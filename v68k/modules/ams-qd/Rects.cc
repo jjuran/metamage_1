@@ -555,7 +555,7 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 {
 	GrafPort& port = **get_addrof_thePort();
 	
-	redraw_lock lock( port.portBits );
+	redraw_lock lock( port.portBits, *r );
 	
 	if ( verb == kQDGrafVerbFrame )
 	{

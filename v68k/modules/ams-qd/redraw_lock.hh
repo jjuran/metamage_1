@@ -11,6 +11,7 @@
 
 
 struct BitMap;
+struct Rect;
 
 
 class redraw_lock
@@ -19,9 +20,10 @@ class redraw_lock
 		raster_lock its_raster_lock;
 	
 	public:
-		redraw_lock( const BitMap& bitmap );
+		redraw_lock( const BitMap& bitmap, const Rect& workArea );
 		
-		redraw_lock( const BitMap& oneBits, const BitMap& twoBits );
+		redraw_lock( const BitMap& bits1, const Rect& rect1,
+		             const BitMap& bits2, const Rect& rect2 );
 };
 
 #endif
