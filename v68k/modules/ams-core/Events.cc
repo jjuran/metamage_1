@@ -350,7 +350,9 @@ pascal char Button_patch()
 
 pascal char StillDown_patch()
 {
-	return Button_patch();
+	EventRecord event;
+	
+	return Button_patch()  &&  ! OSEventAvail( mDownMask | mUpMask, &event );
 }
 
 pascal char WaitMouseUp_patch()
