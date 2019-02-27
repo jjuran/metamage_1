@@ -199,29 +199,21 @@ void paint_cursor( short h, short v )
 	if ( v < 0 )
 	{
 		v_skip = -v;
-		
-		v = 0;
 	}
 	
-	const Ptr   baseAddr = ScrnBase;
 	const short rowBytes = ScreenRow;
 	
-	Ptr plotAddr = baseAddr + v * rowBytes + (h >> 4) * 2;
-	
-	CrsrAddr = plotAddr;
+	Ptr plotAddr = CrsrAddr;
 	
 	if ( h < 0 )
 	{
 		h_trim = -1;
-		
-		CrsrAddr += 2;
-		plotAddr += 2;
 	}
 	else if ( h >= CrsrPin.right - 16 )
 	{
 		h_trim = 1;
 		
-		CrsrAddr -= 2;
+		plotAddr += 2;
 	}
 	
 	save_bits_under_cursor( CrsrAddr, rowBytes, v_count );
