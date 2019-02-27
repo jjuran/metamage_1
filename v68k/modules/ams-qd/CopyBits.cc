@@ -492,12 +492,10 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
 {
 	QDGlobals& qd = get_QDGlobals();
 	
-	GrafPtr saved_port = NULL;
+	const GrafPtr saved_port = qd.thePort;
 	
 	if ( ! equal_bitmaps( dstBits, &qd.thePort->portBits ) )
 	{
-		saved_port = qd.thePort;
-		
 		static GrafPtr port = new_port();
 		
 		qd.thePort = port;
@@ -507,10 +505,7 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
 	
 	StdBits( srcBits, srcRect, dstRect, mode, maskRgn );
 	
-	if ( saved_port )
-	{
-		qd.thePort = saved_port;
-	}
+	qd.thePort = saved_port;
 }
 
 pascal void ScrollRect_patch( const Rect*  srcRect,
