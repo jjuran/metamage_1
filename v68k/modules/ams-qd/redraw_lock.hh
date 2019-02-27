@@ -10,15 +10,18 @@
 #include "raster_lock.hh"
 
 
+struct BitMap;
+
+
 class redraw_lock
 {
 	private:
 		raster_lock its_raster_lock;
 	
 	public:
-		redraw_lock( char* baseAddr );
+		redraw_lock( const BitMap& bitmap );
 		
-		redraw_lock( char* baseAddr1, char* baseAddr2 );
+		redraw_lock( const BitMap& oneBits, const BitMap& twoBits );
 };
 
 #endif

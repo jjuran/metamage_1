@@ -5,18 +5,29 @@
 
 #include "redraw_lock.hh"
 
+// Mac OS
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
+
 
 char* ScrnBase : 0x0824;
 
 
-redraw_lock::redraw_lock( char* baseAddr )
+static inline
+bool is_screen( const BitMap& bitmap )
+{
+	return bitmap.baseAddr == ScrnBase;
+}
+
+redraw_lock::redraw_lock( const BitMap& bitmap )
 :
-	its_raster_lock( baseAddr == ScrnBase )
+	its_raster_lock( is_screen( bitmap ) )
 {
 }
 
-redraw_lock::redraw_lock( char* baseAddr1, char* baseAddr2 )
+redraw_lock::redraw_lock( const BitMap& oneBits, const BitMap& twoBits )
 :
-	its_raster_lock( baseAddr1 == ScrnBase  ||  baseAddr2 == ScrnBase )
+	its_raster_lock( is_screen( oneBits )  ||  is_screen( twoBits ) )
 {
 }

@@ -278,7 +278,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	GrafPort& port = **get_addrof_thePort();
 	
-	redraw_lock lock( port.portBits.baseAddr, srcBits->baseAddr );
+	redraw_lock lock( port.portBits, *srcBits );
 	
 	get_refined_clip_region( port, *dstRect, clipRgn );
 	

@@ -205,7 +205,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	dstRect.top    = port.pnLoc.v - rec.ascent;
 	dstRect.bottom = port.pnLoc.v - rec.ascent + rec.fRectHeight;
 	
-	redraw_lock lock( port.portBits.baseAddr );
+	redraw_lock lock( port.portBits );
 	
 	while ( --n >= 0 )
 	{
