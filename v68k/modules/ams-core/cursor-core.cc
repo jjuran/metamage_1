@@ -21,6 +21,7 @@ short ScreenRow : 0x0106;
 Ptr   ScrnBase  : 0x0824;
 Point Mouse     : 0x0830;
 Rect  CrsrPin   : 0x0834;
+Rect  CrsrRect  : 0x083C;
 
 static Cursor TheCrsr;
 static Ptr    CrsrAddr;
@@ -29,12 +30,86 @@ static char   CrsrBusy;
 static short  CrsrState = -1;  // Invisible cursor, at first
 
 
+static inline
+asm
+void set_empty_rect( Rect* r : __A0 )
+{
+	CLR.L    (A0)+
+	CLR.L    (A0)
+}
+
 void init_lowmem_Cursor()
 {
 	JHideCursor = &hide_cursor;
 	JShowCursor = &show_cursor;
 	JInitCrsr   = &init_cursor;
 	JSetCrsr    = &set_cursor;
+}
+
+static
+void set_Crsr_vars( short h, short v )
+{
+	h -= TheCrsr.hotSpot.h;
+	v -= TheCrsr.hotSpot.v;
+	
+	short top    = v;
+	short bottom = v + 16;
+	
+	if ( top < 0 )
+	{
+		if ( bottom <= 0 )
+		{
+			goto empty;
+		}
+		
+		top = 0;
+	}
+	else if ( bottom > CrsrPin.bottom )
+	{
+		if ( top >= CrsrPin.bottom )
+		{
+			goto empty;
+		}
+		
+		bottom = CrsrPin.bottom;
+	}
+	
+	short left  = h & ~0xF;
+	short right = left + 32;
+	
+	if ( left < 0 )
+	{
+		if ( right <= 0 )
+		{
+			goto empty;
+		}
+		
+		left  = 0;
+		right = 32;
+	}
+	else if ( right > CrsrPin.right )
+	{
+		if ( left >= CrsrPin.right )
+		{
+			goto empty;
+		}
+		
+		right = CrsrPin.right;
+		left  = right - 32;
+	}
+	
+	CrsrRect.top    = top;
+	CrsrRect.left   = left;
+	CrsrRect.bottom = bottom;
+	CrsrRect.right  = right;
+	
+	CrsrAddr = ScrnBase + top * ScreenRow + (left >> 3);
+	
+	return;
+	
+empty:
+	set_empty_rect( &CrsrRect );
+	CrsrAddr = NULL;
 }
 
 static
@@ -105,6 +180,13 @@ void erase_cursor()
 static
 void paint_cursor( short h, short v )
 {
+	set_Crsr_vars( h, v );
+	
+	if ( CrsrAddr == NULL )
+	{
+		return;
+	}
+	
 	screen_lock lock;
 	
 	short h_trim = 0;
@@ -116,11 +198,6 @@ void paint_cursor( short h, short v )
 	
 	if ( v < 0 )
 	{
-		if ( v <= -16 )
-		{
-			return;
-		}
-		
 		v_skip = -v;
 		
 		v_count -= v_skip;
@@ -138,11 +215,6 @@ void paint_cursor( short h, short v )
 	if ( v > CrsrPin.bottom - 16 )
 	{
 		v_count = CrsrPin.bottom - v;
-		
-		if ( v_count <= 0 )
-		{
-			return;
-		}
 		
 		v = CrsrPin.bottom - 16;
 		
@@ -174,6 +246,9 @@ void hide_cursor()
 		--CrsrBusy;
 		
 		erase_cursor();
+		
+		set_empty_rect( &CrsrRect );
+		CrsrAddr = NULL;
 		
 		++CrsrBusy;
 	}
