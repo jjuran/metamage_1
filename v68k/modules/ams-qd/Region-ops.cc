@@ -674,6 +674,8 @@ pascal void DiffRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 	XorRgn( a, tmp, dst );
 }
 
+static Handle xor_scratch = NewHandle( 0 );
+
 pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 {
 	ASSERT( is_valid_region( a ) );
@@ -707,9 +709,9 @@ pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 	
 	const size_t size = max_new_region_size( g_a, g_b );
 	
-	Handle h = NewHandle( size );
+	SetHandleSize( xor_scratch, size );
 	
-	RgnHandle r = (RgnHandle) h;
+	RgnHandle r = (RgnHandle) xor_scratch;
 	
 	xor_region( rgn_extent( *a ), rgn_extent( *b ), rgn_extent( *r ) );
 	
@@ -725,8 +727,6 @@ pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 		
 		CopyRgn( r, dst );
 	}
-	
-	DisposeHandle( h );
 }
 
 static inline
