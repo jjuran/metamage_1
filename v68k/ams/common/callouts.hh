@@ -34,6 +34,13 @@ DEFINE_CALLOUT( void,
                  char        x   : __D1 ),  // right shift bit count
                 0xFFD2 )
 
+DEFINE_CALLOUT( void*,
+                fast_mempcpy,
+                (void*       dst : __A0,
+                 void const* src : __A1,
+                 unsigned    n   : __D0 ),
+                0xFFD0 )
+
 #undef DEFINE_CALLOUT
 
 inline asm
