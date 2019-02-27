@@ -127,9 +127,7 @@ Handle expand_param_text( const unsigned char* text )
 		
 		if ( StringHandle h = DAStrings[ c ] )
 		{
-			fast_memcpy( p, *h + 1, **h );
-			
-			p += **h;
+			p = (char*) fast_mempcpy( p, *h + 1, **h );
 		}
 	}
 	

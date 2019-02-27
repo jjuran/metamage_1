@@ -193,9 +193,7 @@ pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 	
 	unsigned char* p = (unsigned char*) *menu + oldSize - 1;
 	
-	fast_memcpy( p, format, 1 + format[ 0 ] );
-	
-	p += 1 + format[ 0 ];
+	p = (unsigned char*) fast_mempcpy( p, format, 1 + format[ 0 ] );
 	
 	*p++ = 0;  // icon
 	*p++ = 0;  // key
@@ -754,9 +752,7 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 			{
 				unsigned char* q = p + 1 + oldLen;
 				
-				fast_memcpy( p, text, 1 + newLen );
-				
-				p += 1 + newLen;
+				p = (unsigned char*) fast_mempcpy( p, text, 1 + newLen );
 				
 				size_t n = (Ptr) *menu + size - (Ptr) q;
 				
