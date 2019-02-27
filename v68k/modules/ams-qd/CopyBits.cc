@@ -75,9 +75,7 @@ Ptr blit_byte_aligned_segment( Ptr    src,
 		// Use src vs. pat modes because we stripped off the 8 bit
 		
 		case srcCopy:
-			fast_memcpy( dst, src, n_bytes );
-			dst += n_bytes;
-			break;
+			return (Ptr) fast_mempcpy( dst, src, n_bytes );
 		
 		case srcOr:       while ( --n_bytes >= 0 )  *dst++ |=  *src++;  break;
 		case srcXor:      while ( --n_bytes >= 0 )  *dst++ ^=  *src++;  break;
