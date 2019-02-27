@@ -143,9 +143,7 @@ void MFS_load( VCB* vcb, uint16_t stBlk, Ptr buffer, int16_t n )
 	
 	while ( stBlk > 1  &&  n-- > 0 )
 	{
-		fast_memcpy( p, alloc_blocks + (stBlk - 2) * k, k );
-		
-		p += k;
+		p = (Ptr) fast_mempcpy( p, alloc_blocks + (stBlk - 2) * k, k );
 		
 		stBlk = get_next( block_map, stBlk );
 	}
