@@ -129,6 +129,8 @@ int16_t get_next( const uint8_t* block_map, int16_t curBlk )
 
 void MFS_load( VCB* vcb, uint16_t stBlk, Ptr buffer, int16_t n )
 {
+	Ptr p = buffer;
+	
 	const logical_block* all_blocks = (logical_block*) vcb->vcbBufAdr;
 	
 	const logical_block* master_directory_block = all_blocks + 2;
@@ -137,13 +139,13 @@ void MFS_load( VCB* vcb, uint16_t stBlk, Ptr buffer, int16_t n )
 	
 	const char* alloc_blocks = (const char*) (all_blocks + vcb->vcbAlBlSt);
 	
-	const uint32_t alBlkSiz = vcb->vcbAlBlkSiz;
+	const uint32_t k = vcb->vcbAlBlkSiz;
 	
 	while ( stBlk > 1  &&  n-- > 0 )
 	{
-		fast_memcpy( buffer, alloc_blocks + (stBlk - 2) * alBlkSiz, alBlkSiz );
+		fast_memcpy( p, alloc_blocks + (stBlk - 2) * k, k );
 		
-		buffer += alBlkSiz;
+		p += k;
 		
 		stBlk = get_next( block_map, stBlk );
 	}
