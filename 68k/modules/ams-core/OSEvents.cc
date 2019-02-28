@@ -121,18 +121,18 @@ QElemPtr find_an_event( short mask : __D0, EventRecord* event : __A0 )
 	return NULL;
 }
 
-long OSEventAvail_patch( short mask : __D0, EventRecord* event : __A0 )
+long GetOSEvent_patch( short         trap  : __D1,
+                       short         mask  : __D0,
+                       EventRecord*  event : __A0 )
 {
 	QElemPtr it = find_an_event( mask, event );
 	
-	return it ? 0 : -1;
-}
-
-long GetOSEvent_patch( short mask : __D0, EventRecord* event : __A0 )
-{
-	QElemPtr it = find_an_event( mask, event );
+	/*
+		_OSEventAvail is A030 and _GetOSEvent is A031,
+		so if the low bit is set, dequeue the event.
+	*/
 	
-	if ( it != NULL )
+	if ( it != NULL  &&  (trap & 1) )
 	{
 		dequeue_event( it );
 	}
