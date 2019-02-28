@@ -31,6 +31,19 @@ static short  CrsrState = -1;  // Invisible cursor, at first
 
 
 static inline
+asm char lock_cursor()
+{
+	TAS.B    CrsrBusy
+	SEQ.B    D0
+}
+
+static inline
+void unlock_cursor()
+{
+	CrsrBusy = 0;
+}
+
+static inline
 asm
 void set_empty_rect( Rect* r : __A0 )
 {
@@ -255,12 +268,14 @@ void show_cursor()
 
 void update_cursor_location()
 {
-	if ( CrsrState == 0  &&  ! CrsrBusy )
+	if ( CrsrState == 0  &&  lock_cursor() )
 	{
 		screen_lock lock;
 		
 		erase_cursor();
 		paint_cursor( Mouse.h, Mouse.v );
+		
+		unlock_cursor();
 	}
 }
 
