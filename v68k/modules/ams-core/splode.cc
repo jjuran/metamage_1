@@ -67,7 +67,14 @@ timeval approximate_timeval_from_ticks( unsigned long ticks )
 	const uint64_t dt = ticks * microseconds_per_tick;
 	*/
 	
-	const timeval tv = { ticks >> 6, (ticks & (1 << 6) - 1) << 14 };
+	uint32_t usec = (ticks & (1 << 6) - 1) << 14;
+	
+	if ( usec >= 1000000 )
+	{
+		usec = 999999;
+	}
+	
+	const timeval tv = { ticks >> 6, usec };
 	
 	return tv;
 }
