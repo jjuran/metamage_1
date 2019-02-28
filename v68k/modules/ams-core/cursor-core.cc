@@ -172,7 +172,7 @@ void erase_cursor()
 {
 	screen_lock lock;
 	
-	const short n_rows = 16;
+	const short n_rows = CrsrRect.bottom - CrsrRect.top;
 	
 	restore_bits_under_cursor( CrsrAddr, ScreenRow, n_rows );
 }
@@ -191,7 +191,7 @@ void paint_cursor( short h, short v )
 	
 	short h_trim = 0;
 	short v_skip = 0;
-	short v_count = 16;
+	short v_count = CrsrRect.bottom - CrsrRect.top;
 	
 	h -= TheCrsr.hotSpot.h;
 	v -= TheCrsr.hotSpot.v;
@@ -199,8 +199,6 @@ void paint_cursor( short h, short v )
 	if ( v < 0 )
 	{
 		v_skip = -v;
-		
-		v_count -= v_skip;
 		
 		v = 0;
 	}
@@ -211,15 +209,6 @@ void paint_cursor( short h, short v )
 	Ptr plotAddr = baseAddr + v * rowBytes + (h >> 4) * 2;
 	
 	CrsrAddr = plotAddr;
-	
-	if ( v > CrsrPin.bottom - 16 )
-	{
-		v_count = CrsrPin.bottom - v;
-		
-		v = CrsrPin.bottom - 16;
-		
-		CrsrAddr = baseAddr + v * rowBytes + (h >> 4) * 2;
-	}
 	
 	if ( h < 0 )
 	{
@@ -235,7 +224,7 @@ void paint_cursor( short h, short v )
 		CrsrAddr -= 2;
 	}
 	
-	save_bits_under_cursor( CrsrAddr, rowBytes, 16 );
+	save_bits_under_cursor( CrsrAddr, rowBytes, v_count );
 	plot_cursor           ( plotAddr, rowBytes, h & 0xF, h_trim, v_skip, v_count );
 }
 
