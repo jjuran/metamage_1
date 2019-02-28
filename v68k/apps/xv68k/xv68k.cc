@@ -565,6 +565,8 @@ void emulation_loop( v68k::emulator& emu )
 	
 	const unsigned max_steps = parse_instruction_limit( instruction_limit_var );
 	
+	bool event_poll_interrupt_pending = false;
+	
 	while ( (turbo  &&  native_override( emu ))  ||  emu.step() )
 	{
 		n_instructions = emu.instruction_count();
@@ -590,6 +592,13 @@ void emulation_loop( v68k::emulator& emu )
 		if ( (short( n_instructions ) == 0  ||  ticking)  &&  polling )
 		{
 			ticking = false;
+			
+			event_poll_interrupt_pending = true;
+		}
+		
+		if ( event_poll_interrupt_pending  &&  emu.sr.iii == 0 )
+		{
+			event_poll_interrupt_pending = false;
 			
 			const int level  = 1;
 			const int vector = 64;
