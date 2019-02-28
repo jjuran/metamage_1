@@ -127,33 +127,37 @@ empty:
 }
 
 static
-void save_bits_under_cursor( Ptr addr, short rowBytes, short n )
+void save_bits_under_cursor( short n )
 {
+	Ptr addr = CrsrAddr;
+	
 	uint32_t* p = CrsrSave;
 	
 	while ( --n >= 0 )
 	{
 		*p++ = *(uint32_t*) addr;
 		
-		addr += rowBytes;
+		addr += ScreenRow;
 	}
 }
 
 static
-void restore_bits_under_cursor( Ptr addr, short rowBytes, short n )
+void restore_bits_under_cursor( short n )
 {
+	Ptr addr = CrsrAddr;
+	
 	uint32_t* p = CrsrSave;
 	
 	while ( --n >= 0 )
 	{
 		*(uint32_t*) addr = *p++;
 		
-		addr += rowBytes;
+		addr += ScreenRow;
 	}
 }
 
 static
-void plot_cursor( Ptr addr, short rowBytes, short shift, short h_trim, short v_skip, short n )
+void plot_cursor( Ptr addr, short shift, short h_trim, short v_skip, short n )
 {
 	const uint16_t* p = (const uint16_t*) TheCrsr.data + v_skip;
 	const uint16_t* m = (const uint16_t*) TheCrsr.mask + v_skip;
@@ -177,7 +181,7 @@ void plot_cursor( Ptr addr, short rowBytes, short shift, short h_trim, short v_s
 			*q ^=   data << (16 - shift);
 		}
 		
-		addr += rowBytes;
+		addr += ScreenRow;
 	}
 }
 
@@ -188,7 +192,7 @@ void erase_cursor()
 	
 	const short n_rows = CrsrRect.bottom - CrsrRect.top;
 	
-	restore_bits_under_cursor( CrsrAddr, ScreenRow, n_rows );
+	restore_bits_under_cursor( n_rows );
 }
 
 static
@@ -215,8 +219,6 @@ void paint_cursor( short h, short v )
 		v_skip = -v;
 	}
 	
-	const short rowBytes = ScreenRow;
-	
 	Ptr plotAddr = CrsrAddr;
 	
 	if ( h < 0 )
@@ -230,8 +232,8 @@ void paint_cursor( short h, short v )
 		plotAddr += 2;
 	}
 	
-	save_bits_under_cursor( CrsrAddr, rowBytes, v_count );
-	plot_cursor           ( plotAddr, rowBytes, h & 0xF, h_trim, v_skip, v_count );
+	save_bits_under_cursor( v_count );
+	plot_cursor           ( plotAddr, h & 0xF, h_trim, v_skip, v_count );
 }
 
 void hide_cursor()
