@@ -21,6 +21,7 @@ short ScreenRow : 0x0106;
 Ptr   ScrnBase  : 0x0824;
 Point Mouse     : 0x0830;
 Rect  CrsrPin   : 0x0834;
+Rect  CrsrRect  : 0x083C;
 
 static Cursor TheCrsr;
 static Ptr    CrsrAddr;
@@ -28,6 +29,14 @@ static Buffer CrsrSave;
 static char   CrsrBusy;
 static short  CrsrState = -1;  // Invisible cursor, at first
 
+
+static inline
+asm
+void set_empty_rect( Rect* r : __A0 )
+{
+	CLR.L    (A0)+
+	CLR.L    (A0)
+}
 
 void init_lowmem_Cursor()
 {
@@ -38,11 +47,77 @@ void init_lowmem_Cursor()
 }
 
 static
-void save_bits_under_cursor( Ptr addr, short rowBytes )
+void set_Crsr_vars( short h, short v )
+{
+	h -= TheCrsr.hotSpot.h;
+	v -= TheCrsr.hotSpot.v;
+	
+	short top    = v;
+	short bottom = v + 16;
+	
+	if ( top < 0 )
+	{
+		if ( bottom <= 0 )
+		{
+			goto empty;
+		}
+		
+		top = 0;
+	}
+	else if ( bottom > CrsrPin.bottom )
+	{
+		if ( top >= CrsrPin.bottom )
+		{
+			goto empty;
+		}
+		
+		bottom = CrsrPin.bottom;
+	}
+	
+	short left  = h & ~0xF;
+	short right = left + 32;
+	
+	if ( left < 0 )
+	{
+		if ( right <= 0 )
+		{
+			goto empty;
+		}
+		
+		left  = 0;
+		right = 32;
+	}
+	else if ( right > CrsrPin.right )
+	{
+		if ( left >= CrsrPin.right )
+		{
+			goto empty;
+		}
+		
+		right = CrsrPin.right;
+		left  = right - 32;
+	}
+	
+	CrsrRect.top    = top;
+	CrsrRect.left   = left;
+	CrsrRect.bottom = bottom;
+	CrsrRect.right  = right;
+	
+	CrsrAddr = ScrnBase + top * ScreenRow + (left >> 3);
+	
+	return;
+	
+empty:
+	set_empty_rect( &CrsrRect );
+	CrsrAddr = NULL;
+}
+
+static
+void save_bits_under_cursor( Ptr addr, short rowBytes, short n )
 {
 	uint32_t* p = CrsrSave;
 	
-	for ( short i = 0;  i < 16;  ++i )
+	while ( --n >= 0 )
 	{
 		*p++ = *(uint32_t*) addr;
 		
@@ -51,11 +126,11 @@ void save_bits_under_cursor( Ptr addr, short rowBytes )
 }
 
 static
-void restore_bits_under_cursor( Ptr addr, short rowBytes )
+void restore_bits_under_cursor( Ptr addr, short rowBytes, short n )
 {
 	uint32_t* p = CrsrSave;
 	
-	for ( short i = 0;  i < 16;  ++i )
+	while ( --n >= 0 )
 	{
 		*(uint32_t*) addr = *p++;
 		
@@ -97,73 +172,51 @@ void erase_cursor()
 {
 	screen_lock lock;
 	
-	const short rowBytes = ScreenRow;
+	const short n_rows = CrsrRect.bottom - CrsrRect.top;
 	
-	restore_bits_under_cursor( CrsrAddr, rowBytes );
+	restore_bits_under_cursor( CrsrAddr, ScreenRow, n_rows );
 }
 
 static
 void paint_cursor( short h, short v )
 {
+	set_Crsr_vars( h, v );
+	
+	if ( CrsrAddr == NULL )
+	{
+		return;
+	}
+	
 	screen_lock lock;
 	
 	short h_trim = 0;
 	short v_skip = 0;
-	short v_count = 16;
+	short v_count = CrsrRect.bottom - CrsrRect.top;
 	
 	h -= TheCrsr.hotSpot.h;
 	v -= TheCrsr.hotSpot.v;
 	
 	if ( v < 0 )
 	{
-		if ( v <= -16 )
-		{
-			return;
-		}
-		
 		v_skip = -v;
-		
-		v_count -= v_skip;
-		
-		v = 0;
 	}
 	
-	const Ptr   baseAddr = ScrnBase;
 	const short rowBytes = ScreenRow;
 	
-	Ptr plotAddr = baseAddr + v * rowBytes + (h >> 4) * 2;
-	
-	CrsrAddr = plotAddr;
-	
-	if ( v > CrsrPin.bottom - 16 )
-	{
-		v_count = CrsrPin.bottom - v;
-		
-		if ( v_count <= 0 )
-		{
-			return;
-		}
-		
-		v = CrsrPin.bottom - 16;
-		
-		CrsrAddr = baseAddr + v * rowBytes + (h >> 4) * 2;
-	}
+	Ptr plotAddr = CrsrAddr;
 	
 	if ( h < 0 )
 	{
 		h_trim = -1;
-		
-		CrsrAddr += 2;
-		plotAddr += 2;
 	}
 	else if ( h >= CrsrPin.right - 16 )
 	{
 		h_trim = 1;
 		
-		CrsrAddr -= 2;
+		plotAddr += 2;
 	}
 	
-	save_bits_under_cursor( CrsrAddr, rowBytes );
+	save_bits_under_cursor( CrsrAddr, rowBytes, v_count );
 	plot_cursor           ( plotAddr, rowBytes, h & 0xF, h_trim, v_skip, v_count );
 }
 
@@ -174,6 +227,9 @@ void hide_cursor()
 		--CrsrBusy;
 		
 		erase_cursor();
+		
+		set_empty_rect( &CrsrRect );
+		CrsrAddr = NULL;
 		
 		++CrsrBusy;
 	}
