@@ -81,7 +81,7 @@ namespace relix
 			// Yield at least once, even for 0 seconds
 			do
 			{
-				request_timed_wakeup( remaining_microseconds * 1000 );
+				request_timed_wakeup( remaining_microseconds );
 				
 				try_again( false );
 				

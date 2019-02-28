@@ -71,7 +71,7 @@ namespace relix
 			{
 				if ( timeout )
 				{
-					request_timed_wakeup( remaining_microseconds * 1000 );
+					request_timed_wakeup( remaining_microseconds );
 				}
 				
 				try_again( false );

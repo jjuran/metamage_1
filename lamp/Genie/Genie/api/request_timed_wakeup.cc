@@ -32,14 +32,14 @@ namespace relix
 		and callers will keep looping until the delay becomes zero anyway.
 	*/
 	
-	void request_timed_wakeup( unsigned long long nanoseconds )
+	void request_timed_wakeup( unsigned long long microseconds )
 	{
 		const uint32_t max_sleep_ticks = 0x7FFFFFFF;
-		const uint64_t max_nanoseconds = max_sleep_ticks * 1000000000ull / 60;
+		const uint64_t max_microseconds = max_sleep_ticks * 1000000ull / 60;
 		
-		if ( nanoseconds <= max_nanoseconds )
+		if ( microseconds <= max_microseconds )
 		{
-			const uint32_t sleep_ticks = nanoseconds * 6 / 100000000;
+			const uint32_t sleep_ticks = microseconds * 6 / 100000;
 			
 			Ped::AdjustSleepForTimer( sleep_ticks );
 		}

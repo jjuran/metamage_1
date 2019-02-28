@@ -10,7 +10,7 @@
 namespace relix
 {
 	
-	void request_timed_wakeup( unsigned long long nanoseconds );
+	void request_timed_wakeup( unsigned long long microseconds );
 	
 }
 
