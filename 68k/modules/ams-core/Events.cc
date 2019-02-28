@@ -86,11 +86,11 @@ Boolean next_lowlevel_event( bool get, short eventMask, EventRecord* event )
 	return false;
 }
 
-pascal Boolean GetNextEvent_patch( unsigned short  eventMask,
-                                   EventRecord*    event )
+static
+Boolean next_event( bool            getting,
+                    unsigned short  eventMask,
+                    EventRecord*    event )
 {
-	const bool getting = true;
-	
 	UInt32 ticks = get_Ticks();
 	
 	const unsigned long sleep = next_sleep;
@@ -184,69 +184,16 @@ got_event:
 	return ! getting  ||  ! SystemEvent( event );
 }
 
+pascal Boolean GetNextEvent_patch( unsigned short  eventMask,
+                                   EventRecord*    event )
+{
+	return next_event( true, eventMask, event );
+}
+
 pascal Boolean EventAvail_patch( unsigned short  eventMask,
                                  EventRecord*    event )
 {
-	const bool getting = false;
-	
-	const unsigned long sleep = next_sleep;
-	
-	next_sleep = 0;
-	
-	poll_user_input();
-	
-	if ( eventMask & activMask )
-	{
-		if ( CurDeactive )
-		{
-			event->what      = activateEvt;
-			event->message   = (long) CurDeactive;
-			event->when      = get_Ticks();
-			event->where     = Mouse;
-			event->modifiers = 0;
-			
-			return true;
-		}
-		
-		if ( CurActivate )
-		{
-			event->what      = activateEvt;
-			event->message   = (long) CurActivate;
-			event->when      = get_Ticks();
-			event->where     = Mouse;
-			event->modifiers = activeFlag;
-			
-			return true;
-		}
-	}
-	
-	if ( next_lowlevel_event( getting, eventMask, event ) )
-	{
-		return true;
-	}
-	
-	if ( eventMask & updateMask  &&  CheckUpdate( event ) )
-	{
-		return true;
-	}
-	
-	wait_for_user_input( sleep );
-	
-	if ( next_lowlevel_event( getting, eventMask, event ) )
-	{
-		return true;
-	}
-	
-	/*
-		If at any point we return a non-null event, leave next_sleep set to
-		zero.  Otherwise, set it to a small but non-zero amount, so we only
-		waste a little CPU in applications that call GetNextEvent() instead
-		of WaitNextEvent(), rather than consuming one entirely.
-	*/
-	
-	next_sleep = GetNextEvent_throttle;
-	
-	return false;
+	return next_event( false, eventMask, event );
 }
 
 static inline
