@@ -11,6 +11,7 @@
 #endif
 
 // ams-common
+#include "callouts.hh"
 #include "cursor_jump.hh"
 #include "screen_lock.hh"
 
@@ -291,11 +292,7 @@ void init_cursor()
 
 pascal void set_cursor( const Cursor* crsr )
 {
-	--CrsrBusy;
-	
-	TheCrsr = *crsr;
-	
-	++CrsrBusy;
+	fast_memcpy( &TheCrsr, crsr, sizeof (Cursor) );
 	
 	update_cursor_location();
 }
