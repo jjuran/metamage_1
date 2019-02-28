@@ -132,13 +132,8 @@ void cancel( timer_node* node )
 }
 
 static
-bool check_timers( timeval* timeout = NULL )
+void check_timers( timeval* timeout = NULL )
 {
-	if ( timer_chain == NULL )
-	{
-		return false;
-	}
-	
 	timeval now;
 	time( &now );
 	
@@ -151,12 +146,7 @@ bool check_timers( timeval* timeout = NULL )
 		next->ready( next );
 	}
 	
-	if ( timer_chain == NULL )
-	{
-		return false;
-	}
-	
-	if ( timeout )
+	if ( timer_chain  &&  timeout )
 	{
 		timeval dt = timer_chain->wakeup - now;
 		
@@ -165,8 +155,6 @@ bool check_timers( timeval* timeout = NULL )
 			*timeout = dt;
 		}
 	}
-	
-	return true;
 }
 
 bool reactor_wait( timeval* timeout )
