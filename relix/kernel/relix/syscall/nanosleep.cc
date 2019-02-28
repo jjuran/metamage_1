@@ -30,24 +30,24 @@ namespace relix
 {
 	
 	static inline
-	uint64_t nanoseconds_from_timespec( const struct timespec& time )
+	uint64_t microseconds_from_timespec( const struct timespec& time )
 	{
-		return time.tv_sec * 1000000000ull + time.tv_nsec;
+		return time.tv_sec * 1000000ull + time.tv_nsec / 1000;
 	}
 	
 	static inline
-	void set_timespec_nanoseconds( struct timespec& time, uint64_t nanoseconds )
+	void set_timespec_microseconds( struct timespec& ts, uint64_t microseconds )
 	{
-		time.tv_sec  = nanoseconds / 1000000000;
-		time.tv_nsec = nanoseconds % 1000000000;
+		ts.tv_sec  = microseconds / 1000000;
+		ts.tv_nsec = microseconds % 1000000 * 1000;
 	}
 	
 	static inline
-	void set_timespec_nanoseconds( struct timespec* time, uint64_t nanoseconds )
+	void set_timespec_microseconds( struct timespec* ts, uint64_t microseconds )
 	{
-		if ( time != NULL )
+		if ( ts != NULL )
 		{
-			set_timespec_nanoseconds( *time, nanoseconds );
+			set_timespec_microseconds( *ts, microseconds );
 		}
 	}
 	
@@ -63,16 +63,16 @@ namespace relix
 		const struct timespec& minimum = requested[ dozing ? 1 : 0 ];
 		const struct timespec& maximum = requested[ dozing ? 2 : 0 ];
 		
-		const uint64_t min_nanoseconds = nanoseconds_from_timespec( minimum );
-		const uint64_t max_nanoseconds = nanoseconds_from_timespec( maximum );
+		const uint64_t min_microseconds = microseconds_from_timespec( minimum );
+		const uint64_t max_microseconds = microseconds_from_timespec( maximum );
 		
-		const int64_t delta_nanoseconds = max_nanoseconds - min_nanoseconds;
+		const int64_t delta_microseconds = max_microseconds - min_microseconds;
 		
-		const uint64_t start_nanoseconds = clock() * 1000;
+		const uint64_t start_microseconds = clock();
 		
-		const uint64_t end_nanoseconds = start_nanoseconds + max_nanoseconds;
+		const uint64_t end_microseconds = start_microseconds + max_microseconds;
 		
-		int64_t remaining_nanoseconds = max_nanoseconds;
+		int64_t remaining_microseconds = max_microseconds;
 		
 		int result = 0;
 		
@@ -81,29 +81,29 @@ namespace relix
 			// Yield at least once, even for 0 seconds
 			do
 			{
-				request_timed_wakeup( remaining_nanoseconds );
+				request_timed_wakeup( remaining_microseconds * 1000 );
 				
 				try_again( false );
 				
-				remaining_nanoseconds = end_nanoseconds - clock() * 1000;
+				remaining_microseconds = end_microseconds - clock();
 			}
-			while ( remaining_nanoseconds > delta_nanoseconds );
+			while ( remaining_microseconds > delta_microseconds );
 		}
 		catch ( ... )
 		{
-			remaining_nanoseconds = end_nanoseconds - clock() * 1000;
+			remaining_microseconds = end_microseconds - clock();
 			
 			result = set_errno_from_exception();
 			
 			prevent_syscall_restart();
 		}
 		
-		if ( remaining_nanoseconds < 0 )
+		if ( remaining_microseconds < 0 )
 		{
-			remaining_nanoseconds = 0;
+			remaining_microseconds = 0;
 		}
 		
-		set_timespec_nanoseconds( remaining, remaining_nanoseconds );
+		set_timespec_microseconds( remaining, remaining_microseconds );
 		
 		return result;
 	}
