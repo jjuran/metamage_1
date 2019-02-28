@@ -23,6 +23,12 @@
 #include "splode.hh"
 
 
+enum
+{
+	_OSEventAvail = 0xA030,
+	_GetOSEvent   = 0xA031,
+};
+
 UInt32 Ticks   : 0x016A;
 Byte   MBState : 0x0172;
 KeyMap KeyMaps : 0x0174;
@@ -42,11 +48,29 @@ static unsigned long next_sleep;
 #pragma mark -
 
 static
-bool get_lowlevel_event( short eventMask, EventRecord* event )
+asm
+long next_OSEvent( char Get : __D1, short mask : __D0, EventRecord* ev : __A0 )
+{
+	TST.B    D1
+	BNE.S    get
+	
+	_OSEventAvail
+	BRA.S    coda
+	
+get:
+	_GetOSEvent
+	
+coda:
+	ADDQ.L   #1,D0
+	RTS
+}
+
+static
+Boolean next_lowlevel_event( bool get, short eventMask, EventRecord* event )
 {
 	if ( eventMask != autoKeyMask )
 	{
-		if ( GetOSEvent( eventMask & ~autoKeyMask, event ) )
+		if ( next_OSEvent( get, eventMask & ~autoKeyMask, event ) )
 		{
 			button_clicked = false;
 			
@@ -56,10 +80,22 @@ bool get_lowlevel_event( short eventMask, EventRecord* event )
 	
 	if ( eventMask & autoKeyMask )
 	{
-		return GetOSEvent( eventMask, event );
+		return next_OSEvent( get, eventMask, event );
 	}
 	
 	return false;
+}
+
+static inline
+Boolean get_lowlevel_event( short eventMask, EventRecord* event )
+{
+	return next_lowlevel_event( true, eventMask, event );
+}
+
+static inline
+Boolean peek_lowlevel_event( short eventMask, EventRecord* event )
+{
+	return next_lowlevel_event( false, eventMask, event );
 }
 
 pascal Boolean GetNextEvent_patch( unsigned short  eventMask,
@@ -150,25 +186,6 @@ pascal Boolean GetNextEvent_patch( unsigned short  eventMask,
 got_event:
 	
 	return ! SystemEvent( event );
-}
-
-static
-bool peek_lowlevel_event( short eventMask, EventRecord* event )
-{
-	if ( eventMask != autoKeyMask )
-	{
-		if ( OSEventAvail( eventMask & ~autoKeyMask, event ) )
-		{
-			return true;
-		}
-	}
-	
-	if ( eventMask & autoKeyMask )
-	{
-		return OSEventAvail( eventMask, event );
-	}
-	
-	return false;
 }
 
 pascal Boolean EventAvail_patch( unsigned short  eventMask,
