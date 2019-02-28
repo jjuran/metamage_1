@@ -11,6 +11,9 @@
 // POSIX
 #include <sys/time.h>
 
+// math
+#include "math/integer.hh"
+
 // mac-types
 #include "mac_types/epoch.hh"
 
@@ -44,7 +47,11 @@ namespace PosixLib
 	static
 	UInt64 time_offset( UInt64 microseconds )
 	{
-		return UnixTime() * 1000000ULL - microseconds;
+		using math::integer::long_multiply;
+		
+		UInt64 unix_microseconds = long_multiply( UnixTime(), 1000000 );
+		
+		return unix_microseconds - microseconds;
 	}
 	
 	class MicrosecondUnixTimeClock
