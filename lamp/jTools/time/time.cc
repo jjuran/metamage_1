@@ -63,15 +63,26 @@ namespace tool
 		unsigned long long a = tv_a.tv_sec * 1000000ull + tv_a.tv_usec;
 		unsigned long long b = tv_b.tv_sec * 1000000ull + tv_b.tv_usec;
 		
-		float real_diff = (b - a) / 1000000.0;
-		float user_diff = (tms_b.tms_cutime - tms_a.tms_cutime) * 1.0 / CLOCKS_PER_SEC;
-		float sys_diff  = (tms_b.tms_cstime - tms_a.tms_cstime) * 1.0 / CLOCKS_PER_SEC;
+		unsigned long long real_diff = b - a;
+		unsigned long long user_diff = tms_b.tms_cutime - tms_a.tms_cutime;
+		unsigned long long sys_diff  = tms_b.tms_cstime - tms_a.tms_cstime;
+		
+		unsigned real_int = real_diff / 1000000;
+		unsigned real_dec = real_diff / 10000 % 100;
+		
+		unsigned user_int = user_diff / CLOCKS_PER_SEC;
+		unsigned user_dec = user_diff / (CLOCKS_PER_SEC / 100) % 100;
+		
+		unsigned sys_int = sys_diff / CLOCKS_PER_SEC;
+		unsigned sys_dec = sys_diff / (CLOCKS_PER_SEC / 100) % 100;
 		
 		std::fprintf( stderr,             "\n"
-		                      "real %.2f" "\n"
-		                      "user %.2f" "\n"
-		                      "sys  %.2f" "\n",
-		                      real_diff, user_diff, sys_diff );
+		                      "real %u.%.2u" "\n"
+		                      "user %u.%.2u" "\n"
+		                      "sys  %u.%.2u" "\n",
+		                      real_int, real_dec,
+		                      user_int, user_dec,
+		                      sys_int,  sys_dec );
 		
 		return n::convert< p7::exit_t >( wait_status );
 	}
