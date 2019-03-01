@@ -20,7 +20,10 @@ namespace relix
 	
 	/*
 		Ticks are exactly 1/60 second in OS X, but not in OS 9.
-		Here we use OS X ticks.
+		Here we use neither, but a powers-of-two approximation.
+		
+		In our approximation, there are 16912.5 microseconds per tick, which
+		exceeds the actual ~16625.8 in classic Mac OS or ~16666.7 in OS X.
 		
 		The number of OS 9 ticks is slightly larger, since OS 9 ticks are
 		slightly smaller and a few more of them are needed to fill a certain
@@ -41,7 +44,7 @@ namespace relix
 		
 		if ( microseconds <= max_microseconds )
 		{
-			sleep_ticks = microseconds * 6 / 100000;
+			sleep_ticks = (microseconds - microseconds / 32) / 16384;
 		}
 		
 		Ped::AdjustSleepForTimer( sleep_ticks );
