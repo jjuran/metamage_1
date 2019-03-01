@@ -13,6 +13,9 @@
 #include <stdint.h>
 #include <time.h>
 
+// math
+#include "math/integer.hh"
+
 // relix-kernel
 #include "relix/api/errno.hh"
 #include "relix/api/request_timed_wakeup.hh"
@@ -29,17 +32,19 @@
 namespace relix
 {
 	
+	using math::integer::long_multiply;
+	
 	static inline
 	uint64_t microseconds_from_timespec( const struct timespec& time )
 	{
-		return time.tv_sec * 1000000ull + time.tv_nsec / 1000;
+		return long_multiply( time.tv_sec, 1000000 ) + time.tv_nsec / 1000;
 	}
 	
 	static inline
 	void set_timespec_microseconds( struct timespec& ts, uint64_t microseconds )
 	{
-		ts.tv_sec  = microseconds / 1000000;
-		ts.tv_nsec = microseconds % 1000000 * 1000;
+		ts.tv_sec  =                microseconds / 1000000;
+		ts.tv_nsec = long_multiply( microseconds % 1000000, 1000 );
 	}
 	
 	static inline
