@@ -12,6 +12,9 @@
 // POSIX
 #include "unistd.h"
 
+// math
+#include "math/integer.hh"
+
 // vfs
 #include "vfs/file_descriptor.hh"
 #include "vfs/enum/poll_result.hh"
@@ -37,7 +40,9 @@ namespace relix
 		
 		if ( timeout != NULL )
 		{
-			remaining_microseconds = timeout->tv_sec * 1000000
+			using math::integer::long_multiply;
+			
+			remaining_microseconds = long_multiply( timeout->tv_sec, 1000000 )
 			                       + timeout->tv_usec;
 			
 			end_microseconds = clock() + remaining_microseconds;
