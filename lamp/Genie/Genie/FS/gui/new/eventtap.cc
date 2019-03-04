@@ -65,11 +65,11 @@
 #include "Genie/FS/Views.hh"
 
 
-#ifndef CONFIG_MOUSEMOVED_HANDLER
+#ifndef CONFIG_CARBONEVENT_HANDLERS
 	#if TARGET_API_MAC_CARBON
-		#define CONFIG_MOUSEMOVED_HANDLER  1
+		#define CONFIG_CARBONEVENT_HANDLERS  1
 	#else
-		#define CONFIG_MOUSEMOVED_HANDLER  0
+		#define CONFIG_CARBONEVENT_HANDLERS  0
 	#endif
 #endif
 
@@ -211,7 +211,7 @@ namespace Genie
 			const vfs::node* itsKey;
 			Rect             itsBounds;
 			
-		#if CONFIG_MOUSEMOVED_HANDLER
+		#if CONFIG_CARBONEVENT_HANDLERS
 			
 			EventHandlerRef  itsMouseMovedEventHandler;
 			
@@ -222,14 +222,14 @@ namespace Genie
 			{
 				*(uint64_t*) &itsBounds = 0;
 				
-			#if CONFIG_MOUSEMOVED_HANDLER
+			#if CONFIG_CARBONEVENT_HANDLERS
 				
 				itsMouseMovedEventHandler = NULL;
 				
 			#endif
 			}
 			
-		#if CONFIG_MOUSEMOVED_HANDLER
+		#if CONFIG_CARBONEVENT_HANDLERS
 			
 			void Install( const Rect& bounds );
 			
@@ -252,7 +252,7 @@ namespace Genie
 	
 	static const eventtap_handler* active_eventtap;
 	
-#if CONFIG_MOUSEMOVED_HANDLER
+#if CONFIG_CARBONEVENT_HANDLERS
 	
 	static
 	pascal OSStatus eventtap_MouseMoved( EventHandlerCallRef  handler,
@@ -298,7 +298,7 @@ namespace Genie
 	
 	void eventtap_handler::Uninstall()
 	{
-	#if CONFIG_MOUSEMOVED_HANDLER
+	#if CONFIG_CARBONEVENT_HANDLERS
 		
 		OSStatus err;
 		
