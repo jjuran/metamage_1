@@ -203,6 +203,11 @@ void post_event( const splode::ascii_event_buffer& buffer )
 	
 	KeyMods = keymods_from_modifiers_high_byte( mod );
 	
+	if ( ascii == '\0' )
+	{
+		return;  // Don't post events for NUL; just update KeyMods.
+	}
+	
 	const uint8_t action = buffer.attrs & action_mask;
 	
 	if ( action == 0 )
