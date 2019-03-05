@@ -26,6 +26,7 @@
 #include "mac_config/desk-accessories.hh"
 
 // mac-sys-utils
+#include "mac_sys/clock.hh"
 #include "mac_sys/gestalt.hh"
 
 // mac-qd-utils
@@ -85,8 +86,20 @@ void bitmap::set_pixel( unsigned x, unsigned y, const Pattern& color )
 	FillRect( &r, &color );
 }
 
+#ifdef __MC68K__
+	
+	namespace monotonic_clock = mac::sys::tick_clock;
+	
+#else
+	
+	namespace monotonic_clock = mac::sys::microsecond_clock;
+	
+#endif
+
 const int fps = 15;
-const int tick_period = 60 / fps;
+
+const monotonic_clock::clock_t clock_period =
+	monotonic_clock::clocks_per_kilosecond / 1000 / fps;
 
 static Rect buffer_bounds = { 0, 0, nyan_height * n_frames, nyan_width };
 
@@ -203,22 +216,24 @@ void make_main_window()
 class timer
 {
 	private:
-		uint32_t its_frame_duration;
-		uint32_t its_time_of_play;
+		typedef monotonic_clock::clock_t clock_t;
+		
+		clock_t its_frame_duration;
+		clock_t its_time_of_play;
 		int its_start_frame;
 		bool it_is_paused;
 	
 	public:
-		static const uint32_t arbitrarily_long = 0x7FFFFFFF;
+		static const clock_t arbitrarily_long = clock_t( -1 );
 		
-		static uint32_t clock()  { return TickCount(); }
+		static void get_clock( clock_t* t )  { monotonic_clock::get( t ); }
 		
 		timer() : its_start_frame(), it_is_paused()
 		{
-			its_frame_duration = tick_period;  // e.g. 4 (ticks) for 15fps
+			its_frame_duration = clock_period;  // e.g. 4 ticks for 15fps
 		}
 		
-		void play()  { it_is_paused = false;  its_time_of_play = clock(); }
+		void play()  { it_is_paused = false;  get_clock( &its_time_of_play ); }
 		void pause()  { its_start_frame = frame();  it_is_paused = true; }
 		
 		void play_pause()
@@ -232,14 +247,17 @@ class timer
 		
 		bool paused() const  { return it_is_paused; }
 		
-		uint32_t ticks_until_next_frame() const
+		clock_t clocks_until_next_frame() const
 		{
 			if ( paused() )
 			{
 				return arbitrarily_long;
 			}
 			
-			const uint32_t t = clock() - its_time_of_play;
+			clock_t t;
+			get_clock( &t );
+			
+			t -= its_time_of_play;
 			
 			return its_frame_duration - t % its_frame_duration;
 		}
@@ -252,7 +270,8 @@ int timer::frame() const
 		return its_start_frame;
 	}
 	
-	const uint32_t now = clock();
+	clock_t now;
+	get_clock( &now );
 	
 	return (now - its_time_of_play) / its_frame_duration + its_start_frame;
 }
@@ -262,7 +281,9 @@ static timer animation_timer;
 static
 unsigned next_sleep()
 {
-	return animation_timer.ticks_until_next_frame();
+	using monotonic_clock::ticks_from;
+	
+	return ticks_from( animation_timer.clocks_until_next_frame() );
 }
 
 static
