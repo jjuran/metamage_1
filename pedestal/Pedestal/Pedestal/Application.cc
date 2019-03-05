@@ -36,6 +36,7 @@
 
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
+#include "mac_sys/clock.hh"
 #include "mac_sys/current_process.hh"
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/is_front_process.hh"
@@ -133,7 +134,17 @@ namespace Pedestal
 	static bool gEndOfEventLoop;   // set to true once the app is ready to exit
 	
 	
-	static UInt32 gTickCountAtLastContextSwitch = 0;
+#ifdef __MC68K__
+	
+	namespace monotonic_clock = mac::sys::tick_clock;
+	
+#else
+	
+	namespace monotonic_clock = mac::sys::microsecond_clock;
+	
+#endif
+	
+	static monotonic_clock::clock_t gClockAtLastContextSwitch = 0;
 	
 	// ADB address of the keyboard from the last key-down event.
 	static SInt8 gLastKeyboard;  // ADBAddress
@@ -754,11 +765,15 @@ namespace Pedestal
 			return true;
 		}
 		
-		const UInt32 gMaxTicksBetweenEventChecks = 6;
+		using monotonic_clock::clock_t;
+		using monotonic_clock::clocks_per_kilosecond;
 		
-		const UInt32 timetoWNE = gTickCountAtLastContextSwitch + gMaxTicksBetweenEventChecks;
+		const clock_t maxTimeBetweenEventChecks = clocks_per_kilosecond / 10000;
 		
-		UInt32 now = ::LMGetTicks();
+		const clock_t timetoWNE = gClockAtLastContextSwitch + maxTimeBetweenEventChecks;
+		
+		clock_t now;
+		monotonic_clock::get( &now );
 		
 		bool readyToWait = now >= timetoWNE;
 		
@@ -792,11 +807,12 @@ namespace Pedestal
 		}
 	}
 	
-	static const UInt32 gMaxTicksBetweenNonZeroSleeps = 30;
+	const monotonic_clock::clock_t gMaxTimeBetweenNonZeroSleeps =
+		monotonic_clock::clocks_per_kilosecond / 2000;  // 0.5s
 	
-	static UInt32 gTicksAtLastTrueSleep = 0;
+	static monotonic_clock::clock_t gClockAtLastTrueSleep = 0;
 	
-	static UInt32 gTicksAtNextBusiness = 0;
+	static monotonic_clock::clock_t gClockAtNextBusiness = 0;
 	
 	static bool gIdleNeeded = false;
 	
@@ -826,7 +842,12 @@ namespace Pedestal
 	
 	static EventRecord GetAnEvent()
 	{
-		const UInt32 now = ::LMGetTicks();
+		using monotonic_clock::clock_t;
+		using monotonic_clock::get;
+		using monotonic_clock::ticks_from;
+		
+		clock_t now;
+		get( &now );
 		
 		UInt32 ticksToSleep = 0x7FFFFFFF;
 		
@@ -835,7 +856,7 @@ namespace Pedestal
 		
 		if ( ActivelyBusy() )
 		{
-			const bool nonzero = now >= gTicksAtLastTrueSleep + gMaxTicksBetweenNonZeroSleeps;
+			const bool nonzero = now >= gClockAtLastTrueSleep + gMaxTimeBetweenNonZeroSleeps;
 			
 			ticksToSleep = nonzero ? 1 : 0;  // (little to) no sleep for the busy
 		}
@@ -844,17 +865,19 @@ namespace Pedestal
 			ticksToSleep = 1;
 		}
 		
-		gTicksAtNextBusiness = std::max( gTicksAtNextBusiness, now );
+		gClockAtNextBusiness = std::max( gClockAtNextBusiness, now );
 		
-		ticksToSleep = std::min( ticksToSleep, gTicksAtNextBusiness - now );
+		const UInt32 ticksToWait = ticks_from( gClockAtNextBusiness - now );
 		
-		gTicksAtNextBusiness = 0xffffffff;
+		ticksToSleep = std::min( ticksToSleep, ticksToWait );
+		
+		gClockAtNextBusiness = clock_t( -1 );
 		
 		EventRecord nextEvent = WaitNextEvent( ticksToSleep );
 		
 		if ( ticksToSleep > 0 )
 		{
-			gTicksAtLastTrueSleep = ::LMGetTicks();
+			get( &gClockAtLastTrueSleep );
 		}
 		
 		return nextEvent;
@@ -882,7 +905,7 @@ namespace Pedestal
 					gEventCheckNeeded = false;
 					
 					
-					gTickCountAtLastContextSwitch = ::LMGetTicks();
+					monotonic_clock::get( &gClockAtLastContextSwitch );
 					
 					CheckShiftSpaceQuasiMode( event );
 					
@@ -1012,11 +1035,25 @@ namespace Pedestal
 	
 	void AdjustSleepForTimer( unsigned ticksToSleep )
 	{
-		const UInt32 businessTime = ::LMGetTicks() + ticksToSleep;
+		using monotonic_clock::clock_t;
+		using monotonic_clock::clocks_per_kilosecond;
+		using monotonic_clock::get;
 		
-		if ( businessTime < gTicksAtNextBusiness )
+		namespace tick_clock = mac::sys::tick_clock;
+		
+		enum
 		{
-			gTicksAtNextBusiness = businessTime;
+			factor = clocks_per_kilosecond / tick_clock::clocks_per_kilosecond,
+		};
+		
+		clock_t businessTime;
+		get( &businessTime );
+		
+		businessTime += ticksToSleep * factor;
+		
+		if ( businessTime < gClockAtNextBusiness )
+		{
+			gClockAtNextBusiness = businessTime;
 		}
 	}
 	
