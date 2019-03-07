@@ -20,6 +20,9 @@
 #include "command/get_option.hh"
 
 
+#define EXHIBIT_DISPLAY   "EXHIBIT_DISPLAY"
+#define EXHIBIT_INTERACT  "EXHIBIT_INTERACT"
+
 #define DISPLAY   "display"
 #define INTERACT  "interact"
 
@@ -67,6 +70,28 @@ static pid_t author_pid = 0;
 
 static sig_atomic_t child_terminated = 0;
 
+
+static inline
+const char* display()
+{
+	if ( const char* var = getenv( EXHIBIT_DISPLAY ) )
+	{
+		return var;
+	}
+	
+	return DISPLAY;
+}
+
+static inline
+const char* interact()
+{
+	if ( const char* var = getenv( EXHIBIT_INTERACT ) )
+	{
+		return var;
+	}
+	
+	return INTERACT;
+}
 
 static
 void sigchld( int )
@@ -204,7 +229,7 @@ void launch_viewer( const char* raster_path )
 	
 	if ( viewer_pid == 0 )
 	{
-		const char* argv[ 7 ] = { DISPLAY, "-x", "1" };
+		const char* argv[ 7 ] = { display(), "-x", "1" };
 		
 		argv[ 2 ] = magnifier;
 		
@@ -245,7 +270,7 @@ void launch_interactive( char* const* args )
 	
 	if ( viewer_pid == 0 )
 	{
-		const char* argv[ 8 ] = { INTERACT, "--raster", raster_path, "-x" };
+		const char* argv[ 8 ] = { interact(), "--raster", raster_path, "-x" };
 		
 		argv[ 4 ] = magnifier;
 		
