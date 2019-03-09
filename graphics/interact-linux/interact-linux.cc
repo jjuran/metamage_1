@@ -39,7 +39,10 @@
 #define DEV_MOUSE    "/dev/input/mice"
 #define DISPLAY      "display"
 
-#define INTERACT_KEYBOARD "INTERACT_KEYBOARD"
+#define INTERACT_KEYBOARD      "INTERACT_KEYBOARD"
+#define INTERACT_SWAP_CMD_OPT  "INTERACT_SWAP_CMD_OPT"
+
+#define SPIEL_SWAP_CMD_OPT  "SPIEL_SWAP_CMD_OPT"
 
 #define PROGRAM  "interact-linux"
 
@@ -297,6 +300,11 @@ void launch_subprocesses( char* const* args )
 			const char* argv[] = { SPIEL_KEYBD, NULL };
 			
 			const int reader_fd = reader( keyboard_path, privileged_keyboard );
+			
+			if ( const char* var = getenv( INTERACT_SWAP_CMD_OPT ) )
+			{
+				setenv( SPIEL_SWAP_CMD_OPT, var, 0 );
+			}
 			
 		#ifdef __linux__
 			
