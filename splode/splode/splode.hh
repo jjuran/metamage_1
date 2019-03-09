@@ -32,17 +32,35 @@ namespace modes
 {
 	// General modes
 	
+	#define BIT( name )   name ## _bit
+	#define MASK( name )  name = 1 << BIT(name)
+	
 	enum
 	{
-		Command = 1 << 0,
-		Shift   = 1 << 1,
-		Alt     = 1 << 2,
-		Option  = 1 << 3,
-		Control = 1 << 4,
-		Meta    = 1 << 5,
-		Super   = 1 << 6,
-		Hyper   = 1 << 7,
+		BIT( Command ),
+		BIT( Shift   ),
+		BIT( Alt     ),
+		BIT( Option  ),
+		BIT( Control ),
+		BIT( Meta    ),
+		BIT( Super   ),
+		BIT( Hyper   ),
 	};
+	
+	enum
+	{
+		MASK( Command ),
+		MASK( Shift   ),
+		MASK( Alt     ),
+		MASK( Option  ),
+		MASK( Control ),
+		MASK( Meta    ),
+		MASK( Super   ),
+		MASK( Hyper   ),
+	};
+	
+	#undef BIT
+	#undef MASK
 }
 	
 namespace key
