@@ -418,6 +418,23 @@ int32_t get_Ticks_callout( v68k::processor_state& s )
 }
 
 static
+int32_t get_microseconds_callout( v68k::processor_state& s )
+{
+	using namespace v68k::time;
+	
+	const uint64_t t = guest_uptime_microseconds();
+	
+	/*
+		_Microseconds expects the low long in D0 and the high long in A0.
+	*/
+	
+	s.a(0) = uint32_t( t >> 32 );
+	s.d(0) = uint32_t( t       );
+	
+	return rts;
+}
+
+static
 int32_t fast_memset_callout( v68k::processor_state& s )
 {
 	using v68k::user_data_space;
@@ -831,7 +848,7 @@ static const function_type the_callouts[] =
 	NULL,
 	
 	&get_Ticks_callout,
-	NULL,
+	&get_microseconds_callout,
 	NULL,
 	NULL,
 	

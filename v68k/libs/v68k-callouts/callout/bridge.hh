@@ -41,7 +41,7 @@ enum
 	
 	// $FFDE - $FFD8
 	get_Ticks,
-	reserved4,
+	get_microseconds,  // returns in registers, for _Microseconds
 	reserved5,
 	reserved6,
 	
@@ -52,7 +52,7 @@ enum
 	fast_mempcpy,
 	
 	system_call,
-	microseconds,
+	microseconds,  // returns on stack, for MacRelix tool exec parameter block
 	
 	bus_error,
 	address_error,
