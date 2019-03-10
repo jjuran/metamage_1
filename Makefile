@@ -116,14 +116,19 @@ ams-linux-check: unspeakably-root
 display-check:
 	@test -z "$(DISPLAY)" || echo
 	@test -z "$(DISPLAY)" || echo "You have the DISPLAY environment variable set,"
-	@test -z "$(DISPLAY)" || echo "but AMS doesn't work in X11 yet."
+	@test -z "$(DISPLAY)" || echo "but framebuffer mode doesn't work in X11."
 	@test -z "$(DISPLAY)" || echo
-	@test -z "$(DISPLAY)" || echo "Switch to a framebuffer console and try again."
+	@test -z "$(DISPLAY)" || echo "Switch to a framebuffer console and try again,"
+	@test -z "$(DISPLAY)" || echo "or run \`make ams-x11\` instead."
 	@test -z "$(DISPLAY)" || echo
 	@test -z "$(DISPLAY)" || exit 1
 
 ams-linux-demo: ams-linux-check display-check
 	PATH="$$PWD/bin:$$PWD/var/out:$$PATH" ./scripts/ams
+
+ams-x11: $(AMS_REPOS)
+	./build.pl -i $(AMS_TOOLS) interact-x11
+	PATH="$$PWD/var/out:$$PATH" EXHIBIT_INTERACT=interact-x11 ./scripts/ams
 
 ams-osx: $(AMS_REPOS) macward-compat.git
 	bin/build-app Genie
