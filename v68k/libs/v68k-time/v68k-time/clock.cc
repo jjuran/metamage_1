@@ -5,32 +5,62 @@
 
 #include "v68k-time/clock.hh"
 
-// POSIX
-#include <sys/time.h>
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifdef __MACOS__
+#ifndef __TIMER__
+#include <Timer.h>
+#endif
+#endif
+
+// Standard C
+#include <time.h>
 
 
 #pragma exceptions off
 
 
+#ifdef __RELIX__
+#undef CLOCK_MONOTONIC  // It's defined, but clock_gettime() isn't
+#endif
+
+
 namespace v68k {
 namespace time {
 
-uint64_t microsecond_clock()
+static
+uint64_t host_uptime_microseconds()
 {
-	timeval tv;
+#ifdef CLOCK_MONOTONIC
 	
-	int got = gettimeofday( &tv, 0 );  // NULL
+	timespec ts;
 	
-	if ( got < 0 )
-	{
-		return 0;
-	}
+	int nok = clock_gettime( CLOCK_MONOTONIC, &ts );
 	
-	return + tv.tv_sec * 1000000ull
-	       + tv.tv_usec;
+	return + ts.tv_sec * 1000000ull
+	       + ts.tv_nsec / 1000;
+	
+#else
+	
+	uint64_t result;
+	
+	Microseconds( (UnsignedWide*) &result );
+	
+	return result;
+	
+#endif
 }
 
-const uint64_t initial_clock = microsecond_clock();
+static const uint64_t origin = host_uptime_microseconds();
+
+uint64_t guest_uptime_microseconds()
+{
+	return host_uptime_microseconds() - origin;
+}
 
 }  // namespace time
 }  // namespace v68k

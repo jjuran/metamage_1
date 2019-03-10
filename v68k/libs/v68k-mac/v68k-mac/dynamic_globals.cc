@@ -28,7 +28,7 @@ uint32_t get_Ticks()
 {
 	using namespace v68k::time;
 	
-	const uint64_t delta = microsecond_clock() - initial_clock;
+	const uint64_t delta = guest_uptime_microseconds();
 	
 	const unsigned microseconds_per_tick = 1000 * 1000 * 100 / 6015;
 	

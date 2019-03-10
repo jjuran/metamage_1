@@ -13,9 +13,7 @@
 namespace v68k {
 namespace time {
 
-uint64_t microsecond_clock();
-
-extern const uint64_t initial_clock;
+uint64_t guest_uptime_microseconds();
 
 }  // namespace time
 }  // namespace v68k
