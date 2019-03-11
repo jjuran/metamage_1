@@ -90,7 +90,7 @@ namespace vlib
 	};
 	
 	static
-	const op_mapping* find( const op_mapping* a, unsigned n, token_type token )
+	const op_mapping* find( const op_mapping* a, short n, const Token& token )
 	{
 		while ( n-- )
 		{
@@ -108,7 +108,7 @@ namespace vlib
 	#define FIND( array, x )  find( array, sizeof array / sizeof array[0], (x) )
 	
 	static
-	const op_mapping* find_token_op( token_type token, bool expecting_value )
+	const op_mapping* find_token_op( const Token& token, bool expecting_value )
 	{
 		return expecting_value ? FIND( when_value_expected, token )
 		                       : FIND( when_value_acquired, token );
