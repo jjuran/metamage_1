@@ -8,13 +8,13 @@
 
 // vlib
 #include "vlib/op_type.hh"
-#include "vlib/token_type.hh"
+#include "vlib/token.hh"
 
 
 namespace vlib
 {
 	
-	op_type op_from_token( token_type token, bool expecting_value );
+	op_type op_from_token( const Token& token, bool expecting_value );
 	
 }
 

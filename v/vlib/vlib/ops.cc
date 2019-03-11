@@ -114,7 +114,7 @@ namespace vlib
 		                       : FIND( when_value_acquired, token );
 	}
 	
-	op_type op_from_token( token_type token, bool expecting_value )
+	op_type op_from_token( const Token& token, bool expecting_value )
 	{
 		if ( const op_mapping* it = find_token_op( token, expecting_value ) )
 		{
