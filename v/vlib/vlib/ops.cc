@@ -18,83 +18,108 @@ namespace vlib
 		or a binary operator.
 	*/
 	
+	enum spacing_bits
+	{
+		Spacing_tight,  //   a:b
+		Spacing_onlyR,  //   a: b
+		Spacing_onlyL,  //  a :b
+		Spacing_loose,  //  a : b
+	};
+	
+	enum spacing
+	{
+		Tight = 1 << Spacing_tight,
+		OnlyR = 1 << Spacing_onlyR,
+		OnlyL = 1 << Spacing_onlyL,
+		Loose = 1 << Spacing_loose,
+		
+		Every = Tight | OnlyR | OnlyL | Loose,
+	};
+	
 	struct op_mapping
 	{
 		token_type  token;
+		spacing     space;
 		op_type     op;
 	};
 	
 	const op_mapping when_value_expected[] =
 	{
-		{ Token_plus,  Op_unary_plus  },
-		{ Token_minus, Op_unary_minus },
-		{ Token_tilde, Op_unary_negate },
-		{ Token_plus_x2,  Op_preinc },
-		{ Token_minus_x2, Op_predec },
-		{ Token_lt_equals,   Op_recv        },
-		{ Token_parens_plus, Op_unary_count },
-		{ Token_asterisk,    Op_unary_deref },
-		{ Token_ampersand,   Op_unary_refer },
+		{ Token_plus,        Every, Op_unary_plus   },
+		{ Token_minus,       Every, Op_unary_minus  },
+		{ Token_tilde,       Every, Op_unary_negate },
+		{ Token_plus_x2,     Every, Op_preinc       },
+		{ Token_minus_x2,    Every, Op_predec       },
+		{ Token_lt_equals,   Every, Op_recv         },
+		{ Token_parens_plus, Every, Op_unary_count  },
+		{ Token_asterisk,    Every, Op_unary_deref  },
+		{ Token_ampersand,   Every, Op_unary_refer  },
 	};
 	
 	const op_mapping when_value_acquired[] =
 	{
-		{ Token_plus_x2,  Op_postinc },
-		{ Token_minus_x2, Op_postdec },
+		{ Token_plus_x2,  Every, Op_postinc },
+		{ Token_minus_x2, Every, Op_postdec },
 		
-		{ Token_dot_punct, Op_named_unary },
+		{ Token_dot_punct, Every, Op_named_unary },
 		
-		{ Token_dot,         Op_member    },
-		{ Token_plus,        Op_add       },
-		{ Token_minus,       Op_subtract  },
-		{ Token_asterisk,    Op_multiply  },
-		{ Token_slash,       Op_divide    },
-		{ Token_percent,     Op_percent   },
-		{ Token_caret,       Op_empower   },
-		{ Token_parens_star, Op_repeat    },
-		{ Token_equals_x2,   Op_equal     },
-		{ Token_bang_equals, Op_unequal   },
-		{ Token_lt,          Op_lt        },
-		{ Token_lt_equals,   Op_lte       },
-		{ Token_lt_equals_gt,Op_cmp       },
-		{ Token_gt,          Op_gt        },
-		{ Token_gt_equals,   Op_gte       },
-		{ Token_equals_gt,   Op_mapping   },
-		{ Token_colon,       Op_mapping   },
-		{ Token_dot_x2,      Op_gamut     },
-		{ Token_minus_gt,    Op_delta     },
-		{ Token_comma,       Op_list      },
-		{ Token_equals,      Op_duplicate },
+		{ Token_dot,          Every, Op_member    },
+		{ Token_plus,         Every, Op_add       },
+		{ Token_minus,        Every, Op_subtract  },
+		{ Token_asterisk,     Every, Op_multiply  },
+		{ Token_slash,        Every, Op_divide    },
+		{ Token_percent,      Every, Op_percent   },
+		{ Token_caret,        Every, Op_empower   },
+		{ Token_parens_star,  Every, Op_repeat    },
+		{ Token_equals_x2,    Every, Op_equal     },
+		{ Token_bang_equals,  Every, Op_unequal   },
+		{ Token_lt,           Every, Op_lt        },
+		{ Token_lt_equals,    Every, Op_lte       },
+		{ Token_lt_equals_gt, Every, Op_cmp       },
+		{ Token_gt,           Every, Op_gt        },
+		{ Token_gt_equals,    Every, Op_gte       },
+		{ Token_equals_gt,    Every, Op_mapping   },
+		{ Token_colon,        Every, Op_mapping   },
+		{ Token_dot_x2,       Every, Op_gamut     },
+		{ Token_minus_gt,     Every, Op_delta     },
+		{ Token_comma,        Every, Op_list      },
+		{ Token_equals,       Every, Op_duplicate },
 		
-		{ Token_lt_minus,    Op_move },
-		{ Token_lt_minus_gt, Op_swap },
+		{ Token_lt_minus,     Every, Op_move },
+		{ Token_lt_minus_gt,  Every, Op_swap },
 		
-		{ Token_colon_equals,    Op_approximate },
+		{ Token_colon_equals, Every, Op_approximate },
 		
-		{ Token_plus_equals,     Op_increase_by },
-		{ Token_minus_equals,    Op_decrease_by },
-		{ Token_asterisk_equals, Op_multiply_by },
-		{ Token_slash_equals,    Op_divide_by   },
-		{ Token_slash_colon_equals, Op_div_int_by },
-		{ Token_percent_equals,  Op_percent_by  },
+		{ Token_plus_equals,        Every, Op_increase_by },
+		{ Token_minus_equals,       Every, Op_decrease_by },
+		{ Token_asterisk_equals,    Every, Op_multiply_by },
+		{ Token_slash_equals,       Every, Op_divide_by   },
+		{ Token_slash_colon_equals, Every, Op_div_int_by  },
+		{ Token_percent_equals,     Every, Op_percent_by  },
 		
-		{ Token_lt_minus_x2, Op_push },
-		{ Token_lt_equals_x2, Op_send },
+		{ Token_lt_minus_x2,  Every, Op_push },
+		{ Token_lt_equals_x2, Every, Op_send },
 		
-		{ Token_gt_minus,    Op_forward_init },
-		{ Token_minus_lt,    Op_reverse_init },
+		{ Token_gt_minus,    Every, Op_forward_init },
+		{ Token_minus_lt,    Every, Op_reverse_init },
 		
-		{ Token_ampersand,   Op_intersection },
-		{ Token_parens_plus, Op_exclusion    },
-		{ Token_pipe,        Op_union        },
+		{ Token_ampersand,   Every, Op_intersection },
+		{ Token_parens_plus, Every, Op_exclusion    },
+		{ Token_pipe,        Every, Op_union        },
 	};
+	
+	static inline
+	spacing token_spacing_mask( const Token& token )
+	{
+		return spacing( 1 << (token.space_before * 2 + token.space_after) );
+	}
 	
 	static
 	const op_mapping* find( const op_mapping* a, short n, const Token& token )
 	{
 		while ( n-- )
 		{
-			if ( a->token == token )
+			if ( a->token == token  &&  a->space & token_spacing_mask( token ) )
 			{
 				return a;
 			}
