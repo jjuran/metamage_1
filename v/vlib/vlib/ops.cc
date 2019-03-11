@@ -34,6 +34,7 @@ namespace vlib
 		Loose = 1 << Spacing_loose,
 		
 		Postfix = Tight | OnlyR,
+		Match   = Tight | Loose,
 		
 		Every = Tight | OnlyR | OnlyL | Loose,
 	};
@@ -67,13 +68,13 @@ namespace vlib
 		{ Token_dot, OnlyL, Op_named_unary },
 		
 		{ Token_dot,          Tight, Op_member    },
-		{ Token_plus,         Every, Op_add       },
-		{ Token_minus,        Every, Op_subtract  },
-		{ Token_asterisk,     Every, Op_multiply  },
-		{ Token_slash,        Every, Op_divide    },
-		{ Token_percent,      Every, Op_percent   },
+		{ Token_plus,         Match, Op_add       },
+		{ Token_minus,        Match, Op_subtract  },
+		{ Token_asterisk,     Match, Op_multiply  },
+		{ Token_slash,        Match, Op_divide    },
+		{ Token_percent,      Match, Op_percent   },
 		{ Token_caret,        Every, Op_empower   },
-		{ Token_parens_star,  Every, Op_repeat    },
+		{ Token_parens_star,  Match, Op_repeat    },
 		{ Token_equals_x2,    Loose, Op_equal     },
 		{ Token_bang_equals,  Loose, Op_unequal   },
 		{ Token_lt,           Loose, Op_lt        },
@@ -83,10 +84,9 @@ namespace vlib
 		{ Token_gt_equals,    Loose, Op_gte       },
 		{ Token_equals_gt,    Loose, Op_mapping   },
 		{ Token_colon,        OnlyR, Op_mapping   },
-		{ Token_colon,        Tight, Op_reserved  },
-		{ Token_colon,        Loose, Op_reserved  },
-		{ Token_dot_x2,       Every, Op_gamut     },
-		{ Token_minus_gt,     Every, Op_delta     },
+		{ Token_colon,        Match, Op_reserved  },
+		{ Token_dot_x2,       Match, Op_gamut     },
+		{ Token_minus_gt,     Match, Op_delta     },
 		{ Token_comma,        Every, Op_list      },
 		{ Token_equals,       Loose, Op_duplicate },
 		
@@ -108,9 +108,9 @@ namespace vlib
 		{ Token_gt_minus,    Every, Op_forward_init },
 		{ Token_minus_lt,    Every, Op_reverse_init },
 		
-		{ Token_ampersand,   Every, Op_intersection },
-		{ Token_parens_plus, Every, Op_exclusion    },
-		{ Token_pipe,        Every, Op_union        },
+		{ Token_ampersand,   Match, Op_intersection },
+		{ Token_parens_plus, Match, Op_exclusion    },
+		{ Token_pipe,        Match, Op_union        },
 	};
 	
 	static inline

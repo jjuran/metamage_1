@@ -3263,8 +3263,8 @@ $ vc 'var x = [1, 2, 3]; try { x[ 4 ] = 5 } catch { "right out" }'
 
 %
 
-$ vc 'const UTF = 8; UTF - 8: 0, UTF- 8: 0, UTF -8: 0, UTF-8: 1'
-1 >= '((0 => 0), (0 => 0), (0 => 0), ("UTF-8" => 1))'
+$ vc 'const UTF = 8; UTF - 8: 0, UTF-8: 1'
+1 >= '((0 => 0), ("UTF-8" => 1))'
 
 %
 
