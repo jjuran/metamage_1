@@ -432,14 +432,6 @@ namespace vlib
 		
 		if ( const op_token* token = find_op_token( p ) )
 		{
-			if ( token->type == Token_dot )
-			{
-				if ( iota::is_punct( *p ) )
-				{
-					return Token_dot_punct;
-				}
-			}
-			
 			return token->type;
 		}
 		
