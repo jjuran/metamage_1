@@ -45,17 +45,17 @@ $ vx -e 'const x = try { eval "eval str 0" } catch {"nope"}; print rep x;'
 
 %
 
-$ vx -e 'print rep eval "const end = str 1;   3 + 4\nend .\nlength"'
+$ vx -e 'print rep try { eval "const end = str()\nend .\nlength" } catch {1}'
 1 >= 1
 
 %
 
-$ vx -e 'print rep eval "const end = str 12;  3 + 4\n end.\nlength"'
+$ vx -e 'print rep try { eval "const end = str()\n end.\nlength" } catch {2}'
 1 >= 2
 
 %
 
-$ vx -e 'print rep eval "const end = str 123; 3 + 4\nend. \nlength"'
+$ vx -e 'print rep try { eval "const end = str()\nend. \nlength" } catch {3}'
 1 >= 3
 
 %

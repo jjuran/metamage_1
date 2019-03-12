@@ -61,9 +61,9 @@ namespace vlib
 		{ Token_plus_x2,  Every, Op_postinc },
 		{ Token_minus_x2, Every, Op_postdec },
 		
-		{ Token_dot_punct, Every, Op_named_unary },
+		{ Token_dot_punct, OnlyL, Op_named_unary },
 		
-		{ Token_dot,          Every, Op_member    },
+		{ Token_dot,          Tight, Op_member    },
 		{ Token_plus,         Every, Op_add       },
 		{ Token_minus,        Every, Op_subtract  },
 		{ Token_asterisk,     Every, Op_multiply  },
