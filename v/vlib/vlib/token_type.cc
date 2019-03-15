@@ -356,12 +356,12 @@ namespace vlib
 			
 			const char* q = p;
 			
-			while ( is_space( *q ) )  ++q;
-			
 			if ( *q == ':'  &&  q[ 1 ] != '=' )
 			{
 				return Token_bareword_map_key;
 			}
+			
+			while ( is_space( *q ) )  ++q;
 			
 			return *q == '(' ? Token_bareword_function : Token_bareword;
 		}
