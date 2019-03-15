@@ -40,18 +40,18 @@ if not command in command_defs then
 	exit usage()
 }
 
-def check_hash
+def check_hash (name)
 {
-	if not _ in arcsign.hash_functions then
+	if not name in arcsign.hash_functions then
 	{
-		warn "arcsign: " _ ": not a valid hash function"
+		warn "arcsign: " name ": not a valid hash function"
 		exit 2
 	}
 	
-	return _
+	return name
 }
 
-let vload = { packed self-destructing load _ }
+let vload = packed * self-destructing * load
 
 var hash = null
 var key  = null
