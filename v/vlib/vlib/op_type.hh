@@ -127,6 +127,7 @@ namespace vlib
 		Op_brackets,
 		Op_braces,
 		Op_internal_vector,
+		Op_keyvar,
 		
 	// end right-associative
 		Op_end,

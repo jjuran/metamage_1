@@ -45,6 +45,7 @@ namespace vlib
 	
 	const op_mapping when_value_expected[] =
 	{
+		{ Token_colon,       Every, Op_keyvar       },
 		{ Token_plus,        Every, Op_unary_plus   },
 		{ Token_minus,       Every, Op_unary_minus  },
 		{ Token_tilde,       Every, Op_unary_negate },
@@ -80,6 +81,8 @@ namespace vlib
 		{ Token_gt_equals,    Loose, Op_gte       },
 		{ Token_equals_gt,    Loose, Op_mapping   },
 		{ Token_colon,        OnlyR, Op_mapping   },
+		{ Token_colon,        Tight, Op_reserved  },
+		{ Token_colon,        Loose, Op_reserved  },
 		{ Token_dot_x2,       Every, Op_gamut     },
 		{ Token_minus_gt,     Every, Op_delta     },
 		{ Token_comma,        Every, Op_list      },

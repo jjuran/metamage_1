@@ -288,6 +288,19 @@ namespace vlib
 			{
 				insert_lambda_prototype_prelude( expr );
 			}
+			else if ( op == Op_keyvar )
+			{
+				if ( const Identifier* name = expr->right.is< Identifier >() )
+				{
+					v = Value( String( name->get() ), Op_mapping, *name );
+					
+					expr = v.expr();
+				}
+				else
+				{
+					THROW( "`:name` must be an identifier" );
+				}
+			}
 			else if ( declares_symbols( op ) )
 			{
 				const Value* x = &expr->right;
