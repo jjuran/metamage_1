@@ -14,6 +14,7 @@ namespace vlib
 	{
 	// begin right-associative
 		
+		Op_reserved = -1,
 		Op_none,
 		Op_return,
 		Op_throw,

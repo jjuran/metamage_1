@@ -306,6 +306,11 @@ namespace vlib
 	{
 		ASSERT( op != Op_none );
 		
+		if ( op == Op_reserved )
+		{
+			THROW( "operator is in a reserved spacing configuration" );
+		}
+		
 		if ( expecting_value() )
 		{
 			// left unary operator
