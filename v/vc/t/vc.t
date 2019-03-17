@@ -2593,12 +2593,12 @@ $ vc 'const x = "foo"; x x, x 2, x true, x "U"[0], x()'
 
 %
 
-$ vc 'const x = "foo"; x .[0], x "B"[0]'
+$ vc 'const x = "foo"; x [0], x "B"[0]'
 1 >= '("foo0", "fooB")'
 
 %
 
-$ vc 'const x = "foo"; x [0], x"B"[0]'
+$ vc 'const x = "foo"; x[0], x"B"[0]'
 1 >= "('f', '\v')"
 
 %

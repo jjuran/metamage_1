@@ -355,6 +355,12 @@ namespace vlib
 				{
 					stack.push_back( Op_array );
 				}
+				else if ( token.space_before )
+				{
+					fold_ops_and_add( Op_named_unary );
+					
+					stack.push_back( Op_array );
+				}
 				else
 				{
 					fold_ops_and_add( Op_subscript );
