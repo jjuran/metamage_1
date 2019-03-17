@@ -226,13 +226,9 @@ namespace vlib
 		stack.back().op = op;
 	}
 	
+	inline
 	void Parser::push( op_type op )
 	{
-		if ( op == Op_parens  &&  ! expecting_value() )
-		{
-			fold_ops_and_add( Op_function );
-		}
-		
 		stack.push_back( op );
 	}
 	
@@ -390,6 +386,11 @@ namespace vlib
 				break;
 			
 			case Token_lparen:
+				if ( ! expecting_value() )
+				{
+					fold_ops_and_add( Op_function );
+				}
+				
 				push( Op_parens );
 				break;
 			
