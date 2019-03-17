@@ -7,9 +7,9 @@ if argc > 1 then
 	#
 	#     stty: when specifying an output style, modes may not be set
 	
-	const previous = output-from-run .[ "stty", "-g" ]
+	const previous = output-from-run [ "stty", "-g" ]
 	
-	run .[ "stty", "cbreak", "-echo" ]
+	run [ "stty", "cbreak", "-echo" ]
 	
 	try
 	{
@@ -19,5 +19,5 @@ if argc > 1 then
 	
 	# GNU coreutils' stty also can't handle a trailing LF.
 	
-	run .[ "stty", *previous.lines() ]
+	run [ "stty", *previous.lines() ]
 }

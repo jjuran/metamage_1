@@ -117,14 +117,14 @@ else
 {
 	const var_run_raster = home "/var/run/raster"
 	
-	run .[ "mkdir -p" / ' ', var_run_raster ]
+	run [ "mkdir -p" / ' ', var_run_raster ]
 	
 	const screen = var_run_raster "/ams"
 	const raster = "--raster=" screen
 	
-	run .[ "raster make -fg " screen_res "*1 -m paint -R" / ' ', screen ]
+	run [ "raster make -fg " screen_res "*1 -m paint -R" / ' ', screen ]
 	
-	run .[ "raster init" / ' ', screen ]
+	run [ "raster init" / ' ', screen ]
 	
 	xv68k-screen   = raster
 	command-prefix = "exhibit", "-t", title, raster, events_fd_opt

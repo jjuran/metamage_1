@@ -33,6 +33,6 @@ rewrite "v/v/wrapped" <== 0 LF
 
 dup2( rewrite "v/v/text", OUT )
 
-run .["daemonize --cwd --stdout --ctty=tty -- /bin/ps --wide --sleep=0.2" / ' ']
+run ["daemonize --cwd --stdout --ctty=tty -- /bin/ps --wide --sleep=0.2" / ' ']
 
 rewrite "vis" <== 1 LF
