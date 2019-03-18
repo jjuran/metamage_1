@@ -7,7 +7,7 @@ def make (depth: int)
 	
 	def remove (n, src)
 	{
-		state[ src ] = [tail .*state[ src ]]
+		state[ src ] = [tail *state[ src ]]
 	}
 	
 	def insert (n, dst)
@@ -17,8 +17,8 @@ def make (depth: int)
 	
 	def move (n, src, dst)
 	{
-		state[ src ] = [tail .*state[ src ]]
-		state[ dst ] = [n,    *state[ dst ]]
+		state[ src ] = [tail *state[ src ]]
+		state[ dst ] = [n,   *state[ dst ]]
 	}
 	
 	def get (i)

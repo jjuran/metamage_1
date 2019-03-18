@@ -63,7 +63,7 @@ def lcm
 	
 	const factors = pf map { v.key ^ v.value }
 	
-	return Math.product .*factors
+	return Math.product *factors
 }
 
 print lcm (1 .. 20)

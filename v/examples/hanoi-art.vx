@@ -34,7 +34,7 @@ def display
 	{
 		OUT <== CLEAN
 		
-		print "\n".join .*rows
+		print "\n".join *rows
 	}
 	
 	rendering( send, null )
@@ -46,7 +46,7 @@ def visual-move (n, src, dst)
 	{
 		OUT <== CLEAN
 		
-		print "\n".join .*rows
+		print "\n".join *rows
 	}
 	
 	sleep 0.3

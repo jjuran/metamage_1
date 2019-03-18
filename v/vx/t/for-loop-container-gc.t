@@ -25,7 +25,7 @@ def recv-units (behead, src)
 	{
 		while true do
 		{
-			var x = behead .&buffer
+			var x = behead &buffer
 			
 			if (+) x then
 			{

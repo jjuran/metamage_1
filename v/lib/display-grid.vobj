@@ -57,7 +57,7 @@ def groups (size, units)
 	{
 		j = i + size
 		
-		result <-- " ".join .*units[ i -> j ]
+		result <-- " ".join *units[ i -> j ]
 		
 		i = j
 	}
@@ -80,5 +80,5 @@ def display-grid (grid)
 	
 	const g (str[]) = groups( dimensions[ 0 ], cells )
 	
-	return "\n".join .*g
+	return "\n".join *g
 }

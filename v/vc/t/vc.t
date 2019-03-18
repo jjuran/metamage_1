@@ -2468,7 +2468,7 @@ $ vc 'try {throw "foo"} catch {str(_, "bar")}'
 
 %
 
-$ vc '(abs .-42), (rep [])'
+$ vc '(abs -42), (rep [])'
 1 >= '(42, "[]")'
 
 %
@@ -2518,12 +2518,12 @@ $ vc 'const x = "Hi\x00 \u{1f4a9}"; x == str packed x, x == packed( x ).string'
 
 %
 
-$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str .*(packed x), (+) *(packed x)'
+$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str *(packed x), (+) *(packed x)'
 1 >= "(true, 11)"
 
 %
 
-$ vc 'str .*packed( "foo", *"bar", packed "baz" )'
+$ vc 'str *packed( "foo", *"bar", packed "baz" )'
 1 >= '"foobarbaz"'
 
 %
@@ -3283,7 +3283,7 @@ $ vc "'a' .. 'f' map {_}"
 
 %
 
-$ vc "str .*('a' .. 'f')"
+$ vc "str *('a' .. 'f')"
 1 >= '"abcdef"'
 
 %

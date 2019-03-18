@@ -19,7 +19,7 @@ try
 		
 		if b != button-state then
 		{
-			const action = packed( x"0300", byte (u8 .*button-state + 1), '\0' )
+			const action = packed( x"0300", byte (u8 *button-state + 1), '\0' )
 			
 			button-state = b
 			
