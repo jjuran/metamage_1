@@ -33,6 +33,8 @@ namespace vlib
 		OnlyL = 1 << Spacing_onlyL,
 		Loose = 1 << Spacing_loose,
 		
+		Postfix = Tight | OnlyR,
+		
 		Every = Tight | OnlyR | OnlyL | Loose,
 	};
 	
@@ -59,8 +61,8 @@ namespace vlib
 	
 	const op_mapping when_value_acquired[] =
 	{
-		{ Token_plus_x2,  Every, Op_postinc },
-		{ Token_minus_x2, Every, Op_postdec },
+		{ Token_plus_x2,  Postfix, Op_postinc },
+		{ Token_minus_x2, Postfix, Op_postdec },
 		
 		{ Token_dot, OnlyL, Op_named_unary },
 		

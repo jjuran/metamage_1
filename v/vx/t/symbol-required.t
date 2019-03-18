@@ -19,5 +19,5 @@ while i < n do
 {
 	const ok = try { eval cases[ i ]; "not ok" } catch { "ok" }
 	
-	print ok " " .++i
+	print ok " " ++i
 }
