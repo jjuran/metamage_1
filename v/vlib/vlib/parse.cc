@@ -388,7 +388,29 @@ namespace vlib
 			case Token_lparen:
 				if ( ! expecting_value() )
 				{
-					fold_ops_and_add( Op_function );
+					op_type implied_op = Op_function;
+					
+					if ( token.space_before )
+					{
+						const size_t n = stack.size();
+						
+						if ( op_type op = n < 2 ? Op_none : stack[ n - 2 ].op )
+						{
+							switch ( op )
+							{
+								case Op_const:
+								case Op_var:
+								case Op_def:
+									break;
+								
+								default:
+									implied_op = Op_named_unary;
+									break;
+							}
+						}
+					}
+					
+					fold_ops_and_add( implied_op );
 				}
 				
 				push( Op_parens );
