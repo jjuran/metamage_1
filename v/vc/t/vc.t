@@ -2473,7 +2473,7 @@ $ vc '(abs -42), (rep [])'
 
 %
 
-$ vc '(rep [].length), (half .(4)^2)'
+$ vc '(rep [].length), (half (4)^2)'
 1 >= '("0", 8)'
 
 %
