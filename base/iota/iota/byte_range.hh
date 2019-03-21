@@ -49,34 +49,52 @@ namespace iota
 		return br == Byterange_empty;
 	}
 	
+	/*
+		Unfortunately, Metrowerks C++ 2.4.1 tries to use the template overloads
+		of begin() and end() instead of the byte_range overloads, even though
+		byte_range is an exact match.  So we have to call them something else.
+	*/
+	
 	inline
-	unsigned short begin( byte_range br )
+	unsigned short _begin( byte_range br )
 	{
 		return br >> 16;
 	}
 	
 	inline
-	unsigned short end( byte_range br )
+	unsigned short _end( byte_range br )
 	{
 		return br;
 	}
 	
 	inline
+	unsigned short begin( byte_range br )
+	{
+		return _begin( br );
+	}
+	
+	inline
+	unsigned short end( byte_range br )
+	{
+		return _end( br );
+	}
+	
+	inline
 	unsigned char front( byte_range br )
 	{
-		return begin( br );
+		return _begin( br );
 	}
 	
 	inline
 	unsigned char back( byte_range br )
 	{
-		return end( br ) - 1;
+		return _end( br ) - 1;
 	}
 	
 	inline
 	unsigned short size( byte_range br )
 	{
-		return end( br ) - begin( br );
+		return _end( br ) - _begin( br );
 	}
 	
 	inline
@@ -87,23 +105,23 @@ namespace iota
 			return true;
 		}
 		
-		return end( br ) <= 0x100  &&  begin( br ) < end( br );
+		return _end( br ) <= 0x100  &&  _begin( br ) < _end( br );
 	}
 	
 	inline
 	bool contains( byte_range br, unsigned char c )
 	{
-		return c >= begin( br )  &&  c < end( br );
+		return c >= _begin( br )  &&  c < _end( br );
 	}
 	
 	inline
 	byte_range intersection( byte_range a, byte_range b )
 	{
-		const unsigned short a_begin = begin( a );
-		const unsigned short a_end   = end  ( a );
+		const unsigned short a_begin = _begin( a );
+		const unsigned short a_end   = _end  ( a );
 		
-		const unsigned short b_begin = begin( b );
-		const unsigned short b_end   = end  ( b );
+		const unsigned short b_begin = _begin( b );
+		const unsigned short b_end   = _end  ( b );
 		
 		const unsigned short begin = a_begin > b_begin ? a_begin : b_begin;
 		const unsigned short end   = a_end   < b_end   ? a_end   : b_end;
