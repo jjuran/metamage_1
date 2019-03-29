@@ -18,4 +18,6 @@ short Sound_control( short trap_word : __D1, CntrlParam* : __A0, DCE* : __A1 );
 
 #define Sound_status  NULL
 
+pascal void SysBeep_patch( short duration );
+
 #endif

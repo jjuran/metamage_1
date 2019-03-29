@@ -207,3 +207,17 @@ short Sound_control( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
 	
 	return err;
 }
+
+pascal void SysBeep_patch( short duration )
+{
+	enum
+	{
+		swMode = -1,
+	};
+	
+	uint16_t buffer[] = { swMode, 650, 255, duration, 0, 0, 0 };
+	
+	SInt32 size = sizeof buffer;
+	
+	FSWrite( -4, &size, (Ptr) buffer );
+}

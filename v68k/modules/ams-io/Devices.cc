@@ -9,6 +9,9 @@
 #ifndef __DEVICES__
 #include <Devices.h>
 #endif
+#ifndef __TRAPS__
+#include <Traps.h>
+#endif
 
 // ams-io
 #include "Console.hh"
@@ -26,6 +29,11 @@ Byte SdVolume : 0x0260;
 Byte SdEnable : 0x0261;
 
 IODoneProcPtr JIODone : 0x08FC;
+
+
+void* toolbox_trap_table[] : 3 * 1024;
+
+#define TBTRAP( Proc )  (toolbox_trap_table[ _##Proc & 0x03FF ] = &Proc##_patch)
 
 
 static inline
@@ -235,6 +243,8 @@ void install_drivers()
 	if ( sound_fd >= 0 )
 	{
 		INSTALL_SYS_DRIVER( Sound, 3 );
+		
+		TBTRAP( SysBeep );  // A9C8
 		
 		SdVolEnb = -1;
 	}
