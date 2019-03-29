@@ -9,6 +9,10 @@
 struct MenuInfo;
 struct Point;
 
+typedef pascal void (*SysBeep_ProcPtr)( short duration );
+
+extern SysBeep_ProcPtr old_SysBeep;
+
 pascal void InitMenus_patch();
 
 pascal MenuInfo** NewMenu_patch( short menuID, const unsigned char* title );

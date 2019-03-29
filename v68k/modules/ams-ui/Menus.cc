@@ -27,6 +27,7 @@
 #include "Windows.hh"
 
 
+Byte SdVolume    : 0x0260;
 GrafPtr WMgrPort : 0x09DE;
 short TheMenu    : 0x0A26;
 short MBarHeight : 0x0BAA;
@@ -945,8 +946,16 @@ pascal void FlashMenuBar_patch( short menuID )
 	InvertRect( &menu_bar );
 }
 
+SysBeep_ProcPtr old_SysBeep;
+
 pascal void SysBeep_patch( short duration )
 {
+	if ( SdVolume & 0x7 )
+	{
+		old_SysBeep( duration );
+		return;
+	}
+	
 	FlashMenuBar_patch( 0 );
 	
 	UInt32 dummy;
