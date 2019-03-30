@@ -135,7 +135,10 @@ short VRemove_patch( QElem* vbl : __A0 )
 {
 	short saved_SR = disable_interrupts();
 	
-	Dequeue( vbl, &VBLQueue );
+	if ( OSErr err = Dequeue( vbl, &VBLQueue ) )
+	{
+		return err;
+	}
 	
 	if ( VBLQueue.qHead == NULL )
 	{
