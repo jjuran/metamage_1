@@ -444,7 +444,7 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 				{
 					if ( ! PtInRgn( event.where, w->contRgn ) )
 					{
-						SysBeep( 30 );
+						SysBeep( 6 );
 						continue;
 					}
 					
