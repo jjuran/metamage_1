@@ -9,6 +9,9 @@
 #ifndef __DEVICES__
 #include <Devices.h>
 #endif
+#ifndef __RETRACE__
+#include <Retrace.h>
+#endif
 
 // POSIX
 #include <sys/uio.h>
@@ -37,6 +40,7 @@
 enum
 {
 	basic_domain = 0x0101,
+	admin_domain = 0x4A4A,
 	sound_domain = 0x4B4B,
 };
 
@@ -67,6 +71,12 @@ struct FTSynthRec_Flat
 	long   sound3Phase;
 	Fixed  sound4Rate;
 	long   sound4Phase;
+};
+
+typedef FTSynthRec_Flat FTSynthRec_Flat_Update;
+
+struct FTSynthRec_Flat_Buffer : FTSynthRec_Flat
+{
 	Wave   sound1Wave;
 	Wave   sound2Wave;
 	Wave   sound3Wave;
@@ -84,7 +94,7 @@ WavePtr checked( WavePtr wave )
 static inline
 ssize_t start_sound( const void* buffer, UInt32 length )
 {
-	FTSynthRec_Flat flat;
+	FTSynthRec_Flat_Buffer flat;
 	
 	if ( *(short*) buffer == ftMode )
 	{
@@ -144,6 +154,44 @@ void timeval_add( timeval& a, const timeval& b )
 	a.tv_usec = usec;
 }
 
+static inline
+bool operator==( const FTSoundRec& a, const FTSoundRec& b )
+{
+	return memcmp( &a, &b, sizeof (FTSoundRec) ) == 0;
+}
+
+static inline
+bool operator!=( const FTSoundRec& a, const FTSoundRec& b )
+{
+	return !(a == b);
+}
+
+static FTSoundRec* current_FTSound;
+static FTSoundRec  copy_of_FTSoundRec;
+
+static VBLTask SoundVBL;
+
+static
+pascal void SoundVBL_Proc()
+{
+	if ( *current_FTSound != copy_of_FTSoundRec )
+	{
+		copy_of_FTSoundRec = *current_FTSound;
+		
+		FTSynthRec_Flat_Update flat;
+		
+		flat.mode = ftMode | 0x0200;  // 0x0201
+		
+		const int n_from_sndRec = offsetof( FTSoundRec, sound1Wave );
+		
+		fast_memcpy( &flat.duration, &copy_of_FTSoundRec, n_from_sndRec );
+		
+		send_command( admin_domain, &flat, sizeof flat );
+	}
+	
+	SoundVBL.vblCount = 1;
+}
+
 static
 void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 {
@@ -169,6 +217,20 @@ void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 	timer_scheduled = true;
 	
 	reactor_core()->schedule( &Sound_timer_node );
+	
+	if ( *(short*) pb->ioBuffer == ftMode )
+	{
+		const FTSynthRec& synth = *(const FTSynthRec*) pb->ioBuffer;
+		
+		current_FTSound = synth.sndRec;
+		
+		fast_memcpy( &copy_of_FTSoundRec, synth.sndRec, sizeof (FTSoundRec) );
+		
+		SoundVBL.vblAddr  = &SoundVBL_Proc;
+		SoundVBL.vblCount = 1;
+		
+		OSErr err = VInstall( (QElem*) &SoundVBL );
+	}
 }
 
 static
@@ -178,6 +240,8 @@ void cancel_timer()
 	
 	if ( timer_scheduled )
 	{
+		OSErr err = VRemove( (QElem*) &SoundVBL );
+		
 		reactor_core()->cancel( &Sound_timer_node );
 		
 		timer_scheduled = false;
@@ -189,6 +253,8 @@ void cancel_timer()
 static
 void Sound_ready( timer_node* node )
 {
+	OSErr err = VRemove( (QElem*) &SoundVBL );
+	
 	DCtlEntry* dce = *GetDCtlEntry( -4 );
 	
 	IOParam* pb = (IOParam*) dce->dCtlQHdr.qHead;
