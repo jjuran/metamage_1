@@ -16,8 +16,8 @@
 // POSIX
 #include <sys/uio.h>
 
-// SoundDriver
-#include "SoundDriver/SoundDriver.h"
+// exosnd
+#include "exosnd/exosnd.hh"
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
@@ -37,13 +37,6 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
-enum
-{
-	basic_domain = 0x0101,
-	admin_domain = 0x4A4A,
-	sound_domain = 0x4B4B,
-};
-
 static
 ssize_t send_command( UInt16 domain, const void* buffer, UInt32 length )
 {
@@ -59,30 +52,6 @@ ssize_t send_command( UInt16 domain, const void* buffer, UInt32 length )
 	return writev( sound_fd, iov, n_iov );
 }
 
-struct FTSynthRec_Flat
-{
-	short  mode;
-	short  duration;
-	Fixed  sound1Rate;
-	long   sound1Phase;
-	Fixed  sound2Rate;
-	long   sound2Phase;
-	Fixed  sound3Rate;
-	long   sound3Phase;
-	Fixed  sound4Rate;
-	long   sound4Phase;
-};
-
-typedef FTSynthRec_Flat FTSynthRec_Flat_Update;
-
-struct FTSynthRec_Flat_Buffer : FTSynthRec_Flat
-{
-	Wave   sound1Wave;
-	Wave   sound2Wave;
-	Wave   sound3Wave;
-	Wave   sound4Wave;
-};
-
 static Wave zeroWave;
 
 static inline
@@ -94,11 +63,13 @@ WavePtr checked( WavePtr wave )
 static inline
 ssize_t start_sound( const void* buffer, UInt32 length )
 {
-	FTSynthRec_Flat_Buffer flat;
+	using namespace exosnd;
+	
+	FTSynthRec_flat_buffer flat;
 	
 	if ( *(short*) buffer == ftMode )
 	{
-		flat.mode = ftMode | 0x0100;  // 0x0101
+		flat.mode = ftMode_flat_buffer;
 		
 		const FTSoundRec* sndRec = ((const FTSynthRec*) buffer)->sndRec;
 		
@@ -121,9 +92,15 @@ ssize_t start_sound( const void* buffer, UInt32 length )
 }
 
 static inline
+ssize_t send_basic_command( uint16_t command )
+{
+	return send_command( exosnd::basic_domain, &command, sizeof command );
+}
+
+static inline
 ssize_t abort_sound()
 {
-	return send_command( basic_domain, STR_LEN( "\xFF\xFF" ) );
+	return send_basic_command( exosnd::full_stop );
 }
 
 static timer_node Sound_timer_node;
@@ -176,11 +153,13 @@ pascal void SoundVBL_Proc()
 {
 	if ( *current_FTSound != copy_of_FTSoundRec )
 	{
+		using namespace exosnd;
+		
 		copy_of_FTSoundRec = *current_FTSound;
 		
-		FTSynthRec_Flat_Update flat;
+		FTSynthRec_flat_update flat;
 		
-		flat.mode = ftMode | 0x0200;  // 0x0201
+		flat.mode = ftMode_flat_update;
 		
 		const int n_from_sndRec = offsetof( FTSoundRec, sound1Wave );
 		
