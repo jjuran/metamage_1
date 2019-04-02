@@ -163,7 +163,11 @@ sub imports
 	
 	my $imports = $data->{imports} || [];
 	
-	return @$imports;
+	my @result = @$imports;
+	
+	unshift @result, "-L" . $self->tree  if defined $self->{DESC}{PATH};
+	
+	return @result;
 }
 
 sub tree
