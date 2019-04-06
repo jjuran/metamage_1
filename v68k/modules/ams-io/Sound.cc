@@ -73,6 +73,8 @@ ssize_t start_sound( const void* buffer, UInt32 length )
 		
 		const FTSoundRec* sndRec = ((const FTSynthRec*) buffer)->sndRec;
 		
+		flat.recID = (RecID) sndRec;
+		
 		const int n_from_sndRec = offsetof( FTSoundRec, sound1Wave );
 		
 		fast_memcpy( &flat.duration, sndRec, n_from_sndRec );
@@ -160,6 +162,7 @@ pascal void SoundVBL_Proc()
 		FTSynthRec_flat_update flat;
 		
 		flat.mode = ftMode_flat_update;
+		flat.recID = (RecID) current_FTSound;
 		
 		const int n_from_sndRec = offsetof( FTSoundRec, sound1Wave );
 		

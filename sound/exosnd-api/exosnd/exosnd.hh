@@ -16,9 +16,11 @@ namespace exosnd
 #ifdef __MACOS__
 	// Use the same type as MacTypes.h, with no inclusion overhead.
 	typedef long Phase;
+	typedef long RecID;
 #else
 	// For non-Mac, the exact type doesn't matter as long as the length fits.
 	typedef uint32_t Phase;
+	typedef uint32_t RecID;
 #endif
 
 enum
@@ -36,9 +38,16 @@ enum
 	ftMode_flat_update = ftMode | 0x0200,  // admin
 };
 
+#ifdef __GNUC__
+#pragma pack(push, 2)
+#else
+#pragma options align=packed
+#endif
+
 struct FTSynthRec_flat_header
 {
 	short  mode;
+	RecID  recID;        // This is the FTSoundRec buffer address
 	short  duration;
 	Fixed  sound1Rate;
 	Phase  sound1Phase;
@@ -49,6 +58,12 @@ struct FTSynthRec_flat_header
 	Fixed  sound4Rate;
 	Phase  sound4Phase;
 };
+
+#ifdef __GNUC__
+#pragma pack(pop)
+#else
+#pragma options align=reset
+#endif
 
 typedef FTSynthRec_flat_header FTSynthRec_flat_update;
 
