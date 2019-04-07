@@ -5,7 +5,12 @@
 
 #include "portaudio.hh"
 
+#ifdef __linux__
+#include <alsa/asoundlib.h>
+#endif
+
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // PortAudio
@@ -31,6 +36,36 @@ const int frames_per_buffer = 370;
 const int frame_size = sample_size * channel_count;
 const int buffer_size = frame_size * frames_per_buffer;
 
+
+#ifdef __linux__
+
+static
+void alsa_error_handler( const char* file, int line,
+                         const char* func, int err,
+                         const char* fmt, ... )
+{
+}
+
+class alsa_error_handler_scope
+{
+	private:
+		// non-copyable
+		alsa_error_handler_scope           ( const alsa_error_handler_scope& );
+		alsa_error_handler_scope& operator=( const alsa_error_handler_scope& );
+	
+	public:
+		alsa_error_handler_scope()
+		{
+			snd_lib_error_set_handler( &alsa_error_handler );
+		}
+		
+		~alsa_error_handler_scope()
+		{
+			snd_lib_error_set_handler( NULL );
+		}
+};
+
+#endif
 
 static
 int stream_callback( const void*                      input,
@@ -123,6 +158,17 @@ PortAudio::~PortAudio()
 
 bool start()
 {
+#ifdef __linux__
+	
+	static const char* suppress = getenv( "SNDTRACK_SUPPRESS_ALSA_ERRORS" );
+	
+	if ( suppress )
+	{
+		static alsa_error_handler_scope no_alsa_errors;
+	}
+	
+#endif
+	
 	static PortAudio portaudio;
 	
 	const bool ok = Pa_StartStream( output_stream ) == paNoError;
