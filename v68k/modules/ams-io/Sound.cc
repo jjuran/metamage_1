@@ -38,15 +38,23 @@
 
 
 static
-ssize_t send_command( UInt16 domain, const void* buffer, UInt32 length )
+ssize_t send_command( UInt16 domain, const void* buffer, UInt32 buffer_length )
 {
+	/*
+		Callers of this function pass a buffer that includes a `mode` field,
+		but the wire protocol regards the mode as part of an 8-byte header --
+		therefore the length (which covers only the extent) should exclude it.
+	*/
+	
+	UInt32 length = buffer_length - sizeof (short);
+	
 	const int n_iov = 3;
 	
 	iovec iov[ n_iov ] =
 	{
 		{ (void*) &length, sizeof length },
 		{ (void*) &domain, sizeof domain },
-		{ (void*) buffer,  length        },
+		{ (void*) buffer,  buffer_length },
 	};
 	
 	return writev( sound_fd, iov, n_iov );
