@@ -100,6 +100,12 @@ ssize_t send_basic_command( uint16_t command )
 }
 
 static inline
+ssize_t begin_audio()
+{
+	return send_basic_command( exosnd::switch_on );
+}
+
+static inline
 ssize_t abort_sound()
 {
 	return send_basic_command( exosnd::full_stop );
@@ -181,6 +187,8 @@ void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 	{
 		return;
 	}
+	
+	static ssize_t begun = begin_audio();  // send this message first
 	
 	start_sound( pb->ioBuffer, pb->ioReqCount );
 	
