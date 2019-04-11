@@ -37,6 +37,16 @@ const freemountd-subcmd = "freemountd -q --root" / ' ', root_dir
 const events_fd_slot = reader "/dev/null"
 const events_fd_opt  = "--events-fd=" events_fd_slot
 
+def get_sound_fd
+{
+	if const sound_fd = getenv "AMS_SOUND_FD" then
+	{
+		return sound_fd
+	}
+	
+	return ()
+}
+
 def core_opts
 {
 	var opts = [ events_fd_opt ]
@@ -52,7 +62,7 @@ def core_opts
 def io_opts
 {
 	return
-	if const sound_fd = getenv "AMS_SOUND_FD" then
+	if const sound_fd = get_sound_fd() then
 	{
 		ams-io: [ "--sound-fd=" sound_fd ],
 	}
