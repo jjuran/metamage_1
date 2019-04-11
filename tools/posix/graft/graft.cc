@@ -134,11 +134,14 @@ int main( int argc, char** argv )
 		Otherwise, we might clobber them when launching the client.
 	*/
 	
-	CHECK_N( dup2( 2, 6 ) );
-	CHECK_N( dup2( 2, 7 ) );
+	const int input_fd  = 6;
+	const int output_fd = 7;
 	
-	CHECK_N( fcntl( 6, F_SETFD, FD_CLOEXEC ) );
-	CHECK_N( fcntl( 7, F_SETFD, FD_CLOEXEC ) );
+	CHECK_N( dup2( 2, input_fd  ) );
+	CHECK_N( dup2( 2, output_fd ) );
+	
+	CHECK_N( fcntl( input_fd,  F_SETFD, FD_CLOEXEC ) );
+	CHECK_N( fcntl( output_fd, F_SETFD, FD_CLOEXEC ) );
 	
 	int fds[ 2 ];
 	
@@ -155,7 +158,7 @@ int main( int argc, char** argv )
 	
 	if ( client_pid == 0 )
 	{
-		launch( fds[ 1 ], fds[ 0 ], 6, 7, client_args );
+		launch( fds[ 1 ], fds[ 0 ], input_fd, output_fd, client_args );
 	}
 	
 	close( fds[ 0 ] );
