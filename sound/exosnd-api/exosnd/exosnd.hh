@@ -33,7 +33,7 @@ enum
 enum
 {
 	switch_on = 0x0000,  // basic
-	full_stop = 0xFFFF,  // basic
+	full_stop = 0x5858,  // basic ('XX')
 	
 	ftMode_flat_buffer = ftMode | 0x0100,  // sound
 	ftMode_flat_update = ftMode | 0x0200,  // admin
