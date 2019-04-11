@@ -5,6 +5,8 @@
 
 // Standard C
 #include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 
 // POSIX
 #include <fcntl.h>
@@ -21,7 +23,7 @@
 
 #define PROGRAM  "graft"
 
-#define USAGE "Usage: " PROGRAM " server-command \"//\" client-command\n"
+#define USAGE "Usage: " PROGRAM " [--fd N] server-command \"//\" client-command\n"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -98,6 +100,20 @@ int main( int argc, char** argv )
 		return usage();
 	}
 	
+	int chosen_fd = 0;
+	
+	if ( strcmp( *args, "--fd" ) == 0 )
+	{
+		++args;
+		
+		chosen_fd = atoi( *args++ );
+		
+		if ( chosen_fd < 3 )
+		{
+			return usage();
+		}
+	}
+	
 	char** server_args = args;
 	
 	if ( is_dash( *server_args ) )
@@ -134,8 +150,8 @@ int main( int argc, char** argv )
 		Otherwise, we might clobber them when launching the client.
 	*/
 	
-	const int input_fd  = 6;
-	const int output_fd = 7;
+	const int input_fd  = chosen_fd ? chosen_fd : 6;
+	const int output_fd = chosen_fd ? chosen_fd : 7;
 	
 	CHECK_N( dup2( 2, input_fd  ) );
 	CHECK_N( dup2( 2, output_fd ) );
