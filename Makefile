@@ -14,6 +14,8 @@ PACK68K = utils/pack.pl
 METAMAGE_1 = `git remote -v | grep '^origin.*\(fetch\)' | awk '{print $$2}'`
 PLEASE_RUN = 'Please run `(cd .. && git clone' $(METAMAGE_1)')`.'
 
+BUILD_FLAG = `uname -m | grep x86_64 | sed s/x86_64/-W/`
+
 default:
 	@echo 'For help, run `make help`.'
 
@@ -136,6 +138,11 @@ ams-osx: $(AMS_REPOS) macward-compat.git
 	open var/build/dbg/bin/Genie/MacRelix.app
 	./build.pl -i $(AMS_TOOLS) uunix interact
 	PATH="$$PWD/var/out:$$PATH" ./scripts/ams
+
+sndtrack:
+	./build.pl -i vx
+	var/out/vx -Z v/bin/portaudio-pkg.vx make
+	./build.pl -i $(BUILD_FLAG) sndtrack
 
 d68k:
 	./build.pl d68k
