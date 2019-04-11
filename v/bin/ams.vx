@@ -27,6 +27,17 @@ def exists (path)
 	return try {stat path; true} catch {false}
 }
 
+def which (program)
+{
+	try
+	{
+		return output-from-run [ "which", program ]
+	}
+	catch {}
+	
+	return ()
+}
+
 const home     = getenv "HOME"
 const home_68k = home "/68k"
 
@@ -37,11 +48,21 @@ const freemountd-subcmd = "freemountd -q --root" / ' ', root_dir
 const events_fd_slot = reader "/dev/null"
 const events_fd_opt  = "--events-fd=" events_fd_slot
 
+var sound-prefix = ()
+
 def get_sound_fd
 {
 	if const sound_fd = getenv "AMS_SOUND_FD" then
 	{
 		return sound_fd
+	}
+	
+	if which "sndtrack" then
+	{
+		const sound_fd_slot = str reader "/dev/null"
+		sound-prefix = "graft", "--fd", sound_fd_slot, "sndtrack", "//"
+		
+		return sound_fd_slot
 	}
 	
 	return ()
@@ -143,6 +164,6 @@ else
 const xv68k-subcmd = "xv68k", "-tSP", xv68k-screen, *module_opts, app, app_name
 const graft-subcmd = "graft", freemountd-subcmd, "//", xv68k-subcmd
 
-const command = [ command-prefix, graft-subcmd ]
+const command = [ command-prefix, sound-prefix, graft-subcmd ]
 
 run command
