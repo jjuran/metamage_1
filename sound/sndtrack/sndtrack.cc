@@ -62,6 +62,15 @@ void check_tones( const Tone* tone, short n )
 }
 
 static
+void check_squarewave( const command_header& header, const SWSynthRec& rec )
+{
+	if ( header.length % sizeof (Tone) != 0 )
+	{
+		take_exception( opcode_length_invalid );
+	}
+}
+
+static
 ssize_t read_header( int fd, command_header& header )
 {
 	ssize_t n_read = read_all( fd, &header, sizeof header );
@@ -116,10 +125,7 @@ void read_and_enqueue( int fd, const command_header& header, rt_queue& queue )
 		switch ( mode )
 		{
 			case swMode:
-				if ( header.length % sizeof (Tone) != 0 )
-				{
-					take_exception( opcode_length_invalid );
-				}
+				check_squarewave( header, node->sound.square_wave );
 				
 				endianize( node->sound.square_wave );
 				break;
