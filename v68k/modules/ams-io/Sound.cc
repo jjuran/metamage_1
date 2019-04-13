@@ -196,8 +196,6 @@ void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 		return;
 	}
 	
-	static ssize_t begun = begin_audio();  // send this message first
-	
 	start_sound( pb->ioBuffer, pb->ioReqCount );
 	
 	time( &Sound_timer_node.wakeup );
@@ -273,6 +271,13 @@ void Sound_ready( timer_node* node )
 
 OSErr Sound_open( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 {
+	static ssize_t begun = begin_audio();  // send this message first
+	
+	if ( begun < 0 )
+	{
+		return openErr;
+	}
+	
 	return noErr;
 }
 
