@@ -110,7 +110,9 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	{
 		pb->ioRefNum = ~i;
 		
-		return pb->ioResult = noErr;
+		trap_word |= 1 << noQueueBit;  // treat Open like an immediate call
+		
+		return pb->ioResult = DRVR_IO_patch( trap_word, pb );
 	}
 	
 	return pb->ioResult = fnfErr;
@@ -162,7 +164,7 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	int8_t bit = command - 2;
 	
-	if ( ! (dce->dCtlFlags & (0x100 << bit)) )
+	if ( bit >= 0  &&  ! (dce->dCtlFlags & (0x100 << bit)) )
 	{
 		/*
 			The driver doesn't implement this call.
@@ -187,6 +189,14 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	switch ( command )
 	{
+		case kOpenCommand:
+			offset = drvr->drvrOpen;
+			break;
+		
+		case kCloseCommand:
+			offset = drvr->drvrClose;
+			break;
+		
 		case kReadCommand:
 		case kWriteCommand:
 			offset = drvr->drvrPrime;
