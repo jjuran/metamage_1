@@ -258,6 +258,9 @@ void install_drivers()
 	{
 		INSTALL_SYS_DRIVER( Sound, 3 );
 		
+		short refnum;
+		OpenDriver( "\p.Sound", &refnum );
+		
 		TBTRAP( SysBeep );  // A9C8
 		
 		SdVolEnb = -1;
