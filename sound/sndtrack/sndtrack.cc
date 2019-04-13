@@ -54,8 +54,10 @@ void check_tones( const Tone* tone, short n )
 				take_exception( opcode_length_overlong );
 			}
 			
-			break;
+			return;
 		}
+		
+		++tone;
 	}
 	
 	take_exception( sound_unterminated );
@@ -68,6 +70,8 @@ void check_squarewave( const command_header& header, const SWSynthRec& rec )
 	{
 		take_exception( opcode_length_invalid );
 	}
+	
+	check_tones( rec.triplets, header.length / sizeof (Tone) );
 }
 
 static
