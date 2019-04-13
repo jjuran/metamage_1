@@ -271,6 +271,11 @@ void Sound_ready( timer_node* node )
 	}
 }
 
+OSErr Sound_open( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
+{
+	return noErr;
+}
+
 OSErr Sound_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 {
 	OSErr err = noErr;
@@ -323,6 +328,11 @@ short Sound_control( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
 	IODone( dce, err );
 	
 	return err;
+}
+
+OSErr Sound_close( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
+{
+	return noErr;
 }
 
 pascal void SysBeep_patch( short duration )

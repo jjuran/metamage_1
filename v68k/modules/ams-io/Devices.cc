@@ -231,10 +231,14 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 }
 
 #define INSTALL_SYS_DRIVER( d, i )  \
-	install( make_DRVR( "\p." #d, 0, d##_prime, d##_control, d##_status, 0 ), i )
+	install( make_DRVR( "\p." #d,  \
+	d##_open, d##_prime, d##_control, d##_status, d##_close  \
+	), i )
 
 #define INSTALL_DRIVER( d )  \
-	install( make_DRVR( "\p." #d, 0, d##_prime, 0, d##_status, 0 ) )
+	install( make_DRVR( "\p." #d,  \
+	d##_open, d##_prime, d##_control, d##_status, d##_close  \
+	) )
 
 void install_drivers()
 {
