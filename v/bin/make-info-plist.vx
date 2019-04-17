@@ -39,7 +39,7 @@ if Build-origin-path then
 
 def comma-terminated { if _[ _.length - 1 ] in ":[" then { _ } else { _ "," } }
 
-const lines = (info-txt more-txt).lines() map comma-terminated
+const lines = (info-txt more-txt).lines() ver bool map comma-terminated
 
 const info = eval "[" join( "\n", *lines, "]" )
 
