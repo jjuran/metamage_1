@@ -241,6 +241,8 @@ void cancel_timer()
 		reactor_core()->cancel( &Sound_timer_node );
 		
 		timer_scheduled = false;
+		
+		current_FTSound = NULL;
 	}
 	
 	reenable_interrupts( saved_SR );
@@ -254,6 +256,8 @@ void Sound_ready( timer_node* node )
 	DCtlEntry* dce = *GetDCtlEntry( -4 );
 	
 	IOParam* pb = (IOParam*) dce->dCtlQHdr.qHead;
+	
+	current_FTSound = NULL;
 	
 	pb->ioActCount = pb->ioReqCount;
 	
