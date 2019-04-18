@@ -185,6 +185,9 @@ pascal void SoundVBL_Proc()
 		send_command( admin_domain, &flat, sizeof flat );
 	}
 	
+	--current_FTSound->duration;
+	--copy_of_FTSoundRec.duration;
+	
 	SoundVBL.vblCount = 1;
 }
 
