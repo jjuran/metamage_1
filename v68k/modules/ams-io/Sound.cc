@@ -162,6 +162,8 @@ bool operator!=( const FTSoundRec& a, const FTSoundRec& b )
 static FTSoundRec* current_FTSound;
 static FTSoundRec  copy_of_FTSoundRec;
 
+static bool FTSound_was_modified;
+
 static VBLTask SoundVBL;
 
 static
@@ -172,6 +174,8 @@ pascal void SoundVBL_Proc()
 		using namespace exosnd;
 		
 		copy_of_FTSoundRec = *current_FTSound;
+		
+		FTSound_was_modified = true;
 		
 		FTSynthRec_flat_update flat;
 		
@@ -218,6 +222,8 @@ void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 		
 		fast_memcpy( &copy_of_FTSoundRec, synth.sndRec, sizeof (FTSoundRec) );
 		
+		FTSound_was_modified = false;
+		
 		SoundVBL.vblAddr  = &SoundVBL_Proc;
 		SoundVBL.vblCount = 1;
 		
@@ -249,17 +255,30 @@ void Sound_ready( timer_node* node )
 {
 	OSErr err = VRemove( (QElem*) &SoundVBL );
 	
+	timer_scheduled = false;
+	
 	DCtlEntry* dce = *GetDCtlEntry( -4 );
 	
 	IOParam* pb = (IOParam*) dce->dCtlQHdr.qHead;
+	
+	if ( const FTSoundRec* sndRec = current_FTSound )
+	{
+		if ( FTSound_was_modified  &&  sndRec->duration != 0 )
+		{
+			const int ns_per_sec = 1000 * 1000 * 1000;
+			
+			int64_t duration = sndRec->duration * (ns_per_sec * 100ull) / 6015;
+			
+			schedule_timer( pb, duration );
+			return;
+		}
+	}
 	
 	current_FTSound = NULL;
 	
 	pb->ioActCount = pb->ioReqCount;
 	
 	IODone( dce, noErr );
-	
-	timer_scheduled = false;
 	
 	if ( IOParam* pb = (IOParam*) dce->dCtlQHdr.qHead )
 	{
