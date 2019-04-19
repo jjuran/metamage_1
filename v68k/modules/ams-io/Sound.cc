@@ -68,7 +68,7 @@ WavePtr checked( WavePtr wave )
 	return wave ? wave : zeroWave;
 }
 
-static inline
+static
 ssize_t start_sound( const void* buffer, UInt32 length )
 {
 	using namespace exosnd;
@@ -194,8 +194,6 @@ pascal void SoundVBL_Proc()
 static
 void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 {
-	start_sound( pb->ioBuffer, pb->ioReqCount );
-	
 	time( &Sound_timer_node.wakeup );
 	
 	const uint64_t duration_microseconds = duration_nanoseconds / 1000;
@@ -267,6 +265,8 @@ void Sound_ready( timer_node* node )
 	{
 		int64_t duration = mac::snd::duration( pb->ioBuffer, pb->ioReqCount );
 		
+		start_sound( pb->ioBuffer, pb->ioReqCount );
+		
 		schedule_timer( pb, duration );
 	}
 }
@@ -303,6 +303,8 @@ OSErr Sound_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 	
 	if ( ! timer_scheduled )
 	{
+		start_sound( pb->ioBuffer, pb->ioReqCount );
+		
 		schedule_timer( pb, duration );
 	}
 	
