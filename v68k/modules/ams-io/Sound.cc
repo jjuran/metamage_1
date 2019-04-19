@@ -194,11 +194,6 @@ pascal void SoundVBL_Proc()
 static
 void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 {
-	if ( timer_scheduled )
-	{
-		return;
-	}
-	
 	start_sound( pb->ioBuffer, pb->ioReqCount );
 	
 	time( &Sound_timer_node.wakeup );
@@ -306,7 +301,10 @@ OSErr Sound_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 	
 	Sound_timer_node.ready = &Sound_ready;
 	
-	schedule_timer( pb, duration );
+	if ( ! timer_scheduled )
+	{
+		schedule_timer( pb, duration );
+	}
 	
 	reenable_interrupts( saved_SR );
 	
