@@ -1,1 +1,1 @@
-#define APP_NAME "Nyan Cat"
+#define APP_NAME "Nyanochrome Cat"

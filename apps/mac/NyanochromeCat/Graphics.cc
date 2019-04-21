@@ -2,7 +2,7 @@
 	Graphics.cc
 	-----------
 	
-	Programmatic drawing of Josh Juran's Classic Mac Nyan Cat, a parody of
+	Programmatic drawing of Josh Juran's Nyanochrome Cat, a parody of
 	Christopher Torres' 2011 Nyan Cat animation.
 	
 	Copyright 2017, Josh Juran.  All rights reserved.
@@ -20,7 +20,7 @@
 	You should have received a copy of the GNU Affero General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
-	Classic Mac Nyan Cat is copyright 2017, Josh Juran.  All rights reserved.
+	Nyanochrome Cat is copyright 2017, Josh Juran.  All rights reserved.
 */
 
 // Mac OS X
@@ -33,7 +33,7 @@
 #include <Quickdraw.h>
 #endif
 
-// NyanCat
+// NyanochromeCat
 #include "Bitmap.hh"
 
 

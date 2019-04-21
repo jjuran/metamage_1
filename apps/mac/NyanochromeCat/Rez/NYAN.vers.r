@@ -4,7 +4,7 @@
 
 type 'NYAN' as 'STR ';
 
-resource 'NYAN' (0, "Classic Mac Nyan Cat")
+resource 'NYAN' (0, "Nyanochrome Cat")
 {
 	"Copyright " COPY " " COPYRIGHT
 };

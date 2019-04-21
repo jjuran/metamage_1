@@ -1,6 +1,6 @@
 /*
-	NyanCat.cc
-	----------
+	NyanochromeCat.cc
+	-----------------
 */
 
 // Mac OS X
@@ -44,7 +44,7 @@
 // nyancatlib
 #include "nyancat/graphics.hh"
 
-// NyanCat
+// NyanochromeCat
 #include "Bitmap.hh"
 
 
@@ -205,7 +205,7 @@ void make_main_window()
 	
 	main_window = NewWindow( NULL,
 	                         &bounds,
-	                         "\p" "Nyan Cat",
+	                         "\p" "Nyanochrome Cat",
 	                         true,
 	                         noGrowDocProc,
 	                         (WindowRef) -1,
