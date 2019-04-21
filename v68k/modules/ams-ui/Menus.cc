@@ -182,13 +182,11 @@ pascal void DisposeMenu_patch( MenuInfo** menu )
 #pragma mark -
 
 static
-UInt8 actual_item_text_length( ConstStr255Param format )
+UInt8 actual_item_text_length( const UInt8* format, UInt8 len )
 {
 	UInt8 text_len = 0;
 	
 	const UInt8* q = format;
-	
-	UInt8 len = *q++;
 	
 	while ( len-- > 0 )
 	{
@@ -212,7 +210,8 @@ UInt8 actual_item_text_length( ConstStr255Param format )
 }
 
 static
-void decode_item_format( ConstStr255Param format, UInt8* p, UInt8 text_len )
+void decode_item_format( UInt8 const* format, UInt8 len,
+                         UInt8*       p,      UInt8 text_len )
 {
 	*p++ = text_len;
 	
@@ -224,8 +223,6 @@ void decode_item_format( ConstStr255Param format, UInt8* p, UInt8 text_len )
 	UInt8 style = 0;
 	
 	const UInt8* q = format;
-	
-	UInt8 len = *q++;
 	
 	while ( len-- > 0 )
 	{
@@ -251,9 +248,11 @@ pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 {
 	WMgrPort_bezel_scope port_swap;
 	
+	UInt8 length = *format++;
+	
 	const Size oldSize = GetHandleSize( (Handle) menu );
 	
-	const UInt8 text_len = actual_item_text_length( format );
+	const UInt8 text_len = actual_item_text_length( format, length );
 	
 	const Size newSize = oldSize + 1 + text_len + 4;
 	
@@ -261,7 +260,7 @@ pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 	
 	unsigned char* p = (unsigned char*) *menu + oldSize - 1;
 	
-	decode_item_format( format, p, text_len );
+	decode_item_format( format, length, p, text_len );
 	
 	MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
 }
