@@ -192,6 +192,11 @@ UInt8 actual_item_text_length( const UInt8* format, UInt8 len )
 	{
 		UInt8 c = *q++;
 		
+		if ( c == ';' )
+		{
+			break;
+		}
+		
 		switch ( c )
 		{
 			case '/':
@@ -210,8 +215,8 @@ UInt8 actual_item_text_length( const UInt8* format, UInt8 len )
 }
 
 static
-void decode_item_format( UInt8 const* format, UInt8 len,
-                         UInt8*       p,      UInt8 text_len )
+short decode_item_format( UInt8 const* format, UInt8 len,
+                          UInt8*       p,      UInt8 text_len )
 {
 	*p++ = text_len;
 	
@@ -228,6 +233,11 @@ void decode_item_format( UInt8 const* format, UInt8 len,
 	{
 		UInt8 c = *q++;
 		
+		if ( c == ';' )
+		{
+			break;
+		}
+		
 		switch ( c )
 		{
 			case '/':  if ( len )  key = *q++, --len;  break;
@@ -242,10 +252,12 @@ void decode_item_format( UInt8 const* format, UInt8 len,
 	*meta++ = mark;
 	*meta++ = style;
 	*meta   = '\0';
+	
+	return q - format;
 }
 
 static
-void append_one_item( MenuRef menu, const UInt8* format, UInt8 length )
+short append_one_item( MenuRef menu, const UInt8* format, UInt8 length )
 {
 	const Size oldSize = GetHandleSize( (Handle) menu );
 	
@@ -257,7 +269,7 @@ void append_one_item( MenuRef menu, const UInt8* format, UInt8 length )
 	
 	unsigned char* p = (unsigned char*) *menu + oldSize - 1;
 	
-	decode_item_format( format, length, p, text_len );
+	return decode_item_format( format, length, p, text_len );
 }
 
 pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
@@ -266,7 +278,14 @@ pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 	
 	UInt8 length = *format++;
 	
-	append_one_item( menu, format, length );
+	do
+	{
+		short n_bytes_consumed = append_one_item( menu, format, length );
+		
+		format += n_bytes_consumed;
+		length -= n_bytes_consumed;
+	}
+	while ( length > 0 );
 	
 	MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
 }
