@@ -199,6 +199,9 @@ UInt8 actual_item_text_length( const UInt8* format, UInt8 len )
 		
 		switch ( c )
 		{
+			case '(':
+				break;
+			
 			case '/':
 				if ( len )
 				{
@@ -240,6 +243,7 @@ short decode_item_format( UInt8 const* format, UInt8 len,
 		
 		switch ( c )
 		{
+			case '(':  break;
 			case '/':  if ( len )  key = *q++, --len;  break;
 			
 			default:
@@ -274,16 +278,27 @@ short append_one_item( MenuRef menu, const UInt8* format, UInt8 length )
 
 pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 {
+	short count = CountMItems_patch( menu );
+	
 	WMgrPort_bezel_scope port_swap;
 	
 	UInt8 length = *format++;
 	
 	do
 	{
+		const bool disabled = format[ 0 ] == '(';
+		
 		short n_bytes_consumed = append_one_item( menu, format, length );
 		
 		format += n_bytes_consumed;
 		length -= n_bytes_consumed;
+		
+		++count;
+		
+		if ( disabled )
+		{
+			DisableItem_patch( menu, count );
+		}
 	}
 	while ( length > 0 );
 	
