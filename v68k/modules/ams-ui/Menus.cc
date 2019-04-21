@@ -244,12 +244,9 @@ void decode_item_format( UInt8 const* format, UInt8 len,
 	*meta   = '\0';
 }
 
-pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
+static
+void append_one_item( MenuRef menu, const UInt8* format, UInt8 length )
 {
-	WMgrPort_bezel_scope port_swap;
-	
-	UInt8 length = *format++;
-	
 	const Size oldSize = GetHandleSize( (Handle) menu );
 	
 	const UInt8 text_len = actual_item_text_length( format, length );
@@ -261,6 +258,15 @@ pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 	unsigned char* p = (unsigned char*) *menu + oldSize - 1;
 	
 	decode_item_format( format, length, p, text_len );
+}
+
+pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
+{
+	WMgrPort_bezel_scope port_swap;
+	
+	UInt8 length = *format++;
+	
+	append_one_item( menu, format, length );
 	
 	MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
 }
