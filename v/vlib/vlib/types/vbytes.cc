@@ -13,6 +13,7 @@
 
 // vlib
 #include "vlib/array-utils.hh"
+#include "vlib/string-utils.hh"
 #include "vlib/target.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/compare.hh"
@@ -77,6 +78,35 @@ namespace vlib
 		return byte;
 	}
 	
+	
+	static
+	plus::string repeat_bytes( const plus::string& bytes, const Value& right )
+	{
+		if ( const Integer* integer = right.is< Integer >() )
+		{
+			typedef plus::string::size_type size_t;
+			
+			const size_t n = integer_cast< size_t >( *integer );
+			
+			return repeat( bytes, n );
+		}
+		
+		if ( const Boolean* boolean = right.is< Boolean >() )
+		{
+			return *boolean ? bytes : plus::string::null;
+		}
+		
+		THROW( "string/pack repetition requires int or bool" );
+		
+		return plus::string::null;  // not reached
+	}
+	
+	Value multiply( const VBytes& bytes, const Value& factor )
+	{
+		const plus::string s = repeat_bytes( bytes.string(), factor );
+		
+		return VBytes( s, bytes.type(), bytes.dispatch_methods() );
+	}
 	
 	static
 	Value division( const VBytes& bytes, bignum::integer x )

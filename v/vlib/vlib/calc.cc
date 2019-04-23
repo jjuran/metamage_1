@@ -802,28 +802,6 @@ namespace vlib
 		return v.type() == V_str  ||  v.type() == V_pack;
 	}
 	
-	static
-	plus::string repeat_bytes( const plus::string& bytes, const Value& right )
-	{
-		if ( const Integer* integer = right.is< Integer >() )
-		{
-			typedef plus::string::size_type size_t;
-			
-			const size_t n = integer_cast< size_t >( *integer );
-			
-			return repeat( bytes, n );
-		}
-		
-		if ( const Boolean* boolean = right.is< Boolean >() )
-		{
-			return *boolean ? bytes : plus::string::null;
-		}
-		
-		THROW( "string/pack repetition requires int or bool" );
-		
-		return plus::string::null;  // not reached
-	}
-	
 	Value safe_calc( const Value&  left,
 	                 op_type       op,
 	                 const Value&  right )
@@ -999,13 +977,6 @@ namespace vlib
 				default:
 					break;
 			}
-		}
-		
-		if ( op == Op_multiply  &&  is_bytes( left ) )
-		{
-			const plus::string s = repeat_bytes( left.string(), right );
-			
-			return VBytes( s, left.type(), left.dispatch_methods() );
 		}
 		
 		THROW( "operator not defined on mixed types" );
