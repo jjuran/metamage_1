@@ -62,3 +62,8 @@ $ vc 'var p = begin "abc"; var q = ++p; ++q; ++q; try {p - q} catch {"nope"}'
 
 $ vc 'var p = begin "abcdef"; for i in 0 -> 3 do {p += *"a" .. *"b"}; p.rest'
 1 >= '"cdef"'
+
+%
+
+$ vc 'var p = begin "27b-6"; for i in 0 -> 3 do {p += *"0" .. *"9" | *"-"}; p.rest'
+1 >= '"b-6"'
