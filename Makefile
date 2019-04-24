@@ -126,7 +126,9 @@ display-check:
 	@test -z "$(DISPLAY)" || exit 1
 
 NEW_PATH = PATH="$$PWD/bin:$$PWD/var/out:$$PATH"
-RUN_AMS  = $(NEW_PATH) ./scripts/ams
+AMS_ROOT = var/links/ams-68k-bin
+AMS_VARS = AMS_BIN=$(AMS_ROOT)/bin AMS_LIB=$(AMS_ROOT)/lib AMS_MNT=$(AMS_ROOT)/mnt
+RUN_AMS  = $(NEW_PATH) $(AMS_VARS) ./scripts/ams
 
 ams-linux-demo: ams-linux-check display-check
 	$(RUN_AMS)
