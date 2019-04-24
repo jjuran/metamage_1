@@ -128,8 +128,10 @@ display-check:
 ams-linux-demo: ams-linux-check display-check
 	PATH="$$PWD/bin:$$PWD/var/out:$$PATH" ./scripts/ams
 
-ams-x11: $(AMS_REPOS) ams-vx-Z
+ams-x11-build: $(AMS_REPOS) ams-vx-Z
 	./build.pl -i $(AMS_TOOLS) interact-x11
+
+ams-x11: ams-x11-build
 	PATH="$$PWD/bin:$$PWD/var/out:$$PATH" EXHIBIT_INTERACT=interact-x11 ./scripts/ams
 
 ams-osx: $(AMS_REPOS) macward-compat.git
