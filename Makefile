@@ -68,7 +68,7 @@ ams-linux-tools: $(AMS_REPOS) var/install
 	./build.pl -i $(AMS_TOOLS) display-linux interact-linux kdmode reader
 
 ams-vx-Z:
-	@echo 'vx -Z "$$@"' > bin/"vx -Z"
+	@echo 'exec vx -Z "$$@"' > bin/"vx -Z"
 	@chmod +x bin/"vx -Z"
 
 ams-linux: ams-linux-tools ams-vx-Z
