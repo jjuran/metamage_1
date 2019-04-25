@@ -6,11 +6,6 @@ REPOS += freemount
 REPOS += git
 REPOS += macward-compat
 
-D68K  = var/build/dbg/bin/d68k/d68k
-XV68K = var/build/dbg/bin/xv68k/xv68k
-
-PACK68K = utils/pack.pl
-
 METAMAGE_1 = `git remote -v | grep '^origin.*\(fetch\)' | awk '{print $$2}'`
 PLEASE_RUN = 'Please run `(cd .. && git clone' $(METAMAGE_1)')`.'
 
@@ -151,15 +146,6 @@ sndtrack:
 	var/out/vx -Z v/bin/portaudio-pkg.vx make
 	./build.pl -i $(BUILD_FLAG) sndtrack
 
-d68k:
-	./build.pl d68k
-
-d68k-hello: d68k
-	$(PACK68K) v68k/demos/hello.p68k | $(D68K)
-
-d68k-fizzbuzz: d68k
-	$(PACK68K) v68k/demos/fizzbuzz.p68k | $(D68K)
-
 freemountd-tcp: freemount.git
 	./build.pl -i freemountd listen
 
@@ -178,40 +164,6 @@ fls-test: freemount-tcp
 
 fcat-test: freemount-tcp
 	PATH="$$PWD/var/out:$$PATH" var/out/fcat mnt://127.0.0.1/hello.txt
-
-xv68k:
-	./build.pl xv68k
-
-xv68k-rts: xv68k
-	echo 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-hello: xv68k
-	$(PACK68K) v68k/demos/hello.p68k | $(XV68K)
-
-xv68k-ill: xv68k
-	echo 4AFC 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-ill-priv: xv68k
-	echo 4E72 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-ill-F: xv68k
-	echo FFFF 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-segv: xv68k
-	echo 2010 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-segv-pc: xv68k
-	perl -e 'print pack "n*", 0x4EF8, 0x0000, 0x4E75' | $(XV68K)
-	echo 4EF8 0000 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-bus: xv68k
-	echo 202F 0001 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-bus-pc: xv68k
-	echo 6001 4E71 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-div0: xv68k
-	echo 80C1 4E75 | $(PACK68K) | $(XV68K)
 
 .SECONDARY:
 
