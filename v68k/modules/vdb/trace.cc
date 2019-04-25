@@ -18,6 +18,9 @@
 #include "print_registers.hh"
 
 
+#pragma exceptions off
+
+
 #define PROMPT "vdb> "
 
 #define TROFF_WARNING "Warning:  Tracing is off.  Enter 't' to reenable."
@@ -92,11 +95,38 @@ void report_exception( uint16_t vector_offset )
 	write( STDERR_FILENO, "\n\n", 2 );
 }
 
+class NMI_reentry_guard
+{
+	private:
+		static volatile int level;
+		
+		// non-copyable
+		NMI_reentry_guard           ( const NMI_reentry_guard& );
+		NMI_reentry_guard& operator=( const NMI_reentry_guard& );
+	
+	public:
+		NMI_reentry_guard()  { ++level; }
+		~NMI_reentry_guard()  { --level; }
+		
+		static bool reentered()  { return level; }
+		
+};
+
+volatile int NMI_reentry_guard::level;
+
 static void debugger_loop( registers& regs )
 {
-	const uint16_t trace_offset = 9 * sizeof (uint32_t);
+	const uint16_t trace_offset  =  9 * sizeof (uint32_t);
+	const uint16_t sigint_offset = 66 * sizeof (uint32_t);
 	
 	const uint16_t vector_offset = regs.fv & 0x03FF;
+	
+	if ( NMI_reentry_guard::reentered()  &&  vector_offset == sigint_offset )
+	{
+		return;
+	}
+	
+	NMI_reentry_guard guard;
 	
 	if ( vector_offset != trace_offset )
 	{
