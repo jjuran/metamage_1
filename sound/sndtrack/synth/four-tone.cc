@@ -15,7 +15,11 @@
 #include "output.hh"
 
 
-static uint32_t elapsed_samples;
+// sample indices
+static Fixed si1;
+static Fixed si2;
+static Fixed si3;
+static Fixed si4;
 
 short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 {
@@ -26,7 +30,10 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 	
 	if ( reset )
 	{
-		elapsed_samples = 0;
+		si1 = rec.sound1Phase << 16;
+		si2 = rec.sound2Phase << 16;
+		si3 = rec.sound3Phase << 16;
+		si4 = rec.sound4Phase << 16;
 	}
 	
 	--rec.duration;
@@ -44,12 +51,6 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 	{
 		return 0;
 	}
-	
-	// sample indices
-	Fixed si1 = rec.sound1Rate * elapsed_samples + (rec.sound1Phase << 16);
-	Fixed si2 = rec.sound2Rate * elapsed_samples + (rec.sound2Phase << 16);
-	Fixed si3 = rec.sound3Rate * elapsed_samples + (rec.sound3Phase << 16);
-	Fixed si4 = rec.sound4Rate * elapsed_samples + (rec.sound4Phase << 16);
 	
 	for ( int i = 0;  i < sizeof output.data;  ++i )
 	{
@@ -70,8 +71,6 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 		si3 += rec.sound3Rate;
 		si4 += rec.sound4Rate;
 	}
-	
-	elapsed_samples += sizeof output.data;
 	
 	return sizeof output.data;
 }
