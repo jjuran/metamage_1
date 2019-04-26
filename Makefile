@@ -134,6 +134,30 @@ ams-x11-build: $(AMS_REPOS) ams-vx-Z
 ams-x11: ams-x11-build
 	EXHIBIT_INTERACT=interact-x11 $(RUN_AMS)
 
+ams-68k-install:
+	install -d var/install/share/ams/bin
+	install -d var/install/share/ams/lib
+	install -d var/install/share/ams/mnt
+	install -m444 $(AMS_ROOT)/bin/app    var/install/share/ams/bin
+	install -m444 $(AMS_ROOT)/lib/ams-*  var/install/share/ams/lib
+	cp -R $(AMS_ROOT)/mnt/*              var/install/share/ams/mnt
+
+ams-common-install:
+	install -d var/install/bin
+	test \! -x var/out/sndtrack || install var/out/sndtrack var/install/bin
+	install var/out/vx          var/install/bin
+	install var/out/raster      var/install/bin
+	install var/out/exhibit     var/install/bin
+	install var/out/graft       var/install/bin
+	install var/out/freemountd  var/install/bin
+	install var/out/xv68k       var/install/bin
+	install var/out/vx          var/install/bin
+	install v/bin/ams.vx        var/install/bin/ams
+
+ams-x11-install: ams-x11-build ams-68k-install ams-common-install
+	install bin/"vx -Z"           var/install/bin
+	install var/out/interact-x11  var/install/bin
+
 ams-osx: $(AMS_REPOS) macward-compat.git
 	bin/build-app Genie
 	mkdir -p ~/var/run/fs
