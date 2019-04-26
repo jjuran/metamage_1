@@ -21,14 +21,38 @@ static Fixed si2;
 static Fixed si3;
 static Fixed si4;
 
-static inline
+static
 int8_t sample( Wave wave, Fixed index )
 {
 	uint8_t i = index >> 16;
+	uint8_t j = i + 1;
 	
 	int8_t a = wave[ i ] ^ 0x80;
+	int8_t b = wave[ j ] ^ 0x80;
 	
-	return a;
+	uint16_t p1 = index;
+	uint16_t p0 = -p1;
+	
+	if ( p1 == 0 )
+	{
+		return a;  // index is exactly on a byte boundary
+	}
+	
+	/*
+		The phase marker is between byte boundaries, so the "current" byte is
+		really a combination of two consecutive samples.  Proportionally blend
+		the two samples instead of taking just the one at the truncated index.
+		
+		This primarily affects notes with a sample playback rate under 1.0 --
+		when two successive indices truncate to the same value, the sample gets
+		repeated.  This creates a stairstep pattern in the waveform which is
+		audible as a high-pitched tone.  Instead, proportionally blending the
+		current sample with the next interpolates a new sample that lies along
+		the wave, eliminating this stairstepping and the resulting artifact.
+		(Other artifacts still remain, but they're much less pronounced.)
+	*/
+	
+	return (a * p0 + b * p1) / 0x10000;
 }
 
 short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
