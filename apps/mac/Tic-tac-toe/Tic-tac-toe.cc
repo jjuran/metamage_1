@@ -532,10 +532,12 @@ RgnHandle mouse_moved( Point where )
 #ifdef __MC68K__
 
 UInt8 SdVolume : 0x0260;
+UInt8 SdEnable : 0x0261;
 
 #else
 
 const UInt8 SdVolume = 0;
+const UInt8 SdEnable = 0;
 
 #endif
 
@@ -553,8 +555,16 @@ void set_up_Options_menu()
 		
 		CheckMenuItem( Options, Sound, sound_enabled );
 	}
+	else if ( ! SdEnable )
+	{
+		DisableItem( Options, Sound );
+	}
+	
+	return;
 	
 #endif
+	
+	DisableMenuItem( Options, Sound );
 }
 
 int main()
