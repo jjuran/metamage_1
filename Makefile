@@ -158,11 +158,14 @@ ams-x11-install: ams-x11-build ams-68k-install ams-common-install
 	install bin/"vx -Z"           var/install/bin
 	install var/out/interact-x11  var/install/bin
 
-ams-osx: $(AMS_REPOS) macward-compat.git
+ams-osx-build: $(AMS_REPOS) macward-compat.git
 	bin/build-app Genie
+	./build.pl -i $(AMS_TOOLS) uunix interact
+
+ams-osx: ams-osx-build
 	mkdir -p ~/var/run/fs
 	open var/build/dbg/bin/Genie/MacRelix.app
-	./build.pl -i $(AMS_TOOLS) uunix interact
+	true > ~/var/run/fs/gui.fifo
 	$(RUN_AMS)
 
 sndtrack:
