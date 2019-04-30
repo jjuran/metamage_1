@@ -67,8 +67,11 @@ ams-vx-Z:
 	@chmod +x bin/"vx -Z"
 
 ams-linux: ams-linux-tools ams-vx-Z
-	@test -x bin/display     || ln -s ../var/out/display-linux  bin/display
-	@test -x bin/interact    || ln -s ../var/out/interact-linux bin/interact
+	@readlink bin/display  > /dev/null && rm bin/display  || true
+	@readlink bin/interact > /dev/null && rm bin/interact || true
+	@echo 'exec display-linux "$$@"'  > bin/display
+	@echo 'exec interact-linux "$$@"' > bin/interact
+	@chmod +x bin/display bin/interact
 	@test -x bin/spiel-mouse || ln -s ../v/bin/spiel-mouse.vx bin/spiel-mouse
 	@test -x bin/spiel-keyboard || ln -s ../v/bin/spiel-keyboard.vx bin/spiel-keyboard
 	@echo
