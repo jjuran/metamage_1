@@ -62,6 +62,22 @@ var/install:
 ams-linux-tools: $(AMS_REPOS) var/install
 	./build.pl -i $(AMS_TOOLS) display-linux interact-linux kdmode reader
 
+ams-linux-install: ams-linux-tools ams-vx-Z ams-68k-install ams-common-install
+	@readlink bin/display  > /dev/null && rm bin/display  || true
+	@readlink bin/interact > /dev/null && rm bin/interact || true
+	@echo 'exec display-linux "$$@"'  > bin/display
+	@echo 'exec interact-linux "$$@"' > bin/interact
+	@chmod +x bin/display bin/interact
+	install bin/"vx -Z"             var/install/bin
+	install var/out/display-linux   var/install/bin
+	install var/out/interact-linux  var/install/bin
+	install bin/display             var/install/bin
+	install bin/interact            var/install/bin
+	install -d $(AMS_UTILS_ROOT)
+	install -t $(AMS_UTILS_ROOT) var/out/kdmode var/out/reader
+	install v/bin/spiel-mouse.vx     var/install/bin/spiel-mouse
+	install v/bin/spiel-keyboard.vx  var/install/bin/spiel-keyboard
+
 ams-vx-Z:
 	@echo 'exec vx -Z "$$@"' > bin/"vx -Z"
 	@chmod +x bin/"vx -Z"
