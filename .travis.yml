@@ -1,0 +1,36 @@
+language: c
+compiler: gcc
+sudo: require
+dist: trusty
+
+install:
+  - sudo apt-get -y install libssl-dev
+
+script:
+  - ( cd .. ; git clone https://github.com/jjuran/freemount )
+  - ( cd .. ; git clone https://github.com/jjuran/ams-68k-bin )
+  - INSTALL_PREFIX=/usr ./configure
+  - rm -f var/install ; mkdir -p ./AppDir/usr/ ; ln -s ../AppDir/usr var/install # https://github.com/jjuran/metamage_1/issues/9#issuecomment-487292893
+  - make ams-x11-build && make ams-x11-install # https://github.com/jjuran/metamage_1/issues/9#issuecomment-487292893
+  - mkdir -p ./AppDir/usr/share/applications/ ; cp ./packaging/linux/ams-x11.desktop ./AppDir/usr/share/applications/ # FIXME
+  - mkdir -p ./AppDir/usr/share/icons/scalable/apps/ ; touch ./AppDir/usr/share/icons/scalable/apps/ams-x11.svg # FIXME
+  - cp ./packaging/linux/appimage/AppRun ./AppDir ; chmod +x ./AppDir/AppRun
+  - wget -c -nv "https://github.com/AppImage/AppImageKit/releases/download/11/appimagetool-x86_64.AppImage"
+  - chmod a+x appimagetool-x86_64.AppImage
+  - cp ./AppDir/usr/share/applications/*.desktop ./AppDir/ ; cp ./AppDir/usr/share/icons/scalable/apps/ams-x11.svg ./AppDir/
+  - export VERSION=$(git rev-parse --short HEAD) # appimagetool uses this for naming the file
+  - ./appimagetool-x86_64.AppImage -g ./AppDir
+  - sed -i -e 's|Advanced Mac Substitute|Lode Runner|g' ./AppDir/usr/share/applications/ams-x11.desktop
+  - cp ./AppDir/usr/share/applications/*.desktop ./AppDir/ 
+  - wget -c https://archive.org/download/mac_Lode_Runner/Lode_Runner.dsk
+  - mv Lode_Runner.dsk ./AppDir/usr/share/ams/mnt/
+  - ./appimagetool-x86_64.AppImage -g ./AppDir
+  
+after_success:
+  - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+  - bash upload.sh Advanced*AppImage* Lode*AppImage*
+  
+branches:
+  except:
+    - # Do not build tags that we create when we upload to GitHub Releases
+    - /^(?i:continuous)/
