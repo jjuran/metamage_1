@@ -105,6 +105,9 @@ namespace vlib
 			case Op_named_unary:
 				return String( str( Value( a, b ) ) );
 			
+			case Op_multiply:
+				return multiply( (const VBytes&) a, b );
+			
 			case Op_divide:
 				return division( (const VBytes&) a, b );
 			

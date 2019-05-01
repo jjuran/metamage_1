@@ -15,7 +15,45 @@
 #include "output.hh"
 
 
-static uint32_t elapsed_samples;
+// sample indices
+static Fixed si1;
+static Fixed si2;
+static Fixed si3;
+static Fixed si4;
+
+static
+int8_t sample( Wave wave, Fixed index )
+{
+	uint8_t i = index >> 16;
+	uint8_t j = i + 1;
+	
+	int8_t a = wave[ i ] ^ 0x80;
+	int8_t b = wave[ j ] ^ 0x80;
+	
+	uint16_t p1 = index;
+	uint16_t p0 = -p1;
+	
+	if ( p1 == 0 )
+	{
+		return a;  // index is exactly on a byte boundary
+	}
+	
+	/*
+		The phase marker is between byte boundaries, so the "current" byte is
+		really a combination of two consecutive samples.  Proportionally blend
+		the two samples instead of taking just the one at the truncated index.
+		
+		This primarily affects notes with a sample playback rate under 1.0 --
+		when two successive indices truncate to the same value, the sample gets
+		repeated.  This creates a stairstep pattern in the waveform which is
+		audible as a high-pitched tone.  Instead, proportionally blending the
+		current sample with the next interpolates a new sample that lies along
+		the wave, eliminating this stairstepping and the resulting artifact.
+		(Other artifacts still remain, but they're much less pronounced.)
+	*/
+	
+	return (a * p0 + b * p1) / 0x10000;
+}
 
 short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 {
@@ -26,7 +64,10 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 	
 	if ( reset )
 	{
-		elapsed_samples = 0;
+		si1 = rec.sound1Phase << 16;
+		si2 = rec.sound2Phase << 16;
+		si3 = rec.sound3Phase << 16;
+		si4 = rec.sound4Phase << 16;
 	}
 	
 	--rec.duration;
@@ -45,23 +86,12 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 		return 0;
 	}
 	
-	// sample indices
-	Fixed si1 = rec.sound1Rate * elapsed_samples + (rec.sound1Phase << 16);
-	Fixed si2 = rec.sound2Rate * elapsed_samples + (rec.sound2Phase << 16);
-	Fixed si3 = rec.sound3Rate * elapsed_samples + (rec.sound3Phase << 16);
-	Fixed si4 = rec.sound4Rate * elapsed_samples + (rec.sound4Phase << 16);
-	
 	for ( int i = 0;  i < sizeof output.data;  ++i )
 	{
-		uint8_t i1 = si1 >> 16;
-		uint8_t i2 = si2 >> 16;
-		uint8_t i3 = si3 >> 16;
-		uint8_t i4 = si4 >> 16;
-		
-		int16_t sum = has_1 * (int8_t) (rec.sound1Wave[ i1 ] ^ 0x80)
-		            + has_2 * (int8_t) (rec.sound2Wave[ i2 ] ^ 0x80)
-		            + has_3 * (int8_t) (rec.sound3Wave[ i3 ] ^ 0x80)
-		            + has_4 * (int8_t) (rec.sound4Wave[ i4 ] ^ 0x80);
+		int16_t sum = has_1 * sample( rec.sound1Wave, si1 )
+		            + has_2 * sample( rec.sound2Wave, si2 )
+		            + has_3 * sample( rec.sound3Wave, si3 )
+		            + has_4 * sample( rec.sound4Wave, si4 );
 		
 		*p++ = sum / n_voices + 0x80;
 		
@@ -70,8 +100,6 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 		si3 += rec.sound3Rate;
 		si4 += rec.sound4Rate;
 	}
-	
-	elapsed_samples += sizeof output.data;
 	
 	return sizeof output.data;
 }

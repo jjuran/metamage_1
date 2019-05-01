@@ -2,12 +2,11 @@
 
 const bindir = dirname realpath argv[ 0 ]
 
-const metamage_1 = bindir "/../.."
-const ams-68k-bin = metamage_1 "/../ams-68k-bin"
+const amsdir = bindir "/../share/ams/"
 
-const ams_bin = ams-68k-bin "/bin"
-const ams_lib = ams-68k-bin "/lib"
-const ams_mnt = ams-68k-bin "/mnt"
+const ams_bin = getenv "AMS_BIN" or amsdir "/bin"
+const ams_lib = getenv "AMS_LIB" or amsdir "/lib"
+const ams_mnt = getenv "AMS_MNT" or amsdir "/mnt"
 
 const title = "Advanced Mac Substitute"
 

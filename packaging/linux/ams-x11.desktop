@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Advanced Mac Substitute
+Exec=AppRun
+Type=Application
+Icon=ams-x11
+Comment=API-level reimplementation of classic Mac OS
+Categories=System;Emulator;

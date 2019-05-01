@@ -1,0 +1,10 @@
+#!/bin/bash
+
+HERE="$(dirname "$(readlink -f "${0}")")"
+export PATH="$HERE/usr/bin:$PATH"
+
+if [ -e "$HERE/usr/share/ams/mnt/Lode_Runner.dsk" ] ; then
+  AMS_DISK="Lode_Runner.dsk" AMS_APPNAME="Lode Runner" EXHIBIT_INTERACT=interact-x11 ams
+else
+  AMS_APPNAME="Welcome" EXHIBIT_INTERACT=interact-x11 ams
+fi

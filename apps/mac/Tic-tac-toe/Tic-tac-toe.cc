@@ -529,12 +529,52 @@ RgnHandle mouse_moved( Point where )
 	return mouseRgns[ 1 + i ];
 }
 
+#ifdef __MC68K__
+
+UInt8 SdVolume : 0x0260;
+UInt8 SdEnable : 0x0261;
+
+#else
+
+const UInt8 SdVolume = 0;
+const UInt8 SdEnable = 0;
+
+#endif
+
+static
+void set_up_Options_menu()
+{
+	MenuRef Options = GetMenuHandle( 4 );
+	short   Sound   = 1;
+	
+#if ! TARGET_API_MAC_CARBON
+	
+	if ( SdVolume > 0 )
+	{
+		sound_enabled = true;
+		
+		CheckMenuItem( Options, Sound, sound_enabled );
+	}
+	else if ( ! SdEnable )
+	{
+		DisableItem( Options, Sound );
+	}
+	
+	return;
+	
+#endif
+	
+	DisableMenuItem( Options, Sound );
+}
+
 int main()
 {
 	using mac::app::quitting;
 	
 	mac::app::init_toolbox();
 	mac::app::install_menus();
+	
+	set_up_Options_menu();
 	
 	if ( apple_events_present )
 	{

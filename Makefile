@@ -6,11 +6,6 @@ REPOS += freemount
 REPOS += git
 REPOS += macward-compat
 
-D68K  = var/build/dbg/bin/d68k/d68k
-XV68K = var/build/dbg/bin/xv68k/xv68k
-
-PACK68K = utils/pack.pl
-
 METAMAGE_1 = `git remote -v | grep '^origin.*\(fetch\)' | awk '{print $$2}'`
 PLEASE_RUN = 'Please run `(cd .. && git clone' $(METAMAGE_1)')`.'
 
@@ -68,7 +63,7 @@ ams-linux-tools: $(AMS_REPOS) var/install
 	./build.pl -i $(AMS_TOOLS) display-linux interact-linux kdmode reader
 
 ams-vx-Z:
-	@echo 'vx -Z "$$@"' > bin/"vx -Z"
+	@echo 'exec vx -Z "$$@"' > bin/"vx -Z"
 	@chmod +x bin/"vx -Z"
 
 ams-linux: ams-linux-tools ams-vx-Z
@@ -125,33 +120,67 @@ display-check:
 	@test -z "$(DISPLAY)" || echo
 	@test -z "$(DISPLAY)" || exit 1
 
+NEW_PATH = PATH="$$PWD/bin:$$PWD/var/out:$$PATH"
+AMS_ROOT = var/links/ams-68k-bin
+AMS_VARS = AMS_BIN=$(AMS_ROOT)/bin AMS_LIB=$(AMS_ROOT)/lib AMS_MNT=$(AMS_ROOT)/mnt
+RUN_AMS  = $(NEW_PATH) $(AMS_VARS) ./scripts/ams
+
 ams-linux-demo: ams-linux-check display-check
-	PATH="$$PWD/bin:$$PWD/var/out:$$PATH" ./scripts/ams
+	$(RUN_AMS)
 
-ams-x11: $(AMS_REPOS)
+ams-x11-build: $(AMS_REPOS) ams-vx-Z
 	./build.pl -i $(AMS_TOOLS) interact-x11
-	PATH="$$PWD/var/out:$$PATH" EXHIBIT_INTERACT=interact-x11 ./scripts/ams
 
-ams-osx: $(AMS_REPOS) macward-compat.git
+ams-x11: ams-x11-build
+	EXHIBIT_INTERACT=interact-x11 $(RUN_AMS)
+
+ams-68k-install:
+	install -d var/install/share/ams/bin
+	install -d var/install/share/ams/lib
+	install -d var/install/share/ams/mnt
+	install -m444 $(AMS_ROOT)/bin/app    var/install/share/ams/bin
+	install -m444 $(AMS_ROOT)/lib/ams-*  var/install/share/ams/lib
+	cp -R $(AMS_ROOT)/mnt/*              var/install/share/ams/mnt
+
+ams-common-install:
+	install -d var/install/bin
+	test \! -x var/out/sndtrack || install var/out/sndtrack var/install/bin
+	install var/out/vx          var/install/bin
+	install var/out/raster      var/install/bin
+	install var/out/exhibit     var/install/bin
+	install var/out/graft       var/install/bin
+	install var/out/freemountd  var/install/bin
+	install var/out/xv68k       var/install/bin
+	install var/out/vx          var/install/bin
+	install v/bin/ams.vx        var/install/bin/ams
+
+ams-x11-install: ams-x11-build ams-68k-install ams-common-install
+	install bin/"vx -Z"           var/install/bin
+	install var/out/interact-x11  var/install/bin
+
+ams-osx-build: $(AMS_REPOS) macward-compat.git
 	bin/build-app Genie
-	mkdir -p ~/var/run/fs
-	open var/build/dbg/bin/Genie/MacRelix.app
 	./build.pl -i $(AMS_TOOLS) uunix interact
-	PATH="$$PWD/var/out:$$PATH" ./scripts/ams
+
+MACRELIX := var/build/dbg/bin/Genie/MacRelix.app
+APPS := /Applications
+UAPPS := ~/Applications
+
+ams-osx: ams-osx-build
+	mkdir -p ~/var/run/fs
+	open $(MACRELIX)
+	true > ~/var/run/fs/gui.fifo
+	$(RUN_AMS)
+
+ams-osx-install: ams-osx-build ams-68k-install ams-common-install
+	install var/out/interact  var/install/bin
+	install var/out/uunix     var/install/bin
+	if [ -w $(APPS) ]; then cp -R $(MACRELIX) $(APPS); else mkdir -p $(UAPPS) && cp -R $(MACRELIX) $(UAPPS); fi
 
 sndtrack:
 	./build.pl -i vx
 	var/out/vx -Z v/bin/portaudio-pkg.vx make
 	./build.pl -i $(BUILD_FLAG) sndtrack
-
-d68k:
-	./build.pl d68k
-
-d68k-hello: d68k
-	$(PACK68K) v68k/demos/hello.p68k | $(D68K)
-
-d68k-fizzbuzz: d68k
-	$(PACK68K) v68k/demos/fizzbuzz.p68k | $(D68K)
 
 freemountd-tcp: freemount.git
 	./build.pl -i freemountd listen
@@ -171,40 +200,6 @@ fls-test: freemount-tcp
 
 fcat-test: freemount-tcp
 	PATH="$$PWD/var/out:$$PATH" var/out/fcat mnt://127.0.0.1/hello.txt
-
-xv68k:
-	./build.pl xv68k
-
-xv68k-rts: xv68k
-	echo 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-hello: xv68k
-	$(PACK68K) v68k/demos/hello.p68k | $(XV68K)
-
-xv68k-ill: xv68k
-	echo 4AFC 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-ill-priv: xv68k
-	echo 4E72 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-ill-F: xv68k
-	echo FFFF 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-segv: xv68k
-	echo 2010 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-segv-pc: xv68k
-	perl -e 'print pack "n*", 0x4EF8, 0x0000, 0x4E75' | $(XV68K)
-	echo 4EF8 0000 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-bus: xv68k
-	echo 202F 0001 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-bus-pc: xv68k
-	echo 6001 4E71 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-div0: xv68k
-	echo 80C1 4E75 | $(PACK68K) | $(XV68K)
 
 .SECONDARY:
 
