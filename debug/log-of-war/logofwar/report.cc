@@ -5,12 +5,12 @@
 
 #include "logofwar/report.hh"
 
-// standard C
-#include <stdio.h>
+// Standard C
 #include <string.h>
 
 // log-of-war
 #include "logofwar/clock.hh"
+#include "logofwar/print.hh"
 
 
 namespace logofwar
@@ -22,7 +22,11 @@ void report( diagnostic_level level, const char* file, int line )
 {
 	if ( verbose_reports )
 	{
-		fprintf( stderr, "\n%s:%d\n", file, line );
+		print( "\n" );
+		print( file );
+		print( ":" );
+		print( line );
+		print( "\n" );
 	}
 	
 	unsigned long long t = runclock();
@@ -34,7 +38,16 @@ void report( diagnostic_level level, const char* file, int line )
 	
 	const char* space = &"     "[ strlen( level_name ) - 4 ];
 	
-	fprintf( stderr, "T=%lu.%.3ds  %s:%s", ts, tms, level_name, space );
+	print( "T=" );
+	print( ts );
+	print( "." );
+	print( tms / 100     );
+	print( tms / 10 % 10 );
+	print( tms      % 10 );
+	print( "s  " );
+	print( level_name );
+	print( ":" );
+	print( space );
 }
 
 }
