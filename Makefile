@@ -11,6 +11,8 @@ PLEASE_RUN = 'Please run `(cd .. && git clone' $(METAMAGE_1)')`.'
 
 BUILD_FLAG = `uname -m | grep x86_64 | sed s/x86_64/-W/`
 
+BUILD = ./build.pl -i $(BUILD_FLAG)
+
 default:
 	@echo 'For help, run `make help`.'
 
@@ -42,7 +44,7 @@ var/links/%: var/links
 	@true
 
 app-build-tools:
-	./build.pl -i vx
+	$(BUILD) vx
 
 AMS_REPOS := freemount.git ams-68k-bin.git
 AMS_TOOLS := exhibit graft raster vx xv68k freemountd
@@ -179,7 +181,7 @@ ams-x11-install: ams-x11-build ams-68k-install ams-common-install
 
 ams-osx-build: $(AMS_REPOS) macward-compat.git
 	bin/build-app Genie
-	./build.pl -i $(AMS_TOOLS) uunix interact
+	$(BUILD) $(AMS_TOOLS) uunix interact
 
 MACRELIX := var/build/dbg/bin/Genie/MacRelix.app
 APPS := /Applications
@@ -197,12 +199,12 @@ ams-osx-install: ams-osx-build ams-68k-install ams-common-install
 	if [ -w $(APPS) ]; then cp -R $(MACRELIX) $(APPS); else mkdir -p $(UAPPS) && cp -R $(MACRELIX) $(UAPPS); fi
 
 sndtrack:
-	./build.pl -i vx
+	$(BUILD) vx
 	var/out/vx -Z v/bin/portaudio-pkg.vx make
-	./build.pl -i $(BUILD_FLAG) sndtrack
+	$(BUILD) sndtrack
 
 freemountd-tcp: freemount.git
-	./build.pl -i freemountd listen
+	$(BUILD) freemountd listen
 
 var/freemount/hello.txt:
 	mkdir -p var/freemount/
@@ -212,7 +214,7 @@ freemountd-tcp-test: freemountd-tcp var/freemount/hello.txt
 	var/out/listen 127.0.0.1:4564 var/out/freemountd --root var/freemount
 
 freemount-tcp: freemount.git
-	./build.pl -i fls fcat fget utcp
+	$(BUILD) fls fcat fget utcp
 
 fls-test: freemount-tcp
 	PATH="$$PWD/var/out:$$PATH" var/out/fls mnt://127.0.0.1
