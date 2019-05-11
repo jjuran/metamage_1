@@ -294,7 +294,7 @@ namespace vlib
 		{
 			Expr* expr = b.expr();
 			
-			if ( expr->op == Op_block )
+			if ( expr  &&  expr->op == Op_block )
 			{
 				const Value& body = expr->right.expr()->right;
 				
