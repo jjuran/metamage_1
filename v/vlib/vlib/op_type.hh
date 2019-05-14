@@ -133,6 +133,7 @@ namespace vlib
 		Op_if,
 		Op_then,
 		Op_else,
+		Op_else_if,
 		Op_while,    // `while` statement
 		Op_while_2,  // `while` clause of `do` statement
 		Op_do,    // `do` statement
@@ -235,6 +236,7 @@ namespace vlib
 			case Op_mapping:
 			case Op_then:
 			case Op_else:
+			case Op_else_if:
 			case Op_do_2:
 			case Op_while_2:
 			case Op_catch:

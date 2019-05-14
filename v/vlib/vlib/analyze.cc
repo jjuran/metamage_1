@@ -238,6 +238,23 @@ namespace vlib
 		}
 	}
 	
+	static inline
+	Expr* is_elseif( const Expr* expr )
+	{
+		if ( expr->op == Op_else )
+		{
+			if ( Expr* e2 = expr->right.expr() )
+			{
+				if ( e2->op == Op_if )
+				{
+					return e2;
+				}
+			}
+		}
+		
+		return NULL;
+	}
+	
 	class Analyzer
 	{
 		private:
@@ -394,6 +411,12 @@ namespace vlib
 				{
 					THROW( "`:name` must be an identifier" );
 				}
+			}
+			else if ( Expr* else_if_expr = is_elseif( expr ) )
+			{
+				v = Value( expr->left, Op_else_if, else_if_expr->right );
+				
+				expr = v.expr();
 			}
 			else if ( op == Op_present )
 			{

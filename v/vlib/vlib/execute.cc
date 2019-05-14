@@ -568,20 +568,6 @@ namespace vlib
 	static const Proc define_proc( proc_define );
 	
 	static
-	bool is_elseif( const Expr* expr )
-	{
-		if ( expr->op == Op_else )
-		{
-			if (( expr = expr->right.expr() ))
-			{
-				return expr->op == Op_if;
-			}
-		}
-		
-		return false;
-	}
-	
-	static
 	bool is_symbol_list( const Value& list )
 	{
 		list_iterator it( list );
@@ -712,11 +698,20 @@ namespace vlib
 				return Value( test, Op_do_2, execute( expr->right, stack ) );
 			}
 			
-			if ( expr->op == Op_while_2  ||  is_elseif( expr ) )
+			if ( expr->op == Op_while_2 )
 			{
 				const Value& test = invocable_expression( expr->right, stack );
 				
 				return Value( execute( expr->left, stack ), expr->op, test );
+			}
+			
+			if ( expr->op == Op_else_if )
+			{
+				const Value& if_op = Value( Op_if, expr->right );
+				
+				const Value& proc = invocable_expression( if_op, stack );
+				
+				return Value( execute( expr->left, stack ), Op_else, proc );
 			}
 			
 			if ( expr->op == Op_assert )
