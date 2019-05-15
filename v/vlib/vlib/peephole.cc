@@ -63,10 +63,6 @@ namespace vlib
 		
 		This only applies to lambdas.  A `return` in a non-lambda block still
 		needs to throw an exception.
-		
-		TODO:
-		
-			lambda { ...; return 123  }  # `return` is the final statement
 	*/
 	
 	static
@@ -87,9 +83,11 @@ namespace vlib
 			{
 				goto tail_call;
 			}
+			
+			return false;
 		}
 		
-		return false;
+		return expr->op == Op_return;
 	}
 	
 	void optimize_lambda_body( Value& body )
@@ -112,6 +110,13 @@ namespace vlib
 		// This is the block's root expression.
 		Value& root = body.unshare().expr()->right.unshare().expr()->right;
 		
+		if ( expr->op == Op_return )
+		{
+			// Elide the `return` operator.
+			root = expr->right;
+			return;
+		}
+		
 		Value* it = &root;
 		
 		expr = it->expr();
@@ -130,6 +135,13 @@ namespace vlib
 			it = &it->unshare().expr()->right;
 			
 			expr = it->expr();
+			
+			if ( expr  &&  expr->op == Op_return )
+			{
+				// Elide the `return` operator.
+				*it = expr->right;
+				return;
+			}
 		}
 		while ( expr  &&  expr->op == Op_end );
 	}
