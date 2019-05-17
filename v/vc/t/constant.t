@@ -262,3 +262,8 @@ $ vc '{1 and 0 and 3, 1 and 0 or 3, 1 or 0 and 3, 1 or 0 or 3}'
 
 $ vc '{1 and 2 and 0, 1 and 2 or 0, 1 or 2 and 0, 1 or 2 or 0}'
 1 >= '{0, 2, 1, 1}'
+
+%
+
+$ vc 'var x = 0; {x and 1 and 2 and 3}'
+1 >= '{x and 3}'

@@ -90,8 +90,6 @@ namespace vlib
 		Op_union,
 		Op_in,
 		Op_not,
-		Op_and,
-		Op_or,
 		Op_repeat,  // multiply list
 		Op_map,
 		Op_ver,
@@ -109,6 +107,8 @@ namespace vlib
 		Op_mapping,
 		Op_gamut,
 		Op_delta,
+		Op_and,
+		Op_or,
 		Op_list,
 		Op_send,
 		Op_recv,
