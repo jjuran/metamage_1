@@ -311,27 +311,27 @@ $ vc '{i16.decode x"1616"}'
 %
 
 $ vc '{if 1 then {2} else {3}}'
-1 >= '{if (1 then ({2} else {3}))}'
+1 >= '{2}'
 
 %
 
 $ vc '{if 0 then {2} else {3}}'
-1 >= '{if (0 then ({2} else {3}))}'
+1 >= '{3}'
 
 %
 
 $ vc '{if 1 then {2} else if 3 then {4} else {5}}'
-1 >= '{if (1 then ({2} else if (3 then ({4} else {5}))))}'
+1 >= '{2}'
 
 %
 
 $ vc '{if 0 then {2} else if 3 then {4} else {5}}'
-1 >= '{if (0 then ({2} else if (3 then ({4} else {5}))))}'
+1 >= '{if (3 then ({4} else {5}))}'
 
 %
 
 $ vc '{if 0 then {2} else if 0 then {4} else {5}}'
-1 >= '{if (0 then ({2} else if (0 then ({4} else {5}))))}'
+1 >= '{if (0 then ({4} else {5}))}'
 
 %
 

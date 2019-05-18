@@ -5,6 +5,9 @@
 
 #include "vlib/fold.hh"
 
+// debug
+#include "debug/assert.hh"
+
 // vlib
 #include "vlib/assert.hh"
 #include "vlib/exceptions.hh"
@@ -256,6 +259,95 @@ namespace vlib
 		return sym->get();
 	}
 	
+	static
+	Value fold_if( const Value& b )
+	{
+		Expr* expr = b.expr();
+		
+		if ( expr->op == Op_then  &&  is_constant( expr->left ) )
+		{
+			/*
+				One of:
+				
+					if cond then {...}
+					if cond then {...} else {...}
+			*/
+			
+			Expr* e2 = expr->right.expr();
+			
+			const op_type op = e2->op;
+			
+			const bool test = expr->left.to< Boolean >();
+			
+			if ( test )
+			{
+				// cond is true.
+				
+				Expr* block_expr = e2;
+				
+				if ( op == Op_else  ||  op == Op_else_if )
+				{
+					block_expr = e2->left.expr();
+				}
+				
+				ASSERT( block_expr->op == Op_block );
+				
+				const Value& body_or_scope = block_expr->right;
+				
+				if ( body_or_scope.is_evaluated() )
+				{
+					const Value& body = body_or_scope;
+					
+					return body;
+				}
+				
+				const Value& scope = body_or_scope;
+				
+				block_expr = scope.expr();
+				
+				const Value& body = block_expr->right;
+				
+				if ( is_constant( body ) )
+				{
+					return body;
+				}
+			}
+			else if ( op == Op_block )
+			{
+				return empty_list;
+			}
+			else if ( op == Op_else )
+			{
+				const Value& block = e2->right;
+				
+				if ( block.expr()  &&  block.expr()->op == Op_block )
+				{
+					if ( block.expr()->right.is_evaluated() )
+					{
+						return block.expr()->right;
+					}
+					
+					const Value& body = block.expr()->right.expr()->right;
+					
+					if ( is_constant( body ) )
+					{
+						return body;
+					}
+				}
+			}
+			else if ( op == Op_else_if )
+			{
+				const Value& then2 = e2->right;
+				
+				// if false then {...} else if cond then {...}
+				
+				return Value( Op_if, then2 );
+			}
+		}
+		
+		return NIL;
+	}
+	
 	static inline
 	bool is_foldable_declaration( const Value& decl )
 	{
@@ -322,6 +414,10 @@ namespace vlib
 					return body;
 				}
 			}
+		}
+		else if ( op == Op_if )
+		{
+			return fold_if( b );
 		}
 		else if ( op == Op_assert )
 		{
