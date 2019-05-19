@@ -205,19 +205,11 @@ namespace vlib
 	}
 	
 	static
-	Value compute( const Value& v )
-	{
-		Value scope( empty_list, Op_scope, v );
-		
-		return execute( scope );
-	}
-	
-	static
 	Value subfold( const Value& v )
 	{
 		try
 		{
-			return compute( v );
+			return execute( Value( empty_list, Op_scope, v ) );
 		}
 		catch ( const user_exception& )
 		{
