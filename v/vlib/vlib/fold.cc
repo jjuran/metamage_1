@@ -205,19 +205,19 @@ namespace vlib
 	}
 	
 	static
-	Value compute( const Value& a, op_type op, const Value& b )
+	Value compute( const Value& v )
 	{
-		Value scope( empty_list, Op_scope, Value( a, op, b ) );
+		Value scope( empty_list, Op_scope, v );
 		
 		return execute( scope );
 	}
 	
 	static
-	Value subfold( const Value& a, op_type op, const Value& b )
+	Value subfold( const Value& v )
 	{
 		try
 		{
-			return compute( a, op, b );
+			return compute( v );
 		}
 		catch ( const user_exception& )
 		{
@@ -282,7 +282,7 @@ namespace vlib
 			
 			if ( is_block_or_constant( a )  &&  is_block_or_constant( b ) )
 			{
-				const Value folded = subfold( a, op, b );
+				const Value folded = subfold( v );
 				
 				if ( folded )
 				{
