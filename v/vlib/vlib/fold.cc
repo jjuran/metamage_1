@@ -264,8 +264,15 @@ namespace vlib
 	}
 	
 	static
-	Value fold( const Value& a, op_type op, const Value& b, lexical_scope* scope )
+	Value inner_fold( const Value& v, lexical_scope* scope )
 	{
+		Expr* expr = v.expr();
+		
+		const Value& a = expr->left;
+		const Value& b = expr->right;
+		
+		const op_type op = expr->op;
+		
 		if ( is_foldable( a, op, b ) )
 		{
 			if ( is_pure_block_def( a, op, b ) )
@@ -361,7 +368,7 @@ namespace vlib
 		{
 			try
 			{
-				return fold( expr->left, expr->op, expr->right, scope );
+				return inner_fold( v, scope );
 			}
 			catch ( const exception& e )
 			{
