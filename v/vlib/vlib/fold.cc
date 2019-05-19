@@ -215,24 +215,21 @@ namespace vlib
 	static
 	Value subfold( const Value& a, op_type op, const Value& b )
 	{
-		if ( is_block_or_constant( a )  &&  is_block_or_constant( b ) )
+		try
 		{
-			try
-			{
-				return compute( a, op, b );
-			}
-			catch ( const user_exception& )
-			{
-			}
-			catch ( const transfer_via_break& )
-			{
-			}
-			catch ( const transfer_via_continue& )
-			{
-			}
-			catch ( const transfer_via_return& )
-			{
-			}
+			return compute( a, op, b );
+		}
+		catch ( const user_exception& )
+		{
+		}
+		catch ( const transfer_via_break& )
+		{
+		}
+		catch ( const transfer_via_continue& )
+		{
+		}
+		catch ( const transfer_via_return& )
+		{
 		}
 		
 		return NIL;
@@ -276,11 +273,14 @@ namespace vlib
 				return make_constant( a, NULL, Value( Op_lambda, b ), scope );
 			}
 			
-			const Value folded = subfold( a, op, b );
-			
-			if ( folded )
+			if ( is_block_or_constant( a )  &&  is_block_or_constant( b ) )
 			{
-				return folded;
+				const Value folded = subfold( a, op, b );
+				
+				if ( folded )
+				{
+					return folded;
+				}
 			}
 		}
 		else if ( op == Op_end )
