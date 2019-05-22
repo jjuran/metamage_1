@@ -144,7 +144,7 @@ void spawn( int client_fd, char** argv )
 		
 		close( client_fd );
 		
-		execv( argv[ 0 ], argv );
+		execvp( argv[ 0 ], argv );
 		
 	fail:
 		
