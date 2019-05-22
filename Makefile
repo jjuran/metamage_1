@@ -149,6 +149,12 @@ RUN_AMS  = $(NEW_PATH) $(AMS_VARS) ./scripts/ams
 ams-linux-demo: ams-linux-check display-check
 	$(RUN_AMS)
 
+ams-vnc-build: $(AMS_REPOS) ams-vx-Z
+	$(BUILD) $(AMS_TOOLS) listen vnc-interact
+
+ams-vnc: ams-vnc-build
+	EXHIBIT_INTERACT=v/bin/interact-vnc.vx $(RUN_AMS)
+
 ams-x11-build: $(AMS_REPOS) ams-vx-Z
 	./build.pl -i $(AMS_TOOLS) interact-x11
 
