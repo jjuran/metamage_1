@@ -1,0 +1,19 @@
+#!/usr/bin/env vx -Z
+
+OUT <== x"00"
+
+const raster_path = argv[ 2 ]
+
+const events_fd = dup OUT
+
+dup2( ERR, OUT )
+
+const raster = "--raster", raster_path
+const events = "--events-fd=" events_fd
+const title  = if argc > 6 then { "-t" argv[ 6 ] }
+
+warn "\n" "Starting VNC server on port 5900:" "\n"
+
+const command = [ "listen :5900 vnc-interact" / ' ', raster, events, title ]
+
+execvp (command[ 0 ], command)
