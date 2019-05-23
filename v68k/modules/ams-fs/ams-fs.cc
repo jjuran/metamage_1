@@ -70,6 +70,8 @@ void install_FileManager()
 	
 	OSTRAP( OpenRF );  // A00A
 	
+	OSTRAP( GetFileInfo );  // A00C
+	
 	OSTRAP( GetEOF   );  // A011
 	
 	OSTRAP( FlushVol );  // A013

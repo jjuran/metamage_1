@@ -22,6 +22,7 @@
 // ams-fs
 #include "freemount.hh"
 #include "MFS.hh"
+#include "Volumes.hh"
 
 
 enum
@@ -394,4 +395,58 @@ short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	}
 	
 	return pb->ioResult = rfNumErr;
+}
+
+short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
+{
+	VCB* vcb = VCB_lookup( pb->ioVRefNum );
+	
+	if ( vcb == NULL )
+	{
+		return pb->ioResult = nsvErr;
+	}
+	
+	StringPtr name = pb->ioNamePtr;
+	
+	if ( ! name  &&  pb->ioFDirIndex <= 0 )
+	{
+		return pb->ioResult = bdNamErr;
+	}
+	
+	const mfs::file_directory_entry* entry = NULL;
+	
+	if ( pb->ioFDirIndex > 0 )
+	{
+		short index = pb->ioFDirIndex;
+		
+		do
+		{
+			entry = MFS_iterate( vcb, entry );
+		}
+		while ( entry != NULL  &&  --index );
+	}
+	else
+	{
+		entry = MFS_lookup( vcb, name );
+	}
+	
+	if ( entry  &&  pb->ioNamePtr )
+	{
+		ConstStr255Param name = entry->flNam;
+		
+		fast_memcpy( pb->ioNamePtr, name, 1 + name[ 0 ] );
+	}
+	
+	if ( entry == NULL )
+	{
+		return pb->ioResult = fnfErr;
+	}
+	
+	pb->ioFRefNum = 0;  // FIXME
+	
+	const size_t n = offsetof( mfs::_fde, flNam );
+	
+	fast_memcpy( &pb->ioFlAttrib, entry, n );
+	
+	return pb->ioResult = noErr;
 }
