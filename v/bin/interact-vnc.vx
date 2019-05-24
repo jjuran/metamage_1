@@ -1,6 +1,8 @@
 #!/usr/bin/env vx -Z
 
-const addr = "localhost:5900"
+const host = getenv "INTERACT_VNC_HOST" or "localhost"
+const port = getenv "INTERACT_VNC_PORT" or 5900
+const addr = getenv "INTERACT_VNC_ADDR" or host ":" port
 
 OUT <== x"00"
 
