@@ -29,16 +29,16 @@ const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name )
 		return NULL;
 	}
 	
-	if ( name == NULL  ||  name[ 0 ] == '\0' )
-	{
-		return NULL;
-	}
-	
 	const logical_block* all_blocks = (logical_block*) vcb->vcbBufAdr;
 	
 	const logical_block* master_directory_block = all_blocks + 2;
 	
 	const logical_block* file_directory = all_blocks + vcb->vcbVBMSt;  // drDirSt
+	
+	if ( name == NULL  ||  name[ 0 ] == '\0' )
+	{
+		return NULL;
+	}
 	
 	typedef const mfs::file_directory_entry* Iter;
 	
