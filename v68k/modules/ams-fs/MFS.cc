@@ -9,9 +9,9 @@
 #ifndef __FILES__
 #include <Files.h>
 #endif
-
-// iota
-#include "iota/char_types.hh"
+#ifndef __STRINGCOMPARE__
+#include <StringCompare.h>
+#endif
 
 // ams-common
 #include "callouts.hh"
@@ -21,26 +21,6 @@ struct logical_block
 {
 	uint8_t bytes[ 512 ];
 };
-
-static
-bool equivalent_fsnames( const UInt8* a, const UInt8* b, UInt16 len )
-{
-	while ( len-- > 0 )
-	{
-		if ( iota::to_lower( *a++ ) != iota::to_lower( *b++ ) )
-		{
-			return false;
-		}
-	}
-	
-	return true;
-}
-
-static
-bool equivalent_fsnames( ConstStr255Param a, ConstStr255Param b )
-{
-	return *a == *b  &&  equivalent_fsnames( a + 1, b + 1, *a );
-}
 
 const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name )
 {
@@ -66,7 +46,7 @@ const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name )
 	
 	while ( it->flAttrib < 0 )
 	{
-		if ( equivalent_fsnames( it->flNam, name ) )
+		if ( EqualString( it->flNam, name, false, true ) )
 		{
 			return it;
 		}
