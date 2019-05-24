@@ -28,13 +28,12 @@ def exists (path)
 
 def which (program)
 {
+	return
 	try
 	{
-		return output-from-run [ "which", program ]
+		output-from-run [ "which", program ],
 	}
 	catch {}
-	
-	return ()
 }
 
 const home     = getenv "HOME"
