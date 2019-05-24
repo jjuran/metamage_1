@@ -40,9 +40,13 @@ namespace mfs
 		uint8_t   flNam[ 256 ];
 	};
 	
+	typedef file_directory_entry _fde;
+	
 #pragma options align=reset
 	
 }
+
+const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev );
 
 const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name );
 

@@ -22,8 +22,22 @@ struct logical_block
 	uint8_t bytes[ 512 ];
 };
 
-const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name )
+const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
 {
+	if ( prev )
+	{
+		const uint8_t* next = prev->flNam + (1 + prev->flNam[ 0 ] + 1 & 0xFE);
+		
+		const mfs::_fde* result = (const mfs::_fde*) next;
+		
+		if ( result->flAttrib < 0 )
+		{
+			return result;
+		}
+		
+		return result->flAttrib < 0 ? result : NULL;
+	}
+	
 	if ( vcb->vcbSigWord != 0xD2D7 )
 	{
 		return NULL;
@@ -35,25 +49,24 @@ const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name )
 	
 	const logical_block* file_directory = all_blocks + vcb->vcbVBMSt;  // drDirSt
 	
+	return (const mfs::file_directory_entry*) file_directory;
+}
+
+const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name )
+{
 	if ( name == NULL  ||  name[ 0 ] == '\0' )
 	{
 		return NULL;
 	}
 	
-	typedef const mfs::file_directory_entry* Iter;
+	const mfs::file_directory_entry* it = NULL;
 	
-	Iter it = (Iter) file_directory;
-	
-	while ( it->flAttrib < 0 )
+	while (( it = MFS_iterate( vcb, it ) ))
 	{
 		if ( EqualString( it->flNam, name, false, true ) )
 		{
 			return it;
 		}
-		
-		const uint8_t* next = it->flNam + (1 + it->flNam[ 0 ] + 1 & 0xFE);
-		
-		it = (Iter) next;
 	}
 	
 	return NULL;
