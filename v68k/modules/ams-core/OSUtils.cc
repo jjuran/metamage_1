@@ -64,14 +64,14 @@ unsigned long CmpString_patch( const unsigned char* a : __A0,
 	
 	if ( m == 0 )
 	{
-		return true;  // Empty strings are equal
+		return 0;  // Empty strings are equal
 	}
 	
 	uint16_t len = m;
 	
 	if ( (m >> 16) != len )
 	{
-		return false;
+		return 1;  // Strings of unequal length are unequal
 	}
 	
 	if ( A & MARKS )
