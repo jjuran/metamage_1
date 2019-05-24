@@ -12,15 +12,15 @@
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
+#ifndef __STRINGCOMPARE__
+#include <StringCompare.h>
+#endif
 
 // Standard C
 #include <stddef.h>
 
 // Standard C++
 #include <new>
-
-// iota
-#include "iota/char_types.hh"
 
 // gear
 #include "gear/hexadecimal.hh"
@@ -187,26 +187,6 @@ ConstStr255Param get_name( const rsrc_map_header& map, const rsrc_header& rsrc )
 }
 
 static
-bool equivalent_fsnames( const UInt8* a, const UInt8* b, UInt16 len )
-{
-	while ( len-- > 0 )
-	{
-		if ( iota::to_lower( *a++ ) != iota::to_lower( *b++ ) )
-		{
-			return false;
-		}
-	}
-	
-	return true;
-}
-
-static
-bool equivalent_fsnames( ConstStr255Param a, ConstStr255Param b )
-{
-	return *a == *b  &&  equivalent_fsnames( a + 1, b + 1, *a );
-}
-
-static
 rsrc_header* find_rsrc( const rsrc_map_header&  map,
                         ResType                 type,
                         ConstStr255Param        name )
@@ -230,7 +210,7 @@ rsrc_header* find_rsrc( const rsrc_map_header&  map,
 		{
 			if ( ConstStr255Param found_name = get_name( map, *rsrc ) )
 			{
-				if ( equivalent_fsnames( name, found_name ) )
+				if ( EqualString( name, found_name, false, true ) )
 				{
 					return rsrc;
 				}
