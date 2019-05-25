@@ -195,6 +195,7 @@ UAPPS := ~/Applications
 
 ams-osx: ams-osx-build
 	mkdir -p ~/var/run/fs
+	test -p ~/var/run/fs/gui.fifo || mkfifo ~/var/run/fs/gui.fifo
 	open $(MACRELIX)
 	true > ~/var/run/fs/gui.fifo
 	$(RUN_AMS)
