@@ -23,8 +23,12 @@
 #endif
 #endif
 
+// mac-config
+#include "mac_config/color-quickdraw.hh"
+
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
+#include "mac_sys/has/ColorQuickDraw.hh"
 #include "mac_sys/trap_available.hh"
 
 // mac-qd-utils
@@ -46,6 +50,8 @@
 short MBarHeight AT( 0x0BAA );  // only used in v68k for AMS
 
 
+using mac::sys::has_ColorQuickDraw;
+
 using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
 
@@ -59,7 +65,7 @@ bool in_v68k()
 static inline
 bool has_color_quickdraw()
 {
-	return mac::sys::gestalt( 'qd  ' ) > 0;
+	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  has_ColorQuickDraw();
 }
 
 static
@@ -71,9 +77,7 @@ WindowRef new_window( const Rect*           bounds,
                       Boolean               closable,
                       SInt32                ref )
 {
-	static bool has_color = has_color_quickdraw();
-	
-	if ( has_color )
+	if ( CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw() )
 	{
 		return NewCWindow( 0, bounds, title, vis, proc, behind, closable, ref );
 	}
