@@ -23,11 +23,14 @@
 // Standard C
 #include <stdlib.h>
 
+// mac-config
+#include "mac_config/color-quickdraw.hh"
+
 // mac-qd-utils
 #include "mac_qd/is_monochrome.hh"
 
 // mac-sys-utils
-#include "mac_sys/gestalt.hh"
+#include "mac_sys/has/ColorQuickDraw.hh"
 
 // raster
 #include "raster/clut.hh"
@@ -45,7 +48,6 @@
 
 
 using mac::qd::is_monochrome;
-using mac::sys::gestalt;
 
 using namespace raster;
 
@@ -56,27 +58,15 @@ struct raster_info
 	void*        baseAddr;
 };
 
-#if TARGET_CPU_68K  &&  !__MC68020__
-	const bool definitely_not_a_68000 = false;
-#else
-	const bool definitely_not_a_68000 = true;
-#endif
-
 static inline
 bool has_Color_QuickDraw()
 {
-	if ( definitely_not_a_68000 )
+	if ( ! CONFIG_COLOR_QUICKDRAW )
 	{
-		return true;
+		return false;
 	}
 	
-	enum
-	{
-		gestaltQuickdrawVersion = 'qd  ',
-		gestaltOriginalQD       = 0x0000,
-	};
-	
-	return mac::sys::gestalt( gestaltQuickdrawVersion ) != gestaltOriginalQD;
+	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  mac::sys::has_ColorQuickDraw();
 }
 
 static
