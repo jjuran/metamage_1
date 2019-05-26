@@ -9,6 +9,10 @@
 #include <alsa/asoundlib.h>
 #endif
 
+// POSIX
+#include <fcntl.h>
+#include <unistd.h>
+
 // Standard C
 #include <stdlib.h>
 #include <string.h>
@@ -128,6 +132,19 @@ PortAudio::PortAudio()
 	output_parameters.sampleFormat = paUInt8;
 	output_parameters.suggestedLatency = device_info->defaultLowOutputLatency;
 	
+	int saved_err = 0;
+	
+	if ( getenv( "SNDTRACK_SUPPRESS_OPEN_ERRORS" ) )
+	{
+		int null = open( "/dev/null", O_RDONLY );
+		
+		saved_err = dup( STDERR_FILENO );
+		
+		dup2( null, STDERR_FILENO );
+		
+		close( null );
+	}
+	
 	error = Pa_OpenStream( &output_stream,
 	                       NULL,
 	                       &output_parameters,
@@ -136,6 +153,13 @@ PortAudio::PortAudio()
 	                       paNoFlag,
 	                       &stream_callback,
 	                       NULL );
+	
+	if ( saved_err )
+	{
+		dup2( saved_err, STDERR_FILENO );
+		
+		close( saved_err );
+	}
 	
 	if ( error )
 	{
