@@ -7,23 +7,54 @@
 #define MACCONFIG_SYSTEM_HH
 
 
+// These are all System file versions, not marketing versions like 5.0
+
+#define MAC_CONFIG_SYSTEM_1        100  // First release
+#define MAC_CONFIG_SYSTEM_1_1      110
+
+#define MAC_CONFIG_SYSTEM_2        200  // Introduced AppleTalk
+#define MAC_CONFIG_SYSTEM_2_1      210  // Introduced HFS in RAM for HD20
+
+#define MAC_CONFIG_SYSTEM_3        300  // Introduced Plus, ROM HFS, 800K, SCSI
+
+#define MAC_CONFIG_SYSTEM_4        400  // Introduced SE, ADB
+#define MAC_CONFIG_SYSTEM_4_1      410  // Introduced II, color, 68020
+#define MAC_CONFIG_SYSTEM_4_2      420  // Introduced MultiFinder
+
 #define MAC_CONFIG_SYSTEM_6        600
-#define MAC_CONFIG_SYSTEM_6_0_4    604
+#define MAC_CONFIG_SYSTEM_6_0_1    601  // Introduced IIx, 68030, FDHD
+#define MAC_CONFIG_SYSTEM_6_0_2    602
+#define MAC_CONFIG_SYSTEM_6_0_3    603  // Introduced IIcx
+#define MAC_CONFIG_SYSTEM_6_0_4    604  // Introduced Portable, IIci, Gestalt
+#define MAC_CONFIG_SYSTEM_6_0_5    605  // Introduced IIfx
+#define MAC_CONFIG_SYSTEM_6_0_7    607  // Introduced LC, IIsi, Classic
+#define MAC_CONFIG_SYSTEM_6_0_8    608
 
 #define MAC_CONFIG_SYSTEM_7        700
+#define MAC_CONFIG_SYSTEM_7_0_1    701  // Introduced LC II, Quadra
 #define MAC_CONFIG_SYSTEM_7_1      710
 #define MAC_CONFIG_SYSTEM_7_1_2    712
 #define MAC_CONFIG_SYSTEM_7_5      750
+#define MAC_CONFIG_SYSTEM_7_5_1    751
+#define MAC_CONFIG_SYSTEM_7_5_2    752
+#define MAC_CONFIG_SYSTEM_7_5_3    753
 #define MAC_CONFIG_SYSTEM_7_6      760
+#define MAC_CONFIG_SYSTEM_7_6_1    761
 
 #define MAC_CONFIG_MAC_OS_8        800
 #define MAC_CONFIG_MAC_OS_8_1      810
 #define MAC_CONFIG_MAC_OS_8_5      850
+#define MAC_CONFIG_MAC_OS_8_5_1    851
 #define MAC_CONFIG_MAC_OS_8_6      860
 
 #define MAC_CONFIG_MAC_OS_9        900
+#define MAC_CONFIG_MAC_OS_9_0_2    902
+#define MAC_CONFIG_MAC_OS_9_0_3    903
+#define MAC_CONFIG_MAC_OS_9_0_4    904
 #define MAC_CONFIG_MAC_OS_9_1      910
 #define MAC_CONFIG_MAC_OS_9_2      920
+#define MAC_CONFIG_MAC_OS_9_2_1    921
+#define MAC_CONFIG_MAC_OS_9_2_2    922
 
 #define MAC_CONFIG_MAC_OS_X       1000
 #define MAC_CONFIG_MACOSX_10_0    1000
