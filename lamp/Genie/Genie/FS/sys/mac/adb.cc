@@ -10,8 +10,14 @@
 // Standard C++
 #include <algorithm>
 
+// mac-config
+#include "mac_config/adb.hh"
+
 // iota
 #include "iota/char_types.hh"
+
+// mac-sys-utils
+#include "mac_sys/has/ADB.hh"
 
 // gear
 #include "gear/hexadecimal.hh"
@@ -24,9 +30,6 @@
 
 // ClassicToolbox
 #include "ClassicToolbox/DeskBus.hh"
-
-// MacFeatures
-#include "MacFeatures/ADB.hh"
 
 // Arcana
 #include "ADB/Protocol.hh"
@@ -218,7 +221,7 @@ namespace Genie
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
-		if ( !MacFeatures::Has_ADB() )
+		if ( ! (CONFIG_ADB  &&  (CONFIG_ADB_GRANTED  ||  mac::sys::has_ADB())) )
 		{
 			p7::throw_errno( ENOENT );
 		}
