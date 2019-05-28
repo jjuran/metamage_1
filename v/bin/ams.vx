@@ -113,7 +113,8 @@ def argify (name)
 			else {path}
 }
 
-const ams_modules = [ "core io fs rsrc pack seg qd ui" / ' ' ] map {"ams-" v}
+const prefix_list = "core io fs rsrc pack seg qd ui"
+const ams_modules = [ prefix_list / ' ' ] map {"ams-" v}
 const module_opts = ams_modules map {"-m", argify v}
 
 const app = ams_bin "/app"
