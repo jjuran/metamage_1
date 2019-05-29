@@ -269,7 +269,7 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 				item->handle = (Handle) NewControl( window,
 				                                    &item->bounds,
 				                                    &item->length,
-				                                    visible,
+				                                    true,
 				                                    0,  // value
 				                                    0,  // min
 				                                    1,  // max
