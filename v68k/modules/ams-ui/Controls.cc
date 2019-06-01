@@ -241,9 +241,7 @@ pascal short FindControl_patch( Point pt, WindowRef window, ControlRef* which )
 	
 	while ( next != NULL )
 	{
-		const short varCode = *(Byte*) &next[0]->contrlDefProc;
-		
-		if ( long hit = CDEF_0( varCode, next, testCntl, *(long*) &pt ) )
+		if ( short hit = TestControl( next, pt ) )
 		{
 			*which = next;
 			
@@ -272,7 +270,7 @@ pascal short TrackControl_patch( ControlRecord**  control,
 	
 	Point pt = start;
 	
-	const short track_part = CDEF_0( varCode, control, testCntl, *(long*) &pt );
+	const short track_part = TestControl( control, pt );
 	
 	control[0]->contrlHilite = track_part;
 	
@@ -329,7 +327,7 @@ pascal short TrackControl_patch( ControlRecord**  control,
 		{
 			pt = where;
 			
-			short hit = CDEF_0( varCode, control, testCntl, *(long*) &pt );
+			short hit = TestControl( control, pt );
 			
 			if ( hit != track_part )
 			{
@@ -349,11 +347,25 @@ pascal short TrackControl_patch( ControlRecord**  control,
 	
 	control[0]->contrlHilite = 0;
 	
-	const short hit = CDEF_0( varCode, control, testCntl, *(long*) &pt );
+	const short hit = TestControl( control, pt );
 	
 	if ( hit == track_part )
 	{
 		CDEF_0( varCode, control, drawCntl, hit );
+		
+		return hit;
+	}
+	
+	return 0;
+}
+
+pascal short TestControl_patch( ControlRecord** control, Point pt )
+{
+	if ( control[0]->contrlVis  &&  control[0]->contrlHilite != 255 )
+	{
+		const short varCode = *(Byte*) &control[0]->contrlDefProc;
+		
+		long hit = CDEF_0( varCode, control, testCntl, *(long*) &pt );
 		
 		return hit;
 	}

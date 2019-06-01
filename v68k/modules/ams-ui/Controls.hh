@@ -47,6 +47,8 @@ pascal short TrackControl_patch( ControlRecord**  control,
                                  Point            start,
                                  pascal void    (*action)() );
 
+pascal short TestControl_patch( ControlRecord** control, Point pt );
+
 pascal void MoveControl_patch( ControlRecord** control, short w, short h );
 pascal void SizeControl_patch( ControlRecord** control, short w, short h );
 

@@ -173,6 +173,7 @@ static void install_Controls()
 	TBTRAP( SetCtlValue    );  // A963
 	TBTRAP( SetMinCtl      );  // A964
 	TBTRAP( SetMaxCtl      );  // A965
+	TBTRAP( TestControl    );  // A966
 	
 	TBTRAP( TrackControl   );  // A968
 	TBTRAP( DrawControls   );  // A969
