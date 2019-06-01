@@ -269,6 +269,13 @@ namespace TestEdit
 		}
 	};
 	
+	template < class File >
+	static inline
+	void OpenDocument( const File& file )
+	{
+		StoreNewDocument( new Document( file ) );
+	}
+	
 	struct OpenDocuments_AppleEvent
 	{
 		static void Handler( Mac::AppleEvent const&  event,
@@ -287,7 +294,7 @@ namespace TestEdit
 			{
 				Io_Details::file_spec fileSpec = *it;
 				
-				StoreNewDocument( new Document( fileSpec ) );
+				OpenDocument( fileSpec );
 			}
 		}
 		
