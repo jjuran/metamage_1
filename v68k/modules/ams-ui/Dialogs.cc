@@ -259,6 +259,9 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	
 	DialogItem* item = first_dialog_item( items );
 	
+	short item_offset = 0;  // item index - 1
+	short edit_offset = -1;
+	
 	do
 	{
 		switch ( item->type & 0x7F )
@@ -277,8 +280,13 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 				                                    0 );
 				break;
 			
-			case statText:
 			case editText:
+				if ( edit_offset < 0 )
+				{
+					edit_offset = item_offset;
+				}
+				// fall through
+			case statText:
 				item->handle = expand_param_text( &item->length );
 				break;
 			
@@ -295,8 +303,17 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 		}
 		
 		item = next( item );
+		
+		++item_offset;
 	}
 	while ( --n_items_1 >= 0 );
+	
+	d->editField = edit_offset;
+	
+	if ( edit_offset >= 0 )
+	{
+		d->textH = TENew( &window->portRect, &window->portRect );
+	}
 	
 	return window;
 }
@@ -339,6 +356,11 @@ pascal DialogRef GetNewDialog_patch( short id, void* storage, WindowRef behind )
 pascal void CloseDialog_patch( DialogRef dialog )
 {
 	DialogPeek d = (DialogPeek) dialog;
+	
+	if ( d->textH )
+	{
+		TEDispose( d->textH );
+	}
 	
 	short n_items_1 = dialog_item_count_minus_one( d->items );
 	
