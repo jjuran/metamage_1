@@ -24,7 +24,7 @@
 
 
 static
-pascal StringPtr NumToString_method( long x : __D0, StringPtr p : __A0 ) : __A0
+StringPtr NumToString_method( long x : __D0, StringPtr p : __A0 )
 {
 	const char* s = gear::inscribe_decimal( x );
 	
