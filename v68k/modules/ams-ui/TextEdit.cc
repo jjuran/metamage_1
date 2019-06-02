@@ -519,6 +519,39 @@ void insert_char( TEHandle hTE, char c )
 	te.teLength = len + 1;
 }
 
+static
+void insert_chars( TEHandle hTE, const char* p, long n )
+{
+	TERec& te = **hTE;
+	
+	const Handle hText = te.hText;
+	
+	Size size = GetHandleSize( hText );
+	
+	if ( size < te.teLength + n )
+	{
+		size *= 2;
+		
+		if ( size < te.teLength + n )
+		{
+			size = te.teLength + n;
+		}
+		
+		SetHandleSize( hText, size );
+	}
+	
+	short pos = te.selStart;
+	short len = te.teLength;
+	
+	char* target = *hText + pos;
+	
+	BlockMoveData( target, target + n, len - pos );
+	
+	BlockMoveData( p, target, n );
+	
+	te.teLength = len + n;
+}
+
 pascal void TEKey_patch( short c, TERec** hTE )
 {
 	TERec& te = **hTE;
@@ -585,6 +618,24 @@ pascal void TEKey_patch( short c, TERec** hTE )
 			TECalText( hTE );
 			break;
 	}
+	
+	draw_text( te );
+	
+	update_selRect( te );
+	show_selection( te );
+}
+
+pascal void TEInsert_patch( const char* text, long length, TERec** hTE )
+{
+	TERec& te = **hTE;
+	
+	scoped_port thePort = te.inPort;
+	
+	hide_selection( te );
+	
+	insert_chars( hTE, text, length );
+	
+	TECalText( hTE );
 	
 	draw_text( te );
 	

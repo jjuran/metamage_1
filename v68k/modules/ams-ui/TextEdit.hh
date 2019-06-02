@@ -29,6 +29,8 @@ pascal void TEDeactivate_patch( TERec** hTE );
 
 pascal void TEKey_patch( short c, TERec** hTE );
 
+pascal void TEInsert_patch( const char* text, long length, TERec** hTE );
+
 pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE );
 
 pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just );
