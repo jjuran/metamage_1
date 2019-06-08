@@ -31,6 +31,8 @@
 static short ANumber;
 static short ACount = -1;
 
+long CaretTime : 0x02F4;
+
 StringHandle DAStrings[ 4 ] : 0x0AA0;
 
 
@@ -631,6 +633,12 @@ Boolean basic_filterProc( DialogRef dialog, EventRecord* event, short* itemHit )
 	return false;
 }
 
+static inline
+bool blinks( TEHandle hTE )
+{
+	return hTE  &&  hTE[0]->active  &&  hTE[0]->selStart == hTE[0]->selEnd;
+}
+
 pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 {
 	modal_update_scope updating( filterProc == NULL );
@@ -645,11 +653,12 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 	scoped_port thePort = window;
 	
 	WindowPeek w = (WindowPeek) window;
-	
-	const long sleep = 0x7fffffff;
+	DialogPeek d = (DialogPeek) window;
 	
 	while ( true )
 	{
+		const long sleep = blinks( d->textH ) ? CaretTime : 0x7fffffff;
+		
 		EventRecord event;
 		
 		if ( WaitNextEvent( everyEvent, &event, sleep, NULL ) )
