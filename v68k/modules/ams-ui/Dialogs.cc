@@ -219,6 +219,14 @@ DialogItem* end_of_items( Handle items )
 	return get_nth_item( items, n_items_1 + 2 );
 }
 
+static inline
+const DialogItem* get_editField( DialogPeek d )
+{
+	const short i = d->editField + 1;
+	
+	return i ? get_nth_item( d->items, i ) : NULL;
+}
+
 
 #pragma mark -
 #pragma mark Initialization
@@ -479,6 +487,29 @@ bool invoke_defItem( DialogPeek d )
 	}
 	
 	return ! (type & 0x80);
+}
+
+static
+void activate_editField( DialogRef dialog, bool activating )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	if ( TEHandle hTE = d->textH )
+	{
+		if ( activating )
+		{
+			const DialogItem* item = get_editField( d );
+			
+			hTE[0]->viewRect = item->bounds;
+			hTE[0]->destRect = item->bounds;
+			
+			TEActivate( hTE );
+		}
+		else
+		{
+			TEDeactivate( hTE );
+		}
+	}
 }
 
 static pascal
