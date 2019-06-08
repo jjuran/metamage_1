@@ -77,6 +77,22 @@ void draw_text( const TERec& te )
 	draw_text_line( *te.hText, te.teLength, h, v, rectWidth, te.just );
 }
 
+static
+void update_selRect( TERec& te )
+{
+	const char* pText = *te.hText;
+	const short start = te.selStart;
+	const short end   = te.selEnd;
+	const short count = end - start;
+	const short left  = te.destRect.left + TextWidth( pText, 0, start );
+	
+	const bool bleedRight = count > 0  &&  end == te.teLength;
+	
+	te.selRect.left  = left + (start > 0  &&  count > 0);
+	te.selRect.right = bleedRight ? te.destRect.right
+	                              : left + TextWidth( pText, start, count ) + 1;
+}
+
 pascal void TEInit_patch()
 {
 }
@@ -141,6 +157,8 @@ pascal void TESetText_patch( const char* p, long n, TERec** hTE )
 	te.selStart = n;
 	te.selEnd   = n;
 	te.teLength = n;
+	
+	update_selRect( te );
 }
 
 pascal void TEIdle_patch( TEHandle hTE )
@@ -163,11 +181,20 @@ pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
 	
 	te.selStart = selStart;
 	te.selEnd   = selEnd;
+	
+	update_selRect( te );
 }
 
 pascal void TEActivate_patch( TERec** hTE )
 {
-	hTE[0]->active = true;
+	TERec& te = **hTE;
+	
+	te.active = true;
+	
+	te.selRect.top    = te.destRect.top;
+	te.selRect.bottom = te.selRect.top + te.lineHeight;
+	
+	update_selRect( te );
 }
 
 pascal void TEDeactivate_patch( TERec** hTE )
