@@ -598,6 +598,8 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 	
 	dialog = FrontWindow();
 	
+	*dialogHit = dialog;
+	
 	DialogPeek d = (DialogPeek) dialog;
 	
 	// TODO:  keyDown/autoKey
