@@ -209,6 +209,13 @@ void make_edit_record( DialogPeek d, const DialogItem* item )
 	TEHandle hTE = TENew( &item->bounds, &item->bounds );
 	
 	d->textH = hTE;
+	
+	DisposeHandle( hTE[0]->hText );
+	
+	hTE[0]->teLength = GetHandleSize( item->handle );
+	hTE[0]->hText    = item->handle;
+	
+	TESetSelect( 0, 32767, hTE );
 }
 
 pascal DialogRef NewDialog_patch( void*                 storage,
@@ -369,6 +376,8 @@ pascal void CloseDialog_patch( DialogRef dialog )
 	
 	if ( TEHandle hTE = d->textH )
 	{
+		hTE[0]->hText = NewHandle( 0 );
+		
 		TEDispose( hTE );
 	}
 	
