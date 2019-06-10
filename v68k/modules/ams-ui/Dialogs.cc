@@ -1100,6 +1100,43 @@ pascal void SelIText_patch( GrafPort*  dialog,
                             short      start,
                             short      end )
 {
+	DialogPeek d = (DialogPeek) dialog;
+	
+	TEHandle hTE = d->textH;
+	
+	if ( hTE == NULL )
+	{
+		return;
+	}
+	
+	const bool active = hTE[0]->active;
+	
+	if ( active )
+	{
+		TEDeactivate( hTE );
+	}
+	
+	if ( d->editField != item - 1 )
+	{
+		d->editField = item - 1;
+		
+		const DialogItem* edit = get_editField( d );
+		
+		hTE[0]->viewRect = edit->bounds;
+		hTE[0]->destRect = edit->bounds;
+		
+		SetHandleSize( hTE[0]->hText, hTE[0]->teLength );
+		
+		hTE[0]->teLength = GetHandleSize( edit->handle );
+		hTE[0]->hText    = edit->handle;
+	}
+	
+	TESetSelect( start, end, hTE );
+	
+	if ( active )
+	{
+		TEActivate( hTE );
+	}
 }
 
 pascal short FindDItem_patch( DialogRef dialog, Point pt )
