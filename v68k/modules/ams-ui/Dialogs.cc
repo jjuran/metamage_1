@@ -814,6 +814,10 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 			}
 		}
 	}
+	else if ( TEHandle hTE = d->textH )
+	{
+		TEIdle( hTE );
+	}
 	
 	return false;
 }
