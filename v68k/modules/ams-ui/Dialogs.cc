@@ -203,6 +203,14 @@ pascal void InitDialogs_patch( void* proc )
 #pragma mark Creating and Disposing of Dialogs
 #pragma mark -
 
+static
+void make_edit_record( DialogPeek d, const DialogItem* item )
+{
+	TEHandle hTE = TENew( &item->bounds, &item->bounds );
+	
+	d->textH = hTE;
+}
+
 pascal DialogRef NewDialog_patch( void*                 storage,
                                   const Rect*           bounds,
                                   const unsigned char*  title,
@@ -257,6 +265,7 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	
 	short n_items_1 = dialog_item_count_minus_one( items );
 	
+	DialogItem* edit = NULL;
 	DialogItem* item = first_dialog_item( items );
 	
 	short item_offset = 0;  // item index - 1
@@ -284,6 +293,7 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 				if ( edit_offset < 0 )
 				{
 					edit_offset = item_offset;
+					edit        = item;
 				}
 				// fall through
 			case statText:
@@ -312,7 +322,7 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	
 	if ( edit_offset >= 0 )
 	{
-		d->textH = TENew( &window->portRect, &window->portRect );
+		make_edit_record( d, edit );
 	}
 	
 	return window;
