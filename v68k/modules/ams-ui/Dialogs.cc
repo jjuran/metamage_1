@@ -570,11 +570,6 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 	
 	switch ( event->what )
 	{
-		case mouseDown:
-		case keyDown:
-		case autoKey:
-			break;
-		
 		case updateEvt:
 			dialog = (DialogRef) event->message;
 			
@@ -593,7 +588,7 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 			return false;
 		
 		default:
-			return false;
+			break;
 	}
 	
 	dialog = FrontWindow();
