@@ -792,6 +792,20 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 			
 			if ( PtInRect( pt, &item->bounds ) )
 			{
+				if ( (type & 0x7c) == editText )
+				{
+					bool extend = event->modifiers & shiftKey;
+					
+					if ( d->editField + 1 != item_index )
+					{
+						SelectDialogItemText( dialog, item_index, 0, 32767 );
+						
+						extend = false;
+					}
+					
+					TEClick( pt, extend, d->textH );
+				}
+				
 				if ( (type & 0x7c) == ctrlItem )
 				{
 					ControlRef control = (ControlRef) item->handle;
