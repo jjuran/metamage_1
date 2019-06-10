@@ -265,7 +265,26 @@ pascal void TEClick_patch( Point pt, char extend, TERec** hTE )
 	
 	const short hit = hit_test( te, pt );
 	
-	TESetSelect_patch( hit, hit, hTE );
+	te.selPoint  = pt;
+	te.clickTime = Ticks;
+	
+	short start, end;
+	
+	if ( extend )
+	{
+		const short loc = te.clickLoc;
+		
+		start = hit < loc ? hit : loc;
+		end   = hit ^ loc ^ start;
+	}
+	else
+	{
+		te.clickLoc = hit;
+		
+		start = end = hit;
+	}
+	
+	TESetSelect_patch( start, end, hTE );
 }
 
 pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
@@ -334,6 +353,7 @@ bool at_beginning( const TERec& te )
 static
 void select( TERec& te, short pos )
 {
+	te.clickLoc = pos;
 	te.selStart = pos;
 	te.selEnd   = pos;
 }
@@ -347,6 +367,7 @@ void delete_chars( TERec& te, short start, short end )
 	
 	BlockMoveData( pText + end, pText + start, te.teLength - end );
 	
+	te.clickLoc  = start;
 	te.teLength -= len;
 	te.selEnd    = start;
 }
@@ -397,6 +418,7 @@ void insert_char( TEHandle hTE, char c )
 	
 	hText[0][ pos ] = c;
 	
+	te.clickLoc = pos + 1;
 	te.selStart = pos + 1;
 	te.selEnd   = pos + 1;
 	te.teLength = len + 1;
