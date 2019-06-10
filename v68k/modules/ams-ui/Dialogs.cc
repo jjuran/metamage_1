@@ -566,21 +566,16 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
                                    short*              itemHit )
 {
 	DialogRef dialog;
-	GrafPtr savedPort;
 	
 	switch ( event->what )
 	{
 		case updateEvt:
 			dialog = (DialogRef) event->message;
 			
-			GetPort( &savedPort );
-			SetPort( dialog );
-			
 			BeginUpdate( dialog );
 			DrawDialog ( dialog );
 			EndUpdate  ( dialog );
 			
-			SetPort( savedPort );
 			return false;
 		
 		case activateEvt:
