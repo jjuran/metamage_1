@@ -467,14 +467,11 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 		filterProc = &basic_filterProc;
 	}
 	
-	QDGlobals& qd = get_QDGlobals();
-	
 	WindowRef window = FrontWindow();
 	
 	scoped_port thePort = window;
 	
 	WindowPeek w = (WindowPeek) window;
-	DialogPeek d = (DialogPeek) window;
 	
 	const long sleep = 0x7fffffff;
 	
@@ -501,53 +498,12 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 			switch ( event.what )
 			{
 				case updateEvt:
-					window = (WindowRef) event.message;
-					
-					BeginUpdate( window );
-					DrawDialog( window );
-					EndUpdate( window );
-					break;
-				
 				case mouseDown:
-				{
-					Point pt = event.where;
-					GlobalToLocal( &pt );
-					
-					// item count minus one
-					short n_items_1 = dialog_item_count_minus_one( d->items );
-					
-					const DialogItem* item = first_dialog_item( d->items );
-					
-					short item_index = 0;
-					
-					while ( item_index++ <= n_items_1 )
+					if ( DialogSelect( &event, &window, itemHit ) )
 					{
-						const UInt8 type = item->type;
-						
-						if ( PtInRect( pt, &item->bounds ) )
-						{
-							if ( (type & 0x7c) == ctrlItem )
-							{
-								ControlRef control = (ControlRef) item->handle;
-								
-								if ( ! TrackControl( control, pt, NULL ) )
-								{
-									break;
-								}
-							}
-							
-							if ( ! (type & 0x80) )
-							{
-								*itemHit = item_index;
-								return;
-							}
-						}
-						
-						item = next( item );
+						return;
 					}
-					
 					break;
-				}
 				
 				default:
 					break;
