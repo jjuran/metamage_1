@@ -631,7 +631,11 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 			return false;
 		
 		case activateEvt:
-			// TODO:  Activate TE items
+			if ( DialogRef dialog = dialog_from_event( event ) )
+			{
+				activate_editField( dialog, event->modifiers & activeFlag );
+			}
+			
 			return false;
 		
 		default:
