@@ -694,25 +694,28 @@ int32_t BlockMove_callout( v68k::processor_state& s )
 	
 	const uint32_t n = s.d(0);
 	
-	const uint8_t* p = s.mem.translate( src, n, data_space, mem_read );
-	
-	if ( p == NULL )
+	if ( n > 0 )
 	{
-		abort();
-		return nil;  // FIXME
+		const uint8_t* p = s.mem.translate( src, n, data_space, mem_read );
+		
+		if ( p == NULL )
+		{
+			abort();
+			return nil;  // FIXME
+		}
+		
+		uint8_t* q = s.mem.translate( dst, n, data_space, mem_write );
+		
+		if ( q == NULL )
+		{
+			abort();
+			return nil;  // FIXME
+		}
+		
+		memmove( q, p, n );
+		
+		s.mem.translate( dst, n, data_space, mem_update );
 	}
-	
-	uint8_t* q = s.mem.translate( dst, n, data_space, mem_write );
-	
-	if ( q == NULL )
-	{
-		abort();
-		return nil;  // FIXME
-	}
-	
-	memmove( q, p, n );
-	
-	s.mem.translate( dst, n, data_space, mem_update );
 	
 	s.d(0) = noErr;
 	
