@@ -730,6 +730,12 @@ pascal void DrawDialog_patch( DialogRef dialog )
 				
 				InsetRect( &box, -3, -3 );
 				FrameRect( &box );
+				
+				if ( d->editField + 1 == item_index )
+				{
+					TEUpdate( &bounds, d->textH );
+					break;
+				}
 			}
 			// fall through
 			
