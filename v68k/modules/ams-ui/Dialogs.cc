@@ -1037,11 +1037,34 @@ pascal void SetDItem_patch( DialogRef    dialog,
                             Handle       h,
                             const Rect*  box )
 {
+	DialogPeek d = (DialogPeek) dialog;
+	
 	DialogItem* item = get_nth_item( dialog, i );
+	
+	if ( d->editField == i - 1  &&  (type & 0x7f) != editText )
+	{
+		TEHandle hTE = d->textH;
+		
+		SetHandleSize( hTE[0]->hText, hTE[0]->teLength );
+		
+		d->editField = -1;
+	}
 	
 	item->handle = h;
 	item->bounds = *box;
 	item->type   = type;
+	
+	if ( (type & 0x7f) == editText  &&  d->editField < 0 )
+	{
+		d->editField = i - 1;
+		
+		if ( d->textH == NULL )
+		{
+			scoped_port thePort = dialog;
+			
+			make_edit_record( d, item );
+		}
+	}
 }
 
 pascal void GetIText_patch( Handle h, Str255 text )
