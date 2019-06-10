@@ -772,8 +772,6 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 	
 	DialogPeek d = (DialogPeek) dialog;
 	
-	// TODO:  keyDown/autoKey
-	
 	if ( event->what == mouseDown )
 	{
 		scoped_port thePort = dialog;
@@ -828,6 +826,14 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 				advance_field( dialog, event->modifiers & shiftKey );
 				return false;
 			}
+			
+			TEKey( c, hTE );
+			
+			const DialogItem* item = get_editField( d );
+			
+			*itemHit = d->editField + 1;
+			
+			return ! (item->type & 0x80);
 		}
 	}
 	else if ( TEHandle hTE = d->textH )
