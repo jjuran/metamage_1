@@ -190,6 +190,35 @@ const DialogItem* next( const DialogItem* di )
 	return next( const_cast< DialogItem* >( di ) );
 }
 
+static
+DialogItem* get_nth_item( Handle items, short i )
+{
+	DialogItem* item = first_dialog_item( items );
+	
+	while ( --i > 0 )
+	{
+		item = next( item );
+	}
+	
+	return item;
+}
+
+static inline
+DialogItem* get_nth_item( DialogRef dialog, short i )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	return get_nth_item( d->items, i );
+}
+
+static inline
+DialogItem* end_of_items( Handle items )
+{
+	const short n_items_1 = dialog_item_count_minus_one( items );
+	
+	return get_nth_item( items, n_items_1 + 2 );
+}
+
 
 #pragma mark -
 #pragma mark Initialization
@@ -729,15 +758,7 @@ static const Rect alert_icon_bounds = { 10, 20, 10 + 32, 20 + 32 };
 static
 void DITL_append_icon( Handle items, ResID icon_id )
 {
-	short n_items_1 = dialog_item_count_minus_one( items );
-	
-	DialogItem* item = first_dialog_item( items );
-	
-	do
-	{
-		item = next( item );
-	}
-	while ( --n_items_1 >= 0 );
+	DialogItem* item = end_of_items( items );
 	
 	const short added_length = sizeof (DialogItem)
 	                         + sizeof (ResID);  // 16 bytes
@@ -761,15 +782,7 @@ void DITL_append_icon( Handle items, ResID icon_id )
 static
 void DITL_append_userItem( Handle items, UserItemUPP proc, const Rect& bounds )
 {
-	short n_items_1 = dialog_item_count_minus_one( items );
-	
-	DialogItem* item = first_dialog_item( items );
-	
-	do
-	{
-		item = next( item );
-	}
-	while ( --n_items_1 >= 0 );
+	DialogItem* item = end_of_items( items );
 	
 	const short added_length = sizeof (DialogItem);  // 14 bytes
 	
@@ -970,14 +983,7 @@ pascal void GetDItem_patch( DialogRef  dialog,
                             Handle*    h,
                             Rect*      box )
 {
-	DialogPeek d = (DialogPeek) dialog;
-	
-	const DialogItem* item = first_dialog_item( d->items );
-	
-	while ( --i > 0 )
-	{
-		item = next( item );
-	}
+	const DialogItem* item = get_nth_item( dialog, i );
 	
 	*type = item->type;
 	*h    = item->handle;
@@ -990,16 +996,7 @@ pascal void SetDItem_patch( DialogRef    dialog,
                             Handle       h,
                             const Rect*  box )
 {
-	DialogPeek d = (DialogPeek) dialog;
-	
-	short n_items_1 = dialog_item_count_minus_one( d->items );
-	
-	DialogItem* item = first_dialog_item( d->items );
-	
-	while ( --i > 0 )
-	{
-		item = next( item );
-	}
+	DialogItem* item = get_nth_item( dialog, i );
 	
 	item->handle = h;
 	item->bounds = *box;
