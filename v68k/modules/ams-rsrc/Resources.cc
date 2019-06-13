@@ -804,6 +804,8 @@ void GetResInfo_handler( const GetResInfo_args* args : __A0 )
 	
 	if ( args->name )
 	{
+		args->name[ 0 ] = '\0';  // Pessimistically assign empty string
+		
 		const rsrc_map_header& rsrc_map = **(RsrcMapHandle) mp.base;
 		
 		if ( ConstStr255Param name = get_name( rsrc_map, *rsrc ) )
