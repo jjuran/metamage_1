@@ -596,6 +596,8 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 	
 	if ( event->what == mouseDown )
 	{
+		scoped_port thePort = dialog;
+		
 		Point pt = event->where;
 		GlobalToLocal( &pt );
 		
