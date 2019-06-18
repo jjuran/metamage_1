@@ -154,6 +154,11 @@ pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
 		selEnd = te.teLength;
 	}
 	
+	if ( selStart > selEnd )
+	{
+		selStart = selEnd;
+	}
+	
 	te.selStart = selStart;
 	te.selEnd   = selEnd;
 }
