@@ -633,11 +633,6 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 			
 			if ( PtInRect( pt, &item->bounds ) )
 			{
-				if ( type & 0x80 )
-				{
-					return false;  // disabled
-				}
-				
 				if ( (type & 0x7c) == ctrlItem )
 				{
 					ControlRef control = (ControlRef) item->handle;
@@ -646,6 +641,11 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 					{
 						return false;
 					}
+				}
+				
+				if ( type & 0x80 )
+				{
+					return false;  // disabled
 				}
 				
 				*itemHit = item_index;
