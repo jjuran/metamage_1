@@ -527,20 +527,27 @@ pascal Boolean IsDialogEvent_patch( const EventRecord* event )
 	return false;
 }
 
+static inline
+DialogRef dialog_from_event( const EventRecord* event )
+{
+	WindowPeek w = (WindowPeek) event->message;
+	
+	return w->windowKind == dialogKind ? &w->port : NULL;
+}
+
 pascal Boolean DialogSelect_patch( const EventRecord*  event,
                                    DialogRef*          dialogHit,
                                    short*              itemHit )
 {
-	DialogRef dialog;
-	
 	switch ( event->what )
 	{
 		case updateEvt:
-			dialog = (DialogRef) event->message;
-			
-			BeginUpdate( dialog );
-			DrawDialog ( dialog );
-			EndUpdate  ( dialog );
+			if ( DialogRef dialog = dialog_from_event( event ) )
+			{
+				BeginUpdate( dialog );
+				DrawDialog ( dialog );
+				EndUpdate  ( dialog );
+			}
 			
 			return false;
 		
@@ -552,7 +559,7 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 			break;
 	}
 	
-	dialog = FrontWindow();
+	const DialogRef dialog = FrontWindow();
 	
 	*dialogHit = dialog;
 	
