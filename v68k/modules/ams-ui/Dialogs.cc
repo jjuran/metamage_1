@@ -454,6 +454,15 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 		
 		if ( WaitNextEvent( everyEvent, &event, sleep, NULL ) )
 		{
+			if ( event.what == mouseDown )
+			{
+				if ( ! PtInRgn( event.where, w->contRgn ) )
+				{
+					SysBeep( 6 );
+					continue;
+				}
+			}
+			
 			switch ( event.what )
 			{
 				case updateEvt:
@@ -466,12 +475,6 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 				
 				case mouseDown:
 				{
-					if ( ! PtInRgn( event.where, w->contRgn ) )
-					{
-						SysBeep( 6 );
-						continue;
-					}
-					
 					Point pt = event.where;
 					GlobalToLocal( &pt );
 					
