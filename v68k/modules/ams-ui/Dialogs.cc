@@ -367,9 +367,9 @@ pascal void CloseDialog_patch( DialogRef dialog )
 {
 	DialogPeek d = (DialogPeek) dialog;
 	
-	if ( d->textH )
+	if ( TEHandle hTE = d->textH )
 	{
-		TEDispose( d->textH );
+		TEDispose( hTE );
 	}
 	
 	short n_items_1 = dialog_item_count_minus_one( d->items );
