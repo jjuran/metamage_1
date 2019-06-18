@@ -93,6 +93,35 @@ void update_selRect( TERec& te )
 	                              : left + TextWidth( pText, start, count ) + 1;
 }
 
+static
+void toggle_selRect( TERec& te )
+{
+	InvertRect( &te.selRect );
+}
+
+static
+void showhide_selection( TERec& te, bool show )
+{
+	if ( ! te.active )
+	{
+		return;
+	}
+	
+	toggle_selRect( te );
+}
+
+static inline
+void show_selection( TERec& te )
+{
+	showhide_selection( te, true );
+}
+
+static inline
+void hide_selection( TERec& te )
+{
+	showhide_selection( te, false );
+}
+
 pascal void TEInit_patch()
 {
 }
@@ -169,6 +198,10 @@ pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
 {
 	TERec& te = **hTE;
 	
+	scoped_port thePort = te.inPort;
+	
+	hide_selection( te );
+	
 	if ( selEnd > te.teLength )
 	{
 		selEnd = te.teLength;
@@ -183,11 +216,14 @@ pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
 	te.selEnd   = selEnd;
 	
 	update_selRect( te );
+	show_selection( te );
 }
 
 pascal void TEActivate_patch( TERec** hTE )
 {
 	TERec& te = **hTE;
+	
+	scoped_port thePort = te.inPort;
 	
 	te.active = true;
 	
@@ -195,11 +231,18 @@ pascal void TEActivate_patch( TERec** hTE )
 	te.selRect.bottom = te.selRect.top + te.lineHeight;
 	
 	update_selRect( te );
+	show_selection( te );
 }
 
 pascal void TEDeactivate_patch( TERec** hTE )
 {
-	hTE[0]->active = false;
+	TERec& te = **hTE;
+	
+	scoped_port thePort = te.inPort;
+	
+	hide_selection( te );
+	
+	te.active = false;
 }
 
 pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE )
@@ -208,7 +251,11 @@ pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE )
 	
 	scoped_port thePort = te.inPort;
 	
+	hide_selection( te );
+	
 	draw_text( te );
+	
+	show_selection( te );
 }
 
 pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
