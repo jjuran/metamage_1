@@ -21,6 +21,7 @@
 #include "scoped_port.hh"
 
 
+long Ticks     : 0x016A;
 long CaretTime : 0x02F4;
 
 
@@ -99,6 +100,9 @@ void update_selRect( TERec& te )
 static
 void toggle_selRect( TERec& te )
 {
+	te.caretTime  = Ticks + CaretTime;
+	te.caretState = ! te.caretState;
+	
 	InvertRect( &te.selRect );
 }
 
@@ -107,6 +111,12 @@ void showhide_selection( TERec& te, bool show )
 {
 	if ( ! te.active )
 	{
+		return;
+	}
+	
+	if ( !! te.caretState == show )
+	{
+		// Caret is already in desired state.
 		return;
 	}
 	
@@ -123,6 +133,12 @@ static inline
 void hide_selection( TERec& te )
 {
 	showhide_selection( te, false );
+}
+
+static inline
+bool has_caret( const TERec& te )
+{
+	return te.selStart == te.selEnd;
 }
 
 pascal void TEInit_patch()
@@ -196,6 +212,14 @@ pascal void TESetText_patch( const char* p, long n, TERec** hTE )
 
 pascal void TEIdle_patch( TEHandle hTE )
 {
+	TERec& te = **hTE;
+	
+	if ( has_caret( te )  &&  Ticks >= te.caretTime )
+	{
+		scoped_port thePort = te.inPort;
+		
+		toggle_selRect( te );
+	}
 }
 
 pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
