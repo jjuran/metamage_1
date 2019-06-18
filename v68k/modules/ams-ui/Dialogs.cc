@@ -495,18 +495,9 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 				return;
 			}
 			
-			switch ( event.what )
+			if ( DialogSelect( &event, &window, itemHit ) )
 			{
-				case updateEvt:
-				case mouseDown:
-					if ( DialogSelect( &event, &window, itemHit ) )
-					{
-						return;
-					}
-					break;
-				
-				default:
-					break;
+				return;
 			}
 		}
 	}
