@@ -433,9 +433,39 @@ bool invoke_defItem( DialogPeek d )
 	return ! (type & 0x80);
 }
 
+static pascal
+Boolean basic_filterProc( DialogRef dialog, EventRecord* event, short* itemHit )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	if ( event->what == keyDown )
+	{
+		switch ( (char) event->message )
+		{
+			case kEnterCharCode:
+			case kReturnCharCode:
+				if ( invoke_defItem( d ) )
+				{
+					*itemHit = d->aDefItem;
+					return true;
+				}
+			
+			default:
+				break;
+		}
+	}
+	
+	return false;
+}
+
 pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 {
 	modal_update_scope updating( filterProc == NULL );
+	
+	if ( filterProc == NULL )
+	{
+		filterProc = &basic_filterProc;
+	}
 	
 	QDGlobals& qd = get_QDGlobals();
 	
@@ -461,6 +491,11 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 					SysBeep( 6 );
 					continue;
 				}
+			}
+			
+			if ( filterProc( window, &event, itemHit ) )
+			{
+				return;
 			}
 			
 			switch ( event.what )
@@ -509,25 +544,6 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 						}
 						
 						item = next( item );
-					}
-					
-					break;
-				}
-				
-				case keyDown:
-				{
-					switch ( (char) event.message )
-					{
-						case kEnterCharCode:
-						case kReturnCharCode:
-							if ( invoke_defItem( d ) )
-							{
-								*itemHit = d->aDefItem;
-								return;
-							}
-						
-						default:
-							break;
 					}
 					
 					break;
