@@ -64,6 +64,8 @@ void install_ResourceManager()
 	
 	TBTRAP( GetResInfo      );  // A9A8
 	
+	TBTRAP( ChangedResource );  // A9AA
+	
 	TBTRAP( ResError        );  // A9AF
 }
 

@@ -25,6 +25,9 @@
 // gear
 #include "gear/hexadecimal.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -874,6 +877,11 @@ pascal short GetResAttrs_patch( Handle resource )
 pascal long SizeRsrc_patch( Handle resource )
 {
 	return GetHandleSize( resource );
+}
+
+pascal void ChangedResource_patch( Handle resource )
+{
+	ERROR = "ChangedResource is unimplemented";
 }
 
 pascal void SetResPurge_patch( unsigned char install )
