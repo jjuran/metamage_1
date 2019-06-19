@@ -662,16 +662,16 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 					continue;
 				}
 			}
-			
-			if ( filterProc( window, &event, itemHit ) )
-			{
-				return;
-			}
-			
-			if ( DialogSelect( &event, &window, itemHit ) )
-			{
-				return;
-			}
+		}
+		
+		if ( filterProc( window, &event, itemHit ) )
+		{
+			return;
+		}
+		
+		if ( DialogSelect( &event, &window, itemHit ) )
+		{
+			return;
 		}
 	}
 }
