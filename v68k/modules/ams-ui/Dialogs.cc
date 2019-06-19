@@ -227,6 +227,100 @@ const DialogItem* get_editField( DialogPeek d )
 	return i ? get_nth_item( d->items, i ) : NULL;
 }
 
+static
+short next_field( DialogPeek d )
+{
+	const short n_items_1 = dialog_item_count_minus_one( d->items );
+	
+	const DialogItem* item = first_dialog_item( d->items );
+	
+	short first = -1;
+	
+	short i = 0;
+	
+	for ( ;  i <= n_items_1;  ++i )
+	{
+		if ( (item->type & 0x7f) == editText )
+		{
+			first = i;
+			break;
+		}
+		
+		item = next( item );
+	}
+	
+	if ( first < 0 )
+	{
+		return first;
+	}
+	
+	const short editField = d->editField;
+	
+	while ( i < editField )
+	{
+		item = next( item );
+		++i;
+	}
+	
+	do
+	{
+		if ( ++i > n_items_1 )
+		{
+			return first;
+		}
+		
+		item = next( item );
+	}
+	while ( (item->type & 0x7f) != editText );
+	
+	return i;
+}
+
+static
+short prev_field( DialogPeek d )
+{
+	const short n_items_1 = dialog_item_count_minus_one( d->items );
+	
+	const DialogItem* item = first_dialog_item( d->items );
+	
+	const short editField = d->editField;
+	
+	short prev = -1;
+	
+	short i = 0;
+	
+	while ( i < editField )
+	{
+		if ( (item->type & 0x7f) == editText )
+		{
+			prev = i;
+		}
+		
+		item = next( item );
+		++i;
+	}
+	
+	if ( prev >= 0 )
+	{
+		return prev;
+	}
+	
+	short last = editField;
+	
+	while ( i < n_items_1 )
+	{
+		item = next( item );
+		++i;
+		
+		if ( (item->type & 0x7f) == editText )
+		{
+			last = i;
+		}
+	}
+	
+	return last;
+}
+
 
 #pragma mark -
 #pragma mark Initialization
@@ -614,6 +708,20 @@ DialogRef dialog_from_event( const EventRecord* event )
 	return w->windowKind == dialogKind ? &w->port : NULL;
 }
 
+static
+void advance_field( DialogRef dialog, bool reverse )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	const short target = reverse ? prev_field( d )
+	                             : next_field( d );
+	
+	if ( target >= 0  &&  target != d->editField )
+	{
+		SelectDialogItemText( dialog, target + 1, 0, 32767 );
+	}
+}
+
 pascal Boolean DialogSelect_patch( const EventRecord*  event,
                                    DialogRef*          dialogHit,
                                    short*              itemHit )
@@ -691,6 +799,19 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 			}
 			
 			item = next( item );
+		}
+	}
+	else if ( event->what == keyDown  ||  event->what == autoKey )
+	{
+		if ( TEHandle hTE = d->textH )
+		{
+			const char c = (char) event->message;
+			
+			if ( c == kTabCharCode )
+			{
+				advance_field( dialog, event->modifiers & shiftKey );
+				return false;
+			}
 		}
 	}
 	
