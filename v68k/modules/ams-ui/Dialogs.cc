@@ -594,12 +594,13 @@ void activate_editField( DialogRef dialog, bool activating )
 	{
 		if ( activating )
 		{
-			const DialogItem* item = get_editField( d );
-			
-			hTE[0]->viewRect = item->bounds;
-			hTE[0]->destRect = item->bounds;
-			
-			TEActivate( hTE );
+			if ( const DialogItem* item = get_editField( d ) )
+			{
+				hTE[0]->viewRect = item->bounds;
+				hTE[0]->destRect = item->bounds;
+				
+				TEActivate( hTE );
+			}
 		}
 		else
 		{
