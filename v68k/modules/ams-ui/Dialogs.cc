@@ -337,6 +337,15 @@ pascal void InitDialogs_patch( void* proc )
 #pragma mark -
 
 static
+void update_edit_record( TEHandle hTE, const DialogItem* item )
+{
+	hTE[0]->teLength = GetHandleSize( item->handle );
+	hTE[0]->hText    = item->handle;
+	
+	TESetSelect( 0, 32767, hTE );
+}
+
+static
 void make_edit_record( DialogPeek d, const DialogItem* item )
 {
 	TEHandle hTE = TENew( &item->bounds, &item->bounds );
@@ -345,10 +354,7 @@ void make_edit_record( DialogPeek d, const DialogItem* item )
 	
 	DisposeHandle( hTE[0]->hText );
 	
-	hTE[0]->teLength = GetHandleSize( item->handle );
-	hTE[0]->hText    = item->handle;
-	
-	TESetSelect( 0, 32767, hTE );
+	update_edit_record( hTE, item );
 }
 
 pascal DialogRef NewDialog_patch( void*                 storage,
@@ -1198,6 +1204,10 @@ pascal void SetDItem_patch( DialogRef    dialog,
 			scoped_port thePort = dialog;
 			
 			make_edit_record( d, item );
+		}
+		else
+		{
+			update_edit_record( d->textH, item );
 		}
 	}
 }
