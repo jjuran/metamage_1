@@ -262,6 +262,11 @@ short hit_test( const TERec& te, Point pt )
 static
 void update_selection( TERec& te, short selStart, short selEnd )
 {
+	if ( selStart == te.selStart  &&  selEnd == te.selEnd )
+	{
+		return;
+	}
+	
 	hide_selection( te );
 	
 	te.selStart = selStart;
