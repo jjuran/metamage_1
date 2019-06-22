@@ -259,6 +259,18 @@ short hit_test( const TERec& te, Point pt )
 	return hit;
 }
 
+static
+void update_selection( TERec& te, short selStart, short selEnd )
+{
+	hide_selection( te );
+	
+	te.selStart = selStart;
+	te.selEnd   = selEnd;
+	
+	update_selRect( te );
+	show_selection( te );
+}
+
 pascal void TEClick_patch( Point pt, char extend, TERec** hTE )
 {
 	TERec& te = **hTE;
@@ -284,7 +296,7 @@ pascal void TEClick_patch( Point pt, char extend, TERec** hTE )
 		start = end = hit;
 	}
 	
-	TESetSelect_patch( start, end, hTE );
+	update_selection( te, start, end );
 }
 
 pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
@@ -292,8 +304,6 @@ pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
 	TERec& te = **hTE;
 	
 	scoped_port thePort = te.inPort;
-	
-	hide_selection( te );
 	
 	if ( selEnd > te.teLength )
 	{
@@ -305,11 +315,7 @@ pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
 		selStart = selEnd;
 	}
 	
-	te.selStart = selStart;
-	te.selEnd   = selEnd;
-	
-	update_selRect( te );
-	show_selection( te );
+	update_selection( te, selStart, selEnd );
 }
 
 pascal void TEActivate_patch( TERec** hTE )
