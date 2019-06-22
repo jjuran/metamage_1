@@ -6,6 +6,9 @@
 #include "TextEdit.hh"
 
 // Mac OS
+#ifndef __EVENTS__
+#include <Events.h>
+#endif
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
 #endif
@@ -20,15 +23,6 @@
 // ams-ui
 #include "scoped_port.hh"
 
-
-enum
-{
-	kBackspaceCharCode  =  8,
-	kLeftArrowCharCode  = 28,
-	kRightArrowCharCode = 29,
-	kUpArrowCharCode    = 30,
-	kDownArrowCharCode  = 31,
-};
 
 long Ticks     : 0x016A;
 long CaretTime : 0x02F4;
@@ -302,6 +296,20 @@ pascal void TEClick_patch( Point pt, char extend, TERec** hTE )
 	}
 	
 	update_selection( te, start, end );
+	
+	const short loc = te.clickLoc;
+	
+	while ( WaitMouseUp() )
+	{
+		GetMouse( &pt );
+		
+		const short hit = hit_test( te, pt );
+		
+		start = hit < loc ? hit : loc;
+		end   = hit ^ loc ^ start;
+		
+		update_selection( te, start, end );
+	}
 }
 
 pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
