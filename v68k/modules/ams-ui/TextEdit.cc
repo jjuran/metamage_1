@@ -136,9 +136,9 @@ void hide_selection( TERec& te )
 }
 
 static inline
-bool has_caret( const TERec& te )
+bool blinks( const TERec& te )
 {
-	return te.selStart == te.selEnd;
+	return te.active  &&  te.selStart == te.selEnd;
 }
 
 pascal void TEInit_patch()
@@ -214,7 +214,7 @@ pascal void TEIdle_patch( TEHandle hTE )
 {
 	TERec& te = **hTE;
 	
-	if ( has_caret( te )  &&  Ticks >= te.caretTime )
+	if ( blinks( te )  &&  Ticks >= te.caretTime )
 	{
 		scoped_port thePort = te.inPort;
 		
