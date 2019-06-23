@@ -38,11 +38,11 @@ void timeval_add( timeval& tv, uint32_t more_usecs )
 }
 
 static
-asm void call_VBL_task( VBLProcPtr proc : __A0 )
+asm void call_VBL_task( VBLTask* task : __A0, VBLProcPtr proc : __A1 )
 {
 	MOVEM.L  D3/A2-A3,-(SP)
 	
-	JSR      (A0)
+	JSR      (A1)
 	
 	MOVEM.L  (SP)+,D3/A2-A3
 	RTS
@@ -82,7 +82,7 @@ void do_VBL()
 		
 		if ( --task->vblCount == 0 )
 		{
-			call_VBL_task( task->vblAddr );
+			call_VBL_task( task, task->vblAddr );
 		}
 		
 		if ( task->vblCount == 0 )
