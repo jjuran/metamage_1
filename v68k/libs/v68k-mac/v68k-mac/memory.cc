@@ -75,6 +75,8 @@ enum
 	tag_HpChk_low_word,
 	tag_DefltStack,
 	tag_DefltStack_low_word,
+	tag_IAZNotify,
+	tag_IAZNotify_low_word,
 	tag_FCBSPtr,
 	tag_FCBSPtr_low_word,
 	tag_DefVCBPtr,
@@ -253,6 +255,7 @@ static const global globals[] =
 	{ 0x0316, 4,    tag_HpChk       },
 	{ 0x031A, 0x83, 0xFF            },  // Lo3Bytes
 	{ 0x0322, 4,    tag_DefltStack  },
+	{ 0x033C, 4,    tag_IAZNotify   },
 	{ 0x034E, 4,    tag_FCBSPtr     },
 	{ 0x0352, 4,    tag_DefVCBPtr   },
 	{ 0x0356, 10,   tag_VCBQHdr     },
