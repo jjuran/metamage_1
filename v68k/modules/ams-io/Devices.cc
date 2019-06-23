@@ -246,6 +246,11 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		}
 	}
 	
+	if ( immed )
+	{
+		return pb->ioResult = err;
+	}
+	
 	if ( ! async )
 	{
 		while ( pb->ioResult > 0 )
