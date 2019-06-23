@@ -13,8 +13,12 @@
 #include <Resources.h>
 #endif
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "callouts.hh"
+#include "c_string.hh"
 
 
 #pragma exceptions off
@@ -57,6 +61,24 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 			GetResInfo( h, &id, &type, name );
 			
 			HLock( h );
+			
+			DRVRHeader& drvr = *(DRVRHeader*) *h;
+			
+			if ( ! EqualString_sans_case( drvr.drvrName, name ) )
+			{
+				if ( name[ 0 ] > drvr.drvrName[ 0 ] )
+				{
+					ERROR = "DRVR resource ", CSTR( name ),
+					        " has mismatched driver name ", CSTR( drvr.drvrName );
+					
+					return openErr;
+				}
+				
+				NOTICE = "Overwriting driver name ", CSTR( drvr.drvrName ),
+				         " to match resource name ", CSTR( name );
+				
+				fast_memcpy( drvr.drvrName, name, 1 + name[ 0 ] );
+			}
 			
 			err = DriverInstallReserveMem( (DRVRHeader*) *h, ~id );
 			
