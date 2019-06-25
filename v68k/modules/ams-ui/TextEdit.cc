@@ -261,6 +261,8 @@ void update_selection( TERec& te, short selStart, short selEnd )
 		return;
 	}
 	
+	raster_lock lock;
+	
 	hide_selection( te );
 	
 	te.selStart = selStart;
@@ -448,6 +450,8 @@ pascal void TEKey_patch( short c, TERec** hTE )
 	TERec& te = **hTE;
 	
 	scoped_port thePort = te.inPort;
+	
+	raster_lock lock;
 	
 	hide_selection( te );
 	
