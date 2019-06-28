@@ -234,6 +234,16 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		pb->ioCompletion = NULL;
 	}
 	
+	if ( (uint8_t) trap_word == kStatusCommand )
+	{
+		CntrlParam* cntrl = (CntrlParam*) pb;
+		
+		if ( cntrl->csCode == 2 )
+		{
+			*(long*) cntrl->csParam = 0;
+		}
+	}
+	
 	DCtlHandle h = GetDCtlEntry( pb->ioRefNum );
 	
 	if ( h == NULL )
