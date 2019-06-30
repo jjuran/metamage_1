@@ -67,6 +67,13 @@ struct Handle_footer
 	unsigned long  epilogue;
 };
 
+static inline
+bool valid( const Handle_header& header, const Handle_footer& footer )
+{
+	return header.prologue == Handle_prologue  &&
+	       footer.epilogue == Handle_epilogue;
+}
+
 
 static inline
 unsigned long padded( size_t size )
@@ -277,6 +284,14 @@ short DisposeHandle_patch( char** h : __A0 )
 	if ( *h != NULL )
 	{
 		Handle_header* header = get_header( *h );
+		Handle_footer* footer = get_footer( *h );
+		
+		if ( ! valid( *header, *footer ) )
+		{
+			ERROR = "DisposeHandle: invalid handle state (double dispose?)";
+			
+			return MemErr = paramErr;
+		}
 		
 		free( header );
 	}
