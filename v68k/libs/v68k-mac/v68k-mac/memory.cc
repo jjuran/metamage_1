@@ -45,6 +45,8 @@ enum
 	tag_KeyMaps,
 	tag_KeyMaps_word_7 = tag_KeyMaps + 7,  // 16 bytes
 	tag_UnitNtryCnt,
+	tag_VIA,
+	tag_VIA_low_word,
 	tag_SPATBConfig,
 	tag_SPKbdPrint,
 	tag_Time,
@@ -164,6 +166,8 @@ void initialize()
 {
 	((char*) &words[ tag_ROMBase ])[ 1 ] = 0x40;  // ROMBase = 0x00400000
 	
+	words[ tag_VIA        ] = iota::big_u16( 0x00EF     );
+	words[ tag_VIA + 1    ] = iota::big_u16(     0xE1FE );
 	words[ tag_ROM85      ] = 0xFFFF;  // indicates 64K ROM
 	words[ tag_FSFCBLen   ] = 0xFFFF;  // indicates 64K ROM
 	words[ tag_SaveUpdate ] = 0xFFFF;  // initially true
@@ -210,6 +214,7 @@ static const global globals[] =
 	{ 0x0172, 2,    tag_MBState_esc },  // MBState, Tocks (Button escapes)
 	{ 0x0174, 16,   tag_KeyMaps     },  // KeyMap, KeyPadMap, 4 more bytes
 	{ 0x01D2, 2,    tag_UnitNtryCnt },
+	{ 0x01D4, 4,    tag_VIA         },
 	{ 0x01FA, 2,    tag_SPATBConfig },  // SPATalkB, SPConfig
 	{ 0x0207, 2,    tag_SPKbdPrint  },  // SPKbd, SPPrint
 	{ 0x020C, 0x44, tag_Time        },
