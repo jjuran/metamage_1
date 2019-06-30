@@ -158,6 +158,8 @@ pascal void KillControls_patch( GrafPort* window )
 	{
 		DisposeControl( control );
 	}
+	
+	w->controlList = NULL;
 }
 
 #pragma mark -
