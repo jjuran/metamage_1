@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "callouts.hh"
 #include "master_pointer.hh"
@@ -266,6 +269,8 @@ short DisposeHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
+		ERROR = "DisposeHandle: NULL address";
+		
 		return MemErr = nilHandleErr;
 	}
 	
