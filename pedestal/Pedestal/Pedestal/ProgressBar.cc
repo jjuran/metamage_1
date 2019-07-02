@@ -1,9 +1,19 @@
-/*	==============
- *	ProgressBar.cc
- *	==============
- */
+/*
+	ProgressBar.cc
+	--------------
+*/
 
 #include "Pedestal/ProgressBar.hh"
+
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
 
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
@@ -64,10 +74,9 @@ namespace Pedestal
 		}
 	}
 	
-	void ProgressBar::DrawProgress( Rect insetBounds )
+	static
+	void DrawProgress( Rect insetBounds, int value )
 	{
-		int value = Value();
-		
 		if ( value < 0 )
 		{
 			value = 0;
@@ -102,7 +111,7 @@ namespace Pedestal
 		
 		InsetRect( &insetBounds, 1, 1 );
 		
-		DrawProgress( insetBounds );
+		DrawProgress( insetBounds, Value() );
 	}
 	
 }
