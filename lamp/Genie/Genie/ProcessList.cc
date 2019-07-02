@@ -10,6 +10,7 @@
 
 // Standard C
 #include <signal.h>
+#include <string.h>
 
 // Debug
 #include "debug/boost_assert.hh"

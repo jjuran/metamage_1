@@ -5,6 +5,9 @@
 
 #include "Genie/FS/HFS/Rename.hh"
 
+// Standard C
+#include <string.h>
+
 // Debug
 #include "debug/assert.hh"
 

@@ -9,6 +9,9 @@
 #include "fcntl.h"
 #include "sys/stat.h"
 
+// Standard C
+#include <string.h>
+
 // Iota
 #include "iota/strings.hh"
 

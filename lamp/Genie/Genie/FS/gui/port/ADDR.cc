@@ -7,6 +7,7 @@
 
 // Standard C
 #include <signal.h>
+#include <string.h>
 
 // POSIX
 #include <fcntl.h>

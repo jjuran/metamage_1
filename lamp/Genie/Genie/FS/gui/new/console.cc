@@ -20,6 +20,9 @@
 #include <sys/stat.h>
 #include <sys/ttycom.h>
 
+// Standard C
+#include <string.h>
+
 // mac-sys-utils
 #include "mac_sys/beep.hh"
 
