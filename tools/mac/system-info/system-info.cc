@@ -15,6 +15,7 @@
 
 // Standard C
 #include <stdio.h>
+#include <string.h>
 
 // gear
 #include "gear/inscribe_decimal.hh"
