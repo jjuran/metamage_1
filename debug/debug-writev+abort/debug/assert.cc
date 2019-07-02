@@ -5,12 +5,13 @@
 
 #include "debug/assert.hh"
 
-// Standard C
-#include <stdlib.h>
-
 // POSIX
 #include <unistd.h>
 #include <sys/uio.h>
+
+// Standard C
+#include <stdlib.h>
+#include <string.h>
 
 // Iota
 #include "iota/strings.hh"
