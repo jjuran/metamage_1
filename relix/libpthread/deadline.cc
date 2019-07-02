@@ -7,6 +7,10 @@
 
 // POSIX
 #include <unistd.h>
+#include <sys/time.h>
+
+// Standard C
+#include <time.h>
 
 
 static bool operator<( const timespec& a, const timeval& b )
