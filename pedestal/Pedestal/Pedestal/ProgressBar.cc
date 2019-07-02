@@ -29,11 +29,6 @@ namespace Pedestal
 	static RGBColor gSkyBlue  = { 0xcccc, 0xcccc, 0xffff };
 	
 	
-	static Rect ProgressBarInsetBounds( const Rect& bounds )
-	{
-		return N::InsetRect( bounds, 1, 1 );
-	}
-	
 	static void PaintRect_In_Color( const Rect& bounds, const RGBColor& color )
 	{
 		N::RGBForeColor( color );
@@ -101,7 +96,9 @@ namespace Pedestal
 	{
 		N::FrameRect( bounds );
 		
-		Rect insetBounds = ProgressBarInsetBounds( bounds );
+		Rect insetBounds = bounds;
+		
+		InsetRect( &insetBounds, 1, 1 );
 		
 		DrawProgress( insetBounds );
 	}
