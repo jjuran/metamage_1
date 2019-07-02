@@ -35,8 +35,8 @@ namespace Pedestal
 		kSideMargin = 12
 	};
 	
-	static RGBColor gDarkGrey = { 0x4444, 0x4444, 0x4444 };
-	static RGBColor gSkyBlue  = { 0xcccc, 0xcccc, 0xffff };
+	static const RGBColor gDarkGrey = { 0x4444, 0x4444, 0x4444 };
+	static const RGBColor gSkyBlue  = { 0xcccc, 0xcccc, 0xffff };
 	
 	
 	static void PaintRect_In_Color( const Rect& bounds, const RGBColor& color )
