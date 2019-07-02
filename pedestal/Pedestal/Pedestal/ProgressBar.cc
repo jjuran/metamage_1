@@ -35,8 +35,6 @@ namespace Pedestal
 		kSideMargin = 12
 	};
 	
-	static RGBColor gBlack = { 0, 0, 0 };
-	
 	static RGBColor gDarkGrey = { 0x4444, 0x4444, 0x4444 };
 	static RGBColor gSkyBlue  = { 0xcccc, 0xcccc, 0xffff };
 	
@@ -47,7 +45,7 @@ namespace Pedestal
 		
 		PaintRect( &bounds );
 		
-		RGBForeColor( &gBlack );
+		ForeColor( blackColor );
 	}
 	
 	static void PaintProgress( const Rect& insetBounds )
