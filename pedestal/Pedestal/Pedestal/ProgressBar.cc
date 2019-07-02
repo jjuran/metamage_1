@@ -5,8 +5,12 @@
 
 #include "Pedestal/ProgressBar.hh"
 
-// Nitrogen
-#include "Nitrogen/Quickdraw.hh"
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAW_H
+#include "missing/Quickdraw.h"
+#endif
+#endif
 
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
@@ -14,8 +18,6 @@
 
 namespace Pedestal
 {
-	
-	namespace N = Nitrogen;
 	
 	enum
 	{
@@ -31,11 +33,11 @@ namespace Pedestal
 	
 	static void PaintRect_In_Color( const Rect& bounds, const RGBColor& color )
 	{
-		N::RGBForeColor( color );
+		RGBForeColor( &color );
 		
-		N::PaintRect( bounds );
+		PaintRect( &bounds );
 		
-		N::RGBForeColor( gBlack );
+		RGBForeColor( &gBlack );
 	}
 	
 	static void PaintProgress( const Rect& insetBounds )
@@ -46,7 +48,7 @@ namespace Pedestal
 		}
 		else
 		{
-			N::PaintRect( insetBounds );
+			PaintRect( &insetBounds );
 		}
 	}
 	
@@ -58,7 +60,7 @@ namespace Pedestal
 		}
 		else
 		{
-			N::EraseRect( insetBounds );
+			EraseRect( &insetBounds );
 		}
 	}
 	
@@ -94,7 +96,7 @@ namespace Pedestal
 	
 	void ProgressBar::Draw( const Rect& bounds, bool erasing )
 	{
-		N::FrameRect( bounds );
+		FrameRect( &bounds );
 		
 		Rect insetBounds = bounds;
 		
