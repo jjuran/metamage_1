@@ -15,6 +15,9 @@
 #include <ConditionalMacros.h>
 #endif
 
+// Standard C
+#include <string.h>
+
 // mac-config
 #include "mac_config/open-transport.hh"
 #include "mac_config/upp-macros.hh"
