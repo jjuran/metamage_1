@@ -66,6 +66,12 @@ bool is_graft( const char* p )
 	       *p   == '\0';
 }
 
+static inline
+void set_close_on_exec( int fd )
+{
+	CHECK_N( fcntl( fd, F_SETFD, FD_CLOEXEC ) );
+}
+
 static
 void launch( int local, int other, int in, int out, char** argv )
 {
@@ -156,8 +162,8 @@ int main( int argc, char** argv )
 	CHECK_N( dup2( 2, input_fd  ) );
 	CHECK_N( dup2( 2, output_fd ) );
 	
-	CHECK_N( fcntl( input_fd,  F_SETFD, FD_CLOEXEC ) );
-	CHECK_N( fcntl( output_fd, F_SETFD, FD_CLOEXEC ) );
+	set_close_on_exec( input_fd  );
+	set_close_on_exec( output_fd );
 	
 	int fds[ 2 ];
 	
