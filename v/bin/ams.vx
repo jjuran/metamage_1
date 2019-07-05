@@ -41,7 +41,7 @@ const home_68k = home "/68k"
 
 const root_dir = if exists home_68k then {home_68k} else {ams_mnt}
 
-const freemountd-subcmd = "freemountd -q --root" / ' ', root_dir
+const freemountd-server = "freemountd -q --root" / ' ', root_dir, "//"
 
 # Reserve fds 6 and 7
 dup2(ERR, 6)
@@ -166,7 +166,7 @@ else
 }
 
 const xv68k-subcmd = "xv68k", "-tSP", xv68k-screen, *module_opts, app, app_name
-const graft-subcmd = "graft", freemountd-subcmd, "//", xv68k-subcmd
+const graft-subcmd = "graft", freemountd-server, xv68k-subcmd
 
 const command = [ command-prefix, sound-prefix, graft-subcmd ]
 
