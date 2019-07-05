@@ -73,13 +73,12 @@ void set_close_on_exec( int fd )
 }
 
 static
-void launch( int local, int other, int in, int out, char** argv )
+void launch( int local, int in, int out, char** argv )
 {
 	if ( dup2( local, in  ) < 0 )  goto fail;
 	if ( dup2( local, out ) < 0 )  goto fail;
 	
 	close( local );
-	close( other );
 	
 	(void) execvp( argv[ 0 ], argv );
 	
@@ -169,21 +168,24 @@ int main( int argc, char** argv )
 	
 	CHECK_N( socketpair( PF_UNIX, SOCK_STREAM, 0, fds ) );
 	
+	set_close_on_exec( fds[ 1 ] );
+	
 	const pid_t server_pid = CHECK_N( vfork() );
 	
 	if ( server_pid == 0 )
 	{
-		launch( fds[ 0 ], fds[ 1 ], 0, 1, server_args );
+		launch( fds[ 0 ], 0, 1, server_args );
 	}
+	
+	close( fds[ 0 ] );
 	
 	const pid_t client_pid = CHECK_N( vfork() );
 	
 	if ( client_pid == 0 )
 	{
-		launch( fds[ 1 ], fds[ 0 ], input_fd, output_fd, client_args );
+		launch( fds[ 1 ], input_fd, output_fd, client_args );
 	}
 	
-	close( fds[ 0 ] );
 	close( fds[ 1 ] );
 	
 	int wait_status;
