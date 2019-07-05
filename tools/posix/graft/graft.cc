@@ -168,6 +168,8 @@ int main( int argc, char** argv )
 		return usage();
 	}
 	
+	int n_servers = 0;
+	
 	int chosen_fd = 0;
 	
 	if ( strcmp( *args, "--fd" ) == 0 )
@@ -206,6 +208,8 @@ int main( int argc, char** argv )
 	
 	int server_fd = launch_server( args, input_fd, output_fd );
 	
+	++n_servers;
+	
 	args = next_graft;
 	
 	const pid_t client_pid = CHECK_N( vfork() );
@@ -222,8 +226,11 @@ int main( int argc, char** argv )
 	
 	int wait_status;
 	
-	pid_t pid_a = CHECK_N( wait( &wait_status ) );
-	pid_t pid_b = CHECK_N( wait( &wait_status ) );
+	do
+	{
+		pid_t pid = CHECK_N( wait( &wait_status ) );
+	}
+	while ( n_servers-- );
 	
 	return 0;
 }
