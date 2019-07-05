@@ -72,6 +72,12 @@ void set_close_on_exec( int fd )
 	CHECK_N( fcntl( fd, F_SETFD, FD_CLOEXEC ) );
 }
 
+static inline
+void set_not_close_on_exec( int fd )
+{
+	CHECK_N( fcntl( fd, F_SETFD, 0 ) );
+}
+
 static
 void launch( char** argv )
 {
@@ -175,65 +181,92 @@ int main( int argc, char** argv )
 	int saved_server_fds[ n_saveable_server_fds ];
 	
 	int n_saved_server_fds = 0;
-	
-	int chosen_fd = 0;
-	
-	if ( strcmp( *args, "--fd" ) == 0 )
-	{
-		++args;
-		
-		chosen_fd = atoi( *args++ );
-		
-		if ( chosen_fd < 3 )
-		{
-			return usage();
-		}
-	}
-	
-	if ( is_dash( *args ) )
-	{
-		++args;
-	}
+	int n_cloexec_fds = 0;
 	
 	char** next_graft = find_next_graft( args );
 	
-	if ( next_graft == NULL  ||  next_graft == args )
+	while ( next_graft != NULL )
 	{
-		return usage();
-	}
-	
-	*next_graft++ = NULL;
-	
-	if ( *next_graft == NULL )
-	{
-		return usage();
-	}
-	
-	const int input_fd  = chosen_fd ? chosen_fd : 6;
-	const int output_fd = chosen_fd ? chosen_fd : 7;
-	
-	int server_fd = launch_server( args, input_fd, output_fd );
-	
-	++n_servers;
-	
-	args = next_graft;
-	
-	if ( chosen_fd )
-	{
-		dup2( server_fd, chosen_fd );
+		int chosen_fd = 0;
 		
-		saved_server_fds[ n_saved_server_fds++ ] = chosen_fd;
-	}
-	else
-	{
-		dup2( server_fd, 6 );
-		dup2( server_fd, 7 );
+		if ( strcmp( *args, "--fd" ) == 0 )
+		{
+			++args;
+			
+			chosen_fd = atoi( *args++ );
+			
+			if ( chosen_fd < 3 )
+			{
+				return usage();
+			}
+		}
 		
-		saved_server_fds[ n_saved_server_fds++ ] = 6;
-		saved_server_fds[ n_saved_server_fds++ ] = 7;
+		if ( is_dash( *args ) )
+		{
+			++args;
+		}
+		
+		if ( next_graft == args )
+		{
+			return usage();
+		}
+		
+		*next_graft++ = NULL;
+		
+		if ( *next_graft == NULL )
+		{
+			return usage();
+		}
+		
+		const int input_fd  = chosen_fd ? chosen_fd : 6;
+		const int output_fd = chosen_fd ? chosen_fd : 7;
+		
+		int server_fd = launch_server( args, input_fd, output_fd );
+		
+		++n_servers;
+		
+		args = next_graft;
+		
+		next_graft = find_next_graft( args );
+		
+		if ( next_graft == NULL )
+		{
+			n_cloexec_fds = n_saved_server_fds;
+		}
+		
+		if ( chosen_fd )
+		{
+			dup2( server_fd, chosen_fd );
+			
+			saved_server_fds[ n_saved_server_fds++ ] = chosen_fd;
+			
+			if ( next_graft )
+			{
+				set_close_on_exec( chosen_fd );
+			}
+		}
+		else
+		{
+			dup2( server_fd, 6 );
+			dup2( server_fd, 7 );
+			
+			saved_server_fds[ n_saved_server_fds++ ] = 6;
+			saved_server_fds[ n_saved_server_fds++ ] = 7;
+			
+			if ( next_graft )
+			{
+				set_close_on_exec( 6 );
+				set_close_on_exec( 7 );
+			}
+		}
+		
+		close( server_fd );
 	}
 	
-	close( server_fd );
+	for ( int i = 0;  i < n_cloexec_fds;  ++i )
+	{
+		set_not_close_on_exec( saved_server_fds[ i ] );
+	}
 	
 	const pid_t client_pid = CHECK_N( vfork() );
 	
