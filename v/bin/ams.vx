@@ -51,7 +51,7 @@ const events_fd_slot = reader "/dev/null"
 const events_fd_opt  = "--events-fd=" events_fd_slot
 
 var sound-fd
-var sound-prefix = ()
+var sound-server = ()
 
 def get_sound_fd
 {
@@ -63,7 +63,7 @@ def get_sound_fd
 	if which "sndtrack" then
 	{
 		const sound_fd_slot = str (sound-fd = reader "/dev/null")
-		sound-prefix = "graft", "--fd", sound_fd_slot, "sndtrack", "//"
+		sound-server = "--fd", sound_fd_slot, "sndtrack", "//"
 		
 		return sound_fd_slot
 	}
@@ -166,8 +166,8 @@ else
 }
 
 const xv68k-subcmd = "xv68k", "-tSP", xv68k-screen, *module_opts, app, app_name
-const graft-subcmd = "graft", freemountd-server, xv68k-subcmd
+const graft-subcmd = "graft", sound-server, freemountd-server, xv68k-subcmd
 
-const command = [ command-prefix, sound-prefix, graft-subcmd ]
+const command = [ command-prefix, graft-subcmd ]
 
 run command
