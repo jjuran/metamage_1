@@ -91,6 +91,41 @@ fail:
 	_exit( exit_code );
 }
 
+static
+int launch_server( char** server_args, int input_fd, int output_fd )
+{
+	// Invoke subprocesses
+	// -------------------
+	
+	/*
+		Reserve I/O fds so neither becomes one of our sockets.
+		Otherwise, we might clobber them when launching the client.
+	*/
+	
+	CHECK_N( dup2( 2, input_fd  ) );
+	CHECK_N( dup2( 2, output_fd ) );
+	
+	set_close_on_exec( input_fd  );
+	set_close_on_exec( output_fd );
+	
+	int fds[ 2 ];
+	
+	CHECK_N( socketpair( PF_UNIX, SOCK_STREAM, 0, fds ) );
+	
+	set_close_on_exec( fds[ 1 ] );
+	
+	const pid_t server_pid = CHECK_N( vfork() );
+	
+	if ( server_pid == 0 )
+	{
+		launch( fds[ 0 ], 0, 1, server_args );
+	}
+	
+	close( fds[ 0 ] );
+	
+	return fds[ 1 ];
+}
+
 int main( int argc, char** argv )
 {
 	// Process arguments
@@ -147,39 +182,10 @@ int main( int argc, char** argv )
 		return usage();
 	}
 	
-	// Invoke subprocesses
-	// -------------------
-	
-	/*
-		Reserve fds 6 and 7 so neither becomes one of our sockets.
-		Otherwise, we might clobber them when launching the client.
-	*/
-	
 	const int input_fd  = chosen_fd ? chosen_fd : 6;
 	const int output_fd = chosen_fd ? chosen_fd : 7;
 	
-	CHECK_N( dup2( 2, input_fd  ) );
-	CHECK_N( dup2( 2, output_fd ) );
-	
-	set_close_on_exec( input_fd  );
-	set_close_on_exec( output_fd );
-	
-	int fds[ 2 ];
-	
-	CHECK_N( socketpair( PF_UNIX, SOCK_STREAM, 0, fds ) );
-	
-	set_close_on_exec( fds[ 1 ] );
-	
-	const pid_t server_pid = CHECK_N( vfork() );
-	
-	if ( server_pid == 0 )
-	{
-		launch( fds[ 0 ], 0, 1, server_args );
-	}
-	
-	close( fds[ 0 ] );
-	
-	int server_fd = fds[ 1 ];
+	int server_fd = launch_server( server_args, input_fd, output_fd );
 	
 	const pid_t client_pid = CHECK_N( vfork() );
 	
