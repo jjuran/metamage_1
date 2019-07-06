@@ -51,3 +51,26 @@ int try_to_get( const char* begin, unsigned len, plus::var_string& data )
 	
 	return try_to_get( in, out, path, data );
 }
+
+int try_to_put( int fd, const plus::string& path, const plus::string& data )
+{
+	namespace F = freemount;
+	
+	try
+	{
+		const int in  = fd;
+		const int out = fd;
+		
+		F::synced_put( in, out, path, data );
+		
+		return 0;
+	}
+	catch ( const F::path_error& e )
+	{
+		return -e.error;
+	}
+	catch ( ... )
+	{
+		return -EIO;
+	}
+}

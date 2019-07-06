@@ -19,4 +19,6 @@ int try_to_get( int fd, const plus::string& path, plus::var_string& data )
 
 int try_to_get( const char* begin, unsigned len, plus::var_string& data );
 
+int try_to_put( int fd, const plus::string& path, const plus::string& data );
+
 #endif
