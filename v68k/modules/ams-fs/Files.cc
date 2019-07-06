@@ -32,10 +32,14 @@ enum
 
 QHdr VCBQHdr : 0x0356;
 
+short CurApRefNum : 0x0900;
+
 Open_ProcPtr old_Open;
 IO_ProcPtr   old_Close;
 IO_ProcPtr   old_Read;
 IO_ProcPtr   old_Write;
+
+int appfs_fd;
 
 struct fork_spec
 {
@@ -79,6 +83,26 @@ FCB* find_next_empty_FCB()
 	return find_FCB( 0 );
 }
 
+static inline
+bool is_current_application( const mfs::file_directory_entry* entry )
+{
+	const FCB& curApFCB = FCBSPtr->fcbs[ CurApRefNum - 1 ];
+	
+	return curApFCB.fcbFlNum == entry->flNum;
+}
+
+static inline
+void set_writable( FCB* fcb )
+{
+	fcb->fcbMdRByt |= (kioFCBWriteMask >> 8);
+}
+
+static inline
+void set_servable( FCB* fcb )
+{
+	fcb->fcbFlPos = 1;
+}
+
 void initialize()
 {
 	FCBSPtr = (FCBS*) NewPtr( sizeof (FCBS) );
@@ -111,6 +135,13 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 	}
 	
 	const Byte is_rsrc = trap_word;  // Open is A000, OpenRF is A00A
+	
+	/*
+		Self-modification applies to the application's own data fork,
+		when write permission is requested and an appfs server is present.
+	*/
+	
+	const bool selfmod_capable = ! is_rsrc  &&  pb->ioPermssn > 1  &&  appfs_fd;
 	
 	VCB* vcb = (VCB*) VCBQHdr.qHead;
 	
@@ -148,6 +179,12 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 			fcb->fcbFlPos  = 0;
 			
 			pb->ioRefNum = FCB_index( fcb );
+			
+			if ( selfmod_capable  &&  is_current_application( entry ) )
+			{
+				set_writable( fcb );  // writing is allowed
+				set_servable( fcb );  // file persists via appfs
+			}
 			
 			return pb->ioResult = noErr;
 		}
