@@ -43,9 +43,14 @@ const root_dir = if exists home_68k then {home_68k} else {ams_mnt}
 
 const freemountd-subcmd = "freemountd -q --root" / ' ', root_dir
 
+# Reserve fds 6 and 7
+dup2(ERR, 6)
+dup2(ERR, 7)
+
 const events_fd_slot = reader "/dev/null"
 const events_fd_opt  = "--events-fd=" events_fd_slot
 
+var sound-fd
 var sound-prefix = ()
 
 def get_sound_fd
@@ -57,7 +62,7 @@ def get_sound_fd
 	
 	if which "sndtrack" then
 	{
-		const sound_fd_slot = str reader "/dev/null"
+		const sound_fd_slot = str (sound-fd = reader "/dev/null")
 		sound-prefix = "graft", "--fd", sound_fd_slot, "sndtrack", "//"
 		
 		return sound_fd_slot
