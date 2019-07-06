@@ -71,6 +71,34 @@ def get_sound_fd
 	return ()
 }
 
+var appfs-fd
+var appfs-server = ()
+
+def get_appfs_fd
+{
+	var appfs = getenv "AMS_APPFS" or return ()
+	
+	if appfs == "-" then
+	{
+		const osx_prefs = home "/Library/Preferences"
+		const ams_prefs = if exists osx_prefs
+		then { osx_prefs "/Advanced Mac Substitute" }
+		else { home "/.advanced-mac-substitute" }
+		
+		appfs = ams_prefs "/" app_name
+		
+		if not exists appfs then
+		{
+			run [ "mkdir -p" / ' ', appfs ]
+		}
+	}
+	
+	const fd_slot = str (appfs-fd = reader "/dev/null")
+	appfs-server = "--fd", fd_slot, "freemountd -qu --root" / ' ', appfs, "//"
+	
+	return fd_slot
+}
+
 def core_opts
 {
 	var opts = [ events_fd_opt ]
@@ -94,10 +122,24 @@ def io_opts
 
 def fs_opts
 {
-	return
+	const disk_opt =
 	if const disk = getenv "AMS_DISK" then
 	{
-		ams-fs: [ "--disk", disk ],
+		"--disk", disk,
+	}
+	
+	const appfs_opt =
+	if const appfs_fd = get_appfs_fd() then
+	{
+		"--appfs-fd", appfs_fd,
+	}
+	
+	const opts = disk_opt, appfs_opt
+	
+	return
+	if opts then
+	{
+		ams-fs: [ opts ],
 	}
 }
 
@@ -166,7 +208,7 @@ else
 }
 
 const xv68k-subcmd = "xv68k", "-tSP", xv68k-screen, *module_opts, app, app_name
-const graft-subcmd = "graft", sound-server, freemountd-server, xv68k-subcmd
+const graft-subcmd = "graft", sound-server, freemountd-server, appfs-server, xv68k-subcmd
 
 const command = [ command-prefix, graft-subcmd ]
 
