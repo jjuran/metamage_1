@@ -112,6 +112,35 @@ void initialize()
 	FCBSPtr->bufSize = sizeof (FCBS);
 }
 
+static const plus::string data_path = "data";
+
+static
+void load_app_data( FCB* fcb )
+{
+	temp_A4 a4;
+	
+	plus::var_string existing_data;
+	
+	int err = try_to_get( appfs_fd, data_path, existing_data );
+	
+	if ( ! err  &&  ! existing_data.empty() )
+	{
+		const size_t size = existing_data.size();
+		
+		if ( size > fcb->fcbPLen )
+		{
+			DisposePtr( fcb->fcbBfAdr );
+			
+			fcb->fcbBfAdr = NewPtr( size );
+			fcb->fcbPLen  = size;
+		}
+		
+		fcb->fcbEOF = size;
+		
+		fast_memcpy( fcb->fcbBfAdr, existing_data.data(), size );
+	}
+}
+
 short Create_patch( short trap_word : __D1, FileParam* pb : __A0 )
 {
 	return pb->ioResult = extFSErr;
@@ -182,8 +211,9 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 			
 			if ( selfmod_capable  &&  is_current_application( entry ) )
 			{
-				set_writable( fcb );  // writing is allowed
-				set_servable( fcb );  // file persists via appfs
+				set_writable ( fcb );  // writing is allowed
+				set_servable ( fcb );  // file persists via appfs
+				load_app_data( fcb );  // try to read from appfs
 			}
 			
 			return pb->ioResult = noErr;
