@@ -100,6 +100,12 @@ bool is_writable( const FCB* fcb )
 }
 
 static inline
+bool is_servable( const FCB* fcb )
+{
+	return fcb->fcbFlPos;
+}
+
+static inline
 void set_writable( FCB* fcb )
 {
 	fcb->fcbMdRByt |= (kioFCBWriteMask >> 8);
@@ -147,6 +153,18 @@ void load_app_data( FCB* fcb )
 		
 		fast_memcpy( fcb->fcbBfAdr, existing_data.data(), size );
 	}
+}
+
+static
+OSErr save_app_data( const FCB* fcb )
+{
+	temp_A4 a4;
+	
+	plus::string data( fcb->fcbBfAdr, fcb->fcbPLen, plus::delete_never );
+	
+	int err = try_to_put( appfs_fd, data_path, data );
+	
+	return err ? ioErr : noErr;
 }
 
 short Create_patch( short trap_word : __D1, FileParam* pb : __A0 )
@@ -441,6 +459,14 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		
 		pb->ioActCount = count;
 		pb->ioPosOffset = mark += count;
+		
+		if ( is_servable( fcb ) )
+		{
+			if ( OSErr err = save_app_data( fcb ) )
+			{
+				return err;
+			}
+		}
 	}
 	
 	return pb->ioResult = pb->ioActCount == pb->ioReqCount ? noErr : eofErr;
