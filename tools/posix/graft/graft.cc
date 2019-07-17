@@ -179,14 +179,16 @@ int main( int argc, char** argv )
 	
 	close( fds[ 0 ] );
 	
+	int server_fd = fds[ 1 ];
+	
 	const pid_t client_pid = CHECK_N( vfork() );
 	
 	if ( client_pid == 0 )
 	{
-		launch( fds[ 1 ], input_fd, output_fd, client_args );
+		launch( server_fd, input_fd, output_fd, client_args );
 	}
 	
-	close( fds[ 1 ] );
+	close( server_fd );
 	
 	int wait_status;
 	
