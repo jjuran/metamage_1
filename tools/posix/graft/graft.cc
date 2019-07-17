@@ -73,6 +73,20 @@ void set_close_on_exec( int fd )
 }
 
 static
+void launch( char** argv )
+{
+	(void) execvp( argv[ 0 ], argv );
+	
+fail:
+	
+	const int exit_code = errno == ENOENT ? 127 : 126;
+	
+	more::perror( PROGRAM, argv[ 0 ] );
+	
+	_exit( exit_code );
+}
+
+static
 void launch( int local, int in, int out, char** argv )
 {
 	if ( dup2( local, in  ) < 0 )  goto fail;
@@ -191,7 +205,10 @@ int main( int argc, char** argv )
 	
 	if ( client_pid == 0 )
 	{
-		launch( server_fd, input_fd, output_fd, client_args );
+		dup2( server_fd, input_fd  );
+		dup2( server_fd, output_fd );
+		
+		launch( client_args );
 	}
 	
 	close( server_fd );
