@@ -182,25 +182,21 @@ int main( int argc, char** argv )
 		}
 	}
 	
-	char** server_args = args;
-	
-	if ( is_dash( *server_args ) )
+	if ( is_dash( *args ) )
 	{
-		++server_args;
+		++args;
 	}
 	
-	char** next_graft = find_next_graft( server_args );
+	char** next_graft = find_next_graft( args );
 	
-	if ( next_graft == NULL  ||  next_graft == server_args )
+	if ( next_graft == NULL  ||  next_graft == args )
 	{
 		return usage();
 	}
 	
-	*next_graft = NULL;
+	*next_graft++ = NULL;
 	
-	char** client_args = next_graft + 1;
-	
-	if ( *client_args == NULL )
+	if ( *next_graft == NULL )
 	{
 		return usage();
 	}
@@ -208,7 +204,9 @@ int main( int argc, char** argv )
 	const int input_fd  = chosen_fd ? chosen_fd : 6;
 	const int output_fd = chosen_fd ? chosen_fd : 7;
 	
-	int server_fd = launch_server( server_args, input_fd, output_fd );
+	int server_fd = launch_server( args, input_fd, output_fd );
+	
+	args = next_graft;
 	
 	const pid_t client_pid = CHECK_N( vfork() );
 	
@@ -217,7 +215,7 @@ int main( int argc, char** argv )
 		dup2( server_fd, input_fd  );
 		dup2( server_fd, output_fd );
 		
-		launch( client_args );
+		launch( args );
 	}
 	
 	close( server_fd );
