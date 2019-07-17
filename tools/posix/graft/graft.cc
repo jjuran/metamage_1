@@ -140,6 +140,20 @@ int launch_server( char** server_args, int input_fd, int output_fd )
 	return fds[ 1 ];
 }
 
+static
+char** find_next_graft( char** args )
+{
+	while ( const char* p = *args++ )
+	{
+		if ( is_graft( p ) )
+		{
+			return --args;
+		}
+	}
+	
+	return NULL;
+}
+
 int main( int argc, char** argv )
 {
 	// Process arguments
@@ -175,14 +189,9 @@ int main( int argc, char** argv )
 		++server_args;
 	}
 	
-	char** graft_arg = server_args;
+	char** graft_arg = find_next_graft( server_args );
 	
-	while ( *graft_arg  &&  ! is_graft( *graft_arg ) )
-	{
-		++graft_arg;
-	}
-	
-	if ( *graft_arg == NULL  ||  graft_arg == server_args )
+	if ( graft_arg == NULL  ||  graft_arg == server_args )
 	{
 		return usage();
 	}
