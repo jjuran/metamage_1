@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// more-libc
+#include "more/string.h"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -26,16 +29,14 @@ namespace plus
 		ASSERT( n_read    <= n_written );
 		ASSERT( n_written <= capacity  );
 		
-		std::copy( &other.data[ n_read    ],
-		           &other.data[ n_written ],
-		           &      data[ n_read    ] );
+		mempcpy( &data[ n_read ], &other.data[ n_read ], n_written - n_read );
 	}
 	
 	void page::write( const char* buffer, std::size_t n_bytes )
 	{
 		ASSERT( n_bytes <= n_writable() );
 		
-		std::copy( buffer, buffer + n_bytes, &data[ n_written ] );
+		mempcpy( &data[ n_written ], buffer, n_bytes );
 		
 		n_written += n_bytes;
 	}
@@ -46,7 +47,7 @@ namespace plus
 		
 		const char* start = &data[ n_read ];
 		
-		std::copy( start, start + max_bytes, buffer );
+		mempcpy( buffer, start, max_bytes );
 		
 		n_read += max_bytes;
 		
