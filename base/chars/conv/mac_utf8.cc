@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// more-libc
+#include "more/string.h"
+
 // chars
 #include "charsets/ascii.hh"
 #include "charsets/extended_ascii.hh"
@@ -100,9 +103,7 @@ namespace conv
 			
 			const char* it = find_non_ascii( p, p + remaining );
 			
-			std::copy( p, it, q );
-			
-			q += it - p;
+			q = (char*) mempcpy( q, p, it - p );
 			
 			p = it;
 			
@@ -166,9 +167,7 @@ namespace conv
 			
 			const char* it = find_non_ascii( p, p + remaining );
 			
-			std::copy( p, it, q );
-			
-			q += it - p;
+			q = (char*) mempcpy( q, p, it - p );
 			
 			p = it;
 			
