@@ -5,6 +5,7 @@
 
 // POSIX
 #include <unistd.h>
+#include <sys/time.h>
 
 // Standard C
 #include <string.h>
