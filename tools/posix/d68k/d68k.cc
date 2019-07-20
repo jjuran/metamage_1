@@ -872,10 +872,10 @@ namespace tool
 				const char osType[] =
 				{
 					'\'',
-					data >> 24,
-					data >> 16 & 0xff,
-					data >>  8 & 0xff,
-					data       & 0xff,
+					char( data >> 24 ),
+					char( data >> 16 ),
+					char( data >>  8 ),
+					char( data       ),
 					'\'',
 					'\0'
 				};
@@ -1479,7 +1479,16 @@ namespace tool
 		
 		const uint16_t displacement = read_word();
 		
-		const char register_operand[ STRLEN( "Dx" ) ] = { 'D', '0' + data_reg };
+		/*
+			Some compilers are pedantic enough to issue an ERROR under
+			`-Wnarrowing` [sic] since `'0' + data_reg` is technically an int,
+			but never bother to notice that the result can't possibly overflow
+			either int8_t or uint8_t.
+		*/
+		
+		const char data_reg_char = char( '0' + data_reg );
+		
+		const char register_operand[ STRLEN( "Dx" ) ] = { 'D', data_reg_char };
 		
 		plus::var_string memory_operand = "(";
 		
