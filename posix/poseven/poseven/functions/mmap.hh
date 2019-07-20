@@ -57,7 +57,11 @@ namespace poseven
 		
 	#endif
 		
+	#ifdef MAP_NORESERVE
+		
 		map_noreserve    = MAP_NORESERVE,
+		
+	#endif
 		
 	#ifdef MAP_INHERIT
 		
@@ -83,8 +87,17 @@ namespace poseven
 		
 	#endif
 		
+	#ifdef MAP_FILE
+		
 		map_file      = MAP_FILE,
+		
+	#endif
+		
+	#ifdef MAP_ANON
+		
 		map_anon      = MAP_ANON,
+		
+	#endif
 		
 	#ifdef MAP_ANONYMOUS
 		
