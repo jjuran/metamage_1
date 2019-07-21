@@ -22,6 +22,11 @@
 #include "relix/task/process_image.hh"
 
 
+#ifndef MAP_ANON
+#define MAP_ANON 0
+#endif
+
+
 namespace relix
 {
 	
