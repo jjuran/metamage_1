@@ -300,7 +300,7 @@ namespace ShellShock
 		// skip leading space
 		p = SkipWhitespace( cmd );
 		
-		if ( p == '\0' )
+		if ( *p == '\0' )
 		{
 			return List();
 		}
