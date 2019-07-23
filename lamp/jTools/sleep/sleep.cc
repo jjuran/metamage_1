@@ -41,8 +41,8 @@ int main( int argc, char const *const argv[] )
 	{
 		const float int_sleep_time = std::floor( sleep_time );
 		
-		const unsigned long seconds     = static_cast< unsigned long >( int_sleep_time );
-		const unsigned long nanoseconds = static_cast< unsigned long >( (sleep_time - int_sleep_time) * 1000 * 1000 * 1000 );
+		const long seconds     = static_cast< long >( int_sleep_time );
+		const long nanoseconds = static_cast< long >( (sleep_time - int_sleep_time) * 1000 * 1000 * 1000 );
 		
 		const timespec time = { seconds, nanoseconds };
 		
