@@ -170,6 +170,12 @@ int main( int argc, char** argv )
 	
 	int n_servers = 0;
 	
+	const int n_saveable_server_fds = 1024;
+	
+	int saved_server_fds[ n_saveable_server_fds ];
+	
+	int n_saved_server_fds = 0;
+	
 	int chosen_fd = 0;
 	
 	if ( strcmp( *args, "--fd" ) == 0 )
@@ -212,17 +218,34 @@ int main( int argc, char** argv )
 	
 	args = next_graft;
 	
+	if ( chosen_fd )
+	{
+		dup2( server_fd, chosen_fd );
+		
+		saved_server_fds[ n_saved_server_fds++ ] = chosen_fd;
+	}
+	else
+	{
+		dup2( server_fd, 6 );
+		dup2( server_fd, 7 );
+		
+		saved_server_fds[ n_saved_server_fds++ ] = 6;
+		saved_server_fds[ n_saved_server_fds++ ] = 7;
+	}
+	
+	close( server_fd );
+	
 	const pid_t client_pid = CHECK_N( vfork() );
 	
 	if ( client_pid == 0 )
 	{
-		dup2( server_fd, input_fd  );
-		dup2( server_fd, output_fd );
-		
 		launch( args );
 	}
 	
-	close( server_fd );
+	for ( int i = 0;  i < n_saved_server_fds;  ++i )
+	{
+		close( saved_server_fds[ i ] );
+	}
 	
 	int wait_status;
 	
