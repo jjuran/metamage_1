@@ -189,16 +189,16 @@ int main( int argc, char** argv )
 		++server_args;
 	}
 	
-	char** graft_arg = find_next_graft( server_args );
+	char** next_graft = find_next_graft( server_args );
 	
-	if ( graft_arg == NULL  ||  graft_arg == server_args )
+	if ( next_graft == NULL  ||  next_graft == server_args )
 	{
 		return usage();
 	}
 	
-	*graft_arg = NULL;
+	*next_graft = NULL;
 	
-	char** client_args = graft_arg + 1;
+	char** client_args = next_graft + 1;
 	
 	if ( *client_args == NULL )
 	{
