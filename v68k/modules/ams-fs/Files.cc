@@ -131,8 +131,13 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 			
 			MFS_load( vcb, fork.forkStBlk, buffer, len / 512 );
 			
+			/*
+				is_rsrc is either 0x00 or 0x0A.  kioFCBResourceMask is 0x0200,
+				so masking will produce either 0x00 or 0x02.
+			*/
+			
 			fcb->fcbFlNum  = entry->flNum;
-			fcb->fcbMdRByt = entry->flAttrib;
+			fcb->fcbMdRByt = is_rsrc & (kioFCBResourceMask >> 8);  // see above
 			fcb->fcbTypByt = entry->flVersNum;
 			fcb->fcbSBlk   = fork.forkStBlk;
 			fcb->fcbEOF    = fork.forkLgLen;
