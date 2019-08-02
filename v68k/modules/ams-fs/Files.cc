@@ -145,6 +145,7 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 			fcb->fcbCrPs   = 0;
 			fcb->fcbVPtr   = vcb;
 			fcb->fcbBfAdr  = buffer;
+			fcb->fcbFlPos  = 0;
 			
 			pb->ioRefNum = FCB_index( fcb );
 			
