@@ -116,19 +116,6 @@ struct stat
 #define	S_ISLNK(m)	(((m) & 0170000) == 0120000)	/* symbolic link */
 #define	S_ISSOCK(m)	(((m) & 0170000) == 0140000)	/* socket */
 
-#define S_ISCTG( m )  0
-#define S_ISDOOR( m )  0
-#define S_ISMPB( m )  0
-#define S_ISMPC( m )  0
-#define S_ISNWK( m )  0
-#define S_ISPORT( m )  0
-#define S_ISWHT( m )  0
-
-#define S_TYPEISSEM( m )  0
-#define S_TYPEISMQ( m )  0
-#define S_TYPEISSHM( m )  0
-#define S_TYPEISTMO( m )  0
-
 #define AT_FDCWD  (-100)
 #define AT_SYMLINK_FOLLOW       2
 #define AT_SYMLINK_NOFOLLOW  4096
