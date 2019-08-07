@@ -102,6 +102,10 @@
 #undef MB_CUR_MAX
 #define MB_CUR_MAX  3
 
+#ifndef S_ISDOOR
+#define S_ISDOOR( m )  0
+#endif
+
 int gnu_mbswidth( const char *buf, int flags )
 {
 	return mbsnwidth( buf, strlen( buf ), flags );

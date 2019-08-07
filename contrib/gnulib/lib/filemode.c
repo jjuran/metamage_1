@@ -20,6 +20,43 @@
 
 #include "filemode.h"
 
+
+#ifndef S_ISCTG
+#define S_ISCTG( m )  0
+#endif
+#ifndef S_ISDOOR
+#define S_ISDOOR( m )  0
+#endif
+#ifndef S_ISMPB
+#define S_ISMPB( m )  0
+#endif
+#ifndef S_ISMPC
+#define S_ISMPC( m )  0
+#endif
+#ifndef S_ISNWK
+#define S_ISNWK( m )  0
+#endif
+#ifndef S_ISPORT
+#define S_ISPORT( m )  0
+#endif
+#ifndef S_ISWHT
+#define S_ISWHT( m )  0
+#endif
+
+#ifndef S_TYPEISSEM
+#define S_TYPEISSEM( m )  0
+#endif
+#ifndef S_TYPEISMQ
+#define S_TYPEISMQ( m )  0
+#endif
+#ifndef S_TYPEISSHM
+#define S_TYPEISSHM( m )  0
+#endif
+#ifndef S_TYPEISTMO
+#define S_TYPEISTMO( m )  0
+#endif
+
+
 /* The following is for Cray DMF (Data Migration Facility), which is a
    HSM file system.  A migrated file has a `st_dm_mode' that is
    different from the normal `st_mode', so any tests for migrated
