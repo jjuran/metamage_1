@@ -14,6 +14,9 @@
 // command
 #include "command/get_option.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // ams-common
 #include "module_A4.hh"
 
@@ -35,11 +38,13 @@ enum
 	Opt_last_byte = 255,
 	
 	Opt_disk,
+	Opt_appfs_fd,
 };
 
 static command::option options[] =
 {
-	{ "disk", Opt_disk, command::Param_required },
+	{ "disk",     Opt_disk,     command::Param_required },
+	{ "appfs-fd", Opt_appfs_fd, command::Param_required },
 	
 	NULL,
 };
@@ -95,6 +100,10 @@ char* const* get_options( char** argv )
 	{
 		switch ( opt )
 		{
+			case Opt_appfs_fd:
+				appfs_fd = gear::parse_unsigned_decimal( global_result.param );
+				break;
+			
 			case Opt_disk:
 				try_to_mount( global_result.param );
 				break;

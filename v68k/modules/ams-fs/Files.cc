@@ -32,10 +32,14 @@ enum
 
 QHdr VCBQHdr : 0x0356;
 
+short CurApRefNum : 0x0900;
+
 Open_ProcPtr old_Open;
 IO_ProcPtr   old_Close;
 IO_ProcPtr   old_Read;
 IO_ProcPtr   old_Write;
+
+int appfs_fd;
 
 struct fork_spec
 {
@@ -79,6 +83,40 @@ FCB* find_next_empty_FCB()
 	return find_FCB( 0 );
 }
 
+static inline
+bool is_current_application( const mfs::file_directory_entry* entry )
+{
+	const FCB& curApFCB = FCBSPtr->fcbs[ CurApRefNum - 1 ];
+	
+	return curApFCB.fcbFlNum == entry->flNum;
+}
+
+static inline
+bool is_writable( const FCB* fcb )
+{
+	const SInt8 flags = fcb->fcbMdRByt;
+	
+	return flags & (kioFCBWriteMask >> 8);
+}
+
+static inline
+bool is_servable( const FCB* fcb )
+{
+	return fcb->fcbFlPos;
+}
+
+static inline
+void set_writable( FCB* fcb )
+{
+	fcb->fcbMdRByt |= (kioFCBWriteMask >> 8);
+}
+
+static inline
+void set_servable( FCB* fcb )
+{
+	fcb->fcbFlPos = 1;
+}
+
 void initialize()
 {
 	FCBSPtr = (FCBS*) NewPtr( sizeof (FCBS) );
@@ -86,6 +124,47 @@ void initialize()
 	fast_memset( FCBSPtr, '\0', sizeof (FCBS) );
 	
 	FCBSPtr->bufSize = sizeof (FCBS);
+}
+
+static const plus::string data_path = "data";
+
+static
+void load_app_data( FCB* fcb )
+{
+	temp_A4 a4;
+	
+	plus::var_string existing_data;
+	
+	int err = try_to_get( appfs_fd, data_path, existing_data );
+	
+	if ( ! err  &&  ! existing_data.empty() )
+	{
+		const size_t size = existing_data.size();
+		
+		if ( size > fcb->fcbPLen )
+		{
+			DisposePtr( fcb->fcbBfAdr );
+			
+			fcb->fcbBfAdr = NewPtr( size );
+			fcb->fcbPLen  = size;
+		}
+		
+		fcb->fcbEOF = size;
+		
+		fast_memcpy( fcb->fcbBfAdr, existing_data.data(), size );
+	}
+}
+
+static
+OSErr save_app_data( const FCB* fcb )
+{
+	temp_A4 a4;
+	
+	plus::string data( fcb->fcbBfAdr, fcb->fcbPLen, plus::delete_never );
+	
+	int err = try_to_put( appfs_fd, data_path, data );
+	
+	return err ? ioErr : noErr;
 }
 
 short Create_patch( short trap_word : __D1, FileParam* pb : __A0 )
@@ -111,6 +190,13 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 	}
 	
 	const Byte is_rsrc = trap_word;  // Open is A000, OpenRF is A00A
+	
+	/*
+		Self-modification applies to the application's own data fork,
+		when write permission is requested and an appfs server is present.
+	*/
+	
+	const bool selfmod_capable = ! is_rsrc  &&  pb->ioPermssn > 1  &&  appfs_fd;
 	
 	VCB* vcb = (VCB*) VCBQHdr.qHead;
 	
@@ -148,6 +234,13 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 			fcb->fcbFlPos  = 0;
 			
 			pb->ioRefNum = FCB_index( fcb );
+			
+			if ( selfmod_capable  &&  is_current_application( entry ) )
+			{
+				set_writable ( fcb );  // writing is allowed
+				set_servable ( fcb );  // file persists via appfs
+				load_app_data( fcb );  // try to read from appfs
+			}
 			
 			return pb->ioResult = noErr;
 		}
@@ -312,7 +405,71 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return old_Write( trap_word, pb );
 	}
 	
-	return pb->ioResult = rfNumErr;
+	if ( pb->ioReqCount < 0 )
+	{
+		return pb->ioResult = paramErr;  // Negative ioReqCount
+	}
+	
+	FCB* fcb = get_FCB( pb->ioRefNum );
+	
+	if ( ! fcb )
+	{
+		return pb->ioResult = rfNumErr;
+	}
+	
+	if ( ! is_writable( fcb ) )
+	{
+		return pb->ioResult = wrPermErr;
+	}
+	
+	const short mode = pb->ioPosMode;
+	
+	const size_t eof = fcb->fcbEOF;
+	
+	long& mark = fcb->fcbCrPs;
+	
+	switch ( pb->ioPosMode )
+	{
+		case fsAtMark:
+			break;
+		
+		case fsFromStart:
+			mark = pb->ioPosOffset;
+			break;
+		
+		case fsFromLEOF:
+			mark = eof + pb->ioPosOffset;
+			break;
+		
+		case fsFromMark:
+			mark += pb->ioPosOffset;
+			break;
+		
+		default:
+			return pb->ioResult = paramErr;
+	}
+	
+	pb->ioActCount = 0;
+	
+	if ( pb->ioPosOffset < eof )
+	{
+		long count = min( pb->ioReqCount, eof - pb->ioPosOffset );
+		
+		fast_memcpy( &fcb->fcbBfAdr[ mark ], pb->ioBuffer, count );
+		
+		pb->ioActCount = count;
+		pb->ioPosOffset = mark += count;
+		
+		if ( is_servable( fcb ) )
+		{
+			if ( OSErr err = save_app_data( fcb ) )
+			{
+				return err;
+			}
+		}
+	}
+	
+	return pb->ioResult = pb->ioActCount == pb->ioReqCount ? noErr : eofErr;
 }
 
 short GetFPos_patch( short trap_word : __D1, IOParam* pb : __A0 )
