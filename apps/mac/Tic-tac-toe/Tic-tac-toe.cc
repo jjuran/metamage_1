@@ -26,6 +26,7 @@
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
+#include "mac_sys/trap_available.hh"
 
 // mac-snd-utils
 #include "mac_snd/playback.hh"
@@ -567,6 +568,36 @@ void set_up_Options_menu()
 	DisableMenuItem( Options, Sound );
 }
 
+static inline
+bool has_WaitNextEvent()
+{
+	enum { _WaitNextEvent = 0xA860 };
+	
+	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _WaitNextEvent );
+}
+
+static inline
+Boolean WaitNextEvent( EventRecord& event )
+{
+	return WaitNextEvent( everyEvent, &event, 0x7FFFFFFF, gMouseRgn );
+}
+
+static
+Boolean wait_next_event( EventRecord& event )
+{
+	Boolean got = GetNextEvent( everyEvent, &event );
+	
+	if ( event.what == nullEvent  &&  ! PtInRgn( event.where, gMouseRgn ) )
+	{
+		event.what    = osEvt;
+		event.message = mouseMovedMessage << 24;
+		
+		return true;
+	}
+	
+	return got;
+}
+
 int main()
 {
 	using mac::app::quitting;
@@ -591,11 +622,13 @@ int main()
 	
 	calibrate_mouseRgns( unitLength );
 	
+	const bool has_WNE = has_WaitNextEvent();
+	
 	while ( ! quitting )
 	{
 		EventRecord event;
 		
-		if ( WaitNextEvent( everyEvent, &event, 0x7FFFFFFF, gMouseRgn ) )
+		if ( has_WNE ? WaitNextEvent( event ) : wait_next_event( event ) )
 		{
 			WindowRef window;
 			
