@@ -28,6 +28,7 @@
 // mac-sys-utils
 #include "mac_sys/clock.hh"
 #include "mac_sys/gestalt.hh"
+#include "mac_sys/trap_available.hh"
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
@@ -358,6 +359,26 @@ void draw_window( WindowRef window )
 	          NULL );
 }
 
+static inline
+bool has_WaitNextEvent()
+{
+	enum { _WaitNextEvent = 0xA860 };
+	
+	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _WaitNextEvent );
+}
+
+static inline
+Boolean WaitNextEvent( EventRecord& event )
+{
+	return WaitNextEvent( everyEvent, &event, next_sleep(), NULL );
+}
+
+static inline
+Boolean GetNextEvent( EventRecord& event )
+{
+	return GetNextEvent( everyEvent, &event );
+}
+
 int main()
 {
 	using mac::app::quitting;
@@ -380,6 +401,8 @@ int main()
 	
 	static int last_frame = -1;
 	
+	const bool has_WNE = has_WaitNextEvent();
+	
 	while ( ! quitting )
 	{
 		if ( main_window )
@@ -394,7 +417,7 @@ int main()
 		
 		EventRecord event;
 		
-		if ( WaitNextEvent( everyEvent, &event, next_sleep(), NULL ) )
+		if ( has_WNE ? WaitNextEvent( event ) : GetNextEvent( event ) )
 		{
 			WindowRef window;
 			
