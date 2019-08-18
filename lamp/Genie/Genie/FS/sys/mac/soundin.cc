@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -200,6 +203,13 @@ namespace Genie
 	                                          const plus::string&  name,
 	                                          const void*          args )
 	{
+		enum { gestaltSoundAttr = 'snd ' };
+		
+		if ( ! mac::sys::gestalt( gestaltSoundAttr ) )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
 		return vfs::new_basic_directory( parent, name, soundin_Lookup, soundin_Iterate );
 	}
 	
