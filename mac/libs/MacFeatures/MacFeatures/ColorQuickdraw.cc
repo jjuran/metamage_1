@@ -5,10 +5,8 @@
 
 #include "MacFeatures/ColorQuickdraw.hh"
 
-// Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
 
 
 namespace MacFeatures
@@ -18,11 +16,19 @@ namespace MacFeatures
 	
 	bool Has_ColorQuickdraw()
 	{
+		enum
+		{
+			gestaltQuickdrawVersion = 'qd  ',
+			gestaltOriginalQD       = 0x0000,
+		};
+		
+		// FIXME:  This always returns false if _Gestalt is unimplemented.
+		
 		long result;
 		
-		const OSErr err = ::Gestalt( gestaltQuickdrawVersion, &result );
+		result = mac::sys::gestalt( gestaltQuickdrawVersion );
 		
-		return err == noErr  &&  result != gestaltOriginalQD;
+		return result != gestaltOriginalQD;
 	}
 	
 #endif

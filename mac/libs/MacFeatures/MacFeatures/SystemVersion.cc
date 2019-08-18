@@ -5,15 +5,8 @@
 
 #include "MacFeatures/SystemVersion.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
-
-// Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
 
 
 namespace MacFeatures
@@ -21,11 +14,13 @@ namespace MacFeatures
 	
 	unsigned SystemVersion()
 	{
+		enum { gestaltSystemVersion = 'sysv' };
+		
+		// FIXME:  This returns zero if _Gestalt is unimplemented.
+		
 		long result = 0;
 		
-		const OSErr err = ::Gestalt( gestaltSystemVersion, &result );
-		
-		(void) err;  // gestaltSystemVersion is always defined
+		result = mac::sys::gestalt( gestaltSystemVersion );
 		
 		return result;
 	}

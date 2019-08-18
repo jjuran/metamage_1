@@ -5,10 +5,8 @@
 
 #include "MacFeatures/ADB.hh"
 
-// Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
 
 
 namespace MacFeatures
@@ -18,12 +16,16 @@ namespace MacFeatures
 	
 	bool Has_ADB()
 	{
+		enum { gestaltROMSize = 'rom ' };
+		
+		// FIXME:  This always returns false if _Gestalt is unimplemented.
+		
 		long result;
 		
-		const OSErr err = ::Gestalt( gestaltROMSize, &result );
+		result = mac::sys::gestalt( gestaltROMSize );
 		
 		// 256K ROM has ADB
-		return err == noErr  &&  result >= 256 * 1024;
+		return result >= 256 * 1024;
 	}
 	
 #endif

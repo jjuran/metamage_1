@@ -5,10 +5,8 @@
 
 #include "MacFeatures/Appearance.hh"
 
-// Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
 
 
 namespace MacFeatures
@@ -18,11 +16,9 @@ namespace MacFeatures
 	
 	bool Has_Appearance()
 	{
-		long result;
+		enum { gestaltAppearanceAttr = 'appr' };
 		
-		const OSErr err = ::Gestalt( gestaltAppearanceAttr, &result );
-		
-		return err == noErr  &&  result != 0;
+		return mac::sys::gestalt( gestaltAppearanceAttr );
 	}
 	
 #endif
