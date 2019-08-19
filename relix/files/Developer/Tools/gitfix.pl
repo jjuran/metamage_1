@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
-use warnings;
-use strict;
+#use warnings;
+#use strict;
 
 
 sub unpack_name

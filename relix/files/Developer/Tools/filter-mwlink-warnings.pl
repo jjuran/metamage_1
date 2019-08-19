@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
-use warnings FATAL => 'all';
-use strict;
+#use warnings FATAL => 'all';
+#use strict;
 
 my @ignored_routines =
 qw
