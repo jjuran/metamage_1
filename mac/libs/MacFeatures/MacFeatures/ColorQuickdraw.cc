@@ -5,8 +5,15 @@
 
 #include "MacFeatures/ColorQuickdraw.hh"
 
+// Mac OS
+#ifndef __APPLE__
+#ifndef __OSUTILS__
+#include <OSUtils.h>
+#endif
+#endif
+
 // mac-sys-utils
-#include "mac_sys/gestalt.hh"
+#include "mac_sys/trap_available.hh"
 
 
 namespace MacFeatures
@@ -16,19 +23,18 @@ namespace MacFeatures
 	
 	bool Has_ColorQuickdraw()
 	{
-		enum
+		enum { _SysEnvirons = 0xA090 };
+		
+		if ( ! mac::sys::trap_available( _SysEnvirons ) )
 		{
-			gestaltQuickdrawVersion = 'qd  ',
-			gestaltOriginalQD       = 0x0000,
-		};
+			return false;
+		}
 		
-		// FIXME:  This always returns false if _Gestalt is unimplemented.
+		SysEnvRec env;
 		
-		long result;
+		SysEnvirons( curSysEnvVers, &env );
 		
-		result = mac::sys::gestalt( gestaltQuickdrawVersion );
-		
-		return result != gestaltOriginalQD;
+		return env.hasColorQD;
 	}
 	
 #endif
