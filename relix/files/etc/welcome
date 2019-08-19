@@ -7,9 +7,6 @@ echo
 
 echo
 
-# Advise if the perl lib is missing
-/bin/test-type DIR /usr/lib/perl  ||  /etc/bootstrap/check-perl-lib.pl
-
 echo "Logging in with full privileges..."
 echo
 
