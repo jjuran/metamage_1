@@ -40,6 +40,7 @@
 #include "mac_sys/current_process.hh"
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/is_front_process.hh"
+#include "mac_sys/trap_available.hh"
 
 // mac-qd-utils
 #include "mac_qd/assign_pixel_rgn.hh"
@@ -103,6 +104,14 @@ namespace Nitrogen
 			}
 	};
 	
+}
+
+static inline
+bool has_WaitNextEvent()
+{
+	enum { _WaitNextEvent = 0xA860 };
+	
+	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _WaitNextEvent );
 }
 
 namespace Pedestal
@@ -816,8 +825,23 @@ namespace Pedestal
 	
 	static bool gIdleNeeded = false;
 	
+	const bool has_WNE = has_WaitNextEvent();
+	
 	static EventRecord WaitNextEvent( UInt32 sleep, RgnHandle mouseRgn = NULL )
 	{
+		EventRecord event;
+		
+		if ( ! has_WNE )
+		{
+			(void) ::GetNextEvent( everyEvent, &event );
+			
+			// No need to forge mouse-moved events, since we don't use them.
+			
+			mac::sys::clear_async_wakeup();
+			
+			return event;
+		}
+		
 		static Point last_global_mouse = { 0, 0 };
 		
 		static RgnHandle current_mouse_location = NewRgn();
@@ -826,8 +850,6 @@ namespace Pedestal
 		{
 			mouseRgn = current_mouse_location;
 		}
-		
-		EventRecord event;
 		
 		(void) ::WaitNextEvent( everyEvent, &event, sleep, mouseRgn );
 		
