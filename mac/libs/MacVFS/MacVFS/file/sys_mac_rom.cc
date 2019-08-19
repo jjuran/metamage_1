@@ -23,6 +23,7 @@
 
 // mac-sys-utils
 #include "mac_sys/rom_size.hh"
+#include "mac_sys/trap_available.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -34,6 +35,16 @@
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
+
+#if TARGET_CPU_68K
+
+short ROM85 : 0x28E;
+
+#else
+
+static short ROM85;
+
+#endif
 
 #if TARGET_API_MAC_CARBON
 
@@ -48,7 +59,26 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	static const off_t global_rom_size = mac::sys::rom_size();
+	static
+	off_t get_rom_size()
+	{
+		off_t size = mac::sys::rom_size();
+		
+		if ( TARGET_CPU_68K  &&  size == 0 )
+		{
+			enum { _CountADBs = 0xA077 };
+			
+			using mac::sys::trap_available;
+			
+			return + trap_available( _CountADBs ) ? 256 * 1024
+			       : ROM85 > 0                    ? 128 * 1024
+			       :                                64 * 1024;
+		}
+		
+		return size;
+	}
+	
+	static const off_t global_rom_size = get_rom_size();
 	
 	
 	static off_t mac_rom_geteof( const node* that )
