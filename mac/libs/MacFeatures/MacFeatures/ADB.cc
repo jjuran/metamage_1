@@ -6,7 +6,7 @@
 #include "MacFeatures/ADB.hh"
 
 // mac-sys-utils
-#include "mac_sys/gestalt.hh"
+#include "mac_sys/trap_available.hh"
 
 
 namespace MacFeatures
@@ -16,16 +16,9 @@ namespace MacFeatures
 	
 	bool Has_ADB()
 	{
-		enum { gestaltROMSize = 'rom ' };
+		enum { _CountADBs = 0xA077 };
 		
-		// FIXME:  This always returns false if _Gestalt is unimplemented.
-		
-		long result;
-		
-		result = mac::sys::gestalt( gestaltROMSize );
-		
-		// 256K ROM has ADB
-		return result >= 256 * 1024;
+		return mac::sys::trap_available( _CountADBs );
 	}
 	
 #endif
