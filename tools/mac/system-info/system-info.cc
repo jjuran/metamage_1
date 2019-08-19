@@ -67,6 +67,12 @@ struct SonyVars_record
 
 SonyVars_record* SonyVars : 0x0134;
 
+short SysVersion : 0x015A;
+
+#else
+
+static short SysVersion;
+
 #endif
 
 static inline
@@ -138,17 +144,19 @@ void host_env()
 	}
 	else
 	{
+		const uint32_t vers = (TARGET_CPU_68K  &&  ! sysv) ? SysVersion : sysv;
+		
 		if ( sysv >= 0x1000 )
 		{
 			sys1 = 10;
 		}
 		else
 		{
-			sys1 = (sysv >> 8) & 0xF;
+			sys1 = (vers >> 8) & 0xF;
 		}
 		
-		sys2 = (sysv >> 4) & 0xF;
-		sys3 = (sysv >> 0) & 0xF;
+		sys2 = (vers >> 4) & 0xF;
+		sys3 = (vers >> 0) & 0xF;
 	}
 	
 	char a[ 4 ] = { 0 };
@@ -172,7 +180,7 @@ void host_env()
 		printf( "Host CPU machine name:  %s\n", machine_name );
 	}
 	
-	if ( sysv != 0 )
+	if ( sys1 != 0 )
 	{
 		const char* o = ".";
 		
