@@ -40,6 +40,7 @@
 
 
 using mac::sys::gestalt;
+using mac::sys::gestalt_bit_set;
 using mac::sys::gestalt_defined;
 
 
@@ -307,9 +308,7 @@ void host_env()
 	{
 		const int gestalt32BitAddressing = 0;
 		
-		const uint32_t addr = gestalt( 'addr' );
-		
-		const bool _32bits = addr & (1 << gestalt32BitAddressing);
+		const bool _32bits = gestalt_bit_set( 'addr', gestalt32BitAddressing );
 		
 		printf( "680x0 addressing mode:  %s-bit\n", _32bits ? "32" : "24" );
 	}
