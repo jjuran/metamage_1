@@ -59,19 +59,22 @@ namespace relix
 		MOVE.W	6(SP),D0  // get the vector offset
 		ANDI.W	#0x0FFF,D0  // mask off frame code
 		
-		TST.L	gCurrentProcess
-		BNE		recover
+		TST.L   gCurrentProcess                  ;\
+		BNE     recover                          ;\
 		
+		/* get the handler address */ \
 		LEA		gExceptionVectorTable,A0
-		MOVEA.L	(A0,D0.W),A0  // get the handler address
+		MOVEA.L (A0,D0.W),A0
 		
-		JMP		(A0)
+		JMP     (A0)                             ;\
 		
 	recover:
-		MOVEA.L	2(SP),A1  // save the stacked PC for later
+		/* save the stacked PC for later */ \
+		MOVEA.L 2(SP),A1                         ;\
 		
-		LEA		generic_68k_recovery_handler,A0
-		MOVE.L	A0,2(SP)  // set the stacked PC to the recovery handler
+		/* set the stacked PC to the recovery handler */ \
+		LEA     generic_68k_recovery_handler,A0  ;\
+		MOVE.L  A0,2(SP)                         ;\
 		
 		RTE
 	}
