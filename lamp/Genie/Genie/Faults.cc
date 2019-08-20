@@ -54,30 +54,39 @@ namespace relix
 		JMP		(A0)
 	}
 	
-	static asm void GenericExceptionHandler()
-	{
-		MOVE.W	6(SP),D0  // get the vector offset
-		ANDI.W	#0x0FFF,D0  // mask off frame code
-		
+	#define DEFINE_EXCEPTION_HANDLER(N) \
+	static asm void generic_exception_handler_ ## N() \
+	{ \
 		TST.L   gCurrentProcess                  ;\
 		BNE     recover                          ;\
-		
+		\
 		/* get the handler address */ \
-		LEA		gExceptionVectorTable,A0
-		MOVEA.L (A0,D0.W),A0
-		
+		LEA     (gExceptionVectorTable + N),A0   ;\
+		MOVEA.L (A0),A0                          ;\
+		\
 		JMP     (A0)                             ;\
-		
-	recover:
+		\
+	recover: \
 		/* save the stacked PC for later */ \
 		MOVEA.L 2(SP),A1                         ;\
-		
+		MOVEQ.L	#(N * sizeof (void*)),D0         ;\
+		\
 		/* set the stacked PC to the recovery handler */ \
 		LEA     generic_68k_recovery_handler,A0  ;\
 		MOVE.L  A0,2(SP)                         ;\
-		
-		RTE
-	}
+		\
+		RTE \
+	} extern int dummy_for_semicolon
+	
+	DEFINE_EXCEPTION_HANDLER(2);
+	DEFINE_EXCEPTION_HANDLER(3);
+	DEFINE_EXCEPTION_HANDLER(4);
+	DEFINE_EXCEPTION_HANDLER(5);
+	DEFINE_EXCEPTION_HANDLER(6);
+	DEFINE_EXCEPTION_HANDLER(7);
+	DEFINE_EXCEPTION_HANDLER(8);
+	
+	#undef DEFINE_EXCEPTION_HANDLER
 	
 	static void* gExceptionUserHandlerTable[] =
 	{
@@ -124,10 +133,21 @@ namespace relix
 			if ( gExceptionUserHandlerTable[ i ] != NULL )
 			{
 				gExceptionVectorTable[ i ] = system_vectors[ i ];
-				
-				system_vectors[ i ] = &GenericExceptionHandler;
 			}
 		}
+		
+		#define INSTALL_EXCEPTION_HANDLER(n) \
+		system_vectors[ n ] = &generic_exception_handler_##n
+		
+		INSTALL_EXCEPTION_HANDLER( 2 );  // bus error
+		INSTALL_EXCEPTION_HANDLER( 3 );  // address error
+		INSTALL_EXCEPTION_HANDLER( 4 );  // illegal instruction
+		INSTALL_EXCEPTION_HANDLER( 5 );  // division by zero
+		INSTALL_EXCEPTION_HANDLER( 6 );  // CHK
+		INSTALL_EXCEPTION_HANDLER( 7 );  // TRAPV
+		INSTALL_EXCEPTION_HANDLER( 8 );  // privilege violation
+		
+		#undef INSTALL_EXCEPTION_HANDLER
 		
 		saved_trap_2_handler = system_vectors[ 32 + 2 ];
 		
