@@ -137,6 +137,11 @@ namespace recall
 	template < class ReturnAddr >
 	static plus::string get_demangled_symbol_name( ReturnAddr addr )
 	{
+		if ( (long) addr & 1 )
+		{
+			return "<<odd address>>";
+		}
+		
 		const char* located_name = locate_symbol_name( addr );
 		
 		plus::string name = located_name ? plus::string( located_name )
