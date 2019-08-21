@@ -265,6 +265,17 @@ namespace tool
 			{
 				ExecuteCmdLine( ". /etc/profile" );
 			}
+			
+			/*
+				FIXME:  We expect `login` to chdir to $HOME, but there are
+				other ways to request a login shell, and .profile should be
+				read from $HOME, not the cwd.  But this works for `login`.
+			*/
+			
+			if ( p7::stat( "./.relix_profile", stat_buffer ) )
+			{
+				ExecuteCmdLine( ". ./.relix_profile" );
+			}
 		}
 		
 		if ( the_command != NULL )
