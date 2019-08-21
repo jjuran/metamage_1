@@ -126,6 +126,8 @@ sub command
 		push @f, "-fpascal-strings";
 		push @w, "-Wno-deprecated-declarations";
 		
+		push @w, "-Wno-long-double"  if ($conf->{arch} || "") eq "ppc";
+		
 		$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_2';
 	}
 	
