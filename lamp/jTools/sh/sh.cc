@@ -255,13 +255,13 @@ namespace tool
 			#endif
 			}
 		}
-		else
+		else if ( gLoginShell )
 		{
 			// Read from stdin
 			
 			struct stat stat_buffer;
 			
-			if ( gLoginShell && p7::stat( "/etc/profile", stat_buffer ) )
+			if ( p7::stat( "/etc/profile", stat_buffer ) )
 			{
 				ExecuteCmdLine( ". /etc/profile" );
 			}
