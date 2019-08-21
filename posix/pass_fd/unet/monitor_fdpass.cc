@@ -126,7 +126,7 @@ mm_receive_fd(int sock)
 	vec.iov_len = 1;
 	msg.msg_iov = &vec;
 	msg.msg_iovlen = 1;
-	msg.msg_control = &cmsgbuf.buf;
+	msg.msg_control = cmsgbuf.buf;
 	msg.msg_controllen = sizeof(cmsgbuf.buf);
 
 	pfd.fd = sock;
