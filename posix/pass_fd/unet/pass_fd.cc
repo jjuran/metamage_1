@@ -70,7 +70,7 @@ namespace unet
 		
 		iovec iov;
 		
-		iov.iov_base = (void*) "";
+		iov.iov_base = (char*) "";
 		iov.iov_len  = 1;
 		
 		cmsg_fd_alloc cmsg;
@@ -87,7 +87,7 @@ namespace unet
 		msg.msg_iov    = &iov;
 		msg.msg_iovlen = 1;
 		
-		msg.msg_control    = &cmsg;
+		msg.msg_control    = (char*) &cmsg;
 		msg.msg_controllen = control_len;
 		
 		*(int*) CMSG_DATA( &cmsg.header ) = payload_fd;
@@ -163,7 +163,7 @@ namespace unet
 		msg.msg_iov    = &iov;
 		msg.msg_iovlen = 1;
 		
-		msg.msg_control    = &cmsg;
+		msg.msg_control    = (char*) &cmsg;
 		msg.msg_controllen = control_len;
 		
 		ssize_t n_bytes = recvmsg( socket_fd, &msg, 0 );
