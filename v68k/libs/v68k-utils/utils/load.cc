@@ -104,7 +104,7 @@ void* load_file( const char* path, uint32_t* size )
 	}
 	else
 	{
-		const size_t file_size = sb.st_size;
+		const ssize_t file_size = sb.st_size;
 		
 		using v68k::alloc::page_size;
 		

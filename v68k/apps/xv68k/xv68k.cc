@@ -433,7 +433,7 @@ void load_argv( uint8_t* mem, int argc, char* const* argv )
 	{
 		*args++ = big_longword( args_data - mem );
 		
-		const size_t len = strlen( *argv ) + 1;
+		const ssize_t len = strlen( *argv ) + 1;
 		
 		if ( len > args_limit - args_data )
 		{
