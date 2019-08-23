@@ -6,7 +6,9 @@
 #include "screen/lock.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 namespace v68k   {

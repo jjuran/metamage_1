@@ -27,7 +27,9 @@
 #include "screen.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 using v68k::addr_t;

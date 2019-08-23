@@ -15,7 +15,9 @@
 #include "v68k-mac/dynamic_globals.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 namespace v68k {

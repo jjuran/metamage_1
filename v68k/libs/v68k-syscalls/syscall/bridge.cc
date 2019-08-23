@@ -25,7 +25,9 @@
 #include "syscall/bridge.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 using v68k::auth::fully_authorized;

@@ -47,7 +47,9 @@
 #include "utils/print_register_dump.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 #define ERR_MSG( msg )  "v68k: exception: " msg "\n"

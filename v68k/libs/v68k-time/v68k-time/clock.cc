@@ -21,7 +21,9 @@
 #include <time.h>
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 #ifdef __RELIX__

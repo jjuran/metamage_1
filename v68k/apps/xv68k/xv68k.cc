@@ -60,7 +60,9 @@
 #include "screen.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 #define STRLEN( s )  (sizeof "" s - 1)

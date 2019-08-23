@@ -10,7 +10,9 @@
 #include <unistd.h>
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 #define ERR( msg )  ::write( STDERR_FILENO, "" msg "\n", sizeof msg )

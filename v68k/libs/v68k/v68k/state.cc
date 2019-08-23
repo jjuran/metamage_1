@@ -9,7 +9,9 @@
 #include "v68k/endian.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 namespace v68k
