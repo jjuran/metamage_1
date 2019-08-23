@@ -124,6 +124,8 @@ void* load_file( const char* path, uint32_t* size )
 			{
 				free( alloc );
 				
+				alloc = NULL;
+				
 				if ( n_read >= 0 )
 				{
 					errno = EIO;
