@@ -23,6 +23,7 @@ my %Spec_for_option = qw
 
 my %Flags;
 my @Specs;
+my $N_jobs;
 
 sub verbose
 {
@@ -37,6 +38,11 @@ sub installing
 sub specs
 {
 	return @Specs;
+}
+
+sub job_count
+{
+	return $N_jobs;
 }
 
 sub set_option
@@ -69,6 +75,12 @@ sub set_options
 		}
 		elsif ( $arg !~ m{^ -- }x )
 		{
+			if ( my @j = $arg =~ m{^ -j (\d+) $}x )
+			{
+				$N_jobs = $j[ 0 ];
+				next;
+			}
+			
 			my @chars = split "", $arg;
 			
 			shift @chars;  # lose the '-'
@@ -80,6 +92,8 @@ sub set_options
 			die "No long options yet\n";
 		}
 	}
+	
+	$N_jobs ||= 1;
 	
 	return @args;
 }
