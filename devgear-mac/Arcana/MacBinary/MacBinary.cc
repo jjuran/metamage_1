@@ -397,7 +397,7 @@ namespace MacBinary
 		static void Set( Header& h, Value v )
 		{
 			High::Set( h, v >> 8 );
-			Low ::Set( h, v & 0xFF );
+			Low ::Set( h, v      );
 		}
 	};
 	
@@ -718,7 +718,7 @@ namespace MacBinary
 		
 		if ( versionOne  &&  crc  &&  type == 'fold'  &&  (creator & 0xFFFFFFFE) == 0xFFFFFFFE )
 		{
-			return creator & 0x000000FF;
+			return (Byte) creator;
 		}
 		
 		return 0;
