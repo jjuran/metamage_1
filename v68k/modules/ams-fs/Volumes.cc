@@ -17,9 +17,6 @@
 #include "callouts.hh"
 
 
-#define VOLNAME  "\p" "AMS Made-up Storage"
-
-
 enum
 {
 	kHFSFlagMask = 0x0200,
@@ -40,7 +37,11 @@ void mount_virtual_network_volume()
 	vcb->vcbFSID    = 'Ix';
 	vcb->vcbVRefNum = -1;
 	
+	#define VOLNAME  "\p" "AMS Made-up Storage"
+	
 	fast_memcpy( vcb->vcbVN, VOLNAME, sizeof VOLNAME );
+	
+	#undef VOLNAME
 	
 	Enqueue( (QElemPtr) vcb, &VCBQHdr );
 	
