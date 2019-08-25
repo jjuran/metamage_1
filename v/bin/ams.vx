@@ -207,8 +207,10 @@ else
 	command-prefix = "exhibit", "-t", title, raster, events_fd_opt
 }
 
+const servers = sound-server, freemountd-server, appfs-server
+
 const xv68k-subcmd = "xv68k", "-tSP", xv68k-screen, *module_opts, app, app_name
-const graft-subcmd = "graft", sound-server, freemountd-server, appfs-server, xv68k-subcmd
+const graft-subcmd = "graft", servers, xv68k-subcmd
 
 const command = [ command-prefix, graft-subcmd ]
 
