@@ -45,6 +45,7 @@
 #include "mac_qd/assign_pixel_rgn.hh"
 
 // mac-app-utils
+#include "mac_app/commands.hh"
 #include "mac_app/event_handlers.hh"
 #include "mac_app/hooks.hh"
 #include "mac_app/init.hh"
@@ -693,6 +694,8 @@ namespace Pedestal
 		}
 	}
 	
+	static long Quit();
+	
 	Application::Application()
 	{
 		Init_Memory( 0 );
@@ -1019,7 +1022,7 @@ namespace Pedestal
 				break;
 			
 			case 'quit':
-				Quit();
+				mac::app::quit();
 				break;
 			
 			default:
@@ -1071,8 +1074,6 @@ namespace Pedestal
 			
 			window = next;
 		}
-		
-		mac::app::quitting = true;
 		
 		return noErr;
 	}
