@@ -3,9 +3,8 @@
 	---------------
 */
 
-// Nitrogen
-#include "Nitrogen/AEDataModel.hh"
-#include "Nitrogen/AppleEvents.hh"
+// mac-app-utils
+#include "mac_app/event_handlers.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -19,17 +18,12 @@
 namespace Vertice
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
 	
 	class App : public Ped::Application
 	{
 		public:
-			static void AppleEventHandler( Mac::AppleEvent const&  appleEvent,
-			                               Mac::AppleEvent      &  reply );
-			
 			App();
 	};
 	
@@ -41,28 +35,26 @@ namespace Vertice
 		return true;
 	}
 	
-	App::App()
+	static
+	long open_doc( const FSSpec& file )
 	{
-		N::AEInstallEventHandler< AppleEventHandler >( Mac::kCoreEventClass,
-		                                               Mac::kAEOpenDocuments ).release();
+		try
+		{
+			OpenDocument( file );
+		}
+		catch ( ... )
+		{
+			return -1;
+		}
 		
-		SetCommandHandler( Ped::kCmdAbout, &About );
+		return 0;
 	}
 	
-	void App::AppleEventHandler( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply )
+	App::App()
 	{
-		n::owned< Mac::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
-		                                                              Mac::keyDirectObject,
-		                                                              Mac::typeAEList );
+		mac::app::install_opendocs_handler( &open_doc );
 		
-		int docCount = N::AECountItems( docList );
-		
-		for ( int index = 1;  index <= docCount;  index++ )
-		{
-			FSSpec fss = N::AEGetNthPtr< Mac::typeFSS >( docList, index );
-			
-			OpenDocument( fss );
-		}
+		SetCommandHandler( Ped::kCmdAbout, &About );
 	}
 	
 }
