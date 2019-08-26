@@ -19,6 +19,7 @@
 
 // Pedestal
 #include "Pedestal/AboutBox.hh"
+#include "Pedestal/Application.hh"
 #include "Pedestal/Commands.hh"
 
 
@@ -81,17 +82,13 @@ namespace MacBinaryDecoder
 		return true;
 	}
 	
-	App::App()
-	{
-	}
-	
 }
 
 int main( void )
 {
 	using namespace MacBinaryDecoder;
 	
-	MacBinaryDecoder::App app;
+	Ped::Application app;
 	
 	mac::app::install_opendocs_handler( &OpenDocument );
 	

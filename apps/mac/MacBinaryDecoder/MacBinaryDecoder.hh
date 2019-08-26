@@ -7,18 +7,13 @@
 #define MACBINARYDECODER_HH
 
 // Nitrogen
-#ifndef NITROGEN_APPLEEVENTS_HH
-#include "Nitrogen/AppleEvents.hh"
+#ifndef MAC_APPLEEVENTS_TYPES_DESCTYPE_HH
+#include "Mac/AppleEvents/Types/DescType.hh"
 #endif
 
 // MacFiles
 #include "MacFiles/Classic.hh"
 #include "MacFiles/Unicode.hh"
-
-// Pedestal
-#ifndef PEDESTAL_APPLICATION_HH
-#include "Pedestal/Application.hh"
-#endif
 
 
 namespace MacBinaryDecoder
@@ -43,13 +38,6 @@ namespace MacBinaryDecoder
 	typedef FSSpec_Io_Details Io_Details;
 	
 #endif
-	
-	
-	class App : public Pedestal::Application
-	{
-		public:
-			App();
-	};
 	
 }
 
