@@ -8,6 +8,9 @@
 // Standard C
 #include <string.h>
 
+// mac-app-utils
+#include "mac_app/commands.hh"
+
 // gear
 #include "gear/hexadecimal.hh"
 
@@ -16,9 +19,6 @@
 
 // poseven
 #include "poseven/types/errno_t.hh"
-
-// Pedestal
-#include "Pedestal/Application.hh"
 
 // vfs
 #include "vfs/dir_contents.hh"
@@ -44,7 +44,6 @@ namespace Genie
 {
 	
 	namespace p7 = poseven;
-	namespace Ped = Pedestal;
 	
 	
 	typedef const relix::system_call* SystemCallPtr;
@@ -136,7 +135,7 @@ namespace Genie
 	
 	static int quit_main()
 	{
-		Ped::Quit();
+		mac::app::quit();
 		
 		return 0;
 	}
