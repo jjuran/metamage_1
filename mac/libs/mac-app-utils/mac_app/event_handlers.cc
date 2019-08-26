@@ -28,7 +28,7 @@
 #include "mac_config/upp-macros.hh"
 
 // mac-app-utils
-#include "mac_app/state.hh"
+#include "mac_app/commands.hh"
 
 
 namespace mac {
@@ -37,9 +37,7 @@ namespace app {
 static
 pascal OSErr Quit( const AppleEvent* event, AppleEvent* reply, SRefCon )
 {
-	quitting = true;
-	
-	return noErr;
+	return quit();
 }
 
 void install_basic_event_handlers()
