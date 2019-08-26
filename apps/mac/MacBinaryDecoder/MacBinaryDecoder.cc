@@ -65,11 +65,21 @@ namespace MacBinaryDecoder
 		}
 	}
 	
-	static void OpenDocument( const Io_Details::file_spec& file )
+	static
+	long OpenDocument( const Io_Details::file_spec& file )
 	{
-		N::FSDirSpec parent = n::convert< N::FSDirSpec >( io::get_preceding_directory( file ) );
+		try
+		{
+			N::FSDirSpec parent = n::convert< N::FSDirSpec >( io::get_preceding_directory( file ) );
+			
+			Decode( io::open_for_reading( file ), parent );
+		}
+		catch ( ... )
+		{
+			return errAEEventNotHandled;
+		}
 		
-		Decode( io::open_for_reading( file ), parent );
+		return noErr;
 	}
 	
 	// Apple event handlers
