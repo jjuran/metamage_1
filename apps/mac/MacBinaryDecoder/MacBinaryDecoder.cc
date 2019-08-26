@@ -83,16 +83,19 @@ namespace MacBinaryDecoder
 	
 	App::App()
 	{
-		mac::app::install_opendocs_handler( &OpenDocument );
-		
-		SetCommandHandler( Ped::kCmdAbout, &About );
 	}
 	
 }
 
 int main( void )
 {
+	using namespace MacBinaryDecoder;
+	
 	MacBinaryDecoder::App app;
+	
+	mac::app::install_opendocs_handler( &OpenDocument );
+	
+	SetCommandHandler( Ped::kCmdAbout, &About );
 	
 	return app.Run();
 }
