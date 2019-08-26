@@ -14,6 +14,9 @@
 #endif
 
 // Mac OS
+#ifndef __APPLEEVENTS__
+#include <AppleEvents.h>
+#endif
 #ifndef __CONTROLS__
 #include <Controls.h>
 #endif
@@ -59,7 +62,6 @@
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
 
-#include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/Controls.hh"
 #include "Nitrogen/MacErrors.hh"
 #include "Nitrogen/MacWindows.hh"
@@ -120,9 +122,6 @@ namespace Pedestal
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
-	
-	using Mac::kCoreEventClass;
-	using Mac::kAEQuitApplication;
 	
 	const uint32_t gestaltAppleEventsAttr = 'evnt';
 	
@@ -1036,15 +1035,7 @@ namespace Pedestal
 				break;
 			
 			case 'quit':
-				if ( apple_events_present )
-				{
-					// Direct dispatch
-					N::AESend( kCoreEventClass, kAEQuitApplication );
-				}
-				else
-				{
-					Quit();
-				}
+				Quit();
 				break;
 			
 			default:
