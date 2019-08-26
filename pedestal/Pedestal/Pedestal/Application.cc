@@ -14,9 +14,6 @@
 #endif
 
 // Mac OS
-#ifndef __APPLEEVENTS__
-#include <AppleEvents.h>
-#endif
 #ifndef __CONTROLS__
 #include <Controls.h>
 #endif
@@ -35,7 +32,6 @@
 // mac-config
 #include "mac_config/adb.hh"
 #include "mac_config/apple-events.hh"
-#include "mac_config/upp-macros.hh"
 
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
@@ -49,6 +45,8 @@
 #include "mac_qd/assign_pixel_rgn.hh"
 
 // mac-app-utils
+#include "mac_app/event_handlers.hh"
+#include "mac_app/hooks.hh"
 #include "mac_app/init.hh"
 #include "mac_app/menus.hh"
 #include "mac_app/state.hh"
@@ -212,14 +210,6 @@ namespace Pedestal
 	static bool ReadyToExit()
 	{
 		return gReadyToExit_Hook ? gReadyToExit_Hook() : true;
-	}
-	
-	static
-	pascal OSErr Quit( const ::AppleEvent* event, ::AppleEvent* reply, SInt32 )
-	{
-		Quit();
-		
-		return noErr;
 	}
 	
 	static
@@ -710,17 +700,11 @@ namespace Pedestal
 		mac::app::init_toolbox();
 		mac::app::install_menus();
 		
+		mac::app::quit_hook = &Quit;
+		
 		if ( apple_events_present )
 		{
-			DEFINE_UPP( AEEventHandler, Quit );
-			
-			OSErr err;
-			
-			err = AEInstallEventHandler( kCoreEventClass,
-			                             kAEQuitApplication,
-			                             UPP_ARG( Quit ),
-			                             0,
-			                             false );
+			mac::app::install_basic_event_handlers();
 		}
 		
 		MenuRef appleMenu  = GetMenuHandle( 1 );
@@ -1075,7 +1059,7 @@ namespace Pedestal
 		gEventCheckNeeded = true;
 	}
 	
-	void Quit()
+	long Quit()
 	{
 		WindowRef window = FrontWindow();
 		
@@ -1089,6 +1073,8 @@ namespace Pedestal
 		}
 		
 		mac::app::quitting = true;
+		
+		return noErr;
 	}
 	
 }

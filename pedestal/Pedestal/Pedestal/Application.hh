@@ -33,7 +33,7 @@ namespace Pedestal
 	
 	void ScheduleImmediateEventCheck();
 	
-	void Quit();
+	long Quit();
 	
 }
 
