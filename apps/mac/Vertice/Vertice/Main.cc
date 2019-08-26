@@ -52,9 +52,6 @@ namespace Vertice
 	
 	App::App()
 	{
-		mac::app::install_opendocs_handler( &open_doc );
-		
-		SetCommandHandler( Ped::kCmdAbout, &About );
 	}
 	
 }
@@ -62,7 +59,13 @@ namespace Vertice
 
 int main(void)
 {
+	using namespace Vertice;
+	
 	Vertice::App app;
+	
+	mac::app::install_opendocs_handler( &open_doc );
+	
+	SetCommandHandler( Ped::kCmdAbout, &About );
 	
 	return app.Run();
 }
