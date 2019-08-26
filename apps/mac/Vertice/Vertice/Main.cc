@@ -21,13 +21,6 @@ namespace Vertice
 	namespace Ped = Pedestal;
 	
 	
-	class App : public Ped::Application
-	{
-		public:
-			App();
-	};
-	
-	
 	static bool About( Ped::CommandCode )
 	{
 		Ped::ShowAboutBox();
@@ -50,10 +43,6 @@ namespace Vertice
 		return 0;
 	}
 	
-	App::App()
-	{
-	}
-	
 }
 
 
@@ -61,7 +50,7 @@ int main(void)
 {
 	using namespace Vertice;
 	
-	Vertice::App app;
+	Ped::Application app;
 	
 	mac::app::install_opendocs_handler( &open_doc );
 	
