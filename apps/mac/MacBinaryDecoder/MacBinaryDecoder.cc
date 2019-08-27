@@ -3,6 +3,9 @@
 	-------------------
 */
 
+// mac-config
+#include "mac_config/apple-events.hh"
+
 // mac-file-utils
 #include "mac_file/parent_directory.hh"
 
@@ -92,7 +95,15 @@ int main( void )
 	
 	Ped::Application app;
 	
-	mac::app::install_opendocs_handler( &OpenDocument );
+	const bool apple_events_present =
+		CONFIG_APPLE_EVENTS  &&
+			(CONFIG_APPLE_EVENTS_GRANTED  ||
+				Ped::apple_events_present);
+	
+	if ( apple_events_present )
+	{
+		mac::app::install_opendocs_handler( &OpenDocument );
+	}
 	
 	SetCommandHandler( Ped::kCmdAbout, &About );
 	
