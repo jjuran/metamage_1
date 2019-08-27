@@ -3,13 +3,14 @@
 	-------------------
 */
 
+// mac-file-utils
+#include "mac_file/parent_directory.hh"
+
 // mac-app-utils
 #include "mac_app/event_handlers.hh"
 
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
-
-#include "Nitrogen/Files.hh"
 
 // Arcana
 #include "MacBinary.hh"
@@ -26,12 +27,13 @@
 namespace MacBinaryDecoder
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
+	using mac::types::VRefNum_DirID;
 	
-	static void Decode( Io_Details::stream input, const N::FSDirSpec& destDir )
+	
+	static
+	void Decode( Io_Details::stream input, const VRefNum_DirID& destDir )
 	{
 		MacBinary::Decoder decoder( destDir );
 		
@@ -62,7 +64,7 @@ namespace MacBinaryDecoder
 	{
 		try
 		{
-			N::FSDirSpec parent = n::convert< N::FSDirSpec >( io::get_preceding_directory( file ) );
+			VRefNum_DirID parent = mac::file::parent_directory( file );
 			
 			Decode( io::open_for_reading( file ), parent );
 		}
