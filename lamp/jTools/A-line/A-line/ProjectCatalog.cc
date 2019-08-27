@@ -309,8 +309,8 @@ namespace tool
 						
 						plus::string config_pathname( tab2 + 1 );
 						
-						PlatformDemands demands( Platform( gear::parse_unsigned_decimal( requirements ) ),
-						                         Platform( gear::parse_unsigned_decimal( prohibitions ) ) );
+						PlatformDemands demands( (Platform) gear::parse_unsigned_decimal( requirements ),
+						                         (Platform) gear::parse_unsigned_decimal( prohibitions ) );
 						
 						add_cached_config( project_name, demands, config_pathname );
 					}
