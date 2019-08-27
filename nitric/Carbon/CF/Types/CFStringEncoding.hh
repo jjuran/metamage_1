@@ -46,7 +46,7 @@ namespace Carbon
 		kCFStringEncodingUTF8          = ::kCFStringEncodingUTF8,
 		kCFStringEncodingNonLossyASCII = ::kCFStringEncodingNonLossyASCII,
 		
-	#if defined( __APPLE__ )  &&  MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+	#ifdef MAC_OS_X_VERSION_10_4
 		
 		kCFStringEncodingUTF16   = ::kCFStringEncodingUTF16,
 		kCFStringEncodingUTF16BE = ::kCFStringEncodingUTF16BE,

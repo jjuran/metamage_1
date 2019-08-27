@@ -725,6 +725,8 @@ namespace Nitrogen
 //	extern Boolean IsWindowToolbarVisible(WindowRef inWindow);
 	using ::IsWindowToolbarVisible;
 	
+#ifdef MAC_OS_X_VERSION_10_4
+	
 	inline void HIWindowSetProxyFSRef ( WindowRef inWindow, const FSRef &inRef ) {
 		Mac::ThrowOSStatus ( ::HIWindowSetProxyFSRef ( inWindow, &inRef ));
 		}
@@ -734,6 +736,8 @@ namespace Nitrogen
 		Mac::ThrowOSStatus ( ::HIWindowGetProxyFSRef ( inWindow, &retVal ));
 		return retVal;
 		}
+	
+#endif
 #endif
 		
 	inline void SetWindowProxyAlias ( WindowRef inWindow, AliasHandle inAlias ) {
