@@ -9,6 +9,7 @@
 // mac-types
 #include "mac_types/VRefNum_DirID.hh"
 
+struct FSRef;
 struct FSSpec;
 
 
@@ -22,6 +23,8 @@ namespace file {
 	}
 	
 	types::VRefNum_DirID parent_directory( const types::VRefNum_DirID& dir );
+	
+	types::VRefNum_DirID parent_directory( const FSRef& file );
 	
 }
 }

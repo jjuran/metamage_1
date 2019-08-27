@@ -48,13 +48,19 @@ namespace file {
 		return result;
 	}
 	
-#else
-	
-	void dummy()
-	{
-	}
-	
 #endif  // #if ! __LP64__
+	
+	types::VRefNum_DirID parent_directory( const FSRef& file )
+	{
+		FSSpec spec;
+		if ( OSStatus err = FSGetCatalogInfo( &file, 0, 0, 0, &spec, 0 ) )
+		{
+			VRefNum_DirID error = { 0, err };
+			return error;
+		}
+		
+		return parent_directory( spec );
+	}
 	
 }
 }
