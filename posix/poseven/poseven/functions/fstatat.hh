@@ -32,6 +32,8 @@
 namespace poseven
 {
 	
+	typedef struct stat struct_stat;
+	
 	bool fstatat( fd_t           dirfd,
 	              const char    *path,
 	              struct stat&   sb,
@@ -54,7 +56,7 @@ namespace poseven
 	
 	template < class String >
 	inline
-	struct stat fstatat( fd_t           dirfd,
+	struct_stat fstatat( fd_t           dirfd,
 	                     const String&  path,
 	                     at_flags_t     flags = at_flags_t() )
 	{
