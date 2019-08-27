@@ -171,6 +171,12 @@ namespace Nitrogen
 		return nucleus::owned< Mac::AEDesc_Token >::seize( result );
 	}
 	
+#if defined( __GNUC__ ) && ( __GNUC__ * 100 + __GNUC_MINOR__ <= 303 )
+	
+	// Panther's g++ 3.3 can't handle this.
+	
+#else
+	
 	namespace compile_tests
 	{
 		
@@ -271,5 +277,7 @@ namespace Nitrogen
 		}
 		
 	}
+	
+#endif  // #if defined( __GNUC__ ) && ( __GNUC__ * 100 + __GNUC_MINOR__ <= 303 )
 	
 }
