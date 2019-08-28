@@ -161,7 +161,7 @@ ams-x11-build: $(AMS_REPOS) ams-vx-Z
 ams-x11: ams-x11-build
 	EXHIBIT_INTERACT=interact-x11 $(RUN_AMS)
 
-ams-68k-install:
+ams-68k-install: var/install
 	install -d var/install/share/ams/bin
 	install -d var/install/share/ams/lib
 	install -d var/install/share/ams/mnt
@@ -169,7 +169,7 @@ ams-68k-install:
 	install -m444 $(AMS_ROOT)/lib/ams-*  var/install/share/ams/lib
 	cp -R $(AMS_ROOT)/mnt/*              var/install/share/ams/mnt
 
-ams-common-install:
+ams-common-install: var/install
 	install -d var/install/bin
 	test \! -x var/out/sndtrack || install var/out/sndtrack var/install/bin
 	install var/out/vx          var/install/bin
