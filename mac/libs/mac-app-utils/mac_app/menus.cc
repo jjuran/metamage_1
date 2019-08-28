@@ -61,8 +61,7 @@ void install_menus()
 		
 		// Delete "Quit" and the separator above it.
 		
-		DeleteMenuItem( fileMenu, last     );
-		DeleteMenuItem( fileMenu, last - 1 );
+		DeleteMenuItems( fileMenu, last - 1, 2 );
 	}
 }
 
