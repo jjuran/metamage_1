@@ -10,12 +10,10 @@
 
 // Standard C
 #include <errno.h>
+#include <stdlib.h>
 
 // more-libc
 #include "more/string.h"
-
-// plus
-#include "plus/string.hh"
 
 // relix
 #include "relix/api/errno.hh"
@@ -61,23 +59,25 @@ namespace relix
 			return set_errno( EINVAL );
 		}
 		
-		plus::string buffer;
-		
-		try
+		if ( void* buffer = malloc( n_bytes ) )
 		{
-			char* p = buffer.reset( n_bytes );
+			char* p = (char*) buffer;
 			
 			for ( int i = 0;  i < n_iov;  ++i )
 			{
 				p = (char*) mempcpy( p, iov[ i ].iov_base, iov[ i ].iov_len );
 			}
+			
+			ssize_t n_written = write( fd, buffer, n_bytes );
+			
+			free( buffer );
+			
+			return n_written;
 		}
-		catch ( ... )
+		else
 		{
-			return set_errno_from_exception();
+			return set_errno( errno );
 		}
-		
-		return write( fd, buffer.data(), n_bytes );
 	}
 	
 }
