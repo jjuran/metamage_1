@@ -169,7 +169,7 @@ void fill_frame( bitmap& bits )
 static
 timeval timeval_from_us( unsigned long long microseconds )
 {
-	timeval tv = { 0, (uint32_t) microseconds };
+	timeval tv = { 0, (suseconds_t) microseconds };
 	
 	if ( microseconds > 999999 )
 	{
