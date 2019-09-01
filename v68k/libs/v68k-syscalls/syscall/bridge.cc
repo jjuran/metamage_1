@@ -595,10 +595,10 @@ v68k::op_result emu_nanosleep( v68k::processor_state& s )
 	
 	uint32_t requested = args[0];
 	
-	uint32_t requested_seconds;
+	uint32_t requested_seconds_u32;
 	uint32_t requested_nanoseconds;
 	
-	const bool ok = s.mem.get_long( requested,     requested_seconds,     s.data_space() )
+	const bool ok = s.mem.get_long( requested,     requested_seconds_u32, s.data_space() )
 	              & s.mem.get_long( requested + 4, requested_nanoseconds, s.data_space() );
 	
 	if ( !ok )
@@ -613,6 +613,13 @@ v68k::op_result emu_nanosleep( v68k::processor_state& s )
 		errno = EINVAL;
 		
 		return set_result( s, -1 );
+	}
+	
+	const int32_t requested_seconds = (int32_t) requested_seconds_u32;
+	
+	if ( requested_seconds < 0 )
+	{
+		return set_result( s, 0 );  // negative sleep has already expired
 	}
 	
 	const timespec request_ts = { requested_seconds, requested_nanoseconds };
