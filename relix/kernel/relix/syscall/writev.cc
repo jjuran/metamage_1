@@ -25,6 +25,8 @@ namespace relix
 	
 	ssize_t writev( int fd, const struct iovec* iov, int n_iov )
 	{
+		char static_buffer[ 128 ];
+		
 		size_t n_bytes = 0;
 		
 		bool valid = n_iov > 0;
@@ -59,7 +61,9 @@ namespace relix
 			return set_errno( EINVAL );
 		}
 		
-		if ( void* buffer = malloc( n_bytes ) )
+		const bool alloc_required = n_bytes > sizeof static_buffer;
+		
+		if ( void* buffer = alloc_required ? malloc( n_bytes ) : static_buffer )
 		{
 			char* p = (char*) buffer;
 			
@@ -70,7 +74,10 @@ namespace relix
 			
 			ssize_t n_written = write( fd, buffer, n_bytes );
 			
-			free( buffer );
+			if ( alloc_required )
+			{
+				free( buffer );
+			}
 			
 			return n_written;
 		}
