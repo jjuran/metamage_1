@@ -13,6 +13,8 @@
 #ifndef GNU_GZIP_GZIP_H
 #define GNU_GZIP_GZIP_H
 
+#include <unistd.h>
+
 #if defined(__STDC__) || defined(PROTO)
 #  define OF(args)  args
 #else
