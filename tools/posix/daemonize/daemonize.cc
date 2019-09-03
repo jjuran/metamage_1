@@ -125,7 +125,7 @@ int main( int argc, char** argv )
 		return usage();
 	}
 	
-	struct sigaction action = {{ 0 }};
+	struct sigaction action = { 0 };
 	
 	action.sa_handler = SIG_IGN;
 	

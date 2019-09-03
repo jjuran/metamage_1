@@ -110,7 +110,7 @@ namespace relix
 				
 				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
 				{
-					const struct sigaction default_sigaction = {{ SIG_DFL }};
+					const struct sigaction default_sigaction = { SIG_DFL };
 					
 					proc.set_sigaction( signo, default_sigaction );
 				}
