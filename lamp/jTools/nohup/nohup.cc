@@ -39,7 +39,9 @@ int main( int argc, char *const argv[] )
 		return 1;
 	}
 	
-	struct sigaction action = { SIG_IGN };
+	struct sigaction action = { 0 };
+	
+	action.sa_handler = SIG_IGN;
 	
 	sigaction( SIGHUP, &action, NULL );
 	
