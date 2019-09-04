@@ -45,7 +45,8 @@ namespace relix
 				{
 					n_bytes += iov[ i ].iov_len;
 					
-					if ( ssize_t( n_bytes ) < 0 )
+					if ( ssize_t( iov[ i ].iov_len ) < 0  ||
+					     ssize_t( n_bytes          ) < 0 )
 					{
 						valid = false;  // ssize_t overflow
 						
