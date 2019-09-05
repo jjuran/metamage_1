@@ -171,8 +171,9 @@ namespace Genie
 			
 			const ResSpec resSpec = GetResSpec_from_name( that->name() );
 			
-			const N::Handle r = (ResLoad_false_scope(),
-			                     N::Get1Resource( resSpec.type, resSpec.id ));
+			ResLoad_false_scope ResLoad_false;
+			
+			const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 			
 			const mac::types::ResInfo resInfo = N::GetResInfo( r );
 			
@@ -204,8 +205,9 @@ namespace Genie
 			
 			const ResSpec resSpec = GetResSpec_from_name( that->name() );
 			
-			const N::Handle r = (ResLoad_false_scope(),
-			                     N::Get1Resource( resSpec.type, resSpec.id ));
+			ResLoad_false_scope ResLoad_false;
+			
+			const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 			
 			N::SetResInfo( r, resSpec.id, name );
 			
