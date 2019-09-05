@@ -128,10 +128,40 @@ namespace tool
 	namespace Div = Divergence;
 	
 	
+	template < Mac::DescType desiredType >
+	static inline
+	typename Mac::DescType_result< desiredType >::type
+	OSAScriptError( ComponentInstance scriptingComponent, Mac::AEKeyword keyword )
+	{
+		return N::AEGetDescData< desiredType >( N::OSAScriptError( scriptingComponent,
+		                                                           keyword,
+		                                                           desiredType ) );
+	}
+	
+	static inline OSStatus
+	//
+	OSAScriptError_number( ComponentInstance comp )
+	{
+		const Mac::AEKeyword key = Mac::kOSAErrorNumber;
+		const Mac::DescType type = Mac::typeSInt32;
+		
+		return OSAScriptError< type >( comp, key );
+	}
+	
+	static inline nucleus::mutable_string
+	//
+	OSAScriptError_string( ComponentInstance comp )
+	{
+		const Mac::AEKeyword key = Mac::kOSAErrorMessage;
+		const Mac::DescType type = Mac::typeText;
+		
+		return OSAScriptError< type >( comp, key );
+	}
+	
 	static void ReportAndThrowScriptError( ComponentInstance comp, const char* step )
 	{
-		SInt16                   errorNumber  = N::OSAScriptError< Mac::kOSAErrorNumber  >( comp );
-		nucleus::mutable_string  errorMessage = N::OSAScriptError< Mac::kOSAErrorMessage >( comp );
+		SInt16                   errorNumber  = OSAScriptError_number( comp );
+		nucleus::mutable_string  errorMessage = OSAScriptError_string( comp );
 		
 		if ( errorNumber < 0 )
 		{
