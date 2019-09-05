@@ -728,7 +728,7 @@ namespace Pedestal
 	
 	static void CheckKeyboard()
 	{
-		if ( gNeedToConfigureKeyboard  &&  gLastKeyboard != 0 )
+		if ( CONFIG_ADB  &&  gNeedToConfigureKeyboard  &&  gLastKeyboard != 0 )
 		{
 			// Don't reconfigure the keyboard if certain modifiers are down,
 			// since that confuses the OS
