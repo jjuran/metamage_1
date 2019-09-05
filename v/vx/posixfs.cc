@@ -624,7 +624,7 @@ namespace vlib
 	static const Type int32 = i32_vtype;
 	static const Type uint32 = u32_vtype;
 	
-	static const Value fd( Type( fd_vtype ), Op_union, int32 );
+	static const Value fd( (Type( fd_vtype )), Op_union, int32 );
 	
 	static const Value c_str_x2( c_str, c_str );
 	
@@ -661,7 +661,7 @@ namespace vlib
 	const proc_info proc_append   = { "append",   &v_append,   &c_str_bytes };
 	const proc_info proc_truncate = { "truncate", &v_truncate, &c_str_u32 };
 	
-	class FIN : public Unitary
+	class FIN : public Value
 	{
 		public:
 			static bool test( const Value& v )
