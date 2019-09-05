@@ -116,7 +116,12 @@ namespace Genie
 			case gestaltCPUG47447:  name = "7447";   break;
 			case gestaltCPU750FX:   name = "750FX";  break;
 			case gestaltCPU970:     name = "G5";     break;
+			
+		#if defined( __MACOS__ )  ||  defined( MAC_OS_X_VERSION_10_4 )
+			
 			case gestaltCPU970FX:   name = "970FX";  break;
+			
+		#endif
 			
 		#ifdef __MACOS__
 			
