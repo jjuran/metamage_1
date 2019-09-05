@@ -570,7 +570,7 @@ v68k::op_result emu_writev( v68k::processor_state& s )
 			goto end;
 		}
 		
-		iov[i].iov_base = (void*) p;
+		iov[i].iov_base = (char*) p;
 		iov[i].iov_len  = len;
 	}
 	
