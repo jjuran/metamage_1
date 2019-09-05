@@ -22,7 +22,7 @@
 #include "worldview/Render.hh"
 
 
-#if UNIVERSAL_INTERFACES_VERSION < 0x0400
+#ifndef MAC_OS_X_VERSION_10_4
 	
 	typedef CGImageAlphaInfo CGBitmapInfo;
 	
@@ -146,7 +146,7 @@ namespace Vertice
 	
 	void PortView::Update() const
 	{
-	#ifdef MAC_OS_X_VERSION_10_2
+	#ifdef MAC_OS_X_VERSION_10_4
 		
 		OSStatus err;
 		
