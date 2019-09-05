@@ -13,7 +13,7 @@
 namespace Vectoria
 {
 	
-	const double piOver2 = std::asin( 1 );
+	const double piOver2 = std::asin( 1.0 );
 	
 	const double pi = piOver2 * 2;
 	
