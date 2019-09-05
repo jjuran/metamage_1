@@ -15,9 +15,10 @@
 #endif
 
 // POSIX
+// Include <sys/types.h> before <dirent.h> to compile with Mac OS X 10.2's SDK.
+#include <sys/types.h>
 #include <dirent.h>
 #include <fcntl.h>
-#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {
