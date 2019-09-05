@@ -46,6 +46,12 @@
 #include "varyx/posix/exception.hh"
 
 
+#ifdef __APPLE__
+#ifndef _USECONDS_T
+typedef unsigned int useconds_t;
+#endif
+#endif
+
 #ifdef ANDROID
 #define FORK() fork()
 #else

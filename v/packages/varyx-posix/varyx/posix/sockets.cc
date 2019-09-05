@@ -23,6 +23,12 @@
 #include "varyx/posix/exception.hh"
 #include "varyx/posix/file_descriptor.hh"
 
+#ifdef __APPLE__
+#ifndef _SOCKLEN_T
+typedef int socklen_t;
+#endif
+#endif
+
 
 namespace varyx
 {
