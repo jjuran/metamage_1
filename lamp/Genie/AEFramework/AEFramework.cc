@@ -70,9 +70,19 @@ namespace Nitrogen
 		gExpectedReplies[ returnID ] = ExpectedReply( current_thread(), replyStorage );
 	}
 	
+	static inline AEReturnID_32Bit
+	//
+	AEGetAttributePtr_keyReturnIDAttr( const AppleEvent& appleEvent )
+	{
+		const Mac::AEKeyword key = Mac::keyReturnIDAttr;
+		const Mac::DescType type = Mac::typeSInt32;
+		
+		return AEKeyword_get< key >( AEGetAttributePtr_Getter< type >( appleEvent, key ) );
+	}
+	
 	void ReceiveReply( const Mac::AppleEvent& reply )
 	{
-		AEReturnID_32Bit returnID = AEGetAttributePtr< Mac::keyReturnIDAttr >( reply );
+		AEReturnID_32Bit returnID = AEGetAttributePtr_keyReturnIDAttr( reply );
 		
 		ExpectedReplies::iterator found = gExpectedReplies.find( returnID );
 		

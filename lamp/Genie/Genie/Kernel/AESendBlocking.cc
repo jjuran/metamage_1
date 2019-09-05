@@ -29,6 +29,16 @@
 namespace N = Nitrogen;
 
 
+static inline Mac::AEReturnID_32Bit
+//
+AEGetAttributePtr_keyReturnIDAttr( const AppleEvent& appleEvent )
+{
+	const Mac::AEKeyword key = Mac::keyReturnIDAttr;
+	const Mac::DescType type = Mac::typeSInt32;
+	
+	return N::AEKeyword_get< key >( N::AEGetAttributePtr_Getter< type >( appleEvent, key ) );
+}
+
 OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 {
 	using namespace relix;
@@ -44,7 +54,7 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 		                  Mac::kAEQueueReply | Mac::kAECanInteract );
 		
 		// Now that we've sent the event, retrieve the return ID
-		N::AEReturnID_32Bit returnID = N::AEGetAttributePtr< Mac::keyReturnIDAttr >( appleEvent );
+		N::AEReturnID_32Bit returnID = AEGetAttributePtr_keyReturnIDAttr( appleEvent );
 		
 		// Subscribe to AEFramework's queued reply delivery and wake-up service
 		N::ExpectReply( returnID, &reply );
