@@ -7,6 +7,10 @@
 #include <errno.h>
 #include <signal.h>
 #include <stdlib.h>
+#ifdef __APPLE__
+// Needed to compile FD_ZERO with Mac OS X 10.2's headers.
+#include <string.h>
+#endif
 #include <time.h>
 
 // POSIX
