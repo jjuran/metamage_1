@@ -21,6 +21,9 @@
 #endif
 #include <sys/select.h>
 
+// This is needed to compile with Mac OS X 10.2's headers.
+struct timeval;
+
 
 namespace poseven
 {

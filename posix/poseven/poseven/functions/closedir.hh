@@ -15,6 +15,10 @@
 #define POSEVEN_FUNCTIONS_CLOSEDIR_HH
 
 // POSIX
+#ifdef __APPLE__
+// Include <sys/types.h> before <dirent.h> to compile with Mac OS X 10.2's SDK.
+#include <sys/types.h>
+#endif
 #include <dirent.h>
 
 // nucleus
