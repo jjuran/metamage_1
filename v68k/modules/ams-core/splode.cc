@@ -224,6 +224,14 @@ void post_event( const splode::ascii_event_buffer& buffer )
 		xascii = iota::to_upper( ascii );
 	}
 	
+	if ( mod & Option  &&  (int8_t) xascii >= 0 )
+	{
+		if ( uint8_t c = keytrans_option[ xascii ] )
+		{
+			xascii = c;
+		}
+	}
+	
 	const UInt32 message = code << 8 | xascii;
 	
 	const uint8_t action = buffer.attrs & action_mask;
