@@ -25,6 +25,7 @@
 // ams-core
 #include "cursor-core.hh"
 #include "keycodes.hh"
+#include "keytrans.hh"
 #include "options.hh"
 #include "reactor-core.hh"
 
@@ -209,9 +210,20 @@ void post_event( const splode::ascii_event_buffer& buffer )
 		return;  // Don't post events for NUL; just update KeyMods.
 	}
 	
-	const bool shifted = mod & (Shift|Alpha)  &&  iota::is_lower( ascii );
+	uint8_t xascii = ascii;
 	
-	const uint8_t xascii = shifted ? iota::to_upper( ascii ) : ascii;
+	if ( mod & Shift  &&  (int8_t) ascii >= 0 )
+	{
+		if ( uint8_t c = keytrans_shift[ ascii ] )
+		{
+			xascii = c;
+		}
+	}
+	else if ( mod & Alpha  &&  iota::is_lower( ascii ) )
+	{
+		xascii = iota::to_upper( ascii );
+	}
+	
 	const UInt32 message = code << 8 | xascii;
 	
 	const uint8_t action = buffer.attrs & action_mask;
