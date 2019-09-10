@@ -32,7 +32,6 @@
 #include "Pedestal/Application.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowEventHandlers.hh"  // codependent
-#include "Pedestal/WindowMenu.hh"
 
 
 namespace MacGlue
@@ -357,11 +356,8 @@ namespace Pedestal
 	{
 		if ( CONFIG_DESK_ACCESSORIES  &&  mac::app::close_DA_window( window ) )
 		{
-			// We never call window_created() for DAs.
 			return;
 		}
-		
-		window_removed( window );
 		
 		set_window_view( window, NULL );
 	}
@@ -408,8 +404,6 @@ namespace Pedestal
 		
 		n::owned< WindowRef > result =
 		n::owned< WindowRef >::seize( window, disposer );
-		
-		window_created( window );
 		
 		if ( TARGET_API_MAC_CARBON )
 		{

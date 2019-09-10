@@ -23,14 +23,6 @@ namespace Pedestal
 	static std::vector< void* > the_windows_in_menu;
 	
 	
-	void window_created( WindowRef w )
-	{
-	}
-	
-	void window_removed( WindowRef w )
-	{
-	}
-	
 	static bool window_title_less( const void* a_, const void* b_ )
 	{
 		const unsigned char* a;
