@@ -67,6 +67,22 @@ namespace Pedestal
 				continue;
 			}
 			
+		#if OPAQUE_TOOLBOX_STRUCTS
+			
+			Str255 title;
+			GetWTitle( window, title );
+			
+		#else
+			
+			ConstStr255Param title = *((WindowPeek) window)->titleHandle;
+			
+		#endif
+			
+			if ( title[ 0 ] == 0 )
+			{
+				continue;
+			}
+			
 			the_windows_in_menu.push_back( window );
 		}
 	}
@@ -104,10 +120,7 @@ namespace Pedestal
 			
 			AppendMenu( menu, "\p " );
 			
-			if ( title[ 0 ] > 0 )
-			{
-				SetMenuItemText( menu, i + 1, title );
-			}
+			SetMenuItemText( menu, i + 1, title );
 			
 			if ( w == front )
 			{
