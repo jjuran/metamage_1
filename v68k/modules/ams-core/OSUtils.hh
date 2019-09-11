@@ -25,6 +25,8 @@ short ReadDateTime_patch( long* secs : __A0 );
 DateTimeRec* Secs2Date_patch( unsigned long  secs : __D0,
                               DateTimeRec*   date : __A0 );
 
+short InitUtil_patch();
+
 void Enqueue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 );
 
 short Dequeue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 );

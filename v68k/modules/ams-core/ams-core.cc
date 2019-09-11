@@ -234,6 +234,8 @@ void install_OSUtils()
 	OSTRAP( Delay     );  // A03B
 	OSTRAP( CmpString );  // A03C
 	
+	OSTRAP( InitUtil  );  // A03F
+	
 	OSTRAP( UprString );  // A054
 	
 	OSTRAP( SysEnvirons );  // A090

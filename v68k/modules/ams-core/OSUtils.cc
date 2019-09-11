@@ -213,6 +213,15 @@ DateTimeRec* Secs2Date_patch( unsigned long  secs : __D0,
 }
 
 #pragma mark -
+#pragma mark Parameter RAM Operations
+#pragma mark -
+
+short InitUtil_patch()
+{
+	return prInitErr;
+}
+
+#pragma mark -
 #pragma mark Queue Manipulation
 #pragma mark -
 
