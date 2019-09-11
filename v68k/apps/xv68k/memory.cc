@@ -25,6 +25,7 @@
 
 // xv68k
 #include "screen.hh"
+#include "VIA.hh"
 
 
 #ifdef __MWERKS__
@@ -152,6 +153,11 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	if ( addr < low_memory_size )
 	{
 		return lowmem_translate( addr, length, fc, access );
+	}
+	
+	if ( (addr & 0x00FF0000) == 0xEF0000 )
+	{
+		return VIA::translate( addr, length, fc, access );
 	}
 	
 	return v68k::callout::translate( addr, length, fc, access );
