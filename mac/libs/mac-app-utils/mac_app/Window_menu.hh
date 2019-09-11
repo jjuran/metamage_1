@@ -1,10 +1,10 @@
 /*
-	WindowMenu.hh
-	-------------
+	Window_menu.hh
+	--------------
 */
 
-#ifndef PEDESTAL_WINDOWMENU_HH
-#define PEDESTAL_WINDOWMENU_HH
+#ifndef MACAPP_WINDOWMENU_HH
+#define MACAPP_WINDOWMENU_HH
 
 // Mac OS X
 #ifdef __APPLE__
@@ -20,13 +20,14 @@
 #endif
 
 
-namespace Pedestal
-{
+namespace mac {
+namespace app {
 	
 	void populate_Window_menu( MenuRef menu );
 	
 	WindowRef get_nth_window( int i );
 	
+}
 }
 
 #endif

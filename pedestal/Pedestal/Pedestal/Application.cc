@@ -55,6 +55,7 @@
 #include "mac_app/init.hh"
 #include "mac_app/menus.hh"
 #include "mac_app/state.hh"
+#include "mac_app/Window_menu.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -80,7 +81,6 @@
 #include "Pedestal/View.hh"
 #include "Pedestal/Window.hh"
 #include "Pedestal/WindowEventHandlers.hh"
-#include "Pedestal/WindowMenu.hh"
 #include "Pedestal/WindowStorage.hh"
 
 
@@ -413,7 +413,7 @@ namespace Pedestal
 		
 		if ( found.part == N::inMenuBar )
 		{
-			populate_Window_menu( the_Window_menu );
+			mac::app::populate_Window_menu( the_Window_menu );
 			
 			HandleMenuChoice( ::MenuSelect( event.where ) );
 			
@@ -990,7 +990,7 @@ namespace Pedestal
 		}
 		else if ( menuID == N::GetMenuID( the_Window_menu ) )
 		{
-			if ( WindowRef w = get_nth_window( item - 1 ) )
+			if ( WindowRef w = mac::app::get_nth_window( item - 1 ) )
 			{
 				SelectWindow( w );
 			}

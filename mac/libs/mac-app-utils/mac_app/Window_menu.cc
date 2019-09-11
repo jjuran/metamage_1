@@ -1,9 +1,9 @@
 /*
-	WindowMenu.cc
-	-------------
+	Window_menu.cc
+	--------------
 */
 
-#include "Pedestal/WindowMenu.hh"
+#include "mac_app/Window_menu.hh"
 
 // Standard  C++
 #include <algorithm>
@@ -17,8 +17,8 @@
 #include "mac_ui/menus.hh"
 
 
-namespace Pedestal
-{
+namespace mac {
+namespace app {
 	
 	static std::vector< void* > the_windows_in_menu;
 	
@@ -139,4 +139,5 @@ namespace Pedestal
 		return (WindowRef) the_windows_in_menu[ i ];
 	}
 	
+}
 }
