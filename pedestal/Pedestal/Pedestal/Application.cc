@@ -43,6 +43,7 @@
 
 // mac-qd-utils
 #include "mac_qd/assign_pixel_rgn.hh"
+#include "mac_qd/globals/arrow.hh"
 
 // mac-app-utils
 #include "mac_app/commands.hh"
@@ -303,7 +304,7 @@ namespace Pedestal
 			}
 		}
 		
-		N::SetCursor( N::GetQDGlobalsArrow() );
+		SetCursor( &mac::qd::arrow() );
 	}
 	
 	static void DispatchHighLevelEvent( const EventRecord& event )
