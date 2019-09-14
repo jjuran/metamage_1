@@ -31,6 +31,7 @@
 #include "vlib/array-utils.hh"
 #include "vlib/interpret.hh"
 #include "vlib/scope.hh"
+#include "vlib/tracker.hh"
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
 #include "vlib/types/integer.hh"
@@ -319,6 +320,7 @@ int main( int argc, char** argv )
 		}
 		
 		join_all_threads();
+		cull_unreachable_objects();
 	}
 	catch ( const std::bad_alloc& )
 	{
