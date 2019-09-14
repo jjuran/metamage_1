@@ -43,6 +43,7 @@
 
 // mac-qd-utils
 #include "mac_qd/assign_pixel_rgn.hh"
+#include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/arrow.hh"
 #include "mac_qd/wide_drag_area.hh"
 
@@ -581,7 +582,9 @@ namespace Pedestal
 		
 		N::Update_Scope update( window );
 		
-		if ( ::IsPortVisibleRegionEmpty( N::GetWindowPort( window ) ) )
+		CGrafPtr port = GetWindowPort( window );
+		
+		if ( ::IsPortVisibleRegionEmpty( port ) )
 		{
 			return;
 		}
@@ -593,7 +596,7 @@ namespace Pedestal
 			
 			n::saved< N::Clip > savedClip;
 			
-			N::ClipRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
+			N::ClipRect( mac::qd::get_portRect( port ) );
 			
 			N::UpdateControls( window );
 		}

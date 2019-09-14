@@ -13,6 +13,9 @@
 // mac-config
 #include "mac_config/upp-macros.hh"
 
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+
 // nucleus
 #include "nucleus/saved.hh"
 
@@ -25,6 +28,9 @@
 // Pedestal
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowStorage.hh"
+
+
+using mac::qd::get_portRect;
 
 
 namespace Pedestal
@@ -59,7 +65,7 @@ namespace Pedestal
 	static
 	Rect GrowBoxBounds( WindowRef window )
 	{
-		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+		Rect bounds = get_portRect( GetWindowPort( window ) );
 		
 		bounds.left = bounds.right - 15;
 		bounds.top = bounds.bottom - 15;
@@ -98,7 +104,7 @@ namespace Pedestal
 	{
 		if ( View* view = get_window_view( window ) )
 		{
-			view->Draw( N::GetPortBounds( GetWindowPort( window ) ), true );
+			view->Draw( get_portRect( GetWindowPort( window ) ), true );
 		}
 		
 		if ( window_has_grow_icon( window ) )

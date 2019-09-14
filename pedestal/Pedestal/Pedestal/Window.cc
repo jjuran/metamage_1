@@ -1,9 +1,12 @@
-/*	============
- *	PedWindow.cc
- *	============
- */
+/*
+	Window.cc
+	---------
+*/
 
 #include "Pedestal/Window.hh"
+
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
 
 // nucleus
 #include "nucleus/saved.hh"
@@ -31,7 +34,7 @@ namespace Pedestal
 		N::SizeWindow( window, newSize.h, newSize.v, true );
 		
 		// Don't rely on the requested size because it might have been tweaked
-		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+		Rect bounds = mac::qd::get_portRect( GetWindowPort( window ) );
 		
 		// Shotgun approach -- invalidate the whole window.
 		// This conveniently includes both old and new grow box locations.

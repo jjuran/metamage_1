@@ -13,6 +13,9 @@
 // mac-config
 #include "mac_config/desk-accessories.hh"
 
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+
 // mac-app-utils
 #include "mac_app/DAs.hh"
 
@@ -327,7 +330,7 @@ namespace Pedestal
 			return;
 		}
 		
-		N::InvalWindowRect( window, N::GetPortBounds( port ) );
+		N::InvalWindowRect( window, mac::qd::get_portRect( port ) );
 		
 		ScheduleImmediateEventCheck();
 	}
