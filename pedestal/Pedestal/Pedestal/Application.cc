@@ -44,6 +44,7 @@
 // mac-qd-utils
 #include "mac_qd/assign_pixel_rgn.hh"
 #include "mac_qd/globals/arrow.hh"
+#include "mac_qd/wide_drag_area.hh"
 
 // mac-app-utils
 #include "mac_app/commands.hh"
@@ -322,17 +323,7 @@ namespace Pedestal
 	static inline
 	void RespondToDrag( const EventRecord& event, WindowRef window )
 	{
-	#if TARGET_API_MAC_CARBON
-		
-		const Rect& bounds = N::GetQDGlobalsScreenBits().bounds;
-		
-	#else
-		
-		const Rect& bounds = qd.screenBits.bounds;
-		
-	#endif
-		
-		N::DragWindow( window, event.where, bounds );
+		DragWindow( window, event.where, mac::qd::wide_drag_area() );
 	}
 	
 	static bool TrackedControl( ControlRef control, N::ControlPartCode part, Point point )
