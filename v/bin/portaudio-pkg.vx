@@ -54,7 +54,7 @@ def make
 	
 	if not installed() then
 	{
-		system "cd -P " portaudio_repo_path " && make"
+		system "cd -P " portaudio_repo_path " && make lib/libportaudio.la"
 		
 		if not exists portaudio_repo_path "/" static_lib_name then
 		{
