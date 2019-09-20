@@ -181,6 +181,11 @@ namespace system  {
 		Mac::ThrowOSStatus( err );
 	}
 	
+	bool woken_thread( thread_id id )
+	{
+		return ::SetThreadState( id, kReadyThreadState, id ) == noErr;
+	}
+	
 	void thread_yield()
 	{
 		// Ignore errors so we don't throw in critical sections

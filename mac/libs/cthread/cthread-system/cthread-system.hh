@@ -34,6 +34,8 @@ namespace system
 	void stop_thread( thread_id id );
 	void wake_thread( thread_id id );
 	
+	bool woken_thread( thread_id id );
+	
 	void yield_to_thread( thread_id id );
 	
 }
