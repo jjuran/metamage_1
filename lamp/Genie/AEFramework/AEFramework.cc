@@ -14,11 +14,6 @@
 // cthread-either
 #include "cthread-either.hh"
 
-// Nitrogen
-#ifndef MAC_TOOLBOX_TYPES_OSSTATUS_HH
-#include "Mac/Toolbox/Types/OSStatus.hh"
-#endif
-
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif
@@ -93,35 +88,19 @@ namespace Nitrogen
 			
 			gExpectedReplies.erase( found );
 			
-			try
+			if ( woken_thread( thread ) )
 			{
-				// Make sure the thread exists
-				
-				if ( is_thread_stopped( thread ) )
-				{
-					wake_thread( thread );
-				}
-			}
-			catch ( const Mac::OSStatus& err )
-			{
-				if ( err != threadNotFoundErr )
-				{
-					throw;
-				}
-				
-				// A thread terminated without canceling a pending reply
-				thread = 0;
-			}
-			
-			if ( thread )
-			{
-				// before writing to its storage
+				// Make sure the thread exists before writing to its storage
 				if ( replyStorage != NULL )
 				{
 					*replyStorage = AEDuplicateDesc( reply ).release();
 				}
 				
 				yield_to_thread( thread );
+			}
+			else
+			{
+				// A thread terminated without canceling a pending reply
 			}
 		}
 		else
