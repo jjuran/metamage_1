@@ -3,11 +3,27 @@
 	------
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __APPLEEVENTS__
+#include <AppleEvents.h>
+#endif
+
+// Annex
+#ifndef ANNEX_MACTYPES_H
+#include "Annex/MacTypes.h"
+#endif
+
 // mac-config
 #include "mac_config/apple-events.hh"
+#include "mac_config/upp-macros.hh"
 
-// Nitrogen
-#include "Nitrogen/AppleEvents.hh"
+// plus
+#include "plus/string.hh"
 
 // Pedestal
 #include "Pedestal/AboutBox.hh"
@@ -28,24 +44,16 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
 	
-	struct Reply_AppleEvent
+	static
+	pascal OSErr Handle_Reply_event( AppleEvent const*  event,
+	                                 AppleEvent*        reply,
+	                                 SRefCon )
 	{
-		static void Handler( Mac::AppleEvent const&  event,
-		                     Mac::AppleEvent&        reply )
-		{
-			ReceiveReply( event );
-		}
-		
-		static void Install_Handler()
-		{
-			N::AEInstallEventHandler< Handler >( Mac::kCoreEventClass,
-			                                     Mac::kAEAnswer ).release();
-		}
-	};
+		return ReceiveReply( *event );
+	}
 	
 	
 	class App : public Ped::Application
@@ -95,7 +103,13 @@ namespace Genie
 		
 		if ( apple_events_present )
 		{
-			Reply_AppleEvent::Install_Handler();
+			DEFINE_UPP( AEEventHandler, Handle_Reply_event );
+			
+			AEInstallEventHandler( kCoreEventClass,
+			                       kAEAnswer,
+			                       UPP_ARG( Handle_Reply_event ),
+			                       0,
+			                       false );
 		}
 		
 		spawn_process( "/etc/startup" );
