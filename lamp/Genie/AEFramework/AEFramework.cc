@@ -51,7 +51,7 @@ namespace Nitrogen
 		}
 	};
 	
-	typedef std::map< AEReturnID_32Bit, ExpectedReply > ExpectedReplies;
+	typedef std::map< SInt32, ExpectedReply > ExpectedReplies;
 	
 	STATIC ExpectedReplies gExpectedReplies;  // Not for System-6-only builds
 	
@@ -65,19 +65,20 @@ namespace Nitrogen
 		gExpectedReplies[ returnID ] = ExpectedReply( current_thread(), replyStorage );
 	}
 	
-	static inline AEReturnID_32Bit
-	//
-	AEGetAttributePtr_keyReturnIDAttr( const AppleEvent& appleEvent )
+	static inline
+	SInt32 AEGetAttributePtr_keyReturnIDAttr( const AppleEvent& appleEvent )
 	{
 		const Mac::AEKeyword key = Mac::keyReturnIDAttr;
 		const Mac::DescType type = Mac::typeSInt32;
+		
+		SInt32 result;
 		
 		return AEKeyword_get< key >( AEGetAttributePtr_Getter< type >( appleEvent, key ) );
 	}
 	
 	void ReceiveReply( const Mac::AppleEvent& reply )
 	{
-		AEReturnID_32Bit returnID = AEGetAttributePtr_keyReturnIDAttr( reply );
+		SInt32 returnID = AEGetAttributePtr_keyReturnIDAttr( reply );
 		
 		ExpectedReplies::iterator found = gExpectedReplies.find( returnID );
 		
