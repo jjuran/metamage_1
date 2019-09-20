@@ -30,6 +30,11 @@ namespace relix
 		wake_thread( id );
 	}
 	
+	bool woken_os_thread( os_thread_id id )
+	{
+		return woken_thread( id );
+	}
+	
 	void os_thread_yield()
 	{
 		thread_yield();
