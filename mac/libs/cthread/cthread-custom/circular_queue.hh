@@ -20,13 +20,13 @@ namespace custom  {
 		private:
 			queue_element*  its_head;
 			queue_element*  its_tail;
-			
-			bool contains( queue_element* node );
 		
 		public:
 			circular_queue() : its_head(), its_tail()
 			{
 			}
+			
+			bool contains( queue_element* node ) const;
 			
 			void reset( queue_element* node );
 			void prepend( queue_element* node );
