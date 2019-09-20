@@ -14,14 +14,12 @@
 #include "Pedestal/Application.hh"
 #include "Pedestal/Commands.hh"
 
-// Nitrogen Extras / AEFramework
-#include "AEFramework/AEFramework.h"
-
 // relix-kernel
 #include "relix/api/os_thread_api.hh"
 #include "relix/task/scheduler.hh"
 
 // Genie
+#include "AEFramework/AEFramework.h"
 #include "Genie/notify.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/mnt/listener.hh"
@@ -39,7 +37,7 @@ namespace Genie
 		static void Handler( Mac::AppleEvent const&  event,
 		                     Mac::AppleEvent&        reply )
 		{
-			N::ReceiveReply( event );
+			ReceiveReply( event );
 		}
 		
 		static void Install_Handler()

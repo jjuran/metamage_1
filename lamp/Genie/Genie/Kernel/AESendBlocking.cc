@@ -16,14 +16,14 @@
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
 
-// Nitrogen Extras / AEFramework
-#include "AEFramework/AEFramework.h"
-
 // relix
 #include "relix/api/current_thread.hh"
 #include "relix/signal/check_signals.hh"
 #include "relix/signal/signal.hh"
 #include "relix/task/thread.hh"
+
+// Genie
+#include "AEFramework/AEFramework.h"
 
 
 namespace N = Nitrogen;
@@ -57,7 +57,7 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 		N::AEReturnID_32Bit returnID = AEGetAttributePtr_keyReturnIDAttr( appleEvent );
 		
 		// Subscribe to AEFramework's queued reply delivery and wake-up service
-		N::ExpectReply( returnID, &reply );
+		Genie::ExpectReply( returnID, &reply );
 		
 		thread& current = current_thread();
 		
