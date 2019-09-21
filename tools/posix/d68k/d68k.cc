@@ -450,6 +450,8 @@ namespace tool
 	
 	static plus::string read_ea( short mode_reg, short immediate_size )
 	{
+		global_last_absolute_addr_from_ea = 0;
+		
 		const short mode = mode_reg >> 3;
 		
 		const short reg = mode_reg & 0x7;
