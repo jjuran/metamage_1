@@ -44,6 +44,9 @@
 // varyx-channel
 #include "varyx/channel/metatype.hh"
 
+// varyx-ed25519
+#include "varyx/ed25519/functions.hh"
+
 // varyx-meta
 #include "varyx/meta/eval.hh"
 
@@ -71,6 +74,7 @@ using namespace command::constants;
 using namespace vlib;
 
 using namespace varyx::channel;
+using namespace varyx::ed25519;
 using namespace varyx::meta;
 using namespace varyx::posix;
 
@@ -293,6 +297,10 @@ int main( int argc, char** argv )
 	define( proc_utime    );
 	define( proc_warn     );
 	define( proc_write    );
+	
+	define( proc_mkpub  );
+	define( proc_sign   );
+	define( proc_verify );
 	
 	const char* path = "<inline script>";
 	

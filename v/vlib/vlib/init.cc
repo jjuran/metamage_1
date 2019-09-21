@@ -124,10 +124,6 @@ namespace vlib
 		define_keyword( proc_unbin  );
 		define_keyword( proc_unhex  );
 		
-		define_keyword( proc_mkpub  );
-		define_keyword( proc_sign   );
-		define_keyword( proc_verify );
-		
 		return true;
 	}
 	

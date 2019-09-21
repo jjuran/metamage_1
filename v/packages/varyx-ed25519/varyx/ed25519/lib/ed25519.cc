@@ -3,7 +3,7 @@
 	----------
 */
 
-#include "vlib/lib/ed25519.hh"
+#include "varyx/ed25519/lib/ed25519.hh"
 
 // Standard C
 #include <stdint.h>
@@ -15,8 +15,6 @@
 #include "debug/assert.hh"
 
 
-namespace vlib
-{
 namespace ed25519
 {
 	
@@ -66,5 +64,4 @@ namespace ed25519
 		return nok == 0;
 	}
 	
-}
 }

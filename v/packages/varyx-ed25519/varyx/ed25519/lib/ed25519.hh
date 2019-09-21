@@ -3,15 +3,13 @@
 	----------
 */
 
-#ifndef VLIB_LIB_ED25519_HH
-#define VLIB_LIB_ED25519_HH
+#ifndef VARYX_ED25519_LIB_ED25519_HH
+#define VARYX_ED25519_LIB_ED25519_HH
 
 // plus
 #include "plus/string.hh"
 
 
-namespace vlib
-{
 namespace ed25519
 {
 	
@@ -24,7 +22,6 @@ namespace ed25519
 	             const plus::string&  message,
 	             const plus::string&  signature );
 	
-}
 }
 
 #endif

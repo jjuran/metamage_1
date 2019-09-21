@@ -29,10 +29,6 @@ namespace vlib
 	extern const proc_info proc_unbin;
 	extern const proc_info proc_unhex;
 	
-	extern const proc_info proc_mkpub;
-	extern const proc_info proc_sign;
-	extern const proc_info proc_verify;
-	
 }
 
 #endif
