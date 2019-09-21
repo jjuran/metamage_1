@@ -304,6 +304,7 @@ static void install_Packages()
 static
 void install_Scrap()
 {
+	TBTRAP( InfoScrap   );  // A9F9
 	TBTRAP( UnloadScrap );  // A9FA
 	TBTRAP( LoadScrap   );  // A9FB
 	TBTRAP( ZeroScrap   );  // A9FC

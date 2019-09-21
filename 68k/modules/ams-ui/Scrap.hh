@@ -9,6 +9,10 @@
 typedef char** Handle;
 typedef unsigned long ResType;
 
+struct ScrapStuff;
+
+pascal ScrapStuff* InfoScrap_patch();
+
 pascal long UnloadScrap_patch();
 pascal long LoadScrap_patch();
 

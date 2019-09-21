@@ -9,11 +9,34 @@
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
+#ifndef __SCRAP__
+#include <Scrap.h>
+#endif
 
 
 short  TEScrpLength : 0x0AB0;
 Handle TEScrpHandle : 0x0AB4;
 
+
+static unsigned char* scrapName = "\p" "Clipboard File";
+
+static ScrapStuff scrapVars =
+{
+	0,
+	NULL,
+	0,
+	-1,
+	scrapName,
+};
+
+#pragma mark -
+#pragma mark Getting Desk Scrap Information
+#pragma mark -
+
+pascal ScrapStuff* InfoScrap_patch()
+{
+	return &scrapVars;
+}
 
 #pragma mark -
 #pragma mark Keeping the Desk Scrap on the Disk
