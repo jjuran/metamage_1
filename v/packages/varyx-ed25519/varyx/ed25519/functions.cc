@@ -92,9 +92,16 @@ namespace ed25519
 	static const Value sign( packed, bytes );
 	static const Value verify( packed, Value( bytes, packed ) );
 	
-	const proc_info proc_mkpub  = { "ed25519-publickey", &v_mkpub,  &packed };
-	const proc_info proc_sign   = { "ed25519-sign",      &v_sign,   &sign   };
-	const proc_info proc_verify = { "ed25519-verify",    &v_verify, &verify };
+	enum
+	{
+		pure = Proc_pure,
+	};
+	
+	#define ED "ed25519-"
+	
+	const proc_info proc_mkpub  = { ED "publickey", &v_mkpub,  &packed, pure };
+	const proc_info proc_sign   = { ED "sign",      &v_sign,   &sign,   pure };
+	const proc_info proc_verify = { ED "verify",    &v_verify, &verify, pure };
 	
 }
 }

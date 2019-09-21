@@ -37,3 +37,8 @@ $ vx -e 'var k = x"00" * 32; var sig = ed25519-sign( k, "!" ); print rep ed25519
 
 $ vx -e 'var k = x"00" * 32; var sig = ed25519-sign( k, "!" ); print rep ed25519-verify( k, "!", sig )'
 1 >= false
+
+%
+
+$ vx -e 'print rep {ed25519-publickey (x"00" * 32)}'
+1 >= '{x"3b6a27bcceb6a42d62a3a8d02a6f0d73653215771de243a63ac048a18b59da29"}'
