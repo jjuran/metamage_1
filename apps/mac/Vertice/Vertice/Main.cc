@@ -3,6 +3,9 @@
 	---------------
 */
 
+// mac-config
+#include "mac_config/apple-events.hh"
+
 // mac-app-utils
 #include "mac_app/event_handlers.hh"
 
@@ -52,7 +55,15 @@ int main(void)
 	
 	Ped::Application app;
 	
-	mac::app::install_opendocs_handler( &open_doc );
+	const bool apple_events_present =
+		CONFIG_APPLE_EVENTS  &&
+			(CONFIG_APPLE_EVENTS_GRANTED  ||
+				Ped::apple_events_present);
+	
+	if ( apple_events_present )
+	{
+		mac::app::install_opendocs_handler( &open_doc );
+	}
 	
 	SetCommandHandler( Ped::kCmdAbout, &About );
 	
