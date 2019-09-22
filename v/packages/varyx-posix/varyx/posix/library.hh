@@ -3,15 +3,19 @@
 	----------
 */
 
-#ifndef LIBRARY_HH
-#define LIBRARY_HH
+#ifndef VARYX_POSIX_LIBRARY_HH
+#define VARYX_POSIX_LIBRARY_HH
 
 // vlib
 #include "vlib/proc_info.hh"
 
 
-namespace vlib
+namespace varyx
 {
+namespace posix
+{
+	
+	using vlib::proc_info;
 	
 	extern const proc_info proc_EXECV;
 	extern const proc_info proc_EXECVP;
@@ -28,6 +32,7 @@ namespace vlib
 	extern const proc_info proc_utime;
 	extern const proc_info proc_warn;
 	
+}
 }
 
 #endif

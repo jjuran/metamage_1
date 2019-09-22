@@ -3,8 +3,8 @@
 	------------
 */
 
-#ifndef EXCEPTION_HH
-#define EXCEPTION_HH
+#ifndef VARYX_POSIX_EXCEPTION_HH
+#define VARYX_POSIX_EXCEPTION_HH
 
 // Standard C
 #include <errno.h>
@@ -12,8 +12,17 @@
 
 namespace vlib
 {
-	
+
 	class Value;
+	
+}
+
+namespace varyx
+{
+namespace posix
+{
+	
+	using vlib::Value;
 	
 	Value error_desc( int err );
 	
@@ -25,6 +34,7 @@ namespace vlib
 	
 	void throw_exception_object( const Value& fields );
 	
+}
 }
 
 #endif

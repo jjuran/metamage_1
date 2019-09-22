@@ -3,7 +3,7 @@
 	------------
 */
 
-#include "exception.hh"
+#include "varyx/posix/exception.hh"
 
 // POSIX
 #include <string.h>
@@ -21,8 +21,13 @@
 #include "vlib/types/string.hh"
 
 
-namespace vlib
+namespace varyx
 {
+namespace posix
+{
+	
+	using namespace vlib;
+	
 	
 	Value error_desc( int err )
 	{
@@ -82,4 +87,5 @@ namespace vlib
 		throw user_exception( object, source_spec() );
 	}
 	
+}
 }

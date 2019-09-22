@@ -3,7 +3,7 @@
 	----------
 */
 
-#include "sockets.hh"
+#include "varyx/posix/sockets.hh"
 
 // POSIX
 #include <netdb.h>
@@ -19,14 +19,18 @@
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 
-// vx
-#include "exception.hh"
-#include "file_descriptor.hh"
+// varyx-posix
+#include "varyx/posix/exception.hh"
+#include "varyx/posix/file_descriptor.hh"
 
 
-
-namespace vlib
+namespace varyx
 {
+namespace posix
+{
+	
+	using namespace vlib;
+	
 	
 	class addrinfo_cleanup
 	{
@@ -190,4 +194,5 @@ namespace vlib
 	const proc_info proc_tcpconnect = { "tcp-connect", &v_tcpconnect, &c_str_x2 };
 	const proc_info proc_tcplisten  = { "tcp-listen",  &v_tcplisten,  &c_str };
 	
+}
 }

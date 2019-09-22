@@ -3,7 +3,7 @@
 	----------
 */
 
-#include "posixfs.hh"
+#include "varyx/posix/posixfs.hh"
 
 #ifdef __APPLE__
 #include <CoreServices/CoreServices.h>
@@ -43,13 +43,20 @@
 #include "vlib/types/type.hh"
 #include "vlib/types/unitary.hh"
 
-// vx
-#include "exception.hh"
-#include "file_descriptor.hh"
+// varyx-posix
+#include "varyx/posix/exception.hh"
+#include "varyx/posix/file_descriptor.hh"
 
 
-namespace vlib
+namespace varyx
 {
+namespace posix
+{
+	
+	using vlib::Boolean;
+	
+	using namespace vlib;
+	
 	
 	static const Type string = string_vtype;
 	
@@ -703,4 +710,5 @@ namespace vlib
 		}
 	}
 	
+}
 }

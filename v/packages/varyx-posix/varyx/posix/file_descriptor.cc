@@ -3,7 +3,7 @@
 	------------------
 */
 
-#include "file_descriptor.hh"
+#include "varyx/posix/file_descriptor.hh"
 
 // POSIX
 #include <unistd.h>
@@ -33,15 +33,20 @@
 #include "vlib/types/proc.hh"
 #include "vlib/types/type.hh"
 
-// vx
-#include "posixfs.hh"
+// varyx-posix
+#include "varyx/posix/posixfs.hh"
 
 
 #define STRLEN( s )  (sizeof "" s - 1)
 
 
-namespace vlib
+namespace varyx
 {
+namespace posix
+{
+	
+	using namespace vlib;
+	
 	
 	inline
 	auto_fd::~auto_fd()
@@ -286,4 +291,5 @@ namespace vlib
 		Type_pure,
 	};
 	
+}
 }

@@ -3,8 +3,8 @@
 	------------------
 */
 
-#ifndef FILEDESCRIPTOR_HH
-#define FILEDESCRIPTOR_HH
+#ifndef VARYX_POSIX_FILEDESCRIPTOR_HH
+#define VARYX_POSIX_FILEDESCRIPTOR_HH
 
 // vlib
 #include "vlib/value.hh"
@@ -15,6 +15,18 @@ namespace vlib
 	
 	struct dispatch;
 	struct type_info;
+	
+}
+
+namespace varyx
+{
+namespace posix
+{
+	
+	using vlib::dispatch;
+	using vlib::type_info;
+	using vlib::Value;
+	using vlib::Value_other;
 	
 	extern const dispatch fd_dispatch;
 	
@@ -80,6 +92,7 @@ namespace vlib
 	
 	extern const type_info fd_vtype;
 	
+}
 }
 
 #endif

@@ -42,8 +42,8 @@
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 
-// vx
-#include "exception.hh"
+// varyx-posix
+#include "varyx/posix/exception.hh"
 
 
 #ifdef ANDROID
@@ -53,8 +53,13 @@
 #endif
 
 
-namespace vlib
+namespace varyx
 {
+namespace posix
+{
+	
+	using namespace vlib;
+	
 	
 	typedef int (*exec_f)( const char* arg0, char* const* argv );
 	
@@ -468,4 +473,5 @@ namespace vlib
 	const proc_info proc_utime  = { "utime",  &v_utime,  &empty_list };
 	const proc_info proc_warn   = { "warn",   &v_warn,   NULL        };
 	
+}
 }

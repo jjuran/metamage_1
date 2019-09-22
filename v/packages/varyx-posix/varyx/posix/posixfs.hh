@@ -3,15 +3,20 @@
 	----------
 */
 
-#ifndef POSIXFS_HH
-#define POSIXFS_HH
+#ifndef VARYX_POSIX_POSIXFS_HH
+#define VARYX_POSIX_POSIXFS_HH
 
 // vlib
 #include "vlib/proc_info.hh"
 
 
-namespace vlib
+namespace varyx
 {
+namespace posix
+{
+	
+	using vlib::proc_info;
+	using vlib::Value;
 	
 	extern const proc_info proc_chdir;
 	extern const proc_info proc_close;
@@ -39,6 +44,7 @@ namespace vlib
 	
 	void send_data( int fd, const Value& v );
 	
+}
 }
 
 #endif

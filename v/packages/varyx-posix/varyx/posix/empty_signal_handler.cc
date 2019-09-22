@@ -3,12 +3,15 @@
 	-----------------------
 */
 
-#include "empty_signal_handler.hh"
+#include "varyx/posix/empty_signal_handler.hh"
 
 // Standard C
 #include <signal.h>
 #include <stdlib.h>
 
+
+namespace varyx {
+namespace posix {
 
 static
 void empty_signal_handler( int )
@@ -41,4 +44,7 @@ bool verify_empty_signal_handler( int signum )
 	}
 	
 	return sig.sa_handler == &empty_signal_handler;
+}
+
+}
 }

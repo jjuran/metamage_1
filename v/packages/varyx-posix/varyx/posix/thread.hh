@@ -3,8 +3,8 @@
 	---------
 */
 
-#ifndef THREAD_HH
-#define THREAD_HH
+#ifndef VARYX_POSIX_THREAD_HH
+#define VARYX_POSIX_THREAD_HH
 
 // vlib
 #include "vlib/value.hh"
@@ -13,10 +13,21 @@
 namespace vlib
 {
 	
-	class thread_state;
-	
 	struct dispatch;
 	struct type_info;
+	
+}
+
+namespace varyx
+{
+namespace posix
+{
+	
+	using vlib::dispatch;
+	using vlib::type_info;
+	using vlib::Value;
+	
+	class thread_state;
 	
 	extern const dispatch thread_dispatch;
 	
@@ -40,6 +51,7 @@ namespace vlib
 	
 	extern const type_info thread_vtype;
 	
+}
 }
 
 #endif

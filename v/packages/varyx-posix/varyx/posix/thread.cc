@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "thread.hh"
+#include "varyx/posix/thread.hh"
 
 // Standard C++
 #include <new>
@@ -22,12 +22,17 @@
 #include "vlib/types/proc.hh"
 #include "vlib/types/type.hh"
 
-// vx
-#include "thread_state.hh"
+// varyx-posix
+#include "varyx/posix/thread_state.hh"
 
 
-namespace vlib
+namespace varyx
 {
+namespace posix
+{
+	
+	using namespace vlib;
+	
 	
 	Value Thread::coerce( const Value& v )
 	{
@@ -174,4 +179,5 @@ namespace vlib
 		&thread_member,
 	};
 	
+}
 }

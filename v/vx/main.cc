@@ -47,14 +47,14 @@
 // varyx-meta
 #include "varyx/meta/eval.hh"
 
-// vx
-#include "empty_signal_handler.hh"
-#include "file_descriptor.hh"
-#include "library.hh"
-#include "posixfs.hh"
-#include "sockets.hh"
-#include "thread.hh"
-#include "thread_state.hh"
+// varyx-posix
+#include "varyx/posix/empty_signal_handler.hh"
+#include "varyx/posix/file_descriptor.hh"
+#include "varyx/posix/library.hh"
+#include "varyx/posix/posixfs.hh"
+#include "varyx/posix/sockets.hh"
+#include "varyx/posix/thread.hh"
+#include "varyx/posix/thread_state.hh"
 
 
 #define STRLEN( s )  (sizeof "" s - 1)
@@ -72,6 +72,7 @@ using namespace vlib;
 
 using namespace varyx::channel;
 using namespace varyx::meta;
+using namespace varyx::posix;
 
 
 const int thread_interrupt_signal = SIGUSR1;

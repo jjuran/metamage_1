@@ -3,8 +3,8 @@
 	---------------
 */
 
-#ifndef THREADSTATE_HH
-#define THREADSTATE_HH
+#ifndef VARYX_POSIX_THREADSTATE_HH
+#define VARYX_POSIX_THREADSTATE_HH
 
 // poseven
 #include "poseven/types/thread.hh"
@@ -13,8 +13,12 @@
 #include "vlib/value.hh"
 
 
-namespace vlib
+namespace varyx
 {
+namespace posix
+{
+	
+	using vlib::Value;
 	
 	enum thread_status
 	{
@@ -66,6 +70,7 @@ namespace vlib
 	
 	void join_all_threads();
 	
+}
 }
 
 #endif

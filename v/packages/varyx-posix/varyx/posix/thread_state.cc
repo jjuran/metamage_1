@@ -3,7 +3,7 @@
 	---------------
 */
 
-#include "thread_state.hh"
+#include "varyx/posix/thread_state.hh"
 
 // POSIX
 #include <unistd.h>
@@ -30,8 +30,8 @@
 #include "vlib/types/string.hh"
 #include "vlib/types/term.hh"
 
-// vx
-#include "exception.hh"
+// varyx-posix
+#include "varyx/posix/exception.hh"
 
 
 #define THREAD_SELF_DESTRUCTION  "\n" "vx:   SELF-DESTRUCT CODE ACCEPTED" "\n"
@@ -39,10 +39,14 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
-namespace vlib
+namespace varyx
+{
+namespace posix
 {
 	
 	namespace p7 = poseven;
+	
+	using namespace vlib;
 	
 	
 	static std::vector< thread_state* > joinable_threads;
@@ -199,4 +203,5 @@ namespace vlib
 		return its_pb.result.sym()->get();
 	}
 	
+}
 }
