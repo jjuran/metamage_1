@@ -292,7 +292,7 @@ namespace vlib
 			{
 				if ( const Identifier* name = expr->right.is< Identifier >() )
 				{
-					v = Value( String( name->get() ), Op_mapping, *name );
+					v = mapping( name->get(), *name );
 					
 					expr = v.expr();
 				}

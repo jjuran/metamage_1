@@ -196,4 +196,9 @@ namespace vlib
 	const proc_info proc_join  = { "join",  &v_join,  &string_etc, Proc_pure };
 	const proc_info proc_lines = { "lines", &v_lines, &string,     Proc_pure };
 	
+	Value mapping( const plus::string& key, const Value& v )
+	{
+		return Value( String( key ), Op_mapping, v );
+	}
+	
 }

@@ -9,16 +9,11 @@
 // Standard C
 #include <errno.h>
 
-// plus
-#include "plus/string_fwd.hh"
-
 
 namespace vlib
 {
 	
 	class Value;
-	
-	Value mapping( const plus::string& key, const Value& v );
 	
 	Value error_desc( int err );
 	

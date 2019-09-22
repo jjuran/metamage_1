@@ -41,6 +41,8 @@ namespace vlib
 	
 	extern const proc_info proc_join;
 	
+	Value mapping( const plus::string& key, const Value& v );
+	
 }
 
 #endif

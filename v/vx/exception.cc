@@ -24,11 +24,6 @@
 namespace vlib
 {
 	
-	Value mapping( const plus::string& key, const Value& v )
-	{
-		return Value( String( key ), Op_mapping, v );
-	}
-	
 	Value error_desc( int err )
 	{
 		if ( err == EINTR )
