@@ -159,6 +159,12 @@ namespace vlib
 	}
 	
 	static
+	Value v_secret( const Value& v )
+	{
+		return v.secret();
+	}
+	
+	static
 	plus::string::size_type substr_offset( const plus::string&     s,
 	                                       const bignum::integer&  offset )
 	{
@@ -402,7 +408,8 @@ namespace vlib
 	static const Value string_ref( Op_unary_deref, string );
 	static const Value trans( string_ref, Value( bytes, bytes ) );
 	
-	#define TRANS  "translate"
+	#define DESTRUCT  "self-destructing"
+	#define TRANS     "translate"
 	
 	enum
 	{
@@ -418,6 +425,7 @@ namespace vlib
 	const proc_info proc_min    = { "min",    &v_min,    NULL,     pure };
 	const proc_info proc_mince  = { "mince",  &v_mince,  &mince,   pure };
 	const proc_info proc_rep    = { "rep",    &v_rep,    NULL,     pure };
+	const proc_info proc_secret = { DESTRUCT, &v_secret, NULL           };
 	const proc_info proc_sha256 = { "sha256", &v_sha256, &bytes,   pure };
 	const proc_info proc_substr = { "substr", &v_substr, &substr,  pure };
 	const proc_info proc_tail   = { "tail",   &v_tail,   NULL,     pure };

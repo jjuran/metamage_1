@@ -29,6 +29,7 @@
 
 // vlib
 #include "vlib/array-utils.hh"
+#include "vlib/functions.hh"
 #include "vlib/interpret.hh"
 #include "vlib/scope.hh"
 #include "vlib/tracker.hh"

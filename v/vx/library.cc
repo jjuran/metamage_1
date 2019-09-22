@@ -353,12 +353,6 @@ namespace vlib
 	}
 	
 	static
-	Value v_secret( const Value& v )
-	{
-		return v.secret();
-	}
-	
-	static
 	Value v_setenv( const Value& v )
 	{
 		Expr* expr = v.expr();
@@ -513,7 +507,6 @@ namespace vlib
 	static const Value eval( c_str, cstr_eval );
 	static const Value exec( c_str, c_str_array );
 	
-	#define DESTRUCT  "self-destructing"
 	#define RUNOUT    "output-from-run"
 	
 	const proc_info proc_eval   = { "eval",   &v_eval,   &eval       };
@@ -524,7 +517,6 @@ namespace vlib
 	const proc_info proc_print  = { "print",  &v_print,  NULL        };
 	const proc_info proc_RUN    = { "run",    &v_run,    &c_str_array};
 	const proc_info proc_RUNOUT = { RUNOUT,   &v_runout, &c_str_array};
-	const proc_info proc_secret = { DESTRUCT, &v_secret, NULL        };
 	const proc_info proc_setenv = { "setenv", &v_setenv, &cstr_x2    };
 	const proc_info proc_sleep  = { "sleep",  &v_sleep,  &sleep_arg  };
 	const proc_info proc_system = { "system", &v_system, &empty_list };
