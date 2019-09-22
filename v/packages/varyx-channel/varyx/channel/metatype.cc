@@ -3,7 +3,7 @@
 	-----------
 */
 
-#include "channel/metatype.hh"
+#include "varyx/channel/metatype.hh"
 
 // vlib
 #include "vlib/throw.hh"
@@ -18,12 +18,17 @@
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 
-// vx
-#include "channel/channel.hh"
+// varyx-channel
+#include "varyx/channel/channel.hh"
 
 
-namespace vlib
+namespace varyx
 {
+namespace channel
+{
+	
+	using namespace vlib;
+	
 	
 	static
 	const char* channelmetatype_str_data( const Value& v )
@@ -109,4 +114,5 @@ namespace vlib
 		&type,
 	};
 	
+}
 }

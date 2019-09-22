@@ -3,7 +3,7 @@
 	----------
 */
 
-#include "channel/channel.hh"
+#include "varyx/channel/channel.hh"
 
 // Standard C++
 #include <new>
@@ -18,13 +18,18 @@
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/types/proc.hh"
 
-// vx
-#include "channel/metatype.hh"
-#include "channel/state.hh"
+// varyx-channel
+#include "varyx/channel/metatype.hh"
+#include "varyx/channel/state.hh"
 
 
-namespace vlib
+namespace varyx
 {
+namespace channel
+{
+	
+	using namespace vlib;
+	
 	
 	static
 	const char* channel_str_data( const Value& v )
@@ -159,4 +164,5 @@ namespace vlib
 		new ((void*) pointer()) channel_state();
 	}
 	
+}
 }

@@ -41,6 +41,9 @@
 #include "vlib/types/type.hh"
 #include "vlib/types/unitary.hh"
 
+// varyx-channel
+#include "varyx/channel/metatype.hh"
+
 // varyx-meta
 #include "varyx/meta/eval.hh"
 
@@ -52,7 +55,6 @@
 #include "sockets.hh"
 #include "thread.hh"
 #include "thread_state.hh"
-#include "channel/metatype.hh"
 
 
 #define STRLEN( s )  (sizeof "" s - 1)
@@ -68,6 +70,7 @@ namespace p7 = poseven;
 using namespace command::constants;
 using namespace vlib;
 
+using namespace varyx::channel;
 using namespace varyx::meta;
 
 

@@ -3,13 +3,17 @@
 	--------
 */
 
-#include "state.hh"
+#include "varyx/channel/state.hh"
 
 
-namespace vlib
+namespace varyx
+{
+namespace channel
 {
 	
 	namespace p7 = poseven;
+	
+	using namespace vlib;
 	
 	
 	void channel_state::close()
@@ -75,4 +79,5 @@ namespace vlib
 		return result;
 	}
 	
+}
 }

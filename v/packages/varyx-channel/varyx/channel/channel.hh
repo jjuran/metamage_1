@@ -3,8 +3,8 @@
 	----------
 */
 
-#ifndef CHANNEL_CHANNEL_HH
-#define CHANNEL_CHANNEL_HH
+#ifndef VARYX_CHANNEL_CHANNEL_HH
+#define VARYX_CHANNEL_CHANNEL_HH
 
 // vlib
 #include "vlib/value.hh"
@@ -13,9 +13,19 @@
 namespace vlib
 {
 	
-	class channel_state;
-	
 	struct dispatch;
+	
+}
+
+namespace varyx
+{
+namespace channel
+{
+	
+	using vlib::dispatch;
+	using vlib::Value;
+	
+	class channel_state;
 	
 	extern const dispatch channel_dispatch;
 	
@@ -35,6 +45,7 @@ namespace vlib
 			}
 	};
 	
+}
 }
 
 #endif

@@ -3,8 +3,8 @@
 	-----------
 */
 
-#ifndef CHANNEL_METATYPE_HH
-#define CHANNEL_METATYPE_HH
+#ifndef VARYX_CHANNEL_METATYPE_HH
+#define VARYX_CHANNEL_METATYPE_HH
 
 // vlib
 #include "vlib/value.hh"
@@ -14,6 +14,17 @@ namespace vlib
 {
 	
 	struct dispatch;
+	
+}
+
+namespace varyx
+{
+namespace channel
+{
+	
+	using vlib::dispatch;
+	using vlib::Value;
+	using vlib::Value_other;
 	
 	extern const dispatch channelmetatype_dispatch;
 	
@@ -30,6 +41,7 @@ namespace vlib
 			}
 	};
 	
+}
 }
 
 #endif

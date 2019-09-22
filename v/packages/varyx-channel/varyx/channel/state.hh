@@ -3,8 +3,8 @@
 	--------
 */
 
-#ifndef CHANNEL_STATE_HH
-#define CHANNEL_STATE_HH
+#ifndef VARYX_CHANNEL_STATE_HH
+#define VARYX_CHANNEL_STATE_HH
 
 // poseven
 #include "poseven/types/cond.hh"
@@ -14,8 +14,12 @@
 #include "vlib/value.hh"
 
 
-namespace vlib
+namespace varyx
 {
+namespace channel
+{
+	
+	using vlib::Value;
 	
 	class channel_state
 	{
@@ -43,6 +47,7 @@ namespace vlib
 			Value recv();
 	};
 	
+}
 }
 
 #endif
