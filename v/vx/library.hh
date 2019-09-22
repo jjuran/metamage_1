@@ -13,7 +13,6 @@
 namespace vlib
 {
 	
-	extern const proc_info proc_eval;
 	extern const proc_info proc_EXECV;
 	extern const proc_info proc_EXECVP;
 	extern const proc_info proc_exit;

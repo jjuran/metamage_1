@@ -41,6 +41,9 @@
 #include "vlib/types/type.hh"
 #include "vlib/types/unitary.hh"
 
+// varyx-meta
+#include "varyx/meta/eval.hh"
+
 // vx
 #include "empty_signal_handler.hh"
 #include "file_descriptor.hh"
@@ -64,6 +67,8 @@ namespace p7 = poseven;
 
 using namespace command::constants;
 using namespace vlib;
+
+using namespace varyx::meta;
 
 
 const int thread_interrupt_signal = SIGUSR1;

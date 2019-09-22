@@ -18,9 +18,6 @@
 // must
 #include "must/write.h"
 
-// debug
-#include "debug/assert.hh"
-
 // plus
 #include "plus/var_string.hh"
 
@@ -33,13 +30,11 @@
 // vlib
 #include "vlib/array-utils.hh"
 #include "vlib/exceptions.hh"
-#include "vlib/interpret.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
 #include "vlib/types.hh"
 #include "vlib/iterators/array_iterator.hh"
-#include "vlib/iterators/safe_list_builder.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/fraction.hh"
 #include "vlib/types/integer.hh"
@@ -60,52 +55,6 @@
 
 namespace vlib
 {
-	
-	static
-	void eval_error_handler( const plus::string& msg, const source_spec& src )
-	{
-		throw user_exception( String( msg ), src );
-	}
-	
-	static
-	Value v_eval( const Value& v )
-	{
-		Expr* expr = v.expr();
-		
-		const char* code = expr->left .string().c_str();
-		const char* file = expr->right.string().c_str();
-		
-		const Value result = interpret( code, file, NULL, &eval_error_handler );
-		
-		if ( Expr* expr = result.expr() )
-		{
-			if ( expr->op == Op_export )
-			{
-				const Value& exported = expr->right;
-				
-				if ( const Symbol* sym = exported.sym() )
-				{
-					return sym->get();
-				}
-				
-				safe_list_builder  mappings;
-				array_iterator     it( exported );
-				
-				while ( it )
-				{
-					const Symbol* sym = it.use().sym();
-					
-					ASSERT( sym );
-					
-					mappings.append( mapping( sym->name(), sym->get() ) );
-				}
-				
-				return Value( Op_module, make_array( mappings ) );
-			}
-		}
-		
-		return result;
-	}
 	
 	typedef int (*exec_f)( const char* arg0, char* const* argv );
 	
@@ -498,18 +447,12 @@ namespace vlib
 	static const Value sleep_arg ( u32,   Op_union, fract );
 	static const Value maybe_cstr( c_str, Op_union, Value_empty_list );
 	
-	static const Value cstr_eval( c_str,
-	                              Op_duplicate,
-	                              String( "<eval>" ) );
-	
 	static const Value c_str_array( c_str, Op_subscript, empty_list );
 	
-	static const Value eval( c_str, cstr_eval );
 	static const Value exec( c_str, c_str_array );
 	
 	#define RUNOUT    "output-from-run"
 	
-	const proc_info proc_eval   = { "eval",   &v_eval,   &eval       };
 	const proc_info proc_EXECV  = { "execv",  &v_execv,  &exec       };
 	const proc_info proc_EXECVP = { "execvp", &v_execvp, &exec       };
 	const proc_info proc_exit   = { "exit",   &v_exit,   &u8         };
