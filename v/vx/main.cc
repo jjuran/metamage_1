@@ -31,6 +31,7 @@
 #include "vlib/array-utils.hh"
 #include "vlib/functions.hh"
 #include "vlib/interpret.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/scope.hh"
 #include "vlib/tracker.hh"
 #include "vlib/types.hh"
@@ -136,37 +137,18 @@ static char* const* get_options( char** argv )
 }
 
 static
-Value make_argv( int argn, char* const* args )
-{
-	char* const* argp = args + argn;
-	
-	Value result = String( *--argp );
-	
-	while ( argp > args )
-	{
-		result = Value( String( *--argp ), result );
-	}
-	
-	return result;
-}
-
-static
 void set_argv( const char* arg0, int argn, char* const* args )
 {
-	Value argv = Value_empty_list;
+	list_builder argv;
 	
-	if ( argn )
+	if ( arg0 )
 	{
-		argv = make_argv( argn, args );
-		
-		if ( arg0 )
-		{
-			argv = Value( String( arg0 ), argv );
-		}
+		argv.append( String( arg0 ) );
 	}
-	else if ( arg0 )
+	
+	while ( const char* arg = *args++ )
 	{
-		argv = String( arg0 );
+		argv.append( String( arg ) );
 	}
 	
 	const Value& argv_symbol = globals.declare( "argv", Symbol_const );
