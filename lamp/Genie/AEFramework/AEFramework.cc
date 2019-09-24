@@ -5,6 +5,19 @@
 
 #include "AEFramework/AEFramework.h"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#ifndef MAC_OS_X_VERSION_10_5
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+#endif
+
+// Mac OS
+#ifndef __AEDATAMODEL__
+#include <AEDataModel.h>
+#endif
+
 // Standard C++
 #include <map>
 
