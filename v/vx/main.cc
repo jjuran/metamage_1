@@ -59,6 +59,8 @@
 #include "varyx/posix/thread_state.hh"
 
 
+#define PROGRAM  "vx"
+
 #define STRLEN( s )  (sizeof "" s - 1)
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -308,7 +310,7 @@ int main( int argc, char** argv )
 	}
 	catch ( const p7::errno_t& err )
 	{
-		more::perror( "vx", path, err );
+		more::perror( PROGRAM, path, err );
 		
 		return 1;
 	}
