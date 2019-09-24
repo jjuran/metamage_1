@@ -28,13 +28,10 @@
 #include "poseven/types/thread.hh"
 
 // vlib
-#include "vlib/array-utils.hh"
 #include "vlib/functions.hh"
 #include "vlib/interpret.hh"
-#include "vlib/iterators/list_builder.hh"
 #include "vlib/scope.hh"
 #include "vlib/tracker.hh"
-#include "vlib/types.hh"
 #include "vlib/type_info.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/proc.hh"
@@ -52,6 +49,7 @@
 #include "varyx/meta/eval.hh"
 
 // varyx-posix
+#include "varyx/posix/argv.hh"
 #include "varyx/posix/empty_signal_handler.hh"
 #include "varyx/posix/file_descriptor.hh"
 #include "varyx/posix/library.hh"
@@ -140,26 +138,6 @@ static
 Symbol& declare( const char* name )
 {
 	return *globals.declare( name, Symbol_const ).sym();
-}
-
-static
-void set_argv( Symbol& sym, const char* arg0, char* const* args )
-{
-	list_builder argv;
-	
-	if ( arg0 )
-	{
-		argv.append( String( arg0 ) );
-	}
-	
-	while ( const char* arg = *args++ )
-	{
-		argv.append( String( arg ) );
-	}
-	
-	sym.denote( Value( Type( c_str_vtype ), Op_subscript, empty_list ) );
-	
-	sym.assign( make_array( argv ) );
 }
 
 static
