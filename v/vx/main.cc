@@ -143,7 +143,7 @@ Symbol& declare( const char* name )
 }
 
 static
-void set_argv( const char* arg0, char* const* args )
+void set_argv( Symbol& sym, const char* arg0, char* const* args )
 {
 	list_builder argv;
 	
@@ -156,8 +156,6 @@ void set_argv( const char* arg0, char* const* args )
 	{
 		argv.append( String( arg ) );
 	}
-	
-	Symbol& sym = declare( "argv" );
 	
 	sym.denote( Value( Type( c_str_vtype ), Op_subscript, empty_list ) );
 	
@@ -213,7 +211,7 @@ int main( int argc, char** argv )
 	                 : args[ 0 ]     ? NULL
 	                 :                 "-";
 	
-	set_argv( arg0, args );
+	set_argv( declare( "argv" ), arg0, args );
 	
 	define( "argc", Integer( argn + (arg0 != NULL) ) );
 	
