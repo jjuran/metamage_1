@@ -137,6 +137,12 @@ static char* const* get_options( char** argv )
 }
 
 static
+Symbol& declare( const char* name )
+{
+	return *globals.declare( name, Symbol_const ).sym();
+}
+
+static
 void set_argv( const char* arg0, char* const* args )
 {
 	list_builder argv;
@@ -151,9 +157,7 @@ void set_argv( const char* arg0, char* const* args )
 		argv.append( String( arg ) );
 	}
 	
-	const Value& argv_symbol = globals.declare( "argv", Symbol_const );
-	
-	Symbol& sym = *argv_symbol.sym();
+	Symbol& sym = declare( "argv" );
 	
 	sym.denote( Value( Type( c_str_vtype ), Op_subscript, empty_list ) );
 	
@@ -163,7 +167,7 @@ void set_argv( const char* arg0, char* const* args )
 static
 void define( const char* name, const Value& v )
 {
-	globals.declare( name, Symbol_const ).sym()->assign( v );
+	declare( name ).assign( v );
 }
 
 static
