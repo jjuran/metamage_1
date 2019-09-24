@@ -44,7 +44,7 @@ var/links/%: var/links
 	@true
 
 app-build-tools:
-	$(BUILD) vx
+	$(BUILD) minivx
 
 AMS_REPOS := freemount.git ams-68k-bin.git
 AMS_TOOLS := exhibit graft raster vx xv68k freemountd
@@ -206,8 +206,8 @@ ams-osx-install: ams-osx-build ams-68k-install ams-common-install
 	if [ -w $(APPS) ]; then cp -R $(MACRELIX) $(APPS); else mkdir -p $(UAPPS) && cp -R $(MACRELIX) $(UAPPS); fi
 
 sndtrack:
-	$(BUILD) vx
-	var/out/vx -Z v/bin/portaudio-pkg.vx make
+	$(BUILD) minivx
+	var/out/minivx -Z v/bin/portaudio-pkg.vx make
 	$(BUILD) sndtrack
 
 freemountd-tcp: freemount.git
