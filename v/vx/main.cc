@@ -137,7 +137,7 @@ static char* const* get_options( char** argv )
 }
 
 static
-void set_argv( const char* arg0, int argn, char* const* args )
+void set_argv( const char* arg0, char* const* args )
 {
 	list_builder argv;
 	
@@ -209,7 +209,7 @@ int main( int argc, char** argv )
 	                 : args[ 0 ]     ? NULL
 	                 :                 "-";
 	
-	set_argv( arg0, argn, args );
+	set_argv( arg0, args );
 	
 	define( "argc", Integer( argn + (arg0 != NULL) ) );
 	
