@@ -6,6 +6,9 @@
 // Mac OS X
 #ifdef __APPLE__
 #include <CoreServices/CoreServices.h>
+#ifndef MAC_OS_X_VERSION_10_5
+#include <ApplicationServices/ApplicationServices.h>
+#endif
 #endif
 
 // Mac OS
