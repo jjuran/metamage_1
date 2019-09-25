@@ -72,8 +72,6 @@ ams-linux-tools: $(AMS_REPOS) var/install
 	./build.pl -i $(AMS_TOOLS) display-linux interact-linux kdmode reader
 
 ams-linux-install: ams-linux-tools ams-68k-install ams-common-install
-	@readlink bin/display  > /dev/null && rm bin/display  || true
-	@readlink bin/interact > /dev/null && rm bin/interact || true
 	@echo 'exec display-linux "$$@"'  > var/install/bin/display
 	@echo 'exec interact-linux "$$@"' > var/install/bin/interact
 	@chmod +x var/install/bin/display var/install/bin/interact
@@ -85,8 +83,6 @@ ams-linux-install: ams-linux-tools ams-68k-install ams-common-install
 	$(INSTALL_SCRIPT) v/bin/spiel-keyboard.vx  var/install/bin/spiel-keyboard
 
 ams-linux: ams-linux-tools
-	@readlink bin/display  > /dev/null && rm bin/display  || true
-	@readlink bin/interact > /dev/null && rm bin/interact || true
 	@mkdir -p var/demo
 	@echo 'exec display-linux "$$@"'  > var/demo/display
 	@echo 'exec interact-linux "$$@"' > var/demo/interact
