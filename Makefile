@@ -47,7 +47,7 @@ app-build-tools:
 	$(BUILD) minivx
 
 AMS_REPOS := freemount.git ams-68k-bin.git
-AMS_TOOLS := exhibit graft raster vx xv68k freemountd
+AMS_TOOLS := exhibit graft raster minivx vx xv68k freemountd
 
 AMS_UTILS_ROOT := var/install/lib/metamage
 
@@ -144,7 +144,7 @@ display-check:
 NEW_PATH = PATH="$$PWD/bin:$$PWD/var/out:$$PATH"
 AMS_ROOT = var/links/ams-68k-bin
 AMS_VARS = AMS_BIN=$(AMS_ROOT)/bin AMS_LIB=$(AMS_ROOT)/lib AMS_MNT=$(AMS_ROOT)/mnt
-RUN_AMS  = $(NEW_PATH) $(AMS_VARS) ./scripts/ams
+RUN_AMS  = $(NEW_PATH) $(AMS_VARS) var/out/minivx -Z v/bin/ams.vx
 
 ams-linux-demo: ams-linux-check display-check
 	$(RUN_AMS)
