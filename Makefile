@@ -51,6 +51,11 @@ AMS_TOOLS := exhibit graft raster minivx vx xv68k freemountd
 
 AMS_UTILS_ROOT := var/install/lib/metamage
 
+INSTALL_BIN := "`readlink var/install`/bin"
+INSTALLED_VX := $(INSTALL_BIN)/minivx
+
+INSTALL_SCRIPT := INTERPRETER=$(INSTALLED_VX) scripts/install-script.pl
+
 var/install:
 	@echo
 	@echo "Please run \`./configure\`.  Or, if you lack root access, run"
@@ -77,8 +82,8 @@ ams-linux-install: ams-linux-tools ams-vx-Z ams-68k-install ams-common-install
 	install bin/interact            var/install/bin
 	install -d $(AMS_UTILS_ROOT)
 	install -t $(AMS_UTILS_ROOT) var/out/kdmode var/out/reader
-	install v/bin/spiel-mouse.vx     var/install/bin/spiel-mouse
-	install v/bin/spiel-keyboard.vx  var/install/bin/spiel-keyboard
+	$(INSTALL_SCRIPT) v/bin/spiel-mouse.vx     var/install/bin/spiel-mouse
+	$(INSTALL_SCRIPT) v/bin/spiel-keyboard.vx  var/install/bin/spiel-keyboard
 
 ams-vx-Z:
 	@echo 'exec vx -Z "$$@"' > bin/"vx -Z"
@@ -172,14 +177,14 @@ ams-68k-install: var/install
 ams-common-install: var/install
 	install -d var/install/bin
 	test \! -x var/out/sndtrack || install var/out/sndtrack var/install/bin
-	install var/out/vx          var/install/bin
+	install var/out/minivx      var/install/bin
 	install var/out/raster      var/install/bin
 	install var/out/exhibit     var/install/bin
 	install var/out/graft       var/install/bin
 	install var/out/freemountd  var/install/bin
 	install var/out/xv68k       var/install/bin
 	install var/out/vx          var/install/bin
-	install v/bin/ams.vx        var/install/bin/ams
+	$(INSTALL_SCRIPT) v/bin/ams.vx var/install/bin/ams
 
 ams-x11-install: ams-x11-build ams-68k-install ams-common-install
 	install bin/"vx -Z"           var/install/bin
