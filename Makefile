@@ -47,7 +47,7 @@ app-build-tools:
 	$(BUILD) minivx
 
 AMS_REPOS := freemount.git ams-68k-bin.git
-AMS_TOOLS := exhibit graft raster minivx vx xv68k freemountd
+AMS_TOOLS := exhibit graft raster minivx xv68k freemountd
 
 AMS_UTILS_ROOT := var/install/lib/metamage
 
@@ -55,6 +55,8 @@ INSTALL_BIN := "`readlink var/install`/bin"
 INSTALLED_VX := $(INSTALL_BIN)/minivx
 
 INSTALL_SCRIPT := INTERPRETER=$(INSTALLED_VX) scripts/install-script.pl
+
+DEMO_SCRIPT := INTERPRETER=$(PWD)/var/out/minivx scripts/install-script.pl
 
 var/install:
 	@echo
@@ -69,34 +71,28 @@ var/install:
 ams-linux-tools: $(AMS_REPOS) var/install
 	./build.pl -i $(AMS_TOOLS) display-linux interact-linux kdmode reader
 
-ams-linux-install: ams-linux-tools ams-vx-Z ams-68k-install ams-common-install
+ams-linux-install: ams-linux-tools ams-68k-install ams-common-install
 	@readlink bin/display  > /dev/null && rm bin/display  || true
 	@readlink bin/interact > /dev/null && rm bin/interact || true
-	@echo 'exec display-linux "$$@"'  > bin/display
-	@echo 'exec interact-linux "$$@"' > bin/interact
-	@chmod +x bin/display bin/interact
-	install bin/"vx -Z"             var/install/bin
+	@echo 'exec display-linux "$$@"'  > var/install/bin/display
+	@echo 'exec interact-linux "$$@"' > var/install/bin/interact
+	@chmod +x var/install/bin/display var/install/bin/interact
 	install var/out/display-linux   var/install/bin
 	install var/out/interact-linux  var/install/bin
-	install bin/display             var/install/bin
-	install bin/interact            var/install/bin
 	install -d $(AMS_UTILS_ROOT)
 	install -t $(AMS_UTILS_ROOT) var/out/kdmode var/out/reader
 	$(INSTALL_SCRIPT) v/bin/spiel-mouse.vx     var/install/bin/spiel-mouse
 	$(INSTALL_SCRIPT) v/bin/spiel-keyboard.vx  var/install/bin/spiel-keyboard
 
-ams-vx-Z:
-	@echo 'exec vx -Z "$$@"' > bin/"vx -Z"
-	@chmod +x bin/"vx -Z"
-
-ams-linux: ams-linux-tools ams-vx-Z
+ams-linux: ams-linux-tools
 	@readlink bin/display  > /dev/null && rm bin/display  || true
 	@readlink bin/interact > /dev/null && rm bin/interact || true
-	@echo 'exec display-linux "$$@"'  > bin/display
-	@echo 'exec interact-linux "$$@"' > bin/interact
-	@chmod +x bin/display bin/interact
-	@test -x bin/spiel-mouse || ln -s ../v/bin/spiel-mouse.vx bin/spiel-mouse
-	@test -x bin/spiel-keyboard || ln -s ../v/bin/spiel-keyboard.vx bin/spiel-keyboard
+	@mkdir -p var/demo
+	@echo 'exec display-linux "$$@"'  > var/demo/display
+	@echo 'exec interact-linux "$$@"' > var/demo/interact
+	@chmod +x var/demo/display var/demo/interact
+	$(DEMO_SCRIPT) v/bin/spiel-mouse.vx    var/demo/spiel-mouse
+	$(DEMO_SCRIPT) v/bin/spiel-keyboard.vx var/demo/spiel-keyboard
 	@echo
 	@echo "Build phase complete.  Run \`make ams-linux-inst\` to continue."
 	@echo
@@ -146,7 +142,7 @@ display-check:
 	@test -z "$(DISPLAY)" || echo
 	@test -z "$(DISPLAY)" || exit 1
 
-NEW_PATH = PATH="$$PWD/bin:$$PWD/var/out:$$PATH"
+NEW_PATH = PATH="$$PWD/var/demo:$$PWD/var/out:$$PATH"
 AMS_ROOT = var/links/ams-68k-bin
 AMS_VARS = AMS_BIN=$(AMS_ROOT)/bin AMS_LIB=$(AMS_ROOT)/lib AMS_MNT=$(AMS_ROOT)/mnt
 RUN_AMS  = $(NEW_PATH) $(AMS_VARS) var/out/minivx -Z v/bin/ams.vx
@@ -154,13 +150,16 @@ RUN_AMS  = $(NEW_PATH) $(AMS_VARS) var/out/minivx -Z v/bin/ams.vx
 ams-linux-demo: ams-linux-check display-check
 	$(RUN_AMS)
 
-ams-vnc-build: $(AMS_REPOS) ams-vx-Z
+ams-vnc-build: $(AMS_REPOS)
 	$(BUILD) $(AMS_TOOLS) listen vnc-interact
 
 ams-vnc: ams-vnc-build
-	EXHIBIT_INTERACT=v/bin/interact-vnc.vx $(RUN_AMS)
+	@mkdir -p var/demo
+	@echo 'exec var/out/minivx -Z v/bin/interact-vnc.vx "$$@"' > var/demo/interact
+	@chmod +x var/demo/interact
+	$(RUN_AMS)
 
-ams-x11-build: $(AMS_REPOS) ams-vx-Z
+ams-x11-build: $(AMS_REPOS)
 	./build.pl -i $(AMS_TOOLS) interact-x11
 
 ams-x11: ams-x11-build
@@ -183,11 +182,9 @@ ams-common-install: var/install
 	install var/out/graft       var/install/bin
 	install var/out/freemountd  var/install/bin
 	install var/out/xv68k       var/install/bin
-	install var/out/vx          var/install/bin
 	$(INSTALL_SCRIPT) v/bin/ams.vx var/install/bin/ams
 
 ams-x11-install: ams-x11-build ams-68k-install ams-common-install
-	install bin/"vx -Z"           var/install/bin
 	install var/out/interact-x11  var/install/bin
 
 ams-osx-build: $(AMS_REPOS) macward-compat.git
