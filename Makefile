@@ -182,6 +182,8 @@ ams-common-install: var/install
 
 ams-x11-install: ams-x11-build ams-68k-install ams-common-install
 	install var/out/interact-x11  var/install/bin
+	@echo 'exec interact-x11 "$$@"' > var/install/bin/interact
+	@chmod +x var/install/bin/interact
 
 ams-osx-build: $(AMS_REPOS) macward-compat.git
 	bin/build-app Genie
