@@ -60,11 +60,11 @@ DEMO_SCRIPT := INTERPRETER=$(PWD)/var/out/minivx scripts/install-script.pl
 
 var/install:
 	@echo
-	@echo "Please run \`./configure\`.  Or, if you lack root access, run"
+	@echo "Please run \`./configure\`.  To set the install location, run e.g."
 	@echo
-	@echo "    INSTALL_PREFIX=\$$HOME ./configure"
+	@echo "    INSTALL_PREFIX=/usr/local ./configure"
 	@echo
-	@echo "instead."
+	@echo "instead.  (The default is ~/.local)"
 	@echo
 	@exit 1
 
