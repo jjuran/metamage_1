@@ -180,6 +180,11 @@ ams-common-install: var/install
 	install var/out/xv68k       var/install/bin
 	$(INSTALL_SCRIPT) v/bin/ams.vx var/install/bin/ams
 
+ams-vnc-install: ams-vnc-build ams-68k-install ams-common-install
+	install var/out/listen        var/install/bin
+	install var/out/vnc-interact  var/install/bin
+	$(INSTALL_SCRIPT) v/bin/interact-vnc.vx var/install/bin/interact
+
 ams-x11-install: ams-x11-build ams-68k-install ams-common-install
 	install var/out/interact-x11  var/install/bin
 	@echo 'exec interact-x11 "$$@"' > var/install/bin/interact
