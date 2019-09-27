@@ -67,7 +67,9 @@ OSErr AEGetNthPtr( const AEDesc* list, long i, DescType desired, T* it )
 template < class File >
 struct File_DescType_traits;
 
+#if ! __LP64__
 template<> struct File_DescType_traits< FSSpec > { enum { value = typeFSS }; };
+#endif
 template<> struct File_DescType_traits< FSRef > { enum { value = typeFSRef }; };
 
 template < class File >
@@ -119,16 +121,12 @@ OSErr ODoc_generic( const AppleEvent* event, long (*callback)(const File&) )
 	return err;
 }
 
+#if ! __LP64__
+
 static
 pascal OSErr ODoc_FSSpec( const AppleEvent* event, AppleEvent*, SRefCon refcon )
 {
 	return ODoc_generic< FSSpec >( event, (FSSpec_callback) refcon );
-}
-
-static
-pascal OSErr ODoc_FSRef( const AppleEvent* event, AppleEvent*, SRefCon refcon )
-{
-	return ODoc_generic< FSRef >( event, (FSRef_callback) refcon );
 }
 
 void install_opendocs_handler( FSSpec_callback callback )
@@ -142,6 +140,14 @@ void install_opendocs_handler( FSSpec_callback callback )
 	                             UPP_ARG( ODoc_FSSpec ),
 	                             (SRefCon) callback,
 	                             false );
+}
+
+#endif
+
+static
+pascal OSErr ODoc_FSRef( const AppleEvent* event, AppleEvent*, SRefCon refcon )
+{
+	return ODoc_generic< FSRef >( event, (FSRef_callback) refcon );
 }
 
 void install_opendocs_handler( FSRef_callback callback )

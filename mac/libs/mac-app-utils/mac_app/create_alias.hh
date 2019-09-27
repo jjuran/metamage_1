@@ -14,7 +14,11 @@ struct FSSpec;
 namespace mac {
 namespace app {
 	
+#if ! __LP64__
+	
 	short create_alias( const FSSpec& alias_file, const FSSpec& target );
+	
+#endif
 	
 }
 }

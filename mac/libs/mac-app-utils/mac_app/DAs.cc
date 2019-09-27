@@ -24,6 +24,12 @@
 namespace mac {
 namespace app {
 
+#if __LP64__
+
+int dummy;
+
+#else
+
 bool close_DA_window( WindowRef window )
 {
 	const short kind = GetWindowKind( window );
@@ -44,6 +50,8 @@ bool close_front_DA()
 {
 	return close_DA_window( FrontWindow() );
 }
+
+#endif  // #if __LP64__
 
 }
 }

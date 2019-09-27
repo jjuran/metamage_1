@@ -33,6 +33,12 @@ enum
 	kFileMenuID  = 2,
 };
 
+#if __LP64__
+
+int dummy;
+
+#else
+
 void install_menus()
 {
 	short id = 128;
@@ -97,6 +103,8 @@ void open_DA_from_menu( short item )
 	
 #endif
 }
+
+#endif  // #if __LP64__
 
 }
 }

@@ -14,7 +14,7 @@
 #include <CoreServices/CoreServices.h>
 #endif
 
-#ifndef MAC_OS_X_VERSION_10_8
+#if ! __LP64__  &&  ! defined( MAC_OS_X_VERSION_10_8 )
 
 // Mac OS
 #ifndef __OPENTRANSPORT__
@@ -62,11 +62,11 @@ namespace app {
 }
 }
 
-#else  // #ifndef MAC_OS_X_VERSION_10_8
+#else  // #if ! __LP64__  &&  ! defined( MAC_OS_X_VERSION_10_8 )
 
 void dummy()
 {
 	// Silence a warning about a unit with no symbols
 }
 
-#endif  // #ifndef MAC_OS_X_VERSION_10_8
+#endif  // #if ! __LP64__  &&  ! defined( MAC_OS_X_VERSION_10_8 )

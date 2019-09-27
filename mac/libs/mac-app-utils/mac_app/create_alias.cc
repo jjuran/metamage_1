@@ -28,6 +28,12 @@
 namespace mac {
 namespace app {
 	
+#if __LP64__
+	
+	int dummy;
+	
+#else
+	
 	short create_alias( const FSSpec& alias_file, const FSSpec& target )
 	{
 		OSErr err;
@@ -99,6 +105,8 @@ namespace app {
 		
 		return err;
 	}
+	
+#endif  // #if __LP64__
 	
 }
 }
