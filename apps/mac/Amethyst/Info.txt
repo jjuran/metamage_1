@@ -1,0 +1,5 @@
+CFBundleExecutable:  "Amethyst"
+CFBundleName:        "Amethyst"
+CFBundlePackageType: 'APPL'
+CFBundleSignature:   'AMS*'
+NSHighResolutionCapable: true

@@ -1,0 +1,158 @@
+# This script is invoked explicitly with minivx by the application.
+
+const screen_fb_file = argv[ 1 ]
+const events_fd_slot = argv[ 2 ]
+
+const ams_bin = "../xv68k"
+const ams_lib = "../xv68k"
+const ams_mnt = "../Resources/Files"
+
+const config_txt = "../Resources/config.txt"
+
+def comma-terminated (line)
+{
+	const c = line[ line.length - 1 ]
+	
+	return line ("," * not c in ":[" )
+}
+
+const config_lines = (load config_txt).lines() ver bool map comma-terminated
+
+const config = str^(eval "[" join( "\n", *config_lines, "]" ))
+
+const app_name = config[ "name" ]
+
+def active (feature)
+{
+	return feature in config and config[ feature ]
+}
+
+def exists (path)
+{
+	return try {stat path; true} catch {false}
+}
+
+const root_dir = ams_mnt
+
+const freemountd-server = "./freemountd -q --root" / ' ', root_dir, "//"
+
+# Reserve fds 6 and 7
+dup2(ERR, 6)
+dup2(ERR, 7)
+
+var sound-fd
+var sound-server = ()
+
+def get_sound_fd
+{
+	if active "sound" and exists "./sndtrack" then
+	{
+		const sound_fd_slot = str (sound-fd = reader "/dev/null")
+		sound-server = "--fd", sound_fd_slot, "./sndtrack", "//"
+		
+		return sound_fd_slot
+	}
+	
+	return ()
+}
+
+var appfs-fd
+var appfs-server = ()
+
+def get_appfs_fd
+{
+	var appfs = active "appfs" or return ()
+	
+	if appfs isa bool or appfs == "-" then
+	{
+		const home = getenv "HOME"
+		
+		const osx_prefs = home "/Library/Preferences"
+		const ams_prefs = osx_prefs "/Advanced Mac Substitute"
+		
+		appfs = ams_prefs "/" app_name
+		
+		run [ "mkdir", "-p", appfs ]
+	}
+	
+	const fd_slot = str (appfs-fd = reader "/dev/null")
+	appfs-server = "--fd", fd_slot, "./freemountd -qu --root" / ' ', appfs, "//"
+	
+	return fd_slot
+}
+
+def core_opts
+{
+	var opts = [ "--events-fd=" events_fd_slot ]
+	
+	if "romgen" in config then
+	{
+		opts <-- "-R" config[ "romgen" ]
+	}
+	
+	return ams-core: opts
+}
+
+def io_opts
+{
+	return
+	if const sound_fd = get_sound_fd() then
+	{
+		ams-io: [ "--sound-fd=" sound_fd ],
+	}
+}
+
+def fs_opts
+{
+	const disk_opt =
+	if "disk" in config then
+	{
+		"--disk", config[ "disk" ],
+	}
+	
+	const appfs_opt =
+	if const appfs_fd = get_appfs_fd() then
+	{
+		"--appfs-fd", appfs_fd,
+	}
+	
+	const opts = disk_opt, appfs_opt
+	
+	return
+	if opts then
+	{
+		ams-fs: [ opts ],
+	}
+}
+
+const module_args = str^
+[
+	core_opts(),
+	fs_opts(),
+	io_opts(),
+]
+
+def argify (name)
+{
+	const path = ams_lib "/" name
+	
+	return
+		if name in module_args
+			then {"[", path, *module_args[ name ], "]"}
+			else {path}
+}
+
+const prefix_list = "core io fs rsrc pack seg qd ui print"
+const ams_modules = [ prefix_list / ' ' ] map {"ams-" v}
+const module_opts = ams_modules map {"-m", argify v}
+
+const app = ams_bin "/app"
+
+const xv68k-screen = "--raster=" screen_fb_file
+
+const xv68k-subcmd = "./xv68k", "-tSP", xv68k-screen, *module_opts, app, app_name
+const graft-subcmd = "./graft", sound-server, freemountd-server, appfs-server, xv68k-subcmd
+
+const command = [ graft-subcmd ]
+
+execvp( command[ 0 ], command )
