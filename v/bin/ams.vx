@@ -241,7 +241,7 @@ else
 	const screen = var_run_raster "/ams"
 	const raster = "--raster=" screen
 	
-	run [ "raster make -fg " screen_res "*1 -m paint -R" / ' ', screen ]
+	run [ "raster make -fg " screen_res "*1 -c2 -m paint -R" / ' ', screen ]
 	
 	run [ "raster init" / ' ', screen ]
 	
