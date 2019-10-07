@@ -45,11 +45,11 @@ void close_without_errno( int fd )
 }
 
 static
-sync_relay& initialize( raster_load& raster, uint32_t screen_size )
+sync_relay& initialize( raster_load& raster, uint32_t raster_size )
 {
 	using namespace raster;
 	
-	raster.meta = (raster_metadata*) ((char*) raster.addr + screen_size);
+	raster.meta = (raster_metadata*) ((char*) raster.addr + raster_size);
 	
 	raster_metadata& meta = *raster.meta;
 	
@@ -91,7 +91,9 @@ int publish_raster( const char* path )
 	the_screen_size = raster.meta->desc.height
 	                * raster.meta->desc.stride;
 	
-	sync_relay& sync = initialize( raster, the_screen_size );
+	uint32_t count = 1 + raster.meta->desc.extra;
+	
+	sync_relay& sync = initialize( raster, the_screen_size * count );
 	
 	the_sync_relay = &sync;
 	
