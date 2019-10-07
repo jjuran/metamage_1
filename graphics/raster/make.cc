@@ -38,6 +38,7 @@
 enum
 {
 	Opt_relay    = 'R',
+	Opt_count    = 'c',
 	Opt_force    = 'f',
 	Opt_geometry = 'g',
 	Opt_model    = 'm',
@@ -45,6 +46,7 @@ enum
 
 static command::option options[] =
 {
+	{ "count",    Opt_count,    command::Param_required },
 	{ "force",    Opt_force                             },
 	{ "geometry", Opt_geometry, command::Param_required },
 	{ "model",    Opt_model,    command::Param_required },
@@ -60,6 +62,8 @@ struct geometry_spec
 };
 
 static geometry_spec the_geometry;
+
+static unsigned the_count = 1;
 
 static raster::raster_model the_model = raster::Model_none;
 
@@ -170,6 +174,10 @@ char* const* get_options( char** argv )
 		
 		switch ( opt )
 		{
+			case Opt_count:
+				the_count = parse_unsigned_decimal( global_result.param );
+				break;
+			
 			case Opt_force:
 				force_create = true;
 				break;
@@ -274,7 +282,7 @@ int create_raster_file( const char* path, const geometry_spec& geometry )
 	
 	const uint32_t stride     = make_stride( width, weight );
 	const uint32_t image_size = height * stride;
-	const uint32_t raster_size = image_size;
+	const uint32_t raster_size = image_size * the_count;
 	
 	int nok = ftruncate( fd, sizeof_raster( raster_size ) );
 	
@@ -314,6 +322,7 @@ int create_raster_file( const char* path, const geometry_spec& geometry )
 	desc.stride = stride;
 	desc.weight = weight;
 	desc.model  = the_model;
+	desc.extra  = the_count - 1;
 	
 	raster_note* next_note = &note;
 	
@@ -345,6 +354,12 @@ int make_raster( char** argv )
 	if ( the_geometry.width == 0 )
 	{
 		WARN( "`--geometry <width>x<height>*<depth>` is required" );
+		return 2;
+	}
+	
+	if ( unsigned( the_count - 1 ) > 255 )
+	{
+		WARN( "`--count` must be between 1 and 256 inclusive" );
 		return 2;
 	}
 	
