@@ -120,8 +120,6 @@ void print_info( const raster::raster_load& loaded_raster )
 		printf( "Pixel model: %s\n", raster_models[ desc.model ] );
 	}
 	
-	printf( "Flags: %x\n", desc.flags );
-	
 	const raster_note* note = &loaded_raster.meta->note;
 	
 	while ( exists( note ) )
