@@ -328,9 +328,9 @@ short Read_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	pb->ioActCount = 0;
 	
-	if ( pb->ioPosOffset < eof )
+	if ( mark < eof )
 	{
-		long count = min( pb->ioReqCount, eof - pb->ioPosOffset );
+		long count = min( pb->ioReqCount, eof - mark );
 		
 		fast_memcpy( pb->ioBuffer, &fcb->fcbBfAdr[ mark ], count );
 		
