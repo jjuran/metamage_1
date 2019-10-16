@@ -11,6 +11,7 @@
 #endif
 
 // ams-common
+#include "callouts.hh"
 #include "interrupts.hh"
 #include "reactor.hh"
 #include "time.hh"
@@ -101,6 +102,9 @@ void do_VBL()
 static
 void VBL_ready( timer_node* )
 {
+	unlock_screen();
+	lock_screen();
+	
 	timer_scheduled = false;
 	
 	do_VBL();
@@ -121,6 +125,8 @@ short VInstall_patch( QElem* vbl : __A0 )
 	
 	if ( ! timer_scheduled )
 	{
+		lock_screen();
+		
 		VBL_timer_node.ready = &VBL_ready;
 		
 		schedule_VBL_timer();
@@ -145,6 +151,8 @@ short VRemove_patch( QElem* vbl : __A0 )
 		cancel( &VBL_timer_node );
 		
 		timer_scheduled = false;
+		
+		unlock_screen();
 	}
 	
 	reenable_interrupts( saved_SR );
