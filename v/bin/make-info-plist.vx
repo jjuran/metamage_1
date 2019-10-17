@@ -1,4 +1,4 @@
-#!/usr/bin/env vx -Z
+#!/usr/bin/env minivx -Z
 
 const bindir = dirname realpath argv[ 0 ]
 const libdir = bindir "/../lib/v/"
