@@ -190,6 +190,19 @@ ams-x11-install: ams-x11-build ams-68k-install ams-common-install
 	@echo 'exec interact-x11 "$$@"' > var/install/bin/interact
 	@chmod +x var/install/bin/interact
 
+ams-quartz-build: $(AMS_REPOS)
+	$(BUILD) graft xv68k minivx freemountd Amethyst
+
+RETROMATIC := PATH="$$PWD/var/out:$$PATH" v/bin/retromatic.vx
+RETRO_APPS := var/apps
+
+ams-quartz-demo: ams-quartz-build
+	@mkdir -p $(RETRO_APPS)
+	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/IAGO
+	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/"Nyanochrome Cat"
+	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/tic-tac-toe.txt
+	@open $(RETRO_APPS)
+
 ams-osx-build: $(AMS_REPOS) macward-compat.git
 	bin/build-app Genie
 	$(BUILD) $(AMS_TOOLS) uunix interact
