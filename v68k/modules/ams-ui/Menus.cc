@@ -52,6 +52,8 @@ const short system_font_ascent =  9;
 const short menu_title_padding =  9;
 const short gap_between_titles = 13;  // space between text of adjacent titles
 
+static const Point zero_Point = { 0 };
+
 
 class WMgrPort_bezel_scope
 {
@@ -302,7 +304,7 @@ pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 	}
 	while ( length > 0 );
 	
-	MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
+	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
 pascal void AddResMenu_patch( MenuInfo** menu, ResType type )
@@ -345,7 +347,7 @@ pascal void InsertMenu_patch( MenuInfo** menu, short beforeID )
 	
 	header->extent_bytes += sizeof (MenuList_entry);
 	
-	MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
+	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
 pascal void DrawMenuBar_patch()
@@ -461,7 +463,7 @@ pascal Handle GetNewMBar_patch( ResID menuBarID )
 			
 			right_edge += gap_between_titles + StringWidth( menu[0]->menuData );
 			
-			MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
+			MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 		}
 		
 		header->right_edge = right_edge;
@@ -702,7 +704,7 @@ pascal long MenuSelect_patch( Point pt )
 						
 						draw_menu_frame( menuRect );
 						
-						MDEF_0( mDrawMsg, menu, &menuRect, Point(), NULL );
+						MDEF_0( mDrawMsg, menu, &menuRect, zero_Point, NULL );
 					}
 				}
 			}
@@ -848,7 +850,7 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 			{
 				fast_memcpy( p + 1, text + 1, newLen );
 				
-				MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
+				MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 				return;
 			}
 			
@@ -884,7 +886,7 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 				fast_memcpy( p, text, 1 + newLen );
 			}
 			
-			MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
+			MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 			
 			return;
 		}
