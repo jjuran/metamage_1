@@ -525,8 +525,12 @@ pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE )
 
 pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 {
+	raster_lock lock;
+	
 	FontInfo fontInfo;
 	GetFontInfo( &fontInfo );
+	
+	EraseRect( r );
 	
 	const short line_height = fontInfo.ascent
 	                        + fontInfo.descent
