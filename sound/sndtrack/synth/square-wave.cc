@@ -79,6 +79,7 @@ Fixed samples_from_count( uint16_t count )
 }
 
 static Tone* tone;
+static Fixed demiperiod_samples;
 
 static uint32_t elapsed_samples;
 
@@ -101,6 +102,8 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	
 	if ( reset )
 	{
+		demiperiod_samples = samples_from_count( tone->count );
+		
 		elapsed_samples = 0;
 	}
 	
@@ -109,8 +112,6 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	uint8_t* p = output.data;
 	
 	size_t samples_remaining = sizeof output.data;
-	
-	const Fixed demiperiod_samples = samples_from_count( tone->count );
 	
 	// `target_index` is in 32.16 fixed-point format.
 	
