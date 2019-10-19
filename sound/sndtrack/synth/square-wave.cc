@@ -84,6 +84,7 @@ static Fixed demiperiod_samples;
 static int sample;
 
 static uint32_t elapsed_samples;
+static uint64_t next_demiperiod;  // a sample count in 32.16 fixed-point format
 
 short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 {
@@ -116,6 +117,7 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 		sample = nadir;
 		
 		elapsed_samples = 0;
+		next_demiperiod = 0;
 	}
 	
 	--tone->duration;
@@ -123,10 +125,6 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	uint8_t* p = output.data;
 	
 	size_t samples_remaining = sizeof output.data;
-	
-	// `next_demiperiod` is in 32.16 fixed-point format.
-	
-	uint64_t next_demiperiod = (uint64_t) elapsed_samples << shift;
 	
 	goto start;
 	
@@ -144,9 +142,14 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 		
 	start:
 		
-		next_demiperiod += demiperiod_samples;
-		
 		size_t samples_in_run = (next_demiperiod >> shift) - elapsed_samples;
+		
+		if ( samples_in_run == 0 )
+		{
+			next_demiperiod += demiperiod_samples;
+			
+			samples_in_run = (next_demiperiod >> shift) - elapsed_samples;
+		}
 		
 		size_t n = min( samples_remaining, samples_in_run );
 		
