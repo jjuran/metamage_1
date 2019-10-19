@@ -81,6 +81,8 @@ Fixed samples_from_count( uint16_t count )
 static Tone* tone;
 static Fixed demiperiod_samples;
 
+static int sample;
+
 static uint32_t elapsed_samples;
 
 short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
@@ -104,6 +106,15 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	{
 		demiperiod_samples = samples_from_count( tone->count );
 		
+		const uint16_t amplitude = tone->amplitude;
+		
+		const int crest = 128 + amplitude / 2;
+		const int nadir = 128 - amplitude / 2;
+		
+		// Start by taking the wave low.  Real Macs appear to do this.
+		
+		sample = nadir;
+		
 		elapsed_samples = 0;
 	}
 	
@@ -116,20 +127,6 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	// `target_index` is in 32.16 fixed-point format.
 	
 	uint64_t target_index = (uint64_t) elapsed_samples << shift;
-	
-	const uint16_t amplitude = tone->amplitude;
-	
-	const int crest = 128 + amplitude / 2;
-	const int nadir = 128 - amplitude / 2;
-	
-	// Start by taking the wave low.  Real Macs appear to do this.
-	
-	int sample = nadir;
-	
-	if ( target_index / demiperiod_samples & 1 )
-	{
-		sample = crest;
-	}
 	
 	goto start;
 	
