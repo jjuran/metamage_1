@@ -616,13 +616,14 @@ v68k::op_result emu_nanosleep( v68k::processor_state& s )
 	}
 	
 	const int32_t requested_seconds = (int32_t) requested_seconds_u32;
+	const int32_t requested_nanosec = (int32_t) requested_nanoseconds;
 	
 	if ( requested_seconds < 0 )
 	{
 		return set_result( s, 0 );  // negative sleep has already expired
 	}
 	
-	const timespec request_ts = { requested_seconds, requested_nanoseconds };
+	const timespec request_ts = { requested_seconds, requested_nanosec };
 	
 	timespec remain_ts;
 	
