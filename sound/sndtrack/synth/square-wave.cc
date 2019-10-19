@@ -124,9 +124,9 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	
 	size_t samples_remaining = sizeof output.data;
 	
-	// `target_index` is in 32.16 fixed-point format.
+	// `next_demiperiod` is in 32.16 fixed-point format.
 	
-	uint64_t target_index = (uint64_t) elapsed_samples << shift;
+	uint64_t next_demiperiod = (uint64_t) elapsed_samples << shift;
 	
 	goto start;
 	
@@ -144,11 +144,11 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 		
 	start:
 		
-		target_index += demiperiod_samples;
+		next_demiperiod += demiperiod_samples;
 		
-		size_t demiperiod_remaining = (target_index >> shift) - elapsed_samples;
+		size_t samples_in_run = (next_demiperiod >> shift) - elapsed_samples;
 		
-		size_t n = min( samples_remaining, demiperiod_remaining );
+		size_t n = min( samples_remaining, samples_in_run );
 		
 		memset( p, sample, n );
 		
