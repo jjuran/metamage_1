@@ -87,8 +87,6 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	if ( reset )
 	{
 		tone = rec.triplets;
-		
-		elapsed_samples = 0;
 	}
 	
 	while ( tone->duration <= 0 )
@@ -98,6 +96,11 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 			return -1;
 		}
 		
+		reset = true;
+	}
+	
+	if ( reset )
+	{
 		elapsed_samples = 0;
 	}
 	
