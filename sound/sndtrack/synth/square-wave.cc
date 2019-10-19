@@ -66,7 +66,7 @@ Fixed samples_from_count( uint16_t count )
 		Dividing the half-period duration by the sample duration yields the
 		number of samples per half-period: (count / 783360) / (44930 / 10^9)
 		
-		Multiplying numerator and denominator by (783360 / 10^9) yields
+		Multiplying numerator and denominator by (783360 * 10^9) yields
 		(count * 10^9) / (44930 * 783360).  We'll also shift left to preserve
 		some fraction bits.
 		
