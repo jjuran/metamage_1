@@ -155,6 +155,31 @@ short GetVol_patch( short trap_word : __D1, WDPBRec* pb : __A0 )
 	return pb->ioResult = noErr;
 }
 
+short SetVol_patch( short trap_word : __D1, WDPBRec* pb : __A0 )
+{
+	VCB* vcb = NULL;
+	
+	if ( pb->ioNamePtr )
+	{
+		// ioNamePtr
+		vcb = VCB_lookup( pb->ioNamePtr );
+	}
+	else
+	{
+		// ioVRefNum
+		vcb = VCB_lookup( pb->ioVRefNum );
+	}
+	
+	if ( vcb == NULL )
+	{
+		return pb->ioResult = nsvErr;
+	}
+	
+	DefVCBPtr = vcb;
+	
+	return pb->ioResult = noErr;
+}
+
 short FlushVol_patch( short trap_word : __D1, VolumeParam* pb : __A0 )
 {
 	return pb->ioResult = noErr;

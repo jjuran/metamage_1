@@ -81,6 +81,7 @@ void install_FileManager()
 	
 	OSTRAP( FlushVol );  // A013
 	OSTRAP( GetVol   );  // A014
+	OSTRAP( SetVol   );  // A015
 	
 	OSTRAP( GetFPos  );  // A018
 	
