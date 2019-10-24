@@ -16,6 +16,9 @@
 // debug
 #include "debug/assert.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // quickdraw
 #include "qd/regions.hh"
 #include "qd/region_detail.hh"
@@ -179,7 +182,12 @@ bool is_valid_region( RgnHandle rgn )
 	short bottom = -32767;
 	short right  = -32767;
 	
-	ASSERT( extent[ 0 ] == top );
+	ASSERT( extent[ 0 ] >= top );
+	
+	if ( extent[ 0 ] > top )
+	{
+		WARNING = "Region validity: first v coord ", extent[ 0 ], " is below bbox.top ", top;
+	}
 	
 	const short* p = extent;
 	
@@ -213,8 +221,13 @@ bool is_valid_region( RgnHandle rgn )
 	
 	ASSERT( top    == bbox.top    );
 	ASSERT( left   == bbox.left   );
-	ASSERT( bottom == bbox.bottom );
+	ASSERT( bottom <= bbox.bottom );
 	ASSERT( right  == bbox.right  );
+	
+	if ( bottom < bbox.bottom )
+	{
+		WARNING = "Region validity: bottom v coord ", bottom, " is above bbox.bottom ", bbox.bottom;
+	}
 	
 	return true;
 }
