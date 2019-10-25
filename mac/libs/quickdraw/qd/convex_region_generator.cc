@@ -182,4 +182,52 @@ namespace quickdraw
 		return its_mark;
 	}
 	
+	short* convex_region_generator::finish_reflected( short v, short* begin )
+	{
+		const short top    = *begin;
+		const short bottom = v;
+		const short height = bottom - top;
+		
+		const short* first_sentinel = begin + 3;
+		
+		const short* sentinel = its_mark - 1;
+		
+		const short* q = its_mark;
+		const short* p = q - 1;
+		
+		while ( sentinel > first_sentinel )
+		{
+			const short* q = sentinel;
+			const short* p = sentinel - 3;  // v, h0, and h1 at minumum
+			
+			while ( *--p != Region_end )
+			{
+				continue;
+			}
+			
+			sentinel = p++;
+			
+			v = bottom - *p++ + top;
+			
+			*its_mark++ = v;
+			
+			do
+			{
+				*its_mark++ = *p++;
+			}
+			while ( p <= q );
+		}
+		
+		++begin;
+		
+		*its_mark++ = bottom;
+		*its_mark++ = *begin++;
+		*its_mark++ = *begin++;
+		*its_mark++ = Region_end;
+		
+		*its_mark++ = Region_end;
+		
+		return its_mark;
+	}
+	
 }

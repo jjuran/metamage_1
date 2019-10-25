@@ -38,6 +38,8 @@ namespace quickdraw
 			void contract( short v, short left, short right );    /*  \  /  */
 			
 			short* finish( short v );
+			
+			short* finish_reflected( short v, short* begin );
 	};
 	
 }
