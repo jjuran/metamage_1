@@ -286,7 +286,10 @@ void Sound_ready( timer_node* node )
 		
 		start_sound( pb->ioBuffer, pb->ioReqCount );
 		
-		schedule_timer( pb, duration );
+		if ( ! timer_scheduled )
+		{
+			schedule_timer( pb, duration );
+		}
 	}
 }
 
