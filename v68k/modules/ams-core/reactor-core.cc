@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/select.h>
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "interrupts.hh"
 #include "reactor.hh"
@@ -90,14 +93,21 @@ void schedule( timer_node* node )
 	
 	timer_node* next;
 	
-	while ( (next = *slot)  &&  wake > next->wakeup )
+	while ( (next = *slot)  &&  next != node  &&  wake > next->wakeup )
 	{
 		slot = &next->next;
 	}
 	
-	node->next = *slot;
-	
-	*slot = node;
+	if ( next == node )
+	{
+		ERROR = "reactor schedule: node is already scheduled";
+	}
+	else
+	{
+		node->next = *slot;
+		
+		*slot = node;
+	}
 	
 	reenable_interrupts( saved_SR );
 }
