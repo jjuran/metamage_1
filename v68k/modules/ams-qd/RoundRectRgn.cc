@@ -20,16 +20,13 @@ void RoundRectRgn( MacRegion**  rgn,
                    short        ovalWidth,
                    short        ovalHeight )
 {
-	if ( ovalWidth == ovalHeight )
-	{
-		RgnHandle tmp = circular_region( ovalWidth, width, height );
-		
-		XorRgn( tmp, rgn, rgn );
-	}
-	else
-	{
-		// TODO
-	}
+	// TODO:  Support assymetric diameters for real
+	
+	short diameter = ovalWidth < ovalHeight ? ovalWidth : ovalHeight;
+	
+	RgnHandle tmp = circular_region( diameter, width, height );
+	
+	XorRgn( tmp, rgn, rgn );
 }
 
 static inline

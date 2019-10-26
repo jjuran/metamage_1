@@ -12,6 +12,7 @@
 
 // ams-qd
 #include "circular_region.hh"
+#include "RoundRectRgn.hh"
 
 
 static
@@ -22,15 +23,22 @@ void CircularOvalRgn( RgnHandle rgn, short width, short height )
 	XorRgn( tmp, rgn, rgn );
 }
 
-static
-void EllipticOvalRgn( RgnHandle rgn, short width, short height )
-{
-	// TODO
-}
-
 void OvalRgn( RgnHandle rgn, short width, short height )
 {
-	(width == height ? CircularOvalRgn : EllipticOvalRgn)( rgn, width, height );
+	// TODO:  Support assymetric diameters for real
+	
+	if ( width < height )
+	{
+		RoundRectRgn( rgn, width, height, width, width );
+	}
+	else if ( height < width )
+	{
+		RoundRectRgn( rgn, width, height, height, height );
+	}
+	else
+	{
+		CircularOvalRgn( rgn, width, height );
+	}
 }
 
 static inline
