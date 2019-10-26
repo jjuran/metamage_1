@@ -251,7 +251,7 @@ pascal unsigned char GetPixel_patch( short h, short v )
 	Ptr addr = bits.baseAddr;
 	
 	addr += v * bits.rowBytes;
-	addr += h / 8;
+	addr += h / 8u;
 	
 	h &= 0x7;
 	

@@ -170,7 +170,7 @@ bool is_valid_region( RgnHandle rgn )
 	
 	ASSERT( rgn_size >= 28 );
 	
-	const short n = rgn_size / 2 - sizeof (MacRegion) / 2;
+	const short n = rgn_size / 2u - sizeof (MacRegion) / 2;
 	
 	const short* extent = rgn_extent( *rgn );
 	
@@ -284,7 +284,7 @@ pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap )
 		
 		prev = p;
 		
-		p += rowBytes / 2;
+		p += rowBytes / 2u;
 	}
 	while ( ++v < bounds.bottom );
 	

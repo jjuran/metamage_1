@@ -116,7 +116,7 @@ void blit_segment_direct( Ptr      src,
 		return;
 	}
 	
-	if ( short n_bytes = n_pixels_drawn / 8 )
+	if ( short n_bytes = n_pixels_drawn / 8u )
 	{
 		dst = blit_byte_aligned_segment( src,
 		                                 dst,
@@ -153,7 +153,7 @@ void blit_segment_buffered( Ptr       src,
 {
 	const short mode = transfer_mode_AND_0x03;
 	
-	const size_t n_bytes = (n_pixels_skipped + n_pixels_drawn + 7) / 8;
+	const size_t n_bytes = (n_pixels_skipped + n_pixels_drawn + 7) / 8u;
 	
 	Ptr buffer = (Ptr) alloca( n_bytes );
 	
@@ -178,13 +178,13 @@ void blit_segment( Ptr       src,
 		const uint8_t right_shift = 8 - left_shift;
 		
 		// Theoretical 8K maximum
-		const size_t buffer_size = n_pixels_drawn / 8 + 1;
+		const size_t buffer_size = n_pixels_drawn / 8u + 1;
 		
 		Ptr const buffer = (Ptr) alloca( buffer_size );
 		
 		buffer[ 0 ] = '\0';
 		
-		short n_src_bytes = (n_src_pixels_skipped + n_pixels_drawn + 7) / 8;
+		short n_src_bytes = (n_src_pixels_skipped + n_pixels_drawn + 7) / 8u;
 		
 		fast_rshift( buffer, src, n_src_bytes, right_shift );
 		
@@ -231,8 +231,8 @@ void blit_masked_bits( const BitMap&    srcBits,
 				const short h0 = *it++;
 				const short h1 = *it++;
 				
-				Ptr const src = p + (h0 - srcHOffset) / 8;
-				Ptr const dst = q + (h0 - dstHOffset) / 8;
+				Ptr const src = p + (h0 - srcHOffset) / 8u;
+				Ptr const dst = q + (h0 - dstHOffset) / 8u;
 				
 				const short n_src_pixels_skipped = h0 - srcHOffset & 7;
 				const short n_dst_pixels_skipped = h0 - dstHOffset & 7;
@@ -313,8 +313,8 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	src += srcTop * srcRowBytes;
 	dst += dstTop * dstRowBytes;
 	
-	src += srcLeft / 8;
-	dst += dstLeft / 8;
+	src += srcLeft / 8u;
+	dst += dstLeft / 8u;
 	
 	const short srcSkip = srcLeft & 0x7;
 	const short dstSkip = dstLeft & 0x7;
@@ -401,7 +401,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		if ( draw_bottom_to_top )
 		{
 			const short tmpRight = srcSkip + width;
-			const short tmpRowBytes = (tmpRight + 15) / 16 * 2;
+			const short tmpRowBytes = (tmpRight + 15) / 16u * 2;
 			
 			Ptr tmp = NewPtr( n_rows * tmpRowBytes );
 			

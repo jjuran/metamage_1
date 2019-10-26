@@ -185,7 +185,7 @@ Ptr draw_even_segment( Ptr      start,
 		}
 	}
 	
-	short n_longs = n_bytes / 4;
+	short n_longs = n_bytes / 4u;
 	
 	uint32_t* q = (uint32_t*) p;
 	
@@ -244,7 +244,7 @@ Ptr draw_segment( Ptr      start,
 	
 	if ( n_pixels_drawn > 0 )
 	{
-		if ( short n_bytes = n_pixels_drawn / 8 )
+		if ( short n_bytes = n_pixels_drawn / 8u )
 		{
 			p = draw_even_segment( p,
 			                       n_bytes,
@@ -483,7 +483,7 @@ static void draw_rect( const rectangular_op_params&  params,
 	{
 		const uint8_t pat = pattern.pat[ pat_v ];
 		
-		Ptr start = rowBase + (rect.left - bounds.left) / 8;
+		Ptr start = rowBase + (rect.left - bounds.left) / 8u;
 		
 		const short n_pixels_skipped = (rect.left - bounds.left) & 0x7;
 		const short n_pixels_drawn   = rect.right - rect.left;
@@ -532,7 +532,7 @@ void draw_region( const rectangular_op_params&  params,
 				const short h0 = *it++;
 				const short h1 = *it++;
 				
-				Ptr start = rowBase + (h0 - bounds.left) / 8;
+				Ptr start = rowBase + (h0 - bounds.left) / 8u;
 				
 				const short n_pixels_skipped = (h0 - bounds.left) & 0x7;
 				const short n_pixels_drawn   =  h1 - h0;

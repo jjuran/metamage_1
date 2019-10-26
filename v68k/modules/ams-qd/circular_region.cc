@@ -85,12 +85,12 @@ RgnHandle circular_region( short diameter, short width, short height )
 	
 	static RgnHandle tmp = NewRgn();
 	
-	short x = diameter / 2;
+	short x = diameter / 2u;
 	short y0 = 0;
 	
 	const Fixed diameter_reciprocal = FixRatio( 1, diameter );
 	
-	short* scratchpad = (short*) alloca( 2 + diameter / 2 );
+	short* scratchpad = (short*) alloca( 2 + diameter / 2u );
 	
 	short* p = scratchpad;
 	
