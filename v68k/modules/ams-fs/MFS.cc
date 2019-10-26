@@ -87,7 +87,7 @@ int16_t get_next( const uint8_t* block_map, int16_t curBlk )
 		return -1;
 	}
 	
-	block_map += 3 * curBlk / 2;
+	block_map += 3 * curBlk / 2u;
 	
 	if ( curBlk & 1 )
 	{

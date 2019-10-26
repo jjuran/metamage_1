@@ -83,6 +83,6 @@ void try_to_mount( const char* name )
 	if ( sigword == 0xD2D7 )
 	{
 		vcb->vcbMAdr = master_directory_block + 64;
-		vcb->vcbMLen = (vcb->vcbNmAlBlks * 12 + 7) / 8;
+		vcb->vcbMLen = (vcb->vcbNmAlBlks * 12 + 7) / 8u;
 	}
 }
