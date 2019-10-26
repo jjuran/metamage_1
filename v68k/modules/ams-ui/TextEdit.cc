@@ -244,7 +244,7 @@ short hit_test( const TERec& te, Point pt )
 		
 		if ( (h -= width) < 0 )
 		{
-			return hit + (h + width / 2 > 0);
+			return hit + (h + width / 2u > 0);
 		}
 		
 		++hit;

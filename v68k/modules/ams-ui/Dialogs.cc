@@ -1051,7 +1051,7 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, ResID icon_id )
 		
 		const Rect& screen = qd.screenBits.bounds;
 		
-		const short dh = (screen.right - screen.left - bounds.right) / 2;
+		const short dh = (screen.right - screen.left - bounds.right) / 2u;
 		const short dv = (screen.bottom - screen.top - bounds.bottom) / 3;
 		
 		OffsetRect( &bounds, dh, dv );

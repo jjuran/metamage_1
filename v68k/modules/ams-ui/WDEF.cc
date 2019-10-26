@@ -235,9 +235,9 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	
 	PaintRect( &edge );
 	
-	if ( window->titleWidth != 0 )
+	if ( const short title_width = window->titleWidth )
 	{
-		const short h = (content.left + content.right - window->titleWidth) / 2;
+		const short h = (content.left + content.right - title_width) / 2u;
 		
 		MoveTo( h, title_bar.top + title_baseline_v );
 		
@@ -252,7 +252,7 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 				title_bar.top + stripes_v_offset,
 				h - 6,
 				title_bar.bottom - stripes_v_offset,
-				h + window->titleWidth + 6,
+				h + title_width + 6,
 			};
 			
 			RgnHandle title_region = rectangular_utility_region();
