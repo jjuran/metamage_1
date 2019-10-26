@@ -70,7 +70,7 @@ OSErr IOComplete( IOParam* pb : __A0, OSErr err : __D0 )
 		call_completion_routine( pb, err, pb->ioCompletion );
 	}
 	
-	return pb->ioResult;
+	return err;
 }
 
 static
