@@ -151,6 +151,9 @@ long toggle_close_box( WindowPeek window )
 	return 0;
 }
 
+const Pattern odd_stripes  = { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 };
+const Pattern even_stripes = { 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF };
+
 static
 long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 {
@@ -269,9 +272,6 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	}
 	
 	InsetRect( &title_bar, stripes_h_offset, stripes_v_offset );
-	
-	Pattern odd_stripes  = { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 };
-	Pattern even_stripes = { 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF };
 	
 	FillRect( &title_bar, content.top & 1 ? &odd_stripes : &even_stripes );
 	
