@@ -775,6 +775,8 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 	
 	SetClip( w->strucRgn );
 	
+	SectRgn( WMgrPort->clipRgn, GrayRgn, WMgrPort->clipRgn );
+	
 	bool was_inside = false;
 	bool is_inside = true;
 	
