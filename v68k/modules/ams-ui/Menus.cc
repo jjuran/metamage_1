@@ -16,6 +16,9 @@
 // iota
 #include "iota/char_types.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "callouts.hh"
 #include "QDGlobals.hh"
@@ -407,10 +410,15 @@ pascal void DeleteMenu_patch( short menuID )
 	{
 		header->right_edge = last->left_edge;
 	}
-	else
+	else if ( MenuList_entry* found = find_menu_id( menuID ) )
 	{
 		// TODO:  Delete non-last menus
 		DebugStr( "\p" "DeleteMenu of non-last menu is unimplemented" );
+		return;
+	}
+	else
+	{
+		WARNING = "DeleteMenu: menu ID ", menuID, " isn't in menu list";
 		return;
 	}
 	
