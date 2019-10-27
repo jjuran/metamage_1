@@ -16,6 +16,7 @@
 
 // ams-snd
 #include "Sound-1_0.hh"
+#include "SoundDispatch.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -33,6 +34,8 @@ void* toolbox_trap_table[] : 3 * 1024;
 static
 void install_SoundManager()
 {
+	TBTRAP( SoundDispatch );  // A800
+	
 	TBTRAP( SndPlay );  // A805
 }
 
