@@ -37,6 +37,8 @@ void install_SoundManager()
 	TBTRAP( SoundDispatch );  // A800
 	
 	TBTRAP( SndPlay );  // A805
+	
+	TBTRAP( SndNewChannel );  // A807
 }
 
 int main( int argc, char** argv )

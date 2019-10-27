@@ -180,3 +180,11 @@ short SndPlay_patch( SndChannel* c, SndListResource** h, Boolean async )
 	
 	return do_snd_command( c, h, command );
 }
+
+pascal
+short SndNewChannel_patch( SndChannel** c, short s, long i, SndCallBackUPP u )
+{
+	ERROR = "SndNewChannel is unimplemented";
+	
+	return notEnoughHardwareErr;
+}
