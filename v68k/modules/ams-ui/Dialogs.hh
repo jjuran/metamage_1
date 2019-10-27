@@ -74,6 +74,8 @@ pascal void SelIText_patch( GrafPort*  dialog,
                             short      start,
                             short      end );
 
+pascal void HideDItem_patch( GrafPort* dialog, short i );
+
 pascal short FindDItem_patch( GrafPort* dialog, Point pt );
 
 #endif

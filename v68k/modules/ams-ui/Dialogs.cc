@@ -19,6 +19,9 @@
 #include <Sound.h>
 #endif
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "callouts.hh"
 #include "QDGlobals.hh"
@@ -1301,6 +1304,33 @@ pascal void SelIText_patch( GrafPort*  dialog,
 	if ( active )
 	{
 		TEActivate( hTE );
+	}
+}
+
+pascal void HideDItem_patch( GrafPort* dialog, short i )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	DialogItem* item = get_nth_item( dialog, i );
+	
+	if ( (item->type & 0x7c) == ctrlItem )
+	{
+		HideControl( (ControlRef) item->handle );
+	}
+	else if ( item->bounds.left < 8192 )
+	{
+		if ( (item->type & 0x7f) == editText )
+		{
+			WARNING = "hiding an editText item without checking if it's active";
+		}
+		
+		scoped_port thePort = dialog;
+		
+		EraseRect( &item->bounds );
+		InvalRect( &item->bounds );
+		
+		item->bounds.left  += 16384;
+		item->bounds.right += 16384;
 	}
 }
 
