@@ -1118,6 +1118,44 @@ pascal void InsMenuItem_patch( MenuInfo**            menu,
 	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
+pascal void DelMenuItem_patch( MenuInfo** menu, short item )
+{
+	const long stay_mask =   (1 << item    ) - 1;
+	const long move_mask = ~((1 << item + 1) - 1);
+	
+	const long flags = menu[0]->enableFlags;
+	
+	long stay_flags = flags & stay_mask;
+	long move_flags = flags & move_mask;
+	
+	move_flags >>= 1;
+	
+	menu[0]->enableFlags = move_flags | stay_flags;
+	
+	WMgrPort_bezel_scope port_swap;
+	
+	Size old_size = GetHandleSize( (Handle) menu );
+	
+	menu_item_iterator it( menu );
+	
+	while ( it  &&  --item > 0 )
+	{
+		++it;
+	}
+	
+	uint8_t      * addr =   it;
+	uint8_t const* next = (++it).get();
+	
+	const size_t offset = next - (unsigned char*) *menu;
+	const size_t gap    = next - addr;
+	
+	fast_memmove( addr, next, old_size - offset );
+	
+	SetHandleSize( (Handle) menu, old_size - gap );
+	
+	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+}
+
 SysBeep_ProcPtr old_SysBeep;
 
 pascal void SysBeep_patch( short duration )

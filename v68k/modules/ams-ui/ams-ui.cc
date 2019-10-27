@@ -152,6 +152,8 @@ void install_Menus()
 	
 	TBTRAP( CountMItems  );  // A950
 	
+	TBTRAP( DelMenuItem  );  // A952
+	
 	TBTRAP( GetMenu      );  // A9BF
 	TBTRAP( GetNewMBar   );  // A9C0
 	

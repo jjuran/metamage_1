@@ -64,6 +64,8 @@ pascal void InsMenuItem_patch( MenuInfo**            menu,
                                const unsigned char*  s,
                                short                 after );
 
+pascal void DelMenuItem_patch( MenuInfo** menu, short item );
+
 pascal void SysBeep_patch( short duration );
 
 #endif
