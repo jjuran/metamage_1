@@ -376,9 +376,30 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	pb->ioActCount = 0;
 	
-	if ( pb->ioPosOffset < eof )
+	if ( mark <= eof )
 	{
-		long count = min( pb->ioReqCount, eof - pb->ioPosOffset );
+		long count = pb->ioReqCount;
+		
+		if ( count > eof - mark )
+		{
+			const long new_eof = mark + count;
+			
+			Ptr buffer = NewPtr( new_eof );
+			
+			if ( buffer == NULL )
+			{
+				return pb->ioResult = ioErr;
+			}
+			
+			fast_memcpy( buffer, fcb->fcbBfAdr, mark );
+			
+			DisposePtr( fcb->fcbBfAdr );
+			
+			fcb->fcbBfAdr = buffer;
+			
+			fcb->fcbEOF  = new_eof;
+			fcb->fcbPLen = new_eof;
+		}
 		
 		fast_memcpy( &fcb->fcbBfAdr[ mark ], pb->ioBuffer, count );
 		
