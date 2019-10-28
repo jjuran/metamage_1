@@ -10,20 +10,31 @@
 #include "screen_lock.hh"
 
 
-raster_lock::raster_lock( bool cond ) : condition( cond )
+raster_lock::raster_lock( bool cursor, bool screen )
+:
+	cursor_locked( cursor ),
+	screen_locked( screen )
 {
-	if ( cond )
+	if ( screen )
 	{
 		lock_screen();
+	}
+	
+	if ( cursor )
+	{
 		JHideCursor();
 	}
 }
 
 raster_lock::~raster_lock()
 {
-	if ( condition )
+	if ( cursor_locked )
 	{
 		JShowCursor();
+	}
+	
+	if ( screen_locked )
+	{
 		unlock_screen();
 	}
 }
