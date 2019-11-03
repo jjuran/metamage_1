@@ -212,9 +212,9 @@ bool is_valid_region( RgnHandle rgn )
 	}
 	
 	ASSERT( top    == bbox.top    );
-	ASSERT( left   == bbox.left   );
+	EXPECT( left   == bbox.left   );
 	EXPECT( bottom == bbox.bottom );
-	ASSERT( right  == bbox.right  );
+	EXPECT( right  == bbox.right  );
 	
 	return true;
 }
