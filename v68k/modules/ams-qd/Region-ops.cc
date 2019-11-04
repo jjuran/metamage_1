@@ -200,7 +200,8 @@ bool is_valid_region( RgnHandle rgn )
 		
 		while ( *p != End )
 		{
-			ASSERT( *p > h );
+			EXPECT( *p > h );
+			ASSERT( *p >= h );
 			
 			h = *p++;
 			
