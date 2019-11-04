@@ -1001,6 +1001,92 @@ pascal void FlashMenuBar_patch( short menuID )
 	InvertRect( &menu_bar );
 }
 
+static
+short insert_one_item( MenuRef menu, const UInt8* format, UInt8 length, short i )
+{
+	if ( i <= 31 )
+	{
+		const long stay_mask = (1 << i) - 1;
+		const long move_mask = ~stay_mask;
+		
+		const long flags = menu[0]->enableFlags;
+		
+		long stay_flags = flags & stay_mask;
+		long move_flags = flags & move_mask;
+		
+		move_flags <<= 1;
+		
+		menu[0]->enableFlags = move_flags | stay_flags;
+	}
+	
+	const UInt8 text_len = actual_item_text_length( format, length );
+	
+	const Size increase = 1 + text_len + 4;
+	const Size old_size = GetHandleSize( (Handle) menu );
+	const Size new_size = old_size + increase;
+	
+	SetHandleSize( (Handle) menu, new_size );
+	
+	menu_item_iterator it( menu );
+	
+	while ( it  &&  --i > 0 )
+	{
+		++it;
+	}
+	
+	const size_t offset = it.get() - (unsigned char*) *menu;
+	
+	unsigned char* p = (unsigned char*) *menu + offset;
+	unsigned char* q = p + increase;
+	
+	while ( it )
+	{
+		++it;
+	}
+	
+	const unsigned char* end = it.get() + 1;
+	
+	fast_memmove( q, p, end - p );
+	
+	return decode_item_format( format, length, p, text_len );
+}
+
+pascal void InsMenuItem_patch( MenuInfo**            menu,
+                               const unsigned char*  format,
+                               short                 after )
+{
+	WMgrPort_bezel_scope port_swap;
+	
+	UInt8 length = *format++;
+	
+	const short n = CountMItems_patch( menu );
+	
+	if ( after > n )
+	{
+		after = n;
+	}
+	
+	const short i = after + 1;
+	
+	do
+	{
+		const bool disabled = format[ 0 ] == '(';
+		
+		short n_bytes_consumed = insert_one_item( menu, format, length, i );
+		
+		format += n_bytes_consumed;
+		length -= n_bytes_consumed;
+		
+		if ( ! disabled )
+		{
+			EnableItem_patch( menu, i );
+		}
+	}
+	while ( length > 0 );
+	
+	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+}
+
 SysBeep_ProcPtr old_SysBeep;
 
 pascal void SysBeep_patch( short duration )

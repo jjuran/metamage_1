@@ -58,6 +58,10 @@ pascal MenuInfo** GetMHandle_patch( short menuID );
 
 pascal void FlashMenuBar_patch( short menuID );
 
+pascal void InsMenuItem_patch( MenuInfo**            menu,
+                               const unsigned char*  s,
+                               short                 after );
+
 pascal void SysBeep_patch( short duration );
 
 #endif
