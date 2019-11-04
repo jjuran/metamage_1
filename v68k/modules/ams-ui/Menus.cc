@@ -964,6 +964,31 @@ pascal void SetItemMark_patch( MenuInfo** menu, short item, char mark )
 	}
 }
 
+pascal void SetItmIcon_patch( MenuInfo** menu, short item, CharParameter icon )
+{
+	menu_item_iterator it( menu );
+	
+	while ( unsigned char* p = it )
+	{
+		if ( --item == 0 )
+		{
+			p += 1 + p[ 0 ];
+			
+			const bool size_changed = (! *p) != (! icon);
+			
+			*p = icon;
+			
+			if ( size_changed )
+			{
+				MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+			}
+			return;
+		}
+		
+		++it;
+	}
+}
+
 #pragma mark -
 #pragma mark Miscellaneous Routines
 #pragma mark -

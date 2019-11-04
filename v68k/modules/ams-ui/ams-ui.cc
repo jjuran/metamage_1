@@ -137,6 +137,8 @@ void install_Menus()
 	TBTRAP( MenuSelect   );  // A93D
 	TBTRAP( MenuKey      );  // A93E
 	
+	TBTRAP( SetItmIcon   );  // A940
+	
 	TBTRAP( SetItemMark  );  // A944
 	TBTRAP( CheckItem    );  // A945
 	TBTRAP( GetItem      );  // A946
