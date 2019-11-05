@@ -964,11 +964,6 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 
 pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 {
-	WindowPeek w = (WindowPeek) window;
-	
-	CopyRgn( w->strucRgn, OldStructure );
-	CopyRgn( w->contRgn,  OldContent   );
-	
 	QDGlobals& qd = get_QDGlobals();
 	
 	GrafPtr saved_port = qd.thePort;
@@ -978,6 +973,16 @@ pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 	PortSize( h, v );
 	
 	qd.thePort = saved_port;
+	
+	WindowPeek w = (WindowPeek) window;
+	
+	if ( ! w->visible )
+	{
+		return;
+	}
+	
+	CopyRgn( w->strucRgn, OldStructure );
+	CopyRgn( w->contRgn,  OldContent   );
 	
 	call_WDEF( w, wCalcRgns, 0 );
 	
