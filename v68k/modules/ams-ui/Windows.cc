@@ -565,6 +565,10 @@ pascal void ShowHide_patch( WindowRecord* window, Boolean showFlag )
 		
 		paint_one_or_many = &PaintOne_patch;
 	}
+	else
+	{
+		SetEmptyRgn( window->updateRgn );
+	}
 	
 	CalcVBehind_patch( window, window->strucRgn );
 	paint_one_or_many( window, window->strucRgn );
