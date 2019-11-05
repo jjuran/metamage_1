@@ -222,7 +222,7 @@ pascal void GetWMgrPort_patch( struct GrafPort** port )
 pascal struct GrafPort* NewWindow_patch( void*                 storage,
                                          const struct Rect*    bounds,
                                          const unsigned char*  title,
-                                         short                 visible,
+                                         Boolean               visible,
                                          short                 procID,
                                          struct GrafPort*      behind,
                                          unsigned char         closeBox,
