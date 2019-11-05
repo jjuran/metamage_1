@@ -969,11 +969,6 @@ pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 	CopyRgn( w->strucRgn, OldStructure );
 	CopyRgn( w->contRgn,  OldContent   );
 	
-	const Rect& portRect = window->portRect;
-	
-	const short old_height = portRect.bottom - portRect.top;
-	const short old_width  = portRect.right - portRect.left;
-	
 	QDGlobals& qd = get_QDGlobals();
 	
 	GrafPtr saved_port = qd.thePort;
