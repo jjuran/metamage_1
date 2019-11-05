@@ -186,6 +186,12 @@ pascal void DisposeMenu_patch( MenuInfo** menu )
 #pragma mark Forming the Menus
 #pragma mark -
 
+static inline
+bool is_separator( char c )
+{
+	return c == ';'  ||  c == '\r';
+}
+
 static
 UInt8 actual_item_text_length( const UInt8* format, UInt8 len )
 {
@@ -197,7 +203,7 @@ UInt8 actual_item_text_length( const UInt8* format, UInt8 len )
 	{
 		UInt8 c = *q++;
 		
-		if ( c == ';' )
+		if ( is_separator( c ) )
 		{
 			break;
 		}
@@ -241,7 +247,7 @@ short decode_item_format( UInt8 const* format, UInt8 len,
 	{
 		UInt8 c = *q++;
 		
-		if ( c == ';' )
+		if ( is_separator( c ) )
 		{
 			break;
 		}
