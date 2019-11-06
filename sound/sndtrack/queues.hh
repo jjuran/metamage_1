@@ -10,7 +10,7 @@
 struct queue_node
 {
 	queue_node*  next;
-	short        size;  // Any non-zero value indicates validity
+	int          size;  // Any non-zero value indicates validity
 	
 	bool valid() const  { return size != 0; }
 	

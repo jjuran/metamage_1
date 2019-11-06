@@ -17,7 +17,7 @@
 
 static uint32_t elapsed_samples;
 
-short ff_synth( sample_buffer& output, short size, ff_buffer& rec, bool reset )
+short ff_synth( sample_buffer& output, int size, ff_buffer& rec, bool reset )
 {
 	if ( reset )
 	{
@@ -28,8 +28,8 @@ short ff_synth( sample_buffer& output, short size, ff_buffer& rec, bool reset )
 	
 	uint32_t samples_remaining = sizeof output.data;
 	
-	Fixed wave_point = rec.count * elapsed_samples;
-	short wave_index = wave_point >> 16;
+	uint32_t wave_point = rec.count * elapsed_samples;
+	uint16_t wave_index = wave_point >> 16;
 	
 	if ( wave_index >= size )
 	{

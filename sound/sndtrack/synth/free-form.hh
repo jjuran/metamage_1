@@ -10,6 +10,6 @@ struct sample_buffer;
 
 typedef struct FFSynthRec ff_buffer;
 
-short ff_synth( sample_buffer& output, short size, ff_buffer& rec, bool reset );
+short ff_synth( sample_buffer& output, int size, ff_buffer& rec, bool reset );
 
 #endif
