@@ -22,6 +22,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "c_string.hh"
 
 
 static
@@ -43,15 +44,7 @@ StringPtr NumToString_method( long x : __D0, StringPtr p : __A0 )
 static
 long StringToNum_method( ConstStr255Param string : __A0 )
 {
-	char buffer[ 256 ];
-	
-	short len = string[ 0 ];
-	
-	fast_memcpy( buffer, string + 1, len );
-	
-	buffer[ len ] = '\0';
-	
-	return gear::parse_decimal( buffer );
+	return gear::parse_decimal( CSTR( string ) );
 }
 
 asm void Pack7_patch( short method )
