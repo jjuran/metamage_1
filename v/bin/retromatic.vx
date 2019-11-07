@@ -111,7 +111,7 @@ copy( parent_dir "/" name_to_copy, Files "/" name_to_copy )
 const ams_bin = "../ams-68k-bin/bin"
 const ams_lib = "../ams-68k-bin/lib"
 
-const prefix_list = "core io fs rsrc pack seg qd ui print"
+const prefix_list = "core io fs snd rsrc pack seg qd ui print"
 const ams_modules = [ prefix_list / ' ' ] map {ams_lib "/ams-" v}
 
 copy( *ams_modules, ams_bin "/app", xv68k_dir )
