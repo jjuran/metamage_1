@@ -16,6 +16,12 @@
 // POSIX
 #include <unistd.h>
 
+// log-of-war
+#include "logofwar/report.hh"
+
+// ams-common
+#include "c_string.hh"
+
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -70,9 +76,7 @@ pascal void GetFNum_patch( const unsigned char* name, short* num )
 		return;
 	}
 	
-	write( STDERR_FILENO, STR_LEN( "GetFNum:\n" ) );
-	
-	DebugStr( name );
+	WARNING = "GetFNum: unknown ", CSTR( name );
 	
 	*num = 10;
 }
