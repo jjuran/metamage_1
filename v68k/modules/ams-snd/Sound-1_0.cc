@@ -56,13 +56,19 @@ OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 	
 	Ptr samples = snd->samplePtr ? snd->samplePtr : (Ptr) snd->sampleArea;
 	
-	if ( snd->length > 30000 )
+	if ( snd->length > 30000  &&  snd->sampleRate != rate22khz )
 	{
 		ERROR = "sampled sound size of ", snd->length, " bytes is is too long";
 		return unimplemented;
 	}
 	
 	Size payload_len = snd->length;
+	
+	if ( snd->length > 30000 )
+	{
+		payload_len = 370 * 80;  // 29600
+	}
+	
 	Size buffer_size = 6 + payload_len;
 	
 	Ptr buffer = NewPtr( buffer_size );
@@ -97,9 +103,24 @@ OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 	freeform->mode  = ffMode;
 	freeform->count = playback_rate;
 	
-	fast_memcpy( freeform->waveBytes, samples, payload_len );
+	Size samples_remaining = snd->length;
 	
-	err = FSWrite( -4, &buffer_size, buffer );
+	do
+	{
+		fast_memcpy( freeform->waveBytes, samples, payload_len );
+		
+		err = FSWrite( -4, &buffer_size, buffer );
+		
+		samples           += payload_len;
+		samples_remaining -= payload_len;
+		
+		if ( samples_remaining < payload_len )
+		{
+			payload_len = samples_remaining;
+			buffer_size = 6 + payload_len;
+		}
+	}
+	while ( samples_remaining > 0  &&  err == noErr );
 	
 	DisposePtr( buffer );
 	
