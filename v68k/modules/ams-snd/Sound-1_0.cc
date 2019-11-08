@@ -62,7 +62,8 @@ OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 		return unimplemented;
 	}
 	
-	Size buffer_size = 6 + snd->length;
+	Size payload_len = snd->length;
+	Size buffer_size = 6 + payload_len;
 	
 	Ptr buffer = NewPtr( buffer_size );
 	
@@ -89,14 +90,16 @@ OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 			break;
 	}
 	
+	OSErr err;
+	
 	FFSynthRec* freeform = (FFSynthRec*) buffer;
 	
 	freeform->mode  = ffMode;
 	freeform->count = playback_rate;
 	
-	fast_memcpy( freeform->waveBytes, samples, snd->length );
+	fast_memcpy( freeform->waveBytes, samples, payload_len );
 	
-	OSErr err = FSWrite( -4, &buffer_size, buffer );
+	err = FSWrite( -4, &buffer_size, buffer );
 	
 	DisposePtr( buffer );
 	
