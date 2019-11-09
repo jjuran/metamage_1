@@ -149,6 +149,8 @@ void check_timers( timeval* timeout = NULL )
 	timeval now;
 	time( &now );
 	
+	bool any_expired = false;
+	
 	while ( timer_chain != NULL  &&  timer_chain->wakeup <= now )
 	{
 		timer_node* next = timer_chain;
@@ -156,11 +158,17 @@ void check_timers( timeval* timeout = NULL )
 		timer_chain = timer_chain->next;
 		
 		next->ready( next );
+		
+		any_expired = true;
 	}
 	
 	if ( timeout )
 	{
-		if ( timer_chain )
+		if ( any_expired )
+		{
+			*timeout = zero_timeout;
+		}
+		else if ( timer_chain )
 		{
 			timeval dt = timer_chain->wakeup - now;
 			
