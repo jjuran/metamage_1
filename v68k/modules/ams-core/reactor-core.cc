@@ -158,13 +158,16 @@ void check_timers( timeval* timeout = NULL )
 		next->ready( next );
 	}
 	
-	if ( timer_chain  &&  timeout )
+	if ( timeout )
 	{
-		timeval dt = timer_chain->wakeup - now;
-		
-		if ( dt < *timeout )
+		if ( timer_chain )
 		{
-			*timeout = dt;
+			timeval dt = timer_chain->wakeup - now;
+			
+			if ( dt < *timeout )
+			{
+				*timeout = dt;
+			}
 		}
 	}
 }
