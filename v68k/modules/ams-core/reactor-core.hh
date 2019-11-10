@@ -11,6 +11,8 @@ struct timer_node;
 struct timeval;
 struct reactor_core_parameter_block;
 
+extern const timeval zero_timeout;
+
 extern reactor_core_parameter_block the_reactor_core;
 
 void schedule( timer_node* node );

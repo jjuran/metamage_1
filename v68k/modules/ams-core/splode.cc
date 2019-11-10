@@ -42,8 +42,6 @@ Rect   CrsrPin : 0x0834;
 bool button_clicked;
 
 
-static const timeval zero_timeout = { 0, 0 };
-
 static inline
 timeval approximate_timeval_from_ticks( unsigned long ticks )
 {

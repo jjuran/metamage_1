@@ -17,6 +17,8 @@
 #include "time.hh"
 
 
+const timeval zero_timeout = { 0, 0 };
+
 static reactor_node* reactor_chain;
 static timer_node*   timer_chain;
 
