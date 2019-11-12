@@ -235,13 +235,6 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	pb->ioCmdAddr = drvr_entry_point( drvr, command );
 	
-	if ( ! immed )
-	{
-		pb->qType = ioQType;
-		
-		Enqueue( (QElemPtr) pb, &dce->dCtlQHdr );
-	}
-	
 	if ( immed )
 	{
 		OSErr err = call_DRVR( trap_word, (long) pb->ioCmdAddr, pb, dce );
@@ -256,6 +249,10 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		
 		return pb->ioResult = err;
 	}
+	
+	pb->qType = ioQType;
+	
+	Enqueue( (QElemPtr) pb, &dce->dCtlQHdr );
 	
 	OSErr err = call_DRVR( trap_word, (long) pb->ioCmdAddr, pb, dce );
 	
