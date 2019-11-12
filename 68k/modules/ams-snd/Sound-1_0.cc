@@ -13,6 +13,9 @@
 // SoundDriver
 #include "SoundDriver/SoundDriver.h"
 
+// mac-glue-utils
+#include "mac_glue/OSUtils.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -252,6 +255,8 @@ OSErr SndPlay_patch( SndChannel* chan, SndListResource** h, Boolean async )
 		{
 			return MemErr;
 		}
+		
+		async = false;
 	}
 	
 	const short format = h[0]->format;
@@ -310,6 +315,14 @@ OSErr SndPlay_patch( SndChannel* chan, SndListResource** h, Boolean async )
 		}
 		
 		++command;
+	}
+	
+	if ( ! async )
+	{
+		while ( chan->qTail >= 0 )
+		{
+			mac::glue::delay( -1 );  // calls reactor_wait() once
+		}
 	}
 	
 	return noErr;
