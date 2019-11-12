@@ -123,6 +123,8 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	DisposePtr( buffer );
 	
+	chan->cmdInProgress.cmd = nullCmd;
+	
 	return err;
 }
 
@@ -140,6 +142,80 @@ OSErr do_snd_command( SndChannel* chan, const SndCommand& command )
 			ERROR = "unimplemented Sound Manager command ", cmd;
 			return unimplemented;
 	}
+}
+
+static
+short enqueue_command( SndChannel& chan, const SndCommand& command )
+{
+	short tail = chan.qTail;
+	
+	if ( ++tail == chan.qLength )
+	{
+		tail = 0;
+	}
+	
+	bool queued_next = false;
+	
+	if ( chan.qHead == tail )
+	{
+		if ( chan.qTail >= 0 )
+		{
+			/*
+				In an empty queue, qTail is set to -1.
+				Both -1 and 127 increment to 0 above,
+				but only the former succeeds when qHead
+				is also 0 (inserting into a previously
+				empty queue).  Any non-negative value of
+				qTail whose successor ((qTail + 1) % 128)
+				matches qHead indicates a full queue.
+			*/
+			
+			return queueFull;
+		}
+		
+		/*
+			If the queue was empty (putting this command at the
+			head of the queue) and no command is in progress,
+			tell SndDoCommand() to start playing the sound.
+		*/
+		
+		queued_next = chan.cmdInProgress.cmd == nullCmd;
+	}
+	
+	chan.qTail = tail;
+	
+	chan.queue[ tail ] = command;
+	
+	return queued_next;
+}
+
+static
+void start_next_command( SndChannel& chan )
+{
+	if ( chan.qTail < 0 )
+	{
+		chan.cmdInProgress.cmd = nullCmd;
+		
+		return;  // queue is empty
+	}
+	
+	chan.cmdInProgress = chan.queue[ chan.qHead ];
+	
+	/*
+		Remove the command from the queue immediately.
+	*/
+	
+	if ( chan.qHead == chan.qTail )
+	{
+		chan.qTail = -1;
+		chan.qHead = 0;
+	}
+	else if ( ++chan.qHead == chan.qLength )
+	{
+		chan.qHead = 0;
+	}
+	
+	do_snd_command( &chan, chan.cmdInProgress );
 }
 
 pascal
@@ -220,4 +296,19 @@ OSErr SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow )
 	ERROR = "SndDisposeChannel is unimplemented";
 	
 	return noErr;
+}
+
+pascal
+OSErr SndDoCommand_patch( SndChannel* chan, SndCommand* cmd, Boolean noWait )
+{
+	short queued_next = enqueue_command( *chan, *cmd );
+	
+	if ( queued_next > 0 )
+	{
+		start_next_command( *chan );
+		
+		queued_next = 0;  // return noErr
+	}
+	
+	return queued_next;  // either noErr or queueFull
 }

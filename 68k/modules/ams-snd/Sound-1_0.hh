@@ -22,4 +22,6 @@ pascal OSErr SndNewChannel_patch( SndChannel**, short, long, SndCallBackUPP );
 
 pascal OSErr SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow );
 
+pascal OSErr SndDoCommand_patch( SndChannel* c, SndCommand* cmd, Boolean nblk );
+
 #endif
