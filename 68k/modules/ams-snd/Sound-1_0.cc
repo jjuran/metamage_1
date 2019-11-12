@@ -24,6 +24,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "interrupts.hh"
 
 // ams-snd
 #include "admin.hh"
@@ -160,6 +161,8 @@ OSErr do_snd_command( SndChannel* chan, const SndCommand& command )
 static
 short enqueue_command( SndChannel& chan, const SndCommand& command )
 {
+	short saved_SR = disable_interrupts();
+	
 	short tail = chan.qTail;
 	
 	if ( ++tail == chan.qLength )
@@ -183,6 +186,8 @@ short enqueue_command( SndChannel& chan, const SndCommand& command )
 				matches qHead indicates a full queue.
 			*/
 			
+			reenable_interrupts( saved_SR );
+			
 			return queueFull;
 		}
 		
@@ -199,6 +204,8 @@ short enqueue_command( SndChannel& chan, const SndCommand& command )
 	
 	chan.queue[ tail ] = command;
 	
+	reenable_interrupts( saved_SR );
+	
 	return queued_next;
 }
 
@@ -207,9 +214,13 @@ void start_next_command( SndChannel& chan )
 {
 next:
 	
+	short saved_SR = disable_interrupts();
+	
 	if ( chan.qTail < 0 )
 	{
 		chan.cmdInProgress.cmd = nullCmd;
+		
+		reenable_interrupts( saved_SR );
 		
 		return;  // queue is empty
 	}
@@ -229,6 +240,8 @@ next:
 	{
 		chan.qHead = 0;
 	}
+	
+	reenable_interrupts( saved_SR );
 	
 	/*
 		Run any consecutive admin commands immediately, in a loop.
