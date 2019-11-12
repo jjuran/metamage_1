@@ -238,16 +238,16 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	OSErr err = call_DRVR( trap_word, entry_point, pb, dce );
 	
-	if ( killIO )
-	{
-		while ( QElemPtr head = dce->dCtlQHdr.qHead )
-		{
-			IODone( dce, abortErr );
-		}
-	}
-	
 	if ( immed )
 	{
+		if ( killIO )
+		{
+			while ( QElemPtr head = dce->dCtlQHdr.qHead )
+			{
+				IODone( dce, abortErr );
+			}
+		}
+		
 		return pb->ioResult = err;
 	}
 	
