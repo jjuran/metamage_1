@@ -93,6 +93,33 @@ OSErr IOComplete( IOParam* pb : __A0, OSErr err : __D0 )
 	return err;
 }
 
+static inline
+asm char lock_high_bit( void* lock : __A0 )
+{
+	TAS.B    (A0)
+	SPL.B    D0
+}
+
+static inline
+char IOLock( IOParam* pb : __A0 )
+{
+	return lock_high_bit( &pb->ioTrap );
+}
+
+static
+OSErr IONext( DCtlEntry* dce : __A1 )
+{
+	if ( IOParam* pb = (IOParam*) dce->dCtlQHdr.qHead )
+	{
+		if ( IOLock( pb ) )
+		{
+			return call_DRVR( pb->ioTrap, (long) pb->ioCmdAddr, pb, dce );
+		}
+	}
+	
+	return noErr;
+}
+
 static
 OSErr IODone_handler( DCtlEntry* dce : __A1, OSErr err : __D0 )
 {
@@ -250,11 +277,12 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return pb->ioResult = err;
 	}
 	
-	pb->qType = ioQType;
+	pb->qType   = ioQType;
+	pb->ioTrap &= ~0x8000;  // clear high bit to mark as unserviced
 	
 	Enqueue( (QElemPtr) pb, &dce->dCtlQHdr );
 	
-	OSErr err = call_DRVR( trap_word, (long) pb->ioCmdAddr, pb, dce );
+	OSErr err = IONext( dce );
 	
 	if ( ! async )
 	{
