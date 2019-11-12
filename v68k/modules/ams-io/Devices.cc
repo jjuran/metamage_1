@@ -149,7 +149,7 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	const bool killIO = command == kKillIOCommand;
 	
-	const short immed = trap_word & noQueueMask;
+	const short immed = trap_word & noQueueMask  ||  killIO;
 	const short async = trap_word & asyncTrapMask;
 	
 	if ( ! async )
@@ -198,7 +198,7 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return IOComplete( pb, (bit ^ 1) - 20 );
 	}
 	
-	if ( ! immed  &&  ! killIO )
+	if ( ! immed )
 	{
 		pb->qType = ioQType;
 		
