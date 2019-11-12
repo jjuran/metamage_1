@@ -137,7 +137,9 @@ OSErr IODone_handler( DCtlEntry* dce : __A1, OSErr err : __D0 )
 	
 	IOParam* pb = (IOParam*) head;
 	
-	return IOComplete( pb, err );
+	IOComplete( pb, err );
+	
+	return IONext( dce );
 }
 
 short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )

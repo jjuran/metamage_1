@@ -279,18 +279,6 @@ void Sound_ready( timer_node* node )
 	pb->ioActCount = pb->ioReqCount;
 	
 	IODone( dce, noErr );
-	
-	if ( IOParam* pb = (IOParam*) dce->dCtlQHdr.qHead )
-	{
-		int64_t duration = mac::snd::duration( pb->ioBuffer, pb->ioReqCount );
-		
-		start_sound( pb->ioBuffer, pb->ioReqCount );
-		
-		if ( ! timer_scheduled )
-		{
-			schedule_timer( pb, duration );
-		}
-	}
 }
 
 OSErr Sound_open( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
