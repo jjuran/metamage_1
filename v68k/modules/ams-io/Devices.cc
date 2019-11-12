@@ -52,6 +52,26 @@ void* toolbox_trap_table[] : 3 * 1024;
 #define TBTRAP( Proc )  (toolbox_trap_table[ _##Proc & 0x03FF ] = &Proc##_patch)
 
 
+static
+asm
+short call_DRVR( short  trap : __D1,
+                 long   proc : __D2,
+                 void*  pb   : __A0,
+                 void*  dce  : __A1 )
+{
+	LINK     A6,#0
+	
+	MOVEM.L  D3-D7/A2-A4,-(SP)
+	
+	MOVEA.L  D2,A2
+	JSR      (A2)
+	
+	MOVEM.L  (SP)+,D3-D7/A2-A4
+	
+	UNLK     A6
+	RTS
+}
+
 static inline
 asm void call_completion_routine( void* pb : __A0,
                                   short err : __D0,
@@ -93,26 +113,6 @@ OSErr IODone_handler( DCtlEntry* dce : __A1, OSErr err : __D0 )
 	return IOComplete( pb, err );
 }
 
-static
-asm
-short call_DRVR( short  trap : __D1,
-                 long   proc : __D2,
-                 void*  pb   : __A0,
-                 void*  dce  : __A1 )
-{
-	LINK     A6,#0
-	
-	MOVEM.L  D3-D7/A2-A4,-(SP)
-	
-	MOVEA.L  D2,A2
-	JSR      (A2)
-	
-	MOVEM.L  (SP)+,D3-D7/A2-A4
-	
-	UNLK     A6
-	RTS
-}
-
 short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	if ( pb->ioNamePtr == NULL )
@@ -145,6 +145,10 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	pb->ioTrap = trap_word;
 	
+	uint8_t command = trap_word;
+	
+	const bool killIO = command == kKillIOCommand;
+	
 	const short immed = trap_word & noQueueMask;
 	const short async = trap_word & asyncTrapMask;
 	
@@ -168,10 +172,6 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	{
 		return IOComplete( pb, badUnitErr );
 	}
-	
-	uint8_t command = trap_word;
-	
-	const bool killIO = command == kKillIOCommand;
 	
 	if ( killIO )
 	{
