@@ -138,6 +138,41 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = fnfErr;
 }
 
+static
+Ptr drvr_entry_point( DRVRHeader* drvr, uint8_t command )
+{
+	short offset = 0;
+	
+	switch ( command )
+	{
+		case kOpenCommand:
+			offset = drvr->drvrOpen;
+			break;
+		
+		case kCloseCommand:
+			offset = drvr->drvrClose;
+			break;
+		
+		case kReadCommand:
+		case kWriteCommand:
+			offset = drvr->drvrPrime;
+			break;
+		
+		case kControlCommand:
+			offset = drvr->drvrCtl;
+			break;
+		
+		case kStatusCommand:
+			offset = drvr->drvrStatus;
+			break;
+		
+		default:
+			return NULL;
+	}
+	
+	return (Ptr) drvr + offset;
+}
+
 short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	const int noQueueMask   = 1 << noQueueBit;
@@ -198,6 +233,8 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return IOComplete( pb, (bit ^ 1) - 20 );
 	}
 	
+	pb->ioCmdAddr = drvr_entry_point( drvr, command );
+	
 	if ( ! immed )
 	{
 		pb->qType = ioQType;
@@ -205,38 +242,7 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		Enqueue( (QElemPtr) pb, &dce->dCtlQHdr );
 	}
 	
-	short offset = 0;
-	
-	switch ( command )
-	{
-		case kOpenCommand:
-			offset = drvr->drvrOpen;
-			break;
-		
-		case kCloseCommand:
-			offset = drvr->drvrClose;
-			break;
-		
-		case kReadCommand:
-		case kWriteCommand:
-			offset = drvr->drvrPrime;
-			break;
-		
-		case kControlCommand:
-			offset = drvr->drvrCtl;
-			break;
-		
-		case kStatusCommand:
-			offset = drvr->drvrStatus;
-			break;
-		
-		default:
-			break;
-	}
-	
-	long entry_point = (long) drvr + offset;
-	
-	OSErr err = call_DRVR( trap_word, entry_point, pb, dce );
+	OSErr err = call_DRVR( trap_word, (long) pb->ioCmdAddr, pb, dce );
 	
 	if ( immed )
 	{
