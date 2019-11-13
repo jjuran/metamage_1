@@ -372,10 +372,10 @@ pascal GrafPort* GetNewWindow_patch( short      resID,
 	WindowRef window = NewWindow( storage,
 	                              &wind.bounds,
 	                              wind.title,
-	                              wind.visible,
+	                              (Boolean&) wind.visible,
 	                              wind.procID,
 	                              behind,
-	                              wind.goAwayFlag,
+	                              (Boolean&) wind.goAwayFlag,
 	                              wind.refCon );
 	
 	ReleaseResource( h );
