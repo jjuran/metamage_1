@@ -228,13 +228,6 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
                                          unsigned char         closeBox,
                                          long                  refCon )
 {
-	if ( WindowList  &&  ! WindowList->visible  &&  behind != (WindowRef) -1 )
-	{
-		// New window behind invisible front window:  Show the front window.
-		
-		ShowWindow_patch( WindowList );
-	}
-	
 	WindowPeek window = (WindowPeek) storage;
 	
 	if ( window == NULL )
