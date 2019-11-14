@@ -145,7 +145,7 @@ const unsigned char lookup_from_virtual[] =
 	F(1),
 	0x1C,  // Left
 	0x1D,  // Right
-	0x1E,  // Up
 	0x1F,  // Down
+	0x1E,  // Up
 	____,
 };
