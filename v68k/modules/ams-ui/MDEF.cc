@@ -50,6 +50,12 @@ short total_keystroke_offset()
 	return keystroke_gap + keystroke_pen_offset();
 }
 
+static inline
+bool should_draw_key( uint8_t key )
+{
+	return key > 0x1F;
+}
+
 static
 void MDEF_0_Draw( MenuRef menu, const Rect& r )
 {
@@ -108,7 +114,7 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 			
 			DrawString( text );
 			
-			if ( key )
+			if ( should_draw_key( key ) )
 			{
 				MoveTo( right - keystroke_pen_offset(), v );
 				
@@ -197,7 +203,7 @@ void MDEF_0_Size( MenuRef menu )
 		
 		const unsigned char* p = text + 1 + text[ 0 ] + 1;  // skip icon
 		
-		if ( const uint8_t key = *p )
+		if ( should_draw_key( *p ) )
 		{
 			itemWidth += total_keystroke_offset() - right_padding;
 		}
