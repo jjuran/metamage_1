@@ -97,7 +97,7 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 			const uint8_t mark  = *p++;
 			const uint8_t style = *p++;
 			
-			if ( mark )
+			if ( mark  &&  key != hMenuCmd )
 			{
 				MoveTo( left + mark_padding, v );
 				
