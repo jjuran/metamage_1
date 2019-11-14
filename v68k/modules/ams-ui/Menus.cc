@@ -951,7 +951,7 @@ pascal void CheckItem_patch( MenuInfo** menu, short item, char checked )
 	SetItemMark_patch( menu, item, mark );
 }
 
-pascal void SetItemMark_patch( MenuInfo** menu, short item, char mark )
+pascal void SetItemMark_patch( MenuInfo** menu, short item, CharParameter mark )
 {
 	menu_item_iterator it( menu );
 	
