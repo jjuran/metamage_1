@@ -66,6 +66,9 @@ pascal void InsMenuItem_patch( MenuInfo**            menu,
 
 pascal void DelMenuItem_patch( MenuInfo** menu, short item );
 
+pascal void GetItemCmd_patch( MenuInfo** menu, short item, short* key );
+pascal void SetItemCmd_patch( MenuInfo** menu, short item, short  key );
+
 pascal void SysBeep_patch( short duration );
 
 #endif

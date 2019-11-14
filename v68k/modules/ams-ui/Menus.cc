@@ -1156,6 +1156,44 @@ pascal void DelMenuItem_patch( MenuInfo** menu, short item )
 	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
+pascal void GetItemCmd_patch( MenuInfo** menu, short item, CharParameter* key )
+{
+	menu_item_iterator it( menu );
+	
+	while ( const unsigned char* p = it )
+	{
+		if ( --item == 0 )
+		{
+			p += 1 + p[ 0 ] + 1;
+			
+			*key = *p;
+			
+			return;
+		}
+		
+		++it;
+	}
+}
+
+pascal void SetItemCmd_patch( MenuInfo** menu, short item, CharParameter key )
+{
+	menu_item_iterator it( menu );
+	
+	while ( unsigned char* p = it )
+	{
+		if ( --item == 0 )
+		{
+			p += 1 + p[ 0 ] + 1;
+			
+			*p = key;
+			
+			return;
+		}
+		
+		++it;
+	}
+}
+
 SysBeep_ProcPtr old_SysBeep;
 
 pascal void SysBeep_patch( short duration )
