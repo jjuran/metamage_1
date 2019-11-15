@@ -6,8 +6,14 @@
 #include "MDEF.hh"
 
 // Mac OS
+#ifndef __ICONS__
+#include <Icons.h>
+#endif
 #ifndef __MENUS__
 #include <Menus.h>
+#endif
+#ifndef __RESOURCES__
+#include <Resources.h>
 #endif
 
 // ams-common
@@ -103,6 +109,11 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 			const uint8_t mark  = *p++;
 			const uint8_t style = *p++;
 			
+			if ( icon )
+			{
+				v += 8;
+			}
+			
 			if ( mark  &&  key != hMenuCmd )
 			{
 				MoveTo( left + mark_padding, v );
@@ -111,6 +122,27 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 			}
 			
 			MoveTo( left + left_padding, v );
+			
+			Handle h;
+			
+			if ( icon  &&  (h = GetResource( 'ICON', 256 + icon)) )
+			{
+				const short icon_width  = 32;
+				const short icon_height = 32;
+				
+				const short top    = v - 8 - pen_v_offset_for_text;
+				const short bottom = top + icon_height;
+				
+				const short icon_left = left + left_padding;
+				
+				Rect r = { top, icon_left, bottom, icon_left + icon_width };
+				
+				PlotIcon( &r, h );
+				
+				ReleaseResource( h );
+				
+				Move( icon_width + 6, 0 );
+			}
 			
 			DrawString( text );
 			
@@ -123,6 +155,11 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 				DrawString( keystroke );
 			}
 			
+			if ( icon )
+			{
+				v += 8;
+			}
+			
 			const bool enabled = enableFlags & 1  &&  menuEnabled;
 			
 			if ( ! enabled )
@@ -131,6 +168,11 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 				const short bottom = top + menu_item_height;
 				
 				Rect itemRect = { top, left, bottom, right };
+				
+				if ( icon )
+				{
+					itemRect.top -= menu_item_height;
+				}
 				
 				PaintRect( &itemRect );
 			}
@@ -144,15 +186,86 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 }
 
 static
-void invert_item( Rect rect, short item )
+void invert_rows( Rect rect, long rows )
 {
-	if ( item )
+	if ( rows >= 0 )
 	{
-		rect.top   += --item   * menu_item_height;
-		rect.bottom = rect.top + menu_item_height;
+		const short row = rows;
+		const short x2  = rows >> 16;
+		
+		rect.top   += row      *  menu_item_height;
+		rect.bottom = rect.top + (menu_item_height << x2);
 		
 		InvertRect( &rect );
 	}
+}
+
+static
+long rows_from_item( MenuRef menu, short item )
+{
+	if ( item == 0 )
+	{
+		return -1;
+	}
+	
+	short row = 0;
+	
+	menu_item_iterator it( menu );
+	
+	while ( const unsigned char* p = it )
+	{
+		p += 1 + p[ 0 ];
+		
+		const bool has_icon = *p++;
+		
+		if ( --item <= 0 )
+		{
+			return (has_icon << 16) | row;
+		}
+		else if ( has_icon )
+		{
+			++row;  // Items with icons are 2x height
+		}
+		
+		++row;
+		++it;
+	}
+	
+	return -1;
+}
+
+static
+long enabled_item_from_row( MenuRef menu, short row )
+{
+	short item = 1;
+	
+	menu_item_iterator it( menu );
+	
+	while ( const unsigned char* p = it )
+	{
+		const uint8_t len = *p++;
+		
+		const bool separator = len  &&  *p == '-';
+		
+		p += len;
+		
+		if ( const bool has_icon = *p++ )
+		{
+			--row;  // Items with icons are 2x height
+		}
+		
+		if ( row <= 0 )
+		{
+			return separator ? 0 : item;
+		}
+		
+		--row;
+		
+		++it;
+		++item;
+	}
+	
+	return 0;
 }
 
 static
@@ -164,7 +277,9 @@ void MDEF_0_Choose( MenuRef menu, const Rect& rect, Point hit, short* which )
 	{
 		const short dv = hit.v - rect.top;
 		
-		const short item = dv / menu_item_height + 1;
+		const short row = dv / menu_item_height;
+		
+		const short item = enabled_item_from_row( menu, row );
 		
 		const short enabled = item > 31  ||  menu[0]->enableFlags & (1 << item);
 		
@@ -176,8 +291,8 @@ void MDEF_0_Choose( MenuRef menu, const Rect& rect, Point hit, short* which )
 		}
 	}
 	
-	invert_item( rect, *which      );
-	invert_item( rect, enabledItem );
+	invert_rows( rect, rows_from_item( menu, *which      ) );
+	invert_rows( rect, rows_from_item( menu, enabledItem ) );
 	
 	*which = enabledItem;
 }
@@ -201,7 +316,17 @@ void MDEF_0_Size( MenuRef menu )
 		
 		short itemWidth = textWidth + right_padding;
 		
-		const unsigned char* p = text + 1 + text[ 0 ] + 1;  // skip icon
+		const unsigned char* p = text + 1 + text[ 0 ];
+		
+		if ( const uint8_t icon = *p++ )
+		{
+			const short icon_width  = 32;
+			const short icon_height = 32;
+			
+			height += icon_height - menu_item_height;
+			
+			itemWidth += icon_width + 6;
+		}
 		
 		if ( should_draw_key( *p ) )
 		{
