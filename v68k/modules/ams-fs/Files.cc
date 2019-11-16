@@ -876,6 +876,26 @@ OSErr GetFCBInfo_call( FCBPBRec* pb : __A0 )
 }
 
 static
+OSErr GetCatInfo_call( CInfoPBRec* pb : __A0 )
+{
+	DirInfo& dir = pb->dirInfo;
+	
+	INFO = "GetCatInfo:";
+	INFO = "-> ioFDirIndex: ", dir.ioFDirIndex;
+	INFO = "-> ioVRefNum:   ", dir.ioVRefNum;
+	INFO = "-> ioDrDirID:   ", dir.ioDrDirID;
+	
+	if ( dir.ioFDirIndex == 0  &&  dir.ioNamePtr )
+	{
+		INFO = "-> ioNamePtr: \"", CSTR( dir.ioNamePtr ), "\"";
+	}
+	
+	ERROR = "GetCatInfo is unimplemented";
+	
+	return dir.ioResult = paramErr;
+}
+
+static
 OSErr OpenDF_call( short trap_word : __D1, HFileParam* pb : __A0 )
 {
 	const short is_HFS = trap_word & kHFSFlagMask;
@@ -924,6 +944,9 @@ asm void FSDispatch_patch( short trap_word : __D1, short selector : __D0 )
 	CMPI.W   #0x0008,D0
 	BEQ      dispatch_GetFCBInfo
 	
+	CMPI.W   #0x0009,D0
+	BEQ      dispatch_GetCatInfo
+	
 	CMPI.W   #0x001A,D0
 	BEQ      dispatch_OpenDF
 	
@@ -937,6 +960,9 @@ dispatch_GetWDInfo:
 	
 dispatch_GetFCBInfo:
 	JMP      GetFCBInfo_call
+	
+dispatch_GetCatInfo:
+	JMP      GetCatInfo_call
 	
 dispatch_OpenDF:
 	JMP      OpenDF_call
