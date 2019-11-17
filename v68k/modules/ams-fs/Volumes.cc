@@ -37,7 +37,7 @@ void mount_virtual_network_volume()
 	vcb->vcbFSID    = 'Ix';
 	vcb->vcbVRefNum = -1;
 	
-	#define VOLNAME  "\p" "AMS Made-up Storage"
+	#define VOLNAME  "\p" "Bootstrap"
 	
 	fast_memcpy( vcb->vcbVN, VOLNAME, sizeof VOLNAME );
 	
