@@ -24,6 +24,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "c_string.hh"
 #include "QDGlobals.hh"
 
 // ams-ui
@@ -35,6 +36,8 @@ static short ANumber;
 static short ACount = -1;
 
 long CaretTime : 0x02F4;
+
+WindowPeek WindowList  : 0x09D6;
 
 StringHandle DAStrings[ 4 ] : 0x0AA0;
 
@@ -324,6 +327,50 @@ short prev_field( DialogPeek d )
 	}
 	
 	return last;
+}
+
+static
+DialogItem* recover_dialog_item( DialogPeek d, Handle h )
+{
+	short n_items_1 = dialog_item_count_minus_one( d->items );
+	
+	DialogItem* item = first_dialog_item( d->items );
+	
+	do
+	{
+		if ( item->handle == h )
+		{
+			return item;
+		}
+		
+		item = next( item );
+	}
+	while ( --n_items_1 >= 0 );
+	
+	return NULL;
+}
+
+static
+DialogPeek recover_dialog( Handle h )
+{
+	WindowPeek w = WindowList;
+	
+	while ( w != NULL )
+	{
+		if ( w->windowKind == dialogKind  ||  w->windowKind < 0 )
+		{
+			DialogPeek d = (DialogPeek) w;
+			
+			if ( recover_dialog_item( d, h ) )
+			{
+				return d;
+			}
+		}
+		
+		w = w->nextWindow;
+	}
+	
+	return NULL;
 }
 
 
@@ -1260,7 +1307,30 @@ pascal void SetIText_patch( Handle h, const unsigned char* text )
 	
 	fast_memcpy( *h, text + 1, len );
 	
-	// TODO:  Invalidate the text rect
+	DialogPeek d = recover_dialog( h );
+	
+	if ( d == NULL )
+	{
+		ERROR = "SetIText can't recover DialogRef to set text: ", CSTR( text );
+		return;
+	}
+	
+	TEHandle hTE = d->textH;
+	
+	if ( hTE  &&  hTE[0]->hText == h )
+	{
+		hTE[0]->teLength = len;
+		
+		TESetSelect( 0, len, hTE );
+		
+		return;
+	}
+	
+	scoped_port thePort = (DialogRef) d;
+	
+	DialogItem* item = recover_dialog_item( d, h );
+	
+	InvalRect( &item->bounds );
 }
 
 pascal void SelIText_patch( GrafPort*  dialog,
