@@ -16,6 +16,9 @@
 // ams-common
 #include "callouts.hh"
 
+// ams-fs
+#include "mount.hh"
+
 
 enum
 {
@@ -35,7 +38,6 @@ void mount_virtual_network_volume()
 	
 	vcb->vcbSigWord = 'Ix';
 	vcb->vcbFSID    = 'Ix';
-	vcb->vcbVRefNum = -1;
 	
 	#define VOLNAME  "\p" "Bootstrap"
 	
@@ -43,9 +45,7 @@ void mount_virtual_network_volume()
 	
 	#undef VOLNAME
 	
-	Enqueue( (QElemPtr) vcb, &VCBQHdr );
-	
-	DefVCBPtr = vcb;
+	mount_VCB( vcb );
 }
 
 VCB* VCB_lookup( short whichVol )

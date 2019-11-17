@@ -20,6 +20,22 @@
 VCB* DefVCBPtr : 0x0352;
 QHdr VCBQHdr   : 0x0356;
 
+short mount_VCB( VCB* vcb )
+{
+	static short last_vRefNum;
+	
+	vcb->vcbVRefNum = --last_vRefNum;
+	
+	Enqueue( (QElemPtr) vcb, &VCBQHdr );
+	
+	if ( DefVCBPtr == NULL )
+	{
+		DefVCBPtr = vcb;
+	}
+	
+	return last_vRefNum;
+}
+
 void try_to_mount( const char* name )
 {
 	/*
@@ -64,19 +80,9 @@ void try_to_mount( const char* name )
 	
 	BlockMoveData( master_directory_block, &vcb->vcbSigWord, 64 );
 	
-	static short last_vRefNum = -1;  // Reserve -1 for the virtual boot disk.
-	
-	vcb->vcbVRefNum = --last_vRefNum;
-	vcb->vcbMAdr    = NULL;
-	vcb->vcbBufAdr  = image;
-	vcb->vcbMLen    = 0;
-	
-	Enqueue( (QElemPtr) vcb, &VCBQHdr );
-	
-	if ( DefVCBPtr == NULL )
-	{
-		DefVCBPtr = vcb;
-	}
+	vcb->vcbMAdr   = NULL;
+	vcb->vcbBufAdr = image;
+	vcb->vcbMLen   = 0;
 	
 	const uint16_t sigword = vcb->vcbSigWord;
 	
@@ -85,4 +91,6 @@ void try_to_mount( const char* name )
 		vcb->vcbMAdr = master_directory_block + 64;
 		vcb->vcbMLen = (vcb->vcbNmAlBlks * 12 + 7) / 8u;
 	}
+	
+	mount_VCB( vcb );
 }
