@@ -345,6 +345,9 @@ pascal void SFPutFile_call( Point             where,
 	GetDialogItem( dialog, putDisk, &type, &h, &box );
 	SetDialogItem( dialog, putDisk, type, (Handle) &draw_disk_name, &box );
 	
+	GetDialogItem( dialog, putEject, &type, &h, &box );
+	HiliteControl( (ControlRef) h, kControlInactivePart );
+	
 	GetDialogItem( dialog, putName, &type, &h, &box );
 	SetDialogItemText( h, origName );
 	SelectDialogItemText( dialog, putName, 0, origName[ 0 ] );
@@ -505,6 +508,9 @@ pascal void SFGetFile_call( Point               where,
 	
 	GetDialogItem( dialog, getDisk, &type, &h, &box );
 	SetDialogItem( dialog, getDisk, type, (Handle) &draw_disk_name, &box );
+	
+	GetDialogItem( dialog, getEject, &type, &h, &box );
+	HiliteControl( (ControlRef) h, kControlInactivePart );
 	
 	GetDialogItem( dialog, getNmList, &type, &h, &box );
 	SetDialogItem( dialog, getNmList, type, (Handle) &draw_file_list, &box );
