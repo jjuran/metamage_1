@@ -172,7 +172,7 @@ OSErr save_app_data( const FCB* fcb )
 
 short Create_patch( short trap_word : __D1, FileParam* pb : __A0 )
 {
-	return pb->ioResult = extFSErr;
+	return pb->ioResult = wPrErr;
 }
 
 static
