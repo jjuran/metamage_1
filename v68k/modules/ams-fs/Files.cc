@@ -620,9 +620,30 @@ short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
 static
 OSErr GetWDInfo_call( WDPBRec* pb : __A0 )
 {
-	ERROR = "GetWDInfo is unimplemented";
+	const short vRefNum = pb->ioVRefNum;
 	
-	return paramErr;
+	if ( vRefNum >= 0 )
+	{
+		ERROR = "GetWDInfo got a non-negative vRefNum: ", vRefNum;
+		
+		return pb->ioResult = paramErr;
+	}
+	
+	if ( pb->ioNamePtr )
+	{
+		if ( VCB* vcb = VCB_lookup( vRefNum ) )
+		{
+			const uint8_t* name = vcb->vcbVN;
+			
+			fast_memcpy( pb->ioNamePtr, name, 1 + name[ 0 ] );
+		}
+	}
+	
+	pb->ioWDProcID  = 0;
+	pb->ioWDVRefNum = vRefNum;
+	pb->ioWDDirID   = fsRtDirID;
+	
+	return pb->ioResult = noErr;
 }
 
 static
