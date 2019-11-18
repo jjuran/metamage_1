@@ -23,6 +23,7 @@
 #include "module_A4.hh"
 
 // ams-fs
+#include "bootstrap.hh"
 #include "freemount.hh"
 #include "MFS.hh"
 #include "Volumes.hh"
@@ -221,62 +222,7 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 		}
 	}
 	
-	temp_A4 a4;
-	
-	size_t len = name[ 0 ];
-	
-	char path[ 256 + 5 ];
-	
-	fast_memcpy( path, name + 1, len );
-	path[ len ] = '\0';
-	
-	plus::var_string file_data;
-	
-	int err;
-	
-	if ( ! is_rsrc )
-	{
-		err = try_to_get( path, len, file_data );
-		
-		if ( err == -EISDIR )
-		{
-			fast_memcpy( path + len, "/data", 5 );
-			
-			err = try_to_get( path, len + 5, file_data );
-		}
-	}
-	else
-	{
-		fast_memcpy( path + len, "/rsrc", 5 );
-		
-		err = try_to_get( path, len + 5, file_data );
-	}
-	
-	if ( err < 0 )
-	{
-		return pb->ioResult = fnfErr;  // TODO:  Check for other errors.
-	}
-	
-	const size_t size = file_data.size();
-	
-	if ( void* buffer = NewPtr( size ) )
-	{
-		BlockMoveData( file_data.data(), buffer, size );
-		
-		fcb->fcbFlNum = -1;  // Claim the FCB as in use.
-		
-		fcb->fcbEOF  =
-		fcb->fcbPLen = size;
-		fcb->fcbCrPs = 0;
-		
-		fcb->fcbBfAdr = (Ptr) buffer;
-		
-		pb->ioRefNum = FCB_index( fcb );
-		
-		return pb->ioResult = noErr;
-	}
-	
-	return pb->ioResult = memFullErr;
+	return pb->ioResult = bootstrap_open_fork( trap_word, fcb, name );
 }
 
 short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
