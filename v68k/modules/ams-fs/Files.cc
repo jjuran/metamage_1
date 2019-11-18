@@ -593,16 +593,16 @@ short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
 		return pb->ioResult = bdNamErr;
 	}
 	
-	if ( entry  &&  pb->ioNamePtr )
+	if ( entry == NULL )
+	{
+		return pb->ioResult = fnfErr;
+	}
+	
+	if ( pb->ioNamePtr )
 	{
 		ConstStr255Param name = entry->flNam;
 		
 		fast_memcpy( pb->ioNamePtr, name, 1 + name[ 0 ] );
-	}
-	
-	if ( entry == NULL )
-	{
-		return pb->ioResult = fnfErr;
 	}
 	
 	pb->ioFRefNum = 0;  // FIXME
