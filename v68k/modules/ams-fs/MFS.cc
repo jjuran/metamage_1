@@ -15,12 +15,26 @@
 
 // ams-common
 #include "callouts.hh"
+#include "FCB.hh"
 
 
 struct logical_block
 {
 	uint8_t bytes[ 512 ];
 };
+
+struct fork_spec
+{
+	uint16_t  forkStBlk;
+	uint32_t  forkLgLen;
+	uint32_t  forkPyLen;
+};
+
+static inline
+const fork_spec& get_fork( const mfs::file_directory_entry* entry, Byte rsrc )
+{
+	return (const fork_spec&) (rsrc ? entry->flRStBlk : entry->flStBlk);
+}
 
 static
 const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
@@ -133,6 +147,35 @@ void MFS_load( VCB* vcb, uint16_t stBlk, Ptr buffer, int16_t n )
 		
 		stBlk = get_next( block_map, stBlk );
 	}
+}
+
+OSErr MFS_open_fork( short trap_word, FCB* fcb, const mfs::_fde* entry )
+{
+	const Byte is_rsrc = trap_word;  // Open is A000, OpenRF is A00A
+	
+	const fork_spec& fork = get_fork( entry, is_rsrc );
+	
+	const size_t len = fork.forkPyLen;
+	
+	Ptr buffer = NewPtr( len );
+	
+	if ( buffer == NULL )
+	{
+		return memFullErr;
+	}
+	
+	MFS_load( fcb->fcbVPtr, fork.forkStBlk, buffer, len / 512 );
+	
+	fcb->fcbFlNum  = entry->flNum;
+	
+	fcb->fcbTypByt = entry->flVersNum;
+	fcb->fcbSBlk   = fork.forkStBlk;
+	fcb->fcbEOF    = fork.forkLgLen;
+	fcb->fcbPLen   = fork.forkPyLen;
+	
+	fcb->fcbBfAdr  = buffer;
+	
+	return noErr;
 }
 
 OSErr MFS_GetFileInfo( FileParam* pb, const mfs::_fde* entry )
