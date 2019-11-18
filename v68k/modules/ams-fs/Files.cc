@@ -572,13 +572,6 @@ short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
 		return pb->ioResult = nsvErr;
 	}
 	
-	StringPtr name = pb->ioNamePtr;
-	
-	if ( ! name  &&  pb->ioFDirIndex <= 0 )
-	{
-		return pb->ioResult = bdNamErr;
-	}
-	
 	const mfs::file_directory_entry* entry = NULL;
 	
 	if ( pb->ioFDirIndex > 0 )
@@ -591,9 +584,13 @@ short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
 		}
 		while ( entry != NULL  &&  --index );
 	}
-	else
+	else if ( StringPtr name = pb->ioNamePtr )
 	{
 		entry = MFS_lookup( vcb, name );
+	}
+	else
+	{
+		return pb->ioResult = bdNamErr;
 	}
 	
 	if ( entry  &&  pb->ioNamePtr )
