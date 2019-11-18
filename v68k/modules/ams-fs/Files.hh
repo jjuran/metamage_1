@@ -17,8 +17,6 @@ extern IO_ProcPtr   old_Close;
 extern IO_ProcPtr   old_Read;
 extern IO_ProcPtr   old_Write;
 
-extern int appfs_fd;
-
 void initialize();
 
 short Create_patch( short trap_word : __D1, FileParam* pb : __A0 );

@@ -21,6 +21,7 @@
 #include "module_A4.hh"
 
 // ams-fs
+#include "appfs.hh"
 #include "bootstrap.hh"
 #include "Files.hh"
 #include "mount.hh"

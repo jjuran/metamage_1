@@ -20,11 +20,10 @@
 // ams-common
 #include "callouts.hh"
 #include "FCB.hh"
-#include "module_A4.hh"
 
 // ams-fs
+#include "appfs.hh"
 #include "bootstrap.hh"
-#include "freemount.hh"
 #include "MFS.hh"
 #include "Volumes.hh"
 
@@ -42,8 +41,6 @@ Open_ProcPtr old_Open;
 IO_ProcPtr   old_Close;
 IO_ProcPtr   old_Read;
 IO_ProcPtr   old_Write;
-
-int appfs_fd;
 
 static inline
 short FCB_index( const FCB* fcb )
@@ -115,47 +112,6 @@ void initialize()
 	fast_memset( FCBSPtr, '\0', sizeof (FCBS) );
 	
 	FCBSPtr->bufSize = sizeof (FCBS);
-}
-
-static const plus::string data_path = "data";
-
-static
-void load_app_data( FCB* fcb )
-{
-	temp_A4 a4;
-	
-	plus::var_string existing_data;
-	
-	int err = try_to_get( appfs_fd, data_path, existing_data );
-	
-	if ( ! err  &&  ! existing_data.empty() )
-	{
-		const size_t size = existing_data.size();
-		
-		if ( size > fcb->fcbPLen )
-		{
-			DisposePtr( fcb->fcbBfAdr );
-			
-			fcb->fcbBfAdr = NewPtr( size );
-			fcb->fcbPLen  = size;
-		}
-		
-		fcb->fcbEOF = size;
-		
-		fast_memcpy( fcb->fcbBfAdr, existing_data.data(), size );
-	}
-}
-
-static
-OSErr save_app_data( const FCB* fcb )
-{
-	temp_A4 a4;
-	
-	plus::string data( fcb->fcbBfAdr, fcb->fcbPLen, plus::delete_never );
-	
-	int err = try_to_put( appfs_fd, data_path, data );
-	
-	return err ? ioErr : noErr;
 }
 
 short Create_patch( short trap_word : __D1, FileParam* pb : __A0 )
