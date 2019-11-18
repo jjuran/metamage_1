@@ -565,20 +565,9 @@ short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
 		return pb->ioResult = fnfErr;
 	}
 	
-	if ( pb->ioNamePtr )
-	{
-		ConstStr255Param name = entry->flNam;
-		
-		fast_memcpy( pb->ioNamePtr, name, 1 + name[ 0 ] );
-	}
-	
 	pb->ioFRefNum = 0;  // FIXME
 	
-	const size_t n = offsetof( mfs::_fde, flNam );
-	
-	fast_memcpy( &pb->ioFlAttrib, entry, n );
-	
-	return pb->ioResult = noErr;
+	return pb->ioResult = MFS_GetFileInfo( pb, entry );
 }
 
 static

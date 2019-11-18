@@ -134,3 +134,19 @@ void MFS_load( VCB* vcb, uint16_t stBlk, Ptr buffer, int16_t n )
 		stBlk = get_next( block_map, stBlk );
 	}
 }
+
+OSErr MFS_GetFileInfo( FileParam* pb, const mfs::_fde* entry )
+{
+	const size_t n = offsetof( mfs::file_directory_entry, flNam );
+	
+	fast_memcpy( &pb->ioFlAttrib, entry, n );
+	
+	if ( pb->ioNamePtr )
+	{
+		ConstStr255Param name = entry->flNam;
+		
+		fast_memcpy( pb->ioNamePtr, name, 1 + name[ 0 ] );
+	}
+	
+	return noErr;
+}
