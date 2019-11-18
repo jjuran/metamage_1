@@ -549,13 +549,7 @@ short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
 	
 	if ( pb->ioFDirIndex > 0 )
 	{
-		short index = pb->ioFDirIndex;
-		
-		do
-		{
-			entry = MFS_iterate( vcb, entry );
-		}
-		while ( entry != NULL  &&  --index );
+		entry = MFS_get_nth( vcb, pb->ioFDirIndex );
 	}
 	else if ( StringPtr name = pb->ioNamePtr )
 	{

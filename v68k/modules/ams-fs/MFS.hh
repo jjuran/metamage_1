@@ -46,7 +46,7 @@ namespace mfs
 	
 }
 
-const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev );
+const mfs::file_directory_entry* MFS_get_nth( VCB* vcb, short n );
 
 const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name );
 

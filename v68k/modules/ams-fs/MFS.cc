@@ -22,6 +22,7 @@ struct logical_block
 	uint8_t bytes[ 512 ];
 };
 
+static
 const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
 {
 	if ( prev )
@@ -50,6 +51,19 @@ const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
 	const logical_block* file_directory = all_blocks + vcb->vcbVBMSt;  // drDirSt
 	
 	return (const mfs::file_directory_entry*) file_directory;
+}
+
+const mfs::file_directory_entry* MFS_get_nth( VCB* vcb, short n )
+{
+	const mfs::file_directory_entry* entry = NULL;
+	
+	do
+	{
+		entry = MFS_iterate( vcb, entry );
+	}
+	while ( entry != NULL  &&  --n );
+	
+	return entry;
 }
 
 const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name )
