@@ -10,8 +10,6 @@ struct VCB;
 struct VolumeParam;
 struct WDPBRec;
 
-void mount_virtual_network_volume();
-
 VCB* VCB_lookup( short whichVol );
 
 VCB* VCB_lookup( const unsigned char* name );

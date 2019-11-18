@@ -16,9 +16,6 @@
 // ams-common
 #include "callouts.hh"
 
-// ams-fs
-#include "mount.hh"
-
 
 enum
 {
@@ -27,26 +24,6 @@ enum
 
 VCB* DefVCBPtr : 0x0352;
 QHdr VCBQHdr   : 0x0356;
-
-static VCB virtual_network_volume_VCB;
-
-void mount_virtual_network_volume()
-{
-	VCB* vcb = &virtual_network_volume_VCB;
-	
-	fast_memset( vcb, '\0', sizeof (VCB) );
-	
-	vcb->vcbSigWord = 'Ix';
-	vcb->vcbFSID    = 'Ix';
-	
-	#define VOLNAME  "\p" "Bootstrap"
-	
-	fast_memcpy( vcb->vcbVN, VOLNAME, sizeof VOLNAME );
-	
-	#undef VOLNAME
-	
-	mount_VCB( vcb );
-}
 
 VCB* VCB_lookup( short whichVol )
 {

@@ -21,6 +21,7 @@
 #include "module_A4.hh"
 
 // ams-fs
+#include "bootstrap.hh"
 #include "Files.hh"
 #include "mount.hh"
 #include "Volumes.hh"
@@ -135,7 +136,7 @@ int main( int argc, char** argv )
 	
 	install_FileManager();
 	
-	mount_virtual_network_volume();
+	mount_virtual_bootstrap_volume();
 	
 	module_A4_suspend();  // doesn't return
 }
