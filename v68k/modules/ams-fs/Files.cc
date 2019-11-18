@@ -87,11 +87,11 @@ FCB* find_next_empty_FCB()
 }
 
 static inline
-bool is_current_application( const mfs::file_directory_entry* entry )
+bool is_current_application( uint32_t flNum )
 {
 	const FCB& curApFCB = FCBSPtr->fcbs[ CurApRefNum - 1 ];
 	
-	return curApFCB.fcbFlNum == entry->flNum;
+	return curApFCB.fcbFlNum == flNum;
 }
 
 static inline
@@ -238,7 +238,7 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 			
 			pb->ioRefNum = FCB_index( fcb );
 			
-			if ( selfmod_capable  &&  is_current_application( entry ) )
+			if ( selfmod_capable  &&  is_current_application( fcb->fcbFlNum ) )
 			{
 				set_writable ( fcb );  // writing is allowed
 				set_servable ( fcb );  // file persists via appfs
