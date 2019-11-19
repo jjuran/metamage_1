@@ -1338,7 +1338,7 @@ pascal void SetIText_patch( Handle h, const unsigned char* text )
 	
 	DialogItem* item = recover_dialog_item( d, h );
 	
-	InvalRect( &item->bounds );
+	TETextBox( text + 1, len, &item->bounds, 0 );
 }
 
 pascal void SelIText_patch( GrafPort*  dialog,
