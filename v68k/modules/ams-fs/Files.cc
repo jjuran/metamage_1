@@ -203,7 +203,7 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	VCB* vcb = (VCB*) VCBQHdr.qHead;
 	
-	while ( vcb != NULL )
+	for ( ;  vcb != NULL;  vcb = (VCB*) vcb->qLink )
 	{
 		if ( const mfs::file_directory_entry* entry = MFS_lookup( vcb, name ) )
 		{
@@ -247,8 +247,6 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 			
 			return pb->ioResult = noErr;
 		}
-		
-		vcb = (VCB*) vcb->qLink;
 	}
 	
 	temp_A4 a4;
