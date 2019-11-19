@@ -1311,10 +1311,7 @@ pascal void SetIText_patch( Handle h, const unsigned char* text )
 {
 	const Size len = text[ 0 ];
 	
-	if ( GetHandleSize( h ) < len )
-	{
-		SetHandleSize( h, len );
-	}
+	SetHandleSize( h, len );
 	
 	fast_memcpy( *h, text + 1, len );
 	
