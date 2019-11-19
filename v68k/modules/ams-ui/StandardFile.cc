@@ -26,6 +26,10 @@ enum
 	putPrompt = 3,
 	putDisk   = 4,
 	putLine   = 8,
+	
+	getDisk = 4,
+	getLine = 9,
+	getName = 11,
 };
 
 static const char SFPutFile_items[] =
@@ -80,6 +84,78 @@ static const char SFPutFile_items[] =
 	"\x00\x58" "\x00\xc9"  // bounds.bottomRight
 	"\x80"                 // userItem + itemDisable
 	"\x00"                 // null
+	;
+
+static const char SFGetFile_items[] =
+	"\x00\x0a"             // count - 1
+	
+	"\x00\x00\x00\x00"     // handle placeholder
+	"\x00\x1c" "\x00\x98"  // bounds.topLeft
+	"\x00\x2e" "\x00\xe8"  // bounds.bottomRight
+	"\x04"                 // ctrlItem + btnCtrl
+	"\x04" "Open"          // title
+	
+	"\x00\x00\x00\x00"     // handle placeholder
+	"\x00\x3b" "\x04\x80"  // bounds.topLeft
+	"\x00\x4d" "\x04\xd0"  // bounds.bottomRight
+	"\x04"                 // ctrlItem + btnCtrl
+	"\x00" ""              // title
+	
+	"\x00\x00\x00\x00"     // handle placeholder
+	"\x00\x5a" "\x00\x98"  // bounds.topLeft
+	"\x00\x6c" "\x00\xe8"  // bounds.bottomRight
+	"\x04"                 // ctrlItem + btnCtrl
+	"\x06" "Cancel"        // title
+	
+	"\x00\x00\x00\x00"     // handle placeholder
+	"\x00\x1c" "\x00\xf8"  // bounds.topLeft
+	"\x00\x2e" "\x01\x58"  // bounds.bottomRight
+	"\x80"                 // userItem + itemDisable
+	"\x00"                 // null
+	
+	"\x00\x00\x00\x00"     // handle placeholder
+	"\x00\x3b" "\x01\x00"  // bounds.topLeft
+	"\x00\x4d" "\x01\x50"  // bounds.bottomRight
+	"\x04"                 // ctrlItem + btnCtrl
+	"\x05" "Eject"         // title
+	"\x00"                 // pad
+	
+	"\x00\x00\x00\x00"     // handle placeholder
+	"\x00\x5a" "\x01\x00"  // bounds.topLeft
+	"\x00\x6c" "\x01\x50"  // bounds.bottomRight
+	"\x04"                 // ctrlItem + btnCtrl
+	"\x05" "Drive"         // title
+	"\x00"                 // pad
+	
+	"\x00\x00\x00\x00"     // handle placeholder
+	"\x00\x0b" "\x00\x0c"  // bounds.topLeft
+	"\x00\x7d" "\x00\x7d"  // bounds.bottomRight
+	"\x80"                 // userItem + itemDisable
+	"\x00"                 // null
+	
+	"\x00\x00\x00\x00"     // handle placeholder
+	"\x00\x0b" "\x00\x7c"  // bounds.topLeft
+	"\x00\x7d" "\x00\x8c"  // bounds.bottomRight
+	"\x80"                 // userItem + itemDisable
+	"\x00"                 // null
+	
+	"\x00\x00\x00\x00"     // handle placeholder
+	"\x00\x14" "\x00\xf4"  // bounds.topLeft
+	"\x00\x74" "\x00\xf5"  // bounds.bottomRight
+	"\x80"                 // userItem + itemDisable
+	"\x00"                 // null
+	
+	"\x00\x00\x00\x00"     // handle placeholder
+	"\x00\x14" "\x04\x14"  // bounds.topLeft
+	"\x00\x74" "\x04\x79"  // bounds.bottomRight
+	"\x88"                 // statText + itemDisable
+	"\x00" ""              // static text
+	
+	"\x00\x00\x00\x00"     // handle placeholder
+	"\x00\x3c" "\x00\x0e"  // bounds.topLeft
+	"\x00\x4c" "\x00\xe5"  // bounds.bottomRight
+	"\x90"                 // editText + itemDisable
+	"\x00" ""              // initial text
 	;
 
 static inline
@@ -248,13 +324,75 @@ pascal OSErr SFGetFile_call( Point               where,
                              DlgHookUPP          dlgHook,
                              SFReply*            reply )
 {
-	ERROR = "SFGetFile is unimplemented";
+	const short width  = 348;
+	const short height = 136;
 	
-	WARNING = "SFGetFile prompt: ", CSTR( prompt );
+	const short left = where.h;
+	const short top  = where.v;
 	
-	reply->good = false;
+	Rect bounds = { top, left, top + height, left + width };
 	
-	return userCanceledErr;
+	Handle items = PtrToHand( SFGetFile_items, sizeof SFGetFile_items );
+	
+	DialogRef dialog = NewDialog( NULL,
+	                              &bounds,
+	                              "\p",
+	                              true,
+	                              dBoxProc,
+	                              (WindowRef) -1,
+	                              false,
+	                              0,
+	                              items );
+	
+	short type;
+	Handle h;
+	Rect box;
+	
+	GetDialogItem( dialog, getDisk, &type, &h, &box );
+	SetDialogItem( dialog, getDisk, type, (Handle) &draw_disk_name, &box );
+	
+	GetDialogItem( dialog, getLine, &type, &h, &box );
+	SetDialogItem( dialog, getLine, type, (Handle) &draw_dotted_line, &box );
+	
+	short hit = 0;
+	
+	do
+	{
+		ModalDialog( NULL, &hit );
+		
+		if ( hit == 1 )
+		{
+			Str255 name;
+			
+			GetDialogItem( dialog, getName, &type, &h, &box );
+			GetDialogItemText( h, name );
+			
+			Size len = name[ 0 ];
+			
+			if ( len > 0  &&  len <= sizeof reply->fName - 1 )
+			{
+				fast_memcpy( reply->fName, name, 1 + len );
+				break;
+			}
+		}
+		
+		if ( hit == getDrive )
+		{
+			++SFSaveDisk;
+			
+			GetDialogItem( dialog, getDisk, &type, &h, &box );
+			InvalRect( &box );
+		}
+	}
+	while ( hit != 3 );
+	
+	reply->good = hit - 3;  // $fe or $00
+	reply->vRefNum = -SFSaveDisk;
+	reply->version = 0;
+	
+	DisposeDialog( dialog );
+	
+	return noErr;
 }
 
 static
