@@ -1235,11 +1235,22 @@ pascal void GetDItem_patch( DialogRef  dialog,
                             Handle*    h,
                             Rect*      box )
 {
+	DialogPeek d = (DialogPeek) dialog;
+	
 	const DialogItem* item = get_nth_item( dialog, i );
 	
 	*type = item->type;
 	*h    = item->handle;
 	*box  = item->bounds;
+	
+	TEHandle hTE = d->textH;
+	
+	if ( hTE  &&  hTE[0]->hText == item->handle )
+	{
+		// Trim the handle so the caller knows the text length.
+		
+		SetHandleSize( hTE[0]->hText, hTE[0]->teLength );
+	}
 }
 
 pascal void SetDItem_patch( DialogRef    dialog,
