@@ -336,6 +336,33 @@ unsigned long min( unsigned long a, unsigned long b )
 	return b < a ? b : a;
 }
 
+static
+OSErr adjust_mark( long& mark, const IOParam* pb : __A0, long eof )
+{
+	switch ( pb->ioPosMode )
+	{
+		case fsAtMark:
+			break;
+		
+		case fsFromStart:
+			mark = pb->ioPosOffset;
+			break;
+		
+		case fsFromLEOF:
+			mark = eof + pb->ioPosOffset;
+			break;
+		
+		case fsFromMark:
+			mark += pb->ioPosOffset;
+			break;
+		
+		default:
+			return paramErr;
+	}
+	
+	return noErr;
+}
+
 short Read_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	if ( pb->ioRefNum < 0 )
@@ -357,31 +384,13 @@ short Read_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return pb->ioResult = rfNumErr;
 	}
 	
-	const short mode = pb->ioPosMode;
-	
 	const size_t eof = fcb->fcbEOF;
 	
 	long& mark = fcb->fcbCrPs;
 	
-	switch ( pb->ioPosMode )
+	if ( OSErr err = adjust_mark( mark, pb, eof ) )
 	{
-		case fsAtMark:
-			break;
-		
-		case fsFromStart:
-			mark = pb->ioPosOffset;
-			break;
-		
-		case fsFromLEOF:
-			mark = eof + pb->ioPosOffset;
-			break;
-		
-		case fsFromMark:
-			mark += pb->ioPosOffset;
-			break;
-		
-		default:
-			return pb->ioResult = paramErr;
+		return pb->ioResult = err;
 	}
 	
 	pb->ioActCount = 0;
@@ -425,31 +434,13 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return pb->ioResult = wrPermErr;
 	}
 	
-	const short mode = pb->ioPosMode;
-	
 	const size_t eof = fcb->fcbEOF;
 	
 	long& mark = fcb->fcbCrPs;
 	
-	switch ( pb->ioPosMode )
+	if ( OSErr err = adjust_mark( mark, pb, eof ) )
 	{
-		case fsAtMark:
-			break;
-		
-		case fsFromStart:
-			mark = pb->ioPosOffset;
-			break;
-		
-		case fsFromLEOF:
-			mark = eof + pb->ioPosOffset;
-			break;
-		
-		case fsFromMark:
-			mark += pb->ioPosOffset;
-			break;
-		
-		default:
-			return pb->ioResult = paramErr;
+		return pb->ioResult = err;
 	}
 	
 	pb->ioActCount = 0;
@@ -504,25 +495,9 @@ short SetFPos_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	long& mark = fcb->fcbCrPs;
 	
-	switch ( pb->ioPosMode )
+	if ( OSErr err = adjust_mark( mark, pb, eof ) )
 	{
-		case fsAtMark:
-			break;
-		
-		case fsFromStart:
-			mark = pb->ioPosOffset;
-			break;
-		
-		case fsFromLEOF:
-			mark = eof + pb->ioPosOffset;
-			break;
-		
-		case fsFromMark:
-			mark += pb->ioPosOffset;
-			break;
-		
-		default:
-			return pb->ioResult = paramErr;
+		return pb->ioResult = err;
 	}
 	
 	pb->ioPosOffset = mark;
