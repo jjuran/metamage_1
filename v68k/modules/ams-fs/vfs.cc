@@ -12,6 +12,7 @@
 
 // ams-fs
 #include "bootstrap.hh"
+#include "documents.hh"
 #include "MFS.hh"
 
 
@@ -25,6 +26,18 @@ static const filesystem_vtable< uint8_t > bootstrap_vtable =
 	&bootstrap_open_fork,
 	NULL,
 	&bootstrap_GetFileInfo,
+};
+
+static const filesystem_vtable< uint8_t > documents_vtable =
+{
+	&documents_lookup,
+	&documents_get_nth,
+	
+	&documents_Close,
+	&documents_Create,
+	&documents_open_fork,
+	&documents_FlushFile,
+	&documents_GetFileInfo,
 };
 
 static const filesystem_vtable< mfs::file_directory_entry > MFS_vtable =
@@ -45,6 +58,9 @@ const vfs_table* vfs_from_vcb( const VCB* vcb )
 	{
 		case 'Ix':
 			return (const vfs_table*) &bootstrap_vtable;
+		
+		case 0xD0C5:
+			return (const vfs_table*) &documents_vtable;
 		
 		case 0xD2D7:
 			return (const vfs_table*) &MFS_vtable;
