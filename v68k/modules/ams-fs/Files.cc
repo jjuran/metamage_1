@@ -114,9 +114,37 @@ void initialize()
 	FCBSPtr->bufSize = sizeof (FCBS);
 }
 
+static
+OSErr volume_lock_error( const VCB* vcb )
+{
+	if ( vcb->vcbAtrb & kioVAtrbSoftwareLockedMask )
+	{
+		return vLckdErr;
+	}
+	
+	if ( vcb->vcbAtrb & kioVAtrbHardwareLockedMask )
+	{
+		return wPrErr;
+	}
+	
+	return noErr;
+}
+
 short Create_patch( short trap_word : __D1, FileParam* pb : __A0 )
 {
-	return pb->ioResult = wPrErr;
+	VCB* vcb = VCB_lookup( pb->ioVRefNum );
+	
+	if ( vcb == NULL )
+	{
+		return pb->ioResult = nsvErr;
+	}
+	
+	if ( OSErr err = volume_lock_error( vcb ) )
+	{
+		return pb->ioResult = err;
+	}
+	
+	return pb->ioResult = extFSErr;
 }
 
 static
