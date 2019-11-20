@@ -80,6 +80,8 @@ void try_to_mount( const char* name )
 	
 	BlockMoveData( master_directory_block, &vcb->vcbSigWord, 64 );
 	
+	vcb->vcbAtrb |= kioVAtrbHardwareLockedMask;
+	
 	vcb->vcbMAdr   = NULL;
 	vcb->vcbBufAdr = image;
 	vcb->vcbMLen   = 0;

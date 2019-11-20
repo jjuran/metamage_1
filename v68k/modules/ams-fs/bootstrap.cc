@@ -34,6 +34,8 @@ void mount_virtual_bootstrap_volume()
 	vcb->vcbSigWord = 'Ix';
 	vcb->vcbFSID    = 'Ix';
 	
+	vcb->vcbAtrb |= kioVAtrbHardwareLockedMask;
+	
 	#define VOLNAME  "\p" "Bootstrap"
 	
 	fast_memcpy( vcb->vcbVN, VOLNAME, sizeof VOLNAME );
