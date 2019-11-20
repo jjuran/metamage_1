@@ -23,8 +23,7 @@
 
 // ams-fs
 #include "appfs.hh"
-#include "bootstrap.hh"
-#include "MFS.hh"
+#include "vfs.hh"
 #include "Volumes.hh"
 
 
@@ -197,14 +196,29 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	for ( ;  vcb != NULL;  vcb = (VCB*) vcb->qLink )
 	{
-		if ( const mfs::file_directory_entry* entry = MFS_lookup( vcb, name ) )
+		const vfs_table* vfs = vfs_from_vcb( vcb );
+		
+		if ( vfs == NULL )
+		{
+			return pb->ioResult = extFSErr;
+		}
+		
+		if ( const generic_file_entry* entry = vfs->lookup( vcb, name ) )
 		{
 			fcb->fcbCrPs   = 0;
 			fcb->fcbVPtr   = vcb;
 			
 			fcb->fcbFlPos  = 0;
 			
-			MFS_open_fork( trap_word, fcb, entry );
+			if ( OSErr err = vfs->open_fork( trap_word, fcb, entry ) )
+			{
+				if ( err == fnfErr )
+				{
+					continue;
+				}
+				
+				return pb->ioResult = err;
+			}
 			
 			pb->ioRefNum = FCB_index( fcb );
 			
@@ -218,7 +232,7 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 		}
 	}
 	
-	return pb->ioResult = bootstrap_open_fork( trap_word, fcb, name );
+	return pb->ioResult = fnfErr;
 }
 
 short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
@@ -499,15 +513,22 @@ short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
 		return pb->ioResult = nsvErr;
 	}
 	
-	const mfs::file_directory_entry* entry = NULL;
+	const vfs_table* vfs = vfs_from_vcb( vcb );
+	
+	if ( vfs == NULL )
+	{
+		return pb->ioResult = extFSErr;
+	}
+	
+	const generic_file_entry* entry = NULL;
 	
 	if ( pb->ioFDirIndex > 0 )
 	{
-		entry = MFS_get_nth( vcb, pb->ioFDirIndex );
+		entry = vfs->get_nth( vcb, pb->ioFDirIndex );
 	}
 	else if ( StringPtr name = pb->ioNamePtr )
 	{
-		entry = MFS_lookup( vcb, name );
+		entry = vfs->lookup( vcb, name );
 	}
 	else
 	{
@@ -521,7 +542,7 @@ short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
 	
 	pb->ioFRefNum = 0;  // FIXME
 	
-	return pb->ioResult = MFS_GetFileInfo( pb, entry );
+	return pb->ioResult = vfs->GetFileInfo( pb, entry );
 }
 
 static
