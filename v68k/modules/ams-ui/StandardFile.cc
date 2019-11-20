@@ -185,6 +185,22 @@ pascal OSErr SFPutFile_call( Point             where,
 	{
 		ModalDialog( NULL, &hit );
 		
+		if ( hit == 1 )
+		{
+			Str255 name;
+			
+			GetDialogItem( dialog, putName, &type, &h, &box );
+			GetDialogItemText( h, name );
+			
+			Size len = name[ 0 ];
+			
+			if ( len > 0  &&  len <= sizeof reply->fName - 1 )
+			{
+				fast_memcpy( reply->fName, name, 1 + len );
+				break;
+			}
+		}
+		
 		if ( hit == putDrive )
 		{
 			++SFSaveDisk;
@@ -193,14 +209,11 @@ pascal OSErr SFPutFile_call( Point             where,
 			InvalRect( &box );
 		}
 	}
-	while ( hit > 2 );
+	while ( hit != 2 );
 	
 	reply->good = hit - 2;  // $ff or $00
 	reply->vRefNum = -SFSaveDisk;
 	reply->version = 0;
-	
-	GetDialogItem( dialog, putName, &type, &h, &box );
-	GetDialogItemText( h, reply->fName );
 	
 	DisposeDialog( dialog );
 	
