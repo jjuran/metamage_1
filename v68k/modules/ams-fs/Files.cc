@@ -88,6 +88,14 @@ bool is_writable( const FCB* fcb )
 }
 
 static inline
+bool is_locked( const FCB* fcb )
+{
+	const SInt8 flags = fcb->fcbMdRByt;
+	
+	return flags & (kioFCBFileLockedMask >> 8);
+}
+
+static inline
 bool is_servable( const FCB* fcb )
 {
 	return fcb->fcbFlPos;
@@ -308,6 +316,22 @@ short Read_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = pb->ioActCount == pb->ioReqCount ? noErr : eofErr;
 }
 
+static
+OSErr writability_error( const FCB* fcb )
+{
+	if ( ! is_writable( fcb ) )
+	{
+		return wrPermErr;
+	}
+	
+	if ( is_locked( fcb ) )
+	{
+		return fLckdErr;
+	}
+	
+	return volume_lock_error( fcb->fcbVPtr );
+}
+
 short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	if ( pb->ioRefNum < 0 )
@@ -329,9 +353,12 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return pb->ioResult = rfNumErr;
 	}
 	
-	if ( ! is_writable( fcb ) )
+	if ( OSErr err = writability_error( fcb ) )
 	{
-		return pb->ioResult = wrPermErr;
+		if ( err != wPrErr  ||  ! is_servable( fcb ) )
+		{
+			return pb->ioResult = err;
+		}
 	}
 	
 	const size_t eof = fcb->fcbEOF;
