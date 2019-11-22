@@ -175,6 +175,18 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 	const Byte is_rsrc = trap_word;  // Open is A000, OpenRF is A00A
 	
 	/*
+		is_rsrc is either 0x00 or 0x0A.  kioFCBResourceMask is 0x0200,
+		so masking will produce either 0x00 or 0x02.
+	*/
+	
+	fcb->fcbMdRByt = is_rsrc & (kioFCBResourceMask >> 8);  // see above
+	
+	if ( pb->ioPermssn > 1 )
+	{
+		set_writable( fcb );  // writing is allowed
+	}
+	
+	/*
 		Self-modification applies to the application's own data fork,
 		when write permission is requested and an appfs server is present.
 	*/
@@ -187,13 +199,6 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 	{
 		if ( const mfs::file_directory_entry* entry = MFS_lookup( vcb, name ) )
 		{
-			/*
-				is_rsrc is either 0x00 or 0x0A.  kioFCBResourceMask is 0x0200,
-				so masking will produce either 0x00 or 0x02.
-			*/
-			
-			fcb->fcbMdRByt = is_rsrc & (kioFCBResourceMask >> 8);  // see above
-			
 			fcb->fcbCrPs   = 0;
 			fcb->fcbVPtr   = vcb;
 			
@@ -205,7 +210,6 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 			
 			if ( selfmod_capable  &&  is_current_application( fcb->fcbFlNum ) )
 			{
-				set_writable ( fcb );  // writing is allowed
 				set_servable ( fcb );  // file persists via appfs
 				load_app_data( fcb );  // try to read from appfs
 			}
