@@ -151,7 +151,14 @@ short Create_patch( short trap_word : __D1, FileParam* pb : __A0 )
 		return pb->ioResult = err;
 	}
 	
-	return pb->ioResult = extFSErr;
+	const vfs_table* vfs = vfs_from_vcb( vcb );
+	
+	if ( vfs == NULL )
+	{
+		return pb->ioResult = extFSErr;
+	}
+	
+	return pb->ioResult = vfs->Create( vcb, pb->ioNamePtr );
 }
 
 static
@@ -358,7 +365,14 @@ OSErr flush_file( FCB* fcb )
 		return save_app_data( fcb );
 	}
 	
-	return noErr;
+	const vfs_table* vfs = vfs_from_vcb( fcb->fcbVPtr );
+	
+	if ( vfs == NULL )
+	{
+		return extFSErr;
+	}
+	
+	return vfs->FlushFile( fcb );
 }
 
 short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
