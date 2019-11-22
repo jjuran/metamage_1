@@ -350,6 +350,17 @@ OSErr writability_error( const FCB* fcb )
 	return volume_lock_error( fcb->fcbVPtr );
 }
 
+static
+OSErr flush_file( FCB* fcb )
+{
+	if ( is_servable( fcb ) )
+	{
+		return save_app_data( fcb );
+	}
+	
+	return noErr;
+}
+
 short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	if ( pb->ioRefNum < 0 )
@@ -420,12 +431,9 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		pb->ioActCount = count;
 		pb->ioPosOffset = mark += count;
 		
-		if ( is_servable( fcb ) )
+		if ( OSErr err = flush_file( fcb ) )
 		{
-			if ( OSErr err = save_app_data( fcb ) )
-			{
-				return err;
-			}
+			return pb->ioResult = err;
 		}
 	}
 	
