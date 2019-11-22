@@ -20,7 +20,9 @@ static const filesystem_vtable< uint8_t > bootstrap_vtable =
 	&bootstrap_lookup,
 	&bootstrap_get_nth,
 	
+	NULL,
 	&bootstrap_open_fork,
+	NULL,
 	&bootstrap_GetFileInfo,
 };
 
@@ -29,7 +31,9 @@ static const filesystem_vtable< mfs::file_directory_entry > MFS_vtable =
 	&MFS_lookup,
 	&MFS_get_nth,
 	
+	NULL,
 	&MFS_open_fork,
+	NULL,
 	&MFS_GetFileInfo,
 };
 
