@@ -23,6 +23,7 @@
 // ams-fs
 #include "appfs.hh"
 #include "bootstrap.hh"
+#include "documents.hh"
 #include "Files.hh"
 #include "mount.hh"
 #include "Volumes.hh"
@@ -41,12 +42,14 @@ enum
 	
 	Opt_disk,
 	Opt_appfs_fd,
+	Opt_docfs_fd,
 };
 
 static command::option options[] =
 {
 	{ "disk",     Opt_disk,     command::Param_required },
 	{ "appfs-fd", Opt_appfs_fd, command::Param_required },
+	{ "docfs-fd", Opt_docfs_fd, command::Param_required },
 	
 	NULL,
 };
@@ -109,6 +112,10 @@ char* const* get_options( char** argv )
 				appfs_fd = gear::parse_unsigned_decimal( global_result.param );
 				break;
 			
+			case Opt_docfs_fd:
+				docfs_fd = gear::parse_unsigned_decimal( global_result.param );
+				break;
+			
 			case Opt_disk:
 				try_to_mount( global_result.param );
 				break;
@@ -138,6 +145,11 @@ int main( int argc, char** argv )
 	install_FileManager();
 	
 	mount_virtual_bootstrap_volume();
+	
+	if ( docfs_fd )
+	{
+		mount_virtual_documents_volume();
+	}
 	
 	module_A4_suspend();  // doesn't return
 }

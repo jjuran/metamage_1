@@ -81,6 +81,31 @@ def get_appfs_fd
 	return fd_slot
 }
 
+var docfs-fd
+var docfs-server = ()
+
+def get_docfs_fd
+{
+	var docfs = active "docfs" or return ()
+	
+	if docfs isa bool or docfs == "-" then
+	{
+		const home = getenv "HOME"
+		
+		const osx_docs = home "/Documents"
+		const ams_docs = osx_docs "/Advanced Mac Substitute"
+		
+		docfs = ams_docs "/" app_name
+		
+		run [ "mkdir", "-p", docfs ]
+	}
+	
+	const fd_slot = str (docfs-fd = reader "/dev/null")
+	docfs-server = "--fd", fd_slot, "./freemountd -qu --root" / ' ', docfs, "//"
+	
+	return fd_slot
+}
+
 def core_opts
 {
 	var opts = [ "--events-fd=" events_fd_slot ]
@@ -116,7 +141,13 @@ def fs_opts
 		"--appfs-fd", appfs_fd,
 	}
 	
-	const opts = disk_opt, appfs_opt
+	const docfs_opt =
+	if const docfs_fd = get_docfs_fd() then
+	{
+		"--docfs-fd", docfs_fd,
+	}
+	
+	const opts = disk_opt, appfs_opt, docfs_opt
 	
 	return
 	if opts then
@@ -148,10 +179,12 @@ const module_opts = ams_modules map {"-m", argify v}
 
 const app = ams_bin "/app"
 
+const servers = sound-server, freemountd-server, appfs-server
+
 const xv68k-screen = "--raster=" screen_fb_file
 
 const xv68k-subcmd = "./xv68k", "-tSP", xv68k-screen, *module_opts, app, app_name
-const graft-subcmd = "./graft", sound-server, freemountd-server, appfs-server, xv68k-subcmd
+const graft-subcmd = "./graft", servers, xv68k-subcmd
 
 const command = [ graft-subcmd ]
 
