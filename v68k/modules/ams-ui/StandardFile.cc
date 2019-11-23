@@ -10,6 +10,9 @@
 #include <StandardFile.h>
 #endif
 
+// Standard C
+#include <string.h>
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -143,6 +146,22 @@ pascal OSErr SFPutFile_call( Point             where,
                              DlgHookUPP        dlgHook,
                              SFReply*          reply )
 {
+	const unsigned char* SysTwi_prompt = "\p" "File to save this new game in:";
+	
+	if ( memcmp( prompt, SysTwi_prompt, 1 + prompt[ 0 ] ) == 0 )
+	{
+		/*
+			Trim the prompt slightly so it fits in one line and doesn't wrap,
+			since otherwise it gets clobbered by the filename edit field.
+			
+			Alternatively, we could dynamically widen the dialog as needed.
+			The long-term solution is to implement the newer HFS SFPutFile
+			dialog, which provides more space for the prompt.  But for now...
+		*/
+		
+		prompt = "\p" "File to save this game in:";
+	}
+	
 	const short width  = 304;
 	const short height = 104;
 	
