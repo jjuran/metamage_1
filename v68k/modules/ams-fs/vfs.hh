@@ -23,6 +23,7 @@ struct filesystem_vtable
 	typedef const Entry* (*lookup_proc)( VCB* vcb, const uint8_t* name );
 	typedef const Entry* (*getnth_proc)( VCB* vcb, short n );
 	
+	typedef OSErr (*Close_proc)( FCB* fcb );
 	typedef OSErr (*Create_proc)( VCB* vcb, const uint8_t* name );
 	typedef OSErr (*openfork_proc)( short trap_word, FCB* fcb, const Entry* e );
 	typedef OSErr (*FlushFile_proc)( FCB* fcb );
@@ -31,6 +32,7 @@ struct filesystem_vtable
 	lookup_proc  lookup;
 	getnth_proc  get_nth;
 	
+	Close_proc        Close;
 	Create_proc       Create;
 	openfork_proc     open_fork;
 	FlushFile_proc    FlushFile;

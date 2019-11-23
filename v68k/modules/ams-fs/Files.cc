@@ -516,6 +516,11 @@ short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	if ( FCB* fcb = get_FCB( pb->ioRefNum ) )
 	{
+		if ( const vfs_table* vfs = vfs_from_vcb( fcb->fcbVPtr ) )
+		{
+			vfs->Close( fcb );
+		}
+		
 		DisposePtr( fcb->fcbBfAdr );
 		
 		fcb->fcbFlNum = 0;
