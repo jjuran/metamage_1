@@ -518,7 +518,10 @@ short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	{
 		if ( const vfs_table* vfs = vfs_from_vcb( fcb->fcbVPtr ) )
 		{
-			vfs->Close( fcb );
+			if ( vfs->Close )
+			{
+				vfs->Close( fcb );
+			}
 		}
 		
 		DisposePtr( fcb->fcbBfAdr );
