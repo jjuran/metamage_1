@@ -572,6 +572,25 @@ short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
 	return pb->ioResult = vfs->GetFileInfo( pb, entry );
 }
 
+short SetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
+{
+	VCB* vcb = VCB_lookup( pb->ioVRefNum );
+	
+	if ( vcb == NULL )
+	{
+		return pb->ioResult = nsvErr;
+	}
+	
+	if ( OSErr err = volume_lock_error( vcb ) )
+	{
+		return pb->ioResult = err;
+	}
+	
+	WARNING = "returning noErr for unimplemented SetFileInfo";
+	
+	return pb->ioResult = noErr;
+}
+
 static
 OSErr GetWDInfo_call( WDPBRec* pb : __A0 )
 {
