@@ -18,6 +18,7 @@
 #include "callouts.hh"
 
 // ams-core
+#include "Arcs.hh"
 #include "CopyBits.hh"
 #include "CopyMask.hh"
 #include "Cursor.hh"
@@ -167,6 +168,13 @@ static void install_QuickDraw()
 	TBTRAP( EraseOval  );  // A8B9
 	TBTRAP( InvertOval );  // A8BA
 	TBTRAP( FillOval   );  // A8BB
+	
+	TBTRAP( StdArc     );  // A8BD
+	TBTRAP( FrameArc   );  // A8BE
+	TBTRAP( PaintArc   );  // A8BF
+	TBTRAP( EraseArc   );  // A8C0
+	TBTRAP( InvertArc  );  // A8C1
+	TBTRAP( FillArc    );  // A8C2
 	
 	TBTRAP( StdPoly    );  // A8C5
 	TBTRAP( FramePoly  );  // A8C6
