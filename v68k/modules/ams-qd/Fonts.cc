@@ -97,12 +97,64 @@ pascal void GetFNum_patch( const unsigned char* name, short* num )
 	*num = 10;
 }
 
+static
+Handle find_FOND( short family )
+{
+	short i = 0;
+	
+	while ( Handle h = GetIndResource( 'FOND', ++i ) )
+	{
+		if ( family_from_FOND( h ) == family )
+		{
+			return h;
+		}
+		
+		ReleaseResource( h );
+	}
+	
+	return NULL;
+}
+
+static
+short new_resID_for_font_and_size( short font, short size )
+{
+	if ( Handle h = find_FOND( font ) )
+	{
+		const short* p = (const short*) (*h + 0x34);
+		
+		short count_minus_1 = *p++;
+		
+		short id = 0;
+		
+		do
+		{
+			if ( *p == size )
+			{
+				id = p[ 2 ];
+				break;
+			}
+			
+			p += 3;
+		}
+		while ( --count_minus_1 >= 0 );
+		
+		ReleaseResource( h );
+		
+		if ( id )
+		{
+			return id;
+		}
+	}
+	
+	return resID_for_font_and_size( font, size );
+}
+
 pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 {
 	const short fontNum  = specific_font( input->family );
 	const short fontSize = input->size ? input->size : default_font_size;
 	
-	const short resID = resID_for_font_and_size( fontNum, fontSize );
+	const short resID = new_resID_for_font_and_size( fontNum, fontSize );
 	
 	if ( resID != the_current_font_resID )
 	{
