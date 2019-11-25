@@ -68,8 +68,24 @@ pascal void InitFonts_patch()
 	}
 }
 
+static inline
+short family_from_FOND( Handle h )
+{
+	const short family = ((short*) *h)[ 1 ];
+	
+	return family;
+}
+
 pascal void GetFNum_patch( const unsigned char* name, short* num )
 {
+	if ( Handle h = GetNamedResource( 'FOND', name ) )
+	{
+		*num = family_from_FOND( h );
+		
+		ReleaseResource( h );
+		return;
+	}
+	
 	if ( memcmp( name, "\p" STR_LEN( "Geneva" ) ) == 0 )
 	{
 		*num = kFontIDGeneva;
