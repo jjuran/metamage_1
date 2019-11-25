@@ -162,7 +162,11 @@ pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 		
 		if ( resID != system_font_resID  ||  newFont == NULL )
 		{
-			if ( Handle h = GetResource( 'FONT', resID ) )
+			if ( Handle h = GetResource( 'NFNT', resID ) )
+			{
+				newFont = (FontRec**) h;
+			}
+			else if ( Handle h = GetResource( 'FONT', resID ) )
 			{
 				newFont = (FontRec**) h;
 			}
