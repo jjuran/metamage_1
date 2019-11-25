@@ -145,7 +145,7 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 			actually moved, that is), and set sleep back to forever (approx).
 		*/
 		
-		sleep = 0x7fffffff;
+		sleep = 0xFFFFFFFF;
 		
 		if ( *(long*) &pt != *(long*) &event.where )
 		{

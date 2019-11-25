@@ -797,7 +797,7 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 		
 		EventRecord event;
 		
-		if ( WaitNextEvent( mUpMask, &event, 0x7fffffff, mouseRgn ) )
+		if ( WaitNextEvent( mUpMask, &event, 0xFFFFFFFF, mouseRgn ) )
 		{
 			if ( event.what == mouseUp )
 			{
@@ -1117,7 +1117,7 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 			actually moved, that is), and set sleep back to forever (approx).
 		*/
 		
-		sleep = 0x7fffffff;
+		sleep = 0xFFFFFFFF;
 		
 		if ( *(long*) &pt != *(long*) &event.where )
 		{

@@ -733,7 +733,7 @@ pascal long MenuSelect_patch( Point pt )
 		
 		// Wait for mouse movement or mouse-up.
 		
-		const long sleep = 0x7FFFFFFF;
+		const long sleep = 0xFFFFFFFF;
 		
 		EventRecord event;
 		

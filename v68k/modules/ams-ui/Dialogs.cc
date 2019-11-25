@@ -714,7 +714,7 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 	
 	while ( true )
 	{
-		const long sleep = blinks( d->textH ) ? CaretTime : 0x7fffffff;
+		const long sleep = blinks( d->textH ) ? CaretTime : 0xFFFFFFFF;
 		
 		EventRecord event;
 		

@@ -317,7 +317,7 @@ pascal short TrackControl_patch( ControlRecord**  control,
 			that is), and set sleep back to forever (approx).
 		*/
 		
-		sleep = 0x7fffffff;
+		sleep = 0xFFFFFFFF;
 		
 		// global to local
 		where.h += csdx;
