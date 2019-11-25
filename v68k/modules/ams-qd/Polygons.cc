@@ -47,7 +47,6 @@ short x_intercept( Point a, Point b, short y )
 	return (FixMul( proportional_distance, dx << 16 ) >> 16) + x0;
 }
 
-static
 void PolyRgn( RgnHandle rgn, PolyHandle poly )
 {
 	short n = (poly[0]->polySize - sizeof (Polygon)) / 4;

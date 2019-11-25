@@ -7,7 +7,10 @@
 #define POLYGONS_HH
 
 struct MacPolygon;
+struct MacRegion;
 struct Pattern;
+
+void PolyRgn( MacRegion** rgn, MacPolygon** poly );
 
 pascal void FramePoly_patch( MacPolygon** poly );
 pascal void PaintPoly_patch( MacPolygon** poly );
