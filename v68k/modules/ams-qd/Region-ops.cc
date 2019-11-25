@@ -465,6 +465,15 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 {
 	ASSERT( is_valid_region( src ) );
 	
+	if ( src == dst )
+	{
+		static RgnHandle tmp = NewRgn();
+		
+		CopyRgn( src, tmp );
+		
+		src = tmp;
+	}
+	
 	const size_t max_bytes = src[0]->rgnSize;
 	
 	SetHandleSize( (Handle) dst, max_bytes );  // TODO:  Prove this is enough
