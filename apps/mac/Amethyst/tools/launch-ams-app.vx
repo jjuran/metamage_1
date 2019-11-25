@@ -179,7 +179,7 @@ const module_opts = ams_modules map {"-m", argify v}
 
 const app = ams_bin "/app"
 
-const servers = sound-server, freemountd-server, appfs-server
+const servers = sound-server, freemountd-server, appfs-server, docfs-server
 
 const xv68k-screen = "--raster=" screen_fb_file
 
