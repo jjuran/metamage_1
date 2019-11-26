@@ -71,6 +71,8 @@ enum
 	tag_ROMBase_low_word,
 	tag_CaretTime,
 	tag_CaretTime_low_word,
+	tag_DrvQHdr,
+	tag_DrvQHdr_word_4 = tag_DrvQHdr + 4,  // 10 bytes
 	tag_HpChk,
 	tag_HpChk_low_word,
 	tag_DefltStack,
@@ -254,6 +256,7 @@ static const global globals[] =
 	{ 0x02F0, 0x82, 0               },  // DoubleTime (high word)
 	{ 0x02F2, 0x82, 15              },  // DoubleTime (low word)
 	{ 0x02F4, 4,    tag_CaretTime   },
+	{ 0x0308, 10,   tag_DrvQHdr     },
 	{ 0x0316, 4,    tag_HpChk       },
 	{ 0x031A, 0x83, 0xFF            },  // Lo3Bytes
 	{ 0x0322, 4,    tag_DefltStack  },
