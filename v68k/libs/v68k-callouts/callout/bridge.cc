@@ -592,13 +592,7 @@ int32_t system_call_callout( v68k::processor_state& s )
 	}
 	else if ( result == Illegal_instruction )
 	{
-		// FIXME:  Report call number
-		
-		//const uint16_t call_number = s.d(0);
-		
-		const char* msg = "Unimplemented system call\n";
-		
-		write( STDERR_FILENO, msg, strlen( msg ) );
+		FATAL = "Unimplemented system call: ", s.d(0);
 	}
 	
 	return nil;
