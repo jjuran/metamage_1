@@ -53,12 +53,29 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	
 	const Rect& bbox = poly[0]->polyBBox;
 	
-	const short h_count = n & ~1;
+	/*
+		Each scanline of a triangular region can only intersect two polygon
+		edges.  With four or five sides, there can be four intersections, etc.
+		But each intersection can result in two horizontal coordinates -- one
+		to switch on the new area and one to cancel a prior coordinate (except
+		for the first and last rows).  A complete row also contains a vertical
+		coordinate and a trailing sentinel.
+		
+		Each point from top to bottom inclusive could have its own row in the
+		region (and will, for a slope <= 1).  (Note that fenceposting applies,
+		and this is points, not pixels.)
+		
+		Finally, there's a closing sentinel, but there's already space for two
+		horizontal coordinates (at the top and bottom) that won't be used, so
+		we don't need to add more.
+	*/
+	
+	const short h_count = (n & ~1) * 2;
 	const short v_count = bbox.bottom - bbox.top + 1;
 	
 	const short seg_bytes = sizeof (short) * h_count;
 	const short row_bytes = sizeof (short) * 2 + seg_bytes;
-	const short rgn_bytes = sizeof (Region) + 2 + v_count * row_bytes;
+	const short rgn_bytes = sizeof (Region) + v_count * row_bytes;
 	
 	SetHandleSize( (Handle) rgn, rgn_bytes );
 	
