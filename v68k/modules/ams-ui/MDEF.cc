@@ -109,7 +109,9 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 			const uint8_t mark  = *p++;
 			const uint8_t style = *p++;
 			
-			if ( icon )
+			const bool large_icon = icon  &&  large_icon_key( key );
+			
+			if ( large_icon )
 			{
 				v += 8;
 			}
@@ -127,10 +129,10 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 			
 			if ( icon  &&  (h = GetResource( 'ICON', 256 + icon)) )
 			{
-				const short icon_width  = 32;
-				const short icon_height = 32;
+				const short icon_width  = 16 << large_icon;
+				const short icon_height = 16 << large_icon;
 				
-				const short top    = v - 8 - pen_v_offset_for_text;
+				const short top    = v - 8 * large_icon - pen_v_offset_for_text;
 				const short bottom = top + icon_height;
 				
 				const short icon_left = left + left_padding;
@@ -155,7 +157,7 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 				DrawString( keystroke );
 			}
 			
-			if ( icon )
+			if ( large_icon )
 			{
 				v += 8;
 			}
@@ -217,12 +219,13 @@ long rows_from_item( MenuRef menu, short item )
 		p += 1 + p[ 0 ];
 		
 		const bool has_icon = *p++;
+		const bool has_large_icon = has_icon  &&  large_icon_key( *p );
 		
 		if ( --item <= 0 )
 		{
-			return (has_icon << 16) | row;
+			return (has_large_icon << 16) | row;
 		}
-		else if ( has_icon )
+		else if ( has_large_icon )
 		{
 			++row;  // Items with icons are 2x height
 		}
@@ -251,7 +254,10 @@ long enabled_item_from_row( MenuRef menu, short row )
 		
 		if ( const bool has_icon = *p++ )
 		{
-			--row;  // Items with icons are 2x height
+			if ( large_icon_key( *p ) )
+			{
+				--row;  // Items with large icons are 2x height
+			}
 		}
 		
 		if ( row <= 0 )
@@ -320,8 +326,10 @@ void MDEF_0_Size( MenuRef menu )
 		
 		if ( const uint8_t icon = *p++ )
 		{
-			const short icon_width  = 32;
-			const short icon_height = 32;
+			const bool large_icon = large_icon_key( *p );
+			
+			const short icon_width  = 16 << large_icon;
+			const short icon_height = 16 << large_icon;
 			
 			height += icon_height - menu_item_height;
 			

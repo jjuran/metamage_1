@@ -982,14 +982,16 @@ pascal void SetItmIcon_patch( MenuInfo** menu, short item, CharParameter icon )
 		{
 			p += 1 + p[ 0 ];
 			
-			const bool size_changed = (! *p) != (! icon);
+			const bool iconicity_changed = (! *p) != (! icon);
 			
-			*p = icon;
+			*p++ = icon;
 			
-			if ( size_changed )
+			if ( iconicity_changed  &&  large_icon_key( *p ) )
 			{
+				// We added or removed a large icon, so the size has changed.
 				MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 			}
+			
 			return;
 		}
 		
@@ -1179,15 +1181,27 @@ pascal void GetItemCmd_patch( MenuInfo** menu, short item, CharParameter* key )
 
 pascal void SetItemCmd_patch( MenuInfo** menu, short item, CharParameter key )
 {
+	WMgrPort_bezel_scope port_swap;
+	
 	menu_item_iterator it( menu );
 	
 	while ( unsigned char* p = it )
 	{
 		if ( --item == 0 )
 		{
-			p += 1 + p[ 0 ] + 1;
+			p += 1 + p[ 0 ];
+			
+			const uint8_t icon = *p++;
+			
+			const bool resized = large_icon_key( *p ) != large_icon_key( key );
 			
 			*p = key;
+			
+			if ( icon  &&  resized )
+			{
+				// We changed an icon's size, so the menu size has changed.
+				MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+			}
 			
 			return;
 		}
