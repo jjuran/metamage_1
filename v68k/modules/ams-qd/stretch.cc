@@ -32,6 +32,39 @@ void blit_2x_stretched_segment( Ptr src, Ptr dst, short n_bytes )
 }
 
 static
+uint8_t odd_numbered_bits( uint8_t x )
+{
+	uint8_t result = 0;
+	uint8_t mask = 1;
+	
+	for ( int i = 0;  i < 4;  ++i )
+	{
+		x >>= 1;
+		
+		result |= x & mask;
+		
+		mask <<= 1;
+	}
+	
+	return result;
+}
+
+static
+void blit_2x_squished_segment( Ptr src, Ptr dst, short n_bytes )
+{
+	while ( n_bytes-- >= 0 )
+	{
+		uint8_t one = *src++;
+		uint8_t two = *src++;
+		
+		uint8_t a = odd_numbered_bits( one );
+		uint8_t b = odd_numbered_bits( two );
+		
+		*dst++ = (a << 4) | b;
+	}
+}
+
+static
 void stretch_2x( Ptr src, Ptr dst, short srcStride, short dstStride, short n )
 {
 	const short bytes_to_blit = dstStride / 2u;
@@ -46,6 +79,20 @@ void stretch_2x( Ptr src, Ptr dst, short srcStride, short dstStride, short n )
 		
 		dst += dstStride;
 		src += srcStride;
+	}
+}
+
+static
+void squish_2x( Ptr src, Ptr dst, short srcStride, short dstStride, short n )
+{
+	const short bytes_to_blit = dstStride;
+	
+	while ( n-- > 0 )
+	{
+		blit_2x_squished_segment( src, dst, bytes_to_blit );
+		
+		dst += dstStride;
+		src += srcStride * 2;
 	}
 }
 
@@ -72,6 +119,12 @@ void stretch_bits( const BitMap&  srcBits,
 	if ( dstWidth == 2 * srcWidth  &&  dstHeight == 2 * srcHeight )
 	{
 		stretch_2x( src, dst, srcBits.rowBytes, dstBits.rowBytes, srcHeight );
+		return;
+	}
+	
+	if ( srcWidth == 2 * dstWidth  &&  srcHeight == 2 * dstHeight )
+	{
+		squish_2x( src, dst, srcBits.rowBytes, dstBits.rowBytes, dstHeight );
 		return;
 	}
 }
