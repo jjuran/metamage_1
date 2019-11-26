@@ -11,6 +11,9 @@
 // Standard C++
 #include <new>
 
+// plus
+#include "plus/mac_utf8.hh"
+
 // freemount-client
 #include "freemount/synced.hh"
 
@@ -24,7 +27,7 @@ int try_to_get( int in, int out, const string& path, var_string& data )
 	
 	try
 	{
-		data = F::synced_get( in, out, path ).move();
+		data = F::synced_get( in, out, plus::utf8_from_mac( path ) ).move();
 		
 		return 0;
 	}
@@ -61,7 +64,7 @@ int try_to_put( int fd, const plus::string& path, const plus::string& data )
 		const int in  = fd;
 		const int out = fd;
 		
-		F::synced_put( in, out, path, data );
+		F::synced_put( in, out, plus::utf8_from_mac( path ), data );
 		
 		return 0;
 	}
