@@ -179,7 +179,7 @@ bool is_valid_region( RgnHandle rgn )
 	short bottom = -32767;
 	short right  = -32767;
 	
-	ASSERT( extent[ 0 ] == top );
+	EXPECT( extent[ 0 ] == top );
 	
 	const short* p = extent;
 	
@@ -213,7 +213,7 @@ bool is_valid_region( RgnHandle rgn )
 	
 	ASSERT( top    == bbox.top    );
 	ASSERT( left   == bbox.left   );
-	ASSERT( bottom == bbox.bottom );
+	EXPECT( bottom == bbox.bottom );
 	ASSERT( right  == bbox.right  );
 	
 	return true;
