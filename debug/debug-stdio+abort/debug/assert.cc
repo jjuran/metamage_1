@@ -16,16 +16,21 @@ namespace debug
 	void handle_failed_assertion( const char*  text,
 	                              const char*  func,
 	                              const char*  file,
-	                              unsigned     line )
+	                              unsigned     line,
+	                              bool         fatal )
 	{
 		fprintf( stderr,
-		         "ASSERT( %s ) in %s; %s, line %d\n",
+		         "%s( %s ) in %s; %s, line %d\n",
+		         fatal ? "ASSERT" : "EXPECT",
 		         text,
 		         func,
 		         file,
 		         line );
 		
-		abort();
+		if ( fatal )
+		{
+			abort();
+		}
 	}
 	
 }
