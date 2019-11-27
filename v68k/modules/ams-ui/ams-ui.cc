@@ -161,6 +161,8 @@ void install_Menus()
 
 static void install_Controls()
 {
+	TBTRAP( GetCVariant    );  // A809
+	
 	TBTRAP( UpdateControls );  // A953
 	TBTRAP( NewControl     );  // A954
 	TBTRAP( DisposeControl );  // A955
