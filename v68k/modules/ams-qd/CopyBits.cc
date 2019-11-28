@@ -297,6 +297,20 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		srcRect = &stretched_bits.bounds;
 	}
 	
+	Rect clippedSrcRect = *srcRect;
+	Rect clippedDstRect = *dstRect;
+	
+	SectRect( &srcBits->bounds, &clippedSrcRect, &clippedSrcRect );
+	
+	clippedDstRect.top  += clippedSrcRect.top  - srcRect->top;
+	clippedDstRect.left += clippedSrcRect.left - srcRect->left;
+	
+	clippedDstRect.right  += clippedSrcRect.right  - srcRect->right;
+	clippedDstRect.bottom += clippedSrcRect.bottom - srcRect->bottom;
+	
+	srcRect = &clippedSrcRect;
+	dstRect = &clippedDstRect;
+	
 	redraw_lock lock( port.portBits, *dstRect, *srcBits, *srcRect );
 	
 	get_refined_clip_region( port, *dstRect, clipRgn );
