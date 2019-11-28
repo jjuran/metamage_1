@@ -1406,10 +1406,10 @@ pascal void HideDItem_patch( GrafPort* dialog, short i )
 		
 		EraseRect( &item->bounds );
 		InvalRect( &item->bounds );
-		
-		item->bounds.left  += 16384;
-		item->bounds.right += 16384;
 	}
+	
+	item->bounds.left  += 16384;
+	item->bounds.right += 16384;
 }
 
 pascal short FindDItem_patch( DialogRef dialog, Point pt )
