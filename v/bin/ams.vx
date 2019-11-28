@@ -131,6 +131,11 @@ def core_opts
 {
 	var opts = [ events_fd_opt ]
 	
+	if const gne_ticks = getenv "AMS_GNETICKS" then
+	{
+		opts <-- "-G" gne_ticks
+	}
+	
 	if const romgen = getenv "AMS_ROMGEN" then
 	{
 		opts <-- "-R" romgen
