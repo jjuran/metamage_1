@@ -110,6 +110,11 @@ def core_opts
 {
 	var opts = [ "--events-fd=" events_fd_slot ]
 	
+	if "gne-ticks" in config then
+	{
+		opts <-- "-G" config[ "gne-ticks" ]
+	}
+	
 	if "romgen" in config then
 	{
 		opts <-- "-R" config[ "romgen" ]
