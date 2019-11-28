@@ -27,9 +27,10 @@ enum
 	putDisk   = 4,
 	putLine   = 8,
 	
-	getDisk = 4,
-	getLine = 9,
-	getName = 11,
+	getDisk   =  4,
+	getLine   =  9,
+	getPrompt = 10,
+	getName   = 11,
 };
 
 static const char SFPutFile_items[] =
@@ -353,6 +354,12 @@ pascal OSErr SFGetFile_call( Point               where,
 	
 	GetDialogItem( dialog, getLine, &type, &h, &box );
 	SetDialogItem( dialog, getLine, type, (Handle) &draw_dotted_line, &box );
+	
+	GetDialogItem( dialog, getPrompt, &type, &h, &box );
+	box.left  =  12;
+	box.right = 140;
+	SetDialogItem( dialog, getPrompt, type, h, &box );
+	SetDialogItemText( h, "\p" "Name of file to open:" );
 	
 	short hit = 0;
 	
