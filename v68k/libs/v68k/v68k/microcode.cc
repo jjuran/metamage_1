@@ -400,6 +400,151 @@ namespace v68k
 		return Ok;
 	}
 	
+	op_result microcode_MUL_L( processor_state& s, op_params& pb )
+	{
+		const uint32_t details = pb.first;
+		const uint32_t factor  = pb.second;
+		
+		const uint16_t Dh_index = details & 0x0007;
+		
+		const bool is_quad_sized = details & (1 << 10);
+		const bool is_signed     = details & (1 << 11);
+		
+		const uint16_t Dl_index = details >> 12;
+		
+		uint32_t& Dl = s.regs[ Dl_index ];
+		uint32_t& Dh = s.regs[ Dh_index ];
+		
+		uint8_t nzvc = 0;
+		
+		uint64_t product_64;
+		
+		if ( is_signed )
+		{
+			product_64 = (int64_t) Dl * (int32_t) factor;
+			
+			if ( (int32_t) product_64 != (int64_t) product_64 )
+			{
+				nzvc = 0x02;  // overflow
+			}
+		}
+		else
+		{
+			product_64 = (uint64_t) Dl * factor;
+			
+			if ( (uint32_t) product_64 != product_64 )
+			{
+				nzvc = 0x02;  // overflow
+			}
+		}
+		
+		if ( product_64 == 0 )
+		{
+			nzvc |= 0x04;
+		}
+		else if ( (int64_t) product_64 < 0 )
+		{
+			nzvc |= 0x08;
+		}
+		
+		s.sr.nzvc = nzvc;
+		
+		Dl = product_64;
+		
+		if ( is_quad_sized )
+		{
+			Dh = product_64 >> 32;
+		}
+		
+		return Ok;
+	}
+	
+	op_result microcode_DIV_L( processor_state& s, op_params& pb )
+	{
+		s.sr.nzvc = 0;  // Proactively clear C and V (even dividing by zero)
+		
+		const uint32_t details = pb.first;
+		const uint32_t divisor = pb.second;
+		
+		const uint16_t Dr_index = details & 0x0007;
+		
+		const bool is_quad_sized = details & (1 << 10);
+		const bool is_signed     = details & (1 << 11);
+		
+		const uint16_t Dq_index = details >> 12;
+		
+		if ( divisor == 0 )
+		{
+			return Division_by_zero;
+		}
+		
+		uint32_t& Dq = s.regs[ Dq_index ];
+		uint32_t& Dr = s.regs[ Dr_index ];
+		
+		uint64_t dividend = 0;
+		
+		if ( is_quad_sized )
+		{
+			dividend = (uint64_t) Dr << 32;
+		}
+		
+		dividend |= Dq;
+		
+		s.sr.nzvc = 0x02;  // Pessimistically assume overflow
+		
+		uint64_t quotient_64;
+		
+		if ( is_signed )
+		{
+			quotient_64 = (int64_t) dividend / (int32_t) divisor;
+			
+			if ( (int32_t) quotient_64 != (int64_t) quotient_64 )
+			{
+				return Ok;
+			}
+		}
+		else
+		{
+			quotient_64 = dividend / divisor;
+			
+			if ( (uint32_t) quotient_64 != quotient_64 )
+			{
+				return Ok;
+			}
+		}
+		
+		if ( quotient_64 == 0 )
+		{
+			s.sr.nzvc = 0x04;
+		}
+		else if ( (int64_t) quotient_64 < 0 )
+		{
+			s.sr.nzvc = 0x08;
+		}
+		
+		Dq = quotient_64;
+		
+		if ( Dr_index != Dq_index )
+		{
+			uint32_t remainder;
+			
+			if ( is_signed )
+			{
+				int64_t product = (int64_t) quotient_64 * (int32_t) divisor;
+				
+				remainder = (int64_t) dividend - product;
+			}
+			else
+			{
+				remainder = dividend - quotient_64 * divisor;
+			}
+			
+			Dr = remainder;
+		}
+		
+		return Ok;
+	}
+	
 	op_result microcode_MOVEM_to( processor_state& s, op_params& pb )
 	{
 		uint16_t mask = pb.first;
