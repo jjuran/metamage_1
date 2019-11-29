@@ -26,7 +26,7 @@ namespace v68k
 	
 	static fetcher* bit_op_fetchers[] =
 	{
-		fetches_static_bit_op,
+		fetches_word_and_EA,
 		fetches_dynamic_bit_op
 	};
 	

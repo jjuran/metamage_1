@@ -19,7 +19,7 @@ namespace v68k
 	
 	instruction decoded_MOVES =
 	{
-		fetches_MOVES,
+		fetches_word_and_EA,
 		microcode_MOVES,
 		op_size_in_00C0,
 		privileged | not_before_68010

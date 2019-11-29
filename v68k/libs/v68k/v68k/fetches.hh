@@ -17,6 +17,8 @@ namespace v68k
 	
 	extern fetcher fetches_effective_address[];
 	
+	extern fetcher fetches_word_and_EA[];
+	
 	extern fetcher fetches_immediate[];
 	
 	extern fetcher fetches_DIV[];
@@ -31,11 +33,7 @@ namespace v68k
 	
 	extern fetcher fetches_dynamic_bit_op[];
 	
-	extern fetcher fetches_static_bit_op[];
-	
 	extern fetcher fetches_MOVEP[];
-	
-	extern fetcher fetches_MOVES[];
 	
 	extern fetcher fetches_MOVE[];
 	
