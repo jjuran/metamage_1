@@ -432,7 +432,7 @@ namespace Nitrogen
 		kEventParamServiceMessageName = ::kEventParamServiceMessageName,
 		kEventParamServiceUserData = ::kEventParamServiceUserData,
 		
-	#if UNIVERSAL_INTERFACES_VERSION >= 0x0400
+	#ifdef MAC_OS_X_VERSION_10_3
 		
 		kEventParamControlWouldAcceptDrop = ::kEventParamControlWouldAcceptDrop,
 		

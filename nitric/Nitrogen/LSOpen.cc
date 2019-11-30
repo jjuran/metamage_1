@@ -42,7 +42,12 @@ namespace Nitrogen
 	
 	void RegisterLaunchServicesErrors()
 	{
+	#ifdef MAC_OS_X_VERSION_10_3
+		
 		RegisterOSStatus< kLSAppInTrashErr                   >();
+		
+	#endif
+		
 		RegisterOSStatus< kLSUnknownErr                      >();
 		RegisterOSStatus< kLSNotAnApplicationErr             >();
 		RegisterOSStatus< kLSNotInitializedErr               >();
@@ -57,12 +62,17 @@ namespace Nitrogen
 		RegisterOSStatus< kLSAppDoesNotSupportSchemeWarning  >();
 		RegisterOSStatus< kLSServerCommunicationErr          >();
 		RegisterOSStatus< kLSCannotSetInfoErr                >();
+		
+	#ifdef MAC_OS_X_VERSION_10_3
+		
 		RegisterOSStatus< kLSNoRegistrationInfoErr           >();
 		RegisterOSStatus< kLSIncompatibleSystemVersionErr    >();
 		RegisterOSStatus< kLSNoLaunchPermissionErr           >();
 		RegisterOSStatus< kLSNoExecutableErr                 >();
 		RegisterOSStatus< kLSNoClassicEnvironmentErr         >();
 		RegisterOSStatus< kLSMultipleSessionsNotSupportedErr >();
+		
+	#endif
 	}
 	
 }
