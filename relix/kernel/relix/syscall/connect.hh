@@ -13,6 +13,12 @@
 #endif
 #include <sys/socket.h>
 
+#ifdef __APPLE__
+#ifndef _SOCKLEN_T
+typedef int socklen_t;
+#endif
+#endif
+
 
 namespace relix
 {

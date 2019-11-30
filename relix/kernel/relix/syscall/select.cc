@@ -7,10 +7,12 @@
 
 // Standard C
 #include <stdint.h>
+#include <string.h>
 #include <time.h>
 
 // POSIX
-#include "unistd.h"
+#include <unistd.h>
+#include <sys/time.h>
 
 // math
 #include "math/integer.hh"

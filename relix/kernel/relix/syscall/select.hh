@@ -13,6 +13,8 @@
 #endif
 #include <sys/select.h>
 
+struct timeval;
+
 
 namespace relix
 {
