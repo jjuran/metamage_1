@@ -35,6 +35,7 @@
 #include <sys/socket.h>
 #include <sys/uio.h>
 
+#if ! defined( __APPLE__ )  ||  defined( _SOCKLEN_T )
 #include <errno.h>
 #include <poll.h>
 #include <string.h>
@@ -163,3 +164,9 @@ mm_receive_fd(int sock)
 }
 
 }  // namespace openbsd
+
+#else  // #if ! defined( __APPLE__ )  ||  defined( _SOCKLEN_T )
+
+int dummy;
+
+#endif  // #if ! defined( __APPLE__ )  ||  defined( _SOCKLEN_T )
