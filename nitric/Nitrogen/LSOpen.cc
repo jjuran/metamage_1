@@ -19,8 +19,9 @@
 #include "Nitrogen/OSStatus.hh"
 
 
-namespace Nitrogen {
-
+namespace Nitrogen
+{
+	
 	LaunchServicesErrorsRegistrationDependency::LaunchServicesErrorsRegistrationDependency()
 	{
 		// does nothing, but guarantees construction of theRegistration
@@ -39,7 +40,8 @@ namespace Nitrogen {
 	static LaunchServicesErrorsRegistration theRegistration;
 	
 	
-	void RegisterLaunchServicesErrors () {
+	void RegisterLaunchServicesErrors()
+	{
 		RegisterOSStatus< kLSAppInTrashErr                   >();
 		RegisterOSStatus< kLSUnknownErr                      >();
 		RegisterOSStatus< kLSNotAnApplicationErr             >();
@@ -61,8 +63,8 @@ namespace Nitrogen {
 		RegisterOSStatus< kLSNoExecutableErr                 >();
 		RegisterOSStatus< kLSNoClassicEnvironmentErr         >();
 		RegisterOSStatus< kLSMultipleSessionsNotSupportedErr >();
-		}
-
 	}
+	
+}
 
 #endif
