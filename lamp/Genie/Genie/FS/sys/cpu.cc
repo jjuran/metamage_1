@@ -37,8 +37,16 @@
 enum
 {
 	gestaltCPUApollo = 0x0111,
-	gestaltCPUG47447 = 0x0112,
 	gestaltCPU750FX  = 0x0120,
+};
+
+#endif
+
+#ifndef MAC_OS_X_VERSION_10_3
+
+enum
+{
+	gestaltCPUG47447 = 0x0112,
 	gestaltCPU970    = 0x0139,
 	gestaltCPU970FX  = 0x013c,
 	gestaltCPU970MP  = 0x0144,
