@@ -32,9 +32,15 @@ if Build-origin-path then
 	
 	const command = [ "git", "rev-list", build-origin "..HEAD", "--count" ]
 	
-	const build-number = output-from-run command
-	
-	more-txt = "CFBundleVersion: " build-number
+	try
+	{
+		const build-number = output-from-run command
+		
+		more-txt = "CFBundleVersion: " build-number
+	}
+	catch ( ... )
+	{
+	}
 }
 
 def comma-terminated { if _[ _.length - 1 ] in ":[" then { _ } else { _ "," } }
