@@ -59,8 +59,6 @@ namespace Genie
 	
 	struct dev_serial
 	{
-		static const mode_t perm = S_IRUSR | S_IWUSR;
-		
 		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
 	};
 	
@@ -82,16 +80,9 @@ namespace Genie
 		return OpenSerialDevice( port_name, passive, nonblocking );
 	}
 	
-	typedef dev_serial dev_cumodem;
-	typedef dev_serial dev_cuprinter;
-	typedef dev_serial dev_ttymodem;
-	typedef dev_serial dev_ttyprinter;
-	
 	
 	struct dev_gestalt
 	{
-		static const mode_t perm = S_IRUSR;
-		
 		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
 	};
 	
@@ -119,8 +110,6 @@ namespace Genie
 	
 	struct dev_tty
 	{
-		static const mode_t perm = S_IRUSR | S_IWUSR;
-		
 		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
 	};
 	
@@ -158,16 +147,42 @@ namespace Genie
 	};
 	
 	
-	template < class Opener >
-	static vfs::node_ptr BasicDevice_Factory( const vfs::node*     parent,
+	struct basicdevice_params
+	{
+		mode_t perm;
+		
+		const node_method_set& node_methods;
+	};
+	
+	static vfs::node_ptr basicdevice_factory( const vfs::node*     parent,
 	                                          const plus::string&  name,
 	                                          const void*          args )
 	{
+		const basicdevice_params& params = *(const basicdevice_params*) args;
+		
 		return new vfs::node( parent,
 		                      name,
-		                      S_IFCHR | Opener::perm,
-		                      &basic_device< Opener >::node_methods );
+		                      params.perm,
+		                      &params.node_methods );
 	}
+	
+	static basicdevice_params tty_params =
+	{
+		S_IFCHR | S_IRUSR | S_IWUSR,
+		basic_device< dev_tty >::node_methods,
+	};
+	
+	static basicdevice_params gestalt_params =
+	{
+		S_IFCHR | S_IRUSR,
+		basic_device< dev_gestalt >::node_methods,
+	};
+	
+	static basicdevice_params serial_params =
+	{
+		S_IFCHR | S_IRUSR | S_IWUSR,
+		basic_device< dev_serial >::node_methods,
+	};
 	
 	static vfs::node_ptr SimpleDevice_Factory( const vfs::node*     parent,
 	                                           const plus::string&  name,
@@ -185,18 +200,18 @@ namespace Genie
 		{ "zero",    &SimpleDevice_Factory },
 		{ "console", &SimpleDevice_Factory },
 		
-		{ "tty", &BasicDevice_Factory< dev_tty > },
+		{ "tty", &basicdevice_factory, &tty_params },
 		
 	#if CONFIG_DEV_SERIAL
 		
-		{ "cu.modem",    &BasicDevice_Factory< dev_cumodem    > },
-		{ "cu.printer",  &BasicDevice_Factory< dev_cuprinter  > },
-		{ "tty.modem",   &BasicDevice_Factory< dev_ttymodem   > },
-		{ "tty.printer", &BasicDevice_Factory< dev_ttyprinter > },
+		{ "cu.modem",    &basicdevice_factory, &serial_params },
+		{ "cu.printer",  &basicdevice_factory, &serial_params },
+		{ "tty.modem",   &basicdevice_factory, &serial_params },
+		{ "tty.printer", &basicdevice_factory, &serial_params },
 		
 	#endif
 		
-		{ "gestalt", &BasicDevice_Factory< dev_gestalt > },
+		{ "gestalt", &basicdevice_factory, &gestalt_params },
 		
 		{ "con", &dynamic_group_factory, &dynamic_group_element< relix::con_tag >::extra },
 		
