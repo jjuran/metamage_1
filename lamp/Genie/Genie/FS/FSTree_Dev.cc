@@ -57,26 +57,6 @@ namespace Genie
 	using vfs::node_method_set;
 	
 	
-	struct CallOut_Traits
-	{
-		static const bool isPassive = false;
-	};
-	
-	struct DialIn_Traits
-	{
-		static const bool isPassive = true;
-	};
-	
-	struct ModemPort_Traits
-	{
-		static const char* Name()  { return "A"; }
-	};
-	
-	struct PrinterPort_Traits
-	{
-		static const char* Name()  { return "B"; }
-	};
-	
 	struct dev_serial
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
