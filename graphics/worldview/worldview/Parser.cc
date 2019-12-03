@@ -170,15 +170,21 @@ namespace worldview
 		return ImageTile( WidthFromTileSize( colors.size() ), colors );
 	}
 	
+	static
+	const char* find_space( const char* begin, const char* end )
+	{
+		return std::find( begin, end, ' ' );
+	}
+	
 	void Parser::Define( Parser& parser, const char* begin, const char* end )
 	{
-		const char* space = std::find( begin, end, ' ' );
+		const char* space = find_space( begin, end );
 		
 		plus::string type( begin, space );
 		
 		begin = space + (space != end);
 		
-		space = std::find( begin, end, ' ' );
+		space = find_space( begin, end );
 		
 		plus::string name( begin, space );
 		
@@ -226,7 +232,7 @@ namespace worldview
 	
 	void Parser::SetTile( Parser& parser, const char* begin, const char* end )
 	{
-		const char* space = std::find( begin, end, ' ' );
+		const char* space = find_space( begin, end );
 		
 		plus::string name( begin, space );
 		
@@ -317,7 +323,7 @@ namespace worldview
 	
 	void Parser::AddMeshPoint( Parser& parser, const char* begin, const char* end )
 	{
-		const char* space = std::find( begin, end, ' ' );
+		const char* space = find_space( begin, end );
 		
 		plus::string name( begin, space );
 		
@@ -346,7 +352,7 @@ namespace worldview
 		
 		while ( begin < end )
 		{
-			const char* space = std::find( begin, end, ' ' );
+			const char* space = find_space( begin, end );
 			
 			plus::string ptName( begin, space );
 			
