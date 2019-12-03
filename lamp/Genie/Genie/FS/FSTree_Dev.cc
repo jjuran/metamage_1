@@ -77,26 +77,35 @@ namespace Genie
 		static const char* Name()  { return "B"; }
 	};
 	
-	template < class Mode, class Port >
-	struct dev_Serial
+	struct dev_serial
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
 		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
 	};
 	
-	template < class Mode, class Port >
-	vfs::filehandle_ptr dev_Serial< Mode, Port >::open( const vfs::node* that, int flags, mode_t mode )
+	vfs::filehandle_ptr dev_serial::open( const vfs::node* that, int flags, mode_t mode )
 	{
+		/*
+			cu.modem
+			tty.modem
+			cu.printer
+			tty.printer
+		*/
+		
+		const size_t len = that->name().size();
+		
+		const char* port_name  = len & 2 ? "B" : "A";
+		const bool passive     = len & 1;
 		const bool nonblocking = flags & O_NONBLOCK;
 		
-		return OpenSerialDevice( Port::Name(), Mode::isPassive, nonblocking );
+		return OpenSerialDevice( port_name, passive, nonblocking );
 	}
 	
-	typedef dev_Serial< CallOut_Traits, ModemPort_Traits   > dev_cumodem;
-	typedef dev_Serial< CallOut_Traits, PrinterPort_Traits > dev_cuprinter;
-	typedef dev_Serial< DialIn_Traits,  ModemPort_Traits   > dev_ttymodem;
-	typedef dev_Serial< DialIn_Traits,  PrinterPort_Traits > dev_ttyprinter;
+	typedef dev_serial dev_cumodem;
+	typedef dev_serial dev_cuprinter;
+	typedef dev_serial dev_ttymodem;
+	typedef dev_serial dev_ttyprinter;
 	
 	
 	struct dev_gestalt
