@@ -57,12 +57,8 @@ namespace Genie
 	using vfs::node_method_set;
 	
 	
-	struct dev_serial
-	{
-		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
-	};
-	
-	vfs::filehandle_ptr dev_serial::open( const vfs::node* that, int flags, mode_t mode )
+	static
+	vfs::filehandle_ptr serial_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		/*
 			cu.modem
@@ -81,15 +77,28 @@ namespace Genie
 	}
 	
 	
-	struct dev_gestalt
+	const data_method_set serial_data_methods =
 	{
-		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
+		&serial_open,
 	};
 	
-	vfs::filehandle_ptr dev_gestalt::open( const vfs::node* that, int flags, mode_t mode )
+	const node_method_set serial_methods =
 	{
-		return open_gestalt( that, flags, mode );
-	}
+		NULL,
+		&serial_data_methods,
+	};
+	
+	
+	const data_method_set gestalt_data_methods =
+	{
+		&vfs::open_gestalt,
+	};
+	
+	const node_method_set gestalt_methods =
+	{
+		NULL,
+		&gestalt_data_methods,
+	};
 	
 	
 	static vfs::filehandle_ptr simple_device_open( const vfs::node* that, int flags, mode_t mode )
@@ -108,12 +117,9 @@ namespace Genie
 		&simple_device_data_methods
 	};
 	
-	struct dev_tty
-	{
-		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
-	};
 	
-	vfs::filehandle_ptr dev_tty::open( const vfs::node* that, int flags, mode_t mode )
+	static
+	vfs::filehandle_ptr tty_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		vfs::filehandle* tty = relix::current_process().get_process_group().get_session().get_ctty().get();
 		
@@ -125,25 +131,15 @@ namespace Genie
 		return tty;
 	}
 	
-	
-	template < class Opener >
-	struct basic_device
+	const data_method_set tty_data_methods =
 	{
-		static const data_method_set data_methods;
-		static const node_method_set node_methods;
+		&tty_open,
 	};
 	
-	template < class Opener >
-	const data_method_set basic_device< Opener >::data_methods =
-	{
-		&Opener::open
-	};
-	
-	template < class Opener >
-	const node_method_set basic_device< Opener >::node_methods =
+	const node_method_set tty_methods =
 	{
 		NULL,
-		&data_methods
+		&tty_data_methods,
 	};
 	
 	
@@ -169,19 +165,19 @@ namespace Genie
 	static basicdevice_params tty_params =
 	{
 		S_IFCHR | S_IRUSR | S_IWUSR,
-		basic_device< dev_tty >::node_methods,
+		tty_methods,
 	};
 	
 	static basicdevice_params gestalt_params =
 	{
 		S_IFCHR | S_IRUSR,
-		basic_device< dev_gestalt >::node_methods,
+		gestalt_methods,
 	};
 	
 	static basicdevice_params serial_params =
 	{
 		S_IFCHR | S_IRUSR | S_IWUSR,
-		basic_device< dev_serial >::node_methods,
+		serial_methods,
 	};
 	
 	static vfs::node_ptr SimpleDevice_Factory( const vfs::node*     parent,
