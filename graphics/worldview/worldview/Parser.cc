@@ -170,7 +170,7 @@ namespace worldview
 		return ImageTile( WidthFromTileSize( colors.size() ), colors );
 	}
 	
-	void Parser::Define( const char* begin, const char* end )
+	void Parser::Define( Parser& parser, const char* begin, const char* end )
 	{
 		const char* space = std::find( begin, end, ' ' );
 		
@@ -186,19 +186,23 @@ namespace worldview
 		
 		if ( type == "color" )
 		{
-			itsColors[ name ] = ReadColor( begin, end );
+			parser.itsColors[ name ] = parser.ReadColor( begin, end );
 		}
 		else if ( type == "tile" )
 		{
 			ImageTile tile = MakeImageTile( ReadValues( begin, end ) );
 			
-			itsImageTiles[ name ] = tile;
+			parser.itsImageTiles[ name ] = tile;
 		}
 	}
 	
-	void Parser::SetContext( const char* begin, const char* end )
+	void Parser::SetContext( Parser& parser, const char* begin, const char* end )
 	{
 		plus::string contextName( begin, end );
+		
+		Scene*                   itsScene     = parser.itsScene;
+		std::size_t&             itsContextID = parser.itsContextID;
+		Vectoria::Point3D::Type& itsOrigin    = parser.itsOrigin;
 		
 		itsContextID = itsScene->AddSubcontext( itsContextID,
 		                                        contextName,
@@ -208,34 +212,39 @@ namespace worldview
 		itsOrigin = V::Point3D::Make( 0, 0, 0 );
 	}
 	
-	void Parser::MakeCamera( const char* begin, const char* end )
+	void Parser::MakeCamera( Parser& parser, const char* begin, const char* end )
 	{
-		itsScene->Cameras().push_back( Camera( itsContextID ) );
+		parser.itsScene->Cameras().push_back( Camera( parser.itsContextID ) );
 	}
 	
-	void Parser::SetColor( const char* begin, const char* end )
+	void Parser::SetColor( Parser& parser, const char* begin, const char* end )
 	{
-		itsColor = ReadColor( begin, end );
+		parser.itsColor = parser.ReadColor( begin, end );
 		
-		itsImageTile = NULL;
+		parser.itsImageTile = NULL;
 	}
 	
-	void Parser::SetTile( const char* begin, const char* end )
+	void Parser::SetTile( Parser& parser, const char* begin, const char* end )
 	{
 		const char* space = std::find( begin, end, ' ' );
 		
 		plus::string name( begin, space );
 		
-		ImageTileMap::const_iterator it = itsImageTiles.find( name );
+		ImageTileMap::const_iterator it = parser.itsImageTiles.find( name );
 		
-		if ( it == itsImageTiles.end() )
+		if ( it == parser.itsImageTiles.end() )
 		{
 			throw ParseError();
 		}
 		
 		begin = space + (space != end);
 		
-		itsImageTile = &it->second;
+		parser.itsImageTile = &it->second;
+		
+		double& its1U = parser.its1U;
+		double& its1V = parser.its1V;
+		double& its2U = parser.its2U;
+		double& its2V = parser.its2V;
 		
 		its1U = 1.0;
 		
@@ -258,7 +267,7 @@ namespace worldview
 		}
 	}
 	
-	void Parser::SetOrigin( const char* begin, const char* end )
+	void Parser::SetOrigin( Parser& parser, const char* begin, const char* end )
 	{
 		double x, y, z;
 		
@@ -266,11 +275,11 @@ namespace worldview
 		
 		if ( scanned == 3 )
 		{
-			itsOrigin = V::Point3D::Make( x, y, z );
+			parser.itsOrigin = V::Point3D::Make( x, y, z );
 		}
 	}
 	
-	void Parser::Translate( const char* begin, const char* end )
+	void Parser::Translate( Parser& parser, const char* begin, const char* end )
 	{
 		double x, y, z;
 		
@@ -278,11 +287,11 @@ namespace worldview
 		
 		if ( scanned == 3 )
 		{
-			itsOrigin += V::Vector3D::Make( x, y, z );
+			parser.itsOrigin += V::Vector3D::Make( x, y, z );
 		}
 	}
 	
-	void Parser::SetTheta( const char* begin, const char* end )
+	void Parser::SetTheta( Parser& parser, const char* begin, const char* end )
 	{
 		double theta;
 		
@@ -290,11 +299,11 @@ namespace worldview
 		
 		if ( scanned == 1 )
 		{
-			itsTheta = V::Degrees( theta );
+			parser.itsTheta = V::Degrees( theta );
 		}
 	}
 	
-	void Parser::SetPhi( const char* begin, const char* end )
+	void Parser::SetPhi( Parser& parser, const char* begin, const char* end )
 	{
 		double phi;
 		
@@ -302,11 +311,11 @@ namespace worldview
 		
 		if ( scanned == 1 )
 		{
-			itsPhi = V::Degrees( phi );
+			parser.itsPhi = V::Degrees( phi );
 		}
 	}
 	
-	void Parser::AddMeshPoint( const char* begin, const char* end )
+	void Parser::AddMeshPoint( Parser& parser, const char* begin, const char* end )
 	{
 		const char* space = std::find( begin, end, ' ' );
 		
@@ -325,15 +334,15 @@ namespace worldview
 		
 		if ( scanned == 3 )
 		{
-			itsPoints[ name ] = itsOrigin + V::Vector3D::Make( x, y, z );
+			parser.itsPoints[ name ] = parser.itsOrigin + V::Vector3D::Make( x, y, z );
 		}
 	}
 	
-	void Parser::AddMeshPolygon( const char* begin, const char* end )
+	void Parser::AddMeshPolygon( Parser& parser, const char* begin, const char* end )
 	{
 		std::vector< unsigned > offsets;
 		
-		Context& context = itsScene->GetContext( itsContextID );
+		Context& context = parser.itsScene->GetContext( parser.itsContextID );
 		
 		while ( begin < end )
 		{
@@ -341,7 +350,7 @@ namespace worldview
 			
 			plus::string ptName( begin, space );
 			
-			offsets.push_back( context.AddPointToMesh( itsPoints[ ptName ] ) );
+			offsets.push_back( context.AddPointToMesh( parser.itsPoints[ ptName ] ) );
 			
 			begin = space;
 			
@@ -353,21 +362,21 @@ namespace worldview
 		
 		if ( !offsets.empty() )
 		{
-			if ( itsImageTile != NULL )
+			if ( parser.itsImageTile != NULL )
 			{
 				context.AddMeshPolygon( offsets,
-				                        *itsImageTile,
-				                        V::Point2D::Make( its1U, its1V ),
-				                        V::Point2D::Make( its2U, its2V ) );
+				                        *parser.itsImageTile,
+				                        V::Point2D::Make( parser.its1U, parser.its1V ),
+				                        V::Point2D::Make( parser.its2U, parser.its2V ) );
 			}
 			else
 			{
-				context.AddMeshPolygon( offsets, itsColor );
+				context.AddMeshPolygon( offsets, parser.itsColor );
 			}
 		}
 	}
 	
-	typedef void ( Parser::*Handler )( const char*, const char* );
+	typedef void ( *Handler )( Parser&, const char*, const char* );
 	
 	static std::map< plus::string, Handler > MakeHandlers()
 	{
@@ -448,7 +457,7 @@ namespace worldview
 				++start;
 			}
 			
-			(this->*handler)( start, end );
+			handler( *this, start, end );
 		}
 	}
 	
