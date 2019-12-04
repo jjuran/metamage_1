@@ -41,12 +41,20 @@ namespace vfs
 		return get_dynamic_element_from_group_by_id( group, id );
 	}
 	
+	inline
+	void set_dynamic_element_of_group_by_id( dynamic_group&      group,
+	                                         dynamic_element_id  id,
+	                                         const filehandle*   h )
+	{
+		group[ id ] = h;
+	}
+	
 	template < class Handle >
 	void set_dynamic_element_by_id( dynamic_element_id id, const filehandle* h )
 	{
 		dynamic_group& group( get_dynamic_group< Handle >() );
 		
-		group[ id ] = h;
+		set_dynamic_element_of_group_by_id( group, id, h );
 	}
 	
 }
