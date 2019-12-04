@@ -30,7 +30,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	struct sys_type_text_wildcard : vfs::readwrite_property
+	struct sys_type_text_wildcard
 	{
 		static const int fixed_size = sizeof gTextFileCreator;
 		
@@ -52,7 +52,14 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	static const vfs::property_params sys_type_text_wildcard_params =
+	{
+		sizeof gTextFileCreator,
+		&sys_type_text_wildcard::get,
+		&sys_type_text_wildcard::set,
+	};
+	
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	extern const vfs::fixed_mapping sys_type_text_Mappings[] =
 	{
