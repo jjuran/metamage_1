@@ -14,6 +14,7 @@ namespace vlib
 	
 	extern const proc_info proc_It_max;
 	extern const proc_info proc_It_min;
+	extern const proc_info proc_sorted;
 	
 }
 

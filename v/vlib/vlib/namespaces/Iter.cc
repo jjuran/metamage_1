@@ -35,6 +35,11 @@ namespace vlib
 			return Proc( proc_It_min );
 		}
 		
+		if ( name == "sorted" )
+		{
+			return Proc( proc_sorted );
+		}
+		
 		THROW( "nonexistent member of namespace Iter" );
 		
 		return Value();
