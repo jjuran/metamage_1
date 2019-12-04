@@ -33,8 +33,8 @@
 #include "relix/api/current_process.hh"
 #include "relix/config/mini.hh"
 #include "relix/config/pts.hh"
-#include "relix/fs/con_tag.hh"
-#include "relix/fs/pts_tag.hh"
+#include "relix/fs/con_group.hh"
+#include "relix/fs/pts_group.hh"
 #include "relix/fs/simple_device.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
@@ -188,7 +188,6 @@ namespace Genie
 	}
 	
 	using vfs::dynamic_group_factory;
-	using vfs::dynamic_group_element;
 	
 	const vfs::fixed_mapping dev_Mappings[] =
 	{
@@ -209,11 +208,11 @@ namespace Genie
 		
 		{ "gestalt", &basicdevice_factory, &gestalt_params },
 		
-		{ "con", &dynamic_group_factory, &dynamic_group_element< relix::con_tag >::extra },
+		{ "con", &dynamic_group_factory, &relix::get_con_group() },
 		
 	#if CONFIG_PTS
 		
-		{ "pts", &dynamic_group_factory, &dynamic_group_element< relix::pts_tag  >::extra },
+		{ "pts", &dynamic_group_factory, &relix::get_pts_group() },
 		
 	#endif
 		

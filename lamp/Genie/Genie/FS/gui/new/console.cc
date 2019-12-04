@@ -65,7 +65,7 @@
 // relix
 #include "relix/api/root.hh"
 #include "relix/api/try_again.hh"
-#include "relix/fs/con_tag.hh"
+#include "relix/fs/con_group.hh"
 #include "relix/signal/signal_process_group.hh"
 
 // Genie
@@ -401,7 +401,7 @@ namespace Genie
 	{
 		console_extra& extra = *(console_extra*) that->extra();
 		
-		vfs::get_dynamic_group< relix::con_tag >().erase( extra.id );
+		relix::get_con_group().erase( extra.id );
 		
 		intrusive_ptr_release( extra.tty_file );
 	}
@@ -829,7 +829,9 @@ namespace Genie
 		
 		vfs::filehandle_ptr result( new_tty_handle( *that, id ) );
 		
-		vfs::set_dynamic_element_by_id< relix::con_tag >( id, result.get() );
+		vfs::dynamic_group& group = relix::get_con_group();
+		
+		vfs::set_dynamic_element_of_group_by_id( group, id, result.get() );
 		
 		plus::var_string path = "/dev/con/";
 		
