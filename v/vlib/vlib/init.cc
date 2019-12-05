@@ -15,6 +15,7 @@
 #include "vlib/pure.hh"
 #include "vlib/symbol_table.hh"
 #include "vlib/types.hh"
+#include "vlib/namespaces/Iter.hh"
 #include "vlib/namespaces/Math.hh"
 #include "vlib/namespaces/V.hh"
 #include "vlib/types/boolean.hh"
@@ -66,6 +67,7 @@ namespace vlib
 	
 	bool install_keywords()
 	{
+		define_keyword( namespace_Iter );
 		define_keyword( namespace_Math );
 		define_keyword( namespace_V    );
 		
