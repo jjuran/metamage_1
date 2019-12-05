@@ -47,6 +47,11 @@ namespace vlib
 			return compare( call_function( key, a ),
 			                call_function( key, b ) ) < 0;
 		}
+		
+		bool operator()( const Value* a, const Value* b ) const
+		{
+			return (*this)( *a, *b );
+		}
 	};
 	
 	static Value identity = Type( etc_vtype );
@@ -134,7 +139,11 @@ namespace vlib
 	static
 	Value v_sorted( const Value& v )
 	{
-		const Value& container = v;
+		const Expr* expr = v.expr();
+		
+		const bool is_via = expr  &&  expr->op == Op_via;
+		
+		const Value& container = is_via ? expr->left : v;
 		
 		if ( ! is_array( container ) )
 		{
@@ -154,7 +163,19 @@ namespace vlib
 			vector.push_back( &it.use() );
 		}
 		
-		std::stable_sort( vector.begin(), vector.end(), value_less() );
+		typedef std::vector< const Value* >::iterator Iter;
+		
+		Iter begin = vector.begin();
+		Iter end   = vector.end();
+		
+		if ( is_via )
+		{
+			std::stable_sort( begin, end, key_less( expr->right ) );
+		}
+		else
+		{
+			std::stable_sort( begin, end, value_less() );
+		}
 		
 		list_builder result;
 		
