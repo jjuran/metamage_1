@@ -35,6 +35,7 @@ namespace vlib
 		{ "per",   Op_per     },
 		{ "then",  Op_then    },
 		{ "ver",   Op_ver     },
+		{ "via",   Op_via     },
 		{ "while", Op_while_2 },
 	};
 	

@@ -272,7 +272,7 @@ namespace vlib
 			{
 				its_scope.push();
 			}
-			else if ( op == Op_map  ||  op == Op_ver )
+			else if ( op == Op_map  ||  op == Op_ver  ||  op == Op_via )
 			{
 				insert_code_to_unpack_into_v( expr->right );
 			}

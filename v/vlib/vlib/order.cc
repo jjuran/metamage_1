@@ -12,19 +12,59 @@
 // vlib
 #include "vlib/array-utils.hh"
 #include "vlib/compare.hh"
+#include "vlib/function-utils.hh"
 #include "vlib/proc_info.hh"
+#include "vlib/pure.hh"
 #include "vlib/throw.hh"
 #include "vlib/iterators/array_iterator.hh"
 #include "vlib/iterators/list_builder.hh"
+#include "vlib/types/any.hh"
+#include "vlib/types/type.hh"
 
 
 namespace vlib
 {
 	
 	static
+	void check_key_maker( const Value& key_maker )
+	{
+		if ( ! is_pure( key_maker ) )
+		{
+			THROW( "`via` right operand must be a pure function" );
+		}
+	}
+	
+	struct key_less
+	{
+		const Value& key;
+		
+		key_less( const Value& k ) : key( k )
+		{
+		}
+		
+		bool operator()( const Value& a, const Value& b ) const
+		{
+			return compare( call_function( key, a ),
+			                call_function( key, b ) ) < 0;
+		}
+	};
+	
+	static
 	Value minmax( const Value& v, bool min_vs_max )
 	{
-		const Value& container = v;
+		const Expr* expr = v.expr();
+		
+		const bool is_via = expr  &&  expr->op == Op_via;
+		
+		const Value& container = is_via ? expr->left  : v;
+		const Value& key_maker = is_via ? expr->right : Type( etc_vtype );
+		
+		if ( is_via )
+		{
+			check_key_maker( key_maker );
+		}
+		
+		key_less less( key_maker );
 		
 		if ( ! is_array( container ) )
 		{
@@ -44,9 +84,7 @@ namespace vlib
 		{
 			const Value& next = args.use();
 			
-			plus::cmp_t cmp = compare( *result, next );
-			
-			if ( (compare( *result, next ) > 0) == min_vs_max )
+			if ( less( next, *result ) == min_vs_max )
 			{
 				result = &next;
 			}
