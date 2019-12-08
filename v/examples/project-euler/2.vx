@@ -9,10 +9,13 @@ var b = 2
 
 while b <= max do
 {
-	if b % 2 == 0 then
-	{
-		sum += b
-	}
+	sum += b
+	
+	a <-> b
+	b += a
+	
+	a <-> b
+	b += a
 	
 	a <-> b
 	b += a
