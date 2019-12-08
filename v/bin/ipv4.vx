@@ -55,6 +55,8 @@ const inet = ifconfig.inet_addr_prefix
 
 const pad_char = inet[ 0 ]
 
+var results = []
+
 var interface
 
 for line in output-from-run( [ifconfig-path] ).lines() do
@@ -69,6 +71,8 @@ for line in output-from-run( [ifconfig-path] ).lines() do
 	{
 		const ipv4 = get_ipv4_addr( substr( line, inet.length ) )
 		
-		print interface ": " ipv4
+		results <-- interface ": " ipv4
 	}
 }
+
+print "\n".join *(Iter.sorted results)
