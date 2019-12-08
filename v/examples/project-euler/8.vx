@@ -16,19 +16,10 @@ def digit_product
 
 const last = number.length - width
 
-var max_product = 0
-
-for i in 0 .. last do
-{
-	const digits = substr( number, i, width )
-	
-	if not '0' in digits then
-	{
-		max_product = Math.max( max_product, digit_product digits )
-	}
-}
-
-print max_product
+print (0 .. last map { substr( number, v, width ) }
+                 ver { not '0' in v }
+                 map digit_product
+                 per Math.max)
 
 end.
 
