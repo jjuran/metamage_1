@@ -49,6 +49,8 @@ namespace vlib
 		}
 	};
 	
+	static Value identity = Type( etc_vtype );
+	
 	static
 	Value minmax( const Value& v, bool min_vs_max )
 	{
@@ -57,7 +59,7 @@ namespace vlib
 		const bool is_via = expr  &&  expr->op == Op_via;
 		
 		const Value& container = is_via ? expr->left  : v;
-		const Value& key_maker = is_via ? expr->right : Type( etc_vtype );
+		const Value& key_maker = is_via ? expr->right : identity;
 		
 		if ( is_via )
 		{
@@ -106,9 +108,9 @@ namespace vlib
 	}
 	
 	static
-	size_t length( const Value& v )
+	std::size_t length( const Value& v )
 	{
-		size_t n = 0;
+		std::size_t n = 0;
 		
 		array_iterator it( v );
 		
@@ -139,7 +141,7 @@ namespace vlib
 			THROW( "Only arrays can be sorted" );
 		}
 		
-		size_t n = length( container );
+		std::size_t n = length( container );
 		
 		std::vector< const Value* > vector;
 		
@@ -156,7 +158,7 @@ namespace vlib
 		
 		list_builder result;
 		
-		for ( size_t i = 0;  i < n;  ++i )
+		for ( std::size_t i = 0;  i < n;  ++i )
 		{
 			result.append( *vector[ i ] );
 		}
