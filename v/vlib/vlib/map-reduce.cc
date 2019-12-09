@@ -11,6 +11,7 @@
 #include "vlib/list-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/types.hh"
+#include "vlib/tracker.hh"
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/types/boolean.hh"
@@ -38,6 +39,22 @@ namespace vlib
 		while ( it )
 		{
 			const Value& x = it.use();
+			
+			/*
+				We need to protect results of prior calls to f from GC passes
+				made by future calls.
+				
+				We can't just call add_root() and del_root(), though, because
+				call_function() might throw -- so we use a scoped_root.
+				
+				We need to copy the value stored in the list_builder, because
+				append() may modify it, and scoped_root doesn't make a copy,
+				storing only a reference.
+			*/
+			
+			const Value partial = result;
+			
+			scoped_root scope( partial );
 			
 			Value f_x = call_function( f, x );
 			
