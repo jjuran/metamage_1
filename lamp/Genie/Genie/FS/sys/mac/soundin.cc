@@ -149,16 +149,20 @@ namespace Genie
 		return plus::string( result );
 	}
 	
-	struct sys_mac_soundin_REF_name : vfs::readonly_property
+	static
+	void sys_mac_soundin_REF_name_get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			const UInt16 index = GetKeyFromParent( that );
-			
-			const N::Str255 name = N::SPBGetIndexedDevice_Name( index );
-			
-			result = name;
-		}
+		const UInt16 index = GetKeyFromParent( that );
+		
+		const N::Str255 name = N::SPBGetIndexedDevice_Name( index );
+		
+		result = name;
+	}
+	
+	static const vfs::property_params sys_mac_soundin_REF_name_params =
+	{
+		vfs::no_fixed_size,
+		&sys_mac_soundin_REF_name_get,
 	};
 	
 	struct sys_mac_soundin_N_icon
@@ -188,7 +192,7 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	const vfs::fixed_mapping sys_mac_soundin_REF_Mappings[] =
 	{
