@@ -17,7 +17,8 @@
 namespace Genie
 {
 	
-	void sys_mac_thread_defaultstacksize::get( plus::var_string& result, const vfs::node* that, bool binary )
+	static
+	void sys_mac_thread_defaultstacksize_get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		using mac::sys::default_thread_stack_size;
 		using mac::sys::has_ThreadManager;
@@ -30,5 +31,11 @@ namespace Genie
 		
 		serialize::deconstruct::apply( result, data, binary );
 	}
+	
+	const vfs::property_params sys_mac_thread_defaultstacksize_params =
+	{
+		4,  // fixed size
+		&sys_mac_thread_defaultstacksize_get,
+	};
 	
 }

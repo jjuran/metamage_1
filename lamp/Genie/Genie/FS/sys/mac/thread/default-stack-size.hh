@@ -13,12 +13,7 @@
 namespace Genie
 {
 	
-	struct sys_mac_thread_defaultstacksize : vfs::readonly_property
-	{
-		static const int fixed_size = 4;
-		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary );
-	};
+	extern const vfs::property_params sys_mac_thread_defaultstacksize_params;
 	
 }
 
