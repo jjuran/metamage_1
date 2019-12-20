@@ -13,10 +13,7 @@
 namespace Genie
 {
 	
-	struct sys_mac_machine_name : vfs::readonly_property
-	{
-		static void get( plus::var_string& result, const vfs::node* that, bool binary );
-	};
+	extern const vfs::property_params sys_mac_machine_name_params;
 	
 }
 

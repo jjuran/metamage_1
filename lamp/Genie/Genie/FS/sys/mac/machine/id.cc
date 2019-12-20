@@ -101,11 +101,18 @@ namespace Genie
 		return 0;
 	}
 	
-	void sys_mac_machine_id::get( plus::var_string& result, const vfs::node* that, bool binary )
+	static
+	void sys_mac_machine_id_get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		const uint32_t id = GetMachineID();
 		
 		deconstruct_id::apply( result, id, binary );
 	}
+	
+	const vfs::property_params sys_mac_machine_id_params =
+	{
+		4,  // fixed size,
+		&sys_mac_machine_id_get,
+	};
 	
 }
