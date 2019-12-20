@@ -46,23 +46,28 @@ namespace Genie
 		&sys_mac_event_post_click::trigger
 	};
 	
-	struct sys_mac_event_post_key : vfs::writeonly_property
+	static
+	void sys_mac_event_post_key_set( const vfs::node* that, const char* begin, const char* end, bool binary )
 	{
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
+		for ( const char* p = begin;  p != end;  ++p )
 		{
-			for ( const char* p = begin;  p != end;  ++p )
-			{
-				const char c = *p;
-				
-				N::PostEvent( N::keyDown, c );
-				
-				// keyUp is usually masked
-				::PostEvent( ::keyUp, c );
-			}
+			const char c = *p;
+			
+			N::PostEvent( N::keyDown, c );
+			
+			// keyUp is usually masked
+			::PostEvent( ::keyUp, c );
 		}
+	}
+	
+	static const vfs::property_params sys_mac_event_post_key_params =
+	{
+		vfs::no_fixed_size,
+		NULL,
+		&sys_mac_event_post_key_set,
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	const vfs::fixed_mapping sys_mac_event_post_Mappings[] =
 	{
