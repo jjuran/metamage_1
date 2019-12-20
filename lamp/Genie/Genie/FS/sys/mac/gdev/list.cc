@@ -159,22 +159,18 @@ namespace Genie
 		}
 	};
 	
-	template < class Accessor >
-	struct sys_mac_gdev_list_N_Property : vfs::readonly_property
+	static
+	void get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
-		static const int fixed_size = Accessor::fixed_size;
-		
 		typedef GDHandle Key;
+		typedef GetGDBounds Accessor;
 		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			Key key = GetKeyFromParent( that );
-			
-			const typename Accessor::Result data = Accessor::Get( key );
-			
-			Accessor::deconstruct::apply( result, data, binary );
-		}
-	};
+		Key key = GetKeyFromParent( that );
+		
+		Accessor::Result data = Accessor::Get( key );
+		
+		Accessor::deconstruct::apply( result, data, binary );
+	}
 	
 	static vfs::node_ptr Driver_Link_Factory( const vfs::node*     parent,
 	                                          const plus::string&  name,
@@ -189,7 +185,13 @@ namespace Genie
 		return vfs::new_symbolic_link( parent, name, unit );
 	}
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_gdev_list_N_Property< prop > >::value
+	static const vfs::property_params GetGDBounds_params =
+	{
+		GetGDBounds::fixed_size,
+		&get,
+	};
+	
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	const vfs::fixed_mapping sys_mac_gdev_list_H_Mappings[] =
 	{
