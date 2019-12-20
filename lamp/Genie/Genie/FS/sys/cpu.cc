@@ -28,6 +28,7 @@
 #include "plus/var_string.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/property.hh"
 #include "vfs/node/types/property_file.hh"
 
@@ -146,26 +147,6 @@ namespace Genie
 		return name;
 	}
 	
-	struct GetCPUFamily
-	{
-		typedef const char* Result;
-		
-		static Result Get()
-		{
-			return GetCPUName( GetCPUCode( 'cpuf' ) );
-		}
-	};
-	
-	struct GetCPUType
-	{
-		typedef const char* Result;
-		
-		static Result Get()
-		{
-			return GetCPUName( GetCPUCode( 'cput' ) );
-		}
-	};
-	
 	struct GetPrivilegeMode
 	{
 		typedef const char* Result;
@@ -189,25 +170,44 @@ namespace Genie
 		}
 	};
 	
-	template < class Accessor >
-	struct sys_cpu_Property : vfs::readonly_property
+	static
+	void get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
 	{
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
+		const char c = name[ 0 ];
+		
+		switch ( c )
 		{
-			result = Accessor::Get();
+			case 'f':  result = GetCPUName( GetCPUCode( 'cpuf' ) );  break;
+			case 't':  result = GetCPUName( GetCPUCode( 'cput' ) );  break;
+			
+		#if TARGET_CPU_68K
+			
+			case 'm':  result = GetPrivilegeMode::Get();
+				break;
+			
+		#endif
+			
+			default:
+				break;
 		}
+	}
+	
+	static const vfs::property_params sys_cpu_mux_params =
+	{
+		vfs::no_fixed_size,
+		(vfs::property_get_hook) &get,
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	const vfs::fixed_mapping sys_cpu_Mappings[] =
 	{
-		{ "family", PROPERTY( sys_cpu_Property< GetCPUFamily > ) },
-		{ "type",   PROPERTY( sys_cpu_Property< GetCPUType   > ) },
+		{ "family", PROPERTY( sys_cpu_mux ) },
+		{ "type",   PROPERTY( sys_cpu_mux ) },
 		
 	#if TARGET_CPU_68K
 		
-		{ "mode", PROPERTY( sys_cpu_Property< GetPrivilegeMode > ) },
+		{ "mode", PROPERTY( sys_cpu_mux },
 		
 	#endif
 		
