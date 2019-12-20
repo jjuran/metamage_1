@@ -20,7 +20,8 @@
 namespace Genie
 {
 	
-	void sys_mac_time_dlsgmtdelta::get( plus::var_string& result, const vfs::node* that, bool binary )
+	static
+	void sys_mac_time_dlsgmtdelta_get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		const long field = mac::sys::gmtDelta_field();
 		
@@ -32,7 +33,8 @@ namespace Genie
 		plus::encode_32_bit_hex( result, field );
 	}
 	
-	void sys_mac_time_dls::get( plus::var_string& out, const vfs::node* that, bool binary )
+	static
+	void sys_mac_time_dls_get( plus::var_string& out, const vfs::node* that, bool binary )
 	{
 		const unsigned long raw_value = mac::sys::gmtDelta_field();
 		
@@ -47,7 +49,8 @@ namespace Genie
 		out += gear::encoded_hex_char( dls >> 0 );
 	}
 	
-	void sys_mac_time_gmtdelta::get( plus::var_string& out, const vfs::node* that, bool binary )
+	static
+	void sys_mac_time_gmtdelta_get( plus::var_string& out, const vfs::node* that, bool binary )
 	{
 		const long delta = mac::sys::gmt_delta();
 		
@@ -58,5 +61,23 @@ namespace Genie
 		
 		out = gear::inscribe_decimal( delta );
 	}
+	
+	const vfs::property_params sys_mac_time_dlsgmtdelta_params =
+	{
+		4,  // fixed size
+		&sys_mac_time_dlsgmtdelta_get,
+	};
+	
+	const vfs::property_params sys_mac_time_dls_params =
+	{
+		1,  // fixed size
+		&sys_mac_time_dls_get,
+	};
+	
+	const vfs::property_params sys_mac_time_gmtdelta_params =
+	{
+		4,  // fixed size
+		&sys_mac_time_gmtdelta_get,
+	};
 	
 }

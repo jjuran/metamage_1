@@ -13,26 +13,9 @@
 namespace Genie
 {
 	
-	struct sys_mac_time_dlsgmtdelta : vfs::readonly_property
-	{
-		static const int fixed_size = 4;
-		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary );
-	};
-	
-	struct sys_mac_time_dls : vfs::readonly_property
-	{
-		static const int fixed_size = 1;
-		
-		static void get( plus::var_string& out, const vfs::node* that, bool binary );
-	};
-	
-	struct sys_mac_time_gmtdelta : vfs::readonly_property
-	{
-		static const int fixed_size = 4;
-		
-		static void get( plus::var_string& out, const vfs::node* that, bool binary );
-	};
+	extern const vfs::property_params sys_mac_time_dlsgmtdelta_params;
+	extern const vfs::property_params sys_mac_time_dls_params;
+	extern const vfs::property_params sys_mac_time_gmtdelta_params;
 	
 }
 
