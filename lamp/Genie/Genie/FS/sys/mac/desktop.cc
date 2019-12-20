@@ -25,16 +25,6 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	struct GetScreenBounds : serialize_Rect
-	{
-		typedef const Rect& Result;
-		
-		static Result Get( const BitMap& screenBits )
-		{
-			return screenBits.bounds;
-		}
-	};
-	
 	struct GetScreenSize : serialize_Point
 	{
 		typedef Point Result;
@@ -50,22 +40,41 @@ namespace Genie
 		}
 	};
 	
-	template < class Accessor >
-	struct sys_mac_desktop_Property : vfs::readonly_property
+	static
+	void GetScreenBounds_get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
-		static const int fixed_size = Accessor::fixed_size;
+		typedef serialize_Rect Accessor;
 		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			const BitMap& screenBits = N::GetQDGlobalsScreenBits();
-			
-			const typename Accessor::Result data = Accessor::Get( screenBits );
-			
-			Accessor::deconstruct::apply( result, data, binary );
-		}
+		const BitMap& screenBits = N::GetQDGlobalsScreenBits();
+		
+		Accessor::deconstruct::apply( result, screenBits.bounds, binary );
+	}
+	
+	static
+	void GetScreenSize_get( plus::var_string& result, const vfs::node* that, bool binary )
+	{
+		typedef GetScreenSize Accessor;
+		
+		const BitMap& screenBits = N::GetQDGlobalsScreenBits();
+		
+		const Point data = GetScreenSize::Get( screenBits );
+		
+		Accessor::deconstruct::apply( result, data, binary );
+	}
+	
+	static const vfs::property_params GetScreenBounds_params =
+	{
+		serialize_Rect::fixed_size,
+		&GetScreenBounds_get,
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_desktop_Property< prop > >::value
+	static const vfs::property_params GetScreenSize_params =
+	{
+		GetScreenSize::fixed_size,
+		&GetScreenSize_get,
+	};
+	
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	const vfs::fixed_mapping sys_mac_desktop_Mappings[] =
 	{
