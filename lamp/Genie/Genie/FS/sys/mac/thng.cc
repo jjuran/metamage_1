@@ -266,20 +266,22 @@ namespace Genie
 		}
 	};
 	
-	template < class Accessor >
-	struct sys_mac_thng_REF_code : vfs::readonly_property
+	static
+	void sys_mac_thng_REF_code_get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
 	{
-		static const int fixed_size = sizeof (::OSType);
+		const Component comp = GetKeyFromParent( that );
 		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			const Component comp = GetKeyFromParent( that );
-			
-			const ComponentDescription desc = N::GetComponentInfo( comp );
-			
-			result = plus::encode_quad( Accessor::Get( desc ) );
-		}
-	};
+		const ComponentDescription desc = N::GetComponentInfo( comp );
+		
+		const char c = name[ 0 ];
+		
+		::OSType code = c == 't' ? desc.componentType
+		              : c == 's' ? desc.componentSubType
+		              : c == 'm' ? desc.componentManufacturer
+		              :            0;
+		
+		result = plus::encode_quad( code );
+	}
 	
 	static plus::string string_from_stringhandle( N::Handle h )
 	{
@@ -305,33 +307,29 @@ namespace Genie
 		return plus::string( result );
 	}
 	
-	struct sys_mac_thng_REF_name : vfs::readonly_property
+	static
+	void sys_mac_thng_REF_name_get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			const Component comp = GetKeyFromParent( that );
-			
-			n::owned< N::Handle > name = N::NewHandle( 0 );
-			
-			(void) N::GetComponentInfo( comp, name );
-			
-			result = string_from_stringhandle( name );
-		}
-	};
+		const Component comp = GetKeyFromParent( that );
+		
+		n::owned< N::Handle > name = N::NewHandle( 0 );
+		
+		(void) N::GetComponentInfo( comp, name );
+		
+		result = string_from_stringhandle( name );
+	}
 	
-	struct sys_mac_thng_REF_info : vfs::readonly_property
+	static
+	void sys_mac_thng_REF_info_get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			const Component comp = GetKeyFromParent( that );
-			
-			n::owned< N::Handle > info = N::NewHandle( 0 );
-			
-			(void) N::GetComponentInfo( comp, N::Handle(), info );
-			
-			result = string_from_stringhandle( info );
-		}
-	};
+		const Component comp = GetKeyFromParent( that );
+		
+		n::owned< N::Handle > info = N::NewHandle( 0 );
+		
+		(void) N::GetComponentInfo( comp, N::Handle(), info );
+		
+		result = string_from_stringhandle( info );
+	}
 	
 	// perl -e 'for ( @ARGV ) { ++$h{$_} if -f "$_/icon" } print( "$_: " ), system( "cat $_/name" ) for sort keys %h' *
 	// perl -e 'for ( @ARGV ) { ++$h{$_} if -f "$_/suite" } print( "$_: " ), system( "cat $_/name" ) for sort keys %h' *
@@ -397,13 +395,25 @@ namespace Genie
 		return New_FSTree_IconSuite( parent, name, iconSuite );
 	}
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	static const vfs::property_params sys_mac_thng_REF_code_params =
+	{
+		sizeof (::OSType),  // fixed size
+		(vfs::property_get_hook) &sys_mac_thng_REF_code_get,
+	};
+	
+	#define DEFINE_PARAMS( p )  \
+	static const vfs::property_params p##_params = {vfs::no_fixed_size, &p##_get}
+	
+	DEFINE_PARAMS( sys_mac_thng_REF_name );
+	DEFINE_PARAMS( sys_mac_thng_REF_info );
+	
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	const vfs::fixed_mapping sys_mac_thng_REF_Mappings[] =
 	{
-		{ "type",         PROPERTY( sys_mac_thng_REF_code< ComponentDescription_Type         > ) },
-		{ "subtype",      PROPERTY( sys_mac_thng_REF_code< ComponentDescription_SubType      > ) },
-		{ "manufacturer", PROPERTY( sys_mac_thng_REF_code< ComponentDescription_Manufacturer > ) },
+		{ "type",         PROPERTY( sys_mac_thng_REF_code ) },
+		{ "subtype",      PROPERTY( sys_mac_thng_REF_code ) },
+		{ "manufacturer", PROPERTY( sys_mac_thng_REF_code ) },
 		
 		{ "name",         PROPERTY( sys_mac_thng_REF_name ) },
 		{ "info",         PROPERTY( sys_mac_thng_REF_info ) },
