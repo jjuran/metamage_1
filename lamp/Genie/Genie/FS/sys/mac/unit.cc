@@ -188,6 +188,19 @@ namespace Genie
 		}
 	};
 	
+	static
+	AuxDCEHandle get_node_dce( const vfs::node* that )
+	{
+		UnitNumber key = GetKey( that );
+		
+		if ( !is_valid_unit_number( key ) )
+		{
+			throw vfs::undefined_property();
+		}
+		
+		return mac::sys::get_unit_table_base()[ key ];
+	}
+	
 	template < class Accessor >
 	struct sys_mac_unit_N_Property : vfs::readonly_property
 	{
@@ -195,14 +208,7 @@ namespace Genie
 		
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
-			UnitNumber key = GetKey( that );
-			
-			if ( !is_valid_unit_number( key ) )
-			{
-				throw vfs::undefined_property();
-			}
-			
-			AuxDCEHandle dceHandle = mac::sys::get_unit_table_base()[ key ];
+			AuxDCEHandle dceHandle = get_node_dce( that );
 			
 			const typename Accessor::result_type data = Accessor::Get( dceHandle );
 			
