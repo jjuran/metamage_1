@@ -366,34 +366,41 @@ namespace Genie
 		}
 	}
 	
-	template < class Accessor >
-	struct sys_mac_vol_N_Property : vfs::readonly_property
-	{
-		static const int fixed_size = Accessor::fixed_size;
-		
-		typedef N::FSVolumeRefNum Key;
-		
-		static typename Accessor::result_type Get( const vfs::node* that )
-		{
-			XVolumeParam pb;
-			
-			GetVolInfo( pb, *that, NULL );
-			
-			return Accessor::Get( pb );
-		}
-		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			const typename Accessor::result_type data = Get( that );
-			
-			if ( Accessor::neverZero  &&  data == 0 )
-			{
-				p7::throw_errno( ENOENT );
-			}
-			
-			Accessor::deconstruct::apply( result, data, binary );
-		}
-	};
+	#define DEFINE_GETTER( p )  \
+	static void p##_get( plus::var_string& result, const vfs::node* that, bool binary )  \
+	{  \
+		typedef p Accessor;                                                    \
+		XVolumeParam pb;                                                       \
+		GetVolInfo( pb, *that, NULL );                                         \
+		const Accessor::result_type data = Accessor::Get( pb );                \
+		if ( Accessor::neverZero  &&  data == 0 )  p7::throw_errno( ENOENT );  \
+		Accessor::deconstruct::apply( result, data, binary );                  \
+	}
+	
+	DEFINE_GETTER( GetVolumeBlockSize      );
+	DEFINE_GETTER( GetVolumeBlockCount     );
+	DEFINE_GETTER( GetVolumeFreeBlockCount );
+	DEFINE_GETTER( GetVolumeCapacity       );
+	DEFINE_GETTER( GetVolumeFreeSpace      );
+	DEFINE_GETTER( GetVolumeSignature      );
+	DEFINE_GETTER( GetVolumeFSID           );
+	DEFINE_GETTER( GetVolumeWriteCount     );
+	DEFINE_GETTER( GetVolumeFileCount      );
+	DEFINE_GETTER( GetVolumeDirCount       );
+	
+	#define DEFINE_PARAMS( p )  \
+	static const vfs::property_params p##_params = {p::fixed_size, &p##_get}
+	
+	DEFINE_PARAMS( GetVolumeBlockSize      );
+	DEFINE_PARAMS( GetVolumeBlockCount     );
+	DEFINE_PARAMS( GetVolumeFreeBlockCount );
+	DEFINE_PARAMS( GetVolumeCapacity       );
+	DEFINE_PARAMS( GetVolumeFreeSpace      );
+	DEFINE_PARAMS( GetVolumeSignature      );
+	DEFINE_PARAMS( GetVolumeFSID           );
+	DEFINE_PARAMS( GetVolumeWriteCount     );
+	DEFINE_PARAMS( GetVolumeFileCount      );
+	DEFINE_PARAMS( GetVolumeDirCount       );
 	
 	static
 	void name_get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
@@ -572,16 +579,13 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
-	#define PROPERTY_ACCESS( access )  PROPERTY( sys_mac_vol_N_Property< access > )
+	#define PROPERTY_ACCESS( access )  PROPERTY( access )
 	
 	const vfs::fixed_mapping sys_mac_vol_N_Mappings[] =
 	{
 		{ ".mac-name", PROPERTY( sys_mac_vol_N_name ) },
 		{ "name",      PROPERTY( sys_mac_vol_N_name ) },
 		
-	#undef PROPERTY
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
-	
 		{ "block-size",  PROPERTY_ACCESS( GetVolumeBlockSize      ) },
 		{ "blocks",      PROPERTY_ACCESS( GetVolumeBlockCount     ) },
 		{ "blocks-free", PROPERTY_ACCESS( GetVolumeFreeBlockCount ) },
