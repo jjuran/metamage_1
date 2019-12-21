@@ -13,6 +13,7 @@
 #include "plus/serialize.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/property.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
@@ -25,46 +26,45 @@
 #include "Genie/FS/sys/app/window.hh"
 
 
+#ifndef TARGET_API_MAC_CARBON
+#define TARGET_API_MAC_CARBON  0
+#endif
+
+
 namespace Genie
 {
 	
-	struct GetFreeMem : plus::serialize_unsigned< long >
+	static
+	void get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
 	{
-		static long Get()
-		{
-			return mac::sys::free_mem();
-		}
-	};
-	
-	struct GetHeapSize : plus::serialize_unsigned< long >
-	{
-		static long Get()
-		{
-			return mac::sys::heap_size();
-		}
-	};
-	
-	template < class Accessor >
-	struct sys_app_Property : vfs::readonly_property
-	{
-		static const int fixed_size = Accessor::fixed_size;
+		typedef plus::serialize_unsigned< long > Accessor;
 		
-		typedef typename Accessor::result_type result_type;
+		Accessor::result_type data;
 		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
+		if ( ! TARGET_API_MAC_CARBON  &&  name[ 0 ] == 'h' )
 		{
-			const result_type data = Accessor::Get();
-			
-			Accessor::deconstruct::apply( result, data, binary );
+			data = mac::sys::heap_size();
 		}
+		else
+		{
+			data = mac::sys::free_mem();
+		}
+		
+		Accessor::deconstruct::apply( result, data, binary );
+	}
+	
+	static const vfs::property_params sys_app_mux_params =
+	{
+		plus::serialize_unsigned< long >::fixed_size,
+		(vfs::property_get_hook) &get,
 	};
 	
 	
 	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
-	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_Property< access > )
+	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_mux )
 	
 	const vfs::fixed_mapping sys_app_Mappings[] =
 	{
