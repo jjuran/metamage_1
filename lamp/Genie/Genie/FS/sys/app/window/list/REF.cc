@@ -438,6 +438,19 @@ namespace Genie
 		return (WindowRef) plus::decode_32_bit_hex( parent->name() );
 	}
 	
+	static
+	WindowRef get_node_window( const vfs::node* that )
+	{
+		WindowRef key = GetKeyFromParent( that );
+		
+		if ( ! mac::sys::windowlist_contains( key ) )
+		{
+			p7::throw_errno( EIO );
+		}
+		
+		return key;
+	}
+	
 	template < class Accessor >
 	struct sys_app_window_list_REF_Const_Property : vfs::readonly_property
 	{
@@ -447,12 +460,7 @@ namespace Genie
 		
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
-			Key key = GetKeyFromParent( that );
-			
-			if ( ! mac::sys::windowlist_contains( key ) )
-			{
-				p7::throw_errno( EIO );
-			}
+			Key key = get_node_window( that );
 			
 			typedef typename Accessor::result_type result_type;
 			
@@ -473,12 +481,7 @@ namespace Genie
 		
 		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
-			Key key = GetKeyFromParent( that );
-			
-			if ( ! mac::sys::windowlist_contains( key ) )
-			{
-				p7::throw_errno( EIO );
-			}
+			Key key = get_node_window( that );
 			
 			Accessor::Set( key, Accessor::reconstruct::apply( begin, end, binary ) );
 		}
