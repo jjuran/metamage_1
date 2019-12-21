@@ -976,27 +976,19 @@ namespace Genie
 		}
 	}
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( WindowParameters& ) >
-	struct Window_Property : vfs::readwrite_property
-	{
-		static const int fixed_size = Serialize::fixed_size;
-		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			typedef typename Serialize::result_type result_type;
-			
-			const result_type& value = Access( Find( that ) );
-			
-			Serialize::deconstruct::apply( result, value, binary );
-		}
-		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			WindowParameters& params = gWindowParametersMap[ that ];
-			
-			Access( params ) = Serialize::reconstruct::apply( begin, end, binary );
-		}
-	};
+	#define DEFINE_GETTER( p )  \
+	static void p##_get( plus::var_string& result, const vfs::node* that, bool binary )  \
+	{  \
+		const p##_Property::result_type& value = p( Find( that ) );  \
+		p##_Property::deconstruct::apply( result, value, binary );    \
+	}
+	
+	#define DEFINE_SETTER( p )  \
+	static void p##_set( const vfs::node* that, const char* begin, const char* end, bool binary )  \
+	{  \
+		WindowParameters& params = gWindowParametersMap[ that ];               \
+		p( params ) = p##_Property::reconstruct::apply( begin, end, binary );  \
+	}
 	
 	
 	namespace
@@ -1053,23 +1045,6 @@ namespace Genie
 	{
 		const vfs::property_params  _;
 		const bool                  is_mutable;
-	};
-	
-	template < class Property, bool variable >
-	struct port_property_params_factory
-	{
-		static const port_property_params value;
-	};
-	
-	template < class Property, bool variable >
-	const port_property_params port_property_params_factory< Property, variable >::value =
-	{
-		{
-			Property::fixed_size,
-			Property::can_get ? &Property::get : 0,  // NULL
-			Property::can_set ? &Property::set : 0   // NULL
-		},
-		variable
 	};
 	
 	
@@ -1263,17 +1238,12 @@ namespace Genie
 	#define VARIABLE( prop )  PROPERTY( kAttrVariable, prop )
 	#define CONSTANT( prop )  PROPERTY( kAttrConstant, prop )
 	
-	typedef Window_Property< serialize_Point,  &Origin   >  Origin_Property;
-	typedef Window_Property< serialize_Point,  &Size     >  Size_Property;
-	typedef Window_Property< serialize_bool,   &Visible  >  Visible_Property;
-	typedef Window_Property< serialize_ProcID, &ProcID   >  ProcID_Property;
-	typedef Window_Property< serialize_bool,   &CloseBox >  CloseBox_Property;
-	
-#ifdef MAC_OS_X_VERSION_10_2
-	
-	typedef Window_Property< serialize_bool, &Compositing >  Compositing_Property;
-	
-#endif
+	typedef serialize_Point   Origin_Property;
+	typedef serialize_Point   Size_Property;
+	typedef serialize_bool    Visible_Property;
+	typedef serialize_ProcID  ProcID_Property;
+	typedef serialize_bool    CloseBox_Property;
+	typedef serialize_bool    Compositing_Property;
 	
 	static const port_property_params Window_Title_params =
 	{
@@ -1284,6 +1254,39 @@ namespace Genie
 		},
 		kAttrVariable,
 	};
+	
+	DEFINE_GETTER( Origin      );
+	DEFINE_GETTER( Size        );
+	DEFINE_GETTER( Visible     );
+	DEFINE_GETTER( ProcID      );
+	DEFINE_GETTER( CloseBox    );
+	
+	DEFINE_SETTER( Origin      );
+	DEFINE_SETTER( Size        );
+	DEFINE_SETTER( Visible     );
+	DEFINE_SETTER( ProcID      );
+	DEFINE_SETTER( CloseBox    );
+	
+	#define DEFINE_PARAMS( p, v )  \
+	static const port_property_params p##_Property_params = {{p##_Property::fixed_size, &p##_get, &p##_set}, v}
+	
+	#define DEFINE_VARIABLE_PARAMS( p )  DEFINE_PARAMS( p, kAttrVariable )
+	#define DEFINE_CONSTANT_PARAMS( p )  DEFINE_PARAMS( p, kAttrConstant )
+	
+	DEFINE_VARIABLE_PARAMS( Origin      );
+	DEFINE_VARIABLE_PARAMS( Size        );
+	DEFINE_VARIABLE_PARAMS( Visible     );
+	DEFINE_CONSTANT_PARAMS( ProcID      );
+	DEFINE_CONSTANT_PARAMS( CloseBox    );
+	
+#ifdef MAC_OS_X_VERSION_10_2
+	
+	DEFINE_GETTER( Compositing );
+	DEFINE_SETTER( Compositing );
+	
+	DEFINE_CONSTANT_PARAMS( Compositing );
+	
+#endif
 	
 	const vfs::fixed_mapping gui_port_ADDR_Mappings[] =
 	{
@@ -1309,9 +1312,6 @@ namespace Genie
 		{ ".~mac-title", VARIABLE( Window_Title ) },
 		{     ".~title", VARIABLE( Window_Title ) },
 		
-	#undef PROPERTY
-	#define PROPERTY( var, prop )  &new_port_property, &port_property_params_factory< prop, var >::value
-	
 		{ "pos",    VARIABLE( Origin_Property   ) },
 		{ "size",   VARIABLE( Size_Property     ) },
 		{ "vis",    VARIABLE( Visible_Property  ) },
