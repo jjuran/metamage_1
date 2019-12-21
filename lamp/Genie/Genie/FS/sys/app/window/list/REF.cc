@@ -438,41 +438,21 @@ namespace Genie
 		return key;
 	}
 	
-	template < class Accessor >
-	struct sys_app_window_list_REF_Const_Property : vfs::readonly_property
-	{
-		static const int fixed_size = Accessor::fixed_size;
-		
-		typedef WindowRef Key;
-		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			Key key = get_node_window( that );
-			
-			typedef typename Accessor::result_type result_type;
-			
-			const result_type data = Accessor::Get( key );
-			
-			Accessor::deconstruct::apply( result, data, binary );
-		}
-	};
+	#define DEFINE_GETTER( p )  \
+	static void p##_get( plus::var_string& result, const vfs::node* that, bool binary )  \
+	{  \
+		typedef p Accessor;                                       \
+		WindowRef key = get_node_window( that );                  \
+		const Accessor::result_type data = Accessor::Get( key );  \
+		Accessor::deconstruct::apply( result, data, binary );     \
+	}
 	
-	template < class Accessor >
-	struct sys_app_window_list_REF_Property : sys_app_window_list_REF_Const_Property< Accessor >
-	{
-		static const bool can_set = true;
-		
-		static const int fixed_size = Accessor::fixed_size;
-		
-		typedef WindowRef Key;
-		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			Key key = get_node_window( that );
-			
-			Accessor::Set( key, Accessor::reconstruct::apply( begin, end, binary ) );
-		}
-	};
+	#define DEFINE_SETTER( p )  \
+	static void p##_set( const vfs::node* that, const char* begin, const char* end, bool binary )  \
+	{  \
+		WindowRef key = get_node_window( that );                     \
+		p::Set( key, p::reconstruct::apply( begin, end, binary ) );  \
+	}
 	
 	static
 	void title_get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
@@ -544,9 +524,8 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
-	#define PROPERTY_CONST_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Const_Property< access > )
-	
-	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Property< access > )
+	#define PROPERTY_CONST_ACCESS( access )  PROPERTY( access )
+	#define PROPERTY_ACCESS( access )        PROPERTY( access )
 	
 	static const vfs::property_params window_title_params =
 	{
@@ -558,15 +537,49 @@ namespace Genie
 	typedef Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > Access_WindowBackColor;
 	typedef Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > Access_WindowForeColor;
 	
+	DEFINE_GETTER( Access_WindowPosition  );
+	DEFINE_GETTER( Access_WindowSize      );
+	DEFINE_GETTER( Access_WindowVisible   );
+	DEFINE_GETTER( Access_WindowTextFont  );
+	DEFINE_GETTER( Access_WindowTextSize  );
+	DEFINE_GETTER( Access_WindowBackColor );
+	DEFINE_GETTER( Access_WindowForeColor );
+	DEFINE_GETTER( Access_WindowAlpha     );
+	DEFINE_GETTER( Access_WindowZOrder    );
+	
+	DEFINE_SETTER( Access_WindowPosition  );
+	DEFINE_SETTER( Access_WindowSize      );
+	DEFINE_SETTER( Access_WindowVisible   );
+	DEFINE_SETTER( Access_WindowTextFont  );
+	DEFINE_SETTER( Access_WindowTextSize  );
+	DEFINE_SETTER( Access_WindowBackColor );
+	DEFINE_SETTER( Access_WindowForeColor );
+	DEFINE_SETTER( Access_WindowAlpha     );
+	
+	#define DEFINE_PARAMS( p )  \
+	static const vfs::property_params p##_params = {p::fixed_size, &p##_get, &p##_set}
+	
+	DEFINE_PARAMS( Access_WindowPosition  );
+	DEFINE_PARAMS( Access_WindowSize      );
+	DEFINE_PARAMS( Access_WindowVisible   );
+	DEFINE_PARAMS( Access_WindowTextFont  );
+	DEFINE_PARAMS( Access_WindowTextSize  );
+	DEFINE_PARAMS( Access_WindowBackColor );
+	DEFINE_PARAMS( Access_WindowForeColor );
+	DEFINE_PARAMS( Access_WindowAlpha     );
+	
+	static const vfs::property_params Access_WindowZOrder_params =
+	{
+		Access_WindowZOrder::fixed_size,
+		&Access_WindowZOrder_get,
+	};
+	
 	const vfs::fixed_mapping sys_app_window_list_REF_Mappings[] =
 	{
 		{ ".mac-title",  PROPERTY( window_title ) },
 		{      "title",  PROPERTY( window_title ) },
 		{ ".~mac-title", PROPERTY( window_title ) },
 		{     ".~title", PROPERTY( window_title ) },
-	
-	#undef PROPERTY
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 		{ "pos",   PROPERTY_ACCESS( Access_WindowPosition ) },
 		{ "size",  PROPERTY_ACCESS( Access_WindowSize     ) },
