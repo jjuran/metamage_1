@@ -201,21 +201,33 @@ namespace Genie
 		return mac::sys::get_unit_table_base()[ key ];
 	}
 	
-	template < class Accessor >
-	struct sys_mac_unit_N_Property : vfs::readonly_property
-	{
-		static const int fixed_size = Accessor::fixed_size;
-		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			AuxDCEHandle dceHandle = get_node_dce( that );
-			
-			const typename Accessor::result_type data = Accessor::Get( dceHandle );
-			
-			Accessor::deconstruct::apply( result, data, binary );
-		}
-	};
+	#define DEFINE_GETTER( p )  \
+	static void p##_get( plus::var_string& result, const vfs::node* that, bool binary )  \
+	{  \
+		typedef p Accessor;                                             \
+		AuxDCEHandle dceHandle = get_node_dce( that );                  \
+		const Accessor::result_type data = Accessor::Get( dceHandle );  \
+		Accessor::deconstruct::apply( result, data, binary );           \
+	}
 	
+	DEFINE_GETTER( GetDriverFlags            );
+	DEFINE_GETTER( DriverName                );
+	DEFINE_GETTER( GetDriverSlot             );
+	DEFINE_GETTER( GetDriverSlotId           );
+	DEFINE_GETTER( GetDriverBase             );
+	DEFINE_GETTER( GetDriverOwner            );
+	DEFINE_GETTER( GetDriverExternalDeviceID );
+	
+	#define DEFINE_PARAMS( p )  \
+	static const vfs::property_params p##_params = {p::fixed_size, &p##_get}
+	
+	DEFINE_PARAMS( GetDriverFlags            );
+	DEFINE_PARAMS( DriverName                );
+	DEFINE_PARAMS( GetDriverSlot             );
+	DEFINE_PARAMS( GetDriverSlotId           );
+	DEFINE_PARAMS( GetDriverBase             );
+	DEFINE_PARAMS( GetDriverOwner            );
+	DEFINE_PARAMS( GetDriverExternalDeviceID );
 	
 	struct valid_name_of_unit_number
 	{
@@ -259,7 +271,7 @@ namespace Genie
 	}
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_unit_N_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	const vfs::fixed_mapping sys_mac_unit_N_Mappings[] =
 	{
