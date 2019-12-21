@@ -32,6 +32,7 @@
 // plus
 #include "plus/deconstruct.hh"
 #include "plus/hexadecimal.hh"
+#include "plus/mac_utf8.hh"
 #include "plus/reconstruct.hh"
 #include "plus/serialize.hh"
 #include "plus/var_string.hh"
@@ -68,7 +69,6 @@
 // Genie
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/serialize_qd.hh"
-#include "Genie/FS/utf8_text_property.hh"
 
 
 namespace Nitrogen
@@ -121,19 +121,6 @@ namespace Genie
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
-	
-	struct Access_WindowTitle : serialize_Str255_contents
-	{
-		static N::Str255 Get( WindowRef window )
-		{
-			return N::GetWTitle( window );
-		}
-		
-		static void Set( WindowRef window, ConstStr255Param title )
-		{
-			N::SetWTitle( window, title );
-		}
-	};
 	
 	struct Access_WindowPosition : serialize_Point
 	{
@@ -487,6 +474,61 @@ namespace Genie
 		}
 	};
 	
+	static
+	void title_get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
+	{
+		WindowRef window = get_node_window( that );
+		
+		result = N::GetWTitle( window );
+		
+		/*
+			title
+			.mac-title
+			.~title
+			.~mac-title
+			
+			The ".~" prefix sets the binary flag, so if `binary` is true, we
+			need to skip two bytes.  The next byte might be either '.' or 'm'
+			for MacRoman titles, but will always be 't' for UTF-8.
+		*/
+		
+		if ( name[ binary * 2 ] == 't' )
+		{
+			result = plus::utf8_from_mac( result );
+		}
+	}
+	
+	static
+	void set_window_title( WindowRef window, const char* begin, const char* end )
+	{
+		N::Str255 title( begin, end - begin );
+		
+		SetWTitle( window, title );
+	}
+	
+	static inline
+	void set_window_title( WindowRef window, const plus::string& name )
+	{
+		return set_window_title( window, name.begin(), name.end() );
+	}
+	
+	static
+	void title_set( const vfs::node* that, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		WindowRef window = get_node_window( that );
+		
+		if ( name[ binary * 2 ] != 't' )
+		{
+			set_window_title( window, begin, end );
+		}
+		else
+		{
+			plus::string mac_text = plus::mac_from_utf8( begin, end - begin );
+			
+			set_window_title( window, mac_text );
+		}
+	}
+	
 	
 	static vfs::node_ptr window_trigger_factory( const vfs::node*     parent,
 	                                             const plus::string&  name,
@@ -500,25 +542,32 @@ namespace Genie
 	}
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	#define PROPERTY_CONST_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Const_Property< access > )
 	
 	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Property< access > )
 	
-	typedef sys_app_window_list_REF_Property< Access_WindowTitle > window_title;
+	static const vfs::property_params window_title_params =
+	{
+		vfs::no_fixed_size,
+		(vfs::property_get_hook) &title_get,
+		(vfs::property_set_hook) &title_set,
+	};
 	
 	typedef Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > Access_WindowBackColor;
 	typedef Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > Access_WindowForeColor;
 	
 	const vfs::fixed_mapping sys_app_window_list_REF_Mappings[] =
 	{
-		{ ".mac-title", PROPERTY(                     window_title   ) },
-		{      "title", PROPERTY( utf8_text_property< window_title > ) },
-		
-		{ ".~mac-title", PROPERTY(                     window_title   ) },
-		{     ".~title", PROPERTY( utf8_text_property< window_title > ) },
-		
+		{ ".mac-title",  PROPERTY( window_title ) },
+		{      "title",  PROPERTY( window_title ) },
+		{ ".~mac-title", PROPERTY( window_title ) },
+		{     ".~title", PROPERTY( window_title ) },
+	
+	#undef PROPERTY
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	
 		{ "pos",   PROPERTY_ACCESS( Access_WindowPosition ) },
 		{ "size",  PROPERTY_ACCESS( Access_WindowSize     ) },
 		{ "vis",   PROPERTY_ACCESS( Access_WindowVisible  ) },
