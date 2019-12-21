@@ -68,6 +68,19 @@ namespace Genie
 		return GetMenuRef( gear::parse_decimal( parent->name().c_str() ) );
 	}
 	
+	static
+	MenuRef get_menu( const vfs::node* that )
+	{
+		MenuRef menu = GetKeyFromParent( that );
+		
+		if ( menu == NULL )
+		{
+			p7::throw_errno( EIO );
+		}
+		
+		return menu;
+	}
+	
 	template < class Accessor >
 	struct sys_app_menu_list_ID_Property : vfs::readwrite_property
 	{
@@ -75,12 +88,7 @@ namespace Genie
 		
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
-			MenuRef menu = GetKeyFromParent( that );
-			
-			if ( menu == NULL )
-			{
-				p7::throw_errno( EIO );
-			}
+			MenuRef menu = get_menu( that );
 			
 			typedef typename Accessor::result_type result_type;
 			
@@ -91,12 +99,7 @@ namespace Genie
 		
 		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
-			MenuRef menu = GetKeyFromParent( that );
-			
-			if ( menu == NULL )
-			{
-				p7::throw_errno( EIO );
-			}
+			MenuRef menu = get_menu( that );
 			
 			Accessor::Set( menu, Accessor::reconstruct::apply( begin, end, binary ) );
 		}
