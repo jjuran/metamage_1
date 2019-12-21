@@ -24,6 +24,7 @@
 #include "gear/hexadecimal.hh"
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/serialize.hh"
 #include "plus/simple_map.hh"
 #include "plus/string/concat.hh"
@@ -79,8 +80,6 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
-#include "Genie/FS/mac_text_property.hh"
-#include "Genie/FS/utf8_text_property.hh"
 
 
 namespace Genie
@@ -936,22 +935,46 @@ namespace Genie
 	}
 	
 	
-	struct Window_Title : vfs::readwrite_property
+	static
+	void title_get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
 	{
-		static const int fixed_size = -1;
+		result = Find( that ).itsTitle;
 		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			result = Find( that ).itsTitle;
-		}
-		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			WindowParameters& params = gWindowParametersMap[ that ];
+		/*
+			title
+			.mac-title
+			.~title
+			.~mac-title
 			
+			The ".~" prefix sets the binary flag, so if `binary` is true, we
+			need to skip two bytes.  The next byte might be either '.' or 'm'
+			for MacRoman titles, but will always be 't' for UTF-8.
+		*/
+		
+		if ( ! TARGET_API_MAC_CARBON == (name[ binary * 2 ] == 't') )
+		{
+			result = TARGET_API_MAC_CARBON ? plus::mac_from_utf8( result )
+			                               : plus::utf8_from_mac( result );
+		}
+	}
+	
+	static
+	void title_set( const vfs::node* that, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		WindowParameters& params = gWindowParametersMap[ that ];
+		
+		if ( ! TARGET_API_MAC_CARBON == (name[ binary * 2 ] != 't') )
+		{
 			params.itsTitle.assign( begin, end - begin );
 		}
-	};
+		else
+		{
+			const size_t n = end - begin;
+			
+			params.itsTitle = TARGET_API_MAC_CARBON ? plus::mac_from_utf8( begin, n )
+			                                        : plus::utf8_from_mac( begin, n );
+		}
+	}
 	
 	template < class Serialize, typename Serialize::result_type& (*Access)( WindowParameters& ) >
 	struct Window_Property : vfs::readwrite_property
@@ -1235,7 +1258,7 @@ namespace Genie
 		return vfs::new_property( parent, name, params_ );
 	}
 	
-	#define PROPERTY( var, prop )  &new_port_property, &port_property_params_factory< prop, var >::value
+	#define PROPERTY( var, prop )  &new_port_property, &prop##_params
 	
 	#define VARIABLE( prop )  PROPERTY( kAttrVariable, prop )
 	#define CONSTANT( prop )  PROPERTY( kAttrConstant, prop )
@@ -1251,6 +1274,16 @@ namespace Genie
 	typedef Window_Property< serialize_bool, &Compositing >  Compositing_Property;
 	
 #endif
+	
+	static const port_property_params Window_Title_params =
+	{
+		{
+			vfs::no_fixed_size,
+			(vfs::property_get_hook) &title_get,
+			(vfs::property_set_hook) &title_set,
+		},
+		kAttrVariable,
+	};
 	
 	const vfs::fixed_mapping gui_port_ADDR_Mappings[] =
 	{
@@ -1271,24 +1304,14 @@ namespace Genie
 		
 		{ "new",    &vfs::new_static_symlink, "../../new" },
 		
-	#if TARGET_API_MAC_CARBON
+		{ ".mac-title",  VARIABLE( Window_Title ) },
+		{      "title",  VARIABLE( Window_Title ) },
+		{ ".~mac-title", VARIABLE( Window_Title ) },
+		{     ".~title", VARIABLE( Window_Title ) },
 		
-		{ ".mac-title", VARIABLE( mac_text_property< Window_Title > ) },
-		{      "title", VARIABLE(                    Window_Title   ) },
-		
-		{ ".~mac-title", VARIABLE( mac_text_property< Window_Title > ) },
-		{     ".~title", VARIABLE(                    Window_Title   ) },
-		
-	#else
-		
-		{ ".mac-title", VARIABLE(                     Window_Title   ) },
-		{      "title", VARIABLE( utf8_text_property< Window_Title > ) },
-		
-		{ ".~mac-title", VARIABLE(                     Window_Title   ) },
-		{     ".~title", VARIABLE( utf8_text_property< Window_Title > ) },
-		
-	#endif
-		
+	#undef PROPERTY
+	#define PROPERTY( var, prop )  &new_port_property, &port_property_params_factory< prop, var >::value
+	
 		{ "pos",    VARIABLE( Origin_Property   ) },
 		{ "size",   VARIABLE( Size_Property     ) },
 		{ "vis",    VARIABLE( Visible_Property  ) },
