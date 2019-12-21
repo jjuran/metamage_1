@@ -25,6 +25,7 @@
 // plus
 #include "plus/deconstruct.hh"
 #include "plus/freeze.hh"
+#include "plus/mac_utf8.hh"
 #include "plus/serialize.hh"
 #include "plus/stringify.hh"
 #include "plus/var_string.hh"
@@ -60,7 +61,6 @@
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/sys/mac/vol/list/N/dt.hh"
 #include "Genie/FS/sys/mac/vol/list/N/parms.hh"
-#include "Genie/FS/utf8_text_property.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
@@ -216,20 +216,7 @@ namespace Genie
 	
 	struct Volume_Accessor_Defaults
 	{
-		static const bool needsName = false;
-		
 		static const bool neverZero = false;
-	};
-	
-	struct GetVolumeName : Volume_Accessor_Defaults,
-	                       serialize_Str255_contents
-	{
-		static const bool needsName = true;
-		
-		static const unsigned char* Get( const XVolumeParam& volume )
-		{
-			return volume.ioNamePtr;
-		}
 	};
 	
 	struct GetVolumeBlockCount : Volume_Accessor_Defaults,
@@ -390,9 +377,7 @@ namespace Genie
 		{
 			XVolumeParam pb;
 			
-			Str31 name;
-			
-			GetVolInfo( pb, *that, Accessor::needsName ? name : NULL );
+			GetVolInfo( pb, *that, NULL );
 			
 			return Accessor::Get( pb );
 		}
@@ -410,18 +395,69 @@ namespace Genie
 		}
 	};
 	
-	struct sys_mac_vol_N_name : sys_mac_vol_N_Property< GetVolumeName >
+	static
+	void name_get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
 	{
-		static const bool can_set = true;
+		XVolumeParam pb;
 		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
+		Str31 volName;
+		
+		GetVolInfo( pb, *that, volName );
+		
+		result = pb.ioNamePtr;
+		
+		if ( name[ 0 ] != '.' )
 		{
-			const N::FSVolumeRefNum vRefNum = GetKeyFromParent( *that );
-			
-			N::Str27 name( begin, end - begin );
-			
-			Mac::ThrowOSStatus( ::HRename( vRefNum, fsRtDirID, "\p", name ) );
+			result = plus::utf8_from_mac( result );
 		}
+	}
+	
+	static inline
+	OSErr set_vol_name( short vRefNum, const unsigned char* name )
+	{
+		return ::HRename( vRefNum, fsRtDirID, "\p", name );
+	}
+	
+	static
+	OSErr set_vol_name( short vRefNum, const char* begin, const char* end )
+	{
+		N::Str27 name( begin, end - begin );
+		
+		return set_vol_name( vRefNum, name );
+	}
+	
+	static inline
+	OSErr set_vol_name( short vRefNum, const plus::string& name )
+	{
+		return set_vol_name( vRefNum, name.begin(), name.end() );
+	}
+	
+	static
+	void name_set( const vfs::node* that, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		const N::FSVolumeRefNum vRefNum = GetKeyFromParent( *that );
+		
+		OSErr err;
+		
+		if ( name[ 0 ] == '.' )
+		{
+			err = set_vol_name( vRefNum, begin, end );
+		}
+		else
+		{
+			plus::string mac_text = plus::mac_from_utf8( begin, end - begin );
+			
+			err = set_vol_name( vRefNum, mac_text );
+		}
+		
+		Mac::ThrowOSStatus( err );
+	}
+	
+	static const vfs::property_params sys_mac_vol_N_name_params =
+	{
+		vfs::no_fixed_size,
+		(vfs::property_get_hook) &name_get,
+		(vfs::property_set_hook) &name_set,
 	};
 	
 	static vfs::node_ptr folder_link_resolve( const vfs::node* that )
@@ -534,16 +570,18 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	#define PROPERTY_ACCESS( access )  PROPERTY( sys_mac_vol_N_Property< access > )
 	
 	const vfs::fixed_mapping sys_mac_vol_N_Mappings[] =
 	{
 		{ ".mac-name", PROPERTY( sys_mac_vol_N_name ) },
+		{ "name",      PROPERTY( sys_mac_vol_N_name ) },
 		
-		{ "name", PROPERTY( utf8_text_property< sys_mac_vol_N_name > ) },
-		
+	#undef PROPERTY
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	
 		{ "block-size",  PROPERTY_ACCESS( GetVolumeBlockSize      ) },
 		{ "blocks",      PROPERTY_ACCESS( GetVolumeBlockCount     ) },
 		{ "blocks-free", PROPERTY_ACCESS( GetVolumeFreeBlockCount ) },
