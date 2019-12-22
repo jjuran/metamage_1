@@ -161,59 +161,63 @@ namespace Genie
 	
 	struct resource_name : vfs::readwrite_property
 	{
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary );
+		
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary );
+	};
+	
+	void resource_name::get( plus::var_string& result, const vfs::node* that, bool binary )
+	{
+		const vfs::node* res_file = that->owner();
+		
+		const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
+		
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
+		
+		const ResSpec resSpec = GetResSpec_from_name( that->name() );
+		
+		ResLoad_false_scope ResLoad_false;
+		
+		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
+		
+		const mac::types::ResInfo resInfo = N::GetResInfo( r );
+		
+		::ReleaseResource( r );
+		
+		result.assign( resInfo.name );
+	}
+	
+	void resource_name::set( const vfs::node* that, const char* begin, const char* end, bool binary )
+	{
+		const size_t length = end - begin;
+		
+		if ( length > 255 )
 		{
-			const vfs::node* res_file = that->owner();
-			
-			const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
-			
-			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
-			
-			const ResSpec resSpec = GetResSpec_from_name( that->name() );
-			
-			ResLoad_false_scope ResLoad_false;
-			
-			const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
-			
-			const mac::types::ResInfo resInfo = N::GetResInfo( r );
-			
-			::ReleaseResource( r );
-			
-			result.assign( resInfo.name );
+			p7::throw_errno( ENAMETOOLONG );
 		}
 		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			const size_t length = end - begin;
-			
-			if ( length > 255 )
-			{
-				p7::throw_errno( ENAMETOOLONG );
-			}
-			
-			Str255 name;
-			
-			name[ 0 ] = length;
-			
-			memcpy( name + 1, begin, length );
-			
-			const vfs::node* res_file = that->owner();
-			
-			const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
-			
-			RdWr_OpenResFile_Scope openResFile( fileSpec );
-			
-			const ResSpec resSpec = GetResSpec_from_name( that->name() );
-			
-			ResLoad_false_scope ResLoad_false;
-			
-			const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
-			
-			N::SetResInfo( r, resSpec.id, name );
-			
-			::ReleaseResource( r );
-		}
-	};
+		Str255 name;
+		
+		name[ 0 ] = length;
+		
+		memcpy( name + 1, begin, length );
+		
+		const vfs::node* res_file = that->owner();
+		
+		const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
+		
+		RdWr_OpenResFile_Scope openResFile( fileSpec );
+		
+		const ResSpec resSpec = GetResSpec_from_name( that->name() );
+		
+		ResLoad_false_scope ResLoad_false;
+		
+		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
+		
+		N::SetResInfo( r, resSpec.id, name );
+		
+		::ReleaseResource( r );
+	}
 	
 	
 	struct rsrc_extra : Mac_Handle_extra
