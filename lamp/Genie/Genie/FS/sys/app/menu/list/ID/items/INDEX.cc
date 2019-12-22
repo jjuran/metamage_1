@@ -127,6 +127,28 @@ namespace Genie
 		return gear::parse_decimal( that->name().c_str() );
 	}
 	
+	struct menu_item_rec
+	{
+		MenuRef menu;
+		int16_t item;
+	};
+	
+	static
+	menu_item_rec get_menu_item( const vfs::node* that )
+	{
+		const MenuRef menu = get_MenuRef( that );
+		const UInt16 index = get_menu_item_index( that );
+		
+		if ( menu == NULL  ||  index == 0 )
+		{
+			p7::throw_errno( EIO );
+		}
+		
+		const menu_item_rec result = { menu, index };
+		
+		return result;
+	}
+	
 	template < class Accessor >
 	struct sys_app_menu_list_ID_items_INDEX_Property : vfs::readwrite_property
 	{
@@ -134,14 +156,10 @@ namespace Genie
 		
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
-			const MenuRef menu = get_MenuRef( that );
-			
-			const UInt16 index = get_menu_item_index( that );
-			
-			if ( menu == NULL  ||  index == 0 )
-			{
-				p7::throw_errno( EIO );
-			}
+			const menu_item_rec menu_item = get_menu_item( that );
+
+			const MenuRef menu = menu_item.menu;
+			const UInt16 index = menu_item.item;
 			
 			typedef typename Accessor::result_type result_type;
 			
@@ -152,14 +170,10 @@ namespace Genie
 		
 		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
-			const MenuRef menu = get_MenuRef( that );
-			
-			const UInt16 index = get_menu_item_index( that );
-			
-			if ( menu == NULL  ||  index == 0 )
-			{
-				p7::throw_errno( EIO );
-			}
+			const menu_item_rec menu_item = get_menu_item( that );
+
+			const MenuRef menu = menu_item.menu;
+			const UInt16 index = menu_item.item;
 			
 			Accessor::Set( menu, index, Accessor::reconstruct::apply( begin, end, binary ) );
 		}
