@@ -49,7 +49,6 @@
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/utf8_text_property.hh"
 #include "Genie/IO/Handle.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
@@ -159,14 +158,8 @@ namespace Genie
 	}
 	
 	
-	struct resource_name : vfs::readwrite_property
-	{
-		static void get( plus::var_string& result, const vfs::node* that, bool binary );
-		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary );
-	};
-	
-	void resource_name::get( plus::var_string& result, const vfs::node* that, bool binary )
+	static
+	void mac_name_get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		const vfs::node* res_file = that->owner();
 		
@@ -187,7 +180,8 @@ namespace Genie
 		result.assign( resInfo.name );
 	}
 	
-	void resource_name::set( const vfs::node* that, const char* begin, const char* end, bool binary )
+	static
+	void mac_name_set( const vfs::node* that, const char* begin, const char* end, bool binary )
 	{
 		const size_t length = end - begin;
 		
@@ -218,6 +212,36 @@ namespace Genie
 		
 		::ReleaseResource( r );
 	}
+	
+	static
+	void utf8_name_get( plus::var_string& result, const vfs::node* that, bool binary )
+	{
+		mac_name_get( result, that, binary );
+		
+		result = plus::utf8_from_mac( result );
+	}
+	
+	static
+	void utf8_name_set( const vfs::node* that, const char* begin, const char* end, bool binary )
+	{
+		plus::string mac_text = plus::mac_from_utf8( begin, end - begin );
+		
+		mac_name_set( that, mac_text.begin(), mac_text.end(), binary );
+	}
+	
+	static const vfs::property_params mac_name_params =
+	{
+		vfs::no_fixed_size,
+		&mac_name_get,
+		&mac_name_set,
+	};
+	
+	static const vfs::property_params utf8_name_params =
+	{
+		vfs::no_fixed_size,
+		&utf8_name_get,
+		&utf8_name_set,
+	};
 	
 	
 	struct rsrc_extra : Mac_Handle_extra
@@ -364,11 +388,8 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		typedef vfs::property_params_factory<                     resource_name   > mac_factory;
-		typedef vfs::property_params_factory< utf8_text_property< resource_name > > utf8_factory;
-		
-		const vfs::property_params& params = mac ? mac_factory ::value
-		                                         : utf8_factory::value;
+		const vfs::property_params& params = mac ? mac_name_params
+		                                         : utf8_name_params;
 		
 		return vfs::new_property( that, name, &params );
 	}
