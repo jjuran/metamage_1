@@ -183,49 +183,49 @@ namespace Genie
 		(vfs::property_set_hook) &text_set,
 	};
 	
-	template < class Accessor >
-	struct sys_app_menu_list_ID_items_INDEX_Property : vfs::readwrite_property
-	{
-		static const int fixed_size = Accessor::fixed_size;
-		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			const menu_item_rec menu_item = get_menu_item( that );
-
-			const MenuRef menu = menu_item.menu;
-			const UInt16 index = menu_item.item;
-			
-			typedef typename Accessor::result_type result_type;
-			
-			const result_type data = Accessor::Get( menu, index );
-			
-			Accessor::deconstruct::apply( result, data, binary );
-		}
-		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			const menu_item_rec menu_item = get_menu_item( that );
-
-			const MenuRef menu = menu_item.menu;
-			const UInt16 index = menu_item.item;
-			
-			Accessor::Set( menu, index, Accessor::reconstruct::apply( begin, end, binary ) );
-		}
-	};
+	#define DEFINE_GETTER( p )  \
+	static void p##_get( plus::var_string& result, const vfs::node* that, bool binary )  \
+	{  \
+		const menu_item_rec menu_item = get_menu_item( that );  \
+		const MenuRef menu = menu_item.menu;                    \
+		const UInt16 index = menu_item.item;                    \
+		const p::result_type data = p::Get( menu, index );      \
+		p::deconstruct::apply( result, data, binary );          \
+	}
 	
+	#define DEFINE_SETTER( p )  \
+	static void p##_set( const vfs::node* that, const char* begin, const char* end, bool binary )  \
+	{  \
+		const menu_item_rec menu_item = get_menu_item( that );               \
+		const MenuRef menu = menu_item.menu;                                 \
+		const UInt16 index = menu_item.item;                                 \
+		p::Set( menu, index, p::reconstruct::apply( begin, end, binary ) );  \
+	}
+	
+	DEFINE_GETTER( menu_item_mark );
+	DEFINE_GETTER( menu_item_key  );
+	DEFINE_GETTER( menu_item_cmd  );
+	
+	DEFINE_SETTER( menu_item_mark );
+	DEFINE_SETTER( menu_item_key  );
+	DEFINE_SETTER( menu_item_cmd  );
+	
+	#define DEFINE_PARAMS( p )  \
+	static const vfs::property_params p##_params = {p::fixed_size, &p##_get, &p##_set}
+	
+	DEFINE_PARAMS( menu_item_mark );
+	DEFINE_PARAMS( menu_item_key  );
+	DEFINE_PARAMS( menu_item_cmd  );
 	
 	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
-	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_menu_list_ID_items_INDEX_Property< access > )
+	#define PROPERTY_ACCESS( access )  PROPERTY( access )
 	
 	const vfs::fixed_mapping sys_app_menu_list_ID_items_INDEX_Mappings[] =
 	{
 		{ ".mac-text", PROPERTY( sys_app_menu_list_ID_items_INDEX_text ) },
 		{ "text",      PROPERTY( sys_app_menu_list_ID_items_INDEX_text ) },
 		
-	#undef PROPERTY
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
-	
 		{ "mark", PROPERTY_ACCESS( menu_item_mark ) },
 		{ "key",  PROPERTY_ACCESS( menu_item_key  ) },
 		{ "cmd",  PROPERTY_ACCESS( menu_item_cmd  ) },
