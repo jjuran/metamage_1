@@ -37,10 +37,6 @@
 // Pedestal
 #include "Pedestal/MenuItemCommands.hh"
 
-// Genie
-#include "Genie/FS/serialize_Str255.hh"
-#include "Genie/FS/utf8_text_property.hh"
-
 
 namespace Genie
 {
@@ -50,22 +46,13 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	struct menu_item_text : serialize_Str255_contents
+	static
+	void set_text( MenuRef menu, short index, const char* begin, const char* end )
 	{
-		static N::Str255 Get( MenuRef menu, UInt16 index )
-		{
-			N::Str255 result;
-			
-			::GetMenuItemText( menu, index, result );
-			
-			return result;
-		}
+		N::Str255 title( begin, end - begin );
 		
-		static void Set( MenuRef menu, UInt16 index, ConstStr255Param title )
-		{
-			::SetMenuItemText( menu, index, title );
-		}
-	};
+		::SetMenuItemText( menu, index, title );
+	}
 	
 	struct menu_item_cmd : plus::serialize_hex< ::OSType >
 	{
@@ -149,6 +136,53 @@ namespace Genie
 		return result;
 	}
 	
+	static
+	void text_get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
+	{
+		const menu_item_rec menu_item = get_menu_item( that );
+		
+		const MenuRef menu = menu_item.menu;
+		const UInt16 index = menu_item.item;
+		
+		Str255 text = { 0 };
+		
+		::GetMenuItemText( menu, index, text );
+		
+		result = text;
+		
+		if ( name[ 0 ] != '.' )
+		{
+			result = plus::utf8_from_mac( result );
+		}
+	}
+	
+	static
+	void text_set( const vfs::node* that, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		const menu_item_rec menu_item = get_menu_item( that );
+		
+		const MenuRef menu = menu_item.menu;
+		const UInt16 index = menu_item.item;
+		
+		if ( name[ 0 ] == '.' )
+		{
+			set_text( menu, index, begin, end );
+		}
+		else
+		{
+			plus::string mac_text = plus::mac_from_utf8( begin, end - begin );
+			
+			set_text( menu, index, mac_text.begin(), mac_text.end() );
+		}
+	}
+	
+	static const vfs::property_params sys_app_menu_list_ID_items_INDEX_text_params =
+	{
+		vfs::no_fixed_size,
+		(vfs::property_get_hook) &text_get,
+		(vfs::property_set_hook) &text_set,
+	};
+	
 	template < class Accessor >
 	struct sys_app_menu_list_ID_items_INDEX_Property : vfs::readwrite_property
 	{
@@ -180,18 +214,18 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_menu_list_ID_items_INDEX_Property< access > )
-	
-	typedef sys_app_menu_list_ID_items_INDEX_Property< menu_item_text > sys_app_menu_list_ID_items_INDEX_text;
 	
 	const vfs::fixed_mapping sys_app_menu_list_ID_items_INDEX_Mappings[] =
 	{
 		{ ".mac-text", PROPERTY( sys_app_menu_list_ID_items_INDEX_text ) },
+		{ "text",      PROPERTY( sys_app_menu_list_ID_items_INDEX_text ) },
 		
-		{ "text", PROPERTY( utf8_text_property< sys_app_menu_list_ID_items_INDEX_text > ) },
-		
+	#undef PROPERTY
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	
 		{ "mark", PROPERTY_ACCESS( menu_item_mark ) },
 		{ "key",  PROPERTY_ACCESS( menu_item_key  ) },
 		{ "cmd",  PROPERTY_ACCESS( menu_item_cmd  ) },
