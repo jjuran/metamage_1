@@ -20,6 +20,7 @@
 #include <sys/stat.h>
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/simple_map.hh"
 
 // poseven
@@ -52,7 +53,6 @@
 #include "relix/api/try_again.hh"
 
 // Genie
-#include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/Views.hh"
 
 
@@ -212,28 +212,55 @@ namespace Genie
 	}
 	
 	
-	struct Button_Title : vfs::readwrite_property
+	struct Button_Title
 	{
-		static void get( plus::var_string& result, const vfs::node* that, bool binary );
+		static void get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name );
 		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary );
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary, const plus::string& name );
 	};
 	
-	void Button_Title::get( plus::var_string& result, const vfs::node* that, bool binary )
+	void Button_Title::get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
 	{
 		result = gButtonMap[ that ].title;
+		
+		if ( name[ 0 ] != '.' )
+		{
+			result = plus::utf8_from_mac( result );
+		}
 	}
 	
-	void Button_Title::set( const vfs::node* that, const char* begin, const char* end, bool binary )
+	static inline
+	void set_button_title( Button_Parameters& params, const char* begin, const char* end )
+	{
+		params.title = N::Str255( begin, end - begin );
+	}
+	
+	void Button_Title::set( const vfs::node* that, const char* begin, const char* end, bool binary, const plus::string& name )
 	{
 		Button_Parameters& params = gButtonMap[ that ];
 		
-		params.title = N::Str255( begin, end - begin );
+		if ( name[ 0 ] == '.' )
+		{
+			set_button_title( params, begin, end );
+		}
+		else
+		{
+			plus::string mac_text = plus::mac_from_utf8( begin, end - begin );
+			
+			set_button_title( params, mac_text.begin(), mac_text.end() );
+		}
 		
 		params.title_changed = true;
 		
 		InvalidateWindowForView( that );
 	}
+	
+	static const vfs::property_params Button_Title_params =
+	{
+		vfs::no_fixed_size,
+		(vfs::property_get_hook) &Button_Title::get,
+		(vfs::property_set_hook) &Button_Title::set,
+	};
 	
 	struct button_stream_extra
 	{
@@ -374,13 +401,12 @@ namespace Genie
 		&button_click_trigger
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ ".mac-title", PROPERTY( Button_Title ) },
-		
-		{ "title", PROPERTY( utf8_text_property< Button_Title > ) },
+		{ "title",      PROPERTY( Button_Title ) },
 		
 		{ "click", &vfs::trigger_factory, (void*) &button_click_trigger_extra },
 		
