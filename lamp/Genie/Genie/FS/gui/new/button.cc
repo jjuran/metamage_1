@@ -214,23 +214,26 @@ namespace Genie
 	
 	struct Button_Title : vfs::readwrite_property
 	{
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			result = gButtonMap[ that ].title;
-		}
+		static void get( plus::var_string& result, const vfs::node* that, bool binary );
 		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			Button_Parameters& params = gButtonMap[ that ];
-			
-			params.title = N::Str255( begin, end - begin );
-			
-			params.title_changed = true;
-			
-			InvalidateWindowForView( that );
-		}
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary );
 	};
 	
+	void Button_Title::get( plus::var_string& result, const vfs::node* that, bool binary )
+	{
+		result = gButtonMap[ that ].title;
+	}
+	
+	void Button_Title::set( const vfs::node* that, const char* begin, const char* end, bool binary )
+	{
+		Button_Parameters& params = gButtonMap[ that ];
+		
+		params.title = N::Str255( begin, end - begin );
+		
+		params.title_changed = true;
+		
+		InvalidateWindowForView( that );
+	}
 	
 	struct button_stream_extra
 	{
