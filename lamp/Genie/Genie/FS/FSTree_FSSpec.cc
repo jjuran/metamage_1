@@ -289,12 +289,18 @@ namespace Genie
 		
 		if ( TARGET_API_MAC_CARBON )
 		{
-			const FSRef location = N::GetProcessBundleLocation( N::CurrentProcess() );
+			const ProcessSerialNumber current = { 0, kCurrentProcess };
 			
-			const FSSpec locationSpec = N::FSMakeFSSpec( location );
+			FSRef location;
+			OSErr err = GetProcessBundleLocation( &current, &location );
 			
-			vRefNum = Mac::FSVolumeRefNum( locationSpec.vRefNum );
-			dirID   = Mac::FSDirID       ( locationSpec.parID   );
+			if ( err == noErr )
+			{
+				const FSSpec locationSpec = N::FSMakeFSSpec( location );
+				
+				vRefNum = Mac::FSVolumeRefNum( locationSpec.vRefNum );
+				dirID   = Mac::FSDirID       ( locationSpec.parID   );
+			}
 		}
 		
 		const bool exists = MacIO::GetCatInfo< FNF_Returns >( cInfo,
