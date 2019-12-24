@@ -25,7 +25,6 @@
 #include "relix/config/mini.hh"
 
 // Genie
-#include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/sys/mac/desktop.hh"
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/event.hh"
