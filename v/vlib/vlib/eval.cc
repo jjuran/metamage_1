@@ -120,7 +120,7 @@ namespace vlib
 	{
 		handler_into handler = 0;  // NULL
 		
-		Target target = make_target( left );
+		Target target = make_target( left, right );
 		
 		if ( const dispatch* methods = target.addr->dispatch_methods() )
 		{

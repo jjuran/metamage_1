@@ -69,6 +69,8 @@ namespace vlib
 				
 				Target target = make_target( container, src );
 				
+				src.spoil( *target.addr );
+				
 				if ( target.type == 0 )  // NULL
 				{
 					/*
@@ -94,6 +96,8 @@ namespace vlib
 		{
 			THROW( "target value isn't a symbol or component thereof" );
 		}
+		
+		src.spoil( dst.sym()->deref_unsafe() );
 		
 		return dst.sym()->target();
 	}
