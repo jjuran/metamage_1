@@ -58,16 +58,16 @@ namespace vlib
 		return result;
 	}
 	
-	Target make_target( const Value& v )
+	Target make_target( const Value& dst, const Value& src )
 	{
-		if ( Expr* expr = v.expr() )
+		if ( Expr* expr = dst.expr() )
 		{
 			if ( expr->op == Op_subscript )
 			{
 				Value& container = expr->left;
 				Value& subscript = expr->right;
 				
-				Target target = make_target( container );
+				Target target = make_target( container, src );
 				
 				if ( target.type == 0 )  // NULL
 				{
@@ -90,12 +90,12 @@ namespace vlib
 			}
 		}
 		
-		if ( ! is_symbol( v ) )
+		if ( ! is_symbol( dst ) )
 		{
 			THROW( "target value isn't a symbol or component thereof" );
 		}
 		
-		return v.sym()->target();
+		return dst.sym()->target();
 	}
 	
 }

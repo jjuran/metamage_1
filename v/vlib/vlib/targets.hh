@@ -8,12 +8,13 @@
 
 // vlib
 #include "vlib/target.hh"
+#include "vlib/value.hh"
 
 
 namespace vlib
 {
 	
-	Target make_target( const Value& v );
+	Target make_target( const Value& dst, const Value& src = NIL );
 	
 }
 
