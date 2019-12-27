@@ -95,11 +95,7 @@ namespace posix
 		const thread_state& state = *thread.get();
 		
 		put( state.function(), param );
-		
-		if ( state.terminated() )
-		{
-			put( state.result(), param );
-		}
+		put( state.result(),   param );
 	}
 	
 	static const refs ref =
