@@ -137,6 +137,18 @@ static char* const* get_options( char** argv )
 }
 
 static
+void define_keyword( const char* name, const Value& v )
+{
+	create_keyword( name ).sym()->assign( v );
+}
+
+static
+void define_keyword( const proc_info& proc )
+{
+	create_keyword( proc.name ).sym()->assign( Proc( proc ) );
+}
+
+static
 Symbol& declare( const char* name )
 {
 	return *globals.declare( name, Symbol_const ).sym();
@@ -262,9 +274,9 @@ int main( int argc, char** argv )
 	define( proc_warn     );
 	define( proc_write    );
 	
-	define( proc_mkpub  );
-	define( proc_sign   );
-	define( proc_verify );
+	define_keyword( proc_mkpub  );
+	define_keyword( proc_sign   );
+	define_keyword( proc_verify );
 	
 	const char* path = "<inline script>";
 	
