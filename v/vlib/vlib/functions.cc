@@ -5,6 +5,9 @@
 
 #include "vlib/functions.hh"
 
+// chars
+#include "encoding/utf8.hh"
+
 // crypto
 #include "md5/md5.hh"
 #include "sha256/sha256.hh"
@@ -302,6 +305,30 @@ namespace vlib
 	}
 	
 	static
+	Value v_uchr( const Value& arg )
+	{
+		using chars::measure_utf8_bytes_for_unicode;
+		using chars::put_code_point_into_utf8;
+		
+		chars::unichar_t uc = arg.number().clipped();
+		
+		const unsigned n = measure_utf8_bytes_for_unicode( uc );
+		
+		if ( n == 0 )
+		{
+			THROW( "invalid Unicode code point" );
+		}
+		
+		plus::string s;
+		
+		char* p = s.reset( n );
+		
+		put_code_point_into_utf8( uc, n, p );
+		
+		return String( s );
+	}
+	
+	static
 	Value v_unbin( const Value& v )
 	{
 		if ( is_0x_numeral( v.string(), 'b' ) )
@@ -368,6 +395,7 @@ namespace vlib
 	const proc_info proc_substr = { "substr", &v_substr, &substr,  pure };
 	const proc_info proc_tail   = { "tail",   &v_tail,   NULL,     pure };
 	const proc_info proc_trans  = { TRANS,    &v_trans,  &trans         };
+	const proc_info proc_uchr   = { "uchr",   &v_uchr,   &u32,     pure };
 	const proc_info proc_unbin  = { "unbin",  &v_unbin,  &string,  pure };
 	const proc_info proc_unhex  = { "unhex",  &v_unhex,  &string,  pure };
 	

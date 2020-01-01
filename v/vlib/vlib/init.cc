@@ -123,6 +123,7 @@ namespace vlib
 		define_keyword( proc_tail   );
 		define_keyword( proc_trans  );
 		define_keyword( proc_typeof );
+		define_keyword( proc_uchr   );
 		define_keyword( proc_unbin  );
 		define_keyword( proc_unhex  );
 		
