@@ -299,6 +299,24 @@ namespace vlib
 	}
 	
 	static
+	Value v_transd( const Value& v )
+	{
+		list_iterator args( v );
+		
+		const Value& arg1 = args.use();
+		const Value& arg2 = args.use();
+		const Value& arg3 = args.get();
+		
+		plus::var_string s      = arg1.string();
+		const plus::string& pat = arg2.string();
+		const plus::string& sub = arg3.string();
+		
+		translate_core( s, pat, sub );
+		
+		return String( s );
+	}
+	
+	static
 	bool is_0x_numeral( const plus::string& s, char x )
 	{
 		return s.size() > 2  &&  s[ 0 ] == '0'  &&  s[ 1 ] == x;
@@ -373,8 +391,11 @@ namespace vlib
 	static const Value string_ref( Op_unary_deref, string );
 	static const Value trans( string_ref, Value( bytes, bytes ) );
 	
+	static const Value transd( string, Value( bytes, bytes ) );
+	
 	#define DESTRUCT  "self-destructing"
 	#define TRANS     "translate"
+	#define TRANSD    "translated"
 	
 	enum
 	{
@@ -395,6 +416,7 @@ namespace vlib
 	const proc_info proc_substr = { "substr", &v_substr, &substr,  pure };
 	const proc_info proc_tail   = { "tail",   &v_tail,   NULL,     pure };
 	const proc_info proc_trans  = { TRANS,    &v_trans,  &trans         };
+	const proc_info proc_transd = { TRANSD,   &v_transd, &transd,  pure };
 	const proc_info proc_uchr   = { "uchr",   &v_uchr,   &u32,     pure };
 	const proc_info proc_unbin  = { "unbin",  &v_unbin,  &string,  pure };
 	const proc_info proc_unhex  = { "unhex",  &v_unhex,  &string,  pure };

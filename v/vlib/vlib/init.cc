@@ -122,6 +122,7 @@ namespace vlib
 		define_keyword( proc_substr );
 		define_keyword( proc_tail   );
 		define_keyword( proc_trans  );
+		define_keyword( proc_transd );
 		define_keyword( proc_typeof );
 		define_keyword( proc_uchr   );
 		define_keyword( proc_unbin  );

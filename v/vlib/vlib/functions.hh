@@ -26,6 +26,7 @@ namespace vlib
 	extern const proc_info proc_substr;
 	extern const proc_info proc_tail;
 	extern const proc_info proc_trans;
+	extern const proc_info proc_transd;
 	extern const proc_info proc_uchr;
 	extern const proc_info proc_unbin;
 	extern const proc_info proc_unhex;
