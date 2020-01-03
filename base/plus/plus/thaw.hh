@@ -13,6 +13,15 @@
 #include "plus/string.hh"
 
 
+#define INLINE_UNLESS_BROKEN inline
+
+#ifdef __GNUC__
+#if __GNUC__ < 3  ||  __GNUC__ == 3 && __GNUC_MINOR__ < 3
+#undef INLINE_UNLESS_BROKEN
+#define INLINE_UNLESS_BROKEN  /* empty */
+#endif
+#endif
+
 namespace plus
 {
 	
@@ -29,7 +38,14 @@ namespace plus
 	};
 	
 	template < class POD >
-	inline
+	
+	/*
+		Inlining this function yields bad codegen in Apple's g++ 3.1, at least.
+		It appears that assign_pod_from_stream() works correctly, but `result`
+		doesn't get populated.
+	*/
+	
+	INLINE_UNLESS_BROKEN
 	POD thaw_pod< POD >::apply( const char* begin, const char* end )
 	{
 		POD result;
@@ -58,5 +74,7 @@ namespace plus
 	};
 	
 }
+
+#undef INLINE_UNLESS_BROKEN
 
 #endif
