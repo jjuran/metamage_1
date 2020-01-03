@@ -25,15 +25,19 @@ namespace plus
 	{
 		typedef POD result_type;
 		
-		static POD apply( const char* begin, const char* end )
-		{
-			POD result;
-			
-			assign_pod_from_stream( &result, sizeof result, begin, end );
-			
-			return result;
-		}
+		static POD apply( const char* begin, const char* end );
 	};
+	
+	template < class POD >
+	inline
+	POD thaw_pod< POD >::apply( const char* begin, const char* end )
+	{
+		POD result;
+		
+		assign_pod_from_stream( &result, sizeof result, begin, end );
+		
+		return result;
+	}
 	
 	template <>
 	struct thaw_pod< bool >
