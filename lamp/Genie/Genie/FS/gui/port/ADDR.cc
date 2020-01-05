@@ -82,6 +82,15 @@
 #include "Genie/FS/subview.hh"
 
 
+#ifndef CONFIG_COMPOSITING
+#ifdef MAC_OS_X_VERSION_10_2
+#define CONFIG_COMPOSITING  1
+#else
+#define CONFIG_COMPOSITING  0
+#endif
+#endif
+
+
 namespace Genie
 {
 	
@@ -121,7 +130,7 @@ namespace Genie
 		bool                itHasCloseBox;
 		bool                itIsLocked;
 		
-	#ifdef MAC_OS_X_VERSION_10_2
+	#if CONFIG_COMPOSITING
 		
 		bool                it_is_compositing;
 		
@@ -151,7 +160,7 @@ namespace Genie
 		                     itHasCloseBox( true ),
 		                     itIsLocked(),
 		                     
-		                 #ifdef MAC_OS_X_VERSION_10_2
+		                 #if CONFIG_COMPOSITING
 		                     
 		                     it_is_compositing(),
 		                     
@@ -388,7 +397,7 @@ namespace Genie
 		
 	#endif
 		
-	#ifdef MAC_OS_X_VERSION_10_2
+	#if CONFIG_COMPOSITING
 		
 		if ( params.it_is_compositing )
 		{
@@ -1019,7 +1028,7 @@ namespace Genie
 			return params.itHasCloseBox;
 		}
 		
-	#ifdef MAC_OS_X_VERSION_10_2
+	#if CONFIG_COMPOSITING
 		
 		bool& Compositing( WindowParameters& params )
 		{
@@ -1279,7 +1288,7 @@ namespace Genie
 	DEFINE_CONSTANT_PARAMS( ProcID      );
 	DEFINE_CONSTANT_PARAMS( CloseBox    );
 	
-#ifdef MAC_OS_X_VERSION_10_2
+#if CONFIG_COMPOSITING
 	
 	DEFINE_GETTER( Compositing );
 	DEFINE_SETTER( Compositing );
@@ -1324,7 +1333,7 @@ namespace Genie
 		{ ".~procid", CONSTANT( ProcID_Property   ) },
 		{ ".~goaway", CONSTANT( CloseBox_Property ) },
 		
-	#ifdef MAC_OS_X_VERSION_10_2
+	#if CONFIG_COMPOSITING
 		
 		{ "compositing",   CONSTANT( Compositing_Property ) },
 		{ ".~compositing", CONSTANT( Compositing_Property ) },
