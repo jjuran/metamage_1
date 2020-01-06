@@ -171,7 +171,6 @@ namespace Genie
 	typedef TextInvalidating_View_Property< plus::serialize_bool, TextEditParameters::Secret >  Secret_Property;
 	
 	typedef View_Property< plus::serialize_bool, TextEditParameters::Singular >  Singular_Property;
-	typedef View_Property< plus::serialize_bool, TextEditParameters::Wrapped  >  Wrapped_Property;
 	
 	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Width  >  Width_Property;
 	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Height >  Height_Property;
@@ -195,10 +194,6 @@ namespace Genie
 		{ "secret", PROPERTY( Secret_Property ) },
 		
 		{ "singular", PROPERTY( Singular_Property ) },
-		
-		//{ "wrapped", PROPERTY( Wrapped_Property ) },
-		
-		// unlocked-text
 		
 		{ "width",  PROPERTY( Width_Property  ) },
 		{ "height", PROPERTY( Height_Property ) },
