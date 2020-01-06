@@ -333,8 +333,15 @@ namespace Pedestal
 	static
 	n::owned< WindowRef > NewAboutBox()
 	{
+		/*
+			Mac OS X 10.2 supports compositing mode, but it has some issues,
+			which we'll avoid by not using it.  In particular, our Quartz-only
+			code path relies on HIThemeDrawTextBox(), which isn't available
+			until 10.3.
+		*/
+		
 		const Mac::WindowAttributes attrs = Mac::kWindowCloseBoxAttribute
-		                                #ifdef MAC_OS_X_VERSION_10_2
+		                                #ifdef MAC_OS_X_VERSION_10_3  // not 10.2
 		                                  | Mac::kWindowCompositingAttribute
 		                                #endif
 		                                #ifdef MAC_OS_X_VERSION_10_3
