@@ -290,17 +290,41 @@ namespace Genie
 		
 	}
 	
-	typedef View_Property< plus::serialize_bool, Wrapped   > Wrapped_Property;
-	typedef View_Property< plus::serialize_bool, Disabling > Disabling_Property;
+	typedef plus::serialize_bool Wrapped_Property;
+	typedef plus::serialize_bool Disabling_Property;
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	#define DEFINE_GETTER( p )  \
+	static void p##_get( plus::var_string& result, const vfs::node* that, bool binary )  \
+	{  \
+		p##_Property::deconstruct::apply( result, p( that ), binary );  \
+	}
+	
+	#define DEFINE_SETTER( p )  \
+	static void p##_set( const vfs::node* that, const char* begin, const char* end, bool binary )  \
+	{  \
+		p( that ) = p##_Property::reconstruct::apply( begin, end, binary );  \
+	}
+	
+	#define DEFINE_PARAMS( p )  \
+	static const vfs::property_params p##_params = {p##_Property::fixed_size, &p##_get, &p##_set}
+	
+	DEFINE_GETTER( Wrapped   );
+	DEFINE_GETTER( Disabling );
+	
+	DEFINE_SETTER( Wrapped   );
+	DEFINE_SETTER( Disabling );
+	
+	DEFINE_PARAMS( Wrapped   );
+	DEFINE_PARAMS( Disabling );
+	
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ "text", &caption_text_factory },
 		
-		{ "wrapped",   PROPERTY( Wrapped_Property   ) },
-		{ "disabling", PROPERTY( Disabling_Property ) },
+		{ "wrapped",   PROPERTY( Wrapped   ) },
+		{ "disabling", PROPERTY( Disabling ) },
 		
 		{ NULL, NULL }
 	};
