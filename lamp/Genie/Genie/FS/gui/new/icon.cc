@@ -40,7 +40,7 @@ namespace Genie
 		boost::intrusive_ptr< IconData >  data;
 		IconAlignmentType                 align;
 		IconTransformType                 xform;
-		char                              label;
+		SInt16                            label;
 		bool                              selected;
 		bool                              disabling;
 		
@@ -139,7 +139,7 @@ namespace Genie
 			return gIconMap[ view ].xform;
 		}
 		
-		char& Label( const vfs::node* view )
+		SInt16& Label( const vfs::node* view )
 		{
 			return gIconMap[ view ].label;
 		}
@@ -176,7 +176,7 @@ namespace Genie
 	typedef View_Property< plus::serialize_unsigned< IconAlignmentType >, Alignment >  Alignment_Property;
 	typedef View_Property< plus::serialize_unsigned< IconTransformType >, Transform >  Transform_Property;
 	
-	typedef View_Property< plus::serialize_unsigned< char >, Label >  Label_Property;
+	typedef View_Property< plus::serialize_unsigned< SInt16 >, Label >  Label_Property;
 	
 	typedef View_Property< plus::serialize_bool, Selected  >  Selected_Property;
 	typedef View_Property< plus::serialize_bool, Disabling >  Disabling_Property;
