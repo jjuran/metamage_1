@@ -126,35 +126,85 @@ namespace Genie
 	}
 	
 	
-	namespace
+	static
+	short& int_field( const vfs::node* view, const plus::string& name )
 	{
+		Icon_Parameters& params = gIconMap[ view ];
 		
-		IconAlignmentType& Alignment( const vfs::node* view )
-		{
-			return gIconMap[ view ].align;
-		}
+		const char c = name[ 0 ];
 		
-		IconTransformType& Transform( const vfs::node* view )
-		{
-			return gIconMap[ view ].xform;
-		}
+		short& value = c == 'a' ? params.align
+		             : c == 'x' ? params.xform
+		             : c == 'l' ? params.label
+		             :            *(short*) 0;
 		
-		SInt16& Label( const vfs::node* view )
-		{
-			return gIconMap[ view ].label;
-		}
-		
-		bool& Selected( const vfs::node* view )
-		{
-			return gIconMap[ view ].selected;
-		}
-		
-		bool& Disabling( const vfs::node* view )
-		{
-			return gIconMap[ view ].disabling;
-		}
-		
+		return value;
 	}
+	
+	static
+	bool& flag_field( const vfs::node* view, const plus::string& name )
+	{
+		Icon_Parameters& params = gIconMap[ view ];
+		
+		const char c = name[ 0 ];
+		
+		bool& value = c == 'd' ? params.disabling
+		                       : params.selected;
+		
+		return value;
+	}
+	
+	typedef plus::serialize_unsigned< short > serialize_int;
+	
+	static
+	void int_get( plus::var_string& result, const vfs::node* view, bool binary, const plus::string& name )
+	{
+		short value = int_field( view, name );
+		
+		serialize_int::deconstruct::apply( result, value, binary );
+	}
+	
+	static
+	void int_set( const vfs::node* view, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		short& value = int_field( view, name );
+		
+		value = serialize_int::reconstruct::apply( begin, end, binary );
+		
+		InvalidateWindowForView( view );
+	}
+	
+	static const vfs::property_params icon_int_params =
+	{
+		serialize_int::fixed_size,
+		(vfs::property_get_hook) &int_get,
+		(vfs::property_set_hook) &int_set,
+	};
+	
+	static
+	void flag_get( plus::var_string& result, const vfs::node* view, bool binary, const plus::string& name )
+	{
+		bool value = flag_field( view, name );
+		
+		plus::serialize_bool::deconstruct::apply( result, value, binary );
+	}
+	
+	static
+	void flag_set( const vfs::node* view, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		bool& value = flag_field( view, name );
+		
+		value = plus::serialize_bool::reconstruct::apply( begin, end, binary );
+		
+		InvalidateWindowForView( view );
+	}
+	
+	static const vfs::property_params icon_flag_params =
+	{
+		plus::serialize_bool::fixed_size,
+		(vfs::property_get_hook) &flag_get,
+		(vfs::property_set_hook) &flag_set,
+	};
 	
 	static vfs::node_ptr Data_Factory( const vfs::node*     parent,
 	                                   const plus::string&  name,
@@ -171,25 +221,17 @@ namespace Genie
 	}
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
-	
-	typedef View_Property< plus::serialize_unsigned< IconAlignmentType >, Alignment >  Alignment_Property;
-	typedef View_Property< plus::serialize_unsigned< IconTransformType >, Transform >  Transform_Property;
-	
-	typedef View_Property< plus::serialize_unsigned< SInt16 >, Label >  Label_Property;
-	
-	typedef View_Property< plus::serialize_bool, Selected  >  Selected_Property;
-	typedef View_Property< plus::serialize_bool, Disabling >  Disabling_Property;
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ "data", &Data_Factory },
 		
-		{ "align",     PROPERTY( Alignment_Property ) },
-		{ "xform",     PROPERTY( Transform_Property ) },
-		{ "label",     PROPERTY( Label_Property     ) },
-		{ "selected",  PROPERTY( Selected_Property  ) },
-		{ "disabling", PROPERTY( Disabling_Property ) },
+		{ "align",     PROPERTY( icon_int  ) },
+		{ "xform",     PROPERTY( icon_int  ) },
+		{ "label",     PROPERTY( icon_int  ) },
+		{ "selected",  PROPERTY( icon_flag ) },
+		{ "disabling", PROPERTY( icon_flag ) },
 		
 		{ NULL, NULL }
 	};
