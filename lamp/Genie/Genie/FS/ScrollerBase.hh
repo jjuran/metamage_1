@@ -15,6 +15,13 @@
 #include "vfs/node_fwd.hh"
 
 
+namespace vfs
+{
+	
+	struct property_params;
+	
+}
+
 namespace Genie
 {
 	
@@ -141,6 +148,8 @@ namespace Genie
 			
 			void Draw( const Rect& bounds, bool erasing );
 	};
+	
+	extern const vfs::property_params scroller_setting_params;
 	
 }
 
