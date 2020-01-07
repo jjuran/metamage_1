@@ -602,4 +602,19 @@ namespace Genie
 		}
 	}
 	
+	static
+	void scroll_set( const vfs::node* that, const char* begin, const char* end, bool binary )
+	{
+		TextEditParameters::Get( that ).itHasChangedAttributes = true;
+		
+		scroller_setting_params.set( that, begin, end, binary );
+	}
+	
+	const vfs::property_params textedit_scroll_params =
+	{
+		scroller_setting_params.size,
+		scroller_setting_params.get,
+		&scroll_set,
+	};
+	
 }

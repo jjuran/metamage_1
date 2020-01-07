@@ -871,24 +871,9 @@ namespace Genie
 	}
 	
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
-	struct Console_View_Property : public View_Property< Serialize, Access >
-	{
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			TextEditParameters::Get( that ).itHasChangedAttributes = true;
-			
-			View_Property< Serialize, Access >::set( that, begin, end, binary );
-		}
-	};
-	
-	
 	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	typedef Const_View_Property< plus::serialize_bool, TextEditParameters::Active >  Active_Property;
-	
-	typedef Console_View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset >  HOffset_Property;
-	typedef Console_View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset >  VOffset_Property;
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{
@@ -903,8 +888,8 @@ namespace Genie
 		{ "width",  &vfs::new_property, &scroller_setting_params },
 		{ "height", &vfs::new_property, &scroller_setting_params },
 		
-		{ "x", PROPERTY( HOffset_Property ) },
-		{ "y", PROPERTY( VOffset_Property ) },
+		{ "x", &vfs::new_property, &textedit_scroll_params },
+		{ "y", &vfs::new_property, &textedit_scroll_params },
 		
 		{ NULL, NULL }
 	};
