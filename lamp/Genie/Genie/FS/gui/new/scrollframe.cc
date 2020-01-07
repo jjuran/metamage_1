@@ -365,21 +365,6 @@ namespace Genie
 	};
 	
 	
-	namespace
-	{
-		
-		bool& Vertical( const vfs::node* view )
-		{
-			return gScrollFrameParametersMap[ view ].itHasVertical;
-		}
-		
-		bool& Horizontal( const vfs::node* view )
-		{
-			return gScrollFrameParametersMap[ view ].itHasHorizontal;
-		}
-		
-	}
-	
 	static
 	Ped::View* get_view( const vfs::node* key, const plus::string& name )
 	{
@@ -398,10 +383,40 @@ namespace Genie
 		&set_view,
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	typedef plus::serialize_bool serialize;
 	
-	typedef View_Property< plus::serialize_bool, Horizontal >  Horizontal_Property;
-	typedef View_Property< plus::serialize_bool, Vertical   >  Vertical_Property;
+	static
+	void get( plus::var_string& result, const vfs::node* view, bool binary, const plus::string& name )
+	{
+		ScrollFrameParameters& params = gScrollFrameParametersMap[ view ];
+		
+		const bool has = name[ 0 ] == 'h' ? params.itHasHorizontal
+		                                  : params.itHasVertical;
+		
+		serialize::deconstruct::apply( result, has, binary );
+	}
+	
+	static
+	void set( const vfs::node* view, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		ScrollFrameParameters& params = gScrollFrameParametersMap[ view ];
+		
+		bool& has = name[ 0 ] == 'h' ? params.itHasHorizontal
+		                             : params.itHasVertical;
+		
+		has = serialize::reconstruct::apply( begin, end, binary );
+		
+		InvalidateWindowForView( view );
+	}
+	
+	static const vfs::property_params has_scrollbar_params =
+	{
+		serialize::fixed_size,
+		(vfs::property_get_hook) &get,
+		(vfs::property_set_hook) &set,
+	};
+	
+	#define PROPERTY( prop )  &vfs::new_property, &has_scrollbar_params
 	
 	static vfs::node_ptr target_factory( const vfs::node*     parent,
 	                                     const plus::string&  name,
