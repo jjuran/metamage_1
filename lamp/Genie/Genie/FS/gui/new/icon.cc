@@ -28,13 +28,6 @@
 #include "Genie/FS/Views.hh"
 
 
-namespace Nitrogen
-{
-	
-	static const IconTransformType kTransformDisabled = IconTransformType( ::kTransformDisabled );
-	
-}
-
 namespace Genie
 {
 	
@@ -45,15 +38,15 @@ namespace Genie
 	struct Icon_Parameters
 	{
 		boost::intrusive_ptr< IconData >  data;
-		Nitrogen::IconAlignmentType       align;
-		Nitrogen::IconTransformType       xform;
+		IconAlignmentType                 align;
+		IconTransformType                 xform;
 		char                              label;
 		bool                              selected;
 		bool                              disabling;
 		
 		Icon_Parameters() : align(), xform(), label(), selected(), disabling()
 		{
-			xform = N::kTransformDisabled;
+			xform = kTransformDisabled;
 		}
 	};
 	
@@ -79,15 +72,13 @@ namespace Genie
 			void Activate( bool activating );
 	};
 	
-	static inline Nitrogen::IconTransformType
+	static inline IconTransformType
 	//
 	CombinedIconTransforms( const Icon_Parameters& params )
 	{
-		typedef Nitrogen::IconTransformType Type;
-		
-		Type state    = Type( params.xform                         );
-		Type label    = Type( params.label    * kTransformLabel1   );
-		Type selected = Type( params.selected * kTransformSelected );
+		IconTransformType state    = params.xform;
+		IconTransformType label    = params.label    * kTransformLabel1;
+		IconTransformType selected = params.selected * kTransformSelected;
 		
 		return state | label | selected;
 	}
@@ -115,8 +106,8 @@ namespace Genie
 		
 		if ( params.disabling )
 		{
-			params.xform = activating ? N::kTransformNone
-			                          : N::kTransformDisabled;
+			params.xform = activating ? kTransformNone
+			                          : kTransformDisabled;
 			
 			N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 		}
@@ -138,12 +129,12 @@ namespace Genie
 	namespace
 	{
 		
-		N::IconAlignmentType& Alignment( const vfs::node* view )
+		IconAlignmentType& Alignment( const vfs::node* view )
 		{
 			return gIconMap[ view ].align;
 		}
 		
-		N::IconTransformType& Transform( const vfs::node* view )
+		IconTransformType& Transform( const vfs::node* view )
 		{
 			return gIconMap[ view ].xform;
 		}
@@ -182,8 +173,8 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
-	typedef View_Property< plus::serialize_unsigned< N::IconAlignmentType >, Alignment >  Alignment_Property;
-	typedef View_Property< plus::serialize_unsigned< N::IconTransformType >, Transform >  Transform_Property;
+	typedef View_Property< plus::serialize_unsigned< IconAlignmentType >, Alignment >  Alignment_Property;
+	typedef View_Property< plus::serialize_unsigned< IconTransformType >, Transform >  Transform_Property;
 	
 	typedef View_Property< plus::serialize_unsigned< char >, Label >  Label_Property;
 	
