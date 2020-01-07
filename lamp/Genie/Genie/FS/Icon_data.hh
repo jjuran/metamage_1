@@ -56,9 +56,9 @@ namespace Genie
 			
 			void SetIconSuite( nucleus::owned< Nitrogen::IconSuiteRef > suite );
 			
-			void Plot( const Rect&                  area,
-			           Nitrogen::IconAlignmentType  align,
-			           Nitrogen::IconTransformType  transform );
+			void Plot( const Rect&        area,
+			           IconAlignmentType  align,
+			           IconTransformType  transform );
 			
 			size_t GetSize() const;
 			

@@ -162,9 +162,9 @@ namespace Genie
 		itIsPOD = false;
 	}
 	
-	void IconData::Plot( const Rect&           area,
-	                     N::IconAlignmentType  align,
-	                     N::IconTransformType  transform )
+	void IconData::Plot( const Rect&        area,
+	                     IconAlignmentType  align,
+	                     IconTransformType  transform )
 	{
 		OSErr err;
 		
