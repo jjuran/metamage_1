@@ -887,9 +887,6 @@ namespace Genie
 	
 	typedef Const_View_Property< plus::serialize_bool, TextEditParameters::Active >  Active_Property;
 	
-	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Width  >  Width_Property;
-	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Height >  Height_Property;
-	
 	typedef Console_View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset >  HOffset_Property;
 	typedef Console_View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset >  VOffset_Property;
 	
@@ -903,8 +900,8 @@ namespace Genie
 		
 		{ "active", PROPERTY( Active_Property ) },
 		
-		{ "width",  PROPERTY( Width_Property  ) },
-		{ "height", PROPERTY( Height_Property ) },
+		{ "width",  &vfs::new_property, &scroller_setting_params },
+		{ "height", &vfs::new_property, &scroller_setting_params },
 		
 		{ "x", PROPERTY( HOffset_Property ) },
 		{ "y", PROPERTY( VOffset_Property ) },

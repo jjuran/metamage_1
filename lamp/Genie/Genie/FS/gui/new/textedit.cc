@@ -172,9 +172,6 @@ namespace Genie
 	
 	typedef View_Property< plus::serialize_bool, TextEditParameters::Singular >  Singular_Property;
 	
-	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Width  >  Width_Property;
-	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Height >  Height_Property;
-	
 	typedef TE_View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset >  HOffset_Property;
 	typedef TE_View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset >  VOffset_Property;
 	
@@ -195,8 +192,8 @@ namespace Genie
 		
 		{ "singular", PROPERTY( Singular_Property ) },
 		
-		{ "width",  PROPERTY( Width_Property  ) },
-		{ "height", PROPERTY( Height_Property ) },
+		{ "width",  &vfs::new_property, &scroller_setting_params },
+		{ "height", &vfs::new_property, &scroller_setting_params },
 		
 		{ "x", PROPERTY( HOffset_Property ) },
 		{ "y", PROPERTY( VOffset_Property ) },
