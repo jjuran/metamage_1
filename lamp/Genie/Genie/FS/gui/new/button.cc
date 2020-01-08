@@ -22,6 +22,7 @@
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/simple_map.hh"
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
