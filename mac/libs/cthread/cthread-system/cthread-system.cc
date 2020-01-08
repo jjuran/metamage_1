@@ -34,6 +34,16 @@
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 
+#ifdef __APPLE__
+#ifndef MAC_OS_X_VERSION_10_3
+/*
+	In Mac OS X 10.2, GetDefaultThreadStackSize() emits console log noise and
+	returns an error, so just don't call it at all.
+*/
+#define GetDefaultThreadStackSize( style, size_out )  0
+#endif
+#endif
+
 namespace cthread {
 namespace system  {
 	
@@ -103,8 +113,7 @@ namespace system  {
 		
 		::Size size = 0;
 		
-		// Jaguar returns paramErr
-		OSStatus err = ::GetDefaultThreadStackSize( kCooperativeThread, &size );
+		OSStatus err = GetDefaultThreadStackSize( kCooperativeThread, &size );
 		
 		if ( size > stack_size )
 		{
