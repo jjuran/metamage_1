@@ -170,7 +170,7 @@ namespace Genie
 		
 		{ "gate", &gate_factory },
 		
-		{ "selection", PROPERTY( Selection_Property ) },
+		{ "selection", &vfs::new_property, &textedit_selection_params },
 		
 		{ "active", PROPERTY( Active_Property ) },
 		

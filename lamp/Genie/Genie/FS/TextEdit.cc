@@ -617,4 +617,11 @@ namespace Genie
 		&scroll_set,
 	};
 	
+	const vfs::property_params textedit_selection_params =
+	{
+		vfs::no_fixed_size,
+		&Selection_Property::get,
+		&Selection_Property::set,
+	};
+	
 }

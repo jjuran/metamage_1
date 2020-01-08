@@ -176,6 +176,7 @@ namespace Genie
 	};
 	
 	extern const vfs::property_params textedit_scroll_params;
+	extern const vfs::property_params textedit_selection_params;
 	
 }
 

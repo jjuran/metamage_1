@@ -881,7 +881,7 @@ namespace Genie
 		
 		{ "text", &New_FSTree_TextEdit_text },
 		
-		{ "selection", PROPERTY( Selection_Property ) },
+		{ "selection", &vfs::new_property, &textedit_selection_params },
 		
 		{ "active", PROPERTY( Active_Property ) },
 		
