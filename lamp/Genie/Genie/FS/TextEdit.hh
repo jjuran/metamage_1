@@ -175,6 +175,7 @@ namespace Genie
 			void Draw( const Rect& bounds, bool erasing );
 	};
 	
+	extern const vfs::property_params textedit_flag_params;
 	extern const vfs::property_params textedit_scroll_params;
 	extern const vfs::property_params textedit_selection_params;
 	

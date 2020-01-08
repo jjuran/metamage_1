@@ -871,10 +871,6 @@ namespace Genie
 	}
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
-	
-	typedef Const_View_Property< plus::serialize_bool, TextEditParameters::Active >  Active_Property;
-	
 	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ "tty", &console_tty_factory },
@@ -883,7 +879,7 @@ namespace Genie
 		
 		{ "selection", &vfs::new_property, &textedit_selection_params },
 		
-		{ "active", PROPERTY( Active_Property ) },
+		{ "active", &vfs::new_property, &textedit_flag_params },
 		
 		{ "width",  &vfs::new_property, &scroller_setting_params },
 		{ "height", &vfs::new_property, &scroller_setting_params },

@@ -136,30 +136,11 @@ namespace Genie
 		return new vfs::node( parent, name, S_IFREG | 0400, &textedit_gate_methods );
 	}
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
-	struct TextInvalidating_View_Property : public View_Property< Serialize, Access >
-	{
-		static void Set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			TextEditParameters::Get( that ).itsValidLength = 0;
-			
-			View_Property< Serialize, Access >::Set( that, begin, end, binary );
-		}
-	};
-	
 	static const vfs::trigger_extra textedit_lock_trigger_extra =
 	{
 		&textedit_lock_trigger
 	};
 	
-	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
-	
-	typedef Const_View_Property< plus::serialize_bool, TextEditParameters::Active >  Active_Property;
-	
-	typedef TextInvalidating_View_Property< plus::serialize_bool, TextEditParameters::Secret >  Secret_Property;
-	
-	typedef View_Property< plus::serialize_bool, TextEditParameters::Singular >  Singular_Property;
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{
@@ -172,11 +153,9 @@ namespace Genie
 		
 		{ "selection", &vfs::new_property, &textedit_selection_params },
 		
-		{ "active", PROPERTY( Active_Property ) },
-		
-		{ "secret", PROPERTY( Secret_Property ) },
-		
-		{ "singular", PROPERTY( Singular_Property ) },
+		{ "active",   &vfs::new_property, &textedit_flag_params },
+		{ "secret",   &vfs::new_property, &textedit_flag_params },
+		{ "singular", &vfs::new_property, &textedit_flag_params },
 		
 		{ "width",  &vfs::new_property, &scroller_setting_params },
 		{ "height", &vfs::new_property, &scroller_setting_params },
