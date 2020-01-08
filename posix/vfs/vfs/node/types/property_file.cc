@@ -31,6 +31,11 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
+	typedef void (*named_property_get_hook)( plus::var_string&    out,
+	                                         const node*          that,
+	                                         bool                 binary,
+	                                         const plus::string&  name );
+	
 	static filehandle_ptr open_for_read( const node& that, int flags, bool binary )
 	{
 		property_params& extra = *(property_params*) that.extra();
@@ -44,7 +49,9 @@ namespace vfs
 		
 		try
 		{
-			extra.get( data, that.owner(), binary );
+			named_property_get_hook get = (named_property_get_hook) extra.get;
+			
+			get( data, that.owner(), binary, that.name() );
 			
 			if ( !binary )
 			{
@@ -116,7 +123,9 @@ namespace vfs
 		
 		try
 		{
-			extra.get( data, that->owner(), binary );
+			named_property_get_hook get = (named_property_get_hook) extra.get;
+			
+			get( data, that->owner(), binary, that->name() );
 		}
 		catch ( const undefined_property& )
 		{
@@ -138,11 +147,14 @@ namespace vfs
 	};
 	
 	
-	static mode_t get_property_filemode( property_get_hook  get_hook,
-	                                     property_set_hook  set_hook,
-	                                     const node*        parent )
+	static mode_t get_property_filemode( property_get_hook    get_hook,
+	                                     property_set_hook    set_hook,
+	                                     const node*          parent,
+	                                     const plus::string&  name )
 	{
 		mode_t result = S_IFREG | (set_hook ? S_IWUSR : 0);
+		
+		named_property_get_hook get = (named_property_get_hook) get_hook;
 		
 		if ( get_hook != NULL )
 		{
@@ -153,7 +165,7 @@ namespace vfs
 				
 				plus::var_string data;
 				
-				get_hook( data, parent, binary_vs_text );
+				get( data, parent, binary_vs_text, name );
 				
 				result |= 0444;  // all-readable
 			}
@@ -174,7 +186,8 @@ namespace vfs
 		
 		const mode_t mode = get_property_filemode( params.get,
 		                                           params.set,
-		                                           parent );
+		                                           parent,
+		                                           name );
 		
 		node* result = new node( parent,
 		                         name,
