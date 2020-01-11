@@ -36,16 +36,6 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	static NONCARBON_INLINE void ResizedWindow( WindowRef window );
-	
-	static
-	void ResizeWindow( WindowRef window, Point newSize )
-	{
-		N::SizeWindow( window, newSize.h, newSize.v, true );
-		
-		ResizedWindow( window );
-	}
-	
 	static NONCARBON_INLINE
 	void ResizedWindow( WindowRef window )
 	{
@@ -67,6 +57,14 @@ namespace Pedestal
 		{
 			proc( window );
 		}
+	}
+	
+	static
+	void ResizeWindow( WindowRef window, Point newSize )
+	{
+		N::SizeWindow( window, newSize.h, newSize.v, true );
+		
+		ResizedWindow( window );
 	}
 	
 	void ResizingWindow( WindowRef window, Point start )
