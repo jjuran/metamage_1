@@ -632,6 +632,14 @@ OSErr GetFCBInfo_call( FCBPBRec* pb : __A0 )
 }
 
 static
+OSErr OpenDF_call( IOParam* pb : __A0 )
+{
+	ERROR = "OpenDF is unimplemented";
+	
+	return paramErr;
+}
+
+static
 void unimplemented_call( short trap_word : __D1, short selector : __D0 )
 {
 	const char* FSDispatch = "HFSDispatch" + !(trap_word & kHFSFlagMask);
@@ -649,6 +657,9 @@ asm void FSDispatch_patch( short trap_word : __D1, short selector : __D0 )
 	CMPI.W   #0x0008,D0
 	BEQ      dispatch_GetFCBInfo
 	
+	CMPI.W   #0x001A,D0
+	BEQ      dispatch_OpenDF
+	
 	JMP      unimplemented_call
 	
 dispatch_GetWDInfo:
@@ -656,4 +667,7 @@ dispatch_GetWDInfo:
 	
 dispatch_GetFCBInfo:
 	JMP      GetFCBInfo_call
+	
+dispatch_OpenDF:
+	JMP      OpenDF_call
 }
