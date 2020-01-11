@@ -1100,14 +1100,9 @@ OSErr OpenDF_call( short trap_word : __D1, HFileParam* pb : __A0 )
 		INFO = "-> ioNamePtr: \"", CSTR( pb->ioNamePtr ), "\"";
 	}
 	
-	ERROR = "OpenDF is unimplemented";
+	trap_word = 0xA000;
 	
-	/*
-		If we return paramErr, then Lemmings will try Open.  But if we
-		return extFSErr, it won't, reporting an error instead.  Go figure.
-	*/
-	
-	return pb->ioResult = paramErr;
+	return open_fork( trap_word, pb );
 }
 
 static
