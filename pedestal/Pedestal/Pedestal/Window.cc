@@ -29,6 +29,7 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+	static
 	void ResizeWindow( WindowRef window, Point newSize )
 	{
 		N::SizeWindow( window, newSize.h, newSize.v, true );
@@ -50,6 +51,21 @@ namespace Pedestal
 		if ( WindowResized_proc proc = get_window_resized_proc( window ) )
 		{
 			proc( window );
+		}
+	}
+	
+	void ResizingWindow( WindowRef window, Point start )
+	{
+		Rect sizeRect = { 30, 50, 10000, 10000 };
+		
+		Point grown = N::GrowWindow( window, start, sizeRect );
+		
+		if ( grown.h != 0  ||  grown.v != 0 )
+		{
+			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
+			{
+				ResizeWindow( window, grown );
+			}
 		}
 	}
 	

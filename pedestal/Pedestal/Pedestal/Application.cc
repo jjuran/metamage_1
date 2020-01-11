@@ -377,19 +377,10 @@ namespace Pedestal
 		}
 	}
 	
-	static void RespondToGrow( const EventRecord& event, WindowRef window )
+	static inline
+	void RespondToGrow( const EventRecord& event, WindowRef window )
 	{
-		Rect sizeRect = { 30, 50, 10000, 10000 };
-		
-		Point grown = N::GrowWindow( window, event.where, sizeRect );
-		
-		if ( grown.h != 0  ||  grown.v != 0 )
-		{
-			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
-			{
-				ResizeWindow( window, grown );
-			}
-		}
+		ResizingWindow( window, event.where );
 	}
 	
 	static void RespondToGoAway( const EventRecord& event, WindowRef window )

@@ -20,7 +20,7 @@
 namespace Pedestal
 {
 	
-	void ResizeWindow( WindowRef window, Point newSize );
+	void ResizingWindow( WindowRef window, Point start );
 	
 	
 	void SetWindowSize( WindowRef window, Point size );
