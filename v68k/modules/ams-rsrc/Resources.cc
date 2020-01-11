@@ -315,6 +315,8 @@ short OpenResFile_handler( ConstStr255Param name : __A0 )
 	
 	TopMapHndl = h;
 	
+	ResErr = noErr;
+	
 	return CurMap = refNum;
 	
 close_and_bail:
@@ -483,6 +485,8 @@ Handle new_res_handle( RsrcMapHandle rsrc_map, rsrc_header& rsrc, ResType type )
 			return NULL;
 		}
 	}
+	
+	ResErr = noErr;
 	
 	return rsrc.handle;
 }
