@@ -59,6 +59,7 @@ enum
 	tag_Kbd_Alarm,
 	tag_MemErr,
 	tag_SdVolEnable,
+	tag_SoundActLvl,
 	tag_CurPitch,
 	tag_ROM85,
 	tag_PortABUse,
@@ -233,6 +234,7 @@ static const global globals[] =
 	{ 0x021E, 2,    tag_Kbd_Alarm   },  // KbdType, AlarmState
 	{ 0x0220, 2,    tag_MemErr      },
 	{ 0x0260, 2,    tag_SdVolEnable },  // SdVolume, SdEnable
+	{ 0x027E, 2,    tag_SoundActLvl },  // SoundActive, SoundLevel
 	{ 0x0280, 2,    tag_CurPitch    },
 	{ 0x028E, 2,    tag_ROM85       },
 	{ 0x0290, 2,    tag_PortABUse   },  // PortAUse, PortBUse
