@@ -3,30 +3,36 @@
  *	=======
  */
 
+// POSIX
+#include <sys/time.h>
+#include <sys/times.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
 // Standard C/C++
 #include <cstdio>
 
 // Standard C
+#include <errno.h>
+#include <stdlib.h>
 #include <time.h>
-
-// poseven
-#include "poseven/functions/execvp.hh"
-#include "poseven/functions/gettimeofday.hh"
-#include "poseven/functions/times.hh"
-#include "poseven/functions/vfork.hh"
-#include "poseven/functions/wait.hh"
-#include "poseven/functions/_exit.hh"
 
 // Orion
 #include "Orion/Main.hh"
 
 
+static inline
+int exit_from_wait( int status )
+{
+	int result = WIFEXITED  ( status ) ? WEXITSTATUS( status )
+	           : WIFSIGNALED( status ) ? WTERMSIG   ( status ) + 128
+	           :                         -1;
+	
+	return result;
+}
+
 namespace tool
 {
-	
-	namespace n = nucleus;
-	namespace p7 = poseven;
-	
 	
 	int Main( int argc, char** argv )
 	{
@@ -36,29 +42,37 @@ namespace tool
 		struct tms tms_a = { 0 };
 		struct tms tms_b = { 0 };
 		
-		p7::times( tms_a );
+		times( &tms_a );
 		
-		p7::gettimeofday( tv_a );
+		gettimeofday( &tv_a, NULL );
 		
-		p7::pid_t pid = POSEVEN_VFORK();
+		pid_t pid = vfork();
+		
+		if ( pid < 0 )
+		{
+			_exit( 255 );
+		}
 		
 		if ( pid == 0 )
 		{
 			if ( argc <= 1 )
 			{
-				p7::_exit( p7::exit_success );
+				_exit( 0 );
 			}
 			
 			++argv;
 			
-			p7::execvp( argv[0], argv );
+			execvp( argv[0], argv );
+			
+			_exit( errno == ENOENT ? 127 : 126 );
 		}
 		
-		p7::wait_t wait_status = p7::wait();
+		int wait_status = -1;
+		wait( &wait_status );
 		
-		p7::gettimeofday( tv_b );
+		gettimeofday( &tv_b, NULL );
 		
-		p7::times( tms_b );
+		times( &tms_b );
 		
 		unsigned long long a = tv_a.tv_sec * 1000000ull + tv_a.tv_usec;
 		unsigned long long b = tv_b.tv_sec * 1000000ull + tv_b.tv_usec;
@@ -84,7 +98,7 @@ namespace tool
 		                      user_int, user_dec,
 		                      sys_int,  sys_dec );
 		
-		return n::convert< p7::exit_t >( wait_status );
+		return exit_from_wait( wait_status );
 	}
 
 }
