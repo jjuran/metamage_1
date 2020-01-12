@@ -16,6 +16,8 @@ enum
 {
 	gestaltMachineIcon            = 'micn',
 	gestaltUserVisibleMachineName = 'mnam',
+	gestaltQuickdrawVersion       = 'qd  ',
+	gestaltSystemVersion          = 'sysv',
 };
 
 Gestalt_ProcPtr old_Gestalt;
@@ -26,6 +28,11 @@ long Gestalt_payload( unsigned long  selector : __D0,
 {
 	switch ( selector )
 	{
+		case gestaltQuickdrawVersion:
+		case gestaltSystemVersion:
+			*response = 0;
+			break;
+		
 		case gestaltReactorCoreAddr:
 			*response = (long) &the_reactor_core;
 			break;
