@@ -68,6 +68,12 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 	
 	Size len = *name++;
 	
+	if ( len  &&  *name == ':' )
+	{
+		++name;
+		--len;
+	}
+	
 	char path[ 256 + 5 ];
 	
 	fast_memcpy( path, name, len );
