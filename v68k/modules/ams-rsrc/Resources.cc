@@ -244,10 +244,8 @@ const rsrc_data* get_data( const rsrc_map_header& map, const rsrc_header& rsrc )
 }
 
 static
-short OpenResFile_handler( ConstStr255Param name : __A0 )
+short OpenResFile_handler( ConstStr255Param name : __A0, short vRefNum : __D0 )
 {
-	const short vRefNum = 0;  // default
-	
 	OSErr err;
 	short refNum;
 	
@@ -334,6 +332,7 @@ pascal short OpenResFile_patch( ConstStr255Param name )
 	
 	LEA      20(SP),A2
 	MOVEA.L  (A2)+,A0
+	MOVEQ.L  #0,D0    // vRefNum = 0
 	
 	JSR      OpenResFile_handler
 	MOVE.W   D0,(A2)
@@ -353,7 +352,7 @@ pascal void RsrcZoneInit_patch()
 	
 	// CurApRefNum is automatically fixed at 2
 	
-	OpenResFile_handler( CurApName );
+	OpenResFile_handler( CurApName, 0 );
 }
 
 pascal short ResError_patch()
