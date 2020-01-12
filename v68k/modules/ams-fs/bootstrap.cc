@@ -66,11 +66,11 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 	
 	temp_A4 a4;
 	
-	Size len = name[ 0 ];
+	Size len = *name++;
 	
 	char path[ 256 + 5 ];
 	
-	fast_memcpy( path, name + 1, len );
+	fast_memcpy( path, name, len );
 	path[ len ] = '\0';
 	
 	plus::var_string file_data;
