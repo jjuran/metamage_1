@@ -685,6 +685,7 @@ int32_t Gestalt_callout( v68k::processor_state& s )
 	switch ( selector )
 	{
 		case OSTYPE('v', '6', '8', 'k'):  // 'v68k'
+		case OSTYPE('m', 'a', 'c', 'h'):  // 'mach'
 		//	value = 0;
 			break;
 		
