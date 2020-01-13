@@ -1422,6 +1422,37 @@ pascal void HideDItem_patch( GrafPort* dialog, short i )
 	item->bounds.right += 16384;
 }
 
+pascal void ShowDItem_patch( GrafPort* dialog, short i )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	DialogItem* item = get_nth_item( dialog, i );
+	
+	if ( item->bounds.left < 8192 )
+	{
+		return;
+	}
+	
+	if ( (item->type & 0x7c) == ctrlItem )
+	{
+		ShowControl( (ControlRef) item->handle );
+	}
+	else
+	{
+		if ( (item->type & 0x7f) == editText  &&  d->editField < 0 )
+		{
+			WARNING = "showing a lone editText item without making it active";
+		}
+		
+		scoped_port thePort = dialog;
+		
+		InvalRect( &item->bounds );
+	}
+	
+	item->bounds.left  -= 16384;
+	item->bounds.right -= 16384;
+}
+
 pascal short FindDItem_patch( DialogRef dialog, Point pt )
 {
 	DialogPeek d = (DialogPeek) dialog;
