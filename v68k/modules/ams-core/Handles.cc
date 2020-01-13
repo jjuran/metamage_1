@@ -415,15 +415,6 @@ short EmptyHandle_patch( char** h : __A0 )
 	return MemErr = noErr;
 }
 
-asm
-char** NewEmptyHandle_patch()
-{
-	JSR      new_empty_handle
-	MOVE.W   MemErr,D0
-	
-	RTS
-}
-
 #pragma mark -
 #pragma mark Properties of Relocatable Blocks
 #pragma mark -
@@ -476,15 +467,6 @@ short HNoPurge_patch( char** h : __A0 )
 	return MemErr = noErr;
 }
 
-void MoveHHi_patch( char** h : __A0 )
-{
-}
-
-short SetGrowZone_patch( void* proc : __A0 )
-{
-	return MemErr = noErr;
-}
-
 signed char HGetState_patch( char** h : __A0 )
 {
 	if ( h == NULL )
@@ -509,4 +491,34 @@ short HSetState_patch( char** h : __A0, signed char state : __D0 )
 	((master_pointer*) h)->flags = state;
 	
 	return MemErr = noErr;
+}
+
+#pragma mark -
+#pragma mark Grow Zone Operations
+#pragma mark -
+
+short SetGrowZone_patch( void* proc : __A0 )
+{
+	return MemErr = noErr;
+}
+
+#pragma mark -
+#pragma mark Miscellaneous Routines
+#pragma mark -
+
+void MoveHHi_patch( char** h : __A0 )
+{
+}
+
+#pragma mark -
+#pragma mark Advanced Routine
+#pragma mark -
+
+asm
+char** NewEmptyHandle_patch()
+{
+	JSR      new_empty_handle
+	MOVE.W   MemErr,D0
+	
+	RTS
 }
