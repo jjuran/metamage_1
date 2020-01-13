@@ -87,6 +87,39 @@ unsigned long CmpString_patch( const unsigned char* a : __A0,
 	return ! case_insensitive_equal( a, b, len );
 }
 
+unsigned char* UprString_patch( unsigned char* s : __A0,
+                                short len        : __D0,
+                                short trap_word  : __D1 )
+{
+	enum
+	{
+		MARKS = 0x0200,  // diacritics-stripping
+	};
+	
+	bool contains_high_chars = false;
+	
+	for ( int i = 0;  i < len;  ++i )
+	{
+		const int8_t c = s[ i ];
+		
+		if ( c < 0 )
+		{
+			contains_high_chars = true;
+		}
+		
+		s[ i ] = iota::to_upper( c );
+	}
+	
+	// TODO:  Implement mark stripping and marked letter upcasing.
+	
+	if ( contains_high_chars )
+	{
+		write( STDERR_FILENO, STR_LEN( "UprString: leaving marks as is\n" ) );
+	}
+	
+	return s;
+}
+
 #pragma mark -
 #pragma mark Date and Time Operations
 #pragma mark -

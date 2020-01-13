@@ -15,6 +15,10 @@ unsigned long CmpString_patch( const unsigned char* a : __A0,
                                unsigned long        m : __D0,
                                unsigned short       A : __D1 );
 
+unsigned char* UprString_patch( unsigned char* s : __A0,
+                                short len        : __D0,
+                                short trap_word  : __D1 );
+
 short ReadDateTime_patch( long* secs : __A0 );
 
 DateTimeRec* Secs2Date_patch( unsigned long  secs : __D0,

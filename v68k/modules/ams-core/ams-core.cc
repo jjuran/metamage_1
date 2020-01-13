@@ -220,6 +220,8 @@ void install_OSUtils()
 	OSTRAP( Delay     );  // A03B
 	OSTRAP( CmpString );  // A03C
 	
+	OSTRAP( UprString );  // A054
+	
 	TBTRAP( Enqueue   );  // A96E
 	TBTRAP( Dequeue   );  // A96F
 	
