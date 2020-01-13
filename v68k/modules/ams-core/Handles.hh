@@ -33,6 +33,7 @@ long FreeMem_patch();
 void MaxMem_patch();
 
 short ReserveMem_patch( long needed : __D0, short trap_word : __D1 );
+short PurgeMem_patch  ( long needed : __D0, short trap_word : __D1 );
 
 short EmptyHandle_patch( char** h : __A0 );
 

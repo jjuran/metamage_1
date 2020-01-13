@@ -396,6 +396,11 @@ short ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
 	return MemErr = noErr;
 }
 
+short PurgeMem_patch( long needed : __D0, short trap_word : __D1 )
+{
+	return MemErr = noErr;
+}
+
 short EmptyHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )
