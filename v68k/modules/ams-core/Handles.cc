@@ -276,6 +276,51 @@ long GetHandleSize_patch( char** h : __A0 )
 	return header->size;
 }
 
+short SetHandleSize_patch( char**  h         : __A0,
+                           long    size      : __D0,
+                           short   trap_word : __D1 )
+{
+	if ( h == NULL  ||  *h == NULL )
+	{
+		return MemErr = nilHandleErr;
+	}
+	
+	if ( size < 0 )
+	{
+		return MemErr = memSCErr;
+	}
+	
+	Handle_header* header = get_header( *h );
+	
+	if ( size <= header->capacity )
+	{
+		header->size = size;
+	}
+	else
+	{
+		Handle_header* new_header = allocate_Handle_mem( size, trap_word );
+		
+		if ( new_header == NULL )
+		{
+			return MemErr = memFullErr;
+		}
+		
+		fast_memcpy( new_header + 1, header + 1, header->size );
+		
+		new_header->backlink = header->backlink;
+		
+		*h = (char*) &new_header[1];
+		
+		free( header );
+		
+		header = new_header;
+	}
+	
+	set_epilogue( header );
+	
+	return MemErr = noErr;
+}
+
 char** RecoverHandle_patch( char* p : __A0 )
 {
 	if ( p == NULL )
@@ -330,6 +375,46 @@ short ReallocateHandle_patch( char**  h         : __A0,
 	return MemErr = noErr;
 }
 
+#pragma mark -
+#pragma mark Freeing Space in the Heap
+#pragma mark -
+
+long FreeMem_patch()
+{
+	return 1024 * 1024;
+}
+
+asm void MaxMem_patch()
+{
+	SUBA.L   A0,A0
+	MOVE.L   #0x100000,D0
+	RTS
+}
+
+short ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
+{
+	return MemErr = noErr;
+}
+
+short EmptyHandle_patch( char** h : __A0 )
+{
+	if ( h == NULL )
+	{
+		return MemErr = nilHandleErr;
+	}
+	
+	if ( *h != NULL )
+	{
+		Handle_header* header = get_header( *h );
+		
+		free( header );
+		
+		*h = NULL;
+	}
+	
+	return MemErr = noErr;
+}
+
 asm
 char** NewEmptyHandle_patch()
 {
@@ -338,6 +423,10 @@ char** NewEmptyHandle_patch()
 	
 	RTS
 }
+
+#pragma mark -
+#pragma mark Properties of Relocatable Blocks
+#pragma mark -
 
 short HLock_patch( char** h : __A0 )
 {
@@ -389,87 +478,6 @@ short HNoPurge_patch( char** h : __A0 )
 
 void MoveHHi_patch( char** h : __A0 )
 {
-}
-
-short SetHandleSize_patch( char**  h         : __A0,
-                           long    size      : __D0,
-                           short   trap_word : __D1 )
-{
-	if ( h == NULL  ||  *h == NULL )
-	{
-		return MemErr = nilHandleErr;
-	}
-	
-	if ( size < 0 )
-	{
-		return MemErr = memSCErr;
-	}
-	
-	Handle_header* header = get_header( *h );
-	
-	if ( size <= header->capacity )
-	{
-		header->size = size;
-	}
-	else
-	{
-		Handle_header* new_header = allocate_Handle_mem( size, trap_word );
-		
-		if ( new_header == NULL )
-		{
-			return MemErr = memFullErr;
-		}
-		
-		fast_memcpy( new_header + 1, header + 1, header->size );
-		
-		new_header->backlink = header->backlink;
-		
-		*h = (char*) &new_header[1];
-		
-		free( header );
-		
-		header = new_header;
-	}
-	
-	set_epilogue( header );
-	
-	return MemErr = noErr;
-}
-
-short EmptyHandle_patch( char** h : __A0 )
-{
-	if ( h == NULL )
-	{
-		return MemErr = nilHandleErr;
-	}
-	
-	if ( *h != NULL )
-	{
-		Handle_header* header = get_header( *h );
-		
-		free( header );
-		
-		*h = NULL;
-	}
-	
-	return MemErr = noErr;
-}
-
-long FreeMem_patch()
-{
-	return 1024 * 1024;
-}
-
-asm void MaxMem_patch()
-{
-	SUBA.L   A0,A0
-	MOVE.L   #0x100000,D0
-	RTS
-}
-
-short ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
-{
-	return MemErr = noErr;
 }
 
 short SetGrowZone_patch( void* proc : __A0 )
