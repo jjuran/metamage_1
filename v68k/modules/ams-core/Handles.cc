@@ -203,12 +203,77 @@ char** new_handle( long size : __D0, short trap_word : __D1 )
 	return NULL;
 }
 
+#pragma mark -
+#pragma mark Initialization and Allocation
+#pragma mark -
+
+short SetApplLimit_patch( char* p : __A0 )
+{
+	return MemErr = noErr;
+}
+
+void MaxApplZone_patch()
+{
+}
+
+void MoreMasters_patch()
+{
+	MemErr = noErr;
+}
+
+#pragma mark -
+#pragma mark Allocating and Releasing Relocatable Blocks
+#pragma mark -
+
 asm char** NewHandle_patch( long size : __D0, short trap_word : __D1 )
 {
 	JSR      new_handle
 	MOVE.W   MemErr,D0  // Includes the effect of TST.W D0
 	
 	RTS
+}
+
+short DisposeHandle_patch( char** h : __A0 )
+{
+	if ( h == NULL )
+	{
+		ERROR = "DisposeHandle: NULL address";
+		
+		return MemErr = nilHandleErr;
+	}
+	
+	if ( *h != NULL )
+	{
+		Handle_header* header = get_header( *h );
+		Handle_footer* footer = get_footer( *h );
+		
+		if ( ! valid( *header, *footer ) )
+		{
+			ERROR = "DisposeHandle: invalid handle state (double dispose?)";
+			
+			return MemErr = paramErr;
+		}
+		
+		free( header );
+	}
+	
+	free( h );
+	
+	return MemErr = noErr;
+}
+
+long GetHandleSize_patch( char** h : __A0 )
+{
+	if ( h == NULL  ||  *h == NULL )
+	{
+		MemErr = nilHandleErr;
+		
+		return 0;
+	}
+	
+	const Handle_header* header = get_header( *h );
+	
+	return header->size;
 }
 
 char** RecoverHandle_patch( char* p : __A0 )
@@ -231,6 +296,38 @@ char** RecoverHandle_patch( char* p : __A0 )
 	}
 	
 	return (char**) header->backlink;
+}
+
+short ReallocateHandle_patch( char**  h         : __A0,
+                              long    size      : __D0,
+                              short   trap_word : __D1 )
+{
+	if ( h == NULL )
+	{
+		return MemErr = nilHandleErr;
+	}
+	
+	if ( *h != NULL )
+	{
+		Handle_header* header = get_header( *h );
+		
+		free( header );
+		
+		*h = NULL;
+	}
+	
+	Handle_header* header = allocate_Handle_mem( size, trap_word );
+	
+	if ( header == NULL )
+	{
+		return MemErr;  // set in allocate_Handle_mem()
+	}
+	
+	*h = (char*) &header[1];
+	
+	header->backlink = (master_pointer*) h;
+	
+	return MemErr = noErr;
 }
 
 asm
@@ -294,35 +391,6 @@ void MoveHHi_patch( char** h : __A0 )
 {
 }
 
-short DisposeHandle_patch( char** h : __A0 )
-{
-	if ( h == NULL )
-	{
-		ERROR = "DisposeHandle: NULL address";
-		
-		return MemErr = nilHandleErr;
-	}
-	
-	if ( *h != NULL )
-	{
-		Handle_header* header = get_header( *h );
-		Handle_footer* footer = get_footer( *h );
-		
-		if ( ! valid( *header, *footer ) )
-		{
-			ERROR = "DisposeHandle: invalid handle state (double dispose?)";
-			
-			return MemErr = paramErr;
-		}
-		
-		free( header );
-	}
-	
-	free( h );
-	
-	return MemErr = noErr;
-}
-
 short SetHandleSize_patch( char**  h         : __A0,
                            long    size      : __D0,
                            short   trap_word : __D1 )
@@ -368,52 +436,6 @@ short SetHandleSize_patch( char**  h         : __A0,
 	return MemErr = noErr;
 }
 
-long GetHandleSize_patch( char** h : __A0 )
-{
-	if ( h == NULL  ||  *h == NULL )
-	{
-		MemErr = nilHandleErr;
-		
-		return 0;
-	}
-	
-	const Handle_header* header = get_header( *h );
-	
-	return header->size;
-}
-
-short ReallocateHandle_patch( char**  h         : __A0,
-                              long    size      : __D0,
-                              short   trap_word : __D1 )
-{
-	if ( h == NULL )
-	{
-		return MemErr = nilHandleErr;
-	}
-	
-	if ( *h != NULL )
-	{
-		Handle_header* header = get_header( *h );
-		
-		free( header );
-		
-		*h = NULL;
-	}
-	
-	Handle_header* header = allocate_Handle_mem( size, trap_word );
-	
-	if ( header == NULL )
-	{
-		return MemErr;  // set in allocate_Handle_mem()
-	}
-	
-	*h = (char*) &header[1];
-	
-	header->backlink = (master_pointer*) h;
-	
-	return MemErr = noErr;
-}
-
 short EmptyHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )
@@ -431,16 +453,6 @@ short EmptyHandle_patch( char** h : __A0 )
 	}
 	
 	return MemErr = noErr;
-}
-
-short SetApplLimit_patch( char* p : __A0 )
-{
-	return MemErr = noErr;
-}
-
-void MoreMasters_patch()
-{
-	MemErr = noErr;
 }
 
 long FreeMem_patch()
@@ -463,10 +475,6 @@ short ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
 short SetGrowZone_patch( void* proc : __A0 )
 {
 	return MemErr = noErr;
-}
-
-void MaxApplZone_patch()
-{
 }
 
 signed char HGetState_patch( char** h : __A0 )
