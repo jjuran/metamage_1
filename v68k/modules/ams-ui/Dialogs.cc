@@ -1396,11 +1396,16 @@ pascal void HideDItem_patch( GrafPort* dialog, short i )
 	
 	DialogItem* item = get_nth_item( dialog, i );
 	
+	if ( item->bounds.left >= 8192 )
+	{
+		return;
+	}
+	
 	if ( (item->type & 0x7c) == ctrlItem )
 	{
 		HideControl( (ControlRef) item->handle );
 	}
-	else if ( item->bounds.left < 8192 )
+	else
 	{
 		if ( (item->type & 0x7f) == editText )
 		{
