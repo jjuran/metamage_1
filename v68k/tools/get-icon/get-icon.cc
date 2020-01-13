@@ -27,6 +27,11 @@ Handle get_icon()
 		icon = Get1Resource( 'ICN#', 256 );  // Lode Runner...
 	}
 	
+	if ( ! icon )
+	{
+		icon = Get1Resource( 'ICN#', 1000 );  // Lemmings...
+	}
+	
 	return icon;
 }
 
