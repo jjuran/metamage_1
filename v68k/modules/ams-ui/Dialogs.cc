@@ -1338,7 +1338,7 @@ pascal void SetIText_patch( Handle h, const unsigned char* text )
 	{
 		hTE[0]->teLength = len;
 		
-		TESetSelect( 0, len, hTE );
+		TEUpdate( &hTE[0]->viewRect, hTE );
 		
 		return;
 	}
