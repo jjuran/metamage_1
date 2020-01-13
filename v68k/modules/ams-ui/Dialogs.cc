@@ -919,6 +919,8 @@ pascal void DrawDialog_patch( DialogRef dialog )
 	
 	DrawControls( dialog );
 	
+	PenNormal();
+	
 	DialogPeek d = (DialogPeek) dialog;
 	
 	short n_items_1 = dialog_item_count_minus_one( d->items );
