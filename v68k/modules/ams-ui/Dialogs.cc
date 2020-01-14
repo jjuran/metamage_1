@@ -1221,7 +1221,6 @@ pascal void ParamText_patch( const unsigned char*  p1,
 				switch ( item->type & 0x7F )
 				{
 					case statText:
-					case editText:
 						DisposeHandle( item->handle );
 						
 						item->handle = expand_param_text( &item->length );
