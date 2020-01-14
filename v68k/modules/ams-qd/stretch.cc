@@ -6,6 +6,9 @@
 #include "stretch.hh"
 
 // Mac OS
+#ifndef __FIXMATH__
+#include <FixMath.h>
+#endif
 #ifndef __QUICKDRAW__
 #include <Quickdraw.h>
 #endif
@@ -126,5 +129,29 @@ void stretch_bits( const BitMap&  srcBits,
 	{
 		squish_2x( src, dst, srcBits.rowBytes, dstBits.rowBytes, dstHeight );
 		return;
+	}
+	
+	const Fixed x_sampling_factor = FixRatio( srcWidth,  dstWidth  );
+	const Fixed y_sampling_factor = FixRatio( srcHeight, dstHeight );
+	
+	for ( short y = 0;  y < dstHeight;  ++y )
+	{
+		const short src_row = srcTop + (y * y_sampling_factor >> 16);
+		
+		src = srcBits.baseAddr + srcBits.rowBytes * src_row;
+		
+		for ( uint16_t x = 0;  x < dstWidth;  ++x )
+		{
+			const uint16_t src_col = srcLeft + (x * x_sampling_factor >> 16);
+			
+			const Byte byte = src[ src_col / 8 ];
+			const int bitnum = 7 - src_col % 8;
+			
+			const bool pixel = byte & (1 << bitnum);
+			
+			dst[ x / 8 ] |= pixel << 7 - x % 8;
+		}
+		
+		dst += dstBits.rowBytes;
 	}
 }

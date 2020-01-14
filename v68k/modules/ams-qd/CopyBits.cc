@@ -287,7 +287,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		
 		const Rect bounds = { 0, 0, dstHeight, dstWidth };
 		
-		stretched_bits.baseAddr = NewPtr( dstHeight * rowBytes );
+		stretched_bits.baseAddr = NewPtrClear( dstHeight * rowBytes );
 		stretched_bits.rowBytes = rowBytes;
 		stretched_bits.bounds   = bounds;
 		
