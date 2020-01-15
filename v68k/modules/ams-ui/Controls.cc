@@ -34,6 +34,8 @@
 #pragma mark Initialization and Allocation
 #pragma mark -
 
+static Ptr gDefProcPtr = (Ptr) &CDEF_0;
+
 pascal ControlRecord** NewControl_patch( GrafPort*             window,
                                          const Rect*           bounds,
                                          const unsigned char*  title,
@@ -58,7 +60,7 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
 		control[0]->contrlValue   = value;
 		control[0]->contrlMin     = min;
 		control[0]->contrlMax     = max;
-		control[0]->contrlDefProc = NULL;  // TODO
+		control[0]->contrlDefProc = &gDefProcPtr;
 	//	control[0]->contrlData    = NULL;
 	//	control[0]->contrlAction  = NULL;
 		control[0]->contrlRfCon   = refCon;
