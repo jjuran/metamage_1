@@ -113,6 +113,46 @@ void LoadSegment( short segnum : __D0 )
 		SysError( 15 );
 	}
 	
+	if ( segnum == 1 )
+	{
+		enum { _FindControl = 0xA96C };
+		
+		uint16_t* p = (uint16_t*) &code[0][ 0x3afe ];
+		
+		if ( *p++ == _FindControl  &&  *p == 0x31DF )
+		{
+			/*
+				Hot-patch Lode Runner to fix a crash.
+				
+				I'm not sure how this happened; it's almost certainly not a
+				compiler bug, seeing how the correct instruction also occurs
+				later in the same function, but it seems an odd error to make
+				when writing assembly language by hand.
+				
+				The word following the opcode is the same, though in d68k it
+				disassembles differently: (int16_t) 0xae28 == -20952
+				The error is that the opcode's destination effective address
+				is wrong in the shipped code.  The reason it "works" at all is
+				because 68000-based Macs lack an MMU, memory wraps around, and
+				writes never fail, so $ae28 (which is actually $ffffae28) maps
+				to $0001ae28 on an original Macintosh, which is in the 29th
+				scanline of screen memory (and remains so on later Macs with
+				512x342 screens (with more memory) because the screen memory
+				is in the same location relative to the /high end/ of memory).
+				
+				But xv68k doesn't (currently) map the screen that way, so
+				clicking Lode Runner's game window writes to unmapped memory
+				and crashes.  To avoid that, hot-patch the broken instruction
+				to what it should have been.
+				
+				Old:  MOVE.W   (A7)+,0xae28       // dst: mode 7, reg 0
+				New:  MOVE.W   (A7)+,(-20952,A5)  // dst: mode 5, reg 5
+			*/
+			
+			*p = 0x3B5F;
+		}
+	}
+	
 	const segment_header* segment = (segment_header*) *code;
 	
 	uint16_t offset = segment->table_offset;
