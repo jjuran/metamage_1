@@ -30,6 +30,16 @@
 #include "CDEF.hh"
 
 
+static
+long call_CDEF( ControlRef control, short message, long param )
+{
+	ControlDefProcPtr cdef = (ControlDefProcPtr) *control[0]->contrlDefProc;
+	
+	const short varCode = *(Byte*) &control[0]->contrlDefProc;
+	
+	return cdef( varCode, control, message, param );
+}
+
 #pragma mark -
 #pragma mark Initialization and Allocation
 #pragma mark -
@@ -78,7 +88,7 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
 		
 		if ( visible )
 		{
-			CDEF_0( varCode, control, drawCntl, 0 );
+			call_CDEF( control, drawCntl, 0 );
 		}
 	}
 	
@@ -172,9 +182,7 @@ pascal void SetCTitle_patch( ControlRef control, ConstStr255Param title )
 {
 	fast_memcpy( control[0]->contrlTitle, title, 1 + title[ 0 ] );
 	
-	const short varCode = *(Byte*) &control[0]->contrlDefProc;
-	
-	CDEF_0( varCode, control, drawCntl, 0 );
+	call_CDEF( control, drawCntl, 0 );
 }
 
 pascal void HideControl_patch( ControlRef control )
@@ -195,9 +203,7 @@ pascal void ShowControl_patch( ControlRef control )
 	{
 		control[0]->contrlVis = -1;
 		
-		const short varCode = *(Byte*) &control[0]->contrlDefProc;
-		
-		CDEF_0( varCode, control, drawCntl, 0 );
+		call_CDEF( control, drawCntl, 0 );
 	}
 }
 
@@ -211,9 +217,7 @@ pascal void DrawControls_patch( GrafPort* window )
 	
 	while ( control != NULL )
 	{
-		const short varCode = *(Byte*) &control[0]->contrlDefProc;
-		
-		CDEF_0( varCode, control, drawCntl, 0 );
+		call_CDEF( control, drawCntl, 0 );
 		
 		control = control[0]->nextControl;
 	}
@@ -221,9 +225,7 @@ pascal void DrawControls_patch( GrafPort* window )
 
 pascal void HiliteControl_patch( ControlRef control, short hiliteState )
 {
-	const short varCode = *(Byte*) &control[0]->contrlDefProc;
-	
-	CDEF_0( varCode, control, drawCntl, hiliteState );
+	call_CDEF( control, drawCntl, hiliteState );
 }
 
 #pragma mark -
@@ -270,15 +272,13 @@ pascal short TrackControl_patch( ControlRecord**  control,
 	const short csdx = window->portBits.bounds.left;
 	const short csdy = window->portBits.bounds.top;
 	
-	const short varCode = *(Byte*) &control[0]->contrlDefProc;
-	
 	Point pt = start;
 	
 	const short track_part = TestControl( control, pt );
 	
 	control[0]->contrlHilite = track_part;
 	
-	CDEF_0( varCode, control, drawCntl, track_part );
+	call_CDEF( control, drawCntl, track_part );
 	
 	long sleep = 0;
 	
@@ -342,7 +342,7 @@ pascal short TrackControl_patch( ControlRecord**  control,
 			{
 				control[0]->contrlHilite = hit;
 				
-				CDEF_0( varCode, control, drawCntl, track_part );
+				call_CDEF( control, drawCntl, track_part );
 			}
 		}
 	}
@@ -355,7 +355,7 @@ pascal short TrackControl_patch( ControlRecord**  control,
 	
 	if ( hit == track_part )
 	{
-		CDEF_0( varCode, control, drawCntl, hit );
+		call_CDEF( control, drawCntl, hit );
 		
 		return hit;
 	}
@@ -367,9 +367,7 @@ pascal short TestControl_patch( ControlRecord** control, Point pt )
 {
 	if ( control[0]->contrlVis  &&  control[0]->contrlHilite != 255 )
 	{
-		const short varCode = *(Byte*) &control[0]->contrlDefProc;
-		
-		long hit = CDEF_0( varCode, control, testCntl, *(long*) &pt );
+		long hit = call_CDEF( control, testCntl, *(long*) &pt );
 		
 		return hit;
 	}
@@ -442,9 +440,7 @@ pascal void SetCtlValue_patch( ControlRecord** control, short value )
 		
 		control[0]->contrlValue = value;
 		
-		const short varCode = *(Byte*) &control[0]->contrlDefProc;
-		
-		CDEF_0( varCode, control, drawCntl, 0 );
+		call_CDEF( control, drawCntl, 0 );
 	}
 }
 
@@ -464,9 +460,7 @@ pascal void SetMinCtl_patch( ControlRecord** control, short min )
 		
 		control[0]->contrlMin = min;
 		
-		const short varCode = *(Byte*) &control[0]->contrlDefProc;
-		
-		CDEF_0( varCode, control, drawCntl, 0 );
+		call_CDEF( control, drawCntl, 0 );
 	}
 }
 
@@ -486,9 +480,7 @@ pascal void SetMaxCtl_patch( ControlRecord** control, short max )
 		
 		control[0]->contrlMax = max;
 		
-		const short varCode = *(Byte*) &control[0]->contrlDefProc;
-		
-		CDEF_0( varCode, control, drawCntl, 0 );
+		call_CDEF( control, drawCntl, 0 );
 	}
 }
 
