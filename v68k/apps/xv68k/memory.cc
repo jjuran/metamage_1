@@ -132,22 +132,6 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return v68k::mac::translate( addr, length, fc, access );
 	}
 	
-	if ( addr == 0xffffae28 )
-	{
-		/*
-			When Lode Runner's game window is clicked, the FindControl() result
-			is written here.  Remap it to ToolScratch to prevent a crash.
-		*/
-		
-		if ( access != v68k::mem_update )
-		{
-			WARNING = "Suppressed bogus memory access: ",
-				length, "-byte ", access, " at $ffffae28";
-		}
-		
-		addr = 0x9CE;
-	}
-	
 	if ( addr < 3 * 1024  &&  (addr & 0x07FF) < 1024 )
 	{
 		if ( fc <= v68k::user_program_space  &&  access != v68k::mem_exec )
