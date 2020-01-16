@@ -106,8 +106,15 @@ const uint16_t jump_opcode = 0x4EF9;  // JMP      0xABCD1234
 static
 void apply_hotpatches( Handle code, short segnum )
 {
+	Size size = GetHandleSize( code );
+	
 	if ( segnum == 1 )
 	{
+		if ( size < 0x3b02 )
+		{
+			return;
+		}
+		
 		enum { _FindControl = 0xA96C };
 		
 		uint16_t* p = (uint16_t*) &code[0][ 0x3afe ];
