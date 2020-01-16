@@ -363,6 +363,8 @@ int main( int argc, char** argv )
 	}
 	else
 	{
+		signal( SIGINT, SIG_IGN );
+		
 		launch_interactive( args );
 	}
 	
