@@ -253,4 +253,4 @@ const graft-subcmd = "graft", servers, xv68k-subcmd
 
 const command = [ command-prefix, graft-subcmd ]
 
-run command
+execvp (command[ 0 ], command)
