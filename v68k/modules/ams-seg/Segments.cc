@@ -104,15 +104,8 @@ const uint16_t push_opcode = 0x3F3C;  // MOVE.W   #n,-(SP)
 const uint16_t jump_opcode = 0x4EF9;  // JMP      0xABCD1234
 
 static
-void LoadSegment( short segnum : __D0 )
+void apply_hotpatches( Handle code, short segnum )
 {
-	Handle code = GetResource( 'CODE', segnum );
-	
-	if ( code == NULL )
-	{
-		SysError( 15 );
-	}
-	
 	if ( segnum == 1 )
 	{
 		enum { _FindControl = 0xA96C };
@@ -152,6 +145,19 @@ void LoadSegment( short segnum : __D0 )
 			*p = 0x3B5F;
 		}
 	}
+}
+
+static
+void LoadSegment( short segnum : __D0 )
+{
+	Handle code = GetResource( 'CODE', segnum );
+	
+	if ( code == NULL )
+	{
+		SysError( 15 );
+	}
+	
+	apply_hotpatches( code, segnum );
 	
 	const segment_header* segment = (segment_header*) *code;
 	
