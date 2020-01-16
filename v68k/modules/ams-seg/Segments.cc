@@ -106,6 +106,14 @@ const uint16_t jump_opcode = 0x4EF9;  // JMP      0xABCD1234
 static
 void apply_hotpatches( Handle code, short segnum )
 {
+	enum
+	{
+		long_pop_to_absolute_short = 0x31DF,  // dst: mode 7, reg 0
+		long_pop_to_displaced_A5   = 0x3B5F,  // dst: mode 5, reg 5
+		
+		_FindControl = 0xA96C,
+	};
+	
 	Size size = GetHandleSize( code );
 	
 	if ( segnum == 1 )
@@ -115,11 +123,9 @@ void apply_hotpatches( Handle code, short segnum )
 			return;
 		}
 		
-		enum { _FindControl = 0xA96C };
-		
 		uint16_t* p = (uint16_t*) &code[0][ 0x3afe ];
 		
-		if ( *p++ == _FindControl  &&  *p == 0x31DF )
+		if ( *p++ == _FindControl  &&  *p == long_pop_to_absolute_short )
 		{
 			/*
 				Hot-patch Lode Runner to fix a crash.
@@ -145,11 +151,11 @@ void apply_hotpatches( Handle code, short segnum )
 				and crashes.  To avoid that, hot-patch the broken instruction
 				to what it should have been.
 				
-				Old:  MOVE.W   (A7)+,0xae28       // dst: mode 7, reg 0
-				New:  MOVE.W   (A7)+,(-20952,A5)  // dst: mode 5, reg 5
+				Old:  MOVE.W   (A7)+,0xae28
+				New:  MOVE.W   (A7)+,(-20952,A5)
 			*/
 			
-			*p = 0x3B5F;
+			*p = long_pop_to_displaced_A5;
 		}
 	}
 }
