@@ -12,6 +12,7 @@
 namespace VIA {
 
 static uint8_t VIA_reg_A = 0x48;  // use main screen and sound buffers
+static uint8_t VIA_reg_B = 0x80;  // sound disabled
 static uint8_t mmio_byte;
 
 const uint32_t vBase  = 0xEFE1FE;
@@ -35,6 +36,7 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 		switch ( addr )
 		{
 			case aVBufA:  return &VIA_reg_A;
+			case aVBufB:  return &VIA_reg_B;
 			
 			default:      return 0;  // NULL;
 		}
@@ -54,6 +56,10 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 					
 					VIA_reg_A = mmio_byte;
 				}
+				break;
+			
+			case aVBufB:
+				VIA_reg_B = mmio_byte;
 				break;
 			
 			default:
