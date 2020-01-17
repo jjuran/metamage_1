@@ -19,12 +19,16 @@
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // command
 #include "command/get_option.hh"
 
 // v68k
 #include "v68k/emulator.hh"
 #include "v68k/endian.hh"
+#include "v68k/print.hh"
 
 // v68k-alloc
 #include "v68k-alloc/memory.hh"
@@ -721,6 +725,15 @@ void load_file( uint8_t* mem, const char* path )
 		
 		exit( 1 );
 	}
+	
+	if ( const char* filename = strrchr( path, '/' ) )
+	{
+		path = filename + 1;
+	}
+	
+	using v68k::hex32_t;
+	
+	NOTICE = hex32_t( addr ), " -> ", hex32_t( addr + size ), ": ", path;
 	
 	uint16_t* p = (uint16_t*) (mem + code_address);
 	
