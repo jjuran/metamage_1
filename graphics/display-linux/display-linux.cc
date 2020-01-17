@@ -72,6 +72,7 @@ typedef uint32_t bilevel_pixel_t;
 enum
 {
 	Opt_watch   = 'W',
+	Opt_exhibit = 'X',  // exhibition mode, don't catch SIGINT
 	Opt_gfxmode = 'g',
 	Opt_title   = 't',
 	Opt_wait    = 'w',
@@ -82,6 +83,7 @@ enum
 
 static command::option options[] =
 {
+	{ "exhibit-mode",  Opt_exhibit },
 	{ "graphics-mode", Opt_graphics_mode },
 	
 	{ "magnify", Opt_magnify, command::Param_required },
@@ -95,6 +97,7 @@ static int  the_corner;
 static bool gfx_mode;
 static bool waiting;
 static bool watching;
+static bool exhibiting;
 
 static size_t reflection_height;
 
@@ -363,6 +366,10 @@ char* const* get_options( char** argv )
 	{
 		switch ( opt )
 		{
+			case Opt_exhibit:
+				exhibiting = true;
+				break;
+			
 			case Opt_graphics_mode:
 				gfx_mode = should_modeswitch();
 				break;
@@ -635,7 +642,7 @@ int main( int argc, char** argv )
 	
 	const fb_var_screeninfo old_var_info = var_info;
 	
-	if ( watching  ||  waiting )
+	if ( (watching  ||  waiting)  &&  ! exhibiting )
 	{
 		struct sigaction action = { 0 };
 		
