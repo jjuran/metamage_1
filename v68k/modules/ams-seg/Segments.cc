@@ -16,6 +16,9 @@
 // Standard C
 #include <string.h>
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "callouts.hh"
 
@@ -36,6 +39,20 @@ short CurPageOption : 0x0936;
 
 Handle AppParmHandle : 0x0AEC;
 
+
+enum hex32
+{
+	hex32_min = 0,
+	hex32_max = 0xffffffff,
+};
+
+inline
+void print( hex32 x )
+{
+	logofwar::print( "$" );
+	
+	logofwar::print_hex( x );
+}
 
 pascal void GetAppParms_patch( StringPtr name, short* refNum, Handle* hp )
 {
@@ -286,6 +303,12 @@ void LoadSegment( short segnum : __D0 )
 	{
 		SysError( 15 );
 	}
+	
+	Size size = GetHandleSize( code );
+	
+	long addr = (long) *code;
+	
+	NOTICE = hex32( addr ), " -> ", hex32( addr + size ), ": 'CODE' ", segnum;
 	
 	apply_hotpatches( code, segnum );
 	
