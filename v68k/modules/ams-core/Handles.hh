@@ -32,6 +32,8 @@ long FreeMem_patch();
 
 void MaxMem_patch();
 
+long CompactMem_patch( long needed : __D0, short trap_word : __D1 );
+
 short ReserveMem_patch( long needed : __D0, short trap_word : __D1 );
 short PurgeMem_patch  ( long needed : __D0, short trap_word : __D1 );
 

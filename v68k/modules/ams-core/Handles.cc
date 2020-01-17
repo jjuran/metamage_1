@@ -391,6 +391,11 @@ asm void MaxMem_patch()
 	RTS
 }
 
+long CompactMem_patch( long needed : __D0, short trap_word : __D1 )
+{
+	return needed;
+}
+
 short ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
 {
 	return MemErr = noErr;

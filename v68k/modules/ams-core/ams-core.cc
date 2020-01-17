@@ -194,7 +194,7 @@ void install_MemoryManager()
 	OSTRAP( HPurge           );  // A049
 	OSTRAP( HNoPurge         );  // A04A
 	OSTRAP( SetGrowZone      );  // A04B
-	
+	OSTRAP( CompactMem       );  // A04C
 	OSTRAP( PurgeMem         );  // A04D
 	
 	OSTRAP( MaxApplZone      );  // A063
