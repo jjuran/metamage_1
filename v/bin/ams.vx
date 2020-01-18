@@ -159,6 +159,8 @@ def io_opts
 	return
 	if const sound_fd = get_sound_fd() then
 	{
+		setenv( "XV68K_SOUND_FD", sound_fd )
+		
 		ams-io: [ "--sound-fd=" sound_fd ],
 	}
 }
