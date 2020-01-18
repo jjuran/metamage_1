@@ -25,6 +25,7 @@
 
 // xv68k
 #include "screen.hh"
+#include "sound.hh"
 #include "VIA.hh"
 
 
@@ -133,6 +134,14 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	if ( addr >= alt_screen_addr  &&  addr < alt_screen_addr + screen_size )
 	{
 		return screen::translate2( addr - alt_screen_addr, length, fc, access );
+	}
+	
+	const uint32_t sound_addr = 0x0001FD00;
+	const uint32_t sound_size = 740;
+	
+	if ( addr >= sound_addr  &&  addr < sound_addr + sound_size )
+	{
+		return sound::translate( addr - sound_addr, length, fc, access );
 	}
 	
 	if ( (addr >> 16) == 0x0040 )
