@@ -87,6 +87,7 @@ QHdr EventQueue : 0x014A;
 short SysEvtCnt : 0x0154;
 Byte  MBState   : 0x0172;
 
+void* SoundBase : 0x0266;
 short ROM85     : 0x028E;
 
 long  DefltStack : 0x0322;
@@ -153,6 +154,8 @@ void initialize_low_memory_globals()
 	
 	init_lowmem_Cursor();
 	init_cursor();
+	
+	SoundBase = (Ptr) 0x0001FD00;
 }
 
 static
