@@ -5,6 +5,9 @@
 
 #include "VIA.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // xv68k
 #include "screen.hh"
 
@@ -105,7 +108,17 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 				break;
 			
 			case aVBufB:
-				VIA_reg_B = mmio_byte;
+				if ( uint8_t diff = mmio_byte ^ VIA_reg_B )
+				{
+					if ( diff & 0x80 )
+					{
+						const char* endis = mmio_byte & 0x80 ? "dis" : "en";
+						
+						NOTICE = "VIA Register B: sound generation ", endis, "abled";
+					}
+					
+					VIA_reg_B = mmio_byte;
+				}
 				break;
 			
 			default:
