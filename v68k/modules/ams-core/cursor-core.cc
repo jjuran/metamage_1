@@ -23,11 +23,11 @@ Ptr   ScrnBase  : 0x0824;
 Point Mouse     : 0x0830;
 Rect  CrsrPin   : 0x0834;
 Rect  CrsrRect  : 0x083C;
+Cursor TheCrsr  : 0x0844;
+char  CrsrBusy  : 0x08CD;
 
-static Cursor TheCrsr;
 static Ptr    CrsrAddr;
 static Buffer CrsrSave;
-static char   CrsrBusy;
 static short  CrsrState = -1;  // Invisible cursor, at first
 
 
