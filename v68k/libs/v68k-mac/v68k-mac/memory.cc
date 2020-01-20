@@ -94,6 +94,9 @@ enum
 	tag_CrsrPin_word_3 = tag_CrsrPin + 3,  // 8 bytes
 	tag_CrsrRect,
 	tag_CrsrRect_word_3 = tag_CrsrRect + 3,  // 8 bytes
+	tag_TheCrsr,
+	tag_TheCrsr_word_33 = tag_TheCrsr + 33,  // 68 bytes
+	tag_CrsrVisBusy,
 	tag_JIODone,
 	tag_JIODone_low_word,
 	tag_CurrentA5,
@@ -250,6 +253,8 @@ static const global globals[] =
 	{ 0x0830, 4,    tag_Mouse       },
 	{ 0x0834, 8,    tag_CrsrPin     },
 	{ 0x083C, 8,    tag_CrsrRect    },
+	{ 0x0844, 68,   tag_TheCrsr     },
+	{ 0x08CC, 2,    tag_CrsrVisBusy },  // CrsrVis, CrsrBusy
 	{ 0x08FC, 4,    tag_JIODone     },
 	{ 0x0900, 0x82, 2               },  // CurApRefNum
 	{ 0x0904, 4,    tag_CurrentA5   },
@@ -373,7 +378,7 @@ static void refresh_dynamic_global( uint8_t tag )
 	}
 }
 
-static uint8_t buffer[ 32 ];  // needs to be as big as the largest global
+static uint8_t buffer[ 68 ];  // needs to be as big as the largest global
 
 static uint8_t* read_globals( const global* g, int16_t addr, uint32_t size )
 {
