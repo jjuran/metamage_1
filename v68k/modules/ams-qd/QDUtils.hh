@@ -33,5 +33,6 @@ pascal struct Picture** GetPicture_patch( short id );
 pascal long DeltaPoint_patch( Point a, Point b );
 
 pascal Fixed SlopeFromAngle_patch( short angle );
+pascal short AngleFromSlope_patch( Fixed slope );
 
 #endif

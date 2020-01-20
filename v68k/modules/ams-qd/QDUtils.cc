@@ -141,7 +141,7 @@ pascal long DeltaPoint_patch( Point a, Point b )
 }
 
 /*
-	The logic and table for slope<->angle conversion are loosely based
+	The logic and tables for slope<->angle conversion are loosely based
 	on Executor source code (see src/toolutil.c) with some corrections.
 	
 	https://github.com/ctm/executor/blob/master/src/toolutil.c#L458
@@ -211,4 +211,55 @@ pascal long SlopeFromAngle_patch( short angle )
 	}
 	
 	return slope;
+}
+
+static const Fixed slope_inverse_table[] =
+{
+	0x00394c25, 0x001ca4cc, 0x001316b2, 0x000e4eea, 0x000b700c,
+	0x000985a2, 0x000826e8, 0x00071f7d, 0x00065246, 0x0005adce,
+	0x000526f6, 0x0004b657, 0x000456d0, 0x000404b7, 0x0003bd5d,
+	0x00037ebc, 0x0003474b, 0x000315d8, 0x0002e96f, 0x0002c150,
+	0x00029cdc, 0x00027b94, 0x00025d0e, 0x000240f1, 0x000226f3,
+	0x00020ed6, 0x0001f863, 0x0001e36c, 0x0001cfcb, 0x0001bd5d,
+	0x0001ac03, 0x00019ba4, 0x00018c2a, 0x00017d7e, 0x00016f90,
+	0x00016250, 0x000155ae, 0x0001499f, 0x00013e17, 0x0001330c,
+	0x00012874, 0x00011e46, 0x0001147c, 0x00010b0e, 0x000101f5,
+	
+	0x0000f92c, 0x0000f0ae, 0x0000e876, 0x0000e07f, 0x0000d8c4,
+	0x0000d143, 0x0000c9f7, 0x0000c2de, 0x0000bbf4, 0x0000b536,
+	0x0000aea2, 0x0000a835, 0x0000a1ec, 0x00009bc7, 0x000095c2,
+	0x00008fdc, 0x00008a13, 0x00008465, 0x00007ed1, 0x00007955,
+	0x000073f0, 0x00006e9f, 0x00006963, 0x0000643a, 0x00005f22,
+	0x00005a1b, 0x00005523, 0x00005039, 0x00004b5d, 0x0000468d,
+	0x000041c9, 0x00003d0f, 0x0000385f, 0x000033b8, 0x00002f19,
+	0x00002a81, 0x000025ef, 0x00002164, 0x00001cdd, 0x0000185b,
+	0x000013dc, 0x00000f60, 0x00000ae6, 0x0000066d, 0x000001f5,
+	0x00000000,
+};
+
+pascal short AngleFromSlope_patch( long slope )
+{
+	bool reflected = false;
+	
+	if ( slope < 0 )
+	{
+		slope = -slope;
+		reflected = true;
+	}
+	
+	const Fixed* p = slope_inverse_table;
+	
+	while ( *p > slope )
+	{
+		++p;
+	}
+	
+	short angle = p - slope_inverse_table;
+	
+	if ( reflected  &&  angle != 90 )
+	{
+		angle = -angle;
+	}
+	
+	return angle + 90;
 }
