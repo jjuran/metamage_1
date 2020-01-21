@@ -147,6 +147,11 @@ MenuList_entry* find_clicked_menu_title( Point pt )
 
 pascal void InitMenus_patch()
 {
+	if ( MenuList )
+	{
+		return;
+	}
+	
 	calculate_menu_bar_height();
 	
 	draw_menu_bar_from_WMgr_port();
