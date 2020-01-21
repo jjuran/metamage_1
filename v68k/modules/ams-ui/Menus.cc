@@ -35,6 +35,8 @@ GrafPtr WMgrPort : 0x09DE;
 short TheMenu    : 0x0A26;
 short MBarHeight : 0x0BAA;
 
+void* toolbox_trap_table[] : 3 * 1024;
+
 
 struct MenuList_header
 {
@@ -145,6 +147,18 @@ MenuList_entry* find_clicked_menu_title( Point pt )
 #pragma mark Initialization and Allocation
 #pragma mark -
 
+static inline
+void patch_SysBeep()
+{
+	enum { _SysBeep = 0xA9C8 & 0x03FF };
+	
+	SysBeep_ProcPtr& vector = (SysBeep_ProcPtr&) toolbox_trap_table[ _SysBeep ];
+	
+	old_SysBeep = vector;
+	
+	vector = &SysBeep_patch;
+}
+
 pascal void InitMenus_patch()
 {
 	if ( MenuList )
@@ -159,6 +173,8 @@ pascal void InitMenus_patch()
 	MenuList = (MenuList_header**) NewHandleClear( sizeof (MenuList_header) );
 	
 	MenuList[0]->right_edge = 10;
+	
+	patch_SysBeep();
 }
 
 pascal MenuInfo** NewMenu_patch( short menuID, const unsigned char* title )

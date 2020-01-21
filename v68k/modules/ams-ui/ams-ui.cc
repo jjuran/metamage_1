@@ -117,8 +117,6 @@ void install_Windows()
 static
 void install_Menus()
 {
-	old_SysBeep = (SysBeep_ProcPtr) toolbox_trap_table[ _SysBeep & 0x03FF ];
-	
 	TBTRAP( InsMenuItem  );  // A826
 	
 	TBTRAP( GetItemCmd   );  // A84E
@@ -159,8 +157,6 @@ void install_Menus()
 	
 	TBTRAP( GetMenu      );  // A9BF
 	TBTRAP( GetNewMBar   );  // A9C0
-	
-	TBTRAP( SysBeep      );  // A9C8
 }
 
 static void install_Controls()
