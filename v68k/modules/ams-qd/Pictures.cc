@@ -144,7 +144,9 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 {
 	GrafPort& port = **get_addrof_thePort();
 	
-	const UInt8* end = (UInt8*) pic[0] + pic[0]->picSize;
+	Size size = GetHandleSize( (Handle) pic );
+	
+	const UInt8* end = (UInt8*) pic[0] + size;
 	const UInt8* p   = (UInt8*) (pic[0] + 1);
 	
 	PenState penState;
