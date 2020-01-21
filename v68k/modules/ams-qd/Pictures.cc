@@ -160,6 +160,9 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 		
 		switch ( c )
 		{
+			case 0x00:
+				continue;
+			
 			case 0x11:
 				++p;
 				continue;
