@@ -10,6 +10,9 @@
 #include <Quickdraw.h>
 #endif
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // quickdraw
 #include "qd/pack_bits.hh"
 
@@ -164,8 +167,24 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 				continue;
 			
 			case 0x11:
-				++p;
-				continue;
+				{
+					uint8_t version = *p++;
+					
+					if ( version == 1 )
+					{
+						// PICT format 1
+						continue;
+					}
+					else if ( version == 2 )
+					{
+						WARNING = "PICT format 2 unsupported in DrawPicture()";
+					}
+					else
+					{
+						WARNING = "Unknown PICT format ", version;
+					}
+				}
+				break;
 			
 			case 0xA0:
 				p += 2;
