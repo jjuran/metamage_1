@@ -391,7 +391,16 @@ static uint8_t* read_globals( const global* g, int16_t addr, uint32_t size )
 	{
 		uint32_t width = g->size();
 		
-		if ( int8_t( g->size_ ) < 0 )
+		if ( int8_t( g->size_ ) >= 0 )
+		{
+			if ( g->size_ >= 0x40 )
+			{
+				refresh_dynamic_global( g->index );
+			}
+			
+			return (uint8_t*) &words[ g->index ] + (addr - g->addr);
+		}
+		else
 		{
 			if ( width < 2 )
 			{
@@ -417,15 +426,6 @@ static uint8_t* read_globals( const global* g, int16_t addr, uint32_t size )
 					}
 				}
 			}
-		}
-		else
-		{
-			if ( g->size_ >= 0x40 )
-			{
-				refresh_dynamic_global( g->index );
-			}
-			
-			return (uint8_t*) &words[ g->index ] + (addr - g->addr);
 		}
 		
 		addr += width;
