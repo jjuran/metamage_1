@@ -40,7 +40,10 @@ using v68k::user_program_space;
 using v68k::mem_exec;
 
 
-const uint32_t screen_addr = 0x0001A700;
+const uint32_t alt_screen_addr  = 0x00012700;
+const uint32_t main_screen_addr = 0x0001A700;
+
+const uint32_t screen_addr = main_screen_addr;
 
 static uint8_t* low_memory_base;
 static uint32_t low_memory_size;
@@ -124,6 +127,11 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	if ( addr >= screen_addr  &&  addr < screen_addr + screen_size )
 	{
 		return screen::translate( addr - screen_addr, length, fc, access );
+	}
+	
+	if ( addr >= alt_screen_addr  &&  addr < alt_screen_addr + screen_size )
+	{
+		return screen::translate2( addr - alt_screen_addr, length, fc, access );
 	}
 	
 	if ( (addr >> 16) == 0x0040 )

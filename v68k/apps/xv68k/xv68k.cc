@@ -250,11 +250,21 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 		|                       |  40K
 	68K	+-----------------------+
 		
+	72K	+-----------------------+
+		|                       |  screen memory begins 0x00012700  (1792 after)
+		|                       |  screen memory ends   0x00017C80  (896 before)
+		|                       |
+		=   alt screen buffer   =  x6
+		|                       |
+		|                       |
+		|                       |  24K (21.375K used)
+	96K	+-----------------------+
+		
 	104	+-----------------------+
 		|                       |  screen memory begins 0x0001A700  (1792 after)
 		|                       |  screen memory ends   0x0001FC80  (896 before)
 		|                       |
-		= screen memory buffer  =  x6
+		=  main screen buffer   =  x6
 		|                       |
 		|                       |
 		|                       |  24K (21.375K used)

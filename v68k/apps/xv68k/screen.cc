@@ -34,6 +34,9 @@ using v68k::screen::the_screen_size;
 using v68k::screen::the_sync_relay;
 
 
+static void* spare_screen_buffer;
+
+
 static
 void close_without_errno( int fd )
 {
@@ -90,6 +93,11 @@ int publish_raster( const char* path )
 	
 	the_screen_size = raster.meta->desc.height
 	                * raster.meta->desc.stride;
+	
+	if ( raster.meta->desc.extra )
+	{
+		spare_screen_buffer = (uint8_t*) the_screen_buffer + the_screen_size;
+	}
 	
 	uint32_t count = 1 + raster.meta->desc.extra;
 	
@@ -169,6 +177,34 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 	}
 	
 	return p;
+}
+
+uint8_t* translate2( addr_t addr, uint32_t length, fc_t fc, mem_t access )
+{
+	if ( access == v68k::mem_exec )
+	{
+		return 0;  // NULL
+	}
+	
+	if ( spare_screen_buffer == 0 )  // NULL
+	{
+		return 0;  // NULL
+	}
+	
+	const uint32_t screen_size = the_screen_size;
+	
+	if ( length > screen_size )
+	{
+		// The memory access is somehow wider than the buffer is long
+		return 0;  // NULL
+	}
+	
+	if ( addr > screen_size - length )
+	{
+		return 0;  // NULL
+	}
+	
+	return (uint8_t*) spare_screen_buffer + addr;
 }
 
 }  // namespace screen
