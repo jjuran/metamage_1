@@ -187,7 +187,7 @@ struct global
 	uint8_t  size_;
 	uint8_t  index;
 	
-	uint8_t size() const  { return size_ & 0x3F; }
+	uint8_t size() const  { return (int8_t) size_ < 0 ? size_ & 0x3F : size_; }
 	
 	uint16_t word() const  { return int16_t( int8_t( index ) ); }
 };
@@ -214,14 +214,14 @@ static const global globals[] =
 	{ 0x014A, 10,   tag_EventQueue  },
 	{ 0x0154, 2,    tag_EvtBufCnt   },
 	{ 0x0160, 10,   tag_VBLQueue    },
-	{ 0x016A, 0x44, tag_Ticks       },
+	{ 0x016A, 0xC4, tag_Ticks       },
 	{ 0x0172, 2,    tag_MBState_esc },  // MBState, Tocks (Button escapes)
 	{ 0x0174, 16,   tag_KeyMaps     },  // KeyMap, KeyPadMap, 4 more bytes
 	{ 0x01D2, 2,    tag_UnitNtryCnt },
 	{ 0x01D4, 4,    tag_VIA         },
 	{ 0x01FA, 2,    tag_SPATBConfig },  // SPATalkB, SPConfig
 	{ 0x0207, 2,    tag_SPKbdPrint  },  // SPKbd, SPPrint
-	{ 0x020C, 0x44, tag_Time        },
+	{ 0x020C, 0xC4, tag_Time        },
 	{ 0x0210, 2,    tag_BootDrive   },
 	{ 0x0214, 2,    tag_SFSaveDisk  },
 	{ 0x021E, 2,    tag_Kbd_Alarm   },  // KbdType, AlarmState
@@ -391,9 +391,9 @@ static uint8_t* read_globals( const global* g, int16_t addr, uint32_t size )
 	{
 		uint32_t width = g->size();
 		
-		if ( int8_t( g->size_ ) >= 0 )
+		if ( int8_t( g->size_ ) >= 0  ||  g->size_ >= 0xC0 )
 		{
-			if ( g->size_ >= 0x40 )
+			if ( g->size_ >= 0xC0 )
 			{
 				refresh_dynamic_global( g->index );
 			}
