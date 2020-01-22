@@ -27,6 +27,7 @@
 
 
 using raster::raster_load;
+using raster::raster_metadata;
 using raster::sync_relay;
 
 using v68k::screen::the_screen_buffer;
@@ -34,8 +35,30 @@ using v68k::screen::the_screen_size;
 using v68k::screen::the_sync_relay;
 
 
+static raster_metadata* meta;
+
 static void* spare_screen_buffer;
 
+static bool using_alternate_buffer;
+
+
+void page_flip()
+{
+	using_alternate_buffer = ! using_alternate_buffer;
+	
+	if ( spare_screen_buffer )
+	{
+		meta->desc.frame = using_alternate_buffer;
+		
+		void* old_addr = the_screen_buffer;
+		void* new_addr = spare_screen_buffer;
+		
+		the_screen_buffer   = new_addr;
+		spare_screen_buffer = old_addr;
+	}
+	
+	v68k::screen::update();
+}
 
 static
 void close_without_errno( int fd )
@@ -84,6 +107,8 @@ int publish_raster( const char* path )
 	}
 	
 	the_screen_buffer = raster.addr;
+	
+	meta = raster.meta;
 	
 	using v68k::screen::the_surface_shape;
 	
@@ -142,7 +167,8 @@ int set_screen_backing_store_file( const char* path, bool is_raster )
 
 namespace screen {
 
-uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
+static
+uint8_t* translate_live( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 {
 	if ( access == v68k::mem_exec )
 	{
@@ -179,7 +205,8 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 	return p;
 }
 
-uint8_t* translate2( addr_t addr, uint32_t length, fc_t fc, mem_t access )
+static
+uint8_t* translate_spare( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 {
 	if ( access == v68k::mem_exec )
 	{
@@ -205,6 +232,18 @@ uint8_t* translate2( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 	}
 	
 	return (uint8_t*) spare_screen_buffer + addr;
+}
+
+uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
+{
+	return using_alternate_buffer ? translate_spare( addr, length, fc, access )
+	                              : translate_live ( addr, length, fc, access );
+}
+
+uint8_t* translate2( addr_t addr, uint32_t length, fc_t fc, mem_t access )
+{
+	return using_alternate_buffer ? translate_live ( addr, length, fc, access )
+	                              : translate_spare( addr, length, fc, access );
 }
 
 }  // namespace screen
