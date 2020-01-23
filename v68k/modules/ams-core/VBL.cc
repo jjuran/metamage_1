@@ -22,6 +22,8 @@
 
 QHdr VBLQueue : 0x0160;
 
+short CurPageOption : 0x0936;
+
 
 static timer_node VBL_timer_node;
 static bool       timer_scheduled;
@@ -102,8 +104,11 @@ void do_VBL()
 static
 void VBL_ready( timer_node* )
 {
-	unlock_screen();
-	lock_screen();
+	if ( CurPageOption >= 0 )
+	{
+		unlock_screen();
+		lock_screen();
+	}
 	
 	timer_scheduled = false;
 	
@@ -125,7 +130,10 @@ short VInstall_patch( QElem* vbl : __A0 )
 	
 	if ( ! timer_scheduled )
 	{
-		lock_screen();
+		if ( CurPageOption >= 0 )
+		{
+			lock_screen();
+		}
 		
 		VBL_timer_node.ready = &VBL_ready;
 		
@@ -152,7 +160,10 @@ short VRemove_patch( QElem* vbl : __A0 )
 		
 		timer_scheduled = false;
 		
-		unlock_screen();
+		if ( CurPageOption >= 0 )
+		{
+			unlock_screen();
+		}
 	}
 	
 	reenable_interrupts( saved_SR );
