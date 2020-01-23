@@ -96,7 +96,7 @@ int create_raster_file( const char* path )
 	const uint32_t height = 342;
 	const uint32_t weight = 1;
 	
-	const uint32_t frame_count = 1;
+	const uint32_t frame_count = 2;
 	
 	const uint32_t stride     = make_stride( width, weight );
 	const uint32_t image_size = height * stride;
