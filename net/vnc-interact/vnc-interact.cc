@@ -223,8 +223,15 @@ uint8_t* transcode_8x_1_to_8( uint8_t* p, int8_t octet )
 static
 void transcode_framebuffer_8x_1_to_8()
 {
+	using raster::raster_desc;
+	
+	const raster_desc& desc = loaded_raster.meta->desc;
+	const size_t image_size = desc.height * desc.stride;
+	
 	uint8_t* p = framebuffer;
 	uint8_t* q = (uint8_t*) loaded_raster.addr;
+	
+	q += desc.frame * image_size;
 	
 	for ( int i = 0;  i < fb_len / 8;  ++i )
 	{
@@ -562,8 +569,6 @@ void update_loop( raster::sync_relay*  sync,
                   unsigned             height,
                   unsigned             stride )
 {
-	const size_t image_size = height * stride;
-	
 	uint32_t seed = 0;
 	
 	bool wait_is_broken = ! CONFIG_SETPSHARED;
