@@ -320,6 +320,7 @@ void update_loop( raster::sync_relay*  sync,
                   draw_proc            draw )
 {
 	const size_t src_stride = loaded_raster.meta->desc.stride;
+	const size_t image_size = src_stride * height;
 	
 	uint32_t seed = 0;
 	
@@ -333,6 +334,8 @@ void update_loop( raster::sync_relay*  sync,
 		seed = sync->seed;
 		
 		const uint8_t* src = (uint8_t*) loaded_raster.addr;
+		
+		src += loaded_raster.meta->desc.frame * image_size;
 		
 		blit( src, src_stride, dst, dst_stride, width, height, draw );
 	}
