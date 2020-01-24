@@ -313,14 +313,14 @@ static volatile sig_atomic_t signalled;
 
 static
 void update_loop( raster::sync_relay*  sync,
-                  const uint8_t*       src,
-                  size_t               src_stride,
                   uint8_t*             dst,
                   size_t               dst_stride,
                   size_t               width,
                   size_t               height,
                   draw_proc            draw )
 {
+	const size_t src_stride = loaded_raster.meta->desc.stride;
+	
 	uint32_t seed = 0;
 	
 	while ( sync->status == Sync_ready  &&  ! signalled )
@@ -331,6 +331,8 @@ void update_loop( raster::sync_relay*  sync,
 		}
 		
 		seed = sync->seed;
+		
+		const uint8_t* src = (uint8_t*) loaded_raster.addr;
 		
 		blit( src, src_stride, dst, dst_stride, width, height, draw );
 	}
@@ -739,7 +741,7 @@ int main( int argc, char** argv )
 	
 	if ( raster::sync_relay* sync = raster_sync )
 	{
-		update_loop( sync, src, stride, dst, dst_stride, width, height, draw );
+		update_loop( sync, dst, dst_stride, width, height, draw );
 	}
 	
 	blit( src, stride, dst, dst_stride, width, height, draw );
