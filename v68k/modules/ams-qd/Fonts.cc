@@ -97,6 +97,10 @@ pascal void GetFNum_patch( const unsigned char* name, short* num )
 	*num = 10;
 }
 
+pascal void SetFontLock_patch( Boolean locked )
+{
+}
+
 static
 Handle find_FOND( short family )
 {
