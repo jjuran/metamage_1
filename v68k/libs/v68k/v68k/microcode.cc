@@ -12,10 +12,12 @@
 #include "v68k/state.hh"
 
 
+#define OSTYPE(a, b, c, d)  ((a) << 24 | (b) << 16 | (c) << 8 | (d))
+
+
 #ifdef __MWERKS__
 #pragma exceptions off
 #endif
-
 
 namespace v68k
 {
@@ -275,6 +277,18 @@ namespace v68k
 		}
 		else
 		{
+			if ( (s.opcode >> 9 ^ 0xA0) == (uint8_t) s.opcode )
+			{
+				s.sr.nzvc = 0;  // all undefined
+				
+				if ( value < 8 )
+				{
+					const uint32_t signature = OSTYPE('v', '6', '8', 'k');
+					
+					s.sr.nzvc = signature >> (28 - value * 4) & 0xf;
+				}
+			}
+			
 			return Ok;  // within bounds
 		}
 		
