@@ -67,6 +67,8 @@ enum
 	tag_Kbd_Alarm,
 	tag_MemErr,
 	tag_SdVolEnable,
+	tag_SoundPtr,
+	tag_SoundPtr_low_word,
 	tag_SoundBase,
 	tag_SoundBase_low_word,
 	tag_SoundActLvl,
@@ -273,6 +275,7 @@ static const global globals[] =
 	{ 0x021E, 2,    tag_Kbd_Alarm   },  // KbdType, AlarmState
 	{ 0x0220, 2,    tag_MemErr      },
 	{ 0x0260, 2,    tag_SdVolEnable },  // SdVolume, SdEnable
+	{ 0x0262, 4,    tag_SoundPtr    },
 	{ 0x0266, 4,    tag_SoundBase   },
 	{ 0x027E, 2,    tag_SoundActLvl },  // SoundActive, SoundLevel
 	{ 0x0280, 2,    tag_CurPitch    },
