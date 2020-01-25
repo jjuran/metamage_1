@@ -94,6 +94,41 @@ bool in_supervisor_mode()
 	return false;
 }
 
+#ifdef __MC68K__
+
+static
+asm uint32_t core_signature()
+{
+	MOVE     #0,CCR
+	MOVEQ.L  #0,D0
+	MOVEQ.L  #7,D1
+	
+loop:
+	CHK.W    D1,D1
+	MOVE     SR,D2
+	OR.B     D2,D0
+	ROR.L    #4,D0
+	DBRA.S   D1,loop
+	
+	RTS
+}
+
+static inline
+bool in_v68k()
+{
+	return core_signature() == 'v68k';
+}
+
+#else
+
+static inline
+bool in_v68k()
+{
+	return false;
+}
+
+#endif
+
 static
 void compiled()
 {
@@ -460,7 +495,7 @@ void virt_env()
 		blank = "";
 	}
 	
-	if ( TARGET_CPU_68K  &&  gestalt_defined( 'v68k' ) )
+	if ( TARGET_CPU_68K  &&  in_v68k() )
 	{
 		printf( "%s" "68K emulation:          v68k\n", blank );
 		blank = "";
