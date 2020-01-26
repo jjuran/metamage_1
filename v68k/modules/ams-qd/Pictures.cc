@@ -151,6 +151,7 @@ const Byte* do_opcode( const Byte* p, const Rect& dstRect, const Rect& frame )
 	switch ( opcode )
 	{
 		case 0x00:
+		case 0x1E:  // DefHilite
 			break;
 		
 		case 0xA0:
