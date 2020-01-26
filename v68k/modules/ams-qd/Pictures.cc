@@ -83,11 +83,18 @@ const UInt8* draw_bits( const UInt8* p, const Rect& target, const Rect& frame )
 {
 	BitMap bitmap;
 	
-	const short rowBytes = read_word( p );
-	
-	bitmap.rowBytes = rowBytes;
+	short rowBytes = read_word( p );
 	
 	bitmap.bounds = read_Rect( p );
+	
+	if ( rowBytes < 0 )
+	{
+		rowBytes &= 0x3FFF;
+		
+		p += 60;  // skip PixMap guts
+	}
+	
+	bitmap.rowBytes = rowBytes;
 	
 	Rect srcRect = read_Rect( p );
 	Rect dstRect = read_Rect( p );
