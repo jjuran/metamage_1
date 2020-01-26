@@ -182,6 +182,39 @@ const Byte* do_opcode( const Byte* p, const Rect& dstRect, const Rect& frame )
 	return p;
 }
 
+static
+const Byte* do_opcode2( const Byte* p, const Rect& dstRect, const Rect& frame )
+{
+	const UInt16* p2 = (const UInt16*) p;
+	
+	if ( *p++ == 0 )
+	{
+		p = do_opcode( p, dstRect, frame );
+		
+		if ( (long) p & 1 )
+		{
+			++p;
+		}
+		
+		return p;
+	}
+	
+	const UInt16 opcode = *p2++;
+	
+	switch ( opcode )
+	{
+		case 0x0C00:
+			// HeaderOp
+			p2 += 24 / 2u;
+			break;
+		
+		default:
+			return NULL;
+	}
+	
+	return (const Byte*) p2;
+}
+
 pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 {
 	GrafPort& port = **get_addrof_thePort();
@@ -224,7 +257,12 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	}
 	else if ( version == 2 )
 	{
-		WARNING = "PICT format 2 unsupported in DrawPicture()";
+		++p;  // skip $FF after $02
+		
+		while ( p  &&  p < end )
+		{
+			p = do_opcode2( p, *dstRect, pic[0]->picFrame );
+		}
 	}
 	else
 	{
