@@ -149,6 +149,11 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	
 	Size size = GetHandleSize( (Handle) pic );
 	
+	if ( size < sizeof (Picture) + 4 )
+	{
+		return;  // $1101FF is valid, but empty
+	}
+	
 	const UInt8* end = (UInt8*) pic[0] + size;
 	const UInt8* p   = (UInt8*) (pic[0] + 1);
 	
@@ -157,34 +162,43 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	
 	port.pnMode = patCopy;
 	
+	UInt8 c = *p++;
+	
+	if ( c == 0 )
+	{
+		c = *p++;
+	}
+	
+	if ( c != 0x11 )
+	{
+		return;
+	}
+	
+	uint8_t version = *p++;
+	
+	if ( version == 1 )
+	{
+		// PICT format 1
+	}
+	else if ( version == 2 )
+	{
+		WARNING = "PICT format 2 unsupported in DrawPicture()";
+		return;
+	}
+	else
+	{
+		WARNING = "Unknown PICT format ", version;
+		return;
+	}
+	
 	while ( p < end )
 	{
-		UInt8 c = *p++;
+		c = *p++;
 		
 		switch ( c )
 		{
 			case 0x00:
 				continue;
-			
-			case 0x11:
-				{
-					uint8_t version = *p++;
-					
-					if ( version == 1 )
-					{
-						// PICT format 1
-						continue;
-					}
-					else if ( version == 2 )
-					{
-						WARNING = "PICT format 2 unsupported in DrawPicture()";
-					}
-					else
-					{
-						WARNING = "Unknown PICT format ", version;
-					}
-				}
-				break;
 			
 			case 0xA0:
 				p += 2;
