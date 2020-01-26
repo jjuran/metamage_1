@@ -143,6 +143,45 @@ const UInt8* draw_bits( const UInt8* p, const Rect& target, const Rect& frame )
 	return p;
 }
 
+static
+const Byte* do_opcode( const Byte* p, const Rect& dstRect, const Rect& frame )
+{
+	const Byte opcode = *p++;
+	
+	switch ( opcode )
+	{
+		case 0x00:
+			break;
+		
+		case 0xA0:
+			p += 2;
+			break;
+		
+		case 0x01:
+			p += read_word( p ) - 2;
+			break;
+		
+		case 0x09:
+			p = pen_pat( p );
+			break;
+		
+		case 0x22:
+			p = short_line( p, dstRect, frame );
+			break;
+		
+		case 0x90:
+		case 0x98:
+			p = draw_bits( p, dstRect, frame );
+			break;
+		
+		case 0xFF:
+		default:
+			return NULL;
+	}
+	
+	return p;
+}
+
 pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 {
 	GrafPort& port = **get_addrof_thePort();
@@ -178,55 +217,18 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	
 	if ( version == 1 )
 	{
-		// PICT format 1
+		while ( p  &&  p < end )
+		{
+			p = do_opcode( p, *dstRect, pic[0]->picFrame );
+		}
 	}
 	else if ( version == 2 )
 	{
 		WARNING = "PICT format 2 unsupported in DrawPicture()";
-		return;
 	}
 	else
 	{
 		WARNING = "Unknown PICT format ", version;
-		return;
-	}
-	
-	while ( p < end )
-	{
-		c = *p++;
-		
-		switch ( c )
-		{
-			case 0x00:
-				continue;
-			
-			case 0xA0:
-				p += 2;
-				continue;
-			
-			case 0x01:
-				p += read_word( p ) - 2;
-				continue;
-			
-			case 0x09:
-				p = pen_pat( p );
-				continue;
-			
-			case 0x22:
-				p = short_line( p, *dstRect, pic[0]->picFrame );
-				continue;
-			
-			case 0x90:
-			case 0x98:
-				p = draw_bits( p, *dstRect, pic[0]->picFrame );
-				continue;
-			
-			case 0xFF:
-			default:
-				break;
-		}
-		
-		break;
 	}
 	
 	SetPenState( &penState );
