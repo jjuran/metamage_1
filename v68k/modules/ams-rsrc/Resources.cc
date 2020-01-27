@@ -750,6 +750,10 @@ void DetachResource_handler( Handle resource : __A0 )
 	{
 		rsrc->handle = NULL;
 		
+		master_pointer& mp = *(master_pointer*) resource;
+		
+		mp.flags -= kHandleIsResourceMask;
+		
 		err = noErr;
 	}
 	
