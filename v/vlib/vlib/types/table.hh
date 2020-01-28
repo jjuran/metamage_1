@@ -13,6 +13,10 @@
 namespace vlib
 {
 	
+	struct dispatch;
+	
+	extern const dispatch table_dispatch;
+	
 	bool is_table( const Value& v );
 	
 	class Table : public Value
@@ -20,7 +24,7 @@ namespace vlib
 		public:
 			static bool test( const Value& v )
 			{
-				return is_table( v );
+				return v.dispatch_methods() == &table_dispatch;
 			}
 			
 			Table( const Value& key_type, const Value& array );
