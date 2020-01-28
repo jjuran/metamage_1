@@ -224,19 +224,6 @@ namespace vlib
 					
 					THROW( "unary operator not defined for arrays" );
 				
-				case Op_empower:
-					if ( op == Op_unary_minus )
-					{
-						const Value& old_list = expr->right.expr()->right;
-						
-						const Value new_list  = reverse_list( old_list );
-						const Value new_array = make_array  ( new_list );
-						
-						return Value( expr->left, expr->op, new_array );
-					}
-					
-					THROW( "unary operator not defined for arrays" );
-				
 				case Op_gamut:
 				case Op_delta:
 					if ( op == Op_unary_minus )

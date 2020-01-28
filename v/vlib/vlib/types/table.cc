@@ -9,6 +9,7 @@
 #include "vlib/array-utils.hh"
 #include "vlib/assign.hh"
 #include "vlib/equal.hh"
+#include "vlib/list-utils.hh"
 #include "vlib/table-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
@@ -44,6 +45,18 @@ namespace vlib
 		{
 			case Op_typeof:
 				return Value( v.expr()->left, Op_empower, etc );
+			
+			case Op_unary_minus:
+			{
+				Expr* expr = v.expr();
+				
+				const Value& old_list = expr->right.expr()->right;
+				
+				const Value new_list  = reverse_list( old_list );
+				const Value new_array = make_array  ( new_list );
+				
+				return Value( expr->left, expr->op, new_array );
+			}
 			
 			default:
 				break;
