@@ -16,8 +16,10 @@
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/verity.hh"
 #include "vlib/iterators/array_iterator.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
+#include "vlib/types/integer.hh"
 #include "vlib/types/type.hh"
 
 
@@ -66,6 +68,53 @@ namespace vlib
 	}
 	
 	static
+	Value table_member( const Value& table, const plus::string& name )
+	{
+		const Value& array = table.expr()->right;
+		
+		if ( name == "length" )
+		{
+			if ( is_empty_array( array ) )
+			{
+				return Integer();
+			}
+			
+			Expr* expr = array.expr();
+			
+			return Integer( count( expr->right ) );
+		}
+		
+		if ( name == "keys"  ||  name == "values" )
+		{
+			if ( is_empty_array( array ) )
+			{
+				return array;
+			}
+			
+			const bool keys = name == "keys";
+			
+			list_builder results;
+			
+			array_iterator it( array );
+			
+			while ( it )
+			{
+				const Value& mapping = it.use();
+				
+				Expr* expr = mapping.expr();
+				
+				results.append( keys ? expr->left : expr->right );
+			}
+			
+			return make_array( results );
+		}
+		
+		THROW( "nonexistent table member" );
+		
+		return Value();
+	}
+	
+	static
 	bool in_array_mapping_keys( const Value& v, const Value& array )
 	{
 		array_iterator it( array );
@@ -91,6 +140,9 @@ namespace vlib
 		{
 			case Op_contains:
 				return Boolean( in_array_mapping_keys( b, a.expr()->right ) );
+			
+			case Op_member:
+				return table_member( a, b.string() );
 			
 			case Op_subscript:
 				return associative_subscript( a, b );

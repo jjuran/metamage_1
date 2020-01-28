@@ -30,7 +30,6 @@
 #include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
-#include "vlib/iterators/array_iterator.hh"
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
@@ -349,46 +348,6 @@ namespace vlib
 	}
 	
 	static
-	Value table_member( const Value& table, const plus::string& name )
-	{
-		const Value& array = table.expr()->right;
-		
-		if ( name == "length" )
-		{
-			return array_member( array, name );
-		}
-		
-		if ( name == "keys"  ||  name == "values" )
-		{
-			if ( is_empty_array( array ) )
-			{
-				return array;
-			}
-			
-			const bool keys = name == "keys";
-			
-			list_builder results;
-			
-			array_iterator it( array );
-			
-			while ( it )
-			{
-				const Value& mapping = it.use();
-				
-				Expr* expr = mapping.expr();
-				
-				results.append( keys ? expr->left : expr->right );
-			}
-			
-			return make_array( results );
-		}
-		
-		THROW( "nonexistent table member" );
-		
-		return Value();
-	}
-	
-	static
 	Value calc_member( const Value& left, const Value& right )
 	{
 		if ( right.type() != Value_string )
@@ -408,11 +367,6 @@ namespace vlib
 			if ( expr->op == Op_mapping )
 			{
 				return mapping_member( left, right.string() );
-			}
-			
-			if ( expr->op == Op_empower )
-			{
-				return table_member( left, right.string() );
 			}
 			
 			if ( expr->op == Op_module )
