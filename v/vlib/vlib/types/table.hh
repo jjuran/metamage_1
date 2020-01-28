@@ -17,8 +17,6 @@ namespace vlib
 	
 	extern const dispatch table_dispatch;
 	
-	bool is_table( const Value& v );
-	
 	class Table : public Value
 	{
 		public:

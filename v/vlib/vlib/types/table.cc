@@ -8,7 +8,6 @@
 // vlib
 #include "vlib/array-utils.hh"
 #include "vlib/assign.hh"
-#include "vlib/is_type.hh"
 #include "vlib/table-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
@@ -22,20 +21,6 @@
 
 namespace vlib
 {
-	
-	bool is_table( const Value& v )
-	{
-		if ( Expr* expr = v.expr() )
-		{
-			if ( expr->op == Op_empower )
-			{
-				return is_type( expr->left )  &&  is_array( expr->right );
-			}
-		}
-		
-		return false;
-	}
-	
 	
 	static const Type etc = etc_vtype;
 	
