@@ -118,25 +118,6 @@ namespace vlib
 	}
 	
 	static
-	bool in_array_mapping_keys( const Value& v, const Value& array )
-	{
-		array_iterator it( array );
-		
-		while ( it )
-		{
-			const Value& mapping = it.use();
-			const Value& key = mapping.expr()->left;
-			
-			if ( equal( key, v ) )
-			{
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
-	static
 	bool in( const Value& v, const Value& container )
 	{
 		if ( Expr* expr = container.expr() )
@@ -150,9 +131,6 @@ namespace vlib
 				
 				case Op_array:
 					return in_list( v, expr->right );
-				
-				case Op_empower:
-					return in_array_mapping_keys( v, expr->right );
 				
 				default:
 					break;

@@ -8,6 +8,7 @@
 // vlib
 #include "vlib/array-utils.hh"
 #include "vlib/assign.hh"
+#include "vlib/equal.hh"
 #include "vlib/table-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
@@ -52,10 +53,32 @@ namespace vlib
 	}
 	
 	static
+	bool in_array_mapping_keys( const Value& v, const Value& array )
+	{
+		array_iterator it( array );
+		
+		while ( it )
+		{
+			const Value& mapping = it.use();
+			const Value& key = mapping.expr()->left;
+			
+			if ( equal( key, v ) )
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
 		switch ( op )
 		{
+			case Op_contains:
+				return Boolean( in_array_mapping_keys( b, a.expr()->right ) );
+			
 			case Op_subscript:
 				return associative_subscript( a, b );
 			
