@@ -384,6 +384,9 @@ pascal void StdLine_patch( Point newPt )
 	line.bottom = max( pnLoc.v, newPt.v );
 	line.right  = max( pnLoc.h, newPt.h );
 	
+	const short descent = line.bottom - line.top;
+	const short advance = line.right - line.left;
+	
 	line.bottom += thePort->pnSize.v;
 	line.right  += thePort->pnSize.h;
 	
@@ -396,10 +399,7 @@ pascal void StdLine_patch( Point newPt )
 	
 	static Handle handle = NewHandle( 0 );
 	
-	const short descent = line.bottom - line.top;
-	const short advance = line.right - line.left;
-	
-	const short pts = descent + 1;
+	const short pts = line.bottom - line.top + 1;
 	
 	const long handle_len = sizeof (Region) + 2 + pts * 6 * sizeof (short);
 	
