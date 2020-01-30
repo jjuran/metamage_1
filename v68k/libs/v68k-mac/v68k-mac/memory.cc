@@ -161,6 +161,8 @@ enum
 	tag_TEScrpHandle_low_word,
 	tag_AppPacks,
 	tag_AppPacks_word_15 = tag_AppPacks + 15,  // 32 bytes
+	tag_AE8,
+	tag_AE8_low_word,
 	tag_AppParmHandle,
 	tag_AppParmHandle_low_word,
 	tag_DlgFont,
@@ -184,6 +186,8 @@ void initialize()
 	words[ tag_FSFCBLen   ] = 0xFFFF;  // indicates MFS
 	words[ tag_SaveUpdate ] = 0xFFFF;  // initially true
 	words[ tag_PaintWhite ] = 0xFFFF;  // initially true
+	words[ tag_AE8        ] = 0xFFFF;
+	words[ tag_AE8 + 1    ] = 0xFFFF;
 	words[ tag_MBarHeight ] = 0xFFFF;  // signals to use default menu bar height
 }
 
@@ -305,6 +309,7 @@ static const global globals[] =
 	{ 0x0AB0, 2,    tag_TEScrpLength},
 	{ 0x0AB4, 4,    tag_TEScrpHandle},
 	{ 0x0AB8, 32,   tag_AppPacks    },
+	{ 0x0AE8, 4,    tag_AE8         },
 	{ 0x0AEC, 4,    tag_AppParmHandle},
 	{ 0x0AFA, 2,    tag_DlgFont     },
 	{ 0x0B22, 2,    tag_SCSIFlag    },
