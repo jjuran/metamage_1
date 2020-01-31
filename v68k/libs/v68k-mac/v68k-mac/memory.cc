@@ -213,7 +213,7 @@ struct global
 {
 	int16_t  addr;
 	uint8_t  size_;
-	uint8_t  index;
+	uint16_t index;
 	
 	uint8_t size() const  { return (int8_t) size_ < 0 ? size_ & 0x3F : size_; }
 	
