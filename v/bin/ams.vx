@@ -10,6 +10,9 @@ const ams_mnt = getenv "AMS_MNT" or amsdir "/mnt"
 
 const title = "Advanced Mac Substitute"
 
+const model = getenv "AMS_CPU"                # may be ()
+const model_opt = if model then {"-M" model}  # may be ()
+
 const screen_res = getenv "AMS_SCREENRES" or "512x342"
 
 const default_app = "Welcome"
@@ -258,7 +261,7 @@ else
 
 const servers = sound-server, freemountd-server, appfs-server, docfs-server
 
-const xv68k_opts = "-tSP"
+const xv68k_opts = model_opt, "-tSP"
 
 const xv68k-subcmd = xv68k, xv68k_opts, screen_opt, *module_opts, app, app_name
 const graft-subcmd = "graft", servers, xv68k-subcmd
