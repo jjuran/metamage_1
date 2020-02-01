@@ -43,6 +43,13 @@ const root_dir = if exists home_68k then {home_68k} else {ams_mnt}
 
 const freemountd-server = "freemountd -q --root" / ' ', root_dir, "//"
 
+const xv68k = "xv68k"
+
+def module_path (name)
+{
+	return ams_lib "/" name
+}
+
 # Reserve fds 6 and 7
 dup2(ERR, 6)
 dup2(ERR, 7)
@@ -191,7 +198,7 @@ const module_args = str^
 
 def argify (name)
 {
-	const path = ams_lib "/" name
+	const path = module_path name
 	
 	return
 		if name in module_args
@@ -251,7 +258,7 @@ else
 
 const servers = sound-server, freemountd-server, appfs-server, docfs-server
 
-const xv68k-subcmd = "xv68k", "-tSP", xv68k-screen, *module_opts, app, app_name
+const xv68k-subcmd = xv68k, "-tSP", xv68k-screen, *module_opts, app, app_name
 const graft-subcmd = "graft", servers, xv68k-subcmd
 
 const command = [ command-prefix, graft-subcmd ]
