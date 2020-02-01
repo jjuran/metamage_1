@@ -83,6 +83,8 @@ using v68k::callout::system_call;
 using v68k::callout::microseconds;
 using v68k::screen::ignore_screen_locks;
 
+static v68k::processor_model mc68k_model = v68k::mc68000;
+
 static bool turbo;
 static bool polling;
 static bool tracing;
@@ -105,6 +107,7 @@ static module_spec* module_specs;
 enum
 {
 	Opt_authorized = 'A',
+	Opt_model      = 'M',
 	Opt_poll       = 'P',
 	Opt_supervisor = 'S',
 	Opt_trace      = 'T',
@@ -128,6 +131,7 @@ static command::option options[] =
 	{ "trace",      Opt_trace      },
 	{ "turbo",      Opt_turbo      },
 	{ "verbose",    Opt_verbose    },
+	{ "model",      Opt_model,  command::Param_required },
 	{ "pid",        Opt_pid,    command::Param_optional },
 	{ "raster",     Opt_raster, command::Param_required },
 	{ "screen",     Opt_screen, command::Param_required },
@@ -765,7 +769,7 @@ int execute_68k( int argc, char* const* argv )
 	
 	const memory_manager memory( mem, mem_size );
 	
-	v68k::emulator emu( v68k::mc68000, memory, bkpt_handler );
+	v68k::emulator emu( mc68k_model, memory, bkpt_handler );
 	
 	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
 	
@@ -893,6 +897,27 @@ char* const* get_options( char** argv )
 			
 			case Opt_verbose:
 				verbose = true;
+				break;
+			
+			case Opt_model:
+				{
+					const char* p = global_result.param;
+					
+					if ( *p++ == '6'  &&  *p++ == '8'  &&  *p++ == '0' )
+					{
+						uint8_t x = *p++ - '0';
+						
+						if ( x <= 4  &&  *p++ == '0' )
+						{
+							mc68k_model = v68k::processor_model( x << 4 );
+							goto ok;
+						}
+					}
+					
+					EXIT( 2, "xv68k: invalid --model parameter" );
+				ok:
+					;
+				}
 				break;
 			
 			case Opt_pid:
