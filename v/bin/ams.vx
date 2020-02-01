@@ -215,7 +215,7 @@ const module_opts = ams_modules map {"-m", argify v}
 
 const app = ams_bin "/app"
 
-const xv68k-screen
+const screen_opt
 const command-prefix
 
 if exists "/gui" then
@@ -236,7 +236,7 @@ if exists "/gui" then
 	
 	dup2( reader "v/events/v/stream", events_fd_slot )
 	
-	xv68k-screen   = "--screen=v/screen/v/bits"
+	screen_opt     = "--screen=v/screen/v/bits"
 	command-prefix = "daemonize --stdin --cwd --ctty=tty --" / ' '
 }
 else
@@ -252,13 +252,15 @@ else
 	
 	run [ "raster init" / ' ', screen ]
 	
-	xv68k-screen   = raster
+	screen_opt     = raster
 	command-prefix = "exhibit", "-t", title, raster, events_fd_opt
 }
 
 const servers = sound-server, freemountd-server, appfs-server, docfs-server
 
-const xv68k-subcmd = xv68k, "-tSP", xv68k-screen, *module_opts, app, app_name
+const xv68k_opts = "-tSP"
+
+const xv68k-subcmd = xv68k, xv68k_opts, screen_opt, *module_opts, app, app_name
 const graft-subcmd = "graft", servers, xv68k-subcmd
 
 const command = [ command-prefix, graft-subcmd ]
