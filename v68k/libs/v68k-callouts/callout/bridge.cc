@@ -690,7 +690,7 @@ int32_t Gestalt_callout( v68k::processor_state& s )
 			break;
 		
 		case OSTYPE('p', 'r', 'o', 'c'):  // 'proc'
-			value = (s.model >> 8) + 1;
+			value = (s.model >> 4) + 1;
 			break;
 		
 		default:
