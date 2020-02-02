@@ -168,6 +168,7 @@ ams-68k-install: var/install
 	install -m444 $(AMS_ROOT)/bin/app    var/install/share/ams/bin
 	install -m444 $(AMS_ROOT)/lib/ams-*  var/install/share/ams/lib
 	install -m444 $(AMS_ROOT)/lib/vdb    var/install/share/ams/lib
+	install -m444 $(AMS_ROOT)/lib/umsp   var/install/share/ams/lib
 	cp -R $(AMS_ROOT)/mnt/*              var/install/share/ams/mnt
 
 ams-common-install: var/install
