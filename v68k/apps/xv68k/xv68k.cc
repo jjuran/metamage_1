@@ -779,6 +779,10 @@ int execute_68k( int argc, char* const* argv )
 	
 	load_vectors( load );
 	
+	enum { CPUFlag = 0x012F };
+	
+	emu.mem.put_byte( CPUFlag, mc68k_model >> 4, v68k::user_data_space );
+	
 	load_Mac_traps( mem );
 	
 	char* empty_module_argv[] = { NULL };
