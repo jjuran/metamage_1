@@ -136,6 +136,38 @@ bool handle_exception( registers& regs )
 		return true;
 	}
 	
+	// 0100 0110 11xx xxxx:  MOVE from SR
+	
+	if ( (opcode & 0xFFC0) == 0x46C0 )
+	{
+		uint16_t bits =  resolve_ea16( regs, opcode & 0x003F );
+		
+		if ( ((regs.sr ^ bits) & 0xF000) == 0 )
+		{
+			// We allow user-mode to alter the interrupt mask only
+			
+			regs.sr = bits;
+			
+			return true;
+		}
+	}
+	
+	// 0000 0000 0111 1100:  ORI to SR
+	
+	if ( opcode == 0x007C )
+	{
+		uint16_t bits = read_word( regs.pc );
+		
+		if ( (bits & 0xF000) == 0 )
+		{
+			// We allow user-mode to alter the interrupt mask only
+			
+			regs.sr |= bits;
+			
+			return true;
+		}
+	}
+	
 	regs.pc = old_pc;
 	
 	return false;
