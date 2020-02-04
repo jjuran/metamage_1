@@ -1030,11 +1030,9 @@ namespace Genie
 			throw p7::errno_t( ENXIO );
 		}
 		
-		const bool async = false;
-		
 		vfs::filehandle_ptr opened = OpenMacFileHandle( extra.fsspec,
 		                                                flags,
-		                                                async ? &Genie::FSpOpenDF : &OpenDataFork,
+		                                                &OpenDataFork,
 		                                                &FSTreeFromFSSpec );
 		
 		if ( created )
