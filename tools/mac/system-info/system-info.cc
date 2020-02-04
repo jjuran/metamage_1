@@ -65,12 +65,15 @@ struct SonyVars_record
 
 #if TARGET_CPU_68K
 
+uint8_t CPUFlag : 0x012F;
+
 SonyVars_record* SonyVars : 0x0134;
 
 short SysVersion : 0x015A;
 
 #else
 
+static uint8_t CPUFlag;
 static short SysVersion;
 
 #endif
@@ -209,6 +212,11 @@ void host_env()
 	                    :                 "macOS";
 	
 	printf( "Host CPU architecture:  %s\n", arch_name );
+	
+	if ( TARGET_CPU_68K  &&  sysa <= 1 )
+	{
+		printf( "Host CPU model number:  680%c0\n", CPUFlag + '0' );
+	}
 	
 	if ( mnam != NULL )
 	{
