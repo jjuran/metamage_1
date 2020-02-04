@@ -989,6 +989,25 @@ pascal void SetItemMark_patch( MenuInfo** menu, short item, CharParameter mark )
 	}
 }
 
+pascal void GetItemMark_patch( MenuRef menu, short item, CharParameter* mark )
+{
+	menu_item_iterator it( menu );
+	
+	while ( const unsigned char* p = it )
+	{
+		if ( --item == 0 )
+		{
+			p += 1 + p[ 0 ] + 2;
+			
+			*mark = *p;
+			
+			return;
+		}
+		
+		++it;
+	}
+}
+
 pascal void SetItmIcon_patch( MenuInfo** menu, short item, CharParameter icon )
 {
 	WMgrPort_bezel_scope port_swap;
