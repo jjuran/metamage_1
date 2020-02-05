@@ -91,6 +91,11 @@ void do_VBL()
 		{
 			// Dequeue this task
 			*slot = it->qLink;
+			
+			if ( VBLQueue.qHead == NULL  &&  CurPageOption >= 0 )
+			{
+				unlock_screen();
+			}
 		}
 		else
 		{
