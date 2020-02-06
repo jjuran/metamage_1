@@ -134,6 +134,9 @@ OSErr do_snd_command( SndChannel* chan, SndList** h, const SndCommand& command )
 	
 	switch ( cmd )
 	{
+		case nullCmd:
+			return noErr;
+		
 		case bufferCmd:
 			return do_bufferCmd( chan, h, command );
 		
@@ -170,15 +173,23 @@ short SndPlay_patch( SndChannel* c, SndListResource** h, Boolean async )
 		return unimplemented;
 	}
 	
-	if ( n_cmds != 1 )
+	if ( n_cmds == 0 )
 	{
-		ERROR = "'snd ' resource expected to have one command, not ", n_cmds;
+		ERROR = "'snd ' resource expected to have at least one command";
 		return unimplemented;
 	}
 	
-	const SndCommand& command = h[0]->commandPart[ 0 ];
+	const SndCommand* command = h[0]->commandPart;
 	
-	return do_snd_command( c, h, command );
+	for ( int i = 0;  i < n_cmds;  ++i )
+	{
+		if ( OSErr err = do_snd_command( c, h, *command++ ) )
+		{
+			return err;
+		}
+	}
+	
+	return noErr;
 }
 
 pascal
