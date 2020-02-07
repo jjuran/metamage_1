@@ -10,6 +10,8 @@ pascal void RsrcZoneInit_patch();
 
 pascal short OpenResFile_patch( const unsigned char* name );
 
+pascal void CloseResFile_patch( short refnum );
+
 pascal short ResError_patch();
 pascal short CurResFile_patch();
 

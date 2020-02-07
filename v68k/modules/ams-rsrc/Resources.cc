@@ -355,6 +355,31 @@ pascal short OpenResFile_patch( ConstStr255Param name )
 	JMP      (A0)
 }
 
+static
+void CloseResFile_handler( short refnum : __D0 )
+{
+	ERROR = "CloseResFile is unimplemented";
+}
+
+asm
+pascal void CloseResFile_patch( short refnum )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.W   (A2)+,D0
+	
+	JSR      CloseResFile_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #2,SP
+	
+	JMP      (A0)
+}
+
 pascal void RsrcZoneInit_patch()
 {
 	FCBSPtr->fcbs[ 0 ].fcbFlNum = -1;  // claim for System resource fork

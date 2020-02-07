@@ -49,6 +49,7 @@ void install_ResourceManager()
 	TBTRAP( OpenResFile     );  // A997
 	TBTRAP( UseResFile      );  // A998
 	
+	TBTRAP( CloseResFile    );  // A99A
 	TBTRAP( SetResLoad      );  // A99B
 	TBTRAP( CountResources  );  // A99C
 	TBTRAP( GetIndResource  );  // A99D
