@@ -173,26 +173,29 @@ pascal unsigned char EventAvail_patch( unsigned short  eventMask,
 	
 	poll_user_input();
 	
-	if ( CurDeactive )
+	if ( eventMask & activMask )
 	{
-		event->what      = activateEvt;
-		event->message   = (long) CurDeactive;
-		event->when      = get_Ticks();
-		event->where     = Mouse;
-		event->modifiers = 0;
+		if ( CurDeactive )
+		{
+			event->what      = activateEvt;
+			event->message   = (long) CurDeactive;
+			event->when      = get_Ticks();
+			event->where     = Mouse;
+			event->modifiers = 0;
+			
+			return true;
+		}
 		
-		return true;
-	}
-	
-	if ( CurActivate )
-	{
-		event->what      = activateEvt;
-		event->message   = (long) CurActivate;
-		event->when      = get_Ticks();
-		event->where     = Mouse;
-		event->modifiers = activeFlag;
-		
-		return true;
+		if ( CurActivate )
+		{
+			event->what      = activateEvt;
+			event->message   = (long) CurActivate;
+			event->when      = get_Ticks();
+			event->where     = Mouse;
+			event->modifiers = activeFlag;
+			
+			return true;
+		}
 	}
 	
 	if ( peek_lowlevel_event( eventMask, event ) )
@@ -200,7 +203,7 @@ pascal unsigned char EventAvail_patch( unsigned short  eventMask,
 		return true;
 	}
 	
-	if ( CheckUpdate( event ) )
+	if ( eventMask & updateMask  &&  CheckUpdate( event ) )
 	{
 		return true;
 	}
