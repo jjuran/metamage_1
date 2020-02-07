@@ -10,6 +10,9 @@
 #include <Resources.h>
 #endif
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // quickdraw
 #include "qd/pack_bits.hh"
 
@@ -28,11 +31,17 @@ pascal void UnpackBits_patch( Ptr* src, Ptr* dst, short dstBytes )
 
 pascal unsigned char BitTst_patch( Ptr addr, long bit )
 {
+	addr += bit / 8u;
+	bit   = bit % 8u;
+	
 	return (*addr & (1 << 7 - bit)) != 0;
 }
 
 pascal void BitSet_patch( Ptr addr, long bit )
 {
+	addr += bit / 8u;
+	bit   = bit % 8u;
+	
 	const uint8_t mask = 1 << 7 - bit;
 	
 	*addr |= mask;
@@ -40,6 +49,9 @@ pascal void BitSet_patch( Ptr addr, long bit )
 
 pascal void BitClr_patch( Ptr addr, long bit )
 {
+	addr += bit / 8u;
+	bit   = bit % 8u;
+	
 	const uint8_t mask = 1 << 7 - bit;
 	
 	*addr &= ~mask;
