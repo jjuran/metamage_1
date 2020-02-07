@@ -155,6 +155,20 @@ void remove_from_window_list( WindowPeek window )
 	}
 }
 
+static
+WindowPeek next_visible_window( WindowPeek w )
+{
+	for ( ;  w != NULL;  w = w->nextWindow )
+	{
+		if ( w->visible )
+		{
+			break;
+		}
+	}
+	
+	return w;
+}
+
 #pragma mark -
 #pragma mark Initialization and Allocation
 #pragma mark -
@@ -528,9 +542,10 @@ pascal void HideWindow_patch( WindowPeek window )
 	
 	if ( window == WindowList  &&  window->nextWindow != NULL )
 	{
-		// TODO:  What if the next window is invisible?
-		
-		SelectWindow_patch( window->nextWindow );
+		if ( WindowPeek next = next_visible_window( window->nextWindow ) )
+		{
+			SelectWindow_patch( next );
+		}
 	}
 }
 
