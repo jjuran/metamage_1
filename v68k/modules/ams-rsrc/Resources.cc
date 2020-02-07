@@ -53,6 +53,7 @@ enum
 	resPurgeable = 32,
 	resLocked    = 16,
 	resProtected = 8,
+	resChanged   = 2,
 };
 
 
@@ -934,6 +935,46 @@ pascal void ChangedResource_patch( Handle resource )
 	MOVEA.L  (A2)+,A0
 	
 	JSR      ChangedResource_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
+	
+	JMP      (A0)
+}
+
+static
+void WriteResource_handler( Handle resource : __A0 )
+{
+	OSErr err = resNotFound;
+	
+	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
+	{
+		if ( (rsrc->attrs & (resProtected | resChanged)) != resChanged )
+		{
+			err = noErr;
+		}
+		else
+		{
+			ERROR = "WriteResource is unimplemented";
+			err = paramErr;
+		}
+	}
+	
+	ResErr = err;
+}
+
+asm
+pascal void WriteResource_patch( Handle resource )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A0
+	
+	JSR      WriteResource_handler
 	
 	MOVEM.L  (SP)+,D1-D2/A1-A2
 	
