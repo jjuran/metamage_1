@@ -120,6 +120,11 @@ def core_opts
 		opts <-- "-R" config[ "romgen" ]
 	}
 	
+	if "system" in config then
+	{
+		opts <-- "-V" config[ "system" ]
+	}
+	
 	return ams-core: opts
 }
 
