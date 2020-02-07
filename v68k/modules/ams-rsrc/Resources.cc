@@ -48,6 +48,13 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
+enum
+{
+	resPurgeable = 32,
+	resLocked    = 16,
+};
+
+
 short MemErr      : 0x0220;
 Str31 CurApName   : 0x0910;
 Handle TopMapHndl : 0x0A50;
@@ -475,6 +482,16 @@ Handle new_res_handle( RsrcMapHandle rsrc_map, rsrc_header& rsrc, ResType type )
 			mp.offset = (char*) &rsrc - (char*) *rsrc_map;
 			mp.type   = type;
 			mp.base   = rsrc_map;
+			
+			if ( rsrc.attrs & resLocked )
+			{
+				mp.flags |= kHandleLockedMask;
+			}
+			
+			if ( rsrc.attrs & resPurgeable )
+			{
+				mp.flags |= kHandlePurgeableMask;
+			}
 			
 			rsrc.handle = h;
 		}
