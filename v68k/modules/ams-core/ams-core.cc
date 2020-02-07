@@ -57,6 +57,7 @@ enum
 	Opt_GNEtix = 'G',  // GetNextEvent throttle, in ticks
 	Opt_linger = 'L',  // linger on ExitToShell
 	Opt_romgen = 'R',  // ROM generation: 0 for 64K ROM, 1 for 128K, etc.
+	Opt_system = 'V',  // System version
 	
 	Opt_last_byte = 255,
 	
@@ -70,6 +71,7 @@ static command::option options[] =
 	{ "linger",  Opt_linger },
 	
 	{ "romgen", Opt_romgen, command::Param_required },
+	{ "system", Opt_system, command::Param_required },
 	
 	{ "events-fd", Opt_events_fd, command::Param_required },
 	
@@ -77,6 +79,7 @@ static command::option options[] =
 };
 
 static unsigned romgen;
+static unsigned System;
 
 
 void* UTableBase  : 0x011C;
@@ -85,6 +88,7 @@ short UnitNtryCnt : 0x01D2;
 void* SysEvtBuf : 0x0146;
 QHdr EventQueue : 0x014A;
 short SysEvtCnt : 0x0154;
+short SysVersion : 0x015A;
 Byte  MBState   : 0x0172;
 
 void* SoundBase : 0x0266;
@@ -123,6 +127,8 @@ void initialize_low_memory_globals()
 	{
 		ROM85 = 0xFFFFu >> romgen;
 	}
+	
+	SysVersion = System;
 	
 	DefltStack = 64 * 1024;
 	
@@ -320,6 +326,12 @@ char* const* get_options( char** argv )
 			
 			case Opt_romgen:
 				romgen = gear::parse_unsigned_decimal( global_result.param );
+				break;
+			
+			case Opt_system:
+				System = gear::parse_unsigned_decimal( global_result.param );
+				
+				System <<= 8;  // E.g. "6" --> 0x0600
 				break;
 			
 			default:
