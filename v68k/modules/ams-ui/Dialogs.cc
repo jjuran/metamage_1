@@ -917,8 +917,6 @@ pascal void DrawDialog_patch( DialogRef dialog )
 {
 	scoped_port thePort = dialog;
 	
-	EraseRect( &dialog->portRect );
-	
 	DrawControls( dialog );
 	
 	PenNormal();
