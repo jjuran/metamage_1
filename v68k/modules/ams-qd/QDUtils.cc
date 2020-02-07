@@ -118,7 +118,7 @@ pascal void MapPt_patch( Point* pt, const Rect* src, const Rect* dst )
 	const int dstWidth = dst->right - dst->left;
 	
 	pt->v = (pt->v - src->top ) * dstHeight / srcHeight + dst->top;
-	pt->h = (pt->h - src->left) * dstHeight / srcHeight + dst->left;
+	pt->h = (pt->h - src->left) * dstWidth  / srcWidth + dst->left;
 }
 
 pascal void MapRect_patch( Rect* r, const Rect* src, const Rect* dst )
