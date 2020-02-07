@@ -151,6 +151,11 @@ def core_opts
 		opts <-- "-R" romgen
 	}
 	
+	if const system = getenv "AMS_SYSTEM" then
+	{
+		opts <-- "-V" system
+	}
+	
 	return ams-core: opts
 }
 
