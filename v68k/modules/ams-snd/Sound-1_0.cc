@@ -199,3 +199,11 @@ short SndNewChannel_patch( SndChannel** c, short s, long i, SndCallBackUPP u )
 	
 	return notEnoughHardwareErr;
 }
+
+pascal
+short SndDisposeChannel_patch( SndChannel** c )
+{
+	ERROR = "SndDisposeChannel is unimplemented";
+	
+	return noErr;
+}

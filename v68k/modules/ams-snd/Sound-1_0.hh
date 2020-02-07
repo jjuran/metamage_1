@@ -18,4 +18,6 @@ pascal short SndPlay_patch( SndChannel* c, SndListResource** h, Boolean async );
 
 pascal short SndNewChannel_patch( SndChannel**, short, long, SndCallBackUPP );
 
+pascal short SndDisposeChannel_patch( SndChannel** c );
+
 #endif

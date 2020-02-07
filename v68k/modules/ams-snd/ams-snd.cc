@@ -34,7 +34,8 @@ void* toolbox_trap_table[] : 3 * 1024;
 static
 void install_SoundManager()
 {
-	TBTRAP( SoundDispatch );  // A800
+	TBTRAP( SoundDispatch     );  // A800
+	TBTRAP( SndDisposeChannel );  // A801
 	
 	TBTRAP( SndPlay );  // A805
 	
