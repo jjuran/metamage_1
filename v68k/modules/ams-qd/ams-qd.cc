@@ -233,6 +233,7 @@ static void install_QuickDraw()
 	
 	TBTRAP( MapPt       );  // A8F9
 	TBTRAP( MapRect     );  // A8FA
+	TBTRAP( MapRgn      );  // A8FB
 	
 	TBTRAP( DeltaPoint  );  // A94F
 	

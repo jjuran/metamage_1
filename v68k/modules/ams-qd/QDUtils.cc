@@ -10,13 +10,13 @@
 #include <Resources.h>
 #endif
 
-// log-of-war
-#include "logofwar/report.hh"
-
 // quickdraw
 #include "qd/pack_bits.hh"
+#include "qd/regions.hh"
+#include "qd/region_detail.hh"
 
 // ams-common
+#include "callouts.hh"
 #include "QDGlobals.hh"
 
 
@@ -125,6 +125,224 @@ pascal void MapRect_patch( Rect* r, const Rect* src, const Rect* dst )
 {
 	MapPt_patch( (Point*) &r->top,    src, dst );
 	MapPt_patch( (Point*) &r->bottom, src, dst );
+}
+
+static
+short* next_row( short* p )
+{
+	using quickdraw::Region_end;
+	
+	while ( *p++ != Region_end )
+	{
+		continue;
+	}
+	
+	return p;
+}
+
+static
+bool compact_region_vertically( RgnHandle rgn )
+{
+	using quickdraw::Region_end;
+	
+	short* q = (short*) (*rgn + 1);
+	
+	short* r1 = q;
+	short* r2 = next_row( r1 );
+	
+	while ( *r2 != Region_end )
+	{
+		if ( *r2 == *r1 )
+		{
+			*q++ = *r1++;  // copy v coordinate
+			
+			// pointers to h coordinates
+			short* p1 = r1;
+			short* p2 = r2 + 1;
+			
+			while ( *p1 != Region_end  &&  *p2 != Region_end )
+			{
+				// Copy the lesser h coordinate...
+				
+				if ( *p1 < *p2 )
+				{
+					*q++ = *p1++;
+				}
+				else if ( *p2 < *p1 )
+				{
+					if ( q == p1 )
+					{
+						/*
+							We're about to clobber row 1 with data from row 2.
+							Shift the remaining row 1 data to the right, which
+							will overwrite previous data from row 2 that we've
+							already copied.
+						*/
+						
+						const size_t n_bytes = (Byte*) r2 - (Byte*) p1;
+						
+						p1 += p2 - r2;
+						
+						fast_memmove( p1, q, n_bytes );
+					}
+					
+					*q++ = *p2++;
+				}
+				else
+				{
+					// ... unless they're equal, in which case skip both
+					
+					++p1;
+					++p2;
+				}
+			}
+			
+			while ( *p1 != Region_end )
+			{
+				*q++ = *p1++;
+			}
+			
+			while ( *p2 != Region_end )
+			{
+				*q++ = *p2++;
+			}
+			
+			*q++ = *p2++;  // copy end-of-row sentinel
+			
+			if ( *p2 == Region_end )
+			{
+				goto done;
+			}
+			
+			r1 = p2;
+			
+			r2 = next_row( r1 );
+		}
+		else
+		{
+			while ( r1 < r2 )
+			{
+				*q++ = *r1++;
+			}
+			
+			r2 = next_row( r1 );
+		}
+	}
+	
+	while ( r1 < r2 )
+	{
+		*q++ = *r1++;
+	}
+	
+done:
+	
+	*q++ = Region_end;  // end-of-region sentinel
+	
+	const Size size = (Byte*) q - (Byte*) *rgn;
+	
+	if ( size == rgn[0]->rgnSize )
+	{
+		return false;
+	}
+	
+	rgn[0]->rgnSize = size;
+	
+	return true;
+}
+
+static
+void compact_region_horizontally( RgnHandle rgn )
+{
+	using quickdraw::Region_end;
+	
+	short* p = (short*) (*rgn + 1);
+	short* q = p;
+	
+	while ( *p != Region_end )
+	{
+		const short v = *p++;
+		
+		*q++ = v;
+		
+		const short* r = q;  // start of row of h coordinates (following v)
+		
+		short last_h = -0x8000;
+		
+		while ( *p != Region_end )
+		{
+			const short h = *p++;
+			
+			if ( h == last_h )
+			{
+				--q;
+				
+				last_h = -0x8000;
+			}
+			else
+			{
+				last_h = *q++ = h;
+			}
+		}
+		
+		if ( q == r )
+		{
+			--q;
+			++p;
+		}
+		else
+		{
+			*q++ = *p++;  // copy end-of-row sentinel
+		}
+	}
+	
+	*q++ = *p++;  // copy end-of-region sentinel
+	
+	rgn[0]->rgnSize = (Byte*) q - (Byte*) *rgn;
+}
+
+static
+void compact_region( RgnHandle rgn )
+{
+	using quickdraw::set_region_bbox;
+	
+	while ( compact_region_vertically  ( rgn ) )  continue;
+	
+	compact_region_horizontally( rgn );
+	
+	set_region_bbox( &rgn[0]->rgnBBox.top, (short*) (*rgn + 1) );
+	
+	SetHandleSize( (Handle) rgn, rgn[0]->rgnSize );
+}
+
+pascal void MapRgn_patch( RgnHandle rgn, const Rect* src, const Rect* dst )
+{
+	using quickdraw::Region_end;
+	
+	const int srcHeight = src->bottom - src->top;
+	const int dstHeight = dst->bottom - dst->top;
+	
+	const int srcWidth = src->right - src->left;
+	const int dstWidth = dst->right - dst->left;
+	
+	short* p = (short*) (*rgn + 1);
+	
+	while ( *p != Region_end )
+	{
+		const short v = *p;
+		
+		*p++ = (v - src->top ) * dstHeight / srcHeight + dst->top;
+		
+		while ( *p != Region_end )
+		{
+			const short h = *p;
+			
+			*p++ = (h - src->left) * dstWidth / srcWidth + dst->left;
+		}
+		
+		++p;  // skip end-of-row sentinel
+	}
+	
+	compact_region( rgn );
 }
 
 pascal PatHandle GetPattern_patch( short id )

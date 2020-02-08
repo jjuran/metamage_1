@@ -8,8 +8,11 @@
 
 typedef long Fixed;
 
+struct MacRegion;
 struct Point;
 struct Rect;
+
+typedef MacRegion** RgnHandle;
 
 pascal void UnpackBits_patch( char** src, char** dst, short dstBytes );
 
@@ -25,6 +28,7 @@ pascal void StuffHex_patch( char* dst, const unsigned char* srcHex );
 
 pascal void MapPt_patch( Point* pt, const Rect* src, const Rect* dst );
 pascal void MapRect_patch( Rect* r, const Rect* src, const Rect* dst );
+pascal void MapRgn_patch( RgnHandle rgn, const Rect* src, const Rect* dst );
 
 pascal struct Pattern** GetPattern_patch( short id );
 pascal struct Cursor**  GetCursor_patch ( short id );
