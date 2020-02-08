@@ -41,8 +41,8 @@ const signed char reverse_lookup_general_key[] =
 	0x35,  // Escape
 	0x7B,  // Left
 	0x7C,  // Right
-	0x7D,  // Up
-	0x7E,  // Down
+	0x7E,  // Up
+	0x7D,  // Down
 	
 	0x31,  // Space
 	0x12,  // '!'
