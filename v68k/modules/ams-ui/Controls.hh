@@ -12,12 +12,14 @@ struct Point;
 struct Rect;
 struct ControlRecord;
 
+typedef unsigned char Boolean;
+
 typedef pascal void (*ControlActionProcPtr)( ControlRecord**, short );
 
 pascal ControlRecord** NewControl_patch( GrafPort*             window,
                                          const Rect*           bounds,
                                          const unsigned char*  title,
-                                         short                 visible,
+                                         Boolean               visible,
                                          short                 value,
                                          short                 min,
                                          short                 max,
