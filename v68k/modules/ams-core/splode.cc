@@ -33,8 +33,10 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
+typedef KeyMapByteArray Keys;
+
 Byte   MBState : 0x0172;
-KeyMap KeyMaps : 0x0174;
+Keys   KeyMaps : 0x0174;
 UInt16 KeyMods : 0x017A;  // Yes, this is a subfield of KeyMaps.
 Point  Mouse   : 0x0830;
 Rect   CrsrPin : 0x0834;
@@ -247,12 +249,12 @@ void post_event( const splode::ascii_event_buffer& buffer )
 	{
 		if ( action == splode::key::down )
 		{
-			KeyMaps[ code >> 5 ] |= 1 << 0x1F - (code & 0x1F);
+			KeyMaps[ code >> 3 ] |= 1 << (code & 0x07);
 		}
 		
 		if ( action == splode::key::up )
 		{
-			KeyMaps[ code >> 5 ] &= ~(1 << 0x1F - (code & 0x1F));
+			KeyMaps[ code >> 3 ] &= ~(1 << (code & 0x07));
 		}
 	}
 	
