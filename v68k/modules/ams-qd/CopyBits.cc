@@ -273,6 +273,11 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		return;
 	}
 	
+	if ( dstWidth <= 0  ||  dstHeight <= 0 )
+	{
+		return;
+	}
+	
 	const bool congruent  = dstWidth == srcWidth  &&  dstHeight == srcHeight;
 	const bool stretching = ! congruent;
 	
