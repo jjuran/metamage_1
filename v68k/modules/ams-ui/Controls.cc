@@ -111,7 +111,7 @@ pascal ControlRecord** GetNewControl_patch( short controlID, WindowRef window )
 	ControlRef control = NewControl( window,
 	                                 &cntl.bounds,
 	                                 cntl.title,
-	                                 cntl.visible,
+	                                 (Boolean&) cntl.visible,
 	                                 cntl.value,
 	                                 cntl.min,
 	                                 cntl.max,
