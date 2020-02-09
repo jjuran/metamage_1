@@ -321,7 +321,8 @@ short SetHandleSize_patch( char**  h         : __A0,
 	return MemErr = noErr;
 }
 
-char** RecoverHandle_patch( char* p : __A0 )
+static
+char** recover_handle( char* p : __A0 )
 {
 	if ( p == NULL )
 	{
@@ -341,6 +342,17 @@ char** RecoverHandle_patch( char* p : __A0 )
 	}
 	
 	return (char**) header->backlink;
+}
+
+asm
+char** RecoverHandle_patch( char* p : __A0 )
+{
+	MOVE.L   D0,-(SP)
+	
+	JSR      recover_handle
+	
+	MOVE.L   (SP)+,D0
+	RTS
 }
 
 short ReallocateHandle_patch( char**  h         : __A0,
