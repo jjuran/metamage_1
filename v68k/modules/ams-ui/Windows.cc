@@ -1379,6 +1379,11 @@ pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
 
 pascal void CalcVis_patch( WindowPeek window )
 {
+	if ( window == NULL )
+	{
+		return;
+	}
+	
 	RgnHandle visRgn = window->port.visRgn;
 	
 	if ( ! window->visible )
