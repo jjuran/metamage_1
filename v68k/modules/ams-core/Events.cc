@@ -44,12 +44,6 @@ static unsigned long polling_interval = 0;
 static
 bool get_lowlevel_event( short eventMask, EventRecord* event )
 {
-	const short lowlevel_event_mask = mDownMask   | mUpMask
-	                                | keyDownMask | keyUpMask | autoKeyMask
-	                                | diskMask    | driverMask;
-	
-	eventMask &= lowlevel_event_mask;
-	
 	if ( eventMask != autoKeyMask )
 	{
 		if ( GetOSEvent( eventMask & ~autoKeyMask, event ) )
@@ -140,12 +134,6 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 static
 bool peek_lowlevel_event( short eventMask, EventRecord* event )
 {
-	const short lowlevel_event_mask = mDownMask   | mUpMask
-	                                | keyDownMask | keyUpMask | autoKeyMask
-	                                | diskMask;
-	
-	eventMask &= lowlevel_event_mask;
-	
 	if ( eventMask != autoKeyMask )
 	{
 		if ( OSEventAvail( eventMask & ~autoKeyMask, event ) )
