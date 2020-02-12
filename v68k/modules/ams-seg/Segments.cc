@@ -112,6 +112,8 @@ void apply_hotpatches( Handle code, short segnum )
 	{
 		long_pop_to_absolute_short = 0x31DF,  // dst: mode 7, reg 0
 		long_pop_to_displaced_A5   = 0x3B5F,  // dst: mode 5, reg 5
+		byte_clear_to_displaced_A5 = 0x422D,  // dst: mode 5, reg 5
+		byte_set_T_to_displaced_A5 = 0x50ED,  // dst: mode 5, reg 5
 		
 		_FindControl = 0xA96C,
 	};
@@ -158,6 +160,89 @@ void apply_hotpatches( Handle code, short segnum )
 			*/
 			
 			*p = long_pop_to_displaced_A5;
+		}
+	}
+	
+	if ( segnum == 2 )
+	{
+		if ( size < 0x537a )
+		{
+			return;
+		}
+		
+		uint16_t* p = (uint16_t*) &code[0][ 0x537a ];
+		
+		if ( *--p == (uint16_t) -342  &&  *--p == byte_clear_to_displaced_A5 )
+		{
+			/*
+				Hot-patch Lemmings to fix a crash that occurs right at the end
+				of a level played with sound -- /before/ you're given the code
+				to the next level!
+				
+				In CODE segment 2, at offset $00536c, there's a function that
+				stops the sound engine and frees various resources involved,
+				one of which is an array of 104-byte elements.  Another array
+				has 38-byte elements.  There's a VBL task struct from (-310,A5)
+				to (-296,A5); anything at an address just higher than that can
+				be considered VBL payload data, including a flag, the element
+				count, and the first array's base address.
+				
+				Here's what the function does:
+				  * sets a flag at (-296,A5)
+				  * clears a flag at (-342,A5)
+				  * tests an element count at (-294,A5), bailing out if zero
+				  * calls a function that marks elements invalid
+				  * removes a VBL task via _VRemove
+				  * loops over the array, calling a no-op on each element
+				  * tests the base address of the array it already looped over
+				  * frees the array via _DisposePtr
+				  * clears the array pointer variable at (-292,A5)
+				  * calls the function at $0051d8
+				
+				Here's what that last function does:
+				  * tests another array base address at (-350,A5)
+				  * loops over the that array, calling $00510c on each element
+				  * frees the array via _DisposePtr
+				
+				Here's what /that/ function does:
+				  * calls $005960
+				  * (other stuff that's not relevant)
+				
+				And finally, here's what **that** function does:
+				  * tests the flag at (-342,A5), bailing out if set
+				  * loops over the array at (-292,A5), testing each first byte
+				
+				The VBL task is removed, the first array is destroyed, and the
+				application crashes processing the first element of the second
+				array, because it dereferences the first byte of the first slot
+				of the first array, whose pointer location was already cleared,
+				resulting in a NULL dereference.
+				
+				It's not entirely clear what the exact semantics of the flags
+				are, but they appear to be similar.  The VBL payload flag at
+				(-296,A5) is invariably cleared on VBL install and set on VBL
+				removal -- so it has negative polarity.  It seems to mean 'VBL
+				not installed'.  The other flag, at (-342,A5), is set early in
+				an initialization routine and reset in the same function after
+				VInstall() succeeds.  Most of the subroutines that test it bail
+				out if it's set, including one that then sets it and removes
+				the VBL.  The one exception bails out if it's clear and then
+				immediately clears it, subsequently initializing the first
+				array above and installing the VBL.
+				
+				It's another reversed polarity flag, by all indications except
+				one:  The function at $00536c, which calls VRemove(), /clears/
+				rather than sets the flag.  If we patch that function to set
+				the flag instead, the function at $005960 -- that crashes when
+				it accesses NULL -- will bail out instead.  We can't set it to
+				$01 in just the two words we have to play with, but we can set
+				it to $FF, which is just as good as far as TST is concerned.
+				
+				Old:  CLR.B    (-342,A5)
+				New:  ST.B     (-342,A5)
+			*/
+			
+			*p = byte_set_T_to_displaced_A5;
 		}
 	}
 }
