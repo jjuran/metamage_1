@@ -77,7 +77,20 @@ asm void call_completion_routine( void* pb : __A0,
                                   short err : __D0,
                                   void* proc : __A1 )
 {
+	/*
+		Prince of Persia's sound I/O completion handler apparently follows
+		Pascal calling conventions, popping arguments off the stack (leaving
+		it six bytes shorter) and storing a result immediately prior.
+		
+		Allocate a stack frame to restore the SP.  Include a margin big enough
+		to accommodate the six bytes lost as well as a two-byte result.
+	*/
+	
+	LINK     A6,#-8
+	
 	JSR      (A1)
+	
+	UNLK     A6
 }
 
 static
