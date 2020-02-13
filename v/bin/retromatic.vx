@@ -121,7 +121,7 @@ const ams_lib = "../ams-68k-bin/lib"
 const prefix_list = "core io fs snd rsrc pack seg qd ui print"
 const ams_modules = [ prefix_list / ' ' ] map {ams_lib "/ams-" v}
 
-copy( *ams_modules, ams_bin "/app", xv68k_dir )
+copy( *ams_modules, ams_lib "/umsp", ams_bin "/app", xv68k_dir )
 
 const new_data = ("name: " rep name) "\n" * not named
 
