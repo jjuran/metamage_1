@@ -186,7 +186,10 @@ def argify (name)
 }
 
 const prefix_list = "core io fs snd rsrc pack seg qd ui print"
-const ams_modules = [ prefix_list / ' ' ] map {"ams-" v}
+var   ams_modules = [ prefix_list / ' ' ] map {"ams-" v}
+
+ams_modules <-- "umsp"
+
 const module_opts = ams_modules map {"-m", argify v}
 
 const app = ams_bin "/app"
