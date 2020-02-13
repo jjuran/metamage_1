@@ -508,6 +508,16 @@ short GetEOF_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = rfNumErr;
 }
 
+short SetEOF_patch( short trap_word : __D1, IOParam* pb : __A0 )
+{
+	if ( FCB* fcb = get_FCB( pb->ioRefNum ) )
+	{
+		return pb->ioResult = extFSErr;
+	}
+	
+	return pb->ioResult = rfNumErr;
+}
+
 short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	if ( pb->ioRefNum < 0 )
