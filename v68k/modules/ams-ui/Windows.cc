@@ -169,6 +169,12 @@ WindowPeek next_visible_window( WindowPeek w )
 	return w;
 }
 
+static inline
+WindowPeek first_visible_window()
+{
+	return next_visible_window( WindowList );
+}
+
 #pragma mark -
 #pragma mark Initialization and Allocation
 #pragma mark -
@@ -729,7 +735,7 @@ pascal void SendBehind_patch( WindowPeek window, WindowPeek behindWindow )
 
 pascal WindowRef FrontWindow_patch()
 {
-	return (WindowRef) WindowList;
+	return (WindowRef) first_visible_window();
 }
 
 pascal void DrawGrowIcon_patch( WindowPeek window )
