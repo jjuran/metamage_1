@@ -109,6 +109,11 @@ void do_VBL()
 			// Dequeue this task
 			*slot = it->qLink;
 			
+			if ( (QElemPtr) task == VBLQueue.qTail )
+			{
+				VBLQueue.qTail = (QElemPtr) slot;
+			}
+			
 			if ( VBLQueue.qHead == VBLQueue.qTail )
 			{
 				// This should be our dummy VBL
