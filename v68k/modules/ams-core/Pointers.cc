@@ -17,6 +17,7 @@ short MemErr : 0x0220;
 enum
 {
 	noErr      = 0,
+	paramErr   = -50,
 	memFullErr = -108,
 };
 
@@ -83,6 +84,14 @@ char* NewPtr_handler( unsigned long size : __D0, short trap_word : __D1 )
 static
 short DisposePtr_handler( char* alloc : __A0 )
 {
+	block_header& header = *(block_header*) (alloc - sizeof (block_header));
+	
+	if ( (header.tag & 0xC0) != Tag_ptr )
+	{
+		// Invalid block type -- possibly due to a double-free error
+		return MemErr = paramErr;
+	}
+	
 	alloc -= sizeof (block_header);
 	
 	native_alloc = true;  // Set native_alloc in case free() calls DisposePtr()
