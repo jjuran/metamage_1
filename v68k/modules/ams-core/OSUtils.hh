@@ -29,7 +29,7 @@ void Enqueue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 );
 
 short Dequeue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 );
 
-long Delay_patch( long numTicks : __A0 );
+long Delay_patch( long numTicks : __A0, short trap_word : __D1 );
 
 pascal void SysBeep_patch( short duration );
 

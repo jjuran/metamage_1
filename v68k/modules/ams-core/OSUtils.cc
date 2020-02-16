@@ -321,6 +321,20 @@ bail:
 #pragma mark Miscellaneous Utilities
 #pragma mark -
 
+/*
+	Extended Delay() semantics
+	
+	We're adding a new flag to augment the _Delay trap.  The tick-edge flag
+	makes Delay() return after N changes of the tick count, instead of after
+	N whole ticks.  So for example, an edged delay of 1 could return almost
+	immediately, after 16ms, or anywhere in between.
+*/
+
+enum
+{
+	kDelayTickEdgeMask = 0x0200,  // wait until Ticks changes, not whole ticks
+};
+
 static inline
 bool reactor_wait( uint64_t dt )
 {
@@ -329,9 +343,12 @@ bool reactor_wait( uint64_t dt )
 	return reactor_wait( &timeout );
 }
 
-long Delay_patch( long numTicks : __A0 )
+long Delay_patch( long numTicks : __A0, short trap_word : __D1 )
 {
-	const uint64_t start = Microseconds();
+	const short tickEdge = trap_word & kDelayTickEdgeMask;
+	
+	const uint64_t start = tickEdge ? Ticks * tick_microseconds
+	                                : Microseconds();
 	
 	int64_t dt = (uint32_t) numTicks * tick_microseconds;
 	
