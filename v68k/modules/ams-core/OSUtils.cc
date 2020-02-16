@@ -12,6 +12,9 @@
 #ifndef __OSUTILS__
 #include <OSUtils.h>
 #endif
+#ifndef __TIMER__
+#include <Timer.h>
+#endif
 
 // POSIX
 #include <unistd.h>
@@ -37,6 +40,17 @@ uint16_t SysVersion : 0x015A;
 uint32_t Ticks      : 0x016A;
 uint32_t Time       : 0x020C;
 int16_t  BootDrive  : 0x0210;
+
+
+static inline
+uint64_t Microseconds()
+{
+	uint64_t result;
+	
+	Microseconds( (UnsignedWide*) &result );
+	
+	return result;
+}
 
 
 #pragma mark -
@@ -317,7 +331,7 @@ bool reactor_wait( uint64_t dt )
 
 long Delay_patch( long numTicks : __A0 )
 {
-	const uint64_t start = time_microseconds();
+	const uint64_t start = Microseconds();
 	
 	int64_t dt = (uint32_t) numTicks * tick_microseconds;
 	
@@ -329,7 +343,7 @@ long Delay_patch( long numTicks : __A0 )
 	{
 		reactor_wait( dt );
 		
-		dt = end_time - time_microseconds();
+		dt = end_time - Microseconds();
 	}
 	while ( dt > 0  &&  numTicks >= 0 );
 	
