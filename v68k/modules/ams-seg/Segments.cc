@@ -13,6 +13,9 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <string.h>
+
 // ams-common
 #include "callouts.hh"
 
@@ -104,6 +107,22 @@ jump_table_entry* get_jump_table_offset( uint16_t offset : __D0 )
 
 const uint16_t push_opcode = 0x3F3C;  // MOVE.W   #n,-(SP)
 const uint16_t jump_opcode = 0x4EF9;  // JMP      0xABCD1234
+
+static const uint16_t Lemmings_wait_loop[] =
+{
+	0x42A7,  // CLR.L    -(A7)
+	0xA975,  // _TickCount
+	0xBE9F,  // CMP.L    (A7)+,D7
+	0x64F8,  // BCC.S    *-6
+};
+
+static const uint16_t Lemmings_wait_trap[] =
+{
+	0x5288,  // ADDQ.L   #1,A0
+	0x91F8,  // SUBA.L   0x016A,A0
+	0x016A,  //          ^^^^^^
+	0xA23B,  // _DelayEdge (_Delay | kDelayTickEdgeMask)
+};
 
 static
 void apply_hotpatches( Handle code, short segnum )
@@ -243,6 +262,13 @@ void apply_hotpatches( Handle code, short segnum )
 			*/
 			
 			*p = byte_set_T_to_displaced_A5;
+		}
+		
+		p = (uint16_t*) &code[0][ 0x2aaa ];
+		
+		if ( memcmp( p, Lemmings_wait_loop, sizeof Lemmings_wait_loop ) == 0 )
+		{
+			fast_memcpy( p, Lemmings_wait_trap, sizeof Lemmings_wait_trap );
 		}
 	}
 }
