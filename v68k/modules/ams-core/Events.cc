@@ -12,6 +12,9 @@
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
+#ifndef __TIMER__
+#include <Timer.h>
+#endif
 
 // ams-common
 #include "callouts.hh"
@@ -244,6 +247,31 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 	*/
 	
 	UInt32 now = get_Ticks();
+	
+	/*
+		Pin sleep to a minimum of 1 if WaitNextEvent() is called within 2ms of
+		the previous call.  This shouldn't affect the delivery of non-null
+		events, and mitigates core-pegging by applications that pass zero for
+		the sleep parameter, which is especially a problem in Lemmings' post-
+		gameplay stats screen (which otherwise pegs an entire core).  On the
+		other hand, actual gameplay in Lemmings relies on WaitNextEvent() with
+		a zero sleep returning immediately.
+	*/
+	
+	if ( sleep == 0 )
+	{
+		static uint64_t then;
+		
+		uint64_t now = 0;
+		::Microseconds( (UnsignedWide*) &now );
+		
+		if ( now - then < 2000 )
+		{
+			sleep = 1;
+		}
+		
+		then = now;
+	}
 	
 	/*
 		Pin the addition of Ticks and sleep.  In the improbable (but very
