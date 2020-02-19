@@ -14,4 +14,6 @@ short DisposePtr_patch( char* p : __A0 );
 
 long GetPtrSize_patch( char* p : __A0 );
 
+short SetPtrSize_patch( char* p : __A0, long size : __D0 );
+
 #endif

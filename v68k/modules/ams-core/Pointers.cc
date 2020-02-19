@@ -138,3 +138,14 @@ long GetPtrSize_patch( char* p : __A0 )
 	
 	return physical_size - sizeof (block_header) - (header.tag & 0xF);
 }
+
+short SetPtrSize_patch( char* p : __A0, long size : __D0 )
+{
+	long current_size = GetPtrSize_patch( p );
+	
+	short err = current_size < 0    ? current_size
+	          : current_size < size ? memFullErr
+	          :                       noErr;
+	
+	return MemErr = err;
+}

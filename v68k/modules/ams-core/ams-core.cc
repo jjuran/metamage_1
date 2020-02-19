@@ -183,7 +183,7 @@ void install_MemoryManager()
 	
 	OSTRAP( NewPtr           );  // A11E
 	OSTRAP( DisposePtr       );  // A01F
-	
+	OSTRAP( SetPtrSize       );  // A020
 	OSTRAP( GetPtrSize       );  // A021
 	OSTRAP( NewHandle        );  // A022
 	OSTRAP( DisposeHandle    );  // A023
