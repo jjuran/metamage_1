@@ -40,4 +40,6 @@ pascal long DeltaPoint_patch( Point a, Point b );
 pascal Fixed SlopeFromAngle_patch( short angle );
 pascal short AngleFromSlope_patch( Fixed slope );
 
+pascal long PinRect_patch( const Rect* rect, Point pt );
+
 #endif

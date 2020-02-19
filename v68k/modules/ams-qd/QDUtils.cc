@@ -511,3 +511,28 @@ pascal short AngleFromSlope_patch( long slope )
 	
 	return angle + 90;
 }
+
+pascal long PinRect_patch( const Rect* rect, Point pt )
+{
+	if ( pt.h < rect->left )
+	{
+		pt.h = rect->left;
+	}
+	
+	if ( pt.v < rect->top )
+	{
+		pt.v = rect->top;
+	}
+	
+	if ( pt.h > rect->right )
+	{
+		pt.h = rect->right - 1;
+	}
+	
+	if ( pt.v > rect->bottom )
+	{
+		pt.v = rect->bottom - 1;
+	}
+	
+	return (long&) pt;
+}
