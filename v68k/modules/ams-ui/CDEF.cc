@@ -307,6 +307,7 @@ long CDEF_0_Hit( short varCode, ControlRef control, Point where )
 	return 0;
 }
 
+pascal
 long CDEF_0( short varCode, ControlRecord** control, short message, long param )
 {
 	switch ( message )
