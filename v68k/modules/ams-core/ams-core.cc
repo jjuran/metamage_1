@@ -217,6 +217,7 @@ void install_MemoryManager()
 	
 	OSTRAP( MaxMem           );  // A11D
 	
+	TBTRAP( Munger      );  // A9E0
 	TBTRAP( HandToHand  );  // A9E1
 	TBTRAP( PtrToXHand  );  // A9E2
 	TBTRAP( PtrToHand   );  // A9E3

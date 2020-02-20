@@ -6,10 +6,109 @@
 #include "HandleUtils.hh"
 
 // Mac OS
+#ifndef __MACMEMORY__
+#include <MacMemory.h>
+#endif
 #ifndef __TRAPS__
 #include <Traps.h>
 #endif
 
+// Standard C
+#include <string.h>
+
+// ams-common
+#include "callouts.hh"
+
+
+pascal long Munger_patch( Handle h, long i, Ptr p1, long n1, Ptr p2, long n2 )
+{
+	if ( h == NULL  ||  *h == NULL )
+	{
+		return -1;
+	}
+	
+	Size size = GetHandleSize( h );
+	
+	if ( i > size )
+	{
+		return -1;
+	}
+	
+	char* p = *h + i;
+	char* q = *h + size;
+	
+	if ( p1 != NULL )
+	{
+		long len = size - i;
+		
+		while ( len >= n1 )
+		{
+			if ( memcmp( p, p1, n1 ) == 0 )
+			{
+				goto found;
+			}
+			
+			++p;
+			--len;
+		}
+		
+		/*
+			We didn't find the pattern string in its entirety.
+			Try finding a truncation of it at the end of the subject string.
+		*/
+		
+		while ( --n1 > 0 )
+		{
+			if ( memcmp( p, p1, n1 ) == 0 )
+			{
+				goto found;
+			}
+			
+			++p;
+		}
+		
+		return -1;  // not found
+	}
+	
+found:
+	
+	i = p - *h;
+	
+	if ( p2 == NULL )
+	{
+		return i;
+	}
+	
+	long delta = n2 - n1;
+	
+	if ( delta > 0 )
+	{
+		size += delta;
+		
+		SetHandleSize( h, size );
+		
+		p = *h + i;
+		
+		i += n2;
+		
+		BlockMoveData( p + n1, p + n2, size - i );
+	}
+	
+	fast_memcpy( p, p2, n2 );
+	
+	if ( delta < 0 )
+	{
+		size += delta;  // decrease size
+		
+		i += n2;
+		
+		BlockMoveData( p + n1, p + n2, size - i );
+		
+		SetHandleSize( h, size );
+	}
+	
+	return i;
+}
 
 asm short HandToHand_patch( char** h : __A0 )
 {

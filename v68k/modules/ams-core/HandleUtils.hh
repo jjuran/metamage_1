@@ -6,6 +6,11 @@
 #ifndef HANDLEUTILS_HH
 #define HANDLEUTILS_HH
 
+typedef char*  Ptr;
+typedef char** Handle;
+
+pascal long Munger_patch( Handle h, long i, Ptr p1, long n1, Ptr p2, long n2 );
+
 short HandToHand_patch( char** h : __A0 );
 
 short PtrToHand_patch( char* p : __A0, long size : __D0 );
