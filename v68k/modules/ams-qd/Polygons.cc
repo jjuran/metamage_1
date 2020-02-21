@@ -22,7 +22,6 @@
 
 
 using quickdraw::Region_end;
-using quickdraw::segments_box;
 
 
 static
@@ -49,6 +48,8 @@ short x_intercept( Point a, Point b, short y )
 
 void PolyRgn( RgnHandle rgn, PolyHandle poly )
 {
+	typedef quickdraw::malloc_segments_box segments_box;
+	
 	short n = (poly[0]->polySize - sizeof (Polygon)) / 4;
 	
 	const Rect& bbox = poly[0]->polyBBox;
