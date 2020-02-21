@@ -19,9 +19,7 @@
 // ams-qd
 #include "draw.hh"
 #include "Regions.hh"
-
-
-using quickdraw::segments_box;
+#include "segments_box.hh"
 
 
 enum white_t { White };
@@ -507,7 +505,9 @@ void draw_region( const rectangular_op_params&  params,
 {
 	const short* extent = (short*) (*region + 1);
 	
-	quickdraw::malloc_region_iterator it( region[0]->rgnSize, extent );
+	segments_box segments( region[0]->rgnSize );
+	
+	quickdraw::region_iterator it( segments, extent );
 	
 	const BitMap& portBits = params.port->portBits;
 	

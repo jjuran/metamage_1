@@ -20,6 +20,9 @@
 // ams-common
 #include "QDGlobals.hh"
 
+// ams-qd
+#include "segments_box.hh"
+
 
 using quickdraw::Region_end;
 
@@ -48,8 +51,6 @@ short x_intercept( Point a, Point b, short y )
 
 void PolyRgn( RgnHandle rgn, PolyHandle poly )
 {
-	typedef quickdraw::malloc_segments_box segments_box;
-	
 	short n = (poly[0]->polySize - sizeof (Polygon)) / 4;
 	
 	const Rect& bbox = poly[0]->polyBBox;

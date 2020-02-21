@@ -27,6 +27,7 @@
 #include "Rect-utils.hh"
 #include "Rects.hh"
 #include "Regions.hh"
+#include "segments_box.hh"
 
 
 using quickdraw::offset_region;
@@ -439,11 +440,20 @@ static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 	
 	SetHandleSize( (Handle) dst, a_max_bytes + b_max_bytes );  // TODO:  Prove this is enough
 	
+	const size_t r_max_bytes = a_max_bytes + b_max_bytes;
+	
+	segments_box a_segments( a_max_bytes );
+	segments_box b_segments( b_max_bytes );
+	segments_box c_segments( r_max_bytes );
+	segments_box r_segments( r_max_bytes );
+	
 	sect_regions( (const short*) &a[0]->rgnBBox,
 	              rgn_extent( *a ),
-	              a_max_bytes,
+	              a_segments,
 	              rgn_extent( *b ),
-	              b_max_bytes,
+	              b_segments,
+	              c_segments,
+	              r_segments,
 	              rgn_extent( *dst ) );
 	
 	finish_region( dst );
@@ -473,10 +483,12 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 		return;
 	}
 	
+	segments_box segments( max_bytes );
+	
 	sect_rect_region( (const short*) &rect,
 	                  (const short*) &src[0]->rgnBBox,
 	                  rgn_extent( *src ),
-	                  max_bytes,
+	                  segments,
 	                  rgn_extent( *dst ) );
 	
 	finish_region( dst );
