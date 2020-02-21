@@ -119,7 +119,7 @@ namespace quickdraw
 			return;
 		}
 		
-		segments_box segments( max_bytes );
+		malloc_segments_box segments( max_bytes );
 		
 		short v, h;
 		
@@ -228,10 +228,10 @@ namespace quickdraw
 	{
 		const size_t r_max_bytes = a_max_bytes + b_max_bytes;
 		
-		segments_box a_segments( a_max_bytes );
-		segments_box b_segments( b_max_bytes );
-		segments_box c_segments( r_max_bytes );
-		segments_box r_segments( r_max_bytes );
+		malloc_segments_box a_segments( a_max_bytes );
+		malloc_segments_box b_segments( b_max_bytes );
+		malloc_segments_box c_segments( r_max_bytes );
+		malloc_segments_box r_segments( r_max_bytes );
 		
 		short va = *a_extent++;
 		short vb = *b_extent++;

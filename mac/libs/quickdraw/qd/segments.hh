@@ -72,6 +72,8 @@ namespace quickdraw
 	
 	void accumulate_row( short*& r, short v, const segments_box& segments );
 	
+	typedef segments_box malloc_segments_box;
+	
 }
 
 #endif
