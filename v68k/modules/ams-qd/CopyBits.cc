@@ -212,7 +212,7 @@ void blit_masked_bits( const BitMap&    srcBits,
 	
 	const short* extent = (short*) (*maskRgn + 1);
 	
-	quickdraw::region_iterator it( maskRgn[0]->rgnSize, extent );
+	quickdraw::malloc_region_iterator it( maskRgn[0]->rgnSize, extent );
 	
 	while ( const quickdraw::region_band* band = it.next() )
 	{

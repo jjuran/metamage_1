@@ -507,7 +507,7 @@ void draw_region( const rectangular_op_params&  params,
 {
 	const short* extent = (short*) (*region + 1);
 	
-	quickdraw::region_iterator it( region[0]->rgnSize, extent );
+	quickdraw::malloc_region_iterator it( region[0]->rgnSize, extent );
 	
 	const BitMap& portBits = params.port->portBits;
 	
