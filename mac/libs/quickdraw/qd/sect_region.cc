@@ -26,9 +26,15 @@ namespace quickdraw
 	}
 	
 	static inline
+	size_t byte_distance( const void* begin, const void* end )
+	{
+		return (const char*) end - (const char*) begin;
+	}
+	
+	static inline
 	bool odd_count_between( const short* begin, const short* end )
 	{
-		return (end - begin) & 1;
+		return byte_distance( begin, end ) & 2;
 	}
 	
 	static
