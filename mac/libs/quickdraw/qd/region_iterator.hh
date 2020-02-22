@@ -39,6 +39,8 @@ namespace quickdraw
 			const region_band* next();
 	};
 	
+	typedef region_iterator malloc_region_iterator;
+	
 }
 
 #endif
