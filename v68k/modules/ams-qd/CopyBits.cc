@@ -286,7 +286,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	if ( stretching )
 	{
-		const short rowBytes = (dstWidth + 15) / 16 * 2;
+		const short rowBytes = (dstWidth + 15) / 16u * 2;
 		
 		const Rect bounds = { 0, 0, dstHeight, dstWidth };
 		
