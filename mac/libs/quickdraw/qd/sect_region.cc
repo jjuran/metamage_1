@@ -13,13 +13,13 @@
 namespace quickdraw
 {
 	
-	static
+	static inline
 	short min( short a, short b )
 	{
 		return b < a ? b : a;
 	}
 	
-	static
+	static inline
 	short max( short a, short b )
 	{
 		return a > b ? a : b;
