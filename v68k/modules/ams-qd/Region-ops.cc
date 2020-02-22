@@ -726,6 +726,18 @@ pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 	DisposeHandle( h );
 }
 
+static inline
+size_t byte_distance( const void* begin, const void* end )
+{
+	return (const char*) end - (const char*) begin;
+}
+
+static inline
+bool odd_count_between( const short* begin, const short* end )
+{
+	return byte_distance( begin, end ) & 2;
+}
+
 pascal unsigned char PtInRgn_patch( Point pt, MacRegion** rgn )
 {
 	if ( ! PtInRect_patch( pt, &rgn[0]->rgnBBox ) )
@@ -751,7 +763,7 @@ pascal unsigned char PtInRgn_patch( Point pt, MacRegion** rgn )
 			++extent;
 		}
 		
-		contained ^= (extent - h1) & 1;
+		contained ^= odd_count_between( h1, extent );
 		
 		while ( *extent++ != Region_end )  continue;
 	}

@@ -23,6 +23,12 @@
 using quickdraw::convex_region_generator;
 
 
+static inline
+size_t byte_distance( const void* begin, const void* end )
+{
+	return (const char*) end - (const char*) begin;
+}
+
 static
 short* generate_circle( short width, short height, const short* p, short* r )
 {
@@ -136,7 +142,7 @@ RgnHandle circular_region( short diameter, short width, short height )
 	short* begin = (short*) (*tmp + 1);
 	short* end   = generate_circle( width, height, scratchpad, begin );
 	
-	tmp[0]->rgnSize = sizeof (MacRegion) + (end - begin) * sizeof (short);
+	tmp[0]->rgnSize = sizeof (MacRegion) + byte_distance( begin, end );
 	
 	return tmp;
 }

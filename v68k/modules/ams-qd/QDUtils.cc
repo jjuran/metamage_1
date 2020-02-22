@@ -20,6 +20,19 @@
 #include "QDGlobals.hh"
 
 
+static inline
+size_t byte_distance( const void* begin, const void* end )
+{
+	return (const char*) end - (const char*) begin;
+}
+
+template < class T >
+static inline
+void advance_bytes( T*& pointer, size_t n )
+{
+	(const char*&) pointer += n;
+}
+
 pascal void UnpackBits_patch( Ptr* src, Ptr* dst, short dstBytes )
 {
 	UInt8** tmp = (UInt8**) dst;
@@ -179,9 +192,9 @@ bool compact_region_vertically( RgnHandle rgn )
 							already copied.
 						*/
 						
-						const size_t n_bytes = (Byte*) r2 - (Byte*) p1;
+						const size_t n_bytes = byte_distance( p1, r2 );
 						
-						p1 += p2 - r2;
+						advance_bytes( p1, byte_distance( r2, p2 ) );
 						
 						fast_memmove( p1, q, n_bytes );
 					}
@@ -484,7 +497,7 @@ pascal short AngleFromSlope_patch( long slope )
 		++p;
 	}
 	
-	short angle = p - slope_inverse_table;
+	short angle = byte_distance( slope_inverse_table, p ) / 4u;
 	
 	if ( reflected  &&  angle != 90 )
 	{
