@@ -25,6 +25,12 @@ namespace quickdraw
 		return a > b ? a : b;
 	}
 	
+	static inline
+	bool odd_count_between( const short* begin, const short* end )
+	{
+		return (end - begin) & 1;
+	}
+	
 	static
 	void and_segments( segments_box const&  a,
 	                   segments_box const&  b,
@@ -130,7 +136,7 @@ namespace quickdraw
 				++extent;
 			}
 			
-			bool contained = (extent - h0) & 1;
+			bool contained = odd_count_between( h0, extent );
 			
 			if ( contained )
 			{
@@ -142,7 +148,7 @@ namespace quickdraw
 				xor_segments( segments, h );
 			}
 			
-			contained = (extent - h0) & 1;
+			contained = odd_count_between( h0, extent );
 			
 			if ( ! contained )
 			{
@@ -172,7 +178,7 @@ namespace quickdraw
 				++extent;
 			}
 			
-			bool contained = (extent - h0) & 1;
+			bool contained = odd_count_between( h0, extent );
 			
 			if ( contained )
 			{
@@ -188,7 +194,7 @@ namespace quickdraw
 				xor_segments( segments, h );
 			}
 			
-			contained = (extent - h0) & 1;
+			contained = odd_count_between( h0, extent );
 			
 			if ( ! contained )
 			{
