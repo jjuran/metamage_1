@@ -12,9 +12,10 @@
 namespace quickdraw
 {
 	
-	region_iterator::region_iterator( short size, const short* extent )
+	region_iterator::region_iterator( const segments_box&  seg_box,
+	                                  const short*         extent )
 	:
-		its_segments( size )
+		its_segments( seg_box )
 	{
 		its_next_coordinate = extent;
 		
@@ -67,6 +68,14 @@ namespace quickdraw
 		}
 		
 		return &its_next_band;
+	}
+	
+	malloc_region_iterator::malloc_region_iterator( short         size,
+	                                                const short*  extent )
+	:
+		its_segments( size ),
+		its_base( its_segments, extent )
+	{
 	}
 	
 }

@@ -19,15 +19,15 @@
 namespace quickdraw
 {
 	
-	segments_box::segments_box( size_t capacity )  // bytes
+	malloc_segments_box::malloc_segments_box( size_t capacity )  // bytes
+	:
+		segments_box( (short*) malloc( capacity ) )
 	{
-		its_data = (short*) malloc( capacity );
-		its_size = 0;
 	}
 	
-	segments_box::~segments_box()
+	malloc_segments_box::~malloc_segments_box()
 	{
-		free( its_data );
+		free( begin() );
 	}
 	
 	void segments_box::erase( short* it )

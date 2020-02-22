@@ -20,9 +20,11 @@
 // ams-common
 #include "QDGlobals.hh"
 
+// ams-qd
+#include "segments_box.hh"
+
 
 using quickdraw::Region_end;
-using quickdraw::segments_box;
 
 
 static

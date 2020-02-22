@@ -24,6 +24,7 @@
 
 // ams-qd
 #include "draw.hh"
+#include "segments_box.hh"
 #include "stretch.hh"
 
 
@@ -212,7 +213,9 @@ void blit_masked_bits( const BitMap&    srcBits,
 	
 	const short* extent = (short*) (*maskRgn + 1);
 	
-	quickdraw::region_iterator it( maskRgn[0]->rgnSize, extent );
+	segments_box segments( maskRgn[0]->rgnSize );
+	
+	quickdraw::region_iterator it( segments, extent );
 	
 	while ( const quickdraw::region_band* band = it.next() )
 	{
