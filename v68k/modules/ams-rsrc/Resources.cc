@@ -19,26 +19,13 @@
 // Standard C
 #include <stddef.h>
 
-// Standard C++
-#include <new>
-
-// gear
-#include "gear/hexadecimal.hh"
-
 // log-of-war
 #include "logofwar/report.hh"
-
-// plus
-#include "plus/var_string.hh"
-
-// freemount-client
-#include "freemount/synced.hh"
 
 // ams-common
 #include "callouts.hh"
 #include "FCB.hh"
 #include "master_pointer.hh"
-#include "module_A4.hh"
 
 // ams-rsrc
 #include "rsrc_fork.hh"
@@ -447,48 +434,6 @@ pascal void SetResLoad_patch( unsigned char load )
 }
 
 static
-bool try_to_get( const char* begin, const char* end, plus::var_string& data )
-{
-	plus::string path( begin, end - begin, plus::delete_never );
-	
-	try
-	{
-		namespace F = freemount;
-		
-		const int in  = 6;
-		const int out = 7;
-		
-		data = F::synced_get( in, out, path ).move();
-		
-		return true;
-	}
-	catch ( const std::bad_alloc& )
-	{
-		ResErr = memFullErr;
-	}
-	catch ( ... )
-	{
-		ResErr = resNotFound;
-	}
-	
-	return false;
-}
-
-static
-bool try_to_get( char*              insert_end,
-                 char*              end,
-                 const char*        name,
-                 size_t             len,
-                 plus::var_string&  result )
-{
-	char* begin = insert_end - len;
-	
-	fast_memcpy( begin, name, len );
-	
-	return try_to_get( begin, end, result );
-}
-
-static
 Handle new_res_handle( RsrcMapHandle rsrc_map, rsrc_header& rsrc, ResType type )
 {
 	if ( rsrc.handle == NULL )
@@ -548,58 +493,9 @@ Handle GetResource_core( ResType type : __D0, short id : __D1 )
 		rsrc_map = (RsrcMapHandle) rsrc_map[0]->next_map;
 	}
 	
-	/*
-		The app name can only be 31 bytes (not 32), but with the extra byte,
-		"TYPE" is word-aligned.
-	*/
+	ResErr = resNotFound;
 	
-	char tmp_path[] = "1234567890" "1234567890" "1234567890" "12/r/1234.TYPE";
-	
-	char* const end      = tmp_path + sizeof tmp_path - 1;
-	char* const name_end = tmp_path + 32;
-	
-	char* p = end - STRLEN( "1234.TYPE" );
-	
-	gear::encode_16_bit_hex( id, name_end + STRLEN( "/r/" ) );
-	
-	p += 5;
-	
-	*(ResType*) p = type;
-	
-	plus::var_string rsrc;
-	
-	Handle result = 0;  // NULL
-	
-	bool got = false;
-	
-	if ( CurApName[ 0 ] != '\0' )
-	{
-		const size_t len = CurApName[ 0 ];
-		
-		got = try_to_get( name_end, end, (char*) CurApName + 1, len, rsrc );
-	}
-	
-	if ( ! got )
-	{
-		got = try_to_get( name_end, end, STR_LEN( "System" ), rsrc );
-	}
-	
-	if ( ! got )
-	{
-		got = try_to_get( name_end, end, STR_LEN( "AMS Resources" ), rsrc );
-	}
-	
-	if ( ! got )
-	{
-		// ResErr is already set.
-		return result;
-	}
-	
-	result = PtrToHand( rsrc.data(), rsrc.size() );
-	
-	ResErr = MemErr;
-	
-	return result;
+	return NULL;
 }
 
 static
@@ -699,8 +595,6 @@ pascal Handle GetIndResource_patch( ResType type, short index )
 static
 Handle GetResource_handler( ResType type : __D0, short id : __D1 )
 {
-	temp_A4 a4;
-	
 	return GetResource_core( type, id );
 }
 
