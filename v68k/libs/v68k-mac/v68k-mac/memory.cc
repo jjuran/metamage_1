@@ -105,6 +105,7 @@ enum
 	tag_CrsrVisBusy,
 	tag_JIODone,
 	tag_JIODone_low_word,
+	tag_CurApRefNum,
 	tag_CurrentA5,
 	tag_CurrentA5_low_word,
 	tag_CurStackBase,
@@ -186,6 +187,7 @@ void initialize()
 	words[ tag_BootDrive  ] = 0xFFFF;  // initially -1
 	words[ tag_ROM85      ] = 0xFFFF;  // indicates 64K ROM
 	words[ tag_FSFCBLen   ] = 0xFFFF;  // indicates MFS
+	words[ tag_CurApRefNum] = iota::big_u16( 2 );
 	words[ tag_SaveUpdate ] = 0xFFFF;  // initially true
 	words[ tag_PaintWhite ] = 0xFFFF;  // initially true
 	words[ tag_AE8        ] = 0xFFFF;
@@ -271,7 +273,7 @@ static const global globals[] =
 	{ 0x0844, 68,   tag_TheCrsr     },
 	{ 0x08CC, 2,    tag_CrsrVisBusy },  // CrsrVis, CrsrBusy
 	{ 0x08FC, 4,    tag_JIODone     },
-	{ 0x0900, 0x82, 2               },  // CurApRefNum
+	{ 0x0900, 2,    tag_CurApRefNum },
 	{ 0x0904, 4,    tag_CurrentA5   },
 	{ 0x0908, 4,    tag_CurStackBase},
 	{ 0x0910, 32,   tag_CurApName   },
