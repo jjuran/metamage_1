@@ -383,7 +383,7 @@ pascal void CloseResFile_patch( short refnum )
 
 pascal void RsrcZoneInit_patch()
 {
-	FCBSPtr->fcbs[ 0 ].fcbFlNum = -1;  // claim for System resource fork
+	OpenResFile_handler( "\p" "AMS Resources", 0 );  // System resource file
 	
 	CurApRefNum = OpenResFile_handler( CurApName, 0 );
 }
