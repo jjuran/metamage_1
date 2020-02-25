@@ -74,7 +74,7 @@ const xv68k_dir = contents "/xv68k"
 
 const Files = Resources "/Files"
 
-mkdir-p (MacOS_dir, Files, xv68k_dir)
+mkdir-p (MacOS_dir, Files "/AMS Resources", xv68k_dir)
 
 def ams-get-app (property)
 {
@@ -98,14 +98,11 @@ const icon    = icns ams-get-app "icon"
 
 rewrite Resources "/" name ".icns" <== icon
 
-const System = parent_dir "/System"
+const resfiles = [ "AMS Resources", "System" ]
+const respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
 
-if exists System then
-{
-	copy( System, Files )
-}
+run [ bindir "/mkrsrc.vx", "-o", Files "/AMS Resources/rsrc", *respaths ]
 
-copy( parent_dir "/AMS Resources", Files                  )
 copy( parent_dir "/" name_to_copy, Files "/" name_to_copy )
 
 if "files" in config then
