@@ -44,6 +44,14 @@ const home_68k = home "/68k"
 
 const root_dir = if exists home_68k then {home_68k} else {ams_mnt}
 
+const resfiles = [ "AMS Resources", "System" ]
+const respaths = resfiles map { root_dir "/" v } ver { exists v "/r" }
+
+if exists bindir "/mkrsrc.vx" then
+{
+	run [ bindir "/mkrsrc.vx", "-o", root_dir "/AMS Resources/rsrc", *respaths ]
+}
+
 const freemountd-server = "freemountd -q --root" / ' ', root_dir, "//"
 
 const xv68k = "xv68k"
