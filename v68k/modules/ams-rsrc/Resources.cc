@@ -58,6 +58,7 @@ enum
 
 
 short MemErr      : 0x0220;
+short CurApRefNum : 0x0900;
 Str31 CurApName   : 0x0910;
 Handle TopMapHndl : 0x0A50;
 short CurMap      : 0x0A5A;
@@ -384,9 +385,7 @@ pascal void RsrcZoneInit_patch()
 {
 	FCBSPtr->fcbs[ 0 ].fcbFlNum = -1;  // claim for System resource fork
 	
-	// CurApRefNum is automatically fixed at 2
-	
-	OpenResFile_handler( CurApName, 0 );
+	CurApRefNum = OpenResFile_handler( CurApName, 0 );
 }
 
 pascal short ResError_patch()
