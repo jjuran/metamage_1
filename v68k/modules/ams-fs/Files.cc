@@ -524,7 +524,12 @@ short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 			}
 		}
 		
-		DisposePtr( fcb->fcbBfAdr );
+		if ( fcb->fcbBfAdr )
+		{
+			DisposePtr( fcb->fcbBfAdr );
+			
+			fcb->fcbBfAdr = NULL;
+		}
 		
 		fcb->fcbFlNum = 0;
 		

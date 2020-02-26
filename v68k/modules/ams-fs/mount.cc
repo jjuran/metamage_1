@@ -13,8 +13,12 @@
 // Standard C
 #include <string.h>
 
+// ams-common
+#include "callouts.hh"
+
 // ams-fs
 #include "freemount.hh"
+#include "macbinary.hh"
 
 
 VCB* DefVCBPtr : 0x0352;
@@ -78,7 +82,33 @@ void try_to_mount( const char* name )
 	vcb->qType    = fsQType;
 	vcb->vcbFlags = 0;
 	
-	BlockMoveData( master_directory_block, &vcb->vcbSigWord, 64 );
+	const macbinary::hdr& possible_mBIN_header = *(const macbinary::hdr*) image;
+	
+	if ( int8_t version = macbinary::version( possible_mBIN_header ) )
+	{
+		fast_memset( vcb, '\0', sizeof *vcb );
+		
+		vcb->vcbSigWord = 'mB';
+		
+		const uint8_t* filename = possible_mBIN_header.filename;
+		
+		uint8_t len = filename[ 0 ];
+		
+		if ( len <= 27 )
+		{
+			fast_memcpy( vcb->vcbVN, filename, len + 1 );
+		}
+		else
+		{
+			vcb->vcbVN[ 0 ] = 27;
+			
+			fast_memcpy( vcb->vcbVN + 1, filename + 1, 27 );
+		}
+	}
+	else
+	{
+		BlockMoveData( master_directory_block, &vcb->vcbSigWord, 64 );
+	}
 	
 	vcb->vcbAtrb |= kioVAtrbHardwareLockedMask;
 	

@@ -13,6 +13,7 @@
 // ams-fs
 #include "bootstrap.hh"
 #include "documents.hh"
+#include "macbinaryfs.hh"
 #include "MFS.hh"
 
 
@@ -40,6 +41,18 @@ static const filesystem_vtable< uint8_t > documents_vtable =
 	&documents_GetFileInfo,
 };
 
+static const filesystem_vtable< macbinary::header > MacBinary_vtable =
+{
+	&MacBinary_lookup,
+	&MacBinary_get_nth,
+	
+	&MacBinary_Close,
+	NULL,
+	&MacBinary_open_fork,
+	NULL,
+	&MacBinary_GetFileInfo,
+};
+
 static const filesystem_vtable< mfs::file_directory_entry > MFS_vtable =
 {
 	&MFS_lookup,
@@ -61,6 +74,9 @@ const vfs_table* vfs_from_vcb( const VCB* vcb )
 		
 		case 0xD0C5:
 			return (const vfs_table*) &documents_vtable;
+		
+		case 'mB':
+			return (const vfs_table*) &MacBinary_vtable;
 		
 		case 0xD2D7:
 			return (const vfs_table*) &MFS_vtable;
