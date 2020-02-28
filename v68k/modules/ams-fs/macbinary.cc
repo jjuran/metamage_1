@@ -75,7 +75,9 @@ int8_t version( const header& h )
 		return h.zeroByte82 == 0;  // version 1, or invalid
 	}
 	
-	return 2 + (h.formatSig == 'mBIN');  // version 2 or 3
+	int8_t vers = 2 + (h.formatSig == 'mBIN');  // version 2 or 3
+	
+	return vers;
 }
 
 }
