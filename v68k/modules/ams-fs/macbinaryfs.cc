@@ -17,13 +17,53 @@
 #include "callouts.hh"
 #include "FCB.hh"
 
+// ams-fs
+#include "Volumes.hh"
+
+
+static
+const macbinary::header* next( const macbinary::header* h )
+{
+	uint32_t forkLen;
+	
+	const uint32_t data_offset = 128 + h->extHeaderLen + 127 & ~0x7f;
+	
+	fast_memcpy( &forkLen, h->dataForkLen, 4 );
+	
+	const uint32_t rsrc_offset = data_offset + forkLen + 127 & ~0x7f;
+	
+	fast_memcpy( &forkLen, h->rsrcForkLen, 4 );
+	
+	const uint32_t next_offset = rsrc_offset + forkLen + 127 & ~0x7f;
+	
+	h = (const macbinary::header*) ((Ptr) h + next_offset);
+	
+	return h;
+}
 
 const macbinary::header* MacBinary_get_nth( VCB* vcb, short n )
 {
-	if ( n == 1 )
+	const macbinary::header* h = (const macbinary::header*) vcb->vcbBufAdr;
+	
+	uint16_t depth = 0;
+	
+	do
 	{
-		return (const macbinary::header*) vcb->vcbBufAdr;
+		if ( h->extensions == 0 )
+		{
+			if ( --n <= 0 )
+			{
+				return h;
+			}
+		}
+		else
+		{
+			depth += (int8_t) h->fileCreator[ 3 ] * 2 + 3;
+		}
+		
+		h = next( h );
 	}
+	while ( depth > 0 );
 	
 	return NULL;
 }
@@ -37,10 +77,25 @@ const macbinary::header* MacBinary_lookup( VCB* vcb, const uint8_t* name )
 	
 	const macbinary::header* h = (const macbinary::header*) vcb->vcbBufAdr;
 	
-	if ( EqualString( h->filename, name, false, true ) )
+	uint16_t depth = 0;
+	
+	do
 	{
-		return h;
+		if ( h->extensions == 0 )
+		{
+			if ( EqualString( h->filename, name, false, true ) )
+			{
+				return h;
+			}
+		}
+		else
+		{
+			depth += (int8_t) h->fileCreator[ 3 ] * 2 + 3;
+		}
+		
+		h = next( h );
 	}
+	while ( depth > 0 );
 	
 	return NULL;
 }
@@ -50,6 +105,12 @@ OSErr MacBinary_Close( FCB* fcb )
 	fcb->fcbBfAdr = NULL;  // Don't let Close() dispose of the volume buffer
 	
 	return noErr;
+}
+
+static inline
+uint32_t get_filenum( VCB* vcb, const macbinary::header* h )
+{
+	return h - (const macbinary::header*) vcb->vcbBufAdr + 1;
 }
 
 OSErr MacBinary_open_fork( short trap_word, FCB* fcb, const macbinary::hdr* h )
@@ -73,7 +134,7 @@ OSErr MacBinary_open_fork( short trap_word, FCB* fcb, const macbinary::hdr* h )
 		fcb->fcbPLen = (fcb->fcbEOF + 127) & ~0x7f;
 	}
 	
-	fcb->fcbFlNum  = 1;
+	fcb->fcbFlNum  = get_filenum( fcb->fcbVPtr, h );
 	fcb->fcbTypByt = 0;
 	fcb->fcbSBlk   = fcb->fcbPLen >> 7;
 	
@@ -89,7 +150,7 @@ OSErr MacBinary_GetFileInfo( FileParam* pb, const macbinary::hdr* h )
 	
 	((uint8_t*) &pb->ioFlFndrInfo.fdFlags)[ 1 ] = h->fndrFlagsLow;
 	
-	pb->ioFlNum = 1;
+	pb->ioFlNum = get_filenum( VCB_lookup( pb->ioVRefNum ), h );
 	
 	pb->ioFlStBlk  = 0;
 	pb->ioFlRStBlk = 0;

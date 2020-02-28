@@ -5,6 +5,9 @@
 
 #include "macbinary.hh"
 
+// Standard C
+#include <string.h>
+
 
 static
 uint16_t CalcCRC( const uint8_t* dataBuf, uint32_t size )
@@ -65,17 +68,29 @@ int8_t version( const header& h )
 		return 0;
 	}
 	
-	if ( h.extensions )
-	{
-		return 0;  // TODO:  Check for folder archives
-	}
+	enum { kMacBinaryPlusMask = 0x1 };
 	
 	if ( ! crc_check( h ) )
 	{
-		return h.zeroByte82 == 0;  // version 1, or invalid
+		return (h.extensions | h.zeroByte82) == 0;  // version 1, or invalid
 	}
 	
 	int8_t vers = 2 + (h.formatSig == 'mBIN');  // version 2 or 3
+	
+	if ( h.extensions & ~kMacBinaryPlusMask )
+	{
+		return 0;  // unrecognized extension
+	}
+	
+	if ( h.extensions )
+	{
+		if ( memcmp( h.fileType, "fold\xFF\xFF\xFF\xFF", 8 ) != 0 )
+		{
+			return 0;
+		}
+		
+		vers |= 0x80;
+	}
 	
 	return vers;
 }
