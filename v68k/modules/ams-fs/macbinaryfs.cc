@@ -87,7 +87,7 @@ OSErr MacBinary_GetFileInfo( FileParam* pb, const macbinary::hdr* h )
 	
 	fast_memcpy( &pb->ioFlFndrInfo, h->fileType, sizeof (FInfo) );
 	
-	((uint8_t*) pb->ioFlFndrInfo.fdFlags)[ 1 ] = h->fndrFlagsLow;
+	((uint8_t*) &pb->ioFlFndrInfo.fdFlags)[ 1 ] = h->fndrFlagsLow;
 	
 	pb->ioFlNum = 1;
 	
