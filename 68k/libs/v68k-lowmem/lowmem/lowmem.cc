@@ -113,6 +113,8 @@ enum
 	tag_DefVCBPtr_low_word,
 	tag_VCBQHdr,
 	tag_VCBQHdr_word_4 = tag_VCBQHdr + 4,  // 10 bytes
+	tag_CurDirStore,
+	tag_CurDirStore_low_word,
 	tag_FSFCBLen,
 	tag_JHideCursor,
 	tag_JHideCursor_low_word,
@@ -351,6 +353,7 @@ static const global globals[] =
 	{ 0x034E, 4,    tag_FCBSPtr     },
 	{ 0x0352, 4,    tag_DefVCBPtr   },
 	{ 0x0356, 10,   tag_VCBQHdr     },
+	{ 0x0398, 4,    tag_CurDirStore },
 	{ 0x03F6, 2,    tag_FSFCBLen    },
 	{ 0x0800, 4,    tag_JHideCursor },
 	{ 0x0804, 4,    tag_JShowCursor },
