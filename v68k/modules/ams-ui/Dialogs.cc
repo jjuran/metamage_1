@@ -373,6 +373,24 @@ DialogPeek recover_dialog( Handle h )
 	return NULL;
 }
 
+static
+WindowPeek front_dialog_window()
+{
+	WindowPeek w = WindowList;
+	
+	while ( w != NULL )
+	{
+		if ( w->windowKind == dialogKind  ||  w->windowKind < 0 )
+		{
+			return w;  // The window doesn't have to be visible
+		}
+		
+		w = w->nextWindow;
+	}
+	
+	return NULL;
+}
+
 
 #pragma mark -
 #pragma mark Initialization
@@ -1206,36 +1224,31 @@ pascal void ParamText_patch( const unsigned char*  p1,
 	set_param( 2, p3 );
 	set_param( 3, p4 );
 	
-	if ( WindowRef window = FrontWindow() )
+	if ( WindowPeek window = front_dialog_window() )
 	{
-		WindowPeek w = (WindowPeek) window;
+		DialogPeek d = (DialogPeek) window;
 		
-		if ( w->windowKind == dialogKind )
+		short n_items_1 = dialog_item_count_minus_one( d->items );
+		
+		DialogItem* item = first_dialog_item( d->items );
+		
+		do
 		{
-			DialogPeek d = (DialogPeek) window;
-			
-			short n_items_1 = dialog_item_count_minus_one( d->items );
-			
-			DialogItem* item = first_dialog_item( d->items );
-			
-			do
+			switch ( item->type & 0x7F )
 			{
-				switch ( item->type & 0x7F )
-				{
-					case statText:
-						DisposeHandle( item->handle );
-						
-						item->handle = expand_param_text( &item->length );
-						break;
+				case statText:
+					DisposeHandle( item->handle );
 					
-					default:
-						break;
-				}
+					item->handle = expand_param_text( &item->length );
+					break;
 				
-				item = next( item );
+				default:
+					break;
 			}
-			while ( --n_items_1 >= 0 );
+			
+			item = next( item );
 		}
+		while ( --n_items_1 >= 0 );
 	}
 }
 
