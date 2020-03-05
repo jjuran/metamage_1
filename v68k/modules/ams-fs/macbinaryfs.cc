@@ -75,6 +75,14 @@ const macbinary::header* MacBinary_lookup( VCB* vcb, const uint8_t* name )
 		return NULL;
 	}
 	
+	uint8_t name_len = *name++;
+	
+	if ( *name == ':' )
+	{
+		++name;
+		--name_len;
+	}
+	
 	const macbinary::header* h = (const macbinary::header*) vcb->vcbBufAdr;
 	
 	uint16_t depth = 0;
@@ -83,7 +91,10 @@ const macbinary::header* MacBinary_lookup( VCB* vcb, const uint8_t* name )
 	{
 		if ( h->extensions == 0 )
 		{
-			if ( EqualString_sans_case( h->filename, name ) )
+			const uint8_t* this_name = h->filename;
+			const uint8_t  this_len  = *this_name++;
+			
+			if ( EqualString_sans_case( this_name, this_len, name, name_len ) )
 			{
 				return h;
 			}
