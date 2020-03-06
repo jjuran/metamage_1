@@ -83,7 +83,7 @@ const macbinary::header* MacBinary_lookup( VCB* vcb, const uint8_t* name )
 	{
 		if ( h->extensions == 0 )
 		{
-			if ( EqualString( h->filename, name, false, true ) )
+			if ( EqualString_sans_case( h->filename, name ) )
 			{
 				return h;
 			}

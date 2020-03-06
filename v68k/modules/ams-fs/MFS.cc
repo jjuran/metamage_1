@@ -91,7 +91,7 @@ const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name )
 	
 	while (( it = MFS_iterate( vcb, it ) ))
 	{
-		if ( EqualString( it->flNam, name, false, true ) )
+		if ( EqualString_sans_case( it->flNam, name ) )
 		{
 			return it;
 		}

@@ -56,7 +56,7 @@ VCB* VCB_lookup( const unsigned char* name )
 {
 	VCB* vcb = (VCB*) VCBQHdr.qHead;
 	
-	while ( vcb != NULL  &&  ! EqualString( vcb->vcbVN, name, false, true ) )
+	while ( vcb != NULL  &&  EqualString_sans_case( vcb->vcbVN, name ) )
 	{
 		vcb = (VCB*) vcb->qLink;
 	}
