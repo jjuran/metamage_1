@@ -6,6 +6,8 @@
 #ifndef RESOURCES_HH
 #define RESOURCES_HH
 
+pascal short InitResources_patch();
+
 pascal void RsrcZoneInit_patch();
 
 pascal short OpenResFile_patch( const unsigned char* name );

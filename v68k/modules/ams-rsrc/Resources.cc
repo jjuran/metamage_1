@@ -48,6 +48,7 @@ short MemErr      : 0x0220;
 short CurApRefNum : 0x0900;
 Str31 CurApName   : 0x0910;
 Handle TopMapHndl : 0x0A50;
+short SysMap      : 0x0A58;
 short CurMap      : 0x0A5A;
 short ResErr      : 0x0A60;
 
@@ -366,6 +367,11 @@ pascal void CloseResFile_patch( short refnum )
 	ADDQ.L   #2,SP
 	
 	JMP      (A0)
+}
+
+pascal short InitResources_patch()
+{
+	return SysMap;
 }
 
 pascal void RsrcZoneInit_patch()
