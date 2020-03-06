@@ -3,11 +3,14 @@
 	------
 */
 
+// Mac OS
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
+
 // Standard C
 #include <string.h>
 
-
-typedef unsigned char Str31[ 32 ];
 
 struct LaunchParamBlockRec
 {
@@ -37,6 +40,8 @@ int main( int argc, char** argv )
 	{
 		return 2;
 	}
+	
+	InitResources();
 	
 	Str31 appName;
 	
