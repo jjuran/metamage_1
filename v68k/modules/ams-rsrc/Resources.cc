@@ -369,9 +369,33 @@ pascal void CloseResFile_patch( short refnum )
 	JMP      (A0)
 }
 
+static asm
+void run_INIT( ProcPtr proc : __A0 )
+{
+	LINK     A6,#0
+	MOVEM.L  D3-D7/A2-A4,-(SP)
+	
+	JSR      (A0)
+	
+	MOVEM.L  (SP)+,D3-D7/A2-A4
+	UNLK     A6
+	RTS
+}
+
 pascal short InitResources_patch()
 {
 	SysMap = OpenResFile_handler( "\p" "AMS Resources", 0 );
+	
+	short index = 0;
+	
+	while ( Handle h = GetIndResource_patch( 'INIT', ++index ) )
+	{
+		ProcPtr proc = (ProcPtr) *h;
+		
+		run_INIT( proc );
+		
+		ReleaseResource_patch( h );
+	}
 	
 	return SysMap;
 }
