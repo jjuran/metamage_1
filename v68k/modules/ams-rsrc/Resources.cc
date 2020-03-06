@@ -371,13 +371,13 @@ pascal void CloseResFile_patch( short refnum )
 
 pascal short InitResources_patch()
 {
+	SysMap = OpenResFile_handler( "\p" "AMS Resources", 0 );
+	
 	return SysMap;
 }
 
 pascal void RsrcZoneInit_patch()
 {
-	OpenResFile_handler( "\p" "AMS Resources", 0 );  // System resource file
-	
 	CurApRefNum = OpenResFile_handler( CurApName, 0 );
 }
 
