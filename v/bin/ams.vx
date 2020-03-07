@@ -51,7 +51,7 @@ if exists bindir "/mkrsrc.vx" then
 {
 	const output = "-o", root_dir "/AMS Resources/rsrc"
 	
-	run [ bindir "/mkrsrc.vx", output, *respaths ]
+	run [ "minivx", "-Z", bindir "/mkrsrc.vx", output, *respaths ]
 }
 
 const freemountd-server = "freemountd -q --root" / ' ', root_dir, "//"
