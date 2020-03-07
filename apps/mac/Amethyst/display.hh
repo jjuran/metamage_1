@@ -19,6 +19,7 @@ class display_capture
 	private:
 		CGDirectDisplayID  its_id;
 		CGContextRef       its_context;
+		CGrafPtr           its_port;
 		
 		// non-copyable
 		display_capture           ( const display_capture& );
@@ -29,6 +30,7 @@ class display_capture
 		~display_capture();
 		
 		CGContextRef context() const  { return its_context; }
+		CGrafPtr     port   () const  { return its_port;    }
 		
 		double x_scale_factor( double width, double height ) const;
 		

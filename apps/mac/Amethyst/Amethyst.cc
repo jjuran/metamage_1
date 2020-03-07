@@ -27,6 +27,7 @@
 #include "image.hh"
 #include "keycodes.hh"
 #include "make_raster.hh"
+#include "quickdraw.hh"
 #include "raster_task.hh"
 #include "splode.hh"
 #include "tempfile.hh"
@@ -302,6 +303,20 @@ void RunEventLoop()
 	
 	CGRect bounds = captured_display.x_scaled_frame( desc.width, desc.height );
 	
+#if CONFIG_QUICKDRAW
+	
+	const Rect frame =
+	{
+		bounds.origin.y,
+		bounds.origin.x,
+		bounds.origin.y + bounds.size.height,
+		bounds.origin.x + bounds.size.width,
+	};
+	
+	BitMap bitmap = { 0, desc.stride, { 0, 0, desc.height, desc.width } };
+	
+#endif
+	
 	CGWarpMouseCursorPosition( CGPointMake( 15, 15 ) );
 	
 	EventTargetRef target = GetEventDispatcherTarget();
@@ -330,6 +345,23 @@ void RunEventLoop()
 		
 		if ( eventClass == kEventClassAmethyst )
 		{
+		#if CONFIG_QUICKDRAW
+			
+			const uint32_t offset = desc.height * desc.stride * desc.frame;
+			
+			bitmap.baseAddr = (Ptr) addr + offset;
+			
+			CopyBits( &bitmap,
+			          GetPortBitMapForCopyBits( captured_display.port() ),
+			          &bitmap.bounds,
+			          &frame,
+			          srcCopy,
+			          NULL );
+			
+			goto next;
+			
+		#endif
+			
 			if ( CGImageRef image = create_raster_image( addr, desc ) )
 			{
 				CGContextDrawImage( captured_display.context(), bounds, image );

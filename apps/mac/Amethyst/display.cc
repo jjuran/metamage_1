@@ -19,6 +19,9 @@
 #endif
 #endif
 
+// Amethyst
+#include "quickdraw.hh"
+
 
 display_capture::display_capture( CGDirectDisplayID id ) : its_id( id )
 {
@@ -27,9 +30,23 @@ display_capture::display_capture( CGDirectDisplayID id ) : its_id( id )
 		throw CGDisplayCapture_Failed();
 	}
 	
+	void* addr;
+	
+#if CONFIG_QUICKDRAW
+	
+	// UInt32 cast required for 10.4 PPC, at least
+	
+	addr =
+	its_port = CreateNewPortForCGDisplayID( (UInt32) its_id );
+	
+#else
+	
+	addr =
 	its_context = CGDisplayGetDrawingContext( its_id );
 	
-	if ( its_context == NULL )
+#endif
+	
+	if ( addr == NULL )
 	{
 		throw CGDisplayCapture_Failed();
 	}
@@ -40,6 +57,12 @@ display_capture::display_capture( CGDirectDisplayID id ) : its_id( id )
 display_capture::~display_capture()
 {
 	CGDisplayShowCursor( its_id );
+	
+#if CONFIG_QUICKDRAW
+	
+	DisposePort( its_port );
+	
+#endif
 	
 	CGRect bounds = CGDisplayBounds( its_id );
 	
