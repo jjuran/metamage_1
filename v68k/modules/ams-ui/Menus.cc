@@ -441,9 +441,20 @@ pascal void DeleteMenu_patch( short menuID )
 	}
 	else if ( MenuList_entry* found = find_menu_id( menuID ) )
 	{
-		// TODO:  Delete non-last menus
-		DebugStr( "\p" "DeleteMenu of non-last menu is unimplemented" );
-		return;
+		MenuList_entry* next = found + 1;
+		
+		const short edge_delta = next->left_edge - found->left_edge;
+		
+		const char* end = (char*) last + sizeof (MenuList_entry);
+		
+		for ( MenuList_entry* it = next;  (char*) it < end;  ++it )
+		{
+			it->left_edge -= edge_delta;
+		}
+		
+		header->right_edge -= edge_delta;
+		
+		fast_memmove( found, next, end - (char*) next );
 	}
 	else
 	{
