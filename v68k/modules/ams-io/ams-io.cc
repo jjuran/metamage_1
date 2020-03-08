@@ -56,7 +56,7 @@ static
 void install_DeviceManager()
 {
 	OSTRAP( Open   );  // A000
-	
+	OSTRAP( Close  );  // A001
 	OSTRAP( Read   );  // A002
 	OSTRAP( Write  );  // A003
 	OSTRAP( Control);  // A004

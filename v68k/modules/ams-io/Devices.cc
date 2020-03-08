@@ -180,6 +180,30 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = fnfErr;
 }
 
+short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
+{
+	NOTICE = "Close ", pb->ioRefNum;
+	
+	DCtlHandle h = GetDCtlEntry( pb->ioRefNum );
+	
+	if ( h == NULL )
+	{
+		return pb->ioResult = unitEmptyErr;
+	}
+	
+	DCtlEntry* dce = *h;
+	
+	while ( QElemPtr head = dce->dCtlQHdr.qHead )
+	{
+		UInt32 dummy;
+		Delay( -1, &dummy );  // calls reactor_wait() once
+	}
+	
+	trap_word |= 1 << noQueueBit;  // treat Close like an immediate call
+	
+	return pb->ioResult = DRVR_IO_patch( trap_word, pb );
+}
+
 static
 Ptr drvr_entry_point( DRVRHeader* drvr, uint8_t command )
 {
