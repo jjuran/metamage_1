@@ -53,9 +53,9 @@ FCBS* FCBSPtr : 0x034E;
 inline
 FCB* get_FCB( unsigned short refNum )
 {
-	if ( --refNum < kFCBCount )
+	if ( refNum > 0 )
 	{
-		return &FCBSPtr->fcbs[ refNum ];
+		return (FCB*) ((char*) FCBSPtr + refNum);
 	}
 	
 	return NULL;

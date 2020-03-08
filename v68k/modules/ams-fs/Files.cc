@@ -44,7 +44,7 @@ IO_ProcPtr   old_Write;
 static inline
 short FCB_index( const FCB* fcb )
 {
-	return fcb - FCBSPtr->fcbs + 1;
+	return (Ptr) fcb - (Ptr) FCBSPtr;
 }
 
 static
