@@ -669,6 +669,10 @@ void flash_menu_item( MenuRef menu, const Rect& r, Point pt, short item, int n )
 
 pascal long MenuSelect_patch( Point pt )
 {
+	QDGlobals& qd = get_QDGlobals();
+	
+	const short menuLimit = qd.screenBits.bounds.right - 8;
+	
 	WMgrPort_bezel_scope port_swap;
 	
 	BitMap savedBits;
@@ -739,6 +743,11 @@ pascal long MenuSelect_patch( Point pt )
 					menuRect.left = opened->left_edge;
 					menuRect.right = menuRect.left + menu[0]->menuWidth;
 					menuRect.bottom = menuRect.top + menu[0]->menuHeight;
+					
+					if ( menuRect.right > menuLimit )
+					{
+						OffsetRect( &menuRect, menuLimit - menuRect.right, 0 );
+					}
 					
 					if ( menu[0]->menuHeight != 0 )
 					{
