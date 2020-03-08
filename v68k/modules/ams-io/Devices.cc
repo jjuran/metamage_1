@@ -39,6 +39,8 @@ using logofwar::print;
 
 typedef OSErr (*IODoneProcPtr)( DCtlEntry* dce : __A1, OSErr err : __D0 );
 
+DCtlHandle* UTableBase : 0x011C;
+
 UInt16 SdVolEnb : 0x0260;
 
 Byte SdVolume : 0x0260;
@@ -357,6 +359,12 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	d##_open, d##_prime, d##_control, d##_status, d##_close  \
 	) )
 
+static
+void assign_fd( short index, int fd )
+{
+	UTableBase[ index ][0]->dCtlPosition = fd;
+}
+
 void install_drivers()
 {
 	JIODone = &IODone_handler;
@@ -373,6 +381,6 @@ void install_drivers()
 		SdVolEnb = -1;
 	}
 	
-	INSTALL_DRIVER( CIn  );
-	INSTALL_DRIVER( COut );
+	assign_fd( INSTALL_DRIVER( CIn  ), 0 );  // STDIN_FILENO
+	assign_fd( INSTALL_DRIVER( COut ), 1 );  // STDOUT_FILENO
 }

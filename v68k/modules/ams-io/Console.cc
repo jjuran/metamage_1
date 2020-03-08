@@ -27,6 +27,8 @@
 
 OSErr CIn_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 {
+	const int fd = dce->dCtlPosition;
+	
 	OSErr err = noErr;
 	
 	Ptr     buffer = pb->ioBuffer;
@@ -36,7 +38,7 @@ OSErr CIn_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 	
 	while ( needed > 0 )
 	{
-		ssize_t n_read = read( STDIN_FILENO, buffer, needed );
+		ssize_t n_read = read( fd, buffer, needed );
 		
 		if ( n_read < 0 )
 		{
@@ -69,9 +71,11 @@ done:
 
 OSErr COut_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 {
+	const int fd = dce->dCtlPosition;
+	
 	OSErr err = noErr;
 	
-	ssize_t n_written = write( STDOUT_FILENO, pb->ioBuffer, pb->ioReqCount );
+	ssize_t n_written = write( fd, pb->ioBuffer, pb->ioReqCount );
 	
 	if ( n_written < 0 )
 	{
@@ -128,7 +132,7 @@ void CIn_ready( reactor_node* node )
 }
 
 static
-void CIn_watch()
+void CIn_watch( int fd )
 {
 	typedef reactor_core_parameter_block pb_t;
 	
@@ -136,7 +140,7 @@ void CIn_watch()
 	{
 		if ( CIn_reactor_node.ready == NULL )
 		{
-			CIn_reactor_node.fd    = STDIN_FILENO;
+			CIn_reactor_node.fd    = fd;
 			CIn_reactor_node.ready = &CIn_ready;
 			
 			reactor->insert( &CIn_reactor_node );
@@ -151,14 +155,16 @@ OSErr CIn_status( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
 		kSERDInputCount = 2,
 	};
 	
+	const int fd = dce->dCtlPosition;
+	
 	OSErr err = noErr;
 	
 	switch ( pb->csCode )
 	{
 		case kSERDInputCount:
-			if ( (*(long*) pb->csParam = readable_bytes( STDIN_FILENO )) == 0 )
+			if ( (*(long*) pb->csParam = readable_bytes( fd )) == 0 )
 			{
-				CIn_watch();
+				CIn_watch( fd );
 			}
 			break;
 		
