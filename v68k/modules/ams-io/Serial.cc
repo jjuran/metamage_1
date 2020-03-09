@@ -1,9 +1,9 @@
 /*
-	Console.cc
-	----------
+	Serial.cc
+	---------
 */
 
-#include "Console.hh"
+#include "Serial.hh"
 
 // Mac OS
 #ifndef __DEVICES__
@@ -25,7 +25,7 @@
 #include "reactor-gestalt.hh"
 
 
-OSErr CIn_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
+OSErr xIn_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 {
 	const int fd = dce->dCtlPosition;
 	
@@ -69,7 +69,7 @@ done:
 	return err;
 }
 
-OSErr COut_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
+OSErr xOut_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 {
 	const int fd = dce->dCtlPosition;
 	
@@ -115,10 +115,15 @@ ssize_t readable_bytes( int fd )
 	return selected > 0;
 }
 
-static reactor_node CIn_reactor_node;
+/*
+	At the moment there's only one reactor node, with one fd slot,
+	so only one serial port can be waited for at a time.
+*/
+
+static reactor_node xIn_reactor_node;
 
 static
-void CIn_ready( reactor_node* node )
+void xIn_ready( reactor_node* node )
 {
 	typedef reactor_core_parameter_block pb_t;
 	
@@ -126,29 +131,29 @@ void CIn_ready( reactor_node* node )
 	
 	reactor->remove( node );
 	
-	CIn_reactor_node.ready = NULL;  // Needed to prevent double insertion
+	xIn_reactor_node.ready = NULL;  // Needed to prevent double insertion
 	
 	PostEvent( driverEvt, 0 );
 }
 
 static
-void CIn_watch( int fd )
+void xIn_watch( int fd )
 {
 	typedef reactor_core_parameter_block pb_t;
 	
 	if ( pb_t* reactor = (pb_t*) mac::sys::gestalt( gestaltReactorCoreAddr ) )
 	{
-		if ( CIn_reactor_node.ready == NULL )
+		if ( xIn_reactor_node.ready == NULL )
 		{
-			CIn_reactor_node.fd    = fd;
-			CIn_reactor_node.ready = &CIn_ready;
+			xIn_reactor_node.fd    = fd;
+			xIn_reactor_node.ready = &xIn_ready;
 			
-			reactor->insert( &CIn_reactor_node );
+			reactor->insert( &xIn_reactor_node );
 		}
 	}
 }
 
-OSErr CIn_status( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
+OSErr xIn_status( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
 {
 	enum
 	{
@@ -164,7 +169,7 @@ OSErr CIn_status( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
 		case kSERDInputCount:
 			if ( (*(long*) pb->csParam = readable_bytes( fd )) == 0 )
 			{
-				CIn_watch( fd );
+				xIn_watch( fd );
 			}
 			break;
 		
