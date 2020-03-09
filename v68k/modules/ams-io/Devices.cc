@@ -19,6 +19,7 @@
 // ams-io
 #include "Console.hh"
 #include "DRVR.hh"
+#include "Modem.hh"
 #include "options.hh"
 #include "Sound.hh"
 #include "UnitTable.hh"
@@ -379,6 +380,12 @@ void install_drivers()
 		TBTRAP( SysBeep );  // A9C8
 		
 		SdVolEnb = -1;
+	}
+	
+	if ( modem_fd >= 0 )
+	{
+		assign_fd( INSTALL_SYS_DRIVER( AIn,  5 ), modem_fd );
+		assign_fd( INSTALL_SYS_DRIVER( AOut, 6 ), modem_fd );
 	}
 	
 	assign_fd( INSTALL_DRIVER( CIn  ), 0 );  // STDIN_FILENO
