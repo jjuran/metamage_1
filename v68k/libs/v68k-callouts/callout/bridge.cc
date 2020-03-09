@@ -410,11 +410,7 @@ int32_t get_Ticks_callout( v68k::processor_state& s )
 {
 	using namespace v68k::time;
 	
-	const uint64_t delta = guest_uptime_microseconds();
-	
-	const unsigned microseconds_per_tick = 1000 * 1000 * 100 / 6015;
-	
-	s.d(0) = delta / microseconds_per_tick;
+	s.d(0) = guest_uptime_ticks();
 	
 	return rts;
 }

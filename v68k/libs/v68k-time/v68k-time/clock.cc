@@ -64,5 +64,14 @@ uint64_t guest_uptime_microseconds()
 	return host_uptime_microseconds() - origin;
 }
 
+uint32_t guest_uptime_ticks()
+{
+	const uint64_t delta = guest_uptime_microseconds();
+	
+	const unsigned microseconds_per_tick = 1000 * 1000 * 100 / 6015;
+	
+	return delta / microseconds_per_tick;
+}
+
 }  // namespace time
 }  // namespace v68k
