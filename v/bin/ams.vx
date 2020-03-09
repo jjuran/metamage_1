@@ -91,6 +91,26 @@ def get_sound_fd
 	return ()
 }
 
+var modem-fd
+var modem-server = ()
+
+def get_modem_fd
+{
+	if const modem = getenv "AMS_MODEM" then
+	{
+		const host, const port = modem / ':'
+		
+		const command = "tcpclient", host, port, "duplex", "6-1", "0-7"
+		
+		const modem_fd_slot = str (modem-fd = reader "/dev/null")
+		modem-server = "--fd", modem_fd_slot, command, "//"
+		
+		return modem_fd_slot
+	}
+	
+	return ()
+}
+
 var appfs-fd
 var appfs-server = ()
 
@@ -171,12 +191,24 @@ def core_opts
 
 def io_opts
 {
-	return
-	if const sound_fd = get_sound_fd() then
+	const sound = if const sound_fd = get_sound_fd() then
 	{
 		setenv( "XV68K_SOUND_FD", sound_fd )
 		
-		ams-io: [ "--sound-fd=" sound_fd ],
+		"--sound-fd=" sound_fd,
+	}
+	
+	const modem = if const modem_fd = get_modem_fd() then
+	{
+		"--modem-fd=" modem_fd,
+	}
+	
+	const opts = [ sound, modem ]
+	
+	return
+	if opts then
+	{
+		ams-io: opts,
 	}
 }
 
@@ -277,7 +309,8 @@ else
 	command-prefix = "exhibit", "-t", title, raster, events_fd_opt
 }
 
-const servers = sound-server, freemountd-server, appfs-server, docfs-server
+const file-servers = freemountd-server, appfs-server, docfs-server
+const servers = sound-server, modem-server, file-servers
 
 const xv68k_opts = model_opt, "-tSP"
 
