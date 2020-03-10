@@ -507,9 +507,17 @@ void menu_item_chosen( long choice )
 			break;
 		
 		case 4:  // Options
-			sound_enabled = ! sound_enabled;
-			
-			CheckMenuItem( GetMenuHandle( menu ), item, sound_enabled );
+			switch ( item )
+			{
+				case 1:  // Sound
+					sound_enabled = ! sound_enabled;
+					
+					CheckMenuItem( GetMenuHandle( menu ), item, sound_enabled );
+					break;
+				
+				default:
+					break;
+			}
 			break;
 		
 		default:
