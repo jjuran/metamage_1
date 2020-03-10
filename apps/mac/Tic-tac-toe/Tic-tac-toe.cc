@@ -312,8 +312,8 @@ void play_tone( UInt16 swCount )
 	
 	*p++ = swMode;
 	
-	const UInt16 amplitude = 30;  // 0 - 255
-	const UInt16 duration  =  6;  // 0 - 65535
+	const UInt16 amplitude = 255;  // 0 - 255
+	const UInt16 duration  =   6;  // 0 - 65535
 	
 	*p++ = swCount;
 	*p++ = amplitude;
