@@ -133,8 +133,10 @@ enum
 	kMargin = 3,
 };
 
+static short unitLength;
+
 static
-short window_unitLength( WindowRef window )
+void calculate_window_metrics( WindowRef window )
 {
 	const Rect& portRect = get_portRect( window );
 	
@@ -143,9 +145,7 @@ short window_unitLength( WindowRef window )
 	
 	const short portLength = min( portWidth, portHeight );
 	
-	const short unitLength = portLength / 32;
-	
-	return unitLength;
+	unitLength = portLength / 32;
 }
 
 static WindowRef main_window;
@@ -195,8 +195,6 @@ void draw_window( WindowRef window )
 	const Rect& portRect = get_portRect( window );
 	
 	EraseRect( &portRect );
-	
-	const short unitLength = window_unitLength( window );
 	
 	Rect line;
 	
@@ -255,10 +253,8 @@ void draw_window( WindowRef window )
 }
 
 static
-void draw_token( WindowRef window, player_t token, short index )
+void draw_token( player_t token, short index )
 {
-	const short unitLength = window_unitLength( window );
-	
 	const short i = index / 3;
 	const short j = index % 3;
 	
@@ -276,10 +272,8 @@ void draw_token( WindowRef window, player_t token, short index )
 }
 
 static
-short hit_test( WindowRef window, Point where )
+short hit_test( Point where )
 {
-	const short unitLength = window_unitLength( window );
-	
 	short x = where.h / unitLength;
 	short y = where.v / unitLength;
 	
@@ -329,7 +323,7 @@ void play_tone( UInt16 swCount )
 }
 
 static
-void click( WindowRef window, Point where )
+void click( Point where )
 {
 	if ( ! current_player )
 	{
@@ -338,7 +332,7 @@ void click( WindowRef window, Point where )
 	
 	using namespace tictactoe;
 	
-	short i = hit_test( window, where );
+	short i = hit_test( where );
 	
 	move_t result = move( current_player, i );
 	
@@ -357,7 +351,7 @@ void click( WindowRef window, Point where )
 	
 	DisposeRgn( rgn );
 	
-	draw_token( window, current_player, i );
+	draw_token( current_player, i );
 	
 	if ( sound_enabled )
 	{
@@ -417,6 +411,16 @@ void calibrate_mouseRgns( short unitLength )
 }
 
 static
+void window_size_changed( WindowRef window )
+{
+	calculate_window_metrics( window );
+	
+	calculate_token_regions( unitLength );
+	
+	calibrate_mouseRgns( unitLength );
+}
+
+static
 void reset()
 {
 	tictactoe::reset();
@@ -431,14 +435,12 @@ void reset()
 		}
 	}
 	
-	short unitLength = window_unitLength( main_window );
-	
 	calibrate_mouseRgns( unitLength );
 	
 	Point mouse;
 	GetMouse( &mouse );
 	
-	short i = hit_test( main_window, mouse );
+	short i = hit_test( mouse );
 	
 	SetCursor( i + 1 ? &X_cursor : &mac::qd::arrow() );
 	
@@ -512,7 +514,7 @@ RgnHandle mouse_moved( Point where )
 {
 	GlobalToLocal( &where );
 	
-	const short i = hit_test( main_window, where );
+	const short i = hit_test( where );
 	
 	const Cursor* cursor;
 	
@@ -615,12 +617,7 @@ int main()
 	alloc_mouseRgns();
 	
 	make_main_window();
-	
-	short unitLength = window_unitLength( main_window );
-	
-	calculate_token_regions( unitLength );
-	
-	calibrate_mouseRgns( unitLength );
+	window_size_changed( main_window );
 	
 	const bool has_WNE = has_WaitNextEvent();
 	
@@ -672,7 +669,7 @@ int main()
 							}
 							
 							GlobalToLocal( &event.where );
-							click( window, event.where );
+							click( event.where );
 							break;
 						
 						case inGrow:
@@ -682,11 +679,7 @@ int main()
 								
 								InvalRect( window, get_portRect( window ) );
 								
-								unitLength = window_unitLength( window );
-								
-								calculate_token_regions( unitLength );
-								
-								calibrate_mouseRgns( unitLength );
+								window_size_changed( window );
 							}
 							break;
 						
