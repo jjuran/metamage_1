@@ -134,6 +134,8 @@ enum
 };
 
 static short unitLength;
+static short h_margin;
+static short v_margin;
 
 static
 void calculate_window_metrics( WindowRef window )
@@ -146,6 +148,9 @@ void calculate_window_metrics( WindowRef window )
 	const short portLength = min( portWidth, portHeight );
 	
 	unitLength = portLength / 32;
+	
+	h_margin = (portWidth  - portLength) / 2;
+	v_margin = (portHeight - portLength) / 2;
 }
 
 static WindowRef main_window;
@@ -196,6 +201,8 @@ void draw_window( WindowRef window )
 	
 	EraseRect( &portRect );
 	
+	SetOrigin( -h_margin, -v_margin );
+	
 	Rect line;
 	
 	line.left  = unitLength * 3;
@@ -231,14 +238,14 @@ void draw_window( WindowRef window )
 	
 	for ( short i = 0, i3 = 0;  i < 3;  ++i, i3 += 3 )
 	{
-		const short top = unitLength * (4 + 9 * i);
+		const short top = v_margin + unitLength * (4 + 9 * i);
 		
 		for ( short j = 0;  j < 3;  ++j )
 		{
-			const short left = unitLength * (4 + 9 * j);
-			
 			if ( player_t token = tictactoe::get( i3 + j ) )
 			{
+				const short left = h_margin + unitLength * (4 + 9 * j);
+				
 				SetOrigin( -left, -top );
 				
 				RgnHandle rgn = token > 0 ? get_X_token( unitLength )
@@ -258,8 +265,8 @@ void draw_token( player_t token, short index )
 	const short i = index / 3;
 	const short j = index % 3;
 	
-	const short top = unitLength * (4 + 9 * i);
-	const short left = unitLength * (4 + 9 * j);
+	const short top  = v_margin + unitLength * (4 + 9 * i);
+	const short left = h_margin + unitLength * (4 + 9 * j);
 	
 	SetOrigin( -left, -top );
 	
@@ -274,6 +281,9 @@ void draw_token( player_t token, short index )
 static
 short hit_test( Point where )
 {
+	where.h -= h_margin;
+	where.v -= v_margin;
+	
 	short x = where.h / unitLength;
 	short y = where.v / unitLength;
 	
@@ -380,7 +390,7 @@ void calculate_token_regions( short unitLength )
 static
 void calibrate_mouseRgns( short unitLength )
 {
-	Point globalOffset = { 0, 0 };
+	Point globalOffset = { v_margin, h_margin };
 	
 	LocalToGlobal( &globalOffset );
 	
