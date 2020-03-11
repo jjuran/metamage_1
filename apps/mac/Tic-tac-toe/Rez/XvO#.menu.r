@@ -39,5 +39,6 @@ resource 'MENU' (131) {
 	"Options",
 	{
 		"Sound", noIcon, noKey, noMark, plain,
+		"Full screen", noIcon, "F", noMark, plain,
 	}
 };

@@ -46,6 +46,8 @@
 
 // Tic-tac-toe
 #include "cursors.hh"
+#include "fullscreen.hh"
+#include "fullscreen_port.hh"
 #include "regions.hh"
 #include "state.hh"
 
@@ -68,6 +70,7 @@ const bool apple_events_present =
 			mac::sys::gestalt( 'evnt' ) != 0);
 
 static bool sound_enabled;
+static bool is_fullscreen;
 
 static player_t current_player = tictactoe::Player_X;
 
@@ -431,6 +434,62 @@ void window_size_changed( WindowRef window )
 }
 
 static
+WindowRef GetPort_window()
+{
+	/*
+		Return the window whose port is the current port.
+		If accessor calls are functions, the port must belong to a window.
+		Otherwise, it may be just a GrafPort.
+	*/
+	
+	GrafPtr port;
+	GetPort( &port );
+	
+	return GetWindowFromPort( (CGrafPtr) port );
+}
+
+static
+void enter_fullscreen()
+{
+	fullscreen::enter();
+	
+	ForeColor( whiteColor );
+	BackColor( blackColor );
+	
+	WindowRef window = GetPort_window();
+	
+	window_size_changed( window );
+	
+	draw_window( window );
+}
+
+static
+void leave_fullscreen()
+{
+	fullscreen::leave();
+	
+	InvalRect( main_window, get_portRect( main_window ) );
+	
+	window_size_changed( main_window );
+}
+
+static
+void cleanup_fullscreen()
+{
+	if ( TARGET_CPU_68K  &&  mac::sys::gestalt_defined( 'v68k' ) )
+	{
+		return;
+	}
+	
+	if ( TARGET_API_MAC_CARBON  &&  mac::sys::gestalt( 'sysv' ) >= 0x1000 )
+	{
+		return;
+	}
+	
+	fullscreen::leave();
+}
+
+static
 void reset()
 {
 	tictactoe::reset();
@@ -456,7 +515,7 @@ void reset()
 	
 	gMouseRgn = mouseRgns[ i + 1 ];
 	
-	draw_window( main_window );
+	draw_window( GetPort_window() );
 }
 
 static
@@ -482,6 +541,11 @@ void menu_item_chosen( long choice )
 			switch ( item )
 			{
 				case 1:  // New Game
+					if ( is_fullscreen )
+					{
+						HiliteMenu( 0 );
+					}
+					
 					reset();
 					break;
 				
@@ -513,6 +577,23 @@ void menu_item_chosen( long choice )
 					sound_enabled = ! sound_enabled;
 					
 					CheckMenuItem( GetMenuHandle( menu ), item, sound_enabled );
+					break;
+				
+				case 2:  // Full screen
+					HiliteMenu( 0 );
+					
+					is_fullscreen = ! is_fullscreen;
+					
+					if ( is_fullscreen )
+					{
+						enter_fullscreen();
+					}
+					else
+					{
+						leave_fullscreen();
+					}
+					
+					CheckMenuItem( GetMenuHandle( menu ), item, is_fullscreen );
 					break;
 				
 				default:
@@ -650,6 +731,12 @@ int main()
 			switch ( event.what )
 			{
 				case mouseDown:
+					if ( is_fullscreen )
+					{
+						click( event.where );
+						break;
+					}
+					
 					switch ( FindWindow( event.where, &window ) )
 					{
 						case inMenuBar:
@@ -710,6 +797,21 @@ int main()
 					if ( event.modifiers & cmdKey )
 					{
 						menu_item_chosen( MenuKey( event.message ) );
+						break;
+					}
+					
+					if ( (char) event.message == 0x1B  &&  is_fullscreen )
+					{
+						// User pressed Esc
+						
+						is_fullscreen = false;
+						
+						leave_fullscreen();
+						
+						MenuRef Options    = GetMenuHandle( 4 );
+						short   Fullscreen = 2;
+						
+						CheckMenuItem( Options, Fullscreen, false );
 					}
 					
 					break;
@@ -746,6 +848,11 @@ int main()
 					break;
 			}
 		}
+	}
+	
+	if ( is_fullscreen )
+	{
+		cleanup_fullscreen();
 	}
 	
 	return 0;
