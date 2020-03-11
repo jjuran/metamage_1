@@ -216,18 +216,24 @@ pascal void ForeColor_patch( long color )
 {
 	GrafPtr thePort = *get_addrof_thePort();
 	
-	thePort->fgColor = color;
+	if ( color == thePort->fgColor  &&  color == blackColor )
+	{
+		NOTICE = "ForeColor: redundantly set to black";
+	}
 	
-	WARNING = "ForeColor: unused fgColor set to ", color;
+	thePort->fgColor = color;
 }
 
 pascal void BackColor_patch( long color )
 {
 	GrafPtr thePort = *get_addrof_thePort();
 	
-	thePort->bkColor = color;
+	if ( color == thePort->bkColor  &&  color == whiteColor )
+	{
+		NOTICE = "BackColor: redundantly set to white";
+	}
 	
-	WARNING = "BackColor: unused bkColor set to ", color;
+	thePort->bkColor = color;
 }
 
 #pragma mark -
