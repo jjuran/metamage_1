@@ -17,6 +17,7 @@
 #include "redraw_lock.hh"
 
 // ams-qd
+#include "color.hh"
 #include "draw.hh"
 #include "Regions.hh"
 #include "segments_box.hh"
@@ -37,6 +38,18 @@ static inline bool operator==( const Pattern& a, black_t )
 	const UInt32* p = (const UInt32*) a.pat;
 	
 	return *p++ == 0xFFFFFFFF  &&  *p == 0xFFFFFFFF;
+}
+
+static inline
+bool erases_to_white( const GrafPort& port )
+{
+	return port.bkColor & Inverse  &&  port.bkPat == White;
+}
+
+static inline
+bool paints_to_black( const GrafPort& port )
+{
+	return ! (port.fgColor & Inverse)  &&  port.pnPat == Black;
 }
 
 struct rectangular_op_params
@@ -599,7 +612,7 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	
 	if ( verb == kQDGrafVerbErase )
 	{
-		if ( clipping_to_rect  &&  port.bkPat == White )
+		if ( clipping_to_rect  &&  erases_to_white( port ) )
 		{
 			erase_rect( params );
 			
@@ -607,12 +620,17 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		}
 		
 		port.fillPat = port.bkPat;
+		
+		if ( ! (port.bkColor & Inverse) )
+		{
+			patMode ^= 4;  // non-white background; negate the pattern
+		}
 	}
 	else if ( verb == kQDGrafVerbPaint )
 	{
 		const short mode = port.pnMode & 0x7;
 		
-		if ( clipping_to_rect  &&  mode <= srcOr  &&  port.pnPat == Black )
+		if ( clipping_to_rect  &&  mode <= srcOr  &&  paints_to_black( port ) )
 		{
 			// patCopy or patOr -- use optimized paint routine
 			paint_rect( params );
@@ -622,6 +640,11 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		
 		patMode      = port.pnMode;
 		port.fillPat = port.pnPat;
+		
+		if ( port.fgColor & Inverse )
+		{
+			patMode ^= 4;  // white foreground; negate the pattern
+		}
 	}
 	else if ( verb == kQDGrafVerbInvert )
 	{
