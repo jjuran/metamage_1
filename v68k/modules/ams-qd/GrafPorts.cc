@@ -12,6 +12,7 @@
 #include "QDGlobals.hh"
 
 // ams-qd
+#include "color.hh"
 #include "Rects.hh"
 #include "Regions.hh"
 
@@ -221,6 +222,11 @@ pascal void ForeColor_patch( long color )
 		NOTICE = "ForeColor: redundantly set to black";
 	}
 	
+	if ( is_nongray( color ) )
+	{
+		WARNING = "ForeColor: non-gray color ", color, " will render as black";
+	}
+	
 	thePort->fgColor = color;
 }
 
@@ -231,6 +237,11 @@ pascal void BackColor_patch( long color )
 	if ( color == thePort->bkColor  &&  color == whiteColor )
 	{
 		NOTICE = "BackColor: redundantly set to white";
+	}
+	
+	if ( is_nongray( color ) )
+	{
+		WARNING = "BackColor: non-gray color ", color, " will render as black";
 	}
 	
 	thePort->bkColor = color;
