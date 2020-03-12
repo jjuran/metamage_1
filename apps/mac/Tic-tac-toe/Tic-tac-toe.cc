@@ -150,10 +150,10 @@ void calculate_window_metrics( WindowRef window )
 	
 	const short portLength = min( portWidth, portHeight );
 	
-	unitLength = portLength / 32;
+	unitLength = portLength / 32u;
 	
-	h_margin = (portWidth  - portLength) / 2;
-	v_margin = (portHeight - portLength) / 2;
+	h_margin = (portWidth  - portLength) / 2u;
+	v_margin = (portHeight - portLength) / 2u;
 }
 
 static WindowRef main_window;
@@ -172,15 +172,15 @@ void make_main_window()
 	
 	short height = usableHeight;
 	
-	height -= height /  4;  // leave some space
-	height -= height % 16;  // make it an exact multiple
+	height -= height /  4u;  // leave some space
+	height -= height % 16u;  // make it an exact multiple
 	
 	const short margin = usableHeight - height;
 	
-	bounds.top   += margin / 2;
+	bounds.top   += margin / 2u;
 	bounds.bottom = bounds.top + height;
 	
-	bounds.left  = (bounds.right - bounds.left - height) / 2;
+	bounds.left  = (bounds.right - bounds.left - height) / 2u;
 	bounds.right = bounds.left + height;
 	
 	main_window = NewWindow( NULL,
