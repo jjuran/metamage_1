@@ -73,7 +73,7 @@ FCB* find_next_empty_FCB()
 static inline
 bool is_current_application( uint32_t flNum )
 {
-	const FCB& curApFCB = FCBSPtr->fcbs[ CurApRefNum - 1 ];
+	const FCB& curApFCB = *get_FCB( CurApRefNum );
 	
 	return curApFCB.fcbFlNum == flNum;
 }
