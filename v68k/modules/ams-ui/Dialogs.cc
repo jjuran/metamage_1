@@ -378,14 +378,12 @@ WindowPeek front_dialog_window()
 {
 	WindowPeek w = WindowList;
 	
-	while ( w != NULL )
+	if ( w != NULL )
 	{
 		if ( w->windowKind == dialogKind  ||  w->windowKind < 0 )
 		{
 			return w;  // The window doesn't have to be visible
 		}
-		
-		w = w->nextWindow;
 	}
 	
 	return NULL;
