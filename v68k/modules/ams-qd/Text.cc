@@ -247,7 +247,19 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 			dstRect.left  = dstLeft;
 			dstRect.right = dstLeft + width;
 			
-			CopyBits( &srcBits, &dstBits, &srcRect, &dstRect, port.txMode, NULL );
+			const short mode = port.txMode;
+			
+			CopyBits( &srcBits, &dstBits, &srcRect, &dstRect, mode, NULL );
+			
+			UInt8 bold = output->boldPixels;
+			
+			while ( bold-- > 0 )
+			{
+				++dstRect.left;
+				++dstRect.right;
+				
+				CopyBits( &srcBits, &dstBits, &srcRect, &dstRect, mode, NULL );
+			}
 		}
 		
 		port.pnLoc.h += character_width + output->extra;
