@@ -153,6 +153,58 @@ short new_resID_for_font_and_size( short font, short size )
 	return resID_for_font_and_size( font, size );
 }
 
+static const Byte characterization_table[] =
+{
+	80, 80,    // dpi for scaling between devices
+	0, 1, 1,   // bold
+	1, 8, 0,   // italic
+	0, 0, 0,   // not used
+	5, 1, 1,   // outline
+	5, 2, 2,   // shadow
+	0, 0, -1,  // condensed
+	0, 0, 1,   // extended
+	
+	1, 1, 1,   // underline
+};
+
+static
+void apply_characterization( Style face, FMOutput& output )
+{
+	if ( face & underline )
+	{
+		face &= ~underline;
+		
+		const Byte* p = characterization_table + 23;
+		
+		Byte* q = &output.ulOffset;
+		
+		*q++ += *p++;
+		*q++ += *p++;
+		*q++ += *p++;
+	}
+	
+	const Byte* p = characterization_table + 2;
+	
+	Byte* characteristics = &output.boldPixels;
+	
+	while ( face != 0 )
+	{
+		if ( face & 1 )
+		{
+			const UInt8 i = *p++;
+			
+			characteristics[ i ]  = *p++;
+			output.extra         += *p++;
+		}
+		else
+		{
+			p += 3;
+		}
+		
+		face >>= 1;
+	}
+}
+
 pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 {
 	const short fontNum  = specific_font( input->family );
@@ -192,6 +244,13 @@ pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 		the_current_FMOutput.leading    = rec.leading;
 		the_current_FMOutput.numer      = input->numer;
 		the_current_FMOutput.denom      = input->denom;
+	}
+	
+	fast_memset( &the_current_FMOutput.boldPixels, '\0', 7 );
+	
+	if ( input->face )
+	{
+		apply_characterization( input->face, the_current_FMOutput );
 	}
 	
 	return &the_current_FMOutput;
