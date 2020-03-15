@@ -149,7 +149,7 @@ pascal short StdTxMeas_patch( short        n,
 		
 		const int8_t character_width = owTable[ c ];
 		
-		result += character_width;
+		result += character_width + output->extra;
 	}
 	
 	return result;
@@ -250,6 +250,6 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 			CopyBits( &srcBits, &dstBits, &srcRect, &dstRect, port.txMode, NULL );
 		}
 		
-		port.pnLoc.h += character_width;
+		port.pnLoc.h += character_width + output->extra;
 	}
 }
