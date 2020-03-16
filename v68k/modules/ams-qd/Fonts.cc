@@ -180,11 +180,6 @@ pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 			}
 		}
 		
-		if ( the_current_font_record != ROMFont0 )
-		{
-			ReleaseResource( (Handle) the_current_font_record );
-		}
-		
 		the_current_font_resID  = resID;
 		the_current_font_record = newFont;
 		
