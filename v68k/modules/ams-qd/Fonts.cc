@@ -30,6 +30,8 @@
 FontRec** ROMFont0 : 0x0980;
 short     ApFontID : 0x0984;
 
+const Point OneOne : 0x0A02;
+
 
 static inline
 short resID_for_font_and_size( short font, short size )
@@ -56,7 +58,7 @@ static FMOutput the_current_FMOutput;
 
 pascal void InitFonts_patch()
 {
-	const FMInput input = { 0 };
+	const FMInput input = { 0, 0, 0, true, 0, OneOne, OneOne };
 	
 	FMSwapFont( &input );
 	
