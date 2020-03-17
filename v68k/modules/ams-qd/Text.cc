@@ -157,6 +157,11 @@ pascal short StdTxMeas_patch( short        n,
 
 pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 {
+	if ( denom.v == 0  ||  denom.h == 0 )
+	{
+		return;
+	}
+	
 	GrafPort& port = **get_addrof_thePort();
 	
 	if ( port.pnVis < 0 )
@@ -199,11 +204,16 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	Rect srcRect;
 	Rect dstRect;
 	
+	short dst_ascent      = rec.ascent;
+	short dst_fRectHeight = rec.fRectHeight;
+	short dst_widMax      = rec.widMax;
+	short dst_kernMax     = rec.kernMax;
+	
 	srcRect.top    = 0;
 	srcRect.bottom = rec.fRectHeight;
 	
-	dstRect.top    = port.pnLoc.v - rec.ascent;
-	dstRect.bottom = port.pnLoc.v - rec.ascent + rec.fRectHeight;
+	dstRect.top    = port.pnLoc.v - dst_ascent;
+	dstRect.bottom = port.pnLoc.v - dst_ascent + dst_fRectHeight;
 	
 	// Worst case, for checking cursor intersection only
 	dstRect.left  = port.portBits.bounds.left;
@@ -232,17 +242,17 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		if ( port.txMode == srcCopy )
 		{
 			dstRect.left  = port.pnLoc.h;
-			dstRect.right = port.pnLoc.h + rec.widMax;
+			dstRect.right = port.pnLoc.h + dst_widMax;
 			
 			EraseRect( &dstRect );
 		}
 		
-		if ( const short width = next_offset - this_offset )
+		if ( short width = next_offset - this_offset )
 		{
 			srcRect.left  = this_offset;
 			srcRect.right = next_offset;
 			
-			const short dstLeft = port.pnLoc.h + character_offset + rec.kernMax;
+			const short dstLeft = port.pnLoc.h + character_offset + dst_kernMax;
 			
 			dstRect.left  = dstLeft;
 			dstRect.right = dstLeft + width;
