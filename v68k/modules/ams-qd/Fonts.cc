@@ -216,6 +216,9 @@ pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 	
 	if ( resID != the_current_font_resID )
 	{
+		the_current_FMOutput.numer = input->numer;
+		the_current_FMOutput.denom = input->denom;
+		
 		FontRec** newFont = ROMFont0;
 		
 		if ( resID != system_font_resID  ||  newFont == NULL )
@@ -232,6 +235,13 @@ pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 			{
 				return &the_current_FMOutput;
 			}
+			else
+			{
+				the_current_FMOutput.numer.v *= fontSize;
+				the_current_FMOutput.numer.h *= fontSize;
+				the_current_FMOutput.denom.v *= default_font_size;
+				the_current_FMOutput.denom.h *= default_font_size;
+			}
 		}
 		
 		the_current_font_resID  = resID;
@@ -244,8 +254,6 @@ pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 		the_current_FMOutput.descent    = rec.descent;
 		the_current_FMOutput.widMax     = rec.widMax;
 		the_current_FMOutput.leading    = rec.leading;
-		the_current_FMOutput.numer      = input->numer;
-		the_current_FMOutput.denom      = input->denom;
 	}
 	
 	fast_memset( &the_current_FMOutput.boldPixels, '\0', 7 );
