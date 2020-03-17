@@ -119,13 +119,15 @@ void stretch_bits( const BitMap&  srcBits,
 	Ptr src = srcBits.baseAddr + srcBits.rowBytes * srcTop + srcLeft / 8u;
 	Ptr dst = dstBits.baseAddr + dstBits.rowBytes * dstTop + dstLeft / 8u;
 	
-	if ( dstWidth == 2 * srcWidth  &&  dstHeight == 2 * srcHeight )
+	const bool aligned = ! ((srcLeft | dstLeft | srcWidth | dstWidth) & 7);
+	
+	if ( aligned  &&  dstWidth == 2 * srcWidth  &&  dstHeight == 2 * srcHeight )
 	{
 		stretch_2x( src, dst, srcBits.rowBytes, dstBits.rowBytes, srcHeight );
 		return;
 	}
 	
-	if ( srcWidth == 2 * dstWidth  &&  srcHeight == 2 * dstHeight )
+	if ( aligned  &&  srcWidth == 2 * dstWidth  &&  srcHeight == 2 * dstHeight )
 	{
 		squish_2x( src, dst, srcBits.rowBytes, dstBits.rowBytes, dstHeight );
 		return;
