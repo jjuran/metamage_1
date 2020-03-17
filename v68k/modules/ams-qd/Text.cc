@@ -152,7 +152,7 @@ pascal short StdTxMeas_patch( short        n,
 		result += character_width + output->extra;
 	}
 	
-	return result;
+	return result * output->numer.h / output->denom.h;
 }
 
 pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
@@ -212,6 +212,21 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	srcRect.top    = 0;
 	srcRect.bottom = rec.fRectHeight;
 	
+	Fixed v_scale = 0x10000;
+	Fixed h_scale = 0x10000;
+	
+	if ( (long&) output->numer != (long&) denom )
+	{
+		v_scale = (output->numer.v << 16) / output->denom.v;
+		h_scale = (output->numer.h << 16) / output->denom.h;
+		
+		dst_ascent      = dst_ascent      * v_scale >> 16;
+		dst_fRectHeight = dst_fRectHeight * v_scale >> 16;
+		
+		dst_widMax  = dst_widMax  * h_scale >> 16;
+		dst_kernMax = dst_kernMax * h_scale >> 16;
+	}
+	
 	dstRect.top    = port.pnLoc.v - dst_ascent;
 	dstRect.bottom = port.pnLoc.v - dst_ascent + dst_fRectHeight;
 	
@@ -233,8 +248,8 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		// FIXME:  Check for -1
 		const int8_t* offset_width = (int8_t*) &owTable[ c ];
 		
-		const int8_t character_offset = *offset_width++;
-		const int8_t character_width  = *offset_width;
+		const int8_t character_offset = *offset_width++ * h_scale >> 16;
+		const int8_t character_width  = *offset_width   * h_scale >> 16;
 		
 		const short this_offset = locTable[ c ];
 		const short next_offset = locTable[ c + 1 ];
@@ -253,6 +268,8 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 			srcRect.right = next_offset;
 			
 			const short dstLeft = port.pnLoc.h + character_offset + dst_kernMax;
+			
+			width = width * h_scale >> 16;
 			
 			dstRect.left  = dstLeft;
 			dstRect.right = dstLeft + width;
