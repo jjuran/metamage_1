@@ -82,6 +82,11 @@ namespace Genie
 	
 	App::App()
 	{
+	}
+	
+	static
+	void install_handlers()
+	{
 		const bool apple_events_present =
 			CONFIG_APPLE_EVENTS  &&
 				(CONFIG_APPLE_EVENTS_GRANTED  ||
@@ -127,6 +132,8 @@ namespace Genie
 int main()
 {
 	Genie::App app;
+	
+	Genie::install_handlers();
 	
 	return app.Run();
 }
