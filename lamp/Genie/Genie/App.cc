@@ -44,11 +44,11 @@
 #include "Genie/mnt/listener.hh"
 
 
+namespace Ped = Pedestal;
+
+
 namespace Genie
 {
-	
-	namespace Ped = Pedestal;
-	
 	
 	static
 	pascal OSErr Handle_Reply_event( AppleEvent const*  event,
@@ -57,13 +57,6 @@ namespace Genie
 	{
 		return ReceiveReply( *event );
 	}
-	
-	
-	class App : public Ped::Application
-	{
-		public:
-			App();
-	};
 	
 	
 	static bool About( Ped::CommandCode )
@@ -78,10 +71,6 @@ namespace Genie
 		spawn_process( "/bin/teletype" );
 		
 		return true;
-	}
-	
-	App::App()
-	{
 	}
 	
 	static
@@ -131,7 +120,7 @@ namespace Genie
 
 int main()
 {
-	Genie::App app;
+	Ped::Application app;
 	
 	Genie::install_handlers();
 	
