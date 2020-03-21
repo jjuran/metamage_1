@@ -111,6 +111,7 @@ enum
 {
 	_ReallocateHandle = _ReallocHandle,
 	_ReserveMem       = _ResrvMem,
+	_SystemEdit       = _SysEdit,
 };
 
 
@@ -293,6 +294,8 @@ static
 void install_DeskManager()
 {
 	TBTRAP( SystemTask );  // A9B4
+	
+	TBTRAP( SystemEdit );  // A9C2
 }
 
 static
