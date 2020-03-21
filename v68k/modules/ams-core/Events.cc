@@ -88,7 +88,7 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 			
 			CurDeactive = NULL;
 			
-			return true;
+			goto got_event;
 		}
 		
 		if ( CurActivate )
@@ -101,25 +101,25 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 			
 			CurActivate = NULL;
 			
-			return true;
+			goto got_event;
 		}
 	}
 	
 	if ( get_lowlevel_event( eventMask, event ) )
 	{
-		return true;
+		goto got_event;
 	}
 	
 	if ( eventMask & updateMask  &&  CheckUpdate( event ) )
 	{
-		return true;
+		goto got_event;
 	}
 	
 	wait_for_user_input( sleep );
 	
 	if ( get_lowlevel_event( eventMask, event ) )
 	{
-		return true;
+		goto got_event;
 	}
 	
 	/*
@@ -132,6 +132,10 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 	next_sleep = GetNextEvent_throttle;
 	
 	return false;
+	
+got_event:
+	
+	return true;
 }
 
 static
