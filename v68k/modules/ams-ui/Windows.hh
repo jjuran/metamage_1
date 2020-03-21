@@ -9,11 +9,13 @@
 struct EventRecord;
 struct GrafPort;
 struct MacRegion;
+struct MenuList_header;
 struct Point;
 struct Rect;
 struct WindowRecord;
 
-extern MacRegion** BezelRgn;
+extern MacRegion**        BezelRgn;
+extern MenuList_header**  MenuList;
 
 pascal void InitWindows_patch();
 

@@ -28,7 +28,7 @@
 #include "raster_lock.hh"
 #include "unglue.hh"
 
-// ams-core
+// ams-ui
 #include "MBDF.hh"
 #include "MDEF.hh"
 #include "Windows.hh"
@@ -55,7 +55,7 @@ struct MenuList_entry
 	SInt16   left_edge;
 };
 
-static MenuList_header** MenuList;
+MenuList_header** MenuList;
 
 const short system_font_ascent =  9;
 const short menu_title_padding =  9;

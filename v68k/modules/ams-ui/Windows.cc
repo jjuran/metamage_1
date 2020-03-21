@@ -227,6 +227,8 @@ pascal void InitWindows_patch()
 	
 	SaveVisRgn = NewRgn();
 	
+	MenuList = NULL;
+	
 	CurActivate = NULL;
 	CurDeactive = NULL;
 	
