@@ -156,16 +156,16 @@ ssize_t read_all( int fd, void* p, size_t n )
 }
 
 static inline
-void put( const void* p, unsigned n )
+bool put( const void* p, unsigned n )
 {
-	write( STDOUT_FILENO, p, n );
+	return write( STDOUT_FILENO, p, n ) == n;
 }
 
 template < class T >
 static inline
-void put( const T& x )
+bool put( const T& x )
 {
-	put( &x, sizeof x );
+	return put( &x, sizeof x );
 }
 
 static inline
@@ -240,7 +240,7 @@ void transcode_framebuffer_8x_1_to_8()
 }
 
 static
-void send_update()
+bool send_update()
 {
 	if ( ! updates_ended )
 	{
@@ -265,27 +265,32 @@ void send_update()
 	
 	p7::lock lock( update_mutex );
 	
-	put( header );
-	put( element );
+	return
+	put( header  )  &&
+	put( element )  &&
 	put( framebuffer, fb_len );
 }
 
 static inline
-void do_SetPixelFormat( const SetPixelFormat_message& msg )
+bool do_SetPixelFormat( const SetPixelFormat_message& msg )
 {
+	return true;
 }
 
 static inline
-void do_SetEncodings( const SetEncodings_header& header, const S_32* encodings )
+bool do_SetEncodings( const SetEncodings_header& header, const S_32* encodings )
 {
+	return true;
 }
 
 static
-void do_FramebufferUpdateRequest( const FramebufferUpdateRequest_message& msg )
+bool do_FramebufferUpdateRequest( const FramebufferUpdateRequest_message& msg )
 {
+	bool result = true;
+	
 	if ( ! msg.is_incremental )
 	{
-		send_update();
+		result = send_update();
 	}
 	
 	p7::lock lock( update_mutex );
@@ -296,10 +301,12 @@ void do_FramebufferUpdateRequest( const FramebufferUpdateRequest_message& msg )
 	{
 		update_cond.signal();
 	}
+	
+	return result;
 }
 
 static
-void do_KeyEvent( const KeyEvent_message& msg )
+bool do_KeyEvent( const KeyEvent_message& msg )
 {
 	const bool down = msg.is_down;
 	
@@ -355,12 +362,16 @@ void do_KeyEvent( const KeyEvent_message& msg )
 		
 	if ( events_fd )
 	{
-		write( events_fd, &buffer, sizeof buffer );
+		const size_t n = sizeof buffer;
+		
+		return write( events_fd, &buffer, n ) == n;
 	}
+	
+	return true;
 }
 
 static
-void do_PointerEvent( const PointerEvent_message& msg )
+bool do_PointerEvent( const PointerEvent_message& msg )
 {
 	const byte mask = msg.button_mask;
 	
@@ -397,9 +408,13 @@ void do_PointerEvent( const PointerEvent_message& msg )
 		
 		if ( events_fd )
 		{
-			write( events_fd, &buffer, sizeof buffer );
+			const size_t n = sizeof buffer;
+			
+			return write( events_fd, &buffer, n ) == n;
 		}
 	}
+	
+	return true;
 }
 
 static
@@ -416,8 +431,9 @@ bool handle_event()
 		case SetPixelFormat:
 		{
 			SetPixelFormat_message msg;
-			get( type, msg );
 			
+			return
+			get( type, msg )  &&
 			do_SetPixelFormat( msg );
 			break;
 		}
@@ -425,53 +441,46 @@ bool handle_event()
 		case SetEncodings:
 		{
 			SetEncodings_header header;
-			get( type, header );
+			size_t n;
+			void* p;
 			
-			const size_t n = header.count * 4;
-			
-			if ( n > 4096 )
-			{
-				WARN( "too many encodings" );
-				
-			}
-			
-			void* p = alloca( n );
-			get( p, n );
-			
+			return
+			get( type, header )             &&
+			(n = header.count * 4) <= 4096  &&
+			(p = alloca( n ))               &&
+			get( p, n )                     &&
 			do_SetEncodings( header, (S_32*) p );
-			break;
 		}
 		
 		case FramebufferUpdateRequest:
 		{
 			FramebufferUpdateRequest_message msg;
-			get( type, msg );
 			
+			return
+			get( type, msg )  &&
 			do_FramebufferUpdateRequest( msg );
-			break;
 		}
 		
 		case KeyEvent:
 		{
 			KeyEvent_message msg;
-			get( type, msg );
 			
+			return
+			get( type, msg )  &&
 			do_KeyEvent( msg );
-			break;
 		}
 		
 		case PointerEvent:
 		{
 			PointerEvent_message msg;
-			get( type, msg );
 			
+			return
+			get( type, msg )  &&
 			do_PointerEvent( msg );
-			break;
 		}
 		
 		default:
-			abort();
-			break;
+			return false;
 	}
 	
 	return true;
@@ -664,15 +673,8 @@ int main( int argc, char** argv )
 	
 	fb_len = height * width;
 	
-	PUT( RFB_PROTOCOL_VERSION_3_3 );
-	
 	ProtocolVersion version;
-	get( version );
-	
-	PUT( "\0\0\0\1" );
-	
 	char shared_flag;
-	get( shared_flag );
 	
 	const size_t max_title_len = 127;
 	
@@ -712,7 +714,17 @@ int main( int argc, char** argv )
 	
 	memcpy( server_init.name, title, title_len );
 	
+	const bool inited =
+	PUT( RFB_PROTOCOL_VERSION_3_3 )  &&
+	get( version )                   &&
+	PUT( "\0\0\0\1" )                &&
+	get( shared_flag )               &&
 	put( &server_init, sizeof (ServerInit_message< 0 >) + title_len );
+	
+	if ( ! inited )
+	{
+		return 1;
+	}
 	
 	raster_update_thread.create( &raster_update_start, sync );
 	
