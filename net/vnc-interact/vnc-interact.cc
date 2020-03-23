@@ -320,6 +320,16 @@ bool do_KeyEvent( const KeyEvent_message& msg )
 				c = 0x7F;
 				break;
 			
+			case 0xff52:  // Up
+			case 0xff53:  // Right
+				c ^= 0x01;
+				// fall through
+			
+			case 0xff51:  // Left
+			case 0xff54:  // Down
+				c -= 0x51 - 0x1C;
+				break;
+			
 			case 0xffe1:
 			case 0xffe2:
 			case 0xffe3:
