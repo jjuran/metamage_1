@@ -42,7 +42,7 @@ void clobber_screen()
 
 void refresh_screen()
 {
-	PaintRect( &fullscreen_port.portRect );
+	FillRect( &fullscreen_port.portRect, &qd.black );
 	
 	DrawMenuBar();
 	
