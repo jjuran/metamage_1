@@ -365,7 +365,7 @@ bool do_KeyEvent( const KeyEvent_message& msg )
 	splode::ascii_event_buffer buffer =
 	{
 		sizeof buffer - 1,
-		c,
+		(uint8_t) c,
 		modes,
 		attrs,
 	};
