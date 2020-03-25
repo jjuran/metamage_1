@@ -12,6 +12,9 @@
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
+#ifndef __TEXTUTILS__
+#include <TextUtils.h>
+#endif
 
 // iota
 #include "iota/char_types.hh"
@@ -1178,8 +1181,6 @@ pascal void DelMenuItem_patch( MenuInfo** menu, short item )
 	
 	WMgrPort_bezel_scope port_swap;
 	
-	Size old_size = GetHandleSize( (Handle) menu );
-	
 	menu_item_iterator it( menu );
 	
 	while ( it  &&  --item > 0 )
@@ -1190,12 +1191,7 @@ pascal void DelMenuItem_patch( MenuInfo** menu, short item )
 	uint8_t      * addr =   it;
 	uint8_t const* next = (++it).get();
 	
-	const size_t offset = next - (unsigned char*) *menu;
-	const size_t gap    = next - addr;
-	
-	fast_memmove( addr, next, old_size - offset );
-	
-	SetHandleSize( (Handle) menu, old_size - gap );
+	Munger( (Handle) menu, addr - (uint8_t*) *menu, NULL, next - addr, "", 0 );
 	
 	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
