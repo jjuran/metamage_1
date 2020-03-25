@@ -23,6 +23,7 @@
 #include "callouts.hh"
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
+#include "unglue.hh"
 
 // ams-core
 #include "MBDF.hh"
@@ -538,11 +539,7 @@ pascal Handle GetMenuBar_patch()
 
 pascal void SetMenuBar_patch( Handle list )
 {
-	const Size size = GetHandleSize( list );
-	
-	SetHandleSize( (Handle) MenuList, size );
-	
-	fast_memcpy( *MenuList, *list, size );
+	CopyHandle( list, (Handle) MenuList );
 }
 
 #pragma mark -
