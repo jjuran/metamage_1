@@ -10,16 +10,9 @@
 #include <MacMemory.h>
 #endif
 
-enum
-{
-	_PtrToHand = 0xA9E3,
-};
+// ams-common
+#include "unglue.hh"
 
-static inline asm
-StringHandle PtrToHand( const void* p : __A0, UInt32 n : __D0 )
-{
-	_PtrToHand
-}
 
 pascal unsigned char** NewString_patch( const unsigned char* s )
 {
