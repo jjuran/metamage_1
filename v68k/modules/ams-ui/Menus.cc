@@ -903,45 +903,9 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 		{
 			const UInt8 oldLen = p[ 0 ];
 			
-			if ( newLen == oldLen )
-			{
-				fast_memcpy( p + 1, text + 1, newLen );
-				
-				MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
-				return;
-			}
+			const short offset = p - (unsigned char*) *menu;
 			
-			size_t size = GetHandleSize( (Handle) menu );
-			
-			if ( newLen < oldLen )
-			{
-				unsigned char* q = p + 1 + oldLen;
-				
-				p = (unsigned char*) fast_mempcpy( p, text, 1 + newLen );
-				
-				size_t n = (Ptr) *menu + size - (Ptr) q;
-				
-				fast_memmove( p, q, n );
-				
-				SetHandleSize( (Handle) menu, size - (oldLen - newLen) );
-			}
-			else
-			{
-				const short offset = p - (unsigned char*) *menu;
-				
-				SetHandleSize( (Handle) menu, size + (newLen - oldLen) );
-				
-				p = (unsigned char*) *menu + offset;
-				
-				unsigned char* q = p + 1 + oldLen;
-				unsigned char* r = p + 1 + newLen;
-				
-				size_t n = (Ptr) *menu + size - (Ptr) q;
-				
-				fast_memmove( r, q, n );
-				
-				fast_memcpy( p, text, 1 + newLen );
-			}
+			Munger( (Handle) menu, offset, NULL, 1 + oldLen, text, 1 + newLen );
 			
 			MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 			
