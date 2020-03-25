@@ -1329,9 +1329,7 @@ pascal void SetIText_patch( Handle h, const unsigned char* text )
 {
 	const Size len = text[ 0 ];
 	
-	SetHandleSize( h, len );
-	
-	fast_memcpy( *h, text + 1, len );
+	PtrToXHand( text + 1, h, len );
 	
 	DialogPeek d = recover_dialog( h );
 	
