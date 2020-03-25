@@ -110,7 +110,7 @@ found:
 	return i;
 }
 
-asm short HandToHand_patch( char** h : __A0 )
+asm short HandToHand_patch( Handle h : __A0 )
 {
 	_GetHandleSize
 	TST.L    D0
@@ -135,7 +135,7 @@ end:
 
 }
 
-asm short PtrToHand_patch( char* p : __A0, long size : __D0 )
+asm short PtrToHand_patch( Ptr p : __A0, long size : __D0 )
 {
 	MOVE.L   A0,D2     // save the input pointer
 	MOVE.L   D0,D1     // save the input size
@@ -155,7 +155,7 @@ end:
 	RTS
 }
 
-asm short PtrToXHand_patch( const void* p : __A0, char** h : __A1, long : __D0 )
+asm short PtrToXHand_patch( Ptr p : __A0, Handle h : __A1, long n : __D0 )
 {
 	MOVE.L   A0,D2     // save the input pointer
 	MOVE.L   D0,D1     // save the input size
@@ -176,7 +176,7 @@ end:
 	RTS
 }
 
-asm short HandAndHand_patch( char** src : __A0, char** dest : __A1 )
+asm short HandAndHand_patch( Handle src : __A0, Handle dest : __A1 )
 {
 	_GetHandleSize
 	BMI.S    end      // bail on error
@@ -211,7 +211,7 @@ end:
 	RTS
 }
 
-asm short PtrAndHand_patch( const void* p : __A0, char** h : __A1, long : __D0 )
+asm short PtrAndHand_patch( Ptr p : __A0, Handle h : __A1, long n : __D0 )
 {
 	EXG      D0,D1    // D1 = src size
 	EXG      A0,A1    // place dest in A0 for _SetHandleSize, save src in A1
