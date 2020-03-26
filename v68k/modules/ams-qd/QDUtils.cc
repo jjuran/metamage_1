@@ -89,6 +89,11 @@ pascal long BitAnd_patch( long a, long b )
 	return a & b;
 }
 
+pascal long BitNot_patch( long x )
+{
+	return ~x;
+}
+
 static const char hex_table[ 32 ] =
 {
 	0,  10, 11, 12, 13, 14, 15, 0,

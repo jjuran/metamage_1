@@ -23,6 +23,7 @@ pascal void          BitClr_patch( char* addr, long bit );
 pascal short Random_patch();
 
 pascal long BitAnd_patch( long a, long b );
+pascal long BitNot_patch( long x );
 
 pascal void StuffHex_patch( char* dst, const unsigned char* srcHex );
 
