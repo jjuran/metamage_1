@@ -540,6 +540,8 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	
 	if ( edit_offset >= 0 )
 	{
+		scoped_port thePort = window;
+		
 		make_edit_record( d, edit );
 	}
 	
