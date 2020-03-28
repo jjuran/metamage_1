@@ -184,6 +184,8 @@ enum
 	tag_GrayRgn_low_word,
 	tag_SaveVisRgn,
 	tag_SaveVisRgn_low_word,
+	tag_TempRect,
+	tag_TempRect_word_3 = tag_TempRect + 3,  // 8 bytes
 	tag_IconBitmap,
 	tag_IconBitmap_word_6 = tag_IconBitmap + 6,  // 14 bytes
 	tag_MenuList,
@@ -402,6 +404,7 @@ static const global globals[] =
 	{ 0x09EA, 4,    tag_OldContent  },
 	{ 0x09EE, 4,    tag_GrayRgn     },
 	{ 0x09F2, 4,    tag_SaveVisRgn  },
+	{ 0x09FA, 8,    tag_TempRect    },
 	{ 0x0A02, 0x84, 0x01            },  // OneOne
 	{ 0x0A06, 0x84, 0xFF            },  // MinusOne
 	{ 0x0A0E, 14,   tag_IconBitmap  },
