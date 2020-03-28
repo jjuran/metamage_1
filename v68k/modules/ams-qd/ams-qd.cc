@@ -252,6 +252,7 @@ static void install_Fonts()
 	
 	TBTRAP( GetFNum    );  // A900
 	TBTRAP( FMSwapFont );  // A901
+	TBTRAP( RealFont   );  // A902
 	
 	TBTRAP( SetFontLock );  // A903
 }

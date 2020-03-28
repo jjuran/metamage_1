@@ -99,10 +99,6 @@ pascal void GetFNum_patch( const unsigned char* name, short* num )
 	*num = 10;
 }
 
-pascal void SetFontLock_patch( Boolean locked )
-{
-}
-
 static
 Handle find_FOND( short family )
 {
@@ -153,6 +149,19 @@ short new_resID_for_font_and_size( short font, short size )
 	}
 	
 	return resID_for_font_and_size( font, size );
+}
+
+pascal unsigned char RealFont_patch( short num, short size )
+{
+	const short id = new_resID_for_font_and_size( num, size );
+	
+	// Don't bother releasing the resource for now.
+	
+	return GetResource( 'NFNT', id )  ||  GetResource( 'FONT', id );
+}
+
+pascal void SetFontLock_patch( Boolean locked )
+{
 }
 
 static const Byte characterization_table[] =
