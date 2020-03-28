@@ -68,6 +68,7 @@ enum
 	tag_VIA_low_word,
 	tag_SPATBConfig,
 	tag_SPKbdPrint,
+	tag_SPMisc,
 	tag_Time,
 	tag_Time_low_word,
 	tag_BootDrive,
@@ -313,6 +314,7 @@ static const global globals[] =
 	{ 0x01D4, 4,    tag_VIA         },
 	{ 0x01FA, 2,    tag_SPATBConfig },  // SPATalkB, SPConfig
 	{ 0x0207, 2,    tag_SPKbdPrint  },  // SPKbd, SPPrint
+	{ 0x020A, 2,    tag_SPMisc      },  // SPMisc, SPMisc2
 	{ 0x020C, 0xC4, tag_Time        },
 	{ 0x0210, 2,    tag_BootDrive   },
 	{ 0x0214, 2,    tag_SFSaveDisk  },
