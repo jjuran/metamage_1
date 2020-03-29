@@ -112,9 +112,22 @@ void reassign_unimplemented_traps()
 	}
 }
 
+static
+void get_options( int argc : __D0, char** argv : __A0 )
+{
+	if ( argc > 1  &&  strcmp( argv[ 1 ], "--continue-on-bus-error" ) == 0 )
+	{
+		continue_on_bus_error = true;
+	}
+}
+
 int asm main( int argc, char** argv )
 {
 	LINK     A6,#0
+	
+	MOVE.L   8(A6),D0   // argc
+	MOVEA.L  12(A6),A0  // argv
+	JSR      get_options
 	
 	JSR      set_trace_handler
 	BMI.S    bail

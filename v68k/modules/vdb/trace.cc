@@ -28,6 +28,8 @@
 #define PRINT( s )  write( STDERR_FILENO, s "\n", sizeof s )
 
 
+bool continue_on_bus_error;
+
 static unsigned n_steps;
 
 static uint32_t step_over;
@@ -116,6 +118,7 @@ volatile int NMI_reentry_guard::level;
 
 static void debugger_loop( registers& regs )
 {
+	const uint16_t buserr_offset =  2 * sizeof (uint32_t);
 	const uint16_t trace_offset  =  9 * sizeof (uint32_t);
 	const uint16_t sigint_offset = 66 * sizeof (uint32_t);
 	
@@ -131,6 +134,12 @@ static void debugger_loop( registers& regs )
 	if ( vector_offset != trace_offset )
 	{
 		report_exception( vector_offset );
+	}
+	
+	if ( vector_offset == buserr_offset  &&  continue_on_bus_error )
+	{
+		regs.sr &= 0x3FFF;  // clear Trace bits
+		return;
 	}
 	
 	if ( n_steps > 0 )
