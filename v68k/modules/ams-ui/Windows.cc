@@ -33,6 +33,7 @@
 #include "StrUtils.hh"
 #include "WDEF.hh"
 #include "desktop.hh"
+#include "scoped_port.hh"
 #include "utility_region.hh"
 
 
@@ -424,6 +425,11 @@ pascal void CloseWindow_patch( struct GrafPort* port )
 	KillControls( port );
 	
 	WindowPeek window = (WindowPeek) port;
+	
+	if ( window->windowPic )
+	{
+		KillPicture( window->windowPic );
+	}
 	
 	const bool frontmost = window == WindowList;
 	
@@ -1322,6 +1328,11 @@ pascal long GetWRefCon_patch( WindowRecord* window )
 	return window->refCon;
 }
 
+pascal void SetWindowPic_patch( WindowRecord* window, PicHandle pic )
+{
+	window->windowPic = pic;
+}
+
 #pragma mark -
 #pragma mark Low-Level Routines
 #pragma mark -
@@ -1342,6 +1353,22 @@ pascal unsigned char CheckUpdate_patch( EventRecord* event )
 {
 	for ( WindowPeek w = WindowList;  w != NULL;  w = w->nextWindow )
 	{
+		if ( window_needs_update( w ) )
+		{
+			if ( PicHandle pic = w->windowPic )
+			{
+				WindowRef window = &w->port;
+				
+				scoped_port thePort = window;
+				
+				BeginUpdate( window );
+				DrawPicture( pic, &window->portRect );
+				EndUpdate( window );
+				
+				continue;
+			}
+		}
+		
 		if ( window_needs_update( w )  &&  window_could_be_updated_now( w ) )
 		{
 			if ( w == window_with_pending_updateEvt )

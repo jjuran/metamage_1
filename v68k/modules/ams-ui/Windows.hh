@@ -10,6 +10,7 @@ struct EventRecord;
 struct GrafPort;
 struct MacRegion;
 struct MenuList_header;
+struct Picture;
 struct Point;
 struct Rect;
 struct WindowRecord;
@@ -74,6 +75,8 @@ pascal void EndUpdate_patch  ( GrafPort* window );
 
 pascal void SetWRefCon_patch( WindowRecord* window, long data );
 pascal long GetWRefCon_patch( WindowRecord* window );
+
+pascal void SetWindowPic_patch( WindowRecord* window, Picture** pic );
 
 pascal unsigned char CheckUpdate_patch( EventRecord* event );
 

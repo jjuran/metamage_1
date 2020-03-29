@@ -133,6 +133,8 @@ void install_Menus()
 	TBTRAP( GetItemCmd   );  // A84E
 	TBTRAP( SetItemCmd   );  // A84F
 	
+	TBTRAP( SetWindowPic );  // A92E
+	
 	TBTRAP( InitMenus    );  // A930
 	TBTRAP( NewMenu      );  // A931
 	TBTRAP( DisposeMenu  );  // A932
