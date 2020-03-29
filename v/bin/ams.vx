@@ -246,6 +246,9 @@ const module_args = str^
 	core_opts(),
 	fs_opts(),
 	io_opts(),
+	
+	# This setting is not recommended, which is why no logic enables it.
+	#vdb: [ "--continue-on-bus-error" ],
 ]
 
 def argify (name)
