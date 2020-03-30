@@ -253,6 +253,7 @@ static void install_Fonts()
 {
 	TBTRAP( InitFonts );  // A8FE
 	
+	TBTRAP( GetFName   );  // A8FF
 	TBTRAP( GetFNum    );  // A900
 	TBTRAP( FMSwapFont );  // A901
 	TBTRAP( RealFont   );  // A902

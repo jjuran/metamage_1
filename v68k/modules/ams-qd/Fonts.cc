@@ -24,6 +24,7 @@
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
+#define PSTR_LEN( s )  "\p" s, (sizeof s)
 
 #define SYSTEM_FONT_NOT_LOADED "warning: couldn't load the system font"
 
@@ -68,6 +69,35 @@ pascal void InitFonts_patch()
 	{
 		write( STDERR_FILENO, STR_LEN( SYSTEM_FONT_NOT_LOADED "\n" ) );
 	}
+}
+
+pascal void GetFName_patch( short num, unsigned char* name )
+{
+	if ( num == applFont )
+	{
+		num = ApFontID;
+	}
+	
+	switch ( num )
+	{
+		case systemFont:
+			fast_memcpy( name, PSTR_LEN( "Chicago" ) );
+			return;
+		
+		case kFontIDNewYork:
+			fast_memcpy( name, PSTR_LEN( "New York" ) );
+			return;
+		
+		case kFontIDGeneva:
+			fast_memcpy( name, PSTR_LEN( "Geneva" ) );
+			return;
+		
+		case kFontIDMonaco:
+			fast_memcpy( name, PSTR_LEN( "Monaco" ) );
+			return;
+	}
+	
+	name[ 0 ] = 0;
 }
 
 static inline

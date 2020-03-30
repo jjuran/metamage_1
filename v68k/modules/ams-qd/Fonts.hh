@@ -13,6 +13,8 @@ struct FMOutput;
 
 pascal void InitFonts_patch();
 
+pascal void GetFName_patch( short num, unsigned char* name );
+
 pascal void GetFNum_patch( const unsigned char* name, short* num );
 
 pascal unsigned char RealFont_patch( short num, short size );
