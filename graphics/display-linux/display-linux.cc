@@ -183,6 +183,58 @@ void transcode_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
 	}
 }
 
+template < class UInt >
+struct pixtet
+{
+	UInt pixels[ 8 ];
+};
+
+template < class UInt >
+static
+const pixtet< UInt >* make_1_to_direct_table()
+{
+	enum
+	{
+		n_octets = 256,
+		n_pixels = 8,  // per octet
+		
+		n_pixels_in_table = n_octets * n_pixels,  // 2048
+		
+		table_size = n_pixels_in_table * sizeof (UInt),  // 4K or 8K
+	};
+	
+	pixtet< UInt >* table = (pixtet< UInt >*) malloc( table_size );
+	
+	pixtet< UInt >* p = table;
+	
+	for ( int i = 0; i < 256;  ++i )
+	{
+		uint8_t oct = i;
+		
+		transcode_1_to_direct< UInt >( &oct, (uint8_t*) p, 8 );
+		
+		++p;
+	}
+	
+	return table;
+}
+
+template < class UInt >
+static
+void lookup_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
+{
+	static const pixtet< UInt >* table = make_1_to_direct_table< UInt >();
+	
+	pixtet< UInt >* p = (pixtet< UInt >*) dst;
+	
+	while ( width > 0 )
+	{
+		*p++ = table[ *src++ ];
+		
+		width -= 8;
+	}
+}
+
 static
 void copy_8( const uint8_t* src, uint8_t* dst, int width )
 {
@@ -228,7 +280,7 @@ draw_proc select_draw_proc( const raster_desc& desc, bool swap_bytes )
 	switch ( desc.weight )
 	{
 		case 1:
-			return &transcode_1_to_direct< bilevel_pixel_t >;
+			return &lookup_1_to_direct< bilevel_pixel_t >;
 		
 		case 16:
 			return &copy_16;
