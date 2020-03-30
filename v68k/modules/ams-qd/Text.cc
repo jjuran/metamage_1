@@ -155,6 +155,40 @@ pascal short StdTxMeas_patch( short        n,
 	return result * output->numer.h / output->denom.h;
 }
 
+static
+void smear( const BitMap&  srcBits,
+            const BitMap&  dstBits,
+            const Rect&    srcRect,
+            const Rect&    dstRect,
+            short          m,
+            short          n )
+{
+	Rect r = dstRect;
+	
+	const short height = r.bottom - r.top;
+	const short width  = r.right - r.left;
+	
+	const short ii = r.top  + n;
+	const short jj = r.left + m;
+	
+	const short i0 = r.top  - 1;
+	const short j0 = r.left - 1;
+	
+	for ( short i = i0;  i <= ii;  ++i )
+	{
+		r.top = i;
+		r.bottom = i + height;
+		
+		for ( short j = j0;  j <= jj;  ++j )
+		{
+			r.left = j;
+			r.right = j + width;
+			
+			CopyBits( &srcBits, &dstBits, &srcRect, &r, srcOr, NULL );
+		}
+	}
+}
+
 pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 {
 	if ( denom.v == 0  ||  denom.h == 0 )
@@ -307,6 +341,14 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 			short mode = port.txMode;
 			
 			UInt8 bold = output->boldPixels;
+			UInt8 edge = output->shadowPixels;
+			
+			if ( edge )
+			{
+				smear( srcBits, dstBits, srcRect, dstRect, edge + bold, edge );
+				
+				mode = srcBic;
+			}
 			
 			CopyBits( &srcBits, &dstBits, &srcRect, &dstRect, mode, NULL );
 			
