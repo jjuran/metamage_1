@@ -146,7 +146,11 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 				Move( icon_width + 6, 0 );
 			}
 			
+			TextFace( style );
+			
 			DrawString( text );
+			
+			TextFace( normal );
 			
 			if ( should_draw_key( key ) )
 			{
@@ -318,9 +322,7 @@ void MDEF_0_Size( MenuRef menu )
 		
 		height += menu_item_height;
 		
-		const short textWidth = StringWidth( text );
-		
-		short itemWidth = textWidth + right_padding;
+		short itemWidth = right_padding;
 		
 		const unsigned char* p = text + 1 + text[ 0 ];
 		
@@ -336,10 +338,18 @@ void MDEF_0_Size( MenuRef menu )
 			itemWidth += icon_width + 6;
 		}
 		
-		if ( should_draw_key( *p ) )
+		if ( should_draw_key( *p++ ) )
 		{
 			itemWidth += total_keystroke_offset() - right_padding;
 		}
+		
+		++p;  // skip mark
+		
+		TextFace( *p );
+		
+		itemWidth += StringWidth( text );
+		
+		TextFace( normal );
 		
 		if ( itemWidth > maxItemWidth )
 		{
