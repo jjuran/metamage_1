@@ -304,11 +304,11 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 			dstRect.left  = dstLeft;
 			dstRect.right = dstLeft + width;
 			
-			const short mode = port.txMode;
-			
-			CopyBits( &srcBits, &dstBits, &srcRect, &dstRect, mode, NULL );
+			short mode = port.txMode;
 			
 			UInt8 bold = output->boldPixels;
+			
+			CopyBits( &srcBits, &dstBits, &srcRect, &dstRect, mode, NULL );
 			
 			while ( bold-- > 0 )
 			{
