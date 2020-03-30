@@ -241,6 +241,7 @@ UInt8 actual_item_text_length( const UInt8* format, UInt8 len )
 			case '^':
 			case '/':
 			case '!':
+			case '<':
 				if ( len )
 				{
 					--len, ++q;
@@ -266,6 +267,7 @@ short decode_item_format( UInt8 const* format, UInt8 len,
 	UInt8 icon  = 0;
 	UInt8 key   = 0;
 	UInt8 mark  = 0;
+	UInt8 face  = 0;
 	UInt8 style = 0;
 	
 	const UInt8* q = format;
@@ -285,6 +287,14 @@ short decode_item_format( UInt8 const* format, UInt8 len,
 			case '^':  if ( len )  icon = *q++ - '0', --len;  break;
 			case '/':  if ( len )  key  = *q++,       --len;  break;
 			case '!':  if ( len )  mark = *q++,       --len;  break;
+			case '<':  if ( len )  face = *q++,       --len;
+				style = face == 'B' ? bold
+				      : face == 'I' ? italic
+				      : face == 'U' ? underline
+				      : face == 'O' ? outline
+				      : face == 'S' ? shadow
+				      :               normal;
+				break;
 			
 			default:
 				*p++ = c;
