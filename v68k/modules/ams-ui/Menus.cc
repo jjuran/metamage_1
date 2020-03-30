@@ -1037,6 +1037,33 @@ pascal void SetItmIcon_patch( MenuInfo** menu, short item, CharParameter icon )
 	}
 }
 
+pascal void SetItemStyle_patch( MenuRef menu, short item, short style )
+{
+	menu_item_iterator it( menu );
+	
+	while ( unsigned char* p = it )
+	{
+		if ( --item == 0 )
+		{
+			p += 1 + p[ 0 ] + 3;
+			
+			const Style old = *p;
+			
+			if ( style != old )
+			{
+				*p = style;
+				
+				// We changed the style, so the size may have changed.
+				MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+			}
+			
+			return;
+		}
+		
+		++it;
+	}
+}
+
 #pragma mark -
 #pragma mark Miscellaneous Routines
 #pragma mark -
