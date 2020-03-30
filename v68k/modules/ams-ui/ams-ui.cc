@@ -45,13 +45,13 @@ void* toolbox_trap_table[] : 3 * 1024;
 
 enum
 {
-	_BeginUpdate = _BeginUpDate,
-	_CheckUpdate = _CheckUpDate,
-	_EndUpdate   = _EndUpDate,
-	_GetItemMark = _GetItmMark,
-	_SetItemMark = _SetItmMark,
-	_SetItemStyle = _SetItmStyle,
-	_GetMenu     = _GetRMenu,
+	_BeginUpdate    = _BeginUpDate,
+	_CheckUpdate    = _CheckUpDate,
+	_EndUpdate      = _EndUpDate,
+	_GetItemMark    = _GetItmMark,
+	_GetMenu        = _GetRMenu,
+	_SetItemMark    = _SetItmMark,
+	_SetItemStyle   = _SetItmStyle,
 	_UpdateControls = _UpdtControl,
 };
 
