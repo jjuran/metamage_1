@@ -410,6 +410,8 @@ void update_edit_record( TEHandle hTE, const DialogItem* item )
 	hTE[0]->teLength = GetHandleSize( item->handle );
 	hTE[0]->hText    = item->handle;
 	
+	TECalText( hTE );
+	
 	TESetSelect( 0, 32767, hTE );
 }
 
@@ -1347,6 +1349,8 @@ pascal void SetIText_patch( Handle h, const unsigned char* text )
 	{
 		hTE[0]->teLength = len;
 		
+		TECalText( hTE );
+		
 		TEUpdate( &hTE[0]->viewRect, hTE );
 		
 		return;
@@ -1393,6 +1397,8 @@ pascal void SelIText_patch( GrafPort*  dialog,
 		
 		hTE[0]->teLength = GetHandleSize( edit->handle );
 		hTE[0]->hText    = edit->handle;
+		
+		TECalText( hTE );
 	}
 	
 	TESetSelect( start, end, hTE );

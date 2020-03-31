@@ -210,6 +210,8 @@ pascal void TESetText_patch( const char* p, long n, TERec** hTE )
 	te.selEnd   = n;
 	te.teLength = n;
 	
+	TECalText( hTE );
+	
 	update_selRect( te );
 }
 
@@ -468,6 +470,12 @@ pascal void TEKey_patch( short c, TERec** hTE )
 			{
 				delete_prev_char( te );
 			}
+			else
+			{
+				break;
+			}
+			
+			TECalText( hTE );
 			break;
 		
 		case kLeftArrowCharCode:
@@ -503,6 +511,8 @@ pascal void TEKey_patch( short c, TERec** hTE )
 			}
 			
 			insert_char( hTE, c );
+			
+			TECalText( hTE );
 			break;
 	}
 	
