@@ -120,9 +120,37 @@ void update_selRect( TERec& te )
 	const short start = te.selStart;
 	const short end   = te.selEnd;
 	const short count = end - start;
-	const short left  = te.destRect.left + TextWidth( pText, 0, start );
 	
-	const bool bleedRight = count > 0  &&  end == te.teLength;
+	const short* starts = te.lineStarts + 1;
+	
+	short nth_line = -1;
+	
+	while ( ++nth_line, *starts++ < start )
+	{
+		continue;
+	}
+	
+	if ( *--starts == start )
+	{
+		if ( start < te.teLength  ||  pText[ start - 1 ] == '\r' )
+		{
+			++nth_line;
+			++starts;
+		}
+	}
+	
+	const short voffset = nth_line * te.lineHeight;
+	
+	te.selRect.top    = te.destRect.top + voffset;
+	te.selRect.bottom = te.destRect.top + voffset + te.lineHeight;
+	
+	const short nextStart = *starts;
+	const short thisStart = *--starts;
+	const short leftChars = start - thisStart;
+	
+	const short left = te.destRect.left + TextWidth( pText, thisStart, leftChars );
+	
+	const bool bleedRight = count > 0  &&  end == nextStart;
 	
 	te.selRect.left  = left + (start > 0  &&  count > 0);
 	te.selRect.right = bleedRight ? te.destRect.right
@@ -373,9 +401,6 @@ pascal void TEActivate_patch( TERec** hTE )
 	scoped_port thePort = te.inPort;
 	
 	te.active = true;
-	
-	te.selRect.top    = te.destRect.top;
-	te.selRect.bottom = te.selRect.top + te.lineHeight;
 	
 	update_selRect( te );
 	show_selection( te );
