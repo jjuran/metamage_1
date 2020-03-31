@@ -76,12 +76,31 @@ void draw_text( const TERec& te )
 	
 	EraseRect( &destRect );
 	
-	const short v = destRect.top + te.fontAscent;
-	const short h = destRect.left + 1;
+	short v = destRect.top + te.fontAscent;
+	short h = destRect.left + 1;
 	
 	const short rectWidth = destRect.right - destRect.left;
 	
-	draw_text_line( *te.hText, te.teLength, h, v, rectWidth, te.just );
+	const char* p = *te.hText;
+	const short n = te.nLines;
+	
+	const short* starts = te.lineStarts;
+	
+	short start = *starts++;
+	
+	for ( short i = 0;  i < n;  ++i )
+	{
+		const short next = *starts++;
+		
+		const short len = next - start;
+		
+		draw_text_line( p, len, h, v, rectWidth, te.just );
+		
+		p += len;
+		v += te.lineHeight;
+		
+		start = next;
+	}
 }
 
 static
