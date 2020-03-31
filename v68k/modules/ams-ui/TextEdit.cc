@@ -287,17 +287,33 @@ pascal void TEIdle_patch( TEHandle hTE )
 static
 short hit_test( const TERec& te, Point pt )
 {
+	short v = pt.v;
 	short h = pt.h;
 	
+	v -= te.destRect.top;
 	h -= te.destRect.left;
+	
+	const short line = v / te.lineHeight;
+	
+	if ( line < 0 )
+	{
+		return 0;
+	}
+	
+	if ( line >= te.nLines )
+	{
+		return te.teLength;
+	}
+	
+	const short start = te.lineStarts[ line ];
 	
 	const char* p = *te.hText;
 	
-	const short len = te.teLength;
+	const short next = te.lineStarts[ line + 1 ];
 	
-	short hit = 0;
+	short hit = start;
 	
-	while ( hit < len )
+	while ( hit < next )
 	{
 		const short width = TextWidth( p, hit, 1 );
 		
