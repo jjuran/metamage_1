@@ -571,3 +571,48 @@ pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 		p = q + (q >= first_space);
 	}
 }
+
+pascal void TECalText_patch( TERec** hTE )
+{
+	TERec& te = **hTE;
+	
+	const Rect& destRect = te.destRect;
+	
+	const short rectWidth = destRect.right - destRect.left;
+	
+	const char* begin = *te.hText;
+	const char* end   = begin + te.teLength;
+	
+	te.nLines = 0;
+	
+	short* starts = te.lineStarts;
+	
+	const char* p = begin;
+	
+	while ( p < end )
+	{
+		++te.nLines;
+		*starts++ = p - begin;
+		
+		const char* q = gear::find_first_match( p, end, '\r', end );
+		
+		const char* first_space = gear::find_first_match( p, q, ' ', q );
+		
+		while ( q > first_space  &&  TextWidth( p, 0, q - p ) > rectWidth )
+		{
+			while ( *--q != ' ' ) continue;
+		}
+		
+		if ( q == first_space )
+		{
+			while ( q > p + 1  &&  TextWidth( p, 0, q - p ) > rectWidth )
+			{
+				--q;
+			}
+		}
+		
+		p = q + (q >= first_space);
+	}
+	
+	*starts++ = te.teLength;
+}

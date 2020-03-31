@@ -33,4 +33,6 @@ pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE );
 
 pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just );
 
+pascal void TECalText_patch( TERec** hTE );
+
 #endif
