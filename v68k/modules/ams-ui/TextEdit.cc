@@ -82,7 +82,7 @@ void draw_text( const TERec& te )
 	
 	const Rect& destRect = te.destRect;
 	
-	EraseRect( &destRect );
+	EraseRect( &te.viewRect );
 	
 	short v = destRect.top + te.fontAscent;
 	short h = destRect.left + 1;
