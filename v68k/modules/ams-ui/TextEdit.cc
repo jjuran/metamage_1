@@ -244,7 +244,9 @@ short hit_test( const TERec& te, Point pt )
 		
 		if ( (h -= width) < 0 )
 		{
-			return hit + (h + width / 2u > 0);
+			const short half = width / 2u;  // Make sure half is signed
+			
+			return hit + (h + half > 0);
 		}
 		
 		++hit;
