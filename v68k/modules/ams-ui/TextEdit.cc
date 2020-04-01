@@ -556,49 +556,15 @@ pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE )
 
 pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 {
-	raster_lock lock;
+	TEHandle hTE = TENew( r, r );
 	
-	FontInfo fontInfo;
-	GetFontInfo( &fontInfo );
+	hTE[0]->just = just;
 	
-	EraseRect( r );
+	TESetText( p, n, hTE );
 	
-	const short line_height = fontInfo.ascent
-	                        + fontInfo.descent
-	                        + fontInfo.leading;
+	draw_text( **hTE );
 	
-	short h = r->left;
-	short v = r->top + fontInfo.ascent;
-	
-	const short rectWidth = r->right - r->left;
-	
-	const char* end = p + n;
-	
-	while ( p < end )
-	{
-		const char* q = gear::find_first_match( p, end, '\r', end );
-		
-		const char* first_space = gear::find_first_match( p, q, ' ', q );
-		
-		while ( q > first_space  &&  TextWidth( p, 0, q - p ) > rectWidth )
-		{
-			while ( *--q != ' ' ) continue;
-		}
-		
-		if ( q == first_space )
-		{
-			while ( q > p + 1  &&  TextWidth( p, 0, q - p ) > rectWidth )
-			{
-				--q;
-			}
-		}
-		
-		draw_text_line( p, q - p, h, v, rectWidth, just );
-		
-		v += line_height;
-		
-		p = q + (q >= first_space);
-	}
+	TEDispose( hTE );
 }
 
 pascal void TECalText_patch( TERec** hTE )
