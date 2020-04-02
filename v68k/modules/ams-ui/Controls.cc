@@ -137,6 +137,8 @@ pascal ControlRecord** GetNewControl_patch( short controlID, WindowRef window )
 
 pascal void DisposeControl_patch( ControlRecord** control )
 {
+	HideControl( control );
+	
 	WindowPeek w = (WindowPeek) control[0]->contrlOwner;
 	
 	ControlRef* slot = (ControlRef*) &w->controlList;
