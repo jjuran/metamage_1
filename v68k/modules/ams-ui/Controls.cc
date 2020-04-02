@@ -60,6 +60,8 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
 	
 	if ( control )
 	{
+		Handle cdef = GetResource( 'CDEF', procID >> 4 );
+		
 		WindowPeek w = (WindowPeek) window;
 		
 		control[0]->nextControl   = (ControlRef) w->controlList;
@@ -70,7 +72,7 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
 		control[0]->contrlValue   = value;
 		control[0]->contrlMin     = min;
 		control[0]->contrlMax     = max;
-		control[0]->contrlDefProc = &gDefProcPtr;
+		control[0]->contrlDefProc = cdef ? cdef : &gDefProcPtr;
 	//	control[0]->contrlData    = NULL;
 	//	control[0]->contrlAction  = NULL;
 		control[0]->contrlRfCon   = refCon;
