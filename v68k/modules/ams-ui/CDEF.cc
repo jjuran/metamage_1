@@ -16,9 +16,6 @@
 // ams-common
 #include "QDGlobals.hh"
 
-// ams-ui
-#include "scoped_port.hh"
-
 
 const short pushbutton_corner_diameter = 10;
 
@@ -216,8 +213,6 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 	}
 	
 	GrafPtr port = control[0]->contrlOwner;
-	
-	scoped_port thePort = port;
 	
 	const short font = port->txFont;
 	const short size = port->txSize;
