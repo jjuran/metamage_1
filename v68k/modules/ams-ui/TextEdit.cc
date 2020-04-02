@@ -70,7 +70,15 @@ void draw_text_line( const char*  p,
 static
 void draw_text( const TERec& te )
 {
+	static RgnHandle textClip = NewRgn();
+	
 	raster_lock lock;
+	
+	textClip[0]->rgnBBox = te.viewRect;
+	
+	RgnHandle savedClip = te.inPort->clipRgn;
+	
+	te.inPort->clipRgn = textClip;
 	
 	const Rect& destRect = te.destRect;
 	
@@ -101,6 +109,8 @@ void draw_text( const TERec& te )
 		
 		start = next;
 	}
+	
+	te.inPort->clipRgn = savedClip;
 }
 
 static
