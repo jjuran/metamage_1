@@ -181,7 +181,8 @@ static void install_Controls()
 	
 	TBTRAP( SetCTitle      );  // A95F
 	TBTRAP( GetCtlValue    );  // A960
-	
+	TBTRAP( GetMinCtl      );  // A961
+	TBTRAP( GetMaxCtl      );  // A962
 	TBTRAP( SetCtlValue    );  // A963
 	TBTRAP( SetMinCtl      );  // A964
 	TBTRAP( SetMaxCtl      );  // A965
