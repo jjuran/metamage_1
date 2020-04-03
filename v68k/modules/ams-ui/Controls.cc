@@ -274,9 +274,9 @@ pascal short FindControl_patch( Point pt, WindowRef window, ControlRef* which )
 	return 0;
 }
 
-pascal short TrackControl_patch( ControlRecord**  control,
-                                 Point            start,
-                                 pascal void    (*action)() )
+pascal short TrackControl_patch( ControlRecord**   control,
+                                 Point             start,
+                                 ControlActionUPP  action )
 {
 	static const RgnHandle tmp = NewRgn();
 	
@@ -288,6 +288,16 @@ pascal short TrackControl_patch( ControlRecord**  control,
 	
 	const short csdx = window->portBits.bounds.left;
 	const short csdy = window->portBits.bounds.top;
+	
+	if ( (long) action == -1 )
+	{
+		action = control[0]->contrlAction;
+		
+		if ( (long) action == -1 )
+		{
+			action = NULL;  // TODO:  Take action via CDEF
+		}
+	}
 	
 	Point pt = start;
 	
@@ -304,8 +314,25 @@ pascal short TrackControl_patch( ControlRecord**  control,
 	
 	long sleep = 0;
 	
+	if ( action )
+	{
+		mouseRgn = NULL;  // Don't leave WNE early for mouse-moved events
+	}
+	
+	short hit = track_part;
+	
 	while ( true )
 	{
+		if ( action  &&  track_part < kControlIndicatorPart )
+		{
+			if ( hit == track_part )
+			{
+				action( control, track_part );
+			}
+			
+			sleep = 6;
+		}
+		
 		EventRecord event;
 		
 		const bool eventful = WaitNextEvent( mUpMask, &event, sleep, mouseRgn );
@@ -322,7 +349,10 @@ pascal short TrackControl_patch( ControlRecord**  control,
 		
 		Point where = event.where;
 		
-		SetRectRgn( mouseRgn, where.h, where.v, where.h + 1, where.v + 1 );
+		if ( mouseRgn )
+		{
+			SetRectRgn( mouseRgn, where.h, where.v, where.h + 1, where.v + 1 );
+		}
 		
 		if ( event.what != nullEvent )
 		{
@@ -349,11 +379,11 @@ pascal short TrackControl_patch( ControlRecord**  control,
 		where.h += csdx;
 		where.v += csdy;
 		
-		if ( *(long*) &pt != *(long*) &where )
+		if ( action  ||  *(long*) &pt != *(long*) &where )
 		{
 			pt = where;
 			
-			short hit = TestControl( control, pt );
+			hit = TestControl( control, pt );
 			
 			if ( hit != track_part )
 			{
@@ -371,7 +401,7 @@ pascal short TrackControl_patch( ControlRecord**  control,
 	
 	control[0]->contrlHilite = 0;
 	
-	const short hit = TestControl( control, pt );
+	hit = TestControl( control, pt );
 	
 	if ( hit == track_part )
 	{
