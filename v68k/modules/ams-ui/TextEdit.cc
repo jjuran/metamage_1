@@ -724,6 +724,7 @@ pascal void TEScroll_patch( short dh, short dv, TERec** hTE )
 	TERec& te = **hTE;
 	
 	OffsetRect( &te.destRect, dh, dv );
+	OffsetRect( &te.selRect,  dh, dv );
 	
 	TEUpdate( &te.viewRect, hTE );
 }
