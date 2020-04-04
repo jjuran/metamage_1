@@ -301,7 +301,8 @@ long CDEF_0_Hit( short varCode, ControlRef control, Point where )
 	
 	if ( PtInRect( where, &control[0]->contrlRect ) )
 	{
-		return 1;
+		return varCode == pushButProc ? kControlButtonPart
+		                              : kControlCheckBoxPart;  // and radio
 	}
 	
 	return 0;
