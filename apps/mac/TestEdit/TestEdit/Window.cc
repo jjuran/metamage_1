@@ -18,6 +18,9 @@
 #endif
 #endif
 
+// mac-sys-utils
+#include "mac_sys/trap_available.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -36,6 +39,22 @@
 #include "Pedestal/TrackScrollbar.hh"
 #include "Pedestal/WindowStorage.hh"
 
+
+static inline
+bool has_TEPinScroll()
+{
+	enum { _TEPinScroll = 0xA812 };
+	
+	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _TEPinScroll );
+}
+
+static inline
+bool has_TEAutoView()
+{
+	enum { _TEAutoView = 0xA813 };
+	
+	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _TEAutoView );
+}
 
 namespace TestEdit
 {
@@ -140,7 +159,10 @@ namespace TestEdit
 		
 		itsTE = N::TENew( bounds );
 		
-		N::TEAutoView( true, itsTE );  // enable auto-scrolling
+		if ( has_TEAutoView() )
+		{
+			TEAutoView( true, itsTE );  // enable auto-scrolling
+		}
 		
 		InstallCustomTEClickLoop( itsTE );
 	}
@@ -227,7 +249,14 @@ namespace TestEdit
 			
 			short dv = v - (te.viewRect.top - te.destRect.top);
 			
-			N::TEPinScroll( 0, -dv, itsTE );
+			if ( has_TEPinScroll() )
+			{
+				TEPinScroll( 0, -dv, itsTE );
+			}
+			else
+			{
+				TEScroll( 0, -dv, itsTE );
+			}
 		}
 		
 		TERec& te = **itsTE;
