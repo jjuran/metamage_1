@@ -77,8 +77,6 @@ void draw_text( const TERec& te )
 	
 	const short lineHeight = te.lineHeight;
 	
-	raster_lock lock;
-	
 	textClip[0]->rgnBBox = viewRect;
 	
 	RgnHandle savedClip = te.inPort->clipRgn;
@@ -666,6 +664,8 @@ pascal void TEDelete_patch( TERec** hTE )
 		
 		scoped_port thePort = te.inPort;
 		
+		raster_lock lock;
+		
 		hide_selection( te );
 		
 		draw_text( te );
@@ -680,6 +680,8 @@ pascal void TEInsert_patch( const char* text, long length, TERec** hTE )
 	TERec& te = **hTE;
 	
 	scoped_port thePort = te.inPort;
+	
+	raster_lock lock;
 	
 	hide_selection( te );
 	
@@ -699,6 +701,8 @@ pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE )
 	
 	scoped_port thePort = te.inPort;
 	
+	raster_lock lock;
+	
 	hide_selection( te );
 	
 	draw_text( te );
@@ -713,6 +717,8 @@ pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 	hTE[0]->just = just;
 	
 	TESetText( p, n, hTE );
+	
+	raster_lock lock;
 	
 	draw_text( **hTE );
 	
