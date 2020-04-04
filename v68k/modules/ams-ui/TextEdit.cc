@@ -79,16 +79,42 @@ void draw_text( const TERec& te )
 	
 	raster_lock lock;
 	
-	textClip[0]->rgnBBox = te.viewRect;
+	textClip[0]->rgnBBox = viewRect;
 	
 	RgnHandle savedClip = te.inPort->clipRgn;
 	
-	EraseRect( &te.viewRect );
+	EraseRect( &viewRect );
 	
 	const short* starts = te.lineStarts;
 	
+	const short viewHeight = viewRect.bottom - viewRect.top;
+	
+	const short scroll_delta = viewRect.top - destRect.top;
+	
+	const short skipped_lines = scroll_delta ? scroll_delta / lineHeight : 0;
+	
+	if ( skipped_lines >= te.nLines )
+	{
+		return;  // Somehow we're scrolled past the entire text.
+	}
+	
+	/*
+		"above" here means above viewRect.bottom -- so, all the lines either
+		preceding the viewRect entirely or are at least partially visible.
+		
+		"first" is the same, except capped at nLines.  Subtracting the number
+		of skipped lines gives us the number of lines we'll actually draw.
+	*/
+	
+	const short above_lines = (scroll_delta + viewHeight - 1) / lineHeight + 1;
+	const short first_lines = above_lines < te.nLines ? above_lines : te.nLines;
+	const short drawn_lines = first_lines - skipped_lines;
+	
 	short v = destRect.top + te.fontAscent;
 	short h = destRect.left + 1;
+	
+	starts += skipped_lines;
+	v      += skipped_lines * lineHeight;
 	
 	te.inPort->clipRgn = textClip;
 	
@@ -96,8 +122,8 @@ void draw_text( const TERec& te )
 	
 	short start = *starts++;
 	
-	const char* p = *te.hText;
-	const short n = te.nLines;
+	const char* p = *te.hText + start;
+	const short n = drawn_lines;
 	
 	for ( short i = 0;  i < n;  ++i )
 	{
