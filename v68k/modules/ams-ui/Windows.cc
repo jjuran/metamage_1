@@ -492,6 +492,14 @@ pascal void SetWTitle_patch( WindowPeek window, const unsigned char* s )
 		
 		window->titleWidth = 0;
 	}
+	
+	SaveUpdate = false;
+	PaintWhite = false;
+	
+	PaintOne_patch( window, window->strucRgn );
+	
+	SaveUpdate = true;
+	PaintWhite = true;
 }
 
 pascal void GetWTitle_patch( WindowPeek window, unsigned char* s )
