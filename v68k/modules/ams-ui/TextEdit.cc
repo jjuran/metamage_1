@@ -72,29 +72,32 @@ void draw_text( const TERec& te )
 {
 	static RgnHandle textClip = NewRgn();
 	
+	const Rect& destRect = te.destRect;
+	const Rect& viewRect = te.viewRect;
+	
+	const short lineHeight = te.lineHeight;
+	
 	raster_lock lock;
 	
 	textClip[0]->rgnBBox = te.viewRect;
 	
 	RgnHandle savedClip = te.inPort->clipRgn;
 	
-	te.inPort->clipRgn = textClip;
-	
-	const Rect& destRect = te.destRect;
-	
 	EraseRect( &te.viewRect );
+	
+	const short* starts = te.lineStarts;
 	
 	short v = destRect.top + te.fontAscent;
 	short h = destRect.left + 1;
 	
+	te.inPort->clipRgn = textClip;
+	
 	const short rectWidth = destRect.right - destRect.left;
+	
+	short start = *starts++;
 	
 	const char* p = *te.hText;
 	const short n = te.nLines;
-	
-	const short* starts = te.lineStarts;
-	
-	short start = *starts++;
 	
 	for ( short i = 0;  i < n;  ++i )
 	{
@@ -105,7 +108,7 @@ void draw_text( const TERec& te )
 		draw_text_line( p, len, h, v, rectWidth, te.just );
 		
 		p += len;
-		v += te.lineHeight;
+		v += lineHeight;
 		
 		start = next;
 	}
