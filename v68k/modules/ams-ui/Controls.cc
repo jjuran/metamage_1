@@ -278,7 +278,8 @@ pascal short TrackControl_patch( ControlRecord**  control,
                                  Point            start,
                                  pascal void    (*action)() )
 {
-	RgnHandle tmp = NewRgn();
+	static const RgnHandle tmp = NewRgn();
+	
 	RgnHandle mouseRgn = tmp;
 	
 	WindowRef window = control[0]->contrlOwner;
@@ -362,8 +363,6 @@ pascal short TrackControl_patch( ControlRecord**  control,
 			}
 		}
 	}
-	
-	DisposeRgn( tmp );
 	
 	control[0]->contrlHilite = 0;
 	
