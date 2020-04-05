@@ -235,7 +235,7 @@ long CDEF_1_Draw( short varCode, ControlRef control, long param )
 	
 indicator:
 	
-	if ( true )
+	if ( param == 0  ||  param == kDrawControlIndicatorOnly )
 	{
 		if ( aspect > 0 )
 		{
@@ -368,6 +368,12 @@ long CDEF_1_Hit( short varCode, ControlRef control, Point where )
 		return kControlPageDownPart;
 	}
 	
+	if ( coord > delta  &&  coord < delta + 16 )
+	{
+		return kControlIndicatorPart;
+	}
+	
+	// Dead zone on edges of thumb
 	return 0;
 }
 
@@ -381,6 +387,37 @@ long CDEF_1_CalcRgns( short varCode, ControlRef control, long param )
 	RgnHandle rgn = (RgnHandle) param;
 	
 	Rect bounds = control[0]->contrlRect;
+	
+	if ( indicator_only )
+	{
+		const short height = bounds.bottom - bounds.top;
+		const short width  = bounds.right - bounds.left;
+		
+		const short aspect = height - width;
+		
+		const short gap = (aspect > 0 ? height : width) - 3 * 16;  // x - 48px
+		
+		const short min = control[0]->contrlMin;
+		const short max = control[0]->contrlMax;
+		
+		const short value = control[0]->contrlValue;
+		
+		const short delta = 16 + thumb_offset_from_value( gap, value, min, max );
+		
+		bounds.bottom = bounds.top + 16;
+		bounds.right = bounds.left + 16;
+		
+		if ( aspect > 0 )
+		{
+			OffsetRect( &bounds, 0, delta );
+			InsetRect ( &bounds, 1, 0     );
+		}
+		else
+		{
+			OffsetRect( &bounds, delta, 0 );
+			InsetRect ( &bounds, 0,     1 );
+		}
+	}
 	
 	RectRgn( rgn, &bounds );
 	
