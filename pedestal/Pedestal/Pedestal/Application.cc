@@ -110,6 +110,10 @@ namespace Nitrogen
 	
 }
 
+#if TARGET_API_MAC_CARBON
+#define SystemTask()  /**/
+#endif
+
 static inline
 bool has_WaitNextEvent()
 {
@@ -805,6 +809,8 @@ namespace Pedestal
 		
 		if ( ! has_WNE )
 		{
+			SystemTask();
+			
 			(void) ::GetNextEvent( everyEvent, &event );
 			
 			// No need to forge mouse-moved events, since we don't use them.
