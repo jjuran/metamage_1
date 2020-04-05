@@ -51,6 +51,10 @@
 
 #define CONFIG_DAs CONFIG_DESK_ACCESSORIES
 
+#if TARGET_API_MAC_CARBON
+#define SystemTask()  /**/
+#endif
+
 using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
 using mac::qd::wide_drag_area;
@@ -163,6 +167,8 @@ void make_offscreen_buffer()
 	
 	for ( int i = 1;  i < n_frames;  ++i )
 	{
+		SystemTask();
+		
 		MovePortTo( 0, nyan_height * i );
 		
 		draw_frame( bits, i );
@@ -376,6 +382,8 @@ Boolean WaitNextEvent( EventRecord& event )
 static inline
 Boolean GetNextEvent( EventRecord& event )
 {
+	SystemTask();
+	
 	return GetNextEvent( everyEvent, &event );
 }
 
