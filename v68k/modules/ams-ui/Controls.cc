@@ -293,6 +293,11 @@ pascal short TrackControl_patch( ControlRecord**  control,
 	
 	const short track_part = TestControl( control, pt );
 	
+	if ( track_part == 0 )
+	{
+		return 0;  // We hit a dead zone within the control bounds.
+	}
+	
 	control[0]->contrlHilite = track_part;
 	
 	call_CDEF( control, drawCntl, track_part );
