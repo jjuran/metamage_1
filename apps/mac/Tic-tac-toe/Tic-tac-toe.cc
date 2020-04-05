@@ -54,6 +54,10 @@
 
 #define CONFIG_DAs CONFIG_DESK_ACCESSORIES
 
+#if TARGET_API_MAC_CARBON
+#define SystemTask()  /**/
+#endif
+
 using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
 using mac::qd::wide_drag_area;
@@ -686,6 +690,8 @@ Boolean WaitNextEvent( EventRecord& event )
 static
 Boolean wait_next_event( EventRecord& event )
 {
+	SystemTask();
+	
 	Boolean got = GetNextEvent( everyEvent, &event );
 	
 	if ( event.what == nullEvent  &&  ! PtInRgn( event.where, gMouseRgn ) )
