@@ -38,6 +38,16 @@ long call_CDEF( ControlRef control, short message, long param )
 	return cdef( varCode, control, message, param );
 }
 
+static
+void draw_control( ControlRef control )
+{
+	scoped_port thePort = control[0]->contrlOwner;
+	
+	raster_lock lock;
+	
+	call_CDEF( control, drawCntl, 0 );
+}
+
 #pragma mark -
 #pragma mark Initialization and Allocation
 #pragma mark -
@@ -88,9 +98,7 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
 		
 		if ( visible )
 		{
-			scoped_port thePort = control[0]->contrlOwner;
-			
-			call_CDEF( control, drawCntl, 0 );
+			draw_control( control );
 		}
 	}
 	
@@ -186,9 +194,7 @@ pascal void SetCTitle_patch( ControlRef control, ConstStr255Param title )
 {
 	fast_memcpy( control[0]->contrlTitle, title, 1 + title[ 0 ] );
 	
-	scoped_port thePort = control[0]->contrlOwner;
-	
-	call_CDEF( control, drawCntl, 0 );
+	draw_control( control );
 }
 
 pascal void HideControl_patch( ControlRef control )
@@ -211,25 +217,19 @@ pascal void ShowControl_patch( ControlRef control )
 	{
 		control[0]->contrlVis = -1;
 		
-		scoped_port thePort = control[0]->contrlOwner;
-		
-		call_CDEF( control, drawCntl, 0 );
+		draw_control( control );
 	}
 }
 
 pascal void DrawControls_patch( GrafPort* window )
 {
-	raster_lock lock;
-	
-	scoped_port thePort = window;
-	
 	WindowPeek w = (WindowPeek) window;
 	
 	ControlRef control = (ControlRef) w->controlList;
 	
 	while ( control != NULL )
 	{
-		call_CDEF( control, drawCntl, 0 );
+		draw_control( control );
 		
 		control = control[0]->nextControl;
 	}
@@ -492,9 +492,7 @@ pascal void SetCtlValue_patch( ControlRecord** control, short value )
 		
 		control[0]->contrlValue = value;
 		
-		scoped_port thePort = control[0]->contrlOwner;
-		
-		call_CDEF( control, drawCntl, 0 );
+		draw_control( control );
 	}
 }
 
@@ -514,9 +512,7 @@ pascal void SetMinCtl_patch( ControlRecord** control, short min )
 		
 		control[0]->contrlMin = min;
 		
-		scoped_port thePort = control[0]->contrlOwner;
-		
-		call_CDEF( control, drawCntl, 0 );
+		draw_control( control );
 	}
 }
 
@@ -536,9 +532,7 @@ pascal void SetMaxCtl_patch( ControlRecord** control, short max )
 		
 		control[0]->contrlMax = max;
 		
-		scoped_port thePort = control[0]->contrlOwner;
-		
-		call_CDEF( control, drawCntl, 0 );
+		draw_control( control );
 	}
 }
 
