@@ -31,7 +31,14 @@ sub derived_filename
 	
 	my ( $subpath ) = $path =~ m{ // (.*) $}x;
 	
-	$subpath =~ tr{/}{:};
+	if ( $^O eq "msys" )
+	{
+		$subpath =~ s{/}{--}g;
+	}
+	else
+	{
+		$subpath =~ tr{/}{:};
+	}
 	
 	return $subpath;
 }
