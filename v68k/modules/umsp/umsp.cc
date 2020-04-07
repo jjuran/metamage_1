@@ -123,7 +123,7 @@ uint16_t& resolve_ea16( registers& regs, const uint16_t ea )
 static
 bool handle_exception( registers& regs )
 {
-	const uint16_t old_pc = regs.pc;
+	const uint32_t old_pc = regs.pc;
 	
 	const uint16_t opcode = read_word( regs.pc );
 	
@@ -136,11 +136,11 @@ bool handle_exception( registers& regs )
 		return true;
 	}
 	
-	// 0100 0110 11xx xxxx:  MOVE from SR
+	// 0100 0110 11xx xxxx:  MOVE to SR
 	
 	if ( (opcode & 0xFFC0) == 0x46C0 )
 	{
-		uint16_t bits =  resolve_ea16( regs, opcode & 0x003F );
+		uint16_t bits = resolve_ea16( regs, opcode & 0x003F );
 		
 		if ( ((regs.sr ^ bits) & 0xF000) == 0 )
 		{
