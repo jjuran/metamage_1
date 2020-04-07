@@ -20,6 +20,10 @@
 		#define CONFIG_SETPSHARED 0
 	#endif
 	
+	#if defined(__MSYS__) || defined(__CYGWIN__)
+		#define CONFIG_SETPSHARED 0
+	#endif
+	
 	#ifndef CONFIG_SETPSHARED
 		#define CONFIG_SETPSHARED 1
 	#endif
