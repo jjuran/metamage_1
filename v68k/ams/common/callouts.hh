@@ -55,4 +55,28 @@ void fast_memmove( void* : __A1, const void* : __A0, unsigned long : __D0 )
 	0xA22E  // _BlockMoveData
 }
 
+unsigned long CmpString_sans_case( const unsigned char*  a : __A0,
+                                   unsigned char         n : __D1,
+                                   const unsigned char*  b : __A1,
+                                   unsigned char         m : __D2 );
+
+inline
+unsigned long EqualString_sans_case( const unsigned char*  a : __A0,
+                                     unsigned char         n : __D1,
+                                     const unsigned char*  b : __A1,
+                                     unsigned char         m : __D2 )
+{
+	return ! CmpString_sans_case( a, n, b, m );
+}
+
+inline
+unsigned long EqualString_sans_case( const unsigned char*  a : __A0,
+                                     const unsigned char*  b : __A1 )
+{
+	unsigned char n = *a++;
+	unsigned char m = *b++;
+	
+	return EqualString_sans_case( a, n, b, m );
+}
+
 #endif

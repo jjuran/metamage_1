@@ -19,8 +19,9 @@
 #include "Nitrogen/OSStatus.hh"
 
 
-namespace Nitrogen {
-
+namespace Nitrogen
+{
+	
 	LaunchServicesErrorsRegistrationDependency::LaunchServicesErrorsRegistrationDependency()
 	{
 		// does nothing, but guarantees construction of theRegistration
@@ -39,8 +40,14 @@ namespace Nitrogen {
 	static LaunchServicesErrorsRegistration theRegistration;
 	
 	
-	void RegisterLaunchServicesErrors () {
+	void RegisterLaunchServicesErrors()
+	{
+	#ifdef MAC_OS_X_VERSION_10_3
+		
 		RegisterOSStatus< kLSAppInTrashErr                   >();
+		
+	#endif
+		
 		RegisterOSStatus< kLSUnknownErr                      >();
 		RegisterOSStatus< kLSNotAnApplicationErr             >();
 		RegisterOSStatus< kLSNotInitializedErr               >();
@@ -55,14 +62,19 @@ namespace Nitrogen {
 		RegisterOSStatus< kLSAppDoesNotSupportSchemeWarning  >();
 		RegisterOSStatus< kLSServerCommunicationErr          >();
 		RegisterOSStatus< kLSCannotSetInfoErr                >();
+		
+	#ifdef MAC_OS_X_VERSION_10_3
+		
 		RegisterOSStatus< kLSNoRegistrationInfoErr           >();
 		RegisterOSStatus< kLSIncompatibleSystemVersionErr    >();
 		RegisterOSStatus< kLSNoLaunchPermissionErr           >();
 		RegisterOSStatus< kLSNoExecutableErr                 >();
 		RegisterOSStatus< kLSNoClassicEnvironmentErr         >();
 		RegisterOSStatus< kLSMultipleSessionsNotSupportedErr >();
-		}
-
+		
+	#endif
 	}
+	
+}
 
 #endif

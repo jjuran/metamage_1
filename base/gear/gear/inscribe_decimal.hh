@@ -65,7 +65,7 @@ namespace gear
 		{
 			*buffer++ = '-';
 			
-			const Type nadir = 1LL << (sizeof x * 8 - 1);
+			const Type nadir = Type( 1LL << (sizeof x * 8 - 1) );
 			
 			if ( x != nadir )
 			{

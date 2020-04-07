@@ -58,7 +58,7 @@ namespace custom  {
 		return its_tail;
 	}
 	
-	bool circular_queue::contains( queue_element* node )
+	bool circular_queue::contains( queue_element* node ) const
 	{
 		queue_element* it = its_head;
 		

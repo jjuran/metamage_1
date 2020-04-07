@@ -4,33 +4,34 @@
 */
 
 // POSIX
-#include <unistd.h>
+#include <sys/time.h>
 
 // Standard C
-#include <string.h>
-
-// gear
-#include "gear/inscribe_decimal.hh"
+#include <stdio.h>
 
 
 int main()
 {
-	timeval t;
+	const int n = 8;
 	
-	int got = gettimeofday( &t, NULL );
+	timeval t[ n ];
 	
-	if ( got < 0 )
+	for ( int i = 0;  i < n;  ++i )
 	{
-		return 1;  // shouldn't happen
+		int got = gettimeofday( &t[ i ], NULL );
+		
+		if ( got < 0 )
+		{
+			return 1;  // shouldn't happen
+		}
 	}
 	
-	char* s = gear::inscribe_decimal( t.tv_sec );  // FIXME:  Y2038 problem
-	
-	size_t len = strlen( s );
-	
-	s[ len++ ] = '\n';
-	
-	write( STDOUT_FILENO, s, len );
+	for ( int i = 0;  i < n;  ++i )
+	{
+		const timeval& tv = t[ i ];
+		
+		printf( "%ld.%.6ld\n", (long) tv.tv_sec, (long) tv.tv_usec );
+	}
 	
 	return 0;
 }

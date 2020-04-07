@@ -173,6 +173,42 @@ sub jobs_for
 	return @jobs;
 }
 
+my %running_jobs;
+
+sub spawn
+{
+	my ( $job ) = @_;
+	
+	my $pid = fork;
+	
+	defined $pid or die "fork";
+	
+	if ( $pid == 0 )
+	{
+		$job->perform;
+		exit 0;
+	}
+	
+	$running_jobs{ $pid } = $job;
+}
+
+sub wait_for_one_job
+{
+	my $pid = wait;
+	
+	exists $running_jobs{ $pid } or die "No such job $pid\n";
+	
+	delete $running_jobs{ $pid };
+}
+
+sub wait_for_all_jobs
+{
+	while ( keys %running_jobs )
+	{
+		wait_for_one_job;
+	}
+}
+
 sub main
 {
 	my @args = Compile::Driver::Options::set_options( @_ );
@@ -203,6 +239,42 @@ sub main
 	pop @prereqs;
 	
 	my @jobs = map { Compile::Driver::jobs_for( $configuration->get_module( $_ ) ) } @prereqs;
+	
+	my $n_jobs = Compile::Driver::Options::job_count;
+	
+	if ( $n_jobs > 1 )
+	{
+		my $last_type = "";
+		
+		while ( @jobs )
+		{
+			while ( @jobs  &&  keys %running_jobs < $n_jobs )
+			{
+				my $job = shift @jobs;
+				
+				if ( $job->{TYPE} ne $last_type )
+				{
+					# Don't risk spawning a link while compiles are outstanding
+					wait_for_all_jobs;
+					
+					$last_type = $job->{TYPE};
+				}
+				
+				spawn $job;
+			}
+			
+			# Either we ran out of pending jobs, or maxed out the running jobs
+			
+			if ( keys %running_jobs )
+			{
+				wait_for_one_job;
+			}
+		}
+		
+		# No more jobs pending
+		
+		wait_for_all_jobs;
+	}
 	
 	foreach my $job ( @jobs )
 	{

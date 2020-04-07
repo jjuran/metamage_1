@@ -19,12 +19,16 @@
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // command
 #include "command/get_option.hh"
 
 // v68k
 #include "v68k/emulator.hh"
 #include "v68k/endian.hh"
+#include "v68k/print.hh"
 
 // v68k-alloc
 #include "v68k-alloc/memory.hh"
@@ -60,7 +64,9 @@
 #include "screen.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 #define STRLEN( s )  (sizeof "" s - 1)
@@ -76,6 +82,8 @@ using v68k::callout::callout_address;
 using v68k::callout::system_call;
 using v68k::callout::microseconds;
 using v68k::screen::ignore_screen_locks;
+
+static v68k::processor_model mc68k_model = v68k::mc68000;
 
 static bool turbo;
 static bool polling;
@@ -99,6 +107,7 @@ static module_spec* module_specs;
 enum
 {
 	Opt_authorized = 'A',
+	Opt_model      = 'M',
 	Opt_poll       = 'P',
 	Opt_supervisor = 'S',
 	Opt_trace      = 'T',
@@ -122,6 +131,7 @@ static command::option options[] =
 	{ "trace",      Opt_trace      },
 	{ "turbo",      Opt_turbo      },
 	{ "verbose",    Opt_verbose    },
+	{ "model",      Opt_model,  command::Param_required },
 	{ "pid",        Opt_pid,    command::Param_optional },
 	{ "raster",     Opt_raster, command::Param_required },
 	{ "screen",     Opt_screen, command::Param_required },
@@ -132,6 +142,14 @@ static command::option options[] =
 	{ NULL }
 };
 
+
+static sig_atomic_t sigint_pending;
+
+static
+void sigint_handler( int )
+{
+	sigint_pending = true;
+}
 
 #define EXIT( status, msg )  exit_with_message( STR_LEN( msg "\n" ), status )
 
@@ -226,21 +244,31 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 		|                       |
 		|                       |
 		|                       |
-		= user code             =  x9
+		= user code             =  x5
 		|                       |
 		|                       |
 		|                       |
 		|                       |
 		|                       |
 		|                       |
-		|                       |  72K
-	100	+-----------------------+
+		|                       |  40K
+	68K	+-----------------------+
+		
+	72K	+-----------------------+
+		|                       |  screen memory begins 0x00012700  (1792 after)
+		|                       |  screen memory ends   0x00017C80  (896 before)
+		|                       |
+		=   alt screen buffer   =  x6
+		|                       |
+		|                       |
+		|                       |  24K (21.375K used)
+	96K	+-----------------------+
 		
 	104	+-----------------------+
 		|                       |  screen memory begins 0x0001A700  (1792 after)
 		|                       |  screen memory ends   0x0001FC80  (896 before)
 		|                       |
-		= screen memory buffer  =  x6
+		=  main screen buffer   =  x6
 		|                       |
 		|                       |
 		|                       |  24K (21.375K used)
@@ -249,7 +277,7 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 */
 
 const uint32_t params_max_size = 4096;
-const uint32_t code_max_size   = 72 * 1024;
+const uint32_t code_max_size   = 40 * 1024;
 
 const uint32_t os_address   = 7168;
 const uint32_t initial_SSP  = 3072;
@@ -379,6 +407,8 @@ void load_vectors( v68k::user::os_load_spec& os )
 	vectors[ 9] = big_longword( callout_address( trace_exception     ) );
 	vectors[11] = big_longword( callout_address( line_F_emulator     ) );
 	vectors[14] = big_longword( callout_address( format_error        ) );
+	
+	vectors[66] = big_longword( callout_address( sigint_interrupt    ) );
 }
 
 static
@@ -433,7 +463,7 @@ void load_argv( uint8_t* mem, int argc, char* const* argv )
 	{
 		*args++ = big_longword( args_data - mem );
 		
-		const size_t len = strlen( *argv ) + 1;
+		const ssize_t len = strlen( *argv ) + 1;
 		
 		if ( len > args_limit - args_data )
 		{
@@ -606,6 +636,16 @@ void emulation_loop( v68k::emulator& emu )
 			
 			emu.interrupt( level, vector );
 		}
+		
+		if ( sigint_pending )
+		{
+			sigint_pending = false;
+			
+			const int signal_number =  2;
+			const int signal_vector = 64 + signal_number;
+			
+			emu.interrupt( 7, signal_vector );
+		}
 	}
 }
 
@@ -700,6 +740,15 @@ void load_file( uint8_t* mem, const char* path )
 		exit( 1 );
 	}
 	
+	if ( const char* filename = strrchr( path, '/' ) )
+	{
+		path = filename + 1;
+	}
+	
+	using v68k::hex32_t;
+	
+	NOTICE = hex32_t( addr ), " -> ", hex32_t( addr + size ), ": ", path;
+	
 	uint16_t* p = (uint16_t*) (mem + code_address);
 	
 	*p++ = iota::big_u16( 0x4EF9 );
@@ -720,7 +769,7 @@ int execute_68k( int argc, char* const* argv )
 	
 	const memory_manager memory( mem, mem_size );
 	
-	v68k::emulator emu( v68k::mc68000, memory, bkpt_handler );
+	v68k::emulator emu( mc68k_model, memory, bkpt_handler );
 	
 	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
 	
@@ -729,6 +778,10 @@ int execute_68k( int argc, char* const* argv )
 	v68k::user::os_load_spec load = { mem, mem_size, os_address };
 	
 	load_vectors( load );
+	
+	enum { CPUFlag = 0x012F };
+	
+	emu.mem.put_byte( CPUFlag, mc68k_model >> 4, v68k::user_data_space );
 	
 	load_Mac_traps( mem );
 	
@@ -850,6 +903,27 @@ char* const* get_options( char** argv )
 				verbose = true;
 				break;
 			
+			case Opt_model:
+				{
+					const char* p = global_result.param;
+					
+					if ( *p++ == '6'  &&  *p++ == '8'  &&  *p++ == '0' )
+					{
+						uint8_t x = *p++ - '0';
+						
+						if ( x <= 4  &&  *p++ == '0' )
+						{
+							mc68k_model = v68k::processor_model( x << 4 );
+							goto ok;
+						}
+					}
+					
+					EXIT( 2, "xv68k: invalid --model parameter" );
+				ok:
+					;
+				}
+				break;
+			
 			case Opt_pid:
 				if ( global_result.param )
 				{
@@ -958,6 +1032,11 @@ int main( int argc, char** argv )
 		argc = 1;
 		argv = (char**) new_argv;
 	}
+	
+	struct sigaction action = { 0 };
+	action.sa_handler = &sigint_handler;
+	
+	int nok = sigaction( SIGINT, &action, NULL );
 	
 	module_specs = (module_spec*) alloca( argc * sizeof (module_spec) );
 	

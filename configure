@@ -3,10 +3,12 @@
 mkdir -p var
 
 if [ -z "$INSTALL_PREFIX" ]; then
-	INSTALL_PREFIX="/usr/local"
+	INSTALL_PREFIX=~/.local
 fi
 
 quoted_install_prefix="\"$INSTALL_PREFIX\""
+
+mkdir -p "$INSTALL_PREFIX"
 
 rm -f var/install
 ln -s "$INSTALL_PREFIX" var/install

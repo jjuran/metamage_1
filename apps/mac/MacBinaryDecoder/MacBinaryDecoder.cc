@@ -3,16 +3,17 @@
 	-------------------
 */
 
-// Debug
-#include "debug/assert.hh"
+// mac-config
+#include "mac_config/apple-events.hh"
+
+// mac-file-utils
+#include "mac_file/parent_directory.hh"
+
+// mac-app-utils
+#include "mac_app/event_handlers.hh"
 
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
-
-#include "Nitrogen/AEDataModel.hh"
-
-// Iteration
-#include "Iteration/AEDescListItemDatas.hh"
 
 // Arcana
 #include "MacBinary.hh"
@@ -22,24 +23,20 @@
 
 // Pedestal
 #include "Pedestal/AboutBox.hh"
+#include "Pedestal/Application.hh"
 #include "Pedestal/Commands.hh"
 
 
 namespace MacBinaryDecoder
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
-	
-	using Mac::keyDirectObject;
-	using Mac::typeAEList;
-	using Mac::kCoreEventClass;
-	using Mac::kAEOpenDocuments;
+	using mac::types::VRefNum_DirID;
 	
 	
-	static void Decode( Io_Details::stream input, const N::FSDirSpec& destDir )
+	static
+	void Decode( Io_Details::stream input, const VRefNum_DirID& destDir )
 	{
 		MacBinary::Decoder decoder( destDir );
 		
@@ -65,38 +62,21 @@ namespace MacBinaryDecoder
 		}
 	}
 	
-	static void OpenDocument( const Io_Details::file_spec& file )
+	static
+	long OpenDocument( const Io_Details::file_spec& file )
 	{
-		N::FSDirSpec parent = n::convert< N::FSDirSpec >( io::get_preceding_directory( file ) );
-		
-		Decode( io::open_for_reading( file ), parent );
-	}
-	
-	// Apple event handlers
-	
-	// Template parameters must have extern linkage
-	void HandleOpenDocumentsAppleEvent( const Mac::AppleEvent&  appleEvent,
-	                                    Mac::AppleEvent&        reply );
-	
-	void HandleOpenDocumentsAppleEvent( const Mac::AppleEvent&  appleEvent,
-	                                    Mac::AppleEvent&        reply )
-	{
-		typedef N::AEDescList_ItemDataValue_Container< Io_Details::typeFileSpec > Container;
-		typedef Container::const_iterator const_iterator;
-		
-		n::owned< Mac::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
-		                                                              keyDirectObject,
-		                                                              Mac::typeAEList );
-		
-		Container listData = N::AEDescList_ItemDataValues< Io_Details::typeFileSpec >( docList );
-		
-		for ( const_iterator it = listData.begin();  it != listData.end();  ++it )
+		try
 		{
-			Io_Details::file_spec fileSpec = *it;
+			VRefNum_DirID parent = mac::file::parent_directory( file );
 			
-			OpenDocument( fileSpec );
+			Decode( io::open_for_reading( file ), parent );
+		}
+		catch ( ... )
+		{
+			return errAEEventNotHandled;
 		}
 		
+		return noErr;
 	}
 	
 	
@@ -107,19 +87,25 @@ namespace MacBinaryDecoder
 		return true;
 	}
 	
-	App::App()
-	{
-		N::AEInstallEventHandler< HandleOpenDocumentsAppleEvent >( kCoreEventClass,
-		                                                           kAEOpenDocuments ).release();
-		
-		SetCommandHandler( Ped::kCmdAbout, &About );
-	}
-	
 }
 
 int main( void )
 {
-	MacBinaryDecoder::App app;
+	using namespace MacBinaryDecoder;
+	
+	Ped::Application app;
+	
+	const bool apple_events_present =
+		CONFIG_APPLE_EVENTS  &&
+			(CONFIG_APPLE_EVENTS_GRANTED  ||
+				Ped::apple_events_present);
+	
+	if ( apple_events_present )
+	{
+		mac::app::install_opendocs_handler( &OpenDocument );
+	}
+	
+	SetCommandHandler( Ped::kCmdAbout, &About );
 	
 	return app.Run();
 }

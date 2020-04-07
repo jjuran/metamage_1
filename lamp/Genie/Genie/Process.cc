@@ -605,7 +605,7 @@ namespace Genie
 	
 	static void CheckProgramFile( const vfs::node& programFile )
 	{
-		struct ::stat sb;
+		struct stat sb;
 		
 		stat( programFile, sb );
 		
@@ -1085,15 +1085,7 @@ namespace Genie
 		
 		proc.set_pending_signal( signo );
 		
-		{
-			if ( relix::os_thread_id thread = get_os_thread() )
-			{
-				if ( relix::is_os_thread_stopped( thread ) )
-				{
-					relix::wake_os_thread( thread );
-				}
-			}
-		}
+		relix::woken_os_thread( get_os_thread() );
 	}
 	
 	void Process::AsyncYield()

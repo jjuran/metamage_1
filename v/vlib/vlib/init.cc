@@ -15,10 +15,12 @@
 #include "vlib/pure.hh"
 #include "vlib/symbol_table.hh"
 #include "vlib/types.hh"
+#include "vlib/namespaces/Iter.hh"
 #include "vlib/namespaces/Math.hh"
 #include "vlib/namespaces/V.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/byterange.hh"
 #include "vlib/types/pointer.hh"
 #include "vlib/types/fraction.hh"
 #include "vlib/types/integer.hh"
@@ -65,6 +67,7 @@ namespace vlib
 	
 	bool install_keywords()
 	{
+		define_keyword( namespace_Iter );
 		define_keyword( namespace_Math );
 		define_keyword( namespace_V    );
 		
@@ -73,6 +76,7 @@ namespace vlib
 		
 		define_keyword( "boolean",  boolean_vtype  );
 		define_keyword( "bool",     boolean_vtype  );
+		define_keyword( "byterange", byterange_vtype );
 		define_keyword( "function", function_vtype );
 		define_keyword( "fraction", fraction_vtype );
 		define_keyword( "receiver", receiver_vtype );
@@ -118,13 +122,11 @@ namespace vlib
 		define_keyword( proc_substr );
 		define_keyword( proc_tail   );
 		define_keyword( proc_trans  );
+		define_keyword( proc_transd );
 		define_keyword( proc_typeof );
+		define_keyword( proc_uchr   );
 		define_keyword( proc_unbin  );
 		define_keyword( proc_unhex  );
-		
-		define_keyword( proc_mkpub  );
-		define_keyword( proc_sign   );
-		define_keyword( proc_verify );
 		
 		return true;
 	}

@@ -35,6 +35,13 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_word_and_EA[] =
+	{
+		&fetch_unsigned_word,
+		&fetch_effective_address,
+		0  // NULL
+	};
+	
 	fetcher fetches_immediate[] =
 	{
 		&fetch_sized_immediate_data,
@@ -86,28 +93,12 @@ namespace v68k
 	};
 	
 	
-	fetcher fetches_static_bit_op[] =
-	{
-		&fetch_unsigned_word,
-		&fetch_effective_address,
-		0  // NULL
-	};
-	
-	
 	fetcher fetches_MOVEP[] =
 	{
 		&FETCH_MAJOR_REGISTER_NUM,
 		&fetch_MOVEP_address,
 		&fetch_signed_word,
 		&add_first_to_address,
-		0  // NULL
-	};
-	
-	
-	fetcher fetches_MOVES[] =
-	{
-		&fetch_unsigned_word,
-		&fetch_effective_address,
 		0  // NULL
 	};
 	

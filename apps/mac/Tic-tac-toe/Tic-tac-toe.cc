@@ -26,6 +26,7 @@
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
+#include "mac_sys/trap_available.hh"
 
 // mac-snd-utils
 #include "mac_snd/playback.hh"
@@ -45,11 +46,17 @@
 
 // Tic-tac-toe
 #include "cursors.hh"
+#include "fullscreen.hh"
+#include "fullscreen_port.hh"
 #include "regions.hh"
 #include "state.hh"
 
 
 #define CONFIG_DAs CONFIG_DESK_ACCESSORIES
+
+#if TARGET_API_MAC_CARBON
+#define SystemTask()  /**/
+#endif
 
 using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
@@ -67,6 +74,7 @@ const bool apple_events_present =
 			mac::sys::gestalt( 'evnt' ) != 0);
 
 static bool sound_enabled;
+static bool is_fullscreen;
 
 static player_t current_player = tictactoe::Player_X;
 
@@ -132,8 +140,12 @@ enum
 	kMargin = 3,
 };
 
+static short unitLength;
+static short h_margin;
+static short v_margin;
+
 static
-short window_unitLength( WindowRef window )
+void calculate_window_metrics( WindowRef window )
 {
 	const Rect& portRect = get_portRect( window );
 	
@@ -142,9 +154,10 @@ short window_unitLength( WindowRef window )
 	
 	const short portLength = min( portWidth, portHeight );
 	
-	const short unitLength = portLength / 32;
+	unitLength = portLength / 32u;
 	
-	return unitLength;
+	h_margin = (portWidth  - portLength) / 2u;
+	v_margin = (portHeight - portLength) / 2u;
 }
 
 static WindowRef main_window;
@@ -163,15 +176,15 @@ void make_main_window()
 	
 	short height = usableHeight;
 	
-	height -= height /  4;  // leave some space
-	height -= height % 16;  // make it an exact multiple
+	height -= height /  4u;  // leave some space
+	height -= height % 16u;  // make it an exact multiple
 	
 	const short margin = usableHeight - height;
 	
-	bounds.top   += margin / 2;
+	bounds.top   += margin / 2u;
 	bounds.bottom = bounds.top + height;
 	
-	bounds.left  = (bounds.right - bounds.left - height) / 2;
+	bounds.left  = (bounds.right - bounds.left - height) / 2u;
 	bounds.right = bounds.left + height;
 	
 	main_window = NewWindow( NULL,
@@ -195,7 +208,7 @@ void draw_window( WindowRef window )
 	
 	EraseRect( &portRect );
 	
-	const short unitLength = window_unitLength( window );
+	SetOrigin( -h_margin, -v_margin );
 	
 	Rect line;
 	
@@ -232,14 +245,14 @@ void draw_window( WindowRef window )
 	
 	for ( short i = 0, i3 = 0;  i < 3;  ++i, i3 += 3 )
 	{
-		const short top = unitLength * (4 + 9 * i);
+		const short top = v_margin + unitLength * (4 + 9 * i);
 		
 		for ( short j = 0;  j < 3;  ++j )
 		{
-			const short left = unitLength * (4 + 9 * j);
-			
 			if ( player_t token = tictactoe::get( i3 + j ) )
 			{
+				const short left = h_margin + unitLength * (4 + 9 * j);
+				
 				SetOrigin( -left, -top );
 				
 				RgnHandle rgn = token > 0 ? get_X_token( unitLength )
@@ -254,15 +267,13 @@ void draw_window( WindowRef window )
 }
 
 static
-void draw_token( WindowRef window, player_t token, short index )
+void draw_token( player_t token, short index )
 {
-	const short unitLength = window_unitLength( window );
-	
 	const short i = index / 3;
 	const short j = index % 3;
 	
-	const short top = unitLength * (4 + 9 * i);
-	const short left = unitLength * (4 + 9 * j);
+	const short top  = v_margin + unitLength * (4 + 9 * i);
+	const short left = h_margin + unitLength * (4 + 9 * j);
 	
 	SetOrigin( -left, -top );
 	
@@ -275,9 +286,10 @@ void draw_token( WindowRef window, player_t token, short index )
 }
 
 static
-short hit_test( WindowRef window, Point where )
+short hit_test( Point where )
 {
-	const short unitLength = window_unitLength( window );
+	where.h -= h_margin;
+	where.v -= v_margin;
 	
 	short x = where.h / unitLength;
 	short y = where.v / unitLength;
@@ -309,10 +321,10 @@ void play_tone( UInt16 swCount )
 	
 	UInt16* p = buffer;
 	
-	*p++ = swMode;
+	*p++ = (UInt16) swMode;
 	
-	const UInt16 amplitude = 30;  // 0 - 255
-	const UInt16 duration  =  6;  // 0 - 65535
+	const UInt16 amplitude = 255;  // 0 - 255
+	const UInt16 duration  =   6;  // 0 - 65535
 	
 	*p++ = swCount;
 	*p++ = amplitude;
@@ -328,7 +340,7 @@ void play_tone( UInt16 swCount )
 }
 
 static
-void click( WindowRef window, Point where )
+void click( Point where )
 {
 	if ( ! current_player )
 	{
@@ -337,7 +349,7 @@ void click( WindowRef window, Point where )
 	
 	using namespace tictactoe;
 	
-	short i = hit_test( window, where );
+	short i = hit_test( where );
 	
 	move_t result = move( current_player, i );
 	
@@ -356,7 +368,7 @@ void click( WindowRef window, Point where )
 	
 	DisposeRgn( rgn );
 	
-	draw_token( window, current_player, i );
+	draw_token( current_player, i );
 	
 	if ( sound_enabled )
 	{
@@ -385,7 +397,7 @@ void calculate_token_regions( short unitLength )
 static
 void calibrate_mouseRgns( short unitLength )
 {
-	Point globalOffset = { 0, 0 };
+	Point globalOffset = { v_margin, h_margin };
 	
 	LocalToGlobal( &globalOffset );
 	
@@ -416,6 +428,72 @@ void calibrate_mouseRgns( short unitLength )
 }
 
 static
+void window_size_changed( WindowRef window )
+{
+	calculate_window_metrics( window );
+	
+	calculate_token_regions( unitLength );
+	
+	calibrate_mouseRgns( unitLength );
+}
+
+static
+WindowRef GetPort_window()
+{
+	/*
+		Return the window whose port is the current port.
+		If accessor calls are functions, the port must belong to a window.
+		Otherwise, it may be just a GrafPort.
+	*/
+	
+	GrafPtr port;
+	GetPort( &port );
+	
+	return GetWindowFromPort( (CGrafPtr) port );
+}
+
+static
+void enter_fullscreen()
+{
+	fullscreen::enter();
+	
+	ForeColor( whiteColor );
+	BackColor( blackColor );
+	
+	WindowRef window = GetPort_window();
+	
+	window_size_changed( window );
+	
+	draw_window( window );
+}
+
+static
+void leave_fullscreen()
+{
+	fullscreen::leave();
+	
+	InvalRect( main_window, get_portRect( main_window ) );
+	
+	window_size_changed( main_window );
+}
+
+static
+void cleanup_fullscreen()
+{
+	if ( TARGET_CPU_68K  &&  mac::sys::gestalt_defined( 'v68k' ) )
+	{
+		return;
+	}
+	
+	if ( TARGET_API_MAC_CARBON  &&  mac::sys::gestalt( 'sysv' ) >= 0x1000 )
+	{
+		return;
+	}
+	
+	fullscreen::leave();
+}
+
+static
 void reset()
 {
 	tictactoe::reset();
@@ -430,20 +508,18 @@ void reset()
 		}
 	}
 	
-	short unitLength = window_unitLength( main_window );
-	
 	calibrate_mouseRgns( unitLength );
 	
 	Point mouse;
 	GetMouse( &mouse );
 	
-	short i = hit_test( main_window, mouse );
+	short i = hit_test( mouse );
 	
 	SetCursor( i + 1 ? &X_cursor : &mac::qd::arrow() );
 	
 	gMouseRgn = mouseRgns[ i + 1 ];
 	
-	draw_window( main_window );
+	draw_window( GetPort_window() );
 }
 
 static
@@ -469,6 +545,11 @@ void menu_item_chosen( long choice )
 			switch ( item )
 			{
 				case 1:  // New Game
+					if ( is_fullscreen )
+					{
+						HiliteMenu( 0 );
+					}
+					
 					reset();
 					break;
 				
@@ -494,9 +575,34 @@ void menu_item_chosen( long choice )
 			break;
 		
 		case 4:  // Options
-			sound_enabled = ! sound_enabled;
-			
-			CheckMenuItem( GetMenuHandle( menu ), item, sound_enabled );
+			switch ( item )
+			{
+				case 1:  // Sound
+					sound_enabled = ! sound_enabled;
+					
+					CheckMenuItem( GetMenuHandle( menu ), item, sound_enabled );
+					break;
+				
+				case 2:  // Full screen
+					HiliteMenu( 0 );
+					
+					is_fullscreen = ! is_fullscreen;
+					
+					if ( is_fullscreen )
+					{
+						enter_fullscreen();
+					}
+					else
+					{
+						leave_fullscreen();
+					}
+					
+					CheckMenuItem( GetMenuHandle( menu ), item, is_fullscreen );
+					break;
+				
+				default:
+					break;
+			}
 			break;
 		
 		default:
@@ -511,7 +617,7 @@ RgnHandle mouse_moved( Point where )
 {
 	GlobalToLocal( &where );
 	
-	const short i = hit_test( main_window, where );
+	const short i = hit_test( where );
 	
 	const Cursor* cursor;
 	
@@ -529,12 +635,84 @@ RgnHandle mouse_moved( Point where )
 	return mouseRgns[ 1 + i ];
 }
 
+#ifdef __MC68K__
+
+UInt8 SdVolume : 0x0260;
+UInt8 SdEnable : 0x0261;
+
+#else
+
+const UInt8 SdVolume = 0;
+const UInt8 SdEnable = 0;
+
+#endif
+
+static
+void set_up_Options_menu()
+{
+	MenuRef Options = GetMenuHandle( 4 );
+	short   Sound   = 1;
+	
+#if ! TARGET_API_MAC_CARBON
+	
+	if ( SdVolume > 0 )
+	{
+		sound_enabled = true;
+		
+		CheckMenuItem( Options, Sound, sound_enabled );
+	}
+	else if ( ! SdEnable )
+	{
+		DisableItem( Options, Sound );
+	}
+	
+	return;
+	
+#endif
+	
+	DisableMenuItem( Options, Sound );
+}
+
+static inline
+bool has_WaitNextEvent()
+{
+	enum { _WaitNextEvent = 0xA860 };
+	
+	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _WaitNextEvent );
+}
+
+static inline
+Boolean WaitNextEvent( EventRecord& event )
+{
+	return WaitNextEvent( everyEvent, &event, 0x7FFFFFFF, gMouseRgn );
+}
+
+static
+Boolean wait_next_event( EventRecord& event )
+{
+	SystemTask();
+	
+	Boolean got = GetNextEvent( everyEvent, &event );
+	
+	if ( event.what == nullEvent  &&  ! PtInRgn( event.where, gMouseRgn ) )
+	{
+		event.what    = osEvt;
+		event.message = mouseMovedMessage << 24;
+		
+		return true;
+	}
+	
+	return got;
+}
+
 int main()
 {
 	using mac::app::quitting;
 	
 	mac::app::init_toolbox();
 	mac::app::install_menus();
+	
+	set_up_Options_menu();
 	
 	if ( apple_events_present )
 	{
@@ -544,24 +722,27 @@ int main()
 	alloc_mouseRgns();
 	
 	make_main_window();
+	window_size_changed( main_window );
 	
-	short unitLength = window_unitLength( main_window );
-	
-	calculate_token_regions( unitLength );
-	
-	calibrate_mouseRgns( unitLength );
+	const bool has_WNE = has_WaitNextEvent();
 	
 	while ( ! quitting )
 	{
 		EventRecord event;
 		
-		if ( WaitNextEvent( everyEvent, &event, 0x7FFFFFFF, gMouseRgn ) )
+		if ( has_WNE ? WaitNextEvent( event ) : wait_next_event( event ) )
 		{
 			WindowRef window;
 			
 			switch ( event.what )
 			{
 				case mouseDown:
+					if ( is_fullscreen )
+					{
+						click( event.where );
+						break;
+					}
+					
 					switch ( FindWindow( event.where, &window ) )
 					{
 						case inMenuBar:
@@ -599,7 +780,7 @@ int main()
 							}
 							
 							GlobalToLocal( &event.where );
-							click( window, event.where );
+							click( event.where );
 							break;
 						
 						case inGrow:
@@ -609,11 +790,7 @@ int main()
 								
 								InvalRect( window, get_portRect( window ) );
 								
-								unitLength = window_unitLength( window );
-								
-								calculate_token_regions( unitLength );
-								
-								calibrate_mouseRgns( unitLength );
+								window_size_changed( window );
 							}
 							break;
 						
@@ -626,6 +803,21 @@ int main()
 					if ( event.modifiers & cmdKey )
 					{
 						menu_item_chosen( MenuKey( event.message ) );
+						break;
+					}
+					
+					if ( (char) event.message == 0x1B  &&  is_fullscreen )
+					{
+						// User pressed Esc
+						
+						is_fullscreen = false;
+						
+						leave_fullscreen();
+						
+						MenuRef Options    = GetMenuHandle( 4 );
+						short   Fullscreen = 2;
+						
+						CheckMenuItem( Options, Fullscreen, false );
 					}
 					
 					break;
@@ -662,6 +854,11 @@ int main()
 					break;
 			}
 		}
+	}
+	
+	if ( is_fullscreen )
+	{
+		cleanup_fullscreen();
 	}
 	
 	return 0;

@@ -34,7 +34,7 @@ Rect switch_button_rect( const Rect& bounds )
 	
 	const short length = switch_edge_length;  // 12px
 	
-	const short margin = (height - length) / 2;
+	const short margin = (height - length) / 2u;
 	
 	const short top = bounds.top + margin;
 	
@@ -56,8 +56,8 @@ void draw_pushbutton( const Rect&           bounds,
 	{
 		const short titleAscent = 9;
 		
-		const short h = (bounds.left + bounds.right - titleWidth) / 2;
-		const short v = (bounds.top + bounds.bottom + titleAscent) / 2;
+		const short h = (bounds.left + bounds.right - titleWidth) / 2u;
+		const short v = (bounds.top + bounds.bottom + titleAscent) / 2u;
 		
 		MoveTo( h, v );
 		
@@ -197,7 +197,7 @@ void draw_switch_title( const Rect& bounds, const unsigned char* title )
 	const short ascent = 9;
 	
 	const short h = bounds.left + switch_edge_length + margin;
-	const short v = (bounds.top + bounds.bottom + ascent) / 2;
+	const short v = (bounds.top + bounds.bottom + ascent) / 2u;
 	
 	MoveTo( h, v );
 	
@@ -301,12 +301,29 @@ long CDEF_0_Hit( short varCode, ControlRef control, Point where )
 	
 	if ( PtInRect( where, &control[0]->contrlRect ) )
 	{
-		return 1;
+		return varCode == pushButProc ? kControlButtonPart
+		                              : kControlCheckBoxPart;  // and radio
 	}
 	
 	return 0;
 }
 
+static
+long CDEF_0_CalcRgns( short varCode, ControlRef control, long param )
+{
+	const bool indicator_only = param < 0;
+	
+	*(Byte*) param = 0;
+	
+	RgnHandle rgn = (RgnHandle) param;
+	
+	// TODO:  Calculate the region for real
+	RectRgn( rgn, &control[0]->contrlRect );
+	
+	return 0;
+}
+
+pascal
 long CDEF_0( short varCode, ControlRecord** control, short message, long param )
 {
 	switch ( message )
@@ -318,6 +335,8 @@ long CDEF_0( short varCode, ControlRecord** control, short message, long param )
 			return CDEF_0_Hit( varCode, control, *(Point*) &param );
 		
 		case calcCRgns:
+			return CDEF_0_CalcRgns( varCode, control, param );
+		
 		case initCntl:
 		case dispCntl:
 			break;

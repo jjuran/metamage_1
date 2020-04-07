@@ -72,6 +72,7 @@ typedef uint32_t bilevel_pixel_t;
 enum
 {
 	Opt_watch   = 'W',
+	Opt_exhibit = 'X',  // exhibition mode, don't catch SIGINT
 	Opt_gfxmode = 'g',
 	Opt_title   = 't',
 	Opt_wait    = 'w',
@@ -82,6 +83,7 @@ enum
 
 static command::option options[] =
 {
+	{ "exhibit-mode",  Opt_exhibit },
 	{ "graphics-mode", Opt_graphics_mode },
 	
 	{ "magnify", Opt_magnify, command::Param_required },
@@ -95,6 +97,7 @@ static int  the_corner;
 static bool gfx_mode;
 static bool waiting;
 static bool watching;
+static bool exhibiting;
 
 static size_t reflection_height;
 
@@ -310,14 +313,15 @@ static volatile sig_atomic_t signalled;
 
 static
 void update_loop( raster::sync_relay*  sync,
-                  const uint8_t*       src,
-                  size_t               src_stride,
                   uint8_t*             dst,
                   size_t               dst_stride,
                   size_t               width,
                   size_t               height,
                   draw_proc            draw )
 {
+	const size_t src_stride = loaded_raster.meta->desc.stride;
+	const size_t image_size = src_stride * height;
+	
 	uint32_t seed = 0;
 	
 	while ( sync->status == Sync_ready  &&  ! signalled )
@@ -328,6 +332,10 @@ void update_loop( raster::sync_relay*  sync,
 		}
 		
 		seed = sync->seed;
+		
+		const uint8_t* src = (uint8_t*) loaded_raster.addr;
+		
+		src += loaded_raster.meta->desc.frame * image_size;
 		
 		blit( src, src_stride, dst, dst_stride, width, height, draw );
 	}
@@ -363,6 +371,10 @@ char* const* get_options( char** argv )
 	{
 		switch ( opt )
 		{
+			case Opt_exhibit:
+				exhibiting = true;
+				break;
+			
 			case Opt_graphics_mode:
 				gfx_mode = should_modeswitch();
 				break;
@@ -635,7 +647,7 @@ int main( int argc, char** argv )
 	
 	const fb_var_screeninfo old_var_info = var_info;
 	
-	if ( watching  ||  waiting )
+	if ( (watching  ||  waiting)  &&  ! exhibiting )
 	{
 		struct sigaction action = { 0 };
 		
@@ -732,7 +744,7 @@ int main( int argc, char** argv )
 	
 	if ( raster::sync_relay* sync = raster_sync )
 	{
-		update_loop( sync, src, stride, dst, dst_stride, width, height, draw );
+		update_loop( sync, dst, dst_stride, width, height, draw );
 	}
 	
 	blit( src, stride, dst, dst_stride, width, height, draw );

@@ -23,11 +23,12 @@ Ptr   ScrnBase  : 0x0824;
 Point Mouse     : 0x0830;
 Rect  CrsrPin   : 0x0834;
 Rect  CrsrRect  : 0x083C;
+Cursor TheCrsr  : 0x0844;
+char  CrsrVis   : 0x08CC;
+char  CrsrBusy  : 0x08CD;
 
-static Cursor TheCrsr;
 static Ptr    CrsrAddr;
 static Buffer CrsrSave;
-static char   CrsrBusy;
 static short  CrsrState = -1;  // Invisible cursor, at first
 
 
@@ -246,6 +247,7 @@ void hide_cursor()
 		
 		set_empty_rect( &CrsrRect );
 		CrsrAddr = NULL;
+		CrsrVis = false;
 		
 		++CrsrBusy;
 	}
@@ -262,6 +264,7 @@ void show_cursor()
 	
 	if ( ++CrsrState >= 0 )
 	{
+		CrsrVis = true;
 		
 		paint_cursor( Mouse.h, Mouse.v );
 	}

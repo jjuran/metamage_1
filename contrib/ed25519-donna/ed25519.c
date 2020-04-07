@@ -11,12 +11,12 @@
 
 /* define ED25519_SUFFIX to have it appended to the end of each public function */
 #if !defined(ED25519_SUFFIX)
-#define ED25519_SUFFIX 
-#endif
-
+#define ED25519_FN(fn)         fn
+#else
 #define ED25519_FN3(fn,suffix) fn##suffix
 #define ED25519_FN2(fn,suffix) ED25519_FN3(fn,suffix)
 #define ED25519_FN(fn)         ED25519_FN2(fn,ED25519_SUFFIX)
+#endif
 
 #if defined( __RELIX__ )  ||  defined( ANDROID )  ||  __MAC_10_11
 #define ED25519_CUSTOMRANDOM

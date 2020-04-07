@@ -19,6 +19,7 @@
 #include "gear/parse_decimal.hh"
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
 
 // poseven
@@ -33,8 +34,6 @@
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/serialize_Str255.hh"
-#include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/sys/app/menu/list/ID/items.hh"
 
 
@@ -45,73 +44,80 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	struct menu_title : serialize_Str255_contents
-	{
-		static N::Str255 Get( MenuRef menu )
-		{
-			N::Str255 result;
-			
-			::GetMenuTitle( menu, result );
-			
-			return result;
-		}
-		
-		static void Set( MenuRef menu, ConstStr255Param title )
-		{
-			::SetMenuTitle( menu, title );
-		}
-	};
-	
-	
 	static MenuRef GetKeyFromParent( const vfs::node* parent )
 	{
 		return GetMenuRef( gear::parse_decimal( parent->name().c_str() ) );
 	}
 	
-	template < class Accessor >
-	struct sys_app_menu_list_ID_Property : vfs::readwrite_property
+	static
+	MenuRef get_menu( const vfs::node* that )
 	{
-		static const int fixed_size = Accessor::fixed_size;
+		MenuRef menu = GetKeyFromParent( that );
 		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
+		if ( menu == NULL )
 		{
-			MenuRef menu = GetKeyFromParent( that );
-			
-			if ( menu == NULL )
-			{
-				p7::throw_errno( EIO );
-			}
-			
-			typedef typename Accessor::result_type result_type;
-			
-			const result_type data = Accessor::Get( menu );
-			
-			Accessor::deconstruct::apply( result, data, binary );
+			p7::throw_errno( EIO );
 		}
 		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
+		return menu;
+	}
+	
+	static
+	void title_get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
+	{
+		MenuRef menu = get_menu( that );
+		
+		Str255 title = { 0 };
+		
+		::GetMenuTitle( menu, title );
+		
+		result = title;
+		
+		if ( name[ 0 ] != '.' )
 		{
-			MenuRef menu = GetKeyFromParent( that );
-			
-			if ( menu == NULL )
-			{
-				p7::throw_errno( EIO );
-			}
-			
-			Accessor::Set( menu, Accessor::reconstruct::apply( begin, end, binary ) );
+			result = plus::utf8_from_mac( result );
 		}
+	}
+	
+	static
+	void set_menu_title( MenuRef menu, const char* begin, const char* end )
+	{
+		N::Str255 title( begin, end - begin );
+		
+		SetMenuTitle( menu, title );
+	}
+	
+	static
+	void title_set( const vfs::node* that, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		MenuRef menu = get_menu( that );
+		
+		if ( name[ 0 ] == '.' )
+		{
+			set_menu_title( menu, begin, end );
+		}
+		else
+		{
+			plus::string mac_text = plus::mac_from_utf8( begin, end - begin );
+			
+			set_menu_title( menu, mac_text.begin(), mac_text.end() );
+		}
+	}
+	
+	static const vfs::property_params sys_app_menu_list_ID_title_params =
+	{
+		vfs::no_fixed_size,
+		(vfs::property_get_hook) &title_get,
+		(vfs::property_set_hook) &title_set,
 	};
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
-	
-	typedef sys_app_menu_list_ID_Property< menu_title > sys_app_menu_list_ID_title;
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	const vfs::fixed_mapping sys_app_menu_list_ID_Mappings[] =
 	{
 		{ ".mac-title", PROPERTY( sys_app_menu_list_ID_title ) },
-		
-		{ "title", PROPERTY( utf8_text_property< sys_app_menu_list_ID_title > ) },
+		{ "title",      PROPERTY( sys_app_menu_list_ID_title ) },
 		
 		{ "items", &New_FSTree_sys_app_menu_list_ID_items },
 		

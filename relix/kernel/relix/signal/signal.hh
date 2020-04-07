@@ -7,7 +7,11 @@
 #define RELIX_SIGNAL_SIGNAL_HH
 
 // POSIX
+#ifdef __RELIX__
 #include <sys/signal.h>
+#else
+#include <signal.h>
+#endif
 
 
 namespace relix

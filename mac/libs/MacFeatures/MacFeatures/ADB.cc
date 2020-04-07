@@ -5,10 +5,8 @@
 
 #include "MacFeatures/ADB.hh"
 
-// Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
+// mac-sys-utils
+#include "mac_sys/trap_available.hh"
 
 
 namespace MacFeatures
@@ -18,12 +16,9 @@ namespace MacFeatures
 	
 	bool Has_ADB()
 	{
-		long result;
+		enum { _CountADBs = 0xA077 };
 		
-		const OSErr err = ::Gestalt( gestaltROMSize, &result );
-		
-		// 256K ROM has ADB
-		return err == noErr  &&  result >= 256 * 1024;
+		return mac::sys::trap_available( _CountADBs );
 	}
 	
 #endif

@@ -5,6 +5,9 @@
 
 #include "vlib/functions.hh"
 
+// chars
+#include "encoding/utf8.hh"
+
 // crypto
 #include "md5/md5.hh"
 #include "sha256/sha256.hh"
@@ -26,8 +29,6 @@
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/iterators/list_iterator.hh"
-#include "vlib/lib/ed25519.hh"
-#include "vlib/types/boolean.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/stdint.hh"
@@ -156,6 +157,12 @@ namespace vlib
 	Value v_rep( const Value& v )
 	{
 		return String( rep( v ) );
+	}
+	
+	static
+	Value v_secret( const Value& v )
+	{
+		return v.secret();
 	}
 	
 	static
@@ -292,9 +299,51 @@ namespace vlib
 	}
 	
 	static
+	Value v_transd( const Value& v )
+	{
+		list_iterator args( v );
+		
+		const Value& arg1 = args.use();
+		const Value& arg2 = args.use();
+		const Value& arg3 = args.get();
+		
+		plus::var_string s      = arg1.string();
+		const plus::string& pat = arg2.string();
+		const plus::string& sub = arg3.string();
+		
+		translate_core( s, pat, sub );
+		
+		return String( s );
+	}
+	
+	static
 	bool is_0x_numeral( const plus::string& s, char x )
 	{
 		return s.size() > 2  &&  s[ 0 ] == '0'  &&  s[ 1 ] == x;
+	}
+	
+	static
+	Value v_uchr( const Value& arg )
+	{
+		using chars::measure_utf8_bytes_for_unicode;
+		using chars::put_code_point_into_utf8;
+		
+		chars::unichar_t uc = arg.number().clipped();
+		
+		const unsigned n = measure_utf8_bytes_for_unicode( uc );
+		
+		if ( n == 0 )
+		{
+			THROW( "invalid Unicode code point" );
+		}
+		
+		plus::string s;
+		
+		char* p = s.reset( n );
+		
+		put_code_point_into_utf8( uc, n, p );
+		
+		return String( s );
 	}
 	
 	static
@@ -319,64 +368,6 @@ namespace vlib
 		return Packed( unhex( v.string() ) );
 	}
 	
-	static
-	void check_ed25519_key_size( const plus::string& key )
-	{
-		if ( key.size() != 32 )
-		{
-			THROW( "Ed25519 keys must be 32 bytes" );
-		}
-	}
-	
-	static
-	void check_ed25519_sig_size( const plus::string& sig )
-	{
-		if ( sig.size() != 64 )
-		{
-			THROW( "Ed25519 signatures must be 64 bytes" );
-		}
-	}
-	
-	static
-	Value v_mkpub( const Value& v )
-	{
-		const plus::string& secret_key = v.string();
-		
-		check_ed25519_key_size( secret_key );
-		
-		return Packed( ed25519::publickey( secret_key ) );
-	}
-	
-	static
-	Value v_sign( const Value& v )
-	{
-		list_iterator args( v );
-		
-		const plus::string& key = args.use().string();
-		const plus::string& msg = args.get().string();
-		
-		check_ed25519_key_size( key );
-		
-		return Packed( ed25519::sign( key, msg ) );
-	}
-	
-	static
-	Value v_verify( const Value& v )
-	{
-		list_iterator args( v );
-		
-		const plus::string& key = args.use().string();
-		const plus::string& msg = args.use().string();
-		const plus::string& sig = args.get().string();
-		
-		check_ed25519_key_size( key );
-		check_ed25519_sig_size( sig );
-		
-		bool b = ed25519::verify( key, msg, sig );
-		
-		return Boolean( b );
-	}
-	
 	static const Integer zero = Integer( 0 );
 	static const Integer two  = Integer( 2 );
 	static const Integer npos = Integer( uint32_t( -1 ) );
@@ -392,8 +383,6 @@ namespace vlib
 	static const Value mince( string, u32_2 );
 	
 	static const Value bytes( string, Op_union, packed );
-	static const Value sign( packed, bytes );
-	static const Value verify( packed, Value( bytes, packed ) );
 	static const Value x32( u32, Op_union, i32 );
 	static const Value s_offset( x32, Op_duplicate, zero );
 	static const Value s_length( u32, Op_duplicate, npos );
@@ -402,7 +391,11 @@ namespace vlib
 	static const Value string_ref( Op_unary_deref, string );
 	static const Value trans( string_ref, Value( bytes, bytes ) );
 	
-	#define TRANS  "translate"
+	static const Value transd( string, Value( bytes, bytes ) );
+	
+	#define DESTRUCT  "self-destructing"
+	#define TRANS     "translate"
+	#define TRANSD    "translated"
 	
 	enum
 	{
@@ -418,15 +411,14 @@ namespace vlib
 	const proc_info proc_min    = { "min",    &v_min,    NULL,     pure };
 	const proc_info proc_mince  = { "mince",  &v_mince,  &mince,   pure };
 	const proc_info proc_rep    = { "rep",    &v_rep,    NULL,     pure };
+	const proc_info proc_secret = { DESTRUCT, &v_secret, NULL           };
 	const proc_info proc_sha256 = { "sha256", &v_sha256, &bytes,   pure };
 	const proc_info proc_substr = { "substr", &v_substr, &substr,  pure };
 	const proc_info proc_tail   = { "tail",   &v_tail,   NULL,     pure };
 	const proc_info proc_trans  = { TRANS,    &v_trans,  &trans         };
+	const proc_info proc_transd = { TRANSD,   &v_transd, &transd,  pure };
+	const proc_info proc_uchr   = { "uchr",   &v_uchr,   &u32,     pure };
 	const proc_info proc_unbin  = { "unbin",  &v_unbin,  &string,  pure };
 	const proc_info proc_unhex  = { "unhex",  &v_unhex,  &string,  pure };
-	
-	const proc_info proc_mkpub  = { "ed25519-publickey", &v_mkpub,  &packed };
-	const proc_info proc_sign   = { "ed25519-sign",      &v_sign,   &sign   };
-	const proc_info proc_verify = { "ed25519-verify",    &v_verify, &verify };
 	
 }

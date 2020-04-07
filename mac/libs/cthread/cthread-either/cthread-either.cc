@@ -84,6 +84,18 @@ namespace either  {
 		}
 	}
 	
+	bool woken_thread( thread_id id )
+	{
+		if ( has_ThreadManager )
+		{
+			return system::woken_thread( id );
+		}
+		else
+		{
+			return custom::woken_thread( id );
+		}
+	}
+	
 	void thread_yield()
 	{
 		if ( has_ThreadManager )

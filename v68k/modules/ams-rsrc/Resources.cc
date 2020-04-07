@@ -12,30 +12,20 @@
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
+#ifndef __STRINGCOMPARE__
+#include <StringCompare.h>
+#endif
 
 // Standard C
 #include <stddef.h>
 
-// Standard C++
-#include <new>
-
-// iota
-#include "iota/char_types.hh"
-
-// gear
-#include "gear/hexadecimal.hh"
-
-// plus
-#include "plus/var_string.hh"
-
-// freemount-client
-#include "freemount/synced.hh"
+// log-of-war
+#include "logofwar/report.hh"
 
 // ams-common
 #include "callouts.hh"
 #include "FCB.hh"
 #include "master_pointer.hh"
-#include "module_A4.hh"
 
 // ams-rsrc
 #include "rsrc_fork.hh"
@@ -45,9 +35,20 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
+enum
+{
+	resPurgeable = 32,
+	resLocked    = 16,
+	resProtected = 8,
+	resChanged   = 2,
+};
+
+
 short MemErr      : 0x0220;
+short CurApRefNum : 0x0900;
 Str31 CurApName   : 0x0910;
 Handle TopMapHndl : 0x0A50;
+short SysMap      : 0x0A58;
 short CurMap      : 0x0A5A;
 short ResErr      : 0x0A60;
 
@@ -187,26 +188,6 @@ ConstStr255Param get_name( const rsrc_map_header& map, const rsrc_header& rsrc )
 }
 
 static
-bool equivalent_fsnames( const UInt8* a, const UInt8* b, UInt16 len )
-{
-	while ( len-- > 0 )
-	{
-		if ( iota::to_lower( *a++ ) != iota::to_lower( *b++ ) )
-		{
-			return false;
-		}
-	}
-	
-	return true;
-}
-
-static
-bool equivalent_fsnames( ConstStr255Param a, ConstStr255Param b )
-{
-	return *a == *b  &&  equivalent_fsnames( a + 1, b + 1, *a );
-}
-
-static
 rsrc_header* find_rsrc( const rsrc_map_header&  map,
                         ResType                 type,
                         ConstStr255Param        name )
@@ -230,7 +211,7 @@ rsrc_header* find_rsrc( const rsrc_map_header&  map,
 		{
 			if ( ConstStr255Param found_name = get_name( map, *rsrc ) )
 			{
-				if ( equivalent_fsnames( name, found_name ) )
+				if ( EqualString( name, found_name, false, true ) )
 				{
 					return rsrc;
 				}
@@ -261,10 +242,8 @@ const rsrc_data* get_data( const rsrc_map_header& map, const rsrc_header& rsrc )
 }
 
 static
-short OpenResFile_handler( ConstStr255Param name : __A0 )
+short OpenResFile_handler( ConstStr255Param name : __A0, short vRefNum : __D0 )
 {
-	const short vRefNum = 0;  // default
-	
 	OSErr err;
 	short refNum;
 	
@@ -332,6 +311,8 @@ short OpenResFile_handler( ConstStr255Param name : __A0 )
 	
 	TopMapHndl = h;
 	
+	ResErr = noErr;
+	
 	return CurMap = refNum;
 	
 close_and_bail:
@@ -349,6 +330,7 @@ pascal short OpenResFile_patch( ConstStr255Param name )
 	
 	LEA      20(SP),A2
 	MOVEA.L  (A2)+,A0
+	MOVEQ.L  #0,D0    // vRefNum = 0
 	
 	JSR      OpenResFile_handler
 	MOVE.W   D0,(A2)
@@ -362,13 +344,65 @@ pascal short OpenResFile_patch( ConstStr255Param name )
 	JMP      (A0)
 }
 
+static
+void CloseResFile_handler( short refnum : __D0 )
+{
+	ERROR = "CloseResFile is unimplemented";
+}
+
+asm
+pascal void CloseResFile_patch( short refnum )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.W   (A2)+,D0
+	
+	JSR      CloseResFile_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #2,SP
+	
+	JMP      (A0)
+}
+
+static asm
+void run_INIT( ProcPtr proc : __A0 )
+{
+	LINK     A6,#0
+	MOVEM.L  D3-D7/A2-A4,-(SP)
+	
+	JSR      (A0)
+	
+	MOVEM.L  (SP)+,D3-D7/A2-A4
+	UNLK     A6
+	RTS
+}
+
+pascal short InitResources_patch()
+{
+	SysMap = OpenResFile_handler( "\p" "AMS Resources", 0 );
+	
+	short index = 0;
+	
+	while ( Handle h = GetIndResource_patch( 'INIT', ++index ) )
+	{
+		ProcPtr proc = (ProcPtr) *h;
+		
+		run_INIT( proc );
+		
+		ReleaseResource_patch( h );
+	}
+	
+	return SysMap;
+}
+
 pascal void RsrcZoneInit_patch()
 {
-	FCBSPtr->fcbs[ 0 ].fcbFlNum = -1;  // claim for System resource fork
-	
-	// CurApRefNum is automatically fixed at 2
-	
-	OpenResFile_handler( CurApName );
+	CurApRefNum = OpenResFile_handler( CurApName, 0 );
 }
 
 pascal short ResError_patch()
@@ -430,48 +464,6 @@ pascal void SetResLoad_patch( unsigned char load )
 }
 
 static
-bool try_to_get( const char* begin, const char* end, plus::var_string& data )
-{
-	plus::string path( begin, end - begin, plus::delete_never );
-	
-	try
-	{
-		namespace F = freemount;
-		
-		const int in  = 6;
-		const int out = 7;
-		
-		data = F::synced_get( in, out, path ).move();
-		
-		return true;
-	}
-	catch ( const std::bad_alloc& )
-	{
-		ResErr = memFullErr;
-	}
-	catch ( ... )
-	{
-		ResErr = resNotFound;
-	}
-	
-	return false;
-}
-
-static
-bool try_to_get( char*              insert_end,
-                 char*              end,
-                 const char*        name,
-                 size_t             len,
-                 plus::var_string&  result )
-{
-	char* begin = insert_end - len;
-	
-	fast_memcpy( begin, name, len );
-	
-	return try_to_get( begin, end, result );
-}
-
-static
 Handle new_res_handle( RsrcMapHandle rsrc_map, rsrc_header& rsrc, ResType type )
 {
 	if ( rsrc.handle == NULL )
@@ -492,6 +484,16 @@ Handle new_res_handle( RsrcMapHandle rsrc_map, rsrc_header& rsrc, ResType type )
 			mp.type   = type;
 			mp.base   = rsrc_map;
 			
+			if ( rsrc.attrs & resLocked )
+			{
+				mp.flags |= kHandleLockedMask;
+			}
+			
+			if ( rsrc.attrs & resPurgeable )
+			{
+				mp.flags |= kHandlePurgeableMask;
+			}
+			
 			rsrc.handle = h;
 		}
 		else
@@ -500,6 +502,8 @@ Handle new_res_handle( RsrcMapHandle rsrc_map, rsrc_header& rsrc, ResType type )
 			return NULL;
 		}
 	}
+	
+	ResErr = noErr;
 	
 	return rsrc.handle;
 }
@@ -519,58 +523,9 @@ Handle GetResource_core( ResType type : __D0, short id : __D1 )
 		rsrc_map = (RsrcMapHandle) rsrc_map[0]->next_map;
 	}
 	
-	/*
-		The app name can only be 31 bytes (not 32), but with the extra byte,
-		"TYPE" is word-aligned.
-	*/
+	ResErr = resNotFound;
 	
-	char tmp_path[] = "1234567890" "1234567890" "1234567890" "12/r/1234.TYPE";
-	
-	char* const end      = tmp_path + sizeof tmp_path - 1;
-	char* const name_end = tmp_path + 32;
-	
-	char* p = end - STRLEN( "1234.TYPE" );
-	
-	gear::encode_16_bit_hex( id, name_end + STRLEN( "/r/" ) );
-	
-	p += 5;
-	
-	*(ResType*) p = type;
-	
-	plus::var_string rsrc;
-	
-	Handle result = 0;  // NULL
-	
-	bool got = false;
-	
-	if ( CurApName[ 0 ] != '\0' )
-	{
-		const size_t len = CurApName[ 0 ];
-		
-		got = try_to_get( name_end, end, (char*) CurApName + 1, len, rsrc );
-	}
-	
-	if ( ! got )
-	{
-		got = try_to_get( name_end, end, STR_LEN( "System" ), rsrc );
-	}
-	
-	if ( ! got )
-	{
-		got = try_to_get( name_end, end, STR_LEN( "AMS Resources" ), rsrc );
-	}
-	
-	if ( ! got )
-	{
-		// ResErr is already set.
-		return result;
-	}
-	
-	result = PtrToHand( rsrc.data(), rsrc.size() );
-	
-	ResErr = MemErr;
-	
-	return result;
+	return NULL;
 }
 
 static
@@ -670,8 +625,6 @@ pascal Handle GetIndResource_patch( ResType type, short index )
 static
 Handle GetResource_handler( ResType type : __D0, short id : __D1 )
 {
-	temp_A4 a4;
-	
 	return GetResource_core( type, id );
 }
 
@@ -764,6 +717,10 @@ void DetachResource_handler( Handle resource : __A0 )
 	{
 		rsrc->handle = NULL;
 		
+		master_pointer& mp = *(master_pointer*) resource;
+		
+		mp.flags -= kHandleIsResourceMask;
+		
 		err = noErr;
 	}
 	
@@ -824,6 +781,8 @@ void GetResInfo_handler( const GetResInfo_args* args : __A0 )
 	
 	if ( args->name )
 	{
+		args->name[ 0 ] = '\0';  // Pessimistically assign empty string
+		
 		const rsrc_map_header& rsrc_map = **(RsrcMapHandle) mp.base;
 		
 		if ( ConstStr255Param name = get_name( rsrc_map, *rsrc ) )
@@ -892,6 +851,86 @@ pascal short GetResAttrs_patch( Handle resource )
 pascal long SizeRsrc_patch( Handle resource )
 {
 	return GetHandleSize( resource );
+}
+
+static
+void ChangedResource_handler( Handle resource : __A0 )
+{
+	OSErr err = resNotFound;
+	
+	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
+	{
+		if ( rsrc->attrs & resProtected )
+		{
+			err = noErr;
+		}
+		else
+		{
+			ERROR = "ChangedResource is unimplemented";
+			err = paramErr;
+		}
+	}
+	
+	ResErr = err;
+}
+
+asm
+pascal void ChangedResource_patch( Handle resource )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A0
+	
+	JSR      ChangedResource_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
+	
+	JMP      (A0)
+}
+
+static
+void WriteResource_handler( Handle resource : __A0 )
+{
+	OSErr err = resNotFound;
+	
+	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
+	{
+		if ( (rsrc->attrs & (resProtected | resChanged)) != resChanged )
+		{
+			err = noErr;
+		}
+		else
+		{
+			ERROR = "WriteResource is unimplemented";
+			err = paramErr;
+		}
+	}
+	
+	ResErr = err;
+}
+
+asm
+pascal void WriteResource_patch( Handle resource )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A0
+	
+	JSR      WriteResource_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
+	
+	JMP      (A0)
 }
 
 pascal void SetResPurge_patch( unsigned char install )
@@ -1032,6 +1071,29 @@ pascal Handle Get1NamedResource_patch( ResType type, ConstStr255Param name )
 	
 	JSR      Get1NamedResource_handler
 	MOVE.L   A0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #8,SP
+	
+	JMP      (A0)
+}
+
+asm
+pascal short OpenRFPerm_patch( ConstStr255Param name, short vRefNum, char perm )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.B   (A2)+,D1  // payload in the high byte
+	ADDQ.L   #1,A2     // skip the low byte
+	MOVE.W   (A2)+,D0
+	MOVEA.L  (A2)+,A0
+	
+	JSR      OpenResFile_handler
+	MOVE.W   D0,(A2)
 	
 	MOVEM.L  (SP)+,D1-D2/A1-A2
 	

@@ -11,7 +11,7 @@ def display
 	
 	if family == 2 then
 	{
-		addr = ".".join .*(sa[ 4 -> 8 ] map u8)
+		addr = ".".join *(sa[ 4 -> 8 ] map u8)
 	}
 	else
 	{

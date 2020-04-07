@@ -131,25 +131,37 @@ namespace Genie
 	};
 	
 	
-	template < class Accessor >
-	struct sys_mac_vol_N_Parms_Property : vfs::readonly_property
-	{
-		static const int fixed_size = Accessor::fixed_size;
-		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			GetVolParmsInfoBuffer parmsInfo;
-			
-			mac::sys::get_volume_params( parmsInfo, GetKey( that ) );
-			
-			const typename Accessor::result_type data = Accessor::Get( parmsInfo );
-			
-			Accessor::deconstruct::apply( result, data, binary );
-		}
-	};
+	#define DEFINE_GETTER( p )  \
+	static void p##_get( plus::var_string& result, const vfs::node* that, bool binary )  \
+	{  \
+		typedef p Accessor;                                             \
+		GetVolParmsInfoBuffer parmsInfo;                                \
+		mac::sys::get_volume_params( parmsInfo, GetKey( that ) );       \
+		const Accessor::result_type data = Accessor::Get( parmsInfo );  \
+		Accessor::deconstruct::apply( result, data, binary );           \
+	}
+	
+	DEFINE_GETTER( GetVolumeParmsAttrib   );
+	DEFINE_GETTER( GetVolumeParmsHandle   );
+	DEFINE_GETTER( GetVolumeParmsServer   );
+	DEFINE_GETTER( GetVolumeParmsGrade    );
+	DEFINE_GETTER( GetVolumeParmsPrivID   );
+	DEFINE_GETTER( GetVolumeParmsExtended );
+	DEFINE_GETTER( GetVolumeParmsDeviceID );
+	
+	#define DEFINE_PARAMS( p )  \
+	static const vfs::property_params p##_params = {p::fixed_size, &p##_get}
+	
+	DEFINE_PARAMS( GetVolumeParmsAttrib   );
+	DEFINE_PARAMS( GetVolumeParmsHandle   );
+	DEFINE_PARAMS( GetVolumeParmsServer   );
+	DEFINE_PARAMS( GetVolumeParmsGrade    );
+	DEFINE_PARAMS( GetVolumeParmsPrivID   );
+	DEFINE_PARAMS( GetVolumeParmsExtended );
+	DEFINE_PARAMS( GetVolumeParmsDeviceID );
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_vol_N_Parms_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	const vfs::fixed_mapping sys_mac_vol_N_parms_Mappings[] =
 	{

@@ -5,10 +5,6 @@
 
 #include "Genie/FS/HFS/Rename.hh"
 
-// mac-file-utils
-#include "mac_file/make_FSSpec.hh"
-#include "mac_file/parent_directory.hh"
-
 // Debug
 #include "debug/assert.hh"
 
@@ -128,6 +124,14 @@ namespace Genie
 	}
 	
 	
+	static inline
+	void CatMove( const FSSpec& src, long dstDir )
+	{
+		OSErr err = ::CatMove( src.vRefNum, src.parID, src.name, dstDir, NULL );
+		
+		Mac::ThrowOSStatus( err );
+	}
+	
 	static void MoveAndRename( const FSSpec& srcFile, const FSSpec& destFile )
 	{
 		FileLockBypass lockBypass( srcFile );
@@ -208,13 +212,8 @@ namespace Genie
 		
 		if ( keeping_name )
 		{
-			using mac::file::make_FSSpec;
-			using mac::file::parent_directory;
-			
-			FSSpec dest_dir = make_FSSpec( parent_directory( destFileSpec ) );
-			
 			// Same name, different dir; move only.
-			N::CatMove( srcFileSpec, dest_dir );
+			CatMove( srcFileSpec, destFileSpec.parID );
 		}
 		else
 		{

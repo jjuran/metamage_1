@@ -1,0 +1,84 @@
+#!/usr/bin/env vx -Z
+
+const usr_include_portaudio_h = "/usr/include/portaudio.h"
+
+const portaudio_repo      = "portaudio-mirror"
+const portaudio_repo_path = "../" portaudio_repo
+
+const configure_cmd = "./configure --disable-mac-universal"
+
+const static_lib_name = "libportaudio.a"
+const static_lib_subpath = "lib/.libs/" static_lib_name
+
+def exists (path)
+{
+	return try {stat path; true} catch {false}
+}
+
+def installed
+{
+	return exists usr_include_portaudio_h
+}
+
+def clone
+{
+	if installed() then {return ()}
+	
+	if not exists portaudio_repo_path "/.git" then
+	{
+		run [ "bin/clone-repo", portaudio_repo ]
+		
+		system "cd -P " portaudio_repo_path " && git checkout origin/patches"
+	}
+	
+	if not exists "var/links/" portaudio_repo then
+	{
+		system "cd var/links && ln -s ../../" portaudio_repo_path
+		system "rm -f var/cache/compile-driver/catalog"
+	}
+}
+
+def configure
+{
+	clone()
+	
+	if not installed() and not exists portaudio_repo_path "/Makefile" then
+	{
+		system "cd -P " portaudio_repo_path " && " configure_cmd
+	}
+}
+
+def make
+{
+	configure()
+	
+	if not installed() then
+	{
+		system "cd -P " portaudio_repo_path " && make lib/libportaudio.la"
+		
+		if not exists portaudio_repo_path "/" static_lib_name then
+		{
+			system "cd -P " portaudio_repo_path " && ln -s " static_lib_subpath
+		}
+	}
+}
+
+const commands = str^[ :clone, :configure, :make ]
+
+if argc < 2 then
+{
+	exit 0
+}
+
+const subcommand = argv[ 1 ]
+
+if not subcommand in commands then
+{
+	throw subcommand ": no such portaudio-pkg command"
+}
+
+const handler = commands[ subcommand ]
+
+handler()
+
+end.

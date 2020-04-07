@@ -14,10 +14,16 @@
 // command
 #include "command/get_option.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // ams-common
 #include "module_A4.hh"
 
 // ams-fs
+#include "appfs.hh"
+#include "bootstrap.hh"
+#include "documents.hh"
 #include "Files.hh"
 #include "mount.hh"
 #include "Volumes.hh"
@@ -35,11 +41,15 @@ enum
 	Opt_last_byte = 255,
 	
 	Opt_disk,
+	Opt_appfs_fd,
+	Opt_docfs_fd,
 };
 
 static command::option options[] =
 {
-	{ "disk", Opt_disk, command::Param_required },
+	{ "disk",     Opt_disk,     command::Param_required },
+	{ "appfs-fd", Opt_appfs_fd, command::Param_required },
+	{ "docfs-fd", Opt_docfs_fd, command::Param_required },
 	
 	NULL,
 };
@@ -65,18 +75,25 @@ void install_FileManager()
 	OSTRAP( Read   );  // A002
 	OSTRAP( Write  );  // A003
 	
+	OSTRAP( GetVolInfo );  // A007
 	OSTRAP( Create );  // A008
 	
 	OSTRAP( OpenRF );  // A00A
+	
+	OSTRAP( GetFileInfo );  // A00C
+	OSTRAP( SetFileInfo );  // A00D
 	
 	OSTRAP( GetEOF   );  // A011
 	
 	OSTRAP( FlushVol );  // A013
 	OSTRAP( GetVol   );  // A014
+	OSTRAP( SetVol   );  // A015
 	
 	OSTRAP( GetFPos  );  // A018
 	
 	OSTRAP( SetFPos  );  // A044
+	
+	OSTRAP( FSDispatch );  // A060
 }
 
 static
@@ -92,6 +109,14 @@ char* const* get_options( char** argv )
 	{
 		switch ( opt )
 		{
+			case Opt_appfs_fd:
+				appfs_fd = gear::parse_unsigned_decimal( global_result.param );
+				break;
+			
+			case Opt_docfs_fd:
+				docfs_fd = gear::parse_unsigned_decimal( global_result.param );
+				break;
+			
 			case Opt_disk:
 				try_to_mount( global_result.param );
 				break;
@@ -120,7 +145,12 @@ int main( int argc, char** argv )
 	
 	install_FileManager();
 	
-	mount_virtual_network_volume();
+	mount_virtual_bootstrap_volume();
+	
+	if ( docfs_fd )
+	{
+		mount_virtual_documents_volume();
+	}
 	
 	module_A4_suspend();  // doesn't return
 }

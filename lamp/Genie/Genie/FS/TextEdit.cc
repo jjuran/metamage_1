@@ -21,6 +21,7 @@
 
 // plus
 #include "plus/mac_utf8.hh"
+#include "plus/serialize.hh"
 #include "plus/simple_map.hh"
 
 // poseven
@@ -34,6 +35,9 @@
 
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
+
+// vfs
+#include "vfs/node.hh"
 
 // Pedestal
 #include "Pedestal/Clipboard.hh"
@@ -601,5 +605,71 @@ namespace Genie
 			params.itHasChangedAttributes = false;
 		}
 	}
+	
+	using plus::serialize_bool;
+	
+	static
+	void flag_get( plus::var_string& result, const vfs::node* view, bool binary, const plus::string& name )
+	{
+		const TextEditParameters& params = TextEditParameters::Get( view );
+		
+		const char c = name[ 1 ];
+		
+		const bool value = c == 'c' ? params.itIsActive
+		                 : c == 'e' ? params.itIsSecret
+		                 : c == 'i' ? params.itIsSingular
+		                 :            0;
+		
+		serialize_bool::deconstruct::apply( result, value, binary );
+	}
+	
+	static
+	void flag_set( const vfs::node* view, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		TextEditParameters& params = TextEditParameters::Get( view );
+		
+		bool value = serialize_bool::reconstruct::apply( begin, end, binary );
+		
+		if ( name[ 1 ] == 'e' )
+		{
+			params.itsValidLength = 0;
+			params.itIsSecret = value;
+		}
+		else
+		{
+			params.itIsSingular = value;
+		}
+		
+		InvalidateWindowForView( view );
+	}
+	
+	const vfs::property_params textedit_flag_params =
+	{
+		serialize_bool::fixed_size,
+		(vfs::property_get_hook) &flag_get,
+		(vfs::property_set_hook) &flag_set,
+	};
+	
+	static
+	void scroll_set( const vfs::node* that, const char* begin, const char* end, bool binary )
+	{
+		TextEditParameters::Get( that ).itHasChangedAttributes = true;
+		
+		scroller_setting_params.set( that, begin, end, binary );
+	}
+	
+	const vfs::property_params textedit_scroll_params =
+	{
+		scroller_setting_params.size,
+		scroller_setting_params.get,
+		&scroll_set,
+	};
+	
+	const vfs::property_params textedit_selection_params =
+	{
+		vfs::no_fixed_size,
+		&Selection_Property::get,
+		&Selection_Property::set,
+	};
 	
 }

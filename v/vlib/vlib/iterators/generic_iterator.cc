@@ -7,10 +7,12 @@
 
 // vlib
 #include "vlib/throw.hh"
+#include "vlib/iterators/byterange_iterator.hh"
 #include "vlib/iterators/iterator_template.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/iterators/range_iterator.hh"
 #include "vlib/iterators/string_iterator.hh"
+#include "vlib/types/byterange.hh"
 
 
 namespace vlib
@@ -40,6 +42,12 @@ namespace vlib
 			
 			default:
 				break;
+		}
+		
+		if ( container.is< ByteRange >() )
+		{
+			its_impl = new_iterator< byterange_iterator >( container );
+			return;
 		}
 		
 		if ( Expr* expr = container.expr() )

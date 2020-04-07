@@ -66,6 +66,8 @@ enum
 	line_F_emulator,
 	format_error,
 	
+	sigint_interrupt,
+	
 	unimplemented_trap,
 	BlockMove_trap,
 	Gestalt_trap,

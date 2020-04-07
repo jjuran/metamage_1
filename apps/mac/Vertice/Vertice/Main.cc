@@ -3,9 +3,11 @@
 	---------------
 */
 
-// Nitrogen
-#include "Nitrogen/AEDataModel.hh"
-#include "Nitrogen/AppleEvents.hh"
+// mac-config
+#include "mac_config/apple-events.hh"
+
+// mac-app-utils
+#include "mac_app/event_handlers.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -19,19 +21,7 @@
 namespace Vertice
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
-	
-	
-	class App : public Ped::Application
-	{
-		public:
-			static void AppleEventHandler( Mac::AppleEvent const&  appleEvent,
-			                               Mac::AppleEvent      &  reply );
-			
-			App();
-	};
 	
 	
 	static bool About( Ped::CommandCode )
@@ -41,28 +31,19 @@ namespace Vertice
 		return true;
 	}
 	
-	App::App()
+	static
+	long open_doc( const FSSpec& file )
 	{
-		N::AEInstallEventHandler< AppleEventHandler >( Mac::kCoreEventClass,
-		                                               Mac::kAEOpenDocuments ).release();
-		
-		SetCommandHandler( Ped::kCmdAbout, &About );
-	}
-	
-	void App::AppleEventHandler( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply )
-	{
-		n::owned< Mac::AEDescList_Data > docList = N::AEGetParamDesc( appleEvent,
-		                                                              Mac::keyDirectObject,
-		                                                              Mac::typeAEList );
-		
-		int docCount = N::AECountItems( docList );
-		
-		for ( int index = 1;  index <= docCount;  index++ )
+		try
 		{
-			FSSpec fss = N::AEGetNthPtr< Mac::typeFSS >( docList, index );
-			
-			OpenDocument( fss );
+			OpenDocument( file );
 		}
+		catch ( ... )
+		{
+			return -1;
+		}
+		
+		return 0;
 	}
 	
 }
@@ -70,7 +51,21 @@ namespace Vertice
 
 int main(void)
 {
-	Vertice::App app;
+	using namespace Vertice;
+	
+	Ped::Application app;
+	
+	const bool apple_events_present =
+		CONFIG_APPLE_EVENTS  &&
+			(CONFIG_APPLE_EVENTS_GRANTED  ||
+				Ped::apple_events_present);
+	
+	if ( apple_events_present )
+	{
+		mac::app::install_opendocs_handler( &open_doc );
+	}
+	
+	SetCommandHandler( Ped::kCmdAbout, &About );
 	
 	return app.Run();
 }

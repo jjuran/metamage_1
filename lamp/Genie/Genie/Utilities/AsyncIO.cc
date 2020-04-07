@@ -194,21 +194,4 @@ namespace Genie
 	                                    Mac::FSDirID          dirID,
 	                                    const unsigned char*  name );
 	
-	
-	n::owned< Mac::FSFileRefNum >
-	//
-	FSpOpenDF( const FSSpec&  spec,
-	           Mac::FSIOPerm  permissions )
-	{
-		return MacIO::FSpOpenDF( spec, permissions, YIELD, UPP_ARG( WakeUp ) );
-	}
-	
-	n::owned< Mac::FSFileRefNum >
-	//
-	FSpOpenRF( const FSSpec&  spec,
-	           Mac::FSIOPerm  permissions )
-	{
-		return MacIO::FSpOpenRF( spec, permissions, YIELD, UPP_ARG( WakeUp ) );
-	}
-	
 }

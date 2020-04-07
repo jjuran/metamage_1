@@ -18,13 +18,15 @@
 
 // gear
 #include "gear/inscribe_decimal.hh"
+#include "gear/parse_decimal.hh"
 
 // ams-common
 #include "callouts.hh"
+#include "c_string.hh"
 
 
 static
-pascal StringPtr NumToString_method( long x : __D0, StringPtr p : __A0 ) : __A0
+StringPtr NumToString_method( long x : __D0, StringPtr p : __A0 )
 {
 	const char* s = gear::inscribe_decimal( x );
 	
@@ -39,6 +41,12 @@ pascal StringPtr NumToString_method( long x : __D0, StringPtr p : __A0 ) : __A0
 	return q;
 }
 
+static
+long StringToNum_method( ConstStr255Param string : __A0 )
+{
+	return gear::parse_decimal( CSTR( string ) );
+}
+
 asm void Pack7_patch( short method )
 {
 	MOVEA.L  (SP)+,A1
@@ -48,9 +56,15 @@ asm void Pack7_patch( short method )
 	TST.W    D1
 	BEQ      dispatch_NumToString
 	
+	CMPI.W   #0x0001,D1
+	BEQ      dispatch_StringToNum
+	
 	_Debugger
 	_ExitToShell
 	
 dispatch_NumToString:
 	JMP      NumToString_method
+	
+dispatch_StringToNum:
+	JMP      StringToNum_method
 }

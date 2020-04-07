@@ -60,17 +60,17 @@ namespace worldview
 			
 			ColorMatrix ReadColor( const char* begin, const char* end ) const;
 			
-			void Define        ( const char* begin, const char* end );
-			void SetContext    ( const char* begin, const char* end );
-			void MakeCamera    ( const char* begin, const char* end );
-			void SetColor      ( const char* begin, const char* end );
-			void SetTile       ( const char* begin, const char* end );
-			void SetOrigin     ( const char* begin, const char* end );
-			void Translate     ( const char* begin, const char* end );
-			void SetTheta      ( const char* begin, const char* end );
-			void SetPhi        ( const char* begin, const char* end );
-			void AddMeshPoint  ( const char* begin, const char* end );
-			void AddMeshPolygon( const char* begin, const char* end );
+			static void Define        ( Parser&, const char* a, const char* z );
+			static void SetContext    ( Parser&, const char* a, const char* z );
+			static void MakeCamera    ( Parser&, const char* a, const char* z );
+			static void SetColor      ( Parser&, const char* a, const char* z );
+			static void SetTile       ( Parser&, const char* a, const char* z );
+			static void SetOrigin     ( Parser&, const char* a, const char* z );
+			static void Translate     ( Parser&, const char* a, const char* z );
+			static void SetTheta      ( Parser&, const char* a, const char* z );
+			static void SetPhi        ( Parser&, const char* a, const char* z );
+			static void AddMeshPoint  ( Parser&, const char* a, const char* z );
+			static void AddMeshPolygon( Parser&, const char* a, const char* z );
 	};
 	
 	class Loader

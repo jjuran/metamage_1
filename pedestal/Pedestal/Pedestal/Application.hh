@@ -33,8 +33,6 @@ namespace Pedestal
 	
 	void ScheduleImmediateEventCheck();
 	
-	void Quit();
-	
 }
 
 #endif

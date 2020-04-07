@@ -27,6 +27,7 @@
 #include "Rect-utils.hh"
 #include "Rects.hh"
 #include "Regions.hh"
+#include "segments_box.hh"
 
 
 using quickdraw::offset_region;
@@ -167,7 +168,7 @@ bool is_valid_region( RgnHandle rgn )
 	
 	ASSERT( rgn_size >= 28 );
 	
-	const short n = rgn_size / 2 - sizeof (MacRegion) / 2;
+	const short n = rgn_size / 2u - sizeof (MacRegion) / 2;
 	
 	const short* extent = rgn_extent( *rgn );
 	
@@ -179,7 +180,7 @@ bool is_valid_region( RgnHandle rgn )
 	short bottom = -32767;
 	short right  = -32767;
 	
-	ASSERT( extent[ 0 ] == top );
+	EXPECT( extent[ 0 ] == top );
 	
 	const short* p = extent;
 	
@@ -200,7 +201,8 @@ bool is_valid_region( RgnHandle rgn )
 		
 		while ( *p != End )
 		{
-			ASSERT( *p > h );
+			EXPECT( *p > h );
+			ASSERT( *p >= h );
 			
 			h = *p++;
 			
@@ -212,9 +214,9 @@ bool is_valid_region( RgnHandle rgn )
 	}
 	
 	ASSERT( top    == bbox.top    );
-	ASSERT( left   == bbox.left   );
-	ASSERT( bottom == bbox.bottom );
-	ASSERT( right  == bbox.right  );
+	EXPECT( left   == bbox.left   );
+	EXPECT( bottom == bbox.bottom );
+	EXPECT( right  == bbox.right  );
 	
 	return true;
 }
@@ -271,7 +273,7 @@ pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap )
 		
 		prev = p;
 		
-		p += rowBytes / 2;
+		p += rowBytes / 2u;
 	}
 	while ( ++v < bounds.bottom );
 	
@@ -438,11 +440,20 @@ static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 	
 	SetHandleSize( (Handle) dst, a_max_bytes + b_max_bytes );  // TODO:  Prove this is enough
 	
+	const size_t r_max_bytes = a_max_bytes + b_max_bytes;
+	
+	segments_box a_segments( a_max_bytes );
+	segments_box b_segments( b_max_bytes );
+	segments_box c_segments( r_max_bytes );
+	segments_box r_segments( r_max_bytes );
+	
 	sect_regions( (const short*) &a[0]->rgnBBox,
 	              rgn_extent( *a ),
-	              a_max_bytes,
+	              a_segments,
 	              rgn_extent( *b ),
-	              b_max_bytes,
+	              b_segments,
+	              c_segments,
+	              r_segments,
 	              rgn_extent( *dst ) );
 	
 	finish_region( dst );
@@ -451,6 +462,15 @@ static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 {
 	ASSERT( is_valid_region( src ) );
+	
+	if ( src == dst )
+	{
+		static RgnHandle tmp = NewRgn();
+		
+		CopyRgn( src, tmp );
+		
+		src = tmp;
+	}
 	
 	const size_t max_bytes = src[0]->rgnSize;
 	
@@ -463,10 +483,12 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 		return;
 	}
 	
+	segments_box segments( max_bytes );
+	
 	sect_rect_region( (const short*) &rect,
 	                  (const short*) &src[0]->rgnBBox,
 	                  rgn_extent( *src ),
-	                  max_bytes,
+	                  segments,
 	                  rgn_extent( *dst ) );
 	
 	finish_region( dst );
@@ -704,6 +726,18 @@ pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 	DisposeHandle( h );
 }
 
+static inline
+size_t byte_distance( const void* begin, const void* end )
+{
+	return (const char*) end - (const char*) begin;
+}
+
+static inline
+bool odd_count_between( const short* begin, const short* end )
+{
+	return byte_distance( begin, end ) & 2;
+}
+
 pascal unsigned char PtInRgn_patch( Point pt, MacRegion** rgn )
 {
 	if ( ! PtInRect_patch( pt, &rgn[0]->rgnBBox ) )
@@ -729,7 +763,7 @@ pascal unsigned char PtInRgn_patch( Point pt, MacRegion** rgn )
 			++extent;
 		}
 		
-		contained ^= (extent - h1) & 1;
+		contained ^= odd_count_between( h1, extent );
 		
 		while ( *extent++ != Region_end )  continue;
 	}

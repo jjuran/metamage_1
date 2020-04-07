@@ -37,7 +37,6 @@ namespace poseven
 		sighup = SIGHUP,
 		sigill = SIGILL,
 		sigint = SIGINT,
-		sigsys = SIGSYS,
 		sigurg = SIGURG,
 		
 		sigabrt = SIGABRT,
@@ -46,7 +45,6 @@ namespace poseven
 		sigcont = SIGCONT,
 		sigkill = SIGKILL,
 		sigpipe = SIGPIPE,
-		sigprof = SIGPROF,
 		sigquit = SIGQUIT,
 		sigsegv = SIGSEGV,
 		sigstop = SIGSTOP,
@@ -60,19 +58,45 @@ namespace poseven
 		sigxcpu = SIGXCPU,
 		sigxfsz = SIGXFSZ,
 		
-		sigwinch = SIGWINCH,
+	#ifdef SIGSYS
 		
+		// XSI
+		sigsys = SIGSYS,
+		
+	#endif
+		
+	#ifdef SIGVTALRM
+		
+		// XSI
 		sigvtalrm = SIGVTALRM,
+		
+	#endif
+		
+	#ifdef SIGPROF
+		
+		// OB XSI
+		sigprof = SIGPROF,
+		
+	#endif
 		
 	#ifdef SIGPWR
 		
+		// non-POSIX
 		sigpwr = SIGPWR,
 		
 	#endif
 		
 	#ifdef SIGSTKFLT
 		
+		// non-POSIX
 		sigstkflt = SIGSTKFLT,
+		
+	#endif
+		
+	#ifdef SIGWINCH
+		
+		// non-POSIX
+		sigwinch = SIGWINCH,
 		
 	#endif
 		

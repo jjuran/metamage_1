@@ -6,7 +6,6 @@
 #include "Genie/FS/gui/new/scroller.hh"
 
 // plus
-#include "plus/serialize.hh"
 #include "plus/simple_map.hh"
 
 // nucleus
@@ -165,13 +164,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
-	
-	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Width  >  Width_Property;
-	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Height >  Height_Property;
-	
-	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset >  HOffset_Property;
-	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset >  VOffset_Property;
+	#define PROPERTY( prop )  &vfs::new_property, &scroller_setting_params
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{

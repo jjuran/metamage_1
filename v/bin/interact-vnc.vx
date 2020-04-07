@@ -1,0 +1,23 @@
+#!/usr/bin/env vx -Z
+
+const host = getenv "INTERACT_VNC_HOST" or "localhost"
+const port = getenv "INTERACT_VNC_PORT" or 5900
+const addr = getenv "INTERACT_VNC_ADDR" or host ":" port
+
+OUT <== x"00"
+
+const raster_path = argv[ 2 ]
+
+const events_fd = dup OUT
+
+dup2( ERR, OUT )
+
+const raster = "--raster", raster_path
+const events = "--events-fd=" events_fd
+const title  = if argc > 6 then { "-t" argv[ 6 ] }
+
+warn "\n" "Starting VNC server on " addr "\n"
+
+const command = [ "listen", addr, "vnc-interact", raster, events, title ]
+
+execvp (command[ 0 ], command)

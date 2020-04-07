@@ -6,22 +6,18 @@
 #ifndef AEFRAMEWORK_AEFRAMEWORK_H
 #define AEFRAMEWORK_AEFRAMEWORK_H
 
-// Nitrogen
-#ifndef MAC_APPLEEVENTS_TYPES_AEDESC_HH
-#include "Mac/AppleEvents/Types/AEDesc.hh"
-#endif
-#ifndef MAC_APPLEEVENTS_TYPES_AERETURNID_HH
-#include "Mac/AppleEvents/Types/AEReturnID.hh"
-#endif
+// #include <AEDataModel.h>
+struct AEDesc;
+typedef AEDesc AppleEvent;
 
 
-namespace Nitrogen
+namespace Genie
 {
 	
-	void ExpectReply( Mac::AEReturnID_32Bit  returnID,
-	                  Mac::AppleEvent*       replyStorage );
+	void ExpectReply( long         returnID,
+	                  AppleEvent*  replyStorage );
 	
-	void ReceiveReply( const Mac::AppleEvent& reply );
+	short ReceiveReply( const AppleEvent& reply );
 	
 }
 

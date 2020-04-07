@@ -1,7 +1,7 @@
 vc
 ==
 
-`vc` is a simple calculator, based on [vlib][].
+`vc` is a calculator, based on [vlib][].
 
 	$ vc '3 + 4'
 	7
@@ -23,6 +23,6 @@ It supports operator precedence:
 
 [vlib]:  <../vlib>
 
-© 2015 Joshua Juran and released under the [GNU AGPL version 3][AGPL] (or later).
+© 2015-2019 Joshua Juran and released under the [GNU AGPL version 3][AGPL] (or later).
 
 [AGPL]:  <../../LICENSE/AGPL-3.0.txt>

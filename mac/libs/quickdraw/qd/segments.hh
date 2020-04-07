@@ -18,17 +18,15 @@ namespace quickdraw
 		private:
 			short*  its_data;
 			size_t  its_size;  // words
-			
-			// non-copyable
-			segments_box           ( const segments_box& );
-			segments_box& operator=( const segments_box& );
 		
 		public:
 			typedef short*        iterator;
 			typedef short const*  const_iterator;
 			
-			explicit segments_box( size_t capacity );  // bytes
-			~segments_box();
+			explicit
+			segments_box( short* data ) : its_data( data ), its_size()
+			{
+			}
 			
 			size_t size() const  { return its_size; }
 			
@@ -71,6 +69,21 @@ namespace quickdraw
 	                   segments_box const&  b );
 	
 	void accumulate_row( short*& r, short v, const segments_box& segments );
+	
+	class malloc_segments_box : public segments_box
+	{
+		private:
+			// non-copyable
+			malloc_segments_box           ( const malloc_segments_box& );
+			malloc_segments_box& operator=( const malloc_segments_box& );
+		
+		public:
+			typedef short*        iterator;
+			typedef short const*  const_iterator;
+			
+			explicit malloc_segments_box( size_t capacity );  // bytes
+			~malloc_segments_box();
+	};
 	
 }
 

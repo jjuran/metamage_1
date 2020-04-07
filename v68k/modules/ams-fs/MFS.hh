@@ -10,7 +10,11 @@
 #include <stdint.h>
 
 
+struct FCB;
+struct FileParam;
 struct VCB;
+
+typedef short OSErr;
 
 
 namespace mfs
@@ -40,12 +44,20 @@ namespace mfs
 		uint8_t   flNam[ 256 ];
 	};
 	
+	typedef file_directory_entry _fde;
+	
 #pragma options align=reset
 	
 }
 
+const mfs::file_directory_entry* MFS_get_nth( VCB* vcb, short n );
+
 const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name );
 
 void MFS_load( VCB* vcb, uint16_t stBlk, char* buffer, int16_t n );
+
+OSErr MFS_open_fork( short trap_word, FCB* fcb, const mfs::_fde* entry );
+
+OSErr MFS_GetFileInfo( FileParam* pb, const mfs::_fde* entry );
 
 #endif

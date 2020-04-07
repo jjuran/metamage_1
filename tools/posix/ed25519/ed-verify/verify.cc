@@ -87,10 +87,10 @@ int fixed_size_input( const char* path, unsigned fixed_size )
 	if ( S_ISREG( st.st_mode )  &&  st.st_size != fixed_size )
 	{
 		fprintf( stderr,
-		         PROGRAM ": %s: expected size %u, not %llu\n",
+		         PROGRAM ": %s: expected size %u, not %ld\n",
 		         path,
 		         fixed_size,
-		         st.st_size );
+		         (long) st.st_size );
 		
 		exit( 3 );
 	}

@@ -13,12 +13,32 @@
 // Standard C
 #include <string.h>
 
+// ams-common
+#include "callouts.hh"
+
 // ams-fs
 #include "freemount.hh"
+#include "macbinary.hh"
 
 
 VCB* DefVCBPtr : 0x0352;
 QHdr VCBQHdr   : 0x0356;
+
+short mount_VCB( VCB* vcb )
+{
+	static short last_vRefNum;
+	
+	vcb->vcbVRefNum = --last_vRefNum;
+	
+	Enqueue( (QElemPtr) vcb, &VCBQHdr );
+	
+	if ( DefVCBPtr == NULL )
+	{
+		DefVCBPtr = vcb;
+	}
+	
+	return last_vRefNum;
+}
 
 void try_to_mount( const char* name )
 {
@@ -62,27 +82,47 @@ void try_to_mount( const char* name )
 	vcb->qType    = fsQType;
 	vcb->vcbFlags = 0;
 	
-	BlockMoveData( master_directory_block, &vcb->vcbSigWord, 64 );
+	const macbinary::hdr& possible_mBIN_header = *(const macbinary::hdr*) image;
 	
-	static short last_vRefNum = -1;  // Reserve -1 for the virtual boot disk.
-	
-	vcb->vcbVRefNum = --last_vRefNum;
-	vcb->vcbMAdr    = NULL;
-	vcb->vcbBufAdr  = image;
-	vcb->vcbMLen    = 0;
-	
-	Enqueue( (QElemPtr) vcb, &VCBQHdr );
-	
-	if ( DefVCBPtr == NULL )
+	if ( int8_t version = macbinary::version( possible_mBIN_header ) )
 	{
-		DefVCBPtr = vcb;
+		fast_memset( vcb, '\0', sizeof *vcb );
+		
+		vcb->vcbSigWord = 'mB';
+		
+		const uint8_t* filename = possible_mBIN_header.filename;
+		
+		uint8_t len = filename[ 0 ];
+		
+		if ( len <= 27 )
+		{
+			fast_memcpy( vcb->vcbVN, filename, len + 1 );
+		}
+		else
+		{
+			vcb->vcbVN[ 0 ] = 27;
+			
+			fast_memcpy( vcb->vcbVN + 1, filename + 1, 27 );
+		}
 	}
+	else
+	{
+		BlockMoveData( master_directory_block, &vcb->vcbSigWord, 64 );
+	}
+	
+	vcb->vcbAtrb |= kioVAtrbHardwareLockedMask;
+	
+	vcb->vcbMAdr   = NULL;
+	vcb->vcbBufAdr = image;
+	vcb->vcbMLen   = 0;
 	
 	const uint16_t sigword = vcb->vcbSigWord;
 	
 	if ( sigword == 0xD2D7 )
 	{
 		vcb->vcbMAdr = master_directory_block + 64;
-		vcb->vcbMLen = (vcb->vcbNmAlBlks * 12 + 7) / 8;
+		vcb->vcbMLen = (vcb->vcbNmAlBlks * 12 + 7) / 8u;
 	}
+	
+	mount_VCB( vcb );
 }

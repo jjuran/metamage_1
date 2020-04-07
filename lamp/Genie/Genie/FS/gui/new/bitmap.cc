@@ -484,35 +484,22 @@ namespace Genie
 		return it->bitmap;
 	}
 	
-	template < class Accessor >
-	struct BitMap_Property : vfs::readwrite_property
-	{
-		static const int fixed_size = Accessor::fixed_size;
-		
-		static const bool can_set = Accessor::is_mutable;
-		
-		typedef typename Accessor::result_type result_type;
-		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			const BitMap& bits = get_bitmap( that );
-			
-			const result_type data = Accessor::Get( bits );
-			
-			Accessor::deconstruct::apply( result, data, binary );
-		}
-		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			BitMap_Parameters& params = gBitMapMap[ that ];
-			
-			const result_type data = Accessor::reconstruct::apply( begin, end, binary );
-			
-			Accessor::Set( params, data );
-			
-			InvalidateWindowForView( that );
-		}
-	};
+	#define DEFINE_GETTER( p )  \
+	static void p##_get( plus::var_string& result, const vfs::node* that, bool binary )  \
+	{  \
+		typedef p Accessor;                                        \
+		const BitMap& bits = get_bitmap( that );                   \
+		const Accessor::result_type data = Accessor::Get( bits );  \
+		Accessor::deconstruct::apply( result, data, binary );      \
+	}
+	
+	#define DEFINE_SETTER( p )  \
+	static void p##_set( const vfs::node* that, const char* begin, const char* end, bool binary )  \
+	{  \
+		BitMap_Parameters& params = gBitMapMap[ that ];                 \
+		p::Set( params, p::reconstruct::apply( begin, end, binary ) );  \
+		InvalidateWindowForView( that );                                \
+	}
 	
 	
 	static vfs::node_ptr bitmap_bits_Factory( const vfs::node*     parent,
@@ -524,7 +511,26 @@ namespace Genie
 		return new vfs::node( parent, name, mode, &bitmap_bits_methods );
 	}
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< BitMap_Property< prop > >::value
+	#define DEFINE_PARAMS( p )  \
+	static const vfs::property_params p##_params = {p::fixed_size, &p##_get, &p##_set}
+	
+	DEFINE_GETTER( BitMap_rowBytes );
+	DEFINE_GETTER( BitMap_bounds   );
+	DEFINE_GETTER( BitMap_size     );
+	
+	DEFINE_SETTER( BitMap_bounds   );
+	DEFINE_SETTER( BitMap_size     );
+	
+	static const vfs::property_params BitMap_rowBytes_params =
+	{
+		BitMap_rowBytes::fixed_size,
+		&BitMap_rowBytes_get,
+	};
+	
+	DEFINE_PARAMS( BitMap_bounds   );
+	DEFINE_PARAMS( BitMap_size     );
+	
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{

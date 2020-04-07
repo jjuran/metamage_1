@@ -32,7 +32,7 @@ const narrowest = widest - n * 2
 
 def spc (n: int) { " " * n }
 
-const canopy-top = spc (n + 1) ("_" * narrowest)
+const canopy-top = spc(n + 1) ("_" * narrowest)
 
 var i = n
 var width = narrowest

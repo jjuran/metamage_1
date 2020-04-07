@@ -136,48 +136,11 @@ namespace Genie
 		return new vfs::node( parent, name, S_IFREG | 0400, &textedit_gate_methods );
 	}
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
-	struct TE_View_Property : public View_Property< Serialize, Access >
-	{
-		static void Set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			TextEditParameters::Get( that ).itHasChangedAttributes = true;
-			
-			View_Property< Serialize, Access >::Set( that, begin, end, binary );
-		}
-	};
-	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
-	struct TextInvalidating_View_Property : public View_Property< Serialize, Access >
-	{
-		static void Set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			TextEditParameters::Get( that ).itsValidLength = 0;
-			
-			View_Property< Serialize, Access >::Set( that, begin, end, binary );
-		}
-	};
-	
 	static const vfs::trigger_extra textedit_lock_trigger_extra =
 	{
 		&textedit_lock_trigger
 	};
 	
-	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
-	
-	typedef Const_View_Property< plus::serialize_bool, TextEditParameters::Active >  Active_Property;
-	
-	typedef TextInvalidating_View_Property< plus::serialize_bool, TextEditParameters::Secret >  Secret_Property;
-	
-	typedef View_Property< plus::serialize_bool, TextEditParameters::Singular >  Singular_Property;
-	typedef View_Property< plus::serialize_bool, TextEditParameters::Wrapped  >  Wrapped_Property;
-	
-	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Width  >  Width_Property;
-	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Height >  Height_Property;
-	
-	typedef TE_View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset >  HOffset_Property;
-	typedef TE_View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset >  VOffset_Property;
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{
@@ -188,23 +151,17 @@ namespace Genie
 		
 		{ "gate", &gate_factory },
 		
-		{ "selection", PROPERTY( Selection_Property ) },
+		{ "selection", &vfs::new_property, &textedit_selection_params },
 		
-		{ "active", PROPERTY( Active_Property ) },
+		{ "active",   &vfs::new_property, &textedit_flag_params },
+		{ "secret",   &vfs::new_property, &textedit_flag_params },
+		{ "singular", &vfs::new_property, &textedit_flag_params },
 		
-		{ "secret", PROPERTY( Secret_Property ) },
+		{ "width",  &vfs::new_property, &scroller_setting_params },
+		{ "height", &vfs::new_property, &scroller_setting_params },
 		
-		{ "singular", PROPERTY( Singular_Property ) },
-		
-		//{ "wrapped", PROPERTY( Wrapped_Property ) },
-		
-		// unlocked-text
-		
-		{ "width",  PROPERTY( Width_Property  ) },
-		{ "height", PROPERTY( Height_Property ) },
-		
-		{ "x", PROPERTY( HOffset_Property ) },
-		{ "y", PROPERTY( VOffset_Property ) },
+		{ "x", &vfs::new_property, &textedit_scroll_params },
+		{ "y", &vfs::new_property, &textedit_scroll_params },
 		
 		{ NULL, NULL }
 	};

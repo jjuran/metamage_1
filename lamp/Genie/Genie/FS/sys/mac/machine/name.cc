@@ -21,7 +21,8 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	void sys_mac_machine_name::get( plus::var_string& result, const vfs::node* that, bool binary )
+	static
+	void sys_mac_machine_name_get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		const unsigned char* name = mac::sys::get_machine_name();
 		
@@ -32,5 +33,11 @@ namespace Genie
 		
 		result.assign( (const char*) &name[1], name[0] );
 	}
+	
+	const vfs::property_params sys_mac_machine_name_params =
+	{
+		vfs::no_fixed_size,
+		&sys_mac_machine_name_get,
+	};
 	
 }

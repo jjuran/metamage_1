@@ -9,6 +9,10 @@
 struct MenuInfo;
 struct Point;
 
+typedef pascal void (*SysBeep_ProcPtr)( short duration );
+
+extern SysBeep_ProcPtr old_SysBeep;
+
 pascal void InitMenus_patch();
 
 pascal MenuInfo** NewMenu_patch( short menuID, const unsigned char* title );
@@ -46,13 +50,27 @@ pascal void DisableItem_patch( MenuInfo** menu, short item );
 pascal void EnableItem_patch ( MenuInfo** menu, short item );
 
 pascal void CheckItem_patch( MenuInfo** menu, short item, char checked );
-pascal void SetItemMark_patch( MenuInfo** menu, short item, char mark );
+pascal void SetItemMark_patch( MenuInfo** menu, short item, short mark );
+pascal void GetItemMark_patch( MenuInfo** menu, short item, short* mark );
+
+pascal void SetItmIcon_patch( MenuInfo** menu, short item, short icon );
+
+pascal void SetItemStyle_patch( MenuInfo** menu, short item, short style );
 
 pascal short CountMItems_patch( MenuInfo** menu );
 
 pascal MenuInfo** GetMHandle_patch( short menuID );
 
 pascal void FlashMenuBar_patch( short menuID );
+
+pascal void InsMenuItem_patch( MenuInfo**            menu,
+                               const unsigned char*  s,
+                               short                 after );
+
+pascal void DelMenuItem_patch( MenuInfo** menu, short item );
+
+pascal void GetItemCmd_patch( MenuInfo** menu, short item, short* key );
+pascal void SetItemCmd_patch( MenuInfo** menu, short item, short  key );
 
 pascal void SysBeep_patch( short duration );
 

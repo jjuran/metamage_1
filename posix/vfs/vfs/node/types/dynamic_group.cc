@@ -20,19 +20,40 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/types/dynamic_group.hh"
+#include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 
 namespace vfs
 {
 	
-	filehandle_ptr get_dynamic_element_from_node( const node*             that,
-	                                              dynamic_element_getter  getter )
+	struct dynamic_group_extra
 	{
+		const dynamic_group* group;
+	};
+	
+	static
+	filehandle_ptr dge_open( const node* that, int flags, mode_t mode )
+	{
+		dynamic_group_extra& extra = *(dynamic_group_extra*) that->extra();
+		
 		const unsigned id = gear::parse_unsigned_decimal( that->name().c_str() );
 		
-		return getter( id );
+		return get_dynamic_element_from_group_by_id( *extra.group, id );
 	}
+	
+	static const data_method_set dge_data_methods =
+	{
+		&dge_open,
+	};
+	
+	static const node_method_set dge_methods =
+	{
+		NULL,
+		&dge_data_methods,
+	};
 	
 	
 	static node_ptr dynamic_group_lookup( const node*          that,
@@ -53,7 +74,7 @@ namespace vfs
 		return new node( parent,
 		                 name,
 		                 S_IFCHR | 0600,
-		                 extra.methods );
+		                 &dge_methods );
 	}
 	
 	static void dynamic_group_listdir( const node*    that,
@@ -105,7 +126,7 @@ namespace vfs
 		
 		dynamic_group_extra& extra = *(dynamic_group_extra*) result->extra();
 		
-		extra = *(dynamic_group_extra*) args;
+		extra.group = (dynamic_group*) args;
 		
 		return result;
 	}

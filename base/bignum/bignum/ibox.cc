@@ -281,9 +281,21 @@ namespace bignum
 	
 	cmp_t compare( const ibox& a, const ibox& b )
 	{
+		/*
+			Subtract one sign from the other.  The result is in range (-2 .. 2)
+			but we need it mapped to [-1, -1, 0, 1, 1].
+			
+			For non-zero sign_cmp:
+			
+			0010 >> (0010 >> 1 & 1) -> 0010 >> (0001 & 1) -> 0010 >> 1 -> 0001
+			0001 >> (0001 >> 1 & 1) -> 0001 >> (0000 & 1) -> 0001 >> 0 -> 0001
+			1111 >> (1111 >> 1 & 1) -> 1111 >> (1111 & 1) -> 1111 >> 1 -> 1111
+			1110 >> (1110 >> 1 & 1) -> 1110 >> (1111 & 1) -> 1110 >> 1 -> 1111
+		*/
+		
 		if ( cmp_t sign_cmp = a.sign() - b.sign() )
 		{
-			return sign_cmp;
+			return sign_cmp >> ((sign_cmp >> 1) & 1);
 		}
 		
 		if ( a.sign() == 0 )

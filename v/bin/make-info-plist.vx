@@ -1,4 +1,4 @@
-#!/usr/bin/env vx -Z
+#!/usr/bin/env minivx -Z
 
 const bindir = dirname realpath argv[ 0 ]
 const libdir = bindir "/../lib/v/"
@@ -26,20 +26,26 @@ var more-txt = ""
 
 if Build-origin-path then
 {
-	const build-origin = hex unhex .*(load Build-origin-path).lines()
+	const build-origin = hex unhex *(load Build-origin-path).lines()
 	
 	chdir dirname argv[ 1 ]
 	
 	const command = [ "git", "rev-list", build-origin "..HEAD", "--count" ]
 	
-	const build-number = output-from-run command
-	
-	more-txt = "CFBundleVersion: " build-number
+	try
+	{
+		const build-number = output-from-run command
+		
+		more-txt = "CFBundleVersion: " build-number
+	}
+	catch ( ... )
+	{
+	}
 }
 
 def comma-terminated { if _[ _.length - 1 ] in ":[" then { _ } else { _ "," } }
 
-const lines = (info-txt more-txt).lines() map comma-terminated
+const lines = (info-txt more-txt).lines() ver bool map comma-terminated
 
 const info = eval "[" join( "\n", *lines, "]" )
 

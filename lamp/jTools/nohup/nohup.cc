@@ -39,7 +39,9 @@ int main( int argc, char *const argv[] )
 		return 1;
 	}
 	
-	struct sigaction action = {{ SIG_IGN }};
+	struct sigaction action = { 0 };
+	
+	action.sa_handler = SIG_IGN;
 	
 	sigaction( SIGHUP, &action, NULL );
 	
@@ -79,11 +81,11 @@ int main( int argc, char *const argv[] )
 		
 		struct iovec output_message[] =
 		{
-			{ (void*) STR_LEN( "sending output to " ) },
-			{ (void*) STR_LEN( ""                   ) },
-			{ (void*) STR_LEN( ""                   ) },
-			{ (void*) STR_LEN( NOHUP_OUT            ) },
-			{ (void*) STR_LEN( "\n"                 ) }
+			{ (char*) STR_LEN( "sending output to " ) },
+			{ (char*) STR_LEN( ""                   ) },
+			{ (char*) STR_LEN( ""                   ) },
+			{ (char*) STR_LEN( NOHUP_OUT            ) },
+			{ (char*) STR_LEN( "\n"                 ) }
 		};
 		
 		if ( path )

@@ -60,6 +60,12 @@ typedef unsigned int OSType;
 // Orion
 #include "Orion/Main.hh"
 
+#ifdef __APPLE__
+#ifndef _SOCKLEN_T
+typedef int socklen_t;
+#endif
+#endif
+
 
 #define HTTP_VERSION  "HTTP/1.0"
 

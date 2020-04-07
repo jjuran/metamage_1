@@ -543,7 +543,13 @@ namespace vlib
 			return tree;
 		}
 		
-		if ( Expr* expr = tree.expr() )
+		const Value* next = &tree;
+		
+	tail_call:
+		
+		const Value& subtree = *next;
+		
+		if ( Expr* expr = subtree.expr() )
 		{
 			if ( expr->op == Op_for )
 			{
@@ -580,14 +586,16 @@ namespace vlib
 				
 				export_symbol( expr->left, resolve_symbol( symbol, stack ) );
 				
-				return execute( symbol, stack );
+				next = &symbol;
+				goto tail_call;
 			}
 			
 			if ( expr->op == Op_end )
 			{
 				execute( expr->left, stack );
 				
-				return execute( expr->right, stack );
+				next = &expr->right;
+				goto tail_call;
 			}
 			
 			if ( expr->op == Op_block )
@@ -688,7 +696,7 @@ namespace vlib
 			             expr->source );
 		}
 		
-		const Value& resolved = resolve_symbol( tree, stack );
+		const Value& resolved = resolve_symbol( subtree, stack );
 		
 		return eval( resolved );
 	}

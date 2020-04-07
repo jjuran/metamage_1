@@ -6,7 +6,9 @@
 #include "v68k/macros.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 namespace v68k

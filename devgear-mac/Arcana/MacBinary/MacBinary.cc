@@ -32,6 +32,9 @@
 // Standard C
 #include <string.h>
 
+// mac-file-utils
+#include "mac_file/directory.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -394,7 +397,7 @@ namespace MacBinary
 		static void Set( Header& h, Value v )
 		{
 			High::Set( h, v >> 8 );
-			Low ::Set( h, v & 0xFF );
+			Low ::Set( h, v      );
 		}
 	};
 	
@@ -715,13 +718,13 @@ namespace MacBinary
 		
 		if ( versionOne  &&  crc  &&  type == 'fold'  &&  (creator & 0xFFFFFFFE) == 0xFFFFFFFE )
 		{
-			return creator & 0x000000FF;
+			return (Byte) creator;
 		}
 		
 		return 0;
 	}
 	
-	Decoder::Decoder( const N::FSDirSpec& destination )
+	Decoder::Decoder( const VRefNum_DirID& destination )
 	:
 		//fDestDir( destination ),
 		itIsFolder( false ),
@@ -763,7 +766,10 @@ namespace MacBinary
 		
 		ConstStr63Param name = h.Get< kFileName >();
 		
-		itsFrame.file = itsFrame.destDir / name;
+		itsFrame.file.vRefNum = itsFrame.destDir.vRefNum;
+		itsFrame.file.parID   = itsFrame.destDir.dirID;
+		
+		memcpy( itsFrame.file.name, name, sizeof (Str63) );
 		
 		if ( itIsFolder )
 		{
@@ -889,7 +895,7 @@ namespace MacBinary
 			{
 				itsFrameStack.push_back( itsFrame );
 				
-				itsFrame.destDir = N::FSpMake_FSDirSpec( itsFrame.file );
+				itsFrame.destDir = mac::file::directory( itsFrame.file );
 				
 				itsFrame.comment.clear();
 			}

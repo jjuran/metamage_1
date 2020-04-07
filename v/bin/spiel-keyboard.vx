@@ -120,11 +120,13 @@ def upconvert (key_id, act)
 		# Linux has 0 .. 2 as up, down, repeat.
 		# SPIEL has 0 .. 3 as atomic, down, up, repeat
 		
-		var attrs = packed byte .[2, 1, 3][act]
+		var attrs = packed byte [2, 1, 3][act]
 		
 		key_state[ key_id ] = *(attrs & x"01")
 		
-		if const c = ascii[ key_id ] then
+		const c = ascii[ key_id ]
+		
+		if true then
 		{
 			const Command = key_state[[ left_Command_id  ]]
 			              | key_state[[ right_Command_id ]]

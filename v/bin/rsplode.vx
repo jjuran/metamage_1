@@ -5,7 +5,7 @@ const dst = argv[ 2 ]
 
 const dst_r = dst "/r"
 
-run .[ "mkdir", "-p", dst_r ]
+run [ "mkdir", "-p", dst_r ]
 
 const rsrcs = listdir src "/r"
 

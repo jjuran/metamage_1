@@ -32,7 +32,6 @@
 // mac-config
 #include "mac_config/adb.hh"
 #include "mac_config/apple-events.hh"
-#include "mac_config/upp-macros.hh"
 
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
@@ -40,11 +39,18 @@
 #include "mac_sys/current_process.hh"
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/is_front_process.hh"
+#include "mac_sys/trap_available.hh"
 
 // mac-qd-utils
 #include "mac_qd/assign_pixel_rgn.hh"
+#include "mac_qd/get_portRect.hh"
+#include "mac_qd/globals/arrow.hh"
+#include "mac_qd/wide_drag_area.hh"
 
 // mac-app-utils
+#include "mac_app/commands.hh"
+#include "mac_app/event_handlers.hh"
+#include "mac_app/hooks.hh"
 #include "mac_app/init.hh"
 #include "mac_app/menus.hh"
 #include "mac_app/state.hh"
@@ -58,7 +64,6 @@
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
 
-#include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/Controls.hh"
 #include "Nitrogen/MacErrors.hh"
 #include "Nitrogen/MacWindows.hh"
@@ -105,15 +110,24 @@ namespace Nitrogen
 	
 }
 
+#if TARGET_API_MAC_CARBON
+#define SystemTask()  /**/
+#endif
+
+static inline
+bool has_WaitNextEvent()
+{
+	enum { _WaitNextEvent = 0xA860 };
+	
+	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _WaitNextEvent );
+}
+
 namespace Pedestal
 {
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
-	
-	using Mac::kCoreEventClass;
-	using Mac::kAEQuitApplication;
 	
 	const uint32_t gestaltAppleEventsAttr = 'evnt';
 	
@@ -207,14 +221,6 @@ namespace Pedestal
 	}
 	
 	static
-	pascal OSErr Quit( const ::AppleEvent* event, ::AppleEvent* reply, SInt32 )
-	{
-		Quit();
-		
-		return noErr;
-	}
-	
-	static
 	View* get_window_view_ready( WindowRef window )
 	{
 		if ( window != NULL )
@@ -304,7 +310,7 @@ namespace Pedestal
 			}
 		}
 		
-		N::SetCursor( N::GetQDGlobalsArrow() );
+		SetCursor( &mac::qd::arrow() );
 	}
 	
 	static void DispatchHighLevelEvent( const EventRecord& event )
@@ -322,17 +328,7 @@ namespace Pedestal
 	static inline
 	void RespondToDrag( const EventRecord& event, WindowRef window )
 	{
-	#if TARGET_API_MAC_CARBON
-		
-		const Rect& bounds = N::GetQDGlobalsScreenBits().bounds;
-		
-	#else
-		
-		const Rect& bounds = qd.screenBits.bounds;
-		
-	#endif
-		
-		N::DragWindow( window, event.where, bounds );
+		DragWindow( window, event.where, mac::qd::wide_drag_area() );
 	}
 	
 	static bool TrackedControl( ControlRef control, N::ControlPartCode part, Point point )
@@ -385,19 +381,10 @@ namespace Pedestal
 		}
 	}
 	
-	static void RespondToGrow( const EventRecord& event, WindowRef window )
+	static inline
+	void RespondToGrow( const EventRecord& event, WindowRef window )
 	{
-		Rect sizeRect = { 30, 50, 10000, 10000 };
-		
-		Point grown = N::GrowWindow( window, event.where, sizeRect );
-		
-		if ( grown.h != 0  ||  grown.v != 0 )
-		{
-			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
-			{
-				ResizeWindow( window, grown );
-			}
-		}
+		ResizingWindow( window, event.where );
 	}
 	
 	static void RespondToGoAway( const EventRecord& event, WindowRef window )
@@ -590,7 +577,9 @@ namespace Pedestal
 		
 		N::Update_Scope update( window );
 		
-		if ( ::IsPortVisibleRegionEmpty( N::GetWindowPort( window ) ) )
+		CGrafPtr port = GetWindowPort( window );
+		
+		if ( ::IsPortVisibleRegionEmpty( port ) )
 		{
 			return;
 		}
@@ -602,7 +591,7 @@ namespace Pedestal
 			
 			n::saved< N::Clip > savedClip;
 			
-			N::ClipRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
+			N::ClipRect( mac::qd::get_portRect( port ) );
 			
 			N::UpdateControls( window );
 		}
@@ -695,6 +684,8 @@ namespace Pedestal
 		}
 	}
 	
+	static long Quit();
+	
 	Application::Application()
 	{
 		Init_Memory( 0 );
@@ -702,17 +693,11 @@ namespace Pedestal
 		mac::app::init_toolbox();
 		mac::app::install_menus();
 		
+		mac::app::quit_hook = &Quit;
+		
 		if ( apple_events_present )
 		{
-			DEFINE_UPP( AEEventHandler, Quit );
-			
-			OSErr err;
-			
-			err = AEInstallEventHandler( kCoreEventClass,
-			                             kAEQuitApplication,
-			                             UPP_ARG( Quit ),
-			                             0,
-			                             false );
+			mac::app::install_basic_event_handlers();
 		}
 		
 		MenuRef appleMenu  = GetMenuHandle( 1 );
@@ -733,7 +718,7 @@ namespace Pedestal
 	
 	static void CheckKeyboard()
 	{
-		if ( gNeedToConfigureKeyboard  &&  gLastKeyboard != 0 )
+		if ( CONFIG_ADB  &&  gNeedToConfigureKeyboard  &&  gLastKeyboard != 0 )
 		{
 			// Don't reconfigure the keyboard if certain modifiers are down,
 			// since that confuses the OS
@@ -816,8 +801,25 @@ namespace Pedestal
 	
 	static bool gIdleNeeded = false;
 	
+	const bool has_WNE = has_WaitNextEvent();
+	
 	static EventRecord WaitNextEvent( UInt32 sleep, RgnHandle mouseRgn = NULL )
 	{
+		EventRecord event;
+		
+		if ( ! has_WNE )
+		{
+			SystemTask();
+			
+			(void) ::GetNextEvent( everyEvent, &event );
+			
+			// No need to forge mouse-moved events, since we don't use them.
+			
+			mac::sys::clear_async_wakeup();
+			
+			return event;
+		}
+		
 		static Point last_global_mouse = { 0, 0 };
 		
 		static RgnHandle current_mouse_location = NewRgn();
@@ -826,8 +828,6 @@ namespace Pedestal
 		{
 			mouseRgn = current_mouse_location;
 		}
-		
-		EventRecord event;
 		
 		(void) ::WaitNextEvent( everyEvent, &event, sleep, mouseRgn );
 		
@@ -1014,15 +1014,7 @@ namespace Pedestal
 				break;
 			
 			case 'quit':
-				if ( apple_events_present )
-				{
-					// Direct dispatch
-					N::AESend( kCoreEventClass, kAEQuitApplication );
-				}
-				else
-				{
-					Quit();
-				}
+				mac::app::quit();
 				break;
 			
 			default:
@@ -1062,7 +1054,7 @@ namespace Pedestal
 		gEventCheckNeeded = true;
 	}
 	
-	void Quit()
+	long Quit()
 	{
 		WindowRef window = FrontWindow();
 		
@@ -1075,7 +1067,7 @@ namespace Pedestal
 			window = next;
 		}
 		
-		mac::app::quitting = true;
+		return noErr;
 	}
 	
 }

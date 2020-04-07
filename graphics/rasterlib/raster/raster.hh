@@ -107,8 +107,14 @@ namespace raster
 			
 			All other values are reserved.
 		
-		flags:
-			This field is reserved and should be set to zero.
+		extra:
+			The number of additional image frames stored in this file.  A value
+			of zero means one frame total; a value of 255 indicates the maximum
+			frame count of 256 frames.
+		
+		frame:
+			The currently displayed image frame number, zero-indexed.  Must be
+			less than or equal to `extra`.
 	*/
 	
 	enum raster_model
@@ -142,7 +148,8 @@ namespace raster
 		uint32_t  stride;  // bytes per row
 		uint8_t   weight;  // bits per pixel
 		uint8_t   model;   // raster_model
-		uint16_t  flags;
+		uint8_t   extra;   // number of additional stored frames
+		uint8_t   frame;   // currently displayed frame
 		
 		uint64_t  reserved;
 	};

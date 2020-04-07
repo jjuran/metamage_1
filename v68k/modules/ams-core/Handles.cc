@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "callouts.hh"
 #include "master_pointer.hh"
@@ -63,6 +66,13 @@ struct Handle_footer
 {
 	unsigned long  epilogue;
 };
+
+static inline
+bool valid( const Handle_header& header, const Handle_footer& footer )
+{
+	return header.prologue == Handle_prologue  &&
+	       footer.epilogue == Handle_epilogue;
+}
 
 
 static inline
@@ -193,6 +203,28 @@ char** new_handle( long size : __D0, short trap_word : __D1 )
 	return NULL;
 }
 
+#pragma mark -
+#pragma mark Initialization and Allocation
+#pragma mark -
+
+short SetApplLimit_patch( char* p : __A0 )
+{
+	return MemErr = noErr;
+}
+
+void MaxApplZone_patch()
+{
+}
+
+void MoreMasters_patch()
+{
+	MemErr = noErr;
+}
+
+#pragma mark -
+#pragma mark Allocating and Releasing Relocatable Blocks
+#pragma mark -
+
 asm char** NewHandle_patch( long size : __D0, short trap_word : __D1 )
 {
 	JSR      new_handle
@@ -201,14 +233,213 @@ asm char** NewHandle_patch( long size : __D0, short trap_word : __D1 )
 	RTS
 }
 
-asm
-char** NewEmptyHandle_patch()
+short DisposeHandle_patch( char** h : __A0 )
 {
-	JSR      new_empty_handle
-	MOVE.W   MemErr,D0
+	if ( h == NULL )
+	{
+		ERROR = "DisposeHandle: NULL address";
+		
+		return MemErr = nilHandleErr;
+	}
 	
+	if ( *h != NULL )
+	{
+		Handle_header* header = get_header( *h );
+		Handle_footer* footer = get_footer( *h );
+		
+		if ( ! valid( *header, *footer ) )
+		{
+			ERROR = "DisposeHandle: invalid handle state (double dispose?)";
+			
+			return MemErr = paramErr;
+		}
+		
+		free( header );
+	}
+	
+	free( h );
+	
+	return MemErr = noErr;
+}
+
+long GetHandleSize_patch( char** h : __A0 )
+{
+	if ( h == NULL  ||  *h == NULL )
+	{
+		MemErr = nilHandleErr;
+		
+		return 0;
+	}
+	
+	const Handle_header* header = get_header( *h );
+	
+	return header->size;
+}
+
+short SetHandleSize_patch( char**  h         : __A0,
+                           long    size      : __D0,
+                           short   trap_word : __D1 )
+{
+	if ( h == NULL  ||  *h == NULL )
+	{
+		return MemErr = nilHandleErr;
+	}
+	
+	if ( size < 0 )
+	{
+		return MemErr = memSCErr;
+	}
+	
+	Handle_header* header = get_header( *h );
+	
+	if ( size <= header->capacity )
+	{
+		header->size = size;
+	}
+	else
+	{
+		Handle_header* new_header = allocate_Handle_mem( size, trap_word );
+		
+		if ( new_header == NULL )
+		{
+			return MemErr = memFullErr;
+		}
+		
+		fast_memcpy( new_header + 1, header + 1, header->size );
+		
+		new_header->backlink = header->backlink;
+		
+		*h = (char*) &new_header[1];
+		
+		free( header );
+		
+		header = new_header;
+	}
+	
+	set_epilogue( header );
+	
+	return MemErr = noErr;
+}
+
+static
+char** recover_handle( char* p : __A0 )
+{
+	if ( p == NULL )
+	{
+		MemErr = paramErr;
+		
+		return 0;
+	}
+	
+	Handle_header* header = get_header( p );
+	Handle_footer* footer = get_footer( p );
+	
+	if ( header->prologue != Handle_prologue  ||  footer->epilogue != Handle_epilogue )
+	{
+		MemErr = paramErr;
+		
+		return 0;
+	}
+	
+	return (char**) header->backlink;
+}
+
+asm
+char** RecoverHandle_patch( char* p : __A0 )
+{
+	MOVE.L   D0,-(SP)
+	
+	JSR      recover_handle
+	
+	MOVE.L   (SP)+,D0
 	RTS
 }
+
+short ReallocateHandle_patch( char**  h         : __A0,
+                              long    size      : __D0,
+                              short   trap_word : __D1 )
+{
+	if ( h == NULL )
+	{
+		return MemErr = nilHandleErr;
+	}
+	
+	if ( *h != NULL )
+	{
+		Handle_header* header = get_header( *h );
+		
+		free( header );
+		
+		*h = NULL;
+	}
+	
+	Handle_header* header = allocate_Handle_mem( size, trap_word );
+	
+	if ( header == NULL )
+	{
+		return MemErr;  // set in allocate_Handle_mem()
+	}
+	
+	*h = (char*) &header[1];
+	
+	header->backlink = (master_pointer*) h;
+	
+	return MemErr = noErr;
+}
+
+#pragma mark -
+#pragma mark Freeing Space in the Heap
+#pragma mark -
+
+long FreeMem_patch()
+{
+	return 1024 * 1024;
+}
+
+asm void MaxMem_patch()
+{
+	SUBA.L   A0,A0
+	MOVE.L   #0x100000,D0
+	RTS
+}
+
+long CompactMem_patch( long needed : __D0, short trap_word : __D1 )
+{
+	return needed;
+}
+
+short ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
+{
+	return MemErr = noErr;
+}
+
+short PurgeMem_patch( long needed : __D0, short trap_word : __D1 )
+{
+	return MemErr = noErr;
+}
+
+short EmptyHandle_patch( char** h : __A0 )
+{
+	if ( h == NULL )
+	{
+		return MemErr = nilHandleErr;
+	}
+	
+	if ( *h != NULL )
+	{
+		Handle_header* header = get_header( *h );
+		
+		free( header );
+		
+		*h = NULL;
+	}
+	
+	return MemErr = noErr;
+}
+
+#pragma mark -
+#pragma mark Properties of Relocatable Blocks
+#pragma mark -
 
 short HLock_patch( char** h : __A0 )
 {
@@ -258,175 +489,6 @@ short HNoPurge_patch( char** h : __A0 )
 	return MemErr = noErr;
 }
 
-void MoveHHi_patch( char** h : __A0 )
-{
-}
-
-short DisposeHandle_patch( char** h : __A0 )
-{
-	if ( h == NULL )
-	{
-		return MemErr = nilHandleErr;
-	}
-	
-	if ( *h != NULL )
-	{
-		Handle_header* header = get_header( *h );
-		
-		free( header );
-	}
-	
-	free( h );
-	
-	return MemErr = noErr;
-}
-
-short SetHandleSize_patch( char**  h         : __A0,
-                           long    size      : __D0,
-                           short   trap_word : __D1 )
-{
-	if ( h == NULL  ||  *h == NULL )
-	{
-		return MemErr = nilHandleErr;
-	}
-	
-	if ( size < 0 )
-	{
-		return MemErr = memSCErr;
-	}
-	
-	Handle_header* header = get_header( *h );
-	
-	if ( size <= header->capacity )
-	{
-		header->size = size;
-	}
-	else
-	{
-		Handle_header* new_header = allocate_Handle_mem( size, trap_word );
-		
-		if ( new_header == NULL )
-		{
-			return MemErr = memFullErr;
-		}
-		
-		fast_memcpy( new_header + 1, header + 1, header->size );
-		
-		new_header->backlink = header->backlink;
-		
-		*h = (char*) &new_header[1];
-		
-		free( header );
-		
-		header = new_header;
-	}
-	
-	set_epilogue( header );
-	
-	return MemErr = noErr;
-}
-
-long GetHandleSize_patch( char** h : __A0 )
-{
-	if ( h == NULL  ||  *h == NULL )
-	{
-		MemErr = nilHandleErr;
-		
-		return 0;
-	}
-	
-	const Handle_header* header = get_header( *h );
-	
-	return header->size;
-}
-
-short ReallocateHandle_patch( char**  h         : __A0,
-                              long    size      : __D0,
-                              short   trap_word : __D1 )
-{
-	if ( h == NULL )
-	{
-		return MemErr = nilHandleErr;
-	}
-	
-	if ( *h != NULL )
-	{
-		Handle_header* header = get_header( *h );
-		
-		free( header );
-		
-		*h = NULL;
-	}
-	
-	Handle_header* header = allocate_Handle_mem( size, trap_word );
-	
-	if ( header == NULL )
-	{
-		return MemErr;  // set in allocate_Handle_mem()
-	}
-	
-	*h = (char*) &header[1];
-	
-	header->backlink = (master_pointer*) h;
-	
-	return MemErr = noErr;
-}
-
-short EmptyHandle_patch( char** h : __A0 )
-{
-	if ( h == NULL )
-	{
-		return MemErr = nilHandleErr;
-	}
-	
-	if ( *h != NULL )
-	{
-		Handle_header* header = get_header( *h );
-		
-		free( header );
-		
-		*h = NULL;
-	}
-	
-	return MemErr = noErr;
-}
-
-short SetApplLimit_patch( char* p : __A0 )
-{
-	return MemErr = noErr;
-}
-
-void MoreMasters_patch()
-{
-	MemErr = noErr;
-}
-
-long FreeMem_patch()
-{
-	return 1024 * 1024;
-}
-
-asm void MaxMem_patch()
-{
-	SUBA.L   A0,A0
-	MOVE.L   #0x100000,D0
-	RTS
-}
-
-short ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
-{
-	return MemErr = noErr;
-}
-
-short SetGrowZone_patch( void* proc : __A0 )
-{
-	return MemErr = noErr;
-}
-
-void MaxApplZone_patch()
-{
-}
-
 signed char HGetState_patch( char** h : __A0 )
 {
 	if ( h == NULL )
@@ -451,4 +513,34 @@ short HSetState_patch( char** h : __A0, signed char state : __D0 )
 	((master_pointer*) h)->flags = state;
 	
 	return MemErr = noErr;
+}
+
+#pragma mark -
+#pragma mark Grow Zone Operations
+#pragma mark -
+
+short SetGrowZone_patch( void* proc : __A0 )
+{
+	return MemErr = noErr;
+}
+
+#pragma mark -
+#pragma mark Miscellaneous Routines
+#pragma mark -
+
+void MoveHHi_patch( char** h : __A0 )
+{
+}
+
+#pragma mark -
+#pragma mark Advanced Routine
+#pragma mark -
+
+asm
+char** NewEmptyHandle_patch()
+{
+	JSR      new_empty_handle
+	MOVE.W   MemErr,D0
+	
+	RTS
 }

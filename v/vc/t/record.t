@@ -20,7 +20,7 @@ $ vc 'record (foo: 1, bar: null)'
 
 %
 
-$ vc '*record (foo: 1, bar: null)'
+$ vc '*record(foo: 1, bar: null)'
 1 >= '(("foo" => 1), ("bar" => null))'
 
 %
@@ -40,7 +40,7 @@ $ vc 'const a = [foo: 1, bar: null]; a isa record, str^a isa record'
 
 %
 
-$ vc '*record (foo: 1, bar: null) isa record'
+$ vc '*record(foo: 1, bar: null) isa record'
 1 >= false
 
 %

@@ -5,10 +5,14 @@
 
 #include "GrafPorts.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "QDGlobals.hh"
 
 // ams-qd
+#include "color.hh"
 #include "Rects.hh"
 #include "Regions.hh"
 
@@ -206,6 +210,44 @@ pascal void BackPat_patch( const struct Pattern* pat )
 }
 
 #pragma mark -
+#pragma mark Drawing in Color
+#pragma mark -
+
+pascal void ForeColor_patch( long color )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	if ( color == thePort->fgColor  &&  color == blackColor )
+	{
+		NOTICE = "ForeColor: redundantly set to black";
+	}
+	
+	if ( is_nongray( color ) )
+	{
+		WARNING = "ForeColor: non-gray color ", color, " will render as black";
+	}
+	
+	thePort->fgColor = color;
+}
+
+pascal void BackColor_patch( long color )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	if ( color == thePort->bkColor  &&  color == whiteColor )
+	{
+		NOTICE = "BackColor: redundantly set to white";
+	}
+	
+	if ( is_nongray( color ) )
+	{
+		WARNING = "BackColor: non-gray color ", color, " will render as black";
+	}
+	
+	thePort->bkColor = color;
+}
+
+#pragma mark -
 #pragma mark Calculations with Points
 #pragma mark -
 
@@ -251,7 +293,7 @@ pascal unsigned char GetPixel_patch( short h, short v )
 	Ptr addr = bits.baseAddr;
 	
 	addr += v * bits.rowBytes;
-	addr += h / 8;
+	addr += h / 8u;
 	
 	h &= 0x7;
 	

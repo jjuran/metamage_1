@@ -17,6 +17,9 @@
 #ifndef __EVENTS__
 #include <Events.h>
 #endif
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
 
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
@@ -471,6 +474,25 @@ namespace Genie
 		return true;
 	}
 	
+	static
+	uint8_t unmodified_char( UInt32 event_message )
+	{
+		UInt32 state = 0;
+		
+		Handle kchr = GetResource( 'KCHR', 0 );
+		
+		if ( kchr == NULL )
+		{
+			return (uint8_t) event_message;  // Just return the modified char
+		}
+		
+		UInt16 keyCode = (UInt8) (event_message >> 8);
+		
+		UInt32 key = KeyTranslate( *kchr, keyCode, &state );
+		
+		return (uint8_t) key;
+	}
+	
 	bool eventtap_handler::KeyDown( const EventRecord& event )
 	{
 		using namespace splode::modes;
@@ -478,7 +500,7 @@ namespace Genie
 		
 		eventtap_stream_server& extra = *(eventtap_stream_server*) itsKey->extra();
 		
-		const signed char c = char( event.message );
+		const signed char c = unmodified_char( event.message );
 		
 		if ( c < 0 )
 		{

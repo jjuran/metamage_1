@@ -28,10 +28,10 @@
 #include "poseven/types/thread.hh"
 
 // vlib
-#include "vlib/array-utils.hh"
+#include "vlib/functions.hh"
 #include "vlib/interpret.hh"
 #include "vlib/scope.hh"
-#include "vlib/types.hh"
+#include "vlib/tracker.hh"
 #include "vlib/type_info.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/proc.hh"
@@ -39,16 +39,27 @@
 #include "vlib/types/type.hh"
 #include "vlib/types/unitary.hh"
 
-// vx
-#include "empty_signal_handler.hh"
-#include "file_descriptor.hh"
-#include "library.hh"
-#include "posixfs.hh"
-#include "sockets.hh"
-#include "thread.hh"
-#include "thread_state.hh"
-#include "channel/metatype.hh"
+// varyx-channel
+#include "varyx/channel/metatype.hh"
 
+// varyx-ed25519
+#include "varyx/ed25519/functions.hh"
+
+// varyx-meta
+#include "varyx/meta/eval.hh"
+
+// varyx-posix
+#include "varyx/posix/argv.hh"
+#include "varyx/posix/empty_signal_handler.hh"
+#include "varyx/posix/file_descriptor.hh"
+#include "varyx/posix/library.hh"
+#include "varyx/posix/posixfs.hh"
+#include "varyx/posix/sockets.hh"
+#include "varyx/posix/thread.hh"
+#include "varyx/posix/thread_state.hh"
+
+
+#define PROGRAM  "vx"
 
 #define STRLEN( s )  (sizeof "" s - 1)
 
@@ -62,6 +73,11 @@ namespace p7 = poseven;
 
 using namespace command::constants;
 using namespace vlib;
+
+using namespace varyx::channel;
+using namespace varyx::ed25519;
+using namespace varyx::meta;
+using namespace varyx::posix;
 
 
 const int thread_interrupt_signal = SIGUSR1;
@@ -121,52 +137,27 @@ static char* const* get_options( char** argv )
 }
 
 static
-Value make_argv( int argn, char* const* args )
+void define_keyword( const char* name, const Value& v )
 {
-	char* const* argp = args + argn;
-	
-	Value result = String( *--argp );
-	
-	while ( argp > args )
-	{
-		result = Value( String( *--argp ), result );
-	}
-	
-	return result;
+	create_keyword( name ).sym()->assign( v );
 }
 
 static
-void set_argv( const char* arg0, int argn, char* const* args )
+void define_keyword( const proc_info& proc )
 {
-	Value argv = Value_empty_list;
-	
-	if ( argn )
-	{
-		argv = make_argv( argn, args );
-		
-		if ( arg0 )
-		{
-			argv = Value( String( arg0 ), argv );
-		}
-	}
-	else if ( arg0 )
-	{
-		argv = String( arg0 );
-	}
-	
-	const Value& argv_symbol = globals.declare( "argv", Symbol_const );
-	
-	Symbol& sym = *argv_symbol.sym();
-	
-	sym.denote( Value( Type( c_str_vtype ), Op_subscript, empty_list ) );
-	
-	sym.assign( make_array( argv ) );
+	create_keyword( proc.name ).sym()->assign( Proc( proc ) );
+}
+
+static
+Symbol& declare( const char* name )
+{
+	return *globals.declare( name, Symbol_const ).sym();
 }
 
 static
 void define( const char* name, const Value& v )
 {
-	globals.declare( name, Symbol_const ).sym()->assign( v );
+	declare( name ).assign( v );
 }
 
 static
@@ -212,7 +203,7 @@ int main( int argc, char** argv )
 	                 : args[ 0 ]     ? NULL
 	                 :                 "-";
 	
-	set_argv( arg0, argn, args );
+	set_argv( declare( "argv" ), arg0, args );
 	
 	define( "argc", Integer( argn + (arg0 != NULL) ) );
 	
@@ -283,6 +274,10 @@ int main( int argc, char** argv )
 	define( proc_warn     );
 	define( proc_write    );
 	
+	define_keyword( proc_mkpub  );
+	define_keyword( proc_sign   );
+	define_keyword( proc_verify );
+	
 	const char* path = "<inline script>";
 	
 	try
@@ -319,6 +314,7 @@ int main( int argc, char** argv )
 		}
 		
 		join_all_threads();
+		cull_unreachable_objects();
 	}
 	catch ( const std::bad_alloc& )
 	{
@@ -326,7 +322,7 @@ int main( int argc, char** argv )
 	}
 	catch ( const p7::errno_t& err )
 	{
-		more::perror( "vx", path, err );
+		more::perror( PROGRAM, path, err );
 		
 		return 1;
 	}

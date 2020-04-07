@@ -24,6 +24,7 @@
 #include "gear/hexadecimal.hh"
 
 // plus
+#include "plus/mac_utf8.hh"
 #include "plus/serialize.hh"
 #include "plus/simple_map.hh"
 #include "plus/string/concat.hh"
@@ -79,8 +80,15 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
-#include "Genie/FS/mac_text_property.hh"
-#include "Genie/FS/utf8_text_property.hh"
+
+
+#ifndef CONFIG_COMPOSITING
+#ifdef MAC_OS_X_VERSION_10_3
+#define CONFIG_COMPOSITING  1
+#else
+#define CONFIG_COMPOSITING  0
+#endif
+#endif
 
 
 namespace Genie
@@ -122,7 +130,7 @@ namespace Genie
 		bool                itHasCloseBox;
 		bool                itIsLocked;
 		
-	#ifdef MAC_OS_X_VERSION_10_2
+	#if CONFIG_COMPOSITING
 		
 		bool                it_is_compositing;
 		
@@ -152,7 +160,7 @@ namespace Genie
 		                     itHasCloseBox( true ),
 		                     itIsLocked(),
 		                     
-		                 #ifdef MAC_OS_X_VERSION_10_2
+		                 #if CONFIG_COMPOSITING
 		                     
 		                     it_is_compositing(),
 		                     
@@ -389,7 +397,7 @@ namespace Genie
 		
 	#endif
 		
-	#ifdef MAC_OS_X_VERSION_10_2
+	#if CONFIG_COMPOSITING
 		
 		if ( params.it_is_compositing )
 		{
@@ -936,44 +944,60 @@ namespace Genie
 	}
 	
 	
-	struct Window_Title : vfs::readwrite_property
+	static
+	void title_get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
 	{
-		static const int fixed_size = -1;
+		result = Find( that ).itsTitle;
 		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			result = Find( that ).itsTitle;
-		}
-		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			WindowParameters& params = gWindowParametersMap[ that ];
+		/*
+			title
+			.mac-title
+			.~title
+			.~mac-title
 			
+			The ".~" prefix sets the binary flag, so if `binary` is true, we
+			need to skip two bytes.  The next byte might be either '.' or 'm'
+			for MacRoman titles, but will always be 't' for UTF-8.
+		*/
+		
+		if ( ! TARGET_API_MAC_CARBON == (name[ binary * 2 ] == 't') )
+		{
+			result = TARGET_API_MAC_CARBON ? plus::mac_from_utf8( result )
+			                               : plus::utf8_from_mac( result );
+		}
+	}
+	
+	static
+	void title_set( const vfs::node* that, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		WindowParameters& params = gWindowParametersMap[ that ];
+		
+		if ( ! TARGET_API_MAC_CARBON == (name[ binary * 2 ] != 't') )
+		{
 			params.itsTitle.assign( begin, end - begin );
 		}
-	};
+		else
+		{
+			const size_t n = end - begin;
+			
+			params.itsTitle = TARGET_API_MAC_CARBON ? plus::mac_from_utf8( begin, n )
+			                                        : plus::utf8_from_mac( begin, n );
+		}
+	}
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( WindowParameters& ) >
-	struct Window_Property : vfs::readwrite_property
-	{
-		static const int fixed_size = Serialize::fixed_size;
-		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			typedef typename Serialize::result_type result_type;
-			
-			const result_type& value = Access( Find( that ) );
-			
-			Serialize::deconstruct::apply( result, value, binary );
-		}
-		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			WindowParameters& params = gWindowParametersMap[ that ];
-			
-			Access( params ) = Serialize::reconstruct::apply( begin, end, binary );
-		}
-	};
+	#define DEFINE_GETTER( p )  \
+	static void p##_get( plus::var_string& result, const vfs::node* that, bool binary )  \
+	{  \
+		const p##_Property::result_type& value = p( Find( that ) );  \
+		p##_Property::deconstruct::apply( result, value, binary );    \
+	}
+	
+	#define DEFINE_SETTER( p )  \
+	static void p##_set( const vfs::node* that, const char* begin, const char* end, bool binary )  \
+	{  \
+		WindowParameters& params = gWindowParametersMap[ that ];               \
+		p( params ) = p##_Property::reconstruct::apply( begin, end, binary );  \
+	}
 	
 	
 	namespace
@@ -1004,7 +1028,7 @@ namespace Genie
 			return params.itHasCloseBox;
 		}
 		
-	#ifdef MAC_OS_X_VERSION_10_2
+	#if CONFIG_COMPOSITING
 		
 		bool& Compositing( WindowParameters& params )
 		{
@@ -1030,23 +1054,6 @@ namespace Genie
 	{
 		const vfs::property_params  _;
 		const bool                  is_mutable;
-	};
-	
-	template < class Property, bool variable >
-	struct port_property_params_factory
-	{
-		static const port_property_params value;
-	};
-	
-	template < class Property, bool variable >
-	const port_property_params port_property_params_factory< Property, variable >::value =
-	{
-		{
-			Property::fixed_size,
-			Property::can_get ? &Property::get : 0,  // NULL
-			Property::can_set ? &Property::set : 0   // NULL
-		},
-		variable
 	};
 	
 	
@@ -1235,20 +1242,58 @@ namespace Genie
 		return vfs::new_property( parent, name, params_ );
 	}
 	
-	#define PROPERTY( var, prop )  &new_port_property, &port_property_params_factory< prop, var >::value
+	#define PROPERTY( var, prop )  &new_port_property, &prop##_params
 	
 	#define VARIABLE( prop )  PROPERTY( kAttrVariable, prop )
 	#define CONSTANT( prop )  PROPERTY( kAttrConstant, prop )
 	
-	typedef Window_Property< serialize_Point,  &Origin   >  Origin_Property;
-	typedef Window_Property< serialize_Point,  &Size     >  Size_Property;
-	typedef Window_Property< serialize_bool,   &Visible  >  Visible_Property;
-	typedef Window_Property< serialize_ProcID, &ProcID   >  ProcID_Property;
-	typedef Window_Property< serialize_bool,   &CloseBox >  CloseBox_Property;
+	typedef serialize_Point   Origin_Property;
+	typedef serialize_Point   Size_Property;
+	typedef serialize_bool    Visible_Property;
+	typedef serialize_ProcID  ProcID_Property;
+	typedef serialize_bool    CloseBox_Property;
+	typedef serialize_bool    Compositing_Property;
 	
-#ifdef MAC_OS_X_VERSION_10_2
+	static const port_property_params Window_Title_params =
+	{
+		{
+			vfs::no_fixed_size,
+			(vfs::property_get_hook) &title_get,
+			(vfs::property_set_hook) &title_set,
+		},
+		kAttrVariable,
+	};
 	
-	typedef Window_Property< serialize_bool, &Compositing >  Compositing_Property;
+	DEFINE_GETTER( Origin      );
+	DEFINE_GETTER( Size        );
+	DEFINE_GETTER( Visible     );
+	DEFINE_GETTER( ProcID      );
+	DEFINE_GETTER( CloseBox    );
+	
+	DEFINE_SETTER( Origin      );
+	DEFINE_SETTER( Size        );
+	DEFINE_SETTER( Visible     );
+	DEFINE_SETTER( ProcID      );
+	DEFINE_SETTER( CloseBox    );
+	
+	#define DEFINE_PARAMS( p, v )  \
+	static const port_property_params p##_Property_params = {{p##_Property::fixed_size, &p##_get, &p##_set}, v}
+	
+	#define DEFINE_VARIABLE_PARAMS( p )  DEFINE_PARAMS( p, kAttrVariable )
+	#define DEFINE_CONSTANT_PARAMS( p )  DEFINE_PARAMS( p, kAttrConstant )
+	
+	DEFINE_VARIABLE_PARAMS( Origin      );
+	DEFINE_VARIABLE_PARAMS( Size        );
+	DEFINE_VARIABLE_PARAMS( Visible     );
+	DEFINE_CONSTANT_PARAMS( ProcID      );
+	DEFINE_CONSTANT_PARAMS( CloseBox    );
+	
+#if CONFIG_COMPOSITING
+	
+	DEFINE_GETTER( Compositing );
+	DEFINE_SETTER( Compositing );
+	
+	DEFINE_CONSTANT_PARAMS( Compositing );
 	
 #endif
 	
@@ -1271,23 +1316,10 @@ namespace Genie
 		
 		{ "new",    &vfs::new_static_symlink, "../../new" },
 		
-	#if TARGET_API_MAC_CARBON
-		
-		{ ".mac-title", VARIABLE( mac_text_property< Window_Title > ) },
-		{      "title", VARIABLE(                    Window_Title   ) },
-		
-		{ ".~mac-title", VARIABLE( mac_text_property< Window_Title > ) },
-		{     ".~title", VARIABLE(                    Window_Title   ) },
-		
-	#else
-		
-		{ ".mac-title", VARIABLE(                     Window_Title   ) },
-		{      "title", VARIABLE( utf8_text_property< Window_Title > ) },
-		
-		{ ".~mac-title", VARIABLE(                     Window_Title   ) },
-		{     ".~title", VARIABLE( utf8_text_property< Window_Title > ) },
-		
-	#endif
+		{ ".mac-title",  VARIABLE( Window_Title ) },
+		{      "title",  VARIABLE( Window_Title ) },
+		{ ".~mac-title", VARIABLE( Window_Title ) },
+		{     ".~title", VARIABLE( Window_Title ) },
 		
 		{ "pos",    VARIABLE( Origin_Property   ) },
 		{ "size",   VARIABLE( Size_Property     ) },
@@ -1301,7 +1333,7 @@ namespace Genie
 		{ ".~procid", CONSTANT( ProcID_Property   ) },
 		{ ".~goaway", CONSTANT( CloseBox_Property ) },
 		
-	#ifdef MAC_OS_X_VERSION_10_2
+	#if CONFIG_COMPOSITING
 		
 		{ "compositing",   CONSTANT( Compositing_Property ) },
 		{ ".~compositing", CONSTANT( Compositing_Property ) },

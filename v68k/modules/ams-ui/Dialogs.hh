@@ -16,6 +16,7 @@ typedef pascal unsigned char (*ModalFilterUPP)( GrafPort*     dialog,
                                                 short*        itemHit );
 
 pascal void InitDialogs_patch( void* proc );
+pascal void ErrorSound_patch ( void* proc );
 
 pascal GrafPort* NewDialog_patch( void*                 storage,
                                   const Rect*           bounds,
@@ -73,6 +74,9 @@ pascal void SelIText_patch( GrafPort*  dialog,
                             short      item,
                             short      start,
                             short      end );
+
+pascal void HideDItem_patch( GrafPort* dialog, short i );
+pascal void ShowDItem_patch( GrafPort* dialog, short i );
 
 pascal short FindDItem_patch( GrafPort* dialog, Point pt );
 

@@ -283,31 +283,38 @@ namespace Genie
 	}
 	
 	
-	namespace
+	typedef plus::serialize_bool serialize;
+	
+	static
+	void get( plus::var_string& result, const vfs::node* view, bool binary )
 	{
+		bool intersects = gListParameterMap[ view ].itIntersectsGrowBox;
 		
-		bool& Overlap( const vfs::node* view )
-		{
-			return gListParameterMap[ view ].itIntersectsGrowBox;
-		}
-		
+		serialize::deconstruct::apply( result, intersects, binary );
 	}
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
-	struct List_Property : View_Property< Serialize, Access >
+	static
+	void set( const vfs::node* view, const char* begin, const char* end, bool binary )
 	{
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			View_Property< Serialize, Access >::set( that, begin, end, binary );
-			
-			gListParameterMap[ that ].bounds_changed = true;
-		}
+		ListParameters& params = gListParameterMap[ view ];
+		
+		bool& intersects = params.itIntersectsGrowBox;
+		
+		intersects = serialize::reconstruct::apply( begin, end, binary );
+		
+		InvalidateWindowForView( view );
+		
+		params.bounds_changed = true;
+	}
+	
+	static const vfs::property_params list_overlap_params =
+	{
+		serialize::fixed_size,
+		&get,
+		&set,
 	};
 	
-	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
-	
-	typedef List_Property< plus::serialize_bool, Overlap >  Overlap_Property;
+	#define PROPERTY( prop )  &vfs::new_property, &list_overlap_params
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{

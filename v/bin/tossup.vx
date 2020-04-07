@@ -165,7 +165,7 @@ do
 	        "Delta:  " result "\n"
 	        "\n"
 }
-while result == mark-int .-result  # ignore 0 and 2^(k-1)
+while result == mark-int -result  # ignore 0 and 2^(k-1)
 
 const scored = won-or-lost[ +(result < 0) ]
 

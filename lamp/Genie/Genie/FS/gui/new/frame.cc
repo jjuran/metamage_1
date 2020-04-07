@@ -370,19 +370,98 @@ namespace Genie
 	};
 	
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
-	struct Frame_Property : View_Property< Serialize, Access >
+	static
+	Value& value_field( const vfs::node* view, const plus::string& name )
 	{
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			View_Property< Serialize, Access >::set( that, begin, end, binary );
-			
-			gFrameParametersMap[ that ].bounds_changed = true;
-		}
+		FrameParameters& params = gFrameParametersMap[ view ];
+		
+		const unsigned n = name.size();
+		
+		Value& value = n == STRLEN( "width"          ) ? params.width
+		             : n == STRLEN( "height"         ) ? params.height
+		             : n == STRLEN( ".margin-top"    ) ? params.margin_top
+		             : n == STRLEN( ".margin-right"  ) ? params.margin_right
+		             : n == STRLEN( ".margin-bottom" ) ? params.margin_bottom
+		             : n == STRLEN( ".margin-left"   ) ? params.margin_left
+		             :                                   *(Value*) 0;
+		
+		return value;
+	}
+	
+	static
+	int& int_field( const vfs::node* view, const plus::string& name )
+	{
+		FrameParameters& params = gFrameParametersMap[ view ];
+		
+		const unsigned n = name.size();
+		
+		int& value = n == STRLEN( "padding"            ) ? params.padding
+		           : n == STRLEN( ".outline-width"     ) ? params.outline_width
+		           : n == STRLEN( ".outline-offset"    ) ? params.outline_offset
+		           : n == STRLEN( ".outline-curvature" ) ? params.outline_curvature
+		           :                                       *(int*) 0;
+		
+		return value;
+	}
+	
+	static
+	void value_get( plus::var_string& result, const vfs::node* view, bool binary, const plus::string& name )
+	{
+		const Value& value = value_field( view, name );
+		
+		serialize_Value::deconstruct::apply( result, value, binary );
+	}
+	
+	static
+	void value_set( const vfs::node* view, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		Value& value = value_field( view, name );
+		
+		value = serialize_Value::reconstruct::apply( begin, end, binary );
+		
+		InvalidateWindowForView( view );
+		
+		gFrameParametersMap[ view ].bounds_changed = true;
+	}
+	
+	static const vfs::property_params frame_value_params =
+	{
+		serialize_Value::fixed_size,
+		(vfs::property_get_hook) &value_get,
+		(vfs::property_set_hook) &value_set,
 	};
 	
-	#define PROPERTY_VALUE( access )  &vfs::new_property, &vfs::property_params_factory< Frame_Property<       serialize_Value,      access > >::value
-	#define PROPERTY_INT(   access )  &vfs::new_property, &vfs::property_params_factory< Frame_Property< plus::serialize_int< int >, access > >::value
+	typedef plus::serialize_int< int > serialize_int;
+	
+	static
+	void int_get( plus::var_string& result, const vfs::node* view, bool binary, const plus::string& name )
+	{
+		int value = int_field( view, name );
+		
+		serialize_int::deconstruct::apply( result, value, binary );
+	}
+	
+	static
+	void int_set( const vfs::node* view, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		int& value = int_field( view, name );
+		
+		value = serialize_int::reconstruct::apply( begin, end, binary );
+		
+		InvalidateWindowForView( view );
+		
+		gFrameParametersMap[ view ].bounds_changed = true;
+	}
+	
+	static const vfs::property_params frame_int_params =
+	{
+		serialize_int::fixed_size,
+		(vfs::property_get_hook) &int_get,
+		(vfs::property_set_hook) &int_set,
+	};
+	
+	#define PROPERTY_VALUE( access )  &vfs::new_property, &frame_value_params
+	#define PROPERTY_INT(   access )  &vfs::new_property, &frame_int_params
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{

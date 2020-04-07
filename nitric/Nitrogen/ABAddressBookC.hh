@@ -166,6 +166,8 @@ namespace Nitrogen
 //	extern void ABSetMe(ABAddressBookRef addressBook, ABPersonRef moi);
 	using ::ABSetMe;
 
+#ifdef MAC_OS_X_VERSION_10_3
+
 // Returns the record class Name for a particular uniqueId
 	inline nucleus::owned<CFStringRef> ABCopyRecordTypeFromUniqueId ( ABAddressBookRef addressBook, CFStringRef uniqueId ) {
 		(void) AddressBookErrorsRegistrationDependency();
@@ -173,6 +175,8 @@ namespace Nitrogen
 		return nucleus::owned<CFStringRef>::seize( result );
     	}
     
+
+#endif
 
 // --- Properties
 //	Property names must be unique for a record type
@@ -457,6 +461,8 @@ namespace Nitrogen
 		return nucleus::owned<CFStringRef>::seize( result );
 		}
 
+#ifdef MAC_OS_X_VERSION_10_3
+
 // --- Address formatting
 	inline nucleus::owned<CFStringRef> ABCreateFormattedAddressFromDictionary ( ABAddressBookRef addressBook, CFDictionaryRef address ) {
 		(void) AddressBookErrorsRegistrationDependency();
@@ -469,6 +475,8 @@ namespace Nitrogen
 		CFStringRef result = ::ABCopyDefaultCountryCode ( addressBook );
 		return nucleus::owned<CFStringRef>::seize( result );
 		}
+
+#endif
 
 // --------------------------------------------------------------------------------
 //      Person Image Loading

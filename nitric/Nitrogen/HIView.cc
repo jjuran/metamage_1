@@ -60,6 +60,8 @@ namespace Nitrogen {
 #endif
 
 
+#ifdef MAC_OS_X_VERSION_10_3
+
 //	Multiple variations of "HISegmentedViewSetSegmentImage"
 	void HISegmentedViewSetSegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased ) {
 		HIViewImageContentInfo cinfo;
@@ -82,6 +84,8 @@ namespace Nitrogen {
 		ThrowOSStatus ( ::HISegmentedViewSetSegmentImage ( inSegmentedView, inSegmentIndexOneBased, &cinfo ));
 		}
 	
+#endif  // #ifdef MAC_OS_X_VERSION_10_3
+
 #endif  // #if ! __LP64__
 	
 #if 0

@@ -190,7 +190,7 @@ namespace tool
 			{
 				n::owned< p7::fd_t > fd = p7::open( path, p7::o_rdonly );
 				
-				struct ::stat sb = p7::fstat( fd );
+				struct stat sb = p7::fstat( fd );
 				
 				if ( sb.st_size == 0 )
 				{

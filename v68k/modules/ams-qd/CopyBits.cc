@@ -24,6 +24,8 @@
 
 // ams-qd
 #include "draw.hh"
+#include "segments_box.hh"
+#include "stretch.hh"
 
 
 static inline
@@ -116,7 +118,7 @@ void blit_segment_direct( Ptr      src,
 		return;
 	}
 	
-	if ( short n_bytes = n_pixels_drawn / 8 )
+	if ( short n_bytes = n_pixels_drawn / 8u )
 	{
 		dst = blit_byte_aligned_segment( src,
 		                                 dst,
@@ -153,7 +155,7 @@ void blit_segment_buffered( Ptr       src,
 {
 	const short mode = transfer_mode_AND_0x03;
 	
-	const size_t n_bytes = (n_pixels_skipped + n_pixels_drawn + 7) / 8;
+	const size_t n_bytes = (n_pixels_skipped + n_pixels_drawn + 7) / 8u;
 	
 	Ptr buffer = (Ptr) alloca( n_bytes );
 	
@@ -178,13 +180,13 @@ void blit_segment( Ptr       src,
 		const uint8_t right_shift = 8 - left_shift;
 		
 		// Theoretical 8K maximum
-		const size_t buffer_size = n_pixels_drawn / 8 + 1;
+		const size_t buffer_size = n_pixels_drawn / 8u + 1;
 		
 		Ptr const buffer = (Ptr) alloca( buffer_size );
 		
 		buffer[ 0 ] = '\0';
 		
-		short n_src_bytes = (n_src_pixels_skipped + n_pixels_drawn + 7) / 8;
+		short n_src_bytes = (n_src_pixels_skipped + n_pixels_drawn + 7) / 8u;
 		
 		fast_rshift( buffer, src, n_src_bytes, right_shift );
 		
@@ -211,7 +213,9 @@ void blit_masked_bits( const BitMap&    srcBits,
 	
 	const short* extent = (short*) (*maskRgn + 1);
 	
-	quickdraw::region_iterator it( maskRgn[0]->rgnSize, extent );
+	segments_box segments( maskRgn[0]->rgnSize );
+	
+	quickdraw::region_iterator it( segments, extent );
 	
 	while ( const quickdraw::region_band* band = it.next() )
 	{
@@ -231,8 +235,8 @@ void blit_masked_bits( const BitMap&    srcBits,
 				const short h0 = *it++;
 				const short h1 = *it++;
 				
-				Ptr const src = p + (h0 - srcHOffset) / 8;
-				Ptr const dst = q + (h0 - dstHOffset) / 8;
+				Ptr const src = p + (h0 - srcHOffset) / 8u;
+				Ptr const dst = q + (h0 - dstHOffset) / 8u;
 				
 				const short n_src_pixels_skipped = h0 - srcHOffset & 7;
 				const short n_dst_pixels_skipped = h0 - dstHOffset & 7;
@@ -269,14 +273,51 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		return;
 	}
 	
-	if ( dstWidth != srcWidth  ||  dstHeight != srcHeight )
+	if ( dstWidth <= 0  ||  dstHeight <= 0 )
 	{
 		return;
 	}
 	
+	const bool congruent  = dstWidth == srcWidth  &&  dstHeight == srcHeight;
+	const bool stretching = ! congruent;
+	
 	static RgnHandle clipRgn = NewRgn();
 	
 	GrafPort& port = **get_addrof_thePort();
+	
+	BitMap stretched_bits;
+	
+	stretched_bits.baseAddr = NULL;
+	
+	if ( stretching )
+	{
+		const short rowBytes = (dstWidth + 15) / 16u * 2;
+		
+		const Rect bounds = { 0, 0, dstHeight, dstWidth };
+		
+		stretched_bits.baseAddr = NewPtrClear( dstHeight * rowBytes );
+		stretched_bits.rowBytes = rowBytes;
+		stretched_bits.bounds   = bounds;
+		
+		stretch_bits( *srcBits, stretched_bits, *srcRect, bounds );
+		
+		srcBits = &stretched_bits;
+		srcRect = &stretched_bits.bounds;
+	}
+	
+	Rect clippedSrcRect = *srcRect;
+	Rect clippedDstRect = *dstRect;
+	
+	SectRect( &srcBits->bounds, &clippedSrcRect, &clippedSrcRect );
+	
+	clippedDstRect.top  += clippedSrcRect.top  - srcRect->top;
+	clippedDstRect.left += clippedSrcRect.left - srcRect->left;
+	
+	clippedDstRect.right  += clippedSrcRect.right  - srcRect->right;
+	clippedDstRect.bottom += clippedSrcRect.bottom - srcRect->bottom;
+	
+	srcRect = &clippedSrcRect;
+	dstRect = &clippedDstRect;
 	
 	redraw_lock lock( port.portBits, *dstRect, *srcBits, *srcRect );
 	
@@ -313,8 +354,8 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	src += srcTop * srcRowBytes;
 	dst += dstTop * dstRowBytes;
 	
-	src += srcLeft / 8;
-	dst += dstLeft / 8;
+	src += srcLeft / 8u;
+	dst += dstLeft / 8u;
 	
 	const short srcSkip = srcLeft & 0x7;
 	const short dstSkip = dstLeft & 0x7;
@@ -401,7 +442,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		if ( draw_bottom_to_top )
 		{
 			const short tmpRight = srcSkip + width;
-			const short tmpRowBytes = (tmpRight + 15) / 16 * 2;
+			const short tmpRowBytes = (tmpRight + 15) / 16u * 2;
 			
 			Ptr tmp = NewPtr( n_rows * tmpRowBytes );
 			
@@ -439,6 +480,11 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 			                  clipRgn,
 			                  blit );
 		}
+	}
+	
+	if ( stretched_bits.baseAddr )
+	{
+		DisposePtr( stretched_bits.baseAddr );
 	}
 }
 

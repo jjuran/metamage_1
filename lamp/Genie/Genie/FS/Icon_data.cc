@@ -162,10 +162,12 @@ namespace Genie
 		itIsPOD = false;
 	}
 	
-	void IconData::Plot( const Rect&           area,
-	                     N::IconAlignmentType  align,
-	                     N::IconTransformType  transform )
+	void IconData::Plot( const Rect&        area,
+	                     IconAlignmentType  align,
+	                     IconTransformType  transform )
 	{
+		OSErr err;
+		
 		if ( !itIsSet )
 		{
 			return;
@@ -179,55 +181,45 @@ namespace Genie
 				return;
 			}
 			
-			N::ResID resID = N::ResID( itsResID );
+			err = ::PlotIconID( &area, align, transform, itsResID );
 			
-			try
+			if ( err == noErr )
 			{
-				N::PlotIconID( area, align, transform, resID );
-				
 				return;
 			}
-			catch ( const Mac::OSStatus& err )
-			{
-				// No such icon family resource, try a cicn
-			}
+			
+			// No such icon family resource, try a cicn
 			
 		#if CONFIG_COLOR
 			
-			try
+			if ( CIconHandle cicon = ::GetCIcon( itsResID ) )
 			{
-				N::PlotCIconHandle( area,
-				                    align,
-				                    transform,
-				                    N::GetCIcon( resID ) );
+				err = PlotCIconHandle( &area, align, transform, cicon );
 				
-				return;
+				DisposeCIcon( cicon );
+				
+				if ( err == noErr )
+				{
+					return;
+				}
 			}
-			catch ( const Mac::OSStatus& err )
-			{
-				// No such color icon, try an ICON
-			}
+			
+			// No such color icon, try an ICON
 			
 		#endif
 			
-			try
+			if ( Handle icon = ::GetIcon( itsResID ) )
 			{
-				N::PlotIconHandle( area,
-				                   align,
-				                   transform,
-				                   N::GetIcon( resID ) );
+				err = PlotIconHandle( &area, align, transform, icon );
 				
 				return;
 			}
-			catch ( const Mac::OSStatus& err )
-			{
-				// No such icon, give up
-			}
 			
+			// No such icon, give up
 			return;
 		}
 		
-		const std::size_t size = N::GetHandleSize( GetHandle() );
+		const std::size_t size = GetHandleSize( GetHandle() );
 		
 		switch ( size )
 		{
@@ -236,19 +228,13 @@ namespace Genie
 			
 			case sizeof (N::PlainIcon):
 			case sizeof (N::MaskedIcon):
-				N::PlotIconHandle( area,
-				                   align,
-				                   transform,
-				                   N::Handle( GetHandle() ) );
+				PlotIconHandle( &area, align, transform, GetHandle() );
 				break;
 			
 		#if CONFIG_ICONSUITES
 			
 			case 76:
-				N::PlotIconSuite( area,
-				                  align,
-				                  transform,
-				                  N::IconSuiteRef( GetHandle() ) );
+				PlotIconSuite( &area, align, transform, GetHandle() );
 				break;
 			
 		#endif

@@ -148,10 +148,14 @@ namespace Nitrogen {
 		Mac::ThrowOSStatus ( ::HIViewReshapeStructure ( inView ));
 		}
 
+#ifdef MAC_OS_X_VERSION_10_3
+
 	inline void HIViewRegionChanged ( HIViewRef inView, ControlPartCode inRegionCode ) {
      	(void) HIViewErrorsRegistrationDependency();
 		Mac::ThrowOSStatus ( ::HIViewRegionChanged ( inView, inRegionCode ));
 		}
+
+#endif
 
 	
 /*==============================================================================*/
@@ -210,11 +214,15 @@ namespace Nitrogen {
      	(void) HIViewErrorsRegistrationDependency();
 		Mac::ThrowOSStatus ( ::HIViewSetNeedsDisplayInRegion ( inView, inRgn, inNeedsDisplay ));
 		}
-	
+
+#ifdef MAC_OS_X_VERSION_10_3
+
 	inline void HIViewRender ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
 		Mac::ThrowOSStatus ( ::HIViewRender ( inView ));
 		}
+
+#endif
 
 	inline void HIViewFlashDirtyArea ( WindowRef inWindow ) {
      	(void) HIViewErrorsRegistrationDependency();
@@ -320,6 +328,8 @@ namespace Nitrogen {
 /*  LAYOUT                                                                      */
 /*==============================================================================*/
 
+#ifdef MAC_OS_X_VERSION_10_3
+
 	inline HILayoutInfo HIViewGetLayoutInfo ( HIViewRef inView, UInt32 version = kHILayoutInfoVersionZero ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HILayoutInfo retVal;
@@ -351,12 +361,18 @@ namespace Nitrogen {
 		Mac::ThrowOSStatus ( ::HIViewApplyLayout ( inView ));
 		}
 
+#endif
+
 /*==============================================================================*/
 /*  MISCELLANEOUS                                                               */
 /*==============================================================================*/
 
+#ifdef MAC_OS_X_VERSION_10_3
+
 /*	extern WindowRef HIViewGetWindow(HIViewRef inView) */
 	using ::HIViewGetWindow;
+
+#endif
 
 	inline HIViewRef HIViewFindByID ( HIViewRef inStartView, HIViewID inID ) {
      	(void) HIViewErrorsRegistrationDependency();
@@ -395,6 +411,8 @@ namespace Nitrogen {
 		Mac::ThrowOSStatus ( ::HIViewDrawCGImage ( inContext, &inBounds, inImage ));
 		}
 	
+#ifdef MAC_OS_X_VERSION_10_3
+
 	inline HIViewFeatures HIViewGetFeatures ( HIViewRef inView ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewFeatures retVal;
@@ -406,6 +424,8 @@ namespace Nitrogen {
      	(void) HIViewErrorsRegistrationDependency();
 		Mac::ThrowOSStatus ( ::HIViewChangeFeatures ( inView, inFeaturesToSet, inFeaturesToClear ));
 		}
+
+#endif
 
 
 /*==============================================================================*/
@@ -440,6 +460,8 @@ namespace Nitrogen {
 /*	extern Boolean HIScrollViewGetScrollBarAutoHide(HIViewRef inView) */
 	using ::HIScrollViewGetScrollBarAutoHide;
 	
+#ifdef MAC_OS_X_VERSION_10_3
+
 	inline void HIScrollViewNavigate ( HIViewRef inGrowBoxView, HIScrollViewAction inAction ) {
      	(void) HIViewErrorsRegistrationDependency();
 		Mac::ThrowOSStatus ( ::HIScrollViewNavigate ( inGrowBoxView, inAction ));
@@ -448,6 +470,8 @@ namespace Nitrogen {
 /*	extern Boolean HIScrollViewCanNavigate(HIViewRef inView, HIScrollViewAction inAction) */
 	using ::HIScrollViewCanNavigate;
 	
+#endif
+
 
 /*==============================================================================*/
 /*  HIImageView                                                                 */
@@ -575,6 +599,8 @@ namespace Nitrogen {
 /*  HISearchField                                                               */
 /*==============================================================================*/
 
+#ifdef MAC_OS_X_VERSION_10_3
+
 	inline nucleus::owned<HIViewRef> HISearchFieldCreate ( Mac::OptionBits inAttributes ) {
      	(void) HIViewErrorsRegistrationDependency();
 		HIViewRef retVal;
@@ -633,6 +659,8 @@ namespace Nitrogen {
 		return nucleus::owned<CFStringRef>::seize ( retVal );
 		}
 
+#endif  // #ifdef MAC_OS_X_VERSION_10_3
+
 
 /*==============================================================================*/
 /*  HIMenuView                                                                  */
@@ -642,6 +670,8 @@ namespace Nitrogen {
 /*  views. If you need to create an instance of either view, you can use        */
 /*  HIObjectCreate.                                                             */
 /*==============================================================================*/
+
+#ifdef MAC_OS_X_VERSION_10_3
 
 /*	extern MenuRef HIMenuViewGetMenu(HIViewRef inView) */
 	using ::HIMenuViewGetMenu;
@@ -653,10 +683,14 @@ namespace Nitrogen {
 		return retVal;
 		}
 
+#endif
+
 
 /*==============================================================================*/
 /*  HISegmentedView                                                             */
 /*==============================================================================*/
+
+#ifdef MAC_OS_X_VERSION_10_3
 
 	inline nucleus::owned<HIViewRef> HISegmentedViewCreate ( const HIRect &inBounds ) {
      	(void) HIViewErrorsRegistrationDependency();
@@ -761,6 +795,8 @@ namespace Nitrogen {
 	void HISegmentedViewSetSegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased );
 	void HISegmentedViewSetSegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, IconRef iconRef );
 	void HISegmentedViewSetSegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, CGImageRef imageRef );
+
+#endif  // #ifdef MAC_OS_X_VERSION_10_3
 
 #endif  // #if ! __LP64__
 	

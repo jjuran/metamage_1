@@ -26,7 +26,9 @@
 #include "v68k-alloc/memory.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 namespace v68k  {
@@ -35,38 +37,41 @@ namespace utils {
 
 #ifdef __MC68K__
 
-asm void* load( const char* path : __A0 ) : __A0
+asm
+void* load( const char* path : __A0 )
 {
-	MOVEA.L  A0,A1    ; // copy A0
+	MOVEA.L  A0,A1     // copy A0
 	
 	// ENTER strlen0
 loop:
-	TST.B    (A1)+    ;  // while ( *a1++ != '\0' )
-	BNE.S    loop     ;  //    continue;
+	TST.B    (A1)+     // while ( *a1++ != '\0' )
+	BNE.S    loop      //    continue;
 	
-	SUBA.L   A0,A1    ;  // a1 -= a0;
-	MOVE.L   A1,D0    ;  // d0 = a1;
+	SUBA.L   A0,A1     // a1 -= a0;
+	MOVE.L   A1,D0     // d0 = a1;
 	// LEAVE strlen0
 	
-	JSR  0xFFFFFFFC   ;  // the actual load callout
+	JSR  0xFFFFFFFC    // the actual load callout
 	
-	MOVE.L   A0,D2    ;  // if ( *a0 != NULL ) ;
-	BNE.S    no_errno ;  // else
-	MOVE.L   D1,errno ;  //     errno = d1;
+	MOVE.L   A0,D2     // if ( *a0 != NULL ) ;
+	BNE.S    no_errno  // else
+	MOVE.L   D1,errno  //     errno = d1;
 no_errno:
 	RTS
 }
 
-static asm void* load_with_size( const char* path : __A0, uint32_t* size ) : __A0
+static
+asm
+void* load_with_size( const char* path : __A0, uint32_t* size )
 {
-	LINK     A6,#0    ;
+	LINK     A6,#0
 	
 	JSR      load
 	
 	MOVEA.L  8(A6),A1
-	MOVE.L   D0,(A1)  ;
+	MOVE.L   D0,(A1)
 	
-	UNLK     A6       ;
+	UNLK     A6
 	RTS
 }
 
@@ -104,7 +109,7 @@ void* load_file( const char* path, uint32_t* size )
 	}
 	else
 	{
-		const size_t file_size = sb.st_size;
+		const ssize_t file_size = sb.st_size;
 		
 		using v68k::alloc::page_size;
 		
@@ -123,6 +128,8 @@ void* load_file( const char* path, uint32_t* size )
 			if ( n_read != file_size )
 			{
 				free( alloc );
+				
+				alloc = NULL;
 				
 				if ( n_read >= 0 )
 				{

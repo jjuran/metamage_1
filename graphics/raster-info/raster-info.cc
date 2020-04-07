@@ -109,6 +109,7 @@ void print_info( const raster::raster_load& loaded_raster )
 	printf( "Pixel weight (bit depth): %u\n", desc.weight );
 	printf( "Bytes per row: %u (minimum: %lu)\n", desc.stride, min_stride );
 	printf( "Image data bytes: %u\n", desc.height * desc.stride );
+	printf( "Frame count: %u\n", 1 + desc.extra );
 	
 	if ( desc.model >= (uint8_t) Model_end_of_enumeration )
 	{
@@ -119,8 +120,6 @@ void print_info( const raster::raster_load& loaded_raster )
 	{
 		printf( "Pixel model: %s\n", raster_models[ desc.model ] );
 	}
-	
-	printf( "Flags: %x\n", desc.flags );
 	
 	const raster_note* note = &loaded_raster.meta->note;
 	

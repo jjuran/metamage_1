@@ -6,13 +6,12 @@ REPOS += freemount
 REPOS += git
 REPOS += macward-compat
 
-D68K  = var/build/dbg/bin/d68k/d68k
-XV68K = var/build/dbg/bin/xv68k/xv68k
-
-PACK68K = utils/pack.pl
-
 METAMAGE_1 = `git remote -v | grep '^origin.*\(fetch\)' | awk '{print $$2}'`
 PLEASE_RUN = 'Please run `(cd .. && git clone' $(METAMAGE_1)')`.'
+
+BUILD_FLAG = `uname -m | grep x86_64 | sed s/x86_64/-W/`
+
+BUILD = ./build.pl -i $(BUILD_FLAG)
 
 default:
 	@echo 'For help, run `make help`.'
@@ -45,35 +44,51 @@ var/links/%: var/links
 	@true
 
 app-build-tools:
-	./build.pl -i vx
+	$(BUILD) minivx
 
 AMS_REPOS := freemount.git ams-68k-bin.git
-AMS_TOOLS := exhibit graft raster vx xv68k freemountd
+AMS_TOOLS := exhibit graft raster minivx xv68k freemountd
 
 AMS_UTILS_ROOT := var/install/lib/metamage
 
+INSTALL_BIN := "`readlink var/install`/bin"
+INSTALLED_VX := $(INSTALL_BIN)/minivx
+
+INSTALL_SCRIPT := INTERPRETER=$(INSTALLED_VX) scripts/install-script.pl
+
+DEMO_SCRIPT := INTERPRETER=$(PWD)/var/out/minivx scripts/install-script.pl
+
 var/install:
 	@echo
-	@echo "Please run \`./configure\`.  Or, if you lack root access, run"
+	@echo "Please run \`./configure\`.  To set the install location, run e.g."
 	@echo
-	@echo "    INSTALL_PREFIX=\$$HOME ./configure"
+	@echo "    INSTALL_PREFIX=/usr/local ./configure"
 	@echo
-	@echo "instead."
+	@echo "instead.  (The default is ~/.local)"
 	@echo
 	@exit 1
 
 ams-linux-tools: $(AMS_REPOS) var/install
 	./build.pl -i $(AMS_TOOLS) display-linux interact-linux kdmode reader
 
-ams-vx-Z:
-	@echo 'vx -Z "$$@"' > bin/"vx -Z"
-	@chmod +x bin/"vx -Z"
+ams-linux-install: ams-linux-tools ams-68k-install ams-common-install
+	@echo 'exec display-linux "$$@"'  > var/install/bin/display
+	@echo 'exec interact-linux "$$@"' > var/install/bin/interact
+	@chmod +x var/install/bin/display var/install/bin/interact
+	install var/out/display-linux   var/install/bin
+	install var/out/interact-linux  var/install/bin
+	install -d $(AMS_UTILS_ROOT)
+	install -t $(AMS_UTILS_ROOT) var/out/kdmode var/out/reader
+	$(INSTALL_SCRIPT) v/bin/spiel-mouse.vx     var/install/bin/spiel-mouse
+	$(INSTALL_SCRIPT) v/bin/spiel-keyboard.vx  var/install/bin/spiel-keyboard
 
-ams-linux: ams-linux-tools ams-vx-Z
-	@test -x bin/display     || ln -s ../var/out/display-linux  bin/display
-	@test -x bin/interact    || ln -s ../var/out/interact-linux bin/interact
-	@test -x bin/spiel-mouse || ln -s ../v/bin/spiel-mouse.vx bin/spiel-mouse
-	@test -x bin/spiel-keyboard || ln -s ../v/bin/spiel-keyboard.vx bin/spiel-keyboard
+ams-linux: ams-linux-tools
+	@mkdir -p var/demo
+	@echo 'exec display-linux "$$@"'  > var/demo/display
+	@echo 'exec interact-linux "$$@"' > var/demo/interact
+	@chmod +x var/demo/display var/demo/interact
+	$(DEMO_SCRIPT) v/bin/spiel-mouse.vx    var/demo/spiel-mouse
+	$(DEMO_SCRIPT) v/bin/spiel-keyboard.vx var/demo/spiel-keyboard
 	@echo
 	@echo "Build phase complete.  Run \`make ams-linux-inst\` to continue."
 	@echo
@@ -123,31 +138,105 @@ display-check:
 	@test -z "$(DISPLAY)" || echo
 	@test -z "$(DISPLAY)" || exit 1
 
+NEW_PATH = PATH="$$PWD/var/demo:$$PWD/var/out:$$PATH"
+AMS_ROOT = var/links/ams-68k-bin
+AMS_RSRC = "$(AMS_ROOT)/mnt/AMS Resources"
+AMS_VARS = AMS_BIN=$(AMS_ROOT)/bin AMS_LIB=$(AMS_ROOT)/lib AMS_MNT=$(AMS_ROOT)/mnt
+RUN_AMS  = $(NEW_PATH) $(AMS_VARS) var/out/minivx -Z v/bin/ams.vx
+
 ams-linux-demo: ams-linux-check display-check
-	PATH="$$PWD/bin:$$PWD/var/out:$$PATH" ./scripts/ams
+	$(RUN_AMS)
 
-ams-x11: $(AMS_REPOS)
+ams-vnc-build: $(AMS_REPOS)
+	$(BUILD) $(AMS_TOOLS) listen vnc-interact
+
+ams-vnc: ams-vnc-build
+	@mkdir -p var/demo
+	@echo 'exec var/out/minivx -Z v/bin/interact-vnc.vx "$$@"' > var/demo/interact
+	@chmod +x var/demo/interact
+	$(RUN_AMS)
+
+ams-x11-build: $(AMS_REPOS)
 	./build.pl -i $(AMS_TOOLS) interact-x11
-	PATH="$$PWD/var/out:$$PATH" EXHIBIT_INTERACT=interact-x11 ./scripts/ams
 
-ams-osx: $(AMS_REPOS) macward-compat.git
+ams-x11: ams-x11-build
+	EXHIBIT_INTERACT=interact-x11 $(RUN_AMS)
+
+ams-system-rsrcs:
+	$(BUILD) minivx
+	var/out/minivx -Z v/bin/mkrsrc.vx -o $(AMS_RSRC)/rsrc $(AMS_RSRC)
+
+ams-68k-install: var/install ams-system-rsrcs
+	install -d var/install/share/ams/bin
+	install -d var/install/share/ams/lib
+	install -d var/install/share/ams/mnt
+	install -m444 $(AMS_ROOT)/bin/app    var/install/share/ams/bin
+	install -m444 $(AMS_ROOT)/lib/ams-*  var/install/share/ams/lib
+	install -m444 $(AMS_ROOT)/lib/vdb    var/install/share/ams/lib
+	install -m444 $(AMS_ROOT)/lib/umsp   var/install/share/ams/lib
+	cp -R $(AMS_ROOT)/mnt/*              var/install/share/ams/mnt
+
+ams-common-install: var/install
+	install -d var/install/bin
+	test \! -x var/out/sndtrack || install var/out/sndtrack var/install/bin
+	install var/out/minivx      var/install/bin
+	install var/out/raster      var/install/bin
+	install var/out/exhibit     var/install/bin
+	install var/out/graft       var/install/bin
+	install var/out/freemountd  var/install/bin
+	install var/out/xv68k       var/install/bin
+	$(INSTALL_SCRIPT) v/bin/ams.vx var/install/bin/ams
+
+ams-vnc-install: ams-vnc-build ams-68k-install ams-common-install
+	install var/out/listen        var/install/bin
+	install var/out/vnc-interact  var/install/bin
+	$(INSTALL_SCRIPT) v/bin/interact-vnc.vx var/install/bin/interact
+
+ams-x11-install: ams-x11-build ams-68k-install ams-common-install
+	install var/out/interact-x11  var/install/bin
+	@echo 'exec interact-x11 "$$@"' > var/install/bin/interact
+	@chmod +x var/install/bin/interact
+
+ams-quartz-build: $(AMS_REPOS)
+	$(BUILD) graft xv68k minivx freemountd Amethyst
+
+RETROMATIC := PATH="$$PWD/var/out:$$PATH" v/bin/retromatic.vx
+RETRO_APPS := var/apps
+
+ams-quartz-demo: ams-quartz-build
+	@mkdir -p $(RETRO_APPS)
+	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/IAGO
+	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/"Nyanochrome Cat"
+	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/tic-tac-toe.txt
+	@open $(RETRO_APPS)
+
+ams-osx-build: $(AMS_REPOS) macward-compat.git
 	bin/build-app Genie
+	$(BUILD) $(AMS_TOOLS) uunix interact
+
+MACRELIX := var/build/dbg/bin/Genie/MacRelix.app
+APPS := /Applications
+UAPPS := ~/Applications
+
+ams-osx: ams-osx-build
 	mkdir -p ~/var/run/fs
-	open var/build/dbg/bin/Genie/MacRelix.app
-	./build.pl -i $(AMS_TOOLS) uunix interact
-	PATH="$$PWD/var/out:$$PATH" ./scripts/ams
+	test -p ~/var/run/fs/gui.fifo || mkfifo ~/var/run/fs/gui.fifo
+	open $(MACRELIX)
+	true > ~/var/run/fs/gui.fifo
+	$(RUN_AMS)
 
-d68k:
-	./build.pl d68k
+ams-osx-install: ams-osx-build ams-68k-install ams-common-install
+	install var/out/interact  var/install/bin
+	install var/out/uunix     var/install/bin
+	if [ -w $(APPS) ]; then cp -R $(MACRELIX) $(APPS); else mkdir -p $(UAPPS) && cp -R $(MACRELIX) $(UAPPS); fi
 
-d68k-hello: d68k
-	$(PACK68K) v68k/demos/hello.p68k | $(D68K)
-
-d68k-fizzbuzz: d68k
-	$(PACK68K) v68k/demos/fizzbuzz.p68k | $(D68K)
+sndtrack:
+	$(BUILD) minivx
+	var/out/minivx -Z v/bin/portaudio-pkg.vx make
+	$(BUILD) sndtrack
 
 freemountd-tcp: freemount.git
-	./build.pl -i freemountd listen
+	$(BUILD) freemountd listen
 
 var/freemount/hello.txt:
 	mkdir -p var/freemount/
@@ -157,47 +246,13 @@ freemountd-tcp-test: freemountd-tcp var/freemount/hello.txt
 	var/out/listen 127.0.0.1:4564 var/out/freemountd --root var/freemount
 
 freemount-tcp: freemount.git
-	./build.pl -i fls fcat fget utcp
+	$(BUILD) fls fcat fget utcp
 
 fls-test: freemount-tcp
 	PATH="$$PWD/var/out:$$PATH" var/out/fls mnt://127.0.0.1
 
 fcat-test: freemount-tcp
 	PATH="$$PWD/var/out:$$PATH" var/out/fcat mnt://127.0.0.1/hello.txt
-
-xv68k:
-	./build.pl xv68k
-
-xv68k-rts: xv68k
-	echo 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-hello: xv68k
-	$(PACK68K) v68k/demos/hello.p68k | $(XV68K)
-
-xv68k-ill: xv68k
-	echo 4AFC 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-ill-priv: xv68k
-	echo 4E72 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-ill-F: xv68k
-	echo FFFF 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-segv: xv68k
-	echo 2010 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-segv-pc: xv68k
-	perl -e 'print pack "n*", 0x4EF8, 0x0000, 0x4E75' | $(XV68K)
-	echo 4EF8 0000 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-bus: xv68k
-	echo 202F 0001 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-bus-pc: xv68k
-	echo 6001 4E71 4E75 | $(PACK68K) | $(XV68K)
-
-xv68k-div0: xv68k
-	echo 80C1 4E75 | $(PACK68K) | $(XV68K)
 
 .SECONDARY:
 

@@ -108,9 +108,23 @@ namespace raster
 			return false;
 		}
 		
+		if ( desc.frame > desc.extra )
+		{
+			return false;
+		}
+		
 		const uint32_t image_size = desc.height * desc.stride;
 		
-		if ( image_size > footer_offset )
+		const unsigned frame_count = 1 + desc.extra;
+		
+		if ( desc.extra  &&  image_size > 0xFFFFFFFF / frame_count )
+		{
+			return false;
+		}
+		
+		const uint32_t raster_size = image_size * frame_count;
+		
+		if ( raster_size > footer_offset )
 		{
 			return false;
 		}

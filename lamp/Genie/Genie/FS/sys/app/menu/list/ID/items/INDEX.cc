@@ -37,10 +37,6 @@
 // Pedestal
 #include "Pedestal/MenuItemCommands.hh"
 
-// Genie
-#include "Genie/FS/serialize_Str255.hh"
-#include "Genie/FS/utf8_text_property.hh"
-
 
 namespace Genie
 {
@@ -50,22 +46,13 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	struct menu_item_text : serialize_Str255_contents
+	static
+	void set_text( MenuRef menu, short index, const char* begin, const char* end )
 	{
-		static N::Str255 Get( MenuRef menu, UInt16 index )
-		{
-			N::Str255 result;
-			
-			::GetMenuItemText( menu, index, result );
-			
-			return result;
-		}
+		N::Str255 title( begin, end - begin );
 		
-		static void Set( MenuRef menu, UInt16 index, ConstStr255Param title )
-		{
-			::SetMenuItemText( menu, index, title );
-		}
-	};
+		::SetMenuItemText( menu, index, title );
+	}
 	
 	struct menu_item_cmd : plus::serialize_hex< ::OSType >
 	{
@@ -127,56 +114,117 @@ namespace Genie
 		return gear::parse_decimal( that->name().c_str() );
 	}
 	
-	template < class Accessor >
-	struct sys_app_menu_list_ID_items_INDEX_Property : vfs::readwrite_property
+	struct menu_item_rec
 	{
-		static const int fixed_size = Accessor::fixed_size;
-		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			const MenuRef menu = get_MenuRef( that );
-			
-			const UInt16 index = get_menu_item_index( that );
-			
-			if ( menu == NULL  ||  index == 0 )
-			{
-				p7::throw_errno( EIO );
-			}
-			
-			typedef typename Accessor::result_type result_type;
-			
-			const result_type data = Accessor::Get( menu, index );
-			
-			Accessor::deconstruct::apply( result, data, binary );
-		}
-		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			const MenuRef menu = get_MenuRef( that );
-			
-			const UInt16 index = get_menu_item_index( that );
-			
-			if ( menu == NULL  ||  index == 0 )
-			{
-				p7::throw_errno( EIO );
-			}
-			
-			Accessor::Set( menu, index, Accessor::reconstruct::apply( begin, end, binary ) );
-		}
+		MenuRef menu;
+		int16_t item;
 	};
 	
+	static
+	menu_item_rec get_menu_item( const vfs::node* that )
+	{
+		const MenuRef menu = get_MenuRef( that );
+		const UInt16 index = get_menu_item_index( that );
+		
+		if ( menu == NULL  ||  index == 0 )
+		{
+			p7::throw_errno( EIO );
+		}
+		
+		const menu_item_rec result = { menu, index };
+		
+		return result;
+	}
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	static
+	void text_get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
+	{
+		const menu_item_rec menu_item = get_menu_item( that );
+		
+		const MenuRef menu = menu_item.menu;
+		const UInt16 index = menu_item.item;
+		
+		Str255 text = { 0 };
+		
+		::GetMenuItemText( menu, index, text );
+		
+		result = text;
+		
+		if ( name[ 0 ] != '.' )
+		{
+			result = plus::utf8_from_mac( result );
+		}
+	}
 	
-	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_menu_list_ID_items_INDEX_Property< access > )
+	static
+	void text_set( const vfs::node* that, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		const menu_item_rec menu_item = get_menu_item( that );
+		
+		const MenuRef menu = menu_item.menu;
+		const UInt16 index = menu_item.item;
+		
+		if ( name[ 0 ] == '.' )
+		{
+			set_text( menu, index, begin, end );
+		}
+		else
+		{
+			plus::string mac_text = plus::mac_from_utf8( begin, end - begin );
+			
+			set_text( menu, index, mac_text.begin(), mac_text.end() );
+		}
+	}
 	
-	typedef sys_app_menu_list_ID_items_INDEX_Property< menu_item_text > sys_app_menu_list_ID_items_INDEX_text;
+	static const vfs::property_params sys_app_menu_list_ID_items_INDEX_text_params =
+	{
+		vfs::no_fixed_size,
+		(vfs::property_get_hook) &text_get,
+		(vfs::property_set_hook) &text_set,
+	};
+	
+	#define DEFINE_GETTER( p )  \
+	static void p##_get( plus::var_string& result, const vfs::node* that, bool binary )  \
+	{  \
+		const menu_item_rec menu_item = get_menu_item( that );  \
+		const MenuRef menu = menu_item.menu;                    \
+		const UInt16 index = menu_item.item;                    \
+		const p::result_type data = p::Get( menu, index );      \
+		p::deconstruct::apply( result, data, binary );          \
+	}
+	
+	#define DEFINE_SETTER( p )  \
+	static void p##_set( const vfs::node* that, const char* begin, const char* end, bool binary )  \
+	{  \
+		const menu_item_rec menu_item = get_menu_item( that );               \
+		const MenuRef menu = menu_item.menu;                                 \
+		const UInt16 index = menu_item.item;                                 \
+		p::Set( menu, index, p::reconstruct::apply( begin, end, binary ) );  \
+	}
+	
+	DEFINE_GETTER( menu_item_mark );
+	DEFINE_GETTER( menu_item_key  );
+	DEFINE_GETTER( menu_item_cmd  );
+	
+	DEFINE_SETTER( menu_item_mark );
+	DEFINE_SETTER( menu_item_key  );
+	DEFINE_SETTER( menu_item_cmd  );
+	
+	#define DEFINE_PARAMS( p )  \
+	static const vfs::property_params p##_params = {p::fixed_size, &p##_get, &p##_set}
+	
+	DEFINE_PARAMS( menu_item_mark );
+	DEFINE_PARAMS( menu_item_key  );
+	DEFINE_PARAMS( menu_item_cmd  );
+	
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
+	
+	#define PROPERTY_ACCESS( access )  PROPERTY( access )
 	
 	const vfs::fixed_mapping sys_app_menu_list_ID_items_INDEX_Mappings[] =
 	{
 		{ ".mac-text", PROPERTY( sys_app_menu_list_ID_items_INDEX_text ) },
-		
-		{ "text", PROPERTY( utf8_text_property< sys_app_menu_list_ID_items_INDEX_text > ) },
+		{ "text",      PROPERTY( sys_app_menu_list_ID_items_INDEX_text ) },
 		
 		{ "mark", PROPERTY_ACCESS( menu_item_mark ) },
 		{ "key",  PROPERTY_ACCESS( menu_item_key  ) },

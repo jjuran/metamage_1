@@ -26,7 +26,10 @@ namespace Pedestal
 		
 		err = RegisterIconRefFromFSRef( creator, type, &file, &icon );
 		
-		Mac::ThrowOSStatus( err );
+		if ( err != noErr )
+		{
+			return n::owned< IconRef >();
+		}
 		
 		// This shouldn't fail.  If it does, something is seriously wrong.
 		err = AcquireIconRef( icon );

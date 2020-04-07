@@ -78,12 +78,12 @@ namespace poseven
 	inline bool s_isreg ( mode_t mode )  { return S_ISREG ( mode ); }
 	inline bool s_islnk ( mode_t mode )  { return S_ISLNK ( mode ); }
 	
-	inline bool s_isblk ( const struct ::stat& sb )  { return S_ISBLK ( sb.st_mode ); }
-	inline bool s_ischr ( const struct ::stat& sb )  { return S_ISCHR ( sb.st_mode ); }
-	inline bool s_isdir ( const struct ::stat& sb )  { return S_ISDIR ( sb.st_mode ); }
-	inline bool s_isfifo( const struct ::stat& sb )  { return S_ISFIFO( sb.st_mode ); }
-	inline bool s_isreg ( const struct ::stat& sb )  { return S_ISREG ( sb.st_mode ); }
-	inline bool s_islnk ( const struct ::stat& sb )  { return S_ISLNK ( sb.st_mode ); }
+	inline bool s_isblk ( const struct stat& sb )  { return S_ISBLK ( sb.st_mode ); }
+	inline bool s_ischr ( const struct stat& sb )  { return S_ISCHR ( sb.st_mode ); }
+	inline bool s_isdir ( const struct stat& sb )  { return S_ISDIR ( sb.st_mode ); }
+	inline bool s_isfifo( const struct stat& sb )  { return S_ISFIFO( sb.st_mode ); }
+	inline bool s_isreg ( const struct stat& sb )  { return S_ISREG ( sb.st_mode ); }
+	inline bool s_islnk ( const struct stat& sb )  { return S_ISLNK ( sb.st_mode ); }
 	
 }
 

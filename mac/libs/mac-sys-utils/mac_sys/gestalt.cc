@@ -15,12 +15,28 @@
 #include <Gestalt.h>
 #endif
 
+// mac-sys-utils
+#include "mac_sys/trap_available.hh"
+
 
 namespace mac {
 namespace sys {
 	
+	static inline
+	bool has_Gestalt_trap()
+	{
+		enum { _Gestalt = 0xA1AD };
+		
+		return ! TARGET_CPU_68K  ||  trap_available( _Gestalt );
+	}
+	
 	long gestalt( unsigned long selector, long default_value )
 	{
+		if ( ! has_Gestalt_trap() )
+		{
+			return default_value;
+		}
+		
 		SInt32 result;
 		
 		const OSErr err = ::Gestalt( selector, &result );
@@ -30,6 +46,11 @@ namespace sys {
 	
 	bool gestalt_defined( unsigned long selector )
 	{
+		if ( ! has_Gestalt_trap() )
+		{
+			return false;
+		}
+		
 		SInt32 unused_Gestalt_result;
 		
 		const OSErr err = ::Gestalt( selector, &unused_Gestalt_result );

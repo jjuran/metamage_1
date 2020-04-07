@@ -6,17 +6,23 @@
 #ifndef CONSOLE_HH
 #define CONSOLE_HH
 
-struct CntrlParam;
-struct DCtlEntry;
-struct IOParam;
+// ams-io
+#include "Serial.hh"
 
-typedef DCtlEntry DCE;
 
-short CIn_prime ( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 );
-short COut_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 );
+#define CIn_open   NULL
+#define COut_open  NULL
 
-short CIn_status( short trap_word : __D1, CntrlParam* : __A0, DCE* dce : __A1 );
+#define CIn_prime   xIn_prime
+#define COut_prime  xOut_prime
 
+#define CIn_control   NULL
+#define COut_control  NULL
+
+#define CIn_status   xIn_status
 #define COut_status  NULL
+
+#define CIn_close   NULL
+#define COut_close  NULL
 
 #endif

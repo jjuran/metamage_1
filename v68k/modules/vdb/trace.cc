@@ -8,11 +8,17 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <errno.h>
+
 // gear
 #include "gear/parse_decimal.hh"
 
 // vdb
 #include "print_registers.hh"
+
+
+#pragma exceptions off
 
 
 #define PROMPT "vdb> "
@@ -22,13 +28,15 @@
 #define PRINT( s )  write( STDERR_FILENO, s "\n", sizeof s )
 
 
+bool continue_on_bus_error;
+
 static unsigned n_steps;
 
 static uint32_t step_over;
 
 static const char* causes[] =
 {
-	NULL,  // Reset SP (this is a stack pointer)
+	"User Break",
 	NULL,  // Reset PC (would be overridden by actual Reset exception)
 	"Bus Error",
 	"Address Error",
@@ -45,12 +53,34 @@ static const char* causes[] =
 	"Format Error",
 };
 
+static const char* interrupts[] =
+{
+	NULL,  // Reserved (there is no signal 0)
+	NULL,  // SIGHUP
+	"SIGINT",
+};
+
 static
-void report_exception( uint8_t vector_offset )
+void report_exception( uint16_t vector_offset )
 {
 	const char* cause = NULL;
 	
 	const uint8_t vector_number = vector_offset >> 2;
+	
+	if ( vector_number >= 64 )
+	{
+		const uint8_t index = vector_number - 64;
+		
+		if ( index < sizeof interrupts / sizeof *interrupts )
+		{
+			cause = interrupts[ index ];
+		}
+		
+		if ( cause == NULL )
+		{
+			cause = "unspecified interrupt";
+		}
+	}
 	
 	if ( vector_number < sizeof causes / sizeof *causes )
 	{
@@ -67,15 +97,49 @@ void report_exception( uint8_t vector_offset )
 	write( STDERR_FILENO, "\n\n", 2 );
 }
 
+class NMI_reentry_guard
+{
+	private:
+		static volatile int level;
+		
+		// non-copyable
+		NMI_reentry_guard           ( const NMI_reentry_guard& );
+		NMI_reentry_guard& operator=( const NMI_reentry_guard& );
+	
+	public:
+		NMI_reentry_guard()  { ++level; }
+		~NMI_reentry_guard()  { --level; }
+		
+		static bool reentered()  { return level; }
+		
+};
+
+volatile int NMI_reentry_guard::level;
+
 static void debugger_loop( registers& regs )
 {
-	const uint8_t trace_offset = 9 * sizeof (uint32_t);
+	const uint16_t buserr_offset =  2 * sizeof (uint32_t);
+	const uint16_t trace_offset  =  9 * sizeof (uint32_t);
+	const uint16_t sigint_offset = 66 * sizeof (uint32_t);
 	
-	const uint8_t vector_offset = (uint8_t) regs.fv;
+	const uint16_t vector_offset = regs.fv & 0x03FF;
+	
+	if ( NMI_reentry_guard::reentered()  &&  vector_offset == sigint_offset )
+	{
+		return;
+	}
+	
+	NMI_reentry_guard guard;
 	
 	if ( vector_offset != trace_offset )
 	{
 		report_exception( vector_offset );
+	}
+	
+	if ( vector_offset == buserr_offset  &&  continue_on_bus_error )
+	{
+		regs.sr &= 0x3FFF;  // clear Trace bits
+		return;
 	}
 	
 	if ( n_steps > 0 )
@@ -108,8 +172,21 @@ static void debugger_loop( registers& regs )
 		
 		ssize_t n_read = read( STDIN_FILENO, buffer, sizeof buffer );
 		
+		int local_errno = 0;
+		
+		asm
+		{
+			MOVE.L   D1,local_errno
+		}
+		
 		if ( n_read <= 0 )
 		{
+			if ( n_read < 0  &&  local_errno == EINTR )
+			{
+				PRINT( "" );
+				continue;
+			}
+			
 			// FIXME
 			break;
 		}
@@ -164,13 +241,16 @@ static void debugger_loop( registers& regs )
 	}
 }
 
-static asm void trace_handler()
+static
+asm void debugger_break()
 {
 	MOVEM.L  D0-D7/A0-A7,-(SP)
 	
-	MOVE.W   #0x2000,D3
-	AND.W    64(SP),D3
-	BNE.S    no_USP_load
+	MOVE     SR,D3        // S bit is set if we're in Supervisor mode
+	NOT.W    D3           // S bit is clear if we're in Supervisor mode
+	OR.W     64(SP),D3    // S bit is clear if we went from User -> Supervisor
+	BTST     #13,D3       // Test the S bit
+	BNE.S    no_USP_load  // no mode switch
 	
 	MOVE     USP,A0
 	MOVE.L   A0,60(SP)  // copy user SP to registers
@@ -195,7 +275,28 @@ no_USP_store:
 	
 	ADDQ.L   #4,SP
 	
+	TST.W    6(SP)  // test the format/vector word
+	BEQ.S    return_to_user
+	
 	RTE
+	
+return_to_user:
+	MOVE     (SP)+,CCR   // restore the CCR
+	MOVE.L   (SP),6(SP)  // copy the PC to the return address
+	ADDQ.L   #6,SP       // pop the PC and format/vector word off the stack
+	
+	RTS
+}
+
+asm void user_break()
+{
+	// return address is on top of stack
+	
+	CLR.W    -(SP)        // vector 0 shall mean a user break
+	MOVE.L   2(SP),-(SP)  // push the PC again
+	MOVE     SR,-(SP)     // push the SR
+	
+	JMP  debugger_break
 }
 
 asm int set_trace_handler()
@@ -204,7 +305,7 @@ asm int set_trace_handler()
 	
 	BMI.S   bail ;  // D0 is -1 if branch taken
 	
-	LEA     trace_handler,A0
+	LEA     debugger_break,A0
 	
 	MOVE.L  A0,0x0008  // Bus Error
 	MOVE.L  A0,0x000C  // Address Error
@@ -219,6 +320,8 @@ asm int set_trace_handler()
 	MOVE.L  A0,0x0030  // unassigned, reserved
 	MOVE.L  A0,0x0034  // Coprocessor Protocol Violation
 	MOVE.L  A0,0x0038  // Format Error
+	
+	MOVE.L  A0,0x0108  // SIGINT interrupt
 	
 	MOVE    D0,SR
 	MOVEQ   #0,D0

@@ -16,6 +16,12 @@
 #include <Quickdraw.h>
 #endif
 
+#if OPAQUE_TOOLBOX_STRUCTS
+#ifndef __MACWINDOWS__
+#include <MacWindows.h>
+#endif
+#endif
+
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
 #ifndef MISSING_QUICKDRAW_H

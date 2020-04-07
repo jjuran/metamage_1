@@ -10,6 +10,9 @@
 #include <functional>
 #include <vector>
 
+// mac-config
+#include "mac_config/desk-accessories.hh"
+
 // mac-ui-utils
 #include "mac_ui/menus.hh"
 
@@ -17,37 +20,8 @@
 namespace Pedestal
 {
 	
-	static std::vector< void* > the_windows;
 	static std::vector< void* > the_windows_in_menu;
 	
-	
-	void window_created( WindowRef w )
-	{
-		typedef std::vector< void* >::const_iterator Iter;
-		
-		Iter begin = the_windows.begin();
-		Iter end   = the_windows.end  ();
-		
-		if ( std::find( begin, end, w ) == end )
-		{
-			the_windows.push_back( w );
-		}
-	}
-	
-	void window_removed( WindowRef w )
-	{
-		typedef std::vector< void* >::iterator Iter;
-		
-		Iter begin = the_windows.begin();
-		Iter end   = the_windows.end  ();
-		
-		Iter it = std::find( begin, end, w );
-		
-		if ( it != end )
-		{
-			the_windows.erase( it );
-		}
-	}
 	
 	static bool window_title_less( const void* a_, const void* b_ )
 	{
@@ -81,20 +55,54 @@ namespace Pedestal
 		return std::lexicographical_compare( a, a_end, b, b_end );
 	}
 	
+	static
+	void enumerate_windows()
+	{
+		WindowRef window = FrontWindow();
+		
+		for ( ;  window != NULL;  window = GetNextWindow( window ) )
+		{
+			if ( CONFIG_DESK_ACCESSORIES  &&  GetWindowKind( window ) < 0 )
+			{
+				continue;
+			}
+			
+		#if OPAQUE_TOOLBOX_STRUCTS
+			
+			Str255 title;
+			GetWTitle( window, title );
+			
+		#else
+			
+			ConstStr255Param title = *((WindowPeek) window)->titleHandle;
+			
+		#endif
+			
+			if ( title[ 0 ] == 0 )
+			{
+				continue;
+			}
+			
+			the_windows_in_menu.push_back( window );
+		}
+	}
+	
 	void populate_Window_menu( MenuRef menu )
 	{
 		using mac::ui::delete_all_menu_items;
 		
 		delete_all_menu_items( menu );
 		
-		const std::size_t n = the_windows.size();
+		the_windows_in_menu.clear();
+		
+		enumerate_windows();
+		
+		const int n = (int) the_windows_in_menu.size();
 		
 		if ( n == 0 )
 		{
 			return;
 		}
-		
-		the_windows_in_menu = the_windows;
 		
 		std::stable_sort( the_windows_in_menu.begin(),
 		                  the_windows_in_menu.end(),
@@ -112,10 +120,7 @@ namespace Pedestal
 			
 			AppendMenu( menu, "\p " );
 			
-			if ( title[ 0 ] > 0 )
-			{
-				SetMenuItemText( menu, i + 1, title );
-			}
+			SetMenuItemText( menu, i + 1, title );
 			
 			if ( w == front )
 			{

@@ -135,7 +135,7 @@ namespace Genie
 	}
 	
 	void Stat_HFS( bool                  async,
-	               struct ::stat*        sb,
+	               struct stat*          sb,
 	               const CInfoPBRec&     cInfo,
 	               const unsigned char*  name,
 	               bool                  is_rsrc_fork )

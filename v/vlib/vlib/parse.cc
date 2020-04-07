@@ -226,13 +226,9 @@ namespace vlib
 		stack.back().op = op;
 	}
 	
+	inline
 	void Parser::push( op_type op )
 	{
-		if ( op == Op_parens  &&  ! expecting_value() )
-		{
-			fold_ops_and_add( Op_function );
-		}
-		
 		stack.push_back( op );
 	}
 	
@@ -274,14 +270,14 @@ namespace vlib
 			}
 		}
 		
-		fold_ops_and_add( Op_end );
+		fold_ops_and_add( op );
 		
 		if ( stack.size() < 2  ||  stack.end()[ -2 ].op != op )
 		{
 			throw unbalanced_right_delimiter( its_source );
 		}
 		
-		// Remove the sentinel and clear Op_end.
+		// Remove the sentinel and clear the group op we just added.
 		
 		stack.end()[ -2 ].v  = stack.end()[ -1 ].v;
 		stack.end()[ -2 ].op = Op_none;
@@ -305,6 +301,11 @@ namespace vlib
 	void Parser::receive_op( op_type op )
 	{
 		ASSERT( op != Op_none );
+		
+		if ( op == Op_reserved )
+		{
+			THROW( "operator is in a reserved spacing configuration" );
+		}
 		
 		if ( expecting_value() )
 		{
@@ -350,6 +351,12 @@ namespace vlib
 				{
 					stack.push_back( Op_array );
 				}
+				else if ( token.space_before )
+				{
+					fold_ops_and_add( Op_named_unary );
+					
+					stack.push_back( Op_array );
+				}
 				else
 				{
 					fold_ops_and_add( Op_subscript );
@@ -379,6 +386,33 @@ namespace vlib
 				break;
 			
 			case Token_lparen:
+				if ( ! expecting_value() )
+				{
+					op_type implied_op = Op_function;
+					
+					if ( token.space_before )
+					{
+						const size_t n = stack.size();
+						
+						if ( op_type op = n < 2 ? Op_none : stack[ n - 2 ].op )
+						{
+							switch ( op )
+							{
+								case Op_const:
+								case Op_var:
+								case Op_def:
+									break;
+								
+								default:
+									implied_op = Op_named_unary;
+									break;
+							}
+						}
+					}
+					
+					fold_ops_and_add( implied_op );
+				}
+				
 				push( Op_parens );
 				break;
 			

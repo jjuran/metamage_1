@@ -28,6 +28,7 @@ my %category_of_spec = qw
 	m32  width
 	m64  width
 	
+	sym  build
 	dbg  build
 	opt  build
 );
@@ -195,7 +196,14 @@ sub debugging
 {
 	my $self = shift;
 	
-	return $self->{ build } eq "dbg";
+	return $self->{ build } ne "opt";
+}
+
+sub symbolics
+{
+	my $self = shift;
+	
+	return $self->{ build } eq "sym";
 }
 
 1;

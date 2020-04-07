@@ -44,11 +44,12 @@ void install_ResourceManager()
 	TBTRAP( DetachResource  );  // A992
 	TBTRAP( SetResPurge     );  // A993
 	TBTRAP( CurResFile      );  // A994
-	
+	TBTRAP( InitResources   );  // A995
 	TBTRAP( RsrcZoneInit    );  // A996
 	TBTRAP( OpenResFile     );  // A997
 	TBTRAP( UseResFile      );  // A998
 	
+	TBTRAP( CloseResFile    );  // A99A
 	TBTRAP( SetResLoad      );  // A99B
 	TBTRAP( CountResources  );  // A99C
 	TBTRAP( GetIndResource  );  // A99D
@@ -64,7 +65,12 @@ void install_ResourceManager()
 	
 	TBTRAP( GetResInfo      );  // A9A8
 	
+	TBTRAP( ChangedResource );  // A9AA
+	
 	TBTRAP( ResError        );  // A9AF
+	TBTRAP( WriteResource   );  // A9B0
+	
+	TBTRAP( OpenRFPerm      );  // A9C4
 }
 
 int main( int argc, char** argv )

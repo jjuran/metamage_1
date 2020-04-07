@@ -149,6 +149,7 @@ LOCAL_MODULE        := vlib
 LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/array-utils.cc                 \
                        src/vlib/assert.cc                      \
+                       src/vlib/assign.cc                      \
                        src/vlib/calc.cc                        \
                        src/vlib/collectible.cc                 \
                        src/vlib/compare.cc                     \
@@ -165,11 +166,13 @@ LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/is_function.cc                 \
                        src/vlib/is_type.cc                     \
                        src/vlib/iterators/array_iterator.cc    \
+                       src/vlib/iterators/byterange_iterator.cc\
                        src/vlib/iterators/full_iterator.cc     \
                        src/vlib/iterators/generic_iterator.cc  \
                        src/vlib/iterators/list_builder.cc      \
                        src/vlib/iterators/list_iterator.cc     \
                        src/vlib/iterators/range_iterator.cc    \
+                       src/vlib/iterators/safe_list_builder.cc \
                        src/vlib/iterators/string_iterator.cc   \
                        src/vlib/lib/ed25519.cc                 \
                        src/vlib/list-utils.cc                  \
@@ -204,6 +207,7 @@ LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/types/boolean.cc               \
                        src/vlib/types/builtin.cc               \
                        src/vlib/types/byte.cc                  \
+                       src/vlib/types/byterange.cc             \
                        src/vlib/types/endec/byte.cc            \
                        src/vlib/types/endec/stdint.cc          \
                        src/vlib/types/field.cc                 \

@@ -6,11 +6,6 @@
 #ifndef GENIE_ASYNCIO_HH
 #define GENIE_ASYNCIO_HH
 
-// nucleus
-#ifndef NUCLEUS_OWNED_HH
-#include "nucleus/owned.hh"
-#endif
-
 // Nitrogen
 #ifndef MAC_FILES_TYPES_FSDIRID_HH
 #include "Mac/Files/Types/FSDirID.hh"
@@ -20,9 +15,6 @@
 #endif
 #ifndef MAC_FILES_TYPES_FSFILEREFNUM_HH
 #include "Mac/Files/Types/FSFileRefNum.hh"
-#endif
-#ifndef MAC_FILES_TYPES_FSIOPERM_HH
-#include "Mac/Files/Types/FSIOPerm.hh"
 #endif
 #ifndef MAC_FILES_TYPES_FSIOPOSMODE_HH
 #include "Mac/Files/Types/FSIOPosMode.hh"
@@ -38,11 +30,6 @@
 // MacIO
 #include "MacIO/EOF_Policy.hh"
 #include "MacIO/ThrowOSStatus.hh"
-
-
-#ifndef O_MAC_ASYNC
-#define O_MAC_ASYNC  0
-#endif
 
 
 namespace Genie
@@ -145,18 +132,6 @@ namespace Genie
 	{
 		return FSMakeFSSpec< Policy >( dir.vRefNum, dir.dirID, name );
 	}
-	
-	
-	nucleus::owned< Mac::FSFileRefNum >
-	//
-	FSpOpenDF( const FSSpec&  spec,
-	           Mac::FSIOPerm  permissions );
-	
-	
-	nucleus::owned< Mac::FSFileRefNum >
-	//
-	FSpOpenRF( const FSSpec&  spec,
-	           Mac::FSIOPerm  permissions );
 	
 }
 

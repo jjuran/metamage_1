@@ -28,6 +28,9 @@
 // mac-qd-utils
 #include "mac_qd/plot_icon_id.hh"
 
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
 
@@ -152,6 +155,12 @@ namespace Pedestal
 		TextFont( 0 );  // Use system font
 		TextSize( 0 );
 		
+		if ( TARGET_API_MAC_CARBON  &&  mac::sys::gestalt( 'sysv' ) >= 0x1000 )
+		{
+			TextSize( 14 );
+			TextFace( bold );
+		}
+		
 		const OSType creator = GetCreatorFromBNDL();
 		
 		Str255 name = "\p" "Pedestal";
@@ -184,6 +193,11 @@ namespace Pedestal
 			top  + kAboutBoxDetailHeight,
 			left + kAboutBoxTextWidth,
 		};
+		
+		if ( TARGET_API_MAC_CARBON )
+		{
+			TextFace( 0 );
+		}
 		
 		TextFont( 1 );  // Use application font, which should be Geneva
 		TextSize( 9 );
@@ -333,8 +347,15 @@ namespace Pedestal
 	static
 	n::owned< WindowRef > NewAboutBox()
 	{
+		/*
+			Mac OS X 10.2 supports compositing mode, but it has some issues,
+			which we'll avoid by not using it.  In particular, our Quartz-only
+			code path relies on HIThemeDrawTextBox(), which isn't available
+			until 10.3.
+		*/
+		
 		const Mac::WindowAttributes attrs = Mac::kWindowCloseBoxAttribute
-		                                #ifdef MAC_OS_X_VERSION_10_2
+		                                #ifdef MAC_OS_X_VERSION_10_3  // not 10.2
 		                                  | Mac::kWindowCompositingAttribute
 		                                #endif
 		                                #ifdef MAC_OS_X_VERSION_10_3

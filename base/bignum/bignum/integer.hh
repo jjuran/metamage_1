@@ -242,12 +242,29 @@ namespace bignum
 	inline
 	Out integer_cast( const integer& i, Fail fail )
 	{
+	#if defined( __GNUC__ ) && ( __GNUC__ * 100 + __GNUC_MINOR__ <= 303 )
+		
+		// This is a hack to make Varyx usable in Mac OS X 10.3.  I'm sorry.
+		
+		ibox::int_t clip = i.clipped();
+		
+		if ( i.is_negative() )
+		{
+			clip = -clip;
+		}
+		
+		return clip;
+		
+	#else
+		
 		if ( ! i.demotes_to< Out >() )
 		{
 			fail();
 		}
 		
 		return i.clipped_to< Out >();
+		
+	#endif
 	}
 	
 }

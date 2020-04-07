@@ -38,7 +38,7 @@ sub command
 	
 	my @args = ($dest, $self->tool_name);
 	
-	return qw(vx -Ze), 'dup2(rewrite argv[1], fd 1); run argv[2..3]', @args;
+	return qw(minivx -Ze), 'dup2(rewrite argv[1], fd 1); run argv[2..3]', @args;
 }
 
 1;

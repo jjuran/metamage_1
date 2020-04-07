@@ -114,7 +114,9 @@
 
 #if !defined(BOOST_ATOMIC_DETAIL_SIZEOF_WCHAR_T)
 
+#ifndef BOOST_NO_WCHAR_H
 #include <wchar.h>
+#endif
 #include <boost/cstdint.hpp>
 
  #if defined(_MSC_VER) && ( _MSC_VER <= 1310 || defined(UNDER_CE) && _MSC_VER <= 1500 )
@@ -129,6 +131,10 @@
 #elif (WCHAR_MAX + 0) == UINT64_C(0xffffffffffffffff) || (WCHAR_MAX + 0) == INT64_C(0x7fffffffffffffff)
 #define BOOST_ATOMIC_DETAIL_SIZEOF_WCHAR_T 8
 #endif
+#endif
+
+#ifndef BOOST_ATOMIC_DETAIL_SIZEOF_WCHAR_T
+#define BOOST_ATOMIC_DETAIL_SIZEOF_WCHAR_T 4
 #endif
 
 #if !defined(BOOST_ATOMIC_DETAIL_SIZEOF_SHORT) || !defined(BOOST_ATOMIC_DETAIL_SIZEOF_INT) ||\

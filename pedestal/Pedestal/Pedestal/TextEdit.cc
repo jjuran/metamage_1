@@ -662,15 +662,13 @@ namespace Pedestal
 	
 	void TextEdit::Draw( const Rect& bounds, bool erasing )
 	{
-		using nucleus::operators::operator!=;
-		
 		TEHandle hTE = Get();
 		
 		ASSERT( hTE != NULL );
 		
 		TERec& te = **hTE;
 		
-		if ( bounds != te.viewRect )
+		if ( nucleus::operator!=( bounds, te.viewRect ) )
 		{
 			short dv = te.viewRect.top - te.destRect.top;
 			

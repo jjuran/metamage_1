@@ -5,15 +5,8 @@
 
 #include "MacFeatures/BlueBoxed.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
-
-// Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
 
 
 namespace MacFeatures
@@ -23,11 +16,14 @@ namespace MacFeatures
 	
 	bool Is_BlueBoxed()
 	{
-		long result;
+		enum
+		{
+			gestaltMacOSCompatibilityBoxAttr    = 'bbox',
+			gestaltMacOSCompatibilityBoxPresent = 0,
+		};
 		
-		const OSErr err = ::Gestalt( gestaltMacOSCompatibilityBoxAttr, &result );
-		
-		return err == noErr  &&  result & (1 << gestaltMacOSCompatibilityBoxPresent);
+		return mac::sys::gestalt_bit_set( gestaltMacOSCompatibilityBoxAttr,
+		                                  gestaltMacOSCompatibilityBoxPresent );
 	}
 	
 #endif

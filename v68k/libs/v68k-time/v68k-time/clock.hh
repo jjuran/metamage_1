@@ -14,6 +14,7 @@ namespace v68k {
 namespace time {
 
 uint64_t guest_uptime_microseconds();
+uint32_t guest_uptime_ticks();
 
 }  // namespace time
 }  // namespace v68k

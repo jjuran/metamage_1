@@ -28,7 +28,7 @@
 #include "mac_config/upp-macros.hh"
 
 // mac-app-utils
-#include "mac_app/state.hh"
+#include "mac_app/commands.hh"
 
 
 namespace mac {
@@ -37,9 +37,7 @@ namespace app {
 static
 pascal OSErr Quit( const AppleEvent* event, AppleEvent* reply, SRefCon )
 {
-	quitting = true;
-	
-	return noErr;
+	return quit();
 }
 
 void install_basic_event_handlers()
@@ -54,6 +52,116 @@ void install_basic_event_handlers()
 	                             0,
 	                             false );
 }
+
+template < class T >
+static inline
+OSErr AEGetNthPtr( const AEDesc* list, long i, DescType desired, T* it )
+{
+	AEKeyword key;
+	DescType type;
+	Size size;
 	
+	return AEGetNthPtr( list, i, desired, &key, &type, it, sizeof (T), &size );
+}
+
+template < class File >
+struct File_DescType_traits;
+
+#if ! __LP64__
+template<> struct File_DescType_traits< FSSpec > { enum { value = typeFSS }; };
+#endif
+template<> struct File_DescType_traits< FSRef > { enum { value = typeFSRef }; };
+
+template < class File >
+static
+OSErr ODoc_generic( const AppleEvent* event, long (*callback)(const File&) )
+{
+	if ( ! callback )
+	{
+		return errAEEventNotHandled;
+	}
+	
+	const DescType desiredType = File_DescType_traits< File >::value;
+	
+	OSErr err;
+	
+	AEDescList list;
+	
+	err = AEGetParamDesc( event, keyDirectObject, typeAEList, &list );
+	
+	if ( err == noErr )
+	{
+		Size count;
+		err = AECountItems( &list, &count );
+		
+		if ( err == noErr )
+		{
+			for ( int i = 1;  i <= count;  ++i )
+			{
+				File file;
+				
+				err = AEGetNthPtr( &list, i, desiredType, &file );
+				
+				if ( err == noErr )
+				{
+					OSStatus stat = callback( file );
+					
+					if ( stat < 0 )
+					{
+						err = stat;
+						break;
+					}
+				}
+			}
+		}
+		
+		AEDisposeDesc( &list );
+	}
+	
+	return err;
+}
+
+#if ! __LP64__
+
+static
+pascal OSErr ODoc_FSSpec( const AppleEvent* event, AppleEvent*, SRefCon refcon )
+{
+	return ODoc_generic< FSSpec >( event, (FSSpec_callback) refcon );
+}
+
+void install_opendocs_handler( FSSpec_callback callback )
+{
+	DEFINE_UPP( AEEventHandler, ODoc_FSSpec );
+	
+	OSErr err;
+	
+	err = AEInstallEventHandler( kCoreEventClass,
+	                             kAEOpenDocuments,
+	                             UPP_ARG( ODoc_FSSpec ),
+	                             (SRefCon) callback,
+	                             false );
+}
+
+#endif
+
+static
+pascal OSErr ODoc_FSRef( const AppleEvent* event, AppleEvent*, SRefCon refcon )
+{
+	return ODoc_generic< FSRef >( event, (FSRef_callback) refcon );
+}
+
+void install_opendocs_handler( FSRef_callback callback )
+{
+	DEFINE_UPP( AEEventHandler, ODoc_FSRef );
+	
+	OSErr err;
+	
+	err = AEInstallEventHandler( kCoreEventClass,
+	                             kAEOpenDocuments,
+	                             UPP_ARG( ODoc_FSRef ),
+	                             (SRefCon) callback,
+	                             false );
+}
+
 }
 }

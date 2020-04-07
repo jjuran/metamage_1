@@ -31,6 +31,10 @@
 #     define BOOST_NO_IS_ABSTRACT
 #  endif
 
+#  if __GNUC_MINOR__ == 1  &&  defined( __APPLE__ )
+#     define BOOST_NO_WCHAR_H
+#  endif
+
 #  if __GNUC_MINOR__ < 4
 #     define BOOST_NO_IS_ABSTRACT
 #  endif
@@ -310,8 +314,8 @@
 #endif
 
 // versions check:
-// we don't know gcc prior to version 3.30:
-#if (BOOST_GCC_VERSION< 30300)
+// we don't know gcc prior to version 3.1:
+#if (BOOST_GCC_VERSION< 30100)
 #  error "Compiler not configured - please reconfigure"
 #endif
 //

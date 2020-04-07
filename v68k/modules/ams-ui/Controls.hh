@@ -12,12 +12,16 @@ struct Point;
 struct Rect;
 struct ControlRecord;
 
+typedef unsigned char Boolean;
+
 typedef pascal void (*ControlActionProcPtr)( ControlRecord**, short );
+
+typedef ControlActionProcPtr ControlActionUPP;
 
 pascal ControlRecord** NewControl_patch( GrafPort*             window,
                                          const Rect*           bounds,
                                          const unsigned char*  title,
-                                         short                 visible,
+                                         Boolean               visible,
                                          short                 value,
                                          short                 min,
                                          short                 max,
@@ -43,9 +47,11 @@ pascal short FindControl_patch( Point             where,
                                 GrafPort*         window,
                                 ControlRecord***  which );
 
-pascal short TrackControl_patch( ControlRecord**  control,
-                                 Point            start,
-                                 pascal void    (*action)() );
+pascal short TrackControl_patch( ControlRecord**   control,
+                                 Point             start,
+                                 ControlActionUPP  action );
+
+pascal short TestControl_patch( ControlRecord** control, Point pt );
 
 pascal void MoveControl_patch( ControlRecord** control, short w, short h );
 pascal void SizeControl_patch( ControlRecord** control, short w, short h );
@@ -68,5 +74,7 @@ pascal void SetCtlAction_patch( ControlRecord** control, ControlActionProcPtr ac
 pascal ControlActionProcPtr GetCtlAction_patch( ControlRecord** control );
 
 pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn );
+
+pascal short GetCVariant_patch( ControlRecord** control );
 
 #endif

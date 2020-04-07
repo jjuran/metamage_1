@@ -30,12 +30,12 @@
 #include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
-#include "vlib/iterators/array_iterator.hh"
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/byterange.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/iterator.hh"
 #include "vlib/types/lambda.hh"
@@ -117,45 +117,6 @@ namespace vlib
 	}
 	
 	static
-	bool in_array_mapping_keys( const Value& v, const Value& array )
-	{
-		array_iterator it( array );
-		
-		while ( it )
-		{
-			const Value& mapping = it.use();
-			const Value& key = mapping.expr()->left;
-			
-			if ( equal( key, v ) )
-			{
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
-	static
-	bool in_string( const Value& v, const plus::string& s )
-	{
-		switch ( v.type() )
-		{
-			case Value_byte:
-				return s.find( v.to< Byte >() ) != plus::string::npos;
-			
-			case V_str:
-			case V_pack:
-				return s.find( v.string() ) != plus::string::npos;
-			
-			default:
-				break;
-		}
-		
-		THROW( "unsupported pattern type for `in` with string/pack" );
-		return false;
-	}
-	
-	static
 	bool in( const Value& v, const Value& container )
 	{
 		if ( Expr* expr = container.expr() )
@@ -170,9 +131,6 @@ namespace vlib
 				case Op_array:
 					return in_list( v, expr->right );
 				
-				case Op_empower:
-					return in_array_mapping_keys( v, expr->right );
-				
 				default:
 					break;
 			}
@@ -183,12 +141,13 @@ namespace vlib
 			case Value_empty_array:
 				return false;
 			
-			case V_str:
-			case V_pack:
-				return in_string( v, container.string() );
-			
 			default:
 				break;
+		}
+		
+		if ( Value contains = calc( container, Op_contains, v ) )
+		{
+			return contains.as< Boolean >();
 		}
 		
 		THROW( "unsupported container type for `in`" );
@@ -260,19 +219,6 @@ namespace vlib
 					if ( op == Op_begin )
 					{
 						return Iterator( expr->right );
-					}
-					
-					THROW( "unary operator not defined for arrays" );
-				
-				case Op_empower:
-					if ( op == Op_unary_minus )
-					{
-						const Value& old_list = expr->right.expr()->right;
-						
-						const Value new_list  = reverse_list( old_list );
-						const Value new_array = make_array  ( new_list );
-						
-						return Value( expr->left, expr->op, new_array );
 					}
 					
 					THROW( "unary operator not defined for arrays" );
@@ -402,46 +348,6 @@ namespace vlib
 	}
 	
 	static
-	Value table_member( const Value& table, const plus::string& name )
-	{
-		const Value& array = table.expr()->right;
-		
-		if ( name == "length" )
-		{
-			return array_member( array, name );
-		}
-		
-		if ( name == "keys"  ||  name == "values" )
-		{
-			if ( is_empty_array( array ) )
-			{
-				return array;
-			}
-			
-			const bool keys = name == "keys";
-			
-			list_builder results;
-			
-			array_iterator it( array );
-			
-			while ( it )
-			{
-				const Value& mapping = it.use();
-				
-				Expr* expr = mapping.expr();
-				
-				results.append( keys ? expr->left : expr->right );
-			}
-			
-			return make_array( results );
-		}
-		
-		THROW( "nonexistent table member" );
-		
-		return Value();
-	}
-	
-	static
 	Value calc_member( const Value& left, const Value& right )
 	{
 		if ( right.type() != Value_string )
@@ -461,11 +367,6 @@ namespace vlib
 			if ( expr->op == Op_mapping )
 			{
 				return mapping_member( left, right.string() );
-			}
-			
-			if ( expr->op == Op_empower )
-			{
-				return table_member( left, right.string() );
 			}
 			
 			if ( expr->op == Op_module )
@@ -820,28 +721,6 @@ namespace vlib
 		return v.type() == V_str  ||  v.type() == V_pack;
 	}
 	
-	static
-	plus::string repeat_bytes( const plus::string& bytes, const Value& right )
-	{
-		if ( const Integer* integer = right.is< Integer >() )
-		{
-			typedef plus::string::size_type size_t;
-			
-			const size_t n = integer_cast< size_t >( *integer );
-			
-			return repeat( bytes, n );
-		}
-		
-		if ( const Boolean* boolean = right.is< Boolean >() )
-		{
-			return *boolean ? bytes : plus::string::null;
-		}
-		
-		THROW( "string/pack repetition requires int or bool" );
-		
-		return plus::string::null;  // not reached
-	}
-	
 	Value safe_calc( const Value&  left,
 	                 op_type       op,
 	                 const Value&  right )
@@ -863,6 +742,11 @@ namespace vlib
 			
 			case Op_gamut:
 			case Op_delta:
+				if ( left.is< Byte >()  &&  right.is< Byte >() )
+				{
+					return ByteRange( left, op, right );
+				}
+				
 				return Range( left, op, right );
 			
 			case Op_in:       return Boolean(   in   ( left, right ) );
@@ -947,11 +831,6 @@ namespace vlib
 		
 		if ( op == Op_subscript )
 		{
-			if ( is_table( left ) )
-			{
-				return associative_subscript( left, right );
-			}
-			
 			const Value v = linear_subscript( left, right );
 			
 			if ( is_empty_array( right )  ||  right.expr() != 0 )  // NULL
@@ -1012,13 +891,6 @@ namespace vlib
 				default:
 					break;
 			}
-		}
-		
-		if ( op == Op_multiply  &&  is_bytes( left ) )
-		{
-			const plus::string s = repeat_bytes( left.string(), right );
-			
-			return VBytes( s, left.type(), left.dispatch_methods() );
 		}
 		
 		THROW( "operator not defined on mixed types" );

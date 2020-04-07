@@ -15,6 +15,7 @@
 
 // Standard C
 #include <stdio.h>
+#include <string.h>
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -64,7 +65,16 @@ struct SonyVars_record
 
 #if TARGET_CPU_68K
 
+uint8_t CPUFlag : 0x012F;
+
 SonyVars_record* SonyVars : 0x0134;
+
+short SysVersion : 0x015A;
+
+#else
+
+static uint8_t CPUFlag;
+static short SysVersion;
 
 #endif
 
@@ -86,6 +96,41 @@ bool in_supervisor_mode()
 	
 	return false;
 }
+
+#ifdef __MC68K__
+
+static
+asm uint32_t core_signature()
+{
+	MOVE     #0,CCR
+	MOVEQ.L  #0,D0
+	MOVEQ.L  #7,D1
+	
+loop:
+	CHK.W    D1,D1
+	MOVE     SR,D2
+	OR.B     D2,D0
+	ROR.L    #4,D0
+	DBRA.S   D1,loop
+	
+	RTS
+}
+
+static inline
+bool in_v68k()
+{
+	return core_signature() == 'v68k';
+}
+
+#else
+
+static inline
+bool in_v68k()
+{
+	return false;
+}
+
+#endif
 
 static
 void compiled()
@@ -137,17 +182,19 @@ void host_env()
 	}
 	else
 	{
+		const uint32_t vers = (TARGET_CPU_68K  &&  ! sysv) ? SysVersion : sysv;
+		
 		if ( sysv >= 0x1000 )
 		{
 			sys1 = 10;
 		}
 		else
 		{
-			sys1 = (sysv >> 8) & 0xF;
+			sys1 = (vers >> 8) & 0xF;
 		}
 		
-		sys2 = (sysv >> 4) & 0xF;
-		sys3 = (sysv >> 0) & 0xF;
+		sys2 = (vers >> 4) & 0xF;
+		sys3 = (vers >> 0) & 0xF;
 	}
 	
 	char a[ 4 ] = { 0 };
@@ -166,12 +213,17 @@ void host_env()
 	
 	printf( "Host CPU architecture:  %s\n", arch_name );
 	
+	if ( TARGET_CPU_68K  &&  sysa <= 1 )
+	{
+		printf( "Host CPU model number:  680%c0\n", CPUFlag + '0' );
+	}
+	
 	if ( mnam != NULL )
 	{
 		printf( "Host CPU machine name:  %s\n", machine_name );
 	}
 	
-	if ( sysv != 0 )
+	if ( sys1 != 0 )
 	{
 		const char* o = ".";
 		
@@ -451,7 +503,7 @@ void virt_env()
 		blank = "";
 	}
 	
-	if ( TARGET_CPU_68K  &&  gestalt_defined( 'v68k' ) )
+	if ( TARGET_CPU_68K  &&  in_v68k() )
 	{
 		printf( "%s" "68K emulation:          v68k\n", blank );
 		blank = "";

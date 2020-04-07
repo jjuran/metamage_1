@@ -22,7 +22,8 @@
 # define BOOST_SP_NO_SP_CONVERTIBLE
 #endif
 
-#if !defined( BOOST_SP_NO_SP_CONVERTIBLE ) && defined( __GNUC__ ) && ( __GNUC__ * 100 + __GNUC_MINOR__ < 303 )
+#if !defined( BOOST_SP_NO_SP_CONVERTIBLE ) && defined( __GNUC__ ) && ( __GNUC__ * 100 + __GNUC_MINOR__ <= 303 )
+// Apple's g++ 3.3, at least, can't deal with this.
 # define BOOST_SP_NO_SP_CONVERTIBLE
 #endif
 

@@ -49,7 +49,6 @@
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/utf8_text_property.hh"
 #include "Genie/IO/Handle.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
@@ -159,58 +158,89 @@ namespace Genie
 	}
 	
 	
-	struct resource_name : vfs::readwrite_property
+	static
+	void mac_name_get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
+		const vfs::node* res_file = that->owner();
+		
+		const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
+		
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
+		
+		const ResSpec resSpec = GetResSpec_from_name( that->name() );
+		
+		ResLoad_false_scope ResLoad_false;
+		
+		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
+		
+		const mac::types::ResInfo resInfo = N::GetResInfo( r );
+		
+		::ReleaseResource( r );
+		
+		result.assign( resInfo.name );
+	}
+	
+	static
+	void mac_name_set( const vfs::node* that, const char* begin, const char* end, bool binary )
+	{
+		const size_t length = end - begin;
+		
+		if ( length > 255 )
 		{
-			const vfs::node* res_file = that->owner();
-			
-			const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
-			
-			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
-			
-			const ResSpec resSpec = GetResSpec_from_name( that->name() );
-			
-			const N::Handle r = (ResLoad_false_scope(),
-			                     N::Get1Resource( resSpec.type, resSpec.id ));
-			
-			const mac::types::ResInfo resInfo = N::GetResInfo( r );
-			
-			::ReleaseResource( r );
-			
-			result.assign( resInfo.name );
+			p7::throw_errno( ENAMETOOLONG );
 		}
 		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			const size_t length = end - begin;
-			
-			if ( length > 255 )
-			{
-				p7::throw_errno( ENAMETOOLONG );
-			}
-			
-			Str255 name;
-			
-			name[ 0 ] = length;
-			
-			memcpy( name + 1, begin, length );
-			
-			const vfs::node* res_file = that->owner();
-			
-			const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
-			
-			RdWr_OpenResFile_Scope openResFile( fileSpec );
-			
-			const ResSpec resSpec = GetResSpec_from_name( that->name() );
-			
-			const N::Handle r = (ResLoad_false_scope(),
-			                     N::Get1Resource( resSpec.type, resSpec.id ));
-			
-			N::SetResInfo( r, resSpec.id, name );
-			
-			::ReleaseResource( r );
-		}
+		Str255 name;
+		
+		name[ 0 ] = length;
+		
+		memcpy( name + 1, begin, length );
+		
+		const vfs::node* res_file = that->owner();
+		
+		const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
+		
+		RdWr_OpenResFile_Scope openResFile( fileSpec );
+		
+		const ResSpec resSpec = GetResSpec_from_name( that->name() );
+		
+		ResLoad_false_scope ResLoad_false;
+		
+		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
+		
+		N::SetResInfo( r, resSpec.id, name );
+		
+		::ReleaseResource( r );
+	}
+	
+	static
+	void utf8_name_get( plus::var_string& result, const vfs::node* that, bool binary )
+	{
+		mac_name_get( result, that, binary );
+		
+		result = plus::utf8_from_mac( result );
+	}
+	
+	static
+	void utf8_name_set( const vfs::node* that, const char* begin, const char* end, bool binary )
+	{
+		plus::string mac_text = plus::mac_from_utf8( begin, end - begin );
+		
+		mac_name_set( that, mac_text.begin(), mac_text.end(), binary );
+	}
+	
+	static const vfs::property_params mac_name_params =
+	{
+		vfs::no_fixed_size,
+		&mac_name_get,
+		&mac_name_set,
+	};
+	
+	static const vfs::property_params utf8_name_params =
+	{
+		vfs::no_fixed_size,
+		&utf8_name_get,
+		&utf8_name_set,
 	};
 	
 	
@@ -358,11 +388,8 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		typedef vfs::property_params_factory<                     resource_name   > mac_factory;
-		typedef vfs::property_params_factory< utf8_text_property< resource_name > > utf8_factory;
-		
-		const vfs::property_params& params = mac ? mac_factory ::value
-		                                         : utf8_factory::value;
+		const vfs::property_params& params = mac ? mac_name_params
+		                                         : utf8_name_params;
 		
 		return vfs::new_property( that, name, &params );
 	}

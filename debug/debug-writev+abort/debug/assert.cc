@@ -5,12 +5,13 @@
 
 #include "debug/assert.hh"
 
-// Standard C
-#include <stdlib.h>
-
 // POSIX
 #include <unistd.h>
 #include <sys/uio.h>
+
+// Standard C
+#include <stdlib.h>
+#include <string.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -25,7 +26,8 @@ namespace debug
 	void handle_failed_assertion( const char*  text,
 	                              const char*  func,
 	                              const char*  file,
-	                              unsigned     line )
+	                              unsigned     line,
+	                              bool         fatal )
 	{
 		const unsigned magnitude = gear::decimal_magnitude( line );
 		
@@ -33,11 +35,14 @@ namespace debug
 		
 		gear::fill_unsigned_decimal( line, line_buffer, magnitude );
 		
+		const char* macro = fatal ? "ASSERT( "
+		                          : "EXPECT( ";
+		
 		struct iovec iov[] =
 		{
-			{ (void*) STR_LEN( "ASSERT( "  ) },
+			{ (void*) macro, sizeof "ASSERT( " - 1 },
 			{ (void*) text, strlen( text ) },
-			{ (void*) STR_LEN( ") in " ) },
+			{ (void*) STR_LEN( " ) in " ) },
 			{ (void*) func, strlen( func ) },
 			{ (void*) STR_LEN( "(); " ) },
 			{ (void*) file, strlen( file ) },
@@ -48,7 +53,10 @@ namespace debug
 		
 		ssize_t written = writev( STDERR_FILENO, iov, sizeof iov / sizeof iov[0] );
 		
-		abort();
+		if ( fatal )
+		{
+			abort();
+		}
 	}
 	
 }

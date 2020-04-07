@@ -50,6 +50,12 @@
 // Orion
 #include "Orion/Main.hh"
 
+#ifdef __APPLE__
+#ifndef _SOCKLEN_T
+typedef int socklen_t;
+#endif
+#endif
+
 
 namespace tool
 {

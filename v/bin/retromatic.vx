@@ -1,0 +1,160 @@
+#!/usr/bin/env minivx -Z
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/../lib/"
+
+def import { const path = libdir _ ".vsl"; eval( load path, path ) }
+
+const basename = import "basename";
+
+def comma-terminated (line)
+{
+	const c = line[ line.length - 1 ]
+	
+	return line ("," * not c in ":[" )
+}
+
+def exists (path)
+{
+	return try {stat path; true} catch {false}
+}
+
+def mkdir-p
+{
+	run [ "mkdir", "-p", _ ]
+}
+
+def copy
+{
+	run [ "cp", "-pR", _ ]
+}
+
+const output_dir = argv[ 1 ]
+const input_path = argv[ 2 ]
+
+const parent_dir = dirname input_path
+const input_stat = stat    input_path
+
+const src_is_dir = input_stat[ "type" ] == "DIR"
+
+const config_data = if src_is_dir then {""} else {load input_path}
+
+const config_lines = config_data.lines() ver bool map comma-terminated
+
+const config = str^(eval "[" join( "\n", *config_lines, "]" ))
+
+def active (feature)
+{
+	return feature in config and config[ feature ]
+}
+
+const named = "name" in config
+
+const name = if src_is_dir then {basename input_path} else {config[ "name" ]}
+
+const name_to_copy
+
+if "disk" in config then
+{
+	name_to_copy = config[ "disk" ]
+	
+	setenv( "AMS_DISK", name_to_copy )
+}
+else
+{
+	name_to_copy = name
+}
+
+const new_app_dir = output_dir "/" name ".app"
+const contents = new_app_dir "/Contents"
+
+const MacOS_dir = contents "/MacOS"
+const Resources = contents "/Resources"
+const xv68k_dir = contents "/xv68k"
+
+const Files = Resources "/Files"
+
+mkdir-p (MacOS_dir, Files "/AMS Resources", xv68k_dir)
+
+def ams-get-app (property)
+{
+	# This path may not actually exist in the case of a disk image.
+	# Really it's just the fs root path and the app name joined by "/".
+	
+	const path = parent_dir "/" name
+	
+	return packed output-from-run [ "v/bin/ams-get.vx", property, path ]
+}
+
+def icns (icon)
+{
+	assert icon.size == 256
+	
+	return packed ('icns', x"00000110", 'ICN#', x"00000108", icon)
+}
+
+const creator = mb32 ams-get-app "bndl-owner"
+const icon    = icns ams-get-app "icon"
+
+rewrite Resources "/" name ".icns" <== icon
+
+const resfiles = [ "AMS Resources", "System" ]
+const respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
+
+run [ bindir "/mkrsrc.vx", "-o", Files "/AMS Resources/rsrc", *respaths ]
+
+copy( parent_dir "/" name_to_copy, Files "/" name_to_copy )
+
+if "files" in config then
+{
+	const files = config[ "files" ] map { parent_dir "/" v }
+	
+	copy( *files, Files )
+}
+
+const ams_bin = "../ams-68k-bin/bin"
+const ams_lib = "../ams-68k-bin/lib"
+
+const prefix_list = "core io fs snd rsrc pack seg qd ui print"
+const ams_modules = [ prefix_list / ' ' ] map {ams_lib "/ams-" v}
+
+copy( *ams_modules, ams_lib "/umsp", ams_bin "/app", xv68k_dir )
+
+const new_data = ("name: " rep name) "\n" * not named
+
+rewrite Resources "/config.txt" <== new_data config_data
+
+const tools = "apps/mac/Amethyst/tools/launch-ams-app.vx"
+
+const native_binary_names = ["minivx graft xv68k freemountd" / ' ']
+const native_binary_paths = native_binary_names map {"var/out/" v}
+
+copy( tools, *native_binary_paths, MacOS_dir )
+
+if active "sound" and exists "var/out/sndtrack" then
+{
+	copy( "var/out/sndtrack", MacOS_dir )
+}
+
+copy( "var/out/Amethyst", MacOS_dir )
+
+const info =
+[
+	CFBundleExecutable:  "Amethyst",
+	CFBundleIconFile:    name,
+	CFBundleName:        name,
+	CFBundlePackageType: 'APPL',
+	CFBundleSignature:   creator,
+	NSHighResolutionCapable: true,
+]
+map { v.key ": " (rep v.value) "\n" }
+
+const temp_info = contents "/Info.txt"
+
+rewrite temp_info <== str info
+
+const plist = output-from-run [ "v/bin/make-info-plist.vx", temp_info ]
+
+rewrite contents "/Info.plist" <== plist
+
+run [ "rm", temp_info ]

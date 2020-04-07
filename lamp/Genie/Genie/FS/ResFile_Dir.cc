@@ -140,7 +140,7 @@ namespace Genie
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
-		n::owned< Mac::FSFileRefNum > resource_fork = N::FSpOpenRF( fileSpec, Mac::fsRdWrPerm );
+		n::owned< Mac::FSFileRefNum > resource_fork = N::HOpenRF( fileSpec, Mac::fsRdWrPerm );
 		
 		if ( N::GetEOF( resource_fork ) > 286 )
 		{

@@ -5,6 +5,19 @@
 
 #include "AEFramework/AEFramework.h"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#ifndef MAC_OS_X_VERSION_10_5
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+#endif
+
+// Mac OS
+#ifndef __AEDATAMODEL__
+#include <AEDataModel.h>
+#endif
+
 // Standard C++
 #include <map>
 
@@ -14,15 +27,6 @@
 // cthread-either
 #include "cthread-either.hh"
 
-// Nitrogen
-#ifndef MAC_TOOLBOX_TYPES_OSSTATUS_HH
-#include "Mac/Toolbox/Types/OSStatus.hh"
-#endif
-
-#ifndef NITROGEN_AEDATAMODEL_HH
-#include "Nitrogen/AEDataModel.hh"
-#endif
-
 
 #if CONFIG_APPLE_EVENTS
 #define STATIC  static
@@ -31,7 +35,7 @@
 #endif
 
 
-namespace Nitrogen
+namespace Genie
 {
 	
 	using cthread::thread_id;
@@ -41,14 +45,14 @@ namespace Nitrogen
 	
 	struct ExpectedReply
 	{
-		thread_id         thread;
-		Mac::AppleEvent*  reply;
+		thread_id    thread;
+		AppleEvent*  reply;
 		
 		ExpectedReply()
 		{
 		}
 		
-		ExpectedReply( thread_id thread, Mac::AppleEvent* reply )
+		ExpectedReply( thread_id thread, AppleEvent* reply )
 		:
 			thread( thread ),
 			reply ( reply  )
@@ -56,12 +60,12 @@ namespace Nitrogen
 		}
 	};
 	
-	typedef std::map< AEReturnID_32Bit, ExpectedReply > ExpectedReplies;
+	typedef std::map< long, ExpectedReply > ExpectedReplies;
 	
 	STATIC ExpectedReplies gExpectedReplies;  // Not for System-6-only builds
 	
-	void ExpectReply( Mac::AEReturnID_32Bit   returnID,
-	                  Mac::AppleEvent        *replyStorage )
+	void ExpectReply( long         returnID,
+	                  AppleEvent*  replyStorage )
 	{
 		// assert( returnID != 0 );
 		// Can replyStorage be NULL?  If you wanted to know when the reply came back
@@ -70,50 +74,62 @@ namespace Nitrogen
 		gExpectedReplies[ returnID ] = ExpectedReply( current_thread(), replyStorage );
 	}
 	
-	void ReceiveReply( const Mac::AppleEvent& reply )
+	OSErr ReceiveReply( const AppleEvent& reply )
 	{
-		AEReturnID_32Bit returnID = AEGetAttributePtr< Mac::keyReturnIDAttr >( reply );
+		OSErr err;
+		SInt32 data;
+		
+		AEKeyword key = keyReturnIDAttr;
+		DescType type = typeSInt32;
+		Size     size = sizeof data;
+		
+		err = AEGetAttributePtr( &reply, key, type, &type, &data, size, &size );
+		
+		if ( err != noErr )
+		{
+			return err;
+		}
+		
+		SInt32 returnID = data;
 		
 		ExpectedReplies::iterator found = gExpectedReplies.find( returnID );
 		
 		if ( found != gExpectedReplies.end() )
 		{
-			try
+			thread_id   thread       = found->second.thread;
+			AppleEvent* replyStorage = found->second.reply;
+			
+			gExpectedReplies.erase( found );
+			
+			if ( woken_thread( thread ) )
 			{
-				thread_id        thread       = found->second.thread;
-				Mac::AppleEvent* replyStorage = found->second.reply;
-				
-				// Make sure the thread exists
-				
-				if ( is_thread_stopped( thread ) )
-				{
-					wake_thread( thread );
-				}
-				
-				// before writing to its storage
+				// Make sure the thread exists before writing to its storage
 				if ( replyStorage != NULL )
 				{
-					*replyStorage = AEDuplicateDesc( reply ).release();
+					err = AEDuplicateDesc( &reply, replyStorage );
+					
+					if ( err )
+					{
+						replyStorage->descriptorType = 0;
+						replyStorage->dataHandle     = 0;
+						
+						return err;
+					}
 				}
 				
 				yield_to_thread( thread );
 			}
-			catch ( const Mac::OSStatus& err )
+			else
 			{
-				if ( err != threadNotFoundErr )
-				{
-					throw;
-				}
-				
 				// A thread terminated without canceling a pending reply
 			}
-			
-			gExpectedReplies.erase( found );
 		}
 		else
 		{
 			// No such return ID.  Possibly the expecting thread canceled or was terminated.
 		}
+		
+		return noErr;
 	}
 	
 }

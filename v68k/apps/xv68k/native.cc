@@ -6,7 +6,9 @@
 #include "native.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 const uint32_t os_trap_table_address = 1024;

@@ -32,6 +32,7 @@
 // plus
 #include "plus/deconstruct.hh"
 #include "plus/hexadecimal.hh"
+#include "plus/mac_utf8.hh"
 #include "plus/reconstruct.hh"
 #include "plus/serialize.hh"
 #include "plus/var_string.hh"
@@ -68,7 +69,6 @@
 // Genie
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/serialize_qd.hh"
-#include "Genie/FS/utf8_text_property.hh"
 
 
 namespace Nitrogen
@@ -121,19 +121,6 @@ namespace Genie
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
-	
-	struct Access_WindowTitle : serialize_Str255_contents
-	{
-		static N::Str255 Get( WindowRef window )
-		{
-			return N::GetWTitle( window );
-		}
-		
-		static void Set( WindowRef window, ConstStr255Param title )
-		{
-			N::SetWTitle( window, title );
-		}
-	};
 	
 	struct Access_WindowPosition : serialize_Point
 	{
@@ -438,51 +425,89 @@ namespace Genie
 		return (WindowRef) plus::decode_32_bit_hex( parent->name() );
 	}
 	
-	template < class Accessor >
-	struct sys_app_window_list_REF_Const_Property : vfs::readonly_property
+	static
+	WindowRef get_node_window( const vfs::node* that )
 	{
-		static const int fixed_size = Accessor::fixed_size;
+		WindowRef key = GetKeyFromParent( that );
 		
-		typedef WindowRef Key;
-		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
+		if ( ! mac::sys::windowlist_contains( key ) )
 		{
-			Key key = GetKeyFromParent( that );
-			
-			if ( ! mac::sys::windowlist_contains( key ) )
-			{
-				p7::throw_errno( EIO );
-			}
-			
-			typedef typename Accessor::result_type result_type;
-			
-			const result_type data = Accessor::Get( key );
-			
-			Accessor::deconstruct::apply( result, data, binary );
+			p7::throw_errno( EIO );
 		}
-	};
+		
+		return key;
+	}
 	
-	template < class Accessor >
-	struct sys_app_window_list_REF_Property : sys_app_window_list_REF_Const_Property< Accessor >
+	#define DEFINE_GETTER( p )  \
+	static void p##_get( plus::var_string& result, const vfs::node* that, bool binary )  \
+	{  \
+		typedef p Accessor;                                       \
+		WindowRef key = get_node_window( that );                  \
+		const Accessor::result_type data = Accessor::Get( key );  \
+		Accessor::deconstruct::apply( result, data, binary );     \
+	}
+	
+	#define DEFINE_SETTER( p )  \
+	static void p##_set( const vfs::node* that, const char* begin, const char* end, bool binary )  \
+	{  \
+		WindowRef key = get_node_window( that );                     \
+		p::Set( key, p::reconstruct::apply( begin, end, binary ) );  \
+	}
+	
+	static
+	void title_get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
 	{
-		static const bool can_set = true;
+		WindowRef window = get_node_window( that );
 		
-		static const int fixed_size = Accessor::fixed_size;
+		result = N::GetWTitle( window );
 		
-		typedef WindowRef Key;
+		/*
+			title
+			.mac-title
+			.~title
+			.~mac-title
+			
+			The ".~" prefix sets the binary flag, so if `binary` is true, we
+			need to skip two bytes.  The next byte might be either '.' or 'm'
+			for MacRoman titles, but will always be 't' for UTF-8.
+		*/
 		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
+		if ( name[ binary * 2 ] == 't' )
 		{
-			Key key = GetKeyFromParent( that );
-			
-			if ( ! mac::sys::windowlist_contains( key ) )
-			{
-				p7::throw_errno( EIO );
-			}
-			
-			Accessor::Set( key, Accessor::reconstruct::apply( begin, end, binary ) );
+			result = plus::utf8_from_mac( result );
 		}
-	};
+	}
+	
+	static
+	void set_window_title( WindowRef window, const char* begin, const char* end )
+	{
+		N::Str255 title( begin, end - begin );
+		
+		SetWTitle( window, title );
+	}
+	
+	static inline
+	void set_window_title( WindowRef window, const plus::string& name )
+	{
+		return set_window_title( window, name.begin(), name.end() );
+	}
+	
+	static
+	void title_set( const vfs::node* that, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		WindowRef window = get_node_window( that );
+		
+		if ( name[ binary * 2 ] != 't' )
+		{
+			set_window_title( window, begin, end );
+		}
+		else
+		{
+			plus::string mac_text = plus::mac_from_utf8( begin, end - begin );
+			
+			set_window_title( window, mac_text );
+		}
+	}
 	
 	
 	static vfs::node_ptr window_trigger_factory( const vfs::node*     parent,
@@ -497,25 +522,65 @@ namespace Genie
 	}
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
-	#define PROPERTY_CONST_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Const_Property< access > )
+	#define PROPERTY_CONST_ACCESS( access )  PROPERTY( access )
+	#define PROPERTY_ACCESS( access )        PROPERTY( access )
 	
-	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Property< access > )
-	
-	typedef sys_app_window_list_REF_Property< Access_WindowTitle > window_title;
+	static const vfs::property_params window_title_params =
+	{
+		vfs::no_fixed_size,
+		(vfs::property_get_hook) &title_get,
+		(vfs::property_set_hook) &title_set,
+	};
 	
 	typedef Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > Access_WindowBackColor;
 	typedef Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > Access_WindowForeColor;
 	
+	DEFINE_GETTER( Access_WindowPosition  );
+	DEFINE_GETTER( Access_WindowSize      );
+	DEFINE_GETTER( Access_WindowVisible   );
+	DEFINE_GETTER( Access_WindowTextFont  );
+	DEFINE_GETTER( Access_WindowTextSize  );
+	DEFINE_GETTER( Access_WindowBackColor );
+	DEFINE_GETTER( Access_WindowForeColor );
+	DEFINE_GETTER( Access_WindowAlpha     );
+	DEFINE_GETTER( Access_WindowZOrder    );
+	
+	DEFINE_SETTER( Access_WindowPosition  );
+	DEFINE_SETTER( Access_WindowSize      );
+	DEFINE_SETTER( Access_WindowVisible   );
+	DEFINE_SETTER( Access_WindowTextFont  );
+	DEFINE_SETTER( Access_WindowTextSize  );
+	DEFINE_SETTER( Access_WindowBackColor );
+	DEFINE_SETTER( Access_WindowForeColor );
+	DEFINE_SETTER( Access_WindowAlpha     );
+	
+	#define DEFINE_PARAMS( p )  \
+	static const vfs::property_params p##_params = {p::fixed_size, &p##_get, &p##_set}
+	
+	DEFINE_PARAMS( Access_WindowPosition  );
+	DEFINE_PARAMS( Access_WindowSize      );
+	DEFINE_PARAMS( Access_WindowVisible   );
+	DEFINE_PARAMS( Access_WindowTextFont  );
+	DEFINE_PARAMS( Access_WindowTextSize  );
+	DEFINE_PARAMS( Access_WindowBackColor );
+	DEFINE_PARAMS( Access_WindowForeColor );
+	DEFINE_PARAMS( Access_WindowAlpha     );
+	
+	static const vfs::property_params Access_WindowZOrder_params =
+	{
+		Access_WindowZOrder::fixed_size,
+		&Access_WindowZOrder_get,
+	};
+	
 	const vfs::fixed_mapping sys_app_window_list_REF_Mappings[] =
 	{
-		{ ".mac-title", PROPERTY(                     window_title   ) },
-		{      "title", PROPERTY( utf8_text_property< window_title > ) },
-		
-		{ ".~mac-title", PROPERTY(                     window_title   ) },
-		{     ".~title", PROPERTY( utf8_text_property< window_title > ) },
-		
+		{ ".mac-title",  PROPERTY( window_title ) },
+		{      "title",  PROPERTY( window_title ) },
+		{ ".~mac-title", PROPERTY( window_title ) },
+		{     ".~title", PROPERTY( window_title ) },
+	
 		{ "pos",   PROPERTY_ACCESS( Access_WindowPosition ) },
 		{ "size",  PROPERTY_ACCESS( Access_WindowSize     ) },
 		{ "vis",   PROPERTY_ACCESS( Access_WindowVisible  ) },

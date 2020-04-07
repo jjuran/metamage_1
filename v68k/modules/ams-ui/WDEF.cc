@@ -151,6 +151,9 @@ long toggle_close_box( WindowPeek window )
 	return 0;
 }
 
+const Pattern odd_stripes  = { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 };
+const Pattern even_stripes = { 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF };
+
 static
 long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 {
@@ -235,9 +238,9 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	
 	PaintRect( &edge );
 	
-	if ( window->titleWidth != 0 )
+	if ( const short title_width = window->titleWidth )
 	{
-		const short h = (content.left + content.right - window->titleWidth) / 2;
+		const short h = (content.left + content.right - title_width) / 2u;
 		
 		MoveTo( h, title_bar.top + title_baseline_v );
 		
@@ -252,7 +255,7 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 				title_bar.top + stripes_v_offset,
 				h - 6,
 				title_bar.bottom - stripes_v_offset,
-				h + window->titleWidth + 6,
+				h + title_width + 6,
 			};
 			
 			RgnHandle title_region = rectangular_utility_region();
@@ -269,9 +272,6 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	}
 	
 	InsetRect( &title_bar, stripes_h_offset, stripes_v_offset );
-	
-	Pattern odd_stripes  = { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 };
-	Pattern even_stripes = { 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF };
 	
 	FillRect( &title_bar, content.top & 1 ? &odd_stripes : &even_stripes );
 	

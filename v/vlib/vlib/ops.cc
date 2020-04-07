@@ -33,6 +33,9 @@ namespace vlib
 		OnlyL = 1 << Spacing_onlyL,
 		Loose = 1 << Spacing_loose,
 		
+		Postfix = Tight | OnlyR,
+		Match   = Tight | Loose,
+		
 		Every = Tight | OnlyR | OnlyL | Loose,
 	};
 	
@@ -45,6 +48,7 @@ namespace vlib
 	
 	const op_mapping when_value_expected[] =
 	{
+		{ Token_colon,       Every, Op_keyvar       },
 		{ Token_plus,        Every, Op_unary_plus   },
 		{ Token_minus,       Every, Op_unary_minus  },
 		{ Token_tilde,       Every, Op_unary_negate },
@@ -58,54 +62,56 @@ namespace vlib
 	
 	const op_mapping when_value_acquired[] =
 	{
-		{ Token_plus_x2,  Every, Op_postinc },
-		{ Token_minus_x2, Every, Op_postdec },
+		{ Token_plus_x2,  Postfix, Op_postinc },
+		{ Token_minus_x2, Postfix, Op_postdec },
 		
 		{ Token_dot, OnlyL, Op_named_unary },
 		
 		{ Token_dot,          Tight, Op_member    },
-		{ Token_plus,         Every, Op_add       },
-		{ Token_minus,        Every, Op_subtract  },
-		{ Token_asterisk,     Every, Op_multiply  },
-		{ Token_slash,        Every, Op_divide    },
-		{ Token_percent,      Every, Op_percent   },
+		{ Token_plus,         Match, Op_add       },
+		{ Token_minus,        Match, Op_subtract  },
+		{ Token_asterisk,     Match, Op_multiply  },
+		{ Token_slash,        Match, Op_divide    },
+		{ Token_percent,      Match, Op_percent   },
 		{ Token_caret,        Every, Op_empower   },
-		{ Token_parens_star,  Every, Op_repeat    },
-		{ Token_equals_x2,    Every, Op_equal     },
-		{ Token_bang_equals,  Every, Op_unequal   },
-		{ Token_lt,           Every, Op_lt        },
-		{ Token_lt_equals,    Every, Op_lte       },
-		{ Token_lt_equals_gt, Every, Op_cmp       },
-		{ Token_gt,           Every, Op_gt        },
-		{ Token_gt_equals,    Every, Op_gte       },
-		{ Token_equals_gt,    Every, Op_mapping   },
-		{ Token_colon,        Every, Op_mapping   },
-		{ Token_dot_x2,       Every, Op_gamut     },
-		{ Token_minus_gt,     Every, Op_delta     },
+		{ Token_parens_star,  Match, Op_repeat    },
+		{ Token_equals_x2,    Loose, Op_equal     },
+		{ Token_bang_equals,  Loose, Op_unequal   },
+		{ Token_lt,           Loose, Op_lt        },
+		{ Token_lt_equals,    Loose, Op_lte       },
+		{ Token_lt_equals_gt, Loose, Op_cmp       },
+		{ Token_gt,           Loose, Op_gt        },
+		{ Token_gt_equals,    Loose, Op_gte       },
+		{ Token_equals_gt,    Loose, Op_mapping   },
+		{ Token_colon,        Tight, Op_mapping   },
+		{ Token_colon,        OnlyR, Op_mapping   },
+		{ Token_colon,        Loose, Op_reserved  },
+		{ Token_dot_x2,       Match, Op_gamut     },
+		{ Token_minus_gt,     Match, Op_delta     },
 		{ Token_comma,        Every, Op_list      },
-		{ Token_equals,       Every, Op_duplicate },
+		{ Token_equals,       Loose, Op_duplicate },
 		
-		{ Token_lt_minus,     Every, Op_move },
-		{ Token_lt_minus_gt,  Every, Op_swap },
+		{ Token_lt_minus,     Loose, Op_move },
+		{ Token_lt_minus_gt,  Loose, Op_swap },
 		
-		{ Token_colon_equals, Every, Op_approximate },
+		{ Token_colon_equals, Loose, Op_approximate },
 		
-		{ Token_plus_equals,        Every, Op_increase_by },
-		{ Token_minus_equals,       Every, Op_decrease_by },
-		{ Token_asterisk_equals,    Every, Op_multiply_by },
-		{ Token_slash_equals,       Every, Op_divide_by   },
-		{ Token_slash_colon_equals, Every, Op_div_int_by  },
-		{ Token_percent_equals,     Every, Op_percent_by  },
+		{ Token_plus_equals,        Loose, Op_increase_by },
+		{ Token_minus_equals,       Loose, Op_decrease_by },
+		{ Token_asterisk_equals,    Loose, Op_multiply_by },
+		{ Token_slash_equals,       Loose, Op_divide_by   },
+		{ Token_slash_colon_equals, Loose, Op_div_int_by  },
+		{ Token_percent_equals,     Loose, Op_percent_by  },
 		
-		{ Token_lt_minus_x2,  Every, Op_push },
-		{ Token_lt_equals_x2, Every, Op_send },
+		{ Token_lt_minus_x2,  Loose, Op_push },
+		{ Token_lt_equals_x2, Loose, Op_send },
 		
 		{ Token_gt_minus,    Every, Op_forward_init },
 		{ Token_minus_lt,    Every, Op_reverse_init },
 		
-		{ Token_ampersand,   Every, Op_intersection },
-		{ Token_parens_plus, Every, Op_exclusion    },
-		{ Token_pipe,        Every, Op_union        },
+		{ Token_ampersand,   Match, Op_intersection },
+		{ Token_parens_plus, Match, Op_exclusion    },
+		{ Token_pipe,        Match, Op_union        },
 	};
 	
 	static inline

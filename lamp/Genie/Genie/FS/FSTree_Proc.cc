@@ -448,7 +448,7 @@ namespace Genie
 		}
 	};
 	
-	struct proc_PID_name : vfs::readonly_property
+	struct proc_PID_name
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
@@ -456,6 +456,12 @@ namespace Genie
 			
 			result = GetProcess( pid ).get_process().name();
 		}
+	};
+	
+	static const vfs::property_params proc_PID_name_params =
+	{
+		vfs::no_fixed_size,
+		&proc_PID_name::get,
 	};
 	
 	static vfs::node_ptr fd_Factory( const vfs::node*     parent,
@@ -507,7 +513,7 @@ namespace Genie
 		return new vfs::node( parent, name, S_IFREG | 0600, &proc_pid_core_methods );
 	}
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	#define GENERATED( gen )  &vfs::new_generated, (void*) &proc_PID_Property< gen >::Read
 	

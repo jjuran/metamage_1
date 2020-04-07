@@ -272,7 +272,7 @@ namespace vlib
 			{
 				its_scope.push();
 			}
-			else if ( op == Op_map  ||  op == Op_ver )
+			else if ( op == Op_map  ||  op == Op_ver  ||  op == Op_via )
 			{
 				insert_code_to_unpack_into_v( expr->right );
 			}
@@ -287,6 +287,19 @@ namespace vlib
 			else if ( op == Op_lambda )
 			{
 				insert_lambda_prototype_prelude( expr );
+			}
+			else if ( op == Op_keyvar )
+			{
+				if ( const Identifier* name = expr->right.is< Identifier >() )
+				{
+					v = mapping( name->get(), *name );
+					
+					expr = v.expr();
+				}
+				else
+				{
+					THROW( "`:name` must be an identifier" );
+				}
 			}
 			else if ( declares_symbols( op ) )
 			{

@@ -165,8 +165,8 @@ short* shallow_dexter( RgnHandle rgn, Point penSize, Fixed h_increment )
 	const short h0    = bbox.left;
 	const Fixed h_max = bbox.right << 16;
 	
-	Fixed h1 = (h0                 << 16) + h_increment / 2 + 0x8000;
-	Fixed h2 = (h0 + penSize.h - 1 << 16) + h_increment / 2 + 0x8000;
+	Fixed h1 = (h0                 << 16) + h_increment / 2u + 0x8000;
+	Fixed h2 = (h0 + penSize.h - 1 << 16) + h_increment / 2u + 0x8000;
 	
 	generator.start( v, h0, h2 >> 16 );
 	
@@ -221,8 +221,8 @@ short* shallow_sinister( RgnHandle rgn, Point penSize, Fixed h_increment )
 	const short h0    = bbox.right;
 	const Fixed h_min = bbox.left << 16;
 	
-	Fixed h1 = (h0                 << 16) + h_increment / 2 + 0x8000;
-	Fixed h2 = (h0 - penSize.h + 1 << 16) + h_increment / 2 + 0x8000;
+	Fixed h1 = (h0                 << 16) + -(-h_increment / 2u) + 0x8000;
+	Fixed h2 = (h0 - penSize.h + 1 << 16) + -(-h_increment / 2u) + 0x8000;
 	
 	generator.start( v, h2 >> 16, h0 );
 	
@@ -278,7 +278,7 @@ short* steep_dexter( RgnHandle rgn, Point penSize, Fixed h_increment )
 	const short hn = bbox.right;
 	
 	Fixed h1 = (h0             << 16) + 0x8000;
-	Fixed h2 = (h0 + penSize.h << 16) + 0x8000 + h_increment / 2;
+	Fixed h2 = (h0 + penSize.h << 16) + 0x8000 + h_increment / 2u;
 	
 	generator.start( v, h0, h2 >> 16 );
 	
@@ -332,8 +332,8 @@ short* steep_sinister( RgnHandle rgn, Point penSize, Fixed h_increment )
 	const short h0 = bbox.right;
 	const short hn = bbox.left;
 	
-	Fixed h1 = (h0             << 16) + 0x8000 + h_increment / 2;
-	Fixed h2 = (h0 - penSize.h << 16) + 0x8000 + h_increment / 2;
+	Fixed h1 = (h0             << 16) + 0x8000 + -(-h_increment / 2u);
+	Fixed h2 = (h0 - penSize.h << 16) + 0x8000 + -(-h_increment / 2u);
 	
 	generator.start( v, h2 >> 16, h0 );
 	
@@ -384,6 +384,9 @@ pascal void StdLine_patch( Point newPt )
 	line.bottom = max( pnLoc.v, newPt.v );
 	line.right  = max( pnLoc.h, newPt.h );
 	
+	const short descent = line.bottom - line.top;
+	const short advance = line.right - line.left;
+	
 	line.bottom += thePort->pnSize.v;
 	line.right  += thePort->pnSize.h;
 	
@@ -396,10 +399,7 @@ pascal void StdLine_patch( Point newPt )
 	
 	static Handle handle = NewHandle( 0 );
 	
-	const short descent = line.bottom - line.top;
-	const short advance = line.right - line.left;
-	
-	const short pts = descent + 1;
+	const short pts = line.bottom - line.top + 1;
 	
 	const long handle_len = sizeof (Region) + 2 + pts * 6 * sizeof (short);
 	

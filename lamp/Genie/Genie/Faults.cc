@@ -54,27 +54,39 @@ namespace relix
 		JMP		(A0)
 	}
 	
-	static asm void GenericExceptionHandler()
-	{
-		MOVE.W	6(SP),D0  // get the vector offset
-		ANDI.W	#0x0FFF,D0  // mask off frame code
-		
-		TST.L	gCurrentProcess
-		BNE		recover
-		
-		LEA		gExceptionVectorTable,A0
-		MOVEA.L	(A0,D0.W),A0  // get the handler address
-		
-		JMP		(A0)
-		
-	recover:
-		MOVEA.L	2(SP),A1  // save the stacked PC for later
-		
-		LEA		generic_68k_recovery_handler,A0
-		MOVE.L	A0,2(SP)  // set the stacked PC to the recovery handler
-		
-		RTE
-	}
+	#define DEFINE_EXCEPTION_HANDLER(N) \
+	static asm void generic_exception_handler_ ## N() \
+	{ \
+		TST.L   gCurrentProcess                  ;\
+		BNE     recover                          ;\
+		\
+		/* get the handler address */ \
+		LEA     (gExceptionVectorTable + N),A0   ;\
+		MOVEA.L (A0),A0                          ;\
+		\
+		JMP     (A0)                             ;\
+		\
+	recover: \
+		/* save the stacked PC for later */ \
+		MOVEA.L 2(SP),A1                         ;\
+		MOVEQ.L	#(N * sizeof (void*)),D0         ;\
+		\
+		/* set the stacked PC to the recovery handler */ \
+		LEA     generic_68k_recovery_handler,A0  ;\
+		MOVE.L  A0,2(SP)                         ;\
+		\
+		RTE \
+	} extern int dummy_for_semicolon
+	
+	DEFINE_EXCEPTION_HANDLER(2);
+	DEFINE_EXCEPTION_HANDLER(3);
+	DEFINE_EXCEPTION_HANDLER(4);
+	DEFINE_EXCEPTION_HANDLER(5);
+	DEFINE_EXCEPTION_HANDLER(6);
+	DEFINE_EXCEPTION_HANDLER(7);
+	DEFINE_EXCEPTION_HANDLER(8);
+	
+	#undef DEFINE_EXCEPTION_HANDLER
 	
 	static void* gExceptionUserHandlerTable[] =
 	{
@@ -90,24 +102,7 @@ namespace relix
 	};
 	
 	
-	static void* saved_trap_0_handler = NULL;
 	static void* saved_trap_2_handler = NULL;
-	
-	static asm void trap_0_exception_handler()
-	{
-		TST.L	gCurrentProcess
-		BNE		recover
-		
-		MOVEA.L	saved_trap_0_handler,A0  // get the handler address
-		
-		JMP		(A0)
-		
-	recover:
-		LEA		dispatch_68k_system_call,A0
-		MOVE.L	A0,2(SP)  // set the stacked PC to the dispatcher
-		
-		RTE
-	}
 	
 	static asm void trap_2_exception_handler()
 	{
@@ -138,15 +133,24 @@ namespace relix
 			if ( gExceptionUserHandlerTable[ i ] != NULL )
 			{
 				gExceptionVectorTable[ i ] = system_vectors[ i ];
-				
-				system_vectors[ i ] = &GenericExceptionHandler;
 			}
 		}
 		
-		saved_trap_0_handler = system_vectors[ 32 + 0 ];
+		#define INSTALL_EXCEPTION_HANDLER(n) \
+		system_vectors[ n ] = &generic_exception_handler_##n
+		
+		INSTALL_EXCEPTION_HANDLER( 2 );  // bus error
+		INSTALL_EXCEPTION_HANDLER( 3 );  // address error
+		INSTALL_EXCEPTION_HANDLER( 4 );  // illegal instruction
+		INSTALL_EXCEPTION_HANDLER( 5 );  // division by zero
+		INSTALL_EXCEPTION_HANDLER( 6 );  // CHK
+		INSTALL_EXCEPTION_HANDLER( 7 );  // TRAPV
+		INSTALL_EXCEPTION_HANDLER( 8 );  // privilege violation
+		
+		#undef INSTALL_EXCEPTION_HANDLER
+		
 		saved_trap_2_handler = system_vectors[ 32 + 2 ];
 		
-		system_vectors[ 32 + 0 ] = trap_0_exception_handler;
 		system_vectors[ 32 + 2 ] = trap_2_exception_handler;
 	}
 	
@@ -162,7 +166,6 @@ namespace relix
 			}
 		}
 		
-		system_vectors[ 32 + 0 ] = saved_trap_0_handler;
 		system_vectors[ 32 + 2 ] = saved_trap_2_handler;
 	}
 	

@@ -13,16 +13,28 @@
 namespace quickdraw
 {
 	
-	static
+	static inline
 	short min( short a, short b )
 	{
 		return b < a ? b : a;
 	}
 	
-	static
+	static inline
 	short max( short a, short b )
 	{
 		return a > b ? a : b;
+	}
+	
+	static inline
+	size_t byte_distance( const void* begin, const void* end )
+	{
+		return (const char*) end - (const char*) begin;
+	}
+	
+	static inline
+	bool odd_count_between( const short* begin, const short* end )
+	{
+		return byte_distance( begin, end ) & 2;
 	}
 	
 	static
@@ -99,11 +111,11 @@ namespace quickdraw
 		}
 	}
 	
-	void sect_rect_region( const short*  rect,
-	                       const short*  bbox,
-	                       const short*  extent,
-	                       unsigned      max_bytes,
-	                       short*        r )
+	void sect_rect_region( const short*   rect,
+	                       const short*   bbox,
+	                       const short*   extent,
+	                       segments_box&  segments,
+	                       short*         r )
 	{
 		// Clip the rectangle to the region bounding box.
 		
@@ -119,8 +131,6 @@ namespace quickdraw
 			return;
 		}
 		
-		segments_box segments( max_bytes );
-		
 		short v, h;
 		
 		while ( (v = *extent++) <= top )
@@ -132,7 +142,7 @@ namespace quickdraw
 				++extent;
 			}
 			
-			bool contained = (extent - h0) & 1;
+			bool contained = odd_count_between( h0, extent );
 			
 			if ( contained )
 			{
@@ -144,7 +154,7 @@ namespace quickdraw
 				xor_segments( segments, h );
 			}
 			
-			contained = (extent - h0) & 1;
+			contained = odd_count_between( h0, extent );
 			
 			if ( ! contained )
 			{
@@ -174,7 +184,7 @@ namespace quickdraw
 				++extent;
 			}
 			
-			bool contained = (extent - h0) & 1;
+			bool contained = odd_count_between( h0, extent );
 			
 			if ( contained )
 			{
@@ -190,7 +200,7 @@ namespace quickdraw
 				xor_segments( segments, h );
 			}
 			
-			contained = (extent - h0) & 1;
+			contained = odd_count_between( h0, extent );
 			
 			if ( ! contained )
 			{
@@ -219,20 +229,26 @@ namespace quickdraw
 		*r++ = Region_end;
 	}
 	
-	void sect_regions( const short*  bbox,
-	                   const short*  a_extent,
-	                   unsigned      a_max_bytes,
-	                   const short*  b_extent,
-	                   unsigned      b_max_bytes,
-	                   short*        r )
+	void sect_rect_region( const short*  rect,
+	                       const short*  bbox,
+	                       const short*  extent,
+	                       unsigned      max_bytes,
+	                       short*        r )
 	{
-		const size_t r_max_bytes = a_max_bytes + b_max_bytes;
+		malloc_segments_box segments( max_bytes );
 		
-		segments_box a_segments( a_max_bytes );
-		segments_box b_segments( b_max_bytes );
-		segments_box c_segments( r_max_bytes );
-		segments_box r_segments( r_max_bytes );
-		
+		sect_rect_region( rect, bbox, extent, segments, r );
+	}
+	
+	void sect_regions( const short*   bbox,
+	                   const short*   a_extent,
+	                   segments_box&  a_segments,
+	                   const short*   b_extent,
+	                   segments_box&  b_segments,
+	                   segments_box&  c_segments,
+	                   segments_box&  r_segments,
+	                   short*         r )
+	{
 		short va = *a_extent++;
 		short vb = *b_extent++;
 		
@@ -275,6 +291,26 @@ namespace quickdraw
 		}
 		
 		*r++ = Region_end;
+	}
+	
+	void sect_regions( const short*  bbox,
+	                   const short*  a_extent,
+	                   unsigned      a_max_bytes,
+	                   const short*  b_extent,
+	                   unsigned      b_max_bytes,
+	                   short*        r )
+	{
+		const size_t r_max_bytes = a_max_bytes + b_max_bytes;
+		
+		malloc_segments_box a_segments( a_max_bytes );
+		malloc_segments_box b_segments( b_max_bytes );
+		malloc_segments_box c_segments( r_max_bytes );
+		malloc_segments_box r_segments( r_max_bytes );
+		
+		sect_regions( bbox, a_extent, a_segments,
+		                    b_extent, b_segments,
+		                              c_segments,
+		                              r_segments, r );
 	}
 	
 }

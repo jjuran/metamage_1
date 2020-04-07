@@ -155,6 +155,26 @@ void remove_from_window_list( WindowPeek window )
 	}
 }
 
+static
+WindowPeek next_visible_window( WindowPeek w )
+{
+	for ( ;  w != NULL;  w = w->nextWindow )
+	{
+		if ( w->visible )
+		{
+			break;
+		}
+	}
+	
+	return w;
+}
+
+static inline
+WindowPeek first_visible_window()
+{
+	return next_visible_window( WindowList );
+}
+
 #pragma mark -
 #pragma mark Initialization and Allocation
 #pragma mark -
@@ -222,7 +242,7 @@ pascal void GetWMgrPort_patch( struct GrafPort** port )
 pascal struct GrafPort* NewWindow_patch( void*                 storage,
                                          const struct Rect*    bounds,
                                          const unsigned char*  title,
-                                         short                 visible,
+                                         Boolean               visible,
                                          short                 procID,
                                          struct GrafPort*      behind,
                                          unsigned char         closeBox,
@@ -372,10 +392,10 @@ pascal GrafPort* GetNewWindow_patch( short      resID,
 	WindowRef window = NewWindow( storage,
 	                              &wind.bounds,
 	                              wind.title,
-	                              wind.visible,
+	                              (Boolean&) wind.visible,
 	                              wind.procID,
 	                              behind,
-	                              wind.goAwayFlag,
+	                              (Boolean&) wind.goAwayFlag,
 	                              wind.refCon );
 	
 	ReleaseResource( h );
@@ -472,6 +492,14 @@ pascal void SetWTitle_patch( WindowPeek window, const unsigned char* s )
 		
 		window->titleWidth = 0;
 	}
+	
+	SaveUpdate = false;
+	PaintWhite = false;
+	
+	PaintOne_patch( window, window->strucRgn );
+	
+	SaveUpdate = true;
+	PaintWhite = true;
 }
 
 pascal void GetWTitle_patch( WindowPeek window, unsigned char* s )
@@ -528,9 +556,10 @@ pascal void HideWindow_patch( WindowPeek window )
 	
 	if ( window == WindowList  &&  window->nextWindow != NULL )
 	{
-		// TODO:  What if the next window is invisible?
-		
-		SelectWindow_patch( window->nextWindow );
+		if ( WindowPeek next = next_visible_window( window->nextWindow ) )
+		{
+			SelectWindow_patch( next );
+		}
 	}
 }
 
@@ -564,6 +593,10 @@ pascal void ShowHide_patch( WindowRecord* window, Boolean showFlag )
 		call_WDEF( window, wCalcRgns, 0 );
 		
 		paint_one_or_many = &PaintOne_patch;
+	}
+	else
+	{
+		SetEmptyRgn( window->updateRgn );
 	}
 	
 	CalcVBehind_patch( window, window->strucRgn );
@@ -710,7 +743,7 @@ pascal void SendBehind_patch( WindowPeek window, WindowPeek behindWindow )
 
 pascal WindowRef FrontWindow_patch()
 {
-	return (WindowRef) WindowList;
+	return (WindowRef) first_visible_window();
 }
 
 pascal void DrawGrowIcon_patch( WindowPeek window )
@@ -775,6 +808,8 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 	
 	SetClip( w->strucRgn );
 	
+	SectRgn( WMgrPort->clipRgn, GrayRgn, WMgrPort->clipRgn );
+	
 	bool was_inside = false;
 	bool is_inside = true;
 	
@@ -795,7 +830,7 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 		
 		EventRecord event;
 		
-		if ( WaitNextEvent( mUpMask, &event, 0x7fffffff, mouseRgn ) )
+		if ( WaitNextEvent( mUpMask, &event, 0xFFFFFFFF, mouseRgn ) )
 		{
 			if ( event.what == mouseUp )
 			{
@@ -962,16 +997,6 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 
 pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 {
-	WindowPeek w = (WindowPeek) window;
-	
-	CopyRgn( w->strucRgn, OldStructure );
-	CopyRgn( w->contRgn,  OldContent   );
-	
-	const Rect& portRect = window->portRect;
-	
-	const short old_height = portRect.bottom - portRect.top;
-	const short old_width  = portRect.right - portRect.left;
-	
 	QDGlobals& qd = get_QDGlobals();
 	
 	GrafPtr saved_port = qd.thePort;
@@ -981,6 +1006,16 @@ pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 	PortSize( h, v );
 	
 	qd.thePort = saved_port;
+	
+	WindowPeek w = (WindowPeek) window;
+	
+	if ( ! w->visible )
+	{
+		return;
+	}
+	
+	CopyRgn( w->strucRgn, OldStructure );
+	CopyRgn( w->contRgn,  OldContent   );
 	
 	call_WDEF( w, wCalcRgns, 0 );
 	
@@ -1115,7 +1150,7 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 			actually moved, that is), and set sleep back to forever (approx).
 		*/
 		
-		sleep = 0x7fffffff;
+		sleep = 0xFFFFFFFF;
 		
 		if ( *(long*) &pt != *(long*) &event.where )
 		{
@@ -1377,6 +1412,11 @@ pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
 
 pascal void CalcVis_patch( WindowPeek window )
 {
+	if ( window == NULL )
+	{
+		return;
+	}
+	
 	RgnHandle visRgn = window->port.visRgn;
 	
 	if ( ! window->visible )

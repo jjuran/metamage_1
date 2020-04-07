@@ -26,7 +26,7 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void stat( const node& that, struct ::stat& sb )
+	void stat( const node& that, struct stat& sb )
 	{
 		const node_method_set* methods = that.methods();
 		

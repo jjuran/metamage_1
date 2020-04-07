@@ -11,7 +11,7 @@ try
 		#include "tests.hh"
 	}
 	
-	uint64_t best = 0;
+	unsigned long long best = 0;
 	
 	for ( int trial = 0;  trial < n_trials;  ++trial )
 	{
@@ -22,7 +22,7 @@ try
 			#include "tests.hh"
 		}
 		
-		const uint64_t result = t.get();
+		const unsigned long long result = t.get();
 		
 		if ( best == 0  ||  result < best )
 		{

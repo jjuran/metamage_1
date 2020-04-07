@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-use strict;
+#use strict;
 
 my $copier;
 

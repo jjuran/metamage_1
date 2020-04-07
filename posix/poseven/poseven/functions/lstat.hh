@@ -24,9 +24,11 @@
 namespace poseven
 {
 	
+	typedef struct stat struct_stat;
+	
 	bool lstat( const char* pathname, struct stat& sb );
 	
-	struct ::stat lstat( const char* pathname );
+	struct stat lstat( const char* pathname );
 	
 	template < class String >
 	inline bool lstat( const String&  path,
@@ -38,7 +40,8 @@ namespace poseven
 	}
 	
 	template < class String >
-	inline struct ::stat lstat( const String& path )
+	inline
+	struct_stat lstat( const String& path )
 	{
 		using iota::get_string_c_str;
 		

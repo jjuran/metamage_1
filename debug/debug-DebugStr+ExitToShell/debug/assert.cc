@@ -25,11 +25,15 @@ namespace debug
 	void handle_failed_assertion( const char*  text,
 	                              const char*  func,
 	                              const char*  file,
-	                              unsigned     line )
+	                              unsigned     line,
+	                              bool         fatal )
 	{
 		::DebugStr( "\p" "Assertion failure" );
 		
-		mac::sys::exit_to_shell();
+		if ( fatal )
+		{
+			mac::sys::exit_to_shell();
+		}
 	}
 	
 }

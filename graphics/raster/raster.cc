@@ -129,6 +129,21 @@ int raster_cast( char** args )
 }
 
 static
+int raster_bump( char** args )
+{
+	while ( const char* path = *args++ )
+	{
+		open_raster( path );
+		
+		bump_relay( loaded_raster );
+		
+		close_raster( loaded_raster );
+	}
+	
+	return 0;
+}
+
+static
 int raster_wait( char** args )
 {
 	while ( const char* path = *args++ )
@@ -197,6 +212,11 @@ int main( int argc, char** argv )
 	if ( strcmp( subcommand, "cast" ) == 0 )
 	{
 		return raster_cast( args );
+	}
+	
+	if ( strcmp( subcommand, "bump" ) == 0 )
+	{
+		return raster_bump( args );
 	}
 	
 	if ( strcmp( subcommand, "wait" ) == 0 )

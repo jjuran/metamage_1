@@ -156,6 +156,69 @@ namespace iota
 		return swap_8_bytes_little( u64 );
 	}
 	
+	template < class Int >
+	class big_endian
+	{
+		private:
+			Int data;
+		
+		public:
+			typedef Int underlying_type;
+			
+			big_endian() : data()
+			{
+			}
+			
+			void assign( Int x );
+			
+			big_endian( Int x )  { assign( x ); }
+			
+			big_endian& operator=( Int x )  { assign( x );  return *this; }
+			
+			operator Int() const;
+	};
+	
+	template < class Int >
+	void big_endian_conversion_unsupported( Int x );
+	
+	template < class Int >
+	void big_endian< Int >::assign( Int x )
+	{
+		switch ( sizeof x )
+		{
+			default: big_endian_conversion_unsupported( x );
+			
+			case 2:  data = big_u16( x );  break;
+			case 4:  data = big_u32( x );  break;
+		}
+	}
+	
+	template < class Int >
+	big_endian< Int >::operator Int() const
+	{
+		switch ( sizeof data )
+		{
+			default: big_endian_conversion_unsupported( data );
+			
+			case 2:  return u16_from_big( data );
+			case 4:  return u32_from_big( data );
+		}
+	}
+	
+	template < class Int >
+	struct big_endian_conversion
+	{
+	#ifdef __MWERKS__
+	
+		typedef Int type;
+		
+	#else
+		
+		typedef big_endian< Int > type;
+		
+	#endif
+	};
+	
 }
 
 #endif

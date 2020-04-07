@@ -289,12 +289,18 @@ namespace Genie
 		
 		if ( TARGET_API_MAC_CARBON )
 		{
-			const FSRef location = N::GetProcessBundleLocation( N::CurrentProcess() );
+			const ProcessSerialNumber current = { 0, kCurrentProcess };
 			
-			const FSSpec locationSpec = N::FSMakeFSSpec( location );
+			FSRef location;
+			OSErr err = GetProcessBundleLocation( &current, &location );
 			
-			vRefNum = Mac::FSVolumeRefNum( locationSpec.vRefNum );
-			dirID   = Mac::FSDirID       ( locationSpec.parID   );
+			if ( err == noErr )
+			{
+				const FSSpec locationSpec = N::FSMakeFSSpec( location );
+				
+				vRefNum = Mac::FSVolumeRefNum( locationSpec.vRefNum );
+				dirID   = Mac::FSDirID       ( locationSpec.parID   );
+			}
 		}
 		
 		const bool exists = MacIO::GetCatInfo< FNF_Returns >( cInfo,
@@ -389,7 +395,7 @@ namespace Genie
 	static ino_t hfs_inode( const vfs::node* that );
 	
 	static void hfs_stat( const vfs::node*  that,
-	                      struct ::stat&    sb );
+	                      struct stat&      sb );
 	
 	static void hfs_chmod( const vfs::node*  that,
 	                       mode_t            mode );
@@ -715,7 +721,7 @@ namespace Genie
 	}
 	
 	static void hfs_stat( const vfs::node*  that,
-	                      struct ::stat&    sb )
+	                      struct stat&      sb )
 	{
 		const bool async = false;
 		
@@ -1024,11 +1030,9 @@ namespace Genie
 			throw p7::errno_t( ENXIO );
 		}
 		
-		const bool async = false;
-		
 		vfs::filehandle_ptr opened = OpenMacFileHandle( extra.fsspec,
 		                                                flags,
-		                                                async ? &Genie::FSpOpenDF : &OpenDataFork,
+		                                                &OpenDataFork,
 		                                                &FSTreeFromFSSpec );
 		
 		if ( created )

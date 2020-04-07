@@ -15,7 +15,9 @@
 #include "v68k-mac/dynamic_globals.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 namespace v68k {
@@ -37,6 +39,7 @@ enum
 	tag_EventQueue,
 	tag_EventQueue_word_4 = tag_EventQueue + 4,  // 10 bytes
 	tag_EvtBufCnt,
+	tag_SysVersion,
 	tag_VBLQueue,
 	tag_VBLQueue_word_4 = tag_VBLQueue + 4,  // 10 bytes
 	tag_Ticks,
@@ -45,14 +48,20 @@ enum
 	tag_KeyMaps,
 	tag_KeyMaps_word_7 = tag_KeyMaps + 7,  // 16 bytes
 	tag_UnitNtryCnt,
+	tag_VIA,
+	tag_VIA_low_word,
 	tag_SPATBConfig,
 	tag_SPKbdPrint,
 	tag_Time,
 	tag_Time_low_word,
 	tag_BootDrive,
+	tag_SFSaveDisk,
 	tag_Kbd_Alarm,
 	tag_MemErr,
 	tag_SdVolEnable,
+	tag_SoundBase,
+	tag_SoundBase_low_word,
+	tag_SoundActLvl,
 	tag_CurPitch,
 	tag_ROM85,
 	tag_PortABUse,
@@ -60,10 +69,17 @@ enum
 	tag_ApplZone_low_word,
 	tag_ROMBase,
 	tag_ROMBase_low_word,
+	tag_CaretTime,
+	tag_CaretTime_low_word,
+	tag_ScrDmpEnbTyp,
+	tag_DrvQHdr,
+	tag_DrvQHdr_word_4 = tag_DrvQHdr + 4,  // 10 bytes
 	tag_HpChk,
 	tag_HpChk_low_word,
 	tag_DefltStack,
 	tag_DefltStack_low_word,
+	tag_IAZNotify,
+	tag_IAZNotify_low_word,
 	tag_FCBSPtr,
 	tag_FCBSPtr_low_word,
 	tag_DefVCBPtr,
@@ -87,8 +103,12 @@ enum
 	tag_CrsrPin_word_3 = tag_CrsrPin + 3,  // 8 bytes
 	tag_CrsrRect,
 	tag_CrsrRect_word_3 = tag_CrsrRect + 3,  // 8 bytes
+	tag_TheCrsr,
+	tag_TheCrsr_word_33 = tag_TheCrsr + 33,  // 68 bytes
+	tag_CrsrVisBusy,
 	tag_JIODone,
 	tag_JIODone_low_word,
+	tag_CurApRefNum,
 	tag_CurrentA5,
 	tag_CurrentA5_low_word,
 	tag_CurStackBase,
@@ -98,6 +118,7 @@ enum
 	tag_SaveSegHandle,
 	tag_SaveSegHandle_low_word,
 	tag_CurJTOffset,
+	tag_CurPageOption,
 	tag_PrintErr,
 	tag_ROMFont0,
 	tag_ROMFont0_low_word,
@@ -141,8 +162,13 @@ enum
 	tag_ACount,
 	tag_DAStrings,
 	tag_DAStrings_word_7 = tag_DAStrings + 7,  // 16 bytes
+	tag_TEScrpLength,
+	tag_TEScrpHandle,
+	tag_TEScrpHandle_low_word,
 	tag_AppPacks,
 	tag_AppPacks_word_15 = tag_AppPacks + 15,  // 32 bytes
+	tag_AE8,
+	tag_AE8_low_word,
 	tag_AppParmHandle,
 	tag_AppParmHandle_low_word,
 	tag_DlgFont,
@@ -159,10 +185,16 @@ void initialize()
 {
 	((char*) &words[ tag_ROMBase ])[ 1 ] = 0x40;  // ROMBase = 0x00400000
 	
+	words[ tag_VIA        ] = iota::big_u16( 0x00EF     );
+	words[ tag_VIA + 1    ] = iota::big_u16(     0xE1FE );
+	words[ tag_BootDrive  ] = 0xFFFF;  // initially -1
 	words[ tag_ROM85      ] = 0xFFFF;  // indicates 64K ROM
-	words[ tag_FSFCBLen   ] = 0xFFFF;  // indicates 64K ROM
+	words[ tag_FSFCBLen   ] = 0xFFFF;  // indicates MFS
+	words[ tag_CurApRefNum] = iota::big_u16( 2 );
 	words[ tag_SaveUpdate ] = 0xFFFF;  // initially true
 	words[ tag_PaintWhite ] = 0xFFFF;  // initially true
+	words[ tag_AE8        ] = 0xFFFF;
+	words[ tag_AE8 + 1    ] = 0xFFFF;
 	words[ tag_MBarHeight ] = 0xFFFF;  // signals to use default menu bar height
 }
 
@@ -174,7 +206,7 @@ struct global
 	uint8_t  size_;
 	uint8_t  index;
 	
-	uint8_t size() const  { return size_ & 0x3F; }
+	uint8_t size() const  { return (int8_t) size_ < 0 ? size_ & 0x3F : size_; }
 	
 	uint16_t word() const  { return int16_t( int8_t( index ) ); }
 };
@@ -200,18 +232,23 @@ static const global globals[] =
 	{ 0x0146, 4,    tag_SysEvtBuf   },
 	{ 0x014A, 10,   tag_EventQueue  },
 	{ 0x0154, 2,    tag_EvtBufCnt   },
+	{ 0x015A, 2,    tag_SysVersion  },
 	{ 0x0160, 10,   tag_VBLQueue    },
-	{ 0x016A, 0x44, tag_Ticks       },
+	{ 0x016A, 0xC4, tag_Ticks       },
 	{ 0x0172, 2,    tag_MBState_esc },  // MBState, Tocks (Button escapes)
 	{ 0x0174, 16,   tag_KeyMaps     },  // KeyMap, KeyPadMap, 4 more bytes
 	{ 0x01D2, 2,    tag_UnitNtryCnt },
+	{ 0x01D4, 4,    tag_VIA         },
 	{ 0x01FA, 2,    tag_SPATBConfig },  // SPATalkB, SPConfig
 	{ 0x0207, 2,    tag_SPKbdPrint  },  // SPKbd, SPPrint
-	{ 0x020C, 0x44, tag_Time        },
+	{ 0x020C, 0xC4, tag_Time        },
 	{ 0x0210, 2,    tag_BootDrive   },
+	{ 0x0214, 2,    tag_SFSaveDisk  },
 	{ 0x021E, 2,    tag_Kbd_Alarm   },  // KbdType, AlarmState
 	{ 0x0220, 2,    tag_MemErr      },
 	{ 0x0260, 2,    tag_SdVolEnable },  // SdVolume, SdEnable
+	{ 0x0266, 4,    tag_SoundBase   },
+	{ 0x027E, 2,    tag_SoundActLvl },  // SoundActive, SoundLevel
 	{ 0x0280, 2,    tag_CurPitch    },
 	{ 0x028E, 2,    tag_ROM85       },
 	{ 0x0290, 2,    tag_PortABUse   },  // PortAUse, PortBUse
@@ -219,9 +256,13 @@ static const global globals[] =
 	{ 0x02AE, 4,    tag_ROMBase     },
 	{ 0x02F0, 0x82, 0               },  // DoubleTime (high word)
 	{ 0x02F2, 0x82, 15              },  // DoubleTime (low word)
+	{ 0x02F4, 4,    tag_CaretTime   },
+	{ 0x02F8, 2,    tag_ScrDmpEnbTyp},  // ScrDmpEnb, ScrDmpType
+	{ 0x0308, 10,   tag_DrvQHdr     },
 	{ 0x0316, 4,    tag_HpChk       },
 	{ 0x031A, 0x83, 0xFF            },  // Lo3Bytes
 	{ 0x0322, 4,    tag_DefltStack  },
+	{ 0x033C, 4,    tag_IAZNotify   },
 	{ 0x034E, 4,    tag_FCBSPtr     },
 	{ 0x0352, 4,    tag_DefVCBPtr   },
 	{ 0x0356, 10,   tag_VCBQHdr     },
@@ -234,13 +275,16 @@ static const global globals[] =
 	{ 0x0830, 4,    tag_Mouse       },
 	{ 0x0834, 8,    tag_CrsrPin     },
 	{ 0x083C, 8,    tag_CrsrRect    },
+	{ 0x0844, 68,   tag_TheCrsr     },
+	{ 0x08CC, 2,    tag_CrsrVisBusy },  // CrsrVis, CrsrBusy
 	{ 0x08FC, 4,    tag_JIODone     },
-	{ 0x0900, 0x82, 2               },  // CurApRefNum
+	{ 0x0900, 2,    tag_CurApRefNum },
 	{ 0x0904, 4,    tag_CurrentA5   },
 	{ 0x0908, 4,    tag_CurStackBase},
 	{ 0x0910, 32,   tag_CurApName   },
 	{ 0x0930, 4,    tag_SaveSegHandle},
 	{ 0x0934, 2,    tag_CurJTOffset },
+	{ 0x0936, 2,    tag_CurPageOption},
 	{ 0x0944, 2,    tag_PrintErr    },
 	{ 0x0980, 4,    tag_ROMFont0    },
 	{ 0x0984, 0x82, 3               },  // ApFontID (Geneva)
@@ -272,7 +316,10 @@ static const global globals[] =
 	{ 0x0A78, 12,   tag_ApplScratch },
 	{ 0x0A9A, 2,    tag_ACount      },
 	{ 0x0AA0, 16,   tag_DAStrings   },
+	{ 0x0AB0, 2,    tag_TEScrpLength},
+	{ 0x0AB4, 4,    tag_TEScrpHandle},
 	{ 0x0AB8, 32,   tag_AppPacks    },
+	{ 0x0AE8, 4,    tag_AE8         },
 	{ 0x0AEC, 4,    tag_AppParmHandle},
 	{ 0x0AFA, 2,    tag_DlgFont     },
 	{ 0x0B22, 2,    tag_SCSIFlag    },
@@ -354,7 +401,7 @@ static void refresh_dynamic_global( uint8_t tag )
 	}
 }
 
-static uint8_t buffer[ 32 ];  // needs to be as big as the largest global
+static uint8_t buffer[ 68 ];  // needs to be as big as the largest global
 
 static uint8_t* read_globals( const global* g, int16_t addr, uint32_t size )
 {
@@ -372,7 +419,16 @@ static uint8_t* read_globals( const global* g, int16_t addr, uint32_t size )
 	{
 		uint32_t width = g->size();
 		
-		if ( int8_t( g->size_ ) < 0 )
+		if ( int8_t( g->size_ ) >= 0  ||  g->size_ >= 0xC0 )
+		{
+			if ( g->size_ >= 0xC0 )
+			{
+				refresh_dynamic_global( g->index );
+			}
+			
+			return (uint8_t*) &words[ g->index ] + (addr - g->addr);
+		}
+		else
 		{
 			if ( width < 2 )
 			{
@@ -398,15 +454,6 @@ static uint8_t* read_globals( const global* g, int16_t addr, uint32_t size )
 					}
 				}
 			}
-		}
-		else
-		{
-			if ( g->size_ >= 0x40 )
-			{
-				refresh_dynamic_global( g->index );
-			}
-			
-			return (uint8_t*) &words[ g->index ] + (addr - g->addr);
 		}
 		
 		addr += width;

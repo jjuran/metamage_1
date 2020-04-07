@@ -33,7 +33,7 @@
 #include "relix/api/broken_pipe.hh"
 #include "relix/api/root.hh"
 #include "relix/api/try_again.hh"
-#include "relix/fs/pts_tag.hh"
+#include "relix/fs/pts_group.hh"
 #include "relix/fs/terminal.hh"
 
 
@@ -71,11 +71,6 @@ namespace relix
 	};
 	
 	
-	static inline vfs::dynamic_group& GetPseudoTTYMap()
-	{
-		return vfs::get_dynamic_group< pts_tag >();
-	}
-	
 	static inline plus::string make_devpts( size_t id )
 	{
 		plus::var_string result = "/dev/pts/";
@@ -101,7 +96,9 @@ namespace relix
 		vfs::filehandle_ptr master_handle( new_pseudotty( index, *outgoing, *incoming ) );
 		vfs::filehandle_ptr slave_handle ( new_pseudotty( index, *incoming, *outgoing ) );
 		
-		vfs::set_dynamic_element_by_id< pts_tag >( index, slave_handle.get() );
+		vfs::dynamic_group& g = relix::get_pts_group();
+		
+		vfs::set_dynamic_element_of_group_by_id( g, index, slave_handle.get() );
 		
 		vfs::filehandle_ptr terminal = new_terminal( *vfs::resolve_absolute_path( *root(), make_devpts( index ) ) );
 		
@@ -147,7 +144,7 @@ namespace relix
 		extra.input->close_egress();
 		extra.output->close_ingress();
 		
-		GetPseudoTTYMap().erase( extra.id );
+		relix::get_pts_group().erase( extra.id );
 		
 		intrusive_ptr_release( extra.input  );
 		intrusive_ptr_release( extra.output );

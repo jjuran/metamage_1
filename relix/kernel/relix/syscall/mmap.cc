@@ -7,6 +7,10 @@
 
 // POSIX
 #include <errno.h>
+#ifdef __APPLE__
+// This is needed to compile with Mac OS X 10.3's headers.
+#include <sys/types.h>
+#endif
 #include <sys/mman.h>
 
 // vfs
@@ -20,6 +24,11 @@
 #include "relix/api/get_fd_handle.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_image.hh"
+
+
+#ifndef MAP_ANON
+#define MAP_ANON 0
+#endif
 
 
 namespace relix

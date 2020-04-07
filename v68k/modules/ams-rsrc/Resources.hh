@@ -6,9 +6,13 @@
 #ifndef RESOURCES_HH
 #define RESOURCES_HH
 
+pascal short InitResources_patch();
+
 pascal void RsrcZoneInit_patch();
 
 pascal short OpenResFile_patch( const unsigned char* name );
+
+pascal void CloseResFile_patch( short refnum );
 
 pascal short ResError_patch();
 pascal short CurResFile_patch();
@@ -43,6 +47,10 @@ pascal short GetResAttrs_patch( char** resource );
 
 pascal long SizeRsrc_patch( char** resource );
 
+pascal void ChangedResource_patch( char** resource );
+
+pascal void WriteResource_patch( char** resource );
+
 pascal void SetResPurge_patch( unsigned char install );
 
 pascal short Count1Resources_patch( unsigned long type );
@@ -53,5 +61,7 @@ pascal char** Get1Resource_patch( unsigned long type, short id );
 
 pascal char** Get1NamedResource_patch( unsigned long         type,
                                        const unsigned char*  name );
+
+pascal short OpenRFPerm_patch( const unsigned char* name, short vRefNum, char perm );
 
 #endif

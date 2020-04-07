@@ -10,14 +10,31 @@
 #include "screen_lock.hh"
 
 
-void lock_raster()
+raster_lock::raster_lock( bool cursor, bool screen )
+:
+	cursor_locked( cursor ),
+	screen_locked( screen )
 {
-	lock_screen();
-	JHideCursor();
+	if ( screen )
+	{
+		lock_screen();
+	}
+	
+	if ( cursor )
+	{
+		JHideCursor();
+	}
 }
 
-void unlock_raster()
+raster_lock::~raster_lock()
 {
-	JShowCursor();
-	unlock_screen();
+	if ( cursor_locked )
+	{
+		JShowCursor();
+	}
+	
+	if ( screen_locked )
+	{
+		unlock_screen();
+	}
 }

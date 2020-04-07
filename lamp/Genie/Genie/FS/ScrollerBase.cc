@@ -6,7 +6,14 @@
 #include "Genie/FS/ScrollerBase.hh"
 
 // plus
+#include "plus/serialize.hh"
 #include "plus/simple_map.hh"
+
+// vfs
+#include "vfs/node.hh"
+
+// Genie
+#include "Genie/FS/Views.hh"
 
 
 namespace Genie
@@ -215,5 +222,44 @@ namespace Genie
 		
 		Ped::Superview::Draw( bounds, erasing );
 	}
+	
+	static
+	int& scroller_field( const vfs::node* view, const plus::string& name )
+	{
+		ScrollerParameters& params = ScrollerParameters::Get( view );
+		
+		const char c = name[ 0 ];
+		
+		int& value = c == 'w' ? params.itsClientWidth
+		           : c == 'h' ? params.itsClientHeight
+		           : c == 'x' ? params.itsHOffset
+		           : c == 'y' ? params.itsVOffset
+		           :            *(int*) 0;
+		
+		return value;
+	}
+	
+	typedef plus::serialize_int< int > serialize;
+	
+	static
+	void get( plus::var_string& result, const vfs::node* view, bool binary, const plus::string& name )
+	{
+		serialize::deconstruct::apply( result, scroller_field( view, name ), binary );
+	}
+	
+	static
+	void set( const vfs::node* view, const char* begin, const char* end, bool binary, const plus::string& name )
+	{
+		scroller_field( view, name ) = serialize::reconstruct::apply( begin, end, binary );
+		
+		InvalidateWindowForView( view );
+	}
+	
+	const vfs::property_params scroller_setting_params =
+	{
+		serialize::fixed_size,
+		(vfs::property_get_hook) &get,
+		(vfs::property_set_hook) &set,
+	};
 	
 }

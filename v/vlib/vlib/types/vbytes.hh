@@ -34,7 +34,10 @@ namespace vlib
 	
 	Value assign_byte_to_index( Value& s, const Value& x, const Byte& byte );
 	
+	Value multiply( const VBytes& bytes, const Value& factor  );
 	Value division( const VBytes& bytes, const Value& divisor );
+	
+	Value vbytes_contains( const Value& a, const Value& b );
 	
 	Value vbytes_mutating_op_handler( op_type        op,
 	                                  const Target&  target,

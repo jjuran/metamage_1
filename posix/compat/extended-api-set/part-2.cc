@@ -54,7 +54,7 @@ static int link_with_flags( const char* oldpath, const char* newpath, int flags 
 {
 	const bool follow = flags & AT_SYMLINK_FOLLOW;
 	
-	struct ::stat sb;
+	struct stat sb;
 	
 	if ( !follow  &&  lstat( oldpath, &sb ) == 0  &&  S_ISLNK( sb.st_mode ) )
 	{

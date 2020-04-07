@@ -24,6 +24,7 @@
 #include "Drag.hh"
 #include "Icons.hh"
 #include "Menus.hh"
+#include "StandardFile.hh"
 #include "StrUtils.hh"
 #include "TextEdit.hh"
 #include "Windows.hh"
@@ -44,11 +45,13 @@ void* toolbox_trap_table[] : 3 * 1024;
 
 enum
 {
-	_BeginUpdate = _BeginUpDate,
-	_CheckUpdate = _CheckUpDate,
-	_EndUpdate   = _EndUpDate,
-	_SetItemMark = _SetItmMark,
-	_GetMenu     = _GetRMenu,
+	_BeginUpdate    = _BeginUpDate,
+	_CheckUpdate    = _CheckUpDate,
+	_EndUpdate      = _EndUpDate,
+	_GetItemMark    = _GetItmMark,
+	_GetMenu        = _GetRMenu,
+	_SetItemMark    = _SetItmMark,
+	_SetItemStyle   = _SetItmStyle,
 	_UpdateControls = _UpdtControl,
 };
 
@@ -116,6 +119,11 @@ void install_Windows()
 static
 void install_Menus()
 {
+	TBTRAP( InsMenuItem  );  // A826
+	
+	TBTRAP( GetItemCmd   );  // A84E
+	TBTRAP( SetItemCmd   );  // A84F
+	
 	TBTRAP( InitMenus    );  // A930
 	TBTRAP( NewMenu      );  // A931
 	TBTRAP( DisposeMenu  );  // A932
@@ -132,6 +140,10 @@ void install_Menus()
 	TBTRAP( MenuSelect   );  // A93D
 	TBTRAP( MenuKey      );  // A93E
 	
+	TBTRAP( SetItmIcon   );  // A940
+	
+	TBTRAP( SetItemStyle );  // A942
+	TBTRAP( GetItemMark  );  // A943
 	TBTRAP( SetItemMark  );  // A944
 	TBTRAP( CheckItem    );  // A945
 	TBTRAP( GetItem      );  // A946
@@ -145,14 +157,16 @@ void install_Menus()
 	
 	TBTRAP( CountMItems  );  // A950
 	
+	TBTRAP( DelMenuItem  );  // A952
+	
 	TBTRAP( GetMenu      );  // A9BF
 	TBTRAP( GetNewMBar   );  // A9C0
-	
-	TBTRAP( SysBeep      );  // A9C8
 }
 
 static void install_Controls()
 {
+	TBTRAP( GetCVariant    );  // A809
+	
 	TBTRAP( UpdateControls );  // A953
 	TBTRAP( NewControl     );  // A954
 	TBTRAP( DisposeControl );  // A955
@@ -167,10 +181,12 @@ static void install_Controls()
 	
 	TBTRAP( SetCTitle      );  // A95F
 	TBTRAP( GetCtlValue    );  // A960
-	
+	TBTRAP( GetMinCtl      );  // A961
+	TBTRAP( GetMaxCtl      );  // A962
 	TBTRAP( SetCtlValue    );  // A963
 	TBTRAP( SetMinCtl      );  // A964
 	TBTRAP( SetMaxCtl      );  // A965
+	TBTRAP( TestControl    );  // A966
 	
 	TBTRAP( TrackControl   );  // A968
 	TBTRAP( DrawControls   );  // A969
@@ -183,6 +199,9 @@ static void install_Controls()
 
 static void install_Dialogs()
 {
+	TBTRAP( HideDItem );  // A827
+	TBTRAP( ShowDItem );  // A828
+	
 	TBTRAP( InitDialogs  );  // A97B
 	TBTRAP( GetNewDialog );  // A97C
 	TBTRAP( NewDialog    );  // A97D
@@ -202,6 +221,7 @@ static void install_Dialogs()
 	TBTRAP( CautionAlert );  // A988
 	
 	TBTRAP( ParamText    );  // A98B
+	TBTRAP( ErrorSound   );  // A98C
 	
 	TBTRAP( GetDItem     );  // A98D
 	TBTRAP( SetDItem     );  // A98E
@@ -212,17 +232,30 @@ static void install_Dialogs()
 
 static void install_TextEdit()
 {
-	TBTRAP( TEInit    );  // A9CC
-	TBTRAP( TEDispose );  // A9CD
-	TBTRAP( TETextBox );  // A9CE
+	TBTRAP( TEInit       );  // A9CC
+	TBTRAP( TEDispose    );  // A9CD
+	TBTRAP( TETextBox    );  // A9CE
+	TBTRAP( TESetText    );  // A9CF
+	TBTRAP( TECalText    );  // A9D0
+	TBTRAP( TESetSelect  );  // A9D1
+	TBTRAP( TENew        );  // A9D2
+	TBTRAP( TEUpdate     );  // A9D3
+	TBTRAP( TEClick      );  // A9D4
 	
-	TBTRAP( TENew     );  // A9D2
+	TBTRAP( TEDelete     );  // A9D7
+	TBTRAP( TEActivate   );  // A9D8
+	TBTRAP( TEDeactivate );  // A9D9
+	TBTRAP( TEIdle       );  // A9DA
 	
-	TBTRAP( TEIdle );  // A9DA
+	TBTRAP( TEKey        );  // A9DC
+	TBTRAP( TEScroll     );  // A9DD
+	TBTRAP( TEInsert     );  // A9DE
 }
 
 static void install_Packages()
 {
+	TBTRAP( Pack3 );  // A9EA
+	
 	TBTRAP( Pack7 );  // A9EE
 }
 

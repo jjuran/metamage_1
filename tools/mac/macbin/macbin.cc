@@ -14,6 +14,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// mac-file-utils
+#include "mac_file/directory.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -43,9 +46,10 @@
 namespace tool
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
+	
+	using mac::types::VRefNum_DirID;
 	
 	
 	// Operations:
@@ -70,7 +74,8 @@ namespace tool
 		p7::write( p7::fd_t( fd ), (const char*) data, byteCount );
 	}
 	
-	static void Decode( p7::fd_t input, const N::FSDirSpec& destDir )
+	static
+	void Decode( p7::fd_t input, const VRefNum_DirID& destDir )
 	{
 		MacBinary::Decoder decoder( destDir );
 		
@@ -177,8 +182,11 @@ namespace tool
 					decode_target = "/dev/fd/0";
 				}
 				
-				Decode( p7::open( decode_target, p7::o_rdonly ),
-				        N::FSpMake_FSDirSpec( Div::ResolvePathToFSSpec( destDirPath ) ) );
+				FSSpec dest = Div::ResolvePathToFSSpec( destDirPath );
+				
+				VRefNum_DirID destDir = mac::file::directory( dest );
+				
+				Decode( p7::open( decode_target, p7::o_rdonly ), destDir );
 			}
 			catch ( const MacBinary::InvalidMacBinaryHeader& )
 			{

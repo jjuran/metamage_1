@@ -18,7 +18,9 @@
 #include "v68k-time/clock.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 namespace v68k {
@@ -28,11 +30,7 @@ uint32_t get_Ticks()
 {
 	using namespace v68k::time;
 	
-	const uint64_t delta = guest_uptime_microseconds();
-	
-	const unsigned microseconds_per_tick = 1000 * 1000 * 100 / 6015;
-	
-	return delta / microseconds_per_tick;
+	return guest_uptime_ticks();
 }
 
 uint32_t get_Time()

@@ -71,6 +71,7 @@ namespace vlib
 			case Op_gt:
 			case Op_gte:
 			case Op_cmp:
+			case Op_gamut:
 				return Fold_always;
 			
 			case Op_named_unary:
@@ -204,34 +205,23 @@ namespace vlib
 	}
 	
 	static
-	Value compute( const Value& a, op_type op, const Value& b )
+	Value subfold( const Value& v )
 	{
-		Value scope( empty_list, Op_scope, Value( a, op, b ) );
-		
-		return execute( scope );
-	}
-	
-	static
-	Value subfold( const Value& a, op_type op, const Value& b )
-	{
-		if ( is_block_or_constant( a )  &&  is_block_or_constant( b ) )
+		try
 		{
-			try
-			{
-				return compute( a, op, b );
-			}
-			catch ( const user_exception& )
-			{
-			}
-			catch ( const transfer_via_break& )
-			{
-			}
-			catch ( const transfer_via_continue& )
-			{
-			}
-			catch ( const transfer_via_return& )
-			{
-			}
+			return execute( Value( empty_list, Op_scope, v ) );
+		}
+		catch ( const user_exception& )
+		{
+		}
+		catch ( const transfer_via_break& )
+		{
+		}
+		catch ( const transfer_via_continue& )
+		{
+		}
+		catch ( const transfer_via_return& )
+		{
 		}
 		
 		return NIL;
@@ -266,8 +256,15 @@ namespace vlib
 	}
 	
 	static
-	Value fold( const Value& a, op_type op, const Value& b, lexical_scope* scope )
+	Value inner_fold( const Value& v, lexical_scope* scope )
 	{
+		Expr* expr = v.expr();
+		
+		const Value& a = expr->left;
+		const Value& b = expr->right;
+		
+		const op_type op = expr->op;
+		
 		if ( is_foldable( a, op, b ) )
 		{
 			if ( is_pure_block_def( a, op, b ) )
@@ -275,11 +272,14 @@ namespace vlib
 				return make_constant( a, NULL, Value( Op_lambda, b ), scope );
 			}
 			
-			const Value folded = subfold( a, op, b );
-			
-			if ( folded )
+			if ( is_block_or_constant( a )  &&  is_block_or_constant( b ) )
 			{
-				return folded;
+				const Value folded = subfold( v );
+				
+				if ( folded )
+				{
+					return folded;
+				}
 			}
 		}
 		else if ( op == Op_end )
@@ -293,7 +293,7 @@ namespace vlib
 		{
 			Expr* expr = b.expr();
 			
-			if ( expr->op == Op_block )
+			if ( expr  &&  expr->op == Op_block )
 			{
 				const Value& body = expr->right.expr()->right;
 				
@@ -360,7 +360,7 @@ namespace vlib
 		{
 			try
 			{
-				return fold( expr->left, expr->op, expr->right, scope );
+				return inner_fold( v, scope );
 			}
 			catch ( const exception& e )
 			{

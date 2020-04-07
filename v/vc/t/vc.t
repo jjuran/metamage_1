@@ -2386,8 +2386,8 @@ $ vc 'const x = 2 => "/dev/null"; [x.key], [x.value]'
 
 %
 
-$ vc 'var x := 1; x => x, x: x, x :(x), 2: 3, true: 4, (x): 5'
-1 >= '((1 => 1), ("x" => 1), ("x" => 1), (2 => 3), ("true" => 4), (1 => 5))'
+$ vc 'var x := 1; x => x, x: x, 2: 3, true: 4, (x): 5'
+1 >= '((1 => 1), ("x" => 1), (2 => 3), ("true" => 4), (1 => 5))'
 
 %
 
@@ -2468,12 +2468,12 @@ $ vc 'try {throw "foo"} catch {str(_, "bar")}'
 
 %
 
-$ vc '(abs .-42), (rep .[])'
+$ vc '(abs -42), (rep [])'
 1 >= '(42, "[]")'
 
 %
 
-$ vc '(rep .[].length), (half .(4)^2)'
+$ vc '(rep [].length), (half (4)^2)'
 1 >= '("0", 8)'
 
 %
@@ -2518,12 +2518,12 @@ $ vc 'const x = "Hi\x00 \u{1f4a9}"; x == str packed x, x == packed( x ).string'
 
 %
 
-$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str .*(packed x), (+) *(packed x)'
+$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str *(packed x), (+) *(packed x)'
 1 >= "(true, 11)"
 
 %
 
-$ vc 'str .*packed( "foo", *"bar", packed "baz" )'
+$ vc 'str *packed( "foo", *"bar", packed "baz" )'
 1 >= '"foobarbaz"'
 
 %
@@ -2593,12 +2593,12 @@ $ vc 'const x = "foo"; x x, x 2, x true, x "U"[0], x()'
 
 %
 
-$ vc 'const x = "foo"; x .[0], x "B"[0]'
+$ vc 'const x = "foo"; x [0], x "B"[0]'
 1 >= '("foo0", "fooB")'
 
 %
 
-$ vc 'const x = "foo"; x [0], x"B"[0]'
+$ vc 'const x = "foo"; x[0], x"B"[0]'
 1 >= "('f', '\v')"
 
 %
@@ -2805,6 +2805,11 @@ $ vc 'try { " ".join( 1, {2}) } catch {"nope"}'
 
 $ vc '3 <=> 4, 4 <=> 3, 2 + 2 <=> 4'
 1 >= '(-1, 1, 0)'
+
+%
+
+$ vc -- '-1 .. 1 map { const x = v; -1 .. 1 map { x <=> v } }'
+1 >= '[[0, -1, -1], [1, 0, -1], [1, 1, 0]]'
 
 %
 
@@ -3263,8 +3268,8 @@ $ vc 'var x = [1, 2, 3]; try { x[ 4 ] = 5 } catch { "right out" }'
 
 %
 
-$ vc 'const UTF = 8; UTF - 8: 0, UTF- 8: 0, UTF -8: 0, UTF-8: 1'
-1 >= '((0 => 0), (0 => 0), (0 => 0), ("UTF-8" => 1))'
+$ vc 'const UTF = 8; UTF - 8: 0, UTF-8: 1'
+1 >= '((0 => 0), ("UTF-8" => 1))'
 
 %
 
@@ -3283,7 +3288,7 @@ $ vc "'a' .. 'f' map {_}"
 
 %
 
-$ vc "str .*('a' .. 'f')"
+$ vc "str *('a' .. 'f')"
 1 >= '"abcdef"'
 
 %

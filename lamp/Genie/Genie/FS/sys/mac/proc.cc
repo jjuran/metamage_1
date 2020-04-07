@@ -14,6 +14,10 @@
 // gear
 #include "gear/hexadecimal.hh"
 
+// plus
+#include "plus/mac_utf8.hh"
+#include "plus/var_string.hh"
+
 // Nitrogen
 #include "Nitrogen/Processes.hh"
 
@@ -33,7 +37,6 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/utf8_text_property.hh"
 
 
 namespace Genie
@@ -178,28 +181,33 @@ namespace Genie
 	}
 	
 	
-	class sys_mac_proc_PSN_name : public vfs::readonly_property
+	static
+	void name_get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
 	{
-		private:
-			typedef ProcessSerialNumber Key;
+		ProcessSerialNumber key = GetKeyFromParent( that );
 		
-		public:
-			static void get( plus::var_string& result, const vfs::node* that, bool binary )
-			{
-				Key key = GetKeyFromParent( that );
-				
-				Str255 name;
-				
-				ProcessInfoRec processInfo;
-				
-				nucleus::initialize< ProcessInfoRec >( processInfo );
-				
-				processInfo.processName = name;
-				
-				N::GetProcessInformation( key, processInfo );
-				
-				result = name;
-			}
+		Str255 procName;
+		
+		ProcessInfoRec processInfo;
+		
+		nucleus::initialize< ProcessInfoRec >( processInfo );
+		
+		processInfo.processName = procName;
+		
+		N::GetProcessInformation( key, processInfo );
+		
+		result = procName;
+		
+		if ( name[ 0 ] != '.' )
+		{
+			result = plus::utf8_from_mac( result );
+		}
+	}
+	
+	static const vfs::property_params sys_mac_proc_PSN_name_params =
+	{
+		vfs::no_fixed_size,
+		(vfs::property_get_hook) &name_get,
 	};
 	
 	static vfs::node_ptr mac_proc_exe_resolve( const vfs::node* that )
@@ -232,13 +240,12 @@ namespace Genie
 		return new vfs::node( parent, name, S_IFLNK | 0777, &mac_proc_exe_methods );
 	}
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	const vfs::fixed_mapping sys_mac_proc_PSN_Mappings[] =
 	{
 		{ ".mac-name", PROPERTY( sys_mac_proc_PSN_name ) },
-		
-		{ "name", PROPERTY( utf8_text_property< sys_mac_proc_PSN_name > ) },
+		{ "name",      PROPERTY( sys_mac_proc_PSN_name ) },
 		
 		{ "exe", &Executable_Factory },
 		

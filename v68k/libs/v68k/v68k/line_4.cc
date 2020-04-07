@@ -13,7 +13,9 @@
 #include "v68k/ops.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 namespace v68k
@@ -359,7 +361,13 @@ namespace v68k
 			
 			case 0x4c00:
 				// MULL, DIVL (MOVEM handled above)
-				return 0;  // NULL
+				storage.size  = long_sized;
+				storage.code  = opcode & 0x0040 ? &microcode_DIV_L
+				                                : &microcode_MUL_L;
+				storage.fetch = fetches_word_and_EA;
+				storage.flags = not_before_68020 | loads_and;
+				
+				return &storage;
 			
 			case 0x4e00:
 				return decode_4e( opcode, storage );

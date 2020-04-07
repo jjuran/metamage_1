@@ -12,7 +12,9 @@
 #include "v68k/update_CCR.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 namespace v68k

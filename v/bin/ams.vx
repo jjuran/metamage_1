@@ -2,14 +2,16 @@
 
 const bindir = dirname realpath argv[ 0 ]
 
-const metamage_1 = bindir "/../.."
-const ams-68k-bin = metamage_1 "/../ams-68k-bin"
+const amsdir = bindir "/../share/ams/"
 
-const ams_bin = ams-68k-bin "/bin"
-const ams_lib = ams-68k-bin "/lib"
-const ams_mnt = ams-68k-bin "/mnt"
+const ams_bin = getenv "AMS_BIN" or amsdir "/bin"
+const ams_lib = getenv "AMS_LIB" or amsdir "/lib"
+const ams_mnt = getenv "AMS_MNT" or amsdir "/mnt"
 
 const title = "Advanced Mac Substitute"
+
+const model = getenv "AMS_CPU"                # may be ()
+const model_opt = if model then {"-M" model}  # may be ()
 
 const screen_res = getenv "AMS_SCREENRES" or "512x342"
 
@@ -27,23 +29,161 @@ def exists (path)
 	return try {stat path; true} catch {false}
 }
 
+def which (program)
+{
+	return
+	try
+	{
+		output-from-run [ "which", program ],
+	}
+	catch {}
+}
+
 const home     = getenv "HOME"
 const home_68k = home "/68k"
 
 const root_dir = if exists home_68k then {home_68k} else {ams_mnt}
 
-const freemountd-subcmd = "freemountd -q --root" / ' ', root_dir
+const resfiles = [ "AMS Resources", "System" ]
+const respaths = resfiles map { root_dir "/" v } ver { exists v "/r" }
+
+if exists bindir "/mkrsrc.vx" then
+{
+	const output = "-o", root_dir "/AMS Resources/rsrc"
+	
+	run [ "minivx", "-Z", bindir "/mkrsrc.vx", output, *respaths ]
+}
+
+const freemountd-server = "freemountd -q --root" / ' ', root_dir, "//"
+
+const xv68k = "xv68k"
+
+def module_path (name)
+{
+	return ams_lib "/" name
+}
+
+# Reserve fds 6 and 7
+dup2(ERR, 6)
+dup2(ERR, 7)
 
 const events_fd_slot = reader "/dev/null"
 const events_fd_opt  = "--events-fd=" events_fd_slot
+
+var sound-fd
+var sound-server = ()
+
+def get_sound_fd
+{
+	if const sound_fd = getenv "AMS_SOUND_FD" then
+	{
+		return sound_fd
+	}
+	
+	if which "sndtrack" then
+	{
+		const sound_fd_slot = str (sound-fd = reader "/dev/null")
+		sound-server = "--fd", sound_fd_slot, "sndtrack", "//"
+		
+		return sound_fd_slot
+	}
+	
+	return ()
+}
+
+var modem-fd
+var modem-server = ()
+
+def get_modem_fd
+{
+	if const modem = getenv "AMS_MODEM" then
+	{
+		const host, const port = modem / ':'
+		
+		const command = "tcpclient", host, port, "duplex", "6-1", "0-7"
+		
+		const modem_fd_slot = str (modem-fd = reader "/dev/null")
+		modem-server = "--fd", modem_fd_slot, command, "//"
+		
+		return modem_fd_slot
+	}
+	
+	return ()
+}
+
+var appfs-fd
+var appfs-server = ()
+
+def get_appfs_fd
+{
+	var appfs = getenv "AMS_APPFS" or return ()
+	
+	if appfs == "-" then
+	{
+		const osx_prefs = home "/Library/Preferences"
+		const ams_prefs = if exists osx_prefs
+		then { osx_prefs "/Advanced Mac Substitute" }
+		else { home "/.advanced-mac-substitute" }
+		
+		appfs = ams_prefs "/" app_name
+		
+		if not exists appfs then
+		{
+			run [ "mkdir -p" / ' ', appfs ]
+		}
+	}
+	
+	const fd_slot = str (appfs-fd = reader "/dev/null")
+	appfs-server = "--fd", fd_slot, "freemountd -qu --root" / ' ', appfs, "//"
+	
+	return fd_slot
+}
+
+var docfs-fd
+var docfs-server = ()
+
+def get_docfs_fd
+{
+	var docfs = getenv "AMS_DOCFS" or return ()
+	
+	if docfs == "-" then
+	{
+		const osx_docs = home "/Documents"
+		const ams_docs = if exists osx_docs
+		then { osx_docs "/Advanced Mac Substitute" }
+		else { home "/.advanced-mac-substitute/documents" }
+		
+		docfs = ams_docs "/" app_name
+		
+		if not exists docfs then
+		{
+			run [ "mkdir -p" / ' ', docfs ]
+		}
+	}
+	
+	const fd_slot = str (docfs-fd = reader "/dev/null")
+	docfs-server = "--fd", fd_slot, "freemountd -qu --root" / ' ', docfs, "//"
+	
+	return fd_slot
+}
 
 def core_opts
 {
 	var opts = [ events_fd_opt ]
 	
+	if const gne_ticks = getenv "AMS_GNETICKS" then
+	{
+		opts <-- "-G" gne_ticks
+	}
+	
 	if const romgen = getenv "AMS_ROMGEN" then
 	{
 		opts <-- "-R" romgen
+	}
+	
+	if const system = getenv "AMS_SYSTEM" then
+	{
+		opts <-- "-V" system
 	}
 	
 	return ams-core: opts
@@ -51,19 +191,53 @@ def core_opts
 
 def io_opts
 {
-	return
-	if const sound_fd = getenv "AMS_SOUND_FD" then
+	const sound = if const sound_fd = get_sound_fd() then
 	{
-		ams-io: [ "--sound-fd=" sound_fd ],
+		setenv( "XV68K_SOUND_FD", sound_fd )
+		
+		"--sound-fd=" sound_fd,
+	}
+	
+	const modem = if const modem_fd = get_modem_fd() then
+	{
+		"--modem-fd=" modem_fd,
+	}
+	
+	const opts = [ sound, modem ]
+	
+	return
+	if opts then
+	{
+		ams-io: opts,
 	}
 }
 
 def fs_opts
 {
-	return
+	const disk_opt =
 	if const disk = getenv "AMS_DISK" then
 	{
-		ams-fs: [ "--disk", disk ],
+		"--disk", disk,
+	}
+	
+	const appfs_opt =
+	if const appfs_fd = get_appfs_fd() then
+	{
+		"--appfs-fd", appfs_fd,
+	}
+	
+	const docfs_opt =
+	if const docfs_fd = get_docfs_fd() then
+	{
+		"--docfs-fd", docfs_fd,
+	}
+	
+	const opts = disk_opt, appfs_opt, docfs_opt
+	
+	return
+	if opts then
+	{
+		ams-fs: [ opts ],
 	}
 }
 
@@ -72,11 +246,14 @@ const module_args = str^
 	core_opts(),
 	fs_opts(),
 	io_opts(),
+	
+	# This setting is not recommended, which is why no logic enables it.
+	#vdb: [ "--continue-on-bus-error" ],
 ]
 
 def argify (name)
 {
-	const path = ams_lib "/" name
+	const path = module_path name
 	
 	return
 		if name in module_args
@@ -84,12 +261,17 @@ def argify (name)
 			else {path}
 }
 
-const ams_modules = [ "core io fs rsrc pack seg qd ui" / ' ' ] map {"ams-" v}
+const prefix_list = "core io fs snd rsrc pack seg qd ui print"
+var   ams_modules = [ prefix_list / ' ' ] map {"ams-" v}
+
+ams_modules <-- "vdb"
+ams_modules <-- "umsp"
+
 const module_opts = ams_modules map {"-m", argify v}
 
 const app = ams_bin "/app"
 
-const xv68k-screen
+const screen_opt
 const command-prefix
 
 if exists "/gui" then
@@ -110,29 +292,34 @@ if exists "/gui" then
 	
 	dup2( reader "v/events/v/stream", events_fd_slot )
 	
-	xv68k-screen   = "--screen=v/screen/v/bits"
+	screen_opt     = "--screen=v/screen/v/bits"
 	command-prefix = "daemonize --stdin --cwd --ctty=tty --" / ' '
 }
 else
 {
 	const var_run_raster = home "/var/run/raster"
 	
-	run .[ "mkdir -p" / ' ', var_run_raster ]
+	run [ "mkdir -p" / ' ', var_run_raster ]
 	
 	const screen = var_run_raster "/ams"
 	const raster = "--raster=" screen
 	
-	run .[ "raster make -fg " screen_res "*1 -m paint -R" / ' ', screen ]
+	run [ "raster make -fg " screen_res "*1 -c2 -m paint -R" / ' ', screen ]
 	
-	run .[ "raster init" / ' ', screen ]
+	run [ "raster init" / ' ', screen ]
 	
-	xv68k-screen   = raster
+	screen_opt     = raster
 	command-prefix = "exhibit", "-t", title, raster, events_fd_opt
 }
 
-const xv68k-subcmd = "xv68k", "-tSP", xv68k-screen, *module_opts, app, app_name
-const graft-subcmd = "graft", freemountd-subcmd, "//", xv68k-subcmd
+const file-servers = freemountd-server, appfs-server, docfs-server
+const servers = sound-server, modem-server, file-servers
+
+const xv68k_opts = model_opt, "-tSP"
+
+const xv68k-subcmd = xv68k, xv68k_opts, screen_opt, *module_opts, app, app_name
+const graft-subcmd = "graft", servers, xv68k-subcmd
 
 const command = [ command-prefix, graft-subcmd ]
 
-run command
+execvp (command[ 0 ], command)

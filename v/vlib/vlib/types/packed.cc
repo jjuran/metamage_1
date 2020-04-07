@@ -199,8 +199,14 @@ namespace vlib
 				
 				return binary_bitwise_op( op, a, b.string().data() );
 			
+			case Op_multiply:
+				return multiply( (const VBytes&) a, b );
+			
 			case Op_divide:
 				return division( (const VBytes&) a, b );
+			
+			case Op_contains:
+				return vbytes_contains( a, b );
 			
 			default:
 				break;

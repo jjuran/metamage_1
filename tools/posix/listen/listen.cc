@@ -26,6 +26,12 @@
 #include "posix/listen_unix.hh"
 
 
+#ifdef __APPLE__
+#ifndef _SOCKLEN_T
+typedef int socklen_t;
+#endif
+#endif
+
 #ifdef ANDROID
 typedef uint32_t in_addr_t;
 typedef uint16_t in_port_t;
@@ -144,7 +150,7 @@ void spawn( int client_fd, char** argv )
 		
 		close( client_fd );
 		
-		execv( argv[ 0 ], argv );
+		execvp( argv[ 0 ], argv );
 		
 	fail:
 		

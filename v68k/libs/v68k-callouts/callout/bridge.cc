@@ -47,7 +47,9 @@
 #include "utils/print_register_dump.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 #define ERR_MSG( msg )  "v68k: exception: " msg "\n"
@@ -408,11 +410,7 @@ int32_t get_Ticks_callout( v68k::processor_state& s )
 {
 	using namespace v68k::time;
 	
-	const uint64_t delta = guest_uptime_microseconds();
-	
-	const unsigned microseconds_per_tick = 1000 * 1000 * 100 / 6015;
-	
-	s.d(0) = delta / microseconds_per_tick;
+	s.d(0) = guest_uptime_ticks();
 	
 	return rts;
 }
@@ -594,13 +592,7 @@ int32_t system_call_callout( v68k::processor_state& s )
 	}
 	else if ( result == Illegal_instruction )
 	{
-		// FIXME:  Report call number
-		
-		//const uint16_t call_number = s.d(0);
-		
-		const char* msg = "Unimplemented system call\n";
-		
-		write( STDERR_FILENO, msg, strlen( msg ) );
+		FATAL = "Unimplemented system call: ", s.d(0);
 	}
 	
 	return nil;
@@ -683,11 +675,12 @@ int32_t Gestalt_callout( v68k::processor_state& s )
 	switch ( selector )
 	{
 		case OSTYPE('v', '6', '8', 'k'):  // 'v68k'
+		case OSTYPE('m', 'a', 'c', 'h'):  // 'mach'
 		//	value = 0;
 			break;
 		
 		case OSTYPE('p', 'r', 'o', 'c'):  // 'proc'
-			value = (s.model >> 8) + 1;
+			value = (s.model >> 4) + 1;
 			break;
 		
 		default:
@@ -824,6 +817,18 @@ int32_t format_error_callout( v68k::processor_state& s )
 	return nil;
 }
 
+static
+int32_t sigint_interrupt_callout( v68k::processor_state& s )
+{
+	WRITE_ERR( "SIGINT interrupt" );
+	
+	signal( SIGINT, SIG_DFL );
+	
+	dump_and_raise( s, SIGINT );
+	
+	return nil;
+}
+
 
 static const function_type the_callouts[] =
 {
@@ -871,6 +876,8 @@ static const function_type the_callouts[] =
 	&line_A_emulator_callout,
 	&line_F_emulator_callout,
 	&format_error_callout,
+	
+	&sigint_interrupt_callout,
 	
 	&unimplemented_trap_callout,
 	&BlockMove_callout,

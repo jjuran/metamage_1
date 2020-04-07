@@ -12,12 +12,18 @@
 #ifndef __OSUTILS__
 #include <OSUtils.h>
 #endif
+#ifndef __TIMER__
+#include <Timer.h>
+#endif
 
 // POSIX
 #include <unistd.h>
 
 // iota
 #include "iota/char_types.hh"
+
+// log-of-war
+#include "logofwar/report.hh"
 
 // ams-common
 #include "time.hh"
@@ -29,8 +35,22 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
-uint32_t Ticks : 0x016A;
-uint32_t Time  : 0x020C;
+uint8_t  CPUFlag    : 0x012F;
+uint16_t SysVersion : 0x015A;
+uint32_t Ticks      : 0x016A;
+uint32_t Time       : 0x020C;
+int16_t  BootDrive  : 0x0210;
+
+
+static inline
+uint64_t Microseconds()
+{
+	uint64_t result;
+	
+	Microseconds( (UnsignedWide*) &result );
+	
+	return result;
+}
 
 
 #pragma mark -
@@ -64,14 +84,14 @@ unsigned long CmpString_patch( const unsigned char* a : __A0,
 	
 	if ( m == 0 )
 	{
-		return true;  // Empty strings are equal
+		return 0;  // Empty strings are equal
 	}
 	
 	uint16_t len = m;
 	
 	if ( (m >> 16) != len )
 	{
-		return false;
+		return 1;  // Strings of unequal length are unequal
 	}
 	
 	if ( A & MARKS )
@@ -85,6 +105,39 @@ unsigned long CmpString_patch( const unsigned char* a : __A0,
 	}
 	
 	return ! case_insensitive_equal( a, b, len );
+}
+
+unsigned char* UprString_patch( unsigned char* s : __A0,
+                                short len        : __D0,
+                                short trap_word  : __D1 )
+{
+	enum
+	{
+		MARKS = 0x0200,  // diacritics-stripping
+	};
+	
+	bool contains_high_chars = false;
+	
+	for ( int i = 0;  i < len;  ++i )
+	{
+		const int8_t c = s[ i ];
+		
+		if ( c < 0 )
+		{
+			contains_high_chars = true;
+		}
+		
+		s[ i ] = iota::to_upper( c );
+	}
+	
+	// TODO:  Implement mark stripping and marked letter upcasing.
+	
+	if ( contains_high_chars )
+	{
+		write( STDERR_FILENO, STR_LEN( "UprString: leaving marks as is\n" ) );
+	}
+	
+	return s;
 }
 
 #pragma mark -
@@ -157,6 +210,15 @@ DateTimeRec* Secs2Date_patch( unsigned long  secs : __D0,
 	date->day   = days;
 	
 	return date;
+}
+
+#pragma mark -
+#pragma mark Parameter RAM Operations
+#pragma mark -
+
+short InitUtil_patch()
+{
+	return prInitErr;
 }
 
 #pragma mark -
@@ -268,6 +330,20 @@ bail:
 #pragma mark Miscellaneous Utilities
 #pragma mark -
 
+/*
+	Extended Delay() semantics
+	
+	We're adding a new flag to augment the _Delay trap.  The tick-edge flag
+	makes Delay() return after N changes of the tick count, instead of after
+	N whole ticks.  So for example, an edged delay of 1 could return almost
+	immediately, after 16ms, or anywhere in between.
+*/
+
+enum
+{
+	kDelayTickEdgeMask = 0x0200,  // wait until Ticks changes, not whole ticks
+};
+
 static inline
 bool reactor_wait( uint64_t dt )
 {
@@ -276,9 +352,12 @@ bool reactor_wait( uint64_t dt )
 	return reactor_wait( &timeout );
 }
 
-long Delay_patch( long numTicks : __A0 )
+long Delay_patch( long numTicks : __A0, short trap_word : __D1 )
 {
-	const uint64_t start = time_microseconds();
+	const short tickEdge = trap_word & kDelayTickEdgeMask;
+	
+	const uint64_t start = tickEdge ? Ticks * tick_microseconds
+	                                : Microseconds();
 	
 	int64_t dt = (uint32_t) numTicks * tick_microseconds;
 	
@@ -290,7 +369,7 @@ long Delay_patch( long numTicks : __A0 )
 	{
 		reactor_wait( dt );
 		
-		dt = end_time - time_microseconds();
+		dt = end_time - Microseconds();
 	}
 	while ( dt > 0  &&  numTicks >= 0 );
 	
@@ -302,4 +381,31 @@ pascal void SysBeep_patch( short duration )
 	char c = 0x07;
 	
 	write( STDOUT_FILENO, &c, sizeof c );
+}
+
+short SysEnvirons_patch( short v : __D0, SysEnvRec* env : __A0 )
+{
+	/*
+		Default to a Mac Plus for now, which is the minimum for Glider 3.0.
+		A program that refuses to run because a Mac Plus is too old wouldn't
+		have run anyway, and a program so old it doesn't work on a Mac Plus
+		probably wasn't calling SysEnvirons() in the first place.
+	*/
+	
+	env->environsVersion = 1;
+	env->machineType     = envMacPlus;
+	env->systemVersion   = SysVersion;
+	env->processor       = CPUFlag + 1;
+	env->hasFPU          = false;
+	env->hasColorQD      = false;
+	env->keyBoardType    = envUnknownKbd;  // Mac Plus keyboard with keypad
+	env->atDrvrVersNum   = 0;
+	env->sysVRefNum      = BootDrive;
+	
+	if ( v > 1 )
+	{
+		WARNING = "SysEnvirons version ", v, " too big";
+	}
+	
+	return v > 1 ? envVersTooBig : noErr;
 }

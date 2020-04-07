@@ -12,6 +12,9 @@
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
+#ifndef __TIMER__
+#include <Timer.h>
+#endif
 
 // ams-common
 #include "callouts.hh"
@@ -30,7 +33,9 @@ WindowRef CurActivate : 0x0A64;
 WindowRef CurDeactive : 0x0A68;
 
 
-const unsigned long GetNextEvent_throttle = 2;  // minimum ticks between calls
+const long default_GetNextEvent_throttle = 2;  // minimum ticks between calls
+
+unsigned long GetNextEvent_throttle = default_GetNextEvent_throttle;
 
 static unsigned long next_sleep;
 
@@ -42,12 +47,6 @@ static unsigned long polling_interval = 0;
 static
 bool get_lowlevel_event( short eventMask, EventRecord* event )
 {
-	const short lowlevel_event_mask = mDownMask   | mUpMask
-	                                | keyDownMask | keyUpMask | autoKeyMask
-	                                | diskMask    | driverMask;
-	
-	eventMask &= lowlevel_event_mask;
-	
 	if ( eventMask != autoKeyMask )
 	{
 		if ( GetOSEvent( eventMask & ~autoKeyMask, event ) )
@@ -89,7 +88,7 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 			
 			CurDeactive = NULL;
 			
-			return true;
+			goto got_event;
 		}
 		
 		if ( CurActivate )
@@ -102,25 +101,25 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 			
 			CurActivate = NULL;
 			
-			return true;
+			goto got_event;
 		}
 	}
 	
 	if ( get_lowlevel_event( eventMask, event ) )
 	{
-		return true;
+		goto got_event;
 	}
 	
 	if ( eventMask & updateMask  &&  CheckUpdate( event ) )
 	{
-		return true;
+		goto got_event;
 	}
 	
 	wait_for_user_input( sleep );
 	
 	if ( get_lowlevel_event( eventMask, event ) )
 	{
-		return true;
+		goto got_event;
 	}
 	
 	/*
@@ -133,17 +132,15 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 	next_sleep = GetNextEvent_throttle;
 	
 	return false;
+	
+got_event:
+	
+	return ! SystemEvent( event );
 }
 
 static
 bool peek_lowlevel_event( short eventMask, EventRecord* event )
 {
-	const short lowlevel_event_mask = mDownMask   | mUpMask
-	                                | keyDownMask | keyUpMask | autoKeyMask
-	                                | diskMask;
-	
-	eventMask &= lowlevel_event_mask;
-	
 	if ( eventMask != autoKeyMask )
 	{
 		if ( OSEventAvail( eventMask & ~autoKeyMask, event ) )
@@ -171,26 +168,29 @@ pascal unsigned char EventAvail_patch( unsigned short  eventMask,
 	
 	poll_user_input();
 	
-	if ( CurDeactive )
+	if ( eventMask & activMask )
 	{
-		event->what      = activateEvt;
-		event->message   = (long) CurDeactive;
-		event->when      = get_Ticks();
-		event->where     = Mouse;
-		event->modifiers = 0;
+		if ( CurDeactive )
+		{
+			event->what      = activateEvt;
+			event->message   = (long) CurDeactive;
+			event->when      = get_Ticks();
+			event->where     = Mouse;
+			event->modifiers = 0;
+			
+			return true;
+		}
 		
-		return true;
-	}
-	
-	if ( CurActivate )
-	{
-		event->what      = activateEvt;
-		event->message   = (long) CurActivate;
-		event->when      = get_Ticks();
-		event->where     = Mouse;
-		event->modifiers = activeFlag;
-		
-		return true;
+		if ( CurActivate )
+		{
+			event->what      = activateEvt;
+			event->message   = (long) CurActivate;
+			event->when      = get_Ticks();
+			event->where     = Mouse;
+			event->modifiers = activeFlag;
+			
+			return true;
+		}
 	}
 	
 	if ( peek_lowlevel_event( eventMask, event ) )
@@ -198,7 +198,7 @@ pascal unsigned char EventAvail_patch( unsigned short  eventMask,
 		return true;
 	}
 	
-	if ( CheckUpdate( event ) )
+	if ( eventMask & updateMask  &&  CheckUpdate( event ) )
 	{
 		return true;
 	}
@@ -251,6 +251,31 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 	*/
 	
 	UInt32 now = get_Ticks();
+	
+	/*
+		Pin sleep to a minimum of 1 if WaitNextEvent() is called within 2ms of
+		the previous call.  This shouldn't affect the delivery of non-null
+		events, and mitigates core-pegging by applications that pass zero for
+		the sleep parameter, which is especially a problem in Lemmings' post-
+		gameplay stats screen (which otherwise pegs an entire core).  On the
+		other hand, actual gameplay in Lemmings relies on WaitNextEvent() with
+		a zero sleep returning immediately.
+	*/
+	
+	if ( sleep == 0 )
+	{
+		static uint64_t then;
+		
+		uint64_t now = 0;
+		::Microseconds( (UnsignedWide*) &now );
+		
+		if ( now - then < 2000 )
+		{
+			sleep = 1;
+		}
+		
+		then = now;
+	}
 	
 	/*
 		Pin the addition of Ticks and sleep.  In the improbable (but very

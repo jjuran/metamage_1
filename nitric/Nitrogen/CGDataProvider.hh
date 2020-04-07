@@ -32,6 +32,10 @@
 
 typedef CGReleaseDataProcPtr CGDataProviderReleaseDataCallback;
 
+#elif ! defined( MAC_OS_X_VERSION_10_4 )
+
+typedef void (*CGDataProviderReleaseDataCallback)(void*, const void*, size_t);
+
 #endif
 
 namespace nucleus
@@ -120,7 +124,7 @@ namespace Nitrogen
 		return N::CGDataProviderCreateWithData( NULL, data, size, free, fail );
 	}
 	
-#if UNIVERSAL_INTERFACES_VERSION >= 0x0400
+#ifdef MAC_OS_X_VERSION_10_4
 	
 	class CGDataProviderCreateWithCFData_Failed {};
 	

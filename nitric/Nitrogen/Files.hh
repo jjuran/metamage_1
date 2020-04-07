@@ -502,6 +502,39 @@ namespace Nitrogen
 	
 	// ...
 	
+	nucleus::owned< FSFileRefNum > HOpen( Mac::FSVolumeRefNum   vRefNum,
+	                                      Mac::FSDirID          dirID,
+	                                      const unsigned char*  name,
+	                                      Mac::FSIOPerm         perm );
+	
+	inline
+	nucleus::owned< FSFileRefNum > HOpen( const FSSpec&  spec,
+	                                      Mac::FSIOPerm  perm )
+	{
+		return HOpen( Mac::FSVolumeRefNum( spec.vRefNum ),
+		              Mac::FSDirID       ( spec.parID   ),
+		              spec.name,
+		              perm );
+	}
+	
+	
+	nucleus::owned< FSFileRefNum > HOpenRF( Mac::FSVolumeRefNum   vRefNum,
+	                                        Mac::FSDirID          dirID,
+	                                        const unsigned char*  name,
+	                                        Mac::FSIOPerm         perm );
+	
+	inline
+	nucleus::owned< FSFileRefNum > HOpenRF( const FSSpec&  spec,
+	                                        Mac::FSIOPerm  perm )
+	{
+		return HOpenRF( Mac::FSVolumeRefNum( spec.vRefNum ),
+		                Mac::FSDirID       ( spec.parID   ),
+		                spec.name,
+		                perm );
+	}
+	
+	// ...
+	
 	void HCreate( const FSSpec&   file,
 	              Mac::FSCreator  creator,
 	              Mac::FSType     type );

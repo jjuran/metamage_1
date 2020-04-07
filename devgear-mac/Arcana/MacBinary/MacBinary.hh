@@ -9,6 +9,9 @@
 // Standard C++
 #include <vector>
 
+// mac-types
+#include "mac_types/VRefNum_DirID.hh"
+
 // nucleus
 #ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
@@ -18,9 +21,6 @@
 #endif
 
 // Nitrogen
-#ifndef MAC_FILES_TYPES_FSDIRSPEC_HH
-#include "Mac/Files/Types/FSDirSpec.hh"
-#endif
 #ifndef MAC_FILES_TYPES_FSFILEREFNUM_HH
 #include "Mac/Files/Types/FSFileRefNum.hh"
 #endif
@@ -28,6 +28,8 @@
 
 namespace MacBinary
 {
+	
+	using mac::types::VRefNum_DirID;
 	
 	typedef void (*BlockWriter)( int, const void*, std::size_t );
 	
@@ -51,7 +53,7 @@ namespace MacBinary
 		private:
 			struct Frame
 			{
-				Mac::FSDirSpec           destDir;
+				VRefNum_DirID            destDir;
 				FSSpec                   file;
 				UInt32                   modificationDate;
 				nucleus::mutable_string  comment;
@@ -75,7 +77,7 @@ namespace MacBinary
 			void DecodeHeader( const char* header );
 			
 		public:
-			Decoder( const Mac::FSDirSpec& destination );
+			Decoder( const VRefNum_DirID& destination );
 			
 			int Write( const char* data, ByteCount byteCount );
 	};

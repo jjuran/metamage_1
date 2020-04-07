@@ -6,10 +6,17 @@
 #include "Genie/mnt/listener.hh"
 
 // POSIX
+#include <sys/types.h>
 #include <dirent.h>
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/socket.h>
+
+#ifdef __APPLE__
+#ifndef _SOCKLEN_T
+typedef int socklen_t;
+#endif
+#endif
 
 // Standard C
 #include <errno.h>

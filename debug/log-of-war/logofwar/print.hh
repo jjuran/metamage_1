@@ -9,6 +9,8 @@
 namespace logofwar
 {
 	
+	void print( const char* s, unsigned n );
+	
 	void print( const char* s );
 	
 	void print_dec( int x );

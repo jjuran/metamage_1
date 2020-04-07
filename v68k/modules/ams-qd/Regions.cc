@@ -15,6 +15,7 @@
 #include "QDGlobals.hh"
 
 // ams-qd
+#include "Polygons.hh"
 #include "Rect-utils.hh"
 #include "Rects.hh"
 
@@ -112,16 +113,29 @@ pascal void OpenRgn_patch()
 	
 	port.rgnSave = (Handle) rgn;
 	
-	HidePen();
+	OpenPoly();
 }
 
 pascal void CloseRgn_patch( MacRegion** rgn )
 {
-	ShowPen();
-	
 	GrafPort& port = **get_addrof_thePort();
 	
-	CopyRgn_patch( (RgnHandle) port.rgnSave, rgn );
+	PolyHandle poly = (PolyHandle) port.polySave;
+	
+	ClosePoly();
+	
+	SetEmptyRgn( rgn );
+	
+	const short n_pts = (poly[0]->polySize - sizeof (Polygon)) / 4;
+	
+	if ( n_pts >= 3 )
+	{
+		PolyRgn( rgn, poly );
+	}
+	
+	KillPoly( poly );
+	
+	UnionRgn( (RgnHandle) port.rgnSave, rgn, rgn );
 	
 	DisposeHandle( port.rgnSave );
 	

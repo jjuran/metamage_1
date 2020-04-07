@@ -13,6 +13,9 @@
 // POSIX
 #include <unistd.h>
 
+// iota
+#include "iota/char_types.hh"
+
 // splode
 #include "splode/splode.hh"
 
@@ -22,6 +25,7 @@
 // ams-core
 #include "cursor-core.hh"
 #include "keycodes.hh"
+#include "keytrans.hh"
 #include "options.hh"
 #include "reactor-core.hh"
 
@@ -29,16 +33,17 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
+typedef KeyMapByteArray Keys;
+
 Byte   MBState : 0x0172;
-UInt16 KeyMods : 0x017A;
+Keys   KeyMaps : 0x0174;
+UInt16 KeyMods : 0x017A;  // Yes, this is a subfield of KeyMaps.
 Point  Mouse   : 0x0830;
 Rect   CrsrPin : 0x0834;
 
 
 bool button_clicked;
 
-
-static const timeval zero_timeout = { 0, 0 };
 
 static inline
 timeval approximate_timeval_from_ticks( unsigned long ticks )
@@ -175,8 +180,6 @@ void post_event( const splode::ascii_event_buffer& buffer )
 	const uint8_t ascii = buffer.ascii;
 	const int8_t  code  = reverse_lookup_general_key[ ascii & 0x7F ];
 	
-	const UInt32 message = code << 8 | ascii;
-	
 	const uint8_t mode_mask = Command | Shift | Option | Control;
 	const uint8_t attr_mask = Alpha;
 	
@@ -208,6 +211,30 @@ void post_event( const splode::ascii_event_buffer& buffer )
 		return;  // Don't post events for NUL; just update KeyMods.
 	}
 	
+	uint8_t xascii = ascii;
+	
+	if ( mod & Shift  &&  (int8_t) ascii >= 0 )
+	{
+		if ( uint8_t c = keytrans_shift[ ascii ] )
+		{
+			xascii = c;
+		}
+	}
+	else if ( mod & Alpha  &&  iota::is_lower( ascii ) )
+	{
+		xascii = iota::to_upper( ascii );
+	}
+	
+	if ( mod & Option  &&  (int8_t) xascii >= 0 )
+	{
+		if ( uint8_t c = keytrans_option[ xascii ] )
+		{
+			xascii = c;
+		}
+	}
+	
+	const UInt32 message = code << 8 | xascii;
+	
 	const uint8_t action = buffer.attrs & action_mask;
 	
 	if ( action == 0 )
@@ -216,6 +243,19 @@ void post_event( const splode::ascii_event_buffer& buffer )
 		PostEvent( keyUp,   message );
 		
 		return;
+	}
+	
+	if ( code >= 0 )
+	{
+		if ( action == splode::key::down )
+		{
+			KeyMaps[ code >> 3 ] |= 1 << (code & 0x07);
+		}
+		
+		if ( action == splode::key::up )
+		{
+			KeyMaps[ code >> 3 ] &= ~(1 << (code & 0x07));
+		}
 	}
 	
 	const short what = action + (keyDown - splode::key::down);

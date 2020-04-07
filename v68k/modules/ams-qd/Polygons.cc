@@ -20,9 +20,11 @@
 // ams-common
 #include "QDGlobals.hh"
 
+// ams-qd
+#include "segments_box.hh"
+
 
 using quickdraw::Region_end;
-using quickdraw::segments_box;
 
 
 static
@@ -47,19 +49,35 @@ short x_intercept( Point a, Point b, short y )
 	return (FixMul( proportional_distance, dx << 16 ) >> 16) + x0;
 }
 
-static
 void PolyRgn( RgnHandle rgn, PolyHandle poly )
 {
 	short n = (poly[0]->polySize - sizeof (Polygon)) / 4;
 	
 	const Rect& bbox = poly[0]->polyBBox;
 	
-	const short h_count = n & ~1;
+	/*
+		Each scanline of a triangular region can only intersect two polygon
+		edges.  With four or five sides, there can be four intersections, etc.
+		But each intersection can result in two horizontal coordinates -- one
+		to switch on the new area and one to cancel a prior coordinate (except
+		for the first and last rows).  A complete row also contains a vertical
+		coordinate and a trailing sentinel.
+		
+		Each point from top to bottom inclusive could have its own row in the
+		region (and will, for a slope <= 1).  (Note that fenceposting applies,
+		and this is points, not pixels.)
+		
+		Finally, there's a closing sentinel, but there's already space for two
+		horizontal coordinates (at the top and bottom) that won't be used, so
+		we don't need to add more.
+	*/
+	
+	const short h_count = (n & ~1) * 2;
 	const short v_count = bbox.bottom - bbox.top + 1;
 	
 	const short seg_bytes = sizeof (short) * h_count;
 	const short row_bytes = sizeof (short) * 2 + seg_bytes;
-	const short rgn_bytes = sizeof (Region) + 2 + v_count * row_bytes;
+	const short rgn_bytes = sizeof (Region) + v_count * row_bytes;
 	
 	SetHandleSize( (Handle) rgn, rgn_bytes );
 	
@@ -137,6 +155,61 @@ pascal void StdPoly_patch( signed char verb, PolyHandle poly )
 	}
 	
 	GrafPort& port = **get_addrof_thePort();
+	
+	if ( Handle h = port.picSave )
+	{
+		Size size = GetHandleSize( h );
+		
+		Size new_size = size + 1 + poly[0]->polySize;
+		
+		if ( verb != kQDGrafVerbInvert )
+		{
+			new_size += 1 + sizeof (Pattern);
+		}
+		
+		SetHandleSize( h, new_size );
+		
+		char* dst = *h + size;
+		
+		Byte pattern_op = 0;
+		
+		const Pattern* pattern = NULL;
+		
+		switch ( verb )
+		{
+			case kQDGrafVerbFrame:
+			case kQDGrafVerbPaint:
+				pattern_op = 0x09;  // PnPat
+				pattern    = &port.pnPat;
+				break;
+			
+			case kQDGrafVerbErase:
+				pattern_op = 0x02;  // BkPat
+				pattern    = &port.bkPat;
+				break;
+			
+			case kQDGrafVerbFill:
+				pattern_op = 0x0A;  // FillPat
+				pattern    = &port.fillPat;
+				break;
+			
+			default:
+				break;
+		}
+		
+		if ( pattern_op )
+		{
+			*dst++ = pattern_op;
+			
+			BlockMoveData( pattern, dst, sizeof (Pattern) );
+			
+			dst += sizeof (Pattern);
+		}
+		
+		*dst++ = 0x70 + verb;
+		
+		BlockMoveData( *poly, dst, poly[0]->polySize );
+	}
 	
 	if ( verb == kQDGrafVerbFrame )
 	{

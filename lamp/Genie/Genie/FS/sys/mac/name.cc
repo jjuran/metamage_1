@@ -15,14 +15,28 @@
 namespace Genie
 {
 	
-	void sys_mac_macname::get( plus::var_string& result, const vfs::node* that, bool binary )
+	static
+	void sys_mac_macname_get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		result = GetWorkstationName( false );
 	}
 	
-	void sys_mac_name::get( plus::var_string& result, const vfs::node* that, bool binary )
+	static
+	void sys_mac_name_get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		result = GetWorkstationName( true );
 	}
+	
+	const vfs::property_params sys_mac_macname_params =
+	{
+		vfs::no_fixed_size,
+		&sys_mac_macname_get,
+	};
+	
+	const vfs::property_params sys_mac_name_params =
+	{
+		vfs::no_fixed_size,
+		&sys_mac_name_get,
+	};
 	
 }

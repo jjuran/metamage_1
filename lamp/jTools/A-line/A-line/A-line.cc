@@ -425,7 +425,7 @@ namespace tool
 	{
 		if ( !is_null( diagnostics_path ) )
 		{
-			struct ::stat stat_buffer = p7::stat( diagnostics_path );
+			struct stat stat_buffer = p7::stat( diagnostics_path );
 			
 			if ( const size_t size = stat_buffer.st_size )
 			{

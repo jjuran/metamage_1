@@ -19,15 +19,15 @@
 namespace quickdraw
 {
 	
-	segments_box::segments_box( size_t capacity )  // bytes
+	malloc_segments_box::malloc_segments_box( size_t capacity )  // bytes
+	:
+		segments_box( (short*) malloc( capacity ) )
 	{
-		its_data = (short*) malloc( capacity );
-		its_size = 0;
 	}
 	
-	segments_box::~segments_box()
+	malloc_segments_box::~malloc_segments_box()
 	{
-		free( its_data );
+		free( begin() );
 	}
 	
 	void segments_box::erase( short* it )
@@ -94,11 +94,26 @@ namespace quickdraw
 	}
 	
 	static inline
+	size_t byte_distance( const void* begin, const void* end )
+	{
+		return (const char*) end - (const char*) begin;
+	}
+	
+	template < class T >
+	static inline
+	void advance_bytes( T*& pointer, size_t n )
+	{
+		(const char*&) pointer += n;
+	}
+	
+	static inline
 	void copy_segments( short*& r, const short* begin, const short* end )
 	{
-		memcpy( r, begin, (end - begin) * sizeof (short) );
+		const size_t n = byte_distance( begin, end );
 		
-		r += end - begin;
+		memcpy( r, begin, n );
+		
+		advance_bytes( r, n );
 	}
 	
 	static inline

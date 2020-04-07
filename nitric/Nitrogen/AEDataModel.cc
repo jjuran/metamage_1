@@ -695,6 +695,11 @@ namespace Nitrogen
 		RegisterOSStatus< errAERecordingIsAlreadyOn >();
 	}
 	
+#if defined( __GNUC__ ) && ( __GNUC__ * 100 + __GNUC_MINOR__ <= 303 )
+	
+	// Panther's g++ 3.3 can't handle this.
+	
+#else
 	
 	namespace CompileTests
 	{
@@ -715,5 +720,7 @@ namespace Nitrogen
 		}
 		
 	}
+	
+#endif  // #if defined( __GNUC__ ) && ( __GNUC__ * 100 + __GNUC_MINOR__ <= 303 )
 	
 }

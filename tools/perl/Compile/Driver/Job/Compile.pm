@@ -108,6 +108,14 @@ sub command
 	
 	$d{ CONFIG_DEBUGGING } = $conf->debugging + 0;
 	
+	if ( $conf->symbolics )
+	{
+		# Don't turn off optimizations here.  We need them to strip dead code,
+		# because without that we get link errors.
+		
+		push @o, '-g';
+	}
+	
 	if ( $conf->is_carbon )
 	{
 		$d{ TARGET_API_MAC_CARBON } = 1;
@@ -117,6 +125,8 @@ sub command
 	{
 		push @f, "-fpascal-strings";
 		push @w, "-Wno-deprecated-declarations";
+		
+		push @w, "-Wno-long-double"  if ($conf->{arch} || "") eq "ppc";
 		
 		$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_2';
 	}

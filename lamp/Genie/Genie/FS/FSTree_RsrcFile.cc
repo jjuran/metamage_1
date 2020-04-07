@@ -50,7 +50,7 @@ namespace Genie
 	
 	
 	static void rsrcfile_stat( const vfs::node*  that,
-	                           struct ::stat&    sb )
+	                           struct stat&      sb )
 	{
 		CInfoPBRec cInfo = {{ 0 }};
 		
@@ -71,7 +71,7 @@ namespace Genie
 		
 		return OpenMacFileHandle( fileSpec,
 		                          flags,
-		                          &N::FSpOpenRF,
+		                          &N::HOpenRF,
 		                          &GetRsrcForkFSTree );
 	}
 	

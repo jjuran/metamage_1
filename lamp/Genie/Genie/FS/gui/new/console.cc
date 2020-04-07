@@ -65,7 +65,7 @@
 // relix
 #include "relix/api/root.hh"
 #include "relix/api/try_again.hh"
-#include "relix/fs/con_tag.hh"
+#include "relix/fs/con_group.hh"
 #include "relix/signal/signal_process_group.hh"
 
 // Genie
@@ -401,7 +401,7 @@ namespace Genie
 	{
 		console_extra& extra = *(console_extra*) that->extra();
 		
-		vfs::get_dynamic_group< relix::con_tag >().erase( extra.id );
+		relix::get_con_group().erase( extra.id );
 		
 		intrusive_ptr_release( extra.tty_file );
 	}
@@ -829,7 +829,9 @@ namespace Genie
 		
 		vfs::filehandle_ptr result( new_tty_handle( *that, id ) );
 		
-		vfs::set_dynamic_element_by_id< relix::con_tag >( id, result.get() );
+		vfs::dynamic_group& group = relix::get_con_group();
+		
+		vfs::set_dynamic_element_of_group_by_id( group, id, result.get() );
 		
 		plus::var_string path = "/dev/con/";
 		
@@ -869,49 +871,21 @@ namespace Genie
 	}
 	
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
-	struct Console_View_Property : public View_Property< Serialize, Access >
-	{
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			TextEditParameters::Get( that ).itHasChangedAttributes = true;
-			
-			View_Property< Serialize, Access >::set( that, begin, end, binary );
-		}
-	};
-	
-	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
-	
-	typedef Const_View_Property< plus::serialize_bool, TextEditParameters::Active >  Active_Property;
-	
-	typedef View_Property< plus::serialize_bool, TextEditParameters::Wrapped >  Wrapped_Property;
-	
-	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Width  >  Width_Property;
-	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Height >  Height_Property;
-	
-	typedef Console_View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset >  HOffset_Property;
-	typedef Console_View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset >  VOffset_Property;
-	
 	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ "tty", &console_tty_factory },
 		
 		{ "text", &New_FSTree_TextEdit_text },
 		
-		{ "selection", PROPERTY( Selection_Property ) },
+		{ "selection", &vfs::new_property, &textedit_selection_params },
 		
-		{ "active", PROPERTY( Active_Property ) },
+		{ "active", &vfs::new_property, &textedit_flag_params },
 		
-		//{ "wrapped", PROPERTY( Wrapped_Property ) },
+		{ "width",  &vfs::new_property, &scroller_setting_params },
+		{ "height", &vfs::new_property, &scroller_setting_params },
 		
-		// unlocked-text
-		
-		{ "width",  PROPERTY( Width_Property  ) },
-		{ "height", PROPERTY( Height_Property ) },
-		
-		{ "x", PROPERTY( HOffset_Property ) },
-		{ "y", PROPERTY( VOffset_Property ) },
+		{ "x", &vfs::new_property, &textedit_scroll_params },
+		{ "y", &vfs::new_property, &textedit_scroll_params },
 		
 		{ NULL, NULL }
 	};

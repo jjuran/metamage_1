@@ -26,17 +26,23 @@ bool intersects( const Rect& a, const Rect& b, short dh, short dv )
 }
 
 static inline
+bool onscreen( const BitMap& bitmap )
+{
+	return bitmap.baseAddr == ScrnBase;
+}
+
+static inline
 bool intersects_cursor( const BitMap& bitmap, const Rect& r )
 {
 	const short dv = bitmap.bounds.top;
 	const short dh = bitmap.bounds.left;
 	
-	return bitmap.baseAddr == ScrnBase  &&  intersects( CrsrRect, r, dh, dv );
+	return onscreen( bitmap )  &&  intersects( CrsrRect, r, dh, dv );
 }
 
 redraw_lock::redraw_lock( const BitMap& bitmap, const Rect& workArea )
 :
-	its_raster_lock( intersects_cursor( bitmap, workArea ) )
+	its_raster_lock( intersects_cursor( bitmap, workArea ), onscreen( bitmap ) )
 {
 }
 
@@ -44,6 +50,8 @@ redraw_lock::redraw_lock( const BitMap& bits1, const Rect& rect1,
                           const BitMap& bits2, const Rect& rect2 )
 :
 	its_raster_lock( intersects_cursor( bits1, rect1 )  ||
+	                 intersects_cursor( bits2, rect2 ),
+	                 onscreen( bits1 )  ||
 	                 intersects_cursor( bits2, rect2 ) )
 {
 }

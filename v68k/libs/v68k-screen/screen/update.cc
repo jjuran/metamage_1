@@ -6,9 +6,14 @@
 #include "screen/update.hh"
 
 // POSIX
+#ifdef __APPLE__
+// This is needed to compile with Mac OS X 10.3's headers.
+#include <sys/types.h>
+#endif
 #include <sys/mman.h>
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // raster
@@ -18,7 +23,9 @@
 #include "screen/storage.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 namespace v68k   {
@@ -52,6 +59,16 @@ static end_sync finally_end_sync;
 
 void update()
 {
+	static void* previous_frame;
+	
+	if ( previous_frame )
+	{
+		if ( memcmp( previous_frame, the_screen_buffer, the_screen_size ) == 0 )
+		{
+			return;
+		}
+	}
+	
 #ifdef __RELIX__
 	
 		msync( the_screen_buffer, the_screen_size, MS_SYNC );
@@ -64,6 +81,16 @@ void update()
 	}
 	
 #endif
+	
+	if ( previous_frame == NULL )
+	{
+		previous_frame = malloc( the_screen_size );
+	}
+	
+	if ( previous_frame )
+	{
+		memcpy( previous_frame, the_screen_buffer, the_screen_size );
+	}
 }
 
 }  // namespace screen

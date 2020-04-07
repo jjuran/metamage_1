@@ -771,37 +771,57 @@ namespace Genie
 		return *it;
 	}
 	
-	template < class Accessor >
-	struct PixMap_Property : vfs::readwrite_property
+	#define DEFINE_GETTER( p )  \
+	static void p##_get( plus::var_string& result, const vfs::node* that, bool binary )  \
+	{  \
+		GWorld_Parameters& params = get_params( that );  \
+		const p::result_type data = p::Get( params );    \
+		p::deconstruct::apply( result, data, binary );   \
+	}
+	
+	#define DEFINE_SETTER( p )  \
+	static void p##_set( const vfs::node* that, const char* begin, const char* end, bool binary )  \
+	{  \
+		GWorld_Parameters& params = gGWorldMap[ that ];                 \
+		p::Set( params, p::reconstruct::apply( begin, end, binary ) );  \
+		InvalidateWindowForView( that );                                \
+	}
+	
+	#define DEFINE_PARAMS( p )  \
+	static const vfs::property_params p##_params = {p::fixed_size, &p##_get, &p##_set}
+	
+	DEFINE_GETTER( PixMap_rowBytes      );
+	DEFINE_GETTER( PixMap_bounds        );
+	DEFINE_GETTER( PixMap_depth         );
+	DEFINE_GETTER( PixMap_size          );
+	DEFINE_GETTER( PixMap_stride        );
+	DEFINE_GETTER( PixMap_grayscale     );
+	DEFINE_GETTER( PixMap_alpha_last    );
+	DEFINE_GETTER( PixMap_little_endian );
+	
+	DEFINE_SETTER( PixMap_bounds        );
+	DEFINE_SETTER( PixMap_depth         );
+	DEFINE_SETTER( PixMap_size          );
+	DEFINE_SETTER( PixMap_stride        );
+	DEFINE_SETTER( PixMap_grayscale     );
+	DEFINE_SETTER( PixMap_alpha_last    );
+	DEFINE_SETTER( PixMap_little_endian );
+	
+	static const vfs::property_params PixMap_rowBytes_params =
 	{
-		static const int fixed_size = Accessor::fixed_size;
-		
-		static const bool can_set = Accessor::is_mutable;
-		
-		typedef typename Accessor::result_type result_type;
-		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			GWorld_Parameters& params = get_params( that );
-			
-			const result_type data = Accessor::Get( params );
-			
-			Accessor::deconstruct::apply( result, data, binary );
-		}
-		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			GWorld_Parameters& params = gGWorldMap[ that ];
-			
-			const result_type data = Accessor::reconstruct::apply( begin, end, binary );
-			
-			Accessor::Set( params, data );
-			
-			InvalidateWindowForView( that );
-		}
+		PixMap_rowBytes::fixed_size,
+		&PixMap_rowBytes_get,
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< PixMap_Property< prop > >::value
+	DEFINE_PARAMS( PixMap_bounds        );
+	DEFINE_PARAMS( PixMap_depth         );
+	DEFINE_PARAMS( PixMap_size          );
+	DEFINE_PARAMS( PixMap_stride        );
+	DEFINE_PARAMS( PixMap_grayscale     );
+	DEFINE_PARAMS( PixMap_alpha_last    );
+	DEFINE_PARAMS( PixMap_little_endian );
+	
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{

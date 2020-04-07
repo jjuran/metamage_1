@@ -12,14 +12,21 @@
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
+#ifndef __TEXTUTILS__
+#include <TextUtils.h>
+#endif
 
 // iota
 #include "iota/char_types.hh"
+
+// log-of-war
+#include "logofwar/report.hh"
 
 // ams-common
 #include "callouts.hh"
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
+#include "unglue.hh"
 
 // ams-core
 #include "MBDF.hh"
@@ -27,9 +34,12 @@
 #include "Windows.hh"
 
 
+Byte SdVolume    : 0x0260;
 GrafPtr WMgrPort : 0x09DE;
 short TheMenu    : 0x0A26;
 short MBarHeight : 0x0BAA;
+
+void* toolbox_trap_table[] : 3 * 1024;
 
 
 struct MenuList_header
@@ -50,6 +60,8 @@ static MenuList_header** MenuList;
 const short system_font_ascent =  9;
 const short menu_title_padding =  9;
 const short gap_between_titles = 13;  // space between text of adjacent titles
+
+static const Point zero_Point = { 0 };
 
 
 class WMgrPort_bezel_scope
@@ -139,8 +151,25 @@ MenuList_entry* find_clicked_menu_title( Point pt )
 #pragma mark Initialization and Allocation
 #pragma mark -
 
+static inline
+void patch_SysBeep()
+{
+	enum { _SysBeep = 0xA9C8 & 0x03FF };
+	
+	SysBeep_ProcPtr& vector = (SysBeep_ProcPtr&) toolbox_trap_table[ _SysBeep ];
+	
+	old_SysBeep = vector;
+	
+	vector = &SysBeep_patch;
+}
+
 pascal void InitMenus_patch()
 {
+	if ( MenuList )
+	{
+		return;
+	}
+	
 	calculate_menu_bar_height();
 	
 	draw_menu_bar_from_WMgr_port();
@@ -148,6 +177,8 @@ pascal void InitMenus_patch()
 	MenuList = (MenuList_header**) NewHandleClear( sizeof (MenuList_header) );
 	
 	MenuList[0]->right_edge = 10;
+	
+	patch_SysBeep();
 }
 
 pascal MenuInfo** NewMenu_patch( short menuID, const unsigned char* title )
@@ -180,33 +211,158 @@ pascal void DisposeMenu_patch( MenuInfo** menu )
 #pragma mark Forming the Menus
 #pragma mark -
 
-pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
+static inline
+bool is_separator( char c )
 {
-	WMgrPort_bezel_scope port_swap;
+	return c == ';'  ||  c == '\r';
+}
+
+static
+UInt8 actual_item_text_length( const UInt8* format, UInt8 len )
+{
+	UInt8 text_len = 0;
 	
+	const UInt8* q = format;
+	
+	while ( len-- > 0 )
+	{
+		UInt8 c = *q++;
+		
+		if ( is_separator( c ) )
+		{
+			break;
+		}
+		
+		switch ( c )
+		{
+			case '(':
+				break;
+			
+			case '^':
+			case '/':
+			case '!':
+			case '<':
+				if ( len )
+				{
+					--len, ++q;
+				}
+				break;
+			
+			default:
+				++text_len;
+		}
+	}
+	
+	return text_len;
+}
+
+static
+short decode_item_format( UInt8 const* format, UInt8 len,
+                          UInt8*       p,      UInt8 text_len )
+{
+	*p++ = text_len;
+	
+	UInt8* meta = p + text_len;
+	
+	UInt8 icon  = 0;
+	UInt8 key   = 0;
+	UInt8 mark  = 0;
+	UInt8 face  = 0;
+	UInt8 style = 0;
+	
+	const UInt8* q = format;
+	
+	while ( len-- > 0 )
+	{
+		UInt8 c = *q++;
+		
+		if ( is_separator( c ) )
+		{
+			break;
+		}
+		
+		switch ( c )
+		{
+			case '(':  break;
+			case '^':  if ( len )  icon = *q++ - '0', --len;  break;
+			case '/':  if ( len )  key  = *q++,       --len;  break;
+			case '!':  if ( len )  mark = *q++,       --len;  break;
+			case '<':  if ( len )  face = *q++,       --len;
+				style = face == 'B' ? bold
+				      : face == 'I' ? italic
+				      : face == 'U' ? underline
+				      : face == 'O' ? outline
+				      : face == 'S' ? shadow
+				      :               normal;
+				break;
+			
+			default:
+				*p++ = c;
+		}
+	}
+	
+	*meta++ = icon;
+	*meta++ = key;
+	*meta++ = mark;
+	*meta++ = style;
+	*meta   = '\0';
+	
+	return q - format;
+}
+
+static
+short append_one_item( MenuRef menu, const UInt8* format, UInt8 length )
+{
 	const Size oldSize = GetHandleSize( (Handle) menu );
 	
-	// TODO:  Parse the format string
-	const Size newSize = oldSize + 1 + format[ 0 ] + 4;
+	const UInt8 text_len = actual_item_text_length( format, length );
+	
+	const Size newSize = oldSize + 1 + text_len + 4;
 	
 	SetHandleSize( (Handle) menu, newSize );
 	
 	unsigned char* p = (unsigned char*) *menu + oldSize - 1;
 	
-	p = (unsigned char*) fast_mempcpy( p, format, 1 + format[ 0 ] );
+	return decode_item_format( format, length, p, text_len );
+}
+
+pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
+{
+	short count = CountMItems_patch( menu );
 	
-	*p++ = 0;  // icon
-	*p++ = 0;  // key
-	*p++ = 0;  // mark
-	*p++ = 0;  // style
+	WMgrPort_bezel_scope port_swap;
 	
-	*p = 0;  // terminating empty string
+	UInt8 length = *format++;
 	
-	MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
+	do
+	{
+		const bool disabled = format[ 0 ] == '(';
+		
+		short n_bytes_consumed = append_one_item( menu, format, length );
+		
+		format += n_bytes_consumed;
+		length -= n_bytes_consumed;
+		
+		++count;
+		
+		if ( disabled )
+		{
+			DisableItem_patch( menu, count );
+		}
+	}
+	while ( length > 0 );
+	
+	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
 pascal void AddResMenu_patch( MenuInfo** menu, ResType type )
 {
+	if ( type == 'DRVR' )
+	{
+		AppendMenu( menu, "\p"
+		                  "(\0" "Advanced Mac Substitute" ";"
+		                  "(\0" "by Josh Juran" );
+	}
 }
 
 #pragma mark -
@@ -239,7 +395,7 @@ pascal void InsertMenu_patch( MenuInfo** menu, short beforeID )
 	
 	header->extent_bytes += sizeof (MenuList_entry);
 	
-	MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
+	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
 pascal void DrawMenuBar_patch()
@@ -299,10 +455,26 @@ pascal void DeleteMenu_patch( short menuID )
 	{
 		header->right_edge = last->left_edge;
 	}
+	else if ( MenuList_entry* found = find_menu_id( menuID ) )
+	{
+		MenuList_entry* next = found + 1;
+		
+		const short edge_delta = next->left_edge - found->left_edge;
+		
+		const char* end = (char*) last + sizeof (MenuList_entry);
+		
+		for ( MenuList_entry* it = next;  (char*) it < end;  ++it )
+		{
+			it->left_edge -= edge_delta;
+		}
+		
+		header->right_edge -= edge_delta;
+		
+		fast_memmove( found, next, end - (char*) next );
+	}
 	else
 	{
-		// TODO:  Delete non-last menus
-		DebugStr( "\p" "DeleteMenu of non-last menu is unimplemented" );
+		WARNING = "DeleteMenu: menu ID ", menuID, " isn't in menu list";
 		return;
 	}
 	
@@ -355,7 +527,7 @@ pascal Handle GetNewMBar_patch( ResID menuBarID )
 			
 			right_edge += gap_between_titles + StringWidth( menu[0]->menuData );
 			
-			MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
+			MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 		}
 		
 		header->right_edge = right_edge;
@@ -382,11 +554,7 @@ pascal Handle GetMenuBar_patch()
 
 pascal void SetMenuBar_patch( Handle list )
 {
-	const Size size = GetHandleSize( list );
-	
-	SetHandleSize( (Handle) MenuList, size );
-	
-	fast_memcpy( *MenuList, *list, size );
+	CopyHandle( list, (Handle) MenuList );
 }
 
 #pragma mark -
@@ -513,6 +681,10 @@ void flash_menu_item( MenuRef menu, const Rect& r, Point pt, short item, int n )
 
 pascal long MenuSelect_patch( Point pt )
 {
+	QDGlobals& qd = get_QDGlobals();
+	
+	const short menuLimit = qd.screenBits.bounds.right - 8;
+	
 	WMgrPort_bezel_scope port_swap;
 	
 	BitMap savedBits;
@@ -584,6 +756,11 @@ pascal long MenuSelect_patch( Point pt )
 					menuRect.right = menuRect.left + menu[0]->menuWidth;
 					menuRect.bottom = menuRect.top + menu[0]->menuHeight;
 					
+					if ( menuRect.right > menuLimit )
+					{
+						OffsetRect( &menuRect, menuLimit - menuRect.right, 0 );
+					}
+					
 					if ( menu[0]->menuHeight != 0 )
 					{
 						// Save the bits under the menu and draw it.
@@ -596,7 +773,7 @@ pascal long MenuSelect_patch( Point pt )
 						
 						draw_menu_frame( menuRect );
 						
-						MDEF_0( mDrawMsg, menu, &menuRect, Point(), NULL );
+						MDEF_0( mDrawMsg, menu, &menuRect, zero_Point, NULL );
 					}
 				}
 			}
@@ -611,7 +788,7 @@ pascal long MenuSelect_patch( Point pt )
 		
 		// Wait for mouse movement or mouse-up.
 		
-		const long sleep = 0x7FFFFFFF;
+		const long sleep = 0xFFFFFFFF;
 		
 		EventRecord event;
 		
@@ -738,47 +915,11 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 		{
 			const UInt8 oldLen = p[ 0 ];
 			
-			if ( newLen == oldLen )
-			{
-				fast_memcpy( p + 1, text + 1, newLen );
-				
-				MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
-				return;
-			}
+			const short offset = p - (unsigned char*) *menu;
 			
-			size_t size = GetHandleSize( (Handle) menu );
+			Munger( (Handle) menu, offset, NULL, 1 + oldLen, text, 1 + newLen );
 			
-			if ( newLen < oldLen )
-			{
-				unsigned char* q = p + 1 + oldLen;
-				
-				p = (unsigned char*) fast_mempcpy( p, text, 1 + newLen );
-				
-				size_t n = (Ptr) *menu + size - (Ptr) q;
-				
-				fast_memmove( p, q, n );
-				
-				SetHandleSize( (Handle) menu, size - (oldLen - newLen) );
-			}
-			else
-			{
-				const short offset = p - (unsigned char*) *menu;
-				
-				SetHandleSize( (Handle) menu, size + (newLen - oldLen) );
-				
-				p = (unsigned char*) *menu + offset;
-				
-				unsigned char* q = p + 1 + oldLen;
-				unsigned char* r = p + 1 + newLen;
-				
-				size_t n = (Ptr) *menu + size - (Ptr) q;
-				
-				fast_memmove( r, q, n );
-				
-				fast_memcpy( p, text, 1 + newLen );
-			}
-			
-			MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
+			MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 			
 			return;
 		}
@@ -829,7 +970,7 @@ pascal void CheckItem_patch( MenuInfo** menu, short item, char checked )
 	SetItemMark_patch( menu, item, mark );
 }
 
-pascal void SetItemMark_patch( MenuInfo** menu, short item, char mark )
+pascal void SetItemMark_patch( MenuInfo** menu, short item, CharParameter mark )
 {
 	menu_item_iterator it( menu );
 	
@@ -840,6 +981,81 @@ pascal void SetItemMark_patch( MenuInfo** menu, short item, char mark )
 			p += 1 + p[ 0 ] + 2;
 			
 			*p = mark;
+			
+			return;
+		}
+		
+		++it;
+	}
+}
+
+pascal void GetItemMark_patch( MenuRef menu, short item, CharParameter* mark )
+{
+	menu_item_iterator it( menu );
+	
+	while ( const unsigned char* p = it )
+	{
+		if ( --item == 0 )
+		{
+			p += 1 + p[ 0 ] + 2;
+			
+			*mark = *p;
+			
+			return;
+		}
+		
+		++it;
+	}
+}
+
+pascal void SetItmIcon_patch( MenuInfo** menu, short item, CharParameter icon )
+{
+	WMgrPort_bezel_scope port_swap;
+	
+	menu_item_iterator it( menu );
+	
+	while ( unsigned char* p = it )
+	{
+		if ( --item == 0 )
+		{
+			p += 1 + p[ 0 ];
+			
+			const bool iconicity_changed = (! *p) != (! icon);
+			
+			*p++ = icon;
+			
+			if ( iconicity_changed  &&  large_icon_key( *p ) )
+			{
+				// We added or removed a large icon, so the size has changed.
+				MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+			}
+			
+			return;
+		}
+		
+		++it;
+	}
+}
+
+pascal void SetItemStyle_patch( MenuRef menu, short item, short style )
+{
+	menu_item_iterator it( menu );
+	
+	while ( unsigned char* p = it )
+	{
+		if ( --item == 0 )
+		{
+			p += 1 + p[ 0 ] + 3;
+			
+			const Style old = *p;
+			
+			if ( style != old )
+			{
+				*p = style;
+				
+				// We changed the style, so the size may have changed.
+				MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+			}
 			
 			return;
 		}
@@ -885,8 +1101,183 @@ pascal void FlashMenuBar_patch( short menuID )
 	InvertRect( &menu_bar );
 }
 
+static
+short insert_one_item( MenuRef menu, const UInt8* format, UInt8 length, short i )
+{
+	if ( i <= 31 )
+	{
+		const long stay_mask = (1 << i) - 1;
+		const long move_mask = ~stay_mask;
+		
+		const long flags = menu[0]->enableFlags;
+		
+		long stay_flags = flags & stay_mask;
+		long move_flags = flags & move_mask;
+		
+		move_flags <<= 1;
+		
+		menu[0]->enableFlags = move_flags | stay_flags;
+	}
+	
+	const UInt8 text_len = actual_item_text_length( format, length );
+	
+	const Size increase = 1 + text_len + 4;
+	const Size old_size = GetHandleSize( (Handle) menu );
+	const Size new_size = old_size + increase;
+	
+	SetHandleSize( (Handle) menu, new_size );
+	
+	menu_item_iterator it( menu );
+	
+	while ( it  &&  --i > 0 )
+	{
+		++it;
+	}
+	
+	const size_t offset = it.get() - (unsigned char*) *menu;
+	
+	unsigned char* p = (unsigned char*) *menu + offset;
+	unsigned char* q = p + increase;
+	
+	while ( it )
+	{
+		++it;
+	}
+	
+	const unsigned char* end = it.get() + 1;
+	
+	fast_memmove( q, p, end - p );
+	
+	return decode_item_format( format, length, p, text_len );
+}
+
+pascal void InsMenuItem_patch( MenuInfo**            menu,
+                               const unsigned char*  format,
+                               short                 after )
+{
+	WMgrPort_bezel_scope port_swap;
+	
+	UInt8 length = *format++;
+	
+	const short n = CountMItems_patch( menu );
+	
+	if ( after > n )
+	{
+		after = n;
+	}
+	
+	const short i = after + 1;
+	
+	do
+	{
+		const bool disabled = format[ 0 ] == '(';
+		
+		short n_bytes_consumed = insert_one_item( menu, format, length, i );
+		
+		format += n_bytes_consumed;
+		length -= n_bytes_consumed;
+		
+		if ( ! disabled )
+		{
+			EnableItem_patch( menu, i );
+		}
+	}
+	while ( length > 0 );
+	
+	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+}
+
+pascal void DelMenuItem_patch( MenuInfo** menu, short item )
+{
+	const long stay_mask =   (1 << item    ) - 1;
+	const long move_mask = ~((1 << item + 1) - 1);
+	
+	const long flags = menu[0]->enableFlags;
+	
+	long stay_flags = flags & stay_mask;
+	long move_flags = flags & move_mask;
+	
+	move_flags >>= 1;
+	
+	menu[0]->enableFlags = move_flags | stay_flags;
+	
+	WMgrPort_bezel_scope port_swap;
+	
+	menu_item_iterator it( menu );
+	
+	while ( it  &&  --item > 0 )
+	{
+		++it;
+	}
+	
+	uint8_t      * addr =   it;
+	uint8_t const* next = (++it).get();
+	
+	Munger( (Handle) menu, addr - (uint8_t*) *menu, NULL, next - addr, "", 0 );
+	
+	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+}
+
+pascal void GetItemCmd_patch( MenuInfo** menu, short item, CharParameter* key )
+{
+	menu_item_iterator it( menu );
+	
+	while ( const unsigned char* p = it )
+	{
+		if ( --item == 0 )
+		{
+			p += 1 + p[ 0 ] + 1;
+			
+			*key = *p;
+			
+			return;
+		}
+		
+		++it;
+	}
+}
+
+pascal void SetItemCmd_patch( MenuInfo** menu, short item, CharParameter key )
+{
+	WMgrPort_bezel_scope port_swap;
+	
+	menu_item_iterator it( menu );
+	
+	while ( unsigned char* p = it )
+	{
+		if ( --item == 0 )
+		{
+			p += 1 + p[ 0 ];
+			
+			const uint8_t icon = *p++;
+			
+			const bool resized = large_icon_key( *p ) != large_icon_key( key );
+			
+			*p = key;
+			
+			if ( icon  &&  resized )
+			{
+				// We changed an icon's size, so the menu size has changed.
+				MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+			}
+			
+			return;
+		}
+		
+		++it;
+	}
+}
+
+SysBeep_ProcPtr old_SysBeep;
+
 pascal void SysBeep_patch( short duration )
 {
+	if ( SdVolume & 0x7 )
+	{
+		old_SysBeep( duration );
+		return;
+	}
+	
 	FlashMenuBar_patch( 0 );
 	
 	UInt32 dummy;

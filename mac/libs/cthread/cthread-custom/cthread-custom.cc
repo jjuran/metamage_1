@@ -247,6 +247,12 @@ namespace custom  {
 		return (thread_task*) id;
 	}
 	
+	static
+	thread_task* verified( thread_task* task )
+	{
+		return task_queue.contains( task ) ? task : NULL;
+	}
+	
 	thread_id current_thread()
 	{
 		init_tasks_idempotent();
@@ -326,6 +332,21 @@ namespace custom  {
 		{
 			that->schedule = Task_ready;
 		}
+	}
+	
+	bool woken_thread( thread_id id )
+	{
+		if ( thread_task* that = verified( task_from_id( id ) ) )
+		{
+			if ( that->schedule == Task_stopped )
+			{
+				that->schedule = Task_ready;
+			}
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
 	void thread_yield()

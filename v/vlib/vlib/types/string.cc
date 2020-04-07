@@ -105,11 +105,17 @@ namespace vlib
 			case Op_named_unary:
 				return String( str( Value( a, b ) ) );
 			
+			case Op_multiply:
+				return multiply( (const VBytes&) a, b );
+			
 			case Op_divide:
 				return division( (const VBytes&) a, b );
 			
 			case Op_format:
 				return String( format( a.string(), b ) );
+			
+			case Op_contains:
+				return vbytes_contains( a, b );
 			
 			default:
 				break;
@@ -189,5 +195,10 @@ namespace vlib
 	
 	const proc_info proc_join  = { "join",  &v_join,  &string_etc, Proc_pure };
 	const proc_info proc_lines = { "lines", &v_lines, &string,     Proc_pure };
+	
+	Value mapping( const plus::string& key, const Value& v )
+	{
+		return Value( String( key ), Op_mapping, v );
+	}
 	
 }

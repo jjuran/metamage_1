@@ -75,7 +75,7 @@ const cmd = command_defs[ command ]
 
 const kits = args map { const x = _; x => cmd map { _ % x } }
 
-const params = str^[ kits: kits, key: key, hash: hash, stamp: stamp ]
+const params = str^[ :kits, :key, :hash, :stamp ]
 
 const handler = import "arcsign-" command
 

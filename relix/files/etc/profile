@@ -3,17 +3,4 @@
 # You don't need these except for development, although some are still useful
 PATH=$PATH:/Developer/Tools
 
-toolchain=$HOME/opt/relix/toolchain
-codewarrior=$toolchain/codewarrior
-macos=$toolchain/macos
-
-/bin/test-type DIR $codewarrior && export CWANSIIncludes=$codewarrior/include
-/bin/test-type DIR $codewarrior && export CWCIncludes=$codewarrior/include
-/bin/test-type DIR $macos       && export CIncludes=$macos/include
-
-/bin/test-type DIR $codewarrior && export MW68KLibraries=$codewarrior/lib/68k
-/bin/test-type DIR $codewarrior && export MWPPCLibraries=$codewarrior/lib/ppc
-/bin/test-type DIR $macos       && export PPCLibraries=$macos/lib/ppc
-/bin/test-type DIR $macos       && export SharedLibraries=$macos/lib/stub
-
-unset macos codewarrior toolchain
+# You can add customizations in $HOME/.relix_profile

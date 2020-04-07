@@ -8,11 +8,16 @@
 // POSIX
 #include <sys/select.h>
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "interrupts.hh"
 #include "reactor.hh"
 #include "time.hh"
 
+
+const timeval zero_timeout = { 0, 0 };
 
 static reactor_node* reactor_chain;
 static timer_node*   timer_chain;
@@ -90,14 +95,21 @@ void schedule( timer_node* node )
 	
 	timer_node* next;
 	
-	while ( (next = *slot)  &&  wake > next->wakeup )
+	while ( (next = *slot)  &&  next != node  &&  wake > next->wakeup )
 	{
 		slot = &next->next;
 	}
 	
-	node->next = *slot;
-	
-	*slot = node;
+	if ( next == node )
+	{
+		ERROR = "reactor schedule: node is already scheduled";
+	}
+	else
+	{
+		node->next = *slot;
+		
+		*slot = node;
+	}
 	
 	reenable_interrupts( saved_SR );
 }
@@ -137,6 +149,8 @@ void check_timers( timeval* timeout = NULL )
 	timeval now;
 	time( &now );
 	
+	bool any_expired = false;
+	
 	while ( timer_chain != NULL  &&  timer_chain->wakeup <= now )
 	{
 		timer_node* next = timer_chain;
@@ -144,15 +158,24 @@ void check_timers( timeval* timeout = NULL )
 		timer_chain = timer_chain->next;
 		
 		next->ready( next );
+		
+		any_expired = true;
 	}
 	
-	if ( timer_chain  &&  timeout )
+	if ( timeout )
 	{
-		timeval dt = timer_chain->wakeup - now;
-		
-		if ( dt < *timeout )
+		if ( any_expired )
 		{
-			*timeout = dt;
+			*timeout = zero_timeout;
+		}
+		else if ( timer_chain )
+		{
+			timeval dt = timer_chain->wakeup - now;
+			
+			if ( dt < *timeout )
+			{
+				*timeout = dt;
+			}
 		}
 	}
 }

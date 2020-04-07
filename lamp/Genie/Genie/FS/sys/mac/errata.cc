@@ -27,6 +27,7 @@
 #include "MacFeatures/BlueBoxed.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/property.hh"
 #include "vfs/node/types/property_file.hh"
 
@@ -112,23 +113,30 @@ namespace Genie
 	};
 	
 	
-	template < class Erratum >
-	struct sys_mac_errata_Property : vfs::readonly_property
+	static
+	void get( plus::var_string& result, const vfs::node* that, bool binary, const plus::string& name )
 	{
-		static const int fixed_size = 1;
+		const char c = name[ 0 ];
 		
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			plus::deconstruct_bool::apply( result, Erratum::Test(), binary );
-		}
+		const bool test = c == 'a' ? RunningInClassic::Test()
+		                : c == 'f' ? RunningInWeakEmulator::Test()
+		                :            false;
+		
+		plus::deconstruct_bool::apply( result, test, binary );
+	}
+	
+	static const vfs::property_params sys_mac_errata_mux_params =
+	{
+		1,  // fixed size,
+		(vfs::property_get_hook) &get,
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	const vfs::fixed_mapping sys_mac_errata_Mappings[] =
 	{
-		{ "async-io-race",            PROPERTY( sys_mac_errata_Property< RunningInClassic      > ) },
-		{ "fatal-powerpc-exceptions", PROPERTY( sys_mac_errata_Property< RunningInWeakEmulator > ) },
+		{ "async-io-race",            PROPERTY( sys_mac_errata_mux ) },
+		{ "fatal-powerpc-exceptions", PROPERTY( sys_mac_errata_mux ) },
 		
 		{ NULL, NULL }
 	};

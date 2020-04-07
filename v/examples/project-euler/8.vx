@@ -2,8 +2,8 @@
 
 const number = str DATA.lines()
 
-const digits = packed .*(   '0' ..    '9')
-const values = packed .*('\x00' .. '\x09')
+const digits = packed (   '0' ..    '9')
+const values = packed ('\x00' .. '\x09')
 
 const width = 13
 

@@ -8,33 +8,23 @@
 // vlib
 #include "vlib/array-utils.hh"
 #include "vlib/assign.hh"
-#include "vlib/is_type.hh"
+#include "vlib/equal.hh"
+#include "vlib/list-utils.hh"
+#include "vlib/table-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/verity.hh"
 #include "vlib/iterators/array_iterator.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
+#include "vlib/types/integer.hh"
 #include "vlib/types/type.hh"
 
 
 namespace vlib
 {
-	
-	bool is_table( const Value& v )
-	{
-		if ( Expr* expr = v.expr() )
-		{
-			if ( expr->op == Op_empower )
-			{
-				return is_type( expr->left )  &&  is_array( expr->right );
-			}
-		}
-		
-		return false;
-	}
-	
 	
 	static const Type etc = etc_vtype;
 	
@@ -57,6 +47,105 @@ namespace vlib
 		{
 			case Op_typeof:
 				return Value( v.expr()->left, Op_empower, etc );
+			
+			case Op_unary_minus:
+			{
+				Expr* expr = v.expr();
+				
+				const Value& old_list = expr->right.expr()->right;
+				
+				const Value new_list  = reverse_list( old_list );
+				const Value new_array = make_array  ( new_list );
+				
+				return Value( expr->left, expr->op, new_array );
+			}
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
+	static
+	Value table_member( const Value& table, const plus::string& name )
+	{
+		const Value& array = table.expr()->right;
+		
+		if ( name == "length" )
+		{
+			if ( is_empty_array( array ) )
+			{
+				return Integer();
+			}
+			
+			Expr* expr = array.expr();
+			
+			return Integer( count( expr->right ) );
+		}
+		
+		if ( name == "keys"  ||  name == "values" )
+		{
+			if ( is_empty_array( array ) )
+			{
+				return array;
+			}
+			
+			const bool keys = name == "keys";
+			
+			list_builder results;
+			
+			array_iterator it( array );
+			
+			while ( it )
+			{
+				const Value& mapping = it.use();
+				
+				Expr* expr = mapping.expr();
+				
+				results.append( keys ? expr->left : expr->right );
+			}
+			
+			return make_array( results );
+		}
+		
+		THROW( "nonexistent table member" );
+		
+		return Value();
+	}
+	
+	static
+	bool in_array_mapping_keys( const Value& v, const Value& array )
+	{
+		array_iterator it( array );
+		
+		while ( it )
+		{
+			const Value& mapping = it.use();
+			const Value& key = mapping.expr()->left;
+			
+			if ( equal( key, v ) )
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	static
+	Value binary_op_handler( op_type op, const Value& a, const Value& b )
+	{
+		switch ( op )
+		{
+			case Op_contains:
+				return Boolean( in_array_mapping_keys( b, a.expr()->right ) );
+			
+			case Op_member:
+				return table_member( a, b.string() );
+			
+			case Op_subscript:
+				return associative_subscript( a, b );
 			
 			default:
 				break;
@@ -107,7 +196,7 @@ namespace vlib
 	static const operators ops =
 	{
 		&unary_op_handler,
-		0,  // NULL
+		&binary_op_handler,
 		0,  // NULL
 		&mutating_op_handler,
 	};

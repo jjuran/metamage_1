@@ -15,7 +15,14 @@
 #define POSEVEN_FUNCTIONS_SELECT_HH
 
 // POSIX
+#ifdef __APPLE__
+// This is needed to compile with Mac OS X 10.3's headers.
+#include <sys/types.h>
+#endif
 #include <sys/select.h>
+
+// This is needed to compile with Mac OS X 10.2's headers.
+struct timeval;
 
 
 namespace poseven

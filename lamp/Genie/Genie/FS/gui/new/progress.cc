@@ -66,25 +66,38 @@ namespace Genie
 	}
 	
 	
-	namespace
+	typedef plus::serialize_int< int > serialize;
+	
+	static
+	void get( plus::var_string& result, const vfs::node* view, bool binary )
 	{
+		progress_extra& extra = *(progress_extra*) view->extra();
 		
-		int& Value( const vfs::node* view )
-		{
-			progress_extra& extra = *(progress_extra*) view->extra();
-			
-			return extra.value;
-		}
-		
+		serialize::deconstruct::apply( result, extra.value, binary );
 	}
 	
-	typedef View_Property< plus::serialize_int< int >, Value > Value_Property;
+	static
+	void set( const vfs::node* view, const char* begin, const char* end, bool binary )
+	{
+		progress_extra& extra = *(progress_extra*) view->extra();
+		
+		extra.value = serialize::reconstruct::apply( begin, end, binary );
+		
+		InvalidateWindowForView( view );
+	}
 	
-	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
+	static const vfs::property_params value_params =
+	{
+		serialize::fixed_size,
+		&get,
+		&set,
+	};
+	
+	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{
-		{ "value", PROPERTY( Value_Property ) },
+		{ "value", PROPERTY( value ) },
 		
 		{ NULL, NULL }
 	};

@@ -19,25 +19,45 @@
 #include <Resources.h>
 #endif
 
-// Standard C
-#include <string.h>
-
 // ams-common
 #include "callouts.hh"
 #include "raster_lock.hh"
 
-// ams-core
+// ams-ui
 #include "CDEF.hh"
+#include "scoped_port.hh"
 
+
+static
+long call_CDEF( ControlRef control, short message, long param )
+{
+	ControlDefProcPtr cdef = (ControlDefProcPtr) *control[0]->contrlDefProc;
+	
+	const short varCode = *(Byte*) &control[0]->contrlDefProc;
+	
+	return cdef( varCode, control, message, param );
+}
+
+static
+void draw_control( ControlRef control )
+{
+	scoped_port thePort = control[0]->contrlOwner;
+	
+	raster_lock lock;
+	
+	call_CDEF( control, drawCntl, 0 );
+}
 
 #pragma mark -
 #pragma mark Initialization and Allocation
 #pragma mark -
 
+static Ptr gDefProcPtr = (Ptr) &CDEF_0;
+
 pascal ControlRecord** NewControl_patch( GrafPort*             window,
                                          const Rect*           bounds,
                                          const unsigned char*  title,
-                                         short                 visible,
+                                         Boolean               visible,
                                          short                 value,
                                          short                 min,
                                          short                 max,
@@ -48,6 +68,8 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
 	
 	if ( control )
 	{
+		Handle cdef = GetResource( 'CDEF', procID >> 4 );
+		
 		WindowPeek w = (WindowPeek) window;
 		
 		control[0]->nextControl   = (ControlRef) w->controlList;
@@ -58,7 +80,7 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
 		control[0]->contrlValue   = value;
 		control[0]->contrlMin     = min;
 		control[0]->contrlMax     = max;
-		control[0]->contrlDefProc = NULL;  // TODO
+		control[0]->contrlDefProc = cdef ? cdef : &gDefProcPtr;
 	//	control[0]->contrlData    = NULL;
 	//	control[0]->contrlAction  = NULL;
 		control[0]->contrlRfCon   = refCon;
@@ -76,7 +98,7 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
 		
 		if ( visible )
 		{
-			CDEF_0( varCode, control, drawCntl, 0 );
+			draw_control( control );
 		}
 	}
 	
@@ -111,7 +133,7 @@ pascal ControlRecord** GetNewControl_patch( short controlID, WindowRef window )
 	ControlRef control = NewControl( window,
 	                                 &cntl.bounds,
 	                                 cntl.title,
-	                                 cntl.visible,
+	                                 (Boolean&) cntl.visible,
 	                                 cntl.value,
 	                                 cntl.min,
 	                                 cntl.max,
@@ -123,6 +145,8 @@ pascal ControlRecord** GetNewControl_patch( short controlID, WindowRef window )
 
 pascal void DisposeControl_patch( ControlRecord** control )
 {
+	HideControl( control );
+	
 	WindowPeek w = (WindowPeek) control[0]->contrlOwner;
 	
 	ControlRef* slot = (ControlRef*) &w->controlList;
@@ -158,6 +182,8 @@ pascal void KillControls_patch( GrafPort* window )
 	{
 		DisposeControl( control );
 	}
+	
+	w->controlList = NULL;
 }
 
 #pragma mark -
@@ -168,9 +194,7 @@ pascal void SetCTitle_patch( ControlRef control, ConstStr255Param title )
 {
 	fast_memcpy( control[0]->contrlTitle, title, 1 + title[ 0 ] );
 	
-	const short varCode = *(Byte*) &control[0]->contrlDefProc;
-	
-	CDEF_0( varCode, control, drawCntl, 0 );
+	draw_control( control );
 }
 
 pascal void HideControl_patch( ControlRef control )
@@ -178,6 +202,8 @@ pascal void HideControl_patch( ControlRef control )
 	if ( control[0]->contrlVis )
 	{
 		control[0]->contrlVis = 0;
+		
+		scoped_port thePort = control[0]->contrlOwner;
 		
 		// TODO:  Erase the region instead
 		EraseRect( &control[0]->contrlRect );
@@ -191,25 +217,19 @@ pascal void ShowControl_patch( ControlRef control )
 	{
 		control[0]->contrlVis = -1;
 		
-		const short varCode = *(Byte*) &control[0]->contrlDefProc;
-		
-		CDEF_0( varCode, control, drawCntl, 0 );
+		draw_control( control );
 	}
 }
 
 pascal void DrawControls_patch( GrafPort* window )
 {
-	raster_lock lock;
-	
 	WindowPeek w = (WindowPeek) window;
 	
 	ControlRef control = (ControlRef) w->controlList;
 	
 	while ( control != NULL )
 	{
-		const short varCode = *(Byte*) &control[0]->contrlDefProc;
-		
-		CDEF_0( varCode, control, drawCntl, 0 );
+		draw_control( control );
 		
 		control = control[0]->nextControl;
 	}
@@ -217,9 +237,9 @@ pascal void DrawControls_patch( GrafPort* window )
 
 pascal void HiliteControl_patch( ControlRef control, short hiliteState )
 {
-	const short varCode = *(Byte*) &control[0]->contrlDefProc;
+	scoped_port thePort = control[0]->contrlOwner;
 	
-	CDEF_0( varCode, control, drawCntl, hiliteState );
+	call_CDEF( control, drawCntl, hiliteState );
 }
 
 #pragma mark -
@@ -241,9 +261,7 @@ pascal short FindControl_patch( Point pt, WindowRef window, ControlRef* which )
 	
 	while ( next != NULL )
 	{
-		const short varCode = *(Byte*) &next[0]->contrlDefProc;
-		
-		if ( long hit = CDEF_0( varCode, next, testCntl, *(long*) &pt ) )
+		if ( short hit = TestControl( next, pt ) )
 		{
 			*which = next;
 			
@@ -256,32 +274,65 @@ pascal short FindControl_patch( Point pt, WindowRef window, ControlRef* which )
 	return 0;
 }
 
-pascal short TrackControl_patch( ControlRecord**  control,
-                                 Point            start,
-                                 pascal void    (*action)() )
+pascal short TrackControl_patch( ControlRecord**   control,
+                                 Point             start,
+                                 ControlActionUPP  action )
 {
-	RgnHandle tmp = NewRgn();
+	static const RgnHandle tmp = NewRgn();
+	
 	RgnHandle mouseRgn = tmp;
 	
 	WindowRef window = control[0]->contrlOwner;
 	
+	scoped_port thePort = window;
+	
 	const short csdx = window->portBits.bounds.left;
 	const short csdy = window->portBits.bounds.top;
 	
-	const short varCode = *(Byte*) &control[0]->contrlDefProc;
+	if ( (long) action == -1 )
+	{
+		action = control[0]->contrlAction;
+		
+		if ( (long) action == -1 )
+		{
+			action = NULL;  // TODO:  Take action via CDEF
+		}
+	}
 	
 	Point pt = start;
 	
-	const short track_part = CDEF_0( varCode, control, testCntl, *(long*) &pt );
+	const short track_part = TestControl( control, pt );
+	
+	if ( track_part == 0 )
+	{
+		return 0;  // We hit a dead zone within the control bounds.
+	}
 	
 	control[0]->contrlHilite = track_part;
 	
-	CDEF_0( varCode, control, drawCntl, track_part );
+	call_CDEF( control, drawCntl, track_part );
 	
 	long sleep = 0;
 	
+	if ( action )
+	{
+		mouseRgn = NULL;  // Don't leave WNE early for mouse-moved events
+	}
+	
+	short hit = track_part;
+	
 	while ( true )
 	{
+		if ( action  &&  track_part < kControlIndicatorPart )
+		{
+			if ( hit == track_part )
+			{
+				action( control, track_part );
+			}
+			
+			sleep = 6;
+		}
+		
 		EventRecord event;
 		
 		const bool eventful = WaitNextEvent( mUpMask, &event, sleep, mouseRgn );
@@ -298,7 +349,10 @@ pascal short TrackControl_patch( ControlRecord**  control,
 		
 		Point where = event.where;
 		
-		SetRectRgn( mouseRgn, where.h, where.v, where.h + 1, where.v + 1 );
+		if ( mouseRgn )
+		{
+			SetRectRgn( mouseRgn, where.h, where.v, where.h + 1, where.v + 1 );
+		}
 		
 		if ( event.what != nullEvent )
 		{
@@ -319,17 +373,17 @@ pascal short TrackControl_patch( ControlRecord**  control,
 			that is), and set sleep back to forever (approx).
 		*/
 		
-		sleep = 0x7fffffff;
+		sleep = 0xFFFFFFFF;
 		
 		// global to local
 		where.h += csdx;
 		where.v += csdy;
 		
-		if ( *(long*) &pt != *(long*) &where )
+		if ( action  ||  *(long*) &pt != *(long*) &where )
 		{
 			pt = where;
 			
-			short hit = CDEF_0( varCode, control, testCntl, *(long*) &pt );
+			hit = TestControl( control, pt );
 			
 			if ( hit != track_part )
 			{
@@ -340,20 +394,32 @@ pascal short TrackControl_patch( ControlRecord**  control,
 			{
 				control[0]->contrlHilite = hit;
 				
-				CDEF_0( varCode, control, drawCntl, track_part );
+				call_CDEF( control, drawCntl, track_part );
 			}
 		}
 	}
 	
-	DisposeRgn( tmp );
-	
 	control[0]->contrlHilite = 0;
 	
-	const short hit = CDEF_0( varCode, control, testCntl, *(long*) &pt );
+	hit = TestControl( control, pt );
 	
 	if ( hit == track_part )
 	{
-		CDEF_0( varCode, control, drawCntl, hit );
+		call_CDEF( control, drawCntl, hit );
+		
+		return hit;
+	}
+	
+	return 0;
+}
+
+pascal short TestControl_patch( ControlRecord** control, Point pt )
+{
+	if ( control[0]->contrlVis  &&  control[0]->contrlHilite != 255 )
+	{
+		scoped_port thePort = control[0]->contrlOwner;
+		
+		long hit = call_CDEF( control, testCntl, *(long*) &pt );
 		
 		return hit;
 	}
@@ -426,9 +492,7 @@ pascal void SetCtlValue_patch( ControlRecord** control, short value )
 		
 		control[0]->contrlValue = value;
 		
-		const short varCode = *(Byte*) &control[0]->contrlDefProc;
-		
-		CDEF_0( varCode, control, drawCntl, 0 );
+		draw_control( control );
 	}
 }
 
@@ -448,9 +512,7 @@ pascal void SetMinCtl_patch( ControlRecord** control, short min )
 		
 		control[0]->contrlMin = min;
 		
-		const short varCode = *(Byte*) &control[0]->contrlDefProc;
-		
-		CDEF_0( varCode, control, drawCntl, 0 );
+		draw_control( control );
 	}
 }
 
@@ -470,9 +532,7 @@ pascal void SetMaxCtl_patch( ControlRecord** control, short max )
 		
 		control[0]->contrlMax = max;
 		
-		const short varCode = *(Byte*) &control[0]->contrlDefProc;
-		
-		CDEF_0( varCode, control, drawCntl, 0 );
+		draw_control( control );
 	}
 }
 
@@ -512,4 +572,11 @@ pascal ControlActionProcPtr GetCtlAction_patch( ControlRecord** control )
 pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn )
 {
 	DrawControls_patch( window );
+}
+
+pascal short GetCVariant_patch( ControlRecord** control )
+{
+	const short varCode = *(Byte*) &control[0]->contrlDefProc;
+	
+	return varCode;
 }

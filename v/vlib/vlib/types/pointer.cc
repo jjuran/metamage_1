@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/types.h>
 
+// gear
+#include "gear/find.hh"
+
 // debug
 #include "debug/assert.hh"
 
@@ -26,6 +29,7 @@
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/byterange.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/proc.hh"
@@ -233,6 +237,26 @@ namespace vlib
 	}
 	
 	static
+	const Value& scan( Value& v, const iota::byte_range& pattern )
+	{
+		Expr* expr = v.unshare().expr();
+		
+		const plus::string& s = expr->left.string();
+		bignum::integer& iter = expr->right.number();
+		
+		const size_t i = integer_cast< size_t >( iter );
+		
+		if ( i < s.size()  &&  contains( pattern, s[ i ] ) )
+		{
+			++iter;
+			
+			return v;
+		}
+		
+		return empty_list;  // No match
+	}
+	
+	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
 		if ( op == Op_subtract )
@@ -246,9 +270,14 @@ namespace vlib
 		{
 			if ( b.type() == v.expr()->left.type() )
 			{
-				// E.g. `p += "pattern"`
+				// E.g. `p + "pattern"`
 				
 				return scan( v, b.string() );
+			}
+			
+			if ( const ByteRange* byterange = b.is< ByteRange >() )
+			{
+				return scan( v, byterange->get() );
 			}
 		}
 		else if ( op != Op_subtract )
@@ -313,6 +342,11 @@ namespace vlib
 				
 				return scan( v, b.string() );
 			}
+			
+			if ( const ByteRange* byterange = b.is< ByteRange >() )
+			{
+				return scan( v, byterange->get() );
+			}
 		}
 		else if ( op != Op_decrease_by )
 		{
@@ -374,6 +408,15 @@ namespace vlib
 			
 			loc = s.find( c, i );
 		}
+		else if ( const ByteRange* byterange = target.is< ByteRange >() )
+		{
+			const iota::byte_range br = byterange->get();
+			
+			const char* begin = s.data();
+			const char* match = gear::find_first_match( begin, s.size(), br );
+			
+			loc = match ? match - begin : plus::string::npos;
+		}
 		else
 		{
 			const plus::string& sub = target.string();
@@ -395,11 +438,13 @@ namespace vlib
 	
 	static const Type pointer = pointer_vtype;
 	static const Type byte    = byte_vtype;
+	static const Type brange  = byterange_vtype;
 	static const Type packed  = packed_vtype;
 	static const Type string  = string_vtype;
 	
 	static const Value vbytes ( string, Op_union, packed );
-	static const Value finding( byte,   Op_union, vbytes );
+	static const Value a_byte ( byte,   Op_union, brange );
+	static const Value finding( a_byte, Op_union, vbytes );
 	
 	static const Value find( pointer, finding );
 	

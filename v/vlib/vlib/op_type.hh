@@ -14,6 +14,7 @@ namespace vlib
 	{
 	// begin right-associative
 		
+		Op_reserved = -1,
 		Op_none,
 		Op_return,
 		Op_throw,
@@ -67,6 +68,7 @@ namespace vlib
 		Op_unary_deref,
 		Op_forward_init,
 		Op_reverse_init,
+		Op_via,
 		Op_auto,
 		Op_begin,
 		Op_array,
@@ -89,8 +91,6 @@ namespace vlib
 		Op_union,
 		Op_in,
 		Op_not,
-		Op_and,
-		Op_or,
 		Op_repeat,  // multiply list
 		Op_map,
 		Op_ver,
@@ -108,6 +108,8 @@ namespace vlib
 		Op_mapping,
 		Op_gamut,
 		Op_delta,
+		Op_and,
+		Op_or,
 		Op_list,
 		Op_send,
 		Op_recv,
@@ -126,9 +128,11 @@ namespace vlib
 		Op_brackets,
 		Op_braces,
 		Op_internal_vector,
+		Op_keyvar,
+		Op_contains,
 		
-	// end right-associative
 		Op_end,
+	// end right-associative
 		
 		Op_frame,  // links caller's stack to a new stack frame
 		Op_scope,  // links a set of symbols to the code declaring them
@@ -178,7 +182,7 @@ namespace vlib
 			return false;
 		}
 		
-		return op <= Op_named_unary  ||  (op >= Op_mapping  &&  op < Op_end);
+		return op <= Op_named_unary  ||  (op >= Op_mapping  &&  op <= Op_end);
 	}
 	
 	inline
@@ -200,6 +204,7 @@ namespace vlib
 		{
 			case Op_forward_init:
 			case Op_reverse_init:
+			case Op_via:
 			case Op_mapping:
 			case Op_then:
 			case Op_else:

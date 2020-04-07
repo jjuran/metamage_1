@@ -54,8 +54,10 @@
 
 enum
 {
+	Opt_GNEtix = 'G',  // GetNextEvent throttle, in ticks
 	Opt_linger = 'L',  // linger on ExitToShell
 	Opt_romgen = 'R',  // ROM generation: 0 for 64K ROM, 1 for 128K, etc.
+	Opt_system = 'V',  // System version
 	
 	Opt_last_byte = 255,
 	
@@ -64,9 +66,12 @@ enum
 
 static command::option options[] =
 {
+	{ "gne-ticks",  Opt_GNEtix, command::Param_required },
+	
 	{ "linger",  Opt_linger },
 	
 	{ "romgen", Opt_romgen, command::Param_required },
+	{ "system", Opt_system, command::Param_required },
 	
 	{ "events-fd", Opt_events_fd, command::Param_required },
 	
@@ -74,6 +79,7 @@ static command::option options[] =
 };
 
 static unsigned romgen;
+static unsigned System;
 
 
 void* UTableBase  : 0x011C;
@@ -82,8 +88,10 @@ short UnitNtryCnt : 0x01D2;
 void* SysEvtBuf : 0x0146;
 QHdr EventQueue : 0x014A;
 short SysEvtCnt : 0x0154;
+short SysVersion : 0x015A;
 Byte  MBState   : 0x0172;
 
+void* SoundBase : 0x0266;
 short ROM85     : 0x028E;
 
 long  DefltStack : 0x0322;
@@ -103,6 +111,7 @@ enum
 {
 	_ReallocateHandle = _ReallocHandle,
 	_ReserveMem       = _ResrvMem,
+	_SystemEdit       = _SysEdit,
 };
 
 
@@ -119,6 +128,8 @@ void initialize_low_memory_globals()
 	{
 		ROM85 = 0xFFFFu >> romgen;
 	}
+	
+	SysVersion = System;
 	
 	DefltStack = 64 * 1024;
 	
@@ -150,6 +161,8 @@ void initialize_low_memory_globals()
 	
 	init_lowmem_Cursor();
 	init_cursor();
+	
+	SoundBase = (Ptr) 0x0001FD00;
 }
 
 static
@@ -170,14 +183,14 @@ void install_MemoryManager()
 	
 	OSTRAP( NewPtr           );  // A11E
 	OSTRAP( DisposePtr       );  // A01F
-	
+	OSTRAP( SetPtrSize       );  // A020
 	OSTRAP( GetPtrSize       );  // A021
 	OSTRAP( NewHandle        );  // A022
 	OSTRAP( DisposeHandle    );  // A023
 	OSTRAP( SetHandleSize    );  // A024
 	OSTRAP( GetHandleSize    );  // A025
 	OSTRAP( ReallocateHandle );  // A027
-	
+	OSTRAP( RecoverHandle    );  // A028
 	OSTRAP( HLock            );  // A029
 	OSTRAP( HUnlock          );  // A02A
 	OSTRAP( EmptyHandle      );  // A02B
@@ -191,6 +204,8 @@ void install_MemoryManager()
 	OSTRAP( HPurge           );  // A049
 	OSTRAP( HNoPurge         );  // A04A
 	OSTRAP( SetGrowZone      );  // A04B
+	OSTRAP( CompactMem       );  // A04C
+	OSTRAP( PurgeMem         );  // A04D
 	
 	OSTRAP( MaxApplZone      );  // A063
 	OSTRAP( MoveHHi          );  // A064
@@ -202,9 +217,13 @@ void install_MemoryManager()
 	
 	OSTRAP( MaxMem           );  // A11D
 	
+	TBTRAP( Munger      );  // A9E0
 	TBTRAP( HandToHand  );  // A9E1
 	TBTRAP( PtrToXHand  );  // A9E2
 	TBTRAP( PtrToHand   );  // A9E3
+	TBTRAP( HandAndHand );  // A9E4
+	
+	TBTRAP( PtrAndHand  );  // A9EF
 }
 
 static
@@ -214,6 +233,12 @@ void install_OSUtils()
 	
 	OSTRAP( Delay     );  // A03B
 	OSTRAP( CmpString );  // A03C
+	
+	OSTRAP( InitUtil  );  // A03F
+	
+	OSTRAP( UprString );  // A054
+	
+	OSTRAP( SysEnvirons );  // A090
 	
 	TBTRAP( Enqueue   );  // A96E
 	TBTRAP( Dequeue   );  // A96F
@@ -274,7 +299,11 @@ void install_EventManager()
 static
 void install_DeskManager()
 {
+	TBTRAP( SystemEvent );  // A9B2
+	
 	TBTRAP( SystemTask );  // A9B4
+	
+	TBTRAP( SystemEdit );  // A9C2
 }
 
 static
@@ -301,8 +330,19 @@ char* const* get_options( char** argv )
 				events_fd = gear::parse_unsigned_decimal( global_result.param );
 				break;
 			
+			case Opt_GNEtix:
+				GetNextEvent_throttle =
+					gear::parse_unsigned_decimal( global_result.param );
+				break;
+			
 			case Opt_romgen:
 				romgen = gear::parse_unsigned_decimal( global_result.param );
+				break;
+			
+			case Opt_system:
+				System = gear::parse_unsigned_decimal( global_result.param );
+				
+				System <<= 8;  // E.g. "6" --> 0x0600
 				break;
 			
 			default:

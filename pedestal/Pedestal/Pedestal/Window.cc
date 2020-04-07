@@ -1,9 +1,12 @@
-/*	============
- *	PedWindow.cc
- *	============
- */
+/*
+	Window.cc
+	---------
+*/
 
 #include "Pedestal/Window.hh"
+
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
 
 // nucleus
 #include "nucleus/saved.hh"
@@ -19,6 +22,13 @@
 #include "Pedestal/WindowStorage.hh"
 
 
+#if TARGET_API_MAC_CARBON
+#define NONCARBON_INLINE  /**/
+#else
+#define NONCARBON_INLINE  inline
+#endif
+
+
 namespace Pedestal
 {
 	
@@ -26,12 +36,11 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	void ResizeWindow( WindowRef window, Point newSize )
+	static NONCARBON_INLINE
+	void ResizedWindow( WindowRef window )
 	{
-		N::SizeWindow( window, newSize.h, newSize.v, true );
-		
 		// Don't rely on the requested size because it might have been tweaked
-		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+		Rect bounds = mac::qd::get_portRect( GetWindowPort( window ) );
 		
 		// Shotgun approach -- invalidate the whole window.
 		// This conveniently includes both old and new grow box locations.
@@ -47,6 +56,42 @@ namespace Pedestal
 		if ( WindowResized_proc proc = get_window_resized_proc( window ) )
 		{
 			proc( window );
+		}
+	}
+	
+	static
+	void ResizeWindow( WindowRef window, Point newSize )
+	{
+		N::SizeWindow( window, newSize.h, newSize.v, true );
+		
+		ResizedWindow( window );
+	}
+	
+	void ResizingWindow( WindowRef window, Point start )
+	{
+		if ( TARGET_API_MAC_CARBON )
+		{
+			if ( bool changed = ::ResizeWindow( window, start, NULL, NULL ) )
+			{
+				if ( GetWindowKind( window ) == kApplicationWindowKind )
+				{
+					ResizedWindow( window );
+				}
+			}
+			
+			return;
+		}
+		
+		Rect sizeRect = { 30, 50, 10000, 10000 };
+		
+		Point grown = N::GrowWindow( window, start, sizeRect );
+		
+		if ( grown.h != 0  ||  grown.v != 0 )
+		{
+			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
+			{
+				ResizeWindow( window, grown );
+			}
 		}
 	}
 	

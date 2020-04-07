@@ -9,12 +9,13 @@
 #ifndef __FILES__
 #include <Files.h>
 #endif
-
-// iota
-#include "iota/char_types.hh"
+#ifndef __STRINGCOMPARE__
+#include <StringCompare.h>
+#endif
 
 // ams-common
 #include "callouts.hh"
+#include "FCB.hh"
 
 
 struct logical_block
@@ -22,34 +23,37 @@ struct logical_block
 	uint8_t bytes[ 512 ];
 };
 
-static
-bool equivalent_fsnames( const UInt8* a, const UInt8* b, UInt16 len )
+struct fork_spec
 {
-	while ( len-- > 0 )
+	uint16_t  forkStBlk;
+	uint32_t  forkLgLen;
+	uint32_t  forkPyLen;
+};
+
+static inline
+const fork_spec& get_fork( const mfs::file_directory_entry* entry, Byte rsrc )
+{
+	return (const fork_spec&) (rsrc ? entry->flRStBlk : entry->flStBlk);
+}
+
+static
+const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
+{
+	if ( prev )
 	{
-		if ( iota::to_lower( *a++ ) != iota::to_lower( *b++ ) )
+		const uint8_t* next = prev->flNam + (1 + prev->flNam[ 0 ] + 1 & 0xFE);
+		
+		const mfs::_fde* result = (const mfs::_fde*) next;
+		
+		if ( result->flAttrib < 0 )
 		{
-			return false;
+			return result;
 		}
+		
+		return result->flAttrib < 0 ? result : NULL;
 	}
 	
-	return true;
-}
-
-static
-bool equivalent_fsnames( ConstStr255Param a, ConstStr255Param b )
-{
-	return *a == *b  &&  equivalent_fsnames( a + 1, b + 1, *a );
-}
-
-const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name )
-{
 	if ( vcb->vcbSigWord != 0xD2D7 )
-	{
-		return NULL;
-	}
-	
-	if ( name == NULL  ||  name[ 0 ] == '\0' )
 	{
 		return NULL;
 	}
@@ -60,20 +64,37 @@ const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name )
 	
 	const logical_block* file_directory = all_blocks + vcb->vcbVBMSt;  // drDirSt
 	
-	typedef const mfs::file_directory_entry* Iter;
+	return (const mfs::file_directory_entry*) file_directory;
+}
+
+const mfs::file_directory_entry* MFS_get_nth( VCB* vcb, short n )
+{
+	const mfs::file_directory_entry* entry = NULL;
 	
-	Iter it = (Iter) file_directory;
-	
-	while ( it->flAttrib < 0 )
+	do
 	{
-		if ( equivalent_fsnames( it->flNam, name ) )
+		entry = MFS_iterate( vcb, entry );
+	}
+	while ( entry != NULL  &&  --n );
+	
+	return entry;
+}
+
+const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name )
+{
+	if ( name == NULL  ||  name[ 0 ] == '\0' )
+	{
+		return NULL;
+	}
+	
+	const mfs::file_directory_entry* it = NULL;
+	
+	while (( it = MFS_iterate( vcb, it ) ))
+	{
+		if ( EqualString_sans_case( it->flNam, name ) )
 		{
 			return it;
 		}
-		
-		const uint8_t* next = it->flNam + (1 + it->flNam[ 0 ] + 1 & 0xFE);
-		
-		it = (Iter) next;
 	}
 	
 	return NULL;
@@ -94,7 +115,7 @@ int16_t get_next( const uint8_t* block_map, int16_t curBlk )
 		return -1;
 	}
 	
-	block_map += 3 * curBlk / 2;
+	block_map += 3 * curBlk / 2u;
 	
 	if ( curBlk & 1 )
 	{
@@ -126,4 +147,49 @@ void MFS_load( VCB* vcb, uint16_t stBlk, Ptr buffer, int16_t n )
 		
 		stBlk = get_next( block_map, stBlk );
 	}
+}
+
+OSErr MFS_open_fork( short trap_word, FCB* fcb, const mfs::_fde* entry )
+{
+	const Byte is_rsrc = trap_word;  // Open is A000, OpenRF is A00A
+	
+	const fork_spec& fork = get_fork( entry, is_rsrc );
+	
+	const size_t len = fork.forkPyLen;
+	
+	Ptr buffer = NewPtr( len );
+	
+	if ( buffer == NULL )
+	{
+		return memFullErr;
+	}
+	
+	MFS_load( fcb->fcbVPtr, fork.forkStBlk, buffer, len / 512 );
+	
+	fcb->fcbFlNum  = entry->flNum;
+	
+	fcb->fcbTypByt = entry->flVersNum;
+	fcb->fcbSBlk   = fork.forkStBlk;
+	fcb->fcbEOF    = fork.forkLgLen;
+	fcb->fcbPLen   = fork.forkPyLen;
+	
+	fcb->fcbBfAdr  = buffer;
+	
+	return noErr;
+}
+
+OSErr MFS_GetFileInfo( FileParam* pb, const mfs::_fde* entry )
+{
+	const size_t n = offsetof( mfs::file_directory_entry, flNam );
+	
+	fast_memcpy( &pb->ioFlAttrib, entry, n );
+	
+	if ( pb->ioNamePtr )
+	{
+		ConstStr255Param name = entry->flNam;
+		
+		fast_memcpy( pb->ioNamePtr, name, 1 + name[ 0 ] );
+	}
+	
+	return noErr;
 }

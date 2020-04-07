@@ -5,6 +5,10 @@
 
 #include "relix/syscall/getdents.hh"
 
+#ifdef __APPLE__
+#include <sys/types.h>
+#endif
+
 // POSIX
 #include <dirent.h>
 #include <fcntl.h>

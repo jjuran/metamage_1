@@ -32,7 +32,9 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE        := gear
-LOCAL_SRC_FILES     := src/gear/inscribe_decimal.cc src/gear/parse_decimal.cc
+LOCAL_SRC_FILES     := src/gear/hexadecimal.cc       \
+                       src/gear/inscribe_decimal.cc  \
+                       src/gear/parse_decimal.cc
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
 LOCAL_CPP_EXTENSION := .cc
 

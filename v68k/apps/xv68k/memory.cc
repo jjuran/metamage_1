@@ -25,9 +25,13 @@
 
 // xv68k
 #include "screen.hh"
+#include "sound.hh"
+#include "VIA.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 using v68k::addr_t;
@@ -38,7 +42,10 @@ using v68k::user_program_space;
 using v68k::mem_exec;
 
 
-const uint32_t screen_addr = 0x0001A700;
+const uint32_t alt_screen_addr  = 0x00012700;
+const uint32_t main_screen_addr = 0x0001A700;
+
+const uint32_t screen_addr = main_screen_addr;
 
 static uint8_t* low_memory_base;
 static uint32_t low_memory_size;
@@ -124,6 +131,19 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return screen::translate( addr - screen_addr, length, fc, access );
 	}
 	
+	if ( addr >= alt_screen_addr  &&  addr < alt_screen_addr + screen_size )
+	{
+		return screen::translate2( addr - alt_screen_addr, length, fc, access );
+	}
+	
+	const uint32_t sound_addr = 0x0001FD00;
+	const uint32_t sound_size = 740;
+	
+	if ( addr >= sound_addr  &&  addr < sound_addr + sound_size )
+	{
+		return sound::translate( addr - sound_addr, length, fc, access );
+	}
+	
 	if ( (addr >> 16) == 0x0040 )
 	{
 		// Mac ROM
@@ -142,6 +162,11 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	if ( addr < low_memory_size )
 	{
 		return lowmem_translate( addr, length, fc, access );
+	}
+	
+	if ( (addr & 0x00FF0000) == 0xEF0000 )
+	{
+		return VIA::translate( addr, length, fc, access );
 	}
 	
 	return v68k::callout::translate( addr, length, fc, access );

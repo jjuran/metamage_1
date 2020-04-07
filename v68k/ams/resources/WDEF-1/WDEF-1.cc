@@ -158,10 +158,19 @@ pascal long WDEF_1_Draw( short varCode, GrafPort* w, long param )
 	
 	raster_lock lock;
 	
-	FrameRgn( window->strucRgn );
-	CopyRgn ( window->strucRgn, clipRgn );
+	static RgnHandle tmp = NewRgn();
 	
-	InsetRgn( clipRgn, 1, 1 );
+	CopyRgn( window->strucRgn, tmp );
+	InsetRgn( tmp, 1, 1 );
+	
+	/*
+		TODO:  We calculate the inset region twice -- once above, and
+		again below in FrameRgn().  Maybe this could be deduplicated?
+	*/
+	
+	FrameRgn( window->strucRgn );
+	
+	SectRgn( clipRgn, tmp, clipRgn );
 	
 	const Rect& content = window->contRgn[0]->rgnBBox;
 	

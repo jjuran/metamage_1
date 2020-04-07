@@ -6,9 +6,6 @@
 #ifndef GENIE_FILESYSTEM_VIEWS_HH
 #define GENIE_FILESYSTEM_VIEWS_HH
 
-// plus
-#include "plus/var_string.hh"
-
 // vfs
 #include "vfs/node_ptr.hh"
 #include "vfs/property.hh"
@@ -38,40 +35,6 @@ namespace Genie
 	const vfs::node* GetViewWindowKey( const vfs::node* view );
 	
 	bool InvalidateWindowForView( const vfs::node* view );
-	
-	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
-	struct Const_View_Property : vfs::readonly_property
-	{
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			typedef typename Serialize::result_type result_type;
-			
-			const result_type& value = Access( that );
-			
-			Serialize::deconstruct::apply( result, value, binary );
-		}
-	};
-	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
-	struct View_Property : vfs::readwrite_property
-	{
-		static void get( plus::var_string& result, const vfs::node* that, bool binary )
-		{
-			typedef typename Serialize::result_type result_type;
-			
-			const result_type& value = Access( that );
-			
-			Serialize::deconstruct::apply( result, value, binary );
-		}
-		
-		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
-		{
-			Access( that ) = Serialize::reconstruct::apply( begin, end, binary );
-			
-			InvalidateWindowForView( that );
-		}
-	};
 	
 	
 	vfs::node_ptr create_default_delegate_for_new_view( const vfs::node*     node,

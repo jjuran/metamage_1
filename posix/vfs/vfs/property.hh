@@ -16,6 +16,11 @@
 namespace vfs
 {
 	
+	enum
+	{
+		no_fixed_size = -1,
+	};
+	
 	typedef void (*property_get_hook)( plus::var_string&  out,
 	                                   const node*        that,
 	                                   bool               binary );
@@ -27,7 +32,7 @@ namespace vfs
 	
 	struct readonly_property
 	{
-		static const int fixed_size = -1;
+		static const int fixed_size = no_fixed_size;
 		
 		static const bool can_get = true;
 		static const bool can_set = false;
@@ -38,7 +43,7 @@ namespace vfs
 	
 	struct writeonly_property
 	{
-		static const int fixed_size = -1;
+		static const int fixed_size = no_fixed_size;
 		
 		static const bool can_get = false;
 		static const bool can_set = true;
@@ -49,7 +54,7 @@ namespace vfs
 	
 	struct readwrite_property
 	{
-		static const int fixed_size = -1;
+		static const int fixed_size = no_fixed_size;
 		
 		static const bool can_get = true;
 		static const bool can_set = true;

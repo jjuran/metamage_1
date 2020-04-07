@@ -31,6 +31,18 @@ struct OSEvQEl
 };
 
 static
+EvQEl* dequeue_event( QElemPtr it )
+{
+	Dequeue( it, &EventQueue );
+	
+	EvQEl* el = (EvQEl*) it;
+	
+	el->qType = 0;
+	
+	return el;
+}
+
+static
 EvQEl* find_empty_slot()
 {
 	OSEvQEl* it = (OSEvQEl*) SysEvtBuf;
@@ -48,11 +60,7 @@ EvQEl* find_empty_slot()
 	}
 	while ( --n >= 0 );
 	
-	QElemPtr head = EventQueue.qHead;
-	
-	Dequeue( head, &EventQueue );
-	
-	return (EvQEl*) head;
+	return dequeue_event( EventQueue.qHead );
 }
 
 static inline
@@ -124,11 +132,7 @@ char GetOSEvent_patch( short mask : __D0, EventRecord* event : __A0 )
 	
 	if ( it != NULL )
 	{
-		Dequeue( it, &EventQueue );
-		
-		EvQEl* el = (EvQEl*) it;
-		
-		el->qType = 0;
+		dequeue_event( it );
 	}
 	
 	return -(it == NULL);
@@ -146,7 +150,7 @@ void FlushEvents_patch( unsigned long masks : __D0 )
 		
 		if ( (1 << el->evtQWhat) & masks )
 		{
-			Dequeue( it, &EventQueue );
+			dequeue_event( it );
 		}
 		
 		it = next;

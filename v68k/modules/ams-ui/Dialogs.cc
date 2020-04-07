@@ -19,8 +19,12 @@
 #include <Sound.h>
 #endif
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "callouts.hh"
+#include "c_string.hh"
 #include "QDGlobals.hh"
 
 // ams-ui
@@ -30,6 +34,10 @@
 
 static short ANumber;
 static short ACount = -1;
+
+long CaretTime : 0x02F4;
+
+WindowPeek WindowList  : 0x09D6;
 
 StringHandle DAStrings[ 4 ] : 0x0AA0;
 
@@ -190,6 +198,194 @@ const DialogItem* next( const DialogItem* di )
 	return next( const_cast< DialogItem* >( di ) );
 }
 
+static
+DialogItem* get_nth_item( Handle items, short i )
+{
+	DialogItem* item = first_dialog_item( items );
+	
+	while ( --i > 0 )
+	{
+		item = next( item );
+	}
+	
+	return item;
+}
+
+static inline
+DialogItem* get_nth_item( DialogRef dialog, short i )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	return get_nth_item( d->items, i );
+}
+
+static inline
+DialogItem* end_of_items( Handle items )
+{
+	const short n_items_1 = dialog_item_count_minus_one( items );
+	
+	return get_nth_item( items, n_items_1 + 2 );
+}
+
+static inline
+const DialogItem* get_editField( DialogPeek d )
+{
+	const short i = d->editField + 1;
+	
+	return i ? get_nth_item( d->items, i ) : NULL;
+}
+
+static
+short next_field( DialogPeek d )
+{
+	const short n_items_1 = dialog_item_count_minus_one( d->items );
+	
+	const DialogItem* item = first_dialog_item( d->items );
+	
+	short first = -1;
+	
+	short i = 0;
+	
+	for ( ;  i <= n_items_1;  ++i )
+	{
+		if ( (item->type & 0x7f) == editText )
+		{
+			first = i;
+			break;
+		}
+		
+		item = next( item );
+	}
+	
+	if ( first < 0 )
+	{
+		return first;
+	}
+	
+	const short editField = d->editField;
+	
+	while ( i < editField )
+	{
+		item = next( item );
+		++i;
+	}
+	
+	do
+	{
+		if ( ++i > n_items_1 )
+		{
+			return first;
+		}
+		
+		item = next( item );
+	}
+	while ( (item->type & 0x7f) != editText );
+	
+	return i;
+}
+
+static
+short prev_field( DialogPeek d )
+{
+	const short n_items_1 = dialog_item_count_minus_one( d->items );
+	
+	const DialogItem* item = first_dialog_item( d->items );
+	
+	const short editField = d->editField;
+	
+	short prev = -1;
+	
+	short i = 0;
+	
+	while ( i < editField )
+	{
+		if ( (item->type & 0x7f) == editText )
+		{
+			prev = i;
+		}
+		
+		item = next( item );
+		++i;
+	}
+	
+	if ( prev >= 0 )
+	{
+		return prev;
+	}
+	
+	short last = editField;
+	
+	while ( i < n_items_1 )
+	{
+		item = next( item );
+		++i;
+		
+		if ( (item->type & 0x7f) == editText )
+		{
+			last = i;
+		}
+	}
+	
+	return last;
+}
+
+static
+DialogItem* recover_dialog_item( DialogPeek d, Handle h )
+{
+	short n_items_1 = dialog_item_count_minus_one( d->items );
+	
+	DialogItem* item = first_dialog_item( d->items );
+	
+	do
+	{
+		if ( item->handle == h )
+		{
+			return item;
+		}
+		
+		item = next( item );
+	}
+	while ( --n_items_1 >= 0 );
+	
+	return NULL;
+}
+
+static
+DialogPeek recover_dialog( Handle h )
+{
+	WindowPeek w = WindowList;
+	
+	while ( w != NULL )
+	{
+		if ( w->windowKind == dialogKind  ||  w->windowKind < 0 )
+		{
+			DialogPeek d = (DialogPeek) w;
+			
+			if ( recover_dialog_item( d, h ) )
+			{
+				return d;
+			}
+		}
+		
+		w = w->nextWindow;
+	}
+	
+	return NULL;
+}
+
+static
+WindowPeek front_dialog_window()
+{
+	WindowPeek w = WindowList;
+	
+	if ( w  &&  (w->windowKind == dialogKind  ||  w->windowKind < 0) )
+	{
+		return w;  // The window doesn't have to be visible
+	}
+	
+	return NULL;
+}
+
 
 #pragma mark -
 #pragma mark Initialization
@@ -199,9 +395,37 @@ pascal void InitDialogs_patch( void* proc )
 {
 }
 
+pascal void ErrorSound_patch( void* proc )
+{
+	ERROR = "ErrorSound is unimplemented";
+}
+
 #pragma mark -
 #pragma mark Creating and Disposing of Dialogs
 #pragma mark -
+
+static
+void update_edit_record( TEHandle hTE, const DialogItem* item )
+{
+	hTE[0]->teLength = GetHandleSize( item->handle );
+	hTE[0]->hText    = item->handle;
+	
+	TECalText( hTE );
+	
+	TESetSelect( 0, 32767, hTE );
+}
+
+static
+void make_edit_record( DialogPeek d, const DialogItem* item )
+{
+	TEHandle hTE = TENew( &item->bounds, &item->bounds );
+	
+	d->textH = hTE;
+	
+	DisposeHandle( hTE[0]->hText );
+	
+	update_edit_record( hTE, item );
+}
 
 pascal DialogRef NewDialog_patch( void*                 storage,
                                   const Rect*           bounds,
@@ -257,7 +481,11 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	
 	short n_items_1 = dialog_item_count_minus_one( items );
 	
+	DialogItem* edit = NULL;
 	DialogItem* item = first_dialog_item( items );
+	
+	short item_offset = 0;  // item index - 1
+	short edit_offset = -1;
 	
 	do
 	{
@@ -269,7 +497,7 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 				item->handle = (Handle) NewControl( window,
 				                                    &item->bounds,
 				                                    &item->length,
-				                                    visible,
+				                                    true,
 				                                    0,  // value
 				                                    0,  // min
 				                                    1,  // max
@@ -277,8 +505,18 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 				                                    0 );
 				break;
 			
-			case statText:
+			case ctrlItem + resCtrl:
+				item->handle = (Handle) GetNewControl( item_ResID( item ), window );
+				break;
+			
 			case editText:
+				if ( edit_offset < 0 )
+				{
+					edit_offset = item_offset;
+					edit        = item;
+				}
+				// fall through
+			case statText:
 				item->handle = expand_param_text( &item->length );
 				break;
 			
@@ -295,8 +533,19 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 		}
 		
 		item = next( item );
+		
+		++item_offset;
 	}
 	while ( --n_items_1 >= 0 );
+	
+	d->editField = edit_offset;
+	
+	if ( edit_offset >= 0 )
+	{
+		scoped_port thePort = window;
+		
+		make_edit_record( d, edit );
+	}
 	
 	return window;
 }
@@ -339,6 +588,13 @@ pascal DialogRef GetNewDialog_patch( short id, void* storage, WindowRef behind )
 pascal void CloseDialog_patch( DialogRef dialog )
 {
 	DialogPeek d = (DialogPeek) dialog;
+	
+	if ( TEHandle hTE = d->textH )
+	{
+		hTE[0]->hText = NewHandle( 0 );
+		
+		TEDispose( hTE );
+	}
 	
 	short n_items_1 = dialog_item_count_minus_one( d->items );
 	
@@ -411,104 +667,103 @@ bool invoke_defItem( DialogPeek d )
 	return ! (type & 0x80);
 }
 
+static
+void activate_editField( DialogRef dialog, bool activating )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	if ( TEHandle hTE = d->textH )
+	{
+		if ( activating )
+		{
+			if ( const DialogItem* item = get_editField( d ) )
+			{
+				hTE[0]->viewRect = item->bounds;
+				hTE[0]->destRect = item->bounds;
+				
+				TEActivate( hTE );
+			}
+		}
+		else
+		{
+			TEDeactivate( hTE );
+		}
+	}
+}
+
+static pascal
+Boolean basic_filterProc( DialogRef dialog, EventRecord* event, short* itemHit )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	if ( event->what == keyDown )
+	{
+		switch ( (char) event->message )
+		{
+			case kEnterCharCode:
+			case kReturnCharCode:
+				if ( invoke_defItem( d ) )
+				{
+					*itemHit = d->aDefItem;
+					return true;
+				}
+			
+			default:
+				break;
+		}
+	}
+	
+	return false;
+}
+
+static inline
+bool blinks( TEHandle hTE )
+{
+	return hTE  &&  hTE[0]->active  &&  hTE[0]->selStart == hTE[0]->selEnd;
+}
+
 pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 {
 	modal_update_scope updating( filterProc == NULL );
 	
-	QDGlobals& qd = get_QDGlobals();
+	if ( filterProc == NULL )
+	{
+		filterProc = &basic_filterProc;
+	}
 	
-	WindowRef window = qd.thePort;
+	WindowRef window = FrontWindow();
+	
+	scoped_port thePort = window;
 	
 	WindowPeek w = (WindowPeek) window;
 	DialogPeek d = (DialogPeek) window;
 	
-	const long sleep = 0x7fffffff;
-	
 	while ( true )
 	{
+		const long sleep = blinks( d->textH ) ? CaretTime : 0xFFFFFFFF;
+		
 		EventRecord event;
 		
 		if ( WaitNextEvent( everyEvent, &event, sleep, NULL ) )
 		{
-			switch ( event.what )
+			if ( event.what == mouseDown )
 			{
-				case updateEvt:
-					window = (WindowRef) event.message;
-					
-					BeginUpdate( window );
-					DrawDialog( window );
-					EndUpdate( window );
-					break;
-				
-				case mouseDown:
+				if ( ! PtInRgn( event.where, w->contRgn ) )
 				{
-					if ( ! PtInRgn( event.where, w->contRgn ) )
-					{
-						SysBeep( 30 );
-						continue;
-					}
-					
-					Point pt = event.where;
-					GlobalToLocal( &pt );
-					
-					// item count minus one
-					short n_items_1 = dialog_item_count_minus_one( d->items );
-					
-					const DialogItem* item = first_dialog_item( d->items );
-					
-					short item_index = 0;
-					
-					while ( item_index++ <= n_items_1 )
-					{
-						const UInt8 type = item->type;
-						
-						if ( PtInRect( pt, &item->bounds ) )
-						{
-							if ( (type & 0x7c) == ctrlItem )
-							{
-								ControlRef control = (ControlRef) item->handle;
-								
-								if ( ! TrackControl( control, pt, NULL ) )
-								{
-									break;
-								}
-							}
-							
-							if ( ! (type & 0x80) )
-							{
-								*itemHit = item_index;
-								return;
-							}
-						}
-						
-						item = next( item );
-					}
-					
-					break;
+					SysBeep( 6 );
+					continue;
 				}
-				
-				case keyDown:
-				{
-					switch ( (char) event.message )
-					{
-						case kEnterCharCode:
-						case kReturnCharCode:
-							if ( invoke_defItem( d ) )
-							{
-								*itemHit = d->aDefItem;
-								return;
-							}
-						
-						default:
-							break;
-					}
-					
-					break;
-				}
-				
-				default:
-					break;
 			}
+		}
+		
+		if ( filterProc( window, &event, itemHit ) )
+		{
+			return;
+		}
+		
+		if ( DialogSelect( &event, &window, itemHit ) )
+		{
+			return;
 		}
 	}
 }
@@ -537,49 +792,66 @@ pascal Boolean IsDialogEvent_patch( const EventRecord* event )
 	return false;
 }
 
+static inline
+DialogRef dialog_from_event( const EventRecord* event )
+{
+	WindowPeek w = (WindowPeek) event->message;
+	
+	return w->windowKind == dialogKind ? &w->port : NULL;
+}
+
+static
+void advance_field( DialogRef dialog, bool reverse )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	const short target = reverse ? prev_field( d )
+	                             : next_field( d );
+	
+	if ( target >= 0  &&  target != d->editField )
+	{
+		SelectDialogItemText( dialog, target + 1, 0, 32767 );
+	}
+}
+
 pascal Boolean DialogSelect_patch( const EventRecord*  event,
                                    DialogRef*          dialogHit,
                                    short*              itemHit )
 {
-	DialogRef dialog;
-	GrafPtr savedPort;
-	
 	switch ( event->what )
 	{
-		case mouseDown:
-		case keyDown:
-		case autoKey:
-			break;
-		
 		case updateEvt:
-			dialog = (DialogRef) event->message;
+			if ( DialogRef dialog = dialog_from_event( event ) )
+			{
+				BeginUpdate( dialog );
+				DrawDialog ( dialog );
+				EndUpdate  ( dialog );
+			}
 			
-			GetPort( &savedPort );
-			SetPort( dialog );
-			
-			BeginUpdate( dialog );
-			DrawDialog ( dialog );
-			EndUpdate  ( dialog );
-			
-			SetPort( savedPort );
 			return false;
 		
 		case activateEvt:
-			// TODO:  Activate TE items
+			if ( DialogRef dialog = dialog_from_event( event ) )
+			{
+				activate_editField( dialog, event->modifiers & activeFlag );
+			}
+			
 			return false;
 		
 		default:
-			return false;
+			break;
 	}
 	
-	dialog = FrontWindow();
+	const DialogRef dialog = FrontWindow();
+	
+	*dialogHit = dialog;
 	
 	DialogPeek d = (DialogPeek) dialog;
 	
-	// TODO:  keyDown/autoKey
-	
 	if ( event->what == mouseDown )
 	{
+		scoped_port thePort = dialog;
+		
 		Point pt = event->where;
 		GlobalToLocal( &pt );
 		
@@ -596,9 +868,18 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 			
 			if ( PtInRect( pt, &item->bounds ) )
 			{
-				if ( type & 0x80 )
+				if ( (type & 0x7c) == editText )
 				{
-					return false;  // disabled
+					bool extend = event->modifiers & shiftKey;
+					
+					if ( d->editField + 1 != item_index )
+					{
+						SelectDialogItemText( dialog, item_index, 0, 32767 );
+						
+						extend = false;
+					}
+					
+					TEClick( pt, extend, d->textH );
 				}
 				
 				if ( (type & 0x7c) == ctrlItem )
@@ -611,6 +892,11 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 					}
 				}
 				
+				if ( type & 0x80 )
+				{
+					return false;  // disabled
+				}
+				
 				*itemHit = item_index;
 				
 				return true;
@@ -618,6 +904,31 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 			
 			item = next( item );
 		}
+	}
+	else if ( event->what == keyDown  ||  event->what == autoKey )
+	{
+		if ( TEHandle hTE = d->textH )
+		{
+			const char c = (char) event->message;
+			
+			if ( c == kTabCharCode )
+			{
+				advance_field( dialog, event->modifiers & shiftKey );
+				return false;
+			}
+			
+			TEKey( c, hTE );
+			
+			const DialogItem* item = get_editField( d );
+			
+			*itemHit = d->editField + 1;
+			
+			return ! (item->type & 0x80);
+		}
+	}
+	else if ( TEHandle hTE = d->textH )
+	{
+		TEIdle( hTE );
 	}
 	
 	return false;
@@ -628,6 +939,8 @@ pascal void DrawDialog_patch( DialogRef dialog )
 	scoped_port thePort = dialog;
 	
 	DrawControls( dialog );
+	
+	PenNormal();
 	
 	DialogPeek d = (DialogPeek) dialog;
 	
@@ -656,6 +969,12 @@ pascal void DrawDialog_patch( DialogRef dialog )
 				
 				InsetRect( &box, -3, -3 );
 				FrameRect( &box );
+				
+				if ( d->editField + 1 == item_index )
+				{
+					TEUpdate( &bounds, d->textH );
+					break;
+				}
 			}
 			// fall through
 			
@@ -719,15 +1038,7 @@ static const Rect alert_icon_bounds = { 10, 20, 10 + 32, 20 + 32 };
 static
 void DITL_append_icon( Handle items, ResID icon_id )
 {
-	short n_items_1 = dialog_item_count_minus_one( items );
-	
-	DialogItem* item = first_dialog_item( items );
-	
-	do
-	{
-		item = next( item );
-	}
-	while ( --n_items_1 >= 0 );
+	DialogItem* item = end_of_items( items );
 	
 	const short added_length = sizeof (DialogItem)
 	                         + sizeof (ResID);  // 16 bytes
@@ -751,15 +1062,7 @@ void DITL_append_icon( Handle items, ResID icon_id )
 static
 void DITL_append_userItem( Handle items, UserItemUPP proc, const Rect& bounds )
 {
-	short n_items_1 = dialog_item_count_minus_one( items );
-	
-	DialogItem* item = first_dialog_item( items );
-	
-	do
-	{
-		item = next( item );
-	}
-	while ( --n_items_1 >= 0 );
+	DialogItem* item = end_of_items( items );
 	
 	const short added_length = sizeof (DialogItem);  // 14 bytes
 	
@@ -826,7 +1129,7 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, ResID icon_id )
 		
 		const Rect& screen = qd.screenBits.bounds;
 		
-		const short dh = (screen.right - screen.left - bounds.right) / 2;
+		const short dh = (screen.right - screen.left - bounds.right) / 2u;
 		const short dv = (screen.bottom - screen.top - bounds.bottom) / 3;
 		
 		OffsetRect( &bounds, dh, dv );
@@ -920,37 +1223,31 @@ pascal void ParamText_patch( const unsigned char*  p1,
 	set_param( 2, p3 );
 	set_param( 3, p4 );
 	
-	if ( WindowRef window = FrontWindow() )
+	if ( WindowPeek window = front_dialog_window() )
 	{
-		WindowPeek w = (WindowPeek) window;
+		DialogPeek d = (DialogPeek) window;
 		
-		if ( w->windowKind == dialogKind )
+		short n_items_1 = dialog_item_count_minus_one( d->items );
+		
+		DialogItem* item = first_dialog_item( d->items );
+		
+		do
 		{
-			DialogPeek d = (DialogPeek) window;
-			
-			short n_items_1 = dialog_item_count_minus_one( d->items );
-			
-			DialogItem* item = first_dialog_item( d->items );
-			
-			do
+			switch ( item->type & 0x7F )
 			{
-				switch ( item->type & 0x7F )
-				{
-					case statText:
-					case editText:
-						DisposeHandle( item->handle );
-						
-						item->handle = expand_param_text( &item->length );
-						break;
+				case statText:
+					DisposeHandle( item->handle );
 					
-					default:
-						break;
-				}
+					item->handle = expand_param_text( &item->length );
+					break;
 				
-				item = next( item );
+				default:
+					break;
 			}
-			while ( --n_items_1 >= 0 );
+			
+			item = next( item );
 		}
+		while ( --n_items_1 >= 0 );
 	}
 }
 
@@ -962,16 +1259,20 @@ pascal void GetDItem_patch( DialogRef  dialog,
 {
 	DialogPeek d = (DialogPeek) dialog;
 	
-	const DialogItem* item = first_dialog_item( d->items );
-	
-	while ( --i > 0 )
-	{
-		item = next( item );
-	}
+	const DialogItem* item = get_nth_item( dialog, i );
 	
 	*type = item->type;
 	*h    = item->handle;
 	*box  = item->bounds;
+	
+	TEHandle hTE = d->textH;
+	
+	if ( hTE  &&  hTE[0]->hText == item->handle )
+	{
+		// Trim the handle so the caller knows the text length.
+		
+		SetHandleSize( hTE[0]->hText, hTE[0]->teLength );
+	}
 }
 
 pascal void SetDItem_patch( DialogRef    dialog,
@@ -982,18 +1283,36 @@ pascal void SetDItem_patch( DialogRef    dialog,
 {
 	DialogPeek d = (DialogPeek) dialog;
 	
-	short n_items_1 = dialog_item_count_minus_one( d->items );
+	DialogItem* item = get_nth_item( dialog, i );
 	
-	DialogItem* item = first_dialog_item( d->items );
-	
-	while ( --i > 0 )
+	if ( d->editField == i - 1  &&  (type & 0x7f) != editText )
 	{
-		item = next( item );
+		TEHandle hTE = d->textH;
+		
+		SetHandleSize( hTE[0]->hText, hTE[0]->teLength );
+		
+		d->editField = -1;
 	}
 	
 	item->handle = h;
 	item->bounds = *box;
 	item->type   = type;
+	
+	if ( (type & 0x7f) == editText  &&  d->editField < 0 )
+	{
+		d->editField = i - 1;
+		
+		if ( d->textH == NULL )
+		{
+			scoped_port thePort = dialog;
+			
+			make_edit_record( d, item );
+		}
+		else
+		{
+			update_edit_record( d->textH, item );
+		}
+	}
 }
 
 pascal void GetIText_patch( Handle h, Str255 text )
@@ -1014,14 +1333,34 @@ pascal void SetIText_patch( Handle h, const unsigned char* text )
 {
 	const Size len = text[ 0 ];
 	
-	if ( GetHandleSize( h ) < len )
+	PtrToXHand( text + 1, h, len );
+	
+	DialogPeek d = recover_dialog( h );
+	
+	if ( d == NULL )
 	{
-		SetHandleSize( h, len );
+		ERROR = "SetIText can't recover DialogRef to set text: ", CSTR( text );
+		return;
 	}
 	
-	fast_memcpy( *h, text + 1, len );
+	TEHandle hTE = d->textH;
 	
-	// TODO:  Invalidate the text rect
+	if ( hTE  &&  hTE[0]->hText == h )
+	{
+		hTE[0]->teLength = len;
+		
+		TECalText( hTE );
+		
+		TEUpdate( &hTE[0]->viewRect, hTE );
+		
+		return;
+	}
+	
+	scoped_port thePort = (DialogRef) d;
+	
+	DialogItem* item = recover_dialog_item( d, h );
+	
+	TETextBox( text + 1, len, &item->bounds, 0 );
 }
 
 pascal void SelIText_patch( GrafPort*  dialog,
@@ -1029,6 +1368,108 @@ pascal void SelIText_patch( GrafPort*  dialog,
                             short      start,
                             short      end )
 {
+	DialogPeek d = (DialogPeek) dialog;
+	
+	TEHandle hTE = d->textH;
+	
+	if ( hTE == NULL )
+	{
+		return;
+	}
+	
+	const bool active = hTE[0]->active;
+	
+	if ( active )
+	{
+		TEDeactivate( hTE );
+	}
+	
+	if ( d->editField != item - 1 )
+	{
+		d->editField = item - 1;
+		
+		const DialogItem* edit = get_editField( d );
+		
+		hTE[0]->viewRect = edit->bounds;
+		hTE[0]->destRect = edit->bounds;
+		
+		SetHandleSize( hTE[0]->hText, hTE[0]->teLength );
+		
+		hTE[0]->teLength = GetHandleSize( edit->handle );
+		hTE[0]->hText    = edit->handle;
+		
+		TECalText( hTE );
+	}
+	
+	TESetSelect( start, end, hTE );
+	
+	if ( active )
+	{
+		TEActivate( hTE );
+	}
+}
+
+pascal void HideDItem_patch( GrafPort* dialog, short i )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	DialogItem* item = get_nth_item( dialog, i );
+	
+	if ( item->bounds.left >= 8192 )
+	{
+		return;
+	}
+	
+	if ( (item->type & 0x7c) == ctrlItem )
+	{
+		HideControl( (ControlRef) item->handle );
+	}
+	else
+	{
+		if ( (item->type & 0x7f) == editText )
+		{
+			WARNING = "hiding an editText item without checking if it's active";
+		}
+		
+		scoped_port thePort = dialog;
+		
+		EraseRect( &item->bounds );
+		InvalRect( &item->bounds );
+	}
+	
+	item->bounds.left  += 16384;
+	item->bounds.right += 16384;
+}
+
+pascal void ShowDItem_patch( GrafPort* dialog, short i )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	DialogItem* item = get_nth_item( dialog, i );
+	
+	if ( item->bounds.left < 8192 )
+	{
+		return;
+	}
+	
+	if ( (item->type & 0x7c) == ctrlItem )
+	{
+		ShowControl( (ControlRef) item->handle );
+	}
+	else
+	{
+		if ( (item->type & 0x7f) == editText  &&  d->editField < 0 )
+		{
+			WARNING = "showing a lone editText item without making it active";
+		}
+		
+		scoped_port thePort = dialog;
+		
+		InvalRect( &item->bounds );
+	}
+	
+	item->bounds.left  -= 16384;
+	item->bounds.right -= 16384;
 }
 
 pascal short FindDItem_patch( DialogRef dialog, Point pt )

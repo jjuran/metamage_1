@@ -23,9 +23,6 @@
 namespace Pedestal
 {
 	
-	void window_created( WindowRef w );
-	void window_removed( WindowRef w );
-	
 	void populate_Window_menu( MenuRef menu );
 	
 	WindowRef get_nth_window( int i );

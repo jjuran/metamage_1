@@ -1,12 +1,26 @@
-/*	==============
- *	ProgressBar.cc
- *	==============
- */
+/*
+	ProgressBar.cc
+	--------------
+*/
 
 #include "Pedestal/ProgressBar.hh"
 
-// Nitrogen
-#include "Nitrogen/Quickdraw.hh"
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
+
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAW_H
+#include "missing/Quickdraw.h"
+#endif
+#endif
 
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
@@ -15,32 +29,23 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	
 	enum
 	{
 		kStdProgressBarHeight = 12, 
 		kSideMargin = 12
 	};
 	
-	static RGBColor gBlack = { 0, 0, 0 };
+	static const RGBColor gDarkGrey = { 0x4444, 0x4444, 0x4444 };
+	static const RGBColor gSkyBlue  = { 0xcccc, 0xcccc, 0xffff };
 	
-	static RGBColor gDarkGrey = { 0x4444, 0x4444, 0x4444 };
-	static RGBColor gSkyBlue  = { 0xcccc, 0xcccc, 0xffff };
-	
-	
-	static Rect ProgressBarInsetBounds( const Rect& bounds )
-	{
-		return N::InsetRect( bounds, 1, 1 );
-	}
 	
 	static void PaintRect_In_Color( const Rect& bounds, const RGBColor& color )
 	{
-		N::RGBForeColor( color );
+		RGBForeColor( &color );
 		
-		N::PaintRect( bounds );
+		PaintRect( &bounds );
 		
-		N::RGBForeColor( gBlack );
+		ForeColor( blackColor );
 	}
 	
 	static void PaintProgress( const Rect& insetBounds )
@@ -51,7 +56,7 @@ namespace Pedestal
 		}
 		else
 		{
-			N::PaintRect( insetBounds );
+			PaintRect( &insetBounds );
 		}
 	}
 	
@@ -63,14 +68,13 @@ namespace Pedestal
 		}
 		else
 		{
-			N::EraseRect( insetBounds );
+			EraseRect( &insetBounds );
 		}
 	}
 	
-	void ProgressBar::DrawProgress( Rect insetBounds )
+	static
+	void DrawProgress( Rect insetBounds, int value )
 	{
-		int value = Value();
-		
 		if ( value < 0 )
 		{
 			value = 0;
@@ -99,11 +103,13 @@ namespace Pedestal
 	
 	void ProgressBar::Draw( const Rect& bounds, bool erasing )
 	{
-		N::FrameRect( bounds );
+		FrameRect( &bounds );
 		
-		Rect insetBounds = ProgressBarInsetBounds( bounds );
+		Rect insetBounds = bounds;
 		
-		DrawProgress( insetBounds );
+		InsetRect( &insetBounds, 1, 1 );
+		
+		DrawProgress( insetBounds, Value() );
 	}
 	
 }

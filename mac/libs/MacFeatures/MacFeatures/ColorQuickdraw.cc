@@ -6,9 +6,14 @@
 #include "MacFeatures/ColorQuickdraw.hh"
 
 // Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
+#ifndef __APPLE__
+#ifndef __OSUTILS__
+#include <OSUtils.h>
 #endif
+#endif
+
+// mac-sys-utils
+#include "mac_sys/trap_available.hh"
 
 
 namespace MacFeatures
@@ -18,11 +23,18 @@ namespace MacFeatures
 	
 	bool Has_ColorQuickdraw()
 	{
-		long result;
+		enum { _SysEnvirons = 0xA090 };
 		
-		const OSErr err = ::Gestalt( gestaltQuickdrawVersion, &result );
+		if ( ! mac::sys::trap_available( _SysEnvirons ) )
+		{
+			return false;
+		}
 		
-		return err == noErr  &&  result != gestaltOriginalQD;
+		SysEnvRec env;
+		
+		SysEnvirons( curSysEnvVers, &env );
+		
+		return env.hasColorQD;
 	}
 	
 #endif

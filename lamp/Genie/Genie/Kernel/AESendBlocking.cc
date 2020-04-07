@@ -16,18 +16,28 @@
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
 
-// Nitrogen Extras / AEFramework
-#include "AEFramework/AEFramework.h"
-
 // relix
 #include "relix/api/current_thread.hh"
 #include "relix/signal/check_signals.hh"
 #include "relix/signal/signal.hh"
 #include "relix/task/thread.hh"
 
+// Genie
+#include "AEFramework/AEFramework.h"
+
 
 namespace N = Nitrogen;
 
+
+static inline Mac::AEReturnID_32Bit
+//
+AEGetAttributePtr_keyReturnIDAttr( const AppleEvent& appleEvent )
+{
+	const Mac::AEKeyword key = Mac::keyReturnIDAttr;
+	const Mac::DescType type = Mac::typeSInt32;
+	
+	return N::AEKeyword_get< key >( N::AEGetAttributePtr_Getter< type >( appleEvent, key ) );
+}
 
 OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 {
@@ -44,15 +54,16 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 		                  Mac::kAEQueueReply | Mac::kAECanInteract );
 		
 		// Now that we've sent the event, retrieve the return ID
-		N::AEReturnID_32Bit returnID = N::AEGetAttributePtr< Mac::keyReturnIDAttr >( appleEvent );
+		N::AEReturnID_32Bit returnID = AEGetAttributePtr_keyReturnIDAttr( appleEvent );
 		
 		// Subscribe to AEFramework's queued reply delivery and wake-up service
-		N::ExpectReply( returnID, &reply );
+		Genie::ExpectReply( returnID, &reply );
 		
-		const thread& current = current_thread();
-		const pid_t   tid     = current.id();
+		thread& current = current_thread();
 		
 	stop_and_wait:
+		
+		current.mark_current_stack_frame();
 		
 		// Sleep until the reply is delivered
 		stop_os_thread( current.get_os_thread() );

@@ -30,11 +30,17 @@ long long duration( const Tone* tones, unsigned count )
 	
 	const Tone* tone = tones;
 	
+	/*
+		`count` is a multiple of the wavelength.  A zero wavelength is invalid,
+		regardless of what Inside Macintosh says.  So `count` can only be zero
+		when it's a terminator.
+	*/
+	
 	do
 	{
 		ticks += tone->duration;
 	}
-	while ( tone++->duration != 0 );
+	while ( tone++->count != 0 );
 	
 	return nanoseconds_from_ticks( ticks );
 }

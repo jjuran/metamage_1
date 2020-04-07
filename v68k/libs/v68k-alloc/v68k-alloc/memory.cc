@@ -12,7 +12,9 @@
 #include "logofwar/report.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 namespace v68k  {
@@ -26,7 +28,7 @@ static int find_n_pages_at( int n, void* alloc, int i )
 	// Returns 0 on success, or next index to try
 	
 	void* const ante = (char*) alloc - page_size;
-	void* const post = (char*) alloc + page_size;
+	void* const post = (char*) alloc + page_size * n;
 	
 	int j = i + 1 + n;
 	

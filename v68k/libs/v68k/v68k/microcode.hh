@@ -72,6 +72,9 @@ namespace v68k
 	
 	op_result microcode_TAS( processor_state& state, op_params& pb );
 	
+	op_result microcode_MUL_L( processor_state& s, op_params& pb );
+	op_result microcode_DIV_L( processor_state& s, op_params& pb );
+	
 	op_result microcode_MOVEM_to  ( processor_state& state, op_params& pb );
 	op_result microcode_MOVEM_from( processor_state& state, op_params& pb );
 	

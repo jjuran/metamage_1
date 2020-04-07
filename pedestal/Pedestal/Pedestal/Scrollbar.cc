@@ -75,8 +75,6 @@ namespace Pedestal
 	{
 		using namespace nucleus::operators;
 		
-		using nucleus::operator!=;
-		
 		ASSERT( itsControl != NULL );
 		
 		if ( N::GetControlBounds( itsControl ) != bounds )

@@ -13,7 +13,7 @@ def dump_fork( src, dst )
 	}
 }
 
-run .[ "mkdir", "-p", dst ]
+run [ "mkdir", "-p", dst ]
 
 dump_fork (src,                     dst "/data")
 dump_fork (src "/..namedfork/rsrc", dst "/rsrc")

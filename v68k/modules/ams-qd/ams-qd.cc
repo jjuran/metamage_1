@@ -18,7 +18,9 @@
 #include "callouts.hh"
 
 // ams-core
+#include "Arcs.hh"
 #include "CopyBits.hh"
+#include "CopyMask.hh"
 #include "Cursor.hh"
 #include "Fixed.hh"
 #include "Fonts.hh"
@@ -59,6 +61,8 @@ enum
 
 static void install_QuickDraw()
 {
+	TBTRAP( CopyMask );  // A817
+	
 	TBTRAP( InitCursor );  // A850
 	TBTRAP( SetCursor  );  // A851
 	TBTRAP( HideCursor );  // A852
@@ -68,11 +72,16 @@ static void install_QuickDraw()
 	
 	TBTRAP( BitAnd );  // A858
 	
+	TBTRAP( BitNot );  // A85A
+	
 	TBTRAP( BitTst );  // A85D
 	TBTRAP( BitSet );  // A85E
 	TBTRAP( BitClr );  // A85F
 	
 	TBTRAP( Random );  // A861
+	
+	TBTRAP( ForeColor );  // A862
+	TBTRAP( BackColor );  // A863
 	
 	TBTRAP( GetPixel );  // A865
 	TBTRAP( StuffHex );  // A866
@@ -165,6 +174,17 @@ static void install_QuickDraw()
 	TBTRAP( InvertOval );  // A8BA
 	TBTRAP( FillOval   );  // A8BB
 	
+	TBTRAP( SlopeFromAngle );  // A8BC
+	
+	TBTRAP( StdArc     );  // A8BD
+	TBTRAP( FrameArc   );  // A8BE
+	TBTRAP( PaintArc   );  // A8BF
+	TBTRAP( EraseArc   );  // A8C0
+	TBTRAP( InvertArc  );  // A8C1
+	TBTRAP( FillArc    );  // A8C2
+	
+	TBTRAP( AngleFromSlope );  // A8C4
+	
 	TBTRAP( StdPoly    );  // A8C5
 	TBTRAP( FramePoly  );  // A8C6
 	TBTRAP( PaintPoly  );  // A8C7
@@ -211,11 +231,16 @@ static void install_QuickDraw()
 	
 	TBTRAP( ScrollRect  );  // A8EF
 	
-	TBTRAP( DrawPicture );  // A8F6
+	TBTRAP( OpenPicture  );  // A8F3
+	TBTRAP( ClosePicture );  // A8F4
+	TBTRAP( KillPicture  );  // A8F5
+	TBTRAP( DrawPicture  );  // A8F6
 	
 	TBTRAP( MapPt       );  // A8F9
 	TBTRAP( MapRect     );  // A8FA
+	TBTRAP( MapRgn      );  // A8FB
 	
+	TBTRAP( PinRect     );  // A94E
 	TBTRAP( DeltaPoint  );  // A94F
 	
 	TBTRAP( GetPattern  );  // A9B8
@@ -230,6 +255,9 @@ static void install_Fonts()
 	
 	TBTRAP( GetFNum    );  // A900
 	TBTRAP( FMSwapFont );  // A901
+	TBTRAP( RealFont   );  // A902
+	
+	TBTRAP( SetFontLock );  // A903
 }
 
 static void install_StrUtils()

@@ -49,7 +49,7 @@ namespace nucleus
 namespace Nitrogen
 {
 	
-#if UNIVERSAL_INTERFACES_VERSION < 0x0400
+#ifndef MAC_OS_X_VERSION_10_4
 	
 	// This definition of CGBitmapInfo should be regarded as private.
 	typedef CGImageAlphaInfo CGBitmapInfo;
@@ -148,7 +148,7 @@ namespace Nitrogen
 		return nucleus::owned< CGImageRef >::seize( result );
 	}
 	
-#if UNIVERSAL_INTERFACES_VERSION >= 0x0400
+#ifdef MAC_OS_X_VERSION_10_4
 	
 	class CGImageCreateCopy_Failed {};
 	
@@ -215,6 +215,8 @@ namespace Nitrogen
 		return nucleus::owned< CGImageRef >::seize( result );
 	}
 	
+#ifdef MAC_OS_X_VERSION_10_4
+	
 	class CGImageCreateWithImageInRect_Failed {};
 	
 	inline
@@ -251,6 +253,7 @@ namespace Nitrogen
 	}
 	
 #endif
+#endif
 	
 //	CG_EXTERN CGImageRef CGImageCreateWithMaskingColors(CGImageRef image, const float components[]) AVAILABLE_MAC_OS_X_VERSION_10_4_AND_LATER;
 //	CG_EXTERN CGImageRef CGImageCreateCopyWithColorSpace(CGImageRef image, CGColorSpaceRef colorspace) AVAILABLE_MAC_OS_X_VERSION_10_3_AND_LATER;
@@ -269,7 +272,7 @@ namespace Nitrogen
 	using ::CGImageGetShouldInterpolate;
 	using ::CGImageGetRenderingIntent;
 	
-#if UNIVERSAL_INTERFACES_VERSION >= 0x0400
+#ifdef MAC_OS_X_VERSION_10_4
 
 	using ::CGImageGetBitmapInfo;
 	

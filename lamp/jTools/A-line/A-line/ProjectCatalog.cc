@@ -188,7 +188,7 @@ namespace tool
 	                         std::back_insert_iterator< std::vector< plus::string > >  configs,
 	                         std::back_insert_iterator< std::vector< plus::string > >  folders )
 	{
-		struct ::stat dir_stat;
+		struct stat dir_stat;
 		
 		if ( !p7::stat( dirPath, dir_stat )  ||  !p7::s_isdir( dir_stat ) )
 		{
@@ -309,8 +309,8 @@ namespace tool
 						
 						plus::string config_pathname( tab2 + 1 );
 						
-						PlatformDemands demands( Platform( gear::parse_unsigned_decimal( requirements ) ),
-						                         Platform( gear::parse_unsigned_decimal( prohibitions ) ) );
+						PlatformDemands demands( (Platform) gear::parse_unsigned_decimal( requirements ),
+						                         (Platform) gear::parse_unsigned_decimal( prohibitions ) );
 						
 						add_cached_config( project_name, demands, config_pathname );
 					}

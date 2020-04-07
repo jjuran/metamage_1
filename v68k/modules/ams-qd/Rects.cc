@@ -17,11 +17,10 @@
 #include "redraw_lock.hh"
 
 // ams-qd
+#include "color.hh"
 #include "draw.hh"
 #include "Regions.hh"
-
-
-using quickdraw::segments_box;
+#include "segments_box.hh"
 
 
 enum white_t { White };
@@ -39,6 +38,18 @@ static inline bool operator==( const Pattern& a, black_t )
 	const UInt32* p = (const UInt32*) a.pat;
 	
 	return *p++ == 0xFFFFFFFF  &&  *p == 0xFFFFFFFF;
+}
+
+static inline
+bool erases_to_white( const GrafPort& port )
+{
+	return port.bkColor & Inverse  &&  port.bkPat == White;
+}
+
+static inline
+bool paints_to_black( const GrafPort& port )
+{
+	return ! (port.fgColor & Inverse)  &&  port.pnPat == Black;
 }
 
 struct rectangular_op_params
@@ -185,7 +196,7 @@ Ptr draw_even_segment( Ptr      start,
 		}
 	}
 	
-	short n_longs = n_bytes / 4;
+	short n_longs = n_bytes / 4u;
 	
 	uint32_t* q = (uint32_t*) p;
 	
@@ -244,7 +255,7 @@ Ptr draw_segment( Ptr      start,
 	
 	if ( n_pixels_drawn > 0 )
 	{
-		if ( short n_bytes = n_pixels_drawn / 8 )
+		if ( short n_bytes = n_pixels_drawn / 8u )
 		{
 			p = draw_even_segment( p,
 			                       n_bytes,
@@ -483,7 +494,7 @@ static void draw_rect( const rectangular_op_params&  params,
 	{
 		const uint8_t pat = pattern.pat[ pat_v ];
 		
-		Ptr start = rowBase + (rect.left - bounds.left) / 8;
+		Ptr start = rowBase + (rect.left - bounds.left) / 8u;
 		
 		const short n_pixels_skipped = (rect.left - bounds.left) & 0x7;
 		const short n_pixels_drawn   = rect.right - rect.left;
@@ -507,7 +518,9 @@ void draw_region( const rectangular_op_params&  params,
 {
 	const short* extent = (short*) (*region + 1);
 	
-	quickdraw::region_iterator it( region[0]->rgnSize, extent );
+	segments_box segments( region[0]->rgnSize );
+	
+	quickdraw::region_iterator it( segments, extent );
 	
 	const BitMap& portBits = params.port->portBits;
 	
@@ -532,7 +545,7 @@ void draw_region( const rectangular_op_params&  params,
 				const short h0 = *it++;
 				const short h1 = *it++;
 				
-				Ptr start = rowBase + (h0 - bounds.left) / 8;
+				Ptr start = rowBase + (h0 - bounds.left) / 8u;
 				
 				const short n_pixels_skipped = (h0 - bounds.left) & 0x7;
 				const short n_pixels_drawn   =  h1 - h0;
@@ -599,7 +612,7 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	
 	if ( verb == kQDGrafVerbErase )
 	{
-		if ( clipping_to_rect  &&  port.bkPat == White )
+		if ( clipping_to_rect  &&  erases_to_white( port ) )
 		{
 			erase_rect( params );
 			
@@ -607,12 +620,17 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		}
 		
 		port.fillPat = port.bkPat;
+		
+		if ( ! (port.bkColor & Inverse) )
+		{
+			patMode ^= 4;  // non-white background; negate the pattern
+		}
 	}
 	else if ( verb == kQDGrafVerbPaint )
 	{
 		const short mode = port.pnMode & 0x7;
 		
-		if ( clipping_to_rect  &&  mode <= srcOr  &&  port.pnPat == Black )
+		if ( clipping_to_rect  &&  mode <= srcOr  &&  paints_to_black( port ) )
 		{
 			// patCopy or patOr -- use optimized paint routine
 			paint_rect( params );
@@ -622,6 +640,11 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		
 		patMode      = port.pnMode;
 		port.fillPat = port.pnPat;
+		
+		if ( port.fgColor & Inverse )
+		{
+			patMode ^= 4;  // white foreground; negate the pattern
+		}
 	}
 	else if ( verb == kQDGrafVerbInvert )
 	{

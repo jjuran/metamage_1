@@ -20,9 +20,6 @@
 #include <MacTypes.h>
 #endif
 
-// iota
-#include "iota/dummy.hh"
-
 //  These are weird ones:
 //  They are some member functions of std::char_traits < UTF16Char > that the linker wants.
 //  They are not needed in CodeWarrior, because CW8 has two byte wchar_t(s), and so the standard
@@ -32,6 +29,7 @@
 
 #if defined(__GNUC__) && (__GNUC__ < 4)
 
+#include <string>
 #include <ext/algorithm>
 
 namespace std
@@ -74,4 +72,8 @@ namespace std
 
 }
 
+#else
+	
+	int dummy;
+	
 #endif

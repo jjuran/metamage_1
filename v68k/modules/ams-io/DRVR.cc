@@ -96,11 +96,11 @@ DRVRHeader** make_DRVR( ConstStr255Param  name,
 		
 		if ( n_nulls )
 		{
-			header.drvrOpen   = sizeof header;
-			header.drvrPrime  = sizeof header;
-			header.drvrCtl    = sizeof header;
-			header.drvrStatus = sizeof header;
-			header.drvrClose  = sizeof header;
+			header.drvrOpen   = header_size;
+			header.drvrPrime  = header_size;
+			header.drvrCtl    = header_size;
+			header.drvrStatus = header_size;
+			header.drvrClose  = header_size;
 			
 			*p++ = 0x4E75;  // RTS
 		}

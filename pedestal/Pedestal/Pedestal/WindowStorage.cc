@@ -13,6 +13,9 @@
 // mac-config
 #include "mac_config/desk-accessories.hh"
 
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+
 // mac-app-utils
 #include "mac_app/DAs.hh"
 
@@ -32,7 +35,6 @@
 #include "Pedestal/Application.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowEventHandlers.hh"  // codependent
-#include "Pedestal/WindowMenu.hh"
 
 
 namespace MacGlue
@@ -328,7 +330,7 @@ namespace Pedestal
 			return;
 		}
 		
-		N::InvalWindowRect( window, N::GetPortBounds( port ) );
+		N::InvalWindowRect( window, mac::qd::get_portRect( port ) );
 		
 		ScheduleImmediateEventCheck();
 	}
@@ -357,11 +359,8 @@ namespace Pedestal
 	{
 		if ( CONFIG_DESK_ACCESSORIES  &&  mac::app::close_DA_window( window ) )
 		{
-			// We never call window_created() for DAs.
 			return;
 		}
-		
-		window_removed( window );
 		
 		set_window_view( window, NULL );
 	}
@@ -408,8 +407,6 @@ namespace Pedestal
 		
 		n::owned< WindowRef > result =
 		n::owned< WindowRef >::seize( window, disposer );
-		
-		window_created( window );
 		
 		if ( TARGET_API_MAC_CARBON )
 		{

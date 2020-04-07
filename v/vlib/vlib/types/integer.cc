@@ -23,6 +23,7 @@
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
 #include "vlib/types/boolean.hh"
+#include "vlib/types/byte.hh"
 #include "vlib/types/fraction.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
@@ -118,7 +119,7 @@ namespace vlib
 				return Integer( !!(const Boolean&) v + 0 );
 			
 			case Value_byte:
-				return Integer( v.number() );
+				return Integer( static_cast< const Byte& >( v ).get() );
 			
 			case Value_string:
 				return Integer( decode_int( v.string() ) );

@@ -22,11 +22,29 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
+	typedef void (*named_property_write_hook)( const node*          that,
+	                                           const char*          begin,
+	                                           const char*          end,
+	                                           bool                 binary,
+	                                           const plus::string&  name );
+	
 	struct property_writer_extra
 	{
 		property_write_hook  write_hook;
 		bool                 binary;
 	};
+	
+	static inline
+	void call_write_hook( property_write_hook  hook,
+	                      const node*          that,
+	                      const char*          begin,
+	                      const char*          end,
+	                      bool                 binary )
+	{
+		named_property_write_hook write = (named_property_write_hook) hook;
+		
+		write( that->owner(), begin, end, binary, that->name() );
+	}
 	
 	static ssize_t propertywriter_write( filehandle* that, const char* buffer, size_t n )
 	{
@@ -44,7 +62,11 @@ namespace vfs
 			throw p7::errno_t( EINVAL );
 		}
 		
-		extra.write_hook( get_file( *that )->owner(), buffer, buffer + length, extra.binary );
+		call_write_hook( extra.write_hook,
+		                 get_file( *that ).get(),
+		                 buffer,
+		                 buffer + length,
+		                 extra.binary );
 		
 		return n;
 	}

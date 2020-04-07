@@ -7,10 +7,15 @@
 #include <errno.h>
 #include <signal.h>
 #include <stdlib.h>
+#ifdef __APPLE__
+// Needed to compile FD_ZERO with Mac OS X 10.2's headers.
+#include <string.h>
+#endif
 #include <time.h>
 
 // POSIX
 #include <unistd.h>
+#include <sys/select.h>
 #include <sys/time.h>
 #include <sys/uio.h>
 
@@ -24,7 +29,9 @@
 #include "syscall/bridge.hh"
 
 
+#ifdef __MWERKS__
 #pragma exceptions off
+#endif
 
 
 using v68k::auth::fully_authorized;
@@ -567,7 +574,7 @@ v68k::op_result emu_writev( v68k::processor_state& s )
 			goto end;
 		}
 		
-		iov[i].iov_base = (void*) p;
+		iov[i].iov_base = (char*) p;
 		iov[i].iov_len  = len;
 	}
 	
@@ -592,10 +599,10 @@ v68k::op_result emu_nanosleep( v68k::processor_state& s )
 	
 	uint32_t requested = args[0];
 	
-	uint32_t requested_seconds;
+	uint32_t requested_seconds_u32;
 	uint32_t requested_nanoseconds;
 	
-	const bool ok = s.mem.get_long( requested,     requested_seconds,     s.data_space() )
+	const bool ok = s.mem.get_long( requested,     requested_seconds_u32, s.data_space() )
 	              & s.mem.get_long( requested + 4, requested_nanoseconds, s.data_space() );
 	
 	if ( !ok )
@@ -612,7 +619,15 @@ v68k::op_result emu_nanosleep( v68k::processor_state& s )
 		return set_result( s, -1 );
 	}
 	
-	const timespec request_ts = { requested_seconds, requested_nanoseconds };
+	const int32_t requested_seconds = (int32_t) requested_seconds_u32;
+	const int32_t requested_nanosec = (int32_t) requested_nanoseconds;
+	
+	if ( requested_seconds < 0 )
+	{
+		return set_result( s, 0 );  // negative sleep has already expired
+	}
+	
+	const timespec request_ts = { requested_seconds, requested_nanosec };
 	
 	timespec remain_ts;
 	

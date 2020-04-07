@@ -8,6 +8,9 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+// Standard C
+#include <string.h>
+
 // relix
 #include "relix/pump.h"
 
