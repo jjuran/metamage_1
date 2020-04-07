@@ -1,6 +1,6 @@
 #!/usr/bin/env vx -Z
 
-const host = getenv "INTERACT_VNC_HOST" or "localhost"
+const host = getenv "INTERACT_VNC_HOST" or "127.0.0.1"
 const port = getenv "INTERACT_VNC_PORT" or 5900
 const addr = getenv "INTERACT_VNC_ADDR" or host ":" port
 
