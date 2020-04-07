@@ -153,9 +153,10 @@ bool handle_exception( registers& regs )
 			// We allow user-mode to alter the interrupt mask only
 			
 			regs.sr = bits;
-			
-			return true;
 		}
+		// else do nothing
+		
+		return true;
 	}
 	
 	// 0000 0000 0111 1100:  ORI to SR
