@@ -69,7 +69,11 @@ namespace raster
 	{
 		++relay.seed;
 		
+	#if !defined(__MSYS__) && !defined(__CYGWIN__)
+		
 		must_pthread_cond_broadcast( &relay.cond );
+		
+	#endif
 	}
 	
 	void terminate( sync_relay& relay )
