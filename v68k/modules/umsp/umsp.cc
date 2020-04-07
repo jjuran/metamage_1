@@ -73,6 +73,12 @@ uint16_t& resolve_ea16( registers& regs, const uint16_t ea )
 		addr  = read_word( regs.pc ) << 16;
 		addr |= read_word( regs.pc );
 	}
+	else if ( ea == (7 << 3 | 4) )
+	{
+		addr = regs.pc;
+		
+		regs.pc += 2;
+	}
 	else
 	{
 		const uint16_t mode = ea >> 3;
