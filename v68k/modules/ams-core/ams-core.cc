@@ -134,9 +134,12 @@ void initialize_low_memory_globals()
 	DefltStack = 64 * 1024;
 	
 	const int n_unit_table_entries = 32;
+	const size_t unit_table_bytesize = n_unit_table_entries * sizeof (void**);
 	
 	UnitNtryCnt = n_unit_table_entries;
-	UTableBase  = calloc( n_unit_table_entries, sizeof (void**) );
+	UTableBase  = malloc( unit_table_bytesize );
+	
+	fast_memset( UTableBase, '\0', unit_table_bytesize );
 	
 	BitMap screenBits;
 	
@@ -147,9 +150,12 @@ void initialize_low_memory_globals()
 	const short n_max_events = 20;
 	
 	const int event_size = 4 + sizeof (EvQEl);
+	const size_t event_buffer_bytesize = n_max_events * event_size;
 	
-	SysEvtBuf = calloc( event_size, n_max_events );
+	SysEvtBuf = malloc( event_buffer_bytesize );
 	SysEvtCnt = n_max_events - 1;
+	
+	fast_memset( SysEvtBuf, '\0', event_buffer_bytesize );
 	
 	MBState = 0x80;
 	

@@ -27,6 +27,11 @@ enum
 	kHandleLockedMask     = 0x80
 };
 
+enum
+{
+	kClearFlagMask = 0x0200,
+};
+
 const short noErr        = 0;
 const short paramErr     = -50;
 const short memFullErr   = -108;
@@ -137,8 +142,7 @@ Handle_header* allocate_Handle_mem( long   size      : __D0,
 	
 	native_alloc = true;
 	
-	void* alloc = trap_word & 0x0200 ? calloc( 1, full_size )
-	                                 : malloc(    full_size );
+	void* alloc = malloc( full_size );
 	
 	native_alloc = false;
 	
@@ -151,6 +155,11 @@ Handle_header* allocate_Handle_mem( long   size      : __D0,
 	
 	Handle_header* header = (Handle_header*) alloc;
 	Handle_footer* footer = (Handle_footer*) ((char*) &header[1] + padded_size);
+	
+	if ( trap_word & kClearFlagMask )
+	{
+		fast_memset( &header[ 1 ], '\0', padded_size );
+	}
 	
 	header->size     = size;
 	header->capacity = padded_size;
@@ -171,13 +180,15 @@ char** new_empty_handle()
 	
 	native_alloc = true;
 	
-	void* alloc = calloc( sizeof (master_pointer), 1 );
+	void* alloc = malloc( sizeof (master_pointer) );
 	
 	native_alloc = false;
 	
 	if ( alloc != NULL )
 	{
 		MemErr = noErr;
+		
+		fast_memset( alloc, '\0', sizeof (master_pointer) );
 	}
 	
 	return (char**) alloc;
