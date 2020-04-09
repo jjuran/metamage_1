@@ -108,8 +108,8 @@ Handle_footer* get_footer( char* p )
 static inline
 short size_error( unsigned long size : __D0 )
 {
-	const unsigned extra_size = sizeof (Handle_header)
-	                          + sizeof (Handle_footer);  // 16 bytes
+	const unsigned extra_size = sizeof (Handle_header)   // 16 bytes
+	                          + sizeof (Handle_footer);  //  4 bytes
 	
 	if ( size > 0x7FFFFFFF - extra_size )
 	{
@@ -123,8 +123,8 @@ static
 Handle_header* allocate_Handle_mem( long   size      : __D0,
                                     short  trap_word : __D1 )
 {
-	const unsigned extra_size = sizeof (Handle_header)
-	                          + sizeof (Handle_footer);  // 16 bytes
+	const unsigned extra_size = sizeof (Handle_header)   // 16 bytes
+	                          + sizeof (Handle_footer);  //  4 bytes
 	
 	const unsigned long padded_size = padded( size );
 	
@@ -167,7 +167,7 @@ Handle_header* allocate_Handle_mem( long   size      : __D0,
 static
 char** new_empty_handle()
 {
-	MemErr = noErr;
+	MemErr = memFullErr;
 	
 	native_alloc = true;
 	
@@ -175,9 +175,9 @@ char** new_empty_handle()
 	
 	native_alloc = false;
 	
-	if ( alloc == NULL )
+	if ( alloc != NULL )
 	{
-		MemErr = memFullErr;
+		MemErr = noErr;
 	}
 	
 	return (char**) alloc;
