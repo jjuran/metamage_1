@@ -18,11 +18,29 @@
 #include "raster/relay_detail.hh"
 
 
+/*
+	The mutex and condition variable are currently only needed in a
+	process-shared configuration.  If this changes, you can always define
+	CONFIG_CONDVARS true with CONFIG_SETPSHARED false.
+*/
+
+#ifndef CONFIG_CONDVARS
+#define CONFIG_CONDVARS  CONFIG_SETPSHARED
+#endif
+
+#if ! CONFIG_CONDVARS
+#undef CONFIG_SETPSHARED
+#define CONFIG_SETPSHARED  0
+#endif
+
+
 namespace raster
 {
 	
 	void publish( sync_relay& relay )
 	{
+	#if CONFIG_CONDVARS
+		
 		pthread_mutexattr_t mutex_attr;
 		pthread_condattr_t  cond_attr;
 		
@@ -55,21 +73,31 @@ namespace raster
 		must_pthread_mutexattr_destroy( &mutex_attr );
 		must_pthread_condattr_destroy ( &cond_attr  );
 		
+	#endif  // #if CONFIG_CONDVARS
+		
 		relay.status = Sync_ready;
 		relay.seed   = 0;
 	}
 	
 	void unpublish( sync_relay& relay )
 	{
+	#if CONFIG_CONDVARS
+		
 		must_pthread_mutex_destroy( &relay.mutex );
 		must_pthread_cond_destroy ( &relay.cond  );
+		
+	#endif
 	}
 	
 	void broadcast( sync_relay& relay )
 	{
 		++relay.seed;
 		
+	#if CONFIG_CONDVARS
+		
 		must_pthread_cond_broadcast( &relay.cond );
+		
+	#endif
 	}
 	
 	void terminate( sync_relay& relay )
@@ -81,7 +109,7 @@ namespace raster
 	
 	void wait( sync_relay& relay )
 	{
-	#if CONFIG_SETPSHARED
+	#if CONFIG_CONDVARS
 		
 		must_pthread_mutex_lock( &relay.mutex );
 		
