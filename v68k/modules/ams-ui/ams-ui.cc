@@ -24,6 +24,7 @@
 #include "Drag.hh"
 #include "Icons.hh"
 #include "Menus.hh"
+#include "Scrap.hh"
 #include "StandardFile.hh"
 #include "StrUtils.hh"
 #include "TextEdit.hh"
@@ -241,12 +242,13 @@ static void install_TextEdit()
 	TBTRAP( TENew        );  // A9D2
 	TBTRAP( TEUpdate     );  // A9D3
 	TBTRAP( TEClick      );  // A9D4
-	
+	TBTRAP( TECopy       );  // A9D5
+	TBTRAP( TECut        );  // A9D6
 	TBTRAP( TEDelete     );  // A9D7
 	TBTRAP( TEActivate   );  // A9D8
 	TBTRAP( TEDeactivate );  // A9D9
 	TBTRAP( TEIdle       );  // A9DA
-	
+	TBTRAP( TEPaste      );  // A9DB
 	TBTRAP( TEKey        );  // A9DC
 	TBTRAP( TEScroll     );  // A9DD
 	TBTRAP( TEInsert     );  // A9DE
@@ -257,6 +259,14 @@ static void install_Packages()
 	TBTRAP( Pack3 );  // A9EA
 	
 	TBTRAP( Pack7 );  // A9EE
+}
+
+static
+void install_Scrap()
+{
+	TBTRAP( ZeroScrap );  // A9FC
+	TBTRAP( GetScrap  );  // A9FD
+	TBTRAP( PutScrap  );  // A9FE
 }
 
 static
@@ -288,6 +298,7 @@ int main( int argc, char** argv )
 	install_Controls();
 	install_TextEdit();
 	install_Dialogs();
+	install_Scrap();
 	
 	install_IconUtilities();
 	

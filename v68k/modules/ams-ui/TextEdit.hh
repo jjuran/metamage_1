@@ -29,6 +29,10 @@ pascal void TEDeactivate_patch( TERec** hTE );
 
 pascal void TEKey_patch( short c, TERec** hTE );
 
+pascal void TECut_patch( TERec** hTE );
+pascal void TECopy_patch( TERec** hTE );
+pascal void TEPaste_patch( TERec** hTE );
+
 pascal void TEDelete_patch( TERec** hTE );
 
 pascal void TEInsert_patch( const char* text, long length, TERec** hTE );

@@ -12,6 +12,9 @@
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
 #endif
+#ifndef __TEXTUTILS__
+#include <TextUtils.h>
+#endif
 
 // gear
 #include "gear/find.hh"
@@ -26,6 +29,9 @@
 
 long Ticks     : 0x016A;
 long CaretTime : 0x02F4;
+
+short  TEScrpLength : 0x0AB0;
+Handle TEScrpHandle : 0x0AB4;
 
 
 static
@@ -231,6 +237,9 @@ bool blinks( const TERec& te )
 pascal void TEInit_patch()
 {
 	CaretTime = 30;
+	
+//	TEScrpLength = 0;
+	TEScrpHandle = NewHandle( 0 );
 }
 
 pascal TERec** TENew_patch( const Rect* destRect, const Rect* viewRect )
@@ -645,6 +654,73 @@ pascal void TEKey_patch( short c, TERec** hTE )
 			TECalText( hTE );
 			break;
 	}
+	
+	draw_text( te );
+	
+	update_selRect( te );
+	show_selection( te );
+}
+
+static
+OSErr copy_text( TEHandle hTE )
+{
+	TERec& te = **hTE;
+	
+	const Size length = te.selEnd - te.selStart;
+	
+	if ( length <= 0 )
+	{
+		return paramErr;
+	}
+	
+	OSErr err = PtrToXHand( *te.hText + te.selStart, TEScrpHandle, length );
+	
+	if ( err == noErr )
+	{
+		TEScrpLength = length;
+	}
+	
+	return err;
+}
+
+pascal void TECut_patch( TERec** hTE )
+{
+	OSErr err = copy_text( hTE );
+	
+	if ( err == noErr )
+	{
+		TEDelete( hTE );
+	}
+}
+
+pascal void TECopy_patch( TERec** hTE )
+{
+	copy_text( hTE );
+}
+
+pascal void TEPaste_patch( TERec** hTE )
+{
+	TERec& te = **hTE;
+	
+	const Size selLength = te.selEnd - te.selStart;
+	
+	Handle hText = te.hText;
+	
+	SetHandleSize( hText, te.teLength );  // Possibly shrink the handle to fit.
+	
+	Munger( hText, te.selStart, NULL, selLength, *TEScrpHandle, TEScrpLength );
+	
+	te.teLength  = GetHandleSize( hText );
+	te.selStart += TEScrpLength;
+	te.selEnd    = te.selStart;
+	
+	TECalText( hTE );
+	
+	scoped_port thePort = te.inPort;
+	
+	raster_lock lock;
+	
+	hide_selection( te );
 	
 	draw_text( te );
 	
