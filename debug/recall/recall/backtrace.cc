@@ -34,6 +34,12 @@
 #include "recall/traceback_tables.hh"
 
 
+#if defined( __i386__ )  ||  defined( __x86_64__ )
+#define CONFIG_ODD_ADDRESSES  1
+#else
+#define CONFIG_ODD_ADDRESSES  0
+#endif
+
 #ifndef TARGET_CPU_PPC
 	#ifdef __POWERPC__
 		#define TARGET_CPU_PPC 1
@@ -137,7 +143,7 @@ namespace recall
 	template < class ReturnAddr >
 	static plus::string get_demangled_symbol_name( ReturnAddr addr )
 	{
-		if ( (long) addr & 1 )
+		if ( ! CONFIG_ODD_ADDRESSES  &&  (long) addr & 1 )
 		{
 			return "<<odd address>>";
 		}
