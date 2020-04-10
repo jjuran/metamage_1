@@ -122,6 +122,25 @@ namespace recall
 	
 	typedef stack_frame_x86 stack_frame;
 	
+	static char *get_rbp( void )
+	{
+		char* result;
+		
+		__asm__( "mov  %%rbp,%0" : "=ra"(result) );
+		
+		return result;
+	}
+	
+	inline const stack_frame_x86* get_frame_pointer()
+	{
+		return (const stack_frame_x86*) get_rbp();
+	}
+	
+	inline const stack_frame_x86* get_top_frame()
+	{
+		return get_frame_pointer()->next;
+	}
+
 #endif
 	
 }
