@@ -15,6 +15,9 @@
 // Standard C++
 #include <algorithm>
 
+// mac-sys-utils
+#include "mac_sys/trap_available.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -48,6 +51,22 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
 
+
+static inline
+bool has_TEPinScroll()
+{
+	enum { _TEPinScroll = 0xA812 };
+	
+	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _TEPinScroll );
+}
+
+static inline
+bool has_TEAutoView()
+{
+	enum { _TEAutoView = 0xA813 };
+	
+	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _TEAutoView );
+}
 
 namespace Genie
 {
@@ -182,7 +201,10 @@ namespace Genie
 		
 		itsTE = N::TENew( bounds );
 		
-		N::TEAutoView( true, itsTE );  // enable auto-scrolling
+		if ( has_TEAutoView() )
+		{
+			TEAutoView( true, itsTE );  // enable auto-scrolling
+		}
 		
 		InstallCustomTEClickLoop( itsTE );
 		
@@ -495,7 +517,16 @@ namespace Genie
 	
 	void TextEdit_Scroller::Scroll( int dh, int dv )
 	{
-		N::TEPinScroll( dh, dv, itsSubview.Get() );
+		TEHandle hTE = itsSubview.Get();
+		
+		if ( has_TEPinScroll() )
+		{
+			TEPinScroll( dh, dv, hTE );
+		}
+		else
+		{
+			TEScroll( dh, dv, hTE );
+		}
 		
 		const vfs::node* key = GetKey();
 		
