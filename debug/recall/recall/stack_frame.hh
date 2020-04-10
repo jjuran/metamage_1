@@ -113,7 +113,7 @@ namespace recall
 	
 	inline const stack_frame_x86* get_top_frame()
 	{
-		return get_frame_pointer()->next;
+		return get_frame_pointer();
 	}
 	
 #endif
@@ -138,7 +138,7 @@ namespace recall
 	
 	inline const stack_frame_x86* get_top_frame()
 	{
-		return get_frame_pointer()->next;
+		return get_frame_pointer();
 	}
 
 #endif
