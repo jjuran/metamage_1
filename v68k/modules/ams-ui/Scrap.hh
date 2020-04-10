@@ -9,6 +9,9 @@
 typedef char** Handle;
 typedef unsigned long ResType;
 
+pascal long UnloadScrap_patch();
+pascal long LoadScrap_patch();
+
 pascal long ZeroScrap_patch();
 
 pascal long PutScrap_patch( long length, ResType type, const char* src );
