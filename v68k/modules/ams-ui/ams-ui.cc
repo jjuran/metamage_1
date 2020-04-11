@@ -252,6 +252,7 @@ static void install_TextEdit()
 	TBTRAP( TEKey        );  // A9DC
 	TBTRAP( TEScroll     );  // A9DD
 	TBTRAP( TEInsert     );  // A9DE
+	TBTRAP( TESetJust    );  // A9DF
 }
 
 static void install_Packages()

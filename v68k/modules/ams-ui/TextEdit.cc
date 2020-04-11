@@ -771,6 +771,11 @@ pascal void TEInsert_patch( const char* text, long length, TERec** hTE )
 	show_selection( te );
 }
 
+pascal void TESetJust_patch( short just, TERec** hTE )
+{
+	hTE[0]->just = just;
+}
+
 pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE )
 {
 	TERec& te = **hTE;
