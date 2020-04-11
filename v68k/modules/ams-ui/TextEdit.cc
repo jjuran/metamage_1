@@ -586,6 +586,8 @@ void insert_chars( TEHandle hTE, const char* p, long n )
 	BlockMoveData( p, target, n );
 	
 	te.teLength = len + n;
+	te.selStart = pos + n;
+	te.selEnd   = pos + n;
 }
 
 pascal void TEKey_patch( short c, TERec** hTE )
