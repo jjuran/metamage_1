@@ -46,6 +46,11 @@ void* toolbox_trap_table[] : 3 * 1024;
 
 enum
 {
+	_CouldDialog    = 0xA979,
+	_FreeDialog     = 0xA97A,
+	_CouldAlert     = 0xA989,
+	_FreeAlert      = 0xA98A,
+	
 	_BeginUpdate    = _BeginUpDate,
 	_CheckUpdate    = _CheckUpDate,
 	_EndUpdate      = _EndUpDate,
@@ -203,32 +208,31 @@ static void install_Dialogs()
 	TBTRAP( HideDItem );  // A827
 	TBTRAP( ShowDItem );  // A828
 	
-	TBTRAP( InitDialogs  );  // A97B
-	TBTRAP( GetNewDialog );  // A97C
-	TBTRAP( NewDialog    );  // A97D
+	TBTRAP( CouldDialog   );  // A979
+	TBTRAP( FreeDialog    );  // A97A
+	TBTRAP( InitDialogs   );  // A97B
+	TBTRAP( GetNewDialog  );  // A97C
+	TBTRAP( NewDialog     );  // A97D
 	TBTRAP( SelIText      );  // A97E
 	TBTRAP( IsDialogEvent );  // A97F
 	TBTRAP( DialogSelect  );  // A980
-	
-	TBTRAP( DrawDialog   );  // A981
-	TBTRAP( CloseDialog  );  // A982
-	
+	TBTRAP( DrawDialog    );  // A981
+	TBTRAP( CloseDialog   );  // A982
 	TBTRAP( DisposeDialog );  // A983
-	
-	TBTRAP( FindDItem    );  // A984
-	TBTRAP( Alert        );  // A985
-	TBTRAP( StopAlert    );  // A986
-	TBTRAP( NoteAlert    );  // A987
-	TBTRAP( CautionAlert );  // A988
-	
-	TBTRAP( ParamText    );  // A98B
-	TBTRAP( ErrorSound   );  // A98C
-	
-	TBTRAP( GetDItem     );  // A98D
-	TBTRAP( SetDItem     );  // A98E
-	TBTRAP( SetIText     );  // A98F
-	TBTRAP( GetIText     );  // A990
-	TBTRAP( ModalDialog  );  // A991
+	TBTRAP( FindDItem     );  // A984
+	TBTRAP( Alert         );  // A985
+	TBTRAP( StopAlert     );  // A986
+	TBTRAP( NoteAlert     );  // A987
+	TBTRAP( CautionAlert  );  // A988
+	TBTRAP( CouldAlert    );  // A989
+	TBTRAP( FreeAlert     );  // A98A
+	TBTRAP( ParamText     );  // A98B
+	TBTRAP( ErrorSound    );  // A98C
+	TBTRAP( GetDItem      );  // A98D
+	TBTRAP( SetDItem      );  // A98E
+	TBTRAP( SetIText      );  // A98F
+	TBTRAP( GetIText      );  // A990
+	TBTRAP( ModalDialog   );  // A991
 }
 
 static void install_TextEdit()

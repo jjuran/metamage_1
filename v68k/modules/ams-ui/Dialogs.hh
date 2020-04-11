@@ -34,6 +34,9 @@ pascal void CloseDialog_patch( GrafPort* dialog );
 
 pascal void DisposeDialog_patch( GrafPort* dialog );
 
+pascal void CouldDialog_patch( short id );
+pascal void FreeDialog_patch ( short id );
+
 pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit );
 
 pascal unsigned char IsDialogEvent_patch( const EventRecord* event );
@@ -48,6 +51,9 @@ pascal short Alert_patch       ( short alertID, ModalFilterUPP filterProc );
 pascal short StopAlert_patch   ( short alertID, ModalFilterUPP filterProc );
 pascal short NoteAlert_patch   ( short alertID, ModalFilterUPP filterProc );
 pascal short CautionAlert_patch( short alertID, ModalFilterUPP filterProc );
+
+pascal void CouldAlert_patch( short id );
+pascal void FreeAlert_patch ( short id );
 
 pascal void ParamText_patch( const unsigned char*  p1,
                              const unsigned char*  p2,

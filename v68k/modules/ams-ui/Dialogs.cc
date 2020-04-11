@@ -637,6 +637,14 @@ pascal void DisposeDialog_patch( DialogRef dialog )
 	DisposePtr( (Ptr) dialog );
 }
 
+pascal void CouldDialog_patch( short id )
+{
+}
+
+pascal void FreeDialog_patch ( short id )
+{
+}
+
 #pragma mark -
 #pragma mark Handling Dialog Events
 #pragma mark -
@@ -1207,6 +1215,14 @@ pascal short NoteAlert_patch( short alertID, ModalFilterUPP filterProc )
 pascal short CautionAlert_patch( short alertID, ModalFilterUPP filterProc )
 {
 	return basic_Alert( alertID, filterProc, kCautionIcon );
+}
+
+pascal void CouldAlert_patch( short id )
+{
+}
+
+pascal void FreeAlert_patch ( short id )
+{
 }
 
 #pragma mark -
