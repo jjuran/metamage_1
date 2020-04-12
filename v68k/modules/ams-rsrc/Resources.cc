@@ -456,6 +456,8 @@ pascal short HomeResFile_patch( Handle resource )
 
 pascal void UseResFile_patch( short refnum )
 {
+	ResErr = noErr;
+	
 	CurMap = refnum;
 }
 
@@ -541,6 +543,8 @@ short CountResources_handler( ResType type : __D0 )
 		
 		rsrc_map = (RsrcMapHandle) rsrc_map[0]->next_map;
 	}
+	
+	ResErr = noErr;
 	
 	return count;
 }
@@ -692,10 +696,13 @@ pascal Handle GetNamedResource_patch( ResType type, ConstStr255Param name )
 
 pascal void LoadResource_patch( Handle resource )
 {
+	ResErr = noErr;
 }
 
 pascal void ReleaseResource_patch( Handle resource )
 {
+	ResErr = noErr;
+	
 	DetachResource_patch( resource );
 	
 	/*
@@ -790,6 +797,8 @@ void GetResInfo_handler( const GetResInfo_args* args : __A0 )
 			fast_memcpy( args->name, name, 1 + name[ 0 ] );
 		}
 	}
+	
+	ResErr = noErr;
 }
 
 asm
@@ -850,6 +859,8 @@ pascal short GetResAttrs_patch( Handle resource )
 
 pascal long SizeRsrc_patch( Handle resource )
 {
+	// TODO:  Set ResErr appropriately
+	
 	return GetHandleSize( resource );
 }
 
@@ -940,6 +951,8 @@ pascal void SetResPurge_patch( unsigned char install )
 static
 short Count1Resources_handler( ResType type : __D0 )
 {
+	ResErr = noErr;
+	
 	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
 	
 	return count_rsrcs( **rsrc_map, type );
