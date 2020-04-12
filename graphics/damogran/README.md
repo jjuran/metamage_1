@@ -27,7 +27,7 @@ Negative values of `c0` are reserved.
 
 Positive values of `c0` indicate `n = 2 * (c0 + 1)` occurrences of the byte `c1` (where `n` is an even number between 4 and 256 inclusive).
 
-If `c0` is zero, the consider `c1`:
+If `c0` is zero, then consider `c1`:
 
 Negative values of `c1` indicate (and consume) the `n = 2 * -c1` bytes immediately following (where `n` is an even number between 2 and 256 inclusive).
 
