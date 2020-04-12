@@ -53,7 +53,6 @@
 #include "MacFeatures/Features.hh"
 
 // MacIO
-#include "MacIO/FSMakeFSSpec_Sync.hh"
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // poseven
@@ -120,44 +119,6 @@ namespace Genie
 	using mac::types::VRefNum_DirID;
 	using mac::file::make_FSSpec;
 	using mac::file::parent_directory;
-	
-	
-	namespace path_descent_operators
-	{
-		
-		static inline
-		FSSpec operator/( const N::FSDirSpec& dir, const unsigned char* name )
-		{
-			return MacIO::FSMakeFSSpec< FNF_Returns >( dir, name );
-		}
-		
-		static inline
-		FSSpec operator/( const VRefNum_DirID& dir, const unsigned char* name )
-		{
-			return MacIO::FSMakeFSSpec< FNF_Returns >( dir, name );
-		}
-		
-		static inline
-		FSSpec operator/( const FSSpec& dir, const unsigned char* name )
-		{
-			return Dir_From_FSSpec( dir ) / name;
-		}
-		
-		static inline
-		FSSpec operator/( const VRefNum_DirID& dir, const plus::string& name )
-		{
-			return dir / N::Str63( name );
-		}
-		
-		static inline
-		FSSpec operator/( const FSSpec& dir, const plus::string& name )
-		{
-			return dir / N::Str63( name );
-		}
-		
-	}
-	
-	using namespace path_descent_operators;
 	
 	
 	static inline bool operator==( const FSSpec& a, const FSSpec& b )
@@ -332,9 +293,7 @@ namespace Genie
 	{
 		const short vRefNum = mac::file::program_file().vRefNum;
 		
-		const VRefNum_DirID root = { vRefNum, fsRtDirID };
-		
-		FSSpec users = root / "\p" "Users";
+		FSSpec users = { vRefNum, fsRtDirID, "\p" "Users" };
 		
 		return Dir_From_FSSpec( users );
 	}
