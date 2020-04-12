@@ -436,6 +436,34 @@ pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 
 pascal void AddResMenu_patch( MenuInfo** menu, ResType type )
 {
+	short const n_rsrcs = CountResources( type );
+	short       n_items = CountMenuItems( menu );
+	
+	/*
+		TODO:
+		  * Sort the list of names
+		  * De-dupe names
+		  * For 'FONT', include 'FOND'
+		  * For 'DRVR', insert a divider after DAs
+	*/
+	
+	for ( short i = 1;  i <= n_rsrcs;  ++i )
+	{
+		if ( Handle h = GetIndResource( type, i ) )
+		{
+			Str255 name;
+			
+			GetResInfo( h, NULL, NULL, name );
+			
+			if ( name[ 0 ]  &&  name[ 1 ] != '.'  &&  name[ 1 ] != '%' )
+			{
+				AppendMenu( menu, "\p " );
+				
+				SetMenuItemText( menu, ++n_items, name );
+			}
+		}
+	}
+	
 	if ( type == 'DRVR' )
 	{
 		AppendMenu( menu, "\p"
