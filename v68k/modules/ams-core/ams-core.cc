@@ -39,6 +39,7 @@
 #include "Pointers.hh"
 #include "SysError.hh"
 #include "VBL.hh"
+#include "Zones.hh"
 #include "cursor-core.hh"
 #include "interrupt-handlers.hh"
 #include "memwatch.hh"

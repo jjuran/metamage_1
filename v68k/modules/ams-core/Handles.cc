@@ -215,24 +215,6 @@ char** new_handle( long size : __D0, short trap_word : __D1 )
 }
 
 #pragma mark -
-#pragma mark Initialization and Allocation
-#pragma mark -
-
-short SetApplLimit_patch( char* p : __A0 )
-{
-	return MemErr = noErr;
-}
-
-void MaxApplZone_patch()
-{
-}
-
-void MoreMasters_patch()
-{
-	MemErr = noErr;
-}
-
-#pragma mark -
 #pragma mark Allocating and Releasing Relocatable Blocks
 #pragma mark -
 
@@ -402,33 +384,6 @@ short ReallocateHandle_patch( char**  h         : __A0,
 #pragma mark Freeing Space in the Heap
 #pragma mark -
 
-long FreeMem_patch()
-{
-	return 1024 * 1024;
-}
-
-asm void MaxMem_patch()
-{
-	SUBA.L   A0,A0
-	MOVE.L   #0x100000,D0
-	RTS
-}
-
-long CompactMem_patch( long needed : __D0, short trap_word : __D1 )
-{
-	return needed;
-}
-
-short ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
-{
-	return MemErr = noErr;
-}
-
-short PurgeMem_patch( long needed : __D0, short trap_word : __D1 )
-{
-	return MemErr = noErr;
-}
-
 short EmptyHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )
@@ -524,23 +479,6 @@ short HSetState_patch( char** h : __A0, signed char state : __D0 )
 	((master_pointer*) h)->flags = state;
 	
 	return MemErr = noErr;
-}
-
-#pragma mark -
-#pragma mark Grow Zone Operations
-#pragma mark -
-
-short SetGrowZone_patch( void* proc : __A0 )
-{
-	return MemErr = noErr;
-}
-
-#pragma mark -
-#pragma mark Miscellaneous Routines
-#pragma mark -
-
-void MoveHHi_patch( char** h : __A0 )
-{
 }
 
 #pragma mark -
