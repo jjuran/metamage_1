@@ -10,6 +10,10 @@
 #include "v68k/memory.hh"
 
 
+extern uint32_t alt_screen_addr;
+extern uint32_t main_screen_addr;
+extern uint32_t main_sound_addr;
+
 class memory_manager : public v68k::memory
 {
 	public:
