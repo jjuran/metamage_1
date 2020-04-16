@@ -117,6 +117,7 @@ enum
 	
 	Opt_last_byte = 255,
 	
+	Opt_mem,  // number of 512K memory chunks, or zero for 128K
 	Opt_pid,
 	Opt_raster,
 	Opt_screen,
@@ -131,6 +132,7 @@ static command::option options[] =
 	{ "trace",      Opt_trace      },
 	{ "turbo",      Opt_turbo      },
 	{ "verbose",    Opt_verbose    },
+	{ "mem",        Opt_mem,    command::Param_required },
 	{ "model",      Opt_model,  command::Param_required },
 	{ "pid",        Opt_pid,    command::Param_optional },
 	{ "raster",     Opt_raster, command::Param_required },
@@ -290,8 +292,6 @@ const uint32_t tb_trap_table_address = 3072;
 const uint32_t os_trap_count = 1 <<  8;  //  256, 1K
 const uint32_t tb_trap_count = 1 << 10;  // 1024, 4K
 
-const uint32_t mem_size = code_address + code_max_size;
-
 const uint32_t params_addr = 8192;
 
 const uint16_t user_pb_addr   = params_addr +  0;  // 20 bytes
@@ -300,6 +300,8 @@ const uint16_t system_pb_addr = params_addr + 20;  // 20 bytes
 const uint16_t argc_addr = params_addr + 40;  // 4 bytes
 const uint16_t argv_addr = params_addr + 44;  // 4 bytes
 const uint32_t args_addr = params_addr + 48;
+
+static uint32_t mem_size = code_address + code_max_size;
 
 
 static
@@ -760,6 +762,8 @@ void load_file( uint8_t* mem, const char* path )
 static
 int execute_68k( int argc, char* const* argv )
 {
+	using v68k::user_data_space;
+	
 	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
 	
 	if ( mem == NULL )
@@ -779,9 +783,31 @@ int execute_68k( int argc, char* const* argv )
 	
 	load_vectors( load );
 	
-	enum { CPUFlag = 0x012F };
+	enum
+	{
+		ScreenRow = 0x0106,
+		MemTop    = 0x0108,
+		CPUFlag   = 0x012F,
+		SoundBase = 0x0266,
+		ScrnBase  = 0x0824,
+		CrsrPin   = 0x0834,
+	};
 	
 	emu.mem.put_byte( CPUFlag, mc68k_model >> 4, v68k::user_data_space );
+	
+	if ( mem_size >= 1024 * 128 )
+	{
+		alt_screen_addr  = mem_size - (0x20000 - 0x12700);
+		main_screen_addr = mem_size - (0x20000 - 0x1A700);
+		main_sound_addr  = mem_size - (0x20000 - 0x1FD00);
+		
+		emu.mem.put_word( ScreenRow,   64,               user_data_space );
+		emu.mem.put_long( MemTop,      mem_size,         user_data_space );
+		
+		emu.mem.put_long( SoundBase,   main_sound_addr,  user_data_space );
+		emu.mem.put_long( ScrnBase,    main_screen_addr, user_data_space );
+		emu.mem.put_long( CrsrPin + 4, 512 | 342 << 16,  user_data_space );
+	}
 	
 	load_Mac_traps( mem );
 	
@@ -867,6 +893,10 @@ char* const* get_options( char** argv )
 	{
 		using command::global_result;
 		
+		using gear::parse_unsigned_decimal;
+		
+		int n_512K_blocks;
+		
 		switch ( opt )
 		{
 			case Opt_authorized:
@@ -903,6 +933,13 @@ char* const* get_options( char** argv )
 				verbose = true;
 				break;
 			
+			case Opt_mem:
+				n_512K_blocks = parse_unsigned_decimal( &global_result.param );
+				
+				mem_size = n_512K_blocks ? 1024 * 512 * n_512K_blocks
+				                         : 1024 * 128;
+				break;
+			
 			case Opt_model:
 				{
 					const char* p = global_result.param;
@@ -927,8 +964,6 @@ char* const* get_options( char** argv )
 			case Opt_pid:
 				if ( global_result.param )
 				{
-					using gear::parse_unsigned_decimal;
-					
 					fake_pid = parse_unsigned_decimal( &global_result.param );
 				}
 				else
