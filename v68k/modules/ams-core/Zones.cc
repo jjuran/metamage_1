@@ -10,6 +10,8 @@
 #include <MacMemory.h>
 #endif
 
+// ams-common
+#include "callouts.hh"
 
 OSErr MemErr  : 0x0220;
 
@@ -17,6 +19,35 @@ OSErr MemErr  : 0x0220;
 #pragma mark -
 #pragma mark Initialization and Allocation
 #pragma mark -
+
+struct InitZone_Params
+{
+	Ptr          start;
+	Ptr          limit;
+	short        moreMasters;
+	GrowZoneUPP  growZone;
+};
+
+void InitZone_patch( InitZone_Params* params : __A0 )
+{
+	Ptr start = params->start;
+	
+	Zone& zone = *(THz) start;
+	
+	fast_memset( start, '\0', params->limit - start );
+	
+	Ptr heapData = start + 52;
+	Ptr data_end = params->limit - 12;
+	
+	Size data_size = data_end - heapData;
+	
+	*(UInt32*) heapData = data_size;  // free block physical size
+	
+	zone.bkLim    = data_end;
+	zone.zcbFree  = data_size;  // number of bytes occupied by free blocks
+	zone.gzProc   = params->growZone;
+	zone.moreMast = params->moreMasters;
+}
 
 short SetApplLimit_patch( Ptr p : __A0 )
 {

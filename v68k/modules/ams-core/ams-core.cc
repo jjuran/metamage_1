@@ -186,6 +186,8 @@ void install_spinloop_mitigation()
 static
 void install_MemoryManager()
 {
+	OSTRAP( InitZone         );  // A019
+	
 	OSTRAP( FreeMem          );  // A01C
 	
 	OSTRAP( NewPtr           );  // A11E
