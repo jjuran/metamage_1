@@ -44,8 +44,7 @@ using v68k::mem_exec;
 
 const uint32_t alt_screen_addr  = 0x00012700;
 const uint32_t main_screen_addr = 0x0001A700;
-
-const uint32_t screen_addr = main_screen_addr;
+const uint32_t main_sound_addr  = 0x0001FD00;
 
 static uint8_t* low_memory_base;
 static uint32_t low_memory_size;
@@ -126,9 +125,9 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	const uint32_t screen_size = v68k::screen::the_screen_size;
 	
-	if ( addr >= screen_addr  &&  addr < screen_addr + screen_size )
+	if ( addr >= main_screen_addr  &&  addr < main_screen_addr + screen_size )
 	{
-		return screen::translate( addr - screen_addr, length, fc, access );
+		return screen::translate( addr - main_screen_addr, length, fc, access );
 	}
 	
 	if ( addr >= alt_screen_addr  &&  addr < alt_screen_addr + screen_size )
@@ -136,12 +135,11 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return screen::translate2( addr - alt_screen_addr, length, fc, access );
 	}
 	
-	const uint32_t sound_addr = 0x0001FD00;
 	const uint32_t sound_size = 740;
 	
-	if ( addr >= sound_addr  &&  addr < sound_addr + sound_size )
+	if ( addr >= main_sound_addr  &&  addr < main_sound_addr + sound_size )
 	{
-		return sound::translate( addr - sound_addr, length, fc, access );
+		return sound::translate( addr - main_sound_addr, length, fc, access );
 	}
 	
 	if ( (addr >> 16) == 0x0040 )
