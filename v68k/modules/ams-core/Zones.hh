@@ -11,6 +11,8 @@ struct InitZone_Params;
 typedef char*   Ptr;
 typedef char**  Handle;
 
+void InitApplZone_patch();
+
 void InitZone_patch( InitZone_Params* params : __A0 );
 
 short SetApplLimit_patch( Ptr p : __A0 );

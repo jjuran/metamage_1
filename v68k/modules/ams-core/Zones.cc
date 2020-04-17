@@ -13,12 +13,25 @@
 // ams-common
 #include "callouts.hh"
 
-OSErr MemErr  : 0x0220;
+Ptr   HeapEnd  : 0x0114;
+THz   TheZone  : 0x0118;
+OSErr MemErr   : 0x0220;
+THz   ApplZone : 0x02AA;
 
 
 #pragma mark -
 #pragma mark Initialization and Allocation
 #pragma mark -
+
+void InitApplZone_patch()
+{
+	const Ptr zoneEnd = (Ptr) ApplZone + 1024 * 6;
+	
+	InitZone( NULL, 64, zoneEnd, ApplZone );
+	
+	TheZone = ApplZone;
+	HeapEnd = ApplZone->bkLim;
+}
 
 struct InitZone_Params
 {

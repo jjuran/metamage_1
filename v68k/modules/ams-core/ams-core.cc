@@ -203,7 +203,7 @@ void install_MemoryManager()
 	OSTRAP( HLock            );  // A029
 	OSTRAP( HUnlock          );  // A02A
 	OSTRAP( EmptyHandle      );  // A02B
-	
+	OSTRAP( InitApplZone     );  // A02C
 	OSTRAP( SetApplLimit     );  // A02D
 	
 	OSTRAP( MoreMasters      );  // A036
