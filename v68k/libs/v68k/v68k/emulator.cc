@@ -265,11 +265,11 @@ namespace v68k
 	{
 		if ( pc() & 1 )
 		{
-			address_error();
+			fault( Address_error, pc() );
 		}
 		else if ( !mem.get_instruction_word( pc(), opcode, program_space() ) )
 		{
-			bus_error();
+			fault( Bus_error, pc() );
 		}
 	}
 	
