@@ -15,6 +15,8 @@ namespace mac  {
 
 extern bool ticking;
 
+short get_CurPageOption();
+
 uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access );
 
 }  // namespace mac

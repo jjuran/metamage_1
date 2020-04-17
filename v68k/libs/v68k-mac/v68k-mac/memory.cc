@@ -202,6 +202,11 @@ void initialize()
 
 static int initialization = (initialize(), 0);
 
+short get_CurPageOption()
+{
+	return words[ tag_CurPageOption ];
+}
+
 struct global
 {
 	int16_t  addr;
