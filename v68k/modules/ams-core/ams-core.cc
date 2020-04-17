@@ -94,6 +94,8 @@ Byte  MBState   : 0x0172;
 
 void* SoundBase : 0x0266;
 short ROM85     : 0x028E;
+void* SysZone   : 0x02A6;
+void* ApplZone  : 0x02AA;
 
 long  DefltStack : 0x0322;
 
@@ -362,6 +364,18 @@ char* const* get_options( char** argv )
 	return argv;
 }
 
+static
+void create_system_heap()
+{
+	Ptr start = (Ptr) (1024 * 9);
+	Ptr limit = (Ptr) (1024 * 12);
+	
+	SysZone  = start;
+	ApplZone = limit;
+	
+	InitZone( NULL, 32, limit, start );
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc > 0 )
@@ -398,6 +412,8 @@ int main( int argc, char** argv )
 	install_DeskManager();
 	
 	install_Debugger();
+	
+	create_system_heap();
 	
 	module_suspend();  // doesn't return
 }
