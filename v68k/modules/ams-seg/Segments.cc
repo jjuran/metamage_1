@@ -23,6 +23,7 @@
 #include "options.hh"
 
 
+long  DefltStack   : 0x0322;
 short CurApRefNum  : 0x0900;
 Ptr   CurrentA5    : 0x0904;
 Ptr   CurStackBase : 0x0908;
@@ -372,7 +373,7 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	const uint32_t total_a5_size = header.above_a5_size
 	                             + header.below_a5_size;
 	
-	const uint32_t stack_size = 64 * 1024;
+	const uint32_t stack_size = DefltStack;
 	
 	const uint32_t total_alloc_size = stack_size + total_a5_size;
 	
