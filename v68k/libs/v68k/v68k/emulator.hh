@@ -36,6 +36,7 @@ namespace v68k
 			bool step();
 			
 			void prefetch_instruction_word();
+			void prefetch_instruction_word_critical();
 			
 			bool take_exception( uint16_t  format,
 			                     uint16_t  vector_offset,

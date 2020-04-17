@@ -57,7 +57,7 @@ namespace v68k
 			sr.nzvc = 0;
 			
 			// prefetch
-			prefetch_instruction_word();
+			prefetch_instruction_word_critical();
 		}
 	}
 	
@@ -273,6 +273,18 @@ namespace v68k
 		}
 	}
 	
+	void emulator::prefetch_instruction_word_critical()
+	{
+		if ( pc() & 1 )
+		{
+			double_bus_fault();
+		}
+		else if ( ! mem.get_instruction_word( pc(), opcode, program_space() ) )
+		{
+			double_bus_fault();
+		}
+	}
+	
 	bool emulator::take_exception( uint16_t  format,
 	                               uint16_t  vector_offset,
 	                               uint32_t  instruction_address )
@@ -318,7 +330,7 @@ namespace v68k
 			return bus_error();
 		}
 		
-		prefetch_instruction_word();
+		prefetch_instruction_word_critical();
 		
 		return true;
 	}
