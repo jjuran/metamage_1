@@ -51,6 +51,12 @@ static uint32_t low_memory_size;
 
 
 static inline
+bool vid_x2()
+{
+	return v68k::mac::get_CurPageOption() < 0;
+}
+
+static inline
 bool addr_within_span( uint32_t addr, uint32_t base, uint32_t length )
 {
 	return addr >= base  &&  addr < base + length;
@@ -136,7 +142,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return screen::translate( addr - main_screen_addr, length, fc, access );
 	}
 	
-	if ( addr_within_span( addr, alt_screen_addr, screen_size ) )
+	if ( vid_x2()  &&  addr_within_span( addr, alt_screen_addr, screen_size ) )
 	{
 		return screen::translate2( addr - alt_screen_addr, length, fc, access );
 	}
