@@ -363,6 +363,10 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	Ptr stack_bottom = CurPageOption < 0 ? ScrnBase - 0x8000
 	                 : CurPageOption > 0 ? ScrnBase - 0x0600
 	                 :                     ScrnBase;
+	if ( MemTop )
+	{
+		InitApplZone();
+	}
 	
 	RsrcZoneInit();
 	
