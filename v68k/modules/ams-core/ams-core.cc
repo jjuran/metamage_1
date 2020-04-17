@@ -83,6 +83,8 @@ static unsigned romgen;
 static unsigned System;
 
 
+long  MemTop      : 0x0108;
+
 void* UTableBase  : 0x011C;
 short UnitNtryCnt : 0x01D2;
 
@@ -144,11 +146,18 @@ void initialize_low_memory_globals()
 	
 	fast_memset( UTableBase, '\0', unit_table_bytesize );
 	
-	BitMap screenBits;
-	
-	ScrnBitMap( &screenBits );
-	
-	ScreenRow = screenBits.rowBytes;
+	if ( MemTop == 0 )
+	{
+		BitMap screenBits;
+		
+		ScrnBitMap( &screenBits );
+		
+		ScrnBase  = screenBits.baseAddr;
+		ScreenRow = screenBits.rowBytes;
+		CrsrPin   = screenBits.bounds;
+		
+		SoundBase = (Ptr) 0x0001FD00;
+	}
 	
 	const short n_max_events = 20;
 	
@@ -162,16 +171,10 @@ void initialize_low_memory_globals()
 	
 	MBState = 0x80;
 	
-	ScrnBase = screenBits.baseAddr;
-	
 	*(long*) &Mouse = 0x000F000F;  // 15, 15
-	
-	CrsrPin = screenBits.bounds;
 	
 	init_lowmem_Cursor();
 	init_cursor();
-	
-	SoundBase = (Ptr) 0x0001FD00;
 }
 
 static
