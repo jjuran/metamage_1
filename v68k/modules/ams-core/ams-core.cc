@@ -136,7 +136,7 @@ void initialize_low_memory_globals()
 	
 	SysVersion = System;
 	
-	DefltStack = 64 * 1024;
+	DefltStack = 32 * 1024;
 	
 	const int n_unit_table_entries = 32;
 	const size_t unit_table_bytesize = n_unit_table_entries * sizeof (void**);
