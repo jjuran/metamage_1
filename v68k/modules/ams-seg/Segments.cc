@@ -489,13 +489,13 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	asm
 	{
 		MOVEA.L  CurrentA5,A5
-		MOVEA.L  start,A0
+		MOVEA.L  start,A3
 		MOVE.L   CurStackBase,SP
 		
 	// 23. Clear D7.
 		
 	// 24. Start the application.
-		JSR      (A0)
+		JSR      (A3)
 		DC.W     0xA9F4  // _ExitToShell
 	}
 	
