@@ -172,7 +172,7 @@ namespace v68k
 		{
 			if ( badly_aligned_data( a(7) ) )
 			{
-				return address_error();
+				return fault( Address_error, instruction_address );
 			}
 		}
 		
