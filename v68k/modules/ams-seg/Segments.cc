@@ -429,6 +429,11 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	
 	// 12. ... or raise System Error 26.
 	
+	if ( CurApRefNum < 0 )
+	{
+		SysError( 26 );
+	}
+	
 	// 13. Load 'CODE' 0 or raise System Error 26.
 	
 	Handle code0 = GetResource( 'CODE', 0 );
