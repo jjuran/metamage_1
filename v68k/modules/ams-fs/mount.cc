@@ -60,7 +60,7 @@ void try_to_mount( const char* name )
 	
 	const size_t data_size = data.size();
 	
-	Ptr image = NewPtrSys( data_size );
+	Ptr image = NewPtr( data_size );
 	
 	if ( image == NULL )
 	{
