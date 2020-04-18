@@ -362,6 +362,12 @@ pascal void UnloadSeg_patch( void* ptr )
 
 short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 {
+	/*
+		Chapter 10 of Scott Knaster's book /How to Write Macintosh Software/,
+		"Operating System Techniques", includes a "Play by Play" of how Launch
+		works, in 24 numbered steps, paraphrased below.
+	*/
+	
 	const unsigned char* appName = (StringPtr) pb->reserved1;
 	
 	if ( appName == NULL )
@@ -382,6 +388,8 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 		ExitToShell_patch();
 	}
 	
+	// 1. Set CurApName and CurPageOption.
+	
 	fast_memcpy( CurApName, appName, 1 + len );
 	
 	CurPageOption = pb->reserved2;
@@ -399,12 +407,29 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 		WARNING = "Allocating page 2 audio buffer";
 	}
 	
+	// 2. Send goodBye to open drivers with dNeedGoodBye set.
+	// 3. Close previous application's resource file.
+	// 4. Reset SP to BufPtr.
+	// 5. Disable the stack sniffer.
+	// 6. Save any scrap onto the stack.
+	
+	// 7. Reinitialize the application heap.
+	
 	if ( MemTop )
 	{
 		InitApplZone();
 	}
 	
+	// 8. Move the scrap into a new handle (if any).
+	// 9. Reinitialize the unit table.
+	// 10. Clear system globals.
+	
+	// 11. Open the application's resfile, stored in CurApRefNum...
 	RsrcZoneInit();
+	
+	// 12. ... or raise System Error 26.
+	
+	// 13. Load 'CODE' 0 or raise System Error 26.
 	
 	Handle code0 = GetResource( 'CODE', 0 );
 	
@@ -412,6 +437,9 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	{
 		SysError( 26 );
 	}
+	
+	// 14. Expand the stack to include any requested page 2 buffers.
+	// 15. Allocate the area above A5 on the stack.
 	
 	const jump_table_header& header = *(jump_table_header*) *code0;
 	
@@ -427,18 +455,29 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	Ptr alloc = MemTop ? stack_bottom - total_alloc_size
 	                   : NewPtr( total_alloc_size );
 	
+	// 16. Set CurrentA5.
+	// 17. Set CurStackBase.
+	
 	CurStackBase = alloc + stack_size;
 	
 	CurrentA5 = CurStackBase + header.below_a5_size;
+	
+	// 18. Enable the stack sniffer.
+	
+	// 19. Place the jump table above A5.
 	
 	void* jump_table = CurrentA5 + CurJTOffset;
 	
 	fast_memcpy( jump_table, &header + 1, header.jmptable_size );
 	
+	// 20. Release 'CODE' 0.
 	ReleaseResource( code0 );
 	
+	// 21. Place the Finder information handle above A5.
 	above_A5_area* above_A5 = (above_A5_area*) CurrentA5;
 	above_A5->Finder_handle = AppParmHandle;
+	
+	// 22. Set the application heap limit.
 	
 	if ( MemTop )
 	{
@@ -452,6 +491,10 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 		MOVEA.L  CurrentA5,A5
 		MOVEA.L  start,A0
 		MOVE.L   CurStackBase,SP
+		
+	// 23. Clear D7.
+		
+	// 24. Start the application.
 		JSR      (A0)
 		DC.W     0xA9F4  // _ExitToShell
 	}
