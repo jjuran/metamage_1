@@ -408,7 +408,16 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	}
 	
 	// 2. Send goodBye to open drivers with dNeedGoodBye set.
+	
 	// 3. Close previous application's resource file.
+	
+	if ( CurApRefNum > 0 )
+	{
+		CloseResFile( CurApRefNum );
+		
+		CurApRefNum = 0;
+	}
+	
 	// 4. Reset SP to BufPtr.
 	// 5. Disable the stack sniffer.
 	// 6. Save any scrap onto the stack.
