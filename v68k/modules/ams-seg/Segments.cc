@@ -23,7 +23,10 @@
 #include "options.hh"
 
 
+Ptr   MemTop       : 0x0108;
+Ptr   ApplLimit    : 0x0130;
 long  DefltStack   : 0x0322;
+Ptr   ScrnBase     : 0x0824;
 short CurApRefNum  : 0x0900;
 Ptr   CurrentA5    : 0x0904;
 Ptr   CurStackBase : 0x0908;
@@ -357,6 +360,10 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	
 	CurPageOption = pb->reserved2;
 	
+	Ptr stack_bottom = CurPageOption < 0 ? ScrnBase - 0x8000
+	                 : CurPageOption > 0 ? ScrnBase - 0x0600
+	                 :                     ScrnBase;
+	
 	RsrcZoneInit();
 	
 	Handle code0 = GetResource( 'CODE', 0 );
@@ -377,7 +384,8 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	
 	const uint32_t total_alloc_size = stack_size + total_a5_size;
 	
-	Ptr alloc = NewPtr( total_alloc_size );
+	Ptr alloc = MemTop ? stack_bottom - total_alloc_size
+	                   : NewPtr( total_alloc_size );
 	
 	CurStackBase = alloc + stack_size;
 	
@@ -393,6 +401,11 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	
 	above_A5_area* above_A5 = (above_A5_area*) CurrentA5;
 	above_A5->Finder_handle = AppParmHandle;
+	
+	if ( MemTop )
+	{
+		ApplLimit = alloc;
+	}
 	
 	void* start = (char*) jump_table + 2;
 	
