@@ -493,6 +493,7 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 		MOVE.L   CurStackBase,SP
 		
 	// 23. Clear D7.
+		MOVEQ.L  #0,D7
 		
 	// 24. Start the application.
 		JSR      (A3)
