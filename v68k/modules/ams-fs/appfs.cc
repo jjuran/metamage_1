@@ -14,6 +14,7 @@
 #include "callouts.hh"
 #include "FCB.hh"
 #include "module_A4.hh"
+#include "scoped_zone.hh"
 
 // ams-fs
 #include "freemount.hh"
@@ -37,6 +38,8 @@ void load_app_data( FCB* fcb )
 		
 		if ( size > fcb->fcbPLen )
 		{
+			scoped_zone null_zone;
+			
 			DisposePtr( fcb->fcbBfAdr );
 			
 			fcb->fcbBfAdr = NewPtr( size );

@@ -20,6 +20,7 @@
 #include "callouts.hh"
 #include "FCB.hh"
 #include "module_A4.hh"
+#include "scoped_zone.hh"
 
 // ams-fs
 #include "freemount.hh"
@@ -113,6 +114,8 @@ OSErr documents_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 	
 	if ( ! err )
 	{
+		scoped_zone null_zone;
+		
 		const size_t size = file_data.size();
 		
 		StringHandle h = PtrToHand( name, 1 + name[ 0 ] );

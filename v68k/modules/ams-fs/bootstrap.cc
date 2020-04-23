@@ -17,6 +17,7 @@
 #include "callouts.hh"
 #include "FCB.hh"
 #include "module_A4.hh"
+#include "scoped_zone.hh"
 
 // ams-fs
 #include "freemount.hh"
@@ -105,6 +106,8 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 	{
 		return fnfErr;  // TODO:  Check for other errors.
 	}
+	
+	scoped_zone null_zone;
 	
 	const Size size = file_data.size();
 	

@@ -16,6 +16,7 @@
 // ams-common
 #include "callouts.hh"
 #include "FCB.hh"
+#include "scoped_zone.hh"
 
 
 struct logical_block
@@ -151,6 +152,8 @@ void MFS_load( VCB* vcb, uint16_t stBlk, Ptr buffer, int16_t n )
 
 OSErr MFS_open_fork( short trap_word, FCB* fcb, const mfs::_fde* entry )
 {
+	scoped_zone null_zone;
+	
 	const Byte is_rsrc = trap_word;  // Open is A000, OpenRF is A00A
 	
 	const fork_spec& fork = get_fork( entry, is_rsrc );

@@ -20,6 +20,7 @@
 // ams-common
 #include "callouts.hh"
 #include "FCB.hh"
+#include "scoped_zone.hh"
 
 // ams-fs
 #include "appfs.hh"
@@ -421,6 +422,8 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		
 		if ( count > eof - mark )
 		{
+			scoped_zone null_zone;
+			
 			const long new_eof = mark + count;
 			
 			Ptr buffer = NewPtr( new_eof );
