@@ -7,9 +7,15 @@
 #define ZONES_HH
 
 struct InitZone_Params;
+struct Zone;
 
+typedef Zone*   THz;
 typedef char*   Ptr;
 typedef char**  Handle;
+
+Ptr zone_alloc_nonrel( THz zone, long logical_size );
+
+bool zone_free_nonrel( Ptr logical_block_addr );
 
 void InitApplZone_patch();
 
