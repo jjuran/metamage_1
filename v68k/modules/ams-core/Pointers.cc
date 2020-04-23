@@ -11,12 +11,18 @@
 // ams-common
 #include "callouts.hh"
 
+// ams-core
+#include "Zones.hh"
 
-short MemErr : 0x0220;
+
+THz   TheZone : 0x0118;
+short MemErr  : 0x0220;
+THz   SysZone : 0x02A6;
 
 enum
 {
 	kClearFlagMask = 0x0200,
+	kSysFlagMask   = 0x0400,
 };
 
 enum
@@ -56,6 +62,16 @@ char* NewPtr_handler( unsigned long size : __D0, short trap_word : __D1 )
 	
 	char* alloc;
 	
+	if ( const THz zone = (trap_word & kSysFlagMask) ? SysZone : TheZone )
+	{
+		if (( alloc = zone_alloc_nonrel( zone, size ) ))
+		{
+			goto coda;
+		}
+		
+		return NULL;
+	}
+	
 	const unsigned long extended_size = size < 12 ? 12 : (size + 3) & ~0x3;
 	const unsigned long physical_size = sizeof (block_header) + extended_size;
 	
@@ -79,6 +95,8 @@ char* NewPtr_handler( unsigned long size : __D0, short trap_word : __D1 )
 	
 	alloc += sizeof (block_header);
 	
+coda:
+	
 	if ( trap_word & kClearFlagMask )
 	{
 		fast_memset( alloc, '\0', size );
@@ -98,6 +116,11 @@ short DisposePtr_handler( char* alloc : __A0 )
 	{
 		// Invalid block type -- possibly due to a double-free error
 		return MemErr = paramErr;
+	}
+	
+	if ( zone_free_nonrel( alloc ) )
+	{
+		return MemErr = noErr;
 	}
 	
 	alloc -= sizeof (block_header);
