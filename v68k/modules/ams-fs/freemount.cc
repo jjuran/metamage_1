@@ -17,6 +17,9 @@
 // freemount-client
 #include "freemount/synced.hh"
 
+// ams-common
+#include "scoped_zone.hh"
+
 
 using plus::string;
 using plus::var_string;
@@ -24,6 +27,8 @@ using plus::var_string;
 int try_to_get( int in, int out, const string& path, var_string& data )
 {
 	namespace F = freemount;
+	
+	scoped_zone null_zone;
 	
 	try
 	{
@@ -58,6 +63,8 @@ int try_to_get( const char* begin, unsigned len, plus::var_string& data )
 int try_to_put( int fd, const plus::string& path, const plus::string& data )
 {
 	namespace F = freemount;
+	
+	scoped_zone null_zone;
 	
 	try
 	{
