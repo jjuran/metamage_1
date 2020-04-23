@@ -15,6 +15,7 @@
 
 Ptr   HeapEnd  : 0x0114;
 THz   TheZone  : 0x0118;
+Ptr   ApplLimit: 0x0130;
 OSErr MemErr   : 0x0220;
 THz   ApplZone : 0x02AA;
 long  Lo3Bytes : 0x031A;
@@ -131,6 +132,21 @@ short SetApplLimit_patch( Ptr p : __A0 )
 
 void MaxApplZone_patch()
 {
+	if ( ApplLimit >= HeapEnd + minimum_block_size )
+	{
+		const UInt32 delta = ApplLimit - HeapEnd;
+		
+		block_header* old_trailer = (block_header*) HeapEnd;
+		block_header* new_trailer = (block_header*) ApplLimit;
+		
+		HeapEnd = ApplLimit;
+		
+		ApplZone->bkLim = ApplLimit;
+		ApplZone->zcbFree += delta;
+		
+		old_trailer->size = delta;  // physical size of new free block
+		new_trailer->size = sizeof_zone_trailer_block;
+	}
 }
 
 void MoreMasters_patch()
