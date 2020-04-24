@@ -35,6 +35,7 @@
 
 Ptr   MemTop       : 0x0108;
 Ptr   ApplLimit    : 0x0130;
+Str15 FinderName   : 0x02E0;
 long  DefltStack   : 0x0322;
 Ptr   ScrnBase     : 0x0824;
 short CurApRefNum  : 0x0900;
@@ -106,7 +107,7 @@ struct segment_header
 
 struct LaunchParamBlockRec
 {
-	uint32_t reserved1;
+	uint8_t* reserved1;
 	uint16_t reserved2;
 	// ...
 };
@@ -363,6 +364,16 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 
 void ExitToShell_patch()
 {
+	if ( FinderName[ 0 ] )
+	{
+		LaunchParamBlockRec pb;
+		
+		pb.reserved1 = FinderName;
+		pb.reserved2 = 0;
+		
+		Launch_patch( &pb );
+	}
+	
 	if ( linger_on_exit )
 	{
 		pause();
