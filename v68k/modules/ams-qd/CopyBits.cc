@@ -21,6 +21,7 @@
 #include "callouts.hh"
 #include "QDGlobals.hh"
 #include "redraw_lock.hh"
+#include "scoped_zone.hh"
 
 // ams-qd
 #include "draw.hh"
@@ -491,6 +492,8 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 static
 GrafPtr new_port()
 {
+	scoped_zone null_zone;
+	
 	GrafPtr port = (GrafPtr) NewPtr( sizeof (GrafPort) );
 	
 	OpenPort( port );
