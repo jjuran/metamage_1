@@ -401,8 +401,6 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	
 	ReleaseResource( code0 );
 	
-	AppParmHandle = NewHandleClear( 4 );
-	
 	above_A5_area* above_A5 = (above_A5_area*) CurrentA5;
 	above_A5->Finder_handle = AppParmHandle;
 	

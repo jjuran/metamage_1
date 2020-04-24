@@ -4,6 +4,9 @@
 */
 
 // Mac OS
+#ifndef __MACMEMORY__
+#include <MacMemory.h>
+#endif
 #ifndef __TRAPS__
 #include <Traps.h>
 #endif
@@ -42,6 +45,8 @@ static command::option options[] =
 };
 
 
+Handle AppParmHandle : 0x0AEC;
+
 void* toolbox_trap_table[] : 3 * 1024;
 
 #define TBTRAP( Proc )  (toolbox_trap_table[ _##Proc & 0x03FF ] = &Proc##_patch)
@@ -60,6 +65,12 @@ static void install_SegmentLoader()
 	TBTRAP( ExitToShell );  // A9F4
 	TBTRAP( GetAppParms );  // A9F5
 }
+
+struct AppFilesHeader
+{
+	short message;
+	short count;
+};
 
 static char* const* get_options( char** argv )
 {
@@ -87,6 +98,8 @@ static char* const* get_options( char** argv )
 
 int main( int argc, char** argv )
 {
+	AppParmHandle = NewHandleClear( sizeof (AppFilesHeader) );
+	
 	if ( argc > 0 )
 	{
 		char* const* args = get_options( argv );
