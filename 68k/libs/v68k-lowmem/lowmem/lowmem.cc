@@ -89,6 +89,8 @@ enum
 	tag_ApplZone_low_word,
 	tag_ROMBase,
 	tag_ROMBase_low_word,
+	tag_FinderName,
+	tag_FinderName_word_7 = tag_FinderName + 7,  // 16 bytes
 	tag_CaretTime,
 	tag_CaretTime_low_word,
 	tag_ScrDmpEnbTyp,
@@ -320,6 +322,7 @@ static const global globals[] =
 	{ 0x02A6, 4,    tag_SysZone     },
 	{ 0x02AA, 4,    tag_ApplZone    },
 	{ 0x02AE, 4,    tag_ROMBase     },
+	{ 0x02E0, 16,   tag_FinderName  },
 	{ 0x02F0, 0x82, 0               },  // DoubleTime (high word)
 	{ 0x02F2, 0x82, 15              },  // DoubleTime (low word)
 	{ 0x02F4, 4,    tag_CaretTime   },
