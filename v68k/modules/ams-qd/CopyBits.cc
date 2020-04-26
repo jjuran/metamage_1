@@ -292,6 +292,8 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	if ( stretching )
 	{
+		scoped_zone null_zone;
+		
 		const short rowBytes = (dstWidth + 15) / 16u * 2;
 		
 		const Rect bounds = { 0, 0, dstHeight, dstWidth };
@@ -442,6 +444,8 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	{
 		if ( draw_bottom_to_top )
 		{
+			scoped_zone null_zone;
+			
 			const short tmpRight = srcSkip + width;
 			const short tmpRowBytes = (tmpRight + 15) / 16u * 2;
 			
