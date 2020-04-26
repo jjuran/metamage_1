@@ -10,10 +10,13 @@
 #include <MacMemory.h>
 #endif
 
+// ams-common
+#include "scoped_zone.hh"
+
 
 segments_box::segments_box( size_t capacity )  // bytes
 :
-	quickdraw::segments_box( (short*) NewPtr( capacity ) )
+	quickdraw::segments_box( (scoped_zone(), (short*) NewPtr( capacity )) )
 {
 }
 
