@@ -177,7 +177,7 @@ Handle_header* allocate_Handle_mem( long   size      : __D0,
 
 
 static
-char** new_empty_handle()
+char** new_empty_handle( short trap_word : __D1 )
 {
 	MemErr = memFullErr;
 	
@@ -200,7 +200,7 @@ char** new_empty_handle()
 static
 char** new_handle( long size : __D0, short trap_word : __D1 )
 {
-	char** h = new_empty_handle();
+	char** h = new_empty_handle( trap_word );
 	
 	if ( h != NULL )
 	{
@@ -513,7 +513,7 @@ short HSetState_patch( char** h : __A0, signed char state : __D0 )
 #pragma mark -
 
 asm
-char** NewEmptyHandle_patch()
+char** NewEmptyHandle_patch( short trap_word : __D1 )
 {
 	JSR      new_empty_handle
 	MOVE.W   MemErr,D0

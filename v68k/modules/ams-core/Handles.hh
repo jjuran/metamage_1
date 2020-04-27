@@ -37,6 +37,6 @@ signed char HGetState_patch( char** h : __A0 );
 
 short HSetState_patch( char** h : __A0, signed char state : __D0 );
 
-char** NewEmptyHandle_patch();
+char** NewEmptyHandle_patch( short trap_word : __D1 );
 
 #endif
