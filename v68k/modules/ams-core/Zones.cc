@@ -139,6 +139,35 @@ block_header* locate_free_block( THz zone, Size minimum )
 		p = next( p );
 	}
 	
+	/*
+		We didn't find a free block large enough.  If this is the application
+		heap, we can try extending it.  Our starting point is either bkLim (if
+		the last block is allocated, in which case q will be NULL), or the last
+		free block (pointed to by q).
+	*/
+	
+	if ( zone == ApplZone )
+	{
+		Ptr block = q ? (Ptr) q : zone->bkLim;
+		Ptr new_end = block + minimum;
+		
+		if ( new_end <= ApplLimit )
+		{
+			block_header* empty_block = (block_header*) block;
+			block_header* new_trailer = (block_header*) new_end;
+			
+			HeapEnd     = new_end;
+			zone->bkLim = new_end;
+			
+			zone->zcbFree += minimum - (q ? empty_block->size : 0);
+			
+			empty_block->size = minimum;  // physical size of new free block
+			new_trailer->size = sizeof_zone_trailer_block;
+			
+			return empty_block;
+		}
+	}
+	
 	return NULL;
 }
 
