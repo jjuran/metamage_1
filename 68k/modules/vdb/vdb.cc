@@ -28,6 +28,8 @@ void* toolbox_trap_table[] : 3 * 1024;
 
 static void install_Debugger()
 {
+	TBTRAP( SysError );  // A9C9
+	
 	TBTRAP( Debugger );  // A9FF
 	TBTRAP( DebugStr );  // ABFF
 }

@@ -21,12 +21,19 @@
 #define STR_LEN(s)  "" s, (sizeof s - 1)
 
 #define DEBUGGER_TEXT  "User Break"
+#define SYSERROR_TEXT  "System Error"
 
 
 enum
 {
 	trace_on = 0xFFFFFFF4
 };
+
+static
+void SysError_message( short error : __D0 )
+{
+	write( STDERR_FILENO, STR_LEN( SYSERROR_TEXT "\n" ) );
+}
 
 static
 void Debugger_message()
@@ -48,6 +55,20 @@ void DebugStr_message( const unsigned char* message : __A0 )
 	*p = '\n';
 	
 	write( STDERR_FILENO, buffer, length + 1 );
+}
+
+asm
+void SysError_patch( short error : __D0 )
+{
+	LINK     A6,#0
+	MOVEM.L  D0-D2/A0-A1,-(SP)
+	
+	JSR      SysError_message
+	
+	MOVEM.L  (SP)+,D0-D2/A0-A1
+	UNLK     A6
+	
+	JMP      trace_on
 }
 
 asm
