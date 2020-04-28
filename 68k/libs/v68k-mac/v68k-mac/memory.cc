@@ -47,6 +47,8 @@ enum
 	tag_EventQueue,
 	tag_EventQueue_word_4 = tag_EventQueue + 4,  // 10 bytes
 	tag_EvtBufCnt,
+	tag_RndSeed,
+	tag_RndSeed_low_word,
 	tag_SysVersion,
 	tag_VBLQueue,
 	tag_VBLQueue_word_4 = tag_VBLQueue + 4,  // 10 bytes
@@ -290,6 +292,7 @@ static const global globals[] =
 	{ 0x0146, 4,    tag_SysEvtBuf   },
 	{ 0x014A, 10,   tag_EventQueue  },
 	{ 0x0154, 2,    tag_EvtBufCnt   },
+	{ 0x0156, 4,    tag_RndSeed     },
 	{ 0x015A, 2,    tag_SysVersion  },
 	{ 0x0160, 10,   tag_VBLQueue    },
 	{ 0x016A, 0xC4, tag_Ticks       },
