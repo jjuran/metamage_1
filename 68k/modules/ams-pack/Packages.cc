@@ -220,8 +220,18 @@ asm void Pack1_patch()
 
 asm void Pack2_patch()
 {
+	MOVE.W   4(SP),D0
+	
+	SUBQ.W   #2,D0
+	BEQ.S    done       // diLoad
+	
 	PEA      0x0002
 	JMP      call_PACK
+	
+done:
+	MOVE.L   (SP)+,A0
+	ADDQ.L   #2,SP
+	JMP      (A0)
 }
 
 asm void Pack3_patch()
