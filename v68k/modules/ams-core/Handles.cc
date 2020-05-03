@@ -250,7 +250,7 @@ short DisposeHandle_patch( char** h : __A0 )
 			return MemErr = paramErr;
 		}
 		
-		free( header );
+		EmptyHandle_patch( h );
 	}
 	
 	free( h );
