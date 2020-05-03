@@ -183,18 +183,18 @@ char** new_empty_handle( short trap_word : __D1 )
 	
 	native_alloc = true;
 	
-	void* alloc = malloc( sizeof (master_pointer) );
+	master_pointer* mp = (master_pointer*) malloc( sizeof (master_pointer) );
 	
 	native_alloc = false;
 	
-	if ( alloc != NULL )
+	if ( mp != NULL )
 	{
 		MemErr = noErr;
 		
-		fast_memset( alloc, '\0', sizeof (master_pointer) );
+		fast_memset( mp, '\0', sizeof (master_pointer) );
 	}
 	
-	return (char**) alloc;
+	return (char**) mp;
 }
 
 static
