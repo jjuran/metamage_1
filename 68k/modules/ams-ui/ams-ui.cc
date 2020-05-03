@@ -267,6 +267,8 @@ static void install_Dialogs()
 
 static void install_TextEdit()
 {
+	TBTRAP( TEStyleNew   );  // A83E
+	
 	TBTRAP( TEInit       );  // A9CC
 	TBTRAP( TEDispose    );  // A9CD
 	TBTRAP( TETextBox    );  // A9CE
