@@ -355,18 +355,9 @@ short ReallocateHandle_patch( char**  h         : __A0,
                               long    size      : __D0,
                               short   trap_word : __D1 )
 {
-	if ( h == NULL )
+	if ( short err = EmptyHandle_patch( h ) )
 	{
-		return MemErr = nilHandleErr;
-	}
-	
-	if ( *h != NULL )
-	{
-		Handle_header* header = get_header( *h );
-		
-		free( header );
-		
-		*h = NULL;
+		return err;
 	}
 	
 	Handle_header* header = allocate_Handle_mem( size, trap_word );
