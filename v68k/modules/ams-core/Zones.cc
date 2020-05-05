@@ -17,7 +17,59 @@ Ptr   HeapEnd  : 0x0114;
 THz   TheZone  : 0x0118;
 OSErr MemErr   : 0x0220;
 THz   ApplZone : 0x02AA;
+long  Lo3Bytes : 0x031A;
 
+
+struct block_header
+{
+	union
+	{
+		UInt8   tag;
+		UInt32  size;
+	};
+	
+	union
+	{
+		THz     zone;
+		UInt32  misc;
+	};
+};
+
+static inline
+block_header* get_block_header( Ptr logical_addr )
+{
+	return (block_header*) (logical_addr - sizeof (block_header));
+}
+
+static inline
+Ptr data( block_header* block )
+{
+	return (Ptr) block + sizeof (block_header);
+}
+
+static inline
+Size size( block_header* block )
+{
+	return block->size & Lo3Bytes;
+}
+
+static inline
+block_header* next( block_header* block )
+{
+	return (block_header*) ((Ptr) block + size( block ));
+}
+
+static inline
+block_header* begin( THz zone )
+{
+	return (block_header*) &zone->heapData;
+}
+
+static inline
+block_header* end( THz zone )
+{
+	return (block_header*) zone->bkLim;
+}
 
 #pragma mark -
 #pragma mark Initialization and Allocation
