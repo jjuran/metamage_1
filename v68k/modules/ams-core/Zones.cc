@@ -6,6 +6,9 @@
 #include "Zones.hh"
 
 // Mac OS
+#ifndef __MACERRORS__
+#include <MacErrors.h>
+#endif
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
@@ -198,6 +201,11 @@ block_header* zone_alloc( THz zone, long logical_size )
 		
 		// Store the padding in the tag byte.  Caller will set block type.
 		free_block->tag = physical_size - sizeof (block_header) - logical_size;
+		
+		if ( zone->zcbFree < 0 )
+		{
+			SysError( 33 );
+		}
 	}
 	
 	return free_block;
