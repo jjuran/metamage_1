@@ -71,6 +71,12 @@ block_header* end( THz zone )
 	return (block_header*) zone->bkLim;
 }
 
+enum
+{
+	minimum_block_size        = 12,
+	sizeof_zone_trailer_block = minimum_block_size,
+};
+
 #pragma mark -
 #pragma mark Initialization and Allocation
 #pragma mark -
@@ -101,17 +107,21 @@ void InitZone_patch( InitZone_Params* params : __A0 )
 	
 	fast_memset( start, '\0', params->limit - start );
 	
-	Ptr heapData = start + 52;
-	Ptr data_end = params->limit - 12;
+	Ptr heapData = (Ptr) &zone.heapData;
+	Ptr data_end = params->limit - sizeof_zone_trailer_block;
 	
 	Size data_size = data_end - heapData;
-	
-	*(UInt32*) heapData = data_size;  // free block physical size
 	
 	zone.bkLim    = data_end;
 	zone.zcbFree  = data_size;  // number of bytes occupied by free blocks
 	zone.gzProc   = params->growZone;
 	zone.moreMast = params->moreMasters;
+	
+	block_header* single_block = begin( &zone );
+	block_header* zone_trailer = end  ( &zone );
+	
+	single_block->size = data_size;
+	zone_trailer->size = sizeof_zone_trailer_block;
 }
 
 short SetApplLimit_patch( Ptr p : __A0 )
