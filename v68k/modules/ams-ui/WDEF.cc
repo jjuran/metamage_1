@@ -253,9 +253,7 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 				h + title_width + 6,
 			};
 			
-			RgnHandle title_region = rectangular_utility_region();
-			
-			RectRgn( title_region, &title_area );
+			RgnHandle title_region = rectangular_utility_region( title_area );
 			
 			DiffRgn( qd.thePort->clipRgn, title_region, qd.thePort->clipRgn );
 		}
@@ -378,9 +376,7 @@ long WDEF_0_CalcRgns( short varCode, WindowPtr w )
 	{
 		OffsetRect( &rect, shadow_px, shadow_px );
 		
-		RgnHandle shadow = rectangular_utility_region();
-		
-		RectRgn( shadow, &rect );
+		RgnHandle shadow = rectangular_utility_region( rect );
 		
 		UnionRgn( window->strucRgn, shadow, window->strucRgn );
 	}

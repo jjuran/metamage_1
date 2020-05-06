@@ -77,14 +77,12 @@ void draw_text_line( const char*  p,
 static
 void draw_text( const TERec& te )
 {
-	RgnHandle textClip = rectangular_utility_region();
-	
 	const Rect& destRect = te.destRect;
 	const Rect& viewRect = te.viewRect;
 	
 	const short lineHeight = te.lineHeight;
 	
-	textClip[0]->rgnBBox = viewRect;
+	RgnHandle textClip = rectangular_utility_region( viewRect );
 	
 	RgnHandle savedClip = te.inPort->clipRgn;
 	

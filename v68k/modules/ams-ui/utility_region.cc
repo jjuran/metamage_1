@@ -11,9 +11,11 @@
 #endif
 
 
-RgnHandle rectangular_utility_region()
+RgnHandle rectangular_utility_region( const Rect& rect )
 {
 	static RgnHandle rgn = NewRgn();
+	
+	rgn[0]->rgnBBox = rect;
 	
 	return rgn;
 }

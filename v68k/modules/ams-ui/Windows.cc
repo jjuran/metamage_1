@@ -1211,9 +1211,7 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 
 pascal void InvalRect_patch( const Rect* rect )
 {
-	RgnHandle rgn = rectangular_utility_region();
-	
-	RectRgn( rgn, rect );
+	RgnHandle rgn = rectangular_utility_region( *rect );
 	
 	InvalRgn( rgn );
 }
@@ -1236,9 +1234,7 @@ pascal void InvalRgn_patch( struct MacRegion** rgn )
 
 pascal void ValidRect_patch( const Rect* rect )
 {
-	RgnHandle rgn = rectangular_utility_region();
-	
-	RectRgn( rgn, rect );
+	RgnHandle rgn = rectangular_utility_region( *rect );
 	
 	ValidRgn( rgn );
 }
