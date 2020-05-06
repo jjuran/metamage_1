@@ -22,6 +22,7 @@
 // ams-common
 #include "callouts.hh"
 #include "raster_lock.hh"
+#include "scoped_zone.hh"
 
 // ams-ui
 #include "CDEF.hh"
@@ -278,7 +279,7 @@ pascal short TrackControl_patch( ControlRecord**   control,
                                  Point             start,
                                  ControlActionUPP  action )
 {
-	static const RgnHandle tmp = NewRgn();
+	static const RgnHandle tmp = (scoped_zone(), NewRgn());
 	
 	RgnHandle mouseRgn = tmp;
 	

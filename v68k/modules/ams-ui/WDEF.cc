@@ -16,6 +16,7 @@
 // ams-common
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
+#include "scoped_zone.hh"
 
 // ams-ui
 #include "utility_region.hh"
@@ -116,7 +117,7 @@ short shadow_for_variant( short varCode )
 static
 long toggle_close_box( WindowPeek window )
 {
-	static RgnHandle splat_rgn = make_splat();
+	static RgnHandle splat_rgn = (scoped_zone(), make_splat());
 	
 	const Rect& frame = window->strucRgn[0]->rgnBBox;
 	

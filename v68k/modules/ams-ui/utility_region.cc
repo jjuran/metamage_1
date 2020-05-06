@@ -10,10 +10,13 @@
 #include <Quickdraw.h>
 #endif
 
+// ams-common
+#include "scoped_zone.hh"
+
 
 RgnHandle rectangular_utility_region( const Rect& rect )
 {
-	static RgnHandle rgn = NewRgn();
+	static RgnHandle rgn = (scoped_zone(), NewRgn());
 	
 	rgn[0]->rgnBBox = rect;
 	
