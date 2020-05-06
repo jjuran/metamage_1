@@ -21,6 +21,7 @@
 #include "draw.hh"
 #include "Regions.hh"
 #include "segments_box.hh"
+#include "utility_region.hh"
 
 
 enum white_t { White };
@@ -574,11 +575,7 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	{
 		if ( RgnHandle rgnSave = (RgnHandle) port.rgnSave )
 		{
-			RgnHandle rgn = clipRgn;  // Reuse the existing region
-			
-			RectRgn( rgn, r );
-			
-			UnionRgn( rgn, rgnSave, rgnSave );
+			UnionRgn( rectangular_utility_region( *r ), rgnSave, rgnSave );
 		}
 		
 		if ( port.pnVis >= 0 )

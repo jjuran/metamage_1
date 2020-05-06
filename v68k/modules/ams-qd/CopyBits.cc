@@ -27,6 +27,7 @@
 #include "draw.hh"
 #include "segments_box.hh"
 #include "stretch.hh"
+#include "utility_region.hh"
 
 
 static inline
@@ -550,11 +551,7 @@ pascal void ScrollRect_patch( const Rect*  srcRect,
 	          srcCopy,
 	          updateRgn );
 	
-	static RgnHandle tmp = NewRgn();
-	
-	tmp[0]->rgnBBox = dstRect;
-	
-	DiffRgn( updateRgn, tmp, updateRgn );
+	DiffRgn( updateRgn, rectangular_utility_region( dstRect ), updateRgn );
 	
 	EraseRgn( updateRgn );
 }
