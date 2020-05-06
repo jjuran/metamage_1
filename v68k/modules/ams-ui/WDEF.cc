@@ -17,6 +17,9 @@
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
 
+// ams-ui
+#include "utility_region.hh"
+
 
 /*
 	This is the height added by a title bar.  This means that in window
@@ -108,14 +111,6 @@ short shadow_for_variant( short varCode )
 	                      :                          0;
 	
 	return shadow_px;
-}
-
-static
-RgnHandle rectangular_utility_region()
-{
-	static RgnHandle rgn = NewRgn();
-	
-	return rgn;
 }
 
 static

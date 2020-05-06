@@ -25,6 +25,7 @@
 
 // ams-ui
 #include "scoped_port.hh"
+#include "utility_region.hh"
 
 
 long Ticks     : 0x016A;
@@ -76,7 +77,7 @@ void draw_text_line( const char*  p,
 static
 void draw_text( const TERec& te )
 {
-	static RgnHandle textClip = NewRgn();
+	RgnHandle textClip = rectangular_utility_region();
 	
 	const Rect& destRect = te.destRect;
 	const Rect& viewRect = te.viewRect;

@@ -33,6 +33,7 @@
 #include "StrUtils.hh"
 #include "WDEF.hh"
 #include "desktop.hh"
+#include "utility_region.hh"
 
 
 WindowPeek WindowList  : 0x09D6;
@@ -1207,14 +1208,6 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 	local (0,0) to global (100,80), you must add positive numbers or
 	subtract negative ones.
 */
-
-static
-RgnHandle rectangular_utility_region()
-{
-	static RgnHandle rgn = NewRgn();
-	
-	return rgn;
-}
 
 pascal void InvalRect_patch( const Rect* rect )
 {
