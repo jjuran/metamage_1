@@ -12,6 +12,7 @@
 
 // ams-common
 #include "QDGlobals.hh"
+#include "scoped_zone.hh"
 
 // ams-qd
 #include "RoundRectRgn.hh"
@@ -30,7 +31,7 @@ pascal void StdRRect_patch( signed char  verb,
 		return;
 	}
 	
-	static RgnHandle rgn = NewRgn();
+	static RgnHandle rgn = (scoped_zone(), NewRgn());
 	
 	if ( verb == kQDGrafVerbFrame )
 	{

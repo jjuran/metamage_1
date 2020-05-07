@@ -12,6 +12,7 @@
 
 // ams-common
 #include "QDGlobals.hh"
+#include "scoped_zone.hh"
 
 // ams-qd
 #include "OvalRgn.hh"
@@ -127,7 +128,7 @@ pascal void StdArc_patch( SInt8 verb, const Rect* r, short start, short extent )
 	const short width  = r->right - r->left;
 	const short height = r->bottom - r->top;
 	
-	static RgnHandle ovalRgn = NewRgn();
+	static RgnHandle ovalRgn = (scoped_zone(), NewRgn());
 	
 	if ( verb == kQDGrafVerbFrame )
 	{
@@ -147,13 +148,13 @@ pascal void StdArc_patch( SInt8 verb, const Rect* r, short start, short extent )
 	
 	if ( extent < 360 )
 	{
-		static RgnHandle clip = NewRgn();
+		static RgnHandle clip = (scoped_zone(), NewRgn());
 		
 		clip_from_angle( clip, width, height, start );
 		
 		if ( extent != 180 )
 		{
-			static RgnHandle clip2 = NewRgn();
+			static RgnHandle clip2 = (scoped_zone(), NewRgn());
 			
 			short end = (start + extent + 180) % 360;
 			

@@ -12,6 +12,7 @@
 
 // ams-common
 #include "QDGlobals.hh"
+#include "scoped_zone.hh"
 
 // ams-qd
 #include "OvalRgn.hh"
@@ -27,7 +28,7 @@ pascal void StdOval_patch( signed char verb, const Rect* r )
 		return;
 	}
 	
-	static RgnHandle ovalRgn = NewRgn();
+	static RgnHandle ovalRgn = (scoped_zone(), NewRgn());
 	
 	if ( verb == kQDGrafVerbFrame )
 	{

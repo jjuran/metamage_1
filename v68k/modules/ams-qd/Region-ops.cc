@@ -23,6 +23,9 @@
 #include "qd/sect_region.hh"
 #include "qd/xor_region.hh"
 
+// ams-common
+#include "scoped_zone.hh"
+
 // ams-qd
 #include "Rect-utils.hh"
 #include "Rects.hh"
@@ -378,7 +381,7 @@ void stretch_region_v( RgnHandle rgn, short dv, RgnHandle tmp )
 
 pascal void InsetRgn_patch ( MacRegion** rgn, short dh, short dv )
 {
-	static RgnHandle tmp = NewRgn();
+	static RgnHandle tmp = (scoped_zone(), NewRgn());
 	
 	if ( dh != 0 )
 	{
@@ -465,7 +468,7 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 	
 	if ( src == dst )
 	{
-		static RgnHandle tmp = NewRgn();
+		static RgnHandle tmp = (scoped_zone(), NewRgn());
 		
 		CopyRgn( src, tmp );
 		
@@ -571,8 +574,8 @@ pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 		Clip each input region to the intersection of the bounding boxes.
 	*/
 	
-	static RgnHandle one = NewRgn();
-	static RgnHandle two = NewRgn();
+	static RgnHandle one = (scoped_zone(), NewRgn());
+	static RgnHandle two = (scoped_zone(), NewRgn());
 	
 	sect_rect_region( bbox_intersection, a, one );  // clobbers one
 	sect_rect_region( bbox_intersection, b, two );  // clobbers two

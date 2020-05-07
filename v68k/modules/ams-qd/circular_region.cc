@@ -19,6 +19,9 @@
 // quickdraw
 #include "qd/convex_region_generator.hh"
 
+// ams-common
+#include "scoped_zone.hh"
+
 
 using quickdraw::convex_region_generator;
 
@@ -89,7 +92,7 @@ RgnHandle circular_region( short diameter, short width, short height )
 {
 	const Fixed c_squared = 0x00010000;
 	
-	static RgnHandle tmp = NewRgn();
+	static RgnHandle tmp = (scoped_zone(), NewRgn());
 	
 	short x = diameter / 2u;
 	short y0 = 0;

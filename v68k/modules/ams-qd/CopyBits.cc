@@ -283,7 +283,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	const bool congruent  = dstWidth == srcWidth  &&  dstHeight == srcHeight;
 	const bool stretching = ! congruent;
 	
-	static RgnHandle clipRgn = NewRgn();
+	static RgnHandle clipRgn = (scoped_zone(), NewRgn());
 	
 	GrafPort& port = **get_addrof_thePort();
 	

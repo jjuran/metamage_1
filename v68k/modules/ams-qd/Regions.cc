@@ -13,6 +13,7 @@
 // ams-common
 #include "callouts.hh"
 #include "QDGlobals.hh"
+#include "scoped_zone.hh"
 
 // ams-qd
 #include "Polygons.hh"
@@ -25,7 +26,7 @@ static const Rect emptyRect = { 0, 0, 0, 0 };
 
 pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 {
-	static RgnHandle utility_rgn = NewRgn();
+	static RgnHandle utility_rgn = (scoped_zone(), NewRgn());
 	
 	GrafPort& port = **get_addrof_thePort();
 	

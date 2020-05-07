@@ -19,6 +19,7 @@
 
 // ams-common
 #include "QDGlobals.hh"
+#include "scoped_zone.hh"
 
 // ams-qd
 #include "segments_box.hh"
@@ -237,7 +238,7 @@ pascal void StdPoly_patch( signed char verb, PolyHandle poly )
 		}
 	}
 	
-	static RgnHandle rgn = NewRgn();
+	static RgnHandle rgn = (scoped_zone(), NewRgn());
 	
 	PolyRgn( rgn, poly );
 	
