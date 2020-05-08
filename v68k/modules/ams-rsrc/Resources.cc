@@ -352,7 +352,7 @@ pascal short OpenResFile_patch( ConstStr255Param name )
 }
 
 static
-void CloseResFile_handler( short refnum : __D0 )
+void CloseResFile_core( short refnum : __D0 )
 {
 	UpdateResFile_patch( refnum );
 	
@@ -410,6 +410,12 @@ void CloseResFile_handler( short refnum : __D0 )
 	DisposeHandle( h );
 	
 	FSClose( refnum );
+}
+
+static
+void CloseResFile_handler( short refnum : __D0 )
+{
+	CloseResFile_core( refnum );
 }
 
 asm
