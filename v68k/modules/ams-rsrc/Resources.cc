@@ -44,7 +44,9 @@ enum
 };
 
 
+Ptr   MemTop      : 0x0108;
 short MemErr      : 0x0220;
+Ptr   ApplZone    : 0x02AA;
 short CurApRefNum : 0x0900;
 Str31 CurApName   : 0x0910;
 Handle TopMapHndl : 0x0A50;
@@ -487,8 +489,77 @@ pascal short InitResources_patch()
 	return SysMap;
 }
 
+static inline
+bool handle_in_ApplZone( Handle h )
+{
+	/*
+		Compare addresses against MemTop to distinguish those in the ApplZone
+		heap from those in persistent private memory above ROM.
+		
+		Don't use HeapEnd, because the heap has already been shrunk to its
+		original size by the time we're called to clear out resources from
+		the system resource file that could have been allocated higher in the
+		application heap.
+		
+		Don't use ApplLimit, just in case an application sets it to a value
+		less than HeapEnd (which is harmless, or at least mostly harmless).
+	*/
+	
+	return h  &&  *h > ApplZone  &&  *h < MemTop;
+	
+	/*
+		We're actually checking the data block address above.  We can't use
+		the simpler logic below to check the master pointer address, because
+		master pointer blocks are always allocated out of private memory.
+	*/
+	
+	return (Ptr) h > ApplZone  &&  (Ptr) h < MemTop;
+}
+
+static
+void release_ApplZone_resources()
+{
+	if ( MemTop == NULL )
+	{
+		return;
+	}
+	
+	rsrc_map_header& map = **(RsrcMapHandle) TopMapHndl;
+	
+	type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
+	
+	uint16_t n_types_1 = types.count_1;
+	
+	type_header* type = types.list;
+	
+	do
+	{
+		uint16_t n_rsrcs_1 = type->count_1;
+		uint16_t offset    = type->offset;
+		
+		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + offset);
+		
+		do
+		{
+			if ( handle_in_ApplZone( rsrc->handle ) )
+			{
+				rsrc->handle = NULL;
+			}
+			
+			++rsrc;
+		}
+		while ( n_rsrcs_1-- > 0 );
+		
+		++type;
+	}
+	while ( n_types_1-- > 0 );
+	
+}
+
 pascal void RsrcZoneInit_patch()
 {
+	release_ApplZone_resources();
+	
 	CurApRefNum = OpenResFile_handler( CurApName, 0 );
 }
 
