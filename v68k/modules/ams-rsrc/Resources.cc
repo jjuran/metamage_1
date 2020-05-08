@@ -412,9 +412,30 @@ void CloseResFile_core( short refnum : __D0 )
 	FSClose( refnum );
 }
 
+static inline
+short map_refnum( Handle h )
+{
+	rsrc_map_header& map = **(RsrcMapHandle) h;
+	
+	return map.refnum;
+}
+
 static
 void CloseResFile_handler( short refnum : __D0 )
 {
+	if ( refnum == CurApRefNum )
+	{
+		/*
+			If we're asked to close the application's resource file,
+			then close all resource files above it first.
+		*/
+		
+		while ( (refnum = map_refnum( TopMapHndl )) != CurApRefNum )
+		{
+			CloseResFile_core( refnum );
+		}
+	}
+	
 	CloseResFile_core( refnum );
 }
 
