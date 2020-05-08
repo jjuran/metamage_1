@@ -59,6 +59,11 @@ static FMOutput the_current_FMOutput;
 
 pascal void InitFonts_patch()
 {
+	ROMFont0 = NULL;
+	
+	the_current_font_record = NULL;
+	the_current_font_resID  = 0;
+	
 	const FMInput input = { 0, 0, 0, true, 0, OneOne, OneOne };
 	
 	FMSwapFont( &input );
