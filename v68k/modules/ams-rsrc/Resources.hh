@@ -49,6 +49,8 @@ pascal long SizeRsrc_patch( char** resource );
 
 pascal void ChangedResource_patch( char** resource );
 
+pascal void UpdateResFile_patch( short refnum );
+
 pascal void WriteResource_patch( char** resource );
 
 pascal void SetResPurge_patch( unsigned char install );

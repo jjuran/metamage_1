@@ -48,7 +48,7 @@ void install_ResourceManager()
 	TBTRAP( RsrcZoneInit    );  // A996
 	TBTRAP( OpenResFile     );  // A997
 	TBTRAP( UseResFile      );  // A998
-	
+	TBTRAP( UpdateResFile   );  // A999
 	TBTRAP( CloseResFile    );  // A99A
 	TBTRAP( SetResLoad      );  // A99B
 	TBTRAP( CountResources  );  // A99C

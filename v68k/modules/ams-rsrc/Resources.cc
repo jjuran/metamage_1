@@ -910,6 +910,31 @@ pascal void ChangedResource_patch( Handle resource )
 }
 
 static
+void UpdateResFile_handler( short refnum : __D0 )
+{
+	ERROR = "UpdateResFile is unimplemented";
+}
+
+asm
+pascal void UpdateResFile_patch( short refnum )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.W   (A2)+,D0
+	
+	JSR      UpdateResFile_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #2,SP
+	
+	JMP      (A0)
+}
+
+static
 void WriteResource_handler( Handle resource : __A0 )
 {
 	OSErr err = resNotFound;
