@@ -352,7 +352,62 @@ pascal short OpenResFile_patch( ConstStr255Param name )
 static
 void CloseResFile_handler( short refnum : __D0 )
 {
-	ERROR = "CloseResFile is unimplemented";
+	UpdateResFile_patch( refnum );
+	
+	RsrcMapHandle& rsrc_map = find_rsrc_map( refnum );
+	
+	if ( rsrc_map == NULL )
+	{
+		ResErr = resFNotFound;
+		return;
+	}
+	
+	rsrc_map_header& map = **rsrc_map;
+	
+	type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
+	
+	uint16_t n_types_1 = types.count_1;
+	
+	type_header* type = types.list;
+	
+	do
+	{
+		uint16_t n_rsrcs_1 = type->count_1;
+		uint16_t offset    = type->offset;
+		
+		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + offset);
+		
+		do
+		{
+			if ( Handle h = rsrc->handle )
+			{
+				master_pointer& mp = *(master_pointer*) h;
+				
+				mp.flags -= kHandleIsResourceMask;
+				
+				DisposeHandle( h );
+			}
+			
+			++rsrc;
+		}
+		while ( n_rsrcs_1-- > 0 );
+		
+		++type;
+	}
+	while ( n_types_1-- > 0 );
+	
+	Handle h = (Handle) rsrc_map;
+	
+	rsrc_map = (RsrcMapHandle) map.next_map;
+	
+	if ( CurMap == refnum )
+	{
+		CurMap = rsrc_map[0]->refnum;
+	}
+	
+	DisposeHandle( h );
+	
+	FSClose( refnum );
 }
 
 asm
