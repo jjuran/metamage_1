@@ -79,6 +79,11 @@ rsrc_header* recover_rsrc_header( Handle resource )
 static
 RsrcMapHandle find_rsrc_map( short refnum )
 {
+	if ( refnum == 0 )
+	{
+		refnum = SysMap;
+	}
+	
 	RsrcMapHandle rsrc_map = (RsrcMapHandle) TopMapHndl;
 	
 	while ( rsrc_map  &&  rsrc_map[0]->refnum != refnum )
