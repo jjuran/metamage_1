@@ -198,7 +198,6 @@ void initialize()
 	words[ tag_BootDrive  ] = 0xFFFF;  // initially -1
 	words[ tag_ROM85      ] = 0xFFFF;  // indicates 64K ROM
 	words[ tag_FSFCBLen   ] = 0xFFFF;  // indicates MFS
-	words[ tag_CurApRefNum] = iota::big_u16( 2 );
 	words[ tag_SaveUpdate ] = 0xFFFF;  // initially true
 	words[ tag_PaintWhite ] = 0xFFFF;  // initially true
 	words[ tag_AE8        ] = 0xFFFF;
