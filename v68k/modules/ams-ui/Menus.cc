@@ -178,7 +178,10 @@ pascal void InitMenus_patch()
 	
 	MenuList[0]->right_edge = 10;
 	
-	patch_SysBeep();
+	if ( old_SysBeep == NULL )
+	{
+		patch_SysBeep();
+	}
 }
 
 pascal MenuInfo** NewMenu_patch( short menuID, const unsigned char* title )
