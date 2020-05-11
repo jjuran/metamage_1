@@ -16,6 +16,11 @@ short MemErr : 0x0220;
 
 enum
 {
+	kClearFlagMask = 0x0200,
+};
+
+enum
+{
 	noErr      = 0,
 	paramErr   = -50,
 	memFullErr = -108,
@@ -42,25 +47,26 @@ bool native_alloc;
 static
 char* NewPtr_handler( unsigned long size : __D0, short trap_word : __D1 )
 {
+	MemErr = memFullErr;
+	
 	if ( size > 4 * 1024 * 1024 )
 	{
 		return NULL;  // 4 MiB is already out of the question, for now
 	}
+	
+	char* alloc;
 	
 	const unsigned long extended_size = size < 12 ? 12 : (size + 3) & ~0x3;
 	const unsigned long physical_size = sizeof (block_header) + extended_size;
 	
 	native_alloc = true;  // Set native_alloc in case malloc() calls NewPtr()
 	
-	char* alloc = (char*) malloc( physical_size );
+	alloc = (char*) malloc( physical_size );
 	
 	native_alloc = false;
 	
-	MemErr = noErr;
-	
 	if ( alloc == NULL )
 	{
-		MemErr = memFullErr;
 		return NULL;
 	}
 	
@@ -73,10 +79,12 @@ char* NewPtr_handler( unsigned long size : __D0, short trap_word : __D1 )
 	
 	alloc += sizeof (block_header);
 	
-	if ( trap_word & 0x0200 )
+	if ( trap_word & kClearFlagMask )
 	{
 		fast_memset( alloc, '\0', size );
 	}
+	
+	MemErr = noErr;
 	
 	return alloc;
 }
