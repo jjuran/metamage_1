@@ -56,7 +56,17 @@ namespace vlib
 	static size_t n_steps = 0;
 	static size_t n_culls = 0;
 	
+#ifdef __RELIX__
+	
+	#define GC_MUTEX( op )  /**/
+	
+#else
+	
 	static pthread_mutex_t gc_mutex = PTHREAD_MUTEX_INITIALIZER;
+	
+	#define GC_MUTEX( op )  must_pthread_mutex_##op( &gc_mutex )
+	
+#endif
 	
 	class gc_lock
 	{
@@ -66,8 +76,8 @@ namespace vlib
 			gc_lock& operator=( const gc_lock& );
 		
 		public:
-			gc_lock()   { must_pthread_mutex_lock  ( &gc_mutex ); }
-			~gc_lock()  { must_pthread_mutex_unlock( &gc_mutex ); }
+			gc_lock()   { GC_MUTEX( lock   ); }
+			~gc_lock()  { GC_MUTEX( unlock ); }
 	};
 	
 	void gc_safe_overwrite( Value& dst, const Value& src )
