@@ -479,6 +479,36 @@ bool in_SheepShaver()
 }
 
 static
+bool in_QEMU()
+{
+	using mac::types::AuxDCE;
+	
+	if ( TARGET_RT_MAC_MACHO )
+	{
+		return false;
+	}
+	
+	const short n = mac::sys::get_unit_table_entry_count();
+	
+	AuxDCE*** const begin = mac::sys::get_unit_table_base();
+	AuxDCE*** const end   = begin + n;
+	
+	for ( AuxDCE*** it = begin;  it < end;  ++it )
+	{
+		const unsigned char* name = mac::sys::get_driver_name( *it );
+		
+		int cmp = memcmp( name, PSTR_LEN( ".Display_Video_QemuVGA" ) );
+		
+		if ( cmp == 0 )
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+static
 void virt_env()
 {
 	const char* blank = "\n";
@@ -533,8 +563,13 @@ void virt_env()
 		printf( "%s" "PPC emulation:          SheepShaver\n", blank );
 		blank = "";
 	}
+	else if ( in_QEMU() )
+	{
+		printf( "%s" "PPC emulation:          QEMU\n", blank );
+		blank = "";
+	}
 	
-	if ( !! TARGET_CPU_PPC  &&  TARGET_API_MAC_CARBON  &&  ! bbox )
+	if ( TARGET_CPU_PPC  &&  TARGET_API_MAC_CARBON  &&  ! bbox )
 	{
 		if ( gestalt( 'ppcf' ) == 0x0011 )
 		{
