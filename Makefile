@@ -72,8 +72,10 @@ ams-linux-tools: $(AMS_REPOS) var/install
 	./build.pl -i $(AMS_TOOLS) display-linux interact-linux kdmode reader
 
 ams-linux-install: ams-linux-tools ams-68k-install ams-common-install
-	@echo 'exec display-linux "$$@"'  > var/install/bin/display
-	@echo 'exec interact-linux "$$@"' > var/install/bin/interact
+	@echo '#!/bin/sh'                 >  var/install/bin/display
+	@echo 'exec display-linux "$$@"'  >> var/install/bin/display
+	@echo '#!/bin/sh'                 >  var/install/bin/interact
+	@echo 'exec interact-linux "$$@"' >> var/install/bin/interact
 	@chmod +x var/install/bin/display var/install/bin/interact
 	install var/out/display-linux   var/install/bin
 	install var/out/interact-linux  var/install/bin
@@ -84,8 +86,10 @@ ams-linux-install: ams-linux-tools ams-68k-install ams-common-install
 
 ams-linux: ams-linux-tools
 	@mkdir -p var/demo
-	@echo 'exec display-linux "$$@"'  > var/demo/display
-	@echo 'exec interact-linux "$$@"' > var/demo/interact
+	@echo '#!/bin/sh'                 >  var/demo/display
+	@echo 'exec display-linux "$$@"'  >> var/demo/display
+	@echo '#!/bin/sh'                 >  var/demo/interact
+	@echo 'exec interact-linux "$$@"' >> var/demo/interact
 	@chmod +x var/demo/display var/demo/interact
 	$(DEMO_SCRIPT) v/bin/spiel-mouse.vx    var/demo/spiel-mouse
 	$(DEMO_SCRIPT) v/bin/spiel-keyboard.vx var/demo/spiel-keyboard
@@ -152,7 +156,8 @@ ams-vnc-build: $(AMS_REPOS)
 
 ams-vnc: ams-vnc-build
 	@mkdir -p var/demo
-	@echo 'exec var/out/minivx -Z v/bin/interact-vnc.vx "$$@"' > var/demo/interact
+	@echo '#!/bin/sh'                                          >  var/demo/interact
+	@echo 'exec var/out/minivx -Z v/bin/interact-vnc.vx "$$@"' >> var/demo/interact
 	@chmod +x var/demo/interact
 	$(RUN_AMS)
 
@@ -194,7 +199,8 @@ ams-vnc-install: ams-vnc-build ams-68k-install ams-common-install
 
 ams-x11-install: ams-x11-build ams-68k-install ams-common-install
 	install var/out/interact-x11  var/install/bin
-	@echo 'exec interact-x11 "$$@"' > var/install/bin/interact
+	@echo '#!/bin/sh'               >  var/install/bin/interact
+	@echo 'exec interact-x11 "$$@"' >> var/install/bin/interact
 	@chmod +x var/install/bin/interact
 
 ams-quartz-build: $(AMS_REPOS)
