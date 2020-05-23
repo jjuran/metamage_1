@@ -57,7 +57,7 @@ static bool get_stacked_args( const v68k::processor_state& s, uint32_t* out, int
 	{
 		sp += 4;
 		
-		if ( !s.mem.get_long( sp, *out, s.data_space() ) )
+		if ( ! s.get_long( sp, *out, s.data_space() ) )
 		{
 			return false;
 		}
@@ -75,9 +75,9 @@ static void set_errno( v68k::processor_state& s )
 	
 	uint32_t errno_ptr;
 	
-	if ( s.mem.get_long( errno_ptr_addr, errno_ptr, s.data_space() )  &&  errno_ptr != 0 )
+	if ( s.get_long( errno_ptr_addr, errno_ptr, s.data_space() )  &&  errno_ptr != 0 )
 	{
-		s.mem.put_long( errno_ptr, errno, s.data_space() );
+		s.put_long( errno_ptr, errno, s.data_space() );
 	}
 }
 
@@ -128,7 +128,7 @@ v68k::op_result emu_read( v68k::processor_state& s )
 	
 	const size_t length = args[2];
 	
-	uint8_t* p = s.mem.translate( buffer, length, s.data_space(), v68k::mem_write );
+	uint8_t* p = s.translate( buffer, length, s.data_space(), v68k::mem_write );
 	
 	int result;
 	
@@ -162,7 +162,7 @@ v68k::op_result emu_write( v68k::processor_state& s )
 	
 	const size_t length = args[2];
 	
-	const uint8_t* p = s.mem.translate( buffer, length, s.data_space(), v68k::mem_read );
+	const uint8_t* p = s.translate( buffer, length, s.data_space(), v68k::mem_read );
 	
 	int result;
 	
@@ -276,8 +276,8 @@ v68k::op_result emu_gettimeofday( v68k::processor_state& s )
 	
 	if ( result == 0 )
 	{
-		const bool ok = s.mem.put_long( tv_addr,     tv.tv_sec,  s.data_space() )
-		              & s.mem.put_long( tv_addr + 4, tv.tv_usec, s.data_space() );
+		const bool ok = s.put_long( tv_addr,     tv.tv_sec,  s.data_space() )
+		              & s.put_long( tv_addr + 4, tv.tv_usec, s.data_space() );
 		
 		if ( !ok )
 		{
@@ -367,10 +367,10 @@ static int load_fdset( v68k::processor_state&  s,
 		return 0;
 	}
 	
-	const uint8_t* fdset_mem = s.mem.translate( addr,
-	                                            n_bytes,
-	                                            s.data_space(),
-	                                            v68k::mem_read );
+	const uint8_t* fdset_mem = s.translate( addr,
+	                                        n_bytes,
+	                                        s.data_space(),
+	                                        v68k::mem_read );
 	
 	if ( fdset_mem == NULL  ||  (uintptr_t) fdset_mem & 0x1 )
 	{
@@ -411,10 +411,10 @@ static int store_fdset( v68k::processor_state&  s,
 		return 0;
 	}
 	
-	uint8_t* fdset_mem = s.mem.translate( addr,
-	                                      n_bytes,
-	                                      s.data_space(),
-	                                      v68k::mem_write );
+	uint8_t* fdset_mem = s.translate( addr,
+	                                  n_bytes,
+	                                  s.data_space(),
+	                                  v68k::mem_write );
 	
 	if ( fdset_mem == NULL  ||  (uintptr_t) fdset_mem & 0x1 )
 	{
@@ -425,7 +425,7 @@ static int store_fdset( v68k::processor_state&  s,
 	
 	store_fdset( fdset_mem, *native, n_fds );
 	
-	s.mem.translate( addr, n_bytes, s.data_space(), v68k::mem_update );
+	s.translate( addr, n_bytes, s.data_space(), v68k::mem_update );
 	
 	return 1;
 }
@@ -485,8 +485,8 @@ v68k::op_result emu_select( v68k::processor_state& s )
 		uint32_t seconds;
 		uint32_t useconds;
 		
-		const bool ok = s.mem.get_long( timeout_addr,     seconds,  s.data_space() )
-		              & s.mem.get_long( timeout_addr + 4, useconds, s.data_space() );
+		const bool ok = s.get_long( timeout_addr,     seconds,  s.data_space() )
+		              & s.get_long( timeout_addr + 4, useconds, s.data_space() );
 		
 		if ( !ok )
 		{
@@ -541,10 +541,10 @@ v68k::op_result emu_writev( v68k::processor_state& s )
 	
 	struct iovec* iov = (struct iovec*) malloc( sizeof (struct iovec) * n );
 	
-	const iovec_68k* iov_mem = (iovec_68k*) s.mem.translate( iov_addr,
-	                                                         size,
-	                                                         s.data_space(),
-	                                                         v68k::mem_read );
+	const iovec_68k* iov_mem = (iovec_68k*) s.translate( iov_addr,
+	                                                     size,
+	                                                     s.data_space(),
+	                                                     v68k::mem_read );
 	
 	if ( iov == NULL )
 	{
@@ -565,7 +565,7 @@ v68k::op_result emu_writev( v68k::processor_state& s )
 		const uint32_t ptr = v68k::longword_from_big( iov_mem[i].ptr );
 		const uint32_t len = v68k::longword_from_big( iov_mem[i].len );
 		
-		const uint8_t* p = s.mem.translate( ptr, len, s.data_space(), v68k::mem_read );
+		const uint8_t* p = s.translate( ptr, len, s.data_space(), v68k::mem_read );
 		
 		if ( p == NULL )
 		{
@@ -602,8 +602,8 @@ v68k::op_result emu_nanosleep( v68k::processor_state& s )
 	uint32_t requested_seconds_u32;
 	uint32_t requested_nanoseconds;
 	
-	const bool ok = s.mem.get_long( requested,     requested_seconds_u32, s.data_space() )
-	              & s.mem.get_long( requested + 4, requested_nanoseconds, s.data_space() );
+	const bool ok = s.get_long( requested,     requested_seconds_u32, s.data_space() )
+	              & s.get_long( requested + 4, requested_nanoseconds, s.data_space() );
 	
 	if ( !ok )
 	{
@@ -637,8 +637,8 @@ v68k::op_result emu_nanosleep( v68k::processor_state& s )
 	
 	if ( result < 0  &&  remaining != 0 )
 	{
-		const bool ok = s.mem.put_long( remaining,     remain_ts.tv_sec,  s.data_space() )
-		              & s.mem.put_long( remaining + 4, remain_ts.tv_nsec, s.data_space() );
+		const bool ok = s.put_long( remaining,     remain_ts.tv_sec,  s.data_space() )
+		              & s.put_long( remaining + 4, remain_ts.tv_nsec, s.data_space() );
 		
 		if ( !ok )
 		{
