@@ -38,8 +38,8 @@ namespace v68k
 			*is* in fact a read operation, not execution.
 		*/
 		
-		const bool ok = mem.get_long( 0, a(7), supervisor_program_space )  &&
-		                mem.get_long( 4, pc(), supervisor_program_space );
+		const bool ok = get_long( 0, a(7), supervisor_program_space )  &&
+		                get_long( 4, pc(), supervisor_program_space );
 		
 		if ( ! ok )
 		{
@@ -267,7 +267,7 @@ namespace v68k
 		{
 			fault( Address_error, pc() );
 		}
-		else if ( !mem.get_instruction_word( pc(), opcode, program_space() ) )
+		else if ( ! get_instruction_word( pc(), opcode, program_space() ) )
 		{
 			fault( Bus_error, pc() );
 		}
@@ -279,7 +279,7 @@ namespace v68k
 		{
 			double_bus_fault();
 		}
-		else if ( ! mem.get_instruction_word( pc(), opcode, program_space() ) )
+		else if ( ! get_instruction_word( pc(), opcode, program_space() ) )
 		{
 			double_bus_fault();
 		}
@@ -306,13 +306,13 @@ namespace v68k
 		
 		const uint16_t format_and_offset = format << 12 | vector_offset;
 		
-		bool ok = mem.put_word( sp + 0, saved_sr,            supervisor_data_space )
-		        & mem.put_long( sp + 2, pc(),                supervisor_data_space )
-		        & mem.put_word( sp + 6, format_and_offset,   supervisor_data_space );
+		bool ok = put_word( sp + 0, saved_sr,          supervisor_data_space )
+		        & put_long( sp + 2, pc(),              supervisor_data_space )
+		        & put_word( sp + 6, format_and_offset, supervisor_data_space );
 		
 		if ( ok  &&  format == 2 )
 		{
-			ok = mem.put_long( sp + 8, instruction_address, supervisor_data_space );
+			ok = put_long( sp + 8, instruction_address, supervisor_data_space );
 		}
 		
 		if ( !ok )
@@ -325,7 +325,7 @@ namespace v68k
 			return address_error();
 		}
 		
-		if ( !mem.get_long( regs[ VBR ] + vector_offset, pc(), supervisor_data_space ) )
+		if ( ! get_long( regs[ VBR ] + vector_offset, pc(), supervisor_data_space ) )
 		{
 			return bus_error();
 		}

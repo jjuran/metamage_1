@@ -90,6 +90,46 @@ namespace v68k
 			return regs[ PC ];
 		}
 		
+		uint8_t* translate( addr_t a, uint32_t n, fc_t fc, mem_t access ) const
+		{
+			return mem.translate( a, n, fc, access );
+		}
+		
+		bool get_byte( addr_t addr, uint8_t& x, fc_t fc ) const
+		{
+			return mem.get_byte( addr, x, fc );
+		}
+		
+		bool get_word( addr_t addr, uint16_t& x, fc_t fc ) const
+		{
+			return mem.get_word( addr, x, fc );
+		}
+		
+		bool get_long( addr_t addr, uint32_t& x, fc_t fc ) const
+		{
+			return mem.get_long( addr, x, fc );
+		}
+		
+		bool put_byte( addr_t addr, uint8_t x, fc_t fc ) const
+		{
+			return mem.put_byte( addr, x, fc );
+		}
+		
+		bool put_word( addr_t addr, uint16_t x, fc_t fc ) const
+		{
+			return mem.put_word( addr, x, fc );
+		}
+		
+		bool put_long( addr_t addr, uint32_t x, fc_t fc ) const
+		{
+			return mem.put_long( addr, x, fc );
+		}
+		
+		bool get_instruction_word( addr_t addr, uint16_t& x, fc_t fc ) const
+		{
+			return mem.get_instruction_word( addr, x, fc );
+		}
+		
 		op_result read_byte( uint32_t addr, uint32_t& data );
 		op_result read_word( uint32_t addr, uint32_t& data );
 		op_result read_long( uint32_t addr, uint32_t& data );

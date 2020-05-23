@@ -73,8 +73,6 @@ namespace v68k
 	{
 		const function_code_t fc = s.data_space();
 		
-		const memory& mem = s.mem;
-		
 		const uint32_t x = pb.target;
 		
 		uint32_t& Dx = s.d( x );
@@ -85,16 +83,16 @@ namespace v68k
 		
 		if ( pb.size == long_sized )
 		{
-			ok = mem.put_byte( addr + 0, high_byte( high_word( Dx ) ), fc )  &&
-			     mem.put_byte( addr + 2, low_byte ( high_word( Dx ) ), fc );
+			ok = s.put_byte( addr + 0, high_byte( high_word( Dx ) ), fc )  &&
+			     s.put_byte( addr + 2, low_byte ( high_word( Dx ) ), fc );
 			
 			addr += 4;
 		}
 		
 		if ( ok )
 		{
-			ok = mem.put_byte( addr + 0, high_byte( low_word( Dx ) ), fc )  &&
-			     mem.put_byte( addr + 2, low_byte ( low_word( Dx ) ), fc );
+			ok = s.put_byte( addr + 0, high_byte( low_word( Dx ) ), fc )  &&
+			     s.put_byte( addr + 2, low_byte ( low_word( Dx ) ), fc );
 		}
 		
 		return ok ? Ok : Bus_error;
@@ -104,8 +102,6 @@ namespace v68k
 	{
 		const function_code_t fc = s.data_space();
 		
-		const memory& mem = s.mem;
-		
 		const uint32_t x = pb.target;
 		
 		uint32_t& Dx = s.d( x );
@@ -116,16 +112,16 @@ namespace v68k
 		
 		if ( pb.size == long_sized )
 		{
-			ok = mem.get_byte( addr + 0, high_byte( high_word( Dx ) ), fc )  &&
-			     mem.get_byte( addr + 2, low_byte ( high_word( Dx ) ), fc );
+			ok = s.get_byte( addr + 0, high_byte( high_word( Dx ) ), fc )  &&
+			     s.get_byte( addr + 2, low_byte ( high_word( Dx ) ), fc );
 			
 			addr += 4;
 		}
 		
 		if ( ok )
 		{
-			ok = mem.get_byte( addr + 0, high_byte( low_word( Dx ) ), fc )  &&
-			     mem.get_byte( addr + 2, low_byte ( low_word( Dx ) ), fc );
+			ok = s.get_byte( addr + 0, high_byte( low_word( Dx ) ), fc )  &&
+			     s.get_byte( addr + 2, low_byte ( low_word( Dx ) ), fc );
 		}
 		
 		return ok ? Ok : Bus_error;
@@ -169,8 +165,6 @@ namespace v68k
 	
 	op_result microcode_MOVES( processor_state& s, op_params& pb )
 	{
-		const memory& mem = s.mem;
-		
 		const uint32_t addr = pb.address;
 		const uint32_t more = pb.first;
 		
@@ -191,15 +185,15 @@ namespace v68k
 			switch ( pb.size )
 			{
 				case long_sized:
-					ok = mem.put_long( addr, data, fc );
+					ok = s.put_long( addr, data, fc );
 					break;
 				
 				case word_sized:
-					ok = mem.put_word( addr, data, fc );
+					ok = s.put_word( addr, data, fc );
 					break;
 				
 				case byte_sized:
-					ok = mem.put_byte( addr, data, fc );
+					ok = s.put_byte( addr, data, fc );
 					break;
 				
 				default:
@@ -217,15 +211,15 @@ namespace v68k
 			switch ( pb.size )
 			{
 				case long_sized:
-					ok = mem.get_long( addr, data, fc );
+					ok = s.get_long( addr, data, fc );
 					break;
 				
 				case word_sized:
-					ok = mem.get_word( addr, low_word( data ), fc );
+					ok = s.get_word( addr, low_word( data ), fc );
 					break;
 				
 				case byte_sized:
-					ok = mem.get_byte( addr, low_byte( low_word( data ) ), fc );
+					ok = s.get_byte( addr, low_byte( low_word( data ) ), fc );
 					break;
 				
 				default:
@@ -378,7 +372,7 @@ namespace v68k
 		
 		sp -= 4;
 		
-		if ( !s.mem.put_long( sp, pb.address, s.data_space() ) )
+		if ( !s.put_long( sp, pb.address, s.data_space() ) )
 		{
 			return Bus_error;
 		}
@@ -567,8 +561,8 @@ namespace v68k
 			{
 				const uint32_t data = s.regs[ update_register ? 15 - r : r ];
 				
-				const bool ok = longword_sized ? s.mem.put_long( addr, data, s.data_space() )
-											   : s.mem.put_word( addr, data, s.data_space() );
+				const bool ok = longword_sized ? s.put_long( addr, data, s.data_space() )
+											   : s.put_word( addr, data, s.data_space() );
 				
 				if ( !ok )
 				{
@@ -608,13 +602,13 @@ namespace v68k
 				
 				if ( longword_sized )
 				{
-					ok = s.mem.get_long( addr, data, s.data_space() );
+					ok = s.get_long( addr, data, s.data_space() );
 				}
 				else
 				{
 					uint16_t word;
 					
-					ok = s.mem.get_word( addr, word, s.data_space() );
+					ok = s.get_word( addr, word, s.data_space() );
 					
 					data = int32_t( int16_t( word ) );
 				}
@@ -655,7 +649,7 @@ namespace v68k
 		
 		sp -= 4;
 		
-		if ( !s.mem.put_long( sp, An, s.data_space() ) )
+		if ( ! s.put_long( sp, An, s.data_space() ) )
 		{
 			return Bus_error;
 		}
@@ -674,7 +668,7 @@ namespace v68k
 		uint32_t& An = s.a(n);
 		uint32_t& sp = s.a(7);
 		
-		if ( !s.mem.get_long( sp, An, s.data_space() ) )
+		if ( ! s.get_long( sp, An, s.data_space() ) )
 		{
 			return Bus_error;
 		}
@@ -735,7 +729,7 @@ namespace v68k
 		
 		uint16_t id;
 		
-		if ( !s.mem.get_word( sp + 6, id, supervisor_data_space ) )
+		if ( ! s.get_word( sp + 6, id, supervisor_data_space ) )
 		{
 			return Bus_error;
 		}
@@ -751,14 +745,14 @@ namespace v68k
 			return Format_error;
 		}
 		
-		if ( !s.mem.get_long( sp + 2, s.pc(), supervisor_data_space ) )
+		if ( ! s.get_long( sp + 2, s.pc(), supervisor_data_space ) )
 		{
 			return Bus_error;
 		}
 		
 		uint16_t saved_sr;
 		
-		if ( !s.mem.get_word( sp, saved_sr, supervisor_data_space ) )
+		if ( ! s.get_word( sp, saved_sr, supervisor_data_space ) )
 		{
 			return Bus_error;
 		}
@@ -788,7 +782,7 @@ namespace v68k
 	{
 		uint32_t& sp = s.a(7);
 		
-		if ( !s.mem.get_long( sp, s.pc(), s.data_space() ) )
+		if ( ! s.get_long( sp, s.pc(), s.data_space() ) )
 		{
 			return Bus_error;
 		}
@@ -814,7 +808,7 @@ namespace v68k
 		
 		uint16_t ccr;
 		
-		if ( !s.mem.get_word( sp, ccr, s.data_space() ) )
+		if ( ! s.get_word( sp, ccr, s.data_space() ) )
 		{
 			return Bus_error;
 		}
@@ -823,7 +817,7 @@ namespace v68k
 		
 		sp += 2;
 		
-		if ( !s.mem.get_long( sp, s.pc(), s.data_space() ) )
+		if ( ! s.get_long( sp, s.pc(), s.data_space() ) )
 		{
 			return Bus_error;
 		}
@@ -987,7 +981,7 @@ namespace v68k
 		
 		sp -= 4;
 		
-		if ( !s.mem.put_long( sp, s.pc(), s.data_space() ) )
+		if ( ! s.put_long( sp, s.pc(), s.data_space() ) )
 		{
 			return Bus_error;
 		}

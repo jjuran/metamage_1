@@ -145,7 +145,7 @@ namespace v68k
 				for misaligned data accesses.
 			*/
 			
-			if ( !s.mem.get_long( pb.address, pb.address, s.data_space() ) )
+			if ( ! s.get_long( pb.address, pb.address, s.data_space() ) )
 			{
 				return Bus_error;
 			}

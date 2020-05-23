@@ -29,7 +29,7 @@ namespace v68k
 			return Address_error;
 		}
 		
-		if ( !s.mem.get_instruction_word( s.pc(), word, s.program_space() ) )
+		if ( ! s.get_instruction_word( s.pc(), word, s.program_space() ) )
 		{
 			return Bus_error;
 		}

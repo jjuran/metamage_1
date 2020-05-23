@@ -82,9 +82,9 @@ namespace v68k
 		
 		switch ( pb.size )
 		{
-			case byte_sized:  return s.mem.put_byte( addr, data, s.data_space() );
-			case word_sized:  return s.mem.put_word( addr, data, s.data_space() );
-			case long_sized:  return s.mem.put_long( addr, data, s.data_space() );
+			case byte_sized:  return s.put_byte( addr, data, s.data_space() );
+			case word_sized:  return s.put_word( addr, data, s.data_space() );
+			case long_sized:  return s.put_long( addr, data, s.data_space() );
 			
 			default:
 				break;

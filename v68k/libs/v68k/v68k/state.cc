@@ -35,7 +35,7 @@ namespace v68k
 	
 	op_result processor_state::read_byte( uint32_t addr, uint32_t& data )
 	{
-		if ( !mem.get_byte( addr, low_byte( low_word( data ) ), data_space() ) )
+		if ( ! get_byte( addr, low_byte( low_word( data ) ), data_space() ) )
 		{
 			return Bus_error;
 		}
@@ -50,7 +50,7 @@ namespace v68k
 			return Address_error;
 		}
 		
-		if ( !mem.get_word( addr, low_word( data ), data_space() ) )
+		if ( ! get_word( addr, low_word( data ), data_space() ) )
 		{
 			return Bus_error;
 		}
@@ -65,7 +65,7 @@ namespace v68k
 			return Address_error;
 		}
 		
-		if ( !mem.get_long( addr, data, data_space() ) )
+		if ( ! get_long( addr, data, data_space() ) )
 		{
 			return Bus_error;
 		}
