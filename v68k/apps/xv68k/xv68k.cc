@@ -782,7 +782,7 @@ int execute_68k( int argc, char* const* argv )
 		CrsrPin   = 0x0834,
 	};
 	
-	emu.mem.put_byte( CPUFlag, mc68k_model >> 4, v68k::user_data_space );
+	emu.put_byte( CPUFlag, mc68k_model >> 4, v68k::user_data_space );
 	
 	if ( mem_size >= 1024 * 128 )
 	{
@@ -790,12 +790,12 @@ int execute_68k( int argc, char* const* argv )
 		main_screen_addr = mem_size - (0x20000 - 0x1A700);
 		main_sound_addr  = mem_size - (0x20000 - 0x1FD00);
 		
-		emu.mem.put_word( ScreenRow,   64,               user_data_space );
-		emu.mem.put_long( MemTop,      mem_size,         user_data_space );
+		emu.put_word( ScreenRow,   64,               user_data_space );
+		emu.put_long( MemTop,      mem_size,         user_data_space );
 		
-		emu.mem.put_long( SoundBase,   main_sound_addr,  user_data_space );
-		emu.mem.put_long( ScrnBase,    main_screen_addr, user_data_space );
-		emu.mem.put_long( CrsrPin + 4, 512 | 342 << 16,  user_data_space );
+		emu.put_long( SoundBase,   main_sound_addr,  user_data_space );
+		emu.put_long( ScrnBase,    main_screen_addr, user_data_space );
+		emu.put_long( CrsrPin + 4, 512 | 342 << 16,  user_data_space );
 	}
 	
 	load_Mac_traps( mem );

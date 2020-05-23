@@ -36,7 +36,7 @@ uint32_t get_toolbox_trap_addr( v68k::emulator& emu, uint16_t trap_word )
 	const uint32_t trap_entry_addr = trap_table_addr + 4 * (trap_word & 0x3FF);
 	
 	uint32_t trap_addr;
-	emu.mem.get_long( trap_entry_addr, trap_addr, emu.data_space() );
+	emu.get_long( trap_entry_addr, trap_addr, emu.data_space() );
 	
 	return trap_addr;
 }
@@ -84,7 +84,7 @@ bool native_override( v68k::emulator& emu )
 			{
 				const uint32_t stack_top = emu.regs[ SP ] -= 4;
 				
-				emu.mem.put_long( stack_top, emu.regs[ PC ] + 2, data_space );
+				emu.put_long( stack_top, emu.regs[ PC ] + 2, data_space );
 			}
 			
 			emu.regs[ PC ] = trap_addr;
@@ -103,7 +103,7 @@ bool native_override( v68k::emulator& emu )
 			
 			if ( trap_num == 0x00F6 )
 			{
-				emu.mem.get_long( emu.regs[ SP ], pointer_arg, data_space );
+				emu.get_long( emu.regs[ SP ], pointer_arg, data_space );
 				
 				emu.regs[ SP ] += 4;
 			}
@@ -112,14 +112,14 @@ bool native_override( v68k::emulator& emu )
 			const uint32_t trap_entry_addr = trap_table_addr + 4 * trap_num;
 			
 			uint32_t trap_addr;
-			emu.mem.get_long( trap_entry_addr, trap_addr, data_space );
+			emu.get_long( trap_entry_addr, trap_addr, data_space );
 			
-			emu.mem.put_long( emu.regs[ SP ] -= 4, emu.regs[ PC ] + 2, data_space );
+			emu.put_long( emu.regs[ SP ] -= 4, emu.regs[ PC ] + 2, data_space );
 			
-			emu.mem.put_long( emu.regs[ SP ] -= 4, emu.regs[ A1 ], data_space );
-			emu.mem.put_long( emu.regs[ SP ] -= 4, emu.regs[ A0 ], data_space );
-			emu.mem.put_long( emu.regs[ SP ] -= 4, emu.regs[ D2 ], data_space );
-			emu.mem.put_long( emu.regs[ SP ] -= 4, emu.regs[ D1 ], data_space );
+			emu.put_long( emu.regs[ SP ] -= 4, emu.regs[ A1 ], data_space );
+			emu.put_long( emu.regs[ SP ] -= 4, emu.regs[ A0 ], data_space );
+			emu.put_long( emu.regs[ SP ] -= 4, emu.regs[ D2 ], data_space );
+			emu.put_long( emu.regs[ SP ] -= 4, emu.regs[ D1 ], data_space );
 			
 			emu.regs[ D1 ] = trap_word;
 			
@@ -128,14 +128,14 @@ bool native_override( v68k::emulator& emu )
 				emu.regs[ A0 ] = pointer_arg;
 			}
 			
-			emu.mem.put_word( emu.regs[ SP ] -= 2, trap_word, data_space );
-			emu.mem.put_word( emu.regs[ SP ] -= 2, 0x484F,    data_space );
+			emu.put_word( emu.regs[ SP ] -= 2, trap_word, data_space );
+			emu.put_word( emu.regs[ SP ] -= 2, 0x484F,    data_space );
 			
 			// Push the stack pointer as the return address
 			
 			const uint32_t sp = emu.regs[ SP ];
 			
-			emu.mem.put_long( emu.regs[ SP ] -= 4, sp, data_space );
+			emu.put_long( emu.regs[ SP ] -= 4, sp, data_space );
 			
 			emu.regs[ PC ] = trap_addr;
 			
@@ -154,15 +154,15 @@ bool native_override( v68k::emulator& emu )
 		emu.regs[ SP ] += 2;  // pop BKPT instruction word
 		
 		uint16_t trap_word;
-		emu.mem.get_word( emu.regs[ SP ], trap_word, data_space );
+		emu.get_word( emu.regs[ SP ], trap_word, data_space );
 		
 		emu.regs[ SP ] += 2;  // pop trap word
 		
-		emu.mem.get_long( emu.regs[ SP ], emu.regs[ D1 ], data_space );
+		emu.get_long( emu.regs[ SP ], emu.regs[ D1 ], data_space );
 		
 		emu.regs[ SP ] += 4;  // pop saved D1
 		
-		emu.mem.get_long( emu.regs[ SP ], emu.regs[ D2 ], data_space );
+		emu.get_long( emu.regs[ SP ], emu.regs[ D2 ], data_space );
 		
 		emu.regs[ SP ] += 4;  // pop saved D2
 		
@@ -172,16 +172,16 @@ bool native_override( v68k::emulator& emu )
 		}
 		else
 		{
-			emu.mem.get_long( emu.regs[ SP ], emu.regs[ A0 ], data_space );
+			emu.get_long( emu.regs[ SP ], emu.regs[ A0 ], data_space );
 		}
 		
 		emu.regs[ SP ] += 4;  // pop saved A0
 		
-		emu.mem.get_long( emu.regs[ SP ], emu.regs[ A1 ], data_space );
+		emu.get_long( emu.regs[ SP ], emu.regs[ A1 ], data_space );
 		
 		emu.regs[ SP ] += 4;  // pop saved A1
 		
-		emu.mem.get_long( emu.regs[ SP ], emu.regs[ PC ], data_space );
+		emu.get_long( emu.regs[ SP ], emu.regs[ PC ], data_space );
 		
 		emu.regs[ SP ] += 4;  // pop saved return address
 		
