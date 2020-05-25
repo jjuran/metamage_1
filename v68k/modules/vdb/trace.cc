@@ -23,8 +23,6 @@
 
 #define PROMPT "vdb> "
 
-#define TROFF_WARNING "Warning:  Tracing is off.  Enter 't' to reenable."
-
 #define PRINT( s )  write( STDERR_FILENO, s "\n", sizeof s )
 
 
@@ -161,7 +159,7 @@ static void debugger_loop( registers& regs )
 	
 	if ( (regs.sr & 0xC000) == 0 )
 	{
-		PRINT( TROFF_WARNING );
+		regs.sr |= 0x8000;  // set T1 bit (since neither Trace bit is set)
 	}
 	
 	char buffer[ 16 ];
@@ -226,10 +224,6 @@ static void debugger_loop( registers& regs )
 			
 			case 'r':
 				print_registers( regs );
-				break;
-			
-			case 't':
-				regs.sr |= 0x8000;
 				break;
 			
 			case 'x':
