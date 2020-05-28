@@ -43,6 +43,15 @@ DEFINE_CALLOUT( void*,
 
 #undef DEFINE_CALLOUT
 
+static inline
+asm bool mem_test( const void* addr : __A0, int size : __D0 )
+{
+	MOVEQ.L  #0,D1
+	MOVEQ.L  #0,D2
+	
+	JSR      0xFFFFFFCE
+}
+
 inline asm
 void fast_memcpy( void* : __A1, const void* : __A0, unsigned long : __D0 )
 {
