@@ -12,6 +12,24 @@
 #pragma exceptions off
 
 
+static inline
+int32_t read_word( const uint16_t* addr )
+{
+	return *addr;
+}
+
+static inline
+int32_t read_word( uint32_t addr )
+{
+	return read_word( (uint16_t*) addr );
+}
+
+static inline
+bool valid( int32_t word )
+{
+	return true;
+}
+
 static char hexify( unsigned x )
 {
 	x &= 0x0F;
@@ -87,7 +105,12 @@ void print_registers( const uint32_t  d[],
 	
 	p += sizeof "12345678  (" - 1;
 	
-	inscribe_16( p, *(uint16_t*) pc );
+	int32_t word;
+	
+	if ( valid( word = read_word( pc ) ) )
+	{
+		inscribe_16( p, word );
+	}
 	
 	p += sizeof "1234)" "\n" - 1;
 	
