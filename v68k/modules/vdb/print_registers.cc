@@ -8,6 +8,9 @@
 // POSIX
 #include <unistd.h>
 
+// ams-common
+#include "callouts.hh"
+
 
 #pragma exceptions off
 
@@ -15,7 +18,12 @@
 static inline
 int32_t read_word( const uint16_t* addr )
 {
-	return *addr;
+	if ( mem_test( addr, sizeof (int16_t) ) )
+	{
+		return *addr;
+	}
+	
+	return -1;
 }
 
 static inline
@@ -27,7 +35,7 @@ int32_t read_word( uint32_t addr )
 static inline
 bool valid( int32_t word )
 {
-	return true;
+	return word >= 0;
 }
 
 static char hexify( unsigned x )
@@ -67,7 +75,7 @@ static void inscribe_32( char* p, uint32_t x )
 	"D6: 12345678   A6: 12345678" "\n" \
 	"D7: 12345678   A7: 12345678" "\n" \
 	                              "\n" \
-	"PC:  12345678  (1234)"       "\n" \
+	"PC:  12345678  (----)"       "\n" \
 	"SR:  1234"                   "\n" \
 	                              "\n"
 
@@ -112,7 +120,7 @@ void print_registers( const uint32_t  d[],
 		inscribe_16( p, word );
 	}
 	
-	p += sizeof "1234)" "\n" - 1;
+	p += sizeof "----)" "\n" - 1;
 	
 	p += sizeof "SR:  " - 1;
 	
