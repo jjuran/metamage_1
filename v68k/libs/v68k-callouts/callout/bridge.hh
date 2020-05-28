@@ -51,6 +51,12 @@ enum
 	fast_rshift,
 	fast_mempcpy,
 	
+	// $FFCE - $FFC8
+	mem_test,
+	reserved7,
+	reserved8,
+	reserved9,
+	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block
 	

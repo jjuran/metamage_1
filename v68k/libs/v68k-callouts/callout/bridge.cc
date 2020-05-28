@@ -582,6 +582,21 @@ int32_t fast_mempcpy_callout( v68k::processor_state& s )
 }
 
 static
+int32_t mem_test_callout( v68k::processor_state& s )
+{
+	uint32_t addr = s.a(0);
+	uint32_t size = s.d(0);
+	
+	function_code_t fc = s.data_space();
+	
+	bool ok = s.mem.translate( addr, size, fc, v68k::mem_read ) != NULL;
+	
+	s.d(0) = ok;
+	
+	return rts;
+}
+
+static
 int32_t system_call_callout( v68k::processor_state& s )
 {
 	op_result result = bridge_call( s );
@@ -861,6 +876,11 @@ static const function_type the_callouts[] =
 	&fast_memnot_callout,
 	&fast_rshift_callout,
 	&fast_mempcpy_callout,
+	
+	&mem_test_callout,
+	NULL,
+	NULL,
+	NULL,
 	
 	&system_call_callout,
 	&microseconds_callout,
