@@ -185,8 +185,9 @@ static void debugger_loop( registers& regs )
 				continue;
 			}
 			
-			// FIXME
-			break;
+			// Trying to read() our next user command failed.  Just bail out.
+			
+			_exit( 1 );
 		}
 		
 		buffer[ n_read - 1 ] = '\0';
