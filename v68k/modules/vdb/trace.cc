@@ -131,6 +131,9 @@ static void debugger_loop( registers& regs )
 	
 	if ( vector_offset != trace_offset )
 	{
+		n_steps   = 0;
+		step_over = 0;
+		
 		report_exception( vector_offset );
 	}
 	
