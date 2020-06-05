@@ -252,19 +252,21 @@ int32_t set_trace_mode_callout( v68k::processor_state& s )
 static
 int32_t ScrnBitMap_callout( v68k::processor_state& s )
 {
+	const v68k::function_code_t data_space = s.data_space();
+	
 	uint32_t& sp = s.a(7);
 	
 	uint32_t return_address;
 	uint32_t pointer;
 	
-	if ( ! s.mem.get_long( sp, return_address, s.data_space() ) )
+	if ( ! s.mem.get_long( sp, return_address, data_space ) )
 	{
 		return v68k::Bus_error;
 	}
 	
 	sp += 4;
 	
-	if ( ! s.mem.get_long( sp, pointer, s.data_space() ) )
+	if ( ! s.mem.get_long( sp, pointer, data_space ) )
 	{
 		return v68k::Bus_error;
 	}
@@ -275,7 +277,7 @@ int32_t ScrnBitMap_callout( v68k::processor_state& s )
 	               + sizeof (uint16_t)
 	               + sizeof (uint16_t) * 4;
 	
-	uint8_t* p = s.mem.translate( pointer, n, s.data_space(), v68k::mem_write );
+	uint8_t* p = s.mem.translate( pointer, n, data_space, v68k::mem_write );
 	
 	if ( p == NULL )
 	{
@@ -616,11 +618,13 @@ int32_t system_call_callout( v68k::processor_state& s )
 static
 int32_t microseconds_callout( v68k::processor_state& s )
 {
+	const v68k::function_code_t data_space = s.data_space();
+	
 	uint32_t sp = s.a(7);
 	
 	uint32_t result_address;
 	
-	if ( ! s.mem.get_long( sp + 4, result_address, s.data_space() ) )
+	if ( ! s.mem.get_long( sp + 4, result_address, data_space ) )
 	{
 		return v68k::Bus_error;
 	}
@@ -629,12 +633,12 @@ int32_t microseconds_callout( v68k::processor_state& s )
 	
 	uint64_t t = guest_uptime_microseconds();
 	
-	if ( ! s.mem.put_long( result_address, high_long( t ), s.data_space() ) )
+	if ( ! s.mem.put_long( result_address, high_long( t ), data_space ) )
 	{
 		return v68k::Bus_error;
 	}
 	
-	if ( ! s.mem.put_long( result_address + 4, low_long( t ), s.data_space() ) )
+	if ( ! s.mem.put_long( result_address + 4, low_long( t ), data_space ) )
 	{
 		return v68k::Bus_error;
 	}
