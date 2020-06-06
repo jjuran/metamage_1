@@ -300,13 +300,15 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	
 	redraw_lock lock( port.portBits, dstRect );
 	
+	const uint8_t missingChar = rec.lastChar + 1;
+	
 	while ( --n >= 0 )
 	{
 		uint8_t c = *p++;
 		
-		if ( c > rec.lastChar )
+		if ( c > missingChar )
 		{
-			c = rec.lastChar + 1;  // missing character glyph
+			c = missingChar;  // missing character glyph
 		}
 		
 		// FIXME:  Check for -1
