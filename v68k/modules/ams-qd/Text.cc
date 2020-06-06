@@ -300,11 +300,11 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	
 	redraw_lock lock( port.portBits, dstRect );
 	
-	const uint8_t missingChar = rec.lastChar + 1;
+	const uint8_t missingChar = rec.lastChar + 1 - rec.firstChar;
 	
 	while ( --n >= 0 )
 	{
-		uint8_t c = *p++;
+		uint8_t c = *p++ - rec.firstChar;
 		
 		if ( c > missingChar )
 		{
