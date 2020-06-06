@@ -114,6 +114,10 @@ enum
 	tag_TheCrsr,
 	tag_TheCrsr_word_33 = tag_TheCrsr + 33,  // 68 bytes
 	tag_CrsrVisBusy,
+	tag_MouseMask,
+	tag_MouseMask_low_word,
+	tag_MouseOffset,
+	tag_MouseOffset_low_word,
 	tag_JIODone,
 	tag_JIODone_low_word,
 	tag_CurApRefNum,
@@ -294,6 +298,8 @@ static const global globals[] =
 	{ 0x083C, 8,    tag_CrsrRect    },
 	{ 0x0844, 68,   tag_TheCrsr     },
 	{ 0x08CC, 2,    tag_CrsrVisBusy },  // CrsrVis, CrsrBusy
+	{ 0x08D6, 4,    tag_MouseMask   },
+	{ 0x08DA, 4,    tag_MouseOffset },
 	{ 0x08FC, 4,    tag_JIODone     },
 	{ 0x0900, 2,    tag_CurApRefNum },
 	{ 0x0904, 4,    tag_CurrentA5   },
