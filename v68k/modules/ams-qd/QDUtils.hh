@@ -25,6 +25,8 @@ pascal short Random_patch();
 pascal long BitAnd_patch( long a, long b );
 pascal long BitNot_patch( long x );
 
+pascal unsigned long BitShift_patch( unsigned long x, short n );
+
 pascal void StuffHex_patch( char* dst, const unsigned char* srcHex );
 
 pascal void MapPt_patch( Point* pt, const Rect* src, const Rect* dst );

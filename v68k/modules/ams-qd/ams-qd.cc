@@ -75,6 +75,7 @@ static void install_QuickDraw()
 	
 	TBTRAP( BitNot );  // A85A
 	
+	TBTRAP( BitShift );  // A85C
 	TBTRAP( BitTst );  // A85D
 	TBTRAP( BitSet );  // A85E
 	TBTRAP( BitClr );  // A85F

@@ -94,6 +94,13 @@ pascal long BitNot_patch( long x )
 	return ~x;
 }
 
+pascal unsigned long BitShift_patch( unsigned long x, short n )
+{
+	return + n > 0 ? x << ( n % 32u)
+	       : n < 0 ? x >> (-n % 32u)
+	       :         x;
+}
+
 static const char hex_table[ 32 ] =
 {
 	0,  10, 11, 12, 13, 14, 15, 0,
