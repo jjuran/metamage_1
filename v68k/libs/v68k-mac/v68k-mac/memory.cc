@@ -235,6 +235,7 @@ static const global globals[] =
 {
 	{ ROM + 0x0008, 0x82, 0x00 },  // ROM version = 0x0000
 	
+	{ 0x0100, 0x82, 0xFF            },  // MonkeyLives
 	{ 0x0102, 0x84, 72              },  // ScrVRes, ScrHRes
 	{ 0x0106, 2,    tag_ScreenRow   },
 	{ 0x0108, 4,    tag_MemTop      },
