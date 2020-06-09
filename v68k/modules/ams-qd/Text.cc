@@ -136,15 +136,17 @@ pascal short StdTxMeas_patch( short        n,
 	
 	const short* owTable = (short*) &rec.owTLoc + rec.owTLoc;
 	
+	const uint8_t missingChar = rec.lastChar + 1 - rec.firstChar;
+	
 	short result = 0;
 	
 	while ( --n >= 0 )
 	{
-		uint8_t c = *p++;
+		uint8_t c = *p++ - rec.firstChar;
 		
-		if ( c > rec.lastChar )
+		if ( c > missingChar )
 		{
-			c = rec.lastChar + 1;  // missing character glyph
+			c = missingChar;  // missing character glyph
 		}
 		
 		const int8_t character_width = owTable[ c ];
