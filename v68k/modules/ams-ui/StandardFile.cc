@@ -307,7 +307,7 @@ pascal OSErr SFPutFile_call( Point             where,
 	}
 	while ( hit != 2 );
 	
-	reply->good = hit - 2;  // $ff or $00
+	reply->good = 2 - hit;  // $01 or $00
 	reply->vRefNum = -SFSaveDisk;
 	reply->version = 0;
 	
@@ -393,7 +393,7 @@ pascal OSErr SFGetFile_call( Point               where,
 	}
 	while ( hit != 3 );
 	
-	reply->good = hit - 3;  // $fe or $00
+	reply->good = hit != 3;  // $01 or $00
 	reply->vRefNum = -SFSaveDisk;
 	reply->version = 0;
 	
