@@ -33,6 +33,15 @@ void advance_bytes( T*& pointer, size_t n )
 	(const char*&) pointer += n;
 }
 
+pascal void PackBits_patch( Ptr* src, Ptr* dst, short srcBytes )
+{
+	UInt8** tmp = (UInt8**) dst;
+	
+	quickdraw::pack_bits( (const UInt8*&) *src, srcBytes, *tmp );
+	
+	dst = (Ptr*) tmp;
+}
+
 pascal void UnpackBits_patch( Ptr* src, Ptr* dst, short dstBytes )
 {
 	UInt8** tmp = (UInt8**) dst;

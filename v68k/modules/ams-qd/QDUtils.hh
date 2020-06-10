@@ -14,6 +14,7 @@ struct Rect;
 
 typedef MacRegion** RgnHandle;
 
+pascal void PackBits_patch  ( char** src, char** dst, short srcBytes );
 pascal void UnpackBits_patch( char** src, char** dst, short dstBytes );
 
 pascal unsigned char BitTst_patch( char* addr, long bit );
