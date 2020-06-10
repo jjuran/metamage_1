@@ -204,6 +204,13 @@ pascal void SetCTitle_patch( ControlRef control, ConstStr255Param title )
 	draw_control( control );
 }
 
+pascal void GetCTitle_patch( ControlRef control, Str255 title )
+{
+	ConstStr255Param contrlTitle = control[0]->contrlTitle;
+	
+	fast_memcpy( title, contrlTitle, 1 + contrlTitle[ 0 ] );
+}
+
 pascal void HideControl_patch( ControlRef control )
 {
 	if ( control[0]->contrlVis )

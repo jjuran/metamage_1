@@ -35,6 +35,7 @@ pascal void DisposeControl_patch( ControlRecord** control );
 pascal void KillControls_patch( GrafPort* window );
 
 pascal void SetCTitle_patch( ControlRecord** cntl, const unsigned char* title );
+pascal void GetCTitle_patch( ControlRecord** cntl,       unsigned char* title );
 
 pascal void HideControl_patch( ControlRecord** control );
 pascal void ShowControl_patch( ControlRecord** control );

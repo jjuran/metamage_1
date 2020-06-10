@@ -212,7 +212,7 @@ static void install_Controls()
 	TBTRAP( SetCRefCon     );  // A95B
 	TBTRAP( SizeControl    );  // A95C
 	TBTRAP( HiliteControl  );  // A95D
-	
+	TBTRAP( GetCTitle      );  // A95E
 	TBTRAP( SetCTitle      );  // A95F
 	TBTRAP( GetCtlValue    );  // A960
 	TBTRAP( GetMinCtl      );  // A961
