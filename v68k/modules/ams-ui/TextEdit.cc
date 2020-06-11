@@ -122,7 +122,10 @@ void draw_text( const TERec& te )
 	
 	RgnHandle savedClip = te.inPort->clipRgn;
 	
-	EraseRect( &viewRect );
+	if ( te.active )
+	{
+		EraseRect( &viewRect );
+	}
 	
 	const short* starts = te.lineStarts;
 	
