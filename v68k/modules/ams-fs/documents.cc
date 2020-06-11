@@ -42,6 +42,10 @@ void mount_virtual_documents_volume()
 	vcb->vcbSigWord = 0xD0C5;
 	vcb->vcbFSID    = 0xD0C5;
 	
+	// 16 MiB free should be sufficient for now
+	vcb->vcbAlBlkSiz = 4096;
+	vcb->vcbFreeBks  = 4096;
+	
 	#define VOLNAME  "\p" "Documents"
 	
 	fast_memcpy( vcb->vcbVN, VOLNAME, sizeof VOLNAME );
