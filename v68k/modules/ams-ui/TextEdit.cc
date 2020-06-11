@@ -869,7 +869,13 @@ pascal void TEScroll_patch( short dh, short dv, TERec** hTE )
 	OffsetRect( &te.destRect, dh, dv );
 	OffsetRect( &te.selRect,  dh, dv );
 	
-	TEUpdate( &te.viewRect, hTE );
+	static RgnHandle updateRgn = NewRgn();
+	
+	raster_lock lock;
+	
+	ScrollRect( &te.viewRect, dh, dv, updateRgn );
+	
+	TEUpdate( &updateRgn[0]->rgnBBox, hTE );
 }
 
 pascal void TECalText_patch( TERec** hTE )
