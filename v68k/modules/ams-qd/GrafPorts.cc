@@ -253,22 +253,24 @@ pascal void BackColor_patch( long color )
 
 pascal void LocalToGlobal_patch( Point* pt )
 {
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	const Rect& bounds = thePort->portBits.bounds;
-	
-	pt->v -= bounds.top;
-	pt->h -= bounds.left;
+	if ( GrafPtr thePort = *get_addrof_thePort() )
+	{
+		const Rect& bounds = thePort->portBits.bounds;
+		
+		pt->v -= bounds.top;
+		pt->h -= bounds.left;
+	}
 }
 
 pascal void GlobalToLocal_patch( Point* pt )
 {
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	const Rect& bounds = thePort->portBits.bounds;
-	
-	pt->v += bounds.top;
-	pt->h += bounds.left;
+	if ( GrafPtr thePort = *get_addrof_thePort() )
+	{
+		const Rect& bounds = thePort->portBits.bounds;
+		
+		pt->v += bounds.top;
+		pt->h += bounds.left;
+	}
 }
 
 #pragma mark -
