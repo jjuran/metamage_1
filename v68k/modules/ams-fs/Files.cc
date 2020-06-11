@@ -188,8 +188,12 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	fcb->fcbMdRByt = is_rsrc & (kioFCBResourceMask >> 8);  // see above
 	
-	if ( pb->ioPermssn > 1 )
+	const bool writable = pb->ioPermssn != 1;
+	
+	if ( writable )
 	{
+		// 1 is read-only, 2 is write-only, 3 is both, and 0 is whatever.
+		
 		set_writable( fcb );  // writing is allowed
 	}
 	
@@ -198,7 +202,7 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 		when write permission is requested and an appfs server is present.
 	*/
 	
-	const bool selfmod_capable = ! is_rsrc  &&  pb->ioPermssn > 1  &&  appfs_fd;
+	const bool selfmod_capable = ! is_rsrc  &&  writable  &&  appfs_fd;
 	
 	VCB* vcb = (VCB*) VCBQHdr.qHead;
 	
