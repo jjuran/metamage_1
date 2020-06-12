@@ -15,6 +15,65 @@
 namespace quickdraw
 {
 	
+	static
+	const uint8_t* find_end_of_run( const uint8_t* p, const uint8_t* end )
+	{
+		uint8_t c = *p++;
+		
+		while ( p < end )
+		{
+			if ( *p++ != c )
+			{
+				return --p;
+			}
+		}
+		
+		return p;
+	}
+	
+	static
+	const uint8_t* find_double( const uint8_t* p, const uint8_t* end )
+	{
+		uint8_t a = *p++;
+		
+		while ( p < end )
+		{
+			uint8_t b = *p++;
+			
+			if ( a == b )
+			{
+				return p - 2;
+			}
+			
+			a = b;
+		}
+		
+		return NULL;
+	}
+	
+	static
+	const uint8_t* find_triple( const uint8_t* p, const uint8_t* end )
+	{
+		while ( p < end )
+		{
+			p = find_double( p, end );
+			
+			if ( p == NULL  ||  p >= end - 2 )
+			{
+				return NULL;
+			}
+			
+			if ( p[ 0 ] == p[ 2 ] )
+			{
+				return p;
+			}
+			
+			p += 2;
+		}
+		
+		return NULL;
+	}
+	
 	void pack_bits( uint8_t const*& src, unsigned n_src, uint8_t*& dst )
 	{
 		uint8_t const* p = src;
