@@ -250,11 +250,31 @@ def fs_opts
 	}
 }
 
+def seg_opts
+{
+	const open_opt =
+	if const open = getenv "AMS_OPEN" then
+	{
+		assert open[ 4 ] == ':'
+		
+		"--type", open[ 0 -> 4], "--open", substr( open, 5 ),
+	}
+	
+	const opts = [ open_opt ]
+	
+	return
+	if opts then
+	{
+		ams-seg: opts,
+	}
+}
+
 const module_args = str^
 [
 	core_opts(),
 	fs_opts(),
 	io_opts(),
+	seg_opts(),
 	
 	# This setting is not recommended, which is why no logic enables it.
 	#vdb: [ "--continue-on-bus-error" ],
