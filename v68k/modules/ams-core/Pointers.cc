@@ -110,6 +110,11 @@ coda:
 static
 short DisposePtr_handler( char* alloc : __A0 )
 {
+	if ( alloc == NULL )
+	{
+		return MemErr = noErr;
+	}
+	
 	block_header& header = *(block_header*) (alloc - sizeof (block_header));
 	
 	if ( (header.tag & 0xC0) != Tag_ptr )
