@@ -168,11 +168,39 @@ def fs_opts
 	}
 }
 
+def just_the_name (path)
+{
+	return
+	if '/' in path
+	then { -(begin -path).find('/').past }
+	else { path }
+}
+
+def seg_opts
+{
+	const open_opt =
+	if const open = getenv "AMS_OPEN" then
+	{
+		assert open[ 4 ] == ':'
+		
+		"--type", open[ 0 -> 4], "--open", just_the_name substr( open, 5 ),
+	}
+	
+	const opts = [ open_opt ]
+	
+	return
+	if opts then
+	{
+		ams-seg: opts,
+	}
+}
+
 const module_args = str^
 [
 	core_opts(),
 	fs_opts(),
 	io_opts(),
+	seg_opts(),
 ]
 
 def argify (name)
