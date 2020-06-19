@@ -22,6 +22,7 @@
 #include "mac_app/state.hh"
 
 // Amethyst
+#include "apple_events.hh"
 #include "coprocess.hh"
 #include "display.hh"
 #include "image.hh"
@@ -452,7 +453,10 @@ int main( int argc, char** argv )
 	
 	mac::app::install_basic_event_handlers();
 	
-	RunEventLoop();
+	if ( wait_for_first_Apple_event() == noErr )
+	{
+		RunEventLoop();
+	}
 	
 	return 0;
 }
