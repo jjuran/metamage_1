@@ -3,7 +3,7 @@
 const bindir = dirname realpath argv[ 0 ]
 const libdir = bindir "/../lib/v/"
 
-const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
 
 const render_xml = import "render_xml"
 
