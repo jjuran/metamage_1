@@ -7,6 +7,9 @@ def import { const path = libdir _ ".vsl"; eval( load path, path ) }
 
 const basename = import "basename";
 
+const info_plist = import "info_plist"
+const render_xml = import "render_xml"
+
 def comma-terminated (line)
 {
 	const c = line[ line.length - 1 ]
@@ -138,6 +141,8 @@ if active "sound" and exists "var/out/sndtrack" then
 
 copy( "var/out/Amethyst", MacOS_dir )
 
+var plist_xml_lines = [ info_plist.version, info_plist.doctype ]
+
 const info =
 [
 	CFBundleExecutable:  "Amethyst",
@@ -147,14 +152,18 @@ const info =
 	CFBundleSignature:   creator,
 	NSHighResolutionCapable: true,
 ]
-map { v.key ": " (rep v.value) "\n" }
 
-const temp_info = contents "/Info.txt"
+def printer (depth, text)
+{
+	const Tab = "\t"
+	
+	const tabs = Tab * depth
+	
+	plist_xml_lines <-- tabs text
+}
 
-rewrite temp_info <== str info
+render_xml( printer, info_plist.convert info )
 
-const plist = output-from-run [ "v/bin/make-info-plist.vx", temp_info ]
+const plist = "\n".join( *plist_xml_lines, "" )
 
 rewrite contents "/Info.plist" <== plist
-
-run [ "rm", temp_info ]
