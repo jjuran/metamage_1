@@ -143,6 +143,22 @@ copy( "var/out/Amethyst", MacOS_dir )
 
 var plist_xml_lines = [ info_plist.version, info_plist.doctype ]
 
+const doctypes =
+if "document-types" in config then
+{
+	const document-types = config[ "document-types" ]
+	
+	const doctypes = document-types map
+	{
+		[
+			CFBundleTypeName: v.value,
+			CFBundleTypeOSTypes: [ v.key ],
+		],
+	}
+	
+	CFBundleDocumentTypes: doctypes,
+}
+
 const info =
 [
 	CFBundleExecutable:  "Amethyst",
@@ -151,6 +167,8 @@ const info =
 	CFBundlePackageType: 'APPL',
 	CFBundleSignature:   creator,
 	NSHighResolutionCapable: true,
+	
+	doctypes,
 ]
 
 def printer (depth, text)
