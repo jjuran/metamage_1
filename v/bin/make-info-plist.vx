@@ -5,6 +5,7 @@ const libdir = bindir "/../lib/v/"
 
 const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
 
+const info_plist = import "info_plist"
 const render_xml = import "render_xml"
 
 const Tab = "\t"
@@ -51,8 +52,6 @@ const info = eval "[" join( "\n", *lines, "]" )
 
 const mapping = ... => ...
 
-def qq { str ('"', _, '"') }
-
 const reifiers
 
 def reify
@@ -80,13 +79,8 @@ reifiers =
 
 const plist = plist: [ version: "1.0" ]: reify info
 
-const version  = qq "1.0"
-const encoding = qq "UTF-8"
-const dtd_name = qq "-//Apple//DTD PLIST 1.0//EN"
-const dtd_url  = qq "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
-
-print "<?xml version=" version " encoding=" encoding "?>"
-print "<!DOCTYPE plist PUBLIC " dtd_name " " dtd_url ">"
+print info_plist.version
+print info_plist.doctype
 
 def printer
 {
