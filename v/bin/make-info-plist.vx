@@ -50,34 +50,7 @@ const lines = (info-txt more-txt).lines() ver bool map comma-terminated
 
 const info = eval "[" join( "\n", *lines, "]" )
 
-const mapping = ... => ...
-
-const reifiers
-
-def reify
-{
-	for r in reifiers do
-	{
-		if _ isa r.key then
-		{
-			return r.value( _ )
-		}
-	}
-	
-	throw "unimplemented XML conversion input"
-}
-
-reifiers =
-[
-	bool      => { str(_): null  },
-	string    => { string: _     },
-	int       => { string: str _ },
-	mb32      => { string: str _ },
-	mapping[] => { dict:   _ map { key: _.key, reify _.value } },
-	array     => { array:  _ map reify },
-]
-
-const plist = plist: [ version: "1.0" ]: reify info
+const plist = info_plist.convert info
 
 print info_plist.version
 print info_plist.doctype
