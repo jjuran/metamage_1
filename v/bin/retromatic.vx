@@ -79,14 +79,14 @@ const Files = Resources "/Files"
 
 mkdir-p (MacOS_dir, Files "/AMS Resources", xv68k_dir)
 
-def ams-get-app (property)
+def ams-get-app (property, args: ...)
 {
 	# This path may not actually exist in the case of a disk image.
 	# Really it's just the fs root path and the app name joined by "/".
 	
 	const path = parent_dir "/" name
 	
-	return packed output-from-run [ "v/bin/ams-get.vx", property, path ]
+	return packed output-from-run [ "v/bin/ams-get.vx", property, path, args ]
 }
 
 def icns (icon)
@@ -97,7 +97,7 @@ def icns (icon)
 }
 
 const creator = mb32 ams-get-app "bndl-owner"
-const icon    = icns ams-get-app "icon"
+const icon    = icns ams-get-app ("bndl-icon", "APPL")
 
 rewrite Resources "/" name ".icns" <== icon
 
