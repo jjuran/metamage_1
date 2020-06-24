@@ -150,9 +150,22 @@ if "document-types" in config then
 	
 	const doctypes = document-types map
 	{
+		var name = str v.key
+		
+		const icon = icns ams-get-app ("bndl-icon", name)
+		
+		translate( &name, "/\0", ": " );
+		
 		[
 			CFBundleTypeName: v.value,
 			CFBundleTypeOSTypes: [ v.key ],
+			
+			if icon.size then
+			{
+				rewrite Resources "/" name ".icns" <== icon
+				
+				CFBundleTypeIconFile: name,
+			},
 		],
 	}
 	
