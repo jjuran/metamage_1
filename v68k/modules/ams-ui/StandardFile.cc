@@ -411,14 +411,9 @@ pascal OSErr SFPPutFile_call( Point             where,
                               short             dialogID,
                               ModalFilterUPP    filterProc )
 {
-	ERROR = "SFPPutFile is unimplemented";
+	WARNING = "SFPPutFile is incomplete";
 	
-	WARNING = "SFPPutFile prompt:   ", CSTR( prompt );
-	WARNING = "SFPPutFile origName: ", CSTR( origName );
-	
-	reply->good = false;
-	
-	return userCanceledErr;
+	return SFPutFile_call( where, prompt, origName, dlgHook, reply );
 }
 
 static
@@ -432,13 +427,9 @@ pascal OSErr SFPGetFile_call( Point               where,
                               short               dialogID,
                               ModalFilterUPP      filterProc )
 {
-	ERROR = "SFPGetFile is unimplemented";
+	WARNING = "SFPGetFile is incomplete";
 	
-	WARNING = "SFPGetFile prompt: ", CSTR( prompt );
-	
-	reply->good = false;
-	
-	return userCanceledErr;
+	return SFGetFile_call( where, prompt, fileFilter, numTypes, typeList, dlgHook, reply );
 }
 
 static
