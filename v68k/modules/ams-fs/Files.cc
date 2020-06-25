@@ -531,9 +531,20 @@ short SetEOF_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	const long new_eof = (long) pb->ioMisc;
 	
-	if ( new_eof != fcb->fcbEOF )
+	if ( new_eof > fcb->fcbEOF )
 	{
 		return pb->ioResult = extFSErr;
+	}
+	
+	if ( new_eof < fcb->fcbEOF )
+	{
+		fcb->fcbEOF  = new_eof;
+		fcb->fcbPLen = new_eof;
+		
+		if ( OSErr err = flush_file( fcb ) )
+		{
+			return pb->ioResult = err;
+		}
 	}
 	
 	return pb->ioResult = noErr;
