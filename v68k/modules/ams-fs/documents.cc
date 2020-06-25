@@ -155,5 +155,21 @@ OSErr documents_FlushFile( FCB* fcb )
 
 OSErr documents_GetFileInfo( FileParam* pb, const uint8_t* name )
 {
+	temp_A4 a4;
+	
+	plus::var_string file_data;
+	
+	int err = try_to_get( docfs_fd, name, file_data );
+	
+	if ( err == -ENOENT )
+	{
+		return fnfErr;
+	}
+	
+	if ( err )
+	{
+		return ioErr;
+	}
+	
 	return noErr;
 }
