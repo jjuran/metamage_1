@@ -750,6 +750,14 @@ pascal void TEDelete_patch( TERec** hTE )
 		update_selRect( te );
 		show_selection( te );
 	}
+	
+	/*
+		Deja Vu dumps a TE record's entire hText to its save files, instead of
+		just teLength bytes, foiling our amortized constant time optimization
+		of character insertion.  Trim the handle here to appease it.
+	*/
+	
+	SetHandleSize( te.hText, te.teLength );
 }
 
 pascal void TEInsert_patch( const char* text, long length, TERec** hTE )
@@ -770,6 +778,14 @@ pascal void TEInsert_patch( const char* text, long length, TERec** hTE )
 	
 	update_selRect( te );
 	show_selection( te );
+	
+	/*
+		Deja Vu dumps a TE record's entire hText to its save files, instead of
+		just teLength bytes, foiling our amortized constant time optimization
+		of character insertion.  Trim the handle here to appease it.
+	*/
+	
+	SetHandleSize( te.hText, te.teLength );
 }
 
 pascal void TESetJust_patch( short just, TERec** hTE )
