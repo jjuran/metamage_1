@@ -514,12 +514,29 @@ short GetEOF_patch( short trap_word : __D1, IOParam* pb : __A0 )
 
 short SetEOF_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
-	if ( FCB* fcb = get_FCB( pb->ioRefNum ) )
+	FCB* fcb = get_FCB( pb->ioRefNum );
+	
+	if ( ! fcb )
+	{
+		return pb->ioResult = rfNumErr;
+	}
+	
+	if ( OSErr err = writability_error( fcb ) )
+	{
+		if ( err != wPrErr  ||  ! is_servable( fcb ) )
+		{
+			return pb->ioResult = err;
+		}
+	}
+	
+	const long new_eof = (long) pb->ioMisc;
+	
+	if ( new_eof != fcb->fcbEOF )
 	{
 		return pb->ioResult = extFSErr;
 	}
 	
-	return pb->ioResult = rfNumErr;
+	return pb->ioResult = noErr;
 }
 
 short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
