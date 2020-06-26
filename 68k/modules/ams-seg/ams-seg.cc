@@ -4,6 +4,9 @@
 */
 
 // Mac OS
+#ifndef __FILES__
+#include <Files.h>
+#endif
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
@@ -55,6 +58,7 @@ static command::option options[] =
 };
 
 
+QHdr   VCBQHdr       : 0x0356;
 Handle AppParmHandle : 0x0AEC;
 
 void* toolbox_trap_table[] : 3 * 1024;
@@ -84,6 +88,30 @@ struct AppFilesHeader
 
 static OSType fileType;
 
+static
+short documents_vRefNum()
+{
+	static short vRefNum;
+	
+	if ( vRefNum == 0 )
+	{
+		VCB* vcb = (VCB*) VCBQHdr.qHead;
+		
+		while ( vcb != NULL )
+		{
+			if ( vcb->vcbFSID == (short) 0xD0C5 )
+			{
+				vRefNum = vcb->vcbVRefNum;
+				break;
+			}
+			
+			vcb = (VCB*) vcb->qLink;
+		}
+	}
+	
+	return vRefNum;
+}
+
 static char* const* get_options( char** argv )
 {
 	using command::global_result;
@@ -102,9 +130,16 @@ static char* const* get_options( char** argv )
 			
 			case Opt_open:
 			{
+				/*
+					TODO:  What should go in the vRefNum field?
+					
+					Assume the Documents volume for now, which
+					is correct in most cases.
+				*/
+				
 				AppFile file;
 				
-				file.vRefNum = 0;
+				file.vRefNum = documents_vRefNum();
 				file.fType   = fileType;
 				file.versNum = 0;
 				
