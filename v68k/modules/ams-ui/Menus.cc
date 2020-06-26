@@ -848,9 +848,16 @@ pascal long MenuKey_patch( unsigned short key )  // char
 	MenuList_entry* next = (MenuList_entry*) ((char*) *MenuList + extent_bytes);
 	MenuList_entry* end  = (MenuList_entry*) *MenuList;
 	
-	while ( next > end )
+	for ( ;  next > end;  --next )
 	{
 		MenuRef menu = next->menu;
+		
+		UInt32 disableFlags = ~menu[0]->enableFlags;
+		
+		if ( disableFlags & 1 )
+		{
+			continue;
+		}
 		
 		menu_item_iterator it( menu );
 		
@@ -858,7 +865,15 @@ pascal long MenuKey_patch( unsigned short key )  // char
 		
 		while ( const unsigned char* text = it )
 		{
+			++it;
 			++n;
+			
+			// TODO:  Skip disabled items
+			
+			if ( (disableFlags >>= 1) & 1 )
+			{
+				continue;
+			}
 			
 			const unsigned char* p = text + 1 + text[ 0 ] + 1;  // skip icon
 			
@@ -868,11 +883,7 @@ pascal long MenuKey_patch( unsigned short key )  // char
 				
 				return menu[0]->menuID << 16 | n;
 			}
-			
-			++it;
 		}
-		
-		--next;
 	}
 	
 	return 0;
