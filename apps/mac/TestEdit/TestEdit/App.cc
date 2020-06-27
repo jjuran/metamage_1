@@ -10,6 +10,9 @@
 #include "mac_sys/current_process.hh"
 #include "mac_sys/is_front_process.hh"
 
+// mac-app-utils
+#include "mac_app/documents.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -276,35 +279,6 @@ namespace TestEdit
 		StoreNewDocument( new Document( file ) );
 	}
 	
-	struct OpenDocuments_AppleEvent
-	{
-		static void Handler( Mac::AppleEvent const&  event,
-		                     Mac::AppleEvent&        reply )
-		{
-			typedef N::AEDescList_ItemDataValue_Container< Io_Details::typeFileSpec > Container;
-			typedef Container::const_iterator const_iterator;
-			
-			n::owned< Mac::AEDescList_Data > docList = N::AEGetParamDesc( event,
-			                                                              Mac::keyDirectObject,
-			                                                              Mac::typeAEList );
-			
-			Container listData = N::AEDescList_ItemDataValues< Io_Details::typeFileSpec >( docList );
-			
-			for ( const_iterator it = listData.begin();  it != listData.end();  ++it )
-			{
-				Io_Details::file_spec fileSpec = *it;
-				
-				OpenDocument( fileSpec );
-			}
-		}
-		
-		static void Install_Handler()
-		{
-			N::AEInstallEventHandler< Handler >( Mac::kCoreEventClass,
-			                                     Mac::kAEOpenDocuments ).release();
-		}
-	};
-	
 	// Object accessors
 	
 	struct AppFrontmost_Property
@@ -520,6 +494,44 @@ namespace TestEdit
 		return true;
 	}
 	
+	static
+	long document_opener( const Io_Details::file_spec& file )
+	{
+		try
+		{
+			OpenDocument( file );
+			
+			return noErr;
+		}
+		catch ( const Mac::OSStatus& err )
+		{
+			return err;
+		}
+		catch ( ... )
+		{
+			return errAEEventNotHandled;
+		}
+	}
+	
+	static
+	long HFS_document_opener( short vRefNum, long dirID, const Byte* name )
+	{
+	#if ! TARGET_API_MAC_CARBON
+		
+		FSSpec file;
+		
+		file.vRefNum = vRefNum;
+		file.parID   = dirID;
+		
+		BlockMoveData( name, file.name, 1 + name[ 0 ] );
+		
+		return document_opener( file );
+		
+	#endif
+		
+		return 0;
+	}
+	
 	App::App()
 	{
 		using Ped::apple_events_present;
@@ -527,12 +539,19 @@ namespace TestEdit
 		SetCommandHandler( Ped::kCmdAbout, &About       );
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
 		
+		if ( apple_events_present )
+		{
+			mac::app::open_documents_with( &document_opener );
+		}
+		else
+		{
+			mac::app::open_documents_with( &HFS_document_opener );
+		}
+		
 		if ( TARGET_CPU_68K  &&  ! apple_events_present )
 		{
 			return;
 		}
-		
-		OpenDocuments_AppleEvent::Install_Handler();
 		
 		Close_AppleEvent  ::Install_Handler();
 		Count_AppleEvent  ::Install_Handler();
