@@ -123,6 +123,37 @@ OSErr ODoc_generic( const AppleEvent* event, Callback callback )
 
 #if ! __LP64__
 
+struct HFS_callback_adapter
+{
+	HFS_callback callback;
+	
+	operator HFS_callback() const  { return callback; }
+	
+	long operator()( const FSSpec& spec )
+	{
+		return callback( spec.vRefNum, spec.parID, spec.name );
+	}
+};
+
+static
+pascal OSErr ODoc_HFS( const AppleEvent* event, AppleEvent*, SRefCon refcon )
+{
+	return ODoc_generic< FSSpec >( event, (HFS_callback_adapter&) refcon );
+}
+
+void install_opendocs_handler( HFS_callback callback )
+{
+	DEFINE_UPP( AEEventHandler, ODoc_HFS );
+	
+	OSErr err;
+	
+	err = AEInstallEventHandler( kCoreEventClass,
+	                             kAEOpenDocuments,
+	                             UPP_ARG( ODoc_HFS ),
+	                             (SRefCon) callback,
+	                             false );
+}
+
 static
 pascal OSErr ODoc_FSSpec( const AppleEvent* event, AppleEvent*, SRefCon refcon )
 {
