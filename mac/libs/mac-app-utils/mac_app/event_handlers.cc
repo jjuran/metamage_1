@@ -72,9 +72,9 @@ template<> struct File_DescType_traits< FSSpec > { enum { value = typeFSS }; };
 #endif
 template<> struct File_DescType_traits< FSRef > { enum { value = typeFSRef }; };
 
-template < class File >
+template < class File, class Callback >
 static
-OSErr ODoc_generic( const AppleEvent* event, long (*callback)(const File&) )
+OSErr ODoc_generic( const AppleEvent* event, Callback callback )
 {
 	if ( ! callback )
 	{
