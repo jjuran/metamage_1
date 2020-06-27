@@ -204,24 +204,27 @@ namespace io
 	
 	// Open
 	
+	nucleus::owned< Mac::FSFileRefNum >
+	open_data_fork( const FSSpec& file, Mac::FSIOPerm perm );
+	
 	inline nucleus::owned< Nitrogen::FSFileRefNum > open_for_reading( const FSSpec& file, overload = overload() )
 	{
-		return Nitrogen::FSpOpenDF( file, Nitrogen::fsRdPerm );
+		return open_data_fork( file, Mac::fsRdPerm );
 	}
 	
 	inline nucleus::owned< Nitrogen::FSFileRefNum > open_for_writing( const FSSpec& file, overload = overload() )
 	{
-		return Nitrogen::FSpOpenDF( file, Nitrogen::fsWrPerm );
+		return open_data_fork( file, Mac::fsWrPerm );
 	}
 	
 	inline nucleus::owned< Nitrogen::FSFileRefNum > open_for_io( const FSSpec& file, overload = overload() )
 	{
-		return Nitrogen::FSpOpenDF( file, Nitrogen::fsRdWrPerm );
+		return open_data_fork( file, Mac::fsRdWrPerm );
 	}
 	
 	inline nucleus::owned< Nitrogen::FSFileRefNum > open_truncated( const FSSpec& file, overload = overload() )
 	{
-		nucleus::owned< Nitrogen::FSFileRefNum > result = Nitrogen::FSpOpenDF( file, Nitrogen::fsWrPerm );
+		nucleus::owned< Mac::FSFileRefNum > result = open_data_fork( file, Mac::fsWrPerm );
 		
 		Nitrogen::SetEOF( result, 0 );
 		
