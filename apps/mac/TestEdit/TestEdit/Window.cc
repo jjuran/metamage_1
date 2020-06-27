@@ -5,9 +5,6 @@
 
 #include "TestEdit/Window.hh"
 
-// Standard C
-#include <string.h>
-
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
 #ifndef MISSING_FONTS_H
@@ -420,15 +417,7 @@ namespace TestEdit
 		
 		TextEdit& textedit = scroller;
 		
-		Handle hText = textedit.Get()[0]->hText;
-		
-		const size_t size = text.size();
-		
-		N::SetHandleSize( hText, size );
-		
-		memcpy( *hText, text.begin(), size );
-		
-		N::TECalText( textedit.Get() );
+		TESetText( text.data(), text.size(), textedit.Get() );
 	}
 	
 	
