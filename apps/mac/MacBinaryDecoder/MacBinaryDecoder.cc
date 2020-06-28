@@ -10,7 +10,7 @@
 #include "mac_file/parent_directory.hh"
 
 // mac-app-utils
-#include "mac_app/event_handlers.hh"
+#include "mac_app/documents.hh"
 #include "mac_app/file_open_dialog.hh"
 
 // Nitrogen
@@ -144,7 +144,11 @@ int main( void )
 	
 	if ( apple_events_present )
 	{
-		mac::app::install_opendocs_handler( &file_opener );
+		mac::app::open_documents_with( &file_opener );
+	}
+	else
+	{
+		mac::app::open_documents_with( &HFS_file_opener );
 	}
 	
 	SetCommandHandler( Ped::kCmdAbout, &About );
