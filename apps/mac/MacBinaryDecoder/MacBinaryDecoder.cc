@@ -11,6 +11,7 @@
 
 // mac-app-utils
 #include "mac_app/event_handlers.hh"
+#include "mac_app/file_open_dialog.hh"
 
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
@@ -25,6 +26,9 @@
 #include "Pedestal/AboutBox.hh"
 #include "Pedestal/Application.hh"
 #include "Pedestal/Commands.hh"
+
+
+#define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
 
 
 namespace MacBinaryDecoder
@@ -63,7 +67,7 @@ namespace MacBinaryDecoder
 	}
 	
 	static
-	long OpenDocument( const Io_Details::file_spec& file )
+	long file_opener( const Io_Details::file_spec& file )
 	{
 		try
 		{
@@ -79,10 +83,48 @@ namespace MacBinaryDecoder
 		return noErr;
 	}
 	
+	static
+	long HFS_file_opener( short vRefNum, long dirID, const Byte* name )
+	{
+	#if ! TARGET_API_MAC_CARBON
+		
+		FSSpec file;
+		
+		file.vRefNum = vRefNum;
+		file.parID   = dirID;
+		
+		BlockMoveData( name, file.name, 1 + name[ 0 ] );
+		
+		return file_opener( file );
+		
+	#endif
+		
+		return 0;
+	}
 	
 	static bool About( Ped::CommandCode )
 	{
 		Ped::ShowAboutBox();
+		
+		return true;
+	}
+	
+	static const OSType file_open_types[] = { 'mBIN', 'BIN+' };
+	
+	static
+	bool FileOpenDialog( Ped::CommandCode )
+	{
+		using mac::app::file_open_dialog;
+		using Ped::apple_events_present;
+		
+		if ( apple_events_present )
+		{
+			file_open_dialog( ARRAY_LEN( file_open_types ), &file_opener );
+		}
+		else
+		{
+			file_open_dialog( ARRAY_LEN( file_open_types ), &HFS_file_opener );
+		}
 		
 		return true;
 	}
@@ -102,10 +144,11 @@ int main( void )
 	
 	if ( apple_events_present )
 	{
-		mac::app::install_opendocs_handler( &OpenDocument );
+		mac::app::install_opendocs_handler( &file_opener );
 	}
 	
 	SetCommandHandler( Ped::kCmdAbout, &About );
+	SetCommandHandler( Ped::kCmdOpen,  &FileOpenDialog );
 	
 	return app.Run();
 }
