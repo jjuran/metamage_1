@@ -12,6 +12,7 @@
 
 // mac-app-utils
 #include "mac_app/documents.hh"
+#include "mac_app/file_open_dialog.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -40,6 +41,9 @@
 // TestEdit
 #include "TestEdit/App.hh"
 #include "TestEdit/Document.hh"
+
+
+#define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
 
 
 namespace TestEdit
@@ -532,12 +536,33 @@ namespace TestEdit
 		return 0;
 	}
 	
+	static const OSType file_open_types[] = { 'TEXT' };
+	
+	static
+	bool FileOpenDialog( Ped::CommandCode )
+	{
+		using mac::app::file_open_dialog;
+		using Ped::apple_events_present;
+		
+		if ( apple_events_present )
+		{
+			file_open_dialog( ARRAY_LEN( file_open_types ), &file_opener );
+		}
+		else
+		{
+			file_open_dialog( ARRAY_LEN( file_open_types ), &HFS_file_opener );
+		}
+		
+		return true;
+	}
+	
 	App::App()
 	{
 		using Ped::apple_events_present;
 		
-		SetCommandHandler( Ped::kCmdAbout, &About       );
-		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
+		SetCommandHandler( Ped::kCmdAbout, &About          );
+		SetCommandHandler( Ped::kCmdNew,   &NewDocument    );
+		SetCommandHandler( Ped::kCmdOpen,  &FileOpenDialog );
 		
 		if ( apple_events_present )
 		{
