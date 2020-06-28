@@ -604,12 +604,12 @@ namespace MacBinary
 		
 		if ( hFileInfo.ioFlLgLen > 0 )
 		{
-			ReadWrite( N::FSpOpenDF( file, fsRdPerm ), blockWrite, output,  hFileInfo.ioFlLgLen );
+			ReadWrite( N::HOpen( file, fsRdPerm ), blockWrite, output,  hFileInfo.ioFlLgLen );
 		}
 		
 		if ( hFileInfo.ioFlRLgLen > 0 )
 		{
-			ReadWrite( N::FSpOpenRF( file, fsRdPerm ), blockWrite, output,  hFileInfo.ioFlRLgLen );
+			ReadWrite( N::HOpenRF( file, fsRdPerm ), blockWrite, output,  hFileInfo.ioFlRLgLen );
 		}
 		
 		if ( comment_size > 0 )
@@ -739,6 +739,8 @@ namespace MacBinary
 	
 	void Decoder::DecodeHeader( const char* header )
 	{
+		OSErr err;
+		
 		const Header& h = reinterpret_cast< const Header& >( *header );
 		
 		Byte check = CheckHeader( h );
@@ -766,6 +768,8 @@ namespace MacBinary
 		
 		ConstStr63Param name = h.Get< kFileName >();
 		
+		const VRefNum_DirID& dir = itsFrame.destDir;
+		
 		itsFrame.file.vRefNum = itsFrame.destDir.vRefNum;
 		itsFrame.file.parID   = itsFrame.destDir.dirID;
 		
@@ -773,13 +777,19 @@ namespace MacBinary
 		
 		if ( itIsFolder )
 		{
-			N::FSpDirCreate( itsFrame.file );
+			long newDirID;
+			
+			err = DirCreate( dir.vRefNum, dir.dirID, name, &newDirID );
 		}
 		else
 		{
-			N::FSpCreate( itsFrame.file, Mac::FSCreator( h.Get< kFileCreator >() ),
-								         Mac::FSType   ( h.Get< kFileType    >() ) );
+			const OSType creator = h.Get< kFileCreator >();
+			const OSType type    = h.Get< kFileType    >();
+			
+			err = HCreate( dir.vRefNum, dir.dirID, name, creator, type );
 		}
+		
+		Mac::ThrowOSStatus( err );
 		
 		CInfoPBRec pb;
 		
@@ -810,8 +820,8 @@ namespace MacBinary
 		
 		if ( !itIsFolder )
 		{
-			itsDataFork     = N::FSpOpenDF( itsFrame.file, fsWrPerm );
-			itsResourceFork = N::FSpOpenRF( itsFrame.file, fsWrPerm );
+			itsDataFork     = N::HOpen  ( itsFrame.file, fsWrPerm );
+			itsResourceFork = N::HOpenRF( itsFrame.file, fsWrPerm );
 		}
 		
 		itsHeaderWasReceived = true;
