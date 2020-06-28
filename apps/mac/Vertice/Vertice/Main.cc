@@ -8,6 +8,7 @@
 
 // mac-app-utils
 #include "mac_app/event_handlers.hh"
+#include "mac_app/file_open_dialog.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -16,6 +17,9 @@
 
 // Vertice
 #include "Vertice/Document.hh"
+
+
+#define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
 
 
 namespace Vertice
@@ -46,6 +50,16 @@ namespace Vertice
 		return 0;
 	}
 	
+	static const mac::app::OSType file_open_types[] = { 'TEXT' };
+	
+	static
+	bool Open( Ped::CommandCode )
+	{
+		mac::app::file_open_dialog( ARRAY_LEN( file_open_types ), &open_doc );
+		
+		return true;
+	}
+	
 }
 
 
@@ -66,6 +80,7 @@ int main(void)
 	}
 	
 	SetCommandHandler( Ped::kCmdAbout, &About );
+	SetCommandHandler( Ped::kCmdOpen,  &Open  );
 	
 	return app.Run();
 }
