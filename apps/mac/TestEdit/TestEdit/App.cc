@@ -495,7 +495,7 @@ namespace TestEdit
 	}
 	
 	static
-	long document_opener( const Io_Details::file_spec& file )
+	long file_opener( const Io_Details::file_spec& file )
 	{
 		try
 		{
@@ -514,7 +514,7 @@ namespace TestEdit
 	}
 	
 	static
-	long HFS_document_opener( short vRefNum, long dirID, const Byte* name )
+	long HFS_file_opener( short vRefNum, long dirID, const Byte* name )
 	{
 	#if ! TARGET_API_MAC_CARBON
 		
@@ -525,7 +525,7 @@ namespace TestEdit
 		
 		BlockMoveData( name, file.name, 1 + name[ 0 ] );
 		
-		return document_opener( file );
+		return file_opener( file );
 		
 	#endif
 		
@@ -541,11 +541,11 @@ namespace TestEdit
 		
 		if ( apple_events_present )
 		{
-			mac::app::open_documents_with( &document_opener );
+			mac::app::open_documents_with( &file_opener );
 		}
 		else
 		{
-			mac::app::open_documents_with( &HFS_document_opener );
+			mac::app::open_documents_with( &HFS_file_opener );
 		}
 		
 		if ( TARGET_CPU_68K  &&  ! apple_events_present )
