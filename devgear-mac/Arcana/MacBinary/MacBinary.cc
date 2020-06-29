@@ -582,11 +582,15 @@ namespace MacBinary
 	{
 		nucleus::mutable_string comment;
 		
+		long padded_size;
+		
 		try
 		{
 			comment = N::FSpDTGetComment( file );
 			
-			comment.resize( PaddedLength( comment.size(), kMacBinaryBlockSize ) );
+			padded_size = PaddedLength( comment.size(), kMacBinaryBlockSize );
+			
+			comment.reserve( padded_size );
 		}
 		catch ( ... )
 		{
@@ -614,7 +618,9 @@ namespace MacBinary
 		
 		if ( comment_size > 0 )
 		{
-			blockWrite( output, comment.data(), comment_size );
+			comment.resize( padded_size );
+			
+			blockWrite( output, comment.data(), padded_size );
 		}
 	}
 	
