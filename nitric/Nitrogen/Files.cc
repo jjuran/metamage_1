@@ -427,6 +427,17 @@ namespace Nitrogen
 		ThrowOSStatus( ::PBDTGetCommentSync( &pb ) );
 	}
 	
+	static
+	long DTGetComment( DTPBRec& pb, char* buffer, long length )
+	{
+		pb.ioDTBuffer   = buffer;
+		pb.ioDTReqCount = length;
+		
+		ThrowOSStatus( ::PBDTGetCommentSync( &pb ) );
+		
+		return pb.ioDTActCount;
+	}
+	
 	nucleus::string DTGetComment( DTPBRec& pb )
 	{
 		//const ByteCount kMaximumCommentLength      = 200;
@@ -434,10 +445,7 @@ namespace Nitrogen
 		
 		char comment[ kExperimentalCommentLength ];
 		
-		pb.ioDTBuffer = comment;
-		pb.ioDTReqCount = kExperimentalCommentLength;
-		
-		ThrowOSStatus( ::PBDTGetCommentSync( &pb ) );
+		long length = DTGetComment( pb, comment, kExperimentalCommentLength );
 		
 		ASSERT( pb.ioDTActCount >=   0 );
 		ASSERT( pb.ioDTActCount <= 200 );
@@ -450,6 +458,13 @@ namespace Nitrogen
 		DTPBRec pb;
 		
 		return DTGetComment( FSpDTGetPath( file, pb ) );
+	}
+	
+	long FSpDTGetComment( const FSSpec& file, char* buffer, long length )
+	{
+		DTPBRec pb;
+		
+		return DTGetComment( FSpDTGetPath( file, pb ), buffer, length );
 	}
 	
 	

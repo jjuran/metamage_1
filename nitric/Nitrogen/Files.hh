@@ -639,6 +639,8 @@ namespace Nitrogen
 	
 	nucleus::string FSpDTGetComment( const FSSpec& file );
 	
+	long FSpDTGetComment( const FSSpec& file, char* buffer, long length );
+	
 	// PBDTFlushSync
 	// PBDTResetSync
 	// PBDTGetInfoSync
