@@ -10,7 +10,6 @@
 #include "sys/stat.h"
 
 // Iota
-#include "iota/convert_string.hh"
 #include "iota/strings.hh"
 
 // MoreFiles
@@ -192,10 +191,14 @@ namespace Genie
 		{
 			try
 			{
-				plus::string comment = iota::convert_string< plus::string >( N::FSpDTGetComment( item ) );
+				char buffer[ 256 ];
 				
-				if ( comment.size() > 31 )
+				long size = N::FSpDTGetComment( item, buffer, sizeof buffer );
+				
+				if ( size > 31 )
 				{
+					plus::string comment( buffer, size );
+					
 					plus::string hashed = hashed_long_name( comment );
 					
 					ASSERT( hashed.size() == 31  &&  "Long filenames must hash to 31 chars" );
