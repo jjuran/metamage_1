@@ -220,7 +220,8 @@ namespace Genie
 		return plus::utf8_from_mac( colons_from_slashes( get_long_name( item ) ) );
 	}
 	
-	static N::FSVolumeRefNum GetVRefNum( N::FSVolumeRefNum  vRefNum = N::FSVolumeRefNum() )
+	static inline
+	FSVolumeRefNum GetVRefNum( FSVolumeRefNum vRefNum = 0 )
 	{
 		HParamBlockRec pb;
 		
@@ -230,7 +231,7 @@ namespace Genie
 		
 		Mac::ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
 		
-		return N::FSVolumeRefNum( pb.volumeParam.ioVRefNum );
+		return pb.volumeParam.ioVRefNum;
 	}
 	
 	
@@ -276,7 +277,7 @@ namespace Genie
 			                                  dirID );
 		}
 		
-		cInfo.dirInfo.ioVRefNum = GetVRefNum( N::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum ) );
+		cInfo.dirInfo.ioVRefNum = GetVRefNum( cInfo.dirInfo.ioVRefNum );
 		
 		return Dir_From_CInfo( cInfo );
 	}
