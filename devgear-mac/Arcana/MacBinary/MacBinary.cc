@@ -580,23 +580,18 @@ namespace MacBinary
 	
 	static void EncodeFile( const FSSpec& file, HFileInfo& hFileInfo, BlockWriter blockWrite, int output )
 	{
-		nucleus::mutable_string comment;
+		char comment[ 256 ] = {};
 		
+		long comment_size = 0;
 		long padded_size;
 		
 		try
 		{
-			comment = N::FSpDTGetComment( file );
-			
-			padded_size = PaddedLength( comment.size(), kMacBinaryBlockSize );
-			
-			comment.reserve( padded_size );
+			comment_size = N::FSpDTGetComment( file, comment, sizeof comment );
 		}
 		catch ( ... )
 		{
 		}
-		
-		const size_t comment_size = comment.size();
 		
 		HeaderBlock u;
 		
@@ -618,9 +613,9 @@ namespace MacBinary
 		
 		if ( comment_size > 0 )
 		{
-			comment.resize( padded_size );
+			padded_size = PaddedLength( comment_size, kMacBinaryBlockSize );
 			
-			blockWrite( output, comment.data(), padded_size );
+			blockWrite( output, comment, padded_size );
 		}
 	}
 	
