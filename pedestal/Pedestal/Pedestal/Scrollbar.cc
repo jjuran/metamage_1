@@ -44,13 +44,13 @@ namespace Pedestal
 		
 		if ( activating )
 		{
-			//N::ShowControl( itsControl );
-			N::HiliteControl( itsControl, N::kControlNoPart );
+			//ShowControl( itsControl );
+			HiliteControl( itsControl, kControlNoPart );
 		}
 		else
 		{
-			//N::HideControl( itsControl );
-			N::HiliteControl( itsControl, N::kControlInactivePart );
+			//HideControl( itsControl );
+			HiliteControl( itsControl, kControlInactivePart );
 		}
 	}
 	
@@ -79,12 +79,12 @@ namespace Pedestal
 		
 		if ( N::GetControlBounds( itsControl ) != bounds )
 		{
-			N::HideControl( itsControl );
+			HideControl( itsControl );
 			
-			N::MoveControl( itsControl, bounds.left, bounds.top );
-			N::SizeControl( itsControl, bounds.right - bounds.left, bounds.bottom - bounds.top );
+			MoveControl( itsControl, bounds.left, bounds.top );
+			SizeControl( itsControl, bounds.right - bounds.left, bounds.bottom - bounds.top );
 			
-			N::ShowControl( itsControl );
+			ShowControl( itsControl );
 		}
 	}
 	
@@ -92,7 +92,7 @@ namespace Pedestal
 	{
 		if ( itsControl )
 		{
-			N::DisposeControl( itsControl );
+			DisposeControl( itsControl );
 			
 			itsControl = NULL;
 		}
@@ -102,7 +102,7 @@ namespace Pedestal
 	{
 		if ( itsControl )
 		{
-			N::SetControlValue( itsControl, value );
+			SetControlValue( itsControl, value );
 		}
 	}
 	
@@ -119,7 +119,7 @@ namespace Pedestal
 		{
 			short max_offset = std::max( clientLength - viewLength, offset );
 			
-			N::SetControlMaximum( itsControl, max_offset );
+			SetControlMaximum( itsControl, max_offset );
 			
 			SetValue( offset );
 			

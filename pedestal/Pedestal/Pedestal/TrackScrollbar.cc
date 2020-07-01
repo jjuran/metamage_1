@@ -44,21 +44,21 @@ namespace Pedestal
 	
 	static short SetClippedControlValue( ControlRef control, short value )
 	{
-		value = std::max( value, N::GetControlMinimum( control ) );
-		value = std::min( value, N::GetControlMaximum( control ) );
+		value = std::max( value, GetControlMinimum( control ) );
+		value = std::min( value, GetControlMaximum( control ) );
 		
-		N::SetControlValue( control, value );
+		SetControlValue( control, value );
 		
 		return value;
 	}
 	
 	static inline Scrollbar_UserData* GetUserDataFromScrollbar( ControlRef control )
 	{
-		Scrollbar_UserData* userData = N::GetControlReference( control );
+		void* userData = (void*) GetControlReference( control );
 		
 		ASSERT( userData != NULL );
 		
-		return userData;
+		return (Scrollbar_UserData*) userData;
 	}
 	
 	static inline ScrollerAPI* RecoverScrollerFromScrollbar( ControlRef control )
@@ -95,11 +95,11 @@ namespace Pedestal
 	
 	void ScrollbarAction( ControlRef control, N::ControlPartCode part )
 	{
-		const short value = N::GetControlValue( control );
+		const short value = GetControlValue( control );
 		
 		const bool vertical = GetUserDataFromScrollbar( control )->vertical;
 		
-		const bool dragged = part == N::kControlIndicatorPart;
+		const bool dragged = part == kControlIndicatorPart;
 		
 		ScrollerAPI* scroller = RecoverScrollerFromScrollbar( control );
 		
@@ -119,7 +119,7 @@ namespace Pedestal
 			
 			short scrollDistance = 1;
 			
-			if ( part == Mac::kControlPageUpPart  ||  part == Mac::kControlPageDownPart )
+			if ( part == kControlPageUpPart  ||  part == kControlPageDownPart )
 			{
 				const short viewLength = vertical ? scroller->ViewHeight()
 				                                  : scroller->ViewWidth ();
@@ -129,7 +129,7 @@ namespace Pedestal
 				scrollDistance = pageDistance;
 			}
 			
-			if ( part == Mac::kControlUpButtonPart  ||  part == Mac::kControlPageUpPart )
+			if ( part == kControlUpButtonPart  ||  part == kControlPageUpPart )
 			{
 				scrollDistance = -scrollDistance;
 			}
@@ -155,7 +155,7 @@ namespace Pedestal
 		ASSERT( userData != NULL );
 		
 		// Get the current scrollbar value.
-		const short oldValue = N::GetControlValue( control );
+		const short oldValue = GetControlValue( control );
 		
 		switch ( part )
 		{
@@ -169,10 +169,10 @@ namespace Pedestal
 					// Let the system track the drag...
 					part = N::TrackControl( control, point );
 					
-					if ( part == N::kControlIndicatorPart )
+					if ( part == kControlIndicatorPart )
 					{
 						// Drag was successful (i.e. within bounds).
-						const short newValue = N::GetControlValue( control );
+						const short newValue = GetControlValue( control );
 						
 						if ( newValue != oldValue )
 						{
@@ -194,7 +194,7 @@ namespace Pedestal
 			case kControlPageDownPart:
 				if (( part = N::TrackControl< ScrollbarAction >( control, point ) ))
 				{
-					if ( userData->afterHook  &&  N::GetControlValue( control ) != oldValue )
+					if ( userData->afterHook  &&  GetControlValue( control ) != oldValue )
 					{
 						userData->afterHook( control );
 					}
