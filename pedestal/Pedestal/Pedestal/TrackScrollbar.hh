@@ -29,7 +29,7 @@ namespace Pedestal
 		}
 	};
 	
-	void TrackScrollbar( ControlRef control, Mac::ControlPartCode part, Point point );
+	void TrackScrollbar( ControlRef control, ControlPartCode part, Point point );
 	
 }
 

@@ -144,7 +144,7 @@ namespace Pedestal
 	}
 	
 	
-	void TrackScrollbar( ControlRef control, N::ControlPartCode part, Point point )
+	void TrackScrollbar( ControlRef control, ControlPartCode part, Point point )
 	{
 		n::saved< N::Clip > savedClip;
 		

@@ -6,18 +6,23 @@
 #ifndef PEDESTAL_TRACKCONTROL_HH
 #define PEDESTAL_TRACKCONTROL_HH
 
-// Nitrogen
-#ifndef MAC_CONTROLS_TYPES_CONTROLPARTCODE_HH
-#include "Mac/Controls/Types/ControlPartCode.hh"
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __CONTROLS__
+#include <Controls.h>
 #endif
 
 
 namespace Pedestal
 {
 	
-	typedef void ( *ControlTracker )( ControlRef            control,
-	                                  Mac::ControlPartCode  part,
-	                                  Point                 point );
+	typedef void ( *ControlTracker )( ControlRef       control,
+	                                  ControlPartCode  part,
+	                                  Point            point );
 	
 	typedef void ( *TrackDebriefer )( ControlRef control );
 	
