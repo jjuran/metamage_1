@@ -1,38 +1,32 @@
-/*	===============
- *	TrackControl.cc
- *	===============
- */
+/*
+	TrackControl.cc
+	---------------
+*/
 
 #include "Pedestal/TrackControl.hh"
 
 // Debug
 #include "debug/assert.hh"
 
-// Nitrogen
-#include "Nitrogen/Controls.hh"
-
 
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	
-	
-	void TrackControl( ControlRef control, N::ControlPartCode part, Point point )
+	void TrackControl( ControlRef control, ControlPartCode part, Point point )
 	{
 		// Did we actually hit a control?
-		ASSERT( part != N::kControlNoPart );
+		ASSERT( part != kControlNoPart );
 		
 		// If the control has an action routine, it's not a Pedestal control.
-		ASSERT( N::GetControlAction( control ) == NULL );
+		ASSERT( GetControlAction( control ) == NULL );
 		
-		Control_UserData* userData = N::GetControlReference( control );
+		Control_UserData* userData = (Control_UserData*) GetControlReference( control );
 		
 		ASSERT( userData != NULL );
 		
-		part = N::TrackControl( control, point );
+		part = TrackControl( control, point, NULL );
 		
-		if ( part != N::kControlNoPart )
+		if ( part != kControlNoPart )
 		{
 			if ( TrackDebriefer afterHook = userData->afterHook )
 			{

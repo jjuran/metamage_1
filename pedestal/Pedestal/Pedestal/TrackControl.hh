@@ -32,7 +32,7 @@ namespace Pedestal
 	};
 	
 	
-	void TrackControl( ControlRef control, Mac::ControlPartCode part, Point point );
+	void TrackControl( ControlRef control, ControlPartCode part, Point point );
 	
 }
 
