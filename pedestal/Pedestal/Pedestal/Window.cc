@@ -14,9 +14,6 @@
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
 
-// ClassicToolbox
-#include "ClassicToolbox/MacWindows.hh"
-
 // Pedestal
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowStorage.hh"
@@ -62,7 +59,7 @@ namespace Pedestal
 	static
 	void ResizeWindow( WindowRef window, Point newSize )
 	{
-		N::SizeWindow( window, newSize.h, newSize.v, true );
+		SizeWindow( window, newSize.h, newSize.v, true );
 		
 		ResizedWindow( window );
 	}
@@ -86,7 +83,7 @@ namespace Pedestal
 		
 		if ( long grown = GrowWindow( window, start, &sizeRect ) )
 		{
-			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
+			if ( GetWindowKind( window ) == kApplicationWindowKind )
 			{
 				ResizeWindow( window, (Point&) grown );
 			}
@@ -97,7 +94,7 @@ namespace Pedestal
 	{
 		n::saved< N::Port > savePort;
 		
-		N::SetPortWindowPort( window );
+		SetPortWindowPort( window );
 		
 		ResizeWindow( window, size );
 	}
