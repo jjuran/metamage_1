@@ -84,13 +84,11 @@ namespace Pedestal
 		
 		Rect sizeRect = { 30, 50, 10000, 10000 };
 		
-		Point grown = N::GrowWindow( window, start, sizeRect );
-		
-		if ( grown.h != 0  ||  grown.v != 0 )
+		if ( long grown = GrowWindow( window, start, &sizeRect ) )
 		{
 			if ( N::GetWindowKind( window ) == N::kApplicationWindowKind )
 			{
-				ResizeWindow( window, grown );
+				ResizeWindow( window, (Point&) grown );
 			}
 		}
 	}
