@@ -1128,8 +1128,8 @@ namespace Genie
 	
 	struct NameAndID
 	{
-		N::Str31    name;
-		N::FSDirID  id;
+		Str31  name;
+		long   id;
 	};
 	
 	struct IterateIntoCache_CInfoPBRec
@@ -1155,7 +1155,7 @@ namespace Genie
 				goto done;
 			}
 			
-			pb.items[ pb.n_items ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
+			pb.items[ pb.n_items ].id = cInfo.dirInfo.ioDrDirID;
 			
 			++pb.n_items;
 			
@@ -1200,7 +1200,7 @@ namespace Genie
 		
 		FSSpec item = { cInfo.dirInfo.ioVRefNum, cInfo.dirInfo.ioDrDirID };
 		
-		N::FSDirID dirID = N::FSDirID( cInfo.dirInfo.ioDrDirID );
+		long dirID = cInfo.dirInfo.ioDrDirID;
 		
 		const bool async = !TARGET_CPU_68K && mac::sys::item_is_on_server( item ) && !MacFeatures::Is_BlueBoxed();
 		
@@ -1237,7 +1237,7 @@ namespace Genie
 			}
 			else if ( const bool exists = N::PBGetCatInfoSync( cInfo, N::FNF_Returns() ) )
 			{
-				pb.items[ 0 ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
+				pb.items[ 0 ].id = cInfo.dirInfo.ioDrDirID;
 				
 				++pb.n_items;
 			}
