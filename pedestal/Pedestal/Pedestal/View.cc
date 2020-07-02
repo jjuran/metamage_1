@@ -1,12 +1,26 @@
-/*	=======
- *	View.cc
- *	=======
- */
+/*
+	View.cc
+	-------
+*/
 
 #include "Pedestal/View.hh"
 
-// Nitrogen
-#include "Nitrogen/Quickdraw.hh"
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
+
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAW_H
+#include "missing/Quickdraw.h"
+#endif
+#endif
 
 // Pedestal
 #include "Pedestal/ClickTarget.hh"
@@ -16,9 +30,6 @@
 
 namespace Pedestal
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	void View::Uninstall()
 	{
@@ -35,7 +46,7 @@ namespace Pedestal
 	{
 		if ( erasing )
 		{
-			N::EraseRect( bounds );
+			EraseRect( &bounds );
 		}
 	}
 	
