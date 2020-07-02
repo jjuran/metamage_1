@@ -63,9 +63,11 @@ namespace bignum
 			
 			unsigned long byte_size() const  { return size() * sizeof (int_t); }
 			
+			int_t const* data() const  { return box.data(); }
+			
 			iota::span buffer() const
 			{
-				return iota::span( (const char*) box.data(), byte_size() );
+				return iota::span( (const char*) data(), byte_size() );
 			}
 			
 			bool is_zero() const  { return box.sign() == 0; }
