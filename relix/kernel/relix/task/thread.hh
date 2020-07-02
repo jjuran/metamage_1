@@ -45,6 +45,7 @@ namespace relix
 			
 			int its_id;
 			int its_saved_errno;
+			int its_async_op_count;
 			
 			sigset_t its_pending_signals;
 			sigset_t its_blocked_signals;
@@ -74,6 +75,8 @@ namespace relix
 			task* get_task()  { return this; }
 			
 			int id() const  { return its_id; }
+			
+			int async_op_count() const  { return its_async_op_count; }
 			
 			process& get_process() const;
 			
@@ -126,6 +129,8 @@ namespace relix
 			{
 				set_os_thread_param( *its_os_thread.get(), param );
 			}
+			
+			void async_yield();
 			
 			void switch_in();
 			void switch_out();

@@ -53,8 +53,6 @@ namespace Genie
 			Process* its_vfork_parent;
 			
 			ProcessLifeStage        itsLifeStage;
-			
-			unsigned itsAsyncOpCount;
 		
 		private:
 			void* itsReexecArgs[8];
@@ -95,8 +93,6 @@ namespace Genie
 			char run_state_code() const;
 			
 			void Release();
-			
-			void AsyncYield();
 			
 			relix::fd_map& FileDescriptors();
 			

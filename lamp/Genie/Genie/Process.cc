@@ -79,7 +79,6 @@
 #include "relix/api/get_process_group.hh"
 #include "relix/api/root.hh"
 #include "relix/api/terminate_current_process.hh"
-#include "relix/api/thread_yield.hh"
 #include "relix/api/waits_for_children.hh"
 #include "relix/config/mini.hh"
 #include "relix/config/reexec.hh"
@@ -507,7 +506,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		its_vfork_parent      ( 0 ),
 		itsLifeStage          ( kProcessLive ),
-		itsAsyncOpCount       ( 0 ),
 		itMayDumpCore         ()
 	{
 		itsReexecArgs[0] =
@@ -541,7 +539,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		its_vfork_parent      ( 0 ),
 		itsLifeStage          ( kProcessStarting ),
-		itsAsyncOpCount       ( 0 ),
 		itMayDumpCore         ( true )
 	{
 		itsReexecArgs[0] =
@@ -833,7 +830,7 @@ namespace Genie
 			return 'X';
 		}
 		
-		if ( itsAsyncOpCount > 0 )
+		if ( async_op_count() > 0 )
 		{
 			return 'D';
 		}
@@ -1088,15 +1085,6 @@ namespace Genie
 		relix::woken_os_thread( get_os_thread() );
 	}
 	
-	void Process::AsyncYield()
-	{
-		++itsAsyncOpCount;
-		
-		relix::thread_yield();
-		
-		--itsAsyncOpCount;
-	}
-	
 	// declared in Process/AsyncYield.hh
 	void AsyncYield()
 	{
@@ -1106,7 +1094,7 @@ namespace Genie
 		}
 		else
 		{
-			gCurrentProcess->AsyncYield();
+			gCurrentProcess->async_yield();
 		}
 	}
 	

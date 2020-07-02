@@ -6,6 +6,7 @@
 #include "relix/task/thread.hh"
 
 // relix
+#include "relix/api/thread_yield.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_image.hh"
 #include "relix/task/scheduler.hh"
@@ -18,6 +19,7 @@ namespace relix
 	:
 		its_id( id ),
 		its_saved_errno(),
+		its_async_op_count(),
 		its_pending_signals(),  // reset pending signals on new threads
 		its_blocked_signals( blocked ),
 		its_process( &p ),
@@ -57,6 +59,15 @@ namespace relix
 		}
 		
 		return os_thread_id();
+	}
+	
+	void thread::async_yield()
+	{
+		++its_async_op_count;
+		
+		thread_yield();
+		
+		--its_async_op_count;
 	}
 	
 	void thread::switch_in()
