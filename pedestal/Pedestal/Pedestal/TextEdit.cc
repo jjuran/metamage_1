@@ -10,12 +10,15 @@
 
 // Mac OS X
 #ifdef __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
+#include <Carbon/Carbon.h>
 #endif
 
 // Mac OS
 #ifndef __FONTS__
 #include <Fonts.h>
+#endif
+#ifndef __TEXTEDIT__
+#include <TextEdit.h>
 #endif
 
 // Debug
@@ -26,7 +29,6 @@
 
 #include "Nitrogen/Events.hh"
 #include "Nitrogen/Quickdraw.hh"
-#include "Nitrogen/TextEdit.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -134,7 +136,7 @@ namespace Pedestal
 			return;
 		}
 		
-		N::TEIdle( hTE );
+		TEIdle( hTE );
 		
 		AdjustSleepForTimer( ::GetCaretTime() );
 		
@@ -162,9 +164,9 @@ namespace Pedestal
 		
 		TEClickLoop_Scope scope( this );
 		
-		N::TEClick( N::GlobalToLocal( event.where ),
-		            event.modifiers & shiftKey,
-		            Get() );
+		TEClick( N::GlobalToLocal( event.where ),
+		         event.modifiers & shiftKey,
+		         Get() );
 		
 		gExtendingSelection = false;
 		
@@ -588,11 +590,11 @@ namespace Pedestal
 		
 		if ( activating  &&  IsFocused( this ) )
 		{
-			N::TEActivate( hTE );
+			TEActivate( hTE );
 		}
 		else if ( !activating  &&  hTE[0]->active )
 		{
-			N::TEDeactivate( hTE );
+			TEDeactivate( hTE );
 		}
 		
 		gExtendingSelection = false;
@@ -608,7 +610,7 @@ namespace Pedestal
 		
 		ASSERT( hTE != NULL );
 		
-		N::TEActivate( hTE );
+		TEActivate( hTE );
 	}
 	
 	void TextEdit::Blur()
@@ -617,7 +619,7 @@ namespace Pedestal
 		
 		ASSERT( hTE != NULL );
 		
-		N::TEDeactivate( hTE );
+		TEDeactivate( hTE );
 	}
 	
 	void TextEdit::Cue()
@@ -675,12 +677,12 @@ namespace Pedestal
 			te.viewRect = bounds;
 			te.destRect = N::OffsetRect( bounds, 0, -dv );
 			
-			N::TECalText( hTE );
+			TECalText( hTE );
 		}
 		
 		EraseBlankArea( hTE );
 		
-		N::TEUpdate( bounds, hTE );
+		TEUpdate( &bounds, hTE );
 	}
 	
 	bool TextEdit::UserCommand( CommandCode code )
@@ -724,7 +726,11 @@ namespace Pedestal
 			case 'past':  // kHICommandPaste
 			case 'pste':
 				// Update the TE scrap just-in-time
-				N::TEFromScrap();
+				if ( OSErr err = TEFromScrap() )
+				{
+					Mac::SysBeep();
+					break;
+				}
 				
 				Paste();
 				
@@ -776,7 +782,7 @@ namespace Pedestal
 	{
 		ASSERT( Get() != NULL );
 		
-		N::TESetSelect( start, end, Get() );
+		TESetSelect( start, end, Get() );
 		
 		On_UserSelect();
 	}
