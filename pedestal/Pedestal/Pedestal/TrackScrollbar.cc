@@ -18,6 +18,9 @@
 // Standard C++
 #include <algorithm>
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -25,7 +28,6 @@
 #include "nucleus/saved.hh"
 
 // Nitrogen
-#include "Nitrogen/Controls.hh"
 #include "Nitrogen/Quickdraw.hh"
 
 // MacFeatures
@@ -90,10 +92,8 @@ namespace Pedestal
 		}
 	}
 	
-	// Template parameters must have extern linkage
-	void ScrollbarAction( ControlRef control, N::ControlPartCode part );
-	
-	void ScrollbarAction( ControlRef control, N::ControlPartCode part )
+	static
+	pascal void Scroll_Action( ControlRef control, ControlPartCode part )
 	{
 		const short value = GetControlValue( control );
 		
@@ -143,6 +143,7 @@ namespace Pedestal
 		}
 	}
 	
+	DEFINE_UPP( ControlAction, Scroll_Action )
 	
 	void TrackScrollbar( ControlRef control, ControlPartCode part, Point point )
 	{
@@ -167,7 +168,7 @@ namespace Pedestal
 					// Classic scrolling, handled specially.
 					
 					// Let the system track the drag...
-					part = N::TrackControl( control, point );
+					part = TrackControl( control, point, NULL );
 					
 					if ( part == kControlIndicatorPart )
 					{
@@ -192,9 +193,11 @@ namespace Pedestal
 			case kControlDownButtonPart:
 			case kControlPageUpPart:
 			case kControlPageDownPart:
-				if (( part = N::TrackControl< ScrollbarAction >( control, point ) ))
+				part = TrackControl( control, point, UPP_ARG( Scroll_Action ) );
+				
+				if ( part  &&  userData->afterHook )
 				{
-					if ( userData->afterHook  &&  GetControlValue( control ) != oldValue )
+					if ( GetControlValue( control ) != oldValue )
 					{
 						userData->afterHook( control );
 					}
