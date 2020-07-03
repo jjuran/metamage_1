@@ -177,9 +177,24 @@ namespace vlib
 		return compare( one, two );
 	}
 	
+	static
+	bool float_equal( const Value& a, const Value& b )
+	{
+		float_type one = static_cast< const Float& >( a );
+		float_type two = static_cast< const Float& >( b );
+		
+		if  ( isnan( one )  &&  isnan( two ) )
+		{
+			return true;
+		}
+		
+		return one == two;
+	}
+	
 	static const comparison float_comparison =
 	{
 		&float_order,
+		&float_equal,
 	};
 	
 	static
