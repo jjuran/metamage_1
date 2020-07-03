@@ -39,6 +39,7 @@
 #include "vlib/types/any.hh"
 #include "vlib/types/bareword.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/float.hh"
 #include "vlib/types/fraction.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/mb32.hh"
@@ -75,6 +76,14 @@ namespace vlib
 		fraction result( numer, denom );
 		
 		return Fraction( result );
+	}
+	
+	static
+	Value decimal_float( const plus::string& token )
+	{
+		Value fraction = decimal_fraction( token.substr( 0, token.size() - 1 ) );
+		
+		return Float::coerce( fraction );
 	}
 	
 	static
@@ -442,6 +451,10 @@ namespace vlib
 			
 			case Token_decimal:
 				receive_value( decimal_fraction( token.text ) );
+				break;
+			
+			case Token_float:
+				receive_value( decimal_float( token.text ) );
 				break;
 			
 			case Token_unbin:
