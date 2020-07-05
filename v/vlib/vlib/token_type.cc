@@ -148,11 +148,16 @@ namespace vlib
 		{ ">-",  Token_gt_minus  },
 		{ ">=",  Token_gt_equals },
 		{ ">>",  Token_gt_x2 },
+		{ "?",   Token_question },
+		
+		// A - Z
 		
 		{ "[",   Token_lbracket },
 		{ "]",   Token_rbracket },
 		
 		{ "^",   Token_caret },
+		
+		// a - z
 		
 		{ "{",   Token_lbrace },
 		{ "|",   Token_pipe   },

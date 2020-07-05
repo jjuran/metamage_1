@@ -28,6 +28,7 @@ namespace vlib
 		Op_const,
 		Op_var,
 		Op_def,
+		Op_present,
 		Op_for,
 	// end declares-symbols
 		
@@ -194,7 +195,7 @@ namespace vlib
 	inline
 	bool is_right_unary( op_type op )
 	{
-		return op == Op_postinc  ||  op == Op_postdec;
+		return op == Op_postinc  ||  op == Op_postdec  ||  op == Op_present;
 	}
 	
 	inline

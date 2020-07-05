@@ -64,6 +64,7 @@ namespace vlib
 	{
 		{ Token_plus_x2,  Postfix, Op_postinc },
 		{ Token_minus_x2, Postfix, Op_postdec },
+		{ Token_question, Postfix, Op_present },
 		
 		{ Token_dot, OnlyL, Op_named_unary },
 		

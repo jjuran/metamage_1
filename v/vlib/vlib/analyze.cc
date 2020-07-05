@@ -17,6 +17,7 @@
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/bareword.hh"
+#include "vlib/types/null.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/term.hh"
 #include "vlib/types/type.hh"
@@ -300,6 +301,25 @@ namespace vlib
 				{
 					THROW( "`:name` must be an identifier" );
 				}
+			}
+			else if ( op == Op_present )
+			{
+				const Value* x = &expr->left;
+				
+				if ( const Identifier* identifier = x->is< Identifier >() )
+				{
+					if ( ! its_scope->resolve( x->string() ) )
+					{
+						x = &its_scope->declare( x->string(), Symbol_const );
+						
+						x->sym()->deref_unsafe() = Null();
+					}
+				}
+				
+				v = *x;
+				
+				visit( v, expr->source );
+				return;
 			}
 			else if ( declares_symbols( op ) )
 			{

@@ -81,6 +81,7 @@ namespace vlib
 		Token_lt_minus_gt,
 		Token_lt_minus_x2,
 		Token_lt_equals_x2,
+		Token_question,
 		Token_colon,
 		Token_colon_equals,
 		Token_plus_equals,
