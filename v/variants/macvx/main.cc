@@ -33,6 +33,7 @@
 
 // varyx-mac
 #include "varyx/mac/Delay.hh"
+#include "varyx/mac/Sound.hh"
 
 // varyx-posix
 #include "varyx/posix/library.hh"
@@ -136,6 +137,12 @@ int main( int argc, char** argv )
 	define( proc_warn   );
 	
 	define( proc_Delay );
+	
+#if ! __LP64__
+	
+	define( proc_SysBeep );
+	
+#endif
 	
 	const char* path = "<inline script>";
 	
