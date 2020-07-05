@@ -42,3 +42,8 @@ $ vc 'enjoin? (" ", 1, 2, 3)'
 
 $ vc 'if mysql_real_escape_string? then {mysql_real_escape_string "foo"}'
 1 >= '()'
+
+%
+
+$ vc 'def f {"foo"}; f?()'
+1 >= '"foo"'
