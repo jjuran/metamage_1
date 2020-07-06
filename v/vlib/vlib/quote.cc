@@ -7,6 +7,7 @@
 
 // iota
 #include "iota/char_types.hh"
+#include "iota/endian.hh"
 
 // chars
 #include "encoding/utf8.hh"
@@ -247,7 +248,7 @@ namespace vlib
 			*q++ = c;
 		}
 		
-		return result;
+		return iota::u32_from_big( result );
 	}
 	
 	plus::string unquote_escaped_string( const plus::string& s )

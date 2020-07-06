@@ -8,6 +8,9 @@
 // Standard C
 #include <string.h>
 
+// iota
+#include "iota/endian.hh"
+
 // more-libc
 #include "more/string.h"
 
@@ -60,7 +63,9 @@ namespace vlib
 			THROW( "multibyte conversion requires 4 bytes" );
 		}
 		
-		pod_cast< uint32_t >() = *(const uint32_t*) s.data();
+		const uint32_t data_BE = *(const uint32_t*) s.data();
+		
+		pod_cast< uint32_t >() = iota::u32_from_big( data_BE );
 	}
 	
 	Value MB32::coerce( const Value& v )
@@ -112,7 +117,7 @@ namespace vlib
 	{
 		const MB32& mb32 = (const MB32&) v;
 		
-		return mempcpy( p, utf8_from_mb32( mb32.get() ) );
+		return mempcpy( p, utf8_from_mb32( iota::big_u32( mb32.get() ) ) );
 	}
 	
 	static const stringify mb32_str =
@@ -144,7 +149,9 @@ namespace vlib
 	{
 		const MB32& mb32 = (const MB32&) v;
 		
-		const char* q = (const char*) &mb32.get();
+		const uint32_t data_BE = iota::big_u32( mb32.get() );
+		
+		const char* q = (const char*) &data_BE;
 		
 		*p++ = '\'';
 		p = copy_quotable_byte( p, *q++ );
@@ -177,11 +184,23 @@ namespace vlib
 		return 4;
 	}
 	
+	static
+	char* mb32_bin_copy( char* p, const Value& v )
+	{
+		const MB32& mb32 = (const MB32&) v;
+		
+		const uint32_t data_BE = iota::big_u32( mb32.get() );
+		
+		const char* q = (const char*) &data_BE;
+		
+		return (char*) mempcpy( p, q, sizeof data_BE );
+	}
+	
 	static const stringify mb32_bin =
 	{
-		&mb32_bin_data,
+		iota::is_little_endian() ? NULL : &mb32_bin_data,
 		&mb32_bin_size,
-		NULL,
+		iota::is_little_endian() ? &mb32_bin_copy : NULL,
 	};
 	
 	static const stringifiers mb32_stringifiers =
