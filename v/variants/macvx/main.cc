@@ -33,6 +33,7 @@
 
 // varyx-mac
 #include "varyx/mac/Delay.hh"
+#include "varyx/mac/PackBits.hh"
 #include "varyx/mac/Sound.hh"
 #include "varyx/mac/Timer.hh"
 
@@ -145,6 +146,7 @@ int main( int argc, char** argv )
 	
 #if ! __LP64__
 	
+	define( proc_PackBits );
 	define( proc_SysBeep );
 	
 #endif
