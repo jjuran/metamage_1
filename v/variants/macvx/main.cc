@@ -34,6 +34,7 @@
 // varyx-mac
 #include "varyx/mac/Delay.hh"
 #include "varyx/mac/Sound.hh"
+#include "varyx/mac/Timer.hh"
 
 // varyx-posix
 #include "varyx/posix/library.hh"
@@ -119,7 +120,10 @@ void define( const char* name, const Value& v )
 static
 void define( const proc_info& proc )
 {
-	define( proc.name, Proc( proc ) );
+	if ( proc.addr != NULL )
+	{
+		define( proc.name, Proc( proc ) );
+	}
 }
 
 int main( int argc, char** argv )
@@ -137,6 +141,7 @@ int main( int argc, char** argv )
 	define( proc_warn   );
 	
 	define( proc_Delay );
+	define( proc_Microseconds );
 	
 #if ! __LP64__
 	
