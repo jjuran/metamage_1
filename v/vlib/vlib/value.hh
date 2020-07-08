@@ -207,7 +207,9 @@ namespace vlib
 			
 			Value( value_type type = value_type() )
 			:
-				its_box( type, 1 << Flag_cycle_free )
+				its_box( type,
+				         1 << Flag_cycle_free |
+				         1 << Flag_evaluated )
 			{
 				its_dispatch = 0;  // NULL
 			}
