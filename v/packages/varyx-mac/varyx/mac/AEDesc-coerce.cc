@@ -18,6 +18,10 @@
 #include <AEDataModel.h>
 #endif
 
+// chars
+#include "charsets/ascii.hh"
+#include "conv/mac_utf8.hh"
+
 // bignum
 #include "bignum/integer.hh"
 
@@ -45,6 +49,47 @@ namespace mac
 {
 
 DescType undefined_floating_point_type();
+
+static
+AEDesc coerce_string_to_AEDesc( const plus::string& s )
+{
+	using std::size_t;
+	
+	plus::string result;
+	
+	::DescType     type = 0;
+	const void*    data = NULL;
+	unsigned long  size = 0;
+	
+	size_t input_size = s.size();
+	const char* begin = s.data();
+	const char* end   = begin + input_size;
+	
+	size = conv::sizeof_mac_from_utf8( begin, end );
+	
+	char* p = result.reset( size );
+	
+	size = conv::mac_from_utf8_nothrow( p, size, begin, input_size );
+	
+	if ( (long) size >= 0 )
+	{
+		// Successful conversion of UTF-8 to MacRoman
+		
+		type = typeChar;
+		data = result.data();
+	//	size = ...;
+	}
+	else
+	{
+		// Either invalid UTF-8, or non-MacRoman UTF-8 code points
+		
+		type = typeData;
+		data = begin;
+		size = input_size;
+	}
+	
+	return AEDesc( type, data, size );
+}
 
 static
 AEDesc coerce_mappings_to_AEDesc( const Value& mappings )
@@ -164,6 +209,15 @@ AEDesc coerce_to_AEDesc( const Value& v )
 			type = typeChar;
 			data = v.string().data();
 			size = v.string().size();
+			
+			const char* begin;
+			begin = (const char*) data;
+			
+			if ( chars::find_non_ascii( begin, begin + size ) )
+			{
+				return coerce_string_to_AEDesc( v.string() );
+			}
+			
 			break;
 		
 		case Value_mb32:
