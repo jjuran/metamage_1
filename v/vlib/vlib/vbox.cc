@@ -75,7 +75,7 @@ namespace vlib
 		return *this;
 	}
 	
-	vbox::vbox( const vu_string& s, char semantics )
+	vbox::vbox( const vu_string& s, char semantics, short flags )
 	{
 		(vu_string&) *this = s;
 		
@@ -91,10 +91,10 @@ namespace vlib
 		}
 		
 		u.alloc.semantics = semantics;
-		u.alloc.flags     = 0;
+		u.alloc.flags     = flags;
 	}
 	
-	vbox::vbox( const vu_ibox& ix, char semantics )
+	vbox::vbox( const vu_ibox& ix, char semantics, short flags )
 	{
 		(vu_ibox&) *this = ix;
 		
@@ -110,7 +110,7 @@ namespace vlib
 		}
 		
 		u.alloc.semantics = semantics;
-		u.alloc.flags     = 0;
+		u.alloc.flags     = flags;
 	}
 	
 	vbox::vbox( unsigned long n, destructor dtor, char semantics )

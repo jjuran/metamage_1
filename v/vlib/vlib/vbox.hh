@@ -104,23 +104,23 @@ namespace vlib
 		public:
 			~vbox()  { destroy(); }
 			
-			vbox( char semantics = 0 )
+			vbox( char semantics = 0, short flags = 0 )
 			{
 				u.alloc.type      = Vbox_empty;
 				u.alloc.semantics = semantics;
-				u.alloc.flags     = 0;
+				u.alloc.flags     = flags;
 			}
 			
-			vbox( const vu_ibox& ix, char semantics );
+			vbox( const vu_ibox& ix, char semantics, short flags = 0 );
 			
-			vbox( const vu_string& s, char semantics );
+			vbox( const vu_string& s, char semantics, short flags = 0 );
 			
-			vbox( const void* p, char semantics )
+			vbox( const void* p, char semantics, short flags = 0 )
 			{
 				u.alloc.pointer   = (char*) p;
 				u.alloc.type      = Vbox_pointer;
 				u.alloc.semantics = semantics;
-				u.alloc.flags     = 0;
+				u.alloc.flags     = flags;
 			}
 			
 			vbox( unsigned long n, destructor dtor, char semantics );
