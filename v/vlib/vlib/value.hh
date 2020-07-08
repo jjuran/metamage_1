@@ -100,47 +100,37 @@ namespace vlib
 			Value( value_type type, const dispatch* d )
 			:
 				its_dispatch( d ),
-				its_box( type )
+				its_box( type,
+				         !! 1 << Flag_cycle_free |
+				         !! d << Flag_evaluated )
 			{
-				set_cycle_free();
-				
-				if ( d )
-				{
-					set_evaluated();
-				}
 			}
 			
 			Value( const vu_ibox& ix, value_type type, const dispatch* d )
 			:
-				its_box( ix, type )
+				its_box( ix,
+				         type,
+				         1 << Flag_cycle_free |
+				         1 << Flag_evaluated )
 			{
 				its_dispatch = d;
-				
-				set_cycle_free();
-				set_evaluated();
 			}
 			
 			Value( const vu_string& sx, value_type type, const dispatch* d )
 			:
-				its_box( sx, type )
+				its_box( sx, type, 1 << Flag_cycle_free )
 			{
 				its_dispatch = d;
-				
-				set_cycle_free();
 			}
 			
 			Value( const type_info& type, const dispatch* d )
 			:
-				its_box( &type, Value_base_type )
+				its_box( &type,
+				         Value_base_type,
+				         !! 1 << Flag_cycle_free |
+				         !! d << Flag_evaluated )
 			{
 				its_dispatch = d;
-				
-				set_cycle_free();
-				
-				if ( d )
-				{
-					set_evaluated();
-				}
 			}
 			
 			Value( const Value&        a,
@@ -215,11 +205,11 @@ namespace vlib
 				return static_cast< Type const& >( coerced );
 			}
 			
-			Value( value_type type = value_type() ) : its_box( type )
+			Value( value_type type = value_type() )
+			:
+				its_box( type, 1 << Flag_cycle_free )
 			{
 				its_dispatch = 0;  // NULL
-				
-				set_cycle_free();
 			}
 			
 			Value( const Value& a, const Value& b );
