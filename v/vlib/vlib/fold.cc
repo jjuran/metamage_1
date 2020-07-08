@@ -265,6 +265,12 @@ namespace vlib
 		
 		const op_type op = expr->op;
 		
+		if ( op == Op_list )
+		{
+			if ( is_empty_list( a ) )  return b;
+			if ( is_empty_list( b ) )  return a;
+		}
+		
 		if ( is_foldable( a, op, b ) )
 		{
 			if ( is_pure_block_def( a, op, b ) )
