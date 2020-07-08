@@ -10,6 +10,9 @@
 #include "AEBuild.h"
 #include "AEBuildGlobals.h"
 #endif
+#ifndef __AEPRINT__
+#include "AEPrint.h"
+#endif
 
 static AEBuildError MakeAEBuildError()
 {
@@ -68,6 +71,48 @@ OSStatus AEBuildDesc( AEDesc *        dst,
 	if ( error != NULL )
 	{
 		*error = MakeAEBuildError();
+	}
+	
+	return err;
+}
+
+OSStatus AEPrintDescToHandle( const AEDesc* desc, Handle* result )
+{
+	/*
+		NOTE:  AEGizmos' AEPrint() function (which we call below)
+		has different output than AEHelpers' AEPrintDescToHandle()
+		function, so although this code makes AEPrintDescToHandle()
+		callable in both Carbon and classic code, the behavior isn't
+		identical.
+	*/
+	
+	OSErr err;
+	long size;
+	
+	err = AEPrintSize( (AEDesc*) desc, &size );
+	
+	if ( err )  return err;
+	
+	if ( Handle h = NewHandle( size ) )
+	{
+		HLock( h );
+		
+		err = AEPrint( (AEDesc*) desc, *h, size );
+		
+		if ( err == noErr )
+		{
+			HUnlock( h );
+			
+			*result = h;
+			
+			return noErr;
+		}
+		
+		DisposeHandle( h );
+	}
+	else
+	{
+		err = memFullErr;
 	}
 	
 	return err;
