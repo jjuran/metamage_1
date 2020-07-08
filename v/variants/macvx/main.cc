@@ -45,6 +45,7 @@
 #include "varyx/mac/Timer.hh"
 
 // varyx-posix
+#include "varyx/posix/argv.hh"
 #include "varyx/posix/library.hh"
 
 
@@ -151,6 +152,12 @@ int main( int argc, char** argv )
 	}
 	
 	char* const* args = get_options( argv );
+	
+	const char* arg0 = inline_script ? "-e"
+	                 : args[ 0 ]     ? NULL
+	                 :                 "-";
+	
+	set_argv( declare( "argv" ), arg0, args );
 	
 	define( proc_exit   );
 	define( proc_getenv );
