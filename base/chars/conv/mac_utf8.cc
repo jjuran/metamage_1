@@ -9,6 +9,7 @@
 #include <algorithm>
 
 // chars
+#include "charsets/ascii.hh"
 #include "charsets/extended_ascii.hh"
 #include "charsets/MacRoman.hh"
 #include "encoding/utf8.hh"
@@ -20,20 +21,10 @@ namespace conv
 	using chars::unichar_t;
 	
 	
-	static
+	static inline
 	const char* find_non_ascii( const char* begin, const char* end )
 	{
-		while ( begin < end )
-		{
-			signed char c = *begin++;
-			
-			if ( c < 0 )
-			{
-				return --begin;
-			}
-		}
-		
-		return begin;
+		return chars::find_non_ascii( begin, end, end );
 	}
 	
 	static inline unichar_t unicode_from_MacRoman( char c )
