@@ -35,6 +35,7 @@
 
 // varyx-mac
 #include "varyx/mac/AEDesc.hh"
+#include "varyx/mac/AEFlatten.hh"
 #include "varyx/mac/Delay.hh"
 #include "varyx/mac/PackBits.hh"
 #include "varyx/mac/Sound.hh"
@@ -155,6 +156,7 @@ int main( int argc, char** argv )
 	
 	define( AEDesc_vtype  );
 	
+	define( proc_AEFlatten );
 	define( proc_Delay );
 	define( proc_Microseconds );
 	
