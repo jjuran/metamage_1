@@ -42,6 +42,8 @@
 #include "vlib/types/null.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/range.hh"
+#include "vlib/types/record.hh"
+#include "vlib/types/string.hh"
 #include "vlib/types/table.hh"
 #include "vlib/types/vbytes.hh"
 
@@ -380,9 +382,20 @@ namespace vlib
 		{
 			const type_info& typeinfo = vtype.typeinfo();
 			
-			if ( member_proc member = typeinfo.member )
+			if ( member_proc member_hook = typeinfo.member )
 			{
-				return member( left, right.string() );
+				if ( const Value member = member_hook( left, right.string() ) )
+				{
+					return member;
+				}
+				
+				Value desc = mapping( "desc", String( "no such field" ) );
+				Value name = mapping( "name", right );
+				Value type = mapping( "type", String( typeinfo.name ) );
+				
+				Value exception = Record( Value( desc, Value( name, type ) ) );
+				
+				throw user_exception( exception, source_spec() );
 			}
 		}
 		
