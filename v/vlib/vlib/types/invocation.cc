@@ -52,6 +52,42 @@ namespace vlib
 		return recurse( invoke.as< Proc >().addr(), bound_block );
 	}
 	
+	const Value& dereference_block( const Value& invocation )
+	{
+		const Value& entry = invocation.expr()->right.expr()->right;
+		
+		if ( entry.is_evaluated() )
+		{
+			return entry;
+		}
+		
+		if ( is_empty_list( entry )  ||  is_empty_array( entry ) )
+		{
+			/*
+				FIXME:  This shouldn't be necessary, but singletons
+				aren't marked evaluated (and the fix isn't trivial).
+			*/
+			return entry;
+		}
+		
+		return NIL;
+	}
+	
+	static
+	Value unary_op_handler( op_type op, const Value& v )
+	{
+		switch ( op )
+		{
+			case Op_unary_deref:
+				return dereference_block( v );
+			
+			default:
+				break;
+		}
+		
+		return NIL;
+	}
+	
 	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
@@ -70,7 +106,7 @@ namespace vlib
 	
 	static const operators ops =
 	{
-		0,  // NULL
+		&unary_op_handler,
 		&binary_op_handler,
 	};
 	

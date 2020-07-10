@@ -27,6 +27,8 @@ namespace vlib
 			}
 	};
 	
+	const Value& dereference_block( const Value& invocation );
+	
 }
 
 #endif
