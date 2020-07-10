@@ -232,7 +232,7 @@ namespace vlib
 			case Op_multiply:  a *= b;  break;
 			case Op_divide:    a /= b;  break;
 			
-			case Op_empower:   a = powf( a, b );  break;
+			case Op_empower:   a = pow( a, b );  break;
 			
 			default:
 				// not reached
