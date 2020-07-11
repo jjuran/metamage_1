@@ -1,0 +1,11 @@
+#!/usr/bin/env macvx
+#
+#   activate-sig.vx <four-byte code>
+#
+# Example:
+#
+#   activate-sig.vx MACS
+
+const address = sign: mb32 argv[ 1 ]
+
+AESend AECreateAppleEvent( 'misc', 'actv', AEDesc address )
