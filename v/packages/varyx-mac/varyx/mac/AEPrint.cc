@@ -21,12 +21,6 @@
 // Standard C
 #include <string.h>
 
-// mac-config
-#include "mac_config/apple-events.hh"
-
-// mac-sys-utils
-#include "mac_sys/gestalt.hh"
-
 // plus
 #include "plus/mac_utf8.hh"
 
@@ -73,18 +67,7 @@ Value v_AEPrint( const Value& v )
 
 static const Type aedesc = AEDesc_vtype;
 
-// gestaltAppleEventsAttr = 'evnt'
-
-const bool apple_events_present =
-	CONFIG_APPLE_EVENTS  &&
-		(CONFIG_APPLE_EVENTS_GRANTED  ||  ::mac::sys::gestalt( 'evnt' ));
-
-const proc_info proc_AEPrint =
-{
-	"AEPrint",
-	apple_events_present ? &v_AEPrint : NULL,
-	&aedesc,
-};
+const proc_info proc_AEPrint = { "AEPrint", &v_AEPrint, &aedesc };
 
 }
 }
