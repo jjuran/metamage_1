@@ -130,10 +130,27 @@ namespace conv
 		return q - buffer_out;
 	}
 	
-	std::size_t mac_from_utf8( char*         buffer_out,
+	std::size_t mac_from_utf8( char*         buffer,
 	                           std::size_t   length,
 	                           const char**  pp_in,
 	                           std::size_t   n )
+	{
+		std::size_t result = mac_from_utf8_nothrow( buffer, length, pp_in, n );
+		
+		switch ( result )
+		{
+			case invalid_utf8:  throw utf8_decoding_error();
+			case non_Mac_utf8:  throw chars::unrepresentable_character();
+			
+			default:
+				return result;
+		}
+	}
+	
+	std::size_t mac_from_utf8_nothrow( char*         buffer_out,
+	                                   std::size_t   length,
+	                                   const char**  pp_in,
+	                                   std::size_t   n )
 	{
 		const char* buffer_end = buffer_out + length;
 		
@@ -164,7 +181,7 @@ namespace conv
 			
 			if ( !~uc )
 			{
-				throw utf8_decoding_error();
+				return invalid_utf8;
 			}
 			
 			if ( const char c = MacRoman_from_unicode( uc ) )
@@ -173,7 +190,7 @@ namespace conv
 			}
 			else
 			{
-				throw chars::unrepresentable_character();
+				return non_Mac_utf8;
 			}
 		}
 		

@@ -13,6 +13,9 @@
 namespace conv
 {
 	
+	const std::size_t invalid_utf8 = std::size_t( -1 );
+	const std::size_t non_Mac_utf8 = std::size_t( -2 );
+	
 	class utf8_decoding_error {};
 	
 	std::size_t sizeof_utf8_from_mac( const char* begin, const char* end );
@@ -42,6 +45,20 @@ namespace conv
 	                                  std::size_t  n )
 	{
 		return mac_from_utf8( buffer_out, length, &begin, n );
+	}
+	
+	std::size_t mac_from_utf8_nothrow( char*         buffer_out,
+	                                   std::size_t   length,
+	                                   const char**  pp_in,
+	                                   std::size_t   n );
+	
+	inline
+	std::size_t mac_from_utf8_nothrow( char*        buffer_out,
+	                                   std::size_t  length,
+	                                   const char*  begin,
+	                                   std::size_t  n )
+	{
+		return mac_from_utf8_nothrow( buffer_out, length, &begin, n );
 	}
 	
 }
