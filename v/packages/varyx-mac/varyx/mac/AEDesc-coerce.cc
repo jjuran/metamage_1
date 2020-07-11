@@ -207,7 +207,7 @@ AEDesc coerce_to_AEDesc( const Value& v )
 			}
 			else if ( v.number().demotes_to< SInt64 >() )
 			{
-				i64 = v.number().clipped();
+				i64 = v.number().clipped_to< SInt64 >();
 				
 				type = typeSInt64;
 				data = &i64;
