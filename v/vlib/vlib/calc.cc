@@ -824,7 +824,7 @@ namespace vlib
 				
 				if ( is_type( right ) )
 				{
-					return Value( left, op, right );
+					goto no_op;
 				}
 			}
 		}
