@@ -652,7 +652,16 @@ namespace tool
 			
 			plus::string operator()( const plus::string& source_path ) const
 			{
-				return derived_pathname( its_objects_dir, source_path, its_extension );
+				const char* ext = its_extension;
+				
+				if ( ! ext )
+				{
+					const bool is_C = source_path.end()[ -2 ] == '.';
+					
+					ext = is_C ? ".i.o" : ".ii.o";
+				}
+				
+				return derived_pathname( its_objects_dir, source_path, ext );
 			}
 	};
 	
@@ -671,7 +680,13 @@ namespace tool
 	static inline
 	const char* dot_o( bool use_cpp )
 	{
+	#ifdef __RELIX__
+		
 		return use_cpp ? ".cpp.o" : ".o";
+		
+	#endif
+		
+		return use_cpp ? NULL : ".o";
 	}
 	
 	void NameObjectFiles( const Project&                project,
