@@ -234,9 +234,6 @@ namespace vlib
 					
 					THROW( "unary operator not defined for ranges" );
 				
-				case Op_invocation:
-					THROW( "unary operator not defined for blocks" );
-				
 				case Op_begin:
 					THROW( "unary operator not defined for iterators" );
 				
