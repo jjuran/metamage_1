@@ -612,18 +612,11 @@ namespace vlib
 				return Value( test, Op_do_2, execute( expr->right, stack ) );
 			}
 			
-			if ( expr->op == Op_while_2 )
+			if ( expr->op == Op_while_2  ||  is_elseif( expr ) )
 			{
 				const Value& test = invocable_expression( expr->right, stack );
 				
-				return Value( execute( expr->left, stack ), Op_while_2, test );
-			}
-			
-			if ( is_elseif( expr ) )
-			{
-				const Value& proc = invocable_expression( expr->right, stack );
-				
-				return Value( execute( expr->left, stack ), Op_else, proc );
+				return Value( execute( expr->left, stack ), expr->op, test );
 			}
 			
 			if ( expr->op == Op_assert )
