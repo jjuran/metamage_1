@@ -380,7 +380,7 @@ namespace integer {
 		
 		while ( n-- > 0 )
 		{
-			result *= (limb_t) -1 * 1.0 + 1;
+			result *= ((limb_t) -1 / 2u + 1) * 2.0;
 			result += *x++;
 		}
 		
@@ -396,7 +396,7 @@ namespace integer {
 		
 		while ( n-- > 0 )
 		{
-			result *= (limb_t) -1 * 1.0 + 1;
+			result *= ((limb_t) -1 / 2u + 1) * 2.0;
 			result += *--x;
 		}
 		
