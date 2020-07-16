@@ -113,6 +113,7 @@ namespace vlib
 			case Op_delta:  return " -> ";
 			
 			case Op_intersection:  return " & ";
+			case Op_exclusion:     return " ~ ";
 			case Op_union:         return " | ";
 			
 			case Op_in:  return " in ";

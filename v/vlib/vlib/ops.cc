@@ -111,7 +111,7 @@ namespace vlib
 		{ Token_minus_lt,    Every, Op_reverse_init },
 		
 		{ Token_ampersand,   Match, Op_intersection },
-		{ Token_parens_plus, Match, Op_exclusion    },
+		{ Token_tilde,       Match, Op_exclusion    },
 		{ Token_pipe,        Match, Op_union        },
 	};
 	

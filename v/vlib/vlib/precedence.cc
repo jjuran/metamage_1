@@ -29,7 +29,7 @@ namespace vlib
 		Precedence_addition,        // + -
 		Precedence_range,           // .. ->
 		Precedence_intersection,    // &
-		Precedence_exclusion,       // (+)
+		Precedence_exclusion,       // ~
 		Precedence_union,           // |
 		Precedence_in,              // in
 		Precedence_not,             // not
