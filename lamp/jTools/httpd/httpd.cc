@@ -11,9 +11,6 @@
 // Standard C
 #include <stdlib.h>
 
-// Standard C++
-#include <functional>
-
 // iota
 #include "iota/char_types.hh"
 
@@ -123,9 +120,15 @@ namespace tool
 	}
 	
 	
-	static char ToCGI( char c )
+	static inline
+	void cgi_strcpy( char* dst, const char* src, size_t n )
 	{
-		return c == '-' ? '_' : iota::to_upper( c );
+		while ( n-- > 0 )
+		{
+			char c = *src++;
+			
+			*dst++ = c == '-' ? '_' : iota::to_upper( c );
+		}
 	}
 	
 	static bool eq( const char* a, size_t a_size,
@@ -154,10 +157,7 @@ namespace tool
 			
 			char* name = p + prefix_length;
 			
-			std::transform( stream + it->field_offset,
-			                stream + it->colon_offset,
-			                name,
-			                std::ptr_fun( ToCGI ) );
+			cgi_strcpy( name, stream + it->field_offset, name_length );
 			
 			const size_t len = name_length;
 			
