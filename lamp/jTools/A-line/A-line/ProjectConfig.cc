@@ -14,9 +14,6 @@
 // Iota
 #include "iota/strings.hh"
 
-// plus
-#include "plus/pointer_to_function.hh"
-
 // poseven
 #include "poseven/functions/basename.hh"
 
@@ -39,10 +36,13 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
-	static bool c_string_less( const char* a, const char* b )
+	struct c_string_less
 	{
-		return std::strcmp( a, b ) < 0;
-	}
+		bool operator()( const char* a, const char* b )
+		{
+			return std::strcmp( a, b ) < 0;
+		}
+	};
 	
 	static bool DirectiveIsRecognized( const plus::string& directive )
 	{
@@ -81,7 +81,7 @@ namespace tool
 		char const* const* edge = std::lower_bound( recognized + 0,
 		                                            end,
 		                                            directive.c_str(),
-		                                            plus::ptr_fun( c_string_less ) );
+		                                            c_string_less() );
 		
 		bool found = edge != end && directive == *edge;
 		
@@ -248,16 +248,16 @@ namespace tool
 		
 		AddConfigFile( filePath, conf );
 		
-		plus::string project_dir = get_project_dir_from_config_file( filePath );
+		plus::string proj_dir = get_project_dir_from_config_file( filePath );
 		
-		std::vector< plus::string >& conf_subprojects = conf[ "subprojects" ];
+		std::vector< plus::string >& conf_subprojs = conf[ "subprojects" ];
 		
-		std::transform( conf_subprojects.begin(),
-		                conf_subprojects.end(),
-		                std::back_inserter( global_subprojects ),
-		                std::bind1st( plus::ptr_fun( DescendPathToDir ),
-		                              project_dir ) );
+		typedef std::vector< plus::string >::const_iterator It;
 		
+		for ( It it = conf_subprojs.begin();  it != conf_subprojs.end();  ++it )
+		{
+			global_subprojects.push_back( DescendPathToDir( proj_dir, *it ) );
+		}
 	}
 	
 	void AddPendingSubproject( const plus::string& dir )
@@ -273,9 +273,12 @@ namespace tool
 		
 		subprojects.insert( subprojects.end(), folders.begin(), folders.end() );
 		
-		std::for_each( configs.begin(),
-		               configs.end(),
-		               plus::ptr_fun( AddPendingConfigFile ) );
+		typedef std::vector< plus::string >::const_iterator Iter;
+		
+		for ( Iter it = configs.begin();  it != configs.end();  ++it )
+		{
+			AddPendingConfigFile( *it );
+		}
 	}
 	
 	bool AddPendingSubprojects()
@@ -286,9 +289,12 @@ namespace tool
 		
 		swap( subprojects, global_subprojects );
 		
-		std::for_each( subprojects.begin(),
-		               subprojects.end(),
-		               plus::ptr_fun( AddPendingSubproject ) );
+		typedef std::vector< plus::string >::const_iterator Iter;
+		
+		for ( Iter it = subprojects.begin();  it != subprojects.end();  ++it )
+		{
+			AddPendingSubproject( *it );
+		}
 		
 		return subprojects.size() > 0;
 	}
