@@ -64,18 +64,16 @@ namespace poseven
 				private:
 					nucleus::shared< dir_t >  itsDirHandle;
 					value_type                value;
-					bool                      done;
 					
 					void GetNextValue();
 					
-					const_iterator( const nucleus::shared< dir_t >& dirHandle ) : itsDirHandle( dirHandle ),
-					                                                              done( false )
+					const_iterator( const nucleus::shared< dir_t >& dirHandle ) : itsDirHandle( dirHandle )
 					{
 						GetNextValue();
 					}
 				
 				public:
-					const_iterator() : done( true )
+					const_iterator() : value()
 					{
 					}
 					
@@ -84,9 +82,6 @@ namespace poseven
 					
 					reference operator*() const               { return value; }
 					pointer operator->() const                { return &value; }
-					
-					friend bool operator==( const const_iterator& a, const const_iterator& b )    { return a.done == b.done; }
-					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
 			};
 			
 			directory_contents_container( const nucleus::shared< dir_t >& dir ) : itsDirHandle( dir )
@@ -103,6 +98,28 @@ namespace poseven
 			const_iterator end() const                      { return const_iterator(              ); }
 			
 	};
+	
+	inline
+	bool operator==( const directory_contents_container::const_iterator& a,
+	                 const directory_contents_container::const_iterator& b )
+	{
+		/*
+			The value member points to the d_name field of the dir_t
+			for non-end iterators, and is null otherwise.
+			
+			This code assumes that we only compare iterators of which
+			at least one equals end().
+		*/
+		
+		return *a == *b;
+	}
+	
+	inline
+	bool operator!=( const directory_contents_container::const_iterator& a,
+	                 const directory_contents_container::const_iterator& b )
+	{
+		return !( a == b );
+	}
 	
 	
 	inline directory_contents_container directory_contents( const nucleus::shared< dir_t >& dir )

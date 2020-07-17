@@ -58,7 +58,7 @@ namespace poseven
 			return;
 		}
 		
-		done = true;
+		value = NULL;
 		
 		if ( errno != ENOENT )
 		{
