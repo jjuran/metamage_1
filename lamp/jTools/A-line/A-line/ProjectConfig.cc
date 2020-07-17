@@ -78,7 +78,10 @@ namespace tool
 		
 		char const* const* end = recognized + length;
 		
-		char const* const* edge = std::lower_bound( recognized + 0, end, directive.c_str(), std::ptr_fun( c_string_less ) );
+		char const* const* edge = std::lower_bound( recognized + 0,
+		                                            end,
+		                                            directive.c_str(),
+		                                            plus::ptr_fun( c_string_less ) );
 		
 		bool found = edge != end && directive == *edge;
 		
@@ -272,7 +275,7 @@ namespace tool
 		
 		std::for_each( configs.begin(),
 		               configs.end(),
-		               std::ptr_fun( AddPendingConfigFile ) );
+		               plus::ptr_fun( AddPendingConfigFile ) );
 	}
 	
 	bool AddPendingSubprojects()
@@ -285,7 +288,7 @@ namespace tool
 		
 		std::for_each( subprojects.begin(),
 		               subprojects.end(),
-		               std::ptr_fun( AddPendingSubproject ) );
+		               plus::ptr_fun( AddPendingSubproject ) );
 		
 		return subprojects.size() > 0;
 	}
