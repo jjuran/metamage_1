@@ -62,12 +62,12 @@ namespace poseven
 					typedef std::forward_iterator_tag iterator_category;
 					
 				private:
-					nucleus::shared< dir_t >  itsDirHandle;
-					value_type                value;
+					dir_t       itsDirHandle;
+					value_type  value;
 					
 					void GetNextValue();
 					
-					const_iterator( const nucleus::shared< dir_t >& dirHandle ) : itsDirHandle( dirHandle )
+					const_iterator( dir_t dir ) : itsDirHandle( dir )
 					{
 						GetNextValue();
 					}
