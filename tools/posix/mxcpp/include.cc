@@ -59,12 +59,18 @@ namespace tool
 	{
 		const size_t n = global_include_search_paths.size();
 		
-		global_include_search_dirs.resize(n );
+		global_include_search_dirs.reserve( n );
 		
-		std::transform( global_include_search_paths.begin(),
-		                global_include_search_paths.end(),
-		                global_include_search_dirs.begin(),
-		                std::ptr_fun( open_dir ) );
+		typedef std::vector< const char* >::const_iterator Iter;
+		
+		#define paths global_include_search_paths
+		
+		for ( Iter it = paths.begin();  it != paths.end();  ++it )
+		{
+			global_include_search_dirs.push_back( open_dir( *it ) );
+		}
+		
+		#undef paths
 		
 		return n;
 	}
