@@ -4,8 +4,6 @@
 */
 
 // Standard C++
-#include <functional>
-#include <numeric>
 #include <vector>
 
 // Standard C/C++
@@ -344,11 +342,6 @@ namespace tool
 	}
 	
 	
-	static inline std::size_t total_string_size( std::size_t total, const char* s )
-	{
-		return total + strlen( s );
-	}
-	
 	static plus::string JoinScriptPieces( const std::vector< const char* >& pieces )
 	{
 		ASSERT( !pieces.empty() );
@@ -358,10 +351,12 @@ namespace tool
 			return pieces[0];
 		}
 		
-		std::size_t total_length = std::accumulate( pieces.begin(),
-		                                            pieces.end(),
-		                                            pieces.size(),  // add 1 byte for each CR
-		                                            std::ptr_fun( total_string_size ) );
+		size_t total_length = pieces.size();  // add 1 byte for each CR
+		
+		for ( size_t i = 0;  i < pieces.size();  ++i )
+		{
+			total_length += strlen( pieces[ i ] );
+		}
 		
 		plus::var_string result;
 		
