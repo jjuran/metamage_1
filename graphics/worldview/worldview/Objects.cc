@@ -241,12 +241,14 @@ namespace worldview
 	{
 		std::size_t size = offsets.size();
 		
-		std::vector< V::Point3D::Type > points( size );
+		std::vector< V::Point3D::Type > points;
 		
-		std::transform( offsets.begin(),
-		                offsets.end(),
-		                points.begin(),
-		                mesh );
+		points.reserve( size );
+		
+		for ( std::size_t i = 0;  i < size;  ++i )
+		{
+			points.push_back( mesh( offsets[ i ] ) );
+		}
 		
 		V::Vector3D::Type A = points[1] - points[0];
 		V::Vector3D::Type B = points[2] - points[1];
@@ -401,10 +403,10 @@ namespace worldview
 			
 			if ( visible )
 			{
-				std::transform( offsets.begin(),
-				                offsets.begin() + 3,
-				                points,
-				                itsMesh );
+				for ( std::size_t i = 0;  i < 3;  ++i )
+				{
+					points[ i ] = itsMesh( offsets[ i ] );
+				}
 				
 				V::Plane3D::Type plane = V::PlaneVector( points );
 				

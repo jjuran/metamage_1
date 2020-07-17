@@ -12,9 +12,6 @@
 // Standard C/C++
 #include <cmath>
 
-// Standard C++
-#include <functional>
-
 // Vectoria
 #include "Vectoria/Clipping3D.hh"
 #include "Vectoria/LinearAlgebra3D.hh"
@@ -182,7 +179,8 @@ namespace worldview
 	static double sFocalLength = FocalLength( sHorizontalFieldOfViewAngle );
 	
 	
-	static V::Point3D::Type PerspectiveDivision( const V::Point3D::Type& pt )
+	static inline
+	V::Point3D::Type PerspectiveDivision( const V::Point3D::Type& pt )
 	{
 		return pt / -pt[ Z ] * sFocalLength;
 	}
@@ -318,30 +316,32 @@ namespace worldview
 				
 				const std::vector< unsigned >& offsets = polygon.Vertices();
 				
-				std::vector< V::Point3D::Type > points( offsets.size() );
+				std::vector< V::Point3D::Type > points;
 				
-				std::transform( offsets.begin(),
-				                offsets.end(),
-				                points.begin(),
-				                model.Mesh() );
+				points.reserve( offsets.size() );
+				
+				for ( std::size_t i = 0;  i < offsets.size();  ++i )
+				{
+					points.push_back( model.Mesh()( offsets[ i ] ) );
+				}
 				
 				V::Plane3D::Type plane = V::PlaneVector( points );
 				
-				std::transform( points.begin(),
-				                points.end(),
-				                points.begin(),
-				                std::ptr_fun( PerspectiveDivision ) );
+				for ( std::size_t i = 0;  i < points.size();  ++i )
+				{
+					points[ i ] = PerspectiveDivision( points[ i ] );
+				}
 				
 				V::Polygon2D poly2d;
 				
 				std::vector< V::Point2D::Type >& points2d( poly2d.Points() );
 				
-				points2d.resize( points.size() );
+				points2d.reserve( points.size() );
 				
-				std::transform( points.begin(),
-				                points.end(),
-				                points2d.begin(),
-				                std::ptr_fun( Point3DTo2D ) );
+				for ( std::size_t i = 0;  i < points.size();  ++i )
+				{
+					points2d.push_back( Point3DTo2D( points[ i ] ) );
+				}
 				
 				V::Point3D::Type sectPt = LinePlaneIntersection( ray, pt0, plane );
 				

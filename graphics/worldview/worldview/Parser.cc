@@ -148,22 +148,22 @@ namespace worldview
 		
 		if ( size % 3 != 0 )
 		{
-			colors.resize( size );
+			colors.reserve( size );
 			
-			std::transform( values.begin(),
-			                values.end(),
-			                colors.begin(),
-			                std::ptr_fun( static_cast< ColorMatrix (*)( double ) >( V::MakeGray ) ) );
+			for ( std::size_t i = 0;  i < size;  ++i )
+			{
+				colors.push_back( V::MakeGray( values[ i ] ) );
+			}
 		}
 		else
 		{
-			colors.resize( size / 3 );
+			colors.reserve( size / 3 );
 			
 			for ( unsigned i = 0;  i < colors.size();  ++i )
 			{
-				colors[ i ] = V::MakeRGB( values[ 3 * i     ],
-				                          values[ 3 * i + 1 ],
-				                          values[ 3 * i + 2 ] );
+				colors.push_back( V::MakeRGB( values[ 3 * i     ],
+				                              values[ 3 * i + 1 ],
+				                              values[ 3 * i + 2 ] ) );
 			}
 		}
 		

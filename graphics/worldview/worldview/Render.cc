@@ -772,14 +772,16 @@ namespace worldview
 				savedPoints[1] = mesh.Points()[ savedOffsets[ 1 ] ];
 				savedPoints[2] = mesh.Points()[ savedOffsets[ 2 ] ];
 				
-				std::vector< V::Point3D::Type > points( offsets.size() );
+				std::vector< V::Point3D::Type > points;
+				
+				points.reserve( offsets.size() );
 				
 				// Lookup the vertices of this polygon
 				// in port coordinates
-				std::transform( offsets.begin(),
-				                offsets.end(),
-				                points.begin(),
-				                mesh );
+				for ( std::size_t i = 0;  i < offsets.size();  ++i )
+				{
+					points.push_back( mesh( offsets[ i ] ) );
+				}
 				
 				V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
 				
@@ -926,14 +928,16 @@ namespace worldview
 						savedPoints[1] = mesh.Points()[ savedOffsets[ 1 ] ];
 						savedPoints[2] = mesh.Points()[ savedOffsets[ 2 ] ];
 						
-						std::vector< V::Point3D::Type > points( offsets.size() );
+						std::vector< V::Point3D::Type > points;
+						
+						points.reserve( offsets.size() );
 						
 						// Lookup the vertices of this polygon
 						// in port coordinates
-						std::transform( offsets.begin(),
-						                offsets.end(),
-						                points.begin(),
-						                mesh );
+						for ( std::size_t i = 0;  i < offsets.size();  ++i )
+						{
+							points.push_back( mesh( offsets[ i ] ) );
+						}
 						
 						V::Vector3D::Type faceNormal = V::UnitLength( V::FaceNormal( points ) );
 						
@@ -949,12 +953,12 @@ namespace worldview
 						
 						std::vector< V::Point2D::Type >& screenPts( poly2d.Points() );
 						
-						screenPts.resize( points.size() );
+						screenPts.reserve( points.size() );
 						
-						std::transform( points.begin(),
-						                points.end(),
-						                screenPts.begin(),
-						                std::ptr_fun( Point3DTo2D ) );
+						for ( std::size_t i = 0;  i < points.size();  ++i )
+						{
+							screenPts.push_back( Point3DTo2D( points[ i ] ) );
+						}
 						
 						V::Rect2D< double > bounding_rect = poly2d.BoundingRect();
 						
