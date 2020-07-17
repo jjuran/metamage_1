@@ -5,9 +5,6 @@
 
 #include "StringArray.hh"
 
-// Standard C++
-#include <algorithm>
-
 
 namespace ShellShock
 {
@@ -27,9 +24,13 @@ namespace ShellShock
 	StringArray::StringArray( const std::vector< plus::string >& args )
 	{
 		// Assume arrayPointer to be already sorted.
-		std::copy( args.begin(),
-		           args.end(),
-		           std::back_inserter( strings ) );
+		
+		strings.reserve( args.size() );
+		
+		for ( std::size_t i = 0;  i < args.size();  ++i )
+		{
+			strings.push_back( args[ i ] );
+		}
 		
 		Update();
 	}
