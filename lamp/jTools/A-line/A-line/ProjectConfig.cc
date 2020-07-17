@@ -168,12 +168,7 @@ namespace tool
 	}
 	
 	
-	static std::vector< plus::string >& Subprojects()
-	{
-		static std::vector< plus::string > gSubprojects;
-		
-		return gSubprojects;
-	}
+	static std::vector< plus::string > global_subprojects;
 	
 	static plus::string DescendPathToDir( const plus::string& dir, const plus::string& path )
 	{
@@ -256,7 +251,7 @@ namespace tool
 		
 		std::transform( conf_subprojects.begin(),
 		                conf_subprojects.end(),
-		                std::back_inserter( Subprojects() ),
+		                std::back_inserter( global_subprojects ),
 		                std::bind1st( plus::ptr_fun( DescendPathToDir ),
 		                              project_dir ) );
 		
@@ -271,7 +266,7 @@ namespace tool
 		                    std::back_inserter( configs ),
 		                    std::back_inserter( folders ) );
 		
-		std::vector< plus::string >& subprojects = Subprojects();
+		std::vector< plus::string >& subprojects = global_subprojects;
 		
 		subprojects.insert( subprojects.end(), folders.begin(), folders.end() );
 		
@@ -286,7 +281,7 @@ namespace tool
 		
 		using std::swap;
 		
-		swap( subprojects, Subprojects() );
+		swap( subprojects, global_subprojects );
 		
 		std::for_each( subprojects.begin(),
 		               subprojects.end(),
