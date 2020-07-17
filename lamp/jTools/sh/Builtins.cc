@@ -6,7 +6,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
 #include <map>
 #include <set>
 
@@ -312,9 +311,15 @@ namespace tool
 		if ( argc == 1 )
 		{
 			// $ alias
-			std::for_each( gAliases.begin(),
-			               gAliases.end(),
-			               std::ptr_fun( PrintAlias ) );
+			
+			typedef StringMap::const_iterator Iter;
+			
+			Iter end = gAliases.end();
+			
+			for ( Iter it = gAliases.begin();  it != end;  ++it )
+			{
+				PrintAlias( *it );
+			}
 		}
 		else if ( argc == 2 )
 		{
@@ -501,9 +506,15 @@ namespace tool
 		if ( argc == 1 )
 		{
 			// $ set
-			std::for_each( gLocalVariables.begin(),
-			               gLocalVariables.end(),
-			               std::ptr_fun( PrintVariable ) );
+			
+			typedef StringMap::const_iterator Iter;
+			
+			Iter end = gLocalVariables.end();
+			
+			for ( Iter it = gLocalVariables.begin();  it != end;  ++it )
+			{
+				PrintVariable( *it );
+			}
 		}
 		else
 		{

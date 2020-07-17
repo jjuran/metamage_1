@@ -442,9 +442,10 @@ namespace tool
 	
 	static void RedirectIOs( const std::vector< Sh::Redirection >& redirections )
 	{
-		std::for_each( redirections.begin(),
-					   redirections.end(),
-					   std::ptr_fun( RedirectIO ) );
+		for ( size_t i = 0;  i < redirections.size();  ++i )
+		{
+			RedirectIO( redirections[ i ] );
+		}
 	}
 	
 	static void Exec( char const* const argv[], char const* const* envp )
@@ -776,12 +777,16 @@ namespace tool
 	
 	static p7::wait_t ExecutePipeline( const Pipeline& pipeline )
 	{
-		std::vector< Command > commands( pipeline.commands.size() );
+		std::vector< Command > commands;
 		
-		std::transform( pipeline.commands.begin(),
-		                pipeline.commands.end(),
-		                commands.begin(),
-		                std::ptr_fun( ParseCommand ) );
+		const size_t n = pipeline.commands.size();
+		
+		commands.reserve( n );
+		
+		for ( size_t i = 0;  i != n;  ++i )
+		{
+			commands.push_back( ParseCommand( pipeline.commands[ i ] ) );
+		}
 		
 		switch ( commands.size() )
 		{

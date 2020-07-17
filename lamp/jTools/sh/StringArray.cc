@@ -6,7 +6,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
 
 
 namespace ShellShock
@@ -136,21 +135,16 @@ namespace ShellShock
 		Update();
 	}
 	
-	static const char* c_str( const plus::string& s )
-	{
-		return s.c_str();
-	}
-	
 	void StringArray::Update()
 	{
-		array.resize( strings.size() + 1 );
+		array.reserve( strings.size() + 1 );
 		
-		std::transform( strings.begin(),
-		                strings.end(),
-		                array.begin(),
-		                std::ptr_fun( c_str ) );
+		for ( std::size_t i = 0;  i < strings.size();  ++i )
+		{
+			array.push_back( strings[ i ].c_str() );
+		}
 		
-		array.back() = NULL;
+		array.push_back( NULL );
 	}
 	
 	void StringArray::Clear()
