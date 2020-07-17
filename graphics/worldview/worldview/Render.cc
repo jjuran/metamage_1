@@ -9,11 +9,13 @@
 #include <stdint.h>
 
 // Standard C++
-#include <functional>
 #include <vector>
 
 // iota
 #include "iota/endian.hh"
+
+// plus
+#include "plus/pointer_to_function.hh"
 
 // Vectoria
 #include "Vectoria/Units.hh"
@@ -495,7 +497,7 @@ namespace worldview
 		// sort by Y
 		std::sort( sorted_vertices.begin(),
 		           sorted_vertices.end(),
-		           std::ptr_fun( VerticallyGreater ) );
+		           plus::ptr_fun( VerticallyGreater ) );
 		
 		double top    = sorted_vertices.front()[ Y ];
 		double bottom = sorted_vertices.back ()[ Y ];
@@ -790,7 +792,7 @@ namespace worldview
 				std::transform( points.begin(),
 				                points.end(),
 				                points.begin(),
-				                std::ptr_fun( PerspectiveDivision ) );
+				                plus::ptr_fun( PerspectiveDivision ) );
 				
 				std::vector< DeepVertex > vertices( points.size() );
 				
@@ -947,7 +949,7 @@ namespace worldview
 						std::transform( points.begin(),
 						                points.end(),
 						                points.begin(),
-						                std::ptr_fun( PerspectiveDivision ) );
+						                plus::ptr_fun( PerspectiveDivision ) );
 						
 						V::Polygon2D poly2d;
 						
