@@ -27,6 +27,7 @@
 #include "command/get_option.hh"
 
 // plus
+#include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
 
@@ -823,7 +824,7 @@ namespace tool
 		copy_unless( source.begin(),
 		             source.end(),
 		             std::back_inserter( dest ),
-		             std::ptr_fun( filter_item ) );
+		             plus::ptr_fun( filter_item ) );
 	}
 	
 	template < class Sequence >
