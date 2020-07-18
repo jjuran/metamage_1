@@ -5,7 +5,16 @@
 
 #include "portaudio.hh"
 
-#ifdef __linux__
+#ifndef CONFIG_ALSA
+	#ifdef __linux__
+		#define CONFIG_ALSA  1
+	#endif
+	#ifdef __ANDROID__
+		#undef CONFIG_ALSA
+	#endif
+#endif
+
+#if CONFIG_ALSA
 #include <alsa/asoundlib.h>
 #endif
 
@@ -41,7 +50,7 @@ const int frame_size = sample_size * channel_count;
 const int buffer_size = frame_size * frames_per_buffer;
 
 
-#ifdef __linux__
+#if CONFIG_ALSA
 
 static
 void alsa_error_handler( const char* file, int line,
@@ -182,7 +191,7 @@ PortAudio::~PortAudio()
 
 bool start()
 {
-#ifdef __linux__
+#if CONFIG_ALSA
 	
 	static const char* suppress = getenv( "SNDTRACK_SUPPRESS_ALSA_ERRORS" );
 	
