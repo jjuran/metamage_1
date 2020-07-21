@@ -1,0 +1,50 @@
+module exosnd
+
+const basic = x"0101"
+const sound = x"4b4b"
+
+const switch_on = x"0000"
+
+const squarewave = x"ffff"
+
+def twos (n_bytes, x)
+{
+	const abc = unhex hex x
+	const len = n_bytes - abc.size
+	const pad = x"00" * len
+	
+	return pad abc
+}
+
+const big_u16 = twos % 2
+
+def headerize (domain, opcode, extent)
+{
+	const reserved = x"0000"
+	
+	return reserved (big_u16 extent.size) domain opcode extent
+}
+
+const startup = headerize (basic, switch_on, x"")
+
+def triplet (wavelength-amplitude-duration)
+{
+	return wavelength-amplitude-duration map big_u16 per packed
+}
+
+def square_wave_tones (tones)
+{
+	const triplets = (tones map triplet per packed) triplet [0, 0, 0]
+	
+	return headerize (sound, squarewave, triplets)
+}
+
+export
+def player (send)
+{
+	send startup
+	
+	const square_wave = send * square_wave_tones
+	
+	return record( :square_wave )
+}
