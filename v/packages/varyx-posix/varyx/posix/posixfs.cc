@@ -257,9 +257,10 @@ namespace posix
 				
 				POSIX specifies ENOTTY.
 				Mac OS X yields EPERM.
+				Linux generates EINVAL for pipes.
 			*/
 			
-			if ( errno != ENOTTY  &&  errno != EPERM )
+			if ( errno != ENOTTY  &&  errno != EPERM  &&  errno != EINVAL )
 			{
 				fd_error( fd );  // e.g. EBADF
 			}
