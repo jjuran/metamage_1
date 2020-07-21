@@ -1,0 +1,43 @@
+#!/usr/bin/env minivx
+
+if isatty OUT then
+{
+	warn "sndtest: Pipe output to sndtrack, please"
+	exit 1
+}
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/../lib/v/"
+
+const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+
+const exosnd = import "exosnd"
+
+const sound = exosnd.player { OUT <== _ }
+
+const tones =
+[
+	# Victory theme from GunShy by E. C. Horvath.
+	
+	[ 0x08b3, 0x00ff, 0x0007 ],
+	[ 0x06a0, 0x00ff, 0x0007 ],
+	[ 0x0527, 0x00ff, 0x0007 ],
+	[ 0x0459, 0x00ff, 0x000e ],
+	[ 0x0527, 0x00ff, 0x0007 ],
+	[ 0x0459, 0x00ff, 0x001c ],
+	[ 0x0459, 0x00dc, 0x0007 ],
+	[ 0x0459, 0x00b4, 0x0007 ],
+	[ 0x0459, 0x0080, 0x0007 ],
+	[ 0x0459, 0x0040, 0x0007 ],
+	[ 0x0459, 0x0018, 0x0007 ],
+	[ 0x0459, 0x0008, 0x0007 ],
+]
+
+const len_ticks = tones map {v[2]} per Math.sum
+const duration = len_ticks / 60
+
+sound.square_wave tones
+
+sleep duration
+
+end.
