@@ -83,6 +83,7 @@ static Fixed demiperiod_samples;
 
 static int sample;
 
+static uint16_t last_count;
 static uint32_t elapsed_samples;
 static uint64_t next_demiperiod;  // a sample count in 32.16 fixed-point format
 
@@ -105,19 +106,28 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	
 	if ( reset )
 	{
-		demiperiod_samples = samples_from_count( tone->count );
-		
 		const uint16_t amplitude = tone->amplitude;
 		
 		const int crest = 128 + amplitude / 2;
 		const int nadir = 128 - amplitude / 2;
 		
-		// Start by taking the wave low.  Real Macs appear to do this.
-		
-		sample = nadir;
-		
-		elapsed_samples = 0;
-		next_demiperiod = 0;
+		if ( tone->count == last_count )
+		{
+			sample = (int8_t) sample < 0 ? crest : nadir;
+		}
+		else
+		{
+			last_count = tone->count;
+			
+			// Start by taking the wave low.  Real Macs appear to do this.
+			
+			sample = nadir;
+			
+			elapsed_samples = 0;
+			next_demiperiod = 0;
+			
+			demiperiod_samples = samples_from_count( tone->count );
+		}
 	}
 	
 	--tone->duration;
