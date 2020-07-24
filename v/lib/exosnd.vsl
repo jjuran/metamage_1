@@ -6,6 +6,7 @@ const sound = x"4b4b"
 const switch_on = x"0000"
 
 const squarewave = x"ffff"
+const fourtone_b = x"0101"
 
 def twos (n_bytes, x)
 {
@@ -17,6 +18,7 @@ def twos (n_bytes, x)
 }
 
 const big_u16 = twos % 2
+const big_u32 = twos % 4
 
 def headerize (domain, opcode, extent)
 {
@@ -39,12 +41,30 @@ def square_wave_tones (tones)
 	return headerize (sound, squarewave, triplets)
 }
 
+def four_tone_start (duration, notes)
+{
+	const recID = x"00000000"
+	
+	const n0 = 4 - notes.length
+	
+	const meta = notes map {big_u32(v.key) big_u32 v.value.value}
+	const data = notes map {v.value.key}
+	
+	const mgap = x"00" * 8 * n0
+	const dgap = x"00" * 256 * n0
+	
+	const sndrec = packed (recID, big_u16 duration, meta, mgap, data, dgap)
+	
+	return headerize (sound, fourtone_b, sndrec)
+}
+
 export
 def player (send)
 {
 	send startup
 	
 	const square_wave = send * square_wave_tones
+	const four_tone   = send * four_tone_start
 	
-	return record( :square_wave )
+	return record( :square_wave, :four_tone )
 }
