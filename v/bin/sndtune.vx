@@ -1,0 +1,89 @@
+#!/usr/bin/env vx
+
+if isatty OUT then
+{
+	warn "sndtune: Pipe output to sndtrack, please"
+	exit 1
+}
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/../lib/v/"
+
+const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+
+const exosnd = import "exosnd"
+
+const sound = exosnd.player { OUT <== _ }
+
+const square   = packed (x"01" * 128, x"ff" * 128) => 0
+const sawtooth = 0 -> 256 map byte per packed => 128
+
+const triangle = do
+{
+	const tooth = 1 -> 128 map {byte (2 * v)} per packed
+	
+	packed (tooth x"FF" -tooth x"01") => 64,
+}
+
+# 256/370 ~= 45344
+
+# 1.059463094359295^12 ~= 2
+# 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
+
+const semitone_numer = 69433
+const semitone_denom = 2^16
+
+def transpose (n, pitch)
+{
+	return pitch * semitone_numer^n div semitone_denom^n
+}
+
+const C8 = 0x184ada * 2;
+
+const adj = 3
+
+def C (o) { transpose( adj, C8 div 2^(8 - o) ) }
+def D (o) { transpose( 2, C o ) }
+def E (o) { transpose( 4, C o ) }
+def F (o) { transpose( 5, C o ) }
+def G (o) { transpose( 7, C o ) }
+def A (o) { transpose( 9, C o ) }
+def B (o) { transpose( 11, C o ) }
+
+const score =
+[
+	6: [ A 3, C 4, E 4 ],
+	8: [ A 3, C 4, F 4 ],
+	2: [ A 3, C 4, C 4 ],
+	6: [ G 3, C 4, E 4 ],
+	2: [ G 3, B 3, E 4 ],
+	6: [ G 3, B 3, D 4 ],
+	2: [ G 3, G 3, D 4 ],
+	
+	6: [ A 3, C 4, E 4 ],
+	8: [ A 3, C 4, F 4 ],
+	2: [ A 3, C 4, C 4 ],
+	2: [ G 3, C 4, E 4 ],
+	2: [ G 3, C 4, F 4 ],
+	2: [ E 3, C 4, G 4 ],
+	8: [ D 3, B 3, G 4 ],
+]
+
+def play (wave, score)
+{
+	sound.four_tone (255, [ (0: wave) (*) 4 ])
+	
+	for chord in score do
+	{
+		const duration = chord.key / 6
+		const notes    = chord.value map { v => wave }
+		
+		sound.tone_update (255, notes)
+		
+		sleep duration
+	}
+	
+	sound.stop()
+}
+
+play( triangle, score )
