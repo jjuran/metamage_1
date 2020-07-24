@@ -1,12 +1,14 @@
 module exosnd
 
 const basic = x"0101"
+const admin = x"4a4a"
 const sound = x"4b4b"
 
 const switch_on = x"0000"
 
 const squarewave = x"ffff"
 const fourtone_b = x"0101"
+const fourtone_u = x"0201"
 
 def twos (n_bytes, x)
 {
@@ -58,6 +60,21 @@ def four_tone_start (duration, notes)
 	return headerize (sound, fourtone_b, sndrec)
 }
 
+def four_tone_update (duration, notes)
+{
+	const recID = x"00000000"
+	
+	const n0 = 4 - notes.length
+	
+	const meta = notes map {big_u32(v.key) big_u32 v.value.value}
+	
+	const mgap = x"00" * 8 * n0
+	
+	const sndrec = packed (recID, big_u16 duration, meta, mgap)
+	
+	return headerize (admin, fourtone_u, sndrec)
+}
+
 export
 def player (send)
 {
@@ -65,6 +82,7 @@ def player (send)
 	
 	const square_wave = send * square_wave_tones
 	const four_tone   = send * four_tone_start
+	const tone_update = send * four_tone_update
 	
-	return record( :square_wave, :four_tone )
+	return record( :square_wave, :four_tone, :tone_update )
 }
