@@ -1,0 +1,59 @@
+#!/usr/bin/env minivx
+
+if isatty OUT then
+{
+	warn "sndquad: Pipe output to sndtrack, please"
+	exit 1
+}
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/../lib/v/"
+
+const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+
+const exosnd = import "exosnd"
+
+const sound = exosnd.player { OUT <== _ }
+
+const square_2 = packed (x"40" * 128, x"c0" * 128) => 0
+const sawtooth = 0 -> 256 map byte per packed => 128
+
+const triangle = do
+{
+	const tooth = 1 -> 128 map {byte (2 * v)} per packed
+	
+	packed (tooth x"FF" -tooth x"01") => 64,
+}
+
+# 1.059463094359295^12 ~= 2
+# 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
+
+const semitone_numer = 69433
+const semitone_denom = 2^16
+
+const core = 0xb5c8
+
+const adj = int if argc > 1 then {argv[ 1 ]}
+
+def x (k)
+{
+	return k * core * semitone_numer^adj div semitone_denom^adj
+}
+
+const duration = 2
+
+const chord =
+[
+	2: triangle,
+	3: square_2,
+	5: triangle,
+	8: sawtooth,
+]
+
+const notes = chord map { x v.key => v.value }
+
+sound.four_tone (duration * 60, notes)
+
+sleep duration
+
+end.
