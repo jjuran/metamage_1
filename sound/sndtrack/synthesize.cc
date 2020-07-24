@@ -12,6 +12,7 @@
 // sndtrack
 #include "admin.hh"
 #include "backend.hh"
+#include "output.hh"
 #include "sound_node.hh"
 #include "synth/four-tone.hh"
 #include "synth/free-form.hh"
@@ -76,8 +77,32 @@ sound_node* get_next_sound()
 	return node->valid() ? (sound_node*) node : NULL;
 }
 
+static
+void diminish( sample_buffer& output, short count )
+{
+	uint8_t* data = output.data;
+	
+	if ( count > 255 )
+	{
+		for ( short i = 1;  i < 256;  ++i )
+		{
+			int8_t sample = data[ i ] ^ 0x80;
+			
+			sample = sample * (256 - i) / 256u;
+			
+			data[ i ] = sample ^ 0x80;
+		}
+		
+		memset( data + 256, 0x80, count - 256 );
+	}
+}
+
 short synthesize( sample_buffer& output )
 {
+	static sound_node* last_input;
+	
+	bool stopping = false;
+	
 	while ( queue_node* admin = queue_get_next( admin_queue ) )
 	{
 		if ( ! admin->valid() )
@@ -96,6 +121,12 @@ short synthesize( sample_buffer& output )
 					update_fourtone( node, update );
 				}
 			}
+		}
+		
+		if ( admin->size == full_stop_size  &&  last_input != NULL )
+		{
+			stopping = true;
+			break;
 		}
 		
 		switch ( admin->size )
@@ -124,11 +155,15 @@ short synthesize( sample_buffer& output )
 	
 	while ( sound_node* input = get_next_sound() )
 	{
-		static sound_node* last_input;
-		
 		const bool reset = input != last_input;
 		
 		last_input = input;
+		
+		if ( reset  &&  stopping )
+		{
+			last_input = NULL;
+			return 0;
+		}
 		
 		short count = -1;
 		
@@ -158,6 +193,13 @@ short synthesize( sample_buffer& output )
 		
 		if ( count >= 0 )
 		{
+			if ( stopping )
+			{
+				last_input = NULL;
+				
+				diminish( output, count );
+			}
+			
 			return count;
 		}
 		
