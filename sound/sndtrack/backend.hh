@@ -13,6 +13,8 @@ namespace backend
 	bool start();
 	bool stop();
 	
+	void finished();
+	
 }
 
 #endif

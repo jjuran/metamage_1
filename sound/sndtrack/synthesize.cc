@@ -11,6 +11,7 @@
 
 // sndtrack
 #include "admin.hh"
+#include "backend.hh"
 #include "sound_node.hh"
 #include "synth/four-tone.hh"
 #include "synth/free-form.hh"
@@ -135,6 +136,10 @@ short synthesize( sample_buffer& output )
 		
 		switch ( sound.mode )
 		{
+			case shutdown_mode:
+				backend::finished();
+				break;
+			
 			case swMode:
 				count = sw_synth( output, sound.square_wave, reset );
 				break;

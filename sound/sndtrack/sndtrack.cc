@@ -188,6 +188,22 @@ void do_full_stop()
 }
 
 static
+void do_shutdown()
+{
+	const int dummy_size = sizeof (sound_node)
+	                     - sizeof (sound_buffer)
+	                     + sizeof (short);
+	
+	if ( sound_node* node = (sound_node*) queue_alloc_node( dummy_size ) )
+	{
+		node->size       = shutdown_size;
+		node->sound.mode = shutdown_mode;
+		
+		queue_append( sound_queue, node );
+	}
+}
+
+static
 void event_loop( int fd )
 {
 	bool audio_started = false;
@@ -236,6 +252,8 @@ void event_loop( int fd )
 		queue_cull_used( admin_queue );
 		queue_cull_used( sound_queue );
 	}
+	
+	do_shutdown();
 	
 	if ( audio_started )
 	{
