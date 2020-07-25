@@ -33,11 +33,6 @@ const tones =
 	[ 0x0459, 0x0008, 0x0007 ],
 ]
 
-const len_ticks = tones map {v[2]} per Math.sum
-const duration = len_ticks / 60
-
 sound.square_wave tones
-
-sleep duration
 
 end.

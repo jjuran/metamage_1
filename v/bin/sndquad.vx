@@ -54,6 +54,4 @@ const notes = chord map { x v.key => v.value }
 
 sound.four_tone (duration * 60, notes)
 
-sleep duration
-
 end.
