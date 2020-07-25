@@ -14,9 +14,9 @@
 
 // sndtrack
 #include "admin.hh"
+#include "backend.hh"
 #include "exceptions.hh"
 #include "input.hh"
-#include "portaudio.hh"
 #include "sound_node.hh"
 
 
@@ -207,7 +207,7 @@ void event_loop( int fd )
 				switch ( header.opcode )
 				{
 					case switch_on:
-						static bool init = audio_started = portaudio::start();
+						static bool init = audio_started = backend::start();
 						break;
 					
 					case full_stop:
@@ -239,7 +239,7 @@ void event_loop( int fd )
 	
 	if ( audio_started )
 	{
-		portaudio::stop();
+		backend::stop();
 	}
 }
 
