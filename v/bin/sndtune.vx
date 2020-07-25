@@ -1,4 +1,4 @@
-#!/usr/bin/env vx
+#!/usr/bin/env minivx
 
 if isatty OUT then
 {
@@ -52,6 +52,9 @@ def B (o) { transpose( 11, C o ) }
 
 const score =
 [
+	# Melody by Lonely Island.
+	# 8-bit arrangement and notation copyright 2020 Joshua Juran.
+	
 	6: [ A 3, C 4, E 4 ],
 	8: [ A 3, C 4, F 4 ],
 	2: [ A 3, C 4, C 4 ],
