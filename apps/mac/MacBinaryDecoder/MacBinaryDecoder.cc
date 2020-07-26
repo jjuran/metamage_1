@@ -6,15 +6,15 @@
 // mac-config
 #include "mac_config/apple-events.hh"
 
+// mac-sys-utils
+#include "mac_sys/beep.hh"
+
 // mac-file-utils
 #include "mac_file/parent_directory.hh"
 
 // mac-app-utils
 #include "mac_app/documents.hh"
 #include "mac_app/file_open_dialog.hh"
-
-// Nitrogen
-#include "Mac/Sound/Functions/SysBeep.hh"
 
 // Arcana
 #include "MacBinary.hh"
@@ -62,7 +62,7 @@ namespace MacBinaryDecoder
 		catch ( const MacBinary::InvalidMacBinaryHeader& )
 		{
 			//std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %x\n", totalBytes );
-			Mac::SysBeep();
+			mac::sys::beep();
 		}
 	}
 	
