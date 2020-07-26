@@ -14,6 +14,7 @@
 
 // Standard C
 #include <errno.h>
+#include <signal.h>
 #include <stdlib.h>
 
 // POSIX
@@ -58,7 +59,7 @@
 
 extern "C" char** environ;
 
-#ifdef __MWERKS__
+#ifdef __RELIX__
 
 static const char* global_signal_names[] =
 {
@@ -105,6 +106,11 @@ const char* strsignal( int signo )
 	}
 	
 	return global_signal_names[ signo ];
+}
+
+void psignal( unsigned signo, const char* s )
+{
+	more::perror( strsignal( signo ), 0 );
 }
 
 #endif
@@ -991,7 +997,7 @@ namespace tool
 		{
 			int signo = p7::wtermsig( status );
 			
-			more::perror( strsignal( signo ), 0 );
+			psignal( signo, "" );  // Mac OS X 10.2 doesn't NULL-check
 		}
 		
 		return status;
