@@ -8,14 +8,14 @@
 // Standard C
 #include <string.h>
 
+// mac-sys-utils
+#include "mac_sys/beep.hh"
+
 // mac-app-utils
 #include "mac_app/commands.hh"
 
 // gear
 #include "gear/hexadecimal.hh"
-
-// Nitrogen
-#include "Mac/Sound/Functions/SysBeep.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -128,7 +128,7 @@ namespace Genie
 	
 	static int beep_main()
 	{
-		Mac::SysBeep();
+		mac::sys::beep();
 		
 		return 0;
 	}

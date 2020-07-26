@@ -31,6 +31,7 @@
 #include "unistd.h"
 
 // mac-sys-utils
+#include "mac_sys/beep.hh"
 #include "mac_sys/exit_to_shell.hh"
 
 // relix-include
@@ -51,9 +52,6 @@
 
 // Recall
 #include "recall/stack_frame.hh"
-
-// Nitrogen
-#include "Mac/Sound/Functions/SysBeep.hh"
 
 // Recall
 #include "recall/backtrace.hh"
@@ -279,9 +277,9 @@ namespace relix
 		}
 		else
 		{
-			Mac::SysBeep();
-			Mac::SysBeep();
-			Mac::SysBeep();
+			mac::sys::beep();
+			mac::sys::beep();
+			mac::sys::beep();
 		}
 		
 		mac::sys::exit_to_shell();  // not messing around

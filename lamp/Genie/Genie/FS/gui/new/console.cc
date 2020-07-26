@@ -20,8 +20,8 @@
 #include <sys/stat.h>
 #include <sys/ttycom.h>
 
-// Iota
-#include "iota/strings.hh"
+// mac-sys-utils
+#include "mac_sys/beep.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -40,9 +40,6 @@
 
 // poseven
 #include "poseven/types/errno_t.hh"
-
-// Nitrogen
-#include "Mac/Sound/Functions/SysBeep.hh"
 
 // vfs
 #include "vfs/filehandle.hh"
@@ -161,7 +158,7 @@ namespace Genie
 				
 				case 'cut ':
 				case 'clea':
-					Mac::SysBeep();
+					mac::sys::beep();
 					
 					handled = true;
 					break;
@@ -252,7 +249,7 @@ namespace Genie
 					}
 					else
 					{
-						Mac::SysBeep();
+						mac::sys::beep();
 					}
 					
 					break;
@@ -697,7 +694,7 @@ namespace Genie
 			switch ( c )
 			{
 				case 0x07:
-					Mac::SysBeep();
+					mac::sys::beep();
 					break;
 				
 				case '\b':
