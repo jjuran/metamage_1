@@ -38,9 +38,6 @@
 #endif
 
 // Nitrogen
-#ifndef MAC_SOUND_FUNCTIONS_SYSBEEP_HH
-#include "Mac/Sound/Functions/SysBeep.hh"
-#endif
 #ifndef MAC_TOOLBOX_TYPES_FIXED_HH
 #include "Mac/Toolbox/Types/Fixed.hh"
 #endif
@@ -337,8 +334,7 @@ namespace Nitrogen
 	template <>  struct SoundInputDeviceInfoType_Traits< siSampleSizeAvailable > : InfoData_Traits< UInt16** >  {};
 	template <>  struct SoundInputDeviceInfoType_Traits< siSampleRateAvailable > : InfoData_Traits< ::UnsignedFixed** >  {};
 	
-	inline void SysBeep( short duration )  { ::SysBeep( duration ); }
-	
+	// SysBeep
 	// SndDoCommand
 	// SndDoImmediate
 	// SndNewChannel
