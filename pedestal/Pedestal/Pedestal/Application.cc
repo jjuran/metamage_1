@@ -35,6 +35,7 @@
 
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
+#include "mac_sys/beep.hh"
 #include "mac_sys/clock.hh"
 #include "mac_sys/current_process.hh"
 #include "mac_sys/gestalt.hh"
@@ -62,8 +63,6 @@
 #include "nucleus/saved.hh"
 
 // Nitrogen
-#include "Mac/Sound/Functions/SysBeep.hh"
-
 #include "Nitrogen/Controls.hh"
 #include "Nitrogen/MacErrors.hh"
 #include "Nitrogen/MacWindows.hh"
@@ -174,7 +173,7 @@ namespace Pedestal
 	
 	static inline void DebugBeep()
 	{
-		Mac::SysBeep();
+		mac::sys::beep();
 	}
 	
 	
@@ -500,7 +499,7 @@ namespace Pedestal
 			}
 		}
 		
-		Mac::SysBeep();
+		mac::sys::beep();
 	}
 	
 	static void DispatchKey( const EventRecord& event )

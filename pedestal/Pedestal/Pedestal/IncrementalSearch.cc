@@ -11,6 +11,9 @@
 // iota
 #include "iota/char_types.hh"
 
+// mac-sys-utils
+#include "mac_sys/beep.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -18,8 +21,6 @@
 #include "plus/var_string.hh"
 
 // Nitrogen
-#include "Mac/Sound/Functions/SysBeep.hh"
-
 #include "Nitrogen/Events.hh"
 #include "Nitrogen/Resources.hh"
 
@@ -291,7 +292,7 @@ namespace Pedestal
 					
 					itsView.SetCurrentSelection( itsSavedSelection );
 					
-					Mac::SysBeep();
+					mac::sys::beep();
 				}
 			}
 		}
@@ -299,7 +300,7 @@ namespace Pedestal
 		{
 			if ( itsPattern.empty() )
 			{
-				Mac::SysBeep();
+				mac::sys::beep();
 			}
 			else
 			{
@@ -326,7 +327,7 @@ namespace Pedestal
 			{
 				itsView.SetCurrentSelection( itsSavedSelection );
 				
-				Mac::SysBeep();
+				mac::sys::beep();
 			}
 			else
 			{
@@ -357,7 +358,7 @@ namespace Pedestal
 		{
 			if ( shifted == bothShiftKeys )
 			{
-				Mac::SysBeep();
+				mac::sys::beep();
 				
 				return true;
 			}
@@ -372,7 +373,7 @@ namespace Pedestal
 			
 			if ( match == -1 )
 			{
-				Mac::SysBeep();
+				mac::sys::beep();
 			}
 			else
 			{

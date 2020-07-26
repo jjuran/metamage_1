@@ -21,12 +21,13 @@
 #include <TextEdit.h>
 #endif
 
+// mac-sys-utils
+#include "mac_sys/beep.hh"
+
 // Debug
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Mac/Sound/Functions/SysBeep.hh"
-
 #include "Nitrogen/Events.hh"
 #include "Nitrogen/Quickdraw.hh"
 
@@ -292,7 +293,7 @@ namespace Pedestal
 				
 				case kUpArrowCharCode:
 				case kDownArrowCharCode:
-					Mac::SysBeep();  // May move memory
+					mac::sys::beep();  // May move memory
 					break;
 			}
 		}
@@ -520,7 +521,7 @@ namespace Pedestal
 			{
 				lastBeep = event.when;
 				
-				Mac::SysBeep();
+				mac::sys::beep();
 			}
 			
 			// do nothing
@@ -701,7 +702,7 @@ namespace Pedestal
 			case 'cut ':
 				if ( IsSecret() )
 				{
-					Mac::SysBeep();
+					mac::sys::beep();
 					
 					break;
 				}
@@ -715,7 +716,7 @@ namespace Pedestal
 			case 'copy':
 				if ( IsSecret() )
 				{
-					Mac::SysBeep();
+					mac::sys::beep();
 					
 					break;
 				}
@@ -728,7 +729,7 @@ namespace Pedestal
 				// Update the TE scrap just-in-time
 				if ( OSErr err = TEFromScrap() )
 				{
-					Mac::SysBeep();
+					mac::sys::beep();
 					break;
 				}
 				
