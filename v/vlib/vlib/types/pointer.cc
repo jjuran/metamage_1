@@ -278,6 +278,36 @@ namespace vlib
 	}
 	
 	static
+	const Value& scan( Value& v, const Value& pattern )
+	{
+		if ( const Byte* byte = pattern.is< Byte >() )
+		{
+			const uint8_t c = byte->get();
+			
+			return scan( v, iota::make_byte_range_prechecked( c, c ) );
+		}
+		
+		if ( pattern.type() == v.expr()->left.type() )
+		{
+			// E.g. `p + "pattern"`
+			
+			return scan( v, pattern.string() );
+		}
+		
+		if ( const ByteRange* byterange = pattern.is< ByteRange >() )
+		{
+			return scan( v, byterange->get() );
+		}
+		
+		if ( const ByteClass* byteclass = pattern.is< ByteClass >() )
+		{
+			return scan( v, *byteclass );
+		}
+		
+		return NIL;  // Not handled
+	}
+	
+	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
 		if ( op == Op_subtract )
@@ -289,28 +319,9 @@ namespace vlib
 		
 		if ( op == Op_add )
 		{
-			if ( const Byte* byte = b.is< Byte >() )
+			if ( const Value& scanned = scan( v, b ) )
 			{
-				const uint8_t c = byte->get();
-				
-				return scan( v, iota::make_byte_range_prechecked( c, c ) );
-			}
-			
-			if ( b.type() == v.expr()->left.type() )
-			{
-				// E.g. `p + "pattern"`
-				
-				return scan( v, b.string() );
-			}
-			
-			if ( const ByteRange* byterange = b.is< ByteRange >() )
-			{
-				return scan( v, byterange->get() );
-			}
-			
-			if ( const ByteClass* byteclass = b.is< ByteClass >() )
-			{
-				return scan( v, *byteclass );
+				return scanned;
 			}
 		}
 		else if ( op != Op_subtract )
@@ -369,28 +380,9 @@ namespace vlib
 		
 		if ( op == Op_increase_by )
 		{
-			if ( const Byte* byte = b.is< Byte >() )
+			if ( const Value& scanned = scan( v, b ) )
 			{
-				const uint8_t c = byte->get();
-				
-				return scan( v, iota::make_byte_range_prechecked( c, c ) );
-			}
-			
-			if ( b.type() == v.expr()->left.type() )
-			{
-				// E.g. `p += "pattern"`
-				
-				return scan( v, b.string() );
-			}
-			
-			if ( const ByteRange* byterange = b.is< ByteRange >() )
-			{
-				return scan( v, byterange->get() );
-			}
-			
-			if ( const ByteClass* byteclass = b.is< ByteClass >() )
-			{
-				return scan( v, *byteclass );
+				return scanned;
 			}
 		}
 		else if ( op != Op_decrease_by )
