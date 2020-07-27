@@ -8,7 +8,6 @@
 // Standard C++
 #include <algorithm>
 #include <map>
-#include <numeric>
 #include <vector>
 
 // Standard C/C++
@@ -51,9 +50,6 @@
 
 // pfiles
 #include "pfiles/common.hh"
-
-// Nitrogen Extras / Utilities
-//#include "Utilities/Processes.h"
 
 // Orion
 #include "Orion/Main.hh"
@@ -220,56 +216,6 @@ namespace tool
 	{
 		return gOptions;
 	}
-	
-	/*
-	static void SwapFrontProcess( const ProcessSerialNumber& from, const ProcessSerialNumber& to )
-	{
-		try
-		{
-			if ( N::SameProcess( from, N::GetFrontProcess() ) )
-			{
-				N::SetFrontProcess( to );
-			}
-		}
-		catch ( ... )
-		{
-		}
-	}
-	
-	class ApplicationLayerSwitch
-	{
-		private:
-			ProcessSerialNumber itsTargetApp;
-			
-			ApplicationLayerSwitch           ( const ApplicationLayerSwitch& );
-			ApplicationLayerSwitch& operator=( const ApplicationLayerSwitch& );
-		
-		public:
-			ApplicationLayerSwitch() : itsTargetApp( N::CurrentProcess() )  {}
-			
-			ApplicationLayerSwitch( N::OSType signature ) : itsTargetApp( NX::LaunchApplication( signature ) )
-			{
-				SwapFrontProcess( N::CurrentProcess(), itsTargetApp );
-			}
-			
-			~ApplicationLayerSwitch()
-			{
-				SwapFrontProcess( itsTargetApp, N::CurrentProcess() );
-			}
-			
-			void Switch( const ProcessSerialNumber& newTarget )
-			{
-				SwapFrontProcess( itsTargetApp, newTarget );
-				
-				itsTargetApp = newTarget;
-			}
-			
-			void Switch( N::OSType newTarget )
-			{
-				Switch( NX::LaunchApplication( newTarget ) );
-			}
-	};
-	*/
 	
 	
 	static inline plus::string MakeTargetName( const TargetInfo& info )
@@ -545,21 +491,6 @@ namespace tool
 		{
 			return;
 		}
-		
-		/*
-		ApplicationLayerSwitch activateToolServerForCommand;
-		
-		bool shouldSwitchLayers = !TARGET_RT_MAC_MACHO  &&  (command.substr( 0, 6 ) == "tlsrvr"  ||  command.substr( 0, 4 ) == "mwcc" );
-		
-		if ( shouldSwitchLayers )
-		{
-			const N::OSType sigToolServer = N::OSType( 'MPSX' );
-			
-			//static ApplicationLayerSwitch activateToolServerForSession( sigToolServer );
-			
-			activateToolServerForCommand.Switch( sigToolServer );
-		}
-		*/
 		
 		const bool has_diagnostics_file = !is_null( diagnostics_file_path );
 		
