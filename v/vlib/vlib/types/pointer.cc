@@ -419,6 +419,20 @@ namespace vlib
 	}
 	
 	static
+	const char* find_bc( const char* begin, size_t size, const ByteClass& bc )
+	{
+		while ( size-- > 0 )
+		{
+			if ( bc.get( *begin++ ) )
+			{
+				return --begin;
+			}
+		}
+		
+		return NULL;
+	}
+	
+	static
 	Value v_find( const Value& v )
 	{
 		const Value& pointer = first( v );
@@ -448,6 +462,13 @@ namespace vlib
 			
 			loc = match ? match - begin : plus::string::npos;
 		}
+		else if ( const ByteClass* byteclass = target.is< ByteClass >() )
+		{
+			const char* begin = s.data();
+			const char* match = find_bc( begin, s.size(), *byteclass );
+			
+			loc = match ? match - begin : plus::string::npos;
+		}
 		else
 		{
 			const plus::string& sub = target.string();
@@ -469,12 +490,14 @@ namespace vlib
 	
 	static const Type pointer = pointer_vtype;
 	static const Type byte    = byte_vtype;
+	static const Type bclass  = byteclass_vtype;
 	static const Type brange  = byterange_vtype;
 	static const Type packed  = packed_vtype;
 	static const Type string  = string_vtype;
 	
 	static const Value vbytes ( string, Op_union, packed );
-	static const Value a_byte ( byte,   Op_union, brange );
+	static const Value bgroup ( brange, Op_union, bclass );
+	static const Value a_byte ( byte,   Op_union, bgroup );
 	static const Value finding( a_byte, Op_union, vbytes );
 	
 	static const Value find( pointer, finding );

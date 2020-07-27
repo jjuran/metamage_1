@@ -72,3 +72,8 @@ $ vc '(begin x"07ffffe0").find( x"ffff" ).past'
 
 $ vc '(begin "abcde").find( *"c" .. *"d" ).rest'
 1 >= '"cde"'
+
+%
+
+$ vc '(begin "27b-6").find( *"A" .. *"Z" | *"a" .. *"z" ).rest'
+1 >= '"b-6"'
