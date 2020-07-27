@@ -100,6 +100,10 @@ namespace vlib
 			case Op_unary_refer:  return "&";
 			case Op_unary_count:  return "(+) ";
 			
+			case Op_postfix_0_1:  return "?";
+			case Op_postfix_0_N:  return "*";
+			case Op_postfix_1_N:  return "+";
+			
 			case Op_multiply:  return " * ";
 			case Op_divide:    return " / ";
 			case Op_DIV:       return " div ";

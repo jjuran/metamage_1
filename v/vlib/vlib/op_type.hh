@@ -67,6 +67,9 @@ namespace vlib
 		Op_unary_negate,
 		Op_unary_count,
 		Op_unary_deref,
+		Op_postfix_0_1,
+		Op_postfix_0_N,
+		Op_postfix_1_N,
 		Op_forward_init,
 		Op_reverse_init,
 		Op_via,
@@ -195,7 +198,19 @@ namespace vlib
 	inline
 	bool is_right_unary( op_type op )
 	{
-		return op == Op_postinc  ||  op == Op_postdec  ||  op == Op_present;
+		switch ( op )
+		{
+			case Op_postinc:
+			case Op_postdec:
+			case Op_present:
+			case Op_postfix_0_1:
+			case Op_postfix_0_N:
+			case Op_postfix_1_N:
+				return true;
+			
+			default:
+				return false;
+		}
 	}
 	
 	inline

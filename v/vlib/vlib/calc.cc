@@ -46,6 +46,7 @@
 #include "vlib/types/string.hh"
 #include "vlib/types/table.hh"
 #include "vlib/types/vbytes.hh"
+#include "vlib/types/pattern/quantity.hh"
 
 
 namespace vlib
@@ -203,6 +204,17 @@ namespace vlib
 		if ( op == Op_throw )
 		{
 			throw user_exception( v, source_spec() );
+		}
+		
+		switch ( op )
+		{
+			case Op_postfix_0_1:
+			case Op_postfix_0_N:
+			case Op_postfix_1_N:
+				return PatternQuantity( op, v );
+			
+			default:
+				break;
 		}
 		
 		if ( Expr* expr = v.expr() )

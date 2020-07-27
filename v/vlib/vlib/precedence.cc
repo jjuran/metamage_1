@@ -22,7 +22,7 @@ namespace vlib
 		Precedence_unary_step,      // ++ --
 		Precedence_take,            // take
 		Precedence_exponentiation,  // ^
-		Precedence_unary_math,      // + - ~ * & (+) <=
+		Precedence_unary_math,      // + - ~ * & (+) <= ? * +
 		Precedence_initial_value,   // >- -< via
 		Precedence_unary_name,      // (f x) auto begin lambda
 		Precedence_multiplication,  // * /
@@ -87,6 +87,10 @@ namespace vlib
 		{ Precedence_unary_math, Op_unary_count },
 		{ Precedence_unary_math, Op_unary_deref },
 		{ Precedence_unary_math, Op_unary_refer },
+		
+		{ Precedence_unary_math, Op_postfix_0_1 },
+		{ Precedence_unary_math, Op_postfix_0_N },
+		{ Precedence_unary_math, Op_postfix_1_N },
 		
 		{ Precedence_initial_value, Op_forward_init },
 		{ Precedence_initial_value, Op_reverse_init },

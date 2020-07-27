@@ -28,6 +28,7 @@
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/types/byteclass.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/byterange.hh"
@@ -37,6 +38,7 @@
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 #include "vlib/types/vbytes.hh"
+#include "vlib/types/pattern/quantity.hh"
 
 
 namespace vlib
@@ -278,7 +280,7 @@ namespace vlib
 	}
 	
 	static
-	const Value& scan( Value& v, const Value& pattern )
+	Value scan( Value& v, const Value& pattern )
 	{
 		if ( const Byte* byte = pattern.is< Byte >() )
 		{
@@ -302,6 +304,51 @@ namespace vlib
 		if ( const ByteClass* byteclass = pattern.is< ByteClass >() )
 		{
 			return scan( v, *byteclass );
+		}
+		
+		if ( const PatternQuantity* quantity = pattern.is< PatternQuantity >() )
+		{
+			Expr* expr = quantity->expr();
+			
+			const Value& base = expr->left;
+			
+			Value result = scan( v, base );
+			
+			if ( ! result )  return result;
+			
+			if ( is_empty_list( result ) )
+			{
+				return expr->op == Op_postfix_1_N ? result : v;
+			}
+			
+			if ( expr->op == Op_postfix_0_1 )
+			{
+				return result;
+			}
+			
+			list_builder results;
+			
+			if ( ! result.is< Pointer >() )
+			{
+				results.append( result );
+			}
+			
+			while ( ! is_empty_list( result = scan( v, base ) ) )
+			{
+				if ( ! result )  return result;
+				
+				if ( ! result.is< Pointer >() )
+				{
+					results.append( result );
+				}
+			}
+			
+			if ( ! is_empty_list( results ) )
+			{
+				return results;
+			}
+			
+			return v;
 		}
 		
 		return NIL;  // Not handled
