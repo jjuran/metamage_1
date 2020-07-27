@@ -69,9 +69,9 @@ namespace vlib
 		{ Token_dot, OnlyL, Op_named_unary },
 		
 		{ Token_dot,          Tight, Op_member    },
-		{ Token_plus,         Match, Op_add       },
+		{ Token_plus,         Loose, Op_add       },
 		{ Token_minus,        Match, Op_subtract  },
-		{ Token_asterisk,     Match, Op_multiply  },
+		{ Token_asterisk,     Loose, Op_multiply  },
 		{ Token_slash,        Match, Op_divide    },
 		{ Token_percent,      Match, Op_percent   },
 		{ Token_caret,        Every, Op_empower   },

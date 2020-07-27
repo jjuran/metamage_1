@@ -25,7 +25,7 @@ $ vx -e 'const f = eval "var x = 0; {++x}"; print rep(f() + f() + f())'
 
 %
 
-$ vx -e 'const f = eval "{if _%2 then {3*_+1} else {_/2}}"; print rep(f 5, f 6)'
+$ vx -e 'const f = eval "{if _%2 then {3 * _ + 1} else {_/2}}"; print rep(f 5, f 6)'
 1 >= '(16, 3)'
 
 %

@@ -25,7 +25,7 @@ $ vx -e 'var k = x"00" * 32; var sig = ed25519-sign( k, "!" ); print rep ed25519
 
 %
 
-$ vx -e 'var k = x"00" * 32; var sig = ed25519-sign( k, "!" ); print rep ed25519-verify( ed25519-publickey k, "!", k*2 )'
+$ vx -e 'var k = x"00" * 32; var sig = ed25519-sign( k, "!" ); print rep ed25519-verify( ed25519-publickey k, "!", k * 2 )'
 1 >= false
 
 %
