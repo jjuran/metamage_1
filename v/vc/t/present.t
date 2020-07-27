@@ -45,5 +45,5 @@ $ vc 'if mysql_real_escape_string?? then {mysql_real_escape_string "foo"}'
 
 %
 
-$ vc 'def f {"foo"}; f??()'
+$ vc 'def f {"foo"}; f?? ()'
 1 >= '"foo"'

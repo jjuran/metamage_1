@@ -33,7 +33,7 @@ namespace vlib
 		OnlyL = 1 << Spacing_onlyL,
 		Loose = 1 << Spacing_loose,
 		
-		Postfix = Tight | OnlyR,
+		Postfix = OnlyR,
 		Match   = Tight | Loose,
 		
 		Every = Tight | OnlyR | OnlyL | Loose,
