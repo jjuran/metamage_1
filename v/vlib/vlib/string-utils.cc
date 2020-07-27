@@ -91,7 +91,7 @@ namespace vlib
 			case Op_predec:   return "--";
 			case Op_postinc:  return "++";
 			case Op_postdec:  return "--";
-			case Op_present:  return "?";
+			case Op_present:  return "??";
 			
 			case Op_unary_plus:   return "+";
 			case Op_unary_minus:  return "-";
@@ -186,7 +186,7 @@ namespace vlib
 			
 			case Op_end:  return "; ";
 			
-			default:  return " ?? ";
+			default:  return " <<op>> ";
 		}
 	}
 	

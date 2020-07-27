@@ -18,7 +18,7 @@ namespace vlib
 		Precedence_none = 0,
 		
 		Precedence_declarator,      // const var def
-		Precedence_adjacency,       // . f(x) v[i] ?
+		Precedence_adjacency,       // . f(x) v[i] ??
 		Precedence_unary_step,      // ++ --
 		Precedence_take,            // take
 		Precedence_exponentiation,  // ^
