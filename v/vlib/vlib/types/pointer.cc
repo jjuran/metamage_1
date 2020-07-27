@@ -289,6 +289,13 @@ namespace vlib
 		
 		if ( op == Op_add )
 		{
+			if ( const Byte* byte = b.is< Byte >() )
+			{
+				const uint8_t c = byte->get();
+				
+				return scan( v, iota::make_byte_range_prechecked( c, c ) );
+			}
+			
 			if ( b.type() == v.expr()->left.type() )
 			{
 				// E.g. `p + "pattern"`
@@ -362,6 +369,13 @@ namespace vlib
 		
 		if ( op == Op_increase_by )
 		{
+			if ( const Byte* byte = b.is< Byte >() )
+			{
+				const uint8_t c = byte->get();
+				
+				return scan( v, iota::make_byte_range_prechecked( c, c ) );
+			}
+			
 			if ( b.type() == v.expr()->left.type() )
 			{
 				// E.g. `p += "pattern"`
