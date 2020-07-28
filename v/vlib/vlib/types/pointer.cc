@@ -30,6 +30,7 @@
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
 #include "vlib/iterators/list_builder.hh"
+#include "vlib/iterators/array_iterator.hh"
 #include "vlib/types/byteclass.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/byterange.hh"
@@ -389,6 +390,39 @@ namespace vlib
 				}
 				
 				return result;
+			}
+			
+			if ( expr->op == Op_array )
+			{
+				Value backtrack = v;
+				
+				list_builder results;
+				
+				array_iterator it( pattern );
+				
+				while ( it )
+				{
+					Value result = scan( v, it.use() );
+					
+					if ( ! result  ||  is_empty_list( result ) )
+					{
+						v.swap( backtrack );
+						
+						return result;
+					}
+					
+					if ( ! result.is< Pointer >() )
+					{
+						results.append( result );
+					}
+				}
+				
+				if ( is_empty_list( results ) )
+				{
+					return v;
+				}
+				
+				return results;
 			}
 		}
 		

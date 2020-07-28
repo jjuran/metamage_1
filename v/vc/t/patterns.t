@@ -147,3 +147,23 @@ $ vc 'var p = begin "foo bar."; var q = p += (((*"a" .. *"z")+ => str) | " ")+; 
 
 $ vc 'var p = begin "foo bar."; var q = p += (((*"a" .. *"z")+ => str) | " ")+ => str; p.rest, q'
 1 >= '(".", "foobar")'
+
+%
+
+$ vc 'var p = begin "aaaaacccd"; var q = p += ["a"*, "b"*, "c"*]; p.rest, q.rest'
+1 >= '("d", "d")'
+
+%
+
+$ vc 'var p = begin "aaaaacccd"; var q = p += ["a"+, "b"+, "c"+] | ["a"+, "c"]; p.rest, q.rest'
+1 >= '("ccd", "ccd")'
+
+%
+
+$ vc 'var p = begin "&#38;"; var q = p += ["&#", (*"0" .. *"9")+ => str * byte * int, ";"]; p.rest, q'
+1 >= '("", "&")'
+
+%
+
+$ vc 'var p = begin "foo & bar&#33;"; var q = p += (["&#", (*"0" .. *"9")+ => str * byte * int, ";"] | (*" " .. *"~" => str))+ => str; p.rest, q'
+1 >= '("", "foo & bar!")'
