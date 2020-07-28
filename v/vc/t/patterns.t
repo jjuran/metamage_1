@@ -102,3 +102,33 @@ $ vc 'var p = begin "abaaaab"; var q = p += "aa"*; p.rest, q.rest'
 
 $ vc 'var p = begin "abaaaab"; var q = p += "aa"+; p.rest, q'
 1 >= '"abaaaab"'
+
+%
+
+$ vc 'var p = begin "foobar"; var q = p += "foo" | "fooba"; p.rest, q.rest'
+1 >= '("bar", "bar")'
+
+%
+
+$ vc 'var p = begin "foobar"; var q = p += "bar" | "foo"; p.rest, q.rest'
+1 >= '("bar", "bar")'
+
+%
+
+$ vc 'var p = begin "foobar"; var q = p += "bar" | "baz"; p.rest, q'
+1 >= '"foobar"'
+
+%
+
+$ vc 'var p = begin "foobarbaz"; var q = p += ("foo" | "bar")*; p.rest, q.rest'
+1 >= '("baz", "baz")'
+
+%
+
+$ vc 'var p = begin "321--"; var q = p += (*"0" .. *"9")+ | "-"; p.rest, q.rest'
+1 >= '("--", "--")'
+
+%
+
+$ vc 'var p = begin "--321"; var q = p += (*"0" .. *"9")+ | "-"; p.rest, q.rest'
+1 >= '("-321", "-321")'

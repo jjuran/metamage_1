@@ -351,6 +351,24 @@ namespace vlib
 			return v;
 		}
 		
+		if ( Expr* expr = pattern.expr() )
+		{
+			if ( expr->op == Op_union )
+			{
+				const Value& a = expr->left;
+				const Value& b = expr->right;
+				
+				const Value result = scan( v, a );
+				
+				if ( is_empty_list( result ) )
+				{
+					return scan( v, b );
+				}
+				
+				return result;
+			}
+		}
+		
 		return NIL;  // Not handled
 	}
 	

@@ -825,6 +825,11 @@ namespace vlib
 			}
 		}
 		
+		if ( op == Op_union )
+		{
+			goto no_op;
+		}
+		
 		if ( op == Op_empower )
 		{
 			if ( is_type( left ) )
