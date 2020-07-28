@@ -132,3 +132,18 @@ $ vc 'var p = begin "321--"; var q = p += (*"0" .. *"9")+ | "-"; p.rest, q.rest'
 
 $ vc 'var p = begin "--321"; var q = p += (*"0" .. *"9")+ | "-"; p.rest, q.rest'
 1 >= '("-321", "-321")'
+
+%
+
+$ vc 'var p = begin "24601?"; var q = p += (*"0" .. *"9")+ => int; p.rest, q'
+1 >= '("?", 24601)'
+
+%
+
+$ vc 'var p = begin "foo bar."; var q = p += (((*"a" .. *"z")+ => str) | " ")+; p.rest, q'
+1 >= '(".", "foo", "bar")'
+
+%
+
+$ vc 'var p = begin "foo bar."; var q = p += (((*"a" .. *"z")+ => str) | " ")+ => str; p.rest, q'
+1 >= '(".", "foobar")'

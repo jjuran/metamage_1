@@ -18,6 +18,7 @@
 #include "bignum/integer.hh"
 
 // vlib
+#include "vlib/function-utils.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/targets.hh"
@@ -363,6 +364,28 @@ namespace vlib
 				if ( is_empty_list( result ) )
 				{
 					return scan( v, b );
+				}
+				
+				return result;
+			}
+			
+			if ( expr->op == Op_mapping )
+			{
+				const Value& base = expr->left;
+				const Value& post = expr->right;
+				
+				const Value start = v;
+				
+				Value result = scan( v, base );
+				
+				if ( result  &&  ! is_empty_list( result ) )
+				{
+					if ( result.is< Pointer >() )
+					{
+						result = substring( start, v );
+					}
+					
+					return call_function( post, result );
 				}
 				
 				return result;
