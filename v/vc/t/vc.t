@@ -2833,7 +2833,7 @@ $ vc 'not not true, not not false'
 
 %
 
-$ vc 'def ok {str ("not " (*) not _, "ok")}; ok true, ok false'
+$ vc 'def ok {str ("not " (*) not _, "ok")}; ok 1, ok ""'
 1 >= '("ok", "not ok")'
 
 %

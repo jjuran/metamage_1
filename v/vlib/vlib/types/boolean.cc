@@ -95,8 +95,6 @@ namespace vlib
 		{
 			case Op_typeof:  return Type( boolean_vtype );
 			
-			case Op_not:  return Boolean( ! b );
-			
 			case Op_unary_plus:   return Integer( +!!b );
 			case Op_unary_minus:  return Integer( -!!b );
 			

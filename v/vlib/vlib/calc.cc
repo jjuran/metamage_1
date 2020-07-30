@@ -186,6 +186,11 @@ namespace vlib
 			return Value( op, v );
 		}
 		
+		if ( op == Op_not )
+		{
+			return Boolean( ! v.to< Boolean >() );
+		}
+		
 		if ( op == Op_unary_count )
 		{
 			return Integer( count( v ) );
