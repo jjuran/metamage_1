@@ -216,12 +216,10 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 		| boot code / OS        |  1K
 	8K	+-----------------------+
 		|                       |
-		|                       |
-		|                       |
 		| argc/argv/envp params |
-		|                       |
-		|                       |
-		|                       |  4K
+		|                       |  2K
+	10K	+-----------------------+
+		
 	12K	+-----------------------+
 		|                       |
 		|                       |
@@ -270,7 +268,7 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 	
 */
 
-const uint32_t params_max_size = 4096;
+const uint32_t params_max_size = 2048;
 const uint32_t code_max_size   = 40 * 1024;
 
 const uint32_t os_address   = 7168;
