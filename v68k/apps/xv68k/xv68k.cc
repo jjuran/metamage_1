@@ -226,15 +226,7 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 		|                       |
 		|                       |
 		|                       |
-		|                       |
-		|                       |
-		|                       |
-		|                       |
-		| user stack            =  x2
-		|                       |
-		|                       |
-		|                       |
-		|                       |
+		| user stack            =  x4
 		|                       |
 		|                       |
 		|                       |  16K
