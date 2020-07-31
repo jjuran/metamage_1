@@ -219,16 +219,16 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 		| argc/argv/envp params |
 		|                       |  2K
 	10K	+-----------------------+
-		
-	12K	+-----------------------+
+		|                       |
 		|                       |
 		|                       |
 		|                       |
 		| user stack            =  x4
 		|                       |
 		|                       |
-		|                       |  16K
-	28K	+-----------------------+
+		|                       |
+		|                       |  20K
+	30K	+-----------------------+
 		|                       |
 		|                       |
 		|                       |
@@ -244,7 +244,7 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 		|                       |
 		|                       |
 		|                       |  40K
-	68K	+-----------------------+
+	70K	+-----------------------+
 		
 	72K	+-----------------------+
 		|                       |  screen memory begins 0x00012700  (1792 after)
@@ -273,8 +273,8 @@ const uint32_t code_max_size   = 40 * 1024;
 
 const uint32_t os_address   = 7168;
 const uint32_t initial_SSP  = 3072;
-const uint16_t initial_USP  = 28672;
-const uint32_t code_address = 28672;
+const uint16_t initial_USP  = 30720;
+const uint32_t code_address = 30720;
 
 const uint32_t os_trap_table_address = 1024;
 const uint32_t tb_trap_table_address = 3072;
