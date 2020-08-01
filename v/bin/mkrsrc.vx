@@ -1,4 +1,4 @@
-#!/usr/bin/env vx -Z
+#!/usr/bin/env minivx -Z
 
 assert argv[ 1 ] == "-o"
 
