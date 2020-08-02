@@ -1,0 +1,35 @@
+# Ice Cream
+
+# 1.059463094359295^12 ~= 2
+# 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
+
+const semitone_numer = 69433
+const semitone_denom = 2^16
+
+def transpose (n, pitch) { pitch * semitone_numer^n div semitone_denom^n }
+
+const C8 = 0x184ada * 2;
+
+const adj = 0
+
+def C  (o) { transpose( adj, C8 div 2^(8 - o) ) }
+def Ct (o) { transpose( 1, C o ) }
+def D  (o) { transpose( 2, C o ) }
+def Dt (o) { transpose( 3, C o ) }
+def E  (o) { transpose( 4, C o ) }
+def F  (o) { transpose( 5, C o ) }
+def Ft (o) { transpose( 6, C o ) }
+def G  (o) { transpose( 7, C o ) }
+def Gt (o) { transpose( 8, C o ) }
+def A  (o) { transpose( 9, C o ) }
+def B  (o) { transpose( 11, C o ) }
+
+const audiograph =
+[
+	# The chords of "Ice Cream" from The Music Man, by Meredith Willson
+	
+	24: [ A  2, E  3, Ct 4, A  4 ],
+	12: [ B  2, A  3, Dt 4, Ft 4 ],
+	12: [ E  3, B  3, D  4, Gt 4 ],
+	24: [ A  2, Ct 4, E  4, A  4 ],
+]
