@@ -1,0 +1,50 @@
+#!/usr/bin/env minivx
+
+if argc < 2 then
+{
+	warn "usage: sndplay audiograph | sndtrack"
+	exit 1
+}
+
+const audiograph = eval load argv[ 1 ]
+
+if isatty OUT then
+{
+	warn "sndplay: Pipe output to sndtrack, please"
+	exit 1
+}
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/../lib/v/"
+
+const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+
+const exosnd = import "exosnd"
+
+const sound = exosnd.player { OUT <== _ }
+
+const triangle = do
+{
+	const tooth = 1 -> 128 map {byte (2 * v)} per packed
+	
+	packed (tooth x"FF" -tooth x"01") => 64,
+}
+
+def play (wave, score)
+{
+	sound.four_tone (255, [ (0: wave) (*) 4 ])
+	
+	for chord in score do
+	{
+		const duration = chord.key / 8
+		const notes    = chord.value map { v => wave }
+		
+		sound.tone_update (255, notes)
+		
+		sleep duration
+	}
+	
+	sound.stop()
+}
+
+play( triangle, audiograph )
