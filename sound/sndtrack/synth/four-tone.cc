@@ -21,6 +21,11 @@ static Fixed si2;
 static Fixed si3;
 static Fixed si4;
 
+static Fixed prevRate1;
+static Fixed prevRate2;
+static Fixed prevRate3;
+static Fixed prevRate4;
+
 static
 int8_t sample( Wave wave, Fixed index )
 {
@@ -62,13 +67,15 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 		return -1;
 	}
 	
-	if ( reset )
-	{
-		si1 = rec.sound1Phase << 16;
-		si2 = rec.sound2Phase << 16;
-		si3 = rec.sound3Phase << 16;
-		si4 = rec.sound4Phase << 16;
-	}
+	if ( rec.sound1Rate  &&  ! prevRate1 )  si1 = rec.sound1Phase << 16;
+	if ( rec.sound2Rate  &&  ! prevRate2 )  si2 = rec.sound2Phase << 16;
+	if ( rec.sound3Rate  &&  ! prevRate3 )  si3 = rec.sound3Phase << 16;
+	if ( rec.sound4Rate  &&  ! prevRate4 )  si4 = rec.sound4Phase << 16;
+	
+	prevRate1 = rec.sound1Rate;
+	prevRate2 = rec.sound2Rate;
+	prevRate3 = rec.sound3Rate;
+	prevRate4 = rec.sound4Rate;
 	
 	--rec.duration;
 	
