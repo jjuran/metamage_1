@@ -93,7 +93,7 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 		            + has_3 * sample( rec.sound3Wave, si3 )
 		            + has_4 * sample( rec.sound4Wave, si4 );
 		
-		*p++ = sum / n_voices + 0x80;
+		*p++ = sum / 4 + 0x80;
 		
 		si1 += rec.sound1Rate;
 		si2 += rec.sound2Rate;
