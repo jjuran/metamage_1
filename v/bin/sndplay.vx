@@ -32,14 +32,14 @@ const triangle = do
 
 def play (wave, score)
 {
-	sound.four_tone (255, [ (0: wave) (*) 4 ])
+	sound.four_tone (32767, [ (0: wave) (*) 4 ])
 	
 	for chord in score do
 	{
 		const duration = chord.key / 8
 		const notes    = chord.value map { v => wave }
 		
-		sound.tone_update (255, notes)
+		sound.tone_update (32767, notes)
 		
 		sleep duration
 	}
