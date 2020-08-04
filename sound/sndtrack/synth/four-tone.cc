@@ -27,7 +27,7 @@ static Fixed prevRate3;
 static Fixed prevRate4;
 
 static
-int8_t sample( Wave wave, Fixed index )
+int16_t sample( Wave wave, Fixed index )
 {
 	uint8_t i = index >> 16;
 	uint8_t j = i + 1;
@@ -40,7 +40,7 @@ int8_t sample( Wave wave, Fixed index )
 	
 	if ( p1 == 0 )
 	{
-		return a;  // index is exactly on a byte boundary
+		return a << 8;  // index is exactly on a byte boundary
 	}
 	
 	/*
@@ -57,7 +57,7 @@ int8_t sample( Wave wave, Fixed index )
 		(Other artifacts still remain, but they're much less pronounced.)
 	*/
 	
-	return (a * p0 + b * p1) / 0x10000;
+	return (a * p0 + b * p1) / 0x100;
 }
 
 short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
@@ -95,7 +95,7 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 	
 	for ( int i = 0;  i < samples_per_buffer;  ++i )
 	{
-		int16_t sum = has_1 * sample( rec.sound1Wave, si1 )
+		int32_t sum = has_1 * sample( rec.sound1Wave, si1 )
 		            + has_2 * sample( rec.sound2Wave, si2 )
 		            + has_3 * sample( rec.sound3Wave, si3 )
 		            + has_4 * sample( rec.sound4Wave, si4 );

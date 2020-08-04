@@ -141,7 +141,7 @@ PortAudio::PortAudio()
 	
 	output_parameters.device = device;
 	output_parameters.channelCount = channel_count;
-	output_parameters.sampleFormat = paInt8;
+	output_parameters.sampleFormat = paInt16;
 	output_parameters.suggestedLatency = device_info->defaultLowOutputLatency;
 	
 	int saved_err = 0;
