@@ -28,11 +28,35 @@ const audiograph =
 [
 	# The chords of "Ice Cream" from The Music Man, by Meredith Willson
 	
-	24: [ A  2 ],
-	24: [ A  2, E  3 ],
-	24: [ A  2, E  3, Ct 4 ],
-	48: [ A  2, E  3, Ct 4, A  4 ],
-	12: [ B  2, A  3, Dt 4, Ft 4 ],
-	12: [ E  3, B  3, D  4, Gt 4 ],
-	24: [ A  2, Ct 4, E  4, A  4 ],
+	 7: [ A  2 ],
+	 1: [],
+	16: [ A  2 ],
+	
+	 7: [ A  2, E  3 ],
+	 1: [ A  2 ],
+	16: [ A  2, E  3 ],
+	
+	 7: [ A  2, E  3, Ct 4 ],
+	 1: [ A  2, E  3 ],
+	16: [ A  2, E  3, Ct 4 ],
+	
+	 7: [ A  2, E  3, Ct 4, A  4 ],
+	 1: [ A  2, E  3, Ct 4 ],
+	20: [ A  2, E  3, Ct 4, A  4 ],
+	
+	12: [],
+	 
+	 3: [ B  2, A  3, Dt 4, Ft 4 ],
+	 1: [],
+	 6: [ B  2, A  3, Dt 4, Ft 4 ],
+	 2: [],
+	
+	 3: [ E  3, B  3, D  4, Gt 4 ],
+	 1: [],
+	 6: [ E  3, B  3, D  4, Gt 4 ],
+	 2: [],
+	
+	11: [ A  2, Ct 4, E  4, A  4 ],
+	 1: [],
+	20: [ A  2, Ct 4, E  4, A  4 ],
 ]
