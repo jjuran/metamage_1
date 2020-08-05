@@ -41,7 +41,7 @@ namespace portaudio
 const int channel_count = 1;  // monophonic
 const int sample_size   = sizeof (output_sample_t);
 
-const int ground = 0x80;  // unsigned 8-bit samples are centered at 128
+const int ground = 0;  // signed 8-bit samples are centered at 0, not 128
 
 const int sample_rate = 22256;
 
@@ -141,7 +141,7 @@ PortAudio::PortAudio()
 	
 	output_parameters.device = device;
 	output_parameters.channelCount = channel_count;
-	output_parameters.sampleFormat = paUInt8;
+	output_parameters.sampleFormat = paInt8;
 	output_parameters.suggestedLatency = device_info->defaultLowOutputLatency;
 	
 	int saved_err = 0;

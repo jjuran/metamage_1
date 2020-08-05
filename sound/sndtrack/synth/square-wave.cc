@@ -153,7 +153,7 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 		
 		size_t n = min( samples_remaining, samples_in_run );
 		
-		memset( p, sample, n * sizeof (output_sample_t) );
+		memset( p, sample ^ 0x80, n * sizeof (output_sample_t) );
 		
 		p += n;
 		

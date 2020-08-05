@@ -38,7 +38,7 @@ short ff_synth( sample_buffer& output, int size, ff_buffer& rec, bool reset )
 	
 	do
 	{
-		*p++ = rec.waveBytes[ wave_index ];
+		*p++ = rec.waveBytes[ wave_index ] ^ 0x80;
 		
 		++elapsed_samples;
 		--samples_remaining;

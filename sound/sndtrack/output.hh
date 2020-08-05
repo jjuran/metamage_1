@@ -6,7 +6,7 @@
 #ifndef OUTPUT_HH
 #define OUTPUT_HH
 
-typedef unsigned char output_sample_t;
+typedef signed char output_sample_t;
 
 const int samples_per_buffer = 370;
 

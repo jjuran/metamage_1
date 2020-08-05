@@ -86,11 +86,7 @@ short diminish( sample_buffer& output, short count )
 	{
 		for ( short i = 1;  i < 256;  ++i )
 		{
-			int8_t sample = data[ i ] ^ 0x80;
-			
-			sample = sample * (256 - i) / 256u;
-			
-			data[ i ] = sample ^ 0x80;
+			data[ i ] = data[ i ] * (256 - i) / 256u;
 		}
 		
 		return 256;
