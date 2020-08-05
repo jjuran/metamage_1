@@ -122,9 +122,9 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	
 	--tone->duration;
 	
-	uint8_t* p = output.data;
+	output_sample_t* p = output.data;
 	
-	size_t samples_remaining = sizeof output.data;
+	size_t samples_remaining = samples_per_buffer;
 	
 	goto start;
 	
@@ -153,7 +153,7 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 		
 		size_t n = min( samples_remaining, samples_in_run );
 		
-		memset( p, sample, n );
+		memset( p, sample, n * sizeof (output_sample_t) );
 		
 		p += n;
 		
@@ -162,5 +162,5 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	}
 	while ( samples_remaining );
 	
-	return sizeof output.data;
+	return samples_per_buffer;
 }

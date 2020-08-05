@@ -80,7 +80,7 @@ sound_node* get_next_sound()
 static
 short diminish( sample_buffer& output, short count )
 {
-	uint8_t* data = output.data;
+	output_sample_t* data = output.data;
 	
 	if ( count > 255 )
 	{

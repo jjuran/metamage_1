@@ -31,6 +31,7 @@
 
 // sndtrack
 #include "exceptions.hh"
+#include "output.hh"
 #include "synthesize.hh"
 
 
@@ -38,13 +39,13 @@ namespace portaudio
 {
 
 const int channel_count = 1;  // monophonic
-const int sample_size   = 1;  // 8-bit
+const int sample_size   = sizeof (output_sample_t);
 
 const int ground = 0x80;  // unsigned 8-bit samples are centered at 128
 
 const int sample_rate = 22256;
 
-const int frames_per_buffer = 370;
+const int frames_per_buffer = samples_per_buffer;
 
 const int frame_size = sample_size * channel_count;
 const int buffer_size = frame_size * frames_per_buffer;
@@ -92,7 +93,9 @@ int stream_callback( const void*                      input,
 	
 	if ( short n_unset = frames_per_buffer - count )
 	{
-		char* gap = (char*) output + count;
+		n_unset *= sizeof (output_sample_t);
+		
+		char* gap = (char*) output + count * sizeof (output_sample_t);
 		
 		memset( gap, ground, n_unset );  // fill gap with silence
 	}

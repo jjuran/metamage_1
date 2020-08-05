@@ -24,9 +24,9 @@ short ff_synth( sample_buffer& output, int size, ff_buffer& rec, bool reset )
 		elapsed_samples = 0;
 	}
 	
-	uint8_t* p = output.data;
+	output_sample_t* p = output.data;
 	
-	uint32_t samples_remaining = sizeof output.data;
+	uint32_t samples_remaining = samples_per_buffer;
 	
 	uint32_t wave_point = rec.count * elapsed_samples;
 	uint16_t wave_index = wave_point >> 16;
@@ -45,7 +45,7 @@ short ff_synth( sample_buffer& output, int size, ff_buffer& rec, bool reset )
 		
 		if ( samples_remaining == 0 )
 		{
-			return sizeof output.data;
+			return samples_per_buffer;
 		}
 		
 		wave_point += rec.count;
@@ -53,5 +53,5 @@ short ff_synth( sample_buffer& output, int size, ff_buffer& rec, bool reset )
 	}
 	while ( wave_index < size );
 	
-	return sizeof output.data - samples_remaining;
+	return samples_per_buffer - samples_remaining;
 }

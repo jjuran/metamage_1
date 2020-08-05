@@ -79,7 +79,7 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 	
 	--rec.duration;
 	
-	uint8_t* p = output.data;
+	output_sample_t* p = output.data;
 	
 	const bool has_1 = !! rec.sound1Rate;
 	const bool has_2 = !! rec.sound2Rate;
@@ -93,7 +93,7 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 		return 0;
 	}
 	
-	for ( int i = 0;  i < sizeof output.data;  ++i )
+	for ( int i = 0;  i < samples_per_buffer;  ++i )
 	{
 		int16_t sum = has_1 * sample( rec.sound1Wave, si1 )
 		            + has_2 * sample( rec.sound2Wave, si2 )
@@ -108,5 +108,5 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 		si4 += rec.sound4Rate;
 	}
 	
-	return sizeof output.data;
+	return samples_per_buffer;
 }
