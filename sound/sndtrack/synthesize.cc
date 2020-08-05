@@ -78,7 +78,7 @@ sound_node* get_next_sound()
 }
 
 static
-void diminish( sample_buffer& output, short count )
+short diminish( sample_buffer& output, short count )
 {
 	uint8_t* data = output.data;
 	
@@ -93,8 +93,10 @@ void diminish( sample_buffer& output, short count )
 			data[ i ] = sample ^ 0x80;
 		}
 		
-		memset( data + 256, 0x80, count - 256 );
+		return 256;
 	}
+	
+	return count;
 }
 
 short synthesize( sample_buffer& output )
@@ -197,7 +199,7 @@ short synthesize( sample_buffer& output )
 			{
 				last_input = NULL;
 				
-				diminish( output, count );
+				return diminish( output, count );
 			}
 			
 			return count;
