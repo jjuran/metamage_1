@@ -8,6 +8,7 @@ const switch_on = x"0000"
 const full_stop = x"5858"
 
 const squarewave = x"ffff"
+const freeform   = x"0000"
 const fourtone_b = x"0101"
 const fourtone_u = x"0201"
 
@@ -43,6 +44,11 @@ def square_wave_tones (tones)
 	const triplets = (tones map triplet per packed) triplet [0, 0, 0]
 	
 	return headerize (sound, squarewave, triplets)
+}
+
+def free_form_sound (playrate, samples)
+{
+	return headerize (sound, freeform, packed (big_u32 playrate, samples))
 }
 
 def four_tone_start (duration, notes)
@@ -85,8 +91,9 @@ def player (send)
 	const stop = send % interrupt
 	
 	const square_wave = send * square_wave_tones
+	const free_form   = send * free_form_sound
 	const four_tone   = send * four_tone_start
 	const tone_update = send * four_tone_update
 	
-	return record( :stop, :square_wave, :four_tone, :tone_update )
+	return record( :stop, :square_wave, :free_form, :four_tone, :tone_update )
 }
