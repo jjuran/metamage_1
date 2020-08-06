@@ -7,6 +7,7 @@
 
 // Standard C
 #include <stdint.h>
+#include <string.h>
 
 // exosnd-api
 #include "exosnd/exosnd.hh"
@@ -77,6 +78,19 @@ void fill_from_wavetable( output_sample_t* p, Wave wave, Fixed& si, Fixed rate )
 	}
 }
 
+static
+void diminish( sample_buffer& output )
+{
+	output_sample_t* data = output.data;
+	
+	for ( short i = 1;  i < 256;  ++i )
+	{
+		data[ i ] = data[ i ] * (256 - i) / 256u;
+	}
+	
+	memset( &data[ 256 ], '\0', sizeof output.data - 256 * sizeof *data );
+}
+
 short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 {
 	if ( rec.duration <= 0 )
@@ -89,6 +103,16 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 	if ( rec.sound3Rate  &&  ! prevRate3 )  si3 = rec.sound3Phase << 16;
 	if ( rec.sound4Rate  &&  ! prevRate4 )  si4 = rec.sound4Phase << 16;
 	
+	const Fixed rate1 = rec.sound1Rate ? rec.sound1Rate : prevRate1;
+	const Fixed rate2 = rec.sound2Rate ? rec.sound2Rate : prevRate2;
+	const Fixed rate3 = rec.sound3Rate ? rec.sound3Rate : prevRate3;
+	const Fixed rate4 = rec.sound4Rate ? rec.sound4Rate : prevRate4;
+	
+	const bool cut_1 = prevRate1  &&  ! rec.sound1Rate;
+	const bool cut_2 = prevRate2  &&  ! rec.sound2Rate;
+	const bool cut_3 = prevRate3  &&  ! rec.sound3Rate;
+	const bool cut_4 = prevRate4  &&  ! rec.sound4Rate;
+	
 	prevRate1 = rec.sound1Rate;
 	prevRate2 = rec.sound2Rate;
 	prevRate3 = rec.sound3Rate;
@@ -98,10 +122,10 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 	
 	output_sample_t* p = output.data;
 	
-	const bool has_1 = !! rec.sound1Rate;
-	const bool has_2 = !! rec.sound2Rate;
-	const bool has_3 = !! rec.sound3Rate;
-	const bool has_4 = !! rec.sound4Rate;
+	const bool has_1 = !! rate1;
+	const bool has_2 = !! rate2;
+	const bool has_3 = !! rate3;
+	const bool has_4 = !! rate4;
 	
 	uint16_t n_voices = has_1 + has_2 + has_3 + has_4;
 	
@@ -115,10 +139,15 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 	sample_buffer v3;
 	sample_buffer v4;
 	
-	fill_from_wavetable( v1.data, rec.sound1Wave, si1, rec.sound1Rate );
-	fill_from_wavetable( v2.data, rec.sound2Wave, si2, rec.sound2Rate );
-	fill_from_wavetable( v3.data, rec.sound3Wave, si3, rec.sound3Rate );
-	fill_from_wavetable( v4.data, rec.sound4Wave, si4, rec.sound4Rate );
+	fill_from_wavetable( v1.data, rec.sound1Wave, si1, rate1 );
+	fill_from_wavetable( v2.data, rec.sound2Wave, si2, rate2 );
+	fill_from_wavetable( v3.data, rec.sound3Wave, si3, rate3 );
+	fill_from_wavetable( v4.data, rec.sound4Wave, si4, rate4 );
+	
+	if ( cut_1 )  diminish( v1 );
+	if ( cut_2 )  diminish( v2 );
+	if ( cut_3 )  diminish( v3 );
+	if ( cut_4 )  diminish( v4 );
 	
 	for ( int i = 0;  i < samples_per_buffer;  ++i )
 	{
