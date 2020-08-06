@@ -60,6 +60,23 @@ int16_t sample( Wave wave, Fixed index )
 	return (a * p0 + b * p1) / 0x100;
 }
 
+static
+void fill_from_wavetable( output_sample_t* p, Wave wave, Fixed& si, Fixed rate )
+{
+	if ( rate == 0 )
+	{
+		memset( p, '\0', sizeof (sample_buffer) );
+		return;
+	}
+	
+	for ( int i = 0;  i < samples_per_buffer;  ++i )
+	{
+		*p++ = sample( wave, si );
+		
+		si += rate;
+	}
+}
+
 short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 {
 	if ( rec.duration <= 0 )
@@ -93,19 +110,24 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 		return 0;
 	}
 	
+	sample_buffer v1;
+	sample_buffer v2;
+	sample_buffer v3;
+	sample_buffer v4;
+	
+	fill_from_wavetable( v1.data, rec.sound1Wave, si1, rec.sound1Rate );
+	fill_from_wavetable( v2.data, rec.sound2Wave, si2, rec.sound2Rate );
+	fill_from_wavetable( v3.data, rec.sound3Wave, si3, rec.sound3Rate );
+	fill_from_wavetable( v4.data, rec.sound4Wave, si4, rec.sound4Rate );
+	
 	for ( int i = 0;  i < samples_per_buffer;  ++i )
 	{
-		int32_t sum = has_1 * sample( rec.sound1Wave, si1 )
-		            + has_2 * sample( rec.sound2Wave, si2 )
-		            + has_3 * sample( rec.sound3Wave, si3 )
-		            + has_4 * sample( rec.sound4Wave, si4 );
+		int32_t sum = v1.data[ i ]
+		            + v2.data[ i ]
+		            + v3.data[ i ]
+		            + v4.data[ i ];
 		
 		*p++ = sum / 4;
-		
-		si1 += rec.sound1Rate;
-		si2 += rec.sound2Rate;
-		si3 += rec.sound3Rate;
-		si4 += rec.sound4Rate;
 	}
 	
 	return samples_per_buffer;
