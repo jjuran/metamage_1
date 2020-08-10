@@ -986,7 +986,7 @@ namespace tool
 	
 	static void print_comment( uint32_t pc_relative_target )
 	{
-		printf( COMMENT "%#.6x", pc_relative_target );
+		printf( COMMENT "$%.6x", pc_relative_target );
 	}
 	
 	static void decode_jump_table()
