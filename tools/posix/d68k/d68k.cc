@@ -9,12 +9,16 @@
 // Standard C
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 // iota
 #include "iota/char_types.hh"
 #include "iota/endian.hh"
 #include "iota/strings.hh"
+
+// command
+#include "command/get_option.hh"
 
 // gear
 #include "gear/hexadecimal.hh"
@@ -57,6 +61,45 @@
 	Line F:  F-Traps
 */
 
+
+using namespace command::constants;
+
+enum
+{
+	Option_quiet = 'q',
+};
+
+static command::option options[] =
+{
+	{ "quiet", Option_quiet },
+	
+	{ NULL }
+};
+
+static bool quiet = false;
+
+static
+char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_quiet:
+				quiet = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 namespace tool
 {
@@ -175,8 +218,8 @@ namespace tool
 	};
 	
 	
-	static bool globally_prefix_address         = true;
-	static bool globally_attach_target_comments = true;
+	static bool globally_prefix_address;
+	static bool globally_attach_target_comments;
 	
 	static uint32_t global_bytes_read = 0;
 	
@@ -1413,21 +1456,31 @@ namespace tool
 	
 	static void decode_data( uint16_t op )
 	{
-		printf( "DC.W     %#.4x  // %d bytes of data\n", op, op );
+		printf( "DC.W     %#.4x", op );
+		
+		if ( globally_attach_target_comments )
+		{
+			printf( "  // %d bytes of data", op );
+		}
+		
+		printf( "\n" );
 		
 		int n_words = (op + 1) / 2;
 		
 		while ( --n_words >= 0 )
 		{
-			const uint32_t bytes_read = global_bytes_read;
+			if ( globally_prefix_address )
+			{
+				printf( "%.6x:  ", global_bytes_read );
+			}
 			
 			if ( n_words-- )
 			{
-				printf( "%.6x:  DC.L     %#.8x\n", bytes_read, read_long() );
+				printf( "DC.L     %#.8x\n", read_long() );
 			}
 			else
 			{
-				printf( "%.6x:  DC.W     %#.4x\n", bytes_read, read_word() );
+				printf( "DC.W     %#.4x\n", read_word() );
 			}
 		}
 		
@@ -2403,9 +2456,16 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		if ( argc > 1 )
+		char *const *args = get_options( argv );
+		
+		globally_prefix_address         = ! quiet;
+		globally_attach_target_comments = ! quiet;
+		
+		const int argn = argc - (args - argv);
+		
+		if ( argn > 0 )
 		{
-			p7::dup2( p7::open( argv[1], p7::o_rdonly ), p7::stdin_fileno );
+			p7::dup2( p7::open( args[ 1 ], p7::o_rdonly ), p7::stdin_fileno );
 		}
 		
 		global_entry_points.push_back( 0 );  // default entry point
