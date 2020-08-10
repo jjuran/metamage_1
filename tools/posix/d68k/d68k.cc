@@ -1413,7 +1413,7 @@ namespace tool
 	
 	static void decode_data( uint16_t op )
 	{
-		printf( "%.6x:  DC.W     %#.4x  ; %d bytes of data\n", global_bytes_read - 2, op, op );
+		printf( "DC.W     %#.4x  ; %d bytes of data\n", op, op );
 		
 		int n_words = (op + 1) / 2;
 		
