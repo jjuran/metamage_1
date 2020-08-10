@@ -141,7 +141,9 @@ const whitespace = ' ' | '\t'
 
 const space = whitespace+
 
-const separator = '\n' | ';'
+const line_comment = ["//", ~byteclass('\n')*]
+
+const separator = [line_comment?, '\n'] | ';'
 
 const dc_w = [ "DC.W", space, numeral ] => word
 const dc_l = [ "DC.L", space, numeral ] => {word (u32 _ div 2^16), word u16 _}
