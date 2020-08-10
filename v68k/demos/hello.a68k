@@ -1,0 +1,16 @@
+LINK     A6,#0
+PEA      0x000c
+PEA      *+18
+PEA      0x0001
+BSR.S    *+22
+MOVEQ    #0,D0
+UNLK     A6
+RTS
+
+DC.W     0x000c
+DC.L     0x48656c6c
+DC.L     0x6f20776f
+DC.L     0x726c640a
+
+MOVEQ    #4,D0
+TRAP     #0x2
