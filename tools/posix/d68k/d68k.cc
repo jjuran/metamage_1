@@ -64,7 +64,7 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	#define COMMENT  "    ; "
+	#define COMMENT  "    // "
 	
 	
 	struct str_len
@@ -991,7 +991,7 @@ namespace tool
 	
 	static void decode_jump_table()
 	{
-		printf( "; indexed jump table\n" );
+		printf( "// indexed jump table\n" );
 		
 		const uint32_t jump_table = global_bytes_read;
 		
@@ -999,27 +999,27 @@ namespace tool
 		
 		while ( n_jumps-- >= 0 )
 		{
-			printf( "; goto $%.6x\n", jump_table + read_word() );
+			printf( "// goto $%.6x\n", jump_table + read_word() );
 		}
 	}
 	
 	static void decode_switch_table()
 	{
-		printf( "; __lswtch__ table\n" );
+		printf( "// __lswtch__ table\n" );
 		
 		const uint32_t table_start = global_bytes_read;
 		
 		const uint32_t default_case = table_start + read_word();
 		
-		printf( "; default:  goto $%.6x\n", default_case );
+		printf( "// default:  goto $%.6x\n", default_case );
 		
 		const uint32_t min = read_long();
 		
-		printf( "; min: %#x, %d\n", min, min );
+		printf( "// min: %#x, %d\n", min, min );
 		
 		const uint32_t max = read_long();
 		
-		printf( "; max: %#x, %d\n", max, max );
+		printf( "// max: %#x, %d\n", max, max );
 		
 		int n = read_word();
 		
@@ -1033,7 +1033,7 @@ namespace tool
 			
 			target += offset;
 			
-			printf( "; case %#x, %d:  goto $%.6x\n", value, value, target );
+			printf( "// case %#x, %d:  goto $%.6x\n", value, value, target );
 		}
 	}
 	
@@ -1413,7 +1413,7 @@ namespace tool
 	
 	static void decode_data( uint16_t op )
 	{
-		printf( "DC.W     %#.4x  ; %d bytes of data\n", op, op );
+		printf( "DC.W     %#.4x  // %d bytes of data\n", op, op );
 		
 		int n_words = (op + 1) / 2;
 		
@@ -2340,7 +2340,7 @@ namespace tool
 			
 			if ( const char* name = get_name( word_0 ) )
 			{
-				printf( "; ^^^ %s\n\n", name );
+				printf( "// ^^^ %s\n\n", name );
 				
 				if ( peek_word() <= 256 )
 				{
@@ -2390,15 +2390,15 @@ namespace tool
 		const uint16_t  id      = read_word();
 		const uint16_t  version = read_word();
 		
-		printf( "; Flags:          %d" "\n", flags   );
+		printf( "// Flags:          %d" "\n", flags   );
 		
-		printf( "; Resource type:  '%c%c%c%c'" "\n", type >> 24,
-		                                             type >> 16,
-		                                             type >>  8,
-		                                             type );
+		printf( "// Resource type:  '%c%c%c%c'" "\n", type >> 24,
+		                                              type >> 16,
+		                                              type >>  8,
+		                                              type );
 		
-		printf( "; Resource id:    %d" "\n", id      );
-		printf( "; Version:        %d" "\n", version );
+		printf( "// Resource id:    %d" "\n", id      );
+		printf( "// Version:        %d" "\n", version );
 	}
 	
 	int Main( int argc, char** argv )
