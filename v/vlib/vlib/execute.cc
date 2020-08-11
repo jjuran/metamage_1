@@ -538,14 +538,14 @@ namespace vlib
 	
 	Value_in_flight execute( const Value& tree, const Value& stack )
 	{
-		if ( tree.is_evaluated() )
-		{
-			return tree;
-		}
-		
 		const Value* next = &tree;
 		
 	tail_call:
+		
+		if ( next->is_evaluated() )
+		{
+			return *next;
+		}
 		
 		const Value& subtree = *next;
 		
