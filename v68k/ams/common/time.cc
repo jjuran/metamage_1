@@ -39,18 +39,3 @@ bool timeval_less( const timeval& a, const timeval& b )
 		                          a.tv_sec  < b.tv_sec  ||
 		a.tv_sec == b.tv_sec  &&  a.tv_usec < b.tv_usec;
 }
-
-unsigned long long microseconds( const timeval& tv )
-{
-	using math::integer::long_multiply;
-	
-	return long_multiply( tv.tv_sec, 1000000 ) + tv.tv_usec;
-}
-
-unsigned long long time_microseconds()
-{
-	timeval now;
-	gettimeofday( &now, NULL );
-	
-	return microseconds( now );
-}

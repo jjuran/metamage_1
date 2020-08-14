@@ -36,8 +36,4 @@ bool operator <=( const timeval& a, const timeval& b )
 
 const unsigned long long tick_microseconds = 1000 * 1000 * 100 / 6015;
 
-unsigned long long microseconds( const timeval& tv );
-
-unsigned long long time_microseconds();
-
 #endif
