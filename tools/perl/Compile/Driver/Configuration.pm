@@ -69,7 +69,9 @@ sub new
 			$self{ arch } = $osx_arch;
 		}
 		
-		$self{width} ||= "m32";
+		my $wants_64bit = `sh -c 'echo \$HOSTTYPE'` =~ /x86_64/;
+		
+		$self{width} ||= $wants_64bit ? "m64" : "m32";
 		
 		if ( $self{ width } eq "m64" )
 		{
