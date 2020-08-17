@@ -8,6 +8,9 @@
 // Mac OS X
 #ifdef __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
+	#if __LP64__  ||  MAC_OS_X_VERSION_10_7
+	extern "C" void PackBits( Ptr* src, Ptr* dst, short srcBytes );
+	#endif
 #endif
 
 // Mac OS
@@ -17,13 +20,6 @@
 
 // Standard C
 #include <stdlib.h>
-
-// missing-macos
-#ifdef MAC_OS_X_VERSION_10_7
-#ifndef MISSING_QUICKDRAW_H
-#include "missing/Quickdraw.h"
-#endif
-#endif
 
 // vlib
 #include "vlib/proc_info.hh"
