@@ -217,7 +217,7 @@ ams-quartz-demo: ams-quartz-build
 	@open $(RETRO_APPS)
 
 ams-osx-build: $(AMS_REPOS) macward-compat.git
-	bin/build-app Genie
+	bin/build-app -N Genie
 	$(BUILD) $(AMS_TOOLS) uunix interact
 
 MACRELIX := var/build/dbg/bin/Genie/MacRelix.app
