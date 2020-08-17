@@ -9,9 +9,7 @@ REPOS += macward-compat
 METAMAGE_1 = `git remote -v | grep '^origin.*\(fetch\)' | awk '{print $$2}'`
 PLEASE_RUN = 'Please run `(cd .. && git clone' $(METAMAGE_1)')`.'
 
-BUILD_FLAG = `uname -m | grep x86_64 | sed s/x86_64/-W/`
-
-BUILD = ./build.pl -i $(BUILD_FLAG)
+BUILD = ./build.pl -i
 
 default:
 	@echo 'For help, run `make help`.'
