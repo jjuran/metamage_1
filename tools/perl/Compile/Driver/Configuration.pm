@@ -11,6 +11,13 @@ use strict;
 # Host config
 my $is_osx = $^O eq "darwin";
 
+my $SDKROOT = "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk";
+
+if ( $is_osx  &&  -d $SDKROOT )
+{
+	$ENV{SDKROOT} = $SDKROOT;
+}
+
 my $osx_arch = $is_osx ? substr( `arch`, 0, -1 ) : "";
 
 $osx_arch =~ s/^ i386 /x86/x;
