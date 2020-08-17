@@ -14,7 +14,7 @@ my %Spec_for_option = qw
 	P ppc
 	8 x86
 	
-	3 m32
+	N m32
 	W m64
 	
 	R opt
