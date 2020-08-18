@@ -6,6 +6,9 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <signal.h>
+
 // iota
 #include "iota/endian.hh"
 
@@ -203,6 +206,8 @@ void do_shutdown()
 	}
 }
 
+static sig_atomic_t interrupted;
+
 static
 void event_loop( int fd )
 {
@@ -210,7 +215,7 @@ void event_loop( int fd )
 	
 	command_header header;
 	
-	while ( read_header( fd, header ) > 0 )
+	while ( ! interrupted  &&  read_header( fd, header ) > 0 )
 	{
 		if ( header.reserved != 0 )
 		{
@@ -253,16 +258,39 @@ void event_loop( int fd )
 		queue_cull_used( sound_queue );
 	}
 	
-	do_shutdown();
-	
 	if ( audio_started )
 	{
+		if ( interrupted )
+		{
+			do_full_stop();
+			
+			backend::wait();  // consume the interrupt
+		}
+		
+		do_shutdown();
+		
+		if ( backend::wait() )
+		{
+			do_full_stop();
+			do_shutdown();
+		}
+		
 		backend::stop();
 	}
 }
 
+static
+void interrupt( int )
+{
+	interrupted = true;
+	
+	backend::interrupted();
+}
+
 int main( int argc, char* argv[] )
 {
+	signal( SIGINT, &interrupt );
+	
 	event_loop( STDIN_FILENO );
 	
 	return 0;

@@ -22,6 +22,12 @@ bool start()
 	return pipe( pipe_fds ) == 0  &&  portaudio::start();
 }
 
+bool wait()
+{
+	char dummy;
+	return read( pipe_fds[ 0 ], &dummy, 1 ) > 0;
+}
+
 bool stop()
 {
 	char dummy;
@@ -31,6 +37,11 @@ bool stop()
 }
 
 void finished()
+{
+	close( pipe_fds[ 1 ] );
+}
+
+void interrupted()
 {
 	write( pipe_fds[ 1 ], "", 1 );
 }
