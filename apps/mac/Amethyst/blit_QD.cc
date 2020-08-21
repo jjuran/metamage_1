@@ -5,8 +5,8 @@
 
 #include "blit_QD.hh"
 
-// Amethyst
-#include "quickdraw.hh"
+// amicus
+#include "amicus/quickdraw.hh"
 
 
 static CGrafPtr captured_display_port;

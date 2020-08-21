@@ -3,8 +3,11 @@
 	----------
 */
 
-#include "display.hh"
+#include "amicus/display.hh"
 
+
+namespace amicus
+{
 
 display_capture::display_capture( CGDirectDisplayID id ) : its_id( id )
 {
@@ -21,4 +24,6 @@ display_capture::~display_capture()
 	CGDisplayShowCursor( its_id );
 	
 	CGDisplayRelease( its_id );
+}
+
 }

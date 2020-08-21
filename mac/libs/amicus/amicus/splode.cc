@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "splode.hh"
+#include "amicus/splode.hh"
 
 // Mac OS X
 #ifdef __APPLE__
@@ -19,9 +19,12 @@
 // splode
 #include "splode/splode.hh"
 
-// Amethyst
-#include "keycodes.hh"
+// amicus
+#include "amicus/keycodes.hh"
 
+
+namespace amicus
+{
 
 static inline
 uint8_t unmodified_char( UInt32 event_message )
@@ -134,4 +137,6 @@ void send_key_event( int fd, const EventRecord& event )
 	};
 	
 	write( fd, &buffer.len, sizeof buffer );
+}
+
 }

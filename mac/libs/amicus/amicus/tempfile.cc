@@ -3,7 +3,7 @@
 	-----------
 */
 
-#include "tempfile.hh"
+#include "amicus/tempfile.hh"
 
 // Mac OS X
 #ifdef __APPLE__
@@ -13,6 +13,9 @@
 // plus
 #include "plus/var_string.hh"
 
+
+namespace amicus
+{
 
 const OSType folderType = kChewableItemsFolderType;
 
@@ -49,7 +52,9 @@ const char* tempfile_location()
 	
 	path.resize( path.find( '\0' ) );
 	
-	path += "/amethyst.raster";
+	path += "/amicus.raster";
 	
 	return path.c_str();
+}
+
 }

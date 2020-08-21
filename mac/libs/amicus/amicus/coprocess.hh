@@ -3,8 +3,11 @@
 	------------
 */
 
-#ifndef COPROCESS_HH
-#define COPROCESS_HH
+#ifndef AMICUS_COPROCESS_HH
+#define AMICUS_COPROCESS_HH
+
+namespace amicus
+{
 
 struct coprocess_failed {};
 
@@ -24,5 +27,7 @@ class coprocess_launch
 		
 		int socket() const  { return its_socket; }
 };
+
+}
 
 #endif

@@ -3,8 +3,8 @@
 	------------
 */
 
-#ifndef QUICKDRAW_HH
-#define QUICKDRAW_HH
+#ifndef AMICUS_QUICKDRAW_HH
+#define AMICUS_QUICKDRAW_HH
 
 // Mac OS X
 #ifdef __APPLE__

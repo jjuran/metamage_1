@@ -3,7 +3,7 @@
 	--------------
 */
 
-#include "make_raster.hh"
+#include "amicus/make_raster.hh"
 
 // POSIX
 #include <fcntl.h>
@@ -18,6 +18,9 @@
 #include "raster/relay_detail.hh"
 #include "raster/sync.hh"
 
+
+namespace amicus
+{
 
 raster::raster_load loaded_raster;
 
@@ -171,4 +174,6 @@ raster_lifetime::raster_lifetime( const char* raster_path )
 raster_lifetime::~raster_lifetime()
 {
 	unlink( its_path );
+}
+
 }

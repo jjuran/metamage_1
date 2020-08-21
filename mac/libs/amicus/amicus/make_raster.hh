@@ -3,12 +3,15 @@
 	--------------
 */
 
-#ifndef MAKERASTER_HH
-#define MAKERASTER_HH
+#ifndef AMICUS_MAKERASTER_HH
+#define AMICUS_MAKERASTER_HH
 
 // raster
 #include "raster/raster.hh"
 
+
+namespace amicus
+{
 
 extern raster::raster_load loaded_raster;
 
@@ -34,5 +37,7 @@ class raster_lifetime
 		
 		const raster::raster_desc& desc() const { return get().meta->desc; }
 };
+
+}
 
 #endif

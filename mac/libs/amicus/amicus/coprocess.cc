@@ -3,7 +3,7 @@
 	------------
 */
 
-#include "coprocess.hh"
+#include "amicus/coprocess.hh"
 
 // POSIX
 #include <unistd.h>
@@ -17,6 +17,9 @@
 // gear
 #include "gear/inscribe_decimal.hh"
 
+
+namespace amicus
+{
 
 static const char* coprocess_argv[] =
 {
@@ -81,4 +84,6 @@ coprocess_launch::~coprocess_launch()
 {
 	int wait_status;
 	waitpid( its_pid, &wait_status, 0 );
+}
+
 }

@@ -3,7 +3,7 @@
 	---------------
 */
 
-#include "apple_events.hh"
+#include "amicus/apple_events.hh"
 
 // Mac OS X
 #ifdef __APPLE__
@@ -24,6 +24,9 @@
 // plus
 #include "plus/var_string.hh"
 
+
+namespace amicus
+{
 
 enum open_status
 {
@@ -233,4 +236,6 @@ int wait_for_first_Apple_event()
 	                            false );
 	
 	return noErr;
+}
+
 }

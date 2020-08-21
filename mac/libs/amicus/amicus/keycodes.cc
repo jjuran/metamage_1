@@ -9,6 +9,9 @@
 #define ____ 0x00
 #define F(n) ____
 
+namespace amicus
+{
+
 const unsigned char lookup_from_virtual[] =
 {
 	'a',
@@ -149,3 +152,5 @@ const unsigned char lookup_from_virtual[] =
 	0x1E,  // Up
 	____,
 };
+
+}

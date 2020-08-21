@@ -3,14 +3,17 @@
 	--------------
 */
 
-#ifndef RASTERTASK_HH
-#define RASTERTASK_HH
+#ifndef AMICUS_RASTERTASK_HH
+#define AMICUS_RASTERTASK_HH
+
+namespace amicus
+{
 
 enum
 {
-	kEventClassAmethyst = 'AMS*',
+	kEventClassAmicus = 'AMS*',
 	
-	kEventAmethystUpdate = 1,
+	kEventAmicusUpdate = 1,
 };
 
 class raster_monitor
@@ -25,5 +28,7 @@ class raster_monitor
 		
 		~raster_monitor();
 };
+
+}
 
 #endif

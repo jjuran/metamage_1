@@ -21,21 +21,36 @@
 #include "mac_app/event_handlers.hh"
 #include "mac_app/state.hh"
 
+// amicus
+#include "amicus/apple_events.hh"
+#include "amicus/coprocess.hh"
+#include "amicus/display.hh"
+#include "amicus/keycodes.hh"
+#include "amicus/make_raster.hh"
+#include "amicus/quickdraw.hh"
+#include "amicus/raster_task.hh"
+#include "amicus/splode.hh"
+#include "amicus/tempfile.hh"
+
 // Amethyst
-#include "apple_events.hh"
 #include "blit_CG.hh"
 #include "blit_QD.hh"
-#include "coprocess.hh"
-#include "display.hh"
-#include "keycodes.hh"
-#include "make_raster.hh"
-#include "quickdraw.hh"
-#include "raster_task.hh"
-#include "splode.hh"
-#include "tempfile.hh"
 
 
 #define LENGTH( array )  (sizeof (array) / sizeof *(array))
+
+
+using amicus::coprocess_launch;
+using amicus::display_capture;
+using amicus::kEventClassAmicus;
+using amicus::lookup_from_virtual;
+using amicus::raster_lifetime;
+using amicus::raster_monitor;
+using amicus::send_key_event;
+using amicus::send_mouse_event;
+using amicus::send_mouse_moved_event;
+using amicus::tempfile_location;
+using amicus::wait_for_first_Apple_event;
 
 
 static int events_fd = -1;
@@ -361,7 +376,7 @@ void RunEventLoop()
 			}
 		}
 		
-		if ( eventClass == kEventClassAmethyst )
+		if ( eventClass == kEventClassAmicus )
 		{
 			const uint32_t offset = desc.height * desc.stride * desc.frame;
 			

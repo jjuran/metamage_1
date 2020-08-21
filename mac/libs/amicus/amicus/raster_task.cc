@@ -3,7 +3,7 @@
 	--------------
 */
 
-#include "raster_task.hh"
+#include "amicus/raster_task.hh"
 
 // Mac OS X
 #ifdef __APPLE__
@@ -26,6 +26,9 @@
 #include "poseven/types/thread.hh"
 
 
+namespace amicus
+{
+
 extern raster::raster_load loaded_raster;
 
 static poseven::thread raster_thread;
@@ -43,8 +46,8 @@ raster::sync_relay* find_sync()
 static
 void raster_event_loop( raster::sync_relay* sync )
 {
-	const OSType   eventClass = kEventClassAmethyst;
-	const uint32_t eventID    = kEventAmethystUpdate;
+	const OSType   eventClass = kEventClassAmicus;
+	const uint32_t eventID    = kEventAmicusUpdate;
 	
 	EventQueueRef queue = GetMainEventQueue();
 	
@@ -126,4 +129,6 @@ raster_monitor::raster_monitor()
 raster_monitor::~raster_monitor()
 {
 	raster_thread.join();
+}
+
 }

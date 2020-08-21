@@ -3,8 +3,8 @@
 	----------
 */
 
-#ifndef DISPLAY_HH
-#define DISPLAY_HH
+#ifndef AMICUS_DISPLAY_HH
+#define AMICUS_DISPLAY_HH
 
 // Mac OS X
 #ifdef __APPLE__
@@ -12,6 +12,9 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+
+namespace amicus
+{
 
 struct CGDisplayCapture_Failed {};
 
@@ -30,5 +33,7 @@ class display_capture
 		
 		CGDirectDisplayID id() const  { return its_id; }
 };
+
+}
 
 #endif
