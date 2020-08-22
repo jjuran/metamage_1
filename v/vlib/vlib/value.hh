@@ -314,9 +314,9 @@ namespace vlib
 	
 	struct Expr
 	{
-		const op_type  op;
-		Value          left;
-		Value          right;
+		op_type  op;
+		Value    left;
+		Value    right;
 		
 		const source_spec source;
 		
