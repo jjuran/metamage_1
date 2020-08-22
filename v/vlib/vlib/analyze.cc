@@ -174,6 +174,7 @@ namespace vlib
 				{
 					insert_prototype_prelude( R, L_expr->right );
 					
+					expr->right = Value( L_expr->right, Op_prototype, R );
 					expr->left = LL;
 				}
 			}
@@ -201,7 +202,7 @@ namespace vlib
 		{
 			insert_prototype_prelude( RR, RL );
 			
-			expr->right = RR;
+			R_expr->op = Op_prototype;
 		}
 	}
 	
@@ -360,7 +361,10 @@ namespace vlib
 				}
 			}
 			
-			visit( expr->left, expr->source );
+			if ( op != Op_prototype )
+			{
+				visit( expr->left, expr->source );
+			}
 			
 			if ( op != Op_member )
 			{

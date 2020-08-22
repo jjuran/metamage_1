@@ -131,6 +131,7 @@ namespace vlib
 		Op_parens,
 		Op_brackets,
 		Op_braces,
+		Op_prototype,
 		Op_internal_vector,
 		Op_keyvar,
 		Op_contains,
@@ -228,6 +229,7 @@ namespace vlib
 			case Op_while_2:
 			case Op_catch:
 			case Op_scope:
+			case Op_prototype:
 				return true;
 			
 			default:

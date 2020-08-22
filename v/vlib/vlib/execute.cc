@@ -506,6 +506,11 @@ namespace vlib
 		
 		Expr* expr = body.expr();
 		
+		if ( expr  &&  expr->op == Op_prototype )
+		{
+			expr = expr->right.expr();
+		}
+		
 		if ( expr == 0  ||  expr->op != Op_invocation )  // NULL
 		{
 			THROW( "`def` requires a block" );

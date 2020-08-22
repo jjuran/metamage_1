@@ -158,7 +158,7 @@ namespace vlib
 	{
 		if ( Expr* expr = v.expr() )
 		{
-			if ( expr->op == Op_block )
+			if ( expr->op == Op_block  ||  expr->op == Op_prototype )
 			{
 				return is_pure( v );
 			}

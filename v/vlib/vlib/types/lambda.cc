@@ -18,6 +18,15 @@ namespace vlib
 {
 	
 	static
+	Value& lambda_body( Value& protobody )
+	{
+		Expr* expr = protobody.expr();
+		
+		return expr  &&  expr->op == Op_prototype ? expr->right
+		                                          : protobody;
+	}
+	
+	static
 	Value call_function_body( const Value& f, const Value& arguments )
 	{
 		if ( const dispatch* methods = f.dispatch_methods() )
@@ -46,7 +55,9 @@ namespace vlib
 	{
 		try
 		{
-			return call_function_body( lambda.expr()->right, arguments );
+			const Value& body = lambda_body( lambda.expr()->right );
+			
+			return call_function_body( body, arguments );
 		}
 		catch ( const transfer_via_return& e )
 		{
@@ -94,16 +105,18 @@ namespace vlib
 		&ops,
 	};
 	
-	Lambda::Lambda( const Value& body )
+	Lambda::Lambda( const Value& lambda )
 	:
-		Value( dummy_operand, Op_lambda, body, &lambda_dispatch )
+		Value( dummy_operand, Op_lambda, lambda, &lambda_dispatch )
 	{
+		Value& body = lambda_body( expr()->right );
+		
 		if ( ! is_block( body ) )
 		{
 			THROW( "`lambda` requires a block" );
 		}
 		
-		optimize_lambda_body( expr()->right );
+		optimize_lambda_body( body );
 	}
 	
 }
