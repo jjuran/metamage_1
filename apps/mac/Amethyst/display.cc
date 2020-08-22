@@ -62,7 +62,7 @@ display_capture::~display_capture()
 	
 	DisposePort( its_port );
 	
-#endif
+#else
 	
 	CGRect bounds = CGDisplayBounds( its_id );
 	
@@ -73,6 +73,8 @@ display_capture::~display_capture()
 	
 	CGContextFillRect ( its_context, bounds );
 	CGContextClearRect( its_context, bounds );
+	
+#endif
 	
 	CGDisplayRelease( its_id );
 }
