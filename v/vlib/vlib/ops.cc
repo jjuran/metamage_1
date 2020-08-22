@@ -95,6 +95,7 @@ namespace vlib
 		{ Token_minus_gt,     Match, Op_delta     },
 		{ Token_comma,        Every, Op_list      },
 		{ Token_equals,       Loose, Op_duplicate },
+		{ Token_equals,       Tight, Op_named_param},
 		
 		{ Token_lt_minus,     Loose, Op_move },
 		{ Token_lt_minus_gt,  Loose, Op_swap },

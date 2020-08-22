@@ -126,16 +126,23 @@ namespace vlib
 				
 				if ( expr->op == Op_mapping )
 				{
-					if ( expr->left.type() != V_str )
+					if ( expr->left.type() == V_str )
 					{
-						THROW( "non-string parameter name" );
+						// Destructively convert string to bareword
+						expr->left.replace_dispatch_methods( &bareword_dispatch );
 					}
-					
-					// Destructively convert string to bareword
-					expr->left.replace_dispatch_methods( &bareword_dispatch );
 					
 					name = &expr->left;
 					type = &expr->right;
+					
+					if ( name->expr()  &&  name->expr()->op == Op_named_param )
+					{
+						name = &name->expr()->left;
+					}
+				}
+				else if ( expr->op == Op_named_param )
+				{
+					name = &expr->left;
 				}
 			}
 			
@@ -243,6 +250,31 @@ namespace vlib
 	
 	void Analyzer::visit_prototype( Value& v )
 	{
+		Value* list = &v;
+		
+		while ( Expr* expr = list->listexpr() )
+		{
+			Value& head = expr->left;
+			
+			if ( head.expr()  &&  head.expr()->op == Op_named_param )
+			{
+				visit( head.expr()->right, head.expr()->source );
+			}
+			
+			list = &list->expr()->right;
+		}
+		
+		/*
+			Now, list points either to the last parameter,
+			or to empty_list if there were no parameters.
+		*/
+		
+		Value& last = *list;
+		
+		if ( last.expr()  &&  last.expr()->op == Op_named_param )
+		{
+			visit( last.expr()->right, last.expr()->source );
+		}
 	}
 	
 	void Analyzer::visit( Value& v, const source_spec& source )
@@ -371,7 +403,7 @@ namespace vlib
 			{
 				visit_prototype( expr->left );
 			}
-			else
+			else if ( op != Op_named_param )
 			{
 				visit( expr->left, expr->source );
 			}

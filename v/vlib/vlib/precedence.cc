@@ -24,7 +24,7 @@ namespace vlib
 		Precedence_exponentiation,  // ^
 		Precedence_unary_math,      // + - ~ * & (+) <= ? * +
 		Precedence_initial_value,   // >- -< via
-		Precedence_unary_name,      // (f x) auto begin lambda
+		Precedence_unary_name,      // (f x) auto begin lambda x=k
 		Precedence_multiplication,  // * /
 		Precedence_addition,        // + -
 		Precedence_range,           // .. ->
@@ -100,6 +100,7 @@ namespace vlib
 		{ Precedence_unary_name, Op_begin       },
 		{ Precedence_unary_name, Op_lambda      },
 		{ Precedence_unary_name, Op_named_unary },
+		{ Precedence_unary_name, Op_named_param },
 		
 		{ Precedence_multiplication, Op_multiply },
 		{ Precedence_multiplication, Op_divide   },

@@ -110,6 +110,7 @@ namespace vlib
 		
 	// begin right-associative
 		Op_mapping,
+		Op_named_param,
 		Op_gamut,
 		Op_delta,
 		Op_and,
@@ -219,6 +220,7 @@ namespace vlib
 	{
 		switch ( op )
 		{
+			case Op_named_param:
 			case Op_forward_init:
 			case Op_reverse_init:
 			case Op_via:
