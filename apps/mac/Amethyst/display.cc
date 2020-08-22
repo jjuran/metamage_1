@@ -60,6 +60,9 @@ display_capture::~display_capture()
 	
 #if CONFIG_QUICKDRAW
 	
+	Rect bounds;
+	PaintRect( GetPortBounds( its_port, &bounds ) );
+	
 	DisposePort( its_port );
 	
 #else
