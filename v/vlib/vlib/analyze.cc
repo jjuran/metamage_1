@@ -367,7 +367,7 @@ namespace vlib
 				{
 					if ( declares_symbols( e2->op )  &&  e2->op != Op_def )
 					{
-						v = Value( expr->left, Op_denote, expr->right );
+						expr->op = Op_denote;
 					}
 				}
 			}
