@@ -23,6 +23,74 @@ namespace vlib
 {
 	
 	static
+	Value apply_prototype_param( const Expr* expr, const Value& v )
+	{
+		if ( is_empty_list( v ) )
+		{
+			if ( expr->op == Op_mapping )
+			{
+				if ( Expr* L_expr = expr->left.expr() )
+				{
+					expr = L_expr;
+				}
+			}
+			
+			if ( expr->op == Op_named_param )
+			{
+				return expr->right;
+			}
+		}
+		
+		return v;
+	}
+	
+	static
+	Value apply_prototype( const Value& prototype, const Value& arguments )
+	{
+		list_builder result;
+		
+		list_iterator defs( prototype );
+		list_iterator args( arguments );
+		
+		while ( defs )
+		{
+			const Value& param = defs.use();
+			
+			if ( is_etc( param ) )
+			{
+				if ( defs )
+				{
+					THROW( "`...` must be last in a prototype" );
+				}
+				
+				result.append( args.rest() );
+				
+				return result;
+			}
+			
+			const Value& arg = args.use();
+			
+			Expr* expr = param.expr();
+			
+			const Value r = expr ? apply_prototype_param( expr, arg ) : arg;
+			
+			if ( ! r )
+			{
+				THROW( "arguments don't match function prototype" );
+			}
+			
+			result.append( r );
+		}
+		
+		if ( args )
+		{
+			THROW( "too many arguments" );
+		}
+		
+		return result;
+	}
+	
+	static
 	const Value& lambda_prototype( Value& protobody )
 	{
 		Expr* expr = protobody.expr();
@@ -41,7 +109,7 @@ namespace vlib
 	}
 	
 	static
-	Value call_function_body( const Value& f, const Value& arguments )
+	Value call_function( const Value& f, const Value& arguments )
 	{
 		if ( const dispatch* methods = f.dispatch_methods() )
 		{
@@ -69,9 +137,13 @@ namespace vlib
 	{
 		try
 		{
+			const Value& prototype = lambda_prototype( lambda.expr()->right );
+			
 			const Value& body = lambda_body( lambda.expr()->right );
 			
-			return call_function_body( body, arguments );
+			return call_function( body, prototype ? apply_prototype( prototype,
+			                                                         arguments )
+			                                      : arguments );
 		}
 		catch ( const transfer_via_return& e )
 		{
@@ -111,6 +183,11 @@ namespace vlib
 				const Value* name = &param;
 				
 				if ( name->expr()  &&  name->expr()->op == Op_mapping )
+				{
+					name = &name->expr()->left;
+				}
+				
+				if ( name->expr()  &&  name->expr()->op == Op_named_param )
 				{
 					name = &name->expr()->left;
 				}

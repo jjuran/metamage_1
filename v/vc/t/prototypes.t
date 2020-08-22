@@ -102,3 +102,18 @@ $ vc 'const f = lambda () {7}; f.parameter-names'
 
 $ vc 'const f = lambda {7}; f.parameter-names'
 1 >= '()'
+
+%
+
+$ vc 'def f (x: int, y=4) {x + y}; f 3, f (3, 2)'
+1 >= '(7, 5)'
+
+%
+
+$ vc 'def f (x, y=4: int) {x + y}; f 3, f (3, 5)'
+1 >= '(7, 8)'
+
+%
+
+$ vc 'def f (x, y=4: int) {x + y}; f.parameter-names'
+1 >= '[x, y]'
