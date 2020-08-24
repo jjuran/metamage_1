@@ -126,7 +126,10 @@ namespace vlib
 						THROW( "non-string parameter name" );
 					}
 					
-					Value var( Op_var, Identifier( expr->left.string() ) );
+					// Destructively convert string to bareword
+					expr->left.replace_dispatch_methods( &bareword_dispatch );
+					
+					Value var( Op_var, expr->left );
 					
 					prelude.append( Value( var, Op_denote, expr->right ) );
 					continue;
