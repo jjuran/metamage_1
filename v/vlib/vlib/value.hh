@@ -163,6 +163,15 @@ namespace vlib
 			}
 		
 		public:
+			void replace_dispatch_methods( const dispatch* d )
+			{
+				/*
+					Do not call this unless you know what you're doing.
+				*/
+				
+				its_dispatch = d;
+			}
+			
 			bool has_extent() const  { return its_box.has_extent(); }
 			
 			bool is_cycle_free() const  { return flag_bit( Flag_cycle_free ); }
