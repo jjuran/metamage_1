@@ -93,6 +93,8 @@ namespace vlib
 		}
 	}
 	
+	static const Type one( one_vtype );
+	
 	static
 	void insert_prototype_prelude( const Value& f, const Value& prototype )
 	{
@@ -110,6 +112,9 @@ namespace vlib
 		while ( it )
 		{
 			const Value& parameter = it.use();
+			
+			const Value* name = &parameter;
+			const Value* type = &one;
 			
 			if ( Expr* expr = parameter.expr() )
 			{
@@ -129,16 +134,14 @@ namespace vlib
 					// Destructively convert string to bareword
 					expr->left.replace_dispatch_methods( &bareword_dispatch );
 					
-					Value var( Op_var, expr->left );
-					
-					prelude.append( Value( var, Op_denote, expr->right ) );
-					continue;
+					name = &expr->left;
+					type = &expr->right;
 				}
 			}
 			
-			Value var( Op_var, parameter );
+			Value var( Op_var, *name );
 			
-			prelude.append( Value( var, Op_denote, Type( one_vtype ) ) );
+			prelude.append( Value( var, Op_denote, *type ) );
 		}
 		
 		insert_code_to_unpack_arguments( f, prelude.get() );
