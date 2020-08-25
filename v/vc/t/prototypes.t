@@ -62,3 +62,43 @@ $ vc 'def f (x, y: ...) {x, [y]}; try {f()} catch {"nope"}'
 
 $ vc 'export def f () {...}'
 1 >= '(export f)'
+
+%
+
+$ vc 'def f (x: int, y) {x + y}; f.parameter-names'
+1 >= '[x, y]'
+
+%
+
+$ vc 'def f (x: int) {x + 4}; f.parameter-names'
+1 >= '[x]'
+
+%
+
+$ vc 'def f () {7}; f.parameter-names'
+1 >= '[]'
+
+%
+
+$ vc 'def f {7}; f.parameter-names'
+1 >= '()'
+
+%
+
+$ vc 'const f = lambda (x, y: int) {x + y}; f.parameter-names'
+1 >= '[x, y]'
+
+%
+
+$ vc 'const f = lambda (x) {x + 4}; f.parameter-names'
+1 >= '[x]'
+
+%
+
+$ vc 'const f = lambda () {7}; f.parameter-names'
+1 >= '[]'
+
+%
+
+$ vc 'const f = lambda {7}; f.parameter-names'
+1 >= '()'

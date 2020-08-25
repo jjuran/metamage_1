@@ -6,16 +6,30 @@
 #include "vlib/types/lambda.hh"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/peephole.hh"
 #include "vlib/return.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
+#include "vlib/iterators/list_builder.hh"
+#include "vlib/iterators/list_iterator.hh"
+#include "vlib/types/any.hh"
+#include "vlib/types/bareword.hh"
 
 
 namespace vlib
 {
+	
+	static
+	const Value& lambda_prototype( Value& protobody )
+	{
+		Expr* expr = protobody.expr();
+		
+		return expr  &&  expr->op == Op_prototype ? expr->left
+		                                          : NIL;
+	}
 	
 	static
 	Value& lambda_body( Value& protobody )
@@ -76,6 +90,56 @@ namespace vlib
 	}
 	
 	static
+	Value parameter_names( const Value& lambda )
+	{
+		Value& internals = lambda.expr()->right;
+		
+		if ( const Value& prototype = lambda_prototype( internals ) )
+		{
+			list_builder names;
+			list_iterator defs( prototype );
+			
+			while ( defs )
+			{
+				const Value& param = defs.use();
+				
+				if ( is_etc( param ) )
+				{
+					break;
+				}
+				
+				const Value* name = &param;
+				
+				if ( name->expr()  &&  name->expr()->op == Op_mapping )
+				{
+					name = &name->expr()->left;
+				}
+				
+				if ( name->type() == V_str )
+				{
+					names.append( *name );
+				}
+			}
+			
+			return make_array( names );
+		}
+		
+		return empty_list;
+	}
+	
+	static
+	Value lambda_member( const Value& obj,
+	                     const plus::string& member )
+	{
+		if ( member == "parameter-names" )
+		{
+			return parameter_names( obj );
+		}
+		
+		return Value();
+	}
+	
+	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
 		switch ( op )
@@ -83,6 +147,9 @@ namespace vlib
 			case Op_function:
 			case Op_named_unary:
 				return call_lambda( a, b );
+			
+			case Op_member:
+				return lambda_member( a, b.as< Member >().get() );
 			
 			default:
 				break;
