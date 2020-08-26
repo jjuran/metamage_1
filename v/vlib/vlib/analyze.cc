@@ -220,6 +220,8 @@ namespace vlib
 			Value enscope( const Value& block ) const;
 			
 			void visit( Value& syntree, const source_spec& source );
+			
+			void visit_prototype( Value& syntree );
 		
 		public:
 			Analyzer( lexical_scope* globals )
@@ -237,6 +239,10 @@ namespace vlib
 	Value Analyzer::enscope( const Value& block ) const
 	{
 		return Value( its_scope->symbols(), Op_scope, block );
+	}
+	
+	void Analyzer::visit_prototype( Value& v )
+	{
 	}
 	
 	void Analyzer::visit( Value& v, const source_spec& source )
@@ -361,7 +367,11 @@ namespace vlib
 				}
 			}
 			
-			if ( op != Op_prototype )
+			if ( op == Op_prototype )
+			{
+				visit_prototype( expr->left );
+			}
+			else
 			{
 				visit( expr->left, expr->source );
 			}
