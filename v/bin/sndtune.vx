@@ -72,7 +72,7 @@ const score =
 	8: [ D 3, B 3, G 4 ],
 ]
 
-def play (wave, score)
+def play (score, wave=triangle)
 {
 	sound.four_tone (255, [ (0: wave) (*) 4 ])
 	
@@ -89,4 +89,4 @@ def play (wave, score)
 	sound.stop()
 }
 
-play( triangle, score )
+play score

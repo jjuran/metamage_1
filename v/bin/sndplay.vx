@@ -30,7 +30,7 @@ const triangle = do
 	packed (tooth x"FF" -tooth x"01") => 64,
 }
 
-def play (wave, score)
+def play (score, wave=triangle)
 {
 	sound.four_tone (32767, [ (0: wave) (*) 4 ])
 	
@@ -47,4 +47,6 @@ def play (wave, score)
 	sound.stop()
 }
 
-play( triangle, audiograph )
+play audiograph
+
+end.
