@@ -2,11 +2,11 @@
 
 if argc < 2 then
 {
-	warn "usage: sndplay audiograph | sndtrack"
+	warn "usage: sndplay tonegraph | sndtrack"
 	exit 1
 }
 
-const audiograph = eval load argv[ 1 ]
+const tonegraph = eval load argv[ 1 ]
 
 if isatty OUT then
 {
@@ -47,6 +47,6 @@ def play (score, wave=triangle)
 	sound.stop()
 }
 
-play audiograph
+play tonegraph
 
 end.
