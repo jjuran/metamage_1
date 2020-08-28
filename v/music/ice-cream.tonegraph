@@ -24,7 +24,7 @@ def Gt (o) { transpose( 8, C o ) }
 def A  (o) { transpose( 9, C o ) }
 def B  (o) { transpose( 11, C o ) }
 
-const audiograph =
+const tonegraph =
 [
 	# The chords of "Ice Cream" from The Music Man, by Meredith Willson
 	
