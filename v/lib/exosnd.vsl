@@ -24,15 +24,15 @@ def twos (n_bytes, x)
 const big_u16 = twos % 2
 const big_u32 = twos % 4
 
-def headerize (domain, opcode, extent)
+def headerize (domain, opcode, extent=x"")
 {
 	const reserved = x"0000"
 	
 	return reserved (big_u16 extent.size) domain opcode extent
 }
 
-const startup   = headerize (basic, switch_on, x"")
-const interrupt = headerize (basic, full_stop, x"")
+const startup   = headerize (basic, switch_on)
+const interrupt = headerize (basic, full_stop)
 
 def triplet (wavelength-amplitude-duration)
 {
