@@ -5,6 +5,7 @@ const admin = x"4a4a"
 const sound = x"4b4b"
 
 const switch_on = x"0000"
+const allow_eof = x"2e2e"
 const full_stop = x"5858"
 
 const squarewave = x"ffff"
@@ -32,6 +33,7 @@ def headerize (domain, opcode, extent=x"")
 }
 
 const startup   = headerize (basic, switch_on)
+const carry_on  = headerize (basic, allow_eof)
 const interrupt = headerize (basic, full_stop)
 
 def triplet (wavelength-amplitude-duration)
@@ -89,11 +91,14 @@ def player (send)
 	send startup
 	
 	const stop = send % interrupt
+	const detach = send % carry_on
 	
 	const square_wave = send * square_wave_tones
 	const free_form   = send * free_form_sound
 	const four_tone   = send * four_tone_start
 	const tone_update = send * four_tone_update
 	
-	return record( :stop, :square_wave, :free_form, :four_tone, :tone_update )
+	const basic = :stop, :detach
+	
+	return record( basic, :square_wave, :free_form, :four_tone, :tone_update )
 }
