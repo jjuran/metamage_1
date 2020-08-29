@@ -271,6 +271,10 @@ void event_loop( int fd )
 			
 			backend::wait();  // consume the interrupt
 		}
+		else if ( ! play_past_EOF )
+		{
+			do_full_stop();
+		}
 		
 		do_shutdown();
 		
