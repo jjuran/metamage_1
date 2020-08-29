@@ -1,10 +1,22 @@
 #!/usr/bin/env minivx
 
-if isatty OUT then
+def connect_output()
 {
-	warn "sndtune: Pipe output to sndtrack, please"
-	exit 1
+	if const sndpipe_fd = getenv "SNDPIPE_FD" then
+	{
+		return fd int sndpipe_fd
+	}
+	
+	if isatty OUT then
+	{
+		warn "sndtune: Pipe output to sndtrack, please"
+		exit 1
+	}
+	
+	return OUT
 }
+
+const output_fd = connect_output()
 
 const bindir = dirname realpath argv[ 0 ]
 const libdir = bindir "/../lib/v/"
@@ -13,7 +25,7 @@ const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
 
 const sndpipe = import "sndpipe"
 
-const sound = sndpipe.player { OUT <== _ }
+const sound = sndpipe.player { output_fd <== _ }
 
 const square   = packed (x"01" * 128, x"ff" * 128) => 0
 const sawtooth = 0 -> 256 map byte per packed => 128
