@@ -212,6 +212,7 @@ static
 void event_loop( int fd )
 {
 	bool audio_started = false;
+	bool play_past_EOF = false;
 	
 	command_header header;
 	
@@ -229,6 +230,10 @@ void event_loop( int fd )
 				{
 					case switch_on:
 						static bool init = audio_started = backend::start();
+						break;
+					
+					case allow_eof:
+						play_past_EOF = true;
 						break;
 					
 					case full_stop:
