@@ -60,6 +60,8 @@ const leftover = hybrid[ aligned_size -> hybrid.size ]
 sound.free_form (playrate_fixed, hybrid[ 0 -> aligned_size ])
 sound.free_form (playrate_fixed, leftover fading)
 
+sound.detach()
+
 end.
 
     ____            __
