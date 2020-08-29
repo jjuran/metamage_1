@@ -256,13 +256,20 @@ namespace posix
 				Not a tty:
 				
 				POSIX specifies ENOTTY.
-				Mac OS X yields EPERM.
+				Mac OS X yields EPERM (but ENXIO for sockets)
 				Linux generates EINVAL for pipes.
 			*/
 			
-			if ( errno != ENOTTY  &&  errno != EPERM  &&  errno != EINVAL )
+			switch ( errno )
 			{
-				fd_error( fd );  // e.g. EBADF
+				case ENOTTY:
+				case EINVAL:
+				case ENXIO:
+				case EPERM:
+					break;
+				
+				default:
+					fd_error( fd );  // e.g. EBADF
 			}
 		}
 		
