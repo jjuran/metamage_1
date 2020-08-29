@@ -35,4 +35,6 @@ const tones =
 
 sound.square_wave tones
 
+sound.detach()
+
 end.
