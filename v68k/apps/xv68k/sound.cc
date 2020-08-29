@@ -17,9 +17,9 @@ namespace sound {
 
 uint8_t* the_sound_buffer;
 
-const int exosnd_buffer_size = 8 + 4 + 370;
+const int sndpipe_buffer_size = 8 + 4 + 370;
 
-static uint8_t message_buffer[ exosnd_buffer_size ];
+static uint8_t message_buffer[ sndpipe_buffer_size ];
 
 static
 int get_sound_fd()
@@ -39,7 +39,7 @@ void sound_update()
 {
 	uint8_t* p = message_buffer;
 	
-	const size_t size = exosnd_buffer_size - 8;  // 374
+	const size_t size = sndpipe_buffer_size - 8;  // 374
 	
 	*p++ = 0;
 	*p++ = 0;
@@ -66,7 +66,7 @@ void sound_update()
 	
 	if ( sound_fd > 0 )
 	{
-		write( sound_fd, message_buffer, exosnd_buffer_size );
+		write( sound_fd, message_buffer, sndpipe_buffer_size );
 	}
 }
 
