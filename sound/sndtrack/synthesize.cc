@@ -78,11 +78,11 @@ sound_node* get_next_sound()
 }
 
 static
-short diminish( sample_buffer& output, short count )
+short diminish( sample_buffer& output )
 {
 	output_sample_t* data = output.data;
 	
-	if ( count > 255 )
+	if ( output.count > 255 )
 	{
 		for ( short i = 1;  i < 256;  ++i )
 		{
@@ -92,12 +92,14 @@ short diminish( sample_buffer& output, short count )
 		return 256;
 	}
 	
-	return count;
+	return output.count;
 }
 
 short synthesize( sample_buffer& output )
 {
 	static sound_node* last_input;
+	
+	output.count = samples_per_buffer;  // optimistic default
 	
 	bool stopping = false;
 	
@@ -195,10 +197,10 @@ short synthesize( sample_buffer& output )
 			{
 				last_input = NULL;
 				
-				return diminish( output, count );
+				return diminish( output );
 			}
 			
-			return count;
+			return output.count;
 		}
 		
 		queue_advance( sound_queue );

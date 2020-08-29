@@ -12,7 +12,8 @@ const int samples_per_buffer = 370;
 
 struct sample_buffer
 {
-	output_sample_t data[ samples_per_buffer ];
+	short            count;
+	output_sample_t  data[ samples_per_buffer ];
 };
 
 #endif

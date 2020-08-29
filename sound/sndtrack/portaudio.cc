@@ -89,7 +89,14 @@ int stream_callback( const void*                      input,
                      PaStreamCallbackFlags            statusFlags,
                      void*                            userData )
 {
-	short count = synthesize( *(sample_buffer*) output );
+	sample_buffer buffer;
+	
+	short count = synthesize( buffer );
+	
+	if ( count )
+	{
+		memcpy( output, buffer.data, count * sizeof (output_sample_t) );
+	}
 	
 	if ( short n_unset = frames_per_buffer - count )
 	{

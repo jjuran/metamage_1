@@ -131,6 +131,8 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 	
 	if ( n_voices == 0 )
 	{
+		output.count = 0;
+		
 		return 0;
 	}
 	

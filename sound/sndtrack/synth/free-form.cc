@@ -53,5 +53,7 @@ short ff_synth( sample_buffer& output, int size, ff_buffer& rec, bool reset )
 	}
 	while ( wave_index < size );
 	
+	output.count = samples_per_buffer - samples_remaining;
+	
 	return samples_per_buffer - samples_remaining;
 }
