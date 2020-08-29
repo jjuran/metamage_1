@@ -133,7 +133,7 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 	{
 		output.count = 0;
 		
-		return 0;
+		return rec.duration;
 	}
 	
 	sample_buffer v1;
@@ -161,5 +161,5 @@ short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 		*p++ = sum / 4;
 	}
 	
-	return samples_per_buffer;
+	return rec.duration;
 }

@@ -193,7 +193,7 @@ short synthesize( sample_buffer& output )
 		
 		if ( count >= 0 )
 		{
-			if ( stopping )
+			if ( stopping  ||  count == 0 )
 			{
 				last_input = NULL;
 				
