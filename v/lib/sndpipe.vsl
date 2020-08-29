@@ -1,4 +1,4 @@
-module exosnd
+module sndpipe
 
 const basic = x"0101"
 const admin = x"4a4a"

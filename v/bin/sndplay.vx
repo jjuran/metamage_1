@@ -19,9 +19,9 @@ const libdir = bindir "/../lib/v/"
 
 const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
 
-const exosnd = import "exosnd"
+const sndpipe = import "sndpipe"
 
-const sound = exosnd.player { OUT <== _ }
+const sound = sndpipe.player { OUT <== _ }
 
 const triangle = do
 {

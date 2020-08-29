@@ -11,9 +11,9 @@ const libdir = bindir "/../lib/v/"
 
 const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
 
-const exosnd = import "exosnd"
+const sndpipe = import "sndpipe"
 
-const sound = exosnd.player { OUT <== _ }
+const sound = sndpipe.player { OUT <== _ }
 
 const square_2 = packed (x"40" * 128, x"c0" * 128) => 0
 const sawtooth = 0 -> 256 map byte per packed => 128
