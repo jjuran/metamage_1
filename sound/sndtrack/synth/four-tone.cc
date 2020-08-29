@@ -9,8 +9,8 @@
 #include <stdint.h>
 #include <string.h>
 
-// exosnd-api
-#include "exosnd/exosnd.hh"
+// sndpipe-api
+#include "sndpipe/sndpipe.hh"
 
 // sndtrack
 #include "output.hh"

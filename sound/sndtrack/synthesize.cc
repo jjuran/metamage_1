@@ -19,14 +19,14 @@
 #include "synth/square-wave.hh"
 
 
-using exosnd::ftMode_flat_buffer;
-using exosnd::ftMode_flat_update;
+using sndpipe::ftMode_flat_buffer;
+using sndpipe::ftMode_flat_update;
 
 
 static inline
 void update_fourtone( sound_node* dst, const sound_node* src )
 {
-	using exosnd::FTSynthRec_flat_header;
+	using sndpipe::FTSynthRec_flat_header;
 	
 	const int size = sizeof (FTSynthRec_flat_header)
 	               - offsetof( FTSynthRec_flat_header, duration );
@@ -47,7 +47,7 @@ bool matching_fourtone( const queue_node* node, const void* data )
 		return false;
 	}
 	
-	using exosnd::FTSynthRec_flat_header;
+	using sndpipe::FTSynthRec_flat_header;
 	
 	const FTSynthRec_flat_header& buffer = sound->sound.four_tone;
 	const FTSynthRec_flat_header& update = admin->sound.four_tone;

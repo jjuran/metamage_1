@@ -1,16 +1,16 @@
 /*
-	exosnd.hh
-	---------
+	sndpipe.hh
+	----------
 */
 
-#ifndef EXOSND_EXOSND_HH
-#define EXOSND_EXOSND_HH
+#ifndef SNDPIPE_SNDPIPE_HH
+#define SNDPIPE_SNDPIPE_HH
 
 // SoundDriver
 #include "SoundDriver/SoundDriver.h"
 
 
-namespace exosnd
+namespace sndpipe
 {
 	
 #ifdef __MACOS__
@@ -76,6 +76,6 @@ struct FTSynthRec_flat_buffer : FTSynthRec_flat_header
 	Wave  sound4Wave;
 };
 
-}  // namespace exosnd
+}  // namespace sndpipe
 
 #endif

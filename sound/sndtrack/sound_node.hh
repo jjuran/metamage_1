@@ -6,8 +6,8 @@
 #ifndef SOUNDNODE_HH
 #define SOUNDNODE_HH
 
-// exosnd-api
-#include "exosnd/exosnd.hh"
+// sndpipe-api
+#include "sndpipe/sndpipe.hh"
 
 // sndtrack
 #include "queues.hh"
@@ -16,7 +16,7 @@
 typedef SWSynthRec sw_buffer;
 typedef FFSynthRec ff_buffer;
 
-typedef exosnd::FTSynthRec_flat_buffer ft_buffer;
+typedef sndpipe::FTSynthRec_flat_buffer ft_buffer;
 
 union sound_buffer
 {

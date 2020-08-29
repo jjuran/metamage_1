@@ -16,8 +16,8 @@
 // POSIX
 #include <sys/uio.h>
 
-// exosnd
-#include "exosnd/exosnd.hh"
+// sndpipe
+#include "sndpipe/sndpipe.hh"
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
@@ -71,7 +71,7 @@ WavePtr checked( WavePtr wave )
 static
 ssize_t start_sound( const void* buffer, UInt32 length )
 {
-	using namespace exosnd;
+	using namespace sndpipe;
 	
 	FTSynthRec_flat_buffer flat;
 	
@@ -104,19 +104,19 @@ ssize_t start_sound( const void* buffer, UInt32 length )
 static inline
 ssize_t send_basic_command( uint16_t command )
 {
-	return send_command( exosnd::basic_domain, &command, sizeof command );
+	return send_command( sndpipe::basic_domain, &command, sizeof command );
 }
 
 static inline
 ssize_t begin_audio()
 {
-	return send_basic_command( exosnd::switch_on );
+	return send_basic_command( sndpipe::switch_on );
 }
 
 static inline
 ssize_t abort_sound()
 {
-	return send_basic_command( exosnd::full_stop );
+	return send_basic_command( sndpipe::full_stop );
 }
 
 static timer_node Sound_timer_node;
@@ -171,7 +171,7 @@ pascal void SoundVBL_Proc()
 {
 	if ( *current_FTSound != copy_of_FTSoundRec )
 	{
-		using namespace exosnd;
+		using namespace sndpipe;
 		
 		copy_of_FTSoundRec = *current_FTSound;
 		

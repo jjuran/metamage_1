@@ -12,8 +12,8 @@
 // iota
 #include "iota/endian.hh"
 
-// exosnd-api
-#include "exosnd/endian.hh"
+// sndpipe-api
+#include "sndpipe/endian.hh"
 
 // sndtrack
 #include "admin.hh"
@@ -23,7 +23,7 @@
 #include "sound_node.hh"
 
 
-using namespace exosnd;
+using namespace sndpipe;
 
 struct command_header
 {
@@ -84,7 +84,7 @@ ssize_t read_header( int fd, command_header& header )
 	
 	if ( n_read > 0 )
 	{
-		exosnd::endianize( header );
+		sndpipe::endianize( header );
 	}
 	else if ( n_read == 0 )
 	{

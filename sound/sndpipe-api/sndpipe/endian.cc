@@ -3,10 +3,10 @@
 	---------
 */
 
-#include "exosnd/endian.hh"
+#include "sndpipe/endian.hh"
 
 
-namespace exosnd
+namespace sndpipe
 {
 
 using namespace iota;
@@ -50,4 +50,4 @@ void byte_swap( FTSynthRec_flat_header& rec )
 	rec.sound4Phase = swap_4_bytes( rec.sound4Phase );
 }
 
-}  // namespace exosnd
+}  // namespace sndpipe

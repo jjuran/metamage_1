@@ -3,17 +3,17 @@
 	---------
 */
 
-#ifndef EXOSND_ENDIAN_HH
-#define EXOSND_ENDIAN_HH
+#ifndef SNDPIPE_ENDIAN_HH
+#define SNDPIPE_ENDIAN_HH
 
 // iota
 #include "iota/endian.hh"
 
-// exosnd
-#include "exosnd/exosnd.hh"
+// sndpipe
+#include "sndpipe/sndpipe.hh"
 
 
-namespace exosnd
+namespace sndpipe
 {
 	
 	// These **do not** byte-swap the mode field!
@@ -33,6 +33,6 @@ namespace exosnd
 		}
 	}
 	
-}  // namespace exosnd
+}  // namespace sndpipe
 
 #endif
