@@ -31,22 +31,29 @@ var ifconfig-path = "/sbin/ifconfig"
 
 const ifconfig_platform
 
-const ifconfig_version_status = status_from( "/sbin/ifconfig --version" )
-
-if ifconfig_version_status == 127 then
+if (getenv "OSTYPE" or "") == "darwin" then
 {
-	ifconfig-path = "ifconfig"  # for Android
+	ifconfig_platform = "bsd"
 }
-
-const platform_from_exit = int^
-[
-	0: "net-tools",
-	1: "bsd",
-	4: "linux",
-	127: "linux"
-]
-
-ifconfig_platform = platform_from_exit[ ifconfig_version_status ]
+else
+{
+	const ifconfig_version_status = status_from( "/sbin/ifconfig --version" )
+	
+	if ifconfig_version_status == 127 then
+	{
+		ifconfig-path = "ifconfig"  # for Android
+	}
+	
+	const platform_from_exit = int^
+	[
+		0: "net-tools",
+		1: "bsd",
+		4: "linux",
+		127: "linux"
+	]
+	
+	ifconfig_platform = platform_from_exit[ ifconfig_version_status ]
+}
 
 const ifconfig = import "ifconfig." ifconfig_platform
 
