@@ -81,7 +81,7 @@ sub add_project_description
 	
 	my @subproject_dirs = map { "$dir/$_" } @{ $data->{subprojects} || [] };
 	
-	scan_for_project_descriptions( $_ )  foreach @subproject_dirs;
+	scan_for_project_descriptions( $_ )  foreach grep { -d } @subproject_dirs;
 }
 
 sub scan_for_project_descriptions
