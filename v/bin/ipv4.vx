@@ -27,9 +27,11 @@ def status_from
 const begins_with    = import "begins_with"
 const get_until_char = import "get_until_char"
 
-const ifconfig_version_status = status_from( "/sbin/ifconfig --version" )
-
 var ifconfig-path = "/sbin/ifconfig"
+
+const ifconfig_platform
+
+const ifconfig_version_status = status_from( "/sbin/ifconfig --version" )
 
 if ifconfig_version_status == 127 then
 {
@@ -44,7 +46,7 @@ const platform_from_exit = int^
 	127: "linux"
 ]
 
-const ifconfig_platform = platform_from_exit[ ifconfig_version_status ]
+ifconfig_platform = platform_from_exit[ ifconfig_version_status ]
 
 const ifconfig = import "ifconfig." ifconfig_platform
 
