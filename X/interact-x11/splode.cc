@@ -56,8 +56,8 @@ void send_cursor_location( int x, int y )
 	{
 		sizeof buffer - 1,
 		0,
-		iota::big_u16( x ),
-		iota::big_u16( y ),
+		(int16_t) iota::big_u16( x ),
+		(int16_t) iota::big_u16( y ),
 	};
 	
 	WRITE( buffer );
@@ -89,7 +89,7 @@ void send_key_event( XKeyEvent& event )
 	
 	KeySym keysym = XLookupKeysym( &event, 0 );
 	
-	char c = keysym;
+	unsigned char c = keysym;
 	
 	switch ( keysym )
 	{
