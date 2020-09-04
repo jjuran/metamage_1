@@ -1,68 +1,24 @@
 #!/usr/bin/env vx -Z
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/"
-
-const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
-
-def status_from
+def exists (path)
 {
-	const command (str) = _
-	
-	const err = dup ERR
-	
-	const r, const w = pipe()
-	
-	dup2( w, ERR ); close w
-	
-	const exit_status = try { system command } catch { _.exit }
-	
-	dup2( err, ERR ); close err
-	
-	close r
-	
-	return exit_status
+	return try {stat path; true} catch {false}
 }
-
-const begins_with    = import "begins_with"
-const get_until_char = import "get_until_char"
 
 var ifconfig-path = "/sbin/ifconfig"
 
-const ifconfig_platform
-
-if (getenv "OSTYPE" or "") == "darwin" then
+if not exists ifconfig-path then
 {
-	ifconfig_platform = "bsd"
-}
-else
-{
-	const ifconfig_version_status = status_from( "/sbin/ifconfig --version" )
-	
-	if ifconfig_version_status == 127 then
-	{
-		ifconfig-path = "ifconfig"  # for Android
-	}
-	
-	const platform_from_exit = int^
-	[
-		0: "net-tools",
-		1: "bsd",
-		4: "linux",
-		127: "linux"
-	]
-	
-	ifconfig_platform = platform_from_exit[ ifconfig_version_status ]
+	ifconfig-path = "ifconfig"  # for Android
 }
 
-const ifconfig = import "ifconfig." ifconfig_platform
+const lower = 'a' .. 'z'
+const digit = '0' .. '9'
+const space = ' ' | '\t'
 
-const get_intf_name = get_until_char % ifconfig.intf_name_suffix
-const get_ipv4_addr = get_until_char % ' '
-
-const inet = ifconfig.inet_addr_prefix
-
-const pad_char = inet[ 0 ]
+const name = (lower | digit | '-' | '_')+ => str
+const inet = [space*, "inet ", "addr:"?]
+const addr = (digit | '.')+ => str
 
 var results = []
 
@@ -72,13 +28,15 @@ for line in output-from-run( [ifconfig-path] ).lines() do
 {
 	if line == "" then {continue}
 	
-	if line[ 0 ] != pad_char then
+	var p = begin line
+	
+	if var intf_name = p += name then
 	{
-		interface = get_intf_name( line )
+		interface = intf_name
 	}
-	else if begins_with( line, inet ) then
+	else if p += inet then
 	{
-		const ipv4 = get_ipv4_addr( substr( line, inet.length ) )
+		const ipv4 = p += addr
 		
 		results <-- interface ": " ipv4
 	}

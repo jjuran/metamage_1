@@ -1,4 +1,0 @@
-module ifconfig
-
-export const intf_name_suffix = ':'
-export const inet_addr_prefix = (" " * 8) "inet "
