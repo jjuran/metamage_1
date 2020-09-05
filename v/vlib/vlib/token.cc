@@ -21,9 +21,25 @@ namespace vlib
 	}
 	
 	static inline
-	bool whitespace( token_type token )
+	bool whitespace_or_begin( token_type token )
 	{
-		return ignorable( token )  ||  token == Token_newline;
+		switch ( token )
+		{
+			case Token_lparen:
+			case Token_lbrace:
+			case Token_lbracket:
+			
+			case Token_whitespace:
+			case Token_comment:
+			case Token_newline:
+			case Token_semicolon:
+			case Token_comma:  // Commas might not always be followed by space
+			case Token_end:    // This token also occurs at beginning of code
+				return true;
+			
+			default:
+				return false;
+		}
 	}
 	
 	static inline
@@ -50,7 +66,7 @@ namespace vlib
 	
 	token_type next_token( const char*& p, Token& result )
 	{
-		result.space_before = whitespace( result );
+		result.space_before = whitespace_or_begin( result );
 		
 		const char* q = p;
 		

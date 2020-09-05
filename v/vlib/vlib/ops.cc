@@ -37,6 +37,9 @@ namespace vlib
 		Match   = Tight | Loose,
 		
 		Every = Tight | OnlyR | OnlyL | Loose,
+		
+		Not_L = Every - OnlyL,
+		Not_R = Every - OnlyR,
 	};
 	
 	struct op_mapping
@@ -48,16 +51,16 @@ namespace vlib
 	
 	const op_mapping when_value_expected[] =
 	{
-		{ Token_colon,       Every, Op_keyvar       },
-		{ Token_plus,        Every, Op_unary_plus   },
-		{ Token_minus,       Every, Op_unary_minus  },
-		{ Token_tilde,       Every, Op_unary_negate },
-		{ Token_plus_x2,     Every, Op_preinc       },
-		{ Token_minus_x2,    Every, Op_predec       },
-		{ Token_lt_equals,   Every, Op_recv         },
-		{ Token_parens_plus, Every, Op_unary_count  },
-		{ Token_asterisk,    Every, Op_unary_deref  },
-		{ Token_ampersand,   Every, Op_unary_refer  },
+		{ Token_colon,       OnlyL, Op_keyvar       },
+		{ Token_plus,        Not_R, Op_unary_plus   },
+		{ Token_minus,       Not_R, Op_unary_minus  },
+		{ Token_tilde,       Not_R, Op_unary_negate },
+		{ Token_plus_x2,     Not_R, Op_preinc       },
+		{ Token_minus_x2,    Not_R, Op_predec       },
+		{ Token_lt_equals,   Not_R, Op_recv         },
+		{ Token_parens_plus, Not_R, Op_unary_count  },
+		{ Token_asterisk,    Not_R, Op_unary_deref  },
+		{ Token_ampersand,   Not_R, Op_unary_refer  },
 	};
 	
 	const op_mapping when_value_acquired[] =
