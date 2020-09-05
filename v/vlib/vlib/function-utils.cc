@@ -11,6 +11,8 @@
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
+#include "vlib/iterators/list_builder.hh"
+#include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/integer.hh"
 
 
@@ -19,6 +21,11 @@ namespace vlib
 	
 	Value call_function( const Value& f, const Value& arguments )
 	{
+		if ( is_empty_list( f ) )
+		{
+			return f;
+		}
+		
 		if ( const dispatch* methods = f.dispatch_methods() )
 		{
 			if ( const operators* ops = methods->ops )
@@ -58,6 +65,22 @@ namespace vlib
 				}
 				
 				return result;
+			}
+			
+			if ( expr->op == Op_list )
+			{
+				list_iterator it( f );
+				
+				list_builder results;
+				
+				while ( it )
+				{
+					const Value& f = it.use();
+					
+					results.append( call_function( f, arguments ) );
+				}
+				
+				return results;
 			}
 			
 			const Value& method = expr->left;
