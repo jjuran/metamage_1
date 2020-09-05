@@ -7,6 +7,7 @@
 
 // vlib
 #include "vlib/list-utils.hh"
+#include "vlib/member.hh"
 #include "vlib/os.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
@@ -81,6 +82,13 @@ namespace vlib
 				}
 				
 				return results;
+			}
+			
+			if ( expr->op == Op_getter )
+			{
+				const Value& member = expr->right;
+				
+				return calc_member( arguments, member );
 			}
 			
 			const Value& method = expr->left;

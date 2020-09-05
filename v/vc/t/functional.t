@@ -122,3 +122,28 @@ $ vc '() 123'
 
 $ vc '[(md5, sha256, ...) "greetings"] map {v[ 0 -> 8 ]}'
 1 >= '[x"f4a04f87cabf65ed", x"7dd4f2f077e449b4", "greeting"]'
+
+%
+
+$ vc '["We hold these truths to be self-evident" / *" "] map .length'
+1 >= '[2, 4, 5, 6, 2, 2, 12]'
+
+%
+
+$ vc '(.key, .value)(foo: 1)'
+1 >= '("foo", 1)'
+
+%
+
+$ vc '(.keys, .values) str^[foo: 1, bar: 2]'
+1 >= '(["foo", "bar"], [1, 2])'
+
+%
+
+$ vc '.value^2 (foo: bar: "baz")'
+1 >= '"baz"'
+
+%
+
+$ vc '(.y, .x, .dy, .dx) record(x: 0, y: 20, dx: 512, dy: 322)'
+1 >= '(20, 0, 322, 512)'

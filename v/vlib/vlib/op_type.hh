@@ -79,6 +79,7 @@ namespace vlib
 		Op_subscript,
 		Op_block,
 		Op_member,
+		Op_getter,
 		Op_multiply,
 		Op_divide,
 		Op_DIV,

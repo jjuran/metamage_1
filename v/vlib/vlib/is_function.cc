@@ -26,6 +26,7 @@ namespace vlib
 				case Op_bind_args:
 				case Op_invocation:
 				case Op_lambda:
+				case Op_getter:
 				case Op_multiply:
 					return true;
 				

@@ -408,7 +408,7 @@ namespace vlib
 				visit( expr->left, expr->source );
 			}
 			
-			if ( op != Op_member )
+			if ( op != Op_member  &&  op != Op_getter )
 			{
 				visit( expr->right, expr->source );
 			}

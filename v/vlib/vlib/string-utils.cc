@@ -81,6 +81,7 @@ namespace vlib
 			case Op_prototype:
 			case Op_named_unary:  return " ";
 			
+			case Op_getter:
 			case Op_member:  return ".";
 			
 			case Op_take:  return "take ";

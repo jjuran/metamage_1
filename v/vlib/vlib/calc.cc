@@ -196,6 +196,11 @@ namespace vlib
 			return generic_deref( v );
 		}
 		
+		if ( op == Op_getter )
+		{
+			return Value( op, v );
+		}
+		
 		if ( op == Op_return )
 		{
 			throw transfer_via_return( v, source_spec() );

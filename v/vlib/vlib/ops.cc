@@ -51,6 +51,7 @@ namespace vlib
 	
 	const op_mapping when_value_expected[] =
 	{
+		{ Token_dot,         OnlyL, Op_getter       },
 		{ Token_colon,       OnlyL, Op_keyvar       },
 		{ Token_plus,        Not_R, Op_unary_plus   },
 		{ Token_minus,       Not_R, Op_unary_minus  },
@@ -72,8 +73,6 @@ namespace vlib
 		{ Token_question, Postfix, Op_postfix_0_1 },
 		{ Token_asterisk, Postfix, Op_postfix_0_N },
 		{ Token_plus,     Postfix, Op_postfix_1_N },
-		
-		{ Token_dot, OnlyL, Op_named_unary },
 		
 		{ Token_dot,          Tight, Op_member    },
 		{ Token_plus,         Loose, Op_add       },
