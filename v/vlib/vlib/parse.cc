@@ -590,12 +590,11 @@ namespace vlib
 	Value Parser::parse( const char* p )
 	{
 		Value result;  // NIL
+		Token token;
 		
 		while ( true )
 		{
 			bool new_line = false;
-			
-			Token token;
 			
 			while (( next_token( p, token ) ))
 			{
