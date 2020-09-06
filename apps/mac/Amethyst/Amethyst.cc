@@ -43,6 +43,14 @@ static CGPoint cursor_limit;
 static CGPoint last_cursor_location;
 
 static
+void move_cursor_to( CGPoint location )
+{
+	CGWarpMouseCursorPosition( location );
+	
+	CGAssociateMouseAndMouseCursorPosition( true );
+}
+
+static
 CGPoint pin_cursor( CGPoint next_cursor_location )
 {
 	CGPoint unpinned_location = next_cursor_location;
@@ -59,7 +67,7 @@ CGPoint pin_cursor( CGPoint next_cursor_location )
 	
 	if ( ! CGPointEqualToPoint( next_cursor_location, unpinned_location ) )
 	{
-		CGDisplayMoveCursorToPoint( CGMainDisplayID(), next_cursor_location );
+		move_cursor_to( next_cursor_location );
 	}
 	
 	return next_cursor_location;
@@ -431,7 +439,7 @@ void RunEventLoop()
 	transformed_location.x = last_cursor_location.x * factor + bounds.origin.x;
 	transformed_location.y = last_cursor_location.y * factor + bounds.origin.y;
 	
-	CGWarpMouseCursorPosition( transformed_location );
+	move_cursor_to( transformed_location );
 }
 
 static
