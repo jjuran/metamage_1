@@ -63,6 +63,8 @@ if exists bindir "/mkrsrc.vx" then
 	run [ "minivx", "-Z", bindir "/mkrsrc.vx", output, *respaths ]
 }
 
+def freemountd_rw (root) { "freemountd -qu --rw --root" / ' ', root, "//" }
+
 const freemountd-server = "freemountd -q --root" / ' ', root_dir, "//"
 
 const xv68k = "xv68k"
@@ -143,7 +145,7 @@ def get_appfs_fd
 	}
 	
 	const fd_slot = str (appfs-fd = reader "/dev/null")
-	appfs-server = "--fd", fd_slot, "freemountd -qu --root" / ' ', appfs, "//"
+	appfs-server = "--fd", fd_slot, freemountd_rw appfs
 	
 	return fd_slot
 }
@@ -171,7 +173,7 @@ def get_docfs_fd
 	}
 	
 	const fd_slot = str (docfs-fd = reader "/dev/null")
-	docfs-server = "--fd", fd_slot, "freemountd -qu --root" / ' ', docfs, "//"
+	docfs-server = "--fd", fd_slot, freemountd_rw docfs
 	
 	return fd_slot
 }
