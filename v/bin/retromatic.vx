@@ -32,6 +32,8 @@ def copy
 	run [ "cp", "-pR", _ ]
 }
 
+def vx_Z (script_filename) { "minivx", "-Z", bindir "/" script_filename }
+
 const output_dir = argv[ 1 ]
 const input_path = argv[ 2 ]
 
@@ -86,7 +88,7 @@ def ams-get-app (property, args: ...)
 	
 	const path = parent_dir "/" name
 	
-	return packed output-from-run [ "v/bin/ams-get.vx", property, path, args ]
+	return packed output-from-run [ vx_Z "ams-get.vx", property, path, args ]
 }
 
 def icns (icon)
@@ -104,7 +106,7 @@ rewrite Resources "/" name ".icns" <== icon
 const resfiles = [ "AMS Resources", "System" ]
 const respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
 
-run [ bindir "/mkrsrc.vx", "-o", Files "/AMS Resources/rsrc", *respaths ]
+run [ vx_Z "mkrsrc.vx", "-o", Files "/AMS Resources/rsrc", *respaths ]
 
 copy( parent_dir "/" name_to_copy, Files "/" name_to_copy )
 
