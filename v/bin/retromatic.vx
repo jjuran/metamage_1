@@ -158,7 +158,7 @@ const new_data = ("name: " rep name) "\n" * not named
 
 rewrite Resources "/config.txt" <== new_data new_disk config_data
 
-const tools = "apps/mac/Amethyst/tools/launch-ams-app.vx"
+const tools = "mac/libs/amicus/tools/launch-ams-app.vx"
 
 const native_binary_names = ["minivx graft xv68k freemountd" / ' ']
 const native_binary_paths = native_binary_names map {"var/out/" v}
