@@ -65,7 +65,7 @@ if exists bindir "/mkrsrc.vx" then
 
 def freemountd_rw (root) { "freemountd -qu --rw --root" / ' ', root, "//" }
 
-const freemountd-server = "freemountd -q --root" / ' ', root_dir, "//"
+const freemountd-server = "freemountd -qu --root" / ' ', root_dir, "//"
 
 const xv68k = "xv68k"
 

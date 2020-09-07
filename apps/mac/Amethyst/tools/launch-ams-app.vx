@@ -36,7 +36,7 @@ const root_dir = ams_mnt
 
 def freemountd_rw (root) { "./freemountd -qu --rw --root" / ' ', root, "//" }
 
-const freemountd-server = "./freemountd -q --root" / ' ', root_dir, "//"
+const freemountd-server = "./freemountd -qu --root" / ' ', root_dir, "//"
 
 # Reserve fds 6 and 7
 dup2(ERR, 6)
