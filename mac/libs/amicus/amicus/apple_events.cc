@@ -55,7 +55,7 @@ OSStatus set_AMS_OPEN_for_FSRef( const FSRef& ref )
 		return err;
 	}
 	
-	FileInfo& fileInfo = (FileInfo&) info.finderInfo;
+	FileInfo& fileInfo = *(FileInfo*) &info.finderInfo;
 	
 	if ( fileInfo.fileType == 0 )
 	{
