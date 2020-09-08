@@ -77,3 +77,13 @@ $ vc '(begin "abcde").find( *"c" .. *"d" ).rest'
 
 $ vc '(begin "27b-6").find( *"A" .. *"Z" | *"a" .. *"z" ).rest'
 1 >= '"b-6"'
+
+%
+
+$ vc '((begin "scoops").find("o") + "o").find(*"o").rest'
+1 >= '"ops"'
+
+%
+
+$ vc '((begin "scoops").find("o") + "o").find("o").rest'
+1 >= '"ops"'

@@ -601,7 +601,7 @@ namespace vlib
 		{
 			const plus::string& sub = target.string();
 			
-			loc = s.find( sub );
+			loc = s.find( sub, i );
 		}
 		
 		if ( loc == plus::string::npos )
