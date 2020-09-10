@@ -165,7 +165,7 @@ namespace Pedestal
 		TEClickLoop_Scope scope( this );
 		
 		TEClick( N::GlobalToLocal( event.where ),
-		         event.modifiers & shiftKey,
+		         (event.modifiers & shiftKey) != 0,
 		         Get() );
 		
 		gExtendingSelection = false;
