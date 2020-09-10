@@ -85,5 +85,15 @@ $ vc '((begin "scoops").find("o") + "o").find(*"o").rest'
 
 %
 
+$ vc '((begin "scoops").find("o") + "o").find(*"o" .. *"p").rest'
+1 >= '"ops"'
+
+%
+
+$ vc '((begin "scoops").find("o") + "o").find(*"o" | *"z").rest'
+1 >= '"ops"'
+
+%
+
 $ vc '((begin "scoops").find("o") + "o").find("o").rest'
 1 >= '"ops"'

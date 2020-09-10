@@ -583,17 +583,19 @@ namespace vlib
 		}
 		else if ( const ByteRange* byterange = target.is< ByteRange >() )
 		{
+			using gear::find_first_match;
+			
 			const iota::byte_range br = byterange->get();
 			
 			const char* begin = s.data();
-			const char* match = gear::find_first_match( begin, s.size(), br );
+			const char* match = find_first_match( begin + i, s.size() - i, br );
 			
 			loc = match ? match - begin : plus::string::npos;
 		}
 		else if ( const ByteClass* byteclass = target.is< ByteClass >() )
 		{
 			const char* begin = s.data();
-			const char* match = find_bc( begin, s.size(), *byteclass );
+			const char* match = find_bc( begin + i, s.size() - i, *byteclass );
 			
 			loc = match ? match - begin : plus::string::npos;
 		}
