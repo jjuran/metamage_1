@@ -45,6 +45,12 @@ namespace vlib
 	}
 	
 	static
+	bool multiple( const Expr* expr )
+	{
+		return expr  &&  expr->op == Op_mapping  &&  is_etc( expr->right );
+	}
+	
+	static
 	Value apply_prototype( const Value& prototype, const Value& arguments )
 	{
 		list_builder result;
@@ -68,9 +74,16 @@ namespace vlib
 				return result;
 			}
 			
-			const Value& arg = args.use();
-			
 			Expr* expr = param.expr();
+			
+			if ( multiple( expr ) )
+			{
+				result.append( args.rest() );
+				
+				return result;
+			}
+			
+			const Value& arg = args.use();
 			
 			const Value r = expr ? apply_prototype_param( expr, arg ) : arg;
 			
