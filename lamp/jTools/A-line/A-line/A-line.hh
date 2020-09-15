@@ -9,16 +9,12 @@
 // Standard C++
 #include <vector>
 
+// plus
+#include "plus/string_fwd.hh"
+
 // A-line
 #include "A-line/Task.hh"
 
-
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace tool
 {
@@ -28,10 +24,12 @@ namespace tool
 		bool all;
 		bool verbose;
 		bool catalog;
+		bool preprocess;
 		
-		OptionsRecord() : all    ( false ),
-		                  verbose( false ),
-		                  catalog( false )
+		OptionsRecord() : all       ( false ),
+		                  verbose   ( false ),
+		                  catalog   ( false ),
+		                  preprocess( false )
 		{
 		}
 	};
@@ -48,4 +46,3 @@ namespace tool
 }
 
 #endif
-

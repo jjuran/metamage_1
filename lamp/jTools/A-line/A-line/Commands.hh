@@ -78,18 +78,14 @@ namespace tool
 			gnu   ( target.toolchain == toolchainGNU   )
 		{}
 		
-		const char* UnixCompilerName() const  { return gnu ? "gcc" : "mwcc"; }
+		const char* UnixCompilerName() const;
 		
 		Command CompilerName() const
 		{
 			return MakeCommand( UnixCompilerName(), "-c" );
 		}
 		
-		const char* LinkerName() const
-		{
-			return gnu ? "g++"
-			           : "ld";
-		}
+		const char* LinkerName() const;
 		
 		Command TargetArchitecture() const
 		{
@@ -113,6 +109,11 @@ namespace tool
 			{
 				// Pascal strings are Mac-only, but implied until OS X
 				result.push_back( "-fpascal-strings" );
+				
+				if ( ppc )
+				{
+					result.push_back( "-fasm-blocks" );
+				}
 			}
 			
 			if ( !gnu )
@@ -199,4 +200,3 @@ namespace tool
 }
 
 #endif
-

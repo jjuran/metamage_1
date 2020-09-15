@@ -10,106 +10,105 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 18 + 15 + 10;
-
-
-using tap::ok_if;
+static const unsigned n_tests = 19 + 16 + 10;
 
 
 static void empty()
 {
 	plus::string empty;
 	
-	ok_if( empty.empty() );
+	EXPECT( empty.empty() );
 	
-	ok_if( empty.size  () == 0 );
-	ok_if( empty.length() == 0 );
+	EXPECT( empty.size  () == 0 );
+	EXPECT( empty.length() == 0 );
 	
-	ok_if( empty.capacity() == 15 );
+	EXPECT( empty.capacity() >= 15 );
+	EXPECT( empty.capacity() <= 31 );
 	
-	ok_if( empty.data () == (void*) &empty );
-	ok_if( empty.c_str() == (void*) &empty );
-	ok_if( empty.begin() == (void*) &empty );
-	ok_if( empty.end  () == (void*) &empty );
+	EXPECT( empty.data () == (void*) &empty );
+	EXPECT( empty.c_str() == (void*) &empty );
+	EXPECT( empty.begin() == (void*) &empty );
+	EXPECT( empty.end  () == (void*) &empty );
 	
-	ok_if( *empty.c_str() == '\0' );
+	EXPECT( *empty.c_str() == '\0' );
 	
-	ok_if( empty == "" );
+	EXPECT( empty == "" );
 	
 	plus::string also_empty( empty );
 	
-	ok_if( also_empty.size() == 0 );
+	EXPECT( also_empty.size() == 0 );
 	
-	ok_if( also_empty.data() == (void*) &also_empty );
+	EXPECT( also_empty.data() == (void*) &also_empty );
 	
-	ok_if( *also_empty.c_str() == '\0' );
+	EXPECT( *also_empty.c_str() == '\0' );
 	
-	ok_if( also_empty == empty );
+	EXPECT( also_empty == empty );
 	
 	also_empty.assign( "" );
 	
-	ok_if( also_empty.size() == 0 );
+	EXPECT( also_empty.size() == 0 );
 	
-	ok_if( also_empty.data() == (void*) &also_empty );
+	EXPECT( also_empty.data() == (void*) &also_empty );
 	
-	ok_if( *also_empty.c_str() == '\0' );
+	EXPECT( *also_empty.c_str() == '\0' );
 	
-	ok_if( also_empty == empty );
+	EXPECT( also_empty == empty );
 }
 
 static void small()
 {
 	plus::string one = "1";
 	
-	ok_if( one.size() == 1 );
+	EXPECT( one.size() == 1 );
 	
-	ok_if( one.data() == (void*) &one );
+	EXPECT( one.data() == (void*) &one );
 	
-	ok_if( &one.data()[0] == &one[0] );
+	EXPECT( &one.data()[0] == &one[0] );
 	
-	ok_if( one[0] == '1' );
+	EXPECT( one[0] == '1' );
 	
-	ok_if( one.c_str()[1] == '\0' );
+	EXPECT( one.c_str()[1] == '\0' );
 	
-	ok_if( one == "1" );
+	EXPECT( one == "1" );
 	
 	plus::string fifteen = "0123456789abcde";
 	
-	ok_if( fifteen.size    () == 15 );
-	ok_if( fifteen.capacity() == 15 );
+	EXPECT( fifteen.size    () == 15 );
+	EXPECT( fifteen.capacity() >= 15 );
+	EXPECT( fifteen.capacity() <= 31 );
 	
-	ok_if( fifteen.data() == (void*) &fifteen );
+	EXPECT( fifteen.data() == (void*) &fifteen );
 	
-	ok_if( &fifteen.data()[0] == &fifteen[0] );
+	EXPECT( &fifteen.data()[0] == &fifteen[0] );
 	
-	ok_if( fifteen[ 0] == '0' );
-	ok_if( fifteen[ 1] == '1' );
-	ok_if( fifteen[14] == 'e' );
+	EXPECT( fifteen[ 0] == '0' );
+	EXPECT( fifteen[ 1] == '1' );
+	EXPECT( fifteen[14] == 'e' );
 	
-	ok_if( fifteen.c_str()[15] == '\0' );
+	EXPECT( fifteen.c_str()[15] == '\0' );
 	
-	ok_if( fifteen == "0123456789abcde" );
+	EXPECT( fifteen == "0123456789abcde" );
 }
 
 static void large()
 {
-	plus::string sixteen = "0123456789abcdef";
+	plus::string thirtytwo = "0123456789abcdef" "ghijklmnopqrstuv";
 	
-	ok_if( sixteen.size    () == 16 );
-	ok_if( sixteen.capacity() >= 16 );
+	EXPECT( thirtytwo.size    () == 32 );
+	EXPECT( thirtytwo.capacity() >= 32 );
 	
-	ok_if( sixteen.data() != (void*) &sixteen );
+	EXPECT( thirtytwo.data() != (void*) &thirtytwo );
 	
-	ok_if( &sixteen.data()[0] == &sixteen[0] );
+	EXPECT( &thirtytwo.data()[0] == &thirtytwo[0] );
 	
-	ok_if( sixteen[ 0] == '0' );
-	ok_if( sixteen[ 1] == '1' );
-	ok_if( sixteen[14] == 'e' );
-	ok_if( sixteen[15] == 'f' );
+	EXPECT( thirtytwo[ 0] == '0' );
+	EXPECT( thirtytwo[ 1] == '1' );
+	EXPECT( thirtytwo[30] == 'u' );
+	EXPECT( thirtytwo[31] == 'v' );
 	
-	ok_if( sixteen.c_str()[16] == '\0' );
+	EXPECT( thirtytwo.c_str()[32] == '\0' );
 	
-	ok_if( sixteen == "0123456789abcdef" );
+	EXPECT( thirtytwo == "0123456789abcdef" "ghijklmnopqrstuv" );
 	
 }
 
@@ -125,4 +124,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

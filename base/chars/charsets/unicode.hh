@@ -14,4 +14,3 @@ namespace chars
 }
 
 #endif
-

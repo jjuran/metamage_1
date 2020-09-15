@@ -19,9 +19,6 @@
 static const unsigned n_tests = 7 + 4;
 
 
-using tap::ok_if;
-
-
 static void substring()
 {
 	plus::string hex_digits = "0123456789abcdef";
@@ -32,27 +29,27 @@ static void substring()
 	
 	a.erase();
 	
-	ok_if( a.empty() );
+	EXPECT( a.empty() );
 	
-	ok_if( a.data() == a_data );
+	EXPECT( a.data() == a_data );
 	
 	a = hex_digits;
 	
 	a.erase( 13, 20 );
 	
-	ok_if( a == "0123456789abc" );
+	EXPECT( a == "0123456789abc" );
 	
 	a.erase( 0, 3 );
 	
-	ok_if( a == "3456789abc" );
+	EXPECT( a == "3456789abc" );
 	
 	a.erase( 4, 3 );
 	
-	ok_if( a == "3456abc" );
+	EXPECT( a == "3456abc" );
 	
 	a.erase( 7, 0 );
 	
-	ok_if( a == "3456abc" );
+	EXPECT( a == "3456abc" );
 	
 	bool exception_thrown = false;
 	
@@ -65,7 +62,7 @@ static void substring()
 		exception_thrown = true;
 	}
 	
-	ok_if( exception_thrown );
+	EXPECT( exception_thrown );
 }
 
 static void iter_range()
@@ -78,19 +75,19 @@ static void iter_range()
 	
 	a.erase( begin + 13, a.end() );
 	
-	ok_if( a == "0123456789abc" );
+	EXPECT( a == "0123456789abc" );
 	
 	a.erase( begin, begin + 3 );
 	
-	ok_if( a == "3456789abc" );
+	EXPECT( a == "3456789abc" );
 	
 	a.erase( begin + 4, a.end() - 3 );
 	
-	ok_if( a == "3456abc" );
+	EXPECT( a == "3456abc" );
 	
 	a.erase( begin + 7, a.end() );
 	
-	ok_if( a == "3456abc" );
+	EXPECT( a == "3456abc" );
 	
 }
 
@@ -104,4 +101,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

@@ -5,6 +5,18 @@
 
 #include "Pedestal/Stack.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
+#ifndef CGGEOMETRY_H_
+#ifndef __CGGEOMETRY__
+#include <CGGeometry.h>
+#endif
+#endif
+
 // Pedestal
 #include "Pedestal/Quasimode.hh"
 
@@ -59,6 +71,18 @@ namespace Pedestal
 			erasing = erasing  &&  i == count;
 			
 			view.Draw( bounds, erasing );
+		}
+	}
+	
+	void Stack::DrawInContext( CGContextRef context, CGRect bounds )
+	{
+		const unsigned count = ViewCount();
+		
+		for ( unsigned i = count;  i > 0;  --i )
+		{
+			View& view = GetNthView( i );
+			
+			view.DrawInContext( context, bounds );
 		}
 	}
 	
@@ -139,6 +163,18 @@ namespace Pedestal
 		return false;
 	}
 	
+	void Stack::KeyUp( const EventRecord& event )
+	{
+		const unsigned count = ViewCount();
+		
+		for ( unsigned i = 1;  i <= count;  ++i )
+		{
+			View& view = GetNthView( i );
+			
+			view.KeyUp( event );
+		}
+	}
+	
 	bool Stack::HitTest( const EventRecord& event )
 	{
 		const unsigned count = ViewCount();
@@ -168,7 +204,7 @@ namespace Pedestal
 		}
 	}
 	
-	bool Stack::SetCursor( const EventRecord& event, RgnHandle mouseRgn )
+	bool Stack::SetCursor( const EventRecord& event )
 	{
 		const unsigned count = ViewCount();
 		
@@ -178,7 +214,7 @@ namespace Pedestal
 			
 			if ( view.HitTest( event ) )
 			{
-				return view.SetCursor( event, mouseRgn );
+				return view.SetCursor( event );
 				
 				break;
 			}
@@ -224,4 +260,3 @@ namespace Pedestal
 	}
 	
 }
-

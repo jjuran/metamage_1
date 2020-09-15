@@ -16,9 +16,8 @@
 namespace vfs
 {
 	
-	void chmod( const node* it, mode_t mode );
+	void chmod( const node& that, mode_t mode );
 	
 }
 
 #endif
-

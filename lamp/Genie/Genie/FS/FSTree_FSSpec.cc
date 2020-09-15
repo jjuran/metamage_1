@@ -5,9 +5,6 @@
 
 #include "Genie/FS/FSTree_FSSpec.hh"
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include "fcntl.h"
 #include "sys/stat.h"
@@ -18,7 +15,25 @@
 
 // MoreFiles
 #include "MoreFiles/FileCopy.h"
-#include "MoreFiles/MoreFilesExtras.h"
+
+// mac-config
+#include "mac_config/aliases.hh"
+
+// mac-types
+#include "mac_types/VRefNum_DirID.hh"
+
+// mac-sys-utils
+#include "mac_sys/async_wakeup.hh"
+#include "mac_sys/gestalt.hh"
+#include "mac_sys/volume_params.hh"
+
+// mac-file-utils
+#include "mac_file/make_FSSpec.hh"
+#include "mac_file/parent_directory.hh"
+#include "mac_file/program_file.hh"
+
+// mac-app-utils
+#include "mac_app/create_alias.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -30,10 +45,8 @@
 // Nitrogen
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/Files.hh"
+#include "Nitrogen/Processes.hh"
 #include "Nitrogen/Resources.hh"
-
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
 
 // MacFeatures
 #include "MacFeatures/BlueBoxed.hh"
@@ -46,53 +59,55 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Arcana / MD5
-#include "MD5/MD5.hh"
-
-// Pedestal
-#include "Pedestal/WakeUp.hh"
-
-// MacLamp
-#include "FSSpec_from_stat.h"
-
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/filehandle.hh"
+#include "vfs/node.hh"
+#include "vfs/functions/file-tests.hh"
 #include "vfs/functions/pathname.hh"
-#include "vfs/functions/root.hh"
+#include "vfs/functions/resolve_pathname.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/file_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/misc_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/union.hh"
 #include "vfs/primitives/stat.hh"
 
+// MacVFS
+#include "MacVFS/util/FSSpec_from_node.hh"
+
+// relix-kernel
+#include "relix/api/root.hh"
+#include "relix/fs/fifo.hh"
+
 // Genie
-#include "Genie/code/executable_file.hh"
+#include "Genie/BinaryImage.hh"
 #include "Genie/code/prepare_executable.hh"
+#include "Genie/config/resfs.hh"
 #include "Genie/FileSignature.hh"
-#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSSpecForkUser.hh"
 #include "Genie/FS/FSTree_RsrcFile.hh"
 #include "Genie/FS/HFS/hashed_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/FS/HFS/Rename.hh"
 #include "Genie/FS/HFS/SetFileTimes.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/misc_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
+#include "Genie/FS/resfs.hh"
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
 #include "Genie/FS/ResFile_Dir.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/Root_Overlay.hh"
 #include "Genie/FS/StatFile.hh"
-#include "Genie/FS/Union.hh"
 #include "Genie/FS/Users.hh"
 #include "Genie/IO/MacDirectory.hh"
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Kernel/native_syscalls.hh"
+#include "Genie/Process/AsyncYield.hh"
 #include "Genie/Utilities/AsyncIO.hh"
-#include "Genie/Utilities/CreateAlias.hh"
+#include "Genie/Utilities/OpenDataFork.hh"
 
 
 namespace Genie
@@ -101,28 +116,41 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace Ped = Pedestal;
+	
+	using mac::types::VRefNum_DirID;
+	using mac::file::make_FSSpec;
+	using mac::file::parent_directory;
 	
 	
 	namespace path_descent_operators
 	{
 		
-		static inline FSSpec operator/( const N::FSDirSpec& dir, const unsigned char* name )
+		static inline
+		FSSpec operator/( const N::FSDirSpec& dir, const unsigned char* name )
 		{
 			return MacIO::FSMakeFSSpec< FNF_Returns >( dir, name );
 		}
 		
-		static inline FSSpec operator/( const FSSpec& dir, const unsigned char* name )
+		static inline
+		FSSpec operator/( const VRefNum_DirID& dir, const unsigned char* name )
+		{
+			return MacIO::FSMakeFSSpec< FNF_Returns >( dir, name );
+		}
+		
+		static inline
+		FSSpec operator/( const FSSpec& dir, const unsigned char* name )
 		{
 			return Dir_From_FSSpec( dir ) / name;
 		}
 		
-		static inline FSSpec operator/( const N::FSDirSpec& dir, const plus::string& name )
+		static inline
+		FSSpec operator/( const VRefNum_DirID& dir, const plus::string& name )
 		{
 			return dir / N::Str63( name );
 		}
 		
-		static inline FSSpec operator/( const FSSpec& dir, const plus::string& name )
+		static inline
+		FSSpec operator/( const FSSpec& dir, const plus::string& name )
 		{
 			return dir / N::Str63( name );
 		}
@@ -151,11 +179,33 @@ namespace Genie
 	}
 	
 	
+	static void finish_creation( const FSSpec& file, const plus::string& name )
+	{
+		SetLongName( file, slashes_from_colons( plus::mac_from_utf8( name ) ) );
+	}
+	
+	static void create_file( const FSSpec&        file,
+	                         const plus::string&  name,
+	                         Mac::FSCreator       creator,
+	                         Mac::FSType          type )
+	{
+		N::HCreate( file, creator, type );
+		
+		finish_creation( file, name );
+	}
+	
+	static void create_file( const FSSpec& file, const plus::string& name )
+	{
+		N::FileSignature sig = PickFileSignatureForName( name.data(), name.size() );
+		
+		create_file( file, name, sig.creator, sig.type );
+	}
+	
 	static plus::string SlurpFile( const FSSpec& file )
 	{
 		plus::string result;
 		
-		n::owned< N::FSFileRefNum > input = N::FSpOpenDF( file, N::fsRdPerm );
+		n::owned< N::FSFileRefNum > input = OpenDataFork( file, N::fsRdPerm );
 		
 		const std::size_t size = N::GetEOF( input );
 		
@@ -168,7 +218,7 @@ namespace Genie
 	
 	static void SpewFile( const FSSpec& file, const plus::string& contents )
 	{
-		n::owned< N::FSFileRefNum > output = FSpOpenDF( file, N::fsWrPerm );
+		n::owned< N::FSFileRefNum > output = OpenDataFork( file, N::fsWrPerm );
 		
 		N::SetEOF( output, 0 );
 		
@@ -225,56 +275,68 @@ namespace Genie
 	
 	static const unsigned char* const_root_directory_name = "\p" "/";
 	
-	static N::FSDirSpec FindJDirectory()
+	static
+	VRefNum_DirID FindJDirectory()
 	{
-		CInfoPBRec cInfo = { 0 };
+		CInfoPBRec cInfo = {{ 0 }};
 		
 		N::Str63 name = const_root_directory_name;  // overkill
 		
 		// Try current directory first
 		
+		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum();
+		Mac::FSDirID        dirID   = Mac::FSDirID       ();
+		
+		if ( TARGET_API_MAC_CARBON )
+		{
+			const FSRef location = N::GetProcessBundleLocation( N::CurrentProcess() );
+			
+			const FSSpec locationSpec = N::FSMakeFSSpec( location );
+			
+			vRefNum = Mac::FSVolumeRefNum( locationSpec.vRefNum );
+			dirID   = Mac::FSDirID       ( locationSpec.parID   );
+		}
+		
 		const bool exists = MacIO::GetCatInfo< FNF_Returns >( cInfo,
-		                                                      N::FSVolumeRefNum(),
-		                                                      N::FSDirID(),
+		                                                      vRefNum,
+		                                                      dirID,
 		                                                      name );
 		
-		if ( exists )
+		if ( !exists )
 		{
-			cInfo.dirInfo.ioVRefNum = GetVRefNum( N::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum ) );
+			MacIO::GetCatInfo< FNF_Returns >( cInfo,
+			                                  vRefNum,
+			                                  dirID );
 		}
-		else
-		{
-			// Then root, or bust
-			N::FSDirSpec root = io::system_root< N::FSDirSpec >();
-			
-			MacIO::GetCatInfo< FNF_Throws >( cInfo,
-			                                 root.vRefNum,
-			                                 root.dirID,
-			                                 name );
-		}
+		
+		cInfo.dirInfo.ioVRefNum = GetVRefNum( N::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum ) );
 		
 		return Dir_From_CInfo( cInfo );
 	}
 	
-	const Mac::FSDirSpec& root_DirSpec()
+	const VRefNum_DirID& root_DirSpec()
 	{
-		static N::FSDirSpec j = FindJDirectory();
+		static VRefNum_DirID j = FindJDirectory();
 		
 		return j;
 	}
 	
-	static N::FSDirSpec FindUsersDirectory()
+	static
+	VRefNum_DirID FindUsersDirectory()
 	{
-		N::FSDirSpec root = io::system_root< N::FSDirSpec >();
+		const short vRefNum = mac::file::program_file().vRefNum;
+		
+		const VRefNum_DirID root = { vRefNum, fsRtDirID };
 		
 		FSSpec users = root / "\p" "Users";
 		
 		return Dir_From_FSSpec( users );
 	}
 	
-	static const N::FSDirSpec& GetUsersDirectory()
+	static
+	const VRefNum_DirID& GetUsersDirectory()
 	{
-		static N::FSDirSpec users = FindUsersDirectory();
+		static VRefNum_DirID users = FindUsersDirectory();
 		
 		return users;
 	}
@@ -315,99 +377,92 @@ namespace Genie
 		return result;
 	}
 	
-	static FSTreePtr hfs_parent( const FSTree* node );
+	static vfs::node_ptr hfs_parent( const vfs::node* that );
 	
-	static ino_t hfs_parent_inode( const FSTree* node )
+	static ino_t hfs_parent_inode( const vfs::node* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		return extra.fsspec.parID;
 	}
 	
-	static ino_t hfs_inode( const FSTree* node );
+	static ino_t hfs_inode( const vfs::node* that );
 	
-	static void hfs_stat( const FSTree*   node,
-	                      struct ::stat&  sb );
+	static void hfs_stat( const vfs::node*  that,
+	                      struct ::stat&    sb );
 	
-	static void hfs_chmod( const FSTree*  node,
-	                       mode_t         mode );
+	static void hfs_chmod( const vfs::node*  that,
+	                       mode_t            mode );
 	
-	static void hfs_utime( const FSTree*          node,
+	static void hfs_utime( const vfs::node*       that,
 	                       const struct timespec  times[2] );
 	
-	static void hfs_remove( const FSTree* node );
+	static void hfs_remove( const vfs::node* that );
 	
-	static void hfs_rename( const FSTree*  node,
-	                        const FSTree*  destination );
+	static void hfs_rename( const vfs::node*  that,
+	                        const vfs::node*  destination );
 	
-	static IOPtr hfs_open( const FSTree* node, int flags, mode_t mode );
+	static vfs::filehandle_ptr hfs_open( const vfs::node* that, int flags, mode_t mode );
 	
-	static off_t hfs_geteof( const FSTree* node );
+	static off_t hfs_geteof( const vfs::node* that );
 	
-	static void hfs_seteof( const FSTree* node, off_t length );
+	static plus::string hfs_readlink( const vfs::node* that );
 	
-	static plus::string hfs_readlink( const FSTree* node );
+	static vfs::node_ptr hfs_resolve( const vfs::node* that );
 	
-	static FSTreePtr hfs_resolve( const FSTree* node );
-	
-	static void hfs_symlink( const FSTree*        node,
+	static void hfs_symlink( const vfs::node*     that,
 	                         const plus::string&  target );
 	
-	static FSTreePtr hfs_lookup( const FSTree*        node,
-	                             const plus::string&  name,
-	                             const FSTree*        parent );
+	static vfs::node_ptr hfs_lookup( const vfs::node*     that,
+	                                 const plus::string&  name,
+	                                 const vfs::node*     parent );
 	
-	static void hfs_listdir( const FSTree*       node,
+	static void hfs_listdir( const vfs::node*    that,
 	                         vfs::dir_contents&  cache );
 	
-	static void hfs_mkdir( const FSTree*  node,
-	                       mode_t         mode );
+	static void hfs_mkdir( const vfs::node*  that,
+	                       mode_t            mode );
 	
-	static IOPtr hfs_opendir( const FSTree* node );
+	static vfs::filehandle_ptr hfs_opendir( const vfs::node* that );
 	
-	static void hfs_copyfile( const FSTree*  node,
-	                          const FSTree*  dest );
+	static void hfs_copyfile( const vfs::node*  that,
+	                          const vfs::node*  dest );
 	
-	static shared_exec_handle hfs_loadexec( const FSTree* node );
+	static vfs::program_ptr hfs_loadexec( const vfs::node* that );
 	
-	static const data_method_set hfs_data_methods =
+	static void hfs_mknod( const vfs::node* that, mode_t mode, dev_t dev )
 	{
-		&hfs_open,
-		&hfs_geteof,
-		&hfs_seteof
-	};
+		hfs_extra& extra = *(hfs_extra*) that->extra();
+		
+		const mode_t type = mode & S_IFMT;
+		
+		const Mac::FSCreator Creator = Mac::FSCreator( 'Poof' );
+		
+		const Mac::FSType Type_FIFO = Mac::FSType( 'FIFO' );
+		const Mac::FSType Type_SOCK = Mac::FSType( 'SOCK' );
+		
+		switch ( type )
+		{
+			case 0:
+			case S_IFREG:
+				create_file( extra.fsspec, that->name() );
+				break;
+			
+			case S_IFIFO:
+				create_file( extra.fsspec, that->name(), Creator, Type_FIFO );
+				break;
+			
+			case S_IFSOCK:
+				create_file( extra.fsspec, that->name(), Creator, Type_SOCK );
+				break;
+			
+			default:
+				p7::throw_errno( EPERM );
+				break;
+		}
+	}
 	
-	static const link_method_set hfs_link_methods =
-	{
-		&hfs_readlink,
-		&hfs_resolve,
-		&hfs_symlink
-	};
-	
-	static const dir_method_set hfs_dir_methods =
-	{
-		&hfs_lookup,
-		&hfs_listdir,
-		&hfs_mkdir,
-		&hfs_opendir
-	};
-	
-	static const file_method_set hfs_file_methods =
-	{
-		NULL,
-		&hfs_copyfile,
-		NULL,
-		&hfs_loadexec
-	};
-	
-	static const misc_method_set hfs_misc_methods =
-	{
-		&hfs_parent,
-		&hfs_parent_inode,
-		&hfs_inode
-	};
-	
-	static const node_method_set hfs_methods =
+	static const vfs::item_method_set hfs_item_methods =
 	{
 		&hfs_stat,
 		&hfs_chmod,
@@ -415,6 +470,48 @@ namespace Genie
 		&hfs_utime,
 		&hfs_remove,
 		&hfs_rename,
+	};
+	
+	static const vfs::data_method_set hfs_data_methods =
+	{
+		&hfs_open,
+		&hfs_geteof,
+	};
+	
+	static const vfs::link_method_set hfs_link_methods =
+	{
+		&hfs_readlink,
+		&hfs_resolve,
+		&hfs_symlink
+	};
+	
+	static const vfs::dir_method_set hfs_dir_methods =
+	{
+		&hfs_lookup,
+		&hfs_listdir,
+		&hfs_mkdir,
+		&hfs_opendir
+	};
+	
+	static const vfs::file_method_set hfs_file_methods =
+	{
+		NULL,
+		&hfs_copyfile,
+		NULL,
+		&hfs_loadexec,
+		&hfs_mknod,
+	};
+	
+	static const vfs::misc_method_set hfs_misc_methods =
+	{
+		&hfs_parent,
+		&hfs_parent_inode,
+		&hfs_inode
+	};
+	
+	static const vfs::node_method_set hfs_methods =
+	{
+		&hfs_item_methods,
 		&hfs_data_methods,
 		&hfs_link_methods,
 		&hfs_dir_methods,
@@ -422,15 +519,15 @@ namespace Genie
 		&hfs_misc_methods
 	};
 	
-	static FSTreePtr new_HFS_node( const CInfoPBRec&    cInfo,
-	                               const plus::string&  name,
-	                               const FSTree*        parent = NULL )
+	static vfs::node_ptr new_HFS_node( const CInfoPBRec&    cInfo,
+	                                   const plus::string&  name,
+	                                   const vfs::node*     parent = NULL )
 	{
-		FSTree* result = new FSTree( parent,
-		                             name,
-		                             GetItemMode( cInfo.hFileInfo ),
-		                             &hfs_methods,
-		                             sizeof (hfs_extra) );
+		vfs::node* result = new vfs::node( parent,
+		                                   name,
+		                                   GetItemMode( cInfo.hFileInfo ),
+		                                   &hfs_methods,
+		                                   sizeof (hfs_extra) );
 		
 		// we override Parent()
 		
@@ -464,38 +561,42 @@ namespace Genie
 		                                   preflight ) );
 	}
 	
-	static void hfs_copyfile( const FSTree*  node,
-	                          const FSTree*  destination )
+	static void hfs_copyfile( const vfs::node*  that,
+	                          const vfs::node*  destination )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		OSErr err;
+		
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		const FSSpec& srcFile = extra.fsspec;
 		
-		const FSSpec destFile = GetFSSpecFromFSTree( destination );
+		const FSSpec destFile = vfs::FSSpec_from_node( *destination );
 		
 		// Do not resolve links
 		
-		N::FSDirSpec destDir = io::get_preceding_directory( destFile );
+		VRefNum_DirID destDir = parent_directory( destFile );
 		
-		const bool renaming = !std::equal( srcFile.name,
-		                                   srcFile.name + 1 + srcFile.name[0],
-		                                   destFile.name );
+		const bool renaming = memcmp( srcFile.name,
+		                              destFile.name,
+		                              1 + srcFile.name[0] ) != 0;
 		
 		ConstStr255Param name = renaming ? destFile.name : NULL;
 		
 		// FIXME:  This logic should be worked into the file copy routine
 		// Maybe use ExchangeFiles() for safety?
 		
-		if ( io::file_exists( destFile ) )
+		err = ::HDelete( destFile.vRefNum, destFile.parID, destFile.name );
+		
+		if ( err != fnfErr )
 		{
-			io::delete_file( destFile );
+			Mac::ThrowOSStatus( err );
 		}
 		
-		FSpFileCopy( srcFile, destDir / "\p", name );
+		FSpFileCopy( srcFile, make_FSSpec( destDir ), name );
 	}
 	
 	
-	FSTreePtr FSTreeFromFSSpec( const FSSpec& item )
+	vfs::node_ptr FSTreeFromFSSpec( const FSSpec& item )
 	{
 		CInfoPBRec cInfo;
 		
@@ -510,7 +611,7 @@ namespace Genie
 		return new_HFS_node( cInfo, name );
 	}
 	
-	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir )
+	vfs::node_ptr node_from_dirID( short vRefNum, long dirID )
 	{
 		N::Str31 mac_name = "\p";
 		
@@ -520,8 +621,8 @@ namespace Genie
 		
 		FSpGetCatInfo< FNF_Throws >( cInfo,
 		                             async,
-		                             dir.vRefNum,
-		                             dir.dirID,
+		                             vRefNum,
+		                             dirID,
 		                             mac_name,
 		                             0 );
 		
@@ -532,86 +633,109 @@ namespace Genie
 		return new_HFS_node( cInfo, name );
 	}
 	
-	FSTreePtr New_FSTree_Users( const FSTree*        parent,
-	                            const plus::string&  name,
-	                            const void*          args )
+	vfs::node_ptr New_FSTree_Users( const vfs::node*     parent,
+	                                const plus::string&  name,
+	                                const void*          args )
 	{
 		return FSTreeFromFSDirSpec( GetUsersDirectory() );
 	}
 	
 	
-	static FSTreePtr MakeFSRoot()
+	static vfs::node_ptr MakeFSRoot()
 	{
-		return New_FSTree_Union( NULL,
-		                         plus::string::null,
-		                         fixed_dir( NULL,
-		                                    plus::string::null,
-		                                    Root_Overlay_Mappings ).get(),
-		                         FSTreeFromFSDirSpec( root_DirSpec() ).get() );
+		vfs::node_ptr overlayfs = fixed_dir( NULL,
+		                                     plus::string::null,
+		                                     Root_Overlay_Mappings );
+		
+	#if CONFIG_RESFS
+		
+		vfs::node_ptr resfs = new_resfs_root();
+		
+	#endif
+		
+		vfs::node_ptr diskfs = FSTreeFromFSDirSpec( root_DirSpec() );
+		
+	#if CONFIG_RESFS
+		
+		vfs::node_ptr bottom = vfs::new_union_directory( NULL,
+		                                                 plus::string::null,
+		                                                 resfs.get(),
+		                                                 diskfs.get() );
+		
+	#else
+		
+		const vfs::node_ptr& bottom = diskfs;
+		
+	#endif
+		
+		vfs::node_ptr rootfs = vfs::new_union_directory( NULL,
+		                                                 plus::string::null,
+		                                                 overlayfs.get(),
+		                                                 bottom.get() );
+		
+		return rootfs;
 	}
 	
 	
-	static FSTreePtr hfs_parent( const FSTree* node )
+	static vfs::node_ptr hfs_parent( const vfs::node* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		if ( extra.fsspec.parID == fsRtParID )
 		{
 			return Get_sys_mac_vol_N( N::FSVolumeRefNum( extra.fsspec.vRefNum ) );
 		}
 		
-		const Mac::FSDirSpec& root = root_DirSpec();
+		const VRefNum_DirID& root = root_DirSpec();
 		
 		if ( extra.fsspec.vRefNum == root.vRefNum  &&  extra.fsspec.parID == root.dirID )
 		{
-			return FSRoot();
+			return relix::root();
 		}
 		
 		try
 		{
-			if ( extra.fsspec == GetUsersDirectory() / "\p" )
+			if ( extra.fsspec == make_FSSpec( GetUsersDirectory() ) )
 			{
-				return FSRoot();
+				return relix::root();
 			}
 		}
 		catch ( ... )
 		{
 		}
 		
-		return FSTreeFromFSDirSpec( io::get_preceding_directory( extra.fsspec ) );
+		return FSTreeFromFSDirSpec( parent_directory( extra.fsspec ) );
 	}
 	
-	static ino_t hfs_inode( const FSTree* node )
+	static ino_t hfs_inode( const vfs::node* that )
 	{
-		struct ::stat sb;
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		hfs_stat( node, sb );
-		
-		return sb.st_ino;
+		return extra.cinfo.hFileInfo.ioDirID;
 	}
 	
-	static void hfs_stat( const FSTree*   node,
-	                      struct ::stat&  sb )
+	static void hfs_stat( const vfs::node*  that,
+	                      struct ::stat&    sb )
 	{
 		const bool async = false;
 		
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		Stat_HFS( async, &sb, extra.cinfo, extra.fsspec.name, false );
 	}
 	
-	static void hfs_chmod( const FSTree*  node,
-	                       mode_t         mode )
+	static void hfs_chmod( const vfs::node*  that,
+	                       mode_t            mode )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		ChangeFileMode( extra.fsspec, mode );
 	}
 	
-	static void hfs_utime( const FSTree*          node,
+	static void hfs_utime( const vfs::node*       that,
 	                       const struct timespec  times[2] )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		SetFileTimes( N::FSVolumeRefNum( extra.fsspec.vRefNum ),
 		              N::FSDirID       ( extra.fsspec.parID   ),
@@ -619,18 +743,17 @@ namespace Genie
 		              times );
 	}
 	
-	static void Delete_HFS( const FSSpec& fileSpec )
+	static void Delete_HFS( const FSSpec& file )
 	{
 		// returns fnfErr for directories
-		OSErr unlockErr = ::FSpRstFLock( &fileSpec );
-		
-		OSErr deleteErr = ::FSpDelete( &fileSpec );
+		OSErr unlockErr = ::HRstFLock( file.vRefNum, file.parID, file.name );
+		OSErr deleteErr = ::HDelete  ( file.vRefNum, file.parID, file.name );
 		
 		if ( MacFeatures::Is_Running_OSXNative()  &&  unlockErr == noErr  &&  deleteErr == fBsyErr )
 		{
 			// If we're on OS X and the file was busy, try the native unlink().
 			
-			const FSRef fsRef = N::FSpMakeFSRef( fileSpec );
+			const FSRef fsRef = N::FSpMakeFSRef( file );
 			
 			const nucleus::string path = N::FSRefMakePath( fsRef );
 			
@@ -650,65 +773,35 @@ namespace Genie
 		Mac::ThrowOSStatus( deleteErr );
 	}
 	
-	static void hfs_remove( const FSTree* node )
+	static void hfs_remove( const vfs::node* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		Delete_HFS( extra.fsspec );
 	}
 	
 	
-	FSSpec GetFSSpecFromFSTree( const FSTreePtr& file )
+	static void hfs_rename( const vfs::node*  that,
+	                        const vfs::node*  destFile )
 	{
-		struct ::stat stat_buffer = { 0 };
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		try
-		{
-			stat( file.get(), stat_buffer );
-		}
-		catch ( const p7::errno_t& err )
-		{
-			if ( err != ENOENT )
-			{
-				throw;
-			}
-		}
-		
-		FSSpec spec;
-		
-		p7::throw_posix_result( FSSpec_from_stat( stat_buffer, spec ) );
-		
-		return spec;
-	}
-	
-	static void hfs_rename( const FSTree*  node,
-	                        const FSTree*  destFile )
-	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
-		
-		Rename_HFS( extra.fsspec, destFile );
+		Rename_HFS( extra.fsspec, *destFile );
 	}
 	
 	
-	static off_t hfs_geteof( const FSTree* node )
+	static off_t hfs_geteof( const vfs::node* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		Mac::ThrowOSStatus( extra.cinfo.hFileInfo.ioResult );
 		
 		return extra.cinfo.hFileInfo.ioFlLgLen;
 	}
 	
-	static void hfs_seteof( const FSTree* node, off_t length )
+	static plus::string hfs_readlink( const vfs::node* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
-		
-		N::SetEOF( N::FSpOpenDF( extra.fsspec, N::fsWrPerm ), length );
-	}
-	
-	static plus::string hfs_readlink( const FSTree* node )
-	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		const plus::string target = SlurpFile( extra.fsspec );
 		
@@ -717,17 +810,27 @@ namespace Genie
 			return target;
 		}
 		
-		return pathname( hfs_resolve( node ).get() );
+		return pathname( *hfs_resolve( that ) );
 	}
 	
-	static FSTreePtr hfs_resolve( const FSTree* node )
+	enum
 	{
-		if ( !is_symlink( node ) )
+		gestaltAliasMgrAttr = 'alis',
+	};
+	
+	const bool aliases_present =
+		CONFIG_ALIASES  &&
+			(CONFIG_ALIASES_GRANTED  ||
+				mac::sys::gestalt( gestaltAliasMgrAttr ) );
+	
+	static vfs::node_ptr hfs_resolve( const vfs::node* that )
+	{
+		if ( !is_symlink( *that ) )
 		{
-			return node;
+			return that;
 		}
 		
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		const HFileInfo& hFileInfo = extra.cinfo.hFileInfo;
 		
@@ -736,21 +839,19 @@ namespace Genie
 		if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
 			// Symlink to root directory
-			return FSRoot();
+			return relix::root();
 		}
 		else
 		{
 			const FInfo& fInfo = hFileInfo.ioFlFndrInfo;
 			
-			const bool is_alias = fInfo.fdFlags & kIsAlias;
-			
 			const plus::string target = SlurpFile( extra.fsspec );
 			
 			if ( !target.empty() )
 			{
-				return ResolvePathname( target, hfs_parent( node ).get() );
+				return resolve_pathname( *relix::root(), target, *hfs_parent( that ) );
 			}
-			else if ( is_alias )
+			else if ( aliases_present  &&  fInfo.fdFlags & kIsAlias )
 			{
 				FSSpec target = N::ResolveAliasFile( extra.fsspec, false );
 				
@@ -771,7 +872,7 @@ namespace Genie
 	{
 		plus::string utf8_link_name = plus::utf8_from_mac( link_spec.name );
 		
-		FSSpec parent_spec = N::FSMakeFSSpec( io::get_preceding_directory( link_spec ) );
+		FSSpec parent_spec = make_FSSpec( parent_directory( link_spec ) );
 		
 		FSRef parent_ref = N::FSpMakeFSRef( parent_spec );
 		
@@ -785,9 +886,9 @@ namespace Genie
 		                                        path.c_str() ) );
 	}
 	
-	static void CreateSymLink( const FSTreePtr& linkFile, const plus::string& targetPath )
+	static void CreateSymLink( const vfs::node& linkFile, const plus::string& targetPath )
 	{
-		FSSpec linkSpec = GetFSSpecFromFSTree( linkFile );
+		FSSpec linkSpec = vfs::FSSpec_from_node( linkFile );
 		
 		if ( MacFeatures::Is_Running_OSXNative() )
 		{
@@ -796,56 +897,88 @@ namespace Genie
 			return;
 		}
 		
-		N::FSDirSpec linkParent = io::get_preceding_directory( linkSpec );
+		if ( ! aliases_present )
+		{
+			goto no_alias;
+		}
 		
 		try
 		{
+			VRefNum_DirID linkParent = parent_directory( linkSpec );
+			
 			// Target path is resolved relative to the location of the link file
 			// This throws if a nonterminal path component is missing
-			FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSDirSpec( linkParent ).get() );
+			const vfs::node_ptr target = resolve_pathname( *relix::root(), targetPath, *FSTreeFromFSDirSpec( linkParent ) );
 			
 			// Do not resolve links -- if the target of this link is another symlink, so be it
 			
-			FSSpec targetSpec = GetFSSpecFromFSTree( target );
+			FSSpec targetSpec = vfs::FSSpec_from_node( *target );
 			
-			CreateAlias( linkSpec, targetSpec );
+			OSErr err = mac::app::create_alias( linkSpec, targetSpec );
+			
+			if ( err == noErr )
+			{
+				goto created;
+			}
+		}
+		catch ( const p7::errno_t& err )
+		{
+			if ( err != EXDEV )
+			{
+				throw;
+			}
 		}
 		catch ( const Mac::OSStatus& err )
 		{
-			// Non-aliases get creator and type for OS X symlinks
-			N::FSpCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );
 		}
+		
+	no_alias:
+		
+		// Non-aliases get creator and type for OS X symlinks
+		N::HCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );
+		
+	created:
 		
 		SpewFile( linkSpec, targetPath );
 	}
 	
-	static void finish_creation( const FSSpec& file, const plus::string& name )
-	{
-		SetLongName( file, slashes_from_colons( plus::mac_from_utf8( name ) ) );
-	}
-	
-	static void hfs_symlink( const FSTree*        node,
+	static void hfs_symlink( const vfs::node*     that,
 	                         const plus::string&  target )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		CreateSymLink( node, target );
+		CreateSymLink( *that, target );
 		
-		finish_creation( extra.fsspec, node->name() );
+		finish_creation( extra.fsspec, that->name() );
 	}
 	
-	static void create_file( const FSSpec& file, const plus::string& name )
+	static bool hfs_is_fifo( const CInfoPBRec& cInfo )
 	{
-		N::FileSignature sig = PickFileSignatureForName( name.data(), name.size() );
+		if ( cInfo.hFileInfo.ioResult != noErr )
+		{
+			return false;
+		}
 		
-		N::FSpCreate( file, sig );
+		const FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
 		
-		finish_creation( file, name );
+		return fInfo.fdCreator == 'Poof'  &&  (fInfo.fdType & 0xFFFFFF00) == 'FIF\0';
 	}
 	
-	static IOPtr hfs_open( const FSTree* node, int flags, mode_t mode )
+	static bool hfs_is_socket( const CInfoPBRec& cInfo )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		if ( cInfo.hFileInfo.ioResult != noErr )
+		{
+			return false;
+		}
+		
+		const FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
+		
+		return fInfo.fdCreator == 'Poof'  &&  fInfo.fdType == 'SOCK';
+	}
+	
+	static vfs::filehandle_ptr hfs_open( const vfs::node* that, int flags, mode_t mode )
+	{
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		bool created = false;
 		
@@ -855,13 +988,13 @@ namespace Genie
 			
 			if ( !exists )
 			{
-				create_file( extra.fsspec, node->name() );
+				create_file( extra.fsspec, that->name() );
 				
 				created = true;
 			}
 			else
 			{
-				const plus::string name_MacRoman = plus::mac_from_utf8( node->name() );
+				const plus::string name_MacRoman = plus::mac_from_utf8( that->name() );
 				
 				if ( name_MacRoman.size() <= 31 )
 				{
@@ -869,65 +1002,103 @@ namespace Genie
 					
 					const plus::string name = slashes_from_colons( name_MacRoman );
 					
-					const bool equal = std::equal( name.begin(),
-					                               name.end(),
-					                               (const char*) (extra.fsspec.name + 1) );
+					const bool equal = memcmp( name.begin(),
+					                           (extra.fsspec.name + 1),
+					                           name.size() ) == 0;
 					
 					if ( !equal )
 					{
-						N::FSpRename( extra.fsspec, name );
+						N::HRename( extra.fsspec, name );
 					}
 				}
 			}
 		}
 		
+		if ( hfs_is_fifo( extra.cinfo ) )
+		{
+			return relix::open_fifo( that, flags );
+		}
+		
+		if ( hfs_is_socket( extra.cinfo ) )
+		{
+			throw p7::errno_t( ENXIO );
+		}
+		
 		const bool async = false;
 		
-		IOPtr opened = OpenMacFileHandle( extra.fsspec,
-		                                  flags,
-		                                  async ? &Genie::FSpOpenDF : N::FSpOpenDF,
-		                                  &New_DataForkHandle );
+		vfs::filehandle_ptr opened = OpenMacFileHandle( extra.fsspec,
+		                                                flags,
+		                                                async ? &Genie::FSpOpenDF : &OpenDataFork,
+		                                                &FSTreeFromFSSpec );
 		
 		if ( created )
 		{
-			hfs_chmod( node, mode );
+			hfs_chmod( that, mode );
 		}
 		
 		return opened;
 	}
 	
-	static shared_exec_handle hfs_loadexec( const FSTree* node )
+	static vfs::program_ptr hfs_loadexec( const vfs::node* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+	#ifdef __i386__
 		
-		execution_unit unit = load_executable_file( extra.fsspec );
+		throw p7::errno_t( ENOEXEC );
+		
+	#endif
+		
+		hfs_extra& extra = *(hfs_extra*) that->extra();
+		
+		execution_unit unit = GetBinaryImage( extra.fsspec );
 		
 		return prepare_executable( unit );
 	}
 	
-	static IOPtr hfs_opendir( const FSTree* node )
+	static vfs::filehandle_ptr hfs_opendir( const vfs::node* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		const N::FSDirSpec dir = Dir_From_CInfo( extra.cinfo );
+		const VRefNum_DirID dir = Dir_From_CInfo( extra.cinfo );
 		
-		return new MacDirHandle( dir );
+		return Mac_dir_handle( dir );
 	}
 	
-	static void hfs_mkdir( const FSTree*  node,
-	                       mode_t         mode )
+	static void hfs_mkdir( const vfs::node*  that,
+	                       mode_t            mode )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		N::FSpDirCreate( extra.fsspec );
+		N::DirCreate( extra.fsspec );
 		
-		finish_creation( extra.fsspec, node->name() );
+		finish_creation( extra.fsspec, that->name() );
 	}
 	
 	
-	static FSTreePtr FSTreePtr_From_Lookup( const N::FSDirSpec&  dir,
-	                                        const plus::string&  name,
-	                                        const FSTree*        parent )
+	static bool is_possibly_masked_symlink( const CInfoPBRec& cInfo )
+	{
+		const HFileInfo& hFileInfo = cInfo.hFileInfo;
+		
+		if ( hFileInfo.ioResult != 0 )
+		{
+			return false;  // doesn't exist
+		}
+		
+		if ( hFileInfo.ioFlAttrib & kioFlAttribDirMask )
+		{
+			return false;  // directory
+		}
+		
+		const FInfo& fInfo = hFileInfo.ioFlFndrInfo;
+		
+		// 'slnk'/'rhap' files show up as 'TEXT'/'MACS' in Classic
+		
+		return fInfo.fdType == 'TEXT'  &&  fInfo.fdCreator == 'MACS';
+	}
+	
+	static
+	vfs::node_ptr FSTreePtr_From_Lookup( const VRefNum_DirID&  dir,
+	                                     const plus::string&   name,
+	                                     const vfs::node*      parent )
 	{
 		N::Str31 macName = hashed_long_name( slashes_from_colons( plus::mac_from_utf8( name ) ) );
 		
@@ -937,28 +1108,46 @@ namespace Genie
 		
 		FSpGetCatInfo< FNF_Returns >( cInfo, async, dir.vRefNum, dir.dirID, macName, 0 );
 		
+		if ( MacFeatures::Is_BlueBoxed()  &&  is_possibly_masked_symlink( cInfo ) )
+		{
+			FSSpec spec = { dir.vRefNum, dir.dirID };
+			
+			memcpy( spec.name, macName, 1 + macName[0] );
+			
+			FSRef ref = N::FSpMakeFSRef( spec );
+			
+			FSCatalogInfo info;
+			
+			N::FSGetCatalogInfo( ref, kFSCatInfoFinderInfo, &info, NULL, NULL, NULL );
+			
+			const FileInfo& fileInfo = *(const FileInfo*) info.finderInfo;
+			
+			cInfo.hFileInfo.ioFlFndrInfo.fdType    = fileInfo.fileType;
+			cInfo.hFileInfo.ioFlFndrInfo.fdCreator = fileInfo.fileCreator;
+		}
+		
 		return new_HFS_node( cInfo, name, parent );
 	}
 	
-	static FSTreePtr hfs_lookup( const FSTree*        node,
-	                             const plus::string&  name,
-	                             const FSTree*        parent )
+	static vfs::node_ptr hfs_lookup( const vfs::node*     that,
+	                                 const plus::string&  name,
+	                                 const vfs::node*     parent )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		if ( name == "rsrc"  &&  is_file( node ) )
+		if ( name == "rsrc"  &&  is_file( *that ) )
 		{
 			return GetRsrcForkFSTree( extra.fsspec );
 		}
 		
-		if ( name == "r"  &&  is_file( node ) )
+		if ( name == "r"  &&  is_file( *that ) )
 		{
-			return Get_ResFileDir_FSTree( node, "r", extra.fsspec );
+			return Get_ResFileDir_FSTree( that, "r", extra.fsspec );
 		}
 		
 		Mac::ThrowOSStatus( extra.cinfo.dirInfo.ioResult );
 		
-		N::FSDirSpec dir = Dir_From_CInfo( extra.cinfo );
+		VRefNum_DirID dir = Dir_From_CInfo( extra.cinfo );
 		
 		return FSTreePtr_From_Lookup( dir, name, parent );
 	}
@@ -972,10 +1161,9 @@ namespace Genie
 		N::FSDirID  id;
 	};
 	
-#ifdef __MACOS__
-	
-	struct IterateIntoCache_CInfoPBRec : CInfoPBRec
+	struct IterateIntoCache_CInfoPBRec
 	{
+		CInfoPBRec     cInfo;
 		NameAndID      items[ kMaxItems ];
 		UInt16         n_items;
 		volatile bool  done;
@@ -984,25 +1172,27 @@ namespace Genie
 	namespace
 	{
 		
-		pascal void IterateIntoCache_Completion( ParamBlockRec* pb )
+		pascal void IterateIntoCache_Completion( ParamBlockRec* _pb )
 		{
-			IterateIntoCache_CInfoPBRec& cInfo = *(IterateIntoCache_CInfoPBRec*) pb;
+			IterateIntoCache_CInfoPBRec& pb = *(IterateIntoCache_CInfoPBRec*) _pb;
+			
+			CInfoPBRec& cInfo = pb.cInfo;
 			
 			if ( cInfo.dirInfo.ioResult != noErr )
 			{
 				goto done;
 			}
 			
-			cInfo.items[ cInfo.n_items ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
+			pb.items[ pb.n_items ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
 			
-			++cInfo.n_items;
+			++pb.n_items;
 			
-			if ( cInfo.n_items == kMaxItems )
+			if ( pb.n_items == kMaxItems )
 			{
 				goto done;
 			}
 			
-			cInfo.dirInfo.ioNamePtr = cInfo.items[ cInfo.n_items ].name;
+			cInfo.dirInfo.ioNamePtr = pb.items[ pb.n_items ].name;
 			
 			cInfo.dirInfo.ioNamePtr[ 0 ] = '\0';
 			
@@ -1010,7 +1200,7 @@ namespace Genie
 			
 			++cInfo.dirInfo.ioFDirIndex;
 			
-			OSErr err = ::PBGetCatInfoAsync( &cInfo );
+			(void) ::PBGetCatInfoAsync( &cInfo );
 			
 			if ( cInfo.dirInfo.ioResult >= 0 )
 			{
@@ -1022,9 +1212,9 @@ namespace Genie
 			
 		done:
 			
-			cInfo.done = true;
+			pb.done = true;
 			
-			Ped::WakeUp();
+			mac::sys::request_async_wakeup();
 		}
 		
 	}
@@ -1032,15 +1222,17 @@ namespace Genie
 	static void IterateFilesIntoCache( IterateIntoCache_CInfoPBRec&  pb,
 	                                   vfs::dir_contents&            cache )
 	{
-		FSSpec item = { pb.dirInfo.ioVRefNum, pb.dirInfo.ioDrDirID };
+		CInfoPBRec& cInfo = pb.cInfo;
 		
-		N::FSDirID dirID = N::FSDirID( pb.dirInfo.ioDrDirID );
+		FSSpec item = { cInfo.dirInfo.ioVRefNum, cInfo.dirInfo.ioDrDirID };
 		
-		const bool async = !TARGET_CPU_68K && FileIsOnServer( item ) && !MacFeatures::Is_BlueBoxed();
+		N::FSDirID dirID = N::FSDirID( cInfo.dirInfo.ioDrDirID );
+		
+		const bool async = !TARGET_CPU_68K && mac::sys::item_is_on_server( item ) && !MacFeatures::Is_BlueBoxed();
 		
 		if ( async )
 		{
-			pb.dirInfo.ioCompletion = N::StaticUPP< N::IOCompletionUPP, IterateIntoCache_Completion >();
+			cInfo.dirInfo.ioCompletion = N::StaticUPP< N::IOCompletionUPP, IterateIntoCache_Completion >();
 		}
 		
 		UInt16 n_items = 0;
@@ -1049,10 +1241,10 @@ namespace Genie
 		{
 			const UInt16 i = n_items + 1;  // one-based
 			
-			pb.dirInfo.ioNamePtr = pb.items[ 0 ].name;
-			pb.dirInfo.ioDrDirID = dirID;
+			cInfo.dirInfo.ioNamePtr = pb.items[ 0 ].name;
+			cInfo.dirInfo.ioDrDirID = dirID;
 			
-			pb.dirInfo.ioFDirIndex = i;
+			cInfo.dirInfo.ioFDirIndex = i;
 			
 			pb.done = false;
 			
@@ -1062,16 +1254,16 @@ namespace Genie
 			
 			if ( async )
 			{
-				N::PBGetCatInfoAsync( pb, N::FNF_Returns() );
+				N::PBGetCatInfoAsync( cInfo, N::FNF_Returns() );
 				
 				while ( !pb.done )
 				{
 					AsyncYield();
 				}
 			}
-			else if ( const bool exists = N::PBGetCatInfoSync( pb, N::FNF_Returns() ) )
+			else if ( const bool exists = N::PBGetCatInfoSync( cInfo, N::FNF_Returns() ) )
 			{
-				pb.items[ 0 ].id = N::FSDirID( pb.dirInfo.ioDrDirID );
+				pb.items[ 0 ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
 				
 				++pb.n_items;
 			}
@@ -1082,53 +1274,46 @@ namespace Genie
 			{
 				const ino_t inode = pb.items[ j ].id;  // file or dir ID for inode
 				
-				N::CopyToPascalString( pb.items[ j ].name, item.name, sizeof item.name - 1 );
+				N::CopyToPascalString( pb.items[ j ].name + 0, item.name, sizeof item.name - 1 );
 				
 				const vfs::dir_entry node( inode, GetUnixName( item ) );
 				
 				cache.push_back( node );
 			}
 			
-			if ( pb.dirInfo.ioResult == fnfErr )
+			if ( cInfo.dirInfo.ioResult == fnfErr )
 			{
 				return;
 			}
 			
-			Mac::ThrowOSStatus( pb.dirInfo.ioResult );
+			Mac::ThrowOSStatus( cInfo.dirInfo.ioResult );
 		}
 	}
 	
-#endif
-	
-	static void hfs_listdir( const FSTree*       node,
+	static void hfs_listdir( const vfs::node*    that,
 	                         vfs::dir_contents&  cache )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		Mac::ThrowOSStatus( extra.cinfo.hFileInfo.ioResult );
 		
-	#ifdef __MACOS__
+		IterateIntoCache_CInfoPBRec pb;
 		
-		IterateIntoCache_CInfoPBRec cInfo;
+		pb.cInfo = extra.cinfo;
 		
-		static_cast< CInfoPBRec& >( cInfo ) = extra.cinfo;
-		
-		IterateFilesIntoCache( cInfo, cache );
-		
-	#endif
+		IterateFilesIntoCache( pb, cache );
 	}
 	
 }
 
-namespace vfs
+namespace relix
 {
 	
-	const node* root()
+	const vfs::node* root()
 	{
-		static node_ptr root = Genie::MakeFSRoot();
+		static vfs::node_ptr root = Genie::MakeFSRoot();
 		
 		return root.get();
 	}
 	
 }
-

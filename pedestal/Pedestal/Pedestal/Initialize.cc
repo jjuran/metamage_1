@@ -5,31 +5,19 @@
 
 #include "Pedestal/Initialize.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
-#ifndef __DIALOGS__
-#include <Dialogs.h>
+#ifndef __MACMEMORY__
+#include <MacMemory.h>
 #endif
 
 
 namespace Pedestal
 {
-	
-	void Init_MacToolbox()
-	{
-	#if !TARGET_API_MAC_CARBON
-		
-		::InitGraf( &qd.thePort );
-		::InitFonts();
-		::InitWindows();
-		::InitMenus();
-		::TEInit();
-		::InitDialogs( NULL );
-		
-	#endif
-		
-		::InitCursor();
-		// FlushEvents?
-	}
 	
 	void Init_Memory( unsigned moreMasters )
 	{
@@ -46,4 +34,3 @@ namespace Pedestal
 	}
 	
 }
-

@@ -1,7 +1,7 @@
-/*	================
- *	KSIOUXConsole.cc
- *	================
- */
+/*
+	SIOUXConsole.cc
+	---------------
+*/
 
 #if defined(__MWERKS__) && !defined(__MACH__)
 
@@ -25,14 +25,8 @@ enum __io_results
      __io_EOF
 };
 
+extern "C" int __read_console ( __file_handle handle, unsigned char* buffer, size_t* count );
 extern "C" int __write_console( __file_handle handle, unsigned char* buffer, size_t* count );
-
-
-enum
-{
-	kConsoleInputFileDescriptor  = 0,
-	kConsoleOutputFileDescriptor = 1
-};
 
 
 short InstallConsole( short /*fd*/ )
@@ -44,16 +38,6 @@ void RemoveConsole()
 {
 }
 
-long WriteCharsToConsole( char *buffer, long n )
-{
-	return write( kConsoleOutputFileDescriptor, buffer, n );
-}
-
-long ReadCharsFromConsole( char *buffer, long n )
-{
-	return read( kConsoleInputFileDescriptor, buffer, n );
-}
-
 int __write_console( __file_handle handle, unsigned char* buffer, size_t* count )
 {
 	*count = write( handle, buffer, *count );
@@ -61,5 +45,13 @@ int __write_console( __file_handle handle, unsigned char* buffer, size_t* count 
 	return *count >= 0 ? __no_io_error : __io_error;
 }
 
-#endif  // #if defined(__MWERKS__) && !defined(__MACH__)
+int __read_console( __file_handle handle, unsigned char* buffer, size_t* count )
+{
+	*count = read( handle, buffer, *count );
+	
+	return + *count >  0 ? __no_io_error
+	       : *count == 0 ? __io_EOF
+	       :               __io_error;
+}
 
+#endif  // #if defined(__MWERKS__) && !defined(__MACH__)

@@ -1,0 +1,383 @@
+/*
+	Events.cc
+	---------
+*/
+
+#include "Events.hh"
+
+// Mac OS
+#ifndef __EVENTS__
+#include <Events.h>
+#endif
+#ifndef __MACWINDOWS__
+#include <MacWindows.h>
+#endif
+
+// ams-common
+#include "callouts.hh"
+
+// ams-core
+#include "splode.hh"
+
+
+UInt32 Ticks   : 0x016A;
+Byte   MBState : 0x0172;
+UInt8  escapes : 0x0173;  // count of Button() calls that won't block
+KeyMap KeyMaps : 0x0174;
+Point  Mouse   : 0x0830;
+
+WindowRef CurActivate : 0x0A64;
+WindowRef CurDeactive : 0x0A68;
+
+
+const unsigned long GetNextEvent_throttle = 2;  // minimum ticks between calls
+
+static unsigned long next_sleep;
+
+static unsigned long polling_interval = 0;
+
+#pragma mark Accessing Events
+#pragma mark -
+
+static
+bool get_lowlevel_event( short eventMask, EventRecord* event )
+{
+	const short lowlevel_event_mask = mDownMask   | mUpMask
+	                                | keyDownMask | keyUpMask | autoKeyMask
+	                                | diskMask    | driverMask;
+	
+	eventMask &= lowlevel_event_mask;
+	
+	if ( eventMask != autoKeyMask )
+	{
+		if ( GetOSEvent( eventMask & ~autoKeyMask, event ) )
+		{
+			button_clicked = false;
+			
+			return true;
+		}
+	}
+	
+	if ( eventMask & autoKeyMask )
+	{
+		return GetOSEvent( eventMask, event );
+	}
+	
+	return false;
+}
+
+pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
+                                         EventRecord*    event )
+{
+	polling_interval = 0;
+	
+	const unsigned long sleep = next_sleep;
+	
+	next_sleep = 0;
+	
+	poll_user_input();
+	
+	if ( eventMask & activMask )
+	{
+		if ( CurDeactive )
+		{
+			event->what      = activateEvt;
+			event->message   = (long) CurDeactive;
+			event->when      = get_Ticks();
+			event->where     = Mouse;
+			event->modifiers = 0;
+			
+			CurDeactive = NULL;
+			
+			return true;
+		}
+		
+		if ( CurActivate )
+		{
+			event->what      = activateEvt;
+			event->message   = (long) CurActivate;
+			event->when      = get_Ticks();
+			event->where     = Mouse;
+			event->modifiers = activeFlag;
+			
+			CurActivate = NULL;
+			
+			return true;
+		}
+	}
+	
+	if ( get_lowlevel_event( eventMask, event ) )
+	{
+		return true;
+	}
+	
+	if ( eventMask & updateMask  &&  CheckUpdate( event ) )
+	{
+		return true;
+	}
+	
+	wait_for_user_input( sleep );
+	
+	if ( get_lowlevel_event( eventMask, event ) )
+	{
+		return true;
+	}
+	
+	/*
+		If at any point we return a non-null event, leave next_sleep set to
+		zero.  Otherwise, set it to a small but non-zero amount, so we only
+		waste a little CPU in applications that call GetNextEvent() instead
+		of WaitNextEvent(), rather than consuming one entirely.
+	*/
+	
+	next_sleep = GetNextEvent_throttle;
+	
+	return false;
+}
+
+static
+bool peek_lowlevel_event( short eventMask, EventRecord* event )
+{
+	const short lowlevel_event_mask = mDownMask   | mUpMask
+	                                | keyDownMask | keyUpMask | autoKeyMask
+	                                | diskMask;
+	
+	eventMask &= lowlevel_event_mask;
+	
+	if ( eventMask != autoKeyMask )
+	{
+		if ( OSEventAvail( eventMask & ~autoKeyMask, event ) )
+		{
+			return true;
+		}
+	}
+	
+	if ( eventMask & autoKeyMask )
+	{
+		return OSEventAvail( eventMask, event );
+	}
+	
+	return false;
+}
+
+pascal unsigned char EventAvail_patch( unsigned short  eventMask,
+                                       EventRecord*    event )
+{
+	polling_interval = 0;
+	
+	const unsigned long sleep = next_sleep;
+	
+	next_sleep = 0;
+	
+	poll_user_input();
+	
+	if ( CurDeactive )
+	{
+		event->what      = activateEvt;
+		event->message   = (long) CurDeactive;
+		event->when      = get_Ticks();
+		event->where     = Mouse;
+		event->modifiers = 0;
+		
+		return true;
+	}
+	
+	if ( CurActivate )
+	{
+		event->what      = activateEvt;
+		event->message   = (long) CurActivate;
+		event->when      = get_Ticks();
+		event->where     = Mouse;
+		event->modifiers = activeFlag;
+		
+		return true;
+	}
+	
+	if ( peek_lowlevel_event( eventMask, event ) )
+	{
+		return true;
+	}
+	
+	if ( CheckUpdate( event ) )
+	{
+		return true;
+	}
+	
+	wait_for_user_input( sleep );
+	
+	if ( peek_lowlevel_event( eventMask, event ) )
+	{
+		return true;
+	}
+	
+	/*
+		If at any point we return a non-null event, leave next_sleep set to
+		zero.  Otherwise, set it to a small but non-zero amount, so we only
+		waste a little CPU in applications that call GetNextEvent() instead
+		of WaitNextEvent(), rather than consuming one entirely.
+	*/
+	
+	next_sleep = GetNextEvent_throttle;
+	
+	return false;
+}
+
+static inline
+asm UInt32 add_pinned( UInt32 a : __D0, UInt32 b : __D1 ) : __D0
+{
+	ADD.L    D1,D0
+	BCC.S    no_carry
+	MOVEQ    #-1,D0
+no_carry:
+}
+
+pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
+                                          EventRecord*    event,
+                                          unsigned long   sleep,
+                                          RgnHandle       mouseRgn )
+{
+	if ( mouseRgn != NULL  &&  EmptyRgn( mouseRgn ) )
+	{
+		mouseRgn = NULL;
+	}
+	
+	/*
+		Time is fleeting.  Keep a local, non-volatile copy of Ticks.
+		
+		In theory, Ticks could be (future - 1) when compared to future and
+		advance to (future + 1) when subtracted from future, since
+		each load of Ticks makes a fresh call to gettimeofday() (and the
+		same concern would apply it if were updated at interrupt time).
+	*/
+	
+	UInt32 now = get_Ticks();
+	
+	/*
+		Pin the addition of Ticks and sleep.  In the improbable (but very
+		possible) event that an instance of AMS runs for over a year,
+		Ticks may exceed 2^31, at which point adding 0x7FFFFFFF (2^31 - 1)
+		will overflow.  This is bad, because it means that WaitNextEvent()
+		calls with a sleep argument of 0x7FFFFFFF (which are intended to
+		sleep for an arbitrarily long time) will return immediately, and
+		thereby (in all likelihood) consume all available CPU for the next
+		year or so (until Ticks passes 2^32 - 1 and overflows on its own).
+		
+		By pinning the addition to 2^32 - 1, busy-polling is limited to
+		one tick (1/60.15 of a second) after two years or so -- which isn't
+		bad at all.  (Though you may have other issues if you let Ticks
+		overflow.  I strongly don't recommend it...)
+	*/
+	
+	const UInt32 future = add_pinned( now, sleep );
+	
+	/*
+		First timeout is zero, so we can process update events.
+	*/
+	
+	next_sleep = 0;
+	
+	while ( true )
+	{
+		const bool got = GetNextEvent( eventMask, event );
+		
+		if ( got  ||  event->what != nullEvent )
+		{
+			return got;
+		}
+		
+		if ( mouseRgn != NULL  &&  ! PtInRgn( event->where, mouseRgn ) )
+		{
+			event->what    = osEvt;
+			event->message = mouseMovedMessage << 24;
+			
+			return true;
+		}
+		
+		now = get_Ticks();
+		
+		if ( now >= future )
+		{
+			break;
+		}
+		
+		next_sleep = future - now;
+	}
+	
+	return false;
+}
+
+#pragma mark -
+#pragma mark Reading the Mouse
+#pragma mark -
+
+pascal void GetMouse_patch( Point* loc )
+{
+	poll_user_input();
+	
+	*loc = Mouse;
+	
+	GrafPtr thePort;
+	GetPort( &thePort );
+	
+	if ( thePort )
+	{
+		GlobalToLocal( loc );
+	}
+}
+
+pascal char Button_patch()
+{
+	if ( button_clicked )
+	{
+		button_clicked = false;
+		
+		return true;
+	}
+	
+	if ( escapes )
+	{
+		polling_interval = 1;
+		
+		--escapes;
+	}
+	
+	wait_for_user_input( polling_interval );
+	
+	polling_interval = 0xFFFFFFFF;
+	
+	return ! MBState;
+}
+
+pascal char StillDown_patch()
+{
+	EventRecord event;
+	
+	return Button_patch()  &&  ! OSEventAvail( mDownMask | mUpMask, &event );
+}
+
+pascal char WaitMouseUp_patch()
+{
+	EventRecord event;
+	
+	return Button_patch()  &&  ! GetOSEvent( mUpMask, &event );
+}
+
+pascal long TickCount_patch()
+{
+	return Ticks;
+}
+
+#pragma mark -
+#pragma mark Reading the Keyboard and Keypad
+#pragma mark -
+
+pascal void GetKeys_patch( KeyMap keys )
+{
+	UInt32* src = KeyMaps;
+	UInt32* dst = keys;
+	
+	*dst++ = *src++;
+	*dst++ = *src++;
+	*dst++ = *src++;
+	*dst   = *src;
+}

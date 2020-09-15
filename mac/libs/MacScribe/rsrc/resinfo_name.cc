@@ -9,22 +9,16 @@
 #include "more/string.h"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // MacScribe
 #include "quad/quad_name.hh"
-
-// Nitrogen
-#include "Nitrogen/Resources.hh"
 
 
 namespace MacScribe
 {
 	
-	namespace N = Nitrogen;
-	
-	
-	plus::string get_name_from_ResInfo( const N::GetResInfo_Result& info )
+	plus::string get_name_from_ResInfo( const mac::types::ResInfo& info )
 	{
 		plus::string type_quad = make_quad_name( info.type );
 		
@@ -57,4 +51,3 @@ namespace MacScribe
 	}
 	
 }
-

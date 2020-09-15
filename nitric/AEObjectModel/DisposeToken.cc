@@ -1,11 +1,9 @@
-/*	===============
- *	DisposeToken.cc
- *	===============
- */
+/*
+	DisposeToken.cc
+	---------------
+*/
 
-#ifndef AEOBJECTMODEL_DISPOSETOKEN_H
-#include "AEObjectModel/DisposeToken.h"
-#endif
+#include "AEObjectModel/DisposeToken.hh"
 
 // Standard C++
 #include <algorithm>
@@ -14,8 +12,8 @@
 #include "plus/pointer_to_function.hh"
 
 // Nitrogen Extras / Iteration
-#ifndef ITERATION_AEDESCLISTITEMS_H
-#include "Iteration/AEDescListItems.h"
+#ifndef ITERATION_AEDESCLISTITEMS_HH
+#include "Iteration/AEDescListItems.hh"
 #endif
 
 
@@ -89,4 +87,3 @@ namespace Nitrogen
 	};
 	
 }
-

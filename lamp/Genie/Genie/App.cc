@@ -1,21 +1,30 @@
-/*	============
- *	GenieMain.cc
- *	============
- */
+/*
+	App.cc
+	------
+*/
+
+// mac-config
+#include "mac_config/apple-events.hh"
 
 // Nitrogen
 #include "Nitrogen/AppleEvents.hh"
 
 // Pedestal
+#include "Pedestal/AboutBox.hh"
 #include "Pedestal/Application.hh"
 #include "Pedestal/Commands.hh"
 
 // Nitrogen Extras / AEFramework
 #include "AEFramework/AEFramework.h"
 
+// relix-kernel
+#include "relix/api/os_thread_api.hh"
+#include "relix/task/scheduler.hh"
+
 // Genie
+#include "Genie/notify.hh"
 #include "Genie/ProcessList.hh"
-#include "Genie/scheduler.hh"
+#include "Genie/mnt/listener.hh"
 
 
 namespace Genie
@@ -45,13 +54,12 @@ namespace Genie
 	{
 		public:
 			App();
-			~App()  { kill_all_processes(); }
 	};
 	
 	
 	static bool About( Ped::CommandCode )
 	{
-		spawn_process( "/sbin/about" );
+		Ped::ShowAboutBox();
 		
 		return true;
 	}
@@ -65,12 +73,32 @@ namespace Genie
 	
 	App::App()
 	{
-		Ped::gActivelyBusy_Hook = &is_active;
+		const bool apple_events_present =
+			CONFIG_APPLE_EVENTS  &&
+				(CONFIG_APPLE_EVENTS_GRANTED  ||
+					Ped::apple_events_present);
+		
+	#ifndef __RELIX__
+		
+		(void) signal( SIGPIPE, SIG_IGN );
+		
+		install_empty_sighup_handler();
+		
+		start_gui_service();
+		
+	#endif
+		
+		Ped::gThreadYield_Hook  = &relix::os_thread_yield;
+		Ped::gActivelyBusy_Hook = &relix::is_active;
+		Ped::gReadyToExit_Hook  = &is_ready_to_exit;
 		
 		SetCommandHandler( Ped::kCmdAbout, &About       );
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
 		
-		Reply_AppleEvent::Install_Handler();
+		if ( apple_events_present )
+		{
+			Reply_AppleEvent::Install_Handler();
+		}
 		
 		spawn_process( "/etc/startup" );
 	}
@@ -87,4 +115,3 @@ int main()
 	
 	return app.Run();
 }
-

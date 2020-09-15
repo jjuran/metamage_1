@@ -29,7 +29,6 @@
 #define _PTHREAD_H_
 
 #include <time.h>
-#include <signal.h>
 #include <sched.h>
 #include <limits.h>
 #include <sys/types.h>
@@ -157,6 +156,13 @@ int pthread_mutexattr_settype(pthread_mutexattr_t *attr, int type);
 int pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int  pshared);
 int pthread_mutexattr_getpshared(pthread_mutexattr_t *attr, int *pshared);
 
+int pthread_condattr_init(pthread_condattr_t *attr);
+int pthread_condattr_destroy(pthread_condattr_t *attr);
+int pthread_condattr_gettype(const pthread_condattr_t *attr, int *type);
+int pthread_condattr_settype(pthread_condattr_t *attr, int type);
+int pthread_condattr_setpshared(pthread_condattr_t *attr, int  pshared);
+int pthread_condattr_getpshared(pthread_condattr_t *attr, int *pshared);
+
 int pthread_mutex_init(pthread_mutex_t *mutex,
                        const pthread_mutexattr_t *attr);
 int pthread_mutex_destroy(pthread_mutex_t *mutex);
@@ -218,9 +224,6 @@ int pthread_key_create(pthread_key_t *key, void (*destructor_function)(void *));
 int pthread_key_delete (pthread_key_t);
 int pthread_setspecific(pthread_key_t key, const void *value);
 void *pthread_getspecific(pthread_key_t key);
-
-int pthread_kill(pthread_t tid, int sig);
-int pthread_sigmask(int how, const sigset_t *set, sigset_t *oset);
 
 int pthread_getcpuclockid(pthread_t  tid, clockid_t  *clockid);
 

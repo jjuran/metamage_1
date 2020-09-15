@@ -50,4 +50,3 @@ Other improvements under consideration for A-line:
 * OS X dylibs
 * OS X frameworks
 * Linux port
-

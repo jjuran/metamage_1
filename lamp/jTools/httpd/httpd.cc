@@ -1,34 +1,38 @@
-/*	========
- *	httpd.cc
- *	========
- */
-
-// Standard C/C++
-#include <cctype>
-#include <cstdio>
-#include <cstdlib>
-
-// Standard C
-#include <stdlib.h>
+/*
+	httpd.cc
+	--------
+*/
 
 // POSIX
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+// Standard C
+#include <stdlib.h>
+
+// Standard C++
+#include <functional>
+
 // iota
-#include "iota/strings.hh"
+#include "iota/char_types.hh"
+
+// command
+#include "command/get_option.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/inscribe_decimal.hh"
+#include "gear/hexadecimal.hh"
 
 // plus
-#include "plus/hexidecimal.hh"
+#include "plus/argv.hh"
+#include "plus/hexadecimal.hh"
 #include "plus/var_string.hh"
 
 // poseven
 #include "poseven/extras/pump.hh"
-#include "poseven/functions/execv.hh"
+#include "poseven/functions/execve.hh"
+#include "poseven/functions/inet_ntop.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/vfork.hh"
@@ -54,18 +58,21 @@ typedef unsigned int OSType;
 #include "HTTP.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
 #define HTTP_VERSION  "HTTP/1.0"
 
+#define STRLEN( str )  (sizeof "" str - 1)
+
+#define STR_LEN( str )  str, STRLEN( str )
+
 
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	using namespace io::path_descent_operators;
@@ -74,9 +81,45 @@ namespace tool
 	static const char* gDocumentRoot = "/var/www";
 	
 	
+	enum
+	{
+		Option_doc_root = 'd',
+	};
+	
+	using namespace command::constants;
+	
+	static command::option options[] =
+	{
+		{ "doc-root", Option_doc_root, Param_required },
+		{ NULL }
+	};
+	
+	static char* const* get_options( char* const* argv )
+	{
+		++argv;  // skip arg 0
+		
+		short opt;
+		
+		while ( (opt = command::get_option( &argv, options )) )
+		{
+			switch ( opt )
+			{
+				case Option_doc_root:
+					gDocumentRoot = command::global_result.param;
+					break;
+				
+				default:
+					abort();
+			}
+		}
+		
+		return argv;
+	}
+	
+	
 	static char ToCGI( char c )
 	{
-		return c == '-' ? '_' : std::toupper( c );
+		return c == '-' ? '_' : iota::to_upper( c );
 	}
 	
 	static bool eq( const char* a, size_t a_size,
@@ -85,8 +128,10 @@ namespace tool
 		return a_size == b_size  &&  std::equal( a, a + a_size, b );
 	}
 	
-	static void SetCGIVariables( const HTTP::MessageReceiver& request )
+	static plus::string GetCGIVariables( const HTTP::MessageReceiver& request )
 	{
+		plus::var_string result;
+		
 		const HTTP::HeaderIndex& index = request.GetHeaderIndex();
 		
 		const char* stream = request.GetHeaderStream();
@@ -121,8 +166,15 @@ namespace tool
 			plus::string value( stream + it->value_offset,
 			                    stream + it->crlf_offset );
 			
-			setenv( name, value.c_str(), 1 );
+			result += name;
+			result += '=';
+			
+			result.append( value.c_str(), value.size() + 1 );
 		}
+		
+		result.append( STR_LEN( "PATH=/usr/local/bin:/usr/bin:/bin" ) + 1 );
+		
+		return result.move();
 	}
 	
 	static void ForkExecWait( char const* const             argv[],
@@ -131,6 +183,8 @@ namespace tool
 		const plus::string& partialData = request.GetPartialContent();
 		
 		bool partial_data_exist = !partialData.empty();
+		
+		plus::argv env = GetCGIVariables( request );
 		
 		int pipe_ends[2];
 		
@@ -155,13 +209,7 @@ namespace tool
 				close( reader );
 			}
 			
-			// This eliminates LOCAL_EDITOR, PATH, and SECURITYSESSIONID.
-			// We'll have to consider other approaches.
-			//clearenv();
-			
-			SetCGIVariables( request );
-			
-			p7::execv( argv );
+			p7::execve( argv, env.get_argv() );
 		}
 		
 		if ( partial_data_exist )
@@ -218,7 +266,7 @@ namespace tool
 			throw bad_http_request();
 		}
 		
-		parsed.resource.assign( request, resource - begin, space - begin );  // e.g. "/logo.png"
+		parsed.resource.assign( request, resource - begin, space - resource );  // e.g. "/logo.png"
 		
 		// HTTP version string starts after the second space
 		const char* version = space + 1;
@@ -304,7 +352,7 @@ namespace tool
 	
 	static inline char check_xdigit( char c )
 	{
-		if ( !std::isxdigit( c ) )
+		if ( !iota::is_xdigit( c ) )
 		{
 			p7::throw_errno( ENOENT );  // FIXME
 		}
@@ -405,9 +453,9 @@ namespace tool
 		return "application/octet-stream";
 	}
 	
-	static void DumpFile( const plus::string& pathname )
+	static void DumpFile( p7::fd_t from_file )
 	{
-		p7::pump( io::open_for_reading( pathname ), p7::stdout_fileno );
+		p7::pump( from_file, p7::stdout_fileno );
 	}
 	
 	static void ListDir( const plus::string& pathname )
@@ -517,18 +565,31 @@ namespace tool
 			
 		#endif
 			
-			const char* contentType = is_dir ? "text/plain" : GuessContentType( pathname, type );
+			const char* contentType = "text/plain";
 			
 			plus::var_string responseHeader = HTTP_VERSION " 200 OK\r\n";
 			
-			responseHeader += HTTP::HeaderFieldLine( "Content-Type",  contentType                   );
+			n::owned< p7::fd_t > from_file;
 			
-		#if TARGET_OS_MAC
+			if ( !is_dir )
+			{
+				contentType = GuessContentType( pathname, type );
+				
+			#if TARGET_OS_MAC
+				
+				responseHeader += HTTP::HeaderFieldLine( "X-Mac-Type",    plus::encode_32_bit_hex( info.fdType    ) );
+				responseHeader += HTTP::HeaderFieldLine( "X-Mac-Creator", plus::encode_32_bit_hex( info.fdCreator ) );
+				
+			#endif
+				
+				from_file = io::open_for_reading( pathname );
+				
+				const size_t size = p7::fstat( from_file ).st_size;
+				
+				responseHeader += HTTP::HeaderFieldLine( "Content-Length",  gear::inscribe_unsigned_decimal( size ) );
+			}
 			
-			responseHeader += HTTP::HeaderFieldLine( "X-Mac-Type",    plus::encode_32_bit_hex( info.fdType    ) );
-			responseHeader += HTTP::HeaderFieldLine( "X-Mac-Creator", plus::encode_32_bit_hex( info.fdCreator ) );
-			
-		#endif
+			responseHeader += HTTP::HeaderFieldLine( "Content-Type",  contentType );
 			
 			responseHeader += "\r\n";
 			
@@ -536,25 +597,28 @@ namespace tool
 			
 			if ( parsed.method != "HEAD" )
 			{
-				is_dir ? ListDir( pathname ) : DumpFile( pathname );
+				is_dir ? ListDir( pathname ) : DumpFile( from_file );
 			}
 		}
 	}
 	
 	int Main( int argc, char** argv )
 	{
-		o::bind_option_to_variable( "--doc-root", gDocumentRoot );
+		char *const *args = get_options( argv );
 		
-		o::get_options( argc, argv );
-		
-		sockaddr_in peer;
+		sockaddr_storage peer;
 		socklen_t peerlen = sizeof peer;
 		
 		if ( getpeername( 0, (sockaddr*)&peer, &peerlen ) == 0 )
 		{
-			std::fprintf( stderr, "%s:%d",
-			                       inet_ntoa( peer.sin_addr ),
-			                          peer.sin_port );
+			plus::var_string buffer = p7::inet_ntop( peer ).move();
+			
+			const sockaddr_in& in = (const sockaddr_in&) peer;
+			
+			buffer += ':';
+			buffer += gear::inscribe_unsigned_decimal( ntohs( in.sin_port ) );
+			
+			p7::write( p7::stderr_fileno, buffer );
 		}
 		
 		HTTP::MessageReceiver request;
@@ -569,4 +633,3 @@ namespace tool
 	}
 
 }
-

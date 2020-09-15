@@ -136,7 +136,7 @@ namespace Nitrogen
 	                                 bool                isSysHandler )
 	{
 		::OSLAccessorUPP accessor;
-		long accessorRefCon;
+		SRefCon accessorRefCon;
 		
 		ThrowOSStatus( ::AEGetObjectAccessor( desiredClass,
 		                                      containerType,
@@ -273,4 +273,3 @@ namespace Nitrogen
 	}
 	
 }
-

@@ -14,6 +14,12 @@
 #ifndef NITROGEN_KEYCHAINHI_HH
 #define NITROGEN_KEYCHAINHI_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __KEYCHAINHI__
 #include <KeychainHI.h>
 #endif
@@ -90,4 +96,3 @@ namespace Nitrogen {
 	}
 
 #endif
-

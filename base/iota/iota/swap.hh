@@ -7,7 +7,7 @@
 #define IOTA_SWAP_HH
 
 // Standard C++
-#ifdef __GNUC__
+#if defined( __GNUC__ )  &&  ! defined( ANDROID )
 #include <algorithm>
 #endif
 
@@ -15,7 +15,7 @@
 namespace iota
 {
 	
-#ifdef __GNUC__
+#if defined( __GNUC__ )  &&  ! defined( ANDROID )
 	
 	// Something is bringing std::swap() into scope, making swap() ambiguous
 	// unless iota::swap() and std::swap() are the same.
@@ -24,7 +24,7 @@ namespace iota
 	
 #else
 	
-	// Write out own swap() and save the cost of including <algorithm>
+	// Write our own swap() and save the cost of including <algorithm>
 	
 	template < class T >
 	void swap( T& a, T& b )
@@ -41,4 +41,3 @@ namespace iota
 }
 
 #endif
-

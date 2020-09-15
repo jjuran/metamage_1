@@ -10,8 +10,8 @@
 #include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
 
-// Genie
-#include "Genie/FS/FSTree_fwd.hh"
+// vfs
+#include "vfs/node_fwd.hh"
 
 
 namespace Genie
@@ -20,19 +20,19 @@ namespace Genie
 	template < class Mac_Text_Property >
 	struct utf8_text_property
 	{
-		static const std::size_t fixed_size = 0;
+		static const int fixed_size = -1;
 		
 		static const bool can_get = Mac_Text_Property::can_get;
 		static const bool can_set = Mac_Text_Property::can_set;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			Mac_Text_Property::get( result, that, binary );
 			
 			result = plus::utf8_from_mac( result );
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			plus::string mac_text = plus::mac_from_utf8( begin, end - begin );
 			
@@ -46,4 +46,3 @@ namespace Genie
 }
 
 #endif
-

@@ -14,6 +14,12 @@
 #ifndef NITROGEN_LISTS_HH
 #define NITROGEN_LISTS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __LISTS__
 #include <Lists.h>
 #endif
@@ -42,6 +48,8 @@ namespace Nitrogen
 {
 	
 	void RegisterListManagerErrors();
+	
+#if ! __LP64__
 	
 	// 436
 	nucleus::owned< ListHandle > LNew( const Rect&        rView,
@@ -167,7 +175,8 @@ namespace Nitrogen
 	// 1281
 	ListBounds GetListDataBounds( ListHandle list );
 	
+#endif  // #if ! __LP64__
+	
 }
 
 #endif
-

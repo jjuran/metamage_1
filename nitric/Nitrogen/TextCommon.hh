@@ -12,6 +12,12 @@
 #ifndef NITROGEN_TEXTCOMMON_HH
 #define NITROGEN_TEXTCOMMON_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __TEXTCOMMON__
 #include <TextCommon.h>
 #endif
@@ -116,6 +122,10 @@ namespace Nitrogen
   {
 	enum UCCharPropertyType
 	{
+		kUCCharPropTypeGenlCategory   = ::kUCCharPropTypeGenlCategory,
+		kUCCharPropTypeCombiningClass = ::kUCCharPropTypeCombiningClass,
+		kUCCharPropTypeBidiCategory   = ::kUCCharPropTypeBidiCategory,
+		
 		kUCCharPropertyType_Max = nucleus::enumeration_traits< ::UCCharPropertyType >::max
 	};
 	
@@ -311,21 +321,21 @@ namespace Nitrogen
 		                          propType );
 	}
    
-   template < ::UCCharPropertyType propType >
+   template < UCCharPropertyType propType >
    struct UCGetCharProperty_Traits;
 
    template <> struct UCGetCharProperty_Traits< kUCCharPropTypeGenlCategory   > { typedef UCCharGenlCategory   Result; };
    template <> struct UCGetCharProperty_Traits< kUCCharPropTypeCombiningClass > { typedef UCCharCombiningClass Result; };
    template <> struct UCGetCharProperty_Traits< kUCCharPropTypeBidiCategory   > { typedef UCCharBidiCategory   Result; };
    
-   template < ::UCCharPropertyType propType >
+   template < UCCharPropertyType propType >
    typename UCGetCharProperty_Traits<propType>::Result UCGetCharProperty( const UniChar *charPtr,
                                                                           UniCharCount   textLength )
      {
       return UCGetCharProperty( charPtr, textLength, propType );
      }
    
-   template < ::UCCharPropertyType propType, class UniString >
+   template < UCCharPropertyType propType, class UniString >
    typename UCGetCharProperty_Traits<propType>::Result UCGetCharProperty( const UniString& text )
      {
       return UCGetCharProperty( text, propType );

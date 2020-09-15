@@ -14,6 +14,12 @@
 #include <algorithm>
 #include <string>
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>

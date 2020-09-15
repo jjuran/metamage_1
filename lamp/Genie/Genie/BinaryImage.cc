@@ -9,17 +9,19 @@
 #include <algorithm>
 #include <map>
 
+// mac-sys-utils
+#include "mac_sys/has/FSSpec_calls.hh"
+#include "mac_sys/has/RealTempMemory.hh"
+
 // Debug
 #include "debug/assert.hh"
 
 // Nitrogen
+#include "Nitrogen/Files.hh"
 #include "Nitrogen/Resources.hh"
 
 // MacFeatures
 #include "MacFeatures/Features.hh"
-
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
 
 // MacIO
 #include "MacIO/FSRead_Sync.hh"
@@ -27,6 +29,9 @@
 
 // poseven
 #include "poseven/types/errno_t.hh"
+
+// Genie
+#include "Genie/Utilities/OpenDataFork.hh"
 
 
 namespace Genie
@@ -36,6 +41,15 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
+	
+	struct code_rsrc_header
+	{
+		uint16_t branch;
+		uint16_t flags;
+		uint32_t type;
+		uint16_t id;
+		uint16_t version;
+	};
 	
 	struct BinaryFileMetadata
 	{
@@ -82,17 +96,83 @@ namespace Genie
 	
 	static BinaryFileMetadata GetFileMetadata( const FSSpec& file )
 	{
-		CInfoPBRec pb = { 0 };
+		CInfoPBRec pb = {{ 0 }};
 		
 		MacIO::GetCatInfo< MacIO::Throw_All >( pb, file );
 		
 		return BinaryFileMetadata( pb.hFileInfo );
 	}
 	
+	static
+	n::owned< N::Handle > new_handle( size_t size )
+	{
+		OSErr err;
+		Handle h;
+		
+		if (( h = NewHandle( size ) ))  goto done;
+		
+		if ( mac::sys::has_RealTempMemory() )
+		{
+			if (( h = TempNewHandle( size, &err ) ))  goto done;
+		}
+		else
+		{
+			err = MemError();
+		}
+		
+		Mac::ThrowOSStatus( err );
+		
+	done:
+		
+		return n::owned< N::Handle >::seize( N::Handle( h ) );
+	}
+	
+	static BinaryImage ReadProgramFromDataFork( const FSSpec& file, UInt32 offset, UInt32 length )
+	{
+		n::owned< N::FSFileRefNum > refNum = OpenDataFork( file, N::fsRdPerm );
+		
+		if ( length == kCFragGoesToEOF )
+		{
+			UInt32 eof = N::GetEOF( refNum );
+			
+			if ( offset >= eof )
+			{
+				p7::throw_errno( EINVAL );
+			}
+			
+			length = eof - offset;
+		}
+		
+		BinaryImage data = new_handle( length );
+		
+		N::HLockHi( data );
+		
+		MacIO::FSRead( MacIO::kThrowEOF_Always,
+		               refNum,
+		               N::fsFromStart,
+		               offset,
+		               length,
+		               *data.get().Get() );
+		
+		if ( TARGET_CPU_68K )
+		{
+			code_rsrc_header& header = *(code_rsrc_header*) *data.get().Get();
+			
+			// Handle dereferenced here
+			
+			if ( header.branch != 0x600A )
+			{
+				p7::throw_errno( EINVAL );
+			}
+		}
+		
+		return data;
+	}
+	
 	
 	static BinaryImage ReadProgramAsCodeResource()
 	{
-		N::ResType  resType = N::ResType( 'Wish' );
+		N::ResType  resType = N::ResType( 'Tool' );
 		N::ResID    resID   = N::ResID  ( 0      );
 		
 		BinaryImage code = N::DetachResource( N::Get1Resource( resType, resID ) );
@@ -176,51 +256,44 @@ namespace Genie
 		
 		// Handle no longer used here
 		
-		n::owned< N::FSFileRefNum > refNum = N::FSpOpenDF( file, N::fsRdPerm );
-		
-		if ( length == kCFragGoesToEOF )
-		{
-			UInt32 eof = N::GetEOF( refNum );
-			
-			if ( offset >= eof )
-			{
-				p7::throw_errno( ENOEXEC );
-			}
-			
-			length = eof - offset;
-		}
-		
-		BinaryImage data;
-		
-		try
-		{
-			data = N::NewHandle( length );
-		}
-		catch ( ... )
-		{
-			data = N::TempNewHandle( length );
-		}
-		
-		N::HLockHi( data );
-		
-		MacIO::FSRead( MacIO::kThrowEOF_Always,
-		               refNum,
-		               N::fsFromStart,
-		               offset,
-		               length,
-		               *data.get().Get() );
-		
-		return data;
+		return ReadProgramFromDataFork( file, offset, length );
 	}
 	
 	static inline BinaryImage ReadImageFromFile( const FSSpec& file )
 	{
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
+		if ( ! mac::sys::has_FSSpec_calls() )
+		{
+			goto data_fork_only;
+		}
 		
-		const bool rsrc = TARGET_CPU_68K && !TARGET_RT_MAC_CFM;
+		try
+		{
+			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
+			
+			const bool rsrc = TARGET_CPU_68K && !TARGET_RT_MAC_CFM;
+			
+			return rsrc ? ReadProgramAsCodeResource(      )
+			            : ReadProgramAsCodeFragment( file );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			if ( err == eofErr )
+			{
+				// Empty resource fork, try data fork
+			}
+			else if ( err == resNotFound )
+			{
+				// No code resource, try data fork
+			}
+			else
+			{
+				throw;
+			}
+		}
 		
-		return rsrc ? ReadProgramAsCodeResource(      )
-		            : ReadProgramAsCodeFragment( file );
+	data_fork_only:
+		
+		return ReadProgramFromDataFork( file, 0, kCFragGoesToEOF );
 	}
 	
 	static bool CachedImageIsPurged( const BinaryImageCache::value_type& value )
@@ -344,4 +417,3 @@ namespace Genie
 	}
 	
 }
-

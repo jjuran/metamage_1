@@ -1,11 +1,9 @@
-/*	========
- *	Count.cc
- *	========
- */
+/*
+	Count.cc
+	--------
+*/
 
-#ifndef AEOBJECTMODEL_COUNT_H
-#include "AEObjectModel/Count.h"
-#endif
+#include "AEObjectModel/Count.hh"
 
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
@@ -58,4 +56,3 @@ namespace Nitrogen
 	}
 	
 }
-

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+make app-build-tools
+
+PATH="$PWD/var/out:$PATH" ./build.pl "$@"

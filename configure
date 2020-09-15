@@ -1,0 +1,18 @@
+#!/bin/sh -e
+
+mkdir -p var
+
+if [ -z "$INSTALL_PREFIX" ]; then
+	INSTALL_PREFIX="/usr/local"
+fi
+
+quoted_install_prefix="\"$INSTALL_PREFIX\""
+
+rm -f var/install
+ln -s "$INSTALL_PREFIX" var/install
+
+site_config_h="base/config/config/site_config.h"
+
+echo "#define CONFIG_INSTALL_PREFIX  $quoted_install_prefix" > $site_config_h
+
+echo "INSTALL_PREFIX = $quoted_install_prefix"

@@ -41,31 +41,10 @@
 #include <CWANSIIncludes/stdio.h>
 
 #include <sys/cdefs.h>
-#include <sys/_types.h>
 
 #include <stdarg.h>
 
-#if __BSD_VISIBLE || __POSIX_VISIBLE || __XPG_VISIBLE
-#include <sys/types.h>	/* XXX should be removed */
-#endif
-
-#ifndef	_SIZE_T_DEFINED_
-#define	_SIZE_T_DEFINED_
-typedef	__size_t	size_t;
-#endif
-
-#ifndef	_OFF_T_DEFINED_
-#define	_OFF_T_DEFINED_
-typedef	__off_t	off_t;
-#endif
-
-#ifndef NULL
-#ifdef 	__GNUG__
-#define	NULL	__null
-#else
-#define	NULL	0L
-#endif
-#endif
+#include <sys/types.h>
 
 #define	_FSTDIO			/* Define for new stdio with functions. */
 

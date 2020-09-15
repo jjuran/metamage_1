@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+cd $FORGE/gui/port/demo
+
+$DEMO/setup
+
+$DEMO/main
+
+daemonize --cwd --ctty=tty -- idle
+

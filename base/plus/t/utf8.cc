@@ -17,9 +17,6 @@
 static const unsigned n_tests = 19;
 
 
-using tap::ok_if;
-
-
 static bool utf8_is_convertible( const char* begin )
 {
 	using chars::unichar_t;
@@ -35,44 +32,44 @@ static bool utf8_is_convertible( const char* begin )
 
 static void convertibility()
 {
-	ok_if( utf8_is_convertible( "\x7F" ) );
+	EXPECT( utf8_is_convertible( "\x7F" ) );
 	
-	ok_if( utf8_is_convertible( "\xC2\x80" ) );
+	EXPECT( utf8_is_convertible( "\xC2\x80" ) );
 	
-	ok_if( utf8_is_convertible( "\xE2\x80\x80" ) );
+	EXPECT( utf8_is_convertible( "\xE2\x80\x80" ) );
 	
-	ok_if( utf8_is_convertible( "\xF2\x80\x80\x80" ) );
+	EXPECT( utf8_is_convertible( "\xF2\x80\x80\x80" ) );
 	
 	// overlong encodings
 	
-	ok_if( !utf8_is_convertible( "\xC0\x80" ) );
+	EXPECT( !utf8_is_convertible( "\xC0\x80" ) );
 	
-	ok_if( !utf8_is_convertible( "\xE0\x80\x80" ) );
+	EXPECT( !utf8_is_convertible( "\xE0\x80\x80" ) );
 	
-	ok_if( !utf8_is_convertible( "\xF0\x80\x80\x80" ) );
+	EXPECT( !utf8_is_convertible( "\xF0\x80\x80\x80" ) );
 	
 	// leading continuation byte
 	
-	ok_if( !utf8_is_convertible( "\x80" ) );
+	EXPECT( !utf8_is_convertible( "\x80" ) );
 	
 	// missing continuation bytes
 	
-	ok_if( !utf8_is_convertible( "\xC2"     ) );
-	ok_if( !utf8_is_convertible( "\xC2\x00" ) );
+	EXPECT( !utf8_is_convertible( "\xC2"     ) );
+	EXPECT( !utf8_is_convertible( "\xC2\x00" ) );
 	
-	ok_if( !utf8_is_convertible( "\xE2"         ) );
-	ok_if( !utf8_is_convertible( "\xE2\x00"     ) );
-	ok_if( !utf8_is_convertible( "\xE2\x80\x00" ) );
+	EXPECT( !utf8_is_convertible( "\xE2"         ) );
+	EXPECT( !utf8_is_convertible( "\xE2\x00"     ) );
+	EXPECT( !utf8_is_convertible( "\xE2\x80\x00" ) );
 	
-	ok_if( !utf8_is_convertible( "\xF2"             ) );
-	ok_if( !utf8_is_convertible( "\xF2\x00"         ) );
-	ok_if( !utf8_is_convertible( "\xF2\x80\x00"     ) );
-	ok_if( !utf8_is_convertible( "\xF2\x80\x80\x00" ) );
+	EXPECT( !utf8_is_convertible( "\xF2"             ) );
+	EXPECT( !utf8_is_convertible( "\xF2\x00"         ) );
+	EXPECT( !utf8_is_convertible( "\xF2\x80\x00"     ) );
+	EXPECT( !utf8_is_convertible( "\xF2\x80\x80\x00" ) );
 	
 	// surrogates
 	
-	ok_if( !utf8_is_convertible( "\xED\xA0\x80" ) );  // 0xD800
-	ok_if( !utf8_is_convertible( "\xED\xB0\x80" ) );  // 0xDC00
+	EXPECT( !utf8_is_convertible( "\xED\xA0\x80" ) );  // 0xD800
+	EXPECT( !utf8_is_convertible( "\xED\xB0\x80" ) );  // 0xDC00
 	
 }
 
@@ -84,4 +81,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

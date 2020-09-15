@@ -5,12 +5,21 @@
 
 #include "Genie/FS/sys/mac/user/name.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 // Mac OS
+#ifndef __COREFOUNDATION_CFBUNDLE__
 #ifndef __CFBUNDLE__
 #include <CFBundle.h>
 #endif
+#endif
+#ifndef __COREFOUNDATION_CFSTRING__
 #ifndef __CFSTRING__
 #include <CFString.h>
+#endif
 #endif
 
 // plus
@@ -89,15 +98,14 @@ namespace Genie
 		return plus::string::null;
 	}
 	
-	void sys_mac_user_macname::get( plus::var_string& result, const FSTree* that, bool binary )
+	void sys_mac_user_macname::get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		result = GetUserName( false );
 	}
 	
-	void sys_mac_user_name::get( plus::var_string& result, const FSTree* that, bool binary )
+	void sys_mac_user_name::get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		result = GetUserName( true );
 	}
 	
 }
-

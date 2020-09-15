@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 sub silly
@@ -41,4 +41,3 @@ foreach my $line ( @lines )
 }
 
 print join "", @lines;
-

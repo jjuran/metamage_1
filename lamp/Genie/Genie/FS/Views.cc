@@ -5,6 +5,11 @@
 
 #include "Genie/FS/Views.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
@@ -12,34 +17,35 @@
 // POSIX
 #include <sys/stat.h>
 
-// Standard C++
-#include <map>
-
 // iota
 #include "iota/swap.hh"
 
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/simple_map.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// PEdestal
+// Pedestal
 #include "Pedestal/EmptyView.hh"
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/file_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/null.hh"
 #include "vfs/primitives/listdir.hh"
 #include "vfs/primitives/lookup.hh"
 #include "vfs/primitives/mkdir.hh"
 #include "vfs/primitives/remove.hh"
 
 // Genie
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -49,32 +55,11 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	class canary
-	{
-		private:
-			bool it_lives;
-		
-		public:
-			canary() : it_lives( true )
-			{
-			}
-			
-			~canary()
-			{
-				it_lives = false;
-			}
-			
-			bool lives() const
-			{
-				return it_lives;
-			}
-	};
-	
 	struct ViewParameters
 	{
-		FSTreePtr      itsDelegate;
-		ViewFactory    itsFactory;
-		const FSTree*  itsWindowKey;
+		vfs::node_ptr     itsDelegate;
+		ViewFactory       itsFactory;
+		const vfs::node*  itsWindowKey;
 		
 		ViewParameters() : itsFactory(), itsWindowKey()
 		{
@@ -93,74 +78,55 @@ namespace Genie
 		swap( itsWindowKey, other.itsWindowKey );
 	}
 	
-	typedef std::map< plus::string, ViewParameters > ViewParametersSubMap;
-	
-	typedef simple_map< const FSTree*, ViewParametersSubMap > ViewParametersMap;
+	typedef plus::simple_map< const vfs::node*, ViewParameters > ViewParametersMap;
 	
 	static ViewParametersMap gViewParametersMap;
 	
-	static canary the_canary;
 	
-	
-	static const ViewParameters* FindView( const FSTree* parent, const plus::string& name )
+	static inline const ViewParameters* find_view( const vfs::node* parent )
 	{
-		if ( const ViewParametersSubMap* the_submap = gViewParametersMap.find( parent ) )
-		{
-			const ViewParametersSubMap& submap = *the_submap;
-			
-			ViewParametersSubMap::const_iterator it = submap.find( name );
-			
-			if ( it != submap.end() )
-			{
-				return &it->second;
-			}
-		}
-		
-		return NULL;
+		return gViewParametersMap.find( parent );
 	}
 	
-	static bool ViewExists( const FSTree* parent, const plus::string& name )
+	static bool view_exists( const vfs::node* parent )
 	{
-		return FindView( parent, name ) != NULL;
+		return find_view( parent ) != NULL;
 	}
 	
-	static void AddViewParameters( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const FSTreePtr&     delegate,
-	                               ViewFactory          factory )
+	static void add_view_parameters( const vfs::node*  parent,
+	                                 const vfs::node&  delegate,
+	                                 ViewFactory       factory )
 	{
-		ASSERT( delegate.get() != NULL );
-		
-		ViewParameters& params = gViewParametersMap[ parent ][ name ];
+		ViewParameters& params = gViewParametersMap[ parent ];
 		
 		params.itsFactory  = factory;
-		params.itsDelegate = delegate;
+		params.itsDelegate = &delegate;
 	}
 	
-	static void AddViewWindowKey( const FSTree* parent, const plus::string& name, const FSTree* windowKey )
+	static void add_view_port_key( const vfs::node* parent, const vfs::node* windowKey )
 	{
-		ASSERT( FindView( parent, name ) != NULL );
+		ASSERT( find_view( parent ) != NULL );
 		
-		ASSERT( FindView( parent, name )->itsDelegate.get() != NULL );
+		ASSERT( find_view( parent )->itsDelegate.get() != NULL );
 		
-		gViewParametersMap[ parent ][ name ].itsWindowKey = windowKey;
+		gViewParametersMap[ parent ].itsWindowKey = windowKey;
 	}
 	
-	static void DeleteDelegate( FSTreePtr& delegate_ref )
+	static void DeleteDelegate( vfs::node_ptr& delegate_ref )
 	{
-		if ( const FSTree* delegate = delegate_ref.get() )
+		if ( const vfs::node* delegate = delegate_ref.get() )
 		{
-			FSTreePtr delegate_copy;
+			vfs::node_ptr delegate_copy;
 			
 			delegate_copy.swap( delegate_ref );
 			
 			try
 			{
-				remove( delegate );
+				remove( *delegate );
 			}
 			catch ( ... )
 			{
-				if ( TARGET_CONFIG_DEBUGGING )
+				if ( CONFIG_DEBUGGING )
 				{
 					// This might happen in __destroy_global_chain(),
 					// so don't ASSERT which relies on trashed infrastructure.
@@ -173,64 +139,27 @@ namespace Genie
 		}
 	}
 	
-	static void RemoveViewParameters( const FSTree* parent, const plus::string& name )
+	void RemoveAllViewParameters( const vfs::node* parent )
 	{
-		if ( ViewParametersSubMap* it = gViewParametersMap.find( parent ) )
+		if ( ViewParameters* it = gViewParametersMap.find( parent ) )
 		{
-			ViewParametersSubMap& submap = *it;
-			
-			ViewParametersSubMap::iterator jt = submap.find( name );
-			
 			ViewParameters temp;
 			
-			if ( jt != submap.end() )
-			{
-				temp.swap( jt->second );
-				
-				submap.erase( jt );
-				
-				if ( submap.empty() )
-				{
-					gViewParametersMap.erase( it );
-				}
-				
-				notify_port_of_view_loss( temp.itsWindowKey, temp.itsDelegate.get() );
-				
-				DeleteDelegate( temp.itsDelegate );
-			}
+			temp.swap( *it );
+			
+			gViewParametersMap.erase( parent );
+			
+			notify_port_of_view_loss( temp.itsWindowKey, temp.itsDelegate.get() );
+			
+			DeleteDelegate( temp.itsDelegate );
 		}
 	}
 	
-	void RemoveAllViewParameters( const FSTree* parent )
+	static boost::intrusive_ptr< Ped::View > make_view( const vfs::node* parent )
 	{
-		if ( !the_canary.lives() )
+		if ( const ViewParameters* params = find_view( parent ) )
 		{
-			return;
-		}
-		
-		if ( ViewParametersSubMap* it = gViewParametersMap.find( parent ) )
-		{
-			ViewParametersSubMap temp = *it;
-			
-			gViewParametersMap.erase( it );
-			
-			for ( ViewParametersSubMap::iterator jt = temp.begin();  jt != temp.end();  ++jt )
-			{
-				ViewParameters& params = jt->second;
-				
-				notify_port_of_view_loss( params.itsWindowKey, params.itsDelegate.get() );
-				
-				DeleteDelegate( params.itsDelegate );
-			}
-		}
-	}
-	
-	static boost::intrusive_ptr< Ped::View > MakeView( const FSTree*        parent,
-	                                                   const plus::string&  name )
-	{
-		if ( const ViewParameters* params = FindView( parent, name ) )
-		{
-			const FSTree* delegate = params->itsDelegate.get();
+			const vfs::node* delegate = params->itsDelegate.get();
 			
 			ViewFactory factory = params->itsFactory;
 			
@@ -243,9 +172,9 @@ namespace Genie
 		return boost::intrusive_ptr< Ped::View >();
 	}
 	
-	static inline const FSTreePtr& GetViewDelegate( const FSTree* parent, const plus::string& name )
+	static const vfs::node_ptr& GetViewDelegate( const vfs::node* view )
 	{
-		const ViewParameters* params = FindView( parent, name );
+		const ViewParameters* params = find_view( view->owner() );
 		
 		if ( params == NULL )
 		{
@@ -255,51 +184,34 @@ namespace Genie
 		return params->itsDelegate;
 	}
 	
-	static const FSTreePtr& GetViewDelegate( const FSTree* view )
+	const vfs::node* GetViewWindowKey( const vfs::node* view )
 	{
-		const FSTreePtr& delegate = GetViewDelegate( view->owner(), view->name() );
-		
-		return delegate;
-	}
-	
-	static inline const FSTree* GetViewWindowKey( const FSTree* parent, const plus::string& name )
-	{
-		const ViewParameters* params = FindView( parent, name );
+		const ViewParameters* params = find_view( view->owner() );
 		
 		return params ? params->itsWindowKey : NULL;
 	}
 	
-	const FSTree* GetViewWindowKey( const FSTree* view )
-	{
-		return GetViewWindowKey( view->owner(), view->name() );
-	}
 	
-	
-	bool InvalidateWindowForView( const FSTree* view )
+	bool InvalidateWindowForView( const vfs::node* view )
 	{
-		const FSTree* windowKey = GetViewWindowKey( view );
+		const vfs::node* windowKey = GetViewWindowKey( view );
 		
 		return invalidate_port_WindowRef( windowKey );
 	}
 	
 	
-	static void new_view_hardlink( const FSTree*  node,
-	                               const FSTree*  dest );
+	static void new_view_hardlink( const vfs::node*  that,
+	                               const vfs::node*  dest );
 	
-	static const file_method_set new_view_file_methods =
+	static const vfs::file_method_set new_view_file_methods =
 	{
 		NULL,
 		NULL,
 		&new_view_hardlink
 	};
 	
-	static const node_method_set new_view_methods =
+	static const vfs::node_method_set new_view_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		NULL,
@@ -313,21 +225,23 @@ namespace Genie
 		vfs::node_destructor       destructor;
 		ViewFactory                view_factory;
 		DelegateFactory            delegate_factory;
+		size_t                     extra_annex_size;
 	};
 	
-	FSTreePtr New_new_view( const FSTree*              parent,
-	                        const plus::string&        name,
-	                        ViewFactory                factory,
-	                        const vfs::fixed_mapping*  mappings,
-	                        vfs::node_destructor       dtor,
-	                        DelegateFactory            delegate_factory )
+	vfs::node_ptr New_new_view( const vfs::node*           parent,
+	                            const plus::string&        name,
+	                            ViewFactory                factory,
+	                            const vfs::fixed_mapping*  mappings,
+	                            vfs::node_destructor       dtor,
+	                            size_t                     extra_annex_size,
+	                            DelegateFactory            delegate_factory )
 	
 	{
-		FSTree* result = new FSTree( parent,
-		                             name,
-		                             S_IFREG | 0,
-		                             &new_view_methods,
-		                             sizeof (new_view_extra) );
+		vfs::node* result = new vfs::node( parent,
+		                                   name,
+		                                   S_IFREG | 0,
+		                                   &new_view_methods,
+		                                   sizeof (new_view_extra) );
 		
 		new_view_extra& extra = *(new_view_extra*) result->extra();
 		
@@ -335,93 +249,105 @@ namespace Genie
 		extra.destructor       = dtor;
 		extra.view_factory     = factory;
 		extra.delegate_factory = delegate_factory;
+		extra.extra_annex_size = extra_annex_size;
 		
 		return result;
 	}
 	
-	FSTreePtr create_default_delegate_for_new_view( const FSTree*        node,
-	                                                const FSTree*        parent,
-	                                                const plus::string&  name )
+	vfs::node_ptr create_default_delegate_for_new_view( const vfs::node*     that,
+	                                                    const vfs::node*     parent,
+	                                                    const plus::string&  name )
 	{
-		new_view_extra& extra = *(new_view_extra*) node->extra();
+		new_view_extra& extra = *(new_view_extra*) that->extra();
 		
-		FSTreePtr delegate = fixed_dir( parent, name, extra.mappings, extra.destructor );
+		vfs::node_ptr delegate = fixed_dir( parent, name, extra.mappings, extra.destructor );
 		
 		return delegate;
 	}
 	
-	static void new_view_hardlink( const FSTree*  node,
-	                               const FSTree*  target )
+	static void new_view_hardlink( const vfs::node*  that,
+	                               const vfs::node*  target )
 	{
-		new_view_extra& extra = *(new_view_extra*) node->extra();
+		new_view_extra& extra = *(new_view_extra*) that->extra();
 		
-		const FSTree* parent = target->owner();
+		const vfs::node* parent = target->owner();
 		
-		const FSTree* key = parent;
+		const vfs::node* key = parent;
 		
-		const plus::string& name = target->name();
+		vfs::node_ptr delegate = extra.delegate_factory( that, parent, "v" );
 		
-		FSTreePtr delegate = extra.delegate_factory( node, parent, name );
+		add_view_parameters( key, *delegate, extra.view_factory );
 		
-		AddViewParameters( key, name, delegate, extra.view_factory );
-		
-		mkdir( target, 0 );  // mode is ignored
+		mkdir( *target, 0 );  // mode is ignored
 	}
 	
 	
 	struct view_extra
 	{
 		ViewGetter  get;
-		ViewPurger  purge;
+		ViewSetter  set;
 	};
 	
 	
-	static boost::intrusive_ptr< Pedestal::View >& view_of( const FSTree* node )
+	static
+	Pedestal::View* get_view( const vfs::node* that )
 	{
-		ASSERT( node != NULL );
+		ASSERT( that != NULL );
 		
-		const view_extra& extra = *(view_extra*) node->extra();
+		const view_extra& extra = *(view_extra*) that->extra();
 		
-		return extra.get( node->owner(), node->name() );
+		return extra.get( that->owner(), that->name() );
 	}
 	
-	static void unview_mkdir( const FSTree* node, mode_t mode )
+	static
+	void set_view( const vfs::node* that, Pedestal::View* view )
 	{
-		const FSTree* parent = node->owner();
+		ASSERT( that != NULL );
 		
-		const plus::string& name = node->name();
+		const view_extra& extra = *(view_extra*) that->extra();
 		
-		const FSTree* windowKey = GetViewWindowKey( parent );
+		extra.set( that->owner(), that->name(), view );
+	}
+	
+	static void unview_mkdir( const vfs::node* that, mode_t mode )
+	{
+		const vfs::node* parent = that->owner();
+		
+		const plus::string& name = that->name();
+		
+		const vfs::node* windowKey = GetViewWindowKey( parent );
+		
+		if ( windowKey == NULL )
+		{
+			ASSERT( parent != NULL );
+			
+			windowKey = GetViewWindowKey( parent->owner() );
+		}
 		
 		if ( windowKey == NULL )
 		{
 			windowKey = parent;
 		}
 		
-		AddViewWindowKey( parent, name, windowKey );
+		add_view_port_key( parent, windowKey );
 		
-		boost::intrusive_ptr< Ped::View > view = MakeView( parent, name );
+		boost::intrusive_ptr< Ped::View > view = make_view( parent );
 		
-		view_of( node ) = view;
+		set_view( that, view.get() );
 		
 		// Install and invalidate if window exists
 		install_view_in_port( view, windowKey );
 	}
 	
-	static const dir_method_set unview_dir_methods =
+	static const vfs::dir_method_set unview_dir_methods =
 	{
 		NULL,
 		NULL,
 		&unview_mkdir
 	};
 	
-	static const node_method_set unview_methods =
+	static const vfs::node_method_set unview_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		NULL,
@@ -429,93 +355,116 @@ namespace Genie
 	};
 	
 	
-	static void view_touch( const FSTree* node )
+	static void view_touch( const vfs::node* that )
 	{
-		InvalidateWindowForView( node );
+		InvalidateWindowForView( that );
 	}
 	
-	static void view_remove( const FSTree* node )
+	static void view_remove( const vfs::node* that )
 	{
-		const view_extra& extra = *(view_extra*) node->extra();
+		const view_extra& extra = *(view_extra*) that->extra();
 		
-		const FSTree* parent = node->owner();
+		const vfs::node* parent = that->owner();
 		
-		const plus::string& name = node->name();
+		const plus::string& name = that->name();
 		
-		const FSTree* windowKey = GetViewWindowKey( node );
+		const vfs::node* windowKey = GetViewWindowKey( that );
 		
-		uninstall_view_from_port( view_of( node ), windowKey );
+		uninstall_view_from_port( get_view( that ), windowKey );
 		
-		view_of( node ) = Ped::EmptyView::Get();
+		set_view( that, Ped::EmptyView::Get().get() );
 		
-		RemoveViewParameters( parent, name );
-		
-		if ( extra.purge )
-		{
-			extra.purge( parent, name );
-		}
+		RemoveAllViewParameters( parent );
 	}
 	
-	static FSTreePtr view_lookup( const FSTree*        node,
-	                              const plus::string&  name,
-	                              const FSTree*        parent )
+	static vfs::node_ptr view_lookup( const vfs::node*     that,
+	                                  const plus::string&  name,
+	                                  const vfs::node*     parent )
 	{
 		const plus::string& real_name = name.empty() ? plus::string( "." ) : name;
 		
-		return lookup( GetViewDelegate( node ).get(), real_name, NULL );
+		return lookup( *GetViewDelegate( that ), real_name, NULL );
 	}
 	
-	static void view_listdir( const FSTree*       node,
+	static void view_listdir( const vfs::node*    that,
 	                          vfs::dir_contents&  cache )
 	{
-		listdir( GetViewDelegate( node ).get(), cache );
+		listdir( *GetViewDelegate( that ), cache );
 	}
 	
-	static const dir_method_set view_dir_methods =
-	{
-		&view_lookup,
-		&view_listdir
-	};
-	
-	static const node_method_set view_methods =
+	static const vfs::item_method_set view_item_methods =
 	{
 		NULL,
 		NULL,
 		&view_touch,
 		NULL,
 		&view_remove,
+	};
+	
+	static const vfs::dir_method_set view_dir_methods =
+	{
+		&view_lookup,
+		&view_listdir
+	};
+	
+	static const vfs::node_method_set view_methods =
+	{
+		&view_item_methods,
+		NULL,
+		NULL,
+		&view_dir_methods
+	};
+	
+	static const vfs::node_method_set viewdir_methods =
+	{
 		NULL,
 		NULL,
 		NULL,
 		&view_dir_methods
 	};
 	
-	FSTreePtr New_View( const FSTree*        parent,
-	                    const plus::string&  name,
-	                    ViewGetter           get,
-	                    ViewPurger           purge )
+	vfs::node_ptr New_View( const vfs::node*       parent,
+	                        const plus::string&    name,
+	                        const View_Accessors&  access )
 	{
-		const bool exists = ViewExists( parent, name );
+		const bool exists = view_exists( parent );
 		
-		const mode_t mode = exists ? S_IFDIR | 0700
-		                           : 0;
+		const mode_t mode = !exists ? 0
+		                  : name.size() == 1 ? S_IFDIR | 0700
+		                  :                    S_IFREG | 0600;
 		
-		const node_method_set& methods = exists ? view_methods
-		                                        : unview_methods;
+		const vfs::node_method_set& methods = exists ? view_methods
+		                                             : unview_methods;
 		
-		FSTree* result = new FSTree( parent,
-		                             name,
-		                             mode,
-		                             &methods,
-		                             sizeof (view_extra) );
+		vfs::node* result = new vfs::node( parent,
+		                                   name,
+		                                   mode,
+		                                   &methods,
+		                                   sizeof (view_extra) );
 		
 		view_extra& extra = *(view_extra*) result->extra();
 		
-		extra.get   = get;
-		extra.purge = purge;
+		extra.get = access.get;
+		extra.set = access.set;
+		
+		return result;
+	}
+	
+	vfs::node_ptr new_view_dir( const vfs::node*     parent,
+	                            const plus::string&  name,
+	                            const void*          /* args */ )
+	{
+		if ( !view_exists( parent ) )
+		{
+			return vfs::null();
+		}
+		
+		vfs::node* result = new vfs::node( parent,
+		                                   name,
+		                                   S_IFDIR | 0700,
+		                                   &viewdir_methods );
 		
 		return result;
 	}
 	
 }
-

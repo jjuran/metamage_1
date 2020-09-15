@@ -7,9 +7,9 @@
 // Standard C++
 #include <algorithm>
 #include <map>
+#include <set>
 
 // Standard C/C++
-#include <cctype>
 #include <cstring>
 
 // Standard C
@@ -21,7 +21,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-// Iota
+// must
+#include "must/pipe.h"
+
+// iota
+#include "iota/char_types.hh"
 #include "iota/strings.hh"
 
 // gear
@@ -32,6 +36,7 @@
 #include "more/perror.hh"
 
 // plus
+#include "plus/argv.hh"
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
 
@@ -44,11 +49,14 @@
 
 // sh
 #include "Builtins.hh"
+#include "execvpe.hh"
 #include "Expansion.hh"
 #include "Options.hh"
 #include "PositionalParameters.hh"
 #include "StringArray.hh"
 
+
+extern "C" char** environ;
 
 #ifdef __MWERKS__
 
@@ -211,7 +219,7 @@ namespace tool
 			
 			return result;
 		}
-		else if ( std::isdigit( param[0] ) )
+		else if ( iota::is_digit( param[0] ) )
 		{
 			int i = gear::parse_unsigned_decimal( param.c_str() );
 			
@@ -439,17 +447,22 @@ namespace tool
 					   std::ptr_fun( RedirectIO ) );
 	}
 	
-	static void Exec( char const* const argv[] )
+	static void Exec( char const* const argv[], char const* const* envp )
 	{
 		const char* file = argv[ 0 ];
 		
-		(void) execvp( file, const_cast< char** >( argv ) );
+		(void) execvpe( file, (char**) argv, (char**) envp );
 		
 		const char* error_msg = errno == ENOENT ? "command not found" : std::strerror( errno );
 		
 		more::perror( "sh", file, error_msg );
 		
 		_exit( errno == ENOENT ? 127 : 126 );  // Use _exit() to exit a forked but not exec'ed process.
+	}
+	
+	static void Exec( char const* const argv[], plus::argv& env )
+	{
+		Exec( argv, env.get_argv() );
 	}
 	
 	
@@ -466,7 +479,7 @@ namespace tool
 		
 		for ( const char* p = word;  *p != '\0';  ++p )
 		{
-			if ( !std::isalnum( *p ) )
+			if ( !iota::is_alnum( *p ) )
 			{
 				result += '\\';
 			}
@@ -523,18 +536,68 @@ namespace tool
 		return p7::wait_t( 0 );
 	}
 	
-	static void ShiftEnvironmentVariables( char**& argv )
+	struct env_less
+	{
+		bool operator()( const char* a, const char* b ) const
+		{
+			while ( true )
+			{
+				const bool a_ended = *a == '\0'  ||  *a == '=';
+				const bool b_ended = *b == '\0'  ||  *b == '=';
+				
+				if ( a_ended  ||  b_ended )
+				{
+					return a_ended > b_ended;
+				}
+				
+				if ( *a != *b )
+				{
+					typedef unsigned char uint8_t;
+					
+					return uint8_t( *a ) < uint8_t( *b );
+				}
+				
+				++a;
+				++b;
+			}
+		}
+	};
+	
+	static plus::string ShiftEnvironmentVariables( char**& argv )
 	{
 		//ASSERT( argv != NULL );
 		
+		std::set< const char*, env_less > set;
+		
+		if ( environ )
+		{
+			for ( char** envp = environ;  *envp != NULL;  ++envp )
+			{
+				set.erase ( *envp );
+				set.insert( *envp );
+			}
+		}
+		
 		while ( char* eq = std::strchr( argv[ 0 ], '=' ) )
 		{
-			plus::string name( argv[ 0 ], eq );
-			
-			setenv( name.c_str(), eq + 1, true );
+			set.erase ( argv[ 0 ] );
+			set.insert( argv[ 0 ] );
 			
 			++argv;
 		}
+		
+		plus::var_string result;
+		
+		typedef std::set< const char*, env_less >::const_iterator Iter;
+		
+		for ( Iter it = set.begin();  it != set.end();  ++it )
+		{
+			const char* var = *it;
+			
+			result.append( var, strlen( var ) + 1 );
+		}
+		
+		return result.move();
 	}
 	
 	static Command ParseCommand( const Command& command )
@@ -573,10 +636,12 @@ namespace tool
 		
 		try
 		{
-			if ( builtin != NULL  &&  command.redirections.empty() )
+			if ( builtin != NULL  &&  ((strcmp( argv[0], "exec" ) == 0  &&  (RedirectIOs( command.redirections ), true))  ||  command.redirections.empty()) )
 			{
 				return wait_from_exit( CallBuiltin( builtin, argv ) );  // wait from exit
 			}
+			
+			plus::argv env;
 			
 			// This variable is set before and examined after a longjmp(), so it
 			// needs to be volatile to make sure it doesn't wind up in a register
@@ -614,9 +679,9 @@ namespace tool
 					}
 					else
 					{
-						ShiftEnvironmentVariables( argv );
+						env.assign( ShiftEnvironmentVariables( argv ) );
 						
-						Exec( argv );
+						Exec( argv, env );
 					}
 					
 					// Not reached
@@ -655,7 +720,7 @@ namespace tool
 	}
 	
 	
-	static p7::wait_t ExecuteCommandFromPipeline( const Command& command )
+	static p7::wait_t ExecuteCommandFromPipeline( const Command& command, plus::argv& env )
 	{
 		Sh::StringArray argvec( command.args );
 		
@@ -671,7 +736,7 @@ namespace tool
 		{
 			RedirectIOs( command.redirections );
 			
-			ShiftEnvironmentVariables( argv );
+			env.assign( ShiftEnvironmentVariables( argv ) );
 			
 			if ( Builtin builtin = FindBuiltin( argv[ 0 ] ) )
 			{
@@ -679,10 +744,10 @@ namespace tool
 				
 				const char* subshell_argv[] = { "/bin/sh", "-c", subshell.c_str(), NULL };
 				
-				Exec( subshell_argv );
+				Exec( subshell_argv, env );
 			}
 			
-			Exec( argv );
+			Exec( argv, env );
 			
 		}
 		catch ( const p7::exit_t& status )
@@ -697,11 +762,11 @@ namespace tool
 		return wait_from_exit( p7::exit_failure );
 	}
 	
-	static void ExecuteCommandAndExitFromPipeline( const Command& command )
+	static void ExecuteCommandAndExitFromPipeline( const Command& command, plus::argv& env )
 	{
 		try
 		{
-			p7::_exit( n::convert< p7::exit_t >( ExecuteCommandFromPipeline( command ) ) );
+			p7::_exit( n::convert< p7::exit_t >( ExecuteCommandFromPipeline( command, env ) ) );
 		}
 		catch ( const p7::exit_t& status )
 		{
@@ -731,13 +796,15 @@ namespace tool
 				break;
 		}
 		
+		plus::argv env;
+		
 		typedef std::vector< Command >::const_iterator const_iterator;
 		
 		const_iterator command = commands.begin();
 		
 		int pipes[ 2 ];
 		
-		pipe( pipes );  // pipe between first two processes
+		must_pipe( pipes );  // pipe between first two processes
 		
 		int reading = pipes[ 0 ];
 		int writing = pipes[ 1 ];
@@ -757,14 +824,14 @@ namespace tool
 			SetupChildProcess();
 			
 			// exec or exit
-			ExecuteCommandAndExitFromPipeline( commands.front() );
+			ExecuteCommandAndExitFromPipeline( commands.front(), env );
 		}
 		
 		// previous pipe fd's are saved in 'reading' and 'writing'.
 		
 		while ( ++command != commands.end() - 1 )
 		{
-			pipe( pipes );  // next pipe
+			must_pipe( pipes );  // next pipe
 			
 			// Close previous write-end
 			close( writing );
@@ -789,7 +856,7 @@ namespace tool
 				
 				SetupChildProcess( first );
 				
-				ExecuteCommandAndExitFromPipeline( *command );
+				ExecuteCommandAndExitFromPipeline( *command, env );
 			}
 			
 			// Child is forked, so we're done reading
@@ -814,7 +881,7 @@ namespace tool
 			
 			SetupChildProcess( first );
 			
-			ExecuteCommandAndExitFromPipeline( *command );
+			ExecuteCommandAndExitFromPipeline( *command, env );
 		}
 		
 		// Child is forked, so we're done reading
@@ -931,4 +998,3 @@ namespace tool
 	}
 	
 }
-

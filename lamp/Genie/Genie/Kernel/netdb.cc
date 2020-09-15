@@ -3,6 +3,13 @@
  *	========
  */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+#ifndef MAC_OS_X_VERSION_10_8
+
 // Mac OS
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
@@ -11,21 +18,29 @@
 // POSIX
 #include "netdb.h"
 
+// mac-config
+#include "mac_config/open-transport.hh"
+#include "mac_config/upp-macros.hh"
+
+// mac-app-utils
+#include "mac_app/OpenTransport_share.hh"
+
+// relix
+#include "relix/api/errno.hh"
+#include "relix/api/try_again.hh"
+#include "relix/syscall/registry.hh"
+
 // ClassicToolbox
 #include "ClassicToolbox/OpenTransportProviders.hh"
 
-// Genie
-#include "Genie/current_process.hh"
-#include "Genie/SystemCallRegistry.hh"
-#include "Genie/api/yield.hh"
-#include "Genie/Utilities/ShareOpenTransport.hh"
 
-
-namespace Genie
+namespace relix
 {
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
+	
+	using mac::app::OpenTransport_share;
 	
 	
 	struct netdb_provider_data
@@ -60,13 +75,13 @@ namespace Genie
 	}
 	
 	
+	DEFINE_UPP( OTNotify, netdb_notifier )
+	
 	static n::owned< InetSvcRef > InternetServices( netdb_provider_data& data )
 	{
-		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( netdb_notifier );
-		
 		n::owned< InetSvcRef > provider = N::OTOpenInternetServices( kDefaultInternetServicesPath );
 		
-		N::OTInstallNotifier( provider, gNotifyUPP, &data );
+		N::OTInstallNotifier( provider, UPP_ARG( netdb_notifier ), &data );
 		
 		N::OTSetAsynchronous( provider );
 		
@@ -78,7 +93,7 @@ namespace Genie
 	{
 		try
 		{
-			OpenTransportShare sharedOpenTransport;
+			OpenTransport_share shared_OpenTransport;
 			
 			netdb_provider_data data = { 0 };
 			
@@ -110,7 +125,7 @@ namespace Genie
 	{
 		try
 		{
-			OpenTransportShare sharedOpenTransport;
+			OpenTransport_share shared_OpenTransport;
 			
 			netdb_provider_data data = { 0 };
 			
@@ -139,6 +154,8 @@ namespace Genie
 		}
 	}
 	
+#if CONFIG_OPEN_TRANSPORT
+	
 	#pragma force_active on
 	
 	REGISTER_SYSTEM_CALL( _OTInetStringToAddress );
@@ -151,5 +168,8 @@ namespace Genie
 	
 	#pragma force_active reset
 	
+#endif  // #if CONFIG_OPEN_TRANSPORT
+	
 }
 
+#endif  // #ifndef MAC_OS_X_VERSION_10_8

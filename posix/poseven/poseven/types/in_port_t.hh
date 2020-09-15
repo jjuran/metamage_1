@@ -17,9 +17,21 @@
 // POSIX
 #include <netinet/in.h>
 
+// config
+#include "config/endian.h"
+
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
+#endif
+
+#ifdef ANDROID
+typedef uint16_t in_port_t;
+#endif
+
+
+#ifndef CONFIG_LITTLE_ENDIAN
+#error CONFIG_LITTLE_ENDIAN must be defined (in config/endian.h) to use p7::in_port_t
 #endif
 
 
@@ -51,7 +63,7 @@ namespace poseven
 	namespace big_endian
 	{
 		
-	#ifdef __LITTLE_ENDIAN__
+	#if CONFIG_LITTLE_ENDIAN
 		
 		enum in_port_t
 		{
@@ -69,4 +81,3 @@ namespace poseven
 }
 
 #endif
-

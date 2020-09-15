@@ -5,13 +5,15 @@
 
 #include "MacFeatures/BlueBoxed.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __GESTALT__
 #include <Gestalt.h>
 #endif
-
-// iota
-#include "iota/dummy.hh"
 
 
 namespace MacFeatures
@@ -31,4 +33,3 @@ namespace MacFeatures
 #endif
 	
 }
-

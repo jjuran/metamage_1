@@ -60,8 +60,8 @@ namespace tool
 			"precompile",
 			"product",
 			"program",
+			"require",
 			"rez",
-			"rsrc",
 			"runtime",
 			"search",
 			"sources",
@@ -159,10 +159,10 @@ namespace tool
 	{
 		PlatformDemands result;
 		
-		std::for_each( infos.begin(),
-		               infos.end(),
-		               std::bind1st( plus::ptr_fun( SetPlatformInfo ),
-		                             &result ) );
+		for ( size_t i = 0;  i < infos.size();  ++i )
+		{
+			SetPlatformInfo( &result, infos[ i ] );
+		}
 		
 		return result;
 	}
@@ -330,4 +330,3 @@ namespace tool
 	}
 	
 }
-

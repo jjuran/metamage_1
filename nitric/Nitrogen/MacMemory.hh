@@ -14,6 +14,12 @@
 #ifndef NITROGEN_MACMEMORY_HH
 #define NITROGEN_MACMEMORY_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
@@ -39,6 +45,9 @@
 #ifndef MAC_MEMORY_TYPES_HANDLE_HH
 #include "Mac/Memory/Types/Handle.hh"
 #endif
+#ifndef MAC_MEMORY_TYPES_PTR_HH
+#include "Mac/Memory/Types/Ptr.hh"
+#endif
 
 #include <cstddef>
 
@@ -58,52 +67,10 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( MemoryManager );
 	
-   
-	class Ptr
-	{
-		private:
-			typedef void *InternalType;
-			
-			InternalType ptr;
-		
-		public:
-			Ptr()                      : ptr( 0 )  {}
-			
-			template < class T >
-			Ptr( T *thePtr )           : ptr( reinterpret_cast< InternalType >( thePtr ) ) {}
-			
-			::Ptr Get() const          { return reinterpret_cast< ::Ptr >( ptr ); }
-			operator ::Ptr() const     { return Get(); }
-			
-			//void operator*() const       { return *ptr; }
-         
-			friend bool operator==( Ptr a, Ptr b )    { return a.Get() == b.Get(); }
-			friend bool operator!=( Ptr a, Ptr b )    { return a.Get() != b.Get(); }
-	};
-  }
-
-namespace nucleus
-  {
-	template <> struct disposer< Nitrogen::Ptr >
-	{
-		typedef Nitrogen::Ptr  argument_type;
-		typedef void           result_type;
-		
-		void operator()( Nitrogen::Ptr ptr ) const
-		{
-			NUCLEUS_REQUIRE_ERRORS( Nitrogen::MemoryManager );
-			
-			::DisposePtr( ptr );
-			
-			(void) ::MemError();
-		}
-	};
-  }
-
-namespace Nitrogen
-  {
-   using Mac::Handle;
-  }
+	using Mac::Handle;
+	using Mac::Ptr;
+	
+}
 
 namespace nucleus
   {
@@ -272,6 +239,8 @@ namespace Nitrogen
 		MemError();
 	}
 	
+#if ! __LP64__
+	
 	inline void HPurge( Handle h )
 	{
 		::HPurge( h );
@@ -284,6 +253,8 @@ namespace Nitrogen
 		MemError();
 	}
 	
+#endif
+	
 	inline void HLockHi( Handle h )
 	{
 		::HLockHi( h );
@@ -292,11 +263,15 @@ namespace Nitrogen
 	
 	nucleus::owned< Handle > TempNewHandle( std::size_t size );
 	
+#if ! __LP64__
+	
 	inline void MoveHHi( Handle h )
 	{
 		::MoveHHi( h );
 		MemError();
 	}
+	
+#endif
 	
 	// 1058
 	inline void DisposePtr( nucleus::owned< Ptr > )  {}
@@ -477,7 +452,7 @@ namespace Nitrogen
 				HLock( result );
 			}
 			
-			char* begin = *result.get();
+			char* begin = *result.get().Get();
 			
 			get( begin, begin + size );
 			

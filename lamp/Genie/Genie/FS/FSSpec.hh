@@ -6,42 +6,34 @@
 #ifndef GENIE_FILESYSTEM_FSSPEC_HH
 #define GENIE_FILESYSTEM_FSSPEC_HH
 
-// Nitrogen
-#ifndef MAC_FILES_TYPES_FSDIRSPEC_HH
-#include "Mac/Files/Types/FSDirSpec.hh"
-#endif
-#ifndef MAC_FILES_TYPES_FSVOLUMEREFNUM_HH
-#include "Mac/Files/Types/FSVolumeRefNum.hh"
-#endif
+// mac-types
+#include "mac_types/VRefNum_DirID.hh"
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_ptr.hh"
 
 // Files.h
+union CInfoPBRec;
 struct FSSpec;
 
 
 namespace Genie
 {
 	
-	bool VolumeIsOnServer( Mac::FSVolumeRefNum vRefNum );
+	mac::types::VRefNum_DirID Dir_From_CInfo( const CInfoPBRec& cInfo );
 	
-	inline bool FileIsOnServer( const FSSpec& file )
+	mac::types::VRefNum_DirID Dir_From_FSSpec( const FSSpec& dir );
+	
+	vfs::node_ptr FSTreeFromFSSpec( const FSSpec& item );
+	
+	vfs::node_ptr node_from_dirID( short vRefNum, long dirID );
+	
+	template < class Dir >
+	inline vfs::node_ptr FSTreeFromFSDirSpec( const Dir& dir )
 	{
-		return VolumeIsOnServer( Mac::FSVolumeRefNum( file.vRefNum ) );
+		return node_from_dirID( dir.vRefNum, dir.dirID );
 	}
-	
-	Mac::FSDirSpec Dir_From_CInfo( const CInfoPBRec& cInfo );
-	
-	Mac::FSDirSpec Dir_From_FSSpec( const FSSpec& dir );
-	
-	FSSpec GetFSSpecFromFSTree( const FSTreePtr& file );
-	
-	FSTreePtr FSTreeFromFSSpec( const FSSpec& item );
-	
-	FSTreePtr FSTreeFromFSDirSpec( const Mac::FSDirSpec& dir );
 	
 }
 
 #endif
-

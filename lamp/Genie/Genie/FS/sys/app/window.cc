@@ -5,6 +5,11 @@
 
 #include "Genie/FS/sys/app/window.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
@@ -14,7 +19,7 @@
 #include "iota/strings.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -24,7 +29,7 @@
 
 // vfs
 #include "vfs/node.hh"
-#include "vfs/nodes/symbolic_link.hh"
+#include "vfs/node/types/symbolic_link.hh"
 
 // Genie
 #include "Genie/FS/sys/app/window/list.hh"
@@ -55,9 +60,9 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr new_front( const FSTree*        parent,
-	                            const plus::string&  name,
-	                            const void*          args )
+	static vfs::node_ptr new_front( const vfs::node*     parent,
+	                                const plus::string&  name,
+	                                const void*          args )
 	{
 		return vfs::new_symbolic_link( parent, name, sys_app_window_front_ReadLink() );
 	}
@@ -73,4 +78,3 @@ namespace Genie
 	};
 	
 }
-

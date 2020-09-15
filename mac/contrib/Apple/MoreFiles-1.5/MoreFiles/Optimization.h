@@ -55,7 +55,14 @@
 **	File:	Optimization.h
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+#ifndef __CONDITIONALMACROS__
 #include <ConditionalMacros.h>
+#endif
 
 // if we're compiling for Carbon, then we're running on Mac OS 8.1 or later
 #ifndef __MACOSSEVENFIVEONEORLATER
@@ -93,4 +100,3 @@
 		#pragma internal on
 	#endif
 #endif
-

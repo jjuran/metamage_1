@@ -2,6 +2,9 @@
  * Hardly worth copyrighting :-)
  */
 
+#ifndef GNU_GZIP_CRYPT_H
+#define GNU_GZIP_CRYPT_H
+
 #ifdef CRYPT
 #  undef CRYPT      /* dummy version */
 #endif
@@ -10,3 +13,6 @@
 
 #define zencode
 #define zdecode
+
+#endif
+

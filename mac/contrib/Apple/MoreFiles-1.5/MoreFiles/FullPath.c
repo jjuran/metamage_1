@@ -19,10 +19,23 @@
 **	descended from Apple Sample Code, but that you've made changes.
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+#ifndef __MACERRORS__
 #include <MacErrors.h>
+#endif
+#ifndef __MACMEMORY__
 #include <MacMemory.h>
+#endif
+#ifndef __TEXTUTILS__
 #include <TextUtils.h>
+#endif
+#ifndef __ALIASES__
 #include <Aliases.h>
+#endif
 
 #define	__COMPILINGMOREFILES
 
@@ -262,4 +275,3 @@ pascal OSErr LocationFromFullPath(short fullPathLength,
 }
 
 /*****************************************************************************/
-

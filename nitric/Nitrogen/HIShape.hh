@@ -111,11 +111,15 @@ namespace Nitrogen
 		Mac::ThrowOSStatus ( ::HIShapeReplacePathInCGContext ( inShape, inContext ));
 		}
 
+#if ! __LP64__
+	
 	inline void HIShapeSetQDClip ( HIShapeRef inShape, CGrafPtr inPort ) {
      	(void) HIShapeErrorsRegistrationDependency();
 		Mac::ThrowOSStatus ( ::HIShapeSetQDClip ( inShape, inPort ));
 		}
 
+#endif  // #if ! __LP64__
+	
 /*======================================================================================*/
 /*  MUTABLE FUNCTIONS                                                                   */
 /*======================================================================================*/
@@ -155,4 +159,3 @@ namespace Nitrogen
 
 
 #endif /* NITROGEN_HISHAPE_HH */
-

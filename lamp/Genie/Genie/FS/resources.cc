@@ -5,17 +5,18 @@
 
 #include "Genie/FS/resources.hh"
 
-// Standard C
-#include <ctype.h>
-
 // POSIX
+#include <fcntl.h>
 #include <sys/stat.h>
 
+// iota
+#include "iota/char_types.hh"
+
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // plus
-#include "plus/hexidecimal.hh"
+#include "plus/hexadecimal.hh"
 #include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
 
@@ -23,7 +24,7 @@
 #include "quad/quad_name.hh"
 
 // nucleus
-#include "nucleus/shared.hh"
+#include "nucleus/owned.hh"
 
 // Nitrogen
 #ifndef MAC_TOOLBOX_TYPES_OSSTATUS_HH
@@ -38,10 +39,17 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/property.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
+#include "Genie/FS/utf8_text_property.hh"
 #include "Genie/IO/Handle.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
@@ -56,6 +64,32 @@ namespace Genie
 	
 	using MacScribe::make_quad_name;
 	using MacScribe::parse_quad_name;
+	
+	
+	struct ResSpec
+	{
+		Mac::ResType  type;
+		Mac::ResID    id;
+	};
+	
+	class ResLoad_false_scope
+	{
+		private:
+			// non-copyable
+			ResLoad_false_scope           ( const ResLoad_false_scope& );
+			ResLoad_false_scope& operator=( const ResLoad_false_scope& );
+		
+		public:
+			ResLoad_false_scope()
+			{
+				::SetResLoad( false );
+			}
+			
+			~ResLoad_false_scope()
+			{
+				::SetResLoad( true );
+			}
+	};
 	
 	
 	void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
@@ -74,7 +108,7 @@ namespace Genie
 			{
 				const N::Handle r = N::Get1IndResource( type, j );
 				
-				const N::GetResInfo_Result info = N::GetResInfo( r );
+				const mac::types::ResInfo info = N::GetResInfo( r );
 				
 				plus::var_string name = plus::encode_16_bit_hex( info.id );
 				
@@ -89,19 +123,19 @@ namespace Genie
 		}
 	}
 	
-	static N::GetResInfo_Result GetResInfo_from_name( const plus::string& name )
+	static ResSpec GetResSpec_from_name( const plus::string& name )
 	{
 		const plus::string& mac_name = plus::mac_from_utf8( name );
 		
 		const char* begin = mac_name.data();
 		const char* end   = mac_name.size() + begin;
 		
-		// In the event of a short name, isxdigit( '\0' ) will return false
+		// In the event of a short name, is_xdigit( '\0' ) will return false
 		
-		const bool has_id =      isxdigit( begin[0] )
-		                     &&  isxdigit( begin[1] )
-		                     &&  isxdigit( begin[2] )
-		                     &&  isxdigit( begin[3] );
+		const bool has_id =      iota::is_xdigit( begin[0] )
+		                     &&  iota::is_xdigit( begin[1] )
+		                     &&  iota::is_xdigit( begin[2] )
+		                     &&  iota::is_xdigit( begin[3] );
 		
 		if ( !has_id )
 		{
@@ -119,59 +153,116 @@ namespace Genie
 		
 		const ::OSType type = parse_quad_name( begin, end - begin );
 		
-		const N::GetResInfo_Result result = { N::ResID( id ), N::ResType( type ) };
+		const ResSpec result = { Mac::ResType( type ), Mac::ResID( id ) };
 		
 		return result;
 	}
 	
 	
-	class Rsrc_IOHandle : public Handle_IOHandle
+	struct resource_name : vfs::readwrite_property
 	{
-		private:
-			FSSpec itsFileSpec;
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
+		{
+			const vfs::node* res_file = that->owner();
+			
+			const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
+			
+			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
+			
+			const ResSpec resSpec = GetResSpec_from_name( that->name() );
+			
+			const N::Handle r = (ResLoad_false_scope(),
+			                     N::Get1Resource( resSpec.type, resSpec.id ));
+			
+			const mac::types::ResInfo resInfo = N::GetResInfo( r );
+			
+			::ReleaseResource( r );
+			
+			result.assign( resInfo.name );
+		}
 		
-		private:
-			void FlushResource();
-		
-		private:
-			// non-copyable
-			Rsrc_IOHandle           ( const Rsrc_IOHandle& );
-			Rsrc_IOHandle& operator=( const Rsrc_IOHandle& );
-		
-		public:
-			Rsrc_IOHandle( const FSTreePtr&               file,
-			               int                            flags,
-			               const n::shared< N::Handle >&  h,
-			               const FSSpec&                  resFile )
-			:
-				Handle_IOHandle( file, flags, h ),
-				itsFileSpec( resFile )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
+		{
+			const size_t length = end - begin;
+			
+			if ( length > 255 )
 			{
+				p7::throw_errno( ENAMETOOLONG );
 			}
 			
-			~Rsrc_IOHandle();
+			Str255 name;
 			
-			IOPtr Clone();
+			name[ 0 ] = length;
 			
-			void Synchronize( bool metadata );
+			memcpy( name + 1, begin, length );
+			
+			const vfs::node* res_file = that->owner();
+			
+			const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
+			
+			RdWr_OpenResFile_Scope openResFile( fileSpec );
+			
+			const ResSpec resSpec = GetResSpec_from_name( that->name() );
+			
+			const N::Handle r = (ResLoad_false_scope(),
+			                     N::Get1Resource( resSpec.type, resSpec.id ));
+			
+			N::SetResInfo( r, resSpec.id, name );
+			
+			::ReleaseResource( r );
+		}
 	};
 	
-	Rsrc_IOHandle::~Rsrc_IOHandle()
+	
+	struct rsrc_extra : Mac_Handle_extra
 	{
+		FSSpec filespec;
+	};
+	
+	static
+	void flush_resource( vfs::filehandle* that );
+	
+	static
+	void rsrc_cleanup( vfs::filehandle* that )
+	{
+		rsrc_extra& extra = *(rsrc_extra*) that->extra();
+		
 		try
 		{
-			FlushResource();
+			flush_resource( that );
 		}
 		catch ( ... )
 		{
 		}
+		
+		::DisposeHandle( extra.handle );
 	}
 	
-	static N::Handle GetOrAddResource( const N::GetResInfo_Result& resinfo )
+	static
+	vfs::filehandle* new_rsrc_handle( const vfs::node&        file,
+	                                  int                     flags,
+	                                  n::owned< N::Handle >&  h,
+	                                  const FSSpec&           resFile )
+	{
+		vfs::filehandle* result = new vfs::filehandle( &file,
+		                                               flags,
+		                                               &Mac_Handle_methods,
+		                                               sizeof (rsrc_extra),
+		                                               &rsrc_cleanup );
+		
+		rsrc_extra& extra = *(rsrc_extra*) result->extra();
+		
+		extra.handle   = h.release();
+		extra.filespec = resFile;
+		
+		return result;
+	}
+	
+	static N::Handle GetOrAddResource( const ResSpec& resSpec )
 	{
 		try
 		{
-			return N::Get1Resource( resinfo.type, resinfo.id );
+			return N::Get1Resource( resSpec.type, resSpec.id );
 		}
 		catch ( const Mac::OSStatus& err )
 		{
@@ -180,133 +271,204 @@ namespace Genie
 				throw;
 			}
 			
-			return N::AddResource( N::NewHandle( 0 ), resinfo );
+			return N::AddResource( N::NewHandle( 0 ), resSpec.type, resSpec.id, NULL );
 		}
 	}
 	
-	void Rsrc_IOHandle::FlushResource()
+	static
+	void flush_resource( vfs::filehandle* that )
 	{
-		FSTreePtr file = GetFile();
+		rsrc_extra& extra = *(rsrc_extra*) that->extra();
 		
-		N::GetResInfo_Result resInfo = GetResInfo_from_name( file->name() );
+		vfs::node_ptr file = get_file( *that );
 		
-		RdWr_OpenResFile_Scope openResFile( itsFileSpec );
+		const ResSpec resSpec = GetResSpec_from_name( file->name() );
 		
-		const N::Handle r = GetOrAddResource( resInfo );
+		RdWr_OpenResFile_Scope openResFile( extra.filespec );
 		
-		const size_t size = GetEOF();
+		const N::Handle r = GetOrAddResource( resSpec );
+		
+		const size_t size = ::GetHandleSize( extra.handle );
 		
 		N::SetHandleSize( r, size );
 		
-		Positioned_Read( *r.Get(), size, 0 );
+		memcpy( *r.Get(), *extra.handle, size );
 		
 		N::ChangedResource( r );
 		N::WriteResource  ( r );
 	}
 	
-	IOPtr Rsrc_IOHandle::Clone()
-	{
-		return new Rsrc_IOHandle( GetFile(),
-		                          GetFlags(),
-		                          GetHandle(),
-		                          itsFileSpec );
-	}
 	
-	void Rsrc_IOHandle::Synchronize( bool metadata )
-	{
-		FlushResource();
-		
-		metadata = true;  // until we implement data-only flush
-		
-		if ( metadata )
-		{
-			// Just flush the whole volume, since we can't be more specific.
-			Mac::ThrowOSStatus( ::FlushVol( NULL, itsFileSpec.vRefNum ) );
-		}
-		else
-		{
-			// Call PBFlushFile(), or high-level wrapper
-		}
-	}
+	static vfs::filehandle_ptr unrsrc_file_open( const vfs::node* that, int flags, mode_t mode );
 	
-	
-	static IOPtr unrsrc_file_open( const FSTree* node, int flags, mode_t mode );
-	
-	static const data_method_set unrsrc_file_data_methods =
+	static const vfs::data_method_set unrsrc_file_data_methods =
 	{
 		&unrsrc_file_open
 	};
 	
-	static const node_method_set unrsrc_file_methods =
+	static const vfs::node_method_set unrsrc_file_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		&unrsrc_file_data_methods
 	};
 	
 	
-	static void rsrc_file_remove( const FSTree* node );
+	static void rsrc_file_remove( const vfs::node* that );
 	
-	static IOPtr rsrc_file_open( const FSTree* node, int flags, mode_t mode );
+	static void rsrc_file_rename( const vfs::node* that, const vfs::node* destination );
 	
-	static off_t rsrc_file_geteof( const FSTree* node );
+	static vfs::filehandle_ptr rsrc_file_open( const vfs::node* that, int flags, mode_t mode );
 	
-	static const data_method_set rsrc_file_data_methods =
+	static off_t rsrc_file_geteof( const vfs::node* that );
+	
+	static vfs::node_ptr rsrc_file_lookup( const vfs::node*     that,
+	                                       const plus::string&  name,
+	                                       const vfs::node*     parent )
 	{
-		&rsrc_file_open,
-		&rsrc_file_geteof
-	};
+		bool binary = false;
+		bool mac    = false;
+		
+		const char* p = name.c_str();
+		
+		if ( *p == '.' )
+		{
+			++p;
+			
+			if ( *p == '~' )
+			{
+				binary = true;
+				
+				++p;
+			}
+			
+			if ( memcmp( p, "mac-", sizeof "mac-" - 1) == 0 )
+			{
+				mac = true;
+				
+				p += sizeof "mac-" - 1;
+			}
+			else if ( !binary )
+			{
+				p = "";  // Don't match on ".name"
+			}
+		}
+		
+		if ( memcmp( p, "name", sizeof "name" ) != 0 )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		typedef vfs::property_params_factory<                     resource_name   > mac_factory;
+		typedef vfs::property_params_factory< utf8_text_property< resource_name > > utf8_factory;
+		
+		const vfs::property_params& params = mac ? mac_factory ::value
+		                                         : utf8_factory::value;
+		
+		return vfs::new_property( that, name, &params );
+	}
 	
-	static const node_method_set rsrc_file_methods =
+	static const vfs::item_method_set rsrc_file_item_methods =
 	{
 		NULL,
 		NULL,
 		NULL,
 		NULL,
 		&rsrc_file_remove,
+		&rsrc_file_rename,
+	};
+	
+	static const vfs::data_method_set rsrc_file_data_methods =
+	{
+		&rsrc_file_open,
+		&rsrc_file_geteof
+	};
+	
+	static const vfs::dir_method_set rsrc_file_dirmethods =
+	{
+		&rsrc_file_lookup
+	};
+	
+	static const vfs::node_method_set rsrc_file_methods =
+	{
+		&rsrc_file_item_methods,
+		&rsrc_file_data_methods,
 		NULL,
-		&rsrc_file_data_methods
+		&rsrc_file_dirmethods
 	};
 	
 	
-	static bool has_resource( const FSSpec& file, const N::GetResInfo_Result& resinfo )
+	static bool has_resource( const FSSpec& file, const ResSpec& resSpec )
 	{
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdPerm );
 		
-		return ::Get1Resource( resinfo.type, resinfo.id ) != NULL;
+		return ::Get1Resource( resSpec.type, resSpec.id ) != NULL;
 	}
 	
-	static void rsrc_file_remove( const FSTree* node )
+	static void rsrc_file_remove( const vfs::node* that )
 	{
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		RdWr_OpenResFile_Scope openResFile( fileSpec );
 		
-		N::GetResInfo_Result resinfo = GetResInfo_from_name( node->name() );
+		const ResSpec resSpec = GetResSpec_from_name( that->name() );
 		
-		const N::Handle r = N::Get1Resource( resinfo.type, resinfo.id );
+		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 		
 		(void) N::RemoveResource( r );
 	}
 	
-	static off_t rsrc_file_geteof( const FSTree* node )
+	static void rsrc_file_rename( const vfs::node* that, const vfs::node* destination )
 	{
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		if ( destination->owner() != that->owner() )
+		{
+			p7::throw_errno( EXDEV );
+		}
+		
+		const plus::string& new_name = destination->name();
+		
+		const ResSpec old_resSpec = GetResSpec_from_name( that->name() );
+		
+		const ResSpec new_resSpec = GetResSpec_from_name( new_name );
+		
+		if ( old_resSpec.type != new_resSpec.type )
+		{
+			p7::throw_errno( EXDEV );
+		}
+		
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
+		
+		RdWr_OpenResFile_Scope openResFile( fileSpec );
+		
+		::SetResLoad( false );
+		
+		if ( const Handle r = ::Get1Resource( new_resSpec.type, new_resSpec.id ) )
+		{
+			::RemoveResource( r );
+		}
+		
+		::SetResLoad( true );
+		
+		const N::Handle r = N::Get1Resource( old_resSpec.type, old_resSpec.id );
+		
+		const mac::types::ResInfo resInfo = N::GetResInfo( r );
+		
+		N::SetResInfo( r, new_resSpec.id, resInfo.name );
+	}
+	
+	static off_t rsrc_file_geteof( const vfs::node* that )
+	{
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
 		
-		N::GetResInfo_Result resinfo = GetResInfo_from_name( node->name() );
+		const ResSpec resSpec = GetResSpec_from_name( that->name() );
 		
-		const N::Handle r = N::Get1Resource( resinfo.type, resinfo.id );
+		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 		
 		return N::GetHandleSize( r );
 	}
 	
-	static IOPtr unrsrc_file_open( const FSTree* node, int flags, mode_t mode )
+	static vfs::filehandle_ptr unrsrc_file_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
@@ -317,63 +479,70 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		{
 			RdWr_OpenResFile_Scope openResFile( fileSpec );
 			
-			N::GetResInfo_Result resinfo = GetResInfo_from_name( node->name() );
+			const ResSpec resSpec = GetResSpec_from_name( that->name() );
 			
-			(void) N::AddResource( N::NewHandle( 0 ), resinfo );
+			(void) N::AddResource( N::NewHandle( 0 ), resSpec.type, resSpec.id, NULL );
 		}
 		
 		n::owned< N::Handle > h = N::NewHandle( 0 );
 		
-		IOHandle* result = writing ? new Rsrc_IOHandle  ( node, flags, h, fileSpec )
-		                           : new Handle_IOHandle( node, flags, h );
+		// that refers to an unrsrc; make a new one that's a live rsrc
+		
+		vfs::node_ptr new_node = Get_RsrcFile_FSTree( that->owner(),
+		                                              that->name(),
+		                                              fileSpec );
+		
+		that = new_node.get();
+		
+		vfs::filehandle* result = writing ? new_rsrc_handle  ( *that, flags, h, fileSpec )
+		                                  : new_Handle_handle( *that, flags, h );
 		
 		return result;
 	}
 	
-	static IOPtr rsrc_file_open( const FSTree* node, int flags, mode_t mode )
+	static vfs::filehandle_ptr rsrc_file_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
 		
-		N::GetResInfo_Result resinfo = GetResInfo_from_name( node->name() );
+		const ResSpec resSpec = GetResSpec_from_name( that->name() );
 		
-		const N::Handle r = N::Get1Resource( resinfo.type, resinfo.id );
+		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 		
 		n::owned< N::Handle > h = N::DetachResource( r );
 		
-		IOHandle* result = writing ? new Rsrc_IOHandle  ( node, flags, h, fileSpec )
-		                           : new Handle_IOHandle( node, flags, h );
+		vfs::filehandle* result = writing ? new_rsrc_handle  ( *that, flags, h, fileSpec )
+		                                  : new_Handle_handle( *that, flags, h );
 		
 		return result;
 	}
 	
-	FSTreePtr Get_RsrcFile_FSTree( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const FSSpec&        file )
+	vfs::node_ptr Get_RsrcFile_FSTree( const vfs::node*     parent,
+	                                   const plus::string&  name,
+	                                   const FSSpec&        file )
 	{
-		const N::GetResInfo_Result resinfo = GetResInfo_from_name( name );
+		const ResSpec resSpec = GetResSpec_from_name( name );
 		
-		const bool exists = has_resource( file, resinfo );
+		const bool exists = has_resource( file, resSpec );
 		
 		// FIXME:  Check perms
-		const mode_t mode = exists ? S_IFREG | 0400 : 0;
+		const mode_t mode = exists ? S_IFREG | 0444 : 0;
 		
-		const node_method_set* methods = exists ? &rsrc_file_methods
-		                                        : &unrsrc_file_methods;
+		const vfs::node_method_set* methods = exists ? &rsrc_file_methods
+		                                             : &unrsrc_file_methods;
 		
-		FSTree* result = new FSTree( parent, name, mode, methods, sizeof (FSSpec) );
+		vfs::node* result = new vfs::node( parent, name, mode, methods, sizeof (FSSpec) );
 		
 		*(FSSpec*) result->extra() = file;
 		
 		return result;
 	}
 }
-

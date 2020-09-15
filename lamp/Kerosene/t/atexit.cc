@@ -7,6 +7,7 @@
 
 // POSIX
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
@@ -24,9 +25,6 @@
 #define ATEXIT_MESSAGE  "at exit\n"
 
 static const unsigned n_tests = 2;
-
-
-using tap::ok_if;
 
 
 static bool write_at_exit = false;
@@ -69,7 +67,7 @@ static void run( const char* argv0, bool want )
 	
 	const ssize_t n_read = CHECK( read( pipe_ends[0], buffer, sizeof buffer ) );
 	
-	ok_if( n_read == want * STRLEN( ATEXIT_MESSAGE ) );
+	EXPECT( n_read == want * STRLEN( ATEXIT_MESSAGE ) );
 	
 	CHECK( close( pipe_ends[0] ) );
 }
@@ -104,4 +102,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

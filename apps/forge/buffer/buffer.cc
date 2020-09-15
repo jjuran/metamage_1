@@ -19,6 +19,9 @@
 // Relix
 #include "relix/fork_and_exit.h"
 
+// command
+#include "command/get_option.hh"
+
 // poseven
 #include "poseven/extras/pump.hh"
 #include "poseven/extras/spew.hh"
@@ -37,8 +40,72 @@
 #include "poseven/functions/_exit.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_output = 'o',
+	Option_title  = 't',
+	Option_wait   = 'w',
+	
+	Option_last_byte = 255,
+	
+	Option_in_place,
+};
+
+static command::option options[] =
+{
+	{ "out",   Option_output, Param_required },
+	{ "title", Option_title,  Param_required },
+	
+	{ "wait",     Option_wait      },
+	{ "in-place", Option_in_place  },
+	
+	{ NULL }
+};
+
+static bool should_wait = false;
+static bool in_place    = false;
+
+static const char* title       = NULL;
+static const char* output_file = "/dev/null";
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_output:
+				output_file = command::global_result.param;
+				break;
+			
+			case Option_title:
+				title = command::global_result.param;
+				break;
+			
+			case Option_wait:
+				should_wait = true;
+				break;
+			
+			case Option_in_place:
+				in_place = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -46,14 +113,13 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	static void make_window( const char* title )
 	{
 		p7::chdir( "/gui/new/port" );
 		
-		p7::spew( p7::open( "title", p7::o_wronly | p7::o_trunc | p7::o_binary ),
+		p7::spew( p7::open( ".~title", p7::o_wronly | p7::o_trunc ),
 		          title,
 		          std::strlen( title ) );
 		
@@ -64,22 +130,23 @@ namespace tool
 		
 		p7::utime( "window" );
 		
-		p7::spew( "window/text-font", STR_LEN( "4" "\n" ) );
-		p7::spew( "window/text-size", STR_LEN( "9" "\n" ) );
+		p7::spew( "w/text-font", STR_LEN( "4" "\n" ) );
+		p7::spew( "w/text-size", STR_LEN( "9" "\n" ) );
 		
 		p7::link( "/gui/new/stack",       "view"          );
-		p7::link( "/gui/new/scrollframe", "view/main"     );
-		p7::link( "/gui/new/frame",       "view/main/v"   );
-		p7::link( "/gui/new/textedit",    "view/main/v/v" );
 		
-		p7::symlink( "v/v", "view/main/target" );
+		p7::link( "/gui/new/scrollframe", "v/main/view"     );
+		p7::link( "/gui/new/frame",       "v/main/v/view"   );
+		p7::link( "/gui/new/textedit",    "v/main/v/v/view" );
 		
-		p7::spew( "view/main/vertical", STR_LEN( "1" "\n" ) );
-		p7::spew( "view/main/v/padding", STR_LEN( "4" "\n" ) );
+		p7::symlink( "v/v", "v/main/v/target" );
 		
-		p7::symlink( "view/main/v/v/unlock", "accept" );
+		p7::spew( "v/main/v/vertical",  STR_LEN( "1" "\n" ) );
+		p7::spew( "v/main/v/v/padding", STR_LEN( "4" "\n" ) );
 		
-		p7::link( "/gui/new/defaultkeys", "view/defaultkeys" );
+		p7::symlink( "v/main/v/v/v/unlock", "accept" );
+		
+		p7::link( "/gui/new/defaultkeys", "v/defaultkeys/view" );
 	}
 	
 	
@@ -89,7 +156,7 @@ namespace tool
 		
 		p7::ioctl( p7::open( "tty", p7::o_rdwr ), TIOCSCTTY, NULL );
 		
-		const char* gate = "view/main/v/v/gate";
+		const char* gate = "v/main/v/v/v/gate";
 		
 		char c;
 		
@@ -105,36 +172,18 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool should_wait = false;
+		char *const *args = get_options( argv );
 		
-		bool in_place = false;
+		const int argn = argc - (args - argv);
 		
-		const char* title = NULL;
-		
-		const char* output_file = "/dev/null";
-		
-		o::bind_option_to_variable( "-o", output_file );
-		o::bind_option_to_variable( "-t", title       );
-		o::bind_option_to_variable( "-w", should_wait );
-		
-		o::bind_option_to_variable( "--in-place", in_place );
-		
-		o::alias_option( "-o", "--out"   );
-		o::alias_option( "-t", "--title" );
-		o::alias_option( "-w", "--wait"  );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *freeArgs = o::free_arguments();
-		
-		if ( *freeArgs == NULL )
+		if ( *args == NULL )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "Usage: buffer input-file\n" ) );
 			
 			return 1;
 		}
 		
-		const char* input_file = freeArgs[ 0 ];
+		const char* input_file = args[ 0 ];
 		
 		if ( input_file[0] == '-' && input_file[1] == '\0' )
 		{
@@ -157,13 +206,16 @@ namespace tool
 		
 		make_window( title );
 		
-		p7::pump( input, p7::open( "view/main/v/v/text", p7::o_wronly | p7::o_trunc ) );
+		const char* text = "v/main/v/v/v/text";
+		const char* lock = "v/main/v/v/v/lock";
+		
+		p7::pump( input, p7::open( text, p7::o_wronly | p7::o_trunc ) );
 		
 		p7::close( input );
 		
-		p7::utime( "view/main/v/v/lock" );
+		p7::utime( lock );
 		
-		n::owned< p7::fd_t > buffer = p7::open( "view/main/v/v/text", p7::o_rdonly );
+		n::owned< p7::fd_t > buffer = p7::open( text, p7::o_rdonly );
 		
 		n::owned< p7::fd_t > output = p7::openat( cwd, output_file, p7::o_wronly | p7::o_creat );
 		
@@ -195,4 +247,3 @@ namespace tool
 	}
 	
 }
-

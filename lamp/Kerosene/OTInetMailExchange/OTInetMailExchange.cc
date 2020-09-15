@@ -24,4 +24,3 @@ pascal OSStatus OTInetMailExchange( InetSvcRef,
 {
 	return _OTInetMailExchange( domain, count, result );
 }
-

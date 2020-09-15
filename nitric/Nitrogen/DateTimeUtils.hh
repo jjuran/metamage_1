@@ -14,6 +14,12 @@
 #ifndef NITROGEN_DATETIMEUTILS_HH
 #define NITROGEN_DATETIMEUTILS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __DATETIMEUTILS__
 #include <DateTimeUtils.h>
 #endif
@@ -29,6 +35,12 @@
 #ifndef NITROGEN_STR_HH
 #include "Nitrogen/Str.hh"
 #endif
+
+
+#undef DateString
+#undef TimeString
+#undef LongDateString
+#undef LongTimeString
 
 
 namespace Nitrogen
@@ -172,4 +184,3 @@ namespace nucleus
 }
 
 #endif
-

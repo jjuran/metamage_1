@@ -297,4 +297,3 @@ namespace Nitrogen {
 	}
 
 #endif /* NITROGEN_HITOOLBAR_HH */
-

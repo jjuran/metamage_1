@@ -5,14 +5,19 @@
 
 #include "Genie/IO/Handle.hh"
 
-// Standard C++
-#include <algorithm>
+// POSIX
+#include <fcntl.h>
 
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
+
+// vfs
+#include "vfs/node.hh"
+#include "vfs/filehandle/methods/bstore_method_set.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
 
 
 namespace Genie
@@ -22,36 +27,104 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	Handle_IOHandle::~Handle_IOHandle()
+	template < class T >
+	static inline T min( T a, T b )
 	{
+		return b < a ? b : a;
 	}
 	
-	IOPtr Handle_IOHandle::Clone()
+	
+	static
+	void dispose_Mac_Handle( vfs::filehandle* that )
 	{
-		return new Handle_IOHandle( GetFile(),
-		                            GetFlags(),
-		                            itsHandle );
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) that->extra();
+		
+		::DisposeHandle( extra.handle );
 	}
 	
-	ssize_t Handle_IOHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
+	
+	static
+	ssize_t Mac_Handle_pread( vfs::filehandle*  that,
+	                          char*             buffer,
+	                          size_t            n,
+	                          off_t             offset );
+	
+	static
+	off_t Mac_Handle_geteof( vfs::filehandle* that );
+	
+	static
+	ssize_t Mac_Handle_pwrite( vfs::filehandle*  that,
+	                           const char*       buffer,
+	                           size_t            n,
+	                           off_t             offset );
+	
+	static
+	void Mac_Handle_seteof( vfs::filehandle* that, off_t length );
+	
+	static const vfs::bstore_method_set Mac_Handle_bstore_methods =
 	{
-		const size_t size = GetEOF();
+		&Mac_Handle_pread,
+		&Mac_Handle_geteof,
+		&Mac_Handle_pwrite,
+		&Mac_Handle_seteof,
+	};
+	
+	const vfs::filehandle_method_set Mac_Handle_methods =
+	{
+		&Mac_Handle_bstore_methods,
+	};
+	
+	
+	vfs::filehandle* new_Handle_handle( const vfs::node&               file,
+	                                    int                            flags,
+	                                    nucleus::owned< Mac::Handle >  h )
+	{
+		using vfs::filehandle;
+		
+		filehandle* result = new filehandle( &file,
+		                                     flags,
+		                                     &Mac_Handle_methods,
+		                                     sizeof (Mac_Handle_extra),
+		                                     &dispose_Mac_Handle );
+		
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) result->extra();
+		
+		extra.handle = h.release();
+		
+		return result;
+	}
+	
+	static
+	ssize_t Mac_Handle_pread( vfs::filehandle*  that,
+	                          char*             buffer,
+	                          size_t            n_bytes,
+	                          off_t             offset )
+	{
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) that->extra();
+		
+		const size_t size = ::GetHandleSize( extra.handle );
 		
 		if ( offset >= size )
 		{
 			return 0;
 		}
 		
-		n_bytes = std::min< size_t >( n_bytes, size - offset );
+		n_bytes = min< size_t >( n_bytes, size - offset );
 		
-		memcpy( buffer, *itsHandle.get().Get() + offset, n_bytes );
+		memcpy( buffer, *extra.handle + offset, n_bytes );
 		
 		return n_bytes;
 	}
 	
-	ssize_t Handle_IOHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
+	static
+	ssize_t Mac_Handle_pwrite( vfs::filehandle*  that,
+	                           const char*       buffer,
+	                           size_t            n_bytes,
+	                           off_t             offset )
 	{
-		const bool writable = GetFlags() + (1 - O_RDONLY) & 2;
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) that->extra();
+		
+		const bool writable = that->get_flags() + (1 - O_RDONLY) & 2;
 		
 		if ( !writable )
 		{
@@ -65,39 +138,42 @@ namespace Genie
 		
 		const size_t required_size = offset + n_bytes;
 		
-		const size_t existing_size = GetEOF();
+		const size_t existing_size = ::GetHandleSize( extra.handle );
 		
 		if ( required_size > existing_size )
 		{
-			try
-			{
-				N::SetHandleSize( itsHandle, required_size );
-			}
-			catch ( ... )
+			::SetHandleSize( extra.handle, required_size );
+			
+			if ( MemError() != noErr )
 			{
 				if ( offset > existing_size )
 				{
 					throw;
 				}
 				
-				n_bytes = std::min< size_t >( n_bytes, existing_size - offset );
+				n_bytes = min< size_t >( n_bytes, existing_size - offset );
 			}
 		}
 		
-		memcpy( *itsHandle.get().Get() + offset, buffer, n_bytes );
+		memcpy( *extra.handle + offset, buffer, n_bytes );
 		
 		return n_bytes;
 	}
 	
-	off_t Handle_IOHandle::GetEOF()
+	static
+	off_t Mac_Handle_geteof( vfs::filehandle* that )
 	{
-		return N::GetHandleSize( itsHandle );
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) that->extra();
+		
+		return ::GetHandleSize( extra.handle );
 	}
 	
-	void Handle_IOHandle::SetEOF( off_t length )
+	static
+	void Mac_Handle_seteof( vfs::filehandle* that, off_t length )
 	{
-		N::SetHandleSize( itsHandle, length );
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) that->extra();
+		
+		N::SetHandleSize( extra.handle, length );
 	}
 	
 }
-

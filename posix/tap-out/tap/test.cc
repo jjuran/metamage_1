@@ -6,18 +6,13 @@
 
 #include "tap/test.hh"
 
-// Standard C++
-#include <algorithm>
-
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // POSIX
 #include <unistd.h>
 #include <sys/uio.h>
-
-// Iota
-#include "iota/strings.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -45,7 +40,7 @@ namespace tap
 			return;
 		}
 		
-		const unsigned odd_tests = std::abs( extra_tests );
+		const unsigned odd_tests = abs( extra_tests );
 		
 		const unsigned magnitude = gear::decimal_magnitude( odd_tests );
 		
@@ -91,28 +86,19 @@ namespace tap
 		atexit( &atexit_count_tests );
 	}
 	
-	void ok_if( bool ok, const char* comment )
+	void print( bool ok )
 	{
-		if ( comment == NULL )
-		{
-			comment = "";
-		}
-		
 		const bool not_ok = !ok;
 		
 		const unsigned magnitude = gear::decimal_magnitude( ++global_tests_run );
 		
 		const char* tests_str = gear::inscribe_unsigned_decimal( global_tests_run );
 		
-		const bool has_comment = comment[0] != '\0';
-		
 		struct iovec iov[] =
 		{
 			{ (void*) STR_LEN( "not " ) * not_ok      },
 			{ (void*) STR_LEN( "ok "  )               },
 			{ (void*) tests_str, magnitude            },
-			{ (void*) STR_LEN( " - "  ) * has_comment },
-			{ (void*) comment,   strlen( comment )    },
 			{ (void*) STR_LEN( "\n"   )               },
 		};
 		
@@ -120,5 +106,31 @@ namespace tap
 		
 	}
 	
+	void expect( bool condition, const char* ref, unsigned len )
+	{
+		if ( !condition )
+		{
+			write( STDERR_FILENO, ref, len );
+		}
+	
+		print( condition );
+	}
+	
+	int cmp( const void* p, unsigned p_len, const void* q, unsigned q_len )
+	{
+		int result = q_len - p_len;
+		
+		if ( result == 0 )
+		{
+			result = memcmp( p, q, p_len );
+		}
+		
+		if ( result != 0 )
+		{
+			log( p, p_len, q, q_len );
+		}
+		
+		return result;
+	}
+	
 }
-

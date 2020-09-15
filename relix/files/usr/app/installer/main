@@ -1,0 +1,13 @@
+#!/bin/sh
+
+/bin/test -d /tmp || made_tmp=1
+/bin/test -d /tmp || /bin/mkdir /tmp
+
+/sbin/upgrade $PLATFORM 2>&1
+
+/bin/test -z "$made_tmp" || /bin/rmdir /tmp 2> /dev/null || true
+
+/bin/sync
+
+/usr/bin/idle
+

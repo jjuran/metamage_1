@@ -61,28 +61,31 @@ int main( int argc, char const *const argv[] )
 {
 	p7::chdir( "/gui/new/port" );
 	
-	setenv( "WINDOW", tool::getcwd(), true );
+	setenv( "PORT", tool::getcwd(), true );
 	
 	const short width  = 2 * 4 +  6 * 80 + 15;
 	const short height = 2 * 4 + 11 * 24;
 	
 	p7::spew( "size", STR_LEN( "503x272" "\n" ) );
 	
+	p7::spew( p7::open( ".~title", p7::o_wronly | p7::o_trunc ),
+	          STR_LEN( "teletype" ) );
+	
 	p7::utime( "window" );
 	
-	p7::spew( "window/text-font", STR_LEN( "4" "\n" ) );
-	p7::spew( "window/text-size", STR_LEN( "9" "\n" ) );
+	p7::spew( "w/text-font", STR_LEN( "4" "\n" ) );
+	p7::spew( "w/text-size", STR_LEN( "9" "\n" ) );
 	
 	p7::link( "/gui/new/scrollframe", "view"     );
-	p7::link( "/gui/new/frame",       "view/v"   );
-	p7::link( "/gui/new/console",     "view/v/v" );
+	p7::link( "/gui/new/frame",       "v/view"   );
+	p7::link( "/gui/new/console",     "v/v/view" );
 	
-	p7::symlink( "v/v", "view/target" );
+	p7::symlink( "v/v", "v/target" );
 	
-	p7::spew( "view/vertical", STR_LEN( "1" "\n" ) );
-	p7::spew( "view/v/padding", STR_LEN( "4" "\n" ) );
+	p7::spew( "v/vertical", STR_LEN( "1" "\n" ) );
+	p7::spew( "v/v/padding", STR_LEN( "4" "\n" ) );
 	
-	p7::rename( "view/v/v/tty", "tty" );
+	p7::rename( "v/v/v/tty", "tty" );
 	
 	n::owned< p7::fd_t > tty = p7::open( "tty", p7::o_rdwr );
 	
@@ -114,7 +117,7 @@ int main( int argc, char const *const argv[] )
 	
 	if ( const char* name = ttyname( p7::stdin_fileno ) )
 	{
-		p7::spew( p7::open( "title", p7::o_wronly | p7::o_trunc | p7::o_binary ),
+		p7::spew( p7::open( ".~title", p7::o_wronly | p7::o_trunc ),
 		          name,
 		          std::strlen( name ) );
 	}
@@ -139,7 +142,7 @@ int main( int argc, char const *const argv[] )
 	
 	// If the child exited unsuccessfully and the terminal is still connected,
 	// keep the window around.
-	if ( wait_status != 0  &&  ::write( p7::stdout_fileno, "", 0 ) == 0 )
+	if ( wait_status != 0 )
 	{
 		// Reset ourselves as the foreground process group of the terminal,
 		// so we'll get SIGHUP when the window is closed.
@@ -156,4 +159,3 @@ int main( int argc, char const *const argv[] )
 	
 	return 0;
 }
-

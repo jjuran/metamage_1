@@ -3,33 +3,30 @@
  *	========
  */
 
-// Mac OS
-#ifndef __PROCESSES__
-#include <Processes.h>
-#endif
+#ifdef __RELIX__
 
 // Standard C
 #include <signal.h>
 #include <stdlib.h>
 
-// Genie
-#include "Genie/Faults.hh"
+// mac-sys-utils
+#include "mac_sys/exit_to_shell.hh"
 
+// relix-api
+#include "relix/api/deliver_fatal_signal.hh"
 
-#ifdef __RELIX__
 
 void abort()
 {
 	try
 	{
-		Genie::DeliverFatalSignal( SIGABRT );
+		relix::deliver_fatal_signal( SIGABRT );
 	}
 	catch ( ... )
 	{
 	}
 	
-	::ExitToShell();
+	mac::sys::exit_to_shell();
 }
 	
 #endif
-

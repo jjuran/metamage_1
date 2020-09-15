@@ -14,7 +14,7 @@
 #include "iota/strings.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 
 struct rom_info
@@ -88,4 +88,3 @@ int main( int argc, char **argv )
 	
 	return 0;
 }
-

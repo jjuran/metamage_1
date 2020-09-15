@@ -45,6 +45,8 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
    nucleus::owned<DragRef> NewDrag()
      {
       DragRef result;
@@ -308,6 +310,8 @@ namespace Nitrogen
       ThrowOSStatus( ::ZoomRegion( region, zoomDistance, zoomSteps, acceleration ) );
      }
    
+#endif  // #if ! __LP64__
+	
    void RegisterDragManagerErrors()
      {
       RegisterOSStatus< badDragRefErr             >();

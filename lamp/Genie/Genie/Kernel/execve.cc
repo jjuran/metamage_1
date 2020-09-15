@@ -16,6 +16,9 @@
 // plus
 #include "plus/string/concat.hh"
 
+// relix
+#include "relix/syscall/registry.hh"
+
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
 
@@ -24,7 +27,6 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
-#include "Genie/SystemCallRegistry.hh"
 
 
 namespace Genie
@@ -44,8 +46,6 @@ namespace Genie
 		try
 		{
 			Process& current = current_process();
-			
-			bool forked = current.Forked();
 			
 			// Start a new thread with the child's process context
 			current.Exec( path, argv, envp );
@@ -94,4 +94,3 @@ namespace Genie
 	#pragma force_active reset
 	
 }
-

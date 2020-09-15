@@ -12,7 +12,6 @@
 #include <vector>
 
 // Standard C/C++
-#include <cctype>
 #include <cstdio>
 #include <cstring>
 
@@ -23,8 +22,15 @@
 #include "fcntl.h"
 #include <sys/wait.h>
 
-// Iota
+// iota
+#include "iota/char_types.hh"
 #include "iota/strings.hh"
+
+// command
+#include "command/get_option.hh"
+
+// gear
+#include "gear/parse_decimal.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -33,6 +39,7 @@
 #include "plus/var_string.hh"
 
 // poseven
+#include "poseven/functions/chdir.hh"
 #include "poseven/functions/execv.hh"
 #include "poseven/functions/execvp.hh"
 #include "poseven/functions/open.hh"
@@ -49,7 +56,6 @@
 //#include "Utilities/Processes.h"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 // A-line
@@ -67,19 +73,148 @@
 #include "A-line/Task.hh"
 
 
+using namespace command::constants;
+
+using tool::OptionsRecord;
+using tool::Platform;
+using tool::BuildVariety;
+using tool::platformUnspecified;
+using tool::buildDefault;
+
+enum
+{
+	Option_A4      = '4',
+	Option_A5      = '5',
+	Option_68K     = '6',
+	Option_x86     = '8',
+	Option_Blue    = 'B',
+	Option_Carbon  = 'C',
+	Option_CFM     = 'F',
+	Option_MachO   = 'O',
+	Option_PPC     = 'P',
+	Option_release = 'R',
+	Option_sym     = 'X',
+	Option_all     = 'a',
+	Option_debug   = 'g',
+	Option_n_jobs  = 'j',
+	Option_dry_run = 'n',
+	Option_cpp     = 'p',
+	Option_catalog = 't',
+	Option_verbose = 'v',
+};
+
+static command::option options[] =
+{
+	{ "", Option_n_jobs, command::Param_required },
+	
+	{ "all",     Option_all     },
+	{ "cpp",     Option_cpp     },
+	{ "catalog", Option_catalog },
+	{ "dry-run", Option_dry_run },
+	{ "verbose", Option_verbose },
+	
+	{ "68k", Option_68K },
+	{ "ppc", Option_PPC },
+	{ "x86", Option_x86 },
+	
+	{ "a4",    Option_A4    },
+	{ "a5",    Option_A5    },
+	{ "cfm",   Option_CFM   },
+	{ "macho", Option_MachO },
+	
+	{ "blue",   Option_Blue   },
+	{ "carbon", Option_Carbon },
+	
+	{ "sym",     Option_sym     },
+	{ "debug",   Option_debug   },
+	{ "release", Option_release },
+	
+	{ NULL }
+};
+
+static bool gDryRun = false;
+
+static OptionsRecord gOptions;
+
+static std::size_t global_job_limit = 1;
+
+static Platform arch    = platformUnspecified;
+static Platform runtime = platformUnspecified;
+static Platform macAPI  = platformUnspecified;
+
+static BuildVariety buildVariety = buildDefault;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		using namespace tool;
+		
+		using command::global_result;
+		
+		switch ( opt )
+		{
+			case Option_all:
+				gOptions.all = true;
+				break;
+			
+			case Option_catalog:
+				gOptions.catalog = true;
+				break;
+			
+			case Option_dry_run:
+				gDryRun = true;
+				break;
+			
+			case Option_verbose:
+				gOptions.verbose = true;
+				break;
+			
+			case Option_cpp:
+				gOptions.preprocess = true;
+				break;
+			
+			case Option_n_jobs:
+				global_job_limit = gear::parse_decimal( global_result.param );
+				break;
+			
+			case Option_68K:  arch = arch68K;  break;
+			case Option_PPC:  arch = archPPC;  break;
+			case Option_x86:  arch = archX86;  break;
+			
+			case Option_A4:     runtime = runtimeA4CodeResource;  break;
+			case Option_A5:     runtime = runtimeA5CodeSegments;  break;
+			case Option_CFM:    runtime = runtimeCodeFragments;   break;
+			case Option_MachO:  runtime = runtimeMachO;           break;
+			
+			case Option_Blue:    macAPI = apiMacBlue;    break;
+			case Option_Carbon:  macAPI = apiMacCarbon;  break;
+			
+			case Option_sym:      buildVariety = buildSymbolics;  break;
+			case Option_debug:    buildVariety = buildDebug;      break;
+			case Option_release:  buildVariety = buildRelease;    break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
+
+
 namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	using namespace io::path_descent_operators;
 	
-	
-	static bool gDryRun = false;
-	
-	static OptionsRecord gOptions;
 	
 	OptionsRecord& Options()
 	{
@@ -154,7 +289,7 @@ namespace tool
 		
 		for ( const char* p = word.c_str();  *p != '\0';  ++p )
 		{
-			if ( !std::isalnum( *p )  &&  *p != '_' )
+			if ( !iota::is_alnum( *p )  &&  *p != '_' )
 			{
 				switch ( *p )
 				{
@@ -282,8 +417,8 @@ namespace tool
 			pathname = diagnostics_path;
 		}
 		
-		std::fprintf( stderr, "#\n# %d bytes of %s\n#\n" "    report %s\n#\n",
-		                            size,       stuff,               pathname );
+		std::fprintf( stderr, "#\n# %ld bytes of %s\n#\n" "    report %s\n#\n",
+		                            size,        stuff,               pathname );
 	}
 	
 	void check_diagnostics( bool succeeded, const char* diagnostics_path )
@@ -359,7 +494,7 @@ namespace tool
 			{
 				p7::write( p7::stderr_fileno, STR_LEN( "### Aborting on user break via ToolServer.\n" ) );
 				
-				throw p7::exit_t( 128 );
+				_exit( 128 );
 			}
 			
 			end_task( pid, wait_status );
@@ -382,8 +517,6 @@ namespace tool
 			continue;
 		}
 	}
-	
-	static std::size_t global_job_limit = 1;
 	
 	static void wait_for_jobs()
 	{
@@ -495,7 +628,7 @@ namespace tool
 		
 		PrintCommandForShell( MakeCommand( "cd", targetDir.c_str() ) );
 		
-		chdir( targetDir.c_str() );
+		p7::chdir( targetDir.c_str() );
 		
 		const std::vector< plus::string >& prereqs = project.AllUsedProjects();
 		
@@ -554,73 +687,32 @@ namespace tool
 	{
 		if ( argc <= 1 )  return 0;
 		
-		Platform arch    = platformUnspecified;
-		Platform runtime = platformUnspecified;
-		Platform macAPI  = platformUnspecified;
+		char *const *args = get_options( argv );
 		
-		BuildVariety buildVariety = buildDefault;
+		const int argn = argc - (args - argv);
 		
-		// General
+		char const *const *freeArgs = args;
 		
-		o::bind_option_to_variable( "-v", gOptions.verbose );
+		if ( gOptions.preprocess  &&  buildVariety == buildSymbolics )
+		{
+			const char* msg = "A-line:  Symbolics and separate preprocessing are incompatible";
+			
+			fprintf( stderr, "%s\n", msg );
+			
+			return 2;
+		}
 		
-		o::alias_option( "-v", "--verbose" );
+	#if TARGET_API_MAC_CARBON
 		
-		// Actions
+		/*
+			Bringing ToolServer frontmost to run commands seems to improve
+			performance when MacRelix is running natively in OS X, but hurt
+			it in OS 9 (including Classic).
+		*/
 		
-		o::bind_option_to_variable( "-a", gOptions.all );
+		setenv( "TLSRVR_FRONTMOST", "always", 0 );
 		
-		o::alias_option( "-a", "--all" );
-		
-		o::bind_option_to_variable( "-n", gDryRun );
-		
-		o::alias_option( "-n", "--dry-run" );
-		
-		o::bind_option_to_variable( "-t", gOptions.catalog );
-		
-		o::alias_option( "-t", "--catalog" );
-		
-		// Targeting
-		
-		o::bind_option_to_variable( "-6", arch, arch68K );
-		o::bind_option_to_variable( "-P", arch, archPPC );
-		o::bind_option_to_variable( "-8", arch, archX86 );
-		
-		o::bind_option_to_variable( "-4", runtime, runtimeA4CodeResource );
-		o::bind_option_to_variable( "-5", runtime, runtimeA5CodeSegments );
-		o::bind_option_to_variable( "-F", runtime, runtimeCodeFragments  );
-		o::bind_option_to_variable( "-O", runtime, runtimeMachO          );
-		
-		o::bind_option_to_variable( "-B", macAPI, apiMacBlue   );
-		o::bind_option_to_variable( "-C", macAPI, apiMacCarbon );
-		
-		o::bind_option_to_variable( "-X", buildVariety, buildSymbolics );
-		o::bind_option_to_variable( "-g", buildVariety, buildDebug     );
-		o::bind_option_to_variable( "-R", buildVariety, buildRelease   );
-		
-		o::alias_option( "-6", "--68k" );
-		o::alias_option( "-P", "--ppc" );
-		o::alias_option( "-8", "--x86" );
-		
-		o::alias_option( "-4", "--a4"    );
-		o::alias_option( "-5", "--a5"    );
-		o::alias_option( "-F", "--cfm"   );
-		o::alias_option( "-O", "--macho" );
-		
-		o::alias_option( "-B", "--blue"   );
-		o::alias_option( "-C", "--carbon" );
-		
-		o::alias_option( "-X", "--sym    " );
-		o::alias_option( "-g", "--debug"   );
-		o::alias_option( "-R", "--release" );
-		
-		// Performance
-		
-		o::bind_option_to_variable( "-j", global_job_limit );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *freeArgs = o::free_arguments();
+	#endif
 		
 	#if defined( __APPLE__ )  &&  defined( __POWERPC__ )
 		
@@ -680,7 +772,7 @@ namespace tool
 					std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
 				}
 				
-				return EXIT_FAILURE;
+				return 1;
 			}
 			catch ( const NoSuchUsedProject& ex )
 			{
@@ -693,7 +785,7 @@ namespace tool
 					std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
 				}
 				
-				return EXIT_FAILURE;
+				return 1;
 			}
 			catch ( const missing_project_config& missing )
 			{
@@ -760,15 +852,14 @@ namespace tool
 		if ( std::size_t n = CountFailures() )
 		{
 			std::fprintf( stderr, "###\n"
-			                      "### A-line: %d task%s had errors\n"
-			                      "###\n",     n,     n == 1 ? ""
-			                                                 : "s" );
+			                      "### A-line: %ld task%s had errors\n"
+			                      "###\n",     n,      n == 1 ? ""
+			                                                  : "s" );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
-		return EXIT_SUCCESS;
+		return 0;
 	}
 	
 }
-

@@ -4,13 +4,13 @@
  */
 
 // Standard C
-#include <ctype.h>
 #include <string.h>
 
 // POSIX
 #include "sys/utsname.h"
 
-// Iota
+// iota
+#include "iota/char_types.hh"
 #include "iota/strings.hh"
 
 // Debug
@@ -19,9 +19,16 @@
 // plus
 #include "plus/var_string.hh"
 
+// relix
+#include "relix/syscall/registry.hh"
+
 // Genie
-#include "Genie/SystemCallRegistry.hh"
 #include "Genie/Utilities/GetWorkstationName.hh"
+
+
+#define SYSNAME  "Relix"
+#define RELEASE  "0.7.2-alpha.1"
+#define VERSION  "MacRelix"
 
 
 namespace Genie
@@ -44,14 +51,6 @@ namespace Genie
 		#define HARDWARE_CLASS "x86"
 		
 	#endif
-	
-	#ifdef __i386__
-		
-		#define HARDWARE_CLASS "x86"
-		
-	#endif
-	
-	// Genie relies on CFM or classic 68K, so don't compile for Intel (below)
 	
 	
 #if defined(_UTSNAME_LENGTH)
@@ -90,7 +89,7 @@ namespace Genie
 		{
 			const char c = *p;
 			
-			if ( c & 0x80  ||  !isalnum( c ) )
+			if ( ! iota::is_alnum( c ) )
 			{
 				*p = '-';
 			}
@@ -100,10 +99,10 @@ namespace Genie
 			}
 		}
 		
-		string_copy( uts->sysname,  STR_LEN( "Genie" ) );
+		string_copy( uts->sysname,  STR_LEN( SYSNAME ) );
 		string_copy( uts->nodename, nodename.c_str(), nodename.length() );
-		string_copy( uts->release,  STR_LEN( "0.7something" ) );
-		string_copy( uts->version,  STR_LEN( "verbose version string" ) );
+		string_copy( uts->release,  STR_LEN( RELEASE ) );
+		string_copy( uts->version,  STR_LEN( VERSION ) );
 		string_copy( uts->machine,  STR_LEN( HARDWARE_CLASS ) );
 		
 		return 0;
@@ -116,4 +115,3 @@ namespace Genie
 	#pragma force_active reset
 	
 }
-

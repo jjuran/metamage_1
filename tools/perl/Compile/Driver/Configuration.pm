@@ -4,7 +4,7 @@ use Compile::Driver::Catalog;
 use Compile::Driver::Module;
 use Compile::Driver::Platform;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 
@@ -25,6 +25,10 @@ my %category_of_spec = qw
 	ppc  arch
 	x86  arch
 	
+	m32  width
+	m64  width
+	
+	sym  build
 	dbg  build
 	opt  build
 );
@@ -63,6 +67,14 @@ sub new
 		else
 		{
 			$self{ arch } = $osx_arch;
+		}
+		
+		$self{width} ||= "m32";
+		
+		if ( $self{ width } eq "m64" )
+		{
+			$self{ arch } =~ s/^ ppc $/ppc64/x;
+			$self{ arch } =~ s/^ x86 $/x86_64/x;
 		}
 		
 		$self{ mac_runtime } = 'mach-o';
@@ -135,7 +147,7 @@ sub get_module
 		}
 		else
 		{
-			die "No such project '$name'\n";
+			die "No such project '$name'.  Run `make catalog` and try again.\n";
 		}
 	}
 	
@@ -166,6 +178,13 @@ sub arch_option
 	return (-arch => $arch);
 }
 
+sub is_carbon
+{
+	my $self = shift;
+	
+	return ($self->{ mac_api } || "") eq 'carbon';
+}
+
 sub is_apple_gcc
 {
 	my $self = shift;
@@ -177,8 +196,14 @@ sub debugging
 {
 	my $self = shift;
 	
-	return $self->{ build } eq "dbg";
+	return $self->{ build } ne "opt";
+}
+
+sub symbolics
+{
+	my $self = shift;
+	
+	return $self->{ build } eq "sym";
 }
 
 1;
-

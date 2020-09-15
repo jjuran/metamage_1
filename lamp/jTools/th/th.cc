@@ -34,11 +34,16 @@
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
 
+#ifndef O_CLOEXEC
+#define O_CLOEXEC  0
+#endif
+
 // poseven
 #include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/close.hh"
 #include "poseven/functions/execv.hh"
 #include "poseven/functions/dup2.hh"
+#include "poseven/functions/open.hh"
 #include "poseven/functions/perror.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/wait.hh"
@@ -53,6 +58,42 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
+	
+	
+	static inline
+	bool can_backspace()
+	{
+		#ifdef __RELIX__
+			
+			return false;
+			
+		#endif
+			
+			return isatty( STDOUT_FILENO );
+	}
+	
+	class dev_null_fd
+	{
+		private:
+			p7::fd_t its_fd;
+		
+		public:
+			dev_null_fd();
+			
+			operator p7::fd_t() const  { return its_fd; }
+	};
+	
+	dev_null_fd::dev_null_fd()
+	:
+		its_fd( p7::open( "/dev/null", p7::o_wronly | p7::o_cloexec ).release() )
+	{
+		if ( O_CLOEXEC == 0 )
+		{
+			fcntl( its_fd, F_SETFD, FD_CLOEXEC );
+		}
+	}
+	
+	static dev_null_fd dev_null;
 	
 	
 	struct TestResults
@@ -89,6 +130,8 @@ namespace tool
 	
 	static TestResults run_test( const char* test_file )
 	{
+		const bool show_progress = can_backspace();
+		
 		int pipe_ends[2];
 		
 		int piped = pipe( pipe_ends );
@@ -101,6 +144,8 @@ namespace tool
 			
 			p7::dup2( p7::fd_t( pipe_ends[1] ), p7::stdout_fileno );
 			
+			p7::dup2( dev_null, p7::stderr_fileno );  // discard stderr in th
+			
 			closed = close( pipe_ends[1] );
 			
 			const char* argv[] = { "", NULL };
@@ -111,16 +156,6 @@ namespace tool
 		}
 		
 		int closed = close( pipe_ends[1] );
-		
-		p7::wait_t wait_status = p7::wait();
-		
-		if ( wait_status != 0 )
-		{
-			// FIXME
-			p7::write( p7::stdout_fileno, STR_LEN( "ERROR running test\n" ) );
-			
-			exit( 1 );
-		}
 		
 		TestResults results;
 		
@@ -138,6 +173,8 @@ namespace tool
 		}
 		
 		results.planned = gear::parse_unsigned_decimal( plan->c_str() + 3 );
+		
+		unsigned magnitude = 0;
 		
 		unsigned next_test_number = 1;
 		
@@ -179,9 +216,21 @@ namespace tool
 				return results;
 			}
 			
+			if ( show_progress )
+			{
+				write( STDOUT_FILENO, "\b\b\b\b\b\b\b\b\b\b", magnitude );
+				
+				magnitude = gear::magnitude< 10 >( next_test_number );
+			}
+			
 			if ( gear::parse_unsigned_decimal( number ) != next_test_number++ )
 			{
 				return results;
+			}
+			
+			if ( show_progress )
+			{
+				write( STDOUT_FILENO, number, magnitude );
 			}
 			
 			int& result = passed ? todo ? results.unexpected
@@ -190,6 +239,23 @@ namespace tool
 			                            : results.failed;
 			
 			++result;
+		}
+		
+		if ( show_progress )
+		{
+			write( STDOUT_FILENO, "\b\b\b\b\b\b\b\b\b\b", magnitude );
+			write( STDOUT_FILENO, "          ",           magnitude );
+			write( STDOUT_FILENO, "\b\b\b\b\b\b\b\b\b\b", magnitude );
+		}
+		
+		p7::wait_t wait_status = p7::wait();
+		
+		if ( wait_status != 0 )
+		{
+			// FIXME
+			p7::write( p7::stdout_fileno, STR_LEN( "ERROR running test\n" ) );
+			
+			exit( 1 );
 		}
 		
 		return results;
@@ -203,7 +269,7 @@ namespace tool
 			
 			output += " test";
 			
-			output += "s " + (count == 1);
+			output += &"s "[ (count == 1) ];
 			
 			output += status;
 			
@@ -225,11 +291,11 @@ namespace tool
 			
 			struct stat sb;
 			
-			if ( -1 == ::stat( test_file, &sb )  ||  S_ISDIR( sb.st_mode ) && (errno = EISDIR) )
+			if ( -1 == ::stat( test_file, &sb )  ||  (S_ISDIR( sb.st_mode )  &&  (errno = EISDIR)) )
 			{
 				p7::perror( "th", test_file );
 				
-				return EXIT_FAILURE;
+				return 1;
 			}
 			
 			const char* test_name = test_file;
@@ -248,8 +314,8 @@ namespace tool
 			
 			unsigned width = std::max( 32U, name_length );
 			
-			write( STDOUT_FILENO, test_name,                                    name_length );
-			write( STDOUT_FILENO, "..................................", width - name_length );
+			p7::write( p7::stdout_fileno, test_name,                                    name_length );
+			p7::write( p7::stdout_fileno, "..................................", width - name_length );
 			
 			TestResults results = run_test( test_file );
 			
@@ -294,4 +360,3 @@ namespace tool
 	}
 
 }
-

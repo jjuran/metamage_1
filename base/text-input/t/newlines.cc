@@ -13,10 +13,12 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 11;
+static const unsigned n_tests = 13;
 
 
-using tap::ok_if;
+#ifndef NULL
+#define NULL  0
+#endif
 
 
 static void newlines()
@@ -29,19 +31,27 @@ static void newlines()
 	                            "qux\n\r"
 	                            "zee" ) );
 	
-	ok_if( *feed.get_line() == "foo\n" );
-	ok_if( *feed.get_line() ==    "\n" );
-	ok_if( *feed.get_line() == "bar\n" );
-	ok_if( *feed.get_line() ==    "\n" );
-	ok_if( *feed.get_line() == "baz\n" );
-	ok_if( *feed.get_line() == "qux\n" );
-	ok_if( *feed.get_line() ==    "\n" );
+	EXPECT( *feed.get_line() == "foo\n" );
+	EXPECT( *feed.get_line() ==    "\n" );
+	EXPECT( *feed.get_line() == "bar\n" );
+	EXPECT( *feed.get_line() ==    "\n" );
+	EXPECT( *feed.get_line() == "baz\n" );
+	EXPECT( *feed.get_line() == "qux\n" );
+	EXPECT( *feed.get_line() ==    "\n" );
 	
-	ok_if( feed.get_line() == NULL );
-	ok_if( feed.get_line() == NULL );
+	EXPECT( feed.get_line() == NULL );
+	EXPECT( feed.get_line() == NULL );
 	
-	ok_if( feed.get_fragment_ref() == "zee" );
-	ok_if( feed.get_fragment_ref() == ""    );
+	EXPECT( feed.get_fragment_ref() == "zee" );
+	EXPECT( feed.get_fragment_ref() == ""    );
+	
+	feed.accept_input( STR_LEN( "zig" ) );
+	
+	const plus::string* fragment = feed.get_fragment();
+	
+	EXPECT( fragment != NULL  &&  *fragment == "zig" );
+	
+	EXPECT( feed.get_fragment() == NULL );
 }
 
 int main( int argc, const char *const *argv )
@@ -52,4 +62,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

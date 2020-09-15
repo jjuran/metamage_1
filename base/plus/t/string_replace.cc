@@ -23,9 +23,6 @@
 static const unsigned n_tests = 10 + 7 + 2 + 3;
 
 
-using tap::ok_if;
-
-
 static const plus::string empty;
 
 
@@ -37,41 +34,41 @@ static void string()
 	
 	test.replace( zero, zero, empty );
 	
-	ok_if( test == "0123456789abcdef" );
+	EXPECT( test == "0123456789abcdef" );
 	
 	test.replace( 16, 0, empty );
 	
-	ok_if( test == "0123456789abcdef" );
+	EXPECT( test == "0123456789abcdef" );
 	
 	test.replace( 0, 2, empty );
 	
-	ok_if( test == "23456789abcdef" );
+	EXPECT( test == "23456789abcdef" );
 	
 	test.replace( 13, 2, empty );
 	
-	ok_if( test == "23456789abcde" );
+	EXPECT( test == "23456789abcde" );
 	
 	test.replace( 7, 2, empty );
 	
-	ok_if( test == "2345678bcde" );
+	EXPECT( test == "2345678bcde" );
 	
 	const plus::string xyz = "xyz";
 	
 	test.replace( 3, 3, xyz );
 	
-	ok_if( test == "234xyz8bcde" );
+	EXPECT( test == "234xyz8bcde" );
 	
 	test.replace( 1, 1, xyz );
 	
-	ok_if( test == "2xyz4xyz8bcde" );
+	EXPECT( test == "2xyz4xyz8bcde" );
 	
 	test.replace( 13, 0, xyz );
 	
-	ok_if( test == "2xyz4xyz8bcdexyz" );
+	EXPECT( test == "2xyz4xyz8bcdexyz" );
 	
 	test.replace( 2, 13, xyz );
 	
-	ok_if( test == "2xxyzz" );
+	EXPECT( test == "2xxyzz" );
 	
 	bool exception_thrown = false;
 	
@@ -84,7 +81,7 @@ static void string()
 		exception_thrown = true;
 	}
 	
-	ok_if( exception_thrown );
+	EXPECT( exception_thrown );
 }
 
 static void substring()
@@ -104,7 +101,7 @@ static void substring()
 		exception_thrown = true;
 	}
 	
-	ok_if( exception_thrown );
+	EXPECT( exception_thrown );
 	
 	exception_thrown = false;
 	
@@ -117,27 +114,27 @@ static void substring()
 		exception_thrown = true;
 	}
 	
-	ok_if( exception_thrown );
+	EXPECT( exception_thrown );
 	
 	test.replace( 0, 0, empty, 0, 0 );
 	
-	ok_if( test == "abcdefghijklmnop" );
+	EXPECT( test == "abcdefghijklmnop" );
 	
 	test.replace( 0, 1, digits, 0, 1 );
 	
-	ok_if( test == "0bcdefghijklmnop" );
+	EXPECT( test == "0bcdefghijklmnop" );
 	
 	test.replace( 15, 1, digits, 9, 1 );
 	
-	ok_if( test == "0bcdefghijklmno9" );
+	EXPECT( test == "0bcdefghijklmno9" );
 	
 	test.replace( 3, 4, digits, 2, 2 );
 	
-	ok_if( test == "0bc23hijklmno9" );
+	EXPECT( test == "0bc23hijklmno9" );
 	
 	test.replace( 7, 2, digits, 5, 5 );
 	
-	ok_if( test == "0bc23hi56789lmno9" );
+	EXPECT( test == "0bc23hi56789lmno9" );
 }
 
 static void fill()
@@ -155,11 +152,11 @@ static void fill()
 		exception_thrown = true;
 	}
 	
-	ok_if( exception_thrown );
+	EXPECT( exception_thrown );
 	
 	test.replace( 3, 3, 5, '.' );
 	
-	ok_if( test == "abc.....xyz" );
+	EXPECT( test == "abc.....xyz" );
 }
 
 static void range()
@@ -168,15 +165,15 @@ static void range()
 	
 	test.replace( test.begin() + 2, test.end() - 2, STR_LEN( "foo" ) );
 	
-	ok_if( test == "01foo89" );
+	EXPECT( test == "01foo89" );
 	
 	test.replace( test.end() - 1, test.end(), STR_LEN( "bar" ) );
 	
-	ok_if( test == "01foo8bar" );
+	EXPECT( test == "01foo8bar" );
 	
 	test.replace( test.end(), test.end(), 3, '.' );
 	
-	ok_if( test == "01foo8bar..." );
+	EXPECT( test == "01foo8bar..." );
 }
 
 int main( int argc, const char *const *argv )
@@ -193,4 +190,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

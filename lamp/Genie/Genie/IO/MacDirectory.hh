@@ -3,37 +3,21 @@
 	---------------
 */
 
-#ifndef GENIE_IO_VIRTUALDIRECTORY_HH
-#define GENIE_IO_VIRTUALDIRECTORY_HH
+#ifndef GENIE_IO_MACDIRECTORY_HH
+#define GENIE_IO_MACDIRECTORY_HH
 
-// Nitrogen
-#ifndef MAC_FILES_TYPES_FSDIRSPEC_HH
-#include "Mac/Files/Types/FSDirSpec.hh"
-#endif
+// mac-types
+#include "mac_types/VRefNum_DirID.hh"
 
-// Genie
-#include "Genie/IO/Directory.hh"
+// vfs
+#include "vfs/filehandle_ptr.hh"
 
 
 namespace Genie
 {
 	
-	class MacDirHandle : public DirHandle
-	{
-		private:
-			Mac::FSDirSpec its_dir_spec;
-		
-		public:
-			MacDirHandle( const Mac::FSDirSpec& dir )
-			:
-				its_dir_spec( dir )
-			{
-			}
-			
-			FSTreePtr GetFile();
-	};
+	vfs::filehandle_ptr Mac_dir_handle( const mac::types::VRefNum_DirID& dir );
 	
 }
 
 #endif
-

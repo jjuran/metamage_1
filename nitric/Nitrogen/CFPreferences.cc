@@ -90,4 +90,3 @@ namespace Nitrogen
       return nucleus::owned<CFArrayRef>::seize( result );
      }
   }
-

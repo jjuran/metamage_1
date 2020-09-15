@@ -3,45 +3,38 @@
 	--------
 */
 
-#include "Genie/api/yield.hh"
-
-// Standard C
-#include <errno.h>
-
-// poseven
-#include "poseven/types/errno_t.hh"
+// relix-kernel
+#include "relix/api/thread_yield.hh"
+#include "relix/api/yield.hh"
+#include "relix/signal/check_signals.hh"
+#include "relix/task/scheduler.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/Process.hh"
-#include "Genie/scheduler.hh"
-#include "Genie/api/signals.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
-	namespace p7 = poseven;
-	
-	
-	void yield()
+	bool yield( bool may_throw )
 	{
-		mark_process_inactive( current_process().GetPID() );
+		using namespace Genie;
 		
-		current_process().Yield();
-	}
-	
-	void try_again( bool nonblocking )
-	{
-		if ( nonblocking )
-		{
-			p7::throw_errno( EAGAIN );
-		}
+	#ifdef __RELIX__
 		
-		yield();
+		thread_yield();
 		
-		check_signals( true );  // throw caught signals
+	#else
+		
+		Process* current = relix::gCurrentProcess;
+		
+		pthread_yield();
+		
+		relix::gCurrentProcess = current;
+		
+	#endif
+		
+		return check_signals( may_throw );
 	}
 	
 }
-

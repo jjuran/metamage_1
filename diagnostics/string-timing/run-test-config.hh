@@ -38,4 +38,3 @@ catch ( const skipped_test& )
 }
 
 fflush( stdout );
-

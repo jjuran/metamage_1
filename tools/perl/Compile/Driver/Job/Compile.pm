@@ -5,7 +5,7 @@ use     Compile::Driver::Job ;
 
 use Compile::Driver::InputFile::CPPSource;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 
@@ -104,15 +104,30 @@ sub command
 	my @f;
 	my @w;
 	
+	my %d;
+	
+	$d{ CONFIG_DEBUGGING } = $conf->debugging + 0;
+	
+	if ( $conf->symbolics )
+	{
+		# Don't turn off optimizations here.  We need them to strip dead code,
+		# because without that we get link errors.
+		
+		push @o, '-g';
+	}
+	
+	if ( $conf->is_carbon )
+	{
+		$d{ TARGET_API_MAC_CARBON } = 1;
+	}
+	
 	if ( $conf->is_apple_gcc )
 	{
 		push @f, "-fpascal-strings";
 		push @w, "-Wno-deprecated-declarations";
+		
+		$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_2';
 	}
-	
-	my %d;
-	
-	$d{ TARGET_CONFIG_DEBUGGING } = $conf->debugging + 0;
 	
 	my @d = map { "-D$_=" . $d{ $_ } } keys %d;
 	
@@ -122,4 +137,3 @@ sub command
 }
 
 1;
-

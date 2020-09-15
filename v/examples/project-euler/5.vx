@@ -1,0 +1,69 @@
+#!/usr/bin/env vx
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/lib/"
+
+const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+
+const nth_prime = import "nth_prime"
+
+def prime_factorization
+{
+	var product = _
+	
+	var result = []
+	
+	var i = 0
+	
+	while product > 1 do
+	{
+		const factor = nth_prime( i++ )
+		
+		var n = 0
+		
+		while product % factor == 0 do
+		{
+			product /= factor
+		
+			++n
+		}
+		
+		if n then
+		{
+			result <-- factor => n
+		}
+	}
+	
+	return result
+}
+
+def merge_maps
+{
+	var result = int^[]
+	
+	for map in _ do
+	{
+		for m in map do
+		{
+			const k = m.key
+			
+			if not k in result  or  m.value > result[ k ] then
+			{
+				result[ k ] = m.value
+			}
+		}
+	}
+	
+	return result
+}
+
+def lcm
+{
+	const pf = merge_maps( _ map prime_factorization )
+	
+	const factors = pf map { v.key ^ v.value }
+	
+	return Math.product *factors
+}
+
+print lcm (1 .. 20)

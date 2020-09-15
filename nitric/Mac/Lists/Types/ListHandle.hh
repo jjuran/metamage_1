@@ -6,6 +6,12 @@
 #ifndef MAC_LISTS_TYPES_LISTHANDLE_HH
 #define MAC_LISTS_TYPES_LISTHANDLE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __LISTS__
 #include <Lists.h>
 #endif
@@ -19,6 +25,8 @@
 namespace nucleus
 {
 	
+#if ! __LP64__
+	
 	template <> struct disposer< ListHandle >
 	{
 		typedef ListHandle  argument_type;
@@ -30,7 +38,8 @@ namespace nucleus
 		}
 	};
 	
+#endif  // #if ! __LP64__
+	
 }
 
 #endif
-

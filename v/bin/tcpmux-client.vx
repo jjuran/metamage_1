@@ -1,0 +1,58 @@
+#!/usr/bin/env vx -Z
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/../lib/"
+
+const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+
+const readline = import "readline"
+
+def error (msg) { warn msg; exit 1 }
+
+def fail (line)  { error ("truncated response: '" line "'") }
+
+def getline (fd) { readline( fd, fail ) }
+
+if argc < 2 then
+{
+	fd 7 <== "help\r\n"
+	
+	for line in receiver {readline( fd 6, {} )} do
+	{
+		print line
+	}
+	
+	exit 0
+}
+
+if argc < 3 then
+{
+	const invocation = "tcpclient <host> <port> tcpmux-client"
+	
+	warn "Usage:  " invocation
+	warn "        " invocation " <service> <program argv>"
+	
+	exit 2
+}
+
+const service = argv[ 1 ]
+
+const program-argv = argv[ 2 -> argc ]
+
+fd 7 <== service "\r\n"
+
+const response = getline fd 6 or error "empty response"
+
+if response[ 0 ] != '+' then
+{
+	if response[ 0 ] != '-' then
+	{
+		error ("Invalid response: " response)
+	}
+	
+	error response
+}
+
+execvp( program-argv[ 0 ], program-argv )
+
+end.

@@ -14,6 +14,12 @@
 #ifndef NITROGEN_MACWINDOWS_HH
 #define NITROGEN_MACWINDOWS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
@@ -50,6 +56,12 @@
 #endif
 #ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+#endif
+#ifndef MAC_WINDOWS_TYPES_WINDOWATTRIBUTES_HH
+#include "Mac/Windows/Types/WindowAttributes.hh"
+#endif
+#ifndef MAC_WINDOWS_TYPES_WINDOWCLASS_HH
+#include "Mac/Windows/Types/WindowClass.hh"
 #endif
 #ifndef MAC_WINDOWS_TYPES_WINDOWDEFPROCID_HH
 #include "Mac/Windows/Types/WindowDefProcID.hh"
@@ -138,56 +150,9 @@ namespace Nitrogen
 		kPropertyTag_Max = nucleus::enumeration_traits< ::PropertyTag >::max
 	};
 	
-	enum WindowClass
-	{
-		kAlertWindowClass        = ::kAlertWindowClass,
-		kMovableAlertWindowClass = ::kMovableAlertWindowClass,
-		kModalWindowClass        = ::kModalWindowClass,
-		kMovableModalWindowClass = ::kMovableModalWindowClass,
-		kFloatingWindowClass     = ::kFloatingWindowClass,
-		kDocumentWindowClass     = ::kDocumentWindowClass,
-		kUtilityWindowClass      = ::kUtilityWindowClass,
-		kHelpWindowClass         = ::kHelpWindowClass,
-		kSheetWindowClass        = ::kSheetWindowClass,
-		kToolbarWindowClass      = ::kToolbarWindowClass,
-		kPlainWindowClass        = ::kPlainWindowClass,
-		kOverlayWindowClass      = ::kOverlayWindowClass,
-		kSheetAlertWindowClass   = ::kSheetAlertWindowClass,
-		kAltPlainWindowClass     = ::kAltPlainWindowClass,
-		kDrawerWindowClass       = ::kDrawerWindowClass,
-		kAllWindowClasses        = ::kAllWindowClasses,
-		
-		kWindowClass_Max = nucleus::enumeration_traits< ::WindowClass >::max
-	};
-	
-	enum WindowAttributes
-	{
-		kWindowNoAttributes               = ::kWindowNoAttributes,
-		kWindowCloseBoxAttribute          = ::kWindowCloseBoxAttribute,
-		kWindowHorizontalZoomAttribute    = ::kWindowHorizontalZoomAttribute,
-		kWindowVerticalZoomAttribute      = ::kWindowVerticalZoomAttribute,
-		kWindowFullZoomAttribute          = ::kWindowFullZoomAttribute,
-		kWindowCollapseBoxAttribute       = ::kWindowCollapseBoxAttribute,
-		kWindowResizableAttribute         = ::kWindowResizableAttribute,
-		kWindowSideTitlebarAttribute      = ::kWindowSideTitlebarAttribute,
-		kWindowToolbarButtonAttribute     = ::kWindowToolbarButtonAttribute,
-		kWindowNoUpdatesAttribute         = ::kWindowNoUpdatesAttribute,
-		kWindowNoActivatesAttribute       = ::kWindowNoActivatesAttribute,
-		kWindowOpaqueForEventsAttribute   = ::kWindowOpaqueForEventsAttribute,
-		kWindowNoShadowAttribute          = ::kWindowNoShadowAttribute,
-		kWindowHideOnSuspendAttribute     = ::kWindowHideOnSuspendAttribute,
-		kWindowStandardHandlerAttribute   = ::kWindowStandardHandlerAttribute,
-		kWindowHideOnFullScreenAttribute  = ::kWindowHideOnFullScreenAttribute,
-		kWindowInWindowMenuAttribute      = ::kWindowInWindowMenuAttribute,
-		kWindowLiveResizeAttribute        = ::kWindowLiveResizeAttribute,
-		kWindowNoConstrainAttribute       = ::kWindowNoConstrainAttribute,
-		kWindowStandardDocumentAttributes = ::kWindowStandardDocumentAttributes,
-		kWindowStandardFloatingAttributes = ::kWindowStandardFloatingAttributes,
-		
-		kWindowAttributes_Max = nucleus::enumeration_traits< ::WindowAttributes >::max
-	};
-	
-	NUCLEUS_DEFINE_FLAG_OPS( WindowAttributes )
+	using Mac::WindowClass;
+	using Mac::WindowAttributes;
+	using Mac::kWindowNoAttributes;
 	
 	enum WindowPosition
 	{
@@ -247,6 +212,8 @@ namespace Nitrogen
 	#pragma mark ** Specializations **
 	
   }
+
+#if ! __LP64__
 
 namespace MacGlue
 {
@@ -822,5 +789,7 @@ namespace Nitrogen
 	}
 	
 }
+
+#endif  // #if ! __LP64__
 
 #endif

@@ -1,0 +1,39 @@
+#!/usr/bin/env vx
+
+# This is a grossly oversimplified malware simulation.  Run at your own risk!
+
+def want_cookie
+{
+	var n = 0
+	
+	print "I want a cookie.  Give me a cookie, NOW!"
+	
+	sleep 2
+	
+	while true do
+	{
+		if ++n == 3 then
+		{
+			n = 0
+			print "(Type \"cookie\", you idiot.)"
+		}
+		else
+		{
+			print "GIVE ME COOKIE!"
+		}
+		
+		sleep 2;
+	}
+}
+
+var t = thread want_cookie
+
+for line in receiver { IN.read 128 } do
+{
+	if "cookie" in line or "COOKIE" in line then
+	{
+		print "THANK YOU"
+		
+		exit 0
+	}
+}

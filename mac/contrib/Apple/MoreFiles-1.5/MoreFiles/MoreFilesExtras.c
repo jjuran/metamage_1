@@ -19,13 +19,35 @@
 **	descended from Apple Sample Code, but that you've made changes.
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+#ifndef __MACERRORS__
 #include <MacErrors.h>
+#endif
+#ifndef MAC_OS_X_VERSION_10_5
+#ifndef __DEVICES__
 #include <Devices.h>
+#endif
+#endif
+#ifndef __FOLDERS__
 #include <Folders.h>
+#endif
+#ifndef __HFSVOLUMES__
 #include <HFSVolumes.h>
+#endif
+#ifndef __TEXTUTILS__
 #include <TextUtils.h>
+#endif
+#ifndef __SCRIPT__
 #include <Script.h>
+#endif
+#ifndef __MATH64__
 #include <Math64.h>
+#endif
+
 
 #if !TARGET_API_MAC_CARBON
 
@@ -3339,4 +3361,3 @@ pascal	OSErr	GetUGEntries(short objType,
 }
 
 /*****************************************************************************/
-

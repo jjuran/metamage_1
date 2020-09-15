@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 my %Unicode_for_MacRoman;
@@ -85,4 +85,3 @@ const struct unicode_mapping encoder_map[] =
 };
 
 =cut
-

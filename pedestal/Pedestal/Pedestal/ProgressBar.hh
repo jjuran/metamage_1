@@ -6,6 +6,11 @@
 #ifndef PEDESTAL_PROGRESSBAR_HH
 #define PEDESTAL_PROGRESSBAR_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 // Mac OS
 #ifndef __QUICKDRAW__
 #include <Quickdraw.h>
@@ -22,18 +27,8 @@ namespace Pedestal
 	
 	class ProgressBar : public View
 	{
-		private:
-			Rect    itsBounds;
-			//double  itsProgress;
-		
 		public:
-			ProgressBar( const Rect& bounds );
-			
-			virtual double Progress() = 0;
-			
-			//void ZeroProgress();
-			
-			//void SetProgress( double progress );
+			virtual int Value() const = 0;
 			
 			void DrawProgress( Rect insetBounds );
 			
@@ -43,4 +38,3 @@ namespace Pedestal
 }
 
 #endif
-

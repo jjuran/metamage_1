@@ -6,25 +6,20 @@
 #ifndef GENIE_FS_GUI_NEW_STACK_HH
 #define GENIE_FS_GUI_NEW_STACK_HH
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// plus
+#include "plus/string_fwd.hh"
 
+// vfs
+#include "vfs/node_ptr.hh"
 
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace Genie
 {
 	
-	FSTreePtr New_stack( const FSTree*        parent,
-	                     const plus::string&  name,
-	                     const void*          args );
+	vfs::node_ptr New_stack( const vfs::node*     parent,
+	                         const plus::string&  name,
+	                         const void*          args );
 	
 }
 
 #endif
-

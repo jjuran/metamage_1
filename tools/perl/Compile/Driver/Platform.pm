@@ -1,6 +1,6 @@
 package Compile::Driver::Platform;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 my %Bit_for_label = qw
@@ -23,7 +23,7 @@ my %Bit_for_label = qw
 
 sub mask_for_values
 {
-	my @values = @_;
+	my @values = map { s/_?64//; $_ } grep { ! /^ m\d\d $/x } @_;
 	
 	my $mask = 0;
 	
@@ -40,4 +40,3 @@ sub mask_for_values
 }
 
 1;
-

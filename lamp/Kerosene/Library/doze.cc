@@ -34,4 +34,3 @@ int doze( struct timespec const  *minimum,
 	
 	return nanosleep( input, remaining );
 }
-

@@ -14,9 +14,8 @@
 namespace vfs
 {
 	
-	void listdir( const node* it, vfs::dir_contents& contents );
+	void listdir( const node& that, vfs::dir_contents& contents );
 	
 }
 
 #endif
-

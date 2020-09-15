@@ -5,9 +5,6 @@
 
 #include "Pedestal/Window.hh"
 
-// MacGlue
-#include "MacGlue/MacGlue.hh"
-
 // nucleus
 #include "nucleus/saved.hh"
 
@@ -17,20 +14,10 @@
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
 
-// MacFeatures
-#include "MacFeatures/ColorQuickdraw.hh"
-
 // Pedestal
 #include "Pedestal/View.hh"
+#include "Pedestal/WindowStorage.hh"
 
-
-namespace MacGlue
-{
-	
-	DECLARE_MAC_GLUE( NewWindow  );
-	DECLARE_MAC_GLUE( NewCWindow );
-	
-}
 
 namespace Pedestal
 {
@@ -39,37 +26,27 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	typedef pascal WindowRef (*NewWindow_ProcPtr)( void*             storage,
-	                                               const Rect*       bounds,
-	                                               ConstStr255Param  title,
-	                                               Boolean           visible,
-	                                               short             procID,
-	                                               WindowRef         behind,
-	                                               Boolean           goAwayFlag,
-	                                               long              refCon );
-	
-	using MacFeatures::Has_ColorQuickdraw;
-	
-	static const NewWindow_ProcPtr gNewWindow = Has_ColorQuickdraw() ? &MacGlue::NewCWindow
-	                                                                 : &MacGlue::NewWindow;
-	
-	
 	void ResizeWindow( WindowRef window, Point newSize )
 	{
-		if ( Window* base = N::GetWRefCon( window ) )
+		N::SizeWindow( window, newSize.h, newSize.v, true );
+		
+		// Don't rely on the requested size because it might have been tweaked
+		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+		
+		// Shotgun approach -- invalidate the whole window.
+		// This conveniently includes both old and new grow box locations.
+		// Clients can validate regions if they want.
+		
+		invalidate_window( window );
+		
+		if ( View* view = get_window_view( window ) )
 		{
-			// Resize the window
-			base->Resize( window, newSize.h, newSize.v );
-			
-			// Don't rely on the requested size because it might have been tweaked
-			Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
-			
-			// Shotgun approach -- invalidate the whole window.
-			// Clients can validate regions if they want.
-			N::InvalRect( bounds );
-			
-			// Inform the window's contents that it has been resized
-			base->Resized( bounds.right, bounds.bottom );
+			view->SetBounds( bounds );
+		}
+		
+		if ( WindowResized_proc proc = get_window_resized_proc( window ) )
+		{
+			proc( window );
 		}
 	}
 	
@@ -80,147 +57,6 @@ namespace Pedestal
 		N::SetPortWindowPort( window );
 		
 		ResizeWindow( window, size );
-	}
-	
-	
-	Point GetWindowSize( WindowRef window )
-	{
-		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
-		
-		Point result;
-		
-		result.h = bounds.right - bounds.left;
-		result.v = bounds.bottom - bounds.top;
-		
-		return result;
-	}
-	
-	Point GetWindowPosition( WindowRef window )
-	{
-		n::saved< N::Port > savedPort;
-		
-		N::SetPortWindowPort( window );
-		
-		Point upperLeft = { 0, 0 };
-		
-		::LocalToGlobal( &upperLeft );
-		
-		return upperLeft;
-	}
-	
-	
-	n::owned< WindowRef > CreateWindow( const Rect&         bounds,
-	                                    ConstStr255Param    title,
-	                                    bool                visible,
-	                                    N::WindowDefProcID  procID,
-	                                    WindowRef           behind,
-	                                    bool                goAwayFlag,
-	                                    const void*         refCon )
-	{
-		
-		WindowRef window = gNewWindow( NULL,
-		                               &bounds,
-		                               title,
-		                               visible,
-		                               procID,
-		                               behind,
-		                               goAwayFlag,
-		                               (long) refCon );  // reinterpret_cast
-		
-		//N::SetWindowKind( window, kPedestalWindowKind );
-		N::SetPortWindowPort( window );
-		
-		return n::owned< WindowRef >::seize( window, N::Window_Disposer() );
-	}
-	
-	static Rect GrowBoxBounds( WindowRef window )
-	{
-		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
-		
-		bounds.left = bounds.right - 15;
-		bounds.top = bounds.bottom - 15;
-		
-		return bounds;
-	}
-	
-	static void DrawWindow( WindowRef window )
-	{
-		n::saved< N::Clip > savedClip;
-		
-		N::ClipRect( GrowBoxBounds( window ) );
-		
-		N::DrawGrowIcon( window );
-	}
-	
-	void InvalidateWindowGrowBox( WindowRef window )
-	{
-		N::InvalRect( GrowBoxBounds( window ) );
-	}
-	
-	
-	Window::Window( const NewWindowContext& context )
-	:
-		itsWindowRef( CreateWindow( context, this ) ),
-		itsDefProcID( context.procID )
-	{
-	}
-	
-	Window::~Window()
-	{
-	}
-	
-	void Window::Resize( WindowRef window, short h, short v )
-	{
-		InvalidateWindowGrowBox( window );  // assume grow box present on resize
-		
-		if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
-		{
-			(*handler)( window, h, v );
-		}
-		else
-		{
-			N::SizeWindow( window, h, v, true );
-		}
-	}
-	
-	
-	void Window::Activate( bool activating )
-	{
-		GetView()->Activate( activating );
-		
-		InvalidateGrowBox();
-	}
-	
-	void Window::Resized( short width, short height )
-	{
-		Rect bounds = { 0, 0, height, width };
-		
-		GetView()->SetBounds( bounds );
-		
-		InvalidateGrowBox();
-	}
-	
-	void Window::MouseDown( const EventRecord& event )
-	{
-		// FIXME:  The window may want clicks even if it's not in front.
-		if ( Get() != Nitrogen::FrontWindow() )
-		{
-			Nitrogen::SelectWindow( Get() );
-		}
-		else
-		{
-			GetView()->MouseDown( event );
-		}
-	}
-	
-	void Window::Update()
-	{
-		GetView()->Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ), true );
-		
-		if ( !TARGET_API_MAC_CARBON && HasGrowIcon() )
-		{
-			DrawWindow( Get() );
-		}
 	}
 	
 	
@@ -260,4 +96,3 @@ namespace Pedestal
 	#endif
 	
 }
-

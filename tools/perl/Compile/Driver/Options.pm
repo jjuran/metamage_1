@@ -1,11 +1,12 @@
 package Compile::Driver::Options;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 my %Flag_for_option = qw
 (
 	v verbose
+	i install
 );
 
 my %Spec_for_option = qw
@@ -13,7 +14,11 @@ my %Spec_for_option = qw
 	P ppc
 	8 x86
 	
+	3 m32
+	W m64
+	
 	R opt
+	X sym
 );
 
 my %Flags;
@@ -22,6 +27,11 @@ my @Specs;
 sub verbose
 {
 	return $Flags{ verbose };
+}
+
+sub installing
+{
+	return $Flags{ install };
 }
 
 sub specs
@@ -75,4 +85,3 @@ sub set_options
 }
 
 1;
-

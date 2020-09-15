@@ -6,14 +6,9 @@
 // Standard C
 #include <errno.h>
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
+#include <unistd.h>
 #include <sys/stat.h>
-
-// Relix
-#include "relix/_realpathat.h"
 
 // plus
 #include "plus/mac_utf8.hh"
@@ -22,22 +17,44 @@
 #include "GetPathname.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/functions/pathname.hh"
+#include "vfs/functions/resolve_links_in_place.hh"
+
+// MacVFS
+#include "MacVFS/util/FSSpec_from_node.hh"
+
+// relix-kernel
+#include "relix/api/errno.hh"
+#include "relix/api/root.hh"
+#include "relix/fs/resolve_path_at.hh"
+#include "relix/syscall/registry.hh"
 
 // Genie
-#include "Genie/current_process.hh"
-#include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/ResolvePathAt.hh"
-#include "Genie/FS/ResolvePathname.hh"
-#include "Genie/SystemCallRegistry.hh"
+
+
+#ifndef REALPATH_OUTPUT_HFS
+#define REALPATH_OUTPUT_HFS (-1)
+#endif
+
+#ifndef REALPATH_OUTPUT_HFS_UTF8
+#define REALPATH_OUTPUT_HFS_UTF8 (-1)
+#endif
 
 
 namespace Genie
 {
 	
-	static plus::string mac_pathname_from_file( const FSTreePtr& file )
+	template < class T >
+	static inline T min( T a, T b )
 	{
-		return GetMacPathname( GetFSSpecFromFSTree( file ) );
+		return b < a ? b : a;
+	}
+	
+	
+	static plus::string mac_pathname_from_file( const vfs::node& file )
+	{
+		return GetMacPathname( vfs::FSSpec_from_node( file ) );
 	}
 	
 	
@@ -45,14 +62,14 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr file = ResolvePathAt( dirfd, path );
+			vfs::node_ptr file = relix::resolve_path_at( dirfd, path );
 			
-			ResolveLinks_InPlace( file );
+			vfs::resolve_links_in_place( *relix::root(), file );
 			
 			const bool is_mac = flags & REALPATH_OUTPUT_HFS;
 			
-			plus::string resolved = is_mac ? mac_pathname_from_file( file )
-			                               : pathname( file.get() );
+			plus::string resolved = is_mac ? mac_pathname_from_file( *file )
+			                               : pathname( *file );
 			
 			if ( (flags & REALPATH_OUTPUT_HFS_UTF8) == REALPATH_OUTPUT_HFS_UTF8 )
 			{
@@ -61,7 +78,7 @@ namespace Genie
 			
 			const bool too_big = resolved.size() > buffer_size;
 			
-			const size_t bytes_copied = std::min( buffer_size, resolved.size() );
+			const size_t bytes_copied = min( buffer_size, resolved.size() );
 			
 			std::memcpy( buffer, resolved.data(), bytes_copied );
 			
@@ -77,7 +94,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return set_errno_from_exception();
+			return relix::set_errno_from_exception();
 		}
 	}
 	
@@ -88,4 +105,3 @@ namespace Genie
 	#pragma force_active reset
 	
 }
-

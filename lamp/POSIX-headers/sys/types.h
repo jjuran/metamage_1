@@ -65,10 +65,6 @@
 	#define _WCHAR_T_DEFINED_
 	#define	_TIMER_T_DEFINED_
 	
-	#ifdef __cplusplus
-	using std::size_t;
-	#endif
-		
 #endif
 
 #if __BSD_VISIBLE
@@ -86,54 +82,6 @@ typedef	__cpuid_t	cpuid_t;	/* CPU id */
 //typedef	__register_t	register_t;	/* register-sized type */
 #endif /* __BSD_VISIBLE */
 
-/*
- * XXX The exact-width bit types should only be exposed if __BSD_VISIBLE
- *     but the rest of the includes are not ready for that yet.
- */
-#ifndef	__BIT_TYPES_DEFINED__
-#define	__BIT_TYPES_DEFINED__
-#endif
-
-#ifndef	_INT8_T_DEFINED_
-#define	_INT8_T_DEFINED_
-typedef	__int8_t		int8_t;
-#endif
-
-#ifndef	_UINT8_T_DEFINED_
-#define	_UINT8_T_DEFINED_
-typedef	__uint8_t		uint8_t;
-#endif
-
-#ifndef	_INT16_T_DEFINED_
-#define	_INT16_T_DEFINED_
-typedef	__int16_t		int16_t;
-#endif
-
-#ifndef	_UINT16_T_DEFINED_
-#define	_UINT16_T_DEFINED_
-typedef	__uint16_t		uint16_t;
-#endif
-
-#ifndef	_INT32_T_DEFINED_
-#define	_INT32_T_DEFINED_
-typedef	__int32_t		int32_t;
-#endif
-
-#ifndef	_UINT32_T_DEFINED_
-#define	_UINT32_T_DEFINED_
-typedef	__uint32_t		uint32_t;
-#endif
-
-#ifndef	_INT64_T_DEFINED_
-#define	_INT64_T_DEFINED_
-typedef	__int64_t		int64_t;
-#endif
-
-#ifndef	_UINT64_T_DEFINED_
-#define	_UINT64_T_DEFINED_
-typedef	__uint64_t		uint64_t;
-#endif
-
 /* BSD-style unsigned bits types */
 #ifndef __CGBASE__
 #define _MACHTYPES_H_
@@ -147,14 +95,6 @@ typedef	__uint64_t	u_int64_t;
 typedef	__int64_t	quad_t;
 typedef	__uint64_t	u_quad_t;
 typedef	quad_t *	qaddr_t;
-
-#if __BSD_VISIBLE && !defined( __MWERKS__ )
-/* VM system types */
-typedef __vaddr_t	vaddr_t;
-typedef __paddr_t	paddr_t;
-typedef __vsize_t	vsize_t;
-typedef __psize_t	psize_t;
-#endif /* __BSD_VISIBLE */
 
 /* Standard system types */
 typedef	__int32_t	daddr_t;	/* 32-bit disk address */
@@ -246,22 +186,6 @@ __END_DECLS
 
 #if __BSD_VISIBLE
 #include <sys/select.h>	/* must be after type declarations */
-#endif
-
-#if defined(__STDC__) && defined(_KERNEL)
-/*
- * Forward structure declarations for function prototypes.  We include the
- * common structures that cross subsystem boundaries here; others are mostly
- * used in the same place that the structure is defined.
- */
-struct	proc;
-struct	pgrp;
-struct	ucred;
-struct	rusage;
-struct	file;
-struct	buf;
-struct	tty;
-struct	uio;
 #endif
 
 #endif /* !_SYS_TYPES_H_ */

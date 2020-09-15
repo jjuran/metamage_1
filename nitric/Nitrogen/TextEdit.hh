@@ -17,13 +17,18 @@
 // Standard C/C++
 #include <cstring>
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
 #endif
 
 // iota
-#include "iota/distance.hh"
+#include "iota/ptr_diff.hh"
 #include "iota/string_traits.hh"
 
 // Debug
@@ -68,6 +73,8 @@ namespace Nitrogen
 
 namespace Nitrogen
 {
+	
+#if ! __LP64__
 	
 	// TEScrapHandle
 	// TEGetScrapLength
@@ -244,7 +251,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				TESetText( begin, iota::distance( begin, end ), itsTE );
+				TESetText( begin, iota::ptr_diff( begin, end ), itsTE );
 			}
 	};
 	
@@ -269,7 +276,7 @@ namespace Nitrogen
 			
 			void operator()( void *begin, void *end ) const
 			{
-				TEGetText( begin, iota::distance( begin, end ), itsTE );
+				TEGetText( begin, iota::ptr_diff( begin, end ), itsTE );
 			}
 	};
 	
@@ -285,11 +292,12 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				TEInsert( begin, iota::distance( begin, end ), itsTE );
+				TEInsert( begin, iota::ptr_diff( begin, end ), itsTE );
 			}
 	};
+	
+#endif  // #if ! __LP64__
 	
 }
 
 #endif
-

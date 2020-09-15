@@ -26,9 +26,6 @@
 static const unsigned n_tests = 1 * 3 + 2 + 1 + 3;
 
 
-using tap::ok_if;
-
-
 #ifndef __RELIX__
 #define vfork() fork()
 #endif
@@ -113,7 +110,7 @@ static void block_and_raise_sigusr1()
 	
 	CHECK( wait( &wait_status ) );
 	
-	ok_if( wait_status == SIGKILL );
+	EXPECT( wait_status == SIGKILL );
 }
 
 static void block_and_raise_sigusr1_not()
@@ -136,7 +133,7 @@ static void block_and_raise_sigusr1_not()
 	
 	CHECK( wait( &wait_status ) );
 	
-	ok_if( true );
+	EXPECT( true );
 }
 
 static void block_and_raise_sigkill()
@@ -160,7 +157,7 @@ static void block_and_raise_sigkill()
 	
 	CHECK( wait( &wait_status ) );
 	
-	ok_if( true );
+	EXPECT( true );
 }
 
 static void discarded_pending()
@@ -169,11 +166,11 @@ static void discarded_pending()
 	
 	CHECK( raise( SIGWINCH ) );
 	
-	ok_if( is_pending( SIGWINCH ) );
+	EXPECT( is_pending( SIGWINCH ) );
 	
 	CHECK( (int) signal( SIGWINCH, SIG_IGN ) );
 	
-	ok_if( !is_pending( SIGWINCH ) );
+	EXPECT( !is_pending( SIGWINCH ) );
 }
 
 static void ignored_not_pending()
@@ -184,7 +181,7 @@ static void ignored_not_pending()
 	
 	CHECK( raise( SIGUSR1 ) );
 	
-	ok_if( !is_pending( SIGUSR1 ) );
+	EXPECT( !is_pending( SIGUSR1 ) );
 }
 
 static ssize_t n_read = -123;
@@ -230,7 +227,7 @@ static void restart()
 	
 	ssize_t n_read = CHECK( read( pair[1], buffer, sizeof buffer ) );
 	
-	ok_if( n_read == 1 );
+	EXPECT( n_read == 1 );
 	
 	CHECK( shutdown( pair[1], SHUT_WR ) );
 	
@@ -238,9 +235,9 @@ static void restart()
 	
 	n_read = CHECK( read( pair[1], buffer, 1 ) );
 	
-	ok_if( n_read == 1 );
+	EXPECT( n_read == 1 );
 	
-	ok_if( buffer[0] == '+' );
+	EXPECT( buffer[0] == '+' );
 	
 	int wait_status = -1;
 	
@@ -263,4 +260,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

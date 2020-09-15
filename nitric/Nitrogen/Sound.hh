@@ -14,6 +14,14 @@
 #ifndef NITROGEN_SOUND_HH
 #define NITROGEN_SOUND_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+#if ! __LP64__
+
+// Mac OS
 #ifndef __SOUND__
 #include <Sound.h>
 #endif
@@ -537,5 +545,6 @@ namespace Nitrogen
 	
 }
 
-#endif
+#endif  // #if ! __LP64__
 
+#endif

@@ -43,4 +43,3 @@ pascal OSErr ADBOp( Ptr               refCon,
 	
 	return err;
 }
-

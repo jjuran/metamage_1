@@ -6,6 +6,12 @@
 #ifndef MAC_MENUS_TYPES_MENUID_HH
 #define MAC_MENUS_TYPES_MENUID_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __MENUS__
 #include <Menus.h>
 #endif
@@ -32,6 +38,8 @@ namespace Mac
 namespace nucleus
 {
 	
+#if ! __LP64__
+	
 	template <> struct disposer< Mac::MenuID >
 	{
 		typedef Mac::MenuID  argument_type;
@@ -43,7 +51,8 @@ namespace nucleus
 		}
 	};
 	
+#endif  // #if ! __LP64__
+	
 }
 
 #endif
-

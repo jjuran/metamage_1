@@ -28,4 +28,3 @@ __END_DECLS
 #define sigsetjmp( env, savemask )  setjmp( __savemasktoenv( env, savemask )->jumpbuf )
 
 #endif /* _SETJMP_H_ */
-

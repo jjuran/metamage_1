@@ -7,7 +7,7 @@ use Compile::Driver::InputFile::Catalog;
 use Compile::Driver::InputFile::Description;
 use Compile::Driver::Platform;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 
@@ -44,6 +44,13 @@ sub add_project_description
 	my ( $name ) = $dir =~ m{ ( [^/]+ ) $}x;
 	
 	my $data = read_description_file( $path );
+	
+	my $prefix = $RealBin . "/";
+	
+	if ( substr( $path, 0, length $prefix ) eq $prefix )
+	{
+		$path = substr( $path, length $prefix );
+	}
 	
 	if ( my $explicit_name = $data->{name}[0] )
 	{
@@ -146,11 +153,17 @@ sub find_project
 	
 	if ( !exists $entry->{DATA} )
 	{
-		$entry->{DATA} = read_description_file( $entry->{PATH} );
+		my $path = $entry->{PATH};
+		
+		if ( $path !~ m{^ / }x )
+		{
+			$path = "$RealBin/$path";
+		}
+		
+		$entry->{DATA} = read_description_file( $path );
 	}
 	
 	return $entry;
 }
 
 1;
-

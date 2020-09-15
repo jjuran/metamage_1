@@ -1,0 +1,96 @@
+#!/usr/bin/env vx
+#
+# Copyright 2017 Josh Juran.  All rights reserved.
+#
+# "chutesay" is a trademark of Josh Juran.
+# The stick-figure parachute messenger is a trademark of Josh Juran.
+
+def calc-width (lines: str[])
+{
+	# The more lines we have, the wider we have to be.
+	
+	return lines per 0 >-{ Math.max( L + 2, v.length ) }
+}
+
+def odd-padded (x: int)
+{
+	return x + 1 - x mod 2
+}
+
+if argc < 2 then
+{
+	warn "chutesay: argument required"
+	exit 2
+}
+
+const text-lines = [ "", *argv[ 1 -> argc ] ]
+
+const n = text-lines.length
+
+const widest    = 6 + odd-padded calc-width text-lines
+const narrowest = widest - n * 2
+
+def spc (n: int) { " " * n }
+
+const canopy-top = spc (n + 1) ("_" * narrowest)
+
+var i = n
+var width = narrowest
+
+def centered (text: str)
+{
+	const margin = width - text.length
+	
+	width += 2
+	
+	const pre  = margin div 2
+	const post = margin - pre
+	
+	return (spc pre) text (spc post)
+}
+
+const canopy-mid = text-lines map { (spc i--) "/" (centered v) "\\" }
+
+const canopy-bottom = "(" ("_" * widest) ")"
+
+const canopy = canopy-top,
+               *canopy-mid,
+               canopy-bottom
+
+const halflen = widest div 2
+
+# shroud lines
+const lines = 1 -> halflen map { (spc v) "\\" spc( widest - 2 * v ) "/" }
+
+const indent = spc halflen
+
+const pilot =
+[
+	"\\o/",  # \o/
+	"/H\\",  # /H\
+	"/ \\",  # / \
+]
+map { indent v }
+
+print join( "\n", canopy, *lines, *pilot, "" )
+
+end.
+
+    _________________
+   /                 \
+  /  That escalated   \
+ /       quickly       \
+(_______________________)
+ \                     /
+  \                   /
+   \                 /
+    \               /
+     \             /
+      \           /
+       \         /
+        \       /
+         \     /
+          \   /
+           \o/
+           /H\
+           / \

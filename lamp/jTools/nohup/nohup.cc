@@ -39,7 +39,7 @@ int main( int argc, char *const argv[] )
 		return 1;
 	}
 	
-	struct sigaction action = { SIG_IGN };
+	struct sigaction action = {{ SIG_IGN }};
 	
 	sigaction( SIGHUP, &action, NULL );
 	
@@ -115,4 +115,3 @@ int main( int argc, char *const argv[] )
 	
 	return noSuchFile ? 127 : 126;
 }
-

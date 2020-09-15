@@ -14,8 +14,21 @@
 #ifndef NITROGEN_QUICKDRAW_HH
 #define NITROGEN_QUICKDRAW_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
 #ifndef __QUICKDRAW__
 #include <Quickdraw.h>
+#endif
+
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAW_H
+#include "missing/Quickdraw.h"
+#endif
 #endif
 
 // nucleus
@@ -238,17 +251,36 @@ namespace Nitrogen
 	
 	using ::MacSetPort;
 	
-	GrafPtr GetPort();
+	inline
+	GrafPtr GetPort()
+	{
+		::GrafPtr port;
+		::GetPort( &port );
+		
+		return port;
+	}
 	
-	inline bool QDSwapPort( CGrafPtr newPort, CGrafPtr& oldPort )  { return ::QDSwapPort( newPort, reinterpret_cast< ::CGrafPtr* >( &oldPort ) ); }
+	inline
+	bool QDSwapPort( CGrafPtr newPort, CGrafPtr& oldPort )
+	{
+		return ::QDSwapPort( newPort, (::CGrafPtr*) &oldPort );
+	}
 	
-	CGrafPtr QDSwapPort( CGrafPtr newPort );
+	inline
+	CGrafPtr QDSwapPort( CGrafPtr newPort )
+	{
+		CGrafPtr oldPort;
+		(void) QDSwapPort( newPort, oldPort );
+		
+		return oldPort;
+	}
 	
 #if !OPAQUE_TOOLBOX_STRUCTS
 	
-	inline GrafPtr QDSwapPort( GrafPtr newPort )
+	inline
+	GrafPtr QDSwapPort( GrafPtr newPort )
 	{
-		return reinterpret_cast< GrafPtr >( QDSwapPort( reinterpret_cast< CGrafPtr >( newPort ) ) );
+		return (GrafPtr) QDSwapPort( (CGrafPtr) newPort );
 	}
 	
 #endif
@@ -269,8 +301,8 @@ namespace Nitrogen
 	
 	using ::InitCursor;
 	
-	inline void MacSetCursor( const Cursor& cursor )  { ::MacSetCursor( &cursor ); }
-	inline void MacSetCursor( CursHandle    cursor )  { ::MacSetCursor( *cursor ); }
+	inline void MacSetCursor( const Cursor& curs )  { ::MacSetCursor( &curs ); }
+	inline void MacSetCursor( CursHandle    curs )  { ::MacSetCursor( *curs ); }
 	void MacSetCursor( Mac::ResID id );  // calls GetCursor()
 	
 	using ::HideCursor;
@@ -281,9 +313,16 @@ namespace Nitrogen
 	
 	Point GetPen();
 	
-	PenState GetPenState();
+	inline
+	PenState GetPenState()
+	{
+		PenState penState;
+		::GetPenState( &penState );
+		
+		return penState;
+	}
 	
-	inline void SetPenState( const PenState& penState )  { ::SetPenState( &penState ); }
+	inline void SetPenState( const PenState& pen )  { ::SetPenState( &pen ); }
 	
 	using ::PenSize;
 	
@@ -313,7 +352,11 @@ namespace Nitrogen
 		return Make_Rect( top, left, bottom, right );
 	}
 	
-	inline Rect MacSetRect( Point topLeft, Point bottomRight )  { return MacSetRect( topLeft.h, topLeft.v, bottomRight.h, bottomRight.v ); }
+	inline
+	Rect MacSetRect( Point topLeft, Point bottomRight )
+	{
+		return MacSetRect( topLeft.h, topLeft.v, bottomRight.h, bottomRight.v );
+	}
 	
 	Rect MacOffsetRect( const Rect& r, short dh, short dv );
 	
@@ -335,7 +378,14 @@ namespace Nitrogen
 	
 	SectRect_Result SectRect( const Rect& a, const Rect& b );
 	
-	Rect MacUnionRect( const Rect& a, const Rect& b );
+	inline
+	Rect MacUnionRect( const Rect& a, const Rect& b )
+	{
+		Rect result;
+		::MacUnionRect( &a, &b, &result );
+		
+		return result;
+	}
 	
 	bool MacEqualRect( const Rect& a, const Rect& b );
 	
@@ -346,8 +396,9 @@ namespace Nitrogen
 	inline void EraseRect    ( const Rect& r )  { ::EraseRect    ( &r ); }
 	inline void MacInvertRect( const Rect& r )  { ::MacInvertRect( &r ); }
 	
-	inline void MacFillRect( const Rect&     r,
-	                         const Pattern&  pat )  { ::MacFillRect( &r, &pat ); }
+	inline
+	void MacFillRect( const Rect&     r,
+	                  const Pattern&  pat )  { ::MacFillRect( &r, &pat ); }
 	
 	inline void FrameOval ( const Rect& r )  { ::FrameOval ( &r ); }
 	inline void PaintOval ( const Rect& r )  { ::PaintOval ( &r ); }
@@ -400,7 +451,14 @@ namespace Nitrogen
 	                                           short  right,
 	                                           short  bottom );
 	
-	RgnHandle RectRgn( RgnHandle region, const Rect& rect );	
+	inline
+	RgnHandle RectRgn( RgnHandle region, const Rect& rect )
+	{
+		::RectRgn( region, &rect );
+		
+		return region;
+	}
+	
 	nucleus::owned< RgnHandle > RectRgn( const Rect& rect );
 	
 	using ::MacOffsetRgn;
@@ -418,9 +476,17 @@ namespace Nitrogen
 	using ::MacXorRgn;
 	nucleus::owned< RgnHandle > MacXorRgn( RgnHandle a, RgnHandle b );
 	
-	inline bool RectInRgn( const Rect& r, RgnHandle rgn )  { return ::RectInRgn( &r, rgn ); }
+	inline
+	bool RectInRgn( const Rect& r, RgnHandle rgn )
+	{
+		return ::RectInRgn( &r, rgn );
+	}
 	
-	inline bool MacEqualRgn( RgnHandle a, RgnHandle b )  { return ::MacEqualRgn( a, b ); }
+	inline
+	bool MacEqualRgn( RgnHandle a, RgnHandle b )
+	{
+		return ::MacEqualRgn( a, b );
+	}
 	
 	inline bool EmptyRgn( RgnHandle rgn )  { return ::EmptyRgn( rgn ); }
 	
@@ -429,18 +495,67 @@ namespace Nitrogen
 	using ::EraseRgn;
 	using ::MacInvertRgn;
 	
-	inline void MacFillRgn( RgnHandle rgn, const Pattern& pat )  { ::MacFillRgn( rgn, &pat ); }
+	inline
+	void MacFillRgn( RgnHandle rgn, const Pattern& pat )
+	{
+		::MacFillRgn( rgn, &pat );
+	}
 	
-	void ScrollRect( const Rect& r, short dh, short dv, RgnHandle updateRgn );
+	inline
+	void ScrollRect( const Rect& r, short dh, short dv, RgnHandle updateRgn )
+	{
+		::ScrollRect( &r, dh, dv, updateRgn );
+	}
 	
 	nucleus::owned< RgnHandle > ScrollRect( const Rect& r, short dh, short dv );
 	
+	inline
+	Rect GetPortBounds( CGrafPtr port )
+	{
+		Rect bounds;
+		return *( ::GetPortBounds( port, &bounds ) );
+	}
+	
+	inline
 	void CopyBits( const BitMap*  srcBits,
 	               const BitMap*  dstBits,
 	               const Rect&    srcRect,
 	               const Rect&    dstRect,
-	               TransferMode   mode,
-	               RgnHandle      maskRgn = NULL );
+	               TransferMode   mode    = srcCopy,
+	               RgnHandle      maskRgn = NULL )
+	{
+		::CopyBits( srcBits, dstBits, &srcRect, &dstRect, mode, maskRgn );
+	}
+	
+	inline
+	void CopyBits( const CGrafPtr  src,
+	               const CGrafPtr  dst,
+	               const Rect&     srcRect,
+	               const Rect&     dstRect,
+	               TransferMode    mode    = srcCopy,
+	               RgnHandle       maskRgn = NULL )
+	{
+		CopyBits( GetPortBitMapForCopyBits( src ),
+		          GetPortBitMapForCopyBits( dst ),
+		          srcRect,
+		          dstRect,
+		          mode,
+		          maskRgn );
+	}
+	
+	inline
+	void CopyBits( const CGrafPtr  src,
+	               const CGrafPtr  dst,
+	               TransferMode    mode    = srcCopy,
+	               RgnHandle       maskRgn = NULL )
+	{
+		CopyBits( src,
+		          dst,
+		          GetPortBounds( src ),
+		          GetPortBounds( dst ),
+		          mode,
+		          maskRgn );
+	}
 	
 	// SeedFill
 	// CalcMask
@@ -458,7 +573,11 @@ namespace Nitrogen
 	
 	using ::ClosePicture;
 	
-	inline void DrawPicture( PicHandle pic, const Rect& r )  { ::DrawPicture( pic, &r ); }
+	inline
+	void DrawPicture( PicHandle pic, const Rect& r )
+	{
+		::DrawPicture( pic, &r );
+	}
 	
 	inline void KillPicture( nucleus::owned< PicHandle > )  {}
 	
@@ -474,7 +593,11 @@ namespace Nitrogen
 	using ::ErasePoly;
 	using ::InvertPoly;
 	
-	inline void FillPoly( PolyHandle poly, const Pattern& pat )  { ::FillPoly( poly, &pat ); }
+	inline
+	void FillPoly( PolyHandle poly, const Pattern& pat )
+	{
+		::FillPoly( poly, &pat );
+	}
 	
 	inline Point Make_Point( short v, short h )
 	{
@@ -485,17 +608,34 @@ namespace Nitrogen
 	
 	inline Point SetPt( short h, short v )  { return Make_Point( v, h ); }
 	
-	Point LocalToGlobal( Point        point );
-	Rect  LocalToGlobal( const Rect&  rect );
+	inline
+	Point LocalToGlobal( Point point )
+	{
+		::LocalToGlobal( &point );
+		
+		return point;
+	}
 	
-	Point GlobalToLocal( Point        point );
+	inline
+	Point GlobalToLocal( Point point )
+	{
+		::GlobalToLocal( &point );
+		
+		return point;
+	}
+	
+	Rect  LocalToGlobal( const Rect&  rect );
 	Rect  GlobalToLocal( const Rect&  rect );
 	
 	using ::Random;
 	
 	// StuffHex
 	
-	inline bool MacGetPixel( short h, short v )  { return ::MacGetPixel( h, v ); }
+	inline
+	bool MacGetPixel( short h, short v )
+	{
+		return ::MacGetPixel( h, v );
+	}
 	
 	/*
 	Point ScalePt( Point pt, const Rect& srcRect, const Rect& dstRect );
@@ -523,7 +663,11 @@ namespace Nitrogen
 	
 	inline bool EqualPt( Point a, Point b )  { return ::EqualPt( a, b ); }
 	
-	inline bool MacPtInRect( Point pt, const Rect& rect )  { return ::MacPtInRect( pt, &rect ); }
+	inline
+	bool MacPtInRect( Point pt, const Rect& rect )
+	{
+		return ::MacPtInRect( pt, &rect );
+	}
 	
 	// Pt2Rect
 	// PtToAngle
@@ -563,8 +707,8 @@ namespace Nitrogen
 	// FillCRgn
 	// FillCPoly
 	
-	inline void RGBForeColor( const RGBColor& color )  { ::RGBForeColor( &color ); }
-	inline void RGBBackColor( const RGBColor& color )  { ::RGBBackColor( &color ); }
+	inline void RGBForeColor( const RGBColor& rgb )  { ::RGBForeColor( &rgb ); }
+	inline void RGBBackColor( const RGBColor& rgb )  { ::RGBBackColor( &rgb ); }
 	
 	inline void SetCPixel( short h, short v, const RGBColor& color )
 	{
@@ -573,10 +717,32 @@ namespace Nitrogen
 	
 	using ::SetPortPix;
 	
-	RGBColor GetCPixel( short h, short v );
+	inline
+	RGBColor GetCPixel( short h, short v )
+	{
+		RGBColor result;
+		::GetCPixel( h, v, &result );
+		
+		return result;
+	}
 	
-	RGBColor GetForeColor();
-	RGBColor GetBackColor();
+	inline
+	RGBColor GetForeColor()
+	{
+		RGBColor result;
+		::GetForeColor( &result );
+		
+		return result;
+	}
+	
+	inline
+	RGBColor GetBackColor()
+	{
+		RGBColor result;
+		::GetBackColor( &result );
+		
+		return result;
+	}
 	
 	// SeedCFill
 	// CalcCMask
@@ -585,6 +751,8 @@ namespace Nitrogen
 	// HiliteColor
 	
 	inline void DisposeCTable( nucleus::owned< CTabHandle > )  {}
+	
+	nucleus::owned< CTabHandle > GetCTable( short ctabID );
 	
 	// GetCTable
 	// GetCCursor
@@ -652,38 +820,62 @@ namespace Nitrogen
 	// GetPortPixMap
 	// ...
 	
-	const BitMap* GetPortBitMapForCopyBits( CGrafPtr port );
+	using ::GetPortBitMapForCopyBits;
 	
-	Rect GetPortBounds( CGrafPtr port );
+	inline
+	RGBColor GetPortForeColor( CGrafPtr port )
+	{
+		RGBColor result;
+		::GetPortForeColor( port, &result );
+		
+		return result;
+	}
 	
-	RGBColor GetPortForeColor( CGrafPtr port );
-	RGBColor GetPortBackColor( CGrafPtr port );
+	inline
+	RGBColor GetPortBackColor( CGrafPtr port )
+	{
+		RGBColor result;
+		::GetPortBackColor( port, &result );
+		
+		return result;
+	}
 	
 	// ...
 	
-	RgnHandle GetPortVisibleRegion( CGrafPtr port, RgnHandle region );
+	inline
+	RgnHandle GetPortVisibleRegion( CGrafPtr port, RgnHandle region )
+	{
+		return ::GetPortVisibleRegion( port, region );
+	}
 	
 	nucleus::owned< RgnHandle > GetPortVisibleRegion( CGrafPtr port );
 	
-	RgnHandle GetPortClipRegion( CGrafPtr port, RgnHandle region );
+	inline
+	RgnHandle GetPortClipRegion( CGrafPtr port, RgnHandle region )
+	{
+		return ::GetPortClipRegion( port, region );
+	}
 	
 	nucleus::owned< RgnHandle > GetPortClipRegion( CGrafPtr port );
 	
 	// ...
 	
-	Point GetPortPenSize( CGrafPtr );
+	inline
+	Point GetPortPenSize( CGrafPtr port )
+	{
+		Point result;
+		(void)::GetPortPenSize( port, &result );
+		
+		return result;
+	}
 	
 	// ...
 	
-	bool IsPortColor( CGrafPtr port );
-	
-	// ...
-	
-	void SetPortClipRegion( CGrafPtr port, RgnHandle clipRgn );
-	
-	// ...
-	
-	void SetPortPenSize( CGrafPtr port, Point penSize );
+	inline
+	bool IsPortColor( CGrafPtr port )
+	{
+		return ::IsPortColor( port );
+	}
 	
 	// ...
 	
@@ -739,8 +931,10 @@ namespace Nitrogen
 	// QDRestoreRegionBits
 	// QDDisposeRegionBits
 	
-	// Declared in Nitrogen/CGDirectDisplay.hh since it requires CGDirectDisplayID.
-	//nucleus::owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display );
+	/*
+		CreateNewPortForCGDisplayID() is declared in CGDirectDisplay.hh, since
+		it requires CGDirectDisplayID.
+	*/
 	
 	// QDDisplayWaitCursor
 	// QDSetPatternOrigin
@@ -769,66 +963,6 @@ namespace Nitrogen
 			
 			value_type get() const               { return GetClip();  }
 			void set( param_type region ) const  { SetClip( region ); }
-	};
-	
-	class Pen_State
-	{
-		public:
-			typedef PenState         value_type;
-			typedef PenState const&  param_type;
-			
-			value_type get() const              { return GetPenState(); }
-			void set( param_type state ) const  { SetPenState( state ); }
-	};
-	
-	class RGBForeColor_Setting
-	{
-		public:
-			typedef RGBColor         value_type;
-			typedef RGBColor const&  param_type;
-			
-			value_type get() const              { return GetForeColor(); }
-			void set( param_type color ) const  { RGBForeColor( color ); }
-	};
-	
-	class RGBBackColor_Setting
-	{
-		public:
-			typedef RGBColor         value_type;
-			typedef RGBColor const&  param_type;
-			
-			value_type get() const              { return GetBackColor(); }
-			void set( param_type color ) const  { RGBBackColor( color ); }
-	};
-	
-	class Port_ClipRegion
-	{
-		private:
-			CGrafPtr port;
-			
-		public:
-			typedef nucleus::owned< RgnHandle >  value_type;
-			typedef                 RgnHandle    param_type;
-			
-			Port_ClipRegion( CGrafPtr port )     : port( port ) {}
-			
-			value_type get() const               { return GetPortClipRegion( port );            }
-			void set( param_type region ) const  { Nitrogen::SetPortClipRegion( port, region ); }
-	};
-	
-	class Port_PenSize
-	{
-		private:
-			CGrafPtr port;
-      
-		public:
-			typedef Point value_type;
-			typedef Point param_type;
-			
-			Port_PenSize( CGrafPtr port )      : port( port ) {}
-			
-			value_type get() const             { return GetPortPenSize( port );          }
-			void set( param_type size ) const  { Nitrogen::SetPortPenSize( port, size ); }
 	};
 	
 }

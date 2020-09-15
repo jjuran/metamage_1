@@ -54,4 +54,3 @@ namespace MacBinaryDecoder
 }
 
 #endif
-

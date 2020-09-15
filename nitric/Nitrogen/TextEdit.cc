@@ -17,6 +17,8 @@
 namespace Nitrogen
 {
 	
+#if ! __LP64__
+	
 	nucleus::owned< TEHandle > TENew( const Rect&  destRect,
 	                                  const Rect&  viewRect )
 	{
@@ -33,5 +35,12 @@ namespace Nitrogen
 		return nucleus::owned< TEHandle >::seize( hTE );
 	}
 	
+#else
+	
+	void dummy()
+	{
+	}
+	
+#endif  // #if ! __LP64__
+	
 }
-

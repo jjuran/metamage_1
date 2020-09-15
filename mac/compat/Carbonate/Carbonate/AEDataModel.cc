@@ -1,13 +1,13 @@
 // Carbonate/AEDataModel.cc
 
-#ifdef __MC68K__
-
 #ifndef __MACERRORS__
 #include <MacErrors.h>
 #endif
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
+
+#if !ACCESSOR_CALLS_ARE_FUNCTIONS
 
 #include "Carbonate/AEDataModel.hh"
 
@@ -130,4 +130,3 @@ pascal OSErr AEReplaceDescData( DescType     typeCode,
 }
 
 #endif
-

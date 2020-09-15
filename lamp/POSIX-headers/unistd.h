@@ -83,7 +83,9 @@ ssize_t _realpath( const char *path, char *buffer, size_t buffer_size );
 ssize_t _readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size, int flags );
 ssize_t _realpathat( int dirfd, const char *path, char *buffer, size_t buffer_size, int flags );
 
-#define REALPATH_MAC  0x0000001
+#define REALPATH_OUTPUT_HFS       0x0000001
+#define REALPATH_OUTPUT_UTF8      0x0000002
+#define REALPATH_OUTPUT_HFS_UTF8  0x0000003
 
 __dead void	 _exit(int);
 int	 access(const char *, int);
@@ -102,6 +104,7 @@ int	 execlp(const char *, const char *, ...)
 int	 execv(const char *, char * const *);
 int	 execve(const char *, char * const *, char * const *);
 int	 execvp(const char *, char * const *);
+int	 execvpe(const char *, char * const *, char * const *);
 pid_t	 fork(void);
 long	 fpathconf(int, int);
 char	*getcwd(char *, size_t)
@@ -177,7 +180,7 @@ int	 lchown(const char *, uid_t, gid_t);
 int	 mkstemp(char *);
 char	*mktemp(char *);
 int	 nice(int);
-int	 readlink(const char *, char *, size_t)
+ssize_t	 readlink(const char *, char *, size_t)
 		__attribute__ ((__bounded__(__string__,2,3)));
 int	 setkey(const char *);
 int	 setpgrp(pid_t pid, pid_t pgrp);	/* obsoleted by setpgid() */

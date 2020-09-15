@@ -3,8 +3,8 @@
  *	======
  */
 
-#ifndef KEROSENE_TIME_H
-#define KEROSENE_TIME_H
+#ifndef _TIME_H_
+#define _TIME_H_
 
 #include <sys/types.h>
 
@@ -74,4 +74,3 @@ extern "C" {
 #endif
 
 #endif
-

@@ -4,14 +4,12 @@
  */
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // POSIX
 #include <unistd.h>
 #include <sys/uio.h>
-
-// Historical
-#include <alloca.h>
 
 
 #pragma exceptions off
@@ -52,4 +50,3 @@ int main( int argc, char **argv )
 	
 	return n_written < 0 ? 1 : 0;
 }
-

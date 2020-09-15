@@ -10,6 +10,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
 
@@ -19,19 +20,23 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void remove( const node* it )
+	void remove( const node& that )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
-		if ( methods  &&  methods->remove )
+		const item_method_set* item_methods;
+		
+		if ( methods  &&  (item_methods = methods->item_methods) )
 		{
-			methods->remove( it );
+			if ( item_methods->remove )
+			{
+				item_methods->remove( &that );
+				
+				return;
+			}
 		}
-		else
-		{
-			p7::throw_errno( EPERM );
-		}
+		
+		p7::throw_errno( EPERM );
 	}
 	
 }
-

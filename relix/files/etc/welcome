@@ -1,0 +1,16 @@
+#!/bin/sh
+
+echo "MacRelix by Josh Juran <http://www.macrelix.org/>."
+echo
+
+/usr/bin/system-info
+
+echo
+
+# Advise if the perl lib is missing
+/bin/test-type DIR /usr/lib/perl  ||  /etc/bootstrap/check-perl-lib.pl
+
+echo "Logging in with full privileges..."
+echo
+
+exec /bin/login

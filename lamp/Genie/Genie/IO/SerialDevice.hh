@@ -6,18 +6,20 @@
 #ifndef GENIE_IO_SERIALDEVICE_HH
 #define GENIE_IO_SERIALDEVICE_HH
 
-// Genie
-#include "Genie/IO/Device.hh"
+// plus
+#include "plus/string_fwd.hh"
+
+// vfs
+#include "vfs/filehandle_ptr.hh"
 
 
 namespace Genie
 {
 	
-	IOPtr OpenSerialDevice( const plus::string&  portName,
-	                        bool                 isPassive,
-	                        bool                 nonblocking );
+	vfs::filehandle_ptr OpenSerialDevice( const plus::string&  portName,
+	                                      bool                 isPassive,
+	                                      bool                 nonblocking );
 	
 }
 
 #endif
-

@@ -18,4 +18,3 @@ clock_t clock( void )
 {
 	return global_system_params->microsecond_timer();
 }
-

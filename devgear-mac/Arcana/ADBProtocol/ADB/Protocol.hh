@@ -35,4 +35,3 @@ UInt8 GetDeviceHandlerID( Nitrogen::ADBAddress address );
 void SetDeviceHandlerID( Nitrogen::ADBAddress address, UInt8 id );
 
 #endif
-

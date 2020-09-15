@@ -1,0 +1,9 @@
+#!/bin/sh
+
+$DEMO/0;  sleep 3
+$DEMO/1;  sleep 5
+$DEMO/2;  sleep 5
+$DEMO/3;  sleep 5
+$DEMO/4;  sleep 5
+$DEMO/5
+

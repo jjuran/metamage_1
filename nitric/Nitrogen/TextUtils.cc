@@ -17,6 +17,8 @@
 namespace Nitrogen
 {
 	
+#if ! __LP64__
+	
 	nucleus::owned< StringHandle > NewString( ConstStr255Param string )
 	{
 		StringHandle result = ::NewString( string );
@@ -52,10 +54,11 @@ namespace Nitrogen
 		return str;
 	}
 	
+#endif  // #if ! __LP64__
+	
 	nucleus::string p2cstrcpy( ConstStr255Param src )
 	{
 		return nucleus::string( (const char*) &src[1], src[0] );
 	}
 	
 }
-

@@ -27,4 +27,3 @@ class _temporary_cwd
 };
 
 #endif
-

@@ -14,6 +14,12 @@
 #ifndef NITROGEN_AEDATAMODEL_HH
 #define NITROGEN_AEDATAMODEL_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __AEDATAMODEL__
 #include <AEDataModel.h>
 #endif
@@ -27,7 +33,7 @@
 #endif
 
 // iota
-#include "iota/distance.hh"
+#include "iota/ptr_diff.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -366,25 +372,10 @@ namespace Nitrogen
 	{
 		
 		template < class AEDesc_Type >
-		class AEDescEditor
+		AEDesc_Type& mutable_AEDesc( nucleus::owned< AEDesc_Type >& desc )
 		{
-			private:
-				nucleus::owned< AEDesc_Type >& itsDesc;
-				AEDesc_Type                    itsWorkingCopy;
-			
-			public:
-				AEDescEditor( nucleus::owned< AEDesc_Type >& desc )
-				:
-					itsDesc       ( desc           ), 
-					itsWorkingCopy( desc.release() )
-				{
-				}
-				
-				~AEDescEditor()  { itsDesc = nucleus::owned< AEDesc_Type >::seize( itsWorkingCopy ); }
-				
-				AEDesc_Type& Get()       { return itsWorkingCopy; }
-				operator AEDesc_Type&()  { return Get();          }
-		};
+			return const_cast< AEDesc_Type& >( desc.get() );
+		}
 		
 	}
 	
@@ -500,7 +491,7 @@ namespace Nitrogen
 	template < class AEDesc_Type >
 	inline nucleus::owned< AEDesc_Type > AECreateDesc( Mac::DescType typeCode, nucleus::owned< AEDesc_Type > desc )
 	{
-		Detail::AEDescEditor< AEDesc_Type >( desc ).Get().descriptorType = typeCode;
+		Detail::mutable_AEDesc( desc ).descriptorType = typeCode;
 		
 		return desc;
 	}
@@ -624,7 +615,7 @@ namespace Nitrogen
 	                      const void*                              dataPtr,
 	                      std::size_t                              dataSize )
 	{
-		AEPutPtr( Detail::AEDescEditor< Mac::AEDescList_Data >( list ),
+		AEPutPtr( Detail::mutable_AEDesc( list ),
 		          index,
 		          type,
 		          dataPtr,
@@ -639,7 +630,7 @@ namespace Nitrogen
 	                       long                                     index,
 	                       const Mac::AEDesc_Data&                  desc )
 	{
-		AEPutDesc( Detail::AEDescEditor< Mac::AEDescList_Data >( list ), index, desc );
+		AEPutDesc( Detail::mutable_AEDesc( list ), index, desc );
 	}
 	
 	inline void AEPutDesc( nucleus::owned< Mac::AEDescList_Token >&  list,
@@ -653,7 +644,7 @@ namespace Nitrogen
 		// on each member token, we must not do so here.  But we do need to
 		// dispose the AEDesc.  Got it?
 		
-		AEPutDesc( AEDesc_Cast< Mac::AEDescList_Data >( Detail::AEDescEditor< Mac::AEDescList_Token >( list ).Get() ),
+		AEPutDesc( AEDesc_Cast< Mac::AEDescList_Data >( Detail::mutable_AEDesc( list ) ),
 		           index,
 		           AEDesc_Cast< const Mac::AEDesc_Data >( desc.get() ) );
 		
@@ -717,7 +708,7 @@ namespace Nitrogen
 	                         const void*                            dataPtr,
 	                         std::size_t                            dataSize )
 	{
-		AEPutKeyPtr( Detail::AEDescEditor< Mac::AERecord_Data >( record ),
+		AEPutKeyPtr( Detail::mutable_AEDesc( record ),
 		             keyword,
 		             typeCode,
 		             dataPtr,
@@ -735,14 +726,14 @@ namespace Nitrogen
 	                          Mac::AEKeyword                         keyword,
 	                          const Mac::AEDesc_Data&                desc )
 	{
-		AEPutKeyDesc( Detail::AEDescEditor< Mac::AERecord_Data >( record ), keyword, desc );
+		AEPutKeyDesc( Detail::mutable_AEDesc( record ), keyword, desc );
 	}
 	
 	inline void AEPutKeyDesc( nucleus::owned< Mac::AERecord_Token >&  record,
 	                          Mac::AEKeyword                          keyword,
 	                          nucleus::owned< Mac::AEDesc_Token >     token )
 	{
-		AEPutKeyDesc( AEDesc_Cast< Mac::AERecord_Data >( Detail::AEDescEditor< Mac::AERecord_Token >( record ).Get() ),
+		AEPutKeyDesc( AEDesc_Cast< Mac::AERecord_Data >( Detail::mutable_AEDesc( record ) ),
 		              keyword,
 		              AEDesc_Cast< const Mac::AEDesc_Data >( token ) );
 		
@@ -752,7 +743,7 @@ namespace Nitrogen
 	inline void AEPutKeyDesc( nucleus::owned< Mac::AERecord_Data >&  record,
 	                          const AEKeyDesc&                       keyDesc )
 	{
-		AEPutKeyDesc( Detail::AEDescEditor< Mac::AERecord_Data >( record ), keyDesc );
+		AEPutKeyDesc( Detail::mutable_AEDesc( record ), keyDesc );
 	}
 	
 	class AEPutKeyDesc_Binding
@@ -796,7 +787,7 @@ namespace Nitrogen
 	
 	inline void AEDeleteKeyDesc( nucleus::owned< Mac::AERecord_Data >& record, Mac::AEKeyword keyword )
 	{
-		AEDeleteKeyDesc( Detail::AEDescEditor< Mac::AERecord_Data >( record ), keyword );
+		AEDeleteKeyDesc( Detail::mutable_AEDesc( record ), keyword );
 	}
 	
 	#pragma mark -
@@ -810,11 +801,11 @@ namespace Nitrogen
 	                    Mac::AEReturnID            returnID      = Mac::AEReturnID(),
 	                    Mac::AETransactionID       transactionID = Mac::AETransactionID() );
 	
-	void AEPutParamPtr( Mac::AppleEvent&  appleEvent,
-	                    Mac::AEKeyword    keyword,
-	                    Mac::DescType     typeCode,
-	                    const void*       dataPtr,
-	                    std::size_t       dataSize );
+	void AEPutParamPtr( AppleEvent&     appleEvent,
+	                    Mac::AEKeyword  keyword,
+	                    Mac::DescType   typeCode,
+	                    const void*     dataPtr,
+	                    std::size_t     dataSize );
 	
 	void AEPutParamPtr( nucleus::owned< Mac::AppleEvent >&  appleEvent,
 	                    Mac::AEKeyword                      keyword,
@@ -822,37 +813,37 @@ namespace Nitrogen
 	                    const void*                         dataPtr,
 	                    std::size_t                         dataSize );
 	
-	void AEPutParamDesc( Mac::AppleEvent&  appleEvent,
-	                     Mac::AEKeyword    keyword,
-	                     const AEDesc&     desc );
+	void AEPutParamDesc( AppleEvent&     appleEvent,
+	                     Mac::AEKeyword  keyword,
+	                     const AEDesc&   desc );
 	
 	void AEPutParamDesc( nucleus::owned< Mac::AppleEvent >&  appleEvent,
 	                     Mac::AEKeyword                      keyword,
 	                     const AEDesc&                       desc );
 	
-	AEGetParamPtr_Result AEGetParamPtr( const Mac::AppleEvent&  appleEvent,
-	                                    Mac::AEKeyword          keyword,
-	                                    Mac::DescType           desiredType,
-	                                    void*                   dataPtr,
-	                                    std::size_t             maximumSize );
+	AEGetParamPtr_Result AEGetParamPtr( const AppleEvent&  appleEvent,
+	                                    Mac::AEKeyword     keyword,
+	                                    Mac::DescType      desiredType,
+	                                    void*              dataPtr,
+	                                    std::size_t        maximumSize );
 	
 	nucleus::owned< Mac::AEDesc_Data >
 	//
-	AEGetParamDesc( const Mac::AppleEvent&  appleEvent,
-	                Mac::AEKeyword          keyword,
-	                Mac::DescType           desiredType = Mac::typeWildCard );
+	AEGetParamDesc( const AppleEvent&  appleEvent,
+	                Mac::AEKeyword     keyword,
+	                Mac::DescType      desiredType = Mac::typeWildCard );
 	
-	AESizeOfParam_Result AESizeOfParam( const Mac::AppleEvent&  appleEvent,
-	                                    Mac::AEKeyword          keyword );
+	AESizeOfParam_Result AESizeOfParam( const AppleEvent&  appleEvent,
+	                                    Mac::AEKeyword     keyword );
 	
-	void AEDeleteParam(                 Mac::AppleEvent  & appleEvent, Mac::AEKeyword keyword );
+	void AEDeleteParam(                      AppleEvent  & appleEvent, Mac::AEKeyword keyword );
 	void AEDeleteParam( nucleus::owned< Mac::AppleEvent >& appleEvent, Mac::AEKeyword keyword );
 	
-	void AEPutAttributePtr( Mac::AppleEvent&  appleEvent,
-	                        Mac::AEKeyword    keyword,
-	                        Mac::DescType     typeCode,
-	                        const void*       dataPtr,
-	                        std::size_t       dataSize );
+	void AEPutAttributePtr( AppleEvent&     appleEvent,
+	                        Mac::AEKeyword  keyword,
+	                        Mac::DescType   typeCode,
+	                        const void*     dataPtr,
+	                        std::size_t     dataSize );
 	
 	void AEPutAttributePtr( nucleus::owned< Mac::AppleEvent >&  appleEvent,
 	                        Mac::AEKeyword                      keyword,
@@ -860,28 +851,28 @@ namespace Nitrogen
 	                        const void*                         dataPtr,
 	                        std::size_t                         dataSize );
 	
-	void AEPutAttributeDesc( Mac::AppleEvent&  appleEvent,
-	                         Mac::AEKeyword    keyword,
-	                         const AEDesc&     desc );
+	void AEPutAttributeDesc( AppleEvent&     appleEvent,
+	                         Mac::AEKeyword  keyword,
+	                         const AEDesc&   desc );
 	
 	void AEPutAttributeDesc( nucleus::owned< Mac::AppleEvent >&  appleEvent,
 	                         Mac::AEKeyword                      keyword,
 	                         const AEDesc&                       desc );
 	
-	AEGetAttributePtr_Result AEGetAttributePtr( const Mac::AppleEvent&  appleEvent,
-	                                            Mac::AEKeyword          keyword,
-	                                            Mac::DescType           desiredType,
-	                                            void*                   dataPtr,
-	                                            std::size_t             maximumSize );
+	AEGetAttributePtr_Result AEGetAttributePtr( const AppleEvent&  appleEvent,
+	                                            Mac::AEKeyword     keyword,
+	                                            Mac::DescType      desiredType,
+	                                            void*              dataPtr,
+	                                            std::size_t        maximumSize );
 	
 	nucleus::owned< Mac::AEDesc_Data >
 	//
-	AEGetAttributeDesc( const Mac::AppleEvent&  appleEvent,
-	                    Mac::AEKeyword          keyword,
-	                    Mac::DescType           desiredType = Mac::typeWildCard );
+	AEGetAttributeDesc( const AppleEvent&  appleEvent,
+	                    Mac::AEKeyword     keyword,
+	                    Mac::DescType      desiredType = Mac::typeWildCard );
 	
-	AESizeOfAttribute_Result AESizeOfAttribute( const Mac::AppleEvent&  appleEvent,
-	                                            Mac::AEKeyword          keyword );
+	AESizeOfAttribute_Result AESizeOfAttribute( const AppleEvent&  appleEvent,
+	                                            Mac::AEKeyword     keyword );
 	
 	#pragma mark -
 	#pragma mark ** Opaque data **
@@ -959,7 +950,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				theDesc = AECoercePtr( fromType, begin, iota::distance( begin, end ), toType );
+				theDesc = AECoercePtr( fromType, begin, iota::ptr_diff( begin, end ), toType );
 			}
 	};
 	
@@ -994,7 +985,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				theDesc = AECreateDesc< AEDesc_Type >( theType, begin, iota::distance( begin, end ) );
+				theDesc = AECreateDesc< AEDesc_Type >( theType, begin, iota::ptr_diff( begin, end ) );
 			}
 	};
 	
@@ -1038,7 +1029,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				AEPutPtr( theList, theIndex, theType, begin, iota::distance( begin, end ) );
+				AEPutPtr( theList, theIndex, theType, begin, iota::ptr_diff( begin, end ) );
 			}
 	};
 	
@@ -1057,7 +1048,7 @@ namespace Nitrogen
 	                      typename DescType_parameter< type >::type  data )
 	{
 		DescType_put< type >( data,
-		                      AEPutPtr_Putter( Detail::AEDescEditor< Mac::AEDescList_Data >( list ),
+		                      AEPutPtr_Putter( Detail::mutable_AEDesc( list ),
 		                                       index,
 		                                       type ) );
 	}
@@ -1095,7 +1086,7 @@ namespace Nitrogen
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetNthPtr( theList, theIndex, type, begin, iota::distance( begin, end ) );
+				AEGetNthPtr( theList, theIndex, type, begin, iota::ptr_diff( begin, end ) );
 			}
 	};
 	
@@ -1125,7 +1116,7 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				AEPutKeyPtr( theRecord, theKeyword, theType, begin, iota::distance( begin, end ) );
+				AEPutKeyPtr( theRecord, theKeyword, theType, begin, iota::ptr_diff( begin, end ) );
 			}
 	};
 	
@@ -1146,7 +1137,7 @@ namespace Nitrogen
 	                         typename DescType_parameter< type >::type  data )
 	{
 		DescType_put< type >( data,
-		                      AEPutKeyPtr_Putter( Detail::AEDescEditor< Mac::AERecord_Data >( record ),
+		                      AEPutKeyPtr_Putter( Detail::mutable_AEDesc( record ),
 		                                          keyword,
 		                                          type ) );
 	}
@@ -1165,7 +1156,7 @@ namespace Nitrogen
 	inline void AEPutKeyPtr( nucleus::owned< Mac::AERecord_Data >&      record,
 	                         typename AEKeyword_parameter< key >::type  data )
 	{
-		AEPutKeyPtr< key >( Detail::AEDescEditor< Mac::AERecord_Data >( record ), data );
+		AEPutKeyPtr< key >( Detail::mutable_AEDesc( record ), data );
 	}
 	
 	template < Mac::AEKeyword key >
@@ -1221,7 +1212,7 @@ namespace Nitrogen
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetKeyPtr( theRecord, theKeyword, type, begin, iota::distance( begin, end ) );
+				AEGetKeyPtr( theRecord, theKeyword, type, begin, iota::ptr_diff( begin, end ) );
 			}
 	};
 	
@@ -1244,14 +1235,14 @@ namespace Nitrogen
 	class AEPutParamPtr_Putter
 	{
 		private:
-			Mac::AppleEvent&  theAppleEvent;
-			Mac::AEKeyword    theKeyword;
-			Mac::DescType     theType;
+			AppleEvent&     theAppleEvent;
+			Mac::AEKeyword  theKeyword;
+			Mac::DescType   theType;
 		
 		public:
-			AEPutParamPtr_Putter( Mac::AppleEvent&  appleEvent,
-			                      Mac::AEKeyword    keyword,
-			                      Mac::DescType     type )
+			AEPutParamPtr_Putter( AppleEvent&     appleEvent,
+			                      Mac::AEKeyword  keyword,
+			                      Mac::DescType   type )
 			:
 				theAppleEvent( appleEvent  ),
 				theKeyword   ( keyword     ),
@@ -1261,12 +1252,12 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				AEPutParamPtr( theAppleEvent, theKeyword, theType, begin, iota::distance( begin, end ) );
+				AEPutParamPtr( theAppleEvent, theKeyword, theType, begin, iota::ptr_diff( begin, end ) );
 			}
 	};
 	
 	template < Mac::DescType type >
-	inline void AEPutParamPtr( Mac::AppleEvent&                           appleEvent,
+	inline void AEPutParamPtr( AppleEvent&                                appleEvent,
 	                           Mac::AEKeyword                             keyword,
 	                           typename DescType_parameter< type >::type  data )
 	{
@@ -1282,13 +1273,13 @@ namespace Nitrogen
 	                           typename DescType_parameter< type >::type  data )
 	{
 		DescType_put< type >( data,
-		                      AEPutParamPtr_Putter( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ),
+		                      AEPutParamPtr_Putter( Detail::mutable_AEDesc( appleEvent ),
 		                                            keyword,
 		                                            type ) );
 	}
 	
 	template < Mac::AEKeyword key >
-	inline void AEPutParamPtr( Mac::AppleEvent&                           appleEvent,
+	inline void AEPutParamPtr( AppleEvent&                                appleEvent,
 	                           typename AEKeyword_parameter< key >::type  data )
 	{
 		AEKeyword_put< key >( data,
@@ -1301,7 +1292,7 @@ namespace Nitrogen
 	inline void AEPutParamPtr( nucleus::owned< Mac::AppleEvent >&         appleEvent,
 	                           typename AEKeyword_parameter< key >::type  data )
 	{
-		AEPutParamPtr< key >( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ), data );
+		AEPutParamPtr< key >( Detail::mutable_AEDesc( appleEvent ), data );
 	}
 	
 	
@@ -1309,12 +1300,12 @@ namespace Nitrogen
 	class AEGetParamPtr_Getter
 	{
 		private:
-			const Mac::AppleEvent&  theAppleEvent;
-			Mac::AEKeyword          theKeyword;
+			const AppleEvent&  theAppleEvent;
+			Mac::AEKeyword     theKeyword;
 		
 		public:
-			AEGetParamPtr_Getter( const Mac::AppleEvent&  appleEvent,
-			                      Mac::AEKeyword          keyword )
+			AEGetParamPtr_Getter( const AppleEvent&  appleEvent,
+			                      Mac::AEKeyword     keyword )
 			:
 				theAppleEvent( appleEvent ),
 				theKeyword   ( keyword    )
@@ -1339,15 +1330,15 @@ namespace Nitrogen
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetParamPtr( theAppleEvent, theKeyword, type, begin, iota::distance( begin, end ) );
+				AEGetParamPtr( theAppleEvent, theKeyword, type, begin, iota::ptr_diff( begin, end ) );
 			}
 	};
 	
 	template < Mac::DescType type >
 	inline typename DescType_result< type >::type
 	//
-	AEGetParamPtr( const Mac::AppleEvent&  appleEvent,
-	               Mac::AEKeyword          keyword )
+	AEGetParamPtr( const AppleEvent&  appleEvent,
+	               Mac::AEKeyword     keyword )
 	{
 		return DescType_get< type >( AEGetParamPtr_Getter< type >( appleEvent, keyword ) );
 	}
@@ -1355,7 +1346,7 @@ namespace Nitrogen
 	template < Mac::AEKeyword key >
 	inline typename AEKeyword_result< key >::type
 	//
-	AEGetParamPtr( const Mac::AppleEvent& appleEvent )
+	AEGetParamPtr( const AppleEvent& appleEvent )
 	{
 		return AEKeyword_get< key >( AEGetParamPtr_Getter< AEKeyword_DescType< key >::value >( appleEvent, key ) );
 	}
@@ -1364,14 +1355,14 @@ namespace Nitrogen
 	class AEPutAttributePtr_Putter
 	{
 		private:
-			Mac::AppleEvent&  theAppleEvent;
-			Mac::AEKeyword    theKeyword;
-			Mac::DescType     theType;
+			AppleEvent&     theAppleEvent;
+			Mac::AEKeyword  theKeyword;
+			Mac::DescType   theType;
 		
 		public:
-			AEPutAttributePtr_Putter( Mac::AppleEvent&  appleEvent,
-			                          Mac::AEKeyword    keyword,
-			                          Mac::DescType     type )
+			AEPutAttributePtr_Putter( AppleEvent&     appleEvent,
+			                          Mac::AEKeyword  keyword,
+			                          Mac::DescType   type )
 			:
 				theAppleEvent( appleEvent ),
 				theKeyword   ( keyword    ),
@@ -1381,12 +1372,12 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				AEPutAttributePtr( theAppleEvent, theKeyword, theType, begin, iota::distance( begin, end ) );
+				AEPutAttributePtr( theAppleEvent, theKeyword, theType, begin, iota::ptr_diff( begin, end ) );
 			}
 	};
 	
 	template < Mac::DescType type >
-	inline void AEPutAttributePtr( Mac::AppleEvent&                           appleEvent,
+	inline void AEPutAttributePtr( AppleEvent&                                appleEvent,
 	                               Mac::AEKeyword                             keyword,
 	                               typename DescType_parameter< type >::type  data )
 	{
@@ -1402,13 +1393,13 @@ namespace Nitrogen
 	                               typename DescType_parameter< type >::type  data )
 	{
 		DescType_put< type >( data,
-		                      AEPutAttributePtr_Putter( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ),
+		                      AEPutAttributePtr_Putter( Detail::mutable_AEDesc( appleEvent ),
 		                                                keyword,
 		                                                type ) );
 	}
 	
 	template < Mac::AEKeyword key >
-	inline void AEPutAttributePtr( Mac::AppleEvent&                           appleEvent,
+	inline void AEPutAttributePtr( AppleEvent&                                appleEvent,
 	                               typename AEKeyword_parameter< key >::type  data )
 	{
 		AEKeyword_put< key >( data,
@@ -1421,7 +1412,7 @@ namespace Nitrogen
 	inline void AEPutAttributePtr( nucleus::owned< Mac::AppleEvent >&         appleEvent,
 	                               typename AEKeyword_parameter< key >::type  data )
 	{
-		AEPutAttributePtr< key >( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ), data );
+		AEPutAttributePtr< key >( Detail::mutable_AEDesc( appleEvent ), data );
 	}
 	
 	
@@ -1429,12 +1420,12 @@ namespace Nitrogen
 	class AEGetAttributePtr_Getter
 	{
 		private:
-			const Mac::AppleEvent&  theAppleEvent;
-			Mac::AEKeyword          theKeyword;
+			const AppleEvent&  theAppleEvent;
+			Mac::AEKeyword     theKeyword;
 		
 		public:
-			AEGetAttributePtr_Getter( const Mac::AppleEvent&  appleEvent,
-			                          Mac::AEKeyword          keyword )
+			AEGetAttributePtr_Getter( const AppleEvent&  appleEvent,
+			                          Mac::AEKeyword     keyword )
 			:
 				theAppleEvent( appleEvent ),
 				theKeyword   ( keyword    )
@@ -1459,15 +1450,15 @@ namespace Nitrogen
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetAttributePtr( theAppleEvent, theKeyword, type, begin, iota::distance( begin, end ) );
+				AEGetAttributePtr( theAppleEvent, theKeyword, type, begin, iota::ptr_diff( begin, end ) );
 			}
 	};
 	
 	template < Mac::DescType type >
 	inline typename DescType_result< type >::type
 	//
-	AEGetAttributePtr( const Mac::AppleEvent&  appleEvent,
-	                   Mac::AEKeyword          keyword )
+	AEGetAttributePtr( const AppleEvent&  appleEvent,
+	                   Mac::AEKeyword     keyword )
 	{
 		return DescType_get< type >( AEGetAttributePtr_Getter< type >( appleEvent, keyword ) );
 	}
@@ -1475,7 +1466,7 @@ namespace Nitrogen
 	template < Mac::AEKeyword key >
 	inline typename AEKeyword_result< key >::type
 	//
-	AEGetAttributePtr( const Mac::AppleEvent& appleEvent )
+	AEGetAttributePtr( const AppleEvent& appleEvent )
 	{
 		return AEKeyword_get< key >( AEGetAttributePtr_Getter< AEKeyword_DescType< key >::value >( appleEvent, key ) );
 	}
@@ -1495,7 +1486,7 @@ namespace Nitrogen
 			
 			void operator()( void *begin, void *end ) const
 			{
-				AEGetDescData( theDesc, begin, iota::distance( begin, end ) );
+				AEGetDescData( theDesc, begin, iota::ptr_diff( begin, end ) );
 			}
 	};
 	
@@ -1515,12 +1506,12 @@ namespace Nitrogen
 	class AEReplaceDescData_Putter
 	{
 		private:
-			Mac::DescType                        theType;
-			nucleus::owned< Mac::AEDesc_Data >&  theDesc;
+			Mac::DescType      theType;
+			Mac::AEDesc_Data&  theDesc;
 		
 		public:
-			AEReplaceDescData_Putter( Mac::DescType                        type,
-			                          nucleus::owned< Mac::AEDesc_Data >&  desc )
+			AEReplaceDescData_Putter( Mac::DescType      type,
+			                          Mac::AEDesc_Data&  desc )
 			:
 				theType( type ),
 				theDesc( desc )
@@ -1529,13 +1520,13 @@ namespace Nitrogen
 			
 			void operator()( const void *begin, const void *end ) const
 			{
-				AEReplaceDescData( theType, begin, iota::distance( begin, end ), theDesc );
+				AEReplaceDescData( theType, begin, iota::ptr_diff( begin, end ), theDesc );
 			}
 	};
 	
 	template < Mac::DescType type >
 	inline void AEReplaceDescData( typename DescType_parameter< type >::type  data,
-	                               AEDesc&                                    result )
+	                               Mac::AEDesc_Data&                          result )
 	{
 		DescType_put< type >( data,
 		                      AEReplaceDescData_Putter( type, result ) );
@@ -1547,10 +1538,9 @@ namespace Nitrogen
 	{
 		DescType_put< type >( data,
 		                      AEReplaceDescData_Putter( type,
-		                                                Detail::AEDescEditor< Mac::AEDesc_Data >( result ) ) );
+		                                                Detail::mutable_AEDesc( result ) ) );
 	}
 	
 }
 
 #endif
-

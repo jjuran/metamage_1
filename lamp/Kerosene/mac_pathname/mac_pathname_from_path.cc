@@ -9,9 +9,7 @@
 
 // POSIX
 #include <fcntl.h>
-
-// Relix
-#include "relix/_realpathat.h"
+#include <unistd.h>
 
 // plus
 #include "plus/mac_utf8.hh"
@@ -85,4 +83,3 @@ plus::string mac_pathname_from_path( const char* path, bool utf8 )
 	
 #endif
 }
-

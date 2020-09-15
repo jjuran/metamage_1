@@ -8,6 +8,7 @@
 
 // Standard C
 #include <errno.h>
+#include <string.h>
 
 // POSIX
 #include <sys/stat.h>
@@ -19,10 +20,74 @@
 #pragma exceptions off
 
 
+static int failures = 0;
+
+
+static void make_dir( const char* path, int ignored_err = 0 )
+{
+	int f = mkdir( path, 0700 );
+	
+	if ( f < 0  &&  errno != ignored_err )
+	{
+		more::perror( "mkdir", path );
+		
+		++failures;
+	}
+}
+
+static void make_dirs( char* path, char* end )
+{
+	char* p = end;
+	
+	while ( p > path  &&  *--p != '/' ) continue;
+	
+	if ( p != path )
+	{
+		*p = '\0';
+		
+		make_dirs( path, p );
+		
+		*p = '/';
+	}
+	
+	make_dir( path, EEXIST );
+}
+
+static void make_dirs( char* path )
+{
+	const size_t length = strlen( path );
+	
+	char* end = path + length;
+	
+	make_dirs( path, end );
+}
+
 int main( int argc, char *const *argv )
 {
-	// Check for sufficient number of args
-	if ( argc < 2 )
+	if ( *argv == NULL )
+	{
+		return 0;
+	}
+	
+	// Try to make each directory.  Return whether any errors occurred.
+	
+	bool prefixes = false;
+	
+	while ( *++argv != NULL )
+	{
+		if ( strcmp( *argv, "-p" ) == 0 )
+		{
+			prefixes = true;
+			
+			continue;
+		}
+		
+		--argv;
+		
+		break;
+	}
+	
+	if ( *argv == NULL )
 	{
 		more::perror( "mkdir", "missing arguments", 0 );
 		
@@ -30,20 +95,18 @@ int main( int argc, char *const *argv )
 	}
 	
 	// Try to make each directory.  Return whether any errors occurred.
-	int fail = 0;
 	
-	for ( int index = 1;  index < argc;  ++index )
+	while ( *++argv != NULL )
 	{
-		int result = mkdir( argv[ index ], 0700 );
-		
-		if ( result == -1 )
+		if ( prefixes )
 		{
-			more::perror( "mkdir", argv[ index ] );
-			
-			fail++;
+			make_dirs( *argv );
+		}
+		else
+		{
+			make_dir( *argv );
 		}
 	}
 	
-	return (fail == 0) ? 0 : 1;
+	return (failures == 0) ? 0 : 1;
 }
-

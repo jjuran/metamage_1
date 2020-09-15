@@ -17,10 +17,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 2 * 6;
-
-
-using tap::ok_if;
+static const unsigned n_tests = 2 * 8;
 
 
 static uint16_t the_CCR = 0;
@@ -54,34 +51,42 @@ static void ext_word()
 {
 	the_CCR = 0x00;
 	
-	ok_if( ext_W( 0x00000000 ) == 0x00000000 );
+	EXPECT( ext_W( 0x00000000 ) == 0x00000000 );
 	
-	ok_if( the_CCR == 0x04 );
+	EXPECT( the_CCR == 0x04 );
 	
-	ok_if( ext_W( 0xFFFFFFFF ) == 0xFFFFFFFF );
+	EXPECT( ext_W( 0xFFFFFFFF ) == 0xFFFFFFFF );
 	
-	ok_if( the_CCR == 0x08 );
+	EXPECT( the_CCR == 0x08 );
 	
-	ok_if( ext_W( 0xDCBA7600 ) == 0xDCBA0000 );
+	EXPECT( ext_W( 0xDCBA7600 ) == 0xDCBA0000 );
 	
-	ok_if( the_CCR == 0x04 );
+	EXPECT( the_CCR == 0x04 );
+	
+	EXPECT( ext_W( 0x7890ABCD ) == 0x7890FFCD );
+	
+	EXPECT( the_CCR == 0x08 );
 }
 
 static void ext_long()
 {
 	the_CCR = 0x00;
 	
-	ok_if( ext_L( 0x00000000 ) == 0x00000000 );
+	EXPECT( ext_L( 0x00000000 ) == 0x00000000 );
 	
-	ok_if( the_CCR == 0x04 );
+	EXPECT( the_CCR == 0x04 );
 	
-	ok_if( ext_L( 0xFFFFFFFF ) == 0xFFFFFFFF );
+	EXPECT( ext_L( 0xFFFFFFFF ) == 0xFFFFFFFF );
 	
-	ok_if( the_CCR == 0x08 );
+	EXPECT( the_CCR == 0x08 );
 	
-	ok_if( ext_L( 0xDCBA7600 ) == 0x00007600 );
+	EXPECT( ext_L( 0xDCBA7600 ) == 0x00007600 );
 	
-	ok_if( the_CCR == 0x00 );
+	EXPECT( the_CCR == 0x00 );
+	
+	EXPECT( ext_L( 0x7890ABCD ) == 0xFFFFABCD );
+	
+	EXPECT( the_CCR == 0x08 );
 }
 
 
@@ -95,4 +100,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

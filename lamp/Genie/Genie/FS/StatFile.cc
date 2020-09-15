@@ -12,6 +12,12 @@
 #include "stdlib.h"
 #include "sys/stat.h"
 
+// mac-types
+#include "mac_types/epoch.hh"
+
+// gear
+#include "gear/is_binary_data.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -21,18 +27,17 @@
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"
 
-// TimeOff
-#include "TimeOff/TimeOff.hh"
-
 // Genie
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSTree_FSSpec.hh"
 #include "Genie/Utilities/AsyncIO.hh"
+#include "Genie/Utilities/OpenDataFork.hh"
 
 
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
@@ -41,7 +46,7 @@ namespace Genie
 	{
 		switch ( type )
 		{
-			case 'Wish':
+			case 'Tool':
 			case 'MPST':
 			case 'APPL':
 				return true;
@@ -72,7 +77,7 @@ namespace Genie
 		const FInfo& info = hFileInfo.ioFlFndrInfo;
 		bool executable = FInfoIsExecutable( info );
 		
-		return ( writable ? S_IWUSR : 0 ) | ( executable ? S_IXUSR : 0 );
+		return ( writable ? 0200 : 0 ) | ( executable ? 0111 : 0 );
 	}
 	
 	static inline bool is_osx_symlink( const FInfo& fInfo )
@@ -90,7 +95,7 @@ namespace Genie
 		
 		if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
-			const Mac::FSDirSpec& root = root_DirSpec();
+			const mac::types::VRefNum_DirID& root = root_DirSpec();
 			
 			const bool is_root = hFileInfo.ioVRefNum == root.vRefNum  &&  hFileInfo.ioDirID == root.dirID;
 			
@@ -99,7 +104,7 @@ namespace Genie
 				return S_IFLNK | 0777;
 			}
 			
-			return S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR;
+			return S_IFDIR | 0755;
 		}
 		
 		const FInfo& fInfo = hFileInfo.ioFlFndrInfo;
@@ -113,7 +118,20 @@ namespace Genie
 			return S_IFLNK | 0777;
 		}
 		
-		return S_IFREG | S_IRUSR | FileWXModeBits( hFileInfo );;
+		if ( fInfo.fdCreator == 'Poof' )
+		{
+			if ( fInfo.fdType == 'SOCK' )
+			{
+				return S_IFSOCK | 0600;
+			}
+			
+			if ( (fInfo.fdType & 0xFFFFFF00) == 'FIF\0' )
+			{
+				return S_IFIFO | 0600;
+			}
+		}
+		
+		return S_IFREG | 0444 | FileWXModeBits( hFileInfo );
 	}
 	
 	void Stat_HFS( bool                  async,
@@ -122,7 +140,7 @@ namespace Genie
 	               const unsigned char*  name,
 	               bool                  is_rsrc_fork )
 	{
-		const unsigned long timeDiff = TimeOff::MacToUnixTimeDifference();
+		const unsigned long timeDiff = mac::types::epoch_delta();
 		
 		const HFileInfo& hFileInfo = cInfo.hFileInfo;
 		
@@ -208,9 +226,22 @@ namespace Genie
 		
 	}
 	
+	static bool is_text_file( const FSSpec& file )
+	{
+		n::owned< N::FSFileRefNum > in = OpenDataFork( file, N::fsRdPerm );
+		
+		const size_t buffer_size = TARGET_API_MAC_CARBON ? 4096 : 512;
+		
+		char buffer[ buffer_size ];
+		
+		const size_t n_read = N::FSRead( in, buffer, N::ThrowEOF_Never() );
+		
+		return !gear::is_binary_data( buffer, n_read );
+	}
+	
 	void ChangeFileMode( const FSSpec& file, mode_t new_mode )
 	{
-		CInfoPBRec paramBlock = { 0 };
+		CInfoPBRec paramBlock = {{ 0 }};
 		
 		MacIO::GetCatInfo< FNF_Throws >( paramBlock, file );
 		
@@ -238,7 +269,11 @@ namespace Genie
 		{
 			FInfo& info = hFileInfo.ioFlFndrInfo;
 			
-			if ( info.fdType != 'TEXT' )
+			if ( info.fdType == 0  &&  is_text_file( file ) )
+			{
+				info.fdType = 'TEXT';
+			}
+			else if ( info.fdType != 'TEXT' )
 			{
 				// Can't change executability of non-scripts
 				// (e.g. don't remove Shared bit on apps)
@@ -250,7 +285,7 @@ namespace Genie
 			info.fdFlags = (info.fdFlags & ~kIsShared) | (kIsShared * x_bit);
 			info.fdCreator = x_bit ? 'Poof' : TextFileCreator();
 			
-			N::FSpSetFInfo( file, info );
+			N::HSetFInfo( file, info );
 		}
 		
 		if ( changed_bits & S_IWUSR )
@@ -258,15 +293,14 @@ namespace Genie
 			if ( new_mode & S_IWUSR )
 			{
 				// writeable: reset the lock
-				N::FSpRstFLock( file );
+				N::HRstFLock( file );
 			}
 			else
 			{
 				// not writeable: set the lock
-				N::FSpSetFLock( file );
+				N::HSetFLock( file );
 			}
 		}
 	}
 	
 }
-

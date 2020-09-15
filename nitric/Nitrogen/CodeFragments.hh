@@ -14,6 +14,12 @@
 #ifndef NITROGEN_CODEFRAGMENTS_HH
 #define NITROGEN_CODEFRAGMENTS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __CODEFRAGMENTS__
 #include <CodeFragments.h>
 #endif
@@ -66,6 +72,8 @@ namespace Nitrogen
 {
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( CodeFragmentManager );
+	
+#if ! __LP64__
 	
 	static const Mac::ResID kCFragResourceID = Mac::ResID( ::kCFragResourceID );
 	
@@ -417,6 +425,8 @@ namespace Nitrogen
 	}
 	
 	// ...
+	
+#endif  // #if ! __LP64__
 	
 }
 

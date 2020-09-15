@@ -6,6 +6,12 @@
 #ifndef MAC_ALIASES_TYPES_ALIASHANDLE_HH
 #define MAC_ALIASES_TYPES_ALIASHANDLE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __ALIASES__
 #include <Aliases.h>
 #endif
@@ -27,4 +33,3 @@ namespace nucleus
 }
 
 #endif
-

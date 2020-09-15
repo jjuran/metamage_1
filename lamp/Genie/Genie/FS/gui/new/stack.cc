@@ -11,8 +11,8 @@
 // POSIX
 #include <sys/stat.h>
 
-// Debug
-#include "debug/assert.hh"
+// plus
+#include "plus/simple_map.hh"
 
 // Pedestal
 #include "Pedestal/Stack.hh"
@@ -20,22 +20,23 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/property_file.hh"
+#include "vfs/primitives/remove.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 /*
 	cd /gui/new/port
 	ln /gui/new/stack view
-	ln /gui/new/color view/background
-	ln /gui/new/frame view
-	ls view
+	ln /gui/new/color v/background/view
+	ln /gui/new/frame v/frame/view
+	ls v
 		frame
 		background
 	
@@ -51,12 +52,13 @@ namespace Genie
 	{
 		plus::string                       name;
 		boost::intrusive_ptr< Ped::View >  view;
+		const vfs::node*                   node;
 		
-		Named_Subview()
+		Named_Subview() : node()
 		{
 		}
 		
-		Named_Subview( const plus::string& n ) : name( n )
+		Named_Subview( const plus::string& n ) : name( n ), node()
 		{
 		}
 	};
@@ -105,7 +107,7 @@ namespace Genie
 		return v.back();
 	}
 	
-	typedef simple_map< const FSTree*, Stack_Parameters > Stack_Parameters_Map;
+	typedef plus::simple_map< const vfs::node*, Stack_Parameters > Stack_Parameters_Map;
 	
 	static Stack_Parameters_Map gStack_Parameters_Map;
 	
@@ -113,7 +115,7 @@ namespace Genie
 	class Stack : public Ped::Stack
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Key itsKey;
 		
@@ -128,31 +130,46 @@ namespace Genie
 	};
 	
 	
-	static boost::intrusive_ptr< Ped::View > StackFactory( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > StackFactory( const vfs::node* delegate )
 	{
 		return new Stack( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate );
-	
-	
-	static boost::intrusive_ptr< Pedestal::View >&
-	//
-	get_subview( const FSTree* parent, const plus::string& name )
+	static
+	Ped::View* get_subview( const vfs::node* layer, const plus::string& name )
 	{
-		Stack_Parameters& params = gStack_Parameters_Map[ parent ];
+		Stack_Parameters& params = gStack_Parameters_Map[ layer->owner() ];
 		
-		return find_or_append_subview( params, name ).view;
+		return find_or_append_subview( params, layer->name() ).view.get();
 	}
 	
-	static void delete_subview( const FSTree* parent, const plus::string& name )
+	static
+	void set_subview( const vfs::node*     layer,
+	                  const plus::string&  name,
+	                  Ped::View*           view )
 	{
-		Stack_Parameters& params = gStack_Parameters_Map[ parent ];
+		Stack_Parameters& params = gStack_Parameters_Map[ layer->owner() ];
 		
-		Named_Subview* subview = find_subview( params, name );
+		find_or_append_subview( params, layer->name() ).view = view;
+	}
+	
+	const View_Accessors access =
+	{
+		&get_subview,
+		&set_subview,
+	};
+	
+	static void destroy_layer( const vfs::node* that )
+	{
+		Stack_Parameters& params = gStack_Parameters_Map[ that->owner() ];
 		
-		ASSERT( subview != NULL );
+		Named_Subview* subview = find_subview( params, that->name() );
+		
+		if ( subview == NULL )
+		{
+			return;
+		}
 		
 		ViewList& v = params.v;
 		
@@ -160,85 +177,120 @@ namespace Genie
 	}
 	
 	
-	static void stack_remove( const FSTree* node )
+	static vfs::node_ptr stack_subview_factory( const vfs::node*     parent,
+	                                            const plus::string&  name,
+	                                            const void*          args )
 	{
-		DestroyDelegate( node );
+		return New_View( parent, name, access );
 	}
 	
-	static FSTreePtr stack_lookup( const FSTree* node, const plus::string& name, const FSTree* parent )
+	static const vfs::fixed_mapping stack_mappings[] =
 	{
-		return New_View( parent, name, get_subview, delete_subview );
-	}
-	
-	
-	class Stack_IteratorConverter
-	{
-		public:
-			vfs::dir_entry operator()( const ViewList::value_type& value ) const
-			{
-				const ino_t inode = 0;
-				
-				return vfs::dir_entry( inode, value.name );
-			}
+		{ "view", &stack_subview_factory },
+		{ "v",    &new_view_dir          },
+		
+		{ NULL, NULL }
 	};
 	
-	static void stack_listdir( const FSTree* node, vfs::dir_contents& cache )
+	
+	static void stack_remove( const vfs::node* that )
+	{
+		Stack_Parameters& params = gStack_Parameters_Map[ that ];
+		
+		while ( !params.v.empty() )
+		{
+			const vfs::node* layer = params.v.back().node;
+			
+			remove( *layer );
+			
+			RemoveAllViewParameters( layer );
+		}
+		
+		gStack_Parameters_Map.erase( that );
+	}
+	
+	static vfs::node_ptr stack_lookup( const vfs::node*     that,
+	                                   const plus::string&  name,
+	                                   const vfs::node*     parent )
+	{
+		Named_Subview& layer = find_or_append_subview( gStack_Parameters_Map[ that ], name );
+		
+		if ( layer.node == NULL )
+		{
+			vfs::node_ptr layer_node = vfs::fixed_dir( parent,
+			                                           name,
+			                                           stack_mappings,
+			                                           &destroy_layer );
+			
+			layer.node = layer_node.get();
+			
+			return layer_node;
+		}
+		
+		return layer.node;
+	}
+	
+	
+	static void stack_listdir( const vfs::node* that, vfs::dir_contents& cache )
 	{
 		typedef ViewList Sequence;
 		
-		Stack_IteratorConverter converter;
+		const Sequence& sequence = gStack_Parameters_Map[ that ].v;
 		
-		const Sequence& sequence = gStack_Parameters_Map[ node ].v;
+		typedef Sequence::const_iterator Iter;
 		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		const Iter end = sequence.end();
+		
+		for ( Iter it = sequence.begin();  it != end;  ++it )
+		{
+			const ino_t inode = 0;
+			
+			cache.push_back( vfs::dir_entry( inode, it->name ) );
+		}
 	}
 	
-	static const dir_method_set stack_dir_methods =
-	{
-		&stack_lookup,
-		&stack_listdir
-	};
-	
-	static const node_method_set stack_methods =
+	static const vfs::item_method_set stack_item_methods =
 	{
 		NULL,
 		NULL,
 		NULL,
 		NULL,
 		&stack_remove,
-		NULL,
+	};
+	
+	static const vfs::dir_method_set stack_dir_methods =
+	{
+		&stack_lookup,
+		&stack_listdir
+	};
+	
+	static const vfs::node_method_set stack_methods =
+	{
+		&stack_item_methods,
 		NULL,
 		NULL,
 		&stack_dir_methods
 	};
 	
 	
-	static FSTreePtr create_delegate_for_new_stack( const FSTree*        node,
-	                                                const FSTree*        parent,
-	                                                const plus::string&  name )
+	static vfs::node_ptr create_delegate_for_new_stack( const vfs::node*     that,
+	                                                    const vfs::node*     parent,
+	                                                    const plus::string&  name )
 	{
-		return new FSTree( parent, name, S_IFDIR | 0700, &stack_methods );
+		return new vfs::node( parent, name, S_IFDIR | 0700, &stack_methods );
 	}
 	
-	static void DestroyDelegate( const FSTree* delegate )
-	{
-		gStack_Parameters_Map.erase( delegate );
-	}
-	
-	FSTreePtr New_stack( const FSTree*        parent,
-	                     const plus::string&  name,
-	                     const void*          args )
+	vfs::node_ptr New_stack( const vfs::node*     parent,
+	                         const plus::string&  name,
+	                         const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,
 		                     &StackFactory,
 		                     NULL,
-		                     &DestroyDelegate,
+		                     &stack_remove,
+		                     0,
 		                     &create_delegate_for_new_stack );
 	}
 	
 }
-

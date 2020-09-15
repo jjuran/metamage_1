@@ -1,11 +1,12 @@
-/*	================
- *	AEObjectModel.cc
- *	================
- */
+/*
+	AEObjectModel.cc
+	----------------
+*/
 
-#ifndef AEOBJECTMODEL_AEOBJECTMODEL_H
-#include "AEObjectModel/AEObjectModel.h"
-#endif
+#include "AEObjectModel/AEObjectModel.hh"
+
+// Standard C
+#include <stdlib.h>
 
 // Standard C++
 #include <algorithm>
@@ -22,43 +23,37 @@
 #endif
 
 // Nitrogen Extras / AEObjectModel
-#ifndef AEOBJECTMODEL_ACCESSPROPERTY_H
-#include "AEObjectModel/AccessProperty.h"
-#endif
-#ifndef AEOBJECTMODEL_COMPARE_H
-#include "AEObjectModel/Compare.h"
-#endif
-#ifndef AEOBJECTMODEL_COUNT_H
-#include "AEObjectModel/Count.h"
-#endif
-#ifndef AEOBJECTMODEL_DISPOSETOKEN_H
-#include "AEObjectModel/DisposeToken.h"
-#endif
+#include "AEObjectModel/AccessProperty.hh"
+#include "AEObjectModel/Compare.hh"
+#include "AEObjectModel/Count.hh"
+#include "AEObjectModel/DisposeToken.hh"
 
 // Nitrogen Extras / Iteration
-#ifndef ITERATION_AEDESCLISTITEMS_H
-#include "Iteration/AEDescListItems.h"
+#ifndef ITERATION_AEDESCLISTITEMS_HH
+#include "Iteration/AEDescListItems.hh"
 #endif
 
 
 namespace Nitrogen
 {
 	
-	// Given key data of form formAbsolutePosition and a count of the elements,
-	// ComputeAbsoluteIndex() will calculate the corresponding index.
-	// 
-	// A return value of zero indicates that all elements were specified (kAEAll),
-	// which is the only case that doesn't throw if the count is zero.
-	// 
-	// For kAEMiddle, the item before the midpoint is chosen if count is even.
-	// 
-	// For kAEAny, std::rand() is used.  A scripter who has specialized random
-	// number generation requirements should generate those numbers elsewhere
-	// and use typeSInt32 instead.
-	// 
-	// For literal index data, -1 refers to the last element, -2 to the second-to-last,
-	// etc.  Any index (including zero) that doesn't correspond to an existing element
-	// will cause errAENoSuchObject to be thrown.
+	/*
+		Given key data of form formAbsolutePosition and a count of the elements,
+		ComputeAbsoluteIndex() will calculate the corresponding index.
+		
+		A return value of zero indicates that all elements were specified (kAEAll),
+		which is the only case that doesn't throw if the count is zero.
+		
+		For kAEMiddle, the item before the midpoint is chosen if count is even.
+		
+		For kAEAny, rand() is used.  A scripter who has specialized random
+		number generation requirements should generate those numbers elsewhere
+		and use typeSInt32 instead.
+		
+		For literal index data, -1 refers to the last element, -2 to the second-to-last,
+		etc.  Any index (including zero) that doesn't correspond to an existing element
+		will cause errAENoSuchObject to be thrown.
+	*/
 	
 	UInt32 ComputeAbsoluteIndex( const Mac::AEDesc_Data&  keyData,
 	                             std::size_t              count )
@@ -97,7 +92,7 @@ namespace Nitrogen
 							return (count + 1) / 2;
 						
 						case kAEAny:
-							return UInt32( std::rand() / (RAND_MAX + 1.0) * count ) + 1;
+							return UInt32( rand() / (RAND_MAX + 1.0) * count ) + 1;
 						
 						default:
 							break;
@@ -336,4 +331,3 @@ namespace Nitrogen
 	}
 	
 }
-

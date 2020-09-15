@@ -17,6 +17,11 @@
 // Standard C/C++
 #include <cstddef>
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __THREADS__
 #include <Threads.h>
@@ -227,10 +232,7 @@ namespace Nitrogen
 	{
 		static pascal void* Adapter( void* threadParam )
 		{
-			if ( TARGET_CPU_PPC && TARGET_RT_MAC_CFM )
-			{
-				Terminate_ThreadStack();
-			}
+			Terminate_ThreadStack();  // only affects PPC CFM
 			
 			try
 			{
@@ -432,12 +434,18 @@ namespace Nitrogen
 	                       std::size_t  numToCreate,
 	                       std::size_t  stackSize );
 	
+#if ! __LP64__
+	
 	std::size_t GetFreeThreadCount( ThreadStyle threadStyle );
 	
 	std::size_t GetSpecificFreeThreadCount( ThreadStyle  threadStyle,
 	                                        std::size_t  stackSize );
 	
+#endif  // #if ! __LP64__
+	
 	std::size_t GetDefaultThreadStackSize( ThreadStyle threadStyle );
+	
+#if ! __LP64__
 	
 	inline std::size_t ThreadCurrentStackSpace( ThreadID thread )
 	{
@@ -447,6 +455,8 @@ namespace Nitrogen
 		
 		return result;
 	}
+	
+#endif  // #if ! __LP64__
 	
 	void DisposeThread( nucleus::owned< ThreadID >  thread,
 	                    void*              threadResult,
@@ -482,4 +492,3 @@ namespace Nitrogen
 }
 
 #endif
-

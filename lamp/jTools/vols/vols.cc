@@ -6,6 +6,12 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <stdlib.h>
+
+// command
+#include "command/get_option.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -22,8 +28,56 @@
 #include "poseven/sequences/directory_contents.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_last_byte = 255,
+	
+	Option_driver,
+	Option_ramdisk,
+};
+
+static command::option options[] =
+{
+	{ "driver", Option_driver  },
+	{ "ram",    Option_ramdisk },
+	
+	{ NULL }
+};
+
+static const char* wanted_driver_name = NULL;
+
+static bool ramdisk_only = false;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_driver:
+				wanted_driver_name = command::global_result.param;
+				break;
+			
+			case Option_ramdisk:
+				ramdisk_only = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -31,20 +85,32 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
+	
+	static plus::string slurp_file( p7::fd_t dirfd, const char* name )
+	{
+		try
+		{
+			n::owned< p7::fd_t > fd = p7::openat( dirfd, name, p7::o_rdonly );
+			
+			return p7::slurp( fd.get() );
+		}
+		catch ( const p7::errno_t& err )
+		{
+			if ( err != ENOENT )
+			{
+				throw;
+			}
+		}
+		
+		return "";
+	}
 	
 	int Main( int argc, char** argv )
 	{
-		const char* wanted_driver_name = NULL;
+		char *const *args = get_options( argv );
 		
-		bool ramdisk_only = false;
-		
-		o::bind_option_to_variable( "--driver", wanted_driver_name );
-		
-		o::bind_option_to_variable( "--ram", ramdisk_only );
-		
-		o::get_options( argc, argv );
+		const int argn = argc - (args - argv);
 		
 		if ( ramdisk_only )
 		{
@@ -67,13 +133,11 @@ namespace tool
 			
 			n::owned< p7::fd_t > vol_N_dirfd = p7::openat( p7::dirfd( vol_dir ), vol_name, p7::o_rdonly | p7::o_directory );
 			
-			n::owned< p7::fd_t > name_fd = p7::openat( vol_N_dirfd.get(), "driver/name", p7::o_rdonly | p7::o_binary );
-			
 			bool wanted = true;
 			
 			if ( wanted_driver_name != NULL )
 			{
-				plus::string driver_name = p7::slurp( name_fd.get() );
+				plus::string driver_name = slurp_file( vol_N_dirfd.get(), "driver/.~name" );
 				
 				wanted = driver_name == wanted_driver_name;
 			}
@@ -94,4 +158,3 @@ namespace tool
 	}
 	
 }
-

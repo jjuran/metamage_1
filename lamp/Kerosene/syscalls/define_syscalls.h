@@ -8,7 +8,7 @@
 
 
 DEFINE_SYSCALL_7F( _exit )
-
+DEFINE_SYSCALL_7F( fork  )
 DEFINE_SYSCALL_7F( read  )
 DEFINE_SYSCALL_7F( write )
 DEFINE_SYSCALL_7F( openat )
@@ -58,7 +58,7 @@ DEFINE_SYSCALL_7F( umask )
 
 DEFINE_SYSCALL_7F( fork_and_exit )
 DEFINE_SYSCALL_7F( getppid )
-
+DEFINE_SYSCALL_7F( gettid )
 DEFINE_SYSCALL_7F( setsid )
 DEFINE_SYSCALL_7F( sigaction )
 
@@ -99,6 +99,8 @@ DEFINE_SYSCALL( fchdir )
 
 DEFINE_SYSCALL( getdents )
 
+DEFINE_SYSCALL( msync )
+
 DEFINE_SYSCALL( writev )
 DEFINE_SYSCALL( getsid )
 DEFINE_SYSCALL( fdatasync )
@@ -127,4 +129,5 @@ DEFINE_SYSCALL( send )
 DEFINE_SYSCALL( recv )
 DEFINE_SYSCALL( sendto )
 DEFINE_SYSCALL( recvfrom )
-
+DEFINE_SYSCALL( sendmsg )
+DEFINE_SYSCALL( recvmsg )

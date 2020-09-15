@@ -12,9 +12,17 @@
 #ifndef NITROGEN_MACERRORS_HH
 #define NITROGEN_MACERRORS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __MACERRORS__
 #include <MacErrors.h>
 #endif
+
+// Nitrogen
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif

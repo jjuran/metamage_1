@@ -7,15 +7,11 @@
 #define GENIE_FAULTS_HH
 
 
-namespace Genie
+namespace relix
 {
 	
 	void InstallExceptionHandlers();
 	
-	// Defined in Process.cc.
-	void DeliverFatalSignal( int signo );
-	
 }
 
 #endif
-

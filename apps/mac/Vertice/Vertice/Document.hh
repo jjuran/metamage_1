@@ -6,30 +6,16 @@
 #ifndef VERTICE_DOCUMENT_HH
 #define VERTICE_DOCUMENT_HH
 
-// Pedestal
-#ifndef PEDESTAL_USERWINDOW_HH
-#include "Pedestal/UserWindow.hh"
-#endif
-
-// Vertice
-#include "Vertice/PortView.hh"
+// Mac OS
+//#include <Files.h>
+struct FSSpec;
 
 
 namespace Vertice
 {
 	
-	class Window : public Pedestal::UserWindow
-	{
-		public:
-			Window( ConstStr255Param title );
-			
-			Scene& ItsScene();
-			
-			void Load( const FSSpec& file );
-			void Store();
-	};
+	void OpenDocument( const FSSpec& file );
 	
 }
 
 #endif
-

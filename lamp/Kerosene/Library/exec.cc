@@ -120,7 +120,8 @@ static int lookup_path( const char* filename, char* path, size_t buffer_length )
 		
 		std::memcpy( path + filename_offset, filename, filename_length + 1 );
 		
-		struct ::stat sb;
+		struct stat sb;
+		
 		int status = stat( path, &sb );
 		
 		if ( status == 0  &&  sb.st_mode & S_IXUSR )
@@ -141,7 +142,7 @@ static int lookup_path( const char* filename, char* path, size_t buffer_length )
 	return -1;
 }
 
-int execvp( const char* file, char* const argv[] )
+int execvpe( const char* file, char* const argv[], char* const envp[] )
 {
 	char path[ 4096 ];
 	
@@ -157,7 +158,12 @@ int execvp( const char* file, char* const argv[] )
 		file = path;
 	}
 	
-	return execv( file, argv );
+	return execve( file, argv, envp );
+}
+
+int execvp( const char* file, char* const argv[] )
+{
+	return execvpe( file, argv, environ );
 }
 
 int execle( const char* path, const char* arg0, ... )
@@ -188,4 +194,3 @@ int execlp( const char* file, const char* arg0, ... )
 {
 	return execvp( file, (char**) &arg0 );
 }
-

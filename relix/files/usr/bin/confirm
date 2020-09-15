@@ -1,0 +1,87 @@
+#!/bin/sh
+
+set -e
+
+test -z "$3" || echo usage: ok [icon-id] text
+test -z "$3"
+
+iconid=128
+text="$1"
+test -z "$2" || iconid="$1"
+test -z "$2" || text="$2"
+
+cd /gui/new/port
+
+echo 5 > procid
+
+echo 300,100 > size
+
+ln /gui/new/stack view
+
+icon=v/icon/v
+main=v/main/v
+ok=v/ok/v
+cancel=v/cancel/v
+defaultkeys=v/defaultkeys/v
+
+ln /gui/new/frame v/icon/view
+
+echo 32 > $icon/width
+echo 32 > $icon/height
+echo 13 > $icon/.margin-top
+echo 23 > $icon/.margin-left
+echo 23 > $icon/.margin-right
+
+ln /gui/new/icon $icon/view
+
+ln /gui/new/frame v/main/view
+
+echo 13 > $main/.margin-top
+echo 13 > $main/.margin-right
+echo 46 > $main/.margin-bottom
+echo 78 > $main/.margin-left
+
+ln /gui/new/caption $main/view
+
+ln /gui/new/frame v/ok/view
+
+echo 58 > $ok/width
+echo 20 > $ok/height
+echo 13 > $ok/.margin-right
+echo 13 > $ok/.margin-bottom
+
+echo 3 > $ok/.outline-width
+echo 1 > $ok/.outline-offset
+echo 16 > $ok/.outline-curvature
+
+ln /gui/new/button $ok/view
+
+ln /gui/new/frame v/cancel/view
+
+echo 58 > $cancel/width
+echo 20 > $cancel/height
+echo 84 > $cancel/.margin-right
+echo 13 > $cancel/.margin-bottom
+
+ln /gui/new/button $cancel/view
+
+echo $iconid > $icon/v/data
+echo 1 > $icon/v/disabling
+
+echo $text > $main/v/text
+echo 1     > $main/v/disabling
+
+echo Cancel > $cancel/v/title
+
+ln -s $ok/v/click accept
+ln -s $cancel/v/click cancel
+
+ln /gui/new/defaultkeys v/defaultkeys/view
+
+touch window
+
+echo 0 > w/text-font
+#echo ddd > w/back-color
+
+select -1 -r{$ok,$cancel}/v/clicked | perl -e '$_ = <STDIN> or exit 2; /cancel/ && exit 1'
+

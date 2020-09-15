@@ -10,6 +10,7 @@
 
 // POSIX
 #include "fcntl.h"
+#include <sys/stat.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -18,26 +19,42 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
-#include "vfs/nodes/symbolic_link.hh"
+#include "vfs/functions/new_static_symlink.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/dynamic_group.hh"
+
+// MacVFS
+#include "MacVFS/file/gestalt.hh"
+
+// relix-kernel
+#include "relix/api/current_process.hh"
+#include "relix/config/mini.hh"
+#include "relix/config/pts.hh"
+#include "relix/fs/con_tag.hh"
+#include "relix/fs/pts_tag.hh"
+#include "relix/fs/simple_device.hh"
+#include "relix/task/process.hh"
+#include "relix/task/process_group.hh"
+#include "relix/task/session.hh"
 
 // Genie
-#include "Genie/Devices.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/DynamicGroups.hh"
-#include "Genie/FS/FSTree_dev_gestalt.hh"
-#include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/ResolvePathname.hh"
-#include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/SerialDevice.hh"
-#include "Genie/IO/SimpleDevice.hh"
-#include "Genie/Process.hh"
 
+
+#ifndef CONFIG_DEV_SERIAL
+#define CONFIG_DEV_SERIAL  (!CONFIG_MINI)
+#endif
 
 namespace Genie
 {
 	
 	namespace p7 = poseven;
+	
+	using vfs::data_method_set;
+	using vfs::node_method_set;
 	
 	
 	struct CallOut_Traits
@@ -65,11 +82,11 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		static IOPtr open( const FSTree* node, int flags, mode_t mode );
+		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
 	};
 	
 	template < class Mode, class Port >
-	IOPtr dev_Serial< Mode, Port >::open( const FSTree* node, int flags, mode_t mode )
+	vfs::filehandle_ptr dev_Serial< Mode, Port >::open( const vfs::node* that, int flags, mode_t mode )
 	{
 		const bool nonblocking = flags & O_NONBLOCK;
 		
@@ -82,12 +99,22 @@ namespace Genie
 	typedef dev_Serial< DialIn_Traits,  PrinterPort_Traits > dev_ttyprinter;
 	
 	
-	class ConsoleTTYHandle;
-	
-	
-	static IOPtr simple_device_open( const FSTree* node, int flags, mode_t mode )
+	struct dev_gestalt
 	{
-		return GetSimpleDeviceHandle( node->name() );
+		static const mode_t perm = S_IRUSR;
+		
+		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
+	};
+	
+	vfs::filehandle_ptr dev_gestalt::open( const vfs::node* that, int flags, mode_t mode )
+	{
+		return open_gestalt( that, flags, mode );
+	}
+	
+	
+	static vfs::filehandle_ptr simple_device_open( const vfs::node* that, int flags, mode_t mode )
+	{
+		return relix::open_simple_device( *that );
 	}
 	
 	static const data_method_set simple_device_data_methods =
@@ -98,11 +125,6 @@ namespace Genie
 	static const node_method_set simple_device_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&simple_device_data_methods
 	};
 	
@@ -110,14 +132,14 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		static IOPtr open( const FSTree* node, int flags, mode_t mode );
+		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
 	};
 	
-	IOPtr dev_tty::open( const FSTree* node, int flags, mode_t mode )
+	vfs::filehandle_ptr dev_tty::open( const vfs::node* that, int flags, mode_t mode )
 	{
-		const IOPtr& tty = CurrentProcess().ControllingTerminal();
+		vfs::filehandle* tty = relix::current_process().get_process_group().get_session().get_ctty().get();
 		
-		if ( tty.get() == NULL )
+		if ( tty == NULL )
 		{
 			p7::throw_errno( ENOENT );
 		}
@@ -143,39 +165,30 @@ namespace Genie
 	const node_method_set basic_device< Opener >::node_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&data_methods
 	};
 	
 	
-	static FSTreePtr dev_fd_Factory( const FSTree*        parent,
-	                                 const plus::string&  name,
-	                                 const void*          args )
-	{
-		return vfs::new_symbolic_link( parent, name, "/proc/self/fd" );
-	}
-	
 	template < class Opener >
-	static FSTreePtr BasicDevice_Factory( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	static vfs::node_ptr BasicDevice_Factory( const vfs::node*     parent,
+	                                          const plus::string&  name,
+	                                          const void*          args )
 	{
-		return new FSTree( parent,
-		                   name,
-		                   S_IFCHR | Opener::perm,
-		                   &basic_device< Opener >::node_methods );
+		return new vfs::node( parent,
+		                      name,
+		                      S_IFCHR | Opener::perm,
+		                      &basic_device< Opener >::node_methods );
 	}
 	
-	static FSTreePtr SimpleDevice_Factory( const FSTree*        parent,
-	                                       const plus::string&  name,
-	                                       const void*          args )
+	static vfs::node_ptr SimpleDevice_Factory( const vfs::node*     parent,
+	                                           const plus::string&  name,
+	                                           const void*          args )
 	{
-		return new FSTree( parent, name, S_IFCHR | 0600, &simple_device_methods );
+		return new vfs::node( parent, name, S_IFCHR | 0600, &simple_device_methods );
 	}
+	
+	using vfs::dynamic_group_factory;
+	using vfs::dynamic_group_element;
 	
 	const vfs::fixed_mapping dev_Mappings[] =
 	{
@@ -185,20 +198,28 @@ namespace Genie
 		
 		{ "tty", &BasicDevice_Factory< dev_tty > },
 		
+	#if CONFIG_DEV_SERIAL
+		
 		{ "cu.modem",    &BasicDevice_Factory< dev_cumodem    > },
 		{ "cu.printer",  &BasicDevice_Factory< dev_cuprinter  > },
 		{ "tty.modem",   &BasicDevice_Factory< dev_ttymodem   > },
 		{ "tty.printer", &BasicDevice_Factory< dev_ttyprinter > },
 		
+	#endif
+		
 		{ "gestalt", &BasicDevice_Factory< dev_gestalt > },
 		
-		{ "con", &dynamic_group_factory, &dynamic_group_element< ConsoleTTYHandle >::extra },
-		{ "pts", &dynamic_group_factory, &dynamic_group_element< PseudoTTYHandle  >::extra },
+		{ "con", &dynamic_group_factory, &dynamic_group_element< relix::con_tag >::extra },
 		
-		{ "fd", &dev_fd_Factory },
+	#if CONFIG_PTS
+		
+		{ "pts", &dynamic_group_factory, &dynamic_group_element< relix::pts_tag  >::extra },
+		
+	#endif
+		
+		{ "fd", &vfs::new_static_symlink, "/proc/self/fd" },
 		
 		{ NULL, NULL }
 	};
 	
 }
-

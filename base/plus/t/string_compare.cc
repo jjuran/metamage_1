@@ -22,42 +22,39 @@
 static const unsigned n_tests = 24;
 
 
-using tap::ok_if;
-
-
 static void compare()
 {
 	plus::string test = "test";
 	
-	ok_if( test.compare( test ) == 0 );
+	EXPECT( test.compare( test ) == 0 );
 	
-	ok_if( test.compare( ""      ) >  0 );
-	ok_if( test.compare( "t"     ) >  0 );
-	ok_if( test.compare( "taste" ) >  0 );
-	ok_if( test.compare( "test"  ) == 0 );
-	ok_if( test.compare( "testy" ) <  0 );
-	ok_if( test.compare( "toast" ) <  0 );
+	EXPECT( test.compare( ""      ) >  0 );
+	EXPECT( test.compare( "t"     ) >  0 );
+	EXPECT( test.compare( "taste" ) >  0 );
+	EXPECT( test.compare( "test"  ) == 0 );
+	EXPECT( test.compare( "testy" ) <  0 );
+	EXPECT( test.compare( "toast" ) <  0 );
 	
-	ok_if( test.compare( 0, 0, test ) <  0 );
-	ok_if( test.compare( 0, 3, test ) <  0 );
-	ok_if( test.compare( 0, 4, test ) == 0 );
-	ok_if( test.compare( 0, 5, test ) == 0 );
+	EXPECT( test.compare( 0, 0, test ) <  0 );
+	EXPECT( test.compare( 0, 3, test ) <  0 );
+	EXPECT( test.compare( 0, 4, test ) == 0 );
+	EXPECT( test.compare( 0, 5, test ) == 0 );
 	
 	plus::string st = "st";
 	
-	ok_if( test.compare( 0, 4, st ) >  0 );
-	ok_if( test.compare( 1, 4, st ) <  0 );
-	ok_if( test.compare( 2, 4, st ) == 0 );
+	EXPECT( test.compare( 0, 4, st ) >  0 );
+	EXPECT( test.compare( 1, 4, st ) <  0 );
+	EXPECT( test.compare( 2, 4, st ) == 0 );
 	
 	plus::string past = "past";
 	
-	ok_if( test.compare( 0, 4, past, 0, 4 ) >  0 );
-	ok_if( test.compare( 0, 4, past, 1, 4 ) >  0 );
-	ok_if( test.compare( 1, 4, past, 0, 4 ) <  0 );
-	ok_if( test.compare( 1, 4, past, 1, 4 ) >  0 );
-	ok_if( test.compare( 2, 4, past, 2, 4 ) == 0 );
+	EXPECT( test.compare( 0, 4, past, 0, 4 ) >  0 );
+	EXPECT( test.compare( 0, 4, past, 1, 4 ) >  0 );
+	EXPECT( test.compare( 1, 4, past, 0, 4 ) <  0 );
+	EXPECT( test.compare( 1, 4, past, 1, 4 ) >  0 );
+	EXPECT( test.compare( 2, 4, past, 2, 4 ) == 0 );
 	
-	ok_if( test.compare( 0, 4, "testing", 4 ) == 0 );
+	EXPECT( test.compare( 0, 4, "testing", 4 ) == 0 );
 	
 	bool exception_thrown = false;
 	
@@ -70,7 +67,7 @@ static void compare()
 		exception_thrown = true;
 	}
 	
-	ok_if( exception_thrown );
+	EXPECT( exception_thrown );
 	
 	exception_thrown = false;
 	
@@ -83,7 +80,7 @@ static void compare()
 		exception_thrown = true;
 	}
 	
-	ok_if( exception_thrown );
+	EXPECT( exception_thrown );
 	
 	exception_thrown = false;
 	
@@ -96,7 +93,7 @@ static void compare()
 		exception_thrown = true;
 	}
 	
-	ok_if( exception_thrown );
+	EXPECT( exception_thrown );
 	
 	exception_thrown = false;
 	
@@ -109,7 +106,7 @@ static void compare()
 		exception_thrown = true;
 	}
 	
-	ok_if( exception_thrown );
+	EXPECT( exception_thrown );
 }
 
 int main( int argc, const char *const *argv )
@@ -120,4 +117,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

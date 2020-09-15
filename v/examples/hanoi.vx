@@ -1,0 +1,51 @@
+#!/usr/bin/env vx
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/lib/"
+
+const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+
+const logic = import "hanoi/logic"
+
+var depth  = 4
+var silent = false
+
+var p = begin argv
+
+while ++p do
+{
+	const arg = *p
+	
+	if arg == "-s" then
+	{
+		silent = true
+	}
+	else
+	{
+		depth = int arg
+	}
+}
+
+const pegs = "ABC"
+
+def move (n, src, dst)
+{
+	print ("Move disc %s from peg %s to peg %s" % (n, pegs[ src ], pegs[ dst ]))
+}
+
+const disc-mover = if silent then {{}} else {move}
+
+const move-tower = logic.make-tower-mover disc-mover
+
+move-tower( depth, 0, 2 )
+
+end.
+
+
+        __|__
+1      (_____)
+2     (_______)
+3    (_________)
+4  _(___________)_
+  |_______________|
+

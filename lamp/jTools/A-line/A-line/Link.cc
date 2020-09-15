@@ -7,16 +7,14 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
-#include <numeric>
-#include <vector>
+
+// Standard C
+#include <stdlib.h>
 
 // Iota
 #include "iota/strings.hh"
 
 // plus
-#include "plus/functional_extensions.hh"
-#include "plus/pointer_to_function.hh"
 #include "plus/string/concat.hh"
 
 // Debug
@@ -38,7 +36,9 @@
 #include "A-line/A-line.hh"
 #include "A-line/Commands.hh"
 #include "A-line/derived_filename.hh"
+#include "A-line/Info-plist.hh"
 #include "A-line/Locations.hh"
+#include "A-line/prefix.hh"
 #include "A-line/Project.hh"
 #include "A-line/ProjectCommon.hh"
 
@@ -130,13 +130,25 @@ namespace tool
 		return product == productStaticLib  ||  product == productDropIn;
 	}
 	
+	struct not_a_lib_on
+	{
+		Platform platform;
+		
+		not_a_lib_on( Platform platform ) : platform( platform )
+		{
+		}
+		
+		bool operator()( const plus::string& name )
+		{
+			return !ProjectBuildsLib( GetProject( name, platform ) );
+		}
+	};
+	
 	static void RemoveNonLibs( std::vector< plus::string >& usedProjects, Platform platform )
 	{
 		usedProjects.resize( std::remove_if( usedProjects.begin(),
 		                                     usedProjects.end(),
-		                                     plus::compose1( std::not1( plus::ptr_fun( ProjectBuildsLib ) ),
-		                                                     std::bind2nd( plus::ptr_fun( GetProject ),
-		                                                                   platform ) ) ) - usedProjects.begin() );
+		                                     not_a_lib_on( platform ) ) - usedProjects.begin() );
 	}
 	
 	static plus::string DirCreate_Idempotent( const plus::string& dir )
@@ -334,7 +346,16 @@ namespace tool
 		
 		if ( use_OSX_Rez )
 		{
-			rezCommand.push_back( "/Developer/Tools/Rez" );
+			const char* rez = "/Developer/Tools/Rez";
+			
+			struct ::stat sb;
+			
+			if ( stat( rez, &sb ) != 0 )
+			{
+				rez = "Rez";  // It's at /usr/bin/Rez on Lion.
+			}
+			
+			rezCommand.push_back( rez );
 			rezCommand.push_back( "-i" );
 			rezCommand.push_back( "/Developer/Headers/FlatCarbon" );
 			
@@ -343,17 +364,17 @@ namespace tool
 				// ... but only use the data fork for OS X apps
 				rezCommand.push_back( "-useDF" );
 			}
-			
-			rezCommand.push_back( "-d" );
-			
-			rezCommand.push_back( "aeut_RezTemplateVersion=1" );
 		}
 		else
 		{
 			rezCommand.push_back( "mpwrez" );
 		}
 		
-		rezCommand.push_back( "Types.r" );
+		rezCommand.push_back( "-d" );
+		
+		rezCommand.push_back( "aeut_RezTemplateVersion=1" );
+		
+		rezCommand.push_back( "Carbon.r" );
 		
 		rezCommand.push_back( "-i" );
 		
@@ -374,11 +395,6 @@ namespace tool
 	}
 	
 	
-	static plus::string Project_FindResourceFile( const Project& project, const plus::string& filespec )
-	{
-		return project.FindResourceFile( filespec );
-	}
-	
 	static TaskPtr MakeRezTask( const Project&       project,
 	                            const plus::string&  output_pathname,
 	                            bool                 needsCarbResource,
@@ -386,12 +402,18 @@ namespace tool
 	{
 		const std::vector< plus::string >& input_filenames = project.UsedRezFiles();
 		
-		std::vector< plus::string > input_pathnames( input_filenames.size() );
+		const size_t n = input_filenames.size();
 		
-		std::transform( input_filenames.begin(),
-		                input_filenames.end(),
-		                input_pathnames.begin(),
-		                std::bind1st( plus::ptr_fun( &Project_FindResourceFile ), project ) );
+		std::vector< plus::string > input_pathnames;
+		
+		input_pathnames.reserve( n );
+		
+		for ( size_t i = 0;  i < n;  ++i )
+		{
+			const plus::string& filename = input_filenames[ i ];
+			
+			input_pathnames.push_back( project.FindResourceFile( filename ) );
+		}
 		
 		if ( needsCarbResource )
 		{
@@ -405,10 +427,11 @@ namespace tool
 		                                               includeDir,
 		                                               relix ) );
 		
-		std::for_each( input_pathnames.begin(),
-		               input_pathnames.end(),
-		               std::bind1st( plus::ptr_fun( UpdateInputStamp ), rez_task ) );
-		
+		for ( size_t i = 0;  i < n;  ++i )
+		{
+			UpdateInputStamp( rez_task, input_pathnames[ i ] );
+		}
+
 		return rez_task;
 	}
 	
@@ -460,6 +483,79 @@ namespace tool
 	}
 	
 	
+	class ResourceFileCopyingTask : public FileTask
+	{
+		private:
+			const plus::string its_input_pathname;
+		
+		public:
+			ResourceFileCopyingTask( const plus::string&  input,
+			                         const plus::string&  output )
+			:
+				FileTask          ( output ),
+				its_input_pathname( input  )
+			{
+			}
+			
+			void Make();
+			
+			void Return( bool succeeded );
+	};
+	
+	void ResourceFileCopyingTask::Make()
+	{
+		Command command;
+		
+		command.push_back( "cp"                       );
+		command.push_back( its_input_pathname.c_str() );
+		command.push_back( OutputPath()      .c_str() );
+		command.push_back( NULL                       );
+		
+		const plus::string message = "COPY  " + p7::basename( OutputPath() );
+		
+		ExecuteCommand( shared_from_this(), message, command );
+	}
+	
+	void ResourceFileCopyingTask::Return( bool succeeded )
+	{
+	}
+	
+	static
+	TaskPtr make_resources_task( const plus::string&  src,
+	                             const plus::string&  dst )
+	{
+		TaskPtr resources_task( new NullTask() );
+		
+		n::owned< p7::dir_t > resources_dir = p7::opendir( src );
+		
+		errno = 0;
+		
+		while ( const dirent* ent = ::readdir( resources_dir ) )
+		{
+			const char* name = ent->d_name;
+			
+			if ( name[ 0 ] != '.' )
+			{
+				const plus::string src_file = src / name;
+				const plus::string dst_file = dst / name;
+				
+				TaskPtr task( new ResourceFileCopyingTask( src_file, dst_file ) );
+				
+				UpdateInputStamp( task, src_file );
+				
+				resources_task->AddDependent( task );
+			}
+		}
+		
+		if ( errno != 0 )
+		{
+			p7::throw_errno( errno );
+		}
+		
+		return resources_task;
+	}
+	
+	
 	static void make_task_depend_on_libs( const TaskPtr&                      task,
 	                                      const std::vector< plus::string >&  used_project_names,
 	                                      Platform                            platform )
@@ -476,6 +572,16 @@ namespace tool
 			
 			project.get_static_lib_task().lock()->AddDependent( task );
 		}
+	}
+	
+	static const char* ar_name()
+	{
+		if ( const char* ar = getenv( "AR" ) )
+		{
+			return ar;
+		}
+		
+		return "ar";
 	}
 	
 	template < class Iter >
@@ -517,8 +623,8 @@ namespace tool
 	{
 		Command link_command;
 		
-		link_command.push_back( "ar"  );
-		link_command.push_back( "rcs" );
+		link_command.push_back( ar_name() );
+		link_command.push_back( "rcs"    );
 		
 		return make_link_task( link_command,
 		                       output_pathname,
@@ -533,35 +639,44 @@ namespace tool
 	{
 		private:
 			const plus::string& its_objects_dir;
+			const char*         its_extension;
 		
 		public:
-			object_filename_filler( const plus::string& objects )
+			object_filename_filler( const plus::string& objects, const char* extension )
 			:
-				its_objects_dir( objects )
+				its_objects_dir( objects ),
+				its_extension( extension )
 			{
 				ASSERT( !its_objects_dir.empty() );
 			}
 			
 			plus::string operator()( const plus::string& source_path ) const
 			{
-				const char* extension = ".o";
-				
-				return derived_pathname( its_objects_dir, source_path, extension );
+				return derived_pathname( its_objects_dir, source_path, its_extension );
 			}
 	};
 	
-	static void FillObjectFiles( const plus::string&                 objects_dir,
-	                             const std::vector< plus::string >&  source_paths,
-	                             std::vector< plus::string >&        object_pathnames )
+	static
+	void FillObjectFiles( const plus::string&                 objects_dir,
+	                      const std::vector< plus::string >&  source_paths,
+	                      std::vector< plus::string >&        object_pathnames,
+	                      const char*                         extension = ".o" )
 	{
 		std::transform( source_paths.begin(),
 		                source_paths.end(),
 		                object_pathnames.begin(),
-		                object_filename_filler( objects_dir ) );
+		                object_filename_filler( objects_dir, extension ) );
+	}
+	
+	static inline
+	const char* dot_o( bool use_cpp )
+	{
+		return use_cpp ? ".cpp.o" : ".o";
 	}
 	
 	void NameObjectFiles( const Project&                project,
-	                      std::vector< plus::string >&  object_pathnames )
+	                      std::vector< plus::string >&  object_pathnames,
+	                      bool                          use_cpp )
 	{
 		plus::string objects_dir = ProjectObjectsDirPath( project.Name() );
 		
@@ -569,7 +684,7 @@ namespace tool
 		
 		object_pathnames.resize( sources.size() );
 		
-		FillObjectFiles( objects_dir, sources, object_pathnames );
+		FillObjectFiles( objects_dir, sources, object_pathnames, dot_o( use_cpp ) );
 	}
 	
 	
@@ -589,7 +704,18 @@ namespace tool
 		
 		std::vector< plus::string > objectFiles;
 		
-		NameObjectFiles( project, objectFiles );
+	#ifdef __RELIX__
+		
+		const bool preprocessing = Options().preprocess  &&  !get_project_providing_prefix( project, targetInfo.platform );
+		
+	#else
+		
+		// On non-MacRelix, precompiling does *not* override preprocessing
+		const bool preprocessing = Options().preprocess;
+		
+	#endif
+		
+		NameObjectFiles( project, objectFiles, preprocessing );
 		
 		const std::size_t n_tools = project.ToolCount();
 		
@@ -787,6 +913,8 @@ namespace tool
 		
 		if ( toolkit )
 		{
+			const size_t ext_len = strlen( dot_o( preprocessing ) );
+			
 			typedef std::vector< plus::string >::const_iterator Iter;
 			
 			const Iter end = objectFiles.begin() + n_tools;
@@ -799,7 +927,8 @@ namespace tool
 				
 				plus::var_string linkOutput = outputDir / p7::basename( objectFile );
 				
-				linkOutput.resize( linkOutput.size() - 2 );  // truncate ".o"
+				// truncate ".o" or ".cpp.o"
+				linkOutput.resize( linkOutput.size() - ext_len );
 				
 				// truncate ".c" or ".cc"
 				linkOutput.resize( linkOutput.find_last_of( "." ) );
@@ -845,9 +974,44 @@ namespace tool
 					
 					plus::string contents( outputDir / bundleName / "Contents" );
 					
+					const plus::string& proj_dir = project.ProjectFolder();
+					
+					plus::string info = project.ProjectFolder() / "Info.txt";
+					
+					if ( io::file_exists( info ) )
+					{
+						TaskPtr info_task( new InfoPListTask( project.Name(),
+						                                      info,
+						                                      contents ) );
+						
+						UpdateInputStamp( info_task, info );
+						
+						project_base_task->AddDependent( info_task );
+						
+						const char* Build = "Build-origin.txt";
+						
+						plus::string build = project.ProjectFolder() / Build;
+						
+						if ( io::file_exists( build ) )
+						{
+							UpdateInputStamp( info_task, build );
+						}
+					}
+					
 					exeDir = contents / "MacOS";
 					
 					pkginfo_dir = contents;
+					
+					const plus::string resources_src = proj_dir / "Resources";
+					const plus::string resources_dst = contents / "Resources";
+					
+					if ( io::directory_exists( resources_src ) )
+					{
+						TaskPtr resources_task =
+							make_resources_task( resources_src, resources_dst );
+						
+						project_base_task->AddDependent( resources_task );
+					}
 				}
 				else if ( fileType != NULL )
 				{
@@ -880,14 +1044,7 @@ namespace tool
 			
 			if ( ALINE_MAC_DEVELOPMENT )
 			{
-				const std::vector< plus::string >& rsrc_filenames = project.UsedRsrcFiles();
-				
-				std::vector< plus::string > rsrc_pathnames( rsrc_filenames.size() );
-				
-				std::transform( rsrc_filenames.begin(), 
-				                rsrc_filenames.end(),
-				                rsrc_pathnames.begin(),
-		                        std::bind1st( plus::ptr_fun( &Project_FindResourceFile ), project ) );
+				std::vector< plus::string > rsrc_pathnames;
 				
 				TaskPtr rez_task;
 				
@@ -935,4 +1092,3 @@ namespace tool
 	}
 	
 }
-

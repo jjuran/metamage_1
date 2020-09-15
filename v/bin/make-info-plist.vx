@@ -1,0 +1,94 @@
+#!/usr/bin/env vx -Z
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/../lib/v/"
+
+const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+
+const render_xml = import "render_xml"
+
+const Tab = "\t"
+
+const info-txt = load argv[ 1 ]
+
+var Build-origin-path = (dirname argv[ 1 ]) "/Build-origin.txt"
+
+try
+{
+	stat Build-origin-path
+}
+catch
+{
+	Build-origin-path = null
+}
+
+var more-txt = ""
+
+if Build-origin-path then
+{
+	const build-origin = hex unhex *(load Build-origin-path).lines()
+	
+	chdir dirname argv[ 1 ]
+	
+	const command = [ "git", "rev-list", build-origin "..HEAD", "--count" ]
+	
+	const build-number = output-from-run command
+	
+	more-txt = "CFBundleVersion: " build-number
+}
+
+def comma-terminated { if _[ _.length - 1 ] in ":[" then { _ } else { _ "," } }
+
+const lines = (info-txt more-txt).lines() ver bool map comma-terminated
+
+const info = eval "[" join( "\n", *lines, "]" )
+
+const mapping = ... => ...
+
+def qq { str ('"', _, '"') }
+
+const reifiers
+
+def reify
+{
+	for r in reifiers do
+	{
+		if _ isa r.key then
+		{
+			return r.value( _ )
+		}
+	}
+	
+	throw "unimplemented XML conversion input"
+}
+
+reifiers =
+[
+	bool      => { str(_): null  },
+	string    => { string: _     },
+	int       => { string: str _ },
+	mb32      => { string: str _ },
+	mapping[] => { dict:   _ map { key: _.key, reify _.value } },
+	array     => { array:  _ map reify },
+]
+
+const plist = plist: [ version: "1.0" ]: reify info
+
+const version  = qq "1.0"
+const encoding = qq "UTF-8"
+const dtd_name = qq "-//Apple//DTD PLIST 1.0//EN"
+const dtd_url  = qq "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
+
+print "<?xml version=" version " encoding=" encoding "?>"
+print "<!DOCTYPE plist PUBLIC " dtd_name " " dtd_url ">"
+
+def printer
+{
+	const depth, const text = _
+	
+	const tabs = Tab * depth
+	
+	print tabs text
+}
+
+render_xml( printer, plist )

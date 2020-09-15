@@ -13,6 +13,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/utime.hh"
 
@@ -28,21 +29,25 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void touch( const node* it )
+	void touch( const node& that )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
-		if ( methods  &&  methods->touch )
+		const item_method_set* item_methods;
+		
+		if ( methods  &&  (item_methods = methods->item_methods) )
 		{
-			methods->touch( it );
+			if ( item_methods->touch )
+			{
+				item_methods->touch( &that );
+				
+				return;
+			}
 		}
-		else
-		{
-			const struct timespec times[2] = { { 0, UTIME_NOW }, { 0, UTIME_NOW } };
-			
-			utime( it, times );
-		}
+		
+		const struct timespec times[2] = { { 0, UTIME_NOW }, { 0, UTIME_NOW } };
+		
+		utime( that, times );
 	}
 	
 }
-

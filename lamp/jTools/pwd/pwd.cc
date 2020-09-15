@@ -33,7 +33,7 @@ int main( int argc, char const *const argv[] )
 		
 		write( STDERR_FILENO, STR_LEN( "\n" ) );
 		
-		return EXIT_FAILURE;
+		return 1;
 	}
 	
 	buffer[ size++ ] = '\n';
@@ -42,4 +42,3 @@ int main( int argc, char const *const argv[] )
 	
 	return 0;
 }
-

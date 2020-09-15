@@ -29,6 +29,8 @@ namespace poseven
 	
 	enum fd_t
 	{
+		invalid_fileno = -1,
+		
 		stdin_fileno  = STDIN_FILENO,
 		stdout_fileno = STDOUT_FILENO,
 		stderr_fileno = STDERR_FILENO,
@@ -45,4 +47,3 @@ namespace poseven
 }
 
 #endif
-

@@ -5,10 +5,18 @@
 
 #include "Pedestal/CustomTEClickLoop.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
 #endif
+
+// mac-config
+#include "mac_config/upp-macros.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -90,15 +98,14 @@ namespace Pedestal
 	
 #endif
 	
-	static ::TEClickLoopUPP gMasterClickLoop = ::NewTEClickLoopUPP( MasterTEClickLoop );
-	
 	
 	void TEClickLoop_Subject::InstallCustomTEClickLoop( TEHandle hTE )
 	{
 		static ::TEClickLoopUPP clickLoop = gSystemClickLoop = hTE[0]->clickLoop;
 		
-		hTE[0]->clickLoop = gMasterClickLoop;
+		DEFINE_UPP( TEClickLoop, MasterTEClickLoop )
+		
+		hTE[0]->clickLoop = UPP_ARG( MasterTEClickLoop );
 	}
 	
 }
-

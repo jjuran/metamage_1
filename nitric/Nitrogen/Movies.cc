@@ -10,6 +10,13 @@
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
 
+#ifdef __clang__
+#include <Availability.h>
+#endif
+
+#ifdef __MAC_10_12
+#include "iota/dummy.hh"
+#else
 
 #include "Nitrogen/Movies.hh"
 
@@ -44,6 +51,8 @@ namespace Nitrogen
 #pragma force_active reset
 #endif
 	
+	
+#if ! __LP64__
 	
 	nucleus::owned< MovieFileRefNum > OpenMovieFile( const FSSpec&  file,
 	                                                 Mac::FSIOPerm  permission )
@@ -136,6 +145,8 @@ namespace Nitrogen
 		                        &eraseColor,
 		                        flags );
 	}
+	
+#endif  // #if ! __LP64__
 	
 	void RegisterQuickTimeErrors()
 	{
@@ -309,3 +320,4 @@ namespace Nitrogen
 	
 }
 
+#endif  // #ifndef __10_12

@@ -20,9 +20,6 @@
 static const unsigned n_tests = 6 * 4 + (18 + 8 + 2 + 2) * 3 + (18 + 2 + 2) * 3 + (12 + 2) * 3 * 2;
 
 
-using tap::ok_if;
-
-
 static uint16_t the_CCR = 0;
 
 
@@ -88,62 +85,62 @@ DEFINE_REG_SHIFTER( lsl, L )
 
 static void asr_memory()
 {
-	ok_if( asr_mem( 0x0000 ) == 0x0000 );
+	EXPECT( asr_mem( 0x0000 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x04 );
+	EXPECT( the_CCR == 0x04 );
 	
-	ok_if( asr_mem( 0x0001 ) == 0x0000 );
+	EXPECT( asr_mem( 0x0001 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x15 );
+	EXPECT( the_CCR == 0x15 );
 	
-	ok_if( asr_mem( 0xFFFF ) == 0xFFFF );
+	EXPECT( asr_mem( 0xFFFF ) == 0xFFFF );
 	
-	ok_if( the_CCR == 0x19 );
+	EXPECT( the_CCR == 0x19 );
 }
 
 static void asl_memory()
 {
-	ok_if( asl_mem( 0x0000 ) == 0x0000 );
+	EXPECT( asl_mem( 0x0000 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x04 );
+	EXPECT( the_CCR == 0x04 );
 	
-	ok_if( asl_mem( 0x8000 ) == 0x0000 );
+	EXPECT( asl_mem( 0x8000 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x17 );
+	EXPECT( the_CCR == 0x17 );
 	
-	ok_if( asl_mem( 0xFFFF ) == 0xFFFE );
+	EXPECT( asl_mem( 0xFFFF ) == 0xFFFE );
 	
-	ok_if( the_CCR == 0x19 );
+	EXPECT( the_CCR == 0x19 );
 }
 
 static void lsr_memory()
 {
-	ok_if( lsr_mem( 0x0000 ) == 0x0000 );
+	EXPECT( lsr_mem( 0x0000 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x04 );
+	EXPECT( the_CCR == 0x04 );
 	
-	ok_if( lsr_mem( 0x0001 ) == 0x0000 );
+	EXPECT( lsr_mem( 0x0001 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x15 );
+	EXPECT( the_CCR == 0x15 );
 	
-	ok_if( lsr_mem( 0xFFFF ) == 0x7FFF );
+	EXPECT( lsr_mem( 0xFFFF ) == 0x7FFF );
 	
-	ok_if( the_CCR == 0x11 );
+	EXPECT( the_CCR == 0x11 );
 }
 
 static void lsl_memory()
 {
-	ok_if( lsl_mem( 0x0000 ) == 0x0000 );
+	EXPECT( lsl_mem( 0x0000 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x04 );
+	EXPECT( the_CCR == 0x04 );
 	
-	ok_if( lsl_mem( 0x8000 ) == 0x0000 );
+	EXPECT( lsl_mem( 0x8000 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x15 );
+	EXPECT( the_CCR == 0x15 );
 	
-	ok_if( lsl_mem( 0xFFFF ) == 0xFFFE );
+	EXPECT( lsl_mem( 0xFFFF ) == 0xFFFE );
 	
-	ok_if( the_CCR == 0x19 );
+	EXPECT( the_CCR == 0x19 );
 }
 
 
@@ -151,44 +148,44 @@ static void shift_either( shifter shift )
 {
 	the_CCR = 0x00;
 	
-	ok_if( shift( 0x0000, 0 ) == 0x0000 );
+	EXPECT( shift( 0x0000, 0 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x04 );
+	EXPECT( the_CCR == 0x04 );
 	
 	
 	// Test that a 0 count clears C but not X
 	
 	the_CCR = 0x1F;
 	
-	ok_if( shift( 0x0001, 0 ) == 0x0001 );
+	EXPECT( shift( 0x0001, 0 ) == 0x0001 );
 	
-	ok_if( the_CCR == 0x10 );
+	EXPECT( the_CCR == 0x10 );
 	
 	
 	// Test that count is mod 64
 	
-	ok_if( shift( 0x0001, 64 ) == 0x0001 );
+	EXPECT( shift( 0x0001, 64 ) == 0x0001 );
 	
-	ok_if( the_CCR == 0x10 );
+	EXPECT( the_CCR == 0x10 );
 	
 	
-	ok_if( shift( 0x0000, 1 ) == 0x0000 );
+	EXPECT( shift( 0x0000, 1 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x04 );
+	EXPECT( the_CCR == 0x04 );
 }
 
 static void shift_32( shifter shift )
 {
 	// Test that count is not mod 32
 	
-	ok_if( shift( 0x0002, 32 ) == 0x0000 );
+	EXPECT( shift( 0x0002, 32 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x04 );
+	EXPECT( the_CCR == 0x04 );
 	
 	
-	ok_if( shift( 0x0002, 33 ) == 0x0000 );
+	EXPECT( shift( 0x0002, 33 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x04 );
+	EXPECT( the_CCR == 0x04 );
 }
 
 static void shift_right( shifter shift )
@@ -196,41 +193,41 @@ static void shift_right( shifter shift )
 	shift_either( shift );
 	shift_32    ( shift );
 	
-	ok_if( shift( 0x0001, 1 ) == 0x0000 );
+	EXPECT( shift( 0x0001, 1 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x15 );
-	
-	
-	ok_if( shift( 0x0002, 1 ) == 0x0001 );
-	
-	ok_if( the_CCR == 0x00 );
+	EXPECT( the_CCR == 0x15 );
 	
 	
-	ok_if( shift( 0x0003, 1 ) == 0x0001 );
+	EXPECT( shift( 0x0002, 1 ) == 0x0001 );
 	
-	ok_if( the_CCR == 0x11 );
+	EXPECT( the_CCR == 0x00 );
+	
+	
+	EXPECT( shift( 0x0003, 1 ) == 0x0001 );
+	
+	EXPECT( the_CCR == 0x11 );
 }
 
 
 static void shift_right_word( shifter shift )
 {
-	ok_if( shift( 0x76543210, 4 ) == 0x76540321 );
+	EXPECT( shift( 0x76543210, 4 ) == 0x76540321 );
 	
-	ok_if( the_CCR == 0x00 );
+	EXPECT( the_CCR == 0x00 );
 }
 
 static void shift_right_byte( shifter shift )
 {
-	ok_if( shift( 0x76543210, 4 ) == 0x76543201 );
+	EXPECT( shift( 0x76543210, 4 ) == 0x76543201 );
 	
-	ok_if( the_CCR == 0x00 );
+	EXPECT( the_CCR == 0x00 );
 }
 
 static void shift_right_long( shifter shift )
 {
-	ok_if( shift( 0x76543210, 4 ) == 0x07654321 );
+	EXPECT( shift( 0x76543210, 4 ) == 0x07654321 );
 	
-	ok_if( the_CCR == 0x00 );
+	EXPECT( the_CCR == 0x00 );
 }
 
 
@@ -239,24 +236,24 @@ static void asr( shifter shift )
 	shift_right( shift );
 	
 	
-	ok_if( shift( 0xFFFFFFFF, 1 ) == 0xFFFFFFFF );
+	EXPECT( shift( 0xFFFFFFFF, 1 ) == 0xFFFFFFFF );
 	
-	ok_if( the_CCR == 0x19 );
-	
-	
-	ok_if( shift( 0xFFFFFFFE, 1 ) == 0xFFFFFFFF );
-	
-	ok_if( the_CCR == 0x08 );
+	EXPECT( the_CCR == 0x19 );
 	
 	
-	ok_if( shift( 0xFFFFFFFD, 1 ) == 0xFFFFFFFE );
+	EXPECT( shift( 0xFFFFFFFE, 1 ) == 0xFFFFFFFF );
 	
-	ok_if( the_CCR == 0x19 );
+	EXPECT( the_CCR == 0x08 );
 	
 	
-	ok_if( shift( 0xFFFFFFFD, 2 ) == 0xFFFFFFFF );
+	EXPECT( shift( 0xFFFFFFFD, 1 ) == 0xFFFFFFFE );
 	
-	ok_if( the_CCR == 0x08 );
+	EXPECT( the_CCR == 0x19 );
+	
+	
+	EXPECT( shift( 0xFFFFFFFD, 2 ) == 0xFFFFFFFF );
+	
+	EXPECT( the_CCR == 0x08 );
 }
 
 
@@ -268,9 +265,9 @@ static void asr_byte()
 	
 	shift_right_byte( shift );
 	
-	ok_if( shift( 0x89ABCDEF, 4 ) == 0x89ABCDFE );
+	EXPECT( shift( 0x89ABCDEF, 4 ) == 0x89ABCDFE );
 	
-	ok_if( the_CCR == 0x19 );
+	EXPECT( the_CCR == 0x19 );
 }
 
 static void asr_word()
@@ -281,9 +278,9 @@ static void asr_word()
 	
 	shift_right_word( shift );
 	
-	ok_if( shift( 0x89ABCDEF, 4 ) == 0x89ABFCDE );
+	EXPECT( shift( 0x89ABCDEF, 4 ) == 0x89ABFCDE );
 	
-	ok_if( the_CCR == 0x19 );
+	EXPECT( the_CCR == 0x19 );
 }
 
 static void asr_long()
@@ -294,9 +291,9 @@ static void asr_long()
 	
 	shift_right_long( shift );
 	
-	ok_if( shift( 0x89ABCDEF, 4 ) == 0xF89ABCDE );
+	EXPECT( shift( 0x89ABCDEF, 4 ) == 0xF89ABCDE );
 	
-	ok_if( the_CCR == 0x19 );
+	EXPECT( the_CCR == 0x19 );
 }
 
 
@@ -307,9 +304,9 @@ static void lsr_byte()
 	shift_right     ( shift );
 	shift_right_byte( shift );
 	
-	ok_if( shift( 0x89ABCDEF, 4 ) == 0x89ABCD0E );
+	EXPECT( shift( 0x89ABCDEF, 4 ) == 0x89ABCD0E );
 	
-	ok_if( the_CCR == 0x11 );
+	EXPECT( the_CCR == 0x11 );
 }
 
 static void lsr_word()
@@ -319,9 +316,9 @@ static void lsr_word()
 	shift_right     ( shift );
 	shift_right_word( shift );
 	
-	ok_if( shift( 0x89ABCDEF, 4 ) == 0x89AB0CDE );
+	EXPECT( shift( 0x89ABCDEF, 4 ) == 0x89AB0CDE );
 	
-	ok_if( the_CCR == 0x11 );
+	EXPECT( the_CCR == 0x11 );
 }
 
 static void lsr_long()
@@ -331,9 +328,9 @@ static void lsr_long()
 	shift_right     ( shift );
 	shift_right_long( shift );
 	
-	ok_if( shift( 0x89ABCDEF, 4 ) == 0x089ABCDE );
+	EXPECT( shift( 0x89ABCDEF, 4 ) == 0x089ABCDE );
 	
-	ok_if( the_CCR == 0x11 );
+	EXPECT( the_CCR == 0x11 );
 }
 
 
@@ -343,14 +340,14 @@ static void asl( shifter shift )
 	
 	// Test that count is not mod 32
 	
-	ok_if( shift( 0x0002, 32 ) == 0x0000 );
+	EXPECT( shift( 0x0002, 32 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x06 );
+	EXPECT( the_CCR == 0x06 );
 	
 	
-	ok_if( shift( 0x0002, 33 ) == 0x0000 );
+	EXPECT( shift( 0x0002, 33 ) == 0x0000 );
 	
-	ok_if( the_CCR == 0x06 );
+	EXPECT( the_CCR == 0x06 );
 }
 
 static void lsl( shifter shift )
@@ -366,9 +363,9 @@ static void asl_byte()
 	
 	asl( shift );
 	
-	ok_if( shift( 0x89ABCDEF, 4 ) == 0x89ABCDF0 );
+	EXPECT( shift( 0x89ABCDEF, 4 ) == 0x89ABCDF0 );
 	
-	ok_if( the_CCR == 0x0A );
+	EXPECT( the_CCR == 0x0A );
 }
 
 static void asl_word()
@@ -377,9 +374,9 @@ static void asl_word()
 	
 	asl( shift );
 	
-	ok_if( shift( 0x89ABCDEF, 4 ) == 0x89ABDEF0 );
+	EXPECT( shift( 0x89ABCDEF, 4 ) == 0x89ABDEF0 );
 	
-	ok_if( the_CCR == 0x0A );
+	EXPECT( the_CCR == 0x0A );
 }
 
 static void asl_long()
@@ -388,9 +385,9 @@ static void asl_long()
 	
 	asl( shift );
 	
-	ok_if( shift( 0x89ABCDEF, 4 ) == 0x9ABCDEF0 );
+	EXPECT( shift( 0x89ABCDEF, 4 ) == 0x9ABCDEF0 );
 	
-	ok_if( the_CCR == 0x0A );
+	EXPECT( the_CCR == 0x0A );
 }
 
 
@@ -400,9 +397,9 @@ static void lsl_byte()
 	
 	lsl( shift );
 	
-	ok_if( shift( 0x89ABCDEF, 4 ) == 0x89ABCDF0 );
+	EXPECT( shift( 0x89ABCDEF, 4 ) == 0x89ABCDF0 );
 	
-	ok_if( the_CCR == 0x08 );
+	EXPECT( the_CCR == 0x08 );
 }
 
 static void lsl_word()
@@ -411,9 +408,9 @@ static void lsl_word()
 	
 	lsl( shift );
 	
-	ok_if( shift( 0x89ABCDEF, 4 ) == 0x89ABDEF0 );
+	EXPECT( shift( 0x89ABCDEF, 4 ) == 0x89ABDEF0 );
 	
-	ok_if( the_CCR == 0x08 );
+	EXPECT( the_CCR == 0x08 );
 }
 
 static void lsl_long()
@@ -422,9 +419,9 @@ static void lsl_long()
 	
 	lsl( shift );
 	
-	ok_if( shift( 0x89ABCDEF, 4 ) == 0x9ABCDEF0 );
+	EXPECT( shift( 0x89ABCDEF, 4 ) == 0x9ABCDEF0 );
 	
-	ok_if( the_CCR == 0x08 );
+	EXPECT( the_CCR == 0x08 );
 }
 
 
@@ -455,4 +452,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

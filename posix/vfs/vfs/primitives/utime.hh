@@ -17,9 +17,8 @@ struct timespec;
 namespace vfs
 {
 	
-	void utime( const node* it, const struct timespec* times );
+	void utime( const node& that, const struct timespec* times );
 	
 }
 
 #endif
-

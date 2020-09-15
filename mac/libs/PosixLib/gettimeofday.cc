@@ -7,15 +7,16 @@
 #ifndef __DATETIMEUTILS__
 #include <DateTimeUtils.h>
 #endif
-#ifndef __TIMER__
-#include <Timer.h>
-#endif
 
 // POSIX
 #include <sys/time.h>
 
-// TimeOff
-#include "TimeOff/TimeOff.hh"
+// mac-types
+#include "mac_types/epoch.hh"
+
+// mac-sys-utils
+#include "mac_sys/gmt_delta.hh"
+#include "mac_sys/microseconds.hh"
 
 
 namespace PosixLib
@@ -27,39 +28,48 @@ namespace PosixLib
 		
 		::GetDateTime( &result );
 		
-		result -= TimeOff::GetGMTDelta();
+		result -= mac::sys::gmt_delta();
 		
 		return result;
 	}
 	
-	static inline UInt64 Microseconds()
+	static inline time_t UnixTime()
 	{
-		UInt64 result;
-		
-		::Microseconds( (UnsignedWide*) &result );
-		
-		return result;
+		return GetGlobalDateTime() - mac::types::epoch_delta();
 	}
 	
-	struct Clock
+	class MicrosecondUnixTimeClock
 	{
-		UInt64 microseconds;
-		UInt32 dateTime;
-		time_t unixTime;
-		UInt64 diff;
+		private:
+			UInt64 offset;
 		
-		Clock() : microseconds( Microseconds() ),
-		          dateTime    ( GetGlobalDateTime()  ),
-		          unixTime    ( dateTime - TimeOff::MacUnixEpochOffset() ),
-		          diff        ( unixTime * 1000000ULL - microseconds )
-		{
-		}
-		
-		UInt64 Now() const  { return Microseconds() + diff; }
+		public:
+			MicrosecondUnixTimeClock() : offset( Offset() )
+			{
+			}
+			
+			static UInt64 Offset()
+			{
+				return UnixTime() * 1000000ULL - mac::sys::microseconds();
+			}
+			
+			UInt64 Now()
+			{
+				const UInt64 new_offset = Offset();
+				
+				const int delta = 2 * 1000000;  // two seconds
+				
+				if ( new_offset - offset >= delta )
+				{
+					offset = new_offset;
+				}
+				
+				return mac::sys::microseconds() + offset;
+			}
 	};
 	
 	
-	static Clock gClock;
+	static MicrosecondUnixTimeClock gClock;
 	
 }
 
@@ -77,4 +87,3 @@ int gettimeofday( struct timeval* tv, struct timezone* tz )
 	
 	return 0;
 }
-

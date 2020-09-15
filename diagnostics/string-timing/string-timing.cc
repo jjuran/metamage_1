@@ -18,7 +18,7 @@
 
 // plus
 #include "plus/cow_string.hh"
-#include "plus/var_string.hh"
+#include "plus/own_string.hh"
 
 #ifdef __MWERKS__
 #pragma once off
@@ -102,7 +102,7 @@ class timer
 
 const char* test_names[] =
 {
-	"default ctor   ",
+	"default ctor x2",
 	"small   ctor   ",
 	"normal  ctor   ",
 	"small    copy  ",
@@ -180,4 +180,3 @@ int main( int argc, char **argv )
 	
 	return 0;
 }
-

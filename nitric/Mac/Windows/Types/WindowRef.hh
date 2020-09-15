@@ -6,6 +6,12 @@
 #ifndef MAC_WINDOWS_TYPES_WINDOWREF_HH
 #define MAC_WINDOWS_TYPES_WINDOWREF_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
@@ -26,7 +32,7 @@
 namespace nucleus
 {
 	
-#if OPAQUE_TOOLBOX_STRUCTS
+#if OPAQUE_TOOLBOX_STRUCTS  &&  ! __LP64__
 	
 	template <> struct disposer< WindowRef >
 	{
@@ -44,4 +50,3 @@ namespace nucleus
 }
 
 #endif
-

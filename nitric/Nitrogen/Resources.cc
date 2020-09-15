@@ -199,17 +199,12 @@ namespace Nitrogen
 		return attrs;
 	}
 	
-	GetResInfo_Result GetResInfo( Handle r )
+	mac::types::ResInfo GetResInfo( Handle r )
 	{
-		GetResInfo_Result result;
-		::ResID id;
-		::ResType type;
+		mac::types::ResInfo result;
 		
-		::GetResInfo( r, &id, &type, result.name );
+		::GetResInfo( r, &result.id, &result.type, result.name );
 		ResError();
-		
-		result.id   = ResID  ( id   );
-		result.type = ResType( type );
 		
 		return result;
 	}
@@ -231,9 +226,12 @@ namespace Nitrogen
 		return h.release();
 	}
 	
-	Handle AddResource( nucleus::owned< Handle > h, const GetResInfo_Result& resInfo )
+	Handle AddResource( nucleus::owned< Handle > h, const mac::types::ResInfo& resInfo )
 	{
-		return AddResource( h, resInfo.type, resInfo.id, resInfo.name );
+		const ResType type = ResType( resInfo.type );
+		const ResID   id   = ResID  ( resInfo.id   );
+		
+		return AddResource( h, type, id, resInfo.name );
 	}
 	
 	std::size_t GetResourceSizeOnDisk( Handle r )
@@ -313,6 +311,8 @@ namespace Nitrogen
 		ResError();
 	}
 	
+#if ! __LP64__
+	
 	nucleus::owned< ResFileRefNum > FSpOpenResFile( const FSSpec& spec, Mac::FSIOPerm permissions )
 	{
 		ResFileRefNum refNum = ResFileRefNum( ::FSpOpenResFile( &spec, permissions ) );
@@ -330,6 +330,23 @@ namespace Nitrogen
 		::FSpCreateResFile( &spec, creator, type, scriptTag );
 		
 		ResError();
+	}
+	
+#endif  // #if ! __LP64__
+	
+	void FSCreateResourceFile( const Mac::FSRefNameSpec&  file,
+	                           UniCharCount               forkNameLength,
+	                           const UniChar*             forkName )
+	{
+		Mac::ThrowOSStatus( ::FSCreateResourceFile( &file.parent,
+		                                            file.name.length,
+		                                            file.name.unicode,
+		                                            FSCatalogInfoBitmap(),
+		                                            NULL,
+		                                            forkNameLength,
+		                                            forkName,
+		                                            NULL,
+		                                            NULL ) );
 	}
 	
 	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref, 
@@ -378,4 +395,3 @@ namespace Nitrogen
 	}
 	
 }
-

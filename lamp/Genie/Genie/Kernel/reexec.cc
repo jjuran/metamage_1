@@ -1,15 +1,19 @@
-/*	=========
- *	reexec.cc
- *	=========
- */
+/*
+
+	reexec.cc
+	---------
+*/
 
 // Debug
 #include "debug/assert.hh"
 
+// relix
+#include "relix/config/reexec.hh"
+#include "relix/syscall/registry.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
-#include "Genie/SystemCallRegistry.hh"
 
 
 namespace Genie
@@ -27,8 +31,6 @@ namespace Genie
 		{
 			Process& current = current_process();
 			
-			bool forked = current.Forked();
-			
 			// Start a new thread with the child's process context
 			current.Reexec( f, _1, _2, _3, _4, _5, _6, _7 );
 			
@@ -42,6 +44,7 @@ namespace Genie
 		return 0;
 	}
 	
+#if CONFIG_REEXEC
 	
 	#pragma force_active on
 	
@@ -49,5 +52,6 @@ namespace Genie
 	
 	#pragma force_active reset
 	
+#endif
+	
 }
-

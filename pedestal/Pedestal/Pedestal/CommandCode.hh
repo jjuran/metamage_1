@@ -17,10 +17,23 @@ namespace Pedestal
 		kCmdAbout = 'abou',
 		kCmdNew   = 'new ',
 		
+		kCmdClose = 'clos',
+		kCmdQuit  = 'quit',
+		
+		kCmdUndo  = 'undo',
+		kCmdCut   = 'cut ',
+		kCmdCopy  = 'copy',
+		kCmdPaste = 'pste',
+		kCmdClear = 'clea',
+		
+		kCmdSelectAll = 'slct',
+		
+		kHICommandPaste     = 'past',  // kHICommandPaste,
+		kHICommandSelectAll = 'sall',  // kHICommandSelectAll,
+		
 		kCommandCode_Max = 0xffffffff
 	};
 	
 }
 
 #endif
-

@@ -14,6 +14,8 @@
 
 /* $Id$ */
 
+#ifndef GNU_GZIP_TAILOR_H
+#define GNU_GZIP_TAILOR_H
 
 #define HAVE_UNISTD_H 1
 
@@ -386,3 +388,6 @@
 #ifndef put_char
 #  define put_char(c) put_byte(c)
 #endif
+
+#endif
+

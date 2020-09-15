@@ -16,9 +16,8 @@
 namespace vfs
 {
 	
-	off_t geteof( const node* it );
+	off_t geteof( const node& that );
 	
 }
 
 #endif
-

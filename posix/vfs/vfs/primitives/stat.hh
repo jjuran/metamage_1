@@ -17,9 +17,8 @@ struct stat;
 namespace vfs
 {
 	
-	void stat( const node* it, struct ::stat& sb );
+	void stat( const node& that, struct ::stat& sb );
 	
 }
 
 #endif
-

@@ -8,42 +8,33 @@
 // POSIX
 #include <sys/stat.h>
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
+#include "vfs/filehandle/types/directory.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/gui/port.hh"
-#include "Genie/IO/VirtualDirectory.hh"
 
 
 namespace Genie
 {
 	
-	class OpenWindowHandle : public VirtualDirHandle
+	static void remove_port_file( vfs::filehandle* that )
 	{
-		public:
-			OpenWindowHandle( const FSTreePtr& tree );
-			
-			~OpenWindowHandle();
-	};
-	
-	OpenWindowHandle::OpenWindowHandle( const FSTreePtr& tree ) : VirtualDirHandle( tree )
-	{
+		remove_port( get_file( *that ).get() );
 	}
 	
-	OpenWindowHandle::~OpenWindowHandle()
+	static vfs::filehandle_ptr new_port_opendir( const vfs::node* that )
 	{
-		remove_port( GetFile().get() );
-	}
-	
-	static IOPtr new_port_opendir( const FSTree* node )
-	{
-		FSTreePtr dir = new_port();
+		vfs::node_ptr dir = new_port();
 		
-		return new OpenWindowHandle( dir );
+		return vfs::new_dir_handle( dir.get(), &remove_port_file );
 	}
 	
-	static const dir_method_set new_port_dir_methods =
+	static const vfs::dir_method_set new_port_dir_methods =
 	{
 		NULL,
 		NULL,
@@ -51,13 +42,8 @@ namespace Genie
 		&new_port_opendir
 	};
 	
-	static const node_method_set new_port_methods =
+	static const vfs::node_method_set new_port_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		NULL,
@@ -65,12 +51,11 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr New_new_port( const FSTree*        parent,
-	                        const plus::string&  name,
-	                        const void*          args )
+	vfs::node_ptr New_new_port( const vfs::node*     parent,
+	                            const plus::string&  name,
+	                            const void*          args )
 	{
-		return new FSTree( parent, name, S_IFDIR | 0100, &new_port_methods );
+		return new vfs::node( parent, name, S_IFDIR | 0100, &new_port_methods );
 	}
 	
 }
-

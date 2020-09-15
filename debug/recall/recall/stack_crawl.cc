@@ -14,7 +14,7 @@
 #endif
 
 
-#if defined( __x86_64__ )  ||  defined( __powerpc__ )
+#if defined( __llvm__ )  ||  defined( __ELF__ )  ||  defined(__INTERIX)
 #define CONFIG_STACK_CRAWLS 0
 #else
 #define CONFIG_STACK_CRAWLS 1
@@ -28,7 +28,7 @@ namespace recall
 	{
 	#if CONFIG_STACK_CRAWLS
 		
-		stack_frame* frame = get_top_frame()->next;
+		const stack_frame* frame = get_top_frame();
 		
 		while ( frame != NULL  &&  --levels_to_skip >= 0 )
 		{
@@ -164,4 +164,3 @@ namespace recall
 	}
 	
 }
-

@@ -148,4 +148,3 @@ namespace ShellShock
 }
 
 #endif
-

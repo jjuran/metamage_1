@@ -8,6 +8,11 @@
 // Standard C++
 #include <algorithm>
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __CONTROLS__
 #include <Controls.h>
@@ -17,15 +22,32 @@
 #include <DiskInit.h>
 #endif
 #endif
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
 #ifndef __TOOLUTILS__
 #include <ToolUtils.h>
 #endif
 
 // Nostalgia
 #include "Nostalgia/LowMem.hh"
+
+// mac-config
+#include "mac_config/adb.hh"
+#include "mac_config/apple-events.hh"
+#include "mac_config/upp-macros.hh"
+
+// mac-sys-utils
+#include "mac_sys/async_wakeup.hh"
+#include "mac_sys/clock.hh"
+#include "mac_sys/current_process.hh"
+#include "mac_sys/gestalt.hh"
+#include "mac_sys/is_front_process.hh"
+
+// mac-qd-utils
+#include "mac_qd/assign_pixel_rgn.hh"
+
+// mac-app-utils
+#include "mac_app/init.hh"
+#include "mac_app/menus.hh"
+#include "mac_app/state.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -37,38 +59,25 @@
 #include "Mac/Sound/Functions/SysBeep.hh"
 
 #include "Nitrogen/AEInteraction.hh"
-#include "Nitrogen/AppleEvents.hh"
 #include "Nitrogen/Controls.hh"
-#include "Nitrogen/Events.hh"
-#include "Nitrogen/Gestalt.hh"
 #include "Nitrogen/MacErrors.hh"
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Menus.hh"
-#include "Nitrogen/Processes.hh"
 #include "Nitrogen/Quickdraw.hh"
-#include "Nitrogen/Resources.hh"
-#include "Nitrogen/Threads.hh"
-
-// MacFeatures
-#include "MacFeatures/Threads.hh"
-
-#if !TARGET_API_MAC_CARBON
-
-// Arcana
-#include "ADB/KeyboardLEDs.hh"
-#include "ADB/KeyboardModifiers.hh"
-
-#endif
 
 // Pedestal
+#include "Pedestal/ADBKeyboard.hh"
+#include "Pedestal/ClickTarget.hh"
 #include "Pedestal/Commands.hh"
 #include "Pedestal/Initialize.hh"
 #include "Pedestal/MenuBar.hh"
 #include "Pedestal/TrackControl.hh"
 #include "Pedestal/Quasimode.hh"
-#include "Pedestal/SetPort_GetWindow.hh"
-#include "Pedestal/WakeUp.hh"
+#include "Pedestal/View.hh"
 #include "Pedestal/Window.hh"
+#include "Pedestal/WindowEventHandlers.hh"
+#include "Pedestal/WindowMenu.hh"
+#include "Pedestal/WindowStorage.hh"
 
 
 namespace Nitrogen
@@ -106,60 +115,40 @@ namespace Pedestal
 	using Mac::kCoreEventClass;
 	using Mac::kAEQuitApplication;
 	
+	const uint32_t gestaltAppleEventsAttr = 'evnt';
+	
 	static const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
 	static const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
 	static const UInt32 kEitherControlKey = controlKey | rightControlKey;
 	
-	
-	struct AppleEventSignature
-	{
-		Nitrogen::AEEventClass eventClass;
-		Nitrogen::AEEventID    eventID;
-		
-		AppleEventSignature()  {}
-		
-		AppleEventSignature( Nitrogen::AEEventClass  eventClass,
-		                     Nitrogen::AEEventID     eventID )
-		:
-			eventClass( eventClass ),
-			eventID   ( eventID    )
-		{}
-	};
-	
-	struct RunState
-	{
-		AppleEventSignature signatureOfFirstAppleEvent;
-		
-		bool inForeground;     // set to true when the app is frontmost
-		bool startupComplete;  // set to true once the app is ready to respond to events
-		bool quitRequested;    // set to true when quitting is in process, to false if cancelled
-		bool endOfEventLoop;   // set to true once the app is ready to stop processing events
-		
-		RunState()
-		:
-			inForeground   ( false ),  // we have to check
-			startupComplete( false ),
-			quitRequested  ( false ),
-			endOfEventLoop ( false )
-		{}
-	};
+	static MenuRef the_Window_menu;
 	
 	
-	static RunState gRunState;
+	const bool apple_events_present =
+		CONFIG_APPLE_EVENTS  &&
+			(CONFIG_APPLE_EVENTS_GRANTED  ||
+				mac::sys::gestalt( gestaltAppleEventsAttr ) != 0);
 	
-	static UInt32 gTickCountAtLastContextSwitch = 0;
-	static UInt32 gTickCountAtLastUserEvent     = 0;
 	
-	static Point gLastMouseLocation;
+	static bool gInForeground;     // set to true when the app is frontmost
+	static bool gEndOfEventLoop;   // set to true once the app is ready to exit
 	
-#if !TARGET_API_MAC_CARBON
 	
-	// ADB address of the keyboard from the last key-down event.
-	static N::ADBAddress gLastKeyboard;
+#ifdef __MC68K__
+	
+	namespace monotonic_clock = mac::sys::tick_clock;
+	
+#else
+	
+	namespace monotonic_clock = mac::sys::microsecond_clock;
 	
 #endif
 	
-	static bool gKeyboardConfigured      = false;
+	static monotonic_clock::clock_t gClockAtLastContextSwitch = 0;
+	
+	// ADB address of the keyboard from the last key-down event.
+	static SInt8 gLastKeyboard;  // ADBAddress
+	
 	static bool gNeedToConfigureKeyboard = false;
 	
 	static bool gShiftKeyIsDownFromKeyStroke = false;
@@ -174,25 +163,71 @@ namespace Pedestal
 		Mac::SysBeep();
 	}
 	
-	enum
-	{
-		idAppleMENU = 128,  // menu ID = 1
-		idFileMENU,
-		idEditMENU
-		//, idDebugMENU = 255  // menu ID = 128
-	};
 	
-	
+	void (*gThreadYield_Hook )() = NULL;
 	bool (*gActivelyBusy_Hook)() = NULL;
+	bool (*gReadyToExit_Hook )() = NULL;
+	
+	static bool tapping_key_events;
+	
+	void set_key_event_tap( bool enabled )
+	{
+		if ( enabled == tapping_key_events )
+		{
+			return;
+		}
+		
+		tapping_key_events = enabled;
+		
+		if ( TARGET_API_MAC_CARBON )
+		{
+			mac::app::set_Aqua_menu_key( kHICommandQuit, 'Q' * ! enabled );
+			mac::app::set_Aqua_menu_key( kHICommandHide, 'H' * ! enabled );
+		}
+	}
+	
+	
+	static
+	void ThreadYield()
+	{
+		if ( gThreadYield_Hook )
+		{
+			gThreadYield_Hook();
+		}
+	}
 	
 	static bool ActivelyBusy()
 	{
 		return gActivelyBusy_Hook ? gActivelyBusy_Hook() : false;
 	}
 	
-	static void UpdateLastUserEvent()
+	static bool ReadyToExit()
 	{
-		gTickCountAtLastUserEvent = ::LMGetTicks();
+		return gReadyToExit_Hook ? gReadyToExit_Hook() : true;
+	}
+	
+	static
+	pascal OSErr Quit( const ::AppleEvent* event, ::AppleEvent* reply, SInt32 )
+	{
+		Quit();
+		
+		return noErr;
+	}
+	
+	static
+	View* get_window_view_ready( WindowRef window )
+	{
+		if ( window != NULL )
+		{
+			if ( View* view = get_window_view( window ) )
+			{
+				SetPortWindowPort( window );
+				
+				return view;
+			}
+		}
+		
+		return NULL;
 	}
 	
 	static bool DoCommand( CommandCode code );
@@ -201,9 +236,9 @@ namespace Pedestal
 	{
 		bool handled = false;
 		
-		if ( Window* window = SetPort_FrontWindow() )
+		if ( View* view = get_window_view_ready( FrontWindow() ) )
 		{
-			handled = window->GetView()->UserCommand( code );
+			handled = view->UserCommand( code );
 		}
 		
 		handled = handled || DoCommand( CommandCode( code ) );
@@ -216,46 +251,39 @@ namespace Pedestal
 		return handled;
 	}
 	
-#if !TARGET_API_MAC_CARBON
-	
-	static inline N::ADBAddress GetKeyboardFromEvent( const EventRecord& event )
+	enum SuspendResume_flag
 	{
-		return N::ADBAddress( (event.message & adbAddrMask) >> 16 );
+		Flag_suspending,
+		Flag_resuming,
+	};
+	
+	static inline
+	SuspendResume_flag get_SuspendResume_flag( const EventRecord& event )
+	{
+		const bool resuming = event.message & resumeFlag;
+		
+		return SuspendResume_flag( resuming );
 	}
 	
-	static void ConfigureKeyboard( N::ADBAddress keyboard, bool active )
+	static inline
+	SInt8 GetKeyboardFromEvent( const EventRecord& event )
 	{
-		UInt8 capsLED = ::GetCurrentKeyModifiers() & alphaLock ? 2 : 0;
-		
-		SetLEDs( keyboard, (active ? 1 : 0) | capsLED );
-		
-		SetKeyboardModifiersDistinctness( keyboard, active );
-		
-		gKeyboardConfigured = active;
+		return (event.message & adbAddrMask) >> 16;
 	}
 	
-#endif
-	
-	static void Suspend()
+	static
+	void SuspendResume( SuspendResume_flag flag )
 	{
-		gNeedToConfigureKeyboard = true;
-		
-		if ( Window* window = SetPort_FrontWindow() )
+		if ( CONFIG_ADB )
 		{
-			window->Activate( false );
+			gNeedToConfigureKeyboard = true;
+		}
+		
+		if ( WindowRef front = FrontWindow() )
+		{
+			window_activated( front, flag != Flag_suspending );
 		}
 	}
-	
-	static void Resume()
-	{
-		gNeedToConfigureKeyboard = true;
-		
-		if ( Window* window = SetPort_FrontWindow() )
-		{
-			window->Activate( true );
-		}
-	}
-	
 	
 	/*
 	 *	--------------------------
@@ -265,59 +293,46 @@ namespace Pedestal
 	
 	static void HandleMenuChoice( long menuChoice );
 	
-	static bool DispatchCursorToFrontWindow( const EventRecord& event )
+	static
+	void DispatchCursor( const EventRecord& event )
 	{
-		if ( Window* window = SetPort_FrontWindow() )
+		if ( View* view = get_window_view_ready( FrontWindow() ) )
 		{
-			return window->GetView()->SetCursor( event, NULL );
+			if ( view->SetCursor( event ) )
+			{
+				return;
+			}
 		}
 		
-		return false;
-	}
-	
-	static bool DispatchCursor( const EventRecord& event )
-	{
-		if ( !DispatchCursorToFrontWindow( event ) )
-		{
-			N::SetCursor( N::GetQDGlobalsArrow() );
-		}
-		
-		return true;
+		N::SetCursor( N::GetQDGlobalsArrow() );
 	}
 	
 	static void DispatchHighLevelEvent( const EventRecord& event )
 	{
 		ASSERT( event.what == kHighLevelEvent );
 		
-		try
+		OSErr err = AEProcessAppleEvent( &event );
+		
+		if ( err != errAEEventNotHandled )
 		{
-			N::AEProcessAppleEvent( event );
-		}
-		catch ( const Mac::OSStatus& err )
-		{
-			if ( err != errAEEventNotHandled )
-			{
-				throw;
-			}
+			Mac::ThrowOSStatus( err );
 		}
 	}
 	
-	static void RespondToDrag( const EventRecord& event, WindowRef window )
+	static inline
+	void RespondToDrag( const EventRecord& event, WindowRef window )
 	{
-		Rect before = N::GetPortBounds( N::GetWindowPort( window ) );
+	#if TARGET_API_MAC_CARBON
 		
-		N::DragWindow( window, event.where, N::GetQDGlobalsScreenBits().bounds );
+		const Rect& bounds = N::GetQDGlobalsScreenBits().bounds;
 		
-		// FIXME
-		if ( false )
-		{
-			Rect after = N::GetPortBounds( N::GetWindowPort( window ) );
-			
-			if ( before.top != after.top  ||  before.left != after.left )
-			{
-				//window->Moved( after );
-			}
-		}
+	#else
+		
+		const Rect& bounds = qd.screenBits.bounds;
+		
+	#endif
+		
+		N::DragWindow( window, event.where, bounds );
 	}
 	
 	static bool TrackedControl( ControlRef control, N::ControlPartCode part, Point point )
@@ -355,18 +370,18 @@ namespace Pedestal
 		return TrackedControl( found.control, found.part, point );
 	}
 	
-	static void RespondToContent( const EventRecord& event, WindowRef windowRef )
+	static void RespondToContent( const EventRecord& event, WindowRef window )
 	{
 		Point pt = N::GlobalToLocal( event.where );
 		
 		// TrackedControl's result indicates whether a control was found.
-		if ( TrackedControl( N::FindControl( pt, windowRef ), pt ) )
+		if ( TrackedControl( N::FindControl( pt, window ), pt ) )
 		{
 			// already handled
 		}
-		else if ( Window* window = SetPort_GetWindow( windowRef ) )
+		else
 		{
-			window->MouseDown( event );
+			window_mouseDown( window, event );
 		}
 	}
 	
@@ -389,10 +404,18 @@ namespace Pedestal
 	{
 		if ( N::TrackGoAway( window, event.where ) )
 		{
-			if ( Window* base = N::GetWRefCon( window ) )
-			{
-				base->Close( window );
-			}
+			close_window( window );
+		}
+	}
+	
+	static
+	void DispatchMouseUp( const EventRecord& event )
+	{
+		if ( View* target = Get_ClickTarget() )
+		{
+			target->MouseUp( event );
+			
+			Reset_ClickTarget();
 		}
 	}
 	
@@ -400,12 +423,12 @@ namespace Pedestal
 	{
 		ASSERT( event.what == mouseDown );
 		
-		UpdateLastUserEvent();
-		
 		N::FindWindow_Result found = N::FindWindow( event.where );
 		
 		if ( found.part == N::inMenuBar )
 		{
+			populate_Window_menu( the_Window_menu );
+			
 			HandleMenuChoice( ::MenuSelect( event.where ) );
 			
 			return;
@@ -440,8 +463,6 @@ namespace Pedestal
 			default:
 				break;
 		}
-		
-		UpdateLastUserEvent();
 	}
 	
 	static inline bool CharIsArrowKey( char c )
@@ -482,9 +503,9 @@ namespace Pedestal
 	
 	static void EnterShiftSpaceQuasimode( const EventRecord& event )
 	{
-		if ( Window* window = SetPort_FrontWindow() )
+		if ( View* view = get_window_view_ready( FrontWindow() ) )
 		{
-			if ( gQuasimode = window->GetView()->EnterShiftSpaceQuasimode( event ) )
+			if (( gQuasimode = view->EnterShiftSpaceQuasimode( event ) ))
 			{
 				gShiftSpaceQuasimodeMask = event.modifiers & kEitherShiftKey;
 				
@@ -497,15 +518,24 @@ namespace Pedestal
 	
 	static void DispatchKey( const EventRecord& event )
 	{
-		ASSERT( event.what == keyDown || event.what == autoKey );
+		ASSERT( event.what >= keyDown  &&  event.what <= autoKey );
 		
-		UpdateLastUserEvent();
+		if ( CONFIG_ADB )
+		{
+			gLastKeyboard = GetKeyboardFromEvent( event );
+		}
 		
-	#if !TARGET_API_MAC_CARBON
-		
-		gLastKeyboard = GetKeyboardFromEvent( event );
-		
-	#endif
+		if ( event.what == keyUp  ||  tapping_key_events )
+		{
+			// Genie's eventtap view calls KeyDown() from KeyUp() anyway.
+			
+			if ( View* view = get_window_view_ready( FrontWindow() ) )
+			{
+				view->KeyUp( event );
+			}
+			
+			return;
+		}
 		
 		const char c = event.message & charCodeMask;
 		
@@ -535,9 +565,9 @@ namespace Pedestal
 		{
 			EnterShiftSpaceQuasimode( event );
 		}
-		else if ( Window* window = SetPort_FrontWindow() )
+		else if ( View* view = get_window_view_ready( FrontWindow() ) )
 		{
-			window->GetView()->KeyDown( event );
+			view->KeyDown( event );
 		}
 		
 		gShiftKeyIsDownFromKeyStroke = event.modifiers & kEitherShiftKey;
@@ -545,34 +575,36 @@ namespace Pedestal
 	
 	static void DispatchActivate( const EventRecord& event )
 	{
-		if ( Window* window = SetPort_GetWindow( (::WindowRef) event.message ) )
-		{
-			window->Activate( event.modifiers & activeFlag );
-		}
+		WindowRef window = (WindowRef) event.message;
+		
+		SetPortWindowPort( window );
+		
+		window_activated( window, event.modifiers & activeFlag );
 	}
 	
 	static void DispatchUpdate( const EventRecord& event )
 	{
-		WindowRef windowRef = reinterpret_cast< ::WindowRef >( event.message );
+		WindowRef window = (WindowRef) event.message;
 		
-		ASSERT( windowRef != NULL );
+		ASSERT( window != NULL );
 		
-		N::Update_Scope update( windowRef );
+		N::Update_Scope update( window );
 		
-		if ( ::IsPortVisibleRegionEmpty( N::GetWindowPort( windowRef ) ) )
+		if ( ::IsPortVisibleRegionEmpty( N::GetWindowPort( window ) ) )
 		{
 			return;
 		}
 		
-		if ( Window* window = SetPort_GetWindow( windowRef ) )
 		{
-			window->Update();
+			SetPortWindowPort( window );
+			
+			window_update( window );
 			
 			n::saved< N::Clip > savedClip;
 			
-			N::ClipRect( N::GetPortBounds( N::GetWindowPort( windowRef ) ) );
+			N::ClipRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
 			
-			N::UpdateControls( windowRef );
+			N::UpdateControls( window );
 		}
 	}
 	
@@ -586,7 +618,10 @@ namespace Pedestal
 		if ( err != noErr )
 		{
 			::DILoad();
-			err = ::DIBadMount( Point(), message );  // System 7 ignores the point
+			
+			const Point pt = { 120, 120 };
+			err = ::DIBadMount( pt, message );
+			
 			::DIUnload();
 		}
 		
@@ -598,15 +633,12 @@ namespace Pedestal
 		switch ( (event.message & osEvtMessageMask) >> 24 )
 		{
 			case suspendResumeMessage:
-				gRunState.inForeground = event.message & resumeFlag;
-				
-				if ( gRunState.inForeground )
 				{
-					Resume();
-				}
-				else
-				{
-					Suspend();
+					SuspendResume_flag flag = get_SuspendResume_flag( event );
+					
+					gInForeground = flag != Flag_suspending;
+					
+					SuspendResume( flag );
 				}
 				break;
 			
@@ -624,29 +656,25 @@ namespace Pedestal
 		switch ( event.what )
 		{
 		//	case nullEvent:        DispatchNullEvent     ( event );  break;
+			
+		#if CONFIG_APPLE_EVENTS
+		
 			case kHighLevelEvent:  DispatchHighLevelEvent( event );  break;
+			
+		#endif
+			
 			case mouseDown:        DispatchMouseDown     ( event );  break;
+			case mouseUp:          DispatchMouseUp       ( event );  break;
 			case keyDown:
+			case keyUp:
 				case autoKey:      DispatchKey           ( event );  break;
 			case activateEvt:      DispatchActivate      ( event );  break;
 			case updateEvt:        DispatchUpdate        ( event );  break;
 			case diskEvt:          DispatchDiskInsert    ( event );  break;
 			case osEvt:            DispatchOSEvent       ( event );  break;
 			
-			case mouseUp:
-				UpdateLastUserEvent();
-				break;
-			
 			default:
 				break;
-		}
-	}
-	
-	static void GiveIdleTimeToWindow( WindowRef windowRef, const EventRecord& event )
-	{
-		if ( Window* window = SetPort_GetWindow( windowRef ) )
-		{
-			window->GetView()->Idle( event );
 		}
 	}
 	
@@ -660,79 +688,51 @@ namespace Pedestal
 		      //window = N::GetNextWindow( window ) )  // FIXME
 		      window = ::GetNextWindow( window ) )
 		{
-			GiveIdleTimeToWindow( window, event );
+			if ( View* view = get_window_view_ready( window ) )
+			{
+				view->Idle( event );
+			}
 		}
-	}
-	
-	struct AppleEvent
-	{
-		
-		static void Handler( const Mac::AppleEvent&  appleEvent,
-		                     Mac::AppleEvent&        reply );
-		
-	};
-	
-	static MenuRef GetAndInsertMenu( N::ResID resID )
-	{
-		MenuRef menu = N::GetMenu( resID );
-		
-		::InsertMenu( menu, MenuID() );
-		
-		return menu;
 	}
 	
 	Application::Application()
 	{
-		Init_MacToolbox();
-		
 		Init_Memory( 0 );
 		
-		N::AEInstallEventHandler< AppleEvent::Handler >( kCoreEventClass,
-		                                                 N::AEEventID( typeWildCard ) ).release();
+		mac::app::init_toolbox();
+		mac::app::install_menus();
 		
-		MenuRef appleMenu = GetAndInsertMenu( N::ResID( idAppleMENU ) );
-		MenuRef fileMenu  = GetAndInsertMenu( N::ResID( idFileMENU  ) );
-		MenuRef editMenu  = GetAndInsertMenu( N::ResID( idEditMENU  ) );
-		
-		if ( N::Gestalt_Mask< N::gestaltMenuMgrAttr, gestaltMenuMgrAquaLayoutMask >() )
+		if ( apple_events_present )
 		{
-			SInt16 last = N::CountMenuItems( fileMenu );
+			DEFINE_UPP( AEEventHandler, Quit );
 			
-			N::DeleteMenuItem( fileMenu, last );
-			N::DeleteMenuItem( fileMenu, last - 1 );  // Quit item has a separator above it
+			OSErr err;
+			
+			err = AEInstallEventHandler( kCoreEventClass,
+			                             kAEQuitApplication,
+			                             UPP_ARG( Quit ),
+			                             0,
+			                             false );
 		}
+		
+		MenuRef appleMenu  = GetMenuHandle( 1 );
+		MenuRef fileMenu   = GetMenuHandle( 2 );
+		MenuRef editMenu   = GetMenuHandle( 3 );
+		MenuRef windowMenu = GetMenuHandle( 4 );
+		
+		the_Window_menu = windowMenu;
 		
 		AddMenu( appleMenu );
 		AddMenu( fileMenu  );
 		AddMenu( editMenu  );
+		AddMenu( windowMenu );
 		
-		if ( !TARGET_API_MAC_CARBON )
-		{
-			PopulateAppleMenu( appleMenu );
-		}
-		
-		N::InvalMenuBar();
+		FixUpAboutMenuItem( appleMenu );
 	}
 	
-	
-	static void CheckMouse()
-	{
-		using namespace nucleus::operators;
-		
-		Point mouseLocation = N::GetMouse();
-		
-		if ( mouseLocation != gLastMouseLocation )
-		{
-			gLastMouseLocation = mouseLocation;
-			
-			UpdateLastUserEvent();
-		}
-	}
 	
 	static void CheckKeyboard()
 	{
-	#if !TARGET_API_MAC_CARBON
-		
 		if ( gNeedToConfigureKeyboard  &&  gLastKeyboard != 0 )
 		{
 			// Don't reconfigure the keyboard if certain modifiers are down,
@@ -741,17 +741,19 @@ namespace Pedestal
 			                            | kEitherOptionKey
 			                            | kEitherControlKey;
 			
-			if ( (::GetCurrentKeyModifiers() & confusingModifiers) == 0 )
+			const UInt32 currentKeyModifiers = ::GetCurrentKeyModifiers();
+			
+			if ( (currentKeyModifiers & confusingModifiers) == 0 )
 			{
-				bool active = gRunState.inForeground && !gRunState.endOfEventLoop;
+				const bool capsLock_on = currentKeyModifiers & alphaLock;
 				
-				ConfigureKeyboard( gLastKeyboard, active );
+				bool active = gInForeground  &&  ! gEndOfEventLoop;
+				
+				ConfigureKeyboard( gLastKeyboard, active, capsLock_on );
 				
 				gNeedToConfigureKeyboard = false;
 			}
 		}
-		
-	#endif
 	}
 	
 	static bool gEventCheckNeeded = false;
@@ -763,11 +765,15 @@ namespace Pedestal
 			return true;
 		}
 		
-		const UInt32 gMaxTicksBetweenEventChecks = 6;
+		using monotonic_clock::clock_t;
+		using monotonic_clock::clocks_per_kilosecond;
 		
-		const UInt32 timetoWNE = gTickCountAtLastContextSwitch + gMaxTicksBetweenEventChecks;
+		const clock_t maxTimeBetweenEventChecks = clocks_per_kilosecond / 10000;
 		
-		UInt32 now = ::LMGetTicks();
+		const clock_t timetoWNE = gClockAtLastContextSwitch + maxTimeBetweenEventChecks;
+		
+		clock_t now;
+		monotonic_clock::get( &now );
 		
 		bool readyToWait = now >= timetoWNE;
 		
@@ -801,37 +807,47 @@ namespace Pedestal
 		}
 	}
 	
-	static const UInt32 gMaxTicksBetweenNonZeroSleeps = 30;
+	const monotonic_clock::clock_t gMaxTimeBetweenNonZeroSleeps =
+		monotonic_clock::clocks_per_kilosecond / 2000;  // 0.5s
 	
-	static UInt32 gTicksAtLastTrueSleep = 0;
+	static monotonic_clock::clock_t gClockAtLastTrueSleep = 0;
 	
-	static UInt32 gTicksAtNextBusiness = 0;
+	static monotonic_clock::clock_t gClockAtNextBusiness = 0;
 	
 	static bool gIdleNeeded = false;
 	
 	static EventRecord WaitNextEvent( UInt32 sleep, RgnHandle mouseRgn = NULL )
 	{
-		gInWaitNextEvent = true;
+		static Point last_global_mouse = { 0, 0 };
 		
-		if ( gAsyncEventsReady )
+		static RgnHandle current_mouse_location = NewRgn();
+		
+		if ( mouseRgn == NULL )
 		{
-			gAsyncEventsReady = false;
-			
-			sleep = 0;
+			mouseRgn = current_mouse_location;
 		}
 		
 		EventRecord event;
 		
 		(void) ::WaitNextEvent( everyEvent, &event, sleep, mouseRgn );
 		
-		gInWaitNextEvent = false;
+		mac::sys::clear_async_wakeup();
+		
+		last_global_mouse = event.where;
+		
+		mac::qd::assign_pixel_rgn( current_mouse_location, last_global_mouse );
 		
 		return event;
 	}
 	
 	static EventRecord GetAnEvent()
 	{
-		const UInt32 now = ::LMGetTicks();
+		using monotonic_clock::clock_t;
+		using monotonic_clock::get;
+		using monotonic_clock::ticks_from;
+		
+		clock_t now;
+		get( &now );
 		
 		UInt32 ticksToSleep = 0x7FFFFFFF;
 		
@@ -840,7 +856,7 @@ namespace Pedestal
 		
 		if ( ActivelyBusy() )
 		{
-			const bool nonzero = now >= gTicksAtLastTrueSleep + gMaxTicksBetweenNonZeroSleeps;
+			const bool nonzero = now >= gClockAtLastTrueSleep + gMaxTimeBetweenNonZeroSleeps;
 			
 			ticksToSleep = nonzero ? 1 : 0;  // (little to) no sleep for the busy
 		}
@@ -849,77 +865,74 @@ namespace Pedestal
 			ticksToSleep = 1;
 		}
 		
-		gTicksAtNextBusiness = std::max( gTicksAtNextBusiness, now );
+		gClockAtNextBusiness = std::max( gClockAtNextBusiness, now );
 		
-		ticksToSleep = std::min( ticksToSleep, gTicksAtNextBusiness - now );
+		const UInt32 ticksToWait = ticks_from( gClockAtNextBusiness - now );
 		
-		gTicksAtNextBusiness = 0xffffffff;
+		ticksToSleep = std::min( ticksToSleep, ticksToWait );
+		
+		gClockAtNextBusiness = clock_t( -1 );
 		
 		EventRecord nextEvent = WaitNextEvent( ticksToSleep );
 		
 		if ( ticksToSleep > 0 )
 		{
-			gTicksAtLastTrueSleep = ::LMGetTicks();
+			get( &gClockAtLastTrueSleep );
 		}
 		
 		return nextEvent;
 	}
 	
-	static const bool has_ThreadManager = MacFeatures::Has_Threads();
-	
 	static void EventLoop()
 	{
-		// Use two levels of looping.
-		// This lets us loop inside the try block without entering and leaving,
-		// and will continue looping if an exception is thrown.
-		while ( !gRunState.endOfEventLoop || gKeyboardConfigured )
+		while ( ! gEndOfEventLoop  ||  (CONFIG_ADB  &&  gKeyboardConfigured) )
 		{
 			try
 			{
-				while ( !gRunState.endOfEventLoop || gKeyboardConfigured )
+				if ( CONFIG_ADB )
 				{
-					CheckMouse();
-					
 					CheckKeyboard();
+				}
+				
+				ThreadYield();
+				
+				if ( !ActivelyBusy() || ReadyToWaitForEvents() )
+				{
+					using mac::app::quitting;
 					
-					if ( has_ThreadManager )
+					EventRecord event = GetAnEvent();
+					
+					gEventCheckNeeded = false;
+					
+					
+					monotonic_clock::get( &gClockAtLastContextSwitch );
+					
+					CheckShiftSpaceQuasiMode( event );
+					
+					(void) DispatchCursor( event );
+					
+					gIdleNeeded = false;
+					
+					if ( event.what != nullEvent )
 					{
-						N::YieldToAnyThread();
+						DispatchEvent( event );
+						
+						gEventCheckNeeded = true;
+						
+						gIdleNeeded = true;
 					}
-					
-					if ( !ActivelyBusy() || ReadyToWaitForEvents() )
+					else if ( (gIdleNeeded = quitting)  &&  ReadyToExit() )
 					{
-						EventRecord event = GetAnEvent();
+						gEndOfEventLoop = true;
 						
-						gEventCheckNeeded = false;
-						
-						
-						gTickCountAtLastContextSwitch = ::LMGetTicks();
-						
-						CheckShiftSpaceQuasiMode( event );
-						
-						(void) DispatchCursor( event );
-						
-						if ( event.what != nullEvent )
+						if ( CONFIG_ADB )
 						{
-							DispatchEvent( event );
-							
-							gEventCheckNeeded = true;
-							
-							gIdleNeeded = true;
-						}
-						else if ( gRunState.quitRequested )
-						{
-							gRunState.endOfEventLoop = true;
-							
 							gNeedToConfigureKeyboard = gKeyboardConfigured;
 						}
-						else
-						{
-							GiveIdleTimeToWindows( event );
-							
-							gIdleNeeded = false;
-						}
+					}
+					else
+					{
+						GiveIdleTimeToWindows( event );
 					}
 				}
 			}
@@ -932,45 +945,21 @@ namespace Pedestal
 	
 	int Application::Run()
 	{
-		gRunState.inForeground = N::SameProcess( N::GetFrontProcess(), N::CurrentProcess() );
+		using mac::sys::current_process;
+		using mac::sys::is_front_process;
 		
-		gNeedToConfigureKeyboard = gRunState.inForeground;
+		gInForeground = is_front_process( current_process() );
+		
+		if ( CONFIG_ADB )
+		{
+			gNeedToConfigureKeyboard = gInForeground;
+		}
+		
+		SetEventMask( everyEvent );
 		
 		EventLoop();
 		
 		return 0;
-	}
-	
-	void AppleEvent::Handler( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply )
-	{
-		Mac::AEEventClass eventClass = N::AEGetAttributePtr< Mac::keyEventClassAttr >( appleEvent );
-		Mac::AEEventID    eventID    = N::AEGetAttributePtr< Mac::keyEventIDAttr    >( appleEvent );
-		
-		static bool firstTime = true;
-		
-		if ( firstTime )
-		{
-			gRunState.signatureOfFirstAppleEvent = AppleEventSignature( eventClass, eventID );
-			firstTime = false;
-		}
-		
-		if ( eventClass == kCoreEventClass )
-		{
-			switch ( eventID )
-			{
-				case kAEOpenApplication:
-					//myOpenAppReceived = true;
-					break;
-				
-				case kAEQuitApplication:
-					gRunState.quitRequested = true;
-					break;
-				
-				default:
-					throw N::ErrAEEventNotHandled();
-					break;
-			}
-		}
 	}
 	
 	struct UnhighlightMenus
@@ -1000,6 +989,12 @@ namespace Pedestal
 		{
 			DispatchMenuItem( code );
 		}
+		else if ( menuID == N::GetMenuID( the_Window_menu ) )
+		{
+			WindowRef w = get_nth_window( item - 1 );
+			
+			SelectWindow( w );
+		}
 	}
 	
 	bool DoCommand( CommandCode code )
@@ -1014,16 +1009,20 @@ namespace Pedestal
 			case 'clos':
 				if ( WindowRef window = N::FrontWindow() )
 				{
-					if ( Window* base = N::GetWRefCon( window ) )
-					{
-						base->Close( window );
-					}
+					close_window( window );
 				}
 				break;
 			
 			case 'quit':
-				// Direct dispatch
-				N::AESend( kCoreEventClass, kAEQuitApplication );
+				if ( apple_events_present )
+				{
+					// Direct dispatch
+					N::AESend( kCoreEventClass, kAEQuitApplication );
+				}
+				else
+				{
+					Quit();
+				}
 				break;
 			
 			default:
@@ -1036,11 +1035,25 @@ namespace Pedestal
 	
 	void AdjustSleepForTimer( unsigned ticksToSleep )
 	{
-		const UInt32 businessTime = ::LMGetTicks() + ticksToSleep;
+		using monotonic_clock::clock_t;
+		using monotonic_clock::clocks_per_kilosecond;
+		using monotonic_clock::get;
 		
-		if ( businessTime < gTicksAtNextBusiness )
+		namespace tick_clock = mac::sys::tick_clock;
+		
+		enum
 		{
-			gTicksAtNextBusiness = businessTime;
+			factor = clocks_per_kilosecond / tick_clock::clocks_per_kilosecond,
+		};
+		
+		clock_t businessTime;
+		get( &businessTime );
+		
+		businessTime += ticksToSleep * factor;
+		
+		if ( businessTime < gClockAtNextBusiness )
+		{
+			gClockAtNextBusiness = businessTime;
 		}
 	}
 	
@@ -1049,5 +1062,20 @@ namespace Pedestal
 		gEventCheckNeeded = true;
 	}
 	
+	void Quit()
+	{
+		WindowRef window = FrontWindow();
+		
+		while ( window != NULL )
+		{
+			WindowRef next = GetNextWindow( window );
+			
+			close_window( window );
+			
+			window = next;
+		}
+		
+		mac::app::quitting = true;
+	}
+	
 }
-

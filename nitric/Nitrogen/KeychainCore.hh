@@ -14,6 +14,12 @@
 #ifndef NITROGEN_KEYCHAINCORE_HH
 #define NITROGEN_KEYCHAINCORE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __KEYCHAINCORE__
 #include <KeychainCore.h>
 #endif
@@ -91,12 +97,16 @@ namespace Nitrogen
 //	Boolean KCIsInteractionAllowed ( void );
 	using ::KCIsInteractionAllowed;
 	
+#if ! __LP64__
+	
 	inline nucleus::owned<KCRef> KCMakeKCRefFromFSSpec ( const FSSpec &spec ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
 		Mac::ThrowOSStatus ( ::KCMakeKCRefFromFSSpec ( const_cast <FSSpec *> ( &spec ), &result ));
   	    return nucleus::owned<KCRef>::seize( result );
 		}
+	
+#endif  // #if ! __LP64__
 	
 	inline nucleus::owned<KCRef> KCMakeKCRefFromAlias ( AliasHandle keychainAlias ) {
 		(void) KeychainErrorsRegistrationDependency();
@@ -433,4 +443,3 @@ Marshall sez: this is icky because it returns two things that need to be owned.
 	}
 
 #endif
-

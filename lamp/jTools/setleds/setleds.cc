@@ -3,13 +3,14 @@
  *	==========
  */
 
-// Standard C++
-#include <algorithm>
-
 // Standard C/C++
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
+
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
 
 // Mac OS
 #ifndef __MACTYPES__
@@ -131,7 +132,7 @@ namespace tool
 		
 		p7::write( p7::stderr_fileno, STR_LEN( "setleds: ADB unsupported in Carbon\n" ) );
 		
-		return EXIT_FAILURE;
+		return 1;
 		
 	#else
 		
@@ -182,10 +183,12 @@ namespace tool
 		
 		N::ADBDevice_Container adbs;
 		
-		std::for_each( adbs.begin(),
-		               adbs.end(),
-		               std::bind2nd( std::ptr_fun( DoLEDs ),
-		                             leds ) );
+		typedef N::ADBDevice_Container::const_iterator Iter;
+		
+		for ( Iter it = adbs.begin(), end = adbs.end();  it != end;  ++it )
+		{
+			DoLEDs( *it, leds );
+		}
 		
 		return 0;
 		
@@ -193,4 +196,3 @@ namespace tool
 	}
 	
 }
-

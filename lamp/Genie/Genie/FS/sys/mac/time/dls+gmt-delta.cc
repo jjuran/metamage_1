@@ -5,37 +5,24 @@
 
 #include "Genie/FS/sys/mac/time/dls+gmt-delta.hh"
 
-// Mac OS
-#ifndef __OSUTILS__
-#include <OSUtils.h>
-#endif
+// mac-sys-utils
+#include "mac_sys/gmt_delta.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 #include "gear/inscribe_decimal.hh"
 
 // plus
-#include "plus/hexidecimal.hh"
+#include "plus/hexadecimal.hh"
 #include "plus/var_string.hh"
 
 
 namespace Genie
 {
 	
-	static long GetGMTDeltaField()
+	void sys_mac_time_dlsgmtdelta::get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
-		MachineLocation location;
-		
-		::ReadLocation( &location );
-		
-		const long raw_value = location.u.gmtDelta;
-		
-		return raw_value;
-	}
-	
-	void sys_mac_time_dlsgmtdelta::get( plus::var_string& result, const FSTree* that, bool binary )
-	{
-		const long field = GetGMTDeltaField();
+		const long field = mac::sys::gmtDelta_field();
 		
 		if ( binary )
 		{
@@ -45,9 +32,9 @@ namespace Genie
 		plus::encode_32_bit_hex( result, field );
 	}
 	
-	void sys_mac_time_dls::get( plus::var_string& out, const FSTree* that, bool binary )
+	void sys_mac_time_dls::get( plus::var_string& out, const vfs::node* that, bool binary )
 	{
-		const unsigned long raw_value = GetGMTDeltaField();
+		const unsigned long raw_value = mac::sys::gmtDelta_field();
 		
 		const unsigned char dls = raw_value >> 24;
 		
@@ -60,12 +47,9 @@ namespace Genie
 		out += gear::encoded_hex_char( dls >> 0 );
 	}
 	
-	void sys_mac_time_gmtdelta::get( plus::var_string& out, const FSTree* that, bool binary )
+	void sys_mac_time_gmtdelta::get( plus::var_string& out, const vfs::node* that, bool binary )
 	{
-		const long raw_value = GetGMTDeltaField();
-		
-		// Mask off DLS byte, and sign extend if negative
-		const long delta = (raw_value & 0x00FFFFFF) | (raw_value & 0x00800000) * 0xFF << 1;
+		const long delta = mac::sys::gmt_delta();
 		
 		if ( binary )
 		{
@@ -76,4 +60,3 @@ namespace Genie
 	}
 	
 }
-

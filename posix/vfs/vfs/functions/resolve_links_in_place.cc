@@ -20,11 +20,11 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void resolve_links_in_place( node_ptr& file )
+	void resolve_links_in_place( const node& root, node_ptr& file )
 	{
 		unsigned link_count = 0;
 		
-		while ( is_symlink( file ) )
+		while ( is_symlink( *file ) )
 		{
 			++link_count;
 			
@@ -33,9 +33,8 @@ namespace vfs
 				p7::throw_errno( ELOOP );
 			}
 			
-			file = resolve( file.get() );
+			file = resolve( root, *file );
 		}
 	}
 	
 }
-

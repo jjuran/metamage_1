@@ -45,6 +45,8 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
 	nucleus::owned< WindowRef > NewWindow( const Rect&       bounds,
 	                                       ConstStr255Param  title,
 	                                       bool              visible,
@@ -147,9 +149,17 @@ namespace Nitrogen
 		return Detail::GrowWindow( window, startPt, unbounded );
 	}
 	
+	static inline
+	bool has_InvalWindowRect()
+	{
+		return   TARGET_API_MAC_CARBON ? true
+		       : TARGET_CPU_68K        ? false
+		       :                         &::InvalWindowRect != NULL;
+	}
+	
 	void InvalWindowRect( WindowRef window, const Rect& bounds )
 	{
-		if ( TARGET_API_MAC_CARBON  ||  TARGET_CPU_PPC && ::InvalWindowRect != NULL )
+		if ( has_InvalWindowRect() )
 		{
 			::InvalWindowRect( window, &bounds );
 		}
@@ -182,6 +192,8 @@ namespace Nitrogen
       Mac::ThrowOSStatus( ::ChangeWindowAttributes( window, setTheseAttributes, clearTheseAttributes ) );
      }
    
+#endif  // #if ! __LP64__
+	
    void RegisterWindowManagerErrors()
      {
       RegisterOSStatus< memFullErr >();

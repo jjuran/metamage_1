@@ -3,10 +3,11 @@ package Compile::Driver::Module;
 use Compile::Driver::Files;
 use Compile::Driver::InputFile::SourceList;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 
+*list_files      = \&Compile::Driver::Files::list;
 *enumerate_files = \&Compile::Driver::Files::enumerate;
 
 *read_source_list_file = \&Compile::Driver::InputFile::SourceList::read_file;
@@ -63,6 +64,20 @@ sub is_static_lib
 	return grep { $self->product_type eq $_ } qw( lib dropin );
 }
 
+sub is_toolkit
+{
+	my $self = shift;
+	
+	return $self->product_type eq 'toolkit';
+}
+
+sub is_bundle
+{
+	my $self = shift;
+	
+	return $self->product_type eq "app"
+}
+
 sub is_executable
 {
 	my $self = shift;
@@ -74,7 +89,7 @@ sub is_buildable
 {
 	my $self = shift;
 	
-	return $self->is_static_lib  ||  $self->is_executable;
+	return $self->is_static_lib  ||  $self->is_toolkit  ||  $self->is_executable;
 }
 
 sub program_name
@@ -82,6 +97,13 @@ sub program_name
 	my $self = shift;
 	
 	return $self->{DESC}{DATA}{ program }[0] || $self->name;
+}
+
+sub mac_creator
+{
+	my $self = shift;
+	
+	return $self->{DESC}{DATA}{ creator }[0] || "????";
 }
 
 sub immediate_prerequisites
@@ -141,7 +163,11 @@ sub imports
 	
 	my $imports = $data->{imports} || [];
 	
-	return @$imports;
+	my @result = @$imports;
+	
+	unshift @result, "-L" . $self->tree  if defined $self->{DESC}{PATH};
+	
+	return @result;
 }
 
 sub tree
@@ -159,6 +185,59 @@ sub tree
 	$dir =~ s{ /+ A-line\.confd $}{}x;
 	
 	return $desc->{ROOT} = $dir;
+}
+
+sub find_rez
+{
+	my $self = shift;
+	
+	my ( $spec ) = @_;
+	
+	if ( my ( $projname, $rezname ) = $spec =~ /^ (\w+?) : (.+) $/x )
+	{
+		return $self->get( $projname )->find_rez( $rezname );
+	}
+	
+	return $self->tree . "/Rez/$spec";
+}
+
+sub rez_files
+{
+	my $self = shift;
+	
+	my $data = $self->{DESC}{DATA};
+	
+	my $rez = $data->{rez} || [];
+	
+	return map { $self->find_rez( $_ ) } @$rez;
+}
+
+sub resources
+{
+	my $self = shift;
+	
+	my $dir = $self->tree . "/Resources";
+	
+	if ( -d $dir )
+	{
+		return list_files( $dir, sub {1} );
+	}
+	
+	return;
+}
+
+sub info_txt
+{
+	my $self = shift;
+	
+	my $info_txt = $self->tree . "/Info.txt";
+	
+	if ( -f $info_txt )
+	{
+		return $info_txt;
+	}
+	
+	return;
 }
 
 sub source_list
@@ -279,6 +358,24 @@ sub sources
 	return map { enumerate_files( $_, $filter ) } @source_dirs;
 }
 
+sub source_is_tool
+{
+	my $self = shift;
+	
+	my ( $source ) = @_;
+	
+	if ( !exists $self->{IS_TOOL} )
+	{
+		my $tools = $self->{DESC}{DATA}{tools} || [];
+		
+		$self->{IS_TOOL} = { map { $_ => 1 } @$tools };
+	}
+	
+	$source =~ s{^ .* / }{}x;
+	
+	return exists $self->{IS_TOOL}{ $source };
+}
+
 sub all_search_dirs
 {
 	my $self = shift;
@@ -341,4 +438,3 @@ sub find_include
 }
 
 1;
-

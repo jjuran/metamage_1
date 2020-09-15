@@ -3,37 +3,122 @@
  *	========
  */
 
-// Standard C/C++
-#include <cerrno>
-#include <cstdlib>
-
 // POSIX
-#include <arpa/inet.h>
 #include <fcntl.h>
 #include <netdb.h>
+
+// Standard C
+#include <errno.h>
+#include <stdlib.h>
 
 // Iota
 #include "iota/strings.hh"
 
+// command
+#include "command/get_option.hh"
+
 // gear
 #include "gear/find.hh"
 #include "gear/inscribe_decimal.hh"
-#include "gear/parse_decimal.hh"
 
 // poseven
 #include "poseven/bundles/inet.hh"
-#include "poseven/extras/pump.hh"
 #include "poseven/functions/open.hh"
-#include "poseven/functions/socket.hh"
+#include "poseven/functions/read.hh"
 #include "poseven/functions/write.hh"
-#include "poseven/types/exit_t.hh"
 
 // Arcana
 #include "HTTP.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+#ifdef __RELIX__
+#define DEFAULT_USER_AGENT  "htget (a MacRelix program)"
+#else
+#define DEFAULT_USER_AGENT  "htget"
+#endif
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_HEAD = 'I',
+	Option_save = 'O',
+	Option_dump = 'i',
+	Option_file = 'o',
+	
+	Option_last_byte = 255,
+	
+	Option_progress,
+};
+
+static command::option options[] =
+{
+	{ "head", Option_HEAD },
+	{ "save", Option_save },
+	
+	{ "remote-name", Option_save },
+	
+	{ "headers", Option_dump },
+	{ "include", Option_dump },
+	
+	{ "dump-progress", Option_progress },
+	
+	{ "", Option_file, Param_required },
+	
+	{ NULL }
+};
+
+static const char* const defaultOutput = "/dev/fd/1";
+
+static const char* outputFile = defaultOutput;
+
+static bool sendHEADRequest = false;
+static bool dumpHeader      = false;
+static bool saveToFile      = false;
+
+static bool dumping_progress = false;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_HEAD:
+				sendHEADRequest = true;
+				break;
+			
+			case Option_save:
+				saveToFile = true;
+				break;
+			
+			case Option_dump:
+				dumpHeader = true;
+				break;
+			
+			case Option_progress:
+				dumping_progress = true;
+				break;
+			
+			case Option_file:
+				outputFile = command::global_result.param;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -41,8 +126,24 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
+	
+	static size_t content_length = 0;
+	
+	static plus::string content_length_string;
+	
+	static void dump_progress( size_t content_bytes_received )
+	{
+		plus::var_string dump = gear::inscribe_unsigned_decimal( content_bytes_received );
+		
+		dump += '/';
+		
+		dump += content_length_string;
+		
+		dump += '\n';
+		
+		p7::write( p7::stdout_fileno, dump );
+	}
 	
 	static bool ParseURL( const plus::string& url,
 	                      plus::string& outURLScheme, 
@@ -83,71 +184,38 @@ namespace tool
 	}
 	
 	
-	static p7::in_addr_t ResolveHostname( const char* hostname )
-	{
-		hostent* hosts = gethostbyname( hostname );
-		
-		if ( !hosts || h_errno )
-		{
-			plus::var_string message = "Domain name lookup failed: ";
-			
-			message += gear::inscribe_decimal( h_errno );
-			message += "\n";
-			
-			p7::write( p7::stderr_fileno, message );
-			
-			throw p7::exit_failure;
-		}
-		
-		in_addr addr = *(in_addr*) hosts->h_addr;
-		
-		return p7::in_addr_t( addr.s_addr );
-	}
-	
-	
 	static void receive_document( const plus::string&  partial_content,
 	                              p7::fd_t             http_server,
 	                              p7::fd_t             document_destination )
 	{
-		p7::write( document_destination, partial_content );
+		size_t n_written = p7::write( document_destination, partial_content );
 		
-		p7::pump( http_server, document_destination );
+		const size_t buffer_size = 4096;
+		
+		char buffer[ buffer_size ];
+		
+		while ( const ssize_t n_read = p7::read( http_server, buffer, buffer_size ) )
+		{
+			n_written += p7::write( document_destination, buffer, n_read );
+			
+			if ( dumping_progress )
+			{
+				dump_progress( n_written );
+			}
+		}
 	}
 	
 	int Main( int argc, char** argv )
 	{
-		bool sendHEADRequest = false;
-		bool dumpHeader      = false;
-		bool saveToFile      = false;
+		char *const *args = get_options( argv );
 		
-		const char* defaultOutput = "/dev/fd/1";
+		const int argn = argc - (args - argv);
 		
-		const char* outputFile = defaultOutput;
-		
-		o::bind_option_to_variable( "-i", dumpHeader      );
-		o::bind_option_to_variable( "-I", sendHEADRequest );
-		o::bind_option_to_variable( "-o", outputFile      );
-		o::bind_option_to_variable( "-O", saveToFile      );
-		
-		o::alias_option( "-i", "--headers" );
-		o::alias_option( "-i", "--include" );
-		
-		o::alias_option( "-I", "--head" );
-		
-		o::alias_option( "-O", "--remote-name" );
-		o::alias_option( "-O", "--save"        );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *freeArgs = o::free_arguments();
-		
-		const size_t n_args = o::free_argument_count();
-		
-		if ( n_args == 0 )
+		if ( argn == 0 )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "htget: Usage:  htget <url>\n" ) );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
 		const char* method = "GET";
@@ -164,7 +232,7 @@ namespace tool
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "htget: Can't save null document to file\n" ) );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
 		plus::string scheme;
@@ -172,9 +240,9 @@ namespace tool
 		plus::string urlPath;
 		plus::string portStr;
 		
-		p7::in_port_t default_port = p7::in_port_t( 0 );
+		const char* default_port = "";
 		
-		bool parsed = ParseURL( freeArgs[ 0 ], scheme, hostname, portStr, urlPath );
+		bool parsed = ParseURL( args[ 0 ], scheme, hostname, portStr, urlPath );
 		
 		// FIXME:  Eliminate . and .. from urlPath
 		
@@ -187,7 +255,7 @@ namespace tool
 		
 		if ( scheme == "http" )
 		{
-			default_port = p7::in_port_t( 80 );
+			default_port = "80";
 		}
 		else
 		{
@@ -198,20 +266,20 @@ namespace tool
 			return 2;
 		}
 		
-		p7::in_port_t port = default_port;
+		const char* host = hostname.c_str();
+		const char* port = default_port;
 		
 		if ( !portStr.empty() )
 		{
-			port = p7::in_port_t( gear::parse_unsigned_decimal( portStr.c_str() ) );
+			port = portStr.c_str();
 		}
-		
-		p7::in_addr_t ip = ResolveHostname( hostname.c_str() );
 		
 		plus::string message_header =   HTTP::RequestLine( method, urlPath.c_str(), urlPath.size() )
 		                              + HTTP::HeaderFieldLine( "Host", hostname )
+		                              + "User-Agent: " DEFAULT_USER_AGENT "\r\n"
 		                              + "\r\n";
 		
-		n::owned< p7::fd_t > http_server = p7::connect( ip, port );
+		n::owned< p7::fd_t > http_server = p7::connect( host, port );
 		
 		p7::write( http_server, message_header );
 		
@@ -228,7 +296,21 @@ namespace tool
 		
 		if ( expecting_content )
 		{
-			receive_document( response.GetPartialContent(),
+			const plus::string& partial_content = response.GetPartialContent();
+			
+			if ( dumping_progress )
+			{
+				content_length = response.ContentLengthOrZero();
+				
+				if ( content_length )
+				{
+					content_length_string = gear::inscribe_unsigned_decimal( content_length );
+					
+					dump_progress( partial_content.size() );
+				}
+			}
+			
+			receive_document( partial_content,
 			                  http_server,
 			                  p7::open( outputFile, p7::o_wronly | create_flags ) );
 		}
@@ -237,4 +319,3 @@ namespace tool
 	}
 	
 }
-

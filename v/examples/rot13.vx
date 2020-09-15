@@ -1,0 +1,12 @@
+#!/usr/bin/env vx
+
+const args = argv[ 1 -> argc ]
+
+var text = join( " ", *args )
+
+const abc = packed( 'A' .. 'M', 'a' .. 'm' )
+const nop = packed( 'N' .. 'Z', 'n' .. 'z' )
+
+translate( &text, abc nop, nop abc )
+
+print text

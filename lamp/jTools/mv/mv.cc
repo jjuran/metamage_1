@@ -108,4 +108,3 @@ int main( int argc, char const *const argv[] )
 	
 	return fail != 0;
 }
-

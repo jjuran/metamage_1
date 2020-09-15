@@ -1,0 +1,168 @@
+#!/usr/bin/env vx -Z
+
+const bindir = dirname realpath argv[ 0 ]
+
+const amsdir = bindir "/../share/ams/"
+
+const ams_bin = getenv "AMS_BIN" or amsdir "/bin"
+const ams_lib = getenv "AMS_LIB" or amsdir "/lib"
+const ams_mnt = getenv "AMS_MNT" or amsdir "/mnt"
+
+const title = "Advanced Mac Substitute"
+
+const screen_res = getenv "AMS_SCREENRES" or "512x342"
+
+const default_app = "Welcome"
+
+const app_name =
+	if argc > 1
+		then {argv[ 1 ]}
+	else if const ams_appname = getenv "AMS_APPNAME"
+		then {ams_appname}
+	else {default_app}
+
+def exists (path)
+{
+	return try {stat path; true} catch {false}
+}
+
+def which (program)
+{
+	return
+	try
+	{
+		output-from-run [ "which", program ],
+	}
+	catch {}
+}
+
+const home     = getenv "HOME"
+const home_68k = home "/68k"
+
+const root_dir = if exists home_68k then {home_68k} else {ams_mnt}
+
+const freemountd-subcmd = "freemountd -q --root" / ' ', root_dir
+
+const events_fd_slot = reader "/dev/null"
+const events_fd_opt  = "--events-fd=" events_fd_slot
+
+var sound-prefix = ()
+
+def get_sound_fd
+{
+	if const sound_fd = getenv "AMS_SOUND_FD" then
+	{
+		return sound_fd
+	}
+	
+	if which "sndtrack" then
+	{
+		const sound_fd_slot = str reader "/dev/null"
+		sound-prefix = "graft", "--fd", sound_fd_slot, "sndtrack", "//"
+		
+		return sound_fd_slot
+	}
+	
+	return ()
+}
+
+def core_opts
+{
+	var opts = [ events_fd_opt ]
+	
+	if const romgen = getenv "AMS_ROMGEN" then
+	{
+		opts <-- "-R" romgen
+	}
+	
+	return ams-core: opts
+}
+
+def io_opts
+{
+	return
+	if const sound_fd = get_sound_fd() then
+	{
+		ams-io: [ "--sound-fd=" sound_fd ],
+	}
+}
+
+def fs_opts
+{
+	return
+	if const disk = getenv "AMS_DISK" then
+	{
+		ams-fs: [ "--disk", disk ],
+	}
+}
+
+const module_args = str^
+[
+	core_opts(),
+	fs_opts(),
+	io_opts(),
+]
+
+def argify (name)
+{
+	const path = ams_lib "/" name
+	
+	return
+		if name in module_args
+			then {"[", path, *module_args[ name ], "]"}
+			else {path}
+}
+
+const prefix_list = "core io fs rsrc pack seg qd ui print"
+const ams_modules = [ prefix_list / ' ' ] map {"ams-" v}
+const module_opts = ams_modules map {"-m", argify v}
+
+const app = ams_bin "/app"
+
+const xv68k-screen
+const command-prefix
+
+if exists "/gui" then
+{
+	chdir "/gui/new/port"
+	
+	link( "new/stack", "view" )
+	
+	link( "new/eventtap", "v/events/view" )
+	link( "new/bitmap",   "v/screen/view" )
+	
+	rewrite "title"           <== title "\n"
+	rewrite "procid"          <== "4\n"
+	rewrite "size"            <== "512x342\n"
+	rewrite "v/screen/v/size" <== "512x342\n"
+	
+	touch "window"
+	
+	dup2( reader "v/events/v/stream", events_fd_slot )
+	
+	xv68k-screen   = "--screen=v/screen/v/bits"
+	command-prefix = "daemonize --stdin --cwd --ctty=tty --" / ' '
+}
+else
+{
+	const var_run_raster = home "/var/run/raster"
+	
+	run [ "mkdir -p" / ' ', var_run_raster ]
+	
+	const screen = var_run_raster "/ams"
+	const raster = "--raster=" screen
+	
+	run [ "raster make -fg " screen_res "*1 -m paint -R" / ' ', screen ]
+	
+	run [ "raster init" / ' ', screen ]
+	
+	xv68k-screen   = raster
+	command-prefix = "exhibit", "-t", title, raster, events_fd_opt
+}
+
+const xv68k-subcmd = "xv68k", "-tSP", xv68k-screen, *module_opts, app, app_name
+const graft-subcmd = "graft", freemountd-subcmd, "//", xv68k-subcmd
+
+const command = [ command-prefix, sound-prefix, graft-subcmd ]
+
+run command

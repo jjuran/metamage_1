@@ -5,9 +5,14 @@
 
 #include "Genie/Process.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
-#ifndef __PROCESSES__
-#include <Processes.h>
+#ifndef __MACTYPES__
+#include <MacTypes.h>
 #endif
 
 // Standard C++
@@ -20,11 +25,15 @@
 #include <time.h>
 
 // POSIX
+#include <fcntl.h>
 #include "sys/stat.h"
 #include "sys/wait.h"
 #include "unistd.h"
 
-// Relix
+// mac-sys-utils
+#include "mac_sys/exit_to_shell.hh"
+
+// relix-include
 #include "relix/syscalls.h"
 
 // Iota
@@ -45,18 +54,6 @@
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
 
-#include "Nitrogen/Aliases.hh"
-#include "Nitrogen/Threads.hh"
-
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
-
-// GetPathname
-#include "GetPathname.hh"
-
-// MacIO
-#include "MacIO/FSMakeFSSpec_Sync.hh"
-
 // Recall
 #include "recall/backtrace.hh"
 
@@ -64,41 +61,53 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/file_descriptor.hh"
+#include "vfs/filehandle.hh"
+#include "vfs/node.hh"
+#include "vfs/filehandle/primitives/pread.hh"
+#include "vfs/functions/resolve_links_in_place.hh"
+#include "vfs/functions/resolve_pathname.hh"
+#include "vfs/primitives/open.hh"
 #include "vfs/primitives/stat.hh"
 
+// MacVFS
+#include "MacVFS/util/get_Mac_type_code.hh"
+
+// relix-kernel
+#include "relix/api/deliver_fatal_signal.hh"
+#include "relix/api/getcwd.hh"
+#include "relix/api/get_process_group.hh"
+#include "relix/api/root.hh"
+#include "relix/api/terminate_current_process.hh"
+#include "relix/api/thread_yield.hh"
+#include "relix/api/waits_for_children.hh"
+#include "relix/config/mini.hh"
+#include "relix/config/reexec.hh"
+#include "relix/config/syscall_stacks.hh"
+#include "relix/fs/console.hh"
+#include "relix/glue/system_call.68k.hh"
+#include "relix/glue/system_call.ppc.hh"
+#include "relix/glue/userland.hh"
+#include "relix/signal/signal_process_group.hh"
+#include "relix/task/A5_world.hh"
+#include "relix/task/alarm_clock.hh"
+#include "relix/task/fd_map.hh"
+#include "relix/task/process.hh"
+#include "relix/task/process_group.hh"
+#include "relix/task/process_image.hh"
+#include "relix/task/process_resources.hh"
+#include "relix/task/scheduler.hh"
+#include "relix/task/session.hh"
+#include "relix/time/cpu_time_checkpoint.hh"
+
 // Genie
-#include "Genie/caught_signal.hh"
-#include "Genie/Devices.hh"
-#include "Genie/Dispatch/system_call.68k.hh"
-#include "Genie/Dispatch/system_call.ppc.hh"
-#include "Genie/FileDescriptor.hh"
 #include "Genie/Faults.hh"
-#include "Genie/FS/ResolvePathname.hh"
-#include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/exec.hh"
-#include "Genie/FS/opendir.hh"
-#include "Genie/IO/Base.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
-#include "Genie/scheduler.hh"
-#include "Genie/signal_traits.hh"
-#include "Genie/SystemCallRegistry.hh"
-#include "Genie/SystemConsole.hh"
-#include "Genie/userland.hh"
-#include "Genie/Utilities/AsyncIO.hh"
 
 
 #ifndef SIGSTKFLT
 #define SIGSTKFLT  (-1)
-#endif
-
-#if defined(__MWERKS__) && defined(__csignal__)
-	#undef SIGABRT
-	#undef SIGFPE
-	#undef SIGILL
-	#undef SIGINT
-	#undef SIGSEGV
-	#undef SIGTERM
 #endif
 
 
@@ -121,15 +130,23 @@ static void DumpBacktrace()
 	
 	make_report_from_stack_crawl( report, begin, end );
 	
-	(void) Genie::WriteToSystemConsole( report.data(), report.size() );
+	(void) relix::console::log( report.data(), report.size() );
+}
+
+namespace relix
+{
+	
+	Genie::Process* gCurrentProcess;  // extern, declared in Faults.cc
+	
 }
 
 namespace Genie
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	
+	
+	using relix::memory_data;
 	
 	
 	static uint64_t microseconds()
@@ -146,14 +163,14 @@ namespace Genie
 		sizeof (_relix_system_parameter_block),
 		sizeof (_relix_user_parameter_block),
 		
-		TARGET_CPU_68K ? &dispatch_68k_system_call :
-		TARGET_CPU_PPC ? &dispatch_ppc_system_call
+		TARGET_CPU_68K ? &relix::dispatch_68k_system_call :
+		TARGET_CPU_PPC ? &relix::dispatch_ppc_system_call
 		               : NULL,
 		
 		&microseconds
 	};
 	
-	Process* gCurrentProcess;  // extern, declared in Faults.cc
+	using relix::gCurrentProcess;
 	
 	Process& CurrentProcess()
 	{
@@ -193,50 +210,40 @@ namespace Genie
 	
 	Process& GetProcess( pid_t pid )
 	{
-		if ( Process* process = FindProcess( pid ) )
-		{
-			return *process;
-		}
-		
-		throw p7::errno_t( ESRCH );
-	}
-	
-	static void* find_pid( void* param, pid_t pid, Process& process )
-	{
-		return *(pid_t*) param == pid ? &process
-		                              : NULL;
+		return get_process( pid );
 	}
 	
 	Process* FindProcess( pid_t pid )
 	{
-		if ( Process* result = (Process*) for_each_process( &find_pid, &pid ) )
-		{
-			if ( result->GetLifeStage() != kProcessReleased )
-			{
-				return result;
-			}
-		}
-		
-		return NULL;
+		return lookup_process( pid );
 	}
 	
-	void DeliverFatalSignal( int signo )
+}
+
+namespace relix
+{
+	
+	void deliver_fatal_signal( int signo )
 	{
+		using namespace Genie;
+		
 		typedef void (*signal_handler_t)(int);
 		
 		if ( gCurrentProcess != NULL )
 		{
-			signal_handler_t handler = gCurrentProcess->GetSignalAction( signo ).sa_handler;
+			relix::process& proc = gCurrentProcess->get_process();
+			
+			signal_handler_t handler = proc.get_sigaction( signo ).sa_handler;
 			
 			if ( handler != SIG_DFL  &&  handler != SIG_IGN )
 			{
-				call_signal_handler( handler, signo );
+				relix::call_signal_handler( handler, signo );
 			}
 			
 			gCurrentProcess->Terminate( signo | 0x80 );
 		}
 		
-		if ( TARGET_CONFIG_DEBUGGING )
+		if ( CONFIG_DEBUGGING )
 		{
 			::DebugStr( "\p" "Fatal condition occurred on main thread" );
 		}
@@ -247,122 +254,71 @@ namespace Genie
 			Mac::SysBeep();
 		}
 		
-		::ExitToShell();  // not messing around
+		mac::sys::exit_to_shell();  // not messing around
 	}
 	
+}
+
+namespace Genie
+{
 	
-	int Process::Run()
+	// This function doesn't return if the process is current.
+	static inline
+	void exit_process( Process& process, int exit_status )
 	{
-		// Accumulate any system time between start and entry to main()
-		LeaveSystemCall();
+		const int wait_status = (exit_status & 0xFF) << 8;
 		
-		int exit_status = 0;
+		process.Terminate( wait_status );
+	}
+	
+	static int reexec_start( void* args[] )
+	{
+		Reexec_Function f = (Reexec_Function) args[ 0 ];
 		
-		if ( Reexec_Function f = (Reexec_Function) itsReexecArgs[ 0 ] )
-		{
-			exit_status = f( itsReexecArgs[ 1 ],
-			                 itsReexecArgs[ 2 ],
-			                 itsReexecArgs[ 3 ],
-			                 itsReexecArgs[ 4 ],
-			                 itsReexecArgs[ 5 ],
-			                 itsReexecArgs[ 6 ],
-			                 itsReexecArgs[ 7 ] );
-		}
-		else
-		{
-			int    argc = its_memory_data->get_argc();
-			char** argv = its_memory_data->get_argv();
-			char** envp = its_memory_data->get_envp();
-			
-			relix_entry relix_main = its_exec_handle->get_main_entry_point();
-			
-			ENTER_USERMAIN();
-			
-			exit_status = relix_main( argc,
-			                          argv,
-			                          envp,
-			                          &global_parameter_block );
-			
-			EXIT_USERMAIN();
-			
-			// Not reached by regular tools, since they call exit()
-		}
-		
-		// Accumulate any user time between last system call (if any) and return from main()
-		EnterSystemCall();
-		
-		// For code fragments, static destruction occurs here.
-		its_exec_handle.reset();
+		int exit_status = f( args[ 1 ],
+		                     args[ 2 ],
+		                     args[ 3 ],
+		                     args[ 4 ],
+		                     args[ 5 ],
+		                     args[ 6 ],
+		                     args[ 7 ] );
 		
 		return exit_status;
 	}
 	
 	
-	recall::stack_frame_pointer Init_Thread();
-	
-#if TARGET_CPU_PPC && TARGET_RT_MAC_CFM
-	
-	asm recall::stack_frame_pointer Init_Thread()
-	{
-		lwz r4,0(sp)
-		li  r0,0
-		lwz r3,0(r4)
-		stw r0,0(r3)
-	}
-	
-#elif TARGET_CPU_68K
-	
-	asm recall::stack_frame_pointer Init_Thread()
-	{
-		MOVEA.L (A6),A0
-		RTS
-	}
-	
-#else
-	
-	inline recall::stack_frame_pointer Init_Thread()
-	{
-		return NULL;
-	}
-	
-#endif
-	
-	
-	static void* measure_stack_limit()
-	{
-	#ifdef __MACOS__
-		
-		const unsigned extra_stack = TARGET_CPU_68K * 10;
-		
-		return   (char*) recall::get_frame_pointer()
-		       - (N::ThreadCurrentStackSpace( N::GetCurrentThread() ) + extra_stack);
-		
-	#endif
-		
-		return NULL;
-	}
-	
-	pascal void* Process::ThreadEntry( void* param )
+	void* Process::thread_start( void* param, const void* bottom, const void* limit )
 	{
 		Process* process = reinterpret_cast< Process* >( param );
 		
-		process->its_pb.stack_bottom = Init_Thread();
-		process->its_pb.stack_limit  = measure_stack_limit();
+		relix::mark_thread_inactive( process->gettid() );
 		
-		try
+		relix::process_image& image = process->get_process().get_process_image();
+		
+		_relix_user_parameter_block& pb = image.param_block();
+		
+		global_parameter_block.current_user = &pb;
+		
+		// Accumulate any system time between start and entry to main()
+		relix::leave_system();
+		
+		int exit_status = 0;
+		
+		if ( CONFIG_REEXEC  &&  process->itsReexecArgs[ 0 ] )
 		{
-			process->InitThread();
-			
-			int exit_status = process->Run();
-			
-			process->Exit( exit_status );
-			
-			// Not reached
+			exit_status = reexec_start( process->itsReexecArgs );
 		}
-		catch ( ... )
+		else
 		{
-			abort();
+			exit_status = image.enter_start_routine( &global_parameter_block );
+			
+			// Not reached by regular tools, since they call exit()
 		}
+		
+		// Accumulate any time between last syscall (if any) and return from userspace
+		relix::enter_system();
+		
+		exit_process( *process, exit_status );
 		
 		// Not reached
 		
@@ -384,82 +340,94 @@ namespace Genie
 	
 	struct ExecContext
 	{
-		FSTreePtr                   executable;
+		vfs::node_ptr               executable;
 		std::vector< const char* >  argVector;
-		plus::string                scriptPath;
-		plus::string                interpreterPath;
-		plus::string                interpreterArg;
+		plus::var_string            interpreter;
 		
 		ExecContext()  {}
 		
-		ExecContext( const FSTreePtr&    executable,
+		ExecContext( const vfs::node&    executable,
 		             char const* const*  argv )
 		:
-			executable( executable ),
+			executable( &executable ),
 			argVector ( argv, argv + argv_length( argv ) + 1 )
 		{}
 	};
 	
 	static inline p7::errno_t NotExecutable()  { return p7::errno_t( EPERM ); }
 	
-	static void Normalize( const char* path, ExecContext& context, const FSTree* cwd )
+	static plus::string first_disk_block( const vfs::node& file )
 	{
-		FSSpec fileSpec;
+		const size_t buffer_length = 512;
 		
-		OSType type = 'Wish';
+		plus::var_string result;
+		
+		char* p = result.reset( buffer_length );
+		
+		ssize_t n_read = 0;
 		
 		try
 		{
-			fileSpec = GetFSSpecFromFSTree( context.executable );
+			const vfs::filehandle_ptr fh = open( file, O_RDONLY, 0 );
 			
-			type = N::FSpGetFInfo( fileSpec ).fdType;
+			n_read = pread( *fh, p, buffer_length, 0 );
+		}
+		catch ( ... )
+		{
+		}
+		
+		result.resize( n_read );
+		
+		return result.move();
+	}
+	
+	static void Normalize( const char* path, ExecContext& context, const vfs::node& cwd )
+	{
+		OSType type = 0;
+		
+		try
+		{
+			type = vfs::get_Mac_type_code( *context.executable );
 		}
 		catch ( ... )
 		{
 			// Assume that non-FSSpec executables are binaries, not scripts
 		}
 		
-		if ( type == 'Wish' )
+		if ( type == 'Tool' )
 		{
 			return;  // Already normalized
 		}
 		
-		if ( type == 'TEXT' )
+		const plus::string block = first_disk_block( *context.executable );
+		
+		const ssize_t bytes = block.size();
+		
+		const char* data = block.c_str();
+		
+		const bool has_shebang = bytes > 2 && data[0] == '#' && data[1] == '!';
+		
+		if ( type == 'TEXT'  ||  (type == 0  &&  has_shebang) )
 		{
-			context.interpreterPath = "/bin/sh";  // default
-			bool hasArg = false;
-			
-			char data[ 1024 + 1 ];
-			data[1024] = '\0';
-			
-			n::owned< N::FSFileRefNum > script = N::FSpOpenDF( fileSpec, N::fsRdPerm );
-			
-			size_t bytes = N::FSRead( script, 1024, data, N::ThrowEOF_Never() );
-			
-			N::FSClose( script );
-			
-			if ( bytes > 2 && data[0] == '#' && data[1] == '!' )
+			if ( has_shebang )
 			{
-				char* end = data + bytes;
+				const char* end = data + bytes;
 				
-				char* cr = std::find( data, end, '\r' );
-				char* lf = std::find( data, end, '\n' );
+				const char* cr = std::find( data, end, '\r' );
+				const char* lf = std::find( data, end, '\n' );
 				
-				char* nl = std::min( cr, lf );
+				const char* nl = std::min( cr, lf );
 				
 				if ( nl == end )
 				{
 					throw NotExecutable();  // #! line too long
 				}
 				
-				*nl = '\0';
-				
-				char* space = std::strchr( data, ' ' );
-				
-				hasArg = space;
-				
-				context.interpreterPath.assign( &data[2], space ? space : nl );
-				context.interpreterArg .assign( space ? space + 1 : nl, nl );
+				context.interpreter.assign( &data[ 2 ], nl );
+			}
+			else
+			{
+				context.interpreter = "/bin/sh";  // default
 			}
 			
 			// E.g. "$ script foo bar baz"
@@ -473,158 +441,75 @@ namespace Genie
 				// argv == { "/path/to/script", "foo", "bar", "baz", NULL }
 			}
 			
-			context.argVector.insert( context.argVector.begin(),
-			                          context.interpreterPath.c_str() );
+			char* data = &context.interpreter[ 0 ];
+			
+			context.argVector.insert( context.argVector.begin(), data );
 			
 			// argv == { "sh", "script", "foo", "bar", "baz", NULL }
 			
-			if ( hasArg )
+			char* p = data;
+			
+			int i = 0;
+			
+			while ( char* space = strchr( p, ' ' ) )
 			{
-				context.argVector.insert( context.argVector.begin() + 1,
-				                          context.interpreterArg.c_str() );
+				*space = '\0';
+				
+				p = space + 1;
+				
+				context.argVector.insert( context.argVector.begin() + ++i, p );
 			}
 			
-			context.executable = ResolvePathname( context.interpreterPath, cwd );
+			plus::string path = context.interpreter.substr( 0, strlen( data ) );
+			
+			context.executable = resolve_pathname( *relix::root(), path, cwd );
 		}
-		else if ( type == 'MPST' )
-		{
-			context.scriptPath = GetMacPathname( fileSpec );
-			
-			const int newTokenCount = 3;
-			const int skipCount = 1;  // skip the script's name because we're overwriting it anyway
-			
-			// E.g. "$ script foo bar"
-			// argv == { "script", "foo", "bar", "baz", NULL }
-			
-			context.argVector.resize( context.argVector.size() + newTokenCount );
-			
-			const char* const* const argv = &context.argVector.front();
-			
-			// argv == { "script", "foo", "bar", "baz", NULL, ??, ?? }
-			
-			std::copy_backward( context.argVector.begin() + skipCount,
-			                    context.argVector.end() - newTokenCount,
-			                    context.argVector.end() );
-			
-			// argv == { "script", "foo", "bar", "foo", "bar", "baz", NULL }
-			
-			context.argVector[ 0 ] = "/Developer/Tools/tlsrvr";
-			context.argVector[ 1 ] = "--escape";
-			context.argVector[ 2 ] = "--";
-			context.argVector[ 3 ] = context.scriptPath.c_str();  // Overwrite with full pathname
-			
-			// argv == { "sh", "--", "/usr/bin/script", "foo", "bar", "baz", NULL }
-			
-			context.executable = ResolveAbsolutePath( STR_LEN( "/Developer/Tools/tlsrvr" ) );
-		}
-		else
+		else if ( type != 0 )
 		{
 			throw NotExecutable();
 		}
 	}
 	
 	
-	static boost::intrusive_ptr< Session > NewSession( pid_t sid )
-	{
-		return boost::intrusive_ptr< Session >( new Session( sid ) );
-	}
-	
-	static boost::intrusive_ptr< ProcessGroup > NewProcessGroup( pid_t pgid, const boost::intrusive_ptr< Session >& session )
-	{
-		return boost::intrusive_ptr< ProcessGroup >( new ProcessGroup( pgid, session ) );
-	}
-	
-	static boost::intrusive_ptr< ProcessGroup > NewProcessGroup( pid_t pgid )
-	{
-		return NewProcessGroup( pgid, NewSession( pgid ) );
-	}
-	
 	static void* find_process_group( void* param, pid_t, Process& process )
 	{
 		const pid_t pgid = *(pid_t*) param;
 		
-		if ( process.GetPGID() == pgid )
+		relix::process_group& process_group = process.get_process().get_process_group();
+		
+		if ( process_group.id() == pgid )
 		{
-			return process.GetProcessGroup().get();
+			return &process_group;
 		}
 		
 		return NULL;
 	}
 	
-	boost::intrusive_ptr< ProcessGroup > FindProcessGroup( pid_t pgid )
+	static boost::intrusive_ptr< relix::process_image >
+	//
+	new_process_image( const vfs::node&    exe,
+	                   const char* const*  argv,
+	                   const char* const*  envp )
 	{
-		void* result = for_each_process( &find_process_group, &pgid );
-		
-		ProcessGroup* group = (ProcessGroup*) result;
-		
-		return boost::intrusive_ptr< ProcessGroup >( group );
+		return new relix::process_image( exe, argv, envp );
 	}
 	
-	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::intrusive_ptr< Session >& session )
+	static vfs::filehandle_ptr open_device( const char* path, size_t length )
 	{
-		boost::intrusive_ptr< ProcessGroup > pgrp = FindProcessGroup( pgid );
-		
-		if ( pgrp.get() == NULL )
-		{
-			return NewProcessGroup( pgid, session );
-		}
-		
-		if ( pgrp->GetSession() != session )
-		{
-			p7::throw_errno( EPERM );
-		}
-		
-		return pgrp;
-	}
-	
-	static inline boost::intrusive_ptr< memory_data > root_memory_data()
-	{
-		boost::intrusive_ptr< memory_data > result( memory_data::create() );
-		
-		char const *const argv[] = { "init", NULL };
-		
-		result->set_argv( argv );
-		result->set_envp( NULL );
-		
-		return result;
-	}
-	
-	static inline _relix_user_parameter_block user_pb_for_init()
-	{
-		_relix_user_parameter_block pb = { NULL };
-		
-		return pb;
-	}
-	
-	static inline _relix_user_parameter_block copy_user_pb( const _relix_user_parameter_block& pb )
-	{
-		_relix_user_parameter_block result = pb;
-		
-		result.cleanup = NULL;
-		
-		return result;
+		return open( *vfs::resolve_absolute_path( *relix::root(), path, length ), O_RDWR, 0 );
 	}
 	
 	Process::Process( RootProcess ) 
 	:
-		its_pb                ( user_pb_for_init() ),
-		itsPPID               ( 0 ),
+		relix::thread( 1,
+		               0,
+		               *new relix::process(),
+		               false ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
-		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
-		itsStackFramePtr      ( NULL ),
-		itsAlarmClock         ( 0 ),
-		itsName               ( "init" ),
-		its_fs_info           ( fs_info::create( opendir( FSRoot() ) ) ),
-		itsFileDescriptors    ( fd_table::create() ),
-		its_signal_handlers   ( signal_handlers::create() ),
+		its_vfork_parent      ( 0 ),
 		itsLifeStage          ( kProcessLive ),
-		itsInterdependence    ( kProcessIndependent ),
-		itsSchedule           ( kProcessSleeping ),
-		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
-		itsProgramFile        ( FSRoot() ),
-		its_memory_data       ( root_memory_data() ),
 		itMayDumpCore         ()
 	{
 		itsReexecArgs[0] =
@@ -636,37 +521,29 @@ namespace Genie
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
 		
-		fd_table& fds = *itsFileDescriptors;
+		relix::fd_map& fds = FileDescriptors();
 		
-		fds[ 0 ] =
-		fds[ 1 ] = GetSimpleDeviceHandle( "null"    );
-		fds[ 2 ] = GetSimpleDeviceHandle( "console" );
+		fds[ 2 ] = open_device( STR_LEN( "/dev/console" ) );
+		fds[ 1 ] =
+		fds[ 0 ] = open_device( STR_LEN( "/dev/null"    ) );
 		
-		InstallExceptionHandlers();
+		relix::InstallExceptionHandlers();
+		
+		relix::save_the_A5_world();
 	}
 	
-	Process::Process( Process& parent, pid_t pid, pid_t ppid ) 
+	Process::Process( Process& parent, pid_t pid, pid_t tid ) 
 	:
-		SignalReceiver        ( parent ),
-		its_pb                ( copy_user_pb( parent.its_pb ) ),
-		itsPPID               ( ppid ? ppid : parent.GetPID() ),
+		relix::thread( tid,
+		               parent.signals_blocked(),
+		               tid == pid ? *new relix::process( pid, parent.get_process() )
+		                          : parent.get_process(),
+		               false ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
-		itsProcessGroup       ( parent.GetProcessGroup() ),
-		itsStackFramePtr      ( NULL ),
-		itsAlarmClock         ( 0 ),
-		itsName               ( parent.ProgramName() ),
-		its_fs_info           ( parent.its_fs_info ),
-		itsFileDescriptors    ( parent.itsFileDescriptors ),
-		its_signal_handlers   ( parent.its_signal_handlers ),
+		its_vfork_parent      ( 0 ),
 		itsLifeStage          ( kProcessStarting ),
-		itsInterdependence    ( kProcessIndependent ),
-		itsSchedule           ( kProcessRunning ),
-		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
-		itsProgramFile        ( parent.itsProgramFile ),
-		its_exec_handle       ( parent.its_exec_handle ),
-		its_memory_data       ( parent.its_memory_data ),
 		itMayDumpCore         ( true )
 	{
 		itsReexecArgs[0] =
@@ -678,121 +555,59 @@ namespace Genie
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
 		
-		mark_process_active( pid );
-	}
-	
-	Process::~Process()
-	{
-	}
-	
-	void Process::unshare_fs_info()
-	{
-		its_fs_info = duplicate( *its_fs_info );
-	}
-	
-	void Process::unshare_files()
-	{
-		itsFileDescriptors = duplicate( *itsFileDescriptors );
-	}
-	
-	void Process::unshare_signal_handlers()
-	{
-		its_signal_handlers = duplicate( *its_signal_handlers );
-	}
-	
-	unsigned int Process::SetAlarm( unsigned int seconds )
-	{
-		uint64_t now = clock();
+	#ifdef __RELIX__
 		
-		unsigned int remainder = 0;
+		relix::mark_thread_active( tid );
 		
-		if ( itsAlarmClock )
-		{
-			remainder = (itsAlarmClock - now) / 1000000 + 1;
-		}
-		
-		itsAlarmClock = seconds ? now + seconds * 1000000 : 0;
-		
-		return remainder;
-	}
-	
-	void Process::InitThread()
-	{
-		Resume();
-	}
-	
-	Nitrogen::ThreadID Process::GetThread() const
-	{
-		const Process* process = this;
-		
-		while ( process->itsThread.get() == N::kNoThreadID )
-		{
-			pid_t ppid = process->GetPPID();
-			
-			if ( ppid == 1 )
-			{
-				return N::kNoThreadID;
-			}
-			
-			process = &GetProcess( ppid );
-		}
-		
-		return process->itsThread.get();
+	#endif
 	}
 	
 	Process& Process::vfork()
 	{
-		const boost::intrusive_ptr< Process >& child_ptr = NewProcess( *this );
+		Process& child = NewProcess( *this );
 		
-		Process& child = *child_ptr;
-		
-		child.unshare_fs_info();
-		child.unshare_files();
-		child.unshare_signal_handlers();
+		child.get_process().unshare_per_fork();
 		
 		// suspend parent for vfork
 		
 		itsForkedChildPID = child.GetPID();
 		
-		itsInterdependence = kProcessForking;
-		itsSchedule        = kProcessFrozen;
+		child.its_vfork_parent = this;
 		
-		itsStackFramePtr = get_vfork_frame_pointer();
-		
-		Suspend();
+		mark_vfork_stack_frame();
 		
 		// activate child
 		
-		child.itsInterdependence = kProcessForked;
+		child.share_os_thread( *this );
+		
+		update_os_thread_param( &child );
 		
 		gCurrentProcess = &child;
-		
-		global_parameter_block.current_user = &child.its_pb;
 		
 		return child;
 		
 	}
 	
-	static void close_fd_on_exec( void* keep, int fd, FileDescriptor& desc )
+	static void close_fd_on_exec( void* keep, int fd, vfs::file_descriptor& desc )
 	{
-		if ( desc.closeOnExec  &&  fd != *(int*) keep )
+		if ( desc.will_close_on_exec() )
 		{
 			desc.handle.reset();
 		}
 	}
 	
-	static void CloseMarkedFileDescriptors( fd_table& fileDescriptors, int keep_fd = -1 )
+	static void CloseMarkedFileDescriptors( relix::fd_map& fileDescriptors )
 	{
 		// Close file descriptors with close-on-exec flag.
 		
-		fileDescriptors.for_each( &close_fd_on_exec, &keep_fd );
+		fileDescriptors.for_each( &close_fd_on_exec, NULL );
 	}
 	
-	static void CheckProgramFile( const FSTreePtr& programFile )
+	static void CheckProgramFile( const vfs::node& programFile )
 	{
 		struct ::stat sb;
 		
-		stat( programFile.get(), sb );
+		stat( programFile, sb );
 		
 		if ( S_ISDIR( sb.st_mode ) )
 		{
@@ -805,31 +620,24 @@ namespace Genie
 		}
 	}
 	
-	static std::size_t ThreadStackSize()
+	static inline std::size_t minimum_stack_size()
 	{
-		const ::Size minimumStackSize = 64 * 1024;
-		
-		::Size size = 0;
-		
-		// Jaguar returns paramErr
-		OSStatus err = ::GetDefaultThreadStackSize( kCooperativeThread, &size );
-		
-		return std::max( size, minimumStackSize );
+		return (CONFIG_MINI ? 32 : 64) * 1024;
 	}
 	
 	class thing_that_may_resume_after_vfork
 	{
 		private:
-			pid_t its_ppid;
+			Process* its_parent;
 		
 		public:
-			thing_that_may_resume_after_vfork() : its_ppid( 0 )
+			thing_that_may_resume_after_vfork() : its_parent()
 			{
 			}
 			
-			void enable( pid_t ppid )
+			void enable( Process* parent )
 			{
-				its_ppid = ppid;
+				its_parent = parent;
 			}
 			
 			~thing_that_may_resume_after_vfork();
@@ -837,10 +645,45 @@ namespace Genie
 	
 	thing_that_may_resume_after_vfork::~thing_that_may_resume_after_vfork()
 	{
-		if ( its_ppid )
+		if ( its_parent )
 		{
-			GetProcess( its_ppid ).ResumeAfterFork();
+			its_parent->ResumeAfterFork();
 		}
+	}
+	
+	static void thread_switch_in( void* param )
+	{
+		gCurrentProcess = NULL;
+		
+		destroy_pending();
+		
+		Process& thread = *(Process*) param;
+		
+		gCurrentProcess = &thread;
+		
+		thread.clear_stack_frame_mark();  // We don't track this while running
+		
+		thread.switch_in();
+	}
+	
+	static void thread_switch_out( void* param )
+	{
+		Process& thread = *(Process*) param;
+		
+		thread.switch_out();
+		
+		gCurrentProcess = NULL;
+	}
+	
+	static relix::os_thread_box new_thread( Process& task )
+	{
+		const std::size_t min_stack = minimum_stack_size();
+		
+		return new_os_thread( &Process::thread_start,
+		                      &task,
+		                      min_stack,
+		                      &thread_switch_in,
+		                      &thread_switch_out );
 	}
 	
 	void Process::Exec( const char*         path,
@@ -850,106 +693,63 @@ namespace Genie
 		// Declare this first so it goes out of scope last
 		thing_that_may_resume_after_vfork resume;
 		
-		n::owned< N::ThreadID > looseThread;
+		relix::os_thread_box looseThread;
 		
-		FSTreePtr cwd = GetCWD();
+		relix::process& proc = get_process();
 		
-		// Somehow (not GetCWD()) this fails in non-debug 68K in 7.6
-		FSTreePtr programFile = ResolvePathname( path, cwd.get() );
+		vfs::node_ptr cwd = getcwd( proc );
 		
-		ResolveLinks_InPlace( programFile );
+		vfs::node_ptr programFile = resolve_pathname( *relix::root(), path, *cwd );
 		
-		CheckProgramFile( programFile );
+		vfs::resolve_links_in_place( *relix::root(), programFile );
+		
+		CheckProgramFile( *programFile );
 		
 		// Do we take the name before or after normalization?
-		itsName = programFile->name();
+		proc.set_name( programFile->name() );
 		
-		ExecContext context( programFile, argv );
+		ExecContext context( *programFile, argv );
 		
-		Normalize( path, context, cwd.get() );
+		Normalize( path, context, *cwd );
 		
-		int script_fd = -1;
+		CloseMarkedFileDescriptors( FileDescriptors() );
 		
-		if ( !context.interpreterPath.empty() )
-		{
-			const bool has_arg = !context.interpreterArg.empty();
-			
-			const char* script_path = context.argVector[ 1 + has_arg ];
-			
-			if ( std::memcmp( script_path, STR_LEN( "/dev/fd/" ) ) == 0 )
-			{
-				const char* fd_name = script_path + STRLEN( "/dev/fd/" );
-				
-				script_fd = gear::parse_unsigned_decimal( fd_name );
-			}
-		}
-		
-		CloseMarkedFileDescriptors( *itsFileDescriptors, script_fd );
-		
-		ClearPendingSignals();
-		
-		ResetSignalHandlers();
-		
-		// Members of argv and envp could be living in its_memory_data
-		boost::intrusive_ptr< memory_data > new_memory_data( memory_data::create() );
-		
-		new_memory_data->set_argv( &context.argVector.front() );
-		
-		new_memory_data->set_envp( envp );
-		
-		using std::swap;
-		
-		swap( its_memory_data, new_memory_data );
-		
-		itsProgramFile = context.executable;
-		
-		shared_exec_handle executable = exec( itsProgramFile.get() );
+		proc.reset_signal_handlers();
 		
 		// We always spawn a new thread for the exec'ed process.
-		// If we've forked, then the thread is null, but if not, it's the
-		// current thread -- be careful!
-		
-		const std::size_t stackSize = ThreadStackSize();
 		
 		// Create the new thread
-		looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
+		looseThread = new_thread( *this );
 		
-		if ( its_pb.cleanup != NULL )
-		{
-			ENTER_USERLAND();
-			
-			its_pb.cleanup();
-			
-			EXIT_USERLAND();
-			
-			its_pb.cleanup = NULL;
-		}
+		// Save the process image that we're running from and set the new one.
+		boost::intrusive_ptr< relix::process_image > old_image = &proc.get_process_image();
+		
+		proc.set_process_image( *new_process_image( *context.executable,
+		                                            &context.argVector.front(),
+		                                            envp ) );
 		
 		// Make the new thread belong to this process and save the old one
-		itsThread.swap( looseThread );
+		swap_os_thread( looseThread );
 		
-		// Save the binary image that we're running from and set the new one.
-		swap( executable, its_exec_handle );
-		
-		// Lose the current executable.  If we're not vforked and the
+		// Lose the current process image.  If we're not vforked and the
 		// execution unit isn't cached, it's now gone.  But that's okay
 		// since the thread terminates in execve().
-		executable.reset();
+		old_image.reset();
 		
 		itsLifeStage       = kProcessLive;
-		itsInterdependence = kProcessIndependent;
-		itsSchedule        = kProcessRunning;  // a new process is runnable
+		
+		relix::mark_thread_active( gettid() );
 		
 		if ( gCurrentProcess != this )
 		{
 			return;
 		}
 		
-		Suspend();
-		
-		if ( looseThread.get() == N::kNoThreadID )
+		if ( its_vfork_parent )
 		{
-			resume.enable( itsPPID );
+			resume.enable( its_vfork_parent );
+			
+			its_vfork_parent = NULL;
 		}
 	}
 	
@@ -963,7 +763,7 @@ namespace Genie
 	{
 		thing_that_may_resume_after_vfork resume;
 		
-		n::owned< N::ThreadID > looseThread = SpawnThread( (Clone_Function) f, _1 );
+		relix::os_thread_box looseThread = SpawnThread( (Clone_Function) f, _1 );
 		
 	//	itsReexecArgs[0] = (void*) f;
 	//	itsReexecArgs[1] = _1;
@@ -974,22 +774,22 @@ namespace Genie
 		itsReexecArgs[6] = _6;
 		itsReexecArgs[7] = _7;
 		
-		CloseMarkedFileDescriptors( *itsFileDescriptors );
+		CloseMarkedFileDescriptors( FileDescriptors() );
 		
 		if ( gCurrentProcess != this )
 		{
 			return;
 		}
 		
-		Suspend();
-		
-		if ( looseThread.get() == N::kNoThreadID )
+		if ( its_vfork_parent )
 		{
-			resume.enable( itsPPID );
+			resume.enable( its_vfork_parent );
+			
+			its_vfork_parent = NULL;
 		}
 	}
 	
-	n::owned< N::ThreadID > Process::SpawnThread( Clone_Function f, void* arg )
+	relix::os_thread_box Process::SpawnThread( Clone_Function f, void* arg )
 	{
 		itsReexecArgs[0] = (void*) f;
 		itsReexecArgs[1] = arg;
@@ -1000,112 +800,114 @@ namespace Genie
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
 		
-		ClearPendingSignals();
-		
-		ResetSignalHandlers();
-		
-		const std::size_t stackSize = ThreadStackSize();
-		
 		// Create the new thread
-		n::owned< N::ThreadID > looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
+		relix::os_thread_box looseThread = new_thread( *this );
 		
 		// Make the new thread belong to this process and save the old one
-		itsThread.swap( looseThread );
+		swap_os_thread( looseThread );
 		
 		itsLifeStage       = kProcessLive;
-		itsInterdependence = kProcessIndependent;
-		itsSchedule        = kProcessRunning;  // a new process is runnable
+		
+		relix::mark_thread_active( gettid() );
 		
 		return looseThread;
 	}
 	
-	int Process::SetErrno( int errorNumber )
+	pid_t Process::GetPPID() const
 	{
-		if ( its_pb.errno_var != NULL )
-		{
-			*its_pb.errno_var = errorNumber;
-		}
-		
-		return errorNumber == 0 ? 0 : -1;
-	}
-	
-	const plus::string& Process::GetCmdLine() const
-	{
-		return its_memory_data.get() ? its_memory_data.get()->get_cmdline()
-		                             : plus::string::null;
+		return get_process().getppid();
 	}
 	
 	pid_t Process::GetPGID() const
 	{
-		return itsProcessGroup.get() ? itsProcessGroup->ID() : 0;
+		return get_process().get_process_group().id();
 	}
 	
-	pid_t Process::GetSID()  const
+	char Process::run_state_code() const
 	{
-		return itsProcessGroup.get() ? itsProcessGroup->GetSID() : 0;
-	}
-	
-	const IOPtr& Process::ControllingTerminal() const
-	{
-		if ( itsProcessGroup.get() )
+		if ( gCurrentProcess == this )
 		{
-			return GetProcessGroup()->GetSession()->GetControllingTerminal();
+			return 'R';
 		}
 		
-		static IOPtr null;
+		if ( itsLifeStage == kProcessReleased )
+		{
+			return 'X';
+		}
 		
-		return null;
+		if ( itsAsyncOpCount > 0 )
+		{
+			return 'D';
+		}
+		
+		if ( itsForkedChildPID != 0 )
+		{
+			return 'V';
+		}
+		
+		relix::process& proc = get_process();
+		
+		if ( proc.is_stopped() )
+		{
+			return 'T';
+		}
+		
+		if ( relix::os_thread_id thread = get_os_thread() )
+		{
+			if ( relix::is_os_thread_stopped( thread ) )
+			{
+				return 'W';
+			}
+		}
+		
+		if ( relix::is_thread_active( gettid() ) )
+		{
+			return 'Q';
+		}
+		
+		if ( proc.is_zombie() )
+		{
+			return 'Z';
+		}
+		
+		return 'S';
 	}
 	
-	FSTreePtr Process::GetCWD() const
+	relix::fd_map& Process::FileDescriptors()
 	{
-		return its_fs_info->getcwd()->GetFile();
-	}
-	
-	void Process::ChangeDirectory( const FSTreePtr& newCWD )
-	{
-		its_fs_info->chdir( opendir( newCWD.get() ) );
+		return get_process().get_process_resources().get_fd_map();
 	}
 	
 	void Process::ResumeAfterFork()
 	{
-		ASSERT( itsInterdependence == kProcessForking );
-		ASSERT( itsSchedule        == kProcessFrozen  );
-		
 		ASSERT( itsForkedChildPID != 0 );
 		
 		const int depth = 4 + TARGET_CPU_68K;
 		
 		using recall::get_stack_frame_pointer;
 		
-		recall::stack_frame_pointer vfork_fp = get_vfork_frame_pointer(       );
-		recall::stack_frame_pointer stack_fp = get_stack_frame_pointer( depth );
+		typedef recall::stack_frame_pointer fp_t;
+		
+		fp_t vfork_fp = (fp_t) get_vfork_frame_pointer(       );
+		fp_t stack_fp =        get_stack_frame_pointer( depth );
 		
 		// Stack grows down
-		const bool stack_fault = stack_fp > vfork_fp;
+		const bool stack_fault = !CONFIG_SYSCALL_STACKS  &&  stack_fp >= vfork_fp;
 		
-		Resume();
+		update_os_thread_param( this );
 		
-		itsInterdependence = Forked() ? kProcessForked
-		                              : kProcessIndependent;
+		gCurrentProcess = this;
 		
 		pid_t child = itsForkedChildPID;
 		
 		itsForkedChildPID = 0;
 		
-		if ( itsPID == 1 )
-		{
-			itsSchedule = kProcessSleeping;
-			
-			return;
-		}
-		
 		if ( stack_fault )
 		{
-			DeliverFatalSignal( SIGSTKFLT );
+			relix::deliver_fatal_signal( SIGSTKFLT );
 		}
 		
-		LeaveSystemCall();
+		relix::leave_system();
 		
 		resume_vfork( child );
 	}
@@ -1114,23 +916,17 @@ namespace Genie
 	{
 		Process& parent = *this;
 		
-		const boost::intrusive_ptr< Process >& child_ptr = NewProcess( parent );
-		
-		Process& child = *child_ptr;
+		Process& child = NewProcess( parent );
 		
 		child.itsLifeStage       = kProcessLive;
 		
-		child.itsThread = parent.itsThread;
+		child.swap_os_thread( parent );
 		
-		ASSERT( child.its_pb.cleanup == NULL );
+		exit_process( parent, exit_status );
 		
-		using std::swap;
+		child.update_os_thread_param( &child );
 		
-		swap( child.its_pb.cleanup, parent.its_pb.cleanup );
-		
-		parent.Exit( exit_status );
-		
-		child.Resume();
+		gCurrentProcess = &child;
 	}
 	
 	struct notify_param
@@ -1141,174 +937,126 @@ namespace Genie
 	
 	void* Process::notify_process( void* param, pid_t, Process& process )
 	{
+		// `process` is actually a thread
+		
 		const notify_param& pb = *(notify_param*) param;
 		
-		if ( pb.is_session_leader  &&  process.GetSID() == pb.pid )
+		const pid_t that_pid = process.GetPID();
+		
+		if ( that_pid == pb.pid  &&  process.gettid() != that_pid )
+		{
+			// This is one of our threads; kill it.
+			
+			if ( process.itsLifeStage < kProcessTerminating )
+			{
+				process.Terminate( 0 );  // singly recursive call
+			}
+			
+			if ( process.itsLifeStage == kProcessZombie )
+			{
+				process.Release();
+			}
+		}
+		
+		relix::process&  proc    = process.get_process();
+		relix::session&  session = proc.get_process_group().get_session();
+		
+		if ( pb.is_session_leader  &&  session.id() == pb.pid )
 		{
 			process.Raise( SIGHUP );
 		}
 		
-		if ( process.GetPPID() == pb.pid )
+		if ( proc.getppid() == pb.pid )
 		{
-			process.Orphan();
+			proc.orphan();
+			
+			if ( process.itsLifeStage == kProcessZombie )
+			{
+				process.Release();
+			}
 		}
 		
 		return NULL;
 	}
 	
-	void Process::ResetSignalHandlers()
-	{
-		its_signal_handlers->reset_handlers();
-	}
-	
-	const struct sigaction& Process::GetSignalAction( int signo ) const
-	{
-		ASSERT( signo >    0 );
-		ASSERT( signo < NSIG );
-		
-		return its_signal_handlers->get( signo - 1 );
-	}
-	
-	void Process::SetSignalAction( int signo, const struct sigaction& action )
-	{
-		ASSERT( signo >    0 );
-		ASSERT( signo < NSIG );
-		
-		its_signal_handlers->set( signo - 1, action );
-		
-		if ( action.sa_handler == SIG_IGN )
-		{
-			ClearPendingSignalSet( 1 << signo - 1 );
-		}
-	}
-	
-	void Process::ResetSignalAction( int signo )
-	{
-		const struct sigaction default_sigaction = { SIG_DFL };
-		
-		SetSignalAction( signo, default_sigaction );
-	}
-	
-	bool Process::WaitsForChildren() const
-	{
-		const struct sigaction& chld = GetSignalAction( SIGCHLD );
-		
-		enum
-		{
-			sa_nocldwait
-			
-		#ifdef SA_NOCLDWAIT
-			
-			= SA_NOCLDWAIT
-			
-		#endif
-			
-		};
-		
-		return chld.sa_handler != SIG_IGN  &&  (chld.sa_flags & sa_nocldwait) == 0;
-	}
-	
 	// This function doesn't return if the process is current.
-	void Process::Terminate()
+	void Process::Terminate( int wait_status )
 	{
-		mark_process_inactive( GetPID() );
-		
-		if ( WCOREDUMP( itsResult )  &&  itMayDumpCore )
+		if ( WCOREDUMP( wait_status )  &&  itMayDumpCore )
 		{
+			// prevent reentry if backtrace causes exception
+			itMayDumpCore = false;
+			
 			DumpBacktrace();
 		}
 		
 		itsLifeStage = kProcessTerminating;
-		itsSchedule  = kProcessUnscheduled;
 		
-		pid_t ppid = GetPPID();
+		relix::process& process = get_process();
+		
+		process.set_status( wait_status );
+		
+		pid_t ppid = process.getppid();
 		pid_t pid  = GetPID();
-		pid_t sid  = GetSID();
+		pid_t sid  = process.get_process_group().get_session().id();
 		
 		bool isSessionLeader = pid == sid;
 		
-		// This could yield, e.g. in OTCloseProvider() with sync idle events
-		itsFileDescriptors.reset();
-		
-		its_fs_info.reset();
-		
-		itsProcessGroup.reset();
-		
-		if ( its_pb.cleanup != NULL )
+		if ( gettid() == pid )
 		{
-			ENTER_USERLAND();
-			
-			its_pb.cleanup();
-			
-			EXIT_USERLAND();
+			process.zombify();
 		}
 		
 		itsLifeStage = kProcessZombie;
 		
-		Process& parent = GetProcess( ppid );
-		
-		if ( ppid > 1  &&  parent.WaitsForChildren() )
+		if ( gettid() == pid )
 		{
-			parent.Raise( SIGCHLD );
+			notify_param param = { pid, isSessionLeader };
+			
+			for_each_process( &notify_process, &param );
+			
+			Process& parent = GetProcess( ppid );
+			
+			if ( ppid > 1  &&  waits_for_children( parent.get_process() ) )
+			{
+				parent.Raise( SIGCHLD );
+			}
+			else
+			{
+				Release();
+			}
 		}
-		else
-		{
-			Release();
-		}
-		
-		notify_param param = { pid, isSessionLeader };
-		
-		for_each_process( &notify_process, &param );
 		
 		if ( gCurrentProcess != this )
 		{
 			return;
 		}
 		
-		Suspend();
+		relix::restore_the_A5_world();
 		
 		/*
 			For a vforked process (with null thread) this does nothing.
 			Otherwise, reset() is safe because it swaps with a temporary
 			before destroying the thread (so the copy that doesn't get
 			nulled out when the thread terminates is on the stack).
+			
+			Mark the thread inactive now, in case it doesn't get joined
+			right away.  If the OS thread still lives after reset, mark
+			the thread active again.
 		*/
 		
-		itsThread.reset();
+		relix::mark_thread_inactive( gettid() );
+		
+		reset_os_thread();
 		
 		// We get here if this is a vforked child, or fork_and_exit().
 		
-		if ( itsInterdependence == kProcessForked )
+		if ( its_vfork_parent )
 		{
-			GetProcess( itsPPID ).ResumeAfterFork();  // Calls longjmp()
-		}
-	}
-	
-	// This function doesn't return if the process is current.
-	void Process::Terminate( int wait_status )
-	{
-		itsResult = wait_status;
-		
-		Terminate();
-	}
-	
-	// This function doesn't return if the process is current.
-	void Process::Exit( int exit_status )
-	{
-		itsResult = (exit_status & 0xFF) << 8;
-		
-		Terminate();
-	}
-	
-	void Process::Orphan()
-	{
-		ASSERT( itsPID != 1 );
-		
-		itsPPID = 1;
-		
-		if ( itsLifeStage == kProcessZombie )
-		{
-			Release();
+			ASSERT( its_vfork_parent->itsForkedChildPID != 0 );
+			ASSERT( its_vfork_parent->itsForkedChildPID == pid );
+			
+			its_vfork_parent->ResumeAfterFork();  // Calls longjmp()
 		}
 	}
 	
@@ -1316,246 +1064,43 @@ namespace Genie
 	{
 		ASSERT( itsLifeStage == kProcessZombie );
 		
-		itsPPID = 0;  // Don't match PPID comparisons
+		if ( gettid() == GetPID() )
+		{
+			get_process().clear_ppid();  // Don't match PPID comparisons
+		}
+		
 		itsLifeStage = kProcessReleased;
 		
-		notify_reaper();
+		notify_reaper( this );
 	}
 	
-	void Process::Suspend()
+	void Process::Raise( int signo )
 	{
-		SuspendTimer();
+		relix::process& proc = get_process();
 		
-		gCurrentProcess = NULL;
-		
-		global_parameter_block.current_user = NULL;
-	}
-	
-	void Process::Resume()
-	{
-		gCurrentProcess = this;
-		
-		global_parameter_block.current_user = &its_pb;
-		
-		itsStackFramePtr = NULL;  // We don't track this while running
-		
-		itsSchedule = kProcessRunning;
-		
-		ResumeTimer();
-	}
-	
-	void Process::Pause( ProcessSchedule newSchedule )
-	{
-		itsSchedule = newSchedule;
-		
-		Suspend();
-		
-		itsStackFramePtr = recall::get_stack_frame_pointer();
-		
-		if ( newSchedule == kProcessStopped )
-		{
-			N::SetThreadState( GetThread(), N::kStoppedThreadState );
-		}
-		else
-		{
-			// Ignore errors so we don't throw in critical sections
-			(void) ::YieldToAnyThread();
-		}
-		
-		Resume();
-	}
-	
-	void Process::DeliverSignal( int signo )
-	{
 		if ( GetPID() == 1 )
 		{
 			return;
 		}
 		
-		typedef void (*signal_handler_t)(int);
+		proc.set_pending_signal( signo );
 		
-		signal_handler_t action = GetSignalAction( signo ).sa_handler;
-		
-		if ( action == SIG_IGN )
 		{
-			return;
-		}
-		
-		AddPendingSignal( signo );
-		
-		Continue();
-	}
-	
-	// Doesn't return if the process was current and receives a fatal signal while stopped.
-	// But always returns when *raising* a fatal signal.
-	void Process::Raise( int signo )
-	{
-		if ( itsLifeStage >= kProcessTerminating  ||  itsResult != 0 )
-		{
-			return;
-		}
-		
-		DeliverSignal( signo );
-	}
-	
-	// This function doesn't return if the process receives a fatal signal.
-	bool Process::HandlePendingSignals( bool may_throw )
-	{
-		if ( itsLifeStage > kProcessLive )
-		{
-			return false;  // Don't try to handle signals in terminated processes
-		}
-		
-		if ( itsAlarmClock )
-		{
-			uint64_t now = clock();
-			
-			if ( now > itsAlarmClock )
+			if ( relix::os_thread_id thread = get_os_thread() )
 			{
-				itsAlarmClock = 0;
-				
-				Raise( SIGALRM );
+				if ( relix::is_os_thread_stopped( thread ) )
+				{
+					relix::wake_os_thread( thread );
+				}
 			}
 		}
-		
-		if ( itsResult != 0 )
-		{
-			// Fatal signal received.  Terminate.
-			
-			Terminate();  // Kills the thread
-			
-			// Not reached
-		}
-		
-		return DeliverPendingSignals( may_throw );
-	}
-	
-	bool Process::DeliverPendingSignals( bool may_throw )
-	{
-		bool signal_was_caught = false;
-		
-		for ( int signo = 1;  signo < NSIG;  ++signo )
-		{
-			const sigset_t active_signals = GetPendingSignals() & ~GetBlockedSignals();
-			
-			if ( !active_signals )
-			{
-				return false;
-			}
-			
-			const sigset_t signo_mask = 1 << signo - 1;
-			
-			if ( active_signals & signo_mask )
-			{
-				const struct sigaction& action = GetSignalAction( signo );
-				
-				if ( action.sa_handler == SIG_IGN )
-				{
-					continue;
-				}
-				
-				if ( action.sa_handler == SIG_DFL )
-				{
-					const signal_traits traits = global_signal_traits[ signo ];
-					
-					switch ( traits & signal_default_action_mask )
-					{
-						case signal_discard:
-							break;
-						
-						case signal_terminate:
-							Terminate( signo | traits & signal_core );
-							break;
-						
-						case signal_stop:
-							Stop();
-							break;
-						
-						case signal_continue:
-							Continue();
-							break;
-					}
-					
-					continue;
-				}
-				
-				signal_was_caught = true;
-				
-				if ( !may_throw )
-				{
-					continue;
-				}
-				
-				const caught_signal caught = { signo, action };
-				
-				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
-				{
-					ResetSignalAction( signo );
-				}
-				
-				throw caught;
-			}
-		}
-		
-		return signal_was_caught;
-	}
-	
-	// Stops the process' thread.  Eventually returns.
-	void Process::Stop()
-	{
-		ASSERT( gCurrentProcess == this );
-		
-		mark_process_inactive( itsPID );
-		
-		Pause( kProcessStopped );
-		
-		mark_process_active( itsPID );
-	}
-	
-	void Process::Continue()
-	{
-		N::ThreadID thread = GetThread();
-		
-		if ( thread == N::kNoThreadID )
-		{
-			WriteToSystemConsole( STR_LEN( "Genie: Process::Continue(): no thread assigned\n" ) );
-			
-			return;
-		}
-		
-		if ( itsSchedule == kProcessFrozen )
-		{
-			return;
-		}
-		
-		if ( N::GetThreadState( thread ) == N::kStoppedThreadState )
-		{
-			ASSERT( itsSchedule == kProcessStopped );
-			
-			itsSchedule = kProcessSleeping;
-			
-			N::SetThreadState( thread, N::kReadyThreadState );
-		}
-	}
-	
-	
-	static const UInt32 gMinimumSleepIntervalTicks = 2;
-	
-	void Process::Breathe()
-	{
-		Pause( kProcessRunning );
-	}
-	
-	void Process::Yield()
-	{
-		Pause( kProcessSleeping );
 	}
 	
 	void Process::AsyncYield()
 	{
 		++itsAsyncOpCount;
 		
-		Yield();
+		relix::thread_yield();
 		
 		--itsAsyncOpCount;
 	}
@@ -1565,8 +1110,7 @@ namespace Genie
 	{
 		if ( gCurrentProcess == NULL )
 		{
-			// Ignore errors so we don't throw in critical sections
-			(void) ::YieldToAnyThread();
+			relix::os_thread_yield();
 		}
 		else
 		{
@@ -1576,3 +1120,27 @@ namespace Genie
 	
 }
 
+namespace relix
+{
+	
+	process_group* get_process_group( pid_t pgid )
+	{
+		using namespace Genie;
+		
+		return (process_group*) for_each_process( &find_process_group, &pgid );
+	}
+	
+	void signal_process_group( int signo, pid_t pgid )
+	{
+		if ( pgid != no_pgid )
+		{
+			Genie::SendSignalToProcessGroup( signo, pgid );
+		}
+	}
+	
+	void terminate_current_process( int wait_status )
+	{
+		Genie::gCurrentProcess->Terminate( wait_status );
+	}
+	
+}

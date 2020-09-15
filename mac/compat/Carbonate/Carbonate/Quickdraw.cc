@@ -7,11 +7,9 @@
 
 #if !TARGET_API_MAC_CARBON
 
-#if ACCESSOR_CALLS_ARE_FUNCTIONS
 // Compile the Carbon accessors as extern pascal functions.
 #define CARBONATE_LINKAGE pascal
 #include "Carbonate/Quickdraw.hh"
-#endif
 
 // These functions are always declared in the headers and are always extern.
 
@@ -54,6 +52,27 @@ pascal Boolean IsValidPort( CGrafPtr port )
 	bool valid = port != NULL;
 	
 	return valid;
+}
+
+pascal CGrafPtr CreateNewPort()
+{
+	Ptr portMem = NewPtr( sizeof (CGrafPort) );
+	
+	CGrafPtr port = (CGrafPtr) portMem;  /* reinterpret_cast */
+	
+	if ( port != NULL )
+	{
+		OpenCPort( port );
+	}
+	
+	return port;
+}
+
+pascal void DisposePort( CGrafPtr port )
+{
+	CloseCPort( port );
+	
+	DisposePtr( (Ptr) port );  /* reinterpret_cast */
 }
 
 pascal Point* QDLocalToGlobalPoint( CGrafPtr port, Point* point )
@@ -149,4 +168,3 @@ pascal void QDFlushPortBuffer( CGrafPtr port, RgnHandle region )
 // QDDisposeRegionBits
 
 #endif
-

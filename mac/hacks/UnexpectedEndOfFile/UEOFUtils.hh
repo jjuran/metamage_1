@@ -92,4 +92,3 @@ inline bool EqualPstrings( const unsigned char* p, const unsigned char* q )
 {
 	return std::memcmp( p, q, 1 + p[0] ) == 0;
 }
-

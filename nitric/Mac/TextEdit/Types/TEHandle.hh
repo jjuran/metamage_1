@@ -6,6 +6,11 @@
 #ifndef MAC_TEXTEDIT_TYPES_TEHANDLE_HH
 #define MAC_TEXTEDIT_TYPES_TEHANDLE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
@@ -20,6 +25,8 @@
 namespace nucleus
 {
 	
+#if ! __LP64__
+	
 	template <> struct disposer< TEHandle >
 	{
 		typedef TEHandle  argument_type;
@@ -31,7 +38,8 @@ namespace nucleus
 		}
 	};
 	
+#endif  // #if ! __LP64__
+	
 }
 
 #endif
-

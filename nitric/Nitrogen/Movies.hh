@@ -14,6 +14,12 @@
 #ifndef NITROGEN_MOVIES_HH
 #define NITROGEN_MOVIES_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <QuickTime/QuickTime.h>
+#endif
+
+// Mac OS
 #ifndef __MOVIES__
 #include <Movies.h>
 #endif
@@ -49,8 +55,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( QuickTime );
 	
-	using ::Movie;
-	
 	enum MovieFileRefNum
 	{
 		kMovieFileRefNum_Max = nucleus::enumeration_traits< SInt16 >::max
@@ -74,6 +78,8 @@ namespace Nitrogen
 	NUCLEUS_DEFINE_FLAG_OPS( FullScreenFlags )
 	
 }
+
+#if ! __LP64__
 
 namespace nucleus
 {
@@ -165,5 +171,6 @@ namespace Nitrogen
 	
 }
 
-#endif
+#endif  // #if ! __LP64__
 
+#endif

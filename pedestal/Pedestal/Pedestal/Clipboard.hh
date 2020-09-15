@@ -6,6 +6,11 @@
 #ifndef PEDESTAL_CLIPBOARD_HH
 #define PEDESTAL_CLIPBOARD_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
@@ -25,4 +30,3 @@ namespace Pedestal
 }
 
 #endif
-

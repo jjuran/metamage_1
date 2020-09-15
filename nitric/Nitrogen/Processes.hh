@@ -14,6 +14,12 @@
 #ifndef NITROGEN_PROCESSES_HH
 #define NITROGEN_PROCESSES_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
 #ifndef __PROCESSES__
 #include <Processes.h>
 #endif
@@ -83,20 +89,17 @@ namespace nucleus
 			return result;
 		}
 	};
-	
-	// Since ProcessSerialNumber is declared at global scope, namespace Nitrogen isn't checked.
-	// We include "nucleus/operators.hh" below to make the operators available in nucleus::operators.
-	inline bool operator==( const ::ProcessSerialNumber& a, const ::ProcessSerialNumber& b )
-	{
-		return a.highLongOfPSN == b.highLongOfPSN
-			&& a.lowLongOfPSN  == b.lowLongOfPSN;
-	}
-	
-	inline bool operator!=( const ::ProcessSerialNumber& a, const ::ProcessSerialNumber& b )
-	{
-		return !( a == b );
-	}
-	
+}
+
+inline bool operator==( const ::ProcessSerialNumber& a, const ::ProcessSerialNumber& b )
+{
+	return a.highLongOfPSN == b.highLongOfPSN
+		&& a.lowLongOfPSN  == b.lowLongOfPSN;
+}
+
+inline bool operator!=( const ::ProcessSerialNumber& a, const ::ProcessSerialNumber& b )
+{
+	return !( a == b );
 }
 
 namespace Nitrogen
@@ -110,6 +113,8 @@ namespace Nitrogen
 
 namespace nucleus
 {
+	
+#if ! __LP64__
 	
 	template <>
 	struct initializer< ProcessInfoRec >
@@ -135,16 +140,22 @@ namespace nucleus
 		}
 	};
 	
+#endif
+	
 }
 
 namespace Nitrogen
 {
+	
+#if ! __LP64__
 	
 	// Nitrogen accessors, since no Carbon accessors exist
 	inline FSSpec GetProcessInfoAppSpec( const ProcessInfoRec& processInfo )
 	{
 		return *processInfo.processAppSpec;
 	}
+	
+#endif
 	
 	ProcessSerialNumber GetCurrentProcess();
 	
@@ -209,4 +220,3 @@ namespace Nitrogen
 #include "nucleus/operators.hh"
 
 #endif
-

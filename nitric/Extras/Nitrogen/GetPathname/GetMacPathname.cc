@@ -61,4 +61,3 @@ plus::string GetMacPathname( const FSSpec& file )
 	
 	return pathname;
 }
-

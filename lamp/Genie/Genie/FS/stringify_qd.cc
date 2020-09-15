@@ -5,10 +5,9 @@
 
 #include "Genie/FS/stringify_qd.hh"
 
-// Mac OS
-#ifndef __MACTYPES__
-#include <MacTypes.h>
-#endif
+// mac-types
+#include "mac_types/Point.hh"
+#include "mac_types/Rect.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -20,8 +19,13 @@
 namespace Genie
 {
 	
-	void stringify_Point::apply( plus::var_string& out, const Point& pt )
+	using mac::types::Point;
+	
+	
+	void stringify_Point::apply( plus::var_string& out, const ::Point& pt_ )
 	{
+		const Point& pt = (const Point&) pt_;
+		
 		out += gear::inscribe_decimal( pt.h );
 		
 		out += ',';
@@ -29,7 +33,7 @@ namespace Genie
 		out += gear::inscribe_decimal( pt.v );
 	}
 	
-	void stringify_Rect::apply( plus::var_string& out, const Rect& rect )
+	void stringify_Rect::apply( plus::var_string& out, const ::Rect& rect )
 	{
 		const Point* points = (const Point*) &rect;  // reinterpret_cast
 		
@@ -41,4 +45,3 @@ namespace Genie
 	}
 	
 }
-

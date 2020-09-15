@@ -26,4 +26,3 @@ namespace CFMLateImporter
 }
 
 #endif
-

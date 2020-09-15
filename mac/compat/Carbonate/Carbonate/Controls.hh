@@ -99,4 +99,3 @@ CARBONATE_LINKAGE void SetControlPopupMenuID( ControlRef control, short menuID )
 #endif
 
 #endif
-

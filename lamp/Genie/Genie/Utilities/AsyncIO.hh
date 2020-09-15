@@ -39,9 +39,6 @@
 #include "MacIO/EOF_Policy.hh"
 #include "MacIO/ThrowOSStatus.hh"
 
-// Genie
-#include "Genie/Process/AsyncYield.hh"
-
 
 #ifndef O_MAC_ASYNC
 #define O_MAC_ASYNC  0
@@ -78,12 +75,12 @@ namespace Genie
 	template < class Policy >
 	typename Policy::Result
 	//
-	FSpGetCatInfo( CInfoPBRec&          pb,
-	               bool                 async,
-	               Mac::FSVolumeRefNum  vRefNum,
-	               Mac::FSDirID         dirID,
-	               unsigned char*       name,
-	               SInt16               index = 0 );
+	FSpGetCatInfo( CInfoPBRec&     pb,
+	               bool            async,
+	               SInt16          vRefNum,
+	               SInt32          dirID,
+	               unsigned char*  name,
+	               SInt16          index = 0 );
 	
 	template < class Policy >
 	typename Policy::Result
@@ -97,8 +94,8 @@ namespace Genie
 		
 		return FSpGetCatInfo< Policy >( pb,
 		                                async,
-		                                Mac::FSVolumeRefNum( item.vRefNum ),
-		                                Mac::FSDirID       ( item.parID   ),
+		                                item.vRefNum,
+		                                item.parID,
 		                                name );
 	}
 	
@@ -106,10 +103,10 @@ namespace Genie
 	typename Policy::Result
 	inline 
 	//
-	FSpGetCatInfo( CInfoPBRec&          pb,
-	               bool                 async,
-	               Mac::FSVolumeRefNum  vRefNum,
-	               Mac::FSDirID         dirID )
+	FSpGetCatInfo( CInfoPBRec&  pb,
+	               bool         async,
+	               SInt16       vRefNum,
+	               SInt32       dirID )
 	{
 		return FSpGetCatInfo< Policy >( pb,
 		                                async,
@@ -164,4 +161,3 @@ namespace Genie
 }
 
 #endif
-

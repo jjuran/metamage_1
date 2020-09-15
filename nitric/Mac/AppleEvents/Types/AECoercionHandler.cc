@@ -44,7 +44,7 @@ namespace Mac
 	                                        bool      isSysHandler )
 	{
 		::AECoercionHandlerUPP  handler;
-		long                    handlerRefCon;
+		SRefCon                 handlerRefCon;
 		::Boolean               fromTypeIsDesc;
 		
 		ThrowOSStatus( ::AEGetCoercionHandler( fromType,
@@ -63,4 +63,3 @@ namespace Mac
 	}
 	
 }
-

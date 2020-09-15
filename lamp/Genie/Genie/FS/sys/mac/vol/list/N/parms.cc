@@ -5,6 +5,12 @@
 
 #include "Genie/FS/sys/mac/vol/list/N/parms.hh"
 
+// mac-types
+#include "mac_types/GetVolParmsInfoBuffer.hh"
+
+// mac-sys-utils
+#include "mac_sys/volume_params.hh"
+
 // gear
 #include "gear/parse_decimal.hh"
 
@@ -15,33 +21,32 @@
 #include "plus/stringify.hh"
 #include "plus/var_string.hh"
 
-// Nitrogen
-#include "Mac/Files/Types/FSVolumeRefNum.hh"
-#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
-
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
+// vfs
+#include "vfs/node.hh"
+#include "vfs/property.hh"
+#include "vfs/node/types/property_file.hh"
 
 
 namespace Genie
 {
 	
-	static Mac::FSVolumeRefNum GetKeyFromParent( const FSTree* parent )
+	using mac::types::GetVolParmsInfoBuffer;
+	
+	
+	static short GetKeyFromParent( const vfs::node* parent )
 	{
-		return Mac::FSVolumeRefNum( -gear::parse_unsigned_decimal( parent->name().c_str() ) );
+		return -gear::parse_unsigned_decimal( parent->name().c_str() );
 	}
 	
-	static Mac::FSVolumeRefNum GetKey( const FSTree* that )
+	static short GetKey( const vfs::node* that )
 	{
 		return GetKeyFromParent( that->owner() );
 	}
 	
 	
-	struct GetVolumeParmsAttrib : plus::serialize_hex< UInt32 >
+	struct GetVolumeParmsAttrib : plus::serialize_hex< uint32_t >
 	{
-		static UInt32 Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static uint32_t Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			return parmsInfo.vMAttrib;
 		}
@@ -49,63 +54,63 @@ namespace Genie
 	
 	struct GetVolumeParmsHandle : plus::serialize_pointer
 	{
-		static ::Handle Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static void* Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMLocalHand == 0 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMLocalHand;
 		}
 	};
 	
-	struct GetVolumeParmsServer : plus::serialize_hex< UInt32 >
+	struct GetVolumeParmsServer : plus::serialize_hex< uint32_t >
 	{
-		static UInt32 Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static uint32_t Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMServerAdr == 0 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMServerAdr;
 		}
 	};
 	
-	struct GetVolumeParmsGrade : plus::serialize_int< SInt32 >
+	struct GetVolumeParmsGrade : plus::serialize_int< int32_t >
 	{
-		static SInt32 Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static int32_t Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMVersion < 2  ||  parmsInfo.vMVolumeGrade == 0 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMVolumeGrade;
 		}
 	};
 	
-	struct GetVolumeParmsPrivID : plus::serialize_int< SInt16 >
+	struct GetVolumeParmsPrivID : plus::serialize_int< int16_t >
 	{
-		static SInt16 Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static int16_t Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMVersion < 2 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMForeignPrivID;
 		}
 	};
 	
-	struct GetVolumeParmsExtended : plus::serialize_hex< UInt32 >
+	struct GetVolumeParmsExtended : plus::serialize_hex< uint32_t >
 	{
-		static UInt32 Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static uint32_t Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMVersion < 3 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMExtendedAttributes;
@@ -118,44 +123,24 @@ namespace Genie
 		{
 			if ( parmsInfo.vMVersion < 4  ||  parmsInfo.vMDeviceID == NULL )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return (const char*) parmsInfo.vMDeviceID;
 		}
 	};
 	
-	static void GetVolParmsInfo( GetVolParmsInfoBuffer&  parmsInfo,
-	                             const FSTree*           that )
-	{
-		const Mac::FSVolumeRefNum vRefNum = GetKey( that );
-		
-		memset( &parmsInfo, '\0', sizeof parmsInfo );
-		
-		HParamBlockRec pb = { 0 };
-		
-		HIOParam& io = pb.ioParam;
-		
-		io.ioVRefNum  = vRefNum;
-		io.ioBuffer   = (char *) &parmsInfo;
-		io.ioReqCount = sizeof parmsInfo;
-		
-		Mac::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
-	}
-	
 	
 	template < class Accessor >
-	struct sys_mac_vol_N_Parms_Property : readonly_property
+	struct sys_mac_vol_N_Parms_Property : vfs::readonly_property
 	{
-		static const size_t fixed_size = Accessor::fixed_size;
+		static const int fixed_size = Accessor::fixed_size;
 		
-		typedef Mac::FSVolumeRefNum Key;
-		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			GetVolParmsInfoBuffer parmsInfo;
 			
-			GetVolParmsInfo( parmsInfo, that );
+			mac::sys::get_volume_params( parmsInfo, GetKey( that ) );
 			
 			const typename Accessor::result_type data = Accessor::Get( parmsInfo );
 			
@@ -164,7 +149,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_vol_N_Parms_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_vol_N_Parms_Property< prop > >::value
 	
 	const vfs::fixed_mapping sys_mac_vol_N_parms_Mappings[] =
 	{
@@ -184,4 +169,3 @@ namespace Genie
 	};
 	
 }
-

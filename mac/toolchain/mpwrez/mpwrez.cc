@@ -64,7 +64,6 @@ namespace tool
 		std::vector< const char* > command;
 		
 		command.push_back( "tlsrvr"   );
-		command.push_back( "--switch" );  // bring ToolServer to front
 		command.push_back( "--escape" );  // escape arguments to prevent expansion
 		command.push_back( "--"       );  // stop interpreting options here
 		command.push_back( "Rez"      );
@@ -88,6 +87,15 @@ namespace tool
 					
 					case 'v':
 						verbose = true;
+						break;
+					
+					case 'd':
+						if ( arg[2] == '\0' )
+						{
+							command.push_back( arg );
+							
+							command.push_back( *++argv );
+						}
 						break;
 					
 					case 'i':
@@ -142,4 +150,3 @@ namespace tool
 	}
 	
 }
-

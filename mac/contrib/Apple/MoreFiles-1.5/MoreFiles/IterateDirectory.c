@@ -16,7 +16,14 @@
 **	library I wrote while in Apple Developer Technical Support
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+#ifndef __MACERRORS__
 #include <MacErrors.h>
+#endif
 
 #define	__COMPILINGMOREFILES
 

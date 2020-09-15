@@ -8,9 +8,6 @@
 #include <signal.h>
 #include <string.h>
 
-// Standard C/C++
-#include <cctype>
-
 // POSIX
 #include <dirent.h>
 #include <fcntl.h>
@@ -19,10 +16,14 @@
 // Extended API Set Part 2
 #include "extended-api-set/part-2.h"
 
+// must
+#include "must/write.h"
+
 // Relix
 #include "relix/alloca.h"
 
 // iota
+#include "iota/char_types.hh"
 #include "iota/strings.hh"
 
 // gear
@@ -37,11 +38,6 @@
 
 
 #pragma exceptions off
-
-
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
 
 
 static int killall( const char* name_to_kill, int sig )
@@ -70,7 +66,7 @@ static int killall( const char* name_to_kill, int sig )
 		{
 			int pid_dirfd = openat( proc_dirfd, proc_id, O_RDONLY | O_DIRECTORY );
 			
-			int name_fd = openat( pid_dirfd, "name", O_RDONLY | O_BINARY );
+			int name_fd = openat( pid_dirfd, ".~name", O_RDONLY );
 			
 			const ssize_t n_read = read( name_fd, buffer, buffer_size );
 			
@@ -109,7 +105,7 @@ int main( int argc, char const *const argv[] )
 	{
 		const char* sig = argp[ 1 ] + 1;
 		
-		bool numeric = std::isdigit( *sig );
+		bool numeric = iota::is_digit( *sig );
 		
 		// FIXME:  Needs error checking instead of silently using 0
 		sig_number = numeric ? gear::parse_unsigned_decimal( sig )
@@ -121,7 +117,7 @@ int main( int argc, char const *const argv[] )
 	
 	if ( argc != 2 )
 	{
-		(void) write( STDERR_FILENO, STR_LEN( "killall: usage: killall [-sig] name\n" ) );
+		must_write( STDERR_FILENO, STR_LEN( "killall: usage: killall [-sig] name\n" ) );
 		
 		return 1;
 	}
@@ -137,4 +133,3 @@ int main( int argc, char const *const argv[] )
 	
 	return kills > 0 ? 0 : 1;
 }
-

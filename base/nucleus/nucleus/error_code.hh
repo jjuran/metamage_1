@@ -103,7 +103,7 @@
 #endif
 
 // Debug
-#if TARGET_CONFIG_DEBUGGING  &&  !defined( NUCLEUS_DEBUGGING_CONTEXT )
+#if CONFIG_DEBUGGING  &&  !defined( NUCLEUS_DEBUGGING_CONTEXT )
 #include "recall/backtrace.hh"
 #define NUCLEUS_DEBUGGING_CONTEXT  ::recall::debugging_context
 #endif
@@ -292,4 +292,3 @@ namespace nucleus
 }
 
 #endif
-

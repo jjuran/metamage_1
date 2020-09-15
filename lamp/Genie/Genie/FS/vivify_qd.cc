@@ -5,8 +5,8 @@
 
 #include "Genie/FS/vivify_qd.hh"
 
-// Standard C
-#include <ctype.h>
+// iota
+#include "iota/char_types.hh"
 
 // gear
 #include "gear/parse_decimal.hh"
@@ -15,13 +15,17 @@
 namespace Genie
 {
 	
+	using mac::types::Point;
+	using mac::types::Rect;
+	
+	
 	static void advance_to_decimal( const char*& p, const char* end )
 	{
 		if ( p < end )
 		{
 			while ( ++p < end )
 			{
-				if ( isdigit( p[ p[ 0 ] == '-' ] ) )
+				if ( iota::is_digit( p[ p[ 0 ] == '-' ] ) )
 				{
 					return;
 				}
@@ -66,4 +70,3 @@ namespace Genie
 	}
 	
 }
-

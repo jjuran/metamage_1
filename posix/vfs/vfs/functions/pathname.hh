@@ -16,9 +16,8 @@
 namespace vfs
 {
 	
-	plus::string pathname( const node* it );
+	plus::string pathname( const node& that );
 	
 }
 
 #endif
-

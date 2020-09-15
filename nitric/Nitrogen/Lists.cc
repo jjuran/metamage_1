@@ -17,6 +17,8 @@
 namespace Nitrogen
 {
 	
+#if ! __LP64__
+	
 	nucleus::owned< ListHandle > LNew( const Rect&        rView,
 	                                   const ListBounds&  dataBounds,
 	                                   Point              cSize,
@@ -100,10 +102,11 @@ namespace Nitrogen
 		return result;
 	}
 	
+#endif  // #if ! __LP64__
+	
 	void RegisterListManagerErrors()
 	{
 		
 	}
 	
 }
-

@@ -5,15 +5,18 @@
 
 #include "Genie/FS/sys/mac/time.hh"
 
+// vfs
+#include "vfs/property.hh"
+#include "vfs/node/types/property_file.hh"
+
 // Genie
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/sys/mac/time/dls+gmt-delta.hh"
 
 
 namespace Genie
 {
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_time_Mappings[] =
 	{
@@ -21,9 +24,12 @@ namespace Genie
 		{ "dls",            PROPERTY( sys_mac_time_dls         ) },
 		{ "gmt-delta",      PROPERTY( sys_mac_time_gmtdelta    ) },
 		
+		{ ".~dls+gmt-delta", PROPERTY( sys_mac_time_dlsgmtdelta ) },
+		{ ".~dls",           PROPERTY( sys_mac_time_dls         ) },
+		{ ".~gmt-delta",     PROPERTY( sys_mac_time_gmtdelta    ) },
+		
 		{ NULL, NULL }
 		
 	};
 	
 }
-

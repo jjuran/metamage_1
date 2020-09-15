@@ -16,9 +16,8 @@
 namespace vfs
 {
 	
-	void symlink( const node* it, const plus::string& target );
+	void symlink( const node& that, const plus::string& target );
 	
 }
 
 #endif
-

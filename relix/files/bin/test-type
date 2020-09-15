@@ -1,0 +1,10 @@
+#!/usr/bin/vx
+
+try
+{
+	exit int (stat( argv[ 2 ] )[ "type" ] != argv[ 1 ])
+}
+catch
+{
+	exit 1
+}

@@ -14,6 +14,12 @@
 #ifndef NITROGEN_ALIASES_HH
 #define NITROGEN_ALIASES_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __ALIASES__
 #include <Aliases.h>
 #endif
@@ -63,13 +69,21 @@ namespace Nitrogen
   }
 
 namespace Nitrogen
-  {
+{
+	
+#if ! __LP64__
+	
 	// 90
 	nucleus::owned< AliasHandle > NewAlias( const FSSpec& fromFile,
 	                                        const FSSpec& target );
 	
 	nucleus::owned< AliasHandle > NewAlias( const FSSpec& target );
+	
+#endif
+	
 	nucleus::owned< AliasHandle > NewAlias( CFDataRef theData );
+	
+#if ! __LP64__
 	
 	// 127
 	nucleus::owned< AliasHandle > NewAliasMinimalFromFullPath( const char*      fullPath,
@@ -119,6 +133,8 @@ namespace Nitrogen
 	// 221
 	ResolveAliasFile_Result ResolveAliasFile( const FSSpec&  target,
 	                                          bool           resolveAliasChains );
+	
+#endif  // #if ! __LP64__
 	
    nucleus::owned<AliasHandle> FSNewAlias( const FSRef& fromFile,
                                            const FSRef& target );

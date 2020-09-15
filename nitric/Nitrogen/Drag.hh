@@ -14,12 +14,18 @@
 #ifndef NITROGEN_DRAG_HH
 #define NITROGEN_DRAG_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __DRAG__
 #include <Drag.h>
 #endif
 
 // iota
-#include "iota/distance.hh"
+#include "iota/ptr_diff.hh"
 
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
@@ -45,6 +51,8 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( DragManager );
 	
 	
+#if ! __LP64__
+	
 	enum DragItemRef
 	{
 		kDragItemRef_Max = nucleus::enumeration_traits< ::DragItemRef >::max
@@ -52,6 +60,13 @@ namespace Nitrogen
 	
 	enum FlavorType
 	{
+		kDragFlavorTypeHFS                  = ::kDragFlavorTypeHFS,
+		kDragFlavorTypePromiseHFS           = ::kDragFlavorTypePromiseHFS,
+		kFlavorTypeClippingName             = ::kFlavorTypeClippingName,
+		kFlavorTypeClippingFilename         = ::kFlavorTypeClippingFilename,
+		kFlavorTypeDragToTrashOnly          = ::kFlavorTypeDragToTrashOnly,
+		kFlavorTypeFinderNoTrackingBehavior = ::kFlavorTypeFinderNoTrackingBehavior,
+		
 		kFlavorType_Max = nucleus::enumeration_traits< ::FlavorType >::max
 	};
 	
@@ -105,8 +120,8 @@ namespace Nitrogen
 	
    NUCLEUS_DEFINE_FLAG_OPS( DragActions )
    
-   // FlavorType_Traits havce the same format as Flatteners.
-   template < ::FlavorType > struct FlavorType_Traits;
+   // FlavorType_Traits have the same format as Flatteners.
+   template < FlavorType > struct FlavorType_Traits;
    
    template <> struct FlavorType_Traits< kDragFlavorTypeHFS                  >: public nucleus::POD_scribe< HFSFlavor > {};
    template <> struct FlavorType_Traits< kDragFlavorTypePromiseHFS           >: public nucleus::POD_scribe< PromiseHFSFlavor > {};
@@ -179,17 +194,17 @@ namespace Nitrogen
          
          void operator()( const void *begin, const void *end ) const
            {
-            Nitrogen::AddDragItemFlavor( drag, item, type, begin, iota::distance( begin, end ), flags );
+            Nitrogen::AddDragItemFlavor( drag, item, type, begin, iota::ptr_diff( begin, end ), flags );
            }
      };
    
-   template < ::FlavorType theType >
+   template < FlavorType theType >
    struct AddDragItemFlavor_Traits
      {
       typedef typename FlavorType_Traits< theType >::argument_type Data_Type;
      };
    
-   template < ::FlavorType theType >
+   template < FlavorType theType >
    void AddDragItemFlavor( DragRef                                               theDrag,
                            DragItemRef                                           theItemRef,
                            typename AddDragItemFlavor_Traits<theType>::Data_Type data,
@@ -198,7 +213,7 @@ namespace Nitrogen
       FlavorType_Traits< theType >::Put( data, AddDragItemFlavor_Putter( theDrag, theItemRef, theType, theFlags ) );
      }
 
-   template < ::FlavorType theType >
+   template < FlavorType theType >
    void AddDragItemFlavor( DragRef      theDrag,
                            DragItemRef  theItemRef,
                            FlavorFlags  theFlags = FlavorFlags() )
@@ -235,17 +250,17 @@ namespace Nitrogen
          
          void operator()( const void *begin, const void *end ) const
            {
-            Nitrogen::SetDragItemFlavorData( drag, item, type, begin, iota::distance( begin, end ), offset );
+            Nitrogen::SetDragItemFlavorData( drag, item, type, begin, iota::ptr_diff( begin, end ), offset );
            }
      };
 
-   template < ::FlavorType theType >
+   template < FlavorType theType >
    struct SetDragItemFlavorData_Traits
      {
       typedef typename FlavorType_Traits< theType >::argument_type Data_Type;
      };
    
-   template < ::FlavorType theType >
+   template < FlavorType theType >
    void SetDragItemFlavorData( DragRef                                                   theDrag,
                                DragItemRef                                               theItemRef,
                                typename SetDragItemFlavorData_Traits<theType>::Data_Type data )
@@ -253,7 +268,7 @@ namespace Nitrogen
       FlavorType_Traits< theType >::Put( data, SetDragItemFlavorData_Putter( theDrag, theItemRef, theType ) );
      }
    
-   template < ::FlavorType theType >
+   template < FlavorType theType >
    void SetDragItemFlavorData( DragRef theDrag, DragItemRef theItemRef )
      {
       FlavorType_Traits< theType >::Put( SetDragItemFlavorData_Putter( theDrag, theItemRef, theType ) );
@@ -322,17 +337,17 @@ namespace Nitrogen
          
          void operator()( void *begin, void *end ) const
            {
-            Nitrogen::GetFlavorData( drag, item, type, begin, iota::distance( begin, end ), offset );
+            Nitrogen::GetFlavorData( drag, item, type, begin, iota::ptr_diff( begin, end ), offset );
            }
      };
 
-   template < ::FlavorType theType >
+   template < FlavorType theType >
    struct GetFlavorData_Traits
      {
       typedef typename FlavorType_Traits< theType >::result_type Result;
      };
    
-   template < ::FlavorType theType >
+   template < FlavorType theType >
    typename GetFlavorData_Traits<theType>::Result GetFlavorData( DragRef theDrag, DragItemRef theItemRef )
      {
       return FlavorType_Traits< theType >::Get( GetFlavorData_Getter( theDrag, theItemRef, theType ) );
@@ -401,6 +416,8 @@ namespace Nitrogen
                     Point            zoomDistance,
                     SInt16           zoomSteps,
                     ZoomAcceleration acceleration );
+#endif  // #if ! __LP64__
+	
   }
  
 #endif

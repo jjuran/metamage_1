@@ -79,7 +79,7 @@ struct tm* gmtime_r( const time_t* time_p, struct tm* result )
 	
 	result->tm_yday = extra_days;
 	
-	result->tm_wday = (years + years / 4 + extra_days) % 7;
+	result->tm_wday = (years + years / 4 + extra_days + 1) % 7;
 	
 	const bool leap_year = extra_years == 0;
 	
@@ -119,9 +119,9 @@ struct tm* gmtime( const time_t* time_p )
 
 static long get_dls_gmtdelta_field()
 {
-	const char* pathname = "/sys/mac/time/.dls+gmt-delta";
+	const char* pathname = "/sys/mac/time/.~dls+gmt-delta";
 	
-	int fd = open( pathname, O_RDONLY | O_BINARY );
+	int fd = open( pathname, O_RDONLY );
 	
 	if ( fd < 0 )
 	{
@@ -181,4 +181,3 @@ struct tm* localtime( const time_t* time_p )
 	
 	return localtime_r( time_p, &static_tm );
 }
-

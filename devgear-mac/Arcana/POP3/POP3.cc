@@ -418,4 +418,3 @@ namespace POP3
 	}  // namespace Client
 	
 }  // namespace POP3
-

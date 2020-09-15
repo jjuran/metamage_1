@@ -14,12 +14,18 @@
 #ifndef NITROGEN_CONTROLS_HH
 #define NITROGEN_CONTROLS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __CONTROLS__
 #include <Controls.h>
 #endif
 
 // iota
-#include "iota/distance.hh"
+#include "iota/ptr_diff.hh"
 #include "iota/string_traits.hh"
 
 // nucleus
@@ -37,6 +43,9 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_CONTROLS_TYPES_CONTROLDATATAG_HH
+#include "Mac/Controls/Types/ControlData_Tag.hh"
+#endif
 #ifndef MAC_CONTROLS_TYPES_CONTROLPARTCODE_HH
 #include "Mac/Controls/Types/ControlPartCode.hh"
 #endif
@@ -73,6 +82,8 @@ namespace Nitrogen
 	
   }
 
+#if ! __LP64__
+
 namespace nucleus
   {
    // Not actually used, since controls are owned by the parent window
@@ -88,6 +99,8 @@ namespace nucleus
         }
      };
   }
+
+#endif  // #if ! __LP64__
 
 namespace Nitrogen
   {
@@ -174,6 +187,8 @@ namespace Nitrogen
 		                   procID,
 		                   (long) refCon );  // reinterpret_cast
 	}
+	
+#if ! __LP64__
 	
 	// 1007
 	using ::DisposeControl;
@@ -266,6 +281,8 @@ namespace Nitrogen
 	using ::GetControlMaximum;
 	using ::SetControlMaximum;
 	
+#endif  // #if ! __LP64__
+	
 	// 2211
    using ::ControlID;
    
@@ -289,15 +306,7 @@ namespace nucleus
 namespace Nitrogen
 {
 	
-	enum ControlDataTag
-	{
-		kControlFontStyleTag = ::kControlFontStyleTag,
-		kControlKeyFilterTag = ::kControlKeyFilterTag,
-		kControlKindTag      = ::kControlKindTag,
-		kControlSizeTag      = ::kControlSizeTag,
-		
-		kControlDataTag_Max = nucleus::enumeration_traits< ::FourCharCode >::max
-	};
+	typedef Mac::ControlData_Tag ControlDataTag;
 	
    template < ::ResType inTagName > struct ControlData_Traits;
 
@@ -319,6 +328,8 @@ namespace Nitrogen
    ControlRef GetControlByID( WindowRef inWindow, const ControlID& id );
    ControlRef GetControlByID( WindowRef inWindow, Mac::OSType signature, SInt32 id );  // To be removed; use Make.
 
+#if ! __LP64__
+	
 	// 2491
 	inline void SetControlAction( ControlRef control, ControlActionUPP actionProc )
 	{
@@ -353,6 +364,8 @@ namespace Nitrogen
 	{
 		return ::GetControlReference( control );
 	}
+	
+#endif  // #if ! __LP64__
 	
 
    template < ::ResType inTagName >
@@ -392,7 +405,7 @@ namespace Nitrogen
 				Nitrogen::SetControlData( itsControl,
 				                          itsPart,
 				                          itsTagName,
-				                          iota::distance( begin, end ),
+				                          iota::ptr_diff( begin, end ),
 				                          begin );
 			}
 	};
@@ -460,7 +473,7 @@ namespace Nitrogen
 				GetControlData( itsControl,
 				                itsPart,
 				                Nitrogen::ControlDataTag( tagName ),
-				                iota::distance( begin, end ),
+				                iota::ptr_diff( begin, end ),
 				                begin );
 			}
 	};
@@ -496,6 +509,8 @@ namespace Nitrogen
 	// 3140
    bool IsAutomaticControlDragTrackingEnabledForWindow( WindowRef theWindow );
 
+#if ! __LP64__
+	
 	// 3395
 	inline Rect GetControlBounds( ControlRef control )
 	{
@@ -509,6 +524,8 @@ namespace Nitrogen
 	{
 		::SetControlBounds( control, &bounds );
 	}
+	
+#endif  // #if ! __LP64__
 	
    /* ... */
    

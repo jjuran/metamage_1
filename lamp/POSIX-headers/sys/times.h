@@ -24,4 +24,3 @@ clock_t times( struct tms* tp );
 #endif
 
 #endif /* !_SYS_TIMES_H_ */
-

@@ -6,6 +6,12 @@
 #ifndef MAC_FILES_TYPES_FSUSERPRIVILEGES_HH
 #define MAC_FILES_TYPES_FSUSERPRIVILEGES_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
@@ -32,4 +38,3 @@ namespace Mac
 }
 
 #endif
-

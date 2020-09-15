@@ -14,9 +14,6 @@
 // gear
 #include "gear/find.hh"
 
-// plus
-#include "plus/string.hh"
-
 // MacFeatures
 #include "MacFeatures/Features.hh"
 
@@ -60,8 +57,8 @@ namespace Genie
 		
 		// Archive formats
 		{ "mBin", 'BIN+', "MacBinary III+" " archive" },
+		{ "mbim", 'BIN+', "MacBinary III+" " archive" },
 		{ "mbin", 'mBIN', "MacBinary III"  " archive" },
-		{ "mbi",  'mBIN', "MacBinary III"  " archive" },
 		{ "zip",  'ZIP ', "zip"            " archive" },
 		{ "tar",  'TARF', "TAR"            " archive" },
 		{ "lha",  'LHA ', "LHA"            " archive" },
@@ -186,4 +183,3 @@ namespace Genie
 	}
 	
 }
-

@@ -30,9 +30,6 @@ static const unsigned n_tests = 1
                               + !TARGET_API_MAC_CARBON;
 
 
-using tap::ok_if;
-
-
 enum Carbon_test_mode
 {
 	test_default,
@@ -57,7 +54,7 @@ static void null_NULL()
 	
 	Size size = AEGetDescDataSize( &null );
 	
-	ok_if( size == 0 );
+	EXPECT( size == 0 );
 }
 
 static void word_NULL()
@@ -69,7 +66,7 @@ static void word_NULL()
 	const bool ok_for_OS_9 = size == 0;
 	const bool ok_for_OS_X = size == 4;
 	
-	ok_if( passed_for_mode( ok_for_OS_9, ok_for_OS_X ) );
+	EXPECT( passed_for_mode( ok_for_OS_9, ok_for_OS_X ) );
 }
 
 static void true_NULL()
@@ -81,7 +78,7 @@ static void true_NULL()
 	const bool ok_for_OS_9 = size == 0;
 	const bool ok_for_OS_X = size == 4;
 	
-	ok_if( passed_for_mode( ok_for_OS_9, ok_for_OS_X ) );
+	EXPECT( passed_for_mode( ok_for_OS_9, ok_for_OS_X ) );
 }
 
 static void create_typeNull_with_data()
@@ -93,11 +90,11 @@ static void create_typeNull_with_data()
 		exit( 1 );
 	}
 	
-	ok_if( null_h.dataHandle == NULL );
+	EXPECT( null_h.dataHandle == NULL );
 	
 	Size size = AEGetDescDataSize( &null_h );
 	
-	ok_if( size == 0 );
+	EXPECT( size == 0 );
 }
 
 static void create_with_data_and_set_typeNull()
@@ -113,7 +110,7 @@ static void create_with_data_and_set_typeNull()
 	
 	Size size = AEGetDescDataSize( &null_h );
 	
-	ok_if( size == 0 );
+	EXPECT( size == 0 );
 	
 	AEDisposeDesc( &null_h );
 }
@@ -133,7 +130,7 @@ static void purged_handle()
 	
 	Size size = AEGetDescDataSize( &desc );
 	
-	ok_if( size == 0 );
+	EXPECT( size == 0 );
 	
 	AEDisposeDesc( &desc );
 	
@@ -170,4 +167,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

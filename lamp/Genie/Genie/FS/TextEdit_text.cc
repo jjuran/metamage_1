@@ -5,23 +5,24 @@
 
 #include "Genie/FS/TextEdit_text.hh"
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include <sys/stat.h>
 
 // plus
 #include "plus/mac_utf8.hh"
 
+// vfs
+#include "vfs/filehandle.hh"
+#include "vfs/node.hh"
+#include "vfs/filehandle/methods/bstore_method_set.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/RegularFile.hh"
-#include "Genie/IO/VirtualFile.hh"
 
 
 namespace Genie
@@ -30,9 +31,19 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	static void TextEdit_text_SetEOF( const FSTree* text, off_t length )
+	template < class T >
+	static inline T min( T a, T b )
 	{
-		const FSTree* view = text->owner();
+		return b < a ? b : a;
+	}
+	
+	
+	static
+	const vfs::node* view_key( vfs::filehandle* that );
+	
+	static void TextEdit_text_SetEOF( const vfs::node* text, off_t length )
+	{
+		const vfs::node* view = text->owner();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -48,41 +59,56 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	class TextEdit_text_Handle : public VirtualFileHandle< RegularFileHandle >
+	
+	static
+	ssize_t TextEdit_text_pread( vfs::filehandle*  that,
+	                             char*             buffer,
+	                             size_t            n_bytes,
+	                             off_t             offset );
+	
+	static off_t TextEdit_text_geteof( vfs::filehandle* file )
 	{
-		public:
-			TextEdit_text_Handle( const FSTreePtr& file, int flags )
-			:
-				VirtualFileHandle< RegularFileHandle >( file, flags )
-			{
-			}
-			
-			IOPtr Clone();
-			
-			const FSTree* ViewKey();
-			
-			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
-			
-			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
-			
-			off_t GetEOF()  { return TextEditParameters::Get( ViewKey() ).its_utf8_text.size(); }
-			
-			void SetEOF( off_t length )  { TextEdit_text_SetEOF( GetFile().get(), length ); }
+		return TextEditParameters::Get( view_key( file ) ).its_utf8_text.size();
+	}
+	
+	static
+	ssize_t TextEdit_text_pwrite( vfs::filehandle*  that,
+	                              const char*       buffer,
+	                              size_t            n_bytes,
+	                              off_t             offset );
+	
+	static void TextEdit_text_seteof( vfs::filehandle* file, off_t length )
+	{
+		TextEdit_text_SetEOF( get_file( *file ).get(), length );
+	}
+	
+	static const vfs::bstore_method_set TextEdit_text_bstore_methods =
+	{
+		&TextEdit_text_pread,
+		&TextEdit_text_geteof,
+		&TextEdit_text_pwrite,
+		&TextEdit_text_seteof,
 	};
 	
-	IOPtr TextEdit_text_Handle::Clone()
+	static const vfs::filehandle_method_set TextEdit_text_methods =
 	{
-		return new TextEdit_text_Handle( GetFile(), GetFlags() );
+		&TextEdit_text_bstore_methods,
+	};
+	
+	
+	static
+	const vfs::node* view_key( vfs::filehandle* that )
+	{
+		return get_file( *that )->owner();
 	}
 	
-	const FSTree* TextEdit_text_Handle::ViewKey()
+	static
+	ssize_t TextEdit_text_pread( vfs::filehandle*  that,
+	                             char*             buffer,
+	                             size_t            n_bytes,
+	                             off_t             offset )
 	{
-		return GetFile()->owner();
-	}
-	
-	ssize_t TextEdit_text_Handle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
-	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = view_key( that );
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -93,16 +119,20 @@ namespace Genie
 			return 0;
 		}
 		
-		n_bytes = std::min< size_t >( n_bytes, s.size() - offset );
+		n_bytes = min< size_t >( n_bytes, s.size() - offset );
 		
 		memcpy( buffer, &s[ offset ], n_bytes );
 		
 		return n_bytes;
 	}
 	
-	ssize_t TextEdit_text_Handle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
+	static
+	ssize_t TextEdit_text_pwrite( vfs::filehandle*  that,
+	                              const char*       buffer,
+	                              size_t            n_bytes,
+	                              off_t             offset )
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = view_key( that );
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -113,9 +143,7 @@ namespace Genie
 			s.resize( offset + n_bytes );
 		}
 		
-		std::copy( buffer,
-		           buffer + n_bytes,
-		           s.begin() + offset );
+		memcpy( s.begin() + offset, buffer, n_bytes );
 		
 		if ( offset < params.itsValidLength )
 		{
@@ -130,45 +158,39 @@ namespace Genie
 	}
 	
 	
-	static off_t textedit_text_geteof( const FSTree* node )
+	static off_t textedit_text_geteof( const vfs::node* that )
 	{
-		return TextEditParameters::Get( node->owner() ).its_utf8_text.size();
+		return TextEditParameters::Get( that->owner() ).its_utf8_text.size();
 	}
 	
-	static void textedit_text_seteof( const FSTree* node, off_t length )
+	static void textedit_text_seteof( const vfs::node* that, off_t length )
 	{
-		TextEdit_text_SetEOF( node, length );
+		TextEdit_text_SetEOF( that, length );
 	}
 	
-	static IOPtr textedit_text_open( const FSTree* node, int flags, mode_t mode )
+	static vfs::filehandle_ptr textedit_text_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		return new TextEdit_text_Handle( node, flags );
+		return new vfs::filehandle( that, flags, &TextEdit_text_methods );
 	}
 	
-	static const data_method_set textedit_text_data_methods =
+	static const vfs::data_method_set textedit_text_data_methods =
 	{
 		&textedit_text_open,
 		&textedit_text_geteof,
 		&textedit_text_seteof
 	};
 	
-	static const node_method_set textedit_text_methods =
+	static const vfs::node_method_set textedit_text_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		&textedit_text_data_methods
 	};
 	
-	FSTreePtr New_FSTree_TextEdit_text( const FSTree*        parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
+	vfs::node_ptr New_FSTree_TextEdit_text( const vfs::node*     parent,
+	                                        const plus::string&  name,
+	                                        const void*          args )
 	{
-		return new FSTree( parent, name, S_IFREG | 0600, &textedit_text_methods );
+		return new vfs::node( parent, name, S_IFREG | 0600, &textedit_text_methods );
 	}
 	
 }
-

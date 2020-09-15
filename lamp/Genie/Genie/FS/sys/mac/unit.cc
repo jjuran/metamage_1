@@ -3,12 +3,13 @@
 	------------------------
 */
 
-#if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
-
 #include "Genie/FS/sys/mac/unit.hh"
 
-// Standard C
-#include <ctype.h>
+// mac-types
+#include "mac_types/AuxDCE.hh"
+
+// mac-sys-utils
+#include "mac_sys/unit_table.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -17,12 +18,10 @@
 // plus
 #include "plus/contains.hh"
 #include "plus/serialize.hh"
+#include "plus/string.hh"
 
 // Debug
 #include "debug/assert.hh"
-
-// nucleus
-#include "nucleus/indexed_sequence.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -30,88 +29,29 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node.hh"
+#include "vfs/property.hh"
+#include "vfs/node/types/basic_directory.hh"
+#include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
-
-namespace Nitrogen
-{
-	
-	struct UnitTable_Container_Specifics
-	{
-		typedef UInt16             size_type;
-		typedef SInt16             difference_type;
-		typedef AuxDCEHandle       value_type;
-		typedef const value_type&  const_reference;
-		typedef const value_type*  const_pointer;
-		
-		class Nothing {};
-		
-		typedef Nothing context_type;
-		
-		
-		static size_type Size( context_type )
-		{
-			return LMGetUnitTableEntryCount();
-		}
-		
-		static const_reference get_reference( context_type state, size_type position )
-		{
-			AuxDCEHandle* base = (AuxDCEHandle*) LMGetUTableBase();
-			
-			return base[ position ];
-		}
-		
-		static const_pointer get_pointer( context_type state, size_type position )
-		{
-			return &get_reference( state, position );
-		}
-	};
-	
-	class UnitTable_Container: public nucleus::const_indexed_sequence< UnitTable_Container_Specifics >
-	{
-		friend UnitTable_Container UnitTable();
-		
-		private:
-			UnitTable_Container()
-			: nucleus::const_indexed_sequence< UnitTable_Container_Specifics >( UnitTable_Container_Specifics::Nothing() )
-			{}
-	};
-	
-	inline UnitTable_Container UnitTable()
-	{
-		return UnitTable_Container();
-	}
-	
-	
-	UnitTableDrivers_Container_Specifics::key_type
-	//
-	UnitTableDrivers_Container_Specifics::get_next_key( key_type key )
-	{
-		const key_type end = end_key();
-		
-		while ( ++key < end  &&  *key == NULL )
-		{
-			continue;
-		}
-		
-		return key;
-	}
-	
-}
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	
+	
+	using mac::types::AuxDCEHandle;
+	
+	typedef char*           Ptr;
+	typedef unsigned long   UInt32;
+	typedef unsigned short  UnitNumber;
 	
 	
 	struct decode_unit_number
@@ -122,23 +62,17 @@ namespace Genie
 		}
 	};
 	
-	static UnitNumber GetKey( const FSTree* that )
+	static UnitNumber GetKey( const vfs::node* that )
 	{
 		return UnitNumber( decode_unit_number::apply( that->name() ) );
 	}
 	
 	
-	static inline AuxDCEHandle* GetUTableBase()
-	{
-		return (AuxDCEHandle*) LMGetUTableBase();
-	}
-	
-	
 	static bool is_valid_unit_number( UInt32 i )
 	{
-		AuxDCEHandle* base = GetUTableBase();
+		AuxDCEHandle* base = mac::sys::get_unit_table_base();
 		
-		const UInt16 count = LMGetUnitTableEntryCount();
+		const short count = mac::sys::get_unit_table_entry_count();
 		
 		return i < count  &&  base[ i ] != NULL;
 	}
@@ -154,32 +88,9 @@ namespace Genie
 		}
 	};
 	
-	const unsigned char* GetDriverName_WithinHandle( AuxDCEHandle dceHandle )
-	{
-		ASSERT( dceHandle != NULL );
-		
-		if ( dceHandle[0]->dCtlDriver != NULL )
-		{
-			const bool ramBased = dceHandle[0]->dCtlFlags & dRAMBasedMask;
-			
-			const Ptr drvr = dceHandle[0]->dCtlDriver;
-			
-			// Dereferences a handle if ramBased
-			const DRVRHeaderPtr header = ramBased ? *(DRVRHeader **) drvr
-			                                      :  (DRVRHeader * ) drvr;
-			
-			if ( header != NULL )
-			{
-				return header->drvrName;
-			}
-		}
-		
-		return "\p";
-	}
-	
 	static N::Str255 GetDriverName( AuxDCEHandle dceHandle )
 	{
-		const unsigned char* name = GetDriverName_WithinHandle( dceHandle );
+		const unsigned char* name = mac::sys::get_driver_name( dceHandle );
 		
 		// Safely copy Pascal string onto stack
 		return N::Str255( name );
@@ -278,20 +189,20 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_mac_unit_N_Property : readonly_property
+	struct sys_mac_unit_N_Property : vfs::readonly_property
 	{
-		static const size_t fixed_size = Accessor::fixed_size;
+		static const int fixed_size = Accessor::fixed_size;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			UnitNumber key = GetKey( that );
 			
 			if ( !is_valid_unit_number( key ) )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
-			AuxDCEHandle dceHandle = GetUTableBase()[ key ];
+			AuxDCEHandle dceHandle = mac::sys::get_unit_table_base()[ key ];
 			
 			const typename Accessor::result_type data = Accessor::Get( dceHandle );
 			
@@ -312,7 +223,7 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping sys_mac_unit_N_Mappings[];
 	
-	static FSTreePtr unit_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr unit_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !valid_name_of_unit_number::applies( name ) )
 		{
@@ -322,35 +233,27 @@ namespace Genie
 		return fixed_dir( parent, name, sys_mac_unit_N_Mappings );
 	}
 	
-	class unit_IteratorConverter
+	static void unit_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
-		public:
-			vfs::dir_entry operator()( N::UnitTableDrivers_Container::const_reference ref ) const
+		const short n = mac::sys::get_unit_table_entry_count();
+		
+		AuxDCEHandle* it = mac::sys::get_unit_table_base();
+		
+		for ( int i = 0;  i < n;  ++i, ++it )
+		{
+			if ( *it )
 			{
-				const int i = &ref - GetUTableBase();
-				
 				const ino_t inode = i;
 				
 				plus::string name = gear::inscribe_decimal( i );
 				
-				return vfs::dir_entry( inode, name );
+				cache.push_back( vfs::dir_entry( inode, name ) );
 			}
-	};
-	
-	static void unit_iterate( const FSTree* parent, vfs::dir_contents& cache )
-	{
-		unit_IteratorConverter converter;
-		
-		N::UnitTableDrivers_Container sequence = N::UnitTableDrivers();
-		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		}
 	}
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_unit_N_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_unit_N_Property< prop > >::value
 	
 	const vfs::fixed_mapping sys_mac_unit_N_Mappings[] =
 	{
@@ -362,17 +265,22 @@ namespace Genie
 		{ "owner",  PROPERTY( GetDriverOwner            ) },
 		{ "extdev", PROPERTY( GetDriverExternalDeviceID ) },
 		
+		{ ".~flags",  PROPERTY( GetDriverFlags            ) },
+		{ ".~name",   PROPERTY( DriverName                ) },
+		{ ".~slot",   PROPERTY( GetDriverSlot             ) },
+		{ ".~id",     PROPERTY( GetDriverSlotId           ) },
+		{ ".~base",   PROPERTY( GetDriverBase             ) },
+		{ ".~owner",  PROPERTY( GetDriverOwner            ) },
+		{ ".~extdev", PROPERTY( GetDriverExternalDeviceID ) },
+		
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_unit( const FSTree*        parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_unit( const vfs::node*     parent,
+	                                       const plus::string&  name,
+	                                       const void*          args )
 	{
-		return new_basic_directory( parent, name, unit_lookup, unit_iterate );
+		return vfs::new_basic_directory( parent, name, unit_lookup, unit_iterate );
 	}
 	
 }
-
-#endif
-

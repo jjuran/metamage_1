@@ -19,7 +19,7 @@
 #include "iota/strings.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 #include "gear/inscribe_decimal.hh"
 
 // plus
@@ -39,6 +39,14 @@
 		#define TARGET_CPU_PPC 1
 	#else
 		#define TARGET_CPU_PPC 0
+	#endif
+#endif
+
+#ifndef CONFIG_DEMANGLING
+	#ifdef __MC68K__
+		#define CONFIG_DEMANGLING  CONFIG_DEBUGGING
+	#else
+		#define CONFIG_DEMANGLING  1
 	#endif
 #endif
 
@@ -95,7 +103,7 @@ namespace recall
 	
 #endif
 	
-#if defined( __ELF__ )  ||  defined( __CYGWIN__ )
+#if defined( __ELF__ )  ||  defined( __CYGWIN__ )  ||  defined( __INTERIX )
 	
 	static const char* find_symbol_name( return_address_native )
 	{
@@ -134,16 +142,19 @@ namespace recall
 		plus::string name = located_name ? plus::string( located_name )
 		                                 : get_symbol_name( addr );
 		
-		plus::var_string result;
-		
-		try
+		if ( CONFIG_DEMANGLING )
 		{
-			demangler_traits< ReturnAddr >::demangle( result, name );
+			plus::var_string result;
 			
-			return move( result );
-		}
-		catch ( ... )
-		{
+			try
+			{
+				demangler_traits< ReturnAddr >::demangle( result, name );
+				
+				return move( result );
+			}
+			catch ( ... )
+			{
+			}
 		}
 		
 		return name;
@@ -167,9 +178,16 @@ namespace recall
 		
 	#ifdef __MACOS__
 		
-		result.arch           = call.is_cfm ? "ppc" : "68k";
-		result.demangled_name = call.is_cfm ? get_demangled_symbol_name( call.addr_cfm    )
-		                                    : get_demangled_symbol_name( call.addr_native );
+		const long is_cfm = (long) result.frame_pointer & 0x1;
+		
+		if ( is_cfm )
+		{
+			--(long&) result.frame_pointer;
+		}
+		
+		result.arch           = is_cfm ? "ppc" : "68k";
+		result.demangled_name = is_cfm ? get_demangled_symbol_name( call.addr_cfm    )
+		                               : get_demangled_symbol_name( call.addr_native );
 		
 		plus::var_string demangled_name;
 		
@@ -254,4 +272,3 @@ namespace recall
 	}
 	
 }
-

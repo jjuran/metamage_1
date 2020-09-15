@@ -5,19 +5,19 @@
 
 #include "Genie/FS/sys/app.hh"
 
-#ifndef __MACMEMORY__
-#include <MacMemory.h>
-#endif
+// mac-sys-utils
+#include "mac_sys/free_mem.hh"
+#include "mac_sys/heap_size.hh"
 
 // plus
 #include "plus/serialize.hh"
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/property.hh"
+#include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/FS/sys/app/cmd.hh"
 #include "Genie/FS/sys/app/dir.hh"
 #include "Genie/FS/sys/app/exe.hh"
@@ -32,32 +32,26 @@ namespace Genie
 	{
 		static long Get()
 		{
-			return ::FreeMem();
+			return mac::sys::free_mem();
 		}
 	};
-	
-#if !TARGET_API_MAC_CARBON
 	
 	struct GetHeapSize : plus::serialize_unsigned< long >
 	{
 		static long Get()
 		{
-			THz zone = ::ApplicationZone();
-			
-			return zone->bkLim - (Ptr) &zone->heapData;
+			return mac::sys::heap_size();
 		}
 	};
 	
-#endif
-	
 	template < class Accessor >
-	struct sys_app_Property : readonly_property
+	struct sys_app_Property : vfs::readonly_property
 	{
-		static const std::size_t fixed_size = Accessor::fixed_size;
+		static const int fixed_size = Accessor::fixed_size;
 		
 		typedef typename Accessor::result_type result_type;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			const result_type data = Accessor::Get();
 			
@@ -68,7 +62,7 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_Property< access > )
 	
@@ -95,4 +89,3 @@ namespace Genie
 	};
 	
 }
-

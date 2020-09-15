@@ -21,4 +21,3 @@ Legal
 
 MacRelix is copyright 1998-2012, Joshua Juran.
 MacRelix is distributed under the GNU GPL version 3 or later.
-

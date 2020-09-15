@@ -11,7 +11,6 @@
 #include "Pedestal/Application.hh"
 #include "Pedestal/AboutBox.hh"
 #include "Pedestal/Commands.hh"
-#include "Pedestal/WindowsOwner.hh"
 
 // Vertice
 #include "Vertice/Document.hh"
@@ -25,14 +24,6 @@ namespace Vertice
 	namespace Ped = Pedestal;
 	
 	
-	class DocumentsOwner : public Ped::WindowsOwner
-	{
-		public:
-			void OpenDocument( const FSSpec& file );
-	};
-	
-	static DocumentsOwner gDocuments;
-	
 	class App : public Ped::Application
 	{
 		public:
@@ -42,17 +33,6 @@ namespace Vertice
 			App();
 	};
 	
-	
-	void DocumentsOwner::OpenDocument( const FSSpec& file )
-	{
-		Window* doc = new Window( file.name );
-		
-		boost::intrusive_ptr< Ped::Window > document( doc );
-		
-		AddWindow( document );
-		
-		doc->Load( file );
-	}
 	
 	static bool About( Ped::CommandCode )
 	{
@@ -81,7 +61,7 @@ namespace Vertice
 		{
 			FSSpec fss = N::AEGetNthPtr< Mac::typeFSS >( docList, index );
 			
-			gDocuments.OpenDocument( fss );
+			OpenDocument( fss );
 		}
 	}
 	
@@ -94,4 +74,3 @@ int main(void)
 	
 	return app.Run();
 }
-

@@ -13,9 +13,16 @@
 
 #include "Nitrogen/OpenTransportProviders.hh"
 
+// iota
+#ifdef MAC_OS_X_VERSION_10_8
+#include "iota/dummy.hh"
+#endif
+
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
+
+#ifndef MAC_OS_X_VERSION_10_8
 
 using Nitrogen::DefaultInternetServicesPath;
 
@@ -125,3 +132,4 @@ namespace Nitrogen
 	
 }
 
+#endif  // #ifndef MAC_OS_X_VERSION_10_8

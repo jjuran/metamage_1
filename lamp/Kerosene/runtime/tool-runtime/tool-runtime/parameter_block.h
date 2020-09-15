@@ -13,4 +13,3 @@ extern struct _relix_user_parameter_block*    global_user_params;
 #endif
 
 #endif
-

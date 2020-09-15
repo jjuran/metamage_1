@@ -50,7 +50,9 @@ namespace Vectoria
 	
 }
 
-namespace
+#ifdef __APPLE__
+
+namespace _
 {
 	
 	void dummy()
@@ -59,3 +61,4 @@ namespace
 	
 }
 
+#endif

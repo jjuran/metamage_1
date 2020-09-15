@@ -4,6 +4,9 @@
  * terms of the GNU General Public License, see the file COPYING.
  */
 
+#ifndef GNU_GZIP_LZW_H
+#define GNU_GZIP_LZW_H
+
 #if !defined(OF) && defined(lint)
 #  include "gzip.h"
 #endif
@@ -40,3 +43,6 @@ extern int block_mode;   /* block compress mode -C compatible with 2.0 */
 
 extern int lzw    OF((int in, int out));
 extern int unlzw  OF((int in, int out));
+
+#endif
+

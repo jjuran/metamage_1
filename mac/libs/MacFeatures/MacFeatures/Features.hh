@@ -6,6 +6,11 @@
 #ifndef MACFEATURES_FEATURES_HH
 #define MACFEATURES_FEATURES_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __CONDITIONALMACROS__
 #include <ConditionalMacros.h>
@@ -45,4 +50,3 @@ namespace MacFeatures
 }
 
 #endif
-

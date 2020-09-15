@@ -45,6 +45,8 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
    nucleus::owned<MenuRef> NewMenu( MenuID           menuID,
                            ConstStr255Param menuTitle )
      {
@@ -121,6 +123,8 @@ namespace Nitrogen
       ThrowOSStatus( ::ChangeMenuItemAttributes( menu, item, setTheseAttributes, clearTheseAttributes ) );
      }
    
+#endif  // #if ! __LP64__
+	
    void RegisterMenuManagerErrors()
      {
       RegisterOSStatus< paramErr                >();

@@ -14,6 +14,11 @@
 #ifndef NITROGEN_TEXTUTILS_HH
 #define NITROGEN_TEXTUTILS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __TEXTUTILS__
 #include <TextUtils.h>
@@ -38,6 +43,8 @@ namespace Nitrogen
 	// Munger
 	// I am *not* porting Munger().  There are C++ algorithms to do the same things type-safely.
 	
+#if ! __LP64__
+	
 	nucleus::owned< StringHandle > NewString( ConstStr255Param string );
 	
 	void SetString( StringHandle string, ConstStr255Param newStr );
@@ -45,6 +52,8 @@ namespace Nitrogen
 	StringHandle GetString( Mac::ResID stringID );
 	
 	Str255 GetIndString( Mac::ResID resID, UInt16 index );
+	
+#endif  // #if ! __LP64__
 	
 	inline Str255 c2pstrcpy( const char* src )  { return Str255( src ); }
 	
@@ -56,4 +65,3 @@ namespace Nitrogen
 }
 
 #endif
-

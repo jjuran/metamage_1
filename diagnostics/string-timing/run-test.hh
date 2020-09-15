@@ -28,10 +28,9 @@
 	#include "run-test-config.hh"
 	
 	#undef VAR_STRING
-	#define VAR_STRING  plus::var_string
+	#define VAR_STRING  plus::own_string
 	
 	#include "run-test-config.hh"
 	
 	printf( "\n" );
 }
-

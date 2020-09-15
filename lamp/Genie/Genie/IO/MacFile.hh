@@ -7,33 +7,38 @@
 #define GENIE_IO_MACFILE_HH
 
 // nucleus
-#ifndef NUCLEUS_SHARED_HH
-#include "nucleus/shared.hh"
+#ifndef NUCLEUS_OWNED_HH
+#include "nucleus/owned.hh"
 #endif
 
 // Nitrogen
 #ifndef MAC_FILES_TYPES_FSFILEREFNUM_HH
 #include "Mac/Files/Types/FSFileRefNum.hh"
 #endif
+#ifndef MAC_FILES_TYPES_FSIOPERM_HH
+#include "Mac/Files/Types/FSIOPerm.hh"
+#endif
 
-// Genie
-#include "Genie/IO/Base.hh"
+// vfs
+#include "vfs/filehandle_ptr.hh"
+#include "vfs/node_ptr.hh"
 
 
 namespace Genie
 {
 	
-	IOPtr
-	//
-	New_DataForkHandle( const nucleus::shared< Mac::FSFileRefNum >&  refNum,
-	                    int                                          flags );
+	typedef nucleus::owned< Mac::FSFileRefNum > (*ForkOpener)( const FSSpec&, Mac::FSIOPerm );
 	
-	IOPtr
+	typedef vfs::node_ptr (*FileGetter)( const FSSpec& );
+	
+	
+	vfs::filehandle_ptr
 	//
-	New_RsrcForkHandle( const nucleus::shared< Mac::FSFileRefNum >&  refNum,
-	                    int                                          flags );
+	OpenMacFileHandle( const FSSpec&  fileSpec,
+	                   int            flags,
+	                   ForkOpener     openFork,
+	                   FileGetter     getFile );
 	
 }
 
 #endif
-

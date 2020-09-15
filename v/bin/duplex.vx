@@ -1,0 +1,17 @@
+#!/usr/bin/env vx
+
+def relay
+{
+	const input  = fd head _
+	const output = fd tail _
+	
+	while var data = input.read 1024 do
+	{
+		output <== data
+	}
+	
+	exit 0
+}
+
+thread { relay (0, 7) },
+thread { relay (6, 1) }

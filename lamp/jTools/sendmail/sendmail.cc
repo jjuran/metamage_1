@@ -8,17 +8,32 @@
 #include <vector>
 
 // Standard C/C++
-#include <cctype>
 #include <cstdio>
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
+#ifndef MAC_OS_X_VERSION_10_8
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
+#endif
 #endif
 
 // POSIX
 #include <arpa/inet.h>
 #include <netdb.h>
+
+// Standard C
+#include <stdlib.h>
+
+// iota
+#include "iota/char_types.hh"
+
+// command
+#include "command/get_option.hh"
 
 // plus
 #include "plus/pointer_to_function.hh"
@@ -42,13 +57,57 @@
 #include "SMTP.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
+
+#ifndef MAC_OS_X_VERSION_10_8
 
 inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
 {
 	return a.preference < b.preference;
+}
+
+#endif
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_last_byte = 255,
+	
+	Option_relay,
+};
+
+static command::option options[] =
+{
+	{ "relay", Option_relay },
+	
+	{ NULL }
+};
+
+static const char* gRelayServer = NULL;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_relay:
+				gRelayServer = command::global_result.param;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
 }
 
 
@@ -59,17 +118,19 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	using namespace io::path_descent_operators;
 	
 	
-	static const char* gRelayServer = NULL;
-	
-	
 	static N::FSDirSpec QueueDirectory()
 	{
-		return N::FSpMake_FSDirSpec( io::system_root< N::FSDirSpec >() / "j" / "var" / "spool" / "jmail" / "queue" );
+		Mac::FSDirSpec folder = N::FindFolder( N::kOnSystemDisk,
+		                                       N::kSystemFolderType,
+		                                       kDontCreateFolder );
+		
+		folder.dirID = Mac::fsRtDirID;  // root
+		
+		return N::FSpMake_FSDirSpec( folder / "j" / "var" / "spool" / "jmail" / "queue" );
 	}
 	
 	
@@ -205,7 +266,7 @@ namespace tool
 	
 	static bool IsControlChar( char c )
 	{
-		return std::iscntrl( c );
+		return iota::is_cntrl( c );
 	}
 	
 	template < class Stream >
@@ -296,13 +357,19 @@ namespace tool
 		directory_spec destFolder( N::FSpMake_FSDirSpec( destinations ) );
 		
 		typedef io::directory_contents_traits< directory_spec >::container_type directory_container;
-		directory_container contents = io::directory_contents( destFolder );
 		
-		std::for_each( contents.begin(),
-		               contents.end(),
-		               Transmitter( ReadOneLinerFromFile( returnPath ),
-		                            message,
-		                            destinations ) );
+		directory_container dests = io::directory_contents( destFolder );
+		
+		typedef directory_container::const_iterator Iter;
+		
+		Transmitter transmitter( ReadOneLinerFromFile( returnPath ),
+		                         message,
+		                         destinations );
+		
+		for ( Iter it = dests.begin(), end = dests.end();  it != end;  ++it )
+		{
+			transmitter( *it );
+		}
 		
 		io::delete_empty_directory( destFolder );  // this fails if destinations remain
 		io::delete_file           ( returnPath );
@@ -313,20 +380,22 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		o::bind_option_to_variable( "--relay", gRelayServer );
+		char *const *args = get_options( argv );
 		
-		o::get_options( argc, argv );
+		const int argn = argc - (args - argv);
 		
 		N::FSDirSpec queue_dir = QueueDirectory();
 		
 		N::FSSpecContents_Container queue = io::directory_contents( queue_dir );
 		
-		std::for_each( queue.begin(),
-		               queue.end(),
-		               std::bind1st( plus::ptr_fun( ProcessMessage ), queue_dir ) );
+		typedef N::FSSpecContents_Container::const_iterator Iter;
+		
+		for ( Iter it = queue.begin(), end = queue.end();  it != end;  ++it )
+		{
+			ProcessMessage( queue_dir, *it );
+		}
 		
 		return 0;
 	}
 
 }
-

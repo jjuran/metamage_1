@@ -5,13 +5,18 @@
 
 #include "debug/assert.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
-#ifndef __PROCESSES__
-#include <Processes.h>
-#endif
+
+// mac-sys-utils
+#include "mac_sys/exit_to_shell.hh"
 
 
 namespace debug
@@ -24,8 +29,7 @@ namespace debug
 	{
 		::DebugStr( "\p" "Assertion failure" );
 		
-		::ExitToShell();
+		mac::sys::exit_to_shell();
 	}
 	
 }
-

@@ -5,6 +5,15 @@
 
 #include "Mac/Sound/Functions/SysBeep.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+#if ! __LP64__
+
+// Mac OS
+
 #ifndef __SOUND__
 #include <Sound.h>
 #endif
@@ -20,3 +29,10 @@ namespace Mac
 	
 }
 
+#else
+
+void dummy()
+{
+}
+
+#endif  // #if ! __LP64__

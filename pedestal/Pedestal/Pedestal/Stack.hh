@@ -32,6 +32,7 @@ namespace Pedestal
 			bool MouseDown( const EventRecord& event );
 			
 			bool KeyDown( const EventRecord& event );
+			void KeyUp  ( const EventRecord& event );
 			
 			bool HitTest( const EventRecord& event );
 			
@@ -45,7 +46,9 @@ namespace Pedestal
 			
 			void Draw( const Rect& bounds, bool erasing );
 			
-			bool SetCursor( const EventRecord& event, RgnHandle mouseRgn );
+			void DrawInContext( CGContextRef context, CGRect bounds );
+			
+			bool SetCursor( const EventRecord& event );
 			
 			bool UserCommand( CommandCode code );
 	};
@@ -53,4 +56,3 @@ namespace Pedestal
 }
 
 #endif
-

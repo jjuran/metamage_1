@@ -3,8 +3,8 @@
  *	=======
  */
 
-#ifndef KEROSENE_FCNTL_H
-#define KEROSENE_FCNTL_H
+#ifndef _FCNTL_H_
+#define _FCNTL_H_
 
 #include <sys/types.h>
 
@@ -38,8 +38,6 @@ extern "C" {
 	#define O_NOATIME	0		/* atime is not supported and therefore never modified */
 	
 	#define O_DIRECTORY	0x4000  // matches m68k and powerpc Linux
-	
-	#define O_BINARY	0x8000  // matches WinCE
 	
 	#define O_EXEC    0x00040000
 	#define O_SEARCH  0x00040000
@@ -110,4 +108,3 @@ extern "C" {
 #endif
 
 #endif
-

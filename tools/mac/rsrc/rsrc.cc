@@ -3,7 +3,15 @@
 	-------
 */
 
+// Standard C
+#include <errno.h>
+#include <stdlib.h>
+
+// command
+#include "command/get_option.hh"
+
 // gear
+#include "gear/hexadecimal.hh"
 #include "gear/parse_decimal.hh"
 
 // plus
@@ -23,12 +31,76 @@
 #include "Nitrogen/Resources.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
 namespace n = nucleus;
 namespace N = Nitrogen;
+
+using namespace command::constants;
+
+enum
+{
+	Option_type = 't',
+	Option_hex  = 'x',
+	
+	Option_last_byte = 255,
+	
+	Option_data_fork,
+	Option_id,
+};
+
+static command::option options[] =
+{
+	{ "data",      Option_data_fork },
+	{ "data-fork", Option_data_fork },
+	{ "hex-types", Option_hex       },
+	
+	{ "id",  Option_id, Param_required },
+	{ "",  Option_type, Param_required },
+	
+	{ NULL }
+};
+
+static bool use_data_fork;
+static bool use_hex_types;
+
+static const char*  the_type_opt = NULL;
+static const char*  the_id_opt   = NULL;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_data_fork:
+				use_data_fork = true;
+				break;
+			
+			case Option_hex:
+				use_hex_types = true;
+				break;
+			
+			case Option_type:
+				the_type_opt = command::global_result.param;
+				break;
+			
+			case Option_id:
+				the_id_opt = command::global_result.param;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -37,17 +109,51 @@ namespace tool
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
-	
-	static const char*  the_type_opt = NULL;
-	static const char*  the_id_opt   = NULL;
 	
 	static Mac::ResType  the_type;
 	static Mac::ResID    the_id;
 	
 	static HFSUniStr255 the_fork_name;
 	
+	
+	/*
+		Mac OS X helpfully flips to little-endian the resources we're trying
+		to copy and use portably.  Redefine all the relevant resource flippers
+		as no-ops so we get the original pristine data.
+	*/
+	
+	static
+	OSStatus null_flip_proc( OSType, OSType, SInt16, void*, ByteCount, Boolean, void* )
+	{
+		return noErr;
+	}
+	
+	static
+	void install_null_flipper( ResType type )
+	{
+		OSStatus err;
+		
+		err = CoreEndianInstallFlipper( kCoreEndianResourceManagerDomain,
+		                                type,
+		                                &null_flip_proc,
+		                                NULL );
+		
+		Mac::ThrowOSStatus( err );
+	}
+	
+	static
+	void install_null_flippers()
+	{
+		int n_types = N::Count1Types();
+		
+		for ( int i = 1;  i <= n_types;  ++i )
+		{
+			Mac::ResType type = N::Get1IndType( i );
+			
+			install_null_flipper( type );
+		}
+	}
 	
 	static n::owned< N::ResFileRefNum > open_res_file( const FSRef& ref )
 	{
@@ -59,7 +165,30 @@ namespace tool
 	
 	static void list_rsrc_by_handle( N::Handle h )
 	{
-		N::GetResInfo_Result resInfo = N::GetResInfo( h );
+		mac::types::ResInfo resInfo = N::GetResInfo( h );
+		
+		if ( use_hex_types )
+		{
+			char buffer[ 4 + 1 + 8 + 1 ];
+			
+			char* p = buffer;
+			
+			gear::encode_16_bit_hex( resInfo.id, p );
+			
+			p += 4;
+			
+			*p++ = '.';
+			
+			gear::encode_32_bit_hex( resInfo.type, p );
+			
+			p += 8;
+			
+			*p++ = '\n';
+			
+			p7::write( p7::stdout_fileno, buffer, sizeof buffer );
+			
+			return;
+		}
 		
 		plus::string name = MacScribe::get_utf8_name_from_ResInfo( resInfo );
 		
@@ -123,10 +252,14 @@ namespace tool
 	
 	static void print_rsrc_by_handle( N::Handle h, bool showing )
 	{
+	#if ! __LP64__
+		
 		if ( !TARGET_RT_MAC_MACHO )
 		{
 			N::HNoPurge( h );  // not needed on OS X
 		}
+		
+	#endif
 		
 		const char* data = *h.Get();
 		
@@ -164,19 +297,15 @@ namespace tool
 		Mac::Handle h = N::Get1Resource( the_type, the_id );
 		
 		print_rsrc_by_handle( h, showing );
+		
+		return 0;
 	}
 	
 	int Main( int argc, char** argv )
 	{
-		bool use_data_fork = false;
+		char *const *args = get_options( argv );
 		
-		o::bind_option_to_variable( "--data", use_data_fork );
-		
-		o::bind_option_to_variable( "-t", the_type_opt );
-		
-		o::bind_option_to_variable( "--id", the_id_opt );
-		
-		o::get_options( argc, argv );
+		const int argn = argc - (args - argv);
 		
 		if ( the_type_opt != NULL )
 		{
@@ -193,11 +322,9 @@ namespace tool
 			N::ThrowOSStatus( ::FSGetResourceForkName( &the_fork_name ) );
 		}
 		
-		char const *const *free_args = o::free_arguments();
+		char const *const *free_args = args;
 		
-		std::size_t n_args = o::free_argument_count();
-		
-		if ( n_args < 2 )
+		if ( argn < 2 )
 		{
 			p7::perror( "rsrc: a command and argument are required", 0 );
 			
@@ -240,6 +367,12 @@ namespace tool
 		try
 		{
 			resFile = open_res_file( ref );
+			
+		#ifdef __LITTLE_ENDIAN__
+			
+			install_null_flippers();
+			
+		#endif
 		}
 		catch ( const Mac::OSStatus& err )
 		{
@@ -279,4 +412,3 @@ namespace tool
 	}
 	
 }
-

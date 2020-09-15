@@ -6,15 +6,13 @@
 */
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
-
-// libc
-#include <alloca.h>
 
 // iota
 #include "iota/strings.hh"
@@ -90,4 +88,3 @@ int main( int argc, char **argv )
 	
 	return exit_status;
 }
-

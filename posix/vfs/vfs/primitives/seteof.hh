@@ -16,9 +16,8 @@
 namespace vfs
 {
 	
-	void seteof( const node* it, off_t length );
+	void seteof( const node& that, off_t length );
 	
 }
 
 #endif
-

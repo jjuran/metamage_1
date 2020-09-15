@@ -18,13 +18,8 @@ namespace plus
 		delete_never,  // propagates, for static storage like argv members
 		delete_shared, // Refcounted delete, for everything by default
 		delete_owned,  // Stored as shared, but can't be shared again
-		delete_basic,  // Standard-issue delete, for caller-supplied handoffs
-		delete_free    // Calls free(), not operator delete()
+		delete_free    // Calls free(), not extent_release()
 	};
-	
-	char* datum_alloc( unsigned long size );
-	
-	void datum_free( char* mem );
 	
 	
 	inline void construct_from_default( datum_storage& x )
@@ -50,13 +45,6 @@ namespace plus
 	void assign_from_move( datum_storage& x, datum_movable& y );
 	
 	
-	char* allocate( datum_storage& datum, long length, long capacity );
-	
-	inline char* allocate( datum_storage& datum, long length )
-	{
-		return allocate( datum, length, length );
-	}
-	
 	char* allocate_data( datum_storage& datum, const char* p, long n );
 	
 	void construct_from_copy( datum_storage& x, const datum_storage& y, bool taint = false );
@@ -73,6 +61,13 @@ namespace plus
 		assign_from_copy( x, y, true );
 	}
 	
+	inline bool has_dynamic_extent( const datum_storage& datum )
+	{
+		const signed char _policy = datum.small[ datum_max_offset ];
+		
+		return _policy < ~delete_never;
+	}
+	
 	void destroy( datum_storage& datum );
 	
 	char* reallocate( datum_storage& datum, long length );
@@ -85,7 +80,8 @@ namespace plus
 	
 	char* copy_on_write( datum_storage& datum, bool tainting );
 	
+	unsigned long area( const datum_storage& datum );
+	
 }
 
 #endif
-

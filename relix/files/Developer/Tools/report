@@ -1,0 +1,27 @@
+#!/bin/sh
+
+cd /gui/new/port
+
+echo Diagnostics > title
+
+echo 700x400 > size
+echo 10,50 > pos
+
+touch window
+
+echo 4 > w/text-font
+echo 9 > w/text-size
+
+ln /gui/new/scrollframe  view
+ln /gui/new/frame        v/view
+ln /gui/new/console      v/v/view
+
+ln -s v/v v/target
+
+echo 1 > v/vertical
+echo 4 > v/v/padding
+
+mv v/v/v/tty tty
+
+daemonize --cwd --ctty=tty chain cat "$1" ';' idle
+

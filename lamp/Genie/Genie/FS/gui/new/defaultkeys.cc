@@ -5,6 +5,11 @@
 
 #include "Genie/FS/gui/new/defaultkeys.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __EVENTS__
 #include <Events.h>
@@ -15,13 +20,16 @@
 
 // vfs
 #include "vfs/node.hh"
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node/types/fixed_dir.hh"
 #include "vfs/primitives/lookup.hh"
+#include "vfs/primitives/resolve.hh"
 #include "vfs/primitives/touch.hh"
+
+// relix-kernel
+#include "relix/api/root.hh"
 
 // Genie
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/resolve.hh"
 
 
 namespace Genie
@@ -33,27 +41,27 @@ namespace Genie
 	class DefaultKey_Handler : public Ped::View
 	{
 		private:
-			const FSTree* itsKey;
+			const vfs::node* itsKey;
 		
 		public:
-			DefaultKey_Handler( const FSTree* key ) : itsKey( key )
+			DefaultKey_Handler( const vfs::node* key ) : itsKey( key )
 			{
 			}
 			
 			bool KeyDown( const EventRecord& event );
 	};
 	
-	static void Update( const FSTree* that, const char* name )
+	static void Update( const vfs::node* that, const char* name )
 	{
-		const FSTree* window = GetViewWindowKey( that );
+		const vfs::node* window = GetViewWindowKey( that );
 		
 		ASSERT( window != NULL );
 		
-		FSTreePtr link = lookup( window, name );
+		vfs::node_ptr link = lookup( *window, name );
 		
-		FSTreePtr target = resolve( link.get() );
+		vfs::node_ptr target = resolve( *relix::root(), *link );
 		
-		touch( target.get() );
+		touch( *target );
 	}
 	
 	bool DefaultKey_Handler::KeyDown( const EventRecord& event )
@@ -96,32 +104,19 @@ namespace Genie
 		return false;
 	}
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new DefaultKey_Handler( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
-	{
-	}
-	
-	
-	static const vfs::fixed_mapping local_mappings[] =
-	{
-		{ NULL, NULL }
-	};
-	
-	FSTreePtr New_defaultkeys( const FSTree*        parent,
-	                           const plus::string&  name,
-	                           const void*          args )
+	vfs::node_ptr New_defaultkeys( const vfs::node*     parent,
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,
-		                     &CreateView,
-		                     local_mappings,
-		                     &DestroyDelegate );
+		                     &CreateView );
 	}
 	
 }
-

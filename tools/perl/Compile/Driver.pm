@@ -3,12 +3,16 @@ package Compile::Driver;
 use Compile::Driver::Configuration;
 use Compile::Driver::Job;
 use Compile::Driver::Job::Compile;
+use Compile::Driver::Job::Copy;
+use Compile::Driver::Job::InfoPList;
 use Compile::Driver::Job::Link::Archive;
 use Compile::Driver::Job::Link::Binary;
+use Compile::Driver::Job::Link::PkgInfo;
+use Compile::Driver::Job::Rez;
 use Compile::Driver::Module;
 use Compile::Driver::Options;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 
@@ -27,12 +31,20 @@ sub jobs_for
 	my $name = $module->name;
 	
 	my @objs;
+	my @tool_objs;
 	
 	foreach my $path ( @sources )
 	{
 		my $obj = Compile::Driver::Job::obj_pathname( $target, $name, $path );
 		
-		push @objs, $obj;
+		if ( $module->source_is_tool( $path ) )
+		{
+			push @tool_objs, $obj;
+		}
+		else
+		{
+			push @objs, $obj;
+		}
 		
 		my $compile = Compile::Driver::Job::Compile::->new
 		(
@@ -46,8 +58,9 @@ sub jobs_for
 	}
 	
 	my $link;
+	my $copy;
 	
-	if ( $module->is_static_lib )
+	if ( @objs  and  $module->is_static_lib  ||  $module->is_toolkit )
 	{
 		$link = Compile::Driver::Job::Link::Archive::->new
 		(
@@ -59,17 +72,103 @@ sub jobs_for
 	}
 	elsif ( $module->is_executable )
 	{
+		my $prog = $module->program_name;
+		my $path = Compile::Driver::Job::bin_pathname( $target, $name, $prog );
+		
+		if ( $module->is_bundle )
+		{
+			my $bundle = "$path.app";
+			
+			push @jobs, Compile::Driver::Job::Link::PkgInfo::->new
+			(
+				TYPE => "BNDL",
+				FROM => $module,
+				DEST => "$bundle/Contents/PkgInfo",
+			);
+			
+			if ( my $info_txt = $module->info_txt )
+			{
+				push @jobs, Compile::Driver::Job::InfoPList::->new
+				(
+					TYPE => "INFO",
+					FROM => $module,
+					ORIG => $info_txt,
+					DEST => "$bundle/Contents/Info.plist",
+				);
+			}
+			
+			if ( my @rez = $module->rez_files )
+			{
+				push @jobs, Compile::Driver::Job::Rez::->new
+				(
+					TYPE => "REZ",
+					FROM => $module,
+					SRCS => \@rez,
+					DEST => "$bundle/Contents/Resources/$prog.rsrc",
+				);
+			}
+			
+			foreach my $resource ( $module->resources )
+			{
+				my ( $basename ) = $resource =~ m{^ .* / ([^/]+) $}x;
+				
+				push @jobs, Compile::Driver::Job::Copy::->new
+				(
+					TYPE => "COPY",
+					FROM => $module,
+					ORIG => $resource,
+					PATH => $basename,
+					DEST => "$bundle/Contents/Resources/",
+				);
+			}
+			
+			$path = "$bundle/Contents/MacOS/$prog";
+		}
+		
 		$link = Compile::Driver::Job::Link::Binary::->new
 		(
 			TYPE => "LINK",
 			FROM => $module,
 			OBJS => \@objs,
 			PREQ => $module->recursive_prerequisites,
-			DEST => Compile::Driver::Job::bin_pathname( $target, $name, $module->program_name ),
+			DEST => $path,
 		);
+		
+		if ( Compile::Driver::Options::installing )
+		{
+			$copy = Compile::Driver::Job::Copy::->new
+			(
+				TYPE => "COPY",
+				FROM => $module,
+				ORIG => $path,
+				DEST => "var/out/$prog",
+			);
+		}
 	}
 	
-	push @jobs, $link;
+	push @jobs, $link  if defined $link;
+	push @jobs, $copy  if defined $copy;
+	
+	my @prereqs = @{ $module->recursive_prerequisites };
+	
+	push @prereqs, $name;
+	
+	foreach my $obj ( @tool_objs )
+	{
+		my ( $tool_name ) = $obj =~ m{ / ( [^/]+ ) \. \w+ \.o }x;
+		
+		my $link = Compile::Driver::Job::Link::Binary::->new
+		(
+			TYPE => "LINK",
+			PATH => $tool_name,
+			FROM => $module,
+			OBJS => [ $obj ],
+			PREQ => \@prereqs,
+			DEST => Compile::Driver::Job::bin_pathname( $target, $name, $tool_name ),
+		);
+		
+		push @jobs, $link;
+	}
 	
 	return @jobs;
 }
@@ -79,6 +178,16 @@ sub main
 	my @args = Compile::Driver::Options::set_options( @_ );
 	
 	my $configuration = Compile::Driver::Configuration::->new( Compile::Driver::Options::specs );
+	
+	if ( !Compile::Driver::Options::specs  &&  $configuration->{mac} )
+	{
+		my $dir = $Compile::Driver::Job::build_dir;
+		
+		my $target = $configuration->target;
+		my $alias  = $configuration->{build};
+		
+		symlink $target, "$dir/$alias";
+	}
 	
 	foreach my $name ( @args )
 	{
@@ -103,4 +212,3 @@ sub main
 }
 
 1;
-

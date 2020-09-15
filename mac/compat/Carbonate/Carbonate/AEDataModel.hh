@@ -39,4 +39,3 @@ pascal OSErr AEReplaceDescData( DescType     typeCode,
 #endif
 
 #endif
-

@@ -1,0 +1,31 @@
+#!/usr/bin/env vx
+
+const ESC = "\x1b"
+const CSI = ESC "["
+
+const square = "\u2588" * 2
+
+def ramp (row)
+{
+	return str (row map { CSI "38;5;", v, "m" square })
+}
+
+const normals = 0 .. 7
+const brights = 8 .. 15
+
+const colors = 0 -> 6 map { const x = 36 * v + 16; x -> x + 36 }
+
+const grays = 232 .. 255
+
+print ramp normals
+
+print ramp brights
+
+for row in colors do
+{
+	print ramp row
+}
+
+print ramp grays
+
+OUT <== CSI "0m"

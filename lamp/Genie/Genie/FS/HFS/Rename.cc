@@ -5,11 +5,9 @@
 
 #include "Genie/FS/HFS/Rename.hh"
 
-// Standard C++
-#include <algorithm>
-
-// MoreFiles
-#include "MoreFiles/MoreFilesExtras.h"
+// mac-file-utils
+#include "mac_file/make_FSSpec.hh"
+#include "mac_file/parent_directory.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -24,6 +22,13 @@
 // Nitrogen
 #include "Nitrogen/Files.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/functions/file-tests.hh"
+
+// MacVFS
+#include "MacVFS/util/FSSpec_from_node.hh"
+
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
 
@@ -31,11 +36,9 @@
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // Genie
-#include "Genie/FS/file-tests.hh"
-#include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/HFS/hashed_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
+#include "Genie/FS/HFS/MoveRename.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -46,17 +49,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static bool NamesAreSame( ConstStr63Param a, ConstStr63Param b )
-	{
-		// b may be a null string to indicate a will be reused, so they're the same
-		return b[0] == 0  ||  std::equal( a,
-		                                  a + 1 + a[0],
-		                                  b );
-	}
-	
 	static bool FileIsLocked( const FSSpec& file )
 	{
-		CInfoPBRec cInfo = { 0 };
+		CInfoPBRec cInfo = {{ 0 }};
 		
 		MacIO::GetCatInfo< FNF_Throws >( cInfo, file );
 		
@@ -77,7 +72,7 @@ namespace Genie
 			{
 				if ( itWasLocked )
 				{
-					N::FSpRstFLock( file );
+					N::HRstFLock( file );
 				}
 			}
 			
@@ -85,7 +80,9 @@ namespace Genie
 			{
 				if ( itWasLocked )
 				{
-					OSErr err = ::FSpSetFLock( &itsFileSpec );
+					::HSetFLock( itsFileSpec.vRefNum,
+					             itsFileSpec.parID,
+					             itsFileSpec.name );
 				}
 			}
 			
@@ -95,17 +92,33 @@ namespace Genie
 			}
 	};
 	
-	static void RenameItem( const FSSpec& srcFile, const FSSpec& destFile )
+	static OSErr ForceRenameItem( const FSSpec& src, const FSSpec& dst )
 	{
-		ASSERT( srcFile.vRefNum == destFile.vRefNum );
-		ASSERT( srcFile.parID   == destFile.parID   );
+		ASSERT( src.vRefNum == dst.vRefNum );
+		ASSERT( src.parID   == dst.parID   );
 		
-		FileLockBypass lockBypass( srcFile );
+		FileLockBypass lockBypass( src );
 		
 		// Rename source to dest
-		N::FSpRename( srcFile, destFile.name );
+		OSErr err = ::HRename( src.vRefNum, src.parID, src.name, dst.name );
 		
-		lockBypass.SetFile( destFile );
+		if ( err == dupFNErr )
+		{
+			err = ::HDelete( dst.vRefNum, dst.parID, dst.name );
+			
+			if ( err != noErr )
+			{
+				return err;
+			}
+			
+			err = ::HRename( src.vRefNum, src.parID, src.name, dst.name );
+		}
+		
+		Mac::ThrowOSStatus( err );
+		
+		lockBypass.SetFile( dst );
+		
+		return noErr;
 	}
 	
 	
@@ -117,38 +130,23 @@ namespace Genie
 	
 	static void MoveAndRename( const FSSpec& srcFile, const FSSpec& destFile )
 	{
-		// Darn, we have to move *and* rename.  Use MoreFiles.
-		
-		// destFolder is the parent of destFile.
-		// It's semantically invalid (though it might work) to pass an
-		// FSSpec with null fields to Mac OS, but MoreFiles won't do that.
-		// (It breaks it into individual parts before passing them.)
-			
-		FSSpec destFolder;
-		
-		destFolder.vRefNum = destFile.vRefNum;
-		destFolder.parID   = destFile.parID;
-		
-		destFolder.name[0] = '\0';
-		
 		FileLockBypass lockBypass( srcFile );
 		
-		Mac::ThrowOSStatus( ::FSpMoveRenameCompat( &srcFile, &destFolder, destFile.name ) );
+		Mac::ThrowOSStatus( MoveRename( srcFile, destFile.parID, destFile.name ) );
 		
 		lockBypass.SetFile( destFile );
 	}
 	
 	
-	void Rename_HFS( const FSSpec& srcFileSpec, const FSTreePtr& destFile )
+	void Rename_HFS( const FSSpec& srcFileSpec, const vfs::node& destFile )
 	{
-		if ( !io::item_exists( srcFileSpec ) )
-		{
-			p7::throw_errno( ENOENT );
-		}
+		CInfoPBRec src_pb;
+		
+		N::FSpGetCatInfo( srcFileSpec, src_pb, N::FNF_Throws() );
 		
 		bool destExists = exists( destFile );
 		
-		bool srcIsDir  = io::directory_exists( srcFileSpec );
+		bool srcIsDir  = io::item_is_directory( src_pb );
 		bool destIsDir = is_directory( destFile );
 		
 		if ( destExists  &&  srcIsDir != destIsDir )
@@ -156,7 +154,7 @@ namespace Genie
 			p7::throw_errno( destIsDir ? EISDIR : ENOTDIR );
 		}
 		
-		FSSpec destFileSpec = GetFSSpecFromFSTree( destFile );
+		FSSpec destFileSpec = vfs::FSSpec_from_node( destFile );
 		
 		// Can't move across volumes
 		if ( srcFileSpec.vRefNum != destFileSpec.vRefNum )
@@ -166,12 +164,17 @@ namespace Genie
 		
 		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( srcFileSpec.vRefNum );
 		
-		const plus::string& destName = slashes_from_colons( plus::mac_from_utf8( destFile->name() ) );
+		const plus::string& destName = slashes_from_colons( plus::mac_from_utf8( destFile.name() ) );
 		
-		const bool keeping_name =    destName.length() == srcFileSpec.name[0]
-		                          && std::equal( destName.begin(),
-		                                         destName.end(),
-		                                         (const char*) srcFileSpec.name + 1 );
+		const char* dest = destName.begin();
+		
+		const size_t n_dest = destName.size();
+		
+		const unsigned char* src = srcFileSpec.name;
+		
+		const uint8_t n_src = *src++;
+		
+		const bool keeping_name = n_src == n_dest  &&  memcmp( src, dest, n_dest ) == 0;
 		
 		if ( srcFileSpec.parID == destFileSpec.parID )
 		{
@@ -183,31 +186,12 @@ namespace Genie
 				return;
 			}
 			
-			if ( destExists )
-			{
-				const bool same_file = NamesAreSame( srcFileSpec.name, destFileSpec.name );
-				
-				if ( !same_file )
-				{
-					// Delete existing dest file
-					OSErr err = ::FSpDelete( &destFileSpec );
-					
-					if ( destIsDir  &&  err == fBsyErr )
-					{
-						p7::throw_errno( ENOTEMPTY );
-					}
-					
-					Mac::ThrowOSStatus( err );
-				}
-				
-				// Overwrite actual name with requested name
-				
-				plus::string requested_name = hashed_long_name( destName );
-				
-				N::CopyToPascalString( requested_name, destFileSpec.name, 31 );
-			}
+			OSErr deleteErr = ForceRenameItem( srcFileSpec, destFileSpec );
 			
-			RenameItem( srcFileSpec, destFileSpec );
+			if ( deleteErr == fBsyErr  &&  destIsDir )
+			{
+				p7::throw_errno( ENOTEMPTY );
+			}
 			
 			SetLongName( destFileSpec, destName );
 			
@@ -219,13 +203,18 @@ namespace Genie
 		{
 			// Can't be the same file, because it's in a different directory.
 			
-			N::FSpDelete( destFileSpec );
+			N::HDelete( destFileSpec );
 		}
 		
 		if ( keeping_name )
 		{
+			using mac::file::make_FSSpec;
+			using mac::file::parent_directory;
+			
+			FSSpec dest_dir = make_FSSpec( parent_directory( destFileSpec ) );
+			
 			// Same name, different dir; move only.
-			N::FSpCatMove( srcFileSpec, N::FSDirID( destFileSpec.parID ) );
+			N::CatMove( srcFileSpec, dest_dir );
 		}
 		else
 		{
@@ -237,4 +226,3 @@ namespace Genie
 	}
 	
 }
-

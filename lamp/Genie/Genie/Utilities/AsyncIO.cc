@@ -5,6 +5,12 @@
 
 #include "Genie/Utilities/AsyncIO.hh"
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
+// mac-sys-utils
+#include "mac_sys/async_wakeup.hh"
+
 // plus
 #include "plus/pointer_to_function.hh"
 
@@ -21,21 +27,17 @@
 #include "MacIO/GetCatInfo_Async.hh"
 #include "MacIO/GetCatInfo_Sync.hh"
 
-// Pedestal
-#include "Pedestal/WakeUp.hh"
-
 // Genie
-#include "Genie/FS/sys/mac/errata.hh"
+#include "Genie/Process/AsyncYield.hh"
 
 
-#define CALLBACK  plus::ptr_fun( AsyncYield )
+#define YIELD  plus::ptr_fun( AsyncYield )
 
 
 namespace Genie
 {
 	
 	namespace n = nucleus;
-	namespace Ped = Pedestal;
 	
 	
 #if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
@@ -48,10 +50,10 @@ namespace Genie
 	
 #endif
 	{
-		Ped::WakeUp();
+		mac::sys::request_async_wakeup();
 	}
 	
-	static IOCompletionUPP gWakeUp = ::NewIOCompletionUPP( WakeUp );
+	DEFINE_UPP( IOCompletion, WakeUp )
 	
 	SInt32 FSRead( MacIO::EOF_Policy  policy,
 	               Mac::FSFileRefNum  file,
@@ -67,8 +69,8 @@ namespace Genie
 		                              positionOffset,
 		                              requestCount,
 		                              buffer,
-		                              CALLBACK,
-		                              gWakeUp )
+		                              YIELD,
+		                              UPP_ARG( WakeUp ) )
 		             : MacIO::FSRead( policy,
 		                              file,
 		                              positionMode,
@@ -90,8 +92,8 @@ namespace Genie
 		                               positionOffset,
 		                               requestCount,
 		                               buffer,
-		                               CALLBACK,
-		                               gWakeUp )
+		                               YIELD,
+		                               UPP_ARG( WakeUp ) )
 		             : MacIO::FSWrite( file,
 		                               positionMode,
 		                               positionOffset,
@@ -103,14 +105,17 @@ namespace Genie
 	template < class Policy >
 	typename Policy::Result
 	//
-	FSpGetCatInfo( CInfoPBRec&          pb,
-	               bool                 async,
-	               Mac::FSVolumeRefNum  vRefNum,
-	               Mac::FSDirID         dirID,
-	               unsigned char*       name,
-	               SInt16               index )
+	FSpGetCatInfo( CInfoPBRec&     pb,
+	               bool            async,
+	               SInt16          vRefNum,
+	               SInt32          dirID,
+	               unsigned char*  name,
+	               SInt16          index )
 	{
-		Str255 dummyName = "\p";
+		//Str255 dummyName = "\p";  // clang hates this
+		
+		Str255 dummyName;
+		       dummyName[ 0 ] = 0;
 		
 		if ( index == 0  &&  (name == NULL  ||  name[ 0 ] == '\0') )
 		{
@@ -146,25 +151,25 @@ namespace Genie
 		                                    dirID,
 		                                    name,
 		                                    index,
-		                                    CALLBACK,
-		                                    gWakeUp );
+		                                    YIELD,
+		                                    UPP_ARG( WakeUp ) );
 	}
 	
 	template
-	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&          pb,
-	                                  bool                 async,
-	                                  Mac::FSVolumeRefNum  vRefNum,
-	                                  Mac::FSDirID         dirID,
-	                                  unsigned char*       name,
-	                                  SInt16               index );
+	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&     pb,
+	                                  bool            async,
+	                                  SInt16          vRefNum,
+	                                  SInt32          dirID,
+	                                  unsigned char*  name,
+	                                  SInt16          index );
 	
 	template
-	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&          pb,
-	                                   bool                 async,
-	                                   Mac::FSVolumeRefNum  vRefNum,
-	                                   Mac::FSDirID         dirID,
-	                                   unsigned char*       name,
-	                                   SInt16               index );
+	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&     pb,
+	                                   bool            async,
+	                                   SInt16          vRefNum,
+	                                   SInt32          dirID,
+	                                   unsigned char*  name,
+	                                   SInt16          index );
 	
 	
 	template < class Policy >
@@ -175,8 +180,8 @@ namespace Genie
 		return MacIO::FSMakeFSSpec< Policy >( vRefNum,
 		                                      dirID,
 		                                      name,
-		                                      CALLBACK,
-		                                      gWakeUp );
+		                                      YIELD,
+		                                      UPP_ARG( WakeUp ) );
 	}
 	
 	template
@@ -195,7 +200,7 @@ namespace Genie
 	FSpOpenDF( const FSSpec&  spec,
 	           Mac::FSIOPerm  permissions )
 	{
-		return MacIO::FSpOpenDF( spec, permissions, CALLBACK, gWakeUp );
+		return MacIO::FSpOpenDF( spec, permissions, YIELD, UPP_ARG( WakeUp ) );
 	}
 	
 	n::owned< Mac::FSFileRefNum >
@@ -203,8 +208,7 @@ namespace Genie
 	FSpOpenRF( const FSSpec&  spec,
 	           Mac::FSIOPerm  permissions )
 	{
-		return MacIO::FSpOpenRF( spec, permissions, CALLBACK, gWakeUp );
+		return MacIO::FSpOpenRF( spec, permissions, YIELD, UPP_ARG( WakeUp ) );
 	}
 	
 }
-

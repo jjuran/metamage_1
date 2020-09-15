@@ -1,0 +1,100 @@
+#!/usr/bin/env vx
+
+const units = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+
+const teens = ["ten", "eleven", "twelve", "thirteen", "", "fifteen", "", "", "eighteen", ""]
+
+const ten_x = ["", "", "twenty", "thirty", "forty", "fifty", "", "", "eighty", ""]
+
+const powers = ["", "thousand", "million", "billion", "trillion"]
+
+def English (x)
+{
+	if x < 10 then
+	{
+		return units[ x ]
+	}
+	
+	if x < 20 then
+	{
+		return teens[ x - 10 ] or units[ x - 10 ] "teen"
+	}
+	
+	if x < 100 then
+	{
+		const k = x mod 10
+		
+		const ones = if k then {"-" units[ k ]} else {""}
+		
+		const tens = ten_x[ x div 10 ] or units[ x div 10 ] "ty"
+		
+		return tens ones
+	}
+	
+	if x < 1000 then
+	{
+		const cents = x mod 100
+		
+		const tens_ones = if cents then {" " English cents} else {""}
+		
+		const hundreds = English( x div 100 ) " hundred"
+		
+		return hundreds tens_ones
+	}
+	
+	var power = 1
+	var next  = 1000
+	
+	for i in 1 -> powers.length do
+	{
+		power = next
+		next *= 1000
+		
+		if x < next then
+		{
+			const major = x div power
+			const minor = x mod power
+			
+			const majority = English( major ) " " powers[ i ]
+			
+			if minor == 0 then
+			{
+				return majority
+			}
+			
+			const separator = if minor > 99 then {", "} else {" "}
+			
+			const minority = English minor
+			
+			return majority separator minority
+		}
+	}
+	
+	return "many"
+}
+
+def english-number (x)
+{
+	if x < 0 then
+	{
+		return "negative " english-number( -x )
+	}
+	
+	if x in 100 -> 10000 and x div 100 mod 10 != 0 then
+	{
+		const cents = x mod 100
+		
+		const tens_ones = if cents then {" " English cents} else {""}
+		
+		const hundreds = English( x div 100 ) " hundred"
+		
+		return hundreds tens_ones
+	}
+	
+	return English x
+}
+
+for x in argv[ 1 -> argv.length ] do
+{
+	print english-number int x
+}

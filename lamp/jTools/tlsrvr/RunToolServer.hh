@@ -3,13 +3,9 @@
  *	================
  */
 
+// plus
+#include "plus/string_fwd.hh"
 
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace tool
 {
@@ -41,4 +37,3 @@ namespace tool
 	int RunCommandInToolServer( const plus::string& command, bool switch_layers );
 	
 }
-

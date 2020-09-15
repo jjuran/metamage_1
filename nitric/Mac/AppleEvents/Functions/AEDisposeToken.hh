@@ -6,6 +6,11 @@
 #ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSETOKEN_HH
 #define MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSETOKEN_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 // Mac OS
 #ifndef __AEOBJECTS__
 #include <AEObjects.h>
@@ -67,4 +72,3 @@ namespace Mac
 }
 
 #endif
-

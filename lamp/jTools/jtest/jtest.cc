@@ -4,12 +4,9 @@
  */
 
 // Standard C++
-#include <algorithm>
-#include <functional>
 #include <vector>
 
 // Standard C/C++
-#include <cctype>
 #include <cstdio>
 #include <cstring>
 
@@ -20,8 +17,14 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// must
+#include "must/pipe.h"
+#include "must/write.h"
+
 // iota
+#include "iota/char_types.hh"
 #include "iota/strings.hh"
+#include "iota/swap.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -203,7 +206,7 @@ namespace tool
 					throw p7::exit_failure;
 				}
 				
-				using std::swap;
+				using iota::swap;
 				
 				swap( param, hereDoc );
 			}
@@ -356,7 +359,9 @@ namespace tool
 		while ( pipes-- )
 		{
 			int fds[2];
-			pipe( fds );
+			
+			must_pipe( fds );
+			
 			itsPipes.push_back( fds );
 		}
 	}
@@ -373,8 +378,10 @@ namespace tool
 				break;
 			
 			case kInputLine:
-				pipe( fds );
-				write( fds[1], redir.data.data(), redir.data.size() );
+				must_pipe( fds );
+				
+				must_write( fds[1], redir.data.data(), redir.data.size() );
+				
 				close( fds[1] );
 				dup2( fds[0], redir.fd );
 				close( fds[0] );
@@ -398,22 +405,31 @@ namespace tool
 	
 	void TestCase::ClosePipeWriters()
 	{
-		std::for_each( itsWriteEnds.begin(),
-			           itsWriteEnds.end(),
-			           std::ptr_fun( close ) );
+		typedef std::vector< int >::const_iterator Iter;
+		
+		for ( Iter it = itsWriteEnds.begin();  it != itsWriteEnds.end();  ++it )
+		{
+			close( *it );
+		}
 		
 		itsWriteEnds.clear();
 	}
 	
 	bool TestCase::DoesOutputMatch() const
 	{
-		std::vector< Redirection >::const_iterator it = std::find_if( itsRedirections.begin(),
-		                                                              itsRedirections.end(),
-		                                                              std::ptr_fun( DiscrepantOutput ) );
+		typedef std::vector< Redirection >::const_iterator Iter;
 		
-		bool output_matches = it == itsRedirections.end();
+		const Iter end = itsRedirections.end();
 		
-		return output_matches;
+		for ( Iter it = itsRedirections.begin();  it != end;  ++it )
+		{
+			if ( DiscrepantOutput( *it ) )
+			{
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	
@@ -538,7 +554,7 @@ namespace tool
 				continue;
 			}
 			
-			if ( std::isdigit( line[0] ) )
+			if ( iota::is_digit( line[0] ) )
 			{
 				test.AddRedirection( GetRedirectionFromLine( line, feed, reader ) );
 				
@@ -570,10 +586,14 @@ namespace tool
 		
 		p7::write( p7::stdout_fileno, header );
 		
-		std::for_each( battery.begin(), battery.end(), std::ptr_fun( RunTest ) );
+		typedef std::vector< TestCase >::iterator Iter;
+		
+		for ( Iter it = battery.begin();  it != battery.end();  ++it )
+		{
+			RunTest( *it );
+		}
 		
 		return 0;
 	}
 
 }
-

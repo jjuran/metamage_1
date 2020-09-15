@@ -1,0 +1,8 @@
+#!/bin/sh
+
+remote=origin
+homerepo=`git remote -v | grep ^$remote.*\(fetch\) | awk '{print $2}'`
+name="$1"
+newrepo=`echo $homerepo | sed "s/metamage_1/$name/"`
+
+git clone "$newrepo" "../$name"

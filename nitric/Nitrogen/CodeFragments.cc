@@ -48,6 +48,8 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
 	template < class ErrorCode >
 	void ThrowOSStatusErrMessage( ConstStr255Param errMessage )
 	{
@@ -240,6 +242,8 @@ namespace Nitrogen
 		}
 	}
 	
+#endif  // #if ! __LP64__
+	
 	void RegisterCodeFragmentManagerErrors()
 	{
 		RegisterOSStatus< paramErr                >();
@@ -271,4 +275,3 @@ namespace Nitrogen
 	}
 	
 }
-

@@ -14,13 +14,27 @@
 #ifndef POSEVEN_FUNCTIONS_CLEARENV_HH
 #define POSEVEN_FUNCTIONS_CLEARENV_HH
 
+// POSIX
+#include <stdlib.h>
+
+// poseven
+#ifndef POSEVEN_TYPES_ERRNO_T_HH
+#include "poseven/types/errno_t.hh"
+#endif
+
 
 namespace poseven
 {
 	
-	void clearenv();
+#if !defined( __APPLE__ )  &&  !defined( __CYGWIN__ )
+	
+	inline void clearenv()
+	{
+		(void) throw_posix_result( ::clearenv() );
+	}
+	
+#endif
 	
 }
 
 #endif
-

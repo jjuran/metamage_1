@@ -237,4 +237,3 @@ Boolean IsMouseCoalescingEnabled()
 // UnregisterEventHotKey
 
 #endif
-

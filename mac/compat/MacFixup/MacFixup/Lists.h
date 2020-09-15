@@ -12,9 +12,8 @@
 #include <CIncludes/Lists.h>
 #endif
 
-#if !ACCESSORS_ARE_FUNCTIONS
+#if !ACCESSOR_CALLS_ARE_FUNCTIONS
 #include "Carbonate/Lists.hh"
 #endif
 
 #endif
-

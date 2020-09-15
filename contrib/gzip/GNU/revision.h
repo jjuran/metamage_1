@@ -4,6 +4,9 @@
  * terms of the GNU General Public License, see the file COPYING.
  */
 
+#ifndef GNU_GZIP_REVISION_H
+#define GNU_GZIP_REVISION_H
+
 #define VERSION "1.2.4"
 #define PATCHLEVEL 0
 #define REVDATE "18 Aug 93"
@@ -14,3 +17,6 @@
 #endif
 
 /* $Id$ */
+
+#endif
+

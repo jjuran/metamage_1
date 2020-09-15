@@ -192,11 +192,6 @@
 #define	MIN(a,b) (((a)<(b))?(a):(b))
 #define	MAX(a,b) (((a)>(b))?(a):(b))
 
-/* Macros for calculating the offset of a field */
-#if !defined(offsetof) && defined(_KERNEL)
-#define offsetof(s, e) ((size_t)&((s *)0)->e)
-#endif
-
 /*
  * Constants for setting the parameters of the kernel memory allocator.
  *

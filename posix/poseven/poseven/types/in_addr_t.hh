@@ -22,6 +22,10 @@
 #include "nucleus/enumeration_traits.hh"
 #endif
 
+#ifdef ANDROID
+typedef uint32_t in_addr_t;
+#endif
+
 
 namespace poseven
 {
@@ -44,4 +48,3 @@ namespace poseven
 }
 
 #endif
-

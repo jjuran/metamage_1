@@ -8,6 +8,11 @@
 // Standard C++
 #include <algorithm>
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 // Mac OS
 #ifndef __FONTS__
 #include <Fonts.h>
@@ -43,7 +48,7 @@ namespace Pedestal
 	
 	static short gSelectionAnchor, gSelectionExtent;
 	
-	static const size_t kMaximumTELength = 30000;
+	static const size_t kMaximumTELength = 32000;
 	
 	
 	class NotEnoughSpaceForTEKey   {};
@@ -139,8 +144,7 @@ namespace Pedestal
 		}
 	}
 	
-	bool TextEdit::SetCursor( const EventRecord&  event,
-	                          RgnHandle           mouseRgn )
+	bool TextEdit::SetCursor( const EventRecord& event )
 	{
 		N::SetCursor( N::GetCursor( N::iBeamCursor ) );
 		
@@ -495,7 +499,7 @@ namespace Pedestal
 		
 		return    Try_IgnoreAutoKey( event )
 		       || Try_RepeatSearch( *this, event )
-		       || event.what == keyDown && Try_ArrowKeyChord( *this, event.message & charCodeMask );
+		       || (event.what == keyDown && Try_ArrowKeyChord( *this, event.message & charCodeMask ));
 	}
 	
 	bool TextEdit::Process_Key( const EventRecord& event )
@@ -845,4 +849,3 @@ namespace Pedestal
 	}
 	
 }
-

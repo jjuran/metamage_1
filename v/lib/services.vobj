@@ -1,0 +1,5 @@
+const services =
+[
+	"tcpmux",
+	"daytime",
+]

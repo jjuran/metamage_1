@@ -12,12 +12,14 @@
 
 #endif
 
-// Mac OS
-#ifndef __AEDATAMODEL__
-#include <AEDataModel.h>
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
 #endif
-#ifndef __AEINTERACTION__
-#include <AEInteraction.h>
+
+// Mac OS
+#ifndef __FILES__
+#include <Files.h>
 #endif
 
 #if !TARGET_RT_MAC_MACHO
@@ -52,4 +54,3 @@ namespace Divergence
 }
 
 #endif
-

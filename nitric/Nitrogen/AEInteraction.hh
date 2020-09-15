@@ -14,6 +14,11 @@
 #ifndef NITROGEN_AEINTERACTION_HH
 #define NITROGEN_AEINTERACTION_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __AEINTERACTION__
 #include <AEInteraction.h>
@@ -67,7 +72,7 @@ namespace Nitrogen
 	AESend( const Mac::AppleEvent&  appleEvent,
 	        Mac::AESendMode         sendMode,
 	        Mac::AESendPriority     sendPriority   = Mac::kAENormalPriority,
-	        long                    timeOutInTicks = kAEDefaultTimeout,
+	        SInt32                  timeOutInTicks = kAEDefaultTimeout,
 	        AEIdleUPP               idleProc       = NULL,
 	        AEFilterUPP             filterProc     = NULL );
 	
@@ -87,7 +92,7 @@ namespace Nitrogen
 	}
 	
 	inline bool InvokeAEIdleUPP( EventRecord&  theEvent,
-	                             long&         sleepTime,
+	                             SInt32&       sleepTime,
 	                             RgnHandle&    mouseRgn,
 	                             AEIdleUPP     userUPP )
 	{

@@ -1,6 +1,6 @@
 package Compile::Driver::InputFile::Catalog;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 
@@ -40,4 +40,3 @@ sub read_file
 }
 
 1;
-

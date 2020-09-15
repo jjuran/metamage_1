@@ -14,9 +14,16 @@
 #ifndef NITROGEN_DEVICES_HH
 #define NITROGEN_DEVICES_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
+#ifndef MAC_OS_X_VERSION_10_5
 #ifndef __DEVICES__
 #include <Devices.h>
+#endif
 #endif
 
 // nucleus
@@ -54,6 +61,8 @@ namespace Nitrogen
 		not been witnessed in PPC code and almost certainly doesn't exist.
 	*/
 	
+#if ! __LP64__
+	
 	inline OSErr FixedAsyncResult( OSErr err, const ParamBlockRec& pb )
 	{
 		if ( TARGET_CPU_68K )
@@ -67,6 +76,8 @@ namespace Nitrogen
 		
 		return err;
 	}
+	
+#endif  // #if ! __LP64__
 	
 	
 	// Mac OS semantics
@@ -105,6 +116,8 @@ namespace Nitrogen
 	}
 	
 	
+#if ! __LP64__
+	
 	template < class EOF_Policy >
 	inline void PBReadAsync( ParamBlockRec& pb, EOF_Policy policy )
 	{
@@ -124,7 +137,8 @@ namespace Nitrogen
 		Mac::ThrowOSStatus( FixedAsyncResult( ::PBWriteAsync( &pb ), pb ) );
 	}
 	
+#endif  // #if ! __LP64__
+	
 }
 
 #endif
-

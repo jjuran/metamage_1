@@ -7,8 +7,29 @@
 #ifndef TAPOUT_TEST_HH
 #define TAPOUT_TEST_HH
 
-// Standard C/C++
-#include <cstring>
+// iota
+#include "iota/iterator.hh"
+#include "iota/strings.hh"
+
+// plus
+#include "plus/printable.hh"
+
+// tap-out
+#include "tap/log.hh"
+
+
+#define STR_( x ) #x
+#define STR( x ) STR_( x )
+
+#define LINEREF()  __FILE__ ":" STR(__LINE__) ": test failed:\n"
+
+#define EXPECT( cond )  ::tap::expect( cond, STR_LEN( LINEREF() ) )
+
+#define EXPECT_NULL( p )  EXPECT( (p) == 0 )  // NULL
+
+#define EXPECT_CMP( p, p_len, q, q_len )  EXPECT( ::tap::cmp( (p), (p_len), (q), (q_len) ) == 0 )
+
+#define EXPECT_EQ( a, b )  EXPECT( ::tap::eq( (a), (b) ) )
 
 
 namespace tap
@@ -17,28 +38,29 @@ namespace tap
 	void start( const char* program_name, unsigned tests_planned );
 	
 	
-	void ok_if( bool ok, const char* comment = NULL );
+	void print( bool ok );
 	
-	inline void ok_if_null( const void* p, const char* comment = NULL )
-	{
-		ok_if( p == NULL, comment );
-	}
+	void expect( bool condition, const char* ref, unsigned len );
 	
-	inline void ok_if_nonnull( const void* p, const char* comment = NULL )
-	{
-		ok_if( p != NULL, comment );
-	}
+	int cmp( const void* p, unsigned p_len, const void* q, unsigned q_len );
 	
-	inline void ok_if_strings_equal( const char* a,
-	                                 const char* b,
-	                                 const char* comment = NULL )
+	template < class A, class B >
+	bool eq( const A& a, const B& b )
 	{
-		const bool ok = a != NULL  &&  b != NULL  &&  std::strcmp( a, b ) == 0;
+		const bool equal = a == b;
 		
-		ok_if( ok, comment );
+		if ( !equal )
+		{
+			using iota::make_span;
+			using plus::printable;
+			
+			log_expected( make_span( printable( b ) ) );
+			log_received( make_span( printable( a ) ) );
+		}
+		
+		return equal;
 	}
 	
 }
 
 #endif
-

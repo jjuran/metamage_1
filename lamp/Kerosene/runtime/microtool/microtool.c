@@ -26,18 +26,13 @@ extern char** environ;
 extern int errno;
 
 // Call main() and return
-extern int _lamp_main( int argc, char **argv, char **envp, _relix_system_parameter_block* pb );
-extern int       main( int argc, char **argv );
+extern int _relix_main( int argc, char **argv, char **envp, _relix_system_parameter_block* pb );
+extern int        main( int argc, char **argv );
 
-#pragma force_active on
 
-int _lamp_main( int argc, char **argv, char **envp, _relix_system_parameter_block* pb )
+int _relix_main( int argc, char **argv, char **envp, _relix_system_parameter_block* pb )
 {
-#ifndef __MC68K__
-	
 	_set_dispatcher( pb->dispatcher );
-	
-#endif
 	
 	environ = envp;
 	
@@ -55,6 +50,3 @@ int _lamp_main( int argc, char **argv, char **envp, _relix_system_parameter_bloc
 	
 	return main( argc, argv );
 }
-
-#pragma force_active reset
-

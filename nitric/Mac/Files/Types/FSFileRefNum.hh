@@ -6,6 +6,12 @@
 #ifndef MAC_FILES_TYPES_FSFILEREFNUM_HH
 #define MAC_FILES_TYPES_FSFILEREFNUM_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __FILES__
 #include <Files.h>
 #endif
@@ -32,6 +38,8 @@ namespace Mac
 namespace nucleus
 {
 	
+#if ! __LP64__
+	
 	template <> struct disposer< Mac::FSFileRefNum >
 	{
 		typedef Mac::FSFileRefNum  argument_type;
@@ -43,7 +51,8 @@ namespace nucleus
 		}
 	};
 	
+#endif
+	
 }
 
 #endif
-

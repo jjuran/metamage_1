@@ -7,6 +7,7 @@
 
 // plus
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 
 // nucleus
 #include "nucleus/saved.hh"
@@ -22,15 +23,14 @@
 #include "Pedestal/Scroller_beta.hh"
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node.hh"
+#include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -50,7 +50,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const FSTree*, BasicScrollerParameters > BasicScrollerParametersMap;
+	typedef plus::simple_map< const vfs::node*, BasicScrollerParameters > BasicScrollerParametersMap;
 	
 	static BasicScrollerParametersMap  gBasicScrollerParametersMap;
 	
@@ -132,13 +132,13 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new BasicScroller( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		ScrollerParameters::Erase( delegate );
 		
@@ -146,18 +146,26 @@ namespace Genie
 	}
 	
 	
-	namespace
+	static
+	Ped::View* get_view( const vfs::node* key, const plus::string& name )
 	{
-		
-		boost::intrusive_ptr< Ped::View >& GetView( const FSTree* key, const plus::string& name )
-		{
-			return gBasicScrollerParametersMap[ key ].itsSubview;
-		}
-		
+		return gBasicScrollerParametersMap[ key ].itsSubview.get();
 	}
 	
+	static
+	void set_view( const vfs::node* key, const plus::string&, Ped::View* view )
+	{
+		gBasicScrollerParametersMap[ key ].itsSubview = view;
+	}
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	const View_Accessors access =
+	{
+		&get_view,
+		&set_view,
+	};
+	
+	
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Width  >  Width_Property;
 	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::Height >  Height_Property;
@@ -173,14 +181,15 @@ namespace Genie
 		{ "x", PROPERTY( HOffset_Property ) },
 		{ "y", PROPERTY( VOffset_Property ) },
 		
-		{ "v", &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
+		{ "view", &subview_factory, &access },
+		{ "v",    &new_view_dir,            },
 		
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_scroller( const FSTree*        parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
+	vfs::node_ptr New_FSTree_new_scroller( const vfs::node*     parent,
+	                                       const plus::string&  name,
+	                                       const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,
@@ -190,4 +199,3 @@ namespace Genie
 	}
 	
 }
-

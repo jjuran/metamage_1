@@ -16,13 +16,9 @@
 namespace MacScribe
 {
 	
-	namespace N = Nitrogen;
-	
-	
-	plus::string get_utf8_name_from_ResInfo( const N::GetResInfo_Result& info )
+	plus::string get_utf8_name_from_ResInfo( const mac::types::ResInfo& info )
 	{
 		return plus::utf8_from_mac( get_name_from_ResInfo( info ) );
 	}
 	
 }
-

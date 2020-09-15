@@ -8,46 +8,49 @@
 // POSIX
 #include <sys/stat.h>
 
+// mac-file-utils
+#include "mac_file/parent_directory.hh"
+#include "mac_file/program_file.hh"
+
+// vfs
+#include "vfs/node.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
-#include "Genie/Utilities/GetAppFolder.hh"
 
 
 namespace Genie
 {
 	
-	static FSTreePtr app_dir_resolve( const FSTree* node )
+	using mac::file::parent_directory;
+	using mac::file::program_file;
+	
+	
+	static vfs::node_ptr app_dir_resolve( const vfs::node* that )
 	{
-		return FSTreeFromFSDirSpec( GetAppFolder() );
+		return FSTreeFromFSDirSpec( parent_directory( program_file() ) );
 	}
 	
-	static const link_method_set app_dir_link_methods =
+	static const vfs::link_method_set app_dir_link_methods =
 	{
 		NULL,
 		&app_dir_resolve
 	};
 	
-	static const node_method_set app_dir_methods =
+	static const vfs::node_method_set app_dir_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		&app_dir_link_methods
 	};
 	
-	FSTreePtr New_FSTree_sys_app_dir( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	vfs::node_ptr New_FSTree_sys_app_dir( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
-		return new FSTree( parent, name, S_IFLNK | 0777, &app_dir_methods );
+		return new vfs::node( parent, name, S_IFLNK | 0777, &app_dir_methods );
 	}
 	
 }
-

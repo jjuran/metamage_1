@@ -17,7 +17,7 @@
 	#include "MacFiles/Classic.hh"
 	#include "pfiles/common.hh"
 #else
-	#include "FSSpec_from_stat.h"
+	#include "mac_relix/FSSpec_from_stat.hh"
 #endif
 
 
@@ -51,6 +51,8 @@ namespace Divergence
 		
 	#else
 		
+		using mac::relix::FSSpec_from_stat;
+		
 		struct ::stat stat_buffer;
 		
 		const bool exists = p7::stat( path, stat_buffer );
@@ -65,4 +67,3 @@ namespace Divergence
 	}
 	
 }
-

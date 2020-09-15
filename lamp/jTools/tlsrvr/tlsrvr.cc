@@ -3,11 +3,16 @@
  *	=========
  */
 
-// Standard C/C++
-#include <cctype>
-
 // Standard C
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+// iota
+#include "iota/char_types.hh"
+
+// command
+#include "command/get_option.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -26,7 +31,6 @@
 #include "OSErrno/OSErrno.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 // tlsrvr
@@ -34,11 +38,58 @@
 #include "RunToolServer.hh"
 
 
+using namespace command::constants;
+
+enum
+{
+	Option_last_byte = 255,
+	
+	Option_escape,
+	Option_switch,
+};
+
+static command::option options[] =
+{
+	{ "escape", Option_escape },
+	{ "switch", Option_switch },
+	
+	{ NULL }
+};
+
+static bool escapeForMPW = false;
+static bool switchLayers = false;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_escape:
+				escapeForMPW = true;
+				break;
+			
+			case Option_switch:
+				switchLayers = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
+
+
 namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	static plus::string QuoteForMPW( const plus::string& str )
@@ -54,7 +105,7 @@ namespace tool
 		{
 			while ( *q != '\0'  &&  *q != '\'' )
 			{
-				needsQuoting = needsQuoting || !std::isalnum( *q );
+				needsQuoting = needsQuoting || !iota::is_alnum( *q );
 				++q;
 			}
 			
@@ -108,18 +159,30 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool escapeForMPW = false;
-		bool switchLayers = false;
+		char *const *args = get_options( argv );
 		
-		o::bind_option_to_variable( "--escape", escapeForMPW );
-		o::bind_option_to_variable( "--switch", switchLayers );
+		const int argn = argc - (args - argv);
 		
-		o::get_options( argc, argv );
+		if ( const char* frontmost = getenv( "TLSRVR_FRONTMOST" ) )
+		{
+			if ( strcmp( frontmost, "always" ) == 0 )
+			{
+				switchLayers = true;
+			}
+			else if ( strcmp( frontmost, "never" ) == 0 )
+			{
+				// do nothing
+			}
+			else
+			{
+				fprintf( stderr, "TLSRVR_FRONTMOST must be always|never, not %s\n", frontmost );
+				
+				return 2;
+			}
+		}
 		
-		char const *const *free_args = o::free_arguments();
-		
-		plus::string command = MakeCommand( free_args,
-		                                    free_args + o::free_argument_count(),
+		plus::string command = MakeCommand( args,
+		                                    args + argn,
 		                                    escapeForMPW );
 		
 		try
@@ -142,4 +205,3 @@ namespace tool
 	}
 
 }
-

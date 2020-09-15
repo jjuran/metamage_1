@@ -3,6 +3,11 @@
  *	==========
  */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __EVENTS__
 #include <Events.h>
@@ -29,7 +34,6 @@
 #include "stdlib.h"
 
 // Standard C/C++
-#include <cctype>
 #include <cstdio>
 
 // Standard C++
@@ -43,8 +47,10 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
+// iota
+//#include "iota/char_types.hh"
+
 // gear
-#include "gear/hexidecimal.hh"
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
@@ -102,8 +108,8 @@
 #endif
 
 // Nitrogen Extras / Iteration
-#include "Iteration/AEDescListItems.h"
-#include "Iteration/AEDescListItemDatas.h"
+#include "Iteration/AEDescListItems.hh"
+#include "Iteration/AEDescListItemDatas.hh"
 
 // OSErrno
 #include "OSErrno/OSErrno.hh"
@@ -113,7 +119,6 @@
 
 // Arcana
 #include "CRC32.hh"
-#include "MD5/MD5.hh"
 
 // Vectoria
 #include "Vectoria/Matrix.hh"
@@ -434,7 +439,7 @@ static int TestAFP( int argc, char** argv )
 
 static int TestDate( int argc, char** argv )
 {
-	std::printf( "DateTime == %.8x\n", N::GetDateTime() );
+	std::printf( "DateTime == %.8lx\n", N::GetDateTime() );
 	
 	return 0;
 }
@@ -546,56 +551,6 @@ static int TestCRC32( int argc, char** argv )
 	return 0;
 }
 
-static MD5::Result MD5String( const char* text )
-{
-	return MD5::Digest_Bytes( text, std::strlen( text ) );
-}
-
-	static plus::string md5_hex( const MD5::Result& md5 )
-	{
-		plus::string result;
-		
-		char* p = result.reset( sizeof md5.data * 2 );
-		
-		for ( size_t i = 0;  i < sizeof md5.data;  ++i )
-		{
-			p[ i * 2     ] = gear::encoded_hex_char( md5.data[ i ] >> 4 );
-			p[ i * 2 + 1 ] = gear::encoded_hex_char( md5.data[ i ] >> 0 );
-		}
-		
-		return result;
-	}
-	
-static plus::string MD5Hex( const char* text )
-{
-	return md5_hex( MD5String( text ) );
-}
-
-TEST( MD5 )
-{
-	TEST_ASSERT( "d41d8cd98f00b204e9800998ecf8427e" == MD5Hex( "" ) );
-	TEST_ASSERT( "0cc175b9c0f1b6a831c399e269772661" == MD5Hex( "a" ) );
-	TEST_ASSERT( "900150983cd24fb0d6963f7d28e17f72" == MD5Hex( "abc" ) );
-	TEST_ASSERT( "f96b697d7cb7938d525a2f31aaf161d0" == MD5Hex( "message digest" ) );
-	TEST_ASSERT( "c3fcd3d76192e4007dfb496cca67e13b" == MD5Hex( "abcdefghijklmnop" "qrstuvwxyz" ) );
-	TEST_ASSERT( "d174ab98d277d9f5a5611c2c9f419d9f" == MD5Hex( "ABCDEFGHIJKLMNOP" "QRSTUVWXYZabcdef" "ghijklmnopqrstuv" "wxyz0123456789" ) );
-	TEST_ASSERT( "57edf4a22be3c955ac49da2e2107b67a" == MD5Hex( "1234567890123456" "7890123456789012" "3456789012345678" "9012345678901234"
-	                                                           "5678901234567890" ) );
-}
-
-static int TestMD5( int argc, char** argv )
-{
-	if (argc < 3)  return 1;
-	
-	const char* text = argv[ 2 ];
-	
-	plus::string message = MD5Hex( text ) + "\n";
-	
-	p7::write( p7::stdout_fileno, message );
-	
-	return 0;
-}
-
 static int TestOADC( int argc, char** argv )
 {
 	//if (argc < 3)  return 1;
@@ -623,7 +578,7 @@ static std::string Capitalize( std::string s )
 {
 	char& c = s[ 0 ];
 	
-	if ( std::islower( c ) )
+	if ( iota::is_lower( c ) )
 	{
 		c -= ' ';
 	}
@@ -975,15 +930,15 @@ static int TestPath( int argc, char** argv )
 	
 #ifdef __RELIX__
 	
-	const char* window_path = getenv( "WINDOW" );
+	const char* port_path = getenv( "PORT" );
 	
-	if ( !window_path )
+	if ( !port_path )
 	{
 		return 1;
 	}
 	
-	n::owned< p7::fd_t > window = p7::open( window_path,
-	                                        p7::o_rdonly | p7::o_directory );
+	n::owned< p7::fd_t > port = p7::open( port_path,
+	                                      p7::o_rdonly | p7::o_directory );
 	
 	int pix = gear::parse_decimal( argv[2] );
 	
@@ -991,7 +946,7 @@ static int TestPath( int argc, char** argv )
 	
 	int fd = 0;
 	
-	p7::read( p7::openat( window, "ref/pos", p7::o_rdonly | p7::o_binary ),
+	p7::read( p7::openat( port, "w/.~pos", p7::o_rdonly ),
 	          (char*) &location, sizeof location );
 	
 	int start_pos = location.h;
@@ -1000,9 +955,9 @@ static int TestPath( int argc, char** argv )
 	
 	UInt64 time_length = 250000;  // quarter second
 	
-	n::owned< p7::fd_t > pos = p7::openat( window,
-	                                       "ref/pos",
-	                                       p7::o_wronly | p7::o_trunc | p7::o_binary );
+	n::owned< p7::fd_t > pos = p7::openat( port,
+	                                       "w/.~pos",
+	                                       p7::o_wronly | p7::o_trunc );
 	
 	if ( ::GetCurrentKeyModifiers() & (shiftKey | rightShiftKey) )
 	{
@@ -1045,7 +1000,7 @@ void TestMangling( Foo::Bar< int > );
 
 void TestMangling( Foo::Bar< int > )
 {
-	std::abort();
+	abort();
 }
 
 void TestMangling( Foo::Bar_i_ );
@@ -1072,7 +1027,7 @@ typedef DragGrayRgnUPP CallbackUPP;
 
 static pascal void MyCallback()
 {
-	std::abort();
+	abort();
 }
 
 typedef pascal unsigned char (*InitMainProcPtr)( RGBColor* );
@@ -1230,7 +1185,7 @@ static int TestDefaultThreadStackSize( int argc, char** argv )
 		return 1;
 	}
 	
-	std::fprintf( stdout, "Default thread stack size:  %d\n", size );
+	std::fprintf( stdout, "Default thread stack size:  %ld\n", size );
 	
 	return 0;
 }
@@ -1370,7 +1325,6 @@ static const command_t global_commands[] =
 	{ "loc",       TestReadLoc    },
 	{ "mangling",  TestMangling   },
 	{ "map",       TestMap        },
-	{ "md5",       TestMD5        },
 	{ "null",      TestNull       },
 	{ "owned",     TestNucleusOwnedShared },
 	{ "path",      TestPath       },
@@ -1466,4 +1420,3 @@ namespace tool
 	}
 
 }
-

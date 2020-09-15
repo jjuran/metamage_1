@@ -1,10 +1,13 @@
-/*	=================
- *	AccessProperty.cc
- *	=================
- */
+/*
+	AccessProperty.cc
+	-----------------
+*/
 
-#ifndef AEOBJECTMODEL_ACCESSPROPERTY_H
-#include "AEObjectModel/AccessProperty.h"
+#include "AEObjectModel/AccessProperty.hh"
+
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
 #endif
 
 // Mac OS
@@ -180,4 +183,3 @@ namespace Nitrogen
 	}
 	
 }
-

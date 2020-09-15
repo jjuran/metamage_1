@@ -7,6 +7,9 @@
 #define VERTICE_PORTVIEW_HH
 
 // Nitrogen
+#ifndef NITROGEN_CGIMAGE_HH
+#include "Nitrogen/CGImage.hh"
+#endif
 #ifndef NITROGEN_QDOFFSCREEN_HH
 #include "Nitrogen/QDOffscreen.hh"
 #endif
@@ -16,40 +19,29 @@
 #include "Pedestal/View.hh"
 #endif
 
-// Vertice
-#include "Vertice/Port.hh"
+// worldview
+#include "worldview/Anaglyphs.hh"
+#include "worldview/Port.hh"
 
 
 namespace Vertice
 {
 	
-	enum AnaglyphMode
-	{
-		kNoAnaglyph,
-		kTrueAnaglyph,
-		kGrayAnaglyph,
-		kColorAnaglyph,
-		kHalfColorAnaglyph,
-		kOptimizedAnaglyph
-	};
+	using namespace worldview;
 	
 	class PortView : public Pedestal::View
 	{
 		private:
-			MeshModel* Mesh_HitTest( double x, double y );
-			
-			Vertice::ColorMatrix TracePixel( int x, int y );
-			
-			void DrawPixel( int x, int y );
-			
 			Rect                         itsBounds;  // port coordinates
 			Scene                        itsScene;
 			Port                         itsPort;
 			Frame                        itsFrame;
-			Vectoria::XMatrix            itsScreen2Port;
 			std::size_t                  itsSelectedContext;
 			nucleus::owned< GWorldPtr >  itsGWorld;
-			AnaglyphMode                 itsAnaglyphMode;
+		#ifdef MAC_OS_X_VERSION_10_2
+			mutable nucleus::owned< CGImageRef > itsImage;
+		#endif
+			anaglyph_mode                itsAnaglyphMode;
 		
 		public:
 			PortView( const Rect& bounds );
@@ -66,15 +58,16 @@ namespace Vertice
 			bool KeyDown( const EventRecord& event );
 			bool KeyDown( char c );
 			bool DoCommand( Pedestal::CommandCode code )  { return false; }
-			void Resize( short width, short height );
-			void Paint();
-			void Redraw();
+			void SetBounds( const Rect& bounds );
+			void Render();
+			void Derive() const;
+			void Update() const;
 			void Draw( const Rect& bounds, bool erasing );
+			void DrawInContext( CGContextRef context, CGRect bounds );
 			void DrawAnaglyphic();
-			void DrawBetter( bool per_scanline ) const;
+			void DrawBetter() const;
 	};
 	
 }
 
 #endif
-

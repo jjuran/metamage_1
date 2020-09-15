@@ -26,9 +26,6 @@
 static const unsigned n_tests = 4 + 2 + 2 + 2 + 2;
 
 
-using tap::ok_if;
-
-
 static int f_zero( void* )
 {
 	return 0;
@@ -99,17 +96,17 @@ static int simple_clone( int (*f)( void* ), int x = 0 )
 
 static void status()
 {
-	ok_if( simple_clone( &f_zero           ) ==       0 );
-	ok_if( simple_clone( &f_return,      1 ) ==  0x0100 );
-	ok_if( simple_clone( &f_exit,        1 ) ==  0x0100 );
-	ok_if( simple_clone( &f_raise, SIGTERM ) == SIGTERM );
+	EXPECT( simple_clone( &f_zero           ) ==       0 );
+	EXPECT( simple_clone( &f_return,      1 ) ==  0x0100 );
+	EXPECT( simple_clone( &f_exit,        1 ) ==  0x0100 );
+	EXPECT( simple_clone( &f_raise, SIGTERM ) == SIGTERM );
 }
 
 static void parent()
 {
 	const pid_t pid = CHECK( getpid() );
 	
-	ok_if( simple_clone( &f_getppid ) == pid << 8 );
+	EXPECT( simple_clone( &f_getppid ) == pid << 8 );
 	
 	
 	const int child2_pid = simple_clone( &f_clone_getppid ) >> 8;
@@ -118,7 +115,7 @@ static void parent()
 	
 	CHECK( waitpid( child2_pid, &wait_status, 0 ) );
 	
-	ok_if( wait_status == pid << 8 );
+	EXPECT( wait_status == pid << 8 );
 }
 
 static bool cwd_gets_changed( int more_flags )
@@ -145,8 +142,8 @@ static bool cwd_gets_changed( int more_flags )
 
 static void fs_info()
 {
-	ok_if(  cwd_gets_changed( CLONE_FS ) );  // share cwd
-	ok_if( !cwd_gets_changed( 0        ) );  // copy cwd
+	EXPECT(  cwd_gets_changed( CLONE_FS ) );  // share cwd
+	EXPECT( !cwd_gets_changed( 0        ) );  // copy cwd
 }
 
 static bool fd_gets_closed( int more_flags )
@@ -170,8 +167,8 @@ static bool fd_gets_closed( int more_flags )
 
 static void files()
 {
-	ok_if(  fd_gets_closed( CLONE_FILES ) );  // share file descriptors
-	ok_if( !fd_gets_closed( 0           ) );  // copy file descriptor set
+	EXPECT(  fd_gets_closed( CLONE_FILES ) );  // share file descriptors
+	EXPECT( !fd_gets_closed( 0           ) );  // copy file descriptor set
 }
 
 static bool sigaction_changed( int more_flags )
@@ -193,8 +190,8 @@ static bool sigaction_changed( int more_flags )
 
 static void sighand()
 {
-	ok_if(  sigaction_changed( CLONE_SIGHAND ) );  // share signal handlers
-	ok_if( !sigaction_changed( 0             ) );  // copy signal handlers
+	EXPECT(  sigaction_changed( CLONE_SIGHAND ) );  // share signal handlers
+	EXPECT( !sigaction_changed( 0             ) );  // copy signal handlers
 }
 
 
@@ -214,4 +211,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

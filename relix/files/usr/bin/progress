@@ -1,0 +1,53 @@
+#!/usr/bin/perl
+
+my $title = shift;
+
+chdir "/gui/new/port";
+
+sub spew
+{
+	my ( $path, $data ) = @_;
+	
+	open my $out, ">", $path or die "$path: $!\n";
+	
+	print $out $data or die "$path: $!\n";
+	
+	close $out or die "$path: $!\n";
+}
+
+sub set
+{
+	my ( $path, $data ) = @_;
+	
+	spew( $path, "$data\n" );
+}
+
+if ( defined $title )
+{
+	set title => $title;
+}
+
+set procid => 5;
+
+set size => "280,76";
+
+link "new/frame",    "view";
+link "new/progress", "v/view";
+
+set "v/height" => 11;
+
+set "v/.margin-left"   => 10;
+set "v/.margin-right"  => 10;
+set "v/.margin-bottom" => 10;
+
+spew( "window", "" );
+
+while (<>)
+{
+	m{^ \s* (\d+ (?:\.\d+)?) % \s* $}x    and $_ = $1    *   100 or
+	m{^ \s* (\d+) \s* / \s* (\d+) \s* $}x and $_ = $1/$2 * 10000 or
+	chop;
+	
+	set "v/v/value" => $_;
+}
+

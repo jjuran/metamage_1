@@ -5,6 +5,9 @@
 
 #include "Orion/Main.hh"
 
+// POSIX
+#include <netdb.h>
+
 // Standard C++
 #include <exception>
 
@@ -23,6 +26,7 @@
 #include "poseven/functions/write.hh"
 #include "poseven/types/errno_t.hh"
 #include "poseven/types/exit_t.hh"
+#include "poseven/types/gai_error.hh"
 
 
 namespace Orion
@@ -35,7 +39,7 @@ namespace Orion
 	
 	static void ShowDebuggingContext( const void* stack_bottom_limit )
 	{
-	#if TARGET_CONFIG_DEBUGGING
+	#if CONFIG_DEBUGGING
 		
 		using namespace recall;
 		
@@ -62,7 +66,7 @@ namespace Orion
 			{
 				const frame_data* last = end - 1;
 				
-				while ( last->frame_pointer >= stack_bottom_limit )
+				while ( last->frame_pointer > stack_bottom_limit )
 				{
 					--last;
 				}
@@ -98,6 +102,10 @@ namespace Orion
 		{
 			return status;
 		}
+		catch ( const p7::gai_error& err )
+		{
+			p7::perror( argv[0], gai_strerror( err ) );
+		}
 		catch ( const p7::errno_t& err )
 		{
 			p7::perror( argv[0], "exception" );
@@ -121,4 +129,3 @@ namespace Orion
 	}
 	
 }
-

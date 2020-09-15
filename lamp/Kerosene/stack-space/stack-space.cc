@@ -31,4 +31,3 @@ unsigned _relix_stack_space()
 	
 	return stack_pointer - stack_limit;
 }
-

@@ -1,0 +1,54 @@
+#!/usr/bin/env vx
+
+var start = ()
+var timer
+
+OUT <== "-:--.--"
+
+const events = channel()
+
+var reader = thread lambda
+{
+	while var input = IN.read 1 do
+	{
+		const c = *input
+		
+		if c == ' ' then
+		{
+			events <== c
+		}
+	}
+}
+
+def tens
+{
+	return ("0" * (_ < 10)) _
+}
+
+for ev in events do
+{
+	if ev == '\0' then
+	{
+		const micro_dt = utime() - start
+		const centi_dt = micro_dt div 10^4
+		const cc = centi_dt mod 100
+		const dt = centi_dt div 100
+		const m  = dt div 60
+		const ss = dt mod 60
+		
+		OUT <== "\r" m ":" (tens ss) "." tens cc
+	}
+	else if ev == ' ' then
+	{
+		if (+) start then
+		{
+			OUT <== "\n"
+			
+			exit 0
+		}
+		
+		start = utime()
+		
+		timer = thread { while true do { events <== '\0'; sleep 0.005 } }
+	}
+}

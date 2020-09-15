@@ -9,11 +9,25 @@
 // POSIX
 #include "signal.h"
 
+// relix-kernel
+#include "relix/api/errno.hh"
+#include "relix/signal/check_signals.hh"
+#include "relix/syscall/getpid.hh"
+#include "relix/syscall/registry.hh"
+#include "relix/syscall/sigaction.hh"
+#include "relix/syscall/sigpending.hh"
+#include "relix/syscall/sigprocmask.hh"
+#include "relix/syscall/sigsuspend.hh"
+
 // Genie
-#include "Genie/caught_signal.hh"
 #include "Genie/current_process.hh"
+#include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
-#include "Genie/SystemCallRegistry.hh"
+
+
+#ifndef __RELIX__
+#define __SIGTHREAD  0
+#endif
 
 
 namespace Genie
@@ -36,7 +50,35 @@ namespace Genie
 			return 0;
 		}
 		
-		return CurrentProcess().SetErrno( ESRCH );
+		return relix::set_errno( ESRCH );
+	}
+	
+	static
+	int kill_tid( pid_t tid, int signo )
+	{
+		Process& current = current_process();
+		
+		if ( Process* target = FindProcess( tid ) )
+		{
+			if ( current.GetPID() == target->GetPID() )
+			{
+				if ( signo != 0 )
+				{
+					target->set_pending_signal( signo );
+				}
+				
+				return 0;
+			}
+			
+			/*
+				Not reached by pthread_kill().
+				Someone made an evil call to kill() with __SIGTHREAD set.
+			*/
+			
+			return relix::set_errno( EINVAL );
+		}
+		
+		return relix::set_errno( ESRCH );
 	}
 	
 	struct kill_param
@@ -70,16 +112,19 @@ namespace Genie
 	
 	static int kill_pgid( pid_t pgid, int signo )
 	{
-		Process& current = CurrentProcess();
-		
-		kill_param param = { pgid ? pgid : -current.GetPID(), signo, false };
+		kill_param param = { pgid ? pgid : -relix::getpid(), signo, false };
 		
 		for_each_process( &kill_process_in_group, &param );
 		
-		return param.killed_any ? 0 : current.SetErrno( ESRCH );
+		return param.killed_any ? 0 : relix::set_errno( ESRCH );
 		
 	}
 	
+	static inline
+	pid_t getpgid()
+	{
+		return current_process().GetPGID();
+	}
 	
 	static int kill( pid_t pid, int signo )
 	{
@@ -89,19 +134,32 @@ namespace Genie
 			return 0;
 		}
 		
+		const bool is_thread = signo & __SIGTHREAD;
+		
+		if ( is_thread )
+		{
+			signo &= ~__SIGTHREAD;
+		}
+		
 		if ( signo < 0  ||  signo >= NSIG )
 		{
 			return set_errno( EINVAL );
 		}
 		
-		Process& current = current_process();
-		
 		try
 		{
-			int result = pid >   0 ? kill_pid ( pid,               signo )
-			           : pid ==  0 ? kill_pgid( current.GetPGID(), signo )
-			           : pid == -1 ? kill_pgid( 0,                 signo )
-			           :             kill_pgid( -pid,              signo );
+			int result = is_thread ? kill_tid ( pid,       signo )
+			           : pid >   0 ? kill_pid ( pid,       signo )
+			           : pid ==  0 ? kill_pgid( getpgid(), signo )
+			           : pid == -1 ? kill_pgid( 0,         signo )
+			           :             kill_pgid( -pid,      signo );
+			
+			/*
+				Fatal signals terminate the process immediately.
+				Caught signals remain pending until reentering the kernel.
+			*/
+			
+			relix::check_signals( false );
 			
 			return result;
 		}
@@ -112,123 +170,10 @@ namespace Genie
 	}
 	
 	
-	static int sigaction( int signo, const struct sigaction* action, struct sigaction* oldaction )
-	{
-		if ( signo <= 0  ||  signo >= NSIG )
-		{
-			return set_errno( EINVAL );
-		}
-		
-		Process& current = current_process();
-		
-		if ( oldaction != NULL )
-		{
-			*oldaction = current.GetSignalAction( signo );
-		}
-		
-		if ( action != NULL )
-		{
-			if ( signo == SIGKILL  ||  signo == SIGSTOP )
-			{
-				return set_errno( EINVAL );
-			}
-			
-		#ifdef SA_SIGINFO
-			
-			if ( action->sa_flags & SA_SIGINFO )
-			{
-				return set_errno( ENOTSUP );
-			}
-			
-		#endif
-			
-			current.SetSignalAction( signo, *action );
-		}
-		
-		return 0;
-	}
-	
-	
-	static int sigpending( sigset_t* oldset )
-	{
-		if ( oldset != NULL )
-		{
-			*oldset = current_process().GetPendingSignals();
-		}
-		
-		return 0;
-	}
-	
-	
-	static int sigprocmask( int how, const sigset_t* set, sigset_t* oldset )
-	{
-		Process& current = current_process();
-		
-		if ( oldset != NULL )
-		{
-			*oldset = current.GetBlockedSignals();
-		}
-		
-		if ( set != NULL )
-		{
-			const sigset_t unblockable_mask = 1 << SIGKILL - 1 | 1 << SIGSTOP - 1;
-			
-			const sigset_t filtered_set = *set & ~unblockable_mask;
-			
-			switch ( how )
-			{
-				case SIG_SETMASK:
-					current.SetBlockedSignals( filtered_set );
-					break;
-				
-				case SIG_BLOCK:
-					current.BlockSignals( filtered_set );
-					break;
-				
-				case SIG_UNBLOCK:
-					current.UnblockSignals( filtered_set );
-					break;
-				
-				default:
-					return set_errno( EINVAL );
-			}
-		}
-		
-		return 0;
-	}
-	
-	
-	static int sigsuspend( const sigset_t* sigmask )
-	{
-		Process& current = current_process();
-		
-		sigset_t previous = current.GetBlockedSignals();
-		
-		if ( sigmask != NULL )
-		{
-			current.SetBlockedSignals( *sigmask );
-		}
-		
-		try
-		{
-			while ( true )
-			{
-				current.Stop();
-				
-				current.HandlePendingSignals( true );
-			}
-		}
-		catch ( ... )
-		{
-			(void) set_errno_from_exception();
-		}
-		
-		current.SetBlockedSignals( previous );
-		
-		prevent_syscall_restart();
-		
-		return -1;  // EINTR
-	}
+	using relix::sigaction;
+	using relix::sigpending;
+	using relix::sigprocmask;
+	using relix::sigsuspend;
 	
 	
 	#pragma force_active on
@@ -242,4 +187,3 @@ namespace Genie
 	#pragma force_active reset
 	
 }
-

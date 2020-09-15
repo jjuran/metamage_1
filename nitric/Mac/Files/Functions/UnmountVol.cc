@@ -12,6 +12,8 @@
 namespace Mac
 {
 	
+#if ! __LP64__
+	
 	void UnmountVol( ConstStr63Param volName )
 	{
 		ThrowOSStatus( ::UnmountVol( volName, 0 ) );
@@ -22,5 +24,12 @@ namespace Mac
 		ThrowOSStatus( ::UnmountVol( NULL, vRefNum ) );
 	}
 	
+#else
+	
+	void dummy()
+	{
+	}
+	
+#endif
+	
 }
-

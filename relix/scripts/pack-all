@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+
+archive="archive.pl"
+
+date '+export BUILD_DATE="%Y-%m-%d %H:%M"' > /tmp/set-relix_build_date
+
+. /tmp/set-relix_build_date
+
+perl $archive 68k
+perl $archive 68k~
+
+perl $archive os9
+perl $archive os9~
+
+perl $archive osx
+perl $archive osx~

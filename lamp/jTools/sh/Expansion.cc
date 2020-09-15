@@ -5,15 +5,16 @@
 
 #include "Expansion.hh"
 
+// POSIX
+#include <dirent.h>
+#include <pwd.h>
+
 // Standard C/C++
-#include <cctype>
+#include <cstdlib>
 #include <cstring>
 
-// Standard C++
-#include <functional>
-
-// POSIX
-#include "dirent.h"
+// iota
+#include "iota/char_types.hh"
 
 // gear
 #include "gear/find.hh"
@@ -22,7 +23,6 @@
 #include "debug/assert.hh"
 
 // plus
-#include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
 
@@ -344,10 +344,114 @@ namespace ShellShock
 		return expansion;
 	}
 	
+	static plus::string quoted_tilde_expansion( const char* homedir, const plus::string& subpath )
+	{
+		const size_t home_len = std::strlen( homedir );
+		const size_t path_len = subpath.size();
+		
+		size_t n_quotes = 0;
+		
+		const char* end = homedir + home_len;
+		
+		for ( const char* p = homedir;  p < end;  ++p )
+		{
+			if ( *p == '\'' )
+			{
+				++n_quotes;
+			}
+		}
+		
+		const size_t result_len = 1 + home_len + n_quotes * 3 + 1 + path_len;
+		
+		plus::string result;
+		
+		char* q = result.reset( result_len );
+		
+		*q++ = '\'';
+		
+		if ( n_quotes != 0 )
+		{
+			for ( const char* p = homedir;  p < end; )
+			{
+				const char c = *q++ = *p++;
+				
+				if ( c == '\'' )
+				{
+					*q++ = '\\';
+					*q++ = '\'';
+					*q++ = '\'';
+				}
+			}
+		}
+		else
+		{
+			memcpy( q, homedir, home_len );
+			
+			q += home_len;
+		}
+		
+		*q++ = '\'';
+		
+		memcpy( q, subpath.data(), path_len );
+		
+		return result;
+	}
+	
 	plus::string TildeExpansion( const plus::string& word )
 	{
-		// ~jjuran -> /home/jjuran
+		// POSIX.1-2013 Description (2.6.1 Tilde Expansion):
+		// http://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_06_01
 		
+		const char* path = word.c_str();
+		
+		// Look for a tilde at the start of the first path element.
+		if ( path[ 0 ] == '~' )
+		{
+			if ( path[ 1 ] == '\0'  ||  path[ 1 ] == '/' )
+			{
+				// Tilde is single first path element; expand to $HOME.
+				// ~ -> /home/jjuran
+				
+				const char* homedir = std::getenv( "HOME" );
+				
+				// ... but only if $HOME is defined.
+				if ( homedir != NULL )
+				{
+					return quoted_tilde_expansion( homedir, word.substr( 1 ) );
+				}
+			}
+			else
+			{
+				// ~username format. Expand to appropriate user's home directory.
+				// ~jjuran -> /home/jjuran
+				
+				const size_t first_slash = word.find( '/' );
+				
+				const plus::string username = word.substr( 1, first_slash - 1 );
+				
+				struct passwd* userinfo = getpwnam( username.c_str() );
+				
+				if ( userinfo != NULL )
+				{
+					// We got something in ~username format. Try to substitute the path.
+					const char* homedir = userinfo->pw_dir;
+					
+					if ( homedir[ 0 ] != '\0' )
+					{
+						plus::string subpath;
+						
+						if ( first_slash != plus::string::npos )
+						{
+							subpath = word.substr( first_slash );
+						}
+						
+						return quoted_tilde_expansion( homedir, subpath );
+					}
+				}
+			}
+		}
+		
+		// No tilde substitution performed.
 		return word;
 	}
 	
@@ -502,6 +606,25 @@ namespace ShellShock
 		{
 			MatchPathnames( from_dir, path, result );
 		}
+		else
+		{
+			const char* remainder = slash + 1;
+			
+			const plus::string filename( path, slash );
+			
+			std::vector< plus::string > matches;
+			
+			MatchPathnames( from_dir, filename.c_str(), matches );
+			
+			typedef std::vector< plus::string >::const_iterator Iter;
+			
+			for ( Iter it = matches.begin();  it != matches.end();  ++it )
+			{
+				plus::string this_dir = *it + "/";
+				
+				ExpandPathnames( from_dir + this_dir, remainder, result );
+			}
+		}
 	}
 	
 	std::vector< plus::string > PathnameExpansion( const plus::string& word )
@@ -583,22 +706,25 @@ namespace ShellShock
 					
 					while ( *q != '\0'  &&  *q != '"' )
 					{
-						if ( *q == '\\' )
+						const char* mark = q;
+						
+						if ( *q++ == '\\' )
 						{
-							newstr.append( p, q - p );
+							const char c = *q;
 							
-							p = q + 1;
-							
-							if ( *p == '\0' )
+							if ( c == '\0' )
 							{
 								break;
 							}
 							
-							q = p + 1;
-						}
-						else
-						{
-							q++;
+							if ( c == '\\'  ||  c == '"'  ||  c == '$' )
+							{
+								newstr.append( p, mark );
+								
+								p = q;
+							}
+							
+							++q;
 						}
 					}
 					
@@ -650,7 +776,7 @@ namespace ShellShock
 				break;
 			
 			default:
-				for ( end = var;  std::isalnum( *end ) || *end == '_';  ++end ) continue;
+				for ( end = var;  iota::is_alnum( *end ) || *end == '_';  ++end ) continue;
 				p = end;
 				// p == var if name is empty, p > var otherwise
 				break;
@@ -734,6 +860,24 @@ namespace ShellShock
 		
 		return result;
 	}
+	
+	class parameter_expander
+	{
+		private:
+			param_lookup_f its_lookup;
+		
+		public:
+			typedef std::vector< plus::string > result_type;
+			
+			parameter_expander( param_lookup_f f ) : its_lookup( f )
+			{
+			}
+			
+			result_type operator()( const plus::string& word ) const
+			{
+				return ParameterExpansion( its_lookup, word );
+			}
+	};
 	
 	template < class Inserter >
 	static inline void Copy( const plus::string& word, Inserter inserter )
@@ -824,13 +968,7 @@ namespace ShellShock
 						Apply( ProcessSubstitution,
 							Apply( ArithmeticExpansion,
 								Apply( CommandSubstitution,
-									Apply
-									(
-										std::bind1st
-										(
-											plus::ptr_fun( ParameterExpansion ),
-											lookup_param
-										),
+									Apply( parameter_expander( lookup_param ),
 										Apply( TildeExpansion,
 											Apply( BraceExpansion,
 												command
@@ -846,4 +984,3 @@ namespace ShellShock
 	}
 	
 }
-

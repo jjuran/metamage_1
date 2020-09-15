@@ -13,9 +13,8 @@
 namespace vfs
 {
 	
-	node_ptr parent( const node* it );
+	node_ptr parent( const node& that );
 	
 }
 
 #endif
-

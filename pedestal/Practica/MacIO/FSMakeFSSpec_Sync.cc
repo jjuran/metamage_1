@@ -41,4 +41,3 @@ namespace MacIO
 	                                   const unsigned char  *name );
 	
 }
-

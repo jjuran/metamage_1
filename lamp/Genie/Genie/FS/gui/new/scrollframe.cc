@@ -8,11 +8,9 @@
 // POSIX
 #include <sys/stat.h>
 
-// Standard C++
-#include <algorithm>
-
 // plus
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 
 // Nitrogen
 #include "Nitrogen/Controls.hh"
@@ -23,20 +21,23 @@
 #include "Pedestal/Scroller_beta.hh"
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node.hh"
+#include "vfs/functions/resolve_pathname.hh"
+#include "vfs/methods/item_method_set.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
 #include "vfs/primitives/lookup.hh"
 
+// relix-kernel
+#include "relix/api/root.hh"
+
 // Genie
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/TrackScrollbar.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/gui/new/scroller.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -44,6 +45,13 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
+	
+	
+	template < class T >
+	static inline T max( T a, T b )
+	{
+		return b < a ? a : b;
+	}
 	
 	
 	struct ScrollFrameParameters
@@ -64,7 +72,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const FSTree*, ScrollFrameParameters > ScrollFrameParametersMap;
+	typedef plus::simple_map< const vfs::node*, ScrollFrameParameters > ScrollFrameParametersMap;
 	
 	static ScrollFrameParametersMap gScrollFrameParametersMap;
 	
@@ -76,7 +84,7 @@ namespace Genie
 			Scrollbar_UserData itsUserData;
 		
 		public:
-			void Update( const Rect& bounds, const FSTree* viewKey );
+			void Update( const Rect& bounds, const vfs::node* viewKey );
 	};
 	
 	static Ped::ScrollerAPI* RecoverScrollerFromControl( ControlRef control )
@@ -86,7 +94,7 @@ namespace Genie
 		ASSERT( userData      != NULL );
 		ASSERT( userData->key != NULL );
 		
-		const FSTree* scrollFrame = userData->key;
+		const vfs::node* scrollFrame = userData->key;
 		
 		if ( ScrollFrameParameters* it = gScrollFrameParametersMap.find( scrollFrame ) )
 		{
@@ -107,7 +115,7 @@ namespace Genie
 		
 		const bool vertical = userData->vertical;
 		
-		const FSTree* scrollFrame = userData->key;
+		const vfs::node* scrollFrame = userData->key;
 		
 		if ( ScrollFrameParameters* it = gScrollFrameParametersMap.find( scrollFrame ) )
 		{
@@ -117,14 +125,14 @@ namespace Genie
 				int viewLength   = vertical ? proxy->ViewHeight  () : proxy->ViewWidth  ();
 				int offset       = vertical ? proxy->GetVOffset  () : proxy->GetHOffset ();
 				
-				short max_offset = std::max( clientLength - viewLength, offset );
+				short max_offset = max( clientLength - viewLength, offset );
 				
 				N::SetControlMaximum( control, max_offset );
 			}
 		}
 	}
 	
-	void Scrollbar::Update( const Rect& bounds, const FSTree* viewKey )
+	void Scrollbar::Update( const Rect& bounds, const vfs::node* viewKey )
 	{
 		if ( Get() == NULL )
 		{
@@ -146,7 +154,7 @@ namespace Genie
 	class ScrollFrame : public Ped::ScrollFrame
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Key itsKey;
 			
@@ -236,7 +244,7 @@ namespace Genie
 	{
 		const ScrollFrameParameters& params = gScrollFrameParametersMap[ itsKey ];
 		
-		const FSTree* target = params.itsTargetProxy.Get();
+		const vfs::node* target = params.itsTargetProxy.Get();
 		
 		const Rect aperture = ApertureFromBounds( itsLastBounds );
 		
@@ -279,26 +287,26 @@ namespace Genie
 		return *subview;
 	}
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new ScrollFrame( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		gScrollFrameParametersMap.erase( delegate );
 	}
 	
 	
-	static bool scrollframe_target_exists( const FSTree* view )
+	static bool scrollframe_target_exists( const vfs::node* view )
 	{
 		return gScrollFrameParametersMap[ view ].itsTargetProxy.Get() != NULL;
 	}
 	
-	static void scrollframe_target_remove( const FSTree* node )
+	static void scrollframe_target_remove( const vfs::node* that )
 	{
-		const FSTree* view = node->owner();
+		const vfs::node* view = that->owner();
 		
 		ScrollFrameParameters& params = gScrollFrameParametersMap[ view ];
 		
@@ -309,14 +317,14 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	static void scrollframe_target_symlink( const FSTree*        node,
+	static void scrollframe_target_symlink( const vfs::node*     that,
 	                                        const plus::string&  target_path )
 	{
-		const FSTree* view = node->owner();
+		const vfs::node* view = that->owner();
 		
-		FSTreePtr target = ResolvePathname( target_path, view );
+		const vfs::node_ptr target = resolve_pathname( *relix::root(), target_path, *view );
 		
-		FSTreePtr delegate = lookup( target.get(), plus::string::null );
+		vfs::node_ptr delegate = lookup( *target, plus::string::null );
 		
 		ScrollFrameParameters& params = gScrollFrameParametersMap[ view ];
 		
@@ -326,28 +334,32 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	static plus::string scrollframe_target_readlink( const FSTree* node )
+	static plus::string scrollframe_target_readlink( const vfs::node* that )
 	{
-		const FSTree* view = node->owner();
+		const vfs::node* view = that->owner();
 		
 		return gScrollFrameParametersMap[ view ].itsTargetPath;
 	}
 	
-	static const link_method_set scrollframe_target_link_methods =
-	{
-		&scrollframe_target_readlink,
-		NULL,
-		&scrollframe_target_symlink
-	};
-	
-	static const node_method_set scrollframe_target_methods =
+	static const vfs::item_method_set scrollframe_target_item_methods =
 	{
 		NULL,
 		NULL,
 		NULL,
 		NULL,
 		&scrollframe_target_remove,
+	};
+	
+	static const vfs::link_method_set scrollframe_target_link_methods =
+	{
+		&scrollframe_target_readlink,
 		NULL,
+		&scrollframe_target_symlink
+	};
+	
+	static const vfs::node_method_set scrollframe_target_methods =
+	{
+		&scrollframe_target_item_methods,
 		NULL,
 		&scrollframe_target_link_methods
 	};
@@ -356,39 +368,51 @@ namespace Genie
 	namespace
 	{
 		
-		boost::intrusive_ptr< Ped::View >& GetView( const FSTree* key, const plus::string& name )
-		{
-			return gScrollFrameParametersMap[ key ].itsSubview;
-		}
-		
-		bool& Vertical( const FSTree* view )
+		bool& Vertical( const vfs::node* view )
 		{
 			return gScrollFrameParametersMap[ view ].itHasVertical;
 		}
 		
-		bool& Horizontal( const FSTree* view )
+		bool& Horizontal( const vfs::node* view )
 		{
 			return gScrollFrameParametersMap[ view ].itHasHorizontal;
 		}
 		
 	}
 	
+	static
+	Ped::View* get_view( const vfs::node* key, const plus::string& name )
+	{
+		return gScrollFrameParametersMap[ key ].itsSubview.get();
+	}
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	static
+	void set_view( const vfs::node* key, const plus::string&, Ped::View* view )
+	{
+		gScrollFrameParametersMap[ key ].itsSubview = view;
+	}
+	
+	const View_Accessors access =
+	{
+		&get_view,
+		&set_view,
+	};
+	
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	typedef View_Property< plus::serialize_bool, Horizontal >  Horizontal_Property;
 	typedef View_Property< plus::serialize_bool, Vertical   >  Vertical_Property;
 	
-	static FSTreePtr target_factory( const FSTree*        parent,
-	                                 const plus::string&  name,
-	                                 const void*          args )
+	static vfs::node_ptr target_factory( const vfs::node*     parent,
+	                                     const plus::string&  name,
+	                                     const void*          args )
 	{
 		if ( const bool exists = scrollframe_target_exists( parent ) )
 		{
-			return new FSTree( parent, name, S_IFLNK | 0777, &scrollframe_target_methods );
+			return new vfs::node( parent, name, S_IFLNK | 0777, &scrollframe_target_methods );
 		}
 		
-		return new FSTree( parent, name, 0, &scrollframe_target_methods );
+		return new vfs::node( parent, name, 0, &scrollframe_target_methods );
 	}
 	
 	static const vfs::fixed_mapping local_mappings[] =
@@ -398,14 +422,15 @@ namespace Genie
 		
 		{ "target", &target_factory },
 		
-		{ "v", &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
+		{ "view", &subview_factory, &access },
+		{ "v",    &new_view_dir,            },
 		
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_scrollframe( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	vfs::node_ptr New_FSTree_new_scrollframe( const vfs::node*     parent,
+	                                          const plus::string&  name,
+	                                          const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,
@@ -415,4 +440,3 @@ namespace Genie
 	}
 	
 }
-

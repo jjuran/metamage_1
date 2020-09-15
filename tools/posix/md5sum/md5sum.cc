@@ -3,126 +3,119 @@
 	---------
 */
 
+// POSIX
+#include <fcntl.h>
+#include <unistd.h>
+
 // Standard C
 #include <string.h>
 
-// POSIX
-#include <sys/uio.h>
+// more-libc
+#include "more/string.h"
 
-// iota
-#include "iota/strings.hh"
+// more-posix
+#include "more/perror.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
-// poseven
-#include "poseven/functions/open.hh"
-#include "poseven/functions/read.hh"
-
-// Arcana
-#include "MD5/MD5.hh"
-
-// Orion
-#include "Orion/Main.hh"
+// crypto
+#include "md5/md5.hh"
 
 
-namespace tool
+#pragma exceptions off
+
+
+using crypto::md5_digest;
+using crypto::md5_engine;
+
+
+static inline size_t min( size_t a, size_t b )
 {
-	
-	namespace p7 = poseven;
-	
-	
-	static inline size_t min( size_t a, size_t b )
-	{
-		return a < b ? a : b;
-	}
-	
-	static void md5_hex( char* result, const MD5::Result& md5 )
-	{
-		for ( size_t i = 0;  i < sizeof md5.data;  ++i )
-		{
-			result[ i * 2     ] = gear::encoded_hex_char( md5.data[ i ] >> 4 );
-			result[ i * 2 + 1 ] = gear::encoded_hex_char( md5.data[ i ] >> 0 );
-		}
-	}
-	
-	static ssize_t buffered_read( p7::fd_t fd, char* small_buffer, size_t n_bytes_requested )
-	{
-		static char big_buffer[ 4096 ];
-		
-		static size_t mark = 0;
-		static size_t n_bytes_available = 0;
-		
-		if ( n_bytes_available == 0 )
-		{
-			n_bytes_available = p7::read( fd, big_buffer, sizeof big_buffer );
-			
-			mark = 0;
-		}
-		
-		const size_t bytes_to_copy = min( n_bytes_requested, n_bytes_available );
-		
-		memcpy( small_buffer, big_buffer + mark, bytes_to_copy );
-		
-		n_bytes_available -= bytes_to_copy;
-		mark              += bytes_to_copy;
-		
-		return bytes_to_copy;
-	}
-	
-	static void MD5Sum( char* result, p7::fd_t input )
-	{
-		const std::size_t blockSize = 64;
-		
-		char data[ blockSize ];
-		std::size_t bytes;
-		MD5::Engine engine;
-		
-		// loop exits on a partial block or at EOF
-		while ( ( bytes = buffered_read( input, data, blockSize ) ) == blockSize )
-		{
-			engine.DoBlock( data );
-		}
-		
-		engine.Finish( data, bytes * 8 );
-		
-		md5_hex( result, engine.GetResult() );
-	}
-	
-	int Main( int argc, char** argv )
-	{
-		int fail = 0;
-		
-		for ( int i = 1;  i < argc;  ++i )
-		{
-			try
-			{
-				const size_t n_MD5_nibbles = 32;
-				
-				char buffer[ n_MD5_nibbles ];
-				
-				MD5Sum( buffer, p7::open( argv[ i ], p7::o_rdonly ) );
-				
-				buffer[ n_MD5_nibbles ] = '\0';
-				
-				struct iovec output_message[] =
-				{
-					{ buffer, n_MD5_nibbles              },
-					{ (void*) STR_LEN( "  "            ) },
-					{ (void*) argv[i], strlen( argv[i] ) },
-					{ (void*) STR_LEN( "\n"            ) }
-				};
-				
-				(void) writev( STDOUT_FILENO, output_message, sizeof output_message / sizeof output_message[0] );
-			}
-			catch ( ... )
-			{
-				fail++;
-			}
-		}
-		
-		return fail == 0 ? 0 : 1;
-	}
-
+	return a < b ? a : b;
 }
 
+static int error( const char* path )
+{
+	more::perror( "md5sum", path );
+	
+	return 1;
+}
+
+static int md5sum( const char* path )
+{
+	const int input_fd = open( path, O_RDONLY );
+	
+	if ( input_fd < 0 )
+	{
+		return error( path );
+	}
+	
+	const size_t buffer_size = 4096;
+	
+	char buffer[ 4096 ];
+	char* block;
+	ssize_t count;
+	
+	md5_engine engine;
+	
+	// loop exits on a partial block or at EOF
+	while ( true )
+	{
+		ssize_t n_read = read( input_fd, buffer, sizeof buffer );
+		
+		if ( n_read < 0 )
+		{
+			return error( path );
+		}
+		
+		count = n_read;
+		
+		block = buffer;
+		
+		while ( count >= 64 )
+		{
+			engine.digest_block( block );
+			
+			block += 64;
+			count -= 64;
+		}
+		
+		if ( n_read != sizeof buffer )
+		{
+			break;
+		}
+	}
+	
+	const md5_digest& digest = engine.finish( block, count );
+	
+	const size_t n_nibbles = sizeof (md5_digest) * 2;
+	const size_t max_path_len = sizeof buffer - n_nibbles - 2 - 1;
+	
+	const size_t len = min( strlen( path ), max_path_len );
+	
+	char* p = gear::hexpcpy_lower( buffer, &digest, sizeof digest );
+	
+	*p++ = ' ';
+	*p++ = ' ';
+	
+	p = (char*) mempcpy( p, path, len );
+	
+	*p++ = '\n';
+	
+	(void) write( STDOUT_FILENO, buffer, p - buffer );
+	
+	return 0;
+}
+
+int main( int argc, char** argv )
+{
+	bool had_errors = false;
+	
+	for ( int i = 1;  i < argc;  ++i )
+	{
+		had_errors = md5sum( argv[ i ] )  ||  had_errors;
+	}
+	
+	return had_errors ? 1 : 0;
+}

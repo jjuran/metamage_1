@@ -45,6 +45,8 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
 	static nucleus::owned< AliasHandle > NewAlias( const FSSpec* fromFile, const FSSpec& target )
 	{
 		::AliasHandle result;
@@ -64,6 +66,8 @@ namespace Nitrogen
 		return NewAlias( NULL, target );
 	}
 	
+#endif
+	
 	nucleus::owned< AliasHandle > NewAlias( CFDataRef theData )
 	{
 	   CFIndex dataSize = CFDataGetLength ( theData );
@@ -73,6 +77,8 @@ namespace Nitrogen
 	}
 
 
+#if ! __LP64__
+	
 	nucleus::owned< AliasHandle > NewAliasMinimalFromFullPath( const char*      fullPath,
 	                                                           unsigned         length,
 	                                                           ConstStr32Param  zoneName,
@@ -138,6 +144,8 @@ namespace Nitrogen
 		
 		return result;
 	}
+	
+#endif
 	
    nucleus::owned<AliasHandle> FSNewAlias( const FSRef& fromFile,
                                            const FSRef& target )

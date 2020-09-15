@@ -34,11 +34,10 @@ namespace tap
 		{
 			more::perror( global_program_name, text );
 			
-			exit( EXIT_FAILURE );
+			exit( 1 );
 		}
 		
 		return result;
 	}
 	
 }
-

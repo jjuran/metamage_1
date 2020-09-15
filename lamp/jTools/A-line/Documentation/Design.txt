@@ -33,4 +33,3 @@ Notes
 
 [1] Recursive Make Considered Harmful
     <http://www.pcug.org.au/~millerp/rmch/recu-make-cons-harm.html>
-

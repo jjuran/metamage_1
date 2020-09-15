@@ -74,4 +74,3 @@ namespace Nitrogen {
 	}
 	
 #endif /* NITROGEN_LSOPEN_HH */
-

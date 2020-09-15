@@ -3,11 +3,11 @@
  *	========
  */
 
-// Standard C/C++
-#include <cstdlib>
-
 // POSIX
 #include <unistd.h>
+
+// must
+#include "must/write.h"
 
 // Iota
 #include "iota/strings.hh"
@@ -24,12 +24,12 @@ int main( int argc, char *const *argv )
 	// Check for sufficient number of args
 	if ( argc < 2 )
 	{
-		(void) write( STDERR_FILENO, STR_LEN( "rmdir: missing arguments\n" ) );
+		must_write( STDERR_FILENO, STR_LEN( "rmdir: missing arguments\n" ) );
 		
 		return 1;
 	}
 	
-	int exit_status = EXIT_SUCCESS;
+	int exit_status = 0;
 	
 	for ( int index = 1;  index < argc;  ++index )
 	{
@@ -39,7 +39,7 @@ int main( int argc, char *const *argv )
 		
 		if ( removed == -1 )
 		{
-			exit_status = EXIT_FAILURE;
+			exit_status = 1;
 			
 			more::perror( "rmdir", argv[ index ] );
 		}
@@ -47,4 +47,3 @@ int main( int argc, char *const *argv )
 	
 	return exit_status;
 }
-

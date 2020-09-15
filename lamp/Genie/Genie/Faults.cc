@@ -5,68 +5,38 @@
 
 #include "Genie/Faults.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __MACHINEEXCEPTIONS__
 #include <MachineExceptions.h>
 #endif
 
-// Standard C
-#include <signal.h>
-
 // Silver
+#if TARGET_CPU_68K
 #include "Silver/Patch.hh"
 #include "Silver/Procs.hh"
 #include "Silver/Traps.hh"
+#endif
 
-// Genie
-#include "Genie/Dispatch/system_call.68k.hh"
+// relix
+#include "relix/glue/exceptions.hh"
+#include "relix/glue/system_call.68k.hh"
 
 
-namespace Genie
+namespace relix
 {
-	
-	namespace Ag = Silver;
-	
 	
 	extern class Process* gCurrentProcess;  // defined in Process.cc
 	
 	
-	static void BusError()
-	{
-		DeliverFatalSignal( SIGSEGV );
-	}
-	
-	static void AddressError()
-	{
-		DeliverFatalSignal( SIGBUS );
-	}
-	
-	static void IllegalInstruction()
-	{
-		DeliverFatalSignal( SIGILL );
-	}
-	
-	static void DivisionByZero()
-	{
-		DeliverFatalSignal( SIGFPE );
-	}
-	
-	static void integer_range_check()
-	{
-		DeliverFatalSignal( SIGFPE );
-	}
-	
-	static void integer_overflow()
-	{
-		DeliverFatalSignal( SIGFPE );
-	}
-	
-	static void PrivilegeViolation()
-	{
-		DeliverFatalSignal( SIGILL );
-	}
-	
 #if TARGET_CPU_68K
+	
+	namespace Ag = Silver;
+	
 	
 	extern void* gExceptionVectorTable[];
 	extern void* gExceptionUserHandlerTable[];
@@ -110,17 +80,18 @@ namespace Genie
 	{
 		NULL,  // 0, ISP on reset
 		NULL,  // 1, PC on reset
-		BusError,
-		AddressError,
-		IllegalInstruction,
-		DivisionByZero,
+		bus_error,
+		address_error,
+		illegal_instruction,
+		division_by_zero,
 		integer_range_check,
 		integer_overflow,
-		PrivilegeViolation
+		privilege_violation,
 	};
 	
 	
 	static void* saved_trap_0_handler = NULL;
+	static void* saved_trap_2_handler = NULL;
 	
 	static asm void trap_0_exception_handler()
 	{
@@ -128,6 +99,22 @@ namespace Genie
 		BNE		recover
 		
 		MOVEA.L	saved_trap_0_handler,A0  // get the handler address
+		
+		JMP		(A0)
+		
+	recover:
+		LEA		dispatch_68k_system_call,A0
+		MOVE.L	A0,2(SP)  // set the stacked PC to the dispatcher
+		
+		RTE
+	}
+	
+	static asm void trap_2_exception_handler()
+	{
+		TST.L	gCurrentProcess
+		BNE		recover
+		
+		MOVEA.L	saved_trap_2_handler,A0  // get the handler address
 		
 		JMP		(A0)
 		
@@ -156,9 +143,11 @@ namespace Genie
 			}
 		}
 		
-		saved_trap_0_handler = system_vectors[ 32 ];
+		saved_trap_0_handler = system_vectors[ 32 + 0 ];
+		saved_trap_2_handler = system_vectors[ 32 + 2 ];
 		
-		system_vectors[ 32 ] = trap_0_exception_handler;
+		system_vectors[ 32 + 0 ] = trap_0_exception_handler;
+		system_vectors[ 32 + 2 ] = trap_2_exception_handler;
 	}
 	
 	static void remove_68k_exception_handlers()
@@ -173,19 +162,10 @@ namespace Genie
 			}
 		}
 		
-		system_vectors[ 32 ] = saved_trap_0_handler;
+		system_vectors[ 32 + 0 ] = saved_trap_0_handler;
+		system_vectors[ 32 + 2 ] = saved_trap_2_handler;
 	}
 	
-	
-	struct ExitToShell_Patch
-	{
-		static void Code( Ag::ExitToShellProcPtr nextHandler )
-		{
-			remove_68k_exception_handlers();
-			
-			nextHandler();
-		}
-	};
 	
 	struct GetNextEvent_Patch
 	{
@@ -202,6 +182,19 @@ namespace Genie
 		
 		return result;
 	}
+	
+	struct ExitToShell_Patch
+	{
+		static void Code( Ag::ExitToShellProcPtr nextHandler )
+		{
+			Ag::TrapPatch< _GetNextEvent, GetNextEvent_Patch::Code >::Remove();
+			Ag::TrapPatch< _ExitToShell,  ExitToShell_Patch::Code  >::Remove();
+			
+			remove_68k_exception_handlers();
+			
+			nextHandler();
+		}
+	};
 	
 	
 	void InstallExceptionHandlers()
@@ -250,19 +243,19 @@ namespace Genie
 		switch ( exception->theKind )
 		{
 			case kIllegalInstructionException:
-				handler = (const TVector*) IllegalInstruction;
+				handler = (const TVector*) illegal_instruction;
 				
 				break;
 			
 			case kAccessException:
 			case kUnmappedMemoryException:
 			case kUnresolvablePageFaultException:
-				handler = (const TVector*) BusError;
+				handler = (const TVector*) bus_error;
 				
 				break;
 			
 			case kPrivilegeViolationException:
-				handler = (const TVector*) PrivilegeViolation;
+				handler = (const TVector*) privilege_violation;
 				
 				break;
 			
@@ -342,4 +335,3 @@ namespace Genie
 #endif
 	
 }
-

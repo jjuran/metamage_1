@@ -10,9 +10,6 @@
 #include <Gestalt.h>
 #endif
 
-// iota
-#include "iota/dummy.hh"
-
 
 namespace MacFeatures
 {
@@ -32,4 +29,3 @@ namespace MacFeatures
 #endif
 	
 }
-

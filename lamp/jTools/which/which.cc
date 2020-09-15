@@ -3,13 +3,16 @@
 	--------
 */
 
-// Standard C/C++
-#include <cstdlib>
-#include <cstring>
-
 // POSIX
 #include <sys/stat.h>
 #include <unistd.h>
+
+// Standard C
+#include <stdlib.h>
+#include <string.h>
+
+// must
+#include "must/write.h"
 
 
 #ifdef __RELIX__
@@ -17,16 +20,17 @@
 #include "relix/alloca.h"
 #define ALLOC( x )  signalling_alloca( x )
 #else
-#define ALLOC( x )  std::malloc( x )
+#define ALLOC( x )  malloc( x )
 #endif
 
 
 #pragma exceptions off
 
 
-static std::size_t get_max_dir_length( const char* path )
+static
+size_t get_max_dir_length( const char* path )
 {
-	std::size_t result = 0;
+	size_t result = 0;
 	
 	const char* p = path;
 	
@@ -39,7 +43,7 @@ static std::size_t get_max_dir_length( const char* path )
 			++q;
 		}
 		
-		const std::size_t len = q - p;
+		const size_t len = q - p;
 		
 		if ( len > result )
 		{
@@ -52,13 +56,14 @@ static std::size_t get_max_dir_length( const char* path )
 	return result;
 }
 
-static std::size_t get_max_program_length( char** argv )
+static
+size_t get_max_program_length( char** argv )
 {
-	std::size_t result = 0;
+	size_t result = 0;
 	
 	while ( *++argv != NULL )
 	{
-		const std::size_t len = std::strlen( *argv );
+		const size_t len = strlen( *argv );
 		
 		if ( len > result )
 		{
@@ -77,18 +82,18 @@ int main( int argc, char** argv )
 		return 1;
 	}
 	
-	const char* path = std::getenv( "PATH" );
+	const char* path = getenv( "PATH" );
 	
 	if ( path == NULL )
 	{
 		path = "/usr/bin:/bin";
 	}
 	
-	const std::size_t max_dir_length = get_max_dir_length( path );
+	const size_t max_dir_length = get_max_dir_length( path );
 	
-	const std::size_t max_program_length = get_max_program_length( argv );
+	const size_t max_program_length = get_max_program_length( argv );
 	
-	const std::size_t buffer_size = max_dir_length + 1 + max_program_length + 1;
+	const size_t buffer_size = max_dir_length + 1 + max_program_length + 1;
 	
 	char* const buffer = (char*) ALLOC( buffer_size );
 	
@@ -103,11 +108,11 @@ int main( int argc, char** argv )
 	{
 		const char* program = *argv;
 		
-		const std::size_t program_len = std::strlen( program );
+		const size_t program_len = strlen( program );
 		
 		char* mark = end - program_len;
 		
-		std::memcpy( mark, program, program_len );
+		memcpy( mark, program, program_len );
 		
 		*--mark = '/';
 		
@@ -124,15 +129,15 @@ int main( int argc, char** argv )
 				++q;
 			}
 			
-			const std::size_t dir_len = q - p;
+			const size_t dir_len = q - p;
 			
 			char* begin = mark - dir_len;
 			
-			std::memcpy( begin, p, dir_len );
+			memcpy( begin, p, dir_len );
 			
-			struct ::stat sb;
+			struct stat sb;
 			
-			int status = ::stat( begin, &sb );
+			int status = stat( begin, &sb );
 			
 			int mask = S_IFMT | S_IXUSR;
 			
@@ -142,7 +147,7 @@ int main( int argc, char** argv )
 				
 				*end++ = '\n';
 				
-				::write( STDOUT_FILENO, begin, end - begin );
+				must_write( STDOUT_FILENO, begin, end - begin );
 				
 				break;
 			}
@@ -158,4 +163,3 @@ int main( int argc, char** argv )
 	
 	return failed ? 1 : 0;
 }
-

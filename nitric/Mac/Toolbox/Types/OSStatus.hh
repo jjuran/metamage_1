@@ -6,6 +6,12 @@
 #ifndef MAC_TOOLBOX_TYPES_OSSTATUS_HH
 #define MAC_TOOLBOX_TYPES_OSSTATUS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
@@ -37,7 +43,12 @@ namespace Mac
 			OSStatus( ::OSStatus s )                              : status( s )        {}
 			
 			OSStatus( ::OSErr s )                                 : status( s )        {}
+			
+		#if ! __LP64__
+			
 			OSStatus( signed int s )                              : status( s )        {}
+			
+		#endif
 			
 			static OSStatus Make( ::OSStatus s )                  { return OSStatus( s ); }
 			::OSStatus Get() const                                { return status; }
@@ -47,4 +58,3 @@ namespace Mac
 }
 
 #endif
-

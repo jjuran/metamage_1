@@ -12,13 +12,14 @@
 #include "Pedestal/CurrentFocus.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/Window.hh"
+#include "Pedestal/WindowStorage.hh"
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node.hh"
+#include "vfs/node/types/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/focusable_views.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
 
@@ -32,10 +33,10 @@ namespace Genie
 	class Focuser : public Ped::View
 	{
 		private:
-			const FSTree* itsKey;
+			const vfs::node* itsKey;
 		
 		public:
-			Focuser( const FSTree* key ) : itsKey( key )
+			Focuser( const vfs::node* key ) : itsKey( key )
 			{
 			}
 			
@@ -50,7 +51,7 @@ namespace Genie
 	
 	Ped::View* Focuser::GetFocus() const
 	{
-		const FSTree* focus = get_port_focus( GetViewWindowKey( itsKey ) );
+		const vfs::node* focus = get_port_focus( GetViewWindowKey( itsKey ) );
 			
 		return get_focusable_view( focus );
 	}
@@ -58,11 +59,7 @@ namespace Genie
 	
 	static Ped::View& RootView()
 	{
-		namespace N = Nitrogen;
-		
-		Ped::Window* base = N::GetWRefCon( N::FrontWindow() );
-		
-		return *base->GetView();
+		return *Ped::get_window_view( FrontWindow() );
 	}
 	
 	static Ped::View* AutoFocus( Ped::View* current )
@@ -181,9 +178,9 @@ namespace Genie
 	{
 		Ped::View* focus = GetFocus();
 		
-		const short disqualifyingModifiers = controlKey | rightControlKey
-		                                   | optionKey  | rightOptionKey
-		                                   | cmdKey;
+		const UInt16 disqualifyingModifiers = controlKey | rightControlKey
+		                                    | optionKey  | rightOptionKey
+		                                    | cmdKey;
 		
 		const bool advance = (event.modifiers & disqualifyingModifiers) == 0;
 		
@@ -206,32 +203,19 @@ namespace Genie
 		return false;
 	}
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new Focuser( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
-	{
-	}
-	
-	
-	static const vfs::fixed_mapping local_mappings[] =
-	{
-		{ NULL, NULL }
-	};
-	
-	FSTreePtr New_focuser( const FSTree*        parent,
-	                       const plus::string&  name,
-	                       const void*          args )
+	vfs::node_ptr New_focuser( const vfs::node*     parent,
+	                           const plus::string&  name,
+	                           const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,
-		                     &CreateView,
-		                     local_mappings,
-		                     &DestroyDelegate );
+		                     &CreateView );
 	}
 	
 }
-

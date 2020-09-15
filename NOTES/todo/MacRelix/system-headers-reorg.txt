@@ -1,0 +1,142 @@
+System Headers Reorganization
+=============================
+
+Summary
+-------
+
+Combine all MacRelix system headers under one directory in the repository.
+Builds of userspace will see MacRelix's struct stat and S_IFREG after including <sys/stat.h>.
+Builds of the kernel will see native symbols after including <sys/stat.h> (if it exists), and struct __relix_stat and __RELIX_S_IFREG after including "relix/sys/stat.h".
+
+Background
+----------
+
+Currently, we have:
+
+* lamp/POSIX-headers:
+	The (mostly) usual system headers
+
+* relix/include:
+	Various things added for MacRelix
+
+In the latter group, some headers are cross-platform (e.g. fork_and_exit.h), and others are MacRelix-only.  Additionally, some are dependent on Mac OS (and therefore not usable on Unix generally), but work with tools in OS X as well as MacRelix.
+
+Reference
+---------
+
+* ansi_prefix.mac.h:
+	Overrides CodeWarrior's ansi_prefix.mac.h, which it includes as <CWANSIIncludes/ansi_prefix.mac.h>, after which it undefines _POSIX.
+	(When _POSIX is defined, MSL emits declarations that conflict with ours.)
+	Specific to MSL and therefore MacRelix-only.
+
+* ctime:
+	Overrides CodeWarrior's ctime, which it includes as <CWANSIIncludes/ctime> after undefining CLOCKS_PER_SEC, and after which it redefines CLOCKS_PER_SEC to 1000000ul.
+	(The MacRelix clock() is in microseconds.)
+	Specific to MSL and therefore MacRelix-only.
+
+* relix/_OTInetMailExchange.h:
+	Declares the _OTInetMailExchange() system call, which is used by mx and sendmail.
+	Since there's vanishingly little value having this on OS X, it should be replaced with a virtual filesystem.
+	Mac-only, but unimportant on OS X.  Included by the library.
+
+* relix/_OTInetStringToAddress.h:
+	Declares the _OTInetStringToAddress() system call, which is used by gethostbyname() (and directly by mx).
+	Since there's vanishingly little value having this on OS X, it should be replaced with a virtual filesystem.
+	Mac-only, but unimportant on OS X.  Included by the library.
+
+* relix/AESendBlocking.h:
+	Declares the AESendBlocking() system call, which is used by tlsrvr.  This should remain as a high-level library call (calling AESend() directly on OS X), but in MacRelix should be implemented in terms of sockets.
+	Mac-only.  Included by the kernel, and by Divergence but not for Mach-O.  Therefore it's MacRelix-only.
+
+* relix/alloca.h:
+	Defines several variants of alloca() (e.g. safe_alloca()).  Though alloca() (which is declared elsewhere) is commonly available, it's not standard, and our variants definitely aren't.  This header should be available as <alloca.h> for MacRelix tools, but isn't helpful to other platforms.
+	MacRelix-only.  Included by killall, ln, realpath, and which.
+
+* relix/copyfile.h:
+	Declares copyfile() and copyfileat().  These functions should probably be revised so that copyfile() matches that of OS X, in which case the declarations should be moved to <copyfile.h>.  On the other hand, an implementation of copyfile() would also be useful on OS X prior to 10.5.
+	MacRelix-only.  Included by the library as well as copier and cp.  (Not included by the kernel, since copyfileat() is duplicated in <unistd.h>.)
+
+* relix/fork_and_exit.h:
+	Declares fork_and_exit() (which is a system call in MacRelix) and defines it in terms of fork() and _exit() for other platforms.
+	For general use.  Included by daemonize and compiled FORGE applets that duplicate its functionality (e.g. teletype).
+
+* relix/parameter_block.h:
+	Defines _relix_user_parameter_block and _relix_system_parameter_block.
+	MacRelix-only.  Included by the kernel and the library.
+
+* relix/pump.h:
+	Declares pump() (like splice()), which is a system call in MacRelix and defined as a library function for other platforms.
+	For general use.  Included by copy and cp (and others by way of poseven).  If pump() is renamed to splice(), it should be moved to <fcntl.h>.
+
+* relix/recurse.hh:
+	Provides C++ glue for MacRelix's restack(), which calls another function after potentially creating and switching to another stack first.
+	Included by jcpp and jsync.
+	The current implementation is MacRelix-only (via _relix_restack()).  It could be easily revised to work on other platforms (without switching stacks).
+
+* relix/restack.h:
+	Declares _relix_restack() and defines _relix_stack_footer.
+	MacRelix-only.  Included by the library, including relix/recurse.hh.
+
+* relix/sched.h:
+	Declares gettid(), _relix_clone(), and unshare() (and defines CLONE_* constants).
+	MacRelix-only.  Included by the kernel and the library, and possibly by user programs calling _relix_clone() and unshare().  unshare(), at least, is meant to be Linux-compatible, so it should probably be moved to <sched.h> so calls to it for Linux will work unmodified in MacRelix (without requiring an extra include).
+
+* relix/stack.h:
+	Declares _relix_stack_space().
+	MacRelix-only.  Included by the library.
+
+* relix/syscalls.h:
+	Defines all the system call numbers.
+	MacRelix-only.  Included by the kernel and the library.
+
+* relix/vfork.h:
+	Provides MacRelix-specific support for vfork() other than the actual function declaration (which is in <unistd.h>).
+	While vfork() is standard, this header name is not.
+	MacRelix-only.  Included by the kernel and the library.
+
+Plan
+----
+
+* Create relix/relix.h in the system header directory.
+	* Macro __relix(foo) expands to foo under __RELIX__, otherwise __relix_foo.
+	* Macro __RELIX(FOO) expands to FOO under __RELIX__, otherwise __RELIX_FOO.
+* For every system header included by MacRelix,
+	* #include <relix/relix.h>
+	* Rewrite e.g. "struct stat" as "struct __relix(stat)"
+	* Rewrite e.g. "#define O_RDONLY 1" as:
+		* "enum { __RELIX(O_RDONLY) = 1 };"
+		* "#ifdef __RELIX__" / "#define O_RDONLY O_RDONLY" / "#endif"
+* Create a new project called "__relix" with subpath "__relix" symlinking to the system headers directory.
+* Avoid use of incompatible POSIX symbols in prerequisites of MacRelix (e.g. poseven, vfs).
+* Add __relix as a prerequisite of affected projects, e.g. relix-kernel.
+* In each affected project, for every source file including a system header:
+	* Instead of e.g. <fcntl.h>, include "__relix/fcntl.h"
+	* Replace O_RDONLY with __RELIX_O_RDONLY and stat with __relix_stat
+* Move these headers into the system header directory like so:
+	* sched.h (merge with existing sched.h)
+	* relix/_OTInetMailExchange.h
+	* relix/_OTInetStringToAddress.h
+	* relix/AESendBlocking.h
+	* relix/alloca.h
+	* relix/copyfile.h
+	* relix/parameter_block.h
+	* relix/restack.h
+	* relix/stack.h
+	* relix/syscalls.h
+	* relix/vfork.h
+* Move these headers to a new project, relix-compat:
+	* fork_and_exit.h
+	* pump.h
+	* recurse.hh
+* Add "system-headers" project config that's empty for Unix and uses POSIX-headers otherwise.
+* Modify project configs to use system-headers, not POSIX-headers.
+* Move/rename lamp/POSIX-headers ("POSIX-headers") to relix/include ("relix-headers").
+
+Related
+-------
+
+* Revise recurse.hh to work on non-relix.
+* Replace _OTInetMailExchange() with /sys/mac/ot/inet/mx.
+* Replace _OTInetStringToAddress() with /sys/mac/ot/inet/a.
+* Replace AESendBlocking() system call with a sockets-based approach.
+

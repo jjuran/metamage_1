@@ -19,6 +19,8 @@
 namespace plus
 {
 	
+	typedef signed char cmp_t;
+	
 	class string
 	{
 		public:
@@ -40,7 +42,7 @@ namespace plus
 				const int n_bits = sizeof (size_type) * 8;
 				
 				// 0x7fffffff[ffffffff]
-				const size_type max = (size_type( 1 ) << n_bits - 1) - 1;
+				const size_type max = (size_type( 1 ) << (n_bits - 1)) - 1;
 				
 				return max;
 			}
@@ -89,7 +91,10 @@ namespace plus
 			
 			~string()
 			{
-				destroy( store );
+				if ( has_dynamic_extent( store ) )
+				{
+					destroy( store );
+				}
 			}
 			
 			string( datum_movable& m )
@@ -211,6 +216,8 @@ namespace plus
 			
 			friend datum_movable& move( string& s )  { return s.move(); }
 			
+			friend unsigned long area( const string& s )  { return area( s.store ); }
+			
 			size_type copy( char* buffer, size_type n, size_type pos = 0 ) const;
 			
 			size_type find( const string& s, size_type pos = 0 ) const;
@@ -265,6 +272,8 @@ namespace plus
 			int compare( size_type a_pos, size_type a_n, const char* b, size_type b_n = npos ) const;
 	};
 	
+	
+	cmp_t compare( const string& a, const string& b );
 	
 	bool operator==( const string& a, const string& b );
 	
@@ -362,7 +371,7 @@ namespace plus
 		return s.data();
 	}
 	
-	inline std::size_t get_string_size( const string& s )
+	inline string::size_type get_string_size( const string& s )
 	{
 		return s.size();
 	}
@@ -370,4 +379,3 @@ namespace plus
 }
 
 #endif
-

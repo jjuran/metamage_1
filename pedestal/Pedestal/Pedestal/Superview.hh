@@ -6,6 +6,11 @@
 #ifndef PEDESTAL_SUPERVIEW_HH
 #define PEDESTAL_SUPERVIEW_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 // Mac OS
 #ifndef __QUICKDRAW__
 #include <Quickdraw.h>
@@ -25,7 +30,7 @@ namespace Pedestal
 		public:
 			virtual View& Subview() = 0;
 			
-			virtual Rect ApertureFromBounds( const Rect& bounds )  { return bounds; }
+			virtual Rect ApertureFromBounds( const Rect& bounds );
 			
 			void Install( const Rect& bounds );
 			
@@ -50,6 +55,11 @@ namespace Pedestal
 				return Subview().KeyDown( event );
 			}
 			
+			void KeyUp( const EventRecord& event )
+			{
+				Subview().KeyUp( event );
+			}
+			
 			bool HitTest( const EventRecord& event )
 			{
 				return Subview().HitTest( event );
@@ -69,11 +79,13 @@ namespace Pedestal
 				return Subview().Draw( ApertureFromBounds( bounds ), erasing );
 			}
 			
-			bool SetCursor( const EventRecord& event, RgnHandle mouseRgn )
+			void DrawInContext( CGContextRef context, CGRect bounds );
+			
+			bool SetCursor( const EventRecord& event )
 			{
 				if ( HitTest( event ) )
 				{
-					return Subview().SetCursor( event, mouseRgn );
+					return Subview().SetCursor( event );
 				}
 				
 				return false;
@@ -85,4 +97,3 @@ namespace Pedestal
 }
 
 #endif
-

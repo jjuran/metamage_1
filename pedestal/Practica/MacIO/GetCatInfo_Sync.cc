@@ -22,13 +22,16 @@ namespace MacIO
 	template < class Policy >
 	typename Policy::Result
 	//
-	GetCatInfo( CInfoPBRec&        pb,
-	            N::FSVolumeRefNum  vRefNum,
-	            N::FSDirID         dirID,
-	            unsigned char*     name,
-	            SInt16             index )
+	GetCatInfo( CInfoPBRec&     pb,
+	            SInt16          vRefNum,
+	            SInt32          dirID,
+	            unsigned char*  name,
+	            SInt16          index )
 	{
-		Str255 dummyName = "\p";
+		//Str255 dummyName = "\p";  // clang hates this
+		
+		Str255 dummyName;
+		       dummyName[ 0 ] = 0;
 		
 		if ( index == 0  &&  (name == NULL  ||  name[ 0 ] == '\0') )
 		{
@@ -47,18 +50,17 @@ namespace MacIO
 	
 	
 	template
-	void GetCatInfo< Throw_All >( CInfoPBRec&        pb,
-	                              N::FSVolumeRefNum  vRefNum,
-	                              N::FSDirID         dirID,
-	                              unsigned char*     name,
-	                              SInt16             index );
+	void GetCatInfo< Throw_All >( CInfoPBRec&     pb,
+	                              SInt16          vRefNum,
+	                              SInt32          dirID,
+	                              unsigned char*  name,
+	                              SInt16          index );
 	
 	template
-	bool GetCatInfo< Return_FNF >( CInfoPBRec&        pb,
-	                               N::FSVolumeRefNum  vRefNum,
-	                               N::FSDirID         dirID,
-	                               unsigned char*     name,
-	                               SInt16             index );
+	bool GetCatInfo< Return_FNF >( CInfoPBRec&     pb,
+	                               SInt16          vRefNum,
+	                               SInt32          dirID,
+	                               unsigned char*  name,
+	                               SInt16          index );
 	
 }
-

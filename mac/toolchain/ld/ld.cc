@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <list>
-#include <map>
 #include <vector>
 
 // Standard C/C++
@@ -62,141 +61,6 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
-	template < class Iter >
-	plus::string join( Iter begin, Iter end, const plus::string& glue = "" )
-	{
-		if ( begin == end )
-		{
-			return "";
-		}
-		
-		plus::var_string result = *begin++;
-		
-		while ( begin != end )
-		{
-			result += glue;
-			result += *begin++;
-		}
-		
-		return result;
-	}
-	
-	
-	static const plus::string& get_Libraries_pathname()
-	{
-		static plus::string libraries = find_InterfacesAndLibraries() + "/Libraries";
-		
-		return libraries;
-	}
-	
-	
-	#define SHARED_LIB( lib )  { lib "", "SharedLibraries" }
-	
-	#define PPC_LIB( lib )  { lib "", "PPCLibraries" }
-	
-	#define MW68K_LIB( lib )  { lib "", "MW68KLibraries" }
-	#define MWPPC_LIB( lib )  { lib "", "MWPPCLibraries" }
-	
-	typedef const char* StringPair[2];
-	
-	static StringPair gSystemLibraries[] =
-	{
-		SHARED_LIB( "AppearanceLib"      ),
-		SHARED_LIB( "AppleScriptLib"     ),
-		SHARED_LIB( "CarbonLib"          ),
-		SHARED_LIB( "ControlsLib"        ),
-		SHARED_LIB( "InterfaceLib"       ),
-		SHARED_LIB( "InternetConfigLib"  ),
-		SHARED_LIB( "MathLib"            ),
-		SHARED_LIB( "MenusLib"           ),
-		SHARED_LIB( "ObjectSupportLib"   ),
-		SHARED_LIB( "OpenTptInternetLib" ),
-		SHARED_LIB( "OpenTransportLib"   ),
-		SHARED_LIB( "QuickTimeLib"       ),
-		SHARED_LIB( "ThreadsLib"         ),
-		SHARED_LIB( "WindowsLib"         ),
-		
-		PPC_LIB( "CarbonAccessors.o"        ),
-		PPC_LIB( "CursorDevicesGlue.o"      ),
-		PPC_LIB( "OpenTransportAppPPC.o"    ),
-		PPC_LIB( "OpenTptInetPPC.o"         ),
-		PPC_LIB( "PascalPreCarbonUPPGlue.o" ),
-		
-		MWPPC_LIB( "MSL C.Carbon.Lib"     ),
-		MWPPC_LIB( "MSL C.PPC.Lib"        ),
-		MWPPC_LIB( "MSL C++.PPC.Lib"      ),
-		MWPPC_LIB( "MSL RuntimePPC.Lib"   ),
-		MWPPC_LIB( "PLStringFuncsPPC.lib" ),
-		
-		MW68K_LIB( "MacOS.lib" ),
-		
-		MW68K_LIB( "MathLib68K Fa(4i_8d).Lib"    ),
-		MW68K_LIB( "MathLib68K Fa(4i_8d).A4.Lib" ),
-		MW68K_LIB( "MathLibCFM68K (4i_8d).Lib"   ),
-		
-		MW68K_LIB( "MSL C.68K Fa(4i_8d).Lib"    ),
-		MW68K_LIB( "MSL C.68K Fa(4i_8d).A4.Lib" ),
-		MW68K_LIB( "MSL C.CFM68K Fa(4i_8d).Lib" ),
-		
-		MW68K_LIB( "MSL C++.68K Fa(4i_8d).Lib"    ),
-		MW68K_LIB( "MSL C++.68K Fa(4i_8d).A4.Lib" ),
-		MW68K_LIB( "MSL C++.CFM68K Fa(4i_8d).Lib" ),
-		
-		MW68K_LIB( "MSL MWCFM68KRuntime.Lib" ),
-		MW68K_LIB( "MSL Runtime68K.Lib"      ),
-		MW68K_LIB( "MSL Runtime68K.A4.Lib"   ),
-		
-		MW68K_LIB( "PLStringFuncs.glue"      ),
-		MW68K_LIB( "PLStringFuncsCFM68K.lib" ),
-		
-		{ NULL, NULL }
-	};
-	
-	typedef std::map< plus::string, const char* > LibraryMap;
-	
-	static LibraryMap MakeLibraryMap()
-	{
-		LibraryMap map;
-		
-		for ( StringPair* it = gSystemLibraries;  it[0][0] != NULL;  ++it )
-		{
-			map[ it[0][0] ] = it[0][1];
-		}
-		
-		return map;
-	}
-	
-	static LibraryMap& TheLibraryMap()
-	{
-		static LibraryMap gLibraryMap = MakeLibraryMap();
-		
-		return gLibraryMap;
-	}
-	
-	static plus::string FindSystemLibrary( const plus::string& libName )
-	{
-		LibraryMap::const_iterator it = TheLibraryMap().find( libName );
-		
-		if ( it == TheLibraryMap().end() )
-		{
-			return libName;
-		}
-		
-		const char* subdir = it->second;
-		
-		plus::string pathname = get_Libraries_pathname() / subdir / libName;
-		
-		if ( !io::file_exists( pathname ) )
-		{
-			std::fprintf( stderr, "System library missing: %s\n", pathname.c_str() );
-			
-			throw p7::exit_failure;
-		}
-		
-		return pathname;
-	}
-	
-	
 	enum MacAPI
 	{
 		kMacAPINone,
@@ -238,6 +102,102 @@ namespace tool
 		
 	#endif
 	};
+	
+	static Architecture arch = arch_default;
+	
+	static const char* output_pathname = NULL;
+	
+	static bool sym     = true;
+	static bool debug   = true;
+	static bool dry_run = false;
+	static bool verbose = false;
+	
+	
+	template < class Iter >
+	plus::string join( Iter begin, Iter end, const plus::string& glue = "" )
+	{
+		if ( begin == end )
+		{
+			return "";
+		}
+		
+		plus::var_string result = *begin++;
+		
+		while ( begin != end )
+		{
+			result += glue;
+			result += *begin++;
+		}
+		
+		return result;
+	}
+	
+	
+	static const plus::string& get_Libraries_pathname()
+	{
+		static plus::string libraries = find_InterfacesAndLibraries() + "/Libraries/";
+		
+		return libraries;
+	}
+	
+	static plus::string get_Libraries_subdir( const char* name )
+	{
+		if ( const char* path = getenv( name ) )
+		{
+			return path;
+		}
+		
+		return get_Libraries_pathname() + name;
+	}
+	
+	static plus::string get_PPCLibraries()
+	{
+		return get_Libraries_subdir( "PPCLibraries" );
+	}
+	
+	static plus::string get_SharedLibraries()
+	{
+		return get_Libraries_subdir( "SharedLibraries" );
+	}
+	
+	static plus::string FindSystemLibrary( const plus::string& libName )
+	{
+		char const* const MWLibs_name = arch == arch_m68k ? "MW68KLibraries"
+		                              : arch == arch_ppc  ? "MWPPCLibraries"
+		                              :                     "NoArchitecture";
+		
+		const plus::string a = get_Libraries_subdir( MWLibs_name ) / libName;
+		
+		if ( io::file_exists( a ) )
+		{
+			return a;
+		}
+		
+		if ( arch == arch_ppc )
+		{
+			const plus::string b = get_PPCLibraries() / libName;
+			
+			if ( io::file_exists( b ) )
+			{
+				return b;
+			}
+		}
+		
+		if ( arch == arch_ppc  ||  gCFM68K )
+		{
+			const plus::string c = get_SharedLibraries() / libName;
+			
+			if ( io::file_exists( c ) )
+			{
+				return c;
+			}
+		}
+		
+		std::fprintf( stderr, "System library missing: %s\n", libName.c_str() );
+		
+		throw p7::exit_failure;
+	}
+	
 	
 	static Architecture read_arch( const char* arch )
 	{
@@ -365,15 +325,6 @@ namespace tool
 	}
 	
 	
-	static Architecture arch = arch_default;
-	
-	static const char* output_pathname = NULL;
-	
-	static bool sym     = true;
-	static bool debug   = true;
-	static bool dry_run = false;
-	static bool verbose = false;
-	
 	static void do_hyphen_option( char**& argv, std::vector< const char* >& command_args )
 	{
 		const char* arg = argv[0];
@@ -461,7 +412,7 @@ namespace tool
 					
 					// Link fulltool first, if present.
 					// This hack is necessary on 68K to ensure that
-					// _lamp_main() resides within the first 32K,
+					// _relix_main() resides within the first 32K,
 					// accessible by JMP or JSR from the startup code.
 					
 					const bool expedited = std::strcmp( lib_name, "fulltool" ) == 0;
@@ -572,6 +523,8 @@ namespace tool
 			if ( base_length > 0  &&  memcmp( &arg[ base_length ], STR_LEN( ".o" ) ) == 0 )
 			{
 				gFirstObjectFilePath = arg;
+				
+				check_object_file( gFirstObjectFilePath );
 			}
 		}
 		
@@ -602,13 +555,12 @@ namespace tool
 		{
 			std::fprintf( stderr, "%s\n", "ld: -o is required" );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
 		std::vector< const char* > command;
 		
 		command.push_back( "tlsrvr"   );
-		command.push_back( "--switch" );  // bring ToolServer to front
 		command.push_back( "--escape" );  // escape arguments to prevent expansion
 		command.push_back( "--"       );  // stop interpreting options here
 		
@@ -618,11 +570,9 @@ namespace tool
 			case arch_none:
 				std::fprintf( stderr, "%s\n", "ld: invalid architecture" );
 				
-				return EXIT_FAILURE;
+				return 1;
 			
 			case arch_m68k:
-				check_object_file( gFirstObjectFilePath );
-				
 				command.push_back( "MWLink68K" );
 				command.push_back( "-model"    );
 				command.push_back( gCFM68K ? "CFMflatdf" : "far" );
@@ -667,7 +617,7 @@ namespace tool
 					command.push_back( "c"        );
 					command.push_back( "-rsrcfar" );
 					command.push_back( "-rt"      );
-					command.push_back( "Wish=0"   );
+					command.push_back( "Tool=0"   );
 				}
 				else
 				{
@@ -691,10 +641,10 @@ namespace tool
 					command.push_back( store_string( output_name ) );
 				}
 				
-				command.push_back( "-main"      );
-				command.push_back( "_lamp_main" );
+				command.push_back( "-main"       );
+				command.push_back( "_relix_main" );
 				
-				gFileType    = "Wish";
+				gFileType    = "Tool";
 				gFileCreator = "Poof";
 				
 				break;
@@ -782,7 +732,7 @@ namespace tool
 		
 		if ( dry_run )
 		{
-			return EXIT_SUCCESS;
+			return 0;
 		}
 		
 		const bool filtering = arch == arch_ppc;
@@ -844,7 +794,13 @@ namespace tool
 		
 		if ( arch == arch_m68k  &&  !gCFM68K  &&  gProductType == kProductTool )
 		{
-			const char *const postlink_argv[] = { "postlink-68k-tool", output_pathname, NULL };
+			const char *const postlink_argv[] =
+			{
+				"postlink-68k-tool",
+				sym ? output_pathname : "--data-fork",
+				sym ? NULL            : output_pathname,
+				NULL
+			};
 			
 			p7::execvp( postlink_argv );
 		}
@@ -853,4 +809,3 @@ namespace tool
 	}
 	
 }
-

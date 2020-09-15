@@ -13,9 +13,8 @@
 namespace vfs
 {
 	
-	void hardlink( const node* it, const node* target );
+	void hardlink( const node& that, const node& target );
 	
 }
 
 #endif
-

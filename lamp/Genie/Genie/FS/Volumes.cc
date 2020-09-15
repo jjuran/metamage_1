@@ -8,6 +8,11 @@
 // POSIX
 #include <sys/stat.h>
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __FILES__
 #include <Files.h>
@@ -28,14 +33,14 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/misc_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/misc_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -77,10 +82,10 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr volumes_link_resolve( const FSTree* node )
+	static vfs::node_ptr volumes_link_resolve( const vfs::node* that )
 	{
 		// Convert UTF-8 to MacRoman, ':' to '/'
-		plus::var_string mac_name = slashes_from_colons( plus::mac_from_utf8( node->name() ) );
+		plus::var_string mac_name = slashes_from_colons( plus::mac_from_utf8( that->name() ) );
 		
 		mac_name += ":";
 		
@@ -91,36 +96,31 @@ namespace Genie
 		return FSTreeFromFSDirSpec( dir );
 	}
 	
-	static const link_method_set volumes_link_link_methods =
+	static const vfs::link_method_set volumes_link_link_methods =
 	{
 		NULL,
 		&volumes_link_resolve
 	};
 	
-	static const node_method_set volumes_link_methods =
+	static const vfs::node_method_set volumes_link_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		&volumes_link_link_methods
 	};
 	
 	
-	static FSTreePtr volumes_lookup( const FSTree*        node,
-	                                 const plus::string&  name,
-	                                 const FSTree*        parent )
+	static vfs::node_ptr volumes_lookup( const vfs::node*     that,
+	                                     const plus::string&  name,
+	                                     const vfs::node*     parent )
 	{
-		return new FSTree( parent,
-		                   name,
-		                   S_IFLNK | 0777,
-		                   &volumes_link_methods );
+		return new vfs::node( parent,
+		                      name,
+		                      S_IFLNK | 0777,
+		                      &volumes_link_methods );
 	}
 	
-	static void volumes_listdir( const FSTree*       node,
+	static void volumes_listdir( const vfs::node*    that,
 	                             vfs::dir_contents&  cache )
 	{
 		for ( int i = 1;  true;  ++i )
@@ -151,31 +151,26 @@ namespace Genie
 	}
 	
 	
-	static ino_t volumes_inode( const FSTree* node )
+	static ino_t volumes_inode( const vfs::node* that )
 	{
 		return fsRtParID;
 	}
 	
-	static const dir_method_set volumes_dir_methods =
+	static const vfs::dir_method_set volumes_dir_methods =
 	{
 		&volumes_lookup,
 		&volumes_listdir
 	};
 	
-	static const misc_method_set volumes_misc_methods =
+	static const vfs::misc_method_set volumes_misc_methods =
 	{
 		NULL,
 		NULL,
 		&volumes_inode
 	};
 	
-	static const node_method_set volumes_methods =
+	static const vfs::node_method_set volumes_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		NULL,
@@ -185,15 +180,14 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr New_FSTree_Volumes( const FSTree*        parent,
-	                              const plus::string&  name,
-	                              const void*          args )
+	vfs::node_ptr New_FSTree_Volumes( const vfs::node*     parent,
+	                                  const plus::string&  name,
+	                                  const void*          args )
 	{
-		return new FSTree( parent,
-		                   name,
-		                   S_IFDIR | 0700,
-		                   &volumes_methods );
+		return new vfs::node( parent,
+		                      name,
+		                      S_IFDIR | 0700,
+		                      &volumes_methods );
 	}
 	
 }
-

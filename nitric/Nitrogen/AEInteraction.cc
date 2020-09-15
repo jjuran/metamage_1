@@ -31,7 +31,7 @@ namespace Nitrogen
 	AESend( const Mac::AppleEvent&  appleEvent,
 	        Mac::AESendMode         sendMode,
 	        Mac::AESendPriority     sendPriority,
-	        long                    timeOutInTicks,
+	        SInt32                  timeOutInTicks,
 	        AEIdleUPP               idleProc,
 	        AEFilterUPP             filterProc )
 	{
@@ -62,4 +62,3 @@ namespace Nitrogen
 	}
 	
 }
-

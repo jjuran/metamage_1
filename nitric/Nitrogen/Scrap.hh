@@ -14,6 +14,12 @@
 #ifndef NITROGEN_SCRAP_HH
 #define NITROGEN_SCRAP_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __SCRAP__
 #include <Scrap.h>
 #endif
@@ -37,6 +43,8 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ScrapManager );
 	
+#if ! __LP64__
+	
 #if CALL_NOT_IN_CARBON
 	
 	void ZeroScrap();
@@ -47,7 +55,8 @@ namespace Nitrogen
 	
 	void ClearCurrentScrap();
 	
+#endif  // #if ! __LP64__
+	
 }
 
 #endif
-

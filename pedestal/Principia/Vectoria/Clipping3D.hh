@@ -106,4 +106,3 @@ namespace Vectoria
 }
 
 #endif
-

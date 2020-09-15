@@ -4,6 +4,7 @@
 */
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // plus
@@ -16,77 +17,82 @@
 static const unsigned n_tests = 3 + 2 + 2 + 5;
 
 
-using tap::ok_if;
+#define LARGE_STRING  "0123456789abcdef" "ghijklmnopqrstuv"
 
 
 static void large_copy()
 {
-	const char* digits = "0123456789abcdef";
+	const char* digits = LARGE_STRING;
 	
 	plus::string a = digits;
 	
-	ok_if( a.data() != digits );
+	EXPECT( a.data() != digits );
 	
 	plus::string b = a;
 	
-	ok_if( a == b );
+	EXPECT( a == b );
 	
-	ok_if( a.data() == b.data() );  // equal iff copies are shared
+	EXPECT( a.data() == b.data() );  // equal iff copies are shared
 }
 
 static void handoff()
 {
-	char* buffer = (char*) ::operator new( sizeof "0123456789abcdef" );
+	char* buffer = (char*) malloc( sizeof LARGE_STRING );
 	
-	memcpy( buffer, "0123456789abcdef", sizeof "0123456789abcdef" );
+	if ( buffer == NULL )
+	{
+		abort();
+	}
 	
-	plus::string a( buffer, sizeof "0123456789abcdef" - 1, plus::delete_basic );
+	memcpy( buffer, LARGE_STRING, sizeof LARGE_STRING );
 	
-	ok_if( a.data() == buffer );
+	plus::string a( buffer, sizeof LARGE_STRING - 1, plus::delete_free );
+	
+	EXPECT( a.data() == buffer );
 	
 	plus::string b = a;
 	
-	ok_if( a.data() != b.data() );
+	EXPECT( a.data() != b.data() );
 }
 
 static void static_nocopy()
 {
-	const char* digits = "0123456789abcdef";
+	const char* digits = LARGE_STRING;
 	
-	plus::string a( digits, sizeof "0123456789abcdef" - 1, plus::delete_never );
+	plus::string a( digits, sizeof LARGE_STRING - 1, plus::delete_never );
 	
-	ok_if( a.data() == digits );
+	EXPECT( a.data() == digits );
 	
 	plus::string b = a;
 	
-	ok_if( a.data() == b.data() );
+	EXPECT( a.data() == b.data() );
 }
 
 static void static_varcopy()
 {
-	const char* digits = "0123456789abcdef";
+	const char* digits = LARGE_STRING;
 	
-	plus::string a( digits, sizeof "0123456789abcdef" - 1, plus::delete_never );
+	plus::string a( digits, sizeof LARGE_STRING - 1, plus::delete_never );
 	
-	ok_if( a.data() == digits );
+	EXPECT( a.data() == digits );
 	
 	plus::var_string b = a;
 	
-	ok_if( a.data() != b.data() );  // copy now, no COW
+	EXPECT( a.data() != b.data() );  // copy now, no COW
 	
 	plus::var_string c = b;
 	
 	const char* c_data = c.data();
 	
-	ok_if( b.data() != c.data() );
+	EXPECT( b.data() != c.data() );
 	
 	plus::string d = c;
 	
-	ok_if( c.data() != d.data() );  // var_strings aren't shared
+	EXPECT( c.data() != d.data() );  // var_strings aren't shared
 	
 	c.begin();
 	
-	ok_if( c_data == c.data() );
+	EXPECT( c_data == c.data() );
 }
 
 int main( int argc, const char *const *argv )
@@ -103,4 +109,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

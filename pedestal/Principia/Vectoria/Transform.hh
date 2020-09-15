@@ -205,4 +205,3 @@ namespace Vectoria
 }
 
 #endif
-

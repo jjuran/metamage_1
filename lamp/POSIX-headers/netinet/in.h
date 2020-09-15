@@ -629,7 +629,6 @@ int	   in4_cksum(struct mbuf *, u_int8_t, int, int);
 void	   in_delayed_cksum(struct mbuf *);
 int	   in_localaddr(struct in_addr);
 void	   in_socktrim(struct sockaddr_in *);
-char	  *inet_ntoa(struct in_addr);
 
 #define	in_hosteq(s,t)	((s).s_addr == (t).s_addr)
 #define	in_nullhost(x)	((x).s_addr == INADDR_ANY)

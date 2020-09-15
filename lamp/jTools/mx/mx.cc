@@ -17,14 +17,19 @@
 #include "Orion/Main.hh"
 
 
+#ifndef MAC_OS_X_VERSION_10_8
+
 inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
 {
 	return a.preference < b.preference;
 }
 
+#endif  // #ifndef MAC_OS_X_VERSION_10_8
 
 namespace tool
 {
+	
+#ifndef MAC_OS_X_VERSION_10_8
 	
 	namespace N = Nitrogen;
 	
@@ -38,9 +43,13 @@ namespace tool
 		//Io::Out << mx.exchange << " A " << ip << "\n";
 	}
 	
+#endif  // #ifndef MAC_OS_X_VERSION_10_8
+	
 	int Main( int argc, char** argv )
 	{
 		if ( argc < 2 )  return 1;
+		
+	#ifndef MAC_OS_X_VERSION_10_8
 		
 		const char* domain = argv[ 1 ];
 		
@@ -59,8 +68,9 @@ namespace tool
 		               results.end(),
 		               std::ptr_fun( PrintMX ) );
 		
+	#endif  // #ifndef MAC_OS_X_VERSION_10_8
+		
 		return 0;
 	}
 
 }
-

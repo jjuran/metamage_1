@@ -13,9 +13,8 @@
 namespace vfs
 {
 	
-	void rename( const node* it, const node* target );
+	void rename( const node& that, const node& target );
 	
 }
 
 #endif
-

@@ -14,6 +14,13 @@
 #ifndef NITROGEN_OPENTRANSPORTPROVIDERS_HH
 #define NITROGEN_OPENTRANSPORTPROVIDERS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+#ifndef MAC_OS_X_VERSION_10_8
+
 // Mac OS
 // OpenTransportProviders.h depends on FSSpec but doesn't include Files.h.
 #ifndef __FILES__
@@ -215,5 +222,6 @@ namespace Nitrogen
 	
 }
 
-#endif
+#endif  // #ifndef MAC_OS_X_VERSION_10_8
 
+#endif

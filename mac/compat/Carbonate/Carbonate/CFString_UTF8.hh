@@ -18,4 +18,3 @@ unsigned put_code_point_into_UTF8( unsigned int uc, char* p, const char* end );
 
 
 #endif
-

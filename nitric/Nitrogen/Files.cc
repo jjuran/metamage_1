@@ -25,18 +25,22 @@
 #include "debug/assert.hh"
 
 
+#ifndef MAC_OS_X_VERSION_10_5
+typedef SInt16 FSIORefNum;
+#endif
+
 namespace nucleus
 {
 	
-	namespace N = Nitrogen;
+#if ! __LP64__
 	
 	CInfoPBRec&
 	//
-	initializer< CInfoPBRec >::operator()( CInfoPBRec&        pb,
-		                                   N::FSVolumeRefNum  vRefNum,
-		                                   N::FSDirID         dirID,
-		                                   StringPtr          name,
-		                                   SInt16             index )
+	initializer< CInfoPBRec >::operator()( CInfoPBRec&  pb,
+	                                       SInt16       vRefNum,
+	                                       SInt32       dirID,
+	                                       StringPtr    name,
+	                                       SInt16       index )
 	{
 		DirInfo& dirInfo = pb.dirInfo;
 		
@@ -47,6 +51,8 @@ namespace nucleus
 		
 		return pb;
 	}
+	
+#endif  // #if ! __LP64__
 	
 }
 
@@ -77,6 +83,8 @@ namespace Nitrogen
 #pragma force_active reset
 #endif
 	
+	
+#if ! __LP64__
 	
 	static inline OSErr FixedAsyncResult( OSErr err, const HParamBlockRec& pb )
 	{
@@ -223,6 +231,66 @@ namespace Nitrogen
 		FSDirID dirID = FSDirID( cInfo.dirInfo.ioDrDirID );
 		
 		return nucleus::make< FSDirSpec >( FSVolumeRefNum( dir.vRefNum ), dirID );
+	}
+	
+	
+	void HCreate( const FSSpec&   f,
+	              Mac::FSCreator  creator,
+	              Mac::FSType     type )
+	{
+		ThrowOSStatus( ::HCreate( f.vRefNum, f.parID, f.name, creator, type ) );
+	}
+	
+	Mac::FSDirID DirCreate( const FSSpec& loc )
+	{
+		SInt32 id;
+		ThrowOSStatus( ::DirCreate( loc.vRefNum, loc.parID, loc.name, &id ) );
+		
+		return Mac::FSDirID( id );
+	}
+	
+	void HDelete( const FSSpec& file )
+	{
+		ThrowOSStatus( ::HDelete( file.vRefNum, file.parID, file.name ) );
+	}
+	
+	FInfo HGetFInfo( const FSSpec& f )
+	{
+		FInfo info;
+		ThrowOSStatus( ::HGetFInfo( f.vRefNum, f.parID, f.name, &info ) );
+		
+		return info;
+	}
+	
+	void HSetFInfo( const FSSpec& f, const FInfo& info )
+	{
+		ThrowOSStatus( ::HSetFInfo( f.vRefNum, f.parID, f.name, &info ) );
+	}
+	
+	void HSetFLock( const FSSpec& file )
+	{
+		ThrowOSStatus( ::HSetFLock( file.vRefNum, file.parID, file.name ) );
+	}
+	
+	void HRstFLock( const FSSpec& file )
+	{
+		ThrowOSStatus( ::HRstFLock( file.vRefNum, file.parID, file.name ) );
+	}
+	
+	void HRename( const FSSpec& file, const unsigned char* name )
+	{
+		ThrowOSStatus( ::HRename( file.vRefNum, file.parID, file.name, name ) );
+	}
+	
+	void CatMove( const FSSpec& f, const FSSpec& d )
+	{
+		if ( f.vRefNum != d.vRefNum )
+		{
+			ThrowOSStatus( paramErr );  // Follow MoreFiles' example
+		}
+		
+		ThrowOSStatus( ::CatMove( f.vRefNum, f.parID, f.name,
+		                                     d.parID, d.name ) );
 	}
 	
 	
@@ -499,6 +567,8 @@ namespace Nitrogen
       return result;
      }
 
+#endif  // #if ! __LP64__
+	
 /*
 Return Value
 	A result code. See "File Manager Result Codes".
@@ -521,11 +591,15 @@ Return Value
       (void) ::FSDeleteObject( &ref );
      }
 
+#if ! __LP64__
+	
    void FileSystemDisposer::operator()( const FSSpec& spec ) const
      {
       (void) ::FSpDelete( &spec );
      }
    
+#endif  // #if ! __LP64__
+	
    
    FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&         parentRef,
                                                    UniCharCount         nameLength,
@@ -859,7 +933,7 @@ Return Value
                                             const UniChar *forkName,
                                             FSIOPermssn    permissions )
      {
-      SInt16 result;
+      FSIORefNum result;
       ThrowOSStatus( ::FSOpenFork( &ref, forkNameLength, forkName, permissions, &result ) );
       return nucleus::owned<FSForkRefNum>::seize( FSForkRefNum( result ) );
      }
@@ -1008,7 +1082,7 @@ Return Value
    FSGetForkCBInfo_Result FSGetForkCBInfo( FSForkRefNum desiredRefNum )
      {
       FSGetForkCBInfo_Result result;
-      SInt16 actualRefNum;
+      FSIORefNum actualRefNum;
       ThrowOSStatus( ::FSGetForkCBInfo( desiredRefNum,
                                         0,
                                         0,
@@ -1024,7 +1098,7 @@ Return Value
                                            FSForkIterator& iterator )
      {
       FSGetForkCBInfo_Result result;
-      SInt16 actualRefNum;
+      FSIORefNum actualRefNum;
       SInt16 realIterator = iterator;
       ThrowOSStatus( ::FSGetForkCBInfo( 0,
                                         volume,
@@ -1122,16 +1196,20 @@ Return Value
      }
 	
 	
+#if ! __LP64__
+	
 	static void PBHGetVInfoSync( HParamBlockRec& pb )
 	{
 		ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
 	}
 	
+#endif  // #if ! __LP64__
+	
 	FSVolumeRefNum FSGetVolumeRefNum( FSVolumeIndex volumeIndex )
 	{
-	#if TARGET_CPU_PPC
+	#if ! TARGET_CPU_68K
 		
-		if ( TARGET_API_MAC_CARBON  ||  TARGET_CPU_PPC  &&  ::FSGetVolumeInfo != NULL )
+		if ( TARGET_API_MAC_CARBON  ||  &::FSGetVolumeInfo != NULL )
 		{
 			FSVolumeRefNum result;
 			FSGetVolumeInfo( volumeIndex,
@@ -1146,6 +1224,8 @@ Return Value
 		
 	#endif
 		{
+		#if ! __LP64__
+			
 			HParamBlockRec pb;
 			
 			pb.volumeParam.ioNamePtr = NULL;
@@ -1155,6 +1235,8 @@ Return Value
 			PBHGetVInfoSync( pb );
 			
 			return FSVolumeRefNum( pb.volumeParam.ioVRefNum );
+			
+		#endif
 		}
 	}
 
@@ -1400,4 +1482,3 @@ Return Value
      }
 	
 }
-

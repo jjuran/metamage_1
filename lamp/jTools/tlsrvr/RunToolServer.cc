@@ -5,22 +5,32 @@
 
 #include "RunToolServer.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 // Mac OS
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif
-#ifndef __SOUND__
-#include <Sound.h>
-#endif
+
+// POSIX
+#include <unistd.h>
+
+// Standard C
+#include <signal.h>
+#include <stdlib.h>
 
 // Standard C++
 #include <algorithm>
 
-// Standard C/C++
-#include <cstdio>
-
 // Iota
 #include "iota/strings.hh"
+
+// mac-sys-utils
+#include "mac_sys/current_process.hh"
+#include "mac_sys/is_front_process.hh"
 
 // plus
 #include "plus/mac_utf8.hh"
@@ -185,6 +195,22 @@ namespace tool
 	}
 	
 	
+	static
+	bool process_exists( const ProcessSerialNumber& psn )
+	{
+		OSErr err;
+		
+		ProcessInfoRec processInfo;
+		
+		processInfo.processInfoLength = sizeof processInfo;
+		processInfo.processName       = NULL;
+		processInfo.processAppSpec    = NULL;
+		
+		err = GetProcessInformation( &psn, &processInfo );
+		
+		return err == noErr;
+	}
+	
 	static ProcessSerialNumber find_or_launch_ToolServer()
 	{
 		try
@@ -197,6 +223,13 @@ namespace tool
 			{
 				throw;
 			}
+		}
+		
+		if ( const char* ToolServer_path = getenv( "ToolServer" ) )
+		{
+			FSSpec ToolServer = Div::ResolvePathToFSSpec( ToolServer_path );
+			
+			return N::LaunchApplication( ToolServer );
 		}
 		
 		if ( const int device = device_of_ramdisk() )
@@ -249,20 +282,25 @@ namespace tool
 		return appleEvent;
 	}
 	
+	static
+	n::owned< Mac::AppleEvent > CreateQuitEvent( const ProcessSerialNumber& psn )
+	{
+		const Mac::AEEventClass aevt = Mac::kCoreEventClass;
+		const Mac::AEEventID    quit = Mac::kAEQuitApplication;
+		const Mac::DescType  typePSN = Mac::typeProcessSerialNumber;
+		
+		using namespace Nitrogen;
+		
+		return AECreateAppleEvent( aevt, quit, AECreateDesc< typePSN >( psn ) );
+	}
+	
 	static n::owned< Mac::AppleEvent > AESendBlocking( const Mac::AppleEvent& appleEvent )
 	{
-		n::owned< Mac::AppleEvent > replyEvent = N::AEInitializeDesc< Mac::AppleEvent >();
+		Mac::AppleEvent reply;
 		
-		// Declare a block to limit the scope of mutableReply
-		{
-			N::Detail::AEDescEditor< Mac::AppleEvent > mutableReply( replyEvent );
-			
-			Mac::ThrowOSStatus( Div::AESendBlocking( &appleEvent, &mutableReply.Get() ) );
-			
-			// Reply is available.  End scope to restore the reply.
-		}
+		Mac::ThrowOSStatus( Div::AESendBlocking( &appleEvent, &reply ) );
 		
-		return replyEvent;
+		return n::owned< Mac::AppleEvent >::seize( reply );
 	}
 	
 	enum
@@ -308,8 +346,7 @@ namespace tool
 		plus::string inner_script = make_script_from_command( command );
 		
 		p7::spew( p7::open( temp_file_paths[ kScriptFile ], p7::o_wronly ),
-		          inner_script.data(),
-		          inner_script.size() );
+		          inner_script );
 		
 		nucleus::string script = MakeToolServerScript( temp_file_paths[ kScriptFile ],
 		                                               temp_file_paths[ kOutputFile ],
@@ -400,14 +437,22 @@ namespace tool
 		return false;
 	}
 	
+	static inline
+	bool out_of_memory( const plus::string& output )
+	{
+		return output == "\r" "Out of memory\r";
+	}
+	
 	static void switch_process( const ProcessSerialNumber& from,
 	                            const ProcessSerialNumber& to )
 	{
-		if ( N::SameProcess( from, N::GetFrontProcess() ) )
+		using mac::sys::is_front_process;
+		
+		if ( is_front_process( from ) )
 		{
 			N::SetFrontProcess( to );
 			
-			while ( N::SameProcess( from, N::GetFrontProcess() ) )
+			while ( is_front_process( from ) )
 			{
 				sleep( 0 );
 			}
@@ -416,13 +461,19 @@ namespace tool
 	
 	int RunCommandInToolServer( const plus::string& command, bool switch_layers )
 	{
+		const ProcessSerialNumber& self = mac::sys::current_process();
+		
+		bool retried = false;
+		
+	retry:
+		
 		const ProcessSerialNumber toolServer = find_or_launch_ToolServer();
 		
 		// This is a bit of a hack.
 		// It really ought to happen just after we send the event.
 		if ( switch_layers )
 		{
-			switch_process( N::CurrentProcess(), toolServer );
+			switch_process( self, toolServer );
 		}
 		
 		int result = GetResult( AESendBlocking( CreateScriptEvent( toolServer,
@@ -430,7 +481,7 @@ namespace tool
 		
 		if ( switch_layers )
 		{
-			switch_process( toolServer, N::CurrentProcess() );
+			switch_process( toolServer, self );
 		}
 		
 		if ( result == -9 )
@@ -439,7 +490,8 @@ namespace tool
 			return 128;
 		}
 		
-		plus::var_string errors = p7::slurp( temp_file_paths[ kErrorFile ] );
+		plus::var_string output = p7::slurp( temp_file_paths[ kOutputFile ] );
+		plus::var_string errors = p7::slurp( temp_file_paths[ kErrorFile  ] );
 		
 		// A Metrowerks tool returns 1 on error and 2 on user break, except that
 		// if you limit the number of diagnostics displayed and there more errors
@@ -462,11 +514,28 @@ namespace tool
 				// printed does NOT equal user-sponsored cancellation.
 				result = 1;
 			}
+			else if ( ! retried  &&  out_of_memory( output ) )
+			{
+				retried = true;
+				
+				write( STDOUT_FILENO, STR_LEN( "tlsrvr: ToolServer is out of memory.\n" ) );
+				write( STDOUT_FILENO, STR_LEN( "tlsrvr: Quitting ToolServer...\n"       ) );
+				
+				AESendBlocking( CreateQuitEvent( toolServer ) );
+				
+				while ( process_exists( toolServer ) )
+				{
+					kill( 1, 0 );
+				}
+				
+				write( STDOUT_FILENO, STR_LEN( "tlsrvr: Retrying command (once)...\n" ) );
+				
+				goto retry;
+			}
 		}
 		
 		ConvertAndDumpMacText( errors, p7::stderr_fileno );
-		
-		dump_file( temp_file_paths[ kOutputFile ], p7::stdout_fileno );
+		ConvertAndDumpMacText( output, p7::stdout_fileno );
 		
 		// Delete temp files
 		std::for_each( temp_file_paths,
@@ -477,4 +546,3 @@ namespace tool
 	}
 	
 }
-

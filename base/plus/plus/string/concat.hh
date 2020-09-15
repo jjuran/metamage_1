@@ -58,4 +58,3 @@ namespace plus
 }
 
 #endif
-

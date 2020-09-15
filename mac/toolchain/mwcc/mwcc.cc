@@ -87,7 +87,6 @@ namespace tool
 	static bool cfm = false;
 	static bool mc68020 = false;
 	static bool a4 = false;
-	static bool traceback = false;
 	
 	static void set_codegen_flag( const plus::string& flag )
 	{
@@ -110,10 +109,6 @@ namespace tool
 		else if ( flag == "-mA4-globals" )
 		{
 			a4 = true;
-		}
-		else if ( flag == "-mtraceback" )
-		{
-			traceback = true;
 		}
 	}
 	
@@ -335,13 +330,12 @@ namespace tool
 		{
 			std::fprintf( stderr, "%s\n", "mwcc: -o is required" );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
 		std::vector< const char* > command;
 		
 		command.push_back( "tlsrvr"   );
-		command.push_back( "--switch" );  // bring ToolServer to front
 		command.push_back( "--escape" );  // escape arguments to prevent expansion
 		command.push_back( "--"       );  // stop interpreting options here
 		
@@ -351,7 +345,7 @@ namespace tool
 			case arch_none:
 				std::fprintf( stderr, "%s\n", "mwcc: invalid architecture" );
 				
-				return EXIT_FAILURE;
+				return 1;
 			
 			case arch_m68k:
 				command.push_back( "MWC68K"   );
@@ -392,7 +386,7 @@ namespace tool
 			command.push_back( "full" );
 		}
 		
-		const bool debug = opt[2] <= '2';
+		const bool debug = opt == NULL  ||  opt[2] <= '2';
 		
 		if ( arch == arch_m68k  &&  !debug )
 		{
@@ -400,26 +394,40 @@ namespace tool
 			command.push_back( "off"  );
 		}
 		
-		if ( arch == arch_ppc  &&  debug  ||  traceback )
+		if ( arch == arch_ppc )
 		{
 			command.push_back( "-tb" );
 			command.push_back( "on"  );
 		}
 		
 		const char* opt_level = sym   ? "off"
-		                      : debug ? "l2"
+		                      : debug ? "on"
 		                      :         "full";
 		
 		command.push_back( "-opt" );
 		command.push_back( opt_level );
 		
-		command.push_back( "-nosyspath"      );
-		command.push_back( "-convertpaths"   );
-		command.push_back( "-nomapcr"        );
-		command.push_back( "-once"           );
+		if ( !gIncludeDirs.empty() )
+		{
+			command.push_back( "-nosyspath"      );
+			command.push_back( "-convertpaths"   );
+			command.push_back( "-once"           );
+		}
 		
-		command.push_back( "-w"                                                   );
+		command.push_back( "-nomapcr"        );
+		
+		command.push_back( "-w" );
+		
+	#ifdef __MC68K__
+		
+		// Don't assume noimplicit is recognized (which it's not in CW Pro 3)
+		command.push_back( "all,nounusedarg,nonotinlined,noextracomma" );
+		
+	#else
+		
 		command.push_back( "all,nounusedarg,noimplicit,nonotinlined,noextracomma" );
+		
+	#endif
 		
 		command.push_back( "-ext" );
 		command.push_back( "o"    );
@@ -459,4 +467,3 @@ namespace tool
 	}
 	
 }
-

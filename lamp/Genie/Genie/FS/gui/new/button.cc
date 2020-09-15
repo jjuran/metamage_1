@@ -5,8 +5,22 @@
 
 #include "Genie/FS/gui/new/button.hh"
 
+#ifdef __APPLE__
+#include <AvailabilityMacros.h>
+#endif
+
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAW_H
+#include "missing/Quickdraw.h"
+#endif
+#endif
+
 // POSIX
 #include <sys/stat.h>
+
+// plus
+#include "plus/simple_map.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -21,19 +35,25 @@
 #include "Pedestal/PushButton.hh"
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/filehandle.hh"
+#include "vfs/node.hh"
+#include "vfs/enum/poll_result.hh"
+#include "vfs/filehandle/functions/nonblocking.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
+#include "vfs/node/types/trigger.hh"
+
+// relix-kernel
+#include "relix/api/try_again.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/Trigger.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/Stream.hh"
-#include "Genie/IO/VirtualFile.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -63,14 +83,14 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const FSTree*, Button_Parameters > ButtonMap;
+	typedef plus::simple_map< const vfs::node*, Button_Parameters > ButtonMap;
 	
 	static ButtonMap gButtonMap;
 	
 	
 	struct Control_UserData : Pedestal::Control_UserData
 	{
-		const FSTree*  key;
+		const vfs::node*  key;
 		
 		Control_UserData() : key()
 		{
@@ -84,7 +104,7 @@ namespace Genie
 		ASSERT( userData      != NULL );
 		ASSERT( userData->key != NULL );
 		
-		const FSTree* button = userData->key;
+		const vfs::node* button = userData->key;
 		
 		if ( Button_Parameters* it = gButtonMap.find( button ) )
 		{
@@ -95,7 +115,7 @@ namespace Genie
 	class PushButton : public Ped::PushButton
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Control_UserData itsUserData;
 		
@@ -180,26 +200,26 @@ namespace Genie
 		}
 	}
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new PushButton( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		gButtonMap.erase( delegate );
 	}
 	
 	
-	struct Button_Title : readwrite_property
+	struct Button_Title : vfs::readwrite_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = gButtonMap[ that ].title;
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			Button_Parameters& params = gButtonMap[ that ];
 			
@@ -212,42 +232,53 @@ namespace Genie
 	};
 	
 	
-	class Button_socket_Handle : public VirtualFileHandle< StreamHandle >
+	struct button_stream_extra
 	{
-		private:
-			std::size_t itsSeed;
-		
-		public:
-			Button_socket_Handle( const FSTreePtr& file, int flags );
-			
-			unsigned int SysPoll();
-			
-			ssize_t SysRead( char* buffer, std::size_t byteCount );
+		unsigned long seed;
 	};
 	
-	Button_socket_Handle::Button_socket_Handle( const FSTreePtr& file, int flags )
-	:
-		VirtualFileHandle< StreamHandle >( file, flags ),
-		itsSeed( gButtonMap[ file->owner() ].seed )
-	{
-	}
+	static
+	unsigned buttonstream_poll( vfs::filehandle* that );
 	
-	unsigned int Button_socket_Handle::SysPoll()
+	static
+	ssize_t buttonstream_read( vfs::filehandle* that, char* buffer, size_t n );
+	
+	static const vfs::stream_method_set buttonstream_stream_methods =
 	{
-		const FSTree* view = GetFile()->owner();
+		&buttonstream_poll,
+		&buttonstream_read,
+	};
+	
+	static const vfs::filehandle_method_set buttonstream_methods =
+	{
+		NULL,
+		NULL,
+		&buttonstream_stream_methods,
+	};
+	
+	
+	static
+	unsigned buttonstream_poll( vfs::filehandle* that )
+	{
+		button_stream_extra& extra = *(button_stream_extra*) that->extra();
+		
+		const vfs::node* view = get_file( *that )->owner();
 		
 		Button_Parameters* it = gButtonMap.find( view );
 		
 		const bool readable =    it == NULL
 		                      || !it->installed
-		                      || it->seed != itsSeed;
+		                      || it->seed != extra.seed;
 		
-		return readable * kPollRead | kPollWrite;
+		return readable * vfs::Poll_read | vfs::Poll_write;
 	}
 	
-	ssize_t Button_socket_Handle::SysRead( char* buffer, std::size_t byteCount )
+	static
+	ssize_t buttonstream_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		const FSTree* view = GetFile()->owner();
+		button_stream_extra& extra = *(button_stream_extra*) that->extra();
+		
+		const vfs::node* view = get_file( *that )->owner();
 		
 	retry:
 		
@@ -260,19 +291,19 @@ namespace Genie
 		
 		const Button_Parameters& params = *it;
 		
-		if ( params.seed == itsSeed )
+		if ( params.seed == extra.seed )
 		{
-			TryAgainLater();
+			relix::try_again( is_nonblocking( *that ) );
 			
 			goto retry;
 		}
 		
-		if ( byteCount == 0 )
+		if ( n == 0 )
 		{
 			return 0;
 		}
 		
-		itsSeed = params.seed;
+		extra.seed = params.seed;
 		
 		const char c = '\n';
 		
@@ -282,9 +313,9 @@ namespace Genie
 	}
 	
 	
-	static IOPtr button_stream_open( const FSTree* node, int flags, mode_t mode )
+	static vfs::filehandle_ptr button_stream_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		const FSTree* view = node->owner();
+		const vfs::node* view = that->owner();
 		
 		const Button_Parameters* it = gButtonMap.find( view );
 		
@@ -293,48 +324,54 @@ namespace Genie
 			p7::throw_errno( ECONNREFUSED );
 		}
 		
-		return new Button_socket_Handle( node, flags );
+		typedef button_stream_extra stream_extra;
+		
+		vfs::filehandle* result = new vfs::filehandle( that,
+		                                               flags,
+		                                               &buttonstream_methods,
+		                                               sizeof (stream_extra) );
+		
+		stream_extra& extra = *(stream_extra*) result->extra();
+		
+		extra.seed = it->seed;
+		
+		return result;
 	}
 	
-	static const data_method_set button_stream_data_methods =
+	static const vfs::data_method_set button_stream_data_methods =
 	{
 		&button_stream_open
 	};
 	
-	static const node_method_set button_stream_methods =
+	static const vfs::node_method_set button_stream_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		&button_stream_data_methods
 	};
 	
-	static FSTreePtr button_stream_factory( const FSTree*        parent,
-	                                        const plus::string&  name,
-	                                        const void*          args )
+	static vfs::node_ptr button_stream_factory( const vfs::node*     parent,
+	                                            const plus::string&  name,
+	                                            const void*          args )
 	{
-		return new FSTree( parent, name, S_IFREG | 0400, &button_stream_methods );
+		return new vfs::node( parent, name, S_IFCHR | 0400, &button_stream_methods );
 	}
 	
 	
-	static void button_click_trigger( const FSTree* node )
+	static void button_click_trigger( const vfs::node* that )
 	{
-		const FSTree* view = node->owner();
+		const vfs::node* view = that->owner();
 		
 		gButtonMap[ view ].pseudoclicked = true;
 		
 		Ped::AdjustSleepForTimer( 1 );
 	}
 	
-	static const trigger_extra button_click_trigger_extra =
+	static const vfs::trigger_extra button_click_trigger_extra =
 	{
 		&button_click_trigger
 	};
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{
@@ -342,16 +379,16 @@ namespace Genie
 		
 		{ "title", PROPERTY( utf8_text_property< Button_Title > ) },
 		
-		{ "click", &trigger_factory, (void*) &button_click_trigger_extra },
+		{ "click", &vfs::trigger_factory, (void*) &button_click_trigger_extra },
 		
-		{ "socket", &button_stream_factory },
+		{ "clicked", &button_stream_factory },
 		
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_button( const FSTree*        parent,
-	                                 const plus::string&  name,
-	                                 const void*          args )
+	vfs::node_ptr New_FSTree_new_button( const vfs::node*     parent,
+	                                     const plus::string&  name,
+	                                     const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,
@@ -361,4 +398,3 @@ namespace Genie
 	}
 	
 }
-

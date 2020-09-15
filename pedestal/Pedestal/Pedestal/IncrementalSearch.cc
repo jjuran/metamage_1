@@ -8,8 +8,8 @@
 // Standard C++
 #include <vector>
 
-// Standard C/C++
-#include <cctype>
+// iota
+#include "iota/char_types.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -143,7 +143,7 @@ namespace Pedestal
 		{
 			// A lower-case pattern char can match an upper-case text char.
 			
-			if ( *text != *pattern  &&  std::tolower( *text ) != *pattern )
+			if ( *text != *pattern  &&  iota::to_lower( *text ) != *pattern )
 			{
 				return false;
 			}
@@ -169,6 +169,11 @@ namespace Pedestal
 		int maxPosition = text_length - pattern_length;
 		
 		int limit = backward ? -1 : maxPosition + 1;
+		
+		if ( !backward  &&  position >= limit )
+		{
+			return -1;
+		}
 		
 		while ( position != limit )
 		{
@@ -197,7 +202,10 @@ namespace Pedestal
 		
 		Handle kchr = GetResource( 'KCHR', 0 );
 		
-		N::ResError();
+		if ( kchr == NULL )
+		{
+			N::ResError();
+		}
 		
 		ASSERT(  kchr != NULL );
 		ASSERT( *kchr != NULL );
@@ -378,4 +386,3 @@ namespace Pedestal
 	}
 	
 }
-

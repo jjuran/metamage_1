@@ -10,11 +10,9 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/methods/file_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/attach.hh"
-
-// Genie
-#include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -24,21 +22,16 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	static void iconsuite_copyfile( const FSTree* node, const FSTree* target );
+	static void iconsuite_copyfile( const vfs::node* that, const vfs::node* target );
 	
-	static const file_method_set iconsuite_file_methods =
+	static const vfs::file_method_set iconsuite_file_methods =
 	{
 		NULL,
 		&iconsuite_copyfile
 	};
 	
-	static const node_method_set iconsuite_methods =
+	static const vfs::node_method_set iconsuite_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		NULL,
@@ -47,9 +40,9 @@ namespace Genie
 	};
 	
 	
-	static void dispose_iconsuite( const FSTree* node )
+	static void dispose_iconsuite( const vfs::node* that )
 	{
-		::IconSuiteRef& extra = *(::IconSuiteRef*) node->extra();
+		::IconSuiteRef& extra = *(::IconSuiteRef*) that->extra();
 		
 		const bool disposeData = true;
 		
@@ -72,28 +65,28 @@ namespace Genie
 		}
 	};
 	
-	static void iconsuite_copyfile( const FSTree* node, const FSTree* target )
+	static void iconsuite_copyfile( const vfs::node* that, const vfs::node* target )
 	{
-		::IconSuiteRef extra = *(::IconSuiteRef*) node->extra();
+		::IconSuiteRef extra = *(::IconSuiteRef*) that->extra();
 		
 		stored_IconSuite_scope scope( extra );
 		
-		attach( target, node );
+		attach( *target, *that );
 	}
 	
 	
-	FSTreePtr
+	vfs::node_ptr
 	//
-	New_FSTree_IconSuite( const FSTree*                parent,
+	New_FSTree_IconSuite( const vfs::node*             parent,
 			              const plus::string&          name,
 			              n::owned< N::IconSuiteRef >  iconSuite )
 	{
-		FSTree* result = new FSTree( parent,
-		                             name,
-		                             S_IFREG | 0400,
-		                             &iconsuite_methods,
-		                             sizeof (::IconSuiteRef),
-		                             &dispose_iconsuite );
+		vfs::node* result = new vfs::node( parent,
+		                                   name,
+		                                   S_IFREG | 0400,
+		                                   &iconsuite_methods,
+		                                   sizeof (::IconSuiteRef),
+		                                   &dispose_iconsuite );
 		
 		::IconSuiteRef& extra = *(::IconSuiteRef*) result->extra();
 		
@@ -108,4 +101,3 @@ namespace Genie
 	}
 	
 }
-

@@ -43,4 +43,3 @@ namespace ShellShock
 }
 
 #endif
-

@@ -14,6 +14,12 @@
 #ifndef NITROGEN_APPLEEVENTS_HH
 #define NITROGEN_APPLEEVENTS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
 #ifndef __APPLEEVENTS__
 #include <AppleEvents.h>
 #endif
@@ -219,7 +225,7 @@ namespace Nitrogen
 		return AEInstallEventHandler( AEEventHandler( theAEEventClass,
 		                                              theAEEventID,
 		                                              StaticUPP< AEEventHandlerUPP, handler >(),
-		                                              (::SRefCon) handlerRefCon,
+		                                              (::SRefCon) (long) handlerRefCon,
 		                                              isSysHandler ) );
 	}
 	
@@ -299,4 +305,3 @@ namespace Nitrogen
 }
 
 #endif
-

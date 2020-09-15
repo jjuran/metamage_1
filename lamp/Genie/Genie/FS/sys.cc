@@ -5,14 +5,11 @@
 
 #include "Genie/FS/sys.hh"
 
-// POSIX
-#include <sys/stat.h>
-
-// Standard C++
-#include <algorithm>
+// Standard C
+#include <string.h>
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
@@ -20,32 +17,37 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// Pedestal
+#include "Pedestal/Application.hh"
+
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node.hh"
+#include "vfs/node/types/basic_directory.hh"
+#include "vfs/node/types/fixed_dir.hh"
+
+// vfs-relix
+#include "vfs/node/types/builtin.hh"
+
+// relix
+#include "relix/syscall/registry.hh"
 
 // Genie
-#include "Genie/code/fixed_address.hh"
-#include "Genie/code/shared_exec_handle.hh"
-#include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/sys/app.hh"
 #include "Genie/FS/sys/cpu.hh"
 #include "Genie/FS/sys/mac.hh"
 #include "Genie/FS/sys/type.hh"
-#include "Genie/SystemCallRegistry.hh"
 
 
 namespace Genie
 {
 	
 	namespace p7 = poseven;
+	namespace Ped = Pedestal;
 	
 	
-	typedef const SystemCall* SystemCallPtr;
+	typedef const relix::system_call* SystemCallPtr;
 	
 	
 	static plus::string name_of_syscall( SystemCallPtr key )
@@ -67,39 +69,25 @@ namespace Genie
 	}
 	
 	
-	static shared_exec_handle builtin_loadexec( const FSTree* node );
-	
-	static const file_method_set builtin_file_methods =
+	static const relix::system_call* LookUpSystemCallByName( const char* name )
 	{
-		NULL,
-		NULL,
-		NULL,
-		&builtin_loadexec
-	};
-	
-	static const node_method_set builtin_methods =
-	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&builtin_file_methods
-	};
-	
-	static shared_exec_handle builtin_loadexec( const FSTree* node )
-	{
-		relix_entry& extra = *(relix_entry*) node->extra();
+		using namespace relix;
 		
-		return new fixed_address( extra );
+		system_call* it  = the_syscall_array;
+		system_call* end = it + the_last_syscall;
+		
+		for ( ;  it < end;  ++it )
+		{
+			if ( it->name != NULL  &&  strcmp( name, it->name ) == 0 )
+			{
+				return it;
+			}
+		}
+		
+		return NULL;
 	}
 	
-	
-	static FSTreePtr syscall_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr syscall_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( LookUpSystemCallByName( name.c_str() ) == NULL )
 		{
@@ -109,86 +97,61 @@ namespace Genie
 		return fixed_dir( parent, name );
 	}
 	
-	class syscall_IteratorConverter
+	static void syscall_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
-		public:
-			vfs::dir_entry operator()( const SystemCall& value ) const
-			{
-				const ino_t inode = &value - GetSystemCall( 0 );
-				
-				plus::string name = name_of_syscall( &value );
-				
-				return vfs::dir_entry( inode, name );
-			}
-	};
-	
-	static void syscall_iterate( const FSTree* parent, vfs::dir_contents& cache )
-	{
-		syscall_IteratorConverter converter;
-		
-		std::transform( gSystemCallArray,
-		                gSystemCallArray + gLastSystemCall,
-		                std::back_inserter( cache ),
-		                converter );
-	}
-	
-	static FSTreePtr New_sys_kernel_syscall( const FSTree*        parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
-	{
-		return new_basic_directory( parent, name, syscall_lookup, syscall_iterate );
-	}
-	
-	
-	namespace
-	{
-		
-		int main_true()
+		for ( int i = 0;  i < relix::the_last_syscall;  ++i )
 		{
-			return 0;
-		}
-		
-		int main_false()
-		{
-			return 1;
-		}
-		
-		int main_beep()
-		{
-			Mac::SysBeep();
+			const ino_t inode = i;
 			
-			return 0;
+			plus::string name = name_of_syscall( &relix::the_syscall_array[ i ] );
+			
+			cache.push_back( vfs::dir_entry( inode, name ) );
 		}
-		
 	}
 	
-	static FSTreePtr Executable_Factory( const FSTree*        parent,
-	                                     const plus::string&  name,
-	                                     const void*          args )
+	static vfs::node_ptr New_sys_kernel_syscall( const vfs::node*     parent,
+	                                             const plus::string&  name,
+	                                             const void*          args )
 	{
-		FSTree* result = new FSTree( parent,
-		                             name,
-		                             S_IFREG | 0500,
-		                             &builtin_methods,
-		                             sizeof (relix_entry) );
-		
-		relix_entry& extra = *(relix_entry*) result->extra();
-		
-		extra = (relix_entry) args;
-		
-		return result;
+		return vfs::new_basic_directory( parent, name, syscall_lookup, syscall_iterate );
 	}
 	
-	#define EXEC( main )  &Executable_Factory, (const void*) &main
+	
+	static int true_main()
+	{
+		return 0;
+	}
+	
+	static int false_main()
+	{
+		return 1;
+	}
+	
+	static int beep_main()
+	{
+		Mac::SysBeep();
+		
+		return 0;
+	}
+	
+	static int quit_main()
+	{
+		Ped::Quit();
+		
+		return 0;
+	}
+	
+	#define EXEC( main )  &vfs::builtin_factory, (const void*) &main
 	
 	extern const vfs::fixed_mapping sys_kernel_bin_Mappings[];
 	
 	const vfs::fixed_mapping sys_kernel_bin_Mappings[] =
 	{
-		{ "true",  EXEC( main_true  ) },
-		{ "false", EXEC( main_false ) },
+		{ "true",  EXEC( true_main  ) },
+		{ "false", EXEC( false_main ) },
 		
-		{ "beep",  EXEC( main_beep  ) },
+		{ "beep",  EXEC( beep_main  ) },
+		{ "quit",  EXEC( quit_main  ) },
 		
 		{ NULL, NULL }
 	};
@@ -219,4 +182,3 @@ namespace Genie
 	};
 	
 }
-

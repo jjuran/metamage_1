@@ -17,4 +17,3 @@ int copyfile( const char* src, const char* dest )
 {
 	return copyfileat( AT_FDCWD, src, AT_FDCWD, dest, 0 );
 }
-

@@ -5,9 +5,21 @@
 
 #include "Genie/FS/sys/mac/gdev.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 // Mac OS
 #ifndef __QUICKDRAW__
 #include <Quickdraw.h>
+#endif
+
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAW_H
+#include "missing/Quickdraw.h"
+#endif
 #endif
 
 // POSIX
@@ -17,7 +29,7 @@
 #include "iota/strings.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -28,10 +40,12 @@
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/sys/mac/gdev/list.hh"
 
 
@@ -41,7 +55,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static plus::string gdev_main_readlink( const FSTree* node )
+	static plus::string gdev_main_readlink( const vfs::node* that )
 	{
 		const GDHandle gdH = ::GetMainDevice();
 		
@@ -56,33 +70,28 @@ namespace Genie
 		return result;
 	}
 	
-	static const link_method_set gdev_main_link_methods =
+	static const vfs::link_method_set gdev_main_link_methods =
 	{
 		&gdev_main_readlink
 	};
 	
-	static const node_method_set gdev_main_methods =
+	static const vfs::node_method_set gdev_main_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		&gdev_main_link_methods
 	};
 	
-	static FSTreePtr gdev_main_factory( const FSTree*        parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
+	static vfs::node_ptr gdev_main_factory( const vfs::node*     parent,
+	                                        const plus::string&  name,
+	                                        const void*          args )
 	{
 		if ( !MacFeatures::Has_ColorQuickdraw() )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
-		return new FSTree( parent, name, S_IFLNK | 0777, &gdev_main_methods );
+		return new vfs::node( parent, name, S_IFLNK | 0777, &gdev_main_methods );
 	}
 	
 	const vfs::fixed_mapping sys_mac_gdev_Mappings[] =
@@ -96,4 +105,3 @@ namespace Genie
 	};
 	
 }
-

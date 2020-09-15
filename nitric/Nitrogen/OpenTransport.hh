@@ -14,6 +14,13 @@
 #ifndef NITROGEN_OPENTRANSPORT_HH
 #define NITROGEN_OPENTRANSPORT_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+#ifndef MAC_OS_X_VERSION_10_8
+
 // Mac OS
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
@@ -362,5 +369,6 @@ namespace Nitrogen
 	
 }
 
-#endif
+#endif  // #ifndef MAC_OS_X_VERSION_10_8
 
+#endif

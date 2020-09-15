@@ -7,7 +7,7 @@
 #include "iota/strings.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 #include "gear/inscribe_decimal.hh"
 
 // plus
@@ -246,7 +246,7 @@ namespace tool
 		message += command;
 		message += "'\n";
 		
-		return EXIT_FAILURE;
+		return 1;
 	}
 	
 	int Main( int argc, char** argv )
@@ -255,7 +255,7 @@ namespace tool
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "cds: (usage missing)\n" ) );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
 		gDrive  = CD::OpenCDROMDriver();
@@ -291,10 +291,9 @@ namespace tool
 	{
 		p7::write( p7::stderr_fileno, STR_LEN( "cds: Sorry, no Carbon support!\n" ) );
 		
-		return EXIT_FAILURE;
+		return 1;
 	}
 	
 #endif
 	
 }
-

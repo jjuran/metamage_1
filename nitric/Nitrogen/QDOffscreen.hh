@@ -14,12 +14,30 @@
 #ifndef NITROGEN_QDOFFSCREEN_HH
 #define NITROGEN_QDOFFSCREEN_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
+#ifndef MAC_OS_X_VERSION_10_7
 #ifndef __QDOFFSCREEN__
 #include <QDOffscreen.h>
 #endif
+#endif
+
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QDOFFSCREEN_H
+#include "missing/QDOffscreen.h"
+#endif
+#endif
+
+// Nitrogen
 #ifndef NITROGEN_QUICKDRAW_HH
 #include "Nitrogen/Quickdraw.hh"
 #endif
+
 
 namespace Nitrogen
 {
@@ -40,6 +58,8 @@ namespace Nitrogen
 	typedef GWorld_Context GetGWorld_Result;
 	
 }
+
+#if ! __LP64__
 
 namespace nucleus
 {
@@ -127,5 +147,6 @@ namespace Nitrogen
 	
 }
 
-#endif
+#endif  // #if ! __LP64__
 
+#endif

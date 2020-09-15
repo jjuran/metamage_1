@@ -17,9 +17,18 @@
 // Standard C/C++
 #include <cstring>
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
+
+// mac-types
+#include "mac_types/ResInfo.hh"
 
 // iota
 #include "iota/string_traits.hh"
@@ -38,6 +47,9 @@
 #endif
 #ifndef MAC_FILES_TYPES_FSIOPERM_HH
 #include "Mac/Files/Types/FSIOPerm.hh"
+#endif
+#ifndef MAC_FILES_TYPES_FSREFNAMESPEC_HH
+#include "Mac/Files/Types/FSRefNameSpec.hh"
 #endif
 #ifndef MAC_FILES_TYPES_FSSIGNATURE_HH
 #include "Mac/Files/Types/FSSignature.hh"
@@ -257,14 +269,7 @@ namespace Nitrogen
 	
 	ResAttributes GetResAttrs( Handle r );
 	
-	struct GetResInfo_Result
-	{
-		ResID   id;
-		ResType type;
-		::Str255  name;
-	};
-	
-	GetResInfo_Result GetResInfo( Handle r );
+	mac::types::ResInfo GetResInfo( Handle r );
 	
 	void SetResInfo( Handle r, ResID id, ConstStr255Param name );
 	
@@ -273,7 +278,7 @@ namespace Nitrogen
 	                    ResID                     resID,
 	                    ConstStr255Param          name );
 	
-	Handle AddResource( nucleus::owned< Handle > h, const GetResInfo_Result& resInfo );
+	Handle AddResource( nucleus::owned< Handle > h, const mac::types::ResInfo& resInfo );
 	
 	std::size_t GetResourceSizeOnDisk( Handle r );
 	
@@ -300,6 +305,8 @@ namespace Nitrogen
 	
 	void SetResFileAttrs( ResFileRefNum refNum, ResFileAttributes attrs );
 	
+#if ! __LP64__
+	
 	// OpenRFPerm     -- not implemented; use FSpOpenRF
 	// RGetResource
 	// HOpenResFile   -- not implemented; use FSpOpenResFile
@@ -320,6 +327,8 @@ namespace Nitrogen
 		FSpCreateResFile( spec, signature.creator, signature.type, scriptTag );
 	}
 	
+#endif  // #if ! __LP64__
+	
 	// ReadPartialResource
 	// WritePartialResource
 	// SetResourceSize
@@ -332,6 +341,31 @@ namespace Nitrogen
 	// FSpOpenOrphanResFile
 	// GetTopResourceFile
 	// GetNextResourceFile
+	// FSOpenResFile
+	// FSCreateResFile
+	// FSResourceFileAlreadyOpen
+	
+	void FSCreateResourceFile( const Mac::FSRefNameSpec&  file,
+	                           UniCharCount               forkNameLength,
+	                           const UniChar*             forkName );
+	
+	template < class UniString >
+	inline
+	void FSCreateResourceFile( const Mac::FSRefNameSpec&  file,
+	                           const UniString&           forkName )
+	{
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		FSCreateResourceFile( file,
+		                      get_string_size( forkName ),
+		                      get_string_data( forkName ) );
+	}
+	
+	inline void FSCreateResourceFile( const Mac::FSRefNameSpec& file )
+	{
+		FSCreateResourceFile( file, 0, NULL );
+	}
 	
 	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref,
 	                                                    UniCharCount    forkNameLength,
@@ -361,11 +395,6 @@ namespace Nitrogen
 		                           get_string_data( forkName ),
 		                           permissions );
 	}
-	
-	// FSCreateResFile
-	// FSResourceFileAlreadyOpen
-	// FSCreateResourceFile
-	// FSOpenResourceFile
 	
 	class ResFile
 	{
@@ -513,4 +542,3 @@ namespace Nitrogen
 }
 
 #endif
-

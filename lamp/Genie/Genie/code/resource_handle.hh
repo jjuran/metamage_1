@@ -22,9 +22,9 @@ namespace Genie
 			{
 			}
 			
-			relix_entry get_main_entry_point() const
+			vfs::relix_entry get_main_entry_point() const
 			{
-				return (relix_entry) *unit().get();  // reinterpret_cast
+				return (vfs::relix_entry) *unit().get();  // reinterpret_cast
 			}
 	};
 	
@@ -37,4 +37,3 @@ namespace Genie
 }
 
 #endif
-

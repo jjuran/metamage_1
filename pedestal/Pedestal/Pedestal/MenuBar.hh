@@ -22,11 +22,10 @@ namespace Pedestal
 	
 	void AddMenu( MenuRef menu );
 	
-	void PopulateAppleMenu( MenuRef menu );
+	void FixUpAboutMenuItem( MenuRef appleMenu );
 	
 	CommandCode HandleMenuItem( Mac::MenuID menuID, SInt16 item );
 	
 }
 
 #endif
-

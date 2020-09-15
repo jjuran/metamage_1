@@ -6,7 +6,8 @@
 #if defined( I )  &&  I == 0
 	
 	// default construction
-	STRING s;
+	//STRING s;  // this gets optimized away on modern compilers
+	STRING strings[ 2 ];
 	
 #elif I == 1
 	
@@ -16,7 +17,7 @@
 #elif I == 2
 	
 	// pointer/length construction, allocated
-	STRING s( STR_LEN( "0123456789abcdef" ) );
+	STRING s( STR_LEN( "0123456789abcdef0123456789abcdef" ) );
 	
 #elif I == 3
 	
@@ -29,7 +30,7 @@
 #elif I == 4
 	
 	// pointer/length construction, allocated
-	STRING a( STR_LEN( "0123456789abcdef" ) );
+	STRING a( STR_LEN( "0123456789abcdef0123456789abcdef" ) );
 	
 	// copy construction (refcounting)
 	STRING b = a;
@@ -38,7 +39,7 @@
 	#ifdef PLUS_STRING
 	
 	// pointer/length construction, static
-	STRING a( STR_LEN( "0123456789abcdef" ), plus::delete_never );
+	STRING a( STR_LEN( "0123456789abcdef0123456789abcdef" ), plus::delete_never );
 	
 	// copy construction (static)
 	STRING b = a;
@@ -51,7 +52,7 @@
 #elif I == 6
 	
 	// pointer/length construction, allocated
-	STRING a( STR_LEN( "0123456789abcdef" ) );
+	STRING a( STR_LEN( "0123456789abcdef0123456789abcdef" ) );
 	
 	// copy construction (refcounting)
 	STRING b = a;
@@ -62,7 +63,7 @@
 #elif I == 7
 	
 	// pointer/length construction, allocated
-	STRING a( STR_LEN( "0123456789abcdef" ) );
+	STRING a( STR_LEN( "0123456789abcdef0123456789abcdef" ) );
 	
 	// copy construction (refcounting)
 	VAR_STRING b = a;
@@ -73,7 +74,7 @@
 #elif I == 8
 	
 	// pointer/length construction, allocated
-	STRING a( STR_LEN( "0123456789abcdef" ) );
+	STRING a( STR_LEN( "0123456789abcdef0123456789abcdef" ) );
 	
 	// copy construction (refcounting)
 	VAR_STRING b = a;
@@ -87,7 +88,7 @@
 #elif I == 9
 	
 	// pointer/length construction, allocated
-	STRING a( STR_LEN( "0123456789abcdef" ) );
+	STRING a( STR_LEN( "0123456789abcdef0123456789abcdef" ) );
 	
 	// move string to var_string
 	VAR_STRING b = move( a );
@@ -109,7 +110,7 @@
 #elif I == 11
 	
 	// pointer/length construction, allocated
-	STRING a( STR_LEN( "0123456789abcdef" ) );
+	STRING a( STR_LEN( "0123456789abcdef0123456789abcdef" ) );
 	
 	// move
 	STRING b = move( a );
@@ -117,7 +118,7 @@
 #elif I == 12
 	
 	// pointer/length construction, allocated
-	STRING a( STR_LEN( "0123456789abcdef" ) );
+	STRING a( STR_LEN( "0123456789abcdef0123456789abcdef" ) );
 	
 	// move construction
 	VAR_STRING b = move( a );
@@ -130,4 +131,3 @@
 	#error Not a valid test number
 	
 #endif
-

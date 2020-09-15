@@ -182,11 +182,39 @@ signal_handler_t signal( int signo, signal_handler_t func )
 
 void abort()
 {
+	const sigset_t abrt = 1 << (SIGABRT - 1);
+	
+	(void) sigprocmask( SIG_UNBLOCK, &abrt, NULL );
+	
+	/*
+		With the signal unblocked in this thread, we needn't care whether
+		it's sent to the thread or the process, since it will be delivered
+		during the kill() call made by raise().
+	*/
+	
+retry:
+	
+	(void) raise( SIGABRT );
+	
+	/*
+		If the disposition is SIG_DFL, the process is terminated immediately
+		and raise() doesn't return.  If it's SIG_IGN, we raise() again with
+		SIG_DFL.  If the signal sent by kill() is caught, it remains pending,
+		but the subsequent sigaction() call will be interrupted to call the
+		signal handler.  If the handler returns, then we reset the default
+		signal disposition and the next raise() call terminates the process.
+		
+		In the event that the next raise() call switches to another thread,
+		which then reinstalls the signal handler, raise() may return again.
+		In that case, reset the signal disposition and call raise() again,
+		ad infinitum, until the process terminates.
+	*/
+	
 	struct sigaction action = { SIG_DFL, 0, 0 };
 	
 	(void) sigaction( SIGABRT, &action, NULL );
 	
-	(void) raise( SIGABRT );
+	goto retry;
 }
 
 /*
@@ -236,16 +264,14 @@ int mkstemp( char* name )
 
 int raise( int sig )
 {
-	const int killed = kill( getpid(), sig );
-	
-	if ( killed < 0 )
+	if ( int err = pthread_kill( pthread_self(), sig ) )
 	{
-		// Invalid signal number
-		return killed;
+		errno = err;
+		
+		return -1;
 	}
 	
-	// Allow signals to be delivered
-	return kill( 1, 0 );
+	return 0;
 }
 
 int system( const char* command )
@@ -303,33 +329,38 @@ struct group* getgrnam( const char *name )
 #pragma mark -
 #pragma mark ** pwd **
 
+static struct passwd root_pw =
+{
+	"root",
+	"",
+	0,
+	0,
+	0,
+	"",
+	"System Administrator",
+	"/var/root",
+	"/bin/sh",
+	0
+};
+
 struct passwd* getpwnam( const char* name )
 {
-	errno = ESRCH;
+	if ( strcmp( name, "root" ) == 0 )
+	{
+		return &root_pw;
+	}
 	
 	return NULL;
 }
 
 struct passwd* getpwuid( uid_t uid )
 {
-	static struct passwd result =
+	if ( uid == 0 )
 	{
-		"jr",
-		"",
-		0,
-		0,
-		0,
-		"",
-		"J. Random User",
-		"/home/jr",
-		"/bin/sh",
-		0
-	};
+		return &root_pw;
+	}
 	
-	result.pw_uid =
-	result.pw_gid = uid;
-	
-	return &result;
+	return NULL;
 }
 
 #pragma mark -
@@ -401,7 +432,7 @@ void siglongjmp( sigjmp_buf env, int val )
 
 int fileno( FILE *stream )
 {
-	return _fileno( stream );
+	return stream->handle;
 }
 
 extern "C" FILE* __find_unopened_file();
@@ -540,7 +571,7 @@ int link( const char* oldpath, const char* newpath )
 	return linkat( AT_FDCWD, oldpath, AT_FDCWD, newpath, AT_SYMLINK_FOLLOW );
 }
 
-int readlink( const char *path, char *buffer, size_t buffer_size )
+ssize_t readlink( const char *path, char *buffer, size_t buffer_size )
 {
 	const int saved_errno = errno;
 	
@@ -569,13 +600,6 @@ ssize_t _readlink( const char *path, char *buffer, size_t buffer_size )
 int unlink( const char* path )
 {
 	return unlinkat( AT_FDCWD, path, 0 );
-}
-
-pid_t fork()
-{
-	errno = ENOSYS;
-	
-	return -1;
 }
 
 int gethostname( char* result, size_t buffer_length )
@@ -637,6 +661,17 @@ unsigned int sleep( unsigned int seconds )
 	nanosleep( &nanoseconds, &nanoseconds );
 	
 	return nanoseconds.tv_sec + ( nanoseconds.tv_nsec > 0 );
+}
+
+int usleep( useconds_t useconds )
+{
+	const timespec nanoseconds =
+	{
+		useconds / 1000000,
+		useconds % 1000000 * 1000
+	};
+	
+	return nanosleep( &nanoseconds, NULL );
 }
 
 pid_t tcgetpgrp( int fd )
@@ -728,4 +763,3 @@ int setuid( uid_t uid )
 	
 	return 0;
 }
-

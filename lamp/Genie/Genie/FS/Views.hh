@@ -10,11 +10,9 @@
 #include "plus/var_string.hh"
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
-
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
-#include "Genie/FS/property.hh"
+#include "vfs/node_ptr.hh"
+#include "vfs/property.hh"
+#include "vfs/node/types/fixed_dir.hh"
 
 
 namespace Pedestal
@@ -27,25 +25,25 @@ namespace Pedestal
 namespace Genie
 {
 	
-	void RemoveAllViewParameters( const FSTree* parent );
+	void RemoveAllViewParameters( const vfs::node* parent );
 	
 	
-	typedef boost::intrusive_ptr< Pedestal::View > (*ViewFactory)( const FSTree* delegate );
+	typedef boost::intrusive_ptr< Pedestal::View > (*ViewFactory)( const vfs::node* delegate );
 	
-	typedef FSTreePtr (*DelegateFactory)( const FSTree*,
-	                                      const FSTree*,
-	                                      const plus::string& );
-	
-	
-	const FSTree* GetViewWindowKey( const FSTree* view );
-	
-	bool InvalidateWindowForView( const FSTree* view );
+	typedef vfs::node_ptr (*DelegateFactory)( const vfs::node*,
+	                                          const vfs::node*,
+	                                          const plus::string& );
 	
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
-	struct Const_View_Property : readonly_property
+	const vfs::node* GetViewWindowKey( const vfs::node* view );
+	
+	bool InvalidateWindowForView( const vfs::node* view );
+	
+	
+	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
+	struct Const_View_Property : vfs::readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			typedef typename Serialize::result_type result_type;
 			
@@ -55,10 +53,10 @@ namespace Genie
 		}
 	};
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
-	struct View_Property : readwrite_property
+	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
+	struct View_Property : vfs::readwrite_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			typedef typename Serialize::result_type result_type;
 			
@@ -67,7 +65,7 @@ namespace Genie
 			Serialize::deconstruct::apply( result, value, binary );
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			Access( that ) = Serialize::reconstruct::apply( begin, end, binary );
 			
@@ -76,29 +74,39 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr create_default_delegate_for_new_view( const FSTree*        node,
-	                                                const FSTree*        parent,
-	                                                const plus::string&  name );
+	vfs::node_ptr create_default_delegate_for_new_view( const vfs::node*     node,
+	                                                    const vfs::node*     parent,
+	                                                    const plus::string&  name );
 	
-	FSTreePtr New_new_view( const FSTree*              parent,
-	                        const plus::string&        name,
-	                        ViewFactory                factory,
-	                        const vfs::fixed_mapping*  mappings,
-	                        vfs::node_destructor       dtor,
-	                        DelegateFactory            delegate_factory = &create_default_delegate_for_new_view );
+	vfs::node_ptr New_new_view( const vfs::node*           parent,
+	                            const plus::string&        name,
+	                            ViewFactory                factory,
+	                            const vfs::fixed_mapping*  mappings         = vfs::empty_mappings,
+	                            vfs::node_destructor       dtor             = NULL,
+	                            size_t                     extra_annex_size = 0,
+	                            DelegateFactory            delegate_factory = &create_default_delegate_for_new_view );
 	
-	typedef boost::intrusive_ptr< Pedestal::View >&
-	//
-	(*ViewGetter)( const FSTree*, const plus::string& name );
+	typedef Pedestal::View* (*ViewGetter)( const vfs::node*,
+	                                       const plus::string&  name );
 	
-	typedef void (*ViewPurger)( const FSTree*, const plus::string& name );
+	typedef void (*ViewSetter)( const vfs::node*,
+	                            const plus::string&  name,
+	                            Pedestal::View*      view );
 	
-	FSTreePtr New_View( const FSTree*        parent,
-	                    const plus::string&  name,
-	                    ViewGetter           get,
-	                    ViewPurger           purge );
+	struct View_Accessors
+	{
+		ViewGetter  get;
+		ViewSetter  set;
+	};
+	
+	vfs::node_ptr New_View( const vfs::node*       parent,
+	                        const plus::string&    name,
+	                        const View_Accessors&  access );
+	
+	vfs::node_ptr new_view_dir( const vfs::node*     parent,
+	                            const plus::string&  name,
+	                            const void*          /* args */ = NULL );
 	
 }
 
 #endif
-

@@ -5,16 +5,33 @@
 
 #include "Genie/FS/sys/app/window/list/REF.hh"
 
+#ifdef __APPLE__
+#include <AvailabilityMacros.h>
+#endif
+
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAWTEXT_H
+#include "missing/QuickdrawText.h"
+#endif
+#endif
+
 // Standard C/C++
 #include <cstdio>
 #include <cstring>
 
+// mac-sys-utils
+#include "mac_sys/windowlist_contains.hh"
+
+// mac-ui-utils
+#include "mac_ui/windows.hh"
+
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // plus
 #include "plus/deconstruct.hh"
-#include "plus/hexidecimal.hh"
+#include "plus/hexadecimal.hh"
 #include "plus/reconstruct.hh"
 #include "plus/serialize.hh"
 #include "plus/var_string.hh"
@@ -35,18 +52,23 @@
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/property.hh"
+#include "vfs/node/types/property_file.hh"
+#include "vfs/node/types/trigger.hh"
+
 // Pedestal
 #include "Pedestal/Window.hh"
+#include "Pedestal/WindowStorage.hh"
+
+// relix-kernel
+#include "relix/config/color.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/Trigger.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/utf8_text_property.hh"
-#include "Genie/Utilities/WindowList_contains.hh"
 
 
 namespace Nitrogen
@@ -72,6 +94,22 @@ namespace Nitrogen
 	}
 	
 	using ::SetPortTextSize;
+	
+	static inline
+	void SetWindowAlpha( WindowRef window, float alpha )
+	{
+		::SetWindowAlpha( window, alpha );
+	}
+	
+	static
+	float GetWindowAlpha( WindowRef window )
+	{
+		float alpha;
+		
+		Mac::ThrowOSStatus( ::GetWindowAlpha( window, &alpha ) );
+		
+		return alpha;
+	}
 	
 }
 
@@ -101,7 +139,7 @@ namespace Genie
 	{
 		static Point Get( WindowRef window )
 		{
-			return Ped::GetWindowPosition( window );
+			return mac::ui::get_window_position( window );
 		}
 		
 		static void Set( WindowRef window, Point position )
@@ -114,7 +152,7 @@ namespace Genie
 	{
 		static Point Get( WindowRef window )
 		{
-			return Ped::GetWindowSize( window );
+			return mac::ui::get_window_size( window );
 		}
 		
 		static void Set( WindowRef window, Point size )
@@ -325,7 +363,7 @@ namespace Genie
 			
 			SetColor( color );
 			
-			N::InvalRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
+			Ped::invalidate_window( window );
 		}
 	};
 	
@@ -344,7 +382,7 @@ namespace Genie
 			
 			::TextFont( fontID );
 			
-			N::InvalRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
+			Ped::invalidate_window( window );
 		}
 	};
 	
@@ -363,13 +401,31 @@ namespace Genie
 			
 			::TextSize( size );
 			
-			N::InvalRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
+			Ped::invalidate_window( window );
 		}
 	};
 	
-	static void select_trigger( const FSTree* node )
+	struct Access_WindowAlpha : plus::serialize_unsigned< short >
 	{
-		trigger_extra& extra = *(trigger_extra*) node->extra();
+		static short Get( WindowRef window )
+		{
+			return short( N::GetWindowAlpha( window ) * 10000 );
+		}
+		
+		static void Set( WindowRef window, short alpha )
+		{
+			if ( uint16_t( alpha ) > 10000 )
+			{
+				alpha = 10000;
+			}
+			
+			N::SetWindowAlpha( window, alpha / 10000.0 );
+		}
+	};
+	
+	static void select_trigger( const vfs::node* that )
+	{
+		vfs::trigger_extra& extra = *(vfs::trigger_extra*) that->extra();
 		
 		const WindowRef window = (WindowRef) extra.data;
 		
@@ -377,23 +433,23 @@ namespace Genie
 	}
 	
 	
-	static WindowRef GetKeyFromParent( const FSTree* parent )
+	static WindowRef GetKeyFromParent( const vfs::node* parent )
 	{
 		return (WindowRef) plus::decode_32_bit_hex( parent->name() );
 	}
 	
 	template < class Accessor >
-	struct sys_app_window_list_REF_Const_Property : readonly_property
+	struct sys_app_window_list_REF_Const_Property : vfs::readonly_property
 	{
-		static const std::size_t fixed_size = Accessor::fixed_size;
+		static const int fixed_size = Accessor::fixed_size;
 		
 		typedef WindowRef Key;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			Key key = GetKeyFromParent( that );
 			
-			if ( !WindowList_contains( key ) )
+			if ( ! mac::sys::windowlist_contains( key ) )
 			{
 				p7::throw_errno( EIO );
 			}
@@ -411,15 +467,15 @@ namespace Genie
 	{
 		static const bool can_set = true;
 		
-		static const std::size_t fixed_size = Accessor::fixed_size;
+		static const int fixed_size = Accessor::fixed_size;
 		
 		typedef WindowRef Key;
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			Key key = GetKeyFromParent( that );
 			
-			if ( !WindowList_contains( key ) )
+			if ( ! mac::sys::windowlist_contains( key ) )
 			{
 				p7::throw_errno( EIO );
 			}
@@ -429,29 +485,19 @@ namespace Genie
 	};
 	
 	
-	template < class Trigger >
-	static FSTreePtr Trigger_Factory( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
-	{
-		WindowRef key = GetKeyFromParent( parent );
-		
-		return new Trigger( parent, name, key );
-	}
-	
-	static FSTreePtr window_trigger_factory( const FSTree*        parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
+	static vfs::node_ptr window_trigger_factory( const vfs::node*     parent,
+	                                             const plus::string&  name,
+	                                             const void*          args )
 	{
 		const WindowRef window = GetKeyFromParent( parent );
 		
-		const trigger_extra extra = { &select_trigger, (intptr_t) window };
+		const vfs::trigger_extra extra = { &select_trigger, (intptr_t) window };
 		
-		return trigger_factory( parent, name, &extra );
+		return vfs::trigger_factory( parent, name, &extra );
 	}
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	#define PROPERTY_CONST_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Const_Property< access > )
 	
@@ -467,22 +513,46 @@ namespace Genie
 		{ ".mac-title", PROPERTY(                     window_title   ) },
 		{      "title", PROPERTY( utf8_text_property< window_title > ) },
 		
+		{ ".~mac-title", PROPERTY(                     window_title   ) },
+		{     ".~title", PROPERTY( utf8_text_property< window_title > ) },
+		
 		{ "pos",   PROPERTY_ACCESS( Access_WindowPosition ) },
 		{ "size",  PROPERTY_ACCESS( Access_WindowSize     ) },
 		{ "vis",   PROPERTY_ACCESS( Access_WindowVisible  ) },
 		
+		{ ".~pos",   PROPERTY_ACCESS( Access_WindowPosition ) },
+		{ ".~size",  PROPERTY_ACCESS( Access_WindowSize     ) },
+		{ ".~vis",   PROPERTY_ACCESS( Access_WindowVisible  ) },
+		
 		{ "text-font",  PROPERTY_ACCESS( Access_WindowTextFont ) },
 		{ "text-size",  PROPERTY_ACCESS( Access_WindowTextSize ) },
 		
+		{ ".~text-font",  PROPERTY_ACCESS( Access_WindowTextFont ) },
+		{ ".~text-size",  PROPERTY_ACCESS( Access_WindowTextSize ) },
+		
+	#if CONFIG_COLOR
+		
 		{ "back-color", PROPERTY_ACCESS( Access_WindowBackColor ) },
 		{ "fore-color", PROPERTY_ACCESS( Access_WindowForeColor ) },
+		
+		{ ".~back-color", PROPERTY_ACCESS( Access_WindowBackColor ) },
+		{ ".~fore-color", PROPERTY_ACCESS( Access_WindowForeColor ) },
+		
+	#endif
+		
+	#if TARGET_API_MAC_OSX
+		
+		{ "alpha",  PROPERTY_ACCESS( Access_WindowAlpha ) },
+		
+	#endif
 		
 		{ "select", &window_trigger_factory },
 		
 		{ "z", PROPERTY_CONST_ACCESS( Access_WindowZOrder ) },
 		
+		{ ".~z", PROPERTY_CONST_ACCESS( Access_WindowZOrder ) },
+		
 		{ NULL, NULL }
 	};
 	
 }
-

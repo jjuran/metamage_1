@@ -16,23 +16,28 @@
 
 // plus
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 #include "plus/var_string.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/filehandle.hh"
+#include "vfs/node.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
+#include "vfs/filehandle/types/property_reader.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/property_file.hh"
+
 // Pedestal
 #include "Pedestal/ListView.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/PropertyFile.hh"
-#include "Genie/IO/RegularFile.hh"
-#include "Genie/IO/VirtualFile.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -56,7 +61,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const FSTree*, ListParameters > ListParameterMap;
+	typedef plus::simple_map< const vfs::node*, ListParameters > ListParameterMap;
 	
 	static ListParameterMap gListParameterMap;
 	
@@ -64,13 +69,11 @@ namespace Genie
 	class ListView : public Ped::ListView
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Key itsKey;
 		
 		public:
-			typedef Key Initializer;
-			
 			ListView( Key key ) : itsKey( key )
 			{
 			}
@@ -118,51 +121,56 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new ListView( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		gListParameterMap.erase( delegate );
 	}
 	
 	
-	class List_data_Handle : public VirtualFileHandle< StreamHandle >
+	static
+	ssize_t listdata_write( vfs::filehandle* that, const char* buffer, size_t n );
+	
+	static const vfs::stream_method_set listdata_stream_methods =
 	{
-		public:
-			List_data_Handle( const FSTreePtr& file, int flags )
-			:
-				VirtualFileHandle< StreamHandle >( file, flags )
-			{
-			}
-			
-			unsigned int SysPoll()  { return kPollRead | kPollWrite; }
-			
-			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
+		NULL,
+		NULL,
+		&listdata_write,
 	};
 	
-	ssize_t List_data_Handle::SysWrite( const char* buffer, std::size_t byteCount )
+	static const vfs::filehandle_method_set listdata_methods =
 	{
-		if ( byteCount != 0  &&  buffer[ byteCount - 1 ] != '\n' )
+		NULL,
+		NULL,
+		&listdata_stream_methods,
+	};
+	
+	
+	static
+	ssize_t listdata_write( vfs::filehandle* that, const char* buffer, size_t n )
+	{
+		if ( n != 0  &&  buffer[ n - 1 ] != '\n' )
 		{
 			p7::throw_errno( EINVAL );
 		}
 		
-		const FSTree* view = GetFile()->owner();
+		const vfs::node* view = get_file( *that )->owner();
 		
 		ListParameters& params = gListParameterMap[ view ];
 		
 		std::vector< plus::string >& strings = params.itsStrings;
 		
-		if ( GetFlags() & O_TRUNC )
+		if ( that->get_flags() & O_TRUNC )
 		{
 			strings.clear();
 		}
 		
-		const char* end = buffer + byteCount;
+		const char* end = buffer + n;
 		
 		const char* p = buffer;
 		
@@ -181,7 +189,7 @@ namespace Genie
 		
 		InvalidateWindowForView( view );
 		
-		return byteCount;
+		return n;
 	}
 	
 	
@@ -199,19 +207,19 @@ namespace Genie
 		return result;
 	}
 	
-	static off_t list_data_geteof( const FSTree* node )
+	static off_t list_data_geteof( const vfs::node* that )
 	{
-		return measure_strings( gListParameterMap[ node->owner() ].itsStrings );
+		return measure_strings( gListParameterMap[ that->owner() ].itsStrings );
 	}
 	
-	static void list_data_seteof( const FSTree* node, off_t length )
+	static void list_data_seteof( const vfs::node* that, off_t length )
 	{
 		if ( length != 0 )
 		{
 			p7::throw_errno( EINVAL );
 		}
 		
-		ListParameters& params = gListParameterMap[ node->owner() ];
+		ListParameters& params = gListParameterMap[ that->owner() ];
 		
 		params.itsStrings.clear();
 		
@@ -233,69 +241,62 @@ namespace Genie
 		return result;
 	}
 	
-	static IOPtr list_data_open( const FSTree* node, int flags, mode_t mode )
+	static vfs::filehandle_ptr list_data_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		IOHandle* result = NULL;
-		
 		if ( flags == O_RDONLY )
 		{
-			plus::string data = join_strings( gListParameterMap[ node->owner() ].itsStrings );
+			plus::string data = join_strings( gListParameterMap[ that->owner() ].itsStrings );
 			
-			result = new PropertyReaderFileHandle( node, flags, data );
+			return vfs::new_property_reader( *that, flags, data );
 		}
 		else if (    (flags & ~O_CREAT) - O_WRONLY == O_TRUNC
 		          || (flags & ~O_CREAT) - O_WRONLY == O_APPEND )
 		{
-			result = new List_data_Handle( node, flags );
+			// return below to silence Metrowerks warning
 		}
 		else
 		{
 			throw p7::errno_t( EINVAL );
 		}
 		
-		return result;
+		return new vfs::filehandle( that, flags, &listdata_methods );
 	}
 	
-	static const data_method_set list_data_data_methods =
+	static const vfs::data_method_set list_data_data_methods =
 	{
 		&list_data_open,
 		&list_data_geteof,
 		&list_data_seteof
 	};
 	
-	static const node_method_set list_data_methods =
+	static const vfs::node_method_set list_data_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		&list_data_data_methods
 	};
 	
-	static FSTreePtr list_data_factory( const FSTree*        parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
+	static vfs::node_ptr list_data_factory( const vfs::node*     parent,
+	                                        const plus::string&  name,
+	                                        const void*          args )
 	{
-		return new FSTree( parent, name, S_IFREG | 0600, &list_data_methods );
+		return new vfs::node( parent, name, S_IFREG | 0600, &list_data_methods );
 	}
 	
 	
 	namespace
 	{
 		
-		bool& Overlap( const FSTree* view )
+		bool& Overlap( const vfs::node* view )
 		{
 			return gListParameterMap[ view ].itIntersectsGrowBox;
 		}
 		
 	}
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
+	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
 	struct List_Property : View_Property< Serialize, Access >
 	{
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			View_Property< Serialize, Access >::set( that, begin, end, binary );
 			
@@ -304,7 +305,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	typedef List_Property< plus::serialize_bool, Overlap >  Overlap_Property;
 	
@@ -317,9 +318,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_list( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const void*          args )
+	vfs::node_ptr New_FSTree_new_list( const vfs::node*     parent,
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,
@@ -329,4 +330,3 @@ namespace Genie
 	}
 	
 }
-

@@ -1,7 +1,7 @@
-/*	=============
- *	privileged.cc
- *	=============
- */
+/*
+	privileged.cc
+	-------------
+*/
 
 
 #pragma exceptions off
@@ -9,13 +9,12 @@
 
 #ifdef __MC68K__
 
-static void PrivilegedInstructionTest()
+static
+void privileged_instruction_test()
 {
 	asm
 	{
-		machine 68020
-		
-		MOVEC	VBR,A0
+		ORI      #0,SR
 	}
 }
 
@@ -23,7 +22,8 @@ static void PrivilegedInstructionTest()
 
 #ifdef __POWERPC__
 
-static void PrivilegedInstructionTest()
+static
+void privileged_instruction_test()
 {
 	asm
 	{
@@ -36,8 +36,7 @@ static void PrivilegedInstructionTest()
 
 int main()
 {
-	PrivilegedInstructionTest();
+	privileged_instruction_test();
 	
 	return 0;
 }
-

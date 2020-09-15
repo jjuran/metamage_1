@@ -10,6 +10,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/functions/access.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
@@ -20,9 +21,11 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void listdir( const node* it, vfs::dir_contents& contents )
+	void listdir( const node& that, vfs::dir_contents& contents )
 	{
-		const node_method_set* methods = it->methods();
+		access( that, R_OK );
+		
+		const node_method_set* methods = that.methods();
 		
 		const dir_method_set* dir_methods;
 		
@@ -30,7 +33,7 @@ namespace vfs
 		{
 			if ( dir_methods->listdir )
 			{
-				dir_methods->listdir( it, contents );
+				dir_methods->listdir( &that, contents );
 				
 				return;
 			}
@@ -40,4 +43,3 @@ namespace vfs
 	}
 	
 }
-

@@ -6,11 +6,6 @@
 #ifndef PEDESTAL_VIEW_HH
 #define PEDESTAL_VIEW_HH
 
-// Mac OS
-#ifndef __CONDITIONALMACROS__
-#include <ConditionalMacros.h>
-#endif
-
 // Debug
 #include "debug/boost_assert.hh"
 
@@ -26,34 +21,27 @@
 #endif
 
 
+#ifdef __APPLE__
+#define VIRTUAL_ON_OSX  virtual
+#else
+#define VIRTUAL_ON_OSX  /**/
+#endif
+
+struct CGRect;           // CGGeometry.h
 struct EventRecord;      // Events.h
-struct MacRegion;        // Quickdraw.h
-struct OpaqueRgnHandle;  // Quickdraw.h
 struct Rect;             // Quickdraw.h
+
+typedef struct CGContext *CGContextRef;  // CGContext.h
 
 
 namespace Pedestal
 {
-	
-	// same as ::RgnHandle but without the include
-	
-#if !OPAQUE_TOOLBOX_STRUCTS
-	
-	typedef MacRegion** RgnHandle;
-	
-#else
-	
-	typedef OpaqueRgnHandle* RgnHandle;
-	
-#endif
 	
 	class Quasimode;
 	
 	class View : public plus::ref_count< View >
 	{
 		public:
-			struct Initializer {};
-			
 			virtual ~View()  {}
 			
 			virtual void Install  ( const Rect& bounds )  {}
@@ -63,12 +51,16 @@ namespace Pedestal
 			
 			virtual void Idle     ( const EventRecord& event )  {}
 			virtual bool MouseDown( const EventRecord& event )  { return true;  }
+			virtual void MouseUp  ( const EventRecord& event )  {}
 			virtual bool KeyDown  ( const EventRecord& event )  { return false; }
+			virtual void KeyUp    ( const EventRecord& event )  {}
 			virtual bool HitTest  ( const EventRecord& event )  { return true;  }
 			
 			virtual boost::intrusive_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& );
 			
 			virtual void Draw( const Rect& bounds, bool erasing );
+			
+			VIRTUAL_ON_OSX void DrawInContext( CGContextRef context, CGRect bounds );
 			
 			virtual void Activate( bool activating )  {}
 			
@@ -81,19 +73,13 @@ namespace Pedestal
 				return current;
 			}
 			
-			virtual bool SetCursor( const EventRecord&  event,
-			                        RgnHandle           mouseRgn  )  { return false; }
+			virtual bool SetCursor( const EventRecord& event )  { return false; }
 			
 			virtual bool UserCommand( CommandCode code  )  { return false; }
 	};
 	
-	
-	inline boost::intrusive_ptr< View > seize_ptr( View* view )
-	{
-		return boost::intrusive_ptr< View >( view );
-	}
-	
 }
 
-#endif
+#undef VIRTUAL_ON_OSX
 
+#endif

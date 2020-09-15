@@ -20,6 +20,8 @@
 namespace Nitrogen
 {
 	
+#ifndef MAC_OS_X_VERSION_10_8
+	
 	using Mac::ThrowOSStatus;
 	
 	
@@ -236,6 +238,8 @@ namespace Nitrogen
 		return nucleus::owned< OTConfigurationRef >::seize( ::OTCloneConfiguration( config ) );
 	}
 	
+#endif  // #ifndef MAC_OS_X_VERSION_10_8
+	
 	void RegisterOpenTransportErrors()
 	{
 	//	RegisterOSStatus< kOTOutOfMemoryErr          >();  // Duplicates kENOMEMErr
@@ -337,4 +341,3 @@ namespace Nitrogen
 	}
 	
 }
-

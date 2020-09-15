@@ -6,9 +6,13 @@
 
 #define	_SIZE_T_DEFINED_
 
-#ifdef __cplusplus
+#if defined( __cplusplus )  &&  defined( _MSL_USING_NAMESPACE )
+#if __MSL__ < 0x6000
+using namespace std;
+#else
 using std::size_t;
 using std::va_list;
+#endif
 #endif
 typedef va_list __va_list;
 
@@ -44,4 +48,3 @@ typedef unsigned short __wchar_t;
 #endif
 
 #endif
-

@@ -9,6 +9,9 @@
 // POSIX
 #include <unistd.h>
 
+// must
+#include "must/write.h"
+
 // iota
 #include "iota/strings.hh"
 
@@ -21,9 +24,14 @@
 
 int main( int argc, char *const argv[] )
 {
+	if ( argc > 1  &&  strcmp( argv[1], "-s" ) == 0 )
+	{
+		--argc;
+	}
+	
 	if ( argc != 1 )
 	{
-		(void) write( STDERR_FILENO, STR_LEN( "Usage: hostname\n" ) );
+		must_write( STDERR_FILENO, STR_LEN( "Usage: hostname\n" ) );
 		
 		return 1;
 	}
@@ -54,4 +62,3 @@ int main( int argc, char *const argv[] )
 	
 	return 0;
 }
-

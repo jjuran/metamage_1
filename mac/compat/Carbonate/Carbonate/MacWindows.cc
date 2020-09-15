@@ -11,7 +11,7 @@
 #endif
 
 
-#if TARGET_CPU_68K
+#if !ACCESSOR_CALLS_ARE_FUNCTIONS
 
 pascal WindowRef GetWindowList()
 {
@@ -34,4 +34,3 @@ OSStatus GetWindowAlpha( WindowRef window, float* outAlpha )
 	
 	return noErr;
 }
-

@@ -22,4 +22,3 @@
 #undef LongTimeString
 
 #endif
-

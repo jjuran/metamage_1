@@ -24,15 +24,15 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node.hh"
+#include "vfs/property.hh"
+#include "vfs/node/types/basic_directory.hh"
+#include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/generated_file.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
@@ -44,7 +44,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static UInt16 GetKeyFromParent( const FSTree* parent )
+	static UInt16 GetKeyFromParent( const vfs::node* parent )
 	{
 		return gear::parse_unsigned_decimal( parent->name().c_str() );
 	}
@@ -86,7 +86,7 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping sys_mac_soundin_REF_Mappings[];
 	
-	static FSTreePtr soundin_Lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr soundin_Lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !valid_name_of_soundin_device::applies( name ) )
 		{
@@ -95,26 +95,6 @@ namespace Genie
 		
 		return fixed_dir( parent, name, sys_mac_soundin_REF_Mappings );
 	}
-	
-	class soundin_IteratorGenerator
-	{
-		private:
-			std::size_t its_index;
-		
-		public:
-			soundin_IteratorGenerator() : its_index()
-			{
-			}
-			
-			vfs::dir_entry operator()()
-			{
-				const ino_t inode = ++its_index;
-				
-				plus::string name = gear::inscribe_decimal( its_index );
-				
-				return vfs::dir_entry( inode, name );
-			}
-	};
 	
 	template < class Sequence >
 	static inline std::size_t distance( const Sequence& sequence )
@@ -127,13 +107,18 @@ namespace Genie
 		return distance( N::SoundInputDevice_Names() );
 	}
 	
-	static void soundin_Iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void soundin_Iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		const std::size_t n = Count_SoundInputDevices();
 		
-		std::generate_n( std::back_inserter( cache ),
-		                 n,
-		                 soundin_IteratorGenerator() );
+		for ( int i = 1;  i <= n;  ++i )
+		{
+			const ino_t inode = i;
+			
+			plus::string name = gear::inscribe_decimal( i );
+			
+			cache.push_back( vfs::dir_entry( inode, name ) );
+		}
 	}
 	
 	
@@ -161,9 +146,9 @@ namespace Genie
 		return plus::string( result );
 	}
 	
-	struct sys_mac_soundin_REF_name : readonly_property
+	struct sys_mac_soundin_REF_name : vfs::readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			const UInt16 index = GetKeyFromParent( that );
 			
@@ -175,7 +160,7 @@ namespace Genie
 	
 	struct sys_mac_soundin_N_icon
 	{
-		static plus::string Get( const FSTree* parent, const plus::string& name )
+		static plus::string Get( const vfs::node* parent, const plus::string& name )
 		{
 			const UInt16 index = GetKeyFromParent( parent );
 			
@@ -200,23 +185,22 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_soundin_REF_Mappings[] =
 	{
 		{ "name", PROPERTY( sys_mac_soundin_REF_name ) },
 		
-		{ "icon", &new_generated, (void*) &sys_mac_soundin_N_icon::Get },
+		{ "icon", &vfs::new_generated, (void*) &sys_mac_soundin_N_icon::Get },
 		
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_soundin( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_soundin( const vfs::node*     parent,
+	                                          const plus::string&  name,
+	                                          const void*          args )
 	{
-		return new_basic_directory( parent, name, soundin_Lookup, soundin_Iterate );
+		return vfs::new_basic_directory( parent, name, soundin_Lookup, soundin_Iterate );
 	}
 	
 }
-
