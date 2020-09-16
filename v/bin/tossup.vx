@@ -63,7 +63,7 @@ def read-all (error, read, n)
 		
 		n -= piece.size
 		
-		result = result piece
+		result .= piece
 	}
 	
 	return result
@@ -94,7 +94,7 @@ def exchange (outgoing-data)
 		
 		mention "\x08" x
 		
-		result = result x
+		result .= x
 	}
 	
 	return result
