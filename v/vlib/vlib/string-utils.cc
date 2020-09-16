@@ -173,6 +173,7 @@ namespace vlib
 			
 			case Op_duplicate:    return " = ";
 			case Op_approximate:  return " := ";
+			case Op_concat_with:  return " .= ";
 			case Op_increase_by:  return " += ";
 			case Op_decrease_by:  return " -= ";
 			case Op_multiply_by:  return " *= ";

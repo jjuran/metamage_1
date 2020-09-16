@@ -85,6 +85,7 @@ namespace vlib
 		Token_question_x2,
 		Token_colon,
 		Token_colon_equals,
+		Token_dot_equals,
 		Token_plus_equals,
 		Token_minus_equals,
 		Token_asterisk_equals,

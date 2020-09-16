@@ -119,6 +119,7 @@ namespace vlib
 		{ ".",   Token_dot    },
 		{ "..",  Token_dot_x2 },
 		{ "...", Token_dot_x3 },
+		{ ".=",  Token_dot_equals },
 		
 		{ "/",   Token_slash        },
 		{ "//",  Token_slash_x2     },

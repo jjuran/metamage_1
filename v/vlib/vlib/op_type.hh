@@ -43,6 +43,7 @@ namespace vlib
 		Op_postdec,
 		Op_duplicate,
 		Op_approximate,
+		Op_concat_with,
 		Op_increase_by,
 		Op_decrease_by,
 		Op_multiply_by,

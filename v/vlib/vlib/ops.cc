@@ -104,6 +104,7 @@ namespace vlib
 		
 		{ Token_colon_equals, Loose, Op_approximate },
 		
+		{ Token_dot_equals,         Loose, Op_concat_with },
 		{ Token_plus_equals,        Loose, Op_increase_by },
 		{ Token_minus_equals,       Loose, Op_decrease_by },
 		{ Token_asterisk_equals,    Loose, Op_multiply_by },

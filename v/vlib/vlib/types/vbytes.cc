@@ -8,6 +8,9 @@
 // gear
 #include "gear/find.hh"
 
+// plus
+#include "plus/string/concat.hh"
+
 // bignum
 #include "bignum/integer.hh"
 
@@ -261,6 +264,8 @@ namespace vlib
 	                                  const Value&   x,
 	                                  const Value&   b )
 	{
+		VBytes& a = *(VBytes*) target.addr;
+		
 		switch ( op )
 		{
 			case Op_duplicate:
@@ -272,6 +277,18 @@ namespace vlib
 			
 			case Op_approximate:
 				return assign_byte_to_index( *target.addr, x, b.to< Byte >() );
+			
+			case Op_concat_with:
+				if ( b.type() == V_str  ||  b.type() == V_pack )
+				{
+					VBytes bytes( plus::concat( a.string(), b.string() ),
+					              a.type(),
+					              a.dispatch_methods() );
+					
+					a.swap( bytes );
+					
+					return a;
+				}
 			
 			default:
 				break;
