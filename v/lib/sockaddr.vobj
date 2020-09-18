@@ -7,7 +7,7 @@ def display
 	
 	const family = u8 (sa[ 1 ] or sa[ 0 ])
 	
-	const addr
+	var addr
 	
 	if family == 2 then
 	{
@@ -15,7 +15,18 @@ def display
 	}
 	else if family == 30 then
 	{
-		addr = "[" ":".join( hex sa[ 8 -> 24 ] / -4 ) "]"
+		addr = ":".join( hex sa[ 8 -> 24 ] / -4 )
+		
+		if var p = (begin addr).find "0000:0000" then
+		{
+			const q = p
+			
+			p += ["0000", ":0000"+]
+			
+			addr = (q.past or ":") (p.rest or ":")
+		}
+		
+		addr = "[" addr "]"
 	}
 	else
 	{
