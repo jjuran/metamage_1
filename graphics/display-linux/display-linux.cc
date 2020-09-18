@@ -269,12 +269,14 @@ void blit( const uint8_t*  src,
            size_t          height,
            draw_proc       draw )
 {
-	while ( height-- > reflection_height )
+	while ( height > reflection_height )
 	{
 		draw( src, dst, width );
 		
 		src += src_stride;
 		dst += dst_stride;
+		
+		--height;
 	}
 	
 	if ( reflection_height == 0 )
