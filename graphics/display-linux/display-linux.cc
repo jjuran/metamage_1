@@ -95,6 +95,7 @@ static command::option options[] =
 
 static int  the_corner;
 static bool gfx_mode;
+static bool doubling;
 static bool waiting;
 static bool watching;
 static bool exhibiting;
@@ -202,7 +203,7 @@ const pixtet< UInt, X >* make_1_to_direct_table()
 	{
 		n_octets = 256,
 		
-		table_size = n_octets * sizeof (pixel_unit),  // 4K or 8K
+		table_size = n_octets * sizeof (pixel_unit),  // 4K, 8K, or 16K
 	};
 	
 	pixel_unit* table = (pixel_unit*) malloc( table_size );
@@ -284,7 +285,8 @@ draw_proc select_draw_proc( const raster_desc& desc, bool swap_bytes )
 	switch ( desc.weight )
 	{
 		case 1:
-			return &lookup_1_to_direct< bilevel_pixel_t >;
+			return doubling ? &lookup_1_to_direct< bilevel_pixel_t, 2 >
+			                : &lookup_1_to_direct< bilevel_pixel_t, 1 >;
 		
 		case 16:
 			return &copy_16;
@@ -325,8 +327,17 @@ void blit( const uint8_t*  src,
            size_t          height,
            draw_proc       draw )
 {
-	while ( height > reflection_height )
+	const size_t source_rows_reflection_height = reflection_height >> doubling;
+	
+	while ( height > source_rows_reflection_height )
 	{
+		if ( doubling )
+		{
+			draw( src, dst, width );
+			
+			dst += dst_stride;
+		}
+		
 		draw( src, dst, width );
 		
 		src += src_stride;
@@ -356,14 +367,17 @@ void blit( const uint8_t*  src,
 		
 		src += src_stride;
 		
-		memcpy( dst, tmp, dst_stride );
-		
-		dst += dst_stride;
-		fxp -= dst_stride;
-		
-		const int fraction = ++n * 256 / denom;
-		
-		memcpy_fixmul( fxp, tmp, dst_stride, fraction );
+		for ( int i = 0;  i <= doubling;  ++i )
+		{
+			memcpy( dst, tmp, dst_stride );
+			
+			dst += dst_stride;
+			fxp -= dst_stride;
+			
+			const int fraction = ++n * 256 / denom;
+			
+			memcpy_fixmul( fxp, tmp, dst_stride, fraction );
+		}
 	}
 }
 
@@ -427,6 +441,8 @@ char* const* get_options( char** argv )
 	
 	while ( (opt = command::get_option( (char* const**) &argv, options )) > 0 )
 	{
+		using command::global_result;
+		
 		switch ( opt )
 		{
 			case Opt_exhibit:
@@ -435,6 +451,23 @@ char* const* get_options( char** argv )
 			
 			case Opt_graphics_mode:
 				gfx_mode = should_modeswitch();
+				break;
+			
+			case Opt_magnify:
+				if ( int x = atoi( global_result.param ) )
+				{
+					if ( x <= 2 )
+					{
+						if ( x == 2 )
+						{
+							doubling = true;
+						}
+						
+						break;
+					}
+				}
+				
+				WARN( "invalid -x/--magnify parameter" );
 				break;
 			
 			case Opt_wait:
@@ -719,6 +752,16 @@ int main( int argc, char** argv )
 		the_format = Format_fullscreen;
 	}
 	
+	if ( showing_fullscreen() )
+	{
+		doubling = false;
+	}
+	
+	if ( 2 * desc.width > var_info.xres  ||  2 * desc.height > var_info.yres )
+	{
+		doubling = false;
+	}
+	
 	uint8_t bpp = desc.weight;
 	
 	if ( desc.weight == 1 )
@@ -780,8 +823,8 @@ int main( int argc, char** argv )
 	{
 		const uint8_t corner_raw = the_corner - 1;  // 0-based, none = 255
 		
-		const size_t xwidth  = width;
-		const size_t xheight = height;
+		const size_t xwidth  = width  << doubling;
+		const size_t xheight = height << doubling;
 		
 		size_t dx = the_corner & 1 ? 0 : var_info.xres - xwidth;
 		size_t dy = corner_raw < 2 ? 0 : var_info.yres - xheight;
