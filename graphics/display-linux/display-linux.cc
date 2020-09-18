@@ -193,19 +193,18 @@ template < class UInt >
 static
 const pixtet< UInt >* make_1_to_direct_table()
 {
+	typedef pixtet< UInt > pixel_unit;
+	
 	enum
 	{
 		n_octets = 256,
-		n_pixels = 8,  // per octet
 		
-		n_pixels_in_table = n_octets * n_pixels,  // 2048
-		
-		table_size = n_pixels_in_table * sizeof (UInt),  // 4K or 8K
+		table_size = n_octets * sizeof (pixel_unit),  // 4K or 8K
 	};
 	
-	pixtet< UInt >* table = (pixtet< UInt >*) malloc( table_size );
+	pixel_unit* table = (pixel_unit*) malloc( table_size );
 	
-	pixtet< UInt >* p = table;
+	pixel_unit* p = table;
 	
 	for ( int i = 0; i < 256;  ++i )
 	{
@@ -223,9 +222,11 @@ template < class UInt >
 static
 void lookup_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
 {
-	static const pixtet< UInt >* table = make_1_to_direct_table< UInt >();
+	typedef pixtet< UInt > pixel_unit;
 	
-	pixtet< UInt >* p = (pixtet< UInt >*) dst;
+	static const pixel_unit* table = make_1_to_direct_table< UInt >();
+	
+	pixel_unit* p = (pixel_unit*) dst;
 	
 	while ( width > 0 )
 	{
