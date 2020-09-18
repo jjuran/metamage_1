@@ -26,6 +26,11 @@ def display
 			addr = (q.past or ":") (p.rest or ":")
 		}
 		
+		if sa[ 8 -> 20 ] == (x"00" * 10) x"ffff" then
+		{
+			addr = "::ffff:" ".".join *(sa[ 20 -> 24 ] map u8)
+		}
+		
 		addr = "[" addr "]"
 	}
 	else
