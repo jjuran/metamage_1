@@ -354,14 +354,14 @@ void blit( const uint8_t*  src,
 	{
 		draw( src, tmp, width );
 		
+		src += src_stride;
+		
 		memcpy( dst, tmp, dst_stride );
 		
-		const int fraction = ++n * 256 / denom;
-		
-		src += src_stride;
 		dst += dst_stride;
-		
 		fxp -= dst_stride;
+		
+		const int fraction = ++n * 256 / denom;
 		
 		memcpy_fixmul( fxp, tmp, dst_stride, fraction );
 	}
@@ -697,8 +697,6 @@ int main( int argc, char** argv )
 	
 	const raster_desc& desc = loaded_raster.meta->desc;
 	
-	draw_proc draw = select_draw_proc( desc, is_byte_swapped( loaded_raster ) );
-	
 	fb::handle fbh( DEFAULT_FB_PATH );
 	
 	fb_var_screeninfo var_info = get_var_screeninfo( fbh );
@@ -782,8 +780,11 @@ int main( int argc, char** argv )
 	{
 		const uint8_t corner_raw = the_corner - 1;  // 0-based, none = 255
 		
-		size_t dx = the_corner & 1 ? 0 : var_info.xres - width;
-		size_t dy = corner_raw < 2 ? 0 : var_info.yres - height;
+		const size_t xwidth  = width;
+		const size_t xheight = height;
+		
+		size_t dx = the_corner & 1 ? 0 : var_info.xres - xwidth;
+		size_t dy = corner_raw < 2 ? 0 : var_info.yres - xheight;
 		
 		if ( the_corner == 0 )
 		{
@@ -796,9 +797,14 @@ int main( int argc, char** argv )
 		
 		if ( getenv( "DISPLAY_REFLECTION" )  &&  the_corner < 3 )
 		{
-			reflection_height = min( height / 2, var_info.yres - dy - height );
+			if ( const size_t available_rows = var_info.yres - dy - xheight )
+			{
+				reflection_height = min( xheight / 2, available_rows );
+			}
 		}
 	}
+	
+	draw_proc draw = select_draw_proc( desc, is_byte_swapped( loaded_raster ) );
 	
 	if ( raster::sync_relay* sync = raster_sync )
 	{
