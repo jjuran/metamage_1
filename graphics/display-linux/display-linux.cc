@@ -162,7 +162,7 @@ raster::sync_relay* open_raster( const char* path )
 
 typedef void (*draw_proc)( const uint8_t* src, uint8_t* dst, int width );
 
-template < class UInt >
+template < class UInt, int X = 1 >
 static
 void transcode_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
 {
@@ -176,24 +176,27 @@ void transcode_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
 		{
 			const UInt pixel = byte & mask ? 0x00000000 : 0xFFFFFFFF;
 			
-			*p++ = pixel;
+			for ( int i = 0;  i < X;  ++i )
+			{
+				*p++ = pixel;
+			}
 		}
 		
 		width -= 8;
 	}
 }
 
-template < class UInt >
+template < class UInt, int X = 1 >
 struct pixtet
 {
-	UInt pixels[ 8 ];
+	UInt pixels[ 8 * X ];
 };
 
-template < class UInt >
+template < class UInt, int X = 1 >
 static
-const pixtet< UInt >* make_1_to_direct_table()
+const pixtet< UInt, X >* make_1_to_direct_table()
 {
-	typedef pixtet< UInt > pixel_unit;
+	typedef pixtet< UInt, X > pixel_unit;
 	
 	enum
 	{
@@ -210,7 +213,7 @@ const pixtet< UInt >* make_1_to_direct_table()
 	{
 		uint8_t oct = i;
 		
-		transcode_1_to_direct< UInt >( &oct, (uint8_t*) p, 8 );
+		transcode_1_to_direct< UInt, X >( &oct, (uint8_t*) p, 8 );
 		
 		++p;
 	}
@@ -218,13 +221,13 @@ const pixtet< UInt >* make_1_to_direct_table()
 	return table;
 }
 
-template < class UInt >
+template < class UInt, int X >
 static
 void lookup_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
 {
-	typedef pixtet< UInt > pixel_unit;
+	typedef pixtet< UInt, X > pixel_unit;
 	
-	static const pixel_unit* table = make_1_to_direct_table< UInt >();
+	static const pixel_unit* table = make_1_to_direct_table< UInt, X >();
 	
 	pixel_unit* p = (pixel_unit*) dst;
 	
