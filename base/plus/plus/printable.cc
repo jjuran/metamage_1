@@ -5,6 +5,9 @@
 
 #include "plus/printable.hh"
 
+// Standard C
+#include <stdint.h>
+
 // gear
 #include "gear/hexadecimal.hh"
 #include "gear/inscribe_decimal.hh"
@@ -24,13 +27,13 @@ namespace plus
 		
 		if ( sizeof x > 4 )
 		{
-			const unsigned upper = (unsigned long long) x >> 32;
+			const unsigned upper = (uintptr_t) x >> (sizeof x * 8 - 32);
 			
 			gear::encode_32_bit_hex( upper, p );
 			p += 8;
 		}
 		
-		const unsigned lower = (unsigned long long) x;
+		const unsigned lower = (uintptr_t) x;
 		
 		gear::encode_32_bit_hex( lower, p );
 		
