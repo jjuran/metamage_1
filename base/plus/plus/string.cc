@@ -132,24 +132,29 @@ namespace plus
 		allocate_data( store, p, length );
 	}
 	
+	/*
+		Regarding the next three constructors:
+		
+		An uninitialized 15-char string is acceptable because we're just
+		going to assign over it anyway, and empties aren't faster here.
+	*/
+	
 	string::string( const char* p, const char* q )
 	{
-		store.small[ max_offset ] = max_offset;
+		store.small[ max_offset ] = 0;
 		
 		assign( p, q );
 	}
 	
 	string::string( const char* s )
 	{
-		store.small[ max_offset ] = max_offset;
+		store.small[ max_offset ] = 0;
 		
 		assign( s );
 	}
 	
 	string::string( size_type n, char c )
 	{
-		// An uninitialized 15-char string is acceptable because we're just
-		// going to assign over it anyway, and empties aren't faster here.
 		store.small[ max_offset ] = 0;
 		
 		assign( n, c );
