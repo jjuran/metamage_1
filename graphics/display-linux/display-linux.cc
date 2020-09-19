@@ -101,6 +101,7 @@ static bool watching;
 static bool exhibiting;
 
 static size_t reflection_height;
+static size_t output_byte_width;
 
 static raster::raster_load loaded_raster;
 
@@ -355,9 +356,9 @@ void blit( const uint8_t*  src,
 	
 	size_t n = 0;
 	
-	uint8_t* tmp = (uint8_t*) alloca( dst_stride );
+	uint8_t* tmp = (uint8_t*) alloca( output_byte_width );
 	
-	memset( tmp, '\0', dst_stride );
+	memset( tmp, '\0', output_byte_width );
 	
 	uint8_t* fxp = dst + 2 * reflection_height * dst_stride;
 	
@@ -369,14 +370,14 @@ void blit( const uint8_t*  src,
 		
 		for ( int i = 0;  i <= doubling;  ++i )
 		{
-			memcpy( dst, tmp, dst_stride );
+			memcpy( dst, tmp, output_byte_width );
 			
 			dst += dst_stride;
 			fxp -= dst_stride;
 			
 			const int fraction = ++n * 256 / denom;
 			
-			memcpy_fixmul( fxp, tmp, dst_stride, fraction );
+			memcpy_fixmul( fxp, tmp, output_byte_width, fraction );
 		}
 	}
 }
@@ -843,6 +844,7 @@ int main( int argc, char** argv )
 			if ( const size_t available_rows = var_info.yres - dy - xheight )
 			{
 				reflection_height = min( xheight / 2, available_rows );
+				output_byte_width = xwidth * sizeof (int32_t);  // assume 32-bit
 			}
 		}
 	}
