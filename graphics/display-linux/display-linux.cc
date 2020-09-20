@@ -254,6 +254,21 @@ void copy_16( const uint8_t* src, uint8_t* dst, int width )
 }
 
 static
+void copy_16_2x( const uint8_t* src, uint8_t* dst, int width )
+{
+	uint16_t* p = (uint16_t*) dst;
+	uint16_t* q = (uint16_t*) src;
+	
+	while ( width-- > 0 )
+	{
+		uint16_t pixel = *q++;
+		
+		*p++ = pixel;
+		*p++ = pixel;
+	}
+}
+
+static
 void copy_32( const uint8_t* src, uint8_t* dst, int width )
 {
 	memcpy( dst, src, width * 4 );
@@ -290,7 +305,7 @@ draw_proc select_draw_proc( const raster_desc& desc, bool swap_bytes )
 			                : &lookup_1_to_direct< bilevel_pixel_t, 1 >;
 		
 		case 16:
-			return &copy_16;
+			return doubling ? &copy_16_2x : &copy_16;
 		
 		case 32:
 			return swap_bytes ? &swap_32 : &copy_32;
