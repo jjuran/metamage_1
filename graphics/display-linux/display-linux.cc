@@ -275,6 +275,21 @@ void copy_32( const uint8_t* src, uint8_t* dst, int width )
 }
 
 static
+void copy_32_2x( const uint8_t* src, uint8_t* dst, int width )
+{
+	uint32_t* p = (uint32_t*) dst;
+	uint32_t* q = (uint32_t*) src;
+	
+	while ( width-- > 0 )
+	{
+		uint32_t pixel = *q++;
+		
+		*p++ = pixel;
+		*p++ = pixel;
+	}
+}
+
+static
 void swap_32( const uint8_t* src, uint8_t* dst, int width )
 {
 	while ( width > 0 )
@@ -293,6 +308,28 @@ void swap_32( const uint8_t* src, uint8_t* dst, int width )
 	}
 }
 
+static
+void swap_32_2x( const uint8_t* src, uint8_t* dst, int width )
+{
+	while ( width-- > 0 )
+	{
+		uint8_t a = *src++;
+		uint8_t b = *src++;
+		uint8_t c = *src++;
+		uint8_t d = *src++;
+		
+		*dst++ = d;
+		*dst++ = c;
+		*dst++ = b;
+		*dst++ = a;
+		
+		*dst++ = d;
+		*dst++ = c;
+		*dst++ = b;
+		*dst++ = a;
+	}
+}
+
 using namespace raster;
 
 static
@@ -308,7 +345,8 @@ draw_proc select_draw_proc( const raster_desc& desc, bool swap_bytes )
 			return doubling ? &copy_16_2x : &copy_16;
 		
 		case 32:
-			return swap_bytes ? &swap_32 : &copy_32;
+			return swap_bytes ? doubling ? &swap_32_2x : &swap_32
+			                  : doubling ? &copy_32_2x : &copy_32;
 		
 		default:
 			return NULL;
