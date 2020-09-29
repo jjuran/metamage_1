@@ -137,8 +137,8 @@ namespace v68k
 		{
 			if ( (opcode & 0xff00) == 0x0e00 )
 			{
-				return ea_is_memory_alterable( mode ) ? &decoded_MOVES
-				                                      : 0;  // NULL
+				return ea_is_memory_alterable( mode, n ) ? &decoded_MOVES
+				                                         : 0;  // NULL
 			}
 			
 			const int selector = (opcode & 0x0E00) >> 9;
@@ -339,7 +339,8 @@ namespace v68k
 			return &storage;
 		}
 		
-		if ( size_code != 3  &&  (has_0100 ? ea_is_memory_alterable( mode ) : ea_is_data( mode, n )) )
+		if ( size_code != 3  &&  (has_0100 ? ea_is_memory_alterable( mode, n )
+		                                   : ea_is_data           ( mode, n )) )
 		{
 			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
@@ -382,7 +383,7 @@ namespace v68k
 		
 		const bool has_0100 = opcode & 0x0100;
 		
-		const bool normal = has_0100       ? ea_is_memory_alterable( mode )
+		const bool normal = has_0100       ? ea_is_memory_alterable( mode, n )
 		                  : size_code == 0 ? ea_is_data ( mode, n )
 		                  :                  ea_is_valid( mode, n );
 		
@@ -492,7 +493,8 @@ namespace v68k
 			return &storage;
 		}
 		
-		if ( size_code != 3  &&  (has_0100 ? ea_is_memory_alterable( mode ) : ea_is_data( mode, n )) )
+		if ( size_code != 3  &&  (has_0100 ? ea_is_memory_alterable( mode, n )
+		                                   : ea_is_data           ( mode, n )) )
 		{
 			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
@@ -555,7 +557,7 @@ namespace v68k
 			const uint16_t mode = opcode >> 3 & 0x7;
 			const uint16_t n    = opcode >> 0 & 0x7;
 			
-			if ( !ea_is_memory_alterable( mode ) )
+			if ( ! ea_is_memory_alterable( mode, n ) )
 			{
 				return 0;  // NULL
 			}
