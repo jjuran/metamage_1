@@ -380,6 +380,8 @@ namespace Genie
 	
 	void start_gui_service()
 	{
+		mnt::writes_allowed = true;
+		
 		spawn_listener_service();
 		
 		maintain_service_symlink();
