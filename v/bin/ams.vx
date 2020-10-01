@@ -339,8 +339,9 @@ else
 	
 	run [ "raster init" / ' ', screen ]
 	
+	const zoom = "-x" (getenv "AMS_ZOOM" or 1)
 	screen_opt     = raster
-	command-prefix = "exhibit", "-t", title, raster, events_fd_opt
+	command-prefix = "exhibit", "-t", title, raster, events_fd_opt, zoom
 }
 
 const file-servers = freemountd-server, appfs-server, docfs-server
