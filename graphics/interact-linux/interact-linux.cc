@@ -60,7 +60,7 @@
 enum
 {
 	Opt_title   = 't',
-	Opt_magnify = 'x',  // unimplemented, but accepted for compatibility
+	Opt_magnify = 'x',
 	
 	Opt_last_byte = 255,
 	
@@ -78,6 +78,7 @@ static command::option options[] =
 
 static const char* keyboard_path;
 static const char* raster_path;
+static const char* magnify_x = "1";
 
 
 static pid_t mouser_pid = 0;
@@ -104,6 +105,10 @@ char* const* get_options( char** argv )
 		
 		switch ( opt )
 		{
+			case Opt_magnify:
+				magnify_x = global_result.param;
+				break;
+			
 			case Opt_raster:
 				raster_path = global_result.param;
 				break;
@@ -352,7 +357,7 @@ void launch_subprocesses( char* const* args )
 	
 	if ( viewer_pid == 0 )
 	{
-		const char* argv[] = { DISPLAY, "-Xg", "--watch", raster_path, NULL };
+		const char* argv[] = { DISPLAY, "-XgWx", magnify_x, raster_path, NULL };
 		
 		exec_or_exit( argv );
 	}
