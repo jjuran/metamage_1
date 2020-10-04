@@ -34,6 +34,41 @@ namespace plus
 		take advantage of realloc().
 	*/
 	
+	char* extent_alloc_nothrow( unsigned long capacity )
+	{
+		unsigned long extent_size = sizeof (extent_header) + capacity;
+		
+		ASSERT( extent_size > capacity );
+		
+		if ( extent_size < capacity )
+		{
+			/*
+				Overflow occurred.  The capacity is too large, and the
+				address space can't fit the entire extent including the header.
+				This is a programming error -- if you need gigabytes of RAM,
+				this is the wrong facility to use.
+			*/
+			
+			abort();
+		}
+		
+		extent_header* header = (extent_header*) malloc( extent_size );
+		
+		if ( header == NULL )
+		{
+			return NULL;
+		}
+		
+		header->refcount = 1;
+		header->capacity = capacity;
+		header->dtor     = NULL;
+		header->dealloc  = &free;
+		
+		char* buffer = reinterpret_cast< char* >( header + 1 );
+		
+		return buffer;
+	}
+	
 	char* extent_alloc( unsigned long capacity )
 	{
 		unsigned long extent_size = sizeof (extent_header) + capacity;
@@ -62,6 +97,17 @@ namespace plus
 		char* buffer = reinterpret_cast< char* >( header + 1 );
 		
 		return buffer;
+	}
+	
+	char* extent_alloc_nothrow( unsigned long capacity, destructor dtor )
+	{
+		char* extent = extent_alloc_nothrow( capacity );
+		
+		memset( extent, '\0', capacity );
+		
+		extent_set_destructor( extent, dtor );
+		
+		return extent;
 	}
 	
 	char* extent_alloc( unsigned long capacity, destructor dtor )

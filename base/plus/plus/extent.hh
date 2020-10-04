@@ -12,6 +12,9 @@ namespace plus
 	
 	typedef void (*destructor)( void* );
 	
+	char* extent_alloc_nothrow( unsigned long capacity );
+	char* extent_alloc_nothrow( unsigned long capacity, destructor dtor );
+	
 	char* extent_alloc( unsigned long capacity );
 	char* extent_alloc( unsigned long capacity, destructor dtor );
 	
