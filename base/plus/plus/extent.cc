@@ -26,6 +26,7 @@ namespace plus
 		refcount_t    refcount;
 		unsigned long capacity;
 		destructor    dtor;
+		destructor    dealloc;
 	};
 	
 	/*
@@ -56,6 +57,7 @@ namespace plus
 		header->refcount = 1;
 		header->capacity = capacity;
 		header->dtor     = NULL;
+		header->dealloc  = &::operator delete;
 		
 		char* buffer = reinterpret_cast< char* >( header + 1 );
 		
@@ -71,11 +73,6 @@ namespace plus
 		extent_set_destructor( extent, dtor );
 		
 		return extent;
-	}
-	
-	static inline void extent_free( extent_header* header )
-	{
-		::operator delete( header );
 	}
 	
 	static inline extent_header* header_from_buffer( const char* buffer )
@@ -122,7 +119,7 @@ namespace plus
 				dtor( (void*) buffer );
 			}
 			
-			extent_free( header );
+			header->dealloc( header );
 		}
 	}
 	
