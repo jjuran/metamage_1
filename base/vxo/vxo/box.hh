@@ -36,6 +36,7 @@ namespace vxo
 		Box_min_inline_string = 0,
 		Box_max_inline_string = inline_char_size,  // 15 or 31
 		
+		Box_container = 112,  // 0111 0000
 		Box_undefined = 127,  // 0111 1111
 		
 		Box_error = -1,

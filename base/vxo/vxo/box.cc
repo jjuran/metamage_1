@@ -20,6 +20,21 @@ namespace vxo
 
 void Box::destroy_extent()
 {
+	if ( subtype_byte() >= Box_container )
+	{
+		if ( plus::extent_refcount( u.str.pointer ) == 1 )
+		{
+			Box* it = (Box*) u.str.pointer;
+			
+			long n = u.str.length;
+			
+			while ( n-- > 0 )
+			{
+				it++->destroy();
+			}
+		}
+	}
+	
 	plus::extent_release( u.str.pointer );
 	
 	set_control_byte( 0 );
