@@ -8,9 +8,6 @@
 // Standard C++
 #include <algorithm>
 
-// iota
-#include "iota/convert_string.hh"
-
 // Nitrogen
 #include "Nitrogen/MacWindows.hh"
 
@@ -116,7 +113,7 @@ namespace TestEdit
 	
 	plus::string Document::GetName() const
 	{
-		return iota::convert_string< plus::string >( N::GetWTitle( GetWindowRef() ) );
+		return plus::string( N::GetWTitle( GetWindowRef() ) );
 	}
 	
 }
