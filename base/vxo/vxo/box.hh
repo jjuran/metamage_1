@@ -38,7 +38,19 @@ namespace vxo
 		Box_min_inline_string = 0,
 		Box_max_inline_string = inline_char_size,  // 15 or 31
 		
+		Box_inline_uint8  =  96,  // 0110 0000
+		Box_inline_uint16 =  97,  // 0110 0001
+		Box_inline_uint32 =  98,  // 0110 0010
+		Box_inline_uint64 =  99,  // 0110 0011
+		Box_inline_int8   = 100,  // 0110 0100
+		Box_inline_int16  = 101,  // 0110 0101
+		Box_inline_int32  = 102,  // 0110 0110
+		Box_inline_int64  = 103,  // 0110 0111
+		
 		Box_vector_anyptr = 105 + sizeof (anyptr_t) / 4,  // 0110 101x
+		
+		Box_inline_float  = 110,  // 0110 1110
+		Box_inline_double = 111,  // 0110 1111
 		
 		Box_container = 112,  // 0111 0000
 		Box_array     = 112,  // 0111 0000
@@ -50,6 +62,9 @@ namespace vxo
 		Box_error = -1,
 		Box_string = 0,
 	};
+	
+	typedef float  float_t;
+	typedef double double_t;
 	
 	union vxo_u
 	{
