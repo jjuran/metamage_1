@@ -18,6 +18,10 @@
 #include "plus/var_string.hh"
 #include "plus/string/mince.hh"
 
+// vxo
+#include "vxo/lib/unbin.hh"
+#include "vxo/lib/unhex.hh"
+
 // bignum
 #include "bignum/decode_binoid_int.hh"
 #include "bignum/integer_hex.hh"
@@ -59,6 +63,17 @@ namespace vlib
 		crypto::sha256_hash hash = crypto::sha256( s.data(), s.size() );
 		
 		return plus::string( (const char*) &hash, sizeof hash );
+	}
+	
+	static
+	const plus::string& get_string( const vxo::Error_or_String& box )
+	{
+		if ( const char* error = box.error() )
+		{
+			throw_exception( error );
+		}
+		
+		return box.value_cast().get();
 	}
 	
 	static
@@ -354,7 +369,7 @@ namespace vlib
 			return Integer( bignum::unbin_int( v.string().substr( 2 ) ) );
 		}
 		
-		return Packed( unbin( v.string() ) );
+		return Packed( get_string( vxo::unbin( v.string() ) ) );
 	}
 	
 	static
@@ -365,7 +380,7 @@ namespace vlib
 			return Integer( bignum::unhex_int( v.string().substr( 2 ) ) );
 		}
 		
-		return Packed( unhex( v.string() ) );
+		return Packed( get_string( vxo::unhex( v.string() ) ) );
 	}
 	
 	static const Integer zero = Integer( 0 );
