@@ -21,6 +21,9 @@
 #include "vxo-string/string.hh"
 
 
+#pragma exceptions off
+
+
 namespace vxo
 {
 
@@ -66,7 +69,12 @@ Box unhex( const char* data, size_t size, align_t align )
 	
 	plus::string result;
 	
-	char* p = result.reset( n_bytes );
+	char* p = result.reset_nothrow( n_bytes );
+	
+	if ( p == NULL )
+	{
+		return Error( out_of_memory );
+	}
 	
 	while ( n_zero_bytes-- )
 	{
