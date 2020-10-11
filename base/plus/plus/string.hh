@@ -199,7 +199,8 @@ namespace plus
 			
 		#endif
 			
-			char* reset( size_type n = 0 );
+			char* reset_nothrow( size_type n = 0 );
+			char* reset        ( size_type n = 0 );
 			
 			string& operator=( const char* s )  { return assign( s ); }
 			

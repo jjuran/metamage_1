@@ -228,6 +228,16 @@ namespace plus
 		return *this;
 	}
 	
+	char* string::reset_nothrow( size_type length )
+	{
+		if ( length > max_size() )
+		{
+			return NULL;
+		}
+		
+		return reallocate_nothrow( store, length );
+	}
+	
 	char* string::reset( size_type length )
 	{
 		check_size( length );
