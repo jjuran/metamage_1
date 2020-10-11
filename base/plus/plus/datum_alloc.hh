@@ -69,7 +69,8 @@ namespace plus
 	
 	void destroy( datum_storage& datum );
 	
-	char* reallocate( datum_storage& datum, long length );
+	char* reallocate_nothrow( datum_storage& datum, long length );
+	char* reallocate        ( datum_storage& datum, long length );
 	
 	char* extend_capacity( datum_storage& datum, long new_capacity );
 	

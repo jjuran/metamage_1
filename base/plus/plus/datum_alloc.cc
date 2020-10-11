@@ -55,6 +55,44 @@ namespace plus
 	}
 	
 	static
+	char* allocate_nothrow( datum_storage& datum, long length, long capacity )
+	{
+		ASSERT( length   >= 0      );
+		ASSERT( capacity >= length );
+		
+		char* new_pointer;
+		
+		if ( capacity >= datum_buffer_size )
+		{
+			capacity = adjusted_capacity( capacity );
+			
+			// may return NULL
+			new_pointer = extent_alloc_nothrow( capacity + 1 );  // includes NUL
+			
+			if ( new_pointer == NULL )
+			{
+				return NULL;
+			}
+			
+			datum.alloc.pointer  = new_pointer;
+			datum.alloc.length   = length;
+			datum.alloc.capacity = capacity;
+			
+			datum.small[ datum_max_offset ] = ~delete_shared;
+		}
+		else
+		{
+			new_pointer = datum.small;
+			
+			datum.small[ datum_max_offset ] = datum_max_offset - length;
+		}
+		
+		new_pointer[ length ] = '\0';
+		
+		return new_pointer;
+	}
+	
+	static
 	char* allocate( datum_storage& datum, long length, long capacity )
 	{
 		ASSERT( length   >= 0      );
@@ -85,6 +123,12 @@ namespace plus
 		new_pointer[ length ] = '\0';
 		
 		return new_pointer;
+	}
+	
+	static inline
+	char* allocate_nothrow( datum_storage& datum, long length )
+	{
+		return allocate_nothrow( datum, length, length );
 	}
 	
 	static inline
@@ -150,6 +194,17 @@ namespace plus
 	void destroy( datum_storage& datum )
 	{
 		dispose( datum.alloc.pointer, datum.small[ datum_max_offset ] );
+	}
+	
+	char* reallocate_nothrow( datum_storage& datum, long length )
+	{
+		datum_storage old = datum;
+		
+		char* new_pointer = allocate_nothrow( datum, length );
+		
+		destroy( old );
+		
+		return new_pointer;
 	}
 	
 	char* reallocate( datum_storage& datum, long length )
