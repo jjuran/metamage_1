@@ -119,7 +119,7 @@ namespace recall
 	
 	static bool begins_with( const char* s, const char* sub )
 	{
-		while ( *s != '\0' )
+		while ( *sub != '\0' )
 		{
 			if ( *s++ != *sub++ )
 			{
@@ -132,7 +132,7 @@ namespace recall
 	
 	static inline bool operator==( const Operator& op, const char* code )
 	{
-		return begins_with( op.code, code );
+		return begins_with( code, op.code );
 	}
 	
 	static const Operator* find_operator( const char* code )
