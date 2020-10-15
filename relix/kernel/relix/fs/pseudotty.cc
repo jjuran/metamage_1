@@ -15,10 +15,10 @@
 #include <boost/intrusive_ptr.hpp>
 
 // plus
-#include "plus/conduit.hh"
 #include "plus/var_string.hh"
 
 // vfs
+#include "vfs/conduit.hh"
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/enum/poll_result.hh"
@@ -42,9 +42,9 @@ namespace relix
 	
 	struct pseudotty_extra
 	{
-		unsigned        id;
-		plus::conduit*  input;
-		plus::conduit*  output;
+		unsigned       id;
+		vfs::conduit*  input;
+		vfs::conduit*  output;
 	};
 	
 	static
@@ -81,17 +81,17 @@ namespace relix
 	}
 	
 	static
-	vfs::filehandle* new_pseudotty( unsigned        id,
-	                                plus::conduit&  input,
-	                                plus::conduit&  output );
+	vfs::filehandle* new_pseudotty( unsigned       id,
+	                                vfs::conduit&  input,
+	                                vfs::conduit&  output );
 	
 	void new_pseudotty_pair( vfs::filehandle_ptr&  master,
 	                         vfs::filehandle_ptr&  slave )
 	{
 		static unsigned index = 0;
 		
-		boost::intrusive_ptr< plus::conduit > incoming( new plus::conduit );
-		boost::intrusive_ptr< plus::conduit > outgoing( new plus::conduit );
+		boost::intrusive_ptr< vfs::conduit > incoming( new vfs::conduit );
+		boost::intrusive_ptr< vfs::conduit > outgoing( new vfs::conduit );
 		
 		vfs::filehandle_ptr master_handle( new_pseudotty( index, *outgoing, *incoming ) );
 		vfs::filehandle_ptr slave_handle ( new_pseudotty( index, *incoming, *outgoing ) );
@@ -115,9 +115,9 @@ namespace relix
 	void destroy_pseudotty( vfs::filehandle* that );
 	
 	static
-	vfs::filehandle* new_pseudotty( unsigned        id,
-	                                plus::conduit&  input,
-	                                plus::conduit&  output )
+	vfs::filehandle* new_pseudotty( unsigned       id,
+	                                vfs::conduit&  input,
+	                                vfs::conduit&  output )
 	{
 		vfs::filehandle* result = new vfs::filehandle( NULL,
 		                                               O_RDWR,

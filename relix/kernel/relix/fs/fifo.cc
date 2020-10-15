@@ -9,14 +9,14 @@
 #include <map>
 
 // plus
-#include "plus/conduit.hh"
-#include "plus/conduit_max_page_count.hh"
 #include "plus/string.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/conduit.hh"
+#include "vfs/conduit_max_page_count.hh"
 #include "vfs/filehandle.hh"
 #include "vfs/enum/poll_result.hh"
 #include "vfs/functions/pathname.hh"
@@ -57,9 +57,8 @@ namespace relix
 		const plus::string*  key;
 		fifo_connection*     connection;
 		
-		plus::conduit* conduit;
-		
-		fifo_update_f update;
+		vfs::conduit*  conduit;
+		fifo_update_f  update;
 	};
 	
 	
@@ -82,10 +81,11 @@ namespace relix
 		               : (extra.conduit->is_writable() ? rw : r);
 	}
 	
-	static inline fifo_state fifo_state_for_conduit( const plus::conduit& conduit )
+	static inline
+	fifo_state fifo_state_for_conduit( const vfs::conduit& conduit )
 	{
 		return fifo_state_for_ratio( conduit.pages_used(),
-		                             plus::conduit_max_page_count );
+		                             vfs::conduit_max_page_count );
 	}
 	
 	static ssize_t fifo_read( vfs::filehandle* that, char* buffer, size_t n )
@@ -115,7 +115,7 @@ namespace relix
 		
 		if ( update )
 		{
-			plus::conduit& conduit = *extra.conduit;
+			vfs::conduit& conduit = *extra.conduit;
 			
 			bool eof = !extra.connection->writer  &&  conduit.pages_used() == 0;
 			
@@ -301,7 +301,7 @@ namespace relix
 		
 		if ( them != NULL )
 		{
-			boost::intrusive_ptr< plus::conduit > conduit( new plus::conduit );
+			boost::intrusive_ptr< vfs::conduit > conduit( new vfs::conduit );
 			
 			fifo_extra& ours   = *(fifo_extra*) us  ->extra();
 			fifo_extra& theirs = *(fifo_extra*) them->extra();

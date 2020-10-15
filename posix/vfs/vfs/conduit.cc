@@ -3,7 +3,7 @@
 	----------
 */
 
-#include "plus/conduit.hh"
+#include "vfs/conduit.hh"
 
 // more-libc
 #include "more/string.h"
@@ -11,11 +11,11 @@
 // Debug
 #include "debug/assert.hh"
 
-// plus
-#include "plus/conduit_max_page_count.hh"
+// vfs
+#include "vfs/conduit_max_page_count.hh"
 
 
-namespace plus
+namespace vfs
 {
 	
 	static inline

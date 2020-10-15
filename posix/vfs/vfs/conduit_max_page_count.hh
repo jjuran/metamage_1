@@ -3,11 +3,11 @@
 	-------------------------
 */
 
-#ifndef PLUS_CONDUITMAXPAGECOUNT_HH
-#define PLUS_CONDUITMAXPAGECOUNT_HH
+#ifndef VFS_CONDUITMAXPAGECOUNT_HH
+#define VFS_CONDUITMAXPAGECOUNT_HH
 
 
-namespace plus
+namespace vfs
 {
 	
 	const int conduit_max_page_count = 17;

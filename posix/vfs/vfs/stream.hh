@@ -6,17 +6,15 @@
 #ifndef VFS_STREAM_HH
 #define VFS_STREAM_HH
 
-// plus
-#include "plus/conduit.hh"
-
 // vfs
+#include "vfs/conduit.hh"
 #include "vfs/filehandle_ptr.hh"
 
 
 namespace vfs
 {
 	
-	class stream : public plus::conduit
+	class stream : public conduit
 	{
 		private:
 			typedef void (*try_again_f)( bool );

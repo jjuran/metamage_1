@@ -3,8 +3,8 @@
 	----------
 */
 
-#ifndef PLUS_CONDUIT_HH
-#define PLUS_CONDUIT_HH
+#ifndef VFS_CONDUIT_HH
+#define VFS_CONDUIT_HH
 
 // Standard C++
 #include <list>
@@ -13,7 +13,7 @@
 #include "plus/ref_count.hh"
 
 
-namespace plus
+namespace vfs
 {
 	
 	class page
@@ -44,7 +44,7 @@ namespace plus
 			std::size_t read( char* buffer, std::size_t max_bytes );
 	};
 	
-	class conduit : public ref_count< conduit >
+	class conduit : public plus::ref_count< conduit >
 	{
 		private:
 			typedef void (*try_again_f)( bool );

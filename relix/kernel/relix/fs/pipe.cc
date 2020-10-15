@@ -14,10 +14,8 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
-// plus
-#include "plus/conduit.hh"
-
 // vfs
+#include "vfs/conduit.hh"
 #include "vfs/filehandle.hh"
 #include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
@@ -40,15 +38,15 @@ namespace relix
 	
 	struct pipe_end_extra
 	{
-		plus::conduit*  conduit;
-		pipe_end_type   type;
+		vfs::conduit*  conduit;
+		pipe_end_type  type;
 	};
 	
 	static unsigned pipein_poll( vfs::filehandle* that )
 	{
 		pipe_end_extra& extra = *(pipe_end_extra*) that->extra();
 		
-		plus::conduit& conduit = *extra.conduit;
+		vfs::conduit& conduit = *extra.conduit;
 		
 		return + vfs::Poll_read
 		       | vfs::Poll_write * conduit.is_writable();
@@ -58,7 +56,7 @@ namespace relix
 	{
 		pipe_end_extra& extra = *(pipe_end_extra*) that->extra();
 		
-		plus::conduit& conduit = *extra.conduit;
+		vfs::conduit& conduit = *extra.conduit;
 		
 		return conduit.read( buffer, n, is_nonblocking( *that ), &try_again );
 	}
@@ -67,7 +65,7 @@ namespace relix
 	{
 		pipe_end_extra& extra = *(pipe_end_extra*) that->extra();
 		
-		plus::conduit& conduit = *extra.conduit;
+		vfs::conduit& conduit = *extra.conduit;
 		
 		return + vfs::Poll_read * conduit.is_readable()
 		       | vfs::Poll_write;
@@ -77,7 +75,7 @@ namespace relix
 	{
 		pipe_end_extra& extra = *(pipe_end_extra*) that->extra();
 		
-		plus::conduit& conduit = *extra.conduit;
+		vfs::conduit& conduit = *extra.conduit;
 		
 		return conduit.write( buffer, n, is_nonblocking( *that ), &try_again, &broken_pipe );
 	}
@@ -120,9 +118,9 @@ namespace relix
 	void destroy_pipe_end( vfs::filehandle* that );
 	
 	static
-	vfs::filehandle* new_pipe_end( plus::conduit&  conduit,
-	                               int             open_flags,
-	                               pipe_end_type   end_type )
+	vfs::filehandle* new_pipe_end( vfs::conduit&  conduit,
+	                               int            open_flags,
+	                               pipe_end_type  end_type )
 	{
 		const vfs::filehandle_method_set& methods = methods_for_end( end_type );
 		
@@ -161,7 +159,7 @@ namespace relix
 	
 	pipe_ends new_pipe( int nonblock )
 	{
-		boost::intrusive_ptr< plus::conduit > conduit( new plus::conduit );
+		boost::intrusive_ptr< vfs::conduit > conduit( new vfs::conduit );
 		
 		pipe_ends result;
 		
