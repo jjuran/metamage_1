@@ -114,8 +114,54 @@ namespace plus
 	                delete_policy  policy,
 	                size_type      capacity )
 	{
+		/*
+			Sanity-check length and capacity against max_size().
+			
+			We were throwing exceptions on failure, which requires a
+			dependency on the C++ exception runtime.  In practice, an
+			out-of-bounds value will never be provided by correct code.
+			
+			The maximum value is half the size of the address space.
+			This is not an allocation request like malloc(), where the
+			caller can conceivably ask for anything representable by the
+			integer type.  Rather, the caller is providing the length of
+			an allocation that already exists.
+			
+			While a plus::string may contain arbitrary byte values, and
+			a plus::string constructed using a delete_never policy can
+			refer to arbitrary memory, it's out of scope for plus::string
+			to refer to vast swaths of memory that don't correspond to a
+			single object.  The delete_never policy is meant for members
+			of argv and statically allocated storage that will persist for
+			the life of the process (or, on rare occasion, system-owned
+			memory at a fixed address, like the machine name string whose
+			address is returned when calling Gestalt() with a selector of
+			'mnam').
+			
+			In classic Mac OS, malloc() is provided by MSL and backed by
+			NewPtr(), which is limited by the application's heap size.
+			In Mac OS X, it appears that NewPtr() tops out near 1 GiB.
+			I'm not sure what other OSes like Linux and BSD do on 32-bit
+			machines, but the prospect of tending multi-gigabyte workloads
+			on them is vanishingly small.
+			
+			On a 64-bit system, there won't be enough /disk space/ to even
+			come close to the max size -- half the address space is 8 EiB.
+		*/
+		
+		ASSERT( length   <= max_size() );
+		ASSERT( capacity <= max_size() );
+		
+	#ifndef __LP64__
+	#ifndef __APPLE__
+	#ifndef __MACOS__
+		
 		check_size( length   );
 		check_size( capacity );
+		
+	#endif
+	#endif
+	#endif
 		
 		store.alloc.pointer  = p;
 		store.alloc.length   = length;
