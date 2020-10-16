@@ -8,9 +8,6 @@
 // Standard C
 #include <string.h>
 
-// Standard C++
-#include <vector>
-
 // more-libc
 #include "more/string.h"
 
@@ -23,6 +20,10 @@
 
 // bignum
 #include "bignum/integer.hh"
+
+// vxo
+#include "vxo/container.hh"
+#include "vxo/string.hh"
 
 // vlib
 #include "vlib/array-utils.hh"
@@ -47,6 +48,8 @@ namespace vlib
 {
 	
 	using ::mempcpy;
+	
+	typedef vxo::Array_of< vxo::String >  Array_of_String;
 	
 	static inline
 	char* mempcpy( char* p, const plus::string& s )
@@ -221,7 +224,7 @@ namespace vlib
 	class string_maker
 	{
 		private:
-			std::vector< plus::string > its_cache;
+			Array_of_String its_cache;
 			
 			size_t its_index;
 		
@@ -278,7 +281,7 @@ namespace vlib
 			{
 				its_cache.push_back( str->make( value ) );
 				
-				return its_cache.back().size();
+				return its_cache.back().get().size();
 			}
 		}
 		
