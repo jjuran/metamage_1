@@ -4,8 +4,8 @@
  */
 
 // Standard C++
+#include <algorithm>
 #include <map>
-#include <vector>
 
 // POSIX
 #include <sys/select.h>
@@ -20,6 +20,10 @@
 
 // plus
 #include "plus/string.hh"
+
+// vxo
+#include "vxo/container.hh"
+#include "vxo/string.hh"
 
 // text-input
 #include "text_input/feed.hh"
@@ -51,7 +55,7 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	typedef std::vector< plus::string >  Array_of_String;
+	typedef vxo::Array_of< vxo::String >  Array_of_String;
 	
 	struct Record
 	{
@@ -196,7 +200,7 @@ namespace tool
 		
 		Record result;
 		
-		result.port = gear::parse_unsigned_decimal( tokens[ kPort ].c_str() );
+		result.port = gear::parse_unsigned_decimal( tokens[ kPort ].get().c_str() );
 		result.path = tokens[ kPath ];
 		
 		for ( size_t i = kArgv;  i < tokens.size();  ++i )
