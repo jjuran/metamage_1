@@ -195,11 +195,10 @@ namespace tool
 		result.port = gear::parse_unsigned_decimal( tokens[ kPort ].c_str() );
 		result.path = tokens[ kPath ];
 		
-		std::size_t argc = tokens.size() - kArgv;
-		
-		result.argv.resize( argc );
-		
-		std::copy( tokens.begin() + kArgv, tokens.end(), result.argv.begin() );
+		for ( size_t i = kArgv;  i < tokens.size();  ++i )
+		{
+			result.argv.push_back( tokens[ i ] );
+		}
 		
 		return result;
 	}
