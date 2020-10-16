@@ -13,6 +13,17 @@
 namespace vxo
 {
 	
+	class Empty : public Box
+	{
+		public:
+			explicit Empty( box_type type )
+			{
+				u.str.length = 0;
+				
+				set_control_byte( type );
+			}
+	};
+	
 	/*
 		g++ 4.0 has a built-in operator[](<ptr>, int), which makes our own
 		operator[](size_t) on Container and its derived classes ambiguous.
