@@ -37,10 +37,12 @@ namespace vxo
 			typedef plus::string string;
 		
 		public:
-			explicit DynamicString( const string& s );
+			DynamicString( const string& s );
 			
 			string&       get()        { return *(string*)       this; }
 			string const& get() const  { return *(string const*) this; }
+			
+			operator string const&() const  { return get(); }
 	};
 	
 	typedef DynamicString String;
