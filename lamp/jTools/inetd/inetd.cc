@@ -51,11 +51,13 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
+	typedef std::vector< plus::string >  Array_of_String;
+	
 	struct Record
 	{
-		short                        port;
-		plus::string                 path;
-		std::vector< plus::string >  argv;
+		short            port;
+		plus::string     path;
+		Array_of_String  argv;
 	};
 	
 	static std::map< int, Record > gServers;
@@ -142,9 +144,10 @@ namespace tool
 	}
 	
 	
-	static std::vector< plus::string > Split( const plus::string& text )
+	static
+	Array_of_String Split( const plus::string& text )
 	{
-		std::vector< plus::string > result;
+		Array_of_String result;
 		
 		const unsigned char whitespace[] = { 2, ' ', '\t' };
 		
@@ -170,7 +173,8 @@ namespace tool
 		return result;
 	}
 	
-	static Record MakeRecord( const std::vector< plus::string >& tokens )
+	static
+	Record MakeRecord( const Array_of_String& tokens )
 	{
 		enum
 		{
