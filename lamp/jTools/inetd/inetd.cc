@@ -58,8 +58,6 @@ namespace tool
 		std::vector< plus::string >  argv;
 	};
 	
-	static std::vector< Record > gRecords;
-	
 	static std::map< int, Record > gServers;
 	
 	static bool gChildSignalled = false;
