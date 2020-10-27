@@ -5,9 +5,6 @@
 
 #include "worldview/Model.hh"
 
-// Standard C++
-#include <algorithm>
-
 // Vectoria
 #include "Vectoria/Units.hh"
 
@@ -61,7 +58,6 @@ namespace worldview
 	
 	Scene::Scene() : itsContexts( 1 )
 	{
-		itsNameIndex[ " " ] = 0;
 	}
 	
 	Context const& Scene::GetContext( std::size_t index ) const
@@ -80,8 +76,6 @@ namespace worldview
 	                                  const V::XMatrix&    inv )
 	{
 		std::size_t result = itsContexts.size();  // size == index of next element
-		
-		itsNameIndex[ name ] = result;
 		
 		itsContexts.push_back( Context( super, name, offset, inv ) );
 		

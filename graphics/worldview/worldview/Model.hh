@@ -6,11 +6,11 @@
 #ifndef WORLDVIEW_MODEL_HH
 #define WORLDVIEW_MODEL_HH
 
-#include <map>
+// Standard C++
 #include <vector>
 
 // plus
-#include "plus/string.hh"
+#include "plus/string_fwd.hh"
 
 // worldview
 #include "worldview/Objects.hh"
@@ -42,19 +42,11 @@ namespace worldview
 			std::size_t ContextIndex() const  { return itsContextIndex; }
 	};
 	
-	class PointLight
-	{
-		
-	};
-	
 	class Scene
 	{
 		private:
-			std::vector< Context >                 itsContexts;
-			std::map< plus::string, std::size_t >  itsNameIndex;
-			
-			std::vector< Camera >                  itsCameras;
-			std::vector< PointLight >              itsPointLights;
+			std::vector< Context >  itsContexts;
+			std::vector< Camera  >  itsCameras;
 			
 		public:
 			Scene();
