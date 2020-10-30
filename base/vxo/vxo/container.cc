@@ -102,4 +102,49 @@ Box* Container::expand_by( size_t n )
 	return begin() + original_length;
 }
 
+Box* Container::insert_n( Item* loc, size_t n )
+{
+	ASSERT( loc >= begin() );
+	ASSERT( loc <= end()   );
+	
+	const size_t n_bytes_to_move = (char*) end() - (char*) loc;
+	const size_t n_bytes_to_void = n * sizeof (Box);
+	
+	const size_t offset = loc - begin();
+	
+	expand_by( n );
+	
+	loc = begin() + offset;  // In case we reallocated
+	
+	memmove( loc + n, loc, n_bytes_to_move );
+	
+	/*
+		Void the inserted bytes by setting them to 0x7f rather than 0x00.
+		The latter (which encodes a short string of NUL bytes) is fine for
+		cells beyond the length of the container, but those within should be
+		undefined values.
+	*/
+	
+	memset( loc, Box_undefined, n_bytes_to_void );
+	
+	return loc;
+}
+
+void Container::erase_n( Item* loc, size_t n )
+{
+	ASSERT( n   <= size()    );
+	ASSERT( loc >= begin()   );
+	ASSERT( loc <= end()     );
+	ASSERT( loc <= end() - n );
+	
+	const size_t n_bytes_to_move = (char*) end() - (char*) (loc + n);
+	const size_t n_bytes_to_zero = n * sizeof (Box);
+	
+	memmove( loc, loc + n, n_bytes_to_move );
+	
+	memset( end() - n, '\0', n_bytes_to_zero );
+	
+	u.str.length -= n;
+}
+
 }

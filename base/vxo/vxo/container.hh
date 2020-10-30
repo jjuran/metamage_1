@@ -53,7 +53,20 @@ namespace vxo
 			
 			Item* expand_by( size_t n );
 			
+			Item* insert_n( Item* loc, size_t n );
+			
+			void erase_n( Item* loc, size_t n );
+			
 			void push_back( const Item& item )  { *expand_by( 1 ) = item; }
+			
+			Item* insert( Item* loc, const Item& item )
+			{
+				*(loc = insert_n( loc, 1 )) = item;
+				
+				return loc;
+			}
+			
+			void erase( Item* loc )  { erase_n( loc, 1 ); }
 	};
 	
 	template < class Type >
