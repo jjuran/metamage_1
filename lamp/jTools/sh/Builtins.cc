@@ -57,7 +57,6 @@ namespace tool
 	typedef std::map< plus::string, plus::string > StringMap;
 	
 	static StringMap gLocalVariables;
-	static StringMap gAliases;
 	
 	static std::set< plus::string > gVariablesToExport;
 	
@@ -73,21 +72,6 @@ namespace tool
 		variable +=        "'\n";
 		
 		p7::write( p7::stdout_fileno, variable );
-	}
-	
-	static void PrintAlias( const StringMap::value_type& var )
-	{
-		const plus::string& name  = var.first;
-		const plus::string& value = var.second;
-		
-		plus::var_string alias = "alias ";
-		
-		alias += name;
-		alias +=    "='";
-		alias +=       value;
-		alias +=           "'\n";
-		
-		p7::write( p7::stdout_fileno, alias );
 	}
 	
 	
@@ -307,49 +291,6 @@ namespace tool
 		return p7::exit_success;
 	}
 	
-	static p7::exit_t Builtin_Alias( int argc, char** argv )
-	{
-		if ( argc == 1 )
-		{
-			// $ alias
-			
-			typedef StringMap::const_iterator Iter;
-			
-			Iter end = gAliases.end();
-			
-			for ( Iter it = gAliases.begin();  it != end;  ++it )
-			{
-				PrintAlias( *it );
-			}
-		}
-		else if ( argc == 2 )
-		{
-			const char* name = argv[ 1 ];
-			
-			if ( char* eq = std::strchr( argv[ 1 ], '=' ) )
-			{
-				// $ alias foo=bar
-				
-				// FIXME:  This is const.
-				*eq = '\0';
-				
-				gAliases[ name ] = eq + 1;
-			}
-			else
-			{
-				// $ alias foo
-				StringMap::const_iterator found = gAliases.find( name );
-				
-				if ( found != gAliases.end() )
-				{
-					PrintAlias( *found );
-				}
-			}
-		}
-		
-		return p7::exit_success;
-	}
-	
 	static p7::exit_t Builtin_Echo( int argc, char** argv )
 	{
 		plus::var_string line;
@@ -539,16 +480,6 @@ namespace tool
 		return p7::exit_success;
 	}
 	
-	static p7::exit_t Builtin_Unalias( int argc, char** argv )
-	{
-		while ( --argc )
-		{
-			gAliases.erase( argv[ argc ] );
-		}
-		
-		return p7::exit_success;
-	}
-	
 	static p7::exit_t Builtin_Unset( int argc, char** argv )
 	{
 		while ( --argc )
@@ -628,7 +559,6 @@ namespace tool
 	
 	static const builtin_t builtins[] =
 	{
-		{ "alias",   Builtin_Alias   },
 		{ "cd",      Builtin_CD      },
 		{ "echo",    Builtin_Echo    },
 		{ "exec",    Builtin_Exec    },
@@ -636,7 +566,6 @@ namespace tool
 		{ "export",  Builtin_Export  },
 		{ "pwd",     Builtin_PWD     },
 		{ "set",     Builtin_Set     },
-		{ "unalias", Builtin_Unalias },
 		{ "unset",   Builtin_Unset   },
 		{ ".",       BuiltinDot      }
 	};
