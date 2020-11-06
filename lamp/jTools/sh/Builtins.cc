@@ -131,7 +131,8 @@ namespace tool
 		return NULL;
 	}
 	
-	static const char* get_home()
+	static inline
+	const char* get_home()
 	{
 		if ( const char* home = getenv( "HOME" ) )
 		{
