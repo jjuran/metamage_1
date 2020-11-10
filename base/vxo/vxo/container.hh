@@ -51,10 +51,9 @@ namespace vxo
 			Item&       back()        { return end()[ -1 ]; }
 			Item const& back() const  { return end()[ -1 ]; }
 			
-			void push_back( const Item& item )  { append( item ); }
+			Item* expand_by( size_t n );
 			
-			Item* append( const Item& item );
-			Item* append_undef()  { return append( Box() ); }
+			void push_back( const Item& item )  { *expand_by( 1 ) = item; }
 	};
 	
 	template < class Type >
@@ -90,12 +89,7 @@ namespace vxo
 			Item&       back()        { return end()[ -1 ]; }
 			Item const& back() const  { return end()[ -1 ]; }
 			
-			void push_back( const Item& item )  { append( item ); }
-			
-			Item* append( const Item& item )
-			{
-				return (Item*) Container::append( item );
-			}
+			void push_back( const Item& item )  { *expand_by( 1 ) = item; }
 	};
 	
 }

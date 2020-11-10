@@ -49,25 +49,32 @@ Container::Container( box_type type, size_t n_items )
 	}
 }
 
-Box* Container::append( const Box& item )
+Box* Container::expand_by( size_t n )
 {
+	const size_t original_length = u.str.length;
+	
 	ASSERT( is< Container >() );
 	
 	ASSERT( u.str.length <= u.str.capacity );
 	
-	if ( u.str.length == u.str.capacity )
+	const size_t new_length = u.str.length + n;
+	
+	if ( new_length > u.str.capacity )
 	{
 		u.str.length   *= sizeof (Box);
 		u.str.capacity *= sizeof (Box);
 		
 		size_t new_capacity = u.str.capacity * 2;
 		
+		if ( new_capacity < new_length * sizeof (Box) )
+		{
+			new_capacity = new_length * sizeof (Box);
+		}
+		
 		char* alloc;
 		
-		if ( new_capacity == 0 )
+		if ( u.str.pointer == NULL )
 		{
-			new_capacity = 8 * sizeof (Box);
-			
 			alloc = plus::extent_alloc( new_capacity );
 			
 			u.str.pointer  = alloc;
@@ -87,15 +94,12 @@ Box* Container::append( const Box& item )
 		
 		memset( alloc + skipped, '\0', cleared );
 		
-		u.str.length   /= sizeof (Box);
 		u.str.capacity /= sizeof (Box);
 	}
 	
-	Box* it = begin() + u.str.length++;
+	u.str.length = new_length;
 	
-	*it = item;
-	
-	return it;
+	return begin() + original_length;
 }
 
 }
