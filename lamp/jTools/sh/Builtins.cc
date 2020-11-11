@@ -6,7 +6,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <map>
 
 // Standard C/C++
 #include <cstring>
@@ -37,6 +36,7 @@
 #include "poseven/functions/write.hh"
 
 // vxo
+#include "vxo/strmap.hh"
 #include "vxo/strset.hh"
 
 // sh
@@ -56,12 +56,11 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	typedef std::map< plus::string, plus::string > StringMap;
+	typedef vxo::StrMap_to< vxo::String > StringMap;
 	
 	typedef vxo::StrSet StringSet;
 	
 	static StringMap gLocalVariables;
-	
 	static StringSet gVariablesToExport;
 	
 	static void PrintVariable( const StringMap::value_type& var )
