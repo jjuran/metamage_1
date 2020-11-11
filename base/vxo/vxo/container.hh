@@ -30,6 +30,8 @@ namespace vxo
 			
 			size_t size() const  { return u.str.length; }
 			
+			bool empty() const  { return size() == 0; }
+			
 			Item* begin()  { return (Item*) u.str.pointer; }
 			Item* end()    { return begin() + size(); }
 			
