@@ -385,13 +385,13 @@ namespace tool
 				if ( getenv( var ) == NULL )
 				{
 					// Environment variable unset
-					StringMap::const_iterator found = gLocalVariables.find( var );
+					StringMap::iterator found = gLocalVariables.find( var );
 					
 					if ( found != gLocalVariables.end() )
 					{
 						// Shell variable is set, export it
 						setenv( var, found->second.c_str(), 1 );
-						gLocalVariables.erase( var );
+						gLocalVariables.erase( found );
 					}
 					else
 					{
