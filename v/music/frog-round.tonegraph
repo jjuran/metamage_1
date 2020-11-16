@@ -1,0 +1,214 @@
+# Frog Round
+
+# 1.059463094359295^12 ~= 2
+# 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
+
+const semitone_numer = 69433
+const semitone_denom = 2^16
+
+def transpose (n, pitch) { pitch * semitone_numer^n div semitone_denom^n }
+
+const C8 = 0x184ada * 2;
+
+const adj = 0
+
+def C  (o) { transpose( adj, C8 div 2^(8 - o) ) }
+def D  (o) { transpose( 2, C o ) }
+def E  (o) { transpose( 4, C o ) }
+def F  (o) { transpose( 5, C o ) }
+def G  (o) { transpose( 7, C o ) }
+def A  (o) { transpose( 9, C o ) }
+def B  (o) { transpose( 11, C o ) }
+
+def multiplex (a, b)
+{
+	var result = []
+	
+	var p = begin a
+	var q = begin b
+	
+	var dt_a = (*p).key
+	var dt_b = (*q).key
+	var dt
+	
+	while p and q do
+	{
+		dt = Math.min (dt_a, dt_b)
+		
+		result <-- dt => [ *(*p).value, *(*q).value ]
+		
+		dt_a -= dt
+		dt_b -= dt
+		
+		if dt_a == 0 then
+		{
+			dt_a = if ++p then { (*p).key } else { 0 }
+		}
+		
+		if dt_b == 0 then
+		{
+			dt_b = (*++q).key
+		}
+	}
+	
+	if q then
+	{
+		p <-> q
+	}
+	
+	if p then
+	{
+		if dt then
+		{
+			result <-- dt => (*p++).value
+		}
+		
+		while p do
+		{
+			result <-- *p++
+		}
+	}
+	
+	return result
+}
+
+def truncate_at (sequence, cutoff)
+{
+	var result = []
+	
+	var p = begin sequence
+	
+	while p and cutoff > 0 do
+	{
+		var dt = (*p).key
+		
+		if cutoff < dt then
+		{
+			result <-- cutoff => (*p).value
+			break
+		}
+		
+		cutoff -= dt
+		
+		result <-- *p++
+	}
+	
+	return result
+}
+
+const silence = [ 0 ]
+
+const round =
+[
+	# "What a queer bird" set as a round, authorship uncertain.
+	#
+	# For more information:
+	#   https://www.musanim.com/frog/
+	#   https://www.musanim.com/frog/frogref.html
+	#   https://en.wikipedia.org/wiki/What_a_queer_bird
+	
+		# Measure 1
+	 3: [ C 4 ],  # What
+	 1: silence,
+	 4: [ C 4 ],  # a
+	 8: [ B 3 ],  # queer
+	16: [ C 4 ],  # bird
+	 8: silence,
+	 8: [ G 3 ],  # the
+		# Measure 2
+	16: [ C 4 ],  # frog
+	16: [ C 3 ],  # are:
+	 8: silence,
+	
+	 4: [ C 3 ],  # When
+	 4: [ D 3 ],  # he
+		# Measure 3
+	 (7: [ E 3 ], 1: silence) (*) 5,  # sit, he stand (almost).
+	 4: [ D 3 ],  # When
+	 4: [ E 3 ],  # he
+		# Measure 4
+	 (7: [ F 3 ], 1: silence) (*) 5,  # walk, he fly (almost).
+	 4: [ E 3 ],  # When
+	 4: [ F 3 ],  # he
+		# Measure 5
+	 (7: [ G 3 ], 1: silence) (*) 4,  # talk, he cry (al-
+	 4: [ G 3 ],  # -most).
+	 4: silence,
+	 8: [ G 3 ],  # He
+		# Measure 6
+	 8: [ A 3 ],  # ain't
+	 8: [ G 3 ],  # got
+	 4: [ C 4 ],  # no
+	 8: [ B 3 ],  # sense
+	 4: silence,
+	 4: [ C 4 ],  # (hard-
+	 4: [ C 3 ],  # ly).
+	 4: silence,
+	 
+	 4: [ G 3 ],  # He
+		# Measure 7
+	 8: [ A 3 ],  # ain't
+	 8: [ G 3 ],  # got
+	 4: [ C 4 ],  # no
+	 8: [ B 3 ],  # tail
+	 4: silence,
+	 4: [ C 4 ],  # eith-
+	 8: [ C 3 ],  # er
+	 4: silence,
+		# Measure 8
+	 4: [ C 4 ],  # (hard-
+	 4: [ C 3 ],  # ly).
+	 4: silence,
+	 
+	 4: [ C 4 ],  # He
+	 4: [ C 3 ],  # sit
+	 4: [ D 3 ],  # on
+	 4: [ E 3 ],  # what
+	 4: [ F 3 ],  # he
+	 4: [ G 3 ],  # ain't
+	 4: [ A 3 ],  # got
+	 4: [ B 3 ],  # (hard-
+	 3: [ C 4 ],  # ly).
+	 1: silence,
+]
+
+def repeated (sequence)
+{
+	return [ *sequence (*) 4 ]
+}
+
+def higher (sequence)
+{
+	return sequence map { v.key => v.value map { v * 2 } }
+}
+
+def lower (sequence)
+{
+	return sequence map { v.key => v.value map { v div 2 } }
+}
+
+def delayed (sequence)
+{
+	return [ 4 * 8 * 3/2 * 2 => [], *sequence ]
+}
+
+def truncated (sequence)
+{
+	const q = 8
+	const m = q * 4 * 3/2
+	const r = m * 8
+	const t = r * 4 - q * 2
+	
+	return truncate_at( sequence, t )
+}
+
+const voice = repeated round
+
+const vox1 = higher voice
+const vox2 = delayed lower voice
+const vox3 = delayed^2 voice
+const vox4 = delayed^3 higher^2 voice
+
+const ensemble = [vox1, vox2, vox3, vox4] per multiplex
+
+const tonegraph = truncated ensemble map { v.key * 3/8 => v.value }
