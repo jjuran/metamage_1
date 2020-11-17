@@ -164,7 +164,7 @@ raster::sync_relay* open_raster( const char* path )
 
 typedef void (*draw_proc)( const uint8_t* src, uint8_t* dst, int width );
 
-template < class UInt, int X = 1 >
+template < class UInt, int X >
 static
 void transcode_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
 {
@@ -194,7 +194,7 @@ struct pixtet
 	UInt pixels[ 8 * X ];
 };
 
-template < class UInt, int X = 1 >
+template < class UInt, int X >
 static
 const pixtet< UInt, X >* make_1_to_direct_table()
 {
