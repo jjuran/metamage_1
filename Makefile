@@ -67,16 +67,16 @@ var/install:
 	@exit 1
 
 ams-linux-tools: $(AMS_REPOS) var/install
-	./build.pl -i $(AMS_TOOLS) display-linux interact-linux kdmode reader
+	./build.pl -i $(AMS_TOOLS) display-fbdev interact-fbdev kdmode reader
 
 ams-linux-install: ams-linux-tools ams-68k-install ams-common-install
 	@echo '#!/bin/sh'                 >  var/install/bin/display
-	@echo 'exec display-linux "$$@"'  >> var/install/bin/display
+	@echo 'exec display-fbdev "$$@"'  >> var/install/bin/display
 	@echo '#!/bin/sh'                 >  var/install/bin/interact
-	@echo 'exec interact-linux "$$@"' >> var/install/bin/interact
+	@echo 'exec interact-fbdev "$$@"' >> var/install/bin/interact
 	@chmod +x var/install/bin/display var/install/bin/interact
-	install var/out/display-linux   var/install/bin
-	install var/out/interact-linux  var/install/bin
+	install var/out/display-fbdev   var/install/bin
+	install var/out/interact-fbdev  var/install/bin
 	install -d $(AMS_UTILS_ROOT)
 	install -t $(AMS_UTILS_ROOT) var/out/kdmode var/out/reader
 	$(INSTALL_SCRIPT) v/bin/spiel-mouse.vx     var/install/bin/spiel-mouse
@@ -85,9 +85,9 @@ ams-linux-install: ams-linux-tools ams-68k-install ams-common-install
 ams-linux: ams-linux-tools
 	@mkdir -p var/demo
 	@echo '#!/bin/sh'                 >  var/demo/display
-	@echo 'exec display-linux "$$@"'  >> var/demo/display
+	@echo 'exec display-fbdev "$$@"'  >> var/demo/display
 	@echo '#!/bin/sh'                 >  var/demo/interact
-	@echo 'exec interact-linux "$$@"' >> var/demo/interact
+	@echo 'exec interact-fbdev "$$@"' >> var/demo/interact
 	@chmod +x var/demo/display var/demo/interact
 	$(DEMO_SCRIPT) v/bin/spiel-mouse.vx    var/demo/spiel-mouse
 	$(DEMO_SCRIPT) v/bin/spiel-keyboard.vx var/demo/spiel-keyboard

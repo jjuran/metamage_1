@@ -1,5 +1,5 @@
 /*
-	display-linux.cc
+	display-fbdev.cc
 	----------------
 */
 
@@ -37,13 +37,13 @@
 #include "raster/relay_detail.hh"
 #include "raster/sync.hh"
 
-// display-linux
+// display-fbdev
 #include "fb.hh"
 
 
 #define KDMODE  CONFIG_INSTALL_PREFIX "/lib/metamage/kdmode"
 
-#define PROGRAM  "display-linux"
+#define PROGRAM  "display-fbdev"
 
 #define DEFAULT_FB_PATH  "/dev/fb0"
 

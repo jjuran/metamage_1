@@ -1,5 +1,5 @@
 /*
-	interact-linux.cc
+	interact-fbdev.cc
 	-----------------
 */
 
@@ -44,7 +44,7 @@
 
 #define SPIEL_SWAP_CMD_OPT  "SPIEL_SWAP_CMD_OPT"
 
-#define PROGRAM  "interact-linux"
+#define PROGRAM  "interact-fbdev"
 
 #define USAGE  \
 "usage: " PROGRAM " --raster <raster-path>\n"  \
