@@ -178,6 +178,11 @@ namespace vlib
 		
 		while ( const Symbol* sym = it.use().sym() )
 		{
+			if ( sym->mark() )
+			{
+				return true;
+			}
+			
 			const Value& v = sym->get();
 			
 			if ( value_has_custom_references( v ) )
