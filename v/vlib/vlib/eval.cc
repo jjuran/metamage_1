@@ -154,11 +154,6 @@ namespace vlib
 		
 		if ( op == Op_duplicate  ||  op == Op_approximate )
 		{
-			if ( is_symbol( left ) )
-			{
-				track_symbol_if_collectible( left );
-			}
-			
 			const bool collectible = target_is_collectible( target );
 			
 			const bool coercive = op == Op_approximate;
@@ -211,16 +206,6 @@ namespace vlib
 			if ( ! second.addr->is_cycle_free() )
 			{
 				make_target( left, true );  // once more with spoiling
-			}
-			
-			if ( Symbol* sym = left.sym() )
-			{
-				track_symbol_if_collectible( left );
-			}
-			
-			if ( op == Op_swap  &&  right.sym() )
-			{
-				track_symbol_if_collectible( right );
 			}
 			
 			swap( *target.addr, *second.addr );

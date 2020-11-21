@@ -11,6 +11,7 @@
 #include "vlib/symbol.hh"
 #include "vlib/table-utils.hh"
 #include "vlib/throw.hh"
+#include "vlib/tracker.hh"
 
 
 namespace vlib
@@ -102,6 +103,11 @@ namespace vlib
 		
 		if ( spoiling )
 		{
+			if ( ! dst.sym()->mark() )
+			{
+				track_symbol( dst );
+			}
+			
 			dst.sym()->deref_unsafe().spoil();
 		}
 		
