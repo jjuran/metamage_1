@@ -120,7 +120,9 @@ namespace vlib
 	{
 		handler_into handler = 0;  // NULL
 		
-		Target target = make_target( left, ! right.is_cycle_free() );
+		bool spoiling = ! is_right_varop( op )  &&  ! right.is_cycle_free();
+		
+		Target target = make_target( left, spoiling );
 		
 		if ( const dispatch* methods = target.addr->dispatch_methods() )
 		{
@@ -187,7 +189,9 @@ namespace vlib
 		
 		if ( is_right_varop( op ) )
 		{
-			Target second = make_target( right, ! right.is_cycle_free() );
+			bool spoiling = op == Op_swap  &&  ! target.addr->is_cycle_free();
+			
+			Target second = make_target( right, spoiling );
 			
 			check_type( *target.type, *second.addr );
 			
@@ -202,6 +206,11 @@ namespace vlib
 				{
 					THROW( "can't move from a container element" );
 				}
+			}
+			
+			if ( ! second.addr->is_cycle_free() )
+			{
+				make_target( left, true );  // once more with spoiling
 			}
 			
 			if ( Symbol* sym = left.sym() )
