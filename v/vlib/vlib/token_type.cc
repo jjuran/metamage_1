@@ -214,7 +214,7 @@ namespace vlib
 	static
 	token_type new_line( const char* p )
 	{
-		if ( memcmp( p, STR_LEN( "end." ) ) == 0 )
+		if ( strncmp( p, STR_LEN( "end." ) ) == 0 )
 		{
 			p += STRLEN( "end." );
 			
