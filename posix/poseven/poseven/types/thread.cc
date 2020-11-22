@@ -36,10 +36,9 @@ namespace poseven
 		
 	#endif
 		
-		if ( any_thread_object_key == NULL )
-		{
-			any_thread_object_key = new thread_key< thread* >();
-		}
+		static thread_key< thread* > key;
+		
+		any_thread_object_key = &key;
 		
 		return *any_thread_object_key;
 	}
