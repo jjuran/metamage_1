@@ -177,13 +177,7 @@ namespace vlib
 			bool is_cycle_free() const  { return flag_bit( Flag_cycle_free ); }
 			bool is_evaluated()  const  { return flag_bit( Flag_evaluated  ); }
 			
-			void spoil( Value& new_container ) const
-			{
-				if ( ! is_cycle_free() )
-				{
-					new_container.clear_cycle_free();
-				}
-			}
+			void spoil()  { clear_cycle_free(); }
 			
 			template < class Type >
 			Type const* is() const

@@ -58,7 +58,7 @@ namespace vlib
 		return result;
 	}
 	
-	Target make_target( const Value& dst, const Value& src )
+	Target make_target( const Value& dst, bool spoiling )
 	{
 		if ( Expr* expr = dst.expr() )
 		{
@@ -67,9 +67,12 @@ namespace vlib
 				Value& container = expr->left;
 				Value& subscript = expr->right;
 				
-				Target target = make_target( container, src );
+				Target target = make_target( container, spoiling );
 				
-				src.spoil( *target.addr );
+				if ( spoiling )
+				{
+					target.addr->spoil();
+				}
 				
 				if ( target.type == 0 )  // NULL
 				{
@@ -97,7 +100,10 @@ namespace vlib
 			THROW( "target value isn't a symbol or component thereof" );
 		}
 		
-		src.spoil( dst.sym()->deref_unsafe() );
+		if ( spoiling )
+		{
+			dst.sym()->deref_unsafe().spoil();
+		}
 		
 		return dst.sym()->target();
 	}

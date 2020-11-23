@@ -14,7 +14,7 @@
 namespace vlib
 {
 	
-	Target make_target( const Value& dst, const Value& src = NIL );
+	Target make_target( const Value& dst, bool spoiling = false );
 	
 }
 

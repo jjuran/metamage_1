@@ -120,7 +120,7 @@ namespace vlib
 	{
 		handler_into handler = 0;  // NULL
 		
-		Target target = make_target( left, right );
+		Target target = make_target( left, ! right.is_cycle_free() );
 		
 		if ( const dispatch* methods = target.addr->dispatch_methods() )
 		{
@@ -187,7 +187,7 @@ namespace vlib
 		
 		if ( is_right_varop( op ) )
 		{
-			Target second = make_target( right );
+			Target second = make_target( right, ! right.is_cycle_free() );
 			
 			check_type( *target.type, *second.addr );
 			
