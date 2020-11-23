@@ -453,8 +453,6 @@ pascal short InitResources_patch()
 		ProcPtr proc = (ProcPtr) *h;
 		
 		run_INIT( proc );
-		
-		ReleaseResource_patch( h );
 	}
 	
 	return SysMap;
