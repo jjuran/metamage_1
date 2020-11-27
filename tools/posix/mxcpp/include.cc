@@ -150,7 +150,7 @@ namespace tool
 					throw exception( "#include MACRO where MACRO takes arguments" );
 				}
 				
-				const std::vector< plus::string >& replacement = macro->replacement.get();
+				const token_list& replacement = macro->replacement;
 				
 				const size_t n_tokens = replacement.size();
 				
