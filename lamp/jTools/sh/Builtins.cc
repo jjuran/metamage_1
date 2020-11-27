@@ -79,18 +79,10 @@ namespace tool
 	}
 	
 	
-	static bool UnmarkVariableForExport( const plus::string& name )
+	static inline
+	bool UnmarkVariableForExport( const plus::string& name )
 	{
-		StringSet::iterator found = gVariablesToExport.find( name );
-		
-		bool wasMarked = found != gVariablesToExport.end();
-		
-		if ( wasMarked )
-		{
-			gVariablesToExport.erase( found );
-		}
-		
-		return wasMarked;
+		return gVariablesToExport.erase( name );
 	}
 	
 	void AssignShellVariable( const char* name, const char* value )
