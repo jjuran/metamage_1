@@ -6,11 +6,11 @@
 #ifndef MXCPP_TOKENIZE_HH
 #define MXCPP_TOKENIZE_HH
 
-// Standard C++
-#include <vector>
-
 // plus
 #include "plus/string.hh"
+
+// vxo
+#include "vxo/strvec.hh"
 
 
 namespace tool
@@ -19,7 +19,7 @@ namespace tool
 	class token_list
 	{
 		private:
-			std::vector< plus::string > its_vector;
+			vxo::StrVec its_vector;
 		
 		public:
 			size_t size() const  { return get().size(); }
@@ -34,8 +34,8 @@ namespace tool
 				return get()[ i ];
 			}
 			
-			std::vector< plus::string >      & get()        { return its_vector; }
-			std::vector< plus::string > const& get() const  { return its_vector; }
+			vxo::StrVec      & get()        { return its_vector; }
+			vxo::StrVec const& get() const  { return its_vector; }
 	};
 	
 	inline bool operator==( const token_list& a, const token_list& b )
