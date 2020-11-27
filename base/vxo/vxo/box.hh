@@ -38,6 +38,7 @@ namespace vxo
 		
 		Box_container = 112,  // 0111 0000
 		Box_array     = 112,  // 0111 0000
+		Box_set       = 113,  // 0111 0001
 		Box_undefined = 127,  // 0111 1111
 		
 		Box_error = -1,
