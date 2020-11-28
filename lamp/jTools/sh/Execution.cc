@@ -218,7 +218,10 @@ namespace tool
 		{
 			StringVector result( gParameterCount );
 			
-			std::copy( gParameters, gParameters + gParameterCount, result.begin() );
+			for ( size_t i = 0;  i < gParameterCount;  ++i )
+			{
+				result.push_back( gParameters[ i ] );
+			}
 			
 			return result;
 		}

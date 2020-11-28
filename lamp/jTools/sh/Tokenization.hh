@@ -11,13 +11,16 @@
 // plus
 #include "plus/string.hh"
 
+// vxo
+#include "vxo/strvec.hh"
 
-typedef std::vector< plus::string > StringVector;
+
+typedef vxo::StrVec StringVector;
 
 inline
 StringVector MakeVector( const plus::string& s )
 {
-	return StringVector( 1, s );
+	return StringVector( s );
 }
 
 namespace ShellShock
