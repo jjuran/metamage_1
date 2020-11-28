@@ -6,7 +6,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <map>
 #include <set>
 
 // Standard C/C++
@@ -137,35 +136,6 @@ namespace tool
 	{
 		return p7::wait_t( exit_status << 8 );
 	}
-	
-	struct Job
-	{
-		Circuit circuit;
-		int pid;
-	};
-	
-	typedef std::map< std::size_t, Job > JobTable;
-	
-	static JobTable gJobTable;
-	
-	static int NextJobNumber()
-	{
-		return 0;
-	}
-	
-	/*
-	static int NewJob( const Circuit& circuit )
-	{
-		int job = NextJobNumber();
-		
-		gJobTable[ job ];
-		
-		return job;
-		
-		
-		
-	}
-	*/
 	
 	
 	class AppendWithSpace
