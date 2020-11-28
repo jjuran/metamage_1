@@ -598,7 +598,8 @@ namespace tool
 		}
 	}
 	
-	static p7::wait_t ExecuteCommand( const Command& command )
+	static
+	p7::wait_t ExecuteCommand( Command& command )
 	{
 		Sh::StringArray argvec( command.args );
 		
@@ -697,7 +698,8 @@ namespace tool
 	}
 	
 	
-	static p7::wait_t ExecuteCommandFromPipeline( const Command& command, plus::argv& env )
+	static
+	p7::wait_t ExecuteCommandFromPipeline( Command& command, plus::argv& env )
 	{
 		Sh::StringArray argvec( command.args );
 		
@@ -739,7 +741,8 @@ namespace tool
 		return wait_from_exit( p7::exit_failure );
 	}
 	
-	static void ExecuteCommandAndExitFromPipeline( const Command& command, plus::argv& env )
+	static
+	void ExecuteCommandAndExitFromPipeline( Command& command, plus::argv& env )
 	{
 		try
 		{
@@ -779,9 +782,9 @@ namespace tool
 		
 		plus::argv env;
 		
-		typedef std::vector< Command >::const_iterator const_iterator;
+		typedef std::vector< Command >::iterator iterator;
 		
-		const_iterator command = commands.begin();
+		iterator command = commands.begin();
 		
 		int pipes[ 2 ];
 		
