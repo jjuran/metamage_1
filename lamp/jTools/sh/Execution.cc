@@ -59,6 +59,14 @@
 extern "C" char** environ;
 
 #ifdef __RELIX__
+// Relix
+#include "relix/alloca.h"
+#define ALLOCA( x )  signalling_alloca( x )
+#else
+#define ALLOCA( x )  alloca( x )
+#endif
+
+#ifdef __RELIX__
 
 static const char* global_signal_names[] =
 {
@@ -158,6 +166,18 @@ namespace tool
 	static inline std::vector< T > MakeVector( const T& value )
 	{
 		return std::vector< T >( 1, value );
+	}
+	
+	template < class Strings >
+	static
+	void fill_argv( char** argv, Strings& args )
+	{
+		for ( size_t i = 0;  i < args.size();  ++i )
+		{
+			*argv++ = (char*) args[ i ].c_str();
+		}
+		
+		*argv = NULL;
 	}
 	
 	static std::vector< plus::string > lookup_shell_param( const plus::string& param, bool double_quoted )
@@ -601,9 +621,11 @@ namespace tool
 	static
 	p7::wait_t ExecuteCommand( Command& command )
 	{
-		Sh::StringArray argvec( command.args );
+		const size_t argc = command.args.size();
 		
-		char** argv = argvec.GetPointer();
+		char** argv = (char**) ALLOCA( (argc + 1) * sizeof (char*) );
+		
+		fill_argv( argv, command.args );
 		
 		if ( CommandIsOnlyAssignments( argv ) )
 		{
@@ -701,9 +723,11 @@ namespace tool
 	static
 	p7::wait_t ExecuteCommandFromPipeline( Command& command, plus::argv& env )
 	{
-		Sh::StringArray argvec( command.args );
+		const size_t argc = command.args.size();
 		
-		char** argv = argvec.GetPointer();
+		char** argv = (char**) ALLOCA( (argc + 1) * sizeof (char*) );
+		
+		fill_argv( argv, command.args );
 		
 		if ( CommandIsOnlyAssignments( argv ) )
 		{
