@@ -288,7 +288,7 @@ namespace ShellShock
 		// If there's no left-brace, return the word as is.  (No expansion.)
 		if ( *left == '\0' )
 		{
-			return std::vector< plus::string >( 1, word );
+			return MakeVector( word );
 		}
 		
 		// Copy from the beginning of the word up to the left-brace.
@@ -304,7 +304,7 @@ namespace ShellShock
 		// If there's no right-brace, return the word as is.  (No expansion.)
 		if ( *q == '\0' )
 		{
-			return std::vector< plus::string >( 1, word );
+			return MakeVector( word );
 		}
 		
 		// Copy from after the left-brace up to the right-brace.
@@ -478,11 +478,7 @@ namespace ShellShock
 	
 	std::vector< plus::string > WordSplitting( const plus::string& word )
 	{
-		std::vector< plus::string > vec;
-		
-		vec.push_back( word );
-		
-		return vec;
+		return MakeVector( word );
 	}
 	
 	static bool NameMatchesPattern( const char* name, const char* pattern )

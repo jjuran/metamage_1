@@ -12,6 +12,12 @@
 #include "plus/string.hh"
 
 
+inline
+std::vector< plus::string > MakeVector( const plus::string& s )
+{
+	return std::vector< plus::string >( 1, s );
+}
+
 namespace ShellShock
 {
 	

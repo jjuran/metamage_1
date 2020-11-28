@@ -161,12 +161,6 @@ namespace tool
 	};
 	
 	
-	template < class T >
-	static inline std::vector< T > MakeVector( const T& value )
-	{
-		return std::vector< T >( 1, value );
-	}
-	
 	static inline
 	int count_argv( char** argv )
 	{
