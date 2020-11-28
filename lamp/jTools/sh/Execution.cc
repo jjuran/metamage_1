@@ -53,7 +53,6 @@
 #include "Expansion.hh"
 #include "Options.hh"
 #include "PositionalParameters.hh"
-#include "StringArray.hh"
 
 
 extern "C" char** environ;
@@ -166,6 +165,19 @@ namespace tool
 	static inline std::vector< T > MakeVector( const T& value )
 	{
 		return std::vector< T >( 1, value );
+	}
+	
+	static inline
+	int count_argv( char** argv )
+	{
+		int result = 0;
+		
+		while ( *argv++ )
+		{
+			++result;
+		}
+		
+		return result;
 	}
 	
 	template < class Strings >
@@ -465,7 +477,7 @@ namespace tool
 	
 	static p7::exit_t CallBuiltin( Builtin builtin, char** argv )
 	{
-		int argc = Sh::CountStringArray( argv );
+		int argc = count_argv( argv );
 		
 		return builtin( argc, argv );
 	}
