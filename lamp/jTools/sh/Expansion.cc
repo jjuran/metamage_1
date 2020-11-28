@@ -212,13 +212,14 @@ namespace ShellShock
 		return p;
 	}
 	
-	static std::vector< plus::string > SplitBracedGroup( const char* str )
+	static
+	StringVector SplitBracedGroup( const char* str )
 	{
 		const char *p, *q;
 		const char *comma, *left, *right;
 		int level = 0;
 		
-		std::vector< plus::string > words;
+		StringVector words;
 		
 		p = q = str;
 		
@@ -272,7 +273,7 @@ namespace ShellShock
 		return words;
 	}
 	
-	std::vector< plus::string > BraceExpansion( const plus::string& word )
+	StringVector BraceExpansion( const plus::string& word )
 	{
 		// egg-{foo,bar,baz}-yung -> egg-foo-yung egg-bar-yung egg-baz-yung
 		
@@ -316,19 +317,19 @@ namespace ShellShock
 		plus::string postscript( q + 1 );  // "-yung"
 		
 		// Recursively expand the postscript, as it may contain more brace groups.
-		std::vector< plus::string > posts = BraceExpansion( postscript );
+		StringVector posts = BraceExpansion( postscript );
 		
 		// Split the comma-separated brace group.
-		std::vector< plus::string > words = SplitBracedGroup( group.c_str() );
-		std::vector< plus::string > expansion;  // The complete expansion
+		StringVector words = SplitBracedGroup( group.c_str() );
+		StringVector expansion;  // The complete expansion
 		
-		typedef std::vector< plus::string >::const_iterator const_iterator;
+		typedef StringVector::const_iterator const_iterator;
 		
 		// For each word in the first brace group:
 		for ( const_iterator word = words.begin();  word < words.end();  ++word )
 		{
 			// Recursively expand the word.  (Expand subgroups.)
-			std::vector< plus::string > subs = BraceExpansion( *word );
+			StringVector subs = BraceExpansion( *word );
 			
 			// For each expanded word:
 			for ( const_iterator sub = subs.begin();  sub < subs.end();  ++sub )
@@ -476,7 +477,7 @@ namespace ShellShock
 		return word;
 	}
 	
-	std::vector< plus::string > WordSplitting( const plus::string& word )
+	StringVector WordSplitting( const plus::string& word )
 	{
 		return MakeVector( word );
 	}
@@ -525,7 +526,10 @@ namespace ShellShock
 		return false;
 	}
 	
-	static void MatchPathnames( const plus::string& in_dir, const char* pattern, std::vector< plus::string >& result )
+	static
+	void MatchPathnames( const plus::string&  in_dir,
+	                     const char*          pattern,
+	                     StringVector&        result )
 	{
 		const char* dir_pathname = in_dir.empty() ? "." : in_dir.c_str();
 		
@@ -554,7 +558,10 @@ namespace ShellShock
 		closedir( dir );
 	}
 	
-	static void ExpandPathnames( const plus::string& from_dir, const char* path, std::vector< plus::string >& result )
+	static
+	void ExpandPathnames( const plus::string&  from_dir,
+	                      const char*          path,
+	                      StringVector&        result )
 	{
 		//while ( *path == '/' ) continue;  // e.g. /foo//bar
 		
@@ -608,11 +615,11 @@ namespace ShellShock
 			
 			const plus::string filename( path, slash );
 			
-			std::vector< plus::string > matches;
+			StringVector matches;
 			
 			MatchPathnames( from_dir, filename.c_str(), matches );
 			
-			typedef std::vector< plus::string >::const_iterator Iter;
+			typedef StringVector::const_iterator Iter;
 			
 			for ( Iter it = matches.begin();  it != matches.end();  ++it )
 			{
@@ -623,11 +630,11 @@ namespace ShellShock
 		}
 	}
 	
-	std::vector< plus::string > PathnameExpansion( const plus::string& word )
+	StringVector PathnameExpansion( const plus::string& word )
 	{
 		// Genie*.[ch]
 		
-		std::vector< plus::string > result;
+		StringVector result;
 		
 		const unsigned char metachars[] = { 3, '*', '?', '[' };
 		
@@ -787,12 +794,12 @@ namespace ShellShock
 		return plus::string( var, end - var );
 	}
 	
-	std::vector< plus::string > ParameterExpansion( param_lookup_f       lookup_param,
-	                                                const plus::string&  word )
+	StringVector ParameterExpansion( param_lookup_f       lookup_param,
+	                                 const plus::string&  word )
 	{
 		// $HOME -> /home/jjuran
 		
-		std::vector< plus::string > result;
+		StringVector result;
 		
 		bool has_empty_params = false;
 		
@@ -821,7 +828,7 @@ namespace ShellShock
 			
 			plus::string varName = ScanParameter( p );
 			
-			std::vector< plus::string > lookup = lookup_param( varName, double_quoted );
+			StringVector lookup = lookup_param( varName, double_quoted );
 			
 			// lookup.size() equals 1 except in the case of $*, $@, or "$@"
 			
@@ -863,7 +870,7 @@ namespace ShellShock
 			param_lookup_f its_lookup;
 		
 		public:
-			typedef std::vector< plus::string > result_type;
+			typedef StringVector result_type;
 			
 			parameter_expander( param_lookup_f f ) : its_lookup( f )
 			{
@@ -882,7 +889,7 @@ namespace ShellShock
 	}
 	
 	template < class Inserter >
-	void Copy( const std::vector< plus::string >& words, Inserter inserter )
+	void Copy( const StringVector& words, Inserter inserter )
 	{
 		std::copy( words.begin(), words.end(), inserter );
 	}
@@ -892,7 +899,8 @@ namespace ShellShock
 		return word;
 	}
 	
-	static plus::string Join( const std::vector< plus::string >& words )
+	static
+	plus::string Join( const StringVector& words )
 	{
 		if ( words.empty() )
 		{
@@ -901,7 +909,7 @@ namespace ShellShock
 		
 		plus::var_string result = words[0];
 		
-		typedef std::vector< plus::string >::const_iterator Iter;
+		typedef StringVector::const_iterator Iter;
 		
 		for ( Iter it = words.begin() + 1;  it < words.end();  ++it )
 		{
@@ -930,12 +938,12 @@ namespace ShellShock
 	{
 		Command result;
 		
-		typedef std::vector< plus::string >::const_iterator StrIter;
+		typedef StringVector               ::const_iterator StrIter;
 		typedef std::vector< Redirection  >::const_iterator RedirIter;
 		
 		for ( StrIter iArg = command.args.begin();  iArg < command.args.end();  ++iArg )
 		{
-			Copy( algorithm( *iArg ), back_inserter( result.args ) );
+			Copy( algorithm( *iArg ), std::back_inserter( result.args ) );
 		}
 		
 		for ( RedirIter itRedir = command.redirections.begin();  itRedir < command.redirections.end();  ++itRedir )

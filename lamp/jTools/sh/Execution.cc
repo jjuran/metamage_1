@@ -186,7 +186,8 @@ namespace tool
 		*argv = NULL;
 	}
 	
-	static std::vector< plus::string > lookup_shell_param( const plus::string& param, bool double_quoted )
+	static
+	StringVector lookup_shell_param( const plus::string& param, bool double_quoted )
 	{
 		plus::var_string single_result;
 		
@@ -215,7 +216,7 @@ namespace tool
 		}
 		else if ( param == "@"  ||  param == "*" )
 		{
-			std::vector< plus::string > result( gParameterCount );
+			StringVector result( gParameterCount );
 			
 			std::copy( gParameters, gParameters + gParameterCount, result.begin() );
 			

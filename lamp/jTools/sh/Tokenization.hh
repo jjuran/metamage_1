@@ -12,10 +12,12 @@
 #include "plus/string.hh"
 
 
+typedef std::vector< plus::string > StringVector;
+
 inline
-std::vector< plus::string > MakeVector( const plus::string& s )
+StringVector MakeVector( const plus::string& s )
 {
-	return std::vector< plus::string >( 1, s );
+	return StringVector( 1, s );
 }
 
 namespace ShellShock
@@ -105,12 +107,12 @@ namespace ShellShock
 	
 	struct Command
 	{
-		std::vector< plus::string > args;
+		StringVector                args;
 		std::vector< Redirection  > redirections;
 		
 		Command()  {}
 		
-		Command( const std::vector< plus::string >&  args,
+		Command( const StringVector&                 args,
 		         const std::vector< Redirection  >&  redirections )
 		:
 			args        ( args         ),
