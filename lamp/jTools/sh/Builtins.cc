@@ -56,9 +56,11 @@ namespace tool
 	
 	typedef std::map< plus::string, plus::string > StringMap;
 	
+	typedef std::set< plus::string > StringSet;
+	
 	static StringMap gLocalVariables;
 	
-	static std::set< plus::string > gVariablesToExport;
+	static StringSet gVariablesToExport;
 	
 	static void PrintVariable( const StringMap::value_type& var )
 	{
@@ -77,7 +79,7 @@ namespace tool
 	
 	static bool UnmarkVariableForExport( const plus::string& name )
 	{
-		std::set< plus::string >::iterator found = gVariablesToExport.find( name );
+		StringSet::iterator found = gVariablesToExport.find( name );
 		
 		bool wasMarked = found != gVariablesToExport.end();
 		
