@@ -7,7 +7,6 @@
 // Standard C++
 #include <algorithm>
 #include <map>
-#include <set>
 
 // Standard C/C++
 #include <cstring>
@@ -37,6 +36,9 @@
 #include "poseven/functions/open.hh"
 #include "poseven/functions/write.hh"
 
+// vxo
+#include "vxo/strset.hh"
+
 // sh
 #include "Options.hh"
 #include "PositionalParameters.hh"
@@ -56,7 +58,7 @@ namespace tool
 	
 	typedef std::map< plus::string, plus::string > StringMap;
 	
-	typedef std::set< plus::string > StringSet;
+	typedef vxo::StrSet StringSet;
 	
 	static StringMap gLocalVariables;
 	
