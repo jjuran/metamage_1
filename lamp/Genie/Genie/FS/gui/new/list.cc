@@ -181,9 +181,9 @@ namespace Genie
 			strings.push_back( plus::string( p, q ) );
 			
 			p = q + 1;
-			
-			params.data_changed = true;
 		}
+		
+		params.data_changed = true;
 		
 		// FIXME:  Ignores the file mark
 		
