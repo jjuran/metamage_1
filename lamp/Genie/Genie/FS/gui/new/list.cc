@@ -8,9 +8,6 @@
 // POSIX
 #include <sys/stat.h>
 
-// Standard C++
-#include <vector>
-
 // POSIX
 #include <fcntl.h>
 
@@ -49,10 +46,10 @@ namespace Genie
 	
 	struct ListParameters
 	{
-		std::vector< plus::string >  itsStrings;
-		bool                         itIntersectsGrowBox;
-		bool                         bounds_changed;
-		bool                         data_changed;
+		plus::string  its_data;
+		bool          itIntersectsGrowBox;
+		bool          bounds_changed;
+		bool          data_changed;
 		
 		ListParameters() : itIntersectsGrowBox(),
 		                   bounds_changed(),
@@ -105,15 +102,17 @@ namespace Genie
 			
 			DeleteCells();
 			
-			const std::vector< plus::string >& strings = params.itsStrings;
+			const plus::string& data = params.its_data;
 			
-			typedef std::vector< plus::string >::const_iterator Iter;
+			const char* end = data.end();
 			
-			for ( Iter it = strings.begin();  it != strings.end();  ++it )
+			for ( const char* p = data.begin();  p != end; )
 			{
-				const plus::string& s = *it;
+				const char* q = strchr( p, '\n' );
 				
-				AppendCell( s.data(), s.size() );
+				AppendCell( p, q - p );
+				
+				p = q + 1;
 			}
 		}
 		
@@ -163,24 +162,17 @@ namespace Genie
 		
 		ListParameters& params = gListParameterMap[ view ];
 		
-		std::vector< plus::string >& strings = params.itsStrings;
-		
 		if ( that->get_flags() & O_TRUNC )
 		{
-			strings.clear();
+			params.its_data.assign( buffer, n );
 		}
-		
-		const char* end = buffer + n;
-		
-		const char* p = buffer;
-		
-		while ( p < end )
+		else
 		{
-			const char* q = std::find( p, end, '\n' );
+			plus::var_string combined = params.its_data;
 			
-			strings.push_back( plus::string( p, q ) );
+			combined.append( buffer, n );
 			
-			p = q + 1;
+			params.its_data = combined.move();
 		}
 		
 		params.data_changed = true;
@@ -193,23 +185,9 @@ namespace Genie
 	}
 	
 	
-	static std::size_t measure_strings( const std::vector< plus::string >& strings )
-	{
-		std::size_t result = 0;
-		
-		typedef std::vector< plus::string >::const_iterator Iter;
-		
-		for ( Iter it = strings.begin();  it != strings.end();  ++it )
-		{
-			result += it->size() + 1;
-		}
-		
-		return result;
-	}
-	
 	static off_t list_data_geteof( const vfs::node* that )
 	{
-		return measure_strings( gListParameterMap[ that->owner() ].itsStrings );
+		return gListParameterMap[ that->owner() ].its_data.size();
 	}
 	
 	static void list_data_seteof( const vfs::node* that, off_t length )
@@ -221,31 +199,16 @@ namespace Genie
 		
 		ListParameters& params = gListParameterMap[ that->owner() ];
 		
-		params.itsStrings.clear();
+		params.its_data.reset();
 		
 		params.data_changed = true;
-	}
-	
-	static plus::string join_strings( const std::vector< plus::string >& strings )
-	{
-		plus::var_string result;
-		
-		typedef std::vector< plus::string >::const_iterator Iter;
-		
-		for ( Iter it = strings.begin();  it != strings.end();  ++it )
-		{
-			result += *it;
-			result += '\n';
-		}
-		
-		return result;
 	}
 	
 	static vfs::filehandle_ptr list_data_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		if ( flags == O_RDONLY )
 		{
-			plus::string data = join_strings( gListParameterMap[ that->owner() ].itsStrings );
+			plus::string data = gListParameterMap[ that->owner() ].its_data;
 			
 			return vfs::new_property_reader( *that, flags, data );
 		}
