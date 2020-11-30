@@ -6,11 +6,12 @@
 #ifndef MXCPP_EXPAND_HH
 #define MXCPP_EXPAND_HH
 
+// mxcpp
+#include "token_list.hh"
+
 
 namespace tool
 {
-	
-	class token_list;
 	
 	class pseudomacro_got_multiple_args {};
 	class pseudomacro_got_multiple_tokens {};
