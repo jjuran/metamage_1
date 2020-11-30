@@ -6,7 +6,6 @@
 #include "include.hh"
 
 // Standard C++
-#include <map>
 #include <set>
 
 // Standard C
@@ -22,6 +21,9 @@
 // plus
 #include "plus/var_string.hh"
 
+// vxo
+#include "vxo/strmap.hh"
+
 // poseven
 #include "poseven/functions/fstatat.hh"
 #include "poseven/functions/open.hh"
@@ -35,6 +37,8 @@
 #include "preprocess.hh"
 
 
+typedef vxo::StrMap_to< vxo::String > StrMap;
+
 namespace tool
 {
 	
@@ -47,7 +51,7 @@ namespace tool
 	
 	static std::set< plus::string > global_paths_once_included;
 	
-	static std::map< plus::string, plus::string > global_memoized_include_guards;
+	static StrMap global_memoized_include_guards;
 	
 	
 	static p7::fd_t open_dir( const char* path )
@@ -94,7 +98,7 @@ namespace tool
 			return true;
 		}
 		
-		std::map< plus::string, plus::string >::const_iterator it = global_memoized_include_guards.find( path );
+		StrMap::const_iterator it = global_memoized_include_guards.find( path );
 		
 		return it != global_memoized_include_guards.end()  &&  is_defined( it->second );
 	}
