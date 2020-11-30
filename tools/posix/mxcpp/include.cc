@@ -5,9 +5,6 @@
 
 #include "include.hh"
 
-// Standard C++
-#include <set>
-
 // Standard C
 #include <stdlib.h>
 #include <string.h>
@@ -23,6 +20,7 @@
 
 // vxo
 #include "vxo/strmap.hh"
+#include "vxo/strset.hh"
 
 // poseven
 #include "poseven/functions/fstatat.hh"
@@ -37,6 +35,8 @@
 #include "preprocess.hh"
 
 
+using vxo::StrSet;
+
 typedef vxo::StrMap_to< vxo::String > StrMap;
 
 namespace tool
@@ -49,8 +49,7 @@ namespace tool
 	
 	static std::vector< p7::fd_t > global_include_search_dirs;
 	
-	static std::set< plus::string > global_paths_once_included;
-	
+	static StrSet global_paths_once_included;
 	static StrMap global_memoized_include_guards;
 	
 	

@@ -8,7 +8,6 @@
 // Standard C++
 #include <algorithm>
 #include <map>
-#include <set>
 #include <vector>
 
 // Standard C
@@ -16,6 +15,9 @@
 
 // plus
 #include "plus/var_string.hh"
+
+// vxo
+#include "vxo/strset.hh"
 
 // mxcpp
 #include "exception.hh"
@@ -307,17 +309,17 @@ namespace tool
 		}
 	}
 	
-	static bool expand_macros( const token_list&          input,
-	                           bool                       in_expression,
-	                           bool                       allow_calls,
-	                           std::set< plus::string >&  ignored,
-	                           token_list&                output );
+	static bool expand_macros( const token_list&  input,
+	                           bool               in_expression,
+	                           bool               allow_calls,
+	                           vxo::StrSet&       ignored,
+	                           token_list&        output );
 	
 	static void expand_macro_call( const token_list&                 pattern,
 	                               const token_list&                 replacement,
 	                               const std::vector< token_list >&  arg_list,
 	                               bool                              in_expression,
-	                               std::set< plus::string >&         ignored,
+	                               vxo::StrSet&                      ignored,
 	                               token_list&                       output )
 	{
 		std::map< plus::string, token_list > args = map_args( pattern, arg_list );
@@ -331,11 +333,11 @@ namespace tool
 		splice_tokens( substituted, output );
 	}
 	
-	static bool expand_macros( const token_list&          input,
-	                           bool                       in_expression,
-	                           bool                       allow_calls,
-	                           std::set< plus::string >&  ignored,
-	                           token_list&                output )
+	static bool expand_macros( const token_list&  input,
+	                           bool               in_expression,
+	                           bool               allow_calls,
+	                           vxo::StrSet&       ignored,
+	                           token_list&        output )
 	{
 		const size_t n_tokens = input.size();
 		
@@ -503,7 +505,7 @@ namespace tool
 	
 	bool expand_macros( const token_list& input, token_list& output, bool in_expression )
 	{
-		std::set< plus::string > ignored;
+		vxo::StrSet ignored;
 		
 		return expand_macros( input, in_expression, true, ignored, output );
 	}
