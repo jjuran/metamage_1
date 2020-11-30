@@ -100,9 +100,7 @@ namespace tool
 	
 	const char* QueryShellVariable( const plus::string& name )
 	{
-		StringMap::const_iterator found = gLocalVariables.find( name );
-		
-		if ( found != gLocalVariables.end() )
+		if ( StringMap::const_iterator found = gLocalVariables.found( name ) )
 		{
 			return found->second.c_str();
 		}
@@ -380,9 +378,9 @@ namespace tool
 				if ( getenv( var ) == NULL )
 				{
 					// Environment variable unset
-					StringMap::iterator found = gLocalVariables.find( var );
+					StringMap::iterator found = gLocalVariables.found( var );
 					
-					if ( found != gLocalVariables.end() )
+					if ( found )
 					{
 						// Shell variable is set, export it
 						setenv( var, found->second.c_str(), 1 );
