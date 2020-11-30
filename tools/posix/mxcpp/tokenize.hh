@@ -16,26 +16,11 @@
 namespace tool
 {
 	
-	class token_list
+	class token_list : public vxo::StrVec
 	{
-		private:
-			vxo::StrVec its_vector;
-		
 		public:
-			size_t size() const  { return get().size(); }
-			
-			plus::string& operator[]( size_t i )
-			{
-				return get()[ i ];
-			}
-			
-			plus::string const& operator[]( size_t i ) const
-			{
-				return get()[ i ];
-			}
-			
-			vxo::StrVec      & get()        { return its_vector; }
-			vxo::StrVec const& get() const  { return its_vector; }
+			vxo::StrVec      & get()        { return *this; }
+			vxo::StrVec const& get() const  { return *this; }
 	};
 	
 	inline bool operator==( const token_list& a, const token_list& b )
