@@ -7,7 +7,7 @@
 #define VXO_STRING_HH
 
 // plus
-#include "plus/string_fwd.hh"
+#include "plus/string.hh"
 
 // vxo
 #include "vxo/box.hh"
@@ -41,6 +41,8 @@ namespace vxo
 			
 			string&       get()        { return *(string*)       this; }
 			string const& get() const  { return *(string const*) this; }
+			
+			const char* c_str() const  { return get().c_str(); }
 			
 			operator string const&() const  { return get(); }
 			
