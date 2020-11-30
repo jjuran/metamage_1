@@ -22,8 +22,7 @@
 #include "plus/string.hh"
 
 // vxo
-#include "vxo/container.hh"
-#include "vxo/string.hh"
+#include "vxo/strvec.hh"
 
 // text-input
 #include "text_input/feed.hh"
@@ -55,7 +54,7 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	typedef vxo::Array_of< vxo::String >  Array_of_String;
+	typedef vxo::StrVec  Array_of_String;
 	
 	struct Record
 	{
@@ -200,7 +199,7 @@ namespace tool
 		
 		Record result;
 		
-		result.port = gear::parse_unsigned_decimal( tokens[ kPort ].get().c_str() );
+		result.port = gear::parse_unsigned_decimal( tokens[ kPort ].c_str() );
 		result.path = tokens[ kPath ];
 		
 		for ( size_t i = kArgv;  i < tokens.size();  ++i )
