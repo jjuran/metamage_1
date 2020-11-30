@@ -56,11 +56,11 @@ namespace tool
 	{
 		plus::var_string result;
 		
-		const std::size_t n_tokens = tokens.get().size();
+		const std::size_t n_tokens = tokens.size();
 		
 		for ( int i = 0;  i < n_tokens;  ++i )
 		{
-			const plus::string& token = tokens.get()[ i ];
+			const plus::string& token = tokens[ i ];
 			
 			result += token;
 			result += " ";

@@ -145,7 +145,7 @@ namespace tool
 		{
 			if ( const macro_t* macro = find_macro( target ) )
 			{
-				if ( macro->pattern.get().size() > 1 )
+				if ( macro->pattern.size() > 1 )
 				{
 					throw exception( "#include MACRO where MACRO takes arguments" );
 				}

@@ -126,7 +126,7 @@ namespace tool
 			
 			p = q;
 			
-			output.get().push_back( token );
+			output.push_back( token );
 		}
 	}
 	

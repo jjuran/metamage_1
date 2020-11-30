@@ -26,7 +26,7 @@ namespace tool
 		tokenize( pattern,     new_macro.pattern     );
 		tokenize( replacement, new_macro.replacement );
 		
-		plus::string name = new_macro.pattern.get()[0];
+		plus::string name = new_macro.pattern[0];
 		
 		std::map< plus::string, macro_t >::const_iterator it = global_macros.find( name );
 		
