@@ -43,6 +43,8 @@ namespace vxo
 			string const& get() const  { return *(string const*) this; }
 			
 			operator string const&() const  { return get(); }
+			
+			DynamicString& operator=( const string& s );
 	};
 	
 	typedef DynamicString String;
