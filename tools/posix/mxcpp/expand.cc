@@ -368,7 +368,7 @@ namespace tool
 					macro = find_macro( token );
 				}
 				
-				if ( _defined_  ||  _option_  ||  (macro  &&  ignored.find( token ) == ignored.end()) )
+				if ( _defined_  ||  _option_  ||  (macro  &&  ! ignored.found( token )) )
 				{
 					if ( macro )
 					{

@@ -92,14 +92,14 @@ namespace tool
 	
 	static bool should_skip_include( const plus::string& path )
 	{
-		if ( global_paths_once_included.find( path ) != global_paths_once_included.end() )
+		if ( global_paths_once_included.found( path ) )
 		{
 			return true;
 		}
 		
-		StrMap::const_iterator it = global_memoized_include_guards.find( path );
+		StrMap::const_iterator it = global_memoized_include_guards.found( path );
 		
-		return it != global_memoized_include_guards.end()  &&  is_defined( it->second );
+		return it  &&  is_defined( it->second );
 	}
 	
 	static size_t lookup_path( const plus::string& path )
