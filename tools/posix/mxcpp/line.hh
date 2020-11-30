@@ -18,4 +18,3 @@ namespace tool
 }
 
 #endif
-

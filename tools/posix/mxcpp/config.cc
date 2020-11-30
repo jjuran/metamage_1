@@ -23,4 +23,3 @@ namespace tool
 	line_style global_line_style = no_line_directives;
 	
 }
-
