@@ -11,4 +11,6 @@
 
 typedef vxo::StrVec token_list;
 
+typedef vxo::Array_of< token_list > token_lists;
+
 #endif

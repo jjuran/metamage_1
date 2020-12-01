@@ -6,9 +6,7 @@
 #include "expand.hh"
 
 // Standard C++
-#include <algorithm>
 #include <map>
-#include <vector>
 
 // Standard C
 #include <ctype.h>
@@ -25,8 +23,6 @@
 #include "pragma.hh"
 #include "predefined.hh"
 
-
-typedef std::vector< token_list > token_lists;
 
 namespace tool
 {
