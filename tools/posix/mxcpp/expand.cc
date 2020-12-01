@@ -26,6 +26,8 @@
 #include "predefined.hh"
 
 
+typedef std::vector< token_list > token_lists;
+
 namespace tool
 {
 	
@@ -38,7 +40,7 @@ namespace tool
 	}
 	
 	
-	static plus::string get_one_token( const std::vector< token_list >& args )
+	static plus::string get_one_token( const token_lists& args )
 	{
 		if ( args.size() != 1 )
 		{
@@ -69,7 +71,7 @@ namespace tool
 		result.push_back( plus::string( &c, 1 ) );
 	}
 	
-	static bool get_macro_args( const token_list& tokens, std::vector< token_list >& result, size_t& i )
+	static bool get_macro_args( const token_list& tokens, token_lists& result, size_t& i )
 	{
 		result.push_back( token_list() );
 		
@@ -119,8 +121,8 @@ namespace tool
 	}
 	
 	
-	static std::map< plus::string, token_list > map_args( const token_list&                 pattern,
-	                                                      const std::vector< token_list >&  arg_list )
+	static std::map< plus::string, token_list > map_args( const token_list&   pattern,
+	                                                      const token_lists&  arg_list )
 	{
 		std::map< plus::string, token_list > result;
 		
@@ -315,12 +317,12 @@ namespace tool
 	                           vxo::StrSet&       ignored,
 	                           token_list&        output );
 	
-	static void expand_macro_call( const token_list&                 pattern,
-	                               const token_list&                 replacement,
-	                               const std::vector< token_list >&  arg_list,
-	                               bool                              in_expression,
-	                               vxo::StrSet&                      ignored,
-	                               token_list&                       output )
+	static void expand_macro_call( const token_list&   pattern,
+	                               const token_list&   replacement,
+	                               const token_lists&  arg_list,
+	                               bool                in_expression,
+	                               vxo::StrSet&        ignored,
+	                               token_list&         output )
 	{
 		std::map< plus::string, token_list > args = map_args( pattern, arg_list );
 		
@@ -388,7 +390,7 @@ namespace tool
 					
 					if ( gets_paren  &&  allow_calls )
 					{
-						std::vector< token_list > args;
+						token_lists args;
 						
 						const bool got = get_macro_args( input, args, ++i );
 						
