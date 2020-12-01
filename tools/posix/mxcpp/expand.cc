@@ -69,7 +69,7 @@ namespace tool
 	
 	static bool get_macro_args( const token_list& tokens, std::vector< token_list >& result, size_t& i )
 	{
-		result.resize( 1 );
+		result.push_back( token_list() );
 		
 		const size_t n_tokens = tokens.get().size();
 		
@@ -87,7 +87,7 @@ namespace tool
 				}
 				else if ( token == "," )
 				{
-					result.resize( result.size() + 1 );
+					result.push_back( token_list() );
 					
 					continue;
 				}
