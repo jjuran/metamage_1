@@ -5,9 +5,6 @@
 
 #include "expand.hh"
 
-// Standard C++
-#include <map>
-
 // Standard C
 #include <ctype.h>
 
@@ -15,6 +12,7 @@
 #include "plus/var_string.hh"
 
 // vxo
+#include "vxo/strmap.hh"
 #include "vxo/strset.hh"
 
 // mxcpp
@@ -24,7 +22,7 @@
 #include "predefined.hh"
 
 
-typedef std::map< plus::string, token_list > token_list_map;
+typedef vxo::StrMap_to< token_list > token_list_map;
 
 namespace tool
 {
