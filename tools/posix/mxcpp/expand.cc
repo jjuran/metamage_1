@@ -318,8 +318,6 @@ namespace tool
 		
 		substitute_args( replacement, args, substituted );
 		
-		args.clear();
-		
 		token_list spliced;
 		
 		splice_tokens( substituted, output );
