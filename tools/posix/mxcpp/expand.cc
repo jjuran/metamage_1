@@ -24,6 +24,8 @@
 #include "predefined.hh"
 
 
+typedef std::map< plus::string, token_list > token_list_map;
+
 namespace tool
 {
 	
@@ -117,10 +119,10 @@ namespace tool
 	}
 	
 	
-	static std::map< plus::string, token_list > map_args( const token_list&   pattern,
-	                                                      const token_lists&  arg_list )
+	static token_list_map map_args( const token_list&   pattern,
+	                                const token_lists&  arg_list )
 	{
-		std::map< plus::string, token_list > result;
+		token_list_map result;
 		
 		const size_t n_tokens = pattern.size();
 		
@@ -218,9 +220,9 @@ namespace tool
 		return result;
 	}
 	
-	static void substitute_args( const token_list&                            tokens,
-	                             const std::map< plus::string, token_list >&  args,
-	                             token_list&                                  result )
+	static void substitute_args( const token_list&      tokens,
+	                             const token_list_map&  args,
+	                             token_list&            result )
 	{
 		const size_t n_tokens = tokens.size();
 		
@@ -237,7 +239,7 @@ namespace tool
 				continue;
 			}
 			
-			std::map< plus::string, token_list >::const_iterator it = args.find( token );
+			token_list_map::const_iterator it = args.find( token );
 			
 			if ( it != args.end() )
 			{
@@ -320,7 +322,7 @@ namespace tool
 	                               vxo::StrSet&        ignored,
 	                               token_list&         output )
 	{
-		std::map< plus::string, token_list > args = map_args( pattern, arg_list );
+		token_list_map args = map_args( pattern, arg_list );
 		
 		token_list substituted;
 		
