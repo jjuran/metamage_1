@@ -133,6 +133,8 @@ LOCAL_SRC_FILES     := xv68k/diagnostics.cc    \
                        xv68k/native.cc         \
                        xv68k/screen.cc         \
                        xv68k/shared_memory.cc  \
+                       xv68k/sound.cc          \
+                       xv68k/VIA.cc            \
                        xv68k/xv68k.cc
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src $(LOCAL_PATH)/xv68k
 LOCAL_CPP_EXTENSION := .cc
