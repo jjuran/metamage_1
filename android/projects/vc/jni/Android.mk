@@ -2,15 +2,6 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE     := ed25519
-LOCAL_SRC_FILES  := ed25519/ed25519.c
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/ed25519
-
-include $(BUILD_STATIC_LIBRARY)
-
-
-include $(CLEAR_VARS)
-
 LOCAL_MODULE     := must
 LOCAL_SRC_FILES  := src/must/write.c src/must/pthread.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/src
@@ -75,6 +66,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE        := chars
 LOCAL_SRC_FILES     := src/charsets/MacRoman.cc        \
+                       src/charsets/ascii.cc           \
                        src/charsets/extended_ascii.cc  \
                        src/conv/mac_utf8.cc            \
                        src/encoding/utf8.cc            \
@@ -145,6 +137,22 @@ include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_MODULE        := vxo
+LOCAL_SRC_FILES     := src/vxo/box.cc        \
+                       src/vxo/container.cc  \
+                       src/vxo/lib/unbin.cc  \
+                       src/vxo/lib/unhex.cc  \
+                       src/vxo/string.cc     \
+
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
+LOCAL_CPP_EXTENSION := .cc
+LOCAL_CPP_FEATURES  += exceptions
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+
 LOCAL_MODULE        := vlib
 LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/array-utils.cc                 \
@@ -174,14 +182,16 @@ LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/iterators/range_iterator.cc    \
                        src/vlib/iterators/safe_list_builder.cc \
                        src/vlib/iterators/string_iterator.cc   \
-                       src/vlib/lib/ed25519.cc                 \
                        src/vlib/list-utils.cc                  \
                        src/vlib/map-reduce.cc                  \
+                       src/vlib/member.cc                      \
                        src/vlib/named_ops.cc                   \
+                       src/vlib/namespaces/Iter.cc             \
                        src/vlib/namespaces/Math.cc             \
                        src/vlib/namespaces/V.cc                \
                        src/vlib/new_line.cc                    \
                        src/vlib/ops.cc                         \
+                       src/vlib/order.cc                       \
                        src/vlib/parse.cc                       \
                        src/vlib/peephole.cc                    \
                        src/vlib/precedence.cc                  \
@@ -207,10 +217,12 @@ LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/types/boolean.cc               \
                        src/vlib/types/builtin.cc               \
                        src/vlib/types/byte.cc                  \
+                       src/vlib/types/byteclass.cc             \
                        src/vlib/types/byterange.cc             \
                        src/vlib/types/endec/byte.cc            \
                        src/vlib/types/endec/stdint.cc          \
                        src/vlib/types/field.cc                 \
+                       src/vlib/types/float.cc                 \
                        src/vlib/types/fraction.cc              \
                        src/vlib/types/integer.cc               \
                        src/vlib/types/integer/stdint.cc        \
@@ -221,6 +233,7 @@ LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/types/namespace.cc             \
                        src/vlib/types/null.cc                  \
                        src/vlib/types/packed.cc                \
+                       src/vlib/types/pattern/quantity.cc      \
                        src/vlib/types/pointer.cc               \
                        src/vlib/types/proc.cc                  \
                        src/vlib/types/range.cc                 \
@@ -239,7 +252,7 @@ LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/value.cc                       \
                        src/vlib/vbox.cc                        \
 
-LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src $(LOCAL_PATH)/ed25519
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
 LOCAL_CPP_EXTENSION := .cc
 LOCAL_CPP_FEATURES  += exceptions
 
@@ -253,6 +266,6 @@ LOCAL_SRC_FILES     := main.cc
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
 LOCAL_CPP_EXTENSION := .cc
 
-LOCAL_STATIC_LIBRARIES := vlib bignum plus gear chars math md5 sha256 command more must ed25519
+LOCAL_STATIC_LIBRARIES := vlib vxo bignum plus gear chars math md5 sha256 command more must
 
 include $(BUILD_EXECUTABLE)
