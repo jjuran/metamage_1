@@ -79,27 +79,35 @@ namespace tool
 		{
 			const plus::string& token = tokens.get()[ i ];
 			
-			if ( depth == 0 )
+			if ( token.size() == 1 )
 			{
-				if ( token == ")" )
+				switch ( token[ 0 ] )
 				{
-					return true;
-				}
-				else if ( token == "," )
-				{
-					result.push_back( token_list() );
+					case '(':
+						++depth;
+						break;
 					
-					continue;
+					case ')':
+						if ( depth == 0 )
+						{
+							return true;
+						}
+						
+						--depth;
+						break;
+					
+					case ',':
+						if ( depth == 0 )
+						{
+							result.push_back( token_list() );
+							continue;
+						}
+						
+						break;
+					
+					default:
+						break;
 				}
-			}
-			
-			if ( token == "(" )
-			{
-				++depth;
-			}
-			else if ( token == ")" )
-			{
-				--depth;
 			}
 			
 			result.back().get().push_back( token );
