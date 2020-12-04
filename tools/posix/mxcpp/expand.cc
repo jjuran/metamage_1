@@ -83,7 +83,7 @@ namespace tool
 			{
 				if ( token == ")" )
 				{
-					break;
+					return true;
 				}
 				else if ( token == "," )
 				{
@@ -105,7 +105,7 @@ namespace tool
 			result.back().get().push_back( token );
 		}
 		
-		return i < n_tokens;
+		return false;
 	}
 	
 	
