@@ -5,8 +5,8 @@
 
 #include "macro.hh"
 
-// Standard C++
-#include <map>
+// vxo
+#include "vxo/strmap.hh"
 
 // mxcpp
 #include "exception.hh"
@@ -16,7 +16,7 @@
 namespace tool
 {
 	
-	typedef std::map< plus::string, macro_t > macro_map;
+	typedef vxo::StrMap_to< macro_t > macro_map;
 	
 	static macro_map global_macros;
 	
