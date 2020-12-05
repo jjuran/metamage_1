@@ -16,7 +16,9 @@
 namespace tool
 {
 	
-	static std::map< plus::string, macro_t > global_macros;
+	typedef std::map< plus::string, macro_t > macro_map;
+	
+	static macro_map global_macros;
 	
 	
 	void define_macro( const plus::string& pattern, const plus::string& replacement )
@@ -28,7 +30,7 @@ namespace tool
 		
 		const plus::string& name = new_macro.pattern()[ 0 ];
 		
-		std::map< plus::string, macro_t >::const_iterator it = global_macros.find( name );
+		macro_map::const_iterator it = global_macros.find( name );
 		
 		if ( it == global_macros.end() )
 		{
@@ -56,7 +58,7 @@ namespace tool
 	
 	const macro_t* find_macro( const plus::string& name )
 	{
-		std::map< plus::string, macro_t >::const_iterator it = global_macros.find( name );
+		macro_map::const_iterator it = global_macros.find( name );
 		
 		return it != global_macros.end() ? &it->second : NULL;
 	}
