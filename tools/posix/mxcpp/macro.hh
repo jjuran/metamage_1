@@ -18,8 +18,8 @@ namespace tool
 	
 	struct macro_t
 	{
-		token_list  pattern;
-		token_list  replacement;
+		token_list  its_pattern;
+		token_list  its_replacement;
 		
 		macro_t()
 		{
@@ -27,15 +27,21 @@ namespace tool
 		
 		macro_t( const token_list& p, const token_list& r )
 		:
-			pattern( p ),
-			replacement( r )
+			its_pattern( p ),
+			its_replacement( r )
 		{
 		}
+		
+		token_list& pattern()      { return its_pattern;     }
+		token_list& replacement()  { return its_replacement; }
+		
+		token_list const& pattern()     const  { return its_pattern;     }
+		token_list const& replacement() const  { return its_replacement; }
 	};
 	
 	inline bool operator==( const macro_t& a, const macro_t& b )
 	{
-		return a.pattern == b.pattern  &&  a.replacement == b.replacement;
+		return a.pattern() == b.pattern() && a.replacement() == b.replacement();
 	}
 	
 	inline bool operator!=( const macro_t& a, const macro_t& b )

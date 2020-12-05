@@ -23,10 +23,10 @@ namespace tool
 	{
 		macro_t new_macro;
 		
-		tokenize( pattern,     new_macro.pattern     );
-		tokenize( replacement, new_macro.replacement );
+		tokenize( pattern,     new_macro.pattern()     );
+		tokenize( replacement, new_macro.replacement() );
 		
-		const plus::string& name = new_macro.pattern[ 0 ];
+		const plus::string& name = new_macro.pattern()[ 0 ];
 		
 		std::map< plus::string, macro_t >::const_iterator it = global_macros.find( name );
 		

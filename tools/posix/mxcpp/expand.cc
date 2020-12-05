@@ -373,7 +373,7 @@ namespace tool
 						ignored.insert( token );
 					}
 					
-					const bool needs_more_tokens = _option_  ||  _defined_  ||  (macro  &&  macro->pattern.size() > 1);
+					const bool needs_more_tokens = _option_  ||  _defined_  ||  (macro  &&  macro->pattern().size() > 1);
 					
 					if ( needs_more_tokens  &&  i + 1 == n_tokens )
 					{
@@ -407,8 +407,8 @@ namespace tool
 						{
 							token_list spliced;
 							
-							expand_macro_call( macro->pattern,
-							                   macro->replacement,
+							expand_macro_call( macro->pattern(),
+							                   macro->replacement(),
 							                   args,
 							                   in_expression,
 							                   ignored,
@@ -475,7 +475,7 @@ namespace tool
 					}
 					else if ( !call  &&  macro )
 					{
-						const bool done = expand_macros( macro->replacement,
+						const bool done = expand_macros( macro->replacement(),
 						                                 in_expression,
 						                                 true,
 						                                 ignored,
