@@ -76,6 +76,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE        := chars
 LOCAL_SRC_FILES     := src/charsets/MacRoman.cc        \
+                       src/charsets/ascii.cc           \
                        src/charsets/extended_ascii.cc  \
                        src/conv/mac_utf8.cc            \
                        src/encoding/utf8.cc            \
@@ -147,6 +148,22 @@ include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_MODULE        := vxo
+LOCAL_SRC_FILES     := src/vxo/box.cc        \
+                       src/vxo/container.cc  \
+                       src/vxo/lib/unbin.cc  \
+                       src/vxo/lib/unhex.cc  \
+                       src/vxo/string.cc     \
+
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
+LOCAL_CPP_EXTENSION := .cc
+LOCAL_CPP_FEATURES  += exceptions
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+
 LOCAL_MODULE        := poseven
 LOCAL_SRC_FILES     := src/poseven/extras/read_all.cc  \
                        src/poseven/extras/slurp.cc     \
@@ -195,14 +212,16 @@ LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/iterators/range_iterator.cc    \
                        src/vlib/iterators/safe_list_builder.cc \
                        src/vlib/iterators/string_iterator.cc   \
-                       src/vlib/lib/ed25519.cc                 \
                        src/vlib/list-utils.cc                  \
                        src/vlib/map-reduce.cc                  \
+                       src/vlib/member.cc                      \
                        src/vlib/named_ops.cc                   \
+                       src/vlib/namespaces/Iter.cc             \
                        src/vlib/namespaces/Math.cc             \
                        src/vlib/namespaces/V.cc                \
                        src/vlib/new_line.cc                    \
                        src/vlib/ops.cc                         \
+                       src/vlib/order.cc                       \
                        src/vlib/parse.cc                       \
                        src/vlib/peephole.cc                    \
                        src/vlib/precedence.cc                  \
@@ -228,10 +247,12 @@ LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/types/boolean.cc               \
                        src/vlib/types/builtin.cc               \
                        src/vlib/types/byte.cc                  \
+                       src/vlib/types/byteclass.cc             \
                        src/vlib/types/byterange.cc             \
                        src/vlib/types/endec/byte.cc            \
                        src/vlib/types/endec/stdint.cc          \
                        src/vlib/types/field.cc                 \
+                       src/vlib/types/float.cc                 \
                        src/vlib/types/fraction.cc              \
                        src/vlib/types/integer.cc               \
                        src/vlib/types/integer/stdint.cc        \
@@ -242,6 +263,7 @@ LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/types/namespace.cc             \
                        src/vlib/types/null.cc                  \
                        src/vlib/types/packed.cc                \
+                       src/vlib/types/pattern/quantity.cc      \
                        src/vlib/types/pointer.cc               \
                        src/vlib/types/proc.cc                  \
                        src/vlib/types/range.cc                 \
@@ -260,6 +282,33 @@ LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/value.cc                       \
                        src/vlib/vbox.cc                        \
 
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
+LOCAL_CPP_EXTENSION := .cc
+LOCAL_CPP_FEATURES  += exceptions
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE        := varyx-channel
+LOCAL_SRC_FILES     := src/varyx/channel/channel.cc   \
+                       src/varyx/channel/metatype.cc  \
+                       src/varyx/channel/state.cc     \
+
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
+LOCAL_CPP_EXTENSION := .cc
+LOCAL_CPP_FEATURES  += exceptions
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE        := varyx-ed25519
+LOCAL_SRC_FILES     := src/varyx/ed25519/functions.cc    \
+                       src/varyx/ed25519/lib/ed25519.cc  \
+
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src $(LOCAL_PATH)/ed25519
 LOCAL_CPP_EXTENSION := .cc
 LOCAL_CPP_FEATURES  += exceptions
@@ -269,23 +318,46 @@ include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_MODULE        := varyx-meta
+LOCAL_SRC_FILES     := src/varyx/meta/eval.cc
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
+LOCAL_CPP_EXTENSION := .cc
+LOCAL_CPP_FEATURES  += exceptions
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE        := varyx-posix
+LOCAL_SRC_FILES     := src/varyx/posix/argv.cc                  \
+                       src/varyx/posix/empty_signal_handler.cc  \
+                       src/varyx/posix/exception.cc             \
+                       src/varyx/posix/file_descriptor.cc       \
+                       src/varyx/posix/library.cc               \
+                       src/varyx/posix/posixfs.cc               \
+                       src/varyx/posix/sockets.cc               \
+                       src/varyx/posix/thread.cc                \
+                       src/varyx/posix/thread_state.cc          \
+
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
+LOCAL_CPP_EXTENSION := .cc
+LOCAL_CPP_FEATURES  += exceptions
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+
 LOCAL_MODULE        := vx
-LOCAL_SRC_FILES     := vx/main.cc                  \
-                       vx/channel/channel.cc       \
-                       vx/channel/metatype.cc      \
-                       vx/channel/state.cc         \
-                       vx/empty_signal_handler.cc  \
-                       vx/exception.cc             \
-                       vx/file_descriptor.cc       \
-                       vx/library.cc               \
-                       vx/posixfs.cc               \
-                       vx/sockets.cc               \
-                       vx/thread.cc                \
-                       vx/thread_state.cc          \
+LOCAL_SRC_FILES     := vx/main.cc
 
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src $(LOCAL_PATH)/vx
+
 LOCAL_CPP_EXTENSION := .cc
 
-LOCAL_STATIC_LIBRARIES := vlib poseven bignum plus gear chars math md5 sha256 command more must ed25519
+LOCAL_STATIC_LIBRARIES := varyx-channel varyx-ed25519 varyx-meta varyx-posix  \
+                          vlib vxo poseven bignum plus gear chars math md5    \
+                          sha256 command more must ed25519
 
 include $(BUILD_EXECUTABLE)
