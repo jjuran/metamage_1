@@ -273,22 +273,22 @@ namespace tool
 			case detected_ifndef:
 				tokenize( line, guard_tokens );
 				
-				if ( guard_tokens.get().size() == 3  &&  guard_tokens.get()[0] == "#" )
+				if ( guard_tokens.size() == 3  &&  guard_tokens[0] == "#" )
 				{
 					const bool want_ifndef = data.state != detected_ifndef;
 					
 					const char* directive = want_ifndef ? "ifndef" : "define";
 					
-					if ( guard_tokens.get()[1] == directive )
+					if ( guard_tokens[1] == directive )
 					{
 						if ( want_ifndef )
 						{
-							data.guard_macro = guard_tokens.get()[2];
+							data.guard_macro = guard_tokens[2];
 							
 							data.state = detected_ifndef;
 							break;
 						}
-						else if ( guard_tokens.get()[2] == data.guard_macro )
+						else if ( guard_tokens[2] == data.guard_macro )
 						{
 							data.state = detected_define;
 							break;

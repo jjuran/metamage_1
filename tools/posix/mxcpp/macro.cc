@@ -5,8 +5,8 @@
 
 #include "macro.hh"
 
-// Standard C++
-#include <map>
+// vxo
+#include "vxo/strmap.hh"
 
 // mxcpp
 #include "exception.hh"
@@ -16,19 +16,21 @@
 namespace tool
 {
 	
-	static std::map< plus::string, macro_t > global_macros;
+	typedef vxo::StrMap_to< macro_t > macro_map;
+	
+	static macro_map global_macros;
 	
 	
 	void define_macro( const plus::string& pattern, const plus::string& replacement )
 	{
 		macro_t new_macro;
 		
-		tokenize( pattern,     new_macro.pattern     );
-		tokenize( replacement, new_macro.replacement );
+		tokenize( pattern,     new_macro.pattern()     );
+		tokenize( replacement, new_macro.replacement() );
 		
-		plus::string name = new_macro.pattern.get()[0];
+		const plus::string& name = new_macro.pattern()[ 0 ];
 		
-		std::map< plus::string, macro_t >::const_iterator it = global_macros.find( name );
+		macro_map::const_iterator it = global_macros.find( name );
 		
 		if ( it == global_macros.end() )
 		{
@@ -56,7 +58,7 @@ namespace tool
 	
 	const macro_t* find_macro( const plus::string& name )
 	{
-		std::map< plus::string, macro_t >::const_iterator it = global_macros.find( name );
+		macro_map::const_iterator it = global_macros.find( name );
 		
 		return it != global_macros.end() ? &it->second : NULL;
 	}

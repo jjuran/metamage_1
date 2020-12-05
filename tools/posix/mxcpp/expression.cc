@@ -26,7 +26,7 @@ namespace tool
 		
 	tail_call:
 		
-		const plus::string& token = tokens.get()[i];
+		const plus::string& token = tokens[i];
 		
 		const char* p = token.c_str();
 		
@@ -80,7 +80,7 @@ namespace tool
 	
 	static value_t eval_op( const token_list& tokens, std::size_t& i, const value_t& a )
 	{
-		const binary_operation* op = next_binary_operator( tokens.get()[i].c_str() );
+		const binary_operation* op = next_binary_operator( tokens[i].c_str() );
 		
 		if ( op == NULL )
 		{
@@ -91,9 +91,9 @@ namespace tool
 		
 		value_t b = eval_term( tokens, i );
 		
-		if ( i < tokens.get().size() )
+		if ( i < tokens.size() )
 		{
-			const binary_operation* next_op = next_binary_operator( tokens.get()[i].c_str() );
+			const binary_operation* next_op = next_binary_operator( tokens[i].c_str() );
 			
 			if ( next_op  &&  next_op->rank + is_right_associative( op ) > op->rank )
 			{
@@ -109,9 +109,9 @@ namespace tool
 	{
 		value_t operand = eval_term( tokens, i );
 		
-		while ( i < tokens.get().size() )
+		while ( i < tokens.size() )
 		{
-			if ( tokens.get()[i] == ")" )
+			if ( tokens[i] == ")" )
 			{
 				++i;
 				

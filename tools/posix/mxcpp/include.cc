@@ -5,10 +5,6 @@
 
 #include "include.hh"
 
-// Standard C++
-#include <map>
-#include <set>
-
 // Standard C
 #include <stdlib.h>
 #include <string.h>
@@ -21,6 +17,10 @@
 
 // plus
 #include "plus/var_string.hh"
+
+// vxo
+#include "vxo/strmap.hh"
+#include "vxo/strset.hh"
 
 // poseven
 #include "poseven/functions/fstatat.hh"
@@ -35,6 +35,10 @@
 #include "preprocess.hh"
 
 
+using vxo::StrSet;
+
+typedef vxo::StrMap_to< vxo::String > StrMap;
+
 namespace tool
 {
 	
@@ -45,9 +49,8 @@ namespace tool
 	
 	static std::vector< p7::fd_t > global_include_search_dirs;
 	
-	static std::set< plus::string > global_paths_once_included;
-	
-	static std::map< plus::string, plus::string > global_memoized_include_guards;
+	static StrSet global_paths_once_included;
+	static StrMap global_memoized_include_guards;
 	
 	
 	static p7::fd_t open_dir( const char* path )
@@ -89,14 +92,14 @@ namespace tool
 	
 	static bool should_skip_include( const plus::string& path )
 	{
-		if ( global_paths_once_included.find( path ) != global_paths_once_included.end() )
+		if ( global_paths_once_included.found( path ) )
 		{
 			return true;
 		}
 		
-		std::map< plus::string, plus::string >::const_iterator it = global_memoized_include_guards.find( path );
+		StrMap::const_iterator it = global_memoized_include_guards.found( path );
 		
-		return it != global_memoized_include_guards.end()  &&  is_defined( it->second );
+		return it  &&  is_defined( it->second );
 	}
 	
 	static size_t lookup_path( const plus::string& path )
@@ -145,12 +148,12 @@ namespace tool
 		{
 			if ( const macro_t* macro = find_macro( target ) )
 			{
-				if ( macro->pattern.get().size() > 1 )
+				if ( macro->pattern().size() > 1 )
 				{
 					throw exception( "#include MACRO where MACRO takes arguments" );
 				}
 				
-				const std::vector< plus::string >& replacement = macro->replacement.get();
+				const token_list& replacement = macro->replacement();
 				
 				const size_t n_tokens = replacement.size();
 				
