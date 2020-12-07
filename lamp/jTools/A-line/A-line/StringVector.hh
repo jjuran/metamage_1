@@ -6,12 +6,9 @@
 #ifndef ALINE_STRINGVECTOR_HH
 #define ALINE_STRINGVECTOR_HH
 
-// Standard C++
-#include <vector>
+// vxo
+#include "vxo/strvec.hh"
 
-// plus
-#include "plus/string.hh"
-
-typedef std::vector< plus::string > StringVector;
+typedef vxo::StrVec StringVector;
 
 #endif

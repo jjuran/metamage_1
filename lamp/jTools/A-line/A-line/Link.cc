@@ -146,9 +146,9 @@ namespace tool
 	
 	static void RemoveNonLibs( StringVector& usedProjects, Platform platform )
 	{
-		usedProjects.resize( std::remove_if( usedProjects.begin(),
-		                                     usedProjects.end(),
-		                                     not_a_lib_on( platform ) ) - usedProjects.begin() );
+		usedProjects.resize_down( std::remove_if( usedProjects.begin(),
+		                                          usedProjects.end(),
+		                                          not_a_lib_on( platform ) ) - usedProjects.begin() );
 	}
 	
 	static plus::string DirCreate_Idempotent( const plus::string& dir )
@@ -406,9 +406,7 @@ namespace tool
 		
 		const size_t n = input_filenames.size();
 		
-		StringVector input_pathnames;
-		
-		input_pathnames.reserve( n );
+		StringVector input_pathnames( n + needsCarbResource );
 		
 		for ( size_t i = 0;  i < n;  ++i )
 		{
@@ -914,7 +912,7 @@ namespace tool
 			bool has_frameworks = !project.Frameworks().empty();
 			
 			AddFrameworks( has_frameworks ? project.Frameworks()
-			                              : StringVector( 1, "Carbon" ),
+			                              : StringVector( "Carbon" ),
 			               link_input_arguments );
 		}
 		
