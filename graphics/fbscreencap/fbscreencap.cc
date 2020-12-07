@@ -3,6 +3,11 @@
 	--------------
 */
 
+// Android
+#ifdef __ANDROID__
+#include <sys/system_properties.h>
+#endif
+
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
@@ -98,7 +103,29 @@ void save_desktop_screenshot( const char* path )
 		(uint8_t)  model,
 	};
 	
-	const bool rgba = is_rgba( var_info );
+	bool rgba = is_rgba( var_info );
+	
+#ifdef __ANDROID__
+	
+	/*
+		An HP tablet running CyanogenMod (identifying as Android 4.3.1) reports
+		var_info offsets of (red: 16, green: 8, blue: 0) -- i.e. it's claiming
+		ARGB, but actually it's lying and is really RGBA (like all Android 4+,
+		to my knowledge).
+	*/
+	
+	if ( ! rgba )
+	{
+		char buffer[ PROP_VALUE_MAX + 1 ];
+		int len = __system_property_get( "ro.build.version.release", buffer );
+		
+		if ( len >= 2  &&  (buffer[ 0 ] >= '4'  ||  buffer[ 1 ] != '.') )
+		{
+			rgba = true;
+		}
+	}
+	
+#endif
 	
 	if ( rgba )
 	{
