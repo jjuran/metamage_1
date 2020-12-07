@@ -266,8 +266,8 @@ namespace tool
 		std::vector< plus::string > folders;
 		
 		ScanDirForProjects( dir,
-		                    std::back_inserter( configs ),
-		                    std::back_inserter( folders ) );
+		                    configs,
+		                    folders );
 		
 		std::vector< plus::string >& subprojects = global_subprojects;
 		

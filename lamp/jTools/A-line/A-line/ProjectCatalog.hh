@@ -7,7 +7,6 @@
 #define ALINE_PROJECTCATALOG_HH
 
 // Standard C++
-#include <iterator>
 #include <vector>
 
 // plus
@@ -66,9 +65,9 @@ namespace tool
 	
 	const ProjectConfig& GetProjectConfig( const plus::string& name, Platform platform );
 	
-	void ScanDirForProjects( const plus::string&                                       dirPath,
-	                         std::back_insert_iterator< std::vector< plus::string > >  configs,
-	                         std::back_insert_iterator< std::vector< plus::string > >  folders );
+	void ScanDirForProjects( const plus::string&           dirPath,
+	                         std::vector< plus::string >&  configs,
+	                         std::vector< plus::string >&  folders );
 	
 	void write_catalog_cache( poseven::fd_t output   );
 	void read_catalog_cache ( poseven::fd_t input_fd );

@@ -184,9 +184,9 @@ namespace tool
 		its_config_data = MakeConfData( data );
 	}
 	
-	void ScanDirForProjects( const plus::string&                                       dirPath,
-	                         std::back_insert_iterator< std::vector< plus::string > >  configs,
-	                         std::back_insert_iterator< std::vector< plus::string > >  folders )
+	void ScanDirForProjects( const plus::string&           dirPath,
+	                         std::vector< plus::string >&  configs,
+	                         std::vector< plus::string >&  folders )
 	{
 		struct stat dir_stat;
 		
@@ -216,7 +216,7 @@ namespace tool
 		
 		if ( io::file_exists( conf ) )
 		{
-			*configs++ = conf;
+			configs.push_back( conf );
 			
 			return;
 		}
@@ -237,8 +237,10 @@ namespace tool
 		
 		for ( Iter it = contents.begin();  it != end;  ++it )
 		{
-			*(has_confd ? configs
-			            : folders)++ = io::path_descent( conf_path, *it );
+			std::vector< plus::string >& paths = (has_confd ? configs
+			                                                : folders);
+			
+			paths.push_back( io::path_descent( conf_path, *it ) );
 		}
 	}
 	
