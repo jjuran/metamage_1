@@ -27,6 +27,9 @@
 #include "poseven/types/wait_t.hh"
 #endif
 
+// A-line
+#include "A-line/StringVector.hh"
+
 
 namespace tool
 {
@@ -110,9 +113,9 @@ namespace tool
 	class CommandTask : public FileTask
 	{
 		private:
-			Command                      its_command;
-			plus::string                 its_diagnostics_file_path;
-			std::vector< plus::string >  its_input_file_paths;
+			Command       its_command;
+			plus::string  its_diagnostics_file_path;
+			StringVector  its_input_file_paths;
 		
 		public:
 			CommandTask( const Command&       command,

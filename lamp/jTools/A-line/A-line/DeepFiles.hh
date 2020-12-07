@@ -6,11 +6,11 @@
 #ifndef ALINE_DEEPFILES_HH
 #define ALINE_DEEPFILES_HH
 
-// C++
-#include <vector>
-
 // plus
 #include "plus/string.hh"
+
+// A-line
+#include "A-line/StringVector.hh"
 
 
 namespace tool
@@ -22,13 +22,13 @@ namespace tool
 	class DeepFileSearch
 	{
 		private:
-			deep_file_filter filter;
-			std::vector< plus::string >  result;
+			deep_file_filter  filter;
+			StringVector      result;
 		
 		public:
 			DeepFileSearch( deep_file_filter filter ) : filter( filter )  {}
 			
-			operator const std::vector< plus::string >&() const  { return result; }
+			operator const StringVector&() const  { return result; }
 			
 			DeepFileSearch& SearchItem( plus::string item );
 			
@@ -36,7 +36,8 @@ namespace tool
 	};
 	
 	
-	inline std::vector< plus::string > DeepFiles( const plus::string& item, deep_file_filter filter )
+	inline
+	StringVector DeepFiles( const plus::string& item, deep_file_filter filter )
 	{
 		return DeepFileSearch( filter ).SearchItem( item );
 	}

@@ -12,13 +12,15 @@
 // plus
 #include "plus/string.hh"
 
+// A-line
+#include "A-line/StringVector.hh"
+
 
 namespace tool
 {
 	
 	typedef plus::string ConfigKey;
-	
-	typedef std::vector< plus::string > ConfigValues;
+	typedef StringVector ConfigValues;
 	
 	struct DotConfLine
 	{

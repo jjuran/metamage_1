@@ -69,7 +69,7 @@ namespace tool
 					
 					if ( !~end )  throw BadIncludeDirective();
 					
-					std::vector< plus::string >& v( c == '"' ? includes.user : includes.system );
+					StringVector& v( c == '"' ? includes.user : includes.system );
 					
 					v.push_back( line.substr( pos, end - pos ) );
 				}

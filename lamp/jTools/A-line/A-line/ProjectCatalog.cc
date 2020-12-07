@@ -184,9 +184,9 @@ namespace tool
 		its_config_data = MakeConfData( data );
 	}
 	
-	void ScanDirForProjects( const plus::string&           dirPath,
-	                         std::vector< plus::string >&  configs,
-	                         std::vector< plus::string >&  folders )
+	void ScanDirForProjects( const plus::string&  dirPath,
+	                         StringVector&        configs,
+	                         StringVector&        folders )
 	{
 		struct stat dir_stat;
 		
@@ -237,8 +237,7 @@ namespace tool
 		
 		for ( Iter it = contents.begin();  it != end;  ++it )
 		{
-			std::vector< plus::string >& paths = (has_confd ? configs
-			                                                : folders);
+			StringVector& paths = (has_confd ? configs : folders);
 			
 			paths.push_back( io::path_descent( conf_path, *it ) );
 		}

@@ -14,6 +14,7 @@
 #include "plus/string.hh"
 
 // A-line
+#include "A-line/StringVector.hh"
 #include "A-line/TargetTypes.hh"
 
 
@@ -32,7 +33,7 @@ namespace tool
 			const TargetInfo&            its_target_info;
 			Macros                       its_macros;
 			std::list< plus::string >    its_macro_storage;
-			std::vector< plus::string >  its_include_search_options;
+			StringVector                 its_include_search_options;
 			plus::string                 its_precompiled_header_source_pathname;
 			bool                         it_has_precompiled_header_source;
 		
@@ -57,7 +58,7 @@ namespace tool
 			
 			const plus::string& PrecompiledHeaderSource() const  { return its_precompiled_header_source_pathname; }
 			
-			std::vector< plus::string > const& IncludeDirOptions() const  { return its_include_search_options; }
+			StringVector const& IncludeDirOptions() const  { return its_include_search_options; }
 			
 			void AppendIncludeDir ( const plus::string& dir );
 			void PrependIncludeDir( const plus::string& dir );

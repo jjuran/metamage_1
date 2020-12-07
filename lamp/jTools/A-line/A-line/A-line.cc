@@ -561,7 +561,7 @@ namespace tool
 		
 		p7::chdir( targetDir.c_str() );
 		
-		const std::vector< plus::string >& prereqs = project.AllUsedProjects();
+		const StringVector& prereqs = project.AllUsedProjects();
 		
 		std::for_each
 		(

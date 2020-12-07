@@ -8,7 +8,6 @@
 
 // Standard C++
 #include <map>
-#include <vector>
 
 // plus
 #include "plus/string.hh"
@@ -16,13 +15,14 @@
 // A-line
 #include "A-line/Platform.hh"
 #include "A-line/ProjectDotConf.hh"
+#include "A-line/StringVector.hh"
 
 
 namespace tool
 {
 	
 	typedef plus::string ConfigKey;
-	typedef std::vector< plus::string > ConfigValue;
+	typedef StringVector ConfigValue;
 	typedef std::map< ConfigKey, ConfigValue > ConfData;
 	
 	struct NoSuchProject

@@ -22,7 +22,7 @@ namespace tool
 		}
 		
 		// This project doesn't have a precompiled header, but maybe a used one does
-		typedef std::vector< plus::string >::const_iterator const_iterator;
+		typedef StringVector::const_iterator const_iterator;
 		
 		const_iterator const end = project.AllUsedProjects().end();
 		const_iterator it        = project.AllUsedProjects().begin();

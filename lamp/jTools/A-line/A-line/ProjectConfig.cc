@@ -158,7 +158,7 @@ namespace tool
 		*/
 	}
 	
-	static PlatformDemands MakePlatformInfo( const std::vector< plus::string >& infos )
+	static PlatformDemands MakePlatformInfo( const StringVector& infos )
 	{
 		PlatformDemands result;
 		
@@ -171,7 +171,7 @@ namespace tool
 	}
 	
 	
-	static std::vector< plus::string > global_subprojects;
+	static StringVector global_subprojects;
 	
 	static plus::string DescendPathToDir( const plus::string& dir, const plus::string& path )
 	{
@@ -250,9 +250,9 @@ namespace tool
 		
 		plus::string proj_dir = get_project_dir_from_config_file( filePath );
 		
-		std::vector< plus::string >& conf_subprojs = conf[ "subprojects" ];
+		StringVector& conf_subprojs = conf[ "subprojects" ];
 		
-		typedef std::vector< plus::string >::const_iterator It;
+		typedef StringVector::const_iterator It;
 		
 		for ( It it = conf_subprojs.begin();  it != conf_subprojs.end();  ++it )
 		{
@@ -262,18 +262,18 @@ namespace tool
 	
 	void AddPendingSubproject( const plus::string& dir )
 	{
-		std::vector< plus::string > configs;
-		std::vector< plus::string > folders;
+		StringVector configs;
+		StringVector folders;
 		
 		ScanDirForProjects( dir,
 		                    configs,
 		                    folders );
 		
-		std::vector< plus::string >& subprojects = global_subprojects;
+		StringVector& subprojects = global_subprojects;
 		
 		subprojects.insert( subprojects.end(), folders.begin(), folders.end() );
 		
-		typedef std::vector< plus::string >::const_iterator Iter;
+		typedef StringVector::const_iterator Iter;
 		
 		for ( Iter it = configs.begin();  it != configs.end();  ++it )
 		{
@@ -283,13 +283,13 @@ namespace tool
 	
 	bool AddPendingSubprojects()
 	{
-		std::vector< plus::string > subprojects;
+		StringVector subprojects;
 		
 		using std::swap;
 		
 		swap( subprojects, global_subprojects );
 		
-		typedef std::vector< plus::string >::const_iterator Iter;
+		typedef StringVector::const_iterator Iter;
 		
 		for ( Iter it = subprojects.begin();  it != subprojects.end();  ++it )
 		{
@@ -316,7 +316,7 @@ namespace tool
 					                                       line.key.c_str() );
 				}
 				
-				std::vector< plus::string >& conf_key = conf[ line.key ];
+				StringVector& conf_key = conf[ line.key ];
 				
 				conf_key.insert( conf_key.end(), line.values.begin(), line.values.end() );
 			}

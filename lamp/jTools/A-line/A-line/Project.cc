@@ -100,13 +100,13 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
-	const std::vector< plus::string >& get_values( const ConfData& config, const plus::string& key )
+	const StringVector& get_values( const ConfData& config, const plus::string& key )
 	{
 		ConfData::const_iterator it = config.find( key );
 		
 		if ( it == config.end () )
 		{
-			static std::vector< plus::string > null;
+			static StringVector null;
 			
 			return null;
 		}
@@ -114,7 +114,7 @@ namespace tool
 		return it->second;
 	}
 	
-	static const plus::string& get_first( const std::vector< plus::string >& v )
+	static const plus::string& get_first( const StringVector& v )
 	{
 		if ( v.empty() )
 		{
@@ -143,7 +143,7 @@ namespace tool
 	
 	plus::string Project::FindInclude( const plus::string& include_path ) const
 	{
-		typedef std::vector< plus::string >::const_iterator Iter;
+		typedef StringVector::const_iterator Iter;
 		
 		for ( Iter it = its_search_dir_pathnames.begin();  it != its_search_dir_pathnames.end();  ++it )
 		{
@@ -168,7 +168,7 @@ namespace tool
 		{
 			result = FindInclude( include_path );
 			
-			const std::vector< plus::string >& project_names = AllUsedProjects();
+			const StringVector& project_names = AllUsedProjects();
 			
 			for ( size_t i = 0;  i < project_names.size();  ++i )
 			{
@@ -294,11 +294,11 @@ namespace tool
 		return productNotBuilt;
 	}
 	
-	static void GetDirectlyUsedProjectsFromConfig( const ConfData& config, std::vector< plus::string >& used )
+	static void GetDirectlyUsedProjectsFromConfig( const ConfData& config, StringVector& used )
 	{
 		// Figure out which projects we use
-		const std::vector< plus::string >& projects_via_USE  = get_values( config, "use"  );
-		const std::vector< plus::string >& projects_via_USES = get_values( config, "uses" );
+		const StringVector& projects_via_USE  = get_values( config, "use"  );
+		const StringVector& projects_via_USES = get_values( config, "uses" );
 		
 		const plus::string& product_name = get_first( config, "product" );
 		
@@ -335,15 +335,16 @@ namespace tool
 		throw;
 	}
 	
-	static std::vector< plus::string > GetAllUsedProjects( const plus::string&                 project_name,
-	                                                       Platform                            platform,
-	                                                       const std::vector< plus::string >&  used_project_names )
+	static
+	StringVector GetAllUsedProjects( const plus::string&  project_name,
+	                                 Platform             platform,
+	                                 const StringVector&  used_project_names )
 	{
-		std::vector< plus::string > all_used_project_names;
+		StringVector all_used_project_names;
 		
 		std::set< plus::string > set_of_all_used_project_names;
 		
-		typedef std::vector< plus::string >::const_iterator Iter;
+		typedef StringVector::const_iterator Iter;
 		
 		// For each project named in the 'uses' directive:
 		for ( Iter it = used_project_names.begin();  it != used_project_names.end();  ++it )
@@ -352,7 +353,7 @@ namespace tool
 			const Project& used = GetUsedProject( project_name, *it, platform );
 			
 			// Find out which projects it uses
-			const std::vector< plus::string >& subUsed = used.AllUsedProjects();
+			const StringVector& subUsed = used.AllUsedProjects();
 			
 			// For each project even indirectly used by this one:
 			for ( Iter it2 = subUsed.begin();  it2 != subUsed.end();  ++it2 )
@@ -373,10 +374,11 @@ namespace tool
 		return all_used_project_names;
 	}
 	
-	static std::vector< plus::string > get_search_dir_pathnames( const std::vector< plus::string >&  search_directives,
-	                                                             const plus::string&                 project_dir_pathname )
+	static
+	StringVector get_search_dir_pathnames( const StringVector&  search_directives,
+	                                       const plus::string&  project_dir_pathname )
 	{
-		std::vector< plus::string > result;
+		StringVector result;
 		
 		result.reserve( search_directives.size() );
 		
@@ -415,9 +417,9 @@ namespace tool
 	}
 	
 	
-	static plus::string FindSourceFileInDirs( const plus::string& relative_path, const std::vector< plus::string >& search_dirs )
+	static plus::string FindSourceFileInDirs( const plus::string& relative_path, const StringVector& search_dirs )
 	{
-		typedef std::vector< plus::string >::const_iterator dir_iter;
+		typedef StringVector::const_iterator dir_iter;
 		
 		for ( dir_iter it = search_dirs.begin();  it != search_dirs.end();  ++it )
 		{
@@ -446,15 +448,15 @@ namespace tool
 	}
 	
 	
-	static void get_source_data( const plus::string&                 project_dir,
-	                             const std::vector< plus::string >&  source_paths,
-	                             std::vector< plus::string >&        source_file_search_dirs,
-	                             std::vector< plus::string >&        source_file_pathnames )
+	static void get_source_data( const plus::string&  project_dir,
+	                             const StringVector&  source_paths,
+	                             StringVector&        source_file_search_dirs,
+	                             StringVector&        source_file_pathnames )
 	{
 		if ( !source_paths.empty() )
 		{
 			// 'sources' directive specifies source files or source list files.
-			typedef std::vector< plus::string >::const_iterator str_iter;
+			typedef StringVector::const_iterator str_iter;
 			
 			for ( str_iter it = source_paths.begin();  it != source_paths.end();  ++it )
 			{
@@ -487,14 +489,15 @@ namespace tool
 		}
 	}
 	
-	static std::vector< plus::string > find_sources( const std::vector< plus::string >&  source_filenames,
-	                                                 const std::vector< plus::string >&  search_dir_pathnames )
+	static
+	StringVector find_sources( const StringVector&  source_filenames,
+	                           const StringVector&  search_dir_pathnames )
 	{
-		std::vector< plus::string > result;
+		StringVector result;
 		
 		// We have filenames -- now, find them
 		
-		typedef std::vector< plus::string >::const_iterator str_iter;
+		typedef StringVector::const_iterator str_iter;
 		
 		for ( str_iter it = source_filenames.begin();  it != source_filenames.end();  ++it )
 		{
@@ -506,24 +509,25 @@ namespace tool
 		return result;
 	}
 	
-	static void list_sources( const std::vector< plus::string >&  source_dirs,
-	                          std::vector< plus::string >&        output,
-	                          bool                                source_only_search )
+	static
+	void list_sources( const StringVector&  source_dirs,
+	                   StringVector&        output,
+	                   bool                 source_only_search )
 	{
 		// Enumerate our source files
 		// FIXME:  Doesn't deal with duplicates
 		
-		typedef std::vector< plus::string >::const_iterator Iter;
+		typedef StringVector::const_iterator Iter;
 		
 		for ( Iter it = source_dirs.begin();  it != source_dirs.end();  ++it )
 		{
 			const plus::string& source_dir = *it;
 			
-			std::vector< plus::string > deepSources = DeepFiles( source_dir, &IsCompilableFilename );
+			StringVector deepSources = DeepFiles( source_dir, &IsCompilableFilename );
 			
 			if ( !source_only_search )
 			{
-				typedef std::vector< plus::string >::iterator Iter;
+				typedef StringVector::iterator Iter;
 				
 				for ( Iter it = deepSources.begin();  it != deepSources.end();  ++ it )
 				{
@@ -543,7 +547,7 @@ namespace tool
 		}
 	}
 	
-	static bool filename_belongs( const plus::string& source_path, const std::vector< plus::string >& tools )
+	static bool filename_belongs( const plus::string& source_path, const StringVector& tools )
 	{
 		return std::find( tools.begin(),
 		                  tools.end(),
@@ -553,10 +557,10 @@ namespace tool
 	class filename_belonging_check
 	{
 		private:
-			const std::vector< plus::string >& its_tools;
+			const StringVector& its_tools;
 		
 		public:
-			filename_belonging_check( const std::vector< plus::string >& tools )
+			filename_belonging_check( const StringVector& tools )
 			:
 				its_tools( tools )
 			{
@@ -568,8 +572,8 @@ namespace tool
 			}
 	};
 	
-	static std::size_t partition_sources( const std::vector< plus::string >&  tool_filenames,
-	                                      std::vector< plus::string >&        source_paths )
+	static std::size_t partition_sources( const StringVector&  tool_filenames,
+	                                      StringVector&        source_paths )
 	{
 		std::size_t n_tools = std::partition( source_paths.begin(),
 		                                      source_paths.end(),
@@ -608,7 +612,7 @@ namespace tool
 		
 		its_product_type = ReadProduct( product_name );
 		
-		std::vector< plus::string > used_project_names;
+		StringVector used_project_names;
 		
 		switch ( its_product_type )
 		{
@@ -673,7 +677,7 @@ namespace tool
 		
 		if ( io::item_exists( source_list ) )
 		{
-			std::vector< plus::string > listed_sources;
+			StringVector listed_sources;
 			
 			ReadSourceDotList( source_list.c_str(), listed_sources );
 			

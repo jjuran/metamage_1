@@ -68,7 +68,7 @@ namespace tool
 	{
 		const plus::string include = Include( dir );
 		
-		std::vector< plus::string >& dirs = its_include_search_options;
+		StringVector& dirs = its_include_search_options;
 		
 		// This is O(n^3), where
 		// n[1] is the number of calls to AppendIncludeDir(),

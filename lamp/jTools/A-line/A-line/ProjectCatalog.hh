@@ -6,9 +6,6 @@
 #ifndef ALINE_PROJECTCATALOG_HH
 #define ALINE_PROJECTCATALOG_HH
 
-// Standard C++
-#include <vector>
-
 // plus
 #include "plus/string.hh"
 
@@ -20,6 +17,7 @@
 // A-line
 #include "A-line/Platform.hh"
 #include "A-line/ProjectConfig.hh"
+#include "A-line/StringVector.hh"
 
 
 namespace tool
@@ -65,9 +63,9 @@ namespace tool
 	
 	const ProjectConfig& GetProjectConfig( const plus::string& name, Platform platform );
 	
-	void ScanDirForProjects( const plus::string&           dirPath,
-	                         std::vector< plus::string >&  configs,
-	                         std::vector< plus::string >&  folders );
+	void ScanDirForProjects( const plus::string&  dirPath,
+	                         StringVector&        configs,
+	                         StringVector&        folders );
 	
 	void write_catalog_cache( poseven::fd_t output   );
 	void read_catalog_cache ( poseven::fd_t input_fd );

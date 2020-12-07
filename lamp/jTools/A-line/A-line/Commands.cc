@@ -14,7 +14,7 @@
 namespace tool
 {
 	
-	Command& AugmentCommand( Command& command, const std::vector< plus::string >& more )
+	Command& AugmentCommand( Command& command, const StringVector& more )
 	{
 		for ( size_t i = 0;  i < more.size();  ++i )
 		{

@@ -9,10 +9,8 @@
 // Standard C++
 #include <vector>
 
-// plus
-#include "plus/string.hh"
-
 // A-line
+#include "A-line/StringVector.hh"
 #include "A-line/Task.hh"
 
 
@@ -22,9 +20,9 @@ namespace tool
 	class Project;
 	struct TargetInfo;
 	
-	void NameObjectFiles( const Project&                project,
-	                      std::vector< plus::string >&  object_pathnames,
-	                      bool                          use_cpp );
+	void NameObjectFiles( const Project&  project,
+	                      StringVector&   object_pathnames,
+	                      bool            use_cpp );
 	
 	void LinkProduct( Project&                       project,
 	                  const TargetInfo&              targetInfo,

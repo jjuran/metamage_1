@@ -51,7 +51,7 @@ namespace tool
 	}
 	
 	static void Tokenize( const plus::string& line,
-	                      std::back_insert_iterator< std::vector< plus::string > > tokens )
+	                      std::back_insert_iterator< StringVector > tokens )
 	{
 		typedef std::size_t size_type;
 		

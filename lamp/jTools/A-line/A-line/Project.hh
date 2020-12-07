@@ -6,9 +6,6 @@
 #ifndef ALINE_PROJECT_HH
 #define ALINE_PROJECT_HH
 
-// Standard C++
-#include <vector>
-
 // Debug
 #include "debug/boost_assert.hh"
 
@@ -27,7 +24,7 @@
 namespace tool
 {
 	
-	const std::vector< plus::string >& get_values( const ConfData& config, const plus::string& key );
+	const StringVector& get_values( const ConfData& config, const plus::string& key );
 	
 	
 	class Project
@@ -48,19 +45,19 @@ namespace tool
 			// The include path to a header to precompile.
 			const plus::string& its_prefix_source_path;
 			// The names of all projects used directly or indirectly by this one.
-			std::vector< plus::string > its_used_project_names;
+			StringVector its_used_project_names;
 			// Directories to search for headers and unenumerated source files.
-			std::vector< plus::string > its_search_dir_pathnames;
+			StringVector its_search_dir_pathnames;
 			// Directories to which search for source files is restricted.
-			std::vector< plus::string > its_source_dir_pathnames;
+			StringVector its_source_dir_pathnames;
 			// Creator code / signature for output files.
 			plus::string its_creator_code;
 			// Source filenames which are tools.
-			std::vector< plus::string > its_tool_filenames;
+			StringVector its_tool_filenames;
 			// Number of source files which are tools (some names may be absent)
 			std::size_t its_tool_count;
 			// Source files to compile.
-			std::vector< plus::string > its_source_file_pathnames;  // absolute
+			StringVector its_source_file_pathnames;  // absolute
 			
 			// maps include paths to absolute pathnames
 			mutable std::map< plus::string, plus::string > its_include_map;
@@ -88,22 +85,22 @@ namespace tool
 			
 			const plus::string& PrecompiledHeaderSource() const  { return its_prefix_source_path; }
 			
-			const std::vector< plus::string >& AllUsedProjects() const  { return its_used_project_names;    }
+			const StringVector& AllUsedProjects() const  { return its_used_project_names;    }
 			
-			const std::vector< plus::string >& SearchDirs() const  { return its_search_dir_pathnames; }
-			const std::vector< plus::string >& SourceDirs() const  { return its_source_dir_pathnames; }
+			const StringVector& SearchDirs() const  { return its_search_dir_pathnames; }
+			const StringVector& SourceDirs() const  { return its_source_dir_pathnames; }
 			
-			const std::vector< plus::string >& ToolSourceFiles() const  { return its_tool_filenames; }
+			const StringVector& ToolSourceFiles() const  { return its_tool_filenames; }
 			
 			std::size_t ToolCount() const  { return its_tool_count; }
 			
-			const std::vector< plus::string >& LibImports()      const  { return get_values( its_config_data, "imports"    ); }
-			const std::vector< plus::string >& Frameworks()      const  { return get_values( its_config_data, "frameworks" ); }
-			const std::vector< plus::string >& UsedRezFiles()    const  { return get_values( its_config_data, "rez"        ); }
+			const StringVector& LibImports()      const  { return get_values( its_config_data, "imports"    ); }
+			const StringVector& Frameworks()      const  { return get_values( its_config_data, "frameworks" ); }
+			const StringVector& UsedRezFiles()    const  { return get_values( its_config_data, "rez"        ); }
 			
 			const plus::string& CreatorCode() const  { return its_creator_code; }
 			
-			const std::vector< plus::string >& Sources() const  { return its_source_file_pathnames; }
+			const StringVector& Sources() const  { return its_source_file_pathnames; }
 			
 			plus::string FindInclude           ( const plus::string& include_path ) const;
 			

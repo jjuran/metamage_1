@@ -6,11 +6,11 @@
 #ifndef ALINE_INCLUDES_HH
 #define ALINE_INCLUDES_HH
 
-// C++
-#include <vector>
-
 // plus
 #include "plus/string.hh"
+
+// A-line
+#include "A-line/StringVector.hh"
 
 
 namespace tool
@@ -18,8 +18,8 @@ namespace tool
 	
 	struct IncludesCache
 	{
-		std::vector< plus::string > user;
-		std::vector< plus::string > system;
+		StringVector user;
+		StringVector system;
 	};
 	
 	const IncludesCache& GetIncludes( const plus::string& pathname );

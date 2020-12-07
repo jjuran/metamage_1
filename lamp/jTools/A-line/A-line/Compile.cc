@@ -179,14 +179,14 @@ namespace tool
 	{
 		if ( !project.SourceDirs().empty() )
 		{
-			const std::vector< plus::string > source_dirs = project.SourceDirs();
+			const StringVector source_dirs = project.SourceDirs();
 			
 			plus::string includes_union_pathname = get_includes_union_pathname();
 			
 			n::owned< p7::fd_t > include_fd = p7::open( includes_union_pathname,
 			                                            p7::o_rdonly | p7::o_directory );
 			
-			typedef std::vector< plus::string >::const_iterator Iter;
+			typedef StringVector::const_iterator Iter;
 			
 			for ( Iter it = source_dirs.begin();  it != source_dirs.end();  ++it )
 			{
@@ -274,9 +274,9 @@ namespace tool
 			return;
 		}
 		
-		const std::vector< plus::string >& search_dirs( project.SearchDirs() );
+		const StringVector& search_dirs( project.SearchDirs() );
 		
-		typedef std::vector< plus::string >::const_iterator Iter;
+		typedef StringVector::const_iterator Iter;
 		
 		for ( Iter it = search_dirs.begin();  it != search_dirs.end();  ++it )
 		{
@@ -427,9 +427,9 @@ namespace tool
 	                                    const plus::string&        source_pathname,
 	                                    std::set< plus::string >&  result )
 	{
-		const std::vector< plus::string >& includes = GetIncludes( source_pathname ).user;
+		const StringVector& includes = GetIncludes( source_pathname ).user;
 		
-		typedef std::vector< plus::string >::const_iterator Iter;
+		typedef StringVector::const_iterator Iter;
 		
 		for ( Iter it = includes.begin();  it != includes.end();  ++it )
 		{
@@ -807,7 +807,7 @@ namespace tool
 		// Select the includes belonging to the projects we use
 		IncludeDirGatherer gatherer( preprocess_options, needs_include_union );
 		
-		const std::vector< plus::string >& all_used_projects = project.AllUsedProjects();
+		const StringVector& all_used_projects = project.AllUsedProjects();
 		
 		// Reverse direction so projects can override Prefix.hh
 		for ( size_t i = all_used_projects.size();  i > 0;  )
@@ -924,11 +924,11 @@ namespace tool
 			cpp_dir = mkdir_path( "cpp" / project.Name() );
 		}
 		
-		std::vector< plus::string > object_paths;
+		StringVector object_paths;
 		
 		NameObjectFiles( project, object_paths, preprocessing );
 		
-		const std::vector< plus::string >& sources = project.Sources();
+		const StringVector& sources = project.Sources();
 		
 		const std::size_t n_tools = project.ToolCount();
 		
@@ -944,7 +944,7 @@ namespace tool
 		                               cpp_dir,
 		                               precompile_task ) );
 		
-		std::vector< plus::string >::const_iterator the_source, the_object, end = sources.end();
+		StringVector::const_iterator the_source, the_object, end = sources.end();
 		
 		for ( the_source = sources     .begin() + n_tools,
 		      the_object = object_paths.begin() + n_tools;  the_source != end;  ++the_source,

@@ -14,6 +14,7 @@
 
 // A-line
 #include "A-line/Platform.hh"
+#include "A-line/StringVector.hh"
 #include "A-line/TargetInfo.hh"
 
 
@@ -44,7 +45,7 @@ namespace tool
 		return command;
 	}
 	
-	Command& AugmentCommand( Command& command, const std::vector< plus::string >& more );
+	Command& AugmentCommand( Command& command, const StringVector& more );
 	
 	inline Command OutputOption( const char* pathname )
 	{

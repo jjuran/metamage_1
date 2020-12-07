@@ -77,17 +77,17 @@ namespace tool
 	}
 	
 	
-	static void AddProjectImports( const Project& project, Platform platform, std::vector< plus::string >& link_input_arguments )
+	static void AddProjectImports( const Project& project, Platform platform, StringVector& link_input_arguments )
 	{
-		const std::vector< plus::string >& used_project_names = project.AllUsedProjects();
+		const StringVector& used_project_names = project.AllUsedProjects();
 		
-		typedef std::vector< plus::string >::const_iterator Iter;
+		typedef StringVector::const_iterator Iter;
 		
 		for ( Iter the_name = used_project_names.begin();  the_name != used_project_names.end();  ++the_name )
 		{
 			const Project& used_project = GetProject( *the_name, platform );
 			
-			const std::vector< plus::string >& library_imports = used_project.LibImports();
+			const StringVector& library_imports = used_project.LibImports();
 			
 			for ( Iter the_import = library_imports.begin();  the_import != library_imports.end();  ++the_import )
 			{
@@ -112,9 +112,9 @@ namespace tool
 	}
 	
 	
-	static void AddFrameworks( const std::vector< plus::string >& frameworkNames, std::vector< plus::string >& v )
+	static void AddFrameworks( const StringVector& frameworkNames, StringVector& v )
 	{
-		typedef std::vector< plus::string >::const_iterator Iter;
+		typedef StringVector::const_iterator Iter;
 		
 		for ( Iter it = frameworkNames.begin();  it != frameworkNames.end();  ++it )
 		{
@@ -144,7 +144,7 @@ namespace tool
 		}
 	};
 	
-	static void RemoveNonLibs( std::vector< plus::string >& usedProjects, Platform platform )
+	static void RemoveNonLibs( StringVector& usedProjects, Platform platform )
 	{
 		usedProjects.resize( std::remove_if( usedProjects.begin(),
 		                                     usedProjects.end(),
@@ -203,7 +203,8 @@ namespace tool
 	}
 	
 	
-	static void AddLibraryLinkArgs( const std::vector< plus::string >& usedLibs, std::vector< plus::string >& v )
+	static
+	void AddLibraryLinkArgs( const StringVector& usedLibs, StringVector& v )
 	{
 		/*
 			Link the libs in reverse order, so if foo depends on bar,
@@ -308,15 +309,15 @@ namespace tool
 	class RezzingTask : public FileTask
 	{
 		private:
-			std::vector< plus::string >  itsInputPathnames;
-			plus::string                 itsIncludeDirPathname;
-			bool                         itIsTargetingRelix;
+			StringVector  itsInputPathnames;
+			plus::string  itsIncludeDirPathname;
+			bool          itIsTargetingRelix;
 		
 		public:
-			RezzingTask( const std::vector< plus::string >&  input,
-			             const plus::string&                 output,
-			             const plus::string&                 includeDir,
-			             bool                                relix )
+			RezzingTask( const StringVector&  input,
+			             const plus::string&  output,
+			             const plus::string&  includeDir,
+			             bool                 relix )
 			:
 				FileTask             ( output     ),
 				itsInputPathnames    ( input      ),
@@ -401,11 +402,11 @@ namespace tool
 	                            bool                 needsCarbResource,
 	                            bool                 relix )
 	{
-		const std::vector< plus::string >& input_filenames = project.UsedRezFiles();
+		const StringVector& input_filenames = project.UsedRezFiles();
 		
 		const size_t n = input_filenames.size();
 		
-		std::vector< plus::string > input_pathnames;
+		StringVector input_pathnames;
 		
 		input_pathnames.reserve( n );
 		
@@ -439,13 +440,13 @@ namespace tool
 	class ResourceCopyingTask : public FileTask
 	{
 		private:
-			std::vector< plus::string >  itsInputPathnames;
-			bool                         itIsTargetingRelix;
+			StringVector  itsInputPathnames;
+			bool          itIsTargetingRelix;
 		
 		public:
-			ResourceCopyingTask( const std::vector< plus::string >&  input,
-			                     const plus::string&                 output,
-			                     bool                                relix )
+			ResourceCopyingTask( const StringVector&  input,
+			                     const plus::string&  output,
+			                     bool                 relix )
 			:
 				FileTask          ( output   ),
 				itsInputPathnames ( input    ),
@@ -557,11 +558,12 @@ namespace tool
 	}
 	
 	
-	static void make_task_depend_on_libs( const TaskPtr&                      task,
-	                                      const std::vector< plus::string >&  used_project_names,
-	                                      Platform                            platform )
+	static
+	void make_task_depend_on_libs( const TaskPtr&       task,
+	                               const StringVector&  used_project_names,
+	                               Platform             platform )
 	{
-		typedef std::vector< plus::string >::const_iterator Iter;
+		typedef StringVector::const_iterator Iter;
 		
 		for ( Iter it = used_project_names.begin();  it != used_project_names.end();  ++it )
 		{
@@ -667,10 +669,10 @@ namespace tool
 	};
 	
 	static
-	void FillObjectFiles( const plus::string&                 objects_dir,
-	                      const std::vector< plus::string >&  source_paths,
-	                      std::vector< plus::string >&        object_pathnames,
-	                      const char*                         extension = ".o" )
+	void FillObjectFiles( const plus::string&  objects_dir,
+	                      const StringVector&  source_paths,
+	                      StringVector&        object_pathnames,
+	                      const char*          extension = ".o" )
 	{
 		object_filename_filler f( objects_dir, extension );
 		
@@ -692,9 +694,9 @@ namespace tool
 		return use_cpp ? NULL : ".o";
 	}
 	
-	void NameObjectFiles( const Project&                project,
-	                      std::vector< plus::string >&  object_pathnames,
-	                      bool                          use_cpp )
+	void NameObjectFiles( const Project&  project,
+	                      StringVector&   object_pathnames,
+	                      bool            use_cpp )
 	{
 		FillObjectFiles( ProjectObjectsDirPath( project.Name() ),
 		                 project.Sources(),
@@ -717,7 +719,7 @@ namespace tool
 		
 		TaskPtr rmdir_diagnostics_task = seize_ptr( new RemoveDirTask( diagnosticsDir ) );
 		
-		std::vector< plus::string > objectFiles;
+		StringVector objectFiles;
 		
 	#ifdef __RELIX__
 		
@@ -860,7 +862,7 @@ namespace tool
 		
 		TaskPtr link_dependency_task = seize_ptr( new NullTask() );
 		
-		std::vector< plus::string > link_input_arguments;
+		StringVector link_input_arguments;
 		
 		if ( toolkit )
 		{
@@ -884,7 +886,7 @@ namespace tool
 		link_prerequisite->AddDependent( link_dependency_task );
 		
 		// A copy so we can munge it
-		std::vector< plus::string > usedProjects = project.AllUsedProjects();
+		StringVector usedProjects = project.AllUsedProjects();
 		
 		usedProjects.pop_back();  // we're last; drop us
 		
@@ -912,7 +914,7 @@ namespace tool
 			bool has_frameworks = !project.Frameworks().empty();
 			
 			AddFrameworks( has_frameworks ? project.Frameworks()
-			                              : std::vector< plus::string >( 1, "Carbon" ),
+			                              : StringVector( 1, "Carbon" ),
 			               link_input_arguments );
 		}
 		
@@ -930,7 +932,7 @@ namespace tool
 		{
 			const size_t ext_len = strlen( dot_o( preprocessing ) );
 			
-			typedef std::vector< plus::string >::const_iterator Iter;
+			typedef StringVector::const_iterator Iter;
 			
 			const Iter end = objectFiles.begin() + n_tools;
 			
@@ -1059,7 +1061,7 @@ namespace tool
 			
 			if ( ALINE_MAC_DEVELOPMENT )
 			{
-				std::vector< plus::string > rsrc_pathnames;
+				StringVector rsrc_pathnames;
 				
 				TaskPtr rez_task;
 				
