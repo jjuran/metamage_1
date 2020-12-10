@@ -99,6 +99,7 @@ namespace vlib
 		Op_not,
 		Op_repeat,  // multiply list
 		Op_map,
+		Op_gap,
 		Op_ver,
 		Op_per,
 		Op_isa,

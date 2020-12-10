@@ -623,6 +623,11 @@ namespace vlib
 			return map( left, right );
 		}
 		
+		if ( op == Op_gap )
+		{
+			return delta( left, right );
+		}
+		
 		if ( op == Op_ver )
 		{
 			return filter( left, right );

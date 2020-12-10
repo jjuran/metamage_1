@@ -27,6 +27,7 @@ namespace vlib
 		{ "div",   Op_DIV     },
 		{ "do",    Op_do_2    },
 		{ "else",  Op_else    },
+		{ "gap",   Op_gap     },
 		{ "in",    Op_in      },
 		{ "isa",   Op_isa     },
 		{ "map",   Op_map     },

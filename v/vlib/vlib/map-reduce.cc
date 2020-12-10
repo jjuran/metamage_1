@@ -64,6 +64,54 @@ namespace vlib
 		return make_array( result );
 	}
 	
+	Value delta( const Value& container, const Value& f )
+	{
+		if ( ! is_functional( f ) )
+		{
+			THROW( "gap (delta) requires a function" );
+		}
+		
+		generic_iterator it( container );
+		
+		if ( ! it )
+		{
+			return empty_list;
+		}
+		
+		Value prev = it.use();
+		
+		list_builder result;
+		
+		while ( it )
+		{
+			const Value& next = it.use();
+			
+			/*
+				We need to protect results of prior calls to f from GC passes
+				made by future calls.
+				
+				We can't just call add_root() and del_root(), though, because
+				call_function() might throw -- so we use a scoped_root.
+				
+				We need to copy the value stored in the list_builder, because
+				append() may modify it, and scoped_root doesn't make a copy,
+				storing only a reference.
+			*/
+			
+			const Value partial = result;
+			
+			scoped_root scope( partial );
+			
+			Value f_x = call_function( f, Value( prev, next ) );
+			
+			result.append( f_x );
+			
+			prev = next;
+		}
+		
+		return make_array( result );
+	}
+	
 	Value filter( const Value& container, const Value& f )
 	{
 		if ( ! is_functional( f ) )

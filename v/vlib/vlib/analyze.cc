@@ -322,6 +322,10 @@ namespace vlib
 			{
 				insert_code_to_unpack_into_v( expr->right );
 			}
+			else if ( op == Op_gap )
+			{
+				insert_code_to_unpack_into_a_b( expr->right );
+			}
 			else if ( op == Op_per )
 			{
 				insert_code_to_unpack_reducer( expr->right );
