@@ -810,9 +810,10 @@ namespace tool
 		const std::vector< plus::string >& all_used_projects = project.AllUsedProjects();
 		
 		// Reverse direction so projects can override Prefix.hh
-		std::for_each( all_used_projects.rbegin(),
-		               all_used_projects.rend(),
-		               gatherer );
+		for ( size_t i = all_used_projects.size();  i > 0;  )
+		{
+			gatherer( all_used_projects[ --i ] );
+		}
 		
 		if ( needs_include_union )
 		{
