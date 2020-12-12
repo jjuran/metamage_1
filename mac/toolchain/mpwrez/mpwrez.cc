@@ -5,10 +5,12 @@
 
 // Standard C++
 #include <list>
-#include <vector>
 
 // plus
 #include "plus/var_string.hh"
+
+// vxo
+#include "vxo/ptrvec.hh"
 
 // poseven
 #include "poseven/functions/execvp.hh"
@@ -61,7 +63,7 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		std::vector< const char* > command;
+		vxo::PtrVec_< const char > command;
 		
 		command.push_back( "tlsrvr"   );
 		command.push_back( "--escape" );  // escape arguments to prevent expansion
