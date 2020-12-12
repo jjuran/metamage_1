@@ -55,6 +55,10 @@ namespace vxo
 			
 			Item* expand_by( size_t n );
 			
+			Item* insert_n( Item* loc, size_t n );
+			
+			Item* insert( Item* loc )  { return insert_n( loc, 1 ); }
+			
 			void push_back( Item item )  { *expand_by( 1 ) = item; }
 			
 			void pop_back()  { --u.str.length; }
@@ -107,6 +111,11 @@ namespace vxo
 			
 			Item&       back()        { return end()[ -1 ]; }
 			Item const& back() const  { return end()[ -1 ]; }
+			
+			Item* insert( Item* loc )
+			{
+				return (Item*) PtrVec::insert( (anyptr_t*) loc );
+			}
 	};
 	
 }
