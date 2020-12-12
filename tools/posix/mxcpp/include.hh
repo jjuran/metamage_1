@@ -6,14 +6,14 @@
 #ifndef MXCPP_INCLUDE_HH
 #define MXCPP_INCLUDE_HH
 
-// Standard C++
-#include <vector>
-
 // plus
 #include "plus/string_fwd.hh"
 
+// vxo
+#include "vxo/ptrvec.hh"
 
-typedef std::vector< const char* > string_constant_vector;
+
+typedef vxo::PtrVec_< const char > string_constant_vector;
 
 namespace tool
 {

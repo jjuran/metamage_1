@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Standard C++
+#include <vector>
+
 // Extended API Set Part 2
 #include "extended-api-set/part-2.h"
 
