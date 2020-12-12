@@ -672,10 +672,12 @@ namespace tool
 	                      std::vector< plus::string >&        object_pathnames,
 	                      const char*                         extension = ".o" )
 	{
-		std::transform( source_paths.begin(),
-		                source_paths.end(),
-		                object_pathnames.begin(),
-		                object_filename_filler( objects_dir, extension ) );
+		object_filename_filler f( objects_dir, extension );
+		
+		for ( size_t i = 0;  i < source_paths.size();  ++i )
+		{
+			object_pathnames.push_back( f( source_paths[ i ] ) );
+		}
 	}
 	
 	static inline
@@ -697,8 +699,6 @@ namespace tool
 		plus::string objects_dir = ProjectObjectsDirPath( project.Name() );
 		
 		const std::vector< plus::string >& sources = project.Sources();
-		
-		object_pathnames.resize( sources.size() );
 		
 		FillObjectFiles( objects_dir, sources, object_pathnames, dot_o( use_cpp ) );
 	}
