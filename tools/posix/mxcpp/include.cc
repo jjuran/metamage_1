@@ -45,7 +45,7 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	std::vector< const char* > global_include_search_paths;
+	string_constant_vector global_include_search_paths;
 	
 	static std::vector< p7::fd_t > global_include_search_dirs;
 	
@@ -64,7 +64,7 @@ namespace tool
 		
 		global_include_search_dirs.reserve( n );
 		
-		typedef std::vector< const char* >::const_iterator Iter;
+		typedef string_constant_vector::const_iterator Iter;
 		
 		#define paths global_include_search_paths
 		

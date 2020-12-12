@@ -13,12 +13,14 @@
 #include "plus/string_fwd.hh"
 
 
+typedef std::vector< const char* > string_constant_vector;
+
 namespace tool
 {
 	
 	class unterminated_include_path {};
 	
-	extern std::vector< const char* > global_include_search_paths;
+	extern string_constant_vector global_include_search_paths;
 	
 	void mark_current_source_once_included();
 	
