@@ -19,6 +19,8 @@ namespace vxo
 	
 	typedef plus::datum_allocation  u_string;
 	
+	typedef const void* anyptr_t;
+	
 	enum
 	{
 		box_size = sizeof (u_string),
@@ -35,6 +37,8 @@ namespace vxo
 		// 0000 0000 - 000? 1111
 		Box_min_inline_string = 0,
 		Box_max_inline_string = inline_char_size,  // 15 or 31
+		
+		Box_vector_anyptr = 105 + sizeof (anyptr_t) / 4,  // 0110 101x
 		
 		Box_container = 112,  // 0111 0000
 		Box_array     = 112,  // 0111 0000
