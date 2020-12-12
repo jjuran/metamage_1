@@ -205,14 +205,15 @@ namespace tool
 	
 	static void AddLibraryLinkArgs( const std::vector< plus::string >& usedLibs, std::vector< plus::string >& v )
 	{
-		// Link the libs in reverse order, so if foo depends on bar, foo will have precedence.
-		// Somehow, this is actually required to actually link anything on Unix.
+		/*
+			Link the libs in reverse order, so if foo depends on bar,
+			foo will have precedence.  Somehow, this is actually required
+			to actually link anything on Unix.
+		*/
 		
-		typedef std::vector< plus::string >::const_reverse_iterator Iter;
-		
-		for ( Iter it = usedLibs.rbegin();  it != usedLibs.rend();  ++it )
+		for ( size_t i = usedLibs.size();  i > 0;  )
 		{
-			const plus::string& name = *it;
+			const plus::string& name = usedLibs[ --i ];
 			
 			v.push_back( "-l" + name );
 		}
