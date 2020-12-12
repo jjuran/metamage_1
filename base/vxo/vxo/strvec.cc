@@ -22,6 +22,16 @@ void StrVec::insert( Item* loc, const_iterator begin, const_iterator end )
 	std::copy( begin, end, (String*) inserted );
 }
 
+void StrVec::resize_down( size_t n )
+{
+	while ( size() > n )
+	{
+		back() = plus::string::null;
+		
+		--u.str.length;
+	}
+}
+
 bool operator==( const StrVec& a, const StrVec& b )
 {
 	if ( a.size() == b.size() )

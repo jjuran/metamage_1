@@ -62,6 +62,8 @@ namespace vxo
 			
 			void insert( Item* loc, const_iterator begin, const_iterator end );
 			
+			void resize_down( size_t n );
+			
 			void push_back( const Item& item )
 			{
 				static_cast< String& >( *expand_by( 1 ) ) = item;
