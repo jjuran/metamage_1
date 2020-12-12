@@ -35,7 +35,7 @@ namespace vlib
 		Precedence_not,             // not
 		Precedence_repeat,          // (*)
 		Precedence_try,             // try catch
-		Precedence_map,             // map gap ver per
+		Precedence_map,             // map gap pop ver per
 		Precedence_comparison,      // <=>
 		Precedence_inequality,      // < <= > >=
 		Precedence_equality,        // == !=
@@ -131,6 +131,7 @@ namespace vlib
 		
 		{ Precedence_map, Op_map },
 		{ Precedence_map, Op_gap },
+		{ Precedence_map, Op_pop },
 		{ Precedence_map, Op_ver },
 		{ Precedence_map, Op_per },
 		

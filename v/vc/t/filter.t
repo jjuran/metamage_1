@@ -32,3 +32,8 @@ $ vc '[1, "of", "these", "things"] ver {typeof v != string}'
 
 $ vc '[u8, u16, u32] ver {v.size > 1}'
 1 >= '[u16, u32]'
+
+%
+
+$ vc '"gullible" pop {v == *"l"}'
+1 >= 3

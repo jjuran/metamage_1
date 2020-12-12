@@ -14,6 +14,7 @@ namespace vlib
 	
 	Value map   ( const Value& container, const Value& f );
 	Value delta ( const Value& container, const Value& f );
+	Value seqpop( const Value& container, const Value& f );
 	Value filter( const Value& container, const Value& f );
 	Value reduce( const Value& container, const Value& f );
 	

@@ -628,6 +628,11 @@ namespace vlib
 			return delta( left, right );
 		}
 		
+		if ( op == Op_pop )
+		{
+			return seqpop( left, right );
+		}
+		
 		if ( op == Op_ver )
 		{
 			return filter( left, right );

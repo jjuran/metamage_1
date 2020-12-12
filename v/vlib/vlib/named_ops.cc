@@ -34,6 +34,7 @@ namespace vlib
 		{ "mod",   Op_modulo  },
 		{ "or",    Op_or      },
 		{ "per",   Op_per     },
+		{ "pop",   Op_pop     },
 		{ "then",  Op_then    },
 		{ "ver",   Op_ver     },
 		{ "via",   Op_via     },

@@ -15,6 +15,7 @@
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/types/boolean.hh"
+#include "vlib/types/integer.hh"
 
 
 #ifndef NULL
@@ -110,6 +111,30 @@ namespace vlib
 		}
 		
 		return make_array( result );
+	}
+	
+	Value seqpop( const Value& container, const Value& f )
+	{
+		if ( ! is_functional( f ) )
+		{
+			THROW( "subset population (pop) requires a function" );
+		}
+		
+		generic_iterator it( container );
+		
+		long n = 0;
+		
+		while ( it )
+		{
+			const Value& x = it.use();
+			
+			if ( call_function( f, x ).to< Boolean >() )
+			{
+				++n;
+			}
+		}
+		
+		return Integer( n );
 	}
 	
 	Value filter( const Value& container, const Value& f )
