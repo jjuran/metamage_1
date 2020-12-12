@@ -696,11 +696,10 @@ namespace tool
 	                      std::vector< plus::string >&  object_pathnames,
 	                      bool                          use_cpp )
 	{
-		plus::string objects_dir = ProjectObjectsDirPath( project.Name() );
-		
-		const std::vector< plus::string >& sources = project.Sources();
-		
-		FillObjectFiles( objects_dir, sources, object_pathnames, dot_o( use_cpp ) );
+		FillObjectFiles( ProjectObjectsDirPath( project.Name() ),
+		                 project.Sources(),
+		                 object_pathnames,
+		                 dot_o( use_cpp ) );
 	}
 	
 	
