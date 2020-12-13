@@ -152,8 +152,6 @@ namespace tool
 	{
 		its_input_file_paths.insert( its_input_file_paths.begin(), input_begin, input_end );
 		
-		its_command.reserve( command.size() + 2 + input_end - input_begin );
-		
 		its_command.push_back( OutputPath().c_str() );
 		
 		AugmentCommand( its_command, its_input_file_paths );
