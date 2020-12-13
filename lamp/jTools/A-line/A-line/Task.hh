@@ -28,6 +28,7 @@
 #endif
 
 // A-line
+#include "A-line/StrConVector.hh"
 #include "A-line/StringVector.hh"
 
 
@@ -108,7 +109,7 @@ namespace tool
 	};
 	
 	
-	typedef std::vector< const char* > Command;
+	typedef StrConVector Command;
 	
 	class CommandTask : public FileTask
 	{

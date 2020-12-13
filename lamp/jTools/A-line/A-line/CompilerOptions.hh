@@ -6,13 +6,11 @@
 #ifndef ALINE_COMPILEROPTIONS_HH
 #define ALINE_COMPILEROPTIONS_HH
 
-// C++
-#include <vector>
-
 // plus
 #include "plus/string.hh"
 
 // A-line
+#include "A-line/StrConVector.hh"
 #include "A-line/StringVector.hh"
 #include "A-line/TargetTypes.hh"
 
@@ -20,7 +18,7 @@
 namespace tool
 {
 	
-	typedef std::vector< const char* > Macros;
+	typedef StrConVector Macros;
 	
 	struct TargetInfo;
 	

@@ -6,14 +6,12 @@
 #ifndef ALINE_COMMANDS_HH
 #define ALINE_COMMANDS_HH
 
-// Standard C++
-#include <vector>
-
 // plus
 #include "plus/string.hh"
 
 // A-line
 #include "A-line/Platform.hh"
+#include "A-line/StrConVector.hh"
 #include "A-line/StringVector.hh"
 #include "A-line/TargetInfo.hh"
 
@@ -21,7 +19,7 @@
 namespace tool
 {
 	
-	typedef std::vector< const char* > Command;
+	typedef StrConVector Command;
 	
 	
 	void RunCommand( const Command&       command,

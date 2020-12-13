@@ -263,13 +263,13 @@ namespace tool
 		return result;
 	}
 	
-	static void PrintCommand( const std::vector< const char* >& command )
+	static void PrintCommand( const StrConVector& command )
 	{
 		//ASSERT( command.size() > 1 ) );
 		
 		plus::var_string command_line = command.front();
 		
-		typedef std::vector< const char* >::const_iterator Iter;
+		typedef StrConVector::const_iterator Iter;
 		
 		Iter end = command.end() - (command.back() == NULL ? 1 : 0);
 		
@@ -284,7 +284,7 @@ namespace tool
 		p7::write( p7::stdout_fileno, command_line );
 	}
 	
-	static void PrintCommandForShell( const std::vector< const char* >& command )
+	static void PrintCommandForShell( const StrConVector& command )
 	{
 		if ( gOptions.verbose || gDryRun )
 		{
@@ -331,7 +331,7 @@ namespace tool
 	}
 	
 	
-	static p7::pid_t launch_job( const std::vector< const char* >& command, const char* diagnostics_path )
+	static p7::pid_t launch_job( const StrConVector& command, const char* diagnostics_path )
 	{
 		p7::pid_t pid = POSEVEN_VFORK();
 		
@@ -475,10 +475,10 @@ namespace tool
 		reap_jobs( true );
 	}
 	
-	void ExecuteCommand( const TaskPtr&                     task,
-	                     const plus::string&                caption,
-	                     const std::vector< const char* >&  command,
-	                     const char*                        diagnostics_file_path )
+	void ExecuteCommand( const TaskPtr&       task,
+	                     const plus::string&  caption,
+	                     const StrConVector&  command,
+	                     const char*          diagnostics_file_path )
 	{
 		ASSERT( command.size() > 1 );
 		ASSERT( command.back() == NULL );
