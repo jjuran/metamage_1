@@ -7,7 +7,6 @@
 #define ALINE_COMPILEROPTIONS_HH
 
 // C++
-#include <list>
 #include <vector>
 
 // plus
@@ -29,13 +28,12 @@ namespace tool
 	class CompilerOptions
 	{
 		private:
-			plus::string                 its_project_name;
-			const TargetInfo&            its_target_info;
-			Macros                       its_macros;
-			std::list< plus::string >    its_macro_storage;
-			StringVector                 its_include_search_options;
-			plus::string                 its_precompiled_header_source_pathname;
-			bool                         it_has_precompiled_header_source;
+			plus::string       its_project_name;
+			const TargetInfo&  its_target_info;
+			Macros             its_macros;
+			StringVector       its_include_search_options;
+			plus::string       its_precompiled_header_source_pathname;
+			bool               it_has_precompiled_header_source;
 		
 		public:
 			CompilerOptions( const plus::string&  name,

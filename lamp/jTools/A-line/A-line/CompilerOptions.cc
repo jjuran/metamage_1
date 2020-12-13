@@ -11,6 +11,9 @@
 // plus
 #include "plus/string/concat.hh"
 
+// vxo
+#include "vxo/strpool.hh"
+
 // A-line
 #include "A-line/TargetNames.hh"
 
@@ -34,9 +37,9 @@ namespace tool
 	
 	void CompilerOptions::DefineMacro( const plus::string& macro, const plus::string& value )
 	{
-		its_macro_storage.push_back( "-D" + macro + "=" + value );
+		static vxo::StrPool macro_storage;
 		
-		its_macros.push_back( its_macro_storage.back().c_str() );
+		its_macros.push_back( macro_storage[ "-D" + macro + "=" + value ] );
 	}
 	
 	void CompilerOptions::DefineMacro( const plus::string& macro, bool value )
