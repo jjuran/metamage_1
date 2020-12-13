@@ -122,6 +122,13 @@ anyptr_t* PtrVec::insert_n( Item* loc, size_t n )
 	return loc;
 }
 
+void PtrVec::insert( Item* loc, const_iterator begin, const_iterator end )
+{
+	const size_t n = end - begin;
+	
+	memcpy( insert_n( loc, n ), begin, n * sizeof (anyptr_t) );
+}
+
 bool operator==( const PtrVec& a, const PtrVec& b )
 {
 	if ( a.size() == b.size() )

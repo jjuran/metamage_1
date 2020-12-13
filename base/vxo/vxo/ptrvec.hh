@@ -57,6 +57,8 @@ namespace vxo
 			
 			Item* insert_n( Item* loc, size_t n );
 			
+			void insert( Item* loc, const_iterator begin, const_iterator end );
+			
 			Item* insert( Item* loc )  { return insert_n( loc, 1 ); }
 			
 			void push_back( Item item )  { *expand_by( 1 ) = item; }
@@ -111,6 +113,13 @@ namespace vxo
 			
 			Item&       back()        { return end()[ -1 ]; }
 			Item const& back() const  { return end()[ -1 ]; }
+			
+			void insert( Item* loc, const_iterator begin, const_iterator end )
+			{
+				PtrVec::insert( (anyptr_t*) loc,
+				                (anyptr_t*) begin,
+				                (anyptr_t*) end );
+			}
 			
 			Item* insert( Item* loc )
 			{
