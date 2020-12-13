@@ -22,8 +22,27 @@ namespace tool
 	typedef std::map< plus::string, Project* > ProjectMap;
 	
 	// A map from platform to project map
-	typedef std::map< Platform, ProjectMap > ProjectPlatformMap;
+	struct ProjectPlatformMap : std::map< Platform, ProjectMap >
+	{
+		~ProjectPlatformMap();
+	};
 	
+	ProjectPlatformMap::~ProjectPlatformMap()
+	{
+		for ( const_iterator it = begin();  it != end();  ++it )
+		{
+			const ProjectMap& map = it->second;
+			
+			typedef ProjectMap::const_iterator Iter;
+			
+			for ( Iter it = map.begin();  it != map.end();  ++it )
+			{
+				Project* const project = it->second;
+				
+				delete project;
+			}
+		}
+	}
 	
 	static ProjectPlatformMap gProjectPlatformMap;
 	
@@ -47,7 +66,7 @@ namespace tool
 			// Take a reference (auto-vivifying)
 			Project*& project_ptr = map[ project_name ];
 			
-			// This gets leaked, but we would have stored it until exit anyway
+			// These get deleted during static object destruction
 			project_ptr = new Project( project_name,
 			                           platform,
 			                           config.get_project_dir(),
