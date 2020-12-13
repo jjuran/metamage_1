@@ -6,9 +6,9 @@
 #ifndef ALINE_STRCONVECTOR_HH
 #define ALINE_STRCONVECTOR_HH
 
-// Standard C++
-#include <vector>
+// vxo
+#include "vxo/ptrvec.hh"
 
-typedef std::vector< const char* > StrConVector;
+typedef vxo::PtrVec_< const char > StrConVector;
 
 #endif
