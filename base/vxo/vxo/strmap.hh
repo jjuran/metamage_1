@@ -39,7 +39,7 @@ namespace vxo
 			
 			size_t size() const  { return u.str.length / 2; }
 			
-			Pair* begin()  { return (Pair*) u.str.pointer; }
+			Pair* begin()  { unshare(); return (Pair*) u.str.pointer; }
 			Pair* end()    { return begin() + size(); }
 			
 			Pair const* begin() const  { return (Pair const*) u.str.pointer; }
@@ -107,7 +107,7 @@ namespace vxo
 			
 			size_t size() const  { return u.str.length / 2; }
 			
-			Pair* begin()  { return (Pair*) u.str.pointer; }
+			Pair* begin()  { unshare(); return (Pair*) u.str.pointer; }
 			Pair* end()    { return begin() + size(); }
 			
 			Pair const* begin() const  { return (Pair const*) u.str.pointer; }

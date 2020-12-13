@@ -60,8 +60,17 @@ namespace vxo
 		
 			void set_control_byte( char c )  { u.chr[ inline_char_size ] = c; }
 			void set_subtype_byte( char c )  { u.chr[ inline_int_bytes ] = c; }
+			
+			void unshare()
+			{
+				if ( control_byte() == Box_shared )
+				{
+					unshare_extent();
+				}
+			}
 		
 		private:
+			void unshare_extent();
 			void destroy_extent();
 			
 			void destroy()

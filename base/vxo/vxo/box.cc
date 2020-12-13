@@ -18,6 +18,31 @@
 namespace vxo
 {
 
+void Box::unshare_extent()
+{
+	if ( plus::extent_refcount( u.str.pointer ) > 1 )
+	{
+		u.str.pointer = plus::extent_unshare( (char*) u.str.pointer );
+		
+		if ( subtype_byte() >= Box_container )
+		{
+			Box* it = (Box*) u.str.pointer;
+			
+			long n = u.str.length;
+			
+			while ( n-- > 0 )
+			{
+				Box& box = *it++;
+				
+				if ( box.has_extent() )
+				{
+					plus::extent_add_ref( box.u.str.pointer );
+				}
+			}
+		}
+	}
+}
+
 void Box::destroy_extent()
 {
 	if ( subtype_byte() >= Box_container )
