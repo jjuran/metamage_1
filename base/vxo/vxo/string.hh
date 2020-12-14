@@ -42,6 +42,8 @@ namespace vxo
 			string&       get()        { return *(string*)       this; }
 			string const& get() const  { return *(string const*) this; }
 			
+			bool empty() const  { return get().empty(); }
+			
 			const char* c_str() const  { return get().c_str(); }
 			
 			operator string const&() const  { return get(); }
