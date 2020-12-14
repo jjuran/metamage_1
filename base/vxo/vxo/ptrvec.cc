@@ -129,6 +129,20 @@ void PtrVec::insert( Item* loc, const_iterator begin, const_iterator end )
 	memcpy( insert_n( loc, n ), begin, n * sizeof (anyptr_t) );
 }
 
+void PtrVec::erase_n( Item* loc, size_t n )
+{
+	ASSERT( n   <= size()    );
+	ASSERT( loc >= begin()   );
+	ASSERT( loc <= end()     );
+	ASSERT( loc <= end() - n );
+	
+	const size_t n_bytes_to_move = (char*) end() - (char*) (loc + n);
+	
+	memmove( loc, loc + n, n_bytes_to_move );
+	
+	u.str.length -= n;
+}
+
 bool operator==( const PtrVec& a, const PtrVec& b )
 {
 	if ( a.size() == b.size() )

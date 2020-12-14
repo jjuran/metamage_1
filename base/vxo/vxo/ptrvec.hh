@@ -61,6 +61,8 @@ namespace vxo
 			
 			Item* insert( Item* loc )  { return insert_n( loc, 1 ); }
 			
+			void erase_n( Item* loc, size_t n );
+			
 			void push_back( Item item )  { *expand_by( 1 ) = item; }
 			
 			void pop_back()  { --u.str.length; }
@@ -126,6 +128,11 @@ namespace vxo
 			Item* insert( Item* loc )
 			{
 				return (Item*) PtrVec::insert( (anyptr_t*) loc );
+			}
+			
+			void erase( Item* loc )
+			{
+				PtrVec::erase_n( (anyptr_t*) loc, 1 );
 			}
 	};
 	
