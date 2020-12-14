@@ -155,9 +155,11 @@ namespace tool
 	
 	const plus::string& Project::FindIncludeRecursively( const plus::string& include_path ) const
 	{
-		plus::string* result = &its_include_map[ include_path ];
+		vxo::Box* box = &its_include_map.find_or_insert( include_path );
 		
-		if ( result->empty() )
+		vxo::String*& result = *(vxo::String**) &box;
+		
+		if ( box->undefined() )
 		{
 			*result = FindInclude( include_path );
 			
@@ -176,7 +178,10 @@ namespace tool
 				
 				// for searching only directly used projects, call recursive
 				// for searching all used projects, call non-recursive
-				*result = used_project.FindInclude( include_path );
+				plus::string found = used_project.FindInclude( include_path );
+				
+				// GetProject() may have invalidated our pointer; reassign it.
+				result = &its_include_map.assign( include_path, found );
 			}
 		}
 		

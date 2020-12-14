@@ -15,6 +15,9 @@
 // plus
 #include "plus/string.hh"
 
+// vxo
+#include "vxo/strmap.hh"
+
 // A-line
 #include "A-line/ProjectConfig.hh"
 #include "A-line/TargetInfo.hh"
@@ -60,7 +63,7 @@ namespace tool
 			StringVector its_source_file_pathnames;  // absolute
 			
 			// maps include paths to absolute pathnames
-			mutable std::map< plus::string, plus::string > its_include_map;
+			mutable vxo::StrMap_to< vxo::String > its_include_map;
 			
 			boost::weak_ptr< Task > its_precompile_task;
 			boost::weak_ptr< Task > its_static_lib_task;
