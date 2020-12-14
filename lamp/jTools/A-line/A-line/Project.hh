@@ -106,7 +106,8 @@ namespace tool
 			const std::vector< plus::string >& Sources() const  { return its_source_file_pathnames; }
 			
 			plus::string FindInclude           ( const plus::string& include_path ) const;
-			plus::string FindIncludeRecursively( const plus::string& include_path ) const;
+			
+			const plus::string& FindIncludeRecursively( const plus::string& include_path ) const;
 			
 			plus::string FindResourceFile( const plus::string& filename ) const;
 			

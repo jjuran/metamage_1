@@ -160,7 +160,7 @@ namespace tool
 		return "";
 	}
 	
-	plus::string Project::FindIncludeRecursively( const plus::string& include_path ) const
+	const plus::string& Project::FindIncludeRecursively( const plus::string& include_path ) const
 	{
 		plus::string& result = its_include_map[ include_path ];
 		
