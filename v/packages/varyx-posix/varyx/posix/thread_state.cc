@@ -11,11 +11,11 @@
 // Standard C
 #include <stdlib.h>
 
-// Standard C++
-#include <vector>
-
 // debug
 #include "debug/assert.hh"
+
+// vxo
+#include "vxo/ptrvec.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -49,7 +49,7 @@ namespace posix
 	using namespace vlib;
 	
 	
-	static std::vector< thread_state* > joinable_threads;
+	static vxo::PtrVec_< thread_state > joinable_threads;
 	
 	static p7::mutex joinable_threads_mutex;
 	
@@ -70,7 +70,7 @@ namespace posix
 		
 		p7::lock k( joinable_threads_mutex );
 		
-		typedef std::vector< thread_state* >::iterator Iter;
+		typedef vxo::PtrVec_< thread_state >::iterator Iter;
 		
 		const Iter begin = joinable_threads.begin();
 		
