@@ -82,8 +82,9 @@ namespace posix
 			
 			if ( *it == t )
 			{
-				joinable_threads.erase( it );
+				*it = joinable_threads.back();
 				
+				joinable_threads.pop_back();
 				break;
 			}
 		}
