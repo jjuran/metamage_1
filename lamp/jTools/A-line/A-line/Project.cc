@@ -170,11 +170,16 @@ namespace tool
 			
 			const std::vector< plus::string >& project_names = AllUsedProjects();
 			
-			typedef std::vector< plus::string >::const_iterator Iter;
-			
-			for ( Iter it = project_names.begin();  result.empty()  &&  it != project_names.end();  ++it )
+			for ( size_t i = 0;  i < project_names.size();  ++i )
 			{
-				const Project& used_project = GetProject( *it, its_platform );
+				if ( ! result.empty() )
+				{
+					break;
+				}
+				
+				const plus::string& name = project_names[ i ];
+				
+				const Project& used_project = GetProject( name, its_platform );
 				
 				// for searching only directly used projects, call recursive
 				// for searching all used projects, call non-recursive
