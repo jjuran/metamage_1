@@ -39,7 +39,7 @@ namespace vlib
 			return;
 		}
 		
-		typedef std::vector< const Value* > Stack;
+		typedef vxo::PtrVec_< const Value > Stack;
 		
 		Stack& stack = *(Stack*) param;
 		
@@ -59,7 +59,7 @@ namespace vlib
 	}
 	
 	static
-	void push( std::vector< const Value* >& stack, const Value* v )
+	void push( vxo::PtrVec_< const Value >& stack, const Value* v )
 	{
 		if ( ! v->is_cycle_free() )
 		{

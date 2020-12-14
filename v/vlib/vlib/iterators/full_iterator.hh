@@ -6,8 +6,8 @@
 #ifndef VLIB_ITERATORS_FULLITERATOR_HH
 #define VLIB_ITERATORS_FULLITERATOR_HH
 
-// Standard C++
-#include <vector>
+// vxo
+#include "vxo/ptrvec.hh"
 
 
 namespace vlib
@@ -18,7 +18,7 @@ namespace vlib
 	class full_iterator
 	{
 		private:
-			std::vector< const Value* > its_stack;
+			vxo::PtrVec_< const Value > its_stack;
 		
 		public:
 			full_iterator( const Value& start );

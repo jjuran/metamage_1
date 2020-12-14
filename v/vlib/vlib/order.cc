@@ -7,7 +7,9 @@
 
 // Standard C++
 #include <algorithm>
-#include <vector>
+
+// vxo
+#include "vxo/ptrvec.hh"
 
 // vlib
 #include "vlib/array-utils.hh"
@@ -152,9 +154,7 @@ namespace vlib
 		
 		std::size_t n = length( container );
 		
-		std::vector< const Value* > vector;
-		
-		vector.reserve( n );
+		vxo::PtrVec_< const Value > vector( n );
 		
 		array_iterator it( container );
 		
@@ -163,7 +163,7 @@ namespace vlib
 			vector.push_back( &it.use() );
 		}
 		
-		typedef std::vector< const Value* >::iterator Iter;
+		typedef vxo::PtrVec_< const Value >::iterator Iter;
 		
 		Iter begin = vector.begin();
 		Iter end   = vector.end();
