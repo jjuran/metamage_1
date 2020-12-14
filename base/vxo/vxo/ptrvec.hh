@@ -64,6 +64,8 @@ namespace vxo
 			void push_back( Item item )  { *expand_by( 1 ) = item; }
 			
 			void pop_back()  { --u.str.length; }
+			
+			void clear()    { u.str.length = 0; }
 	};
 	
 	bool operator==( const PtrVec& a, const PtrVec& b );
