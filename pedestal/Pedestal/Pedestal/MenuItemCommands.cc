@@ -9,14 +9,13 @@
 #include <map>
 #include <vector>
 
-// Nitrogen
-//#include "Nitrogen/Menus.hh"
-
 
 namespace Pedestal
 {
 	
-	typedef std::map< Mac::MenuID, std::vector< CommandCode > > Menus;
+	typedef unsigned long Code;
+	
+	typedef std::map< Mac::MenuID, std::vector< Code > > Menus;
 	
 	
 	static Menus gMenus;
@@ -29,13 +28,11 @@ namespace Pedestal
 		
 		if ( it != gMenus.end() )
 		{
-			const std::vector< CommandCode >& commands = it->second;
+			const std::vector< Code >& commands = it->second;
 			
 			if ( item_index < commands.size() )
 			{
-				CommandCode code = commands[ item_index ];
-				
-				return code;
+				return (CommandCode) commands[ item_index ];
 			}
 		}
 		
@@ -46,7 +43,7 @@ namespace Pedestal
 	                             MenuItemIndex  item_index,
 	                             CommandCode    code )
 	{
-		std::vector< CommandCode >& commands = gMenus[ menu_id ];
+		std::vector< Code >& commands = gMenus[ menu_id ];
 		
 		if ( item_index >= commands.size() )
 		{
