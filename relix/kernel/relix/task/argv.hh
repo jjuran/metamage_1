@@ -1,16 +1,16 @@
 /*
-	plus/argv.hh
-	------------
+	argv.hh
+	-------
 */
 
 #ifndef RELIX_TASK_ARGV_HH
 #define RELIX_TASK_ARGV_HH
 
-// Standard C++
-#include <vector>
-
 // plus
 #include "plus/var_string.hh"
+
+// vxo
+#include "vxo/ptrvec.hh"
 
 
 namespace relix
@@ -20,7 +20,7 @@ namespace relix
 	{
 		private:
 			plus::var_string      its_string;
-			std::vector< char* >  its_vector;
+			vxo::UPtrVec< char >  its_vector;
 		
 		public:
 			argv();

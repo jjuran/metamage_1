@@ -1,6 +1,6 @@
 /*
-	plus/argv.cc
-	------------
+	argv.cc
+	-------
 */
 
 #include "relix/task/argv.hh"
@@ -37,7 +37,7 @@ namespace relix
 		return result.move();
 	}
 	
-	static void assign_unflattened_argv( std::vector< char* >& result, plus::var_string& flat )
+	static void assign_unflattened_argv( vxo::UPtrVec< char >& result, plus::var_string& flat )
 	{
 		result.clear();
 		
