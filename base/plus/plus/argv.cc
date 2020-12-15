@@ -89,8 +89,7 @@ namespace plus
 	void argv::swap( argv& that )
 	{
 		its_string.swap( that.its_string );
-		
-		std::swap( its_vector, that.its_vector );
+		its_vector.swap( that.its_vector );
 	}
 	
 	void swap( argv& a, argv& b )
