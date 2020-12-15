@@ -16,7 +16,7 @@
 #endif
 
 // Standard C++
-#include <vector>
+#include <algorithm>
 
 // Standard C
 #include <errno.h>
@@ -52,6 +52,9 @@
 
 // plus
 #include "plus/var_string.hh"
+
+// vxo
+#include "vxo/ptrvec.hh"
 
 // Recall
 #include "recall/stack_frame.hh"
@@ -370,7 +373,7 @@ namespace Genie
 	struct ExecContext
 	{
 		vfs::node_ptr               executable;
-		std::vector< const char* >  argVector;
+		vxo::UPtrVec< const char >  argVector;
 		plus::var_string            interpreter;
 		
 		ExecContext()  {}

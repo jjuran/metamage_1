@@ -17,6 +17,9 @@
 // plus
 #include "plus/var_string.hh"
 
+// vxo
+#include "vxo/ptrvec.hh"
+
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
@@ -253,7 +256,7 @@ namespace Genie
 	{
 		plus::var_string arg_string = program_args;
 		
-		std::vector< const char* > args;
+		vxo::UPtrVec< const char > args;
 		
 		const char* program_args_data = program_args.c_str();
 		
