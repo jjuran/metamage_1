@@ -991,9 +991,10 @@ namespace Pedestal
 		}
 		else if ( menuID == N::GetMenuID( the_Window_menu ) )
 		{
-			WindowRef w = get_nth_window( item - 1 );
-			
-			SelectWindow( w );
+			if ( WindowRef w = get_nth_window( item - 1 ) )
+			{
+				SelectWindow( w );
+			}
 		}
 	}
 	
