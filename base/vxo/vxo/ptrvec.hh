@@ -130,6 +130,11 @@ namespace vxo
 				return (Item*) PtrVec::insert( (anyptr_t*) loc );
 			}
 			
+			void insert( Item* loc, Item item )
+			{
+				*insert( loc ) = item;
+			}
+			
 			void erase( Item* loc )
 			{
 				PtrVec::erase_n( (anyptr_t*) loc, 1 );
