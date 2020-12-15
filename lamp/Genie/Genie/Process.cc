@@ -379,8 +379,12 @@ namespace Genie
 		             char const* const*  argv )
 		:
 			executable( &executable ),
-			argVector ( argv, argv + argv_length( argv ) + 1 )
-		{}
+			argVector()
+		{
+			argVector.insert( argVector.begin(),
+			                  argv,
+			                  argv + argv_length( argv ) + 1 );
+		}
 	};
 	
 	static inline p7::errno_t NotExecutable()  { return p7::errno_t( EPERM ); }
