@@ -15,7 +15,7 @@ struct Rect;
 struct WindowRecord;
 
 extern MacRegion**        BezelRgn;
-extern MenuList_header**  MenuList;
+extern MenuList_header**  MenuList : 0x00A1C;
 
 pascal void InitWindows_patch();
 

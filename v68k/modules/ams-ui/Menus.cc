@@ -55,8 +55,6 @@ struct MenuList_entry
 	SInt16   left_edge;
 };
 
-MenuList_header** MenuList;
-
 const short system_font_ascent =  9;
 const short menu_title_padding =  9;
 const short gap_between_titles = 13;  // space between text of adjacent titles
