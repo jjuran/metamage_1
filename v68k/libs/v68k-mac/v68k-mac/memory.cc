@@ -153,6 +153,8 @@ enum
 	tag_IconBitmap,
 	tag_IconBitmap_word_6 = tag_IconBitmap + 6,  // 14 bytes
 	tag_TheMenu,
+	tag_MenuList,
+	tag_MenuList_low_word,
 	tag_DragPattern,
 	tag_DragPattern_word_3 = tag_DragPattern + 3,  // 8 bytes
 	tag_DeskPattern,
@@ -323,6 +325,8 @@ static const global globals[] =
 	{ 0x0A02, 0x84, 0x01            },  // OneOne
 	{ 0x0A06, 0x84, 0xFF            },  // MinusOne
 	{ 0x0A0E, 14,   tag_IconBitmap  },
+	
+	{ 0x0A1C, 4,    tag_MenuList    },
 	
 	{ 0x0A26, 2,    tag_TheMenu     },
 	
