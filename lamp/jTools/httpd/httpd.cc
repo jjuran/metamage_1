@@ -21,8 +21,10 @@
 #include "gear/inscribe_decimal.hh"
 #include "gear/hexadecimal.hh"
 
+// debug
+#include "debug/assert.hh"
+
 // plus
-#include "plus/argv.hh"
 #include "plus/hexadecimal.hh"
 #include "plus/var_string.hh"
 
@@ -70,6 +72,26 @@ typedef int socklen_t;
 
 #define STR_LEN( str )  str, STRLEN( str )
 
+
+static
+void append_arg_pointers( std::vector< char* >& result, plus::var_string& flat )
+{
+	char* begin = &*flat.begin();
+	char* end   = &*flat.end();
+	
+	while ( begin < end )
+	{
+		char* null = std::find( begin, end, '\0' );
+		
+		ASSERT( null != end );
+		
+		result.push_back( begin );
+		
+		begin = null + 1;
+	}
+	
+	result.push_back( NULL );
+}
 
 namespace tool
 {
@@ -190,7 +212,10 @@ namespace tool
 		
 		bool partial_data_exist = !partialData.empty();
 		
-		plus::argv env = GetCGIVariables( request );
+		plus::var_string cgi_vars = GetCGIVariables( request ).move();
+		std::vector< char* > env;
+		
+		append_arg_pointers( env, cgi_vars );
 		
 		int pipe_ends[2];
 		
@@ -215,7 +240,7 @@ namespace tool
 				close( reader );
 			}
 			
-			p7::execve( argv, env.get_argv() );
+			p7::execve( argv, &env[ 0 ] );
 		}
 		
 		if ( partial_data_exist )
