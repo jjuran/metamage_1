@@ -32,8 +32,10 @@
 // more-posix
 #include "more/perror.hh"
 
+// debug
+#include "debug/assert.hh"
+
 // plus
-#include "plus/argv.hh"
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
 
@@ -120,6 +122,49 @@ void psignal( unsigned signo, const char* s )
 }
 
 #endif
+
+class argv_box
+{
+	private:
+		plus::var_string      its_string;
+		std::vector< char* >  its_vector;
+	
+	public:
+		char* const* get_argv() const  { return &its_vector[ 0 ]; }
+		
+		argv_box& assign( const plus::string& s );
+};
+
+static
+void assign_unflattened_argv( std::vector< char* >& result, plus::var_string& flat )
+{
+	result.clear();
+	
+	char* begin = &*flat.begin();
+	char* end   = &*flat.end();
+	
+	while ( begin < end )
+	{
+		char* null = std::find( begin, end, '\0' );
+		
+		ASSERT( null != end );
+		
+		result.push_back( begin );
+		
+		begin = null + 1;
+	}
+	
+	result.push_back( NULL );
+}
+
+argv_box& argv_box::assign( const plus::string& s )
+{
+	its_string = s;
+	
+	assign_unflattened_argv( its_vector, its_string );
+	
+	return *this;
+}
 
 
 namespace tool
@@ -455,7 +500,7 @@ namespace tool
 	}
 	
 	static
-	void Exec( char const* const argv[], const plus::argv& env )
+	void Exec( char const* const argv[], const argv_box& env )
 	{
 		char const* const* envp = env.get_argv();
 		
@@ -663,7 +708,7 @@ namespace tool
 				return wait_from_exit( CallBuiltin( builtin, argv ) );  // wait from exit
 			}
 			
-			plus::argv env;
+			argv_box env;
 			
 			// This variable is set before and examined after a longjmp(), so it
 			// needs to be volatile to make sure it doesn't wind up in a register
@@ -743,7 +788,7 @@ namespace tool
 	
 	
 	static
-	p7::wait_t ExecuteCommandFromPipeline( Command& command, plus::argv& env )
+	p7::wait_t ExecuteCommandFromPipeline( Command& command, argv_box& env )
 	{
 		const size_t argc = command.args.size();
 		
@@ -788,7 +833,7 @@ namespace tool
 	}
 	
 	static
-	void ExecuteCommandAndExitFromPipeline( Command& command, plus::argv& env )
+	void ExecuteCommandAndExitFromPipeline( Command& command, argv_box& env )
 	{
 		try
 		{
@@ -826,7 +871,7 @@ namespace tool
 				break;
 		}
 		
-		plus::argv env;
+		argv_box env;
 		
 		typedef std::vector< Command >::iterator iterator;
 		
