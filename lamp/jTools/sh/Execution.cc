@@ -454,8 +454,11 @@ namespace tool
 		}
 	}
 	
-	static void Exec( char const* const argv[], char const* const* envp )
+	static
+	void Exec( char const* const argv[], const plus::argv& env )
 	{
+		char const* const* envp = env.get_argv();
+		
 		const char* file = argv[ 0 ];
 		
 		(void) execvpe( file, (char**) argv, (char**) envp );
@@ -465,11 +468,6 @@ namespace tool
 		more::perror( "sh", file, error_msg );
 		
 		_exit( errno == ENOENT ? 127 : 126 );  // Use _exit() to exit a forked but not exec'ed process.
-	}
-	
-	static void Exec( char const* const argv[], plus::argv& env )
-	{
-		Exec( argv, env.get_argv() );
 	}
 	
 	
