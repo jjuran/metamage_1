@@ -7,9 +7,7 @@
 
 // Standard C
 #include <stdint.h>
-
-// Standard C/C++
-#include <cstring>
+#include <string.h>
 
 // more-libc
 #include "more/string.h"
@@ -26,13 +24,14 @@ namespace kerosene
 		return a > b ? a : b;
 	}
 	
-	static std::size_t sizeof_argv( char** argv )
+	static
+	size_t sizeof_argv( char** argv )
 	{
-		std::size_t size = 0;
+		size_t size = 0;
 		
 		while ( *argv != NULL )
 		{
-			size += std::strlen( *argv++ ) + 1;
+			size += strlen( *argv++ ) + 1;
 		}
 		
 		return size;
@@ -40,7 +39,7 @@ namespace kerosene
 	
 	static bool cstr_less( const char* a, const char* b )
 	{
-		return std::strcmp( a, b ) < 0;
+		return strcmp( a, b ) < 0;
 	}
 	
 	
@@ -104,18 +103,20 @@ namespace kerosene
 	}
 	
 	
-	static char* new_buffer( std::size_t size )
+	static
+	char* new_buffer( size_t size )
 	{
 		char* buffer = (char*) ::operator new( size + 1 );
 		
-		std::memset( buffer, '\0', size );
+		memset( buffer, '\0', size );
 		
 		buffer[ size ] = '=';
 		
 		return buffer;
 	}
 	
-	static bool ptr_within( void const* p, void const* block, std::size_t n )
+	static
+	bool ptr_within( void const* p, void const* block, size_t n )
 	{
 		uintptr_t addr  = (uintptr_t) p;
 		uintptr_t begin = (uintptr_t) block;
@@ -124,7 +125,7 @@ namespace kerosene
 		return addr >= begin  &&  addr < end;
 	}
 	
-	static char* find_space( char* buffer, std::size_t n )
+	static char* find_space( char* buffer, size_t n )
 	{
 		/*
 			The buffer's unused bytes contain zero.  The last byte of an
@@ -184,14 +185,14 @@ namespace kerosene
 		}
 	}
 	
-	char* environ_store::find_space_or_reallocate( std::size_t extra_space )
+	char* environ_store::find_space_or_reallocate( size_t extra_space )
 	{
 		if ( char* result = find_space( its_buffer, extra_space ) )
 		{
 			return result;
 		}
 		
-		std::size_t size = max( its_length * 2, its_length + extra_space );
+		size_t size = max( its_length * 2, its_length + extra_space );
 		
 		char* buffer = new_buffer( size );
 		
@@ -207,7 +208,7 @@ namespace kerosene
 				
 				*vars = p;
 				
-				p = (char*) mempcpy( p, var, std::strlen( var ) + 1 );
+				p = (char*) mempcpy( p, var, strlen( var ) + 1 );
 			}
 		}
 		
@@ -244,7 +245,7 @@ namespace kerosene
 			{
 				its_vars.push_back( p );
 				
-				p = (char*) mempcpy( p, var, std::strlen( var ) + 1 );
+				p = (char*) mempcpy( p, var, strlen( var ) + 1 );
 			}
 			
 			std::sort( its_vars.begin(),
@@ -283,7 +284,7 @@ namespace kerosene
 	{
 		if ( ptr_within( var, its_buffer, its_length ) )
 		{
-			std::memset( var, '\0', std::strlen( var ) );
+			memset( var, '\0', strlen( var ) );
 		}
 	}
 	
@@ -310,7 +311,7 @@ namespace kerosene
 		// If it doesn't match, we insert (otherwise, we possibly overwrite)
 		const bool inserting = !match;
 		
-		std::size_t name_len;
+		size_t name_len;
 		
 		if ( ! inserting )
 		{
@@ -323,12 +324,12 @@ namespace kerosene
 		}
 		else
 		{
-			name_len = std::strlen( name );
+			name_len = strlen( name );
 		}
 		
-		const std::size_t value_len = std::strlen( value );
+		const size_t value_len = strlen( value );
 		
-		const std::size_t var_len = name_len + 1 + value_len + 1;
+		const size_t var_len = name_len + 1 + value_len + 1;
 		
 		char* new_var = find_space_or_reallocate( var_len );
 		
