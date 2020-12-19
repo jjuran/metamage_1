@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <list>
-#include <vector>
 
 // Standard C/C++
 #include <cstdio>
@@ -13,6 +12,9 @@
 // plus
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
+
+// vxo
+#include "vxo/ptrvec.hh"
 
 // poseven
 #include "poseven/functions/execvp.hh"
@@ -162,7 +164,7 @@ namespace tool
 		return extension_begins_with_char( path, 'o' );
 	}
 	
-	std::vector< const char* > gIncludeDirs;
+	vxo::PtrVec_< const char > gIncludeDirs;
 	
 	static void RememberIncludeDir( const char* pathname )
 	{
@@ -189,7 +191,7 @@ namespace tool
 			return prefix_image_path;
 		}
 		
-		typedef std::vector< const char* >::const_iterator Iter;
+		typedef vxo::PtrVec_< const char >::const_iterator Iter;
 		
 		for ( Iter it = gIncludeDirs.begin();  it != gIncludeDirs.end();  ++it )
 		{
@@ -222,7 +224,7 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		std::vector< const char* > command_args;
+		vxo::PtrVec_< const char > command_args;
 		
 		Architecture arch = arch_none;
 		
@@ -333,7 +335,7 @@ namespace tool
 			return 1;
 		}
 		
-		std::vector< const char* > command;
+		vxo::PtrVec_< const char > command;
 		
 		command.push_back( "tlsrvr"   );
 		command.push_back( "--escape" );  // escape arguments to prevent expansion
