@@ -50,8 +50,8 @@ namespace tool
 		return std::make_pair( key, value );
 	}
 	
-	static void Tokenize( const plus::string& line,
-	                      std::back_insert_iterator< StringVector > tokens )
+	static void Tokenize( const plus::string&  line,
+	                      StringVector&        tokens )
 	{
 		typedef std::size_t size_type;
 		
@@ -70,7 +70,7 @@ namespace tool
 			size_type tokenStart = line.find_first_not_of( ws, i          );
 			size_type tokenEnd   = line.find_first_of    ( ws, tokenStart );
 			
-			*tokens++ = line.substr( tokenStart, tokenEnd - tokenStart );
+			tokens.push_back( line.substr( tokenStart, tokenEnd - tokenStart ) );
 			
 			i = tokenEnd;
 		}
@@ -121,7 +121,7 @@ namespace tool
 			else
 			{
 				// Copy multiple tokens
-				Tokenize( value, std::back_inserter( line.values ) );
+				Tokenize( value, line.values );
 			}
 		}
 	}
