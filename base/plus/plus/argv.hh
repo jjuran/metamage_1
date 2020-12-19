@@ -46,7 +46,11 @@ namespace plus
 			argv& assign( const char *const *args );
 	};
 	
-	void swap( argv& a, argv& b );
+	inline
+	void swap( argv& a, argv& b )
+	{
+		a.swap( b );
+	}
 	
 }
 

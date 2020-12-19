@@ -92,11 +92,6 @@ namespace plus
 		its_vector.swap( that.its_vector );
 	}
 	
-	void swap( argv& a, argv& b )
-	{
-		a.swap( b );
-	}
-	
 	argv& argv::assign( const plus::string& s )
 	{
 		its_string = s;
