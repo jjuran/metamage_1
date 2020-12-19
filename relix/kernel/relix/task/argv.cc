@@ -3,7 +3,7 @@
 	------------
 */
 
-#include "plus/argv.hh"
+#include "relix/task/argv.hh"
 
 // Standard C++
 #include <algorithm>
@@ -15,7 +15,7 @@
 #include "debug/assert.hh"
 
 
-namespace plus
+namespace relix
 {
 	
 	static plus::string flattened_argv( char const *const *argv )

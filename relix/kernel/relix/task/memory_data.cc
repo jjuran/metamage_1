@@ -16,7 +16,6 @@
 #include <boost/intrusive_ptr.hpp>
 
 // plus
-#include "plus/argv.hh"
 #include "plus/simple_map.hh"
 
 // poseven
@@ -27,6 +26,7 @@
 
 // Relix
 #include "relix/task/memory_tract.hh"
+#include "relix/task/argv.hh"
 
 
 namespace relix
@@ -37,8 +37,8 @@ namespace relix
 	
 	struct program_parameters
 	{
-		plus::argv its_cmdline;
-		plus::argv its_environ;
+		argv its_cmdline;
+		argv its_environ;
 	};
 	
 	static void swap( program_parameters& a, program_parameters& b )

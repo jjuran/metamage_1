@@ -3,8 +3,8 @@
 	------------
 */
 
-#ifndef PLUS_ARGV_HH
-#define PLUS_ARGV_HH
+#ifndef RELIX_TASK_ARGV_HH
+#define RELIX_TASK_ARGV_HH
 
 // Standard C++
 #include <vector>
@@ -13,13 +13,13 @@
 #include "plus/var_string.hh"
 
 
-namespace plus
+namespace relix
 {
 	
 	class argv
 	{
 		private:
-			var_string            its_string;
+			plus::var_string      its_string;
 			std::vector< char* >  its_vector;
 		
 		public:
