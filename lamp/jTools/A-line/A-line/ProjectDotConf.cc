@@ -24,14 +24,16 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	static std::pair< plus::string, plus::string > ParseKeyValue( const plus::string& line )
+	static
+	void ParseLineToKeyAndValue( const plus::string&  line,
+	                             plus::string&        key,
+	                             plus::string&        value )
 	{
 		//if (line.size() == 0)  return;  // Redundant
 		const char* ws = " \t";
 		std::size_t posWhitespace = line.find_first_of( ws );
 		// FIXME:  This will break when leading whitespace precedes key
-		plus::string key = line.substr( 0, posWhitespace );
-		plus::string value;
+		key = line.substr( 0, posWhitespace );
 		
 		if ( ~posWhitespace )
 		{
@@ -46,8 +48,6 @@ namespace tool
 				value = line.substr( posValue, posEndOfValue );
 			}
 		}
-		
-		return std::make_pair( key, value );
 	}
 	
 	static void Tokenize( const plus::string&  line,
@@ -101,12 +101,9 @@ namespace tool
 			DotConfLine& line( data.back() );
 			line.lineNumber = lineCount;
 			
-			// Parse a line into key and value
-			//G::ref( line.key, value ) = ParseKeyValue( text );
-			std::pair< plus::string, plus::string > kv = ParseKeyValue( text );
+			plus::string value;
 			
-			line.key           = kv.first;
-			plus::string value = kv.second;
+			ParseLineToKeyAndValue( text, line.key, value );
 			
 			// Check for double-quotes
 			std::size_t size = value.size();
