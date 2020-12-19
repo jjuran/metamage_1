@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <list>
-#include <vector>
 
 // Standard C/C++
 #include <cstring>
@@ -15,6 +14,9 @@
 
 // plus
 #include "plus/var_string.hh"
+
+// vxo
+#include "vxo/ptrvec.hh"
 
 // poseven
 #include "poseven/functions/execvp.hh"
@@ -191,7 +193,7 @@ namespace tool
 		
 		CheckObjectFile( first_input_path, arch, debug );
 		
-		std::vector< const char* > command;
+		vxo::PtrVec_< const char > command;
 		
 		command.push_back( "tlsrvr"   );
 		command.push_back( "--escape" );  // escape arguments to prevent expansion
