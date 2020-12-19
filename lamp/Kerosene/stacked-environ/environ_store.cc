@@ -399,8 +399,7 @@ namespace kerosene
 	void environ_store::clear()
 	{
 		its_vars.clear();
-		
-		its_vars.resize( 1, NULL );
+		its_vars.push_back( NULL );
 		
 		environ = NULL;
 	}
