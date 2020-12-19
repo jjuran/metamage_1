@@ -6,8 +6,8 @@
 #ifndef KEROSENE_ENVIRONSTORE_HH
 #define KEROSENE_ENVIRONSTORE_HH
 
-// Standard C++
-#include <vector>
+// vxo
+#include "vxo/ptrvec.hh"
 
 
 namespace kerosene
@@ -18,7 +18,7 @@ namespace kerosene
 		private:
 			char*                 its_buffer;
 			std::size_t           its_length;
-			std::vector< char* >  its_vars;
+			vxo::PtrVec_< char >  its_vars;
 			
 		private:
 			// Non-copyable

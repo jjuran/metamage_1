@@ -9,6 +9,9 @@
 #include <stdint.h>
 #include <string.h>
 
+// Standard C++
+#include <algorithm>
+
 // more-libc
 #include "more/string.h"
 
@@ -94,7 +97,7 @@ namespace kerosene
 		}
 	}
 	
-	static std::vector< char* >::iterator find_var( std::vector< char* >& vars, const char* name )
+	static vxo::PtrVec_< char >::iterator find_var( vxo::PtrVec_< char >& vars, const char* name )
 	{
 		return std::lower_bound( vars.begin(),
 		                         vars.end() - 1,
@@ -233,7 +236,7 @@ namespace kerosene
 			
 			const int envc = env - envp;  // var count + 1
 			
-			its_vars.reserve( envc );
+			//its_vars.reserve( envc );
 			
 			its_length = sizeof_argv( envp ) * 2;  // leave room for more vars
 			
@@ -290,7 +293,7 @@ namespace kerosene
 	
 	char* environ_store::get( const char* name )
 	{
-		std::vector< char* >::iterator it = find_var( its_vars, name );
+		vxo::PtrVec_< char >::iterator it = find_var( its_vars, name );
 		
 		char *const var = *it;
 		
@@ -301,7 +304,7 @@ namespace kerosene
 	{
 		preallocate();  // make insertion safe
 		
-		std::vector< char* >::iterator it = find_var( its_vars, name );
+		vxo::PtrVec_< char >::iterator it = find_var( its_vars, name );
 		
 		char *const var = *it;
 		
@@ -356,7 +359,7 @@ namespace kerosene
 	{
 		preallocate();  // make insertion safe
 		
-		std::vector< char* >::iterator it = find_var( its_vars, string );
+		vxo::PtrVec_< char >::iterator it = find_var( its_vars, string );
 		
 		char *const var = *it;
 		
@@ -380,7 +383,7 @@ namespace kerosene
 	
 	void environ_store::unset( const char* name )
 	{
-		std::vector< char* >::iterator it = find_var( its_vars, name );
+		vxo::PtrVec_< char >::iterator it = find_var( its_vars, name );
 		
 		char *const var = *it;
 		
