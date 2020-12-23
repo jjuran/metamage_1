@@ -133,6 +133,7 @@ namespace vlib
 		{ ":=",  Token_colon_equals },
 		
 		{ ";",   Token_semicolon },
+		{ ";;",  Token_semicolon_x2 },
 		{ "<",   Token_lt        },
 		{ "<-",  Token_lt_minus  },
 		{ "<--", Token_lt_minus_x2 },

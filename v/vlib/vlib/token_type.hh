@@ -16,6 +16,7 @@ namespace vlib
 		Token_control = -2,  // a control character
 		Token_invalid = -1,
 		
+		Token_semicolon_x2 = Token_reserved,
 		Token_ampersand_x2 = Token_reserved,
 		Token_slash_x2     = Token_reserved,
 		Token_colon_x2     = Token_reserved,
