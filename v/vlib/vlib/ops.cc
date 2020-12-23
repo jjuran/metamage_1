@@ -35,6 +35,7 @@ namespace vlib
 		
 		Postfix = OnlyR,
 		Match   = Tight | Loose,
+		MathL   = Tight | OnlyL,
 		
 		Every = Tight | OnlyR | OnlyL | Loose,
 		
@@ -53,11 +54,11 @@ namespace vlib
 	{
 		{ Token_dot,         OnlyL, Op_getter       },
 		{ Token_colon,       OnlyL, Op_keyvar       },
-		{ Token_plus,        Not_R, Op_unary_plus   },
-		{ Token_minus,       Not_R, Op_unary_minus  },
-		{ Token_tilde,       Not_R, Op_unary_negate },
-		{ Token_plus_x2,     Not_R, Op_preinc       },
-		{ Token_minus_x2,    Not_R, Op_predec       },
+		{ Token_plus,        MathL, Op_unary_plus   },
+		{ Token_minus,       MathL, Op_unary_minus  },
+		{ Token_tilde,       MathL, Op_unary_negate },
+		{ Token_plus_x2,     MathL, Op_preinc       },
+		{ Token_minus_x2,    MathL, Op_predec       },
 		{ Token_lt_equals,   Not_R, Op_recv         },
 		{ Token_parens_plus, Not_R, Op_unary_count  },
 		{ Token_asterisk,    Not_R, Op_unary_deref  },
