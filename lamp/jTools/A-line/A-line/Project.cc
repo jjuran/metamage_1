@@ -134,15 +134,6 @@ namespace tool
 	}
 	
 	
-	static plus::string FindIncludeInFolder( const plus::string& folder, plus::string includePath )
-	{
-		plus::string file = folder / includePath;
-		
-		(void) p7::stat( file );  // throw if nonexistent
-		
-		return file;
-	}
-	
 	plus::string Project::FindInclude( const plus::string& include_path ) const
 	{
 		typedef StringVector::const_iterator Iter;
@@ -205,7 +196,11 @@ namespace tool
 		
 		try
 		{
-			return FindIncludeInFolder( its_dir_pathname / "Rez", filespec );
+			plus::string file = its_dir_pathname / "Rez" / filespec;
+			
+			(void) p7::stat( file );  // throw if nonexistent
+			
+			return file;
 		}
 		catch ( ... )
 		{
