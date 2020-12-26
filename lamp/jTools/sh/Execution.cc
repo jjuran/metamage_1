@@ -572,8 +572,6 @@ namespace tool
 	
 	static plus::string ShiftEnvironmentVariables( char**& argv )
 	{
-		//ASSERT( argv != NULL );
-		
 		std::set< const char*, env_less > set;
 		
 		if ( environ )
@@ -586,13 +584,15 @@ namespace tool
 			}
 		}
 		
-		while ( char* eq = std::strchr( argv[ 0 ], '=' ) )
+		const char* arg;
+		
+		while ( char* eq = std::strchr( arg = *argv++, '=' ) )
 		{
-			set.erase ( argv[ 0 ] );
-			set.insert( argv[ 0 ] );
-			
-			++argv;
+			set.erase ( arg );
+			set.insert( arg );
 		}
+		
+		--argv;
 		
 		plus::var_string result;
 		
