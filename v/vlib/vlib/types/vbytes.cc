@@ -10,6 +10,7 @@
 
 // plus
 #include "plus/string/concat.hh"
+#include "plus/var_string.hh"
 
 // bignum
 #include "bignum/integer.hh"
@@ -281,11 +282,22 @@ namespace vlib
 			case Op_concat_with:
 				if ( b.type() == V_str  ||  b.type() == V_pack )
 				{
-					VBytes bytes( plus::concat( a.string(), b.string() ),
-					              a.type(),
-					              a.dispatch_methods() );
-					
-					a.swap( bytes );
+					if ( a.has_extent() )
+					{
+						a.unshare();
+						
+						plus::var_string& s = *(plus::var_string*) &a.string();
+						
+						s += b.string();
+					}
+					else
+					{
+						VBytes bytes( plus::concat( a.string(), b.string() ),
+						              a.type(),
+						              a.dispatch_methods() );
+						
+						a.swap( bytes );
+					}
 					
 					return a;
 				}
