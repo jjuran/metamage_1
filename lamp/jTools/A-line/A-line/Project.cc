@@ -113,7 +113,8 @@ namespace tool
 		return it->second;
 	}
 	
-	static const plus::string& get_first( const StringVector& v )
+	static inline
+	const plus::string& get_first( const StringVector& v )
 	{
 		if ( v.empty() )
 		{
@@ -123,7 +124,8 @@ namespace tool
 		return v[ 0 ];
 	}
 	
-	static inline const plus::string& get_first( const ConfData& config, const plus::string& key )
+	static
+	const plus::string& get_first( const ConfData& config, const plus::string& key )
 	{
 		return get_first( get_values( config, key ) );
 	}
