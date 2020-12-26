@@ -6,7 +6,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <set>
 
 // Standard C/C++
 #include <cstring>
@@ -39,6 +38,9 @@
 #include "plus/argv.hh"
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
+
+// vxo
+#include "vxo/ptrvec.hh"
 
 // poseven
 #include "poseven/functions/sigaction.hh"
@@ -572,7 +574,9 @@ namespace tool
 	
 	static plus::string ShiftEnvironmentVariables( char**& argv )
 	{
-		std::set< const char*, env_less > set;
+		vxo::PtrVec_< const char > env;
+		
+		env_less less;
 		
 		if ( environ )
 		{
@@ -580,25 +584,36 @@ namespace tool
 			
 			for ( char** envp = environ;  *envp != NULL;  ++envp )
 			{
-				set.insert( *envp );
+				env.push_back( *envp );
 			}
+			
+			std::sort( env.begin(), env.end(), less );
 		}
 		
 		const char* arg;
 		
 		while ( char* eq = std::strchr( arg = *argv++, '=' ) )
 		{
-			set.erase ( arg );
-			set.insert( arg );
+			const char** lb = std::lower_bound( env.begin(),
+			                                    env.end(),
+			                                    arg,
+			                                    less );
+			
+			if ( lb == env.end()  ||  less( arg, *lb ) )
+			{
+				lb = env.insert( lb );
+			}
+			
+			*lb = arg;
 		}
 		
 		--argv;
 		
 		plus::var_string result;
 		
-		typedef std::set< const char*, env_less >::const_iterator Iter;
+		typedef vxo::PtrVec_< const char >::const_iterator Iter;
 		
-		for ( Iter it = set.begin();  it != set.end();  ++it )
+		for ( Iter it = env.begin();  it != env.end();  ++it )
 		{
 			const char* var = *it;
 			
