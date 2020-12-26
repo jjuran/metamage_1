@@ -5,6 +5,9 @@
 
 #include "A-line/Project.hh"
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <algorithm>
 #include <set>
@@ -246,9 +249,13 @@ namespace tool
 	}
 	
 	
-	static bool ends_with( const plus::string& s, const char* tail, unsigned length )
+	static inline
+	bool ends_with( const plus::string& s, const char* tail, size_t len )
 	{
-		return s.length() >= length  &&  std::equal( s.end() - length, s.end(), tail );
+		const char*  data = s.data();
+		const size_t size = s.size();
+		
+		return size >= len  &&  memcmp( data + size - len, tail, len ) == 0;
 	}
 	
 	static ProductType ReadProduct( const plus::string& productName )
