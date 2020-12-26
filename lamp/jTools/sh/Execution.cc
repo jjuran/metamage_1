@@ -578,9 +578,10 @@ namespace tool
 		
 		if ( environ )
 		{
+			// Assume environ has no duplicate variable names
+			
 			for ( char** envp = environ;  *envp != NULL;  ++envp )
 			{
-				set.erase ( *envp );
 				set.insert( *envp );
 			}
 		}
