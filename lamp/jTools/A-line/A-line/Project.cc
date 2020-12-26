@@ -8,7 +8,6 @@
 // Standard C++
 #include <algorithm>
 #include <set>
-#include <vector>
 
 // Standard C/C++
 #include <cstdio>
@@ -118,9 +117,7 @@ namespace tool
 	{
 		if ( v.empty() )
 		{
-			static plus::string null;
-			
-			return null;
+			return plus::string::null;
 		}
 		
 		return v[ 0 ];
