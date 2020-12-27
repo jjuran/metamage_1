@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <list>
-#include <vector>
 
 // Standard C/C++
 #include <cstdio>
@@ -23,6 +22,9 @@
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/string/concat.hh"
+
+// vxo
+#include "vxo/ptrvec.hh"
 
 // poseven
 #include "poseven/extras/slurp.hh"
@@ -214,7 +216,7 @@ namespace tool
 		return arch_none;
 	}
 	
-	std::vector< const char* > gLibraryDirs;
+	vxo::PtrVec_< const char > gLibraryDirs;
 	
 	static void RememberLibraryDir( const char* pathname )
 	{
@@ -223,7 +225,7 @@ namespace tool
 	
 	static plus::string FindLibrary( const char* lib )
 	{
-		typedef std::vector< const char* >::const_iterator Iter;
+		typedef vxo::PtrVec_< const char >::const_iterator Iter;
 		
 		plus::string filename = plus::concat( lib, STR_LEN( ".lib" ) );
 		
@@ -325,7 +327,7 @@ namespace tool
 	}
 	
 	
-	static void do_hyphen_option( char**& argv, std::vector< const char* >& command_args )
+	static void do_hyphen_option( char**& argv, vxo::PtrVec_< const char >& command_args )
 	{
 		const char* arg = argv[0];
 		
@@ -433,7 +435,7 @@ namespace tool
 		}
 	}
 	
-	static void do_plus_option( const char* arg, std::vector< const char* >& command_args )
+	static void do_plus_option( const char* arg, vxo::PtrVec_< const char >& command_args )
 	{
 		if ( const char* equals = std::strchr( arg, '=' ) )
 		{
@@ -503,7 +505,7 @@ namespace tool
 		return true;
 	}
 	
-	static void do_bare_argument( const char* arg, std::vector< const char* >& command_args )
+	static void do_bare_argument( const char* arg, vxo::PtrVec_< const char >& command_args )
 	{
 		const bool needs_link = do_special_case_arg( arg );
 		
@@ -533,7 +535,7 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		std::vector< const char* > command_args;
+		vxo::PtrVec_< const char > command_args;
 		
 		while ( const char* arg = *++argv )
 		{
@@ -558,7 +560,7 @@ namespace tool
 			return 1;
 		}
 		
-		std::vector< const char* > command;
+		vxo::PtrVec_< const char > command;
 		
 		command.push_back( "tlsrvr"   );
 		command.push_back( "--escape" );  // escape arguments to prevent expansion
