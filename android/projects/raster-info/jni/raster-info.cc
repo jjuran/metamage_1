@@ -1,1 +1,0 @@
-../../../repos/metamage_1/graphics/raster-info/raster-info.cc
