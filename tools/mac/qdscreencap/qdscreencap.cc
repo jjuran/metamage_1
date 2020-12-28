@@ -31,6 +31,7 @@
 
 // raster
 #include "raster/raster.hh"
+#include "raster/skif.hh"
 
 
 #define PROGRAM  "qdscreencap"
@@ -104,7 +105,7 @@ raster_info classic_Macintosh_screen_info()
 	raster_info info =
 	{
 		{
-			0,
+			kSKIFFileType,
 			0,
 			512,
 			342,
@@ -140,12 +141,24 @@ raster_info desktop_raster_info()
 	}
 	
 	raster_model model;
+	pixel_layout layout = {};
 	
 	const PixMap& pm = **pmh;
 	
 	if ( pm.pixelType != 0 )  // chunky
 	{
-		model = Model_xRGB;  // 16-bit or 32-bit
+		model = Model_RGB;  // 16-bit or 32-bit
+		
+		if ( pm.pixelSize == 16 )
+		{
+			layout.red   = 0x5a;
+			layout.green = 0x55;
+			layout.blue  = 0x50;
+		}
+		else
+		{
+			layout.per_pixel = raster::xRGB;
+		}
 	}
 	else if ( is_monochrome( pm ) )
 	{
@@ -168,13 +181,16 @@ raster_info desktop_raster_info()
 	raster_info info =
 	{
 		{
-			0,
+			raster::kSKIFFileType,
 			0,
 			width,
 			height,
 			stride,
 			weight,
 			model,
+			0,
+			0,
+			layout,
 		},
 		pm.baseAddr,
 	};
