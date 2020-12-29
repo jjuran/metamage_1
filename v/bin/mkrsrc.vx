@@ -93,7 +93,7 @@ const map_offset = 256 + data_section.size
 
 const header_fields = [256, map_offset, data_section.size, rsrc_map_size ]
 
-const offsets = x"001c" encode_u16BE (typelist_size + rsrc_headers.size)
+const offsets = x"001c" encode_u16BE (0x1c + typelist_size + rsrc_headers.size)
 
 const rsrc_fork_header = header_fields map encode_u32BE per packed
 const rsrc_map_header  = rsrc_fork_header (x"00" * 8) offsets
