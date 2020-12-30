@@ -27,7 +27,7 @@ def encode_u32BE
 
 def add_rsrc (data, name)
 {
-	if name.length != 9 then
+	if name.length != 9 or name[ 0 ] == '.' then
 	{
 		return ()
 	}
