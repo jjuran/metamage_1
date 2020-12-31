@@ -3333,5 +3333,5 @@ $ vc 'byte(5) packed "Hello"'
 
 %
 
-$ vc 'var x = "\xe2\x80\xa2"; translate( &x, "\xe2\x80\xa2", "abc" ); x'
+$ vc 'translated( x"e280a2", "\xe2\x80\xa2", "abc" ).string'
 1 >= '"abc"'

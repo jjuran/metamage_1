@@ -38,6 +38,7 @@
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
+#include "vlib/types/vbytes.hh"
 
 
 namespace vlib
@@ -328,7 +329,7 @@ namespace vlib
 		
 		translate_core( s, pat, sub );
 		
-		return String( s );
+		return VBytes( s, arg1.type(), arg1.dispatch_methods() );
 	}
 	
 	static
@@ -406,7 +407,7 @@ namespace vlib
 	static const Value string_ref( Op_unary_deref, string );
 	static const Value trans( string_ref, Value( bytes, bytes ) );
 	
-	static const Value transd( string, Value( bytes, bytes ) );
+	static const Value transd( bytes, Value( bytes, bytes ) );
 	
 	#define DESTRUCT  "self-destructing"
 	#define TRANS     "translate"
