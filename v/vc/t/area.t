@@ -5,5 +5,5 @@ $ vc 'areaof {123} == areaof [123]'
 
 %
 
-$ vc 'areaof {"x"} < areaof {"x" * 2}'
+$ vc 'areaof {"x"} == areaof {"x" * 2}'
 1 >= true

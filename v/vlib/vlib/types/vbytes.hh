@@ -29,6 +29,7 @@ namespace vlib
 			:
 				Value( (const vu_string&) s, type, d )
 			{
+				set_evaluated();
 			}
 	};
 	
