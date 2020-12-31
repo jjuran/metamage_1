@@ -1,0 +1,44 @@
+#!/usr/bin/env vx -Z
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/"
+
+const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+
+const fifo-icons = import "fifo-icons"
+
+assert argv[ 1 ] == "-o"
+
+const output_dir = argv[ 2 ] "/"
+
+const levels = fifo-icons.guage_levels
+
+const manifest =
+[
+	131: fifo-icons.basic_icon,
+	132: fifo-icons.half_open_reading,
+	133: fifo-icons.half_open_writing,
+	134: fifo-icons.pipe_underrun,
+	135: fifo-icons.empty_guage,
+	
+	*(0 -> 16 map { 136 + v => levels[ v ] }),
+	
+	152: fifo-icons.full_guage,
+	153: fifo-icons.pipe_overrun,
+	154: fifo-icons.writer_closed,
+	155: fifo-icons.broken_pipe,
+]
+
+for icon in manifest do
+{
+	const base = "00" hex icon.key
+	const stem = output_dir base
+	const data = icon.value
+	
+	const get = fifo-icons.get % data
+	
+	for icon-type in ["ICN# icl4 icl8" / ' '] do
+	{
+		rewrite stem "." icon-type <== get icon-type
+	}
+}
