@@ -7,13 +7,11 @@
 // Standard C++
 #include <algorithm>
 
-// Standard C/C++
-#include <cstring>
-
 // Standard C
 #include <errno.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <string.h>
 
 // POSIX
 #include <fcntl.h>
@@ -462,7 +460,7 @@ namespace tool
 		
 		(void) execvpe( file, (char**) argv, (char**) envp );
 		
-		const char* error_msg = errno == ENOENT ? "command not found" : std::strerror( errno );
+		const char* error_msg = errno == ENOENT ? "command not found" : strerror( errno );
 		
 		more::perror( "sh", file, error_msg );
 		
@@ -516,7 +514,7 @@ namespace tool
 	{
 		//ASSERT( argv != NULL );
 		
-		while ( *argv != NULL  &&  std::strchr( *argv, '=' ) )
+		while ( *argv != NULL  &&  strchr( *argv, '=' ) )
 		{
 			++argv;
 		}
@@ -530,7 +528,7 @@ namespace tool
 		
 		while ( *argv != NULL )
 		{
-			char* eq = std::strchr( *argv, '=' );
+			char* eq = strchr( *argv, '=' );
 			
 			//ASSERT( eq != NULL );
 			
@@ -592,7 +590,7 @@ namespace tool
 		
 		const char* arg;
 		
-		while ( char* eq = std::strchr( arg = *argv++, '=' ) )
+		while ( char* eq = strchr( arg = *argv++, '=' ) )
 		{
 			const char** lb = std::lower_bound( env.begin(),
 			                                    env.end(),
