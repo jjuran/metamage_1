@@ -590,7 +590,7 @@ namespace tool
 		
 		const char* arg;
 		
-		while ( char* eq = strchr( arg = *argv++, '=' ) )
+		while ( char* eq = (char*) strchr( arg = *argv++, '=' ) )
 		{
 			const char** lb = std::lower_bound( env.begin(),
 			                                    env.end(),
