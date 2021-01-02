@@ -46,6 +46,9 @@
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
+// AESendBlocking
+#include "AESendBlocking.hh"
+
 // mac_pathname
 #include "mac_pathname_from_path.hh"
 
@@ -308,7 +311,7 @@ namespace tool
 	{
 		Mac::AppleEvent reply;
 		
-		Mac::ThrowOSStatus( Div::AESendBlocking( &appleEvent, &reply ) );
+		Mac::ThrowOSStatus( AESendBlocking( &appleEvent, &reply ) );
 		
 		return n::owned< Mac::AppleEvent >::seize( reply );
 	}

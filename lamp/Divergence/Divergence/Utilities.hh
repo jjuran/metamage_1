@@ -14,7 +14,7 @@
 
 // Mac OS X
 #ifdef __APPLE__
-#include <Carbon/Carbon.h>
+#include <CoreServices/CoreServices.h>
 #endif
 
 // Mac OS
@@ -22,34 +22,11 @@
 #include <Files.h>
 #endif
 
-#if !TARGET_RT_MAC_MACHO
-	#include "relix/AESendBlocking.h"
-#endif
-
 
 namespace Divergence
 {
 	
 	FSSpec ResolvePathToFSSpec( const char* path );
-	
-#if TARGET_RT_MAC_MACHO
-	
-	inline OSStatus AESendBlocking( const AppleEvent* appleEvent, AppleEvent* reply )
-	{
-		return ::AESend( appleEvent,
-		                 reply,
-		                 kAEWaitReply | kAECanInteract,
-		                 kAENormalPriority,
-		                 kNoTimeOut,
-		                 NULL,
-		                 NULL );
-	}
-	
-#else
-	
-	using ::AESendBlocking;
-	
-#endif
 	
 }
 
