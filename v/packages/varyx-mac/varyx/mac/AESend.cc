@@ -18,6 +18,9 @@
 #include <AppleEvents.h>
 #endif
 
+// AESendBlocking
+#include "AESendBlocking.hh"
+
 // vlib
 #include "vlib/proc_info.hh"
 #include "vlib/types/type.hh"
@@ -36,18 +39,16 @@ Value v_AESend( const Value& v )
 {
 	const AEDesc& desc = static_cast< const AEDesc& >( v );
 	
+	AEDesc result;
+	
 	::AppleEvent const* event = &desc.get();
-	::AppleEvent*       reply = NULL;
+	::AppleEvent*       reply = result.pointer();
 	
-	const AESendMode     mode     = kAENoReply;
-	const AESendPriority priority = kAENormalPriority;
-	const SInt32         timeout  = kAEDefaultTimeout;
-	
-	OSErr err = ::AESend( event, reply, mode, priority, timeout, NULL, NULL );
+	OSErr err = ::AESendBlocking( event, reply );
 	
 	throw_MacOS_error( err, "AESend" );
 	
-	return Value_nothing;
+	return result;
 }
 
 static const Type AESend( AEDesc_vtype );
