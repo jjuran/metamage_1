@@ -124,6 +124,72 @@ Value unary_op_handler( op_type op, const Value& v )
 }
 
 static
+Value AEDescList_subscript( const ::AEDesc& list, const Integer& index )
+{
+	OSErr err;
+	
+	::AEKeyword keyword;
+	
+	int32_t i = integer_cast< int32_t >( index );
+	
+	AEDesc nth;
+	
+	err = ::AEGetNthDesc( &list, i, typeWildCard, &keyword, nth.pointer() );
+	
+	throw_MacOS_error( err, "AEGetNthDesc" );
+	
+	if ( keyword == typeWildCard )
+	{
+		return nth;
+	}
+	
+	return Value( MB32( keyword ), Op_mapping, nth );
+}
+
+static
+Value AERecord_subscript( const ::AEDesc& record, const MB32& key )
+{
+	OSErr err;
+	
+	AEDesc keyed;
+	
+	err = ::AEGetKeyDesc( &record, key.get(), typeWildCard, keyed.pointer() );
+	
+	throw_MacOS_error( err, "AEGetKeyDesc" );
+	
+	return keyed;
+}
+
+static
+Value binary_op_handler( op_type op, const Value& a, const Value& b )
+{
+	const ::AEDesc& desc = static_cast< const AEDesc& >( a ).get();
+	
+	switch ( op )
+	{
+		case Op_subscript:
+			if ( const Integer* index = b.is< Integer >() )
+			{
+				return AEDescList_subscript( desc, *index );
+			}
+			else if ( const MB32* key = b.is< MB32 >() )
+			{
+				return AERecord_subscript( desc, *key );
+			}
+			else if ( const String* s = b.is< String >() )
+			{
+				return AERecord_subscript( desc, b.to< MB32 >() );
+			}
+			break;
+		
+		default:
+			break;
+	}
+	
+	return NIL;
+}
+
+static
 Value append_to_list( Value& list, const Value& item )
 {
 	OSErr err;
@@ -179,7 +245,7 @@ Value mutating_op_handler( op_type        op,
 static const operators ops =
 {
 	&unary_op_handler,
-	NULL,
+	&binary_op_handler,
 	NULL,
 	&mutating_op_handler,
 };
