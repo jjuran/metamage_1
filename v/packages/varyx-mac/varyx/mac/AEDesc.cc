@@ -40,6 +40,7 @@
 
 // varyx-mac
 #include "varyx/mac/AEDesc-coerce.hh"
+#include "varyx/mac/AEDesc-deref.hh"
 
 
 namespace varyx
@@ -115,6 +116,9 @@ Value unary_op_handler( op_type op, const Value& v )
 	{
 		case Op_typeof:
 			return Type( AEDesc_vtype );
+		
+		case Op_unary_deref:
+			return AEDesc_deref( v );
 		
 		default:
 			break;
