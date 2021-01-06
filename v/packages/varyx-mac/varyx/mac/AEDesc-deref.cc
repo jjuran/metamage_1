@@ -162,6 +162,9 @@ Value dereferenced_AEDesc( const ::AEDesc& desc )
 		case 'utf8':
 			return String( s );
 		
+		case 'tdta':
+			return Packed( s );
+		
 		default:
 			break;
 	}
