@@ -78,6 +78,9 @@ Value dereferenced_AEDesc( const ::AEDesc& desc )
 			return vlib::Boolean( descType & 0x10000000 );
 		
 		case 'enum':
+			::AEGetDescData( ptr, &u32, sizeof u32 );
+			return MB32( u32 );
+		
 		case 'type':
 		case 'abso':
 			uint32_t type;
