@@ -58,6 +58,7 @@ static
 Value dereferenced_AEDesc( const ::AEDesc& desc )
 {
 	OSErr err;
+	UInt8  u8;
 	SInt16 i16;
 	SInt32 i32;
 	UInt32 u32;
@@ -82,6 +83,10 @@ Value dereferenced_AEDesc( const ::AEDesc& desc )
 			uint32_t type;
 			::AEGetDescData( ptr, &type, 4 );
 			return Value( MB32( descType ), Op_mapping, MB32( type ) );
+		
+		case 'bool':
+			::AEGetDescData( ptr, &u8, sizeof u8 );
+			return vlib::Boolean( u8 );
 		
 		case 'shor':
 			::AEGetDescData( ptr, &i16, sizeof i16 );
