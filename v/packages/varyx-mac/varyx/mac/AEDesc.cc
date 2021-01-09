@@ -26,6 +26,8 @@
 
 // vlib
 #include "vlib/exceptions.hh"
+#include "vlib/list-utils.hh"
+#include "vlib/proc_info.hh"
 #include "vlib/targets.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
@@ -34,6 +36,7 @@
 #include "vlib/types/integer.hh"
 #include "vlib/types/mb32.hh"
 #include "vlib/types/packed.hh"
+#include "vlib/types/proc.hh"
 #include "vlib/types/record.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
@@ -368,6 +371,27 @@ char* AEDesc::copy_data( char* p ) const
 }
 
 static
+Value v_to( const Value& args )
+{
+	const AEDesc& desc = static_cast< const AEDesc& >( first( args ) );
+	const MB32&   type = static_cast< const MB32&   >( rest ( args ) );
+	
+	AEDesc coerced;
+	
+	OSErr err = AECoerceDesc( &desc.get(), type.get(), coerced.pointer() );
+	
+	throw_MacOS_error( err, "AECoerceDesc" );
+	
+	return coerced;
+}
+
+static const Type mb32 = mb32_vtype;
+
+static const Value AEDesc_mb32( (Type( AEDesc_vtype )), mb32 );
+
+static const proc_info proc_to = { "to", &v_to, &AEDesc_mb32 };
+
+static
 Value AEDesc_member( const Value&         obj,
                      const plus::string&  member )
 {
@@ -381,6 +405,11 @@ Value AEDesc_member( const Value&         obj,
 	if ( member == "dataHandle" )
 	{
 		return desc.get_dataHandle();
+	}
+	
+	if ( member == "to" )
+	{
+		return bind_args( Proc( proc_to ), obj );
 	}
 	
 	return NIL;
