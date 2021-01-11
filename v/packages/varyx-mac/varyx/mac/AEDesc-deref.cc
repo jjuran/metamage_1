@@ -18,9 +18,6 @@
 #include <AEDataModel.h>
 #endif
 
-// plus
-#include "plus/mac_utf8.hh"
-
 // vlib
 #include "vlib/array-utils.hh"
 #include "vlib/iterators/list_builder.hh"
@@ -107,6 +104,18 @@ Value dereferenced_AEDesc( const ::AEDesc& desc )
 			::AEGetDescData( ptr, &f64, sizeof f64 );
 			return Float( f64 );
 		
+		case 'TEXT':
+		case 'utxt':
+		{
+			AEDesc coerced;
+			
+			err = AECoerceDesc( ptr, 'utf8', coerced.pointer() );
+			
+			throw_MacOS_error( err, "AECoerceDesc" );
+			
+			return dereferenced_AEDesc( coerced.get() );
+		}
+		
 		case 'obj ':
 		case 'aevt':
 		case 'reco':
@@ -164,9 +173,6 @@ Value dereferenced_AEDesc( const ::AEDesc& desc )
 	
 	switch ( descType )
 	{
-		case 'TEXT':
-			return String( plus::utf8_from_mac( s ) );
-		
 		case 'utf8':
 			return String( s );
 		
