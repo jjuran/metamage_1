@@ -21,7 +21,7 @@ namespace relix
 			syscall_stack& operator=( const syscall_stack& );
 		
 		public:
-			syscall_stack( bool allocating );
+			explicit syscall_stack( bool allocating );
 			
 			~syscall_stack();
 	};
