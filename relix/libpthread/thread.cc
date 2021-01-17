@@ -71,20 +71,22 @@ pthread_t pthread_self()
 {
 	init_thread_leader();
 	
-	int tid = gettid();
-	
-	for ( int i = 0;  i < PTHREAD_THREADS_MAX;  ++i )
 	{
-		if ( pthreads[ i ].tid == tid )
+		int tid = gettid();
+		
+		for ( int i = 0;  i < PTHREAD_THREADS_MAX;  ++i )
 		{
-			return i;
+			if ( pthreads[ i ].tid == tid )
+			{
+				return i;
+			}
 		}
 	}
 	
 	return 0;
 }
 
-int pthread_equal( pthread_t a, pthread_t b)
+int pthread_equal( pthread_t a, pthread_t b )
 {
 	return a == b;
 }
@@ -156,19 +158,21 @@ int pthread_join( pthread_t id, void** result )
 
 int pthread_kill( pthread_t id, int sig )
 {
-	if ( pid_t tid = pthreads[ id ].tid )
+	pid_t tid;
+	
+	if ( ! (tid = pthreads[ id ].tid) )
 	{
-		if ( sig < 0 )
-		{
-			return EINVAL;
-		}
-		
-		int nok = kill( tid, sig | __SIGTHREAD );
-		
-		return nok ? errno : 0;
+		return ESRCH;
 	}
 	
-	return ESRCH;
+	if ( sig < 0 )
+	{
+		return EINVAL;
+	}
+	
+	int nok = kill( tid, sig | __SIGTHREAD );
+	
+	return nok ? errno : 0;
 }
 
 int pthread_key_create( pthread_key_t* key, void (*destructor_function)(void*) )
