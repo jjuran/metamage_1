@@ -412,12 +412,12 @@ namespace tool
 					
 					const char* mac_pathname = StoreMacPathFromPOSIXPath( library_pathname.c_str() );
 					
-					// Link fulltool first, if present.
+					// Link __tool first, if present.
 					// This hack is necessary on 68K to ensure that
 					// _relix_main() resides within the first 32K,
 					// accessible by JMP or JSR from the startup code.
 					
-					const bool expedited = std::strcmp( lib_name, "fulltool" ) == 0;
+					const bool expedited = strcmp( lib_name, "__tool" ) == 0;
 					
 					command_args.insert( ( expedited ? command_args.begin()
 					                                 : command_args.end() ),
