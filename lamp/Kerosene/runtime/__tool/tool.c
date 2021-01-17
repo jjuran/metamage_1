@@ -1,6 +1,6 @@
 /*
-	fulltool.c
-	----------
+	tool.c
+	------
 */
 
 // Relix
