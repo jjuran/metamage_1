@@ -29,6 +29,8 @@ struct pthread
 
 static pthread pthreads[ PTHREAD_THREADS_MAX ];
 
+static bool multithreaded = false;
+
 static int n_keys = 0;
 
 static void init_thread_leader()
@@ -36,6 +38,8 @@ static void init_thread_leader()
 	if ( pthreads[ 0 ].tid == 0 )
 	{
 		pthreads[ 0 ].tid = gettid();
+		
+		multithreaded = true;
 	}
 }
 
@@ -69,8 +73,7 @@ static int find_unused_pthread_id()
 
 pthread_t pthread_self()
 {
-	init_thread_leader();
-	
+	if ( multithreaded )
 	{
 		int tid = gettid();
 		
@@ -160,7 +163,11 @@ int pthread_kill( pthread_t id, int sig )
 {
 	pid_t tid;
 	
-	if ( ! (tid = pthreads[ id ].tid) )
+	if ( ! multithreaded )
+	{
+		tid = gettid();
+	}
+	else if ( ! (tid = pthreads[ id ].tid) )
 	{
 		return ESRCH;
 	}
