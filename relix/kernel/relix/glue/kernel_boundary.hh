@@ -10,9 +10,9 @@
 namespace relix
 {
 	
-	extern "C" long enter_system_call( long syscall_number, long* params );
+	extern "C" long enter_system_call( long syscall_number );
 	
-	extern "C" bool leave_system_call( int result );
+	extern "C" bool leave_system_call();
 	
 }
 

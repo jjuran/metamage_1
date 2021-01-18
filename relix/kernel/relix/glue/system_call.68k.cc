@@ -21,11 +21,8 @@ namespace relix
 	{
 		// D0 contains the system call number
 		
-		MOVEA.L  SP,A1
-		
 		LINK     A6,#0
 		
-		MOVE.L   A1,-(SP)  // push the address of the first arg
 		MOVE.L   D0,-(SP)  // push the system call number
 		
 	#if CONFIG_SYSCALL_STACKS
@@ -42,7 +39,6 @@ namespace relix
 		MOVE.L   4(A6),-(A0)  // return address
 		MOVE.L    (A6),-(A0)  // saved frame pointer (backlink)
 		
-		MOVE.L   4(SP),-(A0)  // address of the first arg
 		MOVE.L    (SP),-(A0)  // system call number
 		
 		MOVEA.L  A0,SP  // switch to new stack

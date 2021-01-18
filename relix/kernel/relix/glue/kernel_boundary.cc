@@ -17,7 +17,7 @@
 namespace relix
 {
 	
-	long enter_system_call( long syscall_number, long* params )
+	long enter_system_call( long syscall_number )
 	{
 		enter_system();
 		
@@ -48,7 +48,7 @@ namespace relix
 		return syscall_number;
 	}
 	
-	bool leave_system_call( int result )
+	bool leave_system_call()
 	{
 		if ( the_signal.number  &&  the_signal.action.sa_handler == SIG_DFL )
 		{

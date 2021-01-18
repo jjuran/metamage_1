@@ -43,10 +43,9 @@ namespace relix
 		
 	restart:
 		
-		// load syscall number and params as arguments
+		// load syscall number as an argument to enter_system_call()
 	//	mr      r3,r11
 		lwz     r3,56(SP)
-		addi    r4,SP,32
 		
 		bl      enter_system_call  // returns syscall number
 		
