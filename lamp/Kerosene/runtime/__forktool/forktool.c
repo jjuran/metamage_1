@@ -3,6 +3,9 @@
 	----------
 */
 
+// Standard C
+#include <stddef.h>
+
 // Relix
 #include "relix/parameter_block.h"
 #include "tool-runtime/parameter_block.h"
@@ -45,6 +48,8 @@ extern void exit( int );
 
 void _relix_main( int argc, char** argv, char** envp, system_pb* pb )
 {
+	const size_t min_size = offsetof( system_pb, runctl ) + sizeof (long (*)());
+	
 	_set_dispatcher( pb->dispatcher );
 	
 	environ = envp;
@@ -62,6 +67,11 @@ void _relix_main( int argc, char** argv, char** envp, system_pb* pb )
 #endif
 	
 	INITIALIZE();
+	
+	if ( pb->system_block_length >= min_size  &&  pb->runctl != NULL )
+	{
+		pb->runctl( runctl_allocate_syscall_stack );
+	}
 	
 	exit( main( argc, argv ) );
 }
