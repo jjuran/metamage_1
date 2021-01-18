@@ -63,7 +63,7 @@ namespace relix
 			os_thread_box its_os_thread;
 		
 		public:
-			thread( int id, sigset_t blocked, process& p, bool use_syscall_stack );
+			thread( int id, sigset_t blocked, process& p, bool use_syscall_stack = false );
 			
 			~thread();
 			
@@ -93,6 +93,8 @@ namespace relix
 			void set_signals_blocked( sigset_t sigset )  { its_blocked_signals = sigset; }
 			
 		#if CONFIG_SYSCALL_STACKS
+			
+			void allocate_syscall_stack()  { its_syscall_stack.allocate(); }
 			
 			void* get_syscall_stack_memory() const  { return its_syscall_stack.memory; }
 			

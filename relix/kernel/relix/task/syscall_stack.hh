@@ -13,7 +13,7 @@ namespace relix
 	class syscall_stack
 	{
 		public:
-			void* const memory;
+			void* memory;
 		
 		private:
 			// non-copyable
@@ -21,7 +21,15 @@ namespace relix
 			syscall_stack& operator=( const syscall_stack& );
 		
 		public:
-			explicit syscall_stack( bool allocating );
+			void allocate();
+			
+			syscall_stack( bool allocating = false ) : memory()
+			{
+				if ( allocating )
+				{
+					allocate();
+				}
+			}
 			
 			~syscall_stack();
 	};
