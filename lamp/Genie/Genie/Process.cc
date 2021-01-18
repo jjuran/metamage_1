@@ -146,11 +146,39 @@ namespace Genie
 	
 	
 	using relix::memory_data;
+	using relix::gCurrentProcess;
 	
 	
 	static uint64_t microseconds()
 	{
 		return clock();
+	}
+	
+	static
+	long runctl( long selector )
+	{
+		switch ( selector )
+		{
+			case runctl_get_max:
+				return runctl_end - 1;
+			
+		#if CONFIG_SYSCALL_STACKS
+			
+			case runctl_allocate_syscall_stack:
+				if ( gCurrentProcess )
+				{
+					gCurrentProcess->allocate_syscall_stack();
+					return 0;
+				}
+				break;
+			
+		#endif
+			
+			default:
+				break;
+		}
+		
+		return -1;
 	}
 	
 	extern "C" _relix_system_parameter_block global_parameter_block;
@@ -166,10 +194,9 @@ namespace Genie
 		TARGET_CPU_PPC ? &relix::dispatch_ppc_system_call
 		               : NULL,
 		
-		&microseconds
+		&microseconds,
+		&runctl,
 	};
-	
-	using relix::gCurrentProcess;
 	
 	Process& CurrentProcess()
 	{
@@ -500,8 +527,7 @@ namespace Genie
 	:
 		relix::thread( 1,
 		               0,
-		               *new relix::process(),
-		               false ),
+		               *new relix::process() ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		its_vfork_parent      ( 0 ),
@@ -533,8 +559,7 @@ namespace Genie
 		relix::thread( tid,
 		               parent.signals_blocked(),
 		               tid == pid ? *new relix::process( pid, parent.get_process() )
-		                          : parent.get_process(),
-		               false ),
+		                          : parent.get_process() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		its_vfork_parent      ( 0 ),
