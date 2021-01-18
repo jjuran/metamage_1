@@ -11,6 +11,14 @@
 extern "C" {
 #endif
 
+enum
+{
+	runctl_get_max,
+	runctl_allocate_syscall_stack,
+	
+	runctl_end
+};
+
 struct _relix_user_parameter_block
 {
 	const void* stack_bottom;
@@ -41,6 +49,8 @@ struct _relix_system_parameter_block
 	void (*const dispatcher)( ... );
 	
 	uint64_t (*const microsecond_timer)();
+	
+	long (*const runctl)( long selector );
 };
 
 typedef struct _relix_system_parameter_block _relix_system_parameter_block;
