@@ -23,12 +23,8 @@ namespace relix
 		public:
 			void allocate();
 			
-			syscall_stack( bool allocating = false ) : memory()
+			syscall_stack() : memory()
 			{
-				if ( allocating )
-				{
-					allocate();
-				}
 			}
 			
 			~syscall_stack();

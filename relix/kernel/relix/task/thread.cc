@@ -15,7 +15,7 @@
 namespace relix
 {
 	
-	thread::thread( int id, sigset_t blocked, process& p, bool use_syscall_stack )
+	thread::thread( int id, sigset_t blocked, process& p )
 	:
 		its_id( id ),
 		its_saved_errno(),
@@ -23,9 +23,6 @@ namespace relix
 		its_pending_signals(),  // reset pending signals on new threads
 		its_blocked_signals( blocked ),
 		its_process( &p ),
-	#if CONFIG_SYSCALL_STACKS
-		its_syscall_stack( use_syscall_stack ),
-	#endif
 		its_stack_frame_ptr()
 	{
 	}

@@ -63,7 +63,7 @@ namespace relix
 			os_thread_box its_os_thread;
 		
 		public:
-			thread( int id, sigset_t blocked, process& p, bool use_syscall_stack = false );
+			thread( int id, sigset_t blocked, process& p );
 			
 			~thread();
 			
