@@ -34,14 +34,16 @@ extern int errno;
 
 extern void _MSL_cleanup();
 
+typedef _relix_system_parameter_block system_pb;
+
 // Call main() and exit()
-extern void _relix_main( int argc, char** argv, char** envp, _relix_system_parameter_block* pb );
+extern void _relix_main( int argc, char** argv, char** envp, system_pb* pb );
 extern int         main( int argc, char** argv );
 
 extern void exit( int );
 
 
-void _relix_main( int argc, char** argv, char** envp, _relix_system_parameter_block* pb )
+void _relix_main( int argc, char** argv, char** envp, system_pb* pb )
 {
 	_set_dispatcher( pb->dispatcher );
 	
