@@ -1,7 +1,7 @@
-/*	========
- *	abort.cc
- *	========
- */
+/*
+	abort.cc
+	--------
+*/
 
 // Standard C
 #include <signal.h>
