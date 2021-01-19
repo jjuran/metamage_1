@@ -82,7 +82,9 @@ sub is_executable
 {
 	my $self = shift;
 	
-	return grep { $self->product_type eq $_ } qw( tool microtool nanotool app );
+	my $product = $self->product_type;
+	
+	return $product eq "app"  ||  $product =~ m{ tool $}x;
 }
 
 sub is_buildable
