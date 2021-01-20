@@ -38,14 +38,14 @@ namespace relix
 		stw     r3,48(SP)
 		stw     r4,52(SP)
 		
-		// save the system call number
-		stw     r11,56(SP)
+		// save the system call number in the slot reserved for binder use
+		stw     r11,16(SP)
 		
 	restart:
 		
 		// load syscall number as an argument to enter_system_call()
 	//	mr      r3,r11
-		lwz     r3,56(SP)
+		lwz     r3,16(SP)
 		
 		bl      enter_system_call  // returns syscall number
 		
