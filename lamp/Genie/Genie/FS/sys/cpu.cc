@@ -207,7 +207,7 @@ namespace Genie
 		
 	#if TARGET_CPU_68K
 		
-		{ "mode", PROPERTY( sys_cpu_mux },
+		{ "mode", PROPERTY( sys_cpu_mux ) },
 		
 	#endif
 		
