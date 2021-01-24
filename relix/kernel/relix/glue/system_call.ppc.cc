@@ -32,6 +32,12 @@ namespace relix
 	
 	asm void dispatch_ppc_system_call( ... )
 	{
+		nofralloc
+		
+		// standard prolog
+		mflr    r0
+		stw     r0,8(SP)
+		
 		// allocate a stack frame
 		stwu    SP,-64(SP)
 		
@@ -147,6 +153,11 @@ namespace relix
 		
 		// restore RTOC
 		lwz     RTOC,20(SP)
+		
+		// standard epilog
+		lwz     r0,8(SP)
+		mtlr    r0
+		blr
 	}
 	
 #endif
