@@ -87,6 +87,13 @@ namespace relix
 		stw     r3,48(r12)
 		stw     r4,52(r12)
 		
+		b       link_resume_addr
+		
+	set_resume_addr:
+		
+		mflr    r0
+		stw     r0,8(SP)
+		
 		mr      SP,r12
 		
 	#endif
@@ -150,6 +157,26 @@ namespace relix
 		lwz     r3,24(SP)
 		
 	#if CONFIG_SYSCALL_STACKS
+		
+		bl      current_stack_base
+		
+		cmpi    cr0,r3,0
+		
+		// restore result
+		lwz     r3,24(SP)
+		
+		beq+    cr0,child_fork_resume
+		
+		// switch back to dispatcher-allocated stack frame
+		lwz     SP,0(SP)
+		
+		b       child_fork_resume
+		
+	link_resume_addr:
+		
+		bl      set_resume_addr
+		
+	child_fork_resume:
 		
 		lmw     r13,64(SP)
 		
