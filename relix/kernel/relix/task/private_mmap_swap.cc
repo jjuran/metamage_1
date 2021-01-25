@@ -15,8 +15,8 @@
 // Standard C
 #include <string.h>
 
-// poseven
-#include "poseven/types/errno_t.hh"
+
+#pragma exceptions off
 
 
 namespace relix
@@ -40,18 +40,20 @@ namespace relix
 		DisposeHandle( h );
 	}
 	
-	void private_mmap_swap::allocate( unsigned long size )
+	allocation_result private_mmap_swap::allocate( unsigned long size )
 	{
+		if ( allocated() )
+		{
+			return Allocation_unnecessary;
+		}
+		
 		typedef short OSErr;
 		
 		OSErr err;
 		
 		h = TempNewHandle( size, &err );
 		
-		if ( h == NULL )
-		{
-			poseven::throw_errno( ENOMEM );
-		}
+		return (allocation_result) allocated();
 	}
 	
 	void private_mmap_swap::reset()
