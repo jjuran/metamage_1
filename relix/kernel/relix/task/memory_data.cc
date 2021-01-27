@@ -57,6 +57,8 @@ namespace relix
 			
 			// privately copyable
 			memory_data_impl( const memory_data_impl& x )
+			:
+				its_memory_mappings( x.its_memory_mappings )
 			{
 				/*
 					Don't copy its_parameters -- it exists only to store data
@@ -72,6 +74,8 @@ namespace relix
 					the process, including argv/envp pointers and string data
 					and private mmap regions.
 				*/
+				
+				prepare();
 			}
 		
 		public:
@@ -200,6 +204,13 @@ namespace relix
 	memory_data* memory_data::create()
 	{
 		return new memory_data_impl();
+	}
+	
+	memory_data* memory_data::clone()
+	{
+		prepare();
+		
+		return new memory_data_impl( *(memory_data_impl*) this );
 	}
 	
 	void destroy( const memory_data* x )

@@ -40,6 +40,8 @@ namespace relix
 			
 			static memory_data* create();
 			
+			memory_data* clone();
+			
 			const plus::string& get_cmdline() const;
 			
 			void set_argv( const char *const *argv );
