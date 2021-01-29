@@ -22,7 +22,7 @@ namespace relix
 		// D0 contains the system call number
 		
 		LINK     A6,#0
-		MOVEM.L  D0/D3-D5,-(SP)  // save scratch regs, push system call number
+		MOVEM.L  D0/D3-D7/A2-A4,-(SP)  // save context regs, push syscall number
 		
 	#if CONFIG_SYSCALL_STACKS
 		
@@ -35,8 +35,9 @@ namespace relix
 		
 		SUBQ     #8,A0  // point after return address, to stack limit
 		
-		MOVE.L   4(A6),-(A0)  // return address
-		MOVE.L    (A6),-(A0)  // saved frame pointer (backlink)
+		LEA      child_fork_resume,A1  // return address
+		MOVE.L   A1,-(A0)  // return address
+		MOVE.L   A6,-(A0)  // saved frame pointer (backlink)
 		
 		MOVE.L    (SP),-(A0)  // system call number
 		
@@ -83,7 +84,9 @@ namespace relix
 		
 		BNE.S    restart
 		
-		MOVEM.L  -12(A6),D3-D5  // restore scratch regs
+	child_fork_resume:
+		
+		MOVEM.L  -32(A6),D3-D7/A2-A4  // restore context
 		UNLK     A6
 		
 		RTS
