@@ -10,6 +10,13 @@
 namespace relix
 {
 	
+	enum allocation_result
+	{
+		Allocation_failed,
+		Allocation_successful,
+		Allocation_unnecessary = -1,
+	};
+	
 	class private_mmap_swap
 	{
 		private:
@@ -30,7 +37,7 @@ namespace relix
 			
 			bool allocated() const  { return h != 0; }  // NULL
 			
-			void allocate( unsigned long size );
+			allocation_result allocate( unsigned long size );
 			
 			void reset();
 			

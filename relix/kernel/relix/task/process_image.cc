@@ -75,6 +75,15 @@ namespace relix
 		its_memory_data->set_envp( envp );
 	}
 	
+	process_image::process_image( const process_image& other )
+	:
+		its_pb( other.its_pb ),
+		its_exe( other.its_exe ),
+		its_program( other.its_program ),
+		its_memory_data( other.its_memory_data->clone() )
+	{
+	}
+	
 	process_image::~process_image()
 	{
 		if ( its_pb.cleanup != 0 )  // NULL
@@ -155,6 +164,22 @@ namespace relix
 	void process_image::remove_memory_mapping( addr_t key )
 	{
 		its_memory_data->remove_memory_mapping( key );
+	}
+	
+	void process_image::back_up_memory()
+	{
+		if ( memory_data* memory = its_memory_data.get() )
+		{
+			memory->back_up();
+		}
+	}
+	
+	void process_image::restore_memory()
+	{
+		if ( memory_data* memory = its_memory_data.get() )
+		{
+			memory->restore();
+		}
 	}
 	
 	void process_image::switch_in()

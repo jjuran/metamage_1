@@ -32,8 +32,14 @@ namespace relix
 	
 	asm void dispatch_ppc_system_call( ... )
 	{
+		nofralloc
+		
+		// standard prolog
+		mflr    r0
+		stw     r0,8(SP)
+		
 		// allocate a stack frame
-		stwu    SP,-64(SP)
+		stwu    SP,-144(SP)
 		
 		// save up to 6 parameters
 		stw     r5,32(SP)
@@ -48,6 +54,8 @@ namespace relix
 		
 	#if CONFIG_SYSCALL_STACKS
 		
+		stmw    r13,64(SP)
+		
 		bl      current_stack_base
 		
 		cmpi    cr0,r3,0
@@ -58,7 +66,6 @@ namespace relix
 		
 		// reload syscall number, load backlink
 		lwz     r11,16(SP)
-		lwz     r10, 0(SP)
 		
 		// reload parameters
 		lwz     r5,32(SP)
@@ -68,9 +75,9 @@ namespace relix
 		lwz     r3,48(SP)
 		lwz     r4,52(SP)
 		
-		// save syscall number and backlink in syscall stack
+		// save syscall number and stack pointer in syscall stack
 		stw     r11,16(r12)
-		stw     r10, 0(r12)
+		stw     SP,  0(r12)
 		
 		// save parameters in syscall stack
 		stw     r5,32(r12)
@@ -79,6 +86,13 @@ namespace relix
 		stw     r8,44(r12)
 		stw     r3,48(r12)
 		stw     r4,52(r12)
+		
+		b       link_resume_addr
+		
+	set_resume_addr:
+		
+		mflr    r0
+		stw     r0,8(SP)
 		
 		mr      SP,r12
 		
@@ -142,11 +156,42 @@ namespace relix
 		// restore result
 		lwz     r3,24(SP)
 		
+	#if CONFIG_SYSCALL_STACKS
+		
+		bl      current_stack_base
+		
+		cmpi    cr0,r3,0
+		
+		// restore result
+		lwz     r3,24(SP)
+		
+		beq+    cr0,child_fork_resume
+		
+		// switch back to dispatcher-allocated stack frame
+		lwz     SP,0(SP)
+		
+		b       child_fork_resume
+		
+	link_resume_addr:
+		
+		bl      set_resume_addr
+		
+	child_fork_resume:
+		
+		lmw     r13,64(SP)
+		
+	#endif
+		
 		// deallocate our stack frame
 		lwz     SP,0(SP)
 		
 		// restore RTOC
 		lwz     RTOC,20(SP)
+		
+		// standard epilog
+		lwz     r0,8(SP)
+		mtlr    r0
+		blr
 	}
 	
 #endif

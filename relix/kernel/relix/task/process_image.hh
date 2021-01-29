@@ -42,6 +42,8 @@ namespace relix
 			vfs::program_ptr its_program;
 			
 			boost::intrusive_ptr< memory_data > its_memory_data;
+			
+			process_image( const process_image& other );  // privately copyable
 		
 		public:
 			process_image();
@@ -51,6 +53,8 @@ namespace relix
 			               const char* const*  envp );
 			
 			~process_image();
+			
+			process_image* clone() const  { return new process_image( *this ); }
 			
 			pb& param_block()  { return its_pb; }
 			
@@ -71,6 +75,9 @@ namespace relix
 			void msync_memory_mapping( addr_t addr, size_t len, int flags );
 			
 			void remove_memory_mapping( addr_t key );
+			
+			void back_up_memory();
+			void restore_memory();
 			
 			void switch_in();
 			void switch_out();

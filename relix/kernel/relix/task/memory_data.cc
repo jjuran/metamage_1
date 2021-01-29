@@ -5,8 +5,8 @@
 
 #include "relix/task/memory_data.hh"
 
-// standard C/C++
-#include <cstring>
+// Standard C++
+#include <list>
 
 // debug
 #include "debug/assert.hh"
@@ -19,12 +19,21 @@
 #include "plus/argv.hh"
 #include "plus/simple_map.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // vfs
 #include "vfs/memory_mapping.hh"
+
+// Relix
+#include "relix/task/memory_tract.hh"
 
 
 namespace relix
 {
+	
+	namespace p7 = poseven;
+	
 	
 	struct program_parameters
 	{
@@ -41,17 +50,15 @@ namespace relix
 	class memory_data_impl : public memory_data
 	{
 		public:
-			typedef plus::simple_map< addr_t, boost::intrusive_ptr< const vfs::memory_mapping > > mmap_map;
+			typedef std::list< memory_tract > mmap_list;
 			
 			program_parameters  its_parameters;
-			mmap_map            its_memory_mappings;
-		
-		public:
-			memory_data_impl()
-			{
-			}
+			mmap_list           its_memory_mappings;
 			
+			// privately copyable
 			memory_data_impl( const memory_data_impl& x )
+			:
+				its_memory_mappings( x.its_memory_mappings )
 			{
 				/*
 					Don't copy its_parameters -- it exists only to store data
@@ -67,10 +74,112 @@ namespace relix
 					the process, including argv/envp pointers and string data
 					and private mmap regions.
 				*/
+				
+				prepare();
 			}
+		
+		public:
+			memory_data_impl()
+			{
+			}
+			
+			const memory_tract* find( addr_t addr ) const;
+			
+			void erase_memory_mapping( addr_t addr );
+			
+			void prepare();
+			void back_up();
+			void restore();
 			
 			void swap( memory_data_impl& other );
 	};
+	
+	const memory_tract* memory_data_impl::find( addr_t addr ) const
+	{
+		typedef mmap_list::const_iterator Iter;
+		
+		const Iter begin = its_memory_mappings.begin();
+		const Iter end   = its_memory_mappings.end();
+		
+		Iter it = end;
+		
+		while ( begin != it )
+		{
+			--it;
+			
+			if ( it->get_address() == addr )
+			{
+				return &*it;
+				
+				break;
+			}
+		}
+		
+		return NULL;
+	}
+	
+	void memory_data_impl::erase_memory_mapping( addr_t addr )
+	{
+		typedef mmap_list::iterator Iter;
+		
+		const Iter begin = its_memory_mappings.begin();
+		const Iter end   = its_memory_mappings.end();
+		
+		Iter it = end;
+		
+		while ( begin != it )
+		{
+			--it;
+			
+			if ( it->get_address() == addr )
+			{
+				its_memory_mappings.erase( it );
+				
+				break;
+			}
+		}
+	}
+	
+	void memory_data_impl::prepare()
+	{
+		typedef mmap_list::iterator Iter;
+		
+		const Iter end = its_memory_mappings.end();
+		
+		for ( Iter it = its_memory_mappings.begin();  it != end;  ++it )
+		{
+			memory_tract& tract = *it;
+			
+			if ( ! tract.allocate() )
+			{
+				p7::throw_errno( ENOMEM );
+			}
+		}
+	}
+	
+	void memory_data_impl::back_up()
+	{
+		typedef mmap_list::iterator Iter;
+		
+		const Iter end = its_memory_mappings.end();
+		
+		for ( Iter it = its_memory_mappings.begin();  it != end;  ++it )
+		{
+			it->back_up();
+		}
+	}
+	
+	void memory_data_impl::restore()
+	{
+		typedef mmap_list::iterator Iter;
+		
+		const Iter end = its_memory_mappings.end();
+		
+		for ( Iter it = its_memory_mappings.begin();  it != end;  ++it )
+		{
+			it->restore();
+		}
+	}
 	
 	void memory_data_impl::swap( memory_data_impl& other )
 	{
@@ -97,9 +206,11 @@ namespace relix
 		return new memory_data_impl();
 	}
 	
-	memory_data* duplicate( const memory_data& x )
+	memory_data* memory_data::clone()
 	{
-		return new memory_data_impl( static_cast< const memory_data_impl& >( x ) );
+		prepare();
+		
+		return new memory_data_impl( *(memory_data_impl*) this );
 	}
 	
 	void destroy( const memory_data* x )
@@ -154,16 +265,14 @@ namespace relix
 		
 		void* key = mapping->get_address();
 		
-		impl_cast( this )->its_memory_mappings[ key ] = mapping;
+		impl_cast( this )->its_memory_mappings.push_back( memory_tract( mapping ) );
 		
 		return key;
 	}
 	
 	void memory_data::msync_memory_mapping( addr_t key, size_t len, int flags )
 	{
-		memory_data_impl::mmap_map& mappings = impl_cast( this )->its_memory_mappings;
-		
-		if ( boost::intrusive_ptr< const vfs::memory_mapping >* it = mappings.find( key ) )
+		if ( const memory_tract* it = impl_cast( this )->find( key ) )
 		{
 			it->get()->msync( key, len, flags );
 		}
@@ -171,12 +280,27 @@ namespace relix
 	
 	void memory_data::remove_memory_mapping( addr_t key )
 	{
-		impl_cast( this )->its_memory_mappings.erase( key );
+		impl_cast( this )->erase_memory_mapping( key );
 	}
 	
 	void memory_data::clear_memory_mappings()
 	{
 		impl_cast( this )->its_memory_mappings.clear();
+	}
+	
+	void memory_data::prepare()
+	{
+		impl_cast( this )->prepare();
+	}
+	
+	void memory_data::back_up()
+	{
+		impl_cast( this )->back_up();
+	}
+	
+	void memory_data::restore()
+	{
+		impl_cast( this )->restore();
 	}
 	
 }

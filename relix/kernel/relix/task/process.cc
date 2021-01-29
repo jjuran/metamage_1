@@ -6,6 +6,7 @@
 #include "relix/task/process.hh"
 
 // relix
+#include "relix/api/get_process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/process_image.hh"
 #include "relix/task/process_resources.hh"
@@ -137,9 +138,80 @@ namespace relix
 		unshare_signal_handlers();
 	}
 	
+#if CONFIG_VM_FORK
+	
+	void process::unshare_vm()
+	{
+		ASSERT( its_vm_fork.get() == NULL );
+		
+		const pid_t ppid = getppid();
+		
+		process& parent = get_process( ppid );
+		
+		if ( parent.its_vm_fork.get() == NULL )
+		{
+			parent.its_vm_fork = new vm_fork( ppid );
+		}
+		
+		its_vm_fork = parent.its_vm_fork;
+		
+		its_process_image = its_process_image->clone();
+		
+		back_up_memory();
+	}
+	
+#endif
+	
+	void process::back_up_memory()
+	{
+		if ( process_image* image = its_process_image.get() )
+		{
+			image->back_up_memory();
+		}
+	}
+	
+	void process::restore_memory()
+	{
+		if ( process_image* image = its_process_image.get() )
+		{
+			image->restore_memory();
+		}
+	}
+	
 	void process::switch_in()
 	{
 		its_process_image->switch_in();
+		
+	#if CONFIG_VM_FORK
+		
+		if ( vm_fork* forked_vm = its_vm_fork.get() )
+		{
+			const pid_t pid = forked_vm->getpid();
+			
+			if ( pid != id() )
+			{
+				try
+				{
+					process& kin = get_process( pid );
+					
+					kin.back_up_memory();
+				}
+				catch ( ... )
+				{
+				}
+				
+				restore_memory();
+				
+				forked_vm->setpid( id() );
+			}
+			
+			if ( its_vm_fork->ref_count() == 1 )
+			{
+				its_vm_fork.reset();
+			}
+		}
+		
+	#endif
 		
 		(void) checkpoint_delta();
 	}

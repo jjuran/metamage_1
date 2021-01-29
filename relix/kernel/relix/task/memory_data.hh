@@ -40,6 +40,8 @@ namespace relix
 			
 			static memory_data* create();
 			
+			memory_data* clone();
+			
 			const plus::string& get_cmdline() const;
 			
 			void set_argv( const char *const *argv );
@@ -60,14 +62,16 @@ namespace relix
 			void remove_memory_mapping( addr_t key );
 			
 			void clear_memory_mappings();
+			
+			void prepare();
+			void back_up();
+			void restore();
 	};
 	
 	inline void swap( memory_data& a, memory_data& b )
 	{
 		a.swap( b );
 	}
-	
-	memory_data* duplicate( const memory_data& one );
 	
 }
 
