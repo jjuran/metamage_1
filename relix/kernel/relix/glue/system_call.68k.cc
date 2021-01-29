@@ -22,8 +22,7 @@ namespace relix
 		// D0 contains the system call number
 		
 		LINK     A6,#0
-		
-		MOVE.L   D0,-(SP)  // push the system call number
+		MOVEM.L  D0/D3-D5,-(SP)  // save scratch regs, push system call number
 		
 	#if CONFIG_SYSCALL_STACKS
 		
@@ -64,12 +63,9 @@ namespace relix
 		MOVEA.L  (A0,D0.W),A0
 	#endif
 		
-		MOVE.L   28(A6),-(SP)
-		MOVE.L   24(A6),-(SP)
-		MOVE.L   20(A6),-(SP)
-		MOVE.L   16(A6),-(SP)
-		MOVE.L   12(A6),-(SP)
-		MOVE.L    8(A6),-(SP)
+		// copy args onto the stack
+		MOVEM.L  8(A6),D0-D5
+		MOVEM.L  D0-D5,-(SP)
 		
 		JSR      (A0)
 		
@@ -87,6 +83,7 @@ namespace relix
 		
 		BNE.S    restart
 		
+		MOVEM.L  -12(A6),D3-D5  // restore scratch regs
 		UNLK     A6
 		
 		RTS
