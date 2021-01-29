@@ -22,7 +22,7 @@ namespace relix
 		// D0 contains the system call number
 		
 		LINK     A6,#0
-		MOVEM.L  D0/D3-D5,-(SP)  // save scratch regs, push system call number
+		MOVEM.L  D0/D3-D7/A2-A4,-(SP)  // save context regs, push syscall number
 		
 	#if CONFIG_SYSCALL_STACKS
 		
@@ -83,7 +83,7 @@ namespace relix
 		
 		BNE.S    restart
 		
-		MOVEM.L  -12(A6),D3-D5  // restore scratch regs
+		MOVEM.L  -32(A6),D3-D7/A2-A4  // restore context
 		UNLK     A6
 		
 		RTS
