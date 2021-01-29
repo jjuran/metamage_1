@@ -1,15 +1,15 @@
-#define COPYRIGHT  "1999-2020 Josh Juran"
+#define COPYRIGHT  "1999-2021 Josh Juran"
 
 #define COPY "\0xA9"
 
 resource 'vers' (1) {
 	0x00,
-	0x75,
+	0x79,
 	alpha,
 	1,
 	smRoman,
-	"0.7.5-alpha.1",
-	"0.7.5-alpha.1, " COPY COPYRIGHT
+	"0.7.9-alpha.1",
+	"0.7.9-alpha.1, " COPY COPYRIGHT
 };
 
 /* Owner resource */
