@@ -800,21 +800,36 @@ namespace Genie
 	{
 		Process& child = NewProcess( *this );
 		
-		child.allocate_syscall_stack();
-		
-		void* child_stack_top  = get_syscall_stack_top( child );
-		void* parent_stack_top = get_syscall_stack_top( *this );
-		
-		memcpy( child_stack_top, parent_stack_top, fork_stack_length );
-		
-		relix::process& child_process = child.get_process();
-		
-		child_process.unshare_per_fork();
-		child_process.unshare_vm();
-		
-		relix::os_thread_box thread = new_thread( &fork_start, child );
-		
-		child.swap_os_thread( thread );
+		try
+		{
+			child.allocate_syscall_stack();
+			
+			void* child_stack_top  = get_syscall_stack_top( child );
+			void* parent_stack_top = get_syscall_stack_top( *this );
+			
+			memcpy( child_stack_top, parent_stack_top, fork_stack_length );
+			
+			relix::process& child_process = child.get_process();
+			
+			child_process.unshare_per_fork();
+			child_process.unshare_vm();
+			
+			relix::os_thread_box thread = new_thread( &fork_start, child );
+			
+			child.swap_os_thread( thread );
+		}
+		catch ( ... )
+		{
+			relix::process& process = child.get_process();
+			
+			process.zombify();
+			process.clear_ppid();
+			
+			remove_task( &child );
+			notify_reaper( &child );
+			
+			throw;
+		}
 		
 		return child.GetPID();
 	}

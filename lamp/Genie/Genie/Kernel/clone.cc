@@ -14,6 +14,7 @@
 #include "relix/syscall/registry.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_resources.hh"
+#include "relix/task/scheduler.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -79,32 +80,47 @@ int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fl
 		relix::process&           proc = child.get_process();
 		relix::process_resources& rsrcs = proc.get_process_resources();
 		
-		if ( share_parent )
+		try
 		{
-			proc.set_ppid( caller.GetPPID() );
+			if ( share_parent )
+			{
+				proc.set_ppid( caller.GetPPID() );
+			}
+			
+			if ( !share_fs )
+			{
+				rsrcs.unshare_fs_info();
+			}
+			
+			if ( !share_files )
+			{
+				rsrcs.unshare_fd_map();
+			}
+			
+			if ( !share_sighand )
+			{
+				proc.unshare_signal_handlers();
+			}
+			
+			if ( CONFIG_VM_FORK  &&  ! share_vm )
+			{
+				proc.unshare_vm();
+			}
+			
+			child.SpawnThread( f, arg );
 		}
-		
-		if ( !share_fs )
+		catch ( ... )
 		{
-			rsrcs.unshare_fs_info();
+			relix::process& process = child.get_process();
+			
+			process.zombify();
+			process.clear_ppid();
+			
+			remove_task( (relix::task*) &child );  // Bypass `protected`
+			notify_reaper( &child );
+			
+			throw;
 		}
-		
-		if ( !share_files )
-		{
-			rsrcs.unshare_fd_map();
-		}
-		
-		if ( !share_sighand )
-		{
-			proc.unshare_signal_handlers();
-		}
-		
-		if ( CONFIG_VM_FORK  &&  ! share_vm )
-		{
-			proc.unshare_vm();
-		}
-		
-		child.SpawnThread( f, arg );
 		
 		return child.gettid();
 	}
