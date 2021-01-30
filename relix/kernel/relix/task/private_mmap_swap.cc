@@ -24,12 +24,20 @@ namespace relix
 	
 #ifndef __MACOS__
 	
-	static inline char** TempNewHandle( unsigned long, short* )
+	static inline
+	char** TempNewHandle( unsigned long, short* )
 	{
 		return NULL;
 	}
 	
-	static inline void DisposeHandle( char** )
+	static inline
+	char** NewHandle( unsigned long )
+	{
+		return NULL;
+	}
+	
+	static inline
+	void DisposeHandle( char** )
 	{
 	}
 	
