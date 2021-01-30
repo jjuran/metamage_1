@@ -53,6 +53,13 @@ namespace relix
 		
 		h = TempNewHandle( size, &err );
 		
+		if ( h != NULL )
+		{
+			return Allocation_successful;
+		}
+		
+		h = NewHandle( size );
+		
 		return (allocation_result) allocated();
 	}
 	
