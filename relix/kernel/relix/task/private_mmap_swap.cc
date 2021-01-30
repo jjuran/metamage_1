@@ -15,6 +15,11 @@
 // Standard C
 #include <string.h>
 
+// mac-sys-utils
+#ifdef __MACOS__
+#include "mac_sys/has/RealTempMemory.hh"
+#endif
+
 
 #pragma exceptions off
 
@@ -22,7 +27,11 @@
 namespace relix
 {
 	
-#ifndef __MACOS__
+#ifdef __MACOS__
+	
+	using mac::sys::has_RealTempMemory;
+	
+#else
 	
 	static inline
 	char** TempNewHandle( unsigned long, short* )
@@ -41,6 +50,12 @@ namespace relix
 	{
 	}
 	
+	static inline
+	bool has_RealTempMemory()
+	{
+		return false;
+	}
+	
 #endif
 	
 	private_mmap_swap::~private_mmap_swap()
@@ -55,15 +70,18 @@ namespace relix
 			return Allocation_unnecessary;
 		}
 		
-		typedef short OSErr;
-		
-		OSErr err;
-		
-		h = TempNewHandle( size, &err );
-		
-		if ( h != NULL )
+		if ( has_RealTempMemory() )
 		{
-			return Allocation_successful;
+			typedef short OSErr;
+			
+			OSErr err;
+			
+			h = TempNewHandle( size, &err );
+			
+			if ( h != NULL )
+			{
+				return Allocation_successful;
+			}
 		}
 		
 		h = NewHandle( size );
