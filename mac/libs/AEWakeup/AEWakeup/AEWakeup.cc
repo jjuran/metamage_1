@@ -1,9 +1,9 @@
-/*	==============
- *	AEFramework.cc
- *	==============
- */
+/*
+	AEWakeup.cc
+	-----------
+*/
 
-#include "AEFramework/AEFramework.h"
+#include "AEWakeup/AEWakeup.hh"
 
 // Mac OS X
 #ifdef __APPLE__
@@ -35,7 +35,7 @@
 #endif
 
 
-namespace Genie
+namespace AEWakeup
 {
 
 using cthread::thread_id;
@@ -64,8 +64,8 @@ typedef std::map< long, ExpectedReply > ExpectedReplies;
 
 STATIC ExpectedReplies gExpectedReplies;  // Not for System-6-only builds
 
-void ExpectReply( long         returnID,
-                  AppleEvent*  replyStorage )
+void Request( long         returnID,
+              AppleEvent*  replyStorage )
 {
 	// assert( returnID != 0 );
 	// Can replyStorage be NULL?  If you wanted to know when the reply came back
@@ -74,7 +74,7 @@ void ExpectReply( long         returnID,
 	gExpectedReplies[ returnID ] = ExpectedReply( current_thread(), replyStorage );
 }
 
-OSErr ReceiveReply( const AppleEvent& reply )
+OSErr Deliver( const AppleEvent& reply )
 {
 	OSErr err;
 	SInt32 data;

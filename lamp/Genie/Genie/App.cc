@@ -28,6 +28,9 @@
 // cthread-either
 #include "cthread-either.hh"
 
+// AEWakeup
+#include "AEWakeup/AEWakeup.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -42,7 +45,6 @@
 #include "relix/task/thread.hh"
 
 // Genie
-#include "AEFramework/AEFramework.h"
 #include "Genie/notify.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/mnt/listener.hh"
@@ -83,7 +85,7 @@ namespace Genie
 	                                 AppleEvent*        reply,
 	                                 SRefCon )
 	{
-		return ReceiveReply( *event );
+		return AEWakeup::Deliver( *event );
 	}
 	
 	

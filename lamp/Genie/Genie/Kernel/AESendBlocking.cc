@@ -23,8 +23,8 @@
 #include "relix/task/scheduler.hh"
 #include "relix/task/thread.hh"
 
-// Genie
-#include "AEFramework/AEFramework.h"
+// AEWakeup
+#include "AEWakeup/AEWakeup.hh"
 
 
 namespace N = Nitrogen;
@@ -57,8 +57,8 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 		// Now that we've sent the event, retrieve the return ID
 		N::AEReturnID_32Bit returnID = AEGetAttributePtr_keyReturnIDAttr( appleEvent );
 		
-		// Subscribe to AEFramework's queued reply delivery and wake-up service
-		Genie::ExpectReply( returnID, &reply );
+		// Subscribe to AEWakeup's queued reply delivery and wake-up service
+		AEWakeup::Request( returnID, &reply );
 		
 		thread& current = current_thread();
 		
