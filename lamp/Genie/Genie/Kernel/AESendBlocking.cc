@@ -44,6 +44,11 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 {
 	using namespace relix;
 	
+	if ( ! AEWakeup::Preflight() )
+	{
+		return memFullErr;
+	}
+	
 	try
 	{
 		Mac::AppleEvent const& appleEvent = static_cast< const Mac::AppleEvent& >( *appleEventPtr );
