@@ -37,99 +37,99 @@
 
 namespace Genie
 {
+
+using cthread::thread_id;
+
+using namespace cthread::either;
+
+
+struct ExpectedReply
+{
+	thread_id    thread;
+	AppleEvent*  reply;
 	
-	using cthread::thread_id;
-	
-	using namespace cthread::either;
-	
-	
-	struct ExpectedReply
+	ExpectedReply()
 	{
-		thread_id    thread;
-		AppleEvent*  reply;
-		
-		ExpectedReply()
-		{
-		}
-		
-		ExpectedReply( thread_id thread, AppleEvent* reply )
-		:
-			thread( thread ),
-			reply ( reply  )
-		{
-		}
-	};
-	
-	typedef std::map< long, ExpectedReply > ExpectedReplies;
-	
-	STATIC ExpectedReplies gExpectedReplies;  // Not for System-6-only builds
-	
-	void ExpectReply( long         returnID,
-	                  AppleEvent*  replyStorage )
-	{
-		// assert( returnID != 0 );
-		// Can replyStorage be NULL?  If you wanted to know when the reply came back
-		// but didn't care what was in it, then it would make sense.
-		
-		gExpectedReplies[ returnID ] = ExpectedReply( current_thread(), replyStorage );
 	}
 	
-	OSErr ReceiveReply( const AppleEvent& reply )
+	ExpectedReply( thread_id thread, AppleEvent* reply )
+	:
+		thread( thread ),
+		reply ( reply  )
 	{
-		OSErr err;
-		SInt32 data;
+	}
+};
+
+typedef std::map< long, ExpectedReply > ExpectedReplies;
+
+STATIC ExpectedReplies gExpectedReplies;  // Not for System-6-only builds
+
+void ExpectReply( long         returnID,
+                  AppleEvent*  replyStorage )
+{
+	// assert( returnID != 0 );
+	// Can replyStorage be NULL?  If you wanted to know when the reply came back
+	// but didn't care what was in it, then it would make sense.
+	
+	gExpectedReplies[ returnID ] = ExpectedReply( current_thread(), replyStorage );
+}
+
+OSErr ReceiveReply( const AppleEvent& reply )
+{
+	OSErr err;
+	SInt32 data;
+	
+	AEKeyword key = keyReturnIDAttr;
+	DescType type = typeSInt32;
+	Size     size = sizeof data;
+	
+	err = AEGetAttributePtr( &reply, key, type, &type, &data, size, &size );
+	
+	if ( err != noErr )
+	{
+		return err;
+	}
+	
+	SInt32 returnID = data;
+	
+	ExpectedReplies::iterator found = gExpectedReplies.find( returnID );
+	
+	if ( found != gExpectedReplies.end() )
+	{
+		thread_id   thread       = found->second.thread;
+		AppleEvent* replyStorage = found->second.reply;
 		
-		AEKeyword key = keyReturnIDAttr;
-		DescType type = typeSInt32;
-		Size     size = sizeof data;
+		gExpectedReplies.erase( found );
 		
-		err = AEGetAttributePtr( &reply, key, type, &type, &data, size, &size );
-		
-		if ( err != noErr )
+		if ( woken_thread( thread ) )
 		{
-			return err;
-		}
-		
-		SInt32 returnID = data;
-		
-		ExpectedReplies::iterator found = gExpectedReplies.find( returnID );
-		
-		if ( found != gExpectedReplies.end() )
-		{
-			thread_id   thread       = found->second.thread;
-			AppleEvent* replyStorage = found->second.reply;
-			
-			gExpectedReplies.erase( found );
-			
-			if ( woken_thread( thread ) )
+			// Make sure the thread exists before writing to its storage
+			if ( replyStorage != NULL )
 			{
-				// Make sure the thread exists before writing to its storage
-				if ( replyStorage != NULL )
-				{
-					err = AEDuplicateDesc( &reply, replyStorage );
-					
-					if ( err )
-					{
-						replyStorage->descriptorType = 0;
-						replyStorage->dataHandle     = 0;
-						
-						return err;
-					}
-				}
+				err = AEDuplicateDesc( &reply, replyStorage );
 				
-				yield_to_thread( thread );
+				if ( err )
+				{
+					replyStorage->descriptorType = 0;
+					replyStorage->dataHandle     = 0;
+					
+					return err;
+				}
 			}
-			else
-			{
-				// A thread terminated without canceling a pending reply
-			}
+			
+			yield_to_thread( thread );
 		}
 		else
 		{
-			// No such return ID.  Possibly the expecting thread canceled or was terminated.
+			// A thread terminated without canceling a pending reply
 		}
-		
-		return noErr;
+	}
+	else
+	{
+		// No such return ID.  Possibly the expecting thread canceled or was terminated.
 	}
 	
+	return noErr;
+}
+
 }
