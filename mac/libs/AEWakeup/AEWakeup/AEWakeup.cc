@@ -18,14 +18,17 @@
 #include <AEDataModel.h>
 #endif
 
-// Standard C++
-#include <map>
+// Standard C
+#include <stdlib.h>
 
 // mac-config
 #include "mac_config/apple-events.hh"
 
 // cthread-either
 #include "cthread-either.hh"
+
+
+#pragma exceptions off
 
 
 #if CONFIG_APPLE_EVENTS
@@ -43,26 +46,34 @@ using cthread::thread_id;
 using namespace cthread::either;
 
 
-struct ExpectedReply
+struct wakeup_request
 {
+	wakeup_request* next;
+	
 	thread_id    thread;
 	AppleEvent*  reply;
-	
-	ExpectedReply()
-	{
-	}
-	
-	ExpectedReply( thread_id thread, AppleEvent* reply )
-	:
-		thread( thread ),
-		reply ( reply  )
-	{
-	}
+	SInt32       return_id;
 };
 
-typedef std::map< long, ExpectedReply > ExpectedReplies;
+STATIC wakeup_request* request_list;  // Not for System-6-only builds
+STATIC wakeup_request* request_free;
 
-STATIC ExpectedReplies gExpectedReplies;  // Not for System-6-only builds
+wakeup_request* Preflight()
+{
+	if ( request_free )
+	{
+		return request_free;
+	}
+	
+	wakeup_request* spare = (wakeup_request*) malloc( sizeof (wakeup_request) );
+	
+	if ( spare != NULL )
+	{
+		request_free = spare;
+	}
+	
+	return spare;
+}
 
 void Request( long         returnID,
               AppleEvent*  replyStorage )
@@ -71,7 +82,39 @@ void Request( long         returnID,
 	// Can replyStorage be NULL?  If you wanted to know when the reply came back
 	// but didn't care what was in it, then it would make sense.
 	
-	gExpectedReplies[ returnID ] = ExpectedReply( current_thread(), replyStorage );
+	if ( wakeup_request* request = Preflight() )
+	{
+		request->next      = request_list;
+		request->reply     = replyStorage;
+		request->thread    = current_thread();
+		request->return_id = returnID;
+		
+		request_list = request;
+		request_free = NULL;
+	}
+	
+	/*
+		If preflight fails and you already sent the event, you won't
+		get a wakeup for the reply.  Call Preflight() first!
+	*/
+}
+
+static
+wakeup_request** find_link( SInt32 key )
+{
+	wakeup_request** link = &request_list;
+	
+	while ( wakeup_request* node = *link )
+	{
+		if ( node->return_id == key )
+		{
+			return link;
+		}
+		
+		link = &node->next;
+	}
+	
+	return NULL;
 }
 
 OSErr Deliver( const AppleEvent& reply )
@@ -92,14 +135,23 @@ OSErr Deliver( const AppleEvent& reply )
 	
 	SInt32 returnID = data;
 	
-	ExpectedReplies::iterator found = gExpectedReplies.find( returnID );
-	
-	if ( found != gExpectedReplies.end() )
+	if ( wakeup_request** link = find_link( returnID ) )
 	{
-		thread_id   thread       = found->second.thread;
-		AppleEvent* replyStorage = found->second.reply;
+		wakeup_request* request = *link;
 		
-		gExpectedReplies.erase( found );
+		*link = request->next;  // Remove the request from the list
+		
+		thread_id   thread       = request->thread;
+		AppleEvent* replyStorage = request->reply;
+		
+		if ( request_free )
+		{
+			free( request );
+		}
+		else
+		{
+			request_free = request;
+		}
 		
 		if ( woken_thread( thread ) )
 		{

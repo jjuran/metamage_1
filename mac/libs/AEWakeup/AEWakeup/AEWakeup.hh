@@ -14,6 +14,10 @@ typedef AEDesc AppleEvent;
 namespace AEWakeup
 {
 	
+	struct wakeup_request;
+	
+	wakeup_request* Preflight();
+	
 	void Request( long         returnID,
 	              AppleEvent*  replyStorage );
 	
