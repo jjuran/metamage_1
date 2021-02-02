@@ -1,7 +1,17 @@
-/*	=================
- *	AESendBlocking.cc
- *	=================
- */
+/*
+	AESendBlocking.cc
+	-----------------
+*/
+
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __AEDATAMODEL__
+#include <AEInteraction.h>
+#endif
 
 // mac-config
 #include "mac_config/apple-events.hh"
@@ -12,9 +22,6 @@
 
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
-
-#include "Nitrogen/AEDataModel.hh"
-#include "Nitrogen/AEInteraction.hh"
 
 // relix
 #include "relix/api/current_thread.hh"
@@ -27,20 +34,7 @@
 #include "AEWakeup/AEWakeup.hh"
 
 
-namespace N = Nitrogen;
-
-
-static inline Mac::AEReturnID_32Bit
-//
-AEGetAttributePtr_keyReturnIDAttr( const AppleEvent& appleEvent )
-{
-	const Mac::AEKeyword key = Mac::keyReturnIDAttr;
-	const Mac::DescType type = Mac::typeSInt32;
-	
-	return N::AEKeyword_get< key >( N::AEGetAttributePtr_Getter< type >( appleEvent, key ) );
-}
-
-OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
+OSStatus AESendBlocking( const AppleEvent* event, AppleEvent* reply )
 {
 	using namespace relix;
 	
@@ -49,21 +43,39 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 		return memFullErr;
 	}
 	
+	const AESendMode     sendMode = kAEQueueReply | kAECanInteract;
+	const AESendPriority priority = kAENormalPriority;
+	const SInt32         timeout  = kAEDefaultTimeout;
+	
+	OSErr err;
+	
+	reply->dataHandle = NULL;
+	
+	err = AESend( event, reply, sendMode, priority, timeout, NULL, NULL );
+	
+	if ( err != noErr )
+	{
+		return err;
+	}
+	
+	SInt32 returnID;
+	
+	AEKeyword key = keyReturnIDAttr;
+	DescType type = typeSInt32;
+	Size     size = sizeof returnID;
+	
+	// Now that we've sent the event, retrieve the return ID
+	err = AEGetAttributePtr( event, key, type, &type, &returnID, size, &size );
+	
+	if ( err != noErr )
+	{
+		return err;  // This really shouldn't happen
+	}
+	
 	try
 	{
-		Mac::AppleEvent const& appleEvent = static_cast< const Mac::AppleEvent& >( *appleEventPtr );
-		Mac::AppleEvent      & reply      = static_cast<       Mac::AppleEvent& >( *replyPtr      );
-		
-		reply.dataHandle = NULL;
-		
-		(void) N::AESend( appleEvent,
-		                  Mac::kAEQueueReply | Mac::kAECanInteract );
-		
-		// Now that we've sent the event, retrieve the return ID
-		N::AEReturnID_32Bit returnID = AEGetAttributePtr_keyReturnIDAttr( appleEvent );
-		
 		// Subscribe to AEWakeup's queued reply delivery and wake-up service
-		AEWakeup::Request( returnID, &reply );
+		AEWakeup::Request( returnID, reply );
 		
 		thread& current = current_thread();
 		
@@ -88,7 +100,7 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 		
 		check_signals( false );  // Don't throw caught signals
 		
-		if ( reply.dataHandle == NULL )
+		if ( reply->dataHandle == NULL )
 		{
 			goto stop_and_wait;
 		}
