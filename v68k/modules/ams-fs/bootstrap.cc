@@ -24,6 +24,10 @@
 #include "mount.hh"
 
 
+#define STRLEN( s )      (sizeof "" s - 1)
+#define STR_LEN( s )  s, (sizeof "" s - 1)
+
+
 void mount_virtual_bootstrap_volume()
 {
 	static VCB virtual_bootstrap_volume_VCB;
@@ -75,7 +79,7 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 		--len;
 	}
 	
-	char path[ 256 + 5 ];
+	char path[ 256 + STRLEN( "/rsrc" ) ];
 	
 	fast_memcpy( path, name, len );
 	path[ len ] = '\0';
@@ -90,16 +94,16 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 		
 		if ( err == -EISDIR )
 		{
-			fast_memcpy( path + len, "/data", 5 );
+			fast_memcpy( path + len, STR_LEN( "/data" ) );
 			
-			err = try_to_get( path, len + 5, file_data );
+			err = try_to_get( path, len + STRLEN( "/data" ), file_data );
 		}
 	}
 	else
 	{
-		fast_memcpy( path + len, "/rsrc", 5 );
+		fast_memcpy( path + len, STR_LEN( "/rsrc" ) );
 		
-		err = try_to_get( path, len + 5, file_data );
+		err = try_to_get( path, len + STRLEN( "/rsrc" ), file_data );
 	}
 	
 	if ( err < 0 )
