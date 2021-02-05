@@ -63,9 +63,9 @@ namespace vfs
 		
 		while ( begin < end )
 		{
-			resolve_links_in_place( root, result );
-			
 			ASSERT( *begin == '/' );
+			
+			resolve_links_in_place( root, result );
 			
 			if ( is_file( *result ) )
 			{
