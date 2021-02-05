@@ -27,6 +27,8 @@
 #define STRLEN( s )      (sizeof "" s - 1)
 #define STR_LEN( s )  s, (sizeof "" s - 1)
 
+#define RSRC_FORK "..namedfork/rsrc"
+
 
 void mount_virtual_bootstrap_volume()
 {
@@ -79,7 +81,7 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 		--len;
 	}
 	
-	char path[ 256 + STRLEN( "/rsrc" ) ];
+	char path[ 256 + STRLEN( "/" RSRC_FORK ) ];
 	
 	fast_memcpy( path, name, len );
 	path[ len ] = '\0';
@@ -104,6 +106,13 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 		fast_memcpy( path + len, STR_LEN( "/rsrc" ) );
 		
 		err = try_to_get( path, len + STRLEN( "/rsrc" ), file_data );
+		
+		if ( err == -ENOENT )
+		{
+			fast_memcpy( path + len, STR_LEN( "/" RSRC_FORK ) );
+			
+			err = try_to_get( path, len + STRLEN( "/" RSRC_FORK ), file_data );
+		}
 	}
 	
 	if ( err < 0 )
