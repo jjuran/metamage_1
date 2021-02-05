@@ -232,6 +232,10 @@ def auto_mbin_disk
 	{
 		app_name ".mbin",
 	}
+	else if exists path ".mbim" then
+	{
+		app_name ".mbim",
+	}
 }
 
 def fs_opts
