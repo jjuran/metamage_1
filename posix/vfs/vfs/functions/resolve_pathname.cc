@@ -40,7 +40,16 @@ namespace vfs
 		
 		plus::string name( begin, slash );
 		
-		begin = slash;
+		if ( name == "..namedfork" )
+		{
+			name.assign( begin, end );
+			
+			begin = end;
+		}
+		else
+		{
+			begin = slash;
+		}
 		
 		return lookup( that, name );
 	}
