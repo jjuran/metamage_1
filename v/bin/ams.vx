@@ -223,10 +223,21 @@ def io_opts
 	}
 }
 
+def auto_mbin_disk
+{
+	const path = root_dir "/" app_name
+	
+	return if exists path then {}
+	else if exists path ".mbin" then
+	{
+		app_name ".mbin",
+	}
+}
+
 def fs_opts
 {
 	const disk_opt =
-	if const disk = getenv "AMS_DISK" then
+	if const disk = getenv "AMS_DISK" or auto_mbin_disk() then
 	{
 		"--disk", disk,
 	}
