@@ -34,6 +34,9 @@
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#ifdef __APPLE__
+#include "vfs/node/types/mac.hh"
+#endif
 
 
 namespace vfs
@@ -164,6 +167,19 @@ namespace vfs
 			p7::throw_errno( ENOENT );
 		}
 		
+		const plus::string& parent_path = *(const plus::string*) &extra.path;
+		
+		const uid_t uid = that->user();
+		
+	#ifdef __APPLE__
+		
+		if ( node_ptr info = mac_lookup_info( parent_path, name, parent, uid ) )
+		{
+			return info;
+		}
+		
+	#endif
+		
 		plus::string path;
 		
 		char* p = path.reset( path_size + 1 + name_size );
@@ -174,7 +190,7 @@ namespace vfs
 		
 		mempcpy( p, name.data(), name_size );
 		
-		return new_posix_file( path.move(), name, parent, that->user() );
+		return new_posix_file( path.move(), name, parent, uid );
 	}
 	
 	static void posix_listdir( const node*         that,
