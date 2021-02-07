@@ -11,6 +11,7 @@
 #endif
 
 // Standard C
+#include <stddef.h>
 #include <errno.h>
 
 // ams-common
@@ -28,6 +29,7 @@
 #define STR_LEN( s )  s, (sizeof "" s - 1)
 
 #define RSRC_FORK "..namedfork/rsrc"
+#define GETFINFO  "..namedfork/GetFInfo"
 
 
 void mount_virtual_bootstrap_volume()
@@ -147,5 +149,40 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 
 OSErr bootstrap_GetFileInfo( FileParam* pb, const uint8_t* name )
 {
-	return extFSErr;
+	temp_A4 a4;
+	
+	Size len = *name++;
+	
+	if ( len  &&  *name == ':' )
+	{
+		++name;
+		--len;
+	}
+	
+	char path[ 256 + STRLEN( "/" GETFINFO ) ];
+	
+	fast_memcpy( path, name, len );
+	fast_memcpy( path + len, STR_LEN( "/" GETFINFO ) );
+	
+	plus::var_string file_info;
+	
+	int err = try_to_get( path, len + STRLEN( "/" GETFINFO ), file_info );
+	
+	if ( err < 0 )
+	{
+		return fnfErr;  // TODO:  Check for other errors.
+	}
+	
+	const Size size = sizeof (FileParam) - offsetof( FileParam, ioFlAttrib );
+	
+	if ( file_info.size() != size )
+	{
+		return paramErr;
+	}
+	
+	pb->ioFRefNum = 0;
+	
+	fast_memcpy( &pb->ioFlAttrib, file_info.data(), size );
+	
+	return noErr;
 }
