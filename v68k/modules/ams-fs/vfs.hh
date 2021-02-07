@@ -29,6 +29,8 @@ struct filesystem_vtable
 	typedef OSErr (*FlushFile_proc)( FCB* fcb );
 	typedef OSErr (*GetFileInfo_proc)( FileParam* pb, const Entry* entry );
 	
+	typedef GetFileInfo_proc SetFileInfo_proc;
+	
 	lookup_proc  lookup;
 	getnth_proc  get_nth;
 	
@@ -37,6 +39,7 @@ struct filesystem_vtable
 	openfork_proc     open_fork;
 	FlushFile_proc    FlushFile;
 	GetFileInfo_proc  GetFileInfo;
+	SetFileInfo_proc  SetFileInfo;
 };
 
 typedef filesystem_vtable< struct generic_file_entry > vfs_table;
