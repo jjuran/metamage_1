@@ -5,6 +5,11 @@
 
 #include "Rects.hh"
 
+// Mac OS
+#ifndef __FIXMATH__
+#include <FixMath.h>
+#endif
+
 // Standard C
 #include <stdlib.h>
 
@@ -818,6 +823,46 @@ pascal unsigned char PtInRect_patch( Point pt, const Rect* rect )
 {
 	return rect->top  <= pt.v  &&  pt.v < rect->bottom  &&  
 	       rect->left <= pt.h  &&  pt.h < rect->right;
+}
+
+pascal void PtToAngle_patch( const Rect* rect, Point pt, short* result )
+{
+	const UInt16 height = rect->bottom - rect->top;
+	const UInt16 width  = rect->right - rect->left;
+	
+	const short cv = rect->bottom + rect->top >> 1;  // rect center V
+	const short ch = rect->right + rect->left >> 1;  // rect center H
+	
+	const UInt16 rise = pt.v - cv;
+	const UInt16 run  = pt.h - ch;
+	
+	short angle = 0;
+	
+	if ( run == 0 )
+	{
+		if ( pt.v > cv )
+		{
+			angle = 180;
+		}
+	}
+	else
+	{
+		if ( rise == 0 )
+		{
+			angle = 90;
+		}
+		else
+		{
+			angle = AngleFromSlope( FixRatio( run * height, rise * width ) );
+		}
+		
+		if ( pt.h < ch )
+		{
+			angle += 180;
+		}
+	}
+	
+	*result = angle;
 }
 
 pascal unsigned char EmptyRect_patch( const Rect* rect )

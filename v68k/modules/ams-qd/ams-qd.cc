@@ -185,6 +185,7 @@ static void install_QuickDraw()
 	TBTRAP( InvertArc  );  // A8C1
 	TBTRAP( FillArc    );  // A8C2
 	
+	TBTRAP( PtToAngle      );  // A8C3
 	TBTRAP( AngleFromSlope );  // A8C4
 	
 	TBTRAP( StdPoly    );  // A8C5

@@ -38,6 +38,8 @@ pascal void Pt2Rect_patch( Point a, Point b, Rect* c );
 
 pascal unsigned char PtInRect_patch( Point pt, const Rect* rect );
 
+pascal void PtToAngle_patch( const Rect* rect, Point pt, short* angle );
+
 pascal unsigned char EmptyRect_patch( const Rect* rect );
 
 #endif
