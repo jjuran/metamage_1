@@ -107,7 +107,7 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 		
 		err = try_to_get( path, len + STRLEN( "/rsrc" ), file_data );
 		
-		if ( err == -ENOENT )
+		if ( err == -ENOENT  ||  err == -ENOTDIR )
 		{
 			fast_memcpy( path + len, STR_LEN( "/" RSRC_FORK ) );
 			
