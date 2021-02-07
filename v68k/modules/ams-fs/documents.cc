@@ -31,6 +31,7 @@
 #define STR_LEN( s )  s, (sizeof "" s - 1)
 
 #define GETFINFO "..namedfork/GetFInfo"
+#define SETFINFO "..namedfork/SetFInfo"
 
 
 short SFSaveDisk : 0x0214;
@@ -198,6 +199,44 @@ OSErr documents_GetFileInfo( FileParam* pb, const uint8_t* name )
 	pb->ioFRefNum = 0;
 	
 	fast_memcpy( &pb->ioFlAttrib, file_info.data(), size );
+	
+	return noErr;
+}
+
+OSErr documents_SetFileInfo( FileParam* pb, const uint8_t* name )
+{
+	temp_A4 a4;
+	
+	Size len = *name++;
+	
+	if ( len  &&  *name == ':' )
+	{
+		++name;
+		--len;
+	}
+	
+	char path[ 256 + STRLEN( "/" SETFINFO ) ];
+	
+	fast_memcpy( path, name, len );
+	fast_memcpy( path + len, STR_LEN( "/" SETFINFO ) );
+	
+	plus::string pathname( path, len + STRLEN( "/" SETFINFO ) );
+	
+	const Size size = sizeof (FileParam) - offsetof( FileParam, ioFlFndrInfo );
+	
+	plus::string file_info( (char*) &pb->ioFlFndrInfo, size );
+	
+	int err = try_to_put( docfs_fd, pathname, file_info );
+	
+	if ( err == -ENOENT )
+	{
+		return fnfErr;
+	}
+	
+	if ( err )
+	{
+		return ioErr;
+	}
 	
 	return noErr;
 }

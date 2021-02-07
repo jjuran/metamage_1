@@ -34,5 +34,6 @@ OSErr documents_open_fork( short trap_word, FCB* fcb, const uint8_t* name );
 OSErr documents_FlushFile( FCB* fcb );
 
 OSErr documents_GetFileInfo( FileParam* pb, const uint8_t* name );
+OSErr documents_SetFileInfo( FileParam* pb, const uint8_t* name );
 
 #endif

@@ -39,6 +39,7 @@ static const filesystem_vtable< uint8_t > documents_vtable =
 	&documents_open_fork,
 	&documents_FlushFile,
 	&documents_GetFileInfo,
+	&documents_SetFileInfo,
 };
 
 static const filesystem_vtable< macbinary::header > MacBinary_vtable =
