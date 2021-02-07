@@ -40,6 +40,7 @@ namespace vfs
 	{
 		Info_null,
 		Info_PkgInfo,
+		Info_FInfo,
 	};
 	
 #ifdef __APPLE__
@@ -48,11 +49,13 @@ namespace vfs
 	{
 		0,
 		2 * sizeof (OSType),
+		sizeof FSCatalogInfo().finderInfo,
 	};
 	
 	static const FSCatalogInfoBitmap info_bits[] =
 	{
 		0,
+		kFSCatInfoFinderInfo,
 		kFSCatInfoFinderInfo,
 	};
 	
@@ -131,6 +134,18 @@ namespace vfs
 		
 		*p4++ = iota::big_u32( *q4++ );  // type
 		*p4++ = iota::big_u32( *q4++ );  // creator
+		
+		UInt16* p2 = (UInt16*) p4;
+		
+		if ( extra.type >= Info_FInfo )
+		{
+			const UInt16* q2 = (const UInt16*) q4;
+			
+			*p2++ = iota::big_u16( *q2++ );  // finderFlags
+			*p2++ = iota::big_u16( *q2++ );  // location.v
+			*p2++ = iota::big_u16( *q2++ );  // location.h
+			*p2++ = iota::big_u16( *q2++ );  // reservedField
+		}
 		
 		return result;
 	}
@@ -211,6 +226,10 @@ namespace vfs
 			else if ( strcmp( fork_name, "PkgInfo" ) == 0 )
 			{
 				type = Info_PkgInfo;
+			}
+			else if ( strcmp( fork_name, "FInfo" ) == 0 )
+			{
+				type = Info_FInfo;
 			}
 			
 			if ( type )
