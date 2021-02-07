@@ -644,6 +644,38 @@ short SetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
 		return pb->ioResult = err;
 	}
 	
+	const vfs_table* vfs = vfs_from_vcb( vcb );
+	
+	if ( vfs == NULL )
+	{
+		return pb->ioResult = extFSErr;
+	}
+	
+	const generic_file_entry* entry = NULL;
+	
+	if ( pb->ioFDirIndex > 0 )
+	{
+		entry = vfs->get_nth( vcb, pb->ioFDirIndex );
+	}
+	else if ( StringPtr name = pb->ioNamePtr )
+	{
+		entry = vfs->lookup( vcb, name );
+	}
+	else
+	{
+		return pb->ioResult = bdNamErr;
+	}
+	
+	if ( entry == NULL )
+	{
+		return pb->ioResult = fnfErr;
+	}
+	
+	if ( vfs->SetFileInfo )
+	{
+		return pb->ioResult = vfs->SetFileInfo( pb, entry );
+	}
+	
 	WARNING = "returning noErr for unimplemented SetFileInfo";
 	
 	return pb->ioResult = noErr;
