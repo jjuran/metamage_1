@@ -26,6 +26,7 @@ namespace vfs
 	typedef filehandle_ptr (*open_method)( const node*, int flags, mode_t );
 	
 	typedef plus::string (*slurp_method)( const node* );
+	typedef void         (*splat_method)( const node*, const char*, size_t );
 	
 	
 	struct data_method_set
@@ -34,6 +35,7 @@ namespace vfs
 		getfsize_method  geteof;
 		truncate_method  seteof;
 		slurp_method     slurp;
+		splat_method     splat;
 	};
 	
 }
