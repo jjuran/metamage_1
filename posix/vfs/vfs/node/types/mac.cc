@@ -22,6 +22,9 @@
 // plus
 #include "plus/string.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // vfs
 #include "vfs/node.hh"
 #include "vfs/methods/data_method_set.hh"
@@ -36,12 +39,16 @@
 namespace vfs
 {
 	
+	namespace p7 = poseven;
+	
+	
 	enum special_info
 	{
 		Info_null,
 		Info_PkgInfo,
 		Info_FInfo,
 		Info_GetFInfo,
+		Info_SetFInfo,
 	};
 	
 #ifdef __APPLE__
@@ -52,6 +59,7 @@ namespace vfs
 		2 * sizeof (OSType),
 		sizeof FSCatalogInfo().finderInfo,
 		80 - 30,  // size of HFileParam starting at ioFlAttrib
+		80 - 32,  // size of HFileParam starting at ioFlFndrInfo
 	};
 	
 	const FSCatalogInfoBitmap bitmap_for_GetFInfo
@@ -62,12 +70,18 @@ namespace vfs
 		| kFSCatInfoDataSizes
 		| kFSCatInfoRsrcSizes;
 	
+	const FSCatalogInfoBitmap bitmap_for_SetFInfo
+		= kFSCatInfoCreateDate
+		| kFSCatInfoContentMod
+		| kFSCatInfoFinderInfo;
+	
 	static const FSCatalogInfoBitmap info_bits[] =
 	{
 		0,
 		kFSCatInfoFinderInfo,
 		kFSCatInfoFinderInfo,
 		bitmap_for_GetFInfo,
+		bitmap_for_SetFInfo,
 	};
 	
 	static inline
@@ -124,6 +138,11 @@ namespace vfs
 		OSStatus err;
 		
 		macinfo_extra& extra = *(macinfo_extra*) that->extra();
+		
+		if ( extra.type == Info_SetFInfo )
+		{
+			p7::throw_errno( EPERM );
+		}
 		
 		FSCatalogInfoBitmap bits = info_bits[ extra.type ];
 		FSCatalogInfo       info;
@@ -194,6 +213,63 @@ namespace vfs
 		return result;
 	}
 	
+	static
+	void macinfo_splat( const node* that, const char* data, size_t size )
+	{
+		OSStatus err;
+		
+		macinfo_extra& extra = *(macinfo_extra*) that->extra();
+		
+		if ( extra.type == Info_GetFInfo )
+		{
+			p7::throw_errno( EPERM );
+		}
+		
+		const size_t expected_size = info_sizes[ extra.type ];
+		
+		if ( size != expected_size )
+		{
+			p7::throw_errno( EINVAL );
+		}
+		
+		FSCatalogInfoBitmap bits = info_bits[ extra.type ];
+		FSCatalogInfo       info = {};
+		
+		const OSType* p4 = (const OSType*) data;
+		
+		OSType* q4 = (OSType*) info.finderInfo;
+		
+		*q4++ = iota::u32_from_big( *p4++ );  // type
+		*q4++ = iota::u32_from_big( *p4++ );  // creator
+		
+		const UInt16* p2 = (const UInt16*) p4;
+		
+		if ( extra.type >= Info_FInfo )
+		{
+			UInt16* q2 = (UInt16*) q4;
+			
+			*q2++ = iota::u16_from_big( *p2++ );  // finderFlags
+			*q2++ = iota::u16_from_big( *p2++ );  // location.v
+			*q2++ = iota::u16_from_big( *p2++ );  // location.h
+			*q2++ = iota::u16_from_big( *p2++ );  // reservedField
+		}
+		
+		if ( extra.type == Info_SetFInfo )
+		{
+			p4 = (const UInt32*) (data + size - 2 * sizeof (UInt32));
+			
+			info.createDate    .lowSeconds = iota::u32_from_big( *p4++ );
+			info.contentModDate.lowSeconds = iota::u32_from_big( *p4++ );
+		}
+		
+		err = FSSetCatalogInfo( &extra.ref, bits, &info );
+		
+		if ( err )
+		{
+			p7::throw_errno( EIO );
+		}
+	}
+	
 	static const item_method_set macinfo_item_methods =
 	{
 		&macinfo_stat,
@@ -205,6 +281,7 @@ namespace vfs
 		NULL,
 		NULL,
 		&macinfo_slurp,
+		&macinfo_splat,
 	};
 	
 	static const node_method_set macinfo_methods =
@@ -278,6 +355,10 @@ namespace vfs
 			else if ( strcmp( fork_name, "GetFInfo" ) == 0 )
 			{
 				type = Info_GetFInfo;
+			}
+			else if ( strcmp( fork_name, "SetFInfo" ) == 0 )
+			{
+				type = Info_SetFInfo;
 			}
 			
 			if ( type )
