@@ -41,6 +41,7 @@ namespace vfs
 		Info_null,
 		Info_PkgInfo,
 		Info_FInfo,
+		Info_GetFInfo,
 	};
 	
 #ifdef __APPLE__
@@ -50,13 +51,23 @@ namespace vfs
 		0,
 		2 * sizeof (OSType),
 		sizeof FSCatalogInfo().finderInfo,
+		80 - 30,  // size of HFileParam starting at ioFlAttrib
 	};
+	
+	const FSCatalogInfoBitmap bitmap_for_GetFInfo
+		= kFSCatInfoNodeID
+		| kFSCatInfoCreateDate
+		| kFSCatInfoContentMod
+		| kFSCatInfoFinderInfo
+		| kFSCatInfoDataSizes
+		| kFSCatInfoRsrcSizes;
 	
 	static const FSCatalogInfoBitmap info_bits[] =
 	{
 		0,
 		kFSCatInfoFinderInfo,
 		kFSCatInfoFinderInfo,
+		bitmap_for_GetFInfo,
 	};
 	
 	static inline
@@ -128,6 +139,12 @@ namespace vfs
 		
 		char* begin = result.reset( info_sizes[ extra.type ] );
 		
+		if ( extra.type == Info_GetFInfo )
+		{
+			*begin++ = 0;  // ioFlAttrib -- FIXME
+			*begin++ = 0;  // ioFlVersNum
+		}
+		
 		OSType* p4 = (OSType*) begin;
 		
 		const OSType* q4 = (const OSType*) info.finderInfo;
@@ -145,6 +162,33 @@ namespace vfs
 			*p2++ = iota::big_u16( *q2++ );  // location.v
 			*p2++ = iota::big_u16( *q2++ );  // location.h
 			*p2++ = iota::big_u16( *q2++ );  // reservedField
+		}
+		
+		if ( extra.type == Info_GetFInfo )
+		{
+			p4 = (UInt32*) p2;
+			
+			*p4++ = iota::big_u32( info.nodeID );  // Host information leak?
+			
+			p2 = (UInt16*) p4;
+			
+			*p2++ = 0;  // ioFlStBlk
+			
+			p4 = (UInt32*) p2;
+			
+			*p4++ = iota::big_u32( info.dataLogicalSize );
+			*p4++ = iota::big_u32( info.dataPhysicalSize );
+			
+			p2 = (UInt16*) p4;
+			
+			*p2++ = 0;  // ioFlRStBlk
+			
+			p4 = (UInt32*) p2;
+			
+			*p4++ = iota::big_u32( info.rsrcLogicalSize  );
+			*p4++ = iota::big_u32( info.rsrcPhysicalSize );
+			*p4++ = iota::big_u32( info.createDate    .lowSeconds );
+			*p4++ = iota::big_u32( info.contentModDate.lowSeconds );
 		}
 		
 		return result;
@@ -230,6 +274,10 @@ namespace vfs
 			else if ( strcmp( fork_name, "FInfo" ) == 0 )
 			{
 				type = Info_FInfo;
+			}
+			else if ( strcmp( fork_name, "GetFInfo" ) == 0 )
+			{
+				type = Info_GetFInfo;
 			}
 			
 			if ( type )
