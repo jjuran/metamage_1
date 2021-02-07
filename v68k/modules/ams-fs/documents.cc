@@ -27,6 +27,12 @@
 #include "mount.hh"
 
 
+#define STRLEN( s )      (sizeof "" s - 1)
+#define STR_LEN( s )  s, (sizeof "" s - 1)
+
+#define GETFINFO "..namedfork/GetFInfo"
+
+
 short SFSaveDisk : 0x0214;
 
 int docfs_fd;
@@ -157,19 +163,41 @@ OSErr documents_GetFileInfo( FileParam* pb, const uint8_t* name )
 {
 	temp_A4 a4;
 	
-	plus::var_string file_data;
+	Size len = *name++;
 	
-	int err = try_to_get( docfs_fd, name, file_data );
-	
-	if ( err == -ENOENT )
+	if ( len  &&  *name == ':' )
 	{
+		++name;
+		--len;
+	}
+	
+	char path[ 256 + STRLEN( "/" GETFINFO ) ] = {};
+	
+	fast_memcpy( path, name, len );
+	fast_memcpy( path + len, STR_LEN( "/" GETFINFO ) );
+	
+	plus::string pathname( path, len + STRLEN( "/" GETFINFO ) );
+	
+	plus::var_string file_info;
+	
+	int err = try_to_get( docfs_fd, pathname, file_info );
+	
+	if ( err < 0 )
+	{
+		// TODO:  Check for other errors.
 		return fnfErr;
 	}
 	
-	if ( err )
+	const Size size = sizeof (FileParam) - offsetof( FileParam, ioFlAttrib );
+	
+	if ( file_info.size() != size )
 	{
 		return ioErr;
 	}
+	
+	pb->ioFRefNum = 0;
+	
+	fast_memcpy( &pb->ioFlAttrib, file_info.data(), size );
 	
 	return noErr;
 }
