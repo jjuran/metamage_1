@@ -38,11 +38,10 @@ const output_dir = argv[ 1 ]
 const input_path = argv[ 2 ]
 
 const parent_dir = dirname input_path
-const input_stat = stat    input_path
 
-const src_is_dir = input_stat[ "type" ] == "DIR"
+const src_is_txt = -substr( -input_path, 0, 4 ) == ".txt"
 
-const config_data = if src_is_dir then {""} else {load input_path}
+const config_data = if src_is_txt then {load input_path} else {""}
 
 const config_lines = config_data.lines() ver bool map comma-terminated
 
@@ -55,7 +54,7 @@ def active (feature)
 
 const named = "name" in config
 
-const name = if src_is_dir then {basename input_path} else {config[ "name" ]}
+const name = if src_is_txt then {config[ "name" ]} else {basename input_path}
 
 const name_to_copy
 
