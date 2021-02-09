@@ -69,6 +69,12 @@ if "disk" in config then
 {
 	disk = config[ "disk" ]
 }
+else if src_is_txt and not exists name_path and exists name_path ".mbin" then
+{
+	disk = name ".mbin"
+	
+	new_disk = ("disk: " rep disk) "\n"
+}
 else if -substr( -name, 0, 5 ) == ".mbin" then
 {
 	disk = name
