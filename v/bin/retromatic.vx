@@ -54,18 +54,40 @@ def active (feature)
 
 const named = "name" in config
 
-const name = if src_is_txt then {config[ "name" ]} else {basename input_path}
+var name = if src_is_txt then {config[ "name" ]} else {basename input_path}
 
 # This path may not actually exist in the case of a disk image.
 # Really it's just the fs root path and the app name joined by "/".
 
-const name_path = parent_dir "/" name
+var name_path = parent_dir "/" name
 
-const name_to_copy
+var new_disk = ""
+
+const disk
 
 if "disk" in config then
 {
-	name_to_copy = config[ "disk" ]
+	disk = config[ "disk" ]
+}
+else if -substr( -name, 0, 5 ) == ".mbin" then
+{
+	disk = name
+	name = name[ 0 -> name.length - 5 ]
+	
+	name_path = parent_dir "/" name
+	
+	new_disk = ("disk: " rep disk) "\n"
+}
+else
+{
+	disk = null
+}
+
+const name_to_copy
+
+if disk then
+{
+	name_to_copy = disk
 	
 	setenv( "AMS_DISK", name_to_copy )
 }
@@ -128,7 +150,7 @@ copy( *ams_modules, ams_lib "/umsp", ams_bin "/app", xv68k_dir )
 
 const new_data = ("name: " rep name) "\n" * not named
 
-rewrite Resources "/config.txt" <== new_data config_data
+rewrite Resources "/config.txt" <== new_data new_disk config_data
 
 const tools = "apps/mac/Amethyst/tools/launch-ams-app.vx"
 
