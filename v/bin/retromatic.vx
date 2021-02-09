@@ -56,6 +56,11 @@ const named = "name" in config
 
 const name = if src_is_txt then {config[ "name" ]} else {basename input_path}
 
+# This path may not actually exist in the case of a disk image.
+# Really it's just the fs root path and the app name joined by "/".
+
+const name_path = parent_dir "/" name
+
 const name_to_copy
 
 if "disk" in config then
@@ -82,10 +87,7 @@ mkdir-p (MacOS_dir, Files "/AMS Resources", xv68k_dir)
 
 def ams-get-app (property, args: ...)
 {
-	# This path may not actually exist in the case of a disk image.
-	# Really it's just the fs root path and the app name joined by "/".
-	
-	const path = parent_dir "/" name
+	const path = name_path
 	
 	return packed output-from-run [ vx_Z "ams-get.vx", property, path, args ]
 }
