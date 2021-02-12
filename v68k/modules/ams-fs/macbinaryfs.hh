@@ -6,7 +6,7 @@
 #ifndef MACBINARYFS_HH
 #define MACBINARYFS_HH
 
-// ams-fs
+// macbinary
 #include "macbinary.hh"
 
 
