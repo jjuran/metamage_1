@@ -17,6 +17,13 @@ typedef uint8_t uint32_x[ 4 ];
 
 typedef uint32_x OSType_x, Point_x;
 
+// Type to use for a 32-bit field that's 16-bit aligned
+#ifdef __MACOS__
+typedef uint32_t uint32_2;
+#else
+typedef uint32_x uint32_2;
+#endif
+
 
 namespace macbinary
 {
@@ -59,7 +66,7 @@ namespace macbinary
 			Bits 1-3 - color 
 			Bit 0 - isOnDesk
 		*/
-		uint32_t  formatSig;            // word-, but not long-aligned
+		uint32_2  formatSig;            // word-, but not long-aligned
 		uint8_t   fdScript;
 		uint8_t   fdXFlags;
 		uint8_t   unused108[ 8 ];

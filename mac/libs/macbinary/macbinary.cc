@@ -8,6 +8,9 @@
 // Standard C
 #include <string.h>
 
+// iota
+#include "iota/endian.hh"
+
 
 static
 uint16_t CalcCRC( const uint8_t* dataBuf, uint32_t size )
@@ -49,9 +52,23 @@ namespace macbinary
 {
 
 static inline
+bool sig_check( const header& h )
+{
+#ifdef __MACOS__
+	
+	return h.formatSig == 'mBIN';
+	
+#else
+	
+	return memcmp( h.formatSig, "mBIN", 4 ) == 0;
+	
+#endif
+}
+
+static inline
 bool crc_check( const header& h )
 {
-	return CalcCRC( (const uint8_t*) &h, 124 ) == h.crc;
+	return CalcCRC( (const uint8_t*) &h, 124 ) == iota::u16_from_big( h.crc );
 }
 
 int8_t version( const header& h )
@@ -75,7 +92,7 @@ int8_t version( const header& h )
 		return (h.extensions | h.zeroByte82) == 0;  // version 1, or invalid
 	}
 	
-	int8_t vers = 2 + (h.formatSig == 'mBIN');  // version 2 or 3
+	int8_t vers = 2 + sig_check( h );  // version 2 or 3
 	
 	if ( h.extensions & ~kMacBinaryPlusMask )
 	{
