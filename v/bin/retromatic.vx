@@ -78,7 +78,7 @@ else if src_is_txt and not exists name_path and exists name_path ".mbin" then
 else if -substr( -name, 0, 5 ) == ".mbin" then
 {
 	disk = name
-	name = name[ 0 -> name.length - 5 ]
+	name = (output-from-run [ "var/out/mbin", "name", input_path ]).lines()[ 0 ]
 	
 	name_path = parent_dir "/" name
 	
