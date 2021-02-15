@@ -1255,8 +1255,12 @@ pascal void ValidRgn_patch( struct MacRegion** rgn )
 	OffsetRgn( rgn, csdx, csdy );  // global to local
 }
 
+static WindowPeek window_with_pending_updateEvt;
+
 pascal void BeginUpdate_patch( struct GrafPort* window )
 {
+	window_with_pending_updateEvt = NULL;
+	
 	WindowPeek w = (WindowPeek) window;
 	
 	using iota::swap;
@@ -1317,14 +1321,28 @@ pascal unsigned char CheckUpdate_patch( EventRecord* event )
 	{
 		if ( window_needs_update( w )  &&  window_could_be_updated_now( w ) )
 		{
+			if ( w == window_with_pending_updateEvt )
+			{
+				/*
+					Don't report an update event that wasn't serviced
+					the last time around.
+				*/
+				
+				return false;
+			}
+			
 			fast_memset( event, '\0', sizeof (EventRecord) );
 			
 			event->what    = updateEvt;
 			event->message = (long) w;
 			
+			window_with_pending_updateEvt = w;
+			
 			return true;
 		}
 	}
+	
+	window_with_pending_updateEvt = NULL;
 	
 	return false;
 }
