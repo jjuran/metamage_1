@@ -27,6 +27,8 @@ bool ticking;
 
 enum
 {
+	tag_00E4,
+	tag_00E4_low_word,
 	tag_ScreenRow,
 	tag_MemTop,
 	tag_MemTop_low_word,
@@ -199,6 +201,7 @@ void initialize()
 {
 	((char*) &words[ tag_ROMBase ])[ 1 ] = 0x40;  // ROMBase = 0x00400000
 	
+	words[ tag_00E4       ] = words[ tag_ROMBase ];
 	words[ tag_VIA        ] = iota::big_u16( 0x00EF     );
 	words[ tag_VIA + 1    ] = iota::big_u16(     0xE1FE );
 	words[ tag_BootDrive  ] = 0xFFFF;  // initially -1
@@ -241,6 +244,7 @@ static const global globals[] =
 {
 	{ ROM + 0x0008, 0x82, 0x00 },  // ROM version = 0x0000
 	
+	{ 0x00E4, 4,    tag_00E4        },
 	{ 0x0100, 0x82, 0xFF            },  // MonkeyLives
 	{ 0x0102, 0x84, 72              },  // ScrVRes, ScrHRes
 	{ 0x0106, 2,    tag_ScreenRow   },
