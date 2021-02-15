@@ -550,6 +550,30 @@ short SetEOF_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = noErr;
 }
 
+short Allocate_patch( short trap_word : __D1, IOParam* pb : __A0 )
+{
+	FCB* fcb = get_FCB( pb->ioRefNum );
+	
+	if ( ! fcb )
+	{
+		return pb->ioResult = rfNumErr;
+	}
+	
+	if ( OSErr err = writability_error( fcb ) )
+	{
+		if ( err != wPrErr  ||  ! is_servable( fcb ) )
+		{
+			return pb->ioResult = err;
+		}
+	}
+	
+	const long new_eof = pb->ioReqCount;
+	
+	WARNING = "Ignoring Allocate of ", new_eof;
+	
+	return pb->ioResult = noErr;
+}
+
 short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	if ( pb->ioRefNum < 0 )

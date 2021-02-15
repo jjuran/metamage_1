@@ -83,6 +83,7 @@ void install_FileManager()
 	OSTRAP( GetFileInfo );  // A00C
 	OSTRAP( SetFileInfo );  // A00D
 	
+	OSTRAP( Allocate );  // A010
 	OSTRAP( GetEOF   );  // A011
 	OSTRAP( SetEOF   );  // A012
 	OSTRAP( FlushVol );  // A013
