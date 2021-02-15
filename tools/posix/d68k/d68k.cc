@@ -2459,7 +2459,7 @@ namespace tool
 		
 		if ( argn > 0 )
 		{
-			p7::dup2( p7::open( args[ 1 ], p7::o_rdonly ), p7::stdin_fileno );
+			p7::dup2( p7::open( args[ 0 ], p7::o_rdonly ), p7::stdin_fileno );
 		}
 		
 		global_entry_points.push_back( 0 );  // default entry point
