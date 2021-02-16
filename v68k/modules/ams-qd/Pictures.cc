@@ -112,7 +112,7 @@ const UInt8* fill_pat( const UInt8* p )
 }
 
 static
-const UInt8* short_line( const UInt8* p, Point origin )
+const UInt8* short_line( const UInt8* p )
 {
 	const short v = read_word( p );
 	const short h = read_word( p );
@@ -120,7 +120,7 @@ const UInt8* short_line( const UInt8* p, Point origin )
 	const SInt8 dh = *p++;
 	const SInt8 dv = *p++;
 	
-	MoveTo( h + origin.h, v + origin.v );
+	MoveTo( h, v );
 	
 	Line( dh, dv );
 	
@@ -128,12 +128,12 @@ const UInt8* short_line( const UInt8* p, Point origin )
 }
 
 static
-const UInt8* long_text( const UInt8* p, Point origin )
+const UInt8* long_text( const UInt8* p )
 {
 	const short v = read_word( p );
 	const short h = read_word( p );
 	
-	MoveTo( h + origin.h, v + origin.v );
+	MoveTo( h, v );
 	
 	DrawString( p );
 	
@@ -143,7 +143,7 @@ const UInt8* long_text( const UInt8* p, Point origin )
 }
 
 static
-const UInt8* poly( const Byte* p, Point origin, Op op )
+const UInt8* poly( const Byte* p, Op op )
 {
 	const UInt8* q = p;
 	
@@ -152,8 +152,6 @@ const UInt8* poly( const Byte* p, Point origin, Op op )
 	Handle h = NewHandle( polySize );
 	
 	BlockMoveData( p, *h, polySize );
-	
-	OffsetPoly( (PolyHandle) h, origin.h, origin.v );
 	
 	signed char verb = op - 0x70;
 	
@@ -165,7 +163,7 @@ const UInt8* poly( const Byte* p, Point origin, Op op )
 }
 
 static
-const UInt8* draw_bits( const UInt8* p, Point origin )
+const UInt8* draw_bits( const UInt8* p )
 {
 	BitMap bitmap;
 	
@@ -186,8 +184,6 @@ const UInt8* draw_bits( const UInt8* p, Point origin )
 	Rect dstRect = read_Rect( p );
 	
 	const short mode = read_word( p );
-	
-	OffsetRect( &dstRect, origin.h, origin.v );
 	
 	short n_rows = bitmap.bounds.bottom - bitmap.bounds.top;
 	
@@ -237,7 +233,7 @@ const UInt8* draw_bits( const UInt8* p, Point origin )
 }
 
 static
-const Byte* do_opcode( const Byte* p, Point origin )
+const Byte* do_opcode( const Byte* p )
 {
 	const Byte opcode = *p++;
 	
@@ -276,11 +272,11 @@ const Byte* do_opcode( const Byte* p, Point origin )
 			break;
 		
 		case 0x22:
-			p = short_line( p, origin );
+			p = short_line( p );
 			break;
 		
 		case 0x28:
-			p = long_text( p, origin );
+			p = long_text( p );
 			break;
 		
 		case 0x70:
@@ -288,12 +284,12 @@ const Byte* do_opcode( const Byte* p, Point origin )
 		case 0x72:
 		case 0x73:
 		case 0x74:
-			p = poly( p, origin, opcode );
+			p = poly( p, opcode );
 			break;
 		
 		case 0x90:
 		case 0x98:
-			p = draw_bits( p, origin );
+			p = draw_bits( p );
 			break;
 		
 		case 0xFF:
@@ -308,13 +304,13 @@ const Byte* do_opcode( const Byte* p, Point origin )
 }
 
 static
-const Byte* do_opcode2( const Byte* p, Point origin )
+const Byte* do_opcode2( const Byte* p )
 {
 	const UInt16* p2 = (const UInt16*) p;
 	
 	if ( *p++ == 0 )
 	{
-		p = do_opcode( p, origin );
+		p = do_opcode( p );
 		
 		if ( (long) p & 1 )
 		{
@@ -381,7 +377,13 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	const short dh = dstRect->left - frame.left;
 	const short dv = dstRect->top  - frame.top;
 	
-	Point origin = { dv, dh };
+	const Point saved_origin = (const Point&) port.portRect;
+	
+	SetOrigin( saved_origin.h - dh, saved_origin.v - dv );
+	
+	const long clipTopLeft = (long&) port.clipRgn[0]->rgnBBox;
+	
+	OffsetRgn( port.clipRgn, -dh, -dv );
 	
 	uint8_t version = *p++;
 	
@@ -389,7 +391,7 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	{
 		while ( p  &&  p < end )
 		{
-			p = do_opcode( p, origin );
+			p = do_opcode( p );
 		}
 	}
 	else if ( version == 2 )
@@ -398,13 +400,35 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 		
 		while ( p  &&  p < end )
 		{
-			p = do_opcode2( p, origin );
+			p = do_opcode2( p );
 		}
 	}
 	else
 	{
 		WARNING = "Unknown PICT format ", version;
 	}
+	
+	if ( clipTopLeft != (long&) port.clipRgn[0]->rgnBBox )
+	{
+		/*
+			Only offset the clipRgn back if it moved in the first place.
+			It is of course possible that both dh and dv are zero, but the
+			real concern is a clip region that approaches the edges of
+			QuickDraw coordinate space on only some sides.  For example:
+			
+				clip region: {-32767,-32767 - 512,342}
+			
+			It's admittedly far-fetched, but it's totally possible.  Drawing
+			a picture offset from the port's top left would unsuccessfully try
+			to offset the clip region up and/or left, but the reverse offset
+			would succeed!  Therefore we check to see if the initial offset
+			occurred to determine if it needs to be reversed.
+		*/
+		
+		OffsetRgn( port.clipRgn, dh, dv );
+	}
+	
+	SetOrigin( saved_origin.h, saved_origin.v );
 	
 	SetPenState( &penState );
 }
