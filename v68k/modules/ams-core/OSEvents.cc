@@ -135,6 +135,8 @@ char GetOSEvent_patch( short mask : __D0, EventRecord* event : __A0 )
 		dequeue_event( it );
 	}
 	
+	EventQueue.qFlags |= 1;  // GetOSEvent was here
+	
 	return -(it == NULL);
 }
 

@@ -24,6 +24,7 @@
 
 
 UInt32 Ticks   : 0x016A;
+QHdr EventQueue : 0x014A;
 Byte   MBState : 0x0172;
 UInt8  escapes : 0x0173;  // count of Button() calls that won't block
 KeyMap KeyMaps : 0x0174;
@@ -131,9 +132,13 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 	
 	next_sleep = GetNextEvent_throttle;
 	
+	EventQueue.qFlags &= ~1;
+	
 	return false;
 	
 got_event:
+	
+	EventQueue.qFlags &= ~1;
 	
 	return ! SystemEvent( event );
 }
