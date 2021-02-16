@@ -97,36 +97,6 @@ Rect read_Rect( const UInt8*& p )
 }
 
 static
-const UInt8* text_font( const UInt8* p )
-{
-	const short font = read_word( p );
-	
-	TextFont( font );
-	
-	return p;
-}
-
-static
-const UInt8* text_mode( const UInt8* p )
-{
-	const short mode = read_word( p );
-	
-	TextMode( mode );
-	
-	return p;
-}
-
-static
-const UInt8* text_size( const UInt8* p )
-{
-	const short size = read_word( p );
-	
-	TextSize( size );
-	
-	return p;
-}
-
-static
 const UInt8* pen_pat( const UInt8* p )
 {
 	Pattern pattern;
@@ -292,11 +262,11 @@ const Byte* do_opcode( const Byte* p, const Rect& dstRect, const Rect& frame )
 			break;
 		
 		case 0x03:
-			p = text_font( p );
+			TextFont( read_word( p ) );
 			break;
 		
 		case 0x05:
-			p = text_mode( p );
+			TextMode( read_word( p ) );
 			break;
 		
 		case 0x09:
@@ -308,7 +278,7 @@ const Byte* do_opcode( const Byte* p, const Rect& dstRect, const Rect& frame )
 			break;
 		
 		case 0x0D:
-			p = text_size( p );
+			TextSize( read_word( p ) );
 			break;
 		
 		case 0x22:
