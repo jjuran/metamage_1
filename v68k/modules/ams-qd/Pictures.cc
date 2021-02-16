@@ -23,12 +23,6 @@
 
 typedef Byte Op;
 
-union Word
-{
-	SInt16 s16;
-	UInt8  u8[2];
-};
-
 pascal PicHandle OpenPicture_patch( const Rect* frame )
 {
 	GrafPort& port = **get_addrof_thePort();
@@ -77,12 +71,12 @@ pascal void ClosePicture_patch()
 static
 short read_word( const UInt8*& p )
 {
-	Word result;
+	short result;
+	fast_memcpy( &result, p, sizeof result );
 	
-	result.u8[ 0 ] = *p++;
-	result.u8[ 1 ] = *p++;
+	p += sizeof result;
 	
-	return result.s16;
+	return result;
 }
 
 static
