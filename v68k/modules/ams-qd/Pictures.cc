@@ -112,7 +112,7 @@ const UInt8* fill_pat( const UInt8* p )
 }
 
 static
-const UInt8* short_line( const UInt8* p, const Rect& target, const Rect& frame )
+const UInt8* short_line( const UInt8* p, Point origin )
 {
 	const short v = read_word( p );
 	const short h = read_word( p );
@@ -120,7 +120,7 @@ const UInt8* short_line( const UInt8* p, const Rect& target, const Rect& frame )
 	const SInt8 dh = *p++;
 	const SInt8 dv = *p++;
 	
-	MoveTo( h + target.left - frame.left, v + target.top - frame.top );
+	MoveTo( h + origin.h, v + origin.v );
 	
 	Line( dh, dv );
 	
@@ -128,12 +128,12 @@ const UInt8* short_line( const UInt8* p, const Rect& target, const Rect& frame )
 }
 
 static
-const UInt8* long_text( const UInt8* p, const Rect& target, const Rect& frame )
+const UInt8* long_text( const UInt8* p, Point origin )
 {
 	const short v = read_word( p );
 	const short h = read_word( p );
 	
-	MoveTo( h + target.left - frame.left, v + target.top - frame.top );
+	MoveTo( h + origin.h, v + origin.v );
 	
 	DrawString( p );
 	
@@ -143,7 +143,7 @@ const UInt8* long_text( const UInt8* p, const Rect& target, const Rect& frame )
 }
 
 static
-const UInt8* poly( const Byte* p, const Rect& target, const Rect& frame, Op op )
+const UInt8* poly( const Byte* p, Point origin, Op op )
 {
 	const UInt8* q = p;
 	
@@ -153,7 +153,7 @@ const UInt8* poly( const Byte* p, const Rect& target, const Rect& frame, Op op )
 	
 	BlockMoveData( p, *h, polySize );
 	
-	OffsetPoly( (PolyHandle) h, target.left - frame.left, target.top - frame.top );
+	OffsetPoly( (PolyHandle) h, origin.h, origin.v );
 	
 	signed char verb = op - 0x70;
 	
@@ -165,7 +165,7 @@ const UInt8* poly( const Byte* p, const Rect& target, const Rect& frame, Op op )
 }
 
 static
-const UInt8* draw_bits( const UInt8* p, const Rect& target, const Rect& frame )
+const UInt8* draw_bits( const UInt8* p, Point origin )
 {
 	BitMap bitmap;
 	
@@ -187,7 +187,7 @@ const UInt8* draw_bits( const UInt8* p, const Rect& target, const Rect& frame )
 	
 	const short mode = read_word( p );
 	
-	OffsetRect( &dstRect, target.left - frame.left, target.top - frame.top );
+	OffsetRect( &dstRect, origin.h, origin.v );
 	
 	short n_rows = bitmap.bounds.bottom - bitmap.bounds.top;
 	
@@ -237,7 +237,7 @@ const UInt8* draw_bits( const UInt8* p, const Rect& target, const Rect& frame )
 }
 
 static
-const Byte* do_opcode( const Byte* p, const Rect& dstRect, const Rect& frame )
+const Byte* do_opcode( const Byte* p, Point origin )
 {
 	const Byte opcode = *p++;
 	
@@ -276,11 +276,11 @@ const Byte* do_opcode( const Byte* p, const Rect& dstRect, const Rect& frame )
 			break;
 		
 		case 0x22:
-			p = short_line( p, dstRect, frame );
+			p = short_line( p, origin );
 			break;
 		
 		case 0x28:
-			p = long_text( p, dstRect, frame );
+			p = long_text( p, origin );
 			break;
 		
 		case 0x70:
@@ -288,12 +288,12 @@ const Byte* do_opcode( const Byte* p, const Rect& dstRect, const Rect& frame )
 		case 0x72:
 		case 0x73:
 		case 0x74:
-			p = poly( p, dstRect, frame, opcode );
+			p = poly( p, origin, opcode );
 			break;
 		
 		case 0x90:
 		case 0x98:
-			p = draw_bits( p, dstRect, frame );
+			p = draw_bits( p, origin );
 			break;
 		
 		case 0xFF:
@@ -308,13 +308,13 @@ const Byte* do_opcode( const Byte* p, const Rect& dstRect, const Rect& frame )
 }
 
 static
-const Byte* do_opcode2( const Byte* p, const Rect& dstRect, const Rect& frame )
+const Byte* do_opcode2( const Byte* p, Point origin )
 {
 	const UInt16* p2 = (const UInt16*) p;
 	
 	if ( *p++ == 0 )
 	{
-		p = do_opcode( p, dstRect, frame );
+		p = do_opcode( p, origin );
 		
 		if ( (long) p & 1 )
 		{
@@ -376,13 +376,20 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 		return;
 	}
 	
+	const Rect& frame = pic[0]->picFrame;
+	
+	const short dh = dstRect->left - frame.left;
+	const short dv = dstRect->top  - frame.top;
+	
+	Point origin = { dv, dh };
+	
 	uint8_t version = *p++;
 	
 	if ( version == 1 )
 	{
 		while ( p  &&  p < end )
 		{
-			p = do_opcode( p, *dstRect, pic[0]->picFrame );
+			p = do_opcode( p, origin );
 		}
 	}
 	else if ( version == 2 )
@@ -391,7 +398,7 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 		
 		while ( p  &&  p < end )
 		{
-			p = do_opcode2( p, *dstRect, pic[0]->picFrame );
+			p = do_opcode2( p, origin );
 		}
 	}
 	else
