@@ -107,6 +107,16 @@ Rect read_Rect( const UInt8*& p )
 	return result;
 }
 
+static Point curvature;
+
+static
+const UInt8* set_curvature( const UInt8* p )
+{
+	fast_memcpy( &curvature, p, sizeof curvature );
+	
+	return p + sizeof curvature;
+}
+
 static
 const UInt8* pen_size( const UInt8* p )
 {
@@ -398,6 +408,10 @@ const Byte* do_opcode( const Byte* p )
 			p = fill_pat( p );
 			break;
 		
+		case 0x0B:
+			p = set_curvature( p );
+			break;
+		
 		case 0x0D:
 			TextSize( read_word( p ) );
 			break;
@@ -441,6 +455,32 @@ const Byte* do_opcode( const Byte* p )
 		case 0x3B:
 		case 0x3C:
 			StdRect( opcode & 0x7, &last_used_rect );
+			break;
+		
+		case 0x40:
+		case 0x41:
+		case 0x42:
+		case 0x43:
+		case 0x44:
+		case 0x48:
+		case 0x49:
+		case 0x4A:
+		case 0x4B:
+		case 0x4C:
+			StdRRect( opcode & 0x7, &last_used_rect, curvature.h, curvature.v );
+			break;
+		
+		case 0x50:
+		case 0x51:
+		case 0x52:
+		case 0x53:
+		case 0x54:
+		case 0x58:
+		case 0x59:
+		case 0x5A:
+		case 0x5B:
+		case 0x5C:
+			StdOval( opcode & 0x7, &last_used_rect );
 			break;
 		
 		case 0x70:
