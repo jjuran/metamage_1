@@ -89,11 +89,9 @@ static
 Rect read_Rect( const UInt8*& p )
 {
 	Rect result;
+	fast_memcpy( &result, p, sizeof result );
 	
-	result.top    = read_word( p );
-	result.left   = read_word( p );
-	result.bottom = read_word( p );
-	result.right  = read_word( p );
+	p += sizeof result;
 	
 	return result;
 }
