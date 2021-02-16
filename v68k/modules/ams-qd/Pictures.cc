@@ -335,7 +335,10 @@ const Byte* do_opcode( const Byte* p, const Rect& dstRect, const Rect& frame )
 			break;
 		
 		case 0xFF:
+			return NULL;
+		
 		default:
+			ERROR = "Aborting picture at unknown opcode ", opcode;
 			return NULL;
 	}
 	
