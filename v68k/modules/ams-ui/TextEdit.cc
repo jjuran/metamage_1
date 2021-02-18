@@ -20,6 +20,7 @@
 #include "gear/find.hh"
 
 // ams-common
+#include "callouts.hh"
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
 
@@ -34,6 +35,41 @@ long CaretTime : 0x02F4;
 short  TEScrpLength : 0x0AB0;
 Handle TEScrpHandle : 0x0AB4;
 
+
+class scoped_TERec
+{
+	private:
+		GrafPtr     its_port;
+		scoped_port its_port_scope;
+		
+		short its_font;
+		short its_face;
+		short its_mode;
+		short its_size;
+		
+		// non-copyable
+		scoped_TERec           ( const scoped_TERec& );
+		scoped_TERec& operator=( const scoped_TERec& );
+	
+	public:
+		scoped_TERec( const TERec& te );
+		
+		~scoped_TERec();
+};
+
+scoped_TERec::scoped_TERec( const TERec& te )
+:
+	its_port( te.inPort ),
+	its_port_scope( its_port )
+{
+	fast_memcpy( &its_font,         &its_port->txFont, sizeof (short) * 4 );
+	fast_memcpy( &its_port->txFont, &te.txFont,        sizeof (short) * 4 );
+}
+
+scoped_TERec::~scoped_TERec()
+{
+	fast_memcpy( &its_port->txFont, &its_font, sizeof (short) * 4 );
+}
 
 static
 void draw_text_line( const char*  p,
@@ -433,7 +469,7 @@ pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
 {
 	TERec& te = **hTE;
 	
-	scoped_port thePort = te.inPort;
+	scoped_TERec scope = te;
 	
 	if ( selEnd > te.teLength )
 	{
@@ -452,7 +488,7 @@ pascal void TEActivate_patch( TERec** hTE )
 {
 	TERec& te = **hTE;
 	
-	scoped_port thePort = te.inPort;
+	scoped_TERec scope = te;
 	
 	te.active = true;
 	
@@ -596,7 +632,7 @@ pascal void TEKey_patch( short c, TERec** hTE )
 {
 	TERec& te = **hTE;
 	
-	scoped_port thePort = te.inPort;
+	scoped_TERec scope = te;
 	
 	raster_lock lock;
 	
@@ -720,7 +756,7 @@ pascal void TEPaste_patch( TERec** hTE )
 	
 	TECalText( hTE );
 	
-	scoped_port thePort = te.inPort;
+	scoped_TERec scope = te;
 	
 	raster_lock lock;
 	
@@ -742,7 +778,7 @@ pascal void TEDelete_patch( TERec** hTE )
 		
 		TECalText( hTE );
 		
-		scoped_port thePort = te.inPort;
+		scoped_TERec scope = te;
 		
 		raster_lock lock;
 		
@@ -767,7 +803,7 @@ pascal void TEInsert_patch( const char* text, long length, TERec** hTE )
 {
 	TERec& te = **hTE;
 	
-	scoped_port thePort = te.inPort;
+	scoped_TERec scope = te;
 	
 	raster_lock lock;
 	
@@ -800,7 +836,7 @@ pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE )
 {
 	TERec& te = **hTE;
 	
-	scoped_port thePort = te.inPort;
+	scoped_TERec scope = te;
 	
 	raster_lock lock;
 	
