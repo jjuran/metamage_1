@@ -417,7 +417,7 @@ void update_edit_record( TEHandle hTE, const DialogItem* item )
 }
 
 static
-void make_edit_record( DialogPeek d, const DialogItem* item )
+void make_edit_record( DialogPeek d )
 {
 	scoped_port thePort = (GrafPtr) d;
 	
@@ -429,7 +429,7 @@ void make_edit_record( DialogPeek d, const DialogItem* item )
 	
 	DisposeHandle( hTE[0]->hText );
 	
-	update_edit_record( hTE, item );
+	hTE[0]->hText = NULL;
 }
 
 pascal DialogRef NewDialog_patch( void*                 storage,
@@ -545,9 +545,11 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	
 	d->editField = edit_offset;
 	
+	make_edit_record( d );
+	
 	if ( edit_offset >= 0 )
 	{
-		make_edit_record( d, edit );
+		update_edit_record( d->textH, edit );
 	}
 	
 	return window;
@@ -1320,7 +1322,6 @@ pascal void SetDItem_patch( DialogRef    dialog,
 		
 		if ( d->textH == NULL )
 		{
-			make_edit_record( d, item );
 		}
 		else
 		{
