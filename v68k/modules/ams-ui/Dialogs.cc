@@ -971,12 +971,6 @@ pascal void DrawDialog_patch( DialogRef dialog )
 				
 				InsetRect( &box, -3, -3 );
 				FrameRect( &box );
-				
-				if ( d->editField + 1 == item_index )
-				{
-					TEUpdate( &bounds, d->textH );
-					break;
-				}
 			}
 			// fall through
 			
@@ -984,7 +978,9 @@ pascal void DrawDialog_patch( DialogRef dialog )
 			{
 				Handle h = item->handle;
 				
-				TETextBox( *h, GetHandleSize( h ), &bounds, 0 );
+				update_edit_record( d->textH, item );
+				
+				TEUpdate( &bounds, d->textH );
 				break;
 			}
 			
@@ -1022,6 +1018,11 @@ pascal void DrawDialog_patch( DialogRef dialog )
 		++item_index;
 	}
 	while ( --n_items_1 >= 0 );
+	
+	if ( const DialogItem* edit = get_editField( d ) )
+	{
+		update_edit_record( d->textH, edit );
+	}
 }
 
 #pragma mark -
@@ -1357,11 +1358,16 @@ pascal void SetIText_patch( Handle h, const unsigned char* text )
 		return;
 	}
 	
-	scoped_port thePort = (DialogRef) d;
-	
 	DialogItem* item = recover_dialog_item( d, h );
 	
-	TETextBox( text + 1, len, &item->bounds, 0 );
+	update_edit_record( hTE, item );
+	
+	TEUpdate( &item->bounds, hTE );
+	
+	if ( const DialogItem* edit = get_editField( d ) )
+	{
+		update_edit_record( hTE, edit );
+	}
 }
 
 pascal void SelIText_patch( GrafPort*  dialog,
