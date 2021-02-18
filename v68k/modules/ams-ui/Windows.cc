@@ -1255,6 +1255,9 @@ pascal void ValidRgn_patch( struct MacRegion** rgn )
 	OffsetRgn( rgn, csdx, csdy );  // global to local
 }
 
+const  short max_update_attempts = 2;
+static short update_attempts;
+
 static WindowPeek window_with_pending_updateEvt;
 
 pascal void BeginUpdate_patch( struct GrafPort* window )
@@ -1328,15 +1331,24 @@ pascal unsigned char CheckUpdate_patch( EventRecord* event )
 					the last time around.
 				*/
 				
-				return false;
+				if ( ! --update_attempts )
+				{
+					SetEmptyRgn( w->updateRgn );
+					
+					return false;
+				}
+			}
+			else
+			{
+				window_with_pending_updateEvt = w;
+				
+				update_attempts = max_update_attempts;
 			}
 			
 			fast_memset( event, '\0', sizeof (EventRecord) );
 			
 			event->what    = updateEvt;
 			event->message = (long) w;
-			
-			window_with_pending_updateEvt = w;
 			
 			return true;
 		}
