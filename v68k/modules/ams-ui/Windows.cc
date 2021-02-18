@@ -36,6 +36,7 @@
 #include "utility_region.hh"
 
 
+short      ApFontID    : 0x0984;
 WindowPeek WindowList  : 0x09D6;
 short      SaveUpdate  : 0x09DA;
 short      PaintWhite  : 0x09DC;
@@ -288,6 +289,8 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	PortSize( bounds->right - bounds->left, bounds->bottom - bounds->top );
 	
 	MovePortTo( bounds->left, bounds->top );
+	
+	TextFont( ApFontID );
 	
 	window->windowKind = userKind;
 	window->visible    = -(visible != 0);
