@@ -589,7 +589,7 @@ pascal void CloseDialog_patch( DialogRef dialog )
 	
 	if ( TEHandle hTE = d->textH )
 	{
-		hTE[0]->hText = NewHandle( 0 );
+		hTE[0]->hText = NULL;
 		
 		TEDispose( hTE );
 	}
