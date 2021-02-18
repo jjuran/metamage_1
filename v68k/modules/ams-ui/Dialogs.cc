@@ -416,6 +416,8 @@ void update_edit_record( TEHandle hTE, const DialogItem* item )
 static
 void make_edit_record( DialogPeek d, const DialogItem* item )
 {
+	scoped_port thePort = (GrafPtr) d;
+	
 	TEHandle hTE = TENew( &item->bounds, &item->bounds );
 	
 	d->textH = hTE;
@@ -540,8 +542,6 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	
 	if ( edit_offset >= 0 )
 	{
-		scoped_port thePort = window;
-		
 		make_edit_record( d, edit );
 	}
 	
@@ -1318,8 +1318,6 @@ pascal void SetDItem_patch( DialogRef    dialog,
 		
 		if ( d->textH == NULL )
 		{
-			scoped_port thePort = dialog;
-			
 			make_edit_record( d, item );
 		}
 		else
