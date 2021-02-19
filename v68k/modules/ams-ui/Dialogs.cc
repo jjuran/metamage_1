@@ -407,6 +407,9 @@ pascal void ErrorSound_patch( void* proc )
 static
 void update_edit_record( TEHandle hTE, const DialogItem* item )
 {
+	hTE[0]->viewRect = item->bounds;
+	hTE[0]->destRect = item->bounds;
+	
 	hTE[0]->teLength = GetHandleSize( item->handle );
 	hTE[0]->hText    = item->handle;
 	
@@ -418,7 +421,9 @@ void make_edit_record( DialogPeek d, const DialogItem* item )
 {
 	scoped_port thePort = (GrafPtr) d;
 	
-	TEHandle hTE = TENew( &item->bounds, &item->bounds );
+	GrafPort& port = *(GrafPtr) d;
+	
+	TEHandle hTE = TENew( &port.portRect, &port.portRect );
 	
 	d->textH = hTE;
 	
@@ -684,9 +689,6 @@ void activate_editField( DialogRef dialog, bool activating )
 		{
 			if ( const DialogItem* item = get_editField( d ) )
 			{
-				hTE[0]->viewRect = item->bounds;
-				hTE[0]->destRect = item->bounds;
-				
 				TEActivate( hTE );
 			}
 		}
