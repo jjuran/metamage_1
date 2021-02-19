@@ -271,6 +271,7 @@ pascal OSErr SFPutFile_call( Point             where,
 	
 	GetDialogItem( dialog, putName, &type, &h, &box );
 	SetDialogItemText( h, origName );
+	SelectDialogItemText( dialog, putName, 0, origName[ 0 ] );
 	
 	GetDialogItem( dialog, putLine, &type, &h, &box );
 	SetDialogItem( dialog, putLine, type, (Handle) &draw_dotted_line, &box );
