@@ -594,12 +594,11 @@ pascal void CloseDialog_patch( DialogRef dialog )
 {
 	DialogPeek d = (DialogPeek) dialog;
 	
-	if ( TEHandle hTE = d->textH )
-	{
-		hTE[0]->hText = NULL;
-		
-		TEDispose( hTE );
-	}
+	TEHandle hTE = d->textH;
+	
+	hTE[0]->hText = NULL;
+	
+	TEDispose( hTE );
 	
 	short n_items_1 = dialog_item_count_minus_one( d->items );
 	
@@ -685,19 +684,18 @@ void activate_editField( DialogRef dialog, bool activating )
 {
 	DialogPeek d = (DialogPeek) dialog;
 	
-	if ( TEHandle hTE = d->textH )
+	TEHandle hTE = d->textH;
+	
+	if ( activating )
 	{
-		if ( activating )
+		if ( const DialogItem* item = get_editField( d ) )
 		{
-			if ( const DialogItem* item = get_editField( d ) )
-			{
-				TEActivate( hTE );
-			}
+			TEActivate( hTE );
 		}
-		else
-		{
-			TEDeactivate( hTE );
-		}
+	}
+	else
+	{
+		TEDeactivate( hTE );
 	}
 }
 
@@ -1320,13 +1318,7 @@ pascal void SetDItem_patch( DialogRef    dialog,
 	{
 		d->editField = i - 1;
 		
-		if ( d->textH == NULL )
-		{
-		}
-		else
-		{
-			update_edit_record( d->textH, item );
-		}
+		update_edit_record( d->textH, item );
 	}
 }
 
@@ -1386,11 +1378,6 @@ pascal void SelIText_patch( GrafPort*  dialog,
 	DialogPeek d = (DialogPeek) dialog;
 	
 	TEHandle hTE = d->textH;
-	
-	if ( hTE == NULL )
-	{
-		return;
-	}
 	
 	const bool active = hTE[0]->active;
 	
