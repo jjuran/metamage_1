@@ -411,8 +411,6 @@ void update_edit_record( TEHandle hTE, const DialogItem* item )
 	hTE[0]->hText    = item->handle;
 	
 	TECalText( hTE );
-	
-	TESetSelect( 0, 32767, hTE );
 }
 
 static
