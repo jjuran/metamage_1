@@ -41,6 +41,8 @@ WindowPeek WindowList  : 0x09D6;
 
 StringHandle DAStrings[ 4 ] : 0x0AA0;
 
+short DlgFont : 0x0AFA;
+
 
 static
 Handle NewHandleOrBust( Size size )
@@ -458,6 +460,8 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 		
 		return NULL;
 	}
+	
+	TextFont( DlgFont );
 	
 	WindowPeek w = (WindowPeek) window;
 	DialogPeek d = (DialogPeek) window;
