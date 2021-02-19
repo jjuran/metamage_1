@@ -464,9 +464,13 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	
 	w->windowKind = dialogKind;
 	
-	TEHandle hTE = TENew( &window->portRect, &window->portRect );
+	{
+		scoped_port thePort = window;
+		
+		d->textH = TENew( &window->portRect, &window->portRect );
+	}
 	
-	d->textH = hTE;
+	TEHandle hTE = d->textH;
 	
 	DisposeHandle( hTE[0]->hText );
 	
