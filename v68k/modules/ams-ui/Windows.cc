@@ -575,7 +575,24 @@ pascal void ShowWindow_patch( WindowPeek window )
 	
 	ShowHide_patch( window, true );
 	
-	// TODO:  Highlight and activate previously invisible front window
+	if ( window == WindowList )
+	{
+		// Highlight and activate previously invisible front window
+		
+		if ( WindowPeek second = next_visible_window( window->nextWindow ) )
+		{
+			if ( CurActivate != (WindowRef) second )
+			{
+				CurDeactive = (WindowRef) second;
+				
+				HiliteWindow_patch( second, false );
+			}
+		}
+		
+		CurActivate = (WindowRef) window;
+		
+		HiliteWindow_patch( window, true );
+	}
 }
 
 typedef pascal void (*window_painter)( WindowPeek, RgnHandle );
