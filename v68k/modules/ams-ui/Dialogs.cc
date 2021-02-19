@@ -416,22 +416,6 @@ void update_edit_record( TEHandle hTE, const DialogItem* item )
 	TECalText( hTE );
 }
 
-static
-void make_edit_record( DialogPeek d )
-{
-	scoped_port thePort = (GrafPtr) d;
-	
-	GrafPort& port = *(GrafPtr) d;
-	
-	TEHandle hTE = TENew( &port.portRect, &port.portRect );
-	
-	d->textH = hTE;
-	
-	DisposeHandle( hTE[0]->hText );
-	
-	hTE[0]->hText = NULL;
-}
-
 pascal DialogRef NewDialog_patch( void*                 storage,
                                   const Rect*           bounds,
                                   const unsigned char*  title,
@@ -479,6 +463,14 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	DialogPeek d = (DialogPeek) window;
 	
 	w->windowKind = dialogKind;
+	
+	TEHandle hTE = TENew( &window->portRect, &window->portRect );
+	
+	d->textH = hTE;
+	
+	DisposeHandle( hTE[0]->hText );
+	
+	hTE[0]->hText = NULL;
 	
 	d->aDefItem = 1;
 	
@@ -544,8 +536,6 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	while ( --n_items_1 >= 0 );
 	
 	d->editField = edit_offset;
-	
-	make_edit_record( d );
 	
 	if ( edit_offset >= 0 )
 	{
