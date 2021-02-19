@@ -40,4 +40,6 @@ short SetGrowZone_patch( void* proc : __A0 );
 
 void MoveHHi_patch( Handle h : __A0 );
 
+long MaxBlock_patch( short trap_word : __D1 );
+
 #endif

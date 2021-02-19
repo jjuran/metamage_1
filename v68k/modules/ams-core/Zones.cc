@@ -354,3 +354,12 @@ short SetGrowZone_patch( void* proc : __A0 )
 void MoveHHi_patch( Handle h : __A0 )
 {
 }
+
+#pragma mark -
+#pragma mark 128K ROM
+#pragma mark -
+
+long MaxBlock_patch( short trap_word : __D1 )
+{
+	return 1024 * 1024;
+}
