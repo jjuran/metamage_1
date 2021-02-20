@@ -143,6 +143,12 @@ pascal void StuffHex_patch( char* dst, const unsigned char* srcHex )
 	}
 }
 
+static inline
+short map_coord( int x, int src, int dst )
+{
+	return muldivs_w( x, dst, src );
+}
+
 pascal void MapPt_patch( Point* pt, const Rect* src, const Rect* dst )
 {
 	const UInt16 srcHeight = src->bottom - src->top;
@@ -151,8 +157,8 @@ pascal void MapPt_patch( Point* pt, const Rect* src, const Rect* dst )
 	const UInt16 srcWidth = src->right - src->left;
 	const UInt16 dstWidth = dst->right - dst->left;
 	
-	pt->v = muldivs_w( pt->v - src->top,  dstHeight, srcHeight ) + dst->top;
-	pt->h = muldivs_w( pt->h - src->left, dstWidth,  srcWidth  ) + dst->left;
+	pt->v = map_coord( pt->v - src->top,  srcHeight, dstHeight ) + dst->top;
+	pt->h = map_coord( pt->h - src->left, srcWidth,  dstWidth  ) + dst->left;
 }
 
 pascal void MapRect_patch( Rect* r, const Rect* src, const Rect* dst )
@@ -362,13 +368,13 @@ pascal void MapRgn_patch( RgnHandle rgn, const Rect* src, const Rect* dst )
 	{
 		const short v = *p;
 		
-		*p++ = muldivs_w( v - src->top, dstHeight, srcHeight ) + dst->top;
+		*p++ = map_coord( v - src->top, srcHeight, dstHeight ) + dst->top;
 		
 		while ( *p != Region_end )
 		{
 			const short h = *p;
 			
-			*p++ = muldivs_w( h - src->left, dstWidth, srcWidth ) + dst->left;
+			*p++ = map_coord( h - src->left, srcWidth, dstWidth ) + dst->left;
 		}
 		
 		++p;  // skip end-of-row sentinel
