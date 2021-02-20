@@ -10,6 +10,9 @@
 #include <MacTypes.h>
 #endif
 
+// math
+#include "math/fractions.hh"
+
 // quickdraw
 #include "qd/pack_bits.hh"
 #include "qd/region_detail.hh"
@@ -146,7 +149,9 @@ pascal void StuffHex_patch( char* dst, const unsigned char* srcHex )
 static inline
 short map_coord( int x, int src, int dst )
 {
-	return muldivs_w( x, dst, src );
+	using math::fractions::half;
+	
+	return half( 1 + muldivs_w( x, 2 * dst, src ) );
 }
 
 pascal void MapPt_patch( Point* pt, const Rect* src, const Rect* dst )
