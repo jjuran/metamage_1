@@ -16,6 +16,9 @@
 // debug
 #include "debug/assert.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // quickdraw
 #include "qd/regions.hh"
 #include "qd/region_detail.hh"
@@ -146,32 +149,83 @@ static short region_size( MacRegion* region, const short* end )
 static
 bool check_region( RgnHandle rgn, const char* func, int line )
 {
+	bool valid = true;
+	
 	const short End = 0x7FFF;
 	
-	ASSERT(  rgn != NULL );
-	ASSERT( *rgn != NULL );
+	if ( rgn == NULL )
+	{
+		ERROR = func, ", line ", line, ": region is NULL";
+		
+		return false;
+	}
+	
+	if ( *rgn == NULL )
+	{
+		ERROR = func, ", line ", line, ": region is empty handle";
+		
+		return false;
+	}
 	
 	const Size h_size = GetHandleSize( (Handle) rgn );
 	
-	ASSERT( h_size >= sizeof (MacRegion) );
+	if ( h_size < sizeof (MacRegion) )
+	{
+		ERROR = func, ", line ", line,
+			": handle size ", h_size, " less than minimum region size";
+		
+		return false;
+	}
 	
 	const short rgn_size = rgn[0]->rgnSize;
 	
-	ASSERT( h_size >= rgn_size );
+	if ( h_size < rgn_size )
+	{
+		ERROR = func, ", line ", line,
+			": region size ", rgn_size, " exceeds handle size ", h_size;
+		
+		return false;
+	}
 	
-	ASSERT( rgn_size % 2 == 0 );
+	if ( rgn_size % 2 != 0 )
+	{
+		ERROR = func, ", line ", line,
+			": region size ", rgn_size, " not a multiple of 2 ";
+		
+		return false;
+	}
 	
 	Rect bbox = rgn[0]->rgnBBox;
 	
-	ASSERT( bbox.top <= bbox.bottom );
-	ASSERT( bbox.left <= bbox.right );
+	if ( bbox.top > bbox.bottom )
+	{
+		ERROR = func, ", line ", line,
+			": region bbox top ", bbox.top, " exceeds bottom ", bbox.bottom;
+		
+		return false;
+	}
+	
+	if ( bbox.left > bbox.right )
+	{
+		ERROR = func, ", line ", line,
+			": region bbox left ", bbox.left, " exceeds right ", bbox.right;
+		
+		return false;
+	}
 	
 	if ( rgn_size == sizeof (MacRegion) )
 	{
+		// This is a simple rectangular region, so we're done
 		return true;
 	}
 	
-	ASSERT( rgn_size >= 28 );
+	if ( rgn_size < 28 )
+	{
+		ERROR = func, ", line ", line,
+			": region size ", rgn_size, " is > 10 but < 28 ";
+		
+		valid = false;
+	}
 	
 	const short n = rgn_size / 2u - sizeof (MacRegion) / 2;
 	
@@ -185,7 +239,13 @@ bool check_region( RgnHandle rgn, const char* func, int line )
 	short bottom = -32767;
 	short right  = -32767;
 	
-	EXPECT( extent[ 0 ] == top );
+	if ( extent[ 0 ] != top )
+	{
+		ERROR = func, ", line ", line,
+			": first v  ", extent[ 0 ], " doesn't match top ", top;
+		
+		valid = false;
+	}
 	
 	const short* p = extent;
 	
@@ -193,7 +253,13 @@ bool check_region( RgnHandle rgn, const char* func, int line )
 	
 	while ( *p != End )
 	{
-		ASSERT( *p > v );
+		if ( *p <= v )
+		{
+			ERROR = func, ", line ", line,
+				"v ", *p, " isn't an increase over ", v;
+			
+			valid = false;
+		}
 		
 		v = *p++;
 		
@@ -206,8 +272,13 @@ bool check_region( RgnHandle rgn, const char* func, int line )
 		
 		while ( *p != End )
 		{
-			EXPECT( *p > h );
-			ASSERT( *p >= h );
+			if ( *p <= h )
+			{
+				ERROR = func, ", line ", line,
+					"h ", *p, " isn't an increase over ", h;
+				
+				valid = false;
+			}
 			
 			h = *p++;
 			
@@ -218,12 +289,39 @@ bool check_region( RgnHandle rgn, const char* func, int line )
 		++p;
 	}
 	
-	ASSERT( top    == bbox.top    );
-	EXPECT( left   == bbox.left   );
-	EXPECT( bottom == bbox.bottom );
-	EXPECT( right  == bbox.right  );
+	if ( top != bbox.top )
+	{
+		ERROR = func, ", line ", line,
+			": actual region top ", top, " doesn't match bbox ", bbox.top;
+		
+		valid = false;
+	}
 	
-	return true;
+	if ( left != bbox.left )
+	{
+		ERROR = func, ", line ", line,
+			": actual region left ", left, " doesn't match bbox ", bbox.left;
+		
+		valid = false;
+	}
+	
+	if ( bottom != bbox.bottom )
+	{
+		ERROR = func, ", line ", line,
+			": actual region bottom ", bottom, " doesn't match bbox ", bbox.bottom;
+		
+		valid = false;
+	}
+	
+	if ( right != bbox.right )
+	{
+		ERROR = func, ", line ", line,
+			": actual region right ", right, " doesn't match bbox ", bbox.right;
+		
+		valid = false;
+	}
+	
+	return valid;
 }
 
 pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap )
