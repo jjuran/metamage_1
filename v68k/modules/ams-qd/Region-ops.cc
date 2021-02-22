@@ -141,8 +141,10 @@ static short region_size( MacRegion* region, const short* end )
 	return rgn_size;
 }
 
+#define CHECK_REGION(func, rgn)  check_region( rgn, func, __LINE__ )
+
 static
-bool is_valid_region( RgnHandle rgn )
+bool check_region( RgnHandle rgn, const char* func, int line )
 {
 	const short End = 0x7FFF;
 	
@@ -302,7 +304,7 @@ pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap )
 
 pascal void OffsetRgn_patch( MacRegion** rgn, short dh, short dv )
 {
-	ASSERT( is_valid_region( rgn ) );
+	CHECK_REGION( "OffsetRgn", rgn );
 	
 	rgn[0]->rgnBBox.top    += dv;
 	rgn[0]->rgnBBox.left   += dh;
@@ -430,8 +432,8 @@ static void finish_region( RgnHandle r )
 
 static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 {
-	ASSERT( is_valid_region( a ) );
-	ASSERT( is_valid_region( b ) );
+	CHECK_REGION( "sect_regions", a );
+	CHECK_REGION( "sect_regions", b );
 	
 	ASSERT( a[0]->rgnSize > sizeof (MacRegion) );
 	ASSERT( b[0]->rgnSize > sizeof (MacRegion) );
@@ -464,7 +466,7 @@ static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 
 static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 {
-	ASSERT( is_valid_region( src ) );
+	CHECK_REGION( "sect_rect_region", src );
 	
 	if ( src == dst )
 	{
@@ -499,8 +501,8 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 
 pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 {
-	ASSERT( is_valid_region( a ) );
-	ASSERT( is_valid_region( b ) );
+	CHECK_REGION( "SectRgn", a );
+	CHECK_REGION( "SectRgn", b );
 	
 	if ( empty_rect( a[0]->rgnBBox )  ||  empty_rect( b[0]->rgnBBox ) )
 	{
@@ -678,8 +680,8 @@ static Handle xor_scratch = NewHandle( 0 );
 
 pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 {
-	ASSERT( is_valid_region( a ) );
-	ASSERT( is_valid_region( b ) );
+	CHECK_REGION( "XOrRgn", a );
+	CHECK_REGION( "XOrRgn", b );
 	
 	if ( empty_rect( a[0]->rgnBBox ) )
 	{
