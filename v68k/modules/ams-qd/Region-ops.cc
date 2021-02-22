@@ -597,12 +597,18 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 	finish_region( dst );
 }
 
+static inline
+bool empty_rgn( RgnHandle rgn )
+{
+	return rgn == NULL  ||  empty_rect( rgn[0]->rgnBBox );
+}
+
 pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 {
 	CHECK_REGION( "SectRgn", a );
 	CHECK_REGION( "SectRgn", b );
 	
-	if ( empty_rect( a[0]->rgnBBox )  ||  empty_rect( b[0]->rgnBBox ) )
+	if ( empty_rgn( a )  ||  empty_rgn( b ) )
 	{
 		SetEmptyRgn( dst );
 		
@@ -760,7 +766,7 @@ pascal void UnionRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 
 pascal void DiffRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 {
-	if ( empty_rect( a[0]->rgnBBox ) )
+	if ( empty_rgn( a ) )
 	{
 		SetEmptyRgn( dst );
 		
@@ -781,14 +787,14 @@ pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 	CHECK_REGION( "XOrRgn", a );
 	CHECK_REGION( "XOrRgn", b );
 	
-	if ( empty_rect( a[0]->rgnBBox ) )
+	if ( empty_rgn( a ) )
 	{
 		CopyRgn( b, dst );
 		
 		return;
 	}
 	
-	if ( empty_rect( b[0]->rgnBBox ) )
+	if ( empty_rgn( b ) )
 	{
 		CopyRgn( a, dst );
 		
