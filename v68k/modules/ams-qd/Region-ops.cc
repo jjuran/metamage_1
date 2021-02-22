@@ -413,6 +413,8 @@ pascal void OffsetRgn_patch( MacRegion** rgn, short dh, short dv )
 	{
 		offset_region( rgn_extent( *rgn ), dh, dv );
 	}
+	
+	ASSERT( CHECK_REGION( "OffsetRgn", rgn ) );
 }
 
 /*
@@ -560,6 +562,8 @@ static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 	              rgn_extent( *dst ) );
 	
 	finish_region( dst );
+	
+	ASSERT( CHECK_REGION( "sect_regions", dst ) );
 }
 
 static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
@@ -595,6 +599,8 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 	                  rgn_extent( *dst ) );
 	
 	finish_region( dst );
+	
+	ASSERT( CHECK_REGION( "sect_rect_region", dst ) );
 }
 
 static inline
@@ -833,6 +839,8 @@ pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 		
 		CopyRgn( r, dst );
 	}
+	
+	ASSERT( CHECK_REGION( "XOrRgn", dst ) );
 }
 
 static inline
