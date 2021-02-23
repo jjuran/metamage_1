@@ -123,6 +123,16 @@ pascal void GetFNum_patch( const unsigned char* name, short* num )
 		return;
 	}
 	
+	if ( Handle font = GetNamedResource( 'FONT', name ) )
+	{
+		GetResInfo( font, num, NULL, NULL );
+		
+		ReleaseResource( font );
+		
+		*num /= 128u;
+		return;
+	}
+	
 	if ( memcmp( name, "\p" STR_LEN( "Geneva" ) ) == 0 )
 	{
 		*num = kFontIDGeneva;
