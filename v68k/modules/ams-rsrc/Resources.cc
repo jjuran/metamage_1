@@ -868,7 +868,8 @@ pascal void LoadResource_patch( Handle resource )
 	ResErr = noErr;
 }
 
-pascal void ReleaseResource_patch( Handle resource )
+static
+void ReleaseResource_handler( Handle resource : __A0 )
 {
 	ResErr = noErr;
 	
@@ -882,6 +883,25 @@ pascal void ReleaseResource_patch( Handle resource )
 	*/
 	
 	DisposeHandle( resource );
+}
+
+asm
+pascal void ReleaseResource_patch( Handle resource )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A0
+	
+	JSR      ReleaseResource_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
+	
+	JMP      (A0)
 }
 
 static
