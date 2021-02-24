@@ -66,9 +66,11 @@ asm Handle PtrToHand( const void* p : __A0, long size : __D0 )
 static inline
 rsrc_header* recover_rsrc_header( Handle resource )
 {
+	// Technically we shouldn't deref before null test, but it works in MWC68K
+	
 	const master_pointer& mp = *(const master_pointer*) resource;
 	
-	if ( mp.flags & kHandleIsResourceMask )
+	if ( resource  &&  mp.flags & kHandleIsResourceMask )
 	{
 		return (rsrc_header*) (*(char**) mp.base + mp.offset);
 	}
