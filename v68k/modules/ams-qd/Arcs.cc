@@ -100,6 +100,95 @@ non_rectangular:
 			*p++ = 0;
 		}
 	}
+	else
+	{
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = 0;
+		*p++ = width;
+		*p++ = height;
+		*p++ = width;
+		*p++ = height;
+		*p++ = 0;
+		
+		const short octant = angle / 45u;
+		
+		short factor = width;
+		
+		if ( octant + 1 & 0x2 )
+		{
+			// True for octants 1, 2, 5, and 6
+			
+			angle = 90 - angle;  // reciprocal slope
+			
+			factor = height;
+		}
+		
+		factor /= 2u;
+		
+		const Fixed slope = SlopeFromAngle( angle );
+		
+		const short delta = factor * slope >> 16;
+		
+		switch ( octant )
+		{
+			case 0:  // 0 .. 45
+				polygon.polyPoints[ 0 ].h = factor - delta;
+				polygon.polyPoints[ 3 ].h = factor + delta;
+				
+				polygon.polyBBox.left = factor + delta;
+				break;
+			
+			case 1:  // 45 .. 90
+				polygon.polyPoints[ 0 ].v = factor - delta;
+				polygon.polyPoints[ 1 ].v = factor + delta;
+				
+				polygon.polyBBox.top = factor + delta;
+				break;
+			
+			case 2:  // 90 .. 135
+				polygon.polyPoints[ 0 ].v = factor - delta;
+				polygon.polyPoints[ 1 ].v = factor + delta;
+				
+				polygon.polyBBox.top = factor - delta;
+				break;
+			
+			case 3:  // 135 .. 180
+				polygon.polyPoints[ 1 ].h = factor - delta;
+				polygon.polyPoints[ 2 ].h = factor + delta;
+				
+				polygon.polyBBox.right = factor + delta;
+				break;
+			
+			case 4:  // 180 .. 225
+				polygon.polyPoints[ 1 ].h = factor - delta;
+				polygon.polyPoints[ 2 ].h = factor + delta;
+				
+				polygon.polyBBox.right = factor - delta;
+				break;
+			
+			case 5:  // 225 .. 270
+				polygon.polyPoints[ 2 ].v = factor + delta;
+				polygon.polyPoints[ 3 ].v = factor - delta;
+				
+				polygon.polyBBox.bottom = factor - delta;
+				break;
+			
+			case 6:  // 270 .. 315
+				polygon.polyPoints[ 2 ].v = factor + delta;
+				polygon.polyPoints[ 3 ].v = factor - delta;
+				
+				polygon.polyBBox.bottom = factor + delta;
+				break;
+			
+			case 7:  // 315 .. 360 (0)
+				polygon.polyPoints[ 0 ].h = factor - delta;
+				polygon.polyPoints[ 3 ].h = factor + delta;
+				
+				polygon.polyBBox.left = factor - delta;
+				break;
+		}
+	}
 	
 	polygon.polyPoints[ n_pts ] = polygon.polyPoints[ 0 ];
 	
