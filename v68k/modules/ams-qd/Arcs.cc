@@ -95,6 +95,8 @@ non_rectangular:
 			*p++ = 0;
 		}
 		
+		polygon.polyPoints[ 3 ] = polygon.polyPoints[ 0 ];
+		
 		PolyRgn( rgn, poly );
 		
 		DisposeHandle( (Handle) poly );
