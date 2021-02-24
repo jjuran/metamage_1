@@ -66,6 +66,9 @@ non_rectangular:
 		
 		Polygon& polygon = **poly;
 		
+		polygon.polySize = size;
+		polygon.polyBBox = region.rgnBBox;
+		
 		short* p = &polygon.polyPoints[ 0 ].v;
 		
 		if ( corner_set & 1 )
