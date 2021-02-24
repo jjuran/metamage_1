@@ -61,9 +61,11 @@ non_rectangular:
 	                 : angle == 315 ? 0xF - 8
 	                 :                0;
 	
+	const short n_pts = 3 + ! corner_set;
+	
 	if ( corner_set )
 	{
-		const Size size = sizeof (Polygon) + 3 * sizeof (Point);
+		const Size size = sizeof (Polygon) + n_pts * sizeof (Point);
 		
 		PolyHandle poly = (PolyHandle) NewHandle( size );
 		
@@ -98,7 +100,7 @@ non_rectangular:
 			*p++ = 0;
 		}
 		
-		polygon.polyPoints[ 3 ] = polygon.polyPoints[ 0 ];
+		polygon.polyPoints[ n_pts ] = polygon.polyPoints[ 0 ];
 		
 		PolyRgn( rgn, poly );
 		
