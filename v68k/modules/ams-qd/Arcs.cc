@@ -24,36 +24,29 @@ void clip_from_angle( RgnHandle rgn, short width, short height, short angle )
 {
 	Region& region = **rgn;
 	
-	short left   = 0;
-	short top    = 0;
-	short right  = width;
-	short bottom = height;
+	SetRectRgn( rgn, 0, 0, width, height );
 	
 	switch ( angle )
 	{
 		case 0:
-			left = width / 2u;
+			region.rgnBBox.left = width / 2u;
 			break;
 		
 		case 90:
-			top = height / 2u;
+			region.rgnBBox.top = height / 2u;
 			break;
 		
 		case 180:
-			right /= 2u;
+			region.rgnBBox.right /= 2u;
 			break;
 		
 		case 270:
-			bottom /= 2u;
+			region.rgnBBox.bottom /= 2u;
 			break;
 			
 		default:
 			goto non_rectangular;
 	}
-	
-	region.rgnSize = sizeof (Region);
-	
-	SetRect( &region.rgnBBox, left, top, right, bottom );
 	
 	return;
 	
