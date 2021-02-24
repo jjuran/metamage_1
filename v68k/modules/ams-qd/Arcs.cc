@@ -71,30 +71,30 @@ non_rectangular:
 		
 		PolyHandle triangle = (PolyHandle) NewHandle( size );
 		
-		Point* p = triangle[0]->polyPoints;
+		short* p = &triangle[0]->polyPoints[ 0 ].v;
 		
 		if ( corner_set & 1 )
 		{
-			Point pt = { 0, 0 };
-			*p++ = pt;
+			*p++ = 0;
+			*p++ = 0;
 		}
 		
 		if ( corner_set & 2 )
 		{
-			Point pt = { 0, width };
-			*p++ = pt;
+			*p++ = 0;
+			*p++ = width;
 		}
 		
 		if ( corner_set & 4 )
 		{
-			Point pt = { height, width };
-			*p++ = pt;
+			*p++ = height;
+			*p++ = width;
 		}
 		
 		if ( corner_set & 8 )
 		{
-			Point pt = { height, 0 };
-			*p++ = pt;
+			*p++ = height;
+			*p++ = 0;
 		}
 		
 		PolyRgn( rgn, triangle );
