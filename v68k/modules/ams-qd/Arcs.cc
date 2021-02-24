@@ -75,25 +75,25 @@ non_rectangular:
 		
 		if ( corner_set & 1 )
 		{
-			Point pt = { top, left };
+			Point pt = { 0, 0 };
 			*p++ = pt;
 		}
 		
 		if ( corner_set & 2 )
 		{
-			Point pt = { top, right };
+			Point pt = { 0, width };
 			*p++ = pt;
 		}
 		
 		if ( corner_set & 4 )
 		{
-			Point pt = { bottom, right };
+			Point pt = { height, width };
 			*p++ = pt;
 		}
 		
 		if ( corner_set & 8 )
 		{
-			Point pt = { bottom, left };
+			Point pt = { height, 0 };
 			*p++ = pt;
 		}
 		
