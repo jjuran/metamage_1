@@ -62,9 +62,11 @@ non_rectangular:
 	{
 		const Size size = sizeof (Polygon) + 3 * sizeof (Point);
 		
-		PolyHandle triangle = (PolyHandle) NewHandle( size );
+		PolyHandle poly = (PolyHandle) NewHandle( size );
 		
-		short* p = &triangle[0]->polyPoints[ 0 ].v;
+		Polygon& polygon = **poly;
+		
+		short* p = &polygon.polyPoints[ 0 ].v;
 		
 		if ( corner_set & 1 )
 		{
@@ -90,9 +92,9 @@ non_rectangular:
 			*p++ = 0;
 		}
 		
-		PolyRgn( rgn, triangle );
+		PolyRgn( rgn, poly );
 		
-		DisposeHandle( (Handle) triangle );
+		DisposeHandle( (Handle) poly );
 	}
 }
 
