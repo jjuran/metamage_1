@@ -41,9 +41,9 @@ namespace portaudio
 const int channel_count = 1;  // monophonic
 const int sample_size   = sizeof (output_sample_t);
 
-const int ground = 0;  // signed 8-bit samples are centered at 0, not 128
+const int ground = 0;  // signed samples are centered at 0, not e.g. 128
 
-const int sample_rate = 22256;
+const double sample_rate = 7833600.0 / 352;  // 22254.[54];
 
 const int frames_per_buffer = samples_per_buffer;
 
