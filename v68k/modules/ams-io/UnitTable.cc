@@ -9,9 +9,9 @@
 #ifndef __DEVICES__
 #include <Devices.h>
 #endif
-#ifndef __STRINGCOMPARE__
-#include <StringCompare.h>
-#endif
+
+// ams-common
+#include "callouts.hh"
 
 
 DCtlHandle*  UTableBase  : 0x011C;
@@ -43,7 +43,7 @@ short find_unit_entry_by_name( ConstStr255Param name )
 		{
 			if ( DRVRHeader* drvr = get_driver( *h ) )
 			{
-				if ( EqualString( drvr->drvrName, name, false, true ) )
+				if ( EqualString_sans_case( drvr->drvrName, name ) )
 				{
 					return i;
 				}
