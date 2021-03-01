@@ -26,6 +26,7 @@
 #include "logofwar/report.hh"
 
 // ams-common
+#include "callouts.hh"
 #include "time.hh"
 
 // ams-core
@@ -101,7 +102,7 @@ unsigned long CmpString_patch( const unsigned char* a : __A0,
 	
 	if ( A & CASE )
 	{
-		return memcmp( a, b, len ) != 0;
+		return fast_memcmp( a, b, len ) != 0;
 	}
 	
 	return ! case_insensitive_equal( a, b, len );

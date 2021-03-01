@@ -13,9 +13,6 @@
 #include <Traps.h>
 #endif
 
-// Standard C
-#include <string.h>
-
 // ams-common
 #include "callouts.hh"
 
@@ -43,7 +40,7 @@ pascal long Munger_patch( Handle h, long i, Ptr p1, long n1, Ptr p2, long n2 )
 		
 		while ( len >= n1 )
 		{
-			if ( memcmp( p, p1, n1 ) == 0 )
+			if ( fast_memcmp( p, p1, n1 ) == 0 )
 			{
 				goto found;
 			}
@@ -59,7 +56,7 @@ pascal long Munger_patch( Handle h, long i, Ptr p1, long n1, Ptr p2, long n2 )
 		
 		while ( --n1 > 0 )
 		{
-			if ( memcmp( p, p1, n1 ) == 0 )
+			if ( fast_memcmp( p, p1, n1 ) == 0 )
 			{
 				goto found;
 			}

@@ -7,7 +7,6 @@
 
 // Standard C
 #include <stdlib.h>
-#include <string.h>
 
 // log-of-war
 #include "logofwar/report.hh"
