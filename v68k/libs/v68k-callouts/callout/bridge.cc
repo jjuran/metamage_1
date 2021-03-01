@@ -599,6 +599,36 @@ int32_t mem_test_callout( v68k::processor_state& s )
 }
 
 static
+int32_t fast_memcmp_callout( v68k::processor_state& s )
+{
+	const v68k::function_code_t data_space = s.data_space();
+	
+	const uint32_t one = s.a(0);
+	const uint32_t two = s.a(1);
+	const uint32_t len = s.d(0);
+	
+	const uint8_t* p = s.mem.translate( one, len, data_space, v68k::mem_read );
+	
+	if ( p == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	const uint8_t* q = s.mem.translate( two, len, data_space, v68k::mem_read );
+	
+	if ( q == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	s.d(0) = memcmp( p, q, len );
+	
+	return rts;
+}
+
+static
 int32_t system_call_callout( v68k::processor_state& s )
 {
 	op_result result = bridge_call( s );
@@ -884,6 +914,11 @@ static const function_type the_callouts[] =
 	&fast_mempcpy_callout,
 	
 	&mem_test_callout,
+	NULL,
+	NULL,
+	NULL,
+	
+	&fast_memcmp_callout,
 	NULL,
 	NULL,
 	NULL,

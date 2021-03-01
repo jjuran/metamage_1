@@ -57,6 +57,12 @@ enum
 	reserved8,
 	reserved9,
 	
+	// $FFC6 - $FFC0
+	fast_memcmp,
+	reserved10,
+	reserved11,
+	reserved12,
+	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block
 	
