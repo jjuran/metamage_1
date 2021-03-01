@@ -12,7 +12,6 @@
 
 // Standard C
 #include <stdlib.h>
-#include <string.h>
 
 // quickdraw
 #include "qd/region_iterator.hh"
@@ -39,7 +38,7 @@ bool byte_aligned( short srcSkip, short dstSkip, short width )
 static
 bool equal_bitmaps( const BitMap* a, const BitMap* b )
 {
-	return a == b  ||  memcmp( a, b, sizeof (BitMap) ) == 0;
+	return a == b  ||  fast_memcmp( a, b, sizeof (BitMap) ) == 0;
 }
 
 template < class Ptr >
