@@ -148,15 +148,9 @@ void timeval_add( timeval& a, const timeval& b )
 }
 
 static inline
-bool operator==( const FTSoundRec& a, const FTSoundRec& b )
+int FTSoundRec_cmp( const FTSoundRec& a, const FTSoundRec& b )
 {
-	return memcmp( &a, &b, sizeof (FTSoundRec) ) == 0;
-}
-
-static inline
-bool operator!=( const FTSoundRec& a, const FTSoundRec& b )
-{
-	return !(a == b);
+	return memcmp( &a, &b, sizeof (FTSoundRec) );
 }
 
 static FTSoundRec* current_FTSound;
@@ -169,7 +163,7 @@ static VBLTask SoundVBL;
 static
 pascal void SoundVBL_Proc()
 {
-	if ( *current_FTSound != copy_of_FTSoundRec )
+	if ( FTSoundRec_cmp( *current_FTSound, copy_of_FTSoundRec ) != 0 )
 	{
 		using namespace sndpipe;
 		
