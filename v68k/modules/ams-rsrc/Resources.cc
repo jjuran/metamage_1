@@ -218,7 +218,7 @@ rsrc_header* find_rsrc( const rsrc_map_header&  map,
 		{
 			if ( ConstStr255Param found_name = get_name( map, *rsrc ) )
 			{
-				if ( EqualString( name, found_name, false, true ) )
+				if ( EqualString_sans_case( name, found_name ) )
 				{
 					return rsrc;
 				}
