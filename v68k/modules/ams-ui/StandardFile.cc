@@ -215,11 +215,11 @@ pascal void draw_dotted_line( DialogRef dialog, short i )
 }
 
 static
-pascal OSErr SFPutFile_call( Point             where,
-                             ConstStr255Param  prompt,
-                             ConstStr255Param  origName,
-                             DlgHookUPP        dlgHook,
-                             SFReply*          reply )
+pascal void SFPutFile_call( Point             where,
+                            ConstStr255Param  prompt,
+                            ConstStr255Param  origName,
+                            DlgHookUPP        dlgHook,
+                            SFReply*          reply )
 {
 	const unsigned char* SysTwi_prompt = "\p" "File to save this new game in:";
 	
@@ -311,18 +311,16 @@ pascal OSErr SFPutFile_call( Point             where,
 	reply->version = 0;
 	
 	DisposeDialog( dialog );
-	
-	return noErr;
 }
 
 static
-pascal OSErr SFGetFile_call( Point               where,
-                             ConstStr255Param    prompt,
-                             FileFilterUPP       fileFilter,
-                             short               numTypes,
-                             ConstSFTypeListPtr  typeList,
-                             DlgHookUPP          dlgHook,
-                             SFReply*            reply )
+pascal void SFGetFile_call( Point               where,
+                            ConstStr255Param    prompt,
+                            FileFilterUPP       fileFilter,
+                            short               numTypes,
+                            ConstSFTypeListPtr  typeList,
+                            DlgHookUPP          dlgHook,
+                            SFReply*            reply )
 {
 	const short width  = 348;
 	const short height = 136;
@@ -397,38 +395,36 @@ pascal OSErr SFGetFile_call( Point               where,
 	reply->version = 0;
 	
 	DisposeDialog( dialog );
-	
-	return noErr;
 }
 
 static
-pascal OSErr SFPPutFile_call( Point             where,
-                              ConstStr255Param  prompt,
-                              ConstStr255Param  origName,
-                              DlgHookUPP        dlgHook,
-                              SFReply*          reply,
-                              short             dialogID,
-                              ModalFilterUPP    filterProc )
+pascal void SFPPutFile_call( Point             where,
+                             ConstStr255Param  prompt,
+                             ConstStr255Param  origName,
+                             DlgHookUPP        dlgHook,
+                             SFReply*          reply,
+                             short             dialogID,
+                             ModalFilterUPP    filterProc )
 {
 	WARNING = "SFPPutFile is incomplete";
 	
-	return SFPutFile_call( where, prompt, origName, dlgHook, reply );
+	SFPutFile_call( where, prompt, origName, dlgHook, reply );
 }
 
 static
-pascal OSErr SFPGetFile_call( Point               where,
-                              ConstStr255Param    prompt,
-                              FileFilterUPP       fileFilter,
-                              short               numTypes,
-                              ConstSFTypeListPtr  typeList,
-                              DlgHookUPP          dlgHook,
-                              SFReply*            reply,
-                              short               dialogID,
-                              ModalFilterUPP      filterProc )
+pascal void SFPGetFile_call( Point               where,
+                             ConstStr255Param    prompt,
+                             FileFilterUPP       fileFilter,
+                             short               numTypes,
+                             ConstSFTypeListPtr  typeList,
+                             DlgHookUPP          dlgHook,
+                             SFReply*            reply,
+                             short               dialogID,
+                             ModalFilterUPP      filterProc )
 {
 	WARNING = "SFPGetFile is incomplete";
 	
-	return SFGetFile_call( where, prompt, fileFilter, numTypes, typeList, dlgHook, reply );
+	SFGetFile_call( where, prompt, fileFilter, numTypes, typeList, dlgHook, reply );
 }
 
 static
