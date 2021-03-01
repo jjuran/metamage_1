@@ -153,6 +153,12 @@ int FTSoundRec_cmp( const FTSoundRec& a, const FTSoundRec& b )
 	return fast_memcmp( &a, &b, sizeof (FTSoundRec) );
 }
 
+static inline
+void FTSoundRec_cpy( FTSoundRec& dst, const FTSoundRec& src )
+{
+	return fast_memcpy( &dst, &src, sizeof (FTSoundRec) );
+}
+
 static FTSoundRec* current_FTSound;
 static FTSoundRec  copy_of_FTSoundRec;
 
@@ -167,7 +173,7 @@ pascal void SoundVBL_Proc()
 	{
 		using namespace sndpipe;
 		
-		copy_of_FTSoundRec = *current_FTSound;
+		FTSoundRec_cpy( copy_of_FTSoundRec, *current_FTSound );
 		
 		FTSound_was_modified = true;
 		
