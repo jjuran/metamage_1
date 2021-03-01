@@ -150,7 +150,7 @@ void timeval_add( timeval& a, const timeval& b )
 static inline
 int FTSoundRec_cmp( const FTSoundRec& a, const FTSoundRec& b )
 {
-	return memcmp( &a, &b, sizeof (FTSoundRec) );
+	return fast_memcmp( &a, &b, sizeof (FTSoundRec) );
 }
 
 static FTSoundRec* current_FTSound;
