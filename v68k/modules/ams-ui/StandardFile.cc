@@ -10,13 +10,11 @@
 #include <StandardFile.h>
 #endif
 
-// Standard C
-#include <string.h>
-
 // log-of-war
 #include "logofwar/report.hh"
 
 // ams-common
+#include "callouts.hh"
 #include "c_string.hh"
 #include "QDGlobals.hh"
 
@@ -225,7 +223,7 @@ pascal OSErr SFPutFile_call( Point             where,
 {
 	const unsigned char* SysTwi_prompt = "\p" "File to save this new game in:";
 	
-	if ( memcmp( prompt, SysTwi_prompt, 1 + prompt[ 0 ] ) == 0 )
+	if ( fast_memcmp( prompt, SysTwi_prompt, 1 + prompt[ 0 ] ) == 0 )
 	{
 		/*
 			Trim the prompt slightly so it fits in one line and doesn't wrap,
