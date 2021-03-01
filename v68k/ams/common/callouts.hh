@@ -41,6 +41,13 @@ DEFINE_CALLOUT( void*,
                  unsigned    n   : __D0 ),
                 0xFFD0 )
 
+DEFINE_CALLOUT( int,
+                fast_memcmp,
+                (void const* a : __A0,
+                 void const* b : __A1,
+                 unsigned    n : __D0 ),
+                0xFFC6 )
+
 #undef DEFINE_CALLOUT
 
 static inline
