@@ -401,11 +401,13 @@ pascal void InsertMenu_patch( MenuInfo** menu, short beforeID )
 
 pascal void DrawMenuBar_patch()
 {
+	TheMenu = 0;
+	
 	WMgrPort_bezel_scope port_swap;
 	
 	draw_menu_bar_from_WMgr_port();
 	
-	const short pen_v = (MBarHeight + system_font_ascent) / 2;
+	const short pen_v = (MBarHeight + system_font_ascent) / 2u;
 	
 	const UInt16 extent_bytes = MenuList[0]->extent_bytes;
 	
