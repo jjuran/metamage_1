@@ -49,9 +49,38 @@ BNDL_array_header* begin( BNDL_header* bndl )
 }
 
 static inline
-BNDL_array_header* begin( BNDL_header** bndl )
+BNDL_array_header* next( BNDL_array_header* it )
 {
-	return begin( *bndl );
+	short sizeof_elements = (it->count_1 + 1) * sizeof (BNDL_array_element);
+	
+	return (BNDL_array_header*) ((char*) (it + 1) + sizeof_elements );
+}
+
+static inline
+BNDL_array_header* find( BNDL_header* bndl, ResType type )
+{
+	BNDL_array_header* it = begin( bndl );
+	
+	short n_1 = bndl->array_count_1;
+	
+	do
+	{
+		if ( it->type == type )
+		{
+			return it;
+		}
+		
+		it = next( it );
+	}
+	while ( --n_1 >= 0 );
+	
+	return NULL;
+}
+
+static inline
+BNDL_array_header* find( BNDL_header** bndl, ResType type )
+{
+	return find( *bndl, type );
 }
 
 static inline
@@ -135,7 +164,7 @@ int main( int argc, char** argv )
 		{
 			if ( local_id >= 0 )
 			{
-				BNDL_array_header* icons = begin( bndl );
+				BNDL_array_header* icons = find( bndl, 'ICN#' );
 				
 				short count_1 = icons->count_1;
 				
