@@ -739,7 +739,7 @@ OSErr GetFCBInfo_call( FCBPBRec* pb : __A0 )
 {
 	ERROR = "GetFCBInfo is unimplemented";
 	
-	return paramErr;
+	return pb->ioResult = paramErr;
 }
 
 static
@@ -747,7 +747,7 @@ OSErr OpenDF_call( IOParam* pb : __A0 )
 {
 	ERROR = "OpenDF is unimplemented";
 	
-	return paramErr;
+	return pb->ioResult = paramErr;
 }
 
 static
