@@ -610,6 +610,8 @@ short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 
 short Delete_patch( short trap_word : __D1, FileParam* pb : __A0 )
 {
+	ERROR = "Delete is unimplemented";
+	
 	return pb->ioResult = extFSErr;
 }
 
