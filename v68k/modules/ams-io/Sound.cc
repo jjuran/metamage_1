@@ -37,6 +37,12 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
+static inline
+size_t byte_distance( const void* begin, const void* end )
+{
+	return (const char*) end - (const char*) begin;
+}
+
 static
 ssize_t send_command( UInt16 domain, const void* buffer, UInt32 buffer_length )
 {
@@ -60,6 +66,21 @@ ssize_t send_command( UInt16 domain, const void* buffer, UInt32 buffer_length )
 	return writev( sound_fd, iov, n_iov );
 }
 
+static
+UInt32 sizeof_SWSynthRec( const SWSynthRec* rec, UInt16 length )
+{
+	short n = (length - sizeof rec->mode) / sizeof (Tone);
+	
+	const Tone* tone = rec->triplets;
+	
+	while ( n-- > 0  &&  tone++->count > 0 )
+	{
+		// Find the trailing count == 0 or run out of data
+	}
+	
+	return byte_distance( rec, tone );
+}
+
 static Wave zeroWave;
 
 static inline
@@ -75,7 +96,21 @@ ssize_t start_sound( const void* buffer, UInt32 length )
 	
 	FTSynthRec_flat_buffer flat;
 	
-	if ( *(short*) buffer == ftMode )
+	const short mode = *(short*) buffer;
+	
+	if ( mode == swMode )
+	{
+		/*
+			Many applications write bytes beyond the terminating Tone.
+			We have no idea what sort of information might be in there,
+			so be safe (and minimize network traffic) by truncating it.
+			
+			Otherwise, sndtrack reports diagnostics for malformed input.
+		*/
+		
+		length = sizeof_SWSynthRec( (const SWSynthRec*) buffer, length );
+	}
+	else if ( mode == ftMode )
 	{
 		flat.mode = ftMode_flat_buffer;
 		
