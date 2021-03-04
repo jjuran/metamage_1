@@ -90,6 +90,7 @@ void install_FileManager()
 	OSTRAP( GetVol   );  // A014
 	OSTRAP( SetVol   );  // A015
 	
+	OSTRAP( Eject    );  // A017
 	OSTRAP( GetFPos  );  // A018
 	
 	OSTRAP( SetFPos  );  // A044

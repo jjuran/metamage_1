@@ -13,8 +13,12 @@
 #include <StringCompare.h>
 #endif
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "callouts.hh"
+#include "c_string.hh"
 
 
 enum
@@ -161,4 +165,35 @@ short SetVol_patch( short trap_word : __D1, WDPBRec* pb : __A0 )
 short FlushVol_patch( short trap_word : __D1, VolumeParam* pb : __A0 )
 {
 	return pb->ioResult = noErr;
+}
+
+static const char* wdnea = " (which doesn't exist anyway)";
+
+short Eject_patch( short trap_word : __D1, VolumeParam* pb : __A0 )
+{
+	StringPtr name = pb->ioNamePtr;
+	
+	VCB* vcb = NULL;
+	
+	if ( name )
+	{
+		// ioNamePtr
+		vcb = VCB_lookup( name );
+		
+		WARNING = "Ignoring Eject of ", CSTR( name ), vcb ? "" : wdnea;
+	}
+	else if ( pb->ioVRefNum )
+	{
+		// ioVRefNum
+		vcb = VCB_lookup( pb->ioVRefNum );
+		
+		WARNING = "Ignoring Eject of ", pb->ioVRefNum, vcb ? "" : wdnea;
+	}
+	
+	if ( vcb == NULL )
+	{
+		return pb->ioResult = nsvErr;
+	}
+	
+	return pb->ioResult = extFSErr;
 }
