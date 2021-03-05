@@ -21,6 +21,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "c_string.hh"
 
 // ams-seg
 #include "options.hh"
@@ -370,6 +371,8 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 		ExitToShell_patch();
 	}
 	
+	NOTICE = "Launching application \"", CSTR( appName ), "\"";
+	
 	const uint8_t len = appName[ 0 ];
 	
 	if ( len > 31 )
@@ -386,6 +389,16 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	Ptr stack_bottom = CurPageOption < 0 ? ScrnBase - 0x8000
 	                 : CurPageOption > 0 ? ScrnBase - 0x0600
 	                 :                     ScrnBase;
+	
+	if ( CurPageOption < 0 )
+	{
+		WARNING = "Allocating page 2 buffers";
+	}
+	else if ( CurPageOption > 0 )
+	{
+		WARNING = "Allocating page 2 audio buffer";
+	}
+	
 	if ( MemTop )
 	{
 		InitApplZone();
