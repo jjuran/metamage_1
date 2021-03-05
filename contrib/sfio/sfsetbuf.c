@@ -180,17 +180,6 @@ reg size_t	size;	/* buffer size, -1 for default size */
 					/* set line mode for terminals */
 					if(!(f->flags&SF_LINE) && isatty(f->file))
 						f->flags |= SF_LINE;
-#if _sys_stat
-					else	/* special case /dev/null */
-					{	reg int	dev, ino;
-						dev = (int)st.st_dev;	
-						ino = (int)st.st_ino;	
-						if(stat(DEVNULL,&st) >= 0 &&
-						   dev == (int)st.st_dev &&
-						   ino == (int)st.st_ino)
-							SFSETNULL(f);
-					}
-#endif
 				}
 
 				/* initialize save input buffer for r+w streams */
