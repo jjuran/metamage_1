@@ -237,16 +237,21 @@ sub copy_file
 	
 	$system->( 'cp', $src, $dest );
 	
-	my ( $name ) = $src =~ m{/([^/]*)$};
-	
-	if ( defined $self->{ vers_1 }  &&  -d "$dest/$name/r" )
+	if ( -d $dest )
 	{
-		spew( "$dest/$name/r/0001.vers", $self->{ vers_1 } );
+		my ( $name ) = $src =~ m{/([^/]*)$};
+		
+		$dest .= "/$name";
 	}
 	
-	if ( defined $self->{ vers_2 }  &&  -d "$dest/$name/r" )
+	if ( defined $self->{ vers_1 }  &&  -d "$dest/r" )
 	{
-		spew( "$dest/$name/r/0002.vers", $self->{ vers_2 } );
+		spew( "$dest/r/0001.vers", $self->{ vers_1 } );
+	}
+	
+	if ( defined $self->{ vers_2 }  &&  -d "$dest/r" )
+	{
+		spew( "$dest/r/0002.vers", $self->{ vers_2 } );
 	}
 	
 	return;
