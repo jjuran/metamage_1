@@ -333,7 +333,12 @@ sub install_script
 	
 	if ( $is_exec )
 	{
-		chmod 0700, "$install_path/$name"  if $is_exec;
+		if ( -d $install_path )
+		{
+			$install_path .= "/$name";
+		}
+		
+		chmod 0700, $install_path;
 	}
 }
 
