@@ -169,6 +169,35 @@ short FlushVol_patch( short trap_word : __D1, VolumeParam* pb : __A0 )
 
 static const char* wdnea = " (which doesn't exist anyway)";
 
+short UnmountVol_patch( short trap_word : __D1, VolumeParam* pb : __A0 )
+{
+	StringPtr name = pb->ioNamePtr;
+	
+	VCB* vcb = NULL;
+	
+	if ( name )
+	{
+		// ioNamePtr
+		vcb = VCB_lookup( name );
+		
+		WARNING = "Ignoring UnmountVol of ", CSTR( name ), vcb ? "" : wdnea;
+	}
+	else if ( pb->ioVRefNum )
+	{
+		// ioVRefNum
+		vcb = VCB_lookup( pb->ioVRefNum );
+		
+		WARNING = "Ignoring UnmountVol of ", pb->ioVRefNum, vcb ? "" : wdnea;
+	}
+	
+	if ( vcb == NULL )
+	{
+		return pb->ioResult = nsvErr;
+	}
+	
+	return pb->ioResult = extFSErr;
+}
+
 short Eject_patch( short trap_word : __D1, VolumeParam* pb : __A0 )
 {
 	StringPtr name = pb->ioNamePtr;
