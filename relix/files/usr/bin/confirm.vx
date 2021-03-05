@@ -1,0 +1,87 @@
+#!/usr/bin/vx -Z
+
+if not argc in 2 .. 3 then
+{
+	warn "usage: confirm [icon-id] text"
+	exit 2
+}
+
+const icon_id = if argc > 2 then {argv[ 1 ]} else {128}
+
+const text = argv[ argc - 1 ]
+
+chdir "/gui/new/port"
+
+const LF = "\n"
+
+rewrite "procid" <== 5 LF
+rewrite "size"   <== "300,100" LF
+
+const icon        = "v/icon/v/"
+const main        = "v/main/v/"
+const ok          = "v/ok/v/"
+const cancel      = "v/cancel/v/"
+const defaultkeys = "v/defaultkeys/v/"
+
+link( "/gui/new/stack", "view" )
+
+link( "/gui/new/frame", "v/icon/view" )
+link( "/gui/new/frame", "v/main/view" )
+link( "/gui/new/frame", "v/ok/view" )
+link( "/gui/new/frame", "v/cancel/view" )
+
+rewrite icon "width"  <== 32 LF
+rewrite icon "height" <== 32 LF
+rewrite icon ".margin-top"   <== 13 LF
+rewrite icon ".margin-left"  <== 23 LF
+rewrite icon ".margin-right" <== 23 LF
+
+link( "/gui/new/icon", icon "view" )
+
+rewrite main ".margin-top"    <== 13 LF
+rewrite main ".margin-left"   <== 78 LF
+rewrite main ".margin-right"  <== 13 LF
+rewrite main ".margin-bottom" <== 46 LF
+
+link( "/gui/new/caption", main "view" )
+
+rewrite ok "width"  <== 58 LF
+rewrite ok "height" <== 20 LF
+rewrite ok ".margin-right"  <== 13 LF
+rewrite ok ".margin-bottom" <== 13 LF
+
+rewrite ok ".outline-width"     <==  3 LF
+rewrite ok ".outline-offset"    <==  1 LF
+rewrite ok ".outline-curvature" <== 16 LF
+
+link( "/gui/new/button", ok "view" )
+
+rewrite cancel "width"  <== 58 LF
+rewrite cancel "height" <== 20 LF
+rewrite cancel ".margin-right"  <== 84 LF
+rewrite cancel ".margin-bottom" <== 13 LF
+
+link( "/gui/new/button", cancel "view" )
+
+rewrite icon "v/data"      <== icon_id LF
+rewrite icon "v/disabling" <== 1 LF
+
+rewrite main "v/text"      <== text LF
+rewrite main "v/disabling" <== 1 LF
+
+rewrite cancel "v/title" <== "Cancel" LF
+
+symlink( ok     "v/click", "accept" )
+symlink( cancel "v/click", "cancel" )
+
+link( "/gui/new/defaultkeys", "v/defaultkeys/view" )
+
+touch "window"
+
+rewrite "w/text-font" <== 0 LF
+
+const select = [ "select -1 -rv/ok/v/v/clicked -rv/cancel/v/v/clicked" / ' ' ]
+
+const selected = try { output-from-run select } catch { exit 2 }
+
+exit int ("cancel" in selected)
