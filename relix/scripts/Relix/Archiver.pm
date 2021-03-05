@@ -387,18 +387,20 @@ sub create_node
 	
 	my ( $path, $subpath, $dir, $param ) = @_;
 	
+	my $ref = ref $param;
+	
 	$path = $self->{ ROOT } . "/$path"  if $path !~ m{^ / }x;
 	
-	$subpath .= "/$dir"  unless $dir eq '.';
+	$subpath .= "/$dir"  unless $dir eq "." || $ref eq "";
 	
 	my $path_from_root = substr( $subpath, 1 )  if $subpath;  # drop leading '/'
 	
 	my $full_path = $path . $subpath;
 	
-	my $ref = ref $param;
-	
 	if ( $ref eq "" )
 	{
+		$full_path .= "/$dir"  unless $dir eq ".";
+		
 		return $self->install_script( $param, $full_path, $path_from_root );
 	}
 	
