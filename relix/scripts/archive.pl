@@ -190,7 +190,7 @@ my %fsmap =
 			# djb's UCSPI
 			\ qw( argv0 tcpcat tcpclient unixclient ),
 			# Varyx calculator / executor
-			\ qw( macvx vc vx ),
+			\ qw( macvx minivx vc vx ),
 			# v68k interpreter
 			\ qw( xv68k ),
 			# Modem-related scripts
