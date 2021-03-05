@@ -38,6 +38,7 @@
 #include "Regions.hh"
 #include "RoundRects.hh"
 #include "StdBits.hh"
+#include "StdProcs.hh"
 #include "Text.hh"
 
 
@@ -257,7 +258,7 @@ static const trap_patch QuickDraw[] =
 	TBTRAP( XOrRgn      ),  // A8E7
 	TBTRAP( PtInRgn     ),  // A8E8
 	TBTRAP( RectInRgn   ),  // A8E9
-	
+	TBTRAP( SetStdProcs ),  // A8EA
 	TBTRAP( StdBits     ),  // A8EB
 	TBTRAP( CopyBits    ),  // A8EC
 	TBTRAP( StdTxMeas   ),  // A8ED
