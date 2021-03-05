@@ -101,6 +101,10 @@ coda:
 	{
 		fast_memset( alloc, '\0', size );
 	}
+	else
+	{
+		fast_memset( alloc, '\x75', size );
+	}
 	
 	MemErr = noErr;
 	

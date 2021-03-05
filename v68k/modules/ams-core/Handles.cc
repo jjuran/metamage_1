@@ -159,6 +159,10 @@ Handle_header* allocate_Handle_mem( long   size      : __D0,
 	{
 		fast_memset( &header[ 1 ], '\0', padded_size );
 	}
+	else
+	{
+		fast_memset( &header[ 1 ], '\x75', padded_size );
+	}
 	
 	header->size     = size;
 	header->capacity = padded_size;
