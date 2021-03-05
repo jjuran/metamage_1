@@ -202,8 +202,9 @@ my %fsmap =
 			# App engines
 			\ qw( icon-editor ),
 			# Script apps
-			qw( asklogin confirm iconedit mon prompt psmon ),
+			qw( asklogin iconedit mon prompt psmon ),
 			{
+				confirm  => "confirm.vx",
 				progress => "progress.vx",
 			},
 			# App utilities
