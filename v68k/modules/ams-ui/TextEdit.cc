@@ -872,6 +872,7 @@ pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE )
 	
 	draw_text( te );
 	
+	update_selRect( te );
 	show_selection( te );
 }
 
