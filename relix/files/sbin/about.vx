@@ -1,0 +1,57 @@
+#!/usr/bin/minivx -Z
+
+chdir "/gui/port/about"
+
+try { touch "w/select"; exit 0 } catch {}
+
+const lock = try { rewrite "lock" } catch { exit 0 }
+
+const icon_id = 128
+
+const LF = "\n"
+
+rewrite "vis"   <== 0 LF
+rewrite "size"  <== "220x68" LF
+rewrite "title" <== "About MacRelix" LF
+
+rewrite "procid" <== 4 LF
+
+touch "window"
+
+rewrite "w/text-font" <== 0 LF
+
+link( "new/stack", "view" )
+
+link( "new/frame", "v/icon/view" )
+link( "new/frame", "v/main/view" )
+
+const icon = "v/icon/v/"
+const main = "v/main/v/"
+
+rewrite icon "width"  <== 32 LF
+rewrite icon "height" <== 32 LF
+rewrite icon ".margin-top"   <== 13 LF
+rewrite icon ".margin-left"  <== 23 LF
+rewrite icon ".margin-right" <== 23 LF
+
+link( "new/icon", icon "view" )
+
+rewrite icon "v/data"      <== icon_id LF
+rewrite icon "v/disabling" <== 1 LF
+
+rewrite main ".margin-top"   <== 13 LF
+rewrite main ".margin-left"  <== 78 LF
+rewrite main ".margin-right" <== 13 LF
+
+link( "new/caption", main "view" )
+
+rewrite main "v/text"      <== DATA
+rewrite main "v/disabling" <== 1 LF
+
+run ["daemonize --cwd --ctty=tty -- idle" / ' ']
+
+rewrite "vis" <== 1 LF
+
+end.
+MacRelix
+by Josh Juran
