@@ -1,0 +1,73 @@
+#!/usr/bin/vx -Z
+
+const title = if argc > 1 then {argv[ 1 ]}
+
+chdir "/gui/new/port"
+
+const LF = "\n"
+
+if title then
+{
+	rewrite "title" <== title LF
+}
+
+rewrite "procid" <== 5 LF
+rewrite "size"   <== "280,76" LF
+
+link( "/gui/new/frame",    "view"   )
+link( "/gui/new/progress", "v/view" )
+
+rewrite "v/height" <== 11 LF
+
+rewrite "v/.margin-left"   <== 10 LF
+rewrite "v/.margin-right"  <== 10 LF
+rewrite "v/.margin-bottom" <== 10 LF
+
+touch "window"
+
+def line_buffered (input)
+{
+	var buffer = ""
+	
+	return lambda
+	{
+		while true do
+		{
+			while var p = (begin buffer).find '\n' do
+			{
+				# Strip newline before returning, and don't return blanks
+				
+				const result = p.past
+				
+				buffer = (++p).rest
+				
+				if result then
+				{
+					return result
+				}
+			}
+			
+			buffer .= (input.read 64 or return ())  # 64 is overkill, really
+		}
+	}
+}
+
+for line in receiver line_buffered IN do
+{
+	var value = line
+	
+	if '%' in value then
+	{
+		value = int value[ 0 -> value.length - 1 ] * 100
+	}
+	else if '/' in value then 
+	{
+		const numer, const denom = value / '/'
+		
+		value = int numer * 10000 div int denom
+	}
+	
+	rewrite "v/v/value" <== value LF
+}
+
+end.
