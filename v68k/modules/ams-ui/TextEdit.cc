@@ -256,6 +256,8 @@ void showhide_selection( TERec& te, bool show )
 static inline
 void show_selection( TERec& te )
 {
+	update_selRect( te );
+	
 	showhide_selection( te, true );
 }
 
@@ -421,7 +423,6 @@ void update_selection( TERec& te, short selStart, short selEnd )
 	te.selStart = selStart;
 	te.selEnd   = selEnd;
 	
-	update_selRect( te );
 	show_selection( te );
 }
 
@@ -517,7 +518,6 @@ pascal void TEActivate_patch( TERec** hTE )
 	
 	te.active = true;
 	
-	update_selRect( te );
 	show_selection( te );
 }
 
@@ -725,7 +725,6 @@ pascal void TEKey_patch( short c, TERec** hTE )
 	
 	draw_text( te );
 	
-	update_selRect( te );
 	show_selection( te );
 }
 
@@ -792,7 +791,6 @@ pascal void TEPaste_patch( TERec** hTE )
 	
 	draw_text( te );
 	
-	update_selRect( te );
 	show_selection( te );
 }
 
@@ -814,7 +812,6 @@ pascal void TEDelete_patch( TERec** hTE )
 		
 		draw_text( te );
 		
-		update_selRect( te );
 		show_selection( te );
 	}
 	
@@ -843,7 +840,6 @@ pascal void TEInsert_patch( const char* text, long length, TERec** hTE )
 	
 	draw_text( te );
 	
-	update_selRect( te );
 	show_selection( te );
 	
 	/*
@@ -872,7 +868,6 @@ pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE )
 	
 	draw_text( te );
 	
-	update_selRect( te );
 	show_selection( te );
 }
 
@@ -902,7 +897,6 @@ pascal void TEScroll_patch( short dh, short dv, TERec** hTE )
 	TERec& te = **hTE;
 	
 	OffsetRect( &te.destRect, dh, dv );
-	OffsetRect( &te.selRect,  dh, dv );
 	
 	Rect srcRect = te.viewRect;
 	
