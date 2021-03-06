@@ -485,7 +485,7 @@ pascal void SetWTitle_patch( WindowPeek window, const unsigned char* s )
 			window->titleHandle = NewString_patch( s );
 		}
 		
-		window->titleWidth = StringWidth( s );
+		window->titleWidth = -1;
 	}
 	else
 	{

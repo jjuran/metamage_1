@@ -234,13 +234,20 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	
 	PaintRect( &edge );
 	
+	StringPtr title = window->titleHandle ? *window->titleHandle : NULL;
+	
+	if ( window->titleWidth < 0 )
+	{
+		window->titleWidth = title ? StringWidth( title ) : 0;
+	}
+	
 	if ( const short title_width = window->titleWidth )
 	{
 		const short h = (content.left + content.right - title_width) / 2u;
 		
 		MoveTo( h, title_bar.top + title_baseline_v );
 		
-		DrawString( *window->titleHandle );
+		DrawString( title );
 		
 		if ( window->hilited )
 		{
