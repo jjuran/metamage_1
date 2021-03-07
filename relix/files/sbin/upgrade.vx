@@ -1,0 +1,43 @@
+#!/usr/bin/vx -Z
+
+const host = "www.macrelix.org"
+
+const relix_url = "http://%s/pub/channel/46e70108/" % host
+
+setenv( "RELIX_URL", relix_url )
+
+const platform =
+	if argc > 1
+		then {argv[ 1 ]}
+		else {(load "/etc/platform").lines()[ 0 ]}
+
+warn "Checking " host " for latest version..."
+
+try
+{
+	system "htget http://" host " > /dev/null 2>&1"
+}
+catch
+{
+	warn "upgrade: can't reach " host
+	exit 1
+}
+
+const prefix = "relix-" platform "_"
+const part_2 = "/etc/bootstrap/upgrade-relix"
+
+const list = output-from-run [ "htget", relix_url ]
+
+var last = ()
+
+for line in list.lines() do
+{
+	if var p = (begin line).find prefix then
+	{
+		const q = p + prefix.length + "20210307-1958".length  # minus the ".gz"
+		
+		last = q - p
+	}
+}
+
+execv( part_2, [part_2, last] )
