@@ -145,6 +145,8 @@ my %fsmap =
 			\ qw( minivx ),
 			# App utilities
 			\ qw( daemonize idle ),
+			# Exceptions
+			\ qw( abort addrerror buserror chk div0 illegal privileged trapv ),
 			# Mac-specific
 			\ qw( drvr sound-info system-info ),
 			# Mac-specific scripts
