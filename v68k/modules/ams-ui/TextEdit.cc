@@ -424,6 +424,27 @@ void update_selection( TERec& te, short selStart, short selEnd )
 	show_selection( te );
 }
 
+static
+void autoscroll( TERec& te )
+{
+	short dv;
+	
+	if ( (dv = te.viewRect.top - te.selRect.top) > 0 )
+	{
+		// scroll up
+	}
+	else if ( (dv = te.viewRect.bottom - te.selRect.bottom) < 0 )
+	{
+		// scroll down
+	}
+	else
+	{
+		return;
+	}
+	
+	OffsetRect( &te.destRect, 0, dv );
+}
+
 pascal void TEClick_patch( Point pt, char extend, TERec** hTE )
 {
 	TERec& te = **hTE;
@@ -697,6 +718,9 @@ pascal void TEKey_patch( short c, TERec** hTE )
 			TECalText( hTE );
 			break;
 	}
+	
+	update_selRect( te );
+	autoscroll( te );
 	
 	draw_text( te );
 	
