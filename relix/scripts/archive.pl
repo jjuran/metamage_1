@@ -167,7 +167,7 @@ my %fsmap =
 			bootstrap => [qw( upgrade-relix check-perl-lib.pl usr-lib-perl.mbin.gz.md5 )],
 		},
 	],
-	sbin => [{about => "about.vx"}, qw( install-usr-lib-perl upgrade )],
+	sbin => [{about => "about.vx", upgrade => "upgrade.vx"}, "install-usr-lib-perl"],
 	tmp => [],
 	usr =>
 	{
