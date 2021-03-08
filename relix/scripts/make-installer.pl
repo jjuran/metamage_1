@@ -127,8 +127,6 @@ my %fsmap =
 	[
 		# Standard
 		\ qw( cat echo false ln mkdir mv rm rmdir sh sync true ),
-		# Perl scripts
-		qw( chmod date test ),
 	],
 	etc =>
 	[
@@ -140,31 +138,30 @@ exec /usr/app/installer/init
 [END]
 			platform => sub { spew_to_rsrc( $_[1], "$config_short_name\n", 'Data' ) unless $config_short_name eq 'xxx' },
 			build_date => sub { spew_to_rsrc( $_[1], `date`, 'Data' ) },
-			bootstrap => [qw( upgrade-relix )],
 		},
 	],
-	sbin => [qw( about upgrade )],
+	sbin => {upgrade => "upgrade.vx"},
 	usr =>
 	{
 		app =>
 		{
-			installer => [qw( init main )],
+			installer => {map {$_ => "$_.vx"} qw( init main )},
 		},
 		bin =>
 		[
 			# Standard
 			\ qw( touch ),
 			# Common
-			\ qw( gzip htget perl ),
-			# V executor
+			\ qw( gzip htget ),
+			# Varyx executor
 			\ qw( vx ),
 			# Script apps
-			qw( confirm progress ),
+			{map {$_ => "$_.vx"} qw( confirm progress )},
 			# App utilities
 			\ qw( daemonize idle select ),
 			# Mac-specific
 			\ qw( macbin ),
-			# V scripts
+			# Varyx scripts
 			{
 				copy_vx( 'arcsign' ),
 			},
