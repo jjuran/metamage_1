@@ -4,7 +4,7 @@ const host = "www.macrelix.org"
 
 const relix_url = "http://%s/pub/channel/46e70108/" % host
 
-setenv( "RELIX_URL", relix_url )
+const key = "46e70108538e13868fc8d8454610d47e9ca09d934aa2224af806547190aa7a93"
 
 const platform =
 	if argc > 1
@@ -24,7 +24,6 @@ catch
 }
 
 const prefix = "relix-" platform "_"
-const part_2 = "/etc/bootstrap/upgrade-relix"
 
 const list = output-from-run [ "htget", relix_url ]
 
@@ -40,4 +39,42 @@ for line in list.lines() do
 	}
 }
 
-execv( part_2, [part_2, last] )
+def exists (path)
+{
+	return try {stat path; true} catch {false}
+}
+
+const dest = "/sys/app/dir/../" last
+
+if exists dest then
+{
+	warn "You already have " last "."
+	exit 0
+}
+
+chdir "/tmp"
+
+warn "Downloading " last ".gz..."
+
+const file = last ".gz"
+const mbim = last ".mbim"
+
+system "htget --dump-progress -O " relix_url file " | progress Downloading"
+
+warn "Checking signature..."
+
+run ["arcsign unseal -K" / ' ', key, file]
+
+warn "Decompressing..."
+
+run ["gzip", "-d", file]
+run ["mv", last, mbim]
+
+warn "Decoding archive..."
+
+run ["macbin", "decode", mbim]
+run ["mv", last, dest]
+run ["rm", mbim]
+run ["sync"]
+
+warn "Done."
