@@ -164,7 +164,7 @@ my %fsmap =
 			platform => sub { verbose_system( "echo $config_short_name > $_[0]" ) unless $config_short_name eq 'xxx' },
 			build_date => sub { verbose_system( "date > $_[0]" ) },
 			#build_date => sub { open my $fh, '>', $_[0]; print $fh `date`; close $fh; },
-			bootstrap => [qw( upgrade-relix check-perl-lib.pl usr-lib-perl.mbin.gz.md5 )],
+			bootstrap => [qw( check-perl-lib.pl usr-lib-perl.mbin.gz.md5 )],
 		},
 	],
 	sbin => [{about => "about.vx", upgrade => "upgrade.vx"}, "install-usr-lib-perl"],
