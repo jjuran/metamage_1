@@ -271,10 +271,6 @@ sub copy_file_to_rsrc
 	
 	-f $src or die "### Missing file $src for copy\n";
 	
-	$src =~ m{ ( / [^/]+ ) $}x;
-	
-	$path_from_root .= $1;
-	
 	if ( -z $src )
 	{
 		$src = "$src/r/0000.Tool";
@@ -324,7 +320,7 @@ sub install_script
 		         : $is_exec ? 'Exec'
 		         :            'Data';
 		
-		$self->copy_file_to_rsrc( $file, $path_from_root, $type );
+		$self->copy_file_to_rsrc( $file, "$path_from_root/$name", $type );
 		
 		return;
 	}
@@ -354,6 +350,8 @@ sub install_subprogram
 	
 	if ( $self->{ RESFS } )
 	{
+		$path_from_root .= "/$project";
+		
 		$self->copy_file_to_rsrc( $output, $path_from_root, 'Exec' );
 	}
 	else
