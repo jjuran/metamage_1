@@ -302,7 +302,7 @@ sub install_script
 {
 	my $self = shift;
 	
-	my ( $name, $install_path, $path_from_root ) = @_;
+	my ( $name, $install_path, $path_from_root, $dst ) = @_;
 	
 	my $relix_files = $self->{ FILES };
 	
@@ -320,7 +320,7 @@ sub install_script
 		         : $is_exec ? 'Exec'
 		         :            'Data';
 		
-		$self->copy_file_to_rsrc( $file, "$path_from_root/$name", $type );
+		$self->copy_file_to_rsrc( $file, "$path_from_root/$dst", $type );
 		
 		return;
 	}
@@ -399,7 +399,10 @@ sub create_node
 	{
 		$full_path .= "/$dir"  unless $dir eq ".";
 		
-		return $self->install_script( $param, $full_path, $path_from_root );
+		my $src = $param;
+		my $dst = $dir ne "." ? $dir : $src;
+		
+		return $self->install_script( $src, $full_path, $path_from_root, $dst );
 	}
 	
 	if ( $ref eq "SCALAR" )
