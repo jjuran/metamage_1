@@ -81,9 +81,11 @@
 #include "relix/api/root.hh"
 #include "relix/api/terminate_current_process.hh"
 #include "relix/api/waits_for_children.hh"
+#include "relix/config/fork.hh"
 #include "relix/config/mini.hh"
 #include "relix/config/reexec.hh"
 #include "relix/config/syscall_stacks.hh"
+
 #include "relix/fs/console.hh"
 #include "relix/glue/system_call.68k.hh"
 #include "relix/glue/system_call.ppc.hh"
@@ -796,6 +798,8 @@ namespace Genie
 		return new_thread( &Process::thread_start, task );
 	}
 	
+#if CONFIG_FORK
+	
 	pid_t Process::fork()
 	{
 		Process& child = NewProcess( *this );
@@ -833,6 +837,8 @@ namespace Genie
 		
 		return child.GetPID();
 	}
+	
+#endif
 	
 	void Process::Exec( const char*         path,
 	                    const char* const   argv[],
