@@ -1,0 +1,38 @@
+#!/usr/bin/vx -Z
+
+def exists (path)
+{
+	return try {stat path; true} catch {false}
+}
+
+const temporary_tmp = not exists "/tmp"
+
+dup2( OUT, ERR )
+
+try
+{
+	if temporary_tmp then
+	{
+		run ["/bin/mkdir", "/tmp"]
+	}
+	
+	run ["/sbin/upgrade", getenv "PLATFORM"]
+}
+catch
+{
+	warn "\n" "*** Installation aborted ***"
+}
+
+try
+{
+	if temporary_tmp then
+	{
+		dup2( reader "/dev/null", ERR )
+		
+		run ["/bin/rmdir", "/tmp"]
+		run ["/bin/sync"]
+	}
+}
+catch {}
+
+run ["/usr/bin/idle"]

@@ -1,0 +1,62 @@
+#!/usr/bin/vx -Z
+
+def exists (path)
+{
+	return try {stat path; true} catch {false}
+}
+
+def has_gestalt (selector)
+{
+	return exists "/sys/mac/gestalt/" selector
+}
+
+const platforms = ["68kos9osx" / 3]
+const flavors   = ["68K PPC Carbon" / ' ']
+
+def select_platform
+{
+	return if not has_gestalt 'ppcf' then {0} else
+	       if not has_gestalt 'tabl' then {2} else
+	       if not has_gestalt 'bbox' then {1} else {2}
+}
+
+const index = select_platform()
+
+setenv( "PLATFORM", platforms[ index ] )
+
+const prompt_template = "Proceed with automatic download of MacRelix/%s?"
+
+try
+{
+	run ["/usr/bin/confirm", prompt_template % flavors[ index ]]
+}
+catch { exit 0 }
+
+chdir "/gui/port/install"
+
+try { touch "w/select"; exit 0 } catch {}
+
+const lock = try { rewrite "lock" } catch { exit 0 }
+
+const LF = "\n"
+
+rewrite "vis"   <== 0 LF
+rewrite "size"  <== "400x100" LF
+rewrite "title" <== "MacRelix Installer" LF
+
+touch "window"
+
+rewrite "w/text-size" <== 9 LF
+rewrite "w/text-font" <== 4 LF
+
+link( "/gui/new/frame",   "view"   )
+link( "/gui/new/caption", "v/view" )
+
+rewrite "v/padding"   <== 4 LF
+rewrite "v/v/wrapped" <== 0 LF
+
+dup2( rewrite "v/v/text", OUT )
+
+run ["daemonize --cwd --stdout --ctty=tty -- /usr/app/installer/main" / ' ']
+
+rewrite "vis" <== 1 LF
