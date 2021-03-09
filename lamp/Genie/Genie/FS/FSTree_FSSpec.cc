@@ -662,6 +662,7 @@ namespace Genie
 		
 		vfs::node_ptr bottom;
 		
+		if ( ! mac::sys::has_MFS_only() )
 		{
 			bottom = FSTreeFromFSDirSpec( root_DirSpec() );  // diskfs
 		}
@@ -670,7 +671,14 @@ namespace Genie
 		
 		vfs::node_ptr resfs = new_resfs_root();
 		
+		if ( mac::sys::has_MFS_only() )
 		{
+			bottom.swap( resfs );
+		}
+		else
+		{
+			// current bottom is diskfs
+			
 			bottom = vfs::new_union_directory( NULL,
 			                                   plus::string::null,
 			                                   resfs.get(),
