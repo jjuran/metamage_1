@@ -42,6 +42,7 @@
 #include "mac_sys/async_wakeup.hh"
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/has/BlueBox.hh"
+#include "mac_sys/has/MFS_only.hh"
 #include "mac_sys/has/native_Carbon.hh"
 #include "mac_sys/volume_params.hh"
 
@@ -90,6 +91,7 @@
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/misc_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/null.hh"
 #include "vfs/node/types/union.hh"
 #include "vfs/primitives/stat.hh"
 
@@ -643,6 +645,11 @@ namespace Genie
 	                                const plus::string&  name,
 	                                const void*          args )
 	{
+		if ( mac::sys::has_MFS_only() )
+		{
+			return vfs::null();
+		}
+		
 		return FSTreeFromFSSpec( Users_FSSpec() );
 	}
 	
