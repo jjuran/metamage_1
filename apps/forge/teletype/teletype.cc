@@ -5,53 +5,28 @@
 
 // Standard C
 #include <signal.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 // POSIX
+#include <fcntl.h>
+#include <sys/ioctl.h>
 #include <sys/ttycom.h>
+#include <sys/wait.h>
+#include <utime.h>
 
 // Relix
 #include "relix/fork_and_exit.h"
 
-// poseven
-#include "poseven/functions/chdir.hh"
-#include "poseven/functions/dup2.hh"
-#include "poseven/functions/execv.hh"
-#include "poseven/functions/ioctl.hh"
-#include "poseven/functions/link.hh"
-#include "poseven/functions/open.hh"
-#include "poseven/functions/rename.hh"
-#include "poseven/functions/setsid.hh"
-#include "poseven/functions/symlink.hh"
-#include "poseven/functions/utime.hh"
-#include "poseven/functions/vfork.hh"
-#include "poseven/functions/wait.hh"
 
-
-namespace n = nucleus;
-namespace p7 = poseven;
+#pragma exceptions off
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
-
-namespace tool
-{
-	
-	static const char* getcwd()
-	{
-		static char buffer[] = "/gui/port/abcd3210";
-		
-		if ( ::getcwd( buffer, sizeof buffer ) == NULL )
-		{
-			p7::throw_errno( errno );
-		}
-		
-		return buffer;
-	}
-	
-}
+#define CHECK_NEG( result )   if ( (result) <  0    )  return 1; else
+#define CHECK_NULL( result )  if ( (result) == NULL )  return 1; else
 
 
 static
@@ -68,9 +43,13 @@ int splat( const char* path, const char* buffer, size_t length )
 
 int main( int argc, char const *const argv[] )
 {
-	p7::chdir( "/gui/new/port" );
+	CHECK_NEG( chdir( "/gui/new/port" ) );
 	
-	setenv( "PORT", tool::getcwd(), true );
+	char port_buffer[ sizeof "/gui/port/abcd3210" ];
+	
+	CHECK_NULL( getcwd( port_buffer, sizeof port_buffer ) );
+	
+	CHECK_NEG( setenv( "PORT", port_buffer, true ) );
 	
 	const short width  = 2 * 4 +  6 * 80 + 15;
 	const short height = 2 * 4 + 11 * 24;
@@ -79,31 +58,33 @@ int main( int argc, char const *const argv[] )
 	
 	splat( ".~title", STR_LEN( "teletype" ) );
 	
-	p7::utime( "window" );
+	CHECK_NEG( utime( "window", NULL ) );
 	
 	splat( "w/text-font", STR_LEN( "4" "\n" ) );
 	splat( "w/text-size", STR_LEN( "9" "\n" ) );
 	
-	p7::link( "/gui/new/scrollframe", "view"     );
-	p7::link( "/gui/new/frame",       "v/view"   );
-	p7::link( "/gui/new/console",     "v/v/view" );
+	CHECK_NEG( link( "/gui/new/scrollframe", "view"     ) );
+	CHECK_NEG( link( "/gui/new/frame",       "v/view"   ) );
+	CHECK_NEG( link( "/gui/new/console",     "v/v/view" ) );
 	
-	p7::symlink( "v/v", "v/target" );
+	CHECK_NEG( symlink( "v/v", "v/target" ) );
 	
 	splat( "v/vertical", STR_LEN( "1" "\n" ) );
 	splat( "v/v/padding", STR_LEN( "4" "\n" ) );
 	
-	p7::rename( "v/v/v/tty", "tty" );
+	CHECK_NEG( rename( "v/v/v/tty", "tty" ) );
 	
-	n::owned< p7::fd_t > tty = p7::open( "tty", p7::o_rdwr );
+	int tty = open( "tty", O_RDWR );
 	
-	p7::dup2( tty, p7::stdin_fileno  );
-	p7::dup2( tty, p7::stdout_fileno );
-	p7::dup2( tty, p7::stderr_fileno );
+	CHECK_NEG( tty );
 	
-	if ( tty.get() > p7::stderr_fileno )
+	CHECK_NEG( dup2( tty, STDIN_FILENO  ) );
+	CHECK_NEG( dup2( tty, STDOUT_FILENO ) );
+	CHECK_NEG( dup2( tty, STDERR_FILENO ) );
+	
+	if ( tty > STDERR_FILENO )
 	{
-		p7::close( tty );
+		close( tty );
 	}
 	
 	if ( getsid( 0 ) != 1 )
@@ -113,7 +94,9 @@ int main( int argc, char const *const argv[] )
 		fork_and_exit( 0 );
 	}
 	
-	p7::pid_t sid = p7::setsid();  // New session
+	pid_t sid = setsid();  // New session
+	
+	CHECK_NEG( sid );
 	
 	// Restore default SIGHUP handling in case we were invoked from daemonize
 	
@@ -121,18 +104,18 @@ int main( int argc, char const *const argv[] )
 	
 	sigaction( SIGHUP, &action, NULL );
 	
-	p7::ioctl( p7::stdin_fileno, TIOCSCTTY, NULL );  // Reattach to terminal
+	CHECK_NEG( ioctl( STDIN_FILENO, TIOCSCTTY, NULL ) );  // Reattach to tty
 	
 	if ( const char* name = ttyname( STDIN_FILENO ) )
 	{
 		splat( ".~title", name, strlen( name ) );
 	}
 	
-	p7::pid_t pid = p7::vfork();
+	pid_t pid = vfork();
 	
 	if ( pid == 0 )
 	{
-		p7::chdir( "/" );
+		chdir( "/" );
 		
 		char* login_argv[] = { "/bin/login", NULL };
 		
@@ -141,10 +124,14 @@ int main( int argc, char const *const argv[] )
 		const char* const* next_argv = use_login ? login_argv
 		                                         : argv + 1;
 		
-		p7::execv( next_argv[0], next_argv );
+		execv( next_argv[0], (char**) next_argv );
+		
+		_exit( 1 );
 	}
 	
-	p7::wait_t wait_status = p7::wait();
+	int wait_status;
+	
+	CHECK_NEG( wait( &wait_status ) );
 	
 	// If the child exited unsuccessfully and the terminal is still connected,
 	// keep the window around.
