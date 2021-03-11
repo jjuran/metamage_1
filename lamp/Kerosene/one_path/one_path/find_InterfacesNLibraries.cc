@@ -1,8 +1,16 @@
 /*
-	find_InterfacesAndLibraries.cc
-	------------------------------
+	find_InterfacesNLibraries.cc
+	----------------------------
 	
-	Joshua Juran
+	(With ccache and a slightly longer name that's consistent with the
+	header, we get "find_InterfacesAndLibraries.cc.ii" -- which is 33
+	characters, longer than HFS can handle.  That gets automatically clipped
+	to 31 characters: "find_InterfacesAndLibraries.cc.", which gets another
+	three characters (which are supposed to be ".ii") blindly trimmed from
+	it, yielding "find_InterfacesAndLibraries.", which Metrowerks' compiler
+	doesn't recognize as source (but treats as such anyway, with a warning).
+	
+	To avoid the confusion, we just shorten the name as above.
 */
 
 #include "one_path/find_InterfacesAndLibraries.hh"
