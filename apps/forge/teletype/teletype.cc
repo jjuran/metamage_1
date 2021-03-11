@@ -3,18 +3,13 @@
 	-----------
 */
 
-// Standard C/C++
-#include <cstring>
-
 // Standard C
 #include <signal.h>
-#include "stdlib.h"
+#include <stdlib.h>
+#include <string.h>
 
 // POSIX
 #include <sys/ttycom.h>
-
-// Iota
-#include "iota/strings.hh"
 
 // Relix
 #include "relix/fork_and_exit.h"
@@ -37,6 +32,9 @@
 
 namespace n = nucleus;
 namespace p7 = poseven;
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 namespace tool
@@ -115,7 +113,7 @@ int main( int argc, char const *const argv[] )
 	
 	p7::ioctl( p7::stdin_fileno, TIOCSCTTY, NULL );  // Reattach to terminal
 	
-	if ( const char* name = ttyname( p7::stdin_fileno ) )
+	if ( const char* name = ttyname( STDIN_FILENO ) )
 	{
 		p7::spew( p7::open( ".~title", p7::o_wronly | p7::o_trunc ),
 		          name,
@@ -146,7 +144,7 @@ int main( int argc, char const *const argv[] )
 	{
 		// Reset ourselves as the foreground process group of the terminal,
 		// so we'll get SIGHUP when the window is closed.
-		int pgrpset = tcsetpgrp( p7::stdin_fileno, sid );
+		int pgrpset = tcsetpgrp( STDIN_FILENO, sid );
 		
 		p7::spew( "title", STR_LEN( "(Done)" "\n" ) );
 		
