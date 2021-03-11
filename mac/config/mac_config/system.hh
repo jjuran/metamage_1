@@ -71,10 +71,13 @@
 #ifndef CONFIG_MINIMUM_SYSTEM
 #ifdef __MC68K__
 	/*
-		MacRelix and other applications are known to work in System 4.2,
-		so make that our minimum for now.
+		System 4.1 introduced the 68020, and consequently, 32-bit addresses
+		(as opposed to the 68000 which has only 24 address lines).  This in
+		turn created a need for StripAddress().  Since the Metrowerks runtimes
+		call StripAddress() at startup without checking for it in advance,
+		System 4.1 is necessarily our minimum.
 	*/
-	#define CONFIG_MINIMUM_SYSTEM  MAC_CONFIG_SYSTEM_4_2
+	#define CONFIG_MINIMUM_SYSTEM  MAC_CONFIG_SYSTEM_4_1
 #elif ! TARGET_API_MAC_CARBON
 	/*
 		System 7.1.2 is the first system supporting PPC machines.
