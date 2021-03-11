@@ -11,12 +11,11 @@
 
 
 /*
-	ADB is supported even prior to System 6 (which is the earliest we track).
-	The ADB API is no longer available in Carbon.
+	ADB is supported since System 4.0, but the API is gone in Carbon.
 */
 
 #ifndef CONFIG_ADB
-#define CONFIG_ADB  (! TARGET_API_MAC_CARBON)
+#define CONFIG_ADB  CONFIG_SYSTEM_4_FEATURED  &&  (! TARGET_API_MAC_CARBON)
 #endif
 
 /*
