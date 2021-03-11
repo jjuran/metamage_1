@@ -15,7 +15,6 @@
 #include "relix/fork_and_exit.h"
 
 // poseven
-#include "poseven/extras/spew.hh"
 #include "poseven/functions/chdir.hh"
 #include "poseven/functions/dup2.hh"
 #include "poseven/functions/execv.hh"
@@ -55,6 +54,18 @@ namespace tool
 }
 
 
+static
+int splat( const char* path, const char* buffer, size_t length )
+{
+	int fd = open( path, O_WRONLY | O_TRUNC );
+	
+	ssize_t n = write( fd, buffer, length );
+	
+	close( fd );
+	
+	return (fd >= 0  &&  n == length) - 1;
+}
+
 int main( int argc, char const *const argv[] )
 {
 	p7::chdir( "/gui/new/port" );
@@ -64,15 +75,14 @@ int main( int argc, char const *const argv[] )
 	const short width  = 2 * 4 +  6 * 80 + 15;
 	const short height = 2 * 4 + 11 * 24;
 	
-	p7::spew( "size", STR_LEN( "503x272" "\n" ) );
+	splat( "size", STR_LEN( "503x272" "\n" ) );
 	
-	p7::spew( p7::open( ".~title", p7::o_wronly | p7::o_trunc ),
-	          STR_LEN( "teletype" ) );
+	splat( ".~title", STR_LEN( "teletype" ) );
 	
 	p7::utime( "window" );
 	
-	p7::spew( "w/text-font", STR_LEN( "4" "\n" ) );
-	p7::spew( "w/text-size", STR_LEN( "9" "\n" ) );
+	splat( "w/text-font", STR_LEN( "4" "\n" ) );
+	splat( "w/text-size", STR_LEN( "9" "\n" ) );
 	
 	p7::link( "/gui/new/scrollframe", "view"     );
 	p7::link( "/gui/new/frame",       "v/view"   );
@@ -80,8 +90,8 @@ int main( int argc, char const *const argv[] )
 	
 	p7::symlink( "v/v", "v/target" );
 	
-	p7::spew( "v/vertical", STR_LEN( "1" "\n" ) );
-	p7::spew( "v/v/padding", STR_LEN( "4" "\n" ) );
+	splat( "v/vertical", STR_LEN( "1" "\n" ) );
+	splat( "v/v/padding", STR_LEN( "4" "\n" ) );
 	
 	p7::rename( "v/v/v/tty", "tty" );
 	
@@ -115,9 +125,7 @@ int main( int argc, char const *const argv[] )
 	
 	if ( const char* name = ttyname( STDIN_FILENO ) )
 	{
-		p7::spew( p7::open( ".~title", p7::o_wronly | p7::o_trunc ),
-		          name,
-		          std::strlen( name ) );
+		splat( ".~title", name, strlen( name ) );
 	}
 	
 	p7::pid_t pid = p7::vfork();
@@ -146,7 +154,7 @@ int main( int argc, char const *const argv[] )
 		// so we'll get SIGHUP when the window is closed.
 		int pgrpset = tcsetpgrp( STDIN_FILENO, sid );
 		
-		p7::spew( "title", STR_LEN( "(Done)" "\n" ) );
+		splat( ".~title", STR_LEN( "(Done)" ) );
 		
 		// Loop so resizing the window doesn't kill us (via SIGWINCH).
 		while ( true )
