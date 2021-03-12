@@ -23,6 +23,9 @@
 #endif
 #endif
 
+// mac-sys-utils
+#include "mac_sys/trap_available.hh"
+
 // Nostalgia
 #include "Nostalgia/MacWindows.hh"
 
@@ -32,6 +35,10 @@
 #include "fullscreen.hh"
 #include "fullscreen_port.hh"
 
+
+#if TARGET_API_MAC_CARBON
+#define SystemTask()  /**/
+#endif
 
 static const Rect grow_size =
 {
@@ -127,6 +134,28 @@ void EraseRect( const Rect& rect )
 	EraseRect( &rect );
 }
 
+static inline
+bool has_WaitNextEvent()
+{
+	enum { _WaitNextEvent = 0xA860 };
+	
+	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _WaitNextEvent );
+}
+
+static inline
+Boolean WaitNextEvent( EventRecord& event )
+{
+	return WaitNextEvent( everyEvent, &event, 0x7FFFFFFF, NULL );
+}
+
+static inline
+Boolean GetNextEvent( EventRecord& event )
+{
+	SystemTask();
+	
+	return GetNextEvent( everyEvent, &event );
+}
+
 int main()
 {
 	Boolean quitting = false;
@@ -148,11 +177,13 @@ int main()
 	
 	WindowRef main_window = NULL;
 	
+	const bool has_WNE = has_WaitNextEvent();
+	
 	while ( ! quitting )
 	{
 		EventRecord event;
 		
-		if ( WaitNextEvent( everyEvent, &event, 0x7FFFFFFF, NULL ) )
+		if ( has_WNE ? WaitNextEvent( event ) : GetNextEvent( event ) )
 		{
 			WindowRef window;
 			
