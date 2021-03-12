@@ -842,6 +842,23 @@ OSErr GetWDInfo_call( WDPBRec* pb : __A0 )
 }
 
 static
+OSErr DirCreate_call( HFileParam* pb : __A0 )
+{
+	INFO = "DirCreate:";
+	INFO = "-> ioVRefNum: ", pb->ioVRefNum;
+	INFO = "-> ioDirID:   ", pb->ioDirID;
+	
+	if ( pb->ioNamePtr )
+	{
+		INFO = "-> ioNamePtr: \"", CSTR( pb->ioNamePtr ), "\"";
+	}
+	
+	ERROR = "DirCreate is unimplemented";
+	
+	return pb->ioResult = paramErr;
+}
+
+static
 OSErr GetFCBInfo_call( FCBPBRec* pb : __A0 )
 {
 	INFO = "GetFCBInfo:";
@@ -898,6 +915,9 @@ void unimplemented_call( short trap_word : __D1, short selector : __D0 )
 
 asm void FSDispatch_patch( short trap_word : __D1, short selector : __D0 )
 {
+	CMPI.W   #0x0006,D0
+	BEQ      dispatch_DirCreate
+	
 	CMPI.W   #0x0007,D0
 	BEQ      dispatch_GetWDInfo
 	
@@ -908,6 +928,9 @@ asm void FSDispatch_patch( short trap_word : __D1, short selector : __D0 )
 	BEQ      dispatch_OpenDF
 	
 	JMP      unimplemented_call
+	
+dispatch_DirCreate:
+	JMP      DirCreate_call
 	
 dispatch_GetWDInfo:
 	JMP      GetWDInfo_call
