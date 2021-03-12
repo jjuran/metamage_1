@@ -9,9 +9,6 @@
 #endif
 
 // Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
@@ -25,6 +22,9 @@
 #include "missing/QuickdrawText.h"
 #endif
 #endif
+
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
@@ -48,19 +48,13 @@ using mac::qd::main_display_bounds;
 static inline
 bool in_v68k()
 {
-	SInt32 result;
-	OSErr err = Gestalt( 'v68k', &result );
-	
-	return err == noErr;
+	return mac::sys::gestalt_defined( 'v68k' );
 }
 
-static
+static inline
 bool has_color_quickdraw()
 {
-	SInt32 result;
-	OSErr err = Gestalt( 'qd  ', &result );
-	
-	return err == noErr  &&  result > 0;
+	return mac::sys::gestalt( 'qd  ' ) > 0;
 }
 
 static
@@ -106,16 +100,13 @@ WindowRef create_window()
 static
 void draw_window( WindowRef window )
 {
-	OSErr err;
-	
 	const Rect& portRect = get_portRect( window );
 	
 	SetPortWindowPort( window );
 	
 	EraseRect( &portRect );
 	
-	SInt32 micn = 0;
-	err = Gestalt( 'micn', &micn );
+	SInt32 micn = mac::sys::gestalt( 'micn' );
 	
 	const short icon_h = 16;
 	const short icon_v = 16;
