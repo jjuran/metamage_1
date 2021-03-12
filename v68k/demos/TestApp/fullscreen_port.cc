@@ -11,15 +11,15 @@
 #endif
 
 // Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
 #ifndef __LOWMEM__
 #include <LowMem.h>
 #endif
 #ifndef __MENUS__
 #include <Menus.h>
 #endif
+
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
 
 
 #if ! TARGET_API_MAC_CARBON
@@ -72,9 +72,7 @@ void cleanup_screen()
 	
 	if ( qd.thePort == &fullscreen_port )
 	{
-		SInt32 v68k = 0;
-		
-		if ( ! TARGET_CPU_68K  ||  Gestalt( 'v68k', &v68k ) != noErr )
+		if ( ! TARGET_CPU_68K  ||  ! mac::sys::gestalt_defined( 'v68k' ) )
 		{
 			refresh_screen();
 		}

@@ -11,12 +11,12 @@
 #endif
 
 // Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
+
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
 
 // TestApp
 #include "fullscreen_QT.hh"
@@ -38,9 +38,7 @@ bool has_QT_v2_5()
 	
 	const SInt32 v2_5 = 0x02500000;
 	
-	SInt32 qtim = 0;
-	
-	return Gestalt( 'qtim', &qtim ) == noErr  &&  qtim >= v2_5;
+	return mac::sys::gestalt( 'qtim' ) >= v2_5;
 }
 
 static const bool has_QT_fullscreen = has_QT_v2_5();
