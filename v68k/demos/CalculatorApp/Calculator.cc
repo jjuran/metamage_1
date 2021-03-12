@@ -18,12 +18,14 @@
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
+#include "mac_qd/globals/patterns.hh"
 #include "mac_qd/main_display_bounds.hh"
 #include "mac_qd/wide_drag_area.hh"
 
 
 #if TARGET_API_MAC_CARBON
 #define SystemTask()  /**/
+#define rDocProc noGrowDocProc
 #endif
 
 using mac::qd::get_portRect;
@@ -56,7 +58,7 @@ WindowRef make_window()
 	
 	SetPortWindowPort( window );
 	
-	BackPat( &qd.ltGray );
+	BackPat( &mac::qd::ltGray() );
 	
 	TextFont( kFontIDGeneva );
 	TextSize( 9 );
@@ -125,7 +127,7 @@ void draw_window( const Rect& rect )
 	
 	Rect console = { 8, 8, 26, 92 };
 	
-	FillRect( &console, &qd.white );
+	FillRect( &console, &mac::qd::white() );
 	
 	InsetRect( &console, -1, -1 );
 	FrameRect( &console );
@@ -148,7 +150,7 @@ void draw_window( const Rect& rect )
 		
 		Rect r = { top, left, bottom, right };
 		
-		FillRect( &r, &qd.white );
+		FillRect( &r, &mac::qd::white() );
 		FrameRect( &r );
 		
 		r.top   += 2;
@@ -202,6 +204,10 @@ int main()
 	InitFonts();
 	InitWindows();
 	InitMenus();
+	
+#endif
+	
+#ifndef __APPLE__
 	
 	InitCursor();
 	
