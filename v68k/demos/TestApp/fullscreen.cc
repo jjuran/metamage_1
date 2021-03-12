@@ -36,7 +36,7 @@ bool has_QT_v2_5()
 		return true;
 	}
 	
-	const SInt32 v2_5 = 02500000;
+	const SInt32 v2_5 = 0x02500000;
 	
 	SInt32 qtim = 0;
 	
