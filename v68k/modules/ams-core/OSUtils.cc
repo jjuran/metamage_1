@@ -393,7 +393,7 @@ short SysEnvirons_patch( short v : __D0, SysEnvRec* env : __A0 )
 		probably wasn't calling SysEnvirons() in the first place.
 	*/
 	
-	const short maxSysEnvVers = 1;
+	const short maxSysEnvVers = curSysEnvVers;  // version 2
 	
 	env->environsVersion = maxSysEnvVers;
 	env->machineType     = envMacPlus;
