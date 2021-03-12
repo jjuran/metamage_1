@@ -29,6 +29,7 @@
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/main_display_bounds.hh"
+#include "mac_qd/plot_icon_id.hh"
 
 
 #ifdef __MC68K__
@@ -121,7 +122,7 @@ void draw_window( WindowRef window )
 	
 	const Rect icon_rect = { icon_v, icon_h, icon_v + 32, icon_h + 32 };
 	
-	PlotIconID( &icon_rect, 0, 0, micn );
+	mac::qd::plot_icon_id( icon_rect, micn );
 	
 	const short text_h = 100;
 	const short text_v = 36;
