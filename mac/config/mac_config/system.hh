@@ -71,10 +71,10 @@
 #ifndef CONFIG_MINIMUM_SYSTEM
 #ifdef __MC68K__
 	/*
-		System 6.0.4 introduced Gestalt().  We can downgrade this requirement
-		if we check for _Gestalt before calling it.
+		MacRelix and other applications are known to work in System 4.2,
+		so make that our minimum for now.
 	*/
-	#define CONFIG_MINIMUM_SYSTEM  MAC_CONFIG_SYSTEM_6_0_4
+	#define CONFIG_MINIMUM_SYSTEM  MAC_CONFIG_SYSTEM_4_2
 #elif ! TARGET_API_MAC_CARBON
 	/*
 		System 7.1.2 is the first system supporting PPC machines.
