@@ -9,15 +9,22 @@
 #endif
 
 // Mac OS
-#ifndef __SOUND__
-#include <Sound.h>
+#ifndef __MACWINDOWS__
+#include <MacWindows.h>
 #endif
+
+// mac-sys-utils
+#include "mac_sys/trap_available.hh"
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/main_display_bounds.hh"
 #include "mac_qd/wide_drag_area.hh"
 
+
+#if TARGET_API_MAC_CARBON
+#define SystemTask()  /**/
+#endif
 
 using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
@@ -162,6 +169,28 @@ void draw_window( const Rect& rect )
 	}
 }
 
+static inline
+bool has_WaitNextEvent()
+{
+	enum { _WaitNextEvent = 0xA860 };
+	
+	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _WaitNextEvent );
+}
+
+static inline
+Boolean WaitNextEvent( EventRecord& event )
+{
+	return WaitNextEvent( everyEvent, &event, 0x7FFFFFFF, NULL );
+}
+
+static inline
+Boolean GetNextEvent( EventRecord& event )
+{
+	SystemTask();
+	
+	return GetNextEvent( everyEvent, &event );
+}
+
 int main()
 {
 	Boolean quitting = false;
@@ -182,11 +211,13 @@ int main()
 	
 	WindowRef main_window = make_window();
 	
+	const bool has_WNE = has_WaitNextEvent();
+	
 	while ( ! quitting )
 	{
 		EventRecord event;
 		
-		if ( WaitNextEvent( everyEvent, &event, 0x7FFFFFFF, NULL ) )
+		if ( has_WNE ? WaitNextEvent( event ) : GetNextEvent( event ) )
 		{
 			WindowRef window;
 			
