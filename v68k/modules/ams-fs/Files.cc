@@ -844,6 +844,15 @@ OSErr GetWDInfo_call( WDPBRec* pb : __A0 )
 static
 OSErr GetFCBInfo_call( FCBPBRec* pb : __A0 )
 {
+	INFO = "GetFCBInfo:";
+	INFO = "-> ioFCBIndx: ", pb->ioFCBIndx;
+	INFO = "-> ioVRefNum: ", pb->ioVRefNum;
+	
+	if ( pb->ioFCBIndx == 0 )
+	{
+		INFO = "-> ioRefNum:  ", pb->ioRefNum;
+	}
+	
 	ERROR = "GetFCBInfo is unimplemented";
 	
 	return pb->ioResult = paramErr;
