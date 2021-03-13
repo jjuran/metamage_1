@@ -160,7 +160,7 @@ OSErr documents_FlushFile( FCB* fcb )
 	return err ? ioErr : noErr;
 }
 
-OSErr documents_GetFileInfo( FileParam* pb, const uint8_t* name )
+OSErr documents_GetFileInfo( HFileParam* pb, const uint8_t* name )
 {
 	temp_A4 a4;
 	
@@ -203,7 +203,7 @@ OSErr documents_GetFileInfo( FileParam* pb, const uint8_t* name )
 	return noErr;
 }
 
-OSErr documents_SetFileInfo( FileParam* pb, const uint8_t* name )
+OSErr documents_SetFileInfo( HFileParam* pb, const uint8_t* name )
 {
 	temp_A4 a4;
 	

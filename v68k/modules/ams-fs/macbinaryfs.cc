@@ -152,7 +152,7 @@ OSErr MacBinary_open_fork( short trap_word, FCB* fcb, const macbinary::hdr* h )
 	return noErr;
 }
 
-OSErr MacBinary_GetFileInfo( FileParam* pb, const macbinary::hdr* h )
+OSErr MacBinary_GetFileInfo( HFileParam* pb, const macbinary::hdr* h )
 {
 	pb->ioFlAttrib  = 0;
 	pb->ioFlVersNum = 0;
@@ -161,7 +161,7 @@ OSErr MacBinary_GetFileInfo( FileParam* pb, const macbinary::hdr* h )
 	
 	((uint8_t*) &pb->ioFlFndrInfo.fdFlags)[ 1 ] = h->fndrFlagsLow;
 	
-	pb->ioFlNum = get_filenum( VCB_lookup( pb->ioVRefNum ), h );
+	pb->ioDirID = get_filenum( VCB_lookup( pb->ioVRefNum ), h );  // ioFlNum
 	
 	pb->ioFlStBlk  = 0;
 	pb->ioFlRStBlk = 0;

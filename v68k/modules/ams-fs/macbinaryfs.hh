@@ -11,7 +11,7 @@
 
 
 struct FCB;
-struct FileParam;
+struct HFileParam;
 struct VCB;
 
 typedef short OSErr;
@@ -25,6 +25,6 @@ OSErr MacBinary_Close( FCB* fcb );
 
 OSErr MacBinary_open_fork( short trap_word, FCB* fcb, const macbinary::hdr* h );
 
-OSErr MacBinary_GetFileInfo( FileParam* pb, const macbinary::hdr* h );
+OSErr MacBinary_GetFileInfo( HFileParam* pb, const macbinary::hdr* h );
 
 #endif

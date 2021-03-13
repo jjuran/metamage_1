@@ -7,6 +7,7 @@
 #define FILES_HH
 
 struct FileParam;
+struct HFileParam;
 struct IOParam;
 
 typedef short (*Open_ProcPtr)( short trap_word : __D1, FileParam* pb : __A0 );
@@ -19,7 +20,7 @@ extern IO_ProcPtr   old_Write;
 
 void initialize();
 
-short Create_patch( short trap_word : __D1, FileParam* pb : __A0 );
+short Create_patch( short trap_word : __D1, HFileParam* pb : __A0 );
 
 short Open_patch  ( short trap_word : __D1, IOParam* pb : __A0 );
 short OpenRF_patch( short trap_word : __D1, IOParam* pb : __A0 );
@@ -35,10 +36,10 @@ short Allocate_patch( short trap_word : __D1, IOParam* pb : __A0 );
 
 short Close_patch( short trap_word : __D1, IOParam* pb : __A0 );
 
-short Delete_patch( short trap_word : __D1, FileParam* pb : __A0 );
+short Delete_patch( short trap_word : __D1, HFileParam* pb : __A0 );
 
-short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 );
-short SetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 );
+short GetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 );
+short SetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 );
 
 void FSDispatch_patch( short trap_word : __D1, short selector : __D0 );
 

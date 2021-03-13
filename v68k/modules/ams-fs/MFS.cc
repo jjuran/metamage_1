@@ -181,7 +181,7 @@ OSErr MFS_open_fork( short trap_word, FCB* fcb, const mfs::_fde* entry )
 	return noErr;
 }
 
-OSErr MFS_GetFileInfo( FileParam* pb, const mfs::_fde* entry )
+OSErr MFS_GetFileInfo( HFileParam* pb, const mfs::_fde* entry )
 {
 	const size_t n = offsetof( mfs::file_directory_entry, flNam );
 	

@@ -11,7 +11,7 @@
 
 
 struct FCB;
-struct FileParam;
+struct HFileParam;
 struct VCB;
 
 typedef short OSErr;
@@ -58,6 +58,6 @@ void MFS_load( VCB* vcb, uint16_t stBlk, char* buffer, int16_t n );
 
 OSErr MFS_open_fork( short trap_word, FCB* fcb, const mfs::_fde* entry );
 
-OSErr MFS_GetFileInfo( FileParam* pb, const mfs::_fde* entry );
+OSErr MFS_GetFileInfo( HFileParam* pb, const mfs::_fde* entry );
 
 #endif

@@ -11,7 +11,7 @@
 
 
 struct FCB;
-struct FileParam;
+struct HFileParam;
 struct VCB;
 
 typedef short OSErr;
@@ -33,7 +33,7 @@ OSErr documents_open_fork( short trap_word, FCB* fcb, const uint8_t* name );
 
 OSErr documents_FlushFile( FCB* fcb );
 
-OSErr documents_GetFileInfo( FileParam* pb, const uint8_t* name );
-OSErr documents_SetFileInfo( FileParam* pb, const uint8_t* name );
+OSErr documents_GetFileInfo( HFileParam* pb, const uint8_t* name );
+OSErr documents_SetFileInfo( HFileParam* pb, const uint8_t* name );
 
 #endif

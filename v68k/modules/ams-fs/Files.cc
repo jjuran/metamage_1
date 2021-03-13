@@ -138,7 +138,7 @@ OSErr volume_lock_error( const VCB* vcb )
 	return noErr;
 }
 
-short Create_patch( short trap_word : __D1, FileParam* pb : __A0 )
+short Create_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 {
 	VCB* vcb = VCB_lookup( pb->ioVRefNum );
 	
@@ -608,14 +608,14 @@ short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = rfNumErr;
 }
 
-short Delete_patch( short trap_word : __D1, FileParam* pb : __A0 )
+short Delete_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 {
 	ERROR = "Delete is unimplemented";
 	
 	return pb->ioResult = extFSErr;
 }
 
-short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
+short GetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 {
 	VCB* vcb = VCB_lookup( pb->ioVRefNum );
 	
@@ -656,7 +656,7 @@ short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
 	return pb->ioResult = vfs->GetFileInfo( pb, entry );
 }
 
-short SetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
+short SetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 {
 	VCB* vcb = VCB_lookup( pb->ioVRefNum );
 	

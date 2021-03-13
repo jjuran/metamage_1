@@ -11,7 +11,7 @@
 
 
 struct FCB;
-struct FileParam;
+struct HFileParam;
 struct VCB;
 
 typedef short OSErr;
@@ -27,7 +27,7 @@ struct filesystem_vtable
 	typedef OSErr (*Create_proc)( VCB* vcb, const uint8_t* name );
 	typedef OSErr (*openfork_proc)( short trap_word, FCB* fcb, const Entry* e );
 	typedef OSErr (*FlushFile_proc)( FCB* fcb );
-	typedef OSErr (*GetFileInfo_proc)( FileParam* pb, const Entry* entry );
+	typedef OSErr (*GetFileInfo_proc)( HFileParam* pb, const Entry* entry );
 	
 	typedef GetFileInfo_proc SetFileInfo_proc;
 	
