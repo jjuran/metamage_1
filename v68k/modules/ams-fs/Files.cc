@@ -808,6 +808,11 @@ short SetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 static
 OSErr GetWDInfo_call( WDPBRec* pb : __A0 )
 {
+	INFO = "GetWDInfo:";
+	INFO = "-> ioVRefNum:  ", pb->ioVRefNum;
+	INFO = "-> ioWDIndex:  ", pb->ioWDIndex;
+	INFO = "-> ioWDProcID: ", pb->ioWDProcID;
+	
 	const short vRefNum = pb->ioVRefNum;
 	
 	if ( vRefNum >= 0 )
@@ -817,9 +822,11 @@ OSErr GetWDInfo_call( WDPBRec* pb : __A0 )
 		return pb->ioResult = paramErr;
 	}
 	
-	if ( pb->ioNamePtr )
+	if ( VCB* vcb = VCB_lookup( vRefNum ) )
 	{
-		if ( VCB* vcb = VCB_lookup( vRefNum ) )
+		DEBUG = "on volume \"", CSTR( vcb->vcbVN ), "\"";
+		
+		if ( pb->ioNamePtr )
 		{
 			const uint8_t* name = vcb->vcbVN;
 			
