@@ -242,7 +242,7 @@ bool check_region( RgnHandle rgn, const char* func, int line )
 	if ( extent[ 0 ] != top )
 	{
 		ERROR = func, ", line ", line,
-			": first v  ", extent[ 0 ], " doesn't match top ", top;
+			": first v ", extent[ 0 ], " doesn't match top ", top;
 		
 		valid = false;
 	}
