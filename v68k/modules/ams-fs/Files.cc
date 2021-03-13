@@ -19,6 +19,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "c_string.hh"
 #include "FCB.hh"
 #include "scoped_zone.hh"
 
@@ -140,6 +141,21 @@ OSErr volume_lock_error( const VCB* vcb )
 
 short Create_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 {
+	const short is_HFS = trap_word & kHFSFlagMask;
+	
+	INFO = "HCreate:" + ! is_HFS;
+	INFO = "-> ioVRefNum: ", pb->ioVRefNum;
+	
+	if ( is_HFS )
+	{
+		INFO = "-> ioDirID:   ", pb->ioDirID;
+	}
+	
+	if ( pb->ioNamePtr )
+	{
+		INFO = "-> ioNamePtr: \"", CSTR( pb->ioNamePtr ), "\"";
+	}
+	
 	VCB* vcb = VCB_lookup( pb->ioVRefNum );
 	
 	if ( vcb == NULL )
@@ -147,8 +163,12 @@ short Create_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 		return pb->ioResult = nsvErr;
 	}
 	
+	DEBUG = "on volume \"", CSTR( vcb->vcbVN ), "\"";
+	
 	if ( OSErr err = volume_lock_error( vcb ) )
 	{
+		WARNING = "volume \"", CSTR( vcb->vcbVN ), "\" is locked: ", err;
+		
 		return pb->ioResult = err;
 	}
 	
@@ -165,12 +185,25 @@ short Create_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 static
 short open_fork( short trap_word : __D1, HFileParam* pb : __A0 )
 {
+	const short is_HFS = trap_word & kHFSFlagMask;
+	
+	INFO = "-> ioVRefNum: ", pb->ioVRefNum;
+	
+	if ( is_HFS )
+	{
+		INFO = "-> ioDirID:   ", pb->ioDirID;
+	}
+	
 	StringPtr name = pb->ioNamePtr;
 	
 	if ( ! name )
 	{
 		return pb->ioResult = bdNamErr;
 	}
+	
+	INFO = "-> ioNamePtr: \"", CSTR( pb->ioNamePtr ), "\"";
+	
+	INFO = "-> ioPermssn: ", pb->filler1;  // ioPermssn
 	
 	FCB* fcb = find_next_empty_FCB();
 	
@@ -217,6 +250,8 @@ short open_fork( short trap_word : __D1, HFileParam* pb : __A0 )
 		
 		if ( const generic_file_entry* entry = vfs->lookup( vcb, name ) )
 		{
+			DEBUG = "on volume \"", CSTR( vcb->vcbVN ), "\"";
+			
 			fcb->fcbCrPs   = 0;
 			fcb->fcbVPtr   = vcb;
 			
@@ -234,6 +269,8 @@ short open_fork( short trap_word : __D1, HFileParam* pb : __A0 )
 			
 			pb->ioFRefNum = FCB_index( fcb );  // ioRefNum
 			
+			INFO = "<- ioFRefNum: ", pb->ioFRefNum;
+			
 			if ( selfmod_capable  &&  is_current_application( fcb->fcbFlNum ) )
 			{
 				set_servable ( fcb );  // file persists via appfs
@@ -249,13 +286,19 @@ short open_fork( short trap_word : __D1, HFileParam* pb : __A0 )
 
 short Open_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 {
-	if ( trap_word & kHFSFlagMask )
+	const short is_HFS = trap_word & kHFSFlagMask;
+	
+	INFO = "HOpen:" + ! is_HFS;
+	
+	if ( is_HFS )
 	{
 		// not a driver
 	}
 	else if ( pb->ioNamePtr  &&  *pb->ioNamePtr  &&  pb->ioNamePtr[ 1 ] == '.' )
 	{
 		// maybe a driver
+		
+		INFO = "-> ioNamePtr: \"", CSTR( pb->ioNamePtr ), "\"";
 		
 		return old_Open( trap_word, (FileParam*) pb );
 	}
@@ -265,6 +308,10 @@ short Open_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 
 short OpenRF_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 {
+	const short is_HFS = trap_word & kHFSFlagMask;
+	
+	INFO = "HOpenRF:" + ! is_HFS;
+	
 	return open_fork( trap_word, pb );
 }
 
@@ -610,6 +657,21 @@ short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 
 short Delete_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 {
+	const short is_HFS = trap_word & kHFSFlagMask;
+	
+	INFO = "HDelete:" + ! is_HFS;
+	INFO = "-> ioVRefNum: ", pb->ioVRefNum;
+	
+	if ( is_HFS )
+	{
+		INFO = "-> ioDirID:   ", pb->ioDirID;
+	}
+	
+	if ( pb->ioNamePtr )
+	{
+		INFO = "-> ioNamePtr: \"", CSTR( pb->ioNamePtr ), "\"";
+	}
+	
 	ERROR = "Delete is unimplemented";
 	
 	return pb->ioResult = extFSErr;
@@ -617,12 +679,29 @@ short Delete_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 
 short GetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 {
+	const short is_HFS = trap_word & kHFSFlagMask;
+	
+	INFO = "HGetFileInfo:" + ! is_HFS;
+	INFO = "-> ioVRefNum: ", pb->ioVRefNum;
+	
+	if ( is_HFS )
+	{
+		INFO = "-> ioDirID:   ", pb->ioDirID;
+	}
+	
+	if ( pb->ioNamePtr )
+	{
+		INFO = "-> ioNamePtr: \"", CSTR( pb->ioNamePtr ), "\"";
+	}
+	
 	VCB* vcb = VCB_lookup( pb->ioVRefNum );
 	
 	if ( vcb == NULL )
 	{
 		return pb->ioResult = nsvErr;
 	}
+	
+	DEBUG = "on volume \"", CSTR( vcb->vcbVN ), "\"";
 	
 	const vfs_table* vfs = vfs_from_vcb( vcb );
 	
@@ -658,6 +737,21 @@ short GetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 
 short SetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 {
+	const short is_HFS = trap_word & kHFSFlagMask;
+	
+	INFO = "HSetFileInfo:" + ! is_HFS;
+	INFO = "-> ioVRefNum: ", pb->ioVRefNum;
+	
+	if ( is_HFS )
+	{
+		INFO = "-> ioDirID:   ", pb->ioDirID;
+	}
+	
+	if ( pb->ioNamePtr )
+	{
+		INFO = "-> ioNamePtr: \"", CSTR( pb->ioNamePtr ), "\"";
+	}
+	
 	VCB* vcb = VCB_lookup( pb->ioVRefNum );
 	
 	if ( vcb == NULL )
@@ -665,8 +759,12 @@ short SetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 		return pb->ioResult = nsvErr;
 	}
 	
+	DEBUG = "on volume \"", CSTR( vcb->vcbVN ), "\"";
+	
 	if ( OSErr err = volume_lock_error( vcb ) )
 	{
+		WARNING = "volume \"", CSTR( vcb->vcbVN ), "\" is locked: ", err;
+		
 		return pb->ioResult = err;
 	}
 	
