@@ -163,7 +163,7 @@ short Create_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 }
 
 static
-short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
+short open_fork( short trap_word : __D1, HFileParam* pb : __A0 )
 {
 	StringPtr name = pb->ioNamePtr;
 	
@@ -188,7 +188,7 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	fcb->fcbMdRByt = is_rsrc & (kioFCBResourceMask >> 8);  // see above
 	
-	const bool writable = pb->ioPermssn != 1;
+	const bool writable = pb->filler1 != 1;  // ioPermssn
 	
 	if ( writable )
 	{
@@ -232,7 +232,7 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 				return pb->ioResult = err;
 			}
 			
-			pb->ioRefNum = FCB_index( fcb );
+			pb->ioFRefNum = FCB_index( fcb );  // ioRefNum
 			
 			if ( selfmod_capable  &&  is_current_application( fcb->fcbFlNum ) )
 			{
@@ -247,7 +247,7 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = fnfErr;
 }
 
-short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
+short Open_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 {
 	if ( trap_word & kHFSFlagMask )
 	{
@@ -263,7 +263,7 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return open_fork( trap_word, pb );
 }
 
-short OpenRF_patch( short trap_word : __D1, IOParam* pb : __A0 )
+short OpenRF_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 {
 	return open_fork( trap_word, pb );
 }

@@ -22,8 +22,9 @@ void initialize();
 
 short Create_patch( short trap_word : __D1, HFileParam* pb : __A0 );
 
-short Open_patch  ( short trap_word : __D1, IOParam* pb : __A0 );
-short OpenRF_patch( short trap_word : __D1, IOParam* pb : __A0 );
+short Open_patch  ( short trap_word : __D1, HFileParam* pb : __A0 );
+short OpenRF_patch( short trap_word : __D1, HFileParam* pb : __A0 );
+
 short Read_patch  ( short trap_word : __D1, IOParam* pb : __A0 );
 short Write_patch ( short trap_word : __D1, IOParam* pb : __A0 );
 
