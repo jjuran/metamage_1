@@ -859,9 +859,29 @@ OSErr GetFCBInfo_call( FCBPBRec* pb : __A0 )
 }
 
 static
-OSErr OpenDF_call( IOParam* pb : __A0 )
+OSErr OpenDF_call( short trap_word : __D1, HFileParam* pb : __A0 )
 {
+	const short is_HFS = trap_word & kHFSFlagMask;
+	
+	INFO = "HOpenDF:" + ! is_HFS;
+	INFO = "-> ioVRefNum: ", pb->ioVRefNum;
+	
+	if ( is_HFS )
+	{
+		INFO = "-> ioDirID:   ", pb->ioDirID;
+	}
+	
+	if ( pb->ioNamePtr )
+	{
+		INFO = "-> ioNamePtr: \"", CSTR( pb->ioNamePtr ), "\"";
+	}
+	
 	ERROR = "OpenDF is unimplemented";
+	
+	/*
+		If we return paramErr, then Lemmings will try Open.  But if we
+		return extFSErr, it won't, reporting an error instead.  Go figure.
+	*/
 	
 	return pb->ioResult = paramErr;
 }
