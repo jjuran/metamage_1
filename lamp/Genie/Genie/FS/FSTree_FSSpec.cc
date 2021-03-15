@@ -928,17 +928,25 @@ namespace Genie
 	
 	static void fifo_update( vfs::filehandle& fifo, relix::fifo_state state )
 	{
+		OSErr err;
+		
 		OSType type = 'FIFa' + state;
 		
 		const vfs::node& file = *get_file( fifo );
 		
 		hfs_extra& extra = *(hfs_extra*) file.extra();
 		
-		FInfo fInfo = N::FSpGetFInfo( extra.fsspec );
+		// Note:  The update could fail if the file has already been deleted.
 		
-		fInfo.fdType = type;
+		FInfo fInfo;
+		err = FSpGetFInfo( &extra.fsspec, &fInfo );
 		
-		N::FSpSetFInfo( extra.fsspec, fInfo );
+		if ( err == noErr )
+		{
+			fInfo.fdType = type;
+			
+			err = FSpSetFInfo( &extra.fsspec, &fInfo );
+		}
 	}
 	
 	static bool hfs_is_fifo( const CInfoPBRec& cInfo )
