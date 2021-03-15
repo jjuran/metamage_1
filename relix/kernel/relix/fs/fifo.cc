@@ -39,8 +39,9 @@ namespace relix
 	{
 		vfs::filehandle*  reader;
 		vfs::filehandle*  writer;
+		bool              opened;  // both reader and writer opened
 		
-		fifo_connection() : reader(), writer()
+		fifo_connection() : reader(), writer(), opened()
 		{
 		}
 	};
@@ -309,6 +310,8 @@ namespace relix
 			
 			intrusive_ptr_add_ref( conduit.get() );
 			intrusive_ptr_add_ref( conduit.get() );
+			
+			connection.opened = true;
 		}
 		else if ( !nonblocking )
 		{
@@ -318,7 +321,7 @@ namespace relix
 				                     : FIFO_half_open_writing );
 			}
 			
-			while ( them == NULL )
+			while ( ! connection.opened )
 			{
 				try_again( false );
 			}
