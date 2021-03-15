@@ -393,7 +393,9 @@ short SysEnvirons_patch( short v : __D0, SysEnvRec* env : __A0 )
 		probably wasn't calling SysEnvirons() in the first place.
 	*/
 	
-	env->environsVersion = 1;
+	const short maxSysEnvVers = 1;
+	
+	env->environsVersion = maxSysEnvVers;
 	env->machineType     = envMacPlus;
 	env->systemVersion   = SysVersion;
 	env->processor       = CPUFlag + 1;
@@ -403,10 +405,10 @@ short SysEnvirons_patch( short v : __D0, SysEnvRec* env : __A0 )
 	env->atDrvrVersNum   = 0;
 	env->sysVRefNum      = BootDrive;
 	
-	if ( v > 1 )
+	if ( v > maxSysEnvVers )
 	{
 		WARNING = "SysEnvirons version ", v, " too big";
 	}
 	
-	return v > 1 ? envVersTooBig : noErr;
+	return v > maxSysEnvVers ? envVersTooBig : noErr;
 }
