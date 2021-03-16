@@ -307,6 +307,18 @@ void host_env()
 	
 	const uint32_t mmu = gestalt( 'mmu ' );
 	
+	if ( TARGET_CPU_68K  &&  sysa <= 1  &&  CPUFlag >= 2 )
+	{
+		const char* mmu_name = mmu == 0 ? "none"  // (seen in Basilisk II)
+		                     : mmu == 1 ? "none (non-paging AMU)"
+		                     : mmu == 2 ? "68851"
+		                     : mmu == 3 ? "68030 built-in MMU"
+		                     : mmu == 4 ? "68040 built-in MMU"
+		                     :            "unknown MMU";
+		
+		printf( "Paged memory hardware:  %s\n", mmu_name );
+	}
+	
 	if ( TARGET_CPU_68K  &&  mmu )
 	{
 		const int gestalt32BitAddressing = 0;
