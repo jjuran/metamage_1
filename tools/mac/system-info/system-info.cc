@@ -151,10 +151,11 @@ void compiled()
 	printf( "%s\n", arch );
 }
 
+static const uint32_t sysa = gestalt( 'sysa' );
+
 static
 void host_env()
 {
-	const uint32_t sysa = gestalt( 'sysa' );
 	const uint32_t sysv = gestalt( 'sysv' );
 	
 	const char* arch_name = sysa <=  1 ? M68K
@@ -304,7 +305,9 @@ void host_env()
 		printf( "%s%d.%d%s\n", text, major, minor, dot );
 	}
 	
-	if ( TARGET_CPU_68K  &&  gestalt( 'mmu ' ) )
+	const uint32_t mmu = gestalt( 'mmu ' );
+	
+	if ( TARGET_CPU_68K  &&  mmu )
 	{
 		const int gestalt32BitAddressing = 0;
 		
@@ -320,7 +323,7 @@ void host_env()
 		printf( "680x0 privilege level:  %s\n", level );
 	}
 	
-	if ( ! TARGET_RT_MAC_MACHO  &&  gestalt( 'mmu ' ) > 1  &&  sysv < 0x1000 )
+	if ( ! TARGET_RT_MAC_MACHO  &&  mmu > 1  &&  sysv < 0x1000 )
 	{
 		const char* status = gestalt( 'vm  ' ) ? "On" : "Off";
 		
@@ -526,7 +529,7 @@ void virt_env()
 		blank = "";
 	}
 	
-	if ( TARGET_CPU_68K  &&  gestalt( 'sysa' ) == 2 )
+	if ( TARGET_CPU_68K  &&  sysa == 2 )
 	{
 		printf( "%s" "68K emulation:          Apple\n", blank );
 		blank = "";
