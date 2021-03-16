@@ -72,10 +72,14 @@ SonyVars_record* SonyVars : 0x0134;
 
 short SysVersion : 0x015A;
 
+char** AppPacks[ 8 ] : 0x0AB8;
+
 #else
 
 static uint8_t CPUFlag;
 static short SysVersion;
+
+static char*** AppPacks;
 
 #endif
 
@@ -306,6 +310,19 @@ void host_env()
 	}
 	
 	const uint32_t mmu = gestalt( 'mmu ' );
+	
+	if ( TARGET_CPU_68K )
+	{
+		const uint32_t fpu = gestalt( 'fpu ' );
+		
+		const char* fpu_name = fpu == 0 ? (AppPacks[ 4 ] ? "SANE only" : "none")
+		                     : fpu == 1 ? "68881"
+		                     : fpu == 2 ? "68882"
+		                     : fpu == 3 ? "68040 built-in FPU"
+		                     :            "unknown FPU";
+		
+		printf( "Floating point praxis:  %s\n", fpu_name );
+	}
 	
 	if ( TARGET_CPU_68K  &&  sysa <= 1  &&  CPUFlag >= 2 )
 	{
