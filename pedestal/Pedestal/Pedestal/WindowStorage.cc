@@ -11,7 +11,11 @@
 #endif
 
 // mac-config
+#include "mac_config/color-quickdraw.hh"
 #include "mac_config/desk-accessories.hh"
+
+// mac-sys-utils
+#include "mac_sys/has/ColorQuickDraw.hh"
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
@@ -28,14 +32,22 @@
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Quickdraw.hh"
 
-// MacFeatures
-#include "MacFeatures/ColorQuickdraw.hh"
-
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowEventHandlers.hh"  // codependent
 
+
+static inline
+bool has_color_quickdraw()
+{
+	if ( ! CONFIG_COLOR_QUICKDRAW )
+	{
+		return false;
+	}
+	
+	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  mac::sys::has_ColorQuickDraw();
+}
 
 namespace MacGlue
 {
@@ -375,10 +387,8 @@ namespace Pedestal
 	                                               Boolean           goAwayFlag,
 	                                               long              refCon );
 	
-	using MacFeatures::Has_ColorQuickdraw;
-	
-	static const NewWindow_ProcPtr gNewWindow = Has_ColorQuickdraw() ? &MacGlue::NewCWindow
-	                                                                 : &MacGlue::NewWindow;
+	static const NewWindow_ProcPtr gNewWindow = has_color_quickdraw() ? &MacGlue::NewCWindow
+	                                                                  : &MacGlue::NewWindow;
 	
 	
 	static inline

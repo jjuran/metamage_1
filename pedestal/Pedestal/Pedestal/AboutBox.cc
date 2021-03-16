@@ -25,14 +25,17 @@
 #endif
 #endif
 
+// mac-config
+#include "mac_config/color-quickdraw.hh"
+
+// mac-sys-utils
+#include "mac_sys/has/ColorQuickDraw.hh"
+
 // mac-qd-utils
 #include "mac_qd/plot_icon_id.hh"
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
-
-// MacFeatures
-#include "MacFeatures/ColorQuickdraw.hh"
 
 // Nitrogen
 #include "Carbon/CF/Types/CFMutableStringRef.hh"
@@ -55,6 +58,12 @@
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
+
+static inline
+bool has_color_quickdraw()
+{
+	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  mac::sys::has_ColorQuickDraw();
+}
 
 namespace Pedestal
 {
@@ -385,7 +394,7 @@ namespace Pedestal
 		
 	#endif
 		
-		if ( MacFeatures::Has_ColorQuickdraw() )
+		if ( CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw() )
 		{
 			N::RGBBackColor( kAboutBoxBackgroundColor );
 		}

@@ -22,9 +22,18 @@
 #endif
 #endif
 
-// MacFeatures
-#include "MacFeatures/ColorQuickdraw.hh"
+// mac-config
+#include "mac_config/color-quickdraw.hh"
 
+// mac-sys-utils
+#include "mac_sys/has/ColorQuickDraw.hh"
+
+
+static inline
+bool has_color_quickdraw()
+{
+	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  mac::sys::has_ColorQuickDraw();
+}
 
 namespace Pedestal
 {
@@ -50,7 +59,7 @@ namespace Pedestal
 	
 	static void PaintProgress( const Rect& insetBounds )
 	{
-		if ( const bool has_color_QD = MacFeatures::Has_ColorQuickdraw() )
+		if ( CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw() )
 		{
 			PaintRect_In_Color( insetBounds, gDarkGrey );
 		}
@@ -62,7 +71,7 @@ namespace Pedestal
 	
 	static void EraseProgress( const Rect& insetBounds )
 	{
-		if ( const bool has_color_QD = MacFeatures::Has_ColorQuickdraw() )
+		if ( CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw() )
 		{
 			PaintRect_In_Color( insetBounds, gSkyBlue );
 		}
