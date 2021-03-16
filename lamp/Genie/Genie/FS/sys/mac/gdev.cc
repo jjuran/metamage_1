@@ -28,6 +28,12 @@
 // iota
 #include "iota/strings.hh"
 
+// mac-config
+#include "mac_config/color-quickdraw.hh"
+
+// mac-sys-utils
+#include "mac_sys/has/ColorQuickDraw.hh"
+
 // gear
 #include "gear/hexadecimal.hh"
 
@@ -37,9 +43,6 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// MacFeatures
-#include "MacFeatures/ColorQuickdraw.hh"
-
 // vfs
 #include "vfs/node.hh"
 #include "vfs/methods/link_method_set.hh"
@@ -48,6 +51,12 @@
 // Genie
 #include "Genie/FS/sys/mac/gdev/list.hh"
 
+
+static inline
+bool has_color_quickdraw()
+{
+	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  mac::sys::has_ColorQuickDraw();
+}
 
 namespace Genie
 {
@@ -86,7 +95,7 @@ namespace Genie
 	                                        const plus::string&  name,
 	                                        const void*          args )
 	{
-		if ( !MacFeatures::Has_ColorQuickdraw() )
+		if ( ! (CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw()) )
 		{
 			p7::throw_errno( ENOENT );
 		}

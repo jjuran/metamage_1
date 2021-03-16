@@ -20,7 +20,11 @@
 #include <cstdio>
 #include <cstring>
 
+// mac-config
+#include "mac_config/color-quickdraw.hh"
+
 // mac-sys-utils
+#include "mac_sys/has/ColorQuickDraw.hh"
 #include "mac_sys/windowlist_contains.hh"
 
 // mac-ui-utils
@@ -50,9 +54,6 @@
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
 
-// MacFeatures
-#include "MacFeatures/ColorQuickdraw.hh"
-
 // vfs
 #include "vfs/node.hh"
 #include "vfs/property.hh"
@@ -70,6 +71,12 @@
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/serialize_qd.hh"
 
+
+static inline
+bool has_color_quickdraw()
+{
+	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  mac::sys::has_ColorQuickDraw();
+}
 
 namespace Nitrogen
 {
@@ -329,7 +336,7 @@ namespace Genie
 	{
 		static RGBColor Get( WindowRef window )
 		{
-			if ( !MacFeatures::Has_ColorQuickdraw() )
+			if ( ! (CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw()) )
 			{
 				p7::throw_errno( ENOENT );
 			}
@@ -339,7 +346,7 @@ namespace Genie
 		
 		static void Set( WindowRef window, const RGBColor& color )
 		{
-			if ( !MacFeatures::Has_ColorQuickdraw() )
+			if ( ! (CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw()) )
 			{
 				p7::throw_errno( ENOENT );
 			}

@@ -5,6 +5,12 @@
 
 #include "Genie/FS/sys/mac/gdev/list.hh"
 
+// mac-config
+#include "mac_config/color-quickdraw.hh"
+
+// mac-sys-utils
+#include "mac_sys/has/ColorQuickDraw.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 
@@ -23,9 +29,6 @@
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
 
-// MacFeatures
-#include "MacFeatures/ColorQuickdraw.hh"
-
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
@@ -40,6 +43,12 @@
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
 
+
+static inline
+bool has_color_quickdraw()
+{
+	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  mac::sys::has_ColorQuickDraw();
+}
 
 namespace Nitrogen
 {
@@ -206,7 +215,7 @@ namespace Genie
 	                                            const plus::string&  name,
 	                                            const void*          args )
 	{
-		if ( !MacFeatures::Has_ColorQuickdraw() )
+		if ( ! (CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw()) )
 		{
 			p7::throw_errno( ENOENT );
 		}
