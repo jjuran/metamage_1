@@ -66,6 +66,7 @@ struct SonyVars_record
 
 #if TARGET_CPU_68K
 
+long    MemTop  : 0x0108;
 uint8_t CPUFlag : 0x012F;
 
 SonyVars_record* SonyVars : 0x0134;
@@ -76,6 +77,7 @@ char** AppPacks[ 8 ] : 0x0AB8;
 
 #else
 
+static long MemTop;
 static uint8_t CPUFlag;
 static short SysVersion;
 
@@ -343,6 +345,35 @@ void host_env()
 		const bool _32bits = gestalt_bit_set( 'addr', gestalt32BitAddressing );
 		
 		printf( "680x0 addressing mode:  %s-bit\n", _32bits ? "32" : "24" );
+	}
+	
+	int32_t ram;
+	
+	if ( TARGET_API_MAC_CARBON  &&  (ram = gestalt( 'ramm' )) )
+	{
+		const char* units = "MiB";
+		
+		if ( (ram & 0x3ff) == 0 )
+		{
+			ram /= 1024u;
+			units = "GiB";
+		}
+		
+		printf( "Physical memory total:  %ld %s\n", (long) ram, units );
+	}
+	else if ( (ram = gestalt( 'ram ' ))  ||  (ram = MemTop) )
+	{
+		ram /= 1024u;
+		
+		const char* units = "K";
+		
+		if ( (ram & 0x3ff) == 0 )
+		{
+			ram /= 1024u;
+			units = " MiB";
+		}
+		
+		printf( "Physical memory total:  %ld%s\n", (long) ram, units );
 	}
 	
 	if ( TARGET_CPU_68K )
