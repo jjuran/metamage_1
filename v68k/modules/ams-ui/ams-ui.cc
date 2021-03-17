@@ -226,7 +226,7 @@ static void install_Controls()
 	TBTRAP( GetCtlAction   );  // A96A
 	TBTRAP( SetCtlAction   );  // A96B
 	TBTRAP( FindControl    );  // A96C
-	
+	TBTRAP( Draw1Control   );  // A96D
 	TBTRAP( GetNewControl  );  // A9BE
 }
 

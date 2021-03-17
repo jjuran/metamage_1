@@ -75,6 +75,8 @@ pascal ControlActionProcPtr GetCtlAction_patch( ControlRecord** control );
 
 pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn );
 
+pascal void Draw1Control_patch( ControlRecord** control );
+
 pascal short GetCVariant_patch( ControlRecord** control );
 
 #endif

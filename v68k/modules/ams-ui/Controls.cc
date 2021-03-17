@@ -581,6 +581,11 @@ pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn )
 	DrawControls_patch( window );
 }
 
+pascal void Draw1Control_patch( ControlRecord** control )
+{
+	draw_control( control );
+}
+
 pascal short GetCVariant_patch( ControlRecord** control )
 {
 	const short varCode = *(Byte*) &control[0]->contrlDefProc;
