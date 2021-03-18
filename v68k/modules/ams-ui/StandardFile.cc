@@ -198,8 +198,6 @@ pascal void draw_disk_name( DialogRef dialog, short i )
 	Handle h;
 	Rect box;
 	
-	get_volume_name();
-	
 	GetDialogItem( dialog, i, &type, &h, &box );
 	
 	TETextBox( volume_name + 1, volume_name[ 0 ],  &box, 0 );
@@ -266,6 +264,8 @@ pascal void SFPutFile_call( Point             where,
 	Handle h;
 	Rect box;
 	
+	get_volume_name();
+	
 	GetDialogItem( dialog, putPrompt, &type, &h, &box );
 	SetDialogItemText( h, prompt );
 	
@@ -304,6 +304,7 @@ pascal void SFPutFile_call( Point             where,
 		if ( hit == putDrive )
 		{
 			++SFSaveDisk;
+			get_volume_name();
 			
 			GetDialogItem( dialog, putDisk, &type, &h, &box );
 			InvalRect( &box );
@@ -351,6 +352,8 @@ pascal void SFGetFile_call( Point               where,
 	Handle h;
 	Rect box;
 	
+	get_volume_name();
+	
 	GetDialogItem( dialog, getDisk, &type, &h, &box );
 	SetDialogItem( dialog, getDisk, type, (Handle) &draw_disk_name, &box );
 	
@@ -388,6 +391,7 @@ pascal void SFGetFile_call( Point               where,
 		if ( hit == getDrive )
 		{
 			++SFSaveDisk;
+			get_volume_name();
 			
 			GetDialogItem( dialog, getDisk, &type, &h, &box );
 			InvalRect( &box );
