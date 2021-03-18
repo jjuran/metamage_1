@@ -165,20 +165,22 @@ asm Handle PtrToHand( const void* p : __A0, long size : __D0 )
 
 short SFSaveDisk : 0x0214;
 
+static Str27 volume_name;
+
 static
-OSErr get_volume_name( Str27 name )
+OSErr get_volume_name()
 {
 	OSErr err;
 	short vRefNum;
 	long freeBytes;
 	
-	err = GetVInfo( -SFSaveDisk, name, &vRefNum, &freeBytes );
+	err = GetVInfo( -SFSaveDisk, volume_name, &vRefNum, &freeBytes );
 	
 	if ( err == nsvErr )
 	{
 		SFSaveDisk = 1;
 		
-		err = GetVInfo( -1, name, &vRefNum, &freeBytes );
+		err = GetVInfo( -1, volume_name, &vRefNum, &freeBytes );
 	}
 	
 	if ( err )
@@ -192,17 +194,15 @@ OSErr get_volume_name( Str27 name )
 static
 pascal void draw_disk_name( DialogRef dialog, short i )
 {
-	Str27 name;
-	
 	short type;
 	Handle h;
 	Rect box;
 	
-	get_volume_name( name );
+	get_volume_name();
 	
 	GetDialogItem( dialog, i, &type, &h, &box );
 	
-	TETextBox( name + 1, name[ 0 ],  &box, 0 );
+	TETextBox( volume_name + 1, volume_name[ 0 ],  &box, 0 );
 }
 
 static
