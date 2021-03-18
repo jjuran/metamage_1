@@ -166,10 +166,9 @@ asm Handle PtrToHand( const void* p : __A0, long size : __D0 )
 short SFSaveDisk : 0x0214;
 
 static
-pascal void draw_disk_name( DialogRef dialog, short i )
+OSErr get_volume_name( Str27 name )
 {
 	OSErr err;
-	Str27 name;
 	short vRefNum;
 	long freeBytes;
 	
@@ -185,12 +184,21 @@ pascal void draw_disk_name( DialogRef dialog, short i )
 	if ( err )
 	{
 		ERROR = "GetVInfo returned ", err;
-		return;
 	}
+	
+	return err;
+}
+
+static
+pascal void draw_disk_name( DialogRef dialog, short i )
+{
+	Str27 name;
 	
 	short type;
 	Handle h;
 	Rect box;
+	
+	get_volume_name( name );
 	
 	GetDialogItem( dialog, i, &type, &h, &box );
 	
