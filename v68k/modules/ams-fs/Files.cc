@@ -682,14 +682,15 @@ short GetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 	const short is_HFS = trap_word & kHFSFlagMask;
 	
 	INFO = "HGetFileInfo:" + ! is_HFS;
-	INFO = "-> ioVRefNum: ", pb->ioVRefNum;
+	INFO = "-> ioFDirIndex: ", pb->ioFDirIndex;
+	INFO = "-> ioVRefNum:   ", pb->ioVRefNum;
 	
 	if ( is_HFS )
 	{
 		INFO = "-> ioDirID:   ", pb->ioDirID;
 	}
 	
-	if ( pb->ioNamePtr )
+	if ( pb->ioFDirIndex <= 0  &&  pb->ioNamePtr )
 	{
 		INFO = "-> ioNamePtr: \"", CSTR( pb->ioNamePtr ), "\"";
 	}
