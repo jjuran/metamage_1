@@ -30,6 +30,7 @@
 #include "Drag.hh"
 #include "Icons.hh"
 #include "IntlUtils.hh"
+#include "Lists.hh"
 #include "Menus.hh"
 #include "options.hh"
 #include "Scrap.hh"
@@ -288,6 +289,8 @@ static void install_TextEdit()
 
 static void install_Packages()
 {
+	TBTRAP( Pack0 );  // A9E7
+	
 	TBTRAP( Pack3 );  // A9EA
 	
 	TBTRAP( Pack6 );  // A9ED
