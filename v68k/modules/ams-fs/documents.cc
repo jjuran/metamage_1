@@ -64,8 +64,24 @@ void mount_virtual_documents_volume()
 	SFSaveDisk = -vRefNum;
 }
 
+static plus::var_string filename_cache;
+
 const uint8_t* documents_get_nth( VCB* vcb, short n )
 {
+	if ( n == 1 )
+	{
+		temp_A4 a4;
+		
+		int err = try_to_list( docfs_fd, plus::string::null, filename_cache );
+	}
+	
+	const size_t offset = (n - 1) * dirent_size;
+	
+	if ( offset < filename_cache.size() )
+	{
+		return (const uint8_t*) &filename_cache[ offset ];
+	}
+	
 	return NULL;  // not yet implemented
 }
 
@@ -194,6 +210,13 @@ OSErr documents_GetFileInfo( HFileParam* pb, const uint8_t* name )
 	if ( file_info.size() != size )
 	{
 		return ioErr;
+	}
+	
+	if ( pb->ioNamePtr )
+	{
+		--name;
+		
+		fast_memcpy( pb->ioNamePtr, name, 1 + name[ 0 ] );
 	}
 	
 	pb->ioFRefNum = 0;
