@@ -173,12 +173,9 @@ pascal void draw_disk_name( DialogRef dialog, short i )
 	short vRefNum;
 	long freeBytes;
 	
-	if ( SFSaveDisk )
-	{
-		err = GetVInfo( -SFSaveDisk, name, &vRefNum, &freeBytes );
-	}
+	err = GetVInfo( -SFSaveDisk, name, &vRefNum, &freeBytes );
 	
-	if ( ! SFSaveDisk  ||  err == nsvErr )
+	if ( err == nsvErr )
 	{
 		SFSaveDisk = 1;
 		
@@ -437,6 +434,11 @@ void unimplemented_call( short selector : __D0 )
 
 asm void Pack3_patch( short selector )
 {
+	TST.W    SFSaveDisk
+	BNE.S    valid_SFSaveDisk
+	ADDQ.W   #1,SFSaveDisk
+	
+valid_SFSaveDisk:
 	MOVEA.L  (SP)+,A0
 	MOVE.W   (SP)+,D0
 	MOVE.L   A0,-(SP)
