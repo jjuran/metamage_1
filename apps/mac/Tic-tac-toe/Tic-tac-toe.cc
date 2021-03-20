@@ -85,6 +85,15 @@ short min( short a, short b )
 }
 
 static inline
+GrafPtr GetPort()
+{
+	GrafPtr port;
+	GetPort( &port );
+	
+	return port;
+}
+
+static inline
 void InvalRect( WindowRef window, const Rect& rect )
 {
 #if ! TARGET_API_MAC_CARBON
@@ -446,10 +455,7 @@ WindowRef GetPort_window()
 		Otherwise, it may be just a GrafPort.
 	*/
 	
-	GrafPtr port;
-	GetPort( &port );
-	
-	return GetWindowFromPort( (CGrafPtr) port );
+	return GetWindowFromPort( (CGrafPtr) GetPort() );
 }
 
 static
