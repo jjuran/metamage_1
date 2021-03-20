@@ -22,7 +22,7 @@
 #endif
 
 
-static Ptr fullscreen_context;
+Ptr fullscreen_context;
 
 void begin_fullscreen()
 {

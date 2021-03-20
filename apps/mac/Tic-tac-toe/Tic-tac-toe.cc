@@ -48,6 +48,7 @@
 #include "cursors.hh"
 #include "fullscreen.hh"
 #include "fullscreen_port.hh"
+#include "fullscreen_QT.hh"
 #include "regions.hh"
 #include "state.hh"
 
@@ -208,6 +209,45 @@ void make_main_window()
 	SetPortWindowPort( main_window );
 }
 
+static inline
+void propagate_to_dock_tile()
+{
+#ifdef __APPLE__
+	
+	if ( is_fullscreen_via_QT() )
+	{
+		return;
+	}
+	
+	GrafPtr  gameboard_port = GetPort();
+	CGrafPtr dock_tile_port = BeginQDContextForApplicationDockTile();
+	
+	Rect src_rect, dst_rect;
+	
+	src_rect.top  = v_margin;
+	src_rect.left = h_margin;
+	src_rect.bottom = v_margin + unitLength * 32;
+	src_rect.right  = h_margin + unitLength * 32;
+	
+	GetPortBounds( dock_tile_port, &dst_rect );
+	
+	CopyBits( GetPortBitMapForCopyBits( gameboard_port ),
+	          GetPortBitMapForCopyBits( dock_tile_port ),
+	          &src_rect,
+	          &dst_rect,
+	          srcCopy,
+	          NULL );
+	
+	// This is needed in 10.2 and 10.4 PPC, not in 10.5 x86
+	QDFlushPortBuffer( dock_tile_port, NULL );
+	
+	EndQDContextForApplicationDockTile( dock_tile_port );
+	
+	SetPort( gameboard_port );
+	
+#endif
+}
+
 static
 void draw_window( WindowRef window )
 {
@@ -273,6 +313,8 @@ void draw_window( WindowRef window )
 	}
 	
 	SetOrigin( 0, 0 );
+	
+	propagate_to_dock_tile();
 }
 
 static
@@ -292,6 +334,8 @@ void draw_token( player_t token, short index )
 	PaintRgn( rgn );
 	
 	SetOrigin( 0, 0 );
+	
+	propagate_to_dock_tile();
 }
 
 static
