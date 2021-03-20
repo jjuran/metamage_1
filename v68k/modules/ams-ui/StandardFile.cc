@@ -191,7 +191,7 @@ OSErr get_volume_name()
 }
 
 static
-void populate_file_list()
+void populate_file_list( short n_types, const OSType* types )
 {
 	static FileParam pb;
 	
@@ -211,6 +211,20 @@ void populate_file_list()
 		++pb.ioFDirIndex;
 		
 		if ( name[ 0 ] == 0  ||  name[ 0 ] > 63  ||  name[ 1 ] == '.' )
+		{
+			continue;
+		}
+		
+		const OSType type = pb.ioFlFndrInfo.fdType;
+		
+		bool match = type == '****';  // wildcard type used on non-Mac hosts
+		
+		for ( short i = 0;  ! match  &&  i < n_types;  ++i )
+		{
+			match = type == types[ i ];
+		}
+		
+		if ( ! match )
 		{
 			continue;
 		}
@@ -396,10 +410,10 @@ pascal void SFGetFile_call( Point               where,
 	
 	filename_list = new_string_list( box );
 	
+	populate_file_list( numTypes, typeList );
+	
 	GetDialogItem( dialog, getLine, &type, &h, &box );
 	SetDialogItem( dialog, getLine, type, (Handle) &draw_dotted_line, &box );
-	
-	populate_file_list();
 	
 	short hit = 0;
 	
@@ -417,7 +431,7 @@ pascal void SFGetFile_call( Point               where,
 			++SFSaveDisk;
 			get_volume_name();
 			
-			populate_file_list();
+			populate_file_list( numTypes, typeList );
 			
 			GetDialogItem( dialog, getDisk, &type, &h, &box );
 			InvalRect( &box );
