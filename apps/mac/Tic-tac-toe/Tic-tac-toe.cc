@@ -84,7 +84,7 @@ short min( short a, short b )
 	return b < a ? b : a;
 }
 
-static
+static inline
 void InvalRect( WindowRef window, const Rect& rect )
 {
 #if ! TARGET_API_MAC_CARBON
@@ -437,7 +437,7 @@ void window_size_changed( WindowRef window )
 	calibrate_mouseRgns( unitLength );
 }
 
-static
+static inline
 WindowRef GetPort_window()
 {
 	/*
