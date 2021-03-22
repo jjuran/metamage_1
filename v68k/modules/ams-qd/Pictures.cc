@@ -135,6 +135,21 @@ const UInt8* fill_pat( const UInt8* p )
 }
 
 static
+const UInt8* line( const UInt8* p )
+{
+	const short v0 = read_word( p );
+	const short h0 = read_word( p );
+	
+	const short v1 = read_word( p );
+	const short h1 = read_word( p );
+	
+	MoveTo( h0, v0 );
+	LineTo( h1, v1 );
+	
+	return p;
+}
+
+static
 const UInt8* short_line( const UInt8* p )
 {
 	const short v = read_word( p );
@@ -379,6 +394,10 @@ const Byte* do_opcode( const Byte* p )
 		
 		case 0x0E:
 			ForeColor( read_long( p ) );
+			break;
+		
+		case 0x20:
+			p = line( p );
 			break;
 		
 		case 0x22:
