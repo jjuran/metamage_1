@@ -80,6 +80,18 @@ short read_word( const UInt8*& p )
 }
 
 static
+long read_long( const UInt8*& p )
+{
+	long result;
+	
+	fast_memcpy( &result, p, sizeof result );
+	
+	p += sizeof result;
+	
+	return result;
+}
+
+static
 Rect read_Rect( const UInt8*& p )
 {
 	Rect result;
@@ -338,6 +350,10 @@ const Byte* do_opcode( const Byte* p )
 		
 		case 0x0D:
 			TextSize( read_word( p ) );
+			break;
+		
+		case 0x0E:
+			ForeColor( read_long( p ) );
 			break;
 		
 		case 0x22:
