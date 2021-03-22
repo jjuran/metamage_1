@@ -127,10 +127,22 @@ pascal void KillPoly_patch( PolyHandle poly )
 
 pascal void OffsetPoly_patch( PolyHandle poly, short dh, short dv )
 {
-	Point* end = (Point*) ((char*) *poly + poly[0]->polySize);
-	Point* pt  = (Point*) &poly[0]->polyBBox;
+	Rect& bbox = poly[0]->polyBBox;
 	
-	// Offset the bounding box, the start point, and each edge point
+	const long topLeft = (long&) bbox;
+	
+	OffsetRect( &bbox, dh, dv );
+	
+	if ( topLeft == (long&) bbox )
+	{
+		// Either we're offsetting by (0,0), or the bbox went out of bounds.
+		return;
+	}
+	
+	Point* end = (Point*) ((char*) *poly + poly[0]->polySize);
+	Point* pt  = poly[0]->polyPoints;
+	
+	// Offset the start point and each edge point
 	
 	while ( pt < end )
 	{
