@@ -326,6 +326,11 @@ const Byte* do_opcode( const Byte* p )
 		
 		case 0xA1:  // long comment
 			p += 2;
+			// fall through
+		case 0x2C:  // reserved
+		case 0x2D:  // reserved
+		case 0x2E:  // reserved
+		case 0x2F:  // reserved
 			p += read_word( p );
 			break;
 		
