@@ -378,6 +378,7 @@ const Byte* do_opcode( const Byte* p )
 		case 0x1E:  // DefHilite
 			break;
 		
+		case 0x1A:  // RGBFgCol
 		case 0x1F:  // OpColor
 			p += 6;
 			break;
