@@ -752,6 +752,16 @@ pascal void SetRect_patch( Rect*  rect,
 
 pascal void OffsetRect_patch( Rect* rect, short dh, short dv )
 {
+	if ( (dv < 0 ? -rect->top - dv : rect->bottom + dv) > 32767 )
+	{
+		return;
+	}
+	
+	if ( (dh < 0 ? -rect->left - dh : rect->right + dh) > 32767 )
+	{
+		return;
+	}
+	
 	rect->top    += dv;
 	rect->left   += dh;
 	rect->bottom += dv;
