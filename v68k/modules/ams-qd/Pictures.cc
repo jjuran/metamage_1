@@ -144,6 +144,8 @@ const UInt8* long_text( const UInt8* p )
 	return p + n;
 }
 
+static Rect last_used_rect;
+
 static
 const UInt8* poly( const Byte* p, Op op )
 {
@@ -283,6 +285,21 @@ const Byte* do_opcode( const Byte* p )
 		
 		case 0x28:
 			p = long_text( p );
+			break;
+		
+		case 0x30:
+		case 0x31:
+		case 0x32:
+		case 0x33:
+		case 0x34:
+			last_used_rect = read_Rect( p );
+			// fall through
+		case 0x38:
+		case 0x39:
+		case 0x3A:
+		case 0x3B:
+		case 0x3C:
+			StdRect( opcode & 0x7, &last_used_rect );
 			break;
 		
 		case 0x70:
