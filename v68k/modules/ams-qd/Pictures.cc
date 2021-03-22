@@ -257,6 +257,10 @@ const Byte* do_opcode( const Byte* p )
 			TextFont( read_word( p ) );
 			break;
 		
+		case 0x04:
+			TextFace( *p++ );
+			break;
+		
 		case 0x05:
 			TextMode( read_word( p ) );
 			break;
@@ -355,6 +359,7 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	}
 	
 	const short txFont = port.txFont;
+	const short txFace = port.txFace;
 	const short txMode = port.txMode;
 	const short txSize = port.txSize;
 	
@@ -439,6 +444,7 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	SetPenState( &penState );
 	
 	TextFont( txFont );
+	TextFace( txFace );
 	TextMode( txMode );
 	TextSize( txSize );
 }
