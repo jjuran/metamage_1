@@ -404,10 +404,17 @@ pascal void OffsetRgn_patch( MacRegion** rgn, short dh, short dv )
 {
 	CHECK_REGION( "OffsetRgn", rgn );
 	
-	rgn[0]->rgnBBox.top    += dv;
-	rgn[0]->rgnBBox.left   += dh;
-	rgn[0]->rgnBBox.bottom += dv;
-	rgn[0]->rgnBBox.right  += dh;
+	Rect& bbox = rgn[0]->rgnBBox;
+	
+	const long topLeft = (long&) bbox;
+	
+	OffsetRect( &bbox, dh, dv );
+	
+	if ( topLeft == (long&) bbox )
+	{
+		// Either we're offsetting by (0,0), or the bbox went out of bounds.
+		return;
+	}
 	
 	if ( rgn[0]->rgnSize > sizeof (MacRegion) )
 	{
