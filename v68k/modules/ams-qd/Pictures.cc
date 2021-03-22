@@ -103,6 +103,17 @@ Rect read_Rect( const UInt8*& p )
 }
 
 static
+const UInt8* pen_size( const UInt8* p )
+{
+	Point size;
+	fast_memcpy( &size, p, sizeof size );
+	
+	PenSize( size.h, size.v );
+	
+	return p + sizeof size;
+}
+
+static
 const UInt8* pen_pat( const UInt8* p )
 {
 	Pattern pattern;
@@ -348,6 +359,10 @@ const Byte* do_opcode( const Byte* p )
 		
 		case 0x05:
 			TextMode( read_word( p ) );
+			break;
+		
+		case 0x07:
+			p = pen_size( p );
 			break;
 		
 		case 0x09:
