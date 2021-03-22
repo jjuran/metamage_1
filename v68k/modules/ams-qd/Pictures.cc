@@ -144,6 +144,67 @@ const UInt8* long_text( const UInt8* p )
 	return p + n;
 }
 
+static
+const UInt8* text_dh( const UInt8* p )
+{
+	const SInt8 dh = *p++;
+	
+	Move( dh, 0 );
+	
+	GrafPort& port = **get_addrof_thePort();
+	
+	Point pt = port.pnLoc;
+	
+	DrawString( p );
+	
+	port.pnLoc = pt;
+	
+	const UInt8 n = *p++;
+	
+	return p + n;
+}
+
+static
+const UInt8* text_dv( const UInt8* p )
+{
+	const SInt8 dv = *p++;
+	
+	Move( 0, dv );
+	
+	GrafPort& port = **get_addrof_thePort();
+	
+	Point pt = port.pnLoc;
+	
+	DrawString( p );
+	
+	port.pnLoc = pt;
+	
+	const UInt8 n = *p++;
+	
+	return p + n;
+}
+
+static
+const UInt8* text_dhdv( const UInt8* p )
+{
+	const SInt8 dh = *p++;
+	const SInt8 dv = *p++;
+	
+	Move( dh, dv );
+	
+	GrafPort& port = **get_addrof_thePort();
+	
+	Point pt = port.pnLoc;
+	
+	DrawString( p );
+	
+	port.pnLoc = pt;
+	
+	const UInt8 n = *p++;
+	
+	return p + n;
+}
+
 static Rect last_used_rect;
 
 static
@@ -285,6 +346,18 @@ const Byte* do_opcode( const Byte* p )
 		
 		case 0x28:
 			p = long_text( p );
+			break;
+		
+		case 0x29:
+			p = text_dh( p );
+			break;
+		
+		case 0x2A:
+			p = text_dv( p );
+			break;
+		
+		case 0x2B:
+			p = text_dhdv( p );
 			break;
 		
 		case 0x30:
