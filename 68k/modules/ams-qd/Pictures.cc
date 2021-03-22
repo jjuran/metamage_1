@@ -118,6 +118,19 @@ const UInt8* set_curvature( const UInt8* p )
 	return p + sizeof curvature;
 }
 
+static Point picture_origin;
+
+static inline
+const UInt8* origin( const UInt8* p )
+{
+	picture_origin.h += read_word( p );
+	picture_origin.v += read_word( p );
+	
+	SetOrigin( picture_origin.h, picture_origin.v );
+	
+	return p;
+}
+
 static inline
 const UInt8* pen_size( const UInt8* p )
 {
@@ -429,6 +442,10 @@ const Byte* do_opcode( const Byte* p )
 			p = set_curvature( p );
 			break;
 		
+		case 0x0C:
+			p = origin( p );
+			break;
+		
 		case 0x0D:
 			TextSize( read_word( p ) );
 			break;
@@ -627,6 +644,8 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	const Point saved_origin = (const Point&) port.portRect;
 	
 	SetOrigin( saved_origin.h - dh, saved_origin.v - dv );
+	
+	picture_origin = (const Point&) port.portRect;
 	
 	const long clipTopLeft = (long&) port.clipRgn[0]->rgnBBox;
 	
