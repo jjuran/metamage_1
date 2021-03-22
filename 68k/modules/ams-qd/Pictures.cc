@@ -181,6 +181,17 @@ const UInt8* short_line( const UInt8* p )
 	return p;
 }
 
+static inline
+const UInt8* short_line_from( const UInt8* p )
+{
+	const SInt8 dh = *p++;
+	const SInt8 dv = *p++;
+	
+	Line( dh, dv );
+	
+	return p;
+}
+
 static
 const UInt8* long_text( const UInt8* p )
 {
@@ -431,6 +442,10 @@ const Byte* do_opcode( const Byte* p )
 		
 		case 0x22:
 			p = short_line( p );
+			break;
+		
+		case 0x23:
+			p = short_line_from( p );
 			break;
 		
 		case 0x28:
