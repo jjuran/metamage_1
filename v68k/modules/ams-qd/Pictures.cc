@@ -324,6 +324,11 @@ const Byte* do_opcode( const Byte* p )
 			p += 2;
 			break;
 		
+		case 0xA1:  // long comment
+			p += 2;
+			p += read_word( p );
+			break;
+		
 		case 0x01:
 			p += read_word( p ) - 2;
 			break;
