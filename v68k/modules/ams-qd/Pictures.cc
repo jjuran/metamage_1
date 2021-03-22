@@ -137,6 +137,8 @@ const UInt8* long_text( const UInt8* p )
 	
 	DrawString( p );
 	
+	MoveTo( h, v );
+	
 	const UInt8 n = *p++;
 	
 	return p + n;
