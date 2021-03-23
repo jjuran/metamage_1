@@ -354,6 +354,10 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 		return;  // $1101FF is valid, but empty
 	}
 	
+	const short txFont = port.txFont;
+	const short txMode = port.txMode;
+	const short txSize = port.txSize;
+	
 	const UInt8* end = (UInt8*) pic[0] + size;
 	const UInt8* p   = (UInt8*) (pic[0] + 1);
 	
@@ -433,4 +437,8 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	SetOrigin( saved_origin.h, saved_origin.v );
 	
 	SetPenState( &penState );
+	
+	TextFont( txFont );
+	TextMode( txMode );
+	TextSize( txSize );
 }
