@@ -80,6 +80,18 @@ short read_word( const UInt8*& p )
 }
 
 static
+long read_long( const UInt8*& p )
+{
+	long result;
+	
+	fast_memcpy( &result, p, sizeof result );
+	
+	p += sizeof result;
+	
+	return result;
+}
+
+static
 Rect read_Rect( const UInt8*& p )
 {
 	Rect result;
@@ -88,6 +100,17 @@ Rect read_Rect( const UInt8*& p )
 	p += sizeof result;
 	
 	return result;
+}
+
+static
+const UInt8* pen_size( const UInt8* p )
+{
+	Point size;
+	fast_memcpy( &size, p, sizeof size );
+	
+	PenSize( size.h, size.v );
+	
+	return p + sizeof size;
 }
 
 static
@@ -109,6 +132,21 @@ const UInt8* fill_pat( const UInt8* p )
 	fast_memcpy( &port.fillPat, p, sizeof (Pattern) );
 	
 	return p + sizeof (Pattern);
+}
+
+static
+const UInt8* line( const UInt8* p )
+{
+	const short v0 = read_word( p );
+	const short h0 = read_word( p );
+	
+	const short v1 = read_word( p );
+	const short h1 = read_word( p );
+	
+	MoveTo( h0, v0 );
+	LineTo( h1, v1 );
+	
+	return p;
 }
 
 static
@@ -137,10 +175,75 @@ const UInt8* long_text( const UInt8* p )
 	
 	DrawString( p );
 	
+	MoveTo( h, v );
+	
 	const UInt8 n = *p++;
 	
 	return p + n;
 }
+
+static
+const UInt8* text_dh( const UInt8* p )
+{
+	const SInt8 dh = *p++;
+	
+	Move( dh, 0 );
+	
+	GrafPort& port = **get_addrof_thePort();
+	
+	Point pt = port.pnLoc;
+	
+	DrawString( p );
+	
+	port.pnLoc = pt;
+	
+	const UInt8 n = *p++;
+	
+	return p + n;
+}
+
+static
+const UInt8* text_dv( const UInt8* p )
+{
+	const SInt8 dv = *p++;
+	
+	Move( 0, dv );
+	
+	GrafPort& port = **get_addrof_thePort();
+	
+	Point pt = port.pnLoc;
+	
+	DrawString( p );
+	
+	port.pnLoc = pt;
+	
+	const UInt8 n = *p++;
+	
+	return p + n;
+}
+
+static
+const UInt8* text_dhdv( const UInt8* p )
+{
+	const SInt8 dh = *p++;
+	const SInt8 dv = *p++;
+	
+	Move( dh, dv );
+	
+	GrafPort& port = **get_addrof_thePort();
+	
+	Point pt = port.pnLoc;
+	
+	DrawString( p );
+	
+	port.pnLoc = pt;
+	
+	const UInt8 n = *p++;
+	
+	return p + n;
+}
+
+static Rect last_used_rect;
 
 static
 const UInt8* poly( const Byte* p, Op op )
@@ -247,6 +350,16 @@ const Byte* do_opcode( const Byte* p )
 			p += 2;
 			break;
 		
+		case 0xA1:  // long comment
+			p += 2;
+			// fall through
+		case 0x2C:  // reserved
+		case 0x2D:  // reserved
+		case 0x2E:  // reserved
+		case 0x2F:  // reserved
+			p += read_word( p );
+			break;
+		
 		case 0x01:
 			p += read_word( p ) - 2;
 			break;
@@ -255,8 +368,16 @@ const Byte* do_opcode( const Byte* p )
 			TextFont( read_word( p ) );
 			break;
 		
+		case 0x04:
+			TextFace( *p++ );
+			break;
+		
 		case 0x05:
 			TextMode( read_word( p ) );
+			break;
+		
+		case 0x07:
+			p = pen_size( p );
 			break;
 		
 		case 0x09:
@@ -271,12 +392,47 @@ const Byte* do_opcode( const Byte* p )
 			TextSize( read_word( p ) );
 			break;
 		
+		case 0x0E:
+			ForeColor( read_long( p ) );
+			break;
+		
+		case 0x20:
+			p = line( p );
+			break;
+		
 		case 0x22:
 			p = short_line( p );
 			break;
 		
 		case 0x28:
 			p = long_text( p );
+			break;
+		
+		case 0x29:
+			p = text_dh( p );
+			break;
+		
+		case 0x2A:
+			p = text_dv( p );
+			break;
+		
+		case 0x2B:
+			p = text_dhdv( p );
+			break;
+		
+		case 0x30:
+		case 0x31:
+		case 0x32:
+		case 0x33:
+		case 0x34:
+			last_used_rect = read_Rect( p );
+			// fall through
+		case 0x38:
+		case 0x39:
+		case 0x3A:
+		case 0x3B:
+		case 0x3C:
+			StdRect( opcode & 0x7, &last_used_rect );
 			break;
 		
 		case 0x70:
@@ -351,6 +507,11 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	{
 		return;  // $1101FF is valid, but empty
 	}
+	
+	const short txFont = port.txFont;
+	const short txFace = port.txFace;
+	const short txMode = port.txMode;
+	const short txSize = port.txSize;
 	
 	const UInt8* end = (UInt8*) pic[0] + size;
 	const UInt8* p   = (UInt8*) (pic[0] + 1);
@@ -431,4 +592,9 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	SetOrigin( saved_origin.h, saved_origin.v );
 	
 	SetPenState( &penState );
+	
+	TextFont( txFont );
+	TextFace( txFace );
+	TextMode( txMode );
+	TextSize( txSize );
 }
