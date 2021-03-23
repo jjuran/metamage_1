@@ -345,6 +345,11 @@ const Byte* do_opcode( const Byte* p )
 {
 	const Byte opcode = *p++;
 	
+	if ( (opcode - 0x30 & 0xC8) == 0x00 )
+	{
+		last_used_rect = read_Rect( p );
+	}
+	
 	switch ( opcode )
 	{
 		case 0x00:
@@ -430,8 +435,6 @@ const Byte* do_opcode( const Byte* p )
 		case 0x32:
 		case 0x33:
 		case 0x34:
-			last_used_rect = read_Rect( p );
-			// fall through
 		case 0x38:
 		case 0x39:
 		case 0x3A:
