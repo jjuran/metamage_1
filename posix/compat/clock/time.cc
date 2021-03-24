@@ -10,6 +10,13 @@
 #include <mach/mach_time.h>
 #endif
 
+// Mac OS
+#ifdef __RELIX__
+#ifndef __TIMER__
+#include <Timer.h>
+#endif
+#endif
+
 // POSIX
 #include <sys/time.h>
 
@@ -17,6 +24,7 @@
 #include <errno.h>
 
 
+const unsigned million = 1000 * 1000;
 const unsigned billion = 1000 * 1000 * 1000;
 
 static inline
@@ -121,3 +129,37 @@ int clock_gettime( clockid_t clock_id, struct timespec* ts )
 #endif  // #ifdef __MAC_10_12
 
 #endif  // #ifdef __MACH__
+
+#ifdef __RELIX__
+
+int clock_getres( clockid_t clock_id, struct timespec* ts )
+{
+	ts->tv_sec  = 0;
+	ts->tv_nsec = 1000;
+	
+	return 0;
+}
+
+int clock_gettime( clockid_t clock_id, struct timespec* ts )
+{
+	if ( clock_id == CLOCK_REALTIME )
+	{
+		return get_realtime_clock( ts );
+	}
+	
+	if ( clock_id == CLOCK_MONOTONIC )
+	{
+		uint64_t now;
+		Microseconds( (UnsignedWide*) &now );
+		
+		ts->tv_sec  = now / million;
+		ts->tv_nsec = now % million * 1000;
+		
+		return 0;
+	}
+	
+	errno = EINVAL;
+	return -1;
+}
+
+#endif  // #ifdef __RELIX__
