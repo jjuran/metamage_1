@@ -19,20 +19,20 @@ uint16_t CalcCRC( const uint8_t* dataBuf, uint32_t size )
 	
 	const unsigned long kMagicNumber = 0x1021;
 	
-	register const uint8_t* dataEnd = dataBuf + size;
+	const uint8_t* dataEnd = dataBuf + size;
 	
-	register unsigned long crc = 0;
+	unsigned long crc = 0;
 	
 	while ( dataBuf != dataEnd )
 	{
-		register unsigned long dataByte = *dataBuf++;
+		unsigned long dataByte = *dataBuf++;
 		dataByte <<= 8;
 		
-		register long i = 8;
+		long i = 8;
 		
 		do
 		{	
-			register long bit = dataByte;
+			long bit = dataByte;
 			dataByte += dataByte;
 			bit ^= crc;
 			crc += crc;
