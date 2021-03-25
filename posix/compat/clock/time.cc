@@ -12,6 +12,9 @@
 
 // Mac OS
 #ifdef __RELIX__
+#ifndef __DRIVERSERVICES__
+#include <DriverServices.h>
+#endif
 #ifndef __TIMER__
 #include <Timer.h>
 #endif
@@ -134,7 +137,20 @@ int clock_gettime( clockid_t clock_id, struct timespec* ts )
 
 int clock_getres( clockid_t clock_id, struct timespec* ts )
 {
-	ts->tv_sec  = 0;
+	ts->tv_sec = 0;
+	
+	if ( clock_id == CLOCK_MONOTONIC  &&  TARGET_CPU_PPC  &&  &UpTime != 0 )
+	{
+		uint64_t one = 1;
+		uint64_t res;
+		
+		(Nanoseconds&) res = AbsoluteToNanoseconds( (const AbsoluteTime&) one );
+		
+		ts->tv_nsec = res % billion;
+		
+		return 0;
+	}
+	
 	ts->tv_nsec = 1000;
 	
 	return 0;
@@ -150,6 +166,17 @@ int clock_gettime( clockid_t clock_id, struct timespec* ts )
 	if ( clock_id == CLOCK_MONOTONIC )
 	{
 		uint64_t now;
+		
+		if ( TARGET_CPU_PPC  &&  &UpTime != 0 )
+		{
+			(Nanoseconds&) now = AbsoluteToNanoseconds( UpTime() );
+			
+			ts->tv_sec  = now / billion;
+			ts->tv_nsec = now % billion;
+			
+			return 0;
+		}
+		
 		Microseconds( (UnsignedWide*) &now );
 		
 		ts->tv_sec  = now / million;
