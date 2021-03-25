@@ -11,6 +11,9 @@
 #endif
 
 // Mac OS
+#ifndef __DRIVERSERVICES__
+#include <DriverServices.h>
+#endif
 #ifndef __LOWMEM__
 #include <LowMem.h>
 #endif
@@ -44,6 +47,16 @@ namespace sys {
 		}
 		
 	#endif
+		
+		if ( ! TARGET_CPU_68K  &&  &UpTime != 0 )
+		{
+			uint64_t now;
+			(Nanoseconds&) now = AbsoluteToNanoseconds( UpTime() );
+			
+			*count = now / 1000;
+			
+			return;
+		}
 		
 		Microseconds( (UnsignedWide*) count );
 	}
