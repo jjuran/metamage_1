@@ -59,6 +59,7 @@ sub command
 	
 	my $module = $self->{FROM};
 	
+	my @mode;
 	my $dest = $self->{DEST};
 	
 	my $conf = $module->{CONF};
@@ -69,6 +70,14 @@ sub command
 	
 	if ( $conf->is_apple_gcc )
 	{
+		if ( my $bundle_type = $module->bundle_type )
+		{
+			if ( $bundle_type ne "app" )
+			{
+				@mode = "-bundle";
+			}
+		}
+		
 		my @names = @{$module->{DESC}{DATA}{frameworks} || []};
 		
 		@names = "Carbon"  if @names == 0;
@@ -76,7 +85,7 @@ sub command
 		push @frameworks, map { -framework => $_ } @names;
 	}
 	
-	return $self->tool_name, -o => $dest, @arch, @frameworks;
+	return $self->tool_name, @mode, -o => $dest, @arch, @frameworks;
 }
 
 1;
