@@ -12,7 +12,7 @@ use strict;
 
 *read_source_list_file = \&Compile::Driver::InputFile::SourceList::read_file;
 
-my %bundle_types = map { $_ => 1 } qw( app );
+my %bundle_types = map { $_ => 1 } qw( app qlgenerator );
 
 
 sub new
