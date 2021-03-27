@@ -75,9 +75,9 @@ sub jobs_for
 		my $prog = $module->program_name;
 		my $path = Compile::Driver::Job::bin_pathname( $target, $name, $prog );
 		
-		if ( $module->is_bundle )
+		if ( my $bundle_type = $module->bundle_type )
 		{
-			my $bundle = "$path.app";
+			my $bundle = "$path.$bundle_type";
 			
 			push @jobs, Compile::Driver::Job::Link::PkgInfo::->new
 			(
