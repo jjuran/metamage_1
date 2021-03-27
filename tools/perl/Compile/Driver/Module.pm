@@ -12,6 +12,8 @@ use strict;
 
 *read_source_list_file = \&Compile::Driver::InputFile::SourceList::read_file;
 
+my %bundle_types = map { $_ => 1 } qw( app );
+
 
 sub new
 {
@@ -75,7 +77,9 @@ sub is_bundle
 {
 	my $self = shift;
 	
-	return $self->product_type eq "app"
+	my $product = $self->product_type;
+	
+	return $bundle_types{ $product };
 }
 
 sub is_executable
@@ -84,7 +88,7 @@ sub is_executable
 	
 	my $product = $self->product_type;
 	
-	return $product eq "app"  ||  $product =~ m{ tool $}x;
+	return $bundle_types{ $product }  ||  $product =~ m{ tool $}x;
 }
 
 sub is_buildable
