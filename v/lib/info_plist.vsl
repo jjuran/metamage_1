@@ -30,7 +30,9 @@ reifiers =
 [
 	bool      => { str(_): null  },
 	string    => { string: _     },
-	int       => { string: str _ },
+	int       => { integer: str _ },
+	fraction  => { real:   str float _ },
+	float     => { real:   str _ },
 	mb32      => { string: str _ },
 	mapping[] => { dict:   _ map { key: _.key, reify _.value } },
 	array     => { array:  _ map reify },
