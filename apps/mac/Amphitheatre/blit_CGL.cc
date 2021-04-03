@@ -16,6 +16,9 @@
 // transcodex
 #include "transcode/8x_1bpp_to_8bpp.hh"
 
+// Amphitheatre
+#include "bitmapped_texture_check.hh"
+
 
 int image_width;
 int image_height;
@@ -27,6 +30,11 @@ const GLenum texture_target = GL_TEXTURE_RECTANGLE_ARB;
 
 int tex_x1;
 int tex_y1;
+
+static bool bitmaps_make_textures;
+
+static GLenum texture_format = GL_LUMINANCE;
+static GLenum texture_type   = GL_UNSIGNED_BYTE;
 
 static uint8_t* texture_data;
 
@@ -91,6 +99,41 @@ CGL_blitter::CGL_blitter( CGDirectDisplayID id, CGRect bounds )
 	
 	CGLSetCurrentContext( context );
 	
+	if ( (bitmaps_make_textures = has_bitmapped_textures()) )
+	{
+		texture_format = GL_COLOR_INDEX;
+		texture_type   = GL_BITMAP;
+		
+		const float palette[] = { 1.0, 0.0 };  // white = 0, black = 1
+		
+		glPixelMapfv( GL_PIXEL_MAP_I_TO_R, 2, palette );
+		
+		/*
+			GL_UNPACK_ALIGNMENT must be a factor of the stride, which is also
+			known as rowBytes.  In practice, screens tend to be a multiple of
+			128px wide, which at 1bpp is 16 bytes -- more than enough to cover
+			OpenGL's default alignment of 4 bytes or even its max of 8 bytes.
+			(An exception is 800px (rowBytes of 100), which is only a multiple
+			of 4 bytes.)
+			
+			Note that color graphics devices in classic Mac OS tend to have
+			extra, unused words at the end of each row.  This is fine when
+			you have qd.screenBits.rowBytes, but OpenGL doesn't have a means
+			to skip words that aren't alignment gaps.  Care must be taken when
+			creating raster files to avoid creating a "gutter" that poses a
+			nuisance for OpenGL, and ideally, choose an image width with no
+			wasted bytes that works regardless of alignment.
+			
+			To ensure compatibility with QuickDraw, the alignment must be at
+			least 2 bytes.  For example, an image width of 520px should have
+			a rowBytes of 66, not 65, and you'd have to call
+			
+				glPixelStorei( GL_UNPACK_ALIGNMENT, 2 );
+			
+			for correct unpacking in OpenGL.
+		*/
+	}
+	
 	glGenTextures( 1, &texture );
 	
 	glBindTexture( texture_target, texture );
@@ -146,8 +189,8 @@ void CGL_blitter::prep( int stride, int width, int height )
 	              tex_width,
 	              tex_height,
 	              0,
-	              GL_LUMINANCE,
-	              GL_UNSIGNED_BYTE,
+	              texture_format,
+	              texture_type,
 	              0 );  // NULL
 	
 	texture_data = (uint8_t*) malloc( tex_width * tex_height );
@@ -155,9 +198,14 @@ void CGL_blitter::prep( int stride, int width, int height )
 
 void CGL_blitter::blit( const void* src_addr )
 {
-	const int n_octets = image_width * image_height / 8u;
-	
-	transcode_8x_1bpp_to_8bpp( src_addr, texture_data, n_octets );
+	if ( ! bitmaps_make_textures )
+	{
+		const int n_octets = image_width * image_height / 8u;
+		
+		transcode_8x_1bpp_to_8bpp( src_addr, texture_data, n_octets );
+		
+		src_addr = texture_data;
+	}
 	
 	glBindTexture( texture_target, texture );
 	
@@ -167,9 +215,9 @@ void CGL_blitter::blit( const void* src_addr )
 	                 0,
 	                 image_width,
 	                 image_height,
-	                 GL_LUMINANCE,
-	                 GL_UNSIGNED_BYTE,
-	                 texture_data );
+	                 texture_format,
+	                 texture_type,
+	                 src_addr );
 	
 	glClear( GL_COLOR_BUFFER_BIT );
 	
