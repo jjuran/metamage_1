@@ -202,7 +202,7 @@ ams-x11-install: ams-x11-build ams-68k-install ams-common-install
 	@chmod +x var/install/bin/interact
 
 ams-quartz-build: $(AMS_REPOS)
-	$(BUILD) graft mbin xv68k minivx freemountd Amethyst
+	$(BUILD) graft mbin xv68k minivx freemountd Amphitheatre
 
 RETROMATIC := PATH="$$PWD/var/out:$$PATH" v/bin/retromatic.vx
 RETRO_APPS := var/apps
