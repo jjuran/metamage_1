@@ -19,6 +19,8 @@
 
 bool has_bitmapped_textures()
 {
+#ifdef GL_TEXTURE_RECTANGLE_ARB
+	
 	short   data = 0xAA55;
 	GLsizei width = 8;
 	GLsizei height = 2;
@@ -53,4 +55,15 @@ bool has_bitmapped_textures()
 	glDeleteTextures( 1, &texture );
 	
 	return bits[ 0 ] != 0;
+	
+#endif
+	
+	/*
+		GL_TEXTURE_2D always supports populating a texture from a bitmap,
+		but if it's not supported by the hardware then we'll get kicked over
+		to a software-only renderer, which is way worse than just transcoding
+		on the CPU.  Return false to avoid this horrid fate.
+	*/
+	
+	return false;
 }

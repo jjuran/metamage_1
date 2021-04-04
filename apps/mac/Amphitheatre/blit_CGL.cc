@@ -26,10 +26,25 @@ int image_height;
 int tex_width;
 int tex_height;
 
+#ifdef GL_TEXTURE_RECTANGLE_ARB
+
 const GLenum texture_target = GL_TEXTURE_RECTANGLE_ARB;
+
+#define glTexCoord_ glTexCoord2i
 
 int tex_x1;
 int tex_y1;
+
+#else
+
+const GLenum texture_target = GL_TEXTURE_2D;
+
+#define glTexCoord_ glTexCoord2f
+
+float tex_x1;
+float tex_y1;
+
+#endif
 
 static bool bitmaps_make_textures;
 
@@ -40,6 +55,21 @@ static uint8_t* texture_data;
 
 static CGLContextObj context;
 static GLuint        texture;
+
+static inline
+unsigned binary_power_up( unsigned x )
+{
+	--x;
+	
+	int power = 1;
+	
+	while ( x >>= 1 )
+	{
+		++power;
+	}
+	
+	return 1 << power;
+}
 
 CGL_blitter::CGL_blitter( CGDirectDisplayID id, CGRect bounds )
 {
@@ -99,6 +129,18 @@ CGL_blitter::CGL_blitter( CGDirectDisplayID id, CGRect bounds )
 	
 	CGLSetCurrentContext( context );
 	
+#ifdef GL_TEXTURE_RECTANGLE_ARB
+	
+	/*
+		Don't even check for bitmap support if we don't have rectangle
+		textures.  It's always supported with 2D textures, but not in the
+		older OpenGL hardware -- and falling back to software rendering
+		kills performance.
+		
+		It's true that has_bitmapped_textures() returns false in this case,
+		but the extra check here lets us omit some dead code.
+	*/
+	
 	if ( (bitmaps_make_textures = has_bitmapped_textures()) )
 	{
 		texture_format = GL_COLOR_INDEX;
@@ -134,6 +176,8 @@ CGL_blitter::CGL_blitter( CGDirectDisplayID id, CGRect bounds )
 		*/
 	}
 	
+#endif
+	
 	glGenTextures( 1, &texture );
 	
 	glBindTexture( texture_target, texture );
@@ -145,6 +189,14 @@ CGL_blitter::CGL_blitter( CGDirectDisplayID id, CGRect bounds )
 		We don't have any cases of minification currently, so it doesn't
 		matter what GL_TEXTURE_MIN_FILTER is set to.
 	*/
+	
+#ifndef GL_TEXTURE_RECTANGLE_ARB
+	
+	// Leave GL_TEXTURE_BASE_LEVEL set to its default of zero.
+	
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0 );
+	
+#endif
 	
 	glViewport( (int) bounds.origin.x,
 	            (int) bounds.origin.y,
@@ -177,11 +229,27 @@ void CGL_blitter::prep( int stride, int width, int height )
 	image_width  = width;
 	image_height = height;
 	
+#ifdef GL_TEXTURE_RECTANGLE_ARB
+	
 	tex_width  = image_width;
 	tex_height = image_height;
 	
 	tex_x1 = image_width;
 	tex_y1 = image_height;
+	
+#else
+	
+	int greater = width > height ? width : height;
+	
+	binary_power_up( greater );
+	
+	tex_width  =
+	tex_height = binary_power_up( greater );
+	
+	tex_x1 = 1.0 * image_width  / tex_width;
+	tex_y1 = 1.0 * image_height / tex_height;
+	
+#endif
 	
 	glTexImage2D( texture_target,
 	              0,
@@ -193,7 +261,10 @@ void CGL_blitter::prep( int stride, int width, int height )
 	              texture_type,
 	              0 );  // NULL
 	
-	texture_data = (uint8_t*) malloc( tex_width * tex_height );
+	if ( ! bitmaps_make_textures )
+	{
+		texture_data = (uint8_t*) malloc( tex_width * tex_height );
+	}
 }
 
 void CGL_blitter::blit( const void* src_addr )
@@ -228,10 +299,10 @@ void CGL_blitter::blit( const void* src_addr )
 	const int width  = image_width;
 	const int height = image_height;
 	
-	glTexCoord2i( 0,     0      ); glVertex2i( 0,     height );  // top left
-	glTexCoord2i( width, 0      ); glVertex2i( width, height );  // top right
-	glTexCoord2i( width, height ); glVertex2i( width, 0      );  // bottom right
-	glTexCoord2i( 0,     height ); glVertex2i( 0,     0      );  // bottom left
+	glTexCoord_( 0,      0      ); glVertex2i( 0,     height );  // top left
+	glTexCoord_( tex_x1, 0      ); glVertex2i( width, height );  // top right
+	glTexCoord_( tex_x1, tex_y1 ); glVertex2i( width, 0      );  // bottom right
+	glTexCoord_( 0,      tex_y1 ); glVertex2i( 0,     0      );  // bottom left
 	
 	glEnd();
 	glDisable( texture_target );
