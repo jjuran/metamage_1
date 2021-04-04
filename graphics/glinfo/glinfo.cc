@@ -18,6 +18,7 @@
 #include <stdio.h>
 
 // glinfo
+#include "bitmapped_texture_check.hh"
 #include "context.hh"
 
 
@@ -66,6 +67,8 @@ int main()
 			write( STDOUT_FILENO, "\n", 1 );
 		}
 	}
+	
+	check_bitmapped_textures();
 	
 	destroy_context();
 }
