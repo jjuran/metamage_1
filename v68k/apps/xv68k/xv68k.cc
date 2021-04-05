@@ -12,7 +12,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-// more
+// more-libc
+#include "more/string.h"
+
+// more-posix
 #include "more/perror.hh"
 
 // gear
@@ -464,11 +467,7 @@ void load_argv( uint8_t* mem, int argc, char* const* argv )
 			abort();
 		}
 		
-		memcpy( args_data, *argv, len );
-		
-		args_data += len;
-		
-		++argv;
+		args_data = (uint8_t*) mempcpy( args_data, *argv++, len );
 	}
 	
 	*args = 0;  // trailing NULL of argv
@@ -689,9 +688,9 @@ void load_module( uint8_t* mem, const char* module )
 		
 		module = p;
 		
-		memcpy( p, home, home_len );  p += home_len;
-		memcpy( p, _68k, _68k_len );  p += _68k_len;
-		memcpy( p, name, name_len );  p += name_len;
+		p = (char*) mempcpy( p, home, home_len );
+		p = (char*) mempcpy( p, _68k, _68k_len );
+		p = (char*) mempcpy( p, name, name_len );
 		
 		*p = '\0';
 	}
