@@ -181,7 +181,7 @@ namespace Genie
 				to be at least half the buffer.
 			*/
 			
-			memcpy( its_data, its_head, its_tail - its_head );
+			memmove( its_data, its_head, its_tail - its_head );
 			
 			its_head -= head_room;
 			its_tail -= head_room;
