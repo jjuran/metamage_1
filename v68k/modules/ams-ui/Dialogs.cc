@@ -913,7 +913,7 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 	}
 	else if ( event->what == keyDown  ||  event->what == autoKey )
 	{
-		if ( TEHandle hTE = d->textH )
+		if ( d->editField >= 0 )
 		{
 			const char c = (char) event->message;
 			
@@ -923,7 +923,7 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 				return false;
 			}
 			
-			TEKey( c, hTE );
+			TEKey( c, d->textH );
 			
 			const DialogItem* item = get_editField( d );
 			
