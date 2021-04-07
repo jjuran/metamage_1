@@ -36,6 +36,8 @@ struct path_component
 	size_t                 size;
 };
 
+#if ! __LP64__
+
 static
 plus::string GetMacPathname( const FSSpec&          file,
                              const path_component*  link,
@@ -108,3 +110,9 @@ plus::string GetMacPathname( const FSSpec& file, bool utf8 )
 	
 	return GetMacPathname( file, link, utf8 );
 }
+
+#else
+
+int dummy;
+
+#endif
