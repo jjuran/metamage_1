@@ -18,6 +18,12 @@
 #include "c_string.hh"
 #include "QDGlobals.hh"
 
+// ams-ui
+#include "string_list.hh"
+
+
+#define PSTR_LEN( s )  ("\p" s), (sizeof s)
+
 
 enum
 {
@@ -27,8 +33,6 @@ enum
 	
 	getDisk   =  4,
 	getLine   =  9,
-	getPrompt = 10,
-	getName   = 11,
 };
 
 static const char SFPutFile_items[] =
@@ -86,7 +90,7 @@ static const char SFPutFile_items[] =
 	;
 
 static const char SFGetFile_items[] =
-	"\x00\x0a"             // count - 1
+	"\x00\x09"             // count - 1
 	
 	"\x00\x00\x00\x00"     // handle placeholder
 	"\x00\x1c" "\x00\x98"  // bounds.topLeft
@@ -129,7 +133,7 @@ static const char SFGetFile_items[] =
 	"\x00\x00\x00\x00"     // handle placeholder
 	"\x00\x0b" "\x00\x0c"  // bounds.topLeft
 	"\x00\x7d" "\x00\x7d"  // bounds.bottomRight
-	"\x80"                 // userItem + itemDisable
+	"\x00"                 // userItem
 	"\x00"                 // null
 	
 	"\x00\x00\x00\x00"     // handle placeholder
@@ -149,12 +153,6 @@ static const char SFGetFile_items[] =
 	"\x00\x74" "\x04\x79"  // bounds.bottomRight
 	"\x88"                 // statText + itemDisable
 	"\x00" ""              // static text
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x3c" "\x00\x0e"  // bounds.topLeft
-	"\x00\x4c" "\x00\xe5"  // bounds.bottomRight
-	"\x90"                 // editText + itemDisable
-	"\x00" ""              // initial text
 	;
 
 static inline
@@ -165,39 +163,78 @@ asm Handle PtrToHand( const void* p : __A0, long size : __D0 )
 
 short SFSaveDisk : 0x0214;
 
+static Str27 volume_name;
+static string_list_handle filename_list;
+
 static
-pascal void draw_disk_name( DialogRef dialog, short i )
+OSErr get_volume_name()
 {
 	OSErr err;
-	Str27 name;
 	short vRefNum;
 	long freeBytes;
 	
-	if ( SFSaveDisk )
-	{
-		err = GetVInfo( -SFSaveDisk, name, &vRefNum, &freeBytes );
-	}
+	err = GetVInfo( -SFSaveDisk, volume_name, &vRefNum, &freeBytes );
 	
-	if ( ! SFSaveDisk  ||  err == nsvErr )
+	if ( err == nsvErr )
 	{
 		SFSaveDisk = 1;
 		
-		err = GetVInfo( -1, name, &vRefNum, &freeBytes );
+		err = GetVInfo( -1, volume_name, &vRefNum, &freeBytes );
 	}
 	
 	if ( err )
 	{
 		ERROR = "GetVInfo returned ", err;
-		return;
 	}
 	
+	return err;
+}
+
+static
+void populate_file_list()
+{
+	static FileParam pb;
+	
+	clear_string_list( filename_list );
+	
+	Str255 name;
+	name[ 0 ] = '\0';
+	
+	pb.ioNamePtr = name;
+	pb.ioVRefNum = -SFSaveDisk;
+	pb.ioFDirIndex = 1;
+	
+	OSErr err;
+	
+	while ( (err = PBGetFInfoSync( (ParamBlockRec*) &pb )) == noErr )
+	{
+		++pb.ioFDirIndex;
+		
+		if ( name[ 0 ] == 0  ||  name[ 0 ] > 63  ||  name[ 1 ] == '.' )
+		{
+			continue;
+		}
+		
+		append_to_string_list( filename_list, name );
+	}
+}
+
+static
+pascal void draw_disk_name( DialogRef dialog, short i )
+{
 	short type;
 	Handle h;
 	Rect box;
 	
 	GetDialogItem( dialog, i, &type, &h, &box );
 	
-	TETextBox( name + 1, name[ 0 ],  &box, 0 );
+	TETextBox( volume_name + 1, volume_name[ 0 ],  &box, 0 );
+}
+
+static
+pascal void draw_file_list( DialogRef dialog, short i )
+{
+	draw_string_list( filename_list );
 }
 
 static
@@ -261,6 +298,8 @@ pascal void SFPutFile_call( Point             where,
 	Handle h;
 	Rect box;
 	
+	get_volume_name();
+	
 	GetDialogItem( dialog, putPrompt, &type, &h, &box );
 	SetDialogItemText( h, prompt );
 	
@@ -299,6 +338,7 @@ pascal void SFPutFile_call( Point             where,
 		if ( hit == putDrive )
 		{
 			++SFSaveDisk;
+			get_volume_name();
 			
 			GetDialogItem( dialog, putDisk, &type, &h, &box );
 			InvalRect( &box );
@@ -346,17 +386,20 @@ pascal void SFGetFile_call( Point               where,
 	Handle h;
 	Rect box;
 	
+	get_volume_name();
+	
 	GetDialogItem( dialog, getDisk, &type, &h, &box );
 	SetDialogItem( dialog, getDisk, type, (Handle) &draw_disk_name, &box );
+	
+	GetDialogItem( dialog, getNmList, &type, &h, &box );
+	SetDialogItem( dialog, getNmList, type, (Handle) &draw_file_list, &box );
+	
+	filename_list = new_string_list( box );
 	
 	GetDialogItem( dialog, getLine, &type, &h, &box );
 	SetDialogItem( dialog, getLine, type, (Handle) &draw_dotted_line, &box );
 	
-	GetDialogItem( dialog, getPrompt, &type, &h, &box );
-	box.left  =  12;
-	box.right = 140;
-	SetDialogItem( dialog, getPrompt, type, h, &box );
-	SetDialogItemText( h, "\p" "Name of file to open:" );
+	populate_file_list();
 	
 	short hit = 0;
 	
@@ -364,28 +407,34 @@ pascal void SFGetFile_call( Point               where,
 	{
 		ModalDialog( NULL, &hit );
 		
-		if ( hit == 1 )
+		if ( hit == 1  &&  get_string_list_selection( filename_list ) )
 		{
-			Str255 name;
-			
-			GetDialogItem( dialog, getName, &type, &h, &box );
-			GetDialogItemText( h, name );
-			
-			Size len = name[ 0 ];
-			
-			if ( len > 0  &&  len <= sizeof reply->fName - 1 )
-			{
-				fast_memcpy( reply->fName, name, 1 + len );
-				break;
-			}
+			break;
 		}
 		
 		if ( hit == getDrive )
 		{
 			++SFSaveDisk;
+			get_volume_name();
+			
+			populate_file_list();
 			
 			GetDialogItem( dialog, getDisk, &type, &h, &box );
 			InvalRect( &box );
+			
+			GetDialogItem( dialog, getNmList, &type, &h, &box );
+			InvalRect( &box );
+		}
+		
+		if ( hit == getNmList )
+		{
+			Point pt;
+			GetMouse( &pt );
+			
+			if ( bool double_clicked = string_list_click( filename_list, pt ) )
+			{
+				break;
+			}
 		}
 	}
 	while ( hit != 3 );
@@ -393,6 +442,14 @@ pascal void SFGetFile_call( Point               where,
 	reply->good = hit != 3;  // $01 or $00
 	reply->vRefNum = -SFSaveDisk;
 	reply->version = 0;
+	
+	if ( ConstStr255Param name = get_string_list_selection( filename_list ) )
+	{
+		fast_memcpy( reply->fName, name, 1 + name[ 0 ] );
+	}
+	
+	dispose_string_list( filename_list );
+	filename_list = NULL;
 	
 	DisposeDialog( dialog );
 }
@@ -437,6 +494,11 @@ void unimplemented_call( short selector : __D0 )
 
 asm void Pack3_patch( short selector )
 {
+	TST.W    SFSaveDisk
+	BNE.S    valid_SFSaveDisk
+	ADDQ.W   #1,SFSaveDisk
+	
+valid_SFSaveDisk:
 	MOVEA.L  (SP)+,A0
 	MOVE.W   (SP)+,D0
 	MOVE.L   A0,-(SP)
