@@ -57,17 +57,7 @@ sub new
 	
 	if ( $is_mac )
 	{
-		if ( exists $self{ arch } )
-		{
-			if ( $osx_arch lt $self{ arch } )
-			{
-				die "Can't build OS X x86 on ppc\n";
-			}
-		}
-		else
-		{
-			$self{ arch } = $osx_arch;
-		}
+		$self{ arch } ||= $osx_arch;
 		
 		my $wants_64bit = `sh -c 'echo \$HOSTTYPE'` =~ /x86_64/;
 		
