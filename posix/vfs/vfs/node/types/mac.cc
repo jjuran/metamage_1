@@ -19,6 +19,9 @@
 // iota
 #include "iota/endian.hh"
 
+// mac-types
+#include "mac_types/epoch.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -102,9 +105,15 @@ namespace vfs
 		return get( info.permissions );
 	}
 	
+#endif  // #ifdef __APPLE__
+	
 	struct macinfo_extra
 	{
+	#ifdef __APPLE__
 		FSRef         ref;
+	#else
+		struct stat   st;
+	#endif
 		special_info  type;
 	};
 	
@@ -115,6 +124,8 @@ namespace vfs
 		macinfo_extra& extra = *(macinfo_extra*) that->extra();
 		
 		memset( &st, '\0', sizeof st );
+		
+	#ifdef __APPLE__
 		
 		FSCatalogInfoBitmap bits = kFSCatInfoPermissions;
 		FSCatalogInfo       info;
@@ -129,6 +140,13 @@ namespace vfs
 		}
 		
 		st.st_mode = permissions( info ).mode;
+		
+	#else
+		
+		st.st_mode = extra.st.st_mode;
+		
+	#endif
+		
 		st.st_size = info_sizes[ extra.type ];
 	}
 	
@@ -142,6 +160,8 @@ namespace vfs
 			p7::throw_errno( EPERM );
 		}
 		
+	#ifdef __APPLE__
+		
 		FSCatalogInfoBitmap bits = info_bits[ extra.type ];
 		FSCatalogInfo       info;
 		
@@ -153,6 +173,8 @@ namespace vfs
 		{
 			return plus::string::null;  // FIXME
 		}
+		
+	#endif
 		
 		plus::string result;
 		
@@ -166,28 +188,55 @@ namespace vfs
 		
 		uint32_t* p4 = (uint32_t*) begin;
 		
+	#ifdef __APPLE__
+		
 		const OSType* q4 = (const OSType*) info.finderInfo;
 		
 		*p4++ = iota::big_u32( *q4++ );  // type
 		*p4++ = iota::big_u32( *q4++ );  // creator
 		
+	#else
+		
+		*p4++ = '*' * 0x01010101;  // type
+		*p4++ = '?' * 0x01010101;  // creator
+		
+	#endif
+		
 		uint16_t* p2 = (uint16_t*) p4;
 		
 		if ( extra.type >= Info_FInfo )
 		{
+		#ifdef __APPLE__
+			
 			const UInt16* q2 = (const UInt16*) q4;
 			
 			*p2++ = iota::big_u16( *q2++ );  // finderFlags
 			*p2++ = iota::big_u16( *q2++ );  // location.v
 			*p2++ = iota::big_u16( *q2++ );  // location.h
 			*p2++ = iota::big_u16( *q2++ );  // reservedField
+			
+		#else
+			
+			memset( p2, '\0', 4 * sizeof (uint16_t) );
+			
+			p2 += 4;
+			
+		#endif
 		}
 		
 		if ( extra.type == Info_GetFInfo )
 		{
 			p4 = (uint32_t*) p2;
 			
+		#ifdef __APPLE__
+			
 			*p4++ = iota::big_u32( info.nodeID );  // Host information leak?
+			
+		#else
+			
+			*p4++ = iota::big_u32( extra.st.st_ino );  // Host information leak?
+			
+		#endif
 			
 			p2 = (uint16_t*) p4;
 			
@@ -195,8 +244,17 @@ namespace vfs
 			
 			p4 = (uint32_t*) p2;
 			
+		#ifdef __APPLE__
+			
 			*p4++ = iota::big_u32( info.dataLogicalSize );
 			*p4++ = iota::big_u32( info.dataPhysicalSize );
+			
+		#else
+			
+			*p4++ = iota::big_u32( extra.st.st_size );
+			*p4++ = iota::big_u32( extra.st.st_blocks * 512 );
+			
+		#endif
 			
 			p2 = (uint16_t*) p4;
 			
@@ -204,10 +262,23 @@ namespace vfs
 			
 			p4 = (uint32_t*) p2;
 			
+		#ifdef __APPLE__
+			
 			*p4++ = iota::big_u32( info.rsrcLogicalSize  );
 			*p4++ = iota::big_u32( info.rsrcPhysicalSize );
 			*p4++ = iota::big_u32( info.createDate    .lowSeconds );
 			*p4++ = iota::big_u32( info.contentModDate.lowSeconds );
+			
+		#else
+			
+			using mac::types::epoch_delta;
+			
+			*p4++ = 0;
+			*p4++ = 0;
+			*p4++ = 0;
+			*p4++ = iota::big_u32( epoch_delta() + extra.st.st_mtime );
+			
+		#endif
 		}
 		
 		return result;
@@ -229,6 +300,8 @@ namespace vfs
 		{
 			p7::throw_errno( EINVAL );
 		}
+		
+	#ifdef __APPLE__
 		
 		OSStatus err;
 		
@@ -268,6 +341,8 @@ namespace vfs
 		{
 			p7::throw_errno( EIO );
 		}
+		
+	#endif
 	}
 	
 	static const item_method_set macinfo_item_methods =
@@ -296,6 +371,8 @@ namespace vfs
 	                   const node*          parent,
 	                   uid_t                user )
 	{
+	#ifdef __APPLE__
+		
 		FSRef ref;
 		Boolean isDir;
 		
@@ -312,16 +389,37 @@ namespace vfs
 			return node_ptr();  // A call ancestor will deal with it
 		}
 		
+		mode_t mode = permissions( info ).mode;
+		
+	#else
+		
+		struct stat st;
+		
+		int nok = stat( path.c_str(), &st );
+		
+		if ( nok )
+		{
+			return node_ptr();  // A call ancestor will deal with it
+		}
+		
+		mode_t mode = st.st_mode;
+		
+	#endif
+		
 		node* result = new node( parent,
 		                         "<info>",
-		                         permissions( info ).mode,
+		                         mode,
 		                         user,
 		                         &macinfo_methods,
 		                         sizeof (macinfo_extra) );
 		
 		macinfo_extra& extra = *(macinfo_extra*) result->extra();
 		
+	#ifdef __APPLE__
 		extra.ref  = ref;
+	#else
+		extra.st   = st;
+	#endif
 		extra.type = type;
 		
 		return result;
@@ -369,7 +467,5 @@ namespace vfs
 		
 		return node_ptr();
 	}
-	
-#endif  // #ifdef __APPLE__
 	
 }

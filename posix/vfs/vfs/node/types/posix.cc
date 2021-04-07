@@ -34,9 +34,7 @@
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
-#ifdef __APPLE__
 #include "vfs/node/types/mac.hh"
-#endif
 
 
 namespace vfs
@@ -171,14 +169,10 @@ namespace vfs
 		
 		const uid_t uid = that->user();
 		
-	#ifdef __APPLE__
-		
 		if ( node_ptr info = mac_lookup_info( parent_path, name, parent, uid ) )
 		{
 			return info;
 		}
-		
-	#endif
 		
 		plus::string path;
 		
