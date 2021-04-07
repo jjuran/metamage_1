@@ -24,6 +24,7 @@ my %category_of_spec = qw
 (
 	ppc  arch
 	x86  arch
+	arm  arch
 	
 	m32  width
 	m64  width
@@ -59,7 +60,9 @@ sub new
 	{
 		$self{ arch } ||= $osx_arch;
 		
-		my $wants_64bit = `sh -c 'echo \$HOSTTYPE'` =~ /x86_64/;
+		my $is_arm = $osx_arch eq "arm64";
+		
+		my $wants_64bit = $is_arm || `sh -c 'echo \$HOSTTYPE'` =~ /x86_64/;
 		
 		$self{width} ||= $wants_64bit ? "m64" : "m32";
 		

@@ -8,6 +8,7 @@ my %Bit_for_label = qw
 	68k 0
 	ppc 1
 	x86 2
+	arm 12
 	
 	a4     3
 	a5     4
