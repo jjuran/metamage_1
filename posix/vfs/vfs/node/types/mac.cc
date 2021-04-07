@@ -51,16 +51,16 @@ namespace vfs
 		Info_SetFInfo,
 	};
 	
-#ifdef __APPLE__
-	
 	static const size_t info_sizes[] =
 	{
 		0,
-		2 * sizeof (OSType),
-		sizeof FSCatalogInfo().finderInfo,
+		2 * 4,    // two 4-byte OSTypes
+		16,       // FInfo, which is 16 bytes
 		80 - 30,  // size of HFileParam starting at ioFlAttrib
 		80 - 32,  // size of HFileParam starting at ioFlFndrInfo
 	};
+	
+#ifdef __APPLE__
 	
 	const FSCatalogInfoBitmap bitmap_for_GetFInfo
 		= kFSCatInfoNodeID
@@ -112,14 +112,14 @@ namespace vfs
 	void macinfo_stat( const node*   that,
 	                   struct stat&  st )
 	{
-		OSStatus err;
-		
 		macinfo_extra& extra = *(macinfo_extra*) that->extra();
 		
 		memset( &st, '\0', sizeof st );
 		
 		FSCatalogInfoBitmap bits = kFSCatInfoPermissions;
 		FSCatalogInfo       info;
+		
+		OSStatus err;
 		
 		err = FSGetCatalogInfo( &extra.ref, bits, &info, NULL, NULL, NULL );
 		
@@ -135,8 +135,6 @@ namespace vfs
 	static
 	plus::string macinfo_slurp( const node* that )
 	{
-		OSStatus err;
-		
 		macinfo_extra& extra = *(macinfo_extra*) that->extra();
 		
 		if ( extra.type == Info_SetFInfo )
@@ -146,6 +144,8 @@ namespace vfs
 		
 		FSCatalogInfoBitmap bits = info_bits[ extra.type ];
 		FSCatalogInfo       info;
+		
+		OSStatus err;
 		
 		err = FSGetCatalogInfo( &extra.ref, bits, &info, NULL, NULL, NULL );
 		
@@ -164,14 +164,14 @@ namespace vfs
 			*begin++ = 0;  // ioFlVersNum
 		}
 		
-		OSType* p4 = (OSType*) begin;
+		uint32_t* p4 = (uint32_t*) begin;
 		
 		const OSType* q4 = (const OSType*) info.finderInfo;
 		
 		*p4++ = iota::big_u32( *q4++ );  // type
 		*p4++ = iota::big_u32( *q4++ );  // creator
 		
-		UInt16* p2 = (UInt16*) p4;
+		uint16_t* p2 = (uint16_t*) p4;
 		
 		if ( extra.type >= Info_FInfo )
 		{
@@ -185,24 +185,24 @@ namespace vfs
 		
 		if ( extra.type == Info_GetFInfo )
 		{
-			p4 = (UInt32*) p2;
+			p4 = (uint32_t*) p2;
 			
 			*p4++ = iota::big_u32( info.nodeID );  // Host information leak?
 			
-			p2 = (UInt16*) p4;
+			p2 = (uint16_t*) p4;
 			
 			*p2++ = 0;  // ioFlStBlk
 			
-			p4 = (UInt32*) p2;
+			p4 = (uint32_t*) p2;
 			
 			*p4++ = iota::big_u32( info.dataLogicalSize );
 			*p4++ = iota::big_u32( info.dataPhysicalSize );
 			
-			p2 = (UInt16*) p4;
+			p2 = (uint16_t*) p4;
 			
 			*p2++ = 0;  // ioFlRStBlk
 			
-			p4 = (UInt32*) p2;
+			p4 = (uint32_t*) p2;
 			
 			*p4++ = iota::big_u32( info.rsrcLogicalSize  );
 			*p4++ = iota::big_u32( info.rsrcPhysicalSize );
@@ -216,8 +216,6 @@ namespace vfs
 	static
 	void macinfo_splat( const node* that, const char* data, size_t size )
 	{
-		OSStatus err;
-		
 		macinfo_extra& extra = *(macinfo_extra*) that->extra();
 		
 		if ( extra.type == Info_GetFInfo )
@@ -231,6 +229,8 @@ namespace vfs
 		{
 			p7::throw_errno( EINVAL );
 		}
+		
+		OSStatus err;
 		
 		FSCatalogInfoBitmap bits = info_bits[ extra.type ];
 		FSCatalogInfo       info = {};
