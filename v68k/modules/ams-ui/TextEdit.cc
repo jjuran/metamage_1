@@ -860,6 +860,8 @@ pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 	
 	raster_lock lock;
 	
+	EraseRect( r );
+	
 	draw_text( **hTE );
 	
 	TEDispose( hTE );
