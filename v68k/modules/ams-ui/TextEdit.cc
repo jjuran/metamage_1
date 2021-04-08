@@ -41,6 +41,7 @@ class scoped_TERec
 	private:
 		GrafPtr     its_port;
 		scoped_port its_port_scope;
+		RgnHandle   its_saved_clipRgn;
 		
 		short its_font;
 		short its_face;
@@ -64,10 +65,15 @@ scoped_TERec::scoped_TERec( const TERec& te )
 {
 	fast_memcpy( &its_font,         &its_port->txFont, sizeof (short) * 4 );
 	fast_memcpy( &its_port->txFont, &te.txFont,        sizeof (short) * 4 );
+	
+	its_saved_clipRgn = its_port->clipRgn;
+	its_port->clipRgn = rectangular_utility_region( te.viewRect );
 }
 
 scoped_TERec::~scoped_TERec()
 {
+	its_port->clipRgn = its_saved_clipRgn;
+	
 	fast_memcpy( &its_port->txFont, &its_font, sizeof (short) * 4 );
 }
 
@@ -118,10 +124,6 @@ void draw_text( const TERec& te )
 	
 	const short lineHeight = te.lineHeight;
 	
-	RgnHandle textClip = rectangular_utility_region( viewRect );
-	
-	RgnHandle savedClip = te.inPort->clipRgn;
-	
 	if ( te.active )
 	{
 		EraseRect( &viewRect );
@@ -158,8 +160,6 @@ void draw_text( const TERec& te )
 	starts += skipped_lines;
 	v      += skipped_lines * lineHeight;
 	
-	te.inPort->clipRgn = textClip;
-	
 	const short rectWidth = destRect.right - destRect.left;
 	
 	short start = *starts++;
@@ -180,8 +180,6 @@ void draw_text( const TERec& te )
 		
 		start = next;
 	}
-	
-	te.inPort->clipRgn = savedClip;
 }
 
 static
@@ -854,15 +852,19 @@ pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 {
 	TEHandle hTE = TENew( r, r );
 	
-	hTE[0]->just = just;
+	TERec& te = **hTE;
+	
+	te.just = just;
 	
 	TESetText( p, n, hTE );
+	
+	scoped_TERec scope = te;
 	
 	raster_lock lock;
 	
 	EraseRect( r );
 	
-	draw_text( **hTE );
+	draw_text( te );
 	
 	TEDispose( hTE );
 }
