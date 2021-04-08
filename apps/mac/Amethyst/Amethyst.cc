@@ -280,9 +280,7 @@ bool handle_EventRecord( const EventRecord& event )
 static
 CGImageRef create_raster_image( void* addr, const raster::raster_desc& desc )
 {
-	const uint32_t offset = desc.height * desc.stride * desc.frame;
-	
-	return create_bilevel_image( (char*) addr + offset,
+	return create_bilevel_image( addr,
 	                             desc.stride,
 	                             desc.width,
 	                             desc.height );
@@ -377,11 +375,13 @@ void RunEventLoop()
 		
 		if ( eventClass == kEventClassAmethyst )
 		{
-		#if CONFIG_QUICKDRAW
-			
 			const uint32_t offset = desc.height * desc.stride * desc.frame;
 			
-			bitmap.baseAddr = (Ptr) addr + offset;
+			Ptr frame_addr = (Ptr) addr + offset;
+			
+		#if CONFIG_QUICKDRAW
+			
+			bitmap.baseAddr = frame_addr;
 			
 			CopyBits( &bitmap,
 			          GetPortBitMapForCopyBits( captured_display.port() ),
@@ -394,7 +394,7 @@ void RunEventLoop()
 			
 		#endif
 			
-			if ( CGImageRef image = create_raster_image( addr, desc ) )
+			if ( CGImageRef image = create_raster_image( frame_addr, desc ) )
 			{
 				CGContextDrawImage( captured_display.context(), bounds, image );
 				
