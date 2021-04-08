@@ -96,6 +96,33 @@ bool is_mouse_moved_event( const EventRecord& event )
 }
 
 static
+double x_scale_factor( CGRect frame, double width, double height )
+{
+	double x_factor = frame.size.width  / width;
+	double y_factor = frame.size.height / height;
+	
+	double factor = x_factor < y_factor ? x_factor : y_factor;
+	
+	if ( factor > 1 )
+	{
+		factor = (int) factor;
+	}
+	
+	return factor;
+}
+
+static
+CGRect x_scaled_frame( CGRect frame, double width, double height )
+{
+	double factor = x_scale_factor( frame, width, height );
+	
+	double dx = (frame.size.width  - factor * width ) / 2;
+	double dy = (frame.size.height - factor * height) / 2;
+	
+	return CGRectInset( frame, dx, dy );
+}
+
+static
 pascal OSStatus eventtap_RawKey( EventHandlerCallRef  handler,
                                  EventRef             event,
                                  void*                userData )
@@ -279,6 +306,8 @@ void RunEventLoop()
 	
 	display_capture captured_display;
 	
+	CGRect display_bounds = CGDisplayBounds( captured_display.id() );
+	
 	const char* raster_path = tempfile_location();
 	
 	raster_lifetime live_raster( raster_path );
@@ -310,7 +339,7 @@ void RunEventLoop()
 	
 	cursor_limit = CGPointMake( desc.width, desc.height );
 	
-	CGRect bounds = captured_display.x_scaled_frame( desc.width, desc.height );
+	CGRect bounds = x_scaled_frame( display_bounds, desc.width, desc.height );
 	
 #if CONFIG_QUICKDRAW
 	
@@ -432,7 +461,7 @@ void RunEventLoop()
 		the captured display.
 	*/
 	
-	double factor = captured_display.x_scale_factor( desc.width, desc.height );
+	double factor = x_scale_factor( display_bounds, desc.width, desc.height );
 	
 	CGPoint transformed_location;
 	

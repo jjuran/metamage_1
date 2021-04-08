@@ -81,32 +81,3 @@ display_capture::~display_capture()
 	
 	CGDisplayRelease( its_id );
 }
-
-double display_capture::x_scale_factor( double width, double height ) const
-{
-	CGRect frame = CGDisplayBounds( its_id );
-	
-	double x_factor = frame.size.width  / width;
-	double y_factor = frame.size.height / height;
-	
-	double factor = x_factor < y_factor ? x_factor : y_factor;
-	
-	if ( factor > 1 )
-	{
-		factor = (int) factor;
-	}
-	
-	return factor;
-}
-
-CGRect display_capture::x_scaled_frame( double width, double height ) const
-{
-	CGRect frame = CGDisplayBounds( its_id );
-	
-	double factor = x_scale_factor( width, height );
-	
-	double dx = (frame.size.width  - factor * width ) / 2;
-	double dy = (frame.size.height - factor * height) / 2;
-	
-	return CGRectInset( frame, dx, dy );
-}

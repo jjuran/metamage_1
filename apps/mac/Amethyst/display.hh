@@ -29,12 +29,9 @@ class display_capture
 		display_capture( CGDirectDisplayID id = CGMainDisplayID() );
 		~display_capture();
 		
+		CGDirectDisplayID id() const  { return its_id; }
 		CGContextRef context() const  { return its_context; }
 		CGrafPtr     port   () const  { return its_port;    }
-		
-		double x_scale_factor( double width, double height ) const;
-		
-		CGRect x_scaled_frame( double width, double height ) const;
 };
 
 #endif
