@@ -353,7 +353,7 @@ pascal void TEIdle_patch( TEHandle hTE )
 	
 	if ( blinks( te )  &&  Ticks >= te.caretTime )
 	{
-		scoped_port thePort = te.inPort;
+		scoped_TERec scope = te;
 		
 		toggle_selRect( te );
 	}
@@ -427,6 +427,8 @@ void update_selection( TERec& te, short selStart, short selEnd )
 pascal void TEClick_patch( Point pt, char extend, TERec** hTE )
 {
 	TERec& te = **hTE;
+	
+	scoped_TERec scope = te;
 	
 	const short hit = hit_test( te, pt );
 	
