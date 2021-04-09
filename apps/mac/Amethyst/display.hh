@@ -8,6 +8,7 @@
 
 // Mac OS X
 #ifdef __APPLE__
+// Including just <CoreGraphics/CoreGraphics.h> fails in Mac OS X 10.4.
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
@@ -18,8 +19,6 @@ class display_capture
 {
 	private:
 		CGDirectDisplayID  its_id;
-		CGContextRef       its_context;
-		CGrafPtr           its_port;
 		
 		// non-copyable
 		display_capture           ( const display_capture& );
@@ -30,8 +29,6 @@ class display_capture
 		~display_capture();
 		
 		CGDirectDisplayID id() const  { return its_id; }
-		CGContextRef context() const  { return its_context; }
-		CGrafPtr     port   () const  { return its_port;    }
 };
 
 #endif

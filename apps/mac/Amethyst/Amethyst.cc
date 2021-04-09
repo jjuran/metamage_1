@@ -23,9 +23,10 @@
 
 // Amethyst
 #include "apple_events.hh"
+#include "blit_CG.hh"
+#include "blit_QD.hh"
 #include "coprocess.hh"
 #include "display.hh"
-#include "image.hh"
 #include "keycodes.hh"
 #include "make_raster.hh"
 #include "quickdraw.hh"
@@ -277,14 +278,11 @@ bool handle_EventRecord( const EventRecord& event )
 	return true;
 }
 
-static
-CGImageRef create_raster_image( void* addr, const raster::raster_desc& desc )
-{
-	return create_bilevel_image( addr,
-	                             desc.stride,
-	                             desc.width,
-	                             desc.height );
-}
+#if CONFIG_QUICKDRAW
+	typedef QD_blitter Blitter;
+#else
+	typedef CG_blitter Blitter;
+#endif
 
 static
 void RunEventLoop()
@@ -309,6 +307,10 @@ void RunEventLoop()
 	
 	CGRect bounds = CGRectInset( display_bounds, x_offset, y_offset );
 	
+	Blitter blitter( captured_display.id(), bounds );
+	
+	blitter.prep( desc.stride, desc.width, desc.height );
+	
 	raster_monitor monitored_raster;
 	
 	coprocess_launch launched_coprocess( raster_path );
@@ -332,20 +334,6 @@ void RunEventLoop()
 #endif
 	
 	cursor_limit = CGPointMake( desc.width, desc.height );
-	
-#if CONFIG_QUICKDRAW
-	
-	const Rect frame =
-	{
-		bounds.origin.y,
-		bounds.origin.x,
-		bounds.origin.y + bounds.size.height,
-		bounds.origin.x + bounds.size.width,
-	};
-	
-	BitMap bitmap = { 0, desc.stride, { 0, 0, desc.height, desc.width } };
-	
-#endif
 	
 	CGWarpMouseCursorPosition( CGPointMake( 15, 15 ) );
 	
@@ -377,30 +365,7 @@ void RunEventLoop()
 		{
 			const uint32_t offset = desc.height * desc.stride * desc.frame;
 			
-			Ptr frame_addr = (Ptr) addr + offset;
-			
-		#if CONFIG_QUICKDRAW
-			
-			bitmap.baseAddr = frame_addr;
-			
-			CopyBits( &bitmap,
-			          GetPortBitMapForCopyBits( captured_display.port() ),
-			          &bitmap.bounds,
-			          &frame,
-			          srcCopy,
-			          NULL );
-			
-			goto next;
-			
-		#endif
-			
-			if ( CGImageRef image = create_raster_image( frame_addr, desc ) )
-			{
-				CGContextDrawImage( captured_display.context(), bounds, image );
-				
-				CGImageRelease( image );
-			}
-			
+			blitter.blit( (Ptr) addr + offset );
 			goto next;
 		}
 		
