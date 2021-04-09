@@ -312,6 +312,12 @@ void RunEventLoop()
 	
 	raster_lifetime live_raster( raster_path );
 	
+	void*                      addr = live_raster.addr();
+	const raster::raster_desc& desc = live_raster.desc();
+	
+	double factor = x_scale_factor( display_bounds, desc.width, desc.height );
+	CGRect bounds = x_scaled_frame( display_bounds, desc.width, desc.height );
+	
 	raster_monitor monitored_raster;
 	
 	coprocess_launch launched_coprocess( raster_path );
@@ -334,12 +340,7 @@ void RunEventLoop()
 	
 #endif
 	
-	void*                      addr = live_raster.addr();
-	const raster::raster_desc& desc = live_raster.desc();
-	
 	cursor_limit = CGPointMake( desc.width, desc.height );
-	
-	CGRect bounds = x_scaled_frame( display_bounds, desc.width, desc.height );
 	
 #if CONFIG_QUICKDRAW
 	
@@ -460,8 +461,6 @@ void RunEventLoop()
 		emulated cursor, so the cursor won't appear to jump when we release
 		the captured display.
 	*/
-	
-	double factor = x_scale_factor( display_bounds, desc.width, desc.height );
 	
 	CGPoint transformed_location;
 	
