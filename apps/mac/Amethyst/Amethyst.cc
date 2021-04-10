@@ -112,17 +112,6 @@ double x_scale_factor( CGRect frame, double width, double height )
 }
 
 static
-CGRect x_scaled_frame( CGRect frame, double width, double height )
-{
-	double factor = x_scale_factor( frame, width, height );
-	
-	double dx = (frame.size.width  - factor * width ) / 2;
-	double dy = (frame.size.height - factor * height) / 2;
-	
-	return CGRectInset( frame, dx, dy );
-}
-
-static
 pascal OSStatus eventtap_RawKey( EventHandlerCallRef  handler,
                                  EventRef             event,
                                  void*                userData )
@@ -316,7 +305,11 @@ void RunEventLoop()
 	const raster::raster_desc& desc = live_raster.desc();
 	
 	double factor = x_scale_factor( display_bounds, desc.width, desc.height );
-	CGRect bounds = x_scaled_frame( display_bounds, desc.width, desc.height );
+	
+	double x_offset = (display_bounds.size.width  - factor * desc.width ) / 2;
+	double y_offset = (display_bounds.size.height - factor * desc.height) / 2;
+	
+	CGRect bounds = CGRectInset( display_bounds, x_offset, y_offset );
 	
 	raster_monitor monitored_raster;
 	
@@ -464,8 +457,8 @@ void RunEventLoop()
 	
 	CGPoint transformed_location;
 	
-	transformed_location.x = last_cursor_location.x * factor + bounds.origin.x;
-	transformed_location.y = last_cursor_location.y * factor + bounds.origin.y;
+	transformed_location.x = last_cursor_location.x * factor + x_offset;
+	transformed_location.y = last_cursor_location.y * factor + y_offset;
 	
 	move_cursor_to( transformed_location );
 }
