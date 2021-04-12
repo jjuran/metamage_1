@@ -18,6 +18,9 @@
 // more-posix
 #include "more/perror.hh"
 
+// transcodex
+#include "transcode/8x_1bpp_to_8bpp.hh"
+
 // gear
 #include "gear/parse_decimal.hh"
 
@@ -205,21 +208,6 @@ void clear_framebuffer()
 	memset( framebuffer, '\0', fb_len );
 }
 
-static inline
-uint8_t* transcode_8x_1_to_8( uint8_t* p, int8_t octet )
-{
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;
-	
-	return p;
-}
-
 static
 void transcode_framebuffer_8x_1_to_8()
 {
@@ -233,10 +221,7 @@ void transcode_framebuffer_8x_1_to_8()
 	
 	q += desc.frame * image_size;
 	
-	for ( int i = 0;  i < fb_len / 8;  ++i )
-	{
-		p = transcode_8x_1_to_8( p, *q++ );
-	}
+	transcode_8x_1bpp_to_8bpp( q, framebuffer, fb_len / 8u );
 }
 
 static
