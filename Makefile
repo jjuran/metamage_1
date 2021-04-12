@@ -205,7 +205,7 @@ ams-quartz-build: $(AMS_REPOS)
 	$(BUILD) graft mbin xv68k minivx freemountd Amphitheatre
 
 RETROMATIC := PATH="$$PWD/var/out:$$PATH" v/bin/retromatic.vx
-RETRO_APPS := var/apps
+RETRO_APPS := ~/Applications/"Advanced Mac Substitute"
 
 ams-quartz-demo: ams-quartz-build
 	@mkdir -p $(RETRO_APPS)
