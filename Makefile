@@ -209,8 +209,8 @@ RETRO_APPS := var/apps
 
 ams-quartz-demo: ams-quartz-build
 	@mkdir -p $(RETRO_APPS)
-	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/IAGO
-	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/"Nyanochrome Cat"
+	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/IAGO.mbin
+	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/"Nyanochrome Cat".mbin
 	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/tic-tac-toe.txt
 	@open $(RETRO_APPS)
 
