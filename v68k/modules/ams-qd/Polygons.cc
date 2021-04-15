@@ -97,8 +97,10 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 		to do that we have to seed them with minimally left and right values.
 	*/
 	
+	short top   = -32767;
 	short left  =  32767;
 	short right = -32767;
+	
 	short bottom = bbox.top;
 	
 	short v = bbox.top;
@@ -137,6 +139,11 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 			accumulate_row( r, v, r_segments );
 			
 			r_segments.clear();
+			
+			if ( top < bbox.top )
+			{
+				top = v;
+			}
 		}
 		
 		r_segments.swap( p_segments );
@@ -163,7 +170,7 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	
 	rgn[0]->rgnSize = size;
 	
-	rgn[0]->rgnBBox.top    = bbox.top;
+	rgn[0]->rgnBBox.top    = top;
 	rgn[0]->rgnBBox.left   = left;
 	rgn[0]->rgnBBox.right  = right;
 	rgn[0]->rgnBBox.bottom = bottom;
