@@ -141,7 +141,15 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	
 	*r++ = Region_end;
 	
-	rgn[0]->rgnSize = (char*) r - (char*) *rgn;
+	const short size = (char*) r - (char*) *rgn;
+	
+	if ( size == sizeof (Region) + sizeof (short) )
+	{
+		SetEmptyRgn( rgn );
+		return;
+	}
+	
+	rgn[0]->rgnSize = size;
 	rgn[0]->rgnBBox = bbox;
 	
 	rgn[0]->rgnBBox.left  = left;
