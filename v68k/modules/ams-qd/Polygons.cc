@@ -99,6 +99,7 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	
 	short left  =  32767;
 	short right = -32767;
+	short bottom = bbox.top;
 	
 	short v = bbox.top;
 	
@@ -129,15 +130,26 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 		
 		xor_segments( r_segments, p_segments );
 		
-		accumulate_row( r, v, r_segments );
+		if ( ! r_segments.empty() )
+		{
+			bottom = v;
+			
+			accumulate_row( r, v, r_segments );
+			
+			r_segments.clear();
+		}
 		
-		r_segments.clear();
 		r_segments.swap( p_segments );
 		
 		++v;
 	}
 	
-	accumulate_row( r, v, r_segments );
+	if ( ! r_segments.empty() )
+	{
+		bottom = v;
+		
+		accumulate_row( r, v, r_segments );
+	}
 	
 	*r++ = Region_end;
 	
@@ -150,10 +162,11 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	}
 	
 	rgn[0]->rgnSize = size;
-	rgn[0]->rgnBBox = bbox;
 	
-	rgn[0]->rgnBBox.left  = left;
-	rgn[0]->rgnBBox.right = right;
+	rgn[0]->rgnBBox.top    = bbox.top;
+	rgn[0]->rgnBBox.left   = left;
+	rgn[0]->rgnBBox.right  = right;
+	rgn[0]->rgnBBox.bottom = bottom;
 }
 
 pascal void StdPoly_patch( signed char verb, PolyHandle poly )
