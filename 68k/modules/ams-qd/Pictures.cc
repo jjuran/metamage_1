@@ -320,7 +320,7 @@ struct Picture_PixMap
 };
 
 static
-const UInt8* draw_bits( const UInt8* p )
+const UInt8* draw_bits( const UInt8* p, bool has_region )
 {
 	Picture_PixMap pixmap;
 	
@@ -357,6 +357,15 @@ const UInt8* draw_bits( const UInt8* p )
 	Rect dstRect = read_Rect( p );
 	
 	const short mode = read_word( p );
+	
+	if ( has_region )
+	{
+		short rgnSize = read_word( p );
+		
+		WARNING = "DrawPicture:  Ignoring bits region of size ", rgnSize;
+		
+		p += rgnSize - sizeof rgnSize;
+	}
 	
 	short n_rows = bitmap.bounds.bottom - bitmap.bounds.top;
 	
@@ -584,7 +593,8 @@ const Byte* do_opcode( const Byte* p )
 		
 		case 0x90:
 		case 0x98:
-			p = draw_bits( p );
+		case 0x99:
+			p = draw_bits( p, opcode & 1 );
 			break;
 		
 		case 0xFF:
