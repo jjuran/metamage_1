@@ -497,14 +497,20 @@ namespace Genie
 		
 		/*
 			Use a grayscale palette at indexed bit depths if requested.
-			(Bit depth 2 already defaults to grayscale.)
 		*/
 		
 		n::owned< CTabHandle > colorTable;
 		
+		short clut_id = weight;
+		
 		if ( params.grayscale  &&  (weight == 4  ||  weight == 8) )
 		{
-			colorTable = N::GetCTable( weight + 32 );
+			clut_id += 32;
+		}
+		
+		if ( weight > 1  &&  weight <= 8 )
+		{
+			colorTable = N::GetCTable( clut_id );
 		}
 		
 		n::owned< GWorldPtr > temp = params.gworld.unshare();
