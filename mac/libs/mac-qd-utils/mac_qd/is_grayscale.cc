@@ -25,7 +25,7 @@ bool is_grayscale( const PixMap& pixmap )
 	{
 		const long ctSeed = ctab[0]->ctSeed;
 		
-		return ctSeed >= 32 + 1  &&  ctSeed <= 32 + 8;
+		return ctSeed == 2  ||  ctSeed == 32 + 4  ||  ctSeed == 32 + 8;
 	}
 	
 	return false;
