@@ -485,6 +485,10 @@ const Byte* do_opcode( const Byte* p )
 			p = pen_size( p );
 			break;
 		
+		case 0x08:
+			PenMode( read_word( p ) );
+			break;
+		
 		case 0x09:
 			p = set_pattern( p, port.pnPat );
 			break;
