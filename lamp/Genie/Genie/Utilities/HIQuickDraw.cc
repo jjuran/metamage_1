@@ -334,11 +334,11 @@ namespace Genie
 		{
 			/*
 				This format is not supported by Core Graphics, but it is by
-				QuickDraw.  Create a new GWorld with the same depth and bounds
-				and call CopyBits() to transcode the pixels for us.
+				QuickDraw.  Create a new GWorld with the same bounds and new
+				depth, and call CopyBits() to transcode the pixels for us.
 			*/
 			
-			n::owned< GWorldPtr > native = N::NewGWorld( 16, pix[0]->bounds );
+			n::owned< GWorldPtr > native = N::NewGWorld( 32, pix[0]->bounds );
 			
 			PixMapHandle tmp = GetGWorldPixMap( native );
 			
