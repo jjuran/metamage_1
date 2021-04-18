@@ -23,6 +23,8 @@
 #include "gear/parse_decimal.hh"
 
 // rasterlib
+#include "raster/clut.hh"
+#include "raster/clut_detail.hh"
 #include "raster/load.hh"
 #include "raster/relay_detail.hh"
 #include "raster/skif.hh"
@@ -70,6 +72,7 @@ static raster::raster_model the_model = raster::Model_none;
 static raster::pixel_layout the_layout;
 
 static bool force_create  = false;
+static bool include_clut  = false;
 static bool include_relay = false;
 
 static const char* raster_models[] =
@@ -190,6 +193,8 @@ char* const* get_options( char** argv )
 			
 			case Opt_model:
 				the_model = lookup_model( global_result.param );
+				
+				include_clut = the_model == raster::Model_palette;
 				break;
 			
 			case Opt_relay:
@@ -235,6 +240,19 @@ size_t note_size( bool included )
 	return (sizeof (raster::raster_note) + sizeof (Struct)) * included;
 }
 
+template <>
+size_t note_size< raster::clut_data >( bool included )
+{
+	if ( ! included )
+	{
+		return 0;
+	}
+	
+	return + sizeof (raster::raster_note)
+	       + sizeof (raster::clut_header)
+	       + sizeof (raster::color) * (1 << the_geometry.weight);
+}
+
 static
 uint32_t sizeof_raster( uint32_t raster_size )
 {
@@ -242,6 +260,7 @@ uint32_t sizeof_raster( uint32_t raster_size )
 	
 	const size_t minimum_footer_size = sizeof (raster_metadata)
 	                                 + note_size< sync_relay >( include_relay )
+	                                 + note_size< clut_data  >( include_clut  )
 	                                 + sizeof (uint32_t) * 2;
 	
 	const uint32_t disk_block_size = 512;
@@ -345,6 +364,20 @@ int create_raster_file( const char* path, const geometry_spec& geometry )
 		next_note = next( next_note );
 	}
 	
+	if ( include_clut )
+	{
+		const short n_colors = (1 << the_geometry.weight);
+		
+		next_note->type = Note_clut;
+		next_note->size = sizeof (clut_header) + sizeof (color) * n_colors;
+		
+		clut_data& clut = data< clut_data >( *next_note );
+		
+		memset( &clut, '\0', next_note->size );
+		
+		next_note = next( next_note );
+	}
+	
 	next_note->type = Note_end;
 	
 	return 0;
@@ -359,6 +392,12 @@ int make_raster( char** argv )
 	if ( path == NULL )
 	{
 		WARN( "path argument required" );
+		return 2;
+	}
+	
+	if ( include_clut  &&  the_geometry.weight > 8 )
+	{
+		WARN( "indexed images can't exceed 8-bit depth" );
 		return 2;
 	}
 	
