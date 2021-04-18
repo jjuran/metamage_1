@@ -19,6 +19,8 @@
 #include "iota/endian.hh"
 
 // raster
+#include "raster/clut.hh"
+#include "raster/clut_detail.hh"
 #include "raster/raster.hh"
 #include "raster/screen.hh"
 #include "raster/validity.hh"
@@ -104,6 +106,24 @@ namespace raster
 		while ( exists( note ) )
 		{
 			note->size = iota::swap_2_bytes( note->size );
+			
+			if ( note->type == Note_clut )
+			{
+				clut_data& clut = data< clut_data >( *note );
+				
+				clut.seed  = iota::swap_4_bytes( clut.seed  );
+				clut.flags = iota::swap_2_bytes( clut.flags );
+				
+				for ( int i = 0;  i <= clut.max;  ++i )
+				{
+					color& c = clut.palette[ i ];
+					
+					c.value = iota::swap_2_bytes( c.value );
+					c.red   = iota::swap_2_bytes( c.red   );
+					c.green = iota::swap_2_bytes( c.green );
+					c.blue  = iota::swap_2_bytes( c.blue  );
+				}
+			}
 			
 			note = next( note );
 			
