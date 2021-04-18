@@ -233,10 +233,10 @@ uint32_t sizeof_raster( uint32_t raster_size )
 {
 	using namespace raster;
 	
-	const uint32_t minimum_footer_size = sizeof (raster_metadata)
-	                                   + sizeof (raster_note) * include_relay
-	                                   + sizeof (sync_relay)  * include_relay
-	                                   + sizeof (uint32_t) * 2;
+	const size_t minimum_footer_size = sizeof (raster_metadata)
+	                                 + sizeof (raster_note) * include_relay
+	                                 + sizeof (sync_relay)  * include_relay
+	                                 + sizeof (uint32_t) * 2;
 	
 	const uint32_t disk_block_size = 512;
 	const uint32_t k               = disk_block_size - 1;
