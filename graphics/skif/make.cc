@@ -33,6 +33,9 @@
 #include "raster/skif.hh"
 #include "raster/sync.hh"
 
+// skif
+#include "clut.hh"
+
 
 #define PROGRAM  "skif"
 
@@ -339,7 +342,7 @@ int create_raster_file( const char* path, const geometry_spec& geometry )
 		
 		clut_data& clut = data< clut_data >( *next_note );
 		
-		memset( &clut, '\0', next_note->size );
+		load_default_clut( clut, n_colors );
 		
 		next_note = next( next_note );
 	}
