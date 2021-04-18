@@ -228,14 +228,20 @@ uint32_t make_stride( uint32_t width, int weight )
 	return width + mask & ~mask;
 }
 
+template < class Struct >
+static inline
+size_t note_size( bool included )
+{
+	return (sizeof (raster::raster_note) + sizeof (Struct)) * included;
+}
+
 static
 uint32_t sizeof_raster( uint32_t raster_size )
 {
 	using namespace raster;
 	
 	const size_t minimum_footer_size = sizeof (raster_metadata)
-	                                 + sizeof (raster_note) * include_relay
-	                                 + sizeof (sync_relay)  * include_relay
+	                                 + note_size< sync_relay >( include_relay )
 	                                 + sizeof (uint32_t) * 2;
 	
 	const uint32_t disk_block_size = 512;
