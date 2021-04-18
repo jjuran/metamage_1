@@ -48,9 +48,22 @@ namespace raster
 	}
 	
 	inline
+	const void* data( const raster_note* note )
+	{
+		return note + 1;
+	}
+	
+	inline
 	void* data( raster_note* note )
 	{
 		return note + 1;
+	}
+	
+	template < class Data >
+	inline
+	const Data& data( const raster_note& note )
+	{
+		return *static_cast< const Data* >( data( &note ) );
 	}
 	
 	template < class Data >
