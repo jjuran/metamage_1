@@ -24,7 +24,7 @@
 #include <stdlib.h>
 
 // mac-qd-utils
-#include "mac_qd/is_grayscale.hh"
+#include "mac_qd/is_monochrome.hh"
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
@@ -42,7 +42,7 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
-using mac::qd::is_grayscale;
+using mac::qd::is_monochrome;
 using mac::sys::gestalt;
 
 using namespace raster;
@@ -147,7 +147,7 @@ raster_info desktop_raster_info()
 	{
 		model = Model_xRGB;  // 16-bit or 32-bit
 	}
-	else if ( is_grayscale( pm ) )
+	else if ( is_monochrome( pm ) )
 	{
 		model = Model_grayscale_paint;
 	}
