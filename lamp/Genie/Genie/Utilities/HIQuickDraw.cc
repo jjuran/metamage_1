@@ -17,7 +17,7 @@
 
 // mac-qd-utils
 #include "mac_qd/get_pix_rowBytes.hh"
-#include "mac_qd/is_grayscale.hh"
+#include "mac_qd/is_monochrome.hh"
 
 // nucleus
 #include "nucleus/saved.hh"
@@ -41,7 +41,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	using mac::qd::get_pix_rowBytes;
-	using mac::qd::is_grayscale;
+	using mac::qd::is_monochrome;
 	
 	
 	static
@@ -308,7 +308,7 @@ namespace Genie
 			                            pixmap.baseAddr );
 		}
 		
-		if ( const bool grayscale = is_grayscale( pixmap ) )
+		if ( const bool monochrome = is_monochrome( pixmap ) )
 		{
 			return image_from_grayscale_data( width,
 			                                  height,
