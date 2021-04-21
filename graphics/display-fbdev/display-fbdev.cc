@@ -576,7 +576,7 @@ static
 bool is_suid_root( const char* path )
 {
 	struct stat st;
-	int nok = stat( KDMODE, &st );
+	int nok = stat( path, &st );
 	
 	return nok == 0  &&  st.st_uid == 0  &&  st.st_mode & 04000;
 }
