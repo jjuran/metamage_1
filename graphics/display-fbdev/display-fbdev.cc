@@ -242,12 +242,6 @@ void lookup_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
 }
 
 static
-void copy_8( const uint8_t* src, uint8_t* dst, int width )
-{
-	memcpy( dst, src, width );
-}
-
-static
 void copy_16( const uint8_t* src, uint8_t* dst, int width )
 {
 	memcpy( dst, src, width * 2 );
