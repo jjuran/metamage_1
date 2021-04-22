@@ -149,7 +149,7 @@ raster_info desktop_raster_info()
 	}
 	else if ( is_monochrome( pm ) )
 	{
-		model = Model_grayscale_paint;
+		model = Model_monochrome_paint;
 	}
 	else
 	{
