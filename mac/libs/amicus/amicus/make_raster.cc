@@ -142,7 +142,7 @@ int create_raster_file( const char* path )
 	desc.height = height;
 	desc.stride = stride;
 	desc.weight = weight;
-	desc.model  = Model_grayscale_paint;
+	desc.model  = Model_monochrome_paint;
 	desc.extra  = frame_count - 1;
 	
 	raster_note* next_note = &note;
