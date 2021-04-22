@@ -376,7 +376,7 @@ int make_raster( char** argv )
 			case 2:
 			case 4:
 			case 8:
-				the_model = Model_grayscale_paint;  // 0 = white, 1 = black
+				the_model = Model_monochrome_paint;  // 0 = white, 1 = black
 				break;
 			
 			case 16:
