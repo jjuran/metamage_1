@@ -170,11 +170,17 @@ using namespace raster;
 static
 draw_proc select_draw_proc( const raster_desc& desc, bool swap_bytes )
 {
+	#define CASE_MONOCHROME( bpp )  \
+		case bpp:  \
+			return doubling ? &lookup_N_to_direct< bilevel_pixel_t, bpp, 2 >  \
+			                : &lookup_N_to_direct< bilevel_pixel_t, bpp, 1 >
+	
 	switch ( desc.weight )
 	{
-		case 1:
-			return doubling ? &lookup_1_to_direct< bilevel_pixel_t, 2 >
-			                : &lookup_1_to_direct< bilevel_pixel_t, 1 >;
+		CASE_MONOCHROME( 1 );
+		CASE_MONOCHROME( 2 );
+		CASE_MONOCHROME( 4 );
+		CASE_MONOCHROME( 8 );
 		
 		case 16:
 			return doubling ? &copy_16_2x : &copy_16;
@@ -186,6 +192,8 @@ draw_proc select_draw_proc( const raster_desc& desc, bool swap_bytes )
 		default:
 			return NULL;
 	}
+	
+	#undef CASE_MONOCHROME
 }
 
 static
@@ -653,7 +661,7 @@ int main( int argc, char** argv )
 	
 	uint8_t bpp = desc.weight;
 	
-	if ( desc.weight == 1 )
+	if ( desc.weight <= 8 )
 	{
 		bpp = sizeof (bilevel_pixel_t) * 8;
 	}

@@ -10,10 +10,17 @@
 #include <stdint.h>
 
 
-template < class UInt, int X >
-void transcode_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
+extern const uint8_t monochrome_1bit[];
+extern const uint8_t monochrome_2bit[];
+extern const uint8_t monochrome_4bit[];
+
+template < class UInt, int bpp, int X >
+void transcode_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 {
-	const int bpp = 1;
+	const uint8_t* palette = bpp == 1 ? monochrome_1bit
+	                       : bpp == 2 ? monochrome_2bit
+	                       : bpp == 4 ? monochrome_4bit
+	                       :            0;  // NULL
 	
 	UInt* p = (UInt*) dst;
 	
@@ -25,7 +32,10 @@ void transcode_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
 		
 		for ( int mask = (1 << bpp) - 1 << 8 - bpp;  n_pixels--;  mask >>= bpp )
 		{
-			const UInt pixel = byte & mask ? 0xFFFFFFFF : 0x00000000;
+			uint8_t luma = bpp < 8 ? palette[ (byte & mask) >> n_pixels * bpp ]
+			                       : byte;
+			
+			const UInt pixel = luma * 0x01010101;
 			
 			for ( int i = 0;  i < X;  ++i )
 			{
@@ -37,16 +47,16 @@ void transcode_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
 	}
 }
 
-template < class UInt, int X = 1 >
+template < class UInt, int bpp, int X = 1 >
 struct pixtet
 {
-	UInt pixels[ 8 * X ];
+	UInt pixels[ 8 / bpp * X ];
 };
 
-template < class UInt, int X >
-const pixtet< UInt, X >* make_1_to_direct_table()
+template < class UInt, int bpp, int X >
+const pixtet< UInt, bpp, X >* make_N_to_direct_table()
 {
-	typedef pixtet< UInt, X > pixel_unit;
+	typedef pixtet< UInt, bpp, X > pixel_unit;
 	
 	enum
 	{
@@ -63,7 +73,7 @@ const pixtet< UInt, X >* make_1_to_direct_table()
 	{
 		uint8_t oct = i;
 		
-		transcode_1_to_direct< UInt, X >( &oct, (uint8_t*) p, 8 );
+		transcode_N_to_direct< UInt, bpp, X >( &oct, (uint8_t*) p, 8 / bpp );
 		
 		++p;
 	}
@@ -71,12 +81,12 @@ const pixtet< UInt, X >* make_1_to_direct_table()
 	return table;
 }
 
-template < class UInt, int X >
-void lookup_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
+template < class UInt, int bpp, int X >
+void lookup_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 {
-	typedef pixtet< UInt, X > pixel_unit;
+	typedef pixtet< UInt, bpp, X > pixel_unit;
 	
-	static const pixel_unit* table = make_1_to_direct_table< UInt, X >();
+	static const pixel_unit* table = make_N_to_direct_table< UInt, bpp, X >();
 	
 	pixel_unit* p = (pixel_unit*) dst;
 	
@@ -84,7 +94,7 @@ void lookup_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
 	{
 		*p++ = table[ *src++ ];
 		
-		width -= 8;
+		width -= 8 / bpp;
 	}
 }
 
