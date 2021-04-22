@@ -227,11 +227,11 @@ namespace Genie
 	}
 	
 	static
-	n::owned< CGImageRef > image_from_grayscale_data( size_t  width,
-	                                                  size_t  height,
-	                                                  size_t  weight,
-	                                                  size_t  stride,
-	                                                  char*   baseAddr )
+	n::owned< CGImageRef > image_from_monochrome_data( size_t  width,
+	                                                   size_t  height,
+	                                                   size_t  weight,
+	                                                   size_t  stride,
+	                                                   char*   baseAddr )
 	{
 		return image_from_data( width,
 		                        height,
@@ -271,11 +271,11 @@ namespace Genie
 		const short height = bitmap.bounds.bottom - bitmap.bounds.top;
 		const short stride = bitmap.rowBytes;
 		
-		return image_from_grayscale_data( width,
-		                                  height,
-		                                  1,  // weight
-		                                  stride,
-		                                  bitmap.baseAddr );
+		return image_from_monochrome_data( width,
+		                                   height,
+		                                   1,  // weight
+		                                   stride,
+		                                   bitmap.baseAddr );
 	}
 	
 	static
@@ -310,11 +310,11 @@ namespace Genie
 		
 		if ( const bool monochrome = is_monochrome( pixmap ) )
 		{
-			return image_from_grayscale_data( width,
-			                                  height,
-			                                  pixmap.pixelSize,
-			                                  stride,
-			                                  pixmap.baseAddr );
+			return image_from_monochrome_data( width,
+			                                   height,
+			                                   pixmap.pixelSize,
+			                                   stride,
+			                                   pixmap.baseAddr );
 		}
 		
 		// Indexed (non-gray, non-direct) pixmaps are not supported yet
