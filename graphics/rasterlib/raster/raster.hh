@@ -27,7 +27,7 @@ namespace raster
 		No synchronization is possible.
 		
 		Dimensions: 512x342, stride: 64 bytes, pixel weight: 1 bit.
-		Model: grayscale paint (white = 0; black = 1).
+		Model: monochrome paint (white = 0; black = 1).
 	*/
 	
 	/*
@@ -71,12 +71,12 @@ namespace raster
 		model:
 			A selector indicating what the bits in a pixel mean, similar in
 			purpose to TIFF's PhotometricInterpretation.
-			0:  Grayscale "paint".  Pixels with all bits set to zero are white;
+			0:  Monochrome "paint".  Pixels with all bits set to zero are white;
 			    those with all bits set to one are black.  Values in between
 			    map to a linearly interpolated gray color.
 			    This corresponds with a TIFF PhotometricInterpretation value
 			    of WhiteIsZero.
-			1:  Grayscale "light".  Pixels with all bits set to zero are black;
+			1:  Monochrome "light".  Pixels with all bits set to zero are black;
 			    those with all bits set to one are white.  Values in between
 			    map to a linearly interpolated gray color.
 			    This corresponds with a TIFF PhotometricInterpretation value
@@ -121,8 +121,10 @@ namespace raster
 	{
 		Model_none = -1,
 		
-		Model_grayscale_paint,
-		Model_grayscale_light,
+		Model_monochrome_paint,
+		Model_monochrome_light,
+		Model_grayscale_paint = Model_monochrome_paint,
+		Model_grayscale_light = Model_monochrome_light,
 		Model_palette,
 		Model_RGB,
 		Model_xRGB,

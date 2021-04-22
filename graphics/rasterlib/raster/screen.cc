@@ -24,7 +24,7 @@ namespace raster
 			342,  // height
 			64,   // stride (a.k.a. rowBytes)
 			1,    // weight
-			Model_grayscale_paint,
+			Model_monochrome_paint,
 		}};
 		
 		raster_load load = { addr, mac_screen_size, &meta };
