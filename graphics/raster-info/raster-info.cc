@@ -26,8 +26,8 @@
 
 static const char* raster_models[] =
 {
-	"grayscale paint (1 == black)",
-	"grayscale light (1 == white)",
+	"monochrome paint (1 == black)",
+	"monochrome light (1 == white)",
 	"palette",
 	"RGB",
 	"xRGB",
