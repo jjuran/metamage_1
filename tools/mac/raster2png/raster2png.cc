@@ -149,8 +149,8 @@ CGImageRef CGImage_from_raster( const raster_load& raster )
 		            :                kCGBitmapByteOrderDefault;
 	}
 	
-	copier cpy = desc.model == Model_grayscale_paint ? inverted_copy
-	                                                 : straight_copy;
+	copier cpy = desc.model == Model_monochrome_paint ? inverted_copy
+	                                                  : straight_copy;
 	
 	if ( little_endian  &&  weight == 16  &&  desc.model == Model_RGB )
 	{
