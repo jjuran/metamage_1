@@ -30,6 +30,8 @@
 #include "mac_sys/gestalt.hh"
 
 // raster
+#include "raster/clut.hh"
+#include "raster/clut_detail.hh"
 #include "raster/raster.hh"
 #include "raster/skif.hh"
 
@@ -38,7 +40,6 @@
 
 #define MISSING_OUTPUT  "stdout is a tty, either redirect or use -o"
 #define NULL_BASE_ADDR  "null base address, aborting"
-#define GRAYSCALE_ONLY  "non-grayscale palettes aren't fully supported yet"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -183,8 +184,6 @@ raster_info desktop_raster_info()
 	else
 	{
 		model = Model_palette;
-		
-		write( STDERR_FILENO, STR_LEN( PROGRAM ": " GRAYSCALE_ONLY "\n" ) );
 	}
 	
 	const short width  = pm.bounds.right - pm.bounds.left;
@@ -214,6 +213,13 @@ raster_info desktop_raster_info()
 	return info;
 }
 
+static inline
+size_t sizeof_clut( short weight )
+{
+	return + sizeof (raster::clut_header)
+	       + sizeof (raster::color) * (1 << weight);
+}
+
 static
 void save_desktop_screenshot( const char* path )
 {
@@ -229,6 +235,34 @@ void save_desktop_screenshot( const char* path )
 	n_written = write( fd, &desc, sizeof desc );
 	
 	uint32_t footer_size = sizeof desc + sizeof (uint32_t) * 2;
+	
+	if ( desc.model == Model_palette )
+	{
+		const PixMap& pm = **get_main_pixmap();
+		
+		const ColorTable& ctab = **pm.pmTable;
+		
+		/*
+			ColorTable includes one ColorSpec, and ctab.ctSize is one less
+			than the number of color entries -- so they cancel each other out.
+		*/
+		
+		const int sizeof_ctab = sizeof ctab + ctab.ctSize * sizeof (ColorSpec);
+		
+		const size_t clut_size = sizeof_clut( desc.weight );
+		
+		// write note header
+		raster_note clut_note;
+		
+		clut_note.type = Note_clut;
+		clut_note.size = clut_size;
+		clut_note.flags = 0;
+		
+		n_written = write( fd, &clut_note, sizeof clut_note );
+		n_written = write( fd, &ctab, clut_size );
+		
+		footer_size += sizeof (raster_note) + clut_size;
+	}
 	
 	const uint32_t disk_block_size = TARGET_API_MAC_CARBON ? 4096 : 512;
 	const uint32_t k               = disk_block_size - 1;
