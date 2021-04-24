@@ -7,16 +7,16 @@
 
 
 static inline
-uint8_t* transcode_8x_1bpp_to_8bpp( uint8_t* p, int8_t octet )
+uint8_t* transcode_8x_1bpp_to_8bpp( uint8_t* p, uint8_t octet )
 {
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
-	*p++ = octet < 0 ? 0x00 : 0xFF;
+	*p++ = (int8_t) octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
+	*p++ = (int8_t) octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
+	*p++ = (int8_t) octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
+	*p++ = (int8_t) octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
+	*p++ = (int8_t) octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
+	*p++ = (int8_t) octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
+	*p++ = (int8_t) octet < 0 ? 0x00 : 0xFF;  octet <<= 1;
+	*p++ = (int8_t) octet < 0 ? 0x00 : 0xFF;
 	
 	return p;
 }
