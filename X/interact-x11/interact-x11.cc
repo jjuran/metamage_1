@@ -71,8 +71,6 @@ static const char* raster_path;
 
 static raster::raster_load loaded_raster;
 
-static char* pixel_buffer;
-
 static int exit_pipe_fds[ 2 ];
 
 
@@ -127,25 +125,6 @@ static Window   window;
 static GC       gc;
 static XImage*  image;
 
-static inline
-uint8_t reverse( uint8_t x )
-{
-	x = (x & 0xF0) >> 4 | (x & 0x0F) << 4;
-	x = (x & 0xCC) >> 2 | (x & 0x33) << 2;
-	x = (x & 0xAA) >> 1 | (x & 0x55) << 1;
-	
-	return x;
-}
-
-static
-void transcode( uint8_t* dst, uint8_t const* src, size_t n )
-{
-	while ( n-- > 0 )
-	{
-		*dst++ = reverse( *src++ );
-	}
-}
-
 static
 void update_image( unsigned width, unsigned height )
 {
@@ -154,8 +133,6 @@ void update_image( unsigned width, unsigned height )
 
 static
 void update_loop( raster::sync_relay*  sync,
-                  uint8_t const*       src,
-                  uint8_t*             dst,
                   unsigned             width,
                   unsigned             height,
                   unsigned             stride )
@@ -174,8 +151,6 @@ void update_loop( raster::sync_relay*  sync,
 		}
 		
 		seed = sync->seed;
-		
-		transcode( dst, src, image_size );
 		
 		p7::lock lock( x11_mutex );
 		
@@ -249,11 +224,7 @@ void* raster_update_start( void* arg )
 	
 	const raster::raster_desc& desc = loaded_raster.meta->desc;
 	
-	const uint8_t* src = (uint8_t*) loaded_raster.addr;
-	
-	uint8_t* dst = (uint8_t*) pixel_buffer;
-	
-	update_loop( sync, src, dst, desc.width, desc.height, desc.stride );
+	update_loop( sync, desc.width, desc.height, desc.stride );
 	
 	close( exit_pipe_fds[ 1 ] );
 	
@@ -297,8 +268,6 @@ int main( int argc, char** argv )
 		return 1;
 	}
 	
-	pixel_buffer = (char*) calloc( height, stride );
-	
 	pipe( exit_pipe_fds );
 	
 	display = XOpenDisplay( NULL );
@@ -315,7 +284,18 @@ int main( int argc, char** argv )
 	Visual* const visual = DefaultVisual( display, s );
 	
 	image = XCreateImage( display, visual, depth, XYBitmap, 0,
-	                      pixel_buffer, width, height, 16, stride );
+	                      (char*) loaded_raster.addr, width, height, 16,
+	                      stride );
+	
+	/*
+		Specify big-endian bit order so that XPutImage() will automatically
+		perform in-byte bit reversal if the server requires the other order.
+		Also specify big-endian byte order, since we told XCreateImage() to
+		operate in units of 16 bits.
+	*/
+	
+	image->bitmap_bit_order = MSBFirst;
+	image->byte_order       = MSBFirst;
 	
 	Status status = XInitImage( image );
 	
@@ -427,6 +407,7 @@ int main( int argc, char** argv )
 	raster_update_thread.cancel( &sync->cond );
 	raster_update_thread.join();
 	
+	image->data = NULL;
 	XDestroyImage( image );
 	XDestroyWindow( display, window );
 	
