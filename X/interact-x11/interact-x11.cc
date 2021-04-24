@@ -191,6 +191,8 @@ void wait_for_fd( int fd )
 	const int exit_fd = exit_pipe_fds[ 0 ];
 	
 	fd_set readfds;
+	FD_ZERO( &readfds );
+	
 	FD_SET( fd,      &readfds );
 	FD_SET( exit_fd, &readfds );
 	
