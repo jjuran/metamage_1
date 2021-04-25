@@ -39,6 +39,7 @@
 
 // display-fbdev
 #include "fb.hh"
+#include "transcode.hh"
 
 
 #define KDMODE  CONFIG_INSTALL_PREFIX "/lib/metamage/kdmode"
@@ -164,176 +165,22 @@ raster::sync_relay* open_raster( const char* path )
 
 typedef void (*draw_proc)( const uint8_t* src, uint8_t* dst, int width );
 
-template < class UInt, int X >
-static
-void transcode_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
-{
-	UInt* p = (UInt*) dst;
-	
-	while ( width > 0 )
-	{
-		uint8_t byte = *src++;
-		
-		for ( int mask = 1 << 7;  mask != 0;  mask >>= 1 )
-		{
-			const UInt pixel = byte & mask ? 0x00000000 : 0xFFFFFFFF;
-			
-			for ( int i = 0;  i < X;  ++i )
-			{
-				*p++ = pixel;
-			}
-		}
-		
-		width -= 8;
-	}
-}
-
-template < class UInt, int X = 1 >
-struct pixtet
-{
-	UInt pixels[ 8 * X ];
-};
-
-template < class UInt, int X >
-static
-const pixtet< UInt, X >* make_1_to_direct_table()
-{
-	typedef pixtet< UInt, X > pixel_unit;
-	
-	enum
-	{
-		n_octets = 256,
-		
-		table_size = n_octets * sizeof (pixel_unit),  // 4K, 8K, or 16K
-	};
-	
-	pixel_unit* table = (pixel_unit*) malloc( table_size );
-	
-	pixel_unit* p = table;
-	
-	for ( int i = 0; i < 256;  ++i )
-	{
-		uint8_t oct = i;
-		
-		transcode_1_to_direct< UInt, X >( &oct, (uint8_t*) p, 8 );
-		
-		++p;
-	}
-	
-	return table;
-}
-
-template < class UInt, int X >
-static
-void lookup_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
-{
-	typedef pixtet< UInt, X > pixel_unit;
-	
-	static const pixel_unit* table = make_1_to_direct_table< UInt, X >();
-	
-	pixel_unit* p = (pixel_unit*) dst;
-	
-	while ( width > 0 )
-	{
-		*p++ = table[ *src++ ];
-		
-		width -= 8;
-	}
-}
-
-static
-void copy_16( const uint8_t* src, uint8_t* dst, int width )
-{
-	memcpy( dst, src, width * 2 );
-}
-
-static
-void copy_16_2x( const uint8_t* src, uint8_t* dst, int width )
-{
-	uint16_t* p = (uint16_t*) dst;
-	uint16_t* q = (uint16_t*) src;
-	
-	while ( width-- > 0 )
-	{
-		uint16_t pixel = *q++;
-		
-		*p++ = pixel;
-		*p++ = pixel;
-	}
-}
-
-static
-void copy_32( const uint8_t* src, uint8_t* dst, int width )
-{
-	memcpy( dst, src, width * 4 );
-}
-
-static
-void copy_32_2x( const uint8_t* src, uint8_t* dst, int width )
-{
-	uint32_t* p = (uint32_t*) dst;
-	uint32_t* q = (uint32_t*) src;
-	
-	while ( width-- > 0 )
-	{
-		uint32_t pixel = *q++;
-		
-		*p++ = pixel;
-		*p++ = pixel;
-	}
-}
-
-static
-void swap_32( const uint8_t* src, uint8_t* dst, int width )
-{
-	while ( width > 0 )
-	{
-		uint8_t a = *src++;
-		uint8_t b = *src++;
-		uint8_t c = *src++;
-		uint8_t d = *src++;
-		
-		*dst++ = d;
-		*dst++ = c;
-		*dst++ = b;
-		*dst++ = a;
-		
-		--width;
-	}
-}
-
-static
-void swap_32_2x( const uint8_t* src, uint8_t* dst, int width )
-{
-	while ( width-- > 0 )
-	{
-		uint8_t a = *src++;
-		uint8_t b = *src++;
-		uint8_t c = *src++;
-		uint8_t d = *src++;
-		
-		*dst++ = d;
-		*dst++ = c;
-		*dst++ = b;
-		*dst++ = a;
-		
-		*dst++ = d;
-		*dst++ = c;
-		*dst++ = b;
-		*dst++ = a;
-	}
-}
-
 using namespace raster;
 
 static
 draw_proc select_draw_proc( const raster_desc& desc, bool swap_bytes )
 {
+	#define CASE_MONOCHROME( bpp )  \
+		case bpp:  \
+			return doubling ? &lookup_N_to_direct< bilevel_pixel_t, bpp, 2 >  \
+			                : &lookup_N_to_direct< bilevel_pixel_t, bpp, 1 >
+	
 	switch ( desc.weight )
 	{
-		case 1:
-			return doubling ? &lookup_1_to_direct< bilevel_pixel_t, 2 >
-			                : &lookup_1_to_direct< bilevel_pixel_t, 1 >;
+		CASE_MONOCHROME( 1 );
+		CASE_MONOCHROME( 2 );
+		CASE_MONOCHROME( 4 );
+		CASE_MONOCHROME( 8 );
 		
 		case 16:
 			return doubling ? &copy_16_2x : &copy_16;
@@ -345,6 +192,8 @@ draw_proc select_draw_proc( const raster_desc& desc, bool swap_bytes )
 		default:
 			return NULL;
 	}
+	
+	#undef CASE_MONOCHROME
 }
 
 static
@@ -812,7 +661,7 @@ int main( int argc, char** argv )
 	
 	uint8_t bpp = desc.weight;
 	
-	if ( desc.weight == 1 )
+	if ( desc.weight <= 8 )
 	{
 		bpp = sizeof (bilevel_pixel_t) * 8;
 	}
