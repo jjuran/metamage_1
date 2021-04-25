@@ -137,6 +137,8 @@ void update_loop( raster::sync_relay*  sync,
                   unsigned             height,
                   unsigned             stride )
 {
+	const raster::raster_desc& desc = loaded_raster.meta->desc;
+	
 	const size_t image_size = height * stride;
 	
 	uint32_t seed = 0;
@@ -153,6 +155,8 @@ void update_loop( raster::sync_relay*  sync,
 		seed = sync->seed;
 		
 		p7::lock lock( x11_mutex );
+		
+		image->data = (char*) loaded_raster.addr + desc.frame * image_size;
 		
 		update_image( width, height );
 		
