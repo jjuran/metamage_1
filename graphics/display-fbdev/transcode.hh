@@ -13,15 +13,19 @@
 template < class UInt, int X >
 void transcode_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
 {
+	const int bpp = 1;
+	
 	UInt* p = (UInt*) dst;
 	
 	while ( width > 0 )
 	{
-		uint8_t byte = *src++;
+		uint8_t byte = ~*src++;
 		
-		for ( int mask = 1 << 7;  mask != 0;  mask >>= 1 )
+		int n_pixels = 8 / bpp;
+		
+		for ( int mask = (1 << bpp) - 1 << 8 - bpp;  n_pixels--;  mask >>= bpp )
 		{
-			const UInt pixel = byte & mask ? 0x00000000 : 0xFFFFFFFF;
+			const UInt pixel = byte & mask ? 0xFFFFFFFF : 0x00000000;
 			
 			for ( int i = 0;  i < X;  ++i )
 			{
