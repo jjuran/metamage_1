@@ -29,6 +29,7 @@
 // relix-kernel
 #include "relix/config/mini.hh"
 #include "relix/task/process.hh"
+#include "relix/task/scheduler.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -235,6 +236,8 @@ namespace Genie
 		}
 		catch ( ... )
 		{
+			remove_task( (relix::task*) &child );  // Bypass `protected`
+			
 			global_processes.at( child.gettid() ).reset();
 		}
 	}
