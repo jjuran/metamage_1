@@ -11,7 +11,7 @@
 
 static CGrafPtr captured_display_port;
 
-static BitMap dstBits;
+static BitMap srcBits;
 static Rect   dstRect;
 
 #if CONFIG_QUICKDRAW
