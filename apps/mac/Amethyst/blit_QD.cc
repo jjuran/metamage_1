@@ -18,10 +18,10 @@ static Rect   dstRect;
 
 QD_blitter::QD_blitter( CGDirectDisplayID id, CGRect bounds )
 {
-	dstRect.top    = bounds.origin.y;
-	dstRect.left   = bounds.origin.x;
-	dstRect.bottom = bounds.origin.y + bounds.size.height;
-	dstRect.right  = bounds.origin.x + bounds.size.width;
+	dstRect.top    = (short)  bounds.origin.y;
+	dstRect.left   = (short)  bounds.origin.x;
+	dstRect.bottom = (short) (bounds.origin.y + bounds.size.height);
+	dstRect.right  = (short) (bounds.origin.x + bounds.size.width);
 	
 	// UInt32 cast required for 10.4 PPC, at least
 	
