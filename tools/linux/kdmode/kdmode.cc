@@ -39,7 +39,7 @@ int main( int argc, char** argv )
 	
 	check_nok( "/dev/tty0", tty0_fd < 0 );
 	
-	long mode;
+	int mode;
 	check_nok( "KDGETMODE", ioctl( tty0_fd, KDGETMODE, &mode ) );
 	
 	/*
@@ -51,9 +51,9 @@ int main( int argc, char** argv )
 	
 	if ( argc <= 1 )
 	{
-		if ( (unsigned long) mode > sizeof modes / sizeof modes[ 0 ] )
+		if ( (unsigned) mode > sizeof modes / sizeof modes[ 0 ] )
 		{
-			fprintf( stderr, "unknown mode: %ld\n", mode );
+			fprintf( stderr, "unknown mode: %d\n", mode );
 			return 1;
 		}
 		
