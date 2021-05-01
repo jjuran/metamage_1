@@ -53,7 +53,8 @@ int main( int argc, char** argv )
 	{
 		if ( (unsigned long) mode > sizeof modes / sizeof modes[ 0 ] )
 		{
-			check_nok( "unknown mode", -1 );
+			fprintf( stderr, "unknown mode: %ld\n", mode );
+			return 1;
 		}
 		
 		printf( "%s\n", modes[ mode ] );
