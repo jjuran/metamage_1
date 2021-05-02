@@ -104,5 +104,7 @@ void copy_32   ( const uint8_t* src, uint8_t* dst, int width );
 void copy_32_2x( const uint8_t* src, uint8_t* dst, int width );
 void swap_32   ( const uint8_t* src, uint8_t* dst, int width );
 void swap_32_2x( const uint8_t* src, uint8_t* dst, int width );
+void rgba_32   ( const uint8_t* src, uint8_t* dst, int width );
+void rgba_32_2x( const uint8_t* src, uint8_t* dst, int width );
 
 #endif

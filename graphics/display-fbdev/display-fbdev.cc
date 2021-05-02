@@ -165,10 +165,17 @@ raster::sync_relay* open_raster( const char* path )
 
 typedef void (*draw_proc)( const uint8_t* src, uint8_t* dst, int width );
 
+enum byte_remapping
+{
+	Byte_remap_none,
+	Byte_remap_swap,
+	Byte_remap_rgba,
+};
+
 using namespace raster;
 
 static
-draw_proc select_draw_proc( const raster_desc& desc, bool swap_bytes )
+draw_proc select_draw_proc( const raster_desc& desc, byte_remapping remap )
 {
 	#define CASE_MONOCHROME( bpp )  \
 		case bpp:  \
@@ -186,14 +193,21 @@ draw_proc select_draw_proc( const raster_desc& desc, bool swap_bytes )
 			return doubling ? &copy_16_2x : &copy_16;
 		
 		case 32:
-			return swap_bytes ? doubling ? &swap_32_2x : &swap_32
-			                  : doubling ? &copy_32_2x : &copy_32;
+			return   remap == 0 ? doubling ? &copy_32_2x : &copy_32
+			       : remap == 1 ? doubling ? &swap_32_2x : &swap_32
+			       :              doubling ? &rgba_32_2x : &rgba_32;
 		
 		default:
 			return NULL;
 	}
 	
 	#undef CASE_MONOCHROME
+}
+
+static inline
+bool is_rgbx_or_rgba( const raster_desc& desc )
+{
+	return (desc.model | (Model_RGBx ^ Model_RGBA)) == Model_RGBA;
 }
 
 static
@@ -745,7 +759,13 @@ int main( int argc, char** argv )
 		}
 	}
 	
-	draw_proc draw = select_draw_proc( desc, is_byte_swapped( loaded_raster ) );
+	
+	
+	byte_remapping remap = is_rgbx_or_rgba( desc )          ? Byte_remap_rgba
+	                     : is_byte_swapped( loaded_raster ) ? Byte_remap_swap
+	                     :                                    Byte_remap_none;
+	
+	draw_proc draw = select_draw_proc( desc, remap );
 	
 	if ( raster::sync_relay* sync = raster_sync )
 	{

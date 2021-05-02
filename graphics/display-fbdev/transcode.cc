@@ -105,3 +105,50 @@ void swap_32_2x( const uint8_t* src, uint8_t* dst, int width )
 		*dst++ = a;
 	}
 }
+
+void rgba_32( const uint8_t* src, uint8_t* dst, int width )
+{
+	uint32_t* p = (uint32_t*) dst;
+	
+	while ( width > 0 )
+	{
+		// We're assuming that RGBA is big-endian, as in Android 4.
+		
+		uint8_t r = *src++;
+		uint8_t g = *src++;
+		uint8_t b = *src++;
+		uint8_t a = *src++;
+		
+		const uint32_t argb = a << 24
+		                    | r << 16
+		                    | g <<  8
+		                    | b;
+		
+		*p++ = argb;
+		
+		--width;
+	}
+}
+
+void rgba_32_2x( const uint8_t* src, uint8_t* dst, int width )
+{
+	uint32_t* p = (uint32_t*) dst;
+	
+	while ( width-- > 0 )
+	{
+		// We're assuming that RGBA is big-endian, as in Android 4.
+		
+		uint8_t r = *src++;
+		uint8_t g = *src++;
+		uint8_t b = *src++;
+		uint8_t a = *src++;
+		
+		const uint32_t argb = a << 24
+		                    | r << 16
+		                    | g <<  8
+		                    | b;
+		
+		*p++ = argb;
+		*p++ = argb;
+	}
+}
