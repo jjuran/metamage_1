@@ -13,6 +13,7 @@
 
 // Standard C
 #include <errno.h>
+#include <stdio.h>
 
 
 namespace fb
@@ -22,6 +23,7 @@ namespace fb
 	{
 		if ( fd < 0 )
 		{
+			perror( path );
 			throw errno;
 		}
 	}
@@ -43,6 +45,7 @@ namespace fb
 		
 		if ( base == NULL )
 		{
+			perror( "display-fbdev: mmap()" );
 			throw errno;
 		}
 	}
@@ -61,6 +64,7 @@ namespace fb
 		
 		if ( fail )
 		{
+			perror( "display-fbdev: FBIOGET_FSCREENINFO" );
 			throw errno;
 		}
 		
@@ -77,6 +81,7 @@ namespace fb
 		
 		if ( fail )
 		{
+			perror( "display-fbdev: FBIOGET_VSCREENINFO" );
 			throw errno;
 		}
 		
@@ -89,6 +94,7 @@ namespace fb
 		
 		if ( fail )
 		{
+			perror( "display-fbdev: FBIOPUT_VSCREENINFO" );
 			throw errno;
 		}
 	}
