@@ -34,10 +34,15 @@ namespace vfs
 		const dynamic_group* group;
 	};
 	
+	struct dynamic_element_extra
+	{
+		const dynamic_group* group;
+	};
+	
 	static
 	filehandle_ptr dge_open( const node* that, int flags, mode_t mode )
 	{
-		dynamic_group_extra& extra = *(dynamic_group_extra*) that->extra();
+		dynamic_element_extra& extra = *(dynamic_element_extra*) that->extra();
 		
 		const unsigned id = gear::parse_unsigned_decimal( that->name().c_str() );
 		
@@ -71,10 +76,18 @@ namespace vfs
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return new node( parent,
-		                 name,
-		                 S_IFCHR | 0600,
-		                 &dge_methods );
+		node* result = new node( parent,
+		                         name,
+		                         S_IFCHR | 0600,
+		                         &dge_methods,
+		                         sizeof (dynamic_element_extra) );
+		
+
+		dynamic_element_extra& x2 = *(dynamic_element_extra*) result->extra();
+		
+		x2.group = extra.group;
+		
+		return result;
 	}
 	
 	static void dynamic_group_listdir( const node*    that,
