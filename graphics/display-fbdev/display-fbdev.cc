@@ -190,7 +190,10 @@ draw_proc select_draw_proc( const raster_desc& desc, byte_remapping remap )
 		CASE_MONOCHROME( 8 );
 		
 		case 16:
-			return doubling ? &rgb565_16_2x : &rgb565_16;
+			return desc.model == Model_RGB ? doubling ? &rgb565_16_2x
+			                                          : &rgb565_16
+			                               : doubling ? &rgb555_16_2x
+			                                          : &rgb555_16;
 		
 		case 32:
 			return   remap == 0 ? doubling ? &copy_32_2x : &copy_32
