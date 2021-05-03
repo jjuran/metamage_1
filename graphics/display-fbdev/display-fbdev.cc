@@ -190,7 +190,7 @@ draw_proc select_draw_proc( const raster_desc& desc, byte_remapping remap )
 		CASE_MONOCHROME( 8 );
 		
 		case 16:
-			return doubling ? &copy_16_2x : &copy_16;
+			return doubling ? &rgb565_16_2x : &rgb565_16;
 		
 		case 32:
 			return   remap == 0 ? doubling ? &copy_32_2x : &copy_32
@@ -679,6 +679,12 @@ int main( int argc, char** argv )
 	{
 		bpp = sizeof (bilevel_pixel_t) * 8;
 	}
+	else if ( desc.weight < var_info.bits_per_pixel )
+	{
+		// Don't downgrade to 16-bit if we're already at 32-bit depth.
+		
+		bpp = var_info.bits_per_pixel;
+	}
 	
 	const bool changing_depth = bpp != var_info.bits_per_pixel;
 	
@@ -766,6 +772,11 @@ int main( int argc, char** argv )
 	                     :                                    Byte_remap_none;
 	
 	draw_proc draw = select_draw_proc( desc, remap );
+	
+	if ( bpp == 16 )
+	{
+		draw = doubling ? &copy_16_2x : &copy_16;
+	}
 	
 	if ( raster::sync_relay* sync = raster_sync )
 	{
