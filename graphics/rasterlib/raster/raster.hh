@@ -211,6 +211,18 @@ namespace raster
 		Channel_premultiplied_blue,
 	};
 	
+	enum
+	{
+		xRGB = 0x00010203,
+		ARGB = 0x04010203,
+		
+		RGBx = 0x01020300,
+		RGBA = 0x01020304,
+		
+		xBGR = 0x00030201,
+		ABGR = 0x04030201,
+	};
+	
 	union pixel_layout
 	{
 		// For weight = 32:
