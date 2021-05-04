@@ -52,7 +52,7 @@ const char* tempfile_location()
 	
 	path.resize( path.find( '\0' ) );
 	
-	path += "/amicus.raster";
+	path += "/amicus.skif";
 	
 	return path.c_str();
 }

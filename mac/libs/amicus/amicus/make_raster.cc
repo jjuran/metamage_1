@@ -16,6 +16,7 @@
 // rasterlib
 #include "raster/load.hh"
 #include "raster/relay_detail.hh"
+#include "raster/skif.hh"
 #include "raster/sync.hh"
 
 
@@ -130,6 +131,7 @@ int create_raster_file( const char* path )
 	uint32_t* end = (uint32_t*) ((char*) raster.meta + footer_size);
 	
 	*--end = footer_size;
+	*--end = kSKIFFileType;
 	
 	raster_metadata& meta = *raster.meta;
 	
@@ -138,6 +140,7 @@ int create_raster_file( const char* path )
 	
 	memset( &meta, '\0', sizeof meta );
 	
+	desc.magic  = kSKIFFileType;
 	desc.width  = width;
 	desc.height = height;
 	desc.stride = stride;
