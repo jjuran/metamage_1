@@ -343,11 +343,11 @@ if exists "/gui" then
 }
 else
 {
-	const var_run_raster = home "/var/run/raster"
+	const home_run = home "/run"
 	
-	run [ "mkdir -p" / ' ', var_run_raster ]
+	run [ "mkdir -p" / ' ', home_run ]
 	
-	const screen = var_run_raster "/ams"
+	const screen = home_run "/ams.skif"
 	const raster = "--raster=" screen
 	
 	run [ "raster make -fg " screen_res "*1 -c2 -m paint -R" / ' ', screen ]
