@@ -6,6 +6,15 @@
 // Standard C
 #include <stdio.h>
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifdef __MACOS__
+#include <ConditionalMacros.h>
+#endif
 
 #define PRINT( format, name )  printf( "%s: %" #format "\n", #name, name )
 
@@ -29,6 +38,10 @@ int main( int argc, char** argv )
 	
 #ifdef __clang__
 	PRINT( d, __clang__ );
+#endif
+	
+#ifdef UNIVERSAL_INTERFACES_VERSION
+	PRINT( x, UNIVERSAL_INTERFACES_VERSION );
 #endif
 	
 	return 0;
