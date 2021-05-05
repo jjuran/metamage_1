@@ -40,6 +40,10 @@ int main( int argc, char** argv )
 	PRINT( d, __clang__ );
 #endif
 	
+#ifdef __MSL__
+	PRINT( x, __MSL__ );
+#endif
+	
 #ifdef UNIVERSAL_INTERFACES_VERSION
 	PRINT( x, UNIVERSAL_INTERFACES_VERSION );
 #endif
