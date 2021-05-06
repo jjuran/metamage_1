@@ -17,11 +17,11 @@
 
 #define RUN(clock)  run_for_clock(clock, #clock)
 
+const uint64_t billion = 1000 * 1000 * 1000;
+
 static
 int run_for_clock( clockid_t clock_id, const char* name )
 {
-	const int billion = 1000 * 1000 * 1000;
-	
 	printf( "%s:\n", name );
 	
 	timespec res;
