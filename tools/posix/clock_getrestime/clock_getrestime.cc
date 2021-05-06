@@ -47,7 +47,9 @@ int run_for_clock( clockid_t clock_id, const char* name )
 	
 	clock_gettime( clock_id, &ts0 );
 	
-	const int n = 1024;
+	unsigned n = 16;
+	
+retry:
 	
 	for ( int i = 0;  i < n;  ++i )
 	{
@@ -58,6 +60,12 @@ int run_for_clock( clockid_t clock_id, const char* name )
 	int64_t t1 = ts1.tv_sec * billion + ts1.tv_nsec;
 	
 	int64_t t = t1 - t0;
+	
+	if ( t < 1000000 )
+	{
+		n *= 16;
+		goto retry;
+	}
 	
 	t /= n;
 	
