@@ -7,14 +7,15 @@
 #include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <time.h>
-#include <sys/time.h>
 
 // Standard C++
 #include <string>
 
 // iota
 #include "iota/strings.hh"
+
+// compat
+#include "clock/time.h"
 
 // plus
 #include "plus/cow_string.hh"
@@ -37,11 +38,11 @@ class skipped_test {};
 
 static uint64_t microclock()
 {
-	timeval tv;
+	timespec ts;
 	
-	int got = gettimeofday( &tv, NULL );
+	clock_gettime( CLOCK_MONOTONIC, &ts );
 	
-	return uint64_t( tv.tv_sec ) * 1000000 + tv.tv_usec;
+	return ts.tv_sec * 1000000ull + ts.tv_nsec / 1000;
 }
 
 #ifdef __RELIX__
