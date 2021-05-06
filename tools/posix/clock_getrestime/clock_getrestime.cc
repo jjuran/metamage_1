@@ -51,7 +51,12 @@ int run_for_clock( clockid_t clock_id, const char* name )
 	        (long) ts0.tv_sec,
 	        (long) ts0.tv_nsec );
 	
-	clock_gettime( clock_id, &ts0 );
+	clock_gettime( CLOCK_MONOTONIC, &ts0 );
+	clock_gettime( CLOCK_MONOTONIC, &ts1 );
+	
+	const int64_t monotonic_cost = nanoseconds( ts1 ) - nanoseconds( ts0 );
+	
+	clock_gettime( CLOCK_MONOTONIC, &ts0 );
 	
 	unsigned n = 16;
 	
@@ -62,7 +67,9 @@ retry:
 		clock_gettime( clock_id, &ts1 );
 	}
 	
-	int64_t t = nanoseconds( ts1 ) - nanoseconds( ts0 );
+	clock_gettime( CLOCK_MONOTONIC, &ts1 );
+	
+	int64_t t = nanoseconds( ts1 ) - nanoseconds( ts0 ) - monotonic_cost;
 	
 	if ( t < 1000000 )
 	{
