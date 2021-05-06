@@ -15,8 +15,14 @@
 #ifndef __DRIVERSERVICES__
 #include <DriverServices.h>
 #endif
+#ifndef __LOWMEM__
+#include <LowMem.h>
+#endif
 #ifndef __TIMER__
 #include <Timer.h>
+#endif
+#ifndef __TRAPS__
+#include <Traps.h>
 #endif
 #endif
 
@@ -135,6 +141,35 @@ int clock_gettime( clockid_t clock_id, struct timespec* ts )
 
 #ifdef __RELIX__
 
+#if TARGET_CPU_68K
+
+static
+bool has_Microseconds_trap()
+{
+	/*
+		_MoveTo is A893 and _Microseconds is A193.  With a unified, compact
+		trap table, only the low byte is significant, so we have to make sure
+		that our check for _Microseconds doesn't yield a false positive from
+		_MoveTo.
+	*/
+	
+	UniversalProcPtr microseconds  = GetOSTrapAddress     ( _Microseconds  );
+	UniversalProcPtr moveto        = GetToolboxTrapAddress( _MoveTo        );
+	UniversalProcPtr unimplemented = GetToolboxTrapAddress( _Unimplemented );
+	
+	return microseconds != moveto  &&  microseconds != unimplemented;
+}
+
+const bool has_Microseconds = has_Microseconds_trap();
+
+#else
+
+const bool has_Microseconds = true;
+
+#endif
+
+const uint64_t ns_per_tick = billion * 100000ull / 6014742;  // 16625817
+
 int clock_getres( clockid_t clock_id, struct timespec* ts )
 {
 	ts->tv_sec = 0;
@@ -151,7 +186,7 @@ int clock_getres( clockid_t clock_id, struct timespec* ts )
 		return 0;
 	}
 	
-	ts->tv_nsec = 1000;
+	ts->tv_nsec = has_Microseconds ? 1000 : ns_per_tick;
 	
 	return 0;
 }
@@ -176,6 +211,20 @@ int clock_gettime( clockid_t clock_id, struct timespec* ts )
 			
 			return 0;
 		}
+		
+	#if TARGET_CPU_68K
+		
+		if ( ! has_Microseconds )
+		{
+			now = LMGetTicks() * ns_per_tick;
+			
+			ts->tv_sec  = now / billion;
+			ts->tv_nsec = now % billion;
+			
+			return 0;
+		}
+		
+	#endif
 		
 		Microseconds( (UnsignedWide*) &now );
 		
