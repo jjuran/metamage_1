@@ -19,6 +19,9 @@
 #include <pthread.h>
 #include <sys/time.h>
 
+// compat
+#include "clock/time.h"
+
 // must
 #include "must/pthread.h"
 
@@ -45,21 +48,22 @@ namespace sys {
 		{
 			if ( wakeup_pending )
 			{
-				struct timeval now;
+				struct timespec now;
 				
-				gettimeofday( &now, NULL );
+				clock_gettime( CLOCK_MONOTONIC, &now );
 				
-				uint64_t s  = now.tv_sec;
-				uint32_t us = now.tv_usec + 10 * 1000;
+				struct timespec& soon = now;
 				
-				if ( us >= 1000 * 1000 )
+				uint32_t ns = now.tv_nsec + 10 * 1000 * 1000;
+				
+				if ( ns >= 1000 * 1000 * 1000 )
 				{
-					us -= 1000 * 1000;
+					ns -= 1000 * 1000 * 1000;
 					
-					s += 1;
+					soon.tv_sec += 1;
 				}
 				
-				struct timespec soon = { s, us * 1000 };
+				soon.tv_nsec = ns;
 				
 				pthread_cond_timedwait( &wakeup_cond, &wakeup_mutex, &soon );
 			}
