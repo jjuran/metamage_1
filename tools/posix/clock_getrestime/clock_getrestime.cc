@@ -19,6 +19,12 @@
 
 const uint64_t billion = 1000 * 1000 * 1000;
 
+static inline
+int64_t nanoseconds( const timespec& ts )
+{
+	return ts.tv_sec * billion + ts.tv_nsec;
+}
+
 static
 int run_for_clock( clockid_t clock_id, const char* name )
 {
@@ -56,10 +62,7 @@ retry:
 		clock_gettime( clock_id, &ts1 );
 	}
 	
-	int64_t t0 = ts0.tv_sec * billion + ts0.tv_nsec;
-	int64_t t1 = ts1.tv_sec * billion + ts1.tv_nsec;
-	
-	int64_t t = t1 - t0;
+	int64_t t = nanoseconds( ts1 ) - nanoseconds( ts0 );
 	
 	if ( t < 1000000 )
 	{
