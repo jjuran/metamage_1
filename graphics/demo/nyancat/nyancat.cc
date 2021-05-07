@@ -7,13 +7,15 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/select.h>
-#include <sys/time.h>
 
 // Standard C
 #include <errno.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
+
+// compat
+#include "clock/time.h"
 
 // more-posix
 #include "more/perror.hh"
@@ -199,10 +201,37 @@ timeval timeval_diff( const timeval& a, const timeval& b )
 	return result;
 }
 
-static inline
-timeval operator-( const timeval& a, const timeval& b )
+static
+timespec timespec_diff( const timespec& a, const timespec& b )
 {
+	const bool borrow = a.tv_nsec < b.tv_nsec;
+	
+	long sec = a.tv_sec  - b.tv_sec  - borrow;
+	int nsec = a.tv_nsec - b.tv_nsec + borrow * 1000000000;
+	
+	if ( sec < 0 )
+	{
+		sec  = 0;
+		nsec = 0;
+	}
+	
+	const timespec result = { sec, nsec };
+	
+	return result;
+}
+
+static inline
+timeval operator-( const timeval& a, const timespec& b_ )
+{
+	timeval b = { b_.tv_sec, b_.tv_nsec / 1000 };
+	
 	return timeval_diff( a, b );
+}
+
+static inline
+timespec operator-( const timespec& a, const timespec& b )
+{
+	return timespec_diff( a, b );
 }
 
 static
@@ -214,14 +243,14 @@ bool wait_for_fd( int fd, timeval* timeout )
 	
 	const int max_fd = fd;
 	
-	timeval then, now;
-	gettimeofday( &then, NULL );
+	timespec then, now;
+	clock_gettime( CLOCK_MONOTONIC, &then );
 	
 	int selected = select( max_fd + 1, &readfds, NULL, NULL, timeout );
 	
 	if ( selected  &&  timeout )
 	{
-		gettimeofday( &now, NULL );
+		clock_gettime( CLOCK_MONOTONIC, &now );
 		
 		*timeout = *timeout - (now - then);
 	}
