@@ -81,7 +81,7 @@ void print_fbdev_info( const char* path )
 	int xmm = var.width;
 	int ymm = var.height;
 	
-	if ( xmm >= 0  &&  ymm >= 0 )
+	if ( xmm > 0  &&  ymm > 0 )
 	{
 		int xdpi = 254 * width  / xmm / 10;
 		int ydpi = 254 * height / ymm / 10;
