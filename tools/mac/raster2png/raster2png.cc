@@ -74,6 +74,12 @@ void inverted_copy( void* dst, const void* src, size_t n )
 	}
 }
 
+static inline
+bool is_16bit_565( const raster_desc& desc )
+{
+	return desc.model == Model_RGB;  // Valid 32-bit rasters are never RGB
+}
+
 static
 void converting_LE_565_to_555_copy( void* dst, const void* src, size_t n )
 {
@@ -152,7 +158,7 @@ CGImageRef CGImage_from_raster( const raster_load& raster )
 	copier cpy = desc.model == Model_monochrome_paint ? inverted_copy
 	                                                  : straight_copy;
 	
-	if ( little_endian  &&  weight == 16  &&  desc.model == Model_RGB )
+	if ( little_endian  &&  weight == 16  &&  is_16bit_565( desc ) )
 	{
 		/*
 			This is a lossy conversion, as it drops the rightmost green bit.
