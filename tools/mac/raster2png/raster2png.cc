@@ -27,6 +27,7 @@
 
 // raster
 #include "raster/load.hh"
+#include "raster/skif.hh"
 
 
 #define PROGRAM  "raster2png"
@@ -77,6 +78,11 @@ void inverted_copy( void* dst, const void* src, size_t n )
 static inline
 bool is_16bit_565( const raster_desc& desc )
 {
+	if ( desc.magic == kSKIFFileType )
+	{
+		return desc.layout.green == 0x65;  // Not a valid 32-bit layout byte
+	}
+	
 	return desc.model == Model_RGB;  // Valid 32-bit rasters are never RGB
 }
 
@@ -146,6 +152,42 @@ CGImageRef CGImage_from_raster( const raster_load& raster )
 	if ( desc.model > Model_RGB  &&  desc.model <= Model_RGBA_premultiplied )
 	{
 		bitmapInfo = Model_RGBA_premultiplied + 1 - desc.model;
+	}
+	else if ( desc.model == Model_RGB  &&  desc.magic == kSKIFFileType )
+	{
+		if ( weight == 32 )
+		{
+			switch ( desc.layout.per_pixel )
+			{
+				default:
+				case xRGB:
+					break;
+				
+				case ARGB:
+					bitmapInfo = kCGImageAlphaFirst;
+					break;
+				
+				case RGBx:
+				case xBGR:  // (big-endian RGBx in little-endian container)
+					bitmapInfo = kCGImageAlphaNoneSkipLast;
+					break;
+				
+				case RGBA:
+				case ABGR:  // (big-endian RGBA in little-endian container)
+					bitmapInfo = kCGImageAlphaLast;
+					break;
+			}
+			
+			if ( (uint8_t) desc.layout.per_pixel == Channel_red )
+			{
+				/*
+					Big-endian RGBA (or RGBx) data in a little-endian file.
+					Quartz has no concept of ABGR, so clear the flag instead.
+				*/
+				
+				little_endian = false;
+			}
+		}
 	}
 	
 	if ( little_endian )
