@@ -75,17 +75,6 @@ void inverted_copy( void* dst, const void* src, size_t n )
 	}
 }
 
-static inline
-bool is_16bit_565( const raster_desc& desc )
-{
-	if ( desc.magic == kSKIFFileType )
-	{
-		return desc.layout.green == 0x65;  // Not a valid 32-bit layout byte
-	}
-	
-	return desc.model == Model_RGB;  // Valid 32-bit rasters are never RGB
-}
-
 static
 void converting_LE_565_to_555_copy( void* dst, const void* src, size_t n )
 {

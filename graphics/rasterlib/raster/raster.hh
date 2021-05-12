@@ -277,6 +277,19 @@ namespace raster
 	
 	
 	inline
+	bool is_16bit_565( const raster_desc& desc )
+	{
+		if ( desc.magic != 0 )
+		{
+			// 0x65 is not a valid 32-bit layout byte, so it must be 16-bit
+			return desc.layout.green == 0x65;
+		}
+		
+		// Valid 32-bit rasters are never mere RGB, but have four components
+		return desc.model == Model_RGB;
+	}
+	
+	inline
 	const raster_note* find_note( const raster_metadata& meta, note_type type )
 	{
 		return find( &meta.note, type );
