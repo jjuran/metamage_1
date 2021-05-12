@@ -35,6 +35,7 @@
 #include "raster/load.hh"
 #include "raster/relay.hh"
 #include "raster/relay_detail.hh"
+#include "raster/skif.hh"
 #include "raster/sync.hh"
 
 // display-fbdev
@@ -170,6 +171,7 @@ enum byte_remapping
 	Byte_remap_none,
 	Byte_remap_swap,
 	Byte_remap_rgba,
+	Byte_remap_both = Byte_remap_swap | Byte_remap_rgba,
 };
 
 using namespace raster;
@@ -182,6 +184,8 @@ draw_proc select_draw_proc( const raster_desc& desc, byte_remapping remap )
 			return doubling ? &lookup_N_to_direct< bilevel_pixel_t, bpp, 2 >  \
 			                : &lookup_N_to_direct< bilevel_pixel_t, bpp, 1 >
 	
+	uint8_t last_pixel;
+	
 	switch ( desc.weight )
 	{
 		CASE_MONOCHROME( 1 );
@@ -190,15 +194,28 @@ draw_proc select_draw_proc( const raster_desc& desc, byte_remapping remap )
 		CASE_MONOCHROME( 8 );
 		
 		case 16:
-			return desc.model == Model_RGB ? doubling ? &rgb565_16_2x
-			                                          : &rgb565_16
-			                               : doubling ? &rgb555_16_2x
-			                                          : &rgb555_16;
+			return is_16bit_565( desc ) ? doubling ? &rgb565_16_2x
+			                                       : &rgb565_16
+			                            : doubling ? &rgb555_16_2x
+			                                       : &rgb555_16;
 		
 		case 32:
-			return   remap == 0 ? doubling ? &copy_32_2x : &copy_32
-			       : remap == 1 ? doubling ? &swap_32_2x : &swap_32
-			       :              doubling ? &rgba_32_2x : &rgba_32;
+			last_pixel = (uint8_t) desc.layout.per_pixel;
+			
+			if ( remap & 0x2 )
+			{
+				bool swapped = desc.magic ? last_pixel == 0x01 : remap & 1;
+				
+				return swapped ? doubling ? &both_32_2x : &both_32
+				               : doubling ? &rgba_32_2x : &rgba_32;
+			}
+			else
+			{
+				bool swapped = desc.magic ? last_pixel != 0x03 : remap & 1;
+				
+				return swapped ? doubling ? &swap_32_2x : &swap_32
+				               : doubling ? &copy_32_2x : &copy_32;
+			}
 		
 		default:
 			return NULL;
@@ -210,6 +227,12 @@ draw_proc select_draw_proc( const raster_desc& desc, byte_remapping remap )
 static inline
 bool is_rgbx_or_rgba( const raster_desc& desc )
 {
+	if ( desc.magic == kSKIFFileType )
+	{
+		return (desc.layout.per_pixel | 0x00000004) == 0x01020304  ||
+		       (desc.layout.per_pixel | 0x04000000) == 0x04030201;
+	}
+	
 	return (desc.model | (Model_RGBx ^ Model_RGBA)) == Model_RGBA;
 }
 
@@ -768,11 +791,8 @@ int main( int argc, char** argv )
 		}
 	}
 	
-	
-	
-	byte_remapping remap = is_rgbx_or_rgba( desc )          ? Byte_remap_rgba
-	                     : is_byte_swapped( loaded_raster ) ? Byte_remap_swap
-	                     :                                    Byte_remap_none;
+	byte_remapping remap = byte_remapping( is_rgbx_or_rgba( desc ) << 1
+	                                     | is_byte_swapped( loaded_raster ) );
 	
 	draw_proc draw = select_draw_proc( desc, remap );
 	

@@ -106,6 +106,8 @@ void swap_32   ( const uint8_t* src, uint8_t* dst, int width );
 void swap_32_2x( const uint8_t* src, uint8_t* dst, int width );
 void rgba_32   ( const uint8_t* src, uint8_t* dst, int width );
 void rgba_32_2x( const uint8_t* src, uint8_t* dst, int width );
+void both_32   ( const uint8_t* src, uint8_t* dst, int width );
+void both_32_2x( const uint8_t* src, uint8_t* dst, int width );
 
 void rgb555_16   ( const uint8_t* src, uint8_t* dst, int width );
 void rgb555_16_2x( const uint8_t* src, uint8_t* dst, int width );

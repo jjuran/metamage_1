@@ -108,21 +108,18 @@ void swap_32_2x( const uint8_t* src, uint8_t* dst, int width )
 
 void rgba_32( const uint8_t* src, uint8_t* dst, int width )
 {
+	const uint32_t* q = (const uint32_t*) src;
+	
 	uint32_t* p = (uint32_t*) dst;
 	
 	while ( width > 0 )
 	{
-		// We're assuming that RGBA is big-endian, as in Android 4.
+		// Convert RGBA to ARGB.
 		
-		uint8_t r = *src++;
-		uint8_t g = *src++;
-		uint8_t b = *src++;
-		uint8_t a = *src++;
+		const uint32_t rgba = *q++;
 		
-		const uint32_t argb = a << 24
-		                    | r << 16
-		                    | g <<  8
-		                    | b;
+		const uint32_t argb = rgba << 24
+		                    | rgba >>  8;
 		
 		*p++ = argb;
 		
@@ -132,21 +129,61 @@ void rgba_32( const uint8_t* src, uint8_t* dst, int width )
 
 void rgba_32_2x( const uint8_t* src, uint8_t* dst, int width )
 {
+	const uint32_t* q = (const uint32_t*) src;
+	
 	uint32_t* p = (uint32_t*) dst;
 	
 	while ( width-- > 0 )
 	{
-		// We're assuming that RGBA is big-endian, as in Android 4.
+		// Convert RGBA to ARGB.
 		
-		uint8_t r = *src++;
-		uint8_t g = *src++;
-		uint8_t b = *src++;
-		uint8_t a = *src++;
+		const uint32_t rgba = *q++;
 		
-		const uint32_t argb = a << 24
-		                    | r << 16
-		                    | g <<  8
-		                    | b;
+		const uint32_t argb = rgba << 24
+		                    | rgba >>  8;
+		
+		*p++ = argb;
+		*p++ = argb;
+	}
+}
+
+void both_32( const uint8_t* src, uint8_t* dst, int width )
+{
+	const uint32_t* q = (const uint32_t*) src;
+	
+	uint32_t* p = (uint32_t*) dst;
+	
+	while ( width > 0 )
+	{
+		// Convert byte-swapped RGBA (ABGR) to ARGB.
+		
+		const uint32_t abgr = *q++;
+		
+		const uint32_t argb = (abgr & 0xFF00FF00)
+		                    | (abgr & 0x00FF00FF) >> 16
+		                    | (abgr & 0x00FF00FF) << 16;
+		
+		*p++ = argb;
+		
+		--width;
+	}
+}
+
+void both_32_2x( const uint8_t* src, uint8_t* dst, int width )
+{
+	const uint32_t* q = (const uint32_t*) src;
+	
+	uint32_t* p = (uint32_t*) dst;
+	
+	while ( width-- > 0 )
+	{
+		// Convert byte-swapped RGBA (ABGR) to ARGB.
+		
+		const uint32_t abgr = *q++;
+		
+		const uint32_t argb = (abgr & 0xFF00FF00)
+		                    | (abgr & 0x00FF00FF) >> 16
+		                    | (abgr & 0x00FF00FF) << 16;
 		
 		*p++ = argb;
 		*p++ = argb;
