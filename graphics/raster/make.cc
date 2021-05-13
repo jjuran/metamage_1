@@ -25,6 +25,7 @@
 // rasterlib
 #include "raster/load.hh"
 #include "raster/relay_detail.hh"
+#include "raster/skif.hh"
 #include "raster/sync.hh"
 
 
@@ -66,6 +67,7 @@ static geometry_spec the_geometry;
 static unsigned the_count = 1;
 
 static raster::raster_model the_model = raster::Model_none;
+static raster::pixel_layout the_layout;
 
 static bool force_create  = false;
 static bool include_relay = false;
@@ -234,7 +236,7 @@ uint32_t sizeof_raster( uint32_t raster_size )
 	const uint32_t minimum_footer_size = sizeof (raster_metadata)
 	                                   + sizeof (raster_note) * include_relay
 	                                   + sizeof (sync_relay)  * include_relay
-	                                   + sizeof (uint32_t);
+	                                   + sizeof (uint32_t) * 2;
 	
 	const uint32_t disk_block_size = 512;
 	const uint32_t k               = disk_block_size - 1;
@@ -309,6 +311,7 @@ int create_raster_file( const char* path, const geometry_spec& geometry )
 	uint32_t* end = (uint32_t*) ((char*) raster.meta + footer_size);
 	
 	*--end = footer_size;
+	*--end = kSKIFFileType;
 	
 	raster_metadata& meta = *raster.meta;
 	
@@ -317,12 +320,14 @@ int create_raster_file( const char* path, const geometry_spec& geometry )
 	
 	memset( &meta, '\0', sizeof meta );
 	
+	desc.magic  = kSKIFFileType;
 	desc.width  = width;
 	desc.height = height;
 	desc.stride = stride;
 	desc.weight = weight;
 	desc.model  = the_model;
 	desc.extra  = the_count - 1;
+	desc.layout = the_layout;
 	
 	raster_note* next_note = &note;
 	
@@ -363,6 +368,57 @@ int make_raster( char** argv )
 		return 2;
 	}
 	
+#ifdef __MWERKS__
+	
+	#define red   per_byte[ 0 ]
+	#define green per_byte[ 1 ]
+	#define blue  per_byte[ 2 ]
+	#define alpha per_byte[ 3 ]
+	
+#endif
+	
+	if ( the_model > raster::Model_RGB )
+	{
+		using namespace raster;
+		
+		if ( the_geometry.weight == 16 )
+		{
+			the_layout.red   = 0x5A;
+			the_layout.green = 0x55;
+			the_layout.blue  = 0x50;
+			
+			if ( the_model & 1 )
+			{
+				the_layout.red   += 0x01;
+				the_layout.green += 0x01;
+				the_layout.blue  += 0x01;
+			}
+			
+			the_layout.alpha = the_model == Model_ARGB ? 0x1F
+			                 : the_model == Model_RGBA ? 0x10
+			                 :                           0x00;
+		}
+		else if ( the_geometry.weight == 32 )
+		{
+			switch ( the_model )
+			{
+				default:
+				case Model_xRGB:  the_layout.per_pixel = xRGB;  break;
+				case Model_RGBx:  the_layout.per_pixel = RGBx;  break;
+				case Model_ARGB:  the_layout.per_pixel = ARGB;  break;
+				case Model_RGBA:  the_layout.per_pixel = RGBA;  break;
+			}
+		}
+		
+		the_model = Model_RGB;
+	}
+	else if ( the_model == raster::Model_RGB )
+	{
+		the_layout.red   = 0x5B;
+		the_layout.green = 0x65;
+		the_layout.blue  = 0x50;
+	}
+	
 	if ( the_model < 0 )
 	{
 		// Pick a sensible default pixel model based on the pixel weight.
@@ -380,19 +436,34 @@ int make_raster( char** argv )
 				break;
 			
 			case 16:
+				the_model = Model_RGB;
 			#if ! defined( __MACOS__ )  &&  ! defined( __APPLE__ )
-				the_model = Model_RGB;  // 5/6/5
+				the_layout.red   = 0x5B;
+				the_layout.green = 0x65;
+				the_layout.blue  = 0x50;
 				break;
 			#else
-			//	the_model = Model_xRGB;  // 1/5/5/5
-			//	break;
+				the_layout.red   = 0x5A;
+				the_layout.green = 0x55;
+				the_layout.blue  = 0x50;
+				break;
 			#endif
 			
 			case 32:
-				the_model = Model_xRGB;  // 8/8/8/8
+				the_model = Model_RGB;
+				the_layout.per_pixel = xRGB;  // 8/8/8/8
 				break;
 		}
 	}
+	
+#ifdef __MWERKS__
+	
+	#undef red
+	#undef green
+	#undef blue
+	#undef alpha
+	
+#endif
 	
 	int err = create_raster_file( path, the_geometry );
 	
