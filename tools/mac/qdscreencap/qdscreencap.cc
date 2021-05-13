@@ -212,7 +212,7 @@ void save_desktop_screenshot( const char* path )
 	
 	n_written = write( fd, &desc, sizeof desc );
 	
-	uint32_t footer_size = sizeof desc + sizeof (uint32_t);
+	uint32_t footer_size = sizeof desc + sizeof (uint32_t) * 2;
 	
 	const uint32_t disk_block_size = TARGET_API_MAC_CARBON ? 4096 : 512;
 	const uint32_t k               = disk_block_size - 1;
@@ -224,6 +224,9 @@ void save_desktop_screenshot( const char* path )
 	
 	const off_t footer_addr = total_size - sizeof footer_size;
 	
+	const size_t code_len = sizeof (uint32_t);
+	
+	n_written = pwrite( fd, "SKIF", code_len, footer_addr - code_len );
 	n_written = pwrite( fd, &footer_size, sizeof footer_size, footer_addr );
 	
 	close( fd );
