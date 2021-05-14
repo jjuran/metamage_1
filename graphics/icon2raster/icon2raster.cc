@@ -22,6 +22,7 @@
 
 // raster
 #include "raster/raster.hh"
+#include "raster/skif.hh"
 
 
 #define PROGRAM  "icon2raster"
@@ -69,26 +70,29 @@ void icon2raster( const char* masked_icon, const char* path )
 	
 	using raster::raster_desc;
 	using raster::raster_model;
-	using raster::Model_ARGB;
+	using raster::Model_RGB;
 	
 	const size_t width  = 32;
 	const size_t height = 32;
 	const size_t weight = 32;
 	const size_t stride = width * weight / 8;
 	
-	const raster_model model = Model_ARGB;
+	const raster_model model = Model_RGB;
 	
 	const uint32_t image_size = height * stride;
 	
 	raster_desc desc =
 	{
-		0,
+		raster::kSKIFFileType,
 		0,
 		width,
 		height,
 		stride,
 		weight,
 		model,
+		0,
+		0,
+		{ raster::ARGB },
 	};
 	
 	int fd = open( path, O_WRONLY | O_CREAT | O_TRUNC, 0666 );
@@ -115,7 +119,7 @@ void icon2raster( const char* masked_icon, const char* path )
 		exit( 1 );
 	}
 	
-	uint32_t footer_size = sizeof desc + sizeof (uint32_t);
+	uint32_t footer_size = sizeof desc + sizeof (uint32_t) * 2;
 	
 	const uint32_t disk_block_size = 4096;
 	const uint32_t k               = disk_block_size - 1;
@@ -127,6 +131,9 @@ void icon2raster( const char* masked_icon, const char* path )
 	
 	const off_t footer_addr = total_size - sizeof footer_size;
 	
+	const size_t code_len = sizeof (uint32_t);
+	
+	n_written = pwrite( fd, "SKIF", code_len, footer_addr - code_len );
 	n_written = pwrite( fd, &footer_size, sizeof footer_size, footer_addr );
 	
 	if ( n_written < 0 )
