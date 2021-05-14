@@ -157,6 +157,41 @@ void compiled()
 	printf( "%s\n", arch );
 }
 
+static const char* clock_speed_unit_prefixes[] =
+{
+	"",  // Hz
+	"k",
+	"M",
+	"G",
+};
+
+static
+void print_clock_speed( const char* part, uint32_t speed, int i )
+{
+	uint32_t x1000 = speed;
+	
+	while ( speed >= 1000 )
+	{
+		x1000 = speed;
+		speed /= 1000;
+		
+		++i;
+	}
+	
+	const char* X = clock_speed_unit_prefixes[ i ];
+	
+	if ( speed < 100 )
+	{
+		const unsigned digit = x1000 / 100 % 10;
+		
+		printf( "%s clock speed:        %u.%u %sHz\n", part, speed, digit, X );
+	}
+	else
+	{
+		printf( "%s clock speed:        %u %sHz\n", part, speed, X );
+	}
+}
+
 static const uint32_t sysa = gestalt( 'sysa' );
 
 static
@@ -255,6 +290,17 @@ void host_env()
 	if ( mnam != NULL )
 	{
 		printf( "Host CPU machine name:  %s\n", machine_name );
+	}
+	
+	if ( const uint32_t pclk = gestalt( 'pclk' ) )
+	{
+		const uint32_t bclk = gestalt( 'bclk' );
+		const uint32_t mclk = gestalt( 'mclk' );
+		const uint32_t bclm = gestalt( 'bclm' );
+		
+		printf( "\n" );
+		print_clock_speed( "CPU", mclk ? mclk : pclk, mclk ? 2 : 0 );
+		print_clock_speed( "Bus", bclm ? bclm : bclk, bclm ? 2 : 0 );
 	}
 	
 	if ( sys1 != 0 )
