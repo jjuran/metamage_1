@@ -226,6 +226,32 @@ void host_env()
 		printf( "Host CPU model number:  680%c0\n", CPUFlag + '0' );
 	}
 	
+	if ( (TARGET_CPU_68K  &&  sysa == 2)  ||  TARGET_CPU_PPC )
+	{
+		const uint32_t cput = gestalt( 'cput' );
+		
+		const char* type = cput == 0x0101 ? "601"
+		                 : cput == 0x0103 ? "603"
+		                 : cput == 0x0104 ? "604"
+		                 : cput == 0x0106 ? "603e"
+		                 : cput == 0x0107 ? "603ev"
+		                 : cput == 0x0108 ? "G3"
+		                 : cput == 0x0109 ? "604e"
+		                 : cput == 0x010A ? "604ev"
+		                 : cput == 0x010C ? "740/750 (G3)"
+		                 : cput == 0x0110 ? "7450 (G4)"
+		                 : cput == 0x0111 ? "7455 (G4)"
+		                 : cput == 0x0112 ? "7447 (G4)"
+		                 : cput == 0x0113 ? "7447A (G4)"  // not in Gestalt.h
+		                 : cput == 0x0120 ? "750FX (G3)"
+		                 : cput == 0x0139 ? "970 (G5)"
+		                 : cput == 0x013C ? "970FX (G5)"
+		                 : cput == 0x0144 ? "970MP (G5)"
+		                 :                  "???";
+		
+		printf( "Host CPU model number:  PowerPC %s\n", type );
+	}
+	
 	if ( mnam != NULL )
 	{
 		printf( "Host CPU machine name:  %s\n", machine_name );
