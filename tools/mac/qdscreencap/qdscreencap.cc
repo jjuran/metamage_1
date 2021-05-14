@@ -151,9 +151,25 @@ raster_info desktop_raster_info()
 		
 		if ( pm.pixelSize == 16 )
 		{
+		#ifdef __MWERKS__
+			
+			#define red   per_byte[ 0 ]
+			#define green per_byte[ 1 ]
+			#define blue  per_byte[ 2 ]
+			
+		#endif
+			
 			layout.red   = 0x5a;
 			layout.green = 0x55;
 			layout.blue  = 0x50;
+			
+		#ifdef __MWERKS__
+			
+			#undef red
+			#undef green
+			#undef blue
+			
+		#endif
 		}
 		else
 		{
