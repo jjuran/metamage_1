@@ -281,8 +281,14 @@ namespace raster
 	{
 		if ( desc.magic != 0 )
 		{
+		#ifndef __MWERKS__
+			
 			// 0x65 is not a valid 32-bit layout byte, so it must be 16-bit
 			return desc.layout.green == 0x65;
+			
+		#endif
+			
+			return desc.layout.per_byte[ 1 ] == 0x65;  // sigh
 		}
 		
 		// Valid 32-bit rasters are never mere RGB, but have four components
