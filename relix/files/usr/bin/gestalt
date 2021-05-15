@@ -9,7 +9,8 @@ usage: gestalt [-bdxktvV] <selector>
     -b  binary
     -d  decimal
     -x  hex
-    -k  frequency
+    -k  frequency in Hz
+    -K  frequency in MHz
     -t  OSType
     -v  version
     -V  NumVersion
@@ -59,6 +60,13 @@ my %formats =
 		$_ /= 1000, $x = shift @x while $_ >= 1000;
 		".1f ${x}Hz";
 	},
+	K => sub
+	{
+		my @x = qw( G T P );
+		my $x = 'M';
+		$_ /= 1000, $x = shift @x while $_ >= 1000;
+		".1f ${x}Hz";
+	},
 	t => sub { $_ = pack "L", $_; 's' },
 	v => sub { Version() },
 	V => sub { NumVersion() },
@@ -70,7 +78,7 @@ my $arg = shift;
 
 if ( defined $arg  &&  $arg =~ m/^ - . $/x )
 {
-	if ( $arg !~ m/^ - ([bdxktvV]) /x )
+	if ( $arg !~ m/^ - ([bdxkKtvV]) /x )
 	{
 		warn $USAGE;
 		exit 2;
