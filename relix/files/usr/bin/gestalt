@@ -68,8 +68,14 @@ my $display = $default_display;
 
 my $arg = shift;
 
-if ( defined $arg  &&  $arg =~ m/^ - ([bdxktvV]) /x )
+if ( defined $arg  &&  $arg =~ m/^ - . $/x )
 {
+	if ( $arg !~ m/^ - ([bdxktvV]) /x )
+	{
+		warn $USAGE;
+		exit 2;
+	}
+	
 	$display = $1;
 	
 	$arg = shift;
