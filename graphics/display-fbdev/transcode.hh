@@ -17,10 +17,10 @@ extern const uint8_t monochrome_4bit[];
 template < class UInt, int bpp, int X >
 void transcode_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 {
-	const uint8_t* palette = bpp == 1 ? monochrome_1bit
-	                       : bpp == 2 ? monochrome_2bit
-	                       : bpp == 4 ? monochrome_4bit
-	                       :            0;  // NULL
+	const uint8_t* ramp = bpp == 1 ? monochrome_1bit
+	                    : bpp == 2 ? monochrome_2bit
+	                    : bpp == 4 ? monochrome_4bit
+	                    :            0;  // NULL
 	
 	UInt* p = (UInt*) dst;
 	
@@ -34,7 +34,9 @@ void transcode_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 		
 		for ( ;  n_pixels--;  mask >>= bpp )
 		{
-			uint8_t luma = bpp < 8 ? palette[ (byte & mask) >> n_pixels * bpp ]
+			const uint8_t i = (byte & mask) >> n_pixels * bpp;
+			
+			uint8_t luma = bpp < 8 ? ramp[ i ]
 			                       : byte;
 			
 			const UInt pixel = luma * 0x01010101;
