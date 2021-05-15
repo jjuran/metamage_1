@@ -30,7 +30,12 @@ void transcode_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 	
 	while ( width > 0 )
 	{
-		uint8_t byte = ~*src++;
+		uint8_t byte = *src++;
+		
+		if ( gray )
+		{
+			byte = ~byte;
+		}
 		
 		int n_pixels = 8 / bpp;
 		
