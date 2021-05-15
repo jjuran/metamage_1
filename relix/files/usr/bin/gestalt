@@ -54,7 +54,7 @@ my %formats =
 	d => 'd',
 	k => sub
 	{
-		my @x = qw( K M G );
+		my @x = qw( k M G );
 		my $x = '';
 		$_ /= 1000, $x = shift @x while $_ >= 1000;
 		".1f ${x}Hz";
