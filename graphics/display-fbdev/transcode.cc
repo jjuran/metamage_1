@@ -9,6 +9,8 @@
 #include <string.h>
 
 
+uint32_t palette_entries[ 256 ];
+
 const uint8_t monochrome_1bit[] =
 {
 	0x00,

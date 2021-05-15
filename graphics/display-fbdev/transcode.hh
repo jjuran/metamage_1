@@ -10,6 +10,8 @@
 #include <stdint.h>
 
 
+extern uint32_t palette_entries[ 256 ];
+
 extern const uint8_t monochrome_1bit[];
 extern const uint8_t monochrome_2bit[];
 extern const uint8_t monochrome_4bit[];
@@ -17,6 +19,8 @@ extern const uint8_t monochrome_4bit[];
 template < class UInt, int bpp, int X >
 void transcode_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 {
+	const bool gray = palette_entries[ 0 ] == 0;
+	
 	const uint8_t* ramp = bpp == 1 ? monochrome_1bit
 	                    : bpp == 2 ? monochrome_2bit
 	                    : bpp == 4 ? monochrome_4bit
@@ -36,10 +40,8 @@ void transcode_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 		{
 			const uint8_t i = (byte & mask) >> n_pixels * bpp;
 			
-			uint8_t luma = bpp < 8 ? ramp[ i ]
-			                       : byte;
-			
-			const UInt pixel = luma * 0x01010101;
+			const UInt pixel = gray ? (bpp < 8 ? ramp[ i ] : byte) * 0x01010101
+			                        : palette_entries[ i ];
 			
 			for ( int i = 0;  i < X;  ++i )
 			{

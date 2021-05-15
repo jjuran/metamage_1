@@ -32,6 +32,8 @@
 #include "command/get_option.hh"
 
 // raster
+#include "raster/clut.hh"
+#include "raster/clut_detail.hh"
 #include "raster/load.hh"
 #include "raster/relay.hh"
 #include "raster/relay_detail.hh"
@@ -799,6 +801,26 @@ int main( int argc, char** argv )
 	if ( bpp == 16 )
 	{
 		draw = doubling ? &copy_16_2x : &copy_16;
+	}
+	
+	if ( desc.model == Model_palette )
+	{
+		const raster_note* note = find_note( *loaded_raster.meta, Note_clut );
+		
+		if ( note )
+		{
+			const clut_data& clut = data< clut_data >( *note );
+			
+			for ( int i = 0;  i <= clut.max;  ++i )
+			{
+				const color& c = clut.palette[ i ];
+				
+				palette_entries[ i ] = 0xFF           << 24
+				                     | (c.red   >> 8) << 16
+				                     | (c.green >> 8) <<  8
+				                     | (c.blue  >> 8) ;
+			}
+		}
 	}
 	
 	if ( raster::sync_relay* sync = raster_sync )
