@@ -18,6 +18,8 @@
 #include "more/perror.hh"
 
 // rasterlib
+#include "raster/clut.hh"
+#include "raster/clut_detail.hh"
 #include "raster/load.hh"
 #include "raster/skif.hh"
 
@@ -167,6 +169,20 @@ void print_info( const raster::raster_load& loaded_raster )
 		
 		printf( "Note type: %s\n", mb32_type  );
 		printf( "Note size: %u\n", note->size );
+		
+		if ( note->type == Note_clut )
+		{
+			const clut_data& clut = data< clut_data >( *note );
+			
+			if ( clut.max > 0 )
+			{
+				printf( "    %d palette entries\n", clut.max + 1 );
+			}
+			else
+			{
+				printf( "%s\n", "    (empty palette)" );
+			}
+		}
 		
 		note = next( note );
 	}
