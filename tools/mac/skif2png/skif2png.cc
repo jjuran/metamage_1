@@ -26,6 +26,8 @@
 #include "more/perror.hh"
 
 // raster
+#include "raster/clut.hh"
+#include "raster/clut_detail.hh"
 #include "raster/load.hh"
 #include "raster/skif.hh"
 
@@ -112,6 +114,8 @@ CGDataProviderRef make_data_provider( char* data, size_t size, copier cpy )
 static
 CGImageRef CGImage_from_raster( const raster_load& raster )
 {
+	const raster_note* clut_note = NULL;
+	
 	const raster_desc& desc = raster.meta->desc;
 	
 	char* base = (char*) raster.addr;
@@ -123,7 +127,17 @@ CGImageRef CGImage_from_raster( const raster_load& raster )
 	size_t weight = desc.weight;
 	size_t stride = desc.stride;
 	
-	const bool tri_colored = desc.model >= Model_RGB;
+	bool tri_colored = desc.model > Model_palette;
+	
+	if ( desc.model == Model_palette )
+	{
+		clut_note = find_note( *raster.meta, Note_clut );
+		
+		if ( clut_note != NULL )
+		{
+			tri_colored = true;
+		}
+	}
 	
 	size_t bits_per_component = weight == 32 ? 8
 	                          : weight == 16 ? 5
@@ -135,6 +149,35 @@ CGImageRef CGImage_from_raster( const raster_load& raster )
 	                                         : kCGColorSpaceGenericGray;
 	
 	CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName( colorSpaceName );
+	
+	if ( clut_note != NULL )
+	{
+		const clut_data& clut = *(const clut_data*) (clut_note + 1);
+		
+		uint8_t* table = (uint8_t*) alloca( 3 * (clut.max + 1) );
+		
+		uint8_t* p = table;
+		
+		for ( int i = 0;  i <= clut.max;  ++i )
+		{
+			const color& c = clut.palette[ i ];
+			
+			*p++ = c.red   >> 8;
+			*p++ = c.green >> 8;
+			*p++ = c.blue  >> 8;
+		}
+		
+		CGColorSpaceRef index = CGColorSpaceCreateIndexed( colorSpace,
+		                                                   clut.max,
+		                                                   table );
+		
+		if ( index )
+		{
+			CGColorSpaceRelease( colorSpace );
+			
+			colorSpace = index;
+		}
+	}
 	
 	CGBitmapInfo bitmapInfo = kCGImageAlphaNoneSkipFirst;
 	
