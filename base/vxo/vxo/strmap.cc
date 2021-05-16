@@ -45,7 +45,7 @@ StrMap::iterator StrMap::found( const plus::string& key )
 	return lb;
 }
 
-Box& StrMap::operator[]( const plus::string& key )
+Box& StrMap::find_or_insert( const plus::string& key )
 {
 	iterator lb = std::lower_bound( begin(), end(), key );
 	

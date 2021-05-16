@@ -61,7 +61,7 @@ namespace vxo
 				return const_cast< StrMap* >( this )->found( key );
 			}
 			
-			Box& operator[]( const plus::string& key );
+			Box& find_or_insert( const plus::string& key );
 			
 			void erase( iterator loc )
 			{
@@ -136,9 +136,14 @@ namespace vxo
 				return const_cast< StrMap_to* >( this )->found( key );
 			}
 			
+			Box& find_or_insert( const plus::string& key )
+			{
+				return (*(StrMap*) this).find_or_insert( key );
+			}
+			
 			Value& operator[]( const plus::string& key )
 			{
-				return static_cast< Value& >( (*(StrMap*) this)[ key ] );
+				return static_cast< Value& >( find_or_insert( key ) );
 			}
 			
 			void erase( iterator loc )
