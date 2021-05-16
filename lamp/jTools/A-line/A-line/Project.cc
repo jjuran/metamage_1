@@ -155,17 +155,17 @@ namespace tool
 	
 	const plus::string& Project::FindIncludeRecursively( const plus::string& include_path ) const
 	{
-		plus::string& result = its_include_map[ include_path ];
+		plus::string* result = &its_include_map[ include_path ];
 		
-		if ( result.empty() )
+		if ( result->empty() )
 		{
-			result = FindInclude( include_path );
+			*result = FindInclude( include_path );
 			
 			const StringVector& project_names = AllUsedProjects();
 			
 			for ( size_t i = 0;  i < project_names.size();  ++i )
 			{
-				if ( ! result.empty() )
+				if ( ! result->empty() )
 				{
 					break;
 				}
@@ -176,11 +176,11 @@ namespace tool
 				
 				// for searching only directly used projects, call recursive
 				// for searching all used projects, call non-recursive
-				result = used_project.FindInclude( include_path );
+				*result = used_project.FindInclude( include_path );
 			}
 		}
 		
-		return result;
+		return *result;
 	}
 	
 	plus::string Project::FindResourceFile( const plus::string& filespec ) const
