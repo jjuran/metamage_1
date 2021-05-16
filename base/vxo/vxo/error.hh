@@ -48,6 +48,8 @@ namespace vxo
 			Value const& value_cast() const  { return *(Value const*) this; }
 	};
 	
+	extern const char out_of_memory[];
+	
 }
 
 #endif
