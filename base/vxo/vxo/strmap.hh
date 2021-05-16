@@ -146,6 +146,11 @@ namespace vxo
 				return static_cast< Value& >( find_or_insert( key ) );
 			}
 			
+			Value& assign( const plus::string& key, const Value& value )
+			{
+				return static_cast< Value& >( find_or_insert( key ) = value );
+			}
+			
 			void erase( iterator loc )
 			{
 				erase_n( (Box*) loc, 2 );
