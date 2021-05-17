@@ -30,11 +30,11 @@ namespace vxo
 	};
 	
 	template < class Value >
-	class Error_or : public Box
+	class Expected : public Box
 	{
 		public:
-			Error_or( const Error& error ) : Box( error )  {}
-			Error_or( const Value& value ) : Box( value )  {}
+			Expected( const Error& error ) : Box( error )  {}
+			Expected( const Value& value ) : Box( value )  {}
 			
 			const char* error() const
 			{

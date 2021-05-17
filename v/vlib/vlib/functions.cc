@@ -67,7 +67,7 @@ namespace vlib
 	}
 	
 	static
-	const plus::string& get_string( const vxo::Error_or_String& box )
+	const plus::string& get_string( const vxo::Expected_String& box )
 	{
 		if ( const char* error = box.error() )
 		{

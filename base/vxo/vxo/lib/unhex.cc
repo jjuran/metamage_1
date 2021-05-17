@@ -21,7 +21,7 @@
 namespace vxo
 {
 
-Error_or_String unhex( const char* data, size_t size, align_t align )
+Expected_String unhex( const char* data, size_t size, align_t align )
 {
 	// Alignment must be a power of two.
 	

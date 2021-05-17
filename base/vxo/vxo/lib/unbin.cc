@@ -15,7 +15,7 @@
 namespace vxo
 {
 
-Error_or_String unbin( const char* data, size_t size, align_t align )
+Expected_String unbin( const char* data, size_t size, align_t align )
 {
 	// Alignment must be a power of two.
 	
