@@ -16,9 +16,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// poseven
-#include "poseven/types/errno_t.hh"
-
 
 #define PROGRAM  "uunix"
 
@@ -26,9 +23,6 @@
                "       (stdout must be a local socket)\n"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
-
-
-namespace p7 = poseven;
 
 
 #define CHECK_N( call )  check_n( call, #call )
@@ -57,7 +51,9 @@ static int connect( const char* path )
 	
 	if ( length >= sizeof un.sun_path )
 	{
-		p7::throw_errno( ENAMETOOLONG );
+		errno = ENAMETOOLONG;
+		
+		check_n( -1, path );
 	}
 	
 	memcpy( un.sun_path, path, length + 1 );
@@ -85,18 +81,7 @@ int main( int argc, char** argv )
 	
 	const char* path = argv[ 1 ];
 	
-	int remote_fd;
-	
-	try
-	{
-		remote_fd = connect( path );
-	}
-	catch ( const p7::errno_t& err )
-	{
-		fprintf( stderr, PROGRAM ": %s: %s\n", path, strerror( err ) );
-		
-		return 1;
-	}
+	int remote_fd = connect( path );
 	
 	CHECK_N( unet::send_fd( socket_fd, remote_fd ) );
 	CHECK_N( unet::send_fd( socket_fd, remote_fd ) );
