@@ -11,6 +11,9 @@
 // POSIX
 #include <unistd.h>
 
+// iota
+#include "iota/freestore_free.hh"
+
 // ams-common
 #include "callouts.hh"
 

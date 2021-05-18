@@ -17,6 +17,9 @@
 // Standard C
 #include <stdlib.h>
 
+// iota
+#include "iota/freestore_free.hh"
+
 // command
 #include "command/get_option.hh"
 

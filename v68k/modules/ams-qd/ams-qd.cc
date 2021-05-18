@@ -14,6 +14,9 @@
 // Standard C
 #include <stdlib.h>
 
+// iota
+#include "iota/freestore_free.hh"
+
 // ams-common
 #include "callouts.hh"
 
