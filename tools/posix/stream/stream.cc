@@ -8,12 +8,16 @@
 #include <unistd.h>
 
 // Standard C
-#include <stdio.h>
 #include <string.h>
+
+// more-posix
+#include "more/perror.hh"
 
 // posix-utils
 #include "posix/open_or_connect.hh"
 
+
+#define PROGRAM  "stream"
 
 #define USAGE "Usage: stream file-path\n"
 
@@ -25,6 +29,12 @@ int usage()
 {
 	write( STDERR_FILENO, STR_LEN( USAGE ) );
 	return 1;
+}
+
+static inline
+void report_error( const char* path )
+{
+	more::perror( PROGRAM, path );
 }
 
 int main( int argc, char** argv )
@@ -45,7 +55,7 @@ int main( int argc, char** argv )
 	
 	if ( fd < 0  ||  dup2( fd, stdio ) < 0 )
 	{
-		perror( path );
+		report_error( path );
 		return 1;
 	}
 	
@@ -58,6 +68,6 @@ int main( int argc, char** argv )
 	
 	execl( cat, "cat", NULL );
 	
-	perror( cat );
+	report_error( cat );
 	return 1;
 }
