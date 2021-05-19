@@ -12,9 +12,11 @@
 // Standard C
 #include <errno.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+// more-posix
+#include "more/perror.hh"
 
 // command
 #include "command/get_option.hh"
@@ -514,7 +516,7 @@ int make_raster( char** argv )
 	
 	if ( err )
 	{
-		perror( path );
+		more::perror( path );
 		return 1;
 	}
 	
