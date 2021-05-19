@@ -63,13 +63,7 @@ namespace tool
 	static inline
 	bool can_backspace()
 	{
-		#ifdef __RELIX__
-			
-			return false;
-			
-		#endif
-			
-			return isatty( STDOUT_FILENO );
+		return isatty( STDOUT_FILENO );
 	}
 	
 	class dev_null_fd
