@@ -7,12 +7,14 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-// Standard C
-#include <stdio.h>
+// more-posix
+#include "more/perror.hh"
 
 // posix-utils
 #include "posix/open_or_connect.hh"
 
+
+#define PROGRAM  "unixclient"
 
 #define USAGE "Usage: unixclient file-path program [args...]\n"
 
@@ -24,6 +26,12 @@ int usage()
 {
 	write( STDERR_FILENO, STR_LEN( USAGE ) );
 	return 1;
+}
+
+static inline
+void report_error( const char* path )
+{
+	more::perror( PROGRAM, path );
 }
 
 int main( int argc, char** argv )
@@ -41,7 +49,7 @@ int main( int argc, char** argv )
 	
 	if ( fd < 0  ||  dup2( fd, 6 ) < 0  ||  dup2( fd, 7 ) < 0 )
 	{
-		perror( socket_path );
+		report_error( socket_path );
 		return 1;
 	}
 	
@@ -52,6 +60,6 @@ int main( int argc, char** argv )
 	
 	execvp( program_argv[ 0 ], program_argv );
 	
-	perror( program_argv[ 0 ] );
+	report_error( program_argv[ 0 ] );
 	return 1;
 }
