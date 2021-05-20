@@ -183,6 +183,8 @@ my %fsmap =
 			},
 			# Ed25519
 			\ qw( ed-mkpub ed-sign ed-verify ),
+			# Graphics
+			\ qw( skif skif-info ),
 			# unet
 			\ qw( uexec utcp uunix ),
 			# Freemount
