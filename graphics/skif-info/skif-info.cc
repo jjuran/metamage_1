@@ -1,6 +1,6 @@
 /*
-	raster-info.cc
-	--------------
+	skif-info.cc
+	------------
 */
 
 // POSIX
@@ -24,7 +24,7 @@
 #include "raster/skif.hh"
 
 
-#define PROGRAM  "raster-info"
+#define PROGRAM  "skif-info"
 
 
 static const char* raster_models[] =

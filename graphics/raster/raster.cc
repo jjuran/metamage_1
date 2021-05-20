@@ -74,7 +74,7 @@ int raster_make( char** args )
 static
 int raster_info( char** args )
 {
-	const char* argv[] = { "raster-info", *args, NULL };
+	const char* argv[] = { "skif-info", *args, NULL };
 	
 	execvp( *argv, (char**) argv );
 	
