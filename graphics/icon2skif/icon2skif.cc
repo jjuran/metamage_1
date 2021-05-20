@@ -1,6 +1,6 @@
 /*
-	icon2raster.cc
-	--------------
+	icon2skif.cc
+	------------
 */
 
 // POSIX
@@ -20,12 +20,12 @@
 // more-posix
 #include "more/perror.hh"
 
-// raster
+// rasterlib
 #include "raster/raster.hh"
 #include "raster/skif.hh"
 
 
-#define PROGRAM  "icon2raster"
+#define PROGRAM  "icon2skif"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -39,7 +39,7 @@ void report_error( const char* path, uint32_t err )
 }
 
 static
-void icon2raster( const char* masked_icon, const char* path )
+void icon2skif( const char* masked_icon, const char* path )
 {
 	using iota::bit_iterator;
 	
@@ -200,7 +200,7 @@ int main( int argc, char** argv )
 		return 1;
 	}
 	
-	icon2raster( buffer, output_path );
+	icon2skif( buffer, output_path );
 	
 	close( fd );
 	
