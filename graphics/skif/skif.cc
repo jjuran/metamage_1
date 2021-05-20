@@ -1,6 +1,6 @@
 /*
-	raster.cc
-	---------
+	skif.cc
+	-------
 */
 
 // POSIX
@@ -18,12 +18,12 @@
 // rasterlib
 #include "raster/load.hh"
 
-// raster
+// skif
 #include "make.hh"
 #include "relay.hh"
 
 
-#define PROGRAM  "raster"
+#define PROGRAM  "skif"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 

@@ -45,7 +45,7 @@ app-build-tools:
 	$(BUILD) minivx
 
 AMS_REPOS := freemount.git ams-68k-bin.git
-AMS_TOOLS := exhibit graft raster minivx xv68k freemountd
+AMS_TOOLS := exhibit graft skif minivx xv68k freemountd
 
 AMS_UTILS_ROOT := var/install/lib/metamage
 
@@ -183,7 +183,7 @@ ams-common-install: var/install
 	install -d var/install/bin
 	test \! -x var/out/sndtrack || install var/out/sndtrack var/install/bin
 	install var/out/minivx      var/install/bin
-	install var/out/raster      var/install/bin
+	install var/out/skif        var/install/bin
 	install var/out/exhibit     var/install/bin
 	install var/out/graft       var/install/bin
 	install var/out/freemountd  var/install/bin
