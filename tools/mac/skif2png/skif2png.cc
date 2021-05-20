@@ -1,6 +1,6 @@
 /*
-	raster2png.cc
-	-------------
+	skif2png.cc
+	-----------
 */
 
 // Mac OS X
@@ -30,7 +30,7 @@
 #include "raster/skif.hh"
 
 
-#define PROGRAM  "raster2png"
+#define PROGRAM  "skif2png"
 
 #define MISSING_INPUT   "input file required"
 #define MISSING_OUTPUT  "stdout is a tty, either redirect or use -o"
