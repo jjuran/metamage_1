@@ -136,10 +136,28 @@ void print_info( const raster::raster_load& loaded_raster )
 		{
 			printf( "Layout:\n" );
 			
+		#ifdef __MWERKS__
+			
+			#define red   per_byte[ 0 ]
+			#define green per_byte[ 1 ]
+			#define blue  per_byte[ 2 ]
+			#define alpha per_byte[ 3 ]
+			
+		#endif
+			
 			print_color_channel( "red:  ", desc.layout.red   );
 			print_color_channel( "green:", desc.layout.green );
 			print_color_channel( "blue: ", desc.layout.blue  );
 			print_color_channel( "alpha:", desc.layout.alpha );
+			
+		#ifdef __MWERKS__
+			
+			#undef red
+			#undef green
+			#undef blue
+			#undef alpha
+			
+		#endif
 		}
 		else if ( desc.weight == 32 )
 		{
