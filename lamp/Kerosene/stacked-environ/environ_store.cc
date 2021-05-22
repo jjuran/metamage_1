@@ -15,8 +15,17 @@
 // more-libc
 #include "more/string.h"
 
+// vxo
+#include "vxo/ptrvec.hh"
+
+
+typedef vxo::UniPtrVec_< char > CStrVec;
 
 char** environ = NULL;
+
+static char*        its_buffer;
+static std::size_t  its_length;
+static CStrVec      its_vars;
 
 
 namespace _relix_libc
@@ -260,11 +269,6 @@ environ_store::environ_store( char** envp )
 	its_vars.push_back( NULL );
 	
 	update_environ();
-}
-
-environ_store::~environ_store()
-{
-	::operator delete( its_buffer );
 }
 
 void environ_store::update_environ()

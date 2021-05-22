@@ -6,22 +6,15 @@
 #ifndef KEROSENE_ENVIRONSTORE_HH
 #define KEROSENE_ENVIRONSTORE_HH
 
-// vxo
-#include "vxo/ptrvec.hh"
+// Standard C/C++
+#include <cstddef>
 
 
 namespace _relix_libc
 {
 	
-	typedef vxo::UniPtrVec_< char > CStrVec;
-	
 	class environ_store
 	{
-		private:
-			char*        its_buffer;
-			std::size_t  its_length;
-			CStrVec      its_vars;
-			
 		private:
 			// Non-copyable
 			environ_store           ( const environ_store& );
@@ -36,8 +29,6 @@ namespace _relix_libc
 		
 		public:
 			environ_store( char** envp );
-			
-			~environ_store();
 			
 			char* get( const char* name );
 			void set( const char* name, const char* value, bool overwriting );
