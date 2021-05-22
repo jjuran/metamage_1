@@ -1,7 +1,7 @@
-/*	================
- *	environ_store.hh
- *	================
- */
+/*
+	environ_store.hh
+	----------------
+*/
 
 #ifndef KEROSENE_ENVIRONSTORE_HH
 #define KEROSENE_ENVIRONSTORE_HH

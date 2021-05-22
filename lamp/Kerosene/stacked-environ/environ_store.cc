@@ -1,7 +1,7 @@
-/*	================
- *	environ_store.cc
- *	================
- */
+/*
+	environ_store.cc
+	----------------
+*/
 
 #include "environ_store.hh"
 

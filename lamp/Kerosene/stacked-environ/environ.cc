@@ -1,7 +1,7 @@
-/*	==========
- *	environ.cc
- *	==========
- */
+/*
+	environ.cc
+	----------
+*/
 
 // Standard C
 #include "errno.h"
