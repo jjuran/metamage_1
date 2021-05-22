@@ -198,7 +198,8 @@ static char* find_space( char* buffer, size_t n )
 	}
 }
 
-char* environ_store::find_space_or_reallocate( size_t extra_space )
+static
+char* find_space_or_reallocate( size_t extra_space )
 {
 	if ( char* result = find_space( its_buffer, extra_space ) )
 	{
@@ -231,6 +232,12 @@ char* environ_store::find_space_or_reallocate( size_t extra_space )
 	its_length = size;
 	
 	return p;
+}
+
+static
+void update_environ()
+{
+	environ = &its_vars.front();
 }
 
 environ_store::environ_store( char** envp )
@@ -271,12 +278,8 @@ environ_store::environ_store( char** envp )
 	update_environ();
 }
 
-void environ_store::update_environ()
-{
-	environ = &its_vars.front();
-}
-
-void environ_store::preallocate()
+static
+void preallocate()
 {
 	// We reserve an extra slot so we can later insert without allocating memory, which
 	// (a) could fail and throw bad_alloc, or
@@ -288,7 +291,8 @@ void environ_store::preallocate()
 	update_environ();
 }
 
-void environ_store::erase( char* var )
+static
+void erase( char* var )
 {
 	if ( ptr_within( var, its_buffer, its_length ) )
 	{
