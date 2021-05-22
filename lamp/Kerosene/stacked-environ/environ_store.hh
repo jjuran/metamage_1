@@ -10,7 +10,7 @@
 #include "vxo/ptrvec.hh"
 
 
-namespace kerosene
+namespace _relix_libc
 {
 	
 	class environ_store

@@ -19,7 +19,7 @@
 char** environ = NULL;
 
 
-namespace kerosene
+namespace _relix_libc
 {
 
 static inline uintptr_t max( uintptr_t a, uintptr_t b )

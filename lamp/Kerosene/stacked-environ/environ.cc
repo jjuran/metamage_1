@@ -17,7 +17,7 @@ static char* _getenv( const char* name );
 #undef getenv
 
 
-using kerosene::environ_store;
+using namespace _relix_libc;
 
 static environ_store *global_environ_top = NULL;
 
