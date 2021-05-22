@@ -240,10 +240,14 @@ void update_environ()
 	environ = &its_vars.front();
 }
 
-environ_store::environ_store( char** envp )
+bool load_environ()
 {
-	its_buffer = NULL;
-	its_length = 0;
+	if ( its_buffer )
+	{
+		return true;
+	}
+	
+	char** envp = environ;
 	
 	if ( envp != NULL  &&  *envp != NULL )
 	{
@@ -276,6 +280,8 @@ environ_store::environ_store( char** envp )
 	its_vars.push_back( NULL );
 	
 	update_environ();
+	
+	return true;
 }
 
 static

@@ -19,23 +19,20 @@ static char* _getenv( const char* name );
 
 using namespace _relix_libc;
 
-static environ_store *global_environ_top = NULL;
+static bool loaded_environ;
 
-static environ_store& get_envp()
+static environ_store get_envp()
 {
-	if ( global_environ_top == NULL )
-	{
-		global_environ_top = new environ_store( environ );
-	}
+	loaded_environ = load_environ();
 	
-	return *global_environ_top;
+	return environ_store();
 }
 
 
 char* getenv( const char* name )
 {
-	return global_environ_top ? global_environ_top->get( name )
-	                          : _getenv( name );
+	return loaded_environ ? environ_store::get( name )
+	                      : _getenv( name );
 }
 
 int setenv( const char* name, const char* value, int overwriting )
