@@ -403,7 +403,6 @@ void environ_store::unset( const char* name )
 void environ_store::clear()
 {
 	its_vars.clear();
-	its_vars.push_back( NULL );
 	
 	environ = NULL;
 }
