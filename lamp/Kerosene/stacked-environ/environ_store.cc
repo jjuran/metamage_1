@@ -306,7 +306,7 @@ void erase( char* var )
 	}
 }
 
-char* environ_store::get( const char* name )
+char* environ_get( const char* name )
 {
 	CStrVec::iterator it = find_var( its_vars, name );
 	
@@ -315,7 +315,7 @@ char* environ_store::get( const char* name )
 	return var_match( var, name );
 }
 
-void environ_store::set( const char* name, const char* value, bool overwriting )
+char* environ_set( const char* name, const char* value, bool overwriting )
 {
 	preallocate();  // make insertion safe
 	
@@ -335,7 +335,7 @@ void environ_store::set( const char* name, const char* value, bool overwriting )
 	{
 		if ( ! overwriting )
 		{
-			return;
+			return var;
 		}
 		
 		name_len = match - var - 1;
@@ -368,9 +368,11 @@ void environ_store::set( const char* name, const char* value, bool overwriting )
 	*p++ = '=';
 	p = (char*) mempcpy( p, value, value_len );
 	// *p is already NUL
+	
+	return new_var;
 }
 
-void environ_store::put( char* string )
+char* environ_put( char* string )
 {
 	preallocate();  // make insertion safe
 	
@@ -394,9 +396,11 @@ void environ_store::put( char* string )
 		
 		erase( var );
 	}
+	
+	return string;
 }
 
-void environ_store::unset( const char* name )
+void environ_unset( const char* name )
 {
 	CStrVec::iterator it = find_var( its_vars, name );
 	
@@ -404,7 +408,6 @@ void environ_store::unset( const char* name )
 	
 	// Did we find the right environment variable?
 	const bool match = var_match( var, name );
-	
 	
 	if ( match )
 	{
@@ -414,7 +417,7 @@ void environ_store::unset( const char* name )
 	}
 }
 
-void environ_store::clear()
+void environ_clear()
 {
 	its_vars.clear();
 	

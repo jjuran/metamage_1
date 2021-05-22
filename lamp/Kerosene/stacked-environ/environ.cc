@@ -21,17 +21,16 @@ using namespace _relix_libc;
 
 static bool loaded_environ;
 
-static environ_store get_envp()
+static inline
+bool loadenv()
 {
-	loaded_environ = load_environ();
-	
-	return environ_store();
+	return loaded_environ = load_environ();
 }
 
 
 char* getenv( const char* name )
 {
-	return loaded_environ ? environ_store::get( name )
+	return loaded_environ ? environ_get( name )
 	                      : _getenv( name );
 }
 
@@ -39,7 +38,7 @@ int setenv( const char* name, const char* value, int overwriting )
 {
 	try
 	{
-		get_envp().set( name, value, overwriting );
+		return (loadenv()  &&  environ_set( name, value, overwriting )) - 1;
 	}
 	catch ( ... )
 	{
@@ -47,15 +46,13 @@ int setenv( const char* name, const char* value, int overwriting )
 		
 		return -1;
 	}
-	
-	return 0;
 }
 
 int putenv( char* string )
 {
 	try
 	{
-		get_envp().put( string );
+		return (loadenv()  &&  environ_put( string )) - 1;
 	}
 	catch ( ... )
 	{
@@ -63,15 +60,13 @@ int putenv( char* string )
 		
 		return -1;
 	}
-	
-	return 0;
 }
 
 int unsetenv( const char* name )
 {
 	try
 	{
-		get_envp().unset( name );
+		return (loadenv()  &&  (environ_unset( name ), true)) - 1;
 	}
 	catch ( ... )
 	{
@@ -79,15 +74,13 @@ int unsetenv( const char* name )
 		
 		return -1;
 	}
-	
-	return 0;
 }
 
 int clearenv()
 {
 	try
 	{
-		get_envp().clear();
+		return (loadenv()  &&  (environ_clear(), true )) - 1;
 	}
 	catch ( ... )
 	{
@@ -95,6 +88,4 @@ int clearenv()
 		
 		return -1;
 	}
-	
-	return 0;
 }
