@@ -42,9 +42,6 @@ namespace tool
 			
 			void AddDefinedMacro( const char* macro_definition );
 			
-			void DefineMacro( const plus::string& macro, const plus::string& value );
-			void DefineMacro( const plus::string& macro, bool value = true );
-			
 			void SetPrecompiledHeaderSource( const plus::string& pch );
 			void SetOutput( const plus::string& output );
 			
