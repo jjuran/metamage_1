@@ -7,6 +7,7 @@
 
 // Standard C
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 // Standard C++
@@ -17,6 +18,9 @@
 
 // vxo
 #include "vxo/ptrvec.hh"
+
+
+#pragma exceptions off
 
 
 typedef vxo::UniPtrVec_< char > CStrVec;
@@ -119,11 +123,14 @@ CStrVec::iterator find_var( CStrVec& vars, const char* name )
 static
 char* new_buffer( size_t size )
 {
-	char* buffer = (char*) ::operator new( size + 1 );
+	char* buffer = (char*) malloc( size + 1 );
 	
-	memset( buffer, '\0', size );
-	
-	buffer[ size ] = '=';
+	if ( buffer )
+	{
+		memset( buffer, '\0', size );
+		
+		buffer[ size ] = '=';
+	}
 	
 	return buffer;
 }
@@ -210,6 +217,11 @@ char* find_space_or_reallocate( size_t extra_space )
 	
 	char* buffer = new_buffer( size );
 	
+	if ( buffer == NULL )
+	{
+		return NULL;
+	}
+	
 	char* p = buffer;
 	
 	for ( char** vars = &its_vars[0];  *vars != NULL;  ++vars )
@@ -226,7 +238,7 @@ char* find_space_or_reallocate( size_t extra_space )
 		}
 	}
 	
-	::operator delete( its_buffer );
+	free( its_buffer );
 	
 	its_buffer = buffer;
 	its_length = size;
@@ -257,17 +269,27 @@ bool load_environ()
 		
 		const int envc = env - envp;  // var count + 1
 		
-		//its_vars.reserve( envc );
+		if ( ! its_vars.expand_by_nothrow( envc ) )
+		{
+			return false;
+		}
+		
+		its_vars.clear();
 		
 		its_length = sizeof_argv( envp ) * 2;  // leave room for more vars
 		
 		its_buffer = new_buffer( its_length );
 		
+		if ( its_buffer == NULL )
+		{
+			return false;
+		}
+		
 		char* p = its_buffer;
 		
 		while ( const char* var = *envp++ )
 		{
-			its_vars.push_back( p );
+			its_vars.push_back_nothrow( p );  // already expanded above
 			
 			p = (char*) mempcpy( p, var, strlen( var ) + 1 );
 		}
@@ -277,7 +299,10 @@ bool load_environ()
 		           std::ptr_fun( &cstr_less ) );
 	}
 	
-	its_vars.push_back( NULL );
+	if ( ! its_vars.push_back_nothrow( NULL ) )
+	{
+		return false;
+	}
 	
 	update_environ();
 	
@@ -361,6 +386,11 @@ char* environ_set( const char* name, const char* value, bool overwriting )
 	const size_t var_len = name_len + 1 + value_len + 1;
 	
 	char* new_var = find_space_or_reallocate( var_len );
+	
+	if ( new_var == NULL )
+	{
+		return NULL;
+	}
 	
 	char* p = new_var;
 	
