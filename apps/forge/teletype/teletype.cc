@@ -16,6 +16,9 @@
 #include <sys/wait.h>
 #include <utime.h>
 
+// iota
+#include "iota/freestore_free.hh"
+
 // Relix
 #include "relix/fork_and_exit.h"
 
