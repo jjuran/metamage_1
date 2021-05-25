@@ -179,9 +179,11 @@ namespace vlib
 		
 		list_builder result;
 		
+		Iter each = begin;
+		
 		for ( std::size_t i = 0;  i < n;  ++i )
 		{
-			result.append( *vector[ i ] );
+			result.append( **each++ );
 		}
 		
 		return make_array( result );
