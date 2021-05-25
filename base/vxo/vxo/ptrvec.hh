@@ -222,9 +222,24 @@ namespace vxo
 				                (anyptr_t*) end );
 			}
 			
+			Item* insert_nothrow( Item* loc )
+			{
+				return (Item*) PtrVec::insert_nothrow( (anyptr_t*) loc );
+			}
+			
 			Item* insert( Item* loc )
 			{
 				return (Item*) PtrVec::insert( (anyptr_t*) loc );
+			}
+			
+			Item* insert_nothrow( Item* loc, Item item )
+			{
+				if ( (loc = insert_nothrow( loc )) )
+				{
+					*loc = item;
+				}
+				
+				return loc;
 			}
 			
 			void insert( Item* loc, Item item )
