@@ -69,6 +69,18 @@ namespace vxo
 			
 			void erase_n( Item* loc, size_t n );
 			
+			Item* push_back_nothrow( Item item )
+			{
+				Item* loc = expand_by_nothrow( 1 );
+				
+				if ( loc )
+				{
+					*loc = item;
+				}
+				
+				return loc;
+			}
+			
 			void push_back( Item item )  { *expand_by( 1 ) = item; }
 			
 			void pop_back()  { --u.str.length; }
