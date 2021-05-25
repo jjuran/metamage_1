@@ -59,7 +59,11 @@ namespace vxo
 			Item* insert_n_nothrow( Item* loc, size_t n );
 			Item* insert_n        ( Item* loc, size_t n );
 			
+			Item* insert_nothrow( Item* loc, const_iterator begin, const_iterator end );
+			
 			void insert( Item* loc, const_iterator begin, const_iterator end );
+			
+			Item* insert_nothrow( Item* loc )  { return insert_n_nothrow( loc, 1 ); }
 			
 			Item* insert( Item* loc )  { return insert_n( loc, 1 ); }
 			

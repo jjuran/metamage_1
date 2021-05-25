@@ -197,6 +197,20 @@ anyptr_t* PtrVec::insert_n( Item* loc, size_t n )
 	return loc;
 }
 
+anyptr_t* PtrVec::insert_nothrow( Item* loc, const_iterator begin, const_iterator end )
+{
+	const size_t n = end - begin;
+	
+	anyptr_t* ptr = insert_n( loc, n );
+	
+	if ( ptr )
+	{
+		memcpy( ptr, begin, n * sizeof (anyptr_t) );
+	}
+	
+	return ptr;
+}
+
 void PtrVec::insert( Item* loc, const_iterator begin, const_iterator end )
 {
 	const size_t n = end - begin;
