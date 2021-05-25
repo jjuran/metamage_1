@@ -366,7 +366,10 @@ char* environ_set( const char* name, const char* value, bool overwriting )
 	
 	if ( inserting )
 	{
-		its_vars.insert( it, new_var );  // won't throw
+		if ( ! its_vars.insert_nothrow( it, new_var ) )
+		{
+			return NULL;
+		}
 	}
 	else
 	{
@@ -404,7 +407,10 @@ char* environ_put( char* string )
 	
 	if ( inserting )
 	{
-		its_vars.insert( it, string );  // memory already reserved
+		if ( ! its_vars.insert_nothrow( it, string ) )
+		{
+			return NULL;
+		}
 	}
 	else
 	{
