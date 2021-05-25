@@ -218,6 +218,26 @@ namespace plus
 		return new_pointer;
 	}
 	
+	char* extend_capacity_nothrow( datum_storage& datum, long new_capacity )
+	{
+		datum_storage old = datum;
+		
+		const long n = size( old );
+		
+		char* q = allocate_nothrow( datum, n, new_capacity );
+		
+		if ( q != NULL )
+		{
+			const char* p = begin( old );
+			
+			memcpy( q, p, n );
+			
+			destroy( old );
+		}
+		
+		return q;
+	}
+	
 	char* extend_capacity( datum_storage& datum, long new_capacity )
 	{
 		datum_storage old = datum;

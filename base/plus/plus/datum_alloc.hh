@@ -72,7 +72,8 @@ namespace plus
 	char* reallocate_nothrow( datum_storage& datum, long length );
 	char* reallocate        ( datum_storage& datum, long length );
 	
-	char* extend_capacity( datum_storage& datum, long new_capacity );
+	char* extend_capacity_nothrow( datum_storage& datum, long new_capacity );
+	char* extend_capacity        ( datum_storage& datum, long new_capacity );
 	
 	char* curtail_capacity( datum_storage& datum, long new_capacity );
 	
