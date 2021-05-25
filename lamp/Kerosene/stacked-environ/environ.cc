@@ -4,7 +4,6 @@
 */
 
 // Standard C
-#include "errno.h"
 #include "stdlib.h"
 
 // Kerosene
@@ -15,6 +14,9 @@ static char* _getenv( const char* name );
 #define getenv _getenv
 #include "getenv.cc.hh"
 #undef getenv
+
+
+#pragma exceptions off
 
 
 using namespace _relix_libc;
@@ -36,56 +38,20 @@ char* getenv( const char* name )
 
 int setenv( const char* name, const char* value, int overwriting )
 {
-	try
-	{
-		return (loadenv()  &&  environ_set( name, value, overwriting )) - 1;
-	}
-	catch ( ... )
-	{
-		errno = ENOMEM;
-		
-		return -1;
-	}
+	return (loadenv()  &&  environ_set( name, value, overwriting )) - 1;
 }
 
 int putenv( char* string )
 {
-	try
-	{
-		return (loadenv()  &&  environ_put( string )) - 1;
-	}
-	catch ( ... )
-	{
-		errno = ENOMEM;
-		
-		return -1;
-	}
+	return (loadenv()  &&  environ_put( string )) - 1;
 }
 
 int unsetenv( const char* name )
 {
-	try
-	{
-		return (loadenv()  &&  (environ_unset( name ), true)) - 1;
-	}
-	catch ( ... )
-	{
-		errno = ENOMEM;
-		
-		return -1;
-	}
+	return (loadenv()  &&  (environ_unset( name ), true)) - 1;
 }
 
 int clearenv()
 {
-	try
-	{
-		return (loadenv()  &&  (environ_clear(), true )) - 1;
-	}
-	catch ( ... )
-	{
-		errno = ENOMEM;
-		
-		return -1;
-	}
+	return (loadenv()  &&  (environ_clear(), true )) - 1;
 }
