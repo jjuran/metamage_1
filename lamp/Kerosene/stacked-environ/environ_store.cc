@@ -285,16 +285,22 @@ bool load_environ()
 }
 
 static
-void preallocate()
+const void* preallocate()
 {
 	// We reserve an extra slot so we can later insert without allocating memory, which
 	// (a) could fail and throw bad_alloc, or
 	// (b) could succeed and invalidate iterators.
 	
-	its_vars.push_back( NULL );
-	its_vars.pop_back();
+	const void* ptr = its_vars.expand_by_nothrow( 1 );
 	
-	update_environ();
+	if ( ptr != NULL )
+	{
+		its_vars.pop_back();
+		
+		update_environ();
+	}
+	
+	return ptr;
 }
 
 static
@@ -317,7 +323,12 @@ char* environ_get( const char* name )
 
 char* environ_set( const char* name, const char* value, bool overwriting )
 {
-	preallocate();  // make insertion safe
+	if ( ! preallocate() )
+	{
+		return NULL;
+	}
+	
+	// Insertion is now safe
 	
 	CStrVec::iterator it = find_var( its_vars, name );
 	
@@ -374,7 +385,12 @@ char* environ_set( const char* name, const char* value, bool overwriting )
 
 char* environ_put( char* string )
 {
-	preallocate();  // make insertion safe
+	if ( ! preallocate() )
+	{
+		return NULL;
+	}
+	
+	// Insertion is now safe
 	
 	CStrVec::iterator it = find_var( its_vars, string );
 	
