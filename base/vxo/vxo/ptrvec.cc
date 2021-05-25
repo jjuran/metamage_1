@@ -40,7 +40,7 @@ PtrVec::PtrVec( size_t n_items )
 		
 		const size_t n_bytes = n_items * sizeof (anyptr_t);
 		
-		if ( char* alloc = plus::extent_alloc( n_bytes ) )
+		if ( char* alloc = plus::extent_alloc_nothrow( n_bytes ) )
 		{
 			u.str.pointer  = alloc;
 			u.str.capacity = n_items;
