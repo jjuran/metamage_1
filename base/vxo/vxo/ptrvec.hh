@@ -53,7 +53,8 @@ namespace vxo
 			Item& back()        { return end()[ -1 ]; }
 			Item  back() const  { return end()[ -1 ]; }
 			
-			Item* expand_by( size_t n );
+			Item* expand_by_nothrow( size_t n );
+			Item* expand_by        ( size_t n );
 			
 			Item* insert_n( Item* loc, size_t n );
 			

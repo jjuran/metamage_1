@@ -50,6 +50,57 @@ PtrVec::PtrVec( size_t n_items )
 	}
 }
 
+anyptr_t* PtrVec::expand_by_nothrow( size_t n )
+{
+	const size_t original_length = u.str.length;
+	
+	ASSERT( u.str.length <= u.str.capacity );
+	
+	const size_t new_length = u.str.length + n;
+	
+	if ( new_length > u.str.capacity )
+	{
+		u.str.length   *= sizeof (anyptr_t);
+		u.str.capacity *= sizeof (anyptr_t);
+		
+		size_t new_capacity = u.str.capacity * 2;
+		
+		if ( new_capacity < new_length * sizeof (anyptr_t) )
+		{
+			new_capacity = new_length * sizeof (anyptr_t);
+		}
+		
+		char* alloc;
+		
+		if ( u.str.pointer == NULL )
+		{
+			if ( new_capacity < minimum_capacity )
+			{
+				new_capacity = minimum_capacity;
+			}
+			
+			alloc = plus::extent_alloc_nothrow( new_capacity );
+			
+			u.str.pointer  = alloc;
+			u.str.capacity = new_capacity;
+			
+			set_control_byte( Box_shared );
+		}
+		else
+		{
+			plus::datum_storage& storage = *(plus::datum_storage*) this;
+			
+			alloc = extend_capacity_nothrow( storage, new_capacity );
+		}
+		
+		u.str.capacity /= sizeof (anyptr_t);
+	}
+	
+	u.str.length = new_length;
+	
+	return begin() + original_length;
+}
+
 anyptr_t* PtrVec::expand_by( size_t n )
 {
 	const size_t original_length = u.str.length;
