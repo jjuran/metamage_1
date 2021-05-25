@@ -152,6 +152,30 @@ anyptr_t* PtrVec::expand_by( size_t n )
 	return begin() + original_length;
 }
 
+anyptr_t* PtrVec::insert_n_nothrow( Item* loc, size_t n )
+{
+	ASSERT( loc >= begin() );
+	ASSERT( loc <= end()   );
+	
+	const size_t n_bytes_to_move = (char*) end() - (char*) loc;
+	const size_t n_bytes_to_zero = n * sizeof (anyptr_t);
+	
+	const size_t offset = loc - begin();
+	
+	if ( ! expand_by_nothrow( n ) )
+	{
+		return NULL;
+	}
+	
+	loc = begin() + offset;  // In case we reallocated
+	
+	memmove( loc + n, loc, n_bytes_to_move );
+	
+	memset( loc, '\0', n_bytes_to_zero );
+	
+	return loc;
+}
+
 anyptr_t* PtrVec::insert_n( Item* loc, size_t n )
 {
 	ASSERT( loc >= begin() );

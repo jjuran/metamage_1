@@ -56,7 +56,8 @@ namespace vxo
 			Item* expand_by_nothrow( size_t n );
 			Item* expand_by        ( size_t n );
 			
-			Item* insert_n( Item* loc, size_t n );
+			Item* insert_n_nothrow( Item* loc, size_t n );
+			Item* insert_n        ( Item* loc, size_t n );
 			
 			void insert( Item* loc, const_iterator begin, const_iterator end );
 			
