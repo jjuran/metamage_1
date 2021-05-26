@@ -34,6 +34,9 @@ def copy
 
 def vx_Z (script_filename) { "minivx", "-Z", bindir "/" script_filename }
 
+const is_arm64 = output-from-run [ "arch" ] == "arm64\n"
+const frontend = if is_arm64 then {"Amethyst"} else {"Amphitheatre"}
+
 const output_dir = argv[ 1 ]
 const input_path = argv[ 2 ]
 
@@ -170,7 +173,7 @@ if active "sound" and exists "var/out/sndtrack" then
 	copy( "var/out/sndtrack", MacOS_dir )
 }
 
-copy( "var/out/Amphitheatre", MacOS_dir )
+copy( "var/out/" frontend, MacOS_dir )
 
 var plist_xml_lines = [ info_plist.version, info_plist.doctype ]
 
@@ -219,7 +222,7 @@ if "document-types" in config then
 
 const info =
 [
-	CFBundleExecutable:  "Amphitheatre",
+	CFBundleExecutable:  frontend,
 	CFBundleIconFile:    name,
 	CFBundleName:        name,
 	CFBundlePackageType: 'APPL',
