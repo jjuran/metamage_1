@@ -22,6 +22,16 @@ namespace vxo
 const size_t minimum_capacity = sizeof (plus::datum_storage);
 const size_t minimum_elements = minimum_capacity / sizeof (PtrVec::Item);
 
+PtrVec::PtrVec()
+{
+	u.str.pointer  = NULL;
+	u.str.length   = 0;
+	u.str.capacity = 0;
+	
+	set_subtype_byte( Box_vector_anyptr );
+	set_control_byte( Box_vector_anyptr );
+}
+
 PtrVec::PtrVec( size_t n_items )
 {
 	u.str.pointer  = NULL;

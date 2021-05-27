@@ -26,7 +26,8 @@ namespace vxo
 			
 			static bool test( const Box& box );  // unimplemented
 			
-			explicit PtrVec( size_t n = 0 );
+			PtrVec();
+			explicit PtrVec( size_t n );
 			
 			size_t size() const  { return u.str.length; }
 			
@@ -111,7 +112,11 @@ namespace vxo
 			
 			static bool test( const Box& box );  // unimplemented
 			
-			explicit PtrVec_( size_t n = 0 ) : PtrVec( n )
+			PtrVec_()
+			{
+			}
+			
+			explicit PtrVec_( size_t n ) : PtrVec( n )
 			{
 			}
 			
@@ -190,7 +195,11 @@ namespace vxo
 			
 			static bool test( const Box& box );  // unimplemented
 			
-			explicit UniPtrVec_( size_t n = 0 ) : PtrVec( n )
+			UniPtrVec_()
+			{
+			}
+			
+			explicit UniPtrVec_( size_t n ) : PtrVec( n )
 			{
 			}
 			
