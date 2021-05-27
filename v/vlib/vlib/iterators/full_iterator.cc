@@ -17,7 +17,7 @@
 namespace vlib
 {
 	
-	typedef vxo::PtrVec_< const Value > Stack;
+	typedef vxo::UniPtrVec_< const Value > Stack;
 	
 	static inline
 	get_refs get_getrefs( const Value& v )
