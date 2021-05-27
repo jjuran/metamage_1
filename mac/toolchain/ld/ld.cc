@@ -63,7 +63,7 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
-	typedef vxo::PtrVec_< const char > CStrVec;
+	typedef vxo::UniPtrVec_< const char > CStrVec;
 	
 	enum MacAPI
 	{
