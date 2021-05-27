@@ -13,7 +13,7 @@
 #include "vxo/ptrvec.hh"
 
 
-typedef vxo::PtrVec_< const char > string_constant_vector;
+typedef vxo::UniPtrVec_< const char > string_constant_vector;
 
 namespace tool
 {
