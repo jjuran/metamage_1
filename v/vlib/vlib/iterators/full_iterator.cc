@@ -17,6 +17,8 @@
 namespace vlib
 {
 	
+	typedef vxo::PtrVec_< const Value > Stack;
+	
 	static inline
 	get_refs get_getrefs( const Value& v )
 	{
@@ -39,8 +41,6 @@ namespace vlib
 			return;
 		}
 		
-		typedef vxo::PtrVec_< const Value > Stack;
-		
 		Stack& stack = *(Stack*) param;
 		
 		stack.push_back( &v );
@@ -59,7 +59,7 @@ namespace vlib
 	}
 	
 	static
-	void push( vxo::PtrVec_< const Value >& stack, const Value* v )
+	void push( Stack& stack, const Value* v )
 	{
 		if ( ! v->is_cycle_free() )
 		{
