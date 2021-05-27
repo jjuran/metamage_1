@@ -63,6 +63,8 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
+	typedef vxo::PtrVec_< const char > CStrVec;
+	
 	enum MacAPI
 	{
 		kMacAPINone,
@@ -216,7 +218,7 @@ namespace tool
 		return arch_none;
 	}
 	
-	vxo::PtrVec_< const char > gLibraryDirs;
+	CStrVec gLibraryDirs;
 	
 	static void RememberLibraryDir( const char* pathname )
 	{
@@ -225,7 +227,7 @@ namespace tool
 	
 	static plus::string FindLibrary( const char* lib )
 	{
-		typedef vxo::PtrVec_< const char >::const_iterator Iter;
+		typedef CStrVec::const_iterator Iter;
 		
 		plus::string filename = plus::concat( lib, STR_LEN( ".lib" ) );
 		
@@ -327,7 +329,8 @@ namespace tool
 	}
 	
 	
-	static void do_hyphen_option( char**& argv, vxo::PtrVec_< const char >& command_args )
+	static
+	void do_hyphen_option( char**& argv, CStrVec& command_args )
 	{
 		const char* arg = argv[0];
 		
@@ -435,7 +438,8 @@ namespace tool
 		}
 	}
 	
-	static void do_plus_option( const char* arg, vxo::PtrVec_< const char >& command_args )
+	static
+	void do_plus_option( const char* arg, CStrVec& command_args )
 	{
 		if ( const char* equals = std::strchr( arg, '=' ) )
 		{
@@ -505,7 +509,8 @@ namespace tool
 		return true;
 	}
 	
-	static void do_bare_argument( const char* arg, vxo::PtrVec_< const char >& command_args )
+	static
+	void do_bare_argument( const char* arg, CStrVec& command_args )
 	{
 		const bool needs_link = do_special_case_arg( arg );
 		
@@ -535,7 +540,7 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		vxo::PtrVec_< const char > command_args;
+		CStrVec command_args;
 		
 		while ( const char* arg = *++argv )
 		{
@@ -560,7 +565,7 @@ namespace tool
 			return 1;
 		}
 		
-		vxo::PtrVec_< const char > command;
+		CStrVec command;
 		
 		command.push_back( "tlsrvr"   );
 		command.push_back( "--escape" );  // escape arguments to prevent expansion
