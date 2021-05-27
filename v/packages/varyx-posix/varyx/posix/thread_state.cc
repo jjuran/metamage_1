@@ -49,7 +49,7 @@ namespace posix
 	using namespace vlib;
 	
 	
-	static vxo::PtrVec_< thread_state > joinable_threads;
+	static vxo::UniPtrVec_< thread_state > joinable_threads;
 	
 	static p7::mutex joinable_threads_mutex;
 	
@@ -70,7 +70,7 @@ namespace posix
 		
 		p7::lock k( joinable_threads_mutex );
 		
-		typedef vxo::PtrVec_< thread_state >::iterator Iter;
+		typedef vxo::UniPtrVec_< thread_state >::iterator Iter;
 		
 		const Iter begin = joinable_threads.begin();
 		
