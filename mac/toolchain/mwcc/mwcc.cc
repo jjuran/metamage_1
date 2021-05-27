@@ -43,6 +43,8 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
+	typedef vxo::UniPtrVec_< const char > CStrVec;
+	
 	template < class Iter >
 	plus::string join( const plus::string& glue, Iter begin, Iter end )
 	{
@@ -164,7 +166,7 @@ namespace tool
 		return extension_begins_with_char( path, 'o' );
 	}
 	
-	vxo::PtrVec_< const char > gIncludeDirs;
+	CStrVec gIncludeDirs;
 	
 	static void RememberIncludeDir( const char* pathname )
 	{
@@ -191,7 +193,7 @@ namespace tool
 			return prefix_image_path;
 		}
 		
-		typedef vxo::PtrVec_< const char >::const_iterator Iter;
+		typedef CStrVec::const_iterator Iter;
 		
 		for ( Iter it = gIncludeDirs.begin();  it != gIncludeDirs.end();  ++it )
 		{
@@ -224,7 +226,7 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		vxo::PtrVec_< const char > command_args;
+		CStrVec command_args;
 		
 		Architecture arch = arch_none;
 		
@@ -335,7 +337,7 @@ namespace tool
 			return 1;
 		}
 		
-		vxo::PtrVec_< const char > command;
+		CStrVec command;
 		
 		command.push_back( "tlsrvr"   );
 		command.push_back( "--escape" );  // escape arguments to prevent expansion

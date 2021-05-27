@@ -615,7 +615,7 @@ namespace tool
 	
 	static plus::string ShiftEnvironmentVariables( char**& argv )
 	{
-		vxo::PtrVec_< const char > env;
+		vxo::UniPtrVec_< const char > env;
 		
 		env_less less;
 		
@@ -652,7 +652,7 @@ namespace tool
 		
 		plus::var_string result;
 		
-		typedef vxo::PtrVec_< const char >::const_iterator Iter;
+		typedef vxo::UniPtrVec_< const char >::const_iterator Iter;
 		
 		for ( Iter it = env.begin();  it != env.end();  ++it )
 		{

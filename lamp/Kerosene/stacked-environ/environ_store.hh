@@ -1,7 +1,7 @@
-/*	================
- *	environ_store.hh
- *	================
- */
+/*
+	environ_store.hh
+	----------------
+*/
 
 #ifndef KEROSENE_ENVIRONSTORE_HH
 #define KEROSENE_ENVIRONSTORE_HH
@@ -10,15 +10,17 @@
 #include "vxo/ptrvec.hh"
 
 
-namespace kerosene
+namespace _relix_libc
 {
+	
+	typedef vxo::UniPtrVec_< char > CStrVec;
 	
 	class environ_store
 	{
 		private:
-			char*                 its_buffer;
-			std::size_t           its_length;
-			vxo::PtrVec_< char >  its_vars;
+			char*        its_buffer;
+			std::size_t  its_length;
+			CStrVec      its_vars;
 			
 		private:
 			// Non-copyable

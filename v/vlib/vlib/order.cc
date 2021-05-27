@@ -154,7 +154,7 @@ namespace vlib
 		
 		std::size_t n = length( container );
 		
-		vxo::PtrVec_< const Value > vector( n );
+		vxo::UniPtrVec_< const Value > vector( n );
 		
 		array_iterator it( container );
 		
@@ -163,7 +163,7 @@ namespace vlib
 			vector.push_back( &it.use() );
 		}
 		
-		typedef vxo::PtrVec_< const Value >::iterator Iter;
+		typedef vxo::UniPtrVec_< const Value >::iterator Iter;
 		
 		Iter begin = vector.begin();
 		Iter end   = vector.end();
