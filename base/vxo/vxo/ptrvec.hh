@@ -141,6 +141,9 @@ namespace vxo
 			}
 	};
 	
+	// This is a temporary hack that allows us to switch in advance.
+	#define UniPtrVec_ PtrVec_
+	
 }
 
 #endif
