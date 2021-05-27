@@ -13,7 +13,7 @@
 namespace _relix_libc
 {
 	
-	typedef vxo::PtrVec_< char > CStrVec;
+	typedef vxo::UniPtrVec_< char > CStrVec;
 	
 	class environ_store
 	{
