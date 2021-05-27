@@ -13,12 +13,14 @@
 namespace _relix_libc
 {
 	
+	typedef vxo::PtrVec_< char > CStrVec;
+	
 	class environ_store
 	{
 		private:
-			char*                 its_buffer;
-			std::size_t           its_length;
-			vxo::PtrVec_< char >  its_vars;
+			char*        its_buffer;
+			std::size_t  its_length;
+			CStrVec      its_vars;
 			
 		private:
 			// Non-copyable

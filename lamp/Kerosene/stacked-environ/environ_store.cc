@@ -97,7 +97,8 @@ static bool var_less( const char* var, const char* name )
 	}
 }
 
-static vxo::PtrVec_< char >::iterator find_var( vxo::PtrVec_< char >& vars, const char* name )
+static
+CStrVec::iterator find_var( CStrVec& vars, const char* name )
 {
 	return std::lower_bound( vars.begin(),
 	                         vars.end() - 1,
@@ -293,7 +294,7 @@ void environ_store::erase( char* var )
 
 char* environ_store::get( const char* name )
 {
-	vxo::PtrVec_< char >::iterator it = find_var( its_vars, name );
+	CStrVec::iterator it = find_var( its_vars, name );
 	
 	char *const var = *it;
 	
@@ -304,7 +305,7 @@ void environ_store::set( const char* name, const char* value, bool overwriting )
 {
 	preallocate();  // make insertion safe
 	
-	vxo::PtrVec_< char >::iterator it = find_var( its_vars, name );
+	CStrVec::iterator it = find_var( its_vars, name );
 	
 	char *const var = *it;
 	
@@ -359,7 +360,7 @@ void environ_store::put( char* string )
 {
 	preallocate();  // make insertion safe
 	
-	vxo::PtrVec_< char >::iterator it = find_var( its_vars, string );
+	CStrVec::iterator it = find_var( its_vars, string );
 	
 	char *const var = *it;
 	
@@ -383,7 +384,7 @@ void environ_store::put( char* string )
 
 void environ_store::unset( const char* name )
 {
-	vxo::PtrVec_< char >::iterator it = find_var( its_vars, name );
+	CStrVec::iterator it = find_var( its_vars, name );
 	
 	char *const var = *it;
 	
