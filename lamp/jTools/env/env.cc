@@ -12,11 +12,14 @@
 // POSIX
 #include <unistd.h>
 
+// more-libc
+#include "more/string.h"
+
 // must
 #include "must/write.h"
 
 // plus
-#include "plus/var_string.hh"
+#include "plus/string.hh"
 
 
 extern "C" char** environ;
@@ -24,12 +27,21 @@ extern "C" char** environ;
 
 static void DumpEnvironment()
 {
-	plus::var_string output;
+	size_t size = 0;
 	
 	for ( char** envp = environ;  *envp != NULL;  ++envp )
 	{
-		output += *envp;
-		output += "\n";
+		size += strlen( *envp ) + 1;
+	}
+	
+	plus::string output;
+	
+	char* p = output.reset( size );
+	
+	for ( char** envp = environ;  *envp != NULL;  ++envp )
+	{
+		p = (char*) mempcpy( p, *envp, strlen( *envp ) );
+		*p++ = '\n';
 	}
 	
 	must_write( STDOUT_FILENO, output.data(), output.size() );
