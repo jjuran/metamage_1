@@ -53,5 +53,6 @@ int unsetenv( const char* name )
 
 int clearenv()
 {
-	return (loadenv()  &&  (environ_clear(), true )) - 1;
+	return loaded_environ ? (environ_clear(), true) - 1
+	                      : (environ = NULL, 0);
 }
