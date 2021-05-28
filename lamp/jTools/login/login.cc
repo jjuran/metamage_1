@@ -11,6 +11,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// iota
+#include "iota/freestore_free.hh"
+
 // more-posix
 #include "more/perror.hh"
 
