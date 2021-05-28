@@ -19,9 +19,6 @@
 // must
 #include "must/write.h"
 
-// plus
-#include "plus/string.hh"
-
 
 #pragma exceptions off
 
@@ -41,15 +38,15 @@ static void DumpEnvironment()
 		size += strlen( *envp ) + 1;
 	}
 	
-	plus::string output;
+	void* alloc = malloc( size );
 	
-	char* p = output.reset_nothrow( size );
-	
-	if ( p == NULL )
+	if ( alloc == NULL )
 	{
 		must_write( STDERR_FILENO, STR_LEN( "*** Out of memory! ***\n" ) );
 		_exit( 1 );
 	}
+	
+	char* p = (char*) alloc;
 	
 	for ( char** envp = environ;  *envp != NULL;  ++envp )
 	{
@@ -57,7 +54,9 @@ static void DumpEnvironment()
 		*p++ = '\n';
 	}
 	
-	must_write( STDOUT_FILENO, output.data(), output.size() );
+	must_write( STDOUT_FILENO, alloc, size );
+	
+	free( alloc );
 }
 
 int main( int argc, char** argv )
