@@ -12,6 +12,9 @@
 // POSIX
 #include <unistd.h>
 
+// iota
+#include "iota/freestore_free.hh"
+
 // more-libc
 #include "more/string.h"
 
@@ -20,6 +23,12 @@
 
 // plus
 #include "plus/string.hh"
+
+
+#pragma exceptions off
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 extern "C" char** environ;
@@ -36,7 +45,13 @@ static void DumpEnvironment()
 	
 	plus::string output;
 	
-	char* p = output.reset( size );
+	char* p = output.reset_nothrow( size );
+	
+	if ( p == NULL )
+	{
+		must_write( STDERR_FILENO, STR_LEN( "*** Out of memory! ***\n" ) );
+		_exit( 1 );
+	}
 	
 	for ( char** envp = environ;  *envp != NULL;  ++envp )
 	{
