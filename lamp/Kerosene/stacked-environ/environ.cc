@@ -4,7 +4,6 @@
 */
 
 // Standard C
-#include "errno.h"
 #include "stdlib.h"
 
 // Kerosene
@@ -17,87 +16,42 @@ static char* _getenv( const char* name );
 #undef getenv
 
 
+#pragma exceptions off
+
+
 using namespace _relix_libc;
 
-static environ_store *global_environ_top = NULL;
+static bool loaded_environ;
 
-static environ_store& get_envp()
+static inline
+bool loadenv()
 {
-	if ( global_environ_top == NULL )
-	{
-		global_environ_top = new environ_store( environ );
-	}
-	
-	return *global_environ_top;
+	return loaded_environ = load_environ();
 }
 
 
 char* getenv( const char* name )
 {
-	return global_environ_top ? global_environ_top->get( name )
-	                          : _getenv( name );
+	return loaded_environ ? environ_get( name )
+	                      : _getenv( name );
 }
 
 int setenv( const char* name, const char* value, int overwriting )
 {
-	try
-	{
-		get_envp().set( name, value, overwriting );
-	}
-	catch ( ... )
-	{
-		errno = ENOMEM;
-		
-		return -1;
-	}
-	
-	return 0;
+	return (loadenv()  &&  environ_set( name, value, overwriting )) - 1;
 }
 
 int putenv( char* string )
 {
-	try
-	{
-		get_envp().put( string );
-	}
-	catch ( ... )
-	{
-		errno = ENOMEM;
-		
-		return -1;
-	}
-	
-	return 0;
+	return (loadenv()  &&  environ_put( string )) - 1;
 }
 
 int unsetenv( const char* name )
 {
-	try
-	{
-		get_envp().unset( name );
-	}
-	catch ( ... )
-	{
-		errno = ENOMEM;
-		
-		return -1;
-	}
-	
-	return 0;
+	return (loadenv()  &&  (environ_unset( name ), true)) - 1;
 }
 
 int clearenv()
 {
-	try
-	{
-		get_envp().clear();
-	}
-	catch ( ... )
-	{
-		errno = ENOMEM;
-		
-		return -1;
-	}
-	
-	return 0;
+	return (loadenv()  &&  (environ_clear(), true )) - 1;
 }

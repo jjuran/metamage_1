@@ -7,6 +7,7 @@
 
 // Standard C
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 // Standard C++
@@ -15,8 +16,20 @@
 // more-libc
 #include "more/string.h"
 
+// vxo
+#include "vxo/ptrvec.hh"
+
+
+#pragma exceptions off
+
+
+typedef vxo::UniPtrVec_< char > CStrVec;
 
 char** environ = NULL;
+
+static char*        its_buffer;
+static std::size_t  its_length;
+static CStrVec      its_vars;
 
 
 namespace _relix_libc
@@ -110,11 +123,14 @@ CStrVec::iterator find_var( CStrVec& vars, const char* name )
 static
 char* new_buffer( size_t size )
 {
-	char* buffer = (char*) ::operator new( size + 1 );
+	char* buffer = (char*) malloc( size + 1 );
 	
-	memset( buffer, '\0', size );
-	
-	buffer[ size ] = '=';
+	if ( buffer )
+	{
+		memset( buffer, '\0', size );
+		
+		buffer[ size ] = '=';
+	}
 	
 	return buffer;
 }
@@ -189,7 +205,8 @@ static char* find_space( char* buffer, size_t n )
 	}
 }
 
-char* environ_store::find_space_or_reallocate( size_t extra_space )
+static
+char* find_space_or_reallocate( size_t extra_space )
 {
 	if ( char* result = find_space( its_buffer, extra_space ) )
 	{
@@ -199,6 +216,11 @@ char* environ_store::find_space_or_reallocate( size_t extra_space )
 	size_t size = max( its_length * 2, its_length + extra_space );
 	
 	char* buffer = new_buffer( size );
+	
+	if ( buffer == NULL )
+	{
+		return NULL;
+	}
 	
 	char* p = buffer;
 	
@@ -216,7 +238,7 @@ char* environ_store::find_space_or_reallocate( size_t extra_space )
 		}
 	}
 	
-	::operator delete( its_buffer );
+	free( its_buffer );
 	
 	its_buffer = buffer;
 	its_length = size;
@@ -224,10 +246,20 @@ char* environ_store::find_space_or_reallocate( size_t extra_space )
 	return p;
 }
 
-environ_store::environ_store( char** envp )
+static
+void update_environ()
 {
-	its_buffer = NULL;
-	its_length = 0;
+	environ = &its_vars.front();
+}
+
+bool load_environ()
+{
+	if ( its_buffer )
+	{
+		return true;
+	}
+	
+	char** envp = environ;
 	
 	if ( envp != NULL  &&  *envp != NULL )
 	{
@@ -237,17 +269,27 @@ environ_store::environ_store( char** envp )
 		
 		const int envc = env - envp;  // var count + 1
 		
-		//its_vars.reserve( envc );
+		if ( ! its_vars.expand_by_nothrow( envc ) )
+		{
+			return false;
+		}
+		
+		its_vars.clear();
 		
 		its_length = sizeof_argv( envp ) * 2;  // leave room for more vars
 		
 		its_buffer = new_buffer( its_length );
 		
+		if ( its_buffer == NULL )
+		{
+			return false;
+		}
+		
 		char* p = its_buffer;
 		
 		while ( const char* var = *envp++ )
 		{
-			its_vars.push_back( p );
+			its_vars.push_back_nothrow( p );  // already expanded above
 			
 			p = (char*) mempcpy( p, var, strlen( var ) + 1 );
 		}
@@ -257,34 +299,37 @@ environ_store::environ_store( char** envp )
 		           std::ptr_fun( &cstr_less ) );
 	}
 	
-	its_vars.push_back( NULL );
+	if ( ! its_vars.push_back_nothrow( NULL ) )
+	{
+		return false;
+	}
 	
 	update_environ();
+	
+	return true;
 }
 
-environ_store::~environ_store()
-{
-	::operator delete( its_buffer );
-}
-
-void environ_store::update_environ()
-{
-	environ = &its_vars.front();
-}
-
-void environ_store::preallocate()
+static
+const void* preallocate()
 {
 	// We reserve an extra slot so we can later insert without allocating memory, which
 	// (a) could fail and throw bad_alloc, or
 	// (b) could succeed and invalidate iterators.
 	
-	its_vars.push_back( NULL );
-	its_vars.pop_back();
+	const void* ptr = its_vars.expand_by_nothrow( 1 );
 	
-	update_environ();
+	if ( ptr != NULL )
+	{
+		its_vars.pop_back();
+		
+		update_environ();
+	}
+	
+	return ptr;
 }
 
-void environ_store::erase( char* var )
+static
+void erase( char* var )
 {
 	if ( ptr_within( var, its_buffer, its_length ) )
 	{
@@ -292,7 +337,7 @@ void environ_store::erase( char* var )
 	}
 }
 
-char* environ_store::get( const char* name )
+char* environ_get( const char* name )
 {
 	CStrVec::iterator it = find_var( its_vars, name );
 	
@@ -301,9 +346,14 @@ char* environ_store::get( const char* name )
 	return var_match( var, name );
 }
 
-void environ_store::set( const char* name, const char* value, bool overwriting )
+char* environ_set( const char* name, const char* value, bool overwriting )
 {
-	preallocate();  // make insertion safe
+	if ( ! preallocate() )
+	{
+		return NULL;
+	}
+	
+	// Insertion is now safe
 	
 	CStrVec::iterator it = find_var( its_vars, name );
 	
@@ -321,7 +371,7 @@ void environ_store::set( const char* name, const char* value, bool overwriting )
 	{
 		if ( ! overwriting )
 		{
-			return;
+			return var;
 		}
 		
 		name_len = match - var - 1;
@@ -337,11 +387,19 @@ void environ_store::set( const char* name, const char* value, bool overwriting )
 	
 	char* new_var = find_space_or_reallocate( var_len );
 	
+	if ( new_var == NULL )
+	{
+		return NULL;
+	}
+	
 	char* p = new_var;
 	
 	if ( inserting )
 	{
-		its_vars.insert( it, new_var );  // won't throw
+		if ( ! its_vars.insert_nothrow( it, new_var ) )
+		{
+			return NULL;
+		}
 	}
 	else
 	{
@@ -354,11 +412,18 @@ void environ_store::set( const char* name, const char* value, bool overwriting )
 	*p++ = '=';
 	p = (char*) mempcpy( p, value, value_len );
 	// *p is already NUL
+	
+	return new_var;
 }
 
-void environ_store::put( char* string )
+char* environ_put( char* string )
 {
-	preallocate();  // make insertion safe
+	if ( ! preallocate() )
+	{
+		return NULL;
+	}
+	
+	// Insertion is now safe
 	
 	CStrVec::iterator it = find_var( its_vars, string );
 	
@@ -372,7 +437,10 @@ void environ_store::put( char* string )
 	
 	if ( inserting )
 	{
-		its_vars.insert( it, string );  // memory already reserved
+		if ( ! its_vars.insert_nothrow( it, string ) )
+		{
+			return NULL;
+		}
 	}
 	else
 	{
@@ -380,9 +448,11 @@ void environ_store::put( char* string )
 		
 		erase( var );
 	}
+	
+	return string;
 }
 
-void environ_store::unset( const char* name )
+void environ_unset( const char* name )
 {
 	CStrVec::iterator it = find_var( its_vars, name );
 	
@@ -390,7 +460,6 @@ void environ_store::unset( const char* name )
 	
 	// Did we find the right environment variable?
 	const bool match = var_match( var, name );
-	
 	
 	if ( match )
 	{
@@ -400,10 +469,9 @@ void environ_store::unset( const char* name )
 	}
 }
 
-void environ_store::clear()
+void environ_clear()
 {
 	its_vars.clear();
-	its_vars.push_back( NULL );
 	
 	environ = NULL;
 }
