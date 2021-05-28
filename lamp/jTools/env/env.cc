@@ -1,13 +1,11 @@
-/*	======
- *	env.cc
- *	======
- */
-
-// Standard C/C++
-#include <cstring>
+/*
+	env.cc
+	------
+*/
 
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // POSIX
 #include <unistd.h>
@@ -64,7 +62,7 @@ static void DumpEnvironment()
 
 int main( int argc, char** argv )
 {
-	while ( *++argv != NULL  &&  std::strchr( *argv, '=' ) )
+	while ( *++argv != NULL  &&  strchr( *argv, '=' ) )
 	{
 		putenv( *argv );
 	}
