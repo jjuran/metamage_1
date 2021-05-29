@@ -34,14 +34,17 @@
 namespace p7 = poseven;
 
 
+static const char env_intfs_libs[] = "INTERFACES_LIBRARIES";
+static const char txt_intfs_libs[] = "Interfaces&Libraries";
+static const char sig_ToolServer[] = "MPSX";
+
+
 plus::string find_InterfacesAndLibraries()
 {
-	if ( const char* interfaces_libraries = getenv( "INTERFACES_LIBRARIES" ) )
+	if ( const char* interfaces_libraries = getenv( env_intfs_libs ) )
 	{
 		return interfaces_libraries;
 	}
-	
-	const char* sig_ToolServer = "MPSX";
 	
 	plus::var_string pathname = find_appl( sig_ToolServer ).move();
 	
@@ -53,7 +56,7 @@ plus::string find_InterfacesAndLibraries()
 		{
 			pathname.resize( it + 1 - p );
 			
-			pathname += "Interfaces&Libraries";
+			pathname += txt_intfs_libs;
 			
 			return pathname.move();
 		}
