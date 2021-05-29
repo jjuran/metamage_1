@@ -29,10 +29,10 @@ static const char list[]        = "list";
 static const char sys_mac_vol[] = "/sys/mac/vol/";
 
 
+static char ram_path[] = "ram/dt/appls/APPL/latest";
+
 plus::string find_appl( const char* appl )
 {
-	char ram_path[] = "ram/dt/appls/APPL/latest";
-	
 	memcpy( ram_path + STRLEN( "ram/dt/appls/" ), appl, STRLEN( "APPL" ) );
 	
 	const char* path = ram_path + STRLEN( "ram/" );
