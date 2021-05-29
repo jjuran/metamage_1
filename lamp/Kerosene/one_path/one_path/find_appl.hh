@@ -12,11 +12,6 @@
 #include "plus/string.hh"
 
 
-namespace tool
-{
-	
-	plus::string find_appl( const char* appl );
-	
-}
+plus::string find_appl( const char* appl );
 
 #endif

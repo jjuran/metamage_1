@@ -12,11 +12,6 @@
 #include "plus/string.hh"
 
 
-namespace tool
-{
-	
-	plus::string find_InterfacesAndLibraries();
-	
-}
+plus::string find_InterfacesAndLibraries();
 
 #endif

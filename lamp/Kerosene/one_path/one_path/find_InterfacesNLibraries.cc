@@ -31,9 +31,6 @@
 #include "one_path/find_appl.hh"
 
 
-namespace tool
-{
-
 namespace p7 = poseven;
 
 
@@ -63,6 +60,4 @@ plus::string find_InterfacesAndLibraries()
 	}
 	
 	throw p7::errno_t( ENOENT );
-}
-
 }

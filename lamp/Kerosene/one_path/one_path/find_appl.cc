@@ -21,9 +21,6 @@
 #include "poseven/sequences/directory_contents.hh"
 
 
-namespace tool
-{
-
 namespace n = nucleus;
 namespace p7 = poseven;
 
@@ -84,6 +81,4 @@ plus::string find_appl( const char* appl )
 	}
 	
 	throw p7::errno_t( ENOENT );
-}
-
 }
