@@ -33,36 +33,36 @@
 
 namespace tool
 {
-	
-	namespace p7 = poseven;
-	
-	
-	plus::string find_InterfacesAndLibraries()
+
+namespace p7 = poseven;
+
+
+plus::string find_InterfacesAndLibraries()
+{
+	if ( const char* interfaces_libraries = getenv( "INTERFACES_LIBRARIES" ) )
 	{
-		if ( const char* interfaces_libraries = getenv( "INTERFACES_LIBRARIES" ) )
-		{
-			return interfaces_libraries;
-		}
-		
-		const char* sig_ToolServer = "MPSX";
-		
-		plus::var_string pathname = find_appl( sig_ToolServer ).move();
-		
-		const char* p = pathname.data();
-		
-		if ( const char* it = gear::find_last_match( p, pathname.size(), '/' ) )
-		{
-			if (( it = gear::find_last_match( p, it - p, '/' ) ))
-			{
-				pathname.resize( it + 1 - p );
-				
-				pathname += "Interfaces&Libraries";
-				
-				return pathname.move();
-			}
-		}
-		
-		throw p7::errno_t( ENOENT );
+		return interfaces_libraries;
 	}
 	
+	const char* sig_ToolServer = "MPSX";
+	
+	plus::var_string pathname = find_appl( sig_ToolServer ).move();
+	
+	const char* p = pathname.data();
+	
+	if ( const char* it = gear::find_last_match( p, pathname.size(), '/' ) )
+	{
+		if (( it = gear::find_last_match( p, it - p, '/' ) ))
+		{
+			pathname.resize( it + 1 - p );
+			
+			pathname += "Interfaces&Libraries";
+			
+			return pathname.move();
+		}
+	}
+	
+	throw p7::errno_t( ENOENT );
+}
+
 }

@@ -23,67 +23,67 @@
 
 namespace tool
 {
+
+namespace n = nucleus;
+namespace p7 = poseven;
+
+
+plus::string find_appl( const char* appl )
+{
+	char ram_path[] = "ram/dt/appls/APPL/latest";
 	
-	namespace n = nucleus;
-	namespace p7 = poseven;
+	memcpy( ram_path + STRLEN( "ram/dt/appls/" ), appl, STRLEN( "APPL" ) );
 	
+	const char* path = ram_path + STRLEN( "ram/" );
 	
-	plus::string find_appl( const char* appl )
+	n::owned< p7::fd_t > vol = p7::open( "/sys/mac/vol/", p7::o_rdonly | p7::o_directory );
+	
+	try
 	{
-		char ram_path[] = "ram/dt/appls/APPL/latest";
+		return p7::readlinkat( vol, ram_path );
+	}
+	catch ( const p7::errno_t& err )
+	{
+		if ( err != ENOTDIR  &&  err != ENOENT  &&  err != EINVAL )
+		{
+			throw;
+		}
+	}
+	
+	n::owned< p7::fd_t > vol_list = p7::openat( vol, "list", p7::o_rdonly | p7::o_directory );
+	
+	const p7::fd_t dir_fd = vol_list;
+	
+	n::owned< p7::dir_t > vol_list_dir = p7::fdopendir( vol_list );
+	
+	typedef p7::directory_contents_container directory_container;
+	
+	typedef directory_container::const_iterator const_iterator;
+	
+	directory_container contents = p7::directory_contents( vol_list_dir );
+	
+	const_iterator end = contents.end();
+	
+	for ( const_iterator it = contents.begin();  it != end;  ++it )
+	{
+		const char* name = *it;
 		
-		memcpy( ram_path + STRLEN( "ram/dt/appls/" ), appl, STRLEN( "APPL" ) );
-		
-		const char* path = ram_path + STRLEN( "ram/" );
-		
-		n::owned< p7::fd_t > vol = p7::open( "/sys/mac/vol/", p7::o_rdonly | p7::o_directory );
+		n::owned< p7::fd_t > list_i = p7::openat( dir_fd, name, p7::o_rdonly | p7::o_directory );
 		
 		try
 		{
-			return p7::readlinkat( vol, ram_path );
+			return p7::readlinkat( list_i, path );
 		}
 		catch ( const p7::errno_t& err )
 		{
-			if ( err != ENOTDIR  &&  err != ENOENT  &&  err != EINVAL )
+			if ( err != ENOENT )
 			{
 				throw;
 			}
 		}
-		
-		n::owned< p7::fd_t > vol_list = p7::openat( vol, "list", p7::o_rdonly | p7::o_directory );
-		
-		const p7::fd_t dir_fd = vol_list;
-		
-		n::owned< p7::dir_t > vol_list_dir = p7::fdopendir( vol_list );
-		
-		typedef p7::directory_contents_container directory_container;
-		
-		typedef directory_container::const_iterator const_iterator;
-		
-		directory_container contents = p7::directory_contents( vol_list_dir );
-		
-		const_iterator end = contents.end();
-		
-		for ( const_iterator it = contents.begin();  it != end;  ++it )
-		{
-			const char* name = *it;
-			
-			n::owned< p7::fd_t > list_i = p7::openat( dir_fd, name, p7::o_rdonly | p7::o_directory );
-			
-			try
-			{
-				return p7::readlinkat( list_i, path );
-			}
-			catch ( const p7::errno_t& err )
-			{
-				if ( err != ENOENT )
-				{
-					throw;
-				}
-			}
-		}
-		
-		throw p7::errno_t( ENOENT );
 	}
 	
+	throw p7::errno_t( ENOENT );
+}
+
 }
