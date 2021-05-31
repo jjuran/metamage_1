@@ -12,6 +12,9 @@
 // Standard C++
 #include <algorithm>
 
+// more-libc
+#include "more/string.h"
+
 // quickdraw
 #include "qd/region_detail.hh"
 
@@ -99,21 +102,12 @@ namespace quickdraw
 		return (const char*) end - (const char*) begin;
 	}
 	
-	template < class T >
-	static inline
-	void advance_bytes( T*& pointer, size_t n )
-	{
-		(const char*&) pointer += n;
-	}
-	
 	static inline
 	void copy_segments( short*& r, const short* begin, const short* end )
 	{
 		const size_t n = byte_distance( begin, end );
 		
-		memcpy( r, begin, n );
-		
-		advance_bytes( r, n );
+		r = (short*) mempcpy( r, begin, n );
 	}
 	
 	static inline

@@ -8,6 +8,9 @@
 // Standard C
 #include <string.h>
 
+// more-libc
+#include "more/string.h"
+
 
 namespace quickdraw
 {
@@ -23,9 +26,8 @@ namespace quickdraw
 		{
 			*r++ = 127;
 			
-			memcpy( r, p, 128 );
+			r = (uint8_t*) mempcpy( r, p, 128 );
 			
-			r += 128;
 			p += 128;
 			n -= 128;
 		}
@@ -34,9 +36,8 @@ namespace quickdraw
 		{
 			*r++ = n - 1;
 			
-			memcpy( r, p, n );
+			r = (uint8_t*) mempcpy( r, p, n );
 			
-			r += n;
 			p += n;
 		}
 		
@@ -59,9 +60,8 @@ namespace quickdraw
 			{
 				size_t n = c + 1;
 				
-				memcpy( r, p, n );
+				r = (uint8_t*) mempcpy( r, p, n );
 				
-				r += n;
 				p += n;
 			}
 			else
