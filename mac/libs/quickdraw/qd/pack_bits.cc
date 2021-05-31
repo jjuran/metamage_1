@@ -79,25 +79,65 @@ namespace quickdraw
 		uint8_t const* p = src;
 		uint8_t*       r = dst;
 		
-		unsigned n = n_src;
+		uint8_t const* end = p + n_src;
 		
-		while ( n > 127 )
+		while ( p < end )
 		{
-			*r++ = 127;
+			const uint8_t* q = find_triple( p, end );
 			
-			r = (uint8_t*) mempcpy( r, p, 128 );
+			if ( int n = (q ? q : end) - p )
+			{
+				const int k = 128;
+				
+				while ( n >= k )
+				{
+					*r++ = k - 1;
+					
+					r = (uint8_t*) mempcpy( r, p, k );
+					
+					p += k;
+					n -= k;
+				}
+				
+				if ( n > 0 )
+				{
+					*r++ = n - 1;
+					
+					r = (uint8_t*) mempcpy( r, p, n );
+					
+					p += n;
+				}
+			}
 			
-			p += 128;
-			n -= 128;
-		}
-		
-		if ( n )
-		{
-			*r++ = n - 1;
-			
-			r = (uint8_t*) mempcpy( r, p, n );
-			
-			p += n;
+			if ( q != NULL )
+			{
+				q = find_end_of_run( q, end );
+				
+				int n = q - p;
+				
+				const int k = 128;
+				
+				while ( n >= k + 2 )
+				{
+					*r++ = 1 - k;
+					*r++ = *p;
+					
+					n -= k;
+				}
+				
+				if ( n == 129 )
+				{
+					*r++ = 1 - 2;
+					*r++ = *p;
+					
+					n -= 2;
+				}
+				
+				*r++ = 1 - n;
+				*r++ = *p;
+				
+				p = q;
+			}
 		}
 		
 		src = p;
