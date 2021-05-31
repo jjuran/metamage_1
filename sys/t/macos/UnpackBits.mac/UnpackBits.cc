@@ -20,7 +20,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 3 * 10;
+static const unsigned n_tests = 3 * 11;
 
 
 struct test_case
@@ -75,7 +75,7 @@ static const test_case test_cases[] =
 	{ "\p\xFF=", "\p==" },   // -1 -> 2
 	{ "\p\xFE.", "\p..." },  // -2 -> 3
 	{ "\p\x82X", "\pXX" X125 },  // -126 -> 127
-//	{ "\p\x81X", "\pXXX" X125 },  // -127 -> 128?  (In Mac OS, 127)
+	{ "\p\x81X", "\pXXX" X125 },  // -127 -> 128
 };
 
 static
