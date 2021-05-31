@@ -67,7 +67,7 @@ static const test_case test_cases[] =
 	{ "\p", "\p" },
 	{ "\p\x00-", "\p-" },
 //	{ "\p\x03abcd", "\pabcd" },  // "illegal character constant"!?
-	{ "\p\x03-abc", "\p-abc" },
+	{ "\p\x03" "abcd", "\pabcd" },
 	{ "\p\x7C"  X125, "\p"  X125 },  // 124 -> 125
 	{ "\p\x7D:" X125, "\p:" X125 },  // 125 -> 126
 	{ "\p\x7E"  S127, "\p"  S127 },  // 126 -> 127
