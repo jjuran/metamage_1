@@ -18,6 +18,7 @@ namespace varyx {
 namespace mac   {
 	
 	extern const vlib::proc_info proc_PackBits;
+	extern const vlib::proc_info proc_UnpackBits;
 	
 }
 }

@@ -178,6 +178,7 @@ int main( int argc, char** argv )
 	
 	define( proc_PackBits );
 	define( proc_SysBeep );
+	define( proc_UnpackBits );
 	
 #endif
 	
