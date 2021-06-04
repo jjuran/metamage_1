@@ -30,21 +30,29 @@ struct test_case
 };
 
 static
-void run_test( const test_case& test )
+void run_test( Ptr origin, Size src_len, Ptr target, Size dst_len )
 {
 	char buffer[ 256 ];
-	
-	Ptr origin = (Ptr) test.src + 1;
 	
 	Ptr src = origin;
 	Ptr dst = buffer;
 	
-	UnpackBits( &src, &dst, test.dst[ 0 ] );
+	UnpackBits( &src, &dst, dst_len );
 	
-	EXPECT_EQ( src - origin, test.src[ 0 ] );
-	EXPECT_EQ( dst - buffer, test.dst[ 0 ] );
+	EXPECT_EQ( src - origin, src_len );
+	EXPECT_EQ( dst - buffer, dst_len );
 	
-	EXPECT_CMP( buffer, dst - buffer, test.dst + 1, test.dst[ 0 ] );
+	EXPECT_CMP( buffer, dst - buffer, target, dst_len );
+}
+
+static inline
+void run_test( const test_case& test )
+{
+	Ptr origin = (Ptr) test.src + 1;
+	Ptr target = (Ptr) test.dst + 1;
+	
+	run_test( origin, test.src[ 0 ],
+	          target, test.dst[ 0 ] );
 }
 
 #define X5  "XXXXX"
