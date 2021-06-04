@@ -45,24 +45,31 @@ namespace quickdraw
 		dst = r;
 	}
 	
+	static inline
+	unsigned min( unsigned a, unsigned b )
+	{
+		return b < a ? b : a;
+	}
+	
 	void unpack_bits( uint8_t const*& src, uint8_t*& dst, unsigned n_dst )
 	{
 		uint8_t const* p = src;
 		uint8_t*       r = dst;
 		
-		uint8_t* end = r + n_dst;
+		unsigned N = n_dst;
 		
-		while ( r < end )
+		while ( N > 0 )
 		{
 			signed char c = *p++;
 			
 			if ( c >= 0 )
 			{
-				size_t n = c + 1;
+				size_t n = min( N, 1 + c );
 				
 				r = (uint8_t*) mempcpy( r, p, n );
 				
 				p += n;
+				N -= n;
 			}
 			else if ( c == (signed char) 0x80 )
 			{
@@ -77,11 +84,12 @@ namespace quickdraw
 			}
 			else
 			{
-				size_t n = 1 - c;
+				size_t n = min( N, 1 - c );
 				
 				memset( r, *p++, n );
 				
 				r += n;
+				N -= n;
 			}
 		}
 		
