@@ -64,6 +64,17 @@ namespace quickdraw
 				
 				p += n;
 			}
+			else if ( c == (signed char) 0x80 )
+			{
+				/*
+					The behavior of UnpackBits() in the presence of this
+					metadata byte is undocumented, and varies across versions
+					of Mac OS.  We can't securely process the input without
+					knowing which behavior the caller is expecting.
+				*/
+				--p;
+				break;
+			}
 			else
 			{
 				size_t n = 1 - c;
