@@ -11,7 +11,8 @@
 #include <MacWindows.h>
 #endif
 
-#include <stdio.h>
+// iota
+#include "iota/freestore_free.hh"
 
 // ams-common
 #include "QDGlobals.hh"
