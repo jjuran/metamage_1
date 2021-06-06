@@ -203,6 +203,13 @@ pascal long WDEF_1_Draw( short varCode, GrafPort* w, long param )
 	
 	PaintRect( &edge );
 	
+	StringPtr title = window->titleHandle ? *window->titleHandle : NULL;
+	
+	if ( window->titleWidth < 0 )
+	{
+		window->titleWidth = title ? StringWidth( title ) : 0;
+	}
+	
 	if ( window->titleWidth != 0 )
 	{
 		short left = content.left;
@@ -216,7 +223,7 @@ pascal long WDEF_1_Draw( short varCode, GrafPort* w, long param )
 		
 		MoveTo( h, title_bar.top + title_baseline_v );
 		
-		DrawString( *window->titleHandle );
+		DrawString( title );
 	}
 	
 	if ( ! window->hilited )
