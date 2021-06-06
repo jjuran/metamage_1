@@ -19,11 +19,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+// iota
+#include "iota/freestore_free.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 
 // posix-utils
 #include "posix/listen_unix.hh"
+
+
+#pragma exceptions off
 
 
 #ifdef __APPLE__
