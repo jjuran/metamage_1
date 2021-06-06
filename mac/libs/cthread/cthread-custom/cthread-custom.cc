@@ -5,6 +5,9 @@
 
 #include "cthread-custom.hh"
 
+// Standard C
+#include <stdlib.h>
+
 // cthread
 #include "cthread/parameter_block.hh"
 
@@ -111,7 +114,7 @@ namespace custom  {
 	static inline
 	void destroy_task( thread_task* task )
 	{
-		::operator delete( task );
+		free( task );
 	}
 	
 #ifdef __MC68K__
@@ -423,7 +426,12 @@ namespace custom  {
 			stack_size = minimum_size;
 		}
 		
-		void* stack = ::operator new( stack_size );
+		void* stack = malloc( stack_size );
+		
+		if ( stack == NULL )
+		{
+			return thread_id();
+		}
 		
 		thread_task* task_ptr = (thread_task*) stack;
 		thread_task& task     = *task_ptr;
