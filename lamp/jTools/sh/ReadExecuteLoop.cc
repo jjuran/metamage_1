@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 // POSIX
+#include <fcntl.h>
 #include <sys/ioctl.h>
 
 // gear
@@ -23,8 +24,6 @@
 
 // poseven
 #include "poseven/extras/fd_reader.hh"
-#include "poseven/functions/ioctl.hh"
-#include "poseven/functions/open.hh"
 #include "poseven/functions/write.hh"
 
 // sh
@@ -75,21 +74,29 @@ namespace tool
 		p7::write( p7::stdout_fileno, prompt_string, std::strlen( prompt_string ) );
 	}
 	
+	static inline
+	void assign_shell_variable( const char* name, int value )
+	{
+		AssignShellVariable( name, gear::inscribe_decimal( value ) );
+	}
+	
 	static void SetRowsAndColumns()
 	{
-		try
+		int fd = open( "/dev/tty", O_RDONLY );
+		
+		if ( fd >= 0 )
 		{
 			struct winsize size = { 0 };
 			
-			p7::ioctl( p7::open( "/dev/tty", p7::o_rdonly ).get(),
-			           TIOCGWINSZ,
-			           &size );
+			int nok = ioctl( fd, TIOCGWINSZ, &size );
 			
-			AssignShellVariable( "LINES",   gear::inscribe_decimal( size.ws_row ) );
-			AssignShellVariable( "COLUMNS", gear::inscribe_decimal( size.ws_col ) );
-		}
-		catch ( ... )
-		{
+			if ( nok == 0 )
+			{
+				assign_shell_variable( "LINES",   size.ws_row );
+				assign_shell_variable( "COLUMNS", size.ws_col );
+			}
+			
+			close( fd );
 		}
 	}
 	
