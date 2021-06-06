@@ -34,7 +34,7 @@ void* thread_entry( void* arg, const void*, const void* )
 	while ( counter < x )
 	{
 		++counter;
-		thread_yield();
+		yield_to_any_thread();
 	}
 	
 	print( "done" );
@@ -56,7 +56,7 @@ int main( int argc, char** argv )
 	
 	for ( int i = 0;  i < 7;  ++i )
 	{
-		thread_yield();
+		yield_to_any_thread();
 		
 		print( "yielded" );
 	}
