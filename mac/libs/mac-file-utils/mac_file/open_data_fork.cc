@@ -3,7 +3,7 @@
 	-----------------
 */
 
-#include "mac_sys/open_data_fork.hh"
+#include "mac_file/open_data_fork.hh"
 
 // Mac OS X
 #ifdef __APPLE__
@@ -21,8 +21,8 @@
 #include "mac_sys/has/FSSpec_calls.hh"
 
 
-namespace mac {
-namespace sys {
+namespace mac  {
+namespace file {
 
 short open_data_fork( const FSSpec& file, signed char perm )
 {

@@ -3,13 +3,13 @@
 	-----------------
 */
 
-#ifndef MACSYS_OPENDATAFORK_HH
-#define MACSYS_OPENDATAFORK_HH
+#ifndef MACFILE_OPENDATAFORK_HH
+#define MACFILE_OPENDATAFORK_HH
 
 struct FSSpec;
 
-namespace mac {
-namespace sys {
+namespace mac  {
+namespace file {
 	
 	short open_data_fork( const FSSpec& file, signed char perm );
 	
