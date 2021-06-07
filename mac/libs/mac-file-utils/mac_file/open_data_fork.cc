@@ -24,10 +24,10 @@
 namespace mac  {
 namespace file {
 
-short open_data_fork( const FSSpec& file, signed char perm )
+FSIORefNum open_data_fork( const FSSpec& file, signed char perm )
 {
 	OSErr err;
-	short result;
+	FSIORefNum result;
 	
 #if ! __LP64__
 	

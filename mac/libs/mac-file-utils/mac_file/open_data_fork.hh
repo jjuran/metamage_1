@@ -11,7 +11,9 @@ struct FSSpec;
 namespace mac  {
 namespace file {
 	
-	short open_data_fork( const FSSpec& file, signed char perm );
+	typedef short FSIORefNum;
+	
+	FSIORefNum open_data_fork( const FSSpec& file, signed char perm );
 	
 }
 }
