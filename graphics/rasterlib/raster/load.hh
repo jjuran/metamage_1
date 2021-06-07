@@ -13,6 +13,7 @@
 namespace raster
 {
 	
+	raster_load open_raster( void* addr, long end, bool synchronized = false );
 	raster_load open_raster( int fd, bool synchronized );
 	
 	inline raster_load load_raster( int fd )  { return open_raster( fd, 0 ); }

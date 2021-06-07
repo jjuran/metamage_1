@@ -155,41 +155,16 @@ namespace raster
 	}
 	
 	
-	raster_load open_raster( int fd, bool synchronized )
+	raster_load open_raster( void* addr, long end, bool synchronized )
 	{
-		const bool mac_screens_allowed   = ! synchronized;
 		const bool byte_swapping_allowed = ! synchronized;
 		
-		const off_t end = size_of_file_if_valid( fd );
-		
-		if ( end < 0 )
-		{
-			return null_raster_load();
-		}
-		
 		const size_t file_size = end;
-		
-		if ( file_size == mac_screen_size  &&  ! mac_screens_allowed )
-		{
-			return invalid_raster();
-		}
-		
-		const int mmap_prot  = PROT_READ | PROT_WRITE;
-		const int mmap_flags = synchronized ? MAP_SHARED : MAP_PRIVATE;
-		
-		void* const addr = mmap( NULL, end, mmap_prot, mmap_flags, fd, 0 );
-		
-		if ( addr == MAP_FAILED )
-		{
-			return null_raster_load();
-		}
 		
 		if ( file_size == mac_screen_size )
 		{
 			return mac_screen_raster_load( addr );
 		}
-		
-		mmap_box box( addr, file_size );
 		
 		uint32_t footer_size = get_footer_size( addr, end );
 		
@@ -235,9 +210,45 @@ namespace raster
 			return invalid_raster();
 		}
 		
-		box.release();
-		
 		raster_load result = { addr, file_size, meta };
+		
+		return result;
+	}
+	
+	raster_load open_raster( int fd, bool synchronized )
+	{
+		const bool mac_screens_allowed   = ! synchronized;
+		const bool byte_swapping_allowed = ! synchronized;
+		
+		const off_t end = size_of_file_if_valid( fd );
+		
+		if ( end < 0 )
+		{
+			return null_raster_load();
+		}
+		
+		const size_t file_size = end;
+		
+		if ( file_size == mac_screen_size  &&  ! mac_screens_allowed )
+		{
+			return invalid_raster();
+		}
+		
+		const int mmap_prot  = PROT_READ | PROT_WRITE;
+		const int mmap_flags = synchronized ? MAP_SHARED : MAP_PRIVATE;
+		
+		void* const addr = mmap( NULL, end, mmap_prot, mmap_flags, fd, 0 );
+		
+		if ( addr == MAP_FAILED )
+		{
+			return null_raster_load();
+		}
+		
+		mmap_box box( addr, file_size );
+		
+		raster_load result = open_raster( addr, end, synchronized );
+		
+		box.release();
 		
 		return result;
 	}
