@@ -47,5 +47,15 @@ FSIORefNum open_data_fork( const FSSpec& file, signed char perm )
 	return 0;
 }
 
+FSIORefNum open_data_fork( const FSRef& file, signed char perm )
+{
+	OSErr err;
+	FSIORefNum result;
+	
+	err = FSOpenFork( &file, 0, NULL, perm, &result );
+	
+	return err ? err : result;
+}
+
 }
 }
