@@ -1,0 +1,217 @@
+/*
+	file_open.cc
+	------------
+*/
+
+#include "file_open.hh"
+
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __FILES__
+#include <Files.h>
+#endif
+
+// mac-config
+#include "mac_config/apple-events.hh"
+
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
+// mac-file-utils
+#include "mac_file/open_data_fork.hh"
+
+// mac-app-utils
+#include "mac_app/documents.hh"
+#include "mac_app/file_open_dialog.hh"
+
+// rasterlib
+#include "raster/load.hh"
+
+// SKIFView
+#include "window.hh"
+
+
+#define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
+
+using mac::file::FSIORefNum;
+
+static const OSType file_open_types[] = { 'SKIF', '?\?\?\?', '\0\0\0\0' };
+
+
+template < class File >
+struct file_traits;
+
+template <>
+struct file_traits< FSSpec >
+{
+	typedef FSSpec File;
+	typedef SInt32 file_size_t;
+	
+	static ConstStr255Param get_name( const File& file )
+	{
+		return file.name;
+	}
+	
+	static OSErr close( FSIORefNum refnum )
+	{
+		return FSClose( refnum );
+	}
+	
+	static Size read( FSIORefNum refnum, void* buffer, SInt32 n )
+	{
+		OSErr err = FSRead( refnum, &n, buffer );
+		
+		return err ? err : n;
+	}
+	
+	static SInt32 geteof( FSIORefNum refnum )
+	{
+		SInt32 result;
+		
+		OSErr err = GetEOF( refnum, &result );
+		
+		return err ? err : result;
+	}
+};
+
+template <>
+struct file_traits< FSRef >
+{
+	typedef FSRef  File;
+	typedef SInt64 file_size_t;
+	
+	static HFSUniStr255 get_name( const File& file )
+	{
+		HFSUniStr255 result = {};
+		
+		OSErr err = FSGetCatalogInfo( &file, 0, NULL, &result, NULL, NULL );
+		
+		return result;
+	}
+	
+	static OSErr close( FSIORefNum refnum )
+	{
+		return FSCloseFork( refnum );
+	}
+	
+	static long read( FSIORefNum refnum, void* buffer, ByteCount n )
+	{
+		OSErr err = FSReadFork( refnum, fsAtMark, 0, n, buffer, &n );
+		
+		return err ? err : n;
+	}
+	
+	static SInt64 geteof( FSIORefNum refnum )
+	{
+		SInt64 result;
+		
+		OSErr err = FSGetForkSize( refnum, &result );
+		
+		return err ? err : result;
+	}
+};
+
+template < class File >
+static
+long file_opener( const File& file )
+{
+	typedef file_traits< File > traits;
+	
+	FSIORefNum refnum = mac::file::open_data_fork( file, fsRdPerm );
+	
+	if ( refnum < 0 )
+	{
+		return refnum;
+	}
+	
+	typename traits::file_size_t size = traits::geteof( refnum );
+	
+	if ( size >= 0  &&  size <= (ByteCount) -1 / 2  &&  (size & 3) == 0 )
+	{
+		if ( Ptr alloc = NewPtr( size ) )
+		{
+			Size n = traits::read( refnum, alloc, size );
+			
+			if ( n == size )
+			{
+				using namespace raster;
+				
+				raster_load load = open_raster( alloc, size );
+				
+				if ( load.addr )
+				{
+					if ( create_window( load, traits::get_name( file ) ) )
+					{
+						alloc = NULL;
+					}
+				}
+			}
+			
+			if ( alloc )
+			{
+				DisposePtr( alloc );
+			}
+		}
+	}
+	
+	traits::close( refnum );
+	
+	return noErr;
+}
+
+static
+long HFS_file_opener( short vRefNum, long dirID, const Byte* name )
+{
+	FSSpec file;
+	
+	file.vRefNum = vRefNum;
+	file.parID   = dirID;
+	
+	BlockMoveData( name, file.name, 1 + name[ 0 ] );
+	
+	return file_opener( file );
+	
+	return 0;
+}
+
+void open_launched_documents()
+{
+	using mac::app::open_documents_with;
+	
+	const bool apple_events_present =
+		CONFIG_APPLE_EVENTS  &&
+			(CONFIG_APPLE_EVENTS_GRANTED  ||
+				mac::sys::gestalt( 'evnt' ) != 0);
+	
+	if ( TARGET_API_MAC_CARBON )
+	{
+		open_documents_with( &file_opener< FSRef > );
+	}
+	else if ( apple_events_present )
+	{
+		open_documents_with( &file_opener< FSSpec > );
+	}
+	else
+	{
+		open_documents_with( &HFS_file_opener );
+	}
+	
+}
+
+void file_open()
+{
+	using mac::app::file_open_dialog;
+	
+	if ( TARGET_API_MAC_CARBON )
+	{
+		file_open_dialog( ARRAY_LEN( file_open_types ), &file_opener< FSRef > );
+	}
+	else
+	{
+		file_open_dialog( ARRAY_LEN( file_open_types ), &HFS_file_opener );
+	}
+}

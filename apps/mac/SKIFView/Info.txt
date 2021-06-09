@@ -1,0 +1,16 @@
+CFBundleExecutable:  "SKIFView"
+CFBundleIconFile:    "SKIFView.icns"
+CFBundleName:        "SKIFView"
+CFBundlePackageType: 'APPL'
+CFBundleSignature:   'SKIF'
+CFBundleDocumentTypes:
+[
+	[
+		CFBundleTypeName:        "SKIF"
+		CFBundleTypeIconFile:    "SKIF.icns"
+		CFBundleTypeExtensions:  [ "skif", "raster" ]
+		CFBundleTypeOSTypes:     [ 'SKIF' ]
+		CFBundleTypeRole:        "Viewer"
+	]
+]
+NSHighResolutionCapable: true
