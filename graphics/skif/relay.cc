@@ -18,7 +18,7 @@
 #include "raster/sync.hh"
 
 
-#define PROGRAM  "raster"
+#define PROGRAM  "skif"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
