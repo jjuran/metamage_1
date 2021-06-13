@@ -183,7 +183,7 @@ void init_raster( const char* raster_path )
 	
 	if ( pid == 0 )
 	{
-		const char* argv[] = { "raster", "init", raster_path, NULL };
+		const char* argv[] = { "skif", "init", raster_path, NULL };
 		
 		exec_or_exit( argv );
 	}
@@ -199,19 +199,19 @@ void init_raster( const char* raster_path )
 	
 	if ( WIFSIGNALED( wait_status ) )
 	{
-		WARN( "raster init: fatal signal" );
+		WARN( "skif init: fatal signal" );
 		exit( 1 );
 	}
 	
 	if ( ! WIFEXITED( wait_status ) )
 	{
-		WARN( "raster init: non-signal, non-exit termination (I'm confused)" );
+		WARN( "skif init: non-signal, non-exit termination (I'm confused)" );
 		exit( 1 );
 	}
 	
 	if ( const int exit_status = WEXITSTATUS( wait_status ) )
 	{
-		WARN( "raster init failed" );
+		WARN( "skif init failed" );
 		exit( 1 );
 	}
 }
