@@ -221,6 +221,9 @@ namespace raster
 		
 		xBGR = 0x00030201,
 		ABGR = 0x04030201,
+		
+		BGRx = 0x03020100,
+		BGRA = 0x03020104,
 	};
 	
 	union pixel_layout
