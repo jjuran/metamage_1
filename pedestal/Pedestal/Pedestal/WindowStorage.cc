@@ -22,6 +22,7 @@
 
 // mac-app-utils
 #include "mac_app/DAs.hh"
+#include "mac_app/Window_menu.hh"
 
 // MacGlue
 #include "MacGlue/MacGlue.hh"
@@ -349,6 +350,8 @@ namespace Pedestal
 	
 	void close_window( WindowRef window )
 	{
+		mac::app::Window_menu_remove( window );
+		
 		if ( WindowClosed_proc proc = get_window_closed_proc( window ) )
 		{
 			proc( window );
@@ -424,6 +427,8 @@ namespace Pedestal
 			
 			Mac::ThrowOSStatus( err );
 		}
+		
+		mac::app::Window_menu_insert( window );
 		
 		return result;
 	}
