@@ -19,125 +19,126 @@
 
 namespace mac {
 namespace app {
+
+static std::vector< void* > the_windows_in_menu;
+
+
+static
+bool window_title_less( const void* a_, const void* b_ )
+{
+	const unsigned char* a;
+	const unsigned char* b;
 	
-	static std::vector< void* > the_windows_in_menu;
+#if ! OPAQUE_TOOLBOX_STRUCTS
 	
+	a = *((WindowPeek) a_)->titleHandle;
+	b = *((WindowPeek) b_)->titleHandle;
 	
-	static bool window_title_less( const void* a_, const void* b_ )
+#else
+	
+	Str255 one;
+	Str255 two;
+	
+	a = one;
+	b = two;
+	
+	GetWTitle( (WindowRef) a_, one );
+	GetWTitle( (WindowRef) b_, two );
+	
+#endif
+	
+	const uint8_t a_len = *a++;
+	const uint8_t b_len = *b++;
+	
+	const unsigned char* a_end = a + a_len;
+	const unsigned char* b_end = b + b_len;
+	
+	return std::lexicographical_compare( a, a_end, b, b_end );
+}
+
+static
+void enumerate_windows()
+{
+	WindowRef window = FrontWindow();
+	
+	for ( ;  window != NULL;  window = GetNextWindow( window ) )
 	{
-		const unsigned char* a;
-		const unsigned char* b;
+		if ( CONFIG_DESK_ACCESSORIES  &&  GetWindowKind( window ) < 0 )
+		{
+			continue;
+		}
 		
-	#if ! OPAQUE_TOOLBOX_STRUCTS
+	#if OPAQUE_TOOLBOX_STRUCTS
 		
-		a = *((WindowPeek) a_)->titleHandle;
-		b = *((WindowPeek) b_)->titleHandle;
+		Str255 title;
+		GetWTitle( window, title );
 		
 	#else
 		
-		Str255 one;
-		Str255 two;
-		
-		a = one;
-		b = two;
-		
-		GetWTitle( (WindowRef) a_, one );
-		GetWTitle( (WindowRef) b_, two );
+		ConstStr255Param title = *((WindowPeek) window)->titleHandle;
 		
 	#endif
 		
-		const uint8_t a_len = *a++;
-		const uint8_t b_len = *b++;
+		if ( title[ 0 ] == 0 )
+		{
+			continue;
+		}
 		
-		const unsigned char* a_end = a + a_len;
-		const unsigned char* b_end = b + b_len;
-		
-		return std::lexicographical_compare( a, a_end, b, b_end );
+		the_windows_in_menu.push_back( window );
 	}
+}
+
+void populate_Window_menu( MenuRef menu )
+{
+	using mac::ui::delete_all_menu_items;
 	
-	static
-	void enumerate_windows()
+	delete_all_menu_items( menu );
+	
+	the_windows_in_menu.clear();
+	
+	enumerate_windows();
+	
+	const int n = (int) the_windows_in_menu.size();
+	
+	if ( n == 0 )
 	{
-		WindowRef window = FrontWindow();
-		
-		for ( ;  window != NULL;  window = GetNextWindow( window ) )
-		{
-			if ( CONFIG_DESK_ACCESSORIES  &&  GetWindowKind( window ) < 0 )
-			{
-				continue;
-			}
-			
-		#if OPAQUE_TOOLBOX_STRUCTS
-			
-			Str255 title;
-			GetWTitle( window, title );
-			
-		#else
-			
-			ConstStr255Param title = *((WindowPeek) window)->titleHandle;
-			
-		#endif
-			
-			if ( title[ 0 ] == 0 )
-			{
-				continue;
-			}
-			
-			the_windows_in_menu.push_back( window );
-		}
+		return;
 	}
 	
-	void populate_Window_menu( MenuRef menu )
+	std::stable_sort( the_windows_in_menu.begin(),
+	                  the_windows_in_menu.end(),
+	                  std::ptr_fun( window_title_less ) );
+	
+	WindowRef front = FrontWindow();
+	
+	Str255 title;
+	
+	for ( int i = 0;  i < n;  ++i )
 	{
-		using mac::ui::delete_all_menu_items;
+		WindowRef w = (WindowRef) the_windows_in_menu[ i ];
 		
-		delete_all_menu_items( menu );
+		GetWTitle( w, title );
 		
-		the_windows_in_menu.clear();
+		AppendMenu( menu, "\p " );
 		
-		enumerate_windows();
+		SetMenuItemText( menu, i + 1, title );
 		
-		const int n = (int) the_windows_in_menu.size();
-		
-		if ( n == 0 )
+		if ( w == front )
 		{
-			return;
-		}
-		
-		std::stable_sort( the_windows_in_menu.begin(),
-		                  the_windows_in_menu.end(),
-		                  std::ptr_fun( window_title_less ) );
-		
-		WindowRef front = FrontWindow();
-		
-		Str255 title;
-		
-		for ( int i = 0;  i < n;  ++i )
-		{
-			WindowRef w = (WindowRef) the_windows_in_menu[ i ];
-			
-			GetWTitle( w, title );
-			
-			AppendMenu( menu, "\p " );
-			
-			SetMenuItemText( menu, i + 1, title );
-			
-			if ( w == front )
-			{
-				CheckMenuItem( menu, i + 1, true );
-			}
+			CheckMenuItem( menu, i + 1, true );
 		}
 	}
-	
-	WindowRef get_nth_window( int i )
+}
+
+WindowRef get_nth_window( int i )
+{
+	if ( (unsigned) i >= the_windows_in_menu.size() )
 	{
-		if ( (unsigned) i >= the_windows_in_menu.size() )
-		{
-			return NULL;
-		}
-		
-		return (WindowRef) the_windows_in_menu[ i ];
+		return NULL;
 	}
 	
+	return (WindowRef) the_windows_in_menu[ i ];
+}
+
 }
 }
