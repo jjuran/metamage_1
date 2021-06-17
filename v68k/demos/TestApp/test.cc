@@ -5,12 +5,7 @@
 
 // Mac OS X
 #ifdef __APPLE__
-#include <Carbon/Carbon.h>
-#endif
-
-// Mac OS
-#ifndef __SOUND__
-#include <Sound.h>
+#include <ApplicationServices/ApplicationServices.h>
 #endif
 
 // missing-macos
@@ -21,6 +16,7 @@
 #endif
 
 // mac-sys-utils
+#include "mac_sys/beep.hh"
 #include "mac_sys/trap_available.hh"
 
 // mac-qd-utils
@@ -273,7 +269,7 @@ int main()
 							break;
 						
 						default:
-							SysBeep( 30 );
+							mac::sys::beep();
 							break;
 					}
 					break;
