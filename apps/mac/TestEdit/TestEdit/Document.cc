@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// mac-app-utils
+#include "mac_app/Window_menu.hh"
+
 // Nitrogen
 #include "Nitrogen/MacWindows.hh"
 
@@ -108,6 +111,9 @@ namespace TestEdit
 		WindowRef window = itsWindow.get();
 		
 		N::SetWindowTitleWithCFString( window, GetFilenameAsCFString( file ) );
+		
+		mac::app::Window_menu_remove( window );
+		mac::app::Window_menu_insert( window );
 		
 		LoadText( itsWindow, ReadFileData( file ) );
 	}
