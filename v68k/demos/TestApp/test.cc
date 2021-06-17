@@ -9,9 +9,6 @@
 #endif
 
 // Mac OS
-#ifndef __LOWMEM__
-#include <LowMem.h>
-#endif
 #ifndef __SOUND__
 #include <Sound.h>
 #endif
@@ -26,6 +23,10 @@
 // mac-sys-utils
 #include "mac_sys/trap_available.hh"
 
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+#include "mac_qd/wide_drag_area.hh"
+
 // Nostalgia
 #include "Nostalgia/MacWindows.hh"
 
@@ -39,6 +40,10 @@
 #if TARGET_API_MAC_CARBON
 #define SystemTask()  /**/
 #endif
+
+using mac::qd::get_portRect;
+using mac::qd::wide_drag_area;
+
 
 static const Rect grow_size =
 {
@@ -81,42 +86,9 @@ void move_front_window( short dh, short dv )
 }
 
 static
-const Rect* drag_bounds()
-{
-#if ! TARGET_API_MAC_CARBON
-	
-	return &LMGetGrayRgn()[0]->rgnBBox;
-	
-#endif
-	
-	return NULL;  // DragWindow() bounds may be NULL in Carbon
-}
-
-#if ! TARGET_API_MAC_CARBON
-
-static inline
-const Rect& get_window_portRect( WindowRef window )
-{
-	return window->portRect;
-}
-
-#else
-
-static inline
-Rect get_window_portRect( WindowRef window )
-{
-	Rect bounds;
-	GetPortBounds( GetWindowPort( window ), &bounds );
-	
-	return bounds;
-}
-
-#endif
-
-static
 void invalidate_scroll_bar_areas( WindowRef window )
 {
-	const Rect& portRect = get_window_portRect( window );
+	const Rect& portRect = get_portRect( window );
 	
 	const short right  = portRect.right;
 	const short bottom = portRect.bottom;
@@ -200,7 +172,7 @@ int main()
 							break;
 						
 						case inDrag:
-							DragWindow( window, event.where, drag_bounds() );
+							DragWindow( window, event.where, wide_drag_area() );
 							break;
 						
 						case inGrow:
@@ -322,7 +294,7 @@ int main()
 					
 					SetPortWindowPort( window );
 					
-					EraseRect( get_window_portRect( window ) );
+					EraseRect( get_portRect( window ) );
 					
 					DrawGrowIcon( window );
 					
