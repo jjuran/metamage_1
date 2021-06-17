@@ -23,6 +23,9 @@
 namespace mac {
 namespace app {
 	
+	void Window_menu_insert( WindowRef window );
+	void Window_menu_remove( WindowRef window );
+	
 	void populate_Window_menu( MenuRef menu );
 	
 	WindowRef get_nth_window( int i );

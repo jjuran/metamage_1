@@ -56,6 +56,14 @@ bool window_title_less( const void* a_, const void* b_ )
 	return std::lexicographical_compare( a, a_end, b, b_end );
 }
 
+void Window_menu_insert( WindowRef window )
+{
+}
+
+void Window_menu_remove( WindowRef window )
+{
+}
+
 static
 void enumerate_windows()
 {
