@@ -6,9 +6,14 @@
 #ifndef PEDESTAL_MENUITEMCOMMANDS_HH
 #define PEDESTAL_MENUITEMCOMMANDS_HH
 
-// Nitrogen
-#ifndef MAC_MENUS_TYPES_MENUID_HH
-#include "Mac/Menus/Types/MenuID.hh"
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __MENUS__
+#include <Menus.h>
 #endif
 
 // Pedestal
@@ -20,10 +25,10 @@
 namespace Pedestal
 {
 	
-	CommandCode GetMenuItemCommandCode( Mac::MenuID    menu_id,
+	CommandCode GetMenuItemCommandCode( MenuID         menu_id,
 	                                    MenuItemIndex  item_index );
 	
-	void SetMenuItemCommandCode( Mac::MenuID    menu_id,
+	void SetMenuItemCommandCode( MenuID         menu_id,
 	                             MenuItemIndex  item_index,
 	                             CommandCode    code );
 	

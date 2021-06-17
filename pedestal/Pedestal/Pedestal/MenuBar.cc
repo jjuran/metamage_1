@@ -99,7 +99,7 @@ namespace Pedestal
 	
 	void AddMenu( MenuRef menu )
 	{
-		const Mac::MenuID menuID = Mac::MenuID( GetMenuID( menu ) );
+		const MenuID menuID = GetMenuID( menu );
 		
 		const UInt16 count = CountMenuItems( menu );
 		
@@ -185,7 +185,7 @@ namespace Pedestal
 	}
 	
 	
-	CommandCode HandleMenuItem( Mac::MenuID menuID, SInt16 item )
+	CommandCode HandleMenuItem( MenuID menuID, SInt16 item )
 	{
 		if ( CommandCode code = GetMenuItemCommandCode( menuID, item ) )
 		{

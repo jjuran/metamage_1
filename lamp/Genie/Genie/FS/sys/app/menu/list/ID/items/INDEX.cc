@@ -58,12 +58,12 @@ namespace Genie
 	{
 		static Ped::CommandCode Get( MenuRef menu, UInt16 index )
 		{
-			return Ped::GetMenuItemCommandCode( Mac::MenuID( GetMenuID( menu ) ), index );
+			return Ped::GetMenuItemCommandCode( GetMenuID( menu ), index );
 		}
 		
 		static void Set( MenuRef menu, UInt16 index, ::OSType code )
 		{
-			Ped::SetMenuItemCommandCode( Mac::MenuID( GetMenuID( menu ) ),
+			Ped::SetMenuItemCommandCode( GetMenuID( menu ),
 			                             index,
 			                             Ped::CommandCode( code ) );
 		}

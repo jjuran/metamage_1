@@ -15,13 +15,13 @@ namespace Pedestal
 	
 	typedef unsigned long Code;
 	
-	typedef std::map< Mac::MenuID, std::vector< Code > > Menus;
+	typedef std::map< MenuID, std::vector< Code > > Menus;
 	
 	
 	static Menus gMenus;
 	
 	
-	CommandCode GetMenuItemCommandCode( Mac::MenuID    menu_id,
+	CommandCode GetMenuItemCommandCode( MenuID         menu_id,
 	                                    MenuItemIndex  item_index )
 	{
 		Menus::const_iterator it = gMenus.find( menu_id );
@@ -39,7 +39,7 @@ namespace Pedestal
 		return CommandCode();
 	}
 	
-	void SetMenuItemCommandCode( Mac::MenuID    menu_id,
+	void SetMenuItemCommandCode( MenuID         menu_id,
 	                             MenuItemIndex  item_index,
 	                             CommandCode    code )
 	{

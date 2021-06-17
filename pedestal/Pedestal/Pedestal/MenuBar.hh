@@ -6,9 +6,14 @@
 #ifndef PEDESTAL_MENUBAR_HH
 #define PEDESTAL_MENUBAR_HH
 
-// Nitrogen
-#ifndef MAC_MENUS_TYPES_MENUID_HH
-#include "Mac/Menus/Types/MenuID.hh"
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __MENUS__
+#include <Menus.h>
 #endif
 
 // Pedestal
@@ -24,7 +29,7 @@ namespace Pedestal
 	
 	void FixUpAboutMenuItem( MenuRef appleMenu );
 	
-	CommandCode HandleMenuItem( Mac::MenuID menuID, SInt16 item );
+	CommandCode HandleMenuItem( MenuID menuID, SInt16 item );
 	
 }
 

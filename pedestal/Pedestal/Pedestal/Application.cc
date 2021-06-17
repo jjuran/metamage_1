@@ -980,8 +980,8 @@ namespace Pedestal
 	
 	void HandleMenuChoice( long menuChoice )
 	{
-		N::MenuID menuID = N::MenuID( HiWord( menuChoice ) );
-		SInt16    item   =            LoWord( menuChoice );
+		MenuID menuID = HiWord( menuChoice );
+		SInt16 item   = LoWord( menuChoice );
 		
 		AtEnd< UnhighlightMenus > unhighlightMenus;
 		
@@ -989,7 +989,7 @@ namespace Pedestal
 		{
 			DispatchMenuItem( code );
 		}
-		else if ( menuID == N::GetMenuID( the_Window_menu ) )
+		else if ( menuID == GetMenuID( the_Window_menu ) )
 		{
 			if ( WindowRef w = mac::app::get_nth_window( item - 1 ) )
 			{
