@@ -10,9 +10,6 @@
 #include <functional>
 #include <vector>
 
-// mac-config
-#include "mac_config/desk-accessories.hh"
-
 // mac-ui-utils
 #include "mac_ui/menus.hh"
 
@@ -109,38 +106,6 @@ void Window_menu_remove( WindowRef window )
 		}
 		
 		++it;
-	}
-}
-
-static
-void enumerate_windows()
-{
-	WindowRef window = FrontWindow();
-	
-	for ( ;  window != NULL;  window = GetNextWindow( window ) )
-	{
-		if ( CONFIG_DESK_ACCESSORIES  &&  GetWindowKind( window ) < 0 )
-		{
-			continue;
-		}
-		
-	#if OPAQUE_TOOLBOX_STRUCTS
-		
-		Str255 title;
-		GetWTitle( window, title );
-		
-	#else
-		
-		ConstStr255Param title = *((WindowPeek) window)->titleHandle;
-		
-	#endif
-		
-		if ( title[ 0 ] == 0 )
-		{
-			continue;
-		}
-		
-		the_windows_in_menu.push_back( window );
 	}
 }
 
