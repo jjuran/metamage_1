@@ -20,6 +20,9 @@
 #include "mac_sys/current_process.hh"
 #include "mac_sys/is_front_process.hh"
 
+// mac-app-utils
+#include "mac_app/Window_menu.hh"
+
 // gear
 #include "gear/hexadecimal.hh"
 
@@ -225,6 +228,8 @@ namespace Genie
 			
 			uninstall_view_from_port( view, key );
 			
+			mac::app::Window_menu_remove( window );
+			
 			window.reset();
 		}
 	}
@@ -425,6 +430,9 @@ namespace Genie
 		                                  N::CFStringCreateWithBytes( title,
 		                                                              utf8,
 		                                                              false ) );
+		
+		mac::app::Window_menu_remove( window );
+		mac::app::Window_menu_insert( window );
 		
 		if ( params.itIsVisible )
 		{

@@ -30,6 +30,9 @@
 // mac-ui-utils
 #include "mac_ui/windows.hh"
 
+// mac-app-utils
+#include "mac_app/Window_menu.hh"
+
 // gear
 #include "gear/hexadecimal.hh"
 
@@ -491,6 +494,9 @@ namespace Genie
 		N::Str255 title( begin, end - begin );
 		
 		SetWTitle( window, title );
+		
+		mac::app::Window_menu_remove( window );
+		mac::app::Window_menu_insert( window );
 	}
 	
 	static inline
