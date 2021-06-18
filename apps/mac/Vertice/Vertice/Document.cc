@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// mac-app-utils
+#include "mac_app/Window_menu.hh"
+
 // text-input
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
@@ -87,6 +90,9 @@ namespace Vertice
 		using Ped::get_window_view;
 		
 		SetWTitle( window, file.name );
+		
+		mac::app::Window_menu_remove( window );
+		mac::app::Window_menu_insert( window );
 		
 		n::owned< N::FSFileRefNum > fRefNum = N::FSpOpenDF( file, N::fsRdPerm );
 		
