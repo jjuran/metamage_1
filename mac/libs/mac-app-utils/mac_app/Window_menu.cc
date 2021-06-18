@@ -20,8 +20,28 @@
 namespace mac {
 namespace app {
 
-static std::vector< void* > the_windows_in_menu;
+typedef std::vector< void* > vector_of_windows;
 
+static vector_of_windows the_windows_in_menu;
+
+
+static
+bool has_empty_title( WindowRef window )
+{
+#if ! OPAQUE_TOOLBOX_STRUCTS
+	
+	const unsigned char* title = *((WindowPeek) window)->titleHandle;
+	
+#else
+	
+	Str255 title;
+	
+	GetWTitle( window, title );
+	
+#endif
+	
+	return title[ 0 ] == 0;
+}
 
 static
 bool window_title_less( const void* a_, const void* b_ )
@@ -58,10 +78,38 @@ bool window_title_less( const void* a_, const void* b_ )
 
 void Window_menu_insert( WindowRef window )
 {
+	if ( has_empty_title( window ) )
+	{
+		return;
+	}
+	
+	typedef vector_of_windows::iterator Iter;
+	
+	Iter it = std::lower_bound( the_windows_in_menu.begin(),
+	                            the_windows_in_menu.end(),
+	                            window,
+	                            std::ptr_fun( window_title_less ) );
+	
+	the_windows_in_menu.insert( it, window );
 }
 
 void Window_menu_remove( WindowRef window )
 {
+	typedef vector_of_windows::iterator Iter;
+	
+	Iter end = the_windows_in_menu.end();
+	Iter it  = the_windows_in_menu.begin();
+	
+	while ( it != end )
+	{
+		if ( *it == window )
+		{
+			the_windows_in_menu.erase( it );
+			break;
+		}
+		
+		++it;
+	}
 }
 
 static
@@ -102,20 +150,12 @@ void populate_Window_menu( MenuRef menu )
 	
 	delete_all_menu_items( menu );
 	
-	the_windows_in_menu.clear();
-	
-	enumerate_windows();
-	
 	const int n = (int) the_windows_in_menu.size();
 	
 	if ( n == 0 )
 	{
 		return;
 	}
-	
-	std::stable_sort( the_windows_in_menu.begin(),
-	                  the_windows_in_menu.end(),
-	                  std::ptr_fun( window_title_less ) );
 	
 	WindowRef front = FrontWindow();
 	
