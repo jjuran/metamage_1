@@ -5,19 +5,106 @@
 
 #include "mac_app/Window_menu.hh"
 
+// Mac OS
+#ifndef __TEXTUTILS__
+#include <TextUtils.h>
+#endif
+
 // Standard  C++
 #include <algorithm>
 #include <functional>
-#include <vector>
 
 // mac-ui-utils
 #include "mac_ui/menus.hh"
 
 
+#pragma exceptions off
+
+
 namespace mac {
 namespace app {
 
-typedef std::vector< void* > vector_of_windows;
+static inline
+size_t byte_distance( const void* begin, const void* end )
+{
+	return (const char*) end - (const char*) begin;
+}
+
+template < class T >
+class Handle_based_vector
+{
+	private:
+		Handle its_handle;
+		size_t its_size;
+		
+		Handle_based_vector           ( const Handle_based_vector& );
+		Handle_based_vector& operator=( const Handle_based_vector& );
+	
+	public:
+		typedef       T*       iterator;
+		typedef const T* const_iterator;
+		
+		Handle_based_vector() : its_handle( NewHandle( 0 ) ), its_size()
+		{
+		}
+		
+		/*
+			The destructor is commented out because we don't need it in this
+			case.  The handle will persist for the life of the application.
+		
+		~Handle_based_vector()
+		{
+			DisposeHandle( its_handle );
+		}
+		*/
+		
+		size_t size() const  { return its_size; }
+		
+		const_iterator begin() const
+		{
+			return (const T*) *its_handle;
+		}
+		
+		const_iterator end() const
+		{
+			return begin() + size();
+		}
+		
+		T operator[]( size_t i ) const
+		{
+			return i < its_size ? begin()[ i ] : NULL;
+		}
+		
+		iterator begin()
+		{
+			return (T*) *its_handle;
+		}
+		
+		iterator end()
+		{
+			return begin() + size();
+		}
+		
+		void insert( iterator it, T x )
+		{
+			long d = byte_distance( begin(), it );
+			
+			Munger( its_handle, d, NULL, 0, &x, sizeof x );
+			
+			++its_size;
+		}
+		
+		void erase( iterator it )
+		{
+			long d = byte_distance( begin(), it );
+			
+			Munger( its_handle, d, NULL, sizeof (T), "", 0 );
+			
+			--its_size;
+		}
+};
+
+typedef Handle_based_vector< void* > vector_of_windows;
 
 static vector_of_windows the_windows_in_menu;
 
