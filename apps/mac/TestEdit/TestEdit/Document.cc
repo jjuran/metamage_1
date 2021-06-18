@@ -105,8 +105,9 @@ namespace TestEdit
 		itHasFile( true  ),
 		itIsDirty( false )
 	{
-		N::SetWindowTitleWithCFString( N::FrontWindow(),
-		                               GetFilenameAsCFString( file ) );
+		WindowRef window = itsWindow.get();
+		
+		N::SetWindowTitleWithCFString( window, GetFilenameAsCFString( file ) );
 		
 		LoadText( itsWindow, ReadFileData( file ) );
 	}
