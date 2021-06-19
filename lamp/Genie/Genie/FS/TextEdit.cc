@@ -429,7 +429,7 @@ namespace Genie
 		const Handle scrapHandle = TEScrapHandle();
 		const UInt16 scrapLength = TEGetScrapLength();
 		
-		Ped::Preflight_TEPaste( hTE, scrapLength );
+		Ped::Preflight_TEPaste( hTE );
 		
 		TextEditParameters& params = TextEditParameters::Get( itsKey );
 		

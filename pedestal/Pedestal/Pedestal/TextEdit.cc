@@ -66,7 +66,7 @@ namespace Pedestal
 		}
 	}
 	
-	void Preflight_TEPaste( TEHandle hTE, size_t scrapLength )
+	void Preflight_TEPaste( TEHandle hTE )
 	{
 		if ( hTE[0]->teLength + TEGetScrapLength() > kMaximumTELength )
 		{
@@ -110,7 +110,7 @@ namespace Pedestal
 		
 		ASSERT( hTE != NULL );
 		
-		Preflight_TEPaste( hTE, TEGetScrapLength() );
+		Preflight_TEPaste( hTE );
 		
 		::TEPaste( hTE );
 	}

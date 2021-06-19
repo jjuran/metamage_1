@@ -35,7 +35,7 @@ namespace Pedestal
 	
 	void Preflight_TEKey( char c, TEHandle hTE );
 	
-	void Preflight_TEPaste( TEHandle hTE, size_t scrapLength );
+	void Preflight_TEPaste( TEHandle hTE );
 	
 	
 	class TextEdit : public View,
