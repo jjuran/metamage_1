@@ -11,6 +11,9 @@
 // Standard C
 #include <stdlib.h>
 
+// more-libc
+#include "more/string.h"
+
 // iota
 #include "iota/char_types.hh"
 
@@ -188,7 +191,8 @@ namespace tool
 			
 			if ( has_http )
 			{
-				name = (char*) memcpy( p, STR_LEN( "HTTP_" ) );
+				name = p;
+				mempcpy( p, STR_LEN( "HTTP_" ) );
 			}
 			
 			plus::string value( stream + it->value_offset,
