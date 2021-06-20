@@ -13,6 +13,9 @@
 #include <cstdlib>
 #include <cstring>
 
+// more-libc
+#include "more/string.h"
+
 // iota
 #include "iota/char_types.hh"
 
@@ -386,14 +389,12 @@ namespace ShellShock
 		}
 		else
 		{
-			memcpy( q, homedir, home_len );
-			
-			q += home_len;
+			q = (char*) mempcpy( q, homedir, home_len );
 		}
 		
 		*q++ = '\'';
 		
-		memcpy( q, subpath.data(), path_len );
+		mempcpy( q, subpath.data(), path_len );
 		
 		return result;
 	}
