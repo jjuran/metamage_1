@@ -740,11 +740,11 @@ namespace Pedestal
 		}
 	}
 	
-	static bool gEventCheckNeeded = false;
+	using mac::app::event_check_due;
 	
 	static bool ReadyToWaitForEvents()
 	{
-		if ( gEventCheckNeeded )
+		if ( event_check_due )
 		{
 			return true;
 		}
@@ -901,7 +901,7 @@ namespace Pedestal
 					
 					EventRecord event = GetAnEvent();
 					
-					gEventCheckNeeded = false;
+					event_check_due = false;
 					
 					
 					monotonic_clock::get( &gClockAtLastContextSwitch );
@@ -916,7 +916,7 @@ namespace Pedestal
 					{
 						DispatchEvent( event );
 						
-						gEventCheckNeeded = true;
+						event_check_due = true;
 						
 						gIdleNeeded = true;
 					}
@@ -1051,7 +1051,7 @@ namespace Pedestal
 	
 	void ScheduleImmediateEventCheck()
 	{
-		gEventCheckNeeded = true;
+		event_check_due = true;
 	}
 	
 	long Quit()

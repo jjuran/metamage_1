@@ -9,6 +9,7 @@
 namespace mac {
 namespace app {
 	
+	extern bool event_check_due;
 	extern bool quitting;
 	
 }
