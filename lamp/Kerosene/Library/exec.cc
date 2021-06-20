@@ -15,6 +15,9 @@
 #include "sys/stat.h"
 #include "unistd.h"
 
+// more-libc
+#include "more/string.h"
+
 // Iota
 #include "iota/strings.hh"
 
@@ -113,12 +116,12 @@ static int lookup_path( const char* filename, char* path, size_t buffer_length )
 		
 		if ( has_separator )
 		{
-			std::memcpy( path, pathVar, dir_path_length );
+			mempcpy( path, pathVar, dir_path_length );
 			
 			path[ dir_path_length ] = '/';
 		}
 		
-		std::memcpy( path + filename_offset, filename, filename_length + 1 );
+		mempcpy( path + filename_offset, filename, filename_length + 1 );
 		
 		struct stat sb;
 		

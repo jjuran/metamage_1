@@ -27,6 +27,9 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
+// more-libc
+#include "more/string.h"
+
 // Iota
 #include "iota/strings.hh"
 
@@ -624,7 +627,7 @@ int gethostname( char* result, size_t buffer_length )
 		return -1;
 	}
 	
-	memcpy( result, nodename, name_length );
+	mempcpy( result, nodename, name_length );
 	
 	return 0;
 }
