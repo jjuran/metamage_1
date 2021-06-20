@@ -12,7 +12,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+
+// more-libc
+#include "more/string.h"
 
 // more-posix
 #include "more/perror.hh"
@@ -106,7 +108,7 @@ void print_info( const raster::raster_load& loaded_raster )
 	
 	if ( desc.magic )
 	{
-		memcpy( mb32_type + 1, &desc.magic, 4 );
+		mempcpy( mb32_type + 1, &desc.magic, 4 );
 		
 		type = mb32_type;
 	}
@@ -183,7 +185,7 @@ void print_info( const raster::raster_load& loaded_raster )
 	
 	while ( exists( note ) )
 	{
-		memcpy( mb32_type + 1, &note->type, 4 );
+		mempcpy( mb32_type + 1, &note->type, 4 );
 		
 		printf( "Note type: %s\n", mb32_type  );
 		printf( "Note size: %u\n", note->size );
