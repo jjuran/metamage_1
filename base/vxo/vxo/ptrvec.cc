@@ -8,6 +8,9 @@
 // Standard C
 #include <string.h>
 
+// more-libc
+#include "more/string.h"
+
 // debug
 #include "debug/assert.hh"
 
@@ -215,7 +218,7 @@ anyptr_t* PtrVec::insert_nothrow( Item* loc, const_iterator begin, const_iterato
 	
 	if ( ptr )
 	{
-		memcpy( ptr, begin, n * sizeof (anyptr_t) );
+		mempcpy( ptr, begin, n * sizeof (anyptr_t) );
 	}
 	
 	return ptr;
@@ -225,7 +228,7 @@ void PtrVec::insert( Item* loc, const_iterator begin, const_iterator end )
 {
 	const size_t n = end - begin;
 	
-	memcpy( insert_n( loc, n ), begin, n * sizeof (anyptr_t) );
+	mempcpy( insert_n( loc, n ), begin, n * sizeof (anyptr_t) );
 }
 
 void PtrVec::erase_n( Item* loc, size_t n )

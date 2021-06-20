@@ -7,10 +7,12 @@
 
 // Standard C
 #include <stdlib.h>
-#include <string.h>
 
 // Standard C++
 #include <algorithm>
+
+// more-libc
+#include "more/string.h"
 
 // debug
 #include "debug/assert.hh"
@@ -30,7 +32,7 @@ const char* Lane::append( const char* p, size_t n )
 	
 	char* dst = its_data + its_mark;
 	
-	memcpy( dst, p, n );
+	mempcpy( dst, p, n );
 	
 	its_mark += n;
 	
