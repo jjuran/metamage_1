@@ -344,7 +344,10 @@ namespace Genie
 		const UInt32 parID = exists ? hFileInfo.ioFlParID
 		                            : hFileInfo.ioDirID;
 		
-		FSSpec result = { vRefNum, parID };
+		FSSpec result;
+		
+		result.vRefNum = vRefNum;
+		result.parID   = parID;
 		
 		memcpy( result.name, hFileInfo.ioNamePtr, 1 + hFileInfo.ioNamePtr[0] );
 		
@@ -1105,7 +1108,9 @@ namespace Genie
 		
 		if ( MacFeatures::Is_BlueBoxed()  &&  is_possibly_masked_symlink( cInfo ) )
 		{
-			FSSpec spec = { dir.vRefNum, dir.dirID };
+			FSSpec spec;
+			
+			*(VRefNum_DirID*) &spec = dir;
 			
 			memcpy( spec.name, macName, 1 + macName[0] );
 			
@@ -1222,7 +1227,11 @@ namespace Genie
 	{
 		CInfoPBRec& cInfo = pb.cInfo;
 		
-		FSSpec item = { cInfo.dirInfo.ioVRefNum, cInfo.dirInfo.ioDrDirID };
+		FSSpec item;
+		
+		item.vRefNum = cInfo.dirInfo.ioVRefNum;
+		item.parID   = cInfo.dirInfo.ioDrDirID;
+		item.name[0] = 0;
 		
 		long dirID = cInfo.dirInfo.ioDrDirID;
 		
