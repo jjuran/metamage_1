@@ -11,6 +11,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// more-libc
+#include "more/string.h"
+
 // must
 #include "must/write.h"
 
@@ -112,7 +115,7 @@ int main( int argc, char** argv )
 		
 		char* mark = end - program_len;
 		
-		memcpy( mark, program, program_len );
+		mempcpy( mark, program, program_len );
 		
 		*--mark = '/';
 		
@@ -133,7 +136,7 @@ int main( int argc, char** argv )
 			
 			char* begin = mark - dir_len;
 			
-			memcpy( begin, p, dir_len );
+			mempcpy( begin, p, dir_len );
 			
 			struct stat sb;
 			
