@@ -21,6 +21,9 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+// more-libc
+#include "more/string.h"
+
 // iota
 #include "iota/strings.hh"
 
@@ -378,8 +381,6 @@ namespace tool
 		                         + STRLEN( " ready" "\r\n" )
 		                         + 1;
 		
-		char hostname[256] = "smtpd";
-		
 		char message_buffer[ buffer_size ] = "220 smtpd";
 		
 		(void) gethostname( message_buffer + STRLEN( "220 " ),
@@ -387,7 +388,7 @@ namespace tool
 		
 		const size_t partial_size = strlen( message_buffer );
 		
-		memcpy( message_buffer + partial_size, STR_LEN( " ready" "\r\n" ) + 1 );
+		mempcpy( message_buffer + partial_size, STR_LEN( " ready" "\r\n" ) + 1 );
 		
 		const size_t message_size = partial_size + STRLEN( " ready" "\r\n" );
 		
