@@ -10,7 +10,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+
+// more-libc
+#include "more/string.h"
 
 // iota
 #include "iota/char_types.hh"
@@ -846,7 +848,7 @@ namespace tool
 		
 		const size_t name_len = STRLEN( "foo" );
 		
-		memcpy( format + STRLEN( "B" ), name, name_len );
+		mempcpy( format + STRLEN( "B" ), name, name_len );
 		
 		const short mode_reg = op & 0x3f;
 		
