@@ -14,6 +14,9 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+// more-libc
+#include "more/string.h"
+
 // iota
 #include "iota/strings.hh"
 
@@ -48,13 +51,15 @@ static int strip( const char* path )
 	
 	char* res_path = (char*) alloca( length + STRLEN( "/r" ) + 1 );
 	
-	memcpy( res_path, path, length );
+	char* p = res_path;
 	
-	memcpy( res_path + length, STR_LEN( "/r" ) + 1 );
+	p = (char*) mempcpy( p, path, length );
+	
+	mempcpy( p, STR_LEN( "/r" ) + 1 );
 	
 	int res_fd = open( res_path, O_RDONLY | O_DIRECTORY );
 	
-	if ( res_fd == -1 )
+	if ( res_fd < 0 )
 	{
 		more::perror( "strip", path, "file has no resource fork" );
 		
