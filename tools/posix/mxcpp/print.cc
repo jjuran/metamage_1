@@ -7,7 +7,9 @@
 
 // Standard C
 #include <stdlib.h>
-#include <string.h>
+
+// more-libc
+#include "more/string.h"
 
 // plus
 #include "plus/string.hh"
@@ -47,7 +49,7 @@ namespace tool
 		{
 			const size_t n = min( length - line_mark, sizeof output_buffer - buffer_mark );
 			
-			memcpy( &output_buffer[ buffer_mark ], &line[ line_mark ], n );
+			mempcpy( &output_buffer[ buffer_mark ], &line[ line_mark ], n );
 			
 			buffer_mark += n;
 			line_mark   += n;

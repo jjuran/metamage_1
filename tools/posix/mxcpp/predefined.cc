@@ -12,6 +12,9 @@
 #include <string.h>
 #include <time.h>
 
+// more-libc
+#include "more/string.h"
+
 // iota
 #include "iota/strings.hh"
 
@@ -105,11 +108,14 @@ namespace tool
 		
 		const size_t partial_length = STRLEN( "Mar 23 " );
 		
-		buffer[ 0                 ] =
-		buffer[ sizeof buffer - 1 ] = '"';
+		char* p = buffer;
 		
-		memcpy( &buffer[ 1                  ], &get_ctime()[  4 ], partial_length   );
-		memcpy( &buffer[ 1 + partial_length ], &get_ctime()[ 20 ], STRLEN( "2010" ) );
+		*p++ = '"';
+		
+		p = (char*) mempcpy( p, &get_ctime()[  4 ], partial_length   );
+		p = (char*) mempcpy( p, &get_ctime()[ 20 ], STRLEN( "2010" ) );
+		
+		*p++ = '"';
 		
 		return plus::string( buffer, sizeof buffer );
 	}
@@ -121,7 +127,7 @@ namespace tool
 		buffer[ 0                 ] =
 		buffer[ sizeof buffer - 1 ] = '"';
 		
-		memcpy( &buffer[ 1 ], &get_ctime()[ 11 ], sizeof buffer - 2 );
+		mempcpy( &buffer[ 1 ], &get_ctime()[ 11 ], sizeof buffer - 2 );
 		
 		return plus::string( buffer, sizeof buffer );
 	}
@@ -142,16 +148,18 @@ namespace tool
 	
 	static void quote_string( plus::string& s )
 	{
-		const size_t length = s.size() + 2;
+		const size_t s_size = s.size();
+		const size_t length = s_size + 2 * sizeof (char);
 		
 		plus::string result;
 		
 		char* p = result.reset( length );
 		
-		p[ 0          ] =
-		p[ length - 1 ] = '"';
+		*p++ = '"';
 		
-		memcpy( &p[ 1 ], s.data(), s.size() );
+		p[ s_size ] = '"';
+		
+		mempcpy( p, s.data(), s_size );
 		
 		s.swap( result );
 	}
