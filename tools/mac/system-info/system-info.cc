@@ -17,6 +17,9 @@
 #include <stdio.h>
 #include <string.h>
 
+// more-libc
+#include "more/string.h"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 
@@ -210,7 +213,7 @@ void host_env()
 	
 	if ( mnam != NULL )
 	{
-		memcpy( machine_name, mnam + 1, mnam[ 0 ] );
+		mempcpy( machine_name, mnam + 1, mnam[ 0 ] );
 	}
 	
 	uint8_t sys1;
