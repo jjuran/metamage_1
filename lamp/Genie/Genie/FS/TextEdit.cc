@@ -15,6 +15,9 @@
 // Standard C++
 #include <algorithm>
 
+// more-libc
+#include "more/string.h"
+
 // mac-sys-utils
 #include "mac_sys/trap_available.hh"
 
@@ -474,7 +477,7 @@ namespace Genie
 		if ( secret )
 		{
 			// Restore the TE scrap
-			memcpy( *scrapHandle, &params.its_mac_text[ start ], scrapLength );
+			mempcpy( *scrapHandle, &params.its_mac_text[ start ], scrapLength );
 		}
 	}
 	

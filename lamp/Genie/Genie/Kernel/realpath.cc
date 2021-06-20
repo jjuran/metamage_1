@@ -10,6 +10,9 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+// more-libc
+#include "more/string.h"
+
 // plus
 #include "plus/mac_utf8.hh"
 
@@ -80,7 +83,7 @@ namespace Genie
 			
 			const size_t bytes_copied = min( buffer_size, resolved.size() );
 			
-			std::memcpy( buffer, resolved.data(), bytes_copied );
+			mempcpy( buffer, resolved.data(), bytes_copied );
 			
 			if ( too_big )
 			{

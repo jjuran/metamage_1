@@ -12,6 +12,9 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+// more-libc
+#include "more/string.h"
+
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/serialize.hh"
@@ -205,7 +208,7 @@ namespace Genie
 		
 		n_bytes = std::min< size_t >( n_bytes, s.size() - offset );
 		
-		memcpy( buffer, &s[ offset ], n_bytes );
+		mempcpy( buffer, &s[ offset ], n_bytes );
 		
 		return n_bytes;
 	}

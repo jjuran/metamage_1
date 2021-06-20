@@ -8,6 +8,9 @@
 // POSIX
 #include <fcntl.h>
 
+// more-libc
+#include "more/string.h"
+
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
 
@@ -111,7 +114,7 @@ namespace Genie
 		
 		n_bytes = min< size_t >( n_bytes, size - offset );
 		
-		memcpy( buffer, *extra.handle + offset, n_bytes );
+		mempcpy( buffer, *extra.handle + offset, n_bytes );
 		
 		return n_bytes;
 	}
@@ -155,7 +158,7 @@ namespace Genie
 			}
 		}
 		
-		memcpy( *extra.handle + offset, buffer, n_bytes );
+		mempcpy( *extra.handle + offset, buffer, n_bytes );
 		
 		return n_bytes;
 	}

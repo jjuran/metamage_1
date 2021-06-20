@@ -30,6 +30,9 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
+// more-libc
+#include "more/string.h"
+
 // mac-sys-utils
 #include "mac_sys/beep.hh"
 #include "mac_sys/exit_to_shell.hh"
@@ -809,7 +812,7 @@ namespace Genie
 			void* child_stack_top  = get_syscall_stack_top( child );
 			void* parent_stack_top = get_syscall_stack_top( *this );
 			
-			memcpy( child_stack_top, parent_stack_top, fork_stack_length );
+			mempcpy( child_stack_top, parent_stack_top, fork_stack_length );
 			
 			relix::process& child_process = child.get_process();
 			

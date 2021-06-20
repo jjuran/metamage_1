@@ -5,12 +5,12 @@
 
 #include "Genie/FS/StatFile.hh"
 
-// Standard C/C++
-#include <cstring>
-
 // POSIX
 #include "stdlib.h"
 #include "sys/stat.h"
+
+// more-libc
+#include "more/string.h"
 
 // mac-types
 #include "mac_types/epoch.hh"
@@ -156,7 +156,7 @@ namespace Genie
 		
 	#ifdef __RELIX__
 		
-		std::memcpy( sb->st_name, name, 1 + name[0] );
+		mempcpy( sb->st_name, name, 1 + name[0] );
 		
 	#endif
 		

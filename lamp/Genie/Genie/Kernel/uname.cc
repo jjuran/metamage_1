@@ -9,6 +9,9 @@
 // POSIX
 #include "sys/utsname.h"
 
+// more-libc
+#include "more/string.h"
+
 // iota
 #include "iota/char_types.hh"
 #include "iota/strings.hh"
@@ -67,7 +70,7 @@ namespace Genie
 	{
 		ASSERT( len < kNameLength );
 		
-		memcpy( dest, str, len + 1 );  // copy length byte too
+		mempcpy( dest, str, len + 1 );  // copy length byte too
 	}
 	
 	static int uname( struct utsname *uts )

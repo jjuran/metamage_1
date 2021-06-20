@@ -37,6 +37,9 @@
 // mac-config
 #include "mac_config/upp-macros.hh"
 
+// more-libc
+#include "more/string.h"
+
 // splode
 #include "splode/splode.hh"
 
@@ -148,7 +151,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		memcpy( buffer, its_head, len );
+		mempcpy( buffer, its_head, len );
 		
 		its_head += len;
 		
@@ -188,9 +191,7 @@ namespace Genie
 		}
 		else
 		{
-			memcpy( its_tail, buffer, n );
-			
-			its_tail += n;
+			its_tail = (unsigned char*) mempcpy( its_tail, buffer, n );
 		}
 	}
 	

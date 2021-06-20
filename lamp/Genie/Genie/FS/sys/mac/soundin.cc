@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// more-libc
+#include "more/string.h"
+
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 
@@ -186,7 +189,7 @@ namespace Genie
 			
 			char* p = result.reset( size );
 			
-			std::memcpy( p, *icon.Get(), size );
+			mempcpy( p, *icon.Get(), size );
 			
 			return result;
 		}

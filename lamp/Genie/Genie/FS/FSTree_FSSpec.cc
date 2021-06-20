@@ -15,6 +15,9 @@
 // MoreFiles
 #include "MoreFiles/FileCopy.h"
 
+// more-libc
+#include "more/string.h"
+
 // mac-config
 #include "mac_config/aliases.hh"
 
@@ -349,7 +352,7 @@ namespace Genie
 		result.vRefNum = vRefNum;
 		result.parID   = parID;
 		
-		memcpy( result.name, hFileInfo.ioNamePtr, 1 + hFileInfo.ioNamePtr[0] );
+		mempcpy( result.name, hFileInfo.ioNamePtr, 1 + hFileInfo.ioNamePtr[0] );
 		
 		return result;
 	}
@@ -1112,7 +1115,7 @@ namespace Genie
 			
 			*(VRefNum_DirID*) &spec = dir;
 			
-			memcpy( spec.name, macName, 1 + macName[0] );
+			mempcpy( spec.name, macName, 1 + macName[0] );
 			
 			FSRef ref = N::FSpMakeFSRef( spec );
 			

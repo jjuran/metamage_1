@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// more-libc
+#include "more/string.h"
+
 // plus
 #include "plus/mac_utf8.hh"
 
@@ -121,7 +124,7 @@ namespace Genie
 		
 		n_bytes = min< size_t >( n_bytes, s.size() - offset );
 		
-		memcpy( buffer, &s[ offset ], n_bytes );
+		mempcpy( buffer, &s[ offset ], n_bytes );
 		
 		return n_bytes;
 	}
@@ -143,7 +146,7 @@ namespace Genie
 			s.resize( offset + n_bytes );
 		}
 		
-		memcpy( s.begin() + offset, buffer, n_bytes );
+		mempcpy( s.begin() + offset, buffer, n_bytes );
 		
 		if ( offset < params.itsValidLength )
 		{

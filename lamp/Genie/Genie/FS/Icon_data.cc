@@ -9,8 +9,8 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-// Standard C
-#include <string.h>
+// more-libc
+#include "more/string.h"
 
 // mac-sys-utils
 #include "mac_sys/has/IconUtilities.hh"
@@ -20,8 +20,6 @@
 
 // gear
 #include "gear/inscribe_decimal.hh"
-
-// gear
 #include "gear/parse_decimal.hh"
 
 // poseven
@@ -295,7 +293,7 @@ namespace Genie
 		const char* p = use_handle ? *h
 		                           : (const char*) &itsResID;
 		
-		std::memcpy( buffer, p + mark, n_bytes );
+		mempcpy( buffer, p + mark, n_bytes );
 		
 		return n_bytes;
 	}
@@ -306,7 +304,7 @@ namespace Genie
 		{
 			Destroy();
 			
-			std::memcpy( &itsResID, buffer, sizeof (::ResID) );
+			mempcpy( &itsResID, buffer, sizeof (::ResID) );
 			
 			itIsSet = true;
 			
@@ -342,7 +340,7 @@ namespace Genie
 		
 		char* p = *h.Get();
 		
-		memcpy( p, buffer, n_bytes );
+		mempcpy( p, buffer, n_bytes );
 		
 		return n_bytes;
 	}
@@ -468,7 +466,7 @@ namespace Genie
 		{
 			short resID = 0;
 			
-			std::memcpy( &resID, buffer, sizeof (::ResID) );
+			mempcpy( &resID, buffer, sizeof (::ResID) );
 			
 			char decimal[ sizeof "-12345\n" ];
 			
@@ -484,7 +482,7 @@ namespace Genie
 				p7::throw_errno( ERANGE );
 			}
 			
-			memcpy( buffer, decimal, bytes_read );
+			mempcpy( buffer, decimal, bytes_read );
 		}
 		
 		return bytes_read;

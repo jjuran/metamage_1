@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// more-libc
+#include "more/string.h"
+
 // mac-qd-utils
 #include "mac_qd/get_pix_rowBytes.hh"
 
@@ -216,10 +219,9 @@ namespace Genie
 			
 			const size_t n = stride - row_offset;
 			
-			memcpy( buffer, &baseAddr[ base_offset ], n );
+			buffer = (char*) mempcpy( buffer, &baseAddr[ base_offset ], n );
 			
 			offset  += n;
-			buffer  += n;
 			n_bytes -= n;
 			
 			++nth_row;
@@ -227,10 +229,11 @@ namespace Genie
 		
 		while ( n_bytes >= stride )
 		{
-			memcpy( buffer, &baseAddr[ nth_row * rowBytes ], stride );
+			const char* src = &baseAddr[ nth_row * rowBytes ];
+			
+			buffer = (char*) mempcpy( buffer, src, stride );
 			
 			offset  += stride;
-			buffer  += stride;
 			n_bytes -= stride;
 			
 			++nth_row;
@@ -238,7 +241,7 @@ namespace Genie
 		
 		if ( n_bytes > 0 )
 		{
-			memcpy( buffer, &baseAddr[ nth_row * rowBytes ], n_bytes );
+			mempcpy( buffer, &baseAddr[ nth_row * rowBytes ], n_bytes );
 		}
 		
 		if ( locked )
@@ -300,7 +303,7 @@ namespace Genie
 			
 			const size_t n = stride - row_offset;
 			
-			memcpy( &baseAddr[ base_offset ], buffer, n );
+			mempcpy( &baseAddr[ base_offset ], buffer, n );
 			
 			offset  += n;
 			buffer  += n;
@@ -311,7 +314,7 @@ namespace Genie
 		
 		while ( n_bytes >= stride )
 		{
-			memcpy( &baseAddr[ nth_row * rowBytes ], buffer, stride );
+			mempcpy( &baseAddr[ nth_row * rowBytes ], buffer, stride );
 			
 			offset  += stride;
 			buffer  += stride;
@@ -322,7 +325,7 @@ namespace Genie
 		
 		if ( n_bytes > 0 )
 		{
-			memcpy( &baseAddr[ nth_row * rowBytes ], buffer, n_bytes );
+			mempcpy( &baseAddr[ nth_row * rowBytes ], buffer, n_bytes );
 		}
 		
 		if ( locked )

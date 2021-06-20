@@ -9,6 +9,9 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+// more-libc
+#include "more/string.h"
+
 // iota
 #include "iota/char_types.hh"
 
@@ -194,7 +197,7 @@ namespace Genie
 		
 		name[ 0 ] = length;
 		
-		memcpy( name + 1, begin, length );
+		mempcpy( name + 1, begin, length );
 		
 		const vfs::node* res_file = that->owner();
 		
@@ -322,7 +325,7 @@ namespace Genie
 		
 		N::SetHandleSize( r, size );
 		
-		memcpy( *r.Get(), *extra.handle, size );
+		mempcpy( *r.Get(), *extra.handle, size );
 		
 		N::ChangedResource( r );
 		N::WriteResource  ( r );

@@ -9,6 +9,9 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 
+// more-libc
+#include "more/string.h"
+
 // plus
 #include "plus/serialize.hh"
 #include "plus/simple_map.hh"
@@ -203,7 +206,7 @@ namespace Genie
 		
 		const char* baseAddr = params.bitmap.baseAddr;
 		
-		memcpy( buffer, &baseAddr[ offset ], n_bytes );
+		mempcpy( buffer, &baseAddr[ offset ], n_bytes );
 		
 		return n_bytes;
 	}
@@ -237,7 +240,7 @@ namespace Genie
 		
 		char* baseAddr = params.bitmap.baseAddr;
 		
-		memcpy( &baseAddr[ offset ], buffer, n_bytes );
+		mempcpy( &baseAddr[ offset ], buffer, n_bytes );
 		
 		InvalidateWindowForView( view );
 		
