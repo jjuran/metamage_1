@@ -12,6 +12,9 @@
 // Standard C
 #include <string.h>
 
+// more-libc
+#include "more/string.h"
+
 // debug
 #include "debug/assert.hh"
 
@@ -181,7 +184,7 @@ namespace plus
 		
 		char* data = mutable_data();
 		
-		memcpy( insert_uninitialized( data + pos, n ), s, n );
+		mempcpy( insert_uninitialized( data + pos, n ), s, n );
 		
 		return *this;
 	}
@@ -254,7 +257,7 @@ namespace plus
 		
 		char* new_pointer = embiggen( new_size );
 		
-		memcpy( new_pointer + old_size, p, length );
+		mempcpy( new_pointer + old_size, p, length );
 		
 		return *this;
 	}
@@ -358,7 +361,7 @@ namespace plus
 		
 		p = replace_setup( p, m, delta );
 		
-		memcpy( p, s, n );
+		mempcpy( p, s, n );
 		
 		return *this;
 	}
@@ -417,7 +420,7 @@ namespace plus
 		
 		p = replace_setup( p, m, delta );
 		
-		memcpy( p, i, n );
+		mempcpy( p, i, n );
 	}
 	
 	void cow_string::replace( char* p, char* q, const char *s )

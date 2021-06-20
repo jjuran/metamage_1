@@ -8,6 +8,9 @@
 // Standard C
 #include <string.h>
 
+// more-libc
+#include "more/string.h"
+
 // plus
 #include "plus/string.hh"
 
@@ -23,7 +26,7 @@ namespace plus
 			s_len = d_size - 1;
 		}
 		
-		memcpy( d, s, s_len );
+		mempcpy( d, s, s_len );
 		
 		d[ s_len ] = '\0';
 	}

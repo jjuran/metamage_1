@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// more-libc
+#include "more/string.h"
+
 // debug
 #include "debug/assert.hh"
 
@@ -142,7 +145,7 @@ namespace plus
 		// TODO:  We'll often need a copy constructor as well.
 		extent_set_destructor( duplicate, header->dtor );
 		
-		memcpy( duplicate, buffer, header->capacity );
+		mempcpy( duplicate, buffer, header->capacity );
 		
 		return duplicate;
 	}

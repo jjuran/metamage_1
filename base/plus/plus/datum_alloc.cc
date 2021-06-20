@@ -7,7 +7,9 @@
 
 // Standard C
 #include <stdlib.h>
-#include <string.h>
+
+// more-libc
+#include "more/string.h"
 
 // debug
 #include "debug/assert.hh"
@@ -141,7 +143,7 @@ namespace plus
 	{
 		char* q = allocate( datum, n );
 		
-		memcpy( q, p, n );
+		mempcpy( q, p, n );
 		
 		return q;
 	}
@@ -230,7 +232,7 @@ namespace plus
 		{
 			const char* p = begin( old );
 			
-			memcpy( q, p, n );
+			mempcpy( q, p, n );
 			
 			destroy( old );
 		}
@@ -248,7 +250,7 @@ namespace plus
 		
 		const char* p = begin( old );
 		
-		memcpy( q, p, n );
+		mempcpy( q, p, n );
 		
 		destroy( old );
 		

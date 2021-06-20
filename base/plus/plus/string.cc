@@ -16,6 +16,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// more-libc
+#include "more/string.h"
+
 // gear
 #include "gear/compare.hh"
 
@@ -299,7 +302,7 @@ namespace plus
 		
 		n = std::min( n, size - pos );
 		
-		memcpy( buffer, data() + pos, n );
+		mempcpy( buffer, data() + pos, n );
 		
 		return n;
 	}

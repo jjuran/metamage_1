@@ -5,8 +5,8 @@
 
 #include "plus/thaw.hh"
 
-// Standard C
-#include <string.h>
+// more-libc
+#include "more/string.h"
 
 
 namespace plus
@@ -19,7 +19,7 @@ namespace plus
 			throw thaw_size_error();
 		}
 		
-		memcpy( pod, begin, size );
+		mempcpy( pod, begin, size );
 	}
 	
 }
