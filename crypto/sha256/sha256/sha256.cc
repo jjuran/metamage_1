@@ -5,8 +5,8 @@
 
 #include "sha256/sha256.hh"
 
-// Standard C
-#include <string.h>
+// more-libc
+#include "more/string.h"
 
 // iota
 #include "iota/endian.hh"
@@ -48,7 +48,7 @@ namespace crypto
 		{
 			// Ensure the block is word-aligned.
 			
-			memcpy( block, data, 64 );
+			mempcpy( block, data, 64 );
 		}
 		else
 		{
@@ -103,7 +103,7 @@ namespace crypto
 		u32* const end_block = final_data + 16;
 		u32* const pad_block = using_both_blocks ? final_data : end_block;
 		
-		memcpy( pad_block, data, n_bytes );
+		mempcpy( pad_block, data, n_bytes );
 		
 		u8* const pad_byte_ptr = (u8*) pad_block + n_bytes;
 		
