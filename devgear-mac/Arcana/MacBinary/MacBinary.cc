@@ -32,6 +32,9 @@
 // Standard C
 #include <string.h>
 
+// more-libc
+#include "more/string.h"
+
 // mac-file-utils
 #include "mac_file/directory.hh"
 
@@ -337,7 +340,7 @@ namespace MacBinary
 		{
 			Value result;
 			
-			memcpy( &result, h.data + offset, sizeof (Value) );
+			mempcpy( &result, h.data + offset, sizeof (Value) );
 			
 			return ByteSwap_Traits< Type >::Swap( result );
 		}
@@ -346,7 +349,7 @@ namespace MacBinary
 		{
 			v = ByteSwap_Traits< Type >::Swap( v );
 			
-			memcpy( h.data + offset, &v, sizeof (Value) );
+			mempcpy( h.data + offset, &v, sizeof (Value) );
 		}
 	};
 	
@@ -370,7 +373,7 @@ namespace MacBinary
 		
 		static void Set( Header& h, Value v )
 		{
-			memcpy( &h.data[ offset ], v, 1 + v[ 0 ] );
+			mempcpy( &h.data[ offset ], v, 1 + v[ 0 ] );
 		}
 	};
 	
@@ -774,7 +777,7 @@ namespace MacBinary
 		itsFrame.file.vRefNum = itsFrame.destDir.vRefNum;
 		itsFrame.file.parID   = itsFrame.destDir.dirID;
 		
-		memcpy( itsFrame.file.name, name, sizeof (Str63) );
+		mempcpy( itsFrame.file.name, name, sizeof (Str63) );
 		
 		if ( itIsFolder )
 		{
