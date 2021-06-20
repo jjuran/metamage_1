@@ -5,14 +5,19 @@
 
 #include "text_input/feed.hh"
 
-// Standard C
-#include <string.h>
+// more-libc
+#include "more/string.h"
 
 // gear
 #include "gear/find.hh"
 
 // debug
 #include "debug/assert.hh"
+
+
+#ifndef NULL
+#define NULL  0L
+#endif
 
 
 namespace text_input
@@ -138,7 +143,7 @@ namespace text_input
 			throw buffer_overrun();
 		}
 		
-		memcpy( this->buffer(), buffer, length );
+		mempcpy( this->buffer(), buffer, length );
 		
 		accept_input( length );
 	}
