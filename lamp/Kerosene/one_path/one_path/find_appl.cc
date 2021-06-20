@@ -10,6 +10,9 @@
 // Extended API Set Part 2
 #include "extended-api-set/part-2.h"
 
+// more-libc
+#include "more/string.h"
+
 // iota
 #include "iota/strings.hh"
 
@@ -33,7 +36,7 @@ static char ram_path[] = "ram/dt/appls/APPL/latest";
 
 plus::string find_appl( const char* appl )
 {
-	memcpy( ram_path + STRLEN( "ram/dt/appls/" ), appl, STRLEN( "APPL" ) );
+	mempcpy( ram_path + STRLEN( "ram/dt/appls/" ), appl, STRLEN( "APPL" ) );
 	
 	const char* path = ram_path + STRLEN( "ram/" );
 	
