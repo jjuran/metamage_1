@@ -22,6 +22,7 @@
 
 // mac-app-utils
 #include "mac_app/DAs.hh"
+#include "mac_app/state.hh"
 #include "mac_app/Window_menu.hh"
 
 // MacGlue
@@ -34,7 +35,6 @@
 #include "Nitrogen/Quickdraw.hh"
 
 // Pedestal
-#include "Pedestal/Application.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowEventHandlers.hh"  // codependent
 
@@ -345,7 +345,7 @@ namespace Pedestal
 		
 		N::InvalWindowRect( window, mac::qd::get_portRect( port ) );
 		
-		ScheduleImmediateEventCheck();
+		mac::app::event_check_due = true;
 	}
 	
 	void close_window( WindowRef window )

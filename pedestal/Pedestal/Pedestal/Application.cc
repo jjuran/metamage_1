@@ -1049,11 +1049,6 @@ namespace Pedestal
 		}
 	}
 	
-	void ScheduleImmediateEventCheck()
-	{
-		event_check_due = true;
-	}
-	
 	long Quit()
 	{
 		WindowRef window = FrontWindow();
