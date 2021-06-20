@@ -18,6 +18,9 @@
 // Relix
 #include "relix/alloca.h"
 
+// more-libc
+#include "more/string.h"
+
 // Iota
 #include "iota/strings.hh"
 
@@ -154,9 +157,11 @@ namespace tool
 					
 					char* buffer = (char*) checked_alloca( path_size + 1 );
 					
-					memcpy( buffer,               dir_path, dir_len );
-					memcpy( buffer + dir_len,     STR_LEN( "/" )    );
-					memcpy( buffer + dir_len + 1, loc,      loc_len );
+					char* p = buffer;
+					
+					p = (char*) mempcpy( p, dir_path, dir_len );
+					*p++ = '/';
+					mempcpy( p, loc, loc_len );
 					
 					buffer[ path_size ] = '\0';
 					
