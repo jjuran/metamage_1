@@ -5,8 +5,8 @@
 
 #include "SMTP.hh"
 
-// Standard C
-#include <string.h>
+// more-libc
+#include "more/string.h"
 
 
 namespace SMTP
@@ -35,7 +35,7 @@ namespace SMTP
 				throw InvalidResponse();
 			}
 			
-			memcpy( chars, response.data(), size );
+			mempcpy( chars, response.data(), size );
 		}
 		
 		static void GetResponse( text_input::feed feed, p7::fd_reader& reader )
