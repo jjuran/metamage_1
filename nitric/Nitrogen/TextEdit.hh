@@ -14,9 +14,6 @@
 #ifndef NITROGEN_TEXTEDIT_HH
 #define NITROGEN_TEXTEDIT_HH
 
-// Standard C/C++
-#include <cstring>
-
 // Mac OS X
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
@@ -98,15 +95,6 @@ namespace Nitrogen
 		TESetText( get_string_data( text ),
 		           get_string_size( text ),
 		           hTE );
-	}
-	
-	using ::TEGetText;
-	
-	inline void TEGetText( void* text, std::size_t length, TEHandle hTE )
-	{
-		::Handle h = hTE[0]->hText;
-		
-		std::memcpy( text, *h, length );
 	}
 	
 	using ::TEIdle;
