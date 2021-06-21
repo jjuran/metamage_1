@@ -5,8 +5,8 @@
 
 #include "vfs/filehandle/types/buffer_file.hh"
 
-// Standard C
-#include <string.h>
+// more-libc
+#include "more/string.h"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -50,7 +50,7 @@ namespace vfs
 		
 		n = min< size_t >( n, extra.size - offset );
 		
-		memcpy( buffer, extra.base + offset, n );
+		mempcpy( buffer, extra.base + offset, n );
 		
 		return n;
 	}
@@ -78,7 +78,7 @@ namespace vfs
 		
 		n = min< size_t >( n, extra.size - offset );
 		
-		memcpy( extra.base + offset, buffer, n );
+		mempcpy( extra.base + offset, buffer, n );
 		
 		return n;
 	}

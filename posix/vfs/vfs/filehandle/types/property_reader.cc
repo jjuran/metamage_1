@@ -5,8 +5,8 @@
 
 #include "vfs/filehandle/types/property_reader.hh"
 
-// Standard C
-#include <string.h>
+// more-libc
+#include "more/string.h"
 
 // plus
 #include "plus/string.hh"
@@ -41,7 +41,7 @@ namespace vfs
 			n = length - offset;
 		}
 		
-		memcpy( buffer, begin( extra.value ) + offset, n );
+		mempcpy( buffer, begin( extra.value ) + offset, n );
 		
 		return n;
 	}
