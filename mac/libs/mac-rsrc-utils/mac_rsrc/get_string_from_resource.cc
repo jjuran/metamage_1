@@ -15,8 +15,8 @@
 #include <Resources.h>
 #endif
 
-// Standard C
-#include <string.h>
+// more-libc
+#include "more/string.h"
 
 
 #pragma exceptions off
@@ -37,7 +37,7 @@ namespace rsrc {
 				
 				if ( size > len )
 				{
-					memcpy( result, *h, len + 1 );
+					mempcpy( result, *h, len + 1 );
 					
 					return true;
 				}
