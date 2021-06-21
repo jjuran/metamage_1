@@ -28,11 +28,7 @@
 #endif
 
 // iota
-#include "iota/ptr_diff.hh"
 #include "iota/string_traits.hh"
-
-// Debug
-#include "debug/assert.hh"
 
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
@@ -238,63 +234,6 @@ namespace Nitrogen
 	// TESetScrapHandle
 	// LMGetWordRedraw
 	// LMSetWordRedraw
-	
-	class TESetText_Putter
-	{
-		private:
-			TEHandle itsTE;
-		
-		public:
-			TESetText_Putter( TEHandle hTE ) : itsTE( hTE )
-			{
-			}
-			
-			void operator()( const void *begin, const void *end ) const
-			{
-				TESetText( begin, iota::ptr_diff( begin, end ), itsTE );
-			}
-	};
-	
-	class TEGetText_Getter
-	{
-		private:
-			TEHandle itsTE;
-		
-		public:
-			TEGetText_Getter( TEHandle hTE ) : itsTE( hTE )
-			{
-			}
-			
-			std::size_t size() const
-			{
-				std::size_t length = itsTE[0]->teLength;
-				
-				ASSERT( GetHandleSize( itsTE[0]->hText ) >= length );
-				
-				return length;
-			}
-			
-			void operator()( void *begin, void *end ) const
-			{
-				TEGetText( begin, iota::ptr_diff( begin, end ), itsTE );
-			}
-	};
-	
-	class TEInsert_Putter
-	{
-		private:
-			TEHandle itsTE;
-		
-		public:
-			TEInsert_Putter( TEHandle hTE ) : itsTE( hTE )
-			{
-			}
-			
-			void operator()( const void *begin, const void *end ) const
-			{
-				TEInsert( begin, iota::ptr_diff( begin, end ), itsTE );
-			}
-	};
 	
 #endif  // #if ! __LP64__
 	
