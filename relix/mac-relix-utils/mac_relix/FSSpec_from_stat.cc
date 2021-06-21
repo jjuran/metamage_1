@@ -10,7 +10,9 @@
 
 // Standard C
 #include <errno.h>
-#include <string.h>
+
+// more-libc
+#include "more/string.h"
 
 // mac-types
 #include "mac_types/FSSpec.hh"
@@ -46,7 +48,7 @@ namespace relix {
 		fsspec.vRefNum = -stat_buffer.st_dev;
 		fsspec.parID   = stat_buffer.st_rdev;
 		
-		memcpy( fsspec.name, stat_buffer.st_name, 1 + name_length );
+		mempcpy( fsspec.name, stat_buffer.st_name, 1 + name_length );
 		
 	#endif
 		
