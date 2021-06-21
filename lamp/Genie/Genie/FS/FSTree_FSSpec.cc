@@ -1284,7 +1284,9 @@ namespace Genie
 			{
 				const ino_t inode = pb.items[ j ].id;  // file or dir ID for inode
 				
-				N::CopyToPascalString( pb.items[ j ].name + 0, item.name, sizeof item.name - 1 );
+				ConstStr255Param name = pb.items[ j ].name;
+				
+				mempcpy( item.name, name, 1 + name[ 0 ] );
 				
 				const vfs::dir_entry node( inode, GetUnixName( item ) );
 				
