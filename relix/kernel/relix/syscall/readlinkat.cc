@@ -8,8 +8,8 @@
 // Standard C
 #include <errno.h>
 
-// Standard C/C++
-#include <cstring>
+// more-libc
+#include "more/string.h"
 
 // vfs
 #include "vfs/node.hh"
@@ -65,7 +65,7 @@ namespace relix
 			
 			const size_t bytes_copied = min( buffer_size, linkPath.size() );
 			
-			std::memcpy( buffer, linkPath.data(), bytes_copied );
+			mempcpy( buffer, linkPath.data(), bytes_copied );
 			
 			if ( too_big )
 			{

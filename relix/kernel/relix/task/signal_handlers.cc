@@ -11,6 +11,9 @@
 // POSIX
 #include <signal.h>
 
+// more-libc
+#include "more/string.h"
+
 
 namespace relix
 {
@@ -35,16 +38,16 @@ namespace relix
 	
 	signal_handlers_impl::signal_handlers_impl( const signal_handlers_impl& other )
 	{
-		memcpy( its_actions, other.its_actions, sizeof its_actions );
+		mempcpy( its_actions, other.its_actions, sizeof its_actions );
 	}
 	
 	void swap( signal_handlers_impl& a, signal_handlers_impl& b )
 	{
 		struct sigaction temp_actions[ NSIG ];
 		
-		memcpy( temp_actions,  a.its_actions, sizeof temp_actions );
-		memcpy( a.its_actions, b.its_actions, sizeof temp_actions );
-		memcpy( b.its_actions, temp_actions,  sizeof temp_actions );
+		mempcpy( temp_actions,  a.its_actions, sizeof temp_actions );
+		mempcpy( a.its_actions, b.its_actions, sizeof temp_actions );
+		mempcpy( b.its_actions, temp_actions,  sizeof temp_actions );
 	}
 	
 	

@@ -5,8 +5,8 @@
 
 #include "relix/socket/get_sockaddr_name.hh"
 
-// Standard C/C++
-#include <cstring>
+// more-libc
+#include "more/string.h"
 
 
 namespace relix
@@ -23,7 +23,7 @@ namespace relix
 		
 		const size_t n = *namelen < size ? *namelen : size;
 		
-		std::memcpy( name, &addr, n );
+		mempcpy( name, &addr, n );
 		
 		*namelen = size;
 	}

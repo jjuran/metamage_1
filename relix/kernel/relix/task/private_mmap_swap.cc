@@ -12,8 +12,8 @@
 #endif
 #endif
 
-// Standard C
-#include <string.h>
+// more-libc
+#include "more/string.h"
 
 // mac-sys-utils
 #ifdef __MACOS__
@@ -100,7 +100,7 @@ namespace relix
 	{
 		if ( h != NULL )
 		{
-			memcpy( *h, canon, size );
+			mempcpy( *h, canon, size );
 		}
 	}
 	
@@ -108,7 +108,7 @@ namespace relix
 	{
 		if ( h != NULL )
 		{
-			memcpy( canon, *h, size );
+			mempcpy( canon, *h, size );
 		}
 	}
 	
