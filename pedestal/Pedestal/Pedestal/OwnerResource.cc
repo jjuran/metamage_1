@@ -10,8 +10,8 @@
 #include <Resources.h>
 #endif
 
-// Standard C
-#include <string.h>
+// more-libc
+#include "more/string.h"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -63,16 +63,16 @@ namespace Pedestal
 				
 				if ( logical_size <= physical_size )
 				{
-					memcpy( data, text, logical_size );
+					mempcpy( data, text, logical_size );
 				}
 				else
 				{
-					memcpy( data, "\p" STR_LEN( TRUNCATED ) + 1 );
+					mempcpy( data, "\p" STR_LEN( TRUNCATED ) + 1 );
 				}
 			}
 			else
 			{
-				memcpy( data, "\p" STR_LEN( EMPTY ) + 1 );
+				mempcpy( data, "\p" STR_LEN( EMPTY ) + 1 );
 			}
 			
 			ReleaseResource( h );

@@ -10,8 +10,8 @@
 #include <Resources.h>
 #endif
 
-// Standard C
-#include <string.h>
+// more-libc
+#include "more/string.h"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -39,7 +39,7 @@ namespace Pedestal
 			if ( physical_size < 4 + 2 + 1 + 1 )
 			{
 				// Less than minimum length
-				memcpy( data, "\p" STR_LEN( TRUNCATED ) + 1 );
+				mempcpy( data, "\p" STR_LEN( TRUNCATED ) + 1 );
 				return true;
 			}
 			
@@ -50,7 +50,7 @@ namespace Pedestal
 			if ( physical_size < 6 + 1 + shortLen + 1 )
 			{
 				// Long version length byte overruns resource
-				memcpy( data, "\p" STR_LEN( TRUNCATED ) + 1 );
+				mempcpy( data, "\p" STR_LEN( TRUNCATED ) + 1 );
 				return true;
 			}
 			
@@ -66,11 +66,11 @@ namespace Pedestal
 			if ( physical_size < 6 + 1 + shortLen + 1 + longLen )
 			{
 				// Long version string data overruns resource
-				memcpy( data, "\p" STR_LEN( TRUNCATED ) + 1 );
+				mempcpy( data, "\p" STR_LEN( TRUNCATED ) + 1 );
 				return true;
 			}
 			
-			memcpy( data, shortVersion, 1 + shortLen );
+			mempcpy( data, shortVersion, 1 + shortLen );
 			
 			ReleaseResource( h );
 			

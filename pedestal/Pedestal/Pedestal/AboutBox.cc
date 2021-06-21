@@ -15,15 +15,15 @@
 #include <TextEdit.h>
 #endif
 
-// Standard C
-#include <string.h>
-
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
 #ifndef MISSING_QUICKDRAWTEXT_H
 #include "missing/QuickdrawText.h"
 #endif
 #endif
+
+// more-libc
+#include "more/string.h"
 
 // mac-config
 #include "mac_config/color-quickdraw.hh"
@@ -184,8 +184,7 @@ namespace Pedestal
 			if ( vers[ 0 ] <= 255 - STRLEN( "Version " ) )
 			{
 				memmove( vers + 1 + STRLEN( "Version " ), vers + 1, vers[ 0 ] );
-				
-				memcpy( vers + 1, STR_LEN( "Version " ) );
+				mempcpy( vers + 1, STR_LEN( "Version " ) );
 				
 				vers[ 0 ] += STRLEN( "Version " );
 			}
