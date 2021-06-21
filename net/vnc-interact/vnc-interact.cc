@@ -15,6 +15,9 @@
 // config
 #include "config/setpshared.h"
 
+// more-libc
+#include "more/string.h"
+
 // more-posix
 #include "more/perror.hh"
 
@@ -707,7 +710,7 @@ int main( int argc, char** argv )
 		title_len,
 	};
 	
-	memcpy( server_init.name, title, title_len );
+	mempcpy( server_init.name, title, title_len );
 	
 	const bool inited =
 	PUT( RFB_PROTOCOL_VERSION_3_3 )  &&
