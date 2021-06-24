@@ -102,6 +102,52 @@ Rect get_window_bounds( const raster_desc& desc )
 }
 
 static
+void convert_16bit( window_state& state )
+{
+	using namespace raster;
+	
+	Ptr baseAddr = (Ptr) state.load.addr;
+	Size n_bytes =       state.load.size;
+	
+	const Ptr end_of_file = baseAddr + n_bytes;
+	
+	const raster_metadata& meta = *state.load.meta;
+	const raster_desc&     desc = meta.desc;
+	
+	PixMap& pixmap = state.pixmap;
+	
+	const UInt32 xRGB1555_BE = iota::big_u32( 0x5A555000 );
+	const UInt32 ARGB1555_BE = iota::big_u32( 0x5A55501F );
+	const UInt32 RGB565_BE   = iota::big_u32( 0x5B655000 );
+	
+	UInt32 layout_BE = desc.magic ? desc.layout.per_pixel
+	                 : desc.model == Model_RGB ? RGB565_BE
+	                 :                           xRGB1555_BE;
+	
+	const bool BE_data = ((short*) end_of_file)[ -1 ];
+	
+#if ! OLDPIXMAPSTRUCT
+	
+	if ( layout_BE == RGB565_BE )
+	{
+		pixmap.pixelFormat = BE_data ? k16BE565PixelFormat
+		                             : k16LE565PixelFormat;
+	}
+	
+	if ( ! BE_data  &&  layout_BE == xRGB1555_BE )
+	{
+		pixmap.pixelFormat = k16LE555PixelFormat;
+	}
+	
+	if ( ! BE_data  &&  layout_BE == ARGB1555_BE )
+	{
+		pixmap.pixelFormat = k16LE5551PixelFormat;
+	}
+	
+#endif
+}
+
+static
 void populate_pixmap( window_state& state )
 {
 	using namespace raster;
@@ -155,35 +201,7 @@ void populate_pixmap( window_state& state )
 			pixmap.cmpCount  = 3;
 			pixmap.cmpSize   = 5;
 			
-			const UInt32 xRGB1555_BE = iota::big_u32( 0x5A555000 );
-			const UInt32 ARGB1555_BE = iota::big_u32( 0x5A55501F );
-			const UInt32 RGB565_BE   = iota::big_u32( 0x5B655000 );
-			
-			UInt32 layout_BE = desc.magic ? desc.layout.per_pixel
-			                 : desc.model == Model_RGB ? RGB565_BE
-			                 :                           xRGB1555_BE;
-			
-			const bool BE_data = ((short*) end)[ -1 ];
-			
-		#if ! OLDPIXMAPSTRUCT
-			
-			if ( layout_BE == RGB565_BE )
-			{
-				pixmap.pixelFormat = BE_data ? k16BE565PixelFormat
-				                             : k16LE565PixelFormat;
-			}
-			
-			if ( ! BE_data  &&  layout_BE == xRGB1555_BE )
-			{
-				pixmap.pixelFormat = k16LE555PixelFormat;
-			}
-			
-			if ( ! BE_data  &&  layout_BE == ARGB1555_BE )
-			{
-				pixmap.pixelFormat = k16LE5551PixelFormat;
-			}
-			
-		#endif
+			convert_16bit( state );
 		}
 		else if ( depth == 32 )
 		{
