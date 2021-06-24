@@ -242,6 +242,23 @@ void convert_16bit( window_state& state )
 			*pix++ = pix555;
 		}
 	}
+	
+	if ( ! BE_data  &&  (layout_BE & 0xFFFFFF00) == xRGB1555_BE )
+	{
+		/*
+			Little-endian 1555:
+			
+			GGGBBBBB xRRRRRGG -> xRRRRRGG GGGBBBBB
+		*/
+		
+		while ( pix < end )
+		{
+			UInt16 pixLE = *pix;
+			UInt16 pixBE = pixLE << 8 | pixLE >> 8;
+			
+			*pix++ = pixBE;
+		}
+	}
 }
 
 static
