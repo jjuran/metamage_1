@@ -124,7 +124,9 @@ void convert_32bit( window_state& state )
 	              : (desc.model | 2) == Model_RGBA ? RGBx
 	              :                                  xRGB;
 	
-	const bool swapped = ! (short) ((int*) end_of_file)[ -1 ];
+	// Having `! X` instead of `X == 0` confused MWCPPC (but not MWC68K).
+	
+	const bool swapped = (short) ((int*) end_of_file)[ -1 ] == 0;
 	
 	if ( ! desc.magic  &&  swapped )
 	{
@@ -133,13 +135,31 @@ void convert_32bit( window_state& state )
 	
 	layout &= ~(0x01000001 * Channel_alpha);
 	
-#if ! OLDPIXMAPSTRUCT
+#ifdef __LITTLE_ENDIAN__
 	
 	if ( layout == BGRx_BE )  pixmap.pixelFormat = k32BGRAPixelFormat;
 	if ( layout == RGBx_BE )  pixmap.pixelFormat = k32RGBAPixelFormat;
 	if ( layout == xBGR_BE )  pixmap.pixelFormat = k32ABGRPixelFormat;
 	
+	return;
+	
 #endif
+	
+	UInt32* pix = (UInt32*)  baseAddr;
+	UInt32* end = (UInt32*) (baseAddr + desc.height * desc.stride);
+	
+	if ( layout == BGRx_BE )
+	{
+		while ( pix < end )
+		{
+			UInt32 pixBGRA = *pix;
+			UInt32 pixRABG = pixBGRA << 16 | pixBGRA >> 16;
+			UInt32 pixARGB = (pixRABG << 8 & 0xFF00FF00)   // A_G_
+			               | (pixRABG >> 8 & 0x00FF00FF);  // _R_B
+			
+			*pix++ = pixARGB;
+		}
+	}
 }
 
 static
