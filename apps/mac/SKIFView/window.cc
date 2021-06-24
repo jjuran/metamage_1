@@ -102,6 +102,47 @@ Rect get_window_bounds( const raster_desc& desc )
 }
 
 static
+void convert_32bit( window_state& state )
+{
+	using namespace raster;
+	
+	Ptr baseAddr = (Ptr) state.load.addr;
+	Size n_bytes =       state.load.size;
+	
+	const Ptr end_of_file = baseAddr + n_bytes;
+	
+	const raster_metadata& meta = *state.load.meta;
+	const raster_desc&     desc = meta.desc;
+	
+	PixMap& pixmap = state.pixmap;
+	
+	const UInt32 BGRx_BE = iota::big_u32( BGRx );
+	const UInt32 RGBx_BE = iota::big_u32( RGBx );
+	const UInt32 xBGR_BE = iota::big_u32( xBGR );
+	
+	UInt32 layout = desc.magic ? desc.layout.per_pixel
+	              : (desc.model | 2) == Model_RGBA ? RGBx
+	              :                                  xRGB;
+	
+	const bool swapped = ! (short) ((int*) end_of_file)[ -1 ];
+	
+	if ( ! desc.magic  &&  swapped )
+	{
+		layout = iota::swap_4_bytes( layout );
+	}
+	
+	layout &= ~(0x01000001 * Channel_alpha);
+	
+#if ! OLDPIXMAPSTRUCT
+	
+	if ( layout == BGRx_BE )  pixmap.pixelFormat = k32BGRAPixelFormat;
+	if ( layout == RGBx_BE )  pixmap.pixelFormat = k32RGBAPixelFormat;
+	if ( layout == xBGR_BE )  pixmap.pixelFormat = k32ABGRPixelFormat;
+	
+#endif
+}
+
+static
 void convert_16bit( window_state& state )
 {
 	using namespace raster;
@@ -178,9 +219,6 @@ void populate_pixmap( window_state& state )
 	
 	const bool has_color = has_Color_QuickDraw();
 	
-	Ptr baseAddr = (Ptr) state.load.addr;
-	Size n_bytes =       state.load.size;
-	
 	const raster_metadata& meta = *state.load.meta;
 	const raster_desc&     desc = meta.desc;
 	
@@ -192,7 +230,7 @@ void populate_pixmap( window_state& state )
 	
 	Rect& bounds = pixmap.bounds;
 	
-	pixmap.baseAddr      = baseAddr;
+	pixmap.baseAddr      = (Ptr) state.load.addr;
 	pixmap.rowBytes      = desc.stride;
 	pixmap.bounds.bottom = desc.height;
 	pixmap.bounds.right  = desc.width;
@@ -217,8 +255,6 @@ void populate_pixmap( window_state& state )
 	{
 		pixmap.rowBytes |= 0x8000;
 		
-		const Ptr end = baseAddr + n_bytes;
-		
 		if ( depth == 16 )
 		{
 			pixmap.pixelType = RGBDirect;
@@ -233,30 +269,7 @@ void populate_pixmap( window_state& state )
 			pixmap.cmpCount  = 3;
 			pixmap.cmpSize   = 8;
 			
-			const UInt32 BGRx_BE = iota::big_u32( BGRx );
-			const UInt32 RGBx_BE = iota::big_u32( RGBx );
-			const UInt32 xBGR_BE = iota::big_u32( xBGR );
-			
-			UInt32 layout = desc.magic ? desc.layout.per_pixel
-			              : (desc.model | 2) == Model_RGBA ? RGBx
-			              :                                  xRGB;
-			
-			const bool swapped = ! (short) ((int*) end)[ -1 ];
-			
-			if ( ! desc.magic  &&  swapped )
-			{
-				layout = iota::swap_4_bytes( layout );
-			}
-			
-			layout &= ~(0x01000001 * Channel_alpha);
-			
-		#if ! OLDPIXMAPSTRUCT
-			
-			if ( layout == BGRx_BE )  pixmap.pixelFormat = k32BGRAPixelFormat;
-			if ( layout == RGBx_BE )  pixmap.pixelFormat = k32RGBAPixelFormat;
-			if ( layout == xBGR_BE )  pixmap.pixelFormat = k32ABGRPixelFormat;
-			
-		#endif
+			convert_32bit( state );
 		}
 		else if ( depth >= 2 )
 		{
