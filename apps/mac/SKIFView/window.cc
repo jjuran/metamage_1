@@ -160,6 +160,18 @@ void convert_32bit( window_state& state )
 			*pix++ = pixARGB;
 		}
 	}
+	
+	if ( layout == RGBx_BE )
+	{
+		while ( pix < end )
+		{
+			UInt32 pixRGBA = *pix;
+			UInt32 pixARGB = (pixRGBA << 24)   // A___
+			               | (pixRGBA >>  8);  // _RGB
+			
+			*pix++ = pixARGB;
+		}
+	}
 }
 
 static
