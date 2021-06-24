@@ -126,7 +126,7 @@ void convert_16bit( window_state& state )
 	
 	const bool BE_data = ((short*) end_of_file)[ -1 ];
 	
-#if ! OLDPIXMAPSTRUCT
+#ifdef __LITTLE_ENDIAN__
 	
 	if ( layout_BE == RGB565_BE )
 	{
@@ -144,7 +144,31 @@ void convert_16bit( window_state& state )
 		pixmap.pixelFormat = k16LE5551PixelFormat;
 	}
 	
+	return;
+	
 #endif
+	
+	UInt16* pix = (UInt16*)  baseAddr;
+	UInt16* end = (UInt16*) (baseAddr + desc.height * desc.stride);
+	
+	if ( layout_BE == RGB565_BE )
+	{
+		/*
+			Little-endian 565:
+			
+			GGgB BBBB RRRR RGGG -> xRRR RRGG GGGB BBBB
+		*/
+		
+		while ( pix < end )
+		{
+			UInt16 pix565 = *pix;
+			UInt16 pix555 = (pix565 << 7 & 0x7F80)  // 0RRR RRGG G000 0000
+			              | (pix565 >> 9 & 0x0060)  // 0000 0000 0GG0 0000
+			              | (pix565 >> 8 & 0x001F); // 0000 0000 000B BBBB
+			
+			*pix++ = pix555;
+		}
+	}
 }
 
 static
