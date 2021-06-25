@@ -126,7 +126,8 @@ namespace relix
 	{
 		const vfs::filehandle_method_set& methods = methods_for_end( end_type );
 		
-		vfs::filehandle* result = new vfs::filehandle( open_flags,
+		vfs::filehandle* result = new vfs::filehandle( NULL,
+		                                               open_flags,
 		                                               &methods,
 		                                               sizeof (pipe_end_extra),
 		                                               &destroy_pipe_end );

@@ -119,7 +119,8 @@ namespace relix
 	                                plus::conduit&  input,
 	                                plus::conduit&  output )
 	{
-		vfs::filehandle* result = new vfs::filehandle( O_RDWR,
+		vfs::filehandle* result = new vfs::filehandle( NULL,
+		                                               O_RDWR,
 		                                               &pseudotty_methods,
 		                                               sizeof (pseudotty_extra),
 		                                               &destroy_pseudotty );

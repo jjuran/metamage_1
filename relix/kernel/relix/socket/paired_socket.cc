@@ -188,7 +188,8 @@ namespace relix
 	                                       vfs::stream&  output,
 	                                       bool          nonblocking )
 	{
-		vfs::filehandle* result = new vfs::filehandle( nonblocking ? O_RDWR | O_NONBLOCK : O_RDWR,
+		vfs::filehandle* result = new vfs::filehandle( NULL,
+		                                               nonblocking ? O_RDWR | O_NONBLOCK : O_RDWR,
 		                                               &pairedsocket_methods,
 		                                               sizeof (pairedsocket_extra),
 		                                               &close_paired_socket );

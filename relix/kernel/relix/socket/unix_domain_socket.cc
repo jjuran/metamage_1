@@ -172,7 +172,8 @@ namespace relix
 		
 		using vfs::filehandle;
 		
-		filehandle* result = new filehandle( O_RDWR,
+		filehandle* result = new filehandle( NULL,
+		                                     O_RDWR,
 		                                     &pairedsocket_methods,
 		                                     sizeof (pairedsocket_extra),
 		                                     &close_paired_socket );
@@ -310,7 +311,8 @@ namespace relix
 	{
 		using vfs::filehandle;
 		
-		filehandle* result = new filehandle( flags,
+		filehandle* result = new filehandle( NULL,
+		                                     flags,
 		                                     &unix_domain_methods,
 		                                     sizeof (unix_domain_extra),
 		                                     &close_unix_domain_socket );
