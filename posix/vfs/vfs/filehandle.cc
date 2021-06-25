@@ -32,20 +32,6 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	filehandle::filehandle( int                           flags,
-	                        const filehandle_method_set*  methods,
-	                        size_t                        n_extra,
-	                        filehandle_destructor         dtor )
-	:
-		its_mark   (         ),
-		its_file   (         ),
-		its_flags  ( flags   ),
-		its_methods( methods ),
-		its_extra  ( n_extra ? ::operator new( n_extra ) : NULL ),
-		its_destructor( dtor )
-	{
-	}
-	
 	filehandle::filehandle( const node*                   file,
 	                        int                           flags,
 	                        const filehandle_method_set*  methods,

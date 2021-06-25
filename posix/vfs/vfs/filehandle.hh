@@ -54,11 +54,6 @@ namespace vfs
 		public:
 			typedef bool (filehandle::*Test)() const;
 			
-			filehandle( int                           flags,
-			            const filehandle_method_set*  methods = 0,  // NULL
-			            size_t                        n_extra = 0,
-			            filehandle_destructor         dtor    = 0 );  // NULL
-			
 			filehandle( const node*                   file,
 			            int                           flags,
 			            const filehandle_method_set*  methods = 0,  // NULL
