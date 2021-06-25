@@ -118,7 +118,8 @@ namespace vfs
 	
 	filehandle_ptr new_posix_fd( int flags, int fd )
 	{
-		filehandle* result = new filehandle( flags,
+		filehandle* result = new filehandle( NULL,
+		                                     flags,
 		                                     &posix_methods,
 		                                     sizeof (posix_file_extra),
 		                                     &close_posix_file );
