@@ -209,7 +209,8 @@ namespace Genie
 	                                     int                           flags,
 	                                     FileGetter                    getFile )
 	{
-		vfs::filehandle* result = new vfs::filehandle( flags,
+		vfs::filehandle* result = new vfs::filehandle( NULL,
+		                                               flags,
 		                                               &hfs_methods,
 		                                               sizeof (Mac_file_extra),
 		                                               &close_Mac_file );

@@ -329,7 +329,8 @@ namespace Genie
 	                             const n::shared< dyad >&  drivers,
 	                             bool                      passive )
 	{
-		vfs::filehandle* result = new vfs::filehandle( O_RDWR,
+		vfs::filehandle* result = new vfs::filehandle( NULL,
+		                                               O_RDWR,
 		                                               &serial_methods,
 		                                               sizeof (serial_device_extra),
 		                                               &destroy_serial_device );

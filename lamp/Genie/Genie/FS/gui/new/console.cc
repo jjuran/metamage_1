@@ -446,7 +446,8 @@ namespace Genie
 	static
 	vfs::filehandle* new_tty_handle( const vfs::node& file, unsigned id )
 	{
-		vfs::filehandle* result = new vfs::filehandle( 0,
+		vfs::filehandle* result = new vfs::filehandle( NULL,
+		                                               0,
 		                                               &consoletty_methods,
 		                                               sizeof (console_extra),
 		                                               &destroy_console );

@@ -1134,7 +1134,7 @@ namespace Genie
 		
 		CreateUserWindow( that->owner() );
 		
-		return new vfs::filehandle( flags );
+		return new vfs::filehandle( NULL, flags );
 	}
 	
 	static const vfs::item_method_set unwindow_item_methods =
