@@ -11,10 +11,10 @@ resource 'SKIF' (0, "SKIFView")
 
 resource 'vers' (1) {
 	0x00,
-	0x10,
+	0x11,
 	release,
 	0,
 	smRoman,
-	"0.1",
-	"0.1, " COPY COPYRIGHT
+	"0.1.1",
+	"0.1.1, " COPY COPYRIGHT
 };
