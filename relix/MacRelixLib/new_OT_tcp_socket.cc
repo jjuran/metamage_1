@@ -309,7 +309,8 @@ namespace relix
 		const int flags = nonblocking ? O_RDWR | O_NONBLOCK
 		                              : O_RDWR;
 		
-		vfs::filehandle* socket = new vfs::filehandle( flags,
+		vfs::filehandle* socket = new vfs::filehandle( NULL,
+		                                               flags,
 		                                               &OT_methods,
 		                                               sizeof (OT_socket_extra),
 		                                               &destroy_OT_socket );
