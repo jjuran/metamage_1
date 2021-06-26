@@ -39,6 +39,20 @@ namespace qd  {
 	inline
 	bool is_port_visrgn_empty( GrafPtr port )
 	{
+		/*
+			Non-Carbon calls to IsPortVisibleRegionEmpty() are statically
+			linked to the Carbonate library which defines it inline.
+			
+			Carbon didn't add IsPortVisibleRegionEmpty() until CarbonLib 1.3,
+			so we have to check before calling it.  If it's not present,
+			be pessimistic but safe and return false.
+		*/
+		
+		if ( TARGET_API_MAC_CARBON  &&  &IsPortVisibleRegionEmpty == NULL )
+		{
+			return false;
+		}
+		
 		return IsPortVisibleRegionEmpty( port );
 	}
 	
