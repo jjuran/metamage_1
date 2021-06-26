@@ -19,6 +19,7 @@
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
+#include "mac_qd/is_port_visrgn_empty.hh"
 
 // mac-app-utils
 #include "mac_app/DAs.hh"
@@ -338,7 +339,7 @@ namespace Pedestal
 		
 		CGrafPtr port = GetWindowPort( window );
 		
-		if ( IsPortVisibleRegionEmpty( port ) )
+		if ( mac::qd::is_port_visrgn_empty( port ) )
 		{
 			return;
 		}
