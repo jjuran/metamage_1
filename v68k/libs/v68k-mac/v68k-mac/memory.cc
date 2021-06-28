@@ -73,6 +73,8 @@ enum
 	tag_SoundBase_low_word,
 	tag_SoundVBL,
 	tag_SoundVBL_word_7 = tag_SoundVBL + 7,  // 16 bytes
+	tag_SoundDCE,
+	tag_SoundDCE_low_word,
 	tag_SoundActLvl,
 	tag_CurPitch,
 	tag_ROM85,
@@ -280,6 +282,7 @@ static const global globals[] =
 	{ 0x0262, 4,    tag_SoundPtr    },
 	{ 0x0266, 4,    tag_SoundBase   },
 	{ 0x026A, 16,   tag_SoundVBL    },
+	{ 0x027A, 4,    tag_SoundDCE    },
 	{ 0x027E, 2,    tag_SoundActLvl },  // SoundActive, SoundLevel
 	{ 0x0280, 2,    tag_CurPitch    },
 	{ 0x028E, 2,    tag_ROM85       },
