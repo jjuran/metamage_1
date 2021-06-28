@@ -47,6 +47,8 @@ UInt16 SdVolEnb : 0x0260;
 Byte SdVolume : 0x0260;
 Byte SdEnable : 0x0261;
 
+DCtlEntry* SoundDCE : 0x027A;
+
 IODoneProcPtr JIODone : 0x08FC;
 
 
@@ -373,6 +375,8 @@ void install_drivers()
 	if ( sound_fd >= 0 )
 	{
 		INSTALL_SYS_DRIVER( Sound, 3 );
+		
+		SoundDCE = *UTableBase[ 3 ];
 		
 		short refnum;
 		OpenDriver( "\p.Sound", &refnum );
