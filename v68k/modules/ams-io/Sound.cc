@@ -311,7 +311,10 @@ void Sound_ready( timer_node* node )
 	
 	current_FTSound = NULL;
 	
-	pb->ioActCount = pb->ioReqCount;
+	if ( pb )
+	{
+		pb->ioActCount = pb->ioReqCount;
+	}
 	
 	IODone( dce, noErr );
 }
