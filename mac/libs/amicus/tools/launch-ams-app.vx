@@ -108,6 +108,8 @@ def get_docfs_fd
 	return fd_slot
 }
 
+const model_opt = if "cpu" in config then {"-M" config[ "cpu" ]}  # may be ()
+
 def core_opts
 {
 	var opts = [ "--events-fd=" events_fd_slot ]
@@ -226,9 +228,11 @@ const app = ams_bin "/app"
 
 const servers = sound-server, freemountd-server, appfs-server, docfs-server
 
+const xv68k_opts = model_opt, "-tSP"
+
 const xv68k-screen = "--raster=" screen_fb_file
 
-const xv68k-subcmd = "./xv68k", "-tSP", xv68k-screen, *module_opts, app, app_name
+const xv68k-subcmd = "./xv68k", xv68k_opts, xv68k-screen, *module_opts, app, app_name
 const graft-subcmd = "./graft", servers, xv68k-subcmd
 
 const command = [ graft-subcmd ]
