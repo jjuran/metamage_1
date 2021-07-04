@@ -109,6 +109,8 @@ typedef Handle_based_vector< void* > vector_of_windows;
 static vector_of_windows the_windows_in_menu;
 
 
+#if ! __LP64__
+
 static
 bool has_empty_title( WindowRef window )
 {
@@ -239,6 +241,8 @@ WindowRef get_nth_window( int i )
 	
 	return (WindowRef) the_windows_in_menu[ i ];
 }
+
+#endif  // #if ! __LP64__
 
 }
 }
