@@ -11,6 +11,7 @@ namespace ui  {
 
 void delete_all_menu_items( MenuRef menu )
 {
+#if ! __LP64__
 #if ! OPAQUE_TOOLBOX_STRUCTS
 	
 	menu[0]->menuWidth  = 0;
@@ -36,6 +37,8 @@ void delete_all_menu_items( MenuRef menu )
 		
 		--n;
 	}
+	
+#endif  // #if ! __LP64__
 }
 
 }

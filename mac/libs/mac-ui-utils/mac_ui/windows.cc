@@ -19,6 +19,8 @@
 namespace mac {
 namespace ui  {
 
+#if ! __LP64__
+
 Point get_window_position( WindowRef window )
 {
 #if ! TARGET_API_MAC_CARBON
@@ -57,6 +59,12 @@ Point get_window_size( WindowRef window )
 	
 	return size;
 }
+
+#else
+
+int dummy;
+
+#endif  // #if ! __LP64__
 
 }
 }
