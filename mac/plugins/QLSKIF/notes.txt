@@ -1,0 +1,61 @@
+QuickLook notes
+
+OS X Hidden Treasures: Quick Look
+https://tidbits.com/2016/02/12/os-x-hidden-treasures-quick-look/
+
+To enable text selection in QuickLook previews (only in 10.10 or earlier):
+
+	defaults write com.apple.finder QLEnableTextSelection -bool TRUE; killall Finder
+
+QuickLook for files with no extension or an unknown extension
+https://apple.stackexchange.com/questions/7799/quicklook-for-files-with-no-extension-or-an-unknown-extension
+
+To learn the UTI of a file as Spotlight sees it (including dyn.<hash>):
+
+	mdls -name kMDItemContentType path-to-file
+
+Register new OS X file type by extension & associate with Cocoa app
+https://stackoverflow.com/questions/14870155/register-new-os-x-file-type-by-extension-associate-with-cocoa-app
+
+UTExportedTypeDeclarations
+LSTypeIsPackage?
+
+The "/.vol" directory and "volfs"
+https://developer.apple.com/library/archive/qa/qa2001/qa1113.html
+
+/.vol/<volumeID>/<dirID>/<name>
+
+* <volumeID> is the decimal representation of a 32 bit "volfs" volume identifier
+(Carbon maintains an internal table that maps the volume's vRefNum to this value),
+
+Converting a vRef and dirID (from a FSSpec) to a CFURL/NSURL
+https://stackoverflow.com/questions/25067954/converting-a-vref-and-dirid-from-a-fsspec-to-a-cfurl-nsurl
+
+dev_t ConvertVolumeRefNumtoVolumeID(FSVolumeRefNum refNum)
+{
+    FSRef root;
+    OSErr error = FSGetVolumeInfo(refNum, 0, NULL, kFSVolInfoNone, NULL, NULL, &root);
+    if(error != noErr)
+        return 0;
+    UInt8 path[500];
+    OSStatus status = FSRefMakePath(&root, path, 500);
+    if(status != noErr)
+        return 0;
+    struct stat volStats;
+    int err = stat((const char*)path, &volStats);
+    if(err != 0)
+        return 0;
+
+    return volStats.st_dev;
+}
+
+CFURLRef CreateURLFromVolumeIDandDirectoryID(dev_t volumeID, SInt32 directoryID)
+{
+    CFStringRef thePath = CFStringCreateWithFormat(kCFAllocatorDefault, NULL,
+        CFSTR("/.vol/%d/%d"), volumeID, (int) directoryID);
+
+    CFURLRef theURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, thePath,
+        kCFURLPOSIXPathStyle, false);
+    CFRelease(thePath);
+    return theURL;
+}
