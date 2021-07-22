@@ -37,12 +37,14 @@ namespace relix
 		const uint32_t max_sleep_ticks = 0x7FFFFFFF;
 		const uint64_t max_microseconds = max_sleep_ticks * 1000000ull / 60;
 		
+		uint32_t sleep_ticks = max_sleep_ticks;
+		
 		if ( microseconds <= max_microseconds )
 		{
-			const uint32_t sleep_ticks = microseconds * 6 / 100000;
-			
-			Ped::AdjustSleepForTimer( sleep_ticks );
+			sleep_ticks = microseconds * 6 / 100000;
 		}
+		
+		Ped::AdjustSleepForTimer( sleep_ticks );
 	}
 	
 }
