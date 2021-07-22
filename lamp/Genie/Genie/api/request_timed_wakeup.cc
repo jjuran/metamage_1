@@ -37,14 +37,16 @@ namespace relix
 	
 	void request_timed_wakeup( unsigned long long microseconds )
 	{
-		const uint32_t max_sleep_ticks = 0x7FFFFFFF;
-		const uint64_t max_microseconds = max_sleep_ticks * 1000000ull / 60;
+		const uint64_t max_microseconds = 0xFFFFFFFF;  // roughly 70 minutes
+		const uint32_t max_sleep_ticks = max_microseconds * 3 / 5000;  // 257698
 		
 		uint32_t sleep_ticks = max_sleep_ticks;
 		
 		if ( microseconds <= max_microseconds )
 		{
-			sleep_ticks = (microseconds - microseconds / 32) / 16384;
+			const uint32_t capped_useconds = microseconds;
+			
+			sleep_ticks = (capped_useconds - capped_useconds / 32) / 16384;
 		}
 		
 		Ped::AdjustSleepForTimer( sleep_ticks );
