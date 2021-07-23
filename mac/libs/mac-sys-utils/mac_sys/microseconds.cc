@@ -90,11 +90,18 @@ void microseconds( unsigned long long* count )
 			While that's too much error to accept, the idea is sound -- we
 			just need more precision.  Besides augmenting the dividend of
 			one million by another million factor to remove the divisor's
-			decimal point, we'll also multiply it by 2^10 (1024) -- so we
-			get 17024836 instead of 16625 (and more bits of precision).
+			decimal point, we'll also multiply it by 2^16 (65536) -- so we
+			get 1089589545 instead of 16625 (and twice the precision).
 			At run time, after multiplying by the number of ticks, we then
-			divide by 2^10 again, which at worst will rely on bit shifts.
-			This reduces our error to about four milliseconds per day.
+			divide by 2^16 again, which at worst will rely on bit shifts.
+			This reduces our error to about 65 microseconds per day.
+			
+			We define the term "chronofragment", which simply means a
+			65,536,000,000th of a second.
+			
+				(Prior to switching the factor from 1,024 to 65,536,
+				we required a different time unit, whose definition
+				is retained below for historical reference.)
 			
 			Much like kibi- and mebi- are 1024x and 1048576x factors,
 			counterparts to metric kilo- and mega- (1000x and 1000000x),
@@ -106,9 +113,9 @@ void microseconds( unsigned long long* count )
 		const uint64_t million = 1000 * 1000;
 		const uint64_t trillion = million * million;
 		
-		const uint32_t tick_mibimicroseconds = 1024 * trillion / 60147420;
+		const uint32_t tick_chronofragments = 65536 * trillion / 60147420;
 		
-		*count = long_multiply( Ticks, tick_mibimicroseconds ) >> 10;
+		*count = long_multiply( Ticks, tick_chronofragments ) >> 16;
 		
 		return;
 	}
