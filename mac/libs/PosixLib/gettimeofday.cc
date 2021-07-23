@@ -22,6 +22,9 @@
 namespace PosixLib
 {
 	
+	using mac::sys::microseconds;
+	
+	
 	static inline UInt32 GetGlobalDateTime()
 	{
 		UInt32 result;
@@ -38,24 +41,27 @@ namespace PosixLib
 		return GetGlobalDateTime() - mac::types::epoch_delta();
 	}
 	
+	static
+	UInt64 time_offset( UInt64 microseconds )
+	{
+		return UnixTime() * 1000000ULL - microseconds;
+	}
+	
 	class MicrosecondUnixTimeClock
 	{
 		private:
 			UInt64 offset;
 		
 		public:
-			MicrosecondUnixTimeClock() : offset( Offset() )
+			MicrosecondUnixTimeClock() : offset( time_offset( microseconds() ) )
 			{
-			}
-			
-			static UInt64 Offset()
-			{
-				return UnixTime() * 1000000ULL - mac::sys::microseconds();
 			}
 			
 			UInt64 Now()
 			{
-				const UInt64 new_offset = Offset();
+				const UInt64 now = microseconds();
+				
+				const UInt64 new_offset = time_offset( now );
 				
 				const int delta = 2 * 1000000;  // two seconds
 				
@@ -64,7 +70,7 @@ namespace PosixLib
 					offset = new_offset;
 				}
 				
-				return mac::sys::microseconds() + offset;
+				return now + offset;
 			}
 	};
 	
