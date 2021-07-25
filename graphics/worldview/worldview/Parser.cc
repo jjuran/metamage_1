@@ -10,7 +10,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
 #include <vector>
 
 // gear
@@ -384,37 +383,44 @@ namespace worldview
 	
 	typedef void ( *Handler )( Parser&, const char*, const char* );
 	
-	static std::map< plus::string, Handler > MakeHandlers()
+	struct named_handler
 	{
-		std::map< plus::string, Handler > handlers;
-		
-		handlers[ "camera"    ] = &Parser::MakeCamera;
-		handlers[ "color"     ] = &Parser::SetColor;
-		handlers[ "context"   ] = &Parser::SetContext;
-		handlers[ "define"    ] = &Parser::Define;
-		handlers[ "origin"    ] = &Parser::SetOrigin;
-		handlers[ "phi"       ] = &Parser::SetPhi;
-		handlers[ "poly"      ] = &Parser::AddMeshPolygon;
-		handlers[ "polygon"   ] = &Parser::AddMeshPolygon;
-		handlers[ "pt"        ] = &Parser::AddMeshPoint;
-		handlers[ "theta"     ] = &Parser::SetTheta;
-		handlers[ "tile"      ] = &Parser::SetTile;
-		handlers[ "translate" ] = &Parser::Translate;
-		
-		return handlers;
-	}
+		const char* name;
+		Handler     proc;
+	};
+	
+	static const named_handler handlers[] =
+	{
+		{ "camera",    &Parser::MakeCamera     },
+		{ "color",     &Parser::SetColor       },
+		{ "context",   &Parser::SetContext     },
+		{ "define",    &Parser::Define         },
+		{ "origin",    &Parser::SetOrigin      },
+		{ "phi",       &Parser::SetPhi         },
+		{ "poly",      &Parser::AddMeshPolygon },
+		{ "polygon",   &Parser::AddMeshPolygon },
+		{ "pt",        &Parser::AddMeshPoint   },
+		{ "theta",     &Parser::SetTheta       },
+		{ "tile",      &Parser::SetTile        },
+		{ "translate", &Parser::Translate      },
+	};
+	
+	#define ARRAY_END(array)  ((array) + sizeof (array) / sizeof *(array))
 	
 	static Handler GetHandler( const plus::string& command )
 	{
-		typedef std::map< plus::string, Handler > Handlers;
+		const named_handler* begin = handlers;
+		const named_handler* end = ARRAY_END( handlers );
 		
-		static Handlers handlers = MakeHandlers();
+		for ( const named_handler* it = handlers;  it != end;  ++it )
+		{
+			if ( it->name == command )
+			{
+				return it->proc;
+			}
+		}
 		
-		Handlers::const_iterator it = handlers.find( command );
-		
-		if ( it == handlers.end() )  return NULL;
-		
-		return it->second;
+		return NULL;
 	}
 	
 	Parser::Parser( Scene& scene ) : itsScene( &scene ),
