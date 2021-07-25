@@ -115,15 +115,6 @@ namespace tool
 		return DateFormattedForFilename( now, serial );
 	}
 	
-	static inline unsigned int IP( unsigned char a,
-	                               unsigned char b,
-	                               unsigned char c,
-	                               unsigned char d )
-	{
-		return (a << 24) | (b << 16) | (c << 8) | d;
-	}
-	
-	
 	static plus::string GetForwardPath( const plus::string& rcptLine )
 	{
 		return rcptLine.substr( STRLEN( "RCPT TO:" ) );
