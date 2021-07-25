@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <list>
 #include <memory>
 #include <vector>
 
@@ -199,7 +198,7 @@ namespace tool
 	
 	plus::string myHello;
 	plus::string myFrom;
-	std::list< plus::string > myTo;
+	std::vector< plus::string > myTo;
 	
 	static std::auto_ptr< PartialMessage > myMessage;
 	
