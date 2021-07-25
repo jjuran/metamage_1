@@ -145,9 +145,11 @@ void draw_string_list( string_list_handle slh )
 			DrawString( list.cellArray[ i ].name );
 		}
 		
-		if ( list.selection < list.n_vis_cells )
+		const unsigned short current_index = list.selection;
+		
+		if ( current_index < list.n_vis_cells )
 		{
-			box.top += list.selection * line_height;
+			box.top += current_index * line_height;
 			box.bottom = box.top + line_height;
 			
 			InvertRect( &box );
@@ -163,11 +165,12 @@ bool string_list_click( string_list_handle slh, Point pt )
 	
 	const short line_height = list.line_height;
 	
-	const short clicked = (pt.v - list.rView.top) / line_height;
+	const short clicked_index = (pt.v - list.rView.top) / line_height;
+	const short selected_cell = clicked_index;
 	
-	if ( clicked < list.cell_count )
+	if ( selected_cell < list.cell_count )
 	{
-		if ( clicked != list.selection )
+		if ( selected_cell != list.selection )
 		{
 			const short base = list.rView.top + 1;
 			
@@ -175,20 +178,22 @@ bool string_list_click( string_list_handle slh, Point pt )
 			box.left  = list.rView.left  + 1;
 			box.right = list.rView.right - 1;
 			
-			if ( list.selection < list.n_vis_cells )
+			const unsigned short previous_index = list.selection;
+			
+			if ( previous_index < list.n_vis_cells )
 			{
-				box.top = base + list.selection * line_height;
+				box.top = base + previous_index * line_height;
 				box.bottom = box.top + line_height;
 				
 				InvertRect( &box );
 			}
 			
-			box.top = base + clicked * line_height;
+			box.top = base + clicked_index * line_height;
 			box.bottom = box.top + line_height;
 			
 			InvertRect( &box );
 			
-			list.selection = clicked;
+			list.selection = selected_cell;
 		}
 	}
 	
