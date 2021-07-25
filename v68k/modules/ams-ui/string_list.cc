@@ -30,6 +30,8 @@ struct cell_data
 struct string_list_record
 {
 	Rect       rView;
+	short      font_ascent;
+	short      line_height;
 	short      selection;
 	short      cell_count;
 	cell_data  cellArray[ 1 ];
@@ -46,6 +48,14 @@ string_list_handle new_string_list( const Rect& view )
 		string_list_record& list = **slh;
 		
 		list.rView = view;
+		
+		FontInfo fontInfo;
+		GetFontInfo( &fontInfo );
+		
+		list.font_ascent = fontInfo.ascent;
+		list.line_height = fontInfo.ascent
+		                 + fontInfo.descent
+		                 + fontInfo.leading;
 	}
 	
 	return slh;
@@ -112,15 +122,10 @@ void draw_string_list( string_list_handle slh )
 	InsetRect( &box, 1, 1 );
 	EraseRect( &box );
 	
-	FontInfo fontInfo;
-	GetFontInfo( &fontInfo );
-	
-	const short line_height = fontInfo.ascent
-	                        + fontInfo.descent
-	                        + fontInfo.leading;
+	const short line_height = list.line_height;
 	
 	const short left = box.left + 3;
-	const short base = box.top + fontInfo.ascent;
+	const short base = box.top + list.font_ascent;
 	
 	if ( const short n = list.cell_count )
 	{
@@ -142,14 +147,9 @@ void draw_string_list( string_list_handle slh )
 
 bool string_list_click( string_list_handle slh, Point pt )
 {
-	FontInfo fontInfo;
-	GetFontInfo( &fontInfo );
-	
-	const short line_height = fontInfo.ascent
-	                        + fontInfo.descent
-	                        + fontInfo.leading;
-	
 	string_list_record& list = **slh;
+	
+	const short line_height = list.line_height;
 	
 	const short clicked = (pt.v - list.rView.top) / line_height;
 	
