@@ -68,6 +68,7 @@ void clear_string_list( string_list_handle slh )
 {
 	string_list_record& list = **slh;
 	
+	list.selection  = 0;
 	list.cell_count = 0;
 }
 
