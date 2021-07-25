@@ -22,6 +22,8 @@ void append_to_string_list( string_list_handle slh, const unsigned char* str );
 
 void draw_string_list( string_list_handle slh );
 
+void scroll_string_list_to( string_list_handle slh, short offset );
+
 bool string_list_click( string_list_handle slh, Point pt );
 
 const unsigned char* get_string_list_selection( string_list_handle slh );

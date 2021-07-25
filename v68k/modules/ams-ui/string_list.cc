@@ -33,6 +33,7 @@ struct string_list_record
 	short      font_ascent;
 	short      line_height;
 	short      n_vis_cells;
+	short      scrolled_to;
 	short      selection;
 	short      cell_count;
 	cell_data  cellArray[ 1 ];
@@ -87,8 +88,9 @@ void clear_string_list( string_list_handle slh )
 {
 	string_list_record& list = **slh;
 	
-	list.selection  = 0;
-	list.cell_count = 0;
+	list.scrolled_to = 0;
+	list.selection   = 0;
+	list.cell_count  = 0;
 }
 
 void append_to_string_list( string_list_handle slh, const unsigned char* str )
@@ -142,10 +144,12 @@ void draw_string_list( string_list_handle slh )
 		{
 			MoveTo( left, base + i * line_height );
 			
-			DrawString( list.cellArray[ i ].name );
+			const short j = i + list.scrolled_to;
+			
+			DrawString( list.cellArray[ j ].name );
 		}
 		
-		const unsigned short current_index = list.selection;
+		const unsigned short current_index = list.selection - list.scrolled_to;
 		
 		if ( current_index < list.n_vis_cells )
 		{
@@ -159,14 +163,27 @@ void draw_string_list( string_list_handle slh )
 	thePort->clipRgn = savedClip;
 }
 
+void scroll_string_list_to( string_list_handle slh, short offset )
+{
+	string_list_record& list = **slh;
+	
+	if ( list.cell_count > list.n_vis_cells )
+	{
+		list.scrolled_to = offset;
+		
+		draw_string_list( slh );
+	}
+}
+
 bool string_list_click( string_list_handle slh, Point pt )
 {
 	string_list_record& list = **slh;
 	
 	const short line_height = list.line_height;
+	const short scrolled_to = list.scrolled_to;
 	
 	const short clicked_index = (pt.v - list.rView.top) / line_height;
-	const short selected_cell = clicked_index;
+	const short selected_cell = scrolled_to + clicked_index;
 	
 	if ( selected_cell < list.cell_count )
 	{
@@ -178,7 +195,7 @@ bool string_list_click( string_list_handle slh, Point pt )
 			box.left  = list.rView.left  + 1;
 			box.right = list.rView.right - 1;
 			
-			const unsigned short previous_index = list.selection;
+			const unsigned short previous_index = list.selection - scrolled_to;
 			
 			if ( previous_index < list.n_vis_cells )
 			{
