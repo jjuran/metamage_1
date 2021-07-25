@@ -32,10 +32,17 @@ struct string_list_record
 	Rect       rView;
 	short      font_ascent;
 	short      line_height;
+	short      n_vis_cells;
 	short      selection;
 	short      cell_count;
 	cell_data  cellArray[ 1 ];
 };
+
+static inline
+short min( short a, short b )
+{
+	return b < a ? b : a;
+}
 
 string_list_handle new_string_list( const Rect& view )
 {
@@ -56,6 +63,8 @@ string_list_handle new_string_list( const Rect& view )
 		list.line_height = fontInfo.ascent
 		                 + fontInfo.descent
 		                 + fontInfo.leading;
+		
+		list.n_vis_cells = (view.bottom - view.top) / list.line_height;
 	}
 	
 	return slh;
@@ -127,7 +136,7 @@ void draw_string_list( string_list_handle slh )
 	const short left = box.left + 3;
 	const short base = box.top + list.font_ascent;
 	
-	if ( const short n = list.cell_count )
+	if ( const short n = min( list.cell_count, list.n_vis_cells ) )
 	{
 		for ( short i = 0;  i < n;  ++i )
 		{
@@ -136,10 +145,13 @@ void draw_string_list( string_list_handle slh )
 			DrawString( list.cellArray[ i ].name );
 		}
 		
-		box.top += list.selection * line_height;
-		box.bottom = box.top + line_height;
-		
-		InvertRect( &box );
+		if ( list.selection < list.n_vis_cells )
+		{
+			box.top += list.selection * line_height;
+			box.bottom = box.top + line_height;
+			
+			InvertRect( &box );
+		}
 	}
 	
 	thePort->clipRgn = savedClip;
@@ -163,10 +175,13 @@ bool string_list_click( string_list_handle slh, Point pt )
 			box.left  = list.rView.left  + 1;
 			box.right = list.rView.right - 1;
 			
-			box.top = base + list.selection * line_height;
-			box.bottom = box.top + line_height;
-			
-			InvertRect( &box );
+			if ( list.selection < list.n_vis_cells )
+			{
+				box.top = base + list.selection * line_height;
+				box.bottom = box.top + line_height;
+				
+				InvertRect( &box );
+			}
 			
 			box.top = base + clicked * line_height;
 			box.bottom = box.top + line_height;
