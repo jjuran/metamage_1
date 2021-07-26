@@ -697,7 +697,7 @@ void activate_editField( DialogRef dialog, bool activating )
 	}
 }
 
-static pascal
+pascal
 Boolean basic_filterProc( DialogRef dialog, EventRecord* event, short* itemHit )
 {
 	DialogPeek d = (DialogPeek) dialog;
