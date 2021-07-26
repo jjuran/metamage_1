@@ -164,6 +164,7 @@ asm Handle PtrToHand( const void* p : __A0, long size : __D0 )
 short SFSaveDisk : 0x0214;
 
 static Str27 volume_name;
+static short filename_count;
 static string_list_handle filename_list;
 
 static
@@ -196,6 +197,8 @@ void populate_file_list( short n_types, const OSType* types )
 	static FileParam pb;
 	
 	clear_string_list( filename_list );
+	
+	filename_count = 0;
 	
 	Str255 name;
 	name[ 0 ] = '\0';
@@ -230,6 +233,8 @@ void populate_file_list( short n_types, const OSType* types )
 		}
 		
 		append_to_string_list( filename_list, name );
+		
+		++filename_count;
 	}
 }
 
