@@ -6,6 +6,9 @@
 #include "StandardFile.hh"
 
 // Mac OS
+#ifndef __CONTROLDEFINITIONS__
+#include <ControlDefinitions.h>
+#endif
 #ifndef __STANDARDFILE__
 #include <StandardFile.h>
 #endif
@@ -19,6 +22,7 @@
 #include "QDGlobals.hh"
 
 // ams-ui
+#include "Dialogs.hh"
 #include "string_list.hh"
 
 
@@ -163,9 +167,25 @@ asm Handle PtrToHand( const void* p : __A0, long size : __D0 )
 
 short SFSaveDisk : 0x0214;
 
+const short n_viewable_cells = 7;
+
 static Str27 volume_name;
+static ControlRef scrollbar;
 static short filename_count;
 static string_list_handle filename_list;
+
+
+static inline
+short min( short a, short b )
+{
+	return b < a ? b : a;
+}
+
+static inline
+short max( short a, short b )
+{
+	return a > b ? a : b;
+}
 
 static
 OSErr get_volume_name()
@@ -372,6 +392,82 @@ pascal void SFPutFile_call( Point             where,
 	DisposeDialog( dialog );
 }
 
+static pascal
+void scrollbar_action( ControlRef control, short part )
+{
+	short value = GetControlValue( scrollbar );
+	short delta = 1;
+	
+	/*
+		kControlUpButtonPart   = 20
+		kControlDownButtonPart = 21
+		kControlPageUpPart     = 22
+		kControlPageDownPart   = 23
+	*/
+	
+	if ( (part & ~3) == 20 )
+	{
+		if ( part & 2 )
+		{
+			delta = n_viewable_cells;
+		}
+		
+		if ( part & 1 )
+		{
+			const short maximum = GetControlMaximum( scrollbar );
+			
+			value = min( value + delta, maximum );
+		}
+		else
+		{
+			value = max( value - delta, 0 );
+		}
+	}
+	
+	SetControlValue( scrollbar, value );
+	
+	scroll_string_list_to( filename_list, value );
+}
+
+static pascal
+Boolean SFGet_filterProc( DialogRef dialog, EventRecord* event, short* itemHit )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	if ( event->what == mouseDown )
+	{
+		Point pt = event->where;
+		GlobalToLocal( &pt );
+		
+		if ( short part = TestControl( scrollbar, pt ) )
+		{
+			switch ( part )
+			{
+				case kControlIndicatorPart:
+					// not yet implemented
+					break;
+				
+				case kControlUpButtonPart:
+				case kControlDownButtonPart:
+				case kControlPageUpPart:
+				case kControlPageDownPart:
+					TrackControl( scrollbar, pt, &scrollbar_action );
+					
+					*itemHit = getScroll;
+					return true;
+			}
+		}
+	}
+	
+	return basic_filterProc( dialog, event, itemHit );
+}
+
+static inline
+short scrollmax()
+{
+	return max( filename_count - n_viewable_cells, 0 );
+}
+
 static
 pascal void SFGetFile_call( Point               where,
                             ConstStr255Param    prompt,
@@ -417,6 +513,10 @@ pascal void SFGetFile_call( Point               where,
 	
 	populate_file_list( numTypes, typeList );
 	
+	GetDialogItem( dialog, getScroll, &type, &h, &box );
+	scrollbar = NewControl( dialog, &box, "\p", 1, 0, 0, scrollmax(), 16, 0 );
+	// It's not necessary to call SetDialogItem().
+	
 	GetDialogItem( dialog, getLine, &type, &h, &box );
 	SetDialogItem( dialog, getLine, type, (Handle) &draw_dotted_line, &box );
 	
@@ -424,7 +524,7 @@ pascal void SFGetFile_call( Point               where,
 	
 	do
 	{
-		ModalDialog( NULL, &hit );
+		ModalDialog( &SFGet_filterProc, &hit );
 		
 		if ( hit == 1  &&  get_string_list_selection( filename_list ) )
 		{
@@ -437,6 +537,9 @@ pascal void SFGetFile_call( Point               where,
 			get_volume_name();
 			
 			populate_file_list( numTypes, typeList );
+			
+			SetControlMaximum( scrollbar, scrollmax() );
+			SetControlValue( scrollbar, 0 );
 			
 			GetDialogItem( dialog, getDisk, &type, &h, &box );
 			InvalRect( &box );
@@ -469,6 +572,8 @@ pascal void SFGetFile_call( Point               where,
 	
 	dispose_string_list( filename_list );
 	filename_list = NULL;
+	
+	scrollbar = NULL;
 	
 	DisposeDialog( dialog );
 }
