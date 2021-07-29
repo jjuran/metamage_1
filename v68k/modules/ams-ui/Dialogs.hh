@@ -11,9 +11,15 @@ struct GrafPort;
 struct Point;
 struct Rect;
 
+typedef unsigned char Boolean;
+
 typedef pascal unsigned char (*ModalFilterUPP)( GrafPort*     dialog,
                                                 EventRecord*  event,
                                                 short*        itemHit );
+
+pascal Boolean basic_filterProc( GrafPort*     dialog,
+                                 EventRecord*  event,
+                                 short*        itemHit );
 
 pascal void InitDialogs_patch( void* proc );
 pascal void ErrorSound_patch ( void* proc );
