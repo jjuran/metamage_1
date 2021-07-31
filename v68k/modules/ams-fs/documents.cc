@@ -16,6 +16,9 @@
 // Standard C
 #include <errno.h>
 
+// Standard C++
+#include <algorithm>
+
 // ams-common
 #include "callouts.hh"
 #include "FCB.hh"
@@ -66,6 +69,28 @@ void mount_virtual_documents_volume()
 
 static plus::var_string filename_cache;
 
+struct cached_filename
+{
+	Str63 name;
+};
+
+static inline
+bool operator<( const cached_filename& a, const cached_filename& b )
+{
+	return RelString( a.name, b.name, false, true ) < 0;
+}
+
+static
+void sort_filenames( plus::var_string& cache )
+{
+	const size_t n = cache.size() / dirent_size;
+	
+	cached_filename* begin = (cached_filename*) &cache[ 0 ];
+	cached_filename* end   = begin + n;
+	
+	std::sort( begin, end );
+}
+
 const uint8_t* documents_get_nth( VCB* vcb, short n )
 {
 	if ( n == 1 )
@@ -73,6 +98,8 @@ const uint8_t* documents_get_nth( VCB* vcb, short n )
 		temp_A4 a4;
 		
 		int err = try_to_list( docfs_fd, plus::string::null, filename_cache );
+		
+		sort_filenames( filename_cache );
 	}
 	
 	const size_t offset = (n - 1) * dirent_size;
