@@ -72,6 +72,23 @@ bool case_insensitive_equal( const uint8_t* a, const uint8_t* b, uint16_t len )
 	return true;
 }
 
+static
+int case_insensitive_order( const uint8_t* a, const uint8_t* b, uint16_t len )
+{
+	while ( len-- > 0 )
+	{
+		uint8_t c = iota::to_lower( *a++ );
+		uint8_t d = iota::to_lower( *b++ );
+		
+		if ( c != d )
+		{
+			return (c > d) - (c < d);
+		}
+	}
+	
+	return 0;
+}
+
 unsigned long CmpString_patch( const unsigned char* a : __A0,
                                const unsigned char* b : __A1,
                                unsigned long        m : __D0,
@@ -106,6 +123,52 @@ unsigned long CmpString_patch( const unsigned char* a : __A0,
 	}
 	
 	return ! case_insensitive_equal( a, b, len );
+}
+
+long RelString_patch( const unsigned char* a : __A0,
+                      const unsigned char* b : __A1,
+                      unsigned long        m : __D0,
+                      unsigned short       A : __D1 )
+{
+	enum
+	{
+		MARKS = 0x0200,  // diacritics-insensitive
+		CASE  = 0x0400,  // case-sensitive
+	};
+	
+	if ( m == 0 )
+	{
+		return 0;  // Empty strings are equal
+	}
+	
+	const uint16_t a_len = m >> 16;
+	const uint16_t b_len = m;
+	
+	const uint16_t min_len = b_len < a_len ? b_len : a_len;
+	
+	const int result_by_length = (b_len < a_len) - (a_len < b_len);
+	
+	if ( A & MARKS )
+	{
+		write( STDERR_FILENO, STR_LEN( "RelString: ignoring MARKS bit\n" ) );
+	}
+	
+	if ( A & CASE )
+	{
+		if ( int cmp = fast_memcmp( a, b, min_len ) )
+		{
+			return cmp;
+		}
+		
+		return result_by_length;
+	}
+	
+	if ( int cmp = case_insensitive_order( a, b, min_len ) )
+	{
+		return cmp;
+	}
+	
+	return result_by_length;
 }
 
 unsigned char* UprString_patch( unsigned char* s : __A0,

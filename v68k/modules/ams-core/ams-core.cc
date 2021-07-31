@@ -256,6 +256,7 @@ void install_OSUtils()
 	
 	OSTRAP( InitUtil  );  // A03F
 	
+	OSTRAP( RelString );  // A050
 	OSTRAP( ReadXPRam );  // A051
 	
 	OSTRAP( UprString );  // A054

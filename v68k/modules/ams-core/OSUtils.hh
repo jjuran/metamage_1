@@ -16,6 +16,11 @@ unsigned long CmpString_patch( const unsigned char* a : __A0,
                                unsigned long        m : __D0,
                                unsigned short       A : __D1 );
 
+long RelString_patch( const unsigned char* a : __A0,
+                      const unsigned char* b : __A1,
+                      unsigned long        m : __D0,
+                      unsigned short       A : __D1 );
+
 unsigned char* UprString_patch( unsigned char* s : __A0,
                                 short len        : __D0,
                                 short trap_word  : __D1 );
