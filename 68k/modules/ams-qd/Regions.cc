@@ -16,6 +16,7 @@
 #include "scoped_zone.hh"
 
 // ams-qd
+#include "GrafProcs.hh"
 #include "Polygons.hh"
 #include "Rect-utils.hh"
 #include "Rects.hh"
@@ -73,21 +74,37 @@ pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 
 pascal void FrameRgn_patch( MacRegion** rgn )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, rgnProc );
+	
 	StdRgn( kQDGrafVerbFrame, rgn );
 }
 
 pascal void PaintRgn_patch( MacRegion** rgn )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, rgnProc );
+	
 	StdRgn( kQDGrafVerbPaint, rgn );
 }
 
 pascal void EraseRgn_patch( MacRegion** rgn )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, rgnProc );
+	
 	StdRgn( kQDGrafVerbErase, rgn );
 }
 
 pascal void InverRgn_patch( MacRegion** rgn )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, rgnProc );
+	
 	StdRgn( kQDGrafVerbInvert, rgn );
 }
 
@@ -96,6 +113,8 @@ pascal void FillRgn_patch( MacRegion** rgn, const Pattern* pattern )
 	GrafPort& port = *get_thePort();
 	
 	port.fillPat = *pattern;
+	
+	CHECK_CUSTOM_GRAFPROC( port, rgnProc );
 	
 	StdRgn( kQDGrafVerbFill, rgn );
 }

@@ -20,6 +20,7 @@
 #include "scoped_zone.hh"
 
 // ams-qd
+#include "GrafProcs.hh"
 #include "Pen.hh"
 #include "Regions.hh"
 
@@ -240,21 +241,37 @@ pascal void StdPoly_patch( signed char verb, PolyHandle poly )
 
 pascal void FramePoly_patch( PolyHandle poly )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, polyProc );
+	
 	StdPoly( kQDGrafVerbFrame, poly );
 }
 
 pascal void PaintPoly_patch( PolyHandle poly )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, polyProc );
+	
 	StdPoly( kQDGrafVerbPaint, poly );
 }
 
 pascal void ErasePoly_patch( PolyHandle poly )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, polyProc );
+	
 	StdPoly( kQDGrafVerbErase, poly );
 }
 
 pascal void InvertPoly_patch( PolyHandle poly )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, polyProc );
+	
 	StdPoly( kQDGrafVerbInvert, poly );
 }
 
@@ -263,6 +280,8 @@ pascal void FillPoly_patch( PolyHandle poly, const Pattern* pattern )
 	GrafPort& port = *get_thePort();
 	
 	port.fillPat = *pattern;
+	
+	CHECK_CUSTOM_GRAFPROC( port, polyProc );
 	
 	StdPoly( kQDGrafVerbFill, poly );
 }

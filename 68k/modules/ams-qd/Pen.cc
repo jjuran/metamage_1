@@ -21,6 +21,7 @@
 
 // ams-qd
 #include "antislope.hh"
+#include "GrafProcs.hh"
 #include "Polygons.hh"
 #include "Regions.hh"
 
@@ -584,6 +585,8 @@ pascal void Move_patch( short dh, short dv )
 pascal void LineTo_patch( short h, short v )
 {
 	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, lineProc );
 	
 	StdLine( *(const Point*) &v );
 	

@@ -22,6 +22,7 @@
 #include "QDGlobals.hh"
 
 // ams-qd
+#include "GrafProcs.hh"
 #include "Picture-bits.hh"
 #include "Pictures-common.hh"
 
@@ -36,6 +37,8 @@ typedef Byte Op;
 pascal PicHandle OpenPicture_patch( const Rect* frame )
 {
 	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, putPicProc );
 	
 	enum { initial_size = 12 };
 	
@@ -331,6 +334,8 @@ const Byte* do_opcode( const Byte* p )
 		
 		case 0xA0:  // short comment
 		case 0xA1:  // long comment
+			CHECK_CUSTOM_GRAFPROC( port, commentProc );
+			
 			p += 2;
 			
 			if ( opcode == 0xA0 )
@@ -547,6 +552,8 @@ pascal void KillPicture_patch( PicHandle picture )
 pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 {
 	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, getPicProc );
 	
 	Size size = mac::glue::GetHandleSize_raw( (Handle) pic );
 	

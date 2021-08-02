@@ -12,6 +12,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "GrafProcs.hh"
 #include "QDGlobals.hh"
 #include "scoped_zone.hh"
 #include "utility_region.hh"
@@ -57,6 +58,8 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
 		
 		SetPortBits( dstBits );
 	}
+	
+	CHECK_CUSTOM_GRAFPROC( *saved_port, bitsProc );
 	
 	StdBits( srcBits, srcRect, dstRect, mode, maskRgn );
 	

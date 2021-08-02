@@ -15,6 +15,7 @@
 #include "scoped_zone.hh"
 
 // ams-qd
+#include "GrafProcs.hh"
 #include "OvalRgn.hh"
 #include "Polygons.hh"
 #include "Regions.hh"
@@ -284,21 +285,37 @@ pascal void StdArc_patch( SInt8 verb, const Rect* r, short start, short extent )
 
 pascal void EraseArc_patch( const Rect* rect, short start, short extent )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, arcProc );
+	
 	StdArc( kQDGrafVerbErase, rect, start, extent );
 }
 
 pascal void PaintArc_patch( const Rect* rect, short start, short extent )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, arcProc );
+	
 	StdArc( kQDGrafVerbPaint, rect, start, extent );
 }
 
 pascal void InvertArc_patch( const Rect* rect, short start, short extent )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, arcProc );
+	
 	StdArc( kQDGrafVerbInvert, rect, start, extent );
 }
 
 pascal void FrameArc_patch( const Rect* rect, short start, short extent )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, arcProc );
+	
 	StdArc( kQDGrafVerbFrame, rect, start, extent );
 }
 
@@ -310,6 +327,8 @@ pascal void FillArc_patch( const Rect*     rect,
 	GrafPort& port = *get_thePort();
 	
 	port.fillPat = *pattern;
+	
+	CHECK_CUSTOM_GRAFPROC( port, arcProc );
 	
 	StdArc( kQDGrafVerbFill, rect, start, extent );
 }

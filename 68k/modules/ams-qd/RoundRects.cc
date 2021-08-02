@@ -15,6 +15,7 @@
 #include "scoped_zone.hh"
 
 // ams-qd
+#include "GrafProcs.hh"
 #include "Regions.hh"
 #include "RoundRectRgn.hh"
 
@@ -81,6 +82,10 @@ pascal void EraseRoundRect_patch( const Rect*  rect,
                                   short        ovalWidth,
                                   short        ovalHeight )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, rRectProc );
+	
 	StdRRect( kQDGrafVerbErase, rect, ovalWidth, ovalHeight );
 }
 
@@ -88,6 +93,10 @@ pascal void PaintRoundRect_patch( const Rect*  rect,
                                   short        ovalWidth,
                                   short        ovalHeight )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, rRectProc );
+	
 	StdRRect( kQDGrafVerbPaint, rect, ovalWidth, ovalHeight );
 }
 
@@ -95,6 +104,10 @@ pascal void InverRoundRect_patch( const Rect*  rect,
                                   short        ovalWidth,
                                   short        ovalHeight )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, rRectProc );
+	
 	StdRRect( kQDGrafVerbInvert, rect, ovalWidth, ovalHeight );
 }
 
@@ -102,6 +115,10 @@ pascal void FrameRoundRect_patch( const Rect*  rect,
                                   short        ovalWidth,
                                   short        ovalHeight )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, rRectProc );
+	
 	StdRRect( kQDGrafVerbFrame, rect, ovalWidth, ovalHeight );
 }
 
@@ -113,6 +130,8 @@ pascal void FillRoundRect_patch( const Rect*     rect,
 	GrafPort& port = *get_thePort();
 	
 	port.fillPat = *pattern;
+	
+	CHECK_CUSTOM_GRAFPROC( port, rRectProc );
 	
 	StdRRect( kQDGrafVerbFill, rect, ovalWidth, ovalHeight );
 }

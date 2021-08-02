@@ -26,6 +26,7 @@
 // ams-qd
 #include "color.hh"
 #include "draw.hh"
+#include "GrafProcs.hh"
 #include "Regions.hh"
 #include "segments_box.hh"
 
@@ -417,21 +418,37 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 
 pascal void EraseRect_patch( const Rect* rect )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, rectProc );
+	
 	StdRect( kQDGrafVerbErase, rect );
 }
 
 pascal void PaintRect_patch( const Rect* rect )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, rectProc );
+	
 	StdRect( kQDGrafVerbPaint, rect );
 }
 
 pascal void InverRect_patch( const Rect* rect )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, rectProc );
+	
 	StdRect( kQDGrafVerbInvert, rect );
 }
 
 pascal void FrameRect_patch( const Rect* rect )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, rectProc );
+	
 	StdRect( kQDGrafVerbFrame, rect );
 }
 
@@ -440,6 +457,8 @@ pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
 	GrafPort& port = *get_thePort();
 	
 	port.fillPat = *pattern;
+	
+	CHECK_CUSTOM_GRAFPROC( port, rectProc );
 	
 	StdRect( kQDGrafVerbFill, rect );
 }

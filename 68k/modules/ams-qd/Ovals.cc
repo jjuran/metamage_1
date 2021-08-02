@@ -15,6 +15,7 @@
 #include "scoped_zone.hh"
 
 // ams-qd
+#include "GrafProcs.hh"
 #include "OvalRgn.hh"
 #include "Regions.hh"
 
@@ -76,21 +77,37 @@ pascal void StdOval_patch( signed char verb, const Rect* r )
 
 pascal void EraseOval_patch( const Rect* rect )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, ovalProc );
+	
 	StdOval( kQDGrafVerbErase, rect );
 }
 
 pascal void PaintOval_patch( const Rect* rect )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, ovalProc );
+	
 	StdOval( kQDGrafVerbPaint, rect );
 }
 
 pascal void InvertOval_patch( const Rect* rect )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, ovalProc );
+	
 	StdOval( kQDGrafVerbInvert, rect );
 }
 
 pascal void FrameOval_patch( const Rect* rect )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, ovalProc );
+	
 	StdOval( kQDGrafVerbFrame, rect );
 }
 
@@ -99,6 +116,8 @@ pascal void FillOval_patch( const Rect* rect, const Pattern* pattern )
 	GrafPort& port = *get_thePort();
 	
 	port.fillPat = *pattern;
+	
+	CHECK_CUSTOM_GRAFPROC( port, ovalProc );
 	
 	StdOval( kQDGrafVerbFill, rect );
 }

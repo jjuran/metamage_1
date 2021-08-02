@@ -21,6 +21,9 @@
 #include "QDGlobals.hh"
 #include "redraw_lock.hh"
 
+// ams-qd
+#include "GrafProcs.hh"
+
 
 #pragma exceptions off
 
@@ -77,6 +80,10 @@ pascal void DrawString_patch( const unsigned char* s )
 
 pascal void DrawText_patch( const char* buffer, short offset, short n )
 {
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, textProc );
+	
 	StdText( n, buffer + offset, OneOne, OneOne );
 }
 
@@ -96,6 +103,10 @@ pascal short TextWidth_patch( const char* buffer, short offset, short n )
 	Point denom = OneOne;
 	
 	FontInfo info;
+	
+	GrafPort& port = *get_thePort();
+	
+	CHECK_CUSTOM_GRAFPROC( port, txMeasProc );
 	
 	return StdTxMeas( n, buffer + offset, &numer, &denom, &info );
 }
