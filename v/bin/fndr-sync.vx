@@ -10,7 +10,7 @@ def converted (path)
 	}
 	catch {}
 	
-	return AEDesc(path).to('furl').to('fss ')
+	return AEDesc FSSpec?? path  # FSSpec is 32-bit only.
 }
 
 var event = AECreateAppleEvent( 'fndr', 'fupd', AEDesc( sign: 'MACS' ) )
