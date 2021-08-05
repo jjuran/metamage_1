@@ -17,6 +17,9 @@
 #ifndef __AEDATAMODEL__
 #include <AEDataModel.h>
 #endif
+#ifndef __FILES__
+#include <Files.h>
+#endif
 
 // chars
 #include "charsets/ascii.hh"
@@ -37,6 +40,9 @@
 #include "vlib/types/record.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/table.hh"
+
+// varyx-mac
+#include "varyx/mac/FSSpec.hh"
 
 
 #if UNIVERSAL_INTERFACES_VERSION < 0x0400
@@ -295,6 +301,19 @@ AEDesc coerce_to_AEDesc( const Value& v )
 	{
 		type = typeNull;
 	}
+	
+#if ! __LP64__
+	
+	if ( const FSSpec* fsspec = v.is< FSSpec >() )
+	{
+		const ::FSSpec& spec = fsspec->get();
+		
+		type = typeFSS;
+		data = &spec;
+		size = sizeof spec;
+	}
+	
+#endif
 	
 	if ( type == 0 )
 	{
