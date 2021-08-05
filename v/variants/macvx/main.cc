@@ -40,6 +40,7 @@
 #include "varyx/mac/AEPrint.hh"
 #include "varyx/mac/AESend.hh"
 #include "varyx/mac/Delay.hh"
+#include "varyx/mac/FSSpec.hh"
 #include "varyx/mac/PackBits.hh"
 #include "varyx/mac/Sound.hh"
 #include "varyx/mac/Timer.hh"
@@ -175,6 +176,8 @@ int main( int argc, char** argv )
 	define( proc_Microseconds );
 	
 #if ! __LP64__
+	
+	define( FSSpec_vtype  );
 	
 	define( proc_PackBits );
 	define( proc_SysBeep );
