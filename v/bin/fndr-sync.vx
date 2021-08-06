@@ -1,12 +1,21 @@
 #!/usr/bin/env macvx
 
-const desiredType = ['fss ', 'alis'][ size_t.size div 8 ]
-
 const path = argv[ 1 ]
+
+def converted (path)
+{
+	try
+	{
+		return AEDesc(path).to('fsrf')
+	}
+	catch {}
+	
+	return AEDesc(path).to('furl').to('fss ')
+}
 
 var event = AECreateAppleEvent( 'fndr', 'fupd', AEDesc( sign: 'MACS' ) )
 
-event <-- '----': AEDesc(path).to('furl').to(desiredType)
+event <-- '----': converted path
 
 try
 {
