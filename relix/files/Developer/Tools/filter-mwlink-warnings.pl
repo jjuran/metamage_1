@@ -67,6 +67,7 @@ qw
 (
 	Abort.cc
 	Genie/Abort.cc.cpp
+	:Genie/Abort.cc
 	OTInetMailExchange.cc
 	OTInetMailExchange.cc.cpp
 	dlmalloc.c
