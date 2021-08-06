@@ -113,6 +113,7 @@
 #include "Genie/Kernel/native_syscalls.hh"
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/Utilities/AsyncIO.hh"
+#include "Genie/Utilities/FinderSync.hh"
 #include "Genie/Utilities/OpenDataFork.hh"
 
 
@@ -952,6 +953,11 @@ namespace Genie
 			fInfo.fdType = type;
 			
 			err = FSpSetFInfo( &extra.fsspec, &fInfo );
+			
+			if ( err == noErr )
+			{
+				send_Finder_sync_event( extra.fsspec );
+			}
 		}
 	}
 	
