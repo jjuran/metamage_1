@@ -31,14 +31,24 @@ unsigned char encode_cell_index( unsigned i )
 	return code;
 }
 
+static inline
+unsigned decode_cell_index( unsigned char code )
+{
+	return ((code & 0xF) - 1) * 3 + (code >> 4) - 0xa;
+}
+
 struct Ledger
 {
 	unsigned short count;
 	unsigned char  entries[ n_squares + 1 ];  // includes a zero terminator
 	
+	unsigned short size() const  { return count; }
+	
 	void reset();
 	
 	void enter( unsigned char entry );
+	
+	unsigned char pop();
 };
 
 void Ledger::reset()
@@ -57,6 +67,20 @@ void Ledger::enter( unsigned char entry )
 	}
 	
 	entries[ count++ ] = entry;
+}
+
+unsigned char Ledger::pop()
+{
+	if ( count == 0 )
+	{
+		return 0;
+	}
+	
+	unsigned char last = entries[ --count ];
+	
+	entries[ count ] = 0;
+	
+	return last;
 }
 
 static Ledger ledger;
@@ -85,6 +109,11 @@ player_t get( unsigned i )
 bool can_move( unsigned i )
 {
 	return i < n_squares  &&  squares[ i ] == 0;
+}
+
+bool can_undo()
+{
+	return ledger.size();
 }
 
 static
@@ -123,6 +152,20 @@ move_t move( player_t player, unsigned i )
 	squares[ i ] = player;
 	
 	return move_t( won() );
+}
+
+int undo_move()
+{
+	if ( unsigned char code = ledger.pop() )
+	{
+		unsigned i = decode_cell_index( code );
+		
+		squares[ i ] = Player_none;
+		
+		return i;
+	}
+	
+	return -1;
 }
 
 void reset()

@@ -35,8 +35,11 @@ const unsigned n_squares = 9;
 player_t get( unsigned i );
 
 bool can_move( unsigned i );
+bool can_undo();
 
 move_t move( player_t player, unsigned i );
+
+int undo_move();
 
 void reset();
 
