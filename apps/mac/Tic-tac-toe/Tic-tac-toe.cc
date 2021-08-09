@@ -105,6 +105,7 @@ static bool sound_enabled;
 static bool is_fullscreen;
 
 static player_t current_player = tictactoe::Player_X;
+static player_t winning_player = tictactoe::Player_none;
 
 static inline
 short min( short a, short b )
@@ -424,7 +425,7 @@ void play_tone( UInt16 swCount )
 static
 void click( Point where )
 {
-	if ( ! current_player )
+	if ( winning_player )
 	{
 		return;
 	}
@@ -457,14 +458,12 @@ void click( Point where )
 		play_tone( tone );
 	}
 	
-	if ( result == Move_ok )
+	if ( result > Move_ok )
 	{
-		current_player = opponent( current_player );
+		winning_player = current_player;
 	}
-	else if ( result > Move_ok )
-	{
-		current_player = Player_none;
-	}
+	
+	current_player = opponent( current_player );
 }
 
 static
@@ -692,7 +691,7 @@ RgnHandle mouse_moved( Point where )
 	
 	const Cursor* cursor;
 	
-	if ( current_player  &&  tictactoe::can_move( i ) )
+	if ( ! winning_player  &&  tictactoe::can_move( i ) )
 	{
 		cursor = current_player > 0 ? &X_cursor : &O_cursor;
 	}
