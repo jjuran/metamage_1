@@ -77,6 +77,23 @@ const bool apple_events_present =
 		(CONFIG_APPLE_EVENTS_GRANTED  ||
 			mac::sys::gestalt( 'evnt' ) != 0);
 
+enum
+{
+	Apple_menu_items = 0,
+	About,
+	
+	File_menu_items = 0,
+	NewGame,
+	Open,
+	Close,
+	File_divider_item_4,
+	Quit,
+	
+	Options_menu_items = 0,
+	Sound,
+	Fullscreen,
+};
+
 static bool sound_enabled;
 static bool is_fullscreen;
 
@@ -577,7 +594,7 @@ void menu_item_chosen( long choice )
 	switch ( menu )
 	{
 		case 1:  // (Apple)
-			if ( item == 1 )
+			if ( item == About )
 			{
 				// About...
 			}
@@ -590,7 +607,7 @@ void menu_item_chosen( long choice )
 		case 2:  // File
 			switch ( item )
 			{
-				case 1:  // New Game
+				case NewGame:
 					if ( is_fullscreen )
 					{
 						HiliteMenu( 0 );
@@ -599,17 +616,18 @@ void menu_item_chosen( long choice )
 					reset();
 					break;
 				
-				case 2:  // Open
+				case Open:
 					break;
 				
-				case 3:  // Close
+				case Close:
 					if ( CONFIG_DAs  &&  mac::app::close_front_DA() )
 					{
 						break;
 					}
+					// fall through
 				
-				case 4:  // -
-				case 5:  // Quit
+				case File_divider_item_4:
+				case Quit:
 					mac::app::quitting = true;
 					break;
 				
@@ -623,13 +641,13 @@ void menu_item_chosen( long choice )
 		case 4:  // Options
 			switch ( item )
 			{
-				case 1:  // Sound
+				case Sound:
 					sound_enabled = ! sound_enabled;
 					
 					CheckMenuItem( GetMenuHandle( menu ), item, sound_enabled );
 					break;
 				
-				case 2:  // Full screen
+				case Fullscreen:
 					HiliteMenu( 0 );
 					
 					is_fullscreen = ! is_fullscreen;
@@ -697,7 +715,6 @@ static
 void set_up_Options_menu()
 {
 	MenuRef Options = GetMenuHandle( 4 );
-	short   Sound   = 1;
 	
 #if ! TARGET_API_MAC_CARBON
 	
@@ -858,7 +875,6 @@ int main()
 						leave_fullscreen();
 						
 						MenuRef Options    = GetMenuHandle( 4 );
-						short   Fullscreen = 2;
 						
 						CheckMenuItem( Options, Fullscreen, false );
 					}
