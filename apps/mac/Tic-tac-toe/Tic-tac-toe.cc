@@ -79,6 +79,11 @@ const bool apple_events_present =
 
 enum
 {
+	Apple = 1,
+	File,
+	Edit,
+	Options,
+	
 	Apple_menu_items = 0,
 	About,
 	
@@ -93,6 +98,8 @@ enum
 	Sound,
 	Fullscreen,
 };
+
+static MenuRef Options_menu;
 
 static bool sound_enabled;
 static bool is_fullscreen;
@@ -593,7 +600,7 @@ void menu_item_chosen( long choice )
 	
 	switch ( menu )
 	{
-		case 1:  // (Apple)
+		case Apple:
 			if ( item == About )
 			{
 				// About...
@@ -604,7 +611,7 @@ void menu_item_chosen( long choice )
 			}
 			break;
 		
-		case 2:  // File
+		case File:
 			switch ( item )
 			{
 				case NewGame:
@@ -635,10 +642,10 @@ void menu_item_chosen( long choice )
 					break;
 			}
 		
-		case 3:  // Edit
+		case Edit:
 			break;
 		
-		case 4:  // Options
+		case Options:
 			switch ( item )
 			{
 				case Sound:
@@ -714,22 +721,20 @@ const UInt8 SdEnable = 0;
 static
 void set_up_Options_menu()
 {
-	MenuRef Options = GetMenuHandle( 4 );
-	
 #if ! TARGET_API_MAC_CARBON
 	
 	if ( SdVolume > 0 )
 	{
 		sound_enabled = true;
 		
-		CheckMenuItem( Options, Sound, sound_enabled );
+		CheckMenuItem( Options_menu, Sound, sound_enabled );
 	}
 	else if ( ! SdEnable )
 	
 #endif
 	
 	{
-		mac::ui::disable_menu_item( Options, Sound );
+		mac::ui::disable_menu_item( Options_menu, Sound );
 	}
 }
 
@@ -771,6 +776,8 @@ int main()
 	
 	mac::app::init_toolbox();
 	mac::app::install_menus();
+	
+	Options_menu = GetMenuHandle( 4 );
 	
 	set_up_Options_menu();
 	
@@ -874,9 +881,7 @@ int main()
 						
 						leave_fullscreen();
 						
-						MenuRef Options    = GetMenuHandle( 4 );
-						
-						CheckMenuItem( Options, Fullscreen, false );
+						CheckMenuItem( Options_menu, Fullscreen, false );
 					}
 					
 					break;
