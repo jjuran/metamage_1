@@ -28,9 +28,6 @@
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/trap_available.hh"
 
-// mac-snd-utils
-#include "mac_snd/playback.hh"
-
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/main_display_bounds.hh"
@@ -53,6 +50,7 @@
 #include "fullscreen_port.hh"
 #include "fullscreen_QT.hh"
 #include "menus.hh"
+#include "play_tone.hh"
 #include "regions.hh"
 #include "state.hh"
 
@@ -369,33 +367,6 @@ short hit_test( Point where )
 	}
 	
 	return y / 9 * 3 + x / 9;
-}
-
-static
-void play_tone( UInt16 swCount )
-{
-	const UInt16 n_notes = 1;
-	
-	UInt16 buffer[ 1 + 3 * (n_notes + 1) ];
-	
-	UInt16* p = buffer;
-	
-	*p++ = (UInt16) swMode;
-	
-	const UInt16 amplitude = 255;  // 0 - 255
-	const UInt16 duration  =   6;  // 0 - 65535
-	
-	*p++ = swCount;
-	*p++ = amplitude;
-	*p++ = duration;
-	
-	*p++ = 0;
-	*p++ = 0;
-	*p++ = 0;
-	
-	const SWSynthRec& rec = *(SWSynthRec*) buffer;
-	
-	mac::snd::play( rec, sizeof buffer );
 }
 
 static
