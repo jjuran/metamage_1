@@ -705,7 +705,7 @@ void menu_item_chosen( long choice )
 				case Sound:
 					sound_enabled = ! sound_enabled;
 					
-					CheckMenuItem( GetMenuHandle( menu ), item, sound_enabled );
+					CheckMenuItem( Options_menu, item, sound_enabled );
 					break;
 				
 				case Fullscreen:
@@ -722,7 +722,7 @@ void menu_item_chosen( long choice )
 						leave_fullscreen();
 					}
 					
-					CheckMenuItem( GetMenuHandle( menu ), item, is_fullscreen );
+					CheckMenuItem( Options_menu, item, is_fullscreen );
 					break;
 				
 				default:
