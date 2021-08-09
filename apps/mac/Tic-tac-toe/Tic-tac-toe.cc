@@ -555,14 +555,12 @@ void reset()
 		mouseRgns[ i ] = allocRgns[ i ];
 	}
 	
-	Point mouse;
-	GetMouse( &mouse );
+	/*
+		Elicit a mouse-moved event to change the cursor if it's in a live
+		square (outside of the dead zone).
+	*/
 	
-	short i = hit_test( mouse );
-	
-	SetCursor( i + 1 ? &X_cursor : &mac::qd::arrow() );
-	
-	gMouseRgn = mouseRgns[ i + 1 ];
+	gMouseRgn = otherRgn;
 	
 	draw_window( GetPort_window() );
 }
