@@ -46,6 +46,7 @@
 
 // Tic-tac-toe
 #include "cursors.hh"
+#include "dock_tile.hh"
 #include "fullscreen.hh"
 #include "fullscreen_port.hh"
 #include "fullscreen_QT.hh"
@@ -223,31 +224,7 @@ void propagate_to_dock_tile()
 		return;
 	}
 	
-	GrafPtr  gameboard_port = GetPort();
-	CGrafPtr dock_tile_port = BeginQDContextForApplicationDockTile();
-	
-	Rect src_rect, dst_rect;
-	
-	src_rect.top  = margin.v;
-	src_rect.left = margin.h;
-	src_rect.bottom = margin.v + unitLength * 32;
-	src_rect.right  = margin.h + unitLength * 32;
-	
-	GetPortBounds( dock_tile_port, &dst_rect );
-	
-	CopyBits( GetPortBitMapForCopyBits( gameboard_port ),
-	          GetPortBitMapForCopyBits( dock_tile_port ),
-	          &src_rect,
-	          &dst_rect,
-	          srcCopy,
-	          NULL );
-	
-	// This is needed in 10.2 and 10.4 PPC, not in 10.5 x86
-	QDFlushPortBuffer( dock_tile_port, NULL );
-	
-	EndQDContextForApplicationDockTile( dock_tile_port );
-	
-	SetPort( gameboard_port );
+	propagate_to_dock_tile( unitLength, margin );
 	
 #endif
 }
