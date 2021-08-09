@@ -37,6 +37,9 @@
 #include "mac_qd/wide_drag_area.hh"
 #include "mac_qd/globals/arrow.hh"
 
+// mac-ui-utils
+#include "mac_ui/menus.hh"
+
 // mac-app-utils
 #include "mac_app/DAs.hh"
 #include "mac_app/event_handlers.hh"
@@ -705,15 +708,12 @@ void set_up_Options_menu()
 		CheckMenuItem( Options, Sound, sound_enabled );
 	}
 	else if ( ! SdEnable )
-	{
-		DisableItem( Options, Sound );
-	}
-	
-	return;
 	
 #endif
 	
-	DisableMenuItem( Options, Sound );
+	{
+		mac::ui::disable_menu_item( Options, Sound );
+	}
 }
 
 static inline
