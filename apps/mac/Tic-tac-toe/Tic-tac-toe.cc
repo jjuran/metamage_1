@@ -94,11 +94,15 @@ enum
 	File_divider_item_4,
 	Quit,
 	
+	Edit_menu_items = 0,
+	Undo,
+	
 	Options_menu_items = 0,
 	Sound,
 	Fullscreen,
 };
 
+static MenuRef Edit_menu;
 static MenuRef Options_menu;
 
 static bool sound_enabled;
@@ -464,6 +468,54 @@ void click( Point where )
 	}
 	
 	current_player = opponent( current_player );
+	
+	mac::ui::enable_menu_item( Edit_menu, Undo );
+}
+
+static
+void undo()
+{
+	int undone_index = tictactoe::undo_move();
+	
+	if ( undone_index < 0 )
+	{
+		return;
+	}
+	
+	int rgn_index = undone_index + 1;
+	
+	Rect bounds;
+	GetPortBounds( GetWindowPort( main_window ), &bounds );
+	
+	Point origin = {};
+	GlobalToLocal( &origin );
+	
+	SetOrigin( -origin.h, -origin.v );
+	
+	RgnHandle rgn = mouseRgns[ rgn_index ] = allocRgns[ rgn_index ];
+	
+	EraseRgn( rgn );
+	
+	SetOrigin( 0, 0 );
+	
+	propagate_to_dock_tile();
+	
+	XorRgn( otherRgn, rgn, otherRgn );
+	
+	winning_player = tictactoe::Player_none;
+	current_player = opponent( current_player );
+	
+	/*
+		Elicit a mouse-moved event to change the cursor if it's in a live
+		square (outside of the dead zone).
+	*/
+	
+	gMouseRgn = otherRgn;
+	
+	if ( ! tictactoe::can_undo() )
+	{
+		mac::ui::disable_menu_item( Edit_menu, Undo );
+	}
 }
 
 static
@@ -642,6 +694,15 @@ void menu_item_chosen( long choice )
 			}
 		
 		case Edit:
+			switch ( item )
+			{
+				case Undo:
+					undo();
+					break;
+				
+				default:
+					break;
+			}
 			break;
 		
 		case Options:
@@ -776,6 +837,7 @@ int main()
 	mac::app::init_toolbox();
 	mac::app::install_menus();
 	
+	Edit_menu    = GetMenuHandle( 3 );
 	Options_menu = GetMenuHandle( 4 );
 	
 	set_up_Options_menu();
