@@ -546,12 +546,12 @@ void calibrate_mouseRgns( short unitLength )
 			rect.left  = globalOffset.h + unitLength * (3 + 9 * j);
 			rect.right = globalOffset.h + unitLength * (3 + 9 * j + 8);
 			
+			RectRgn( allocRgns[ 1 + i3 + j ], &rect );
+			
 			RgnHandle rgn = mouseRgns[ 1 + i3 + j ];
 			
 			if ( rgn != otherRgn )
 			{
-				RectRgn( rgn, &rect );
-				
 				XorRgn( otherRgn, rgn, otherRgn );
 			}
 		}
@@ -632,6 +632,8 @@ void reset()
 	{
 		mouseRgns[ i ] = allocRgns[ i ];
 	}
+	
+	calibrate_mouseRgns( unitLength );
 	
 	/*
 		Elicit a mouse-moved event to change the cursor if it's in a live
