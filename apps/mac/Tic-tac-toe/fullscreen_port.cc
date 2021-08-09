@@ -11,9 +11,6 @@
 #endif
 
 // Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
 #ifndef __LOWMEM__
 #include <LowMem.h>
 #endif
@@ -25,9 +22,14 @@
 #if ! TARGET_API_MAC_CARBON
 
 static GrafPort fullscreen_port;
+static short saved_MBarHeight;
 
 void clobber_screen()
 {
+	saved_MBarHeight = LMGetMBarHeight();
+	
+	LMSetMBarHeight( 0 );
+	
 	if ( fullscreen_port.visRgn == NULL )
 	{
 		OpenPort( &fullscreen_port );
@@ -43,6 +45,8 @@ void clobber_screen()
 void refresh_screen()
 {
 	FillRect( &fullscreen_port.portRect, &qd.black );
+	
+	LMSetMBarHeight( saved_MBarHeight );
 	
 	DrawMenuBar();
 	
