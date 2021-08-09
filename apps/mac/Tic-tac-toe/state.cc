@@ -12,6 +12,55 @@
 namespace tictactoe
 {
 
+/*
+	Cell indices:    Coordinates:
+	
+	 0 | 1 | 2        a1 | b1 | c1
+	---+---+---      ----+----+----
+	 3 | 4 | 5        a2 | b2 | c2
+	---+---+---      ----+----+----
+	 6 | 7 | 8        a3 | b3 | c3
+*/
+
+static inline
+unsigned char encode_cell_index( unsigned i )
+{
+	unsigned char code = 0xa0 + i % 3 * 0x10
+	                   + 0x01 + i / 3 * 0x01;
+	
+	return code;
+}
+
+struct Ledger
+{
+	unsigned short count;
+	unsigned char  entries[ n_squares + 1 ];  // includes a zero terminator
+	
+	void reset();
+	
+	void enter( unsigned char entry );
+};
+
+void Ledger::reset()
+{
+	while ( count > 0 )
+	{
+		entries[ --count ] = 0;
+	}
+}
+
+void Ledger::enter( unsigned char entry )
+{
+	if ( count >= n_squares )
+	{
+		return;
+	}
+	
+	entries[ count++ ] = entry;
+}
+
+static Ledger ledger;
+
 static signed char squares[ n_squares ];
 
 static const short wins[][ 3 ] =
@@ -69,6 +118,8 @@ move_t move( player_t player, unsigned i )
 		return Move_bad;
 	}
 	
+	ledger.enter( encode_cell_index( i ) );
+	
 	squares[ i ] = player;
 	
 	return move_t( won() );
@@ -76,6 +127,8 @@ move_t move( player_t player, unsigned i )
 
 void reset()
 {
+	ledger.reset();
+	
 	for ( short i = 0;  i < n_squares;  ++i )
 	{
 		squares[ i ] = 0;
