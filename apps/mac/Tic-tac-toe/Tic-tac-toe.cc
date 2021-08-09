@@ -113,6 +113,7 @@ static const Rect grow_size =
 	32767, 32767,
 };
 
+static RgnHandle allocRgns[ 10 ];
 static RgnHandle mouseRgns[ 10 ];
 static RgnHandle otherRgn;
 static RgnHandle gMouseRgn;
@@ -122,6 +123,7 @@ void alloc_mouseRgns()
 {
 	for ( short i = 0;  i < 10;  ++i )
 	{
+		allocRgns[ i ] =
 		mouseRgns[ i ] = NewRgn();
 	}
 	
@@ -419,8 +421,6 @@ void click( Point where )
 	
 	XorRgn( otherRgn, rgn, otherRgn );
 	
-	DisposeRgn( rgn );
-	
 	draw_token( current_player, i );
 	
 	if ( sound_enabled )
@@ -552,13 +552,8 @@ void reset()
 	
 	for ( short i = 1;  i < 10;  ++i )
 	{
-		if ( mouseRgns[ i ] == otherRgn )
-		{
-			mouseRgns[ i ] = NewRgn();
-		}
+		mouseRgns[ i ] = allocRgns[ i ];
 	}
-	
-	calibrate_mouseRgns( unitLength );
 	
 	Point mouse;
 	GetMouse( &mouse );
