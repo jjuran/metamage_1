@@ -149,7 +149,7 @@ void compiled()
 	                 : TARGET_RT_MAC_CFM   ? MOD_TYPE "CFM"
 	                 :                       MOD_TYPE "Code resource";
 	
-	printf( "%s\n", type );
+	puts( type );
 	
 	const char* arch = TARGET_CPU_68K    ? COMPILED M68K
 	                 : TARGET_CPU_PPC    ? COMPILED PPC
@@ -157,7 +157,7 @@ void compiled()
 	                 : TARGET_CPU_X86_64 ? COMPILED X86_64
 	                 :                     COMPILED WHAT;
 	
-	printf( "%s\n", arch );
+	puts( arch );
 }
 
 static const char* clock_speed_unit_prefixes[] =
@@ -301,7 +301,7 @@ void host_env()
 		const uint32_t mclk = gestalt( 'mclk' );
 		const uint32_t bclm = gestalt( 'bclm' );
 		
-		printf( "\n" );
+		puts( "" );
 		print_clock_speed( "CPU", mclk ? mclk : pclk, mclk ? 2 : 0 );
 		print_clock_speed( "Bus", bclm ? bclm : bclk, bclm ? 2 : 0 );
 	}
@@ -317,7 +317,7 @@ void host_env()
 			c[ 0 ] = '\0';
 		}
 		
-		printf( "\n" );
+		puts( "" );
 		printf( "Host operating system:  %s %s.%s%s%s\n", os_name, a, b, o, c );
 	}
 	
@@ -329,19 +329,19 @@ void host_env()
 	}
 	else if ( os & (1 << 19) )
 	{
-		printf( "%s\n", "Application switching:  Process Manager (native)" );
+		puts( "Application switching:  Process Manager (native)" );
 	}
 	else if ( os & (1 << 3) )
 	{
-		printf( "%s\n", "Application switching:  Process Manager" );
+		puts( "Application switching:  Process Manager" );
 	}
 	else if ( os & (1 << 1) )
 	{
-		printf( "%s\n", "Application switching:  MultiFinder" );
+		puts( "Application switching:  MultiFinder" );
 	}
 	else
 	{
-		printf( "%s\n", "Application switching:  none" );
+		puts( "Application switching:  none" );
 	}
 	
 	if ( ! TARGET_CPU_68K )
@@ -350,11 +350,11 @@ void host_env()
 	}
 	else if ( gestalt( 'thds' ) )
 	{
-		printf( "%s\n", "Cooperative threading:  Thread Manager" );
+		puts( "Cooperative threading:  Thread Manager" );
 	}
 	else
 	{
-		printf( "%s\n", "Cooperative threading:  Metamage threads" );
+		puts( "Cooperative threading:  Metamage threads" );
 	}
 	
 	const uint32_t gestaltOpenTptTCPPresentMask = 0x00000010;
