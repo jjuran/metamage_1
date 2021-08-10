@@ -160,10 +160,8 @@ static short unitLength;
 static Point margin;
 
 static
-void calculate_window_metrics( WindowRef window )
+void calculate_window_metrics( const Rect& portRect )
 {
-	const Rect& portRect = get_portRect( window );
-	
 	const short portWidth  = portRect.right - portRect.left;
 	const short portHeight = portRect.bottom - portRect.top;
 	
@@ -474,7 +472,7 @@ void calibrate_mouseRgns( short unitLength )
 static
 void window_size_changed( WindowRef window )
 {
-	calculate_window_metrics( window );
+	calculate_window_metrics( get_portRect( window ) );
 	
 	calculate_token_regions( unitLength );
 	
