@@ -104,7 +104,7 @@ bool can_undo()
 }
 
 static
-bool won()
+bool won( signed char squares[] )
 {
 	const short* p = *wins;
 	
@@ -138,7 +138,7 @@ move_t move( player_t player, unsigned i )
 	
 	squares[ i ] = player;
 	
-	return move_t( won() );
+	return move_t( won( squares ) );
 }
 
 int undo_move()
