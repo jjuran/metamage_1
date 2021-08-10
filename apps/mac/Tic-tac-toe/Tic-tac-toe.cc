@@ -343,11 +343,11 @@ short hit_test( Point where )
 }
 
 static
-void click( Point where )
+RgnHandle click( Point where, bool sound_enabled )
 {
 	if ( winning_player )
 	{
-		return;
+		return NULL;
 	}
 	
 	using namespace tictactoe;
@@ -358,20 +358,18 @@ void click( Point where )
 	
 	if ( result < Move_ok )
 	{
-		return;
+		return NULL;
 	}
 	
 	SetCursor( &mac::qd::arrow() );
 	
 	RgnHandle rgn = mouseRgns[ 1 + i ];
 	
-	gMouseRgn = mouseRgns[ 1 + i ] = otherRgn;
+	mouseRgns[ 1 + i ] = otherRgn;
 	
 	XorRgn( otherRgn, rgn, otherRgn );
 	
 	draw_token( current_player, i );
-	
-	propagate_to_dock_tile();
 	
 	if ( sound_enabled )
 	{
@@ -387,7 +385,20 @@ void click( Point where )
 	
 	current_player = opponent( current_player );
 	
-	mac::ui::enable_menu_item( Edit_menu, Undo );
+	return otherRgn;
+}
+
+static
+void click( Point where )
+{
+	if ( RgnHandle rgn = click( where, sound_enabled ) )
+	{
+		gMouseRgn = rgn;
+		
+		propagate_to_dock_tile();
+		
+		mac::ui::enable_menu_item( Edit_menu, Undo );
+	}
 }
 
 static
