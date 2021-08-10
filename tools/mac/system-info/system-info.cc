@@ -385,6 +385,10 @@ void host_env()
 		
 		printf( "%s%d.%d%s\n", text, major, minor, dot );
 	}
+	else if ( gestalt_defined( 'mtcp' ) )
+	{
+		puts( "TCP/IP protocol stack:  MacTCP (not yet supported)" );
+	}
 	
 	const uint32_t mmu = gestalt( 'mmu ' );
 	
