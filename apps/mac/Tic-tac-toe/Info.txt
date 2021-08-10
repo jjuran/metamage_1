@@ -3,3 +3,14 @@ CFBundleIconFile:    "Tic-tac-toe.icns"
 CFBundleName:        "Tic-tac-toe"
 CFBundlePackageType: 'APPL'
 CFBundleSignature:   'XvO#'
+CFBundleDocumentTypes:
+[
+	[
+		CFBundleTypeName:        "Tic-tac-toe saved game"
+		CFBundleTypeIconFile:    "Tic-tac-toe saved game.icns"
+		CFBundleTypeExtensions:  [ "tic-tac-toe" ]
+		CFBundleTypeOSTypes:     [ 'XvO#' ]
+		CFBundleTypeRole:        "Editor"
+	]
+]
+NSHighResolutionCapable: true
