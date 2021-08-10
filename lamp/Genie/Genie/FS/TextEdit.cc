@@ -89,7 +89,7 @@ namespace Genie
 		itsTextDimensions( N::SetPt( 0, 0 ) ),
 		itsValidLength(),
 		itHasChangedAttributes(),
-		itIsAtBottom(),
+		itIsAtBottom( true ),
 		itIsInterlocked(),
 		itIsActive(),
 		itIsSecret(),
