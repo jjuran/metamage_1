@@ -498,6 +498,16 @@ WindowRef GetPort_window()
 }
 
 static
+void invalidate_window_size( WindowRef window )
+{
+	const Rect& portRect = get_portRect( window );
+	
+	InvalRect( window, portRect );
+	
+	window_size_changed( portRect );
+}
+
+static
 void enter_fullscreen()
 {
 	fullscreen::enter();
@@ -517,9 +527,7 @@ void leave_fullscreen()
 {
 	fullscreen::leave();
 	
-	InvalRect( main_window, get_portRect( main_window ) );
-	
-	window_size_changed( main_window );
+	invalidate_window_size( main_window );
 }
 
 static
@@ -829,9 +837,7 @@ int main()
 							{
 								SizeWindow( window, grew, grew >> 16, true );
 								
-								InvalRect( window, get_portRect( window ) );
-								
-								window_size_changed( window );
+								invalidate_window_size( window );
 							}
 							break;
 						
