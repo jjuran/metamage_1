@@ -483,9 +483,6 @@ void undo()
 	
 	int rgn_index = undone_index + 1;
 	
-	Rect bounds;
-	GetPortBounds( GetWindowPort( main_window ), &bounds );
-	
 	Point origin = {};
 	GlobalToLocal( &origin );
 	
