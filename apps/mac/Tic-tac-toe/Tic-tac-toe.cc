@@ -537,7 +537,7 @@ void cleanup_fullscreen()
 }
 
 static
-void reset()
+RgnHandle reset()
 {
 	tictactoe::reset();
 	
@@ -551,14 +551,14 @@ void reset()
 	
 	calibrate_mouseRgns( unitLength );
 	
+	draw_window( get_portRect( GetPort() ) );
+	
 	/*
 		Elicit a mouse-moved event to change the cursor if it's in a live
 		square (outside of the dead zone).
 	*/
 	
-	gMouseRgn = otherRgn;
-	
-	draw_window( get_portRect( GetPort() ) );
+	return otherRgn;
 }
 
 static
@@ -584,7 +584,8 @@ void menu_item_chosen( long choice )
 			switch ( item )
 			{
 				case NewGame:
-					reset();
+					gMouseRgn = reset();
+					
 					propagate_to_dock_tile();
 					break;
 				
