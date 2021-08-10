@@ -470,13 +470,19 @@ void calibrate_mouseRgns( short unitLength )
 }
 
 static
-void window_size_changed( WindowRef window )
+void window_size_changed( const Rect& portRect )
 {
-	calculate_window_metrics( get_portRect( window ) );
+	calculate_window_metrics( portRect );
 	
 	calculate_token_regions( unitLength );
 	
 	calibrate_mouseRgns( unitLength );
+}
+
+static
+void window_size_changed( WindowRef window )
+{
+	window_size_changed( get_portRect( window ) );
 }
 
 static inline
