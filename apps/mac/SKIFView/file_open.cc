@@ -5,16 +5,6 @@
 
 #include "file_open.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
-
-// Mac OS
-#ifndef __FILES__
-#include <Files.h>
-#endif
-
 // mac-config
 #include "mac_config/apple-events.hh"
 
@@ -22,6 +12,7 @@
 #include "mac_sys/gestalt.hh"
 
 // mac-file-utils
+#include "mac_file/file_traits.hh"
 #include "mac_file/open_data_fork.hh"
 
 // mac-app-utils
@@ -38,82 +29,10 @@
 #define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
 
 using mac::file::FSIORefNum;
+using mac::file::file_traits;
 
 static const OSType file_open_types[] = { 'SKIF', '?\?\?\?', '\0\0\0\0' };
 
-
-template < class File >
-struct file_traits;
-
-template <>
-struct file_traits< FSSpec >
-{
-	typedef FSSpec File;
-	typedef SInt32 file_size_t;
-	
-	static ConstStr255Param get_name( const File& file )
-	{
-		return file.name;
-	}
-	
-	static OSErr close( FSIORefNum refnum )
-	{
-		return FSClose( refnum );
-	}
-	
-	static Size read( FSIORefNum refnum, void* buffer, SInt32 n )
-	{
-		OSErr err = FSRead( refnum, &n, buffer );
-		
-		return err ? err : n;
-	}
-	
-	static SInt32 geteof( FSIORefNum refnum )
-	{
-		SInt32 result;
-		
-		OSErr err = GetEOF( refnum, &result );
-		
-		return err ? err : result;
-	}
-};
-
-template <>
-struct file_traits< FSRef >
-{
-	typedef FSRef  File;
-	typedef SInt64 file_size_t;
-	
-	static HFSUniStr255 get_name( const File& file )
-	{
-		HFSUniStr255 result = {};
-		
-		OSErr err = FSGetCatalogInfo( &file, 0, NULL, &result, NULL, NULL );
-		
-		return result;
-	}
-	
-	static OSErr close( FSIORefNum refnum )
-	{
-		return FSCloseFork( refnum );
-	}
-	
-	static long read( FSIORefNum refnum, void* buffer, ByteCount n )
-	{
-		OSErr err = FSReadFork( refnum, fsAtMark, 0, n, buffer, &n );
-		
-		return err ? err : n;
-	}
-	
-	static SInt64 geteof( FSIORefNum refnum )
-	{
-		SInt64 result;
-		
-		OSErr err = FSGetForkSize( refnum, &result );
-		
-		return err ? err : result;
-	}
-};
 
 template < class File >
 static
@@ -174,8 +93,6 @@ long HFS_file_opener( short vRefNum, long dirID, const Byte* name )
 	BlockMoveData( name, file.name, 1 + name[ 0 ] );
 	
 	return file_opener( file );
-	
-	return 0;
 }
 
 void open_launched_documents()
@@ -199,7 +116,6 @@ void open_launched_documents()
 	{
 		open_documents_with( &HFS_file_opener );
 	}
-	
 }
 
 void file_open()
