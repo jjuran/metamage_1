@@ -484,12 +484,6 @@ void window_size_changed( const Rect& portRect )
 }
 
 static
-void window_size_changed( WindowRef window )
-{
-	window_size_changed( get_portRect( window ) );
-}
-
-static
 void invalidate_window_size( WindowRef window )
 {
 	const Rect& portRect = get_portRect( window );
@@ -763,7 +757,7 @@ int main()
 	alloc_mouseRgns();
 	
 	make_main_window();
-	window_size_changed( main_window );
+	window_size_changed( get_portRect( main_window ) );
 	
 	const bool has_WNE = has_WaitNextEvent();
 	
