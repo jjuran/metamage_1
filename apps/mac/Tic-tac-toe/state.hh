@@ -70,6 +70,10 @@ int undo_move();
 
 void reset();
 
+const Code* extract();
+
+bool restore( const Code* data, unsigned short size );
+
 }
 
 #endif
