@@ -202,7 +202,8 @@ short hit_test( Point where )
 	return y / 9 * 3 + x / 9;
 }
 
-RgnHandle click( Point where, bool sound_enabled )
+static
+RgnHandle play( short i, bool sound_enabled )
 {
 	if ( winning_player )
 	{
@@ -210,8 +211,6 @@ RgnHandle click( Point where, bool sound_enabled )
 	}
 	
 	using namespace tictactoe;
-	
-	short i = hit_test( where );
 	
 	move_t result = move( current_player, i );
 	
@@ -245,6 +244,11 @@ RgnHandle click( Point where, bool sound_enabled )
 	current_player = opponent( current_player );
 	
 	return otherRgn;
+}
+
+RgnHandle click( Point where, bool sound_enabled )
+{
+	return play( hit_test( where ), sound_enabled );
 }
 
 RgnHandle undo()
