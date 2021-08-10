@@ -35,4 +35,6 @@ RgnHandle reset();
 
 RgnHandle mouse_moved( Point where );
 
+void reload( const unsigned char* data, unsigned short size );
+
 #endif

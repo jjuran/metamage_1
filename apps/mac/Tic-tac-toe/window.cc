@@ -16,10 +16,14 @@
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/arrow.hh"
 
+// mac-ui-utils
+#include "mac_ui/menus.hh"
+
 // Tic-tac-toe
 #include "cursors.hh"
 #include "dock_tile.hh"
 #include "fullscreen_QT.hh"
+#include "menus.hh"
 #include "play_tone.hh"
 #include "regions.hh"
 #include "state.hh"
@@ -378,4 +382,25 @@ RgnHandle mouse_moved( Point where )
 	SetCursor( cursor );
 	
 	return mouseRgns[ 1 + i ];
+}
+
+void reload( const unsigned char* data, unsigned short size )
+{
+	const bool sound_enabled = false;
+	
+	reset();
+	
+	while ( size-- > 0 )
+	{
+		unsigned i = tictactoe::decode_cell_index( *data++ );
+		
+		play( i, sound_enabled );
+	}
+	
+	propagate_to_dock_tile();
+	
+	if ( tictactoe::can_undo() )
+	{
+		mac::ui::enable_menu_item( Edit_menu, Undo );
+	}
 }
