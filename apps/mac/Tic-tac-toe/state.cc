@@ -18,20 +18,27 @@ struct Ledger
 	
 	unsigned char size() const  { return entries[ 0 ]; }
 	
-	void reset();
+	void reset( const Code* data = 0, unsigned short size = 0 );
 	
 	void enter( Code entry );
 	
 	Code pop();
 };
 
-void Ledger::reset()
+void Ledger::reset( const Code* data, unsigned short size )
 {
 	unsigned char& count = entries[ 0 ];
 	
-	while ( count > 0 )
+	while ( count > size )
 	{
 		entries[ count-- ] = 0;
+	}
+	
+	count = 0;
+	
+	while ( count < size )
+	{
+		entries[ ++count ] = *data++;
 	}
 }
 
