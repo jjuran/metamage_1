@@ -665,11 +665,6 @@ void menu_item_chosen( long choice )
 			switch ( item )
 			{
 				case NewGame:
-					if ( is_fullscreen )
-					{
-						HiliteMenu( 0 );
-					}
-					
 					reset();
 					break;
 				
