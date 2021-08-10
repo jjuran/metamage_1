@@ -38,12 +38,14 @@
 
 // mac-app-utils
 #include "mac_app/DAs.hh"
+#include "mac_app/documents.hh"
 #include "mac_app/event_handlers.hh"
 #include "mac_app/init.hh"
 #include "mac_app/menus.hh"
 #include "mac_app/state.hh"
 
 // Tic-tac-toe
+#include "file_open.hh"
 #include "fullscreen.hh"
 #include "menus.hh"
 #include "state.hh"
@@ -90,6 +92,7 @@ static const Rect grow_size =
 	32767, 32767,
 };
 
+static RgnHandle gInertRgn;
 static RgnHandle gMouseRgn;
 
 /*
@@ -250,6 +253,9 @@ void menu_item_chosen( long choice )
 					break;
 				
 				case Open:
+					InitCursor();
+					file_open();
+					gMouseRgn = gInertRgn;
 					break;
 				
 				case Close:
@@ -394,6 +400,7 @@ Boolean wait_next_event( EventRecord& event )
 
 int main()
 {
+	using mac::app::open_documents_with;
 	using mac::app::quitting;
 	
 	mac::app::init_toolbox();
@@ -407,10 +414,13 @@ int main()
 		mac::app::install_basic_event_handlers();
 	}
 	
+	gInertRgn =
 	gMouseRgn = alloc_mouseRgns();
 	
 	make_main_window();
 	window_size_changed( get_portRect( main_window ) );
+	
+	open_launched_documents();
 	
 	const bool has_WNE = has_WaitNextEvent();
 	
