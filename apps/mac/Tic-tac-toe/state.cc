@@ -12,31 +12,6 @@
 namespace tictactoe
 {
 
-/*
-	Cell indices:    Coordinates:
-	
-	 0 | 1 | 2        a1 | b1 | c1
-	---+---+---      ----+----+----
-	 3 | 4 | 5        a2 | b2 | c2
-	---+---+---      ----+----+----
-	 6 | 7 | 8        a3 | b3 | c3
-*/
-
-static inline
-unsigned char encode_cell_index( unsigned i )
-{
-	unsigned char code = 0xa0 + i % 3 * 0x10
-	                   + 0x01 + i / 3 * 0x01;
-	
-	return code;
-}
-
-static inline
-unsigned decode_cell_index( unsigned char code )
-{
-	return ((code & 0xF) - 1) * 3 + (code >> 4) - 0xa;
-}
-
 struct Ledger
 {
 	unsigned short count;
@@ -46,9 +21,9 @@ struct Ledger
 	
 	void reset();
 	
-	void enter( unsigned char entry );
+	void enter( Code entry );
 	
-	unsigned char pop();
+	Code pop();
 };
 
 void Ledger::reset()
@@ -59,7 +34,7 @@ void Ledger::reset()
 	}
 }
 
-void Ledger::enter( unsigned char entry )
+void Ledger::enter( Code entry )
 {
 	if ( count >= n_squares )
 	{
@@ -69,14 +44,14 @@ void Ledger::enter( unsigned char entry )
 	entries[ count++ ] = entry;
 }
 
-unsigned char Ledger::pop()
+Code Ledger::pop()
 {
 	if ( count == 0 )
 	{
 		return 0;
 	}
 	
-	unsigned char last = entries[ --count ];
+	Code last = entries[ --count ];
 	
 	entries[ count ] = 0;
 	
@@ -156,7 +131,7 @@ move_t move( player_t player, unsigned i )
 
 int undo_move()
 {
-	if ( unsigned char code = ledger.pop() )
+	if ( Code code = ledger.pop() )
 	{
 		unsigned i = decode_cell_index( code );
 		
