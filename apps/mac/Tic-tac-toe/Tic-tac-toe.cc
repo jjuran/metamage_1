@@ -313,8 +313,6 @@ void draw_token( player_t token, short index )
 	PaintRgn( rgn );
 	
 	SetOrigin( 0, 0 );
-	
-	propagate_to_dock_tile();
 }
 
 static
@@ -373,6 +371,8 @@ void click( Point where )
 	
 	draw_token( current_player, i );
 	
+	propagate_to_dock_tile();
+	
 	if ( sound_enabled )
 	{
 		const UInt16 tone = current_player == tictactoe::Player_X ? 629 : 1497;
@@ -413,8 +413,6 @@ void undo()
 	
 	SetOrigin( 0, 0 );
 	
-	propagate_to_dock_tile();
-	
 	XorRgn( otherRgn, rgn, otherRgn );
 	
 	winning_player = tictactoe::Player_none;
@@ -426,11 +424,6 @@ void undo()
 	*/
 	
 	gMouseRgn = otherRgn;
-	
-	if ( ! tictactoe::can_undo() )
-	{
-		mac::ui::disable_menu_item( Edit_menu, Undo );
-	}
 }
 
 static
@@ -607,6 +600,14 @@ void menu_item_chosen( long choice )
 			{
 				case Undo:
 					undo();
+					
+					propagate_to_dock_tile();
+					
+					if ( ! tictactoe::can_undo() )
+					{
+						mac::ui::disable_menu_item( Edit_menu, Undo );
+					}
+					
 					break;
 				
 				default:
