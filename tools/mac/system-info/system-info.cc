@@ -33,6 +33,10 @@
 #define TARGET_CPU_X86_64  0
 #endif
 
+#ifndef TARGET_CPU_ARM
+#define TARGET_CPU_ARM  0
+#endif
+
 
 #define PROGRAM  "system-info"
 
@@ -51,6 +55,7 @@ using mac::sys::gestalt_defined;
 #define PPC     "PowerPC"
 #define X86     "x86"
 #define X86_64  "x86_64"
+#define ARM     "ARM"
 #define WHAT    "???"
 
 #define MOD_TYPE  "Execution module type:  "
@@ -155,6 +160,7 @@ void compiled()
 	                 : TARGET_CPU_PPC    ? COMPILED PPC
 	                 : TARGET_CPU_X86    ? COMPILED X86
 	                 : TARGET_CPU_X86_64 ? COMPILED X86_64
+	                 : TARGET_CPU_ARM    ? COMPILED ARM
 	                 :                     COMPILED WHAT;
 	
 	puts( arch );
@@ -205,6 +211,7 @@ void host_env()
 	const char* arch_name = sysa <=  1 ? M68K
 	                      : sysa ==  2 ? PPC
 	                      : sysa == 10 ? X86
+	                      : sysa == 20 ? ARM
 	                      :              WHAT;
 	
 	char machine_name[ 256 ] = { 0 };
