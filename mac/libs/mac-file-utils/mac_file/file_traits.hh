@@ -23,6 +23,12 @@
 namespace mac  {
 namespace file {
 
+static inline
+bool is_read_error( OSErr err )
+{
+	return err != noErr  &&  err != eofErr;
+}
+
 template < class File >
 struct file_traits;
 
@@ -46,7 +52,7 @@ struct file_traits< FSSpec >
 	{
 		OSErr err = FSRead( refnum, &n, buffer );
 		
-		return err ? err : n;
+		return is_read_error( err ) ? err : n;
 	}
 	
 	static SInt32 geteof( FSIORefNum refnum )
@@ -83,7 +89,7 @@ struct file_traits< FSRef >
 	{
 		OSErr err = FSReadFork( refnum, fsAtMark, 0, n, buffer, &n );
 		
-		return err ? err : n;
+		return is_read_error( err ) ? err : n;
 	}
 	
 	static SInt64 geteof( FSIORefNum refnum )
