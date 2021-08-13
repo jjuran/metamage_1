@@ -55,6 +55,13 @@ struct file_traits< FSSpec >
 		return is_read_error( err ) ? err : n;
 	}
 	
+	static Size write( FSIORefNum refnum, const void* buffer, SInt32 n )
+	{
+		OSErr err = FSWrite( refnum, &n, buffer );
+		
+		return err ? err : n;
+	}
+	
 	static SInt32 geteof( FSIORefNum refnum )
 	{
 		SInt32 result;
@@ -90,6 +97,13 @@ struct file_traits< FSRef >
 		OSErr err = FSReadFork( refnum, fsAtMark, 0, n, buffer, &n );
 		
 		return is_read_error( err ) ? err : n;
+	}
+	
+	static long write( FSIORefNum refnum, const void* buffer, ByteCount n )
+	{
+		OSErr err = FSWriteFork( refnum, fsAtMark, 0, n, buffer, &n );
+		
+		return err ? err : n;
 	}
 	
 	static SInt64 geteof( FSIORefNum refnum )
