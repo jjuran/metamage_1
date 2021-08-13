@@ -46,6 +46,7 @@
 
 // Tic-tac-toe
 #include "file_open.hh"
+#include "file_save.hh"
 #include "fullscreen.hh"
 #include "menus.hh"
 #include "state.hh"
@@ -255,6 +256,13 @@ void menu_item_chosen( long choice )
 				case Open:
 					InitCursor();
 					file_open();
+					gMouseRgn = gInertRgn;
+					break;
+				
+				case Save:
+				case SaveAs:
+					InitCursor();
+					file_save();
 					gMouseRgn = gInertRgn;
 					break;
 				

@@ -30,6 +30,8 @@ enum
 	NewGame,
 	Open,
 	Close,
+	Save,
+	SaveAs,
 	File_divider_before_Quit,
 	Quit,
 	
