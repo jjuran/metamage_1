@@ -52,6 +52,7 @@
 #include "fullscreen.hh"
 #include "fullscreen_port.hh"
 #include "fullscreen_QT.hh"
+#include "menus.hh"
 #include "regions.hh"
 #include "state.hh"
 
@@ -76,34 +77,6 @@ const bool apple_events_present =
 	CONFIG_APPLE_EVENTS  &&
 		(CONFIG_APPLE_EVENTS_GRANTED  ||
 			mac::sys::gestalt( 'evnt' ) != 0);
-
-enum
-{
-	Apple = 1,
-	File,
-	Edit,
-	Options,
-	
-	Apple_menu_items = 0,
-	About,
-	
-	File_menu_items = 0,
-	NewGame,
-	Open,
-	Close,
-	File_divider_item_4,
-	Quit,
-	
-	Edit_menu_items = 0,
-	Undo,
-	
-	Options_menu_items = 0,
-	Sound,
-	Fullscreen,
-};
-
-static MenuRef Edit_menu;
-static MenuRef Options_menu;
 
 static bool sound_enabled;
 static bool is_fullscreen;
@@ -678,7 +651,6 @@ void menu_item_chosen( long choice )
 					}
 					// fall through
 				
-				case File_divider_item_4:
 				case Quit:
 					mac::app::quitting = true;
 					break;
@@ -831,9 +803,7 @@ int main()
 	mac::app::init_toolbox();
 	mac::app::install_menus();
 	
-	Edit_menu    = GetMenuHandle( 3 );
-	Options_menu = GetMenuHandle( 4 );
-	
+	set_up_menus();
 	set_up_Options_menu();
 	
 	if ( apple_events_present )
