@@ -232,8 +232,6 @@ void propagate_to_dock_tile()
 static
 void draw_window( WindowRef window )
 {
-	SetPortWindowPort( window );
-	
 	const Rect& portRect = get_portRect( window );
 	
 	EraseRect( &portRect );
@@ -861,6 +859,8 @@ int main()
 				
 				case updateEvt:
 					window = (WindowRef) event.message;
+					
+					SetPortWindowPort( window );
 					
 					BeginUpdate( window );
 					draw_window( window );
