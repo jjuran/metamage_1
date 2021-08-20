@@ -292,8 +292,6 @@ void draw_window( WindowRef window )
 	}
 	
 	SetOrigin( 0, 0 );
-	
-	propagate_to_dock_tile();
 }
 
 static
@@ -585,6 +583,7 @@ void menu_item_chosen( long choice )
 			{
 				case NewGame:
 					reset();
+					propagate_to_dock_tile();
 					break;
 				
 				case Open:
