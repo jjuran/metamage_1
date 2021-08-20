@@ -228,10 +228,8 @@ void propagate_to_dock_tile()
 }
 
 static
-void draw_window( WindowRef window )
+void draw_window( const Rect& portRect )
 {
-	const Rect& portRect = get_portRect( window );
-	
 	EraseRect( &portRect );
 	
 	SetOrigin( -margin.h, -margin.v );
@@ -290,6 +288,12 @@ void draw_window( WindowRef window )
 	}
 	
 	SetOrigin( 0, 0 );
+}
+
+static
+void draw_window( WindowRef window )
+{
+	draw_window( get_portRect( window ) );
 }
 
 static
