@@ -28,9 +28,6 @@
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/trap_available.hh"
 
-// mac-snd-utils
-#include "mac_snd/playback.hh"
-
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/main_display_bounds.hh"
@@ -49,9 +46,12 @@
 
 // Tic-tac-toe
 #include "cursors.hh"
+#include "dock_tile.hh"
 #include "fullscreen.hh"
 #include "fullscreen_port.hh"
 #include "fullscreen_QT.hh"
+#include "menus.hh"
+#include "play_tone.hh"
 #include "regions.hh"
 #include "state.hh"
 
@@ -76,34 +76,6 @@ const bool apple_events_present =
 	CONFIG_APPLE_EVENTS  &&
 		(CONFIG_APPLE_EVENTS_GRANTED  ||
 			mac::sys::gestalt( 'evnt' ) != 0);
-
-enum
-{
-	Apple = 1,
-	File,
-	Edit,
-	Options,
-	
-	Apple_menu_items = 0,
-	About,
-	
-	File_menu_items = 0,
-	NewGame,
-	Open,
-	Close,
-	File_divider_item_4,
-	Quit,
-	
-	Edit_menu_items = 0,
-	Undo,
-	
-	Options_menu_items = 0,
-	Sound,
-	Fullscreen,
-};
-
-static MenuRef Edit_menu;
-static MenuRef Options_menu;
 
 static bool sound_enabled;
 static bool is_fullscreen;
@@ -185,14 +157,11 @@ enum
 };
 
 static short unitLength;
-static short h_margin;
-static short v_margin;
+static Point margin;
 
 static
-void calculate_window_metrics( WindowRef window )
+void calculate_window_metrics( const Rect& portRect )
 {
-	const Rect& portRect = get_portRect( window );
-	
 	const short portWidth  = portRect.right - portRect.left;
 	const short portHeight = portRect.bottom - portRect.top;
 	
@@ -200,8 +169,8 @@ void calculate_window_metrics( WindowRef window )
 	
 	unitLength = portLength / 32u;
 	
-	h_margin = (portWidth  - portLength) / 2u;
-	v_margin = (portHeight - portLength) / 2u;
+	margin.v = (portHeight - portLength) / 2u;
+	margin.h = (portWidth  - portLength) / 2u;
 }
 
 static WindowRef main_window;
@@ -253,45 +222,17 @@ void propagate_to_dock_tile()
 		return;
 	}
 	
-	GrafPtr  gameboard_port = GetPort();
-	CGrafPtr dock_tile_port = BeginQDContextForApplicationDockTile();
-	
-	Rect src_rect, dst_rect;
-	
-	src_rect.top  = v_margin;
-	src_rect.left = h_margin;
-	src_rect.bottom = v_margin + unitLength * 32;
-	src_rect.right  = h_margin + unitLength * 32;
-	
-	GetPortBounds( dock_tile_port, &dst_rect );
-	
-	CopyBits( GetPortBitMapForCopyBits( gameboard_port ),
-	          GetPortBitMapForCopyBits( dock_tile_port ),
-	          &src_rect,
-	          &dst_rect,
-	          srcCopy,
-	          NULL );
-	
-	// This is needed in 10.2 and 10.4 PPC, not in 10.5 x86
-	QDFlushPortBuffer( dock_tile_port, NULL );
-	
-	EndQDContextForApplicationDockTile( dock_tile_port );
-	
-	SetPort( gameboard_port );
+	propagate_to_dock_tile( unitLength, margin );
 	
 #endif
 }
 
 static
-void draw_window( WindowRef window )
+void draw_window( const Rect& portRect )
 {
-	SetPortWindowPort( window );
-	
-	const Rect& portRect = get_portRect( window );
-	
 	EraseRect( &portRect );
 	
-	SetOrigin( -h_margin, -v_margin );
+	SetOrigin( -margin.h, -margin.v );
 	
 	Rect line;
 	
@@ -328,13 +269,13 @@ void draw_window( WindowRef window )
 	
 	for ( short i = 0, i3 = 0;  i < 3;  ++i, i3 += 3 )
 	{
-		const short top = v_margin + unitLength * (4 + 9 * i);
+		const short top = margin.v + unitLength * (4 + 9 * i);
 		
 		for ( short j = 0;  j < 3;  ++j )
 		{
 			if ( player_t token = tictactoe::get( i3 + j ) )
 			{
-				const short left = h_margin + unitLength * (4 + 9 * j);
+				const short left = margin.h + unitLength * (4 + 9 * j);
 				
 				SetOrigin( -left, -top );
 				
@@ -347,8 +288,12 @@ void draw_window( WindowRef window )
 	}
 	
 	SetOrigin( 0, 0 );
-	
-	propagate_to_dock_tile();
+}
+
+static
+void draw_window( WindowRef window )
+{
+	draw_window( get_portRect( window ) );
 }
 
 static
@@ -357,8 +302,8 @@ void draw_token( player_t token, short index )
 	const short i = index / 3;
 	const short j = index % 3;
 	
-	const short top  = v_margin + unitLength * (4 + 9 * i);
-	const short left = h_margin + unitLength * (4 + 9 * j);
+	const short top  = margin.v + unitLength * (4 + 9 * i);
+	const short left = margin.h + unitLength * (4 + 9 * j);
 	
 	SetOrigin( -left, -top );
 	
@@ -375,8 +320,8 @@ void draw_token( player_t token, short index )
 static
 short hit_test( Point where )
 {
-	where.h -= h_margin;
-	where.v -= v_margin;
+	where.v -= margin.v;
+	where.h -= margin.h;
 	
 	short x = where.h / unitLength;
 	short y = where.v / unitLength;
@@ -397,33 +342,6 @@ short hit_test( Point where )
 	}
 	
 	return y / 9 * 3 + x / 9;
-}
-
-static
-void play_tone( UInt16 swCount )
-{
-	const UInt16 n_notes = 1;
-	
-	UInt16 buffer[ 1 + 3 * (n_notes + 1) ];
-	
-	UInt16* p = buffer;
-	
-	*p++ = (UInt16) swMode;
-	
-	const UInt16 amplitude = 255;  // 0 - 255
-	const UInt16 duration  =   6;  // 0 - 65535
-	
-	*p++ = swCount;
-	*p++ = amplitude;
-	*p++ = duration;
-	
-	*p++ = 0;
-	*p++ = 0;
-	*p++ = 0;
-	
-	const SWSynthRec& rec = *(SWSynthRec*) buffer;
-	
-	mac::snd::play( rec, sizeof buffer );
 }
 
 static
@@ -484,9 +402,6 @@ void undo()
 	
 	int rgn_index = undone_index + 1;
 	
-	Rect bounds;
-	GetPortBounds( GetWindowPort( main_window ), &bounds );
-	
 	Point origin = {};
 	GlobalToLocal( &origin );
 	
@@ -528,7 +443,7 @@ void calculate_token_regions( short unitLength )
 static
 void calibrate_mouseRgns( short unitLength )
 {
-	Point globalOffset = { v_margin, h_margin };
+	Point globalOffset = margin;
 	
 	LocalToGlobal( &globalOffset );
 	
@@ -559,25 +474,23 @@ void calibrate_mouseRgns( short unitLength )
 }
 
 static
-void window_size_changed( WindowRef window )
+void window_size_changed( const Rect& portRect )
 {
-	calculate_window_metrics( window );
+	calculate_window_metrics( portRect );
 	
 	calculate_token_regions( unitLength );
 	
 	calibrate_mouseRgns( unitLength );
 }
 
-static inline
-WindowRef GetPort_window()
+static
+void invalidate_window_size( WindowRef window )
 {
-	/*
-		Return the window whose port is the current port.
-		If accessor calls are functions, the port must belong to a window.
-		Otherwise, it may be just a GrafPort.
-	*/
+	const Rect& portRect = get_portRect( window );
 	
-	return GetWindowFromPort( (CGrafPtr) GetPort() );
+	InvalRect( window, portRect );
+	
+	window_size_changed( portRect );
 }
 
 static
@@ -588,11 +501,11 @@ void enter_fullscreen()
 	ForeColor( whiteColor );
 	BackColor( blackColor );
 	
-	WindowRef window = GetPort_window();
+	const Rect& portRect = main_display_bounds();
 	
-	window_size_changed( window );
+	window_size_changed( portRect );
 	
-	draw_window( window );
+	draw_window( portRect );
 }
 
 static
@@ -600,9 +513,7 @@ void leave_fullscreen()
 {
 	fullscreen::leave();
 	
-	InvalRect( main_window, get_portRect( main_window ) );
-	
-	window_size_changed( main_window );
+	invalidate_window_size( main_window );
 }
 
 static
@@ -643,7 +554,7 @@ void reset()
 	
 	gMouseRgn = otherRgn;
 	
-	draw_window( GetPort_window() );
+	draw_window( get_portRect( GetPort() ) );
 }
 
 static
@@ -669,12 +580,8 @@ void menu_item_chosen( long choice )
 			switch ( item )
 			{
 				case NewGame:
-					if ( is_fullscreen )
-					{
-						HiliteMenu( 0 );
-					}
-					
 					reset();
+					propagate_to_dock_tile();
 					break;
 				
 				case Open:
@@ -687,7 +594,6 @@ void menu_item_chosen( long choice )
 					}
 					// fall through
 				
-				case File_divider_item_4:
 				case Quit:
 					mac::app::quitting = true;
 					break;
@@ -714,7 +620,7 @@ void menu_item_chosen( long choice )
 				case Sound:
 					sound_enabled = ! sound_enabled;
 					
-					CheckMenuItem( GetMenuHandle( menu ), item, sound_enabled );
+					CheckMenuItem( Options_menu, item, sound_enabled );
 					break;
 				
 				case Fullscreen:
@@ -731,7 +637,7 @@ void menu_item_chosen( long choice )
 						leave_fullscreen();
 					}
 					
-					CheckMenuItem( GetMenuHandle( menu ), item, is_fullscreen );
+					CheckMenuItem( Options_menu, item, is_fullscreen );
 					break;
 				
 				default:
@@ -840,9 +746,7 @@ int main()
 	mac::app::init_toolbox();
 	mac::app::install_menus();
 	
-	Edit_menu    = GetMenuHandle( 3 );
-	Options_menu = GetMenuHandle( 4 );
-	
+	set_up_menus();
 	set_up_Options_menu();
 	
 	if ( apple_events_present )
@@ -853,7 +757,7 @@ int main()
 	alloc_mouseRgns();
 	
 	make_main_window();
-	window_size_changed( main_window );
+	window_size_changed( get_portRect( main_window ) );
 	
 	const bool has_WNE = has_WaitNextEvent();
 	
@@ -919,9 +823,7 @@ int main()
 							{
 								SizeWindow( window, grew, grew >> 16, true );
 								
-								InvalRect( window, get_portRect( window ) );
-								
-								window_size_changed( window );
+								invalidate_window_size( window );
 							}
 							break;
 						
@@ -952,6 +854,8 @@ int main()
 				
 				case updateEvt:
 					window = (WindowRef) event.message;
+					
+					SetPortWindowPort( window );
 					
 					BeginUpdate( window );
 					draw_window( window );
