@@ -445,7 +445,7 @@ void calculate_token_regions( short unitLength )
 }
 
 static
-void calibrate_mouseRgns( short unitLength )
+void calibrate_mouseRgns()
 {
 	Point globalOffset = margin;
 	
@@ -484,7 +484,7 @@ void window_size_changed( const Rect& portRect )
 	
 	calculate_token_regions( unitLength );
 	
-	calibrate_mouseRgns( unitLength );
+	calibrate_mouseRgns();
 }
 
 static
@@ -549,7 +549,7 @@ RgnHandle reset()
 		mouseRgns[ i ] = allocRgns[ i ];
 	}
 	
-	calibrate_mouseRgns( unitLength );
+	calibrate_mouseRgns();
 	
 	draw_window( get_portRect( GetPort() ) );
 	
@@ -810,7 +810,7 @@ int main()
 						
 						case inDrag:
 							DragWindow( window, event.where, wide_drag_area() );
-							calibrate_mouseRgns( unitLength );
+							calibrate_mouseRgns();
 							break;
 						
 						case inGoAway:
