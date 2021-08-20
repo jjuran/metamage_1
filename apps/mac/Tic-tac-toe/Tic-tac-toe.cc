@@ -402,13 +402,13 @@ void click( Point where )
 }
 
 static
-void undo()
+RgnHandle undo()
 {
 	int undone_index = tictactoe::undo_move();
 	
 	if ( undone_index < 0 )
 	{
-		return;
+		return NULL;
 	}
 	
 	int rgn_index = undone_index + 1;
@@ -434,7 +434,7 @@ void undo()
 		square (outside of the dead zone).
 	*/
 	
-	gMouseRgn = otherRgn;
+	return otherRgn;
 }
 
 static
@@ -611,7 +611,10 @@ void menu_item_chosen( long choice )
 			switch ( item )
 			{
 				case Undo:
-					undo();
+					if ( RgnHandle rgn = undo() )
+					{
+						gMouseRgn = rgn;
+					}
 					
 					propagate_to_dock_tile();
 					
