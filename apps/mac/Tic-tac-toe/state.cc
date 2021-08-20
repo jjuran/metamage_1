@@ -14,10 +14,9 @@ namespace tictactoe
 
 struct Ledger
 {
-	unsigned short count;
-	unsigned char  entries[ n_squares + 1 ];  // includes a zero terminator
+	Code entries[ 1 + n_squares ];  // includes a length byte
 	
-	unsigned short size() const  { return count; }
+	unsigned char size() const  { return entries[ 0 ]; }
 	
 	void reset();
 	
@@ -28,32 +27,38 @@ struct Ledger
 
 void Ledger::reset()
 {
+	unsigned char& count = entries[ 0 ];
+	
 	while ( count > 0 )
 	{
-		entries[ --count ] = 0;
+		entries[ count-- ] = 0;
 	}
 }
 
 void Ledger::enter( Code entry )
 {
+	unsigned char& count = entries[ 0 ];
+	
 	if ( count >= n_squares )
 	{
 		return;
 	}
 	
-	entries[ count++ ] = entry;
+	entries[ ++count ] = entry;
 }
 
 Code Ledger::pop()
 {
+	unsigned char& count = entries[ 0 ];
+	
 	if ( count == 0 )
 	{
 		return 0;
 	}
 	
-	Code last = entries[ --count ];
+	Code last = entries[ count ];
 	
-	entries[ count ] = 0;
+	entries[ count-- ] = 0;
 	
 	return last;
 }
