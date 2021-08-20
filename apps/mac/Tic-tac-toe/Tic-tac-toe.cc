@@ -123,7 +123,7 @@ static RgnHandle otherRgn;
 static RgnHandle gMouseRgn;
 
 static
-void alloc_mouseRgns()
+RgnHandle alloc_mouseRgns()
 {
 	for ( short i = 0;  i < 10;  ++i )
 	{
@@ -131,7 +131,7 @@ void alloc_mouseRgns()
 		mouseRgns[ i ] = NewRgn();
 	}
 	
-	gMouseRgn = otherRgn = mouseRgns[ 0 ];
+	return otherRgn = mouseRgns[ 0 ];
 }
 
 /*
@@ -770,7 +770,7 @@ int main()
 		mac::app::install_basic_event_handlers();
 	}
 	
-	alloc_mouseRgns();
+	gMouseRgn = alloc_mouseRgns();
 	
 	make_main_window();
 	window_size_changed( get_portRect( main_window ) );
