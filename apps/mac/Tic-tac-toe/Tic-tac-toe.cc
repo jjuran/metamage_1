@@ -489,18 +489,6 @@ void window_size_changed( WindowRef window )
 	window_size_changed( get_portRect( window ) );
 }
 
-static inline
-WindowRef GetPort_window()
-{
-	/*
-		Return the window whose port is the current port.
-		If accessor calls are functions, the port must belong to a window.
-		Otherwise, it may be just a GrafPort.
-	*/
-	
-	return GetWindowFromPort( (CGrafPtr) GetPort() );
-}
-
 static
 void invalidate_window_size( WindowRef window )
 {
@@ -519,11 +507,11 @@ void enter_fullscreen()
 	ForeColor( whiteColor );
 	BackColor( blackColor );
 	
-	WindowRef window = GetPort_window();
+	const Rect& portRect = main_display_bounds();
 	
-	window_size_changed( window );
+	window_size_changed( portRect );
 	
-	draw_window( window );
+	draw_window( portRect );
 }
 
 static
@@ -572,7 +560,7 @@ void reset()
 	
 	gMouseRgn = otherRgn;
 	
-	draw_window( GetPort_window() );
+	draw_window( get_portRect( GetPort() ) );
 }
 
 static
