@@ -22,6 +22,8 @@ namespace ui  {
 	
 	void delete_all_menu_items( MenuRef menu );
 	
+#if ! __LP64__
+	
 	inline
 	void enable_menu_item( MenuRef menu, MenuItemIndex item )
 	{
@@ -47,6 +49,8 @@ namespace ui  {
 		
 		DisableMenuItem( menu, item );
 	}
+	
+#endif
 	
 }
 }
