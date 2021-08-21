@@ -109,14 +109,14 @@ class CGContextForPort
 		CGContextForPort& operator=( const CGContextForPort& );
 	
 	public:
-		CGContextForPort();
+		CGContextForPort( bool erasing = false );
 		
 		~CGContextForPort();
 		
 		operator CGContextRef() const  { return context; }
 };
 
-CGContextForPort::CGContextForPort()
+CGContextForPort::CGContextForPort( bool erasing )
 {
 	const bool fullscreen = is_fullscreen_via_QT();
 	
@@ -125,6 +125,20 @@ CGContextForPort::CGContextForPort()
 	CGrafPtr port = (CGrafPtr) GetPort();
 	
 	CreateCGContextForPort( port, &context );
+	
+	if ( erasing )
+	{
+		const Rect& portRect = get_portRect( port );
+		
+		CGRect whole = {};
+		
+		whole.size.width  = portRect.right;
+		whole.size.height = portRect.bottom;
+		
+		CGContextSetGrayFillColor( context, ! fullscreen, 1 );
+		
+		CGContextFillRect( context, whole );
+	}
 	
 	CGContextTranslateCTM( context, margin.h, margin.v );
 	CGContextScaleCTM( context, unitLength, unitLength );
@@ -141,14 +155,14 @@ CGContextForPort::~CGContextForPort()
 
 void draw_window( const Rect& portRect )
 {
-	EraseRect( &portRect );
-	
 #ifdef MAC_OS_X_VERSION_10_4
 	
-	draw_board( CGContextForPort(), tictactoe::squares );
+	draw_board( CGContextForPort( true ), tictactoe::squares );
 	return;
 	
 #endif
+	
+	EraseRect( &portRect );
 	
 	SetOrigin( -margin.h, -margin.v );
 	
