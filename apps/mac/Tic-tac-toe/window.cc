@@ -80,8 +80,8 @@ void calculate_window_metrics( const Rect& portRect )
 	
 	unitLength = portLength / 32u;
 	
-	margin.v = (portHeight - portLength) / 2u;
-	margin.h = (portWidth  - portLength) / 2u;
+	margin.v = (portHeight - unitLength * 32) / 2u;
+	margin.h = (portWidth  - unitLength * 32) / 2u;
 }
 
 void propagate_to_dock_tile()
