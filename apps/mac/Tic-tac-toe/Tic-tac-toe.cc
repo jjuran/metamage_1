@@ -145,6 +145,30 @@ void make_main_window()
 	bounds.left  = (bounds.right - bounds.left - height) / 2u;
 	bounds.right = bounds.left + height;
 	
+#if TARGET_API_MAC_CARBON
+	
+	const WindowAttributes attrs = kWindowCloseBoxAttribute
+	                             | kWindowCollapseBoxAttribute
+	                             | kWindowResizableAttribute
+	                           #ifdef MAC_OS_X_VERSION_10_3
+	                             | kWindowAsyncDragAttribute
+	                           #endif
+	                             ;
+	
+	OSStatus err;
+	err = CreateNewWindow( kDocumentWindowClass, attrs, &bounds, &main_window );
+	
+	if ( err )
+	{
+		ExitToShell();
+	}
+	
+	SetWTitle( main_window, "\p" "Tic-tac-toe" );
+	
+	ShowWindow( main_window );
+	
+#else
+	
 	main_window = NewWindow( NULL,
 	                         &bounds,
 	                         "\p" "Tic-tac-toe",
@@ -153,6 +177,8 @@ void make_main_window()
 	                         (WindowRef) -1,
 	                         true,
 	                         0 );
+	
+#endif
 	
 	SetPortWindowPort( main_window );
 }
