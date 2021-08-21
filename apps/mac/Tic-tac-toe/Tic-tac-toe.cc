@@ -161,6 +161,8 @@ static
 void draw_window( WindowRef window )
 {
 	draw_window( get_portRect( window ) );
+	
+	propagate_to_dock_tile();
 }
 
 static
