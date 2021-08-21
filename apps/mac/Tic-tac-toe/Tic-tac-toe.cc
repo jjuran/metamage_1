@@ -51,6 +51,7 @@
 #include "menus.hh"
 #include "state.hh"
 #include "window.hh"
+#include "window_events.hh"
 
 
 #define CONFIG_DAs CONFIG_DESK_ACCESSORIES
@@ -147,9 +148,12 @@ void make_main_window()
 	
 #if TARGET_API_MAC_CARBON
 	
+	const bool osx_native = mac::sys::gestalt( 'sysv' ) >= 0x1000;
+	
 	const WindowAttributes attrs = kWindowCloseBoxAttribute
 	                             | kWindowCollapseBoxAttribute
 	                             | kWindowResizableAttribute
+	                             | kWindowLiveResizeAttribute * osx_native
 	                           #ifdef MAC_OS_X_VERSION_10_3
 	                             | kWindowAsyncDragAttribute
 	                           #endif
@@ -164,6 +168,8 @@ void make_main_window()
 	}
 	
 	SetWTitle( main_window, "\p" "Tic-tac-toe" );
+	
+	install_window_event_handlers( main_window );
 	
 	ShowWindow( main_window );
 	
