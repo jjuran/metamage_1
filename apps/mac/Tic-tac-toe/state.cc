@@ -72,7 +72,7 @@ Code Ledger::pop()
 
 static Ledger ledger;
 
-static signed char squares[ n_squares ];
+signed char squares[ n_squares ];
 
 static const short wins[][ 3 ] =
 {

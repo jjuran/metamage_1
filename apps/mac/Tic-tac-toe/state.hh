@@ -59,6 +59,8 @@ enum move_t
 
 const unsigned n_squares = 9;
 
+extern signed char squares[ n_squares ];
+
 player_t get( unsigned i );
 
 bool can_move( unsigned i );
