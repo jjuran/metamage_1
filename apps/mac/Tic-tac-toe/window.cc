@@ -22,6 +22,7 @@
 // Tic-tac-toe
 #include "cursors.hh"
 #include "dock_tile.hh"
+#include "draw_CG.hh"
 #include "fullscreen_QT.hh"
 #include "menus.hh"
 #include "play_tone.hh"
@@ -98,9 +99,54 @@ void propagate_to_dock_tile()
 #endif
 }
 
+class CGContextForPort
+{
+	private:
+		CGContextRef context;
+		
+		// non-copyable
+		CGContextForPort           ( const CGContextForPort& );
+		CGContextForPort& operator=( const CGContextForPort& );
+	
+	public:
+		CGContextForPort( CGrafPtr port = (CGrafPtr) GetPort() );
+		
+		~CGContextForPort();
+		
+		operator CGContextRef() const  { return context; }
+};
+
+CGContextForPort::CGContextForPort( CGrafPtr port )
+{
+	const bool fullscreen = is_fullscreen_via_QT();
+	
+	float white_or_black = fullscreen;
+	
+	CreateCGContextForPort( port, &context );
+	
+	CGContextTranslateCTM( context, margin.h, margin.v );
+	CGContextScaleCTM( context, unitLength, unitLength );
+	
+	CGContextSetGrayFillColor  ( context, white_or_black, 1 );
+	CGContextSetGrayStrokeColor( context, white_or_black, 1 );
+}
+
+CGContextForPort::~CGContextForPort()
+{
+	CGContextFlush  ( context );  // required in Mac OS X 10.4
+	CGContextRelease( context );
+}
+
 void draw_window( const Rect& portRect )
 {
 	EraseRect( &portRect );
+	
+#ifdef MAC_OS_X_VERSION_10_4
+	
+	draw_board( CGContextForPort(), tictactoe::squares );
+	return;
+	
+#endif
 	
 	SetOrigin( -margin.h, -margin.v );
 	
@@ -165,6 +211,13 @@ void draw_token( player_t token, short index )
 {
 	const short i = index / 3;
 	const short j = index % 3;
+	
+#ifdef MAC_OS_X_VERSION_10_4
+	
+	draw_token( CGContextForPort(), token, j, i );
+	return;
+	
+#endif
 	
 	const short top  = margin.v + unitLength * (4 + 9 * i);
 	const short left = margin.h + unitLength * (4 + 9 * j);
