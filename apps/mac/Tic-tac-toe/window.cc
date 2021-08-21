@@ -109,18 +109,20 @@ class CGContextForPort
 		CGContextForPort& operator=( const CGContextForPort& );
 	
 	public:
-		CGContextForPort( CGrafPtr port = (CGrafPtr) GetPort() );
+		CGContextForPort();
 		
 		~CGContextForPort();
 		
 		operator CGContextRef() const  { return context; }
 };
 
-CGContextForPort::CGContextForPort( CGrafPtr port )
+CGContextForPort::CGContextForPort()
 {
 	const bool fullscreen = is_fullscreen_via_QT();
 	
 	float white_or_black = fullscreen;
+	
+	CGrafPtr port = (CGrafPtr) GetPort();
 	
 	CreateCGContextForPort( port, &context );
 	
