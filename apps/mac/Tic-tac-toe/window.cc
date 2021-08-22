@@ -150,6 +150,20 @@ CGContextForPort::~CGContextForPort()
 	CGContextRelease( context );
 }
 
+void draw_window( CGContextRef context )
+{
+	// Caller saves and restores the graphics context as needed.
+	
+	CGContextTranslateCTM( context, margin.h, margin.v );
+	CGContextScaleCTM( context, unitLength, unitLength );
+	
+	CGContextSetGrayFillColor( context, 1, 1 );  // white
+	
+	CGContextFillRect( context, CGRectMake( 0, 0, 32, 32 ) );
+	
+	draw_board( context, tictactoe::squares );
+}
+
 void draw_window( const Rect& portRect )
 {
 	if ( CONFIG_USE_COREGRAPHICS )

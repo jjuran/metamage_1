@@ -12,13 +12,30 @@
 #endif
 
 // Mac OS
+#ifndef CGCONTEXT_H_
+#ifndef __CGCONTEXT__
+#include <CGContext.h>
+#endif
+#endif
 #ifndef __QUICKDRAW__
 #include <Quickdraw.h>
 #endif
 
 
+/*
+	Compositing mode is introduced in Mac OS X 10.2,
+	but doesn't work without major problems until 10.3.
+*/
+
+#ifdef MAC_OS_X_VERSION_10_3
+#define CONFIG_COMPOSITING  1
+#else
+#define CONFIG_COMPOSITING  0
+#endif
+
 void propagate_to_dock_tile();
 
+void draw_window( CGContextRef context );
 void draw_window( const Rect& portRect );
 
 RgnHandle click( Point where, bool sound_enabled );

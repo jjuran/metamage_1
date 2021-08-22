@@ -143,8 +143,14 @@ void make_main_window()
 	                             | kWindowCollapseBoxAttribute
 	                             | kWindowResizableAttribute
 	                             | kWindowLiveResizeAttribute * osx_native
+	                           #if CONFIG_COMPOSITING
+	                             | kWindowCompositingAttribute
+	                           #endif
 	                           #ifdef MAC_OS_X_VERSION_10_3
 	                             | kWindowAsyncDragAttribute
+	                           #endif
+	                           #ifdef MAC_OS_X_VERSION_10_7
+	                             | kWindowHighResolutionCapableAttribute
 	                           #endif
 	                             ;
 	
@@ -310,7 +316,14 @@ void menu_item_chosen( long choice )
 					{
 						RgnHandle rgn = reactivate_region( rgn_index );
 						
-						erase_token_in_region( rgn );
+						if ( CONFIG_COMPOSITING  &&  ! is_fullscreen )
+						{
+							mac::ui::invalidate_window( main_window );
+						}
+						else
+						{
+							erase_token_in_region( rgn );
+						}
 						
 						/*
 							Elicit a mouse-moved event to change the cursor if
@@ -457,6 +470,16 @@ int main()
 	
 	make_main_window();
 	window_size_changed( get_portRect( main_window ) );
+	
+	/*
+		A new non-compositing window already has a full update region
+		and doesn't need to be invalidated.
+	*/
+	
+	if ( CONFIG_COMPOSITING )
+	{
+		mac::ui::invalidate_window( main_window );
+	}
 	
 	propagate_to_dock_tile();
 	

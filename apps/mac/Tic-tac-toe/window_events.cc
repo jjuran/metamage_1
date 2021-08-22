@@ -69,6 +69,57 @@ static EventTypeSpec windowBoundsChange_event[] =
 	{ kEventClassWindow, kEventWindowBoundsChanged  },
 };
 
+static
+pascal OSStatus window_ControlDraw( EventHandlerCallRef  handler,
+                                    EventRef             event,
+                                    void*                userData )
+{
+	OSStatus err;
+	
+	ControlRef control;
+	CGContextRef context = NULL;
+	
+	(err = GetEventParameter( event,
+	                          kEventParamDirectObject,
+	                          typeControlRef,
+	                          NULL,
+	                          sizeof control,
+	                          NULL,
+	                          &control ))  ||
+	(err = GetEventParameter( event,
+	                          kEventParamCGContextRef,
+	                          typeCGContextRef,
+	                          NULL,
+	                          sizeof context,
+	                          NULL,
+	                          &context ));
+	
+#ifdef MAC_OS_X_VERSION_10_2
+	
+	if ( err == noErr )
+	{
+		HIRect bounds;
+		HIViewGetBounds( control, &bounds );
+		
+		CGContextSaveGState( context );
+		
+		draw_window( context );
+		
+		CGContextRestoreGState( context );
+	}
+	
+#endif
+	
+	return err;
+}
+
+DEFINE_CARBON_UPP( EventHandler, window_ControlDraw )
+
+static EventTypeSpec controlDraw_event[] =
+{
+	{ kEventClassControl, kEventControlDraw },
+};
+
 void install_window_event_handlers( WindowRef window )
 {
 	OSStatus err;
@@ -87,5 +138,26 @@ void install_window_event_handlers( WindowRef window )
 		                                 windowBoundsChange_event,
 		                                 NULL,
 		                                 NULL );
+	}
+	
+	
+	if ( CONFIG_COMPOSITING )
+	{
+	#ifdef MAC_OS_X_VERSION_10_2
+		
+		HIViewRef root = HIViewGetRoot( window );
+		
+		HIViewRef content;
+		err = HIViewFindByID( root, kHIViewWindowContentID, &content );
+		
+		err = InstallControlEventHandler( content,
+		                                  UPP_ARG( window_ControlDraw ),
+		                                  1,
+		                                  controlDraw_event,
+		                                  NULL,
+		                                  NULL );
+		
+	#endif
+		
 	}
 }
