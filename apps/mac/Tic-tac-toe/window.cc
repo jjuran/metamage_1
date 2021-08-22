@@ -348,9 +348,6 @@ RgnHandle undo()
 	
 	XorRgn( otherRgn, rgn, otherRgn );
 	
-	winning_player = tictactoe::Player_none;
-	current_player = opponent( current_player );
-	
 	/*
 		Elicit a mouse-moved event to change the cursor if it's in a live
 		square (outside of the dead zone).

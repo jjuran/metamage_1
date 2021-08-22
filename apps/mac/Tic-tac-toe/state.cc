@@ -161,6 +161,9 @@ int undo_move()
 		
 		squares[ i ] = Player_none;
 		
+		winning_player = Player_none;
+		current_player = opponent( current_player );
+		
 		return i;
 	}
 	
