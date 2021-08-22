@@ -23,7 +23,22 @@
 #endif
 
 
+RgnHandle allocRgns[ 10 ];
+RgnHandle mouseRgns[ 10 ];
+RgnHandle otherRgn;
+
 static RgnHandle tmp = NewRgn();
+
+RgnHandle alloc_mouseRgns()
+{
+	for ( short i = 0;  i < 10;  ++i )
+	{
+		allocRgns[ i ] =
+		mouseRgns[ i ] = NewRgn();
+	}
+	
+	return otherRgn = mouseRgns[ 0 ];
+}
 
 RgnHandle get_X_token( short unitLength )
 {

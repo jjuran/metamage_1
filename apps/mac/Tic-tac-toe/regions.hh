@@ -16,6 +16,12 @@
 #include <Quickdraw.h>
 #endif
 
+extern RgnHandle allocRgns[ 10 ];
+extern RgnHandle mouseRgns[ 10 ];
+extern RgnHandle otherRgn;
+
+RgnHandle alloc_mouseRgns();
+
 RgnHandle get_X_token( short unitLength );
 RgnHandle get_O_token( short unitLength );
 

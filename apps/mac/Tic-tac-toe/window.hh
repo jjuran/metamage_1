@@ -17,8 +17,6 @@
 #endif
 
 
-RgnHandle alloc_mouseRgns();
-
 void propagate_to_dock_tile();
 
 void draw_window( const Rect& portRect );

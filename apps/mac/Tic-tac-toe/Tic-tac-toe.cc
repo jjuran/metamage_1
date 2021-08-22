@@ -50,6 +50,7 @@
 #include "file_save.hh"
 #include "fullscreen.hh"
 #include "menus.hh"
+#include "regions.hh"
 #include "state.hh"
 #include "window.hh"
 #include "window_events.hh"

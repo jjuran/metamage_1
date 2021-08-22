@@ -53,21 +53,6 @@ short min( short a, short b )
 	return b < a ? b : a;
 }
 
-static RgnHandle allocRgns[ 10 ];
-static RgnHandle mouseRgns[ 10 ];
-static RgnHandle otherRgn;
-
-RgnHandle alloc_mouseRgns()
-{
-	for ( short i = 0;  i < 10;  ++i )
-	{
-		allocRgns[ i ] =
-		mouseRgns[ i ] = NewRgn();
-	}
-	
-	return otherRgn = mouseRgns[ 0 ];
-}
-
 static short unitLength;
 static Point margin;
 
