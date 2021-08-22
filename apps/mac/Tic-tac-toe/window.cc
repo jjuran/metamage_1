@@ -288,6 +288,8 @@ short hit_test( Point where )
 static
 RgnHandle play( short i, bool sound_enabled )
 {
+	player_t playing_player = current_player;
+	
 	using namespace tictactoe;
 	
 	move_t result = move( i );
@@ -305,21 +307,14 @@ RgnHandle play( short i, bool sound_enabled )
 	
 	XorRgn( otherRgn, rgn, otherRgn );
 	
-	draw_token( current_player, i );
+	draw_token( playing_player, i );
 	
 	if ( sound_enabled )
 	{
-		const UInt16 tone = current_player == tictactoe::Player_X ? 629 : 1497;
+		const UInt16 tone = playing_player == tictactoe::Player_X ? 629 : 1497;
 		
 		play_tone( tone );
 	}
-	
-	if ( result > Move_ok )
-	{
-		winning_player = current_player;
-	}
-	
-	current_player = opponent( current_player );
 	
 	return otherRgn;
 }

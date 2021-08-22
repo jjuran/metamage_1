@@ -141,7 +141,16 @@ move_t move( unsigned i )
 	
 	squares[ i ] = current_player;
 	
-	return move_t( won( squares ) );
+	const bool game_over = won( squares );
+	
+	if ( game_over )
+	{
+		winning_player = current_player;
+	}
+	
+	current_player = opponent( current_player );
+	
+	return move_t( game_over );
 }
 
 int undo_move()
