@@ -40,6 +40,26 @@ RgnHandle alloc_mouseRgns()
 	return otherRgn = mouseRgns[ 0 ];
 }
 
+RgnHandle deactivate_region( int rgn_index )
+{
+	RgnHandle rgn = mouseRgns[ rgn_index ];
+	
+	mouseRgns[ rgn_index ] = otherRgn;
+	
+	XorRgn( otherRgn, rgn, otherRgn );
+	
+	return otherRgn;
+}
+
+RgnHandle reactivate_region( int rgn_index )
+{
+	RgnHandle rgn = mouseRgns[ rgn_index ] = allocRgns[ rgn_index ];
+	
+	XorRgn( otherRgn, rgn, otherRgn );
+	
+	return rgn;
+}
+
 RgnHandle get_X_token( short unitLength )
 {
 	static short prevLen = 0;

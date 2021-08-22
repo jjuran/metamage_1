@@ -286,12 +286,6 @@ RgnHandle play( short i, bool sound_enabled )
 	
 	SetCursor( &mac::qd::arrow() );
 	
-	RgnHandle rgn = mouseRgns[ 1 + i ];
-	
-	mouseRgns[ 1 + i ] = otherRgn;
-	
-	XorRgn( otherRgn, rgn, otherRgn );
-	
 	draw_token( playing_player, i );
 	
 	if ( sound_enabled )
@@ -301,7 +295,7 @@ RgnHandle play( short i, bool sound_enabled )
 		play_tone( tone );
 	}
 	
-	return otherRgn;
+	return deactivate_region( 1 + i );
 }
 
 RgnHandle click( Point where, bool sound_enabled )
@@ -325,13 +319,11 @@ RgnHandle undo()
 	
 	SetOrigin( -origin.h, -origin.v );
 	
-	RgnHandle rgn = mouseRgns[ rgn_index ] = allocRgns[ rgn_index ];
+	RgnHandle rgn = reactivate_region( rgn_index );
 	
 	EraseRgn( rgn );
 	
 	SetOrigin( 0, 0 );
-	
-	XorRgn( otherRgn, rgn, otherRgn );
 	
 	/*
 		Elicit a mouse-moved event to change the cursor if it's in a live

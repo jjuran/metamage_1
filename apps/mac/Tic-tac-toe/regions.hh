@@ -22,6 +22,9 @@ extern RgnHandle otherRgn;
 
 RgnHandle alloc_mouseRgns();
 
+RgnHandle deactivate_region( int rgn_index );
+RgnHandle reactivate_region( int rgn_index );
+
 RgnHandle get_X_token( short unitLength );
 RgnHandle get_O_token( short unitLength );
 
