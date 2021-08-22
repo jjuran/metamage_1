@@ -408,9 +408,6 @@ RgnHandle reset()
 {
 	tictactoe::reset();
 	
-	current_player = tictactoe::Player_X;
-	winning_player = tictactoe::Player_none;
-	
 	for ( short i = 1;  i < 10;  ++i )
 	{
 		mouseRgns[ i ] = allocRgns[ i ];

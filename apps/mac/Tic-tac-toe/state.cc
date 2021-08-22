@@ -178,6 +178,9 @@ void reset()
 	{
 		squares[ i ] = 0;
 	}
+	
+	winning_player = Player_none;
+	current_player = Player_X;
 }
 
 const Code* extract()
