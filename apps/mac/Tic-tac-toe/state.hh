@@ -61,6 +61,9 @@ const unsigned n_squares = 9;
 
 extern signed char squares[ n_squares ];
 
+extern player_t current_player;
+extern player_t winning_player;
+
 player_t get( unsigned i );
 
 bool can_move( unsigned i );

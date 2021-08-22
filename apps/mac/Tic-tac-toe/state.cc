@@ -12,6 +12,9 @@
 namespace tictactoe
 {
 
+player_t current_player = tictactoe::Player_X;
+player_t winning_player = tictactoe::Player_none;
+
 struct Ledger
 {
 	Code entries[ 1 + n_squares ];  // includes a length byte

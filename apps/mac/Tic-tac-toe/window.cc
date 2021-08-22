@@ -44,8 +44,8 @@ using mac::qd::get_portRect;
 using tictactoe::move_t;
 using tictactoe::player_t;
 
-static player_t current_player = tictactoe::Player_X;
-static player_t winning_player = tictactoe::Player_none;
+using tictactoe::current_player;
+using tictactoe::winning_player;
 
 static inline
 short min( short a, short b )
