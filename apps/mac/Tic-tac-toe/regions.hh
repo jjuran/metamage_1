@@ -22,6 +22,8 @@ extern RgnHandle otherRgn;
 
 RgnHandle alloc_mouseRgns();
 
+void calibrate_mouseRgns( Point globalOffset, short unitLength );
+
 RgnHandle deactivate_region( int rgn_index );
 RgnHandle reactivate_region( int rgn_index );
 

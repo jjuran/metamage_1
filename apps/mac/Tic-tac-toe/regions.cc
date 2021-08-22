@@ -40,6 +40,34 @@ RgnHandle alloc_mouseRgns()
 	return otherRgn = mouseRgns[ 0 ];
 }
 
+void calibrate_mouseRgns( Point globalOffset, short unitLength )
+{
+	Rect rect = { -32000, -32000, 32000, 32000 };
+	
+	RectRgn( otherRgn, &rect );
+	
+	for ( short i = 0, i3 = 0;  i < 3;  ++i, i3 += 3 )
+	{
+		rect.top    = globalOffset.v + unitLength * (3 + 9 * i);
+		rect.bottom = globalOffset.v + unitLength * (3 + 9 * i + 8);
+		
+		for ( short j = 0;  j < 3;  ++j )
+		{
+			rect.left  = globalOffset.h + unitLength * (3 + 9 * j);
+			rect.right = globalOffset.h + unitLength * (3 + 9 * j + 8);
+			
+			RectRgn( allocRgns[ 1 + i3 + j ], &rect );
+			
+			RgnHandle rgn = mouseRgns[ 1 + i3 + j ];
+			
+			if ( rgn != otherRgn )
+			{
+				XorRgn( otherRgn, rgn, otherRgn );
+			}
+		}
+	}
+}
+
 RgnHandle deactivate_region( int rgn_index )
 {
 	RgnHandle rgn = mouseRgns[ rgn_index ];
