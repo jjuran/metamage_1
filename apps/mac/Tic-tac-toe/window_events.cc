@@ -73,6 +73,7 @@ DEFINE_CARBON_UPP( EventHandler, window_WindowBoundsChanging )
 static EventTypeSpec windowBoundsChanging_event[] =
 {
 	{ kEventClassWindow, kEventWindowBoundsChanging },
+	{ kEventClassWindow, kEventWindowBoundsChanged  },
 };
 
 void install_window_event_handlers( WindowRef window )
@@ -89,7 +90,7 @@ void install_window_event_handlers( WindowRef window )
 		
 		err = InstallWindowEventHandler( window,
 		                                 UPP_ARG( window_WindowBoundsChanging ),
-		                                 1,
+		                                 2,
 		                                 windowBoundsChanging_event,
 		                                 NULL,
 		                                 NULL );
