@@ -69,7 +69,7 @@ player_t get( unsigned i );
 bool can_move( unsigned i );
 bool can_undo();
 
-move_t move( player_t player, unsigned i );
+move_t move( unsigned i );
 
 int undo_move();
 

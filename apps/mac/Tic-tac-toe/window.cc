@@ -290,7 +290,7 @@ RgnHandle play( short i, bool sound_enabled )
 {
 	using namespace tictactoe;
 	
-	move_t result = move( current_player, i );
+	move_t result = move( i );
 	
 	if ( result < Move_ok )
 	{

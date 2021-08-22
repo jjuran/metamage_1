@@ -130,7 +130,7 @@ bool won( signed char squares[] )
 	return false;
 }
 
-move_t move( player_t player, unsigned i )
+move_t move( unsigned i )
 {
 	if ( ! can_move( i ) )
 	{
@@ -139,7 +139,7 @@ move_t move( player_t player, unsigned i )
 	
 	ledger.enter( encode_cell_index( i ) );
 	
-	squares[ i ] = player;
+	squares[ i ] = current_player;
 	
 	return move_t( won( squares ) );
 }
