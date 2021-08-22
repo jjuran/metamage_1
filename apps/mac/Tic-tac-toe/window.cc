@@ -288,11 +288,6 @@ short hit_test( Point where )
 static
 RgnHandle play( short i, bool sound_enabled )
 {
-	if ( winning_player )
-	{
-		return NULL;
-	}
-	
 	using namespace tictactoe;
 	
 	move_t result = move( current_player, i );
@@ -449,7 +444,7 @@ RgnHandle mouse_moved( Point where )
 	
 	const Cursor* cursor;
 	
-	if ( ! winning_player  &&  tictactoe::can_move( i ) )
+	if ( tictactoe::can_move( i ) )
 	{
 		cursor = current_player > 0 ? &X_cursor : &O_cursor;
 	}

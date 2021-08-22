@@ -98,7 +98,7 @@ player_t get( unsigned i )
 
 bool can_move( unsigned i )
 {
-	return i < n_squares  &&  squares[ i ] == 0;
+	return ! winning_player  &&  i < n_squares  &&  squares[ i ] == 0;
 }
 
 bool can_undo()
