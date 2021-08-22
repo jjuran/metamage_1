@@ -68,6 +68,14 @@ void calibrate_mouseRgns( Point globalOffset, short unitLength )
 	}
 }
 
+void reset_mouseRgns()
+{
+	for ( short i = 1;  i < 10;  ++i )
+	{
+		mouseRgns[ i ] = allocRgns[ i ];
+	}
+}
+
 RgnHandle deactivate_region( int rgn_index )
 {
 	RgnHandle rgn = mouseRgns[ rgn_index ];

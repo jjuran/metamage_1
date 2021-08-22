@@ -362,10 +362,7 @@ RgnHandle reset()
 {
 	tictactoe::reset();
 	
-	for ( short i = 1;  i < 10;  ++i )
-	{
-		mouseRgns[ i ] = allocRgns[ i ];
-	}
+	reset_mouseRgns();
 	
 	calibrate_mouseRgns();
 	
