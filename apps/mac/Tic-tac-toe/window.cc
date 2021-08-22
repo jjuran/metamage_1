@@ -132,10 +132,10 @@ CGContextForPort::CGContextForPort( bool erasing )
 	
 	CreateCGContextForPort( port, &context );
 	
+	const Rect& portRect = get_portRect( port );
+	
 	if ( erasing )
 	{
-		const Rect& portRect = get_portRect( port );
-		
 		CGRect whole = {};
 		
 		whole.size.width  = portRect.right;
@@ -145,6 +145,14 @@ CGContextForPort::CGContextForPort( bool erasing )
 		
 		CGContextFillRect( context, whole );
 	}
+	
+	/*
+		Flip the coordinate system so that the Y axis increases,
+		downward as in QuickDraw (and compositing-mode windows).
+	*/
+	
+	CGContextTranslateCTM( context, 0, portRect.bottom );
+	CGContextScaleCTM    ( context, 1, -1 );
 	
 	CGContextTranslateCTM( context, margin.h, margin.v );
 	CGContextScaleCTM( context, unitLength, unitLength );

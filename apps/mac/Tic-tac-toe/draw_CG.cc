@@ -52,8 +52,6 @@ void draw_grid_lines( CGContextRef context )
 
 void draw_token( CGContextRef context, int token, int x, int y )
 {
-	y = 2 - y;
-	
 	CGContextSaveGState( context );
 	
 	CGContextTranslateCTM( context, 4 + 9 * x, 4 + 9 * y );
