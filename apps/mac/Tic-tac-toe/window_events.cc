@@ -52,17 +52,10 @@ pascal OSStatus window_WindowBoundsChange( EventHandlerCallRef  handler,
 	
 	if ( err == noErr  &&  attributes & kWindowBoundsChangeSizeChanged )
 	{
-		GrafPtr port;
-		GetPort( &port );
-		
-		SetPortWindowPort( window );
-		
 		const Rect& portRect = get_portRect( window );
 		
 		window_size_changed( portRect );
 		draw_window        ( portRect );
-		
-		SetPort( port );
 	}
 	
 	return err;
