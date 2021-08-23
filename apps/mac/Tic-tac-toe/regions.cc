@@ -107,3 +107,10 @@ RgnHandle get_O_token( short unitLength )
 	
 	return rgn;
 }
+
+RgnHandle temporary_copy( RgnHandle rgn )
+{
+	CopyRgn( rgn, tmp );
+	
+	return tmp;
+}

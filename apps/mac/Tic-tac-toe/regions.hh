@@ -19,4 +19,6 @@
 RgnHandle get_X_token( short unitLength );
 RgnHandle get_O_token( short unitLength );
 
+RgnHandle temporary_copy( RgnHandle rgn );
+
 #endif
