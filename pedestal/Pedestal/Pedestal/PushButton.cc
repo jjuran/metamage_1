@@ -5,13 +5,16 @@
 
 #include "Pedestal/PushButton.hh"
 
+// Mac OS
+#ifndef __CONTROLDEFINITIONS__
+#include <ControlDefinitions.h>
+#endif
+
 // mac-qd-utils
 #include "mac_qd/globals/thePort_window.hh"
 
 // Nitrogen
-#include "Mac/Controls/Types/ControlPartCode.hh"
-
-#include "Nitrogen/Controls.hh"
+#include "Nitrogen/Str.hh"
 
 
 namespace Pedestal
@@ -25,15 +28,15 @@ namespace Pedestal
 	                                           ConstStr255Param title,
 	                                           const void* refCon )
 	{
-		return N::NewControl( owningWindow,
-		                      boundsRect,
-		                      title,
-		                      true,
-		                      0,
-		                      0,
-		                      1,
-		                      Mac::pushButProc,
-		                      refCon );
+		return NewControl( owningWindow,
+		                   &boundsRect,
+		                   title,
+		                   true,
+		                   0,
+		                   0,
+		                   1,
+		                   pushButProc,
+		                   (long) refCon );
 	}
 	
 	
@@ -58,15 +61,15 @@ namespace Pedestal
 	
 	void PushButton::SetBounds( const Rect& bounds )
 	{
-		N::SetControlBounds( itsControl, bounds );
+		SetControlBounds( itsControl, &bounds );
 	}
 	
 	void PushButton::Activate( bool activating )
 	{
-		N::ControlPartCode code = activating ? N::kControlNoPart
-		                                     : N::kControlInactivePart;
+		ControlPartCode code = activating ? kControlNoPart
+		                                  : kControlInactivePart;
 		
-		N::HiliteControl( itsControl, code );
+		HiliteControl( itsControl, code );
 	}
 	
 }
