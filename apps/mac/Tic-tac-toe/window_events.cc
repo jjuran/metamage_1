@@ -27,9 +27,9 @@ using mac::qd::get_portRect;
 
 
 static
-pascal OSStatus window_WindowBoundsChanging( EventHandlerCallRef  handler,
-                                             EventRef             event,
-                                             void*                userData )
+pascal OSStatus window_WindowBoundsChange( EventHandlerCallRef  handler,
+                                           EventRef             event,
+                                           void*                userData )
 {
 	OSStatus err;
 	
@@ -68,9 +68,9 @@ pascal OSStatus window_WindowBoundsChanging( EventHandlerCallRef  handler,
 	return err;
 }
 
-DEFINE_CARBON_UPP( EventHandler, window_WindowBoundsChanging )
+DEFINE_CARBON_UPP( EventHandler, window_WindowBoundsChange )
 
-static EventTypeSpec windowBoundsChanging_event[] =
+static EventTypeSpec windowBoundsChange_event[] =
 {
 	{ kEventClassWindow, kEventWindowBoundsChanging },
 	{ kEventClassWindow, kEventWindowBoundsChanged  },
@@ -89,9 +89,9 @@ void install_window_event_handlers( WindowRef window )
 		*/
 		
 		err = InstallWindowEventHandler( window,
-		                                 UPP_ARG( window_WindowBoundsChanging ),
+		                                 UPP_ARG( window_WindowBoundsChange ),
 		                                 2,
-		                                 windowBoundsChanging_event,
+		                                 windowBoundsChange_event,
 		                                 NULL,
 		                                 NULL );
 	}
