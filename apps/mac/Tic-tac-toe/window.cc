@@ -15,6 +15,7 @@
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/arrow.hh"
+#include "mac_qd/globals/thePort.hh"
 
 // mac-ui-utils
 #include "mac_ui/menus.hh"
@@ -48,15 +49,6 @@ static inline
 short min( short a, short b )
 {
 	return b < a ? b : a;
-}
-
-static inline
-GrafPtr GetPort()
-{
-	GrafPtr port;
-	GetPort( &port );
-	
-	return port;
 }
 
 static RgnHandle allocRgns[ 10 ];
@@ -128,7 +120,7 @@ CGContextForPort::CGContextForPort( bool erasing )
 	
 	float white_or_black = fullscreen;
 	
-	CGrafPtr port = (CGrafPtr) GetPort();
+	CGrafPtr port = GetQDGlobalsThePort();
 	
 	CreateCGContextForPort( port, &context );
 	
@@ -438,7 +430,7 @@ RgnHandle reset()
 		square (outside of the dead zone).
 	*/
 	
-	draw_window( get_portRect( GetPort() ) );
+	draw_window( get_portRect( mac::qd::thePort() ) );
 	
 	return otherRgn;
 }

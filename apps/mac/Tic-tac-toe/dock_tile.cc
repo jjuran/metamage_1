@@ -17,21 +17,12 @@
 #endif
 #endif
 
-static inline
-GrafPtr GetPort()
-{
-	GrafPtr port;
-	GetPort( &port );
-	
-	return port;
-}
-
 
 void propagate_to_dock_tile( short unitLength, Point margin )
 {
 #ifdef __APPLE__
 	
-	GrafPtr  gameboard_port = GetPort();
+	CGrafPtr gameboard_port = GetQDGlobalsThePort();
 	CGrafPtr dock_tile_port = BeginQDContextForApplicationDockTile();
 	
 	Rect src_rect, dst_rect;
