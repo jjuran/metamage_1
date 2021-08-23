@@ -30,6 +30,12 @@
 #include "state.hh"
 
 
+#ifdef MAC_OS_X_VERSION_10_4
+#define CONFIG_USE_COREGRAPHICS  1
+#else
+#define CONFIG_USE_COREGRAPHICS  0
+#endif
+
 using mac::qd::get_portRect;
 
 using tictactoe::move_t;
@@ -155,12 +161,11 @@ CGContextForPort::~CGContextForPort()
 
 void draw_window( const Rect& portRect )
 {
-#ifdef MAC_OS_X_VERSION_10_4
-	
-	draw_board( CGContextForPort( true ), tictactoe::squares );
-	return;
-	
-#endif
+	if ( CONFIG_USE_COREGRAPHICS )
+	{
+		draw_board( CGContextForPort( true ), tictactoe::squares );
+		return;
+	}
 	
 	EraseRect( &portRect );
 	
@@ -228,12 +233,11 @@ void draw_token( player_t token, short index )
 	const short i = index / 3;
 	const short j = index % 3;
 	
-#ifdef MAC_OS_X_VERSION_10_4
-	
-	draw_token( CGContextForPort(), token, j, i );
-	return;
-	
-#endif
+	if ( CONFIG_USE_COREGRAPHICS )
+	{
+		draw_token( CGContextForPort(), token, j, i );
+		return;
+	}
 	
 	const short top  = margin.v + unitLength * (4 + 9 * i);
 	const short left = margin.h + unitLength * (4 + 9 * j);
