@@ -5,6 +5,9 @@
 
 #include "Pedestal/ListView.hh"
 
+// mac-qd-utils
+#include "mac_qd/globals/thePort_window.hh"
+
 // Nitrogen
 #include "Nitrogen/Controls.hh"
 #include "Nitrogen/Events.hh"
@@ -113,7 +116,7 @@ namespace Pedestal
 		                   N::SetRect( 0, 0, 1, 0 ),  // one column, zero rows
 		                   N::SetPt( 0, 0 ),
 		                   Mac::ResID( 0 ),
-		                   N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
+		                   mac::qd::thePort_window(),
 		                   drawIt,
 		                   hasGrow,
 		                   scrollHoriz,

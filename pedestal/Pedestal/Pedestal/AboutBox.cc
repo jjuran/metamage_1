@@ -33,6 +33,7 @@
 
 // mac-qd-utils
 #include "mac_qd/plot_icon_id.hh"
+#include "mac_qd/globals/screenBits.hh"
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
@@ -111,11 +112,11 @@ namespace Pedestal
 		
 		const short topMargin = ::GetMBarHeight() + 18;  // FIXME:  Calculate title bar height
 		
-		BitMap screenBits = N::GetQDGlobalsScreenBits();
+		const Rect& screenBounds = mac::qd::screenBits().bounds;
 		
-		short spareWidth = screenBits.bounds.right - bounds.right;
+		short spareWidth = screenBounds.right - bounds.right;
 		
-		short spareHeight = screenBits.bounds.bottom - bounds.bottom - topMargin;
+		short spareHeight = screenBounds.bottom - bounds.bottom - topMargin;
 		
 		::OffsetRect( &bounds,
 		              spareWidth / 2,

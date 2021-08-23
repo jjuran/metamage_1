@@ -21,6 +21,10 @@
 // mac-config
 #include "mac_config/upp-macros.hh"
 
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+#include "mac_qd/globals/thePort.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -149,7 +153,7 @@ namespace Pedestal
 	{
 		n::saved< N::Clip > savedClip;
 		
-		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		N::ClipRect( mac::qd::get_portRect( mac::qd::thePort() ) );
 		
 		const Scrollbar_UserData* userData = GetUserDataFromScrollbar( control );
 		

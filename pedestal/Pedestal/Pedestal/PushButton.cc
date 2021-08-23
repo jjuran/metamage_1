@@ -20,6 +20,9 @@
 #endif
 #endif
 
+// mac-qd-utils
+#include "mac_qd/globals/thePort_window.hh"
+
 // Nitrogen
 #include "Mac/Controls/Types/ControlPartCode.hh"
 
@@ -65,7 +68,7 @@ namespace Pedestal
 	{
 		N::Str255 title = Title();
 		
-		itsControl = NewMacPushButton( N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
+		itsControl = NewMacPushButton( mac::qd::thePort_window(),
 		                               bounds,
 		                               title,
 		                               RefCon() );

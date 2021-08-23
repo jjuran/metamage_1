@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// mac-qd-utils
+#include "mac_qd/globals/thePort_window.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -60,7 +63,7 @@ namespace Pedestal
 		
 		const N::ControlProcID procID = GetControlProcIDForScrollbar();
 		
-		itsControl = N::NewControl( N::GetWindowFromPort( N::GetQDGlobalsThePort() ),
+		itsControl = N::NewControl( mac::qd::thePort_window(),
 		                            bounds,
 		                            "\p",
 		                            true,

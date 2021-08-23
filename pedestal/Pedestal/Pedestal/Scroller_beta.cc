@@ -8,6 +8,10 @@
 // Standard C++
 #include <algorithm>
 
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+#include "mac_qd/globals/thePort.hh"
+
 // nucleus
 #include "nucleus/saved.hh"
 
@@ -85,7 +89,7 @@ namespace Pedestal
 	{
 		n::saved< N::Clip > savedClip;
 		
-		N::ClipRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		N::ClipRect( mac::qd::get_portRect( mac::qd::thePort() ) );
 		
 		UpdateScrollbars();
 	}
