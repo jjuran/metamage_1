@@ -23,7 +23,7 @@ void draw_window( const Rect& portRect );
 
 RgnHandle click( Point where, bool sound_enabled );
 
-RgnHandle undo();
+void erase_token_in_region( RgnHandle rgn );
 
 void calibrate_mouseRgns();
 

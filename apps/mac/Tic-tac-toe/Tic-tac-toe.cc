@@ -306,9 +306,18 @@ void menu_item_chosen( long choice )
 			switch ( item )
 			{
 				case Undo:
-					if ( RgnHandle rgn = undo() )
+					if ( int rgn_index = tictactoe::undo_move() + 1 )
 					{
-						gMouseRgn = rgn;
+						RgnHandle rgn = reactivate_region( rgn_index );
+						
+						erase_token_in_region( rgn );
+						
+						/*
+							Elicit a mouse-moved event to change the cursor if
+							it's in a live square (outside of the dead zone).
+						*/
+						
+						gMouseRgn = gInertRgn;
 					}
 					
 					propagate_to_dock_tile();

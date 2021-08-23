@@ -303,34 +303,16 @@ RgnHandle click( Point where, bool sound_enabled )
 	return play( hit_test( where ), sound_enabled );
 }
 
-RgnHandle undo()
+void erase_token_in_region( RgnHandle rgn )
 {
-	int undone_index = tictactoe::undo_move();
-	
-	if ( undone_index < 0 )
-	{
-		return NULL;
-	}
-	
-	int rgn_index = undone_index + 1;
-	
 	Point origin = {};
 	GlobalToLocal( &origin );
 	
 	SetOrigin( -origin.h, -origin.v );
 	
-	RgnHandle rgn = reactivate_region( rgn_index );
-	
 	EraseRgn( rgn );
 	
 	SetOrigin( 0, 0 );
-	
-	/*
-		Elicit a mouse-moved event to change the cursor if it's in a live
-		square (outside of the dead zone).
-	*/
-	
-	return otherRgn;
 }
 
 static
