@@ -18,6 +18,12 @@
 // mac-sys-utils
 #include "mac_sys/trap_available.hh"
 
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+#include "mac_qd/globals/patterns.hh"
+#include "mac_qd/globals/screenBits.hh"
+#include "mac_qd/globals/thePort.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -177,7 +183,7 @@ namespace TestEdit
 	
 	static void DrawQuasimodeFrame()
 	{
-		DrawQuasimodeFrame( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		DrawQuasimodeFrame( mac::qd::get_portRect( mac::qd::thePort() ) );
 	}
 	
 	void TextEdit::BeginQuasimode()
@@ -187,11 +193,11 @@ namespace TestEdit
 	
 	void TextEdit::EndQuasimode()
 	{
-		N::PenPat( N::GetQDGlobalsWhite() );
+		N::PenPat( mac::qd::white() );
 		
 		DrawQuasimodeFrame();
 		
-		N::PenPat( N::GetQDGlobalsBlack() );
+		N::PenPat( mac::qd::black() );
 	}
 	
 	Ped::TextSelection TextEdit::GetPriorSelection() const
@@ -352,7 +358,7 @@ namespace TestEdit
 		public:
 			ScrollFrame()
 			:
-				itsBounds( N::GetPortBounds( N::GetQDGlobalsThePort() ) ),
+				itsBounds( mac::qd::get_portRect( mac::qd::thePort() ) ),
 				itsFrame( itsBounds )
 			{
 				itsUserData.trackHook = &Ped::TrackScrollbar;
@@ -423,7 +429,7 @@ namespace TestEdit
 	
 	static Rect MakeWindowRect()
 	{
-		Rect screenBounds = N::GetQDGlobalsScreenBits().bounds;
+		const Rect& screenBounds = mac::qd::screenBits().bounds;
 		
 		Rect rect = N::SetRect(0, 18, 2*4+6*80+16, 18+2*4+11*25+16);
 		short mbarHeight = ::GetMBarHeight();
