@@ -347,28 +347,12 @@ RgnHandle undo()
 	
 	int rgn_index = undone_index + 1;
 	
-	RgnHandle rgn = mouseRgns[ rgn_index ] = allocRgns[ rgn_index ];
-	
-	/*
-		Sometimes when unitLength == 2, Core Graphics draws everything
-		one pixel lower than QuickDraw would, and erasing a square would
-		damage the gridline above it.  Inset the region we're erasing to
-		prevent that.
-	*/
-	
-	if ( CONFIG_USE_COREGRAPHICS )
-	{
-		rgn = temporary_copy( rgn );
-		
-		const short inset = unitLength / 2u;
-		
-		InsetRgn( rgn, inset, inset );
-	}
-	
 	Point origin = {};
 	GlobalToLocal( &origin );
 	
 	SetOrigin( -origin.h, -origin.v );
+	
+	RgnHandle rgn = mouseRgns[ rgn_index ] = allocRgns[ rgn_index ];
 	
 	EraseRgn( rgn );
 	
