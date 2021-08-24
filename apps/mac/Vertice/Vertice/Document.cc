@@ -9,6 +9,7 @@
 #include <algorithm>
 
 // mac-qd-utils
+#include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/screenBits.hh"
 
 // mac-app-utils
@@ -17,9 +18,6 @@
 // text-input
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
-
-// Nitrogen
-#include "Nitrogen/MacWindows.hh"
 
 // Nitrogen Extras
 #include "FSReader.hh"
@@ -59,7 +57,6 @@ namespace Vertice
 		rect.right = hMargin / 2 + length;
 		
 		return rect;
-		return N::InsetRect( rect, 4, 4 );
 	}
 	
 	static
@@ -121,7 +118,7 @@ namespace Vertice
 	{
 		n::owned< WindowRef > window = CreateWindow( MakeWindowRect() );
 		
-		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+		const Rect& bounds = mac::qd::get_portRect( window );
 		
 		boost::intrusive_ptr< Ped::View > view( new PortView( bounds ) );
 		
