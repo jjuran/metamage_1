@@ -38,7 +38,7 @@ RgnHandle get_X_token( short unitLength )
 	const short width  = unitLength * 6;
 	const short height = unitLength * 6;
 	
-	const short offset = unitLength * 3 / 4;
+	const short offset = unitLength > 1 ? unitLength * 3 / 4u : 1;
 	
 	PolyHandle dexter = OpenPoly();
 	
