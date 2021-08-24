@@ -13,6 +13,8 @@
 
 // mac-qd-utils
 #include "mac_qd/get_pix_rowBytes.hh"
+#include "mac_qd/get_portRect.hh"
+#include "mac_qd/globals/thePort.hh"
 
 // plus
 #include "plus/serialize.hh"
@@ -431,8 +433,8 @@ namespace Genie
 		{
 			// Copy to dest
 			N::CopyBits( gworld,
-			             N::GetQDGlobalsThePort(),
-			             N::GetPortBounds( gworld ),
+			             (CGrafPtr) mac::qd::thePort(),
+			             mac::qd::get_portRect( gworld ),
 			             bounds,
 			             mode );
 			

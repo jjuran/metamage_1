@@ -12,6 +12,9 @@
 // more-libc
 #include "more/string.h"
 
+// mac-qd-utils
+#include "mac_qd/globals/thePort.hh"
+
 // plus
 #include "plus/serialize.hh"
 #include "plus/simple_map.hh"
@@ -351,7 +354,7 @@ namespace Genie
 		
 		// Copy to dest
 		N::CopyBits( &params.bitmap,
-		             N::GetPortBitMapForCopyBits( N::GetQDGlobalsThePort() ),
+		             N::GetPortBitMapForCopyBits( (CGrafPtr) mac::qd::thePort() ),
 		             params.bitmap.bounds,
 		             bounds,
 		             mode );

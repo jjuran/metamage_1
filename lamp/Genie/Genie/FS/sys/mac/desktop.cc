@@ -5,11 +5,21 @@
 
 #include "Genie/FS/sys/mac/desktop.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
+
+// mac-qd-utils
+#include "mac_qd/globals/screenBits.hh"
+
 // plus
 #include "plus/var_string.hh"
-
-// Nitrogen
-#include "Nitrogen/Quickdraw.hh"
 
 // vfs
 #include "vfs/property.hh"
@@ -21,9 +31,6 @@
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	struct GetScreenSize : serialize_Point
 	{
@@ -45,7 +52,7 @@ namespace Genie
 	{
 		typedef serialize_Rect Accessor;
 		
-		const BitMap& screenBits = N::GetQDGlobalsScreenBits();
+		const BitMap& screenBits = mac::qd::screenBits();
 		
 		Accessor::deconstruct::apply( result, screenBits.bounds, binary );
 	}
@@ -55,7 +62,7 @@ namespace Genie
 	{
 		typedef GetScreenSize Accessor;
 		
-		const BitMap& screenBits = N::GetQDGlobalsScreenBits();
+		const BitMap& screenBits = mac::qd::screenBits();
 		
 		const Point data = GetScreenSize::Get( screenBits );
 		

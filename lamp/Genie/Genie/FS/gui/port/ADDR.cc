@@ -20,6 +20,9 @@
 #include "mac_sys/current_process.hh"
 #include "mac_sys/is_front_process.hh"
 
+// mac-qd-utils
+#include "mac_qd/globals/screenBits.hh"
+
 // mac-app-utils
 #include "mac_app/Window_menu.hh"
 
@@ -193,11 +196,11 @@ namespace Genie
 		
 		const short topMargin = ::GetMBarHeight() + 18;  // FIXME:  Calculate title bar height
 		
-		BitMap screenBits = N::GetQDGlobalsScreenBits();
+		const Rect& screenBits_bounds = mac::qd::screenBits().bounds;
 		
-		short spareWidth = screenBits.bounds.right - bounds.right;
+		short spareWidth = screenBits_bounds.right - bounds.right;
 		
-		short spareHeight = screenBits.bounds.bottom - bounds.bottom - topMargin;
+		short spareHeight = screenBits_bounds.bottom - bounds.bottom - topMargin;
 		
 		::OffsetRect( &bounds,
 		              spareWidth / 2,

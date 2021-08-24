@@ -21,6 +21,10 @@
 // mac-sys-utils
 #include "mac_sys/trap_available.hh"
 
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+#include "mac_qd/globals/thePort.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -295,12 +299,12 @@ namespace Genie
 	
 	void TextEdit::BeginQuasimode()
 	{
-		N::FrameRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		N::FrameRect( mac::qd::get_portRect( mac::qd::thePort() ) );
 	}
 	
 	void TextEdit::EndQuasimode()
 	{
-		N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+		N::InvalRect( mac::qd::get_portRect( mac::qd::thePort() ) );
 	}
 	
 	Ped::TextSelection TextEdit::GetPriorSelection() const

@@ -5,6 +5,10 @@
 
 #include "Genie/FS/gui/new/icon.hh"
 
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+#include "mac_qd/globals/thePort.hh"
+
 // plus
 #include "plus/serialize.hh"
 #include "plus/simple_map.hh"
@@ -109,7 +113,7 @@ namespace Genie
 			params.xform = activating ? kTransformNone
 			                          : kTransformDisabled;
 			
-			N::InvalRect( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
+			N::InvalRect( mac::qd::get_portRect( mac::qd::thePort() ) );
 		}
 	}
 	
