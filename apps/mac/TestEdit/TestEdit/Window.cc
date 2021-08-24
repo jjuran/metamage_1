@@ -176,7 +176,8 @@ namespace TestEdit
 	}
 	
 	
-	static void DrawQuasimodeFrame( Rect frame )
+	static inline
+	void DrawQuasimodeFrame( const Rect& frame )
 	{
 		N::FrameRect( frame );
 	}
