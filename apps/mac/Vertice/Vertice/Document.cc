@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// mac-qd-utils
+#include "mac_qd/globals/screenBits.hh"
+
 // mac-app-utils
 #include "mac_app/Window_menu.hh"
 
@@ -41,7 +44,7 @@ namespace Vertice
 	
 	static Rect MakeWindowRect()
 	{
-		Rect screenBounds = N::GetQDGlobalsScreenBits().bounds;
+		const Rect& screenBounds = mac::qd::screenBits().bounds;
 		short mbarHeight = ::GetMBarHeight();
 		Rect rect = screenBounds;
 		rect.top += mbarHeight + 22;

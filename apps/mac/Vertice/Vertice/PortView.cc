@@ -8,6 +8,9 @@
 // Standard C++
 #include <vector>
 
+// mac-qd-utils
+#include "mac_qd/globals/thePort_window.hh"
+
 // nucleus
 #include "nucleus/saved.hh"
 
@@ -67,7 +70,7 @@ namespace Vertice
 	static
 	void blit_to_thePort( CGrafPtr src )
 	{
-		CGrafPtr thePort = N::GetQDGlobalsThePort();
+		CGrafPtr thePort = (CGrafPtr) mac::qd::thePort();
 		
 		PixMapHandle pix = N::GetGWorldPixMap( thePort );
 		n::saved< N::Pixels_State > savedPixelsState( pix );
@@ -150,7 +153,7 @@ namespace Vertice
 		
 		OSStatus err;
 		
-		WindowRef window = GetWindowFromPort( GetQDGlobalsThePort() );
+		WindowRef window = mac::qd::thePort_window();
 		
 		ControlRef content;
 		err = GetRootControl( window, &content );
@@ -192,7 +195,7 @@ namespace Vertice
 	{
 	#ifdef MAC_OS_X_VERSION_10_7
 		
-		WindowRef window = GetWindowFromPort( GetQDGlobalsThePort() );
+		WindowRef window = mac::qd::thePort_window();
 		
 		CGFloat factor = HIWindowGetBackingScaleFactor( window );
 		
