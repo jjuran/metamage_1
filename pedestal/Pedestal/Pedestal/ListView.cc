@@ -31,6 +31,22 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+	static
+	RgnHandle get_visRgn()
+	{
+	#if OPAQUE_TOOLBOX_STRUCTS
+		
+		static RgnHandle rgn = NewRgn();
+		
+		return GetPortVisibleRegion( GetQDGlobalsThePort(), rgn );
+		
+	#else
+		
+		return ::qd.thePort->visRgn;
+		
+	#endif
+	}
+	
 	// Mac OS places the scrollbars outside the bounds.
 	// We adjust the bounds inward so they draw within the original bounds.
 	
@@ -151,7 +167,7 @@ namespace Pedestal
 	{
 		//Rect bounds = Bounds( itsList );
 		//N::EraseRect( bounds );
-		N::LUpdate( N::GetPortVisibleRegion( N::GetQDGlobalsThePort() ), itsList );
+		N::LUpdate( get_visRgn(), itsList );
 	}
 	
 	void ListView::SetCell( UInt16 offset, const char* data, std::size_t length )
