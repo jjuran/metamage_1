@@ -26,28 +26,26 @@
 #include "Nitrogen/TextEdit.hh"
 
 
-namespace Nitrogen
-{
-	
-	class TextMode_Setting
-	{
-		public:
-			typedef short  value_type;
-			typedef short  param_type;
-			
-			value_type get() const  { return GetPortTextMode( GetQDGlobalsThePort() ); }
-			
-			void set( param_type mode ) const  { TextMode( mode ); }
-	};
-	
-}
-
 namespace Pedestal
 {
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
+	
+	static
+	short get_TextMode()
+	{
+	#if OPAQUE_TOOLBOX_STRUCTS
+		
+		return GetPortTextMode( GetQDGlobalsThePort() );
+		
+	#else
+		
+		return ::qd.thePort->txMode;
+		
+	#endif
+	}
 	
 	void Caption::Draw( const Rect& bounds, bool erasing )
 	{
@@ -62,7 +60,7 @@ namespace Pedestal
 			N::ClipRect( bounds );
 		}
 		
-		n::saved< N::TextMode_Setting > savedTextMode;
+		const short saved_txMode = get_TextMode();
 		
 		if ( Disabled() )
 		{
@@ -70,6 +68,8 @@ namespace Pedestal
 		}
 		
 		N::TETextBox( Text(), newBounds );
+		
+		::TextMode( saved_txMode );
 	}
 	
 }
