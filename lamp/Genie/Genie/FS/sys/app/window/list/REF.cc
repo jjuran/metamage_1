@@ -84,31 +84,9 @@ bool has_color_quickdraw()
 namespace Nitrogen
 {
 	
-	inline void TextFont( FontID font )
-	{
-		::TextFont( font );
-	}
-	
-	using ::TextSize;
-	
 	inline FontID GetPortTextFont( CGrafPtr port )
 	{
 		return FontID( ::GetPortTextFont( port ) );
-	}
-	
-	using ::GetPortTextSize;
-	
-	inline void SetPortTextFont( CGrafPtr port, FontID font )
-	{
-		::SetPortTextFont( port, font );
-	}
-	
-	using ::SetPortTextSize;
-	
-	static inline
-	void SetWindowAlpha( WindowRef window, float alpha )
-	{
-		::SetWindowAlpha( window, alpha );
 	}
 	
 	static
@@ -169,11 +147,11 @@ namespace Genie
 		{
 			if ( visible )
 			{
-				N::ShowWindow( window );
+				ShowWindow( window );
 			}
 			else
 			{
-				N::HideWindow( window );
+				HideWindow( window );
 			}
 		}
 	};
@@ -184,7 +162,7 @@ namespace Genie
 		{
 			unsigned z = 0;
 			
-			for ( WindowRef it = N::GetWindowList();  it != window;  ++z, it = N::GetNextWindow( it ) )
+			for ( WindowRef it = GetWindowList();  it != window;  ++z, it = GetNextWindow( it ) )
 			{
 				if ( it == NULL )
 				{
@@ -344,7 +322,7 @@ namespace Genie
 				p7::throw_errno( ENOENT );
 			}
 			
-			return GetColor( N::GetWindowPort( window ) );
+			return GetColor( GetWindowPort( window ) );
 		}
 		
 		static void Set( WindowRef window, const RGBColor& color )
@@ -356,7 +334,7 @@ namespace Genie
 			
 			n::saved< N::Port > savePort;
 			
-			N::SetPortWindowPort( window );
+			SetPortWindowPort( window );
 			
 			SetColor( color );
 			
@@ -368,14 +346,14 @@ namespace Genie
 	{
 		static short Get( WindowRef window )
 		{
-			return N::GetPortTextFont( N::GetWindowPort( window ) );
+			return N::GetPortTextFont( GetWindowPort( window ) );
 		}
 		
 		static void Set( WindowRef window, short fontID )
 		{
 			n::saved< N::Port > savePort;
 			
-			N::SetPortWindowPort( window );
+			SetPortWindowPort( window );
 			
 			::TextFont( fontID );
 			
@@ -387,14 +365,14 @@ namespace Genie
 	{
 		static short Get( WindowRef window )
 		{
-			return N::GetPortTextSize( N::GetWindowPort( window ) );
+			return GetPortTextSize( GetWindowPort( window ) );
 		}
 		
 		static void Set( WindowRef window, short size )
 		{
 			n::saved< N::Port > savePort;
 			
-			N::SetPortWindowPort( window );
+			SetPortWindowPort( window );
 			
 			::TextSize( size );
 			
@@ -416,7 +394,7 @@ namespace Genie
 				alpha = 10000;
 			}
 			
-			N::SetWindowAlpha( window, alpha / 10000.0 );
+			SetWindowAlpha( window, alpha / 10000.0 );
 		}
 	};
 	
@@ -426,7 +404,7 @@ namespace Genie
 		
 		const WindowRef window = (WindowRef) extra.data;
 		
-		N::SelectWindow( window );
+		SelectWindow( window );
 	}
 	
 	
