@@ -79,6 +79,16 @@ void calculate_window_metrics( const Rect& portRect )
 	
 	unitLength = portLength / 32u;
 	
+	if ( unitLength == 0 )
+	{
+		unitLength = 1;
+		
+		margin.v = 0;
+		margin.h = 0;
+		
+		return;
+	}
+	
 	margin.v = (portHeight - unitLength * 32) / 2u;
 	margin.h = (portWidth  - unitLength * 32) / 2u;
 }
