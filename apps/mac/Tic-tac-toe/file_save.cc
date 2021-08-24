@@ -46,9 +46,9 @@ long write_and_close_stream( FSIORefNum refnum )
 	
 	traits::close( refnum );
 	
-	OSErr err = n < 0    ? n
-	          : n < size ? ioErr
-	          :            noErr;
+	OSErr err = n < 0    ? (OSErr) n
+	          : n < size ? (OSErr) ioErr
+	          :            (OSErr) noErr;
 	
 	return err;
 }
