@@ -879,34 +879,6 @@ namespace Nitrogen
 	
 	// ...
 	
-	// GetQDGlobalsRandomSeed
-	
-#if ACCESSOR_CALLS_ARE_FUNCTIONS
-	
-	const BitMap&  GetQDGlobalsScreenBits();
-	const Cursor&  GetQDGlobalsArrow();
-	const Pattern& GetQDGlobalsDarkGray();
-	const Pattern& GetQDGlobalsLightGray();
-	const Pattern& GetQDGlobalsGray();
-	const Pattern& GetQDGlobalsBlack();
-	const Pattern& GetQDGlobalsWhite();
-	
-#else
-	
-	inline const BitMap&  GetQDGlobalsScreenBits()  { return qd.screenBits; }
-	inline const Cursor&  GetQDGlobalsArrow()       { return qd.arrow; }
-	inline const Pattern& GetQDGlobalsDarkGray()    { return qd.dkGray; }
-	inline const Pattern& GetQDGlobalsLightGray()   { return qd.ltGray; }
-	inline const Pattern& GetQDGlobalsGray()        { return qd.gray; }
-	inline const Pattern& GetQDGlobalsBlack()       { return qd.black; }
-	inline const Pattern& GetQDGlobalsWhite()       { return qd.white; }
-	
-#endif
-	
-	using ::GetQDGlobalsThePort;
-	
-	// ...
-	
 	nucleus::owned< CGrafPtr > CreateNewPort();
 	
 	inline void DisposePort( nucleus::owned< CGrafPtr > )  {}

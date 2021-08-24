@@ -224,43 +224,6 @@ namespace Nitrogen
 		return region;
 	}
 	
-#if ACCESSOR_CALLS_ARE_FUNCTIONS
-	
-	namespace Detail
-	{
-		
-		template < class Type >
-		Type& QDGlobalsVar
-		(
-		#if !TARGET_RT_MAC_MACHO
-			pascal
-		#endif
-			Type* (getter)(Type*)
-		)
-		{
-			static Type var;
-			return *getter( &var );
-		}
-		
-	}
-	
-	
-	// Thread-safety note:
-	//
-	// GetQDGlobalsScreenBits() and GetQDGlobalsArrow() should be okay,
-	// since two simultaneous accesses would be copying the same data.
-	// The Pattern-returning functions are not thread-safe.
-	
-	const BitMap&  GetQDGlobalsScreenBits()  { return Detail::QDGlobalsVar( ::GetQDGlobalsScreenBits ); }
-	const Cursor&  GetQDGlobalsArrow()       { return Detail::QDGlobalsVar( ::GetQDGlobalsArrow      ); }
-	const Pattern& GetQDGlobalsDarkGray()    { return Detail::QDGlobalsVar( ::GetQDGlobalsDarkGray   ); }
-	const Pattern& GetQDGlobalsLightGray()   { return Detail::QDGlobalsVar( ::GetQDGlobalsLightGray  ); }
-	const Pattern& GetQDGlobalsGray()        { return Detail::QDGlobalsVar( ::GetQDGlobalsGray       ); }
-	const Pattern& GetQDGlobalsBlack()       { return Detail::QDGlobalsVar( ::GetQDGlobalsBlack      ); }
-	const Pattern& GetQDGlobalsWhite()       { return Detail::QDGlobalsVar( ::GetQDGlobalsWhite      ); }
-	
-#endif
-	
 	nucleus::owned< CGrafPtr > CreateNewPort()
 	{
 		return nucleus::owned< CGrafPtr >::seize( ::CreateNewPort(),
