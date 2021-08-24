@@ -21,6 +21,7 @@
 #include "mac_sys/is_front_process.hh"
 
 // mac-qd-utils
+#include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/screenBits.hh"
 
 // mac-app-utils
@@ -456,7 +457,7 @@ namespace Genie
 		Ped::set_window_view( window, params.itsSubview.get() );
 		
 		// We could copy from above but the actual bounds could be different
-		bounds = N::GetPortBounds( GetWindowPort( window ) );
+		bounds = mac::qd::get_portRect( window );
 		
 		params.itsSubview->Install( bounds );
 		
@@ -576,7 +577,7 @@ namespace Genie
 		{
 			SetWindowPort_Scope scope( window );
 			
-			Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+			Rect bounds = mac::qd::get_portRect( window );
 			
 			view->Install( bounds );
 			
