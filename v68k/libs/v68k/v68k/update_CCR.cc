@@ -61,8 +61,7 @@ namespace v68k
 	{
 		const int32_t a = sign_extend( pb.first,  pb.size );
 		const int32_t b = sign_extend( pb.second, pb.size );
-		
-		const int32_t d = b - a;
+		const int32_t d = sign_extend( b - a,     pb.size );
 		
 		s.sr.nzvc = common_NZ( d )
 		          | additive_VC( a, d, b );  // b is the sum
