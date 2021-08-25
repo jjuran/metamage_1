@@ -72,6 +72,19 @@ const short bezel_corner_diameter = 16;
 
 
 static
+asm SInt16 sub_clamped( SInt16 a : __D1, SInt16 b : __D0 )
+{
+	MOVE.W   #32767,D2
+	SUB.W    D1,D0
+	BVC.S    done
+	EXG      D2,D0
+	BMI.S    done
+	NEG.W    D0
+done:
+	RTS
+}
+
+static
 RgnHandle QDGlobalToLocalRegion( GrafPtr port, RgnHandle rgn )
 {
 	const Rect& bounds = port->portBits.bounds;
@@ -79,6 +92,20 @@ RgnHandle QDGlobalToLocalRegion( GrafPtr port, RgnHandle rgn )
 	OffsetRgn( rgn, bounds.left, bounds.top );
 	
 	return rgn;
+}
+
+static
+void QDLocalToGlobalRect_clamped( GrafPtr port, const Rect* src, Rect* dst )
+{
+	const Point& topLeft = *(Point*) &port->portBits.bounds;
+	
+	short*       p = &dst->top;
+	short const* q = &src->top;
+	
+	*p++ = sub_clamped( topLeft.v, *q++ );
+	*p++ = sub_clamped( topLeft.h, *q++ );
+	*p++ = sub_clamped( topLeft.v, *q++ );
+	*p++ = sub_clamped( topLeft.h, *q++ );
 }
 
 static
@@ -1103,6 +1130,14 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 {
 	WindowPeek window = (WindowPeek) w;
 	
+	/*
+		We have to clamp because the grow limit rect might extend all the way
+		to 32767,32767, for example, and local-to-global adds to it.
+	*/
+	
+	Rect limit;
+	QDLocalToGlobalRect_clamped( w, size, &limit );
+	
 	RgnHandle mouseRgn = NewRgn();
 	
 	QDGlobals& qd = get_QDGlobals();
@@ -1162,11 +1197,15 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 		
 		sleep = 0xFFFFFFFF;
 		
-		if ( *(long*) &pt != *(long*) &event.where )
+		long pinned = PinRect( &limit, where );
+		
+		if ( *(long*) &pt != pinned )
 		{
 			raster_lock lock;
 			
 			call_WDEF( window, wGrow, (long) &grow_rect );
+			
+			event.where = *(Point*) &pinned;
 			
 			grow_rect.bottom += event.where.v - pt.v;
 			grow_rect.right  += event.where.h - pt.h;
