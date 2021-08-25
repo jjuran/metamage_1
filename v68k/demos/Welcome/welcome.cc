@@ -182,6 +182,12 @@ int main()
 	
 	WindowRef main_window = create_window();
 	
+#ifndef __APPLE__
+	
+	TextFont( systemFont );
+	
+#endif
+	
 	const bool has_WNE = has_WaitNextEvent();
 	
 	while ( ! quitting )
