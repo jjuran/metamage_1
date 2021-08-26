@@ -11,6 +11,9 @@
 // mac-qd-utils
 #include "mac_qd/globals/thePort_window.hh"
 
+// mac-ui-utils
+#include "mac_ui/windows.hh"
+
 // nucleus
 #include "nucleus/saved.hh"
 
@@ -149,18 +152,12 @@ namespace Vertice
 	
 	void PortView::Update() const
 	{
-	#ifdef MAC_OS_X_VERSION_10_4
-		
-		OSStatus err;
+	#ifdef MAC_OS_X_VERSION_10_2
 		
 		WindowRef window = mac::qd::thePort_window();
 		
-		ControlRef content;
-		err = GetRootControl( window, &content );
-		
-		if ( HIViewIsCompositingEnabled( content ) )
+		if ( mac::ui::invalidate_if_compositing( window ) )
 		{
-			err = HIViewSetNeedsDisplay( content, true );
 			return;
 		}
 		
