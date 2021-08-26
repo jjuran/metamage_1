@@ -15,6 +15,11 @@
 #include <MacWindows.h>
 #endif
 
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+#include "mac_qd/globals/thePort.hh"
+#include "mac_qd/is_port_visrgn_empty.hh"
+
 
 namespace mac {
 namespace ui  {
@@ -135,6 +140,47 @@ bool invalidate_if_compositing( WindowRef window )
 #endif
 	
 	return false;
+}
+
+void invalidate_window( WindowRef window )
+{
+#ifdef MAC_OS_X_VERSION_10_2
+	
+	if ( invalidate_if_compositing( window ) )
+	{
+		return;
+	}
+	
+#endif
+	
+	CGrafPtr port = GetWindowPort( window );
+	
+	if ( ! mac::qd::is_port_visrgn_empty( port ) )
+	{
+		const Rect& portRect = mac::qd::get_portRect( port );
+		
+	#if ! TARGET_API_MAC_CARBON
+		
+		GrafPtr thePort = mac::qd::thePort();
+		
+		if ( thePort != window )
+		{
+			SetPort( window );
+		}
+		
+		InvalRect( &portRect );
+		
+		if ( thePort != window )
+		{
+			SetPort( thePort );
+		}
+		
+		return;
+		
+	#endif
+		
+		InvalWindowRect( window, &portRect );
+	}
 }
 
 #else
