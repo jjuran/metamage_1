@@ -1,0 +1,26 @@
+CFBundleDevelopmentRegion: "English"
+CFBundleDocumentTypes:
+[
+	[
+		CFBundleTypeName: "Tic-tac-toe saved game"
+		CFBundleTypeRole: "QLGenerator"
+		LSItemContentTypes:
+		[
+			"com.metamage.tic-tac-toe"
+			"dyn.ah62d4rv4ge81k4pdfz4gc23rsv10n"
+		]
+	]
+]
+CFBundleIdentifier: "com.metamage.QLTicTacToe"
+CFPlugInFactories:
+[
+	"F4520E14-E458-5615-479A-FA4B24E7E04D": "QuickLookGeneratorPluginFactory"
+]
+CFPlugInTypes:
+[
+	"5E2D9680-5022-40FA-B806-43349622E5B9": ["F4520E14-E458-5615-479A-FA4B24E7E04D"]
+]
+NSHumanReadableCopyright: "Copyright 2021 Josh Juran. All rights reserved."
+QLNeedsToBeRunInMainThread: false
+QLSupportsConcurrentRequests: true
+QLThumbnailMinimumSize: 32
