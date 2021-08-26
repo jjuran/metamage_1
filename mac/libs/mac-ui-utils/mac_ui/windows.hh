@@ -24,6 +24,8 @@ namespace ui  {
 	
 	Point get_window_size( WindowRef window );
 	
+	bool invalidate_if_compositing( WindowRef window );
+	
 }
 }
 

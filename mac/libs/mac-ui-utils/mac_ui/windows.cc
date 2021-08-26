@@ -60,6 +60,83 @@ Point get_window_size( WindowRef window )
 	return size;
 }
 
+#ifdef MAC_OS_X_VERSION_10_2
+
+static
+ControlRef get_content_view_if_compositing( WindowRef window )
+{
+#ifdef MAC_OS_X_VERSION_10_2
+	
+	OSStatus err;
+	
+#ifndef MAC_OS_X_VERSION_10_4
+	
+	// Mac OS X 10.2 - 10.3:  Check if the window is in compositing mode.
+	
+	WindowAttributes attrs = kWindowNoAttributes;
+	err = GetWindowAttributes( window, &attrs );
+	
+	if ( err != noErr  ||  ! (attrs & kWindowCompositingAttribute) )
+	{
+		return NULL;
+	}
+	
+	// The window is in compositing mode, so return the content view.
+	
+#endif
+	
+	// Mac OS X 10.2 - 10.14:  Get the window's content view.
+	
+	ControlRef content;
+	err = GetRootControl( window, &content );
+	
+	if ( err != noErr )
+	{
+		return NULL;
+	}
+	
+#ifdef MAC_OS_X_VERSION_10_4
+	
+	// Mac OS X 10.4 - 10.14:  Check if the view is in compositing mode.
+	
+	if ( ! HIViewIsCompositingEnabled( content ) )
+	{
+		return NULL;
+	}
+	
+	// The content view is in compositing mode, so return it.
+	
+#endif
+	
+	return content;
+	
+#endif  // #ifdef MAC_OS_X_VERSION_10_2
+	
+	// Compositing mode doesn't exist.
+	
+	return NULL;
+}
+
+#endif  // #ifdef MAC_OS_X_VERSION_10_2
+
+bool invalidate_if_compositing( WindowRef window )
+{
+#ifdef MAC_OS_X_VERSION_10_2
+	
+	OSStatus err;
+	
+	if ( ControlRef content = get_content_view_if_compositing( window ) )
+	{
+		err = HIViewSetNeedsDisplay( content, true );
+		
+		return err == noErr;
+	}
+	
+#endif
+	
+	return false;
+}
+
 #else
 
 int dummy;
