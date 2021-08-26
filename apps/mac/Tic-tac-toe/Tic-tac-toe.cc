@@ -35,6 +35,7 @@
 
 // mac-ui-utils
 #include "mac_ui/menus.hh"
+#include "mac_ui/windows.hh"
 
 // mac-app-utils
 #include "mac_app/DAs.hh"
@@ -74,19 +75,6 @@ const bool apple_events_present =
 
 static bool sound_enabled;
 static bool is_fullscreen;
-
-static inline
-void InvalRect( WindowRef window, const Rect& rect )
-{
-#if ! TARGET_API_MAC_CARBON
-	
-	InvalRect( &rect );
-	return;
-	
-#endif
-	
-	InvalWindowRect( window, &rect );
-}
 
 static const Rect grow_size =
 {
@@ -215,9 +203,9 @@ void invalidate_window_size( WindowRef window )
 {
 	const Rect& portRect = get_portRect( window );
 	
-	InvalRect( window, portRect );
-	
 	window_size_changed( portRect );
+	
+	mac::ui::invalidate_window( window );
 }
 
 static
