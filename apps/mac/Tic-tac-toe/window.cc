@@ -20,10 +20,12 @@
 // mac-ui-utils
 #include "mac_ui/menus.hh"
 
+// CGTictactoe
+#include "CGTictactoe.hh"
+
 // Tic-tac-toe
 #include "cursors.hh"
 #include "dock_tile.hh"
-#include "draw_CG.hh"
 #include "fullscreen_QT.hh"
 #include "menus.hh"
 #include "play_tone.hh"

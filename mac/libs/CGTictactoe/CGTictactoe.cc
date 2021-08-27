@@ -1,9 +1,9 @@
 /*
-	draw_CG.cc
-	----------
+	CGTictactoe.cc
+	--------------
 */
 
-#include "draw_CG.hh"
+#include "CGTictactoe.hh"
 
 static
 void draw_X( CGContextRef context )

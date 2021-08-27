@@ -1,14 +1,13 @@
 /*
-	draw_CG.hh
-	----------
+	CGTictactoe.hh
+	--------------
 */
 
-#ifndef TICTACTOE_DRAWCG_HH
-#define TICTACTOE_DRAWCG_HH
+#ifndef CGTICTACTOE_HH
+#define CGTICTACTOE_HH
 
 // Mac OS X
 #ifdef __APPLE__
-// Including just <CoreGraphics/CoreGraphics.h> fails in Mac OS X 10.4.
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
