@@ -8,26 +8,19 @@
 static
 void draw_X( CGContextRef context )
 {
-	const float width  = 6;
-	const float height = 6;
+	const float offset = 0.35;
 	
-	const float offset = 3.0 / 4;
+	const float min = 0 + offset;
+	const float max = 6 - offset;
 	
-	CGContextMoveToPoint   ( context, 0,              0      + offset );
-	CGContextAddLineToPoint( context, 0     + offset, 0               );
-	CGContextAddLineToPoint( context, width,          height - offset );
-	CGContextAddLineToPoint( context, width - offset, height          );
+	CGContextMoveToPoint   ( context, min, min );
+	CGContextAddLineToPoint( context, max, max );
 	
-	CGContextClosePath( context );
-	CGContextFillPath ( context );
-	
-	CGContextMoveToPoint   ( context, width - offset, 0               );
-	CGContextAddLineToPoint( context, width,          0      + offset );
-	CGContextAddLineToPoint( context, 0     + offset, height          );
-	CGContextAddLineToPoint( context, 0,              height - offset );
+	CGContextMoveToPoint   ( context, min, max );
+	CGContextAddLineToPoint( context, max, min );
 	
 	CGContextClosePath( context );
-	CGContextFillPath ( context );
+	CGContextStrokePath( context );
 }
 
 static
