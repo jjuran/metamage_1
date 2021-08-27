@@ -33,7 +33,7 @@
 #include "state.hh"
 
 
-#ifdef MAC_OS_X_VERSION_10_4
+#ifdef MAC_OS_X_VERSION_10_0
 #define CONFIG_USE_COREGRAPHICS  1
 #else
 #define CONFIG_USE_COREGRAPHICS  0
@@ -161,7 +161,6 @@ CGContextForPort::CGContextForPort( bool erasing )
 	CGContextTranslateCTM( context, margin.h, margin.v );
 	CGContextScaleCTM( context, unitLength, unitLength );
 	
-	CGContextSetGrayFillColor  ( context, white_or_black, 1 );
 	CGContextSetGrayStrokeColor( context, white_or_black, 1 );
 }
 
