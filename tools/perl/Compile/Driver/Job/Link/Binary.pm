@@ -53,6 +53,13 @@ sub tool_name
 	return "c++";
 }
 
+sub has_framework
+{
+	my ( $name ) = @_;
+	
+	return -d "/System/Library/Frameworks/$name.framework";
+}
+
 sub command
 {
 	my $self = shift;
@@ -70,15 +77,24 @@ sub command
 	
 	if ( $conf->is_apple_gcc )
 	{
+		my @names = @{$module->{DESC}{DATA}{frameworks} || []};
+		
 		if ( my $bundle_type = $module->bundle_type )
 		{
 			if ( $bundle_type ne "app" )
 			{
 				@mode = "-bundle";
+				
+				if ( $bundle_type eq "qlgenerator" )
+				{
+					push @names, (has_framework "CoreGraphics")
+					             ? ("CoreFoundation", "CoreGraphics")
+					             : "ApplicationServices";
+					
+					push @names, "QuickLook";
+				}
 			}
 		}
-		
-		my @names = @{$module->{DESC}{DATA}{frameworks} || []};
 		
 		@names = "Carbon"  if @names == 0;
 		
