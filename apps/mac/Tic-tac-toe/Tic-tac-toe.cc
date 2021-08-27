@@ -581,6 +581,12 @@ int main()
 		}
 	}
 	
+#ifdef __APPLE__
+	
+	RestoreApplicationDockTileImage();
+	
+#endif
+	
 	if ( is_fullscreen )
 	{
 		cleanup_fullscreen();
