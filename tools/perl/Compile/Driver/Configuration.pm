@@ -34,6 +34,21 @@ my %category_of_spec = qw
 	opt  build
 );
 
+sub hosttype
+{
+	my $hosttype = substr( `sh -c 'echo \$HOSTTYPE'`, 0, -1 );
+	
+	if ( $osx_arch eq "x86"  &&  $hosttype eq "" )
+	{
+		# In Mac OS X 10.7, running `echo $HOSTTYPE` in the shell outputs
+		# "x86_64", but `sh -c 'echo $HOSTYPE'` just emits a blank line.
+		
+		$hosttype = substr( `uname -m`, 0, -1 );
+	}
+	
+	return $hosttype;
+}
+
 sub new
 {
 	my $class = shift;
@@ -62,7 +77,7 @@ sub new
 		
 		my $is_arm = $osx_arch eq "arm64";
 		
-		my $wants_64bit = $is_arm || `sh -c 'echo \$HOSTTYPE'` =~ /x86_64/;
+		my $wants_64bit = $is_arm || hosttype() =~ /x86_64/;
 		
 		$self{width} ||= $wants_64bit ? "m64" : "m32";
 		
