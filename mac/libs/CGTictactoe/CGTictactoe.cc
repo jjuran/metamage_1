@@ -36,11 +36,20 @@ void draw_O( CGContextRef context )
 static
 void draw_grid_lines( CGContextRef context )
 {
-	CGContextFillRect( context, CGRectMake( 3, 11, 26, 1 ) );
-	CGContextFillRect( context, CGRectMake( 3, 20, 26, 1 ) );
+	CGContextMoveToPoint   ( context,  3, 11.5 );
+	CGContextAddLineToPoint( context, 29, 11.5 );
 	
-	CGContextFillRect( context, CGRectMake( 11, 3, 1, 26 ) );
-	CGContextFillRect( context, CGRectMake( 20, 3, 1, 26 ) );
+	CGContextMoveToPoint   ( context,  3, 20.5 );
+	CGContextAddLineToPoint( context, 29, 20.5 );
+	
+	CGContextMoveToPoint   ( context, 11.5,  3 );
+	CGContextAddLineToPoint( context, 11.5, 29 );
+	
+	CGContextMoveToPoint   ( context, 20.5,  3 );
+	CGContextAddLineToPoint( context, 20.5, 29 );
+	
+	CGContextClosePath( context );
+	CGContextStrokePath( context );
 }
 
 void draw_token( CGContextRef context, int token, int x, int y )
