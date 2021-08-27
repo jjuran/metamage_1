@@ -44,6 +44,15 @@ enum player_t
 	Player_O = -1,
 };
 
+enum status_t
+{
+	Status_O_has_won = -2,
+	Status_O_is_next = -1,
+	Status_not_valid =  0,
+	Status_X_is_next =  1,
+	Status_X_has_won =  2,
+};
+
 inline
 player_t opponent( player_t player )
 {
@@ -76,6 +85,8 @@ int undo_move();
 void reset();
 
 const Code* extract();
+
+status_t restore( const Code* data, unsigned short size, signed char board[] );
 
 bool restore( const Code* data, unsigned short size );
 

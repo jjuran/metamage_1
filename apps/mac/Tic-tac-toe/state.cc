@@ -188,10 +188,8 @@ const Code* extract()
 	return ledger.entries;
 }
 
-bool restore( const Code* data, unsigned short size )
+status_t restore( const Code* data, unsigned short size, signed char board[] )
 {
-	signed char tentative_squares[ n_squares ] = {};
-	
 	player_t player = Player_X;
 	player_t winner = Player_none;
 	
@@ -199,31 +197,45 @@ bool restore( const Code* data, unsigned short size )
 	{
 		if ( winner )
 		{
-			return false;  // superfluous move after game over
+			return Status_not_valid;  // superfluous move after game over
 		}
 		
 		Code code = data[ i ];
 		
 		if ( (code - 0xa0 & 0xf0) > 0x20u  ||  (code - 1 & 0xf) > 2u )
 		{
-			return false;  // invalid code
+			return Status_not_valid;  // invalid code
 		}
 		
 		unsigned index = decode_cell_index( data[ i ] );
 		
-		if ( tentative_squares[ index ] )
+		if ( board[ index ] )
 		{
-			return false;  // duplicate move in square
+			return Status_not_valid;  // duplicate move in square
 		}
 		
-		tentative_squares[ index ] = player;
+		board[ index ] = player;
 		
-		if ( won( tentative_squares ) )
+		if ( won( board ) )
 		{
 			winner = player;
 		}
 		
 		player = opponent( player );
+	}
+	
+	// Passed all validation checks.
+	
+	return status_t( winner ? winner * 2 : player );
+}
+
+bool restore( const Code* data, unsigned short size )
+{
+	signed char tentative_squares[ n_squares ] = {};
+	
+	if ( ! restore( data, size, tentative_squares ) )
+	{
+		return false;
 	}
 	
 	ledger.reset( data, size );
