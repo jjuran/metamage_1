@@ -26,11 +26,31 @@ void draw_X( CGContextRef context )
 static
 void draw_O( CGContextRef context )
 {
+	const float offset = 0.5;
+	
+	const float min = 0 + offset;  // 0.5
+	const float mid = 6 / 2;       // 3.0
+	const float max = 6 - offset;  // 5.5
+	
+	const float d = max - min;  // 5.0
+	const float r = d / 2;      // 2.5
+	
 #ifdef MAC_OS_X_VERSION_10_4
 	
-	CGContextStrokeEllipseInRect( context, CGRectMake( 0.5, 0.5, 5, 5 ) );
+	CGContextStrokeEllipseInRect( context, CGRectMake( min, min, d, d ) );
+	return;
 	
 #endif
+	
+	CGContextMoveToPoint( context, mid, min );  // top center
+	
+	CGContextAddArcToPoint( context, max, min, max, max, r );  // upper right
+	CGContextAddArcToPoint( context, max, max, min, max, r );  // lower right
+	CGContextAddArcToPoint( context, min, max, min, min, r );  // lower left
+	CGContextAddArcToPoint( context, min, min, max, min, r );  // upper left
+	
+	CGContextClosePath( context );
+	CGContextStrokePath( context );
 }
 
 static
