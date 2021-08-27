@@ -181,8 +181,6 @@ static
 void draw_window( WindowRef window )
 {
 	draw_window( get_portRect( window ) );
-	
-	propagate_to_dock_tile();
 }
 
 static
@@ -449,6 +447,8 @@ int main()
 	
 	make_main_window();
 	window_size_changed( get_portRect( main_window ) );
+	
+	propagate_to_dock_tile();
 	
 	open_launched_documents();
 	

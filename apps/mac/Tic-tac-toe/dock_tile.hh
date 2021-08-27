@@ -17,6 +17,8 @@
 #endif
 
 
+void draw_dock_tile( signed char board[ 9 ] );
+
 void propagate_to_dock_tile( short unitLength, Point margin );
 
 #endif

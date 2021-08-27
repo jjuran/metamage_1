@@ -99,12 +99,7 @@ void propagate_to_dock_tile()
 {
 #ifdef __APPLE__
 	
-	if ( is_fullscreen_via_QT() )
-	{
-		return;
-	}
-	
-	propagate_to_dock_tile( unitLength, margin );
+	draw_dock_tile( tictactoe::squares );
 	
 #endif
 }
