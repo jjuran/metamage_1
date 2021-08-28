@@ -15,10 +15,11 @@
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/arrow.hh"
-#include "mac_qd/globals/thePort.hh"
+#include "mac_qd/globals/thePort_window.hh"
 
 // mac-ui-utils
 #include "mac_ui/menus.hh"
+#include "mac_ui/windows.hh"
 
 // CGTictactoe
 #include "CGTictactoe.hh"
@@ -396,18 +397,16 @@ RgnHandle mouse_moved( Point where )
 
 void reload( const unsigned char* data, unsigned short size )
 {
-	const bool sound_enabled = false;
-	
-	reset();
-	
 	while ( size-- > 0 )
 	{
 		unsigned i = tictactoe::decode_cell_index( *data++ );
 		
-		play( i, sound_enabled );
+		deactivate_region( 1 + i );
 	}
 	
 	propagate_to_dock_tile();
+	
+	mac::ui::invalidate_window( mac::qd::thePort_window() );
 	
 	if ( tictactoe::can_undo() )
 	{
