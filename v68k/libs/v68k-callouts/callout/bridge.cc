@@ -64,6 +64,10 @@
 namespace v68k    {
 namespace callout {
 
+using v68k::mem_read;
+using v68k::mem_write;
+using v68k::mem_update;
+
 using v68k::auth::fully_authorized;
 using v68k::auth::supervisor_mode_switch_allowed;
 using v68k::screen::lock_level;
@@ -146,7 +150,7 @@ int32_t load_callout( v68k::processor_state& s )
 	const uint8_t* p = s.mem.translate( path_addr,
 	                                    path_size,
 	                                    data_space,
-	                                    v68k::mem_read );
+	                                    mem_read );
 	
 	if ( p == NULL )
 	{
@@ -279,7 +283,7 @@ int32_t ScrnBitMap_callout( v68k::processor_state& s )
 	               + sizeof (uint16_t)
 	               + sizeof (uint16_t) * 4;
 	
-	uint8_t* p = s.mem.translate( pointer, n, data_space, v68k::mem_write );
+	uint8_t* p = s.mem.translate( pointer, n, data_space, mem_write );
 	
 	if ( p == NULL )
 	{
@@ -451,7 +455,7 @@ int32_t fast_memset_callout( v68k::processor_state& s )
 		return rts;
 	}
 	
-	uint8_t* p = s.mem.translate( mem, n, data_space, v68k::mem_write );
+	uint8_t* p = s.mem.translate( mem, n, data_space, mem_write );
 	
 	if ( p == NULL )
 	{
@@ -461,7 +465,7 @@ int32_t fast_memset_callout( v68k::processor_state& s )
 	
 	memset( p, x, n );
 	
-	s.mem.translate( mem, n, data_space, v68k::mem_update );
+	s.mem.translate( mem, n, data_space, mem_update );
 	
 	return rts;
 }
@@ -480,7 +484,7 @@ int32_t fast_memnot_callout( v68k::processor_state& s )
 		return rts;
 	}
 	
-	uint8_t* p = s.mem.translate( mem, n, data_space, v68k::mem_write );
+	uint8_t* p = s.mem.translate( mem, n, data_space, mem_write );
 	
 	if ( p == NULL )
 	{
@@ -495,7 +499,7 @@ int32_t fast_memnot_callout( v68k::processor_state& s )
 		*p++ ^= 0xFF;
 	}
 	
-	s.mem.translate( mem, n, data_space, v68k::mem_update );
+	s.mem.translate( mem, n, data_space, mem_update );
 	
 	return rts;
 }
@@ -503,9 +507,6 @@ int32_t fast_memnot_callout( v68k::processor_state& s )
 static
 int32_t fast_rshift_callout( v68k::processor_state& s )
 {
-	using v68k::mem_read;
-	using v68k::mem_write;
-	
 	const v68k::function_code_t data_space = s.data_space();
 	
 	const uint32_t a = s.a(0);
@@ -549,7 +550,7 @@ int32_t fast_rshift_callout( v68k::processor_state& s )
 		*dst    = byte << left_shift;
 	}
 	
-	s.mem.translate( b, n + 1, data_space, v68k::mem_update );
+	s.mem.translate( b, n + 1, data_space, mem_update );
 	
 	return rts;
 }
@@ -564,7 +565,7 @@ int32_t fast_mempcpy_callout( v68k::processor_state& s )
 	
 	const uint32_t n = s.d(0);
 	
-	const uint8_t* p = s.mem.translate( src, n, data_space, v68k::mem_read );
+	const uint8_t* p = s.mem.translate( src, n, data_space, mem_read );
 	
 	if ( p == NULL )
 	{
@@ -572,7 +573,7 @@ int32_t fast_mempcpy_callout( v68k::processor_state& s )
 		return nil;  // FIXME
 	}
 	
-	uint8_t* q = s.mem.translate( dst, n, data_space, v68k::mem_write );
+	uint8_t* q = s.mem.translate( dst, n, data_space, mem_write );
 	
 	if ( q == NULL )
 	{
@@ -582,7 +583,7 @@ int32_t fast_mempcpy_callout( v68k::processor_state& s )
 	
 	memmove( q, p, n );
 	
-	s.mem.translate( dst, n, data_space, v68k::mem_update );
+	s.mem.translate( dst, n, data_space, mem_update );
 	
 	s.a(0) += n;
 	s.a(1) += n;
@@ -598,7 +599,7 @@ int32_t mem_test_callout( v68k::processor_state& s )
 	
 	function_code_t fc = s.data_space();
 	
-	bool ok = s.mem.translate( addr, size, fc, v68k::mem_read ) != NULL;
+	bool ok = s.mem.translate( addr, size, fc, mem_read ) != NULL;
 	
 	s.d(0) = ok;
 	
@@ -614,7 +615,7 @@ int32_t fast_memcmp_callout( v68k::processor_state& s )
 	const uint32_t two = s.a(1);
 	const uint32_t len = s.d(0);
 	
-	const uint8_t* p = s.mem.translate( one, len, data_space, v68k::mem_read );
+	const uint8_t* p = s.mem.translate( one, len, data_space, mem_read );
 	
 	if ( p == NULL )
 	{
@@ -622,7 +623,7 @@ int32_t fast_memcmp_callout( v68k::processor_state& s )
 		return nil;  // FIXME
 	}
 	
-	const uint8_t* q = s.mem.translate( two, len, data_space, v68k::mem_read );
+	const uint8_t* q = s.mem.translate( two, len, data_space, mem_read );
 	
 	if ( q == NULL )
 	{
@@ -693,7 +694,7 @@ int32_t BlockMove_callout( v68k::processor_state& s )
 	
 	const uint32_t n = s.d(0);
 	
-	const uint8_t* p = s.mem.translate( src, n, data_space, v68k::mem_read );
+	const uint8_t* p = s.mem.translate( src, n, data_space, mem_read );
 	
 	if ( p == NULL )
 	{
@@ -701,7 +702,7 @@ int32_t BlockMove_callout( v68k::processor_state& s )
 		return nil;  // FIXME
 	}
 	
-	uint8_t* q = s.mem.translate( dst, n, data_space, v68k::mem_write );
+	uint8_t* q = s.mem.translate( dst, n, data_space, mem_write );
 	
 	if ( q == NULL )
 	{
@@ -711,7 +712,7 @@ int32_t BlockMove_callout( v68k::processor_state& s )
 	
 	memmove( q, p, n );
 	
-	s.mem.translate( dst, n, data_space, v68k::mem_update );
+	s.mem.translate( dst, n, data_space, mem_update );
 	
 	s.d(0) = noErr;
 	
