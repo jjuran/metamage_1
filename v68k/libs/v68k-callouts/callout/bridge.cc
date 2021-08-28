@@ -129,6 +129,8 @@ int32_t no_op_callout( v68k::processor_state& s )
 static
 int32_t load_callout( v68k::processor_state& s )
 {
+	const v68k::function_code_t data_space = s.data_space();
+	
 	const uint32_t path_addr = s.a(0);
 	const uint32_t path_size = s.d(0);  // includes trailing NUL
 	
@@ -143,7 +145,7 @@ int32_t load_callout( v68k::processor_state& s )
 	
 	const uint8_t* p = s.mem.translate( path_addr,
 	                                    path_size,
-	                                    v68k::user_data_space,
+	                                    data_space,
 	                                    v68k::mem_read );
 	
 	if ( p == NULL )
@@ -467,6 +469,8 @@ int32_t fast_memset_callout( v68k::processor_state& s )
 static
 int32_t fast_memnot_callout( v68k::processor_state& s )
 {
+	const v68k::function_code_t data_space = s.data_space();
+	
 	const uint32_t mem = s.a(0);
 	
 	const uint32_t n = s.d(0);
@@ -476,7 +480,7 @@ int32_t fast_memnot_callout( v68k::processor_state& s )
 		return rts;
 	}
 	
-	uint8_t* p = s.mem.translate( mem, n, v68k::user_data_space, v68k::mem_write );
+	uint8_t* p = s.mem.translate( mem, n, data_space, v68k::mem_write );
 	
 	if ( p == NULL )
 	{
@@ -491,7 +495,7 @@ int32_t fast_memnot_callout( v68k::processor_state& s )
 		*p++ ^= 0xFF;
 	}
 	
-	s.mem.translate( mem, n, v68k::user_data_space, v68k::mem_update );
+	s.mem.translate( mem, n, data_space, v68k::mem_update );
 	
 	return rts;
 }
@@ -499,9 +503,10 @@ int32_t fast_memnot_callout( v68k::processor_state& s )
 static
 int32_t fast_rshift_callout( v68k::processor_state& s )
 {
-	using v68k::user_data_space;
 	using v68k::mem_read;
 	using v68k::mem_write;
+	
+	const v68k::function_code_t data_space = s.data_space();
 	
 	const uint32_t a = s.a(0);
 	const uint32_t b = s.a(1);
@@ -518,7 +523,7 @@ int32_t fast_rshift_callout( v68k::processor_state& s )
 	const uint8_t right_shift = x;
 	const uint8_t left_shift  = 8 - right_shift;
 	
-	const uint8_t* src = s.mem.translate( a, n, user_data_space, mem_read );
+	const uint8_t* src = s.mem.translate( a, n, data_space, mem_read );
 	
 	if ( src == NULL )
 	{
@@ -526,7 +531,7 @@ int32_t fast_rshift_callout( v68k::processor_state& s )
 		return nil;  // FIXME
 	}
 	
-	uint8_t* dst = s.mem.translate( b, n + 1, user_data_space, mem_write );
+	uint8_t* dst = s.mem.translate( b, n + 1, data_space, mem_write );
 	
 	if ( dst == NULL )
 	{
@@ -544,7 +549,7 @@ int32_t fast_rshift_callout( v68k::processor_state& s )
 		*dst    = byte << left_shift;
 	}
 	
-	s.mem.translate( b, n + 1, user_data_space, v68k::mem_update );
+	s.mem.translate( b, n + 1, data_space, v68k::mem_update );
 	
 	return rts;
 }
@@ -552,12 +557,14 @@ int32_t fast_rshift_callout( v68k::processor_state& s )
 static
 int32_t fast_mempcpy_callout( v68k::processor_state& s )
 {
+	const v68k::function_code_t data_space = s.data_space();
+	
 	const uint32_t dst = s.a(0);
 	const uint32_t src = s.a(1);
 	
 	const uint32_t n = s.d(0);
 	
-	const uint8_t* p = s.mem.translate( src, n, v68k::user_data_space, v68k::mem_read );
+	const uint8_t* p = s.mem.translate( src, n, data_space, v68k::mem_read );
 	
 	if ( p == NULL )
 	{
@@ -565,7 +572,7 @@ int32_t fast_mempcpy_callout( v68k::processor_state& s )
 		return nil;  // FIXME
 	}
 	
-	uint8_t* q = s.mem.translate( dst, n, v68k::user_data_space, v68k::mem_write );
+	uint8_t* q = s.mem.translate( dst, n, data_space, v68k::mem_write );
 	
 	if ( q == NULL )
 	{
@@ -575,7 +582,7 @@ int32_t fast_mempcpy_callout( v68k::processor_state& s )
 	
 	memmove( q, p, n );
 	
-	s.mem.translate( dst, n, v68k::user_data_space, v68k::mem_update );
+	s.mem.translate( dst, n, data_space, v68k::mem_update );
 	
 	s.a(0) += n;
 	s.a(1) += n;
