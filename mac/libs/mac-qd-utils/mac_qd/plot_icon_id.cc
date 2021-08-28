@@ -25,6 +25,8 @@
 namespace mac {
 namespace qd  {
 
+#if ! __LP64__
+
 short plot_icon_id( const Rect& bounds, short id )
 {
 	if ( mac::sys::has_IconUtilities() )
@@ -44,6 +46,12 @@ short plot_icon_id( const Rect& bounds, short id )
 	
 	return resNotFound;
 }
+
+#else
+
+int dummy;
+
+#endif
 
 }
 }

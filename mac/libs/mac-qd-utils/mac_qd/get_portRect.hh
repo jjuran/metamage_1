@@ -58,6 +58,8 @@ namespace qd  {
 		return bounds;
 	}
 	
+#if ! __LP64__
+	
 	inline
 	Rect get_portRect( WindowRef window )
 	{
@@ -65,6 +67,7 @@ namespace qd  {
 	}
 	
 #endif
+#endif  // #if ! OPAQUE_TOOLBOX_STRUCTS
 	
 }
 }

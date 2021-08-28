@@ -56,6 +56,8 @@ namespace qd  {
 		return IsPortVisibleRegionEmpty( port );
 	}
 	
+#if ! __LP64__
+	
 	inline
 	bool is_port_visrgn_empty( WindowRef window )
 	{
@@ -63,6 +65,7 @@ namespace qd  {
 	}
 	
 #endif
+#endif  // #if ! OPAQUE_TOOLBOX_STRUCTS
 	
 }
 }
