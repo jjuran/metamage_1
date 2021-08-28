@@ -114,7 +114,7 @@ unsigned long CmpString_patch( const unsigned char* a : __A0,
 	
 	if ( A & MARKS )
 	{
-		write( STDERR_FILENO, STR_LEN( "CmpString: ignoring MARKS bit\n" ) );
+		NOTICE = "CmpString: ignoring MARKS bit";
 	}
 	
 	if ( A & CASE )
@@ -150,7 +150,7 @@ long RelString_patch( const unsigned char* a : __A0,
 	
 	if ( A & MARKS )
 	{
-		write( STDERR_FILENO, STR_LEN( "RelString: ignoring MARKS bit\n" ) );
+		WARNING = "RelString: ignoring MARKS bit";
 	}
 	
 	if ( A & CASE )
@@ -198,7 +198,7 @@ unsigned char* UprString_patch( unsigned char* s : __A0,
 	
 	if ( contains_high_chars )
 	{
-		write( STDERR_FILENO, STR_LEN( "UprString: leaving marks as is\n" ) );
+		WARNING = "UprString: leaving marks as is";
 	}
 	
 	return s;
