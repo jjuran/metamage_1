@@ -66,6 +66,14 @@ const uint32_t vBase  = 0xEFE1FE;
 const uint32_t aVBufA = 0xEFFFFE;
 const uint32_t aVBufB = vBase;
 
+/*
+	These counters are used to report page flipping without spamming the
+	console.  If incremented at 60 Hz, they wrap every 4.25 seconds.
+*/
+
+static uint8_t audio_page_flips;
+static uint8_t video_page_flips;
+
 uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 {
 	if ( length != 1 )
@@ -101,6 +109,21 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 					if ( diff & 0x40 )
 					{
 						page_flip();
+						
+						if ( ! video_page_flips++ )
+						{
+							NOTICE = "Video page flips occuring";
+						}
+					}
+					
+					if ( diff & 0x08 )
+					{
+						// Audio page flip
+						
+						if ( ! audio_page_flips++ )
+						{
+							WARNING = "Audio page flips unimplemented";
+						}
 					}
 					
 					VIA_reg_A = mmio_byte;
