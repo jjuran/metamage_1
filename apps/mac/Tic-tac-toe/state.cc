@@ -233,19 +233,23 @@ bool restore( const Code* data, unsigned short size )
 {
 	signed char tentative_squares[ n_squares ] = {};
 	
-	if ( ! restore( data, size, tentative_squares ) )
+	status_t status = restore( data, size, tentative_squares );
+	
+	if ( status )
 	{
-		return false;
+		winning_player = winner( status );
+		current_player = winning_player ? opponent( winning_player )
+		                                : player_t( status );
+		
+		ledger.reset( data, size );
+		
+		for ( short i = 0;  i < n_squares;  ++i )
+		{
+			squares[ i ] = tentative_squares[ i ];
+		}
 	}
 	
-	ledger.reset( data, size );
-	
-	for ( short i = 0;  i < n_squares;  ++i )
-	{
-		squares[ i ] = tentative_squares[ i ];
-	}
-	
-	return true;  // passed all validation checks
+	return status;
 }
 
 }

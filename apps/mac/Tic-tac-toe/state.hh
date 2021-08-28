@@ -59,6 +59,12 @@ player_t opponent( player_t player )
 	return player_t( -player );
 }
 
+inline
+player_t winner( status_t status )
+{
+	return player_t( status / 2 );
+}
+
 enum move_t
 {
 	Move_bad = -1,
