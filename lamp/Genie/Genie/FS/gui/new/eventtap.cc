@@ -494,6 +494,12 @@ namespace Genie
 		return (uint8_t) key;
 	}
 	
+	static inline
+	bool is_keypad( UInt16 lower_event_message )
+	{
+		return (lower_event_message & 0x0000e000) == 0x4000;
+	}
+	
 	bool eventtap_handler::KeyDown( const EventRecord& event )
 	{
 		using namespace splode::modes;
@@ -513,13 +519,14 @@ namespace Genie
 		
 		// 3/4/5 -> 1/2/3
 		const uint8_t action = event.what - 2;
+		const uint8_t keypad = is_keypad( event.message ) ? Keypad : 0;
 		
 		splode::ascii_event_buffer buffer =
 		{
 			sizeof buffer - 1,
 			c,
 			 (event.modifiers >> 8) & mode_mask,
-			((event.modifiers >> 8) & attr_mask) | action,
+			((event.modifiers >> 8) & attr_mask) | keypad | action,
 		};
 		
 		if ( extra.client )
