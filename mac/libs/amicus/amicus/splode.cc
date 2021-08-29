@@ -26,14 +26,6 @@
 namespace amicus
 {
 
-static inline
-uint8_t unmodified_char( UInt32 event_message )
-{
-	const int8_t vcode = (event_message >> 8) & 0x7F;
-	
-	return lookup_from_virtual[ vcode ];
-}
-
 static short last_x;
 static short last_y;
 
@@ -115,7 +107,9 @@ void send_key_event( int fd, const EventRecord& event )
 	using namespace splode::modes;
 	using namespace splode::key;
 	
-	const signed char c = unmodified_char( event.message );
+	const int8_t vcode = (event.message >> 8) & 0x7F;
+	
+	const signed char c = lookup_from_virtual[ vcode ];
 	
 	if ( c < 0 )
 	{
