@@ -190,6 +190,11 @@ bool handle_CGEvent( CGEventRef event )
 			int8_t key;
 			key = CGEventGetIntegerValueField( event, kCGKeyboardEventKeycode );
 			
+			if ( is_keypad( key ) )
+			{
+				attrs |= splode::key::Keypad;
+			}
+			
 			c = lookup_from_virtual[ key & 0x7F ];
 			
 			// fall through

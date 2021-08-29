@@ -121,13 +121,14 @@ void send_key_event( int fd, const EventRecord& event )
 	
 	// 3/4/5 -> 1/2/3
 	const uint8_t action = event.what - 2;
+	const uint8_t keypad = is_keypad( vcode ) ? Keypad : 0;
 	
 	splode::ascii_event_buffer buffer =
 	{
 		sizeof buffer - 1,
 		c,
 		 (event.modifiers >> 8) & mode_mask,
-		((event.modifiers >> 8) & attr_mask) | action,
+		((event.modifiers >> 8) & attr_mask) | keypad | action,
 	};
 	
 	write( fd, &buffer.len, sizeof buffer );

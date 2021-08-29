@@ -11,6 +11,12 @@ struct EventRecord;
 namespace amicus
 {
 
+static inline
+bool is_keypad( signed char vcode )
+{
+	return (vcode & 0x60) == 0x40;
+}
+
 void send_mouse_moved_event( int fd, short x, short y );
 
 template < class Coord >
