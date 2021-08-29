@@ -66,6 +66,23 @@ FCB* find_FCB( long fileNum )
 	return NULL;
 }
 
+static
+FCB* find_FCB( long fileNum, VCB* vcb )
+{
+	FCB* begin = FCBSPtr->fcbs;
+	FCB* end   = begin + kFCBCount;
+	
+	for ( FCB* it = begin;  it < end;  ++it )
+	{
+		if ( it->fcbFlNum == fileNum  &&  it->fcbVPtr == vcb )
+		{
+			return it;
+		}
+	}
+	
+	return NULL;
+}
+
 static inline
 FCB* find_next_empty_FCB()
 {
@@ -733,7 +750,21 @@ short GetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 	
 	pb->ioFRefNum = 0;  // FIXME
 	
-	return pb->ioResult = vfs->GetFileInfo( pb, entry );
+	OSErr err = vfs->GetFileInfo( pb, entry );
+	
+	if ( err == noErr )
+	{
+		short refnum = 0;
+		
+		if ( FCB* fcb = find_FCB( pb->ioDirID, vcb ) )
+		{
+			refnum = FCB_index( fcb );
+		}
+		
+		pb->ioFRefNum = refnum;
+	}
+	
+	return pb->ioResult = err;
 }
 
 short SetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 )
