@@ -67,7 +67,8 @@ namespace key
 	
 	enum
 	{
-		BIT( Alpha ) = 2,
+		BIT( Alpha  ) = 2,
+		BIT( Keypad ),
 	};
 	
 	enum
@@ -79,7 +80,8 @@ namespace key
 		
 		action_mask = 3,
 		
-		MASK( Alpha ),
+		MASK( Alpha  ),
+		MASK( Keypad ),
 	};
 }
 
