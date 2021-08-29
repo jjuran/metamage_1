@@ -177,8 +177,11 @@ void post_event( const splode::ascii_event_buffer& buffer )
 	using namespace splode::key;
 	using splode::uint8_t;
 	
+	const Boolean keypad = buffer.attrs & Keypad;
 	const uint8_t ascii = buffer.ascii;
-	const int8_t  code  = reverse_lookup_general_key[ ascii & 0x7F ];
+	
+	const int8_t code = keypad ? reverse_lookup_from_keypad[ ascii & 0x1F ]
+	                           : reverse_lookup_general_key[ ascii & 0x7F ];
 	
 	const uint8_t mode_mask = Command | Shift | Option | Control;
 	const uint8_t attr_mask = Alpha;
