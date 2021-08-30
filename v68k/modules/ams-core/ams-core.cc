@@ -60,7 +60,6 @@
 enum
 {
 	Opt_GNEtix = 'G',  // GetNextEvent throttle, in ticks
-	Opt_linger = 'L',  // linger on ExitToShell
 	Opt_romgen = 'R',  // ROM generation: 0 for 64K ROM, 1 for 128K, etc.
 	Opt_system = 'V',  // System version
 	
@@ -72,8 +71,6 @@ enum
 static command::option options[] =
 {
 	{ "gne-ticks",  Opt_GNEtix, command::Param_required },
-	
-	{ "linger",  Opt_linger },
 	
 	{ "romgen", Opt_romgen, command::Param_required },
 	{ "system", Opt_system, command::Param_required },
