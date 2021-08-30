@@ -59,6 +59,7 @@
 
 enum
 {
+	Opt_auto_0 = '0',  // Always clear memory in NewPtr and NewHandle
 	Opt_GNEtix = 'G',  // GetNextEvent throttle, in ticks
 	Opt_romgen = 'R',  // ROM generation: 0 for 64K ROM, 1 for 128K, etc.
 	Opt_system = 'V',  // System version
@@ -70,6 +71,8 @@ enum
 
 static command::option options[] =
 {
+	{ "auto-clear",  Opt_auto_0 },
+	
 	{ "gne-ticks",  Opt_GNEtix, command::Param_required },
 	
 	{ "romgen", Opt_romgen, command::Param_required },
@@ -348,6 +351,10 @@ char* const* get_options( char** argv )
 	{
 		switch ( opt )
 		{
+			case Opt_auto_0:
+				autoclear = true;
+				break;
+			
 			case Opt_events_fd:
 				events_fd = gear::parse_unsigned_decimal( global_result.param );
 				break;

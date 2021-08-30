@@ -16,6 +16,7 @@
 #include "master_pointer.hh"
 
 // ams-core
+#include "options.hh"
 #include "Pointers.hh"
 
 
@@ -155,7 +156,7 @@ Handle_header* allocate_Handle_mem( long   size      : __D0,
 	Handle_header* header = (Handle_header*) alloc;
 	Handle_footer* footer = (Handle_footer*) ((char*) &header[1] + padded_size);
 	
-	if ( trap_word & kClearFlagMask )
+	if ( trap_word & kClearFlagMask  ||  autoclear )
 	{
 		fast_memset( &header[ 1 ], '\0', padded_size );
 	}

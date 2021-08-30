@@ -12,6 +12,7 @@
 #include "callouts.hh"
 
 // ams-core
+#include "options.hh"
 #include "Zones.hh"
 
 
@@ -97,7 +98,7 @@ char* NewPtr_handler( unsigned long size : __D0, short trap_word : __D1 )
 	
 coda:
 	
-	if ( trap_word & kClearFlagMask )
+	if ( trap_word & kClearFlagMask  ||  autoclear )
 	{
 		fast_memset( alloc, '\0', size );
 	}
