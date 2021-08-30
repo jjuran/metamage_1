@@ -29,12 +29,12 @@ namespace ascii
 	};
 }
 	
+#define BIT( name )   name ## _bit
+#define MASK( name )  name = 1 << BIT(name)
+
 namespace modes
 {
 	// General modes
-	
-	#define BIT( name )   name ## _bit
-	#define MASK( name )  name = 1 << BIT(name)
 	
 	enum
 	{
@@ -59,14 +59,16 @@ namespace modes
 		MASK( Super   ),
 		MASK( Hyper   ),
 	};
-	
-	#undef BIT
-	#undef MASK
 }
 	
 namespace key
 {
 	// Key event attributes
+	
+	enum
+	{
+		BIT( Alpha ) = 2,
+	};
 	
 	enum
 	{
@@ -77,9 +79,12 @@ namespace key
 		
 		action_mask = 3,
 		
-		Alpha = 4,
+		MASK( Alpha ),
 	};
 }
+
+#undef BIT
+#undef MASK
 	
 namespace pointer
 {
