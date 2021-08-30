@@ -68,7 +68,7 @@ const ascii_chars =
 	"\0" * 2,  # F11, F12
 	"\0" * 6,  # Ro, Katakana, Hiragana, Henkan, Katakana-Hiragana, Muhenkan
 	'\0',  # keypad JP-comma
-	'\0',  # keypad Enter
+	'\x03',  # keypad Enter
 	'\0',  # right Control
 	'/',
 	'\0',  # SysRq
@@ -84,12 +84,15 @@ const ascii_chars =
 	'\0',  # PageDown
 	'\0',  # Insert (Help)
 	'\x7F',  # Delete (FwdDel)
+	'\0',  # Macro
 	'\0',  # Mute
 	'\0',  # Volume Down
 	'\0',  # Volume Up
 	'\0',  # Power
 	'=',
+	'\0',  # keypad +/-
 	'\0',  # Pause
+	'\0',  # Scale
 	',',
 	"\0" * 3,  # Hanguel, Hanja, Yen
 	"\0" * 2,  # left/right Meta (Command)
@@ -103,7 +106,6 @@ const ascii_chars =
 	'\0',  # Find
 	'\0',  # Cut
 	'\0',  # Help
-	"\0" * 12,  # F13 - F24
 )
 
 const ascii = packed ascii_chars
