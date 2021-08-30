@@ -114,6 +114,11 @@ def core_opts
 {
 	var opts = [ "--events-fd=" events_fd_slot ]
 	
+	if "auto-clear" in config and config[ "auto-clear" ] then
+	{
+		opts <-- "-0"
+	}
+	
 	if "gne-ticks" in config then
 	{
 		opts <-- "-G" config[ "gne-ticks" ]
