@@ -182,6 +182,11 @@ def core_opts
 {
 	var opts = [ events_fd_opt ]
 	
+	if const auto_clear = getenv "AMS_AUTOCLEAR" then
+	{
+		opts <-- "-0"
+	}
+	
 	if const gne_ticks = getenv "AMS_GNETICKS" then
 	{
 		opts <-- "-G" gne_ticks
