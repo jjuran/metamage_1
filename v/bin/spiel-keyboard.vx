@@ -108,6 +108,11 @@ const ascii_chars =
 	'\0',  # Help
 )
 
+def is_on_keypad (key)
+{
+	return key in 71 .. 83 or key in [ 55, 96, 98, 117 ]  # * Enter / =
+}
+
 const ascii = packed ascii_chars
 
 var key_state = x"00" * ascii.size
@@ -164,6 +169,11 @@ def upconvert (key_id, act)
 			if caps_lock then
 			{
 				attrs = attrs | x"04"
+			}
+			
+			if is_on_keypad key_id then
+			{
+				attrs = attrs | x"08"
 			}
 			
 			return packed (keyevent_len, c, modes, attrs, keydevice_id)
