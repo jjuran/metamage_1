@@ -12,6 +12,30 @@
 namespace VIA {
 
 /*
+	VIA Register A:
+	
+	+----------+---------+-------+-------+---------+-------+-----------+
+	| Bit #    |    7    |   6   |   5   |    4    |   3   |  2  1  0  |
+	+----------+---------+-------+-------+---------+-------+-----------+
+	|          |   SCC   |  Alt  |  Disk |   ROM   |  Alt  |   Audio   |
+	| Function |  wait/  | video |  SEL  | overlay | audio |   level   |
+	|          | request |  off  |  line |         |  off  |           |
+	+----------+---------+-------+-------+---------+-------+-----------+
+	
+	VIA Register B:
+	
+	+----------+-------+-------+---------+-------+---------+-------+---------+
+	| Bit #    |   7   |   6   |  5   4  |   3   |    2    |   1   |    0    |
+	+----------+-------+-------+---------+-------+---------+-------+---------+
+	|          | Sound | Horiz |  Mouse  | Mouse |   RTC   |  RTC  |   RTC   |
+	| Function |  gen  | ontal | Y2 | X2 | click |  serial |  data |  serial |
+	|          |  off  | blank |         |       |  enable | clock |   data  |
+	+----------+-------+-------+---------+-------+---------+-------+---------+
+	
+	(constructed from descriptions in Inside Macintosh, Volume III)
+*/
+
+/*
 	VIA Auxiliary Control Register (ACR):
 	
 	+----------+---------+---------+-----------------+---------+---------+
