@@ -88,6 +88,8 @@ const uint16_t readable_VIA_fields = 1 << VIA_reg_B
                                    | 1 << VIA_ACR
                                    | 1 << VIA_reg_A;
 
+const uint16_t writable_VIA_fields = readable_VIA_fields;
+
 enum
 {
 	initial_reg_A = 0x48,  // use main screen and sound buffers
@@ -147,6 +149,16 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 		if ( readable_VIA_fields & (1 << index) )
 		{
 			return VIA + index;
+		}
+		
+		return 0;  // NULL
+	}
+	
+	if ( access == v68k::mem_write )
+	{
+		if ( writable_VIA_fields & (1 << index) )
+		{
+			return &mmio_byte;
 		}
 		
 		return 0;  // NULL
