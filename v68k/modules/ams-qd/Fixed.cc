@@ -41,3 +41,8 @@ pascal void LongMul_patch( long a, long b, struct Int64Bit* product )
 {
 	*(long long*) product = (long long) a * b;
 }
+
+pascal long FixDiv_patch( long a, long b )
+{
+	return fix_div( a, b );
+}
