@@ -60,4 +60,34 @@ namespace quickdraw
 		return quotient + 2 * remainder / denom;
 	}
 	
+	long fix_div( long dividend, long divisor )
+	{
+		if ( divisor == 0x10000 )
+		{
+			return dividend;
+		}
+		
+		if ( divisor == -0x10000 )
+		{
+			if ( dividend == -2147483648 )
+			{
+				return 0x7FFFFFFF;
+			}
+			
+			return -dividend;
+		}
+		
+		if ( divisor == 0 )
+		{
+			return dividend < 0 ? 0x80000000 : 0x7FFFFFFF;
+		}
+		
+		long long dividend_64 = (unsigned long long) dividend << 32;
+		long long divisor_64  = (unsigned long long) divisor  << 16;
+		
+		dividend_64 += divisor_64 / 2;
+		
+		return dividend_64 / divisor_64;
+	}
+	
 }

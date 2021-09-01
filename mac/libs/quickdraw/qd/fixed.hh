@@ -28,6 +28,8 @@ namespace quickdraw
 		return rounded >> 16;
 	}
 	
+	long fix_div( long dividend, long divisor );
+	
 }
 
 #endif
