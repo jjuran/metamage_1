@@ -36,7 +36,7 @@ namespace quickdraw
 	{
 		if ( denom == 1 )
 		{
-			return numer << 16;
+			return numer * 65536;
 		}
 		
 		if ( denom == -1 )
@@ -46,7 +46,7 @@ namespace quickdraw
 				return 0x7FFFFFFF;
 			}
 			
-			return -numer << 16;
+			return -numer * 65536;
 		}
 		
 		if ( denom == 0 )
@@ -54,8 +54,8 @@ namespace quickdraw
 			return numer < 0 ? 0x80000000 : 0x7FFFFFFF;
 		}
 		
-		const int32_t quotient  = (numer << 16) / denom;
-		const int32_t remainder = (numer << 16) % denom;
+		const int32_t quotient  = numer * 65536 / denom;
+		const int32_t remainder = numer * 65536 % denom;
 		
 		return quotient + 2 * remainder / denom;
 	}
