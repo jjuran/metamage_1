@@ -9,20 +9,20 @@
 namespace quickdraw
 {
 	
-	long fix_mul( long a, long b )
+	int32_t fix_mul( int32_t a, int32_t b )
 	{
-		const unsigned long long product = (long long) a * b;
+		const uint64_t product = (int64_t) a * b;
 		
-		long long rounded_product = product + 0x8000;
+		int64_t rounded_product = product + 0x8000;
 		
-		if ( rounded_product < 0  &&  (long long) product >= 0 )
+		if ( rounded_product < 0  &&  (int64_t) product >= 0 )
 		{
 			return 0x7FFFFFFF;
 		}
 		
 		rounded_product >>= 16;
 		
-		if ( rounded_product != (long) rounded_product )
+		if ( rounded_product != (int32_t) rounded_product )
 		{
 			const bool negative = (a < 0) != (b < 0);
 			
@@ -32,7 +32,7 @@ namespace quickdraw
 		return rounded_product;
 	}
 	
-	long fix_ratio( short numer, short denom )
+	int32_t fix_ratio( int16_t numer, int16_t denom )
 	{
 		if ( denom == 1 )
 		{
@@ -54,13 +54,13 @@ namespace quickdraw
 			return numer < 0 ? 0x80000000 : 0x7FFFFFFF;
 		}
 		
-		const long quotient  = (numer << 16) / denom;
-		const long remainder = (numer << 16) % denom;
+		const int32_t quotient  = (numer << 16) / denom;
+		const int32_t remainder = (numer << 16) % denom;
 		
 		return quotient + 2 * remainder / denom;
 	}
 	
-	long fix_div( long dividend, long divisor )
+	int32_t fix_div( int32_t dividend, int32_t divisor )
 	{
 		if ( divisor == 0x10000 )
 		{
@@ -82,8 +82,8 @@ namespace quickdraw
 			return dividend < 0 ? 0x80000000 : 0x7FFFFFFF;
 		}
 		
-		long long dividend_64 = (unsigned long long) dividend << 32;
-		long long divisor_64  = (unsigned long long) divisor  << 16;
+		int64_t dividend_64 = (uint64_t) dividend << 32;
+		int64_t divisor_64  = (uint64_t) divisor  << 16;
 		
 		dividend_64 += divisor_64 / 2;
 		

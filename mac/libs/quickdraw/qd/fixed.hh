@@ -6,19 +6,23 @@
 #ifndef QUICKDRAW_FIXED_HH
 #define QUICKDRAW_FIXED_HH
 
+// Standard C
+#include <stdint.h>
+
+
 namespace quickdraw
 {
 	
-	long fix_mul( long a, long b );
+	int32_t fix_mul( int32_t a, int32_t b );
 	
-	long fix_ratio( short numer, short denom );
+	int32_t fix_ratio( int16_t numer, int16_t denom );
 	
 	inline
-	short fix_round( long x )
+	int16_t fix_round( int32_t x )
 	{
-		const unsigned long unrounded = x;
+		const uint32_t unrounded = x;
 		
-		const long rounded = unrounded + 0x8000;
+		const int32_t rounded = unrounded + 0x8000;
 		
 		if ( rounded < 0  &&  x >= 0 )
 		{
@@ -28,7 +32,7 @@ namespace quickdraw
 		return rounded >> 16;
 	}
 	
-	long fix_div( long dividend, long divisor );
+	int32_t fix_div( int32_t dividend, int32_t divisor );
 	
 }
 
