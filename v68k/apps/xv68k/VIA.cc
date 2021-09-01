@@ -52,19 +52,73 @@ namespace VIA {
 	(from the Synertek SY6522 manual)
 */
 
-static uint8_t VIA_reg_A = 0x48;  // use main screen and sound buffers
-static uint8_t VIA_reg_B = 0x80;  // sound disabled
-static uint8_t VIA_ACR   = 0x00;  // One-shot; PB7, PB, PA, shift reg. disabled
 static uint8_t mmio_byte;
+
+/*
+	VIA address space is divided into sixteen 512-byte blocks,
+	in each of which just a single byte is valid.
+*/
 
 enum
 {
-	vACR = 512 * 11,
+	VIA_reg_B,
+	VIA_unused,
+	VIA_dir_B,
+	VIA_dir_A,
+	
+	VIA_T1_C,
+	VIA_T1_CH,
+	VIA_T1_L,
+	VIA_T1_LH,
+	
+	VIA_T2_C,
+	VIA_T2_CH,
+	VIA_SR,
+	VIA_ACR,
+	
+	VIA_PCR,
+	VIA_IFR,
+	VIA_IER,
+	VIA_reg_A,
+	
+	n_VIA_bytes,
+};
+
+const uint16_t readable_VIA_fields = 1 << VIA_reg_B
+                                   | 1 << VIA_ACR
+                                   | 1 << VIA_reg_A;
+
+enum
+{
+	initial_reg_A = 0x48,  // use main screen and sound buffers
+	initial_reg_B = 0x80,  // sound disabled
+	initial_ACR   = 0x00,  // One-shot; PB7, PB, PA, shift register disabled
+};
+
+static uint8_t VIA[ n_VIA_bytes ] =
+{
+	initial_reg_B,
+	0,
+	0,
+	0,
+	
+	0,
+	0,
+	0,
+	0,
+	
+	0,
+	0,
+	0,
+	initial_ACR,
+	
+	0,
+	0,
+	0,
+	initial_reg_A,
 };
 
 const uint32_t vBase  = 0xEFE1FE;
-const uint32_t aVBufA = 0xEFFFFE;
-const uint32_t aVBufB = vBase;
 
 /*
 	These counters are used to report page flipping without spamming the
@@ -81,30 +135,29 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 		return 0;  // NULL
 	}
 	
-	if ( access == v68k::mem_exec )
+	if ( (addr & 0xffe1ff) != vBase )
 	{
 		return 0;  // NULL
 	}
 	
+	int index = addr >> 9 & 0xf;
+	
 	if ( access == v68k::mem_read )
 	{
-		switch ( addr )
+		if ( readable_VIA_fields & (1 << index) )
 		{
-			case aVBufA:  return &VIA_reg_A;
-			case aVBufB:  return &VIA_reg_B;
-			
-			case vBase + vACR:  return &VIA_ACR;
-			
-			default:      return 0;  // NULL;
+			return VIA + index;
 		}
+		
+		return 0;  // NULL
 	}
 	
 	if ( access == v68k::mem_update )
 	{
-		switch ( addr )
+		switch ( index )
 		{
-			case aVBufA:
-				if ( uint8_t diff = mmio_byte ^ VIA_reg_A )
+			case VIA_reg_A:
+				if ( uint8_t diff = mmio_byte ^ VIA[ index ] )
 				{
 					if ( diff & 0x40 )
 					{
@@ -126,12 +179,12 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 						}
 					}
 					
-					VIA_reg_A = mmio_byte;
+					VIA[ index ] = mmio_byte;
 				}
 				break;
 			
-			case aVBufB:
-				if ( uint8_t diff = mmio_byte ^ VIA_reg_B )
+			case VIA_reg_B:
+				if ( uint8_t diff = mmio_byte ^ VIA[ index ] )
 				{
 					if ( diff & 0x80 )
 					{
@@ -140,7 +193,7 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 						NOTICE = "VIA Register B: sound generation ", endis, "abled";
 					}
 					
-					VIA_reg_B = mmio_byte;
+					VIA[ index ] = mmio_byte;
 				}
 				break;
 			
