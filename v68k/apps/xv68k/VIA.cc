@@ -8,6 +8,9 @@
 // log-of-war
 #include "logofwar/report.hh"
 
+// v68k
+#include "v68k/print.hh"
+
 // xv68k
 #include "screen.hh"
 
@@ -84,11 +87,57 @@ enum
 	n_VIA_bytes,
 };
 
+static const char* const field_names[] =
+{
+	"Register B",
+	0,
+	0,
+	0,
+	
+	0,
+	0,
+	0,
+	0,
+	
+	0,
+	0,
+	0,
+	"ACR",
+	
+	0,
+	0,
+	0,
+	"Register A",
+};
+
 const uint16_t readable_VIA_fields = 1 << VIA_reg_B
                                    | 1 << VIA_ACR
                                    | 1 << VIA_reg_A;
 
 const uint16_t writable_VIA_fields = readable_VIA_fields;
+
+static const uint8_t writable_VIA_bits[] =
+{
+	0x80,  // register B: sound generation flag
+	0,
+	0,
+	0,
+	
+	0,
+	0,
+	0,
+	0,
+	
+	0,
+	0,
+	0,
+	0,
+	
+	0,
+	0,
+	0,
+	0x48,  // register A: video/audio page 2 flags
+};
 
 enum
 {
@@ -168,6 +217,12 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 	{
 		if ( uint8_t diff = mmio_byte ^ VIA[ index ] )
 		{
+			if ( diff & ~writable_VIA_bits[ index ] )
+			{
+				WARNING = "Write to VIA ", field_names[ index ],
+					" flips unimplemented bits: ", (v68k::hex32_t) diff;
+			}
+			
 			switch ( index )
 			{
 				case VIA_reg_A:
