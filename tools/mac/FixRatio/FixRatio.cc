@@ -27,13 +27,13 @@ using quickdraw::fix_ratio;
 static
 void report( short a, short b )
 {
-	printf( "input: %d / %d\n", a, b );
+	printf( "input: $%.8x / $%.8x | %d / %d\n", a, b, a, b );
 	
 	const int original = FixRatio ( a, b );
 	const int copyleft = fix_ratio( a, b );
 	
-	printf( "original QD: %d\n", original );
-	printf( "copyleft qd: %d\n", copyleft );
+	printf( "original QD: $%.8x | %d\n", original, original );
+	printf( "copyleft qd: $%.8x | %d\n", copyleft, copyleft );
 }
 
 int main( int argc, char** argv )

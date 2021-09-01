@@ -27,13 +27,13 @@ using quickdraw::fix_round;
 static
 void report( int x )
 {
-	printf( "input: %d\n", x );
+	printf( "input: $%.8x | %d\n", x, x );
 	
 	const int original = FixRound ( x );
 	const int copyleft = fix_round( x );
 	
-	printf( "original QD: %d\n", original );
-	printf( "copyleft qd: %d\n", copyleft );
+	printf( "original QD: $%.8x | %d\n", original, original );
+	printf( "copyleft qd: $%.8x | %d\n", copyleft, copyleft );
 }
 
 int main( int argc, char** argv )
