@@ -69,7 +69,7 @@ namespace quickdraw
 		
 		if ( divisor == -0x10000 )
 		{
-			if ( dividend == -2147483648 )
+			if ( dividend == -2147483647 - 1 )
 			{
 				return 0x7FFFFFFF;
 			}
