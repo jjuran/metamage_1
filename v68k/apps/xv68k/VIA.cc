@@ -166,11 +166,11 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 	
 	if ( access == v68k::mem_update )
 	{
-		switch ( index )
+		if ( uint8_t diff = mmio_byte ^ VIA[ index ] )
 		{
-			case VIA_reg_A:
-				if ( uint8_t diff = mmio_byte ^ VIA[ index ] )
-				{
+			switch ( index )
+			{
+				case VIA_reg_A:
 					if ( diff & 0x40 )
 					{
 						page_flip();
@@ -190,27 +190,22 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 							WARNING = "Audio page flips unimplemented";
 						}
 					}
-					
-					VIA[ index ] = mmio_byte;
-				}
-				break;
-			
-			case VIA_reg_B:
-				if ( uint8_t diff = mmio_byte ^ VIA[ index ] )
-				{
+					break;
+				
+				case VIA_reg_B:
 					if ( diff & 0x80 )
 					{
 						const char* endis = mmio_byte & 0x80 ? "dis" : "en";
 						
 						NOTICE = "VIA Register B: sound generation ", endis, "abled";
 					}
-					
-					VIA[ index ] = mmio_byte;
-				}
-				break;
+					break;
+				
+				default:
+					break;
+			}
 			
-			default:
-				break;
+			VIA[ index ] = mmio_byte;
 		}
 	}
 	
