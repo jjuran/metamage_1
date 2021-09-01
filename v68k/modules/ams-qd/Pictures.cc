@@ -16,10 +16,15 @@
 // quickdraw
 #include "qd/pack_bits.hh"
 
+// v68k
+#include "v68k/print.hh"
+
 // ams-common
 #include "callouts.hh"
 #include "QDGlobals.hh"
 
+
+using v68k::hex32_t;
 
 typedef Byte Op;
 
@@ -452,7 +457,7 @@ const Byte* do_opcode( const Byte* p )
 			return NULL;
 		
 		default:
-			ERROR = "Aborting picture at unknown opcode ", opcode;
+			ERROR = "Aborting picture at unknown opcode ", (hex32_t) opcode;
 			return NULL;
 	}
 	
