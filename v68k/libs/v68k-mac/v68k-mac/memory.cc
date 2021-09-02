@@ -212,24 +212,6 @@ void initialize()
 {
 	((char*) &words[ tag_ROMBase ])[ 1 ] = 0x40;  // ROMBase = 0x00400000
 	
-	/*
-		Tetris stores a pointer to a private control block in SoundPtr
-		(which otherwise wouldn't get used, since Tetris doesn't use the
-		four-tone synthesizer).  At startup, it calls a sound-stopping
-		routine that clears a flag byte in that control block, but at that
-		time, the control block hasn't been created yet, and SoundPtr still
-		contains zero.  To prevent an unmapped access to $0084, initialize
-		SoundPtr to point to some harmless landing zone; the screen buffer
-		works just fine for this (and the write isn't even visible).
-		
-		An alternative fix is to write an INIT that patches _LoadSeg so it
-		will hot-patch Tetris to avoid the superfluous call to stop sound
-		at launch, but this is obviously much trickier and a lot more work.
-	*/
-	
-	((char*) &words[ tag_SoundPtr ])[ 1 ] = 0x01;  // load 0x0001A700, which
-	((char*) &words[ tag_SoundPtr ])[ 2 ] = 0xA7;  // is the screen buffer
-	
 	words[ tag_00E4       ] = words[ tag_ROMBase ];
 	words[ tag_VIA        ] = iota::big_u16( 0x00EF     );
 	words[ tag_VIA + 1    ] = iota::big_u16(     0xE1FE );
