@@ -63,6 +63,7 @@ enum
 	Opt_GNEtix = 'G',  // GetNextEvent throttle, in ticks
 	Opt_romgen = 'R',  // ROM generation: 0 for 64K ROM, 1 for 128K, etc.
 	Opt_system = 'V',  // System version
+	Opt_auto_v = 'Y',  // Auto-sync screen updates to VBL interrupts
 	
 	Opt_last_byte = 255,
 	
@@ -72,6 +73,7 @@ enum
 static command::option options[] =
 {
 	{ "auto-clear",  Opt_auto_0 },
+	{ "auto-vsync",  Opt_auto_v },
 	
 	{ "gne-ticks",  Opt_GNEtix, command::Param_required },
 	
@@ -371,6 +373,10 @@ char* const* get_options( char** argv )
 		{
 			case Opt_auto_0:
 				autoclear = true;
+				break;
+			
+			case Opt_auto_v:
+				auto_vsync = true;
 				break;
 			
 			case Opt_events_fd:

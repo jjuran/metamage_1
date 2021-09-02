@@ -8,4 +8,5 @@
 
 
 bool autoclear;
+bool auto_vsync;
 int events_fd;
