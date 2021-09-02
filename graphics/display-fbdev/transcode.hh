@@ -30,7 +30,9 @@ void transcode_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 		
 		int n_pixels = 8 / bpp;
 		
-		for ( int mask = (1 << bpp) - 1 << 8 - bpp;  n_pixels--;  mask >>= bpp )
+		int mask = ((1 << bpp) - 1) << (8 - bpp);
+		
+		for ( ;  n_pixels--;  mask >>= bpp )
 		{
 			uint8_t luma = bpp < 8 ? palette[ (byte & mask) >> n_pixels * bpp ]
 			                       : byte;

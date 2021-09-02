@@ -203,9 +203,9 @@ void rgb555_16( const uint8_t* src, uint8_t* dst, int width )
 		
 		const uint16_t rgb = msb << 8 | lsb;
 		
-		const uint8_t r = (rgb & 0x7C00) * 0x0021 >> 10 + 2;
-		const uint8_t g = (rgb & 0x03E0) * 0x0021 >>  5 + 2;
-		const uint8_t b = (rgb & 0x001F) * 0x0021 >>  0 + 2;
+		const uint8_t r = (rgb & 0x7C00) * 0x0021 >> (10 + 2);
+		const uint8_t g = (rgb & 0x03E0) * 0x0021 >> ( 5 + 2);
+		const uint8_t b = (rgb & 0x001F) * 0x0021 >> ( 0 + 2);
 		
 		const uint32_t xrgb = r << 16
 		                    | g <<  8
@@ -230,9 +230,9 @@ void rgb555_16_2x( const uint8_t* src, uint8_t* dst, int width )
 		
 		const uint16_t rgb = msb << 8 | lsb;
 		
-		const uint8_t r = (rgb & 0x7C00) * 0x0021 >> 10 + 2;
-		const uint8_t g = (rgb & 0x03E0) * 0x0021 >>  5 + 2;
-		const uint8_t b = (rgb & 0x001F) * 0x0021 >>  0 + 2;
+		const uint8_t r = (rgb & 0x7C00) * 0x0021 >> (10 + 2);
+		const uint8_t g = (rgb & 0x03E0) * 0x0021 >> ( 5 + 2);
+		const uint8_t b = (rgb & 0x001F) * 0x0021 >> ( 0 + 2);
 		
 		const uint32_t xrgb = r << 16
 		                    | g <<  8
@@ -256,9 +256,9 @@ void rgb565_16( const uint8_t* src, uint8_t* dst, int width )
 		
 		const uint16_t rgb = msb << 8 | lsb;
 		
-		const uint8_t r = (rgb & 0xF800) * 0x0021 >> 11 + 2;
-		const uint8_t g = (rgb & 0x07E0) * 0x0041 >>  5 + 4;
-		const uint8_t b = (rgb & 0x001F) * 0x0021 >>  0 + 2;
+		const uint8_t r = (rgb & 0xF800) * 0x0021 >> (11 + 2);
+		const uint8_t g = (rgb & 0x07E0) * 0x0041 >> ( 5 + 4);
+		const uint8_t b = (rgb & 0x001F) * 0x0021 >> ( 0 + 2);
 		
 		const uint32_t xrgb = r << 16
 		                    | g <<  8
@@ -283,9 +283,9 @@ void rgb565_16_2x( const uint8_t* src, uint8_t* dst, int width )
 		
 		const uint16_t rgb = msb << 8 | lsb;
 		
-		const uint8_t r = (rgb & 0xF800) * 0x0021 >> 11 + 2;
-		const uint8_t g = (rgb & 0x07E0) * 0x0041 >>  5 + 4;
-		const uint8_t b = (rgb & 0x001F) * 0x0021 >>  0 + 2;
+		const uint8_t r = (rgb & 0xF800) * 0x0021 >> (11 + 2);
+		const uint8_t g = (rgb & 0x07E0) * 0x0041 >> ( 5 + 4);
+		const uint8_t b = (rgb & 0x001F) * 0x0021 >> ( 0 + 2);
 		
 		const uint32_t xrgb = r << 16
 		                    | g <<  8
