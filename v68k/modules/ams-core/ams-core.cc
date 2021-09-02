@@ -160,7 +160,7 @@ void initialize_low_memory_globals()
 		ScreenRow = screenBits.rowBytes;
 		CrsrPin   = screenBits.bounds;
 		
-		SoundBase = (Ptr) 0x0001FD00;
+		SoundBase = (Ptr) ScrnBase - 0x1A700 + 0x1FD00;
 	}
 	
 	const short n_max_events = 20;
