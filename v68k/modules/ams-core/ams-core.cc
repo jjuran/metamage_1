@@ -18,6 +18,7 @@
 #include <stdlib.h>
 
 // iota
+#include "iota/char_types.hh"
 #include "iota/freestore_free.hh"
 
 // command
@@ -25,6 +26,9 @@
 
 // gear
 #include "gear/parse_decimal.hh"
+
+// log-of-war
+#include "logofwar/report.hh"
 
 // ams-common
 #include "callouts.hh"
@@ -359,6 +363,50 @@ void install_Debugger()
 }
 
 static
+unsigned parse_version( const char* version_string )
+{
+	const char* p = version_string;
+	
+	char c;
+	
+	if ( iota::is_digit( c = *p++ ) )
+	{
+		int version = (c - '0') << 8;
+		
+		if ( ! (c = *p++) )
+		{
+			return version;
+		}
+		
+		if ( c == '.'  &&  iota::is_digit( c = *p++ ) )
+		{
+			version |= (c - '0') << 4;
+			
+			if ( ! (c = *p++) )
+			{
+				return version;
+			}
+			
+			if ( c == '.'  &&  iota::is_digit( c = *p++ ) )
+			{
+				version |= c - '0';
+				
+				if ( ! (c = *p++) )
+				{
+					return version;
+				}
+			}
+		}
+	}
+	
+	FATAL = "Invalid version '", version_string, "'";
+	
+	exit( 1 );
+	
+	return 0;
+}
+
+static
 char* const* get_options( char** argv )
 {
 	using command::global_result;
@@ -393,9 +441,7 @@ char* const* get_options( char** argv )
 				break;
 			
 			case Opt_system:
-				System = gear::parse_unsigned_decimal( global_result.param );
-				
-				System <<= 8;  // E.g. "6" --> 0x0600
+				System = parse_version( global_result.param );
 				break;
 			
 			default:
