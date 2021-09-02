@@ -187,6 +187,11 @@ def core_opts
 		opts <-- "-0"
 	}
 	
+	if const auto_vsync = getenv "AMS_AUTOVSYNC" then
+	{
+		opts <-- "-Y"
+	}
+	
 	if const gne_ticks = getenv "AMS_GNETICKS" then
 	{
 		opts <-- "-G" gne_ticks
