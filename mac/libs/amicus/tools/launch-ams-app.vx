@@ -119,6 +119,11 @@ def core_opts
 		opts <-- "-0"
 	}
 	
+	if "auto-vsync" in config and config[ "auto-vsync" ] then
+	{
+		opts <-- "-Y"
+	}
+	
 	if "gne-ticks" in config then
 	{
 		opts <-- "-G" config[ "gne-ticks" ]
