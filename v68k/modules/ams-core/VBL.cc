@@ -10,6 +10,9 @@
 #include <Retrace.h>
 #endif
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "callouts.hh"
 #include "interrupts.hh"
@@ -17,6 +20,7 @@
 #include "time.hh"
 
 // ams-core
+#include "options.hh"
 #include "reactor-core.hh"
 
 
@@ -121,7 +125,7 @@ void do_VBL()
 				VBLQueue.qHead = VBLQueue.qTail = NULL;
 			}
 			
-			if ( VBLQueue.qHead == NULL  &&  CurPageOption >= 0 )
+			if ( VBLQueue.qHead == NULL  &&  auto_vsync )
 			{
 				unlock_screen();
 			}
@@ -138,7 +142,7 @@ void do_VBL()
 static
 void VBL_ready( timer_node* )
 {
-	if ( CurPageOption >= 0 )
+	if ( auto_vsync )
 	{
 		unlock_screen();
 		lock_screen();
@@ -156,6 +160,13 @@ void VBL_ready( timer_node* )
 
 short VInstall_patch( QElem* vbl : __A0 )
 {
+	if ( auto_vsync  &&  CurPageOption < 0 )
+	{
+		WARNING = "Disabling auto-vsync because page 2 video is in use.";
+		
+		auto_vsync = false;
+	}
+	
 	VBLTask* task = (VBLTask*) vbl;
 	
 	short saved_SR = disable_interrupts();
@@ -175,7 +186,7 @@ short VInstall_patch( QElem* vbl : __A0 )
 	
 	if ( ! timer_scheduled )
 	{
-		if ( CurPageOption >= 0 )
+		if ( auto_vsync )
 		{
 			lock_screen();
 		}
@@ -212,7 +223,7 @@ short VRemove_patch( QElem* vbl : __A0 )
 		
 		timer_scheduled = false;
 		
-		if ( CurPageOption >= 0 )
+		if ( auto_vsync )
 		{
 			unlock_screen();
 		}
