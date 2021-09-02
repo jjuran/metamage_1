@@ -98,6 +98,7 @@ short SysEvtCnt : 0x0154;
 short SysVersion : 0x015A;
 Byte  MBState   : 0x0172;
 
+void* SoundPtr  : 0x0262;
 void* SoundBase : 0x0266;
 short ROM85     : 0x028E;
 void* SysZone   : 0x02A6;
@@ -162,6 +163,23 @@ void initialize_low_memory_globals()
 		
 		SoundBase = (Ptr) ScrnBase - 0x1A700 + 0x1FD00;
 	}
+	
+	/*
+		Tetris stores a pointer to a private control block in SoundPtr
+		(which otherwise wouldn't get used, since Tetris doesn't use the
+		four-tone synthesizer).  At startup, it calls a sound-stopping
+		routine that clears a flag byte in that control block, but at that
+		time, the control block hasn't been created yet, and SoundPtr still
+		contains zero.  To prevent an unmapped access to $0084, initialize
+		SoundPtr to point to some harmless landing zone; the screen buffer
+		works just fine for this (and the write isn't even visible).
+		
+		An alternative fix is to write an INIT that patches _LoadSeg so it
+		will hot-patch Tetris to avoid the superfluous call to stop sound
+		at launch, but this is obviously much trickier and a lot more work.
+	*/
+	
+	SoundPtr = ScrnBase;
 	
 	const short n_max_events = 20;
 	
