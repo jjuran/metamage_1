@@ -15,7 +15,6 @@
 
 // ams-common
 #include "QDGlobals.hh"
-#include "raster_lock.hh"
 #include "scoped_zone.hh"
 #include "utility_region.hh"
 
@@ -160,8 +159,6 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	{
 		return toggle_close_box( window );
 	}
-	
-	raster_lock lock;
 	
 	const Rect& content = window->contRgn[0]->rgnBBox;
 	

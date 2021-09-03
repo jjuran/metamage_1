@@ -1652,6 +1652,8 @@ pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 	{
 		if ( might_intersect( clobbered_region, window->strucRgn ) )
 		{
+			raster_lock lock;
+			
 			call_WDEF( window, wDraw, 0 );
 		}
 		
