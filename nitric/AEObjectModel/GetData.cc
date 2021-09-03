@@ -44,8 +44,24 @@ namespace Nitrogen
 	{
 		nucleus::owned< Mac::AERecord_Data > record = AECreateList( true );
 		
-		AEPutKeyPtr< Mac::keyAEDesiredClass >( record, objectClass );
-		AEPutKeyPtr< Mac::keyAEKeyForm      >( record, keyForm     );
+		/*
+			g++ 3 can't handle this:
+			
+			AEPutKeyPtr< Mac::keyAEDesiredClass >( record, objectClass );
+			AEPutKeyPtr< Mac::keyAEKeyForm      >( record, keyForm     );
+		*/
+		
+		AEPutKeyPtr( record,
+		             Mac::keyAEDesiredClass,
+		             Mac::typeType,
+		             &objectClass,
+		             sizeof objectClass );
+		
+		AEPutKeyPtr( record,
+		             Mac::keyAEKeyForm,
+		             Mac::typeEnumerated,
+		             &keyForm,
+		             sizeof keyForm );
 		
 		AEPutKeyDesc( record, Mac::keyAEKeyData,   keyData   );
 		AEPutKeyDesc( record, Mac::keyAEContainer, container );
