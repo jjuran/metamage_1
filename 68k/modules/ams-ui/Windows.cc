@@ -45,7 +45,6 @@
 #include "patches.hh"
 #include "scoped_port.hh"
 #include "StrUtils.hh"
-#include "WDEF.hh"
 
 
 #pragma exceptions off
@@ -135,16 +134,9 @@ void QDLocalToGlobalRect_clamped( GrafPtr port, const Rect* src, Rect* dst )
 static
 long call_WDEF( WindowPeek window, short message, long param )
 {
-	WindowDefProcPtr wdef = &WDEF_0;
+	WindowDefProcPtr wdef = (WindowDefProcPtr) *window->windowDefProc;
 	
 	const short varCode = *(Byte*) &window->windowDefProc;
-	
-	Handle h = window->windowDefProc;
-	
-	if ( (UInt32) h & 0x00FFFFFF )
-	{
-		wdef = (WindowDefProcPtr) *h;
-	}
 	
 	return wdef( varCode, (WindowPtr) window, message, param );
 }
@@ -314,6 +306,13 @@ pascal WindowRef NewWindow_patch( void*             storage,
                                   Boolean           closeBox,
                                   long              refCon )
 {
+	Handle wdef = GetResource( 'WDEF', procID >> 4 );
+	
+	if ( ! wdef )
+	{
+		return NULL;
+	}
+	
 	WindowPeek window = (WindowPeek) storage;
 	
 	if ( window == NULL )
@@ -360,7 +359,7 @@ pascal WindowRef NewWindow_patch( void*             storage,
 	window->goAwayFlag = closeBox;
 	window->refCon     = refCon;
 	
-	window->windowDefProc = GetResource( 'WDEF', procID >> 4 );
+	window->windowDefProc = wdef;
 	
 	const short varCode = procID & 0x0F;
 	
