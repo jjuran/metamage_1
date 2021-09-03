@@ -749,6 +749,18 @@ short Delete_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 		INFO = "-> ioNamePtr: \"", CSTR( pb->ioNamePtr ), "\"";
 	}
 	
+	pb->ioFDirIndex = 0;
+	
+	if ( OSErr err = GetFileInfo_patch( trap_word, pb ) )
+	{
+		return err;  // pb->ioResult is already set
+	}
+	
+	if ( pb->ioFRefNum )
+	{
+		return pb->ioResult = fBsyErr;
+	}
+	
 	ERROR = "Delete is unimplemented";
 	
 	return pb->ioResult = extFSErr;
