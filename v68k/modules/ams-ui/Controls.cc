@@ -240,6 +240,8 @@ pascal void HiliteControl_patch( ControlRef control, short hiliteState )
 {
 	scoped_port thePort = control[0]->contrlOwner;
 	
+	control[0]->contrlHilite = hiliteState;
+	
 	call_CDEF( control, drawCntl, hiliteState );
 }
 
