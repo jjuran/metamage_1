@@ -13,7 +13,6 @@
 
 // ams-common
 #include "QDGlobals.hh"
-#include "raster_lock.hh"
 
 
 #pragma exceptions off
@@ -156,8 +155,6 @@ pascal long WDEF_1_Draw( short varCode, GrafPort* w, long param )
 	
 	GrafPtr   thePort = *get_addrof_thePort();
 	RgnHandle clipRgn = thePort->clipRgn;
-	
-	raster_lock lock;
 	
 	static RgnHandle tmp = NewRgn();
 	
