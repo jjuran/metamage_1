@@ -46,7 +46,7 @@ void draw_control( ControlRef control )
 	
 	raster_lock lock;
 	
-	call_CDEF( control, drawCntl, 0 );
+	call_CDEF( control, drawCntl, control[0]->contrlHilite );
 }
 
 #pragma mark -
@@ -238,11 +238,9 @@ pascal void DrawControls_patch( GrafPort* window )
 
 pascal void HiliteControl_patch( ControlRef control, short hiliteState )
 {
-	scoped_port thePort = control[0]->contrlOwner;
-	
 	control[0]->contrlHilite = hiliteState;
 	
-	call_CDEF( control, drawCntl, hiliteState );
+	draw_control( control );
 }
 
 #pragma mark -
