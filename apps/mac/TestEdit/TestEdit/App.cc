@@ -242,7 +242,19 @@ namespace TestEdit
 			Mac::AEObjectClass containerClass = N::GetObjectClass( containerToken );
 			
 			// The kind of thing we're counting, e.g. 'file'
-			Mac::AEObjectClass desiredClass = N::AEGetParamPtr< Mac::keyAEObjectClass >( event );
+			Mac::AEObjectClass desiredClass;
+			
+			/*
+				g++ 3 can't handle this:
+				
+				Mac::AEObjectClass desiredClass = N::AEGetParamPtr< Mac::keyAEObjectClass >( event );
+			*/
+			
+			N::AEGetParamPtr( event,
+			                  Mac::keyAEObjectClass,
+			                  Mac::typeType,
+			                  &desiredClass,
+			                  sizeof desiredClass );
 			
 			std::size_t count = N::Count( desiredClass, containerClass, containerToken );
 			
