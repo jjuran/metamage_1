@@ -203,12 +203,12 @@ short VInstall_patch( QElem* vbl : __A0 )
 
 short VRemove_patch( QElem* vbl : __A0 )
 {
-	short saved_SR = disable_interrupts();
-	
 	if ( OSErr err = Dequeue( vbl, &VBLQueue ) )
 	{
 		return err;
 	}
+	
+	short saved_SR = disable_interrupts();
 	
 	if ( VBLQueue.qHead == VBLQueue.qTail )
 	{
