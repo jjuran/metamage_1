@@ -250,6 +250,14 @@ void launch_viewer( const char* raster_path )
 static
 void launch_interactive( char* const* args )
 {
+	/*
+		The author process reads from the front end of a socket
+		and the viewer process writes to the back end.
+	*/
+	
+	int author_fd;
+	int viewer_fd;
+	
 	int socket_fds[ 2 ];
 	
 	int nok = socketpair( PF_UNIX, SOCK_STREAM, 0, socket_fds );
@@ -259,6 +267,9 @@ void launch_interactive( char* const* args )
 		report_error( "socketpair", errno );
 		exit( 1 );
 	}
+	
+	author_fd = socket_fds[ 0 ];
+	viewer_fd = socket_fds[ 1 ];
 	
 	viewer_pid = fork();
 	
@@ -280,11 +291,11 @@ void launch_interactive( char* const* args )
 			argv[ 6 ] = title;
 		}
 		
-		exec_or_exit_endpoint( argv, socket_fds[ 1 ], socket_fds[ 0 ] );
+		exec_or_exit_endpoint( argv, viewer_fd, author_fd );
 	}
 	
 	char ready;
-	ssize_t n = read( socket_fds[ 0 ], &ready, 1 );
+	ssize_t n = read( author_fd, &ready, 1 );
 	
 	if ( n < 0 )
 	{
@@ -309,16 +320,16 @@ void launch_interactive( char* const* args )
 	
 	if ( author_pid == 0 )
 	{
-		const int ours  = socket_fds[ 0 ];
-		const int other = socket_fds[ 1 ];
+		const int ours  = author_fd;
+		const int other = viewer_fd;
 		
 		const int keep_output = -1;  // Don't clobber stdout
 		
 		exec_or_exit_endpoint( args, ours, other, events_fd, keep_output );
 	}
 	
-	close( socket_fds[ 0 ] );
-	close( socket_fds[ 1 ] );
+	close( author_fd );
+	close( viewer_fd );
 }
 
 int main( int argc, char** argv )
