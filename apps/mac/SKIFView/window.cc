@@ -11,6 +11,9 @@
 #endif
 
 // Mac OS
+#ifndef __CARBONEVENTS__
+#include <CarbonEvents.h>
+#endif
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
@@ -28,12 +31,18 @@
 // iota
 #include "iota/endian.hh"
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 // mac-sys-utils
 #include "mac_sys/has/ColorQuickDraw.hh"
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/main_display_bounds.hh"
+
+// mac-ui-utils
+#include "mac_ui/windows.hh"
 
 // rasterlib
 #include "raster/clut.hh"
@@ -43,6 +52,17 @@
 // SKIFView
 #include "CGQuickDraw.hh"
 
+
+/*
+	Compositing mode is introduced in Mac OS X 10.2,
+	but doesn't work without major problems until 10.3.
+*/
+
+#ifdef MAC_OS_X_VERSION_10_3
+#define CONFIG_COMPOSITING  1
+#else
+#define CONFIG_COMPOSITING  0
+#endif
 
 using raster::raster_desc;
 
@@ -67,6 +87,55 @@ bool has_Color_QuickDraw()
 	
 	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  mac::sys::has_ColorQuickDraw();
 }
+
+static
+pascal OSStatus window_ControlDraw( EventHandlerCallRef  handler,
+                                    EventRef             event,
+                                    void*                userData )
+{
+	OSStatus err;
+	
+	ControlRef control;
+	CGContextRef context = NULL;
+	
+	(err = GetEventParameter( event,
+	                          kEventParamDirectObject,
+	                          typeControlRef,
+	                          NULL,
+	                          sizeof control,
+	                          NULL,
+	                          &control ))  ||
+	(err = GetEventParameter( event,
+	                          kEventParamCGContextRef,
+	                          typeCGContextRef,
+	                          NULL,
+	                          sizeof context,
+	                          NULL,
+	                          &context ));
+	
+	CGImageRef image = (CGImageRef) userData;
+	
+#ifdef MAC_OS_X_VERSION_10_2
+	
+	if ( err == noErr )
+	{
+		HIRect bounds;
+		HIViewGetBounds( control, &bounds );
+		
+		HIViewDrawCGImage( context, &bounds, image );
+	}
+	
+#endif
+	
+	return err;
+}
+
+DEFINE_CARBON_UPP( EventHandler, window_ControlDraw )
+
+static EventTypeSpec controlDraw_event[] =
+{
+	{ kEventClassControl, kEventControlDraw },
+};
 
 static
 Rect get_window_bounds( const raster_desc& desc )
@@ -389,6 +458,29 @@ WindowRef populate_window_nonnull( WindowRef window, const raster_load& load )
 		if ( TARGET_API_MAC_OSX )
 		{
 			state->image = CreateCGImageFromPixMap( state->pixmap );
+			
+			if ( CONFIG_COMPOSITING  &&  state->image != NULL )
+			{
+			#ifdef MAC_OS_X_VERSION_10_2
+				
+				OSStatus err;
+				HIViewRef root = HIViewGetRoot( window );
+				
+				HIViewRef content;
+				err = HIViewFindByID( root, kHIViewWindowContentID, &content );
+				
+				err = InstallControlEventHandler( content,
+				                                  UPP_ARG( window_ControlDraw ),
+				                                  1,
+				                                  controlDraw_event,
+				                                  state->image,
+				                                  NULL );
+				
+				mac::ui::invalidate_window( window );
+				
+			#endif
+				
+			}
 		}
 		
 		SetWRefCon( window, (long) state );
@@ -435,8 +527,14 @@ WindowRef new_window( const raster_desc& desc, ConstStr255Param name )
 	{
 		const WindowAttributes attrs = kWindowCloseBoxAttribute
 		                             | kWindowCollapseBoxAttribute
+		                           #if CONFIG_COMPOSITING
+		                             | kWindowCompositingAttribute
+		                           #endif
 		                           #ifdef MAC_OS_X_VERSION_10_3
 		                             | kWindowAsyncDragAttribute
+		                           #endif
+		                           #ifdef MAC_OS_X_VERSION_10_7
+		                             | kWindowHighResolutionCapableAttribute
 		                           #endif
 		                             ;
 		
