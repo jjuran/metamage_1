@@ -410,6 +410,31 @@ WindowRef new_window( const raster_desc& desc, ConstStr255Param name )
 {
 	Rect bounds = get_window_bounds( desc );
 	
+	if ( TARGET_API_MAC_CARBON )
+	{
+		const WindowAttributes attrs = kWindowCloseBoxAttribute
+		                             | kWindowCollapseBoxAttribute
+		                           #ifdef MAC_OS_X_VERSION_10_3
+		                             | kWindowAsyncDragAttribute
+		                           #endif
+		                             ;
+		
+		OSStatus err;
+		WindowRef window;
+		err = CreateNewWindow( kDocumentWindowClass, attrs, &bounds, &window );
+		
+		if ( err != noErr )
+		{
+			return NULL;
+		}
+		
+		SetWTitle( window, name );
+		
+		ShowWindow( window );
+		
+		return window;
+	}
+	
 	const WindowRef behind = (WindowRef) -1;
 	const short     procid = noGrowDocProc;
 	
