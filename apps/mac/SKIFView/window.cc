@@ -201,23 +201,17 @@ void convert_16bit( window_state& state )
 	
 #ifdef __LITTLE_ENDIAN__
 	
-	if ( layout_BE == RGB565_BE )
-	{
-		pixmap.pixelFormat = BE_data ? k16BE565PixelFormat
-		                             : k16LE565PixelFormat;
-	}
-	
 	if ( ! BE_data  &&  layout_BE == xRGB1555_BE )
 	{
 		pixmap.pixelFormat = k16LE555PixelFormat;
+		return;
 	}
 	
 	if ( ! BE_data  &&  layout_BE == ARGB1555_BE )
 	{
 		pixmap.pixelFormat = k16LE5551PixelFormat;
+		return;
 	}
-	
-	return;
 	
 #endif
 	
@@ -227,17 +221,33 @@ void convert_16bit( window_state& state )
 	if ( layout_BE == RGB565_BE )
 	{
 		/*
-			Little-endian 565:
+			Little-endian 565 to big-endian 1555:
 			
 			GGgB BBBB RRRR RGGG -> xRRR RRGG GGGB BBBB
+			
+			Little-endian 565 to little-endian 1555:
+			
+			RRRR RGGG GGgB BBBB -> xRRR RRGG GGGB BBBB
 		*/
 		
 		while ( pix < end )
 		{
 			UInt16 pix565 = *pix;
+			
+		#ifndef __LITTLE_ENDIAN__
+			
 			UInt16 pix555 = (pix565 << 7 & 0x7F80)  // 0RRR RRGG G000 0000
 			              | (pix565 >> 9 & 0x0060)  // 0000 0000 0GG0 0000
 			              | (pix565 >> 8 & 0x001F); // 0000 0000 000B BBBB
+			
+		#else
+			
+			pixmap.pixelFormat = k16LE555PixelFormat;
+			
+			UInt16 pix555 = (pix565 >> 1 & 0x7FE0)  // 0RRR RRGG GGG0 0000
+			              | (pix565 >> 0 & 0x001F); // 0000 0000 000B BBBB
+			
+		#endif
 			
 			*pix++ = pix555;
 		}
