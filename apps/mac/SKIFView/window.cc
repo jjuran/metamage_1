@@ -40,6 +40,9 @@
 #include "raster/clut_detail.hh"
 #include "raster/load.hh"
 
+// SKIFView
+#include "CGQuickDraw.hh"
+
 
 using raster::raster_desc;
 
@@ -47,6 +50,7 @@ using raster::raster_desc;
 struct window_state
 {
 	raster_load  load;
+	CGImageRef   image;
 	PixMap       pixmap;
 	short        mode;
 };
@@ -382,6 +386,11 @@ WindowRef populate_window_nonnull( WindowRef window, const raster_load& load )
 		
 		populate_pixmap( *state );
 		
+		if ( TARGET_API_MAC_OSX )
+		{
+			state->image = CreateCGImageFromPixMap( state->pixmap );
+		}
+		
 		SetWRefCon( window, (long) state );
 		
 		return window;
@@ -476,6 +485,11 @@ void destroy_window( WindowRef window )
 {
 	if ( window_state* state = (window_state*) GetWRefCon( window ) )
 	{
+		if ( TARGET_API_MAC_OSX )
+		{
+			CGImageRelease( state->image );
+		}
+		
 		if ( CTabHandle ctab = state->pixmap.pmTable )
 		{
 			DisposeCTable( ctab );
@@ -496,6 +510,20 @@ void draw_window( WindowRef window )
 		CGrafPtr port = GetWindowPort( window );
 		
 		const Rect& bounds = mac::qd::get_portRect( port );
+		
+		if ( TARGET_API_MAC_OSX  &&  state->image )
+		{
+			CGContextRef context;
+			CreateCGContextForPort( port, &context );
+			
+			CGRect rect = CGRectMake( 0, 0, bounds.right, bounds.bottom );
+			
+			CGContextDrawImage( context, rect, state->image );
+			
+			CGContextFlush  ( context );  // required in Mac OS X 10.4
+			CGContextRelease( context );
+			return;
+		}
 		
 		SetPort( (GrafPtr) port );
 		
