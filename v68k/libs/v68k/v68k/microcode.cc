@@ -1037,19 +1037,23 @@ namespace v68k
 	
 	op_result microcode_SBCD( processor_state& s, op_params& pb )
 	{
-		const int a = decoded_BCD( pb.first  );
-		const int b = decoded_BCD( pb.second );
+		int difference = (uint8_t) pb.second - (uint8_t) pb.first;
 		
-		const int difference = b - a;
-		
-		pb.result = BCD_encoded( (100 + b - a) % 100 );
+		if ( (pb.first & 0xf) > (pb.second & 0xf) )
+		{
+			difference -= 0x10 - 10;
+		}
 		
 		if ( const bool borrow = difference < 0 )
 		{
+			difference += 0x10 * 10;
+			
 			// Hack so SUBX-style CCR update sets the bits correctly
 			pb.first  = 0xFFFFFFFF;
 			pb.second = 0x00000000;
 		}
+		
+		pb.result = difference;
 		
 		return Ok;
 	}
@@ -1167,19 +1171,23 @@ namespace v68k
 	
 	op_result microcode_ABCD( processor_state& s, op_params& pb )
 	{
-		const int a = decoded_BCD( pb.first  );
-		const int b = decoded_BCD( pb.second );
+		uint32_t sum = pb.first + pb.second;
 		
-		const int sum = a + b;
-		
-		pb.result = BCD_encoded( sum % 100 );
-		
-		if ( const bool carry = sum >= 100 )
+		if ( (pb.first & 0xf) + (pb.second & 0xf) >= 10 )
 		{
+			sum += 0x10 - 10;
+		}
+		
+		if ( const bool carry = sum >= 0x10 * 10 )
+		{
+			sum -= 0x10 * 10;
+			
 			// Sick hack so ADDX-style CCR update sets the C bit
 			pb.first  |= 0x80;
 			pb.second |= 0x80;
 		}
+		
+		pb.result = sum;
 		
 		return Ok;
 	}
