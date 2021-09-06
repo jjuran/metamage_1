@@ -1024,17 +1024,6 @@ namespace v68k
 		return Ok;
 	}
 	
-	static uint32_t BCD_encoded( int x )
-	{
-		return + x / 10 << 4
-		       | x % 10;
-	}
-	
-	static int decoded_BCD( uint8_t x )
-	{
-		return 10 * (x >> 4) + (x & 0xF);
-	}
-	
 	op_result microcode_SBCD( processor_state& s, op_params& pb )
 	{
 		int difference = (uint8_t) pb.second - (uint8_t) pb.first;
