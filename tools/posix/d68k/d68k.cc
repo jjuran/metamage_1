@@ -185,6 +185,14 @@ namespace tool
 		"SET"
 	};
 	
+	static const char* bfonly_ops[] =
+	{
+		"EXTU",
+		"EXTS",
+		"FFO",
+		"INS"
+	};
+	
 	static const char* bit_slide_ops[] =
 	{
 		"AS",
@@ -2159,12 +2167,68 @@ namespace tool
 		}
 	}
 	
+	static
+	void decode_bitfield( uint16_t op )
+	{
+		const uint16_t extension = read_word();
+		
+		const plus::string ea = read_ea( op & 0x3f, 0 );
+		
+		const short offset = extension >> 6 & 0x1f;
+		const short width  = extension      & 0x1f;
+		
+		const short Do = extension & 0x0800;
+		const short Dw = extension & 0x0020;
+		const short is_bfonly = op & 0x0100;
+		
+		const char* const* ops = is_bfonly ? bfonly_ops : bit_ops;
+		
+		const char* partial_mnemonic = ops[ op >> 9 & 0x3 ];
+		
+		/*
+			The partial mnemonic is either 3 or 4 characters.  For the minimum
+			of 3, append the maximum 4 space characters.  For the longer 4,
+			append only 3 space characters.
+		*/
+		
+		const char* space = &"    "[ strlen( partial_mnemonic ) - 3 ];
+		
+		printf( "BF%s%s", partial_mnemonic, space );
+		
+		if ( (op & 0x0f00) == 0x0F00 )
+		{
+			// BFINS
+			
+			printf( "D%c,", '0' | extension >> 12 );
+		}
+		
+		const char o = Do ? 'D' : '#';
+		const char w = Dw ? 'D' : '#';
+		
+		printf( "%s {%c%d:%c%d}", ea.c_str(), o, offset, w, width );
+		
+		if ( op & 0x0100  &&  (op & 0x0f00) != 0x0F00 )
+		{
+			// BFEXTU, BFEXTS, BFFFO
+			
+			printf( ",D%c", '0' | extension >> 12 );
+		}
+		
+		printf( "\n" );
+	}
+	
 	static void decode_shift_rotate( uint16_t op )
 	{
 		const short size_index = op >> 6 & 0x3;
 		
 		if ( size_index == 3  &&  op & 0x800 )
 		{
+			if ( op & 0x0800 )
+			{
+				decode_bitfield( op );
+				return;
+			}
+			
 			throw illegal_instruction();
 		}
 		
