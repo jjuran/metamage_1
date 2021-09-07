@@ -171,7 +171,7 @@ namespace v68k
 			
 			if ( selector == 6  &&  mode == 7  &&  n & 2 )
 			{
-				storage.flags = loads_and | stores_data | not_before_68010;
+				storage.flags = loads_and | CMP_CCR_update | not_before_68010;
 			}
 			
 			return &storage;
