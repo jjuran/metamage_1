@@ -437,6 +437,8 @@ namespace v68k
 		if ( is_quad_sized )
 		{
 			Dh = product_64 >> 32;
+			
+			nzvc &= ~0x02;  // clear overflow
 		}
 		
 		if ( product_64 == 0 )
