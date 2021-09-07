@@ -439,15 +439,26 @@ namespace v68k
 			Dh = product_64 >> 32;
 			
 			nzvc &= ~0x02;  // clear overflow
+			
+			if ( product_64 == 0 )
+			{
+				nzvc |= 0x04;
+			}
+			else if ( (int64_t) product_64 < 0 )
+			{
+				nzvc |= 0x08;
+			}
 		}
-		
-		if ( product_64 == 0 )
+		else
 		{
-			nzvc |= 0x04;
-		}
-		else if ( (int64_t) product_64 < 0 )
-		{
-			nzvc |= 0x08;
+			if ( (int32_t) product_64 == 0 )
+			{
+				nzvc |= 0x04;
+			}
+			else if ( (int32_t) product_64 < 0 )
+			{
+				nzvc |= 0x08;
+			}
 		}
 		
 		s.sr.nzvc = nzvc;
