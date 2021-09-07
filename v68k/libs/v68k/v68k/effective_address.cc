@@ -119,7 +119,7 @@ namespace v68k
 		
 		if ( base_suppress )
 		{
-			base_displacement = 0;
+			pb.address = 0;
 		}
 		
 		const bool index_suppress = extension & 0x40;

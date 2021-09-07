@@ -432,23 +432,36 @@ namespace v68k
 			}
 		}
 		
-		if ( product_64 == 0 )
-		{
-			nzvc |= 0x04;
-		}
-		else if ( (int64_t) product_64 < 0 )
-		{
-			nzvc |= 0x08;
-		}
-		
-		s.sr.nzvc = nzvc;
-		
 		Dl = product_64;
 		
 		if ( is_quad_sized )
 		{
 			Dh = product_64 >> 32;
+			
+			nzvc &= ~0x02;  // clear overflow
+			
+			if ( product_64 == 0 )
+			{
+				nzvc |= 0x04;
+			}
+			else if ( (int64_t) product_64 < 0 )
+			{
+				nzvc |= 0x08;
+			}
 		}
+		else
+		{
+			if ( (int32_t) product_64 == 0 )
+			{
+				nzvc |= 0x04;
+			}
+			else if ( (int32_t) product_64 < 0 )
+			{
+				nzvc |= 0x08;
+			}
+		}
+		
+		s.sr.nzvc = nzvc;
 		
 		return Ok;
 	}

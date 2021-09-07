@@ -144,7 +144,7 @@ namespace v68k
 		
 		if ( mode == 7  &&  n == 4 )
 		{
-			fetch_sized_immediate_data( s, pb );
+			fetch_sized_immediate_signed_data( s, pb );
 			
 			return Ok;
 		}

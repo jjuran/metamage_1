@@ -166,12 +166,12 @@ namespace v68k
 			
 			if ( selector == 6 )
 			{
-				storage.flags = loads_and | SUB_CCR_update;
+				storage.flags = loads_and | CMP_CCR_update;
 			}
 			
 			if ( selector == 6  &&  mode == 7  &&  n & 2 )
 			{
-				storage.flags = loads_and | stores_data | not_before_68010;
+				storage.flags = loads_and | CMP_CCR_update | not_before_68010;
 			}
 			
 			return &storage;
@@ -433,7 +433,7 @@ namespace v68k
 				{
 					storage.fetch = fetches_CMPM;
 					storage.code  = microcode_NOP;
-					storage.flags = SUB_CCR_update;
+					storage.flags = CMP_CCR_update;
 					
 					return &storage;
 				}
@@ -453,7 +453,7 @@ namespace v68k
 				{
 					storage.fetch = fetches_CMP;
 					storage.code  = microcode_NOP;
-					storage.flags = SUB_CCR_update;
+					storage.flags = CMP_CCR_update;
 					
 					return &storage;
 				}
