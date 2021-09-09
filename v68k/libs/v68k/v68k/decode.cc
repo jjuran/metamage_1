@@ -6,6 +6,7 @@
 #include "v68k/decode.hh"
 
 // v68k
+#include "v68k/bitfields.hh"
 #include "v68k/ea_types.hh"
 #include "v68k/fetches.hh"
 #include "v68k/instructions.hh"
@@ -532,6 +533,74 @@ namespace v68k
 		&microcode_ROL
 	};
 	
+	static const microcode bitfield_microcodes[] =
+	{
+		&microcode_BFTST_Dn,
+		&microcode_BFEXTU_Dn,
+		&microcode_BFCHG_Dn,
+		&microcode_BFEXTS_Dn,
+		&microcode_BFCLR_Dn,
+		&microcode_BFFFO_Dn,
+		&microcode_BFSET_Dn,
+		&microcode_BFINS_Dn,
+		&microcode_BFTST,
+		&microcode_BFEXTU,
+		&microcode_BFCHG,
+		&microcode_BFEXTS,
+		&microcode_BFCLR,
+		&microcode_BFFFO,
+		&microcode_BFSET,
+		&microcode_BFINS,
+	};
+	
+	static
+	int bitfield_mode_selector( uint16_t opcode, int i )
+	{
+		const uint16_t mode_x8 = opcode & 0x38;
+		
+		switch ( mode_x8 )
+		{
+			case 8 * 0:  // Data register
+				return i - 8;
+			
+			case 8 * 1:  // Address register
+			case 8 * 3:  // Postincrement
+			case 8 * 4:  // Predecrement
+				return -1;
+			
+			case 8 * 7:
+				switch ( opcode & 0x07 )
+				{
+					case 2:  // PC-relative displacement
+					case 3:  // PC-relative indexed / memory indirect
+						switch ( i - 8 )
+						{
+							case 2:  // BFCHG
+							case 4:  // BFCLR
+							case 6:  // BFSET
+							case 7:  // BFINS
+								return -1;
+							
+							default:
+								break;
+						}
+						break;
+					
+					case 4:  // Immediate
+						return -1;
+					
+					default:
+						break;
+				}
+				break;
+			
+			default:
+				break;
+		}
+		
+		return i;
+	}
+	
 	static const instruction* decode_line_E( uint16_t opcode, instruction& storage )
 	{
 		const uint16_t size_code = opcode >> 6 & 0x3;
@@ -551,7 +620,19 @@ namespace v68k
 			
 			if ( i >= 8 )
 			{
-				return 0;  // NULL
+				i = bitfield_mode_selector( opcode, i );
+				
+				if ( i < 0 )
+				{
+					return 0;  // NULL
+				}
+				
+				storage.size  = unsized;
+				storage.fetch = fetches_bitfield;
+				storage.code  = bitfield_microcodes[ i ];
+				storage.flags = not_before_68020;
+				
+				return &storage;
 			}
 			
 			const uint16_t mode = opcode >> 3 & 0x7;

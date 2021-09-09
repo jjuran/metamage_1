@@ -6,6 +6,7 @@
 #include "v68k/fetches.hh"
 
 // v68k
+#include "v68k/bitfields.hh"
 #include "v68k/fetch.hh"
 #include "v68k/load_store.hh"
 
@@ -327,6 +328,14 @@ namespace v68k
 	{
 		&fetch_one,
 		&fetch_effective_address,
+		0  // NULL
+	};
+	
+	fetcher fetches_bitfield[] =
+	{
+		&fetch_unsigned_word,
+		&fetch_effective_address,
+		&normalize_bitfield_operands,
 		0  // NULL
 	};
 	
