@@ -65,6 +65,8 @@ static void install_QuickDraw()
 {
 	TBTRAP( CopyMask );  // A817
 	
+	TBTRAP( SetFScaleDisable );  // A834
+	
 	TBTRAP( FixDiv   );  // A84D
 	
 	TBTRAP( InitCursor );  // A850

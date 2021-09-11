@@ -23,4 +23,6 @@ pascal void SetFontLock_patch( Boolean locked );
 
 pascal FMOutput* FMSwapFont_patch( const FMInput* input );
 
+pascal void SetFScaleDisable_patch( Boolean disable );
+
 #endif

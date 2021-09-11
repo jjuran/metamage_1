@@ -33,6 +33,8 @@ short     ApFontID : 0x0984;
 
 const Point OneOne : 0x0A02;
 
+Byte FScaleDisable : 0x0A63;
+
 
 static inline
 short resID_for_font_and_size( short font, short size )
@@ -318,4 +320,9 @@ pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 	}
 	
 	return &the_current_FMOutput;
+}
+
+pascal void SetFScaleDisable_patch( Boolean disable )
+{
+	FScaleDisable = disable;
 }
