@@ -256,6 +256,7 @@ int main( int argc, char** argv )
 	define( proc_exit     );
 	define( proc_fstat    );
 	define( proc_getenv   );
+	define( proc_getpid   );
 	define( proc_isatty   );
 	define( proc_listdir  );
 	define( proc_load     );
