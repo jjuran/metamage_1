@@ -327,11 +327,11 @@ const module_opts = ams_modules map {"-m", argify v}
 
 const app = ams_bin "/app"
 
-const home_run = home "/run"
+const works = home "/run/" getpid() ".works"
 
-run [ "mkdir -p" / ' ', home_run ]
+run [ "mkdir -p" / ' ', works ]
 
-const screen = home_run "/ams.skif"
+const screen = works "/screen.skif"
 const raster = "--raster=" screen
 
 run [ "skif make -fg " screen_res "*1 -c2 -m paint -R" / ' ', screen ]
@@ -352,4 +352,11 @@ const graft-subcmd = "graft", servers, xv68k-subcmd
 
 const command = [ command-prefix, graft-subcmd ]
 
-execvp (command[ 0 ], command)
+warn "screen: " screen
+
+run command
+
+remove screen
+remove works
+
+end.
