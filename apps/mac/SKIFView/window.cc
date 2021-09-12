@@ -294,6 +294,8 @@ void populate_pixmap( window_state& state )
 	pixmap.bounds.bottom = desc.height;
 	pixmap.bounds.right  = desc.width;
 	
+	pixmap.pixelSize = depth;
+	
 	if ( depth == 1 )
 	{
 		return;
@@ -307,8 +309,6 @@ void populate_pixmap( window_state& state )
 	
 	pixmap.vRes = fixed_72dpi;
 	pixmap.hRes = fixed_72dpi;
-	
-	pixmap.pixelSize = depth;
 	
 	if ( has_color )
 	{
@@ -358,6 +358,8 @@ void populate_pixmap( window_state& state )
 				
 				if ( ctab[0]->ctSize >= clut->max )
 				{
+					ctab[0]->ctSeed += 1024;
+					
 					const Size n = (clut->max + 1) * sizeof (ColorSpec);
 					
 					BlockMoveData( clut->palette, ctab[0]->ctTable, n );
@@ -493,9 +495,9 @@ void draw_window( WindowRef window )
 	{
 		CGrafPtr port = GetWindowPort( window );
 		
-		SetPort( (GrafPtr) port );
-		
 		const Rect& bounds = mac::qd::get_portRect( port );
+		
+		SetPort( (GrafPtr) port );
 		
 		CopyBits( (const BitMap*) &state->pixmap,
 		          GetPortBitMapForCopyBits( port ),
