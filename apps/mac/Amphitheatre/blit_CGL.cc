@@ -79,7 +79,8 @@ CGL_blitter::CGL_blitter( CGDirectDisplayID id, CGRect bounds )
 	
 	const CGLPixelFormatAttribute attrs[] =
 	{
-	#ifndef MAC_OS_X_VERSION_10_6
+	#ifndef MAC_OS_X_VERSION_10_7
+		// Without this, CGLSetFullScreen() returns 10004 in 10.6.
 		kCGLPFAFullScreen,
 	#endif
 		kCGLPFADoubleBuffer,
@@ -105,11 +106,13 @@ CGL_blitter::CGL_blitter( CGDirectDisplayID id, CGRect bounds )
 		return;
 	}
 	
-#ifdef MAC_OS_X_VERSION_10_6
+#ifdef MAC_OS_X_VERSION_10_7
 	
 	/*
 		According to the Internet, 10.5 lacks CGLSetFullScreenOnDisplay(),
 		even though Apple's headers claim otherwise.
+		
+		In addition, CGLSetFullScreenOnDisplay() is returning 10012 in 10.6.
 	*/
 	
 	err = CGLSetFullScreenOnDisplay( context, display_mask );
