@@ -34,9 +34,11 @@ const BitMap& screenBits()
 }
 
 #endif
-#endif
+#else  // #if ! __LP64__
 
 int dummy;
+
+#endif
 
 }
 }

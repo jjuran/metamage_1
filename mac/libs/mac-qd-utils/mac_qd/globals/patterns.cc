@@ -37,9 +37,11 @@ const Pattern& black()   { return *GetQDGlobalsBlack    ( &qd_black  ); }
 const Pattern& white()   { return *GetQDGlobalsWhite    ( &qd_white  ); }
 
 #endif
-#endif
+#else  // #if ! __LP64__
 
 int dummy;
+
+#endif
 
 }
 }

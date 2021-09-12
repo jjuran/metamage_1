@@ -43,8 +43,6 @@ GrafPtr thePort()
 
 #endif
 
-int dummy;
-
 }
 }
 

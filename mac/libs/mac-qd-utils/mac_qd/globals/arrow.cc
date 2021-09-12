@@ -34,9 +34,11 @@ const Cursor& arrow()
 }
 
 #endif
-#endif
+#else  // #if ! __LP64__
 
 int dummy;
+
+#endif
 
 }
 }
