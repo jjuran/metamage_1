@@ -20,11 +20,11 @@
 #include "bitmapped_texture_check.hh"
 
 
-int image_width;
-int image_height;
+static int image_width;
+static int image_height;
 
-int tex_width;
-int tex_height;
+static int tex_width;
+static int tex_height;
 
 #ifdef GL_TEXTURE_RECTANGLE_ARB
 
@@ -32,8 +32,8 @@ const GLenum texture_target = GL_TEXTURE_RECTANGLE_ARB;
 
 #define glTexCoord_ glTexCoord2i
 
-int tex_x1;
-int tex_y1;
+static int tex_x1;
+static int tex_y1;
 
 #else
 
@@ -41,8 +41,8 @@ const GLenum texture_target = GL_TEXTURE_2D;
 
 #define glTexCoord_ glTexCoord2f
 
-float tex_x1;
-float tex_y1;
+static float tex_x1;
+static float tex_y1;
 
 #endif
 
@@ -124,8 +124,6 @@ CGL_blitter::CGL_blitter( CGDirectDisplayID id, CGRect bounds )
 	{
 		return;
 	}
-	
-	#undef SETFULLSCREEN
 	
 	CGLSetCurrentContext( context );
 	
@@ -240,8 +238,6 @@ void CGL_blitter::prep( int stride, int width, int height )
 #else
 	
 	int greater = width > height ? width : height;
-	
-	binary_power_up( greater );
 	
 	tex_width  =
 	tex_height = binary_power_up( greater );
