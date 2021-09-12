@@ -34,7 +34,7 @@ namespace qd  {
 		return EmptyRgn( port->visRgn );
 	}
 	
-#else
+#elif ! __LP64__
 	
 	inline
 	bool is_port_visrgn_empty( GrafPtr port )
@@ -56,15 +56,12 @@ namespace qd  {
 		return IsPortVisibleRegionEmpty( port );
 	}
 	
-#if ! __LP64__
-	
 	inline
 	bool is_port_visrgn_empty( WindowRef window )
 	{
 		return is_port_visrgn_empty( GetWindowPort( window ) );
 	}
 	
-#endif
 #endif  // #if ! OPAQUE_TOOLBOX_STRUCTS
 	
 }

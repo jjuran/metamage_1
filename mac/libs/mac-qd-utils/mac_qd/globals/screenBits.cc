@@ -21,6 +21,7 @@
 namespace mac {
 namespace qd  {
 
+#if ! __LP64__
 #if OPAQUE_TOOLBOX_STRUCTS
 
 static BitMap qd_screenBits;
@@ -33,6 +34,9 @@ const BitMap& screenBits()
 }
 
 #endif
+#endif
+
+int dummy;
 
 }
 }

@@ -49,6 +49,8 @@ namespace qd  {
 	
 #else
 	
+#if ! __LP64__
+	
 	inline
 	Rect get_portRect( GrafPtr port )
 	{
@@ -57,8 +59,6 @@ namespace qd  {
 		
 		return bounds;
 	}
-	
-#if ! __LP64__
 	
 	inline
 	Rect get_portRect( WindowRef window )

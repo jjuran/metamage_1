@@ -21,6 +21,7 @@
 namespace mac {
 namespace qd  {
 
+#if ! __LP64__
 #if OPAQUE_TOOLBOX_STRUCTS
 
 static Cursor qd_arrow;
@@ -33,6 +34,9 @@ const Cursor& arrow()
 }
 
 #endif
+#endif
+
+int dummy;
 
 }
 }

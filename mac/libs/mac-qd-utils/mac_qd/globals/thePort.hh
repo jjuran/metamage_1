@@ -27,6 +27,8 @@
 namespace mac {
 namespace qd  {
 
+#if ! __LP64__
+
 inline
 GrafPtr thePort()
 {
@@ -38,6 +40,10 @@ GrafPtr thePort()
 	
 	return (GrafPtr) GetQDGlobalsThePort();
 }
+
+#endif
+
+int dummy;
 
 }
 }

@@ -21,6 +21,7 @@
 namespace mac {
 namespace qd  {
 
+#if ! __LP64__
 #if OPAQUE_TOOLBOX_STRUCTS
 
 static Pattern qd_dkGray;
@@ -36,6 +37,9 @@ const Pattern& black()   { return *GetQDGlobalsBlack    ( &qd_black  ); }
 const Pattern& white()   { return *GetQDGlobalsWhite    ( &qd_white  ); }
 
 #endif
+#endif
+
+int dummy;
 
 }
 }
