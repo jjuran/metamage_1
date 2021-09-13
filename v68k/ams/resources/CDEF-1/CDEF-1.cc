@@ -196,6 +196,11 @@ long CDEF_1_Draw( short varCode, ControlRef control, long param )
 	const bool inactive = min >= max  ||  param == 255;
 	const bool hiliting = param != 0  &&  param != 255;
 	
+	if ( param == 129 )
+	{
+		goto indicator;
+	}
+	
 	if ( hiliting )
 	{
 		goto hilite;
@@ -228,9 +233,9 @@ long CDEF_1_Draw( short varCode, ControlRef control, long param )
 	
 	bounds = control[0]->contrlRect;
 	
-hilite:
+indicator:
 	
-	if ( param == 0 )
+	if ( true )
 	{
 		if ( aspect > 0 )
 		{
@@ -275,6 +280,8 @@ hilite:
 		
 		param = control[0]->contrlHilite;
 	}
+	
+hilite:
 	
 	bounds = control[0]->contrlRect;
 	
