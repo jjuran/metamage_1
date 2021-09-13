@@ -499,7 +499,7 @@ pascal void SetCtlValue_patch( ControlRecord** control, short value )
 		
 		control[0]->contrlValue = value;
 		
-		draw_control( control );
+		draw_control( control, kDrawControlIndicatorOnly );
 	}
 }
 
@@ -519,7 +519,7 @@ pascal void SetMinCtl_patch( ControlRecord** control, short min )
 		
 		control[0]->contrlMin = min;
 		
-		draw_control( control );
+		draw_control( control, kDrawControlIndicatorOnly );
 	}
 }
 
@@ -539,7 +539,7 @@ pascal void SetMaxCtl_patch( ControlRecord** control, short max )
 		
 		control[0]->contrlMax = max;
 		
-		draw_control( control );
+		draw_control( control, kDrawControlIndicatorOnly );
 	}
 }
 

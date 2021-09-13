@@ -234,7 +234,7 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 	const bool hilite = true;
 	
 	const bool inactive = param == 255;
-	const bool hiliting = param != 0  &&  ! inactive;
+	const bool hiliting = param != 0  &&  param != 129  &&  ! inactive;
 	
 	const unsigned char* title = control[0]->contrlTitle;
 	const short          value = control[0]->contrlValue;
