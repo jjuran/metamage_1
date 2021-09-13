@@ -40,13 +40,19 @@ long call_CDEF( ControlRef control, short message, long param )
 }
 
 static
-void draw_control( ControlRef control )
+void draw_control( ControlRef control, short part )
 {
 	scoped_port thePort = control[0]->contrlOwner;
 	
 	raster_lock lock;
 	
-	call_CDEF( control, drawCntl, control[0]->contrlHilite );
+	call_CDEF( control, drawCntl, part );
+}
+
+static
+void draw_control( ControlRef control )
+{
+	draw_control( control, control[0]->contrlHilite );
 }
 
 #pragma mark -
