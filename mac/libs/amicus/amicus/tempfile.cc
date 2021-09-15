@@ -10,6 +10,9 @@
 #include <CoreServices/CoreServices.h>
 #endif
 
+// gear
+#include "gear/inscribe_decimal.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -52,7 +55,9 @@ const char* tempfile_location()
 	
 	path.resize( path.find( '\0' ) );
 	
-	path += "/amicus.skif";
+	path += "/amicus-";
+	path += gear::inscribe_unsigned_decimal( getpid() );
+	path += ".skif";
 	
 	return path.c_str();
 }
