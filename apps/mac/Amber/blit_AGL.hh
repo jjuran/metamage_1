@@ -1,0 +1,24 @@
+/*
+	blit_AGL.hh
+	-----------
+*/
+
+#ifndef BLITAGL_HH
+#define BLITAGL_HH
+
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+
+void create_AGL_context();
+void destroy_AGL_context();
+
+void attach_to_window( WindowRef window );
+
+void set_AGL_geometry( int stride, int width, int height );
+
+void blit_AGL( const void* src_addr );
+
+#endif
