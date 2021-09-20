@@ -227,6 +227,8 @@ const info =
 	CFBundleName:        name,
 	CFBundlePackageType: 'APPL',
 	CFBundleSignature:   creator,
+	CFBundleVersion:     "for Advanced Mac Substitute",
+	CFBundleGetInfoString: "(using the " frontend " front end)",
 	NSHighResolutionCapable: true,
 	
 	doctypes,
