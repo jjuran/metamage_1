@@ -22,8 +22,6 @@ class raster_lifetime
 	private:
 		const char* its_path;
 		
-		const raster::raster_load& get() const  { return loaded_raster; }
-		
 		// non-copyable
 		raster_lifetime           ( const raster_lifetime& );
 		raster_lifetime& operator=( const raster_lifetime& );
@@ -32,6 +30,8 @@ class raster_lifetime
 		raster_lifetime( const char* raster_path );
 		
 		~raster_lifetime();
+		
+		const raster::raster_load& get() const  { return loaded_raster; }
 		
 		void* addr() const  { return get().addr; }
 		
