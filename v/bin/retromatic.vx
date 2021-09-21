@@ -192,6 +192,11 @@ if active "sound" and exists "var/out/sndtrack" then
 	copy( "var/out/sndtrack", MacOS_dir )
 }
 
+if frontend != "Amber" and exists "var/out/Amber" then
+{
+	copy( "var/out/Amber", MacOS_dir )
+}
+
 copy( "var/out/" frontend, MacOS_dir )
 
 var plist_xml_lines = [ info_plist.version, info_plist.doctype ]
