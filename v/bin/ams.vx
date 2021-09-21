@@ -327,47 +327,20 @@ const module_opts = ams_modules map {"-m", argify v}
 
 const app = ams_bin "/app"
 
-const screen_opt
-const command-prefix
+const home_run = home "/run"
 
-if exists "/gui" then
-{
-	chdir "/gui/new/port"
-	
-	link( "new/stack", "view" )
-	
-	link( "new/eventtap", "v/events/view" )
-	link( "new/bitmap",   "v/screen/view" )
-	
-	rewrite "title"           <== title "\n"
-	rewrite "procid"          <== "4\n"
-	rewrite "size"            <== "512x342\n"
-	rewrite "v/screen/v/size" <== "512x342\n"
-	
-	touch "window"
-	
-	dup2( reader "v/events/v/stream", events_fd_slot )
-	
-	screen_opt     = "--screen=v/screen/v/bits"
-	command-prefix = "daemonize --stdin --cwd --ctty=tty --" / ' '
-}
-else
-{
-	const home_run = home "/run"
-	
-	run [ "mkdir -p" / ' ', home_run ]
-	
-	const screen = home_run "/ams.skif"
-	const raster = "--raster=" screen
-	
-	run [ "skif make -fg " screen_res "*1 -c2 -m paint -R" / ' ', screen ]
-	
-	run [ "skif init" / ' ', screen ]
-	
-	const zoom = "-x" (getenv "AMS_ZOOM" or 1)
-	screen_opt     = raster
-	command-prefix = "exhibit", "-t", title, raster, events_fd_opt, zoom
-}
+run [ "mkdir -p" / ' ', home_run ]
+
+const screen = home_run "/ams.skif"
+const raster = "--raster=" screen
+
+run [ "skif make -fg " screen_res "*1 -c2 -m paint -R" / ' ', screen ]
+
+run [ "skif init" / ' ', screen ]
+
+const zoom = "-x" (getenv "AMS_ZOOM" or 1)
+const screen_opt     = raster
+const command-prefix = "exhibit", "-t", title, raster, events_fd_opt, zoom
 
 const file-servers = freemountd-server, appfs-server, docfs-server
 const servers = sound-server, modem-server, file-servers
