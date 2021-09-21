@@ -34,8 +34,27 @@ def copy
 
 def vx_Z (script_filename) { "minivx", "-Z", bindir "/" script_filename }
 
-const is_arm64 = output-from-run [ "arch" ] == "arm64\n"
-const frontend = if is_arm64 then {"Amethyst"} else {"Amphitheatre"}
+def choose_frontend
+{
+	const is_arm64 = output-from-run [ "arch" ] == "arm64\n"
+	const frontend = if is_arm64 then {"Amethyst"} else {"Amphitheatre"}
+	
+	if const retro_frontend = getenv "RETRO_FRONTEND" then
+	{
+		if retro_frontend != frontend then
+		{
+			warn "retromatic: "
+			     "Using " retro_frontend " as front end "
+			     "instead of default " frontend
+		}
+		
+		return retro_frontend
+	}
+	
+	return frontend
+}
+
+const frontend = choose_frontend()
 
 const output_dir = argv[ 1 ]
 const input_path = argv[ 2 ]
