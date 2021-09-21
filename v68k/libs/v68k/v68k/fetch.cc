@@ -394,16 +394,6 @@ namespace v68k
 	}
 	
 	
-	op_result sign_extend_A_operand( processor_state& s, op_params& pb )
-	{
-		if ( pb.size != long_sized )
-		{
-			pb.first = int32_t( int16_t( pb.first ) );
-		}
-		
-		return Ok;
-	}
-	
 	op_result force_long_sized( processor_state& s, op_params& pb )
 	{
 		pb.size = long_sized;

@@ -296,7 +296,6 @@ namespace v68k
 	fetcher fetches_ADDA[] =
 	{
 		&fetch_sized_data_at_effective_address,
-		&sign_extend_A_operand,
 		&FETCH_MAJOR_REGISTER_ID,  // register id (An for line D)
 		0  // NULL
 	};

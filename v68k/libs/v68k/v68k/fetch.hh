@@ -80,8 +80,6 @@ namespace v68k
 	op_result fetch_bit_shift_count( processor_state& state, op_params& pb );
 	
 	
-	op_result sign_extend_A_operand( processor_state& s, op_params& pb );
-	
 	op_result force_long_sized( processor_state& state, op_params& pb );
 	
 	op_result assign_first_to_second( processor_state& state, op_params& pb );
