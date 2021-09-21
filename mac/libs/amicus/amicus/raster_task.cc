@@ -10,13 +10,7 @@
 #include <Carbon/Carbon.h>
 #endif
 
-// POSIX
-#include <unistd.h>
-
-// config
-#include "config/setpshared.h"
-
-// raster
+// rasterlib
 #include "raster/raster.hh"
 #include "raster/relay.hh"
 #include "raster/relay_detail.hh"
@@ -56,29 +50,15 @@ void raster_event_loop( raster::sync_relay* sync )
 	
 	uint32_t seed = 0;
 	
-	bool wait_is_broken = ! CONFIG_SETPSHARED;
+	sigset_t mask;
+	sigprocmask( SIG_SETMASK, NULL, &mask );  // get blocked signal mask
+	sigdelset  ( &mask, SIGUSR1 );
 	
 	while ( sync->status == raster::Sync_ready )
 	{
 		while ( seed == sync->seed )
 		{
-			if ( wait_is_broken )
-			{
-				usleep( 10000 );  // 10ms
-			}
-			else
-			{
-				try
-				{
-					raster::wait( *sync );
-				}
-				catch ( const raster::wait_failed& )
-				{
-					//ERROR( POLLING_ENSUES );
-					
-					wait_is_broken = true;
-				}
-			}
+			sigsuspend( &mask );
 			
 			poseven::thread::testcancel();
 		}
@@ -115,8 +95,22 @@ void* raster_thread_entry( void* arg )
 	return NULL;
 }
 
+static
+void sigusr1( int sig )
+{
+}
+
 raster_monitor::raster_monitor()
 {
+	// Block SIGUSR1 and install an empty signal handler
+	
+	sigset_t mask;
+	sigemptyset( &mask );
+	sigaddset  ( &mask, SIGUSR1 );
+	sigprocmask( SIG_BLOCK, &mask, NULL );
+	
+	signal( SIGUSR1, &sigusr1 );
+	
 	GetMainEventQueue();  // initialization is thread-unsafe before 10.4
 	
 	raster::sync_relay* sync = find_sync();

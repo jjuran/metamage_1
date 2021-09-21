@@ -65,6 +65,10 @@ coprocess_launch::coprocess_launch( const char* raster_path )
 	
 	if ( its_pid == 0 )
 	{
+		setenv( "V68K_SCREEN_VIEWER_PID",
+		        gear::inscribe_unsigned_decimal( getppid() ),
+		        1 );
+		
 		close( local_fd );
 		
 		const char* fd_arg = gear::inscribe_unsigned_decimal( other_fd );
