@@ -13,11 +13,13 @@
 #include <sys/mman.h>
 
 // Standard C
+#include <signal.h>
 #include <stdlib.h>
 #include <string.h>
 
 // raster
 #include "raster/relay.hh"
+#include "raster/relay_detail.hh"
 
 // v68k-screen
 #include "screen/storage.hh"
@@ -54,6 +56,14 @@ struct end_sync
 
 static end_sync finally_end_sync;
 
+static const char* viewer_pid_env = getenv( "V68K_SCREEN_VIEWER_PID" );
+
+static int update_pid = viewer_pid_env ? atoi( viewer_pid_env ) : 0;
+
+#else
+
+const int update_pid = 0;
+
 #endif
 
 
@@ -77,7 +87,16 @@ void update()
 	
 	if ( the_sync_relay != 0 )  // NULL
 	{
-		raster::broadcast( *the_sync_relay );
+		if ( update_pid )
+		{
+			++the_sync_relay->seed;
+			
+			kill( update_pid, SIGUSR1 );
+		}
+		else
+		{
+			raster::broadcast( *the_sync_relay );
+		}
 	}
 	
 #endif
