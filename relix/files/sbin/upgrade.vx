@@ -68,13 +68,14 @@ run ["arcsign unseal -K" / ' ', key, file]
 warn "Decompressing..."
 
 run ["gzip", "-d", file]
-run ["mv", last, mbim]
+
+rename (last, mbim)
 
 warn "Decoding archive..."
 
 run ["macbin", "decode", mbim]
-run ["mv", last, dest]
 
+rename (last, dest)
 remove mbim
 
 run ["sync"]
