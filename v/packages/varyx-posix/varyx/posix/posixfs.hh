@@ -35,6 +35,7 @@ namespace posix
 	extern const proc_info proc_readlink;
 	extern const proc_info proc_realpath;
 	extern const proc_info proc_remove;
+	extern const proc_info proc_rename;
 	extern const proc_info proc_rewrite;
 	extern const proc_info proc_stat;
 	extern const proc_info proc_symlink;

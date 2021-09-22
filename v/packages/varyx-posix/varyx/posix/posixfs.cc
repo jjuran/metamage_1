@@ -21,7 +21,7 @@
 // Standard C
 #include <errno.h>
 #include <stdlib.h>
-#include <stdio.h>  // for remove()
+#include <stdio.h>  // for remove(), rename()
 #include <string.h>
 
 // plus
@@ -561,6 +561,33 @@ namespace posix
 	}
 	
 	static
+	Value v_rename( const Value& v )
+	{
+		const char* incoming = first( v ).string().c_str();
+		const char* outgoing = rest ( v ).string().c_str();
+		
+		int nok = rename( incoming, outgoing );
+		
+		if ( nok )
+		{
+			int saved_errno = errno;
+			
+			struct stat st;
+			
+			nok = stat( incoming, &st );
+			
+			if ( nok )
+			{
+				path_error( incoming );
+			}
+			
+			path_error( outgoing, saved_errno );
+		}
+		
+		return Value_nothing;
+	}
+	
+	static
 	Value v_rewrite( const Value& v )
 	{
 		const char* path = v.string().c_str();
@@ -718,6 +745,7 @@ namespace posix
 	const proc_info proc_readlink = { "readlink", &v_readlink, &c_str };
 	const proc_info proc_realpath = { "realpath", &v_realpath, &c_str };
 	const proc_info proc_remove   = { "remove",   &v_remove,   &c_str };
+	const proc_info proc_rename   = { "rename",   &v_rename,   &c_str_x2 };
 	const proc_info proc_rewrite  = { "rewrite",  &v_rewrite,  &c_str };
 	const proc_info proc_stat     = { "stat",     &v_stat,     &c_str };
 	const proc_info proc_symlink  = { "symlink",  &v_symlink,  &c_str_x2 };

@@ -236,6 +236,7 @@ int main( int argc, char** argv )
 		define( proc_chdir  );
 		define( proc_link   );
 		define( proc_remove );
+		define( proc_rename );
 		define( proc_rewrite );
 		define( proc_tcpconnect );
 		define( proc_tcplisten  );
