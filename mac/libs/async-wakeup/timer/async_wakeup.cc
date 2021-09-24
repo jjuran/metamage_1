@@ -16,9 +16,6 @@
 #include <OpenTransport.h>
 #endif
 #endif
-#ifndef __OSUTILS__
-#include <OSUtils.h>
-#endif
 #ifndef __PROCESSES__
 #include <Processes.h>
 #endif
@@ -28,6 +25,7 @@
 
 // mac-sys-utils
 #include "mac_sys/current_process.hh"
+#include "mac_sys/delay.hh"
 #include "mac_sys/gestalt.hh"
 
 
@@ -96,8 +94,7 @@ namespace sys {
 		{
 			::WakeUpProcess( the_wakeup_timer.psn );
 			
-			uint32_t dummy;
-			::Delay( 1, &dummy );  // one tick == 16ms
+			mac::sys::delay( 1 );  // one tick == 16ms
 		}
 		while ( wakeup_requested );
 	}

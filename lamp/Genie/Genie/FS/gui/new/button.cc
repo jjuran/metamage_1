@@ -19,6 +19,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// mac-sys-utils
+#include "mac_sys/delay.hh"
+
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/simple_map.hh"
@@ -29,7 +32,6 @@
 
 // Nitrogen
 #include "Nitrogen/Controls.hh"
-#include "Nitrogen/OSUtils.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -177,7 +179,7 @@ namespace Genie
 			
 			QDFlushPortBuffer();
 			
-			N::Delay( 8 );
+			mac::sys::delay( 8 );
 			
 			N::HiliteControl( Get(), N::kControlNoPart );
 			
