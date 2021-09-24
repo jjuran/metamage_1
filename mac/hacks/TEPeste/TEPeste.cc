@@ -10,9 +10,6 @@
 #ifndef __EVENTS__
 #include <Events.h>
 #endif
-#ifndef __OSUTILS__
-#include <OSUtils.h>
-#endif
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
@@ -28,6 +25,9 @@
 
 // Standard C/C++
 #include <cstring>
+
+// mac-sys-utils
+#include "mac_sys/delay.hh"
 
 // Silver
 #include "Silver/Install.hh"
@@ -84,9 +84,7 @@ static void Payload( TEHandle hTE )
 	
 	TESetSelect( start, start + len, hTE );
 	
-	UInt32 finalTicks;
-	
-	::Delay( 30, &finalTicks );
+	mac::sys::delay( 30 );
 }
 
 namespace
