@@ -19,6 +19,9 @@
 #include <Sound.h>
 #endif
 
+// mac-sys-utils
+#include "mac_sys/delay.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -665,12 +668,10 @@ bool invoke_defItem( DialogPeek d )
 	
 	if ( type == ctrlItem + btnCtrl )
 	{
-		UInt32 dummy;
-		
 		ControlRef button = (ControlRef) item->handle;
 		
 		HiliteControl( button, kControlButtonPart );
-		Delay( 8, &dummy );
+		mac::sys::delay( 8 );
 		HiliteControl( button, kControlNoPart );
 	}
 	
