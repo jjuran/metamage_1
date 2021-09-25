@@ -115,6 +115,11 @@ void make_offscreen_port()
 {
 	Ptr addr = NewPtr( offscreen_buffer_size );
 	
+	if ( ! addr )
+	{
+		ExitToShell();
+	}
+	
 	BitMap bitmap = { addr, nyan_stride, buffer_bounds };
 	
 #if ! TARGET_API_MAC_CARBON
