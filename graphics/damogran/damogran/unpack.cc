@@ -6,11 +6,48 @@
 #include "damogran/unpack.hh"
 
 // Standard C
+#include <stddef.h>
+#ifndef __MC68K__
 #include <string.h>
+#endif
 
 
 namespace damogran
 {
+
+#ifdef __MC68K__
+
+static asm
+void memcpy( uint8_t* dst : __A1, const uint8_t* src : __A0, int n : __D0 )
+{
+	LSR.L    #1,D0
+	SUBQ.L   #1,D0
+	
+loop:
+	MOVE.W   (A0)+,(A1)+
+	DBRA.S   D0,loop
+	
+	RTS
+}
+
+static asm
+void memset( uint8_t* dst : __A1, uint8_t fill : __D1, int n : __D0 )
+{
+	MOVE.B   D1,D2
+	LSL.W    #8,D2
+	MOVE.B   D1,D2
+	
+	LSR.L    #1,D0
+	SUBQ.L   #1,D0
+	
+loop:
+	MOVE.W   D2,(A1)+
+	DBRA.S   D0,loop
+	
+	RTS
+}
+
+#endif  // #ifdef __MC68K__
 
 typedef signed char int8_t;
 
