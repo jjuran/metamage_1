@@ -11,7 +11,7 @@ namespace damogran
 
 typedef unsigned char uint8_t;
 
-unsigned long preflight( const uint8_t* src, const uint8_t* end );
+unsigned long pack_preflight( const uint8_t* src, const uint8_t* end );
 
 uint8_t* pack( const uint8_t* src, const uint8_t* end, uint8_t* dst );
 

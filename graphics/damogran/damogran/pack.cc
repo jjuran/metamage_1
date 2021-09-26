@@ -84,7 +84,7 @@ const byte_t* advance_repeated_pairs( const byte_t* begin, const byte_t* end )
 	                                               (const short*) end );
 }
 
-unsigned long preflight( const uint8_t* src, const uint8_t* end )
+unsigned long pack_preflight( const uint8_t* src, const uint8_t* end )
 {
 	unsigned long packed_byte_count = 0;
 	
