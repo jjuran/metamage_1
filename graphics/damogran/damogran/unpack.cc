@@ -54,8 +54,6 @@ void memset( uint8_t* dst : __A1, uint8_t fill : __D1, int n : __D0 )
 	MOVE.W   D2,(A1)+
 even_4x:
 	
-	SUBQ.W   #1,D0
-	
 loop:
 	MOVE.L   D2,(A1)+
 	DBRA.S   D0,loop
@@ -162,7 +160,7 @@ c0_nonzero:
 	MOVE.B   D2,D0
 	
 call_memset:
-	ADDQ.W   #1,D0
+	SUBQ.W   #1,D0
 	JSR      memset
 	
 loop_bottom:
