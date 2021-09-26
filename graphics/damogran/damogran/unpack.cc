@@ -20,12 +20,12 @@ namespace damogran
 static asm
 void memcpy( uint8_t* dst : __A1, const uint8_t* src : __A0, int n : __D0 )
 {
-	LSR.L    #2,D0
+	LSR.W    #1,D0
 	BCC.S    even_4x
 	MOVE.W   (A0)+,(A1)+
 even_4x:
 	
-	SUBQ.L   #1,D0
+	SUBQ.W   #1,D0
 	BMI.S    done
 	
 loop:
@@ -49,12 +49,12 @@ void memset( uint8_t* dst : __A1, uint8_t fill : __D1, int n : __D0 )
 	SWAP     D2
 	MOVE.W   D1,D2
 	
-	LSR.L    #2,D0
+	LSR.W    #1,D0
 	BCC.S    even_4x
 	MOVE.W   D2,(A1)+
 even_4x:
 	
-	SUBQ.L   #1,D0
+	SUBQ.W   #1,D0
 	
 loop:
 	MOVE.L   D2,(A1)+
@@ -145,7 +145,6 @@ loop_top:
 	BPL.S    c0_zero_c1_positive
 	
 	NEG.B    D0
-	ADD.W    D0,D0
 	
 	JSR      memcpy
 	BRA.S    loop_bottom
@@ -164,7 +163,6 @@ c0_nonzero:
 	
 call_memset:
 	ADDQ.W   #1,D0
-	ADD.W    D0,D0
 	JSR      memset
 	
 loop_bottom:
