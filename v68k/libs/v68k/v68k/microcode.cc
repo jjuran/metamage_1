@@ -1322,7 +1322,7 @@ namespace v68k
 				
 				udata >>= count - 1;
 				
-				last_bit = data & 0x1;
+				last_bit = udata & 0x1;
 				
 				udata >>= 1;
 				
