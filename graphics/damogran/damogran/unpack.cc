@@ -20,28 +20,44 @@ namespace damogran
 static asm
 void memcpy( uint8_t* dst : __A1, const uint8_t* src : __A0, int n : __D0 )
 {
-	LSR.L    #1,D0
+	LSR.L    #2,D0
+	BCC.S    even_4x
+	MOVE.W   (A0)+,(A1)+
+even_4x:
+	
 	SUBQ.L   #1,D0
+	BMI.S    done
 	
 loop:
-	MOVE.W   (A0)+,(A1)+
+	MOVE.L   (A0)+,(A1)+
 	DBRA.S   D0,loop
 	
+done:
 	RTS
 }
 
 static asm
 void memset( uint8_t* dst : __A1, uint8_t fill : __D1, int n : __D0 )
 {
+	// We never get called with n < 4, so the loop is never skipped.
+	
 	MOVE.B   D1,D2
 	LSL.W    #8,D2
 	MOVE.B   D1,D2
 	
-	LSR.L    #1,D0
+	MOVE.W   D2,D1
+	SWAP     D2
+	MOVE.W   D1,D2
+	
+	LSR.L    #2,D0
+	BCC.S    even_4x
+	MOVE.W   D2,(A1)+
+even_4x:
+	
 	SUBQ.L   #1,D0
 	
 loop:
-	MOVE.W   D2,(A1)+
+	MOVE.L   D2,(A1)+
 	DBRA.S   D0,loop
 	
 	RTS
