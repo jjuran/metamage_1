@@ -127,13 +127,57 @@ long unpack_preflight( const uint8_t* src, const uint8_t* end )
 	#define _a0  : __A0
 	#define _a1  : __A1
 
+asm
 const uint8_t* unpack( const uint8_t* src _a0, uint8_t* dst _a1, uint8_t* end )
+{
+	LINK     A6,#0
+	
+loop_top:
+	MOVEQ.L  #0,D0
+	MOVE.B   (A0)+,D2  // c0
+	MOVE.B   (A0)+,D0  // c1
+	
+	TST.B    D2
+	BNE.S    c0_nonzero
+	
+	TST.B    D0
+	BEQ.S    loop_bottom
+	BPL.S    c0_zero_c1_positive
+	
+	NEG.B    D0
+	ADD.W    D0,D0
+	
+	JSR      memcpy
+	BRA.S    loop_bottom
+	
+c0_zero_c1_positive:
+	LSL.W    #8,D0     // * 256
+	OR.B     (A0)+,D0  // + c2
+	MOVE.B   (A0)+,D1  // c3
+	
+	BRA.S    call_memset
+	
+c0_nonzero:
+	MOVE.B   D0,D1
+	MOVEQ.L  #0,D0
+	MOVE.B   D2,D0
+	
+call_memset:
+	ADDQ.W   #1,D0
+	ADD.W    D0,D0
+	JSR      memset
+	
+loop_bottom:
+	CMPA.L   8(A6),A1
+	BNE.S    loop_top
+	
+	UNLK     A6
+	RTS
+}
 
 #else
 
 const uint8_t* unpack( const uint8_t* src, uint8_t* dst, uint8_t* end )
-
-#endif
 {
 	do
 	{
@@ -183,5 +227,7 @@ const uint8_t* unpack( const uint8_t* src, uint8_t* dst, uint8_t* end )
 	
 	return src;
 }
+
+#endif  // #ifdef __MC68K__
 
 }  // namespace damogran
