@@ -15,29 +15,6 @@
 namespace damogran
 {
 
-#ifdef __MC68K__
-
-static asm
-void memcpy( uint8_t* dst : __A1, const uint8_t* src : __A0, int n : __D0 )
-{
-	LSR.W    #1,D0
-	BCC.S    even_4x
-	MOVE.W   (A0)+,(A1)+
-even_4x:
-	
-	SUBQ.W   #1,D0
-	BMI.S    done
-	
-loop:
-	MOVE.L   (A0)+,(A1)+
-	DBRA.S   D0,loop
-	
-done:
-	RTS
-}
-
-#endif  // #ifdef __MC68K__
-
 typedef signed char int8_t;
 
 long unpack_preflight( const uint8_t* src, const uint8_t* end )
@@ -119,7 +96,20 @@ loop_top:
 	
 	NEG.B    D0
 	
-	JSR      memcpy
+// memcpy
+	LSR.W    #1,D0
+	BCC.S    memcpy_even_4x
+	MOVE.W   (A0)+,(A1)+
+memcpy_even_4x:
+	
+	SUBQ.W   #1,D0
+	BMI.S    memcpy_done
+	
+memcpy_loop:
+	MOVE.L   (A0)+,(A1)+
+	DBRA.S   D0,memcpy_loop
+	
+memcpy_done:
 	BRA.S    loop_bottom
 	
 c0_zero_c1_positive:
