@@ -122,7 +122,18 @@ long unpack_preflight( const uint8_t* src, const uint8_t* end )
 	return src > end ? -1 : len;
 }
 
+#ifdef __MC68K__
+
+	#define _a0  : __A0
+	#define _a1  : __A1
+
+const uint8_t* unpack( const uint8_t* src _a0, uint8_t* dst _a1, uint8_t* end )
+
+#else
+
 const uint8_t* unpack( const uint8_t* src, uint8_t* dst, uint8_t* end )
+
+#endif
 {
 	do
 	{
