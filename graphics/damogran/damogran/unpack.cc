@@ -83,12 +83,9 @@ const uint8_t* unpack( const uint8_t* src _a0, uint8_t* dst _a1, uint8_t* end )
 loop_top:
 	MOVEQ.L  #0,D0
 	MOVE.B   (A0)+,D2  // c0
-	MOVE.B   (A0)+,D0  // c1
-	
-	TST.B    D2
 	BNE.S    c0_nonzero
 	
-	TST.B    D0
+	MOVE.B   (A0)+,D0  // c1
 	BEQ.S    loop_bottom
 	BPL.S    c0_zero_c1_positive
 	
@@ -116,7 +113,8 @@ c0_zero_c1_positive:
 	BRA.S    call_memset
 	
 c0_nonzero:
-	MOVE.B   D0,D1
+	MOVE.B   (A0)+,D1  // c1
+	
 	MOVEQ.L  #0,D0
 	MOVE.B   D2,D0
 	
