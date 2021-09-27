@@ -103,13 +103,11 @@ loop_top:
 memcpy_even_4x:
 	
 	SUBQ.W   #1,D0
-	BMI.S    memcpy_done
+	BMI.S    loop_bottom
 	
 memcpy_loop:
 	MOVE.L   (A0)+,(A1)+
 	DBRA.S   D0,memcpy_loop
-	
-memcpy_done:
 	BRA.S    loop_bottom
 	
 c0_zero_c1_positive:
