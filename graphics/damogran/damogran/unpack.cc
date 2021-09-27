@@ -80,8 +80,6 @@ long unpack_preflight( const uint8_t* src, const uint8_t* end )
 asm
 const uint8_t* unpack( const uint8_t* src _a0, uint8_t* dst _a1, uint8_t* end )
 {
-	LINK     A6,#0
-	
 loop_top:
 	MOVEQ.L  #0,D0
 	MOVE.B   (A0)+,D2  // c0
@@ -143,10 +141,9 @@ memset_loop:
 	DBRA.S   D0,memset_loop
 	
 loop_bottom:
-	CMPA.L   8(A6),A1
+	CMPA.L   4(SP),A1
 	BNE.S    loop_top
 	
-	UNLK     A6
 	RTS
 }
 
