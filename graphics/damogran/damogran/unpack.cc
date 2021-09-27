@@ -36,31 +36,6 @@ done:
 	RTS
 }
 
-static asm
-void memset( uint8_t* dst : __A1, uint8_t fill : __D1, int n : __D0 )
-{
-	// We never get called with n < 4, so the loop is never skipped.
-	
-	MOVE.B   D1,D2
-	LSL.W    #8,D2
-	MOVE.B   D1,D2
-	
-	MOVE.W   D2,D1
-	SWAP     D2
-	MOVE.W   D1,D2
-	
-	LSR.W    #1,D0
-	BCC.S    even_4x
-	MOVE.W   D2,(A1)+
-even_4x:
-	
-loop:
-	MOVE.L   D2,(A1)+
-	DBRA.S   D0,loop
-	
-	RTS
-}
-
 #endif  // #ifdef __MC68K__
 
 typedef signed char int8_t;
@@ -161,7 +136,23 @@ c0_nonzero:
 	
 call_memset:
 	SUBQ.W   #1,D0
-	JSR      memset
+// memset
+	MOVE.B   D1,D2
+	LSL.W    #8,D2
+	MOVE.B   D1,D2
+	
+	MOVE.W   D2,D1
+	SWAP     D2
+	MOVE.W   D1,D2
+	
+	LSR.W    #1,D0
+	BCC.S    memset_even_4x
+	MOVE.W   D2,(A1)+
+memset_even_4x:
+	
+memset_loop:
+	MOVE.L   D2,(A1)+
+	DBRA.S   D0,memset_loop
 	
 loop_bottom:
 	CMPA.L   8(A6),A1
