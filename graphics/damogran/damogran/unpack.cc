@@ -123,7 +123,9 @@ c0_nonzero:
 call_memset:
 	SUBQ.W   #1,D0
 // memset
+	MOVEQ.L  #0,D2
 	MOVE.B   D1,D2
+	BEQ.S    fill_ready
 	LSL.W    #8,D2
 	MOVE.B   D1,D2
 	
@@ -131,6 +133,7 @@ call_memset:
 	SWAP     D2
 	MOVE.W   D1,D2
 	
+fill_ready:
 	LSR.W    #1,D0
 	BCC.S    memset_even_4x
 	MOVE.W   D2,(A1)+
