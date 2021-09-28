@@ -16,7 +16,6 @@
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
 #ifndef MISSING_QUICKDRAW_H
-#include "missing/QDOffscreen.h"
 #include "missing/Quickdraw.h"
 #endif
 #endif
@@ -46,13 +45,11 @@
 #include "nyancat/graphics.hh"
 
 // NyanochromeCat
-#include "Bitmap.hh"
 #include "Geometry.hh"
+#include "Offscreen.hh"
 
 
 #define CONFIG_DAs CONFIG_DESK_ACCESSORIES
-
-#define CONFIG_PORTBITS  ! TARGET_API_MAC_CARBON
 
 #if TARGET_API_MAC_CARBON
 #define SystemTask()  /**/
@@ -62,7 +59,6 @@ using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
 using mac::qd::wide_drag_area;
 
-using nyancat::bitmap;
 using nyancat::n_frames;
 
 
@@ -72,20 +68,6 @@ const bool apple_events_present =
 	CONFIG_APPLE_EVENTS  &&
 		(CONFIG_APPLE_EVENTS_GRANTED  ||
 			mac::sys::gestalt( 'evnt' ) != 0);
-
-const Pattern veryDarkGray = { 0x77, 0xFF, 0xDD, 0xFF, 0x77, 0xFF, 0xDD, 0xFF };
-
-const int offscreen_buffer_size = frame_size * n_frames;
-
-void bitmap::set_pixel( unsigned x, unsigned y, const Pattern& color )
-{
-	x *= its_magnifier;
-	y *= its_magnifier;
-	
-	Rect r = { y, x, y + its_magnifier, x + its_magnifier };
-	
-	FillRect( &r, &color );
-}
 
 #ifdef __MC68K__
 	
@@ -102,86 +84,7 @@ const int fps = 15;
 const monotonic_clock::clock_t clock_period =
 	monotonic_clock::clocks_per_kilosecond / 1000 / fps;
 
-static Rect buffer_bounds = { 0, 0, nyan_height * n_frames, nyan_width };
-
 static GrafPtr offscreen_port;
-
-static
-void make_offscreen_port()
-{
-	Ptr addr = NewPtr( offscreen_buffer_size );
-	
-	if ( ! addr )
-	{
-		ExitToShell();
-	}
-	
-	BitMap bitmap = { addr, nyan_stride, buffer_bounds };
-	
-#if CONFIG_PORTBITS
-	
-	static GrafPort port;
-	
-	offscreen_port = &port;
-	
-	OpenPort( offscreen_port );
-	
-	RectRgn( offscreen_port->visRgn, &buffer_bounds );
-	
-	SetPortBits( &bitmap );
-	
-	PortSize( nyan_width, nyan_height * n_frames );
-	
-#else
-	
-	QDErr err = NewGWorld( &offscreen_port, 1, &buffer_bounds, NULL, NULL, 0 );
-	
-	if ( err )
-	{
-		ExitToShell();
-	}
-	
-	SetGWorld( offscreen_port, NULL );
-	
-#endif
-}
-
-static
-void make_offscreen_buffer()
-{
-	CursHandle cursor_handle = GetCursor( watchCursor );
-	
-	if ( cursor_handle )
-	{
-		Cursor cursor = **cursor_handle;
-		
-		SetCursor( &cursor );
-	}
-	
-	make_offscreen_port();
-	
-	bitmap bits( zoom );
-	
-	FillRect( &buffer_bounds, &veryDarkGray );
-	
-	draw_frame( bits, 0 );
-	
-	for ( int i = 1;  i < n_frames;  ++i )
-	{
-		SystemTask();
-		
-		MovePortTo( 0, nyan_height * i );
-		
-		draw_frame( bits, i );
-	}
-	
-	MovePortTo( 0, 0 );
-	
-	if ( cursor_handle )
-	{
-		InitCursor();
-	}
-}
 
 static inline
 short aligned( short x, short alignment )
@@ -402,7 +305,21 @@ int main()
 	
 	SetEventMask( everyEvent );
 	
-	make_offscreen_buffer();
+	CursHandle cursor_handle = GetCursor( watchCursor );
+	
+	if ( cursor_handle )
+	{
+		Cursor cursor = **cursor_handle;
+		
+		SetCursor( &cursor );
+	}
+	
+	offscreen_port = render_offscreen();
+	
+	if ( cursor_handle )
+	{
+		InitCursor();
+	}
 	
 	make_main_window();
 	
