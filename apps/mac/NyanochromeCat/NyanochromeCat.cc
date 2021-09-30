@@ -354,7 +354,7 @@ void draw_window( WindowRef window )
 	
 	unsigned t = animation_timer.frame();
 	
-	t %= 12;
+	t %= n_frames;
 	
 	const Rect& portRect = get_portRect( window );
 	
@@ -420,7 +420,7 @@ int main()
 	{
 		if ( main_window )
 		{
-			int next_frame = animation_timer.frame() % 12;
+			int next_frame = animation_timer.frame() % n_frames;
 			
 			if ( next_frame != last_frame )
 			{
