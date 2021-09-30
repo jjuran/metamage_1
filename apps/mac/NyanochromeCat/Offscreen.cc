@@ -48,6 +48,8 @@ void bitmap::set_pixel( unsigned x, unsigned y, const Pattern& color )
 	FillRect( &r, &color );
 }
 
+int current_frame;
+
 const Pattern veryDarkGray = { 0x77, 0xFF, 0xDD, 0xFF, 0x77, 0xFF, 0xDD, 0xFF };
 
 const short buffer_height = nyan_height * n_frames;
@@ -116,4 +118,20 @@ GrafPtr render_offscreen()
 	MovePortTo( 0, 0 );
 	
 	return offscreen_port;
+}
+
+void prepare_next_frame()
+{
+	if ( ++current_frame == n_frames )
+	{
+		current_frame = 0;
+	}
+}
+
+void prepare_prev_frame()
+{
+	if ( --current_frame < 0 )
+	{
+		current_frame = n_frames - 1;
+	}
 }

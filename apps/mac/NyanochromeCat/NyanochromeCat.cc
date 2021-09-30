@@ -41,9 +41,6 @@
 #include "mac_app/menus.hh"
 #include "mac_app/state.hh"
 
-// nyancatlib
-#include "nyancat/graphics.hh"
-
 // NyanochromeCat
 #include "Geometry.hh"
 #include "Offscreen.hh"
@@ -58,8 +55,6 @@
 using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
 using mac::qd::wide_drag_area;
-
-using nyancat::n_frames;
 
 
 // gestaltAppleEventsAttr = 'evnt'
@@ -131,9 +126,8 @@ class timer
 	private:
 		typedef monotonic_clock::clock_t clock_t;
 		
-		clock_t its_frame_duration;
-		clock_t its_time_of_play;
-		int its_start_frame;
+		clock_t its_pulse_interval;
+		clock_t its_next_pulse;
 		bool it_is_paused;
 	
 	public:
@@ -141,26 +135,26 @@ class timer
 		
 		static void get_clock( clock_t* t )  { monotonic_clock::get( t ); }
 		
-		timer() : its_start_frame(), it_is_paused()
+		timer() : its_next_pulse(), it_is_paused( true )
 		{
-			its_frame_duration = clock_period;  // e.g. 4 ticks for 15fps
+			its_pulse_interval = clock_period;  // e.g. 4 ticks for 15fps
 		}
 		
-		void play()  { it_is_paused = false;  get_clock( &its_time_of_play ); }
-		void pause()  { its_start_frame = frame();  it_is_paused = true; }
+		void start()  { play();  its_next_pulse += its_pulse_interval; }
+		
+		void play()  { it_is_paused = false;  get_clock( &its_next_pulse ); }
+		void pause()  { it_is_paused = true; }
 		
 		void play_pause()
 		{
 			it_is_paused ? play() : pause();
 		}
 		
-		void advance( int skip )  { its_start_frame += skip; }
-		
-		int frame() const;
+		bool pulse();
 		
 		bool paused() const  { return it_is_paused; }
 		
-		clock_t clocks_until_next_frame() const
+		clock_t clocks_until_next_pulse() const
 		{
 			if ( paused() )
 			{
@@ -170,23 +164,38 @@ class timer
 			clock_t t;
 			get_clock( &t );
 			
-			t -= its_time_of_play;
+			if ( t >= its_next_pulse )
+			{
+				return 0;
+			}
 			
-			return its_frame_duration - t % its_frame_duration;
+			return its_next_pulse - t;
 		}
 };
 
-int timer::frame() const
+bool timer::pulse()
 {
 	if ( it_is_paused )
 	{
-		return its_start_frame;
+		return false;
 	}
 	
 	clock_t now;
 	get_clock( &now );
 	
-	return (now - its_time_of_play) / its_frame_duration + its_start_frame;
+	if ( now >= its_next_pulse )
+	{
+		its_next_pulse += its_pulse_interval;
+		
+		if ( its_next_pulse <= now )
+		{
+			its_next_pulse = now + its_pulse_interval;
+		}
+		
+		return true;
+	}
+	
+	return false;
 }
 
 static timer animation_timer;
@@ -196,7 +205,7 @@ unsigned next_sleep()
 {
 	using monotonic_clock::ticks_from;
 	
-	return ticks_from( animation_timer.clocks_until_next_frame() );
+	return ticks_from( animation_timer.clocks_until_next_pulse() );
 }
 
 static
@@ -251,9 +260,7 @@ void menu_item_chosen( long choice )
 static
 void draw_window( WindowRef window )
 {
-	unsigned t = animation_timer.frame();
-	
-	t %= n_frames;
+	unsigned t = current_frame;
 	
 	const Rect& portRect = get_portRect( window );
 	
@@ -323,9 +330,9 @@ int main()
 	
 	make_main_window();
 	
-	animation_timer.play();
+	draw_window( main_window );
 	
-	static int last_frame = -1;
+	animation_timer.start();
 	
 	const bool has_WNE = has_WaitNextEvent();
 	
@@ -333,10 +340,9 @@ int main()
 	{
 		if ( main_window )
 		{
-			int next_frame = animation_timer.frame() % n_frames;
-			
-			if ( next_frame != last_frame )
+			if ( animation_timer.pulse() )
 			{
+				prepare_next_frame();
 				draw_window( main_window );
 			}
 		}
@@ -409,11 +415,13 @@ int main()
 							break;
 						
 						case 0x1C:
-							animation_timer.advance( -1 );
+							prepare_prev_frame();
+							draw_window( main_window );
 							break;
 						
 						case 0x1D:
-							animation_timer.advance( 1 );
+							prepare_next_frame();
+							draw_window( main_window );
 							break;
 						
 						default:

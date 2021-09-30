@@ -14,4 +14,9 @@
 #endif
 
 
+extern int current_frame;
+
 GrafPtr render_offscreen();
+
+void prepare_next_frame();
+void prepare_prev_frame();
