@@ -30,7 +30,6 @@
 #include "mac_sys/trap_available.hh"
 
 // mac-qd-utils
-#include "mac_qd/get_portRect.hh"
 #include "mac_qd/main_display_bounds.hh"
 #include "mac_qd/wide_drag_area.hh"
 
@@ -52,7 +51,6 @@
 #define SystemTask()  /**/
 #endif
 
-using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
 using mac::qd::wide_drag_area;
 
@@ -78,8 +76,6 @@ const int fps = 15;
 
 const monotonic_clock::clock_t clock_period =
 	monotonic_clock::clocks_per_kilosecond / 1000 / fps;
-
-static GrafPtr offscreen_port;
 
 static inline
 short aligned( short x, short alignment )
@@ -257,23 +253,10 @@ void menu_item_chosen( long choice )
 	HiliteMenu( 0 );
 }
 
-static
+static inline
 void draw_window( WindowRef window )
 {
-	unsigned t = current_frame;
-	
-	const Rect& portRect = get_portRect( window );
-	
-	Rect srcRect = portRect;
-	
-	OffsetRect( &srcRect, 0, t * nyan_height );
-	
-	CopyBits( GetPortBitMapForCopyBits( (CGrafPtr) offscreen_port ),
-	          GetPortBitMapForCopyBits( GetWindowPort( window ) ),
-	          &srcRect,
-	          &portRect,
-	          srcCopy,
-	          NULL );
+	blit( GetWindowPort( window ) );
 }
 
 static inline
@@ -321,7 +304,7 @@ int main()
 		SetCursor( &cursor );
 	}
 	
-	offscreen_port = render_offscreen();
+	render_offscreen();
 	
 	if ( cursor_handle )
 	{

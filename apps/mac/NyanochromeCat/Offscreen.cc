@@ -23,6 +23,9 @@
 #endif
 #endif
 
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+
 // nyancatlib
 #include "nyancat/graphics.hh"
 
@@ -33,6 +36,8 @@
 
 #define CONFIG_PORTBITS  ! TARGET_API_MAC_CARBON
 
+
+using mac::qd::get_portRect;
 
 using nyancat::bitmap;
 using nyancat::n_frames;
@@ -48,7 +53,7 @@ void bitmap::set_pixel( unsigned x, unsigned y, const Pattern& color )
 	FillRect( &r, &color );
 }
 
-int current_frame;
+static int current_frame;
 
 const Pattern veryDarkGray = { 0x77, 0xFF, 0xDD, 0xFF, 0x77, 0xFF, 0xDD, 0xFF };
 
@@ -98,7 +103,7 @@ void make_offscreen_port()
 #endif
 }
 
-GrafPtr render_offscreen()
+void render_offscreen()
 {
 	make_offscreen_port();
 	
@@ -116,8 +121,6 @@ GrafPtr render_offscreen()
 	}
 	
 	MovePortTo( 0, 0 );
-	
-	return offscreen_port;
 }
 
 void prepare_next_frame()
@@ -134,4 +137,22 @@ void prepare_prev_frame()
 	{
 		current_frame = n_frames - 1;
 	}
+}
+
+void blit( CGrafPtr port )
+{
+	unsigned t = current_frame;
+	
+	const Rect& portRect = get_portRect( port );
+	
+	Rect srcRect = portRect;
+	
+	OffsetRect( &srcRect, 0, t * nyan_height );
+	
+	CopyBits( GetPortBitMapForCopyBits( (CGrafPtr) offscreen_port ),
+	          GetPortBitMapForCopyBits( port ),
+	          &srcRect,
+	          &portRect,
+	          srcCopy,
+	          NULL );
 }
