@@ -51,6 +51,8 @@
 
 #define CONFIG_DAs CONFIG_DESK_ACCESSORIES
 
+#define CONFIG_PORTBITS  ! TARGET_API_MAC_CARBON
+
 #if TARGET_API_MAC_CARBON
 #define SystemTask()  /**/
 #endif
@@ -122,7 +124,7 @@ void make_offscreen_port()
 	
 	BitMap bitmap = { addr, nyan_stride, buffer_bounds };
 	
-#if ! TARGET_API_MAC_CARBON
+#if CONFIG_PORTBITS
 	
 	static GrafPort port;
 	
