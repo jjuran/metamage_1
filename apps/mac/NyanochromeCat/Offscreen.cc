@@ -123,7 +123,27 @@ void render_offscreen()
 		draw_frame( bits, i );
 	}
 	
+#if CONFIG_PORTBITS
+	
+	ClosePort( offscreen_port );
+	DisposePtr( (Ptr) offscreen_port );
+	
+#else
+	
 	MovePortTo( 0, 0 );
+	
+	CopyBits( GetPortBitMapForCopyBits( (CGrafPtr) offscreen_port ),
+	          &buffer_bits,
+	          &buffer_bounds,
+	          &buffer_bounds,
+	          srcCopy,
+	          NULL );
+	
+	DisposeGWorld( offscreen_port );
+	
+#endif
+	
+	offscreen_port = NULL;
 }
 
 void prepare_next_frame()
@@ -152,7 +172,7 @@ void blit( CGrafPtr port )
 	
 	OffsetRect( &srcRect, 0, t * nyan_height );
 	
-	CopyBits( GetPortBitMapForCopyBits( (CGrafPtr) offscreen_port ),
+	CopyBits( &buffer_bits,
 	          GetPortBitMapForCopyBits( port ),
 	          &srcRect,
 	          &portRect,
