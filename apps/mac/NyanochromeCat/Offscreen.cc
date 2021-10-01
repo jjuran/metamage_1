@@ -77,9 +77,12 @@ void make_offscreen_port()
 	
 #if CONFIG_PORTBITS
 	
-	static GrafPort port;
+	offscreen_port = (GrafPtr) NewPtr( sizeof (GrafPort) );
 	
-	offscreen_port = &port;
+	if ( ! offscreen_port )
+	{
+		ExitToShell();
+	}
 	
 	OpenPort( offscreen_port );
 	
