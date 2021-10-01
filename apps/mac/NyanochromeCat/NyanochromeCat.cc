@@ -225,6 +225,8 @@ void make_main_window()
 	                         (WindowRef) -1,
 	                         true,
 	                         0 );
+	
+	SetPortWindowPort( main_window );
 }
 
 class timer
@@ -352,8 +354,6 @@ void menu_item_chosen( long choice )
 static
 void draw_window( WindowRef window )
 {
-	SetPortWindowPort( window );
-	
 	unsigned t = animation_timer.frame();
 	
 	t %= n_frames;
