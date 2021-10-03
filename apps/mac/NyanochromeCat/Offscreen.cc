@@ -31,10 +31,13 @@
 
 // NyanochromeCat
 #include "Bitmap.hh"
+#include "FrameDeltas.hh"
 #include "Geometry.hh"
 
 
 #define CONFIG_PORTBITS  ! TARGET_API_MAC_CARBON
+
+#define CONFIG_FRAME_DELTAS  TARGET_CPU_68K
 
 
 using mac::qd::get_portRect;
@@ -53,6 +56,8 @@ void bitmap::set_pixel( unsigned x, unsigned y, const Pattern& color )
 	FillRect( &r, &color );
 }
 
+static bool using_frame_deltas;
+
 static int current_frame;
 
 const Pattern veryDarkGray = { 0x77, 0xFF, 0xDD, 0xFF, 0x77, 0xFF, 0xDD, 0xFF };
@@ -66,7 +71,20 @@ static GrafPtr offscreen_port;
 static
 void make_offscreen_port()
 {
+	short port_height = buffer_height;
+	
 	Ptr addr = NewPtr( frame_size * n_frames );
+	
+	if ( CONFIG_FRAME_DELTAS  &&  ! addr )
+	{
+		using_frame_deltas = true;
+		
+		port_height = nyan_height;
+		
+		const int n_cells = 3;
+		
+		addr = NewPtr( frame_size * n_cells );
+	}
 	
 	if ( ! addr )
 	{
@@ -86,11 +104,11 @@ void make_offscreen_port()
 	
 	OpenPort( offscreen_port );
 	
-	RectRgn( offscreen_port->visRgn, &buffer_bounds );
-	
 	SetPortBits( &buffer_bits );
 	
-	PortSize( nyan_width, buffer_height );
+	PortSize( nyan_width, port_height );
+	
+	RectRgn( offscreen_port->visRgn, &offscreen_port->portRect );
 	
 #else
 	
@@ -122,11 +140,32 @@ void render_offscreen()
 	
 #endif
 	
+	uint8_t* tmp = (uint8_t*) buffer_bits.baseAddr;
+	
+	uint8_t* alt = tmp + frame_size;
+	uint8_t* dst = alt + frame_size;
+	
+	if ( using_frame_deltas )
+	{
+		// Copy frame 0 from cell 0 to cell 1.
+		
+		BlockMoveData( tmp, alt, frame_size );
+	}
+	
 	for ( int i = 1;  i < n_frames;  ++i )
 	{
 	#if CONFIG_PORTBITS
 		
-		baseAddr += frame_size;
+		if ( using_frame_deltas )
+		{
+			baseAddr = (Ptr) dst;
+			
+			FillRect( &buffer_bounds, &veryDarkGray );
+		}
+		else
+		{
+			baseAddr += frame_size;
+		}
 		
 	#else
 		
@@ -135,6 +174,26 @@ void render_offscreen()
 	#endif
 		
 		draw_frame( bits, i );
+		
+		if ( using_frame_deltas )
+		{
+			uint8_t* src = dst;
+			dst = alt;
+			alt = src;
+			
+			save_frame_delta( i, dst, src );
+		}
+	}
+	
+	if ( using_frame_deltas )
+	{
+		uint8_t* src = tmp;
+		
+		dst = alt;
+		
+		save_frame_delta( 0, dst, src );
+		
+		SetPtrSize( buffer_bits.baseAddr, 2 * frame_size );
 	}
 	
 #if CONFIG_PORTBITS
@@ -165,22 +224,48 @@ void prepare_next_frame()
 	if ( ++current_frame == n_frames )
 	{
 		current_frame = 0;
-		
-		buffer_bits.baseAddr -= frame_size * n_frames;
 	}
 	
-	buffer_bits.baseAddr += frame_size;
+	if ( using_frame_deltas )
+	{
+		uint8_t* dst = (uint8_t*) buffer_bits.baseAddr;
+		uint8_t* tmp = (uint8_t*) buffer_bits.baseAddr + frame_size;
+		
+		load_frame_delta( current_frame, dst, tmp );
+	}
+	else
+	{
+		buffer_bits.baseAddr += frame_size;
+		
+		if ( current_frame == 0 )
+		{
+			buffer_bits.baseAddr -= frame_size * n_frames;
+		}
+	}
 }
 
 void prepare_prev_frame()
 {
-	buffer_bits.baseAddr -= frame_size;
+	if ( using_frame_deltas )
+	{
+		uint8_t* dst = (uint8_t*) buffer_bits.baseAddr;
+		uint8_t* tmp = (uint8_t*) buffer_bits.baseAddr + frame_size;
+		
+		load_frame_delta( current_frame, dst, tmp );
+	}
+	else
+	{
+		buffer_bits.baseAddr -= frame_size;
+		
+		if ( current_frame == 0 )
+		{
+			buffer_bits.baseAddr += frame_size * n_frames;
+		}
+	}
 	
 	if ( --current_frame < 0 )
 	{
 		current_frame = n_frames - 1;
-		
-		buffer_bits.baseAddr += frame_size * n_frames;
 	}
 }
 
