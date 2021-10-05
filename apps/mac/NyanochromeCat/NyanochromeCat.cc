@@ -47,6 +47,7 @@
 
 // NyanochromeCat
 #include "Bitmap.hh"
+#include "Geometry.hh"
 
 
 #define CONFIG_DAs CONFIG_DESK_ACCESSORIES
@@ -74,14 +75,7 @@ const bool apple_events_present =
 
 const Pattern veryDarkGray = { 0x77, 0xFF, 0xDD, 0xFF, 0x77, 0xFF, 0xDD, 0xFF };
 
-const int zoom = 4;
-
-const int nyan_width  = zoom * 70;
-const int nyan_height = zoom * 72;
-
-const int nyan_stride = (nyan_width + 15) / 16 * 2;
-
-const int offscreen_buffer_size = nyan_stride * nyan_height * n_frames;
+const int offscreen_buffer_size = frame_size * n_frames;
 
 void bitmap::set_pixel( unsigned x, unsigned y, const Pattern& color )
 {
