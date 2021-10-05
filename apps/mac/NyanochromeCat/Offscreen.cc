@@ -116,9 +116,23 @@ void render_offscreen()
 	
 	draw_frame( bits, 0 );
 	
+#if CONFIG_PORTBITS
+	
+	Ptr& baseAddr = offscreen_port->portBits.baseAddr;
+	
+#endif
+	
 	for ( int i = 1;  i < n_frames;  ++i )
 	{
+	#if CONFIG_PORTBITS
+		
+		baseAddr += frame_size;
+		
+	#else
+		
 		MovePortTo( 0, nyan_height * i );
+		
+	#endif
 		
 		draw_frame( bits, i );
 	}
@@ -151,30 +165,32 @@ void prepare_next_frame()
 	if ( ++current_frame == n_frames )
 	{
 		current_frame = 0;
+		
+		buffer_bits.baseAddr -= frame_size * n_frames;
 	}
+	
+	buffer_bits.baseAddr += frame_size;
 }
 
 void prepare_prev_frame()
 {
+	buffer_bits.baseAddr -= frame_size;
+	
 	if ( --current_frame < 0 )
 	{
 		current_frame = n_frames - 1;
+		
+		buffer_bits.baseAddr += frame_size * n_frames;
 	}
 }
 
 void blit( CGrafPtr port )
 {
-	unsigned t = current_frame;
-	
 	const Rect& portRect = get_portRect( port );
-	
-	Rect srcRect = portRect;
-	
-	OffsetRect( &srcRect, 0, t * nyan_height );
 	
 	CopyBits( &buffer_bits,
 	          GetPortBitMapForCopyBits( port ),
-	          &srcRect,
+	          &portRect,
 	          &portRect,
 	          srcCopy,
 	          NULL );
