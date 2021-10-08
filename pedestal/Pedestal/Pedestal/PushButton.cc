@@ -5,21 +5,6 @@
 
 #include "Pedestal/PushButton.hh"
 
-// Standard C++
-#include <algorithm>
-
-// Mac OS
-#ifndef __FONTS__
-#include <Fonts.h>
-#endif
-
-// missing-macos
-#ifdef MAC_OS_X_VERSION_10_7
-#ifndef MISSING_QUICKDRAWTEXT_H
-#include "missing/QuickdrawText.h"
-#endif
-#endif
-
 // mac-qd-utils
 #include "mac_qd/globals/thePort_window.hh"
 
@@ -27,8 +12,6 @@
 #include "Mac/Controls/Types/ControlPartCode.hh"
 
 #include "Nitrogen/Controls.hh"
-#include "Nitrogen/MacWindows.hh"
-#include "Nitrogen/Quickdraw.hh"
 
 
 namespace Pedestal
@@ -51,16 +34,6 @@ namespace Pedestal
 		                      1,
 		                      Mac::pushButProc,
 		                      refCon );
-	}
-	
-	
-	static Point CalcButtonSize( ConstStr255Param title )
-	{
-		int width = 1 + 8 + ::StringWidth( title ) + 8 + 1;
-		
-		width = std::max( width, 58 );
-		
-		return N::SetPt( width, 20 );
 	}
 	
 	
