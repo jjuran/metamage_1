@@ -61,12 +61,12 @@ namespace Pedestal
 	
 	bool Scroller_KeyDown( ScrollerAPI& scroller, const EventRecord& event )
 	{
-		const char keyCode = (event.message & keyCodeMask) >> 8;
+		const char keyCode = event.message >> 8;
 		
 		// Only consider programmers' keys, not control characters
 		if ( keyCode >= 0x70 )
 		{
-			const char keyChar = event.message & charCodeMask;
+			const char keyChar = event.message;
 			
 			const int voffset = NewVOffset( scroller, keyChar );
 			
