@@ -63,15 +63,15 @@ namespace Pedestal
 		
 		const N::ControlProcID procID = GetControlProcIDForScrollbar();
 		
-		itsControl = N::NewControl( mac::qd::thePort_window(),
-		                            bounds,
-		                            "\p",
-		                            true,
-		                            0,
-		                            0,
-		                            0,
-		                            procID,
-		                            refCon );
+		itsControl = NewControl( mac::qd::thePort_window(),
+		                         &bounds,
+		                         "\p",
+		                         true,
+		                         0,
+		                         0,
+		                         0,
+		                         procID,
+		                         (long) refCon );
 	}
 	
 	void Scrollbar::UpdateBounds( const Rect& bounds )
