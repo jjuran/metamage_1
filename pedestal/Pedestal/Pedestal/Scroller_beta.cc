@@ -33,7 +33,9 @@ namespace Pedestal
 			return 0;
 		}
 		
-		const int max_voffset = std::max( scroller.ClientHeight() - scroller.ViewHeight(), 0 );
+		const short viewHeight = scroller.ViewHeight();
+		
+		const int max_voffset = std::max( scroller.ClientHeight() - viewHeight, 0 );
 		
 		if ( c == kEndCharCode )
 		{
@@ -42,7 +44,7 @@ namespace Pedestal
 		
 		const int voffset = scroller.GetVOffset();
 		
-		const short page_distance = scroller.ViewHeight() - 1;
+		const short page_distance = viewHeight - 1;
 		
 		switch ( c )
 		{
