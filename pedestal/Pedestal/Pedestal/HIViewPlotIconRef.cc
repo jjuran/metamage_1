@@ -5,15 +5,14 @@
 
 #include "Pedestal/HIViewPlotIconRef.hh"
 
-// Nitrogen
-#include "Nitrogen/Icons.hh"
+// Mac OS
+#ifndef __ICONS__
+#include <Icons.h>
+#endif
 
 
 namespace Pedestal
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	void HIViewPlotIconRef( CGContextRef context, CGRect bounds, IconRef icon )
 	{
@@ -26,7 +25,7 @@ namespace Pedestal
 		CGContextTranslateCTM( context, 0, bounds.size.height );
 		CGContextScaleCTM    ( context, 1, -1 );
 		
-		N::PlotIconRefInContext( context, bounds, icon );
+		PlotIconRefInContext( context, &bounds, 0, 0, NULL, 0, icon );
 		
 		CGContextRestoreGState( context );
 	}
