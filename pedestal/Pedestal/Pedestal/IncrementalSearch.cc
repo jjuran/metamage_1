@@ -5,6 +5,16 @@
 
 #include "Pedestal/IncrementalSearch.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
+
 // Standard C++
 #include <vector>
 
@@ -22,7 +32,6 @@
 
 // Nitrogen
 #include "Nitrogen/Events.hh"
-#include "Nitrogen/Resources.hh"
 
 
 namespace Pedestal
@@ -205,7 +214,7 @@ namespace Pedestal
 		
 		if ( kchr == NULL )
 		{
-			N::ResError();
+			return '\0';
 		}
 		
 		ASSERT(  kchr != NULL );
@@ -275,6 +284,12 @@ namespace Pedestal
 		const UInt16 ignoredModifierMask = itsModifierMask;
 		
 		const char c = GetTranslatedKeyFromEvent( event, ignoredModifierMask );
+		
+		if ( ! c )
+		{
+			// No 'KCHR' resource?  Oh well, eat the event.
+			return true;
+		}
 		
 		if ( CharIsHorizontalArrow( c ) )
 		{
