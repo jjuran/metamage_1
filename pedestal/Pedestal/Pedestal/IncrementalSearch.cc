@@ -7,10 +7,13 @@
 
 // Mac OS X
 #ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
+#include <Carbon/Carbon.h>
 #endif
 
 // Mac OS
+#ifndef __EVENTS__
+#include <Events.h>
+#endif
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
@@ -30,15 +33,9 @@
 // plus
 #include "plus/var_string.hh"
 
-// Nitrogen
-#include "Nitrogen/Events.hh"
-
 
 namespace Pedestal
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	static inline bool CharIsHorizontalArrow( char c )
 	{
@@ -67,9 +64,11 @@ namespace Pedestal
 		                                0,  // 70 - 77
 		                                1 << (0x7b & 0x07) | 1 << (0x7c & 0x07) };
 		
-		N::GetKeys_Result keys = N::GetKeys();
+		KeyMap keymap;
 		
-		return std::memcmp( keys.keyMapByteArray, desiredKeys, sizeof desiredKeys ) == 0;
+		GetKeys( keymap );
+		
+		return memcmp( keymap, desiredKeys, sizeof desiredKeys ) == 0;
 	}
 	
 	
