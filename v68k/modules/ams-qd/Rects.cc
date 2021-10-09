@@ -113,6 +113,7 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	Rect rect;
 	
 	do_Rect_intersection( rect, bounds, input_rect );
+	do_Rect_intersection( rect, thePort->portRect, rect );
 	
 	params.rect = rect;
 	
