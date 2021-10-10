@@ -13,9 +13,6 @@
 #include "mac_qd/globals/thePort.hh"
 #include "mac_qd/scoped_clipRect.hh"
 
-// Nitrogen
-#include "Nitrogen/Quickdraw.hh"
-
 // Pedestal
 #include "Pedestal/Scrollbar.hh"
 
@@ -23,8 +20,11 @@
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	
+	static inline
+	bool PtInRect( Point pt, const Rect& rect )
+	{
+		return ::PtInRect( pt, &rect );
+	}
 	
 	static int NewVOffset( const ScrollerAPI& scroller, char c )
 	{
@@ -105,7 +105,11 @@ namespace Pedestal
 	
 	bool ScrollFrame::HitTest( const EventRecord& event )
 	{
-		return N::PtInRect( N::GlobalToLocal( event.where ), ApertureFromBounds( Bounds() ) );
+		Point where = event.where;
+		
+		GlobalToLocal( &where );
+		
+		return PtInRect( where, ApertureFromBounds( Bounds() ) );
 	}
 	
 	bool ScrollFrame::MouseDown( const EventRecord& event )
