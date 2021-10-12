@@ -5,6 +5,9 @@
 
 #include "native.hh"
 
+// Standard C
+#include <string.h>
+
 
 #ifdef __MWERKS__
 #pragma exceptions off
@@ -29,6 +32,102 @@ bool is_spinloop_branch( uint16_t opcode )
 	return opcode == 0x66FA;  // BNE.S    *-4
 }
 
+/*
+	The Metamage codebase includes a 68K asm implementation of mempcpy(),
+	an extension to the standard C library.  It's a useful alternative to
+	memcpy() for several reasons.  First, it returns the incremented dst
+	pointer, which is less work than saving and restoring the unmodified
+	value, and the caller may well want the incremented result anyway.
+	Second, it doesn't waste time checking the length before entering the
+	byte copy loop for small lengths (as MSL's memcpy() does).  Third, it
+	never incurs trap dispatch overhead to call BlockMoveData().  Finally,
+	as an extern function, it avoids codegen bloat.
+	
+	The downside is that we miss out on any optimizations for large copies
+	implemented in BlockMoveData() itself, if any.  In general, I suggest
+	using purpose-matched variants of memcpy() when performance warrants it,
+	e.g. one that expects word-aligned data or only copies up to 32K, etc.
+	That way, those variants can be optimized, and the general case doesn't
+	have to check at run time, every time, to see if such optimizations can
+	be applied.
+	
+	That said, when code runs in xv68k, we would very much like to bypass
+	the byte copy loop and execute the copy natively.  MSL's memcpy(), with
+	its provision for calling BlockMoveData(), actually did this -- how sad
+	that our "optimization" of using mempcpy() defeats that!  AMS modules
+	already know to call fast_mempcpy() instead, which calls out to a native
+	implementation, but sometimes they share libraries with non-AMS programs,
+	so an xv68k-dependent approach isn't workable in that case.  Our solution
+	is to recognize mempcpy() in emulated code as it's executed, and patch
+	it to call fast_mempcpy() instead.
+	
+	This optimization is especially important to ams-fs's performance as a
+	Freemount client, since the plus::string objects used as buffers call
+	mempcpy() internally.  Region intersection calculations in ams-qd also
+	make calls to mempcpy(), affecting performance with complex regions.
+	
+	In general, this approach could run afoul of a few applications which
+	checksum their code, but we'll deal with that when it actually happens.
+	
+	mempcpy:
+	
+		TST.L    D0                 // 4a80
+		BEQ.S    *+8 (done)         // 6706
+	loop:
+		MOVE.B   (A1)+,(A0)+        // 10d9
+		SUBQ.L   #1,D0              // 5380
+		BNE.S    *-4 (loop)         // 66fa
+	done:
+		RTS                         // 4e75
+	
+	mempcpy_patched:
+	
+		TST.L    D0                 // 4a80
+		BEQ.S    *+8 (done)         // 6706
+	loop:
+		JMP      fast_mempcpy       // 4ef8ffd0
+	not_reached:
+		BNE.S    *-4 (loop)         // 66fa
+	done:
+		RTS                         // 4e75
+	
+*/
+
+#define MEMPCPY  \
+	"\x4a\x80" \
+	"\x67\x06" \
+	"\x10\xd9" \
+	"\x53\x80" \
+	"\x66\xfa" \
+	"\x4e\x75"
+
+#define JMP_FAST_MEMPCPY  "\x4e\xf8\xff\xd0"
+
+static
+bool patched_mempcpy( v68k::emulator& emu )
+{
+	using v68k::PC;
+	using v68k::mem_write;
+	
+	if ( emu.opcode == 0x10D9 )
+	{
+		uint32_t pc = emu.regs[ PC ];
+		
+		if ( uint8_t* p = emu.translate( pc, 8, emu.data_space(), mem_write ) )
+		{
+			if ( memcmp( p, MEMPCPY + 4, 8 ) == 0 )
+			{
+				memcpy( p, JMP_FAST_MEMPCPY, 4 );
+				
+				emu.prefetch_instruction_word();
+				return true;
+			}
+		}
+	}
+	
+	return false;
+}
+
 static
 uint32_t get_toolbox_trap_addr( v68k::emulator& emu, uint16_t trap_word )
 {
@@ -50,6 +149,15 @@ bool native_override( v68k::emulator& emu )
 	using v68k::SP;
 	using v68k::PC;
 	using v68k::function_code_t;
+	
+	if ( patched_mempcpy( emu ) )
+	{
+		/*
+			We've patched the instruction, but we didn't execute it here.
+		*/
+		
+		return false;
+	}
 	
 	if ( spinloop_flag  &&  is_spinloop_memtest( emu.opcode ) )
 	{
