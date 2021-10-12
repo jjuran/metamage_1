@@ -35,6 +35,20 @@ int get_sound_fd()
 static const int sound_fd = get_sound_fd();
 
 static
+bool is_silence_and_zeros( const uint8_t* p, short n )
+{
+	while ( n-- > 0 )
+	{
+		if ( (*p++ & 0x7f) )
+		{
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+static
 void sound_update()
 {
 	uint8_t* p = message_buffer;
@@ -66,6 +80,20 @@ void sound_update()
 	
 	if ( sound_fd > 0 )
 	{
+		p = message_buffer + 12;
+		
+		if ( is_silence_and_zeros( p, 370 ) )
+		{
+			/*
+				Lemmings begins sound generation by filling the sound
+				buffer with zero bytes, resulting in a nasty click.
+				
+				Prevent that by substituting the actual silence byte value.
+			*/
+			
+			memset( p, '\x80', 370 );
+		}
+		
 		write( sound_fd, message_buffer, sndpipe_buffer_size );
 	}
 }
