@@ -1422,7 +1422,9 @@ pascal void HideDItem_patch( GrafPort* dialog, short i )
 	
 	DialogItem* item = get_nth_item( dialog, i );
 	
-	if ( item->bounds.left >= 8192 )
+	Rect* bounds = &item->bounds;
+	
+	if ( bounds->left >= 8192 )
 	{
 		return;
 	}
@@ -1440,12 +1442,12 @@ pascal void HideDItem_patch( GrafPort* dialog, short i )
 		
 		scoped_port thePort = dialog;
 		
-		EraseRect( &item->bounds );
-		InvalRect( &item->bounds );
+		EraseRect( bounds );
+		InvalRect( bounds );
 	}
 	
-	item->bounds.left  += 16384;
-	item->bounds.right += 16384;
+	bounds->left  += 16384;
+	bounds->right += 16384;
 }
 
 pascal void ShowDItem_patch( GrafPort* dialog, short i )
