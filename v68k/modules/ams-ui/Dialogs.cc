@@ -1429,9 +1429,27 @@ pascal void HideDItem_patch( GrafPort* dialog, short i )
 		return;
 	}
 	
+	Rect outline_bounds;
+	
 	if ( (item->type & 0x7c) == ctrlItem )
 	{
 		HideControl( (ControlRef) item->handle );
+		
+		if ( i == d->aDefItem )
+		{
+			/*
+				We're hiding the default button.  In addition to hiding
+				the control itself, also erase the 3px border around it.
+				(This fixes a cosmetic issue in Lemmings' level picker.)
+			*/
+			
+			outline_bounds = *bounds;
+			bounds = &outline_bounds;
+			
+			InsetRect( bounds, -4, -4 );
+			
+			goto erase;
+		}
 	}
 	else
 	{
@@ -1439,6 +1457,8 @@ pascal void HideDItem_patch( GrafPort* dialog, short i )
 		{
 			WARNING = "hiding an editText item without checking if it's active";
 		}
+		
+	erase:
 		
 		scoped_port thePort = dialog;
 		
