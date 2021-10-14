@@ -1410,7 +1410,13 @@ pascal unsigned char CheckUpdate_patch( EventRecord* event )
 				update_attempts = max_update_attempts;
 			}
 			
-			fast_memset( event, '\0', sizeof (EventRecord) );
+			/*
+				Assume the caller has already populated the other fields
+				of the event record (which is true of GetNextEvent()).
+				
+				Lemmings expects event.where to be set to the
+				actual mouse location even for update events.
+			*/
 			
 			event->what    = updateEvt;
 			event->message = (long) w;
