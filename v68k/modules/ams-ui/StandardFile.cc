@@ -521,6 +521,7 @@ pascal void SFGetFile_call( Point               where,
 	
 	GetDialogItem( dialog, getScroll, &type, &h, &box );
 	scrollbar = NewControl( dialog, &box, "\p", 1, 0, 0, scrollmax(), 16, 0 );
+	ValidRect( &box );
 	// It's not necessary to call SetDialogItem().
 	
 	GetDialogItem( dialog, getLine, &type, &h, &box );

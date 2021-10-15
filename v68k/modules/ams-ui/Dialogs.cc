@@ -511,6 +511,8 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 				                                    1,  // max
 				                                    item->type & 0x03,
 				                                    0 );
+				
+				ValidRect( &item->bounds );
 				break;
 			
 			case ctrlItem + resCtrl:
