@@ -1547,6 +1547,7 @@ pascal void CalcVis_patch( WindowPeek window )
 	}
 	
 	RgnHandle visRgn = window->port.visRgn;
+	RgnHandle update = window->updateRgn;
 	
 	if ( ! window->visible )
 	{
@@ -1568,6 +1569,8 @@ pascal void CalcVis_patch( WindowPeek window )
 			DiffRgn( visRgn, w->strucRgn, visRgn );
 		}
 	}
+	
+	SectRgn( update, visRgn, update );
 	
 	QDGlobalToLocalRegion( &window->port, visRgn );
 }
