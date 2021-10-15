@@ -303,6 +303,9 @@ const module_args = str^
 	io_opts(),
 	seg_opts(),
 	
+	# For debugging only:
+	#ams-ui: [ "--debug-updates" ],
+	
 	# This setting is not recommended, which is why no logic enables it.
 	#vdb: [ "--continue-on-bus-error" ],
 ]
