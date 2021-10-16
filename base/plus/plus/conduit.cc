@@ -5,9 +5,6 @@
 
 #include "plus/conduit.hh"
 
-// Standard C++
-#include <algorithm>
-
 // more-libc
 #include "more/string.h"
 
@@ -20,6 +17,12 @@
 
 namespace plus
 {
+	
+	static inline
+	std::size_t min( std::size_t a, std::size_t b )
+	{
+		return b < a ? b : a;
+	}
 	
 	page::page( const page& other )
 	:
@@ -43,7 +46,7 @@ namespace plus
 	
 	std::size_t page::read( char* buffer, std::size_t max_bytes )
 	{
-		max_bytes = std::min( max_bytes, n_readable() );
+		max_bytes = min( max_bytes, n_readable() );
 		
 		const char* start = &data[ n_read ];
 		
