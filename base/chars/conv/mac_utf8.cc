@@ -5,9 +5,6 @@
 
 #include "conv/mac_utf8.hh"
 
-// Standard C++
-#include <algorithm>
-
 // more-libc
 #include "more/string.h"
 
@@ -23,6 +20,12 @@ namespace conv
 	
 	using chars::unichar_t;
 	
+	
+	static inline
+	std::size_t min( std::size_t a, std::size_t b )
+	{
+		return b < a ? b : a;
+	}
 	
 	static inline
 	const char* find_non_ascii( const char* begin, const char* end )
@@ -99,7 +102,7 @@ namespace conv
 		
 		while ( p < end )
 		{
-			const std::size_t remaining = std::min( end - p, buffer_end - q );
+			const std::size_t remaining = min( end - p, buffer_end - q );
 			
 			const char* it = find_non_ascii( p, p + remaining );
 			
@@ -163,7 +166,7 @@ namespace conv
 		
 		while ( p < end )
 		{
-			const std::size_t remaining = std::min( end - p, buffer_end - q );
+			const std::size_t remaining = min( end - p, buffer_end - q );
 			
 			const char* it = find_non_ascii( p, p + remaining );
 			
