@@ -11,6 +11,10 @@
 // in the public domain.
 
 
+#if __LP64__
+int dummy;
+#else
+
 #include "Nitrogen/OpenTransportProviders.hh"
 
 // iota
@@ -133,3 +137,5 @@ namespace Nitrogen
 }
 
 #endif  // #ifndef MAC_OS_X_VERSION_10_8
+
+#endif  // #if __LP64__

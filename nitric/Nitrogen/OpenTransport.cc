@@ -11,6 +11,10 @@
 // in the public domain.
 
 
+#if __LP64__
+int dummy;
+#else
+
 #include "Nitrogen/OpenTransport.hh"
 
 // Nitrogen
@@ -341,3 +345,5 @@ namespace Nitrogen
 	}
 	
 }
+
+#endif  // #if __LP64__
