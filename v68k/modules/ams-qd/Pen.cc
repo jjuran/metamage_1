@@ -20,6 +20,7 @@
 #include "QDGlobals.hh"
 
 // ams-qd
+#include "antislope.hh"
 #include "OpenPoly.hh"
 
 
@@ -431,7 +432,7 @@ pascal void StdLine_patch( Point newPt )
 	}
 	else if ( advance > descent )
 	{
-		const Fixed h_increment = FixRatio( newPt.h - pnLoc.h, newPt.v - pnLoc.v );
+		const Fixed h_increment = antislope( newPt, pnLoc );
 		
 		if ( newPt.h >= pnLoc.h )
 		{
@@ -444,7 +445,7 @@ pascal void StdLine_patch( Point newPt )
 	}
 	else
 	{
-		const Fixed h_increment = FixRatio( newPt.h - pnLoc.h, newPt.v - pnLoc.v );
+		const Fixed h_increment = antislope( newPt, pnLoc );
 		
 		if ( newPt.h >= pnLoc.h )
 		{
