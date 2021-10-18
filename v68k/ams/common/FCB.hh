@@ -50,15 +50,4 @@ struct FCBS
 
 FCBS* FCBSPtr : 0x034E;
 
-inline
-FCB* get_FCB( unsigned short refNum )
-{
-	if ( refNum > 0 )
-	{
-		return (FCB*) ((char*) FCBSPtr + refNum);
-	}
-	
-	return NULL;
-}
-
 #endif

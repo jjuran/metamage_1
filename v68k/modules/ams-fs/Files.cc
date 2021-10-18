@@ -50,6 +50,17 @@ short FCB_index( const FCB* fcb )
 }
 
 static
+FCB* get_FCB( unsigned short refNum )
+{
+	if ( refNum > 0 )
+	{
+		return (FCB*) ((char*) FCBSPtr + refNum);
+	}
+	
+	return NULL;
+}
+
+static
 FCB* find_FCB( long fileNum )
 {
 	FCB* begin = FCBSPtr->fcbs;

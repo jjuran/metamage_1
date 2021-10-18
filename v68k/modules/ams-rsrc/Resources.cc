@@ -66,6 +66,17 @@ asm Handle PtrToHand( const void* p : __A0, long size : __D0 )
 }
 
 static inline
+FCB* get_FCB( unsigned short refNum )
+{
+	if ( refNum > 0 )
+	{
+		return (FCB*) ((char*) FCBSPtr + refNum);
+	}
+	
+	return NULL;
+}
+
+static inline
 rsrc_header* recover_rsrc_header( Handle resource )
 {
 	// Technically we shouldn't deref before null test, but it works in MWC68K
