@@ -52,7 +52,9 @@ short FCB_index( const FCB* fcb )
 static
 FCB* get_FCB( unsigned short refNum )
 {
-	if ( refNum > 0 )
+	// Don't dereference odd addresses
+	
+	if ( refNum > 0  &&  (refNum & 0x1) == 0 )
 	{
 		return (FCB*) ((char*) FCBSPtr + refNum);
 	}
