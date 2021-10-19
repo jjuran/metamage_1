@@ -288,7 +288,7 @@ void apply_hotpatches( Handle code, short segnum )
 		
 		p = (uint16_t*) &code[0][ 0x2aaa ];
 		
-		if ( memcmp( p, Lemmings_wait_loop, sizeof Lemmings_wait_loop ) == 0 )
+		if ( fast_memequ( p, Lemmings_wait_loop, sizeof Lemmings_wait_loop ) )
 		{
 			fast_memcpy( p, Lemmings_wait_trap, sizeof Lemmings_wait_trap );
 		}
