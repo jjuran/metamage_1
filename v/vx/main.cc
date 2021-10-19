@@ -54,6 +54,7 @@
 #include "varyx/posix/file_descriptor.hh"
 #include "varyx/posix/library.hh"
 #include "varyx/posix/posixfs.hh"
+#include "varyx/posix/signals.hh"
 #include "varyx/posix/sockets.hh"
 #include "varyx/posix/thread.hh"
 #include "varyx/posix/thread_state.hh"
@@ -269,6 +270,8 @@ int main( int argc, char** argv )
 	define( proc_realpath );
 	define( proc_secret   );
 	define( proc_setenv   );
+	define( proc_sig_dfl  );
+	define( proc_sig_ign  );
 	define( proc_sleep    );
 	define( proc_stat     );
 	define( proc_symlink  );

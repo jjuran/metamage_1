@@ -44,6 +44,7 @@
 #include "varyx/posix/argv.hh"
 #include "varyx/posix/file_descriptor.hh"
 #include "varyx/posix/library.hh"
+#include "varyx/posix/signals.hh"
 #include "varyx/posix/posixfs.hh"
 
 
@@ -229,6 +230,8 @@ int main( int argc, char** argv )
 	define( proc_readlink );
 	define( proc_realpath );
 	define( proc_setenv   );
+	define( proc_sig_dfl  );
+	define( proc_sig_ign  );
 	define( proc_sleep    );
 	define( proc_stat     );
 	define( proc_symlink  );
