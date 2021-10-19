@@ -50,6 +50,12 @@ DEFINE_CALLOUT( int,
 
 #undef DEFINE_CALLOUT
 
+inline
+int fast_memequ( const void* a, const void* b, unsigned long n )
+{
+	return fast_memcmp( a, b, n ) == 0;
+}
+
 static inline
 asm bool mem_test( const void* addr : __A0, int size : __D0 )
 {
