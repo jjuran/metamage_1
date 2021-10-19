@@ -184,16 +184,16 @@ void apply_hotpatches( Handle code, short segnum )
 				disassembles differently: (int16_t) 0xae28 == -20952
 				The error is that the opcode's destination effective address
 				is wrong in the shipped code.  The reason it "works" at all is
-				because 68000-based Macs lack an MMU, memory wraps around, and
-				writes never fail, so $ae28 (which is actually $ffffae28) maps
-				to $0001ae28 on an original Macintosh, which is in the 29th
-				scanline of screen memory (and remains so on later Macs with
-				512x342 screens (with more memory) because the screen memory
-				is in the same location relative to the /high end/ of memory).
+				because 68000-based Macs lack an MMU and writes never fail,
+				so $ae28 (which is actually $ffffae28) maps to a nonexistent
+				location in I/O space, and since no peripheral is listening
+				for accesses there, nothing at all happens as a result.
 				
-				But xv68k doesn't (currently) map the screen that way, so
-				clicking Lode Runner's game window writes to unmapped memory
-				and crashes.  To avoid that, hot-patch the broken instruction
+				But xv68k doesn't blithely ignore wild writes to the entire
+				upper half of memory, because its I/O space is limited to only
+				those bytes that actually have a purpose.  So clicking in Lode
+				Runner's game window instead writes to unmapped memory and
+				crashes.  To avoid that, hot-patch the broken instruction
 				to what it should have been.
 				
 				Old:  MOVE.W   (A7)+,0xae28
@@ -242,7 +242,7 @@ void apply_hotpatches( Handle code, short segnum )
 				
 				Here's what that last function does:
 				  * tests another array base address at (-350,A5)
-				  * loops over the that array, calling $00510c on each element
+				  * loops over that array, calling $00510c on each element
 				  * frees the array via _DisposePtr
 				
 				Here's what /that/ function does:
