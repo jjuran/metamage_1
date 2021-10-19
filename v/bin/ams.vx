@@ -357,6 +357,10 @@ const command = [ command-prefix, graft-subcmd ]
 
 warn "screen: " screen
 
+const SIGINT = 2
+
+signal-ignore SIGINT
+
 run command
 
 remove screen
