@@ -469,6 +469,10 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	Ptr alloc = MemTop ? stack_bottom - total_alloc_size
 	                   : NewPtr( total_alloc_size );
 	
+	// 'ss' == 0x7373, an odd address and an invalid instruction.
+	
+	fast_memset( alloc, 's', stack_size );
+	
 	// 16. Set CurrentA5.
 	// 17. Set CurStackBase.
 	
