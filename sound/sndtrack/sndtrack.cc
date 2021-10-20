@@ -298,7 +298,10 @@ void interrupt( int )
 
 int main( int argc, char* argv[] )
 {
-	signal( SIGINT, &interrupt );
+	if ( signal( SIGINT, SIG_IGN ) != SIG_IGN )
+	{
+		signal( SIGINT, &interrupt );
+	}
 	
 	event_loop( STDIN_FILENO );
 	
