@@ -134,6 +134,23 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 	
 	next_sleep = GetNextEvent_throttle;
 	
+	if ( GetNextEvent_throttle == 0 )
+	{
+		static UInt32 last_ticks;
+		static UInt32 null_events_per_tick;
+		
+		if ( ticks != last_ticks )
+		{
+			null_events_per_tick = 0;
+			
+			last_ticks = ticks;
+		}
+		else if ( ++null_events_per_tick > 2 )
+		{
+			next_sleep = default_GetNextEvent_throttle;
+		}
+	}
+	
 	EventQueue.qFlags &= ~1;
 	
 	return false;
