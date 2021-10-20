@@ -71,6 +71,8 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 {
 	polling_interval = 0;
 	
+	UInt32 ticks = get_Ticks();
+	
 	const unsigned long sleep = next_sleep;
 	
 	next_sleep = 0;
@@ -83,7 +85,7 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 		{
 			event->what      = activateEvt;
 			event->message   = (long) CurDeactive;
-			event->when      = get_Ticks();
+			event->when      = ticks;
 			event->where     = Mouse;
 			event->modifiers = 0;
 			
@@ -96,7 +98,7 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 		{
 			event->what      = activateEvt;
 			event->message   = (long) CurActivate;
-			event->when      = get_Ticks();
+			event->when      = ticks;
 			event->where     = Mouse;
 			event->modifiers = activeFlag;
 			
