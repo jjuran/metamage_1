@@ -9,9 +9,6 @@
 #ifndef __NUMBERFORMATTING__
 #include <NumberFormatting.h>
 #endif
-#ifndef __TRAPS__
-#include <Traps.h>
-#endif
 
 // Standard C
 #include <string.h>
@@ -19,6 +16,9 @@
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
+
+// log-of-war
+#include "logofwar/report.hh"
 
 // ams-common
 #include "callouts.hh"
@@ -47,6 +47,14 @@ long StringToNum_call( ConstStr255Param string : __A0 )
 	return gear::parse_decimal( CSTR( string ) );
 }
 
+static
+void unimplemented_call( short selector : __D1 )
+{
+	FATAL = "unimplemented Pack7 call ", selector;
+	
+	asm { ILLEGAL }
+}
+
 asm void Pack7_patch( short method )
 {
 	MOVEA.L  (SP)+,A1
@@ -59,8 +67,7 @@ asm void Pack7_patch( short method )
 	CMPI.W   #0x0001,D1
 	BEQ      dispatch_StringToNum
 	
-	_Debugger
-	_ExitToShell
+	JMP      unimplemented_call
 	
 dispatch_NumToString:
 	JMP      NumToString_call

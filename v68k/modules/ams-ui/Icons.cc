@@ -15,9 +15,9 @@
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
-#ifndef __TRAPS__
-#include <Traps.h>
-#endif
+
+// log-of-war
+#include "logofwar/report.hh"
 
 // ams-common
 #include "QDGlobals.hh"
@@ -102,6 +102,14 @@ pascal OSErr IconIDToRgn_call( RgnHandle          rgn,
 	return noErr;
 }
 
+static
+void unimplemented_call( short selector : __D0 )
+{
+	FATAL = "unimplemented IconDispatch call ", selector;
+	
+	asm { ILLEGAL }
+}
+
 asm void IconDispatch_patch( short method : __D0 )
 {
 	CMPI.W   #0x0500,D0
@@ -110,8 +118,7 @@ asm void IconDispatch_patch( short method : __D0 )
 	CMPI.W   #0x0613,D0
 	BEQ      dispatch_IconIDToRgn
 	
-	_Debugger
-	_ExitToShell
+	JMP      unimplemented_call
 	
 dispatch_PlotIconID:
 	JMP      PlotIconID_call
