@@ -15,6 +15,9 @@
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
+#ifndef __MENUS__
+#include <Menus.h>
+#endif
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
@@ -280,7 +283,8 @@ pascal void InitWindows_patch()
 	CurDeactive = NULL;
 	
 	draw_desktop_from_WMgrPort();
-	draw_menu_bar_from_WMgr_port();
+	
+	InitMenus();  // Some applications assume this.
 }
 
 pascal void GetWMgrPort_patch( struct GrafPort** port )
