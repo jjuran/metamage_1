@@ -180,25 +180,28 @@ OSErr documents_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 	
 	int err = try_to_get( docfs_fd, name, file_data );
 	
-	if ( ! err )
+	if ( err < 0 )
 	{
-		scoped_zone null_zone;
-		
-		const size_t size = file_data.size();
-		
-		StringHandle h = PtrToHand( name, 1 + name[ 0 ] );
-		
-		fcb->fcbFlNum  = (long) h;
-		
-		fcb->fcbTypByt = 0;
-		fcb->fcbSBlk   = 0;
-		fcb->fcbEOF    = size;
-		fcb->fcbPLen   = size;
-		
-		fcb->fcbBfAdr  = NewPtr( size );
-		
-		fast_memcpy( fcb->fcbBfAdr, file_data.data(), size );
+		// TODO:  Check for other errors.
+		return fnfErr;
 	}
+	
+	scoped_zone null_zone;
+	
+	const size_t size = file_data.size();
+	
+	StringHandle h = PtrToHand( name, 1 + name[ 0 ] );
+	
+	fcb->fcbFlNum  = (long) h;
+	
+	fcb->fcbTypByt = 0;
+	fcb->fcbSBlk   = 0;
+	fcb->fcbEOF    = size;
+	fcb->fcbPLen   = size;
+	
+	fcb->fcbBfAdr  = NewPtr( size );
+	
+	fast_memcpy( fcb->fcbBfAdr, file_data.data(), size );
 	
 	return noErr;
 }
