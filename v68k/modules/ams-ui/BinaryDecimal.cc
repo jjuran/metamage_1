@@ -26,7 +26,7 @@
 
 
 static
-StringPtr NumToString_method( long x : __D0, StringPtr p : __A0 )
+StringPtr NumToString_call( long x : __D0, StringPtr p : __A0 )
 {
 	const char* s = gear::inscribe_decimal( x );
 	
@@ -42,7 +42,7 @@ StringPtr NumToString_method( long x : __D0, StringPtr p : __A0 )
 }
 
 static
-long StringToNum_method( ConstStr255Param string : __A0 )
+long StringToNum_call( ConstStr255Param string : __A0 )
 {
 	return gear::parse_decimal( CSTR( string ) );
 }
@@ -63,8 +63,8 @@ asm void Pack7_patch( short method )
 	_ExitToShell
 	
 dispatch_NumToString:
-	JMP      NumToString_method
+	JMP      NumToString_call
 	
 dispatch_StringToNum:
-	JMP      StringToNum_method
+	JMP      StringToNum_call
 }

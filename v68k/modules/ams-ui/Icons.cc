@@ -48,10 +48,10 @@ pascal void PlotIcon_patch( const Rect* rect, char** icon )
 }
 
 static
-pascal OSErr PlotIconID_method( const Rect*        rect,
-                                IconAlignmentType  align,
-                                IconTransformType  xform,
-                                short              resID )
+pascal OSErr PlotIconID_call( const Rect*        rect,
+                              IconAlignmentType  align,
+                              IconTransformType  xform,
+                              short              resID )
 {
 	Handle h = GetResource( 'ICN#', resID );
 	
@@ -74,10 +74,10 @@ pascal OSErr PlotIconID_method( const Rect*        rect,
 }
 
 static
-pascal OSErr IconIDToRgn_method( RgnHandle          rgn,
-                                 const Rect*        iconRect,
-                                 IconAlignmentType  align,
-                                 short              resID )
+pascal OSErr IconIDToRgn_call( RgnHandle          rgn,
+                               const Rect*        iconRect,
+                               IconAlignmentType  align,
+                               short              resID )
 {
 	Handle h = GetResource( 'ICN#', resID );
 	
@@ -114,8 +114,8 @@ asm void IconDispatch_patch( short method : __D0 )
 	_ExitToShell
 	
 dispatch_PlotIconID:
-	JMP      PlotIconID_method
+	JMP      PlotIconID_call
 	
 dispatch_IconIDToRgn:
-	JMP      IconIDToRgn_method
+	JMP      IconIDToRgn_call
 }
