@@ -521,6 +521,8 @@ long WDEF_0_DrawGIcon( short varCode, WindowPtr w )
 
 pascal long WDEF_0( short varCode, WindowPtr w, short message, long param )
 {
+	WindowPeek window = (WindowPeek) w;
+	
 	switch ( message )
 	{
 		case wDraw:
@@ -533,7 +535,17 @@ pascal long WDEF_0( short varCode, WindowPtr w, short message, long param )
 			return WDEF_0_CalcRgns( varCode, w );
 		
 		case wNew:
+			if ( varCode & 0x8 )
+			{
+				window->dataHandle = NewHandleClear( 2 * sizeof (Rect) );
+			}
+			break;
+		
 		case wDispose:
+			if ( Handle h = window->dataHandle )
+			{
+				DisposeHandle( h );
+			}
 			break;
 		
 		case wGrow:
