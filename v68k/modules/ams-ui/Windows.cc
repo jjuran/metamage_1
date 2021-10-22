@@ -362,6 +362,8 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	
 	window->hilited = frontmost;
 	
+	call_WDEF( window, wNew, 0 );
+	
 	if ( ! visible )
 	{
 		SetEmptyRgn( port->visRgn );
@@ -478,6 +480,8 @@ pascal void CloseWindow_patch( struct GrafPort* port )
 	{
 		KillPicture( window->windowPic );
 	}
+	
+	call_WDEF( window, wDispose, 0 );
 	
 	const bool frontmost = window == WindowList;
 	
