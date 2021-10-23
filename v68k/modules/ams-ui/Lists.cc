@@ -454,6 +454,37 @@ void calc_visible( ListHandle listH )
 }
 
 static
+pascal Boolean LGetSelect_call( Boolean next, Cell* cell, ListHandle listH )
+{
+	ListRec& list = **listH;
+	
+	const short n_rows = list.dataBounds.bottom - list.dataBounds.top;
+	const short n_cols = list.dataBounds.right - list.dataBounds.left;
+	
+	short i = cell->v * n_cols + cell->h;
+	
+retry:
+	
+	if ( is_selected( list, i ) )
+	{
+		return true;
+	}
+	
+	if ( next  &&  ++i < list.maxIndex )
+	{
+		goto retry;
+	}
+	
+	return false;
+}
+
+static
+pascal Cell LLastClick_call( ListHandle listH )
+{
+	return listH[0]->lastClick;
+}
+
+static
 pascal ListHandle LNew_call( const Rect*        view,
                              const ListBounds*  dataBounds,
                              Point              cellSize,
@@ -681,8 +712,8 @@ static void* dispatch_table[] =
 	(void*) unimplemented_call,
 	(void*) unimplemented_call,
 	(void*) unimplemented_call,
-	(void*) unimplemented_call,
-	(void*) unimplemented_call,
+	(void*) LGetSelect_call,
+	(void*) LLastClick_call,
 	(void*) LNew_call,
 	(void*) unimplemented_call,
 	(void*) unimplemented_call,
