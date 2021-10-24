@@ -23,6 +23,7 @@
 
 // ams-ui
 #include "Dialogs.hh"
+#include "scrolling.hh"
 #include "string_list.hh"
 
 
@@ -176,12 +177,6 @@ static string_list_handle filename_list;
 
 
 static inline
-short min( short a, short b )
-{
-	return b < a ? b : a;
-}
-
-static inline
 short max( short a, short b )
 {
 	return a > b ? a : b;
@@ -291,6 +286,19 @@ pascal void draw_dotted_line( DialogRef dialog, short i )
 }
 
 static
+void SFGet_scroll_to( const scroll_action_rec& action, short value )
+{
+	scroll_string_list_to( filename_list, value );
+}
+
+static const scroll_action_rec scroll_action_context =
+{
+	&SFGet_scroll_to,
+	1,
+	n_viewable_cells,
+};
+
+static
 pascal void SFPutFile_call( Point             where,
                             ConstStr255Param  prompt,
                             ConstStr255Param  origName,
@@ -396,43 +404,6 @@ pascal void SFPutFile_call( Point             where,
 }
 
 static pascal
-void scrollbar_action( ControlRef control, short part )
-{
-	short value = GetControlValue( scrollbar );
-	short delta = 1;
-	
-	/*
-		kControlUpButtonPart   = 20
-		kControlDownButtonPart = 21
-		kControlPageUpPart     = 22
-		kControlPageDownPart   = 23
-	*/
-	
-	if ( (part & ~3) == 20 )
-	{
-		if ( part & 2 )
-		{
-			delta = n_viewable_cells;
-		}
-		
-		if ( part & 1 )
-		{
-			const short maximum = GetControlMaximum( scrollbar );
-			
-			value = min( value + delta, maximum );
-		}
-		else
-		{
-			value = max( value - delta, 0 );
-		}
-	}
-	
-	SetControlValue( scrollbar, value );
-	
-	scroll_string_list_to( filename_list, value );
-}
-
-static pascal
 Boolean SFGet_filterProc( DialogRef dialog, EventRecord* event, short* itemHit )
 {
 	DialogPeek d = (DialogPeek) dialog;
@@ -454,7 +425,7 @@ Boolean SFGet_filterProc( DialogRef dialog, EventRecord* event, short* itemHit )
 				case kControlDownButtonPart:
 				case kControlPageUpPart:
 				case kControlPageDownPart:
-					TrackControl( scrollbar, pt, &scrollbar_action );
+					TrackControl( scrollbar, pt, &scrollbar_actionProc );
 					
 					*itemHit = getScroll;
 					return true;
@@ -523,6 +494,8 @@ pascal void SFGetFile_call( Point               where,
 	scrollbar = NewControl( dialog, &box, "\p", 1, 0, 0, scrollmax(), 16, 0 );
 	ValidRect( &box );
 	// It's not necessary to call SetDialogItem().
+	
+	scrollbar[0]->contrlRfCon = (long) &scroll_action_context;
 	
 	GetDialogItem( dialog, getLine, &type, &h, &box );
 	SetDialogItem( dialog, getLine, type, (Handle) &draw_dotted_line, &box );
