@@ -6,6 +6,9 @@
 #include "Lists.hh"
 
 // Mac OS
+#ifndef __CONTROLDEFINITIONS__
+#include <ControlDefinitions.h>
+#endif
 #ifndef __LISTS__
 #include <Lists.h>
 #endif
@@ -22,8 +25,10 @@
 // ams-common
 #include "callouts.hh"
 #include "QDGlobals.hh"
+#include "raster_lock.hh"
 
 // ams-ui
+#include "scrolling.hh"
 #include "utility_region.hh"
 
 
@@ -160,6 +165,61 @@ void draw_list_cells( const ListRec& list, const Rect& range, RgnHandle clip )
 	}
 }
 
+/*
+	Ideally, Lists_scroll_action_rec would be a derived struct of
+	scroll_action_rec, but that prevents a simple brace initialization.
+*/
+
+struct Lists_scroll_action_rec
+{
+	scroll_callback scroll_to;
+	
+	short step;  // should always be 1
+	short page;  // the number of visible cells at most, maybe one fewer
+	
+	ListHandle  listH;
+	Boolean     horizontal;
+};
+
+static
+void Lists_scroll_to( const scroll_action_rec& action, short value )
+{
+	typedef Lists_scroll_action_rec action_rec;
+	
+	const action_rec& list_action = *(const action_rec*) &action;
+	
+	ListRec& list = **list_action.listH;
+	
+	short dh = 0;
+	short dv = 0;
+	
+	if ( ! list_action.horizontal )
+	{
+		dv = (list.visible.top - value) * list.cellSize.v;
+		
+		list.visible.bottom = list.visible.bottom - list.visible.top + value;
+		list.visible.top = value;
+	}
+	
+	RgnHandle updateRgn = NewRgn();
+	
+	raster_lock lock;
+	
+	ScrollRect( &list.rView, dh, dv, updateRgn );
+	
+	draw_list_cells( list, list.visible, updateRgn );
+	
+	DisposeRgn( updateRgn );
+}
+
+static Lists_scroll_action_rec scroll_action_context =
+{
+	&Lists_scroll_to,
+	1,
+	0,
+	NULL,
+};
+
 static
 pascal void LActivate_call( Boolean activating, ListHandle listH )
 {
@@ -234,11 +294,48 @@ pascal short LAddRow_call( short row_count, short row, ListHandle listH )
 }
 
 static
+void scrollbar_hit( ControlRef scrollbar, Point pt )
+{
+	if ( short part = TestControl( scrollbar, pt ) )
+	{
+		switch ( part )
+		{
+			case kControlIndicatorPart:
+				// not yet implemented
+				break;
+			
+			case kControlUpButtonPart:
+			case kControlDownButtonPart:
+			case kControlPageUpPart:
+			case kControlPageDownPart:
+				TrackControl( scrollbar, pt, &scrollbar_actionProc );
+				break;
+		}
+	}
+}
+
+static
 pascal Boolean LClick_call( Point pt, EventModifiers mods, ListHandle listH )
 {
 	ListRec& list = **listH;
 	
 	const Rect& view = list.rView;
+	
+	if ( pt.h >= view.right )
+	{
+		if ( ControlRef scrollbar = list.vScroll )
+		{
+			short n_visible_cells = list.visible.bottom - list.visible.top;
+			
+			scroll_action_context.page = n_visible_cells;
+			scroll_action_context.listH = listH;
+			scroll_action_context.horizontal = false;
+			
+			scrollbar_hit( scrollbar, pt );
+		}
+		
+		return false;
+	}
 	
 	if ( ! PtInRect( pt, &view ) )
 	{
@@ -455,6 +552,16 @@ void calc_visible( ListHandle listH )
 	
 	list.visible.bottom = visible_height + list.visible.top;
 	list.visible.right  = visible_width  + list.visible.left;
+	
+	if ( ControlRef scrollbar = list.vScroll )
+	{
+		const short dataHeight = list.dataBounds.bottom - list.dataBounds.top;
+		
+		const short fully_visible_height = view_height / list.cellSize.v;
+		
+		SetControlMaximum( scrollbar, dataHeight - fully_visible_height );
+		SetControlValue( scrollbar, list.visible.top );
+	}
 }
 
 static
@@ -534,6 +641,8 @@ pascal ListHandle LNew_call( const Rect*        view,
 		{
 			goto fail;
 		}
+		
+		list.vScroll[0]->contrlRfCon = (long) &scroll_action_context;
 	}
 	
 	if ( hScroll )
