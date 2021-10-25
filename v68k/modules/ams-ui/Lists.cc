@@ -251,10 +251,16 @@ pascal Boolean LClick_call( Point pt, EventModifiers mods, ListHandle listH )
 	const UInt32 prev_clock = list.clikTime;
 	const Cell   prev_click = list.lastClick;
 	
+	const Cell relative_cell =
+	{
+		(pt.v - view.top  + 0u) / list.cellSize.v,
+		(pt.h - view.left + 0u) / list.cellSize.h,
+	};
+	
 	const Cell clicked =
 	{
-		list.visible.top  + (pt.v - view.top  + 0u) / list.cellSize.v,
-		list.visible.left + (pt.h - view.left + 0u) / list.cellSize.h,
+		list.visible.top  + relative_cell.v,
+		list.visible.left + relative_cell.h,
 	};
 	
 	const bool double_click = clicked == prev_click  &&  now - prev_clock < 8;
@@ -274,8 +280,8 @@ pascal Boolean LClick_call( Point pt, EventModifiers mods, ListHandle listH )
 	{
 		if ( ! is_selected( list, clicked_index ) )
 		{
-			const short top  = view.top  + clicked.v * list.cellSize.v;
-			const short left = view.left + clicked.h * list.cellSize.h;
+			const short top  = view.top  + relative_cell.v * list.cellSize.v;
+			const short left = view.left + relative_cell.h * list.cellSize.h;
 			
 			const Rect rect =
 			{
@@ -295,7 +301,7 @@ pascal Boolean LClick_call( Point pt, EventModifiers mods, ListHandle listH )
 	
 	for ( short row = dataBounds.top;  row < dataBounds.bottom;  ++row )
 	{
-		const short y = row - dataBounds.top;
+		const short y = row - dataBounds.top - list.visible.top;
 		
 		const short top = view.top + list.cellSize.v * y;
 		
@@ -310,7 +316,7 @@ pascal Boolean LClick_call( Point pt, EventModifiers mods, ListHandle listH )
 			
 			mark_unselected( list, i );
 			
-			const short x = col - dataBounds.left;
+			const short x = col - dataBounds.left - list.visible.left;
 			
 			const short left = view.left + list.cellSize.h * x;
 			
@@ -447,10 +453,8 @@ void calc_visible( ListHandle listH )
 	const short visible_height = (view_height - 1) / list.cellSize.v + 1;
 	const short visible_width  = (view_width  - 1) / list.cellSize.h + 1;
 	
-	// No scrolling yet
-	
-	list.visible.bottom = visible_height;
-	list.visible.right  = visible_width;
+	list.visible.bottom = visible_height + list.visible.top;
+	list.visible.right  = visible_width  + list.visible.left;
 }
 
 static
