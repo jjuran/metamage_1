@@ -200,6 +200,8 @@ enum
 	tag_AppParmHandle_low_word,
 	tag_DlgFont,
 	tag_SCSIFlag,
+	tag_MenuDisable,
+	tag_MenuDisable_low_word,
 	tag_MBarHeight,
 	tag_last_A_trap,
 	n_words
@@ -371,6 +373,7 @@ static const global globals[] =
 	{ 0x0AEC, 4,    tag_AppParmHandle},
 	{ 0x0AFA, 2,    tag_DlgFont     },
 	{ 0x0B22, 2,    tag_SCSIFlag    },
+	{ 0x0B54, 4,    tag_MenuDisable },
 	{ 0x0BAA, 2,    tag_MBarHeight  },
 	{ 0x0BFE, 2,    tag_last_A_trap }
 };
