@@ -287,19 +287,19 @@ pascal void InitWindows_patch()
 	InitMenus();  // Some applications assume this.
 }
 
-pascal void GetWMgrPort_patch( struct GrafPort** port )
+pascal void GetWMgrPort_patch( GrafPtr* port )
 {
 	*port = WMgrPort;
 }
 
-pascal struct GrafPort* NewWindow_patch( void*                 storage,
-                                         const struct Rect*    bounds,
-                                         const unsigned char*  title,
-                                         Boolean               visible,
-                                         short                 procID,
-                                         struct GrafPort*      behind,
-                                         unsigned char         closeBox,
-                                         long                  refCon )
+pascal WindowRef NewWindow_patch( void*             storage,
+                                  const Rect*       bounds,
+                                  ConstStr255Param  title,
+                                  Boolean           visible,
+                                  short             procID,
+                                  WindowRef         behind,
+                                  Boolean           closeBox,
+                                  long              refCon )
 {
 	WindowPeek window = (WindowPeek) storage;
 	
@@ -431,9 +431,9 @@ struct WIND_resource
 	Str255  title;
 };
 
-pascal GrafPort* GetNewWindow_patch( short      resID,
+pascal WindowRef GetNewWindow_patch( short      resID,
                                      void*      storage,
-                                     GrafPort*  behind )
+                                     WindowRef  behind )
 {
 	Handle h = GetResource( 'WIND', resID );
 	
@@ -460,7 +460,7 @@ pascal GrafPort* GetNewWindow_patch( short      resID,
 	return window;
 }
 
-pascal void CloseWindow_patch( struct GrafPort* port )
+pascal void CloseWindow_patch( WindowRef port )
 {
 	if ( CurActivate == port )
 	{
@@ -519,7 +519,7 @@ pascal void CloseWindow_patch( struct GrafPort* port )
 	}
 }
 
-pascal void DisposeWindow_patch( struct GrafPort* window )
+pascal void DisposeWindow_patch( WindowRef window )
 {
 	CloseWindow( window );
 	
@@ -530,7 +530,7 @@ pascal void DisposeWindow_patch( struct GrafPort* window )
 #pragma mark Window Display
 #pragma mark -
 
-pascal void SetWTitle_patch( WindowPeek window, const unsigned char* s )
+pascal void SetWTitle_patch( WindowPeek window, ConstStr255Param s )
 {
 	if ( s != NULL  &&  s[ 0 ] != 0 )
 	{
@@ -566,13 +566,13 @@ pascal void SetWTitle_patch( WindowPeek window, const unsigned char* s )
 	PaintWhite = true;
 }
 
-pascal void GetWTitle_patch( WindowPeek window, unsigned char* s )
+pascal void GetWTitle_patch( WindowPeek window, StringPtr s )
 {
 	s[ 0 ] = '\0';
 	
 	if ( window->titleHandle )
 	{
-		const unsigned char* title = *window->titleHandle;
+		ConstStr255Param title = *window->titleHandle;
 		
 		const Size size = 1 + title[ 0 ];
 		
@@ -658,7 +658,7 @@ pascal void ShowWindow_patch( WindowPeek window )
 
 typedef pascal void (*window_painter)( WindowPeek, RgnHandle );
 
-pascal void ShowHide_patch( WindowRecord* window, Boolean showFlag )
+pascal void ShowHide_patch( WindowPeek window, Boolean showFlag )
 {
 	if ( window == NULL  ||  ! window->visible == ! showFlag )
 	{
@@ -684,7 +684,7 @@ pascal void ShowHide_patch( WindowRecord* window, Boolean showFlag )
 	paint_one_or_many( window, window->strucRgn );
 }
 
-pascal void HiliteWindow_patch( WindowPeek window, unsigned char hilite )
+pascal void HiliteWindow_patch( WindowPeek window, Boolean hilite )
 {
 	if ( window->hilited == hilite )
 	{
@@ -867,7 +867,7 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 	return inDesk;
 }
 
-pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
+pascal Boolean TrackGoAway_patch( WindowRef window, Point pt )
 {
 	RgnHandle mouseRgn = NewRgn();
 	
@@ -1282,7 +1282,7 @@ pascal void InvalRect_patch( const Rect* rect )
 	InvalRgn( rgn );
 }
 
-pascal void InvalRgn_patch( struct MacRegion** rgn )
+pascal void InvalRgn_patch( RgnHandle rgn )
 {
 	GrafPtr thePort = *get_addrof_thePort();
 	
@@ -1305,7 +1305,7 @@ pascal void ValidRect_patch( const Rect* rect )
 	ValidRgn( rgn );
 }
 
-pascal void ValidRgn_patch( struct MacRegion** rgn )
+pascal void ValidRgn_patch( RgnHandle rgn )
 {
 	GrafPtr thePort = *get_addrof_thePort();
 	
@@ -1326,7 +1326,7 @@ static short update_attempts;
 
 static WindowPeek window_with_pending_updateEvt;
 
-pascal void BeginUpdate_patch( struct GrafPort* window )
+pascal void BeginUpdate_patch( WindowRef window )
 {
 	window_with_pending_updateEvt = NULL;
 	
@@ -1372,7 +1372,7 @@ pascal void BeginUpdate_patch( struct GrafPort* window )
 	}
 }
 
-pascal void EndUpdate_patch( struct GrafPort* window )
+pascal void EndUpdate_patch( WindowRef window )
 {
 	WindowPeek w = (WindowPeek) window;
 	
@@ -1387,17 +1387,17 @@ pascal void EndUpdate_patch( struct GrafPort* window )
 #pragma mark Miscellaneous Routines
 #pragma mark -
 
-pascal void SetWRefCon_patch( WindowRecord* window, long data )
+pascal void SetWRefCon_patch( WindowPeek window, long data )
 {
 	window->refCon = data;
 }
 
-pascal long GetWRefCon_patch( WindowRecord* window )
+pascal long GetWRefCon_patch( WindowPeek window )
 {
 	return window->refCon;
 }
 
-pascal void SetWindowPic_patch( WindowRecord* window, PicHandle pic )
+pascal void SetWindowPic_patch( WindowPeek window, PicHandle pic )
 {
 	window->windowPic = pic;
 }
@@ -1418,7 +1418,7 @@ bool window_could_be_updated_now( WindowPeek w )
 	return ! exclusive_modal_updating  ||  w->windowKind == dialogKind;
 }
 
-pascal unsigned char CheckUpdate_patch( EventRecord* event )
+pascal Boolean CheckUpdate_patch( EventRecord* event )
 {
 	for ( WindowPeek w = WindowList;  w != NULL;  w = w->nextWindow )
 	{
