@@ -537,7 +537,25 @@ pascal long WDEF_0( short varCode, WindowPtr w, short message, long param )
 		case wNew:
 			if ( varCode & 0x8 )
 			{
-				window->dataHandle = NewHandleClear( 2 * sizeof (Rect) );
+				Handle h = NewHandle( sizeof (WStateData) );
+				
+				window->dataHandle = h;
+				
+				WStateData& zoom = *(WStateData*) *h;
+				
+				const short dh = -w->portBits.bounds.left;
+				const short dv = -w->portBits.bounds.top;
+				
+				zoom.userState = w->portRect;
+				
+				OffsetRect( &zoom.userState, dh, dv );
+				
+				const Rect& screenBounds = get_QDGlobals().screenBits.bounds;
+				
+				zoom.stdState.top    = screenBounds.top    + (2 + 19 + 20);
+				zoom.stdState.left   = screenBounds.left   + (2 + 1);
+				zoom.stdState.right  = screenBounds.right  - (2 + 2);
+				zoom.stdState.bottom = screenBounds.bottom - (1 + 2);
 			}
 			break;
 		
