@@ -23,6 +23,41 @@
 #define PSTR_LEN( s ) "\p" s, sizeof s
 
 
+static ConstStr255Param day_names[] =
+{
+	"\p" "",
+	"\p" "Sunday",
+	"\p" "Monday",
+	"\p" "Tuesday",
+	"\p" "Wednesday",
+	"\p" "Thursday",
+	"\p" "Friday",
+	"\p" "Saturday",
+};
+
+static ConstStr255Param month_names[] =
+{
+	"\p" "",
+	"\p" "January",
+	"\p" "February",
+	"\p" "March",
+	"\p" "April",
+	"\p" "May",
+	"\p" "June",
+	"\p" "July",
+	"\p" "August",
+	"\p" "September",
+	"\p" "October",
+	"\p" "November",
+	"\p" "December",
+};
+
+static inline
+unsigned char* fast_pstrcpy( unsigned char* p, const unsigned char* s )
+{
+	return (unsigned char*) fast_mempcpy( p, s + 1, s[ 0 ] );
+}
+
 static
 pascal void IUDateString_call( long dateTime, DateForm form, Str255 result )
 {
@@ -51,7 +86,26 @@ pascal void IUDateString_call( long dateTime, DateForm form, Str255 result )
 			break;
 		
 		case longDate:
-			fast_memcpy( result, PSTR_LEN( "<<longDate>>" ) );
+			++p;  // skip length byte
+			
+			p = fast_pstrcpy( p, day_names[ rec.dayOfWeek ] );
+			*p++ = ',';
+			*p++ = ' ';
+			
+			p = fast_pstrcpy( p, month_names[ rec.month ] );
+			*p++ = ' ';
+			
+			*p++ = rec.day / 10 + '0';
+			*p++ = rec.day % 10 + '0';
+			*p++ = ',';
+			*p++ = ' ';
+			
+			*p++ = year / 1000 + '0';  year %= 1000;
+			*p++ = year / 100  + '0';  year %= 100;
+			*p++ = year / 10   + '0';  year %= 10;
+			*p++ = year        + '0';
+			
+			result[ 0 ] = p - (result + 1);
 			break;
 		
 		case abbrevDate:
