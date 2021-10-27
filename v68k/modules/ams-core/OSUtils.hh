@@ -27,6 +27,8 @@ unsigned char* UprString_patch( unsigned char* s : __A0,
 
 short ReadDateTime_patch( long* secs : __A0 );
 
+unsigned long Date2Secs_patch( const DateTimeRec* date : __A0 );
+
 DateTimeRec* Secs2Date_patch( unsigned long  secs : __D0,
                               DateTimeRec*   date : __A0 );
 

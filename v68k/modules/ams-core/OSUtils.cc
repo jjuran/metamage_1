@@ -223,6 +223,37 @@ static const char month_days[] =
 	31, 30, 31,
 };
 
+unsigned long Date2Secs_patch( const DateTimeRec* date : __A0 )
+{
+	const unsigned long days_per_quad = 365 * 4 + 1;
+	
+	int years = date->year - 1904;
+	int quads = years / 4u;
+	
+	years %= 4u;
+	
+	int days  = date->day   - 1 + days_per_quad * quads;
+	int month = date->month - 1;
+	
+	if ( years == 0  &&  month > 1 )
+	{
+		// A leap year, in a month after February
+		
+		++days;
+	}
+	
+	while ( month-- > 0 )
+	{
+		days += month_days[ month ];
+	}
+	
+	unsigned long hours = 24 * days  + date->hour;
+	unsigned long mins  = 60 * hours + date->minute;
+	unsigned long secs  = 60 * mins  + date->second;
+	
+	return secs;
+}
+
 DateTimeRec* Secs2Date_patch( unsigned long  secs : __D0,
                               DateTimeRec*   date : __A0 )
 {

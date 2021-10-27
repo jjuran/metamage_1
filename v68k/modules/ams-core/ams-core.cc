@@ -293,7 +293,7 @@ void install_OSUtils()
 	TBTRAP( Dequeue   );  // A96F
 	
 	TBTRAP( Secs2Date );  // A9C6
-	
+	TBTRAP( Date2Secs );  // A9C7
 	TBTRAP( SysBeep   );  // A9C8
 	TBTRAP( SysError  );  // A9C9
 }
