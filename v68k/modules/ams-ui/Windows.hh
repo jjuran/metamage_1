@@ -102,4 +102,6 @@ pascal void CalcVis_patch( WindowPeek window );
 
 pascal void CalcVBehind_patch( WindowPeek w, RgnHandle rgn );
 
+pascal void ZoomWindow_patch( WindowPeek window, short part, Boolean front );
+
 #endif

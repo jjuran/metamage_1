@@ -98,6 +98,8 @@ void initialize_low_memory_globals()
 static
 void install_Windows()
 {
+	TBTRAP( ZoomWindow    );  // A83A
+	
 	TBTRAP( DrawGrowIcon  );  // A904
 	TBTRAP( DragGrayRgn   );  // A905
 	TBTRAP( NewString     );  // A906

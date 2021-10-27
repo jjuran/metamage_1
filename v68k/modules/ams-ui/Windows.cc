@@ -1600,3 +1600,24 @@ pascal void CalcVBehind_patch( WindowPeek window, RgnHandle rgn )
 		CalcVis_patch( w );
 	}
 }
+
+pascal void ZoomWindow_patch( WindowPeek window, short part, Boolean front )
+{
+	if ( Handle h = window->dataHandle )
+	{
+		const WStateData& zoom = *(WStateData*) *h;
+		
+		const Rect& user = zoom.userState;
+		const Rect& std  = zoom.stdState;
+		
+		const Rect& rect = part == inZoomIn ? zoom.userState : zoom.stdState;
+		
+		const short width  = rect.right - rect.left;
+		const short height = rect.bottom - rect.top;
+		
+		WindowRef w = (WindowRef) window;
+		
+		MoveWindow( w, rect.left, rect.top, front );
+		SizeWindow( w, width,     height,   true  );
+	}
+}
