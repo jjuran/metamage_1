@@ -237,10 +237,10 @@ DateTimeRec* Secs2Date_patch( unsigned long  secs : __D0,
 	date->hour   = hour % 24;
 	days         = hour / 24;
 	
+	date->dayOfWeek = (days + 5) % 7 + 1;  // 1904-01-01 is a Friday
+	
 	const unsigned short quads = days / days_per_quad;
 	days                       = days % days_per_quad;
-	
-	date->dayOfWeek = (days + 5) % 7 + 1;  // 1904-01-01 is a Friday
 	
 	const unsigned short feb29 = 31 + 28;
 	
