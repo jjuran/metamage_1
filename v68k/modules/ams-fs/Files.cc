@@ -524,14 +524,27 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 			fcb->fcbPLen = new_eof;
 		}
 		
+		const vfs_table* vfs = vfs_from_vcb( fcb->fcbVPtr );
+		
+		if ( vfs->Write )
+		{
+			if ( OSErr err = vfs->Write( fcb, pb->ioBuffer, count ) )
+			{
+				return pb->ioResult = err;
+			}
+		}
+		
 		fast_memcpy( &fcb->fcbBfAdr[ mark ], pb->ioBuffer, count );
 		
 		pb->ioActCount = count;
 		pb->ioPosOffset = mark += count;
 		
-		if ( OSErr err = flush_file( fcb ) )
+		if ( ! vfs->Write )
 		{
-			return pb->ioResult = err;
+			if ( OSErr err = flush_file( fcb ) )
+			{
+				return pb->ioResult = err;
+			}
 		}
 	}
 	
