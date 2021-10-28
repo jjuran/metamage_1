@@ -131,6 +131,20 @@ OSErr documents_Close( FCB* fcb )
 	return noErr;
 }
 
+OSErr documents_Write( FCB* fcb, const char* buffer, uint32_t length )
+{
+	temp_A4 a4;
+	
+	StringPtr p = *(StringHandle) fcb->fcbFlNum;
+	
+	plus::string name( p,              plus::delete_never );
+	plus::string data( buffer, length, plus::delete_never );
+	
+	int err = try_to_write( docfs_fd, name, data, fcb->fcbCrPs );
+	
+	return err ? ioErr : noErr;
+}
+
 OSErr documents_Create( VCB* vcb, const uint8_t* name )
 {
 	temp_A4 a4;
