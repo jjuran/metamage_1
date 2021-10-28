@@ -169,16 +169,26 @@ OSErr documents_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 {
 	const Byte is_rsrc = trap_word;  // Open is A000, OpenRF is A00A
 	
+	const int path_len = name[ 0 ] + !! is_rsrc * STRLEN( "/..namedfork/rsrc" );
+	
+	Str255 path;
+	
+	unsigned char* p = path;
+	
+	*p++ = path_len;
+	
+	p = (unsigned char*) fast_mempcpy( p, name + 1, name[ 0 ] );
+	
 	if ( is_rsrc )
 	{
-		return extFSErr;
+		fast_mempcpy( p, STR_LEN( "/..namedfork/rsrc" ) );
 	}
 	
 	temp_A4 a4;
 	
 	plus::var_string file_data;
 	
-	int err = try_to_get( docfs_fd, name, file_data );
+	int err = try_to_get( docfs_fd, path, file_data );
 	
 	if ( err < 0 )
 	{
@@ -190,7 +200,7 @@ OSErr documents_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 	
 	const size_t size = file_data.size();
 	
-	StringHandle h = PtrToHand( name, 1 + name[ 0 ] );
+	StringHandle h = PtrToHand( path, 1 + path[ 0 ] );
 	
 	fcb->fcbFlNum  = (long) h;
 	
