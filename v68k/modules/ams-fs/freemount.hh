@@ -26,6 +26,11 @@ int try_to_get( const char* begin, unsigned len, plus::var_string& data );
 
 int try_to_put( int fd, const plus::string& path, const plus::string& data );
 
+int try_to_write( int                  fd,
+                  const plus::string&  path,
+                  const plus::string&  data,
+                  unsigned             offset );
+
 int try_to_list( int I, int O, const plus::string& path, plus::var_string& r );
 
 inline

@@ -89,6 +89,34 @@ int try_to_put( int fd, const plus::string& path, const plus::string& data )
 	}
 }
 
+int try_to_write( int                  fd,
+                  const plus::string&  path,
+                  const plus::string&  data,
+                  unsigned             offset )
+{
+	namespace F = freemount;
+	
+	scoped_zone null_zone;
+	
+	try
+	{
+		const int in  = fd;
+		const int out = fd;
+		
+		F::synced_pwrite( in, out, plus::utf8_from_mac( path ), data, offset );
+		
+		return 0;
+	}
+	catch ( const F::path_error& e )
+	{
+		return -e.error;
+	}
+	catch ( ... )
+	{
+		return -EIO;
+	}
+}
+
 static
 void per_dirent( const char* name, uint32_t size, void* x )
 {
