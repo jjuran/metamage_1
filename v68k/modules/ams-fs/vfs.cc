@@ -24,6 +24,7 @@ static const filesystem_vtable< uint8_t > bootstrap_vtable =
 	
 	NULL,
 	NULL,
+	NULL,
 	&bootstrap_open_fork,
 	NULL,
 	&bootstrap_GetFileInfo,
@@ -35,6 +36,7 @@ static const filesystem_vtable< uint8_t > documents_vtable =
 	&documents_get_nth,
 	
 	&documents_Close,
+	&documents_Write,
 	&documents_Create,
 	&documents_open_fork,
 	&documents_FlushFile,
@@ -49,6 +51,7 @@ static const filesystem_vtable< macbinary::header > MacBinary_vtable =
 	
 	&MacBinary_Close,
 	NULL,
+	NULL,
 	&MacBinary_open_fork,
 	NULL,
 	&MacBinary_GetFileInfo,
@@ -59,6 +62,7 @@ static const filesystem_vtable< mfs::file_directory_entry > MFS_vtable =
 	&MFS_lookup,
 	&MFS_get_nth,
 	
+	NULL,
 	NULL,
 	NULL,
 	&MFS_open_fork,
