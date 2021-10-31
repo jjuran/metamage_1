@@ -10,8 +10,10 @@ void* os_trap_table     [] : 1 * 1024;
 void* toolbox_trap_table[] : 3 * 1024;
 
 
+typedef unsigned short trap_u16;
+
 static
-void*& find_trap( short trapNum : __D0 )
+void*& find_trap( trap_u16 trapNum : __D0, trap_u16 trap_word : __D1 )
 {
 	void** table;
 	short  mask;
@@ -30,12 +32,14 @@ void*& find_trap( short trapNum : __D0 )
 	return table[ trapNum & mask ];
 }
 
-void* GetTrapAddress_patch( unsigned short trapNum : __D0 )
+void* GetTrapAddress_patch( short trapNum : __D0, short trap_word : __D1 )
 {
-	return find_trap( trapNum );
+	return find_trap( trapNum, trap_word );
 }
 
-void SetTrapAddress_patch( unsigned short trapNum : __D0, void* addr : __A0 )
+void SetTrapAddress_patch( void* addr      : __A0,
+                           short trapNum   : __D0,
+                           short trap_word : __D1 )
 {
-	find_trap( trapNum ) = addr;
+	find_trap( trapNum, trap_word ) = addr;
 }
