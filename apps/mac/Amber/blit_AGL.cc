@@ -96,9 +96,11 @@ void create_AGL_context()
 		Leave GL_TEXTURE_MAG_FILTER set to its default of GL_LINEAR for now.
 		Perhaps in the future we'll have a switch to use GL_NEAREST instead.
 		
-		We don't have any cases of minification currently, so it doesn't
-		matter what GL_TEXTURE_MIN_FILTER is set to.
+		Set GL_TEXTURE_MIN_FILTER to GL_LINEAR.  Apparently NVIDIA's GPUs
+		default to GL_NEAREST, which looks terrible when viewing at 50%.
 	*/
+	
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	
 	// Leave GL_TEXTURE_BASE_LEVEL set to its default of zero.
 	
