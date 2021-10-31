@@ -12,13 +12,32 @@ void* toolbox_trap_table[] : 3 * 1024;
 
 typedef unsigned short trap_u16;
 
+static inline
+bool is_toolbox_trap_num( trap_u16 trapNum : __D0 )
+{
+	trapNum &= 0x01FF;
+	
+	return trapNum >= 0x50  &&  trapNum != 0x54  &&  trapNum != 0x57;
+}
+
 static
 void*& find_trap( trap_u16 trapNum : __D0, trap_u16 trap_word : __D1 )
 {
 	void** table;
 	short  mask;
 	
-	if ( trapNum & 0x0800 )
+	/*
+		If bit 9 is set in the trap word, then bit 10 specifies which trap
+		table to use.  Failing that, we have to guess, based on which traps
+		existed in the 64K ROM.
+		
+		Thanks to Elliot Nunn for the guessing fallback logic (from mps).
+	*/
+	
+	bool is_toolbox = trap_word & 0x0200 ? trap_word & 0x0400
+	                : is_toolbox_trap_num( trapNum );
+	
+	if ( is_toolbox )
 	{
 		table = toolbox_trap_table;
 		mask  = 0x03FF;
