@@ -115,7 +115,7 @@ bool patched_mempcpy( v68k::emulator& emu )
 		
 		if ( uint8_t* p = emu.translate( pc, 8, emu.data_space(), mem_write ) )
 		{
-			if ( memcmp( p, MEMPCPY + 4, 8 ) == 0 )
+			if ( memcmp( p, &MEMPCPY[ 4 ], 8 ) == 0 )
 			{
 				memcpy( p, JMP_FAST_MEMPCPY, 4 );
 				
