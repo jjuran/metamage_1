@@ -6,6 +6,8 @@
 #include "Carbon.hh"
 
 
+#ifndef __APPLE__
+
 #if TARGET_API_MAC_CARBON
 
 /*
@@ -29,3 +31,5 @@ void full_stop()
 }
 
 #endif  // #if TARGET_API_MAC_CARBON
+
+#endif  // #ifndef __APPLE__

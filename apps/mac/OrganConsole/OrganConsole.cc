@@ -33,6 +33,9 @@
 #include "mac_app/scoped_EventMask.hh"
 #include "mac_app/state.hh"
 
+// posix-utils
+#include "posix/bindir.hh"
+
 // OrganConsole
 #include "fourtone.hh"
 #include "keymap.hh"
@@ -154,7 +157,7 @@ Boolean wait_next_event( EventRecord& event )
 	return GetNextEvent( everyEvent, &event );
 }
 
-int main()
+int main( int argc, char** argv )
 {
 	using mac::app::quitting;
 	
@@ -172,6 +175,14 @@ int main()
 	{
 		mac::app::install_basic_event_handlers();
 	}
+	
+#ifdef __APPLE__
+	
+	int bindir_fd = bindir( argv[ 0 ] );
+	
+	fchdir( bindir_fd );
+	
+#endif
 	
 	scoped_EventMask eventMask( everyEvent );
 	
