@@ -1,0 +1,37 @@
+# The first sung measure of the Hallelujah Chorus from Handel's /Messiah/
+
+# 1.059463094359295^12 ~= 2
+# 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
+
+const semitone_numer = 69433
+const semitone_denom = 2^16
+
+def transpose (n, pitch) { pitch * semitone_numer^n div semitone_denom^n }
+
+const C8 = 0x184ada * 2;
+const C0 = C8 div 2^8
+
+const adj = 2  # Scored in D major
+
+def C  (o) { transpose( adj, C8 div 2^(8 - o) ) }
+def E  (o) { transpose( 4, C o ) }
+def F  (o) { transpose( 5, C o ) }
+def G  (o) { transpose( 7, C o ) }
+def A  (o) { transpose( 9, C o ) }
+
+const audiograph =
+[
+	# By George Frideric Handel.
+	# 8-bit arrangement and notation copyright 2021 Joshua Juran.
+	
+	6: [ C 3, E 4, G 4, C 5 ],
+	2: [ E 3, C 4, G 4, G 4 ],
+	2: [ F 3, C 4, F 4, A 4 ],
+	2: [ C 3, C 4, E 4, G 4 ],
+	4: [],
+]
+
+end.
+
+Source: <https://downloads.bbc.co.uk/musictv/sing/
+hallelujah/resources/bbc_sing_hallelujah_chorus.pdf>
