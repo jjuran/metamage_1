@@ -15,6 +15,8 @@ namespace sndpipe
 
 typedef sndpipe::FTSynthRec_flat_buffer ft_buffer;
 
+void ft_clear();
+
 short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset );
 
 #endif

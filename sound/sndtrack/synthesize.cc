@@ -185,6 +185,12 @@ short synthesize( sample_buffer& output )
 			
 			case ftMode_flat_buffer:
 				count = ft_synth( output, sound.four_tone, reset );
+				
+				if ( stopping )
+				{
+					ft_clear();
+				}
+				
 				break;
 			
 			default:

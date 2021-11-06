@@ -91,6 +91,14 @@ void diminish( sample_buffer& output )
 	memset( &data[ 256 ], '\0', sizeof output.data - 256 * sizeof *data );
 }
 
+void ft_clear()
+{
+	prevRate1 = 0;
+	prevRate2 = 0;
+	prevRate3 = 0;
+	prevRate4 = 0;
+}
+
 short ft_synth( sample_buffer& output, ft_buffer& rec, bool reset )
 {
 	if ( rec.duration <= 0 )
