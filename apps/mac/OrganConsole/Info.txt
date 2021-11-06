@@ -1,0 +1,7 @@
+CFBundleExecutable:  "Organ Console"
+CFBundleIconFile:    "Organ Console.icns"
+CFBundleName:        "Organ Console"
+CFBundlePackageType: 'APPL'
+CFBundleSignature:   '|gan'
+CFBundleGetInfoString: "Copyright 2021-2023 Josh Juran"
+CFBundleShortVersionString: "0.5"
