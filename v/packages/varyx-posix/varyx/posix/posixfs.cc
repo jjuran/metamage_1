@@ -257,7 +257,7 @@ namespace posix
 				Not a tty:
 				
 				POSIX specifies ENOTTY.
-				Mac OS X yields EPERM (but ENXIO for sockets)
+				Mac OS X yields EPERM (but ENXIO or 102 for sockets)
 				Linux generates EINVAL for pipes.
 			*/
 			
@@ -266,6 +266,7 @@ namespace posix
 				case ENOTTY:
 				case EINVAL:
 				case ENXIO:
+				case 102:  // EOPNOTSUPP in later OS X, but not always
 				case EPERM:
 					break;
 				
