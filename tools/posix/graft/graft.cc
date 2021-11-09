@@ -23,10 +23,11 @@
 
 #define PROGRAM  "graft"
 
-#define USAGE "Usage: " PROGRAM " [--fd N] server-command \"//\" client-command\n"
+#define USAGE "Usage: " PROGRAM " [--fd N] server-command \"//\" client-command"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
+#define WARN( s )  write( STDERR_FILENO, STR_LEN( s "\n" ) );
 
 #define CHECK_N( call )  check_n( call, #call )
 
@@ -46,7 +47,7 @@ int check_n( int result, const char* code )
 static
 int usage()
 {
-	write( STDERR_FILENO, STR_LEN( USAGE ) );
+	WARN( USAGE );
 	return 1;
 }
 
