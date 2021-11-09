@@ -196,9 +196,11 @@ int main( int argc, char** argv )
 			
 			chosen_fd = atoi( *args++ );
 			
-			if ( chosen_fd < 3 )
+			if ( chosen_fd == 2 )
 			{
-				return usage();
+				usage();
+				WARN( "       (where N is any file descriptor except 2)" );
+				return 1;
 			}
 		}
 		
