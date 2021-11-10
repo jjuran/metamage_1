@@ -89,7 +89,11 @@ AEDesc coerce_string_to_AEDesc( const plus::string& s )
 	{
 		// Either invalid UTF-8, or non-MacRoman UTF-8 code points
 		
-		enum { typeUTF8Text = 'utf8' };
+		enum
+		{
+			typeData     = 'tdta',
+			typeUTF8Text = 'utf8',
+		};
 		
 		type = size == conv::non_Mac_utf8 ? typeUTF8Text : typeData;
 		data = begin;
