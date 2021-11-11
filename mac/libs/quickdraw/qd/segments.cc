@@ -35,18 +35,22 @@ namespace quickdraw
 	
 	void segments_box::erase( short* it )
 	{
-		std::copy( it + 1, end(), it );
+		short* dst = it;
+		short* src = it + 1;
+		
+		memmove( dst, src, (char*) end() - (char*) src );
 		
 		--its_size;
 	}
 	
 	void segments_box::insert( short* it, short h )
 	{
-		short* old_end = end();
+		short* src = it;
+		short* dst = it + 1;
+		
+		memmove( dst, src, (char*) end() - (char*) src );
 		
 		++its_size;
-		
-		std::copy_backward( it, old_end, end() );
 		
 		*it = h;
 	}
