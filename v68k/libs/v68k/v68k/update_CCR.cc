@@ -6,7 +6,6 @@
 #include "v68k/update_CCR.hh"
 
 // v68k
-#include "v68k/macros.hh"
 #include "v68k/op_params.hh"
 #include "v68k/state.hh"
 
@@ -25,56 +24,86 @@ namespace v68k
 	#define C( x )  (!!(x) << 0)
 	
 	
-	static inline uint8_t common_NZ( int32_t data )
+	static inline
+	uint32_t additive_overflow( uint32_t a, uint32_t b, uint32_t c )
 	{
+		return ~(a ^ b) & (a ^ c);
+	}
+	
+	static inline
+	uint32_t additive_carry( uint32_t a, uint32_t b, uint32_t c )
+	{
+		return (a & b) | (~c & b) | (a & ~c);
+	}
+	
+	static inline
+	uint8_t common_NZ( int32_t data, int pb_size )
+	{
+		int n_bits = 1 << (pb_size + 2);  // 1, 2, 3 -> 3, 4, 5 -> 8, 16, 32
+		
+		data = (uint32_t) data << (32 - n_bits);  // 8, 16, 32 -> 24, 16, 0
+		
 		return + N( data <  0 )
 		       | Z( data == 0 );
 	}
 	
-	static inline uint8_t ADDX_NZ( int32_t data, uint8_t nzvc )
+	static inline
+	uint8_t ADDX_NZ( int32_t data, int pb_size, uint8_t nzvc )
 	{
+		int n_bits = 1 << (pb_size + 2);  // 1, 2, 3 -> 3, 4, 5 -> 8, 16, 32
+		
+		data = (uint32_t) data << (32 - n_bits);  // 8, 16, 32 -> 24, 16, 0
+		
 		return +   N( data <  0 )
 		       | ( Z( data == 0 ) & nzvc & 0x4 );
 	}
 	
-	static inline uint8_t additive_VC( int32_t a, int32_t b, int32_t c )
+	static inline
+	uint8_t additive_VC( uint32_t a, uint32_t b, uint32_t c, int pb_size )
 	{
-		const bool S = a < 0;
-		const bool D = b < 0;
-		const bool R = c < 0;
+		uint32_t V = additive_overflow( a, b, c );
+		uint32_t C = additive_carry   ( a, b, c );
 		
-		return + V( (S == D) & (S != R) )
-		       | C( S & D | !R & D | S & !R );
+		int n_bits = 1 << (pb_size + 2);  // 1, 2, 3 -> 3, 4, 5 -> 8, 16, 32
+		
+		int v_shift = n_bits - 2;
+		int c_shift = n_bits - 1;
+		
+		int v_mask = 0x02;
+		int c_mask = 0x01;
+		
+		return + (V >> v_shift & v_mask)
+		       | (C >> c_shift & c_mask);
 	}
 	
 	static void update_CCR_ADD( processor_state& s, const op_params& pb )
 	{
-		const int32_t a = sign_extend( pb.first,  pb.size );
-		const int32_t b = sign_extend( pb.second, pb.size );
-		const int32_t c = sign_extend( pb.result, pb.size );
+		const int32_t a = pb.first;
+		const int32_t b = pb.second;
+		const int32_t c = pb.result;
 		
-		s.sr.nzvc = common_NZ( c )
-		          | additive_VC( a, b, c );
+		s.sr.nzvc = common_NZ( c, pb.size )
+		          | additive_VC( a, b, c, pb.size );
 	}
 	
 	static void update_CCR_SUB( processor_state& s, const op_params& pb )
 	{
-		const int32_t a = sign_extend( pb.first,  pb.size );
-		const int32_t b = sign_extend( pb.second, pb.size );
-		const int32_t d = sign_extend( b - a,     pb.size );
+		const int32_t a = pb.first;
+		const int32_t b = pb.second;
+		const int32_t d = b - a;
 		
-		s.sr.nzvc = common_NZ( d )
-		          | additive_VC( a, d, b );  // b is the sum
+		s.sr.nzvc = common_NZ( d, pb.size )
+		          | additive_VC( a, d, b, pb.size );  // b is the sum
 	}
 	
 	static void update_CCR_ADDX( processor_state& s, const op_params& pb )
 	{
-		const int32_t a = sign_extend( pb.first,  pb.size ) - s.sr.x;
-		const int32_t b = sign_extend( pb.second, pb.size );
-		const int32_t c = sign_extend( pb.result, pb.size );
+		const int32_t a = pb.first - s.sr.x;
+		const int32_t b = pb.second;
+		const int32_t c = pb.result;
 		
-		s.sr.nzvc = ADDX_NZ( c, s.sr.nzvc )
-		          | additive_VC( a, b, c );
+		s.sr.nzvc = ADDX_NZ( c, pb.size, s.sr.nzvc )
+		          | additive_VC( a, b, c, pb.size );
 	}
 	
 	static void update_CCR_SUBX( processor_state& s, const op_params& pb )
@@ -83,15 +112,13 @@ namespace v68k
 		const int32_t b = pb.second;
 		const int32_t d = pb.result;
 		
-		s.sr.nzvc = ADDX_NZ( d, s.sr.nzvc )
-		          | additive_VC( a, d, b );  // b is the sum
+		s.sr.nzvc = ADDX_NZ( d, pb.size, s.sr.nzvc )
+		          | additive_VC( a, d, b, pb.size );  // b is the sum
 	}
 	
 	static void update_CCR_TST( processor_state& s, const op_params& pb )
 	{
-		const int32_t data = sign_extend( pb.result, pb.size );
-		
-		s.sr.nzvc = common_NZ( data );
+		s.sr.nzvc = common_NZ( pb.result, pb.size );
 	}
 	
 	static void update_CCR_BTST( processor_state& s, const op_params& pb )
@@ -125,9 +152,7 @@ namespace v68k
 				considers only the 16-bit quotient.
 			*/
 			
-			const int32_t data = sign_extend( pb.result, word_sized );
-			
-			s.sr.nzvc = common_NZ( data );
+			s.sr.nzvc = common_NZ( pb.result, word_sized );
 		}
 	}
 	
