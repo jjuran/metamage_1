@@ -48,17 +48,6 @@ namespace v68k
 	}
 	
 	static inline
-	uint8_t ADDX_NZ( int32_t data, int pb_size, uint8_t nzvc )
-	{
-		int n_bits = 1 << (pb_size + 2);  // 1, 2, 3 -> 3, 4, 5 -> 8, 16, 32
-		
-		data = (uint32_t) data << (32 - n_bits);  // 8, 16, 32 -> 24, 16, 0
-		
-		return +   N( data <  0 )
-		       | ( Z( data == 0 ) & nzvc & 0x4 );
-	}
-	
-	static inline
 	uint8_t additive_VC( uint32_t a, uint32_t b, uint32_t c, int pb_size )
 	{
 		uint32_t V = additive_overflow( a, b, c );
@@ -76,14 +65,32 @@ namespace v68k
 		       | (C >> c_shift & c_mask);
 	}
 	
+	static
+	void update_CCR_additive( processor_state& s, int32_t result,
+	                          int32_t a, int32_t b, int32_t c, int pb_size )
+	{
+		s.sr.nzvc = common_NZ( result, pb_size )
+		          | additive_VC( a, b, c, pb_size );
+	}
+	
+	static inline
+	void update_CCR_additive_x( processor_state& s, int32_t result,
+	                            int32_t a, int32_t b, int32_t c, int pb_size )
+	{
+		uint8_t nzvc = s.sr.nzvc;
+		
+		update_CCR_additive( s, result, a, b, c, pb_size );
+		
+		s.sr.nzvc &= nzvc | ~0x4;
+	}
+	
 	static void update_CCR_ADD( processor_state& s, const op_params& pb )
 	{
 		const int32_t a = pb.first;
 		const int32_t b = pb.second;
 		const int32_t c = pb.result;
 		
-		s.sr.nzvc = common_NZ( c, pb.size )
-		          | additive_VC( a, b, c, pb.size );
+		update_CCR_additive( s, c, a, b, c, pb.size );
 	}
 	
 	static void update_CCR_SUB( processor_state& s, const op_params& pb )
@@ -92,8 +99,7 @@ namespace v68k
 		const int32_t b = pb.second;
 		const int32_t d = b - a;
 		
-		s.sr.nzvc = common_NZ( d, pb.size )
-		          | additive_VC( a, d, b, pb.size );  // b is the sum
+		update_CCR_additive( s, d, a, d, b, pb.size );  // b is the sum
 	}
 	
 	static void update_CCR_ADDX( processor_state& s, const op_params& pb )
@@ -102,8 +108,7 @@ namespace v68k
 		const int32_t b = pb.second;
 		const int32_t c = pb.result;
 		
-		s.sr.nzvc = ADDX_NZ( c, pb.size, s.sr.nzvc )
-		          | additive_VC( a, b, c, pb.size );
+		update_CCR_additive_x( s, c, a, b, c, pb.size );
 	}
 	
 	static void update_CCR_SUBX( processor_state& s, const op_params& pb )
@@ -112,8 +117,7 @@ namespace v68k
 		const int32_t b = pb.second;
 		const int32_t d = pb.result;
 		
-		s.sr.nzvc = ADDX_NZ( d, pb.size, s.sr.nzvc )
-		          | additive_VC( a, d, b, pb.size );  // b is the sum
+		update_CCR_additive_x( s, d, a, d, b, pb.size );  // b is the sum
 	}
 	
 	static void update_CCR_TST( processor_state& s, const op_params& pb )
