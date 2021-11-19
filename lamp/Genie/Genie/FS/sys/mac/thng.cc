@@ -71,73 +71,6 @@ namespace Nitrogen
 	}
 	
 	
-	class Component_Container
-	{
-		private:
-			// not implemented:
-			Component_Container& operator=( const Component_Container& );
-		
-		public:
-			typedef UInt16 size_type;
-			typedef SInt16 difference_type;
-			
-			typedef Component value_type;
-			
-			typedef const value_type &reference;
-			typedef const value_type &const_reference;
-			
-			typedef const value_type *pointer;
-			typedef const value_type *const_pointer;
-			
-			class const_iterator
-			{
-				friend class Component_Container;
-				
-				public:
-					typedef Component_Container::size_type  size_type;
-					typedef Component_Container::reference  reference;
-					typedef Component_Container::pointer    pointer;
-					
-					typedef std::forward_iterator_tag iterator_category;
-					
-				private:
-					Component component;
-					
-					const_reference GetReference() const
-					{
-						return component;
-					}
-					
-					void Advance()
-					{
-						component = FindNextComponent( component );
-					}
-					
-					const_iterator( Component c = NULL ) : component( c )
-					{
-					}
-					
-				public:
-					const_iterator& operator++()      { Advance();  return *this; }
-					const_iterator operator++(int)    { const_iterator old = *this; operator++(); return old; }
-					
-					reference operator*() const       { return GetReference(); }
-					pointer operator->() const        { return &GetReference(); }
-					
-					friend bool operator==( const const_iterator& a, const const_iterator& b )    { return a.component == b.component; }
-					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
-			};
-			
-			const_iterator begin() const              { return const_iterator( FindNextComponent() ); }
-			const_iterator end() const                { return const_iterator(); }
-	};
-	
-	inline Component_Container Components()
-	{
-		return Component_Container();
-	}
-	
-	
 	static ComponentDescription GetComponentInfo( Component  component,
 	                                              Handle     name = Handle(),
 	                                              Handle     info = Handle(),
@@ -215,11 +148,7 @@ namespace Genie
 	
 	static void thng_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
-		N::Component_Container sequence = N::Components();
-		
-		typedef N::Component_Container::const_iterator Iter;
-		
-		const Iter end = sequence.end();
+		Component component = NULL;
 		
 		vfs::dir_entry entry;
 		
@@ -227,9 +156,9 @@ namespace Genie
 		
 		char* p = entry.name.reset( 8 );
 		
-		for ( Iter it = sequence.begin();  it != end;  ++it )
+		while ( (component = N::FindNextComponent( component )) )
 		{
-			gear::encode_32_bit_hex( (unsigned) *it, p );
+			gear::encode_32_bit_hex( (unsigned) component, p );
 			
 			cache.push_back( entry );
 		}
