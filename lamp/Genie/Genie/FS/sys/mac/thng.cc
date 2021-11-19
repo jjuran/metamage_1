@@ -179,7 +179,8 @@ namespace Genie
 	}
 	
 	
-	static bool is_valid_Component_name( const plus::string& name )
+	static inline
+	bool is_valid_Component_name( const plus::string& name )
 	{
 		if ( !canonical_32_bit_hex::applies( name ) )
 		{
