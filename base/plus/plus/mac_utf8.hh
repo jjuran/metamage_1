@@ -16,6 +16,9 @@
 namespace plus
 {
 	
+	string::size_type sizeof_utf8_from_mac( const string& mac  );
+	string::size_type sizeof_mac_from_utf8( const string& utf8 );
+	
 	string utf8_from_mac( const char* p, string::size_type n );
 	string mac_from_utf8( const char* p, string::size_type n );
 	

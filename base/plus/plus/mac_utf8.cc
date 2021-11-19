@@ -15,6 +15,20 @@
 namespace plus
 {
 	
+	string::size_type sizeof_utf8_from_mac( const string& mac )
+	{
+		const char* begin = mac.begin();
+		
+		return conv::sizeof_utf8_from_mac( begin, begin + mac.size() );
+	}
+	
+	string::size_type sizeof_mac_from_utf8( const string& utf8 )
+	{
+		const char* begin = utf8.begin();
+		
+		return conv::sizeof_mac_from_utf8( begin, begin + utf8.size() );
+	}
+	
 	static
 	bool has_non_ascii( const char* begin, const char* end )
 	{
