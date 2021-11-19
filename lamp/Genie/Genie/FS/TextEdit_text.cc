@@ -50,11 +50,13 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
-		if ( length < params.its_utf8_text.length() )
+		if ( length < plus::sizeof_utf8_from_mac( params.its_mac_text ) )
 		{
-			params.its_utf8_text.resize( length );
+			plus::var_string s = plus::utf8_from_mac( params.its_mac_text );
 			
-			params.its_mac_text = plus::mac_from_utf8( params.its_utf8_text );
+			s.resize( length );
+			
+			params.its_mac_text = plus::mac_from_utf8( s );
 			
 			params.itsValidLength = params.its_mac_text.length();
 		}
@@ -71,7 +73,9 @@ namespace Genie
 	
 	static off_t TextEdit_text_geteof( vfs::filehandle* file )
 	{
-		return TextEditParameters::Get( view_key( file ) ).its_utf8_text.size();
+		TextEditParameters& params = TextEditParameters::Get( view_key( file ) );
+		
+		return plus::sizeof_utf8_from_mac( params.its_mac_text );
 	}
 	
 	static
@@ -115,7 +119,7 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
-		const plus::string& s = params.its_utf8_text;
+		const plus::string& s = plus::utf8_from_mac( params.its_mac_text );
 		
 		if ( offset >= s.size() )
 		{
@@ -139,7 +143,7 @@ namespace Genie
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
-		plus::var_string& s = params.its_utf8_text;
+		plus::var_string s = plus::utf8_from_mac( params.its_mac_text );
 		
 		if ( offset + n_bytes > s.size() )
 		{
@@ -163,7 +167,9 @@ namespace Genie
 	
 	static off_t textedit_text_geteof( const vfs::node* that )
 	{
-		return TextEditParameters::Get( that->owner() ).its_utf8_text.size();
+		TextEditParameters& params = TextEditParameters::Get( that->owner() );
+		
+		return plus::sizeof_utf8_from_mac( params.its_mac_text );
 	}
 	
 	static void textedit_text_seteof( const vfs::node* that, off_t length )

@@ -763,8 +763,6 @@ namespace Genie
 			s += saved_input;
 		}
 		
-		params.its_utf8_text = plus::utf8_from_mac( s );
-		
 		if ( params.itsSelection.start >= start_of_input )
 		{
 			params.itsSelection.start += bytes_inserted;
