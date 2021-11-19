@@ -286,7 +286,7 @@ namespace Genie
 				// corruption; shouldn't happen
 				result[0] = size - 1;
 				
-				std::copy( &str[1], &str[ size ], &result[1] );
+				mempcpy( &result[ 1 ], &str[ 1 ], size - 1 );
 			}
 			else
 			{
