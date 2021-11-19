@@ -11,6 +11,9 @@
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 
+// gear
+#include "gear/hexadecimal.hh"
+
 // plus
 #include "plus/hexadecimal.hh"
 #include "plus/quad.hh"
@@ -218,13 +221,17 @@ namespace Genie
 		
 		const Iter end = sequence.end();
 		
+		vfs::dir_entry entry;
+		
+		entry.inode = 0;
+		
+		char* p = entry.name.reset( 8 );
+		
 		for ( Iter it = sequence.begin();  it != end;  ++it )
 		{
-			const ino_t inode = 0;
+			gear::encode_32_bit_hex( (unsigned) *it, p );
 			
-			plus::string name = plus::encode_32_bit_hex( (unsigned) *it );
-			
-			cache.push_back( vfs::dir_entry( inode, name ) );
+			cache.push_back( entry );
 		}
 	}
 	
