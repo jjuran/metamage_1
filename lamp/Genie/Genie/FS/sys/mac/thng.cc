@@ -53,10 +53,17 @@ namespace Nitrogen
 	using Mac::ThrowOSStatus;
 	
 	
-	const ComponentDescription& AnyComponentDescription();
+	static ComponentDescription gAnyComponentDescription =
+	{
+		kAnyComponentType,
+		kAnyComponentSubType,
+		kAnyComponentManufacturer,
+		0,
+		kAnyComponentFlagsMask
+	};
 	
 	inline Component FindNextComponent( Component                    component   = NULL,
-	                                    const ComponentDescription&  description = AnyComponentDescription() )
+	                                    const ComponentDescription&  description = gAnyComponentDescription )
 	{
 		ComponentDescription desc_copy = description;
 		
@@ -130,17 +137,6 @@ namespace Nitrogen
 		return Component_Container();
 	}
 	
-	
-	static ComponentDescription gAnyComponentDescription = { kAnyComponentType,
-	                                                         kAnyComponentSubType,
-	                                                         kAnyComponentManufacturer,
-	                                                         0,
-	                                                         kAnyComponentFlagsMask };
-	
-	const ComponentDescription& AnyComponentDescription()
-	{
-		return gAnyComponentDescription;
-	}
 	
 	static ComponentDescription GetComponentInfo( Component  component,
 	                                              Handle     name = Handle(),
