@@ -331,7 +331,7 @@ namespace Genie
 			
 			(void) N::GetComponentInfo( comp, N::Handle(), N::Handle(), icon );
 			
-			std::size_t size = N::GetHandleSize( icon );
+			Size size = GetHandleSize( icon.get() );
 			
 			if ( size == 0 )
 			{
@@ -377,7 +377,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		const std::size_t size = N::GetHandleSize( Handle( h ) );
+		const Size size = GetHandleSize( h );
 		
 		const char* begin = *h;
 		const char* end   = begin + size;
