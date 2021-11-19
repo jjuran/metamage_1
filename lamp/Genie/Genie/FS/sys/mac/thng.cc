@@ -5,9 +5,6 @@
 
 #include "Genie/FS/sys/mac/thng.hh"
 
-// Standard C++
-#include <algorithm>
-
 // more-libc
 #include "more/string.h"
 
@@ -351,9 +348,18 @@ namespace Genie
 		}
 	};
 	
-	static inline bool nonzero( char c )
+	static inline
+	bool all_zero( const char* begin, const char* end )
 	{
-		return c;
+		while ( begin < end )
+		{
+			if ( *begin++ != '\0' )
+			{
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	static vfs::node_ptr IconSuite_Factory( const vfs::node*     parent,
@@ -376,7 +382,7 @@ namespace Genie
 		const char* begin = *h;
 		const char* end   = begin + size;
 		
-		if ( std::find_if( begin, end, std::ptr_fun( nonzero ) ) == end )
+		if ( all_zero( begin, end ) )
 		{
 			// IconSuiteRef handle data is all zero.
 			p7::throw_errno( ENOENT );
