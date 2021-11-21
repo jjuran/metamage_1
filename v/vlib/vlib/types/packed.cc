@@ -144,13 +144,25 @@ namespace vlib
 	}
 	
 	static
-	Value binary_bitwise_op( op_type op, Value a, const char* b )
+	Value binary_bitwise_op( op_type op, Value a, const Value& b )
 	{
 		using namespace math::bitwise;
 		
+		if ( b.type() != V_pack )
+		{
+			THROW( "bitwise logic requires packed operands" );
+		}
+		
+		if ( a.string().size() != b.string().size() )
+		{
+			THROW( "bitwise logic operands must be of equal length" );
+		}
+		
+		const char* b_data = b.string().data();
+		
 		const plus::string& s = a.unshare().string();
 		
-		char* data = (char*) s.data();
+		char* a_data = (char*) s.data();
 		
 		const plus::string::size_type n = s.size();
 		
@@ -158,9 +170,9 @@ namespace vlib
 		{
 			default:  // won't happen
 			
-			case Op_intersection:  bitwise_and( data, b, n );  break;
-			case Op_exclusion:     bitwise_xor( data, b, n );  break;
-			case Op_union:         bitwise_or ( data, b, n );  break;
+			case Op_intersection:  bitwise_and( a_data, b_data, n );  break;
+			case Op_exclusion:     bitwise_xor( a_data, b_data, n );  break;
+			case Op_union:         bitwise_or ( a_data, b_data, n );  break;
 		}
 		
 		return a;
@@ -187,17 +199,7 @@ namespace vlib
 			case Op_intersection:
 			case Op_exclusion:
 			case Op_union:
-				if ( b.type() != V_pack )
-				{
-					THROW( "bitwise logic requires packed operands" );
-				}
-				
-				if ( a.string().size() != b.string().size() )
-				{
-					THROW( "bitwise logic operands must be of equal length" );
-				}
-				
-				return binary_bitwise_op( op, a, b.string().data() );
+				return binary_bitwise_op( op, a, b );
 			
 			case Op_multiply:
 				return multiply( (const VBytes&) a, b );
