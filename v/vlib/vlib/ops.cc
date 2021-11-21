@@ -112,6 +112,9 @@ namespace vlib
 		{ Token_slash_equals,       Loose, Op_divide_by   },
 		{ Token_slash_colon_equals, Loose, Op_div_int_by  },
 		{ Token_percent_equals,     Loose, Op_percent_by  },
+		{ Token_ampersand_equals,   Loose, Op_setAND_with },
+		{ Token_tilde_equals,       Loose, Op_setXOR_with },
+		{ Token_pipe_equals,        Loose, Op_setOR_with  },
 		
 		{ Token_lt_minus_x2,  Loose, Op_push },
 		{ Token_lt_equals_x2, Loose, Op_send },

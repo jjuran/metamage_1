@@ -66,7 +66,9 @@ namespace vlib
 		Token_percent,
 		Token_caret,
 		Token_ampersand,
+		Token_ampersand_equals,
 		Token_pipe,
+		Token_pipe_equals,
 		Token_equals_x2,
 		Token_bang_equals,
 		Token_lt,
@@ -95,6 +97,7 @@ namespace vlib
 		Token_percent_equals,
 		Token_semicolon,
 		Token_tilde,
+		Token_tilde_equals,
 	};
 	
 	token_type next_token_type( const char*& p );

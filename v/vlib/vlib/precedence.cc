@@ -163,6 +163,9 @@ namespace vlib
 		{ Precedence_assignment, Op_divide_by   },
 		{ Precedence_assignment, Op_div_int_by  },
 		{ Precedence_assignment, Op_percent_by  },
+		{ Precedence_assignment, Op_setAND_with },
+		{ Precedence_assignment, Op_setXOR_with },
+		{ Precedence_assignment, Op_setOR_with  },
 		{ Precedence_assignment, Op_push        },
 		{ Precedence_assignment, Op_send        },
 		

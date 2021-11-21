@@ -51,6 +51,9 @@ namespace vlib
 		Op_div_int_by,
 		Op_percent_by,
 		Op_remain_by = Op_percent_by,
+		Op_setAND_with,
+		Op_setXOR_with,
+		Op_setOR_with,
 		Op_push,
 		
 		Op_denote,

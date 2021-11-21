@@ -94,6 +94,7 @@ namespace vlib
 		
 		{ "&",   Token_ampersand },
 		{ "&&",  Token_ampersand_x2 },
+		{ "&=",  Token_ampersand_equals },
 		
 		{ "(",   Token_lparen },
 		{ "()",  Token_parens },
@@ -164,10 +165,12 @@ namespace vlib
 		
 		{ "{",   Token_lbrace },
 		{ "|",   Token_pipe   },
+		{ "|=",  Token_pipe_equals },
 		{ "||",  Token_pipe_x2 },
 		{ "}",   Token_rbrace },
 		
 		{ "~",   Token_tilde },
+		{ "~=",  Token_tilde_equals },
 	};
 	
 	static const char* matches( const char* s, const char* pattern )

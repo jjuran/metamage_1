@@ -13,6 +13,7 @@
 
 // vlib
 #include "vlib/string-utils.hh"
+#include "vlib/target.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
@@ -144,7 +145,7 @@ namespace vlib
 	}
 	
 	static
-	Value binary_bitwise_op( op_type op, Value a, const Value& b )
+	Value& binary_bitwise_op_in_place( op_type op, Value& a, const Value& b )
 	{
 		using namespace math::bitwise;
 		
@@ -176,6 +177,12 @@ namespace vlib
 		}
 		
 		return a;
+	}
+	
+	static inline
+	Value binary_bitwise_op( op_type op, Value a, const Value& b )
+	{
+		return binary_bitwise_op_in_place( op, a, b );
 	}
 	
 	static inline
@@ -217,12 +224,35 @@ namespace vlib
 		return Value();
 	}
 	
+	static
+	Value packed_mutating_op_handler( op_type        op,
+	                                  const Target&  target,
+	                                  const Value&   x,
+	                                  const Value&   b )
+	{
+		Packed& a = *(Packed*) target.addr;
+		
+		switch ( op )
+		{
+			case Op_setAND_with:
+			case Op_setXOR_with:
+			case Op_setOR_with:
+				op = op_type( op - (Op_setOR_with - Op_union) );
+				
+				return binary_bitwise_op_in_place( op, a, b );
+			default:
+				break;
+		}
+		
+		return vbytes_mutating_op_handler( op, target, x, b );
+	}
+	
 	static const operators ops =
 	{
 		&unary_op_handler,
 		&binary_op_handler,
 		NULL,
-		&vbytes_mutating_op_handler,
+		&packed_mutating_op_handler,
 	};
 	
 	const dispatch packed_dispatch =

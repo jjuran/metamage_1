@@ -184,6 +184,9 @@ namespace vlib
 			case Op_divide_by:    return " /= ";
 			case Op_div_int_by:   return " /:= ";
 			case Op_percent_by:   return " %= ";
+			case Op_setAND_with:  return " &= ";
+			case Op_setXOR_with:  return " ~= ";
+			case Op_setOR_with:   return " |= ";
 			
 			case Op_forward_init:  return " >-";
 			case Op_reverse_init:  return "-< ";
