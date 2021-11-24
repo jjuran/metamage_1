@@ -671,11 +671,6 @@ namespace vlib
 			
 			if ( is_left_varop( expr->op )  &&  ! is_type_annotation( *left ) )
 			{
-				if ( expr->op == Op_denote  &&  left->expr()->op == Op_def )
-				{
-					THROW( "function prototypes are unimplemented" );
-				}
-				
 				return eval( resolve_symbol_expr( *left, stack ),
 				             expr->op,
 				             execute( *right, stack ),
