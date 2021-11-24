@@ -380,7 +380,11 @@ namespace vlib
 					ASSERT( e2 != NULL );
 					
 					e2 = e2->left.expr();  // `in`
-					ASSERT( e2 != NULL );
+					
+					if ( e2 == NULL )
+					{
+						THROW( "`for` expects `in`" );
+					}
 					
 					x = &e2->left;  // loop iteration variable
 				}
