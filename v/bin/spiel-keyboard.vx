@@ -168,12 +168,12 @@ def upconvert (key_id, act)
 			
 			if caps_lock then
 			{
-				attrs = attrs | x"04"
+				attrs |= x"04"
 			}
 			
 			if is_on_keypad key_id then
 			{
-				attrs = attrs | x"08"
+				attrs |= x"08"
 			}
 			
 			return packed (keyevent_len, c, modes, attrs, keydevice_id)
