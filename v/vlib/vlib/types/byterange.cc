@@ -82,7 +82,7 @@ namespace vlib
 	
 	static const stringifiers byterange_stringifiers =
 	{
-		NULL,            // str: undefined
+		&byterange_bin,  // str: same as bin
 		&byterange_rep,  // rep: range syntax (always gamut, never delta)
 		&byterange_bin,  // bin: packed array of bytes in sequence
 	};

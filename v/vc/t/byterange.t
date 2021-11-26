@@ -27,3 +27,8 @@ $ vc "packed('A' .. 'C', 'a' .. 'c').string"
 
 $ vc "['A', 'b', '3', 'D', 'e', 'f', '.'] ver {v in 'a' .. 'e'} per str"
 1 >= '"be"'
+
+%
+
+$ vc "string('a' .. 'e')"
+1 >= '"abcde"'
