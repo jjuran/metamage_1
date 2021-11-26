@@ -1,0 +1,25 @@
+#!/usr/bin/env minivx
+
+# Given a one-based index into an array of columns,
+# return the name as given by a spreadsheet application.
+
+def column_name (index)
+{
+	var name = ""
+	
+	while index do
+	{
+		--index
+		
+		const shift
+		
+		shift = index mod 26
+		index = index div 26
+		
+		name .= "" byte (u8 'A' + shift)
+	}
+	
+	return -name
+}
+
+print column_name int argv[ 1 ]
