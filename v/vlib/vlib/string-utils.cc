@@ -76,6 +76,7 @@ namespace vlib
 			case Op_module: return "module ";
 			case Op_export: return "export ";
 			case Op_var:    return "var ";
+			case Op_let:    return "let ";
 			case Op_const:  return "const ";
 			case Op_def:    return "def ";
 			case Op_for:    return "for ";

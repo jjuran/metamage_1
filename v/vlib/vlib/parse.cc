@@ -408,6 +408,7 @@ namespace vlib
 							switch ( op )
 							{
 								case Op_const:
+								case Op_let:
 								case Op_var:
 								case Op_def:
 									break;

@@ -17,7 +17,7 @@ namespace vlib
 	{
 		Precedence_none = 0,
 		
-		Precedence_declarator,      // const var def
+		Precedence_declarator,      // const let var def
 		Precedence_adjacency,       // f(x) v[i] ?? foo.bar .bar
 		Precedence_unary_step,      // ++ --
 		Precedence_take,            // take
@@ -62,6 +62,7 @@ namespace vlib
 		{ Precedence_declarator, Op_module },
 		{ Precedence_declarator, Op_export },
 		{ Precedence_declarator, Op_const },
+		{ Precedence_declarator, Op_let   },
 		{ Precedence_declarator, Op_var   },
 		{ Precedence_declarator, Op_def   },
 		

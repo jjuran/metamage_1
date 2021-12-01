@@ -47,7 +47,7 @@ namespace vlib
 	static
 	void insert_code_to_unpack_into_v( const Value& f )
 	{
-		const Value const_v( Op_const, Identifier( "v" ) );
+		const Value const_v( Op_let, Identifier( "v" ) );
 		
 		insert_code_to_unpack_arguments( f, const_v );
 	}
@@ -57,8 +57,8 @@ namespace vlib
 	                                     const char*   a,
 	                                     const char*   b )
 	{
-		const Value const_a( Op_const, Identifier( a ) );
-		const Value const_b( Op_const, Identifier( b ) );
+		const Value const_a( Op_let, Identifier( a ) );
+		const Value const_b( Op_let, Identifier( b ) );
 		
 		const Value ab_list( const_a, const_b );
 		

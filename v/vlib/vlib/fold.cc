@@ -348,7 +348,7 @@ namespace vlib
 					}
 				}
 				
-				if ( decl  &&  decl->expr()->op == Op_const )
+				if ( decl  &&  decl->expr()->op <= Op_let )
 				{
 					const bool coercive = op == Op_approximate;
 					

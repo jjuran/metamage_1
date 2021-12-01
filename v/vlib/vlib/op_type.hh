@@ -26,6 +26,7 @@ namespace vlib
 		
 	// begin declares-symbols
 		Op_const,
+		Op_let,
 		Op_var,
 		Op_def,
 		Op_present,
