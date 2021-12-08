@@ -177,6 +177,50 @@ namespace vlib
 	}
 	
 	static
+	Value division( const VBytes& bytes, const plus::string& div )
+	{
+		typedef plus::string::size_type  size_t;
+		
+		const plus::string& s = bytes.string();
+		
+		const size_t div_len = div.size();
+		
+		if ( div_len == 0 )
+		{
+			THROW( "division by zero-length string" );
+		}
+		
+		long pos = s.find( div );
+		
+		if ( pos < 0 )
+		{
+			return bytes;
+		}
+		
+		size_t i = 0;
+		
+		list_builder result;
+		
+		goto start;
+		
+		do
+		{
+			i = pos + div_len;
+			
+			pos = s.find( div, i );
+			
+		start:
+			
+			result.append( VBytes( s.substr( i, pos - i ),
+			                       bytes.type(),
+			                       bytes.dispatch_methods() ) );
+		}
+		while ( pos >= 0 );
+		
+		return result.get();
+	}
+	
+	static
 	Value division( const VBytes& bytes, char c )
 	{
 		typedef plus::string::size_type  size_t;
@@ -228,6 +272,11 @@ namespace vlib
 		if ( const Byte* byte = divisor.is< Byte >() )
 		{
 			return division( bytes, byte->get() );
+		}
+		
+		if ( divisor.type() == V_str  ||  divisor.type() == V_pack )
+		{
+			return division( bytes, divisor.string() );
 		}
 		
 		THROW( "divisor of bytes must be an integer or byte" );
