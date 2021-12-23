@@ -27,6 +27,7 @@ namespace vxo
 		
 		inline_char_size = box_size - 1,
 		inline_int_bytes = box_size - 2,
+		ternary_byte_loc = box_size - 3,
 	};
 	
 	enum box_type
@@ -80,9 +81,10 @@ namespace vxo
 	{
 		protected:
 			vxo_u u;
-		
+			
 			void set_control_byte( char c )  { u.chr[ inline_char_size ] = c; }
 			void set_subtype_byte( char c )  { u.chr[ inline_int_bytes ] = c; }
+			void set_ternary_byte( char c )  { u.chr[ ternary_byte_loc ] = c; }
 			
 			void unshare()
 			{
@@ -117,6 +119,7 @@ namespace vxo
 			
 			int8_t control_byte() const  { return u.chr[ inline_char_size ]; }
 			int8_t subtype_byte() const  { return u.chr[ inline_int_bytes ]; }
+			int8_t ternary_byte() const  { return u.chr[ ternary_byte_loc ]; }
 			
 			int8_t datatype_byte() const
 			{
