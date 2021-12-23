@@ -538,6 +538,10 @@ namespace tool
 		}
 		catch ( ... )
 		{
+		}
+		
+		if ( pathname.empty() )
+		{
 			p7::write( p7::stdout_fileno,
 			           STR_LEN( HTTP_ERROR( "404 Not Found" ) ) );
 			
