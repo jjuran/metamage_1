@@ -58,9 +58,9 @@ namespace Vertice
 	{
 		PixMapHandle pix = N::GetGWorldPixMap( gworld );
 		
-		const Rect  bounds = ( *pix )->bounds;
-		::Ptr       base   = ( *pix )->baseAddr;
-		unsigned    stride = ( *pix )->rowBytes & 0x3fff;
+		const Rect  bounds = pix[0]->bounds;
+		::Ptr       base   = pix[0]->baseAddr;
+		unsigned    stride = pix[0]->rowBytes & 0x3fff;
 		
 		const unsigned width  = bounds.right - bounds.left;
 		const unsigned height = bounds.bottom - bounds.top;
@@ -101,9 +101,9 @@ namespace Vertice
 		
 		PixMapHandle pix = ::GetPortPixMap( gworld );
 		
-		const Rect  bounds = ( *pix )->bounds;
-		::Ptr       base   = ( *pix )->baseAddr;
-		unsigned    stride = ( *pix )->rowBytes & 0x3fff;
+		const Rect  bounds = pix[0]->bounds;
+		::Ptr       base   = pix[0]->baseAddr;
+		unsigned    stride = pix[0]->rowBytes & 0x3fff;
 		
 		const size_t width  = bounds.right - bounds.left;
 		const size_t height = bounds.bottom - bounds.top;
