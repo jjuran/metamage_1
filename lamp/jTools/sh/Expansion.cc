@@ -883,16 +883,21 @@ namespace ShellShock
 			}
 	};
 	
-	template < class Inserter >
-	static inline void Copy( const plus::string& word, Inserter inserter )
+	static inline
+	void Copy( const plus::string& word, StringVector& container )
 	{
-		*inserter++ = word;
+		container.push_back( word );
 	}
 	
-	template < class Inserter >
-	void Copy( const StringVector& words, Inserter inserter )
+	static
+	void Copy( const StringVector& words, StringVector& container )
 	{
-		std::copy( words.begin(), words.end(), inserter );
+		size_t n = words.size();
+		
+		for ( size_t i = 0;  i < n;  ++i )
+		{
+			container.push_back( words[ i ] );
+		}
 	}
 	
 	static inline plus::string Join( const plus::string& word )
@@ -944,7 +949,7 @@ namespace ShellShock
 		
 		for ( StrIter iArg = command.args.begin();  iArg < command.args.end();  ++iArg )
 		{
-			Copy( algorithm( *iArg ), std::back_inserter( result.args ) );
+			Copy( algorithm( *iArg ), result.args );
 		}
 		
 		for ( RedirIter itRedir = command.redirections.begin();  itRedir < command.redirections.end();  ++itRedir )
