@@ -11,9 +11,9 @@
 // plus
 #include "plus/var_string.hh"
 
-// vxo
-#include "vxo/strmap.hh"
-#include "vxo/strset.hh"
+// vxs
+#include "vxs/strmap.hh"
+#include "vxs/strset.hh"
 
 // mxcpp
 #include "exception.hh"

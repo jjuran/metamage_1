@@ -3,13 +3,10 @@
 	--------
 */
 
-#include "vxo/lib/unbin.hh"
+#include "vxs/lib/unbin.hh"
 
 // debug
 #include "debug/assert.hh"
-
-// plus
-#include "plus/string.hh"
 
 
 namespace vxo

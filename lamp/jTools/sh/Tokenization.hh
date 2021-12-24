@@ -11,8 +11,8 @@
 // plus
 #include "plus/string.hh"
 
-// vxo
-#include "vxo/strvec.hh"
+// vxs
+#include "vxs/strvec.hh"
 
 
 typedef vxo::StrVec StringVector;

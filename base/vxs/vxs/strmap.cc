@@ -3,13 +3,10 @@
 	---------
 */
 
-#include "vxo/strmap.hh"
+#include "vxs/strmap.hh"
 
 // Standard C++
 #include <algorithm>
-
-// plus
-#include "plus/string.hh"
 
 
 namespace vxo

@@ -18,9 +18,9 @@
 #include "plus/var_string.hh"
 #include "plus/string/mince.hh"
 
-// vxo
-#include "vxo/lib/unbin.hh"
-#include "vxo/lib/unhex.hh"
+// vxs
+#include "vxs/lib/unbin.hh"
+#include "vxs/lib/unhex.hh"
 
 // bignum
 #include "bignum/decode_binoid_int.hh"

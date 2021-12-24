@@ -3,15 +3,14 @@
 	---------
 */
 
-#ifndef VXO_STRSET_HH
-#define VXO_STRSET_HH
-
-// plus
-#include "plus/string.hh"
+#ifndef VXS_STRSET_HH
+#define VXS_STRSET_HH
 
 // vxo
 #include "vxo/container.hh"
-#include "vxo/string.hh"
+
+// vxs
+#include "vxs/string.hh"
 
 
 namespace vxo

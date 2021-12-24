@@ -3,12 +3,14 @@
 	---------
 */
 
-#ifndef VXO_STRMAP_HH
-#define VXO_STRMAP_HH
+#ifndef VXS_STRMAP_HH
+#define VXS_STRMAP_HH
 
 // vxo
 #include "vxo/container.hh"
-#include "vxo/string.hh"
+
+// vxs
+#include "vxs/string.hh"
 
 
 namespace vxo

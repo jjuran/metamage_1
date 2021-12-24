@@ -21,8 +21,8 @@
 // plus
 #include "plus/string.hh"
 
-// vxo
-#include "vxo/strvec.hh"
+// vxs
+#include "vxs/strvec.hh"
 
 // text-input
 #include "text_input/feed.hh"

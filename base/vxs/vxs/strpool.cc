@@ -3,7 +3,7 @@
 	----------
 */
 
-#include "vxo/strpool.hh"
+#include "vxs/strpool.hh"
 
 // Standard C
 #include <stdlib.h>
@@ -16,9 +16,6 @@
 
 // debug
 #include "debug/assert.hh"
-
-// plus
-#include "plus/string.hh"
 
 
 namespace vxo

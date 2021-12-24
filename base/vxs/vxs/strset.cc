@@ -3,13 +3,10 @@
 	---------
 */
 
-#include "vxo/strset.hh"
+#include "vxs/strset.hh"
 
 // Standard C++
 #include <algorithm>
-
-// plus
-#include "plus/string.hh"
 
 
 namespace vxo

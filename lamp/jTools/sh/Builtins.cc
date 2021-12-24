@@ -35,9 +35,9 @@
 #include "poseven/functions/open.hh"
 #include "poseven/functions/write.hh"
 
-// vxo
-#include "vxo/strmap.hh"
-#include "vxo/strset.hh"
+// vxs
+#include "vxs/strmap.hh"
+#include "vxs/strset.hh"
 
 // sh
 #include "Options.hh"

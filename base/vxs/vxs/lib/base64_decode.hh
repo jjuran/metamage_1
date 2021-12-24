@@ -3,12 +3,14 @@
 	----------------
 */
 
-#ifndef VXO_LIB_BASE64DECODE_HH
-#define VXO_LIB_BASE64DECODE_HH
+#ifndef VXS_LIB_BASE64DECODE_HH
+#define VXS_LIB_BASE64DECODE_HH
 
 // vxo
 #include "vxo/error.hh"
-#include "vxo/string.hh"
+
+// vxs
+#include "vxs/string.hh"
 
 
 namespace vxo

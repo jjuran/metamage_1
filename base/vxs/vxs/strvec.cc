@@ -3,13 +3,10 @@
 	---------
 */
 
-#include "vxo/strvec.hh"
+#include "vxs/strvec.hh"
 
 // Standard C++
 #include <algorithm>
-
-// plus
-#include "plus/string.hh"
 
 
 namespace vxo

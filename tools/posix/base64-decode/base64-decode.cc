@@ -20,7 +20,9 @@
 
 // vxo
 #include "vxo/error.hh"
-#include "vxo/lib/base64_decode.hh"
+
+// vxs
+#include "vxs/lib/base64_decode.hh"
 
 
 #pragma exceptions off

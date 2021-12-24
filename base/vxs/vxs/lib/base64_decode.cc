@@ -3,13 +3,10 @@
 	----------------
 */
 
-#include "vxo/lib/base64_decode.hh"
+#include "vxs/lib/base64_decode.hh"
 
 // iota
 #include "iota/char_types.hh"
-
-// plus
-#include "plus/string.hh"
 
 
 #pragma exceptions off

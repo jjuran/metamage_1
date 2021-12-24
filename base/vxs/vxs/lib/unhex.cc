@@ -3,7 +3,7 @@
 	--------
 */
 
-#include "vxo/lib/unhex.hh"
+#include "vxs/lib/unhex.hh"
 
 // iota
 #include "iota/char_types.hh"
@@ -13,9 +13,6 @@
 
 // debug
 #include "debug/assert.hh"
-
-// plus
-#include "plus/string.hh"
 
 
 namespace vxo
