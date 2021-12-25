@@ -5,8 +5,8 @@
 
 #include "vxs/string.hh"
 
-// plus
-#include "plus/extent.hh"
+// vxo
+#include "vxo/extent.hh"
 
 
 #pragma exceptions off
@@ -21,7 +21,7 @@ DynamicString::DynamicString( const plus::string& s )
 	
 	if ( has_extent() )
 	{
-		plus::extent_add_ref( u.str.pointer );
+		extent_add_ref( u.str.pointer );
 	}
 	
 	if ( has_pointer() )
@@ -36,14 +36,14 @@ DynamicString& DynamicString::operator=( const string& s )
 	{
 		if ( has_extent() )
 		{
-			plus::extent_release( u.str.pointer );
+			extent_release( u.str.pointer );
 		}
 		
 		u.str = *(u_string*) &s;
 		
 		if ( has_extent() )
 		{
-			plus::extent_add_ref( u.str.pointer );
+			extent_add_ref( u.str.pointer );
 		}
 		
 		if ( has_pointer() )

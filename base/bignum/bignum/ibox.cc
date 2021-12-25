@@ -17,8 +17,8 @@
 // debug
 #include "debug/assert.hh"
 
-// plus
-#include "plus/extent.hh"
+// vxo
+#include "vxo/extent.hh"
 
 
 namespace bignum
@@ -27,11 +27,11 @@ namespace bignum
 	using math::integer::limb_t;
 	using math::integer::cmp_t;
 	
-	using plus::extent_release;
-	using plus::extent_unshare;
-	using plus::extent_alloc;
-	using plus::extent_add_ref;
-	using plus::extent_area;
+	using vxo::extent_release;
+	using vxo::extent_unshare;
+	using vxo::extent_alloc;
+	using vxo::extent_add_ref;
+	using vxo::extent_area;
 	
 	
 	void ibox::destroy_extent()
@@ -118,7 +118,7 @@ namespace bignum
 			
 			if ( that.has_extent() )
 			{
-				plus::extent_add_ref( (char*) that.its.pointer );
+				vxo::extent_add_ref( (char*) that.its.pointer );
 			}
 		}
 		

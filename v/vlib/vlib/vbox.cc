@@ -8,8 +8,8 @@
 // iota
 #include "iota/swap.hh"
 
-// plus
-#include "plus/extent.hh"
+// vxo
+#include "vxo/extent.hh"
 
 
 namespace vlib
@@ -19,7 +19,7 @@ namespace vlib
 	
 	void vbox::destroy_extent()
 	{
-		plus::extent_release( u.alloc.pointer );
+		vxo::extent_release( u.alloc.pointer );
 		
 		u.alloc.type = 0;
 	}
@@ -28,7 +28,7 @@ namespace vlib
 	{
 		if ( has_extent() )
 		{
-			plus::extent_set_selfdestruct( (char*) u.alloc.pointer );
+			vxo::extent_set_selfdestruct( (char*) u.alloc.pointer );
 		}
 	}
 	
@@ -36,7 +36,7 @@ namespace vlib
 	{
 		if ( has_extent() )
 		{
-			u.alloc.pointer = plus::extent_unshare( (char*) u.alloc.pointer );
+			u.alloc.pointer = vxo::extent_unshare( (char*) u.alloc.pointer );
 		}
 	}
 	
@@ -46,7 +46,7 @@ namespace vlib
 		
 		if ( has_extent() )
 		{
-			plus::extent_add_ref( u.alloc.pointer );
+			vxo::extent_add_ref( u.alloc.pointer );
 		}
 	}
 	
@@ -54,7 +54,7 @@ namespace vlib
 	{
 		if ( that.has_extent() )
 		{
-			plus::extent_add_ref( that.u.alloc.pointer );
+			vxo::extent_add_ref( that.u.alloc.pointer );
 		}
 		
 		/*
@@ -67,7 +67,7 @@ namespace vlib
 		
 		if ( has_extent() )
 		{
-			plus::extent_release( u.alloc.pointer );
+			vxo::extent_release( u.alloc.pointer );
 		}
 		
 		u = tmp;
@@ -81,7 +81,7 @@ namespace vlib
 		
 		if ( u.chars.data[ vbox_inline_size ] < 0 )
 		{
-			plus::extent_add_ref( u.alloc.pointer );
+			vxo::extent_add_ref( u.alloc.pointer );
 			
 			u.alloc.type = Vbox_alloc;
 		}
@@ -100,7 +100,7 @@ namespace vlib
 		
 		if ( u.ibox.size > 0 )
 		{
-			plus::extent_add_ref( u.alloc.pointer );
+			vxo::extent_add_ref( u.alloc.pointer );
 			
 			u.alloc.type = Vbox_alloc;
 		}
@@ -115,7 +115,7 @@ namespace vlib
 	
 	vbox::vbox( unsigned long n, destructor dtor, char semantics )
 	{
-		char* extent = plus::extent_alloc( n, dtor );
+		char* extent = vxo::extent_alloc( n, dtor );
 		
 		u.alloc.pointer   = extent;
 		u.alloc.type      = Vbox_alloc;
@@ -149,7 +149,7 @@ namespace vlib
 	{
 		if ( has_extent() )
 		{
-			return plus::extent_refcount( u.alloc.pointer );
+			return vxo::extent_refcount( u.alloc.pointer );
 		}
 		
 		return 0;
@@ -159,7 +159,7 @@ namespace vlib
 	{
 		if ( box.has_extent() )
 		{
-			return sizeof (vbox) + plus::extent_area( box.u.alloc.pointer );
+			return sizeof (vbox) + vxo::extent_area( box.u.alloc.pointer );
 		}
 		
 		return sizeof (vbox);

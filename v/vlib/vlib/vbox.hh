@@ -9,8 +9,8 @@
 // Standard C
 #include <stdint.h>
 
-// plus
-#include "plus/datum_storage.hh"
+// vxo
+#include "vxo/datum_storage.hh"
 
 // bignum
 #include "bignum/ibox.hh"
@@ -60,7 +60,7 @@ namespace vlib
 		Vbox_pointer,
 	};
 	
-	typedef plus::datum_allocation  vu_string;
+	typedef vxo::datum_allocation   vu_string;
 	typedef bignum::ibox_structure  vu_ibox;
 	
 	struct vu_alloc : vu_string
