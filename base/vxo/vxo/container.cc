@@ -11,9 +11,9 @@
 // debug
 #include "debug/assert.hh"
 
-// plus
-#include "plus/datum_alloc.hh"
-#include "plus/extent.hh"
+// vxo
+#include "vxo/datum_alloc.hh"
+#include "vxo/extent.hh"
 
 
 namespace vxo
@@ -39,7 +39,7 @@ Container::Container( box_type type, size_t n_items )
 		
 		// Passing a destructor (even if NULL) clears the buffer.
 		
-		if ( char* alloc = plus::extent_alloc( n_bytes, NULL ) )
+		if ( char* alloc = extent_alloc( n_bytes, NULL ) )
 		{
 			u.str.pointer  = alloc;
 			u.str.capacity = n_items;
@@ -75,7 +75,7 @@ Box* Container::expand_by( size_t n )
 		
 		if ( u.str.pointer == NULL )
 		{
-			alloc = plus::extent_alloc( new_capacity );
+			alloc = extent_alloc( new_capacity );
 			
 			u.str.pointer  = alloc;
 			u.str.capacity = new_capacity;
@@ -84,7 +84,7 @@ Box* Container::expand_by( size_t n )
 		}
 		else
 		{
-			plus::datum_storage& storage = *(plus::datum_storage*) this;
+			datum_storage& storage = *(datum_storage*) this;
 			
 			alloc = extend_capacity( storage, new_capacity );
 		}

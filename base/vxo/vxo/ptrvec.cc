@@ -14,15 +14,15 @@
 // debug
 #include "debug/assert.hh"
 
-// plus
-#include "plus/datum_alloc.hh"
-#include "plus/extent.hh"
+// vxo
+#include "vxo/datum_alloc.hh"
+#include "vxo/extent.hh"
 
 
 namespace vxo
 {
 
-const size_t minimum_capacity = sizeof (plus::datum_storage);
+const size_t minimum_capacity = sizeof (datum_storage);
 const size_t minimum_elements = minimum_capacity / sizeof (PtrVec::Item);
 
 PtrVec::PtrVec()
@@ -53,7 +53,7 @@ PtrVec::PtrVec( size_t n_items )
 		
 		const size_t n_bytes = n_items * sizeof (anyptr_t);
 		
-		if ( char* alloc = plus::extent_alloc_nothrow( n_bytes ) )
+		if ( char* alloc = extent_alloc_nothrow( n_bytes ) )
 		{
 			u.str.pointer  = alloc;
 			u.str.capacity = n_items;
@@ -92,7 +92,7 @@ anyptr_t* PtrVec::expand_by_nothrow( size_t n )
 				new_capacity = minimum_capacity;
 			}
 			
-			alloc = plus::extent_alloc_nothrow( new_capacity );
+			alloc = extent_alloc_nothrow( new_capacity );
 			
 			u.str.pointer  = alloc;
 			u.str.capacity = new_capacity;
@@ -101,7 +101,7 @@ anyptr_t* PtrVec::expand_by_nothrow( size_t n )
 		}
 		else
 		{
-			plus::datum_storage& storage = *(plus::datum_storage*) this;
+			datum_storage& storage = *(datum_storage*) this;
 			
 			alloc = extend_capacity_nothrow( storage, new_capacity );
 		}
@@ -143,7 +143,7 @@ anyptr_t* PtrVec::expand_by( size_t n )
 				new_capacity = minimum_capacity;
 			}
 			
-			alloc = plus::extent_alloc( new_capacity );
+			alloc = extent_alloc( new_capacity );
 			
 			u.str.pointer  = alloc;
 			u.str.capacity = new_capacity;
@@ -152,7 +152,7 @@ anyptr_t* PtrVec::expand_by( size_t n )
 		}
 		else
 		{
-			plus::datum_storage& storage = *(plus::datum_storage*) this;
+			datum_storage& storage = *(datum_storage*) this;
 			
 			alloc = extend_capacity( storage, new_capacity );
 		}

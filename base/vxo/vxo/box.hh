@@ -10,14 +10,14 @@
 #include <stddef.h>
 #include <stdint.h>
 
-// plus
-#include "plus/datum_alloc.hh"
+// vxo
+#include "vxo/datum_alloc.hh"
 
 
 namespace vxo
 {
 	
-	typedef plus::datum_allocation  u_string;
+	typedef datum_allocation  u_string;
 	
 	typedef const void* anyptr_t;
 	
