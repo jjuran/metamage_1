@@ -29,7 +29,7 @@ namespace plus
 	{
 		if ( &m != &store )
 		{
-			plus::copy_on_write( m, true );
+			vxo::copy_on_write( m, true );
 			
 			assign_from_move( store, m );
 		}

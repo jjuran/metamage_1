@@ -56,7 +56,7 @@ OSErr save_app_data( const FCB* fcb )
 {
 	temp_A4 a4;
 	
-	plus::string data( fcb->fcbBfAdr, fcb->fcbPLen, plus::delete_never );
+	plus::string data( fcb->fcbBfAdr, fcb->fcbPLen, vxo::delete_never );
 	
 	int err = try_to_put( appfs_fd, data_path, data );
 	

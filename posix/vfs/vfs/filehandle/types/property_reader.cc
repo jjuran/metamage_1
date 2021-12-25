@@ -22,7 +22,7 @@ namespace vfs
 	
 	struct property_reader_extra
 	{
-		plus::datum_storage  value;
+		vxo::datum_storage  value;
 	};
 	
 	static ssize_t propertyreader_pread( filehandle* file, char* buffer, size_t n, off_t offset )

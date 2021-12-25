@@ -46,7 +46,7 @@ namespace vfs
 	
 	struct generated_extra
 	{
-		plus::datum_storage datum;
+		vxo::datum_storage datum;
 	};
 	
 	
@@ -54,7 +54,7 @@ namespace vfs
 	{
 		const generated_extra& extra = *(generated_extra*) that->extra();
 		
-		return plus::size( extra.datum );
+		return vxo::size( extra.datum );
 	}
 	
 	static filehandle_ptr generated_open( const node* that, int flags, mode_t mode )
@@ -75,7 +75,7 @@ namespace vfs
 	{
 		generated_extra& extra = *(generated_extra*) that->extra();
 		
-		plus::destroy( extra.datum );
+		vxo::destroy( extra.datum );
 	}
 	
 	node_ptr new_generated( const node*          parent,
@@ -95,7 +95,7 @@ namespace vfs
 		
 		generated_extra& extra = *(generated_extra*) result->extra();
 		
-		plus::construct_from_move( extra.datum, data.move() );
+		vxo::construct_from_move( extra.datum, data.move() );
 		
 		return result;
 	}

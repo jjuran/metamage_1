@@ -39,7 +39,7 @@
 	#ifdef PLUS_STRING
 	
 	// pointer/length construction, static
-	STRING a( STR_LEN( "0123456789abcdef0123456789abcdef" ), plus::delete_never );
+	STRING a( STR_LEN( "0123456789abcdef0123456789abcdef" ), vxo::delete_never );
 	
 	// copy construction (static)
 	STRING b = a;

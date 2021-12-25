@@ -11,9 +11,9 @@
 // debug
 #include "debug/assert.hh"
 
-// plus
-#include "plus/datum_access.hh"
-#include "plus/datum_alloc.hh"
+// vxo
+#include "vxo/datum_access.hh"
+#include "vxo/datum_alloc.hh"
 
 
 #define LENGTH_ERROR_MESSAGE  "string size can't exceed 0x7fffffff"
@@ -21,6 +21,12 @@
 
 namespace plus
 {
+	
+	using vxo::datum_max_offset;
+	using vxo::datum_storage;
+	using vxo::set_capacity;
+	using vxo::size;
+	
 	
 	void string_check_size( long size )
 	{
