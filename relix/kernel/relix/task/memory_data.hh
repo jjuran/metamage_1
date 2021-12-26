@@ -6,8 +6,10 @@
 #ifndef RELIX_TASK_MEMORYDATA_HH
 #define RELIX_TASK_MEMORYDATA_HH
 
+// vxo
+#include "vxo/ref_count.hh"
+
 // plus
-#include "plus/ref_count.hh"
 #include "plus/string.hh"
 
 // vfs
@@ -21,7 +23,7 @@ namespace relix
 	
 	void destroy( const memory_data* x );
 	
-	class memory_data : public plus::ref_count< memory_data >
+	class memory_data : public vxo::ref_count< memory_data >
 	{
 		private:
 			// Non-copyable (prevents slicing, including std::swap())

@@ -12,8 +12,8 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 
 namespace relix
@@ -27,7 +27,7 @@ namespace relix
 namespace relix
 {
 	
-	class process_resources : public plus::ref_count< process_resources >
+	class process_resources : public vxo::ref_count< process_resources >
 	{
 		private:
 			boost::intrusive_ptr< fs_info > its_fs_info;

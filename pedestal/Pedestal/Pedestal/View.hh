@@ -9,8 +9,8 @@
 // Debug
 #include "debug/boost_assert.hh"
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 // Boost
 #include <boost/intrusive_ptr.hpp>
@@ -39,7 +39,7 @@ namespace Pedestal
 	
 	class Quasimode;
 	
-	class View : public plus::ref_count< View >
+	class View : public vxo::ref_count< View >
 	{
 		public:
 			virtual ~View()  {}

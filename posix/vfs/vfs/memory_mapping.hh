@@ -9,14 +9,14 @@
 // more-libc
 #include "more/size.h"
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 
 namespace vfs
 {
 	
-	class memory_mapping : public plus::ref_count< memory_mapping >
+	class memory_mapping : public vxo::ref_count< memory_mapping >
 	{
 		private:
 			typedef void* addr_t;

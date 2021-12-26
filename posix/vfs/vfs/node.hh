@@ -9,8 +9,10 @@
 // POSIX
 #include <sys/types.h>
 
+// vxo
+#include "vxo/ref_count.hh"
+
 // plus
-#include "plus/ref_count.hh"
 #include "plus/string.hh"
 
 
@@ -24,7 +26,7 @@ namespace vfs
 	struct node_method_set;
 	
 	
-	class node : public plus::ref_count< node >
+	class node : public vxo::ref_count< node >
 	{
 		private:
 			const node*             its_owner;

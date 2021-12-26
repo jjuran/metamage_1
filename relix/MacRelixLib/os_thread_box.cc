@@ -11,8 +11,8 @@
 // cthread-either
 #include "cthread-either.hh"
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 
 namespace relix
@@ -23,7 +23,7 @@ namespace relix
 	using cthread::parameter_block;
 	
 	
-	class os_thread : public plus::ref_count< os_thread >
+	class os_thread : public vxo::ref_count< os_thread >
 	{
 		private:
 			parameter_block its_param;

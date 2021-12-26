@@ -9,8 +9,8 @@
 // Standard C++
 #include <list>
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 
 namespace vfs
@@ -44,7 +44,7 @@ namespace vfs
 			std::size_t read( char* buffer, std::size_t max_bytes );
 	};
 	
-	class conduit : public plus::ref_count< conduit >
+	class conduit : public vxo::ref_count< conduit >
 	{
 		private:
 			typedef void (*try_again_f)( bool );

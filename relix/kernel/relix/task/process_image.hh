@@ -15,8 +15,8 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 // vfs
 #include "vfs/memory_mapping_fwd.hh"
@@ -30,7 +30,7 @@
 namespace relix
 {
 	
-	class process_image : public plus::ref_count< process_image >
+	class process_image : public vxo::ref_count< process_image >
 	{
 		private:
 			typedef _relix_user_parameter_block pb;

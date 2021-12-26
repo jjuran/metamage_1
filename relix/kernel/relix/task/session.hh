@@ -6,8 +6,8 @@
 #ifndef RELIX_TASK_SESSION_HH
 #define RELIX_TASK_SESSION_HH
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 // vfs
 #include "vfs/filehandle_ptr.hh"
@@ -16,7 +16,7 @@
 namespace relix
 {
 	
-	class session : public plus::ref_count< session >
+	class session : public vxo::ref_count< session >
 	{
 		private:
 			int its_id;

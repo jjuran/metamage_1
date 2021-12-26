@@ -15,8 +15,8 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 // Recall
 #include "recall/stack_crawl.hh"
@@ -36,7 +36,7 @@ namespace relix
 	class process;
 	
 	
-	class thread : public plus::ref_count< thread >,
+	class thread : public vxo::ref_count< thread >,
 	               protected task,
 	               public relix::vfork_context
 	{

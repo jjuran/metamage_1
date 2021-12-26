@@ -9,8 +9,8 @@
 // Debug
 #include "debug/boost_assert.hh"
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 // Boost
 #include <boost/intrusive_ptr.hpp>
@@ -24,7 +24,7 @@ namespace relix
 	
 	const int no_pgid = 0x7fffffff;
 	
-	class process_group : public plus::ref_count< process_group >
+	class process_group : public vxo::ref_count< process_group >
 	{
 		private:
 			int its_id;

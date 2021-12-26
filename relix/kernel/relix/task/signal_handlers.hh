@@ -6,8 +6,8 @@
 #ifndef RELIX_TASK_SIGNALHANDLERS_HH
 #define RELIX_TASK_SIGNALHANDLERS_HH
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 
 // #include <signal.h>
@@ -22,7 +22,7 @@ namespace relix
 	void destroy( const signal_handlers* x );
 	
 	
-	class signal_handlers : public plus::ref_count< signal_handlers >
+	class signal_handlers : public vxo::ref_count< signal_handlers >
 	{
 		private:
 			// Private, undefined assignment operator prevents std::swap()

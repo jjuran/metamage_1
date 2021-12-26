@@ -6,8 +6,10 @@
 #ifndef GENIE_FILESYSTEM_ICON_DATA_HH
 #define GENIE_FILESYSTEM_ICON_DATA_HH
 
+// vxo
+#include "vxo/ref_count.hh"
+
 // plus
-#include "plus/ref_count.hh"
 #include "plus/string.hh"
 
 // Nitrogen
@@ -22,7 +24,7 @@
 namespace Genie
 {
 	
-	class IconData : public plus::ref_count< IconData >
+	class IconData : public vxo::ref_count< IconData >
 	{
 		private:
 			typedef void (*Deleter)( void* );

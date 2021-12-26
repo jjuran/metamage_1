@@ -9,8 +9,8 @@
 // Standard C++
 #include <vector>
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 // vfs
 #include "vfs/dir_entry.hh"
@@ -19,7 +19,7 @@
 namespace vfs
 {
 	
-	class dir_contents : public plus::ref_count< dir_contents >
+	class dir_contents : public vxo::ref_count< dir_contents >
 	{
 		private:
 			typedef std::vector< dir_entry > Vector;

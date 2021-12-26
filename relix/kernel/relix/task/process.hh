@@ -17,8 +17,10 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
+// vxo
+#include "vxo/ref_count.hh"
+
 // plus
-#include "plus/ref_count.hh"
 #include "plus/string.hh"
 
 // relix-kernel
@@ -42,7 +44,7 @@ namespace relix
 	typedef process_resources process_rsrcs;
 	
 	
-	class process : public plus::ref_count< process >
+	class process : public vxo::ref_count< process >
 	{
 		private:
 			int its_id;

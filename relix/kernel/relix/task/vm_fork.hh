@@ -9,14 +9,14 @@
 // POSIX
 #include <sys/types.h>
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 
 namespace relix
 {
 	
-	class vm_fork : public plus::ref_count< vm_fork >
+	class vm_fork : public vxo::ref_count< vm_fork >
 	{
 		private:
 			pid_t its_current_pid;

@@ -6,8 +6,8 @@
 #ifndef RELIX_TASK_FSINFO_HH
 #define RELIX_TASK_FSINFO_HH
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 // vfs
 #include "vfs/filehandle_ptr.hh"
@@ -21,7 +21,7 @@ namespace relix
 	void destroy( const fs_info* x );
 	
 	
-	class fs_info : public plus::ref_count< fs_info >
+	class fs_info : public vxo::ref_count< fs_info >
 	{
 		private:
 			// Private, undefined assignment operator prevents std::swap()

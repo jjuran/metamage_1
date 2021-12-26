@@ -6,8 +6,8 @@
 #ifndef VFS_PROGRAM_HH
 #define VFS_PROGRAM_HH
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 
 struct _relix_system_parameter_block;
@@ -21,7 +21,7 @@ namespace vfs
 	                            char* const*                    envp,
 	                            _relix_system_parameter_block*  pb );
 	
-	class program : public plus::ref_count< program >
+	class program : public vxo::ref_count< program >
 	{
 		public:
 			virtual ~program();

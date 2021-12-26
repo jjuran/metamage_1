@@ -6,14 +6,14 @@
 #ifndef UNET_CONNECTION_HH
 #define UNET_CONNECTION_HH
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 
 namespace unet
 {
 	
-	class connection : public plus::ref_count< connection >
+	class connection : public vxo::ref_count< connection >
 	{
 		private:
 			int its_input;

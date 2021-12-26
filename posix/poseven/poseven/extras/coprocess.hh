@@ -6,8 +6,8 @@
 #ifndef POSEVEN_EXTRAS_COPROCESS_HH
 #define POSEVEN_EXTRAS_COPROCESS_HH
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 // poseven
 #ifndef POSEVEN_TYPES_PID_T_HH
@@ -21,7 +21,7 @@
 namespace poseven
 {
 	
-	class coprocess : public plus::ref_count< coprocess >
+	class coprocess : public vxo::ref_count< coprocess >
 	{
 		private:
 			pid_t its_pid;

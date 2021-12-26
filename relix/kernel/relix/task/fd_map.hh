@@ -6,8 +6,8 @@
 #ifndef RELIX_TASK_FDMAP_HH
 #define RELIX_TASK_FDMAP_HH
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 
 namespace vfs
@@ -29,7 +29,7 @@ namespace relix
 namespace relix
 {
 	
-	class fd_map : public plus::ref_count< fd_map >
+	class fd_map : public vxo::ref_count< fd_map >
 	{
 		private:
 			// Private, undefined assignment operator prevents std::swap()

@@ -6,8 +6,8 @@
 #ifndef PEDESTAL_QUASIMODE_HH
 #define PEDESTAL_QUASIMODE_HH
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 
 struct EventRecord;
@@ -16,7 +16,7 @@ struct EventRecord;
 namespace Pedestal
 {
 	
-	class Quasimode : public plus::ref_count< Quasimode >
+	class Quasimode : public vxo::ref_count< Quasimode >
 	{
 		public:
 			virtual ~Quasimode()  {}

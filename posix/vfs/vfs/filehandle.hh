@@ -9,8 +9,8 @@
 // POSIX
 #include <sys/types.h>
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 // vfs
 #include "vfs/node_fwd.hh"
@@ -37,7 +37,7 @@ namespace vfs
 	
 	typedef void (*filehandle_destructor)( filehandle* );
 	
-	class filehandle : public plus::ref_count< filehandle >
+	class filehandle : public vxo::ref_count< filehandle >
 	{
 		private:
 			off_t                         its_mark;

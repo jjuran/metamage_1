@@ -6,8 +6,10 @@
 #ifndef TESTEDIT_DOCUMENT_HH
 #define TESTEDIT_DOCUMENT_HH
 
+// vxo
+#include "vxo/ref_count.hh"
+
 // plus
-#include "plus/ref_count.hh"
 #include "plus/string.hh"
 
 // TestEdit
@@ -17,7 +19,7 @@
 namespace TestEdit
 {
 	
-	class Document : public plus::ref_count< Document >
+	class Document : public vxo::ref_count< Document >
 	{
 		private:
 			nucleus::owned< WindowRef >  itsWindow;
