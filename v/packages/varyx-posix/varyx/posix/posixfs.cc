@@ -524,7 +524,7 @@ namespace posix
 			return String( plus::string( real, len ) );
 		}
 		
-		plus::string s( real, len, plus::delete_free );
+		plus::string s( real, len, vxo::delete_free );
 		
 		return String( plus::string( s.data(), len ) );
 	}

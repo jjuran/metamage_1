@@ -170,6 +170,8 @@ namespace plus
 	
 	const char* string::c_str() const
 	{
+		using vxo::datum_storage;
+		
 		datum_storage& u = const_cast< datum_storage& >( store );
 		
 		char* last = u.small + max_offset;
@@ -536,7 +538,7 @@ namespace plus
 			n = len - pos;
 		}
 		
-		if ( n > datum_max_offset  &&  _policy() >= ~delete_shared )
+		if ( n > vxo::datum_max_offset  &&  _policy() >= ~vxo::delete_shared )
 		{
 			plus::string temp = *this;
 			

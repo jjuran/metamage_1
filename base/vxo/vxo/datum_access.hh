@@ -3,14 +3,14 @@
 	---------------
 */
 
-#ifndef PLUS_DATUMACCESS_HH
-#define PLUS_DATUMACCESS_HH
+#ifndef VXO_DATUMACCESS_HH
+#define VXO_DATUMACCESS_HH
 
-// plus
-#include "plus/datum_storage.hh"
+// vxo
+#include "vxo/datum_storage.hh"
 
 
-namespace plus
+namespace vxo
 {
 	
 	inline signed char margin( const datum_storage& x )

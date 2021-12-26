@@ -3,10 +3,10 @@
 	---------------
 */
 
-#include "plus/datum_access.hh"
+#include "vxo/datum_access.hh"
 
 
-namespace plus
+namespace vxo
 {
 	
 	unsigned long size( const datum_storage& x )

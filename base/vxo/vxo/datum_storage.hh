@@ -3,11 +3,11 @@
 	----------------
 */
 
-#ifndef PLUS_DATUMSTORAGE_HH
-#define PLUS_DATUMSTORAGE_HH
+#ifndef VXO_DATUMSTORAGE_HH
+#define VXO_DATUMSTORAGE_HH
 
 
-namespace plus
+namespace vxo
 {
 	
 	struct datum_allocation

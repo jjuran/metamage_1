@@ -51,8 +51,8 @@ namespace vfs
 	
 	struct posix_extra
 	{
-		plus::datum_storage  path;
-		struct stat          status;
+		vxo::datum_storage  path;
+		struct stat         status;
 	};
 	
 	static void fix_loose_filemode( struct stat& st )
@@ -268,7 +268,7 @@ namespace vfs
 		
 		posix_extra& extra = *(posix_extra*) result->extra();
 		
-		plus::construct_from_move( extra.path, path.move() );
+		vxo::construct_from_move( extra.path, path.move() );
 		
 		extra.status = sb;
 		

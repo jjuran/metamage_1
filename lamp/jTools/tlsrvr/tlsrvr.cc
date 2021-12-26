@@ -140,7 +140,7 @@ namespace tool
 		{
 			plus::string word = plus::string( *it,
 			                                  strlen( *it ),
-			                                  plus::delete_never );
+			                                  vxo::delete_never );
 			
 			word = plus::mac_from_utf8( word );
 			

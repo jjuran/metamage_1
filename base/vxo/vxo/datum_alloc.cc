@@ -3,7 +3,7 @@
 	--------------
 */
 
-#include "plus/datum_alloc.hh"
+#include "vxo/datum_alloc.hh"
 
 // Standard C
 #include <stdlib.h>
@@ -14,12 +14,12 @@
 // debug
 #include "debug/assert.hh"
 
-// plus
-#include "plus/datum_access.hh"
-#include "plus/extent.hh"
+// vxo
+#include "vxo/datum_access.hh"
+#include "vxo/extent.hh"
 
 
-namespace plus
+namespace vxo
 {
 	
 	void construct_from_move_untaint_policy( datum_storage&  x,

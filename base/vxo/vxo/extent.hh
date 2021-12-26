@@ -3,11 +3,11 @@
 	---------
 */
 
-#ifndef PLUS_EXTENT_HH
-#define PLUS_EXTENT_HH
+#ifndef VXO_EXTENT_HH
+#define VXO_EXTENT_HH
 
 
-namespace plus
+namespace vxo
 {
 	
 	typedef void (*destructor)( void* );

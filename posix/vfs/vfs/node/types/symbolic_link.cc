@@ -25,8 +25,8 @@ namespace vfs
 	
 	struct symlink_extra
 	{
-		plus::datum_storage  target;
-		remove_method        remove;
+		vxo::datum_storage  target;
+		remove_method       remove;
 	};
 	
 	static void remove( const node* that )
@@ -75,7 +75,7 @@ namespace vfs
 	{
 		symlink_extra& extra = *(symlink_extra*) that->extra();
 		
-		plus::destroy( extra.target );
+		vxo::destroy( extra.target );
 	}
 	
 	node_ptr new_symbolic_link( const node*          parent,
@@ -92,7 +92,7 @@ namespace vfs
 		
 		symlink_extra& extra = *(symlink_extra*) result->extra();
 		
-		plus::construct_from_move( extra.target, target.move() );
+		vxo::construct_from_move( extra.target, target.move() );
 		
 		extra.remove = remove;
 		

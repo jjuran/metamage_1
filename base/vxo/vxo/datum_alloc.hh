@@ -3,14 +3,14 @@
 	--------------
 */
 
-#ifndef PLUS_DATUMALLOC_HH
-#define PLUS_DATUMALLOC_HH
+#ifndef VXO_DATUMALLOC_HH
+#define VXO_DATUMALLOC_HH
 
-// plus
-#include "plus/datum_storage.hh"
+// vxo
+#include "vxo/datum_storage.hh"
 
 
-namespace plus
+namespace vxo
 {
 	
 	enum delete_policy

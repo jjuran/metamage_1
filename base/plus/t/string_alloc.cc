@@ -46,7 +46,7 @@ static void handoff()
 	
 	memcpy( buffer, LARGE_STRING, sizeof LARGE_STRING );
 	
-	plus::string a( buffer, sizeof LARGE_STRING - 1, plus::delete_free );
+	plus::string a( buffer, sizeof LARGE_STRING - 1, vxo::delete_free );
 	
 	EXPECT( a.data() == buffer );
 	
@@ -59,7 +59,7 @@ static void static_nocopy()
 {
 	const char* digits = LARGE_STRING;
 	
-	plus::string a( digits, sizeof LARGE_STRING - 1, plus::delete_never );
+	plus::string a( digits, sizeof LARGE_STRING - 1, vxo::delete_never );
 	
 	EXPECT( a.data() == digits );
 	
@@ -72,7 +72,7 @@ static void static_varcopy()
 {
 	const char* digits = LARGE_STRING;
 	
-	plus::string a( digits, sizeof LARGE_STRING - 1, plus::delete_never );
+	plus::string a( digits, sizeof LARGE_STRING - 1, vxo::delete_never );
 	
 	EXPECT( a.data() == digits );
 	

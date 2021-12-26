@@ -10,9 +10,11 @@
 #include "iota/pascal_string.hh"
 #include "iota/swap.hh"
 
+// vxo
+#include "vxo/datum_access.hh"
+#include "vxo/datum_alloc.hh"
+
 // plus
-#include "plus/datum_access.hh"
-#include "plus/datum_alloc.hh"
 #include "plus/string_common.hh"
 
 
@@ -24,6 +26,9 @@ namespace plus
 	class string
 	{
 		public:
+			typedef vxo::datum_movable datum_movable;
+			typedef vxo::delete_policy delete_policy;
+			
 			typedef char value_type;
 			
 			typedef unsigned long  size_type;
@@ -51,11 +56,11 @@ namespace plus
 			
 			enum
 			{
-				max_offset = datum_buffer_size - 1
+				max_offset = vxo::datum_buffer_size - 1
 			};
 		
 		protected:
-			datum_storage store;
+			vxo::datum_storage store;
 		
 		private:
 			// The _ is mnemonic for ~
@@ -66,7 +71,7 @@ namespace plus
 		protected:
 			char* copy_on_write( bool tainting )
 			{
-				return plus::copy_on_write( store, tainting );
+				return vxo::copy_on_write( store, tainting );
 			}
 		
 		public:
@@ -143,13 +148,13 @@ namespace plus
 			
 			bool empty() const  { return size() == 0; }
 			
-			size_type size() const  { return plus::size( store ); }
+			size_type size() const  { return vxo::size( store ); }
 			
 			size_type length() const  { return size(); }
 			
-			size_type capacity() const  { return plus::capacity( store ); }
+			size_type capacity() const  { return vxo::capacity( store ); }
 			
-			const char* data() const  { return plus::begin( store ); }
+			const char* data() const  { return vxo::begin( store ); }
 			
 			const char* c_str() const;
 			

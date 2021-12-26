@@ -137,8 +137,8 @@ OSErr documents_Write( FCB* fcb, const char* buffer, uint32_t length )
 	
 	StringPtr p = *(StringHandle) fcb->fcbFlNum;
 	
-	plus::string name( p,              plus::delete_never );
-	plus::string data( buffer, length, plus::delete_never );
+	plus::string name( p,              vxo::delete_never );
+	plus::string data( buffer, length, vxo::delete_never );
 	
 	int err = try_to_write( docfs_fd, name, data, fcb->fcbCrPs );
 	
@@ -222,8 +222,8 @@ OSErr documents_FlushFile( FCB* fcb )
 	
 	StringPtr p = *(StringHandle) fcb->fcbFlNum;
 	
-	plus::string name( p,                           plus::delete_never );
-	plus::string data( fcb->fcbBfAdr, fcb->fcbPLen, plus::delete_never );
+	plus::string name( p,                           vxo::delete_never );
+	plus::string data( fcb->fcbBfAdr, fcb->fcbPLen, vxo::delete_never );
 	
 	int err = try_to_put( docfs_fd, name, data );
 	

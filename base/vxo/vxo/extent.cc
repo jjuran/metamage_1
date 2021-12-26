@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "plus/extent.hh"
+#include "vxo/extent.hh"
 
 // Standard C
 #include <stdlib.h>
@@ -15,11 +15,11 @@
 // debug
 #include "debug/assert.hh"
 
-// plus
-#include "plus/ref_count.hh"
+// vxo
+#include "vxo/ref_count.hh"
 
 
-namespace plus
+namespace vxo
 {
 	
 	struct extent_header

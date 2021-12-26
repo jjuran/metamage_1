@@ -11,8 +11,9 @@
 // iota
 #include "iota/swap.hh"
 
-// plus
-#include "plus/extent.hh"
+// vxo
+#include "vxo/datum_alloc.hh"
+#include "vxo/extent.hh"
 
 
 namespace vlib
@@ -45,9 +46,9 @@ namespace vlib
 			if ( expr != pointer )
 			{
 				// Don't call pair_destructor() recursively -- we iterate.
-				plus::extent_set_destructor( (char*) expr, NULL );
+				vxo::extent_set_destructor( (char*) expr, NULL );
 				
-				plus::extent_release( (char*) expr );
+				vxo::extent_release( (char*) expr );
 			}
 			
 			if ( next_extent == NULL )
@@ -180,7 +181,7 @@ namespace vlib
 	{
 		if ( box.has_extent() )
 		{
-			plus::extent_add_ref( (const char*) box.pointer() );
+			vxo::extent_add_ref( (const char*) box.pointer() );
 		}
 	}
 	
@@ -200,13 +201,13 @@ namespace vlib
 				add_ref( exp->left .its_box );
 				add_ref( exp->right.its_box );
 				
-				typedef const plus::datum_storage string_datum;
+				typedef const vxo::datum_storage string_datum;
 				
 				string_datum& datum = (string_datum&) exp->source.file();
 				
-				if ( plus::has_dynamic_extent( datum ) )
+				if ( vxo::has_dynamic_extent( datum ) )
 				{
-					plus::extent_add_ref( datum.alloc.pointer );
+					vxo::extent_add_ref( datum.alloc.pointer );
 				}
 			}
 			
