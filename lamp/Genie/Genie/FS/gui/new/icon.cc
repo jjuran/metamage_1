@@ -218,7 +218,7 @@ namespace Genie
 		
 		if ( data.get() == NULL )
 		{
-			data = boost::intrusive_ptr< IconData >( new IconData );
+			data.reset( new IconData );
 		}
 		
 		return New_FSTree_Icon_data( parent, name, data );
