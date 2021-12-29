@@ -202,7 +202,7 @@ namespace Genie
 		}
 		
 		// Check if fragment name is or ends with "Carbon"
-		N::Str255 name = member.name;
+		ConstStr255Param name = member.name;
 		
 		const unsigned char* endOfName = name + 1 + name[0];
 		
