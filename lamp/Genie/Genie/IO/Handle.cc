@@ -11,6 +11,9 @@
 // more-libc
 #include "more/string.h"
 
+// mac-sys-utils
+#include "mac_sys/mem_error.hh"
+
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
 
@@ -147,7 +150,7 @@ namespace Genie
 		{
 			::SetHandleSize( extra.handle, required_size );
 			
-			if ( MemError() != noErr )
+			if ( mac::sys::mem_error() )
 			{
 				if ( offset > existing_size )
 				{

@@ -12,6 +12,7 @@
 // mac-sys-utils
 #include "mac_sys/has/FSSpec_calls.hh"
 #include "mac_sys/has/RealTempMemory.hh"
+#include "mac_sys/mem_error.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -117,7 +118,7 @@ namespace Genie
 		}
 		else
 		{
-			err = MemError();
+			err = mac::sys::mem_error();
 		}
 		
 		Mac::ThrowOSStatus( err );
