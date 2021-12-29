@@ -16,6 +16,7 @@
 
 // mac-sys-utils
 #include "mac_sys/has/ColorQuickDraw.hh"
+#include "mac_sys/mem_error.hh"
 
 // mac-ui-utils
 #include "mac_ui/windows.hh"
@@ -445,7 +446,7 @@ namespace Pedestal
 		
 		if ( window == NULL )
 		{
-			OSStatus err = MemError();
+			OSStatus err = mac::sys::mem_error();
 			
 			if ( err == noErr )
 			{
