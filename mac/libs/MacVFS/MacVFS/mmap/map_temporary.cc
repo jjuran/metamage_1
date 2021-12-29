@@ -44,9 +44,7 @@ namespace vfs
 	
 	memory_mapping_ptr map_temporary( std::size_t length, int prot, int flags )
 	{
-		n::owned< Mac::Handle > handle = new_handle( length );
-		
-		return new Handle_memory_mapping( handle, length, flags );
+		return new Handle_memory_mapping( new_handle( length ), length, flags );
 	}
 	
 }
