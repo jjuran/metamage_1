@@ -21,6 +21,9 @@
 #include "Rects.hh"
 
 
+OSErr MemErr : 0x0220;
+
+
 static const Rect emptyRect = { 0, 0, 0, 0 };
 
 
@@ -159,7 +162,7 @@ pascal void CopyRgn_patch( MacRegion** src, MacRegion** dst )
 	
 	SetHandleSize( (Handle) dst, size );
 	
-	if ( MemError() != noErr )
+	if ( MemErr != noErr )
 	{
 		return;
 	}
