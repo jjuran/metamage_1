@@ -38,6 +38,8 @@
 static short ANumber;
 static short ACount = -1;
 
+OSErr MemErr : 0x0220;
+
 long CaretTime : 0x02F4;
 
 WindowPeek WindowList  : 0x09D6;
@@ -1171,7 +1173,7 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, ResID icon_id )
 	
 	if ( dialog == NULL )
 	{
-		return MemError();
+		return MemErr;
 	}
 	
 	DITL_append_userItem( h, &default_button_outline, dialog->portRect );
