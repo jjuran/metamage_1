@@ -79,92 +79,92 @@ static char* const* get_options( char* const* argv )
 
 namespace tool
 {
+
+namespace p7 = poseven;
+
+
+static int Select( const std::vector< const char* >& read_files, bool only_one )
+{
+	int max_fd_plus_1 = 0;
 	
-	namespace p7 = poseven;
+	fd_set read_fds;
 	
+	FD_ZERO( &read_fds );
 	
-	static int Select( const std::vector< const char* >& read_files, bool only_one )
+	std::vector< const char* > name_of;
+	
+	typedef std::vector< const char* >::const_iterator const_iterator;
+	
+	for ( const_iterator it = read_files.begin();  it != read_files.end();  ++it )
 	{
-		int max_fd_plus_1 = 0;
+		const char* name = *it;
 		
-		fd_set read_fds;
+		int fd = open( name, O_RDONLY );
 		
-		FD_ZERO( &read_fds );
-		
-		std::vector< const char* > name_of;
-		
-		typedef std::vector< const char* >::const_iterator const_iterator;
-		
-		for ( const_iterator it = read_files.begin();  it != read_files.end();  ++it )
+		if ( fd < 0 )
 		{
-			const char* name = *it;
-			
-			int fd = open( name, O_RDONLY );
-			
-			if ( fd < 0 )
-			{
-				p7::perror( "select", name );
-				return 5;
-			}
-			
-			FD_SET( fd, &read_fds );
-			
-			max_fd_plus_1 = fd + 1;
-			
-			name_of.resize( max_fd_plus_1 );
-			
-			name_of[ fd ] = name;
+			p7::perror( "select", name );
+			return 5;
 		}
 		
-		// This blocks and yields to other threads
-		int selected = select( max_fd_plus_1, &read_fds, NULL, NULL, NULL );
+		FD_SET( fd, &read_fds );
 		
-		if ( selected < 0 )
-		{
-			p7::perror( "select: select()" );
-			
-			return 3;  // error from select()
-		}
+		max_fd_plus_1 = fd + 1;
 		
-		if ( selected == 0 )
-		{
-			return 1;  // timeout
-		}
+		name_of.resize( max_fd_plus_1 );
 		
-		if ( selected > 1  &&  only_one )
-		{
-			return 2;  // multiple, maybe a window closed
-		}
-		
-		for ( int reader = 0;  reader < max_fd_plus_1;  ++reader )
-		{
-			if ( !FD_ISSET( reader, &read_fds ) )  continue;
-			
-			const char* name = name_of[ reader ];
-			
-			iovec iov[] =
-			{
-				{ (char*) name, strlen( name ) },
-				{ (char*)      STR_LEN( "\n" ) },
-			};
-			
-			ssize_t n = writev( STDOUT_FILENO, iov, sizeof iov / sizeof *iov );
-			
-			if ( n < 0 )
-			{
-				return 4;
-			}
-		}
-		
-		return 0;
+		name_of[ fd ] = name;
 	}
 	
+	// This blocks and yields to other threads
+	int selected = select( max_fd_plus_1, &read_fds, NULL, NULL, NULL );
 	
-	int Main( int argc, char** argv )
+	if ( selected < 0 )
 	{
-		char *const *args = get_options( argv );
+		p7::perror( "select: select()" );
 		
-		return Select( readers, only_one );
+		return 3;  // error from select()
 	}
 	
+	if ( selected == 0 )
+	{
+		return 1;  // timeout
+	}
+	
+	if ( selected > 1  &&  only_one )
+	{
+		return 2;  // multiple, maybe a window closed
+	}
+	
+	for ( int reader = 0;  reader < max_fd_plus_1;  ++reader )
+	{
+		if ( !FD_ISSET( reader, &read_fds ) )  continue;
+		
+		const char* name = name_of[ reader ];
+		
+		iovec iov[] =
+		{
+			{ (char*) name, strlen( name ) },
+			{ (char*)      STR_LEN( "\n" ) },
+		};
+		
+		ssize_t n = writev( STDOUT_FILENO, iov, sizeof iov / sizeof *iov );
+		
+		if ( n < 0 )
+		{
+			return 4;
+		}
+	}
+	
+	return 0;
+}
+
+
+int Main( int argc, char** argv )
+{
+	char *const *args = get_options( argv );
+	
+	return Select( readers, only_one );
+}
+
 }
