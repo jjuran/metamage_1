@@ -57,8 +57,12 @@ namespace worldview
 			                           const V::XMatrix&    offset,
 			                           const V::XMatrix&    inv );
 			
+			void AddCamera( std::size_t camera )
+			{
+				itsCameras.push_back( camera );
+			}
+			
 			const std::vector< Camera >& Cameras() const  { return itsCameras; }
-			      std::vector< Camera >& Cameras()        { return itsCameras; }
 	};
 	
 }

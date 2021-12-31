@@ -219,7 +219,7 @@ namespace worldview
 	
 	void Parser::MakeCamera( Parser& parser, const char* begin, const char* end )
 	{
-		parser.itsScene->Cameras().push_back( Camera( parser.itsContextID ) );
+		parser.itsScene->AddCamera( parser.itsContextID );
 	}
 	
 	void Parser::SetColor( Parser& parser, const char* begin, const char* end )
