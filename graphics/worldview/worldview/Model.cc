@@ -12,11 +12,11 @@
 namespace worldview
 {
 	
-	V::XMatrix Camera::WorldToEyeTransform( const Scene& scene ) const
+	V::XMatrix WorldToEyeTransform( const Scene& scene, std::size_t camera )
 	{
-		V::XMatrix inverse = scene.GetContext( itsContextIndex ).itsInverse;
+		V::XMatrix inverse = scene.GetContext( camera ).itsInverse;
 		
-		std::size_t index = scene.GetSuperContext( itsContextIndex );
+		std::size_t index = scene.GetSuperContext( camera );
 		
 		while ( scene.SuperContextExists( index ) )
 		{
@@ -29,11 +29,11 @@ namespace worldview
 		return inverse;
 	}
 	
-	V::XMatrix Camera::EyeToWorldTransform( const Scene& scene ) const
+	V::XMatrix EyeToWorldTransform( const Scene& scene, std::size_t camera )
 	{
-		V::XMatrix xform = scene.GetContext( itsContextIndex ).itsTransform;
+		V::XMatrix xform = scene.GetContext( camera ).itsTransform;
 		
-		std::size_t index = scene.GetSuperContext( itsContextIndex );
+		std::size_t index = scene.GetSuperContext( camera );
 		
 		while ( scene.SuperContextExists( index ) )
 		{
@@ -46,14 +46,9 @@ namespace worldview
 		return xform;
 	}
 	
-	V::XMatrix Camera::EyeToPortTransform() const
+	V::XMatrix EyeToPortTransform()
 	{
 		return V::XMatrix( V::Pitch( -V::Degrees( 90 ) ) );
-	}
-	
-	V::XMatrix Camera::PortToEyeTransform() const
-	{
-		return V::XMatrix( V::Pitch( V::Degrees( 90 ) ) );
 	}
 	
 	Scene::Scene() : itsContexts( 1 )

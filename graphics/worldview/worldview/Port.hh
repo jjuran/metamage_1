@@ -73,8 +73,6 @@ namespace worldview
 		cmdNextCamera
 	};
 	
-	class Camera;
-	
 	class FlatLens
 	{
 		public:

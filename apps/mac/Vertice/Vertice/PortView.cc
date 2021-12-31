@@ -210,7 +210,7 @@ namespace Vertice
 	
 	void PortView::DrawAnaglyphic()
 	{
-		std::size_t contextIndex = itsScene.Cameras().front().ContextIndex();
+		std::size_t contextIndex = itsScene.Cameras().front();
 		
 		Moveable& target = itsPort.itsScene.GetContext( contextIndex );
 		
@@ -444,7 +444,7 @@ namespace Vertice
 		
 		if ( itsSelectedContext == 0 )
 		{
-			itsSelectedContext = itsScene.Cameras().front().ContextIndex();
+			itsSelectedContext = itsScene.Cameras().front();
 		}
 		
 		itsPort.SendCameraCommand( itsSelectedContext, cmd );

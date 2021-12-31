@@ -211,10 +211,10 @@ namespace worldview
 	{
 		if ( itsScene.Cameras().empty() )  return;
 		
-		Camera& camera = itsScene.Cameras().front();
+		Camera camera = itsScene.Cameras().front();
 		
-		const V::XMatrix& world2eye = camera.WorldToEyeTransform( itsScene );
-		const V::XMatrix& eye2port  = camera.EyeToPortTransform();
+		const V::XMatrix& world2eye = WorldToEyeTransform( itsScene, camera );
+		const V::XMatrix& eye2port  = EyeToPortTransform();
 		
 		V::XMatrix world2port = Compose( world2eye, eye2port );
 		
@@ -241,7 +241,7 @@ namespace worldview
 		
 		V::Point3D::Type eye = V::Point3D::Make( 0, 0, 0 );
 		
-		eye = camera.EyeToWorldTransform( itsScene ) * eye;
+		eye = EyeToWorldTransform( itsScene, camera ) * eye;
 		
 		for ( ModelIter it = models.begin();  it != models.end();  ++it )
 		{

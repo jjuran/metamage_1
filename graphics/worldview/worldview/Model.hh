@@ -23,24 +23,12 @@ namespace worldview
 	
 	class Scene;
 	
-	class Camera
-	{
-		private:
-			std::size_t itsContextIndex;
-		
-		public:
-			Camera() : itsContextIndex( 0 )  {}
-			
-			Camera( std::size_t index ) : itsContextIndex( index )  {}
-			
-			V::XMatrix WorldToEyeTransform( const Scene& model ) const;
-			V::XMatrix EyeToWorldTransform( const Scene& model ) const;
-			
-			V::XMatrix EyeToPortTransform() const;
-			V::XMatrix PortToEyeTransform() const;
-			
-			std::size_t ContextIndex() const  { return itsContextIndex; }
-	};
+	typedef std::size_t Camera;
+	
+	V::XMatrix WorldToEyeTransform( const Scene& scene, std::size_t camera );
+	V::XMatrix EyeToWorldTransform( const Scene& scene, std::size_t camera );
+	
+	V::XMatrix EyeToPortTransform();
 	
 	class Scene
 	{
