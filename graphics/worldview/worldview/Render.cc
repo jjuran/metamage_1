@@ -25,10 +25,8 @@
 #include "Vectoria/LinearAlgebra3D.hh"
 #include "Vectoria/TriColor.hh"
 
-// Portage
-#include "Portage/DepthBuffer.hh"
-
 // worldview
+#include "worldview/DepthBuffer.hh"
 #include "worldview/Model.hh"
 #include "worldview/Objects.hh"
 #include "worldview/Port.hh"
@@ -84,7 +82,7 @@ namespace worldview
 	}
 	
 	
-	typedef Portage::DepthBuffer< float > DeepPixelDevice;
+	typedef DepthBuffer< float > DeepPixelDevice;
 	
 	static DeepPixelDevice gDeepPixelDevice;
 	

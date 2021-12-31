@@ -1,10 +1,10 @@
-/*	======================
- *	Portage/DepthBuffer.hh
- *	======================
- */
+/*
+	worldview/DepthBuffer.hh
+	------------------------
+*/
 
-#ifndef PORTAGE_DEPTHBUFFER_HH
-#define PORTAGE_DEPTHBUFFER_HH
+#ifndef WORLDVIEW_DEPTHBUFFER_HH
+#define WORLDVIEW_DEPTHBUFFER_HH
 
 // Standard C
 #include <string.h>
@@ -13,7 +13,7 @@
 #include <vector>
 
 
-namespace Portage
+namespace worldview
 {
 	
 	template < class Scalar >
