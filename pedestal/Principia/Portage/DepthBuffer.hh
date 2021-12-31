@@ -6,8 +6,10 @@
 #ifndef PORTAGE_DEPTHBUFFER_HH
 #define PORTAGE_DEPTHBUFFER_HH
 
+// Standard C
+#include <string.h>
+
 // Standard C++
-#include <algorithm>
 #include <vector>
 
 
@@ -40,7 +42,13 @@ namespace Portage
 				Reset();
 			}
 			
-			void Reset()  { std::fill( itsCells.begin(), itsCells.end(), Scalar( 0 ) ); }
+			void Reset()
+			{
+				char* begin = (char*) &*itsCells.begin();
+				size_t size = (char*) &*itsCells.end() - begin;
+				
+				memset( begin, '\0', size );
+			}
 			
 			void Resize( unsigned width, unsigned height )
 			{
