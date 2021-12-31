@@ -8,9 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Standard C++
-#include <vector>
-
 // POSIX
 #include <fcntl.h>
 #include <sys/select.h>
@@ -22,6 +19,9 @@
 
 // command
 #include "command/get_option.hh"
+
+// vxo
+#include "vxo/ptrvec.hh"
 
 
 #define PROGRAM  "select"
@@ -47,7 +47,7 @@ static command::option options[] =
 
 static bool only_one = false;
 
-static std::vector< const char* > readers;
+static vxo::UPtrVec< const char > readers;
 
 static inline
 void report_error( const char* path, int err = errno )
@@ -82,7 +82,7 @@ static char* const* get_options( char* const* argv )
 }
 
 
-static int Select( const std::vector< const char* >& read_files, bool only_one )
+static int Select( const vxo::UPtrVec< const char >& read_files, bool only_one )
 {
 	int max_fd_plus_1 = 0;
 	
@@ -90,9 +90,9 @@ static int Select( const std::vector< const char* >& read_files, bool only_one )
 	
 	FD_ZERO( &read_fds );
 	
-	std::vector< const char* > name_of;
+	vxo::UPtrVec< const char > name_of;
 	
-	typedef std::vector< const char* >::const_iterator const_iterator;
+	typedef vxo::UPtrVec< const char >::const_iterator const_iterator;
 	
 	for ( const_iterator it = read_files.begin();  it != read_files.end();  ++it )
 	{
