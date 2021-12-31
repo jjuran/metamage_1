@@ -13,8 +13,10 @@
 #include <vector>
 
 // POSIX
+#include <fcntl.h>
 #include <sys/select.h>
 #include <sys/uio.h>
+#include <unistd.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -23,7 +25,6 @@
 #include "command/get_option.hh"
 
 // poseven
-#include "poseven/functions/open.hh"
 #include "poseven/functions/perror.hh"
 #include "poseven/types/exit_t.hh"
 
@@ -100,7 +101,13 @@ namespace tool
 		{
 			const char* name = *it;
 			
-			p7::fd_t fd = p7::open( name, p7::o_rdonly ).release();
+			int fd = open( name, O_RDONLY );
+			
+			if ( fd < 0 )
+			{
+				p7::perror( "select", name );
+				return 5;
+			}
 			
 			FD_SET( fd, &read_fds );
 			
