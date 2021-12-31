@@ -236,10 +236,10 @@ namespace worldview
 	
 	class Geometry_Error {};
 	
-	template < class Inserter >
+	template < class Container >
 	static void Convexify( const std::vector< unsigned >&  offsets,
 	                       const PointMesh&                mesh,
-	                       Inserter                        output )
+	                       Container&                      output )
 	{
 		std::size_t size = offsets.size();
 		
@@ -300,7 +300,7 @@ namespace worldview
 		
 		if ( concave_vertices == 0 )
 		{
-			output++ = offsets;
+			output.push_back( offsets );
 			
 			return;
 		}
@@ -325,7 +325,7 @@ namespace worldview
 				triangle[ 1 ] = remaining_offsets[ next  ];
 				triangle[ 2 ] = remaining_offsets[ next2 ];
 				
-				output++ = triangle;
+				output.push_back( triangle );
 				
 				remaining_offsets.erase( remaining_offsets.begin() + next );
 				points           .erase( points           .begin() + next );
@@ -361,7 +361,7 @@ namespace worldview
 			}
 		}
 		
-		output++ = remaining_offsets;
+		output.push_back( remaining_offsets );
 	}
 	
 	void MeshModel::AddMeshPolygon( const std::vector< unsigned >&  offsets,
@@ -369,7 +369,7 @@ namespace worldview
 	{
 		std::vector< std::vector< unsigned > > offset_groups;
 		
-		Convexify( offsets, itsMesh, std::back_inserter( offset_groups ) );
+		Convexify( offsets, itsMesh, offset_groups );
 		
 		typedef std::vector< std::vector< unsigned > >::const_iterator Iter;
 		
