@@ -8,7 +8,6 @@
 #include <string.h>
 
 // Standard C++
-#include <map>
 #include <vector>
 
 // POSIX
@@ -92,7 +91,7 @@ namespace tool
 		
 		FD_ZERO( &read_fds );
 		
-		std::map< int, const char* > name_of;
+		std::vector< const char* > name_of;
 		
 		typedef std::vector< const char* >::const_iterator const_iterator;
 		
@@ -111,6 +110,8 @@ namespace tool
 			FD_SET( fd, &read_fds );
 			
 			maxFD = fd;
+			
+			name_of.resize( maxFD + 1 );
 			
 			name_of[ fd ] = name;
 		}
