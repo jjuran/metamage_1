@@ -26,9 +26,6 @@
 #include "poseven/functions/perror.hh"
 #include "poseven/types/exit_t.hh"
 
-// Orion
-#include "Orion/Main.hh"
-
 
 using namespace command::constants;
 
@@ -76,9 +73,6 @@ static char* const* get_options( char* const* argv )
 	return argv;
 }
 
-
-namespace tool
-{
 
 namespace p7 = poseven;
 
@@ -160,11 +154,9 @@ static int Select( const std::vector< const char* >& read_files, bool only_one )
 }
 
 
-int Main( int argc, char** argv )
+int main( int argc, char** argv )
 {
 	char *const *args = get_options( argv );
 	
 	return Select( readers, only_one );
-}
-
 }
