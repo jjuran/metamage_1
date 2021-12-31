@@ -14,6 +14,8 @@
 #include <sys/uio.h>
 #include <unistd.h>
 
+#include "iota/freestore_free.hh"
+
 // more-posix
 #include "more/perror.hh"
 
@@ -70,8 +72,13 @@ static char* const* get_options( char* const* argv )
 				break;
 			
 			case Option_reader:
-				readers.push_back( command::global_result.param );
-				break;
+				if ( readers.push_back_nothrow( command::global_result.param ) )
+				{
+					break;  // ok
+				}
+				
+				// Out of memory already!?
+				// Fall through
 			
 			default:
 				abort();
@@ -110,7 +117,12 @@ static int Select( const vxo::UPtrVec< const char >& read_files, bool only_one )
 		
 		max_fd_plus_1 = fd + 1;
 		
-		name_of.resize( max_fd_plus_1 );
+		if ( ! name_of.resize_nothrow( max_fd_plus_1 ) )
+		{
+			// The only conceivable error is ENOMEM.
+			report_error( "<memory allocation>" );
+			return 108;
+		}
 		
 		name_of[ fd ] = name;
 	}
