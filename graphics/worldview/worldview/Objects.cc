@@ -24,6 +24,8 @@ namespace worldview
 	using Vectoria::Z;
 	using Vectoria::W;
 	
+	typedef unsigned char Boolean;
+	
 	
 	void ImageTile::Swap( ImageTile& other )
 	{
@@ -262,7 +264,7 @@ namespace worldview
 		
 		unsigned concave_vertices = 0;
 		
-		std::vector< bool > concave( size );
+		std::vector< Boolean > concave( size );
 		
 		for ( unsigned i = 0;  i < points.size() - 2;  ++i )
 		{
@@ -433,9 +435,9 @@ namespace worldview
 		
 		const std::vector< V::Point3D::Type >& points = itsMesh.Points();
 		
-		std::vector< bool > positive_mask( points.size() );
-		std::vector< bool > zero_mask    ( points.size() );
-		std::vector< bool > negative_mask( points.size() );
+		std::vector< Boolean > positive_mask( points.size() );
+		std::vector< Boolean > zero_mask    ( points.size() );
+		std::vector< Boolean > negative_mask( points.size() );
 		
 		typedef std::vector< V::Point3D::Type >::const_iterator PointIter;
 		
