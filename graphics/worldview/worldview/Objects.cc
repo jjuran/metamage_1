@@ -436,8 +436,6 @@ namespace worldview
 		const std::vector< V::Point3D::Type >& points = itsMesh.Points();
 		
 		std::vector< Boolean > positive_mask( points.size() );
-		std::vector< Boolean > zero_mask    ( points.size() );
-		std::vector< Boolean > negative_mask( points.size() );
 		
 		typedef std::vector< V::Point3D::Type >::const_iterator PointIter;
 		
@@ -450,14 +448,6 @@ namespace worldview
 			if ( product > 0 )
 			{
 				positive_mask[ i ] = true;
-			}
-			else if ( product < 0 )
-			{
-				negative_mask[ i ] = true;
-			}
-			else
-			{
-				zero_mask[ i ] = true;
 			}
 		}
 		
