@@ -37,11 +37,6 @@ namespace worldview
 			
 			DepthBuffer() : itsWidth( 0 ), itsHeight( 0 ), itsCells()  {}
 			
-			DepthBuffer( unsigned width, unsigned height ) : itsWidth( width ), itsHeight( height ), itsCells( Size() )
-			{
-				Reset();
-			}
-			
 			void Reset()
 			{
 				char* begin = (char*) &*itsCells.begin();
