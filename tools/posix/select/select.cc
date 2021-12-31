@@ -5,6 +5,7 @@
 
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // Standard C++
 #include <algorithm>
@@ -13,6 +14,7 @@
 
 // POSIX
 #include <sys/select.h>
+#include <sys/uio.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -20,13 +22,9 @@
 // command
 #include "command/get_option.hh"
 
-// plus
-#include "plus/string/concat.hh"
-
 // poseven
 #include "poseven/functions/open.hh"
 #include "poseven/functions/perror.hh"
-#include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
 // Orion
@@ -137,9 +135,18 @@ namespace tool
 			
 			const char* name = name_of[ reader ];
 			
-			const plus::string message = plus::concat( name, STR_LEN( "\n" ) );
+			iovec iov[] =
+			{
+				{ (char*) name, strlen( name ) },
+				{ (char*)      STR_LEN( "\n" ) },
+			};
 			
-			p7::write( p7::stdout_fileno, message );
+			ssize_t n = writev( STDOUT_FILENO, iov, sizeof iov / sizeof *iov );
+			
+			if ( n < 0 )
+			{
+				return 4;
+			}
 		}
 		
 		return 0;
