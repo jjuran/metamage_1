@@ -68,6 +68,10 @@ namespace vxo
 			
 			Item* insert( Item* loc )  { return insert_n( loc, 1 ); }
 			
+			Item* resize_nothrow( size_t n );
+			
+			void resize( size_t n );
+			
 			void erase_n( Item* loc, size_t n );
 			
 			Item* push_back_nothrow( Item item )
@@ -263,7 +267,5 @@ namespace vxo
 	};
 	
 }
-
-#define UniPtrVec_ UPtrVec
 
 #endif

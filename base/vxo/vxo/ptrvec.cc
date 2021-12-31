@@ -165,6 +165,46 @@ anyptr_t* PtrVec::expand_by( size_t n )
 	return begin() + original_length;
 }
 
+anyptr_t* PtrVec::resize_nothrow( size_t n )
+{
+	const size_t length = size();
+	
+	if ( n <= length )
+	{
+		u.str.length = n;
+	}
+	else if ( expand_by_nothrow( n ) )
+	{
+		const size_t n_bytes_to_zero = (n - length) * sizeof (anyptr_t);
+		
+		memset( begin() + length, '\0', n_bytes_to_zero );
+	}
+	else
+	{
+		return NULL;
+	}
+	
+	return begin() + length;
+}
+
+void PtrVec::resize( size_t n )
+{
+	const size_t length = size();
+	
+	if ( n <= length )
+	{
+		u.str.length = n;
+	}
+	else
+	{
+		expand_by( n );
+		
+		const size_t n_bytes_to_zero = (n - length) * sizeof (anyptr_t);
+		
+		memset( begin() + length, '\0', n_bytes_to_zero );
+	}
+}
+
 anyptr_t* PtrVec::insert_n_nothrow( Item* loc, size_t n )
 {
 	ASSERT( loc >= begin() );
