@@ -4,6 +4,7 @@
 */
 
 // Standard C
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -16,15 +17,16 @@
 #include <sys/uio.h>
 #include <unistd.h>
 
-// Iota
-#include "iota/strings.hh"
+// more-posix
+#include "more/perror.hh"
 
 // command
 #include "command/get_option.hh"
 
-// poseven
-#include "poseven/functions/perror.hh"
-#include "poseven/types/exit_t.hh"
+
+#define PROGRAM  "select"
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 using namespace command::constants;
@@ -46,6 +48,12 @@ static command::option options[] =
 static bool only_one = false;
 
 static std::vector< const char* > readers;
+
+static inline
+void report_error( const char* path, int err = errno )
+{
+	more::perror( PROGRAM, path, err );
+}
 
 static char* const* get_options( char* const* argv )
 {
@@ -74,9 +82,6 @@ static char* const* get_options( char* const* argv )
 }
 
 
-namespace p7 = poseven;
-
-
 static int Select( const std::vector< const char* >& read_files, bool only_one )
 {
 	int max_fd_plus_1 = 0;
@@ -97,7 +102,7 @@ static int Select( const std::vector< const char* >& read_files, bool only_one )
 		
 		if ( fd < 0 )
 		{
-			p7::perror( "select", name );
+			report_error( name );
 			return 5;
 		}
 		
@@ -115,7 +120,7 @@ static int Select( const std::vector< const char* >& read_files, bool only_one )
 	
 	if ( selected < 0 )
 	{
-		p7::perror( "select: select()" );
+		report_error( "<select>" );
 		
 		return 3;  // error from select()
 	}
