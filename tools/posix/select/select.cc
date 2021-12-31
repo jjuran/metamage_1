@@ -8,7 +8,6 @@
 #include <string.h>
 
 // Standard C++
-#include <algorithm>
 #include <map>
 #include <vector>
 
@@ -111,7 +110,7 @@ namespace tool
 			
 			FD_SET( fd, &read_fds );
 			
-			maxFD = std::max< int >( maxFD, fd );
+			maxFD = fd;
 			
 			name_of[ fd ] = name;
 		}
