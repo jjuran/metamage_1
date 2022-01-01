@@ -59,19 +59,20 @@ namespace nucleus
 		if ( address_size > kMaxPPCXTIAddress )
 		{
 			// FIXME:  Should throw or something
+			
+			address_size = kMaxPPCXTIAddress;
 		}
 		
 		PPCXTIAddress xtiAddr;
 		
 		xtiAddr.fAddressType = kDNSAddrType;
 		
-		std::fill( xtiAddr.fAddress,
+		std::fill( xtiAddr.fAddress + address_size,
 		           xtiAddr.fAddress + kMaxPPCXTIAddress + 1,
 		           '\0' );
 		
 		std::copy( address_data,
-		           address_data + std::min< std::size_t >( address_size,
-		                                                   kMaxPPCXTIAddress ),
+		           address_data + address_size,
 		           xtiAddr.fAddress );
 		
 		return xtiAddr;
