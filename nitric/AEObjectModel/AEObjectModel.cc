@@ -219,46 +219,6 @@ namespace Nitrogen
 		return AccessProperty( propertyID, containerToken, containerClass );
 	}
 	
-	struct ObjectAccessContext
-	{
-		Mac::AEObjectClass       desiredClass;
-		Mac::AEObjectClass       containerClass;
-		Mac::AEKeyForm           keyForm;
-		const Mac::AEDesc_Data&  keyData;
-		
-		ObjectAccessContext( Mac::AEObjectClass       desiredClass,
-		                     Mac::AEObjectClass       containerClass,
-		                     Mac::AEKeyForm           keyForm,
-		                     const Mac::AEDesc_Data&  keyData )
-		:
-			desiredClass  ( desiredClass ),
-			containerClass( containerClass ),
-			keyForm       ( keyForm ),
-			keyData       ( keyData )
-		{}
-	};
-	
-	static nucleus::owned< Mac::AEDesc_Token >
-	//
-	CallObjectAccessor( const Mac::AEDesc_Token&    containerToken,
-	                    const ObjectAccessContext&  context )
-	{
-		return AECallObjectAccessor( context.desiredClass,
-		                             containerToken,
-		                             context.containerClass,
-		                             context.keyForm,
-		                             context.keyData );
-	}
-	
-	static nucleus::owned< Mac::AEDesc_Token >
-	//
-	CallObjectAccessorWithContext( const AEDesc&               containerToken,
-	                               const ObjectAccessContext&  context )
-	{
-		return CallObjectAccessor( AEDesc_Cast< const Mac::AEDesc_Token >( containerToken ),
-		                           context );
-	}
-	
 	static inline const Mac::AEDesc_Token& AEToken_Cast( const AEDesc& token )
 	{
 		return AEDesc_Cast< const Mac::AEDesc_Token >( token );

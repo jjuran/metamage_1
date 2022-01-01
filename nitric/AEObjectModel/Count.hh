@@ -28,8 +28,6 @@ namespace Nitrogen
 			           Mac::AEObjectClass        containerClass,
 			           const Mac::AEDesc_Token&  containerToken );
 	
-	template < ::DescType desiredClass, ::DescType containerType > struct Count_Traits;
-	
 	class Counter
 	{
 		public:
@@ -73,12 +71,6 @@ namespace Nitrogen
 				map[ Key( desiredClass, containerType ) ] = callback;
 			}
 			
-			template < ::DescType desiredClass, ::DescType containerType >
-			void Register()
-			{
-				Register( desiredClass, containerType, Count_Traits< desiredClass, containerType >::Count );
-			}
-			
 			std::size_t Count( Mac::AEObjectClass        desiredClass,
 			                   Mac::AEObjectClass        containerClass,
 			                   const Mac::AEDesc_Token&  containerToken );
@@ -89,12 +81,6 @@ namespace Nitrogen
 	inline void RegisterCounter( Mac::AEObjectClass desiredClass, Mac::DescType containerType, Counter::Callback callback )
 	{
 		TheGlobalCounter().Register( desiredClass, containerType, callback );
-	}
-	
-	template < ::DescType desiredClass, ::DescType containerType >
-	inline void RegisterCounter()
-	{
-		TheGlobalCounter().template Register< desiredClass, containerType >();
 	}
 	
 }

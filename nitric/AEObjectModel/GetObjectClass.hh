@@ -92,8 +92,6 @@ namespace Nitrogen
 	#pragma mark -
 	#pragma mark ** ObjectClassGetter **
 	
-	template < Mac::DescType tokenType > struct GetObjectClass_Traits;
-	
 	class ObjectClassGetter
 	{
 		public:
@@ -116,12 +114,6 @@ namespace Nitrogen
 				map[ tokenType ] = callback;
 			}
 			
-			template < Mac::DescType tokenType >
-			void Register()
-			{
-				Register( tokenType, GetObjectClass_Traits< tokenType >::GetObjectClass );
-			}
-			
 			Mac::AEObjectClass GetObjectClass( const Mac::AEDesc_Token& obj );
 	};
 	
@@ -130,12 +122,6 @@ namespace Nitrogen
 	inline void RegisterObjectClassGetter( Mac::DescType tokenType, ObjectClassGetter::Callback callback )
 	{
 		TheGlobalObjectClassGetter().Register( tokenType, callback );
-	}
-	
-	template < Mac::DescType tokenType >
-	inline void RegisterObjectClassGetter()
-	{
-		TheGlobalObjectClassGetter().template Register< tokenType >();
 	}
 	
 }

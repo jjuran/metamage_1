@@ -23,8 +23,6 @@ namespace Nitrogen
 	
 	void SetData( const Mac::AEDesc_Token& obj, const Mac::AEDesc_Data& data );
 	
-	template < ::DescType tokenType > struct SetData_Traits;
-	
 	class DataSetter
 	{
 		public:
@@ -47,12 +45,6 @@ namespace Nitrogen
 				map[ tokenType ] = callback;
 			}
 			
-			template < ::DescType tokenType >
-			void Register()
-			{
-				Register( tokenType, SetData_Traits< tokenType >::SetData );
-			}
-			
 			void SetData( const Mac::AEDesc_Token& obj, const Mac::AEDesc_Data& data );
 	};
 	
@@ -61,12 +53,6 @@ namespace Nitrogen
 	inline void RegisterDataSetter( Mac::DescType tokenType, DataSetter::Callback callback )
 	{
 		TheGlobalDataSetter().Register( tokenType, callback );
-	}
-	
-	template < ::DescType tokenType >
-	inline void RegisterDataSetter()
-	{
-		TheGlobalDataSetter().template Register< tokenType >();
 	}
 	
 }
