@@ -6,8 +6,10 @@
 #include "plus/simple_map.hh"
 
 // Standard C++
-#include <algorithm>
 #include <map>
+
+// iota
+#include "iota/swap.hh"
 
 
 namespace plus
@@ -64,7 +66,7 @@ namespace plus
 				slot = duplicate( it->second );
 			}
 			
-			using std::swap;
+			using iota::swap;
 			
 			swap( its_map, temp.its_map );
 		}
@@ -79,9 +81,14 @@ namespace plus
 		
 		simple_map_type& map = its_map->map;
 		
-		std::for_each( map.begin(),
-		               map.end(),
-		               map_destroyer( its_deallocator ) );
+		typedef simple_map_type::const_iterator Iter;
+		
+		Iter end = map.end();
+		
+		for ( Iter it = map.begin();  it != end;  ++it )
+		{
+			its_deallocator( it->second );
+		}
 		
 		map.clear();
 	}
