@@ -19,6 +19,9 @@
 #include <Script.h>
 #endif
 
+// Standard C
+#include <string.h>
+
 // more-libc
 #include "more/string.h"
 
@@ -82,16 +85,14 @@ namespace nucleus
 	template <>
 	PPCAddrRec maker< PPCAddrRec >::operator()( const PPCXTIAddress& xtiAddr ) const
 	{
-		const UInt8* terminator = std::find( xtiAddr.fAddress,
-		                                     xtiAddr.fAddress + kMaxPPCXTIAddress,
-		                                     '\0' );
+		size_t size = strlen( (const char*) xtiAddr.fAddress ) + 1;
 		
 		PPCAddrRec xti;
 		
 		xti.Reserved[0] = 0;
 		xti.Reserved[1] = 0;
 		xti.Reserved[2] = 0;
-		xti.xtiAddrLen = sizeof (::PPCXTIAddressType) + (terminator + 1 - xtiAddr.fAddress);
+		xti.xtiAddrLen = sizeof (::PPCXTIAddressType) + size;
 		xti.xtiAddr = xtiAddr;
 		
 		return xti;
