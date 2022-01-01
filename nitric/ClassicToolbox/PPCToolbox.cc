@@ -66,13 +66,13 @@ namespace nucleus
 		xtiAddr.fAddressType = kDNSAddrType;
 		
 		std::fill( xtiAddr.fAddress,
-				   xtiAddr.fAddress + kMaxPPCXTIAddress + 1,
-				   '\0' );
+		           xtiAddr.fAddress + kMaxPPCXTIAddress + 1,
+		           '\0' );
 		
-		std::copy( address_data, 
-				   address_data + std::min< std::size_t >( address_size,
-														   kMaxPPCXTIAddress ), 
-				   xtiAddr.fAddress );
+		std::copy( address_data,
+		           address_data + std::min< std::size_t >( address_size,
+		                                                   kMaxPPCXTIAddress ),
+		           xtiAddr.fAddress );
 		
 		return xtiAddr;
 	}
