@@ -5,9 +5,6 @@
 
 #include "ClassicToolbox/CommResources.hh"
 
-// Standard C++
-#include <map>
-
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
@@ -40,20 +37,8 @@ namespace Nitrogen
 #endif
 	
 	
-	typedef std::map< CRMDeviceType, CRMAttributes_Disposer >  CRMAttributes_Disposer_Map;
-	
-	CRMAttributes_Disposer_Map gCRMAttributes_Disposer_Map;
-	
-	
 	void DisposeCRMAttributes( CRMDeviceType crmDeviceType, CRMAttributes crmAttributes )
 	{
-		CRMAttributes_Disposer_Map::const_iterator it = gCRMAttributes_Disposer_Map.find( crmDeviceType );
-		
-		if ( it != gCRMAttributes_Disposer_Map.end() )
-		{
-			return it->second( crmAttributes );
-		}
-		
 		// FIXME:  Assert
 	}
 	
