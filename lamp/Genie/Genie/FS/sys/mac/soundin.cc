@@ -63,19 +63,15 @@ namespace Genie
 			return false;
 		}
 		
-		try
+		Str255 name;
+		Handle icon;
+		
+		if ( OSErr err = SPBGetIndexedDevice( i, name, &icon ) )
 		{
-			(void) N::SPBGetIndexedDevice( i );
-		}
-		catch ( const Mac::OSStatus& err )
-		{
-			if ( err != siBadSoundInDevice )
-			{
-				throw;
-			}
-			
 			return false;
 		}
+		
+		DisposeHandle( icon );
 		
 		return true;
 	}
