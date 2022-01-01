@@ -3,10 +3,8 @@
  *	=====
  */
 
-// Standard C++
-#include <vector>
-
 // Standard C
+#include <signal.h>
 #include <stdlib.h>
 
 // POSIX
@@ -24,7 +22,6 @@
 // poseven
 #include "poseven/functions/fcntl.hh"
 #include "poseven/functions/open.hh"
-#include "poseven/functions/sigaction.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/wait.hh"
 
@@ -155,11 +152,11 @@ namespace tool
 			kill( -shell_pgid, SIGTTIN );
 		}
 		
-		p7::sigaction( p7::sigint,  p7::sig_ign );
-		p7::sigaction( p7::sigquit, p7::sig_ign );
-		p7::sigaction( p7::sigtstp, p7::sig_ign );
-		p7::sigaction( p7::sigttin, p7::sig_ign );
-		p7::sigaction( p7::sigttou, p7::sig_ign );
+		signal( SIGINT,  SIG_IGN );
+		signal( SIGQUIT, SIG_IGN );
+		signal( SIGTSTP, SIG_IGN );
+		signal( SIGTTIN, SIG_IGN );
+		signal( SIGTTOU, SIG_IGN );
 		
 		pid_t pid = getpid();
 		

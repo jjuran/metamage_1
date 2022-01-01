@@ -43,7 +43,6 @@
 #include "vxo/ptrvec.hh"
 
 // poseven
-#include "poseven/functions/sigaction.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/wait.hh"
 #include "poseven/functions/write.hh"
@@ -673,11 +672,11 @@ namespace tool
 	{
 		if ( GetOption( kOptionMonitor ) )
 		{
-			p7::sigaction( p7::sigint,  p7::sig_dfl );
-			p7::sigaction( p7::sigquit, p7::sig_dfl );
-			p7::sigaction( p7::sigtstp, p7::sig_dfl );
-			p7::sigaction( p7::sigttin, p7::sig_dfl );
-			p7::sigaction( p7::sigttou, p7::sig_dfl );
+			signal( SIGINT,  SIG_DFL );
+			signal( SIGQUIT, SIG_DFL );
+			signal( SIGTSTP, SIG_DFL );
+			signal( SIGTTIN, SIG_DFL );
+			signal( SIGTTOU, SIG_DFL );
 			
 			setpgid( 0, pgid );
 			
