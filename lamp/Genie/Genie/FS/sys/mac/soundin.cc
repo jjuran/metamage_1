@@ -128,30 +128,6 @@ namespace Genie
 	}
 	
 	
-	static plus::string string_from_stringhandle( N::Handle h )
-	{
-		N::Str255 result;
-		
-		if ( std::size_t size = N::GetHandleSize( h ) )
-		{
-			unsigned const char* str = (StringPtr) *h.Get();
-			
-			if ( 1 + str[0] > size )
-			{
-				// corruption; shouldn't happen
-				result[0] = size - 1;
-				
-				std::copy( &str[1], &str[ size ], &result[1] );
-			}
-			else
-			{
-				result = str;
-			}
-		}
-		
-		return plus::string( result );
-	}
-	
 	static
 	void sys_mac_soundin_REF_name_get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
