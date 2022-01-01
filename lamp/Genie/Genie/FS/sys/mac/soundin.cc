@@ -133,9 +133,7 @@ namespace Genie
 	{
 		const UInt16 index = GetKeyFromParent( that );
 		
-		const N::Str255 name = N::SPBGetIndexedDevice_Name( index );
-		
-		result = name;
+		result = N::SPBGetIndexedDevice_Name( index );
 	}
 	
 	static const vfs::property_params sys_mac_soundin_REF_name_params =
