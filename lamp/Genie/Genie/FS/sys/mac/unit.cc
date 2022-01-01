@@ -88,19 +88,11 @@ namespace Genie
 		}
 	};
 	
-	static N::Str255 GetDriverName( AuxDCEHandle dceHandle )
-	{
-		const unsigned char* name = mac::sys::get_driver_name( dceHandle );
-		
-		// Safely copy Pascal string onto stack
-		return N::Str255( name );
-	}
-	
 	struct DriverName : serialize_Str255_contents
 	{
 		static N::Str255 Get( AuxDCEHandle dceHandle )
 		{
-			return GetDriverName( dceHandle );
+			return mac::sys::get_driver_name( dceHandle );
 		}
 	};
 	
