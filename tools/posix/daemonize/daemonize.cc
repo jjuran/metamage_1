@@ -9,7 +9,10 @@
 #include <stdlib.h>
 
 // POSIX
+#include <fcntl.h>
+#include <sys/ioctl.h>
 #include <termios.h>
+#include <unistd.h>
 
 // command
 #include "command/get_option.hh"
@@ -25,9 +28,6 @@
 #include "relix/fork_and_exit.h"
 
 // poseven
-#include "poseven/functions/close.hh"
-#include "poseven/functions/ioctl.hh"
-#include "poseven/functions/open.hh"
 #include "poseven/functions/perror.hh"
 
 
@@ -103,7 +103,6 @@ static char* const* get_options( char* const* argv )
 }
 
 
-namespace n = nucleus;
 namespace p7 = poseven;
 
 
@@ -138,7 +137,7 @@ int main( int argc, char** argv )
 	// Start a new session with no controlling terminal
 	setsid();
 	
-	n::owned< p7::fd_t > stdio;
+	int stdio;
 	
 	if ( ctty )
 	{
@@ -146,11 +145,14 @@ int main( int argc, char** argv )
 		
 		sigaction( SIGHUP, &action, NULL );
 		
-		stdio = p7::open( ctty, p7::o_rdwr );
+		stdio = open( ctty, O_RDWR );
 		
 	#ifdef TIOCSCTTY
 		
-		p7::ioctl( stdio.get(), TIOCSCTTY, NULL );
+		if ( stdio >= 0 )
+		{
+			ioctl( stdio, TIOCSCTTY, NULL );
+		}
 		
 	#endif
 	}
@@ -159,7 +161,13 @@ int main( int argc, char** argv )
 		// Ensure we can't acquire a controlling terminal by being session leader
 		fork_and_exit( 0 );
 		
-		stdio = p7::open( "/dev/null", p7::o_rdonly );
+		stdio = open( "/dev/null", O_RDWR );
+	}
+	
+	if ( stdio < 0 )
+	{
+		p7::perror( argv[0], "/dev/null" );
+		return 1;
 	}
 	
 	if ( !keep_cwd )
@@ -182,7 +190,7 @@ int main( int argc, char** argv )
 		dup2( stdio, STDERR_FILENO  );
 	}
 	
-	p7::close( stdio );
+	close( stdio );
 	
 	(void) execvp( *args, (char**) args );
 	
