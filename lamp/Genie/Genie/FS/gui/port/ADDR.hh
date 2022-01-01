@@ -28,8 +28,8 @@ namespace Genie
 	
 	bool invalidate_port_WindowRef( const vfs::node* key );
 	
-	void install_view_in_port    ( const boost::intrusive_ptr< Pedestal::View >& view, const vfs::node* key );
-	void uninstall_view_from_port( const boost::intrusive_ptr< Pedestal::View >& view, const vfs::node* key );
+	void install_view_in_port    ( Pedestal::View& view, const vfs::node* key );
+	void uninstall_view_from_port( Pedestal::View& view, const vfs::node* key );
 	
 	const vfs::node* get_port_focus( const vfs::node* port );
 	

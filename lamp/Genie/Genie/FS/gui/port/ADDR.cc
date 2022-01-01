@@ -230,7 +230,7 @@ namespace Genie
 		{
 			Ped::View* view = Ped::get_window_view( window );
 			
-			uninstall_view_from_port( view, key );
+			uninstall_view_from_port( *view, key );
 			
 			mac::app::Window_menu_remove( window );
 			
@@ -571,7 +571,7 @@ namespace Genie
 		return false;
 	}
 	
-	void install_view_in_port( const boost::intrusive_ptr< Ped::View >& view, const vfs::node* key )
+	void install_view_in_port( Ped::View& view, const vfs::node* key )
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
 		{
@@ -579,24 +579,24 @@ namespace Genie
 			
 			Rect bounds = mac::qd::get_portRect( window );
 			
-			view->Install( bounds );
+			view.Install( bounds );
 			
 			if ( window == FrontWindow()  &&  is_front_process() )
 			{
-				view->Activate( true );
+				view.Activate( true );
 			}
 			
 			InvalidateWindowRef( window );
 		}
 	}
 	
-	void uninstall_view_from_port( const boost::intrusive_ptr< Ped::View >& view, const vfs::node* key )
+	void uninstall_view_from_port( Ped::View& view, const vfs::node* key )
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
 		{
 			SetWindowPort_Scope scope( window );
 			
-			view->Uninstall();
+			view.Uninstall();
 			
 			InvalidateWindowRef( window );
 		}

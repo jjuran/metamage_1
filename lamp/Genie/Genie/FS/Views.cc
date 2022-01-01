@@ -336,7 +336,7 @@ namespace Genie
 		set_view( that, view.get() );
 		
 		// Install and invalidate if window exists
-		install_view_in_port( view, windowKey );
+		install_view_in_port( *view, windowKey );
 	}
 	
 	static const vfs::dir_method_set unview_dir_methods =
@@ -370,7 +370,7 @@ namespace Genie
 		
 		const vfs::node* windowKey = GetViewWindowKey( that );
 		
-		uninstall_view_from_port( get_view( that ), windowKey );
+		uninstall_view_from_port( *get_view( that ), windowKey );
 		
 		set_view( that, Ped::EmptyView::Get().get() );
 		
