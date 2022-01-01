@@ -197,21 +197,11 @@ namespace Genie
 			return false;
 		}
 		
-		try
-		{
-			(void) N::GetComponentInfo( component );
-		}
-		catch ( const Mac::OSStatus& err )
-		{
-			if ( err != badComponentSelector )
-			{
-				throw;
-			}
-			
-			return false;
-		}
+		ComponentDescription desc;
 		
-		return true;
+		OSErr err = GetComponentInfo( component, &desc, NULL, NULL, NULL );
+		
+		return err == noErr;
 	}
 	
 	extern const vfs::fixed_mapping sys_mac_thng_REF_Mappings[];
