@@ -85,7 +85,7 @@ namespace tool
 	
 	static int Select( const std::vector< const char* >& read_files, bool only_one )
 	{
-		int maxFD = -1;
+		int max_fd_plus_1 = 0;
 		
 		fd_set read_fds;
 		
@@ -109,15 +109,15 @@ namespace tool
 			
 			FD_SET( fd, &read_fds );
 			
-			maxFD = fd;
+			max_fd_plus_1 = fd + 1;
 			
-			name_of.resize( maxFD + 1 );
+			name_of.resize( max_fd_plus_1 );
 			
 			name_of[ fd ] = name;
 		}
 		
 		// This blocks and yields to other threads
-		int selected = select( maxFD + 1, &read_fds, NULL, NULL, NULL );
+		int selected = select( max_fd_plus_1, &read_fds, NULL, NULL, NULL );
 		
 		if ( selected < 0 )
 		{
@@ -136,7 +136,7 @@ namespace tool
 			return 2;  // multiple, maybe a window closed
 		}
 		
-		for ( int reader = 0;  reader <= maxFD;  ++reader )
+		for ( int reader = 0;  reader < max_fd_plus_1;  ++reader )
 		{
 			if ( !FD_ISSET( reader, &read_fds ) )  continue;
 			
