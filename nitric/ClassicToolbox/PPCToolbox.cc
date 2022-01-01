@@ -19,6 +19,9 @@
 #include <Script.h>
 #endif
 
+// more-libc
+#include "more/string.h"
+
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
 
@@ -71,9 +74,7 @@ namespace nucleus
 		           xtiAddr.fAddress + kMaxPPCXTIAddress + 1,
 		           '\0' );
 		
-		std::copy( address_data,
-		           address_data + address_size,
-		           xtiAddr.fAddress );
+		void* p = mempcpy( xtiAddr.fAddress, address_data, address_size );
 		
 		return xtiAddr;
 	}
