@@ -451,7 +451,7 @@ namespace worldview
 		
 		const char* start = cmd_start;
 		
-		const char* stop = std::find( start, end, ' ' );
+		const char* stop = find_space( start, end );
 		
 		plus::string cmdname( start, stop );
 		
