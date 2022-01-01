@@ -8,9 +8,6 @@
 
 #include "ClassicToolbox/PPCToolbox.hh"
 
-// Standard C++
-#include <algorithm>
-
 // Mac OS
 #ifndef __MACERRORS__
 #include <MacErrors.h>
@@ -73,11 +70,9 @@ namespace nucleus
 		
 		xtiAddr.fAddressType = kDNSAddrType;
 		
-		std::fill( xtiAddr.fAddress + address_size,
-		           xtiAddr.fAddress + kMaxPPCXTIAddress + 1,
-		           '\0' );
-		
 		void* p = mempcpy( xtiAddr.fAddress, address_data, address_size );
+		
+		*(char*) p = '\0';
 		
 		return xtiAddr;
 	}
