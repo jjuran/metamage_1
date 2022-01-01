@@ -14,6 +14,9 @@
 #include <termios.h>
 #include <unistd.h>
 
+// iota
+#include "iota/freestore_free.hh"
+
 // command
 #include "command/get_option.hh"
 
@@ -21,14 +24,16 @@
 #include "must/chdir.h"
 #include "must/write.h"
 
-// iota
-#include "iota/strings.hh"
+// more-posix
+#include "more/perror.hh"
 
 // Relix
 #include "relix/fork_and_exit.h"
 
-// poseven
-#include "poseven/functions/perror.hh"
+
+#define PROGRAM  "daemonize"
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 using namespace command::constants;
@@ -63,6 +68,12 @@ static bool keep_stderr = false;
 
 static const char* ctty = NULL;
 
+
+static inline
+void report_error( const char* path, int err = errno )
+{
+	more::perror( PROGRAM, path, err );
+}
 
 static char* const* get_options( char* const* argv )
 {
@@ -101,9 +112,6 @@ static char* const* get_options( char* const* argv )
 	
 	return argv;
 }
-
-
-namespace p7 = poseven;
 
 
 static int usage()
@@ -166,7 +174,7 @@ int main( int argc, char** argv )
 	
 	if ( stdio < 0 )
 	{
-		p7::perror( argv[0], "/dev/null" );
+		report_error( "/dev/null" );
 		return 1;
 	}
 	
@@ -196,7 +204,7 @@ int main( int argc, char** argv )
 	
 	bool noSuchFile = errno == ENOENT;
 	
-	p7::perror( argv[0], argv[1] );
+	report_error( argv[ 1 ] );
 	
 	return noSuchFile ? 127 : 126;
 }
