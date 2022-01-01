@@ -230,9 +230,7 @@ namespace Genie
 			s.resize( offset + n_bytes );
 		}
 		
-		std::copy( buffer,
-		           buffer + n_bytes,
-		           s.begin() + offset );
+		mempcpy( s.begin() + offset, buffer, n_bytes );
 		
 		params.its_mac_text = plus::mac_from_utf8( s );
 		
