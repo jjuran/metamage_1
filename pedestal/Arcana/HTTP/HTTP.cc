@@ -186,7 +186,9 @@ namespace HTTP
 				return;
 			}
 			
-			if ( itsReceivedData.size() - itsPlaceToLookForEndOfHeader < STRLEN( "\r\n" "\r\n" ) )
+			const size_t received_data_size = itsReceivedData.size();
+			
+			if ( received_data_size - itsPlaceToLookForEndOfHeader < STRLEN( "\r\n" "\r\n" ) )
 			{
 				return;
 			}
@@ -195,7 +197,7 @@ namespace HTTP
 			
 			if ( eohMarker == itsReceivedData.npos )
 			{
-				itsPlaceToLookForEndOfHeader = itsReceivedData.size() - STRLEN( "\r\n" "\r\n" ) + 1;
+				itsPlaceToLookForEndOfHeader = received_data_size - STRLEN( "\r\n" "\r\n" ) + 1;
 				
 				return;
 			}
@@ -205,6 +207,8 @@ namespace HTTP
 			
 			// The content starts after the two CRLF
 			std::size_t startOfContent = eohMarker + STRLEN( "\r\n" "\r\n" );
+			
+			const char* end = begin + received_data_size;
 			
 			// Anything left over is content
 			std::size_t leftOver = itsReceivedData.size() - startOfContent;
@@ -219,7 +223,7 @@ namespace HTTP
 			
 			const char* header_stream = GetHeaderStream();
 			
-			itsHeaderIndex = MakeHeaderIndex( header_stream, &*itsReceivedData.end() );
+			itsHeaderIndex = MakeHeaderIndex( header_stream, end );
 			
 			if ( const HeaderFieldEntry* contentLengthEntry = FindHeaderFieldInStream( header_stream,
 			                                                                           itsHeaderIndex,
