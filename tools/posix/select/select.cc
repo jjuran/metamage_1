@@ -114,7 +114,7 @@ namespace tool
 		// This blocks and yields to other threads
 		int selected = select( maxFD + 1, &read_fds, NULL, NULL, NULL );
 		
-		if ( selected == -1 )
+		if ( selected < 0 )
 		{
 			p7::perror( "select: select()" );
 			
