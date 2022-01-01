@@ -45,12 +45,6 @@ namespace Nitrogen
 	CRMAttributes_Disposer_Map gCRMAttributes_Disposer_Map;
 	
 	
-	void Register_CRMAttributes_Disposer( CRMDeviceType           crmDeviceType,
-	                                      CRMAttributes_Disposer  disposer )
-	{
-		gCRMAttributes_Disposer_Map[ crmDeviceType ] = disposer;
-	}
-	
 	void DisposeCRMAttributes( CRMDeviceType crmDeviceType, CRMAttributes crmAttributes )
 	{
 		CRMAttributes_Disposer_Map::const_iterator it = gCRMAttributes_Disposer_Map.find( crmDeviceType );

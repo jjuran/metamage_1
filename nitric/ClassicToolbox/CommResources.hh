@@ -82,17 +82,6 @@ namespace Nitrogen
 	
 	typedef void (*CRMAttributes_Disposer)( CRMAttributes );
 	
-	void Register_CRMAttributes_Disposer( CRMDeviceType           crmDeviceType,
-	                                      CRMAttributes_Disposer  disposer );
-	
-	template < CRMDeviceType crmDeviceType >
-	void RegisterCRMAttributesDisposer()
-	{
-		typedef typename CRMAttributes_Traits< crmDeviceType >::Type Type;
-		
-		Register_CRMAttributes_Disposer( crmDeviceType, AdaptDisposer< Type >::ForCRMAttributes );
-	}
-	
 	void DisposeCRMAttributes( CRMDeviceType  crmDeviceType,
 	                           CRMAttributes  crmAttributes );
 	
@@ -177,21 +166,6 @@ namespace Nitrogen
 	}
 	
 	nucleus::owned< CRMRecPtr > New_CRMRecord();
-	
-	template < CRMDeviceType crmDeviceType >
-	nucleus::owned< CRMRecPtr > New_CRMRecord( nucleus::owned< typename CRMAttributes_Traits< crmDeviceType >::Type > crmAttributes )
-	{
-		RegisterCRMAttributesDisposer< crmDeviceType >();
-		
-		nucleus::owned< CRMRecPtr > result = New_CRMRecord();
-		
-		CRMRecPtr crmRec = result;
-		
-		crmRec->crmDeviceType = crmDeviceType;
-		crmRec->crmAttributes = reinterpret_cast< long >( crmAttributes.release() );
-		
-		return result;
-	}
 	
 	#pragma mark -
 	#pragma mark ** Paraphernalia **
