@@ -126,7 +126,7 @@ my %fsmap =
 	bin =>
 	[
 		# Standard
-		\ qw( mkdir sh sync ),
+		\ qw( sh ),
 	],
 	etc =>
 	[

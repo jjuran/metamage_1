@@ -78,6 +78,6 @@ run ["macbin", "decode", mbim]
 rename (last, dest)
 remove mbim
 
-run ["sync"]
+sync()
 
 warn "Done."

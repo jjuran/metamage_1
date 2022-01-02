@@ -13,7 +13,7 @@ try
 {
 	if temporary_tmp then
 	{
-		run ["/bin/mkdir", "/tmp"]
+		mkdir "/tmp"
 	}
 	
 	run ["/sbin/upgrade", getenv "PLATFORM"]
@@ -29,7 +29,7 @@ try
 	{
 		remove "/tmp"
 		
-		run ["/bin/sync"]
+		sync()
 	}
 }
 catch {}
