@@ -174,7 +174,8 @@ namespace tool
 		return result;
 	}
 	
-	static bool is_string_literal( const char* p )
+	static inline
+	bool is_string_literal( const char* p )
 	{
 		if ( *p == 'L' )
 		{
