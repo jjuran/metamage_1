@@ -36,6 +36,66 @@ namespace tool
 	}
 	
 	
+	class token_stack
+	{
+		private:
+			token_list preceding;  // stored in reverse order
+			
+			const plus::string*  begin;
+			const plus::string*  end;
+		
+		public:
+			token_stack( const token_list& input )
+			{
+				begin = input.begin();
+				end   = input.end();
+			}
+			
+			bool empty() const  { return preceding.empty()  &&  begin == end; }
+			
+			const plus::string& front() const;
+			
+			plus::string pop();
+			
+			void push( const plus::string& s )  { preceding.push_back( s ); }
+			void push( const token_list& tokens );
+	};
+	
+	inline
+	const plus::string& token_stack::front() const
+	{
+		if ( ! preceding.empty() )
+		{
+			return preceding.back();
+		}
+		
+		return *begin;
+	}
+	
+	plus::string token_stack::pop()
+	{
+		if ( ! preceding.empty() )
+		{
+			plus::string result = preceding.back();
+			
+			preceding.pop_back();
+			
+			return result;
+		}
+		
+		return *begin++;
+	}
+	
+	void token_stack::push( const token_list& tokens )
+	{
+		size_t i = tokens.size();
+		
+		while ( i-- > 0 )
+		{
+			push( tokens[ i ] );
+		}
+	}
+	
 	static
 	const plus::string& get_one_token( const token_lists& args )
 	{
@@ -68,17 +128,17 @@ namespace tool
 		result.push_back( plus::string( &c, 1 ) );
 	}
 	
-	static bool get_macro_args( const token_list& tokens, token_lists& result, size_t& i )
+	static bool get_macro_args( token_stack& tokens, token_lists& result )
 	{
 		result.push_back( token_list() );
 		
-		const size_t n_tokens = tokens.size();
+		tokens.pop();  // skip "("
 		
-		++i;
+		int depth = 0;
 		
-		for ( int depth = 0;  i < n_tokens;  ++i )
+		while ( ! tokens.empty() )
 		{
-			const plus::string& token = tokens[ i ];
+			plus::string token = tokens.pop();
 			
 			if ( token.size() == 1 )
 			{
@@ -329,11 +389,19 @@ namespace tool
 	                           vxo::StrSet&       ignored,
 	                           token_list&        output )
 	{
-		const size_t n_tokens = input.size();
+		token_stack stack( input );
 		
-		for ( size_t i = 0;  i < n_tokens;  ++i )
+		while ( ! stack.empty() )
 		{
-			const plus::string& token = input[ i ];
+			const plus::string token = stack.pop();
+			
+			if ( token.empty() )
+			{
+				plus::string popped = stack.pop();
+				
+				ignored.erase( popped );
+				continue;
+			}
 			
 			if ( is_initial( token.front() ) )
 			{
@@ -360,19 +428,14 @@ namespace tool
 				
 				if ( _defined_  ||  _option_  ||  (macro  &&  ! ignored.found( token )) )
 				{
-					if ( macro )
-					{
-						ignored.insert( token );
-					}
-					
 					const bool needs_more_tokens = _option_  ||  _defined_  ||  (macro  &&  macro->pattern().size() > 1);
 					
-					if ( needs_more_tokens  &&  i + 1 == n_tokens )
+					if ( needs_more_tokens  &&  stack.empty() )
 					{
 						return false;
 					}
 					
-					const bool gets_paren = needs_more_tokens  &&  input[ i + 1 ] == "(";
+					const bool gets_paren = needs_more_tokens  &&  stack.front() == "(";
 					
 					const bool call = _defined_ ? gets_paren : needs_more_tokens;
 					
@@ -380,7 +443,7 @@ namespace tool
 					{
 						token_lists args;
 						
-						const bool got = get_macro_args( input, args, ++i );
+						const bool got = get_macro_args( stack, args );
 						
 						if ( !got )
 						{
@@ -397,6 +460,11 @@ namespace tool
 						}
 						else
 						{
+							ignored.insert( token );
+							
+							stack.push( token );
+							stack.push( "" );
+							
 							token_list spliced;
 							
 							expand_macro_call( macro->pattern(),
@@ -408,80 +476,37 @@ namespace tool
 							
 							bool done;
 							
-							while ( true )
+							token_list& local_output = semiexpanded;
+							
+							done = expand_macros( spliced, in_expression, false, ignored, local_output );
+							
+							if ( ! done )
 							{
-								token_list local_output;
-								
-								done = expand_macros( spliced, in_expression, false, ignored, local_output );
-								
-								if ( done )
-								{
-									semiexpanded.swap( local_output );
-									
-									break;
-								}
-								
-								if ( i >= n_tokens - 1 )
-								{
-									return false;
-								}
-								
-								spliced.push_back( input[ ++i ] );
+								return false;
 							}
 							
-							while ( true )
-							{
-								token_list local_output;
-								
-								done = expand_macros( semiexpanded, in_expression, true, ignored, local_output );
-								
-								if ( done )
-								{
-									output.insert( output.end(),
-									               local_output.begin(),
-									               local_output.end() );
-									
-									break;
-								}
-								
-								if ( i >= n_tokens - 1 )
-								{
-									return false;
-								}
-								
-								semiexpanded.push_back( input[ ++i ] );
-							}
+							stack.push( semiexpanded );
 						}
-						
-						ignored.erase( token );
 						
 						continue;
 					}
 					else if ( !call  &&  _defined_ )
 					{
-						add_boolean_token( is_defined( input[ ++i ] ), output );
+						add_boolean_token( is_defined( stack.pop() ), output );
 						
 						continue;
 					}
 					else if ( !call  &&  macro )
 					{
-						const bool done = expand_macros( macro->replacement(),
-						                                 in_expression,
-						                                 true,
-						                                 ignored,
-						                                 output );
+						ignored.insert( token );
 						
-						if ( !done )
-						{
-							return false;
-						}
+						stack.push( token );
+						stack.push( "" );
 						
-						ignored.erase( token );
+						stack.push( macro->replacement() );
 						
 						continue;
 					}
-					
-					ignored.erase( token );
 				}
 			}
 			
