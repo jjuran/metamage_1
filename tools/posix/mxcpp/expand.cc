@@ -307,17 +307,9 @@ namespace tool
 		}
 	}
 	
-	static bool expand_macros( const token_list&  input,
-	                           bool               in_expression,
-	                           bool               allow_calls,
-	                           vxo::StrSet&       ignored,
-	                           token_list&        output );
-	
 	static void expand_macro_call( const token_list&   pattern,
 	                               const token_list&   replacement,
 	                               const token_lists&  arg_list,
-	                               bool                in_expression,
-	                               vxo::StrSet&        ignored,
 	                               token_list&         output )
 	{
 		token_list_map args = map_args( pattern, arg_list );
@@ -325,8 +317,6 @@ namespace tool
 		token_list substituted;
 		
 		substitute_args( replacement, args, substituted );
-		
-		token_list spliced;
 		
 		splice_tokens( substituted, output );
 	}
@@ -410,8 +400,6 @@ namespace tool
 							expand_macro_call( macro->pattern(),
 							                   macro->replacement(),
 							                   args,
-							                   in_expression,
-							                   ignored,
 							                   spliced );
 							
 							token_list semiexpanded;
