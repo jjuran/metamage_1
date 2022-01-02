@@ -126,7 +126,7 @@ my %fsmap =
 	bin =>
 	[
 		# Standard
-		\ qw( cat echo false ln mkdir mv rm rmdir sh sync true ),
+		\ qw( mkdir mv rm rmdir sh sync ),
 	],
 	etc =>
 	[
@@ -149,8 +149,6 @@ exec /usr/app/installer/init
 		},
 		bin =>
 		[
-			# Standard
-			\ qw( touch ),
 			# Common
 			\ qw( gzip htget ),
 			# Varyx executor
