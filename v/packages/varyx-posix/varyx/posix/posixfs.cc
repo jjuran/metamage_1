@@ -536,6 +536,22 @@ namespace posix
 		
 		int nok = remove( path );
 		
+	#ifdef __MSL__
+		
+		// Metrowerks' libc's remove() won't delete directories.
+		
+		if ( nok  &&  errno == EPERM )
+		{
+			nok = rmdir( path );
+			
+			if ( nok )
+			{
+				errno = EPERM;
+			}
+		}
+		
+	#endif
+		
 		if ( nok )
 		{
 			path_error( path );
