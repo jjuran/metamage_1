@@ -74,7 +74,9 @@ warn "Decoding archive..."
 
 run ["macbin", "decode", mbim]
 run ["mv", last, dest]
-run ["rm", mbim]
+
+remove mbim
+
 run ["sync"]
 
 warn "Done."

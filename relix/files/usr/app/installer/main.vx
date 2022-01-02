@@ -27,9 +27,8 @@ try
 {
 	if temporary_tmp then
 	{
-		dup2( reader "/dev/null", ERR )
+		remove "/tmp"
 		
-		run ["/bin/rmdir", "/tmp"]
 		run ["/bin/sync"]
 	}
 }
