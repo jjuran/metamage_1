@@ -419,6 +419,21 @@ namespace posix
 	}
 	
 	static
+	Value v_mkdir( const Value& v )
+	{
+		const char* path = v.string().c_str();
+		
+		int nok = mkdir( path, 0777 );  // Rely on umask being sensible
+		
+		if ( nok )
+		{
+			path_error( path );
+		}
+		
+		return Value_nothing;
+	}
+	
+	static
 	Value v_pipe( const Value& v )
 	{
 		int pipe_ends[ 2 ];
@@ -739,6 +754,7 @@ namespace posix
 	const proc_info proc_listdir  = { "listdir",  &v_listdir,  &c_str };
 	const proc_info proc_load     = { "load",     &v_load,     &c_str };
 	const proc_info proc_lstat    = { "lstat",    &v_lstat,    &c_str };
+	const proc_info proc_mkdir    = { "mkdir",    &v_mkdir,    &c_str };
 	const proc_info proc_pipe     = { "pipe",     &v_pipe,     &empty_list };
 	const proc_info proc_read     = { "read",     &v_read,     &fd_u32 };
 	const proc_info proc_reader   = { "reader",   &v_reader,   &c_str };

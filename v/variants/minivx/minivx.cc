@@ -202,6 +202,7 @@ int main( int argc, char** argv )
 		define( proc_append );
 		define( proc_chdir  );
 		define( proc_link   );
+		define( proc_mkdir  );
 		define( proc_remove );
 		define( proc_rename );
 		define( proc_rewrite );

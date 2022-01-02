@@ -29,6 +29,7 @@ namespace posix
 	extern const proc_info proc_listdir;
 	extern const proc_info proc_load;
 	extern const proc_info proc_lstat;
+	extern const proc_info proc_mkdir;
 	extern const proc_info proc_pipe;
 	extern const proc_info proc_read;
 	extern const proc_info proc_reader;
