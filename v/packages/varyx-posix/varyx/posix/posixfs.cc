@@ -676,6 +676,14 @@ namespace posix
 	}
 	
 	static
+	Value v_sync( const Value& v )
+	{
+		sync();
+		
+		return Value_nothing;
+	}
+	
+	static
 	Value v_touch( const Value& v )
 	{
 		const char* path = v.string().c_str();
@@ -765,6 +773,7 @@ namespace posix
 	const proc_info proc_rewrite  = { "rewrite",  &v_rewrite,  &c_str };
 	const proc_info proc_stat     = { "stat",     &v_stat,     &c_str };
 	const proc_info proc_symlink  = { "symlink",  &v_symlink,  &c_str_x2 };
+	const proc_info proc_sync     = { "sync",     &v_sync,     &empty_list };
 	const proc_info proc_touch    = { "touch",    &v_touch,    &c_str };
 	const proc_info proc_write    = { "write",    &v_write,    &fd_bytes };
 	
