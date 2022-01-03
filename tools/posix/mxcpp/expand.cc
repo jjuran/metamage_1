@@ -36,7 +36,8 @@ namespace tool
 	}
 	
 	
-	static plus::string get_one_token( const token_lists& args )
+	static
+	const plus::string& get_one_token( const token_lists& args )
 	{
 		if ( args.size() != 1 )
 		{
