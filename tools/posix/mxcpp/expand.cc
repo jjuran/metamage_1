@@ -340,7 +340,7 @@ namespace tool
 				const macro_t* macro = NULL;
 				
 				const bool _defined_ = in_expression  &&  token == "defined";
-				const bool _option_  = !_defined_     &&  token == "__option";
+				const bool _option_  =                    token == "__option";
 				
 				if ( !_defined_  &&  !_option_ )
 				{
