@@ -439,8 +439,6 @@ namespace tool
 					
 					const bool gets_paren = needs_more_tokens  &&  stack.front() == "(";
 					
-					const bool call = _defined_ ? gets_paren : needs_more_tokens;
-					
 					if ( gets_paren  &&  allow_calls )
 					{
 						token_lists args;
@@ -493,13 +491,13 @@ namespace tool
 						
 						continue;
 					}
-					else if ( !call  &&  _defined_ )
+					else if ( ! gets_paren  &&  _defined_ )
 					{
 						add_boolean_token( is_defined( stack.pop() ), output );
 						
 						continue;
 					}
-					else if ( !call  &&  macro )
+					else if ( ! needs_more_tokens  &&  macro )
 					{
 						ignored.insert( token );
 						
