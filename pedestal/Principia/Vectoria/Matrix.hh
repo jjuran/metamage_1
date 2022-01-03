@@ -88,6 +88,8 @@ namespace Vectoria
 			This& operator+=( const This& other );
 			This& operator-=( const This& other );
 			
+			This& invert_each_element();
+			
 			This& operator*=( Component factor  );
 			This& operator/=( Component divisor );
 			
@@ -130,6 +132,22 @@ namespace Vectoria
 		while ( dst < end )
 		{
 			*dst++ -= *src++;
+		}
+		
+		return *this;
+	}
+	
+	template < class T, unsigned R, unsigned C >
+	Matrix< T, R, C >& Matrix< T, R, C >::invert_each_element()
+	{
+		value_type* dst = myCells;
+		value_type* end = myCells + cellCount;
+		
+		while ( dst < end )
+		{
+			value_type v = *dst;
+			
+			*dst++ = -v;
 		}
 		
 		return *this;
@@ -183,7 +201,11 @@ namespace Vectoria
 	template < class T, unsigned R, unsigned C >
 	Matrix< T, R, C > operator-( const Matrix< T, R, C >& matrix )
 	{
-		return matrix * -1.0;
+		Matrix< T, R, C > copy = matrix;
+		
+		copy.invert_each_element();
+		
+		return copy;
 	}
 	
 	template < class T, unsigned R, unsigned C >
