@@ -96,7 +96,7 @@ namespace tool
 		}
 	}
 	
-	static
+	static inline
 	const plus::string& get_one_token( const token_lists& args )
 	{
 		if ( args.size() != 1 )
@@ -410,7 +410,9 @@ namespace tool
 				const bool _defined_ = in_expression  &&  token == "defined";
 				const bool _option_  =                    token == "__option";
 				
-				if ( !_defined_  &&  !_option_ )
+				const bool defined_or_option = _defined_  ||  _option_;
+				
+				if ( ! defined_or_option )
 				{
 					plus::string predef_result = eval_predefined_macro( token );
 					
@@ -426,9 +428,9 @@ namespace tool
 					macro = find_macro( token );
 				}
 				
-				if ( _defined_  ||  _option_  ||  (macro  &&  ! ignored.found( token )) )
+				if ( defined_or_option  ||  (macro  &&  ! ignored.found( token )) )
 				{
-					const bool needs_more_tokens = _option_  ||  _defined_  ||  (macro  &&  macro->pattern().size() > 1);
+					const bool needs_more_tokens = defined_or_option  ||  (macro  &&  macro->pattern().size() > 1);
 					
 					if ( needs_more_tokens  &&  stack.empty() )
 					{
@@ -450,13 +452,14 @@ namespace tool
 							return false;
 						}
 						
-						if ( _defined_ )
+						if ( defined_or_option )
 						{
-							add_boolean_token( is_defined( get_one_token( args ) ), output );
-						}
-						else if ( _option_ )
-						{
-							add_boolean_token( check_option( get_one_token( args ) ), output );
+							const plus::string& token = get_one_token( args );
+							
+							bool boolean = _option_ ? check_option( token )
+							                        : is_defined( token );
+							
+							add_boolean_token( boolean, output );
 						}
 						else
 						{
