@@ -58,13 +58,11 @@ for line in receiver line_buffered IN do
 	
 	if '%' in value then
 	{
-		value = int value[ 0 -> value.length - 1 ] * 100
+		value = int [value / '%'][0] * 100
 	}
 	else if '/' in value then 
 	{
-		const numer, const denom = value / '/'
-		
-		value = int numer * 10000 div int denom
+		value = [value / '/'] map int per {a * 10000 div b}
 	}
 	
 	rewrite "v/v/value" <== value LF
