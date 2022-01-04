@@ -44,9 +44,6 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
-// iota
-//#include "iota/char_types.hh"
-
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -97,10 +94,6 @@
 #include "ClassicToolbox/AppleTalk.hh"
 #include "ClassicToolbox/Serial.hh"
 #endif
-
-// Nitrogen Extras / Iteration
-#include "Iteration/AEDescListItems.hh"
-#include "Iteration/AEDescListItemDatas.hh"
 
 // OSErrno
 #include "OSErrno/OSErrno.hh"
@@ -559,65 +552,6 @@ static int TestOADC( int argc, char** argv )
 		
 		std::printf( "OpenADefaultComponent returned %d.\n", err );
 	}
-	
-	return 0;
-}
-
-
-/*
-static std::string Capitalize( std::string s )
-{
-	char& c = s[ 0 ];
-	
-	if ( iota::is_lower( c ) )
-	{
-		c -= ' ';
-	}
-	
-	return s;
-}
-
-static void PrintString( std::string s )
-{
-	s += "\n";
-	
-	p7::write( p7::stdout_fileno, s );
-}
-*/
-
-static int TestAE( int argc, char** argv )
-{
-	//if (argc < 3)  return 1;
-	n::owned< Mac::AEDescList_Data > list = N::AECreateList< Mac::AEDescList_Data >();
-	
-	N::AEPutPtr< Mac::typeChar >( list, 0, "foo" );
-	N::AEPutPtr< Mac::typeChar >( list, 0, "bar" );
-	N::AEPutPtr< Mac::typeChar >( list, 0, "baz" );
-	
-	/*
-	N::AEDescListItemData_Container< typeChar > listData = N::AEDescListItemDatas< typeChar >( list );
-	
-	N::AEDescListItemData< typeChar > foo = *listData.begin();
-	
-	{
-		NN::Scoped< N::AEDescListItemData< typeChar > > scoped( foo );
-		
-		foo = "zee";
-		
-		std::for_each( listData.begin(),
-		               listData.end(),
-		               std::ptr_fun( PrintString ) );
-		
-		std::transform( listData.begin(), 
-		                listData.end(), 
-		                listData.begin(), 
-		                std::ptr_fun( Capitalize ) );
-	}
-	
-	std::for_each( listData.begin(),
-	               listData.end(),
-	               std::ptr_fun( PrintString ) );
-	*/
 	
 	return 0;
 }
@@ -1267,7 +1201,6 @@ struct command_t
 static const command_t global_commands[] =
 {
 	{ "OADC",      TestOADC       },
-	{ "ae",        TestAE         },
 	
 #if !TARGET_API_MAC_CARBON
 	
