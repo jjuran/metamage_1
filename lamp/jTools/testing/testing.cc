@@ -12,9 +12,6 @@
 #ifndef __EVENTS__
 #include <Events.h>
 #endif
-#ifndef __FOLDERS__
-#include <Folders.h>
-#endif
 #ifndef __MACERRORS__
 #include <MacErrors.h>
 #endif
@@ -56,18 +53,13 @@
 
 // Recall
 #include "recall/backtrace.hh"
-#include "recall/demangle.hh"
-#include "recall/mach_o.hh"
-#include "recall/macsbug_symbols.hh"
 #include "recall/stack_crawl.hh"
-#include "recall/traceback_tables.hh"
 
 // Debug
 #include "debug/assert.hh"
 
 // plus
 #include "plus/var_string.hh"
-#include "plus/string/concat.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
@@ -84,8 +76,7 @@
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/MacMemory.hh"
 #include "Nitrogen/OSUtils.hh"
-//#include "Nitrogen/Resources.hh"
-#include "Nitrogen/Sound.hh"
+#include "Nitrogen/Resources.hh"
 #include "Nitrogen/Str.hh"
 #include "Nitrogen/Timer.hh"
 
@@ -1061,31 +1052,6 @@ static int TestCallback( int argc, char** argv )
 }
 
 
-
-static int TestUnmangle( int argc, char** argv )
-{
-	if ( argc <= 2 )
-	{
-		std::puts( "Missing argument" );
-		
-		return 1;
-	}
-	
-	const char* name = argv[2];
-	
-	plus::var_string unmangled;
-	
-	name[0] == '.' ? recall::demangle_MWCPPC( unmangled, name )
-	               : recall::demangle_MWC68K( unmangled, name );
-	
-	unmangled += "\n";
-	
-	p7::write( p7::stdout_fileno, unmangled );
-	
-	return 0;
-}
-
-
 static recall::frame_data gStackCrawl[ 64 ];
 
 static unsigned n_stack_frames;
@@ -1333,7 +1299,6 @@ static const command_t global_commands[] =
 	{ "svcs",      TestServices   },
 	{ "throw",     TestThrow      },
 	{ "unit",      TestUnit       },
-	{ "unmangle",  TestUnmangle   },
 	{ "unwind",    TestUnwind     },
 	{ "vector",    TestVectoria   },
 };
