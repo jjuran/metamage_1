@@ -779,13 +779,13 @@ static int TestReadLoc( int argc, char** argv )
 	
 	#define ENDL "\n"
 	
-	std::printf( "Latitude: %d degrees"     ENDL
+	std::printf( "Latitude:  %d degrees"    ENDL
 	             "Longitude: %d degrees"    ENDL
-	             "Daylight Saving Time: %s" ENDL
-	             "GMT delta: %d hours"      "\n", int( latitude  ),
+	             "GMT delta: %d hours"      ENDL
+	             "Daylight Saving Time: %s" "\n", int( latitude  ),
 	                                              int( longitude ),
-	                                              dls ? "on" : "off",
-	                                              int( gmtDelta / 3600 ) );
+	                                              int( gmtDelta / 3600 ),
+	                                              dls ? "on" : "off" );
 	
 	return 0;
 }
