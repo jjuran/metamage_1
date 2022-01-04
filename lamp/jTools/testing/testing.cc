@@ -752,8 +752,6 @@ static int TestThrow( int argc, char** argv )
 
 static int TestReadLoc( int argc, char** argv )
 {
-	//if ( argc < 3 )  return 1;
-	
 	MachineLocation loc;
 	
 	N::ReadLocation( loc );
@@ -779,34 +777,15 @@ static int TestReadLoc( int argc, char** argv )
 	
 	gmtDelta |= signExtend ? 0xFF000000 : 0x00000000;
 	
-	/*
-	Io::Out << "Latitude:  " << latitude  << " degrees\n";
-	Io::Out << "Longitude: " << longitude << " degrees\n";
-	Io::Out << "Daylight Savings Time: " << (dls ? "on" : "off") << "\n";
-	Io::Out << "GMT delta: " << gmtDelta / 3600 << " hours\n";
-	*/
-	
-	/*
-	std::printf( "Latitude: %d degrees\n",  int( latitude  ) );
-	std::printf( "Longitude: %d degrees\n", int( longitude ) );
-	
-	std::printf( "Daylight Savings Time: %s\n", dls ? "on" : "off" );
-	
-	std::printf( "GMT delta: %d hours\n", int( gmtDelta / 3600 ) );
-	*/
-	
 	#define ENDL "\n"
-	//#define ENDL ",  "
 	
-	std::printf( "Latitude: %d degrees"      ENDL
-	             "Longitude: %d degrees"     ENDL
-	             "Daylight Savings Time: %s" ENDL
-	             "GMT delta: %d hours"       "\n", int( latitude  ),
-	                                               int( longitude ),
-	                                               dls ? "on" : "off",
-	                                               int( gmtDelta / 3600 ) );
-	
-	//std::fflush( stdout );
+	std::printf( "Latitude: %d degrees"     ENDL
+	             "Longitude: %d degrees"    ENDL
+	             "Daylight Saving Time: %s" ENDL
+	             "GMT delta: %d hours"      "\n", int( latitude  ),
+	                                              int( longitude ),
+	                                              dls ? "on" : "off",
+	                                              int( gmtDelta / 3600 ) );
 	
 	return 0;
 }
