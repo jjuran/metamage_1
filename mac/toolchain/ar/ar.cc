@@ -193,7 +193,7 @@ namespace tool
 		
 		CheckObjectFile( first_input_path, arch, debug );
 		
-		vxo::UniPtrVec_< const char > command;
+		vxo::UPtrVec< const char > command;
 		
 		command.push_back( "tlsrvr"   );
 		command.push_back( "--escape" );  // escape arguments to prevent expansion

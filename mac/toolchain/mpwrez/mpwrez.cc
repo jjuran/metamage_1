@@ -63,7 +63,7 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		vxo::UniPtrVec_< const char > command;
+		vxo::UPtrVec< const char > command;
 		
 		command.push_back( "tlsrvr"   );
 		command.push_back( "--escape" );  // escape arguments to prevent expansion
