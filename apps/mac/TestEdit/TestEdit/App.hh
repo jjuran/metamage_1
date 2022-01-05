@@ -16,9 +16,6 @@
 #include "MacFiles/Unicode.hh"
 
 // Pedestal
-#ifndef PEDESTAL_APPLICATION_HH
-#include "Pedestal/Application.hh"
-#endif
 #ifndef PEDESTAL_WINDOW_HH
 #include "Pedestal/Window.hh"
 #endif
@@ -53,13 +50,6 @@ namespace TestEdit
 		public:
 			nucleus::owned< Mac::AEDesc_Token > GetElementByIndex( std::size_t index ) const;
 			nucleus::owned< Mac::AEDesc_Token > GetElementByID   ( UInt32      id    ) const;
-	};
-	
-	
-	class App : public Pedestal::Application
-	{
-		public:
-			App();
 	};
 	
 }

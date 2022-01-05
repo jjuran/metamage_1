@@ -35,6 +35,7 @@
 
 // Pedestal
 #include "Pedestal/AboutBox.hh"
+#include "Pedestal/Application.hh"
 #include "Pedestal/Commands.hh"
 #include "Pedestal/WindowStorage.hh"
 
@@ -568,7 +569,8 @@ bool FileOpenDialog( Ped::CommandCode )
 	return true;
 }
 
-App::App()
+static
+void SetUpAppleEvents()
 {
 	using Ped::apple_events_present;
 	
@@ -625,7 +627,9 @@ int main( void )
 {
 	using namespace TestEdit;
 	
-	TestEdit::App app;
+	Ped::Application app;
+	
+	SetUpAppleEvents();
 	
 	SetCommandHandler( Ped::kCmdAbout, &About          );
 	SetCommandHandler( Ped::kCmdNew,   &NewDocument    );
