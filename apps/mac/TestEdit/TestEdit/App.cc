@@ -174,9 +174,6 @@ WindowRef get_document_window_by_id( long id )
 static DocumentContainer gDocuments;
 
 
-static void StoreNewDocument( Document* doc );
-
-
 static
 void DocumentClosed( WindowRef window )
 {
@@ -291,13 +288,6 @@ struct GetData_AppleEvent
 		                                     Mac::kAEGetData ).release();
 	}
 };
-
-template < class File >
-static inline
-void OpenDocument( const File& file )
-{
-	StoreNewDocument( new Document( file ) );
-}
 
 // Object accessors
 
@@ -512,6 +502,13 @@ static bool NewDocument( Ped::CommandCode )
 	StoreNewDocument( new Document );
 	
 	return true;
+}
+
+template < class File >
+static inline
+void OpenDocument( const File& file )
+{
+	StoreNewDocument( new Document( file ) );
 }
 
 static
