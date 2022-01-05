@@ -117,7 +117,7 @@ namespace Genie
 		                    outline_offset(),
 		                    outline_curvature(),
 		                    bounds_changed(),
-		                    itsSubview( Ped::EmptyView::Get() )
+		                    itsSubview( Ped::EmptyView() )
 		{
 		}
 	};
@@ -277,7 +277,7 @@ namespace Genie
 		
 		if ( subview.get() == NULL )
 		{
-			subview = Ped::EmptyView::Get();
+			subview = Ped::EmptyView();
 		}
 		
 		return *subview;

@@ -67,7 +67,7 @@ namespace Genie
 		
 		ScrollFrameParameters() : itHasVertical(),
 		                          itHasHorizontal(),
-		                          itsSubview( Ped::EmptyView::Get() )
+		                          itsSubview( Ped::EmptyView() )
 		{
 		}
 	};
@@ -281,7 +281,7 @@ namespace Genie
 		
 		if ( subview.get() == NULL )
 		{
-			subview = Ped::EmptyView::Get();
+			subview = Ped::EmptyView();
 		}
 		
 		return *subview;

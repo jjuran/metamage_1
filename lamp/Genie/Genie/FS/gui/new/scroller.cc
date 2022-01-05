@@ -44,7 +44,7 @@ namespace Genie
 	{
 		boost::intrusive_ptr< Ped::View >  itsSubview;
 		
-		BasicScrollerParameters() : itsSubview( Ped::EmptyView::Get() )
+		BasicScrollerParameters() : itsSubview( Ped::EmptyView() )
 		{
 		}
 	};
@@ -79,7 +79,7 @@ namespace Genie
 		
 		if ( subview.get() == NULL )
 		{
-			subview = Ped::EmptyView::Get();
+			subview = Ped::EmptyView();
 		}
 		
 		return *subview;

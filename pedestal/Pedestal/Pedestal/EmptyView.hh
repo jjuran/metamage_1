@@ -12,10 +12,7 @@ namespace Pedestal
 	
 	class View;
 	
-	struct EmptyView
-	{
-		static View* Get();
-	};
+	View* EmptyView();
 	
 }
 

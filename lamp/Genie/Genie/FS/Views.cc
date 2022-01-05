@@ -373,7 +373,7 @@ namespace Genie
 		
 		uninstall_view_from_port( *get_view( that ), windowKey );
 		
-		set_view( that, Ped::EmptyView::Get() );
+		set_view( that, Ped::EmptyView() );
 		
 		RemoveAllViewParameters( parent );
 	}

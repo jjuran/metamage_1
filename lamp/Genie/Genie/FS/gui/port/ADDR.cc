@@ -174,7 +174,7 @@ namespace Genie
 		                     
 		                 #endif
 		                     
-		                     itsSubview( Ped::EmptyView::Get() ),
+		                     itsSubview( Ped::EmptyView() ),
 		                     itsFocus(),
 		                     itsTerminal()
 		{

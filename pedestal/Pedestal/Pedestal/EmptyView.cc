@@ -12,7 +12,7 @@
 namespace Pedestal
 {
 	
-	View* EmptyView::Get()
+	View* EmptyView()
 	{
 		static boost::intrusive_ptr< View > empty = new View;
 		
