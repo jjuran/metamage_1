@@ -6,6 +6,9 @@
 // iota
 #include "iota/convert_string.hh"
 
+// mac-config
+#include "mac_config/apple-events.hh"
+
 // mac-sys-utils
 #include "mac_sys/current_process.hh"
 #include "mac_sys/is_front_process.hh"
@@ -572,22 +575,6 @@ bool FileOpenDialog( Ped::CommandCode )
 static
 void SetUpAppleEvents()
 {
-	using Ped::apple_events_present;
-	
-	if ( apple_events_present )
-	{
-		mac::app::open_documents_with( &file_opener );
-	}
-	else
-	{
-		mac::app::open_documents_with( &HFS_file_opener );
-	}
-	
-	if ( TARGET_CPU_68K  &&  ! apple_events_present )
-	{
-		return;
-	}
-	
 	Close_AppleEvent  ::Install_Handler();
 	Count_AppleEvent  ::Install_Handler();
 	GetData_AppleEvent::Install_Handler();
@@ -629,7 +616,21 @@ int main( void )
 	
 	Ped::Application app;
 	
-	SetUpAppleEvents();
+	const bool apple_events_present =
+		CONFIG_APPLE_EVENTS  &&
+			(CONFIG_APPLE_EVENTS_GRANTED  ||
+				Ped::apple_events_present);
+	
+	if ( apple_events_present )
+	{
+		mac::app::open_documents_with( &file_opener );
+		
+		SetUpAppleEvents();
+	}
+	else
+	{
+		mac::app::open_documents_with( &HFS_file_opener );
+	}
 	
 	SetCommandHandler( Ped::kCmdAbout, &About          );
 	SetCommandHandler( Ped::kCmdNew,   &NewDocument    );
