@@ -572,10 +572,6 @@ App::App()
 {
 	using Ped::apple_events_present;
 	
-	SetCommandHandler( Ped::kCmdAbout, &About          );
-	SetCommandHandler( Ped::kCmdNew,   &NewDocument    );
-	SetCommandHandler( Ped::kCmdOpen,  &FileOpenDialog );
-	
 	if ( apple_events_present )
 	{
 		mac::app::open_documents_with( &file_opener );
@@ -627,7 +623,13 @@ App::App()
 
 int main( void )
 {
+	using namespace TestEdit;
+	
 	TestEdit::App app;
+	
+	SetCommandHandler( Ped::kCmdAbout, &About          );
+	SetCommandHandler( Ped::kCmdNew,   &NewDocument    );
+	SetCommandHandler( Ped::kCmdOpen,  &FileOpenDialog );
 	
 	return app.Run();
 }
