@@ -23,7 +23,7 @@
 #pragma exceptions off
 
 
-typedef vxo::UniPtrVec_< char > CStrVec;
+typedef vxo::UPtrVec< char > CStrVec;
 
 char** environ = NULL;
 
