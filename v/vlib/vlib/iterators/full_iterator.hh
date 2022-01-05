@@ -18,7 +18,7 @@ namespace vlib
 	class full_iterator
 	{
 		private:
-			vxo::UniPtrVec_< const Value > its_stack;
+			vxo::UPtrVec< const Value > its_stack;
 		
 		public:
 			full_iterator( const Value& start );
