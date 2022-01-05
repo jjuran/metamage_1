@@ -1,19 +1,22 @@
-/*	============
- *	EmptyView.cc
- *	============
- */
+/*
+	EmptyView.cc
+	------------
+*/
 
 #include "Pedestal/EmptyView.hh"
+
+// Pedestal
+#include "Pedestal/View.hh"
 
 
 namespace Pedestal
 {
 	
-	const boost::intrusive_ptr< View >& EmptyView::Get()
+	View* EmptyView::Get()
 	{
-		static boost::intrusive_ptr< View > empty = new EmptyView;
+		static boost::intrusive_ptr< View > empty = new View;
 		
-		return empty;
+		return empty.get();
 	}
 	
 }

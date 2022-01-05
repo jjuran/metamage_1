@@ -54,6 +54,7 @@
 
 // Pedestal
 #include "Pedestal/EmptyView.hh"
+#include "Pedestal/View.hh"
 #include "Pedestal/WindowStorage.hh"
 
 // vfs

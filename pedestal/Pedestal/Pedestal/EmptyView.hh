@@ -1,24 +1,20 @@
-/*	============
- *	EmptyView.hh
- *	============
- */
+/*
+	EmptyView.hh
+	------------
+*/
 
 #ifndef PEDESTAL_EMPTYVIEW_HH
 #define PEDESTAL_EMPTYVIEW_HH
-
-// Pedestal
-#ifndef PEDESTAL_VIEW_HH
-#include "Pedestal/View.hh"
-#endif
 
 
 namespace Pedestal
 {
 	
-	class EmptyView : public View
+	class View;
+	
+	struct EmptyView
 	{
-		public:
-			static const boost::intrusive_ptr< View >& Get();
+		static View* Get();
 	};
 	
 }

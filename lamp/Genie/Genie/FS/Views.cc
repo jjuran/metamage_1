@@ -31,6 +31,7 @@
 
 // Pedestal
 #include "Pedestal/EmptyView.hh"
+#include "Pedestal/View.hh"
 
 // vfs
 #include "vfs/node.hh"
@@ -372,7 +373,7 @@ namespace Genie
 		
 		uninstall_view_from_port( *get_view( that ), windowKey );
 		
-		set_view( that, Ped::EmptyView::Get().get() );
+		set_view( that, Ped::EmptyView::Get() );
 		
 		RemoveAllViewParameters( parent );
 	}
