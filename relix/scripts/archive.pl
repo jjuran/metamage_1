@@ -153,7 +153,7 @@ my %fsmap =
 		\ qw( teletype ),
 		# Perl scripts
 		qw( chmod date test ),
-		# V scripts
+		# Varyx scripts
 		qw( test-type ),
 	],
 	etc =>
@@ -204,7 +204,7 @@ my %fsmap =
 			# App engines
 			\ qw( icon-editor ),
 			# Script apps
-			qw( asklogin iconedit mon prompt psmon ),
+			qw( asklogin iconedit mon prompt ),
 			{
 				confirm  => "confirm.vx",
 				progress => "progress.vx",
@@ -220,7 +220,7 @@ my %fsmap =
 			qw( drvr gestalt ),
 			# Perl scripts
 			qw( grep head printenv strings tee tr wc ),
-			# V scripts
+			# Varyx scripts
 			{
 				copy_vx( 'arcsign' ),
 			},
