@@ -176,12 +176,12 @@ namespace vxo
 	};
 	
 	template < class T >
-	class UniPtrVec_ : public PtrVec
+	class UPtrVec : public PtrVec
 	{
 		private:
 			// non-copyable
-			UniPtrVec_           ( const UniPtrVec_& );
-			UniPtrVec_& operator=( const UniPtrVec_& );
+			UPtrVec           ( const UPtrVec& );
+			UPtrVec& operator=( const UPtrVec& );
 		
 		public:
 			typedef T* Item;
@@ -195,11 +195,11 @@ namespace vxo
 			
 			static bool test( const Box& box );  // unimplemented
 			
-			UniPtrVec_()
+			UPtrVec()
 			{
 			}
 			
-			explicit UniPtrVec_( size_t n ) : PtrVec( n )
+			explicit UPtrVec( size_t n ) : PtrVec( n )
 			{
 			}
 			
@@ -263,5 +263,7 @@ namespace vxo
 	};
 	
 }
+
+#define UniPtrVec_ UPtrVec
 
 #endif
