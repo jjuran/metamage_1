@@ -605,11 +605,11 @@ namespace Genie
 	};
 	
 	
-	vfs::node_ptr New_FSTree_Icon_data( const vfs::node*                         parent,
-	                                    const plus::string&                      name,
-	                                    const boost::intrusive_ptr< IconData >&  data )
+	vfs::node_ptr New_FSTree_Icon_data( const vfs::node*     parent,
+	                                    const plus::string&  name,
+	                                    IconData*            data )
 	{
-		ASSERT( data.get() != NULL );
+		ASSERT( data != NULL );
 		
 		vfs::node* result = new vfs::node( parent,
 		                                   name,
@@ -620,9 +620,9 @@ namespace Genie
 		
 		icon_data_extra& extra = *(icon_data_extra*) result->extra();
 		
-		intrusive_ptr_add_ref( data.get() );
+		intrusive_ptr_add_ref( data );
 		
-		extra.data = data.get();
+		extra.data = data;
 		
 		return result;
 	}

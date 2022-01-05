@@ -221,7 +221,7 @@ namespace Genie
 			data.reset( new IconData );
 		}
 		
-		return New_FSTree_Icon_data( parent, name, data );
+		return New_FSTree_Icon_data( parent, name, data.get() );
 	}
 	
 	
