@@ -15,7 +15,7 @@ warn "Checking " host " for latest version..."
 
 try
 {
-	system "htget http://" host " > /dev/null 2>&1"
+	output-from-run [ "htget -I http://" host / ' ' ]
 }
 catch
 {
