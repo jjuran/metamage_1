@@ -80,19 +80,6 @@ namespace vxo
 			datum.alloc.length   = length;
 			datum.alloc.capacity = capacity;
 			
-			/*
-				We need to clear the vxo subtype byte if it might have
-				garbage left over from a small string that makes vxo::Box
-				think it's a container, and try to destroy it as such.
-				
-				We may as well clear the whole word.
-			*/
-			
-			if ( is_small( datum ) )
-			{
-				datum.alloc.misc = 0;
-			}
-			
 			datum.small[ datum_max_offset ] = ~delete_shared;
 		}
 		else
@@ -125,19 +112,6 @@ namespace vxo
 			datum.alloc.pointer  = new_pointer;
 			datum.alloc.length   = length;
 			datum.alloc.capacity = capacity;
-			
-			/*
-				We need to clear the vxo subtype byte if it might have
-				garbage left over from a small string that makes vxo::Box
-				think it's a container, and try to destroy it as such.
-				
-				We may as well clear the whole word.
-			*/
-			
-			if ( is_small( datum ) )
-			{
-				datum.alloc.misc = 0;
-			}
 			
 			datum.small[ datum_max_offset ] = ~delete_shared;
 		}
