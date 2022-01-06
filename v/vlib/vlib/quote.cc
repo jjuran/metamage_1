@@ -343,11 +343,8 @@ namespace vlib
 	}
 	
 	static
-	plus::string::size_type quoted_length( const plus::string& s )
+	plus::string::size_type quoted_length( const char* p, size_t n )
 	{
-		const char* p = s.data();
-		size_t      n = s.size();
-		
 		plus::string::size_type length = 2;  // the enclosing quotes
 		
 		while ( n-- > 0 )
@@ -421,7 +418,7 @@ namespace vlib
 		
 		plus::string result;
 		
-		char* q = result.reset( quoted_length( s ) );
+		char* q = result.reset( quoted_length( p, n ) );
 		
 		*q++ = '"';
 		
