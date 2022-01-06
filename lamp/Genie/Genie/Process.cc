@@ -118,6 +118,12 @@
 #endif
 
 
+static inline
+const char* min( const char* a, const char* b )
+{
+	return b < a ? b : a;
+}
+
 static void DumpBacktrace()
 {
 	using namespace recall;
@@ -452,7 +458,7 @@ namespace Genie
 				const char* cr = std::find( data, end, '\r' );
 				const char* lf = std::find( data, end, '\n' );
 				
-				const char* nl = std::min( cr, lf );
+				const char* nl = min( cr, lf );
 				
 				if ( nl == end )
 				{
