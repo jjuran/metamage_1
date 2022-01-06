@@ -22,6 +22,9 @@
 #include "vlib/throw.hh"
 
 
+#define ESC '\x1b'
+
+
 namespace vlib
 {
 	
@@ -197,6 +200,8 @@ namespace vlib
 				case 'f':  c = '\f';  break;
 				case 'r':  c = '\r';  break;
 				
+				case 'e':  c = ESC;  break;
+				
 				case 'x':
 					c = decode_hex_escape( p );
 					break;
@@ -299,6 +304,8 @@ namespace vlib
 						case 'v':  c = '\v';  break;
 						case 'f':  c = '\f';  break;
 						case 'r':  c = '\r';  break;
+						
+						case 'e':  c = ESC;  break;
 						
 						case 'x':
 							c = decode_hex_escape( p );
