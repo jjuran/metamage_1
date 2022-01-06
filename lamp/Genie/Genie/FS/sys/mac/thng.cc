@@ -206,13 +206,13 @@ namespace Genie
 		result = plus::encode_quad( code );
 	}
 	
-	static plus::string string_from_stringhandle( N::Handle h )
+	static plus::string string_from_stringhandle( Handle h )
 	{
 		N::Str255 result;
 		
-		if ( std::size_t size = N::GetHandleSize( h ) )
+		if ( size_t size = GetHandleSize( h ) )
 		{
-			unsigned const char* str = (StringPtr) *h.Get();
+			unsigned const char* str = (StringPtr) *h;
 			
 			if ( 1 + str[0] > size )
 			{
@@ -239,7 +239,7 @@ namespace Genie
 		
 		(void) N::GetComponentInfo( comp, name );
 		
-		result = string_from_stringhandle( name );
+		result = string_from_stringhandle( name.get() );
 	}
 	
 	static
@@ -251,7 +251,7 @@ namespace Genie
 		
 		(void) N::GetComponentInfo( comp, N::Handle(), info );
 		
-		result = string_from_stringhandle( info );
+		result = string_from_stringhandle( info.get() );
 	}
 	
 	// perl -e 'for ( @ARGV ) { ++$h{$_} if -f "$_/icon" } print( "$_: " ), system( "cat $_/name" ) for sort keys %h' *
