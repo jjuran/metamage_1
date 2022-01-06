@@ -123,18 +123,11 @@ sub copy_vobj
 
 my %fsmap =
 (
-	bin =>
-	[
-		# Standard
-		\ qw( sh ),
-	],
 	etc =>
 	[
 		{
 			startup => sub { spew_to_rsrc( $_[1], <<'[END]', 'Exec' ) },
-#!/bin/sh
-
-exec /usr/app/installer/init
+#!/usr/bin/vx -Z /usr/app/installer/init
 [END]
 			platform => sub { spew_to_rsrc( $_[1], "$config_short_name\n", 'Data' ) unless $config_short_name eq 'xxx' },
 			build_date => sub { spew_to_rsrc( $_[1], `date`, 'Data' ) },
