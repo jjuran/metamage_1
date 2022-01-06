@@ -59,7 +59,10 @@ warn "Downloading " last ".gz..."
 const file = last ".gz"
 const mbim = last ".mbim"
 
-system "htget --dump-progress -O " relix_url file " | progress Downloading"
+let download = "graft --fd 1 progress Downloading // "
+               "htget --dump-progress -O" / ' ', relix_url file
+
+run [ download ]
 
 warn "Checking signature..."
 
