@@ -214,12 +214,14 @@ namespace Genie
 		{
 			unsigned const char* str = (StringPtr) *h;
 			
-			if ( 1 + str[0] > size )
+			size_t len = *str++;
+			
+			if ( 1 + len > size )
 			{
 				// corruption; shouldn't happen
 				result[0] = size - 1;
 				
-				mempcpy( &result[ 1 ], &str[ 1 ], size - 1 );
+				mempcpy( &result[ 1 ], str, size - 1 );
 			}
 			else
 			{
