@@ -22,6 +22,8 @@
 namespace vlib
 {
 	
+	typedef plus::string::size_type size_t;
+	
 	static
 	char decode_octal_escape( char c, const char*& p, char quote )
 	{
@@ -343,8 +345,6 @@ namespace vlib
 	static
 	plus::string::size_type quoted_length( const plus::string& s )
 	{
-		typedef plus::string::size_type size_t;
-		
 		const char* p = s.data();
 		size_t      n = s.size();
 		
@@ -416,8 +416,6 @@ namespace vlib
 	
 	plus::string quote_string( const plus::string& s )
 	{
-		typedef plus::string::size_type size_t;
-		
 		const char* p = s.data();
 		size_t      n = s.size();
 		
