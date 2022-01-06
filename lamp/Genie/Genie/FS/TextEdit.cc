@@ -12,6 +12,9 @@
 #endif
 #endif
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <algorithm>
 
@@ -564,9 +567,9 @@ namespace Genie
 			{
 				// fill with bullets
 				
-				std::fill( text + params.itsValidLength,
-				           text + te.teLength,
-				           0xA5 );
+				memset( text + params.itsValidLength,
+				        0xA5,
+				        te.teLength - params.itsValidLength );
 			}
 			else
 			{
