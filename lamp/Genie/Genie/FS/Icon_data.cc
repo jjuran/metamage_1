@@ -25,13 +25,6 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Nitrogen
-#ifndef MAC_TOOLBOX_TYPES_OSSTATUS_HH
-#include "Mac/Toolbox/Types/OSStatus.hh"
-#endif
-
-#include "Nitrogen/Icons.hh"
-
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
@@ -53,19 +46,6 @@
 #include "Genie/Utilities/Copy_IconSuite.hh"
 
 
-namespace Nitrogen
-{
-	
-	static void PlotIconHandle( const Rect&        area,
-	                            IconAlignmentType  align,
-	                            IconTransformType  transform,
-	                            Handle             icon )
-	{
-		Mac::ThrowOSStatus( ::PlotIconHandle( &area, align, transform, icon ) );
-	}
-	
-}
-
 namespace Genie
 {
 	
@@ -80,13 +60,6 @@ namespace Genie
 		return b < a ? b : a;
 	}
 	
-	
-	static void Plot_Null( const Rect&           area,
-	                       N::IconAlignmentType  align,
-			               N::IconTransformType  transform )
-	{
-		// do nothing
-	}
 	
 	static void dispose_handle( void* h )
 	{
@@ -256,7 +229,7 @@ namespace Genie
 			return sizeof (::ResID);
 		}
 		
-		return N::GetHandleSize( N::Handle( h ) );
+		return GetHandleSize( h );
 	}
 	
 	ssize_t IconData::Read( char* buffer, std::size_t n_bytes, off_t mark ) const
@@ -275,7 +248,7 @@ namespace Genie
 			p7::throw_errno( EPERM );
 		}
 		
-		const std::size_t size = use_handle ? N::GetHandleSize( N::Handle( h ) )
+		const std::size_t size = use_handle ? GetHandleSize( h )
 		                                    : sizeof (::ResID);
 		
 		if ( size == 0 )
@@ -321,13 +294,13 @@ namespace Genie
 			Destroy();
 		}
 		
-		N::Handle h = GetHandle();
+		Handle h = GetHandle();
 		
 		if ( h == NULL )
 		{
 			h = N::NewHandle( n_bytes ).release();
 			
-			itsRef     = h.Get();
+			itsRef     = h;
 			itsDeleter = dispose_handle;
 			
 			itIsSet = true;
@@ -338,7 +311,7 @@ namespace Genie
 			N::SetHandleSize( h, n_bytes );
 		}
 		
-		char* p = *h.Get();
+		char* p = *h;
 		
 		mempcpy( p, buffer, n_bytes );
 		
