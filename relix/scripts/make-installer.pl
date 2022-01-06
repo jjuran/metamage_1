@@ -156,7 +156,7 @@ exec /usr/app/installer/init
 			# Script apps
 			{map {$_ => "$_.vx"} qw( confirm progress )},
 			# App utilities
-			\ qw( daemonize idle select ),
+			\ qw( daemonize graft idle select ),
 			# Mac-specific
 			\ qw( macbin ),
 			# Varyx scripts
