@@ -167,6 +167,8 @@ namespace vxo
 	
 	char* allocate_data( datum_storage& datum, const char* p, long n )
 	{
+		datum.alloc.misc = 0;
+		
 		char* q = allocate( datum, n );
 		
 		mempcpy( q, p, n );
