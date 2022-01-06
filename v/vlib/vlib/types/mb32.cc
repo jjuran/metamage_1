@@ -17,6 +17,9 @@
 // chars
 #include "charsets/extended_ascii.hh"
 
+// vxo
+#include "vxo/lib/quote.hh"
+
 // plus
 #include "plus/mac_utf8.hh"
 
@@ -136,10 +139,10 @@ namespace vlib
 		
 		unsigned length = 0;
 		
-		length += quoted_length( *p++ );
-		length += quoted_length( *p++ );
-		length += quoted_length( *p++ );
-		length += quoted_length( *p++ );
+		length += vxo::quoted_length( *p++ );
+		length += vxo::quoted_length( *p++ );
+		length += vxo::quoted_length( *p++ );
+		length += vxo::quoted_length( *p++ );
 		
 		return length - 3 * 2;  // subtract three pairs of quotes
 	}
@@ -154,10 +157,10 @@ namespace vlib
 		const char* q = (const char*) &data_BE;
 		
 		*p++ = '\'';
-		p = copy_quotable_byte( p, *q++ );
-		p = copy_quotable_byte( p, *q++ );
-		p = copy_quotable_byte( p, *q++ );
-		p = copy_quotable_byte( p, *q++ );
+		p = vxo::copy_quotable_byte( p, *q++ );
+		p = vxo::copy_quotable_byte( p, *q++ );
+		p = vxo::copy_quotable_byte( p, *q++ );
+		p = vxo::copy_quotable_byte( p, *q++ );
 		*p++ = '\'';
 		
 		return p;

@@ -5,6 +5,9 @@
 
 #include "vlib/types/byte.hh"
 
+// vxo
+#include "vxo/lib/quote.hh"
+
 // bignum
 #include "bignum/integer.hh"
 
@@ -76,13 +79,13 @@ namespace vlib
 	static
 	size_t byte_rep_size( const Value& v )
 	{
-		return quoted_length( v.to< Byte >().get() );
+		return vxo::quoted_length( v.to< Byte >().get() );
 	}
 	
 	static
 	char* byte_rep_copy( char* p, const Value& v )
 	{
-		return quote_byte( p, v.to< Byte >().get() );
+		return vxo::quote_byte( p, v.to< Byte >().get() );
 	}
 	
 	static const stringify byte_rep =
