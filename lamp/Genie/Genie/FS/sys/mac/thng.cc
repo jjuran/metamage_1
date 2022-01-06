@@ -208,7 +208,7 @@ namespace Genie
 	
 	static plus::string string_from_stringhandle( Handle h )
 	{
-		N::Str255 result;
+		plus::string result;
 		
 		if ( size_t size = GetHandleSize( h ) )
 		{
@@ -219,17 +219,14 @@ namespace Genie
 			if ( 1 + len > size )
 			{
 				// corruption; shouldn't happen
-				result[0] = size - 1;
-				
-				mempcpy( &result[ 1 ], str, size - 1 );
 			}
-			else
-			{
-				result = str;
-			}
+			
+			char* p = result.reset( len );
+			
+			mempcpy( p, str, len );
 		}
 		
-		return plus::string( result );
+		return result;
 	}
 	
 	static
