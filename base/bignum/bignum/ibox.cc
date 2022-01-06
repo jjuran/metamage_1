@@ -5,8 +5,11 @@
 
 #include "bignum/ibox.hh"
 
-// Standard C++
-#include <algorithm>
+// Standard C
+#include <string.h>
+
+// more-libc
+#include "more/string.h"
 
 // iota
 #include "iota/endian.hh"
@@ -90,8 +93,9 @@ namespace bignum
 		char* extent = extent_alloc( n * sizeof (int_t) );
 		
 		// Copy before clobbering the struct
+		// This is strictly a copy, not a move, but memmove() is smaller.
 		
-		std::copy( data, data + n, (int_t*) extent );
+		memmove( extent, data, n * sizeof (int_t) );
 		
 		its.pointer = (ptr_t) extent;
 		its.size    = n;
@@ -198,19 +202,19 @@ namespace bignum
 		
 		if ( iota::is_little_endian() )
 		{
-			std::copy( old_data, old_data + old_size, p );
+			p = (int_t*) mempcpy( p, old_data, old_size * sizeof (int_t) );
 			
-			p += old_size;
-			
-			std::fill( p, p + n_zeros, 0 );
+			memset( p, '\0', n_zeros * sizeof (int_t) );
 		}
 		else
 		{
-			std::fill( p, p + n_zeros, 0 );
+			memset( p, '\0', n_zeros * sizeof (int_t) );
 			
 			p += n_zeros;
 			
-			std::copy( old_data, old_data + old_size, p );
+			// This is strictly a copy, not a move, but memmove() is smaller.
+			
+			memmove( p, old_data, old_size * sizeof (int_t) );
 		}
 		
 		destroy();
@@ -249,12 +253,12 @@ namespace bignum
 			
 			if ( n_zeros != 0 )
 			{
-				std::copy( its.pointer + n_zeros,
-				           its.pointer + its.size,
-				           its.pointer );
+				its.size -= n_zeros;
+				
+				memmove( its.pointer,
+				         its.pointer + n_zeros,
+				         its.size * sizeof (int_t) );
 			}
-			
-			its.size -= n_zeros;
 		}
 		
 		if ( its.size == 1 )
