@@ -15,9 +15,6 @@
 // gear
 #include "gear/hexadecimal.hh"
 
-// vxo
-#include "vxo/lib/quote.hh"
-
 // vlib
 #include "vlib/throw.hh"
 
@@ -333,22 +330,6 @@ namespace vlib
 		--q;
 		
 		return result.substr( 0, q - begin );
-	}
-	
-	plus::string quote_string( const plus::string& s )
-	{
-		using vxo::quoted_length;
-		
-		const char* p = s.data();
-		size_t      n = s.size();
-		
-		plus::string result;
-		
-		char* q = result.reset( quoted_length( p, n ) );
-		
-		vxo::quote_string( p, n, q );
-		
-		return result;
 	}
 	
 }

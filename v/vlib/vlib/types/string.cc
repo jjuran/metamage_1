@@ -5,8 +5,8 @@
 
 #include "vlib/types/string.hh"
 
-// more-libc
-#include "more/string.h"
+// vxo
+#include "vxo/lib/quote.hh"
 
 // vlib
 #include "vlib/list-utils.hh"
@@ -27,21 +27,10 @@
 #include "vlib/types/vbytes.hh"
 
 
-#undef mempcpy
-
-
 namespace vlib
 {
 	
 	extern const proc_info proc_lines;
-	
-	using ::mempcpy;
-	
-	static inline
-	char* mempcpy( char* p, const plus::string& s )
-	{
-		return (char*) mempcpy( p, s.data(), s.size() );
-	}
 	
 	
 	Value String::coerce( const Value& v )
@@ -52,13 +41,13 @@ namespace vlib
 	static
 	size_t string_rep_size( const Value& v )
 	{
-		return quote_string( v.string() ).size();
+		return vxo::quoted_length( v.string().data(), v.string().size() );
 	}
 	
 	static
 	char* string_rep_copy( char* p, const Value& v )
 	{
-		return mempcpy( p, quote_string( v.string() ) );
+		return vxo::quote_string( v.string().data(), v.string().size(), p );
 	}
 	
 	static const stringify string_rep =

@@ -30,8 +30,6 @@ namespace vlib
 	
 	plus::string unquote_escaped_string( const plus::string& s );
 	
-	plus::string quote_string( const plus::string& s );
-	
 }
 
 #endif
