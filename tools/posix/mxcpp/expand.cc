@@ -385,7 +385,6 @@ namespace tool
 	
 	static bool expand_macros( const token_list&  input,
 	                           bool               in_expression,
-	                           bool               allow_calls,
 	                           vxo::StrSet&       ignored,
 	                           token_list&        output )
 	{
@@ -439,7 +438,7 @@ namespace tool
 					
 					const bool gets_paren = needs_more_tokens  &&  stack.front() == "(";
 					
-					if ( gets_paren  &&  allow_calls )
+					if ( gets_paren )
 					{
 						token_lists args;
 						
@@ -508,7 +507,7 @@ namespace tool
 	{
 		vxo::StrSet ignored;
 		
-		return expand_macros( input, in_expression, true, ignored, output );
+		return expand_macros( input, in_expression, ignored, output );
 	}
 	
 }
