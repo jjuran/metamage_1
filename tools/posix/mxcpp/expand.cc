@@ -473,20 +473,7 @@ namespace tool
 							                   args,
 							                   spliced );
 							
-							token_list semiexpanded;
-							
-							bool done;
-							
-							token_list& local_output = semiexpanded;
-							
-							done = expand_macros( spliced, in_expression, false, ignored, local_output );
-							
-							if ( ! done )
-							{
-								return false;
-							}
-							
-							stack.push( semiexpanded );
+							stack.push( spliced );
 						}
 						
 						continue;
