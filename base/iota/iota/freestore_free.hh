@@ -30,7 +30,7 @@
 
 extern void* operator_new_is_undefined;
 
-void* operator new( size_t )
+void* operator new( unsigned long )
 {
 	return operator_new_is_undefined;
 }
