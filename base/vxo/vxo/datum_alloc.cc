@@ -20,6 +20,7 @@
 // vxo
 #include "vxo/datum_access.hh"
 #include "vxo/extent.hh"
+#include "vxo/required.hh"
 
 
 #if defined(__MWERKS__)  &&  __MWERKS__ < 0x2300
@@ -124,34 +125,7 @@ namespace vxo
 	static
 	char* allocate( datum_storage& datum, long length, long capacity )
 	{
-		ASSERT( length   >= 0      );
-		ASSERT( capacity >= length );
-		
-		char* new_pointer;
-		
-		if ( capacity >= datum_buffer_size )
-		{
-			capacity = adjusted_capacity( capacity );
-			
-			// may throw
-			new_pointer = extent_alloc( capacity + 1 );  // includes NUL
-			
-			datum.alloc.pointer  = new_pointer;
-			datum.alloc.length   = length;
-			datum.alloc.capacity = capacity;
-			
-			datum.small[ datum_max_offset ] = ~delete_shared;
-		}
-		else
-		{
-			new_pointer = datum.small;
-			
-			datum.small[ datum_max_offset ] = datum_max_offset - length;
-		}
-		
-		new_pointer[ length ] = '\0';
-		
-		return new_pointer;
+		return required( allocate_nothrow( datum, length, capacity ) );
 	}
 	
 	static inline
@@ -246,15 +220,7 @@ namespace vxo
 	
 	char* reallocate( datum_storage& datum, long length )
 	{
-		string_check_size( length );
-		
-		datum_storage old = datum;
-		
-		char* new_pointer = allocate( datum, length );
-		
-		destroy( old );
-		
-		return new_pointer;
+		return required( reallocate_nothrow( datum, length ) );
 	}
 	
 	char* extend_capacity_nothrow( datum_storage& datum, long new_capacity )
@@ -279,19 +245,7 @@ namespace vxo
 	
 	char* extend_capacity( datum_storage& datum, long new_capacity )
 	{
-		datum_storage old = datum;
-		
-		const long n = size( old );
-		
-		char* q = allocate( datum, n, new_capacity );
-		
-		const char* p = begin( old );
-		
-		mempcpy( q, p, n );
-		
-		destroy( old );
-		
-		return q;
+		return required( extend_capacity_nothrow( datum, new_capacity ) );
 	}
 	
 	char* curtail_capacity( datum_storage& datum, long new_capacity )

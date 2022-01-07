@@ -17,6 +17,7 @@
 
 // vxo
 #include "vxo/ref_count.hh"
+#include "vxo/required.hh"
 
 
 namespace vxo
@@ -89,32 +90,7 @@ namespace vxo
 	
 	char* extent_alloc( unsigned long capacity )
 	{
-		unsigned long extent_size = sizeof (extent_header) + capacity;
-		
-		ASSERT( extent_size > capacity );
-		
-		if ( extent_size < capacity )
-		{
-			/*
-				Overflow occurred.  The capacity is too large, and the
-				address space can't fit the entire extent including the header.
-				This is a programming error -- if you need gigabytes of RAM,
-				this is the wrong facility to use.
-			*/
-			
-			abort();
-		}
-		
-		extent_header* header = (extent_header*) ::operator new( extent_size );
-		
-		header->refcount = 1;
-		header->capacity = capacity;
-		header->dtor     = NULL;
-		header->dealloc  = &::operator delete;
-		
-		char* buffer = reinterpret_cast< char* >( header + 1 );
-		
-		return buffer;
+		return required( extent_alloc_nothrow( capacity ) );
 	}
 	
 	char* extent_alloc_nothrow( unsigned long capacity, destructor dtor )
@@ -130,13 +106,7 @@ namespace vxo
 	
 	char* extent_alloc( unsigned long capacity, destructor dtor )
 	{
-		char* extent = extent_alloc( capacity );
-		
-		memset( extent, '\0', capacity );
-		
-		header_from_buffer( extent )->dtor = dtor;
-		
-		return extent;
+		return required( extent_alloc_nothrow( capacity, dtor ) );
 	}
 	
 	static char* extent_duplicate( const char* buffer )

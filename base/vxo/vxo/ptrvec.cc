@@ -17,6 +17,7 @@
 // vxo
 #include "vxo/datum_alloc.hh"
 #include "vxo/extent.hh"
+#include "vxo/required.hh"
 
 
 namespace vxo
@@ -96,53 +97,13 @@ anyptr_t* PtrVec::expand_by_nothrow( size_t n )
 
 anyptr_t* PtrVec::expand_by( size_t n )
 {
-	const size_t original_length = u.str.length;
+	/*
+		If n == 0 and the vector hasn't been populated yet,
+		a successful expand_by_nothrow() call will return NULL.
+	*/
 	
-	ASSERT( u.str.length <= u.str.capacity );
-	
-	const size_t new_length = u.str.length + n;
-	
-	if ( new_length > u.str.capacity )
-	{
-		u.str.length   *= sizeof (anyptr_t);
-		u.str.capacity *= sizeof (anyptr_t);
-		
-		size_t new_capacity = u.str.capacity * 2;
-		
-		if ( new_capacity < new_length * sizeof (anyptr_t) )
-		{
-			new_capacity = new_length * sizeof (anyptr_t);
-		}
-		
-		char* alloc;
-		
-		if ( u.str.pointer == NULL )
-		{
-			if ( new_capacity < minimum_capacity )
-			{
-				new_capacity = minimum_capacity;
-			}
-			
-			alloc = extent_alloc( new_capacity );
-			
-			u.str.pointer  = alloc;
-			u.str.capacity = new_capacity;
-			
-			set_control_byte( Box_shared );
-		}
-		else
-		{
-			datum_storage& storage = *(datum_storage*) this;
-			
-			alloc = extend_capacity( storage, new_capacity );
-		}
-		
-		u.str.capacity /= sizeof (anyptr_t);
-	}
-	
-	u.str.length = new_length;
-	
-	return begin() + original_length;
+	return n ? required( expand_by_nothrow( n ) )
+	         : end();
 }
 
 anyptr_t* PtrVec::resize_nothrow( size_t n )
@@ -169,20 +130,7 @@ anyptr_t* PtrVec::resize_nothrow( size_t n )
 
 void PtrVec::resize( size_t n )
 {
-	const size_t length = size();
-	
-	if ( n <= length )
-	{
-		u.str.length = n;
-	}
-	else
-	{
-		expand_by( n );
-		
-		const size_t n_bytes_to_zero = (n - length) * sizeof (anyptr_t);
-		
-		memset( begin() + length, '\0', n_bytes_to_zero );
-	}
+	required( resize_nothrow( n ) );
 }
 
 anyptr_t* PtrVec::insert_n_nothrow( Item* loc, size_t n )
@@ -211,23 +159,7 @@ anyptr_t* PtrVec::insert_n_nothrow( Item* loc, size_t n )
 
 anyptr_t* PtrVec::insert_n( Item* loc, size_t n )
 {
-	ASSERT( loc >= begin() );
-	ASSERT( loc <= end()   );
-	
-	const size_t n_bytes_to_move = (char*) end() - (char*) loc;
-	const size_t n_bytes_to_zero = n * sizeof (anyptr_t);
-	
-	const size_t offset = loc - begin();
-	
-	expand_by( n );
-	
-	loc = begin() + offset;  // In case we reallocated
-	
-	memmove( loc + n, loc, n_bytes_to_move );
-	
-	memset( loc, '\0', n_bytes_to_zero );
-	
-	return loc;
+	return required( insert_n_nothrow( loc, n ) );
 }
 
 anyptr_t* PtrVec::insert_nothrow( Item* loc, const_iterator begin, const_iterator end )
@@ -246,9 +178,7 @@ anyptr_t* PtrVec::insert_nothrow( Item* loc, const_iterator begin, const_iterato
 
 void PtrVec::insert( Item* loc, const_iterator begin, const_iterator end )
 {
-	const size_t n = end - begin;
-	
-	mempcpy( insert_n( loc, n ), begin, n * sizeof (anyptr_t) );
+	required( insert_nothrow( loc, begin, end ) );
 }
 
 void PtrVec::erase_n( Item* loc, size_t n )
