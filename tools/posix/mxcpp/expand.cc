@@ -436,9 +436,7 @@ namespace tool
 						return false;
 					}
 					
-					const bool gets_paren = needs_more_tokens  &&  stack.front() == "(";
-					
-					if ( gets_paren )
+					if ( needs_more_tokens  &&  stack.front() == "(" )
 					{
 						token_lists args;
 						
@@ -477,7 +475,7 @@ namespace tool
 						
 						continue;
 					}
-					else if ( ! gets_paren  &&  _defined_ )
+					else if ( _defined_ )
 					{
 						add_boolean_token( is_defined( stack.pop() ), output );
 						
