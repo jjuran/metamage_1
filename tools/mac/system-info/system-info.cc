@@ -20,6 +20,9 @@
 // more-libc
 #include "more/string.h"
 
+// iota
+#include "iota/freestore_free.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 
@@ -27,6 +30,9 @@
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/get_machine_name.hh"
 #include "mac_sys/unit_table.hh"
+
+
+#pragma exceptions off
 
 
 #ifndef TARGET_CPU_X86_64
