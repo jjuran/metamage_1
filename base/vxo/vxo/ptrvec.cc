@@ -92,12 +92,13 @@ anyptr_t* PtrVec::expand_by_nothrow( size_t n )
 				new_capacity = minimum_capacity;
 			}
 			
-			alloc = extent_alloc_nothrow( new_capacity );
-			
-			u.str.pointer  = alloc;
-			u.str.capacity = new_capacity;
-			
-			set_control_byte( Box_shared );
+			if ( (alloc = extent_alloc_nothrow( new_capacity )) )
+			{
+				u.str.pointer  = alloc;
+				u.str.capacity = new_capacity;
+				
+				set_control_byte( Box_shared );
+			}
 		}
 		else
 		{
@@ -107,6 +108,13 @@ anyptr_t* PtrVec::expand_by_nothrow( size_t n )
 		}
 		
 		u.str.capacity /= sizeof (anyptr_t);
+		
+		if ( alloc == NULL )
+		{
+			u.str.length = original_length;
+			
+			return NULL;
+		}
 	}
 	
 	u.str.length = new_length;
