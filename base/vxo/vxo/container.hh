@@ -38,7 +38,7 @@ namespace vxo
 			
 			bool empty() const  { return size() == 0; }
 			
-			Item* begin()  { unshare(); return (Item*) u.str.pointer; }
+			Item* begin()  { return (Item*) u.str.pointer; }
 			Item* end()    { return begin() + size(); }
 			
 			Item const* begin() const  { return (Item const*) u.str.pointer; }
