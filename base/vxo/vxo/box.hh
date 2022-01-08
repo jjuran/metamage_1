@@ -59,6 +59,8 @@ namespace vxo
 		
 		Box_boolean   = 120,  // 0111 1000
 		
+		Box_symbolic  = 124,  // 0111 1100
+		
 		Box_undefined = 127,  // 0111 1111
 		
 		Box_error = -1,
