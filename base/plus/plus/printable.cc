@@ -16,11 +16,17 @@
 namespace plus
 {
 	
+	/*
+		We don't have to null-check the results of reset_nothrow(),
+		because in all cases, the requested size is guaranteed to be
+		less than the size of the small buffer.
+	*/
+	
 	string printable( const void* x )
 	{
 		string result;
 		
-		char* p = result.reset( 2 + 2 * sizeof x );  // "0x" ...
+		char* p = result.reset_nothrow( 2 + 2 * sizeof x );  // "0x" ...
 		
 		*p++ = '0';
 		*p++ = 'x';
@@ -37,7 +43,7 @@ namespace plus
 		
 		gear::encode_32_bit_hex( lower, p );
 		
-		return result;
+		return result.move();
 	}
 	
 	string printable( unsigned long long x )
@@ -46,11 +52,11 @@ namespace plus
 		
 		string result;
 		
-		char* p = result.reset( n );
+		char* p = result.reset_nothrow( n );
 		
 		gear::fill_unsigned< 10 >( x, p, n );
 		
-		return result;
+		return result.move();
 	}
 	
 	string printable( long long x )
@@ -70,7 +76,7 @@ namespace plus
 		
 		string result;
 		
-		char* p = result.reset( negative + n );
+		char* p = result.reset_nothrow( negative + n );
 		
 		if ( negative )
 		{
@@ -79,7 +85,7 @@ namespace plus
 		
 		gear::fill_unsigned< 10 >( ux, p, n );
 		
-		return result;
+		return result.move();
 	}
 	
 }
