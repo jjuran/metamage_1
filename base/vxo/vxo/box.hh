@@ -57,6 +57,8 @@ namespace vxo
 		Box_set       = 113,  // 0111 0001
 		Box_map       = 115,  // 0111 0011
 		
+		Box_boolean   = 120,  // 0111 1000
+		
 		Box_undefined = 127,  // 0111 1111
 		
 		Box_error = -1,
