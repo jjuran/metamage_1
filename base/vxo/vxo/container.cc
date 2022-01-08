@@ -50,6 +50,67 @@ Container::Container( box_type type, size_t n_items )
 	}
 }
 
+Box* Container::expand_by_nothrow( size_t n )
+{
+	const size_t original_length = u.str.length;
+	
+	ASSERT( is< Container >() );
+	
+	ASSERT( u.str.length <= u.str.capacity );
+	
+	const size_t new_length = u.str.length + n;
+	
+	if ( new_length > u.str.capacity )
+	{
+		u.str.length   *= sizeof (Box);
+		u.str.capacity *= sizeof (Box);
+		
+		size_t new_capacity = u.str.capacity * 2;
+		
+		if ( new_capacity < new_length * sizeof (Box) )
+		{
+			new_capacity = new_length * sizeof (Box);
+		}
+		
+		char* alloc;
+		
+		if ( u.str.pointer == NULL )
+		{
+			if ( (alloc = extent_alloc_nothrow( new_capacity )) )
+			{
+				u.str.pointer  = alloc;
+				u.str.capacity = new_capacity;
+				
+				set_control_byte( Box_shared );
+			}
+		}
+		else
+		{
+			datum_storage& storage = *(datum_storage*) this;
+			
+			alloc = extend_capacity_nothrow( storage, new_capacity );
+		}
+		
+		size_t skipped = u.str.length;
+		size_t cleared = new_capacity - skipped;
+		
+		memset( alloc + skipped, '\0', cleared );
+		
+		u.str.capacity /= sizeof (Box);
+		
+		if ( alloc == NULL )
+		{
+			u.str.length = original_length;
+			
+			return NULL;
+		}
+	}
+	
+	u.str.length = new_length;
+	
+	return begin() + original_length;
+}
+
 Box* Container::expand_by( size_t n )
 {
 	const size_t original_length = u.str.length;

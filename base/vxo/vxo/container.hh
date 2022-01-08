@@ -59,11 +59,24 @@ namespace vxo
 			Item&       back()        { return end()[ -1 ]; }
 			Item const& back() const  { return end()[ -1 ]; }
 			
-			Item* expand_by( size_t n );
+			Item* expand_by_nothrow( size_t n );
+			Item* expand_by        ( size_t n );
 			
 			Item* insert_n( Item* loc, size_t n );
 			
 			void erase_n( Item* loc, size_t n );
+			
+			Item* push_back_nothrow( const Item& item )
+			{
+				Item* loc = expand_by_nothrow( 1 );
+				
+				if ( loc )
+				{
+					*loc = item;
+				}
+				
+				return loc;
+			}
 			
 			void push_back( const Item& item )  { *expand_by( 1 ) = item; }
 			
