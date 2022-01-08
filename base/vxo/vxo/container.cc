@@ -40,7 +40,7 @@ Container::Container( box_type type, size_t n_items )
 		
 		// Passing a destructor (even if NULL) clears the buffer.
 		
-		if ( char* alloc = extent_alloc( n_bytes, NULL ) )
+		if ( char* alloc = extent_alloc_nothrow( n_bytes, NULL ) )
 		{
 			u.str.pointer  = alloc;
 			u.str.capacity = n_items;
