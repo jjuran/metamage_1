@@ -8,6 +8,12 @@
 // iota
 #include "iota/char_types.hh"
 
+// vxo
+#include "vxo/error.hh"
+
+// vxs
+#include "vxs/string.hh"
+
 
 #pragma exceptions off
 
@@ -32,7 +38,7 @@ int8_t decode( char c )
 	       :                       -1;
 }
 
-Expected< String > base64_decode( const char* data, size_t padded_size )
+Box base64_decode( const char* data, size_t padded_size )
 {
 	if ( padded_size & 0x03 )
 	{
