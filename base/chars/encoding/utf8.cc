@@ -23,25 +23,25 @@ namespace chars
 				break;
 			
 			case 1:
-				p[0] = uc;
+				*p++ = uc;
 				break;
 			
 			case 2:
-				p[0] = 0xC0 | (uc >> 6 & 0x1F);
-				p[1] = 0x80 | (uc      & 0x3F);
+				*p++ = 0xC0 | (uc >> 6 & 0x1F);
+				*p++ = 0x80 | (uc      & 0x3F);
 				break;
 			
 			case 3:
-				p[0] = 0xE0 | (uc >> 12 & 0x0F);
-				p[1] = 0x80 | (uc >>  6 & 0x3F);
-				p[2] = 0x80 | (uc       & 0x3F);
+				*p++ = 0xE0 | (uc >> 12 & 0x0F);
+				*p++ = 0x80 | (uc >>  6 & 0x3F);
+				*p++ = 0x80 | (uc       & 0x3F);
 				break;
 			
 			case 4:
-				p[0] = 0xF0 | (uc >> 18 & 0x07);
-				p[1] = 0x80 | (uc >> 12 & 0x3F);
-				p[2] = 0x80 | (uc >>  6 & 0x3F);
-				p[3] = 0x80 | (uc       & 0x3F);
+				*p++ = 0xF0 | (uc >> 18 & 0x07);
+				*p++ = 0x80 | (uc >> 12 & 0x3F);
+				*p++ = 0x80 | (uc >>  6 & 0x3F);
+				*p++ = 0x80 | (uc       & 0x3F);
 				break;
 		}
 	}
