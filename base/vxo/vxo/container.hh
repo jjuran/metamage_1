@@ -22,6 +22,12 @@ namespace vxo
 	class Container : public Box
 	{
 		public:
+			enum
+			{
+				box_type_base = 0x70,  // 0111 0000
+				box_type_mask = 0xF8,  // 1111 1000
+			};
+			
 			typedef Box Item;
 			
 			static bool test( const Box& box );

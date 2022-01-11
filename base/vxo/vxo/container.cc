@@ -21,7 +21,8 @@ namespace vxo
 
 bool Container::test( const Box& box )
 {
-	return box.has_pointer()  &&  box.subtype_byte() >= Box_container;
+	return box.has_pointer()  &&
+	       (box.subtype_byte() & box_type_mask) == box_type_base;
 }
 
 Container::Container( box_type type, size_t n_items )
