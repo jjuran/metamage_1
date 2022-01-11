@@ -124,9 +124,7 @@ namespace conv
 				break;
 			}
 			
-			chars::put_code_point_into_utf8( uc, n_bytes, q );
-			
-			q += n_bytes;
+			q = chars::put_code_point_into_utf8( uc, n_bytes, q );
 			
 			++p;
 		}

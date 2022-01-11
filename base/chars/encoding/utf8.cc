@@ -14,7 +14,7 @@ namespace chars
 		return (c & 0xC0) == 0x80;
 	}
 	
-	void put_code_point_into_utf8( unichar_t uc, unsigned n_bytes, char* p )
+	char* put_code_point_into_utf8( unichar_t uc, unsigned n_bytes, char* p )
 	{
 		switch ( n_bytes )
 		{
@@ -44,6 +44,8 @@ namespace chars
 				*p++ = 0x80 | (uc       & 0x3F);
 				break;
 		}
+		
+		return p;
 	}
 	
 	unichar_t get_next_code_point_from_utf8( const char*& p, const char* end )

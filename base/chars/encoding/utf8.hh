@@ -37,7 +37,7 @@ namespace chars
 		       :            0;  // reserved or invalid
 	}
 	
-	void put_code_point_into_utf8( unichar_t uc, unsigned n_bytes, char* p );
+	char* put_code_point_into_utf8( unichar_t uc, unsigned n_bytes, char* p );
 	
 	unichar_t get_next_code_point_from_utf8( const char*& p, const char* end );
 	
