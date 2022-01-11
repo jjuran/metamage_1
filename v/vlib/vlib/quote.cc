@@ -70,7 +70,7 @@ namespace vlib
 	}
 	
 	static
-	void inscribe_unicode( char*& q, chars::unichar_t uc )
+	char* inscribe_unicode( char* q, chars::unichar_t uc )
 	{
 		using chars::measure_utf8_bytes_for_unicode;
 		using chars::put_code_point_into_utf8;
@@ -82,13 +82,11 @@ namespace vlib
 			THROW( "invalid Unicode code point" );
 		}
 		
-		put_code_point_into_utf8( uc, n, q );
-		
-		q += n;
+		return put_code_point_into_utf8( uc, n, q );
 	}
 	
 	static
-	void decode_braced_unicode_escape( char*& q, const char*& p )
+	char* decode_braced_unicode_escape( char* q, const char*& p )
 	{
 		using iota::is_xdigit;
 		using gear::decoded_hex_digit;
@@ -118,7 +116,7 @@ namespace vlib
 				THROW( "invalid unicode escape sequence" );
 			}
 			
-			inscribe_unicode( q, uc );
+			q = inscribe_unicode( q, uc );
 			
 			if ( c == ' '  ||  c == '\t' )
 			{
@@ -132,6 +130,8 @@ namespace vlib
 			
 			break;
 		}
+		
+		return q;
 	}
 	
 	static
@@ -163,19 +163,18 @@ namespace vlib
 	}
 	
 	static
-	void decode_unicode_escape( char*& q, const char*& p )
+	char* decode_unicode_escape( char* q, const char*& p )
 	{
 		using chars::unichar_t;
 		
 		if ( *p == '{' )
 		{
-			decode_braced_unicode_escape( q, ++p );
-			return;
+			return decode_braced_unicode_escape( q, ++p );
 		}
 		
 		const unichar_t uc = decode_unicode_bmp_escape( p );
 		
-		inscribe_unicode( q, uc );
+		return inscribe_unicode( q, uc );
 	}
 	
 	char decode_escaped_byte( const char*& p )
@@ -288,7 +287,7 @@ namespace vlib
 				{
 					if ( c == 'u' )
 					{
-						decode_unicode_escape( q, p );
+						q = decode_unicode_escape( q, p );
 						continue;
 					}
 					
