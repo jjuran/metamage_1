@@ -13,3 +13,9 @@
 
 // iota
 #include "iota/freestore_free.hh"
+
+#ifndef __MWERKS__
+
+int dummy;
+
+#endif
