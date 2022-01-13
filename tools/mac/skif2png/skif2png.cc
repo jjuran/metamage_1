@@ -25,7 +25,7 @@
 // more-posix
 #include "more/perror.hh"
 
-// raster
+// rasterlib
 #include "raster/clut.hh"
 #include "raster/clut_detail.hh"
 #include "raster/load.hh"
@@ -112,7 +112,7 @@ CGDataProviderRef make_data_provider( char* data, size_t size, copier cpy )
 }
 
 static
-CGImageRef CGImage_from_raster( const raster_load& raster )
+CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 {
 	const raster_note* clut_note = NULL;
 	
@@ -301,7 +301,7 @@ void write_image_as_type( CGImageRef image, const char* path, CFStringRef type )
 static
 void raster_to_PNG( const raster_load& raster, const char* path )
 {
-	CGImageRef image = CGImage_from_raster( raster );
+	CGImageRef image = CGSKIFCreateImageFromRaster( raster );
 	
 	write_image_as_type( image, path, kUTTypePNG );
 	
