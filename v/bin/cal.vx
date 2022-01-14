@@ -111,8 +111,6 @@ def ymd
 	return *(argv[ 1 .. 3 ] map int)
 }
 
-let year, let month, let day = ymd()
-
-print display-grid calendar_month( year, month, day )
+print display-grid calendar_month ymd()
 
 end.
