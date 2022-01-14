@@ -94,11 +94,9 @@ def tens (x)
 }
 
 export
-def gmtime
+def gmtime (secs)
 {
-	const y, var m, const d, const H, const M, const S, const w = time_pieces _
-	
-	--m
+	const (y, m, d, H, M, S, w) = time_pieces secs
 	
 	const fields =
 	(
@@ -106,7 +104,7 @@ def gmtime
 		min:  M,
 		hour: H,
 		mday: d,
-		mon:  m,
+		mon:  m - 1,
 		year: y,
 		wday: w,
 		zone: utc,
@@ -116,9 +114,9 @@ def gmtime
 }
 
 export
-def stamp
+def stamp (secs)
 {
-	const y, const m, const d, const H, const M, const S, ... = time_pieces _
+	const (y, m, d, H, M, S), ... = time_pieces secs
 	
 	const date = "-".join (     y, tens m, tens d)
 	const time = ":".join (tens H, tens M, tens S)
