@@ -15,7 +15,7 @@ $ vc 'Iter.popcount (1 -> 1)'
 
 %
 
-$ vc 'Iter.popcount [-0.0f, null, 0.0f]'
+$ vc 'Iter.popcount [null, begin [], begin "x" + 1]'
 1 >= 0
 
 %
