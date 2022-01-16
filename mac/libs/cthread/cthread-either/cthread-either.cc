@@ -111,6 +111,18 @@ namespace either  {
 		}
 	}
 	
+	short stop_thread_nothrow( thread_id id )
+	{
+		if ( has_ThreadManager )
+		{
+			return system::stop_thread_nothrow( id );
+		}
+		else
+		{
+			return custom::stop_thread_nothrow( id );
+		}
+	}
+	
 	bool woken_thread( thread_id id )
 	{
 		if ( has_ThreadManager )

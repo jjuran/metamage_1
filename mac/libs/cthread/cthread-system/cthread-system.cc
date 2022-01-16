@@ -188,6 +188,11 @@ namespace system  {
 		Mac::ThrowOSStatus( err );
 	}
 	
+	short stop_thread_nothrow( thread_id id )
+	{
+		return ::SetThreadState( id, kStoppedThreadState, kNoThreadID );
+	}
+	
 	bool woken_thread( thread_id id )
 	{
 		return ::SetThreadState( id, kReadyThreadState, id ) == noErr;

@@ -34,6 +34,14 @@ namespace custom
 	void stop_thread( thread_id id );
 	void wake_thread( thread_id id );
 	
+	inline
+	short stop_thread_nothrow( thread_id id )
+	{
+		stop_thread( id );
+		
+		return 0;
+	}
+	
 	bool woken_thread( thread_id id );
 	
 	void yield_to_thread( thread_id id );
