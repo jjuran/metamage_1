@@ -23,6 +23,8 @@ namespace relix
 	using cthread::parameter_block;
 	
 	
+	struct thread_creation_failure {};
+	
 	class os_thread : public vxo::ref_count< os_thread >
 	{
 		private:
@@ -66,6 +68,11 @@ namespace relix
 		its_param.switch_out = switch_out;
 		
 		its_id = create_thread( its_param, stack_size );
+		
+		if ( ! its_id )
+		{
+			throw thread_creation_failure();
+		}
 	}
 	
 	os_thread::~os_thread()
