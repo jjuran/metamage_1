@@ -171,9 +171,7 @@ namespace system  {
 		
 		OSErr err = ::GetThreadState( id, &state );
 		
-		Mac::ThrowOSStatus( err );
-		
-		return state == kStoppedThreadState;
+		return err == noErr  &&  state == kStoppedThreadState;
 	}
 	
 	void stop_thread( thread_id id )
