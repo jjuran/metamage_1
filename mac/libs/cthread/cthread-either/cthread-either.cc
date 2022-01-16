@@ -87,30 +87,6 @@ namespace either  {
 		                         : custom::is_thread_stopped( id );
 	}
 	
-	void stop_thread( thread_id id )
-	{
-		if ( has_ThreadManager )
-		{
-			system::stop_thread( id );
-		}
-		else
-		{
-			custom::stop_thread( id );
-		}
-	}
-	
-	void wake_thread( thread_id id )
-	{
-		if ( has_ThreadManager )
-		{
-			system::wake_thread( id );
-		}
-		else
-		{
-			custom::wake_thread( id );
-		}
-	}
-	
 	short stop_thread_nothrow( thread_id id )
 	{
 		if ( has_ThreadManager )

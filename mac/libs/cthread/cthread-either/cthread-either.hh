@@ -86,9 +86,6 @@ namespace either
 	
 	bool is_thread_stopped( thread_id id );
 	
-	void stop_thread( thread_id id );
-	void wake_thread( thread_id id );
-	
 	short stop_thread_nothrow( thread_id id );
 	
 	bool woken_thread( thread_id id );

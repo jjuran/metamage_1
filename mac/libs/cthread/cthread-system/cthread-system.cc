@@ -30,9 +30,6 @@
 // recall
 #include "recall/stack_frame.hh"
 
-// Nitrogen
-#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
-
 
 #ifdef __APPLE__
 #ifndef MAC_OS_X_VERSION_10_3
@@ -172,20 +169,6 @@ namespace system  {
 		OSErr err = ::GetThreadState( id, &state );
 		
 		return err == noErr  &&  state == kStoppedThreadState;
-	}
-	
-	void stop_thread( thread_id id )
-	{
-		OSErr err = ::SetThreadState( id, kStoppedThreadState, kNoThreadID );
-		
-		Mac::ThrowOSStatus( err );
-	}
-	
-	void wake_thread( thread_id id )
-	{
-		OSErr err = ::SetThreadState( id, kReadyThreadState, kNoThreadID );
-		
-		Mac::ThrowOSStatus( err );
 	}
 	
 	short stop_thread_nothrow( thread_id id )
