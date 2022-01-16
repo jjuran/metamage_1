@@ -21,14 +21,9 @@ namespace relix
 		return is_thread_stopped( id );
 	}
 	
-	void stop_os_thread( os_thread_id id )
+	short stop_os_thread_nothrow( os_thread_id id )
 	{
-		stop_thread( id );
-	}
-	
-	void wake_os_thread( os_thread_id id )
-	{
-		wake_thread( id );
+		return stop_thread_nothrow( id );
 	}
 	
 	bool woken_os_thread( os_thread_id id )

@@ -30,8 +30,8 @@
 // recall
 #include "recall/stack_frame.hh"
 
-// Nitrogen
-#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
+#pragma exceptions off
 
 
 #ifdef __APPLE__
@@ -71,15 +71,7 @@ namespace system  {
 		pb.stack_bottom = mac::sys::init_thread();
 		pb.stack_limit  = measure_stack_limit();
 		
-		try
-		{
-			return pb.start( pb.param, pb.stack_bottom, pb.stack_limit );
-		}
-		catch ( ... )
-		{
-		}
-		
-		return NULL;
+		return pb.start( pb.param, pb.stack_bottom, pb.stack_limit );
 	}
 	
 	static
@@ -130,7 +122,10 @@ namespace system  {
 		                   NULL,
 		                   &thread );
 		
-		Mac::ThrowOSStatus( err );
+		if ( err )
+		{
+			return thread_id();
+		}
 		
 		enum { Out, In };
 		
@@ -171,23 +166,12 @@ namespace system  {
 		
 		OSErr err = ::GetThreadState( id, &state );
 		
-		Mac::ThrowOSStatus( err );
-		
-		return state == kStoppedThreadState;
+		return err == noErr  &&  state == kStoppedThreadState;
 	}
 	
-	void stop_thread( thread_id id )
+	short stop_thread_nothrow( thread_id id )
 	{
-		OSErr err = ::SetThreadState( id, kStoppedThreadState, kNoThreadID );
-		
-		Mac::ThrowOSStatus( err );
-	}
-	
-	void wake_thread( thread_id id )
-	{
-		OSErr err = ::SetThreadState( id, kReadyThreadState, kNoThreadID );
-		
-		Mac::ThrowOSStatus( err );
+		return ::SetThreadState( id, kStoppedThreadState, kNoThreadID );
 	}
 	
 	bool woken_thread( thread_id id )

@@ -86,7 +86,10 @@ OSStatus AESendBlocking( const AppleEvent* event, AppleEvent* reply )
 		current.mark_current_stack_frame();
 		
 		// Sleep until the reply is delivered
-		stop_os_thread( current.get_os_thread() );
+		if ( OSErr err = stop_os_thread_nothrow( current.get_os_thread() ) )
+		{
+			return err;
+		}
 		
 		/*
 			Check for fatal signals; ignore caught ones (for now).

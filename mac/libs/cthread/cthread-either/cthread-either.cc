@@ -17,6 +17,9 @@
 #include "mac_sys/has/ThreadManager.hh"
 
 
+#pragma exceptions off
+
+
 namespace cthread
 {
 	
@@ -87,27 +90,15 @@ namespace either  {
 		                         : custom::is_thread_stopped( id );
 	}
 	
-	void stop_thread( thread_id id )
+	short stop_thread_nothrow( thread_id id )
 	{
 		if ( has_ThreadManager )
 		{
-			system::stop_thread( id );
+			return system::stop_thread_nothrow( id );
 		}
 		else
 		{
-			custom::stop_thread( id );
-		}
-	}
-	
-	void wake_thread( thread_id id )
-	{
-		if ( has_ThreadManager )
-		{
-			system::wake_thread( id );
-		}
-		else
-		{
-			custom::wake_thread( id );
+			return custom::stop_thread_nothrow( id );
 		}
 	}
 	
