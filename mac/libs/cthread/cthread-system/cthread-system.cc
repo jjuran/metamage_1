@@ -127,7 +127,10 @@ namespace system  {
 		                   NULL,
 		                   &thread );
 		
-		Mac::ThrowOSStatus( err );
+		if ( err )
+		{
+			return thread_id();
+		}
 		
 		enum { Out, In };
 		
