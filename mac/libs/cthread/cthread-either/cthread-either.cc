@@ -17,6 +17,9 @@
 #include "mac_sys/has/ThreadManager.hh"
 
 
+#pragma exceptions off
+
+
 namespace cthread
 {
 	

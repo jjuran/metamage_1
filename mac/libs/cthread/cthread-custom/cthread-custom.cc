@@ -18,6 +18,9 @@
 #include "circular_queue.hh"
 
 
+#pragma exceptions off
+
+
 #ifdef __MC68K__
 #define AT( addr )  : addr
 #define STATIC static

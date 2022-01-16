@@ -31,6 +31,9 @@
 #include "recall/stack_frame.hh"
 
 
+#pragma exceptions off
+
+
 #ifdef __APPLE__
 #ifndef MAC_OS_X_VERSION_10_3
 /*
