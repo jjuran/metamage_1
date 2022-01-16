@@ -39,6 +39,7 @@ using v68k::fc_t;
 using v68k::mem_t;
 
 using v68k::user_program_space;
+using v68k::mem_write;
 using v68k::mem_exec;
 
 
@@ -80,6 +81,11 @@ uint8_t* lowmem_translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 			
 			return 0;  // NULL
 		}
+	}
+	
+	if ( addr / 1024u == 7  &&  access == mem_write )
+	{
+		return 0;  // NULL
 	}
 	
 	if ( length > low_memory_size  ||  addr > low_memory_size - length )
