@@ -31,6 +31,11 @@ namespace relix
 		wake_thread( id );
 	}
 	
+	short stop_os_thread_nothrow( os_thread_id id )
+	{
+		return stop_thread_nothrow( id );
+	}
+	
 	bool woken_os_thread( os_thread_id id )
 	{
 		return woken_thread( id );
