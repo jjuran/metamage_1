@@ -276,6 +276,7 @@ const uint32_t code_max_size   = 40 * 1024;
 
 const uint32_t os_address   = 7168;
 const uint32_t initial_SSP  = 3072;
+const uint16_t stack_limit  = 10240;
 const uint16_t initial_USP  = 30720;
 const uint32_t code_address = 30720;
 
@@ -289,6 +290,9 @@ const uint32_t params_addr = 8192;
 
 const uint16_t user_pb_addr   = params_addr +  0;  // 20 bytes
 const uint16_t system_pb_addr = params_addr + 20;  // 20 bytes
+
+const uint16_t user_pb_stack_bottom_addr = user_pb_addr + 0;
+const uint16_t user_pb_stack_limit_addr  = user_pb_addr + 4;
 
 const uint16_t argc_addr = params_addr + 40;  // 4 bytes
 const uint16_t argv_addr = params_addr + 44;  // 4 bytes
@@ -320,6 +324,14 @@ const uint16_t loader_code[] =
 	
 	0x4BF8,  // LEA  (12288).W,A5
 	0x3000,
+	
+	0x21CF,  // MOVE.L   A7,(user_pb_stack_bottom_addr).W
+	user_pb_stack_bottom_addr,
+	
+	0x21FC,  // MOVE.L  #stack_limit,(user_pb_stack_limit_addr).W
+	0x0000,
+	stack_limit,
+	user_pb_stack_limit_addr,
 	
 	0x42B8,  // CLR.L  user_pb_addr + 2 * sizeof (u32)  ; user_pb->errno_var
 	user_pb_addr + 2 * sizeof (uint32_t),
