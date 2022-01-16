@@ -406,13 +406,7 @@ namespace custom  {
 			f( task->pb->param );
 		}
 		
-		try
-		{
-			pb.start( pb.param, pb.stack_bottom, pb.stack_limit );
-		}
-		catch ( ... )
-		{
-		}
+		pb.start( pb.param, pb.stack_bottom, pb.stack_limit );
 	}
 	
 	thread_id create_thread( parameter_block& pb, unsigned stack_size )

@@ -68,15 +68,7 @@ namespace system  {
 		pb.stack_bottom = mac::sys::init_thread();
 		pb.stack_limit  = measure_stack_limit();
 		
-		try
-		{
-			return pb.start( pb.param, pb.stack_bottom, pb.stack_limit );
-		}
-		catch ( ... )
-		{
-		}
-		
-		return NULL;
+		return pb.start( pb.param, pb.stack_bottom, pb.stack_limit );
 	}
 	
 	static
