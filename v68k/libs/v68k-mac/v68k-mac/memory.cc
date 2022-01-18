@@ -181,6 +181,7 @@ enum
 	tag_CurMap,
 	tag_ResLoad,
 	tag_ResErr,
+	tag_TaskFScaleD,
 	tag_CurActivate,
 	tag_CurActivate_low_word,
 	tag_CurDeactive,
@@ -363,6 +364,7 @@ static const global globals[] =
 	{ 0x0A5A, 2,    tag_CurMap      },
 	{ 0x0A5E, 2,    tag_ResLoad     },
 	{ 0x0A60, 2,    tag_ResErr      },
+	{ 0x0A62, 2,    tag_TaskFScaleD },  // TaskLock, FScaleDisable
 	{ 0x0A64, 4,    tag_CurActivate },
 	{ 0x0A68, 4,    tag_CurDeactive },
 	{ 0x0A78, 12,   tag_ApplScratch },
