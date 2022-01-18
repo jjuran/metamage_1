@@ -145,6 +145,7 @@ enum
 	tag_CurJTOffset,
 	tag_CurPageOption,
 	tag_PrintErr,
+	tag_scrapCount,
 	tag_ROMFont0,
 	tag_ROMFont0_low_word,
 	tag_ToolScratch,
@@ -334,6 +335,7 @@ static const global globals[] =
 	{ 0x0934, 2,    tag_CurJTOffset },
 	{ 0x0936, 2,    tag_CurPageOption},
 	{ 0x0944, 2,    tag_PrintErr    },
+	{ 0x0968, 2,    tag_scrapCount  },
 	{ 0x0980, 4,    tag_ROMFont0    },
 	{ 0x0984, 0x82, 3               },  // ApFontID (Geneva)
 	{ 0x09CE, 8,    tag_ToolScratch },
