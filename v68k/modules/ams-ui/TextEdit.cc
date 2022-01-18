@@ -495,12 +495,12 @@ pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
 	
 	scoped_TERec scope = te;
 	
-	if ( selEnd > te.teLength )
+	if ( (UInt32) selEnd > te.teLength )
 	{
 		selEnd = te.teLength;
 	}
 	
-	if ( selStart > selEnd )
+	if ( (UInt32) selStart > (UInt32) selEnd )
 	{
 		selStart = selEnd;
 	}
