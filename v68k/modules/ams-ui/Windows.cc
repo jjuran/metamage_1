@@ -856,11 +856,14 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 		
 		WindowPtr ptr = (WindowPtr) w;
 		
-		if ( short hit = call_WDEF( w, wHit, *(long*) &pt ) )
+		if ( PtInRgn( pt, w->strucRgn ) )
 		{
-			*window = ptr;
-			
-			return hit + 2;
+			if ( short hit = call_WDEF( w, wHit, *(long*) &pt ) )
+			{
+				*window = ptr;
+				
+				return hit + 2;
+			}
 		}
 	}
 	
