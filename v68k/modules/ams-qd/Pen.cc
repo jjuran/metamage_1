@@ -544,8 +544,9 @@ pascal void Move_patch( short dh, short dv )
 {
 	GrafPtr thePort = *get_addrof_thePort();
 	
-	thePort->pnLoc.v += dv;
-	thePort->pnLoc.h += dh;
+	Point pnLoc = thePort->pnLoc;
+	
+	MoveTo_patch( pnLoc.h + dh, pnLoc.v + dv );
 }
 
 pascal void LineTo_patch( short h, short v )
