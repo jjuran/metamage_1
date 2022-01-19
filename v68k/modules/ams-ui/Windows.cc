@@ -496,7 +496,7 @@ pascal void CloseWindow_patch( WindowRef port )
 		{
 			CurActivate = (WindowRef) WindowList;
 			
-			HiliteWindow_patch( WindowList, true );
+			HiliteWindow_patch( WindowList, -true );
 		}
 	}
 	
@@ -606,7 +606,7 @@ pascal void SelectWindow_patch( WindowPeek window )
 	
 	BringToFront_patch( window );
 	HiliteWindow_patch( leader, false );
-	HiliteWindow_patch( window, true  );
+	HiliteWindow_patch( window, -true );
 }
 
 pascal void HideWindow_patch( WindowPeek window )
@@ -652,7 +652,7 @@ pascal void ShowWindow_patch( WindowPeek window )
 		
 		CurActivate = (WindowRef) window;
 		
-		HiliteWindow_patch( window, true );
+		HiliteWindow_patch( window, -true );
 	}
 }
 
@@ -819,7 +819,7 @@ pascal void SendBehind_patch( WindowPeek window, WindowPeek behindWindow )
 	CurActivate = (WindowRef) leader;
 	
 	HiliteWindow_patch( window, false );
-	HiliteWindow_patch( leader, true  );
+	HiliteWindow_patch( leader, -true );
 }
 
 pascal WindowRef FrontWindow_patch()
