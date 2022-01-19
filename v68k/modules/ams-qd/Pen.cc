@@ -536,6 +536,27 @@ pascal void MoveTo_patch( short h, short v )
 {
 	GrafPtr thePort = *get_addrof_thePort();
 	
+	GrafPort& port = *thePort;
+	
+	if ( port.rgnSave  &&  port.polySave )
+	{
+		PolyHandle poly = (PolyHandle) port.polySave;
+		
+		if ( const short n_pts = (poly[0]->polySize - sizeof (Polygon)) / 4u )
+		{
+			ClosePoly();
+			
+			if ( n_pts >= 3 )
+			{
+				FramePoly( poly );
+			}
+			
+			KillPoly( poly );
+			
+			OpenPoly();
+		}
+	}
+	
 	thePort->pnLoc.v = v;
 	thePort->pnLoc.h = h;
 }
