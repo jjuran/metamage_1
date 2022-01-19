@@ -14,12 +14,21 @@
 #include "circular_region.hh"
 
 
+static inline
+short min( short a, short b )
+{
+	return b < a ? b : a;
+}
+
 void RoundRectRgn( MacRegion**  rgn,
                    short        width,
                    short        height,
                    short        ovalWidth,
                    short        ovalHeight )
 {
+	ovalWidth  = min( ovalWidth,  width  );
+	ovalHeight = min( ovalHeight, height );
+	
 	// TODO:  Support assymetric diameters for real
 	
 	short diameter = ovalWidth < ovalHeight ? ovalWidth : ovalHeight;
