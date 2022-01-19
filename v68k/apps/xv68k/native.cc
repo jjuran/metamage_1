@@ -142,6 +142,7 @@ uint32_t get_toolbox_trap_addr( v68k::emulator& emu, uint16_t trap_word )
 
 bool native_override( v68k::emulator& emu )
 {
+	using v68k::D0;
 	using v68k::D1;
 	using v68k::D2;
 	using v68k::A0;
@@ -288,6 +289,10 @@ bool native_override( v68k::emulator& emu )
 		emu.get_long( emu.regs[ SP ], emu.regs[ A1 ], data_space );
 		
 		emu.regs[ SP ] += 4;  // pop saved A1
+		
+		const int16_t d0 = emu.regs[ D0 ];
+		
+		emu.sr.nzvc = (d0 < 0) << 3 | (d0 == 0) << 2;
 		
 		emu.get_long( emu.regs[ SP ], emu.regs[ PC ], data_space );
 		
