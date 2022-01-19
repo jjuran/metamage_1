@@ -29,9 +29,9 @@ void RoundRectRgn( MacRegion**  rgn,
 	ovalWidth  = min( ovalWidth,  width  );
 	ovalHeight = min( ovalHeight, height );
 	
-	// TODO:  Support assymetric diameters for real
+	// TODO:  Support asymmetric diameters for real
 	
-	short diameter = ovalWidth < ovalHeight ? ovalWidth : ovalHeight;
+	const short diameter = min( ovalWidth, ovalHeight );
 	
 	RgnHandle tmp = circular_region( diameter, width, height );
 	
