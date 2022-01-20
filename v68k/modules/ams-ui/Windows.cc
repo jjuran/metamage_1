@@ -543,7 +543,9 @@ pascal void SetWTitle_patch( WindowPeek window, ConstStr255Param s )
 			window->titleHandle = NewString_patch( s );
 		}
 		
-		window->titleWidth = -1;
+		scoped_port thePort = WMgrPort;
+		
+		window->titleWidth = StringWidth( s );
 	}
 	else
 	{
