@@ -123,11 +123,25 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 		return 0;  // NULL
 	}
 	
-	const addr_t last = buffer_size - 2;
+	/*
+		Enchanted Scepters writes pairs of samples in reverse order,
+		so if we wait only until the last sample is written, we'll have
+		missed the one before it.  Instead, wait until both of the final
+		samples of been written to the buffer.
+	*/
 	
-	if ( access == v68k::mem_update  &&  addr == last )
+	static int counter = 2;
+	
+	const addr_t last_two = buffer_size - 4;
+	
+	if ( access == v68k::mem_update  &&  addr >= last_two )
 	{
-		sound_update();
+		if ( --counter == 0 )
+		{
+			sound_update();
+			
+			counter = 2;
+		}
 	}
 	
 	return the_sound_buffer + addr;
