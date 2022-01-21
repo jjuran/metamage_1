@@ -33,6 +33,7 @@ enum disposition
 	inval = error,
 	empty = warn,
 	badid = warn,
+	audio = warn,
 };
 
 static const char* responses[] =
@@ -74,6 +75,7 @@ static const exception_spec exceptions[] =
 	{ inval, "invalid zero wavelength for tone" },
 	{ empty, "tone duration is zero" },
 	{ badid, "no such ID for four-tone update" },
+	{ audio, "gap in audio playback detected" },
 };
 
 bool take_exception_internal( exception_type type )

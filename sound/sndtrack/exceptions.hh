@@ -30,6 +30,7 @@ enum exception_type
 	element_wavelength_zero,          // square-wave tone with count == 0
 	element_duration_zero,            // square-wave tone duration == 0
 	update_unidentified,              // four-tone update's ID doesn't match
+	audio_playback_gap,               // suspicious gap between sounds
 };
 
 /*

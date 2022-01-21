@@ -12,6 +12,7 @@
 // sndtrack
 #include "admin.hh"
 #include "backend.hh"
+#include "exceptions.hh"
 #include "output.hh"
 #include "sound_node.hh"
 #include "synth/four-tone.hh"
@@ -95,9 +96,18 @@ short diminish( sample_buffer& output )
 	return output.count;
 }
 
+bool silent_2ago;
+bool silent_then;
+bool silent_now = true;
+
 short synthesize( sample_buffer& output )
 {
 	static sound_node* last_input;
+	
+	silent_2ago = silent_then;
+	silent_then = silent_now;
+	
+	silent_now = false;
 	
 	output.count = samples_per_buffer;  // optimistic default
 	
@@ -199,8 +209,17 @@ short synthesize( sample_buffer& output )
 		
 		if ( count >= 0 )
 		{
+			if ( silent_then  &&  ! silent_2ago )
+			{
+				take_exception( audio_playback_gap );
+			}
+			
 			if ( stopping  ||  count == 0 )
 			{
+				// Defeat the audio gap detection to prevent a false positive.
+				silent_then = true;
+				silent_now = true;
+				
 				last_input = NULL;
 				
 				return diminish( output );
@@ -212,5 +231,7 @@ short synthesize( sample_buffer& output )
 		queue_advance( sound_queue );
 	}
 	
+	silent_now = true;
+ 	
 	return 0;
 }
