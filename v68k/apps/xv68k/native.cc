@@ -8,6 +8,12 @@
 // Standard C
 #include <string.h>
 
+// log-of-war
+#include "logofwar/report.hh"
+
+// v68k
+#include "v68k/print.hh"
+
 
 #ifdef __MWERKS__
 #pragma exceptions off
@@ -164,6 +170,8 @@ bool native_override( v68k::emulator& emu )
 	{
 		const int level  = 1;
 		const int vector = 88;
+		
+		WARNING = "Patching spinloop at ", (v68k::hex32_t) emu.regs[ PC ];
 		
 		emu.interrupt( level, vector );
 		
