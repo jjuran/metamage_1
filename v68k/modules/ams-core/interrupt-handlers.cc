@@ -47,15 +47,22 @@ asm void event_poll_interrupt_handler()
 static
 asm void spinloop_detect_interrupt_handler()
 {
+	MOVE.L   D0,-(SP)
 	MOVE.L   A0,-(SP)
 	
-//	LEA      4(SP),A0  // exception stack frame
-	MOVEA.L  6(SP),A0  // exception stack frame's stacked PC
+//	LEA      8(SP),A0   // exception stack frame
+	MOVEA.L  10(SP),A0  // exception stack frame's stacked PC
 	
-	MOVE.W   #0x486D, (A0)  // replace TST opcode with PEA
-	MOVE.W   #0xA2F6,4(A0)  // replace BNE opcode with trap
+	MOVE.W   (A0),D0        // copy the TST opcode
+	ANDI.W   #0x003F,(A0)   // keep only the effective address mode
+	ORI.W    #0x4840,(A0)   // replace prior TST opcode with PEA
+	ANDI.W   #0x00C0,D0     // isolate size code
+	LSL.W    #3,D0          // Shift size code from $00C0 to $0600
+	ORI.W    #0xA0F6,D0     // compose trap word
+	MOVE.W   D0,4(A0)       // replace BNE opcode with trap
 	
 	MOVEA.L  (SP)+,A0
+	MOVE.L   (SP)+,D0
 	RTE
 }
 
