@@ -208,6 +208,12 @@ pascal MenuInfo** GetMenu_patch( short resID )
 
 pascal void DisposeMenu_patch( MenuInfo** menu )
 {
+	if ( ! menu )
+	{
+		ERROR = "DisposeMenu: NULL address";
+		return;
+	}
+	
 	DisposeHandle( (Handle) menu );
 }
 
