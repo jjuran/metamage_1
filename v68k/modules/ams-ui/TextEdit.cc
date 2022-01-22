@@ -934,12 +934,19 @@ pascal void TECalText_patch( TERec** hTE )
 		*starts++ = p - begin;
 		
 		const char* q = gear::find_first_match( p, end, '\r', end );
+		const char* r = q;
+		
+		short width = TextWidth( p, 0, q - p );
 		
 		const char* first_space = gear::find_first_match( p, q, ' ', q );
 		
-		while ( q > first_space  &&  TextWidth( p, 0, q - p ) > rectWidth )
+		while ( q > first_space  &&  width > rectWidth )
 		{
 			while ( *--q != ' ' ) continue;
+			
+			width -= TextWidth( q, 0, r - q );
+			
+			r = q;
 		}
 		
 		if ( q == first_space )
