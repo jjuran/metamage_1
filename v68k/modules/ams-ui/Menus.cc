@@ -396,6 +396,11 @@ pascal void InsertMenu_patch( MenuInfo** menu, short beforeID )
 {
 	// TODO:  Respect beforeID
 	
+	if ( beforeID )
+	{
+		WARNING = "InsertMenu: ignoring beforeID of ", beforeID;
+	}
+	
 	WMgrPort_bezel_scope port_swap;
 	
 	const UInt16 extent_bytes = MenuList[0]->extent_bytes;
