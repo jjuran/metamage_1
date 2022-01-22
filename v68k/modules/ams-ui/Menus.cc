@@ -206,6 +206,8 @@ pascal MenuInfo** GetMenu_patch( short resID )
 	return (MenuRef) h;
 }
 
+static short predisposed_menu_id;
+
 pascal void DisposeMenu_patch( MenuInfo** menu )
 {
 	if ( ! menu )
@@ -221,6 +223,8 @@ pascal void DisposeMenu_patch( MenuInfo** menu )
 		ERROR = "Disposing of menu ID ", id, " which is still in the menu list";
 		
 		DeleteMenu( id );
+		
+		predisposed_menu_id = id;
 	}
 	
 	DisposeHandle( (Handle) menu );
@@ -495,9 +499,16 @@ pascal void DeleteMenu_patch( short menuID )
 	}
 	else
 	{
-		WARNING = "DeleteMenu: menu ID ", menuID, " isn't in menu list";
+		if ( menuID != predisposed_menu_id )
+		{
+			WARNING = "DeleteMenu: menu ID ", menuID, " isn't in menu list";
+		}
+		
+		predisposed_menu_id = 0;
 		return;
 	}
+	
+	predisposed_menu_id = 0;
 	
 	header->extent_bytes -= sizeof (MenuList_entry);
 }
