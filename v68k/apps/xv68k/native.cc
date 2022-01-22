@@ -29,7 +29,15 @@ static bool spinloop_flag;
 static inline
 bool is_spinloop_memtest( uint16_t opcode )
 {
-	return opcode == 0x4A6D;  // TST.W    (offset,A5)
+	switch ( opcode )
+	{
+		case 0x4A38:  // TST.B    0xXXXX
+		case 0x4A6D:  // TST.W    (offset,A5)
+			return true;
+		
+		default:
+			return false;
+	}
 }
 
 static inline
