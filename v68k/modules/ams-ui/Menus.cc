@@ -214,6 +214,15 @@ pascal void DisposeMenu_patch( MenuInfo** menu )
 		return;
 	}
 	
+	const short id = menu[0]->menuID;
+	
+	if ( MenuList_entry* found = find_menu_id( id ) )
+	{
+		ERROR = "Disposing of menu ID ", id, " which is still in the menu list";
+		
+		DeleteMenu( id );
+	}
+	
 	DisposeHandle( (Handle) menu );
 }
 
