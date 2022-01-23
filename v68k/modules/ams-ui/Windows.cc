@@ -1191,7 +1191,13 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 	PenMode( notPatXor );
 	PenPat( &qd.gray );
 	
-	Rect grow_rect = window->contRgn[0]->rgnBBox;
+	/*
+		The grow rect probably doesn't need clamping at all, but that
+		function already exists, and plain QDLocalToGlobalRect() doesn't.
+	*/
+	
+	Rect grow_rect;
+	QDLocalToGlobalRect_clamped( w, &w->portRect, &grow_rect );
 	
 	Point pt = start;
 	
