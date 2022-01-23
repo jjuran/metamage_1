@@ -28,6 +28,9 @@
 // mac-sys-utils
 #include "mac_sys/delay.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "callouts.hh"
 #include "QDGlobals.hh"
@@ -1069,6 +1072,18 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 
 pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 {
+	if ( h == 0  ||  v == 0 )
+	{
+		/*
+			Applications should be comparing the result of GrowWindow() to
+			$80008000 (indicating no change) and eliding the SizeWindow()
+			call in the event of a match, but Enchanted Scepters passes zero.
+		*/
+		
+		ERROR = "Zero width or height argument to SizeWindow()";
+		return;
+	}
+	
 	{
 		scoped_port thePort = window;
 		
