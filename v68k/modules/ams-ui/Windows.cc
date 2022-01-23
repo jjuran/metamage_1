@@ -1555,7 +1555,7 @@ pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 		
 		if ( PaintWhite )
 		{
-			EraseRect( &window->contRgn[0]->rgnBBox );
+			EraseRgn( window->contRgn );
 		}
 	}
 }
