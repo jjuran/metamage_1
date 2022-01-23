@@ -662,7 +662,7 @@ pascal void TEKey_patch( short c, TERec** hTE )
 	
 	hide_selection( te );
 	
-	switch ( c )
+	switch ( (char) c )
 	{
 		case kBackspaceCharCode:
 			if ( has_selection( te ) )
