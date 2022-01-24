@@ -1072,15 +1072,17 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 
 pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 {
-	if ( h == 0  ||  v == 0 )
+	if ( h == 0  &&  v == 0 )
 	{
 		/*
 			Applications should be comparing the result of GrowWindow() to
 			$80008000 (indicating no change) and eliding the SizeWindow()
 			call in the event of a match, but Enchanted Scepters passes zero.
+			
+			However, Inside Macintosh documents SizeWindow() as doing nothing
+			in that case, so we'll let it pass.
 		*/
 		
-		ERROR = "Zero width or height argument to SizeWindow()";
 		return;
 	}
 	
