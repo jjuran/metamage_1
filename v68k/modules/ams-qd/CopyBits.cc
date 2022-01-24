@@ -539,9 +539,14 @@ pascal void ScrollRect_patch( const Rect*  srcRect,
 	
 	Rect dstRect = *srcRect;
 	
+	// Start with the visRgn (omitting any occluded parts of the source).
+	CopyRgn( thePort->visRgn, updateRgn );
+	
+	// Translate the visRgn (along with the dstRect itself).
+	OffsetRgn( updateRgn, dh, dv );
 	OffsetRect( &dstRect, dh, dv );
 	
-	RectRgn( updateRgn, srcRect );
+	// Use the translated visRgn as a mask region to omit occluded bits.
 	
 	CopyBits( &thePort->portBits,
 	          &thePort->portBits,
@@ -549,6 +554,10 @@ pascal void ScrollRect_patch( const Rect*  srcRect,
 	          &dstRect,
 	          srcCopy,
 	          updateRgn );
+	
+	// The actual update region is (srcRect - dstRect).
+	
+	RectRgn( updateRgn, srcRect );
 	
 	DiffRgn( updateRgn, rectangular_utility_region( dstRect ), updateRgn );
 	
