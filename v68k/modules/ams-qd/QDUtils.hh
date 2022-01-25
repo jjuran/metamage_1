@@ -34,10 +34,6 @@ pascal void MapPt_patch( Point* pt, const Rect* src, const Rect* dst );
 pascal void MapRect_patch( Rect* r, const Rect* src, const Rect* dst );
 pascal void MapRgn_patch( RgnHandle rgn, const Rect* src, const Rect* dst );
 
-pascal struct Pattern** GetPattern_patch( short id );
-pascal struct Cursor**  GetCursor_patch ( short id );
-pascal struct Picture** GetPicture_patch( short id );
-
 pascal long DeltaPoint_patch( Point a, Point b );
 
 pascal Fixed SlopeFromAngle_patch( short angle );

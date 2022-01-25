@@ -40,7 +40,6 @@
 #include "Region-ops.hh"
 #include "Regions.hh"
 #include "RoundRects.hh"
-#include "StrUtils.hh"
 #include "Text.hh"
 
 
@@ -252,11 +251,6 @@ static void install_QuickDraw()
 	
 	TBTRAP( PinRect     );  // A94E
 	TBTRAP( DeltaPoint  );  // A94F
-	
-	TBTRAP( GetPattern  );  // A9B8
-	TBTRAP( GetCursor   );  // A9B9
-	
-	TBTRAP( GetPicture  );  // A9BC
 }
 
 static void install_Fonts()
@@ -271,11 +265,6 @@ static void install_Fonts()
 	TBTRAP( SetFontLock );  // A903
 }
 
-static void install_StrUtils()
-{
-	TBTRAP( GetString );  // A9BA
-}
-
 int main( int argc, char** argv )
 {
 	if ( argc > 1 )
@@ -287,7 +276,6 @@ int main( int argc, char** argv )
 	
 	install_QuickDraw();
 	install_Fonts();
-	install_StrUtils();
 	
 	module_suspend();  // doesn't return
 }

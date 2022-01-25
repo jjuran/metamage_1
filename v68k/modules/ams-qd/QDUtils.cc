@@ -6,8 +6,8 @@
 #include "QDUtils.hh"
 
 // Mac OS
-#ifndef __RESOURCES__
-#include <Resources.h>
+#ifndef __MACTYPES__
+#include <MacTypes.h>
 #endif
 
 // quickdraw
@@ -377,21 +377,6 @@ pascal void MapRgn_patch( RgnHandle rgn, const Rect* src, const Rect* dst )
 	}
 	
 	compact_region( rgn );
-}
-
-pascal PatHandle GetPattern_patch( short id )
-{
-	return (PatHandle) GetResource( 'PAT ', id );
-}
-
-pascal CursHandle GetCursor_patch( short id )
-{
-	return (CursHandle) GetResource( 'CURS', id );
-}
-
-pascal PicHandle GetPicture_patch( short id )
-{
-	return (PicHandle) GetResource( 'PICT', id );
 }
 
 pascal long DeltaPoint_patch( Point a, Point b )
