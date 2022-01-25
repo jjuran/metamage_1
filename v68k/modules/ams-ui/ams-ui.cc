@@ -310,8 +310,6 @@ void install_Scrap()
 static
 void install_IconUtilities()
 {
-	TBTRAP( GetIcon      );  // A9BB
-	
 	TBTRAP( IconDispatch );  // ABC9
 }
 

@@ -27,11 +27,6 @@ BitMap IconBitmap : 0x0A0E;
 OSErr  ResErr     : 0x0A60;
 
 
-pascal char** GetIcon_patch( short iconID )
-{
-	return GetResource( 'ICON', iconID );
-}
-
 static inline
 void CopyIconBits( Ptr baseAddr, const Rect* r, short mode )
 {
