@@ -16,6 +16,7 @@
 
 // ams-rsrc
 #include "Resources.hh"
+#include "Utilities.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -73,6 +74,15 @@ void install_ResourceManager()
 	TBTRAP( OpenRFPerm      );  // A9C4
 }
 
+static void install_Utilities()
+{
+	TBTRAP( GetPattern );  // A9B8
+	TBTRAP( GetCursor  );  // A9B9
+	TBTRAP( GetString  );  // A9BA
+	TBTRAP( GetIcon    );  // A9BB
+	TBTRAP( GetPicture );  // A9BC
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc > 1 )
@@ -83,6 +93,8 @@ int main( int argc, char** argv )
 	}
 	
 	install_ResourceManager();
+	
+	install_Utilities();
 	
 	module_A4_suspend();  // doesn't return
 }
