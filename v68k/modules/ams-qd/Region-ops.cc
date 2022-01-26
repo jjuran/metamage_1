@@ -255,7 +255,7 @@ bool check_region( RgnHandle rgn, const char* func, int line )
 	{
 		if ( *p <= v )
 		{
-			ERROR = func, ", line ", line,
+			ERROR = func, ", line ", line, ": "
 				"v ", *p, " isn't an increase over ", v;
 			
 			valid = false;
@@ -274,7 +274,7 @@ bool check_region( RgnHandle rgn, const char* func, int line )
 		{
 			if ( *p <= h )
 			{
-				ERROR = func, ", line ", line,
+				ERROR = func, ", line ", line, ": "
 					"h ", *p, " isn't an increase over ", h;
 				
 				valid = false;
