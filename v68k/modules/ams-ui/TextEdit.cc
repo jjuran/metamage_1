@@ -903,11 +903,31 @@ pascal void TEScroll_patch( short dh, short dv, TERec** hTE )
 	OffsetRect( &te.destRect, dh, dv );
 	OffsetRect( &te.selRect,  dh, dv );
 	
+	Rect srcRect = te.viewRect;
+	
+	if ( dv < 0 )
+	{
+		srcRect.top -= dv;
+	}
+	else
+	{
+		srcRect.bottom -= dv;
+	}
+	
+	if ( dh < 0 )
+	{
+		srcRect.left -= dh;
+	}
+	else
+	{
+		srcRect.right -= dh;
+	}
+	
 	static RgnHandle updateRgn = NewRgn();
 	
 	raster_lock lock;
 	
-	ScrollRect( &te.viewRect, dh, dv, updateRgn );
+	ScrollRect( &srcRect, dh, dv, updateRgn );
 	
 	TEUpdate( &updateRgn[0]->rgnBBox, hTE );
 }
