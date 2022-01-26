@@ -533,6 +533,8 @@ pascal void DisposeWindow_patch( WindowRef window )
 #pragma mark Window Display
 #pragma mark -
 
+static void update_window_frame( WindowPeek w );
+
 pascal void SetWTitle_patch( WindowPeek window, ConstStr255Param s )
 {
 	if ( s != NULL  &&  s[ 0 ] != 0 )
@@ -1092,8 +1094,14 @@ pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 		PortSize( h, v );
 	}
 	
-	WindowPeek w = (WindowPeek) window;
+	SaveUpdate = update;
 	
+	update_window_frame( (WindowPeek) window );
+}
+
+static
+void update_window_frame( WindowPeek w )
+{
 	if ( ! w->visible )
 	{
 		return;
@@ -1123,8 +1131,6 @@ pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 	XorRgn( w->strucRgn, w->contRgn, frame );
 	
 	UnionRgn( exposed, frame, exposed );
-	
-	SaveUpdate = update;
 	
 	PaintBehind_patch( w, exposed );
 	CalcVBehind_patch( w, exposed );
