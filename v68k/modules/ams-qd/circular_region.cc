@@ -103,6 +103,8 @@ RgnHandle circular_region( short diameter, short width, short height )
 	
 	short* p = scratchpad;
 	
+	*p = 0;
+	
 	while ( y0 < x )
 	{
 		--x;
