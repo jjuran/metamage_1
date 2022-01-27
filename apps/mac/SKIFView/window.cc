@@ -354,7 +354,13 @@ void populate_pixmap( window_state& state )
 	const raster_metadata& meta = *state.load.meta;
 	const raster_desc&     desc = meta.desc;
 	
-	state.mode = has_color ? ditherCopy : srcCopy;
+	state.mode = desc.model == Model_monochrome_light ? notSrcCopy
+	                                                  :    srcCopy;
+	
+	if ( has_color )
+	{
+		state.mode |= ditherCopy;
+	}
 	
 	const uint8_t depth = desc.weight;
 	
