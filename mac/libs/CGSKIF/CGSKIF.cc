@@ -14,8 +14,51 @@
 #include "raster/skif.hh"
 
 
+#ifndef MAC_OS_X_VERSION_10_4
+typedef CGImageAlphaInfo CGBitmapInfo;
+#endif
+
+
 using namespace raster;
 
+
+static
+CGColorSpaceRef GrayColorSpace()
+{
+	static CGColorSpaceRef colorSpace =
+	
+#ifdef MAC_OS_X_VERSION_10_4
+	
+	CGColorSpaceCreateWithName( kCGColorSpaceGenericGray )
+	
+#else
+	
+	CGColorSpaceCreateDeviceGray()
+	
+#endif
+	;
+	
+	return colorSpace;
+}
+
+static
+CGColorSpaceRef RGBColorSpace()
+{
+	static CGColorSpaceRef colorSpace =
+	
+#ifdef MAC_OS_X_VERSION_10_4
+	
+	CGColorSpaceCreateWithName( kCGColorSpaceGenericRGB )
+	
+#else
+	
+	CGColorSpaceCreateDeviceRGB()
+	
+#endif
+	;
+	
+	return colorSpace;
+}
 
 static
 void release_data( void* info, const void* data, size_t size )
@@ -112,10 +155,10 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	
 	int n_components = tri_colored ? 3 : 1;
 	
-	CFStringRef colorSpaceName = tri_colored ? kCGColorSpaceGenericRGB
-	                                         : kCGColorSpaceGenericGray;
+	CGColorSpaceRef colorSpace = tri_colored ? RGBColorSpace()
+	                                         : GrayColorSpace();
 	
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName( colorSpaceName );
+	CGColorSpaceRetain( colorSpace );
 	
 	if ( clut_note != NULL )
 	{
@@ -150,7 +193,7 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	
 	if ( desc.model > Model_RGB  &&  desc.model <= Model_RGBA_premultiplied )
 	{
-		bitmapInfo = Model_RGBA_premultiplied + 1 - desc.model;
+		bitmapInfo = CGBitmapInfo( Model_RGBA_premultiplied + 1 - desc.model );
 	}
 	else if ( desc.model == Model_RGB  &&  desc.magic == kSKIFFileType )
 	{
@@ -189,12 +232,16 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 		}
 	}
 	
+#ifdef MAC_OS_X_VERSION_10_4
+	
 	if ( little_endian )
 	{
 		bitmapInfo |= weight == 16 ? kCGBitmapByteOrder16Little
 		            : weight == 32 ? kCGBitmapByteOrder32Little
 		            :                kCGBitmapByteOrderDefault;
 	}
+	
+#endif
 	
 	copier cpy = desc.model == Model_monochrome_paint ? inverted_copy
 	                                                  : straight_copy;
