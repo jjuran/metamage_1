@@ -12,6 +12,7 @@
 
 // ams-qd
 #include "circular_region.hh"
+#include "ovoid_region.hh"
 
 
 static inline
@@ -29,11 +30,9 @@ void RoundRectRgn( MacRegion**  rgn,
 	ovalWidth  = min( ovalWidth,  width  );
 	ovalHeight = min( ovalHeight, height );
 	
-	// TODO:  Support asymmetric diameters for real
-	
-	const short diameter = min( ovalWidth, ovalHeight );
-	
-	RgnHandle tmp = circular_region( diameter, width, height );
+	RgnHandle tmp = ovalWidth == ovalHeight
+	              ? circular_region( ovalWidth,             width, height )
+	              : ovoid_region   ( ovalWidth, ovalHeight, width, height );
 	
 	XorRgn( tmp, rgn, rgn );
 }
