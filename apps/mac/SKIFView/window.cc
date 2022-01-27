@@ -49,8 +49,8 @@
 #include "raster/clut_detail.hh"
 #include "raster/load.hh"
 
-// SKIFView
-#include "CGQuickDraw.hh"
+// CGSKIF
+#include "CGSKIF.hh"
 
 
 /*
@@ -453,11 +453,9 @@ WindowRef populate_window_nonnull( WindowRef window, const raster_load& load )
 	{
 		state->load = load;
 		
-		populate_pixmap( *state );
-		
 		if ( TARGET_API_MAC_OSX )
 		{
-			state->image = CreateCGImageFromPixMap( state->pixmap );
+			state->image = CGSKIFCreateImageFromRaster( load );
 			
 			if ( CONFIG_COMPOSITING  &&  state->image != NULL )
 			{
@@ -481,6 +479,10 @@ WindowRef populate_window_nonnull( WindowRef window, const raster_load& load )
 			#endif
 				
 			}
+		}
+		else
+		{
+			populate_pixmap( *state );
 		}
 		
 		SetWRefCon( window, (long) state );
