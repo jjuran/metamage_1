@@ -24,36 +24,29 @@ void clip_from_angle( RgnHandle rgn, short width, short height, short angle )
 {
 	Region& region = **rgn;
 	
-	short left   = 0;
-	short top    = 0;
-	short right  = width;
-	short bottom = height;
+	SetRectRgn( rgn, 0, 0, width, height );
 	
 	switch ( angle )
 	{
 		case 0:
-			left = width / 2u;
+			region.rgnBBox.left = width / 2u;
 			break;
 		
 		case 90:
-			top = height / 2u;
+			region.rgnBBox.top = height / 2u;
 			break;
 		
 		case 180:
-			right /= 2u;
+			region.rgnBBox.right /= 2u;
 			break;
 		
 		case 270:
-			bottom /= 2u;
+			region.rgnBBox.bottom /= 2u;
 			break;
 			
 		default:
 			goto non_rectangular;
 	}
-	
-	region.rgnSize = sizeof (Region);
-	
-	SetRect( &region.rgnBBox, left, top, right, bottom );
 	
 	return;
 	
@@ -69,9 +62,14 @@ non_rectangular:
 	{
 		const Size size = sizeof (Polygon) + 3 * sizeof (Point);
 		
-		PolyHandle triangle = (PolyHandle) NewHandle( size );
+		PolyHandle poly = (PolyHandle) NewHandle( size );
 		
-		short* p = &triangle[0]->polyPoints[ 0 ].v;
+		Polygon& polygon = **poly;
+		
+		polygon.polySize = size;
+		polygon.polyBBox = region.rgnBBox;
+		
+		short* p = &polygon.polyPoints[ 0 ].v;
 		
 		if ( corner_set & 1 )
 		{
@@ -97,9 +95,11 @@ non_rectangular:
 			*p++ = 0;
 		}
 		
-		PolyRgn( rgn, triangle );
+		polygon.polyPoints[ 3 ] = polygon.polyPoints[ 0 ];
 		
-		DisposeHandle( (Handle) triangle );
+		PolyRgn( rgn, poly );
+		
+		DisposeHandle( (Handle) poly );
 	}
 }
 
