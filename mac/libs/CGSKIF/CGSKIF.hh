@@ -11,6 +11,13 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+// Mac OS
+#ifndef CGIMAGE_H_
+#ifndef __CGIMAGE__
+#include <CGImage.h>
+#endif
+#endif
+
 // rasterlib
 #include "raster/load.hh"
 

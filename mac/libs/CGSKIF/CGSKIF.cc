@@ -5,6 +5,10 @@
 
 #include "CGSKIF.hh"
 
+// Standard C
+#include <stdlib.h>
+#include <string.h>
+
 // iota
 #include "iota/endian.hh"
 
