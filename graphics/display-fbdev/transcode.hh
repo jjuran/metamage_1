@@ -10,6 +10,8 @@
 #include <stdint.h>
 
 
+extern uint8_t monochrome_toggle;
+
 extern uint32_t palette_entries[ 256 ];
 
 extern const uint8_t monochrome_1bit[];
@@ -30,12 +32,7 @@ void transcode_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 	
 	while ( width > 0 )
 	{
-		uint8_t byte = *src++;
-		
-		if ( gray )
-		{
-			byte = ~byte;
-		}
+		uint8_t byte = *src++ ^ monochrome_toggle;
 		
 		int n_pixels = 8 / bpp;
 		

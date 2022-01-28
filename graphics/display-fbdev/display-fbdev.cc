@@ -803,6 +803,11 @@ int main( int argc, char** argv )
 		draw = doubling ? &copy_16_2x : &copy_16;
 	}
 	
+	if ( desc.model == Model_monochrome_paint )
+	{
+		monochrome_toggle = -1;
+	}
+	
 	if ( desc.model == Model_palette )
 	{
 		const raster_note* note = find_note( *loaded_raster.meta, Note_clut );
