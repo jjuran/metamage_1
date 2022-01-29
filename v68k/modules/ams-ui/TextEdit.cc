@@ -23,6 +23,7 @@
 #include "callouts.hh"
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
+#include "scoped_zone.hh"
 
 // ams-ui
 #include "scoped_port.hh"
@@ -913,6 +914,8 @@ pascal void TEScroll_patch( short dh, short dv, TERec** hTE )
 
 pascal void TECalText_patch( TERec** hTE )
 {
+	static Handle hLocs = (scoped_zone(), NewHandle( 0 ));
+	
 	TERec& te = **hTE;
 	
 	const Rect& destRect = te.destRect;
@@ -921,6 +924,12 @@ pascal void TECalText_patch( TERec** hTE )
 	
 	const char* begin = *te.hText;
 	const char* end   = begin + te.teLength;
+	
+	SetHandleSize( hLocs, te.teLength * sizeof (short) );
+	
+	MeasureText( te.teLength, begin, *hLocs );
+	
+	const short* charLocs = (short*) *hLocs;
 	
 	te.nLines = 0;
 	
@@ -933,10 +942,11 @@ pascal void TECalText_patch( TERec** hTE )
 		++te.nLines;
 		*starts++ = p - begin;
 		
-		const char* q = gear::find_first_match( p, end, '\r', end );
-		const char* r = q;
+		const short lineLoc = charLocs[ p - begin ];
 		
-		short width = TextWidth( p, 0, q - p );
+		const char* q = gear::find_first_match( p, end, '\r', end );
+		
+		short width = charLocs[ q - begin ] - lineLoc;
 		
 		const char* first_space = gear::find_first_match( p, q, ' ', q );
 		
@@ -944,14 +954,12 @@ pascal void TECalText_patch( TERec** hTE )
 		{
 			while ( *--q != ' ' ) continue;
 			
-			width -= TextWidth( q, 0, r - q );
-			
-			r = q;
+			width = charLocs[ q - begin ] - lineLoc;
 		}
 		
 		if ( q == first_space )
 		{
-			while ( q > p + 1  &&  TextWidth( p, 0, q - p ) > rectWidth )
+			while ( q > p + 1  &&  charLocs[ q - begin ] - lineLoc > rectWidth )
 			{
 				--q;
 			}
