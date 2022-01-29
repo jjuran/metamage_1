@@ -38,4 +38,6 @@ pascal short StdTxMeas_patch( short        n,
 
 pascal void StdText_patch( short n, const char* p, Point numer, Point denom );
 
+pascal void MeasureText_patch( short count, const char* p, short* locs );
+
 #endif

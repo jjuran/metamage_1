@@ -67,6 +67,8 @@ static void install_QuickDraw()
 	
 	TBTRAP( SetFScaleDisable );  // A834
 	
+	TBTRAP( MeasureText );  // A837
+	
 	TBTRAP( FixDiv   );  // A84D
 	
 	TBTRAP( InitCursor );  // A850

@@ -368,3 +368,62 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		port.pnLoc.h += character_width + output->extra;
 	}
 }
+
+pascal void MeasureText_patch( short count, const char* p, short* locs )
+{
+	FontInfo info;
+	
+	const FMOutPtr output = get_FontInfo( &info, OneOne, OneOne );
+	
+	if ( output->fontHandle == NULL )
+	{
+		return;
+	}
+	
+	const FontRec& rec = **(FontRec**) output->fontHandle;
+	
+	const short* owTable = (short*) &rec.owTLoc + rec.owTLoc;
+	
+	const uint8_t missingChar = rec.lastChar + 1 - rec.firstChar;
+	
+	short width = 0;
+	
+	*locs++ = 0;
+	
+	while ( --count >= 0 )
+	{
+		uint8_t c = *p++ - rec.firstChar;
+		
+		if ( c == '\r' )
+		{
+			/*
+				How do StdTxMeas() and MeasureText() handle a CR in the input?
+				Inside Macintosh doesn't specify.  The 16-bit width results
+				indicate that these routines are meant to be called with a
+				single line (or paragraph) of text as input.  (It would only
+				take a hundred or so lines of text to exceed the maximum width
+				of 32767.)
+				
+				Since the results of measuring entire pages of text at once
+				are implcitly undefined, we're free to define the semantics
+				for ourselves:  A CR sets the width back to zero.  This allows
+				TextEdit to make a single MeasureText() call in TECalText(),
+				for example.
+			*/
+			
+			*locs++ = width = 0;
+			continue;
+		}
+		
+		if ( c > missingChar )
+		{
+			c = missingChar;  // missing character glyph
+		}
+		
+		const int8_t character_width = owTable[ c ];
+		
+		width += character_width + output->extra;
+		
+		*locs++ = width * output->numer.h / output->denom.h;
+	}
+}
