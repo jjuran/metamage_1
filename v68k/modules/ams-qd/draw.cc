@@ -41,6 +41,8 @@ Ptr draw_masked_byte( uint8_t  byte,
 	if ( transfer_mode_AND_0x07 >= 0x04 )
 	{
 		byte = ~byte;
+		
+		transfer_mode_AND_0x07 -= 0x04;
 	}
 	
 	byte &= mask;
