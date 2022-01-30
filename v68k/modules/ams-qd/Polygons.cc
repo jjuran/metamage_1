@@ -34,15 +34,16 @@ using quickdraw::Region_end;
 
 void PolyRgn( RgnHandle rgn, PolyHandle poly )
 {
-	short n = (poly[0]->polySize - sizeof (Polygon)) / 4;
+	const short n_lineTo = (poly[0]->polySize - sizeof (Polygon)) / 4;
+	const short n_unique = n_lineTo;
 	
-	Point** edges = (Point**) alloca( n * 4 );
+	Point** edges = (Point**) alloca( n_unique * sizeof (void*) );
 	
 	Point** p = edges;
 	
 	Point* pt = poly[0]->polyPoints;
 	
-	for ( short i = 0;  i < n;  ++i )
+	for ( short i = 0;  i < n_unique;  ++i )
 	{
 		short a_v = pt++->v;
 		short b_v = pt  ->v;
@@ -85,7 +86,7 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 		we don't need to add more.
 	*/
 	
-	const short h_count = (n & ~1) * 2;
+	const short h_count = (n_unique & ~1) * 2;
 	const short v_count = bbox.bottom - bbox.top + 1;
 	
 	const short seg_bytes = sizeof (short) * h_count;
