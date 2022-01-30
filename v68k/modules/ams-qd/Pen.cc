@@ -542,7 +542,9 @@ pascal void MoveTo_patch( short h, short v )
 	{
 		PolyHandle poly = (PolyHandle) port.polySave;
 		
-		if ( const short n_pts = (poly[0]->polySize - sizeof (Polygon)) / 4u )
+		const short n_pts = (poly[0]->polySize - sizeof (Polygon)) / 4u;
+		
+		if ( n_pts > 0 )
 		{
 			ClosePoly();
 			
