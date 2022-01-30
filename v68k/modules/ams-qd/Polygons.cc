@@ -34,14 +34,17 @@ using quickdraw::Region_end;
 
 void PolyRgn( RgnHandle rgn, PolyHandle poly )
 {
+	Point* pt = poly[0]->polyPoints;
+	
 	const short n_lineTo = (poly[0]->polySize - sizeof (Polygon)) / 4;
-	const short n_unique = n_lineTo;
+	
+	const bool unclosed = *(long*) &pt[ 0 ] != *(long*) &pt[ n_lineTo ];
+	
+	const short n_unique = n_lineTo + unclosed;
 	
 	Point** edges = (Point**) alloca( n_unique * sizeof (void*) );
 	
 	Point** p = edges;
-	
-	Point* pt = poly[0]->polyPoints;
 	
 	for ( short i = 0;  i < n_unique;  ++i )
 	{
