@@ -42,6 +42,11 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	
 	const short n_unique = n_lineTo + unclosed;
 	
+	if ( n_unique < 3 )
+	{
+		return;
+	}
+	
 	Point** edges = (Point**) alloca( n_unique * sizeof (void*) );
 	
 	Point** p = edges;
@@ -201,7 +206,7 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 
 pascal void StdPoly_patch( signed char verb, PolyHandle poly )
 {
-	if ( poly[0]->polySize < sizeof (Polygon) + 3 * sizeof (Point ) )
+	if ( poly[0]->polySize <= sizeof (Polygon) )
 	{
 		return;
 	}
