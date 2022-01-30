@@ -88,7 +88,7 @@ bool take_exception_internal( exception_type type )
 	{
 		const char* category = responses[ e.response ];
 		
-		fprintf( stderr, PROGRAM ": %s: %s\n", category, e.summary );
+		fprintf( stderr, PROGRAM ": %s:  ** %s **\n", category, e.summary );
 	}
 	
 	return e.response == fatal;
