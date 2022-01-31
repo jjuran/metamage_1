@@ -76,7 +76,21 @@ pascal void ClosePoly_patch()
 	
 	PolyHandle poly = (PolyHandle) port.polySave;
 	
+	/*
+		Go through the motions of adding the starting point in order to
+		close the polygon (if necessary), but save and restore the size
+		so that logically it doesn't take effect.  The benefit of doing
+		so is that PolyRgn() can make use of the contiguous storage.
+		
+		We can't just auto-close the polygon because some applications
+		rely on FramePoly() drawing an unclosed chain of line segments.
+	*/
+	
+	const short polySize = poly[0]->polySize;
+	
 	add_polygon_point( *poly[0]->polyPoints );
+	
+	poly[0]->polySize = polySize;
 	
 	Point* pt = poly[0]->polyPoints;
 	
