@@ -44,10 +44,10 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	
 	for ( short i = 0;  i < n;  ++i )
 	{
-		Point a = *pt++;
-		Point b = *pt;
+		short a_v = pt++->v;
+		short b_v = pt  ->v;
 		
-		if ( a.v != b.v )
+		if ( a_v != b_v )
 		{
 			*p++ = pt;
 		}
@@ -60,10 +60,9 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	
 	for ( short i = 0;  i < edge_count;  ++i )
 	{
-		Point a = edges[ i ][ -1 ];
-		Point b = edges[ i ][  0 ];
+		Point* pt = edges[ i ];
 		
-		antislopes[ i ] = antislope( a, b );
+		antislopes[ i ] = antislope( pt[ -1 ], pt[ 0 ] );
 		intercepts[ i ] = 0x80000000;
 	}
 	
