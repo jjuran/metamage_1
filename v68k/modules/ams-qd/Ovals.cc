@@ -28,6 +28,12 @@ pascal void StdOval_patch( signed char verb, const Rect* r )
 		return;
 	}
 	
+	if ( width < 3  ||  height < 3 )
+	{
+		StdRect( verb, r );
+		return;
+	}
+	
 	static RgnHandle ovalRgn = (scoped_zone(), NewRgn());
 	
 	if ( verb == kQDGrafVerbFrame )
