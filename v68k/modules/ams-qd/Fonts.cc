@@ -20,6 +20,7 @@
 #include "logofwar/report.hh"
 
 // ams-common
+#include "callouts.hh"
 #include "c_string.hh"
 
 
@@ -135,7 +136,7 @@ pascal void GetFNum_patch( const unsigned char* name, short* num )
 		return;
 	}
 	
-	if ( memcmp( name, "\p" STR_LEN( "Geneva" ) ) == 0 )
+	if ( fast_memcmp( name, "\p" STR_LEN( "Geneva" ) ) == 0 )
 	{
 		*num = kFontIDGeneva;
 		return;
