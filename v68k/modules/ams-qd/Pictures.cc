@@ -490,6 +490,23 @@ const Byte* do_opcode( const Byte* p )
 			StdOval( opcode & 0x7, &last_used_rect );
 			break;
 		
+		case 0x60:
+		case 0x61:
+		case 0x62:
+		case 0x63:
+		case 0x64:
+		case 0x68:
+		case 0x69:
+		case 0x6A:
+		case 0x6B:
+		case 0x6C:
+			short start, extent;
+			start  = read_word( p );
+			extent = read_word( p );
+			
+			StdArc( opcode & 0x7, &last_used_rect, start, extent );
+			break;
+		
 		case 0x70:
 		case 0x71:
 		case 0x72:
