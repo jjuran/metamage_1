@@ -14,6 +14,9 @@
 #include "scoped_zone.hh"
 
 
+#pragma exceptions off
+
+
 segments_box::segments_box( size_t capacity )  // bytes
 :
 	quickdraw::segments_box( (scoped_zone(), (short*) NewPtr( capacity )) )

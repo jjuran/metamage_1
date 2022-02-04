@@ -29,6 +29,9 @@
 #include "utility_region.hh"
 
 
+#pragma exceptions off
+
+
 enum white_t { White };
 enum black_t { Black };
 

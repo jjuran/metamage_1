@@ -26,6 +26,9 @@
 #include "scoped_zone.hh"
 
 
+#pragma exceptions off
+
+
 using quickdraw::convex_region_generator;
 
 

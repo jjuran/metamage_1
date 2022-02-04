@@ -15,6 +15,9 @@
 #include "redraw_lock.hh"
 
 
+#pragma exceptions off
+
+
 const Point OneOne : 0x0A02;
 
 

@@ -17,6 +17,9 @@
 #include "Regions.hh"
 
 
+#pragma exceptions off
+
+
 short MemErr : 0x0220;
 
 

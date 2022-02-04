@@ -18,6 +18,9 @@
 #include "OvalRgn.hh"
 
 
+#pragma exceptions off
+
+
 pascal void StdOval_patch( signed char verb, const Rect* r )
 {
 	const short width  = r->right - r->left;

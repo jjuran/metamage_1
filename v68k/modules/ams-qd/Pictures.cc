@@ -24,6 +24,9 @@
 #include "QDGlobals.hh"
 
 
+#pragma exceptions off
+
+
 using v68k::hex32_t;
 
 typedef Byte Op;

@@ -18,6 +18,9 @@
 #include "RoundRectRgn.hh"
 
 
+#pragma exceptions off
+
+
 pascal void StdRRect_patch( signed char  verb,
                             const Rect*  r,
                             short        ovalWidth,

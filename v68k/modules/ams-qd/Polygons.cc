@@ -32,6 +32,9 @@
 using quickdraw::Region_end;
 
 
+#pragma exceptions off
+
+
 void PolyRgn( RgnHandle rgn, PolyHandle poly )
 {
 	Point* pt = poly[0]->polyPoints;

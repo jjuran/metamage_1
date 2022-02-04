@@ -21,6 +21,9 @@
 #include "Rects.hh"
 
 
+#pragma exceptions off
+
+
 OSErr MemErr : 0x0220;
 
 

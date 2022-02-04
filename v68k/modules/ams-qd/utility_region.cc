@@ -14,6 +14,9 @@
 #include "scoped_zone.hh"
 
 
+#pragma exceptions off
+
+
 RgnHandle rectangular_utility_region( const Rect& rect )
 {
 	static RgnHandle rgn = (scoped_zone(), NewRgn());

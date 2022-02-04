@@ -19,6 +19,9 @@
 #include "Polygons.hh"
 
 
+#pragma exceptions off
+
+
 static
 void clip_from_angle( RgnHandle rgn, short width, short height, short angle )
 {

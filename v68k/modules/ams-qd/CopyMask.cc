@@ -14,6 +14,9 @@
 #include "redraw_lock.hh"
 
 
+#pragma exceptions off
+
+
 pascal void CopyMask_patch( const BitMap*  srcBits,
                             const BitMap*  maskBits,
                             const BitMap*  dstBits,

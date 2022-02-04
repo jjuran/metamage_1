@@ -36,6 +36,9 @@
 #include "segments_box.hh"
 
 
+#pragma exceptions off
+
+
 using quickdraw::offset_region;
 using quickdraw::Region_end;
 using quickdraw::region_geometry;

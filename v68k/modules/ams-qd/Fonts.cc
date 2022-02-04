@@ -24,6 +24,9 @@
 #include "c_string.hh"
 
 
+#pragma exceptions off
+
+
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 #define PSTR_LEN( s )  "\p" s, (sizeof s)
 

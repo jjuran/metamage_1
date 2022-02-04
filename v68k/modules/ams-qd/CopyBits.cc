@@ -29,6 +29,9 @@
 #include "utility_region.hh"
 
 
+#pragma exceptions off
+
+
 static inline
 bool byte_aligned( short srcSkip, short dstSkip, short width )
 {
