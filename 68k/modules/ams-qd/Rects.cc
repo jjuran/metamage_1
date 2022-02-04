@@ -395,8 +395,7 @@ static void frame_rect( const Rect* rect )
 	
 	if ( rect->bottom - rect->top <= h2  ||  rect->right - rect->left <= w2 )
 	{
-		StdRect_patch( kQDGrafVerbPaint, rect );
-		
+		StdRect( kQDGrafVerbPaint, rect );
 		return;
 	}
 	
@@ -408,7 +407,7 @@ static void frame_rect( const Rect* rect )
 	
 	edge.bottom = edge.top + penHeight;
 	
-	StdRect_patch( kQDGrafVerbPaint, &edge );
+	StdRect( kQDGrafVerbPaint, &edge );
 	
 	
 	edge.top += penHeight;
@@ -417,13 +416,13 @@ static void frame_rect( const Rect* rect )
 	
 	edge.bottom = rect->bottom - penHeight;
 	
-	StdRect_patch( kQDGrafVerbPaint, &edge );
+	StdRect( kQDGrafVerbPaint, &edge );
 	
 	
 	edge.left  = rect->right - penWidth;
 	edge.right = rect->right;
 	
-	StdRect_patch( kQDGrafVerbPaint, &edge );
+	StdRect( kQDGrafVerbPaint, &edge );
 	
 	edge.left = rect->left;
 	
@@ -431,7 +430,7 @@ static void frame_rect( const Rect* rect )
 	
 	edge.bottom += penHeight;
 	
-	StdRect_patch( kQDGrafVerbPaint, &edge );
+	StdRect( kQDGrafVerbPaint, &edge );
 }
 
 static void fill_rect( const rectangular_op_params& params )
@@ -787,7 +786,7 @@ pascal unsigned char SectRect_patch( const Rect* a, const Rect* b, Rect* c )
 	c->bottom = b->bottom < a->bottom ? b->bottom : a->bottom;
 	c->right  = b->right  < a->right  ? b->right  : a->right;
 	
-	if ( EmptyRect_patch( c ) )
+	if ( EmptyRect( c ) )
 	{
 		c->top    = 0;
 		c->left   = 0;

@@ -157,8 +157,8 @@ pascal void MapPt_patch( Point* pt, const Rect* src, const Rect* dst )
 
 pascal void MapRect_patch( Rect* r, const Rect* src, const Rect* dst )
 {
-	MapPt_patch( (Point*) &r->top,    src, dst );
-	MapPt_patch( (Point*) &r->bottom, src, dst );
+	MapPt( (Point*) &r->top,    src, dst );
+	MapPt( (Point*) &r->bottom, src, dst );
 }
 
 static

@@ -569,7 +569,7 @@ pascal void Move_patch( short dh, short dv )
 	
 	Point pnLoc = thePort->pnLoc;
 	
-	MoveTo_patch( pnLoc.h + dh, pnLoc.v + dv );
+	MoveTo( pnLoc.h + dh, pnLoc.v + dv );
 }
 
 pascal void LineTo_patch( short h, short v )
@@ -596,5 +596,5 @@ pascal void Line_patch( short dh, short dv )
 	
 	Point pnLoc = thePort->pnLoc;
 	
-	LineTo_patch( pnLoc.h + dh, pnLoc.v + dv );
+	LineTo( pnLoc.h + dh, pnLoc.v + dv );
 }

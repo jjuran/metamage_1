@@ -548,7 +548,7 @@ static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 	ASSERT( a[0]->rgnSize > sizeof (MacRegion) );
 	ASSERT( b[0]->rgnSize > sizeof (MacRegion) );
 	
-	ASSERT( EqualRect_patch( &a[0]->rgnBBox, &b[0]->rgnBBox ) );
+	ASSERT( EqualRect( &a[0]->rgnBBox, &b[0]->rgnBBox ) );
 	
 	const size_t a_max_bytes = a[0]->rgnSize;
 	const size_t b_max_bytes = b[0]->rgnSize;
@@ -867,7 +867,7 @@ bool odd_count_between( const short* begin, const short* end )
 
 pascal unsigned char PtInRgn_patch( Point pt, MacRegion** rgn )
 {
-	if ( ! PtInRect_patch( pt, &rgn[0]->rgnBBox ) )
+	if ( ! PtInRect( pt, &rgn[0]->rgnBBox ) )
 	{
 		return false;
 	}

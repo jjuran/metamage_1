@@ -66,7 +66,7 @@ pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 	
 	const Rect& box = clipRgn[0]->rgnBBox;
 	
-	StdRect_patch( verb, &box );
+	StdRect( verb, &box );
 	
 	port.clipRgn = saved_clipRgn;
 }
@@ -116,7 +116,7 @@ pascal void OpenRgn_patch()
 {
 	GrafPort& port = **get_addrof_thePort();
 	
-	RgnHandle rgn = NewRgn_patch();
+	RgnHandle rgn = NewRgn();
 	
 	port.rgnSave = (Handle) rgn;
 	
@@ -229,7 +229,7 @@ pascal unsigned char RectInRgn_patch( const Rect* r, MacRegion** rgn )
 	
 	Rect intersection;
 	
-	return SectRect_patch( r, &rgn[0]->rgnBBox, &intersection );
+	return SectRect( r, &rgn[0]->rgnBBox, &intersection );
 }
 
 pascal unsigned char EqualRgn_patch( MacRegion** a, MacRegion** b )
@@ -244,7 +244,7 @@ pascal unsigned char EqualRgn_patch( MacRegion** a, MacRegion** b )
 		return false;
 	}
 	
-	if ( EmptyRgn_patch( a )  &&  EmptyRgn_patch( b ) )
+	if ( EmptyRgn( a )  &&  EmptyRgn( b ) )
 	{
 		return true;
 	}

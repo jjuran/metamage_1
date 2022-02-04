@@ -140,7 +140,7 @@ pascal void MovePortTo_patch( short left, short top )
 	const short dh = left + bounds.left;
 	const short dv = top  + bounds.top;
 	
-	OffsetRect_patch( &bounds, -dh, -dv );
+	OffsetRect( &bounds, -dh, -dv );
 }
 
 pascal void SetOrigin_patch( short h, short v )
@@ -158,8 +158,8 @@ pascal void SetOrigin_patch( short h, short v )
 	const short dh = h - portRect.left;
 	const short dv = v - portRect.top;
 	
-	OffsetRect_patch( &portRect, dh, dv );
-	OffsetRect_patch( &bounds,   dh, dv );
+	OffsetRect( &portRect, dh, dv );
+	OffsetRect( &bounds,   dh, dv );
 	
 	OffsetRgn( thePort->visRgn, dh, dv );
 }
@@ -173,7 +173,7 @@ pascal void SetClip_patch( struct MacRegion** clipRgn )
 		return;
 	}
 	
-	CopyRgn_patch( clipRgn, thePort->clipRgn );
+	CopyRgn( clipRgn, thePort->clipRgn );
 }
 
 pascal void GetClip_patch( struct MacRegion** clipRgn )
@@ -185,7 +185,7 @@ pascal void GetClip_patch( struct MacRegion** clipRgn )
 		return;
 	}
 	
-	CopyRgn_patch( thePort->clipRgn, clipRgn );
+	CopyRgn( thePort->clipRgn, clipRgn );
 }
 
 pascal void ClipRect_patch( const struct Rect* clipRect )
@@ -197,7 +197,7 @@ pascal void ClipRect_patch( const struct Rect* clipRect )
 		return;
 	}
 	
-	RectRgn_patch( thePort->clipRgn, clipRect );
+	RectRgn( thePort->clipRgn, clipRect );
 }
 
 pascal void BackPat_patch( const struct Pattern* pat )
