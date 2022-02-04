@@ -63,19 +63,19 @@ non_rectangular:
 	
 	const short n_pts = 3 + ! corner_set;
 	
+	const Size size = sizeof (Polygon) + n_pts * sizeof (Point);
+	
+	PolyHandle poly = (PolyHandle) NewHandle( size );
+	
+	Polygon& polygon = **poly;
+	
+	polygon.polySize = size;
+	polygon.polyBBox = region.rgnBBox;
+	
+	short* p = &polygon.polyPoints[ 0 ].v;
+	
 	if ( corner_set )
 	{
-		const Size size = sizeof (Polygon) + n_pts * sizeof (Point);
-		
-		PolyHandle poly = (PolyHandle) NewHandle( size );
-		
-		Polygon& polygon = **poly;
-		
-		polygon.polySize = size;
-		polygon.polyBBox = region.rgnBBox;
-		
-		short* p = &polygon.polyPoints[ 0 ].v;
-		
 		if ( corner_set & 1 )
 		{
 			*p++ = 0;
@@ -99,13 +99,13 @@ non_rectangular:
 			*p++ = height;
 			*p++ = 0;
 		}
-		
-		polygon.polyPoints[ n_pts ] = polygon.polyPoints[ 0 ];
-		
-		PolyRgn( rgn, poly );
-		
-		DisposeHandle( (Handle) poly );
 	}
+	
+	polygon.polyPoints[ n_pts ] = polygon.polyPoints[ 0 ];
+	
+	PolyRgn( rgn, poly );
+	
+	DisposeHandle( (Handle) poly );
 }
 
 pascal void StdArc_patch( SInt8 verb, const Rect* r, short start, short extent )
