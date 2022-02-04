@@ -120,6 +120,8 @@ def get_docfs_fd
 
 const model_opt = if "cpu" in config then {"-M" config[ "cpu" ]}  # may be ()
 
+const mem_opt = if "mem" in config then {"--mem=" config[ "mem" ]}  # may be ()
+
 def core_opts
 {
 	var opts = [ "--events-fd=" events_fd_slot ]
@@ -248,7 +250,7 @@ const app = ams_bin "/app"
 
 const servers = sound-server, freemountd-server, appfs-server, docfs-server
 
-const xv68k_opts = model_opt, "-tSP"
+const xv68k_opts = model_opt, mem_opt, "-tSP"
 
 const xv68k-screen = "--raster=" works_dir_path "/" screen_fb_file
 
