@@ -107,8 +107,6 @@ short synthesize( sample_buffer& output )
 	silent_2ago = silent_then;
 	silent_then = silent_now;
 	
-	silent_now = false;
-	
 	output.count = samples_per_buffer;  // optimistic default
 	
 	bool stopping = false;
@@ -191,6 +189,8 @@ short synthesize( sample_buffer& output )
 			
 			case ffMode:
 				count = ff_synth( output, input->size, sound.free_form, reset );
+				
+				silent_now = false;
 				break;
 			
 			case ftMode_flat_buffer:
