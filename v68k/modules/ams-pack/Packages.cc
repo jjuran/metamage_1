@@ -5,12 +5,16 @@
 
 #include "Packages.hh"
 
+// Mac OS
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
 #ifndef __TRAPS__
 #include <Traps.h>
 #endif
 
 
-char** AppPacks : 0x0AB8;
+Handle AppPacks[] : 0x0AB8;
 
 enum
 {
@@ -23,6 +27,10 @@ pascal void InitPack_patch( short packID )
 
 pascal void InitAllPacks_patch()
 {
+	for ( short packID = 0;  packID < n_packs;  ++packID )
+	{
+		AppPacks[ packID ] = GetResource( 'PACK', packID );
+	}
 }
 
 /*
