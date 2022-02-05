@@ -236,6 +236,11 @@ void post_event( const splode::ascii_event_buffer& buffer )
 		}
 	}
 	
+	if ( mod == Control )
+	{
+		xascii &= 0x1f;
+	}
+	
 	const UInt32 message = code << 8 | xascii;
 	
 	const uint8_t action = buffer.attrs & action_mask;
