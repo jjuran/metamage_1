@@ -14,6 +14,16 @@
 #include "mac_sys/gestalt.hh"
 
 
+#ifdef __MC68K__
+
+short ROM85 : 0x028E;  // ffff -> 64K, 7fff -> 128K, 3fff -> 256K
+
+#else
+
+static short ROM85;
+
+#endif
+
 namespace mac {
 namespace sys {
 	
@@ -38,6 +48,12 @@ namespace sys {
 			{
 				rom_size = 512 * 1024;  // special case for Mac Classic
 			}
+		}
+		else if ( TARGET_CPU_68K  &&  rom_size == 0 )
+		{
+			return ROM85      < 0 ?  64 * 1024 :
+			       ROM85 & 0x4000 ? 128 * 1024 :
+			                        256 * 1024;
 		}
 		
 		return rom_size;
