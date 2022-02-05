@@ -24,6 +24,14 @@ const uint32_t n_alloc_bytes = limit - start;  // 6 MiB
 const uint32_t n_alloc_pages = n_alloc_bytes / page_size;
 
 
+int count_free_pages();
+
+inline
+uint32_t count_free_bytes()
+{
+	return count_free_pages() << page_size_bits;
+}
+
 uint32_t allocate_n_pages_for_existing_alloc_unchecked( uint32_t n, void* alloc );
 
 inline uint32_t allocate_n_pages( void* alloc, uint32_t n )

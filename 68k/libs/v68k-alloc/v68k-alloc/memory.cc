@@ -23,6 +23,18 @@ namespace alloc {
 static void* alloc_pages[ n_alloc_pages + 1 ];
 
 
+int count_free_pages()
+{
+	int n = 0;
+	
+	for ( int i = 1;  i < n_alloc_pages;  ++i )
+	{
+		n += ! alloc_pages[ i ];
+	}
+	
+	return n;
+}
+
 static int find_n_pages_at( int n, void* alloc, int i )
 {
 	// Returns 0 on success, or next index to try
