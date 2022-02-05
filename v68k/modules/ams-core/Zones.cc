@@ -23,9 +23,15 @@ Ptr   HeapEnd  : 0x0114;
 THz   TheZone  : 0x0118;
 Ptr   ApplLimit: 0x0130;
 OSErr MemErr   : 0x0220;
+THz   SysZone  : 0x02A6;
 THz   ApplZone : 0x02AA;
 long  Lo3Bytes : 0x031A;
 
+
+enum
+{
+	kSysHeapFlagMask = 0x0400,
+};
 
 enum tag_byte
 {
@@ -365,6 +371,11 @@ short SetZone_patch( THz z : __A0 )
 
 long FreeMem_patch( short trap_word : __D1 )
 {
+	if ( THz zone = trap_word & kSysHeapFlagMask ? SysZone : TheZone )
+	{
+		return zone->zcbFree;
+	}
+	
 	return 1024 * 1024;
 }
 
