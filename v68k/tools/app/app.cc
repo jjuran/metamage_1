@@ -4,6 +4,9 @@
 */
 
 // Mac OS
+#ifndef __PACKAGES__
+#include <Packages.h>
+#endif
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
@@ -45,6 +48,7 @@ int main( int argc, char** argv )
 	}
 	
 	InitResources();
+	InitAllPacks();
 	
 	Str31 appName;
 	
