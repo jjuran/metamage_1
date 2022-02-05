@@ -29,6 +29,7 @@
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/get_machine_name.hh"
+#include "mac_sys/has/floating_point_math.hh"
 #include "mac_sys/unit_table.hh"
 
 
@@ -87,17 +88,19 @@ SonyVars_record* SonyVars : 0x0134;
 
 short SysVersion : 0x015A;
 
-char** AppPacks[ 8 ] : 0x0AB8;
-
 #else
 
 static long MemTop;
 static uint8_t CPUFlag;
 static short SysVersion;
 
-static char*** AppPacks;
-
 #endif
+
+static inline
+int has_fpmath()
+{
+	return mac::sys::has_floating_point_math();
+}
 
 static inline
 bool in_supervisor_mode()
@@ -409,7 +412,7 @@ void host_env()
 	{
 		const uint32_t fpu = gestalt( 'fpu ' );
 		
-		const char* fpu_name = fpu == 0 ? (AppPacks[ 4 ] ? "SANE only" : "none")
+		const char* fpu_name = fpu == 0 ? (has_fpmath() ? "SANE only" : "none")
 		                     : fpu == 1 ? "68881"
 		                     : fpu == 2 ? "68882"
 		                     : fpu == 3 ? "68040 built-in FPU"
