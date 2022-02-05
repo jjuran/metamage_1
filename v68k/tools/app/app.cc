@@ -11,6 +11,9 @@
 // Standard C
 #include <string.h>
 
+// ams-common
+#include "callouts.hh"
+
 
 struct LaunchParamBlockRec
 {
@@ -49,7 +52,7 @@ int main( int argc, char** argv )
 	
 	*p++ = len;
 	
-	memcpy( p, path, len );
+	fast_memcpy( p, path, len );
 	
 	LaunchParamBlockRec pb = { appName };
 	
