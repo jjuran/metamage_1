@@ -219,6 +219,8 @@ void install_spinloop_mitigation()
 static
 void install_MemoryManager()
 {
+	old_FreeMem = (FreeMem_ProcPtr) os_trap_table[ _FreeMem & 0x00FF ];
+	
 	OSTRAP( InitZone         );  // A019
 	OSTRAP( GetZone          );  // A01A
 	OSTRAP( SetZone          );  // A01B

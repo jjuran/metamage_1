@@ -60,6 +60,8 @@ struct block_header
 	};
 };
 
+FreeMem_ProcPtr old_FreeMem;
+
 static inline
 block_header* get_block_header( Ptr logical_addr )
 {
@@ -376,7 +378,7 @@ long FreeMem_patch( short trap_word : __D1 )
 		return zone->zcbFree;
 	}
 	
-	return 1024 * 1024;
+	return old_FreeMem();
 }
 
 asm void MaxMem_patch( short trap_word : __D1 )

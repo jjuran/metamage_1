@@ -13,6 +13,10 @@ typedef Zone*   THz;
 typedef char*   Ptr;
 typedef char**  Handle;
 
+typedef long (*FreeMem_ProcPtr)();
+
+extern FreeMem_ProcPtr old_FreeMem;
+
 Ptr zone_alloc_nonrel( THz zone, long logical_size );
 
 bool zone_free_nonrel( Ptr logical_block_addr );
