@@ -685,6 +685,14 @@ int32_t microseconds_callout( v68k::processor_state& s )
 }
 
 static
+int32_t FreeMem_callout( v68k::processor_state& s )
+{
+	s.d(0) = v68k::alloc::count_free_bytes();
+	
+	return rts;
+}
+
+static
 int32_t BlockMove_callout( v68k::processor_state& s )
 {
 	const v68k::function_code_t data_space = s.data_space();
@@ -956,6 +964,7 @@ static const function_type the_callouts[] =
 	&sigint_interrupt_callout,
 	
 	&unimplemented_trap_callout,
+	&FreeMem_callout,
 	&BlockMove_callout,
 	&Gestalt_callout,
 	&unimplemented_callout

@@ -81,6 +81,7 @@ enum
 	sigint_interrupt,
 	
 	unimplemented_trap,
+	FreeMem_trap,
 	BlockMove_trap,
 	Gestalt_trap,
 	unimplemented,
