@@ -429,6 +429,7 @@ void load_Mac_traps( uint8_t* mem )
 	init_trap_table( os_traps, os_traps + os_trap_count, unimplemented );
 	init_trap_table( tb_traps, tb_traps + tb_trap_count, unimplemented );
 	
+	os_traps[ 0x1C ] = big_longword( callout_address( FreeMem_trap     ) );
 	os_traps[ 0x1E ] = big_longword( callout_address( alloc            ) );
 	os_traps[ 0x1F ] = big_longword( callout_address( dealloc          ) );
 	os_traps[ 0x2E ] = big_longword( callout_address( BlockMove_trap   ) );
