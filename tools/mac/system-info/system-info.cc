@@ -30,6 +30,7 @@
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/get_machine_name.hh"
 #include "mac_sys/has/floating_point_math.hh"
+#include "mac_sys/rom_size.hh"
 #include "mac_sys/unit_table.hh"
 
 
@@ -309,6 +310,21 @@ void host_env()
 	if ( mnam != NULL )
 	{
 		printf( "Host CPU machine name:  %s\n", machine_name );
+	}
+	
+	if ( uint32_t rom = mac::sys::rom_size() )
+	{
+		rom /= 1024u;
+		
+		const char* units = "K";
+		
+		if ( (rom & 0x3ff) == 0 )
+		{
+			rom /= 1024u;
+			units = " MiB";
+		}
+		
+		printf( "Read-only memory size:  %ld%s\n", (long) rom, units );
 	}
 	
 	if ( const uint32_t pclk = gestalt( 'pclk' ) )
