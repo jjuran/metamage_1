@@ -20,6 +20,7 @@
 #include "synth/square-wave.hh"
 
 
+using sndpipe::set_loudness_level;
 using sndpipe::ftMode_flat_buffer;
 using sndpipe::ftMode_flat_update;
 
@@ -94,6 +95,19 @@ void diminish( sample_buffer& output )
 	}
 }
 
+static short audio_level = 7;
+
+static
+void soften( sample_buffer& output )
+{
+	output_sample_t* data = output.data;
+	
+	for ( short i = 0;  i < 370;  ++i )
+	{
+		data[ i ] = data[ i ] * audio_level / 7;
+	}
+}
+
 static bool silent_2ago;
 static bool silent_then;
 static bool silent_now = true;
@@ -119,6 +133,15 @@ short synthesize( sample_buffer& output )
 		if ( admin->size > 0 )
 		{
 			sound_node* update = (sound_node*) admin;
+			
+			if ( update->sound.mode == set_loudness_level )
+			{
+				using sndpipe::volume_setting;
+				
+				volume_setting* setting = (volume_setting*) &update->sound;
+				
+				audio_level = setting->volume & 7;
+			}
 			
 			if ( update->sound.mode == ftMode_flat_update )
 			{
@@ -207,6 +230,16 @@ short synthesize( sample_buffer& output )
 		
 		if ( count >= 0 )
 		{
+			if ( audio_level == 0 )
+			{
+				return 0;
+			}
+			
+			if ( audio_level != 7 )
+			{
+				soften( output );
+			}
+			
 			if ( silent_then  &&  ! silent_2ago )
 			{
 				take_exception( audio_playback_gap );
