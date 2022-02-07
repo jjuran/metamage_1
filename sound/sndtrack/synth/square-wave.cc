@@ -106,7 +106,14 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	
 	if ( reset )
 	{
-		const uint16_t amplitude = tone->amplitude;
+		/*
+			Square wave tones are too loud relative to four-tone and
+			freeform-wave sounds (as well as the host system generally).
+			
+			Halve their amplitude to compensate.
+		*/
+		
+		const uint16_t amplitude = tone->amplitude / 2;
 		
 		const int crest = 128 + amplitude / 2;
 		const int nadir = 128 - amplitude / 2;
