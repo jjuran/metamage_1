@@ -36,8 +36,17 @@ enum
 	allow_eof = 0x2e2e,  // basic ('..')
 	full_stop = 0x5858,  // basic ('XX')
 	
+	set_loudness_level = 0x6c6c,  // admin ('ll')
+	
 	ftMode_flat_buffer = ftMode | 0x0100,  // sound
 	ftMode_flat_update = ftMode | 0x0200,  // admin
+};
+
+struct volume_setting
+{
+	short  mode;       // $6c6c ('ll')
+	Byte   semantics;  // zero for 0 .. 7, other values reserved
+	Byte   volume;     // $00 .. $07, other values reserved
 };
 
 #ifdef __GNUC__
