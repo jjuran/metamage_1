@@ -136,12 +136,12 @@ static const uint8_t writable_VIA_bits[] =
 	0,
 	0,
 	0,
-	0x48,  // register A: video/audio page 2 flags
+	0x4f,  // register A: video/audio page 2 flags, audio level
 };
 
 enum
 {
-	initial_reg_A = 0x48,  // use main screen and sound buffers
+	initial_reg_A = 0x4f,  // use main screen and sound buffers, full volume
 	initial_reg_B = 0x80,  // sound disabled
 	initial_ACR   = 0x00,  // One-shot; PB7, PB, PA, shift register disabled
 };
