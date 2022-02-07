@@ -87,7 +87,7 @@ short diminish( sample_buffer& output )
 	{
 		for ( short i = 1;  i < 256;  ++i )
 		{
-			data[ i ] = data[ i ] * (256 - i) / 256u;
+			data[ i ] = data[ i ] * (256 - i) / 256;
 		}
 		
 		return 256;
