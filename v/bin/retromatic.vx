@@ -272,3 +272,5 @@ render_xml( printer, info_plist.convert info )
 const plist = "\n".join( *plist_xml_lines, "" )
 
 rewrite contents "/Info.plist" <== plist
+
+run [ bindir "/fndr-sync.vx", new_app_dir ]
