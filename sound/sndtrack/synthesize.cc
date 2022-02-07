@@ -96,9 +96,9 @@ short diminish( sample_buffer& output )
 	return output.count;
 }
 
-bool silent_2ago;
-bool silent_then;
-bool silent_now = true;
+static bool silent_2ago;
+static bool silent_then;
+static bool silent_now = true;
 
 short synthesize( sample_buffer& output )
 {
