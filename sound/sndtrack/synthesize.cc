@@ -79,7 +79,7 @@ sound_node* get_next_sound()
 }
 
 static
-short diminish( sample_buffer& output )
+void diminish( sample_buffer& output )
 {
 	output_sample_t* data = output.data;
 	
@@ -90,10 +90,8 @@ short diminish( sample_buffer& output )
 			data[ i ] = data[ i ] * (256 - i) / 256;
 		}
 		
-		return 256;
+		output.count = 256;
 	}
-	
-	return output.count;
 }
 
 static bool silent_2ago;
@@ -222,7 +220,7 @@ short synthesize( sample_buffer& output )
 				
 				last_input = NULL;
 				
-				return diminish( output );
+				diminish( output );
 			}
 			
 			return output.count;
