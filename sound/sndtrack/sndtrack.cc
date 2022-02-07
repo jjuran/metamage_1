@@ -158,6 +158,13 @@ void read_and_enqueue( int fd, const command_header& header, rt_queue& queue )
 				endianize( node->sound.four_tone );
 				break;
 			
+			case set_loudness_level:
+				if ( header.length < 2 )
+				{
+					take_exception( opcode_length_underrun );
+				}
+				break;
+			
 			default:
 				take_exception( domain_opcode_undefined );
 				break;

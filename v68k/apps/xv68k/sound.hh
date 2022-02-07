@@ -23,6 +23,8 @@ enum
 
 extern uint8_t* the_sound_buffer;
 
+void set_audio_level( short level );
+
 uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access );
 
 }
