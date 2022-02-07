@@ -34,6 +34,31 @@ int get_sound_fd()
 
 static const int sound_fd = get_sound_fd();
 
+void set_audio_level( short level )
+{
+	uint8_t* p = message_buffer;
+	
+	const size_t payload_size = 2;
+	const size_t message_size = 8 + payload_size;
+	
+	*p++ = 0;
+	*p++ = 0;
+	*p++ = payload_size >> 8;  // 0
+	*p++ = payload_size;       // 2
+	*p++ = 'J';                // admin domain
+	*p++ = 'J';
+	*p++ = 'l';                // set_loudness_level
+	*p++ = 'l';
+	
+	*p++ = 0;                  // semantics
+	*p++ = level & 7;          // volume
+	
+	if ( sound_fd > 0 )
+	{
+		write( sound_fd, message_buffer, message_size );
+	}
+}
+
 static
 bool is_silence_and_zeros( const uint8_t* p, short n )
 {

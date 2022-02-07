@@ -13,6 +13,7 @@
 
 // xv68k
 #include "screen.hh"
+#include "sound.hh"
 
 
 namespace VIA {
@@ -244,6 +245,11 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 						{
 							WARNING = "Audio page flips unimplemented";
 						}
+					}
+					
+					if ( diff & 0x07 )
+					{
+						sound::set_audio_level( mmio_byte & 7 );
 					}
 					break;
 				
