@@ -31,9 +31,9 @@ THz GetZone_patch();
 
 short SetZone_patch( THz z : __A0 );
 
-long FreeMem_patch();
+long FreeMem_patch( short trap_word : __D1 );
 
-void MaxMem_patch();
+void MaxMem_patch( short trap_word : __D1 );
 
 long CompactMem_patch( long needed : __D0, short trap_word : __D1 );
 

@@ -363,12 +363,12 @@ short SetZone_patch( THz z : __A0 )
 #pragma mark Freeing Space in the Heap
 #pragma mark -
 
-long FreeMem_patch()
+long FreeMem_patch( short trap_word : __D1 )
 {
 	return 1024 * 1024;
 }
 
-asm void MaxMem_patch()
+asm void MaxMem_patch( short trap_word : __D1 )
 {
 	SUBA.L   A0,A0
 	MOVE.L   #0x100000,D0
