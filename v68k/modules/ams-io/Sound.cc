@@ -177,6 +177,8 @@ void timeval_add( timeval& a, const timeval& b )
 	if ( usec >= 1000000 )
 	{
 		usec -= 1000000;
+		
+		++a.tv_sec;
 	}
 	
 	a.tv_usec = usec;
