@@ -146,7 +146,7 @@ namespace Genie
 		
 		if ( r != NULL )
 		{
-			const Size size = ::GetHandleSize( r );
+			const Size size = GetResourceSizeOnDisk( r );
 			
 			::ReleaseResource( r );
 			
