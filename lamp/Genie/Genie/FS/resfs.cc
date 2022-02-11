@@ -122,16 +122,6 @@ namespace Genie
 		short    res_id;
 	};
 	
-	static void resfs_file_stat( const vfs::node*  that,
-	                             struct stat&      sb )
-	{
-		resfs_file_extra& extra = *(resfs_file_extra*) that->extra();
-		
-		memset( &sb, '\0', sizeof (struct stat) );
-		
-		sb.st_mode = extra.res_type == 'Exec' ? S_IFREG | 0555 : S_IFREG | 0444;
-	}
-	
 	static vfs::filehandle_ptr resfs_file_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		resfs_file_extra& extra = *(resfs_file_extra*) that->extra();
@@ -164,6 +154,17 @@ namespace Genie
 		}
 		
 		return 0;
+	}
+	
+	static
+	void resfs_file_stat( const vfs::node*  that,
+	                      struct stat&      st )
+	{
+		resfs_file_extra& extra = *(resfs_file_extra*) that->extra();
+		
+		memset( &st, '\0', sizeof (struct stat) );
+		
+		st.st_mode = extra.res_type == 'Exec' ? S_IFREG | 0555 : S_IFREG | 0444;
 	}
 	
 	static vfs::program_ptr resfs_file_loadexec( const vfs::node* that )
