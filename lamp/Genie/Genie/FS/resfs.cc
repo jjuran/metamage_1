@@ -165,6 +165,7 @@ namespace Genie
 		memset( &st, '\0', sizeof (struct stat) );
 		
 		st.st_mode = extra.res_type == 'Exec' ? S_IFREG | 0555 : S_IFREG | 0444;
+		st.st_size = resfs_file_geteof( that );
 	}
 	
 	static vfs::program_ptr resfs_file_loadexec( const vfs::node* that )
