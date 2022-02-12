@@ -101,6 +101,8 @@ int main( int argc, char** argv )
 	if ( nok )
 	{
 		perror( "<stdin>" );
+		
+		free( p );
 		return 1;
 	}
 	
@@ -109,6 +111,8 @@ int main( int argc, char** argv )
 	if ( strlen( p ) != n )
 	{
 		fprintf( stderr, "%s: %s\n", PROGRAM, "forbidden NUL byte" );
+		
+		free( p );
 		return 1;
 	}
 	
@@ -117,6 +121,8 @@ int main( int argc, char** argv )
 	if ( const Error* error = box.is< Error >() )
 	{
 		fprintf( stderr, "%s: %s\n", PROGRAM, error->get() );
+		
+		free( p );
 		return 1;
 	}
 	
@@ -128,6 +134,8 @@ int main( int argc, char** argv )
 		
 		printf( "%s: %d\n", key, n );
 	}
+	
+	free( p );
 	
 	return 0;
 }
