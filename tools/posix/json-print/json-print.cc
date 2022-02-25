@@ -168,7 +168,7 @@ int display( const vxo::Box& box, int depth, char sep, char term )
 			}
 		}
 		
-		printf( "%s%c\n", indent, closing[ is_map ] );
+		printf( "%s%c%c\n", indent, closing[ is_map ], sep );
 	}
 	else
 	{
