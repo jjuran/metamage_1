@@ -33,6 +33,7 @@
 
 // vxs
 #include "vxs/lib/json/decode.hh"
+#include "vxs/lib/json/encode_string.hh"
 #include "vxs/string.hh"
 
 
@@ -47,6 +48,7 @@ using namespace command::constants;
 
 enum
 {
+	Option_json   = 'j',  // JSON output
 	Option_except = 'x',
 };
 
@@ -57,8 +59,13 @@ static command::option options[] =
 	{ "exclude",     Option_except, Param_required },
 	{ "exclude-key", Option_except, Param_required },
 	
+	{ "json",        Option_json },
+	{ "json-output", Option_json },
+	
 	{ NULL }
 };
+
+static bool json_output;
 
 static vxo::UPtrVec< const char > excluded_keys;
 
@@ -85,6 +92,10 @@ char* const* get_options( char* const* argv )
 					report_error( "<processing arguments>" );
 					exit( 1 );
 				}
+				break;
+			
+			case Option_json:
+				json_output = true;
 				break;
 			
 			default:
@@ -169,6 +180,21 @@ int display( const vxo::Box& box, int depth, char sep, char term )
 		const char*  data = s.data();
 		const size_t size = s.size();
 		
+		if ( json_output )
+		{
+			const vxo::Box json = vxo::json::encode_string( data, size );
+			
+			if ( json.is< vxo::Error >() )
+			{
+				return 108;
+			}
+			
+			const plus::string& s = static_cast< const String& >( json ).get();
+			
+			printf( "%s%s%c%c", indent, s.data(), sep, term );
+			return 0;
+		}
+		
 		const size_t length = vxo::quoted_length( data, size );
 		
 		plus::string quoted;
@@ -216,7 +242,7 @@ int display( const vxo::Box& box, int depth, char sep, char term )
 	{
 		const char opening[] = "[{";
 		const char closing[] = "]}";
-		const char odd_sep[] = ",:";
+		const char odd_sep[] = ",: ";
 		const char odd_eol[] = "\n ";
 		
 		const vxo::Container& box = *container;
@@ -253,7 +279,9 @@ int display( const vxo::Box& box, int depth, char sep, char term )
 			
 			is_odd = is_map & ! is_odd;
 			
-			const char sep = odd_sep[ is_odd ];
+			int last = json_output  &&  i == n - 1;
+			
+			const char sep = odd_sep[ is_odd + last * 2 ];
 			const char eol = odd_eol[ is_odd ];
 			
 			if ( int xs = display( v, depth * is_deep, sep, eol ) )
