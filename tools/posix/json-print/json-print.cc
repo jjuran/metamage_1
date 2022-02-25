@@ -16,17 +16,84 @@
 // iota
 #include "iota/char_types.hh"
 
+// more-posix
+#include "more/perror.hh"
+
+// command
+#include "command/get_option.hh"
+
 // vxo
 #include "vxo/boolean.hh"
 #include "vxo/container.hh"
 #include "vxo/error.hh"
 #include "vxo/lib/quote.hh"
 #include "vxo/number.hh"
+#include "vxo/ptrvec.hh"
 #include "vxo/symbol.hh"
 
 // vxs
 #include "vxs/lib/json/decode.hh"
 #include "vxs/string.hh"
+
+
+#pragma exceptions off
+
+
+#define PROGRAM  "json-print"
+
+
+using namespace command::constants;
+
+
+enum
+{
+	Option_except = 'x',
+};
+
+static command::option options[] =
+{
+	{ "except",      Option_except, Param_required },
+	{ "except-key",  Option_except, Param_required },
+	{ "exclude",     Option_except, Param_required },
+	{ "exclude-key", Option_except, Param_required },
+	
+	{ NULL }
+};
+
+static vxo::UPtrVec< const char > excluded_keys;
+
+static inline
+void report_error( const char* path, int err = errno )
+{
+	more::perror( PROGRAM, path, err );
+}
+
+static
+char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_except:
+				if ( ! excluded_keys.push_back_nothrow( command::global_result.param ) )
+				{
+					report_error( "<processing arguments>" );
+					exit( 1 );
+				}
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 static plus::string spaces;
@@ -53,8 +120,26 @@ bool can_be_unquoted( const char* begin, const char* end )
 }
 
 static
+bool excluded( const plus::string& key )
+{
+	const size_t n = excluded_keys.size();
+	
+	for ( size_t i = 0;  i < n;  ++i )
+	{
+		if ( key == excluded_keys[ i ] )
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+static
 int display( const vxo::Box& box, int depth, char sep, char term )
 {
+	using vxo::String;
+	
 	const int n_spaces = depth * 2;
 	
 	size_t spaces_size = spaces.size();
@@ -77,7 +162,7 @@ int display( const vxo::Box& box, int depth, char sep, char term )
 	
 	const char* indent = spaces.data() + (spaces_size - n_spaces);
 	
-	if ( const vxo::String* string = box.is< vxo::String >() )
+	if ( const String* string = box.is< String >() )
 	{
 		const plus::string& s = *string;
 		
@@ -157,6 +242,15 @@ int display( const vxo::Box& box, int depth, char sep, char term )
 				putchar( '\n' );
 			}
 			
+			if ( is_map & ! is_odd )
+			{
+				if ( excluded( static_cast< const String& >( v ).get() ) )
+				{
+					++i;
+					continue;
+				}
+			}
+			
 			is_odd = is_map & ! is_odd;
 			
 			const char sep = odd_sep[ is_odd ];
@@ -192,15 +286,17 @@ void display( const vxo::Box& box )
 
 int main( int argc, char** argv )
 {
-	char** argp = argv + 1;
+	char *const *args = get_options( argv );
 	
-	if ( argc < 2 )
+	int argn = argc - (args - argv);
+	
+	if ( argn < 1 )
 	{
-		fprintf( stderr, "usage: %s path\n", argv[ 0 ] );
+		fprintf( stderr, "usage: %s [-x key]... path\n", argv[ 0 ] );
 		return 2;
 	}
 	
-	const char* path = *argp++;
+	const char* path = *args++;
 	
 	char* p = NULL;
 	
