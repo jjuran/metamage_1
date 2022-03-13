@@ -34,8 +34,6 @@ void EllipticOvalRgn( RgnHandle rgn, short width, short height )
 
 void OvalRgn( RgnHandle rgn, short width, short height )
 {
-	// TODO:  Support assymetric diameters for real
-	
 	if ( width != height )
 	{
 		EllipticOvalRgn( rgn, width, height );

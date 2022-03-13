@@ -61,6 +61,16 @@ RgnHandle ovoid_region( short hdiam, short vdiam, short width, short height )
 	bbox.bottom = height;
 	bbox.right  = width;
 	
+	if ( width < 3  ||  height < 3 )
+	{
+		/*
+			We have a similar check in StdOval(), but that one doesn't cover
+			calls to FrameOval() with a dimension of 4px (requiring an inner
+			oval with a dimension of 2px).
+		*/
+		return tmp;
+	}
+	
 	Size rgnSize = sizeof (MacRegion) + max_diam * 2 * 6;  // close enough
 	
 	if ( GetHandleSize( (Handle) tmp ) < rgnSize )
