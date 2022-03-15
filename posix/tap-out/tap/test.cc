@@ -52,12 +52,12 @@ namespace tap
 		
 		struct iovec iov[] =
 		{
-			{ (void*) STR_LEN( "There were " )           },
-			{ (void*) tests_str, magnitude               },
-			{ (void*) STR_LEN( " "           )           },
-			{ (void*) STR_LEN( "extra"       ) * extra   },
-			{ (void*) STR_LEN( "missing"     ) * missing },
-			{ (void*) STR_LEN( " tests\n"    )           },
+			{ (char*) STR_LEN( "There were " )           },
+			{ (char*) tests_str, magnitude               },
+			{ (char*) STR_LEN( " "           )           },
+			{ (char*) STR_LEN( "extra"       ) * extra   },
+			{ (char*) STR_LEN( "missing"     ) * missing },
+			{ (char*) STR_LEN( " tests\n"    )           },
 		};
 		
 		CHECK( writev( STDERR_FILENO, iov, sizeof iov / sizeof iov[0] ) );
@@ -96,10 +96,10 @@ namespace tap
 		
 		struct iovec iov[] =
 		{
-			{ (void*) STR_LEN( "not " ) * not_ok      },
-			{ (void*) STR_LEN( "ok "  )               },
-			{ (void*) tests_str, magnitude            },
-			{ (void*) STR_LEN( "\n"   )               },
+			{ (char*) STR_LEN( "not " ) * not_ok      },
+			{ (char*) STR_LEN( "ok "  )               },
+			{ (char*) tests_str, magnitude            },
+			{ (char*) STR_LEN( "\n"   )               },
 		};
 		
 		CHECK( writev( STDOUT_FILENO, iov, sizeof iov / sizeof iov[0] ) );
