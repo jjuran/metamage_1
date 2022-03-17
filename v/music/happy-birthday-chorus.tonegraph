@@ -1,0 +1,72 @@
+# Happy Birthday Chorus
+# (a parody of the Hallelujah chorus from Handel's Messiah)
+#
+# Copyright 2022 Josh Juran.
+#
+# This /software/ is provided under the terms of the GNU AGPL v3 or later.
+#
+# This /song/ is provided for non-commercial use only.
+#
+# Feel free to perform, record, and share it for the benefit of loved ones.
+# However, you are not permitted to use this song as part of any commercial
+# transaction (unless such permission has been granted separately).
+# Bundling this song with audio or video advertising is absolutely forbidden.
+
+# 1.059463094359295^12 ~= 2
+# 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
+
+let semitone_numer = 69433
+let semitone_denom = 2^16
+
+def transpose (n, pitch) { pitch * semitone_numer^n div semitone_denom^n }
+
+let C8 = 0x184ada * 2;
+
+let adj = 0
+
+def C  (o) { transpose( adj, C8 div 2^(8 - o) ) }
+def D  (o) { transpose( 2, C o ) }
+def E  (o) { transpose( 4, C o ) }
+def F  (o) { transpose( 5, C o ) }
+def G  (o) { transpose( 7, C o ) }
+def A  (o) { transpose( 9, C o ) }
+def B  (o) { transpose( 11, C o ) }
+
+def x2 (chord) {0.6: chord, 0.4: [], 1: chord}
+
+let audiograph =
+[
+	# Music by George Frideric Handel.
+	# 8-bit arrangement and notation copyright 2022 Joshua Juran.
+	# Lyrics copyright 2022 Joshua Juran.
+	
+	6: [ C 3, E 4, G 4, C 5 ],  # Ha-
+	2: [ E 3, C 4, G 4, G 4 ],  # -ppy
+	2: [ F 3, C 4, F 4, A 4 ],  # Birth-
+	2: [ C 3, C 4, E 4, G 4 ],  # -day
+	4: [],
+	
+	6: [ C 3, E 4, G 4, C 5 ],  # Ha-
+	2: [ E 3, E 4, G 4, G 4 ],  # -ppy
+	2: [ F 3, C 4, F 4, A 4 ],  # Birth-
+	2: [ C 3, C 4, E 4, G 4 ],  # -day
+	2: [],
+	x2 [ E 3, C 4, G 4, C 5 ],  # Ha-ppy
+	
+	2: [ F 3, F 4, A 4, C 5 ],  # Birth-
+	2: [ C 3, E 4, G 4, C 5 ],  # -day
+	2: [],
+	x2 [ E 3, C 4, G 4, C 5 ],  # Ha-ppy
+	2: [ F 3, F 4, A 4, C 5 ],  # Birth-
+	2: [ C 3, E 4, G 4, C 5 ],  # -day
+	2: [],
+	x2 [ E 3, C 4, G 4, C 5 ],  # Ha-ppy
+	
+	                            # S/T:   A/B:
+	2: [ D 3, D 4, F 4, B 4 ],  # Bir-   Bir-
+	2: [ C 3, G 3, E 4, C 5 ],  # -rth-  -r-
+	2: [ G 3, G 3, D 4, C 5 ],  # -day   -r-
+	2: [ G 3, G 3, D 4, B 4 ],  # to     -rth-
+	4: [ C 3, G 3, E 4, C 5 ],  # you    -day
+#	4: [],
+]
