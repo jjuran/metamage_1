@@ -1,9 +1,9 @@
 /*
-	rounds.cc
-	---------
+	core.cc
+	-------
 */
 
-#include "sha1/rounds.hh"
+#include "sha1/core.hh"
 
 
 namespace crypto
@@ -72,7 +72,7 @@ namespace crypto
 	
 #ifdef __MC68K__
 	
-	// Defined in rounds.68k.cc
+	// Defined in core.68k.cc
 	
 #else
 	

@@ -1,6 +1,6 @@
 /*
-	rounds.cc
-	---------
+	core.68k.cc
+	-----------
 */
 
 /*
@@ -9,7 +9,7 @@
 */
 
 // md5
-#include "md5/rounds.hh"
+#include "md5/core.hh"
 #include "md5/table.hh"
 
 

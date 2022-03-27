@@ -1,6 +1,6 @@
 /*
-	rounds.cc
-	---------
+	core.cc
+	-------
 */
 
 /*
@@ -8,7 +8,7 @@
 	<http://www.faqs.org/rfcs/rfc1321.html>
 */
 
-#include "md5/rounds.hh"
+#include "md5/core.hh"
 
 // iota
 #include "iota/endian.hh"
@@ -76,7 +76,7 @@ namespace crypto
 	
 #ifdef __MC68K__
 	
-	// defined in rounds.68k.cc
+	// defined in core.68k.cc
 	
 #else
 	

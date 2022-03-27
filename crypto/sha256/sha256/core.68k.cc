@@ -1,10 +1,10 @@
 /*
-	rounds.cc
-	---------
+	core.cc
+	-------
 */
 
 // sha256
-#include "sha256/rounds.hh"
+#include "sha256/core.hh"
 #include "sha256/table.hh"
 
 

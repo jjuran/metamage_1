@@ -1,10 +1,10 @@
 /*
-	rounds.hh
-	---------
+	core.hh
+	-------
 */
 
-#ifndef MD5_ROUNDS_HH
-#define MD5_ROUNDS_HH
+#ifndef MD5_CORE_HH
+#define MD5_CORE_HH
 
 // md5
 #include "md5/state.hh"

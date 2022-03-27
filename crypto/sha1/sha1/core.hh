@@ -1,10 +1,10 @@
 /*
-	rounds.hh
-	---------
+	core.hh
+	-------
 */
 
-#ifndef SHA1_ROUNDS_HH
-#define SHA1_ROUNDS_HH
+#ifndef SHA1_CORE_HH
+#define SHA1_CORE_HH
 
 // sha1
 #include "sha1/state.hh"

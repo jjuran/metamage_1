@@ -12,7 +12,7 @@
 #include "iota/endian.hh"
 
 // sha256
-#include "sha256/rounds.hh"
+#include "sha256/core.hh"
 
 
 #pragma exceptions off

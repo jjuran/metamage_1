@@ -1,10 +1,10 @@
 /*
-	rounds.cc
-	---------
+	core.68k.cc
+	-----------
 */
 
 // sha1
-#include "sha1/rounds.hh"
+#include "sha1/core.hh"
 
 
 namespace crypto

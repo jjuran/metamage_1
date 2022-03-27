@@ -17,7 +17,7 @@
 #include "iota/endian.hh"
 
 // md5
-#include "md5/rounds.hh"
+#include "md5/core.hh"
 
 
 #pragma exceptions off
