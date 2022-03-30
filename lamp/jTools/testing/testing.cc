@@ -72,7 +72,6 @@
 #include "Nitrogen/DateTimeUtils.hh"
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/MacMemory.hh"
-#include "Nitrogen/OSUtils.hh"
 #include "Nitrogen/Resources.hh"
 #include "Nitrogen/Str.hh"
 #include "Nitrogen/Timer.hh"
@@ -750,46 +749,6 @@ static int TestThrow( int argc, char** argv )
 	return 0;
 }
 
-static int TestReadLoc( int argc, char** argv )
-{
-	MachineLocation loc;
-	
-	N::ReadLocation( loc );
-	
-	double latitude  = loc.latitude;
-	double longitude = loc.longitude;
-	
-	// Convert from Fract to normal -- move binary point
-	latitude  /= (1 << 30);
-	longitude /= (1 << 30);
-	
-	// Convert to degrees
-	latitude  *= 90;
-	longitude *= 90;
-	
-	long gmtDelta = loc.u.gmtDelta;
-	
-	bool dls = gmtDelta & 0x80000000;
-	
-	gmtDelta &= 0x00FFFFFF;
-	
-	bool signExtend = gmtDelta & 0x00800000;
-	
-	gmtDelta |= signExtend ? 0xFF000000 : 0x00000000;
-	
-	#define ENDL "\n"
-	
-	std::printf( "Latitude:  %d degrees"    ENDL
-	             "Longitude: %d degrees"    ENDL
-	             "GMT delta: %d hours"      ENDL
-	             "Daylight Saving Time: %s" "\n", int( latitude  ),
-	                                              int( longitude ),
-	                                              int( gmtDelta / 3600 ),
-	                                              dls ? "on" : "off" );
-	
-	return 0;
-}
-
 static inline double get_scaled_linear_motion( double elapsed_time )
 {
 	return elapsed_time;
@@ -1200,7 +1159,6 @@ static const command_t global_commands[] =
 	
 #endif
 	
-	{ "loc",       TestReadLoc    },
 	{ "mangling",  TestMangling   },
 	{ "map",       TestMap        },
 	{ "null",      TestNull       },
