@@ -325,7 +325,7 @@ namespace tool
 					result.push_back( "#" );
 				}
 				
-				result.push_back( token );
+				result.push_back( eval_predefined_macro( token ) );
 			}
 			
 			preceded_by_hash = false;
