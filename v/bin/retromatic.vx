@@ -216,7 +216,7 @@ if "document-types" in config then
 	
 	const doctypes = document-types map
 	{
-		var name = str v.key
+		const name = translated( str v.key, "/\0", ": " );
 		
 		const type_key = mb32 v.key
 		
@@ -225,8 +225,6 @@ if "document-types" in config then
 			else {                 type_key   }
 		
 		const icon = icns ams-get-app ("bndl-icon", str icon_key)
-		
-		translate( &name, "/\0", ": " );
 		
 		[
 			CFBundleTypeName: v.value,
