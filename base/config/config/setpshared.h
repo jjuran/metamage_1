@@ -12,6 +12,10 @@
 		#define CONFIG_SETPSHARED 0
 	#endif
 	
+	#ifdef __NetBSD__
+		#define CONFIG_SETPSHARED 0
+	#endif
+	
 	#ifdef __OpenBSD__
 		#define CONFIG_SETPSHARED 0
 	#endif
