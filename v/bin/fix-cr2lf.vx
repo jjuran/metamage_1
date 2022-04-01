@@ -8,9 +8,7 @@ for path in args do
 	
 	const data = load path
 	
-	var fixed = data
-	
-	translate( &fixed, "\r", "\n" )
+	const fixed = translated( data, "\r", "\n" )
 	
 	if data == fixed then
 	{
