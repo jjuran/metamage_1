@@ -1,14 +1,10 @@
 #!/usr/bin/env vx
 
-def pack_icon
+def pack_icon (source)
 {
-	const source = _
+	const meat = mince substr( source, 1 )
 	
-	var meat = mince substr( source, 1 )
-	
-	translate( &meat, " X", "01" )
-	
-	return unbin str meat.lines()
+	return unbin str translated( meat, " X", "01" ).lines()
 }
 
 # Width:  32 columns + 31 spaces + 2 '|' + 1 '\n'
