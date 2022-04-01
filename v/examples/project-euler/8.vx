@@ -7,18 +7,11 @@ const values = packed ('\x00' .. '\x09')
 
 const width = 13
 
-def digit_product
-{
-	translate( &_, digits, values )
-	
-	return _ map int per Math.product
-}
-
 const last = number.length - width
 
 print (0 .. last map { substr( number, v, width ) }
                  ver { not '0' in v }
-                 map digit_product
+                 map { translated( v, digits, values ) map int per {a * b} }
                  per Math.max)
 
 end.
