@@ -74,10 +74,10 @@ struct cached_filename
 	Str63 name;
 };
 
-static inline
+static
 bool operator<( const cached_filename& a, const cached_filename& b )
 {
-	return RelString( a.name, b.name, false, true ) < 0;
+	return RelString_sans_case( a.name, b.name ) < 0;
 }
 
 static
