@@ -27,6 +27,7 @@ extern "C" {
 #ifndef MAC_OS_X_VERSION_10_10
 
 #if __FreeBSD__ < 8  // undefined __FreeBSD__ counts as zero
+#if !(__NetBSD__ && AT_FDCWD)
 #if !(__OpenBSD__ && AT_FDCWD)
 
 /*
@@ -89,6 +90,7 @@ int symlinkat( const char* target_path, int newdirfd, const char* newpath );
 int unlinkat( int dirfd, const char* path, int flags );
 
 #endif  // #if !(__OpenBSD__ && AT_FDCWD)
+#endif  // #if !(__NetBSD__ && AT_FDCWD)
 #endif  // #if __FreeBSD__ < 8
 #endif  // #ifndef MAC_OS_X_VERSION_10_10
 
