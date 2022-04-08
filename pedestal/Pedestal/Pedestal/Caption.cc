@@ -18,18 +18,16 @@
 #endif
 #endif
 
-// nucleus
-#include "nucleus/saved.hh"
+// mac-qd-utils
+#include "mac_qd/scoped_clipRect.hh"
 
 // Nitrogen
-#include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/TextEdit.hh"
 
 
 namespace Pedestal
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
 	
@@ -49,15 +47,15 @@ namespace Pedestal
 	
 	void Caption::Draw( const Rect& bounds, bool erasing )
 	{
-		n::saved< N::Clip > savedClip;
+		static RgnHandle tmp = NewRgn();
+		
+		mac::qd::scoped_clipRect clipRect( bounds, tmp );
 		
 		Rect newBounds = bounds;
 		
 		if ( !Wrapped() )
 		{
 			newBounds.right = 30000;
-			
-			N::ClipRect( bounds );
 		}
 		
 		const short saved_txMode = get_TextMode();

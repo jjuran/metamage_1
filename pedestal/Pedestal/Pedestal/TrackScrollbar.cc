@@ -24,15 +24,10 @@
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/thePort.hh"
+#include "mac_qd/scoped_clipRect.hh"
 
 // Debug
 #include "debug/assert.hh"
-
-// nucleus
-#include "nucleus/saved.hh"
-
-// Nitrogen
-#include "Nitrogen/Quickdraw.hh"
 
 // MacFeatures
 #include "MacFeatures/Appearance.hh"
@@ -43,10 +38,6 @@
 
 namespace Pedestal
 {
-	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
-	
 	
 	static short SetClippedControlValue( ControlRef control, short value )
 	{
@@ -151,9 +142,11 @@ namespace Pedestal
 	
 	void TrackScrollbar( ControlRef control, ControlPartCode part, Point point )
 	{
-		n::saved< N::Clip > savedClip;
+		using namespace mac::qd;
 		
-		N::ClipRect( mac::qd::get_portRect( mac::qd::thePort() ) );
+		static RgnHandle tmp = NewRgn();
+		
+		scoped_clipRect clipRect( get_portRect( thePort() ), tmp );
 		
 		const Scrollbar_UserData* userData = GetUserDataFromScrollbar( control );
 		

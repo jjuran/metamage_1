@@ -47,6 +47,7 @@
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/arrow.hh"
 #include "mac_qd/is_port_visrgn_empty.hh"
+#include "mac_qd/scoped_clipRect.hh"
 #include "mac_qd/wide_drag_area.hh"
 
 // mac-app-utils
@@ -589,9 +590,11 @@ namespace Pedestal
 			
 			window_update( window );
 			
-			n::saved< N::Clip > savedClip;
+			static RgnHandle tmp = NewRgn();
 			
-			N::ClipRect( mac::qd::get_portRect( port ) );
+			using namespace mac::qd;
+			
+			scoped_clipRect clipRect( get_portRect( port ), tmp );
 			
 			N::UpdateControls( window );
 		}

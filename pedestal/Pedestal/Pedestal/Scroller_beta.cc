@@ -11,9 +11,7 @@
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/thePort.hh"
-
-// nucleus
-#include "nucleus/saved.hh"
+#include "mac_qd/scoped_clipRect.hh"
 
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
@@ -25,7 +23,6 @@
 namespace Pedestal
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
 	
@@ -87,9 +84,11 @@ namespace Pedestal
 	
 	void ScrollFrame::ClickInLoop()
 	{
-		n::saved< N::Clip > savedClip;
+		using namespace mac::qd;
 		
-		N::ClipRect( mac::qd::get_portRect( mac::qd::thePort() ) );
+		static RgnHandle tmp = NewRgn();
+		
+		scoped_clipRect clipRect( get_portRect( thePort() ), tmp );
 		
 		UpdateScrollbars();
 	}

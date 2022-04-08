@@ -15,9 +15,7 @@
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
-
-// nucleus
-#include "nucleus/saved.hh"
+#include "mac_qd/scoped_clipRect.hh"
 
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
@@ -36,7 +34,6 @@ using mac::qd::get_portRect;
 namespace Pedestal
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
 	
@@ -109,9 +106,9 @@ namespace Pedestal
 		
 		if ( window_has_grow_icon( window ) )
 		{
-			n::saved< N::Clip > savedClip;
+			static RgnHandle tmp = NewRgn();
 			
-			N::ClipRect( GrowBoxBounds( window ) );
+			mac::qd::scoped_clipRect clipRect( GrowBoxBounds( window ), tmp );
 			
 			DrawGrowIcon( window );
 		}
