@@ -63,10 +63,10 @@ namespace Pedestal
 	
 	bool Scroller_KeyDown( ScrollerAPI& scroller, const EventRecord& event )
 	{
-		const char keyCode = event.message >> 8;
+		const short keyCode_and_char = event.message;
 		
 		// Only consider programmers' keys, not control characters
-		if ( keyCode >= 0x70 )
+		if ( keyCode_and_char >= 0x7000 )
 		{
 			const char keyChar = event.message;
 			
