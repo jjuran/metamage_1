@@ -48,6 +48,7 @@
 #include "mac_qd/globals/arrow.hh"
 #include "mac_qd/is_port_visrgn_empty.hh"
 #include "mac_qd/scoped_clipRect.hh"
+#include "mac_qd/scoped_port.hh"
 #include "mac_qd/wide_drag_area.hh"
 
 // mac-app-utils
@@ -61,9 +62,6 @@
 
 // Debug
 #include "debug/assert.hh"
-
-// nucleus
-#include "nucleus/saved.hh"
 
 // Nitrogen
 #include "Nitrogen/Controls.hh"
@@ -126,7 +124,6 @@ bool has_WaitNextEvent()
 namespace Pedestal
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
 	
@@ -672,7 +669,7 @@ namespace Pedestal
 	
 	static void GiveIdleTimeToWindows( const EventRecord& event )
 	{
-		n::saved< N::Port > savePort;
+		mac::qd::scoped_port thePort;
 		
 		// FIXME:  Use window iterator
 		for ( WindowRef window = N::FrontWindow();

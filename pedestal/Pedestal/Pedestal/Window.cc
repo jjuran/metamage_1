@@ -7,12 +7,7 @@
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
-
-// nucleus
-#include "nucleus/saved.hh"
-
-// Nitrogen
-#include "Nitrogen/Quickdraw.hh"
+#include "mac_qd/scoped_port.hh"
 
 // Pedestal
 #include "Pedestal/View.hh"
@@ -28,10 +23,6 @@
 
 namespace Pedestal
 {
-	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
-	
 	
 	static NONCARBON_INLINE
 	void ResizedWindow( WindowRef window )
@@ -92,9 +83,7 @@ namespace Pedestal
 	
 	void SetWindowSize( WindowRef window, Point size )
 	{
-		n::saved< N::Port > savePort;
-		
-		SetPortWindowPort( window );
+		mac::qd::scoped_port thePort( window );
 		
 		ResizeWindow( window, size );
 	}
