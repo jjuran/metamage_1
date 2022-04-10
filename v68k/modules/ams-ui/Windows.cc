@@ -50,6 +50,8 @@
 #pragma exceptions off
 
 
+Byte       WWExist     : 0x08F2;
+
 short      ApFontID    : 0x0984;
 WindowPeek WindowList  : 0x09D6;
 short      SaveUpdate  : 0x09DA;
@@ -288,6 +290,8 @@ pascal void InitWindows_patch()
 	draw_desktop_from_WMgrPort();
 	
 	InitMenus();  // Some applications assume this.
+	
+	WWExist = 0;
 }
 
 pascal void GetWMgrPort_patch( GrafPtr* port )
