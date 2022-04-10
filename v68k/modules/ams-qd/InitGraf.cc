@@ -18,6 +18,8 @@ short ScreenRow : 0x0106;
 Ptr   ScrnBase  : 0x0824;
 Rect  CrsrPin   : 0x0834;
 
+Byte  QDExist   : 0x08F3;
+
 
 #define PACK16( _15, _14, _13,_12,  \
                 _11, _10,  _9, _8,  \
@@ -155,4 +157,6 @@ pascal void InitGraf_patch( GrafPtr* thePort_ptr )
 	set_Pattern( qd.white,  0x00000000 );
 	
 	qd.thePort = NULL;
+	
+	QDExist = 0;
 }
