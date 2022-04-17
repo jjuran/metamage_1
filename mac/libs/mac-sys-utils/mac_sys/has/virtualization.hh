@@ -43,6 +43,12 @@ namespace sys {
 	}
 	
 	inline
+	bool has_MacOnLinux()
+	{
+		return is_driver_installed( "\p" ".MacOnLinuxVideo" );
+	}
+	
+	inline
 	bool has_QEMU()
 	{
 		return is_driver_installed( "\p" ".Display_Video_QemuVGA" );
