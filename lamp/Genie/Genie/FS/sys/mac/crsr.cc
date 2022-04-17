@@ -15,17 +15,14 @@
 #include <LowMem.h>
 #endif
 
+// mac-sys-utils
+#include "mac_sys/has/CursorDevices.hh"
+
 // plus
 #include "plus/var_string.hh"
 
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
-
-// ClassicToolbox
-//#include "ClassicToolbox/CursorDevices.h"
-
-// MacFeatures
-#include "MacFeatures/CursorDevices.hh"
 
 // vfs
 #include "vfs/property.hh"
@@ -113,7 +110,7 @@ namespace Genie
 		
 		static CursorDevicePtr GetCursorDevice( const vfs::node* that )
 		{
-			static const bool has_CDM = MacFeatures::Has_CursorDevices();
+			static const bool has_CDM = mac::sys::has_CursorDevices();
 			
 			if ( !has_CDM )
 			{
