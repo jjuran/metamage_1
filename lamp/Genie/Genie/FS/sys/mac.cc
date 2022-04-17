@@ -26,7 +26,6 @@
 
 // Genie
 #include "Genie/FS/sys/mac/desktop.hh"
-#include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/event.hh"
 #include "Genie/FS/sys/mac/gdev.hh"
 #include "Genie/FS/sys/mac/gestalt.hh"
@@ -110,7 +109,6 @@ namespace Genie
 	#endif
 		
 		{ "desktop", PREMAPPED( sys_mac_desktop_Mappings ) },
-		{ "errata",  PREMAPPED( sys_mac_errata_Mappings  ) },
 		{ "event",   PREMAPPED( sys_mac_event_Mappings   ) },
 		
 	#if CONFIG_SYS_MAC_GDEV

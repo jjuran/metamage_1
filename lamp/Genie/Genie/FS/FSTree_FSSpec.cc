@@ -102,7 +102,6 @@
 #include "Genie/FS/HFS/Rename.hh"
 #include "Genie/FS/HFS/SetFileTimes.hh"
 #include "Genie/FS/resfs.hh"
-#include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
 #include "Genie/FS/ResFile_Dir.hh"
 #include "Genie/FS/Root_Overlay.hh"
