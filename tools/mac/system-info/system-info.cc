@@ -15,7 +15,6 @@
 
 // Standard C
 #include <stdio.h>
-#include <string.h>
 
 // more-libc
 #include "more/string.h"
@@ -29,9 +28,10 @@
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/get_machine_name.hh"
+#include "mac_sys/has/BlueBox.hh"
 #include "mac_sys/has/floating_point_math.hh"
+#include "mac_sys/has/virtualization.hh"
 #include "mac_sys/rom_size.hh"
-#include "mac_sys/unit_table.hh"
 
 
 #pragma exceptions off
@@ -44,14 +44,6 @@
 #ifndef TARGET_CPU_ARM
 #define TARGET_CPU_ARM  0
 #endif
-
-
-#define PROGRAM  "system-info"
-
-#define STR_LEN( s )  "" s, (sizeof s - 1)
-
-// Pascal string and entire length, including length byte
-#define PSTR_LEN( s )  "\p" s, (sizeof s)
 
 
 using mac::sys::gestalt;
@@ -72,20 +64,10 @@ using mac::sys::gestalt_defined;
 #define MAE  "Macintosh Application Environment (MAE)"
 
 
-struct SonyVars_record
-{
-	uint32_t zeros[ 3 ];
-	uint32_t reserved;
-	uint32_t magic;
-	uint32_t address;
-};
-
 #if TARGET_CPU_68K
 
 long    MemTop  : 0x0108;
 uint8_t CPUFlag : 0x012F;
-
-SonyVars_record* SonyVars : 0x0134;
 
 short SysVersion : 0x015A;
 
@@ -121,41 +103,6 @@ bool in_supervisor_mode()
 	
 	return false;
 }
-
-#ifdef __MC68K__
-
-static
-asm uint32_t core_signature()
-{
-	MOVE     #0,CCR
-	MOVEQ.L  #0,D0
-	MOVEQ.L  #7,D1
-	
-loop:
-	CHK.W    D1,D1
-	MOVE     SR,D2
-	OR.B     D2,D0
-	ROR.L    #4,D0
-	DBRA.S   D1,loop
-	
-	RTS
-}
-
-static inline
-bool in_v68k()
-{
-	return core_signature() == 'v68k';
-}
-
-#else
-
-static inline
-bool in_v68k()
-{
-	return false;
-}
-
-#endif
 
 static
 void compiled()
@@ -525,176 +472,17 @@ void host_env()
 }
 
 static
-bool in_MinivMac()
-{
-#if TARGET_CPU_68K
-	
-	if ( SonyVars  &&  ((uint32_t) SonyVars & 1) == 0 )
-	{
-		const uint32_t magic = 0x841339E2;
-		
-		const uint32_t* p = SonyVars->zeros;
-		
-		uint32_t zero = 0;
-		
-		zero |= *p++;
-		zero |= *p++;
-		zero |= *p++;
-		
-		return zero == 0  &&  SonyVars->magic == magic;
-	}
-	
-#endif
-	
-	return false;
-}
-
-static
-bool in_BasiliskII()
-{
-	using mac::types::AuxDCE;
-	
-	if ( ! TARGET_CPU_68K )
-	{
-		return false;
-	}
-	
-	const short n = mac::sys::get_unit_table_entry_count();
-	
-	AuxDCE*** const begin = mac::sys::get_unit_table_base();
-	AuxDCE*** const end   = begin + n;
-	
-	for ( AuxDCE*** it = begin;  it < end;  ++it )
-	{
-		const unsigned char* name = mac::sys::get_driver_name( *it );
-		
-		int cmp = memcmp( name, PSTR_LEN( ".Display_Video_Apple_Basilisk" ) );
-		
-		if ( cmp == 0 )
-		{
-			return true;
-		}
-	}
-	
-	return false;
-}
-
-static
-bool in_ShapeShifter()
-{
-	using mac::types::AuxDCE;
-	
-	if ( ! TARGET_CPU_68K )
-	{
-		return false;
-	}
-	
-	const short n = mac::sys::get_unit_table_entry_count();
-	
-	AuxDCE*** const begin = mac::sys::get_unit_table_base();
-	AuxDCE*** const end   = begin + n;
-	
-	for ( AuxDCE*** it = begin;  it < end;  ++it )
-	{
-		const unsigned char* name = mac::sys::get_driver_name( *it );
-		
-		/*
-			Expecting one of:
-			
-				.Display_Video_Apple_Amiga1
-				.Display_Video_Apple_Amiga2
-		*/
-		
-		int cmp = memcmp( name, PSTR_LEN( ".Display_Video_Apple_Amiga?" ) - 1 );
-		
-		if ( cmp == 0 )
-		{
-			return true;
-		}
-	}
-	
-	return false;
-}
-
-static
-bool in_SheepShaver()
-{
-	using mac::types::AuxDCE;
-	
-	if ( TARGET_RT_MAC_MACHO )
-	{
-		return false;
-	}
-	
-	const short n = mac::sys::get_unit_table_entry_count();
-	
-	AuxDCE*** const begin = mac::sys::get_unit_table_base();
-	AuxDCE*** const end   = begin + n;
-	
-	for ( AuxDCE*** it = begin;  it < end;  ++it )
-	{
-		const unsigned char* name = mac::sys::get_driver_name( *it );
-		
-		// Yes, SheepShaver currently installs a driver with a dotless name.
-		
-		if ( memcmp( name, PSTR_LEN( "Display_Video_Apple_Sheep" ) ) == 0 )
-		{
-			return true;
-		}
-		
-		if ( memcmp( name, PSTR_LEN( ".Display_Video_Apple_Sheep" ) ) == 0 )
-		{
-			return true;
-		}
-	}
-	
-	return false;
-}
-
-static
-bool in_QEMU()
-{
-	using mac::types::AuxDCE;
-	
-	if ( TARGET_RT_MAC_MACHO )
-	{
-		return false;
-	}
-	
-	const short n = mac::sys::get_unit_table_entry_count();
-	
-	AuxDCE*** const begin = mac::sys::get_unit_table_base();
-	AuxDCE*** const end   = begin + n;
-	
-	for ( AuxDCE*** it = begin;  it < end;  ++it )
-	{
-		const unsigned char* name = mac::sys::get_driver_name( *it );
-		
-		int cmp = memcmp( name, PSTR_LEN( ".Display_Video_QemuVGA" ) );
-		
-		if ( cmp == 0 )
-		{
-			return true;
-		}
-	}
-	
-	return false;
-}
-
-static
 void virt_env()
 {
 	const char* blank = "\n";
 	
-	if ( gestalt( 'a/ux' ) )
+	if ( mac::sys::has_AUX() )
 	{
 		printf( "%s" "Paravirtualization:     A/UX\n", blank );
 		blank = "";
 	}
 	
-	const bool bbox = gestalt( 'bbox' );
-	
-	if ( bbox )
+	if ( mac::sys::has_BlueBox() )
 	{
 		printf( "%s" "Paravirtualization:     Blue Box\n", blank );
 		blank = "";
@@ -706,45 +494,45 @@ void virt_env()
 		blank = "";
 	}
 	
-	if ( TARGET_CPU_68K  &&  in_v68k() )
+	if ( TARGET_CPU_68K  &&  mac::sys::has_v68k() )
 	{
 		printf( "%s" "68K emulation:          v68k\n", blank );
 		blank = "";
 	}
-	else if ( TARGET_CPU_68K  &&  gestalt_defined( 'cith' ) )
+	else if ( TARGET_CPU_68K  &&  mac::sys::has_MAE() )
 	{
 		printf( "%s" "68K emulation:          " MAE "\n", blank );
 		blank = "";
 	}
-	else if ( TARGET_CPU_68K  &&  in_MinivMac() )
+	else if ( TARGET_CPU_68K  &&  mac::sys::has_MinivMac() )
 	{
 		printf( "%s" "68K emulation:          Mini vMac\n", blank );
 		blank = "";
 	}
-	else if ( in_BasiliskII() )
+	else if ( TARGET_CPU_68K  &&  mac::sys::has_BasiliskII() )
 	{
 		printf( "%s" "68K emulation:          Basilisk II\n", blank );
 		blank = "";
 	}
-	else if ( TARGET_CPU_68K  &&  in_ShapeShifter() )
+	else if ( TARGET_CPU_68K  &&  mac::sys::has_ShapeShifter() )
 	{
 		printf( "%s" "68K emulation:          ShapeShifter\n", blank );
 		blank = "";
 	}
-	else if ( in_SheepShaver() )
+	else if ( mac::sys::has_SheepShaver() )
 	{
 		printf( "%s" "PPC emulation:          SheepShaver\n", blank );
 		blank = "";
 	}
-	else if ( in_QEMU() )
+	else if ( mac::sys::has_QEMU() )
 	{
 		printf( "%s" "PPC emulation:          QEMU\n", blank );
 		blank = "";
 	}
 	
-	if ( TARGET_CPU_PPC  &&  TARGET_API_MAC_CARBON  &&  ! bbox )
+	if ( TARGET_CPU_PPC  &&  TARGET_API_MAC_CARBON )
 	{
-		if ( gestalt( 'ppcf' ) == 0x0011 )
+		if ( mac::sys::has_Rosetta() )
 		{
 			printf( "%s" "PPC emulation:          Rosetta\n", blank );
 			blank = "";
