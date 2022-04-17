@@ -487,6 +487,11 @@ void virt_env()
 		printf( "%s" "Paravirtualization:     Blue Box\n", blank );
 		blank = "";
 	}
+	else if ( mac::sys::has_MacOnLinux() )
+	{
+		printf( "%s" "Paravirtualization:     Mac-on-Linux\n", blank );
+		blank = "";
+	}
 	
 	if ( TARGET_CPU_68K  &&  sysa == 2 )
 	{
