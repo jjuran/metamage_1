@@ -11,18 +11,15 @@
 // Standard C
 #include <string.h>
 
+// mac-sys-utils
+#include "mac_sys/has/Darwin_kernel.hh"
+
 // gear
 #include "gear/find.hh"
-
-// MacFeatures
-#include "MacFeatures/Features.hh"
 
 
 namespace Genie
 {
-	
-	using MacFeatures::Has_OSXSystem;
-	
 	
 	enum
 	{
@@ -30,8 +27,8 @@ namespace Genie
 		sigTextWrangler = '!Rch'
 	};
 	
-	::OSType gTextFileCreator = Has_OSXSystem() ? sigTextWrangler
-	                                            : sigBBEdit;
+	OSType gTextFileCreator = mac::sys::has_Darwin_kernel() ? sigTextWrangler
+	                                                        : sigBBEdit;
 	
 	
 	struct ExtensionToTypeRecord

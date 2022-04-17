@@ -11,6 +11,7 @@
 
 // mac-sys-utils
 #include "mac_sys/has/FSSpec_calls.hh"
+#include "mac_sys/has/native_Carbon.hh"
 #include "mac_sys/has/RealTempMemory.hh"
 #include "mac_sys/mem_error.hh"
 
@@ -20,9 +21,6 @@
 // Nitrogen
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Resources.hh"
-
-// MacFeatures
-#include "MacFeatures/Features.hh"
 
 // MacIO
 #include "MacIO/FSRead_Sync.hh"
@@ -346,7 +344,7 @@ namespace Genie
 			return ReadImageFromFile( file );
 		}
 		
-		if ( MacFeatures::Is_Running_OSXNative() )
+		if ( mac::sys::has_native_Carbon() )
 		{
 			// kPrivateCFragCopy is broken on OS X as early as 10.2.8
 			return ReadImageFromFile( file );

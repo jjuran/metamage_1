@@ -27,6 +27,8 @@
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
 #include "mac_sys/gestalt.hh"
+#include "mac_sys/has/BlueBox.hh"
+#include "mac_sys/has/native_Carbon.hh"
 #include "mac_sys/volume_params.hh"
 
 // mac-file-utils
@@ -49,10 +51,6 @@
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Processes.hh"
 #include "Nitrogen/Resources.hh"
-
-// MacFeatures
-#include "MacFeatures/BlueBoxed.hh"
-#include "MacFeatures/Features.hh"
 
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"
@@ -729,7 +727,7 @@ namespace Genie
 		OSErr unlockErr = ::HRstFLock( file.vRefNum, file.parID, file.name );
 		OSErr deleteErr = ::HDelete  ( file.vRefNum, file.parID, file.name );
 		
-		if ( MacFeatures::Is_Running_OSXNative()  &&  unlockErr == noErr  &&  deleteErr == fBsyErr )
+		if ( mac::sys::has_native_Carbon()  &&  unlockErr == noErr  &&  deleteErr == fBsyErr )
 		{
 			// If we're on OS X and the file was busy, try the native unlink().
 			
@@ -870,7 +868,7 @@ namespace Genie
 	{
 		FSSpec linkSpec = vfs::FSSpec_from_node( linkFile );
 		
-		if ( MacFeatures::Is_Running_OSXNative() )
+		if ( mac::sys::has_native_Carbon() )
 		{
 			create_native_symlink( linkSpec, targetPath.c_str() );
 			
@@ -1114,7 +1112,7 @@ namespace Genie
 		
 		FSpGetCatInfo< FNF_Returns >( cInfo, async, dir.vRefNum, dir.dirID, macName, 0 );
 		
-		if ( MacFeatures::Is_BlueBoxed()  &&  is_possibly_masked_symlink( cInfo ) )
+		if ( mac::sys::has_BlueBox()  &&  is_possibly_masked_symlink( cInfo ) )
 		{
 			FSSpec spec;
 			
@@ -1243,7 +1241,9 @@ namespace Genie
 		
 		long dirID = cInfo.dirInfo.ioDrDirID;
 		
-		const bool async = !TARGET_CPU_68K && mac::sys::item_is_on_server( item ) && !MacFeatures::Is_BlueBoxed();
+		const bool async = ! TARGET_CPU_68K                     &&
+		                   mac::sys::item_is_on_server( item )  &&
+		                   ! mac::sys::has_BlueBox();
 		
 		if ( async )
 		{

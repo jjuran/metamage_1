@@ -10,12 +10,10 @@
 
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
+#include "mac_sys/has/BlueBox.hh"
 
 // plus
 #include "plus/pointer_to_function.hh"
-
-// MacFeatures
-#include "MacFeatures/BlueBoxed.hh"
 
 // MacIO
 #include "MacIO/FSMakeFSSpec_Async.hh"
@@ -141,7 +139,7 @@ namespace Genie
 		// the completion routine only delays the crash instead of avoiding it.
 		// Apparently this is a bug in the .BlueBoxShared driver.
 		
-		if ( TARGET_CPU_68K  ||  !async  ||  MacFeatures::Is_BlueBoxed() )
+		if ( TARGET_CPU_68K  ||  ! async  ||  mac::sys::has_BlueBox() )
 		{
 			return MacIO::GetCatInfo< Policy >( pb, vRefNum, dirID, name, index );
 		}

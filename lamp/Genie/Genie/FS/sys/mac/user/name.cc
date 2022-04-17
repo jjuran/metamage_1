@@ -22,15 +22,15 @@
 #endif
 #endif
 
+// mac-sys-utils
+#include "mac_sys/has/native_Carbon.hh"
+
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
 
 // Nitrogen
 #include "Nitrogen/CFBase.hh"
-
-// MacFeatures
-#include "MacFeatures/Features.hh"
 
 // Genie
 #include "Genie/Utilities/CFStringGetStdString.hh"
@@ -42,9 +42,6 @@ namespace Genie
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	
-	
-	using MacFeatures::Is_Running_OSXNative;
 	
 	
 	static CFStringRef CSCopyUserName_CFM( Boolean useShortName )
@@ -75,7 +72,7 @@ namespace Genie
 	
 	static plus::string GetUserName( bool convert_to_UTF8 )
 	{
-		if ( !Is_Running_OSXNative() )
+		if ( ! mac::sys::has_native_Carbon() )
 		{
 			plus::string result = GetStringResource( -16096 );
 			
