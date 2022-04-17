@@ -26,38 +26,38 @@
 
 namespace mac {
 namespace sys {
+
+bool is_driver_open( const unsigned char* driver_name )
+{
+	const short count = get_unit_table_entry_count();
 	
-	bool is_driver_open( const unsigned char* driver_name )
+#if ! TARGET_API_MAC_CARBON
+	
+	for ( short unit = 0;  unit < count;  ++unit )
 	{
-		const short count = get_unit_table_entry_count();
+		DCtlHandle dceHandle = GetDCtlEntry( -unit );
 		
-	#if ! TARGET_API_MAC_CARBON
-		
-		for ( short unit = 0;  unit < count;  ++unit )
+		if ( dceHandle != NULL  &&  dceHandle[0]->dCtlDriver != NULL )
 		{
-			DCtlHandle dceHandle = GetDCtlEntry( -unit );
+			const int flags = dceHandle[0]->dCtlFlags;
+			const int inRAM = flags & dRAMBasedMask;
 			
-			if ( dceHandle != NULL  &&  dceHandle[0]->dCtlDriver != NULL )
+			DRVRHeader* drvr = inRAM ? *(DRVRHeader**) dceHandle[0]->dCtlDriver
+			                         :  (DRVRHeader* ) dceHandle[0]->dCtlDriver;
+			
+			ConstStr255Param name = drvr->drvrName;
+			
+			if ( ::EqualString( name, driver_name, false, true ) )
 			{
-				const int flags = dceHandle[0]->dCtlFlags;
-				const int inRAM = flags & dRAMBasedMask;
-				
-				DRVRHeaderPtr header = inRAM ? *(DRVRHeader**) dceHandle[0]->dCtlDriver
-				                             :  (DRVRHeader* ) dceHandle[0]->dCtlDriver;
-				
-				ConstStr255Param name = header->drvrName;
-				
-				if ( ::EqualString( name, driver_name, false, true ) )
-				{
-					return flags & dOpenedMask;
-				}
+				return flags & dOpenedMask;
 			}
 		}
-		
-	#endif
-		
-		return false;
 	}
 	
+#endif
+	
+	return false;
+}
+
 }
 }
