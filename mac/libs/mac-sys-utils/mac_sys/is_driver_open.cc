@@ -39,16 +39,17 @@ namespace sys {
 			
 			if ( dceHandle != NULL  &&  dceHandle[0]->dCtlDriver != NULL )
 			{
-				const bool ramBased = dceHandle[0]->dCtlFlags & dRAMBasedMask;
+				const int flags = dceHandle[0]->dCtlFlags;
+				const int inRAM = flags & dRAMBasedMask;
 				
-				DRVRHeaderPtr header = ramBased ? *reinterpret_cast< DRVRHeader** >( dceHandle[0]->dCtlDriver )
-				                                :  reinterpret_cast< DRVRHeader*  >( dceHandle[0]->dCtlDriver );
+				DRVRHeaderPtr header = inRAM ? *(DRVRHeader**) dceHandle[0]->dCtlDriver
+				                             :  (DRVRHeader* ) dceHandle[0]->dCtlDriver;
 				
 				ConstStr255Param name = header->drvrName;
 				
 				if ( ::EqualString( name, driver_name, false, true ) )
 				{
-					return dceHandle[0]->dCtlFlags & dOpenedMask;
+					return flags & dOpenedMask;
 				}
 			}
 		}
