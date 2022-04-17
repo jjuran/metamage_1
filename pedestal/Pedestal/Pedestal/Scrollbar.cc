@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// mac-sys-utils
+#include "mac_sys/has/Appearance.hh"
+
 // mac-qd-utils
 #include "mac_qd/globals/thePort_window.hh"
 
@@ -19,9 +22,6 @@
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Quickdraw.hh"
 
-// MacFeatures
-#include "MacFeatures/Appearance.hh"
-
 
 namespace Pedestal
 {
@@ -31,7 +31,7 @@ namespace Pedestal
 	
 	static inline N::ControlProcID GetControlProcIDForScrollbar()
 	{
-		const bool liveScrolling = MacFeatures::Has_Appearance();
+		const bool liveScrolling = mac::sys::has_Appearance();
 		
 		return liveScrolling ? Mac::kControlScrollBarLiveProc
 		                     : Mac::scrollBarProc;

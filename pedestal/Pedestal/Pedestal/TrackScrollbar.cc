@@ -21,6 +21,9 @@
 // mac-config
 #include "mac_config/upp-macros.hh"
 
+// mac-sys-utils
+#include "mac_sys/has/Appearance.hh"
+
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/thePort.hh"
@@ -28,9 +31,6 @@
 
 // Debug
 #include "debug/assert.hh"
-
-// MacFeatures
-#include "MacFeatures/Appearance.hh"
 
 // Pedestal
 #include "Pedestal/Scroller_beta.hh"
@@ -160,7 +160,7 @@ namespace Pedestal
 			case kControlIndicatorPart:
 				// The user clicked on the indicator
 				
-				if ( !MacFeatures::Has_Appearance() )
+				if ( ! mac::sys::has_Appearance() )
 				{
 					// Classic scrolling, handled specially.
 					
