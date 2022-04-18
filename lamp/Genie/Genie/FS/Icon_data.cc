@@ -298,18 +298,21 @@ namespace Genie
 		
 		if ( h == NULL )
 		{
-			h = N::NewHandle( n_bytes ).release();
-			
-			itsRef     = h;
-			itsDeleter = dispose_handle;
-			
-			itIsSet = true;
-			itIsPOD = true;
+			if ( (h = NewHandle( n_bytes )) )
+			{
+				itsRef     = h;
+				itsDeleter = dispose_handle;
+				
+				itIsSet = true;
+				itIsPOD = true;
+			}
 		}
 		else
 		{
-			N::SetHandleSize( h, n_bytes );
+			SetHandleSize( h, n_bytes );
 		}
+		
+		N::MemError();
 		
 		char* p = *h;
 		
