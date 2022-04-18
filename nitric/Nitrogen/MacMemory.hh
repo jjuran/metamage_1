@@ -289,11 +289,7 @@ namespace Nitrogen
 	inline void DisposeHandle( nucleus::owned< Handle > )  {}
 	
 	// 1117
-	inline void SetHandleSize( Handle h, std::size_t size )
-	{
-		::SetHandleSize( h, size );
-		MemError();
-	}
+	void SetHandleSize( Handle h, std::size_t size );
 	
 	// 1141
 	inline std::size_t GetHandleSize( Handle h )

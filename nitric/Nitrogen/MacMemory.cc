@@ -105,6 +105,12 @@ namespace Nitrogen
 		return result;
 	}
 	
+	void SetHandleSize( Handle h, std::size_t size )
+	{
+		::SetHandleSize( h, size );
+		MemError();
+	}
+	
 	
    void RegisterMemoryManagerErrors()
      {
