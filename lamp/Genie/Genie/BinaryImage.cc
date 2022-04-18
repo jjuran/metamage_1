@@ -401,16 +401,13 @@ namespace Genie
 		
 		// cacheEntry->image is NULL
 		
-		BinaryImageCacheEntry newEntry;
+		BinaryImageCacheEntry& newEntry = *cacheEntry;
 		
 		newEntry.metadata = metadata;
 		newEntry.image    = ReadImageFromFile( file );
 		
 		// Mark it purgeable for when we later unlock it
 		HPurge( newEntry.image.get() );
-		
-		// Install the new cache entry
-		*cacheEntry = newEntry;
 		
 		return newEntry.image;
 	}
