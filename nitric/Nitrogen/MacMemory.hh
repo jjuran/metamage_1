@@ -285,12 +285,6 @@ namespace Nitrogen
 		return size;
 	}
 	
-	template < class T >
-	inline std::size_t GetPtrArraySize( T* p )
-	{
-		return Nitrogen::GetPtrSize( Ptr( p ) ) / sizeof (T);
-	}
-	
 	// 1102
 	inline void DisposeHandle( nucleus::owned< Handle > )  {}
 	
@@ -301,24 +295,12 @@ namespace Nitrogen
 		MemError();
 	}
 	
-	template < class T >
-	inline void SetHandleArraySize( T** h, std::size_t elementCount )
-	{
-		Nitrogen::SetHandleSize( Handle( h ), elementCount * sizeof (T) );
-	}
-	
 	// 1141
 	inline std::size_t GetHandleSize( Handle h )
 	{
 		std::size_t size = ::GetHandleSize( h );
 		MemError();
 		return size;
-	}
-	
-	template < class T >
-	inline std::size_t GetHandleArraySize( T** h )
-	{
-		return Nitrogen::GetHandleSize( Handle( h ) ) / sizeof (T);
 	}
 	
 	enum Handle_Flags
