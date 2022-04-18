@@ -430,7 +430,7 @@ namespace Genie
 		
 		::Ptr const old_base = params.bitmap.baseAddr;
 		
-		const size_t old_size = old_base ? N::GetPtrSize( old_base ) : 0;
+		const size_t old_size = old_base ? GetPtrSize( old_base ) : 0;
 		
 		params.bits.reset();
 		

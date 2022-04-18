@@ -24,7 +24,7 @@ namespace Genie
 	static n::owned< CFragConnectionID > connect( const Mac::Handle  h,
 	                                              vfs::relix_entry*  main )
 	{
-		const std::size_t size = N::GetHandleSize( h );
+		const std::size_t size = GetHandleSize( h );
 		
 		return N::GetMemFragment< N::kPrivateCFragCopy >( *h,
 		                                                  size,

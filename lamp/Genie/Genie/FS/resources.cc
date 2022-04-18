@@ -495,7 +495,7 @@ namespace Genie
 		
 		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 		
-		return N::GetHandleSize( r );
+		return GetHandleSize( r );
 	}
 	
 	static vfs::filehandle_ptr unrsrc_file_open( const vfs::node* that, int flags, mode_t mode )

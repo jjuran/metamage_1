@@ -144,7 +144,7 @@ namespace Genie
 		
 		BinaryImage data = new_handle( length );
 		
-		N::HLockHi( data );
+		HLockHi( data.get() );
 		
 		MacIO::FSRead( MacIO::kThrowEOF_Always,
 		               refNum,
@@ -176,7 +176,7 @@ namespace Genie
 		
 		BinaryImage code = N::DetachResource( N::Get1Resource( resType, resID ) );
 		
-		N::HLockHi( code.get() );
+		HLockHi( code.get() );
 		
 		return code;
 	}
@@ -323,7 +323,7 @@ namespace Genie
 		
 		if ( image.sole() && image.get() && *image.get() )
 		{
-			N::HUnlock( image.get() );
+			HUnlock( image.get() );
 		}
 	}
 	
@@ -383,7 +383,7 @@ namespace Genie
 				if ( *h )
 				{
 					// Make sure it's locked
-					N::HLockHi( h );
+					HLockHi( h );
 					
 					return image;
 				}
@@ -407,7 +407,7 @@ namespace Genie
 		newEntry.image    = ReadImageFromFile( file );
 		
 		// Mark it purgeable for when we later unlock it
-		N::HPurge( newEntry.image );
+		HPurge( newEntry.image.get() );
 		
 		// Install the new cache entry
 		*cacheEntry = newEntry;

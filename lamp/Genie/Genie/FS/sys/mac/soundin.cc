@@ -148,7 +148,7 @@ namespace Genie
 			
 			N::Handle icon = device.get().deviceIconHandle;
 			
-			const std::size_t size = N::GetHandleSize( icon );
+			const std::size_t size = GetHandleSize( icon );
 			
 			if ( size == 0 )
 			{
