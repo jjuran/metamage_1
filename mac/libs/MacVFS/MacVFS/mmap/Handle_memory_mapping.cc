@@ -6,16 +6,13 @@
 #include "MacVFS/mmap/Handle_memory_mapping.hh"
 
 // Nitrogen
-#ifndef NITROGEN_MACMEMORY_HH
-#include "Nitrogen/MacMemory.hh"
+#ifndef MAC_MEMORY_TYPES_HANDLE_HH
+#include "Mac/Memory/Types/Handle.hh"
 #endif
 
 
 namespace vfs
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	Handle_memory_mapping::Handle_memory_mapping( nucleus::owned< Mac::Handle >  h,
 	                                              Size                           size,
@@ -24,7 +21,7 @@ namespace vfs
 		memory_mapping( *h.get(), size, flags ),
 		its_handle( h )
 	{
-		N::HLock( its_handle );
+		HLock( its_handle.get() );
 	}
 	
 }
