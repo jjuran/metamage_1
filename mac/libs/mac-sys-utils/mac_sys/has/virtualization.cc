@@ -5,6 +5,12 @@
 
 #include "mac_sys/has/virtualization.hh"
 
+// Standard C
+#include <string.h>
+
+// mac-sys-utils
+#include "mac_sys/get_machine_name.hh"
+
 
 namespace mac {
 namespace sys {
@@ -72,6 +78,14 @@ bool has_MinivMac()
 #endif
 	
 	return false;
+}
+
+bool has_MacOnLinux_MacOSX()
+{
+	const unsigned char* name = "\p" "AAPL,MOL";
+	const unsigned char* mnam = get_machine_name();
+	
+	return memcmp( mnam, name, sizeof "AAPL,MOL" ) == 0;
 }
 
 }

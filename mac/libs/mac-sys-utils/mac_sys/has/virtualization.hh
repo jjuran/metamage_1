@@ -43,9 +43,25 @@ namespace sys {
 	}
 	
 	inline
-	bool has_MacOnLinux()
+	bool has_MacOnLinux_classicMacOS()
 	{
 		return is_driver_installed( "\p" ".MacOnLinuxVideo" );
+	}
+	
+	bool has_MacOnLinux_MacOSX();
+	
+	inline
+	bool has_MacOnLinux()
+	{
+		return
+		
+	#if TARGET_API_MAC_CARBON
+		
+			has_MacOnLinux_MacOSX()  ||
+		
+	#endif
+		
+			has_MacOnLinux_classicMacOS();
 	}
 	
 	inline
