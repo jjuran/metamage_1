@@ -135,10 +135,20 @@ struct tm* localtime_r( const time_t* time_p, struct tm* result )
 		return NULL;
 	}
 	
-	const long raw_field = get_dls_gmtdelta_field();
+	long delta = get_dls_gmtdelta_field();
+	
+	int tm_isdst = delta < 0;
 	
 	// Mask off DLS byte, and sign extend if negative
-	const long delta = (raw_field & 0x00FFFFFF) | (raw_field & 0x00800000) * 0xFF << 1;
+	
+	if ( delta & 0x00800000 )
+	{
+		delta |= 0xFF000000;
+	}
+	else
+	{
+		delta &= 0x00FFFFFF;
+	}
 	
 	time_t adjusted_time = *time_p + delta;
 	
@@ -147,7 +157,7 @@ struct tm* localtime_r( const time_t* time_p, struct tm* result )
 		return NULL;
 	}
 	
-	result->tm_isdst = (raw_field & 0x80000000) != 0;
+	result->tm_isdst = tm_isdst;
 	
 	return result;
 }
