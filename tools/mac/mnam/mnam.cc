@@ -27,13 +27,15 @@ int main( int argc, char** argv )
 		
 		*end = '\n';
 		
-		int err = write( STDOUT_FILENO, buffer, length + 1 );
+		ssize_t n = write( STDOUT_FILENO, buffer, length + 1 );
 		
-		if ( err )
+		if ( n != length + 1 )
 		{
-			return 1;
+			return 13;
 		}
+		
+		return 0;
 	}
 	
-	return 0;
+	return 1;
 }
