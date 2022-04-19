@@ -44,7 +44,6 @@
 #include "Genie/FS/sys/mac/unit.hh"
 #include "Genie/FS/sys/mac/xpram.hh"
 #endif
-#include "Genie/FS/sys/mac/time.hh"
 #include "Genie/FS/sys/mac/user.hh"
 #include "Genie/FS/sys/mac/vol.hh"
 
@@ -119,7 +118,6 @@ namespace Genie
 		
 		{ "machine", PREMAPPED( sys_mac_machine_Mappings ) },
 		{ "thread",  PREMAPPED( sys_mac_thread_Mappings  ) },
-		{ "time",    PREMAPPED( sys_mac_time_Mappings    ) },
 		{ "user",    PREMAPPED( sys_mac_user_Mappings    ) },
 		{ "vol",     PREMAPPED( sys_mac_vol_Mappings     ) },
 		
