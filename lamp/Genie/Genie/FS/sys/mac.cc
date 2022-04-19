@@ -34,7 +34,6 @@
 #include "Genie/FS/sys/mac/proc.hh"
 #include "Genie/FS/sys/mac/soundin.hh"
 #include "Genie/FS/sys/mac/thng.hh"
-#include "Genie/FS/sys/mac/thread.hh"
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 #include "Genie/FS/sys/mac/adb.hh"
 #include "Genie/FS/sys/mac/crm.hh"
@@ -115,7 +114,6 @@ namespace Genie
 		
 	#endif
 		
-		{ "thread",  PREMAPPED( sys_mac_thread_Mappings  ) },
 		{ "user",    PREMAPPED( sys_mac_user_Mappings    ) },
 		{ "vol",     PREMAPPED( sys_mac_vol_Mappings     ) },
 		
