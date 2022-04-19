@@ -3,13 +3,14 @@
  *	=======
  */
 
+// Mac OS
+#ifndef __OSUTILS__
+#include <OSUtils.h>
+#endif
+
 // Standard C
 #include "errno.h"
 #include "time.h"
-
-// POSIX
-#include <fcntl.h>
-#include <unistd.h>
 
 
 #pragma exceptions off
@@ -117,33 +118,14 @@ struct tm* gmtime( const time_t* time_p )
 	return gmtime_r( time_p, &static_tm );
 }
 
-static long get_dls_gmtdelta_field()
+static inline
+long get_dls_gmtdelta_field()
 {
-	const char* pathname = "/sys/mac/time/.~dls+gmt-delta";
+	MachineLocation location;
 	
-	int fd = open( pathname, O_RDONLY );
+	ReadLocation( &location );
 	
-	if ( fd < 0 )
-	{
-		return -1;
-	}
-	
-	long result;
-	
-	ssize_t n_read = read( fd, &result, sizeof result );
-	
-	const int saved_errno = errno;
-	
-	close( fd );
-	
-	errno = saved_errno;
-	
-	if ( n_read != sizeof result )
-	{
-		return -1;
-	}
-	
-	return result;
+	return location.u.gmtDelta;
 }
 
 struct tm* localtime_r( const time_t* time_p, struct tm* result )
@@ -154,11 +136,6 @@ struct tm* localtime_r( const time_t* time_p, struct tm* result )
 	}
 	
 	const long raw_field = get_dls_gmtdelta_field();
-	
-	if ( raw_field == -1 )
-	{
-		return NULL;
-	}
 	
 	// Mask off DLS byte, and sign extend if negative
 	const long delta = (raw_field & 0x00FFFFFF) | (raw_field & 0x00800000) * 0xFF << 1;
