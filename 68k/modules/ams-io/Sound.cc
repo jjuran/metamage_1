@@ -348,8 +348,6 @@ OSErr Sound_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 		goto done;
 	}
 	
-	pb->ioResult = 1;
-	
 	short saved_SR = disable_interrupts();
 	
 	Sound_timer_node.ready = &Sound_ready;

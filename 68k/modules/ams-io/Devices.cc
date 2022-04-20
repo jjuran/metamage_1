@@ -333,6 +333,8 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return pb->ioResult = err;
 	}
 	
+	pb->ioResult = ioInProgress;
+	
 	pb->qType   = ioQType;
 	pb->ioTrap &= ~0x8000;  // clear high bit to mark as unserviced
 	
