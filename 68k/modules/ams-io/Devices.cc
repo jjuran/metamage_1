@@ -367,7 +367,24 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	pb->qType   = ioQType;
 	pb->ioTrap &= ~0x8000;  // clear high bit to mark as unserviced
 	
-	Enqueue( (QElemPtr) pb, &dce->dCtlQHdr );
+	if ( (QElemPtr) pb != dce->dCtlQHdr.qTail )
+	{
+		Enqueue( (QElemPtr) pb, &dce->dCtlQHdr );
+	}
+	else
+	{
+		FATAL = "Driver I/O requested with already-queued parameter block";
+		
+	#define SP4   "    "
+	#define SP28  SP4 SP4 SP4 SP4 SP4 SP4 SP4
+		
+		DebugStr( "\p" "\n" SP28 "***  You have died.  ***" "\n" );
+		
+		asm
+		{
+			DC.W     _ExitToShell
+		}
+	}
 	
 	OSErr err = IONext( dce );
 	
