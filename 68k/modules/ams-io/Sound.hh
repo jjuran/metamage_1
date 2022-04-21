@@ -6,6 +6,11 @@
 #ifndef SOUND_HH
 #define SOUND_HH
 
+enum
+{
+	kSoundDriverRefNum = -4,
+};
+
 struct CntrlParam;
 struct DCtlEntry;
 struct IOParam;

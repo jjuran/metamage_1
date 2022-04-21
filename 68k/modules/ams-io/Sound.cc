@@ -294,7 +294,7 @@ void Sound_ready( timer_node* node )
 	
 	timer_scheduled = false;
 	
-	DCtlEntry* dce = *GetDCtlEntry( -4 );
+	DCtlEntry* dce = *GetDCtlEntry( kSoundDriverRefNum );
 	
 	IOParam* pb = (IOParam*) dce->dCtlQHdr.qHead;
 	
@@ -408,5 +408,5 @@ pascal void SysBeep_patch( short duration )
 	
 	SInt32 size = sizeof buffer;
 	
-	FSWrite( -4, &size, (Ptr) buffer );
+	FSWrite( kSoundDriverRefNum, &size, (Ptr) buffer );
 }
