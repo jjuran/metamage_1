@@ -149,7 +149,12 @@ OSErr IODone_handler( DCtlEntry* dce : __A1, OSErr err : __D0 )
 {
 	QElemPtr head = dce->dCtlQHdr.qHead;
 	
-	if ( OSErr err = Dequeue( head, &dce->dCtlQHdr ) )
+	IOParam* pb = (IOParam*) head;
+	
+	if ( false )
+	{
+	}
+	else if ( OSErr err = Dequeue( head, &dce->dCtlQHdr ) )
 	{
 		/*
 			Another IODone() call beat us to the punch.  Bail out now, so we
@@ -158,8 +163,6 @@ OSErr IODone_handler( DCtlEntry* dce : __A1, OSErr err : __D0 )
 		
 		return err;
 	}
-	
-	IOParam* pb = (IOParam*) head;
 	
 	IOComplete( pb, err );
 	
@@ -367,13 +370,15 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	pb->qType   = ioQType;
 	pb->ioTrap &= ~0x8000;  // clear high bit to mark as unserviced
 	
+#define IORWAQPB  "I/O requested with already-queued parameter block"
+	
 	if ( (QElemPtr) pb != dce->dCtlQHdr.qTail )
 	{
 		Enqueue( (QElemPtr) pb, &dce->dCtlQHdr );
 	}
 	else
 	{
-		FATAL = "Driver I/O requested with already-queued parameter block";
+		FATAL = "Driver " IORWAQPB;
 		
 	#define SP4   "    "
 	#define SP28  SP4 SP4 SP4 SP4 SP4 SP4 SP4
