@@ -151,8 +151,17 @@ OSErr IODone_handler( DCtlEntry* dce : __A1, OSErr err : __D0 )
 	
 	IOParam* pb = (IOParam*) head;
 	
-	if ( false )
+	if ( pb->ioRefNum == kSoundDriverRefNum  &&  pb->ioVersNum )
 	{
+		/*
+			This request has been multiply queued.  (Hi, Prince of Persia!)
+			Since we're not removing it from the queue this time, clear the
+			lock bit so IONext() will invoke the driver again.
+		*/
+		
+		--pb->ioVersNum;
+		
+		pb->ioTrap &= ~0x8000;
 	}
 	else if ( OSErr err = Dequeue( head, &dce->dCtlQHdr ) )
 	{
@@ -374,9 +383,19 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	if ( (QElemPtr) pb != dce->dCtlQHdr.qTail )
 	{
+		if ( pb->ioRefNum == kSoundDriverRefNum )
+		{
+			/*
+				Zero the reference count, but only for the .Sound driver.
+				Other drivers might use this field for their own purposes.
+			*/
+			
+			pb->ioVersNum = 0;
+		}
+		
 		Enqueue( (QElemPtr) pb, &dce->dCtlQHdr );
 	}
-	else
+	else if ( pb->ioRefNum != kSoundDriverRefNum )
 	{
 		FATAL = "Driver " IORWAQPB;
 		
@@ -389,6 +408,10 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		{
 			DC.W     _ExitToShell
 		}
+	}
+	else if ( ! pb->ioVersNum++ )
+	{
+		WARNING = ".Sound " IORWAQPB;
 	}
 	
 	OSErr err = IONext( dce );
