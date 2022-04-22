@@ -37,6 +37,9 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
+const short noQueueMask   = 1 << noQueueBit;
+const short asyncTrapMask = 1 << asyncTrpBit;
+
 static inline
 size_t byte_distance( const void* begin, const void* end )
 {
@@ -364,7 +367,12 @@ OSErr Sound_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 	
 done:
 	
-	IODone( dce, err );
+	const short immed = pb->ioTrap & noQueueMask;
+	
+	if ( ! immed )
+	{
+		IODone( dce, err );
+	}
 	
 	return err;
 }
@@ -387,7 +395,12 @@ short Sound_control( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
 			break;
 	}
 	
-	IODone( dce, err );
+	const short immed = pb->ioTrap & noQueueMask;
+	
+	if ( ! immed )
+	{
+		IODone( dce, err );
+	}
 	
 	return err;
 }
