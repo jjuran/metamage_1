@@ -12,12 +12,10 @@
 
 // log-of-war
 #include "logofwar/report.hh"
+#include "logofwar/print.hh"
 
 // quickdraw
 #include "qd/pack_bits.hh"
-
-// v68k
-#include "v68k/print.hh"
 
 // ams-common
 #include "callouts.hh"
@@ -27,7 +25,7 @@
 #pragma exceptions off
 
 
-using v68k::hex32_t;
+using logofwar::hex32_t;
 
 typedef Byte Op;
 
