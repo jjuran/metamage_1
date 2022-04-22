@@ -9,6 +9,12 @@
 namespace logofwar
 {
 	
+	enum hex32_t
+	{
+		hex32_min = 0,
+		hex32_max = 0xffffffff,
+	};
+	
 	void print( const char* s, unsigned n );
 	
 	void print( const char* s );
@@ -17,6 +23,14 @@ namespace logofwar
 	void print_hex( int x );
 	
 	inline void print( int x )  { print_dec( x ); }
+	
+	inline
+	void print( hex32_t x )
+	{
+		logofwar::print( "$" );
+		
+		logofwar::print_hex( x );
+	}
 	
 }
 
