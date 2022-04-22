@@ -19,6 +19,9 @@
 // log-of-war
 #include "logofwar/report.hh"
 
+// ams-common
+#include "interrupts.hh"
+
 // ams-io
 #include "Console.hh"
 #include "DRVR.hh"
@@ -324,9 +327,35 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		
 		if ( killIO )
 		{
-			while ( QElemPtr head = dce->dCtlQHdr.qHead )
+			if ( dce->dCtlQHdr.qHead )
 			{
-				IODone( dce, abortErr );
+				/*
+					It's time to kill I/O.  First we'll disable interrupts
+					just long enough to atomically steal the I/O queue nodes
+					without actually traversing the queue:
+				*/
+				
+				short saved_SR = disable_interrupts();
+				
+				QElemPtr head = dce->dCtlQHdr.qHead;
+				
+				dce->dCtlQHdr.qHead = NULL;
+				dce->dCtlQHdr.qTail = NULL;
+				
+				reenable_interrupts( saved_SR );
+				
+				/*
+					Code that runs at interrupt time can now queue new I/O
+					requests.  In the meantime, we'll complete all the old
+					requests that are being aborted by the KillIO call:
+				*/
+				
+				while ( IOParam* pb = (IOParam*) head )
+				{
+					head = pb->qLink;
+					
+					IOComplete( pb, abortErr );
+				}
 			}
 		}
 		
