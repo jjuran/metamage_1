@@ -25,6 +25,9 @@
 #include "reactor-gestalt.hh"
 
 
+const short noQueueMask   = 1 << noQueueBit;
+const short asyncTrapMask = 1 << asyncTrpBit;
+
 OSErr xIn_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 {
 	const int fd = dce->dCtlPosition;
@@ -59,7 +62,7 @@ OSErr xIn_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 	
 done:
 	
-	const short immed = pb->ioTrap & (1 << noQueueBit);
+	const short immed = pb->ioTrap & noQueueMask;
 	
 	if ( ! immed )
 	{
@@ -87,7 +90,7 @@ OSErr xOut_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 	
 done:
 	
-	const short immed = pb->ioTrap & (1 << noQueueBit);
+	const short immed = pb->ioTrap & noQueueMask;
 	
 	if ( ! immed )
 	{
@@ -180,7 +183,7 @@ OSErr xIn_status( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
 	
 done:
 	
-	const short immed = pb->ioTrap & (1 << noQueueBit);
+	const short immed = pb->ioTrap & noQueueMask;
 	
 	if ( ! immed )
 	{
