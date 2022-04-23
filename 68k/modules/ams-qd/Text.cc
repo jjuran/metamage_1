@@ -139,13 +139,13 @@ pascal short StdTxMeas_patch( short        n,
 	
 	const short* owTable = (short*) &rec.owTLoc + rec.owTLoc;
 	
-	const uint8_t missingChar = rec.lastChar + 1 - rec.firstChar;
+	const short missingChar = rec.lastChar + 1 - rec.firstChar;
 	
 	short result = 0;
 	
 	while ( --n >= 0 )
 	{
-		uint8_t c = *p++ - rec.firstChar;
+		short c = *p++ - rec.firstChar;
 		
 		if ( c > missingChar )
 		{
@@ -305,11 +305,11 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	
 	redraw_lock lock( port.portBits, dstRect );
 	
-	const uint8_t missingChar = rec.lastChar + 1 - rec.firstChar;
+	const short missingChar = rec.lastChar + 1 - rec.firstChar;
 	
 	while ( --n >= 0 )
 	{
-		uint8_t c = *p++ - rec.firstChar;
+		short c = *p++ - rec.firstChar;
 		
 		if ( c > missingChar )
 		{
@@ -387,7 +387,7 @@ pascal void MeasureText_patch( short count, const char* p, short* locs )
 	
 	const short* owTable = (short*) &rec.owTLoc + rec.owTLoc;
 	
-	const uint8_t missingChar = rec.lastChar + 1 - rec.firstChar;
+	const short missingChar = rec.lastChar + 1 - rec.firstChar;
 	
 	short width = 0;
 	
@@ -395,7 +395,7 @@ pascal void MeasureText_patch( short count, const char* p, short* locs )
 	
 	while ( --count >= 0 )
 	{
-		uint8_t c = *p++ - rec.firstChar;
+		short c = *p++ - rec.firstChar;
 		
 		if ( c == '\r' )
 		{
