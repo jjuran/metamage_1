@@ -27,27 +27,15 @@
 #pragma exceptions off
 
 
-static UniversalProcPtr old_LoadSeg;
 static UniversalProcPtr old_TEInit;
 
-static
-void LoadSeg_handler( short segnum : __D0 )
+static inline
+void install_patch( Handle h )
 {
-	const short target_segnum = 3;
-	
 	const int query_offset = 0x001b7e;
 	
-	Handle h;
-	
-	if ( segnum == target_segnum  &&  (h = GetResource( 'CODE', segnum )) )
+	if ( h  &&  GetHandleSize( h ) >= query_offset + sizeof (UInt32) )
 	{
-		const Size size = GetHandleSize( h );
-		
-		if ( size < query_offset + sizeof (UInt32) )
-		{
-			return;
-		}
-		
 		UInt32* p = (UInt32*) (*h + query_offset);
 		
 		if ( *p == 0x7c006018 )
@@ -60,24 +48,10 @@ void LoadSeg_handler( short segnum : __D0 )
 			*/
 			
 			*p = 0x70206024;
+			
+			HNoPurge( h );
 		}
 	}
-}
-
-static
-pascal asm void LoadSeg_patch( short segnum )
-{
-	LINK     A6,#0
-	MOVEM.L  D0-D2/A0-A1,-(SP)
-	
-	MOVE.W   8(A6),D0
-	JSR      LoadSeg_handler
-	
-	MOVEM.L  (SP)+,D0-D2/A0-A1
-	UNLK     A6
-	
-	MOVE.L   old_LoadSeg,-(SP)
-	RTS
 }
 
 static
@@ -87,9 +61,7 @@ void TEInit_handler()
 	{
 		ReleaseResource( h );
 		
-		old_LoadSeg = NGetTrapAddress( _LoadSeg, ToolTrap );
-		
-		NSetTrapAddress( (UniversalProcPtr) LoadSeg_patch, _LoadSeg, ToolTrap );
+		install_patch( Get1Resource( 'CODE', 3 ) );
 	}
 }
 
