@@ -8,6 +8,8 @@
 #include <string.h>
 
 // POSIX
+#include <fcntl.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 // Extended API Set, Part 2
@@ -19,13 +21,8 @@
 // more-libc
 #include "more/string.h"
 
-// poseven
-#include "poseven/functions/fstatat.hh"
-#include "poseven/functions/perror.hh"
-#include "poseven/functions/write.hh"
-
-// Orion
-#include "Orion/Main.hh"
+// more-posix
+#include "more/perror.hh"
 
 
 #ifndef AT_LINK_ALIAS
@@ -41,10 +38,7 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
-namespace tool
-{
-
-namespace p7 = poseven;
+#pragma exceptions off
 
 
 static
@@ -65,8 +59,7 @@ const char* basename( const char* pathname )
 	return pathname;
 }
 
-
-int Main( int argc, char** argv )
+int main( int argc, char** argv )
 {
 	bool symbolic = false;
 	bool aliased  = false;
@@ -114,7 +107,7 @@ int Main( int argc, char** argv )
 	
 	if (  misused )
 	{
-		p7::write( p7::stderr_fileno, STR_LEN( "Usage: ln " LN_OPTIONS " target [link]\n" ) );
+		write( STDERR_FILENO, STR_LEN( "Usage: ln " LN_OPTIONS " target [link]\n" ) );
 		
 		return 2;
 	}
@@ -139,9 +132,11 @@ int Main( int argc, char** argv )
 			
 			loc = basename( target );
 			
-			struct stat sb;
+			struct stat st;
 			
-			const bool exists = p7::fstatat( p7::fd_t( dirfd ), loc, sb );
+			int nok = fstatat( dirfd, loc, &st, 0 );
+			
+			const bool exists = nok == 0;
 			
 			if (( failed = exists ))
 			{
@@ -165,6 +160,12 @@ int Main( int argc, char** argv )
 				
 				loc = buffer;
 			}
+			else if ( errno != ENOENT )
+			{
+				more::perror( "ln", target );
+				
+				return 1;
+			}
 		}
 		else if ( errno == ENOENT )
 		{
@@ -181,7 +182,7 @@ int Main( int argc, char** argv )
 		
 		if ( failed )
 		{
-			p7::perror( "ln", loc );
+			more::perror( "ln", loc );
 			
 			return 1;
 		}
@@ -194,12 +195,10 @@ int Main( int argc, char** argv )
 	
 	if ( linked < 0 )
 	{
-		p7::perror( "ln", target );
+		more::perror( "ln", target );
 		
 		return 1;
 	}
 	
 	return 0;
-}
-
 }
