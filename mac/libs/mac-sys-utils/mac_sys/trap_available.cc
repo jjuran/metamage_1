@@ -15,12 +15,14 @@
 
 // Mac OS
 #ifdef __MACOS__
-#ifndef __PATCHES__
-#include <Patches.h>
-#endif
 #ifndef __TRAPS__
 #include <Traps.h>
 #endif
+#endif
+
+// mac-sys-utils
+#if ! TARGET_API_MAC_CARBON
+#include "mac_sys/trap_address.hh"
 #endif
 
 
@@ -33,8 +35,8 @@ namespace sys {
 	bool fewer_traps()
 	{
 		return TARGET_CPU_68K  &&
-		       GetToolboxTrapAddress( 0xA86E ) ==
-		       GetToolboxTrapAddress( 0xAA6E );
+		       get_trap_address( 0xA86E ) ==
+		       get_trap_address( 0xAA6E );
 	}
 	
 	static inline
@@ -44,15 +46,9 @@ namespace sys {
 	}
 	
 	static inline
-	TrapType get_trap_type( unsigned short trap )
-	{
-		return trap & 0x800 ? ToolTrap : OSTrap;
-	}
-	
-	static inline
 	UniversalProcPtr unimplemented()
 	{
-		return GetToolboxTrapAddress( _Unimplemented );
+		return get_trap_address( _Unimplemented );
 	}
 	
 	bool trap_available( unsigned short trap )
@@ -62,9 +58,7 @@ namespace sys {
 			return false;
 		}
 		
-		TrapType type = get_trap_type( trap );
-		
-		return NGetTrapAddress( trap, type ) != unimplemented();
+		return get_trap_address( trap ) != unimplemented();
 	}
 	
 #else
