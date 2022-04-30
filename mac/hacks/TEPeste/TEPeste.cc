@@ -7,9 +7,6 @@
 */
 
 // Mac OS
-#ifndef __EVENTS__
-#include <Events.h>
-#endif
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
@@ -23,26 +20,18 @@
 #include <Traps.h>
 #endif
 
-// Standard C/C++
-#include <cstring>
+// Standard C
+#include <string.h>
 
 // mac-sys-utils
 #include "mac_sys/delay.hh"
-
-// Silver
-#include "Silver/Install.hh"
-#include "Silver/Patch.hh"
-#include "Silver/Procs.hh"
-#include "Silver/Traps.hh"
+#include "mac_sys/trap_address.hh"
 
 
 #pragma exceptions off
 
 
-namespace Ag = Silver;
-
-using namespace Ag::Trap_ProcPtrs;
-
+static UniversalProcPtr old_TEPaste;
 
 static const char* gGags[] =
 {
@@ -73,7 +62,7 @@ static void Payload( TEHandle hTE )
 {
 	const char* gag = PickAGag( TickCount() % kCountOfGags );
 	
-	long len = std::strlen( gag );
+	long len = strlen( gag );
 	long start = hTE[0]->selStart;
 	
 	SysBeep( 30 );
@@ -87,29 +76,40 @@ static void Payload( TEHandle hTE )
 	mac::sys::delay( 30 );
 }
 
-namespace
+static
+void TEPaste_handler( TEHandle hTE )
 {
-	
-	void PatchedTEPaste( TEHandle hTE, TEPasteProcPtr nextHandler )
+	if ( (gLastTimeWasAGag = ShouldDoAGag()) )
 	{
-		if ( (gLastTimeWasAGag = ShouldDoAGag()) )
-		{
-			Payload( hTE );
-		}
-		
-		nextHandler( hTE );
+		Payload( hTE );
 	}
-	
 }
 
-static OSErr Installer()
+static
+pascal
+asm
+void TEPaste_patch( TEHandle hTE )
 {
-	Ag::TrapPatch< _TEPaste, PatchedTEPaste >::Install();
+	LINK     A6,#0
 	
-	return noErr;
+	MOVE.L   8(A6),-(SP)
+	JSR      TEPaste_handler
+	
+	UNLK     A6
+	
+	MOVEA.L  old_TEPaste,A0
+	JMP      (A0)
 }
 
 int main()
 {
-	return Ag::Install( Installer );
+	Handle self = Get1Resource( 'INIT', 0 );
+	
+	DetachResource( self );
+	
+	old_TEPaste = mac::sys::get_trap_address( _TEPaste );
+	
+	mac::sys::set_trap_address( (ProcPtr) TEPaste_patch, _TEPaste );
+	
+	return 0;
 }
