@@ -29,6 +29,9 @@
 #include <Traps.h>
 #endif
 
+// mac-sys-utils
+#include "mac_sys/trap_address.hh"
+
 // ams-common
 #include "callouts.hh"
 
@@ -181,9 +184,9 @@ pascal asm void TEInit_patch()
 
 int main()
 {
-	old_TEInit = NGetTrapAddress( _TEInit, ToolTrap );
+	old_TEInit = mac::sys::get_trap_address( _TEInit );
 	
-	NSetTrapAddress( (UniversalProcPtr) TEInit_patch, _TEInit, ToolTrap );
+	mac::sys::set_trap_address( (ProcPtr) TEInit_patch, _TEInit );
 	
 	return 0;
 }

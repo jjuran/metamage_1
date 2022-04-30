@@ -8,7 +8,7 @@
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
-	This is an application hot-patch to prevent a crash in Lode Runner
+	This is an application hot patch to prevent a crash in Lode Runner
 	due to an unmapped memory access when run in Advanced Mac Substitute.
 	
 	The problem is that Lode Runner's call to FindControl() is followed by
@@ -64,6 +64,9 @@
 #include <Traps.h>
 #endif
 
+// mac-sys-utils
+#include "mac_sys/trap_address.hh"
+
 
 #pragma exceptions off
 
@@ -116,9 +119,9 @@ pascal asm void TEInit_patch()
 
 int main()
 {
-	old_TEInit = NGetTrapAddress( _TEInit, ToolTrap );
+	old_TEInit = mac::sys::get_trap_address( _TEInit );
 	
-	NSetTrapAddress( (UniversalProcPtr) TEInit_patch, _TEInit, ToolTrap );
+	mac::sys::set_trap_address( (ProcPtr) TEInit_patch, _TEInit );
 	
 	return 0;
 }

@@ -36,6 +36,9 @@
 #include <Traps.h>
 #endif
 
+// mac-sys-utils
+#include "mac_sys/trap_address.hh"
+
 
 #pragma exceptions off
 
@@ -64,9 +67,9 @@ void TEInit_handler()
 	{
 		ReleaseResource( h );
 		
-		old_VInstall = NGetTrapAddress( _VInstall, OSTrap );
+		old_VInstall = mac::sys::get_trap_address( _VInstall );
 		
-		NSetTrapAddress( (UniversalProcPtr) VInstall_patch, _VInstall, OSTrap );
+		mac::sys::set_trap_address( (ProcPtr) VInstall_patch, _VInstall );
 	}
 }
 
@@ -83,9 +86,9 @@ pascal asm void TEInit_patch()
 
 int main()
 {
-	old_TEInit = NGetTrapAddress( _TEInit, ToolTrap );
+	old_TEInit = mac::sys::get_trap_address( _TEInit );
 	
-	NSetTrapAddress( (UniversalProcPtr) TEInit_patch, _TEInit, ToolTrap );
+	mac::sys::set_trap_address( (ProcPtr) TEInit_patch, _TEInit );
 	
 	return 0;
 }
