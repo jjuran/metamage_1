@@ -15,16 +15,20 @@
 #include <MachineExceptions.h>
 #endif
 
-// Silver
+// mac-sys-utils
 #if TARGET_CPU_68K
-#include "Silver/Patch.hh"
-#include "Silver/Procs.hh"
-#include "Silver/Traps.hh"
+#include "mac_sys/trap_address.hh"
 #endif
 
 // relix
 #include "relix/glue/exceptions.hh"
 #include "relix/glue/system_call.68k.hh"
+
+
+#pragma exceptions off
+
+
+struct EventRecord;
 
 
 namespace relix
@@ -34,9 +38,6 @@ namespace relix
 	
 	
 #if TARGET_CPU_68K
-	
-	namespace Ag = Silver;
-	
 	
 	extern void* gExceptionVectorTable[];
 	extern void* gExceptionUserHandlerTable[];
@@ -170,42 +171,75 @@ namespace relix
 	}
 	
 	
-	struct GetNextEvent_Patch
+	enum
 	{
-		static short Code( EventMask eventMask, EventRecord* theEvent, Ag::GetNextEventProcPtr nextHandler );
+		_ExitToShell  = 0xA9F4,
+		_GetNextEvent = 0xA970,
+		
+		_SetToolTrapAddress = 0xA647,
 	};
 	
-	short GetNextEvent_Patch::Code( EventMask eventMask, EventRecord* theEvent, Ag::GetNextEventProcPtr nextHandler )
+	static UniversalProcPtr old_ExitToShell;
+	static UniversalProcPtr old_GetNextEvent;
+	
+	static
+	asm
+	void ExitToShell_patch()
 	{
-		remove_68k_exception_handlers();
+		LINK     A6,#0
 		
-		short result = nextHandler( eventMask, theEvent );
+		JSR      remove_68k_exception_handlers
 		
-		install_68k_exception_handlers();
+		MOVEA.L  old_GetNextEvent,A0
+		MOVE.W   #0xA970,D0
+		_SetToolTrapAddress
 		
-		return result;
+		MOVEA.L  old_ExitToShell,A0
+		MOVE.W   #0xA9F4,D0
+		_SetToolTrapAddress
+		
+		UNLK     A6
+		JMP      (A0)
 	}
 	
-	struct ExitToShell_Patch
+	static
+	pascal
+	asm
+	short GetNextEvent_patch( short eventMask, EventRecord* event )
 	{
-		static void Code( Ag::ExitToShellProcPtr nextHandler )
-		{
-			Ag::TrapPatch< _GetNextEvent, GetNextEvent_Patch::Code >::Remove();
-			Ag::TrapPatch< _ExitToShell,  ExitToShell_Patch::Code  >::Remove();
-			
-			remove_68k_exception_handlers();
-			
-			nextHandler();
-		}
-	};
-	
+		MOVEA.L  (SP)+,A1  // pop return address
+		MOVEA.L  (SP)+,A0  // pop event
+		MOVE.W   (SP)+,D0  // pop eventMask
+		
+		MOVE.L   A1,-(SP)  // re-push the return address
+		
+		LINK     A6,#-2    // space for GetNextEvent() result
+		
+		MOVE.W   D0,-(SP)  // push GetNextEvent() arguments early,
+		MOVE.L   A0,-(SP)  // since we use volatile registers
+		
+		JSR      remove_68k_exception_handlers
+		MOVEA.L  old_GetNextEvent,A0
+		JSR      (A0)
+		JSR      install_68k_exception_handlers
+		
+		MOVE.W   (SP),8(A6)  // store result
+		
+		UNLK     A6
+		RTS
+	}
 	
 	void InstallExceptionHandlers()
 	{
+		using namespace mac::sys;
+		
 		install_68k_exception_handlers();
 		
-		Ag::TrapPatch< _ExitToShell,  ExitToShell_Patch::Code  >::Install();
-		Ag::TrapPatch< _GetNextEvent, GetNextEvent_Patch::Code >::Install();
+		old_ExitToShell  = get_trap_address( _ExitToShell  );
+		old_GetNextEvent = get_trap_address( _GetNextEvent );
+		
+		set_trap_address( (ProcPtr) &ExitToShell_patch,  _ExitToShell  );
+		set_trap_address( (ProcPtr) &GetNextEvent_patch, _GetNextEvent );
 	}
 	
 #endif
