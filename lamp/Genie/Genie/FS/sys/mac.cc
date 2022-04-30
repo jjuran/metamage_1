@@ -37,7 +37,6 @@
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 #include "Genie/FS/sys/mac/adb.hh"
 #include "Genie/FS/sys/mac/crm.hh"
-#include "Genie/FS/sys/mac/crsr.hh"
 #include "Genie/FS/sys/mac/drive.hh"
 #include "Genie/FS/sys/mac/unit.hh"
 #include "Genie/FS/sys/mac/xpram.hh"
@@ -89,8 +88,6 @@ namespace Genie
 		{ "crm",  PREMAPPED( sys_mac_crm_Mappings  ) },
 		
 	#endif
-		
-		{ "crsr", PREMAPPED( sys_mac_crsr_Mappings ) },
 		
 	#if CONFIG_SYS_MAC_ADB
 		
