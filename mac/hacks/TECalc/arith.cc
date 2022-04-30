@@ -85,10 +85,10 @@ Doug
 *	the operator and the one or two operands.
 */
 
-#include <ctype.h>
-#include <null.h>
-
 #include <Sound.h>
+
+// iota
+#include "iota/char_types.hh"
 
 #define TOKEN char
 #define VALUE long
@@ -100,7 +100,7 @@ extern VALUE expression(const char* expr);
 #define peek() (*gExpression)
 #define consume() (*gExpression++)
 #define handle_eoi(p) 0
-#define class_ident(c) (isdigit(c))
+#define class_ident(c) (iota::is_digit(c))
 #define class_unary(c) ((c) == '-')
 
 static short class_binary(char c)

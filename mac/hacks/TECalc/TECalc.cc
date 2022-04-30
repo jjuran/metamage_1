@@ -7,11 +7,11 @@
 */
 
 // Mac OS
-#ifndef __EVENTS__
-#include <Events.h>
-#endif
 #ifndef __NUMBERFORMATTING__
 #include <NumberFormatting.h>
+#endif
+#ifndef __RESOURCES__
+#include <Resources.h>
 #endif
 #ifndef __SOUND__
 #include <Sound.h>
@@ -23,73 +23,87 @@
 #include <Traps.h>
 #endif
 
-// Standard C/C++
-#include <cstring>
-
-// Silver
-#include "Silver/Install.hh"
-#include "Silver/Patch.hh"
-#include "Silver/Procs.hh"
-#include "Silver/Traps.hh"
+// mac-sys-utils
+#include "mac_sys/trap_address.hh"
 
 
 #pragma exceptions off
 
 
-namespace Ag = Silver;
-
-
 extern long expression( const char* expr );
 
 
-namespace
+static UniversalProcPtr old_TEKey;
+
+static
+Boolean TEKey_handler( char c : __D0, TEHandle hTE : __A0 )
 {
+	int start = hTE[0]->selStart;
+	int end   = hTE[0]->selEnd;
 	
-	void PatchedTEKey( short c, TEHandle hTE, Ag::TEKeyProcPtr nextHandler )
+	if ( c == '='  &&  start != end )
 	{
-		int start = hTE[0]->selStart;
-		int end   = hTE[0]->selEnd;
+		int len = end - start;
 		
-		if ( c == '='  &&  start != end )
+		if ( len > 255 )
 		{
-			int len = end - start;
+			::SysBeep( 30 );
 			
-			if ( len > 255 )
-			{
-				::SysBeep( 30 );
-				
-				return;
-			}
-			
-			char buf[256];
-			
-			std::memcpy( buf, *hTE[0]->hText, len );
-			buf[ len ] = '\0';
-			
-			long value = expression( buf );
-			
-			::NumToString( (short) value, (unsigned char*) buf );
-			
-			::TEDelete( hTE );
-			::TEInsert( buf + 1, buf[0], hTE );
-			::TESetSelect( start, start + buf[0], hTE );
+			return true;
 		}
-		else
-		{
-			nextHandler( c, hTE );
-		}
+		
+		char buf[256];
+		
+		BlockMoveData( *hTE[0]->hText, buf, len );
+		buf[ len ] = '\0';
+		
+		long value = expression( buf );
+		
+		::NumToString( (short) value, (unsigned char*) buf );
+		
+		::TEDelete( hTE );
+		::TEInsert( buf + 1, buf[0], hTE );
+		::TESetSelect( start, start + buf[0], hTE );
+		
+		return true;
 	}
 	
+	return false;
 }
 
-static OSErr Installer()
+static
+pascal
+asm
+void TEKey_patch( short c, TEHandle hTE )
 {
-	Ag::TrapPatch< _TEKey, PatchedTEKey >::Install();
+	LINK     A6,#0
 	
-	return noErr;
+	MOVE.W   12(A6),D0
+	MOVE.L   8(A6),A0
+	JSR      TEKey_handler
+	
+	UNLK     A6
+	
+	TST.B    D0
+	MOVEA.L  old_TEKey,A0
+	BEQ.S    pass
+	
+	MOVEA.L  (SP)+,A0  // pop return address
+	ADDQ.L   #6,SP     // pop arguments
+	
+pass:
+	JMP      (A0)
 }
 
 int main()
 {
-	return Ag::Install( Installer );
+	Handle self = Get1Resource( 'INIT', 0 );
+	
+	DetachResource( self );
+	
+	old_TEKey = mac::sys::get_trap_address( _TEKey );
+	
+	mac::sys::set_trap_address( (ProcPtr) TEKey_patch, _TEKey );
+	
+	return 0;
 }
