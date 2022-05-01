@@ -28,23 +28,18 @@
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
+#ifndef __TRAPS__
+#include <Traps.h>
+#endif
 
-// Standard C/C++
-#include <cstring>
-
-// Silver
-#include "Silver/Install.hh"
-#include "Silver/Patch.hh"
-#include "Silver/Procs.hh"
-#include "Silver/Traps.hh"
+// mac-sys-utils
+#include "mac_sys/trap_address.hh"
 
 
 #pragma exceptions off
 
 
-namespace Ag = Silver;
-
-using namespace Ag::Trap_ProcPtrs;
+GrafPtr WMgrPort : 0x09DE;
 
 
 static const char* gLastString;
@@ -70,10 +65,7 @@ static bool IsFinderInForeground()
 
 static bool IsPointingToTrash(Point pt)
 {
-	GrafPtr wMgrPort;
-	
-	GetWMgrPort( &wMgrPort );
-	Rect rect = wMgrPort->portRect;
+	Rect rect = WMgrPort->portRect;
 	
 	rect.bottom -= 32;
 	rect.right  -= 32;
@@ -264,28 +256,32 @@ static void Payload( EventRecord* theEvent )
 	}
 }
 
-namespace
-{
-	
-	short PatchedGetNextEvent( EventMask eventMask, EventRecord* theEvent, GetNextEventProcPtr nextHandler )
-	{
-		bool result = nextHandler( eventMask, theEvent );
-		
-		Payload( theEvent );
-		
-		return result;
-	}
-	
-}
+static UniversalProcPtr old_GetNextEvent;
 
-static OSErr Installer()
+typedef pascal short (*GetNextEventProcPtr)( EventMask, EventRecord* );
+
+static
+pascal
+short GetNextEvent_patch( EventMask eventMask, EventRecord* theEvent )
 {
-	Ag::TrapPatch< _GetNextEvent, PatchedGetNextEvent >::Install();
+	GetNextEventProcPtr nextHandler = (GetNextEventProcPtr) old_GetNextEvent;
 	
-	return noErr;
+	short result = nextHandler( eventMask, theEvent );
+	
+	Payload( theEvent );
+	
+	return result;
 }
 
 int main()
 {
-	return Ag::Install( Installer );
+	Handle self = Get1Resource( 'INIT', 0 );
+	
+	DetachResource( self );
+	
+	old_GetNextEvent = mac::sys::get_trap_address( _GetNextEvent );
+	
+	mac::sys::set_trap_address( (ProcPtr) GetNextEvent_patch, _GetNextEvent );
+	
+	return 0;
 }
