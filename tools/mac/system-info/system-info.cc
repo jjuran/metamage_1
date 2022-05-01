@@ -504,6 +504,11 @@ void virt_env()
 		printf( "%s" "68K emulation:          v68k\n", blank );
 		blank = "";
 	}
+	else if ( TARGET_CPU_68K  &&  mac::sys::has_Executor() )
+	{
+		printf( "%s" "68K emulation:          Executor\n", blank );
+		blank = "";
+	}
 	else if ( TARGET_CPU_68K  &&  mac::sys::has_MAE() )
 	{
 		printf( "%s" "68K emulation:          " MAE "\n", blank );
