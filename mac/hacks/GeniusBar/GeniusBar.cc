@@ -50,13 +50,6 @@ using namespace Ag::Trap_ProcPtrs;
 static const char* gLastString;
 
 
-static bool NeedToUpdateString( const char* s )
-{
-	gLastString = s;
-	
-	return std::strcmp( gLastString, s ) != 0;
-}
-
 static bool IsFinderInForeground()
 {
 	ProcessSerialNumber psn;
@@ -255,7 +248,7 @@ static void Payload( EventRecord* theEvent )
 	{
 		const char* str = GetGeniusString( theEvent );
 		
-		if ( NeedToUpdateString( str ) )
+		if ( str != gLastString )
 		{
 			if ( str == NULL )
 			{
@@ -265,6 +258,8 @@ static void Payload( EventRecord* theEvent )
 			{
 				DrawGeniusMessage( str );
 			}
+			
+			gLastString = str;
 		}
 	}
 }
