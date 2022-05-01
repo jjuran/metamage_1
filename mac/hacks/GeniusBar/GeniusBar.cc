@@ -202,17 +202,8 @@ static const char* GetGeniusString( EventRecord* theEvent )
 static void DrawGeniusMessage( const char* str )
 {
 	GrafPtr savePort;
-	GrafPtr wMgrPort = WMgrPort;
 	Rect rect;
 	RGBColor saveColor, menuColor;
-	long len = std::strlen( str );
-	
-	const bool color = mac::sys::trap_available( _GetCWMgrPort );
-	
-	if ( color )
-	{
-		GetCWMgrPort( (CGrafPtr*) &wMgrPort );
-	}
 	
 	GetPort( &savePort );
 	short mbarHeight = GetMBarHeight();
@@ -220,7 +211,16 @@ static void DrawGeniusMessage( const char* str )
 	rect.top = 1;
 	rect.bottom = mbarHeight - 2;
 	rect.left = 8;
-	rect.right = wMgrPort->portRect.right - 8;
+	rect.right = WMgrPort->portRect.right - 8;
+	
+	GrafPtr wMgrPort = WMgrPort;
+	
+	const bool color = mac::sys::trap_available( _GetCWMgrPort );
+	
+	if ( color )
+	{
+		GetCWMgrPort( (CGrafPtr*) &wMgrPort );
+	}
 	
 	SetPort( wMgrPort );
 	
@@ -235,7 +235,7 @@ static void DrawGeniusMessage( const char* str )
 	EraseRect( &rect );
 	
 	MoveTo( 8, mbarHeight - 6 );
-	DrawText( str, 0, len );
+	DrawText( str, 0, strlen( str ) );
 	
 	if ( color )
 	{
