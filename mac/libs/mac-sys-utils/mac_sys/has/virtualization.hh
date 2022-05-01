@@ -22,6 +22,20 @@ namespace sys {
 		return core_signature() == 'v68k';
 	}
 	
+	inline
+	bool has_Executor()
+	{
+	#ifdef __MC68K__
+		
+		const short& UnitNtryCnt = *(short*) 0x01D2;
+		
+		return UnitNtryCnt == 0;
+		
+	#endif
+		
+		return false;
+	}
+	
 	bool has_MinivMac();
 	
 	inline
