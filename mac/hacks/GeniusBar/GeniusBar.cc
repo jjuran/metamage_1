@@ -34,6 +34,7 @@
 
 // mac-sys-utils
 #include "mac_sys/trap_address.hh"
+#include "mac_sys/trap_available.hh"
 
 
 #pragma exceptions off
@@ -201,32 +202,46 @@ static const char* GetGeniusString( EventRecord* theEvent )
 static void DrawGeniusMessage( const char* str )
 {
 	GrafPtr savePort;
-	CGrafPtr cWMgrPort;
+	GrafPtr wMgrPort = WMgrPort;
 	Rect rect;
 	RGBColor saveColor, menuColor;
 	long len = std::strlen( str );
 	
+	const bool color = mac::sys::trap_available( _GetCWMgrPort );
+	
+	if ( color )
+	{
+		GetCWMgrPort( (CGrafPtr*) &wMgrPort );
+	}
+	
 	GetPort( &savePort );
-	GetCWMgrPort( &cWMgrPort );
 	short mbarHeight = GetMBarHeight();
 	
 	rect.top = 1;
 	rect.bottom = mbarHeight - 2;
 	rect.left = 8;
-	rect.right = cWMgrPort->portRect.right - 8;
+	rect.right = wMgrPort->portRect.right - 8;
 	
-	SetPort( (GrafPtr) cWMgrPort );
-	GetBackColor( &saveColor );
+	SetPort( wMgrPort );
 	
-	GetCPixel( 5, 5, &menuColor );
-	RGBBackColor( &menuColor );
+	if ( color )
+	{
+		GetBackColor( &saveColor );
+		
+		GetCPixel( 5, 5, &menuColor );
+		RGBBackColor( &menuColor );
+	}
 	
 	EraseRect( &rect );
 	
 	MoveTo( 8, mbarHeight - 6 );
 	DrawText( str, 0, len );
 	
-	RGBBackColor( &saveColor );
+	if ( color )
+	{
+		RGBBackColor( &saveColor );
+	}
+	
 	SetPort( savePort );
 }
 
