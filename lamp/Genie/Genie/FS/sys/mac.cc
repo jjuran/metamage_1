@@ -25,9 +25,7 @@
 #include "relix/config/mini.hh"
 
 // Genie
-#include "Genie/FS/sys/mac/desktop.hh"
 #include "Genie/FS/sys/mac/event.hh"
-#include "Genie/FS/sys/mac/gdev.hh"
 #include "Genie/FS/sys/mac/gestalt.hh"
 #include "Genie/FS/sys/mac/keys.hh"
 #include "Genie/FS/sys/mac/name.hh"
@@ -51,10 +49,6 @@
 
 #ifndef CONFIG_SYS_MAC_CRM
 #define CONFIG_SYS_MAC_CRM  (!CONFIG_MINI)
-#endif
-
-#ifndef CONFIG_SYS_MAC_GDEV
-#define CONFIG_SYS_MAC_GDEV  CONFIG_COLOR
 #endif
 
 #ifndef CONFIG_SYS_MAC_SOUNDIN
@@ -102,14 +96,7 @@ namespace Genie
 		
 	#endif
 		
-		{ "desktop", PREMAPPED( sys_mac_desktop_Mappings ) },
 		{ "event",   PREMAPPED( sys_mac_event_Mappings   ) },
-		
-	#if CONFIG_SYS_MAC_GDEV
-		
-		{ "gdev",    PREMAPPED( sys_mac_gdev_Mappings    ) },
-		
-	#endif
 		
 		{ "user",    PREMAPPED( sys_mac_user_Mappings    ) },
 		{ "vol",     PREMAPPED( sys_mac_vol_Mappings     ) },
