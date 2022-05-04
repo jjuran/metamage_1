@@ -540,7 +540,7 @@ void virt_env()
 		blank = "";
 	}
 	
-	if ( TARGET_CPU_PPC  &&  TARGET_API_MAC_CARBON )
+	if ( !! TARGET_CPU_PPC  &&  TARGET_API_MAC_CARBON )
 	{
 		if ( mac::sys::has_Rosetta() )
 		{
