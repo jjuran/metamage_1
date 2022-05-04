@@ -1,0 +1,68 @@
+#!/usr/bin/env minivx
+
+# This looks like a hot mess in Mac OS X 10.4, where the Terminal's fixed-width
+# font apparently lacks Unicode blocks and they're borrowed from some other
+# font, but end up wider than a column.
+#
+# In Mac OS X 10.5, the width is fixed but the lower half block doesn't extend
+# as far as the full block.  This persists through OS X 10.8.
+#
+# The lower half block is finally fixed in OS X 10.9.  However, the resulting
+# images remain marred by the leading space between lines of the terminal,
+# which in a white window resembles a printout with a failing cartridge or
+# clogged print head.
+#
+# Linux's fbdev console has full-height blocks that leave no space between
+# successive lines.  However, Debian 7 is missing the half-block character
+# glyphs and substitutes the missing character diamond.  In Debian 8 and 10,
+# the glyphs are present, but the lower half block is slightly taller than
+# the upper half block, resulting in an image that's arguably superior to any
+# of the prior alternatives, yet still mediocre.  (So close, yet so far...)
+
+let blocks = [ " ", "\u2584", "\u2580", "\u2588" ]
+
+def bitstrings { _ map { v "0", v "1" } }
+
+let binary-strings = bitstrings^8 [ "" ]
+
+def binarize (data)
+{
+	let bits = data map { *binary-strings[ int v ] }
+	
+	return str bits
+}
+
+def render_two_rows (a, b)
+{
+	assert a.length == b.length
+	
+	return 0 -> a.length map { blocks[ int a[[ v ]] * 2 + int b[[ v ]] ] }
+}
+
+def render (data)
+{
+	return [data / 16] map { str render_two_rows (binarize v / 2) }
+}
+
+let columns = 80
+let margin = (columns - 32) div 2
+let spaces = " " * margin
+
+let icon = IN.read 128
+let mask = IN.read 128 or x"ff" * 128
+
+let normal = render icon
+let masked = render (icon ~ mask)
+
+def columnify (a, b)
+{
+	assert a.length == b.length
+	
+	let space = " " * 4
+	
+	return 0 -> a.length map { space a[ v ] (space * 2) b[ v ] }
+}
+
+let rows = columnify (normal, masked)
+
+print "\n".join ("", *rows, "")
