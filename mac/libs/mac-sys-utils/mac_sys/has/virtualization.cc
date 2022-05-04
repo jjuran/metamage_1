@@ -85,7 +85,7 @@ bool has_MacOnLinux_MacOSX()
 	const unsigned char* name = "\p" "AAPL,MOL";
 	const unsigned char* mnam = get_machine_name();
 	
-	return memcmp( mnam, name, sizeof "AAPL,MOL" ) == 0;
+	return mnam  &&  memcmp( mnam, name, sizeof "AAPL,MOL" ) == 0;
 }
 
 }
