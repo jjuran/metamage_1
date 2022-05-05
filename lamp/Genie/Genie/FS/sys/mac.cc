@@ -25,7 +25,6 @@
 #include "relix/config/mini.hh"
 
 // Genie
-#include "Genie/FS/sys/mac/event.hh"
 #include "Genie/FS/sys/mac/gestalt.hh"
 #include "Genie/FS/sys/mac/keys.hh"
 #include "Genie/FS/sys/mac/name.hh"
@@ -95,8 +94,6 @@ namespace Genie
 		{ "xpram", &vfs::new_generated, (void*) &sys_mac_xpram::Read },
 		
 	#endif
-		
-		{ "event",   PREMAPPED( sys_mac_event_Mappings   ) },
 		
 		{ "user",    PREMAPPED( sys_mac_user_Mappings    ) },
 		{ "vol",     PREMAPPED( sys_mac_vol_Mappings     ) },
