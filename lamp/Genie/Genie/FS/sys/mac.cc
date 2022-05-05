@@ -26,7 +26,6 @@
 
 // Genie
 #include "Genie/FS/sys/mac/gestalt.hh"
-#include "Genie/FS/sys/mac/keys.hh"
 #include "Genie/FS/sys/mac/name.hh"
 #include "Genie/FS/sys/mac/proc.hh"
 #include "Genie/FS/sys/mac/soundin.hh"
@@ -102,8 +101,6 @@ namespace Genie
 		
 		{ ".mac-name", PROPERTY( sys_mac_macname ) },
 		{      "name", PROPERTY( sys_mac_name    ) },
-		
-		{ "keys", &vfs::new_generated, (void*) &sys_mac_keys::Read },
 		
 		{ "rom",     &vfs::new_sys_mac_rom     },
 		{ "bootrom", &vfs::new_sys_mac_bootrom },
