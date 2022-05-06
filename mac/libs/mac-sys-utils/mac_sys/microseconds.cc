@@ -30,19 +30,42 @@
 #include "math/integer.hh"
 
 // mac-sys-utils
-#include "mac_sys/trap_available.hh"
+#if TARGET_CPU_68K
+#include "mac_sys/trap_address.hh"
+#endif
 
 
 namespace mac {
 namespace sys {
 
+#if TARGET_CPU_68K
+
+static
+bool has_Microseconds_trap()
+{
+	/*
+		_MoveTo is A893 and _Microseconds is A193.  With a unified, compact
+		trap table, only the low byte is significant, so we have to make sure
+		that our check for _Microseconds doesn't yield a false positive from
+		_MoveTo.
+	*/
+	
+	UniversalProcPtr microseconds  = get_trap_address( _Microseconds  );
+	UniversalProcPtr moveto        = get_trap_address( _MoveTo        );
+	UniversalProcPtr unimplemented = get_trap_address( _Unimplemented );
+	
+	return microseconds != unimplemented  &&  microseconds != moveto;
+}
+
+static const bool has_Microseconds = has_Microseconds_trap();
+
+#endif
+
 void microseconds( unsigned long long* count )
 {
 #if TARGET_CPU_68K
 	
-	static const bool available = trap_available( _Microseconds );
-	
-	if ( ! available )
+	if ( ! has_Microseconds )
 	{
 		using math::integer::long_multiply;
 		
