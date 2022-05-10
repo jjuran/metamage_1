@@ -5,9 +5,6 @@
 
 #include "Genie/FS/sys/mac.hh"
 
-// mac-config
-#include "mac_config/adb.hh"
-
 // vfs
 #include "vfs/node.hh"
 #include "vfs/property.hh"
@@ -30,7 +27,6 @@
 #include "Genie/FS/sys/mac/soundin.hh"
 #include "Genie/FS/sys/mac/thng.hh"
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
-#include "Genie/FS/sys/mac/adb.hh"
 #include "Genie/FS/sys/mac/crm.hh"
 #include "Genie/FS/sys/mac/drive.hh"
 #include "Genie/FS/sys/mac/unit.hh"
@@ -39,10 +35,6 @@
 #include "Genie/FS/sys/mac/user.hh"
 #include "Genie/FS/sys/mac/vol.hh"
 
-
-#ifndef CONFIG_SYS_MAC_ADB
-#define CONFIG_SYS_MAC_ADB  (CONFIG_ADB  &&  ! CONFIG_MINI)
-#endif
 
 #ifndef CONFIG_SYS_MAC_CRM
 #define CONFIG_SYS_MAC_CRM  (!CONFIG_MINI)
@@ -77,12 +69,6 @@ namespace Genie
 	#if CONFIG_SYS_MAC_CRM
 		
 		{ "crm",  PREMAPPED( sys_mac_crm_Mappings  ) },
-		
-	#endif
-		
-	#if CONFIG_SYS_MAC_ADB
-		
-		{ "adb",   &New_FSTree_sys_mac_adb   },
 		
 	#endif
 		
