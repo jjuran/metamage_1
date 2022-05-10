@@ -105,19 +105,19 @@ namespace Genie
 	static
 	n::owned< N::Handle > new_handle( size_t size )
 	{
-		OSErr err;
 		Handle h;
-		
-		if (( h = NewHandle( size ) ))  goto done;
 		
 		if ( mac::sys::has_RealTempMemory() )
 		{
+			OSErr err;
+			
 			if (( h = TempNewHandle( size, &err ) ))  goto done;
 		}
-		else
-		{
-			err = mac::sys::mem_error();
-		}
+		
+		if (( h = NewHandle( size ) ))  goto done;
+		
+		OSErr err;
+		err = mac::sys::mem_error();
 		
 		Mac::ThrowOSStatus( err );
 		
