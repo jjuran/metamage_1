@@ -80,7 +80,7 @@ void set_cursor_location( Point location )
 }
 }
 
-#else
+#elif defined( __APPLE__ )
 
 int dummy;
 
