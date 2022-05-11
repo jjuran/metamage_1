@@ -152,7 +152,7 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 		Enchanted Scepters writes pairs of samples in reverse order,
 		so if we wait only until the last sample is written, we'll have
 		missed the one before it.  Instead, wait until both of the final
-		samples of been written to the buffer.
+		samples have been written to the buffer.
 	*/
 	
 	static int counter = 2;
