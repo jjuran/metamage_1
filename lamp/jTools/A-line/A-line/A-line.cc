@@ -72,9 +72,7 @@
 using namespace command::constants;
 
 using tool::OptionsRecord;
-using tool::Platform;
 using tool::BuildVariety;
-using tool::platformUnspecified;
 using tool::buildDefault;
 
 enum
