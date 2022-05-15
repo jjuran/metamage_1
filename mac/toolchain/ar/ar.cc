@@ -203,8 +203,6 @@ namespace tool
 		{
 			case mw::cpu_m68k:
 				command.push_back( "MWLink68K" );
-				command.push_back( "-model"    );
-				command.push_back( "far"       );
 				break;
 			
 			case mw::cpu_powerpc:
