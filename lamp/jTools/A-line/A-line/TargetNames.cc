@@ -37,7 +37,9 @@ namespace tool
 	{
 		switch ( rt )
 		{
+			case runtime_A4_near:        return "a4+near";
 			case runtimeA4CodeResource:  return "a4";
+			case runtime_A5_near:        return "a5+near";
 			case runtimeA5CodeSegments:  return "a5";
 			case runtimeCodeFragments:   return "cfm";
 			case runtimeMachO:           return "mach";

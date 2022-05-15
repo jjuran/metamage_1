@@ -94,10 +94,16 @@ enum Platform
 	platformMac  = 1 << 10,
 	platformUnix = 1 << 11,
 	
+	model_near = 1 << 12,
+	
+	runtime_A4_near = runtimeA4CodeResource | model_near,
+	runtime_A5_near = runtimeA5CodeSegments | model_near,
+	
 	archMask     = 0x0007,
 	runtimeMask  = 0x00F8,
 	apiMask      = 0x0300,
 	platformMask = 0x0C00,
+	model_mask   = 0x1000,
 };
 
 inline Platform operator&( Platform a, Platform b )

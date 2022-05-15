@@ -84,6 +84,7 @@ enum
 	Option_Blue    = 'B',
 	Option_Carbon  = 'C',
 	Option_CFM     = 'F',
+	Option_near    = 'N',
 	Option_MachO   = 'O',
 	Option_PPC     = 'P',
 	Option_release = 'R',
@@ -111,6 +112,8 @@ static command::option options[] =
 	{ "ppc", Option_PPC },
 	{ "x86", Option_x86 },
 	
+	{ "near", Option_near },
+	
 	{ "a4",    Option_A4    },
 	{ "a5",    Option_A5    },
 	{ "cfm",   Option_CFM   },
@@ -133,6 +136,7 @@ static OptionsRecord gOptions;
 static std::size_t global_job_limit = 1;
 
 static Platform arch    = platformUnspecified;
+static Platform model   = platformUnspecified;
 static Platform runtime = platformUnspecified;
 static Platform macAPI  = platformUnspecified;
 
@@ -180,6 +184,8 @@ static char* const* get_options( char* const* argv )
 			case Option_PPC:  arch = archPPC;  break;
 			case Option_x86:  arch = archX86;  break;
 			
+			case Option_near:  model = model_near;  break;
+			
 			case Option_A4:     runtime = runtimeA4CodeResource;  break;
 			case Option_A5:     runtime = runtimeA5CodeSegments;  break;
 			case Option_CFM:    runtime = runtimeCodeFragments;   break;
@@ -219,7 +225,7 @@ namespace tool
 	static inline plus::string MakeTargetName( const TargetInfo& info )
 	{
 		return MakeTargetName( info.platform & archMask,
-		                       info.platform & runtimeMask,
+		                       info.platform & (runtimeMask | model_mask),
 		                       info.platform & apiMask,
 		                       info.build );
 	}
@@ -651,7 +657,7 @@ namespace tool
 		
 	#endif
 		
-		Platform targetPlatform = arch | runtime | macAPI;
+		Platform targetPlatform = arch | model | runtime | macAPI;
 		
 		AddPendingSubproject( UserSrcTreePath() );
 		

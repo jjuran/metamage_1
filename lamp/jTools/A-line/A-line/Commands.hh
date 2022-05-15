@@ -55,6 +55,7 @@ namespace tool
 		TargetInfo target;
 		
 		bool m68k, ppc, x86;
+		bool pc_rel;  // model near
 		bool a4, a5, cfm, machO;
 		bool blue, carbon;
 		bool sym, debug;
@@ -66,6 +67,7 @@ namespace tool
 			m68k  ( target.platform & arch68K               ),
 			ppc   ( target.platform & archPPC               ),
 			x86   ( target.platform & archX86               ),
+			pc_rel( target.platform & model_near  &&  m68k  ),
 			a4    ( target.platform & runtimeA4CodeResource ),
 			a5    ( target.platform & runtimeA5CodeSegments ),
 			cfm   ( target.platform & runtimeCodeFragments  ),
@@ -143,6 +145,11 @@ namespace tool
 			if ( sym )
 			{
 				result.push_back( "-g" );
+			}
+			
+			if ( pc_rel )
+			{
+				result.push_back( "-mpcrel" );
 			}
 			
 			if ( m68k && cfm )

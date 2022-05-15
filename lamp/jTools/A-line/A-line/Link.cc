@@ -922,6 +922,11 @@ namespace tool
 			command.push_back( cmdgen.LinkerOptions() );
 		}
 		
+		if ( targetInfo.platform & model_near )
+		{
+			command.push_back( "-mpcrel" );
+		}
+		
 		plus::string outputDir = ProjectOutputDirPath( project.Name() );
 		
 		command.push_back( "-o" );

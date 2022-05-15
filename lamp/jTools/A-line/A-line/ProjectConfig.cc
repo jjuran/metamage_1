@@ -96,6 +96,8 @@ namespace tool
 		map[ "ppc" ] = archPPC;
 		map[ "x86" ] = archX86;
 		
+		map[ "near" ] = model_near;
+		
 		map[ "a4"     ] = runtimeA4CodeResource;
 		map[ "a5"     ] = runtimeA5CodeSegments;
 		map[ "cfm"    ] = runtimeCodeFragments;
