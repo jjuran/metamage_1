@@ -57,6 +57,12 @@ namespace sys {
 	}
 	
 	inline
+	bool has_RadiusRocket()
+	{
+		return gestalt_defined( 0x52518d32 );  // 'RQc2', except with a cedilla
+	}
+	
+	inline
 	bool has_MacOnLinux_classicMacOS()
 	{
 		return is_driver_installed( "\p" ".MacOnLinuxVideo" );
