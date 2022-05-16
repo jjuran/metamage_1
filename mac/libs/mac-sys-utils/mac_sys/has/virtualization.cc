@@ -61,17 +61,20 @@ bool has_MinivMac()
 	
 	if ( SonyVars  &&  ((uint32_t) SonyVars & 1) == 0 )
 	{
-		const uint32_t magic = 0x841339E2;
-		
-		const uint32_t* p = SonyVars->zeros;
-		
-		uint32_t zero = 0;
-		
-		zero |= *p++;
-		zero |= *p++;
-		zero |= *p++;
-		
-		return zero == 0  &&  SonyVars->magic == magic;
+		if ( is_driver_installed( "\p" ".Sony" ) )
+		{
+			const uint32_t magic = 0x841339E2;
+			
+			const uint32_t* p = SonyVars->zeros;
+			
+			uint32_t zero = 0;
+			
+			zero |= *p++;
+			zero |= *p++;
+			zero |= *p++;
+			
+			return zero == 0  &&  SonyVars->magic == magic;
+		}
 	}
 	
 #endif
