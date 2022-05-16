@@ -259,6 +259,11 @@ void host_env()
 		printf( "Host CPU machine name:  %s\n", machine_name );
 	}
 	
+	if ( TARGET_CPU_68K  &&  mac::sys::has_RadiusRocket() )
+	{
+		printf( "Cluster computing rig:  Radius Rocket\n" );
+	}
+	
 	if ( uint32_t rom = mac::sys::rom_size() )
 	{
 		rom /= 1024u;
