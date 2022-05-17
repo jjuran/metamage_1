@@ -251,6 +251,7 @@ namespace tool
 	{
 		kProductTool,
 		kProductCodeResource,
+		kProductDriverOrDA,
 		kProductSharedLib,
 		kProductApp
 	};
@@ -505,8 +506,12 @@ namespace tool
 					break;
 				
 				case 'INIT':
-				case 'DRVR':
 					gProductType = kProductCodeResource;
+					break;
+				
+				case 'DRVR':
+				case 'dfil':
+					gProductType = kProductDriverOrDA;
 					break;
 				
 				default:
@@ -617,6 +622,14 @@ namespace tool
 				
 				command.push_back( "-rsrcflags" );
 				command.push_back( "system"     );  // FIXME: Not all code rsrc are system
+				break;
+			
+			case kProductDriverOrDA:
+				command.push_back( "-xm"          );
+				command.push_back( "c"            );
+				command.push_back( "-custom"      );
+				command.push_back( "-main"        );
+				command.push_back( "_DRVR_header" );
 				break;
 			
 			case kProductSharedLib:
@@ -823,17 +836,29 @@ namespace tool
 			return exit_status;
 		}
 		
-		if ( arch == arch_m68k  &&  !gCFM68K  &&  gProductType == kProductTool )
+		if ( arch == arch_m68k  &&  ! gCFM68K )
 		{
-			const char *const postlink_argv[] =
+			if ( gProductType == kProductTool )
 			{
-				"postlink-68k-tool",
-				sym ? output_pathname : "--data-fork",
-				sym ? NULL            : output_pathname,
-				NULL
-			};
-			
-			p7::execvp( postlink_argv );
+				const char *const postlink_argv[] =
+				{
+					"postlink-68k-tool",
+					sym ? output_pathname : "--data-fork",
+					sym ? NULL            : output_pathname,
+					NULL
+				};
+				
+				p7::execvp( postlink_argv );
+			}
+			else if ( gProductType == kProductDriverOrDA )
+			{
+				const char *const postlink_argv[] =
+				{
+					"postlink-68k-drvr", output_pathname, NULL
+				};
+				
+				p7::execvp( postlink_argv );
+			}
 		}
 		
 		return exit_status;
