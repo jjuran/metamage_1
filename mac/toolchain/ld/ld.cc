@@ -408,10 +408,6 @@ namespace tool
 				{
 					output_pathname = *++argv;
 				}
-				else if ( std::strcmp( arg + 1, "object" ) == 0 )
-				{
-					gProductType = kProductCodeResource;
-				}
 				
 				break;
 			
