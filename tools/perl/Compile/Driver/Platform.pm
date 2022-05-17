@@ -10,6 +10,7 @@ my %Bit_for_label = qw
 	x86 2
 	arm 12
 	
+	near   13
 	a4     3
 	a5     4
 	cfm    5
