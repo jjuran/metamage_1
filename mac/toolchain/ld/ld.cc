@@ -400,6 +400,11 @@ namespace tool
 					command_args.push_back(    arg  );
 					command_args.push_back( *++argv );
 				}
+				else if ( strcmp( arg + 1, "rsrcname" ) == 0 )
+				{
+					command_args.push_back(    arg  );
+					command_args.push_back( *++argv );
+				}
 				
 				break;
 			
