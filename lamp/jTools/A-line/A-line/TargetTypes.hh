@@ -21,6 +21,7 @@ namespace tool
 		productTool,
 		productToolkit,
 		productINIT,
+		productDA,
 		productDriver
 	};
 	

@@ -292,6 +292,10 @@ namespace tool
 		{
 			return productINIT;
 		}
+		else if ( productName == "DA" )
+		{
+			return productDA;
+		}
 		else if ( productName == "driver" )
 		{
 			return productDriver;

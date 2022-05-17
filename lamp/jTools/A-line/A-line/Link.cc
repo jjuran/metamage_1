@@ -828,6 +828,14 @@ namespace tool
 				AugmentCommand( command, cmdgen.ResourceTypeAndID( "INIT=0" ) );
 				break;
 			
+			case productDA:
+				fileType = "dfil";
+				creator  = "MACS";
+				
+				AugmentCommand( command, cmdgen.ResourceTypeAndID( "DRVR=0" ) );
+				AugmentCommand( command, cmdgen.ResourceName     ( linkName.c_str() ) );
+				break;
+			
 			case productDriver:
 				fileType = "DRVR";
 				creator  = "RSED";
