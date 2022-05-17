@@ -32,6 +32,9 @@
 #include "mac_qd/wide_drag_area.hh"
 
 
+#pragma exceptions off
+
+
 #if TARGET_API_MAC_CARBON
 #define SystemTask()  /**/
 #define rDocProc noGrowDocProc
@@ -50,10 +53,10 @@ WindowRef make_window()
 	
 	Rect bounds = main_display_bounds();
 	
-	bounds.left  = (bounds.right - width) / 2;
+	bounds.left  = (bounds.right - width) / 2u;
 	bounds.right = bounds.left + width;
 	
-	bounds.top    = (bounds.bottom - height) / 3;
+	bounds.top    = (bounds.bottom - height) * 3 / 8u;
 	bounds.bottom = bounds.top + height;
 	
 	WindowRef window = NewWindow( NULL,
@@ -105,25 +108,25 @@ static button_desc buttons[] =
 	{ '.', 2, 4 },
 };
 
-static
+static inline
 short button_top( short y )
 {
 	return 26 + 6 + y * (16 + 6);
 }
 
-static
+static inline
 short button_left( short x )
 {
 	return 8 + x * (18 + 4);
 }
 
-static
+static inline
 short button_bottom( short y )
 {
 	return button_top( y ) + 16;
 }
 
-static
+static inline
 short button_right( short x )
 {
 	return button_left( x ) + 18;
@@ -221,8 +224,6 @@ int main()
 	InitCursor();
 	
 #endif
-	
-	SetEventMask( everyEvent );
 	
 	WindowRef main_window = make_window();
 	
