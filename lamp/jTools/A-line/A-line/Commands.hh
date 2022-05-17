@@ -186,8 +186,6 @@ namespace tool
 			return MakeCommand( "-rsrcname", name );
 		}
 		
-		const char* CustomDriverHeader() const  { return "-custom"; }
-		
 		// CodeWarrior only
 		const char* MWTargetSharedLibrary() const
 		{

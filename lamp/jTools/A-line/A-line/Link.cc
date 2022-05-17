@@ -798,8 +798,6 @@ namespace tool
 		
 		AugmentCommand( command, cmdgen.TargetArchitecture() );
 		
-		plus::string driverName;
-		
 		const char* fileType = NULL;
 		
 		plus::string creator  = project.CreatorCode();
@@ -831,15 +829,11 @@ namespace tool
 				break;
 			
 			case productDriver:
-				driverName = "." + project.Name();
-				
 				fileType = "DRVR";
 				creator  = "RSED";
 				
 				AugmentCommand( command, cmdgen.ResourceTypeAndID( "DRVR=0" ) );
-				AugmentCommand( command, cmdgen.ResourceName     ( driverName.c_str() ) );
-				
-				command.push_back( cmdgen.CustomDriverHeader() );
+				AugmentCommand( command, cmdgen.ResourceName     ( linkName.c_str() ) );
 				break;
 			
 		#endif
