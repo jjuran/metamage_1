@@ -13,6 +13,7 @@
 
 // mac-sys-utils
 #include "mac_sys/has/FSSpec_calls.hh"
+#include "mac_sys/res_error.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -110,7 +111,7 @@ namespace Genie
 		}
 		else
 		{
-			const OSErr err = ::ResError();
+			const OSErr err = mac::sys::res_error();
 			
 			if ( err != eofErr )
 			{
