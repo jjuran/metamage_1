@@ -9,6 +9,9 @@
 // Standard C/C++
 #include <cstdio>
 
+// mac-sys-utils
+#include "mac_sys/res_error.hh"
+
 // command
 #include "command/get_option.hh"
 
@@ -127,7 +130,7 @@ namespace tool
 				}
 				else
 				{
-					OSErr err = ResError();
+					OSErr err = mac::sys::res_error();
 					
 					if ( err != resNotFound )
 					{
