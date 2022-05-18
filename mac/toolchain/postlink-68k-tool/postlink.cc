@@ -12,17 +12,8 @@
 // iota
 #include "iota/strings.hh"
 
-// more-libc
-#include "more/string.h"
-
 // command
 #include "command/get_option.hh"
-
-// plus
-#include "plus/string.hh"
-
-// poseven
-#include "poseven/functions/truncate.hh"
 
 // Nitrogen
 #include "Nitrogen/Resources.hh"
@@ -144,7 +135,6 @@ namespace tool
 	
 	namespace N = Nitrogen;
 	namespace n = nucleus;
-	namespace p7 = poseven;
 	namespace Div = Divergence;
 	
 	
@@ -215,18 +205,22 @@ namespace tool
 			
 			code.reset();
 			
-			plus::string rsrc_path;
-			
-			const size_t len = strlen( target_path );
-			
-			char* p = rsrc_path.reset( len + STRLEN( "/rsrc" ) );
-			
-			const char* begin = p;
-			
-			p = (char*) mempcpy( p, target_path, len );
-			p = (char*) mempcpy( p, STR_LEN( "/rsrc" ) );
-			
-			p7::truncate( begin, 0 );
+			if ( err == noErr )
+			{
+				err = FSpOpenRF( &target_filespec, fsRdWrPerm, &refnum );
+				
+				if ( err == noErr )
+				{
+					err = SetEOF( refnum, 0 );
+					
+					OSErr err2 = FSClose( refnum );
+					
+					if ( err == noErr )
+					{
+						err = err2;
+					}
+				}
+			}
 			
 			return err > -125 ? -err : 125;
 		}
