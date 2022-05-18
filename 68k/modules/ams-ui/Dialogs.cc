@@ -44,6 +44,8 @@ long CaretTime : 0x02F4;
 
 WindowPeek WindowList  : 0x09D6;
 
+OSErr ResErr : 0x0A60;
+
 StringHandle DAStrings[ 4 ] : 0x0AA0;
 
 short DlgFont : 0x0AFA;
@@ -1123,7 +1125,7 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, ResID icon_id )
 	
 	if ( h == NULL )
 	{
-		return ResError();
+		return ResErr;
 	}
 	
 	AlertTHndl alert = (AlertTHndl) h;
@@ -1151,7 +1153,7 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, ResID icon_id )
 	
 	if ( h == NULL )
 	{
-		return ResError();
+		return ResErr;
 	}
 	
 	DetachResource( h );
