@@ -20,6 +20,7 @@
 
 // mac-sys-utils
 #include "mac_sys/has/IconUtilities.hh"
+#include "mac_sys/res_error.hh"
 
 
 namespace mac {
@@ -39,7 +40,7 @@ short plot_icon_id( const Rect& bounds, short id )
 		
 		return noErr;
 	}
-	else if ( OSErr err = ResError() )
+	else if ( OSErr err = mac::sys::res_error() )
 	{
 		return err;
 	}

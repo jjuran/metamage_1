@@ -24,6 +24,9 @@
 #include <Script.h>
 #endif
 
+// mac-sys-utils
+#include "mac_sys/res_error.hh"
+
 
 namespace mac {
 namespace app {
@@ -60,7 +63,7 @@ namespace app {
 		
 		FSpCreateResFile( &alias_file, creator, type, smSystemScript );
 		
-		if (( err = ResError() ))
+		if (( err = mac::sys::res_error() ))
 		{
 			return err;
 		}
@@ -69,7 +72,7 @@ namespace app {
 		
 		if ( res == -1 )
 		{
-			return ResError();
+			return mac::sys::res_error();
 		}
 		
 		AliasHandle h;
@@ -81,7 +84,7 @@ namespace app {
 		
 		AddResource( (Handle) h, rAliasType, 0, "\p" );
 		
-		if (( err = ResError() ))
+		if (( err = mac::sys::res_error() ))
 		{
 			DisposeHandle( (Handle) h );
 			
