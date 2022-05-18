@@ -3,6 +3,16 @@
 	--------
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifdef __MACOS__
+#include <Files.h>
+#endif
+
 // POSIX
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -16,6 +26,9 @@
 
 // iota
 #include "iota/char_types.hh"
+
+// mac-relix-utils
+#include "mac_relix/FSSpec_from_path.hh"
 
 // command
 #include "command/get_option.hh"
@@ -45,12 +58,7 @@
 // pfiles
 #include "pfiles/common.hh"
 
-#if defined( __MACOS__ ) || defined( __APPLE__ )
-
-// Divergence
-#include "Divergence/Utilities.hh"
-
-#else
+#ifndef __MACTYPES__
 
 typedef unsigned int OSType;
 
@@ -589,17 +597,17 @@ namespace tool
 			type = kUnknownType;
 			
 			FInfo info = { 0 };
+			FSSpec file;
 			
-			if ( !is_dir )
+			using mac::relix::FSSpec_from_existing_path;
+			
+			int typed = ! is_dir  &&
+			            ! FSSpec_from_existing_path( pathname.c_str(), file ) &&
+			            ! FSpGetFInfo( &file, &info );
+			
+			if ( typed )
 			{
-				FSSpec file = Divergence::ResolvePathToFSSpec( pathname.c_str() );
-				
-				::OSErr err = FSpGetFInfo( &file, &info );
-				
-				if ( err == noErr )
-				{
-					type = info.fdType;
-				}
+				type = info.fdType;
 			}
 			
 		#endif
