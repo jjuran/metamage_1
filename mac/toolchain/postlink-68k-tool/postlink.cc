@@ -3,6 +3,9 @@
 	-----------
 */
 
+// POSIX
+#include <unistd.h>
+
 // Standard C
 #include <stdlib.h>
 
@@ -19,9 +22,7 @@
 #include "plus/string.hh"
 
 // poseven
-#include "poseven/functions/open.hh"
 #include "poseven/functions/truncate.hh"
-#include "poseven/functions/write.hh"
 
 // Nitrogen
 #include "Nitrogen/Resources.hh"
@@ -188,14 +189,29 @@ namespace tool
 		
 		n::owned< N::Handle > code = Patch68KStartup( target_filespec );
 		
-		// System calls can move memory, so just lock the handle
-		N::HLock( code );
-		
 		if ( in_data )
 		{
-			p7::write( p7::open( target_path, p7::o_wronly ),
-			           *code.get().Get(),
-			           N::GetHandleSize( code ));
+			OSErr err;
+			short refnum;
+			
+			err = FSpOpenDF( &target_filespec, fsRdWrPerm, &refnum );
+			
+			if ( err == noErr )
+			{
+				Handle h = code.get();
+				Handle code = h;
+				
+				SInt32 size = GetHandleSize( code );
+				
+				err = FSWrite( refnum, &size, *code );
+				
+				OSErr err2 = FSClose( refnum );
+				
+				if ( err == noErr )
+				{
+					err = err2;
+				}
+			}
 			
 			code.reset();
 			
@@ -211,6 +227,8 @@ namespace tool
 			p = (char*) mempcpy( p, STR_LEN( "/rsrc" ) );
 			
 			p7::truncate( begin, 0 );
+			
+			return err > -125 ? -err : 125;
 		}
 		
 		return 0;
