@@ -89,6 +89,43 @@ static char* const* get_options( char* const* argv )
 	return argv;
 }
 
+static
+bool Patch68KStartupCode( Handle code )
+{
+	const UInt32 nopnop = 0x4e714e71;
+	const UInt32 jmp    = 0x4efa0000;
+	
+	UInt32* const saveRegisters = (UInt32*) (*code + 12);
+	UInt32* const setCurrentA4  = (UInt32*) (*code + 16);
+	UInt32* const loadStartToA0 = (UInt32*) (*code + 20);
+	UInt32* const moveAndStrip  = (UInt32*) (*code + 24);
+	UInt32* const setupMainRsrc = (UInt32*) (*code + 28);
+	UInt32* const restoreRegs   = (UInt32*) (*code + 32);
+	UInt32* const jmpToMain     = (UInt32*) (*code + 36);
+	
+	const bool is_far = *moveAndStrip == 0x2008A055;
+	
+	if ( ! is_far )
+	{
+		return true;
+	}
+	
+	if ( *jmpToMain == nopnop )
+	{
+		return false;
+	}
+	
+	*saveRegisters = *setCurrentA4  + 4;
+	*setCurrentA4  = *loadStartToA0 + 4;
+	*loadStartToA0 = *moveAndStrip;
+	*moveAndStrip  = *setupMainRsrc + 4;
+	*setupMainRsrc = *jmpToMain + 8;
+	*restoreRegs   = nopnop;
+	*jmpToMain     = nopnop;
+	
+	return true;
+}
+
 
 namespace tool
 {
@@ -98,42 +135,6 @@ namespace tool
 	namespace p7 = poseven;
 	namespace Div = Divergence;
 	
-	
-	static bool Patch68KStartupCode( ::Handle code )
-	{
-		const UInt32 nopnop = 0x4e714e71;
-		const UInt32 jmp    = 0x4efa0000;
-		
-		UInt32* const saveRegisters = reinterpret_cast< UInt32* >( *code + 12 );
-		UInt32* const setCurrentA4  = reinterpret_cast< UInt32* >( *code + 16 );
-		UInt32* const loadStartToA0 = reinterpret_cast< UInt32* >( *code + 20 );
-		UInt32* const moveAndStrip  = reinterpret_cast< UInt32* >( *code + 24 );
-		UInt32* const setupMainRsrc = reinterpret_cast< UInt32* >( *code + 28 );
-		UInt32* const restoreRegs   = reinterpret_cast< UInt32* >( *code + 32 );
-		UInt32* const jmpToMain     = reinterpret_cast< UInt32* >( *code + 36 );
-		
-		const bool is_far = *moveAndStrip == 0x2008A055;
-		
-		if ( ! is_far )
-		{
-			return true;
-		}
-		
-		if ( *jmpToMain == nopnop )
-		{
-			return false;
-		}
-		
-		*saveRegisters = *setCurrentA4  + 4;
-		*setCurrentA4  = *loadStartToA0 + 4;
-		*loadStartToA0 = *moveAndStrip;
-		*moveAndStrip  = *setupMainRsrc + 4;
-		*setupMainRsrc = *jmpToMain + 8;
-		*restoreRegs   = nopnop;
-		*jmpToMain     = nopnop;
-		
-		return true;
-	}
 	
 	static n::owned< N::Handle > Patch68KStartup( const FSSpec& file )
 	{
