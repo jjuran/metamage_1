@@ -3,6 +3,16 @@
 	-----------
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
+
 // POSIX
 #include <unistd.h>
 
@@ -14,9 +24,6 @@
 
 // command
 #include "command/get_option.hh"
-
-// Nitrogen
-#include "Nitrogen/Resources.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
@@ -133,23 +140,22 @@ bool Patch68KStartupCode( Handle code )
 namespace tool
 {
 	
-	namespace N = Nitrogen;
 	namespace Div = Divergence;
 	
 	
 	static
 	Handle Patch68KStartup()
 	{
-		N::ResType  resType = N::ResType( 'Tool' );
-		N::ResID    resID   = N::ResID  ( 0      );
+		Handle code = Get1Resource( 'Tool', 0 );
 		
-		N::Handle code = N::Get1Resource( resType, resID );
-		
-		const bool patched = Patch68KStartupCode( code.Get() );
-		
-		N::ChangedResource( code );
-		
-		N::WriteResource( code );
+		if ( code )
+		{
+			if ( const bool patched = Patch68KStartupCode( code ) )
+			{
+				ChangedResource( code );
+				WriteResource  ( code );
+			}
+		}
 		
 		return code;
 	}
