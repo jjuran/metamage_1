@@ -134,16 +134,14 @@ namespace tool
 {
 	
 	namespace N = Nitrogen;
-	namespace n = nucleus;
 	namespace Div = Divergence;
 	
 	
-	static n::owned< N::Handle > Patch68KStartup( const FSSpec& file )
+	static
+	Handle Patch68KStartup()
 	{
 		N::ResType  resType = N::ResType( 'Tool' );
 		N::ResID    resID   = N::ResID  ( 0      );
-		
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdWrPerm );
 		
 		N::Handle code = N::Get1Resource( resType, resID );
 		
@@ -153,7 +151,7 @@ namespace tool
 		
 		N::WriteResource( code );
 		
-		return N::DetachResource( code );
+		return code;
 	}
 	
 	
@@ -177,20 +175,25 @@ namespace tool
 			return 0;
 		}
 		
-		n::owned< N::Handle > code = Patch68KStartup( target_filespec );
+		short resfile = FSpOpenResFile( &target_filespec, fsRdWrPerm );
+		
+		if ( resfile <= 0 )
+		{
+			return 1;
+		}
+		
+		Handle code = Patch68KStartup();
+		
+		OSErr err;
 		
 		if ( in_data )
 		{
-			OSErr err;
 			short refnum;
 			
 			err = FSpOpenDF( &target_filespec, fsRdWrPerm, &refnum );
 			
 			if ( err == noErr )
 			{
-				Handle h = code.get();
-				Handle code = h;
-				
 				SInt32 size = GetHandleSize( code );
 				
 				err = FSWrite( refnum, &size, *code );
@@ -202,30 +205,30 @@ namespace tool
 					err = err2;
 				}
 			}
+		}
+		
+		CloseResFile( resfile );
+		
+		if ( in_data  &&  err == noErr )
+		{
+			short refnum;
 			
-			code.reset();
+			err = FSpOpenRF( &target_filespec, fsRdWrPerm, &refnum );
 			
 			if ( err == noErr )
 			{
-				err = FSpOpenRF( &target_filespec, fsRdWrPerm, &refnum );
+				err = SetEOF( refnum, 0 );
+				
+				OSErr err2 = FSClose( refnum );
 				
 				if ( err == noErr )
 				{
-					err = SetEOF( refnum, 0 );
-					
-					OSErr err2 = FSClose( refnum );
-					
-					if ( err == noErr )
-					{
-						err = err2;
-					}
+					err = err2;
 				}
 			}
-			
-			return err > -125 ? -err : 125;
 		}
 		
-		return 0;
+		return err > -125 ? -err : 125;
 	}
 	
 }
