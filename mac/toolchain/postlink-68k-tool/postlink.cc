@@ -33,6 +33,11 @@
 #include "Orion/Main.hh"
 
 
+#define PREFIX  "postlink-68k-tool: "
+
+#define ERROR( e, msg )  (wrote( 2, STR_LEN( PREFIX msg "\n" ) ) ? e : 13)
+
+
 using namespace command::constants;
 
 enum
@@ -58,6 +63,12 @@ static command::option options[] =
 static bool dry_run = false;
 static bool verbose = false;
 static bool in_data = false;
+
+static inline
+bool wrote( int fd, const void* buffer, size_t n )
+{
+	return write( fd, buffer, n ) == n;
+}
 
 static char* const* get_options( char* const* argv )
 {
@@ -163,9 +174,7 @@ namespace tool
 		
 		if ( argn == 0 )
 		{
-			p7::write( p7::stderr_fileno, STR_LEN( "postlink: argument required\n" ) );
-			
-			return 1;
+			ERROR( 50, "argument required" );
 		}
 		
 		const char* target_path = args[ 0 ];
