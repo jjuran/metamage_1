@@ -25,11 +25,14 @@
 // command
 #include "command/get_option.hh"
 
-// Divergence
-#include "Divergence/Utilities.hh"
+// mac-relix-utils
+#include "mac_relix/FSSpec_from_path.hh"
 
 // Orion
 #include "Orion/Main.hh"
+
+
+#pragma exceptions off
 
 
 #define PREFIX  "postlink-68k-tool: "
@@ -140,9 +143,6 @@ bool Patch68KStartupCode( Handle code )
 namespace tool
 {
 	
-	namespace Div = Divergence;
-	
-	
 	static
 	Handle Patch68KStartup()
 	{
@@ -174,7 +174,11 @@ namespace tool
 		
 		const char* target_path = args[ 0 ];
 		
-		FSSpec target_filespec = Div::ResolvePathToFSSpec( target_path );
+		FSSpec target_filespec;
+		if ( mac::relix::FSSpec_from_existing_path( target_path, target_filespec ) )
+		{
+			return 1;
+		}
 		
 		if ( dry_run )
 		{
