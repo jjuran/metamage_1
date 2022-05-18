@@ -13,8 +13,8 @@
 
 // Mac OS
 #if TARGET_API_MAC_CARBON
-#ifndef __MACMEMORY__
-#include <MacMemory.h>
+#ifndef __LOWMEM__
+#include <LowMem.h>
 #endif
 #endif
 
@@ -29,9 +29,11 @@ namespace sys {
 		
 		return *(short*) 0x220;  // MemErr
 		
-	#endif
+	#else
 		
-		return MemError();
+		return LMGetMemErr();
+		
+	#endif
 	}
 	
 }
