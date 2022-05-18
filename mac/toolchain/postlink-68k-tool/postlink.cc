@@ -25,9 +25,6 @@
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
 
-// Orion
-#include "Orion/Main.hh"
-
 
 #pragma exceptions off
 
@@ -138,106 +135,99 @@ bool Patch68KStartupCode( Handle code )
 	return true;
 }
 
-
-namespace tool
+static
+Handle Patch68KStartup()
 {
+	Handle code = Get1Resource( 'Tool', 0 );
 	
-	static
-	Handle Patch68KStartup()
+	if ( code )
 	{
-		Handle code = Get1Resource( 'Tool', 0 );
-		
-		if ( code )
+		if ( const bool patched = Patch68KStartupCode( code ) )
 		{
-			if ( const bool patched = Patch68KStartupCode( code ) )
-			{
-				ChangedResource( code );
-				WriteResource  ( code );
-			}
+			ChangedResource( code );
+			WriteResource  ( code );
 		}
-		
-		return code;
 	}
 	
+	return code;
+}
+
+int main( int argc, char** argv )
+{
+	char *const *args = get_options( argv );
 	
-	int Main( int argc, char** argv )
+	const int argn = argc - (args - argv);
+	
+	if ( argn == 0 )
 	{
-		char *const *args = get_options( argv );
+		ERROR( 50, "argument required" );
+	}
+	
+	const char* target_path = args[ 0 ];
+	
+	FSSpec target_filespec;
+	if ( mac::relix::FSSpec_from_existing_path( target_path, target_filespec ) )
+	{
+		return 1;
+	}
+	
+	if ( dry_run )
+	{
+		return 0;
+	}
+	
+	short resfile = FSpOpenResFile( &target_filespec, fsRdWrPerm );
+	
+	if ( resfile <= 0 )
+	{
+		return 1;
+	}
+	
+	Handle code = Patch68KStartup();
+	
+	OSErr err;
+	
+	if ( in_data )
+	{
+		short refnum;
 		
-		const int argn = argc - (args - argv);
+		err = FSpOpenDF( &target_filespec, fsRdWrPerm, &refnum );
 		
-		if ( argn == 0 )
+		if ( err == noErr )
 		{
-			ERROR( 50, "argument required" );
-		}
-		
-		const char* target_path = args[ 0 ];
-		
-		FSSpec target_filespec;
-		if ( mac::relix::FSSpec_from_existing_path( target_path, target_filespec ) )
-		{
-			return 1;
-		}
-		
-		if ( dry_run )
-		{
-			return 0;
-		}
-		
-		short resfile = FSpOpenResFile( &target_filespec, fsRdWrPerm );
-		
-		if ( resfile <= 0 )
-		{
-			return 1;
-		}
-		
-		Handle code = Patch68KStartup();
-		
-		OSErr err;
-		
-		if ( in_data )
-		{
-			short refnum;
+			SInt32 size = GetHandleSize( code );
 			
-			err = FSpOpenDF( &target_filespec, fsRdWrPerm, &refnum );
+			err = FSWrite( refnum, &size, *code );
+			
+			OSErr err2 = FSClose( refnum );
 			
 			if ( err == noErr )
 			{
-				SInt32 size = GetHandleSize( code );
-				
-				err = FSWrite( refnum, &size, *code );
-				
-				OSErr err2 = FSClose( refnum );
-				
-				if ( err == noErr )
-				{
-					err = err2;
-				}
+				err = err2;
 			}
 		}
+	}
+	
+	CloseResFile( resfile );
+	
+	if ( in_data  &&  err == noErr )
+	{
+		short refnum;
 		
-		CloseResFile( resfile );
+		err = FSpOpenRF( &target_filespec, fsRdWrPerm, &refnum );
 		
-		if ( in_data  &&  err == noErr )
+		if ( err == noErr )
 		{
-			short refnum;
+			err = SetEOF( refnum, 0 );
 			
-			err = FSpOpenRF( &target_filespec, fsRdWrPerm, &refnum );
+			OSErr err2 = FSClose( refnum );
 			
 			if ( err == noErr )
 			{
-				err = SetEOF( refnum, 0 );
-				
-				OSErr err2 = FSClose( refnum );
-				
-				if ( err == noErr )
-				{
-					err = err2;
-				}
+				err = err2;
 			}
 		}
-		
-		return err > -125 ? -err : 125;
 	}
 	
+	return err > -125 ? -err : 125;
 }
