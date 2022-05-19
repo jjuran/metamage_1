@@ -802,7 +802,11 @@ namespace tool
 		
 		const char* fileType = NULL;
 		
-		plus::string creator = project.CreatorCode();
+		plus::string creator  = project.CreatorCode();
+		
+		const plus::string& progName = project.ProgramName();
+		const plus::string& linkName = progName.empty() ? project.Name()
+		                                                : progName;
 		
 		switch ( product )
 		{
@@ -976,13 +980,6 @@ namespace tool
 		else
 		{
 			plus::string exeDir = outputDir;
-			
-			plus::string linkName = project.ProgramName();
-			
-			if ( linkName == "" )
-			{
-				linkName = project.Name();
-			}
 			
 			const bool app = ALINE_MAC_DEVELOPMENT  &&  product == productApplication;
 			
