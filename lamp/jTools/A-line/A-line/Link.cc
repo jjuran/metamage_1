@@ -804,15 +804,6 @@ namespace tool
 		
 		plus::string creator = project.CreatorCode();
 		
-	#if ALINE_MAC_DEVELOPMENT
-		
-		if ( creator.length() != sizeof 'Ctor' )
-		{
-			creator = "\?\?\?\?";
-		}
-		
-	#endif
-		
 		switch ( product )
 		{
 			case productToolkit:
@@ -854,6 +845,21 @@ namespace tool
 				
 				p7::throw_errno( EINVAL );
 		}
+		
+	#if ALINE_MAC_DEVELOPMENT
+		
+		const plus::string& specified_creator = project.CreatorCode();
+		
+		if ( ! specified_creator.empty() )
+		{
+			creator = specified_creator;
+		}
+		else if ( creator.empty() )
+		{
+			creator = "\?\?\?\?";
+		}
+		
+	#endif
 		
 		
 		const bool toolkit = n_tools > 0;
