@@ -35,12 +35,16 @@ extern "C" {
 #pragma options align=packed
 #endif
 
+#ifndef __SOUND__
+
 enum
 {
 	swMode = -1,  // square-wave synthesizer
 	ftMode =  1,  // four-tone synthesizer
 	ffMode =  0,  // free-form synthesizer
 };
+
+#endif
 
 /*
 	Square-wave synthesizer
