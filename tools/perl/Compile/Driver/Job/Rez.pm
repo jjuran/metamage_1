@@ -25,9 +25,18 @@ sub input_files
 	return @$r;
 }
 
+our $Rez;
+
 sub tool_name
 {
-	return "Rez";
+	if ( ! defined $Rez )
+	{
+		$Rez = "/Developer/Tools/Rez";
+		
+		$Rez = "Rez"  unless -e $Rez;
+	}
+	
+	return $Rez;
 }
 
 sub command
