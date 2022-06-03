@@ -41,6 +41,7 @@
 #include "varyx/mac/AESend.hh"
 #include "varyx/mac/Delay.hh"
 #include "varyx/mac/FSSpec.hh"
+#include "varyx/mac/Launch.hh"
 #include "varyx/mac/PackBits.hh"
 #include "varyx/mac/Sound.hh"
 #include "varyx/mac/Timer.hh"
@@ -179,6 +180,7 @@ int main( int argc, char** argv )
 	
 	define( FSSpec_vtype  );
 	
+	define( proc_LaunchApplication );
 	define( proc_PackBits );
 	define( proc_SysBeep );
 	define( proc_UnpackBits );
