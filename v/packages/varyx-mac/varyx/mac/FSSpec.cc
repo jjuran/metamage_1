@@ -59,8 +59,8 @@ namespace Div = Divergence;
 	a viable option either, since (a) FSSpecs should work in OS versions
 	like System 7, which don't have FSRef support, and (b) FSPathMakeRef()
 	uses Mac path syntax in classic Mac OS anyway.  FSMakeFSSpec() isn't
-	suitable either, again because conversion from Unix pathname is not the
-	OS-provided function does, and having Varyx do it would be confusing.
+	suitable either, again because conversion from Unix pathname is not what
+	the OS-provided function does, so having Varyx do it would be confusing.
 	
 	One could argue that the same is true of FSSpec itself, but in Mac OS
 	it's simply a struct name.  There are constructor functions, and FSSpec
