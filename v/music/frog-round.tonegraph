@@ -211,4 +211,4 @@ const vox4 = delayed^3 higher^2 voice
 
 const ensemble = [vox1, vox2, vox3, vox4] per multiplex
 
-const tonegraph = truncated ensemble map { v.key * 3/8 => v.value }
+const tonegraph = truncated ensemble map { v.key * 5/16 => v.value }
