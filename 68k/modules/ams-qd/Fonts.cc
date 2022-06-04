@@ -63,6 +63,19 @@ static FontRec** the_current_font_record;
 static FMOutput the_current_FMOutput;
 
 
+static inline
+Handle get_NFNT_or_FONT( short id )
+{
+	Handle h = GetResource( 'NFNT', id );
+	
+	if ( ! h )
+	{
+		h = GetResource( 'FONT', id );
+	}
+	
+	return h;
+}
+
 pascal void InitFonts_patch()
 {
 	ROMFont0 = NULL;
@@ -194,13 +207,11 @@ short new_resID_for_font_and_size( short font, short size )
 	return resID_for_font_and_size( font, size );
 }
 
-pascal unsigned char RealFont_patch( short num, short size )
+pascal Boolean RealFont_patch( short num, short size )
 {
 	const short id = new_resID_for_font_and_size( num, size );
 	
-	// Don't bother releasing the resource for now.
-	
-	return GetResource( 'NFNT', id )  ||  GetResource( 'FONT', id );
+	return get_NFNT_or_FONT( id ) != NULL;
 }
 
 pascal void SetFontLock_patch( Boolean locked )
@@ -275,11 +286,7 @@ pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 		
 		if ( resID != system_font_resID  ||  newFont == NULL )
 		{
-			if ( Handle h = GetResource( 'NFNT', resID ) )
-			{
-				newFont = (FontRec**) h;
-			}
-			else if ( Handle h = GetResource( 'FONT', resID ) )
+			if ( Handle h = get_NFNT_or_FONT( resID ) )
 			{
 				newFont = (FontRec**) h;
 			}
