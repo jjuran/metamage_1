@@ -957,10 +957,15 @@ pascal void DrawDialog_patch( DialogRef dialog )
 	
 	DialogPeek d = (DialogPeek) dialog;
 	
+	bool active = d->textH  &&  d->textH[0]->active;
+	
+	d->textH[0]->active = false;
+	
 	short n_items_1 = dialog_item_count_minus_one( d->items );
 	
 	const DialogItem* item = first_dialog_item( d->items );
 	
+	short edit_index = d->editField + 1;
 	short item_index = 1;
 	
 	do
@@ -989,9 +994,16 @@ pascal void DrawDialog_patch( DialogRef dialog )
 			{
 				Handle h = item->handle;
 				
+				if ( item_index == edit_index )
+				{
+					d->textH[0]->active = active;
+				}
+				
 				update_edit_record( d->textH, item );
 				
 				TEUpdate( &bounds, d->textH );
+				
+				d->textH[0]->active = false;
 				break;
 			}
 			
@@ -1029,6 +1041,8 @@ pascal void DrawDialog_patch( DialogRef dialog )
 		++item_index;
 	}
 	while ( --n_items_1 >= 0 );
+	
+	d->textH[0]->active = active;
 	
 	if ( const DialogItem* edit = get_editField( d ) )
 	{

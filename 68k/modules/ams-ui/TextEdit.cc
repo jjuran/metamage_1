@@ -250,14 +250,13 @@ void showhide_selection( TERec& te, bool show )
 		return;
 	}
 	
+	update_selRect( te );
 	toggle_selRect( te );
 }
 
 static inline
 void show_selection( TERec& te )
 {
-	update_selRect( te );
-	
 	showhide_selection( te, true );
 }
 
