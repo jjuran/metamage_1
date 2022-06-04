@@ -124,16 +124,12 @@ pascal void GetFNum_patch( const unsigned char* name, short* num )
 	if ( Handle h = GetNamedResource( 'FOND', name ) )
 	{
 		*num = family_from_FOND( h );
-		
-		ReleaseResource( h );
 		return;
 	}
 	
 	if ( Handle font = GetNamedResource( 'FONT', name ) )
 	{
 		GetResInfo( font, num, NULL, NULL );
-		
-		ReleaseResource( font );
 		
 		*num /= 128u;
 		return;
@@ -161,8 +157,6 @@ Handle find_FOND( short family )
 		{
 			return h;
 		}
-		
-		ReleaseResource( h );
 	}
 	
 	return NULL;
@@ -190,8 +184,6 @@ short new_resID_for_font_and_size( short font, short size )
 			p += 3;
 		}
 		while ( --count_minus_1 >= 0 );
-		
-		ReleaseResource( h );
 		
 		if ( id )
 		{
