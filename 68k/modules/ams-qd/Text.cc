@@ -145,7 +145,7 @@ pascal short StdTxMeas_patch( short        n,
 	
 	while ( --n >= 0 )
 	{
-		short c = *p++ - rec.firstChar;
+		short c = (uint8_t) *p++ - rec.firstChar;
 		
 		if ( c > missingChar )
 		{
@@ -309,7 +309,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	
 	while ( --n >= 0 )
 	{
-		short c = *p++ - rec.firstChar;
+		short c = (uint8_t) *p++ - rec.firstChar;
 		
 		if ( c > missingChar )
 		{
@@ -395,7 +395,7 @@ pascal void MeasureText_patch( short count, const char* p, short* locs )
 	
 	while ( --count >= 0 )
 	{
-		short c = *p++ - rec.firstChar;
+		short c = (uint8_t) *p++ - rec.firstChar;
 		
 		if ( c == '\r' )
 		{
