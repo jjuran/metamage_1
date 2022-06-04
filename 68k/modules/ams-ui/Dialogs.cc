@@ -964,6 +964,7 @@ pascal void DrawDialog_patch( DialogRef dialog )
 	short n_items_1 = dialog_item_count_minus_one( d->items );
 	
 	const DialogItem* item = first_dialog_item( d->items );
+	const DialogItem* edit = NULL;
 	
 	short edit_index = d->editField + 1;
 	short item_index = 1;
@@ -996,6 +997,8 @@ pascal void DrawDialog_patch( DialogRef dialog )
 				
 				if ( item_index == edit_index )
 				{
+					edit = item;
+					
 					d->textH[0]->active = active;
 				}
 				
@@ -1044,7 +1047,7 @@ pascal void DrawDialog_patch( DialogRef dialog )
 	
 	d->textH[0]->active = active;
 	
-	if ( const DialogItem* edit = get_editField( d ) )
+	if ( edit != NULL )
 	{
 		update_edit_record( d->textH, edit );
 	}
