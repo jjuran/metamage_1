@@ -176,6 +176,38 @@ Handle find_FOND( short family )
 }
 
 static
+const AsscEntry* largest_of_family( short family )
+{
+	const AsscEntry* entry = NULL;
+	
+	if ( Handle fond = find_FOND( family ) )
+	{
+		short max_size = 0;
+		
+		const short* p = (const short*) (*fond + 0x34);
+		
+		short count_minus_1 = *p++;
+		
+		do
+		{
+			const short size = *p;
+			
+			if ( size > max_size )
+			{
+				max_size = size;
+				
+				entry = (const AsscEntry*) p;
+			}
+			
+			p += 3;
+		}
+		while ( --count_minus_1 >= 0 );
+	}
+	
+	return entry;
+}
+
+static
 short new_resID_for_font_and_size( short font, short size )
 {
 	if ( Handle h = find_FOND( font ) )
@@ -296,10 +328,22 @@ pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 			}
 			else
 			{
+				short found_font_size = default_font_size;
+				
+				if ( const AsscEntry* entry = largest_of_family( fontNum ) )
+				{
+					if ( Handle h = get_NFNT_or_FONT( entry->fontID ) )
+					{
+						newFont = (FontRec**) h;
+						
+						found_font_size = entry->fontSize;
+					}
+				}
+				
 				the_current_FMOutput.numer.v *= fontSize;
 				the_current_FMOutput.numer.h *= fontSize;
-				the_current_FMOutput.denom.v *= default_font_size;
-				the_current_FMOutput.denom.h *= default_font_size;
+				the_current_FMOutput.denom.v *= found_font_size;
+				the_current_FMOutput.denom.h *= found_font_size;
 			}
 		}
 		
