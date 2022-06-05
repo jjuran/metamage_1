@@ -20,6 +20,8 @@
 namespace mac   {
 namespace relix {
 	
+#if defined( __RELIX__ )  ||  defined( __APPLE__ )
+	
 	int FSSpec_from_existing_path( const char* path, FSSpec& result )
 	{
 	#ifdef __RELIX__
@@ -49,6 +51,8 @@ namespace relix {
 		
 	#endif
 	}
+	
+#endif  // #if defined( __RELIX__ )  ||  defined( __APPLE__ )
 	
 }
 }
