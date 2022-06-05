@@ -90,14 +90,21 @@ def get_docfs_fd
 {
 	var docfs = active "docfs" or return ()
 	
-	if docfs isa bool or docfs == "-" then
+	if docfs isa bool then
+	{
+		docfs = "-"
+	}
+	
+	if not '/' in docfs then
 	{
 		const home = getenv "HOME"
 		
 		const osx_docs = home "/Documents"
 		const ams_docs = osx_docs "/Advanced Mac Substitute"
 		
-		docfs = ams_docs "/" app_name
+		const name = if docfs == "-" then {app_name} else {docfs}
+		
+		docfs = ams_docs "/" name
 		
 		run [ "mkdir", "-p", docfs ]
 	}
