@@ -203,7 +203,7 @@ namespace vlib
 		return result;
 	}
 	
-	const proc_info proc_typeof = { "typeof", &v_typeof, NULL };
+	const proc_info proc_typeof = { "typeof", &v_typeof, NULL, Proc_pure };
 	
 	Value generic_array_type( etc, Op_subscript, Value_empty_list );
 	
