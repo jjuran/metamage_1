@@ -141,6 +141,8 @@ namespace vlib
 				{
 					return Value( a, op, b );
 				}
+				
+				break;
 			
 			case Op_member:
 				if ( b.type() != V_str )
