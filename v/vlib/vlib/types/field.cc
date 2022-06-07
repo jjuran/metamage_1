@@ -78,12 +78,6 @@ namespace vlib
 		}
 		else if ( member_size == STRLEN( "xxcode" ) )
 		{
-			if ( type.size().number().clipped() != 1 )
-			{
-				// Only byte-sized fields have unambiguous coding.
-				return NULL;
-			}
-			
 			if ( memcmp( member_data + 2, STR_LEN( "code" ) ) != 0 )
 			{
 				return NULL;
