@@ -69,14 +69,7 @@ namespace vlib
 		const char*  member_data = member.data();
 		const size_t member_size = member.size();
 		
-		if ( member_size == STRLEN( "xxcode-native" ) )
-		{
-			if ( memcmp( member_data + 2, STR_LEN( "code-native" ) ) != 0 )
-			{
-				return NULL;
-			}
-		}
-		else if ( member_size == STRLEN( "xxcode" ) )
+		if ( member_size == STRLEN( "xxcode" ) )
 		{
 			if ( memcmp( member_data + 2, STR_LEN( "code" ) ) != 0 )
 			{
