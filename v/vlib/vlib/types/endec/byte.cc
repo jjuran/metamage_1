@@ -47,7 +47,12 @@ namespace vlib
 	static const Type byte   = byte_vtype;
 	static const Type packed = packed_vtype;
 	
-	const proc_info proc_encode_byte = { "encode", &v_encode, &byte   };
-	const proc_info proc_decode_byte = { "decode", &v_decode, &packed };
+	enum
+	{
+		pure = Proc_pure,
+	};
+	
+	const proc_info proc_encode_byte = { "encode", &v_encode, &byte,   pure };
+	const proc_info proc_decode_byte = { "decode", &v_decode, &packed, pure };
 	
 }

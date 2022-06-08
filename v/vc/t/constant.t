@@ -297,3 +297,8 @@ $ vc '{begin "foo"}'
 
 $ vc '{(begin ("pointer")).find("int").rest}'
 1 >= '{"inter"}'
+
+%
+
+$ vc '{byte.decode x"3f"}'
+1 >= "{'?'}"
