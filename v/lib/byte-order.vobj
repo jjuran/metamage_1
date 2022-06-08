@@ -1,24 +1,20 @@
 module byte-order
 
-def same-endian-fields
+def same-endian-fields (T)
 {
-	const T = _
-	
 	const fields = type: T,
-	               encode: T.encode-native,
-	               decode: T.decode-native,
+	               encode: T.encode,
+	               decode: T.decode,
 	               size: T.size
 	
 	return fields
 }
 
-def cross-endian-fields
+def cross-endian-fields (T)
 {
-	const T = _
-	
 	const fields = type: T,
-	               encode: { -(T.encode-native _) },
-	               decode: { T.decode-native (-_) },
+	               encode: { -(T.encode _) },
+	               decode: { T.decode (-_) },
 	               size: T.size
 	
 	return fields
@@ -26,16 +22,14 @@ def cross-endian-fields
 
 const same-cross = [ same-endian-fields, cross-endian-fields ]
 
-const big-little = u16.encode-native 1 map { same-cross[ int _ ] }
+const big-little = u16.encode 1 map { same-cross[ int v ] }
 
 const big-endian-fields,
 const little-endian-fields = *big-little
 
 export
-def native
+def native (T)
 {
-	const T = _
-	
 	const fields = order: native,
 	               same-endian-fields T
 	
@@ -43,10 +37,8 @@ def native
 }
 
 export
-def big-endian
+def big-endian (T)
 {
-	const T = _
-	
 	const fields = order: big-endian,
 	               big-endian-fields T
 	
@@ -54,10 +46,8 @@ def big-endian
 }
 
 export
-def little-endian
+def little-endian (T)
 {
-	const T = _
-	
 	const fields = order: little-endian,
 	               little-endian-fields T
 	
