@@ -287,3 +287,8 @@ $ vc '{(vector[byte] x"78")[0]}'
 
 $ vc '{(vector(byte) x"78")[0]}'
 1 >= "{'x'}"
+
+%
+
+$ vc '{begin "foo"}'
+1 >= "{<pointer>}"

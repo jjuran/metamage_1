@@ -49,6 +49,7 @@ namespace vlib
 			case Op_unary_negate:
 			case Op_unary_count:
 			case Op_unary_deref:
+			case Op_begin:
 			case Op_array:
 			case Op_subscript:
 			case Op_member:
