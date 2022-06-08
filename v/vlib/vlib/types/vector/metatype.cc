@@ -87,6 +87,8 @@ namespace vlib
 	static const typing type =
 	{
 		&typecheck,
+		NULL,
+		Type_pure,
 	};
 	
 	const dispatch vectormetatype_dispatch =

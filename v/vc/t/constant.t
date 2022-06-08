@@ -282,3 +282,8 @@ $ vc '{typeof ""}'
 
 $ vc '{(vector[byte] x"78")[0]}'
 1 >= "{'x'}"
+
+%
+
+$ vc '{(vector(byte) x"78")[0]}'
+1 >= "{'x'}"
