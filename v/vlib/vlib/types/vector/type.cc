@@ -214,6 +214,7 @@ namespace vlib
 	{
 		&typecheck,
 		&transform,
+		Type_pure,
 	};
 	
 	const dispatch vectortype_dispatch =
