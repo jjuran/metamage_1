@@ -751,9 +751,14 @@ namespace posix
 	static const Value c_str_bytes( c_str, bytes );
 	static const Value c_str_u32( c_str, uint32 );
 	
+	enum
+	{
+		pure = Proc_pure,
+	};
+	
 	const proc_info proc_chdir    = { "chdir",    &v_chdir,    &c_str };
 	const proc_info proc_close    = { "close",    &v_close,    &fd    };
-	const proc_info proc_dirname  = { "dirname",  &v_dirname,  &c_str };
+	const proc_info proc_dirname  = { "dirname",  &v_dirname,  &c_str, pure };
 	const proc_info proc_dup      = { "dup",      &v_dup,      &fd    };
 	const proc_info proc_dup2     = { "dup2",     &v_dup2,     &fd_x2 };
 	const proc_info proc_fstat    = { "fstat",    &v_fstat,    &fd    };
