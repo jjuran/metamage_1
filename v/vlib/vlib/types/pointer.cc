@@ -632,7 +632,7 @@ namespace vlib
 	
 	static const Value find( pointer, finding );
 	
-	static const proc_info proc_find = { "find", &v_find, &find };
+	static const proc_info proc_find = { "find", &v_find, &find, Proc_pure };
 	
 	static
 	Value pointer_member( const Value&         v,

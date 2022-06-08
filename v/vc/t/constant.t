@@ -292,3 +292,8 @@ $ vc '{(vector(byte) x"78")[0]}'
 
 $ vc '{begin "foo"}'
 1 >= "{<pointer>}"
+
+%
+
+$ vc '{(begin ("pointer")).find("int").rest}'
+1 >= '{"inter"}'
