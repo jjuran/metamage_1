@@ -35,16 +35,6 @@ $ vc '[u8, i8, u16, i16, u32, i32, u64, i64] map {_.size}'
 
 %
 
-$ vc '[u8, i8] map { _.encode == _.encode-native }'
-1 >= '[true, true]'
-
-%
-
-$ vc '[u8, i8] map { _.decode == _.decode-native }'
-1 >= '[true, true]'
-
-%
-
 $ vc '[0, 42, 127, 128, 255] map u8.encode'
 1 >= '[x"00", x"2a", x"7f", x"80", x"ff"]'
 
@@ -65,10 +55,10 @@ $ vc '[x"00", x"2a", x"7f", x"80", x"ff"] map i8.decode'
 
 %
 
-$ vc '[u16, i16, u32, i32] map { _.decode-native -(_.encode-native 1) }'
+$ vc '[u16, i16, u32, i32] map { _.decode -(_.encode 1) }'
 1 >= '[256, 256, 16777216, 16777216]'
 
 %
 
-$ vc '[u16, i16, u32, i32] map { _.decode-native -(_.encode-native 255) }'
+$ vc '[u16, i16, u32, i32] map { _.decode -(_.encode 255) }'
 1 >= '[65280, -256, 4278190080, -16777216]'
