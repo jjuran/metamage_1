@@ -196,7 +196,7 @@ const record_size = j
 
 for ev in receiver { IN.read record_size } do
 {
-	const fields = field_defs map { v.key.decode-native ev[ *v.value ] }
+	const fields = field_defs map { v.key.decode ev[ *v.value ] }
 	
 	if fields[ 0 ] == 1 then
 	{
