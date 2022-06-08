@@ -302,3 +302,8 @@ $ vc '{(begin ("pointer")).find("int").rest}'
 
 $ vc '{byte.decode x"3f"}'
 1 >= "{'?'}"
+
+%
+
+$ vc '{i16.decode x"1616"}'
+1 >= "{5654}"

@@ -61,8 +61,8 @@ namespace vlib
 	static const Type integer = integer_vtype;
 	static const Type packed  = packed_vtype;
 	
-	#define ENCODE( I )  { "encode", &v_encode< I >, &integer }
-	#define DECODE( I )  { "decode", &v_decode< I >, &packed  }
+	#define ENCODE( I )  { "encode", &v_encode< I >, &integer, Proc_pure }
+	#define DECODE( I )  { "decode", &v_decode< I >, &packed,  Proc_pure }
 	
 	const proc_info proc_encode_i8 = ENCODE( int8_t );
 	const proc_info proc_decode_i8 = DECODE( int8_t );
