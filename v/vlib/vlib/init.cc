@@ -37,6 +37,7 @@
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 #include "vlib/types/integer/stdint.hh"
+#include "vlib/types/struct/metatype.hh"
 #include "vlib/types/vector/metatype.hh"
 
 
@@ -108,6 +109,7 @@ namespace vlib
 		
 		define_keyword( "array", generic_array_type );
 		
+		define_keyword( "struct", Struct_Metatype() );
 		define_keyword( "vector", Vector_Metatype() );
 		
 		if ( sizeof (size_t) == 4 )  define_keyword( "size_t", u32_type() );
