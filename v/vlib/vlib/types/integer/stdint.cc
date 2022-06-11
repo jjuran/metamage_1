@@ -53,17 +53,7 @@ namespace vlib
 	{
 	}
 	
-	Value i8_type()
-	{
-		return StdInt( i8_vtype, proc_encode_i8, proc_decode_i8 );
-	}
-	
-	Value u8_type()
-	{
-		return StdInt( u8_vtype, proc_encode_u8, proc_decode_u8 );
-	}
-	
-	#define DEFINE_MULTIBYTE_STDINT( type )  \
+	#define DEFINE_STDINT( type )  \
 	Value type##_type()  \
 	{                    \
 		return StdInt( type##_vtype,          \
@@ -71,11 +61,13 @@ namespace vlib
 		               proc_decode_##type );  \
 	}
 	
-	DEFINE_MULTIBYTE_STDINT( i16 )
-	DEFINE_MULTIBYTE_STDINT( i32 )
-	DEFINE_MULTIBYTE_STDINT( i64 )
-	DEFINE_MULTIBYTE_STDINT( u16 )
-	DEFINE_MULTIBYTE_STDINT( u32 )
-	DEFINE_MULTIBYTE_STDINT( u64 )
+	DEFINE_STDINT( i8  )
+	DEFINE_STDINT( i16 )
+	DEFINE_STDINT( i32 )
+	DEFINE_STDINT( i64 )
+	DEFINE_STDINT( u8  )
+	DEFINE_STDINT( u16 )
+	DEFINE_STDINT( u32 )
+	DEFINE_STDINT( u64 )
 	
 }
