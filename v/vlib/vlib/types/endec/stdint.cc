@@ -64,31 +64,28 @@ namespace vlib
 	#define ENCODE( I )  { "encode", &v_encode< I >, &integer }
 	#define DECODE( I )  { "decode", &v_decode< I >, &packed  }
 	
-	#define ENCODE_NATIVE( I )  { "encode-native", &v_encode< I >, &integer }
-	#define DECODE_NATIVE( I )  { "decode-native", &v_decode< I >, &packed  }
-	
 	const proc_info proc_encode_i8 = ENCODE( int8_t );
 	const proc_info proc_decode_i8 = DECODE( int8_t );
 	
-	const proc_info proc_encode_native_i16 = ENCODE_NATIVE( int16_t );
-	const proc_info proc_decode_native_i16 = DECODE_NATIVE( int16_t );
+	const proc_info proc_encode_i16 = ENCODE( int16_t );
+	const proc_info proc_decode_i16 = DECODE( int16_t );
 	
-	const proc_info proc_encode_native_i32 = ENCODE_NATIVE( int32_t );
-	const proc_info proc_decode_native_i32 = DECODE_NATIVE( int32_t );
+	const proc_info proc_encode_i32 = ENCODE( int32_t );
+	const proc_info proc_decode_i32 = DECODE( int32_t );
 	
-	const proc_info proc_encode_native_i64 = ENCODE_NATIVE( int64_t );
-	const proc_info proc_decode_native_i64 = DECODE_NATIVE( int64_t );
+	const proc_info proc_encode_i64 = ENCODE( int64_t );
+	const proc_info proc_decode_i64 = DECODE( int64_t );
 	
 	const proc_info proc_encode_u8 = ENCODE( uint8_t );
 	const proc_info proc_decode_u8 = DECODE( uint8_t );
 	
-	const proc_info proc_encode_native_u16 = ENCODE_NATIVE( uint16_t );
-	const proc_info proc_decode_native_u16 = DECODE_NATIVE( uint16_t );
+	const proc_info proc_encode_u16 = ENCODE( uint16_t );
+	const proc_info proc_decode_u16 = DECODE( uint16_t );
 	
-	const proc_info proc_encode_native_u32 = ENCODE_NATIVE( uint32_t );
-	const proc_info proc_decode_native_u32 = DECODE_NATIVE( uint32_t );
+	const proc_info proc_encode_u32 = ENCODE( uint32_t );
+	const proc_info proc_decode_u32 = DECODE( uint32_t );
 	
-	const proc_info proc_encode_native_u64 = ENCODE_NATIVE( uint64_t );
-	const proc_info proc_decode_native_u64 = DECODE_NATIVE( uint64_t );
+	const proc_info proc_encode_u64 = ENCODE( uint64_t );
+	const proc_info proc_decode_u64 = DECODE( uint64_t );
 	
 }

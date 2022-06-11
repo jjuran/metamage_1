@@ -15,26 +15,26 @@ namespace vlib
 	extern const proc_info proc_encode_i8;
 	extern const proc_info proc_decode_i8;
 	
-	extern const proc_info proc_encode_native_i16;
-	extern const proc_info proc_decode_native_i16;
+	extern const proc_info proc_encode_i16;
+	extern const proc_info proc_decode_i16;
 	
-	extern const proc_info proc_encode_native_i32;
-	extern const proc_info proc_decode_native_i32;
+	extern const proc_info proc_encode_i32;
+	extern const proc_info proc_decode_i32;
 	
-	extern const proc_info proc_encode_native_i64;
-	extern const proc_info proc_decode_native_i64;
+	extern const proc_info proc_encode_i64;
+	extern const proc_info proc_decode_i64;
 	
 	extern const proc_info proc_encode_u8;
 	extern const proc_info proc_decode_u8;
 	
-	extern const proc_info proc_encode_native_u16;
-	extern const proc_info proc_decode_native_u16;
+	extern const proc_info proc_encode_u16;
+	extern const proc_info proc_decode_u16;
 	
-	extern const proc_info proc_encode_native_u32;
-	extern const proc_info proc_decode_native_u32;
+	extern const proc_info proc_encode_u32;
+	extern const proc_info proc_decode_u32;
 	
-	extern const proc_info proc_encode_native_u64;
-	extern const proc_info proc_decode_native_u64;
+	extern const proc_info proc_encode_u64;
+	extern const proc_info proc_decode_u64;
 	
 }
 

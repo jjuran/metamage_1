@@ -66,9 +66,9 @@ namespace vlib
 	#define DEFINE_MULTIBYTE_STDINT( type )  \
 	Value type##_type()  \
 	{                    \
-		return StdInt( type##_vtype,                 \
-		               proc_encode_native_##type,    \
-		               proc_decode_native_##type );  \
+		return StdInt( type##_vtype,          \
+		               proc_encode_##type,    \
+		               proc_decode_##type );  \
 	}
 	
 	DEFINE_MULTIBYTE_STDINT( i16 )
