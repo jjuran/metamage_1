@@ -38,6 +38,8 @@
 
 #define ANONYMOUS_STRUCT  "<anonymous struct>"
 
+#define STRLEN(s)  (sizeof "" s - 1)
+
 
 namespace vlib
 {
@@ -279,13 +281,27 @@ Value Struct_Type::unpack_fields( const Value& data ) const
 static
 const char* structtype_str_data( const Value& v )
 {
-	return ANONYMOUS_STRUCT;
+	const Struct_Type& st = static_cast< const Struct_Type& >( v );
+	
+	const plus::string& name = st.name().string();
+	
+	return ! name.empty() ? name.c_str() : ANONYMOUS_STRUCT;
+}
+
+static
+size_t structtype_str_size( const Value& v )
+{
+	const Struct_Type& st = static_cast< const Struct_Type& >( v );
+	
+	const size_t size = st.name().string().size();
+	
+	return size ? size : STRLEN( ANONYMOUS_STRUCT );
 }
 
 static const stringify structtype_str =
 {
 	&structtype_str_data,
-	NULL,
+	&structtype_str_size,
 	NULL,
 };
 
@@ -294,7 +310,11 @@ plus::string structtype_rep_make( const Value& v )
 {
 	const Struct_Type& st = static_cast< const Struct_Type& >( v );
 	
+	const plus::string& name = st.name().string();
+	
 	return "struct " +
+	       name +
+	       &" "[ name.empty() ] +
 	       rep( Value( nothing, Op_scope, st.fields() ) );
 }
 

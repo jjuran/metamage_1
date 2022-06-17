@@ -62,3 +62,53 @@ $ vc 'let Int = struct {x: i16}; [struct, Int, Int []] map typeof'
 
 $ vc 'let Int = struct {x: i16}; typeof Int [] == Int and Int [] isa Int'
 1 >= true
+
+%
+
+$ vc 'struct Point {v: i16, h: i16}; Point'
+1 >= 'struct Point {("v" => i16), ("h" => i16)}'
+
+%
+
+$ vc 'struct Point {v: i16, h: i16}; Point == typeof Point []'
+1 >= true
+
+%
+
+$ vc 'struct Foo {x: i16}; struct Bar {x: i16}; Foo == Bar'
+1 >= false
+
+%
+
+$ vc 'struct Foo {x: i16}; struct Bar {x: i16}; Foo [12345] == Bar [12345]'
+1 >= false
+
+%
+
+$ vc 'struct Foo {x: i8}; struct Bar {x: i8}; packed Foo [9] == packed Bar [9]'
+1 >= true
+
+%
+
+$ vc 'struct Foo {x: i16}; (.size, .name) Foo'
+1 >= '(2, "Foo")'
+
+%
+
+$ vc 'struct Foo {x: i16}; i16.decode packed Foo [12345]'
+1 >= 12345
+
+%
+
+$ vc 'struct Foo {x: i16, y: i16}; let foo = Foo [12, 34]; (.x, .y) foo'
+1 >= '(12, 34)'
+
+%
+
+$ vc 'struct Foo {x: i16, y: i16}; let foo = Foo [12, 34]; *Foo, *foo'
+1 >= '(("x" => i16), ("y" => i16), ("x" => 12), ("y" => 34))'
+
+%
+
+$ vc 'struct Foo {x: i16, y: i16}; let foo = Foo [1234]; [Foo, foo] map typeof'
+1 >= '[type, struct Foo {("x" => i16), ("y" => i16)}]'

@@ -19,6 +19,7 @@
 #include "vlib/types/bareword.hh"
 #include "vlib/types/null.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/struct/type.hh"
 #include "vlib/types/term.hh"
 #include "vlib/types/type.hh"
 
@@ -277,6 +278,25 @@ namespace vlib
 		}
 	}
 	
+	static
+	bool is_named_struct_definition( const Value& v )
+	{
+		Expr* expr;
+		Symbol* sym;
+		const Identifier* id;
+		
+		return (expr = v.expr())                     &&
+		       expr->op == Op_named_unary            &&
+		       (sym = expr->left.sym())              &&
+		       sym->name() == "struct"               &&
+		       (expr = expr->right.expr())           &&
+		       expr->op == Op_function               &&
+		       (id = expr->left.is< Identifier >())  &&
+		       (expr = expr->right.expr())           &&
+		       expr->op == Op_block                  &&
+		       true;
+	}
+	
 	void Analyzer::visit( Value& v, const source_spec& source )
 	{
 		if ( Expr* expr = v.expr() )
@@ -405,6 +425,33 @@ namespace vlib
 				{
 					throw user_exception( String( e.message ), expr->source );
 				}
+			}
+			
+			if ( is_named_struct_definition( v ) )
+			{
+				Expr* e2 = expr->right.expr();
+				
+				const plus::string& name = e2->left.string();
+				
+				Value& body = e2->right;
+				
+				visit( body, e2->source );
+				
+				/*
+					This is a named struct definition (`struct Foo {...}`)
+					rather than an anonymous struct type construction.
+					
+					The `struct` keyword parses as an identifier, so
+					we have to handle it specially.
+				*/
+				
+				Symbol* sym = its_scope->declare( name, Symbol_const ).sym();
+				
+				sym->deref_unsafe() = Struct_Type( body, String( name ) );
+				
+				v = nothing;
+				
+				return;
 			}
 			
 			if ( op == Op_prototype )
