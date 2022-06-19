@@ -63,7 +63,7 @@ namespace vlib
 	{
 		if ( Expr* expr = dst.expr() )
 		{
-			if ( expr->op == Op_subscript )
+			if ( expr->op == Op_subscript  ||  expr->op == Op_member )
 			{
 				Value& container = expr->left;
 				Value& subscript = expr->right;

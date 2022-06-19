@@ -112,3 +112,8 @@ $ vc 'struct Foo {x: i16, y: i16}; let foo = Foo [12, 34]; *Foo, *foo'
 
 $ vc 'struct Foo {x: i16, y: i16}; let foo = Foo [1234]; [Foo, foo] map typeof'
 1 >= '[type, struct Foo {("x" => i16), ("y" => i16)}]'
+
+%
+
+$ vc 'struct Point {v: i16, h: i16}; var pt = Point(); pt.h = 257; packed pt'
+1 >= x"00000101"

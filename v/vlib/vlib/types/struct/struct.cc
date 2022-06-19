@@ -111,10 +111,37 @@ Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	return NIL;
 }
 
+static
+Value mutating_op_handler( op_type        op,
+                           const Target&  target,
+                           const Value&   x,
+                           const Value&   b )
+{
+	Struct& object = static_cast< Struct& >( *target.addr );
+	
+	const Member& member = x.expr()->right.as< Member >();
+	
+	switch ( op )
+	{
+		case Op_duplicate:
+		case Op_approximate:
+			object.get_type().set( object.mutable_data(), member, b );
+			
+			return b;
+		
+		default:
+			break;
+	}
+	
+	return NIL;
+}
+
 static const operators ops =
 {
 	&unary_op_handler,
 	&binary_op_handler,
+	NULL,
+	&mutating_op_handler,
 };
 
 const dispatch struct_dispatch =

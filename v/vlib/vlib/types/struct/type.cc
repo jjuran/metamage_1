@@ -182,6 +182,18 @@ Value decode_field( const Value& endec, const plus::string& bytes )
 	return decoded;
 }
 
+static
+plus::string encode_field( const Value& endec, const Value& v )
+{
+	handler_2arg handler = get_binary_ops_handler_unchecked( endec );
+	
+	const Value encode = endec_encode( handler, endec );
+	
+	const Value encoded = call_function( encode, v );
+	
+	return encoded.string();
+}
+
 Value Struct_Type::get( const Value& data, const Member& name ) const
 {
 	size_t offset = 0;
@@ -210,6 +222,42 @@ Value Struct_Type::get( const Value& data, const Member& name ) const
 	THROW( "No such struct member" );
 	
 	return NIL;
+}
+
+void Struct_Type::set( Value& data, const Member& name, const Value& v ) const
+{
+	size_t offset = 0;
+	size_t size   = 0;
+	
+	list_iterator defs = fields();
+	
+	while ( defs )
+	{
+		const Value& field = defs.use();
+		const Value& fname = field.expr()->left;
+		
+		size = field_size( field );
+		
+		if ( fname.string() == name.get() )
+		{
+			const Value& endec = field.expr()->right;
+			plus::string bytes = encode_field( endec, v );
+			
+			if ( bytes.size() != size )
+			{
+				THROW( "struct field size mismatch" );
+			}
+			
+			char* start = (char*) &data.unshare().string()[ offset ];
+			
+			memcpy( start, bytes.data(), size );
+			return;
+		}
+		
+		offset += size;
+	}
+	
+	THROW( "No such struct member" );
 }
 
 Value Struct_Type::pack_initializer_list( const Value& init_list ) const

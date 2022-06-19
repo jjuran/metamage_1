@@ -38,6 +38,8 @@ namespace vlib
 			
 			Value get( const Value& data, const Member& name ) const;
 			
+			void set( Value& data, const Member& name, const Value& v ) const;
+			
 			Value pack_initializer_list( const Value& init_list ) const;
 			
 			Value unpack_fields( const Value& data ) const;
