@@ -5,6 +5,10 @@
 
 #include "screen/update.hh"
 
+// POSIX
+#include <fcntl.h>
+#include <unistd.h>
+
 // Standard C
 #include <signal.h>
 #include <stdlib.h>
@@ -49,12 +53,14 @@ struct end_sync
 
 static end_sync finally_end_sync;
 
+static const char* update_fifo = getenv( "GRAPHICS_UPDATE_SIGNAL_FIFO" );
 static const char* viewer_pid_env = getenv( "V68K_SCREEN_VIEWER_PID" );
 
 static int update_pid = viewer_pid_env ? atoi( viewer_pid_env ) : 0;
 
 #else
 
+const char* update_fifo;
 const int update_pid = 0;
 
 #endif
@@ -85,6 +91,12 @@ void update()
 			++the_sync_relay->seed;
 			
 			kill( update_pid, SIGUSR1 );
+		}
+		else if ( update_fifo )
+		{
+			++the_sync_relay->seed;
+			
+			close( open( update_fifo, O_RDONLY | O_NONBLOCK ) );
 		}
 		else
 		{
