@@ -141,6 +141,8 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return v68k::alloc::translate( addr, length, fc, access );
 	}
 	
+#ifndef __RELIX__
+	
 	const uint32_t screen_size = v68k::screen::the_screen_size;
 	
 	if ( addr_within_span( addr, main_screen_addr, screen_size ) )
@@ -166,6 +168,8 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return v68k::mac::translate( addr, length, fc, access );
 	}
 	
+#endif
+	
 	if ( addr < 3 * 1024  &&  (addr & 0x07FF) < 1024 )
 	{
 		if ( fc <= v68k::user_program_space  &&  access != v68k::mem_exec )
@@ -180,10 +184,14 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return lowmem_translate( addr, length, fc, access );
 	}
 	
+#ifndef __RELIX__
+	
 	if ( (addr & 0x00FF0000) == 0xEF0000 )
 	{
 		return VIA::translate( addr, length, fc, access );
 	}
+	
+#endif
 	
 	return v68k::callout::translate( addr, length, fc, access );
 }
