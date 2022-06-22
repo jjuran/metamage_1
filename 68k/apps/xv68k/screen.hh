@@ -12,7 +12,7 @@
 
 void page_flip();
 
-int set_screen_backing_store_file( const char* path, bool is_raster );
+int set_screen_backing_store_file( const char* path );
 
 namespace screen {
 

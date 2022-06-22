@@ -123,7 +123,6 @@ enum
 	Opt_mem,  // number of 512K memory chunks, or zero for 128K
 	Opt_pid,
 	Opt_raster,
-	Opt_screen,
 	Opt_ignore_screen_locks,
 };
 
@@ -139,7 +138,6 @@ static command::option options[] =
 	{ "model",      Opt_model,  command::Param_required },
 	{ "pid",        Opt_pid,    command::Param_optional },
 	{ "raster",     Opt_raster, command::Param_required },
-	{ "screen",     Opt_screen, command::Param_required },
 	{ "module",     Opt_module, command::Param_required },
 	
 	{ "ignore-screen-locks", Opt_ignore_screen_locks },
@@ -975,11 +973,17 @@ char* const* get_options( char** argv )
 				break;
 			
 			case Opt_raster:
-			case Opt_screen:
+				
+			#ifdef __RELIX__
+				
+				EXIT( 1, "xv68k: --raster support missing" );
+				
+			#endif
+				
 				if ( has_screen )
 				{
 					write( STDERR_FILENO,
-					       STR_LEN( "xv68k: duplicate --screen/--raster\n" ) );
+					       STR_LEN( "xv68k: duplicate --raster switch\n" ) );
 					
 					exit( 2 );
 				}
@@ -987,10 +991,7 @@ char* const* get_options( char** argv )
 				const char* path;
 				path = global_result.param;
 				
-				int nok;
-				nok = set_screen_backing_store_file( path, opt == Opt_raster );
-				
-				if ( nok )
+				if ( int nok = set_screen_backing_store_file( path ) )
 				{
 					const char* error = strerror( nok );
 					

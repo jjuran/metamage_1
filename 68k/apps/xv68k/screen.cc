@@ -85,8 +85,7 @@ sync_relay& initialize( raster_load& raster, uint32_t raster_size )
 	return data< sync_relay >( note );
 }
 
-static
-int publish_raster( const char* path )
+int set_screen_backing_store_file( const char* path )
 {
 	int fd = open( path, O_RDWR );
 	
@@ -129,38 +128,6 @@ int publish_raster( const char* path )
 	sync_relay& sync = initialize( raster, the_screen_size * count );
 	
 	the_sync_relay = &sync;
-	
-	return 0;
-}
-
-int set_screen_backing_store_file( const char* path, bool is_raster )
-{
-	if ( is_raster )
-	{
-	#ifdef __RELIX__
-		
-		return ENOSYS;
-		
-	#endif
-		
-		return publish_raster( path );
-	}
-	
-	using v68k::screen::the_surface_shape;
-	
-	the_surface_shape.width  = 512;
-	the_surface_shape.height = 342;
-	the_surface_shape.stride = 64;
-	
-	const uint32_t screen_size = 21888;  // 512x342x1 / 8
-	
-	the_screen_size   = screen_size;
-	the_screen_buffer = open_shared_memory( path, screen_size );
-	
-	if ( the_screen_buffer == 0 )  // NULL
-	{
-		return errno;
-	}
 	
 	return 0;
 }
