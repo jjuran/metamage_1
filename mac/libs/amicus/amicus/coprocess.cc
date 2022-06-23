@@ -39,7 +39,7 @@ void exec_or_exit( const char* const argv[] )
 	_exit( errno == ENOENT ? 127 : 126 );
 }
 
-coprocess_launch::coprocess_launch( int bindir_fd, const char* raster_path )
+coprocess_launch::coprocess_launch( int bindir_fd, const char* works_path )
 {
 	int socket_fds[ 2 ];
 	
@@ -76,7 +76,7 @@ coprocess_launch::coprocess_launch( int bindir_fd, const char* raster_path )
 		
 		const char* fd_arg = gear::inscribe_unsigned_decimal( other_fd );
 		
-		coprocess_argv[ 3 ] = raster_path;  // --raster param
+		coprocess_argv[ 3 ] = works_path;
 		coprocess_argv[ 4 ] = fd_arg;       // --events-fd param
 		
 		exec_or_exit( coprocess_argv );
