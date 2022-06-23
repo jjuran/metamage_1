@@ -4,6 +4,7 @@
 */
 
 // POSIX
+#include <sys/stat.h>
 #include <unistd.h>
 
 // Extended API Set, Part 2
@@ -20,6 +21,8 @@
 namespace amicus
 {
 
+static const char raster_path[] = "screen.skif";
+
 class emulated_screen
 {
 	private:
@@ -28,16 +31,16 @@ class emulated_screen
 		coprocess_launch  launched_coprocess;
 	
 	public:
-		emulated_screen( int bindir_fd, const char* raster_path );
+		emulated_screen( int bindir_fd, const char* works_path );
 		
 		const raster::raster_load& load() const  { return live_raster.get(); }
 		const raster::raster_desc& desc() const  { return live_raster.desc(); }
 };
 
-emulated_screen::emulated_screen( int bindir_fd, const char* raster_path )
+emulated_screen::emulated_screen( int bindir_fd, const char* works_path )
 :
 	live_raster       ( raster_path ),
-	launched_coprocess( bindir_fd, raster_path )
+	launched_coprocess( bindir_fd, works_path )
 {
 	events_fd = launched_coprocess.socket();
 }
@@ -81,16 +84,29 @@ int main( int argc, char** argv )
 	
 	using namespace amicus;
 	
+	const char* works_path = tempfile_location();
+	
+	int nok = mkdir( works_path, 0777 );
+	
+	if ( nok  &&  errno != EEXIST )
+	{
+		return 1;
+	}
+	
 	if ( wait_for_first_Apple_event() == noErr )
 	{
 		int bindir_fd = bindir( argv[ 0 ] );
 		
-		emulated_screen screen( bindir_fd, tempfile_location() );
+		chdir( works_path );
+		
+		emulated_screen screen( bindir_fd, works_path );
 		
 		close( bindir_fd );
 		
 		run_event_loop( screen );
 	}
+	
+	rmdir( works_path );
 	
 	return 0;
 }

@@ -57,7 +57,7 @@ const char* tempfile_location()
 	
 	path += "/amicus-";
 	path += gear::inscribe_unsigned_decimal( getpid() );
-	path += ".skif";
+	path += ".works";
 	
 	return path.c_str();
 }

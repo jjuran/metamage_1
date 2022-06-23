@@ -1,6 +1,7 @@
 # This script is invoked explicitly with minivx by the application.
 
-const screen_fb_file = argv[ 1 ]
+const screen_fb_file = "screen.skif"
+const works_dir_path = argv[ 1 ]
 const events_fd_slot = argv[ 2 ]
 
 const ams_bin = "../xv68k"
@@ -247,7 +248,7 @@ const servers = sound-server, freemountd-server, appfs-server, docfs-server
 
 const xv68k_opts = model_opt, "-tSP"
 
-const xv68k-screen = "--raster=" screen_fb_file
+const xv68k-screen = "--raster=" works_dir_path "/" screen_fb_file
 
 const xv68k-subcmd = "./xv68k", xv68k_opts, xv68k-screen, *module_opts, app, app_name
 const graft-subcmd = "./graft", servers, xv68k-subcmd
