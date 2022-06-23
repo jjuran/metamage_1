@@ -22,7 +22,7 @@ class coprocess_launch
 		coprocess_launch& operator=( const coprocess_launch& );
 	
 	public:
-		coprocess_launch( const char* raster_path );
+		coprocess_launch( int bindir_fd, const char* raster_path );
 		~coprocess_launch();
 		
 		int socket() const  { return its_socket; }

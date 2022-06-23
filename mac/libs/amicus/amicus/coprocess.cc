@@ -39,7 +39,7 @@ void exec_or_exit( const char* const argv[] )
 	_exit( errno == ENOENT ? 127 : 126 );
 }
 
-coprocess_launch::coprocess_launch( const char* raster_path )
+coprocess_launch::coprocess_launch( int bindir_fd, const char* raster_path )
 {
 	int socket_fds[ 2 ];
 	
@@ -65,6 +65,9 @@ coprocess_launch::coprocess_launch( const char* raster_path )
 	
 	if ( its_pid == 0 )
 	{
+		fchdir( bindir_fd );
+		close ( bindir_fd );
+		
 		setenv( "V68K_SCREEN_VIEWER_PID",
 		        gear::inscribe_unsigned_decimal( getppid() ),
 		        1 );
