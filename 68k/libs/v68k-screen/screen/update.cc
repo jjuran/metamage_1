@@ -5,13 +5,6 @@
 
 #include "screen/update.hh"
 
-// POSIX
-#ifdef __APPLE__
-// This is needed to compile with Mac OS X 10.3's headers.
-#include <sys/types.h>
-#endif
-#include <sys/mman.h>
-
 // Standard C
 #include <signal.h>
 #include <stdlib.h>
@@ -69,6 +62,12 @@ const int update_pid = 0;
 
 void update()
 {
+#ifdef __RELIX__
+	
+	return;
+	
+#endif
+	
 	static void* previous_frame;
 	
 	if ( previous_frame )
@@ -78,12 +77,6 @@ void update()
 			return;
 		}
 	}
-	
-#ifdef __RELIX__
-	
-		msync( the_screen_buffer, the_screen_size, MS_SYNC );
-	
-#else
 	
 	if ( the_sync_relay != 0 )  // NULL
 	{
@@ -98,8 +91,6 @@ void update()
 			raster::broadcast( *the_sync_relay );
 		}
 	}
-	
-#endif
 	
 	if ( previous_frame == NULL )
 	{
