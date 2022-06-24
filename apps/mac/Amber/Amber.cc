@@ -8,9 +8,6 @@
 #include <Carbon/Carbon.h>
 #endif
 
-// POSIX
-#include <unistd.h>
-
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
 #ifndef MISSING_QUICKDRAW_H
@@ -30,14 +27,11 @@
 #include "splode/splode.hh"
 
 // amicus
-#include "amicus/apple_events.hh"
-#include "amicus/coprocess.hh"
 #include "amicus/events.hh"
 #include "amicus/keycodes.hh"
-#include "amicus/make_raster.hh"
-#include "amicus/raster_task.hh"
 #include "amicus/splode.hh"
-#include "amicus/tempfile.hh"
+
+#include "amicus/shared.cc.hh"
 
 // Amber
 #include "blit_AGL.hh"
@@ -327,22 +321,12 @@ static EventTypeSpec Keyboard_event[] =
 };
 
 static
-void run_event_loop()
+void run_event_loop( const emulated_screen& screen )
 {
 	OSStatus err;
 	
-	const char* raster_path = tempfile_location();
-	
-	raster_lifetime live_raster( raster_path );
-	
-	const raster_load& load = live_raster.get();
-	const raster_desc& desc = live_raster.desc();
-	
-	raster_monitor monitored_raster;
-	
-	coprocess_launch launched_coprocess( raster_path );
-	
-	events_fd = launched_coprocess.socket();
+	const raster_load& load = screen.load();
+	const raster_desc& desc = screen.desc();
 	
 	/*
 		We have to launch the coprocess before we create the window in
@@ -434,32 +418,9 @@ void run_event_loop()
 }  // namespace amicus
 
 static
-void change_dir( char* argv0 )
+void initialize()
 {
-	if ( char* slash = strrchr( argv0, '/' ) )
-	{
-		*slash = '\0';
-		
-		chdir( argv0 );
-		
-		*slash = '/';
-	}
-}
-
-int main( int argc, char** argv )
-{
-	change_dir( argv[ 0 ] );
-	
 	set_up_menus();
 	
 	SetMenuCommandMark( View, kZoom100Percent, kCheckCharCode );
-	
-	int err = amicus::wait_for_first_Apple_event();
-	
-	if ( amicus::wait_for_first_Apple_event() == noErr )
-	{
-		amicus::run_event_loop();
-	}
-	
-	return 0;
 }

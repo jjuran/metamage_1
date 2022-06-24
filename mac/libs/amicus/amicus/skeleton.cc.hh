@@ -8,21 +8,15 @@
 #include <Carbon/Carbon.h>
 #endif
 
-// POSIX
-#include <unistd.h>
-
 // mac-app-utils
 #include "mac_app/event_handlers.hh"
 #include "mac_app/state.hh"
 
 // amicus
-#include "amicus/apple_events.hh"
-#include "amicus/coprocess.hh"
 #include "amicus/display.hh"
 #include "amicus/events.hh"
-#include "amicus/make_raster.hh"
-#include "amicus/raster_task.hh"
-#include "amicus/tempfile.hh"
+
+#include "amicus/shared.cc.hh"
 
 
 namespace amicus
@@ -45,7 +39,7 @@ double x_scale_factor( CGRect frame, double width, double height )
 }
 
 static
-void run_event_loop()
+void run_event_loop( const emulated_screen& screen )
 {
 	OSStatus err;
 	
@@ -53,12 +47,8 @@ void run_event_loop()
 	
 	CGRect display_bounds = CGDisplayBounds( captured_display.id() );
 	
-	const char* raster_path = tempfile_location();
-	
-	raster_lifetime live_raster( raster_path );
-	
-	void*                      addr = live_raster.addr();
-	const raster::raster_desc& desc = live_raster.desc();
+	void*                      addr = screen.load().addr;
+	const raster::raster_desc& desc = screen.desc();
 	
 	double factor = x_scale_factor( display_bounds, desc.width, desc.height );
 	
@@ -70,12 +60,6 @@ void run_event_loop()
 	Blitter blitter( captured_display.id(), bounds );
 	
 	blitter.prep( desc.stride, desc.width, desc.height );
-	
-	raster_monitor monitored_raster;
-	
-	coprocess_launch launched_coprocess( raster_path );
-	
-	events_fd = launched_coprocess.socket();
 	
 #ifndef MAC_OS_X_VERSION_10_5
 	
@@ -186,28 +170,7 @@ void run_event_loop()
 }  // namespace amicus
 
 static
-void change_dir( char* argv0 )
+void initialize()
 {
-	if ( char* slash = strrchr( argv0, '/' ) )
-	{
-		*slash = '\0';
-		
-		chdir( argv0 );
-		
-		*slash = '/';
-	}
-}
-
-int main( int argc, char** argv )
-{
-	change_dir( argv[ 0 ] );
-	
 	mac::app::install_basic_event_handlers();
-	
-	if ( amicus::wait_for_first_Apple_event() == noErr )
-	{
-		amicus::run_event_loop();
-	}
-	
-	return 0;
 }
