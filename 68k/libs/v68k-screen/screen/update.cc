@@ -10,7 +10,6 @@
 #include <unistd.h>
 
 // Standard C
-#include <signal.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -54,14 +53,10 @@ struct end_sync
 static end_sync finally_end_sync;
 
 static const char* update_fifo = getenv( "GRAPHICS_UPDATE_SIGNAL_FIFO" );
-static const char* viewer_pid_env = getenv( "V68K_SCREEN_VIEWER_PID" );
-
-static int update_pid = viewer_pid_env ? atoi( viewer_pid_env ) : 0;
 
 #else
 
 const char* update_fifo;
-const int update_pid = 0;
 
 #endif
 
@@ -86,13 +81,7 @@ void update()
 	
 	if ( the_sync_relay != 0 )  // NULL
 	{
-		if ( update_pid )
-		{
-			++the_sync_relay->seed;
-			
-			kill( update_pid, SIGUSR1 );
-		}
-		else if ( update_fifo )
+		if ( update_fifo )
 		{
 			++the_sync_relay->seed;
 			
