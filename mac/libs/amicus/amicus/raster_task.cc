@@ -10,6 +10,11 @@
 #include <Carbon/Carbon.h>
 #endif
 
+// POSIX
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 // rasterlib
 #include "raster/raster.hh"
 #include "raster/relay.hh"
@@ -23,9 +28,17 @@
 namespace amicus
 {
 
+static const char update_fifo[] = "update-signal.fifo";
+
 extern raster::raster_load loaded_raster;
 
 static poseven::thread raster_thread;
+
+static
+void sigchld( int )
+{
+	open( update_fifo, O_RDONLY | O_NONBLOCK );
+}
 
 static
 raster::sync_relay* find_sync()
@@ -50,17 +63,11 @@ void raster_event_loop( raster::sync_relay* sync )
 	
 	uint32_t seed = 0;
 	
-	sigset_t mask;
-	sigprocmask( SIG_SETMASK, NULL, &mask );  // get blocked signal mask
-	sigdelset  ( &mask, SIGUSR1 );
-	
 	while ( sync->status == raster::Sync_ready )
 	{
 		while ( seed == sync->seed )
 		{
-			sigsuspend( &mask );
-			
-			poseven::thread::testcancel();
+			close( open( update_fifo, O_WRONLY ) );
 		}
 		
 		seed = sync->seed;
@@ -95,23 +102,13 @@ void* raster_thread_entry( void* arg )
 	return NULL;
 }
 
-static
-void sigusr1( int sig )
-{
-}
-
 raster_monitor::raster_monitor()
 {
-	// Block SIGUSR1 and install an empty signal handler
-	
-	sigset_t mask;
-	sigemptyset( &mask );
-	sigaddset  ( &mask, SIGUSR1 );
-	sigprocmask( SIG_BLOCK, &mask, NULL );
-	
-	signal( SIGUSR1, &sigusr1 );
+	signal( SIGCHLD, &sigchld );
 	
 	GetMainEventQueue();  // initialization is thread-unsafe before 10.4
+	
+	mkfifo( update_fifo, 0666 );
 	
 	raster::sync_relay* sync = find_sync();
 	
@@ -123,6 +120,8 @@ raster_monitor::raster_monitor()
 raster_monitor::~raster_monitor()
 {
 	raster_thread.join();
+	
+	unlink( update_fifo );
 }
 
 }

@@ -4,6 +4,8 @@ const screen_fb_file = "screen.skif"
 const works_dir_path = argv[ 1 ]
 const events_fd_slot = argv[ 2 ]
 
+setenv( "GRAPHICS_UPDATE_SIGNAL_FIFO", works_dir_path "/update-signal.fifo" )
+
 const ams_bin = "../xv68k"
 const ams_lib = "../xv68k"
 const ams_mnt = "../Resources/Files"

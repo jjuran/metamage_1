@@ -12,7 +12,6 @@
 
 // Standard C
 #include <errno.h>
-#include <stdlib.h>
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -67,10 +66,6 @@ coprocess_launch::coprocess_launch( int bindir_fd, const char* works_path )
 	{
 		fchdir( bindir_fd );
 		close ( bindir_fd );
-		
-		setenv( "V68K_SCREEN_VIEWER_PID",
-		        gear::inscribe_unsigned_decimal( getppid() ),
-		        1 );
 		
 		close( local_fd );
 		
