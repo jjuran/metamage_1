@@ -159,7 +159,7 @@ const respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
 
 run [ vx_Z "mkrsrc.vx", "-o", Files "/AMS Resources/rsrc", *respaths ]
 
-copy( parent_dir "/" name_to_copy, Files "/" name_to_copy )
+copy( parent_dir "/" name_to_copy, Files )
 
 if "files" in config then
 {
