@@ -104,7 +104,21 @@ namespace raster
 	{
 		relay.status = Sync_ended;
 		
-		broadcast( relay );
+		++relay.seed;
+		
+	#if CONFIG_CONDVARS
+		
+		/*
+			Allow errors -- xv68k in Amber gets EINVAL here in Mac OS X 10.7.
+			
+			I have no idea why this happens.  We never destroy the condvar
+			or unmap the memory segment.  We don't even unlink the raster
+			file until after xv68k exits (which shouldn't matter anyway).
+		*/
+		
+		int err = pthread_cond_broadcast( &relay.cond );
+		
+	#endif
 	}
 	
 	void wait( sync_relay& relay )
