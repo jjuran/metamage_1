@@ -424,15 +424,11 @@ void run_event_loop()
 	
 	RunApplicationEventLoop();
 	
-	if ( screen_window )
-	{
-		HideWindow( screen_window );
-		DisposeWindow( screen_window );
-	}
-	
 	close( events_fd );
 	
 	destroy_AGL_context();
+	
+	DisposeWindow( screen_window );
 }
 
 }  // namespace amicus
