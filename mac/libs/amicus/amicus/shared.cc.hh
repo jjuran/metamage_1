@@ -62,6 +62,10 @@ void initialize();
 
 int main( int argc, char** argv )
 {
+	// Reserve fds 6 and 7 for graft to connect ams-fs/xv68k to freemountd.
+	dup2( STDERR_FILENO, 6 );
+	dup2( STDERR_FILENO, 7 );
+	
 	change_dir( argv[ 0 ] );
 	
 	initialize();
