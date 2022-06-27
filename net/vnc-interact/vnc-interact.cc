@@ -9,6 +9,7 @@
 
 // Standard C
 #include <errno.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -84,6 +85,8 @@ static command::option options[] =
 	{ "magnify", Opt_magnify, command::Param_required },
 	{ NULL }
 };
+
+static const char* update_fifo = getenv( "GRAPHICS_UPDATE_SIGNAL_FIFO" );
 
 static int events_fd;
 
@@ -586,7 +589,18 @@ void update_loop( raster::sync_relay*  sync,
 		
 		while ( seed == sync->seed )
 		{
-			if ( wait_is_broken )
+			if ( update_fifo )
+			{
+				int fd = open( update_fifo, O_WRONLY );
+				
+				if ( fd < 0 )
+				{
+					return;
+				}
+				
+				close( fd );
+			}
+			else if ( wait_is_broken )
 			{
 				usleep( 10000 );  // 10ms
 			}
@@ -637,6 +651,11 @@ void* raster_update_start( void* arg )
 	return NULL;
 }
 
+static
+void sigusr1( int )
+{
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc == 0 )
@@ -652,6 +671,11 @@ int main( int argc, char** argv )
 	{
 		write( STDERR_FILENO, STR_LEN( USAGE ) );
 		return 2;
+	}
+	
+	if ( update_fifo )
+	{
+		signal( SIGUSR1, &sigusr1 );
 	}
 	
 	raster::sync_relay* sync = open_raster( raster_path );
@@ -731,7 +755,13 @@ int main( int argc, char** argv )
 		continue;
 	}
 	
-	raster_update_thread.cancel( &sync->cond );
+	/*
+		Interrupt the open() of the update FIFO to unblock update_loop().
+	*/
+	
+	kill( 0, SIGUSR1 );
+	
+	raster_update_thread.cancel( update_fifo ? NULL : &sync->cond );
 	raster_update_thread.join();
 	
 	return 0;
