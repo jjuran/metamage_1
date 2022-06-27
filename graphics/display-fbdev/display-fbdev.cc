@@ -330,6 +330,8 @@ void update_loop( raster::sync_relay*  sync,
                   size_t               height,
                   draw_proc            draw )
 {
+	const char* update_fifo = getenv( "GRAPHICS_UPDATE_SIGNAL_FIFO" );
+	
 	const size_t src_stride = loaded_raster.meta->desc.stride;
 	const size_t image_size = src_stride * height;
 	
@@ -339,7 +341,14 @@ void update_loop( raster::sync_relay*  sync,
 	{
 		while ( seed == sync->seed )
 		{
-			raster::wait( *sync );
+			if ( update_fifo )
+			{
+				close( open( update_fifo, O_WRONLY ) );
+			}
+			else
+			{
+				raster::wait( *sync );
+			}
 		}
 		
 		seed = sync->seed;
