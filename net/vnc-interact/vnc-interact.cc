@@ -611,14 +611,6 @@ void update_loop( raster::sync_relay*  sync,
 		
 		send_update();
 	}
-	
-	updates_ended = true;
-	
-	wait_for_update_request();
-	
-	clear_framebuffer();
-	
-	send_update();
 }
 
 static
@@ -633,6 +625,14 @@ void* raster_update_start( void* arg )
 	uint8_t* dst = framebuffer;
 	
 	update_loop( sync, src, dst, desc.width, desc.height, desc.stride );
+	
+	updates_ended = true;
+	
+	wait_for_update_request();
+	
+	clear_framebuffer();
+	
+	send_update();
 	
 	return NULL;
 }
