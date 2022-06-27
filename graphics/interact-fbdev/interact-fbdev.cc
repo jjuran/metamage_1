@@ -363,6 +363,19 @@ void launch_subprocesses( char* const* args )
 	}
 }
 
+const char* update_fifo = getenv( "GRAPHICS_UPDATE_SIGNAL_FIFO" );
+
+static
+void sigterm( int )
+{
+	/*
+		We ourselves have been terminated.  Open the update FIFO to unblock
+		display-fbdev in its update_loop(), so we can all exit and go home.
+	*/
+	
+	open( update_fifo, O_RDONLY | O_NONBLOCK );
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc == 0 )
@@ -380,6 +393,11 @@ int main( int argc, char** argv )
 	{
 		write( STDERR_FILENO, STR_LEN( USAGE ) );
 		return 2;
+	}
+	
+	if ( update_fifo )
+	{
+		signal( SIGTERM, &sigterm );
 	}
 	
 	launch_subprocesses( args );
