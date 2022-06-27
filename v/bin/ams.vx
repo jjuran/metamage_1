@@ -334,8 +334,11 @@ const works = home "/run/" getpid() ".works"
 
 run [ "mkdir -p" / ' ', works ]
 
+const update = works "/update-signal.fifo"
 const screen = works "/screen.skif"
 const raster = "--raster=" screen
+
+run [ "mkfifo", update ]
 
 run [ "skif make -fg " screen_res "*1 -c2 -m paint -R" / ' ', screen ]
 
@@ -355,6 +358,9 @@ const graft-subcmd = "graft", servers, xv68k-subcmd
 const command = [ command-prefix, graft-subcmd ]
 
 warn "screen: " screen
+warn "update: " update
+
+setenv( "GRAPHICS_UPDATE_SIGNAL_FIFO", update )
 
 const SIGINT = 2
 
@@ -362,6 +368,29 @@ signal-ignore SIGINT
 
 run command
 
+# We need to "unlock" the FIFO (by opening it O_RDONLY | O_NONBLOCK)
+# one last time in case vnc-interact is blocked trying to open it.
+# Then we delete the FIFO so it can't be opened again.
+
+# In order to avoid a race condition, we actually rename the FIFO first.
+# Unlocking the renamed FIFO unblocks vnc-interact's open() call, and if
+# it manages to call open() again before we call remove(), the open() will
+# fail nonetheless because the FIFO was already renamed.
+
+let update2 = update "2"
+
+rename( update, update2 )
+
+try
+{
+	# This will throw an exception because load() doesn't work on FIFOs,
+	# but it does open it O_RDONLY|O_NONBLOCK first, which is all we need.
+	
+	load update2
+}
+catch {}
+
+remove update2
 remove screen
 remove works
 
