@@ -137,6 +137,8 @@ void update_loop( raster::sync_relay*  sync,
                   unsigned             height,
                   unsigned             stride )
 {
+	const char* update_fifo = getenv( "GRAPHICS_UPDATE_SIGNAL_FIFO" );
+	
 	const raster::raster_desc& desc = loaded_raster.meta->desc;
 	
 	const size_t image_size = height * stride;
@@ -147,7 +149,14 @@ void update_loop( raster::sync_relay*  sync,
 	{
 		while ( seed == sync->seed )
 		{
-			raster::wait( *sync );
+			if ( update_fifo )
+			{
+				close( open( update_fifo, O_WRONLY ) );
+			}
+			else
+			{
+				raster::wait( *sync );
+			}
 			
 			p7::thread::testcancel();
 		}
