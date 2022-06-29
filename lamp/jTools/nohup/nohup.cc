@@ -1,7 +1,7 @@
-/*	========
- *	nohup.cc
- *	========
- */
+/*
+	nohup.cc
+	--------
+*/
 
 // Standard C
 #include <errno.h>
@@ -14,11 +14,8 @@
 #include <unistd.h>
 #include <sys/uio.h>
 
-// Extended API Set, PArt 2
+// Extended API Set, Part 2
 #include "extended-api-set/part-2.h"
-
-// Iota
-#include "iota/strings.hh"
 
 // more-posix
 #include "more/perror.hh"
@@ -29,17 +26,24 @@
 
 #define NOHUP_OUT  "nohup.out"
 
+#define STRLEN( s )  (sizeof "" s - 1)
+#define STR_LEN( s ) "" s, STRLEN( s )
+
+#define WARN( msg )  write( STDERR_FILENO, STR_LEN( msg "\n" ) )
+
+#define LENGTH( array )  (sizeof array / sizeof array[0])
+
 
 int main( int argc, char *const argv[] )
 {
 	if ( argc < 2 )
 	{
-		(void) write( STDERR_FILENO, STR_LEN( "Usage: nohup command [ arg1 ... argn ]\n" ) );
+		WARN( "Usage: nohup command [ arg1 ... argn ]" );
 		
-		return 1;
+		return 125;
 	}
 	
-	struct sigaction action = { 0 };
+	struct sigaction action = {};
 	
 	action.sa_handler = SIG_IGN;
 	
@@ -49,9 +53,11 @@ int main( int argc, char *const argv[] )
 	{
 		const char* path = NULL;
 		
-		int output = open( NOHUP_OUT, O_WRONLY | O_CREAT | O_APPEND, 0600 );
+		const int create_append = O_WRONLY | O_CREAT | O_APPEND;
 		
-		if ( output == -1 )
+		int output = open( NOHUP_OUT, create_append, 0600 );
+		
+		if ( output < 0 )
 		{
 			if ( const char* home = getenv( "HOME" ) )
 			{
@@ -61,7 +67,7 @@ int main( int argc, char *const argv[] )
 				
 				if ( home_fd >= 0 )
 				{
-					output = openat( home_fd, NOHUP_OUT, O_WRONLY | O_CREAT | O_APPEND, 0600 );
+					output = openat( home_fd, NOHUP_OUT, create_append, 0600 );
 					
 					int saved_errno = errno;
 					
@@ -71,11 +77,11 @@ int main( int argc, char *const argv[] )
 				}
 			}
 			
-			if ( output == -1 )
+			if ( output < 0 )
 			{
 				more::perror( "nohup: can't open a nohup.out file." );
 				
-				return 127;
+				return 30;
 			}
 		}
 		
@@ -97,7 +103,7 @@ int main( int argc, char *const argv[] )
 			output_message[2].iov_len  = STRLEN( "/" );
 		}
 		
-		(void) writev( STDERR_FILENO, output_message, sizeof output_message / sizeof output_message[0] );
+		writev( STDERR_FILENO, output_message, LENGTH( output_message ) );
 		
 		dup2( output, STDOUT_FILENO );
 		
