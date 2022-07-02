@@ -538,7 +538,7 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		{
 			if ( is_servable( fcb ) )
 			{
-				return save_app_data( fcb, fcb->fcbPLen );
+				return save_app_data( fcb, mark );
 			}
 			
 			if ( OSErr err = flush_file( fcb ) )
