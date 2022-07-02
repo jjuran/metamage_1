@@ -14,6 +14,6 @@ extern int appfs_fd;
 
 void load_app_data( FCB* fcb );
 
-OSErr save_app_data( const FCB* fcb );
+OSErr save_app_data( const FCB* fcb, long length );
 
 #endif

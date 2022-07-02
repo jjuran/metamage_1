@@ -52,11 +52,11 @@ void load_app_data( FCB* fcb )
 	}
 }
 
-OSErr save_app_data( const FCB* fcb )
+OSErr save_app_data( const FCB* fcb, long length )
 {
 	temp_A4 a4;
 	
-	plus::string data( fcb->fcbBfAdr, fcb->fcbPLen, vxo::delete_never );
+	plus::string data( fcb->fcbBfAdr, length, vxo::delete_never );
 	
 	int err = try_to_put( appfs_fd, data_path, data );
 	
