@@ -442,11 +442,6 @@ OSErr writability_error( const FCB* fcb )
 static
 OSErr flush_file( FCB* fcb )
 {
-	if ( is_servable( fcb ) )
-	{
-		return save_app_data( fcb );
-	}
-	
 	const vfs_table* vfs = vfs_from_vcb( fcb->fcbVPtr );
 	
 	if ( vfs == NULL )
@@ -541,6 +536,11 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		
 		if ( ! vfs->Write )
 		{
+			if ( is_servable( fcb ) )
+			{
+				return save_app_data( fcb );
+			}
+			
 			if ( OSErr err = flush_file( fcb ) )
 			{
 				return pb->ioResult = err;
@@ -630,6 +630,11 @@ short SetEOF_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	{
 		fcb->fcbEOF  = new_eof;
 		fcb->fcbPLen = new_eof;
+		
+		if ( is_servable( fcb ) )
+		{
+			return save_app_data( fcb );
+		}
 		
 		if ( OSErr err = flush_file( fcb ) )
 		{
