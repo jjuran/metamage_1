@@ -1,0 +1,49 @@
+# The procession of a relic of Antioch in /Monty Python and the Holy Grail/
+#
+# 8-bit arrangement and notation copyright 2022 Joshua Juran.
+
+# 1.059463094359295^12 ~= 2
+# 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
+
+let semitone_numer = 69433
+let semitone_denom = 2^16
+
+def transpose (n, pitch) { pitch * semitone_numer^n div semitone_denom^n }
+
+let C8 = 0x184ada * 2;
+let C0 = C8 div 2^8
+
+let adj = 6  # Scored in F sharp or G flat major
+
+def C  (o) { transpose( adj, C8 div 2^(8 - o) ) }
+def D  (o) { transpose( 2, C o ) }
+def E  (o) { transpose( 4, C o ) }
+def F  (o) { transpose( 5, C o ) }
+def G  (o) { transpose( 7, C o ) }
+def A  (o) { transpose( 9, C o ) }
+def B  (o) { transpose( 11, C o ) }
+
+let gap = 0.125
+
+def q (pitches) { (4 - gap): pitches, (gap): [] }
+def h (pitches) {  6:        pitches,  2:    [] }
+
+let statement =
+	q [ G 3 ],  # Pi-
+	q [ G 3 ],  # -e
+	q [ G 3 ],  # Je-
+	q [ G 3 ],  # -su
+	q [ A 3 ],  # Do-
+	q [ F 3 ],  # -mi-
+	h [ G 3 ],  # -ne
+	
+	q [ F 2, C 3, F 3 ],  # Do-
+	q [ G 2, D 3, G 3 ],  # -na
+	q [ F 2, C 3, F 3 ],  # e-
+	q [ E 2, B 2, E 3 ],  # -is
+	q [ D 2, A 2, D 3 ],  # Re-
+	q [ D 2, A 2, D 3 ],  # -qui-
+	h [ C 2, G 2, C 3 ],  # -em
+	()
+
+let audiograph = [ statement (*) 4 ]

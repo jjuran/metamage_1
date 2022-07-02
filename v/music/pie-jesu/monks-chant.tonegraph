@@ -1,0 +1,62 @@
+# Intro from the monks' chant in /Monty Python and the Holy Grail/
+#
+# 8-bit arrangement and notation copyright 2022 Joshua Juran.
+
+# 1.059463094359295^12 ~= 2
+# 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
+
+let semitone_numer = 69433
+let semitone_denom = 2^16
+
+def transpose (n, pitch) { pitch * semitone_numer^n div semitone_denom^n }
+
+let C8 = 0x184ada * 2;
+let C0 = C8 div 2^8
+
+let adj = 0  Scored in G minor
+
+def C  (o) { transpose( adj, C8 div 2^(8 - o) ) }
+def D  (o) { transpose( 2, C o ) }
+def F  (o) { transpose( 5, C o ) }
+def G  (o) { transpose( 7, C o ) }
+def Bb (o) { transpose( 10, C o ) }
+
+let gap = 0.125
+
+def q (pitches) { (4 - gap): pitches, (gap): [] }
+def h (pitches) { (8 - gap): pitches, (gap): [] }
+def w (pitches) { 16:        pitches }
+
+let pie_jesu_domine =
+	q [ Bb 2, F 3, Bb 3 ],  # Pi-
+	q [ Bb 2, F 3, Bb 3 ],  # -e
+	q [ Bb 2, F 3, Bb 3 ],  # Je-
+	q [ Bb 2, F 3, Bb 3 ],  # -su
+	q [ Bb 2, F 3, Bb 3 ],  # Do-
+	q [ Bb 2, F 3, Bb 3 ],  # -mi-
+	q [ Bb 2, F 3, Bb 3 ],  # -ne
+	q []
+
+let dona_eis_requiem =
+	q [ Bb 2, F 3, Bb 3 ],  # Do-
+	q [ Bb 2, F 3, Bb 3 ],  # -na
+	q [ Bb 2, F 3, Bb 3 ],  # e-
+	q [ Bb 2, F 3, Bb 3 ],  # -is
+	q [ Bb 2, F 3, Bb 3 ],  # Re-
+	q [ G  2, D 3, G  3 ],  # -qui-
+	h [ G  2, D 3, G  3 ],  # -em
+	w []
+
+let audiograph =
+[
+	pie_jesu_domine,
+	dona_eis_requiem,
+	
+	pie_jesu_domine,
+	h [],
+	dona_eis_requiem,
+	
+	pie_jesu_domine,
+	h [],
+	dona_eis_requiem,
+]
