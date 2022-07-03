@@ -240,7 +240,7 @@ void host_env()
 		                 : cput == 0x0108 ? "G3"
 		                 : cput == 0x0109 ? "604e"
 		                 : cput == 0x010A ? "604ev"
-		                 : cput == 0x010C ? "740/750 (G3)"
+		                 : cput == 0x010C ? "G4"
 		                 : cput == 0x0110 ? "7450 (G4)"
 		                 : cput == 0x0111 ? "7455 (G4)"
 		                 : cput == 0x0112 ? "7447 (G4)"
