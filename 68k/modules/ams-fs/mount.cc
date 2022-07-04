@@ -92,16 +92,14 @@ void try_to_mount( const char* name )
 		
 		uint8_t len = filename[ 0 ];
 		
-		if ( len <= 27 )
+		if ( len > 27 )
 		{
-			fast_memcpy( vcb->vcbVN, filename, len + 1 );
+			len = 27;
 		}
-		else
-		{
-			vcb->vcbVN[ 0 ] = 27;
-			
-			fast_memcpy( vcb->vcbVN + 1, filename + 1, 27 );
-		}
+		
+		vcb->vcbVN[ 0 ] = len;
+		
+		fast_memcpy( vcb->vcbVN + 1, filename + 1, len );
 	}
 	else
 	{
