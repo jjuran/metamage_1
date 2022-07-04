@@ -77,8 +77,6 @@ void try_to_mount( const char* name )
 	
 	fast_memcpy( image, data.data(), data_size );
 	
-	Ptr master_directory_block = image + 1024;
-	
 	vcb->qType    = fsQType;
 	vcb->vcbFlags = 0;
 	
@@ -103,7 +101,15 @@ void try_to_mount( const char* name )
 	}
 	else
 	{
+		Ptr master_directory_block = image + 1024;
+		
 		fast_memcpy( &vcb->vcbSigWord, master_directory_block, 64 );
+		
+		if ( vcb->vcbSigWord == 0xD2D7 )
+		{
+			vcb->vcbMAdr = master_directory_block + 64;
+			vcb->vcbMLen = (vcb->vcbNmAlBlks * 12 + 7) / 8u;
+		}
 	}
 	
 	vcb->vcbAtrb |= kioVAtrbHardwareLockedMask;
@@ -111,14 +117,6 @@ void try_to_mount( const char* name )
 	vcb->vcbMAdr   = NULL;
 	vcb->vcbBufAdr = image;
 	vcb->vcbMLen   = 0;
-	
-	const uint16_t sigword = vcb->vcbSigWord;
-	
-	if ( sigword == 0xD2D7 )
-	{
-		vcb->vcbMAdr = master_directory_block + 64;
-		vcb->vcbMLen = (vcb->vcbNmAlBlks * 12 + 7) / 8u;
-	}
 	
 	mount_VCB( vcb );
 }
