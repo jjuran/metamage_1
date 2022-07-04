@@ -75,7 +75,7 @@ void try_to_mount( const char* name )
 		return;
 	}
 	
-	BlockMoveData( data.data(), image, data_size );
+	fast_memcpy( image, data.data(), data_size );
 	
 	Ptr master_directory_block = image + 1024;
 	
@@ -105,7 +105,7 @@ void try_to_mount( const char* name )
 	}
 	else
 	{
-		BlockMoveData( master_directory_block, &vcb->vcbSigWord, 64 );
+		fast_memcpy( &vcb->vcbSigWord, master_directory_block, 64 );
 	}
 	
 	vcb->vcbAtrb |= kioVAtrbHardwareLockedMask;

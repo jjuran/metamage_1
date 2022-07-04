@@ -133,7 +133,7 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 		return memFullErr;
 	}
 	
-	BlockMoveData( file_data.data(), buffer, size );
+	fast_mempcpy( buffer, file_data.data(), size );
 	
 	fcb->fcbFlNum = -1;  // Claim the FCB as in use.
 	
