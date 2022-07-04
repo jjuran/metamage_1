@@ -67,7 +67,7 @@ void try_to_mount( const char* name )
 		return;
 	}
 	
-	VCB* vcb = (VCB*) NewPtr( sizeof (VCB) );
+	VCB* vcb = (VCB*) NewPtrClear( sizeof (VCB) );
 	
 	if ( vcb == NULL )
 	{
@@ -86,8 +86,6 @@ void try_to_mount( const char* name )
 	
 	if ( int8_t version = macbinary::version( possible_mBIN_header ) )
 	{
-		fast_memset( vcb, '\0', sizeof *vcb );
-		
 		vcb->vcbSigWord = 'mB';
 		
 		const uint8_t* filename = possible_mBIN_header.filename;
