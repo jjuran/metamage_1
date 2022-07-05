@@ -78,7 +78,8 @@ void try_to_mount( const char* name )
 	fast_memcpy( image, data.data(), data_size );
 	
 	vcb->qType    = fsQType;
-	vcb->vcbFlags = 0;
+	
+	vcb->vcbBufAdr = image;
 	
 	const macbinary::hdr& possible_mBIN_header = *(const macbinary::hdr*) image;
 	
@@ -113,10 +114,6 @@ void try_to_mount( const char* name )
 	}
 	
 	vcb->vcbAtrb |= kioVAtrbHardwareLockedMask;
-	
-	vcb->vcbMAdr   = NULL;
-	vcb->vcbBufAdr = image;
-	vcb->vcbMLen   = 0;
 	
 	mount_VCB( vcb );
 }
