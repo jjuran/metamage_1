@@ -28,7 +28,6 @@
 #include "Genie/FS/sys/mac/thng.hh"
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 #include "Genie/FS/sys/mac/crm.hh"
-#include "Genie/FS/sys/mac/drive.hh"
 #include "Genie/FS/sys/mac/unit.hh"
 #include "Genie/FS/sys/mac/xpram.hh"
 #endif
@@ -72,7 +71,6 @@ namespace Genie
 		
 	#endif
 		
-		{ "drive", &New_FSTree_sys_mac_drive },
 		{ "unit",  &New_FSTree_sys_mac_unit  },
 		
 		{ "xpram", &vfs::new_generated, (void*) &sys_mac_xpram::Read },
