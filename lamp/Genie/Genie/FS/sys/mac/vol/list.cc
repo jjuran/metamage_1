@@ -49,7 +49,6 @@
 #include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
-#include "vfs/node/types/symbolic_link.hh"
 
 // relix-kernel
 #include "relix/api/root.hh"
@@ -503,50 +502,6 @@ namespace Genie
 		return FSTreeFromFSDirSpec( volume );
 	}
 	
-	static vfs::node_ptr Drive_Link_Factory( const vfs::node*     parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
-	{
-		N::FSVolumeRefNum key = GetKeyFromParent( *parent );
-		
-		HVolumeParam pb;
-		
-		PBHGetVInfoSync( pb, key );
-		
-		if ( pb.ioVDrvInfo == 1 )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		plus::string drive = gear::inscribe_decimal( pb.ioVDrvInfo );
-		
-		drive = "/sys/mac/drive/" + drive;
-		
-		return vfs::new_symbolic_link( parent, name, drive );
-	}
-	
-	static vfs::node_ptr Driver_Link_Factory( const vfs::node*     parent,
-	                                          const plus::string&  name,
-	                                          const void*          args )
-	{
-		N::FSVolumeRefNum key = GetKeyFromParent( *parent );
-		
-		HVolumeParam pb;
-		
-		PBHGetVInfoSync( pb, key );
-		
-		if ( pb.ioVDRefNum == 0 )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		plus::string unit = gear::inscribe_decimal( ~pb.ioVDRefNum );
-		
-		unit = "/sys/mac/unit/" + unit;
-		
-		return vfs::new_symbolic_link( parent, name, unit );
-	}
-	
 	static vfs::node_ptr Folder_Link_Factory( const vfs::node*     parent,
 	                                          const plus::string&  name,
 	                                          const void*          args )
@@ -581,9 +536,6 @@ namespace Genie
 		{ "freespace", PROPERTY_ACCESS( GetVolumeFreeSpace ) },
 		
 		{ "sig", PROPERTY_ACCESS( GetVolumeSignature ) },
-		
-		{ "drive",  &Drive_Link_Factory  },
-		{ "driver", &Driver_Link_Factory },
 		
 		{ "fsid", PROPERTY_ACCESS( GetVolumeFSID ) },
 		
