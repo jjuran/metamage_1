@@ -33,10 +33,8 @@
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
 #include "vfs/node/types/symbolic_link.hh"
-#include "vfs/node/types/trigger.hh"
 
 // Genie
-#include "Genie/FS/Drives.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
@@ -199,17 +197,6 @@ namespace Genie
 		}
 	};
 	
-	static vfs::node_ptr drive_trigger_factory( const vfs::node*     parent,
-	                                            const plus::string&  name,
-	                                            const void*          args )
-	{
-		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( *parent );
-		
-		const vfs::trigger_extra extra = { (vfs::trigger_function) args, vRefNum };
-		
-		return vfs::trigger_factory( parent, name, &extra );
-	}
-	
 	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_drive_N_Property< prop > >::value
 	
 	const vfs::fixed_mapping sys_mac_drive_N_Mappings[] =
@@ -219,11 +206,6 @@ namespace Genie
 		{ "flags", PROPERTY( GetDriveFlags ) },
 		{ "fsid",  PROPERTY( GetDriveFSID  ) },
 		{ "size",  PROPERTY( GetDriveSize  ) },
-		
-		{ "flush",  &drive_trigger_factory, (void*) &volume_flush_trigger   },
-		{ "umount", &drive_trigger_factory, (void*) &volume_unmount_trigger },
-		{ "eject",  &drive_trigger_factory, (void*) &volume_eject_trigger   },
-		{ "mount",  &drive_trigger_factory, (void*) &volume_mount_trigger   },
 		
 		{ NULL, NULL }
 	};

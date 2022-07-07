@@ -50,13 +50,11 @@
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
 #include "vfs/node/types/symbolic_link.hh"
-#include "vfs/node/types/trigger.hh"
 
 // relix-kernel
 #include "relix/api/root.hh"
 
 // Genie
-#include "Genie/FS/Drives.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/sys/mac/vol/list/N/dt.hh"
@@ -563,17 +561,6 @@ namespace Genie
 		return new vfs::node( parent, name, S_IFLNK | 0777, &folder_link_methods );
 	}
 	
-	static vfs::node_ptr volume_trigger_factory( const vfs::node*     parent,
-	                                             const plus::string&  name,
-	                                             const void*          args )
-	{
-		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( *parent );
-		
-		const vfs::trigger_extra extra = { (vfs::trigger_function) args, vRefNum };
-		
-		return vfs::trigger_factory( parent, name, &extra );
-	}
-	
 	
 	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
@@ -609,15 +596,6 @@ namespace Genie
 		
 		// volume roots are named "mnt", not the volume name
 		{ "mnt",  &Root_Factory },
-		
-		{ "flush",  &volume_trigger_factory, (void*) &volume_flush_trigger   },
-		{ "umount", &volume_trigger_factory, (void*) &volume_unmount_trigger },
-		
-	#if !TARGET_API_MAC_CARBON
-		
-		{ "eject",  &volume_trigger_factory, (void*) &volume_eject_trigger   },
-		
-	#endif
 		
 		{ "sys", &Folder_Link_Factory },
 		{ "tmp", &Folder_Link_Factory },
