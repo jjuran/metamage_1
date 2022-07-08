@@ -12,6 +12,9 @@
 #ifndef __CONDITIONALMACROS__
 #include <ConditionalMacros.h>
 #endif
+#ifndef __TEXTUTILS__
+#include <TextUtils.h>
+#endif
 
 // Standard C
 #include <stdio.h>
@@ -27,6 +30,7 @@
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
+#include "mac_sys/get_machine_id.hh"
 #include "mac_sys/get_machine_name.hh"
 #include "mac_sys/has/BlueBox.hh"
 #include "mac_sys/has/floating_point_math.hh"
@@ -174,6 +178,32 @@ void host_env()
 	char machine_name[ 256 ] = { 0 };
 	
 	const unsigned char* mnam = mac::sys::get_machine_name();
+	
+#if ! TARGET_API_MAC_CARBON
+	
+	Str255 indexed_mnam = {};
+	
+	if ( mnam == NULL )
+	{
+		/*
+			The 'mnam' Gestalt selector is not present.  Index the list of
+			machine name strings in the System file.
+			
+			Watch out for bogus name lists that are just "  Macintosh" and
+			"  Power Macintosh", and suppress the name in that case.
+		*/
+		
+		const short machine_id = mac::sys::get_machine_id();
+		
+		GetIndString( indexed_mnam, -16395, machine_id );
+		
+		if ( indexed_mnam[ 0 ] > 0  &&  indexed_mnam[ 1 ] != ' ' )
+		{
+			mnam = indexed_mnam;
+		}
+	}
+	
+#endif
 	
 	if ( mnam != NULL )
 	{
