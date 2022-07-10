@@ -22,6 +22,10 @@
 
 short MemErr : 0x0220;
 
+char* ScrnBase : 0x0824;
+Rect  CrsrRect : 0x083C;
+char* CrsrSave : 0x088C;
+
 
 #pragma mark -
 #pragma mark GrafPort Routines
@@ -280,6 +284,18 @@ pascal void GlobalToLocal_patch( Point* pt )
 #pragma mark Miscellaneous Routines
 #pragma mark -
 
+static inline
+bool onscreen( const BitMap& bitmap )
+{
+	return bitmap.baseAddr == ScrnBase;
+}
+
+static inline
+bool intersects_cursor( const BitMap& bitmap, Point pt )
+{
+	return onscreen( bitmap )  &&  PtInRect( pt, &CrsrRect );
+}
+
 pascal unsigned char GetPixel_patch( short h, short v )
 {
 	GrafPtr thePort = *get_addrof_thePort();
@@ -295,9 +311,32 @@ pascal unsigned char GetPixel_patch( short h, short v )
 	v -= bounds.top;
 	h -= bounds.left;
 	
-	Ptr addr = bits.baseAddr;
+	Ptr   addr     = bits.baseAddr;
+	short rowBytes = bits.rowBytes;
 	
-	addr += v * bits.rowBytes;
+	/*
+		Missile calls GetPixel() to hit-test incoming warheads against the
+		detonations of the player's defensive munitions.  It checks for two
+		adjacent black pixels, which will never match a warhead's contrail
+		(which is drawn with a checkerboard pattern).  Testing on a real Mac
+		reveals that it doesn't match the cursor, either, so it's wrong to
+		sample an area of the screen that intersects the cursor.
+		
+		Rather than spend time hiding and showing the cursor (and generating
+		a false-positive screen update), check to see if the point is within
+		CrsrRect, and if so, query the cursor-saved-bits buffer directly.
+	*/
+	
+	if ( intersects_cursor( bits, *(Point*) &v ) )
+	{
+		v -= CrsrRect.top;
+		h -= CrsrRect.left;
+		
+		addr     = CrsrSave;
+		rowBytes = sizeof (UInt32);
+	}
+	
+	addr += v * rowBytes;
 	addr += h / 8u;
 	
 	h &= 0x7;
