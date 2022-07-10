@@ -13,6 +13,9 @@
 #include <Quickdraw.h>
 #endif
 
+// ams-common
+#include "callouts.hh"
+
 
 short ScreenRow : 0x0106;
 Ptr   ScrnBase  : 0x0824;
@@ -148,7 +151,7 @@ pascal void InitGraf_patch( GrafPtr* thePort_ptr )
 	qd.screenBits.rowBytes = ScreenRow;
 	qd.screenBits.bounds   = CrsrPin;
 	
-	qd.arrow = arrow;
+	fast_memcpy( &qd.arrow, &arrow, sizeof arrow );
 	
 	set_Pattern( qd.dkGray, 0x77DD77DD );
 	set_Pattern( qd.ltGray, 0x88228822 );
