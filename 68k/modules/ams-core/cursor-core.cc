@@ -16,6 +16,7 @@
 #include "screen_lock.hh"
 
 
+typedef uint32_t* Saved;
 typedef uint32_t Buffer[ 16 ];
 
 short ScreenRow : 0x0106;
@@ -24,11 +25,12 @@ Point Mouse     : 0x0830;
 Rect  CrsrPin   : 0x0834;
 Rect  CrsrRect  : 0x083C;
 Cursor TheCrsr  : 0x0844;
+Saved CrsrSave  : 0x088C;
 char  CrsrVis   : 0x08CC;
 char  CrsrBusy  : 0x08CD;
 
 static Ptr    CrsrAddr;
-static Buffer CrsrSave;
+static Buffer bits_under_cursor;
 static short  CrsrState = -1;  // Invisible cursor, at first
 
 
@@ -59,6 +61,8 @@ void init_lowmem_Cursor()
 	JShowCursor = &show_cursor;
 	JInitCrsr   = &init_cursor;
 	JSetCrsr    = &set_cursor;
+	
+	CrsrSave = bits_under_cursor;
 }
 
 static
@@ -132,7 +136,7 @@ void save_bits_under_cursor( short n )
 {
 	Ptr addr = CrsrAddr;
 	
-	uint32_t* p = CrsrSave;
+	uint32_t* p = bits_under_cursor;
 	
 	while ( --n >= 0 )
 	{
@@ -147,7 +151,7 @@ void restore_bits_under_cursor( short n )
 {
 	Ptr addr = CrsrAddr;
 	
-	uint32_t* p = CrsrSave;
+	uint32_t* p = bits_under_cursor;
 	
 	while ( --n >= 0 )
 	{
