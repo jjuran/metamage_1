@@ -125,6 +125,8 @@ enum
 	tag_CrsrRect_word_3 = tag_CrsrRect + 3,  // 8 bytes
 	tag_TheCrsr,
 	tag_TheCrsr_word_33 = tag_TheCrsr + 33,  // 68 bytes
+	tag_CrsrSave,
+	tag_CrsrSave_low_word,
 	tag_CrsrVisBusy,
 	tag_CrsrNewCouple,
 	tag_MouseMask,
@@ -326,6 +328,19 @@ static const global globals[] =
 	{ 0x0834, 8,    tag_CrsrPin     },
 	{ 0x083C, 8,    tag_CrsrRect    },
 	{ 0x0844, 68,   tag_TheCrsr     },
+	
+	/*
+		In the 64K ROM, CrsrSave is a 64-byte buffer for saving the bits
+		under the cursor.  Subsequently, it's a pointer to such a buffer.
+		On color machines, new globals are added at addresses that used to
+		be included in CrsrSave.
+		
+		We implement CrsrSave as a pointer, in order to be compatible with
+		color machines and to make it obvious if anything tries to access
+		the original CrsrSave (since most of it remains unmapped).
+	*/
+	
+	{ 0x088C, 4,    tag_CrsrSave    },
 	{ 0x08CC, 2,    tag_CrsrVisBusy },  // CrsrVis, CrsrBusy
 	{ 0x08CE, 2,    tag_CrsrNewCouple},  // CrsrNew, CrsrCouple
 	{ 0x08D6, 4,    tag_MouseMask   },
