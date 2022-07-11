@@ -5,6 +5,9 @@
 
 #include "memory.hh"
 
+// Standard C
+#include <string.h>
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -143,11 +146,31 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 #ifndef __RELIX__
 	
+	/*
+		In fixed-RAM configurations, the "low memory" segment is large
+		enough to include the screen buffers.  Direct writes and reads of
+		the screen there, and on update, copy to the live graphics buffer.
+	*/
+	
+	const bool has_fixed_RAM = low_memory_size >= 128 * 1024;
+	
 	const uint32_t screen_size = v68k::screen::the_screen_size;
 	
 	if ( addr_within_span( addr, main_screen_addr, screen_size ) )
 	{
 		const uint32_t offset = addr - main_screen_addr;
+		
+		if ( has_fixed_RAM )
+		{
+			if ( access != v68k::mem_update )
+			{
+				goto skip_framebuffer;
+			}
+			
+			memcpy( screen::translate( offset, length, fc, v68k::mem_write ),
+			        low_memory_base + addr,
+			        length );
+		}
 		
 		return screen::translate( offset, length, fc, access );
 	}
@@ -156,8 +179,22 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	{
 		const uint32_t offset = addr - alt_screen_addr;
 		
+		if ( has_fixed_RAM )
+		{
+			if ( access != v68k::mem_update )
+			{
+				goto skip_framebuffer;
+			}
+			
+			memcpy( screen::translate2( offset, length, fc, v68k::mem_write ),
+			        low_memory_base + addr,
+			        length );
+		}
+		
 		return screen::translate2( offset, length, fc, access );
 	}
+	
+skip_framebuffer:
 	
 	const uint32_t sound_size = 740;
 	

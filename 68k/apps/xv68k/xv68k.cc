@@ -801,6 +801,8 @@ int execute_68k( int argc, char* const* argv )
 		main_screen_addr = mem_size - (0x20000 - 0x1A700);
 		main_sound_addr  = mem_size - (0x20000 - 0x1FD00);
 		
+		memset( mem + main_screen_addr, 0xFF, 64 * 342 );  // paint it black
+		
 		emu.put_word( ScreenRow,   64,               user_data_space );
 		emu.put_long( MemTop,      mem_size,         user_data_space );
 		
