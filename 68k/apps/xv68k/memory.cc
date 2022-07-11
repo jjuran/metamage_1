@@ -147,12 +147,16 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	if ( addr_within_span( addr, main_screen_addr, screen_size ) )
 	{
-		return screen::translate( addr - main_screen_addr, length, fc, access );
+		const uint32_t offset = addr - main_screen_addr;
+		
+		return screen::translate( offset, length, fc, access );
 	}
 	
 	if ( vid_x2()  &&  addr_within_span( addr, alt_screen_addr, screen_size ) )
 	{
-		return screen::translate2( addr - alt_screen_addr, length, fc, access );
+		const uint32_t offset = addr - alt_screen_addr;
+		
+		return screen::translate2( offset, length, fc, access );
 	}
 	
 	const uint32_t sound_size = 740;
