@@ -59,6 +59,13 @@ const frontend = choose_frontend()
 const output_dir = argv[ 1 ]
 const input_path = argv[ 2 ]
 
+if not exists input_path then
+{
+	warn "retromatic.vx: " input_path ": No such file or directory"
+	
+	exit 1
+}
+
 const parent_dir = dirname input_path
 
 const src_is_txt = -substr( -input_path, 0, 4 ) == ".txt"
