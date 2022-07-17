@@ -207,11 +207,13 @@ ams-quartz-build: $(AMS_REPOS)
 RETROMATIC := PATH="$$PWD/var/out:$$PATH" v/bin/retromatic.vx
 RETRO_APPS := ~/Applications/"Advanced Mac Substitute"
 
-ams-quartz-demo: ams-quartz-build
+ams-quartz-demo-nosound: ams-quartz-build
 	@mkdir -p $(RETRO_APPS)
 	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/"Nyanochrome Cat".mbin
 	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/tic-tac-toe.txt
 	@open $(RETRO_APPS)
+
+ams-quartz-demo: sndtrack ams-quartz-demo-nosound
 
 ams-osx-build: $(AMS_REPOS) macward-compat.git
 	bin/build-app -N Genie
