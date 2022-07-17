@@ -36,7 +36,7 @@ const mods = ["core fs rsrc" / ' '] map ams_mod
 const program = ams_bin "/get-" property
 
 const freemount-srv = "freemountd -q --root" / ' ', fs_root
-const xv68k-command = "xv68k", "-S", *mods, program, app_name, arguments
+const xv68k-command = "xv68k", "-tS", *mods, program, app_name, arguments
 const graft-command = "graft", freemount-srv, "//", xv68k-command
 
 run [graft-command]
