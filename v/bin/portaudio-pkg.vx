@@ -1,4 +1,4 @@
-#!/usr/bin/env vx -Z
+#!/usr/bin/env minivx -Z
 
 const usr_include_portaudio_h = "/usr/include/portaudio.h"
 
@@ -26,6 +26,20 @@ def clone
 	
 	if not exists portaudio_repo_path "/.git" then
 	{
+		let symbol = "MAC_OS_X_VERSION_10_4"
+		let header = "/usr/include/AvailabilityMacros.h"
+		
+		try
+		{
+			run ["grep", "-q", "define " symbol, header]
+		}
+		catch
+		{
+			warn "portaudio-pkg.vx: PortAudio requires Mac OS X 10.4 minimum."
+			
+			exit 1
+		}
+		
 		run [ "bin/clone-repo", portaudio_repo ]
 		
 		system "cd -P " portaudio_repo_path " && git checkout origin/patches"
