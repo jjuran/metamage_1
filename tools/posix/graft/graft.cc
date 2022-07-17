@@ -284,12 +284,23 @@ int main( int argc, char** argv )
 	}
 	
 	int wait_status;
+	int client_wait_status = -1;
 	
 	do
 	{
 		pid_t pid = CHECK_N( wait( &wait_status ) );
+		
+		if ( pid == client_pid )
+		{
+			client_wait_status = wait_status;
+		}
 	}
 	while ( n_servers-- );
 	
-	return 0;
+	if ( WIFSIGNALED( client_wait_status ) )
+	{
+		return 128 + WTERMSIG( client_wait_status );
+	}
+	
+	return client_wait_status;
 }
