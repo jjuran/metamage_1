@@ -4,8 +4,10 @@
 */
 
 // POSIX
+#include <fcntl.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 
 // Standard C
@@ -46,6 +48,7 @@ enum
 	
 	Opt_raster,
 	Opt_events_fd,
+	Opt_events_fifo,
 };
 
 static command::option options[] =
@@ -54,11 +57,13 @@ static command::option options[] =
 	{ "title",   Opt_title,   command::Param_required },
 	{ "magnify", Opt_magnify, command::Param_required },
 	{ "events-fd", Opt_events_fd, command::Param_required },
+	{ "events-fifo", Opt_events_fifo, command::Param_required },
 	{ NULL }
 };
 
 
 static const char* raster_path;
+static const char* fifo_path;
 static const char* title;
 
 static const char* magnifier = "1";
@@ -132,6 +137,10 @@ char* const* get_options( char** argv )
 			
 			case Opt_events_fd:
 				events_fd = atoi( global_result.param );
+				break;
+			
+			case Opt_events_fifo:
+				fifo_path = global_result.param;
 				break;
 			
 			default:
@@ -250,14 +259,116 @@ void launch_viewer( const char* raster_path )
 static
 void launch_interactive( char* const* args )
 {
-	int socket_fds[ 2 ];
+	/*
+		The author process reads from the front end of a socket
+		and the viewer process writes to the back end.
+		
+		Alternatively, we can create and use a named pipe instead.
+	*/
 	
-	int nok = socketpair( PF_UNIX, SOCK_STREAM, 0, socket_fds );
+	int author_fd;
+	int viewer_fd;
 	
-	if ( nok )
+	if ( fifo_path == NULL )
 	{
-		report_error( "socketpair", errno );
-		exit( 1 );
+		int socket_fds[ 2 ];
+		
+		int nok = socketpair( PF_UNIX, SOCK_STREAM, 0, socket_fds );
+		
+		if ( nok )
+		{
+			report_error( "socketpair", errno );
+			exit( 1 );
+		}
+		
+		author_fd = socket_fds[ 0 ];
+		viewer_fd = socket_fds[ 1 ];
+	}
+	else
+	{
+		struct stat st;
+		int nok = stat( fifo_path, &st );
+		
+		/*
+			There are four possible outcomes:
+			
+			  * a FIFO exists
+			  * something else exists
+			  * nothing exists
+			  * some other error occurred
+		*/
+		
+		if ( nok == 0 )
+		{
+			/*
+				Something exists.  If it's not a FIFO, the user erred and we
+				shouldn't continue, lest we risk deleting something important.
+			*/
+			
+			if ( ! S_ISFIFO( st.st_mode ) )
+			{
+				more::perror( PROGRAM, fifo_path, "not a named pipe" );
+				exit( 1 );
+			}
+			
+			/*
+				A FIFO exists.  Delete it anyway and create a fresh one, so
+				we're sure that we won't be interfering with an existing set
+				of processes.
+				
+				No need to error-check:  If unlink() fails, then mkfifo()
+				will fail below.
+			*/
+			
+			unlink( fifo_path );
+		}
+		else if ( errno != ENOENT )
+		{
+			report_error( fifo_path, errno );
+			exit( 1 );
+		}
+		
+		nok = mkfifo( fifo_path, 0666 );
+		
+		if ( nok )
+		{
+			report_error( "fifo_path", errno );
+			exit( 1 );
+		}
+		
+		int fifo_reader = open( fifo_path, O_RDONLY | O_NONBLOCK );
+		
+		if ( fifo_reader < 0 )
+		{
+			report_error( "fifo_path", errno );
+			exit( 1 );
+		}
+		
+		int fifo_writer = open( fifo_path, O_WRONLY );
+		
+		if ( fifo_writer < 0 )
+		{
+			report_error( "fifo_path", errno );
+			exit( 1 );
+		}
+		
+		close( fifo_reader );
+		
+		fifo_reader = open( fifo_path, O_RDONLY );
+		
+		if ( fifo_reader < 0 )
+		{
+			report_error( "fifo_path", errno );
+			exit( 1 );
+		}
+		
+		/*
+			Since we're using a FIFO, have the author read from it
+			and the viewer write to it.
+		*/
+		
+		author_fd = fifo_reader;
+		viewer_fd = fifo_writer;
 	}
 	
 	viewer_pid = fork();
@@ -280,11 +391,11 @@ void launch_interactive( char* const* args )
 			argv[ 6 ] = title;
 		}
 		
-		exec_or_exit_endpoint( argv, socket_fds[ 1 ], socket_fds[ 0 ] );
+		exec_or_exit_endpoint( argv, viewer_fd, author_fd );
 	}
 	
 	char ready;
-	ssize_t n = read( socket_fds[ 0 ], &ready, 1 );
+	ssize_t n = read( author_fd, &ready, 1 );
 	
 	if ( n < 0 )
 	{
@@ -309,16 +420,16 @@ void launch_interactive( char* const* args )
 	
 	if ( author_pid == 0 )
 	{
-		const int ours  = socket_fds[ 0 ];
-		const int other = socket_fds[ 1 ];
+		const int ours  = author_fd;
+		const int other = viewer_fd;
 		
 		const int keep_output = -1;  // Don't clobber stdout
 		
 		exec_or_exit_endpoint( args, ours, other, events_fd, keep_output );
 	}
 	
-	close( socket_fds[ 0 ] );
-	close( socket_fds[ 1 ] );
+	close( author_fd );
+	close( viewer_fd );
 }
 
 int main( int argc, char** argv )

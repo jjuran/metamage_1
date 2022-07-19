@@ -335,7 +335,10 @@ const works = home "/run/" getpid() ".works"
 run [ "mkdir -p" / ' ', works ]
 
 const update = works "/update-signal.fifo"
+const events = works "/events.fifo"
 const screen = works "/screen.skif"
+
+const ev_opt = "--events-fifo=" events
 const raster = "--raster=" screen
 
 run [ "mkfifo", update ]
@@ -345,7 +348,8 @@ run [ "skif make -fg " screen_res "*1 -c2 -m paint -R" / ' ', screen ]
 run [ "skif init" / ' ', screen ]
 
 const zoom = "-x" (getenv "AMS_ZOOM" or 1)
-const command-prefix = "exhibit", "-t", title, raster, events_fd_opt, zoom
+const event_input = events_fd_opt, ev_opt
+const command-prefix = "exhibit", "-t", title, raster, event_input, zoom
 
 const file-servers = freemountd-server, appfs-server, docfs-server
 const servers = sound-server, modem-server, file-servers
@@ -358,6 +362,7 @@ const graft-subcmd = "graft", servers, xv68k-subcmd
 const command = [ command-prefix, graft-subcmd ]
 
 warn "screen: " screen
+warn "events: " events
 warn "update: " update
 
 setenv( "GRAPHICS_UPDATE_SIGNAL_FIFO", update )
@@ -391,6 +396,7 @@ try
 catch {}
 
 remove update2
+remove events
 remove screen
 remove works
 
