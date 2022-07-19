@@ -3,7 +3,7 @@
 	-----------
 */
 
-#include "blit_AGL.hh"
+#include "aglow/blit_AGL.hh"
 
 // Mac OS X
 #ifdef __APPLE__

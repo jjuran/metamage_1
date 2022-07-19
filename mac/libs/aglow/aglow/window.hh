@@ -3,8 +3,8 @@
 	---------
 */
 
-#ifndef WINDOW_HH
-#define WINDOW_HH
+#ifndef AGLOW_WINDOW_HH
+#define AGLOW_WINDOW_HH
 
 // Mac OS X
 #ifdef __APPLE__

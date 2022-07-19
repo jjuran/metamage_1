@@ -3,7 +3,7 @@
 	--------
 */
 
-#include "menus.hh"
+#include "aglow/menus.hh"
 
 
 #define LENGTH( array )  (sizeof (array) / sizeof *(array))

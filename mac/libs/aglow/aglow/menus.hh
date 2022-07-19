@@ -3,8 +3,8 @@
 	--------
 */
 
-#ifndef MENUS_HH
-#define MENUS_HH
+#ifndef AGLOW_MENUS_HH
+#define AGLOW_MENUS_HH
 
 // Mac OS X
 #ifdef __APPLE__

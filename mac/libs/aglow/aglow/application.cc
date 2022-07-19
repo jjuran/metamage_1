@@ -1,12 +1,17 @@
 /*
-	Amber.cc
-	--------
+	application.cc
+	--------------
 */
+
+#include "aglow/application.hh"
 
 // Mac OS X
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
 #endif
+
+// POSIX
+#include <unistd.h>
 
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
@@ -19,24 +24,24 @@
 #include "mac_config/upp-macros.hh"
 
 // mac-app-utils
-#include "mac_app/event_handlers.hh"
 #include "mac_app/menus.hh"
-#include "mac_app/state.hh"
 
 // splode
 #include "splode/splode.hh"
 
+// rasterlib
+#include "raster/raster.hh"
+
 // amicus
 #include "amicus/events.hh"
 #include "amicus/keycodes.hh"
+#include "amicus/raster_task.hh"
 #include "amicus/splode.hh"
 
-#include "amicus/shared.cc.hh"
-
-// Amber
-#include "blit_AGL.hh"
-#include "menus.hh"
-#include "window.hh"
+// aglow
+#include "aglow/blit_AGL.hh"
+#include "aglow/menus.hh"
+#include "aglow/window.hh"
 
 
 #define LENGTH( array )  (sizeof (array) / sizeof *(array))

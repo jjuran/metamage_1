@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "window.hh"
+#include "aglow/window.hh"
 
 // Mac OS X
 #ifdef __APPLE__

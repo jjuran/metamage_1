@@ -3,8 +3,8 @@
 	-----------
 */
 
-#ifndef BLITAGL_HH
-#define BLITAGL_HH
+#ifndef AGLOW_BLITAGL_HH
+#define AGLOW_BLITAGL_HH
 
 // Mac OS X
 #ifdef __APPLE__
