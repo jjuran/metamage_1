@@ -33,6 +33,9 @@ void sigchld( int )
 namespace amicus
 {
 
+using raster::raster_desc;
+using raster::raster_load;
+
 static const char raster_path[] = "screen.skif";
 
 class raster_updating
@@ -65,8 +68,8 @@ class emulated_screen
 	public:
 		emulated_screen( int bindir_fd, const char* works_path );
 		
-		const raster::raster_load& load() const  { return live_raster.get(); }
-		const raster::raster_desc& desc() const  { return live_raster.desc(); }
+		const raster_load& load() const  { return live_raster.get(); }
+		const raster_desc& desc() const  { return live_raster.desc(); }
 };
 
 emulated_screen::emulated_screen( int bindir_fd, const char* works_path )
@@ -79,7 +82,7 @@ emulated_screen::emulated_screen( int bindir_fd, const char* works_path )
 }
 
 static
-void run_event_loop( const emulated_screen& screen );
+void run_event_loop( const raster_load& load, const raster_desc& desc );
 
 }  // namespace amicus
 
@@ -138,7 +141,10 @@ int main( int argc, char** argv )
 		
 		close( bindir_fd );
 		
-		run_event_loop( screen );
+		const raster_load& load = screen.load();
+		const raster_desc& desc = screen.desc();
+		
+		run_event_loop( load, desc );
 	}
 	
 	rmdir( works_path );

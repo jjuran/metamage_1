@@ -39,7 +39,7 @@ double x_scale_factor( CGRect frame, double width, double height )
 }
 
 static
-void run_event_loop( const emulated_screen& screen )
+void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
 	
@@ -47,8 +47,7 @@ void run_event_loop( const emulated_screen& screen )
 	
 	CGRect display_bounds = CGDisplayBounds( captured_display.id() );
 	
-	void*                      addr = screen.load().addr;
-	const raster::raster_desc& desc = screen.desc();
+	void* addr = load.addr;
 	
 	double factor = x_scale_factor( display_bounds, desc.width, desc.height );
 	

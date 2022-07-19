@@ -321,12 +321,9 @@ static EventTypeSpec Keyboard_event[] =
 };
 
 static
-void run_event_loop( const emulated_screen& screen )
+void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
-	
-	const raster_load& load = screen.load();
-	const raster_desc& desc = screen.desc();
 	
 	/*
 		We have to launch the coprocess before we create the window in
