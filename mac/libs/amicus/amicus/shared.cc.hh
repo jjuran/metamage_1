@@ -3,6 +3,11 @@
 	------------
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // POSIX
 #include <sys/stat.h>
 #include <unistd.h>
@@ -13,6 +18,7 @@
 // amicus
 #include "amicus/apple_events.hh"
 #include "amicus/coprocess.hh"
+#include "amicus/events.hh"
 #include "amicus/make_raster.hh"
 #include "amicus/raster_task.hh"
 #include "amicus/tempfile.hh"
