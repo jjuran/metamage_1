@@ -81,7 +81,8 @@ emulated_screen::emulated_screen( int bindir_fd, const char* works_path )
 	events_fd = launched_coprocess.socket();
 }
 
-static
+void initialize();
+
 void run_event_loop( const raster_load& load, const raster_desc& desc );
 
 }  // namespace amicus
@@ -107,9 +108,6 @@ int bindir( char* argv0 )
 	return dirfd;
 }
 
-static
-void initialize();
-
 int main( int argc, char** argv )
 {
 	signal( SIGCHLD, &sigchld );
@@ -118,7 +116,7 @@ int main( int argc, char** argv )
 	dup2( STDERR_FILENO, 6 );
 	dup2( STDERR_FILENO, 7 );
 	
-	initialize();
+	amicus::initialize();
 	
 	using namespace amicus;
 	

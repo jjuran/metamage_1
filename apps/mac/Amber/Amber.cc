@@ -320,7 +320,6 @@ static EventTypeSpec Keyboard_event[] =
 	{ kEventClassKeyboard, kEventRawKeyUp     },
 };
 
-static
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
@@ -412,12 +411,11 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	DisposeWindow( screen_window );
 }
 
-}  // namespace amicus
-
-static
 void initialize()
 {
 	set_up_menus();
 	
 	SetMenuCommandMark( View, kZoom100Percent, kCheckCharCode );
 }
+
+}  // namespace amicus

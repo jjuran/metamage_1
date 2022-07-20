@@ -38,7 +38,6 @@ double x_scale_factor( CGRect frame, double width, double height )
 	return factor;
 }
 
-static
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
@@ -166,10 +165,9 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	move_cursor_to( transformed_location );
 }
 
-}  // namespace amicus
-
-static
 void initialize()
 {
 	mac::app::install_basic_event_handlers();
 }
+
+}  // namespace amicus
