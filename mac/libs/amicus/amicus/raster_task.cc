@@ -30,6 +30,8 @@ namespace amicus
 
 static const char update_fifo[] = "update-signal.fifo";
 
+static bool monitoring;
+
 static poseven::thread raster_thread;
 
 static
@@ -61,9 +63,9 @@ void raster_event_loop( raster::sync_relay* sync )
 	
 	uint32_t seed = 0;
 	
-	while ( sync->status == raster::Sync_ready )
+	while ( monitoring  &&  sync->status == raster::Sync_ready )
 	{
-		while ( seed == sync->seed )
+		while ( monitoring  &&  seed == sync->seed )
 		{
 			close( open( update_fifo, O_WRONLY ) );
 		}
@@ -112,11 +114,15 @@ raster_monitor::raster_monitor( const raster::raster_load& load )
 	
 	publish( *sync );
 	
+	monitoring = true;
+	
 	raster_thread.create( &raster_thread_entry, sync );
 }
 
 raster_monitor::~raster_monitor()
 {
+	monitoring = false;
+	
 	raster_thread.join();
 	
 	unlink( update_fifo );
