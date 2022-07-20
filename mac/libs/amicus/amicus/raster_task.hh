@@ -6,6 +6,10 @@
 #ifndef AMICUS_RASTERTASK_HH
 #define AMICUS_RASTERTASK_HH
 
+
+#define UPDATE_FIFO  "update-signal.fifo"
+
+
 namespace raster
 {
 	
