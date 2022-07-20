@@ -12,7 +12,6 @@
 
 // POSIX
 #include <fcntl.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 // rasterlib
@@ -106,8 +105,6 @@ raster_monitor::raster_monitor( const raster::raster_load& load )
 	
 	GetMainEventQueue();  // initialization is thread-unsafe before 10.4
 	
-	mkfifo( UPDATE_FIFO, 0666 );
-	
 	raster::sync_relay* sync = find_sync( load );
 	
 	publish( *sync );
@@ -122,8 +119,6 @@ raster_monitor::~raster_monitor()
 	monitoring = false;
 	
 	raster_thread.join();
-	
-	unlink( UPDATE_FIFO );
 }
 
 }

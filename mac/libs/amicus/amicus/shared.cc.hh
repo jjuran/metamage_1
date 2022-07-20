@@ -23,10 +23,30 @@ namespace amicus
 
 static const char raster_path[] = "screen.skif";
 
+class raster_updating
+{
+	private:
+		// non-copyable
+		raster_updating           ( const raster_updating& );
+		raster_updating& operator=( const raster_updating& );
+	
+	public:
+		raster_updating()
+		{
+			mkfifo( UPDATE_FIFO, 0666 );
+		}
+		
+		~raster_updating()
+		{
+			unlink( UPDATE_FIFO );
+		}
+};
+
 class emulated_screen
 {
 	private:
 		raster_lifetime   live_raster;
+		raster_updating   update_fifo;
 		raster_monitor    monitored_raster;
 		coprocess_launch  launched_coprocess;
 	
