@@ -6,6 +6,13 @@
 #ifndef AMICUS_RASTERTASK_HH
 #define AMICUS_RASTERTASK_HH
 
+namespace raster
+{
+	
+	struct raster_load;
+	
+}
+
 namespace amicus
 {
 
@@ -24,7 +31,7 @@ class raster_monitor
 		raster_monitor& operator=( const raster_monitor& );
 	
 	public:
-		raster_monitor();
+		explicit raster_monitor( const raster::raster_load& load );
 		
 		~raster_monitor();
 };

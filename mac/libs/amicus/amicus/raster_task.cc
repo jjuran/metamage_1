@@ -30,8 +30,6 @@ namespace amicus
 
 static const char update_fifo[] = "update-signal.fifo";
 
-extern raster::raster_load loaded_raster;
-
 static poseven::thread raster_thread;
 
 static
@@ -41,11 +39,11 @@ void sigchld( int )
 }
 
 static
-raster::sync_relay* find_sync()
+raster::sync_relay* find_sync( const raster::raster_load& load )
 {
 	using namespace raster;
 	
-	raster_note* sync = find_note( *loaded_raster.meta, Note_sync );
+	raster_note* sync = find_note( *load.meta, Note_sync );
 	
 	return (sync_relay*) data( sync );
 }
@@ -102,7 +100,7 @@ void* raster_thread_entry( void* arg )
 	return NULL;
 }
 
-raster_monitor::raster_monitor()
+raster_monitor::raster_monitor( const raster::raster_load& load )
 {
 	signal( SIGCHLD, &sigchld );
 	
@@ -110,7 +108,7 @@ raster_monitor::raster_monitor()
 	
 	mkfifo( update_fifo, 0666 );
 	
-	raster::sync_relay* sync = find_sync();
+	raster::sync_relay* sync = find_sync( load );
 	
 	publish( *sync );
 	

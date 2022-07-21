@@ -40,6 +40,7 @@ class emulated_screen
 emulated_screen::emulated_screen( int bindir_fd, const char* works_path )
 :
 	live_raster       ( raster_path ),
+	monitored_raster  ( live_raster.get() ),
 	launched_coprocess( bindir_fd, works_path )
 {
 	events_fd = launched_coprocess.socket();
