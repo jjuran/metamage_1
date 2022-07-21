@@ -13,14 +13,15 @@
 namespace amicus
 {
 
-extern raster::raster_load loaded_raster;
-
 struct raster_creation_error {};
 
 class raster_lifetime
 {
+	typedef raster::raster_load raster_load;
+	
 	private:
 		const char* its_path;
+		raster_load its_load;
 		
 		// non-copyable
 		raster_lifetime           ( const raster_lifetime& );
@@ -31,7 +32,7 @@ class raster_lifetime
 		
 		~raster_lifetime();
 		
-		const raster::raster_load& get() const  { return loaded_raster; }
+		const raster::raster_load& get() const  { return its_load; }
 		
 		void* addr() const  { return get().addr; }
 		

@@ -23,8 +23,6 @@
 namespace amicus
 {
 
-raster::raster_load loaded_raster;
-
 static
 uint32_t make_stride( uint32_t width, int weight )
 {
@@ -85,7 +83,7 @@ void close_without_errno( int fd )
 }
 
 static
-int create_raster_file( const char* path )
+int create_raster_file( const char* path, raster::raster_load& result )
 {
 	using namespace raster;
 	
@@ -157,7 +155,7 @@ int create_raster_file( const char* path )
 	
 	next_note->type = Note_end;
 	
-	loaded_raster = raster;
+	result = raster;
 	
 	return 0;
 }
@@ -166,7 +164,7 @@ raster_lifetime::raster_lifetime( const char* raster_path )
 {
 	its_path = raster_path;
 	
-	int errnum = create_raster_file( raster_path );
+	int errnum = create_raster_file( raster_path, its_load );
 	
 	if ( errnum )
 	{
