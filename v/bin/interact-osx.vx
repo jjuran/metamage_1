@@ -1,0 +1,12 @@
+#!/usr/bin/env minivx -Z
+
+# Set EXHIBIT_INTERACT=v/bin/interact-osx.vx to use Interax as a front end.
+
+let raster_path = argv[ 2 ]
+let works_path  = dirname raster_path
+
+run ["open", "-a", "Interax", works_path]
+
+const command = [ "interact-shim" ]
+
+execvp (command[ 0 ], command)
