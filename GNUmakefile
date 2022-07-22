@@ -220,8 +220,6 @@ ams-osx-build: $(AMS_REPOS) macward-compat.git
 	$(BUILD) $(AMS_TOOLS) uunix interact
 
 MACRELIX := var/build/dbg/bin/Genie/MacRelix.app
-APPS := /Applications
-UAPPS := ~/Applications
 
 ams-osx: ams-osx-build
 	mkdir -p ~/var/run/fs
@@ -229,11 +227,6 @@ ams-osx: ams-osx-build
 	open $(MACRELIX)
 	true > ~/var/run/fs/gui.fifo
 	$(RUN_AMS)
-
-ams-osx-install: ams-osx-build ams-68k-install ams-common-install
-	install var/out/interact  var/install/bin
-	install var/out/uunix     var/install/bin
-	if [ -w $(APPS) ]; then cp -R $(MACRELIX) $(APPS); else mkdir -p $(UAPPS) && cp -R $(MACRELIX) $(UAPPS); fi
 
 sndtrack:
 	$(BUILD) minivx
