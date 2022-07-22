@@ -216,17 +216,11 @@ ams-quartz-demo-nosound: ams-quartz-build
 ams-quartz-demo: sndtrack ams-quartz-demo-nosound
 
 ams-osx-build: $(AMS_REPOS) macward-compat.git
-	bin/build-app -N Genie
-	$(BUILD) $(AMS_TOOLS) uunix interact
-
-MACRELIX := var/build/dbg/bin/Genie/MacRelix.app
+	bin/build-app -N Interax
+	$(BUILD) $(AMS_TOOLS) interact-shim
 
 ams-osx: ams-osx-build
-	mkdir -p ~/var/run/fs
-	test -p ~/var/run/fs/gui.fifo || mkfifo ~/var/run/fs/gui.fifo
-	open $(MACRELIX)
-	true > ~/var/run/fs/gui.fifo
-	$(RUN_AMS)
+	EXHIBIT_INTERACT=v/bin/interact-osx.vx $(RUN_AMS)
 
 sndtrack:
 	$(BUILD) minivx
