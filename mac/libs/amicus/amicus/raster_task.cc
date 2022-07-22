@@ -32,12 +32,6 @@ static bool monitoring;
 static poseven::thread raster_thread;
 
 static
-void sigchld( int )
-{
-	open( UPDATE_FIFO, O_RDONLY | O_NONBLOCK );
-}
-
-static
 raster::sync_relay* find_sync( const raster::raster_load& load )
 {
 	using namespace raster;
@@ -101,8 +95,6 @@ void* raster_thread_entry( void* arg )
 
 raster_monitor::raster_monitor( const raster::raster_load& load )
 {
-	signal( SIGCHLD, &sigchld );
-	
 	GetMainEventQueue();  // initialization is thread-unsafe before 10.4
 	
 	raster::sync_relay* sync = find_sync( load );
