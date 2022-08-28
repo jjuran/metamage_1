@@ -29,6 +29,7 @@
 // varyx-mac
 #include "varyx/mac/AEDesc.hh"
 #include "varyx/mac/FSSpec.hh"
+#include "varyx/mac/ProcessSerialNumber.hh"
 
 
 namespace varyx
@@ -94,7 +95,7 @@ Value v_LaunchApplication( const Value& v )
 	
 	throw_MacOS_error( err, "LaunchApplication" );
 	
-	return nothing;
+	return ProcessSerialNumber( pb.launchProcessSN );
 }
 
 static const Type fsspec = FSSpec_vtype;
