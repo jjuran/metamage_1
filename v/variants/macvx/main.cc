@@ -31,6 +31,7 @@
 #include "vlib/tracker.hh"
 #include "vlib/type_info.hh"
 #include "vlib/types/proc.hh"
+#include "vlib/types/struct/type.hh"
 #include "vlib/types/type.hh"
 
 // varyx-mac
@@ -43,6 +44,7 @@
 #include "varyx/mac/FSSpec.hh"
 #include "varyx/mac/Launch.hh"
 #include "varyx/mac/PackBits.hh"
+#include "varyx/mac/ProcessSerialNumber.hh"
 #include "varyx/mac/Sound.hh"
 #include "varyx/mac/Timer.hh"
 
@@ -146,6 +148,12 @@ void define( const type_info& type )
 	}
 }
 
+static
+void define( const Struct_Type& type )
+{
+	define( type.name().string().c_str(), type );
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc == 0 )
@@ -167,6 +175,8 @@ int main( int argc, char** argv )
 	define( proc_warn   );
 	
 	define( AEDesc_vtype  );
+	
+	define( struct_ProcessSerialNumber() );
 	
 	define( proc_AECreateAppleEvent );
 	define( proc_AEFlatten );
