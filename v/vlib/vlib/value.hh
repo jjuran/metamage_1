@@ -150,6 +150,7 @@ namespace vlib
 				return its_box.pointer();
 			}
 			
+		public:
 			template < class T >
 			T const& pod_cast() const
 			{
@@ -162,7 +163,6 @@ namespace vlib
 				return *reinterpret_cast< T* >( &its_box );
 			}
 		
-		public:
 			void replace_dispatch_methods( const dispatch* d )
 			{
 				/*
