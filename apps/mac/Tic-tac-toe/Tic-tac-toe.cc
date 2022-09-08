@@ -213,6 +213,8 @@ void invalidate_window_size( WindowRef window )
 	mac::ui::invalidate_window( window );
 }
 
+static WindowRef overlay;
+
 static
 void enter_fullscreen()
 {
@@ -221,6 +223,38 @@ void enter_fullscreen()
 	const Rect& portRect = main_display_bounds();
 	
 	window_size_changed( portRect );
+	
+#if CONFIG_COMPOSITING
+	
+	/*
+		QuickTime's fullscreen blanking window isn't created with
+		kWindowHighResolutionCapableAttribute, and it can't be set
+		after the fact, so we need to create a new window if we might
+		have a high resolution display.
+		
+		In addition, using kEventControlDraw avoids some unsightly
+		flashing as the new window appears, so create a new window
+		whenever we can use compositing, not just for high-res.
+	*/
+	
+	const WindowAttributes attrs = kWindowCompositingAttribute
+	                           #ifdef MAC_OS_X_VERSION_10_7
+	                             | kWindowHighResolutionCapableAttribute
+	                           #endif
+	                             ;
+	
+	OSStatus err;
+	err = CreateNewWindow( kSimpleWindowClass, attrs, &portRect, &overlay );
+	
+	install_window_event_handlers( overlay );
+	
+	SetPortWindowPort( overlay );
+	
+	ShowWindow( overlay );
+	
+	return;
+	
+#endif
 	
 	ForeColor( whiteColor );
 	BackColor( blackColor );
@@ -231,6 +265,13 @@ void enter_fullscreen()
 static
 void leave_fullscreen()
 {
+	if ( CONFIG_COMPOSITING )
+	{
+		DisposeWindow( overlay );
+		
+		overlay = NULL;
+	}
+	
 	fullscreen::leave();
 	
 	invalidate_window_size( main_window );
@@ -316,9 +357,12 @@ void menu_item_chosen( long choice )
 					{
 						RgnHandle rgn = reactivate_region( rgn_index );
 						
-						if ( CONFIG_COMPOSITING  &&  ! is_fullscreen )
+						if ( CONFIG_COMPOSITING )
 						{
-							mac::ui::invalidate_window( main_window );
+							WindowRef window = is_fullscreen ? overlay
+							                                 : main_window;
+							
+							mac::ui::invalidate_window( window );
 						}
 						else
 						{
