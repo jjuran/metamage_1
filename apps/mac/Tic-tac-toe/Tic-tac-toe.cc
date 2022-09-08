@@ -218,12 +218,12 @@ void enter_fullscreen()
 {
 	fullscreen::enter();
 	
-	ForeColor( whiteColor );
-	BackColor( blackColor );
-	
 	const Rect& portRect = main_display_bounds();
 	
 	window_size_changed( portRect );
+	
+	ForeColor( whiteColor );
+	BackColor( blackColor );
 	
 	draw_window( portRect );
 }
