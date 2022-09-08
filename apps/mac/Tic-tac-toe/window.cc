@@ -155,12 +155,28 @@ void draw_window( CGContextRef context )
 {
 	// Caller saves and restores the graphics context as needed.
 	
+	const bool fullscreen = is_fullscreen_via_QT();
+	
+	const float fullscreen_white_or_window_black =   fullscreen;
+	const float fullscreen_black_or_window_white = ! fullscreen;
+	
 	CGContextTranslateCTM( context, margin.h, margin.v );
 	CGContextScaleCTM( context, unitLength, unitLength );
 	
-	CGContextSetGrayFillColor( context, 1, 1 );  // white
+	CGContextSetGrayStrokeColor( context, fullscreen_white_or_window_black, 1 );
+	CGContextSetGrayFillColor  ( context, fullscreen_black_or_window_white, 1 );
 	
-	CGContextFillRect( context, CGRectMake( 0, 0, 32, 32 ) );
+#ifdef MAC_OS_X_VERSION_10_3
+	
+	/*
+		CGContextGetClipBoundingBox() doesn't exist before 10.3,
+		but this is okay because we only get here through the compositing
+		path, which we only enable for 10.3+.
+	*/
+	
+	CGContextFillRect( context, CGContextGetClipBoundingBox( context ) );
+	
+#endif
 	
 	draw_board( context, tictactoe::squares );
 }
