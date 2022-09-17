@@ -12,11 +12,6 @@
 #include <netdb.h>
 
 
-int inet_aton( const char* name, struct in_addr* out_addr )
-{
-	return -1;
-}
-
 char* inet_ntoa( struct in_addr addr )
 {
 	static char result[ 16 ] = { 0 };
