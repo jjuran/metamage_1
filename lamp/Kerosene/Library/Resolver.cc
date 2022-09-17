@@ -14,7 +14,7 @@
 
 char* inet_ntoa( struct in_addr addr )
 {
-	static char result[ 16 ] = { 0 };
+	static char result[ INET_ADDRSTRLEN ] = { 0 };
 	
 	std::sprintf( result, "%u.%u.%u.%u", (addr.s_addr >> 24) & 0xFF,
 	                                     (addr.s_addr >> 16) & 0xFF,
