@@ -333,14 +333,14 @@ namespace vlib
 		
 		ASSERT( expr != NULL );
 		
-		if ( (expr->op & 0xFF) == Op_block )
+		if ( (uint8_t) expr->op == Op_block )
 		{
 			expr = expr->right.expr();
 			
 			ASSERT( expr != NULL );
 		}
 		
-		if ( expr->op == Op_array  ||  (expr->op & 0xFF) == Op_scope )
+		if ( expr->op == Op_array  ||  (uint8_t) expr->op == Op_scope )
 		{
 			const size_t n_brackets = use_parens( mode ) * 2;
 			
@@ -462,7 +462,7 @@ namespace vlib
 		
 		Expr* expr = value.expr();
 		
-		if ( (expr->op & 0xFF) == Op_block )
+		if ( (uint8_t) expr->op == Op_block )
 		{
 			expr = expr->right.expr();
 		}
@@ -487,7 +487,7 @@ namespace vlib
 			return p;
 		}
 		
-		if ( (expr->op & 0xFF) == Op_scope )
+		if ( (uint8_t) expr->op == Op_scope )
 		{
 			*p++ = '{';
 			
