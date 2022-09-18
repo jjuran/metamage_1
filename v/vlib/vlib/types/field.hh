@@ -14,7 +14,10 @@
 namespace vlib
 {
 	
+	struct dispatch;
 	struct proc_info;
+	
+	extern const dispatch field_dispatch;
 	
 	class Field : public Value
 	{
@@ -23,6 +26,11 @@ namespace vlib
 			       const type_info&  type,
 			       const proc_info&  encode,
 			       const proc_info&  decode );
+			
+			static bool test( const Value& v )
+			{
+				return v.dispatch_methods() == &field_dispatch;
+			}
 			
 			const type_info& base_type() const
 			{

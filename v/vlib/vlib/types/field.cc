@@ -175,7 +175,7 @@ namespace vlib
 		Type_pure,
 	};
 	
-	static const dispatch field_dispatch =
+	const dispatch field_dispatch =
 	{
 		&field_stringifiers,
 		NULL,
