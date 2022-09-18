@@ -22,6 +22,7 @@
 #include "vlib/types/byte.hh"
 #include "vlib/types/byteclass.hh"
 #include "vlib/types/byterange.hh"
+#include "vlib/types/endianness.hh"
 #include "vlib/types/float.hh"
 #include "vlib/types/pointer.hh"
 #include "vlib/types/fraction.hh"
@@ -111,6 +112,10 @@ namespace vlib
 		
 		define_keyword( "struct", Struct_Metatype() );
 		define_keyword( "vector", Vector_Metatype() );
+		
+		define_keyword( "big-endian",    Endianness( big_endian    ) );
+		define_keyword( "native-endian", Endianness( native_endian ) );
+		define_keyword( "little-endian", Endianness( little_endian ) );
 		
 		if ( sizeof (size_t) == 4 )  define_keyword( "size_t", u32_type() );
 		if ( sizeof (size_t) == 8 )  define_keyword( "size_t", u64_type() );
