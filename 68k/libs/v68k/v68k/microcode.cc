@@ -432,8 +432,6 @@ namespace v68k
 			}
 		}
 		
-		Dl = product_64;
-		
 		if ( is_quad_sized )
 		{
 			Dh = product_64 >> 32;
@@ -460,6 +458,8 @@ namespace v68k
 				nzvc |= 0x08;
 			}
 		}
+		
+		Dl = product_64;
 		
 		s.sr.nzvc = nzvc;
 		
