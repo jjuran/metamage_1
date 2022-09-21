@@ -436,15 +436,15 @@ namespace v68k
 		{
 			Dh = product_64 >> 32;
 			
-			nzvc &= ~0x02;  // clear overflow
+			nzvc = 0;  // clear overflow
 			
 			if ( product_64 == 0 )
 			{
-				nzvc |= 0x04;
+				nzvc = 0x04;
 			}
 			else if ( (int64_t) product_64 < 0 )
 			{
-				nzvc |= 0x08;
+				nzvc = 0x08;
 			}
 		}
 		else
