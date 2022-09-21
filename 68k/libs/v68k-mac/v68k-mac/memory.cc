@@ -129,6 +129,7 @@ enum
 	tag_CrsrSave_low_word,
 	tag_CrsrVisBusy,
 	tag_CrsrNewCouple,
+	tag_CrsrObscale,
 	tag_MouseMask,
 	tag_MouseMask_low_word,
 	tag_MouseOffset,
@@ -343,6 +344,7 @@ static const global globals[] =
 	{ 0x088C, 4,    tag_CrsrSave    },
 	{ 0x08CC, 2,    tag_CrsrVisBusy },  // CrsrVis, CrsrBusy
 	{ 0x08CE, 2,    tag_CrsrNewCouple},  // CrsrNew, CrsrCouple
+	{ 0x08D2, 2,    tag_CrsrObscale },  // CrsrObscure, CrsrScale
 	{ 0x08D6, 4,    tag_MouseMask   },
 	{ 0x08DA, 4,    tag_MouseOffset },
 	{ 0x08F2, 2,    tag_WWQDExist   },  // WWExist, QDExist
