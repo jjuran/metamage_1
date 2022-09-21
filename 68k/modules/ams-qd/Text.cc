@@ -330,7 +330,9 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 			dstRect.left  = port.pnLoc.h;
 			dstRect.right = port.pnLoc.h + dst_widMax;
 			
-			EraseRect( &dstRect );
+			QDGlobals& qd = get_QDGlobals();
+			
+			FillRect( &dstRect, &qd.white );
 		}
 		
 		if ( short width = next_offset - this_offset )
