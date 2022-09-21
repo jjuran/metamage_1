@@ -52,6 +52,8 @@ enum
 	tag_VBLQueue_word_4 = tag_VBLQueue + 4,  // 10 bytes
 	tag_Ticks,
 	tag_Ticks_low_word,
+	tag_MBTicks,
+	tag_MBTicks_low_word,
 	tag_MBState_esc,
 	tag_KeyMaps,
 	tag_KeyMaps_word_7 = tag_KeyMaps + 7,  // 16 bytes
@@ -282,6 +284,7 @@ static const global globals[] =
 	{ 0x015A, 2,    tag_SysVersion  },
 	{ 0x0160, 10,   tag_VBLQueue    },
 	{ 0x016A, 0xC4, tag_Ticks       },
+	{ 0x016E, 4,    tag_MBTicks     },
 	{ 0x0172, 2,    tag_MBState_esc },  // MBState, Tocks (Button escapes)
 	{ 0x0174, 16,   tag_KeyMaps     },  // KeyMap, KeyPadMap, 4 more bytes
 	{ 0x01D2, 2,    tag_UnitNtryCnt },
