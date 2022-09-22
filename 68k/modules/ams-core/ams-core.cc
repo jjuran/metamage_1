@@ -114,6 +114,7 @@ long  DefltStack : 0x0322;
 
 short ScreenRow : 0x0106;
 void* ScrnBase  : 0x0824;
+Point RawMouse  : 0x082C;
 Point Mouse     : 0x0830;
 Rect  CrsrPin   : 0x0834;
 
@@ -199,7 +200,10 @@ void initialize_low_memory_globals()
 	
 	MBState = 0x80;
 	
-	*(long*) &Mouse = 0x000F000F;  // 15, 15
+	const long initial_mouse_loc = 0x000F000F;  // 15, 15
+	
+	*(long*) &RawMouse = initial_mouse_loc;
+	*(long*) &Mouse    = initial_mouse_loc;
 	
 	init_lowmem_Cursor();
 	init_cursor();

@@ -38,6 +38,7 @@ typedef KeyMapByteArray Keys;
 Byte   MBState : 0x0172;
 Keys   KeyMaps : 0x0174;
 UInt16 KeyMods : 0x017A;  // Yes, this is a subfield of KeyMaps.
+Point  RawMouse: 0x082C;
 Point  Mouse   : 0x0830;
 Rect   CrsrPin : 0x0834;
 
@@ -274,29 +275,31 @@ void post_event( const splode::ascii_event_buffer& buffer )
 static
 void SetMouse( short x, short y )
 {
-	Mouse.h = x;
-	Mouse.v = y;
+	RawMouse.h = x;
+	RawMouse.v = y;
 	
 	const short width  = CrsrPin.right;
 	const short height = CrsrPin.bottom;
 	
-	if ( Mouse.h < 0 )
+	if ( RawMouse.h < 0 )
 	{
-		Mouse.h = 0;
+		RawMouse.h = 0;
 	}
-	else if ( Mouse.h >= width )
+	else if ( RawMouse.h >= width )
 	{
-		Mouse.h = width - 1;
+		RawMouse.h = width - 1;
 	}
 	
-	if ( Mouse.v < 0 )
+	if ( RawMouse.v < 0 )
 	{
-		Mouse.v = 0;
+		RawMouse.v = 0;
 	}
-	else if ( Mouse.v >= height )
+	else if ( RawMouse.v >= height )
 	{
-		Mouse.v = height - 1;
+		RawMouse.v = height - 1;
 	}
+	
+	Mouse = RawMouse;
 	
 	update_cursor_location();
 }
@@ -304,7 +307,7 @@ void SetMouse( short x, short y )
 static inline
 void SetMouse( const splode::pointer_movement_buffer& buffer )
 {
-	SetMouse( Mouse.h + buffer.dx, Mouse.v - buffer.dy );
+	SetMouse( RawMouse.h + buffer.dx, RawMouse.v - buffer.dy );
 }
 
 static inline
