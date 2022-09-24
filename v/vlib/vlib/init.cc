@@ -27,7 +27,6 @@
 #include "vlib/types/fraction.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/iterator.hh"
-#include "vlib/types/mb32.hh"
 #include "vlib/types/namespace.hh"
 #include "vlib/types/null.hh"
 #include "vlib/types/packed.hh"
@@ -36,6 +35,7 @@
 #include "vlib/types/record.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
+#include "vlib/types/endec/mb32.hh"
 #include "vlib/types/integer/stdint.hh"
 #include "vlib/types/struct/metatype.hh"
 #include "vlib/types/vector/metatype.hh"
@@ -95,7 +95,7 @@ namespace vlib
 		define_keyword( "c_str",    c_str_vtype    );
 		define_keyword( "type",     type_vtype     );
 		define_keyword( "null",     null_vtype     );
-		define_keyword( "mb32",     mb32_vtype     );
+		define_keyword( "mb32",     mb32_type()    );
 		define_keyword( "byte",     byte_type()    );
 		define_keyword( "float",    float_vtype    );
 		define_keyword( "i64",      i64_type()     );
