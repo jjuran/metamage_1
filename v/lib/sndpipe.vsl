@@ -13,17 +13,8 @@ const freeform   = x"0000"
 const fourtone_b = x"0101"
 const fourtone_u = x"0201"
 
-def twos (n_bytes, x)
-{
-	const abc = unhex hex x
-	const len = n_bytes - abc.size
-	const pad = x"00" * len
-	
-	return pad abc
-}
-
-const big_u16 = twos % 2
-const big_u32 = twos % 4
+const big_u16 = (big-endian u16).encode
+const big_u32 = (big-endian u32).encode
 
 def headerize (domain, opcode, extent=x"")
 {
