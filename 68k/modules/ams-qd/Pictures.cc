@@ -201,7 +201,7 @@ const UInt8* long_text( const UInt8* p )
 static
 const UInt8* text_dh( const UInt8* p )
 {
-	const SInt8 dh = *p++;
+	const UInt8 dh = *p++;
 	
 	Move( dh, 0 );
 	
@@ -221,7 +221,7 @@ const UInt8* text_dh( const UInt8* p )
 static
 const UInt8* text_dv( const UInt8* p )
 {
-	const SInt8 dv = *p++;
+	const UInt8 dv = *p++;
 	
 	Move( 0, dv );
 	
@@ -241,8 +241,8 @@ const UInt8* text_dv( const UInt8* p )
 static
 const UInt8* text_dhdv( const UInt8* p )
 {
-	const SInt8 dh = *p++;
-	const SInt8 dv = *p++;
+	const UInt8 dh = *p++;
+	const UInt8 dv = *p++;
 	
 	Move( dh, dv );
 	
