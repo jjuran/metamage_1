@@ -27,8 +27,9 @@
 #pragma exceptions off
 
 
+#define LENGTH(array)  (sizeof (array) / sizeof *(array))
+
 #define STR_LEN( s )  "" s, (sizeof s - 1)
-#define PSTR_LEN( s )  "\p" s, (sizeof s)
 
 #define SYSTEM_FONT_NOT_LOADED "warning: couldn't load the system font"
 
@@ -95,6 +96,15 @@ pascal void InitFonts_patch()
 	}
 }
 
+static ConstStr255Param basic_font_names[] =
+{
+	"\p" "Chicago",
+	NULL,
+	"\p" "New York",
+	"\p" "Geneva",
+	"\p" "Monaco",
+};
+
 pascal void GetFName_patch( short num, unsigned char* name )
 {
 	if ( num == applFont )
@@ -102,23 +112,13 @@ pascal void GetFName_patch( short num, unsigned char* name )
 		num = ApFontID;
 	}
 	
-	switch ( num )
+	if ( (UInt16) num < LENGTH( basic_font_names ) )
 	{
-		case systemFont:
-			fast_memcpy( name, PSTR_LEN( "Chicago" ) );
+		if ( ConstStr255Param basic_name = basic_font_names[ num ] )
+		{
+			fast_memcpy( name, basic_name, 1 + basic_name[ 0 ] );
 			return;
-		
-		case kFontIDNewYork:
-			fast_memcpy( name, PSTR_LEN( "New York" ) );
-			return;
-		
-		case kFontIDGeneva:
-			fast_memcpy( name, PSTR_LEN( "Geneva" ) );
-			return;
-		
-		case kFontIDMonaco:
-			fast_memcpy( name, PSTR_LEN( "Monaco" ) );
-			return;
+		}
 	}
 	
 	name[ 0 ] = 0;
