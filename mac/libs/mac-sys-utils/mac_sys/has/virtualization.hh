@@ -37,6 +37,7 @@ namespace sys {
 	}
 	
 	bool has_MinivMac();
+	bool has_PCE();
 	
 	inline
 	bool has_AUX()

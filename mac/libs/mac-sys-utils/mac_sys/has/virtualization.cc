@@ -83,6 +83,25 @@ bool has_MinivMac()
 	return false;
 }
 
+bool has_PCE()
+{
+#ifdef __MC68K__
+	
+	const uint32_t sign_addr = 0xf80000;
+	const uint32_t sign_data = 'PCEX';
+	
+	void* SonyVars = *(void**) 0x0134;
+	
+	if ( SonyVars  &&  is_driver_installed( "\p" ".Sony" ) )
+	{
+		return *(uint32_t*) sign_addr == sign_data;
+	}
+	
+#endif
+	
+	return false;
+}
+
 bool has_MacOnLinux_MacOSX()
 {
 	const unsigned char* name = "\p" "AAPL,MOL";
