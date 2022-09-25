@@ -187,9 +187,15 @@ const UInt8* short_line( const UInt8* p )
 	const SInt8 dh = *p++;
 	const SInt8 dv = *p++;
 	
+	GrafPort& port = **get_addrof_thePort();
+	
+	Point pt = port.pnLoc;
+	
 	MoveTo( h, v );
 	
 	Line( dh, dv );
+	
+	port.pnLoc = pt;
 	
 	return p;
 }
