@@ -110,7 +110,7 @@ Rect read_Rect( const UInt8*& p )
 
 static Point curvature;
 
-static
+static inline
 const UInt8* set_curvature( const UInt8* p )
 {
 	fast_memcpy( &curvature, p, sizeof curvature );
@@ -118,7 +118,7 @@ const UInt8* set_curvature( const UInt8* p )
 	return p + sizeof curvature;
 }
 
-static
+static inline
 const UInt8* pen_size( const UInt8* p )
 {
 	Point size;
@@ -129,7 +129,7 @@ const UInt8* pen_size( const UInt8* p )
 	return p + sizeof size;
 }
 
-static
+static inline
 const UInt8* pen_pat( const UInt8* p )
 {
 	Pattern pattern;
@@ -140,7 +140,7 @@ const UInt8* pen_pat( const UInt8* p )
 	return p + 8;
 }
 
-static
+static inline
 const UInt8* fill_pat( const UInt8* p )
 {
 	GrafPort& port = **get_addrof_thePort();
