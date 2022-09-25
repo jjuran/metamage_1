@@ -554,6 +554,11 @@ void virt_env()
 		printf( "%s" "68K emulation:          Mini vMac\n", blank );
 		blank = "";
 	}
+	else if ( TARGET_CPU_68K  &&  mac::sys::has_PCE() )
+	{
+		printf( "%s" "68K emulation:          PCE\n", blank );
+		blank = "";
+	}
 	else if ( TARGET_CPU_68K  &&  mac::sys::has_BasiliskII() )
 	{
 		printf( "%s" "68K emulation:          Basilisk II\n", blank );
