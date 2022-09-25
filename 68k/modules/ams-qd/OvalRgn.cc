@@ -16,32 +16,12 @@
 #include "RoundRectRgn.hh"
 
 
-static
-void CircularOvalRgn( RgnHandle rgn, short width, short height )
-{
-	RgnHandle tmp = circular_region( width );
-	
-	XorRgn( tmp, rgn, rgn );
-}
-
-static
-void EllipticOvalRgn( RgnHandle rgn, short width, short height )
-{
-	RgnHandle tmp = ovoid_region( width, height );
-	
-	XorRgn( tmp, rgn, rgn );
-}
-
 void OvalRgn( RgnHandle rgn, short width, short height )
 {
-	if ( width != height )
-	{
-		EllipticOvalRgn( rgn, width, height );
-	}
-	else
-	{
-		CircularOvalRgn( rgn, width, height );
-	}
+	RgnHandle tmp = width == height ? circular_region( width )
+	                                : ovoid_region( width, height );
+	
+	XorRgn( tmp, rgn, rgn );
 }
 
 static inline
