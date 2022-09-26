@@ -470,10 +470,10 @@ void stretch_region_h( RgnHandle rgn, short dh, RgnHandle tmp )
 {
 	for ( short i = dh;  i < 0;  ++i )
 	{
-		OffsetRgn( rgn, 0, -1 );
+		OffsetRgn( rgn, -1, 0 );
 		UnionRgn( rgn, tmp, rgn );
 		
-		OffsetRgn( tmp, 0, 1 );
+		OffsetRgn( tmp, 1, 0 );
 		UnionRgn( rgn, tmp, rgn );
 	}
 }
@@ -483,10 +483,10 @@ void stretch_region_v( RgnHandle rgn, short dv, RgnHandle tmp )
 {
 	for ( short i = dv;  i < 0;  ++i )
 	{
-		OffsetRgn( rgn, -1, 0 );
+		OffsetRgn( rgn, 0, -1 );
 		UnionRgn( rgn, tmp, rgn );
 		
-		OffsetRgn( tmp, 1, 0 );
+		OffsetRgn( tmp, 0, 1 );
 		UnionRgn( rgn, tmp, rgn );
 	}
 }
