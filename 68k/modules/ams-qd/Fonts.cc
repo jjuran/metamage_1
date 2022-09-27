@@ -147,10 +147,20 @@ pascal void GetFNum_patch( const unsigned char* name, short* num )
 		return;
 	}
 	
-	if ( fast_memcmp( name, "\p" STR_LEN( "Geneva" ) ) == 0 )
+	short i = 0;
+	
+	ConstStr255Param const* it = basic_font_names;
+	
+	while ( it < basic_font_names + LENGTH( basic_font_names ) )
 	{
-		*num = kFontIDGeneva;
-		return;
+		if ( EqualString_sans_case( *it, name ) )
+		{
+			*num = i;
+			return;
+		}
+		
+		++i;
+		++it;
 	}
 	
 	WARNING = "GetFNum: unknown ", CSTR( name );
