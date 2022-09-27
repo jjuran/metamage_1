@@ -99,7 +99,7 @@ pascal void InitFonts_patch()
 static ConstStr255Param basic_font_names[] =
 {
 	"\p" "Chicago",
-	NULL,
+	"\p",  // application font
 	"\p" "New York",
 	"\p" "Geneva",
 	"\p" "Monaco",
@@ -114,11 +114,10 @@ pascal void GetFName_patch( short num, unsigned char* name )
 	
 	if ( (UInt16) num < LENGTH( basic_font_names ) )
 	{
-		if ( ConstStr255Param basic_name = basic_font_names[ num ] )
-		{
-			fast_memcpy( name, basic_name, 1 + basic_name[ 0 ] );
-			return;
-		}
+		ConstStr255Param basic_name = basic_font_names[ num ];
+		
+		fast_memcpy( name, basic_name, 1 + basic_name[ 0 ] );
+		return;
 	}
 	
 	name[ 0 ] = 0;
