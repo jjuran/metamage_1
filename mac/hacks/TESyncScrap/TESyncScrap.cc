@@ -1,8 +1,43 @@
 /*
+	TESyncScrap.cc
+	--------------
 	
-	TESyncScrap
+	TESyncScrap INIT for Mac OS
 	
-	Joshua Juran
+	Copyright 2009, Joshua Juran.  All rights reserved.
+	
+	License:  AGPLv3+ (see bottom for legal boilerplate)
+	
+	This system extension patches TextEdit's scrap routines in order
+	to keep the TE scrap and the desk scrap in sync at all times.
+	
+	Prior to Carbon, Mac developers were advised to synchronize the
+	TE scrap with the desk scrap during a layer switch -- that is, when
+	an application moved into or out of the foreground.  This will work,
+	provided that the foreground application is the only party interested
+	in the clipboard contents (since it alone knows whether the current
+	clipboard contents are stored in the TE scrap or the desk scrap).
+	
+	This approach prevents background applications and extension code from
+	interacting with the clipboard, but now there's an additional factor
+	to consider: paravirtualized clipboard integration when Mac OS is
+	running in an emulator.  Host layer switches (between the emulator and
+	other host applications that use the clipboard) are imperceptible to
+	the guest OS, so the foreground guest application won't synchronize the
+	scraps when switching in the host, as it would in the guest.
+	
+	The problem can be demonstrated in both directions with the Key Caps
+	desk accessory.
+	
+	The solution is to tail-patch TECut and TECopy to call TEToScrap()
+	afterward, and head-patch[1] TEPaste to call TEFromScrap() in advance.
+	
+	This ensures that the desk scrap always contains the current clipboard
+	contents, so the host's clipboard integration can copy from and update
+	it at will.
+	
+	[1] Technically, our TEPaste patch is not a proper head-only patch --
+	though it could be made into one if rewritten in assembly language.
 	
 */
 
@@ -16,91 +51,93 @@
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
 #endif
+#ifndef __TRAPS__
+#include <Traps.h>
+#endif
 
-// Silver
-#include "Silver/Install.hh"
-#include "Silver/Patch.hh"
-#include "Silver/Procs.hh"
-#include "Silver/Traps.hh"
+// mac-sys-utils
+#include "mac_sys/trap_address.hh"
 
 
 #pragma exceptions off
 
 
-namespace Ag = Silver;
+typedef void (*TEScrap_ProcPtr)( TEHandle hTE );
 
+static TEScrap_ProcPtr old_TECopy;
+static TEScrap_ProcPtr old_TECut;
+static TEScrap_ProcPtr old_TEPaste;
 
-namespace
+static OSErr FlushScrap()
 {
+	OSErr err = ZeroScrap();
 	
-	static OSErr FlushScrap()
+	if ( err == noErr )
 	{
-		OSErr err = ZeroScrap();
-		
-		if ( err == noErr )
-		{
-			err = TEToScrap();
-		}
-		
-		return err;
+		err = TEToScrap();
 	}
 	
-	void TECut_Patch( TEHandle hTE, Ag::TECutProcPtr nextHandler )
-	{
-		nextHandler( hTE );
-		
-		FlushScrap();
-	}
-	
-	#define TECopy_Patch TECut_Patch
-	/*
-	// TECopy_Patch is the same as TECut_Patch
-	
-	void TECopy_Patch( TEHandle hTE, Ag::TECopyProcPtr nextHandler )
-	{
-		nextHandler( hTE );
-		
-		FlushScrap();
-	}
-	*/
-	
-	void TEPaste_Patch( TEHandle hTE, Ag::TEPasteProcPtr nextHandler )
-	{
-		OSErr err = TEFromScrap();
-		
-		nextHandler( hTE );
-	}
-	
-	
-	void TEInit_Patch( Ag::TEInitProcPtr nextHandler )
-	{
-		const Handle hack = ::Get1NamedResource( 'Hack', "\p" "TESyncScrap" );
-		
-		if ( hack != NULL )
-		{
-			::ReleaseResource( hack );
-		}
-		else
-		{
-			Ag::TrapPatch< _TECopy,  TECopy_Patch  >::Install();
-			Ag::TrapPatch< _TECut,   TECut_Patch   >::Install();
-			Ag::TrapPatch< _TEPaste, TEPaste_Patch >::Install();
-		}
-		
-		nextHandler();
-	}
-	
+	return err;
 }
 
-
-static OSErr Installer()
+static
+pascal
+void
+TECopy_patch( TEHandle hTE )
 {
-	Ag::TrapPatch< _TEInit, TEInit_Patch >::Install();
+	old_TECopy( hTE );
 	
-	return noErr;
+	FlushScrap();
+}
+
+static
+pascal
+void
+TECut_patch( TEHandle hTE )
+{
+	old_TECut( hTE );
+	
+	FlushScrap();
+}
+
+static
+pascal
+void
+TEPaste_patch( TEHandle hTE )
+{
+	TEFromScrap();
+	
+	old_TEPaste( hTE );
 }
 
 int main()
 {
-	return Ag::Install( Installer );
+	Handle self = Get1Resource( 'INIT', 0 );
+	
+	DetachResource( self );
+	
+	old_TECopy  = (TEScrap_ProcPtr) mac::sys::get_trap_address( _TECopy  );
+	old_TECut   = (TEScrap_ProcPtr) mac::sys::get_trap_address( _TECut   );
+	old_TEPaste = (TEScrap_ProcPtr) mac::sys::get_trap_address( _TEPaste );
+	
+	mac::sys::set_trap_address( (ProcPtr) TECopy_patch,  _TECopy  );
+	mac::sys::set_trap_address( (ProcPtr) TECut_patch,   _TECut   );
+	mac::sys::set_trap_address( (ProcPtr) TEPaste_patch, _TEPaste );
+	
+	return 0;
 }
+
+/*
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
