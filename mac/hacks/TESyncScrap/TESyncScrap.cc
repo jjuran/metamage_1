@@ -62,7 +62,7 @@
 #pragma exceptions off
 
 
-typedef void (*TEScrap_ProcPtr)( TEHandle hTE );
+typedef pascal void (*TEScrap_ProcPtr)( TEHandle hTE );
 
 static TEScrap_ProcPtr old_TECopy;
 static TEScrap_ProcPtr old_TECut;
