@@ -17,6 +17,9 @@
 	This is a hot patch for Prince of Persia that fixes the off-by-one
 	error by replacing the faulty BLE instruction with a BLT instruction.
 	
+	Also, if we're running in v68k (and Advanced Mac Substitute), throttle
+	the busy loop with Delay(1) calls so we don't waste so much CPU.
+	
 */
 
 // Mac OS
@@ -28,6 +31,7 @@
 #endif
 
 // mac-sys-utils
+#include "mac_sys/has/virtualization.hh"
 #include "mac_sys/trap_address.hh"
 
 
@@ -52,6 +56,20 @@ static const UInt16 PoP_wait_loop[] =
 	0xB0AD, -27060,  // 000106:  CMP.L    (-27060,A5),D0
 	0x6FE6,          // 00010a:  BLE.S    *-24    ; $0000f2
 };
+
+static
+asm
+void idle()
+{
+	// Reproduce clobbered instructions' effect
+	MOVE.L   0x016A,-23198(A5)
+	
+	// Spend a litle time quiescent rather than busy looping
+	MOVEA.L  #1,A0
+	_Delay
+	
+	RTS
+}
 
 static inline
 bool equal_words( const UInt16* a, const UInt16* b, short n )
@@ -79,6 +97,19 @@ void install_patch( Handle h )
 		
 		if ( equal_words( (UInt16*) p, VEC_LEN( PoP_wait_loop ) ) )
 		{
+			if ( mac::sys::has_v68k() )
+			{
+				/*
+					We're running in Advanced Mac Substitute.  Graft a call
+					to our idle routine into the busy loop to save CPU.
+				*/
+				
+				UInt32* q = (UInt32*) p;
+				
+				*q++ = 0x4E714EB9;  // NOP; JSR
+				*q++ = (UInt32) &idle;
+			}
+			
 			p += sizeof PoP_wait_loop - 2;
 			
 			*p = 0x6D;  // BLT, not BLE
