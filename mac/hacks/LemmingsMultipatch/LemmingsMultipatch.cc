@@ -54,7 +54,7 @@ static const UInt16 Lemmings_wait_trap[] =
 	0x5288,  // ADDQ.L   #1,A0
 	0x91F8,  // SUBA.L   0x016A,A0
 	0x016A,  //          ^^^^^^
-	0xA23B,  // _DelayEdge (_Delay | kDelayTickEdgeMask)
+	_Delay,
 };
 
 static inline
