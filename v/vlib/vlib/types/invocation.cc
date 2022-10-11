@@ -61,15 +61,6 @@ namespace vlib
 			return entry;
 		}
 		
-		if ( is_empty_list( entry )  ||  is_empty_array( entry ) )
-		{
-			/*
-				FIXME:  This shouldn't be necessary, but singletons
-				aren't marked evaluated (and the fix isn't trivial).
-			*/
-			return entry;
-		}
-		
 		return NIL;
 	}
 	
