@@ -123,7 +123,7 @@ pascal short IUMagString_call( char* a, char* b, short an, short bn )
 {
 	typedef unsigned char uint8_t;
 	
-	return RelString( (uint8_t*) a, (uint8_t*) b, an, bn );
+	return RelString_sans_case( (uint8_t*) a, an, (uint8_t*) b, bn );
 }
 
 static
