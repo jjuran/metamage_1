@@ -88,11 +88,14 @@ long Gestalt_payload( unsigned long  selector : __D0,
 asm
 short Gestalt_patch( unsigned long selector : __D0 )
 {
-	MOVE.L   A1,-(SP)         // save A1, the 'response' address
+	// Allocate space on the stack for the response.
+	SUBQ.L   #4,SP
+	MOVEA.L  SP,A1
 	
 	JSR      Gestalt_payload
 	
-	MOVEA.L  (SP)+,A1         // restore A1
+	// Pop the response to A0, where the glue code expects to find it.
+	MOVEA.L  (SP)+,A0
 	
 	TST.L    D0
 	BEQ.S    found
@@ -102,8 +105,5 @@ short Gestalt_patch( unsigned long selector : __D0 )
 	JMP      (A0)
 	
 found:
-	// Found -- move the result to A0, where the glue code expects to find it.
-	MOVEA.L  (A1),A0
-	
 	RTS
 }
