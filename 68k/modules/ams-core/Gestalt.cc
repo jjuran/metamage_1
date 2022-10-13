@@ -14,10 +14,21 @@
 
 enum
 {
+	gestaltAddressingModeAttr     = 'addr',
+	gestaltAppleTalkVersion       = 'atlk',
+	gestaltFPUType                = 'fpu ',
 	gestaltMachineIcon            = 'micn',
 	gestaltUserVisibleMachineName = 'mnam',
+	gestaltMMUType                = 'mmu ',
+	gestaltParityAttr             = 'prty',
+	gestaltOSTable                = 'ostt',
 	gestaltQuickdrawVersion       = 'qd  ',
+	gestaltSerialAttr             = 'ser ',
+	gestaltNuBusConnectors        = 'sltc',
 	gestaltSystemVersion          = 'sysv',
+	gestaltToolboxTable           = 'tbtt',
+	gestaltVersion                = 'vers',
+	gestaltVMAttr                 = 'vm  ',
 };
 
 short SysVersion : 0x015A;
@@ -30,12 +41,29 @@ long Gestalt_payload( unsigned long  selector : __D0,
 {
 	switch ( selector )
 	{
+		case gestaltAddressingModeAttr:
+		case gestaltAppleTalkVersion:
+		case gestaltFPUType:
+		case gestaltMMUType:
+		case gestaltParityAttr:
 		case gestaltQuickdrawVersion:
+		case gestaltSerialAttr:
+		case gestaltNuBusConnectors:
+		case gestaltVersion:
+		case gestaltVMAttr:
 			*response = 0;
 			break;
 		
 		case gestaltReactorCoreAddr:
 			*response = (long) &the_reactor_core;
+			break;
+		
+		case gestaltOSTable:
+			*response = 0x00000400;  // 1K
+			break;
+		
+		case gestaltToolboxTable:
+			*response = 0x00000c00;  // 3K
 			break;
 		
 		case gestaltMachineIcon:
