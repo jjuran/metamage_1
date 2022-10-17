@@ -240,13 +240,9 @@ void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 {
 	time( &Sound_timer_node.wakeup );
 	
-	const uint64_t duration_microseconds = duration_nanoseconds / 1000;
+	timeval duration;
 	
-	const timeval duration =
-	{
-		duration_microseconds / 1000000,
-		duration_microseconds % 1000000,
-	};
+	timeval_from_nanoseconds( &duration, &duration_nanoseconds );
 	
 	timeval_add( Sound_timer_node.wakeup, duration );
 	
