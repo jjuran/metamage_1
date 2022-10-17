@@ -32,23 +32,6 @@ short CurPageOption : 0x0936;
 static timer_node VBL_timer_node;
 static bool       timer_scheduled;
 
-/*
-	The SoundMusicSys module used in games like Prince of Persia expects to
-	find its newly installed VBL task in the VBL queue, but it doesn't check
-	the queue head.  In order to make it work properly, place our own "task"
-	at the head of the queue so the check succeeds.
-*/
-
-static VBLTask dummy_VBL_task;
-
-static
-void dummy_VBL_proc( VBLTask* task : __A0 )
-{
-	// Don't do anything; just stick around in the queue
-	
-	task->vblCount = 0x7FFF;
-}
-
 static
 void timeval_add( timeval& tv, uint32_t more_usecs )
 {
@@ -118,13 +101,6 @@ void do_VBL()
 				VBLQueue.qTail = (QElemPtr) slot;
 			}
 			
-			if ( VBLQueue.qHead == VBLQueue.qTail )
-			{
-				// This should be our dummy VBL
-				
-				VBLQueue.qHead = VBLQueue.qTail = NULL;
-			}
-			
 			if ( VBLQueue.qHead == NULL  &&  auto_vsync )
 			{
 				unlock_screen();
@@ -173,17 +149,6 @@ short VInstall_patch( QElem* vbl : __A0 )
 	
 	Enqueue( vbl, &VBLQueue );
 	
-	if ( VBLQueue.qHead == vbl )
-	{
-		// place our dummy VBL task at the head of the queue
-		
-		dummy_VBL_task.qLink    = vbl;
-		dummy_VBL_task.vblAddr  = (VBLUPP) &dummy_VBL_proc;
-		dummy_VBL_task.vblCount = 0x7FFF;
-		
-		VBLQueue.qHead = (QElem*) &dummy_VBL_task;
-	}
-	
 	if ( ! timer_scheduled )
 	{
 		if ( auto_vsync )
@@ -209,13 +174,6 @@ short VRemove_patch( QElem* vbl : __A0 )
 	}
 	
 	short saved_SR = disable_interrupts();
-	
-	if ( VBLQueue.qHead == VBLQueue.qTail )
-	{
-		// This should be our dummy VBL
-		
-		VBLQueue.qHead = VBLQueue.qTail = NULL;
-	}
 	
 	if ( VBLQueue.qHead == NULL )
 	{
