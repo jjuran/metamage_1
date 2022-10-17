@@ -16,6 +16,18 @@ DEFINE_CALLOUT( void, unlock_screen, (), 0xFFEA )
 
 DEFINE_CALLOUT( unsigned long, get_Ticks, (), 0xFFDE )
 
+DEFINE_CALLOUT( struct timeval*,
+                timeval_from_microseconds,
+                (struct timeval*     dst : __A0,
+                 unsigned long long* src : __A1 ),
+                0xFFDA )
+
+DEFINE_CALLOUT( struct timeval*,
+                timeval_from_nanoseconds,
+                (struct timeval*     dst : __A0,
+                 unsigned long long* src : __A1 ),
+                0xFFD8 )
+
 DEFINE_CALLOUT( void,
                 fast_memset,
                 (void* : __A0, char : __D1, unsigned long : __D0 ),
