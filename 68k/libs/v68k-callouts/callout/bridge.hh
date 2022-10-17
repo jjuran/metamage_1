@@ -42,8 +42,8 @@ enum
 	// $FFDE - $FFD8
 	get_Ticks,
 	get_microseconds,  // returns in registers, for _Microseconds
-	reserved5,
-	reserved6,
+	timeval_from_microseconds,
+	timeval_from_nanoseconds,
 	
 	// $FFD6 - $FFD0
 	fast_memset,
