@@ -433,7 +433,9 @@ bail:
 static inline
 bool reactor_wait( uint64_t dt )
 {
-	timeval timeout = { dt / 1000000, dt % 1000000 };
+	timeval timeout;
+	
+	timeval_from_microseconds( &timeout, &dt );
 	
 	return reactor_wait( &timeout );
 }
