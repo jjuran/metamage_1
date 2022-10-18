@@ -97,12 +97,12 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 		we don't need to add more.
 	*/
 	
-	const short h_count = (n_unique & ~1) * 2;
-	const short v_count = bbox.bottom - bbox.top + 1;
+	const UInt16 h_count = (n_unique & ~1) * 2;
+	const UInt16 v_count = bbox.bottom - bbox.top + 1;
 	
-	const short seg_bytes = sizeof (short) * h_count;
-	const short row_bytes = sizeof (short) * 2 + seg_bytes;
-	const short rgn_bytes = sizeof (Region) + v_count * row_bytes;
+	const UInt16 seg_bytes = sizeof (short) * h_count;
+	const UInt16 row_bytes = sizeof (short) * 2 + seg_bytes;
+	const UInt32 rgn_bytes = sizeof (Region) + v_count * row_bytes;
 	
 	SetHandleSize( (Handle) rgn, rgn_bytes );
 	
