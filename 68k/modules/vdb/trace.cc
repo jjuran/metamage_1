@@ -12,6 +12,7 @@
 #include <errno.h>
 
 // gear
+#include "gear/hexadecimal.hh"
 #include "gear/parse_decimal.hh"
 
 // recall
@@ -23,6 +24,8 @@
 
 
 #pragma exceptions off
+
+#define STRLEN( s )  (sizeof "" s - 1)
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -124,9 +127,17 @@ void print_stack_crawl( const registers& regs )
 {
 	using namespace recall;
 	
-	char label[] = "\n" "0: ";
+	using gear::encode_32_bit_hex;
+	
+	char label[] = "\n" "0: <--------> ";
+	
+	const int return_addr_index = STRLEN( "\n" "0: <" );
+	
+	char* return_addr_iter = label + return_addr_index;
 	
 	const int label_size = sizeof label - 1;
+	
+	encode_32_bit_hex( regs.pc, return_addr_iter );
 	
 	return_address_native retaddr = (return_address_native) regs.pc;
 	
@@ -154,6 +165,8 @@ void print_stack_crawl( const registers& regs )
 		const char* name = "???";
 		
 		retaddr = frames[ i ].addr_native;
+		
+		encode_32_bit_hex( (long) retaddr, return_addr_iter );
 		
 		if ( (long) retaddr & 0x1 )
 		{
