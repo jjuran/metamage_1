@@ -158,3 +158,10 @@ RgnHandle circular_region( short diameter, short width, short height )
 	
 	return tmp;
 }
+
+RgnHandle circular_region( short diameter )
+{
+	RgnHandle rgn = circular_region( diameter, diameter, diameter );
+	
+	return rgn;
+}
