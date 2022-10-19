@@ -25,6 +25,7 @@
 // ams-common
 #include "math.hh"
 #include "scoped_zone.hh"
+#include "unglue.hh"
 
 
 #pragma exceptions off
@@ -161,7 +162,34 @@ RgnHandle circular_region( short diameter, short width, short height )
 
 RgnHandle circular_region( short diameter )
 {
+	const long n_entries = 128;
+	const Size memo_size = n_entries * sizeof (RgnHandle);
+	
+	static Handle memo = (scoped_zone(), NewHandleClear( memo_size ));
+	
+	RgnHandle* memoized = NULL;
+	
+	if ( diameter <= n_entries )
+	{
+		const UInt16 memo_index = diameter - 1;
+		
+		memoized = (RgnHandle*) (*memo + memo_index * sizeof (RgnHandle));
+		
+		if ( *memoized )
+		{
+			return *memoized;
+		}
+	}
+	
 	RgnHandle rgn = circular_region( diameter, diameter, diameter );
+	
+	if ( memoized )
+	{
+		if ( Handle h = (scoped_zone(), HandToHand( (Handle) rgn )) )
+		{
+			*memoized = rgn = (RgnHandle) h;
+		}
+	}
 	
 	return rgn;
 }
