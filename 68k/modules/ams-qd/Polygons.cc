@@ -196,15 +196,16 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	if ( size == sizeof (Region) + sizeof (short) )
 	{
 		SetEmptyRgn( rgn );
-		return;
 	}
-	
-	rgn[0]->rgnSize = size;
-	
-	rgn[0]->rgnBBox.top    = top;
-	rgn[0]->rgnBBox.left   = left;
-	rgn[0]->rgnBBox.right  = right;
-	rgn[0]->rgnBBox.bottom = bottom;
+	else
+	{
+		rgn[0]->rgnSize = size;
+		
+		rgn[0]->rgnBBox.top    = top;
+		rgn[0]->rgnBBox.left   = left;
+		rgn[0]->rgnBBox.right  = right;
+		rgn[0]->rgnBBox.bottom = bottom;
+	}
 }
 
 pascal void StdPoly_patch( signed char verb, PolyHandle poly )
