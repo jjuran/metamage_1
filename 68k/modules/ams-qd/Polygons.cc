@@ -35,6 +35,66 @@ using quickdraw::Region_end;
 #pragma exceptions off
 
 
+static inline
+short min( short a, short b )
+{
+	return b < a ? b : a;
+}
+
+static inline
+short max( short a, short b )
+{
+	return a > b ? a : b;
+}
+
+static inline
+const short* rgn_extent( const MacRegion* rgn )
+{
+	return (const short*) &rgn[ 1 ];
+}
+
+static
+void shrinkwrap_region_bbox( RgnHandle rgn )
+{
+	const short End = 0x7FFF;
+	
+	short left  =  32767;
+	short right = -32767;
+	
+	const short* p = rgn_extent( *rgn );
+	
+	while ( *p++ != End )
+	{
+		// v skipped above
+		
+		do
+		{
+			short h = *p++;
+			
+			left  = min( left,  h );
+			right = max( right, h );
+		}
+		while ( *p != End );
+		
+		++p;  // skip row-ending sentinel
+	}
+	
+	Rect& bbox = rgn[0]->rgnBBox;
+	
+	bbox.left  = left;
+	bbox.right = right;
+}
+
+/*
+	The logic below for generating regions from polygons keeps track of
+	the bounding box of all pixels it considers.  However, sometimes some
+	of the pixels near a vertex cancel each other out, and sometimes there
+	are no pixels remaining just within the left or right edge of the box.
+	
+	Once we have the final region contents, we need to re-calculate the
+	left and right edges of the bounding box for an exact fit (done above).
+*/
+
 void PolyRgn( RgnHandle rgn, PolyHandle poly )
 {
 	Point* pt = poly[0]->polyPoints;
@@ -205,6 +265,8 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 		rgn[0]->rgnBBox.left   = left;
 		rgn[0]->rgnBBox.right  = right;
 		rgn[0]->rgnBBox.bottom = bottom;
+		
+		shrinkwrap_region_bbox( rgn );
 	}
 }
 
