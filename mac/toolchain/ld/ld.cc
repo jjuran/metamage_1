@@ -620,8 +620,14 @@ namespace tool
 					command.push_back( "-rsrcfar" );
 				}
 				
+				/*
+					TODO:  Not all code resources are INITs generally,
+					but at the moment INITs are the only ones supported,
+					so having them locked in the system heap makes sense.
+				*/
+				
 				command.push_back( "-rsrcflags" );
-				command.push_back( "system"     );  // FIXME: Not all code rsrc are system
+				command.push_back( "system,locked" );
 				break;
 			
 			case kProductDriverOrDA:
