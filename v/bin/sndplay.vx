@@ -6,7 +6,7 @@ if argc < 2 then
 	exit 1
 }
 
-let tonegraph = eval load argv[ 1 ]
+let tonegraph = eval (load, realpath) argv[ 1 ]
 
 def connect_output()
 {
