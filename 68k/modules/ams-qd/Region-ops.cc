@@ -155,6 +155,8 @@ static short region_size( MacRegion* region, const short* end )
 }
 
 #define CHECK_REGION(func, rgn)  check_region( rgn, func, __LINE__ )
+#undef CHECK_REGION
+#define CHECK_REGION(func, rgn)  true
 
 static
 bool check_region( RgnHandle rgn, const char* func, int line )
