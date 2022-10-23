@@ -74,7 +74,7 @@ let config_data = if src_is_txt then {load input_path} else {""}
 
 let config_lines = config_data.lines() ver bool per comma-separated
 
-let config = str^[eval config_lines]
+let config = str^[eval( config_lines, realpath input_path )]
 
 def active (feature)
 {
