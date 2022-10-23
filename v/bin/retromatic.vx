@@ -83,6 +83,13 @@ def active (feature)
 
 let named = "name" in config
 
+if src_is_txt and not named then
+{
+	warn "retromatic.vx: " input_path ": Required field 'name' is missing"
+	
+	exit 1
+}
+
 var name = if src_is_txt then {config[ "name" ]} else {basename input_path}
 
 # This path may not actually exist in the case of a disk image.
