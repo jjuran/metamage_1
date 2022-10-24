@@ -472,7 +472,7 @@ int32_t timeval_from_microseconds_callout( v68k::processor_state& s )
 	bool ok = get_quad   ( s, us, microseconds )  &&
 	          put_timeval( s, tv, microseconds );
 	
-	return ok ? rts : v68k::Bus_error;
+	return ok ? rts : (int) v68k::Bus_error;
 }
 
 static
@@ -486,7 +486,7 @@ int32_t timeval_from_nanoseconds_callout( v68k::processor_state& s )
 	bool ok = get_quad   ( s, ns, nanoseconds )  &&
 	          put_timeval( s, tv, nanoseconds / 1000 );
 	
-	return ok ? rts : v68k::Bus_error;
+	return ok ? rts : (int) v68k::Bus_error;
 }
 
 static
