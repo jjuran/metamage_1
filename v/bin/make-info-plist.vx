@@ -10,9 +10,12 @@ let render_xml = import "render_xml"
 
 let Tab = "\t"
 
-let info-txt = load argv[ 1 ]
+let info_txt = argv[ 1 ]
+let info_dir = dirname info_txt
 
-var Build-origin-path = (dirname argv[ 1 ]) "/Build-origin.txt"
+let info-txt = load info_txt
+
+var Build-origin-path = info_dir "/Build-origin.txt"
 
 try
 {
@@ -29,7 +32,7 @@ if Build-origin-path then
 {
 	let build-origin = hex unhex *(load Build-origin-path).lines()
 	
-	chdir dirname argv[ 1 ]
+	chdir info_dir
 	
 	let command = [ "git", "rev-list", build-origin "..HEAD", "--count" ]
 	
