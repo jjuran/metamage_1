@@ -1054,6 +1054,41 @@ pascal long SizeRsrc_patch( Handle resource )
 }
 
 static
+void SetResAttrs_handler( Handle resource : __A0, short attrs : __D0 )
+{
+	OSErr err = resNotFound;
+	
+	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
+	{
+		rsrc->attrs = attrs;
+		
+		err = noErr;
+	}
+	
+	ResErr = err;
+}
+
+asm
+pascal void SetResAttrs_patch( Handle resource, short attrs )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.W   (A2)+,D0
+	MOVEA.L  (A2)+,A0
+	
+	JSR      SetResAttrs_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #6,SP
+	
+	JMP      (A0)
+}
+
+static
 void ChangedResource_handler( Handle resource : __A0 )
 {
 	OSErr err = resNotFound;

@@ -47,6 +47,8 @@ pascal short GetResAttrs_patch( char** resource );
 
 pascal long SizeRsrc_patch( char** resource );
 
+pascal void SetResAttrs_patch( char** resource, short attrs );
+
 pascal void ChangedResource_patch( char** resource );
 
 pascal void UpdateResFile_patch( short refnum );

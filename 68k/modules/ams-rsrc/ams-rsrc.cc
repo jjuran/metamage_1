@@ -63,7 +63,7 @@ void install_ResourceManager()
 	
 	TBTRAP( SizeRsrc        );  // A9A5
 	TBTRAP( GetResAttrs     );  // A9A6
-	
+	TBTRAP( SetResAttrs     );  // A9A7
 	TBTRAP( GetResInfo      );  // A9A8
 	
 	TBTRAP( ChangedResource );  // A9AA
