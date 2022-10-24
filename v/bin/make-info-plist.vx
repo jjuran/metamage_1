@@ -1,16 +1,16 @@
 #!/usr/bin/env minivx -Z
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/v/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
 
-const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+let import = { let path = libdir _ ".vsl"; eval( load path, path ) }
 
-const info_plist = import "info_plist"
-const render_xml = import "render_xml"
+let info_plist = import "info_plist"
+let render_xml = import "render_xml"
 
-const Tab = "\t"
+let Tab = "\t"
 
-const info-txt = load argv[ 1 ]
+let info-txt = load argv[ 1 ]
 
 var Build-origin-path = (dirname argv[ 1 ]) "/Build-origin.txt"
 
@@ -27,15 +27,15 @@ var more-txt = ""
 
 if Build-origin-path then
 {
-	const build-origin = hex unhex *(load Build-origin-path).lines()
+	let build-origin = hex unhex *(load Build-origin-path).lines()
 	
 	chdir dirname argv[ 1 ]
 	
-	const command = [ "git", "rev-list", build-origin "..HEAD", "--count" ]
+	let command = [ "git", "rev-list", build-origin "..HEAD", "--count" ]
 	
 	try
 	{
-		const build-number = output-from-run command
+		let build-number = output-from-run command
 		
 		more-txt = "CFBundleVersion: " (rep *build-number.lines()) "\n"
 	}
@@ -46,20 +46,18 @@ if Build-origin-path then
 
 def comma-terminated { if _[ _.length - 1 ] in ":[" then { _ } else { _ "," } }
 
-const lines = (info-txt more-txt).lines() ver bool map comma-terminated
+let lines = (info-txt more-txt).lines() ver bool map comma-terminated
 
-const info = eval "[" join( "\n", *lines, "]" )
+let info = eval "[" join( "\n", *lines, "]" )
 
-const plist = info_plist.convert info
+let plist = info_plist.convert info
 
 print info_plist.version
 print info_plist.doctype
 
-def printer
+def printer (depth, text)
 {
-	const depth, const text = _
-	
-	const tabs = Tab * depth
+	let tabs = Tab * depth
 	
 	print tabs text
 }
