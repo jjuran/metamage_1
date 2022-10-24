@@ -3,7 +3,7 @@
 let bindir = dirname realpath argv[ 0 ]
 let libdir = bindir "/../lib/v/"
 
-let import = { let path = libdir _ ".vsl"; eval( load path, path ) }
+def import (lib) { eval (load, realpath) libdir lib ".vsl" }
 
 let info_plist = import "info_plist"
 let render_xml = import "render_xml"
