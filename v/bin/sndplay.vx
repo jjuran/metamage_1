@@ -6,11 +6,11 @@ if argc < 2 then
 	exit 1
 }
 
-const tonegraph = eval load argv[ 1 ]
+let tonegraph = eval load argv[ 1 ]
 
 def connect_output()
 {
-	if const sndpipe_fd = getenv "SNDPIPE_FD" then
+	if let sndpipe_fd = getenv "SNDPIPE_FD" then
 	{
 		return fd int sndpipe_fd
 	}
@@ -24,20 +24,20 @@ def connect_output()
 	return OUT
 }
 
-const output_fd = connect_output()
+let output_fd = connect_output()
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/v/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
 
-const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+let import = { let path = libdir _ ".vsl"; eval( load path, path ) }
 
-const sndpipe = import "sndpipe"
+let sndpipe = import "sndpipe"
 
-const sound = sndpipe.player { output_fd <== _ }
+let sound = sndpipe.player { output_fd <== _ }
 
-const triangle = do
+let triangle = do
 {
-	const tooth = 1 -> 128 map {byte (2 * v)} per packed
+	let tooth = 1 -> 128 map {byte (2 * v)} per packed
 	
 	packed (tooth x"FF" -tooth x"01") => 64,
 }
@@ -48,8 +48,8 @@ def play (score, wave=triangle)
 	
 	for chord in score do
 	{
-		const duration = chord.key / 8
-		const notes    = chord.value map { v => wave }
+		let duration = chord.key / 8
+		let notes    = chord.value map { v => wave }
 		
 		sound.tone_update (32767, notes)
 		
