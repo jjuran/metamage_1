@@ -1,18 +1,18 @@
 #!/usr/bin/env minivx -Z
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/"
 
-def import { const path = libdir _ ".vsl"; eval( load path, path ) }
+def import { let path = libdir _ ".vsl"; eval( load path, path ) }
 
-const basename = import "basename";
+let basename = import "basename";
 
-const info_plist = import "info_plist"
-const render_xml = import "render_xml"
+let info_plist = import "info_plist"
+let render_xml = import "render_xml"
 
 def comma-terminated (line)
 {
-	const c = line[ line.length - 1 ]
+	let c = line[ line.length - 1 ]
 	
 	return line ("," * not c in ":[" )
 }
@@ -36,10 +36,10 @@ def vx_Z (script_filename) { "minivx", "-Z", bindir "/" script_filename }
 
 def choose_frontend
 {
-	const is_arm64 = output-from-run [ "arch" ] == "arm64\n"
-	const frontend = if is_arm64 then {"Amethyst"} else {"Amphitheatre"}
+	let is_arm64 = output-from-run [ "arch" ] == "arm64\n"
+	let frontend = if is_arm64 then {"Amethyst"} else {"Amphitheatre"}
 	
-	if const retro_frontend = getenv "RETRO_FRONTEND" then
+	if let retro_frontend = getenv "RETRO_FRONTEND" then
 	{
 		if retro_frontend != frontend then
 		{
@@ -54,10 +54,10 @@ def choose_frontend
 	return frontend
 }
 
-const frontend = choose_frontend()
+let frontend = choose_frontend()
 
-const output_dir = argv[ 1 ]
-const input_path = argv[ 2 ]
+let output_dir = argv[ 1 ]
+let input_path = argv[ 2 ]
 
 if not exists input_path then
 {
@@ -66,22 +66,22 @@ if not exists input_path then
 	exit 1
 }
 
-const parent_dir = dirname input_path
+let parent_dir = dirname input_path
 
-const src_is_txt = -substr( -input_path, 0, 4 ) == ".txt"
+let src_is_txt = -substr( -input_path, 0, 4 ) == ".txt"
 
-const config_data = if src_is_txt then {load input_path} else {""}
+let config_data = if src_is_txt then {load input_path} else {""}
 
-const config_lines = config_data.lines() ver bool map comma-terminated
+let config_lines = config_data.lines() ver bool map comma-terminated
 
-const config = str^(eval "[" join( "\n", *config_lines, "]" ))
+let config = str^(eval "[" join( "\n", *config_lines, "]" ))
 
 def active (feature)
 {
 	return feature in config and config[ feature ]
 }
 
-const named = "name" in config
+let named = "name" in config
 
 var name = if src_is_txt then {config[ "name" ]} else {basename input_path}
 
@@ -131,20 +131,20 @@ else
 	name_to_copy = name
 }
 
-const new_app_dir = output_dir "/" name ".app"
-const contents = new_app_dir "/Contents"
+let new_app_dir = output_dir "/" name ".app"
+let contents = new_app_dir "/Contents"
 
-const MacOS_dir = contents "/MacOS"
-const Resources = contents "/Resources"
-const xv68k_dir = contents "/xv68k"
+let MacOS_dir = contents "/MacOS"
+let Resources = contents "/Resources"
+let xv68k_dir = contents "/xv68k"
 
-const Files = Resources "/Files"
+let Files = Resources "/Files"
 
 mkdir-p (MacOS_dir, Files "/AMS Resources", xv68k_dir)
 
 def ams-get-app (property, args: ...)
 {
-	const path = name_path
+	let path = name_path
 	
 	return packed output-from-run [ vx_Z "ams-get.vx", property, path, args ]
 }
@@ -156,13 +156,13 @@ def icns (icon)
 	return packed ('icns', x"00000110", 'ICN#', x"00000108", icon)
 }
 
-const creator = mb32 ams-get-app "bndl-owner"
-const icon    = icns ams-get-app ("bndl-icon", "APPL")
+let creator = mb32 ams-get-app "bndl-owner"
+let icon    = icns ams-get-app ("bndl-icon", "APPL")
 
 rewrite Resources "/" name ".icns" <== icon
 
-const resfiles = [ "AMS Resources", "System" ]
-const respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
+let resfiles = [ "AMS Resources", "System" ]
+let respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
 
 run [ vx_Z "mkrsrc.vx", "-o", Files "/AMS Resources/rsrc", *respaths ]
 
@@ -170,27 +170,27 @@ copy( parent_dir "/" name_to_copy, Files )
 
 if "files" in config then
 {
-	const files = config[ "files" ] map { parent_dir "/" v }
+	let files = config[ "files" ] map { parent_dir "/" v }
 	
 	copy( *files, Files )
 }
 
-const ams_bin = "../ams-68k-bin/bin"
-const ams_lib = "../ams-68k-bin/lib"
+let ams_bin = "../ams-68k-bin/bin"
+let ams_lib = "../ams-68k-bin/lib"
 
-const prefix_list = "core io fs snd rsrc pack seg qd ui print"
-const ams_modules = [ prefix_list / ' ' ] map {ams_lib "/ams-" v}
+let prefix_list = "core io fs snd rsrc pack seg qd ui print"
+let ams_modules = [ prefix_list / ' ' ] map {ams_lib "/ams-" v}
 
 copy( *ams_modules, ams_lib "/umsp", ams_bin "/app", xv68k_dir )
 
-const new_data = ("name: " rep name) "\n" * not named
+let new_data = ("name: " rep name) "\n" * not named
 
 rewrite Resources "/config.txt" <== new_data new_disk config_data
 
-const tools = "mac/libs/amicus/tools/launch-ams-app.vx"
+let tools = "mac/libs/amicus/tools/launch-ams-app.vx"
 
-const native_binary_names = ["minivx graft xv68k freemountd" / ' ']
-const native_binary_paths = native_binary_names map {"var/out/" v}
+let native_binary_names = ["minivx graft xv68k freemountd" / ' ']
+let native_binary_paths = native_binary_names map {"var/out/" v}
 
 copy( tools, *native_binary_paths, MacOS_dir )
 
@@ -210,28 +210,28 @@ var plist_xml_lines = [ info_plist.version, info_plist.doctype ]
 
 def document_icons_table
 {
-	const table = try { config[ "document-icons" ] } catch { [] }
+	let table = try { config[ "document-icons" ] } catch { [] }
 	
 	return mb32^(table map { mb32 v.key => v.value })
 }
 
-const doctypes =
+let doctypes =
 if "document-types" in config then
 {
-	const document-types = config[ "document-types" ]
-	const document-icons = document_icons_table()
+	let document-types = config[ "document-types" ]
+	let document-icons = document_icons_table()
 	
-	const doctypes = document-types map
+	let doctypes = document-types map
 	{
-		const name = translated( str v.key, "/\0", ": " );
+		let name = translated( str v.key, "/\0", ": " );
 		
-		const type_key = mb32 v.key
+		let type_key = mb32 v.key
 		
-		const icon_key = if type_key in document-icons
+		let icon_key = if type_key in document-icons
 			then { document-icons[ type_key ] }
 			else {                 type_key   }
 		
-		const icon = icns ams-get-app ("bndl-icon", str icon_key)
+		let icon = icns ams-get-app ("bndl-icon", str icon_key)
 		
 		[
 			CFBundleTypeName: v.value,
@@ -249,7 +249,7 @@ if "document-types" in config then
 	CFBundleDocumentTypes: doctypes,
 }
 
-const info =
+let info =
 [
 	CFBundleExecutable:  frontend,
 	CFBundleIconFile:    name,
@@ -265,16 +265,16 @@ const info =
 
 def printer (depth, text)
 {
-	const Tab = "\t"
+	let Tab = "\t"
 	
-	const tabs = Tab * depth
+	let tabs = Tab * depth
 	
 	plist_xml_lines <-- tabs text
 }
 
 render_xml( printer, info_plist.convert info )
 
-const plist = "\n".join( *plist_xml_lines, "" )
+let plist = "\n".join( *plist_xml_lines, "" )
 
 rewrite contents "/Info.plist" <== plist
 
