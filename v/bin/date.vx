@@ -1,7 +1,9 @@
 #!/usr/bin/env vx
 
-let libdir = { (dirname argv[ 0 ]) "/../lib/v/" }
-let import = { eval load libdir() _ ".vobj"  }
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
+
+def import (lib) { eval (load, realpath) libdir lib ".vobj" }
 
 let date-time = import "date-time"
 
