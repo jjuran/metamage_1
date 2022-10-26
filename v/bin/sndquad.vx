@@ -2,7 +2,7 @@
 
 def connect_output()
 {
-	if const sndpipe_fd = getenv "SNDPIPE_FD" then
+	if let sndpipe_fd = getenv "SNDPIPE_FD" then
 	{
 		return fd int sndpipe_fd
 	}
@@ -16,23 +16,23 @@ def connect_output()
 	return OUT
 }
 
-const output_fd = connect_output()
+let output_fd = connect_output()
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/v/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
 
-const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+let import = { let path = libdir _ ".vsl"; eval( load path, path ) }
 
-const sndpipe = import "sndpipe"
+let sndpipe = import "sndpipe"
 
-const sound = sndpipe.player { output_fd <== _ }
+let sound = sndpipe.player { output_fd <== _ }
 
-const square_2 = packed (x"40" * 128, x"c0" * 128) => 0
-const sawtooth = 0 -> 256 map byte per packed => 128
+let square_2 = packed (x"40" * 128, x"c0" * 128) => 0
+let sawtooth = 0 -> 256 map byte per packed => 128
 
-const triangle = do
+let triangle = do
 {
-	const tooth = 1 -> 128 map {byte (2 * v)} per packed
+	let tooth = 1 -> 128 map {byte (2 * v)} per packed
 	
 	packed (tooth x"FF" -tooth x"01") => 64,
 }
@@ -40,21 +40,21 @@ const triangle = do
 # 1.059463094359295^12 ~= 2
 # 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
 
-const semitone_numer = 69433
-const semitone_denom = 2^16
+let semitone_numer = 69433
+let semitone_denom = 2^16
 
-const core = 0xb5c8
+let core = 0xb5c8
 
-const adj = int if argc > 1 then {argv[ 1 ]}
+let adj = int if argc > 1 then {argv[ 1 ]}
 
 def x (k)
 {
 	return k * core * semitone_numer^adj div semitone_denom^adj
 }
 
-const duration = 2
+let duration = 2
 
-const chord =
+let chord =
 [
 	2: triangle,
 	3: square_2,
@@ -62,7 +62,7 @@ const chord =
 	8: sawtooth,
 ]
 
-const notes = chord map { x v.key => v.value }
+let notes = chord map { x v.key => v.value }
 
 sound.four_tone (duration * 60, notes)
 
