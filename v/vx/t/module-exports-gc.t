@@ -3,7 +3,7 @@
 const bindir = dirname realpath argv[ 0 ]
 const libdir = bindir "/../../lib/"
 
-const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+const import = { const path = libdir _ ".vy"; eval( load path, path ) }
 
 const date-time = import "date-time"
 
