@@ -1,6 +1,6 @@
 #!/usr/bin/env macvx
 
-const path = argv[ 1 ]
+let path = argv[ 1 ]
 
 def converted (path)
 {
@@ -19,7 +19,7 @@ event <-- '----': converted path
 
 try
 {
-	const reply = AESend event
+	let reply = AESend event
 }
 catch
 {
