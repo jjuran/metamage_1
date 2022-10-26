@@ -1,14 +1,14 @@
 #!/usr/bin/env vx -Z
 
-const args = argv[ 1 -> argc ]
+let args = argv[ 1 -> argc ]
 
 for path in args do
 {
 	OUT <== path ": "
 	
-	const data = load path
+	let data = load path
 	
-	const fixed = translated( data, "\r", "\n" )
+	let fixed = translated( data, "\r", "\n" )
 	
 	if data == fixed then
 	{
