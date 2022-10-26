@@ -1,11 +1,11 @@
 #!/usr/bin/env vx -Z
 
-const src = argv[ 1 ]
-const dst = argv[ 2 ]
+let src = argv[ 1 ]
+let dst = argv[ 2 ]
 
 def dump_fork( src, dst )
 {
-	if const data = load src then
+	if let data = load src then
 	{
 		warn dst
 	
