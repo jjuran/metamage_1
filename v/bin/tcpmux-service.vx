@@ -3,7 +3,7 @@
 let bindir = dirname realpath argv[ 0 ]
 let libdir = bindir "/../lib/"
 
-let import = { let path = libdir _ ".vobj"; eval( load path, path ) }
+def import (lib) { eval (load, realpath) libdir lib ".vobj" }
 
 let readline = import "readline"
 let services = import "services"
