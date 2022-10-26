@@ -1,30 +1,30 @@
 #!/usr/bin/env minivx
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/v/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
 
-const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+let import = { let path = libdir _ ".vsl"; eval( load path, path ) }
 
-const render_html = import "render_html"
+let render_html = import "render_html"
 
-const Tab = "\t"
+let Tab = "\t"
 
 def printer (depth, text)
 {
-	const tabs = Tab * depth
+	let tabs = Tab * depth
 	
 	print tabs text
 }
 
-const print_html = render_html % printer
+let print_html = render_html % printer
 
 def comma-terminated (s) { s and s ("," * not s[ s.length - 1 ] in ":[,") }
 
-const proto_html = load argv[ 1 ]
+let proto_html = load argv[ 1 ]
 
-const lines = proto_html.lines() map comma-terminated
+let lines = proto_html.lines() map comma-terminated
 
-const structure = eval "[" join( "\n", *lines, "]" )
+let structure = eval "[" join( "\n", *lines, "]" )
 
 print "<!DOCTYPE html>"
 
