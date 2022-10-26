@@ -1,18 +1,18 @@
 #!/usr/bin/env vx -Z
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/v/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
 
-const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+let import = { let path = libdir _ ".vobj"; eval( load path, path ) }
 
-const options = import "options"
-const arcsign = import "arcsign"
+let options = import "options"
+let arcsign = import "arcsign"
 
-const date-time = try { import "date-time" } catch {}
+let date-time = try { import "date-time" } catch {}
 
-const stamp = if date-time then {{ date-time.stamp time() }} else { null }
+let stamp = if date-time then {{ date-time.stamp time() }} else { null }
 
-const command_defs = str^
+let command_defs = str^
 [
 	seal:   [load, append],
 	unseal: [load, truncate],
@@ -33,7 +33,7 @@ if argc < 3 then
 	exit usage()
 }
 
-const command = argv[ 1 ]
+let command = argv[ 1 ]
 
 if not command in command_defs then
 {
@@ -51,19 +51,19 @@ def check_hash
 	return _
 }
 
-const vload = { packed self-destructing load _ }
+let vload = { packed self-destructing load _ }
 
 var hash = null
 var key  = null
 
-const option_defs = byte^
+let option_defs = byte^
 [
 	'h': [ &hash, check_hash ],
 	'K': [ &key, unhex ],
 	'k': [ &key, vload ],
 ]
 
-const args = options.parse( argv[ 1 -> argc ], option_defs, { exit usage() } )
+let args = options.parse( argv[ 1 -> argc ], option_defs, { exit usage() } )
 
 if key isa null then
 {
@@ -71,21 +71,21 @@ if key isa null then
 	exit 2
 }
 
-const cmd = command_defs[ command ]
+let cmd = command_defs[ command ]
 
-const kits = args map { const x = _; x => cmd map { _ % x } }
+let kits = args map { let x = v; x => cmd map { v % x } }
 
-const params = str^[ :kits, :key, :hash, :stamp ]
+let params = str^[ :kits, :key, :hash, :stamp ]
 
-const handler = import "arcsign-" command
+let handler = import "arcsign-" command
 
-const results = handler( arcsign, params )
+let results = handler( arcsign, params )
 
 var exit_status = 0
 
 for r in results do
 {
-	const v = r.value
+	let v = r.value
 	
 	if v.length > 1 then
 	{
