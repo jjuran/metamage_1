@@ -1,14 +1,14 @@
 #!/usr/bin/env vx -Z
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/"
 
-const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+let import = { let path = libdir _ ".vobj"; eval( load path, path ) }
 
-const date-time = import "date-time"
-const sockaddr  = import "sockaddr"
+let date-time = import "date-time"
+let sockaddr  = import "sockaddr"
 
-const port = getenv "PAIRUP_PORT"
+let port = getenv "PAIRUP_PORT"
 
 if not bool port then
 {
@@ -16,7 +16,7 @@ if not bool port then
 	exit 2
 }
 
-const listener-fd = tcp-listen port
+let listener-fd = tcp-listen port
 
 def respond { print "\r" "[" (date-time.stamp time()) "]" "  " _ }
 
@@ -26,9 +26,9 @@ def recruit
 	
 	OUT <== "Waiting for " name "..."
 	
-	const n = "Alice".length - name.length  # We know that "Bob" is shorter
+	let n = "Alice".length - name.length  # We know that "Bob" is shorter
 	
-	const connection = accept listener-fd
+	let connection = accept listener-fd
 	
 	respond name ":  " (" " * n) sockaddr.display connection.address
 	
@@ -50,8 +50,8 @@ def relay
 
 def pair-up
 {
-	const A = recruit "Alice"
-	const B = recruit "Bob"
+	let A = recruit "Alice"
+	let B = recruit "Bob"
 	
 	OUT <== "Full-duplex relay in progress..."
 	
