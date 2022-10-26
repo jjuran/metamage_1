@@ -2,7 +2,7 @@
 
 def pack_icon (source)
 {
-	const meat = mince substr( source, 1 )
+	let meat = mince substr( source, 1 )
 	
 	return unbin str translated( meat, " X", "01" ).lines()
 }
@@ -10,8 +10,8 @@ def pack_icon (source)
 # Width:  32 columns + 31 spaces + 2 '|' + 1 '\n'
 # Height: 32 data rows + 1 blank
 
-const bytes_per_frame = (32 * 2 + 2) * 32 + 1
+let bytes_per_frame = (32 * 2 + 2) * 32 + 1
 
-const source = load argv[ 1 ]
+let source = load argv[ 1 ]
 
 OUT <== [source / -bytes_per_frame] map pack_icon
