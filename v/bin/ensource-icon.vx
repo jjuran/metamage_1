@@ -2,31 +2,31 @@
 
 def bitstrings { _ map { v "0", v "1" } }
 
-const binary-strings = bitstrings^8 [ "" ]
+let binary-strings = bitstrings^8 [ "" ]
 
 def binarize (data)
 {
-	const bits = data map { *binary-strings[ int v ] }
+	let bits = data map { *binary-strings[ int v ] }
 	
 	return str bits
 }
 
 def lineate (bits)
 {
-	const pixels = translated( bits, "01", " X" )
+	let pixels = translated( bits, "01", " X" )
 	
 	return "|" join( " ", *pixels ) "|\n"
 }
 
-const data = packed load argv[ 1 ]
+let data = packed load argv[ 1 ]
 
 assert data.size in [ 128, 256 ]
 
-const icons = [data / -128]
+let icons = [data / -128]
 
 for icon in icons do
 {
-	const rows = [icon / -4] map lineate * binarize
+	let rows = [icon / -4] map lineate * binarize
 	
 	print str rows
 }
