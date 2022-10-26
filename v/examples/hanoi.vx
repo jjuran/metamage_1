@@ -1,11 +1,11 @@
 #!/usr/bin/env vx
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/lib/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/lib/"
 
-const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+let import = { let path = libdir _ ".vsl"; eval( load path, path ) }
 
-const logic = import "hanoi/logic"
+let logic = import "hanoi/logic"
 
 var depth  = 4
 var silent = false
@@ -14,7 +14,7 @@ var p = begin argv
 
 while ++p do
 {
-	const arg = *p
+	let arg = *p
 	
 	if arg == "-s" then
 	{
@@ -26,16 +26,16 @@ while ++p do
 	}
 }
 
-const pegs = "ABC"
+let pegs = "ABC"
 
 def move (n, src, dst)
 {
 	print ("Move disc %s from peg %s to peg %s" % (n, pegs[ src ], pegs[ dst ]))
 }
 
-const disc-mover = if silent then {{}} else {move}
+let disc-mover = if silent then {{}} else {move}
 
-const move-tower = logic.make-tower-mover disc-mover
+let move-tower = logic.make-tower-mover disc-mover
 
 move-tower( depth, 0, 2 )
 

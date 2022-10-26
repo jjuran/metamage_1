@@ -1,13 +1,13 @@
 #!/usr/bin/env vx
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/lib/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/lib/"
 
-const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+let import = { let path = libdir _ ".vsl"; eval( load path, path ) }
 
-const board = import "hanoi/board"
-const logic = import "hanoi/logic"
-const scene = import "hanoi/scene"
+let board = import "hanoi/board"
+let logic = import "hanoi/logic"
+let scene = import "hanoi/scene"
 
 var depth = 4
 
@@ -15,18 +15,18 @@ var p = begin argv
 
 while ++p do
 {
-	const arg = *p
+	let arg = *p
 	
 	depth = int arg
 }
 
-const simulator = board.make  depth
-const rendering = scene.make( depth, simulator.get )
+let simulator = board.make  depth
+let rendering = scene.make( depth, simulator.get )
 
-const ESC = "\x1b"
-const CSI = ESC "["
+let ESC = "\x1b"
+let CSI = ESC "["
 
-const CLEAN = CSI "H" CSI "J"  # home, clear to end
+let CLEAN = CSI "H" CSI "J"  # home, clear to end
 
 def display
 {
@@ -64,7 +64,7 @@ def visual-move (n, src, dst)
 
 display()
 
-const move-tower = logic.make-tower-mover visual-move
+let move-tower = logic.make-tower-mover visual-move
 
 move-tower( depth, 0, 2 )
 
