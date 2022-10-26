@@ -8,9 +8,9 @@ def import (lib) { eval (load, realpath) libdir lib ".vy" }
 let options = import "options"
 let arcsign = import "arcsign"
 
-let date-time = try { import "date-time" } catch {}
+let date-time = import "date-time"
 
-let stamp = if date-time then {{ date-time.stamp time() }} else { null }
+def stamp { date-time.stamp time() }
 
 let command_defs = str^
 [
