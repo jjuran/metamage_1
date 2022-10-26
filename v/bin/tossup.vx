@@ -11,36 +11,36 @@
 # same script (in contrast to asymmetrical protocols like "I flip, you call",
 # where two different roles exist and must be assigned somehow).
 
-const isa_tty = isatty OUT
-const verbose = int (isa_tty and getenv "TOSSUP_VERBOSE")
+let isa_tty = isatty OUT
+let verbose = int (isa_tty and getenv "TOSSUP_VERBOSE")
 
-const cps = 20  # 20 characters per second for dramatic effect
+let cps = 20  # 20 characters per second for dramatic effect
 
-const delay = +isa_tty / cps
+let delay = +isa_tty / cps
 
-const mention = if isa_tty then {{OUT <== _}} else {{}}
-const details = if verbose then {{OUT <== _}} else {{}}
+let mention = if isa_tty then {{OUT <== _}} else {{}}
+let details = if verbose then {{OUT <== _}} else {{}}
 
-const ESC = "\x1b"
-const CSI = ESC "["
+let ESC = "\x1b"
+let CSI = ESC "["
 
-const CLEAN = CSI "H" CSI "J"  # home, clear to end
+let CLEAN = CSI "H" CSI "J"  # home, clear to end
 
-const RESET = CSI "0m"
-const RED   = CSI "91m"
-const GREEN = CSI "92m"
-const AMBER = CSI "93m"
-const WHITE = CSI "97m"
+let RESET = CSI "0m"
+let RED   = CSI "91m"
+let GREEN = CSI "92m"
+let AMBER = CSI "93m"
+let WHITE = CSI "97m"
 
 mention CLEAN  # must be a separate write() call
 
 mention WHITE "Tossup" RESET " in progress:" "\n"
         "\n"
 
-const random-fd = reader "/dev/urandom"
+let random-fd = reader "/dev/urandom"
 
-const opponent-input  = fd 6
-const opponent-output = fd 7
+let opponent-input  = fd 6
+let opponent-output = fd 7
 
 def abort
 {
@@ -59,7 +59,7 @@ def read-all (error, read, n)
 	
 	while n do
 	{
-		const piece = read n or return error result
+		let piece = read n or return error result
 		
 		n -= piece.size
 		
@@ -69,14 +69,14 @@ def read-all (error, read, n)
 	return result
 }
 
-const random-bytes = read-all % abort % random-fd.read
+let random-bytes = read-all % abort % random-fd.read
 
-const B = record( recv: opponent-input.read, send: { opponent-output <== _ } )
+let B = record( recv: opponent-input.read, send: { opponent-output <== _ } )
 
-const hash-len = 32
-const salt-len = 7
-const mark-int = i8
-const mark-len = mark-int.size
+let hash-len = 32
+let salt-len = 7
+let mark-int = i8
+let mark-len = mark-int.size
 
 def exchange (outgoing-data)
 {
@@ -90,7 +90,7 @@ def exchange (outgoing-data)
 		
 		if delay then { sleep delay }
 		
-		const x = B.recv 1 or abort()
+		let x = B.recv 1 or abort()
 		
 		mention "\x08" x
 		
@@ -102,10 +102,10 @@ def exchange (outgoing-data)
 
 def play
 {
-	const salt-A = random-bytes salt-len
-	const mark-A = random-bytes mark-len
+	let salt-A = random-bytes salt-len
+	let mark-A = random-bytes mark-len
 	
-	const hash-A = sha256 salt-A mark-A
+	let hash-A = sha256 salt-A mark-A
 	
 	mention "Outgoing mark:  " GREEN mark-A RESET "\n"
 	
@@ -115,22 +115,22 @@ def play
 	mention "\n"
 	        "Exchange hash:  "
 	
-	const hash-B = exchange hash-A
+	let hash-B = exchange hash-A
 	
 	mention "\r" "Received" "\n"
 	        "Exchange salt:  "
 	
-	const salt-B = exchange salt-A
+	let salt-B = exchange salt-A
 	
 	mention "\r" "Received" "\n"
 	        "Exchange mark:  " RED
 	
-	const mark-B = exchange mark-A
+	let mark-B = exchange mark-A
 	
 	mention "\r" RESET "Received" "\n"
 	        "\n"
 	
-	const computed-hash = sha256 salt-B mark-B
+	let computed-hash = sha256 salt-B mark-B
 	
 	details "Computed hash:  " computed-hash "\n"
 	
@@ -148,16 +148,16 @@ def play
 	return mark-A, mark-B
 }
 
-const won-or-lost = [ "WON", "LOST" ]
+let won-or-lost = [ "WON", "LOST" ]
 
 var result
 
 do
 {
-	const A, const B = play()
+	let A, let B = play()
 	
-	const a = unhex "0x" hex A
-	const b = unhex "0x" hex B
+	let a = unhex "0x" hex A
+	let b = unhex "0x" hex B
 	
 	result = mark-int (a - b)
 	
@@ -167,7 +167,7 @@ do
 }
 while result == mark-int -result  # ignore 0 and 2^(k-1)
 
-const scored = won-or-lost[ +(result < 0) ]
+let scored = won-or-lost[ +(result < 0) ]
 
 mention "You " AMBER scored RESET ".\n\n"
 
