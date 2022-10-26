@@ -1,6 +1,6 @@
-#!/usr/bin/env vx
+#!/usr/bin/env minivx
 
-const icon_types = str^
+let icon_types = str^
 [
 	# 'ICON' elements aren't supported in 'icns', but we document the
 	# format here anyway for completeness.
@@ -80,32 +80,32 @@ def icon_type_of (name)
 
 def encode_u32BE
 {
-	const x = unhex hex _
+	let x = unhex hex _
 	
-	const pad = x"00" * (4 - x.size)
+	let pad = x"00" * (4 - x.size)
 	
 	return pad x
 }
 
 def pack_one
 {
-	const tag  = packed _.key
-	const data = packed _.value
+	let tag  = packed _.key
+	let data = packed _.value
 	
-	const size = encode_u32BE( data.size + 8 )
+	let size = encode_u32BE( data.size + 8 )
 	
 	return tag size data
 }
 
 def icon_type_from_filename (name)
 {
-	const r0 = begin -name
+	let r0 = begin -name
 	
 	var r1 = r0.find '.'
 	
 	if r1 then
 	{
-		const ext = -r1.past
+		let ext = -r1.past
 		
 		if ext.length == 4 and mb32 ext in icon_types.values then
 		{
@@ -139,7 +139,7 @@ assert icon_type_from_filename "32x32,1+1" == 'ICN#'
 
 def basename (path)
 {
-	if const p = (begin -path).find '/' then
+	if let p = (begin -path).find '/' then
 	{
 		return -p.past
 	}
@@ -154,23 +154,23 @@ assert basename "bar" == "bar"
 
 def pack_icon_file (path)
 {
-	const data = load path
+	let data = load path
 	
 	if data[ 0 -> 4 ] == "icns" then
 	{
-		const size = eval "0x" hex data[ 4 -> 8 ]
+		let size = eval "0x" hex data[ 4 -> 8 ]
 		
 		assert size > 8
 		
 		return data[ 8 -> size ]
 	}
 	
-	const icon_type = icon_type_from_filename basename path
+	let icon_type = icon_type_from_filename basename path
 	
 	return pack_one( icon_type => data )
 }
 
-if const icons = argv[ 1 -> argc ] map pack_icon_file then
+if let icons = argv[ 1 -> argc ] map pack_icon_file then
 {
 	OUT <== pack_one( icns: icons )
 	
