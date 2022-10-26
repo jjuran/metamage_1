@@ -1,20 +1,20 @@
 #!/usr/bin/env vx -Z
 
-const bindir = dirname realpath argv[ 0 ]
+let bindir = dirname realpath argv[ 0 ]
 
-const amsdir = bindir "/../share/ams/"
+let amsdir = bindir "/../share/ams/"
 
-const ams_bin = getenv "AMS_BIN" or amsdir "/bin"
-const ams_lib = getenv "AMS_LIB" or amsdir "/lib"
-const ams_mnt = getenv "AMS_MNT" or amsdir "/mnt"
+let ams_bin = getenv "AMS_BIN" or amsdir "/bin"
+let ams_lib = getenv "AMS_LIB" or amsdir "/lib"
+let ams_mnt = getenv "AMS_MNT" or amsdir "/mnt"
 
-const title = "Advanced Mac Substitute"
+let title = "Advanced Mac Substitute"
 
-const model = getenv "AMS_CPU"                # may be ()
-const model_opt = if model then {"-M" model}  # may be ()
+let model = getenv "AMS_CPU"                # may be ()
+let model_opt = if model then {"-M" model}  # may be ()
 
-const mem = getenv "AMS_MEM"
-const mem_opt = if mem then
+let mem = getenv "AMS_MEM"
+let mem_opt = if mem then
 {
 	# 128K, 512K, 1 MiB, 2 MiB, 2.5 MiB, 4 MiB
 	assert int mem in [ 0, 1, 2, 4, 5, 8 ]
@@ -22,14 +22,14 @@ const mem_opt = if mem then
 	"--mem=" mem,
 }
 
-const screen_res = getenv "AMS_SCREENRES" or "512x342"
+let screen_res = getenv "AMS_SCREENRES" or "512x342"
 
-const default_app = "Welcome"
+let default_app = "Welcome"
 
-const app_name =
+let app_name =
 	if argc > 1
 		then {argv[ 1 ]}
-	else if const ams_appname = getenv "AMS_APPNAME"
+	else if let ams_appname = getenv "AMS_APPNAME"
 		then {ams_appname}
 	else {default_app}
 
@@ -48,26 +48,26 @@ def which (program)
 	catch {}
 }
 
-const home     = getenv "HOME"
-const home_68k = home "/68k"
+let home     = getenv "HOME"
+let home_68k = home "/68k"
 
-const root_dir = if exists home_68k then {home_68k} else {ams_mnt}
+let root_dir = if exists home_68k then {home_68k} else {ams_mnt}
 
-const resfiles = [ "AMS Resources", "System" ]
-const respaths = resfiles map { root_dir "/" v } ver { exists v "/r" }
+let resfiles = [ "AMS Resources", "System" ]
+let respaths = resfiles map { root_dir "/" v } ver { exists v "/r" }
 
 if exists bindir "/mkrsrc.vx" then
 {
-	const output = "-o", root_dir "/AMS Resources/rsrc"
+	let output = "-o", root_dir "/AMS Resources/rsrc"
 	
 	run [ "minivx", "-Z", bindir "/mkrsrc.vx", output, *respaths ]
 }
 
 def freemountd_rw (root) { "freemountd -qu --rw --root" / ' ', root, "//" }
 
-const freemountd-server = "freemountd -qu --root" / ' ', root_dir, "//"
+let freemountd-server = "freemountd -qu --root" / ' ', root_dir, "//"
 
-const xv68k = "xv68k"
+let xv68k = "xv68k"
 
 def module_path (name)
 {
@@ -78,22 +78,22 @@ def module_path (name)
 dup2(ERR, 6)
 dup2(ERR, 7)
 
-const events_fd_slot = reader "/dev/null"
-const events_fd_opt  = "--events-fd=" events_fd_slot
+let events_fd_slot = reader "/dev/null"
+let events_fd_opt  = "--events-fd=" events_fd_slot
 
 var sound-fd
 var sound-server = ()
 
 def get_sound_fd
 {
-	if const sound_fd = getenv "AMS_SOUND_FD" then
+	if let sound_fd = getenv "AMS_SOUND_FD" then
 	{
 		return sound_fd
 	}
 	
 	if which "sndtrack" then
 	{
-		const sound_fd_slot = str (sound-fd = reader "/dev/null")
+		let sound_fd_slot = str (sound-fd = reader "/dev/null")
 		sound-server = "--fd", sound_fd_slot, "sndtrack", "//"
 		
 		return sound_fd_slot
@@ -107,13 +107,13 @@ var modem-server = ()
 
 def get_modem_fd
 {
-	if const modem = getenv "AMS_MODEM" then
+	if let modem = getenv "AMS_MODEM" then
 	{
-		const host, const port = modem / ':'
+		let host, let port = modem / ':'
 		
-		const command = "tcpclient", host, port, "duplex", "6-1", "0-7"
+		let command = "tcpclient", host, port, "duplex", "6-1", "0-7"
 		
-		const modem_fd_slot = str (modem-fd = reader "/dev/null")
+		let modem_fd_slot = str (modem-fd = reader "/dev/null")
 		modem-server = "--fd", modem_fd_slot, command, "//"
 		
 		return modem_fd_slot
@@ -131,8 +131,8 @@ def get_appfs_fd
 	
 	if appfs == "-" then
 	{
-		const osx_prefs = home "/Library/Preferences"
-		const ams_prefs = if exists osx_prefs
+		let osx_prefs = home "/Library/Preferences"
+		let ams_prefs = if exists osx_prefs
 		then { osx_prefs "/Advanced Mac Substitute" }
 		else { home "/.advanced-mac-substitute" }
 		
@@ -144,7 +144,7 @@ def get_appfs_fd
 		}
 	}
 	
-	const fd_slot = str (appfs-fd = reader "/dev/null")
+	let fd_slot = str (appfs-fd = reader "/dev/null")
 	appfs-server = "--fd", fd_slot, freemountd_rw appfs
 	
 	return fd_slot
@@ -159,8 +159,8 @@ def get_docfs_fd
 	
 	if docfs == "-" then
 	{
-		const osx_docs = home "/Documents"
-		const ams_docs = if exists osx_docs
+		let osx_docs = home "/Documents"
+		let ams_docs = if exists osx_docs
 		then { osx_docs "/Advanced Mac Substitute" }
 		else { home "/.advanced-mac-substitute/documents" }
 		
@@ -172,7 +172,7 @@ def get_docfs_fd
 		}
 	}
 	
-	const fd_slot = str (docfs-fd = reader "/dev/null")
+	let fd_slot = str (docfs-fd = reader "/dev/null")
 	docfs-server = "--fd", fd_slot, freemountd_rw docfs
 	
 	return fd_slot
@@ -182,27 +182,27 @@ def core_opts
 {
 	var opts = [ events_fd_opt ]
 	
-	if const auto_clear = getenv "AMS_AUTOCLEAR" then
+	if let auto_clear = getenv "AMS_AUTOCLEAR" then
 	{
 		opts <-- "-0"
 	}
 	
-	if const auto_vsync = getenv "AMS_AUTOVSYNC" then
+	if let auto_vsync = getenv "AMS_AUTOVSYNC" then
 	{
 		opts <-- "-Y"
 	}
 	
-	if const gne_ticks = getenv "AMS_GNETICKS" then
+	if let gne_ticks = getenv "AMS_GNETICKS" then
 	{
 		opts <-- "-G" gne_ticks
 	}
 	
-	if const romgen = getenv "AMS_ROMGEN" then
+	if let romgen = getenv "AMS_ROMGEN" then
 	{
 		opts <-- "-R" romgen
 	}
 	
-	if const system = getenv "AMS_SYSTEM" then
+	if let system = getenv "AMS_SYSTEM" then
 	{
 		opts <-- "-V" system
 	}
@@ -212,19 +212,19 @@ def core_opts
 
 def io_opts
 {
-	const sound = if const sound_fd = get_sound_fd() then
+	let sound = if let sound_fd = get_sound_fd() then
 	{
 		setenv( "XV68K_SOUND_FD", sound_fd )
 		
 		"--sound-fd=" sound_fd,
 	}
 	
-	const modem = if const modem_fd = get_modem_fd() then
+	let modem = if let modem_fd = get_modem_fd() then
 	{
 		"--modem-fd=" modem_fd,
 	}
 	
-	const opts = [ sound, modem ]
+	let opts = [ sound, modem ]
 	
 	return
 	if opts then
@@ -235,7 +235,7 @@ def io_opts
 
 def auto_mbin_disk
 {
-	const path = root_dir "/" app_name
+	let path = root_dir "/" app_name
 	
 	return if exists path then {}
 	else if exists path ".mbin" then
@@ -250,25 +250,25 @@ def auto_mbin_disk
 
 def fs_opts
 {
-	const disk_opt =
-	if const disk = getenv "AMS_DISK" or auto_mbin_disk() then
+	let disk_opt =
+	if let disk = getenv "AMS_DISK" or auto_mbin_disk() then
 	{
 		"--disk", disk,
 	}
 	
-	const appfs_opt =
-	if const appfs_fd = get_appfs_fd() then
+	let appfs_opt =
+	if let appfs_fd = get_appfs_fd() then
 	{
 		"--appfs-fd", appfs_fd,
 	}
 	
-	const docfs_opt =
-	if const docfs_fd = get_docfs_fd() then
+	let docfs_opt =
+	if let docfs_fd = get_docfs_fd() then
 	{
 		"--docfs-fd", docfs_fd,
 	}
 	
-	const opts = disk_opt, appfs_opt, docfs_opt
+	let opts = disk_opt, appfs_opt, docfs_opt
 	
 	return
 	if opts then
@@ -279,15 +279,15 @@ def fs_opts
 
 def seg_opts
 {
-	const open_opt =
-	if const open = getenv "AMS_OPEN" then
+	let open_opt =
+	if let open = getenv "AMS_OPEN" then
 	{
 		assert open[ 4 ] == ':'
 		
 		"--type", open[ 0 -> 4], "--open", substr( open, 5 ),
 	}
 	
-	const opts = [ open_opt ]
+	let opts = [ open_opt ]
 	
 	return
 	if opts then
@@ -296,7 +296,7 @@ def seg_opts
 	}
 }
 
-const module_args = str^
+let module_args = str^
 [
 	core_opts(),
 	fs_opts(),
@@ -312,7 +312,7 @@ const module_args = str^
 
 def argify (name)
 {
-	const path = module_path name
+	let path = module_path name
 	
 	return
 		if name in module_args
@@ -320,26 +320,26 @@ def argify (name)
 			else {path}
 }
 
-const prefix_list = "core io fs snd rsrc pack seg qd ui print"
-var   ams_modules = [ prefix_list / ' ' ] map {"ams-" v}
+let prefix_list = "core io fs snd rsrc pack seg qd ui print"
+var ams_modules = [ prefix_list / ' ' ] map {"ams-" v}
 
 ams_modules <-- "vdb"
 ams_modules <-- "umsp"
 
-const module_opts = ams_modules map {"-m", argify v}
+let module_opts = ams_modules map {"-m", argify v}
 
-const app = ams_bin "/app"
+let app = ams_bin "/app"
 
-const works = home "/run/" getpid() ".works"
+let works = home "/run/" getpid() ".works"
 
 run [ "mkdir -p" / ' ', works ]
 
-const update = works "/update-signal.fifo"
-const events = works "/events.fifo"
-const screen = works "/screen.skif"
+let update = works "/update-signal.fifo"
+let events = works "/events.fifo"
+let screen = works "/screen.skif"
 
-const ev_opt = "--events-fifo=" events
-const raster = "--raster=" screen
+let ev_opt = "--events-fifo=" events
+let raster = "--raster=" screen
 
 run [ "mkfifo", update ]
 
@@ -347,19 +347,19 @@ run [ "skif make -fg " screen_res "*1 -c2 -m paint -R" / ' ', screen ]
 
 run [ "skif init" / ' ', screen ]
 
-const zoom = "-x" (getenv "AMS_ZOOM" or 1)
-const event_input = events_fd_opt, ev_opt
-const command-prefix = "exhibit", "-t", title, raster, event_input, zoom
+let zoom = "-x" (getenv "AMS_ZOOM" or 1)
+let event_input = events_fd_opt, ev_opt
+let command-prefix = "exhibit", "-t", title, raster, event_input, zoom
 
-const file-servers = freemountd-server, appfs-server, docfs-server
-const servers = sound-server, modem-server, file-servers
+let file-servers = freemountd-server, appfs-server, docfs-server
+let servers = sound-server, modem-server, file-servers
 
-const xv68k_opts = model_opt, mem_opt, "-tSP"
+let xv68k_opts = model_opt, mem_opt, "-tSP"
 
-const xv68k-subcmd = xv68k, xv68k_opts, raster, *module_opts, app, app_name
-const graft-subcmd = "graft", servers, xv68k-subcmd
+let xv68k-subcmd = xv68k, xv68k_opts, raster, *module_opts, app, app_name
+let graft-subcmd = "graft", servers, xv68k-subcmd
 
-const command = [ command-prefix, graft-subcmd ]
+let command = [ command-prefix, graft-subcmd ]
 
 warn "screen: " screen
 warn "events: " events
@@ -367,7 +367,7 @@ warn "update: " update
 
 setenv( "GRAPHICS_UPDATE_SIGNAL_FIFO", update )
 
-const SIGINT = 2
+let SIGINT = 2
 
 signal-ignore SIGINT
 
