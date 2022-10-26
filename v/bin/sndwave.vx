@@ -2,7 +2,7 @@
 
 def connect_output()
 {
-	if const sndpipe_fd = getenv "SNDPIPE_FD" then
+	if let sndpipe_fd = getenv "SNDPIPE_FD" then
 	{
 		return fd int sndpipe_fd
 	}
@@ -16,58 +16,58 @@ def connect_output()
 	return OUT
 }
 
-const output_fd = connect_output()
+let output_fd = connect_output()
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/v/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
 
-const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+let import = { let path = libdir _ ".vsl"; eval( load path, path ) }
 
-const sndpipe = import "sndpipe"
+let sndpipe = import "sndpipe"
 
-const sound = sndpipe.player { output_fd <== _ }
+let sound = sndpipe.player { output_fd <== _ }
 
 def inverted (wave)
 {
-	const forward = packed ('\x01' .. '\xff')
-	const reverse = -forward
+	let forward = packed ('\x01' .. '\xff')
+	let reverse = -forward
 	
 	return packed translated (wave.string, forward, reverse)
 }
 
 def make_hybrid_wave (leg_length)
 {
-	const leg2 = packed (byte 2 .. byte (1 + leg_length))
-	const leg1 = -leg2
-	const edge = x"01" * (254 - 2 * leg_length)
+	let leg2 = packed (byte 2 .. byte (1 + leg_length))
+	let leg1 = -leg2
+	let edge = x"01" * (254 - 2 * leg_length)
 	
-	const bottom = leg1 edge leg2
-	const top    = inverted bottom
+	let bottom = leg1 edge leg2
+	let top    = inverted bottom
 	
 	return top bottom
 }
 
 def make_fading_wave (fade)
 {
-	const plane = x"80" * fade
-	const climb = packed (byte 129 .. byte (255 - fade))
-	const angle = plane climb
+	let plane = x"80" * fade
+	let climb = packed (byte 129 .. byte (255 - fade))
+	let angle = plane climb
 	
-	const demiwave = angle -angle
+	let demiwave = angle -angle
 	
 	return demiwave inverted demiwave
 }
 
-const playrate       = 2
-const playrate_fixed = 2^16 * playrate
+let playrate       = 2
+let playrate_fixed = 2^16 * playrate
 
-const hybrid = 0 .. 126 map make_hybrid_wave per packed
-const fading = 1 .. 126 map make_fading_wave per packed
+let hybrid = 0 .. 126 map make_hybrid_wave per packed
+let fading = 1 .. 126 map make_fading_wave per packed
 
-const n_leftover   = hybrid.size mod (370 / playrate)
-const aligned_size = hybrid.size - n_leftover
+let n_leftover   = hybrid.size mod (370 / playrate)
+let aligned_size = hybrid.size - n_leftover
 
-const leftover = hybrid[ aligned_size -> hybrid.size ]
+let leftover = hybrid[ aligned_size -> hybrid.size ]
 
 sound.free_form (playrate_fixed, hybrid[ 0 -> aligned_size ])
 sound.free_form (playrate_fixed, leftover fading)
