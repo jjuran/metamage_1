@@ -5,13 +5,13 @@ var timer
 
 OUT <== "-:--.--"
 
-const events = channel()
+let events = channel()
 
 var reader = thread lambda
 {
 	while var input = IN.read 1 do
 	{
-		const c = *input
+		let c = *input
 		
 		if c == ' ' then
 		{
@@ -29,12 +29,12 @@ for ev in events do
 {
 	if ev == '\0' then
 	{
-		const micro_dt = utime() - start
-		const centi_dt = micro_dt div 10^4
-		const cc = centi_dt mod 100
-		const dt = centi_dt div 100
-		const m  = dt div 60
-		const ss = dt mod 60
+		let micro_dt = utime() - start
+		let centi_dt = micro_dt div 10^4
+		let cc = centi_dt mod 100
+		let dt = centi_dt div 100
+		let m  = dt div 60
+		let ss = dt mod 60
 		
 		OUT <== "\r" m ":" (tens ss) "." tens cc
 	}
