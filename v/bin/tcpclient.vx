@@ -6,12 +6,12 @@ if argc < 4 then
 	exit 2
 }
 
-const node    = argv[ 1 ]
-const service = argv[ 2 ]
+let node    = argv[ 1 ]
+let service = argv[ 2 ]
 
-const program-argv = argv[ 3 -> argc ]
+let program-argv = argv[ 3 -> argc ]
 
-const fd = tcp-connect( node, service )
+let fd = tcp-connect( node, service )
 
 dup2( fd, 6 )
 dup2( fd, 7 )
