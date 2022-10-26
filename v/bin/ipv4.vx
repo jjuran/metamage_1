@@ -12,13 +12,13 @@ if not exists ifconfig-path then
 	ifconfig-path = "ifconfig"  # for Android
 }
 
-const lower = 'a' .. 'z'
-const digit = '0' .. '9'
-const space = ' ' | '\t'
+let lower = 'a' .. 'z'
+let digit = '0' .. '9'
+let space = ' ' | '\t'
 
-const name = (lower | digit | '-' | '_')+ => str
-const inet = [space*, "inet ", "addr:"?]
-const addr = (digit | '.')+ => str
+let name = (lower | digit | '-' | '_')+ => str
+let inet = [space*, "inet ", "addr:"?]
+let addr = (digit | '.')+ => str
 
 var results = []
 
@@ -36,7 +36,7 @@ for line in output-from-run( [ifconfig-path] ).lines() do
 	}
 	else if p += inet then
 	{
-		const ipv4 = p += addr
+		let ipv4 = p += addr
 		
 		results <-- interface ": " ipv4
 	}
