@@ -7,7 +7,7 @@ if argc > 1 then
 	#
 	#     stty: when specifying an output style, modes may not be set
 	
-	const previous = output-from-run [ "stty", "-g" ]
+	let previous = output-from-run [ "stty", "-g" ]
 	
 	run [ "stty", "cbreak", "-echo" ]
 	
