@@ -1,30 +1,30 @@
 #!/usr/bin/env vx
 
-const libdir = { (dirname argv[ 0 ]) "/../lib/v/" }
-const import = { eval load libdir() _ ".vobj"  }
+let libdir = { (dirname argv[ 0 ]) "/../lib/v/" }
+let import = { eval load libdir() _ ".vobj"  }
 
-const date-time = import "date-time"
+let date-time = import "date-time"
 
-const days   = date-time.days
-const months = date-time.months
-const gmtime = date-time.gmtime
+let days   = date-time.days
+let months = date-time.months
+let gmtime = date-time.gmtime
 
 def left-pad (fill, width, x)
 {
-	const s = str x
+	let s = str x
 	
 	return (fill * (width - s.length)) s
 }
 
-const tm = gmtime time()
+let tm = gmtime time()
 
-const hms = [tm.hour, tm.min, tm.sec] map left-pad % "0" % 2 per {a ":" b}
+let hms = [tm.hour, tm.min, tm.sec] map left-pad % "0" % 2 per {a ":" b}
 
-const parts = days[ tm.wday ][ 0 -> 3 ],
-              months[ tm.mon ][ 0 -> 3 ],
-              left-pad( " ", 2, tm.mday ),
-              hms,
-              tm.zone,
-              tm.year
+let parts = days[ tm.wday ][ 0 -> 3 ],
+            months[ tm.mon ][ 0 -> 3 ],
+            left-pad( " ", 2, tm.mday ),
+            hms,
+            tm.zone,
+            tm.year
 
 print " ".join parts
