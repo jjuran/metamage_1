@@ -1,22 +1,22 @@
 #!/usr/bin/env minivx
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/v/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
 
-const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+let import = { let path = libdir _ ".vsl"; eval( load path, path ) }
 
-const pretty-printing = import "pretty-printing"
+let pretty-printing = import "pretty-printing"
 
-const Tab = "\t"
+let Tab = "\t"
 
 def printer (depth, text)
 {
-	const tabs = Tab * depth
+	let tabs = Tab * depth
 	
 	print tabs text
 }
 
-const pretty-print = pretty-printing printer
+let pretty-print = pretty-printing printer
 
 pretty-print eval load argv[ 1 ]
 
