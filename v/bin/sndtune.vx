@@ -2,7 +2,7 @@
 
 def connect_output()
 {
-	if const sndpipe_fd = getenv "SNDPIPE_FD" then
+	if let sndpipe_fd = getenv "SNDPIPE_FD" then
 	{
 		return fd int sndpipe_fd
 	}
@@ -16,23 +16,23 @@ def connect_output()
 	return OUT
 }
 
-const output_fd = connect_output()
+let output_fd = connect_output()
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/v/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
 
-const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+let import = { let path = libdir _ ".vsl"; eval( load path, path ) }
 
-const sndpipe = import "sndpipe"
+let sndpipe = import "sndpipe"
 
-const sound = sndpipe.player { output_fd <== _ }
+let sound = sndpipe.player { output_fd <== _ }
 
-const square   = packed (x"01" * 128, x"ff" * 128) => 0
-const sawtooth = 0 -> 256 map byte per packed => 128
+let square   = packed (x"01" * 128, x"ff" * 128) => 0
+let sawtooth = 0 -> 256 map byte per packed => 128
 
-const triangle = do
+let triangle = do
 {
-	const tooth = 1 -> 128 map {byte (2 * v)} per packed
+	let tooth = 1 -> 128 map {byte (2 * v)} per packed
 	
 	packed (tooth x"FF" -tooth x"01") => 64,
 }
@@ -42,17 +42,17 @@ const triangle = do
 # 1.059463094359295^12 ~= 2
 # 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
 
-const semitone_numer = 69433
-const semitone_denom = 2^16
+let semitone_numer = 69433
+let semitone_denom = 2^16
 
 def transpose (n, pitch)
 {
 	return pitch * semitone_numer^n div semitone_denom^n
 }
 
-const C8 = 0x184ada * 2;
+let C8 = 0x184ada * 2;
 
-const adj = 3
+let adj = 3
 
 def C (o) { transpose( adj, C8 div 2^(8 - o) ) }
 def D (o) { transpose( 2, C o ) }
@@ -62,7 +62,7 @@ def G (o) { transpose( 7, C o ) }
 def A (o) { transpose( 9, C o ) }
 def B (o) { transpose( 11, C o ) }
 
-const score =
+let score =
 [
 	# Melody by Lonely Island.
 	# 8-bit arrangement and notation copyright 2020 Joshua Juran.
@@ -90,8 +90,8 @@ def play (score, wave=triangle)
 	
 	for chord in score do
 	{
-		const duration = chord.key / 6
-		const notes    = chord.value map { v => wave }
+		let duration = chord.key / 6
+		let notes    = chord.value map { v => wave }
 		
 		sound.tone_update (255, notes)
 		
