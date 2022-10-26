@@ -21,7 +21,7 @@ let output_fd = connect_output()
 let bindir = dirname realpath argv[ 0 ]
 let libdir = bindir "/../lib/v/"
 
-let import = { let path = libdir _ ".vsl"; eval( load path, path ) }
+def import (lib) { eval (load, realpath) libdir lib ".vsl" }
 
 let sndpipe = import "sndpipe"
 
