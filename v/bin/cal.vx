@@ -1,15 +1,15 @@
 #!/usr/bin/env vx
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/v/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
 
-const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+let import = { let path = libdir _ ".vobj"; eval( load path, path ) }
 
-const display-grid = import "display-grid"
+let display-grid = import "display-grid"
 
-const wdays = ["Sun Mon Tue Wed Thu Fri Sat" / ' ']
+let wdays = ["Sun Mon Tue Wed Thu Fri Sat" / ' ']
 
-const offsets =
+let offsets =
 [
 	1, 4, 4,
 	0, 2, 5,
@@ -17,7 +17,7 @@ const offsets =
 	1, 4, 6,
 ]
 
-const mdays =
+let mdays =
 [
 	31, 28, 31,
 	30, 31, 30,
@@ -37,45 +37,45 @@ def days_in_month (month, leap_year)
 
 def weekday_of (year, month, day)
 {
-	const century = year div 100
-	const ydigits = year mod 100
+	let century = year div 100
+	let ydigits = year mod 100
 	
-	const leap_year = is_leap_year year
+	let leap_year = is_leap_year year
 	
-	const leap = leap_year * +(month <= 2)
+	let leap = leap_year * +(month <= 2)
 	
-	const offset = offsets[ month - 1 ]
+	let offset = offsets[ month - 1 ]
 	
-	const fudge = 19 - century  # works for 19xx and 20xx
+	let fudge = 19 - century  # works for 19xx and 20xx
 	
-	const x = ydigits + ydigits div 4 + offset + day - 1 - leap + fudge
+	let x = ydigits + ydigits div 4 + offset + day - 1 - leap + fudge
 	
 	return x mod 7
 }
 
 def make_cal (offset, n_days)  # offset = 0 for Sunday, 1 for Monday, etc.
 {
-	const one =  1 ..      9 map {"  " str _}
-	const two = 10 .. n_days map {" "  str _}
+	let one =  1 ..      9 map {"  " str _}
+	let two = 10 .. n_days map {" "  str _}
 	
-	const extra = 6 * 7 - (offset + n_days)
+	let extra = 6 * 7 - (offset + n_days)
 	
-	const cells = "" (*) offset, *one, *two, "" (*) extra
+	let cells = "" (*) offset, *one, *two, "" (*) extra
 	
 	return [7, 7]: [ *wdays, cells ]
 }
 
 def calendar_month (year, month, day)
 {
-	const offset = weekday_of( year, month, 1 )
+	let offset = weekday_of( year, month, 1 )
 	
-	const days = days_in_month( month, is_leap_year year )
+	let days = days_in_month( month, is_leap_year year )
 	
 	var cal = make_cal( offset, days )
 	
 	if day then
 	{
-		const i = 7 + offset + day - 1
+		let i = 7 + offset + day - 1
 		
 		var cells = cal.value
 		
@@ -91,7 +91,7 @@ def ymd
 {
 	if argv.length == 1 then
 	{
-		const date-time = import "../lib/v/date-time"
+		let date-time = import "../lib/v/date-time"
 		
 		return *[ date-time.time_pieces time() ][ 0 .. 2 ]
 	}
@@ -111,7 +111,7 @@ def ymd
 	return *(argv[ 1 .. 3 ] map int)
 }
 
-const year, const month, const day = ymd()
+let year, let month, let day = ymd()
 
 print display-grid calendar_month( year, month, day )
 
