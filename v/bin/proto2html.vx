@@ -20,11 +20,12 @@ let print_html = render_html % printer
 
 def comma-terminated (s) { s and s ("," * not s[ s.length - 1 ] in ":[,") }
 
-let proto_html = load argv[ 1 ]
+let path = argv[ 1 ]
+let proto_html = load path
 
 let lines = proto_html.lines() map comma-terminated
 
-let structure = eval "[" join( "\n", *lines, "]" )
+let structure = eval( "[" join( "\n", *lines, "]" ), realpath path )
 
 print "<!DOCTYPE html>"
 
