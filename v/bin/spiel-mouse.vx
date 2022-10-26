@@ -1,6 +1,6 @@
 #!/usr/bin/env vx
 
-const input = if argc > 1 then {reader argv[ 1 ]} else {IN}
+let input = if argc > 1 then {reader argv[ 1 ]} else {IN}
 
 var button-state = x"00"
 
@@ -8,18 +8,18 @@ try
 {
 	for msg in receiver { input.read 3 } do
 	{
-		const deltas = msg[ 1 .. 2 ]
+		let deltas = msg[ 1 .. 2 ]
 		
 		if deltas != x"0000" then
 		{
 			OUT <== x"02" deltas
 		}
 		
-		const b = msg[[ 0 ]] & x"01"
+		let b = msg[[ 0 ]] & x"01"
 		
 		if b != button-state then
 		{
-			const action = packed( x"0300", byte (u8 *button-state + 1), '\0' )
+			let action = packed( x"0300", byte (u8 *button-state + 1), '\0' )
 			
 			button-state = b
 			
