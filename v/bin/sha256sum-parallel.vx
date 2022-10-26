@@ -1,8 +1,8 @@
 #!/usr/bin/env vx
 
-const args = argv[ 1 -> argc ]
+let args = argv[ 1 -> argc ]
 
-const results = channel()
+let results = channel()
 
 def worker
 {
@@ -19,8 +19,8 @@ def report
 	}
 }
 
-const workers = args map worker
-const reporter = thread report
+let workers = args map worker
+let reporter = thread report
 
 for w in workers do
 {
