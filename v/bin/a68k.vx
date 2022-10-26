@@ -1,19 +1,19 @@
 #!/usr/bin/env minivx
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/v/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
 
-const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+let import = { let path = libdir _ ".vsl"; eval( load path, path ) }
 
-const asm68k = import "asm68k"
+let asm68k = import "asm68k"
 
-const asm =      if argc < 2          then { "NOP; RTS  \n" }
-            else if argv[ 1 ] == "-e" then { argv[ 2 ] "\n" }
-            else                           { load argv[ 1 ] }
+let asm =      if argc < 2          then { "NOP; RTS  \n" }
+          else if argv[ 1 ] == "-e" then { argv[ 2 ] "\n" }
+          else                           { load argv[ 1 ] }
 
 var p = begin asm
 
-if const results = p += asm68k.grammar then
+if let results = p += asm68k.grammar then
 {
 	if p.rest then
 	{
