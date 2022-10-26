@@ -1,12 +1,12 @@
 #!/usr/bin/env vx
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/v/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
 
-const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+let import = { let path = libdir _ ".vobj"; eval( load path, path ) }
 
-const display-grid = import "display-grid"
+let display-grid = import "display-grid"
 
-const grid = eval argv[ 1 ]
+let grid = eval argv[ 1 ]
 
 print display-grid grid
