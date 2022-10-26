@@ -2,25 +2,25 @@
 
 assert argv[ 1 ] == "-o"
 
-const output_file = argv[ 2 ]
-const input_files = argv[ 3 -> argc ]
+let output_file = argv[ 2 ]
+let input_files = argv[ 3 -> argc ]
 
 var types = mb32^[]
 
 def encode_u16BE
 {
-	const x = unhex hex u16 _
+	let x = unhex hex u16 _
 	
-	const pad = x"00" * (2 - x.size)
+	let pad = x"00" * (2 - x.size)
 	
 	return pad x
 }
 
 def encode_u32BE
 {
-	const x = unhex hex u32 _
+	let x = unhex hex u32 _
 	
-	const pad = x"00" * (4 - x.size)
+	let pad = x"00" * (4 - x.size)
 	
 	return pad x
 }
@@ -32,8 +32,8 @@ def add_rsrc (data, name)
 		return ()
 	}
 	
-	const resid = i16 unhex "0x" name[ 0 -> 4 ]
-	const rtype = mb32           name[ 5 -> 9 ]
+	let resid = i16 unhex "0x" name[ 0 -> 4 ]
+	let rtype = mb32           name[ 5 -> 9 ]
 	
 	if not rtype in types then
 	{
@@ -45,21 +45,21 @@ def add_rsrc (data, name)
 
 for resfile in input_files do
 {
-	const dir = resfile "/r/"
+	let dir = resfile "/r/"
 	
-	const rsrcs = listdir dir
+	let rsrcs = listdir dir
 	
 	for rsrc in rsrcs do
 	{
-		const path = dir rsrc
+		let path = dir rsrc
 		
 		add_rsrc (packed load path, rsrc)
 	}
 }
 
-const rsrc_count = types.values map {v.length} per Math.sum
+let rsrc_count = types.values map {v.length} per Math.sum
 
-const typelist_size = 2 + 8 * types.length
+let typelist_size = 2 + 8 * types.length
 
 var type_list = encode_u16BE (types.length - 1)
 
@@ -68,37 +68,37 @@ var data_section = x""
 
 for type_rsrcs in types do
 {
-	const rtype = type_rsrcs.key
-	const rsrcs = type_rsrcs.value
+	let rtype = type_rsrcs.key
+	let rsrcs = type_rsrcs.value
 	
-	const offset = encode_u16BE (typelist_size + rsrc_headers.size)
+	let offset = encode_u16BE (typelist_size + rsrc_headers.size)
 	
 	type_list = type_list (packed rtype) encode_u16BE( rsrcs.length - 1 ) offset
 	
 	for id_rsrc in rsrcs do
 	{
-		const id   = id_rsrc.key
-		const rsrc = id_rsrc.value
+		let id   = id_rsrc.key
+		let rsrc = id_rsrc.value
 		
-		const offset = encode_u32BE data_section.size
+		let offset = encode_u32BE data_section.size
 		
 		rsrc_headers = rsrc_headers (encode_u16BE id) x"ffff" offset x"00000000"
 		data_section = data_section (encode_u32BE rsrc.size) rsrc
 	}
 }
 
-const rsrc_map_size = 28 + typelist_size + rsrc_headers.size
+let rsrc_map_size = 28 + typelist_size + rsrc_headers.size
 
-const map_offset = 256 + data_section.size
+let map_offset = 256 + data_section.size
 
-const header_fields = [256, map_offset, data_section.size, rsrc_map_size ]
+let header_fields = [256, map_offset, data_section.size, rsrc_map_size ]
 
-const offsets = x"001c" encode_u16BE (0x1c + typelist_size + rsrc_headers.size)
+let offsets = x"001c" encode_u16BE (0x1c + typelist_size + rsrc_headers.size)
 
-const rsrc_fork_header = header_fields map encode_u32BE per packed
-const rsrc_map_header  = rsrc_fork_header (x"00" * 8) offsets
+let rsrc_fork_header = header_fields map encode_u32BE per packed
+let rsrc_map_header  = rsrc_fork_header (x"00" * 8) offsets
 
-const rsrc_map = rsrc_map_header type_list rsrc_headers
+let rsrc_map = rsrc_map_header type_list rsrc_headers
 
 var out = rewrite output_file
 
