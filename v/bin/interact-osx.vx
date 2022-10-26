@@ -7,6 +7,6 @@ let works_path  = dirname raster_path
 
 run ["open", "-a", "Interax", works_path]
 
-const command = [ "interact-shim" ]
+let command = [ "interact-shim" ]
 
 execvp (command[ 0 ], command)
