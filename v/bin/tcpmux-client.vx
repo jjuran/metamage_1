@@ -1,11 +1,11 @@
 #!/usr/bin/env vx -Z
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/"
 
-const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+let import = { let path = libdir _ ".vobj"; eval( load path, path ) }
 
-const readline = import "readline"
+let readline = import "readline"
 
 def error (msg) { warn msg; exit 1 }
 
@@ -27,7 +27,7 @@ if argc < 2 then
 
 if argc < 3 then
 {
-	const invocation = "tcpclient <host> <port> tcpmux-client"
+	let invocation = "tcpclient <host> <port> tcpmux-client"
 	
 	warn "Usage:  " invocation
 	warn "        " invocation " <service> <program argv>"
@@ -35,13 +35,13 @@ if argc < 3 then
 	exit 2
 }
 
-const service = argv[ 1 ]
+let service = argv[ 1 ]
 
-const program-argv = argv[ 2 -> argc ]
+let program-argv = argv[ 2 -> argc ]
 
 fd 7 <== service "\r\n"
 
-const response = getline fd 6 or error "empty response"
+let response = getline fd 6 or error "empty response"
 
 if response[ 0 ] != '+' then
 {
