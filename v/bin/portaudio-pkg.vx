@@ -1,14 +1,14 @@
 #!/usr/bin/env minivx -Z
 
-const usr_include_portaudio_h = "/usr/include/portaudio.h"
+let usr_include_portaudio_h = "/usr/include/portaudio.h"
 
-const portaudio_repo      = "portaudio-mirror"
-const portaudio_repo_path = "../" portaudio_repo
+let portaudio_repo      = "portaudio-mirror"
+let portaudio_repo_path = "../" portaudio_repo
 
-const configure_cmd = "./configure --disable-mac-universal"
+let configure_cmd = "./configure --disable-mac-universal"
 
-const static_lib_name = "libportaudio.a"
-const static_lib_subpath = "lib/.libs/" static_lib_name
+let static_lib_name = "libportaudio.a"
+let static_lib_subpath = "lib/.libs/" static_lib_name
 
 def exists (path)
 {
@@ -77,21 +77,21 @@ def make
 	}
 }
 
-const commands = str^[ :clone, :configure, :make ]
+let commands = str^[ :clone, :configure, :make ]
 
 if argc < 2 then
 {
 	exit 0
 }
 
-const subcommand = argv[ 1 ]
+let subcommand = argv[ 1 ]
 
 if not subcommand in commands then
 {
 	throw subcommand ": no such portaudio-pkg command"
 }
 
-const handler = commands[ subcommand ]
+let handler = commands[ subcommand ]
 
 handler()
 
