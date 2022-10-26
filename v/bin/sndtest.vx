@@ -2,7 +2,7 @@
 
 def connect_output()
 {
-	if const sndpipe_fd = getenv "SNDPIPE_FD" then
+	if let sndpipe_fd = getenv "SNDPIPE_FD" then
 	{
 		return fd int sndpipe_fd
 	}
@@ -16,18 +16,18 @@ def connect_output()
 	return OUT
 }
 
-const output_fd = connect_output()
+let output_fd = connect_output()
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/v/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
 
-const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+let import = { let path = libdir _ ".vsl"; eval( load path, path ) }
 
-const sndpipe = import "sndpipe"
+let sndpipe = import "sndpipe"
 
-const sound = sndpipe.player { output_fd <== _ }
+let sound = sndpipe.player { output_fd <== _ }
 
-const tones =
+let tones =
 [
 	# Victory theme from GunShy by E. C. Horvath.
 	
