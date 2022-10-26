@@ -1,29 +1,29 @@
 #!/usr/bin/env minivx -Z
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/"
 
-def import { const path = libdir _ ".vsl"; eval( load path, path ) }
+def import { let path = libdir _ ".vsl"; eval( load path, path ) }
 
-const basename = import "basename";
+let basename = import "basename";
 
-const property = argv[ 1 ]
-const app_path = argv[ 2 ]
+let property = argv[ 1 ]
+let app_path = argv[ 2 ]
 
-const arguments = *argv[ 3 -> argc ]
+let arguments = *argv[ 3 -> argc ]
 
-const app_name = basename app_path
+let app_name = basename app_path
 
-const ams_68k_bin = "../ams-68k-bin"
+let ams_68k_bin = "../ams-68k-bin"
 
-const ams_bin = ams_68k_bin "/bin"
-const ams_lib = ams_68k_bin "/lib"
+let ams_bin = ams_68k_bin "/bin"
+let ams_lib = ams_68k_bin "/lib"
 
-const fs_root = dirname app_path
+let fs_root = dirname app_path
 
 def ams_mod (subname)
 {
-	if subname == "fs" and (const disk = getenv "AMS_DISK") then
+	if subname == "fs" and (let disk = getenv "AMS_DISK") then
 	{
 		return "-m", "[", ams_lib "/ams-" subname, "--disk", disk, "]"
 	}
@@ -31,12 +31,12 @@ def ams_mod (subname)
 	return "-m" ams_lib "/ams-" subname
 }
 
-const mods = ["core fs rsrc" / ' '] map ams_mod
+let mods = ["core fs rsrc" / ' '] map ams_mod
 
-const program = ams_bin "/get-" property
+let program = ams_bin "/get-" property
 
-const freemount-srv = "freemountd -q --root" / ' ', fs_root
-const xv68k-command = "xv68k", "-tS", *mods, program, app_name, arguments
-const graft-command = "graft", freemount-srv, "//", xv68k-command
+let freemount-srv = "freemountd -q --root" / ' ', fs_root
+let xv68k-command = "xv68k", "-tS", *mods, program, app_name, arguments
+let graft-command = "graft", freemount-srv, "//", xv68k-command
 
 run [graft-command]
