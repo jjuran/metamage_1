@@ -1,26 +1,26 @@
 #!/usr/bin/env vx -Z
 
-const src = argv[ 1 ]
-const dst = argv[ 2 ]
+let src = argv[ 1 ]
+let dst = argv[ 2 ]
 
-const dst_r = dst "/r"
+let dst_r = dst "/r"
 
 run [ "mkdir", "-p", dst_r ]
 
-const rsrcs = listdir src "/r"
+let rsrcs = listdir src "/r"
 
 for rsrc in rsrcs do
 {
-	const out = dst_r "/" rsrc
+	let out = dst_r "/" rsrc
 	
 	warn out
 	
 	rewrite out <== load src "/r/" rsrc
 }
 
-if const data = load src then
+if let data = load src then
 {
-	const dst_data = dst "/data"
+	let dst_data = dst "/data"
 	
 	warn dst_data
 	
