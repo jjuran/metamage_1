@@ -23,48 +23,48 @@ if argc < 2 then
 	exit 2
 }
 
-const text-lines = [ "", *argv[ 1 -> argc ] ]
+let text-lines = [ "", *argv[ 1 -> argc ] ]
 
-const n = text-lines.length
+let n = text-lines.length
 
-const widest    = 6 + odd-padded calc-width text-lines
-const narrowest = widest - n * 2
+let widest    = 6 + odd-padded calc-width text-lines
+let narrowest = widest - n * 2
 
 def spc (n: int) { " " * n }
 
-const canopy-top = spc(n + 1) ("_" * narrowest)
+let canopy-top = spc(n + 1) ("_" * narrowest)
 
 var i = n
 var width = narrowest
 
 def centered (text: str)
 {
-	const margin = width - text.length
+	let margin = width - text.length
 	
 	width += 2
 	
-	const pre  = margin div 2
-	const post = margin - pre
+	let pre  = margin div 2
+	let post = margin - pre
 	
 	return (spc pre) text (spc post)
 }
 
-const canopy-mid = text-lines map { (spc i--) "/" (centered v) "\\" }
+let canopy-mid = text-lines map { (spc i--) "/" (centered v) "\\" }
 
-const canopy-bottom = "(" ("_" * widest) ")"
+let canopy-bottom = "(" ("_" * widest) ")"
 
-const canopy = canopy-top,
-               *canopy-mid,
-               canopy-bottom
+let canopy = canopy-top,
+             *canopy-mid,
+             canopy-bottom
 
-const halflen = widest div 2
+let halflen = widest div 2
 
 # shroud lines
-const lines = 1 -> halflen map { (spc v) "\\" spc( widest - 2 * v ) "/" }
+let lines = 1 -> halflen map { (spc v) "\\" spc( widest - 2 * v ) "/" }
 
-const indent = spc halflen
+let indent = spc halflen
 
-const pilot =
+let pilot =
 [
 	"\\o/",  # \o/
 	"/H\\",  # /H\
