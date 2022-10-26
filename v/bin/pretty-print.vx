@@ -18,6 +18,6 @@ def printer (depth, text)
 
 let pretty-print = pretty-printing printer
 
-pretty-print eval load argv[ 1 ]
+pretty-print eval (load, realpath) argv[ 1 ]
 
 end.
