@@ -1,12 +1,12 @@
 #!/usr/bin/env vx -Z
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/../lib/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/"
 
-const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+let import = { let path = libdir _ ".vobj"; eval( load path, path ) }
 
-const readline = import "readline"
-const services = import "services"
+let readline = import "readline"
+let services = import "services"
 
 def fail (line)  { throw "truncated response: '" line "'" }
 
@@ -22,7 +22,7 @@ def tolower (c)
 	return c
 }
 
-const request = getline IN map tolower per str
+let request = getline IN map tolower per str
 
 if request == "help" then
 {
@@ -30,7 +30,7 @@ if request == "help" then
 }
 else if request in services then
 {
-	const service = bindir "/" request "-service.vx"
+	let service = bindir "/" request "-service.vx"
 	
 	OUT <== "+OK " request "\r\n"
 	
