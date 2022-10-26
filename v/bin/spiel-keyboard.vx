@@ -2,22 +2,22 @@
 
 # cat /dev/input/eventN | spiel-keyboard.vx | ...
 
-const Command = 2^0
-const Shift   = 2^1
-const Alt     = 2^2
-const Option  = 2^3
-const Control = 2^4
-const Meta    = 2^5
+let Command = 2^0
+let Shift   = 2^1
+let Alt     = 2^2
+let Option  = 2^3
+let Control = 2^4
+let Meta    = 2^5
 
-const left_Control_id  =  29
-const left_Shift_id    =  42
-const right_Shift_id   =  54
-const left_Alt_id      =  56
-const CapsLock_id      =  58
-const right_Control_id =  97
-const right_Alt_id     = 100
-const left_Meta_id     = 125
-const right_Meta_id    = 126
+let left_Control_id  =  29
+let left_Shift_id    =  42
+let right_Shift_id   =  54
+let left_Alt_id      =  56
+let CapsLock_id      =  58
+let right_Control_id =  97
+let right_Alt_id     = 100
+let left_Meta_id     = 125
+let right_Meta_id    = 126
 
 const left_Option_id
 const left_Command_id
@@ -39,7 +39,7 @@ else
 	right_Command_id = right_Meta_id
 }
 
-const ascii_chars =
+let ascii_chars =
 (
 	'\0',  # There is no key 0
 	'\x1B',  # Esc
@@ -113,14 +113,14 @@ def is_on_keypad (key)
 	return key in 71 .. 83 or key in [ 55, 96, 98, 117 ]  # * Enter / =
 }
 
-const ascii = packed ascii_chars
+let ascii = packed ascii_chars
 
 var key_state = x"00" * ascii.size
 
 var caps_lock = false
 
-const keyevent_len = byte 4
-const keydevice_id = byte 0
+let keyevent_len = byte 4
+let keydevice_id = byte 0
 
 def upconvert (key_id, act)
 {
@@ -138,33 +138,33 @@ def upconvert (key_id, act)
 		
 		key_state[ key_id ] = *(attrs & x"01")
 		
-		const c = ascii[ key_id ]
+		let c = ascii[ key_id ]
 		
 		if true then
 		{
-			const Command = key_state[[ left_Command_id  ]]
-			              | key_state[[ right_Command_id ]]
+			let Command = key_state[[ left_Command_id  ]]
+			            | key_state[[ right_Command_id ]]
 			
-			const Shift = key_state[[ left_Shift_id  ]]
-			            | key_state[[ right_Shift_id ]]
+			let Shift = key_state[[ left_Shift_id  ]]
+			          | key_state[[ right_Shift_id ]]
 			
-			const Alt = key_state[[ left_Alt_id  ]]
-			          | key_state[[ right_Alt_id ]]
+			let Alt = key_state[[ left_Alt_id  ]]
+			        | key_state[[ right_Alt_id ]]
 			
-			const Option = key_state[[ left_Option_id  ]]
-			             | key_state[[ right_Option_id ]]
+			let Option = key_state[[ left_Option_id  ]]
+			           | key_state[[ right_Option_id ]]
 			
-			const Control = key_state[[ left_Control_id  ]]
-			              | key_state[[ right_Control_id ]]
+			let Control = key_state[[ left_Control_id  ]]
+			            | key_state[[ right_Control_id ]]
 			
-			const Meta = key_state[[ left_Meta_id  ]]
-			           | key_state[[ right_Meta_id ]]
+			let Meta = key_state[[ left_Meta_id  ]]
+			         | key_state[[ right_Meta_id ]]
 			
-			const bits = -[ Command, Shift, Alt, Option, Control, Meta ]
+			let bits = -[ Command, Shift, Alt, Option, Control, Meta ]
 			
-			const binary_digits = bits map { *(v | x"30") }
+			let binary_digits = bits map { *(v | x"30") }
 			
-			const modes = *(unbin str binary_digits)
+			let modes = *(unbin str binary_digits)
 			
 			if caps_lock then
 			{
@@ -183,25 +183,25 @@ def upconvert (key_id, act)
 	return x""
 }
 
-const sizeof_timeval = (hex size_t(-1)).length
+let sizeof_timeval = (hex size_t(-1)).length
 
-const field_types = [ u16, u16, u32 ]  # type, code, value
+let field_types = [ u16, u16, u32 ]  # type, code, value
 
 var i = 0
 var j = sizeof_timeval
 
-const field_defs = field_types map { i = j; j += v.size; v => [i -> j] }
+let field_defs = field_types map { i = j; j += v.size; v => [i -> j] }
 
-const record_size = j
+let record_size = j
 
 for ev in receiver { IN.read record_size } do
 {
-	const fields = field_defs map { v.key.decode ev[ *v.value ] }
+	let fields = field_defs map { v.key.decode ev[ *v.value ] }
 	
 	if fields[ 0 ] == 1 then
 	{
-		const id  = fields[ 1 ]
-		const act = fields[ 2 ]
+		let id  = fields[ 1 ]
+		let act = fields[ 2 ]
 		
 		if id isa u8 and act isa u8 then
 		{
