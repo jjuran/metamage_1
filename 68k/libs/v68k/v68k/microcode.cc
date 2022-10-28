@@ -1079,7 +1079,8 @@ namespace v68k
 			//const int16_t remainder = dividend % divisor;
 			const int16_t remainder = dividend - quotient * divisor;
 			
-			pb.result = remainder << 16 | uint16_t( quotient );
+			pb.result = (uint16_t) remainder << 16
+			          | (uint16_t) quotient;
 		}
 		
 		return Ok;
