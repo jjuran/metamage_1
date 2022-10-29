@@ -32,6 +32,7 @@ bool is_spinloop_memtest( uint16_t opcode )
 	switch ( opcode )
 	{
 		case 0x4A38:  // TST.B    0xXXXX
+		case 0x4A2D:  // TST.B    (offset,A5)
 		case 0x4A6D:  // TST.W    (offset,A5)
 			return true;
 		
