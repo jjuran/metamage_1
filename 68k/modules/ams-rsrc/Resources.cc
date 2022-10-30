@@ -1046,11 +1046,32 @@ pascal short GetResAttrs_patch( Handle resource )
 	JMP      (A0)
 }
 
-pascal long SizeRsrc_patch( Handle resource )
+static
+long SizeRsrc_handler( Handle resource : __A0 )
 {
 	// TODO:  Set ResErr appropriately
 	
 	return GetHandleSize( resource );
+}
+
+asm
+pascal long SizeRsrc_patch( Handle resource )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A0
+	
+	JSR      SizeRsrc_handler
+	MOVE.L   D0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
+	
+	JMP      (A0)
 }
 
 static
