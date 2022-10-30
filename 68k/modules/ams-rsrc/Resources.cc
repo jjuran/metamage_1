@@ -1049,9 +1049,19 @@ pascal short GetResAttrs_patch( Handle resource )
 static
 long SizeRsrc_handler( Handle resource : __A0 )
 {
-	// TODO:  Set ResErr appropriately
+	if ( const master_pointer* mp = (const master_pointer*) resource )
+	{
+		if ( mp->flags & kHandleIsResourceMask )
+		{
+			ResErr = noErr;
+			
+			return GetHandleSize( resource );
+		}
+	}
 	
-	return GetHandleSize( resource );
+	ResErr = resNotFound;
+	
+	return -1;
 }
 
 asm
