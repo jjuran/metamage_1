@@ -1173,6 +1173,42 @@ pascal void ChangedResource_patch( Handle resource )
 }
 
 static
+void AddResource_handler( Handle            data : __A0,
+                          ResType           type : __D0,
+                          short             id   : __D1,
+                          ConstStr255Param  name : __A1 )
+{
+	ERROR = "AddResource is unimplemented";
+	
+	ResErr = wrgVolTypErr;
+}
+
+asm
+pascal void AddResource_patch( Handle            data,
+                               ResType           type,
+                               short             id,
+                               ConstStr255Param  name )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A1
+	MOVE.W   (A2)+,D1
+	MOVE.L   (A2)+,D0
+	MOVEA.L  (A2)+,A0
+	
+	JSR      AddResource_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	LEA      14(SP),SP
+	
+	JMP      (A0)
+}
+
+static
 void UpdateResFile_handler( short refnum : __D0 )
 {
 	ERROR = "UpdateResFile is unimplemented";

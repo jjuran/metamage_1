@@ -51,6 +51,11 @@ pascal void SetResAttrs_patch( char** resource, short attrs );
 
 pascal void ChangedResource_patch( char** resource );
 
+pascal void AddResource_patch( char**                data,
+                               unsigned long         type,
+                               short                 id,
+                               const unsigned char*  name );
+
 pascal void UpdateResFile_patch( short refnum );
 
 pascal void WriteResource_patch( char** resource );
