@@ -26,7 +26,6 @@
 UInt32 Ticks   : 0x016A;
 QHdr EventQueue : 0x014A;
 Byte   MBState : 0x0172;
-UInt8  escapes : 0x0173;  // count of Button() calls that won't block
 KeyMap KeyMaps : 0x0174;
 Point  Mouse   : 0x0830;
 
@@ -39,8 +38,6 @@ const long default_GetNextEvent_throttle = 2;  // minimum ticks between calls
 unsigned long GetNextEvent_throttle = default_GetNextEvent_throttle;
 
 static unsigned long next_sleep;
-
-static unsigned long polling_interval = 0;
 
 #pragma mark Accessing Events
 #pragma mark -
@@ -69,8 +66,6 @@ bool get_lowlevel_event( short eventMask, EventRecord* event )
 pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
                                          EventRecord*    event )
 {
-	polling_interval = 0;
-	
 	UInt32 ticks = get_Ticks();
 	
 	const unsigned long sleep = next_sleep;
@@ -184,8 +179,6 @@ bool peek_lowlevel_event( short eventMask, EventRecord* event )
 pascal unsigned char EventAvail_patch( unsigned short  eventMask,
                                        EventRecord*    event )
 {
-	polling_interval = 0;
-	
 	const unsigned long sleep = next_sleep;
 	
 	next_sleep = 0;
@@ -383,16 +376,7 @@ pascal char Button_patch()
 		return true;
 	}
 	
-	if ( escapes )
-	{
-		polling_interval = 1;
-		
-		--escapes;
-	}
-	
-	wait_for_user_input( polling_interval );
-	
-	polling_interval = 0xFFFFFFFF;
+	poll_user_input();
 	
 	return ! MBState;
 }
