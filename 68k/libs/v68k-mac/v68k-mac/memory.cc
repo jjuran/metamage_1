@@ -54,7 +54,7 @@ enum
 	tag_Ticks_low_word,
 	tag_MBTicks,
 	tag_MBTicks_low_word,
-	tag_MBState_esc,
+	tag_MBStocks,
 	tag_KeyMaps,
 	tag_KeyMaps_word_7 = tag_KeyMaps + 7,  // 16 bytes
 	tag_UnitNtryCnt,
@@ -285,7 +285,7 @@ static const global globals[] =
 	{ 0x0160, 10,   tag_VBLQueue    },
 	{ 0x016A, 0xC4, tag_Ticks       },
 	{ 0x016E, 4,    tag_MBTicks     },
-	{ 0x0172, 2,    tag_MBState_esc },  // MBState, Tocks (Button escapes)
+	{ 0x0172, 2,    tag_MBStocks    },  // MBState, Tocks
 	{ 0x0174, 16,   tag_KeyMaps     },  // KeyMap, KeyPadMap, 4 more bytes
 	{ 0x01D2, 2,    tag_UnitNtryCnt },
 	{ 0x01D4, 4,    tag_VIA         },
@@ -451,15 +451,6 @@ static void refresh_dynamic_global( uint8_t tag )
 	switch ( tag )
 	{
 		case tag_Ticks:
-			/*
-				We're coopting Tocks to be the number of Button() calls that
-				can be made without blocking before reading Ticks again.
-				The 1987 rewrite of Steve Capps' Clock only needs one, but the
-				1984 original makes two consecutive calls.
-			*/
-			
-			((uint8_t*) &words[ tag_MBState_esc ])[ 1 ] = 2;  // big-endian
-			
 			ticking = true;
 			
 			longword = get_Ticks();
