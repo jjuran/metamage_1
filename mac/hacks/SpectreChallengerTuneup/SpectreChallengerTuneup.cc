@@ -1,6 +1,6 @@
 /*
-	SpectreTuneup.cc
-	----------------
+	SpectreChallengerTuneup.cc
+	--------------------------
 	
 	Spectre Challenger Tune-up INIT for Advanced Mac Substitute
 	
@@ -36,17 +36,17 @@
 
 static UniversalProcPtr  old_TEInit;
 
-static const UInt16 old_wait_loop[] =
+static const UInt16 old_spinloop[] =
 {
 	0x102d, -29074,  // 00372a:  MOVE.B   (-29074,A5),D0
 	0x6702,          // 00372e:  BEQ.S    *+4    // $003732
 	0x60f8,          // 003730:  BRA.S    *-6    // $00372a
 };
 
-static const UInt16 new_wait_loop[] =
+static const UInt16 new_spinloop[] =
 {
 	0x4a2d, -29074,  // 00372a:  TST.B    (-29074,A5)
-	0x66fa,          // 00372e:  BNE.S    *-4    // $003732
+	0x66fa,          // 00372e:  BNE.S    *-4    // $00372a
 	0x4e71,          // 003730:  NOP
 };
 
@@ -55,13 +55,13 @@ void install_patches( Handle h )
 {
 	const int query_offset = 0x00372a;
 	
-	if ( h  &&  GetHandleSize( h ) >= query_offset + sizeof old_wait_loop )
+	if ( h  &&  GetHandleSize( h ) >= query_offset + sizeof old_spinloop )
 	{
 		UInt32* p = (UInt32*) (*h + query_offset);
 		
-		if ( fast_memequ( p, old_wait_loop, sizeof old_wait_loop ) )
+		if ( fast_memequ( p, old_spinloop, sizeof old_spinloop ) )
 		{
-			fast_memcpy( p, new_wait_loop, sizeof new_wait_loop );
+			fast_memcpy( p, new_spinloop, sizeof new_spinloop );
 			
 			HNoPurge( h );
 		}
