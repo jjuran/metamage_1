@@ -22,15 +22,33 @@ Expected_String unbin( const char* data, size_t size, align_t align )
 	
 	ASSERT( (align ^ mask) == (align + mask) );
 	
+	size_t n_digits = 0;
+	size_t n_digits_since_space = 0;
+	
 	for ( size_t i = 0;  i < size;  ++i )
 	{
 		if ( data[ i ] - '0' & ~1 )
 		{
-			return Error( "invalid binary digit" );
+			if ( data[ i ] != ' ' )
+			{
+				return Error( "invalid binary digit" );
+			}
+			
+			if ( n_digits_since_space % 8u != 0 )
+			{
+				return Error( "invalid binary digit spacing" );
+			}
+			
+			n_digits_since_space = 0;
+			
+			continue;
 		}
+		
+		++n_digits;
+		++n_digits_since_space;
 	}
 	
-	size_t n_data_bytes = (size + 7) / 8;
+	size_t n_data_bytes = (n_digits + 7) / 8;
 	size_t n_zero_bytes = mask - (n_data_bytes + mask & mask);
 	size_t n_bytes      = n_data_bytes + n_zero_bytes;
 	
@@ -47,7 +65,7 @@ Expected_String unbin( const char* data, size_t size, align_t align )
 	
 	unsigned char c;
 	
-	if ( unsigned n_loose_digits = size & 7 )
+	if ( unsigned n_loose_digits = n_digits & 7 )
 	{
 		c = 0;
 		
@@ -63,7 +81,15 @@ Expected_String unbin( const char* data, size_t size, align_t align )
 	
 	for ( ;  n > 0;  --n )
 	{
-		c = *data++ - '0';
+		c = *data++;
+		
+		while ( c == ' ' )
+		{
+			c = *data++;
+		}
+		
+		c -= '0';
+		
 		c = *data++ - '0' | (c << 1);
 		c = *data++ - '0' | (c << 1);
 		c = *data++ - '0' | (c << 1);
