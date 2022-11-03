@@ -15,7 +15,7 @@
 namespace {
 #endif
 
-int fork()
+pid_t fork()
 {
 	using namespace Genie;
 	

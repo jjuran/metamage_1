@@ -34,7 +34,7 @@ namespace Genie
 	}
 	
 	
-	static int fork_and_exit( int exit_status )
+	static pid_t fork_and_exit( int exit_status )
 	{
 		try
 		{
