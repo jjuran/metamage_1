@@ -12,7 +12,7 @@ namespace relix
 	
 	class process_group;
 	
-	process_group* get_process_group( int pgid );
+	process_group* get_process_group( pid_t pgid );
 	
 }
 
