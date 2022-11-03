@@ -539,7 +539,7 @@ int futimens( int fd, const timespec times[2] )
 #pragma mark -
 #pragma mark ** sys/wait **
 
-int wait( int* stat )
+pid_t wait( int* stat )
 {
 	const pid_t any = -1;
 	
