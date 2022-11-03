@@ -76,11 +76,11 @@ sub copy_vx
 	return copy_script( $name, $path );
 }
 
-sub copy_vobj
+sub copy_vy
 {
 	my ( $name ) = @_;
 	
-	$name .= '.vobj';
+	$name .= '.vy';
 	
 	my $path = "$v_dir/lib/$name";
 	
@@ -236,7 +236,7 @@ my %fsmap =
 			},
 			v =>
 			{
-				map { copy_vobj $_ }
+				map { copy_vy $_ }
 					qw( arcsign arcsign-seal arcsign-unseal date-time options ),
 			},
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
