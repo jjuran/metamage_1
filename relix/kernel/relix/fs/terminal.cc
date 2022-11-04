@@ -31,7 +31,7 @@
 // relix
 #include "relix/api/current_process.hh"
 #include "relix/api/get_process_group.hh"
-#include "relix/api/get_process_group_in_session.hh"
+#include "relix/api/get_session_process_group.hh"
 #include "relix/signal/signal_process_group.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
@@ -135,7 +135,7 @@ namespace relix
 					p7::throw_errno( ENOTTY );
 				}
 				
-				setpgrp( *that, get_process_group_in_session( *argp, process_session )->id() );
+				setpgrp( *that, get_session_process_group( *argp, process_session )->id() );
 				
 				break;
 			

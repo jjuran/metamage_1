@@ -12,7 +12,7 @@
 #include "relix/api/current_process.hh"
 #include "relix/api/errno.hh"
 #include "relix/api/get_process.hh"
-#include "relix/api/get_process_group_in_session.hh"
+#include "relix/api/get_session_process_group.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
@@ -81,7 +81,7 @@ namespace relix
 				pgid = target_pid;
 			}
 			
-			target.set_process_group( *get_process_group_in_session( pgid, target_session ) );
+			target.set_process_group( *get_session_process_group( pgid, target_session ) );
 			
 			return 0;
 		}

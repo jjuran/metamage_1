@@ -1,9 +1,9 @@
 /*
-	get_process_group_in_session.cc
-	-------------------------------
+	get_session_process_group.cc
+	----------------------------
 */
 
-#include "relix/api/get_process_group_in_session.hh"
+#include "relix/api/get_session_process_group.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -23,7 +23,7 @@ namespace relix
 	
 	boost::intrusive_ptr< process_group >
 	//
-	get_process_group_in_session( pid_t pgid, session& s )
+	get_session_process_group( pid_t pgid, session& s )
 	{
 		process_group* pgrp = get_process_group( pgid );
 		
