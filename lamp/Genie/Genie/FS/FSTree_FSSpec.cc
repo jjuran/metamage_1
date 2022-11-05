@@ -198,29 +198,23 @@ namespace Genie
 		
 		if ( item.name[0] == 31 )
 		{
-			try
+			char buffer[ 256 ];
+			
+			long size = get_desktop_comment( item, buffer, sizeof buffer );
+			
+			if ( size > 31 )
 			{
-				char buffer[ 256 ];
+				Str31 hashed;
 				
-				long size = get_desktop_comment( item, buffer, sizeof buffer );
+				hash_long_name( hashed, buffer, size );
 				
-				if ( size > 31 )
+				ASSERT( hashed[ 0 ] == 31  &&  "Long filenames must hash to 31 chars" );
+				
+				if ( memcmp( hashed, item.name, sizeof hashed ) == 0 )
 				{
-					Str31 hashed;
-					
-					hash_long_name( hashed, buffer, size );
-					
-					ASSERT( hashed[ 0 ] == 31  &&  "Long filenames must hash to 31 chars" );
-					
-					if ( memcmp( hashed, item.name, sizeof hashed ) == 0 )
-					{
-						// Assume it's a Unix name.  FIXME:  Need better heuristics
-						return plus::string( buffer, size );
-					}
+					// Assume it's a Unix name.  FIXME:  Need better heuristics
+					return plus::string( buffer, size );
 				}
-			}
-			catch ( ... )
-			{
 			}
 		}
 		
