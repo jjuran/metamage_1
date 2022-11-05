@@ -284,9 +284,10 @@ namespace Genie
 		return get_long_name( item.vRefNum, item.parID, item.name );
 	}
 	
-	static plus::string GetUnixName( const FSSpec& item )
+	static
+	plus::string GetUnixName( short vRefNum, long dirID, const uint8_t* name )
 	{
-		return plus::utf8_from_mac( colons_from_slashes( get_long_name( item ) ) );
+		return plus::utf8_from_mac( colons_from_slashes( get_long_name( vRefNum, dirID, name ) ) );
 	}
 	
 	static inline
@@ -379,7 +380,7 @@ namespace Genie
 			return "mnt";
 		}
 		
-		return GetUnixName( fileSpec );
+		return GetUnixName( fileSpec.vRefNum, fileSpec.parID, fileSpec.name );
 	}
 	
 	
@@ -1472,9 +1473,7 @@ namespace Genie
 				
 				ConstStr255Param name = pb.items[ j ].name;
 				
-				mempcpy( item.name, name, 1 + name[ 0 ] );
-				
-				const vfs::dir_entry node( inode, GetUnixName( item ) );
+				const vfs::dir_entry node( inode, GetUnixName( item.vRefNum, item.parID, name ) );
 				
 				cache.push_back( node );
 			}
