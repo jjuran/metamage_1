@@ -6,14 +6,14 @@
 #ifndef GENIE_FS_HFS_HASHEDLONGNAME_HH
 #define GENIE_FS_HFS_HASHEDLONGNAME_HH
 
-// plus
-#include "plus/string.hh"
+// more-libc
+#include "more/size.h"
 
 
 namespace Genie
 {
 	
-	plus::string hashed_long_name( const plus::string& long_name );
+	void hash_long_name( unsigned char* hashed, const char* name, size_t len );
 	
 }
 

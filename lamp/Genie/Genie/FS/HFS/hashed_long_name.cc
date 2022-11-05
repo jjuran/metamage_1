@@ -8,6 +8,9 @@
 // Standard C/C++
 #include <cstddef>
 
+// more-libc
+#include "more/string.h"
+
 // gear
 #include "gear/find.hh"
 
@@ -17,8 +20,8 @@
 // Debug
 #include "debug/assert.hh"
 
-// plus
-#include "plus/var_string.hh"
+
+#pragma exceptions off
 
 
 namespace Genie
@@ -33,18 +36,22 @@ static char base32_encode( unsigned x )
 	return ( x < 10 ? '0' : 'a' - 10 ) + x;
 }
 
-plus::string hashed_long_name( const plus::string& long_name )
+void hash_long_name( unsigned char* hashed, const char* long_name, size_t long_length )
 {
 	const std::size_t max_length = 31;
 	
-	const std::size_t long_length = long_name.length();
+	uint8_t* p = hashed;
 	
 	if ( long_length <= max_length )
 	{
-		return long_name;
+		*p++ = long_length;
+		
+		mempcpy( p, long_name, long_length );
+		
+		return;
 	}
 	
-	const char* begin = long_name.data();
+	const char* begin = long_name;
 	const char* end   = begin + long_length;
 	
 	const char* dot = gear::find_last_match( begin, end, '.' );
@@ -80,18 +87,18 @@ plus::string hashed_long_name( const plus::string& long_name )
 	
 	const unsigned char* data = (const unsigned char*) &hash;
 	
-	plus::var_string hashed_name( begin, shortened_base_length );
+	*p++ = 31;
 	
-	hashed_name += 0xA5;  // bullet
+	p = (uint8_t*) mempcpy( p, begin, shortened_base_length );
+	
+	*p++ = 0xA5;  // bullet
 	
 	for ( int i = 0;  i != hash_length;  ++i )
 	{
-		hashed_name += base32_encode( data[ i ] >> 3 );
+		*p++ = base32_encode( data[ i ] >> 3 );
 	}
 	
-	hashed_name.append( base_end, end );
-	
-	return hashed_name;
+	p = (uint8_t*) mempcpy( p, base_end, end - base_end );
 }
 
 }

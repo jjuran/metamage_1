@@ -206,16 +206,16 @@ namespace Genie
 				
 				if ( size > 31 )
 				{
-					plus::string comment( buffer, size );
+					Str31 hashed;
 					
-					plus::string hashed = hashed_long_name( comment );
+					hash_long_name( hashed, buffer, size );
 					
-					ASSERT( hashed.size() == 31  &&  "Long filenames must hash to 31 chars" );
+					ASSERT( hashed[ 0 ] == 31  &&  "Long filenames must hash to 31 chars" );
 					
-					if ( std::memcmp( hashed.data(), &item.name[1], 31 ) == 0 )
+					if ( memcmp( hashed, item.name, sizeof hashed ) == 0 )
 					{
 						// Assume it's a Unix name.  FIXME:  Need better heuristics
-						return comment;
+						return plus::string( buffer, size );
 					}
 				}
 			}
@@ -1107,7 +1107,11 @@ namespace Genie
 	                                     const plus::string&   name,
 	                                     const vfs::node*      parent )
 	{
-		N::Str31 macName = hashed_long_name( slashes_from_colons( plus::mac_from_utf8( name ) ) );
+		plus::string long_name = slashes_from_colons( plus::mac_from_utf8( name ) );
+		
+		Str31 macName;
+		
+		hash_long_name( macName, long_name.data(), long_name.size() );
 		
 		CInfoPBRec cInfo;
 		
