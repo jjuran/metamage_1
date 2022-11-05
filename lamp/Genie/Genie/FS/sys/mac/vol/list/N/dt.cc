@@ -12,6 +12,9 @@
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
+// mac-file-utils
+#include "mac_file/desktop.hh"
+
 // MacScribe
 #include "quad/utf8_quad_name.hh"
 
@@ -19,7 +22,8 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Toolbox/Types/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // vfs
 #include "vfs/dir_contents.hh"
@@ -35,37 +39,9 @@
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
-namespace Nitrogen
-{
-	
-	static FSSpec DTGetAPPL( FSVolumeRefNum  vRefNum,
-	                         Mac::FSCreator  signature,
-	                         short           index = 0 )
-	{
-		DTPBRec pb;
-		
-		PBDTGetPath( vRefNum, pb );
-		
-		FSSpec result;
-		
-		pb.ioNamePtr     = result.name;
-		pb.ioIndex       = index;
-		pb.ioFileCreator = signature;
-		
-		PBDTGetAPPLSync( pb );
-		
-		result.vRefNum = vRefNum;
-		result.parID   = pb.ioAPPLParID;
-		
-		return result;
-	}
-	
-}
-
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -75,13 +51,19 @@ namespace Genie
 	
 	static FSSpec DTGetAPPL( const vfs::node* appls_quad, short index = 0 )
 	{
+		using mac::file::get_desktop_APPL;
+		
 		const ::OSType creator = parse_utf8_quad_name( appls_quad->name() );
 		
 		const vfs::node* great_x2_grandparent = appls_quad->owner()->owner()->owner();
 		
-		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -gear::parse_unsigned_decimal( great_x2_grandparent->name().c_str() ) );
+		const short vRefNum = -gear::parse_unsigned_decimal( great_x2_grandparent->name().c_str() );
 		
-		return N::DTGetAPPL( vRefNum, Mac::FSCreator( creator ), index );
+		FSSpec file;
+		
+		Mac::ThrowOSStatus( get_desktop_APPL( file, vRefNum, creator, index ) );
+		
+		return file;
 	}
 	
 	static vfs::node_ptr latest_appl_link_resolve( const vfs::node* that )
