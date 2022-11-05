@@ -32,7 +32,6 @@
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // Genie
-#include "Genie/FS/HFS/hashed_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/FS/HFS/MoveRename.hh"
 #include "Genie/Utilities/AsyncIO.hh"
