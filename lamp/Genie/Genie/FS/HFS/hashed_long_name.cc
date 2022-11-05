@@ -5,9 +5,6 @@
 
 #include "Genie/FS/HFS/hashed_long_name.hh"
 
-// Standard C/C++
-#include <cstddef>
-
 // more-libc
 #include "more/string.h"
 
@@ -38,7 +35,7 @@ static char base32_encode( unsigned x )
 
 void hash_long_name( unsigned char* hashed, const char* long_name, size_t long_length )
 {
-	const std::size_t max_length = 31;
+	const size_t max_length = 31;
 	
 	uint8_t* p = hashed;
 	
@@ -75,11 +72,11 @@ void hash_long_name( unsigned char* hashed, const char* long_name, size_t long_l
 	// or if the extension (including the dot) exceeds the limit.
 	const char* base_end = dotted ? dot : end;
 	
-	const std::size_t base_length = base_end - begin;
+	const size_t base_length = base_end - begin;
 	
-	const std::size_t replaced_length = long_length - max_length + inserted_length;
+	const size_t replaced_length = long_length - max_length + inserted_length;
 	
-	const std::size_t shortened_base_length = base_length - replaced_length;
+	const size_t shortened_base_length = base_length - replaced_length;
 	
 	ASSERT( shortened_base_length >= minimum_remaining_base );
 	
