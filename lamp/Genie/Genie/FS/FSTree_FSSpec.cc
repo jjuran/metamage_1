@@ -247,15 +247,17 @@ namespace Genie
 		return err;
 	}
 	
-	static plus::string get_long_name( const FSSpec& item )
+	static
+	plus::string get_long_name( short vRefNum, long dirID, const uint8_t* name )
 	{
 		using mac::file::get_desktop_comment;
 		
-		if ( item.name[0] == 31 )
+		if ( name[ 0 ] == 31 )
 		{
 			char buffer[ 256 ];
 			
-			long size = get_desktop_comment( item, buffer, sizeof buffer );
+			long size = get_desktop_comment( vRefNum, dirID, name,
+			                                 buffer, sizeof buffer );
 			
 			if ( size > 31 )
 			{
@@ -265,7 +267,7 @@ namespace Genie
 				
 				ASSERT( hashed[ 0 ] == 31  &&  "Long filenames must hash to 31 chars" );
 				
-				if ( memcmp( hashed, item.name, sizeof hashed ) == 0 )
+				if ( memcmp( hashed, name, sizeof hashed ) == 0 )
 				{
 					// Assume it's a Unix name.  FIXME:  Need better heuristics
 					return plus::string( buffer, size );
@@ -273,7 +275,13 @@ namespace Genie
 			}
 		}
 		
-		return plus::string( item.name );
+		return plus::string( name );
+	}
+	
+	static
+	plus::string get_long_name( const FSSpec& item )
+	{
+		return get_long_name( item.vRefNum, item.parID, item.name );
 	}
 	
 	static plus::string GetUnixName( const FSSpec& item )
