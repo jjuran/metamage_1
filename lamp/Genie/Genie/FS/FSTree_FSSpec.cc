@@ -373,14 +373,21 @@ namespace Genie
 	}
 	
 	
-	static plus::string MakeName( const FSSpec& fileSpec )
+	static
+	plus::string MakeName( short vRefNum, long dirID, const uint8_t* name )
 	{
-		if ( fileSpec.parID == fsRtParID )
+		if ( dirID == fsRtParID )
 		{
 			return "mnt";
 		}
 		
-		return GetUnixName( fileSpec.vRefNum, fileSpec.parID, fileSpec.name );
+		return GetUnixName( vRefNum, dirID, name );
+	}
+	
+	static
+	plus::string MakeName( const FSSpec& fileSpec )
+	{
+		return MakeName( fileSpec.vRefNum, fileSpec.parID, fileSpec.name );
 	}
 	
 	
@@ -652,13 +659,13 @@ namespace Genie
 		                                       mac_name,
 		                                       0 );
 		
-		FSSpec fsspec;
+		const DirInfo& dirInfo = cInfo.dirInfo;
 		
-		FSMakeFSSpec( cInfo, fsspec );
+		dirID = dirInfo.ioDrParID;
 		
-		const plus::string name = MakeName( fsspec );
+		uint8_t* namePtr = dirInfo.ioNamePtr;
 		
-		return new_HFS_node( cInfo, name );
+		return new_HFS_node( cInfo, MakeName( vRefNum, dirID, namePtr ) );
 	}
 	
 	vfs::node_ptr New_FSTree_Users( const vfs::node*     parent,
