@@ -636,13 +636,19 @@ namespace Genie
 	
 	vfs::node_ptr FSTreeFromFSSpec( const FSSpec& item )
 	{
+		return node_from_HFS( item.vRefNum, item.parID, item.name );
+	}
+	
+	vfs::node_ptr node_from_HFS( short vRefNum, long dirID, const Byte* name )
+	{
 		CInfoPBRec cInfo;
 		
-		MacIO::GetCatInfo< MacIO::Return_FNF >( cInfo, item );
+		MacIO::GetCatInfo< MacIO::Return_FNF >( cInfo,
+		                                        vRefNum,
+		                                        dirID,
+		                                        (StringPtr) name );
 		
-		const plus::string name = MakeName( item );
-		
-		return new_HFS_node( cInfo, name );
+		return new_HFS_node( cInfo, MakeName( vRefNum, dirID, name ) );
 	}
 	
 	vfs::node_ptr node_from_dirID( short vRefNum, long dirID )
