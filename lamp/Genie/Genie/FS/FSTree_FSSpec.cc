@@ -96,7 +96,7 @@
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree_RsrcFile.hh"
-#include "Genie/FS/HFS/hashed_long_name.hh"
+#include "Genie/FS/HFS/hash_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/FS/HFS/Rename.hh"
 #include "Genie/FS/HFS/SetFileTimes.hh"

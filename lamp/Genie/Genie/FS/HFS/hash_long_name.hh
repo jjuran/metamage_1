@@ -1,10 +1,10 @@
 /*
-	hashed_long_name.hh
-	-------------------
+	hash_long_name.hh
+	-----------------
 */
 
-#ifndef GENIE_FS_HFS_HASHEDLONGNAME_HH
-#define GENIE_FS_HFS_HASHEDLONGNAME_HH
+#ifndef GENIE_FS_HFS_HASHLONGNAME_HH
+#define GENIE_FS_HFS_HASHLONGNAME_HH
 
 // more-libc
 #include "more/size.h"

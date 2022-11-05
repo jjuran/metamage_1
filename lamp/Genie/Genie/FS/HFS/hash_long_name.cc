@@ -1,9 +1,9 @@
 /*
-	hashed_long_name.cc
-	-------------------
+	hash_long_name.cc
+	-----------------
 */
 
-#include "Genie/FS/HFS/hashed_long_name.hh"
+#include "Genie/FS/HFS/hash_long_name.hh"
 
 // more-libc
 #include "more/string.h"
