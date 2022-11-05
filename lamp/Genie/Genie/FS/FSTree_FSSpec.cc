@@ -32,6 +32,7 @@
 #include "mac_sys/volume_params.hh"
 
 // mac-file-utils
+#include "mac_file/desktop.hh"
 #include "mac_file/make_FSSpec.hh"
 #include "mac_file/parent_directory.hh"
 #include "mac_file/program_file.hh"
@@ -193,13 +194,15 @@ namespace Genie
 	
 	static plus::string get_long_name( const FSSpec& item )
 	{
+		using mac::file::get_desktop_comment;
+		
 		if ( item.name[0] == 31 )
 		{
 			try
 			{
 				char buffer[ 256 ];
 				
-				long size = N::FSpDTGetComment( item, buffer, sizeof buffer );
+				long size = get_desktop_comment( item, buffer, sizeof buffer );
 				
 				if ( size > 31 )
 				{
