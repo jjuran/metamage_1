@@ -44,8 +44,8 @@
 #include "varyx/posix/argv.hh"
 #include "varyx/posix/file_descriptor.hh"
 #include "varyx/posix/library.hh"
-#include "varyx/posix/signals.hh"
 #include "varyx/posix/posixfs.hh"
+#include "varyx/posix/signals.hh"
 
 
 #define PROGRAM  "minivx"
@@ -70,6 +70,7 @@ using namespace varyx::posix;
 enum
 {
 	Opt_unrestricted  = 'Z',
+	Opt_check_syntax  = 'c',
 	Opt_inline_script = 'e',
 };
 
@@ -77,9 +78,11 @@ static command::option options[] =
 {
 	{ "inline-script",  Opt_inline_script, Param_required },
 	{ "unrestricted",   Opt_unrestricted },
+	{ "",               Opt_check_syntax },
 	{ NULL }
 };
 
+static bool check_syntax = false;
 static bool unrestricted = false;
 
 static const char* inline_script = NULL;
@@ -107,6 +110,10 @@ static char* const* get_options( char** argv )
 		{
 			case Opt_inline_script:
 				inline_script = command::global_result.param;
+				break;
+			
+			case Opt_check_syntax:
+				check_syntax = true;
 				break;
 			
 			case Opt_unrestricted:
@@ -245,11 +252,13 @@ int main( int argc, char** argv )
 	
 	const char* path = "<inline script>";
 	
+	execute_proc execute = check_syntax ? identity_function : NULL;
+	
 	try
 	{
 		if ( inline_script != NULL )
 		{
-			interpret( inline_script, NULL, &globals );
+			interpret( inline_script, NULL, &globals, NULL, execute );
 		}
 		else
 		{
@@ -275,7 +284,13 @@ int main( int argc, char** argv )
 			
 			define( "CODE", String( program.substr( 0, pos ) ) );
 			
-			interpret( program.c_str(), path, &globals );
+			interpret( program.c_str(), path, &globals, NULL, execute );
+			
+			if ( check_syntax )
+			{
+				write( STDERR_FILENO, path, strlen( path ) );
+				write( STDERR_FILENO, STR_LEN( " syntax OK\n" ) );
+			}
 		}
 		
 		cull_unreachable_objects();
