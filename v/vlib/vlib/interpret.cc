@@ -41,6 +41,11 @@
 namespace vlib
 {
 	
+	Value identity_function( const Value& value )
+	{
+		return value;
+	}
+	
 	static
 	void fail( const char* msg, unsigned len )
 	{
@@ -79,11 +84,17 @@ namespace vlib
 	Value interpret( const char*     program,
 	                 const char*     file,
 	                 lexical_scope*  globals,
-	                 error_handler   handler )
+	                 error_handler   handler,
+	                 execute_proc    execute )
 	{
 		if ( handler == NULL )
 		{
 			handler = &fail_handler;
+		}
+		
+		if ( execute == NULL )
+		{
+			execute = &vlib::execute;
 		}
 		
 		try
