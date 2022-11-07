@@ -297,20 +297,45 @@ const UInt8* poly( const Byte* p, Op op )
 	return p + polySize;
 }
 
+struct Picture_PixMap
+{
+//	short rowBytes;
+//	Rect  bounds;
+	short pmVersion;
+	short packType;
+	long  packSize;
+	Fixed hRes;
+	Fixed vRes;
+	short pixelType;
+	short pixelSize;
+	short cmpCount;
+	short cmpSize;
+};
+
 static
 const UInt8* draw_bits( const UInt8* p )
 {
+	Picture_PixMap pixmap;
+	
 	BitMap bitmap;
 	
 	short rowBytes = read_word( p );
 	
 	bitmap.bounds = read_Rect( p );
 	
-	if ( rowBytes < 0 )
+	const bool color = rowBytes < 0;
+	
+	if ( color )
 	{
 		rowBytes &= 0x3FFF;
 		
-		p += 60;  // skip PixMap guts
+		fast_memcpy( &pixmap, p, sizeof (Picture_PixMap) );
+		
+		p += sizeof (Picture_PixMap) + 18;  // 24 + 18 = 42
+		
+		UInt16 n_colors = read_word( p ) + 1;
+		
+		p += 8 * n_colors;
 	}
 	
 	bitmap.rowBytes = rowBytes;
@@ -321,6 +346,13 @@ const UInt8* draw_bits( const UInt8* p )
 	const short mode = read_word( p );
 	
 	short n_rows = bitmap.bounds.bottom - bitmap.bounds.top;
+	
+	if ( color )
+	{
+		UInt16 width = srcRect.right - srcRect.left;
+		
+		srcRect.right = srcRect.left + width * pixmap.pixelSize;
+	}
 	
 	if ( rowBytes < 8 )
 	{
