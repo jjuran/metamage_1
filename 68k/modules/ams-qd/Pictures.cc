@@ -229,46 +229,42 @@ const UInt8* long_text( const UInt8* p )
 }
 
 static
+const UInt8* text( const UInt8* p )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	Point pt = port.pnLoc;
+	
+	DrawString( p );
+	
+	port.pnLoc = pt;
+	
+	const UInt8 n = *p++;
+	
+	return p + n;
+}
+
+static inline
 const UInt8* text_dh( const UInt8* p )
 {
 	const UInt8 dh = *p++;
 	
 	Move( dh, 0 );
 	
-	GrafPort& port = **get_addrof_thePort();
-	
-	Point pt = port.pnLoc;
-	
-	DrawString( p );
-	
-	port.pnLoc = pt;
-	
-	const UInt8 n = *p++;
-	
-	return p + n;
+	return text( p );
 }
 
-static
+static inline
 const UInt8* text_dv( const UInt8* p )
 {
 	const UInt8 dv = *p++;
 	
 	Move( 0, dv );
 	
-	GrafPort& port = **get_addrof_thePort();
-	
-	Point pt = port.pnLoc;
-	
-	DrawString( p );
-	
-	port.pnLoc = pt;
-	
-	const UInt8 n = *p++;
-	
-	return p + n;
+	return text( p );
 }
 
-static
+static inline
 const UInt8* text_dhdv( const UInt8* p )
 {
 	const UInt8 dh = *p++;
@@ -276,17 +272,7 @@ const UInt8* text_dhdv( const UInt8* p )
 	
 	Move( dh, dv );
 	
-	GrafPort& port = **get_addrof_thePort();
-	
-	Point pt = port.pnLoc;
-	
-	DrawString( p );
-	
-	port.pnLoc = pt;
-	
-	const UInt8 n = *p++;
-	
-	return p + n;
+	return text( p );
 }
 
 static Rect last_used_rect;
