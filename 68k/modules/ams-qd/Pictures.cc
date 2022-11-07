@@ -373,28 +373,30 @@ const UInt8* draw_bits( const UInt8* p )
 	
 	dstRect.bottom = dstRect.top;
 	
-	if ( rowBytes <= 250 )
+	if ( rowBytes > 250 )
 	{
-		UInt8 buffer[ 256 ];
-		
-		bitmap.baseAddr = (Ptr) buffer;
-		
-		do
-		{
-			UInt8 count = *p++;
-			
-			UInt8* dst = buffer;
-			
-			quickdraw::unpack_bits( p, dst, rowBytes );
-			
-			++dstRect.bottom;
-			
-			StdBits( &bitmap, &srcRect, &dstRect, mode, NULL );
-			
-			++dstRect.top;
-		}
-		while ( --n_rows > 0 );
+		return NULL;
 	}
+	
+	UInt8 buffer[ 256 ];
+	
+	bitmap.baseAddr = (Ptr) buffer;
+	
+	do
+	{
+		UInt8 count = *p++;
+		
+		UInt8* dst = buffer;
+		
+		quickdraw::unpack_bits( p, dst, rowBytes );
+		
+		++dstRect.bottom;
+		
+		StdBits( &bitmap, &srcRect, &dstRect, mode, NULL );
+		
+		++dstRect.top;
+	}
+	while ( --n_rows > 0 );
 	
 	return p;
 }
