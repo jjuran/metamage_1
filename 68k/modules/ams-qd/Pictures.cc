@@ -25,6 +25,7 @@
 #include "QDGlobals.hh"
 
 // ams-qd
+#include "palette.hh"
 #include "transcode.hh"
 
 
@@ -325,6 +326,8 @@ const UInt8* draw_bits( const UInt8* p )
 	
 	BitMap bitmap;
 	
+	Byte polarized_palette[ 256 ];
+	
 	short rowBytes = read_word( p );
 	
 	bitmap.bounds = read_Rect( p );
@@ -340,6 +343,10 @@ const UInt8* draw_bits( const UInt8* p )
 		p += sizeof (Picture_PixMap) + 18;  // 24 + 18 = 42
 		
 		UInt16 n_colors = read_word( p ) + 1;
+		
+		const ColorSpec* color_palette = (const ColorSpec*) p;
+		
+		polarize_palette( color_palette, n_colors, polarized_palette );
 		
 		p += 8 * n_colors;
 	}
@@ -388,6 +395,8 @@ const UInt8* draw_bits( const UInt8* p )
 		
 		if ( color )
 		{
+			apply_palette( bitmap, polarized_palette );
+			
 			downsample_8_to_1( buffer, buffer, rowBytes );
 		}
 		
