@@ -10,6 +10,9 @@
 #include <Quickdraw.h>
 #endif
 
+// Standard C
+#include <stdlib.h>  // for alloca()
+
 // log-of-war
 #include "logofwar/report.hh"
 #include "logofwar/print.hh"
@@ -373,18 +376,15 @@ const UInt8* draw_bits( const UInt8* p )
 	
 	dstRect.bottom = dstRect.top;
 	
-	if ( rowBytes > 250 )
-	{
-		return NULL;
-	}
-	
-	UInt8 buffer[ 256 ];
+	UInt8* buffer = (UInt8*) alloca( rowBytes );
 	
 	bitmap.baseAddr = (Ptr) buffer;
 	
+	const int increment = 1 + (rowBytes > 250);
+	
 	do
 	{
-		UInt8 count = *p++;
+		p += increment;  // skip count
 		
 		UInt8* dst = buffer;
 		
