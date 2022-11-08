@@ -24,6 +24,9 @@
 #include "callouts.hh"
 #include "QDGlobals.hh"
 
+// ams-qd
+#include "transcode.hh"
+
 
 #pragma exceptions off
 
@@ -350,13 +353,6 @@ const UInt8* draw_bits( const UInt8* p )
 	
 	short n_rows = bitmap.bounds.bottom - bitmap.bounds.top;
 	
-	if ( color )
-	{
-		UInt16 width = srcRect.right - srcRect.left;
-		
-		srcRect.right = srcRect.left + width * pixmap.pixelSize;
-	}
-	
 	if ( rowBytes < 8 )
 	{
 		bitmap.baseAddr = (Ptr) p;
@@ -389,6 +385,11 @@ const UInt8* draw_bits( const UInt8* p )
 		UInt8* dst = buffer;
 		
 		quickdraw::unpack_bits( p, dst, rowBytes );
+		
+		if ( color )
+		{
+			downsample_8_to_1( buffer, buffer, rowBytes );
+		}
 		
 		++dstRect.bottom;
 		
