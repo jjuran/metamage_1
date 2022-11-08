@@ -44,7 +44,6 @@ bool equal_bitmaps( const BitMap* a, const BitMap* b )
 	return a == b  ||  fast_memcmp( a, b, sizeof (BitMap) ) == 0;
 }
 
-template < class Ptr >
 static
 void copy_aligned_sector( Ptr    src,
                           Ptr    dst,
@@ -420,12 +419,12 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		{
 			width /= 8;
 			
-			copy_aligned_sector< Ptr >( src,
-			                            dst,
-			                            n_rows,
-			                            width,
-			                            srcRowBytes,
-			                            dstRowBytes );
+			copy_aligned_sector( src,
+			                     dst,
+			                     n_rows,
+			                     width,
+			                     srcRowBytes,
+			                     dstRowBytes );
 		}
 		else
 		{
