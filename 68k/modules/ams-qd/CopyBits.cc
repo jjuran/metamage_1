@@ -38,13 +38,13 @@ bool byte_aligned( short srcSkip, short dstSkip, short width )
 	return srcSkip + dstSkip == 0  &&  width % 8 == 0;
 }
 
-static
+static inline
 bool equal_bitmaps( const BitMap* a, const BitMap* b )
 {
 	return a == b  ||  fast_memcmp( a, b, sizeof (BitMap) ) == 0;
 }
 
-static
+static inline
 void copy_aligned_sector( Ptr    src,
                           Ptr    dst,
                           short  n_rows,
@@ -63,7 +63,7 @@ void copy_aligned_sector( Ptr    src,
 	}
 }
 
-static
+static inline
 Ptr blit_byte_aligned_segment( Ptr    src,
                                Ptr    dst,
                                short  n_bytes,
