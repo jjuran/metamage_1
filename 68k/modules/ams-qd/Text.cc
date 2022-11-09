@@ -158,7 +158,7 @@ pascal short StdTxMeas_patch( short        n,
 		result += character_width + output->extra;
 	}
 	
-	return result * output->numer.h / output->denom.h;
+	return muldivu_w( result, output->numer.h, output->denom.h );
 }
 
 static
@@ -430,6 +430,6 @@ pascal void MeasureText_patch( short count, const char* p, short* locs )
 		
 		width += character_width + output->extra;
 		
-		*locs++ = width * output->numer.h / output->denom.h;
+		*locs++ = muldivu_w( width, output->numer.h, output->denom.h );
 	}
 }
