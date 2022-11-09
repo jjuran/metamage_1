@@ -29,6 +29,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "math.hh"
 #include "scoped_zone.hh"
 
 // ams-qd
@@ -361,7 +362,7 @@ pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap )
 	const UInt16 half_max_h_coords = width + 1 >> 1;
 	
 	const UInt16 max_h_longs = 1 + half_max_h_coords;
-	const UInt32 max_rgn_size = 10 + max_h_longs * (height + 1) * 4 + 2;
+	const UInt32 max_rgn_size = 10 + mulu_w( max_h_longs, height + 1 ) * 4 + 2;
 	
 	SetHandleSize( (Handle) rgn, max_rgn_size + rowBytes );
 	
