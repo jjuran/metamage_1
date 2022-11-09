@@ -141,7 +141,7 @@ void stretch_bits( const BitMap&  srcBits,
 	
 	for ( short y = 0;  y < dstHeight;  ++y )
 	{
-		const short src_row = srcTop + (y * y_sampling_factor >> 16);
+		const short src_row = srcTop + fixmulu_w( y, y_sampling_factor );
 		
 		src = srcBits.baseAddr + srcBits.rowBytes * src_row;
 		

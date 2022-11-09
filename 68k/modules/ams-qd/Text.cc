@@ -290,11 +290,11 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		v_scale = (output->numer.v << 16) / output->denom.v;
 		h_scale = (output->numer.h << 16) / output->denom.h;
 		
-		ascent      = ascent      * v_scale >> 16;
-		fRectHeight = fRectHeight * v_scale >> 16;
+		ascent      = fixmulu_w( ascent,      v_scale );
+		fRectHeight = fixmulu_w( fRectHeight, v_scale );
 		
-		widMax  = widMax  * h_scale >> 16;
-		kernMax = kernMax * h_scale >> 16;
+		widMax  = fixmulu_w( widMax,  h_scale );
+		kernMax = fixmulu_w( kernMax, h_scale );
 	}
 	
 	dstRect.top    = port.pnLoc.v - ascent;
@@ -320,8 +320,8 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		// FIXME:  Check for -1
 		const int8_t* offset_width = (int8_t*) &owTable[ c ];
 		
-		const int8_t character_offset = *offset_width++ * h_scale >> 16;
-		const int8_t character_width  = *offset_width   * h_scale >> 16;
+		const int8_t character_offset = fixmulu_w( *offset_width++, h_scale );
+		const int8_t character_width  = fixmulu_w( *offset_width,   h_scale );
 		
 		const short this_offset = locTable[ c ];
 		const short next_offset = locTable[ c + 1 ];
@@ -343,7 +343,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 			
 			const short dstLeft = port.pnLoc.h + character_offset + kernMax;
 			
-			width = width * h_scale >> 16;
+			width = fixmulu_w( width, h_scale );
 			
 			dstRect.left  = dstLeft;
 			dstRect.right = dstLeft + width;
