@@ -119,20 +119,23 @@ void stretch_bits( const BitMap&  srcBits,
 	const short srcLeft = srcRect.left - srcBits.bounds.left;
 	const short dstLeft = dstRect.left - dstBits.bounds.left;
 	
-	Ptr src = srcBits.baseAddr + mulu_w( srcBits.rowBytes, srcTop ) + srcLeft / 8u;
-	Ptr dst = dstBits.baseAddr + mulu_w( dstBits.rowBytes, dstTop ) + dstLeft / 8u;
+	const short srcRowBytes = srcBits.rowBytes;
+	const short dstRowBytes = dstBits.rowBytes;
+	
+	Ptr src = srcBits.baseAddr + mulu_w( srcRowBytes, srcTop ) + srcLeft / 8u;
+	Ptr dst = dstBits.baseAddr + mulu_w( dstRowBytes, dstTop ) + dstLeft / 8u;
 	
 	const bool aligned = ! ((srcLeft | dstLeft | srcWidth | dstWidth) & 7);
 	
 	if ( aligned  &&  dstWidth == 2 * srcWidth  &&  dstHeight == 2 * srcHeight )
 	{
-		stretch_2x( src, dst, srcBits.rowBytes, dstBits.rowBytes, srcHeight );
+		stretch_2x( src, dst, srcRowBytes, dstRowBytes, srcHeight );
 		return;
 	}
 	
 	if ( aligned  &&  srcWidth == 2 * dstWidth  &&  srcHeight == 2 * dstHeight )
 	{
-		squish_2x( src, dst, srcBits.rowBytes, dstBits.rowBytes, dstHeight );
+		squish_2x( src, dst, srcRowBytes, dstRowBytes, dstHeight );
 		return;
 	}
 	
