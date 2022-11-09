@@ -11,6 +11,7 @@
 #endif
 
 // ams-common
+#include "math.hh"
 #include "QDGlobals.hh"
 #include "redraw_lock.hh"
 
@@ -269,7 +270,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	short widMax      = rec.widMax;
 	short kernMax     = rec.kernMax;
 	
-	const short* locTable = (short*) (src + fRectHeight * rowBytes);
+	const short* locTable = (short*) (src + mulu_w( rowBytes, fRectHeight ));
 	
 	BitMap srcBits = { src, rowBytes, { 0, 0, fRectHeight, rowBytes * 8 } };
 	

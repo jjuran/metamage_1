@@ -18,6 +18,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "math.hh"
 #include "QDGlobals.hh"
 #include "redraw_lock.hh"
 
@@ -151,7 +152,7 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	char* baseAddr = portBits.baseAddr;
 	
 	params.topLeft    = *(Point*) &rect;
-	params.start      = baseAddr + top * rowBytes + outer_left_bytes;
+	params.start      = baseAddr + mulu_w( rowBytes, top ) + outer_left_bytes;
 	params.height     = height_px;
 	params.skip_bytes = rowBytes - outer_bytes;
 	
@@ -347,7 +348,7 @@ static void invert_rect( const rectangular_op_params& params )
 	{
 		if ( params.skip_bytes == 0 )
 		{
-			fast_memnot( p, params.height * params.draw_bytes );
+			fast_memnot( p, mulu_w( params.draw_bytes, params.height ) );
 			return;
 		}
 	}
@@ -497,7 +498,10 @@ static void draw_rect( const rectangular_op_params&  params,
 	
 	short pat_v = top & 0x7;
 	
-	Ptr rowBase = portBits.baseAddr + (top - bounds.top) * portBits.rowBytes;
+	const uint16_t n_rows_skipped = top - bounds.top;
+	
+	Ptr rowBase = portBits.baseAddr
+	            + mulu_w( portBits.rowBytes, n_rows_skipped );
 	
 	for ( int i = top;  i < bottom;  ++i )
 	{
@@ -540,7 +544,10 @@ void draw_region( const rectangular_op_params&  params,
 		const short v0 = band->v0;
 		const short v1 = band->v1;
 		
-		Ptr rowBase = portBits.baseAddr + (v0 - bounds.top) * portBits.rowBytes;
+		const uint16_t n_rows_skipped = v0 - bounds.top;
+		
+		Ptr rowBase = portBits.baseAddr
+		            + mulu_w( portBits.rowBytes, n_rows_skipped );
 		
 		for ( short v = v0;  v < v1;  ++v )
 		{
@@ -866,7 +873,10 @@ pascal void PtToAngle_patch( const Rect* rect, Point pt, short* result )
 		}
 		else
 		{
-			angle = AngleFromSlope( FixRatio( run * height, rise * width ) );
+			const uint32_t run_x_height = mulu_w( run, height );
+			const uint32_t rise_x_width = mulu_w( rise, width );
+			
+			angle = AngleFromSlope( FixRatio( run_x_height, rise_x_width ) );
 		}
 		
 		if ( pt.h < ch )

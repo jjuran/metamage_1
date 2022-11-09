@@ -20,6 +20,7 @@
 #include "qd/convex_region_generator.hh"
 
 // ams-common
+#include "math.hh"
 #include "scoped_zone.hh"
 
 
@@ -133,7 +134,7 @@ RgnHandle circular_region( short diameter, short width, short height )
 		}
 	}
 	
-	Size rgnSize = sizeof (MacRegion) + diameter * 2 * 6;  // close enough
+	Size rgnSize = sizeof (Region) + mulu_w( 2 * 6, diameter );  // close enough
 	
 	if ( GetHandleSize( (Handle) tmp ) < rgnSize )
 	{

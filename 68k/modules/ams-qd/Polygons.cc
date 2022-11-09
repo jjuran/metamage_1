@@ -22,6 +22,7 @@
 
 // ams-common
 #include "QDGlobals.hh"
+#include "math.hh"
 #include "scoped_zone.hh"
 
 // ams-qd
@@ -162,7 +163,7 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	
 	const UInt16 seg_bytes = sizeof (short) * h_count;
 	const UInt16 row_bytes = sizeof (short) * 2 + seg_bytes;
-	const UInt32 rgn_bytes = sizeof (Region) + v_count * row_bytes;
+	const UInt32 rgn_bytes = sizeof (Region) + mulu_w( row_bytes, v_count );
 	
 	SetHandleSize( (Handle) rgn, rgn_bytes );
 	

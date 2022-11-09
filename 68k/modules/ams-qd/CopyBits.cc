@@ -18,6 +18,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "math.hh"
 #include "QDGlobals.hh"
 #include "redraw_lock.hh"
 #include "scoped_zone.hh"
@@ -225,8 +226,8 @@ void blit_masked_bits( const BitMap&    srcBits,
 		const short v0 = band->v0;
 		const short v1 = band->v1;
 		
-		Ptr p = srcBits.baseAddr + (v0 - srcVOffset) * srcBits.rowBytes;
-		Ptr q = dstBits.baseAddr + (v0 - dstVOffset) * dstBits.rowBytes;
+		Ptr p = srcBits.baseAddr + mulu_w( srcBits.rowBytes, v0 - srcVOffset );
+		Ptr q = dstBits.baseAddr + mulu_w( dstBits.rowBytes, v0 - dstVOffset );
 		
 		for ( short v = v0;  v < v1;  ++v )
 		{
@@ -300,7 +301,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		
 		const Rect bounds = { 0, 0, dstHeight, dstWidth };
 		
-		stretched_bits.baseAddr = NewPtrClear( dstHeight * rowBytes );
+		stretched_bits.baseAddr = NewPtrClear( mulu_w( rowBytes, dstHeight ) );
 		stretched_bits.rowBytes = rowBytes;
 		stretched_bits.bounds   = bounds;
 		
@@ -399,8 +400,8 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	{
 		if ( draw_bottom_to_top )
 		{
-			src += n_rows * srcRowBytes;
-			dst += n_rows * dstRowBytes;
+			src += mulu_w( srcRowBytes, n_rows );
+			dst += mulu_w( dstRowBytes, n_rows );
 			
 			while ( n_rows-- > 0 )
 			{
@@ -451,7 +452,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 			const short tmpRight = srcSkip + width;
 			const short tmpRowBytes = (tmpRight + 15) / 16u * 2;
 			
-			Ptr tmp = NewPtr( n_rows * tmpRowBytes );
+			Ptr tmp = NewPtr( mulu_w( tmpRowBytes, n_rows ) );
 			
 			BitMap tmpBits = { tmp, tmpRowBytes, { 0, 0, n_rows, tmpRight } };
 			
