@@ -269,9 +269,9 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	short widMax      = rec.widMax;
 	short kernMax     = rec.kernMax;
 	
-	const short* locTable = (short*) (src + rec.fRectHeight * rowBytes);
+	const short* locTable = (short*) (src + fRectHeight * rowBytes);
 	
-	BitMap srcBits = { src, rowBytes, { 0, 0, rec.fRectHeight, rowBytes * 8 } };
+	BitMap srcBits = { src, rowBytes, { 0, 0, fRectHeight, rowBytes * 8 } };
 	
 	const BitMap& dstBits = port.portBits;
 	
@@ -279,7 +279,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	Rect dstRect;
 	
 	srcRect.top    = 0;
-	srcRect.bottom = rec.fRectHeight;
+	srcRect.bottom = fRectHeight;
 	
 	Fixed v_scale = 0x10000;
 	Fixed h_scale = 0x10000;
