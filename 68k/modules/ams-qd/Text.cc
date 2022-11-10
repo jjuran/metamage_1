@@ -264,6 +264,11 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	
 	Ptr src = (Ptr) &rec + sizeof (FontRec);
 	
+	short ascent      = rec.ascent;
+	short fRectHeight = rec.fRectHeight;
+	short widMax      = rec.widMax;
+	short kernMax     = rec.kernMax;
+	
 	const short* locTable = (short*) (src + rec.fRectHeight * rowBytes);
 	
 	BitMap srcBits = { src, rowBytes, { 0, 0, rec.fRectHeight, rowBytes * 8 } };
@@ -272,11 +277,6 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	
 	Rect srcRect;
 	Rect dstRect;
-	
-	short dst_ascent      = rec.ascent;
-	short dst_fRectHeight = rec.fRectHeight;
-	short dst_widMax      = rec.widMax;
-	short dst_kernMax     = rec.kernMax;
 	
 	srcRect.top    = 0;
 	srcRect.bottom = rec.fRectHeight;
@@ -289,15 +289,15 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		v_scale = (output->numer.v << 16) / output->denom.v;
 		h_scale = (output->numer.h << 16) / output->denom.h;
 		
-		dst_ascent      = dst_ascent      * v_scale >> 16;
-		dst_fRectHeight = dst_fRectHeight * v_scale >> 16;
+		ascent      = ascent      * v_scale >> 16;
+		fRectHeight = fRectHeight * v_scale >> 16;
 		
-		dst_widMax  = dst_widMax  * h_scale >> 16;
-		dst_kernMax = dst_kernMax * h_scale >> 16;
+		widMax  = widMax  * h_scale >> 16;
+		kernMax = kernMax * h_scale >> 16;
 	}
 	
-	dstRect.top    = port.pnLoc.v - dst_ascent;
-	dstRect.bottom = port.pnLoc.v - dst_ascent + dst_fRectHeight;
+	dstRect.top    = port.pnLoc.v - ascent;
+	dstRect.bottom = port.pnLoc.v - ascent + fRectHeight;
 	
 	// Worst case, for checking cursor intersection only
 	dstRect.left  = port.portBits.bounds.left;
@@ -328,7 +328,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		if ( port.txMode == srcCopy )
 		{
 			dstRect.left  = port.pnLoc.h;
-			dstRect.right = port.pnLoc.h + dst_widMax;
+			dstRect.right = port.pnLoc.h + widMax;
 			
 			QDGlobals& qd = get_QDGlobals();
 			
@@ -340,7 +340,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 			srcRect.left  = this_offset;
 			srcRect.right = next_offset;
 			
-			const short dstLeft = port.pnLoc.h + character_offset + dst_kernMax;
+			const short dstLeft = port.pnLoc.h + character_offset + kernMax;
 			
 			width = width * h_scale >> 16;
 			
