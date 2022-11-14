@@ -3,6 +3,16 @@
 	------
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __MACWINDOWS__
+#include <MacWindows.h>
+#endif
+
 // iota
 #include "iota/convert_string.hh"
 
@@ -23,8 +33,6 @@
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEObjects.hh"
-#include "Nitrogen/CarbonEvents.hh"
-#include "Nitrogen/MacWindows.hh"
 
 // AEObjectModel
 #include "AEObjectModel/AccessProperty.hh"
@@ -477,7 +485,7 @@ n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByID( UInt32 id ) con
 
 static void StoreNewDocument( Document* doc )
 {
-	N::SetWRefCon( doc->GetWindowRef(), doc );
+	SetWRefCon( doc->GetWindowRef(), (SRefCon) doc );
 	
 	try
 	{
