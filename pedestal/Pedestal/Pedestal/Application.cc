@@ -11,6 +11,9 @@
 #endif
 
 // Mac OS
+#ifndef __CARBONEVENTS__
+#include <CarbonEvents.h>
+#endif
 #ifndef __CONTROLS__
 #include <Controls.h>
 #endif
@@ -22,6 +25,9 @@
 #ifndef __TOOLUTILS__
 #include <ToolUtils.h>
 #endif
+
+// Annex
+#include "Annex/MacTypes.h"
 
 // Nostalgia
 #include "Nostalgia/LowMem.hh"
@@ -42,6 +48,7 @@
 // mac-qd-utils
 #include "mac_qd/assign_pixel_rgn.hh"
 #include "mac_qd/get_portRect.hh"
+#include "mac_qd/get_visRgn.hh"
 #include "mac_qd/globals/arrow.hh"
 #include "mac_qd/is_port_visrgn_empty.hh"
 #include "mac_qd/scoped_clipRect.hh"
@@ -61,7 +68,6 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/Controls.hh"
 #include "Nitrogen/MacErrors.hh"
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Quickdraw.hh"
@@ -340,21 +346,22 @@ namespace Pedestal
 		DragWindow( window, event.where, mac::qd::wide_drag_area() );
 	}
 	
-	static bool TrackedControl( ControlRef control, N::ControlPartCode part, Point point )
+	static
+	bool TrackedControl( ControlRef control, ControlPartCode part, Point point )
 	{
 		// Did we actually hit a control?
-		if ( part != N::kControlNoPart )
+		if ( part != kControlNoPart )
 		{
 			// If the control has an action routine, it's not a Pedestal control.
 			// It might (for example) be a List-Manager-owned scrollbar, 
 			// which we trigger through LClick().
 			// Return false to indicate that we didn't handle the event.
-			if ( N::GetControlAction( control ) == NULL )
+			if ( GetControlAction( control ) == NULL )
 			{
-				Control_UserData* userData = N::GetControlReference( control );
-				
-				if ( userData != NULL )
+				if ( SRefCon refcon = GetControlReference( control ) )
 				{
+					Control_UserData* userData = (Control_UserData*) refcon;
+					
 					ControlTracker trackControl = userData->trackHook;
 					
 					if ( trackControl != NULL )
@@ -370,17 +377,16 @@ namespace Pedestal
 		return false;
 	}
 	
-	static inline bool TrackedControl( const N::FindControl_Result& found, Point point )
-	{
-		return TrackedControl( found.control, found.part, point );
-	}
-	
 	static void RespondToContent( const EventRecord& event, WindowRef window )
 	{
 		Point pt = N::GlobalToLocal( event.where );
 		
+		ControlRef control;
+		
+		ControlPartCode part = FindControl( pt, window, &control );
+		
 		// TrackedControl's result indicates whether a control was found.
-		if ( TrackedControl( N::FindControl( pt, window ), pt ) )
+		if ( TrackedControl( control, part, pt ) )
 		{
 			// already handled
 		}
@@ -602,9 +608,11 @@ namespace Pedestal
 			
 			using namespace mac::qd;
 			
+			::RgnHandle visRgn = TARGET_API_MAC_OSX ? NULL : get_visRgn( port );
+			
 			scoped_clipRect clipRect( get_portRect( port ), tmp );
 			
-			N::UpdateControls( window );
+			UpdateControls( window, visRgn );
 		}
 	}
 	
