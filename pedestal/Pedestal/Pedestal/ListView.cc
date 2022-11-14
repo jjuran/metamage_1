@@ -6,6 +6,8 @@
 #include "Pedestal/ListView.hh"
 
 // mac-qd-utils
+#include "mac_qd/get_visRgn.hh"
+#include "mac_qd/globals/thePort.hh"
 #include "mac_qd/globals/thePort_window.hh"
 
 // Nitrogen
@@ -33,22 +35,6 @@ namespace Pedestal
 	
 	namespace N = Nitrogen;
 	
-	
-	static
-	RgnHandle get_visRgn()
-	{
-	#if OPAQUE_TOOLBOX_STRUCTS
-		
-		static RgnHandle rgn = NewRgn();
-		
-		return GetPortVisibleRegion( GetQDGlobalsThePort(), rgn );
-		
-	#else
-		
-		return ::qd.thePort->visRgn;
-		
-	#endif
-	}
 	
 	// Mac OS places the scrollbars outside the bounds.
 	// We adjust the bounds inward so they draw within the original bounds.
@@ -168,9 +154,12 @@ namespace Pedestal
 	
 	void ListView::Draw( const Rect& bounds, bool erasing )
 	{
+		using mac::qd::get_visRgn;
+		using mac::qd::thePort;
+		
 		//Rect bounds = Bounds( itsList );
 		//N::EraseRect( bounds );
-		N::LUpdate( get_visRgn(), itsList );
+		LUpdate( get_visRgn( thePort() ), itsList );
 	}
 	
 	void ListView::SetCell( UInt16 offset, const char* data, std::size_t length )
