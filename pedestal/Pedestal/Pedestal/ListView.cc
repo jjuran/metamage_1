@@ -11,7 +11,6 @@
 #include "mac_qd/globals/thePort_window.hh"
 
 // Nitrogen
-#include "Nitrogen/Controls.hh"
 #include "Nitrogen/Events.hh"
 #include "Nitrogen/Lists.hh"
 #include "Nitrogen/Quickdraw.hh"
@@ -79,15 +78,16 @@ namespace Pedestal
 			ControlRef scrollbar = scrollVert ? ::GetListVerticalScrollBar  ( list )
 			                                  : ::GetListHorizontalScrollBar( list );
 			
-			Rect bounds = N::GetControlBounds( scrollbar );
+			Rect bounds;
+			GetControlBounds( scrollbar, &bounds );
 			
 			N::InvalRect( bounds );
 			
 			(scrollVert ? bounds.bottom : bounds.right) -= 15;
 			
-			N::SetControlBounds( scrollbar, bounds );
+			SetControlBounds( scrollbar, &bounds );
 			
-			N::DrawOneControl( scrollbar );
+			DrawOneControl( scrollbar );
 		}
 	}
 	
