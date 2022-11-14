@@ -86,31 +86,6 @@
 #include "Pedestal/WindowStorage.hh"
 
 
-namespace Nitrogen
-{
-	
-	using ::BeginUpdate;
-	using ::EndUpdate;
-	
-	class Update_Scope
-	{
-		private:
-			WindowRef window;
-		
-		public:
-			Update_Scope( WindowRef window ) : window( window )
-			{
-				BeginUpdate( window );
-			}
-			
-			~Update_Scope()
-			{
-				EndUpdate( window );
-			}
-	};
-	
-}
-
 #if TARGET_API_MAC_CARBON
 #define SystemTask()  /**/
 #endif
@@ -590,15 +565,11 @@ namespace Pedestal
 		
 		ASSERT( window != NULL );
 		
-		N::Update_Scope update( window );
+		BeginUpdate( window );
 		
 		CGrafPtr port = GetWindowPort( window );
 		
-		if ( mac::qd::is_port_visrgn_empty( port ) )
-		{
-			return;
-		}
-		
+		if ( ! mac::qd::is_port_visrgn_empty( port ) )
 		{
 			SetPortWindowPort( window );
 			
@@ -614,6 +585,8 @@ namespace Pedestal
 			
 			UpdateControls( window, visRgn );
 		}
+		
+		EndUpdate( window );
 	}
 	
 	static void DispatchDiskInsert( const EventRecord& event )
