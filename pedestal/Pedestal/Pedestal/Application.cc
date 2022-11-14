@@ -64,7 +64,6 @@
 #include "Nitrogen/Controls.hh"
 #include "Nitrogen/MacErrors.hh"
 #include "Nitrogen/MacWindows.hh"
-#include "Nitrogen/Menus.hh"
 #include "Nitrogen/Quickdraw.hh"
 
 // Pedestal
@@ -976,7 +975,7 @@ namespace Pedestal
 	
 	struct UnhighlightMenus
 	{
-		void operator()() const  { N::HiliteMenu(); }
+		void operator()() const  { HiliteMenu( 0 ); }
 	};
 	
 	template < class Func >
