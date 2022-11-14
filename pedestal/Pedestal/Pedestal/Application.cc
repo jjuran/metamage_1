@@ -69,7 +69,6 @@
 
 // Nitrogen
 #include "Nitrogen/MacErrors.hh"
-#include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Quickdraw.hh"
 
 // Pedestal
@@ -379,7 +378,7 @@ namespace Pedestal
 	
 	static void RespondToGoAway( const EventRecord& event, WindowRef window )
 	{
-		if ( N::TrackGoAway( window, event.where ) )
+		if ( TrackGoAway( window, event.where ) )
 		{
 			close_window( window );
 		}
@@ -400,9 +399,11 @@ namespace Pedestal
 	{
 		ASSERT( event.what == mouseDown );
 		
-		N::FindWindow_Result found = N::FindWindow( event.where );
+		WindowRef window;
 		
-		if ( found.part == N::inMenuBar )
+		WindowPartCode part = FindWindow( event.where, &window );
+		
+		if ( part == inMenuBar )
 		{
 			mac::app::populate_Window_menu( the_Window_menu );
 			
@@ -411,7 +412,7 @@ namespace Pedestal
 			return;
 		}
 		
-		if ( found.window == NULL )
+		if ( window == NULL )
 		{
 			// Sometimes happens, though I'm not sure under what circumstances.
 			return;
@@ -419,23 +420,23 @@ namespace Pedestal
 		
 	#if CALL_NOT_IN_CARBON
 		
-		if ( found.part == inSysWindow )
+		if ( part == inSysWindow )
 		{
-			::SystemClick( &event, found.window );
+			::SystemClick( &event, window );
 			
 			return;
 		}
 		
 	#endif
 		
-		N::SetPortWindowPort( found.window );
+		SetPortWindowPort( window );
 		
-		switch ( found.part )
+		switch ( part )
 		{
-			case inDrag:     RespondToDrag   ( event, found.window );  break;
-			case inContent:  RespondToContent( event, found.window );  break;
-			case inGrow:     RespondToGrow   ( event, found.window );  break;
-			case inGoAway:   RespondToGoAway ( event, found.window );  break;
+			case inDrag:     RespondToDrag   ( event, window );  break;
+			case inContent:  RespondToContent( event, window );  break;
+			case inGrow:     RespondToGrow   ( event, window );  break;
+			case inGoAway:   RespondToGoAway ( event, window );  break;
 			
 			default:
 				break;
@@ -664,9 +665,8 @@ namespace Pedestal
 		mac::qd::scoped_port thePort;
 		
 		// FIXME:  Use window iterator
-		for ( WindowRef window = N::FrontWindow();
+		for ( WindowRef window = FrontWindow();
 		      window != NULL;
-		      //window = N::GetNextWindow( window ) )  // FIXME
 		      window = ::GetNextWindow( window ) )
 		{
 			if ( View* view = get_window_view_ready( window ) )
@@ -1000,7 +1000,7 @@ namespace Pedestal
 		switch ( code )
 		{
 			case 'clos':
-				if ( WindowRef window = N::FrontWindow() )
+				if ( WindowRef window = FrontWindow() )
 				{
 					close_window( window );
 				}
