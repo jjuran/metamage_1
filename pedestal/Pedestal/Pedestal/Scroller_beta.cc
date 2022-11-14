@@ -5,9 +5,6 @@
 
 #include "Pedestal/Scroller_beta.hh"
 
-// Standard C++
-#include <algorithm>
-
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/thePort.hh"
@@ -19,6 +16,20 @@
 
 namespace Pedestal
 {
+	
+	static inline
+	int
+	min( int a, int b )
+	{
+		return b > a ? b : a;
+	}
+	
+	static inline
+	int
+	max( int a, int b )
+	{
+		return a > b ? a : b;
+	}
 	
 	static inline
 	bool PtInRect( Point pt, const Rect& rect )
@@ -35,7 +46,7 @@ namespace Pedestal
 		
 		const short viewHeight = scroller.ViewHeight();
 		
-		const int max_voffset = std::max( scroller.ClientHeight() - viewHeight, 0 );
+		const int max_voffset = max( scroller.ClientHeight() - viewHeight, 0 );
 		
 		if ( c == kEndCharCode )
 		{
@@ -49,10 +60,10 @@ namespace Pedestal
 		switch ( c )
 		{
 			case kPageUpCharCode:
-				return std::max( voffset - page_distance, 0 );
+				return max( voffset - page_distance, 0 );
 			
 			case kPageDownCharCode:
-				return std::min( voffset + page_distance, max_voffset );
+				return min( voffset + page_distance, max_voffset );
 			
 			default:
 				break;

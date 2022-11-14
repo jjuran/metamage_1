@@ -5,9 +5,6 @@
 
 #include "Pedestal/Scrollbar.hh"
 
-// Standard C++
-#include <algorithm>
-
 // mac-sys-utils
 #include "mac_sys/has/Appearance.hh"
 
@@ -28,6 +25,13 @@ namespace Pedestal
 	
 	namespace N = Nitrogen;
 	
+	
+	static inline
+	short
+	max( short a, short b )
+	{
+		return a > b ? a : b;
+	}
 	
 	static inline N::ControlProcID GetControlProcIDForScrollbar()
 	{
@@ -120,7 +124,7 @@ namespace Pedestal
 	{
 		if ( itsControl )
 		{
-			short max_offset = std::max( clientLength - viewLength, offset );
+			short max_offset = max( clientLength - viewLength, offset );
 			
 			SetControlMaximum( itsControl, max_offset );
 			

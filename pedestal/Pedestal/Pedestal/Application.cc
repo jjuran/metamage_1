@@ -5,9 +5,6 @@
 
 #include "Pedestal/Application.hh"
 
-// Standard C++
-#include <algorithm>
-
 // Mac OS X
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
@@ -168,6 +165,21 @@ namespace Pedestal
 	static UInt32 gShiftSpaceQuasimodeMask = 0;
 	
 	static boost::intrusive_ptr< Quasimode > gQuasimode;
+	
+	
+	static inline
+	UInt32
+	ticks_min( UInt32 a, UInt32 b )
+	{
+		return b < a ? b : a;
+	}
+	
+	static inline
+	monotonic_clock::clock_t
+	clock_max( monotonic_clock::clock_t a, monotonic_clock::clock_t b )
+	{
+		return a > b ? a : b;
+	}
 	
 	
 	static inline void DebugBeep()
@@ -865,11 +877,11 @@ namespace Pedestal
 			ticksToSleep = 1;
 		}
 		
-		gClockAtNextBusiness = std::max( gClockAtNextBusiness, now );
+		gClockAtNextBusiness = clock_max( gClockAtNextBusiness, now );
 		
 		const UInt32 ticksToWait = ticks_from( gClockAtNextBusiness - now );
 		
-		ticksToSleep = std::min( ticksToSleep, ticksToWait );
+		ticksToSleep = ticks_min( ticksToSleep, ticksToWait );
 		
 		gClockAtNextBusiness = clock_t( -1 );
 		

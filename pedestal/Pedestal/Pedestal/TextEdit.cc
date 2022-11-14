@@ -5,9 +5,6 @@
 
 #include "Pedestal/TextEdit.hh"
 
-// Standard C++
-#include <algorithm>
-
 // Mac OS X
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
@@ -57,6 +54,20 @@ namespace Pedestal
 	class NotEnoughSpaceForTEKey   {};
 	class NotEnoughSpaceForTEPaste {};
 	
+	
+	static inline
+	short
+	min( short a, short b )
+	{
+		return b > a ? b : a;
+	}
+	
+	static inline
+	short
+	max( short a, short b )
+	{
+		return a > b ? a : b;
+	}
 	
 	void Preflight_TEKey( char c, TEHandle hTE )
 	{
@@ -480,8 +491,8 @@ namespace Pedestal
 			// Arrow key with Shift
 			// Delete key with Command or Option on empty selection
 			
-			selStart = std::min( gSelectionAnchor, gSelectionExtent );
-			selEnd   = std::max( gSelectionAnchor, gSelectionExtent );
+			selStart = min( gSelectionAnchor, gSelectionExtent );
+			selEnd   = max( gSelectionAnchor, gSelectionExtent );
 			
 			// Update the real selection
 			::TESetSelect( selStart, selEnd, hTE );

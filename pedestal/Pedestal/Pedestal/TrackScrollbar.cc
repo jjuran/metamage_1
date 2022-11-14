@@ -15,9 +15,6 @@
 #include <ControlDefinitions.h>
 #endif
 
-// Standard C++
-#include <algorithm>
-
 // mac-config
 #include "mac_config/upp-macros.hh"
 
@@ -39,10 +36,24 @@
 namespace Pedestal
 {
 	
+	static inline
+	short
+	min( short a, short b )
+	{
+		return b > a ? b : a;
+	}
+	
+	static inline
+	short
+	max( short a, short b )
+	{
+		return a > b ? a : b;
+	}
+	
 	static short SetClippedControlValue( ControlRef control, short value )
 	{
-		value = std::max( value, GetControlMinimum( control ) );
-		value = std::min( value, GetControlMaximum( control ) );
+		value = max( value, GetControlMinimum( control ) );
+		value = min( value, GetControlMaximum( control ) );
 		
 		SetControlValue( control, value );
 		
