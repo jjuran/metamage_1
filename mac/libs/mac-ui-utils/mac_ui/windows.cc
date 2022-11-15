@@ -28,13 +28,11 @@ namespace ui  {
 
 Point get_window_position( WindowRef window )
 {
-#if ! TARGET_API_MAC_CARBON
-	
-	WindowPeek w = (WindowPeek) window;
+#if ! OPAQUE_TOOLBOX_STRUCTS
 	
 	Point position;
 	
-	position.v  = -window->portBits.bounds.top;
+	position.v = -window->portBits.bounds.top;
 	position.h = -window->portBits.bounds.left;
 	
 	return position;
@@ -49,7 +47,7 @@ Point get_window_position( WindowRef window )
 
 Point get_window_size( WindowRef window )
 {
-#if ! TARGET_API_MAC_CARBON
+#if ! OPAQUE_TOOLBOX_STRUCTS
 	
 	Rect& bounds = window->portRect;
 	
@@ -159,7 +157,7 @@ void invalidate_window( WindowRef window )
 	{
 		const Rect& portRect = mac::qd::get_portRect( port );
 		
-	#if ! TARGET_API_MAC_CARBON
+	#if ! OPAQUE_TOOLBOX_STRUCTS
 		
 		GrafPtr thePort = mac::qd::thePort();
 		
