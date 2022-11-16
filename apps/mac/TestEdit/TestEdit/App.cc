@@ -26,9 +26,6 @@
 #include "Nitrogen/CarbonEvents.hh"
 #include "Nitrogen/MacWindows.hh"
 
-// Iteration
-#include "Iteration/AEDescListItemDatas.hh"
-
 // AEObjectModel
 #include "AEObjectModel/AccessProperty.hh"
 #include "AEObjectModel/AEObjectModel.hh"
@@ -182,14 +179,16 @@ void DocumentClosed( WindowRef window )
 	delete doc;
 }
 
-template < class Container >
-static void CloseDocuments( const Container& container )
+static
+void CloseDocuments( const AEDescList& list )
 {
-	typedef typename Container::const_iterator Iter;
+	long count = N::AECountItems( list );
 	
-	for ( Iter it = container.begin();  it != container.end();  ++it )
+	for ( long i = 1;  i <= count;  ++i )  // one-based
 	{
-		Ped::close_window( *it );
+		WindowRef window = N::AEGetNthPtr< typeDocument >( list, i );
+		
+		Ped::close_window( window );
 	}
 }
 
@@ -210,7 +209,7 @@ struct Close_AppleEvent
 				break;
 			
 			case Mac::typeAEList:
-				CloseDocuments( N::AEDescList_ItemDataValues< typeDocument >( token ) );
+				CloseDocuments( ( token ) );
 				break;
 			
 			default:
