@@ -31,17 +31,11 @@
 // poseven
 #include "poseven/functions/write.hh"
 
-// Orion
-#include "Orion/Main.hh"
-
 
 namespace Nitrogen
 {
 	// Define namespace Nitrogen for Carbon
 }
-
-namespace tool
-{
 
 namespace N = Nitrogen;
 namespace p7 = poseven;
@@ -122,7 +116,7 @@ static const char* gOptionNames[] = { "num", "caps", "scroll", NULL };
 #endif
 
 
-int Main( int argc, char** argv )
+int main( int argc, char** argv )
 {
 #if TARGET_API_MAC_CARBON
 	
@@ -184,6 +178,4 @@ int Main( int argc, char** argv )
 	return 0;
 	
 #endif
-}
-
 }
