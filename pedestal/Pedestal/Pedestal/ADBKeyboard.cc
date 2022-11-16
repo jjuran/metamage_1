@@ -5,13 +5,13 @@
 
 #include "Pedestal/ADBKeyboard.hh"
 
-#if ! TARGET_API_MAC_CARBON
+// mac-adb-utils
+#include "mac_adb/device_handler_ID.hh"
+#include "mac_adb/keyboard.hh"
+#include "mac_adb/LEDs.hh"
 
-// Arcana
-#include "ADB/KeyboardLEDs.hh"
-#include "ADB/KeyboardModifiers.hh"
 
-#endif
+#pragma exceptions off
 
 
 namespace Pedestal
@@ -20,21 +20,19 @@ namespace Pedestal
 	bool gKeyboardConfigured = false;
 	
 	
-#if ! TARGET_API_MAC_CARBON
-	
-	namespace N = Nitrogen;
-	
 	void ConfigureKeyboard( signed char kbd, bool active, bool capsLock_on )
 	{
-		const N::ADBAddress keyboard = N::ADBAddress( kbd );
+		using namespace mac::adb;
 		
-		SetLEDs( keyboard, (active ? 1 : 0) | (capsLock_on ? 2 : 0) );
+		const address_t keyboard = kbd;
 		
-		SetKeyboardModifiersDistinctness( keyboard, active );
+		Byte id = device_handler_ID_for_keyboard_with_remapping( active );
+		
+		set_LEDs( keyboard, (active ? 1 : 0) | (capsLock_on ? 2 : 0) );
+		
+		set_device_handler_ID( keyboard, id );
 		
 		gKeyboardConfigured = active;
 	}
-	
-#endif
 	
 }
