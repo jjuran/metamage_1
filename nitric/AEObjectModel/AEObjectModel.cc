@@ -8,9 +8,6 @@
 // Standard C
 #include <stdlib.h>
 
-// Standard C++
-#include <algorithm>
-
 // Nitrogen
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
@@ -27,11 +24,6 @@
 #include "AEObjectModel/Compare.hh"
 #include "AEObjectModel/Count.hh"
 #include "AEObjectModel/DisposeToken.hh"
-
-// Nitrogen Extras / Iteration
-#ifndef ITERATION_AEDESCLISTITEMS_HH
-#include "Iteration/AEDescListItems.hh"
-#endif
 
 
 namespace Nitrogen
@@ -277,15 +269,17 @@ namespace Nitrogen
 	{
 		nucleus::owned< Mac::AEDescList_Token > result = AECreateList< Mac::AEDescList_Token >();
 		
-		AEDescList_ItemValue_Container values = AEDescList_ItemValues( containerToken );
+		ObjectAccessor_Caller caller( desiredClass,
+		                              containerClass,
+		                              keyForm,
+		                              keyData );
 		
-		std::transform( values.begin(),
-		                values.end(),
-		                AEDescList_Item_BackInserter( result ),
-		                ObjectAccessor_Caller( desiredClass,
-		                                       containerClass,
-		                                       keyForm,
-		                                       keyData ) );
+		long count = AECountItems( containerToken );
+		
+		for ( long i = 1;  i <= count;  ++i )
+		{
+			AEPutDesc( result, 0, caller( AEGetNthDesc( containerToken, i ) ) );
+		}
 		
 		return result;
 	}
