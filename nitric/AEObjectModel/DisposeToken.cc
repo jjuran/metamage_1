@@ -14,18 +14,7 @@ namespace Nitrogen
 	
 	void DisposeToken( nucleus::owned< Mac::AEDesc_Data > token )
 	{
-		return TheGlobalTokenDisposer().DisposeToken( token );
-	}
-	
-	TokenDisposer::TokenDisposer()
-	{
-		Register( Mac::typeAEList, DisposeTokenList );
-	}
-	
-	void TokenDisposer::DisposeToken( nucleus::owned< Mac::AEDesc_Data > token )
-	{
-		Map::const_iterator found = map.find( Mac::DescType( token.get().descriptorType ) );
-		if ( found == map.end() )
+		if ( token.get().descriptorType != typeAEList )
 		{
 			// If we omitted this, the descriptor would still be disposed
 			// at function exit.
@@ -35,13 +24,7 @@ namespace Nitrogen
 			return;  // FIXME:  Check for typeWildCard
 		}
 		
-		return found->second( token );
-	}
-	
-	TokenDisposer& TheGlobalTokenDisposer()
-	{
-		static TokenDisposer theGlobalTokenDisposer;
-		return theGlobalTokenDisposer;
+		DisposeTokenList( token );
 	}
 	
 	void DisposeTokenList( nucleus::owned< Mac::AEDescList_Data > listOfTokens )
