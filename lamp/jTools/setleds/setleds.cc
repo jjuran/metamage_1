@@ -9,6 +9,11 @@
 #endif
 
 // Mac OS
+#if ! TARGET_API_MAC_CARBON
+#ifndef __DESKBUS__
+#include <DeskBus.h>
+#endif
+#endif
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
@@ -23,18 +28,11 @@
 // iota
 #include "iota/strings.hh"
 
-// Arcana
-#if !TARGET_API_MAC_CARBON
-#include "ADB/KeyboardLEDs.hh"
-#endif
+// mac-adb-utils
+#include "mac_adb/LEDs.hh"
 
 
-namespace Nitrogen
-{
-	// Define namespace Nitrogen for Carbon
-}
-
-namespace N = Nitrogen;
+#pragma exceptions off
 
 
 #if !TARGET_API_MAC_CARBON
@@ -79,11 +77,12 @@ static void PrintLEDs( UInt8 leds )
 static
 void DoLEDs( short i )
 {
-	N::GetIndADB_Result adbDevice = N::GetIndADB( i );
+	ADBDataBlock data;
+	ADBAddress address = GetIndADB( &data, i );
 	
-	if ( IsKeyboard( adbDevice ) )
+	if ( IsKeyboard( data ) )
 	{
-		UInt8 leds = GetLEDs( adbDevice );
+		Byte leds = mac::adb::get_LEDs( address );
 		
 		if ( gChangedBitsMask == 0 )
 		{
@@ -94,7 +93,7 @@ void DoLEDs( short i )
 			leds &= ~gChangedBitsMask;
 			leds |= gChangedBits;
 			
-			SetLEDs( adbDevice, leds );
+			mac::adb::set_LEDs( address, leds );
 		}
 	}
 }
