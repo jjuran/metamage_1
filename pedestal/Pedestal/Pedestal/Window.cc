@@ -28,7 +28,7 @@ namespace Pedestal
 	void ResizedWindow( WindowRef window )
 	{
 		// Don't rely on the requested size because it might have been tweaked
-		Rect bounds = mac::qd::get_portRect( GetWindowPort( window ) );
+		Rect bounds = mac::qd::get_portRect( window );
 		
 		// Shotgun approach -- invalidate the whole window.
 		// This conveniently includes both old and new grow box locations.

@@ -62,7 +62,7 @@ namespace Pedestal
 	static
 	Rect GrowBoxBounds( WindowRef window )
 	{
-		Rect bounds = get_portRect( GetWindowPort( window ) );
+		Rect bounds = get_portRect( window );
 		
 		bounds.left = bounds.right - 15;
 		bounds.top = bounds.bottom - 15;
@@ -101,7 +101,7 @@ namespace Pedestal
 	{
 		if ( View* view = get_window_view( window ) )
 		{
-			view->Draw( get_portRect( GetWindowPort( window ) ), true );
+			view->Draw( get_portRect( window ), true );
 		}
 		
 		if ( window_has_grow_icon( window ) )
