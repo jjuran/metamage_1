@@ -5,16 +5,8 @@
 
 #include "AEObjectModel/DisposeToken.hh"
 
-// Standard C++
-#include <algorithm>
-
-// plus
-#include "plus/pointer_to_function.hh"
-
-// Nitrogen Extras / Iteration
-#ifndef ITERATION_AEDESCLISTITEMS_HH
-#include "Iteration/AEDescListItems.hh"
-#endif
+// Nitrogen
+#include "Nitrogen/AEDataModel.hh"
 
 
 namespace Nitrogen
@@ -52,14 +44,6 @@ namespace Nitrogen
 		return theGlobalTokenDisposer;
 	}
 	
-	static void DisposeTokenFromList( nucleus::owned< Mac::AEDesc_Data > token )
-	{
-		// This is basically a call to AEDisposeToken(), but it's for tokens
-		// stored as Owned< AEDesc_Data >.
-		
-		nucleus::disposer< Mac::AEDesc_Token >()( token.release() );
-	}
-	
 	void DisposeTokenList( nucleus::owned< Mac::AEDescList_Data > listOfTokens )
 	{
 		// listOfTokens is owned< AEDescList_Data > for this reason:
@@ -70,17 +54,20 @@ namespace Nitrogen
 		// Since we've deliberately made it hard to accidentally pull tokens out
 		// of a non-token list, here we'll have to jump through our own hoop.
 		
-		AEDescList_ItemValue_Container tokens = AEDescList_ItemValues( listOfTokens );
-		
 		// Get each token from the list (which allocates a new AEDesc),
 		// and call AEDisposeToken on it, which disposes both
 		// any token-related resources and the newly allocated AEDesc itself.
 		// The copy of the token AEDesc remaining in the list descriptor will go 
 		// when the list goes.
 		
-		std::for_each( tokens.begin(),
-		               tokens.end(),
-		               plus::ptr_fun( DisposeTokenFromList ) );
+		long count = AECountItems( listOfTokens );
+		
+		for ( long i = 1;  i <= count;  ++i )
+		{
+			Mac::AEDesc_Data desc = AEGetNthDesc( listOfTokens, i ).release();
+			
+			AEDisposeToken( &desc );
+		}
 		
 		// Implicit
 		//AEDisposeDesc( listOfTokens );
