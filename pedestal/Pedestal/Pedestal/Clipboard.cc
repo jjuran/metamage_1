@@ -5,40 +5,37 @@
 
 #include "Pedestal/Clipboard.hh"
 
-// Nitrogen
-#include "Mac/Toolbox/Types/OSStatus.hh"
+// Mac OS
+#ifndef __SCRAP__
+#include <Scrap.h>
+#endif
 
-#include "Nitrogen/Scrap.hh"
-#include "Nitrogen/TextEdit.hh"
+
+#pragma exceptions off
 
 
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	
-	
 	static inline void ClearCarbonScrap()
 	{
 		if ( TARGET_API_MAC_CARBON )
 		{
-			N::ClearCurrentScrap();
+			ClearCurrentScrap();
 		}
 	}
 	
 	static void FlushScrap()
 	{
-		try
-		{
-		#if !TARGET_API_MAC_CARBON
-			
-			N::ZeroScrap();
-			
-		#endif
-			
-			N::TEToScrap();
-		}
-		catch ( const Mac::OSStatus& err )
+	#if !TARGET_API_MAC_CARBON
+		
+		ZeroScrap();
+		
+	#endif
+		
+		OSErr err = TEToScrap();
+		
+		if ( err != noErr )
 		{
 			ClearCarbonScrap();
 		}
@@ -48,7 +45,7 @@ namespace Pedestal
 	{
 		ClearCarbonScrap();
 		
-		N::TECut( hTE );
+		TECut( hTE );
 		
 		FlushScrap();
 	}
@@ -57,7 +54,7 @@ namespace Pedestal
 	{
 		ClearCarbonScrap();
 		
-		N::TECopy( hTE );
+		TECopy( hTE );
 		
 		FlushScrap();
 	}
@@ -65,9 +62,12 @@ namespace Pedestal
 	void Clipboard::TEPaste( TEHandle hTE )
 	{
 		// Update the TE scrap just-in-time
-		N::TEFromScrap();
+		OSErr err = TEFromScrap();
 		
-		N::TEPaste( hTE );
+		if ( err == noErr )
+		{
+			TEPaste( hTE );
+		}
 	}
 	
 }
