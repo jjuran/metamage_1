@@ -63,7 +63,7 @@ pascal void ADBCompletion( Ptr buffer, Ptr refCon, long command )
 #if ! TARGET_API_MAC_CARBON
 
 static
-OSErr SendADBCommandSync( Ptr buffer, UInt8 command )
+OSErr SendADBCommandSync( Ptr buffer, short command )
 {
 	DEFINE_UPP( ADBCompletion, ADBCompletion )
 	
@@ -103,11 +103,11 @@ int main( int argc, char** argv )
 	{
 		ADBDataBlock data;
 		
-		ADBAddress address = GetIndADB( &data, i );
+		short address = GetIndADB( &data, i );
 		
 		uint8_t registers[ 9 ][ 4 ];
 		
-		uint8_t command = address << 4 | kADBTalkCommand | 0;
+		short command = address << 4 | kADBTalkCommand | 0;
 		
 		for ( short r = 0;  r < 4;  ++r, ++command )
 		{
