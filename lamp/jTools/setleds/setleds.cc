@@ -23,9 +23,6 @@
 // iota
 #include "iota/strings.hh"
 
-// plus
-#include "plus/var_string.hh"
-
 // Arcana
 #if !TARGET_API_MAC_CARBON
 #include "ADB/KeyboardLEDs.hh"
@@ -63,30 +60,20 @@ static void PrintLEDs( UInt8 leds )
 	bool caps   = leds & 2;
 	bool scroll = leds & 4;
 	
-	plus::var_string message;
+	#define NUM    "NumLock"
+	#define CAPS   "CapsLock"
+	#define SCROLL "ScrollLock"
 	
-	// Reserve enough memory to hold everything, avoiding reallocation
-	message.reserve( 255 );
+	#define ON_ " on "
+	#define OFF " off"
+	#define SUB " %s"
 	
-	/*
-	message += "# Device at ADB address ";
+	#define FORMAT \
+	"Current default flags:  " NUM ON_ "   " CAPS OFF "   " SCROLL OFF "\n" \
+	"Current flags:          " NUM ON_ "   " CAPS OFF "   " SCROLL OFF "\n" \
+	"Current leds:           " NUM SUB "   " CAPS SUB "   " SCROLL SUB "\n"
 	
-	message += address + '0';
-	message += "\n";
-	*/
-	
-	message += "Current default flags:  NumLock on    CapsLock off   ScrollLock off\n";
-	message += "Current flags:          NumLock on    CapsLock off   ScrollLock off\n";
-	message += "Current leds:           NumLock ";
-	
-	message += status[ num    ];
-	message += "   " "CapsLock ";
-	message += status[ caps   ];
-	message += "   " "ScrollLock ";
-	message += status[ scroll ];
-	message += "\n";
-	
-	write( STDOUT_FILENO, message.data(), message.size() );
+	printf( FORMAT, status[ num ], status[ caps ], status[ scroll ] );
 }
 
 static
