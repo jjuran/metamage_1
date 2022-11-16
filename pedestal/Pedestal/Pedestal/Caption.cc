@@ -7,8 +7,12 @@
 
 // Mac OS X
 #ifdef __APPLE__
-// We need this to define MAC_OS_X_VERSION_*
-#include <CoreServices/CoreServices.h>
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __TEXTEDIT__
+#include <TextEdit.h>
 #endif
 
 // missing-macos
@@ -21,15 +25,22 @@
 // mac-qd-utils
 #include "mac_qd/scoped_clipRect.hh"
 
-// Nitrogen
-#include "Nitrogen/TextEdit.hh"
+
+#pragma exceptions off
 
 
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	
+	static inline
+	void TETextBox( const plus::string&  text,
+	                const Rect&          box )
+	{
+		TETextBox( text.data(),
+		           text.size(),
+		           &box,
+		           teFlushLeft );
+	}
 	
 	static
 	short get_TextMode()
@@ -65,7 +76,7 @@ namespace Pedestal
 			::TextMode( grayishTextOr );
 		}
 		
-		N::TETextBox( Text(), newBounds );
+		TETextBox( Text(), newBounds );
 		
 		::TextMode( saved_txMode );
 	}
