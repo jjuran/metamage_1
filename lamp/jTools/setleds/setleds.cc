@@ -112,8 +112,6 @@ int main( int argc, char** argv )
 	
 #else
 	
-	int count = N::CountADBs();
-	
 	for ( char** argp = argv + 1;  *argp != NULL;  ++argp )
 	{
 		const char* arg = *argp;
@@ -152,13 +150,11 @@ int main( int argc, char** argv )
 		}
 	}
 	
-	N::ADBDevice_Container adbs;
+	short count = CountADBs();
 	
-	typedef N::ADBDevice_Container::const_iterator Iter;
-	
-	for ( Iter it = adbs.begin(), end = adbs.end();  it != end;  ++it )
+	for ( short i = 1;  i <= count;  ++i )
 	{
-		DoLEDs( *it );
+		DoLEDs( N::GetIndADB( i ) );
 	}
 	
 	return 0;
