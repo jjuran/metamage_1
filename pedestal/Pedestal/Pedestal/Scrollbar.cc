@@ -5,6 +5,14 @@
 
 #include "Pedestal/Scrollbar.hh"
 
+// Mac OS
+#ifndef __CONTROLDEFINITIONS__
+#include <ControlDefinitions.h>
+#endif
+
+// Standard C
+#include <string.h>
+
 // mac-sys-utils
 #include "mac_sys/has/Appearance.hh"
 
@@ -14,17 +22,12 @@
 // Debug
 #include "debug/assert.hh"
 
-// Nitrogen
-#include "Nitrogen/Controls.hh"
-#include "Nitrogen/MacWindows.hh"
-#include "Nitrogen/Quickdraw.hh"
+
+#pragma exceptions off
 
 
 namespace Pedestal
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	static inline
 	short
@@ -33,12 +36,13 @@ namespace Pedestal
 		return a > b ? a : b;
 	}
 	
-	static inline N::ControlProcID GetControlProcIDForScrollbar()
+	static inline
+	short GetControlProcIDForScrollbar()
 	{
 		const bool liveScrolling = mac::sys::has_Appearance();
 		
-		return liveScrolling ? Mac::kControlScrollBarLiveProc
-		                     : Mac::scrollBarProc;
+		return liveScrolling ? (short) kControlScrollBarLiveProc
+		                     : (short) scrollBarProc;
 	}
 	
 	
@@ -65,7 +69,7 @@ namespace Pedestal
 	{
 		ASSERT( itsControl == NULL );
 		
-		const N::ControlProcID procID = GetControlProcIDForScrollbar();
+		const short procID = GetControlProcIDForScrollbar();
 		
 		itsControl = NewControl( mac::qd::thePort_window(),
 		                         &bounds,
@@ -80,11 +84,12 @@ namespace Pedestal
 	
 	void Scrollbar::UpdateBounds( const Rect& bounds )
 	{
-		using namespace nucleus::operators;
-		
 		ASSERT( itsControl != NULL );
 		
-		if ( N::GetControlBounds( itsControl ) != bounds )
+		Rect currentBounds;
+		GetControlBounds( itsControl, &currentBounds );
+		
+		if ( memcmp( &currentBounds, &bounds, sizeof (Rect) ) != 0 )
 		{
 			HideControl( itsControl );
 			
