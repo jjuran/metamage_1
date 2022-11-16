@@ -3,10 +3,6 @@
  *	==========
  */
 
-// Standard C/C++
-#include <cstdio>
-#include <cstring>
-
 // Mac OS X
 #ifdef __APPLE__
 #include <CoreServices/CoreServices.h>
@@ -19,6 +15,10 @@
 
 // POSIX
 #include <unistd.h>
+
+// Standard C
+#include <stdio.h>
+#include <string.h>
 
 // iota
 #include "iota/strings.hh"
@@ -139,14 +139,14 @@ int main( int argc, char** argv )
 		}
 		else if ( arg[0] != '-' )
 		{
-			std::fprintf( stderr, "setleds: unrecognized argument '%s'\n", arg );
+			fprintf( stderr, "setleds: unrecognized argument '%s'\n", arg );
 			
 			return 2;
 		}
 		
 		for ( const char** pp = gOptionNames;  ;  ++pp )
 		{
-			if ( std::strcmp( *pp, arg + 1 ) == 0 )
+			if ( strcmp( *pp, arg + 1 ) == 0 )
 			{
 				int bit = pp - gOptionNames;
 				
@@ -158,7 +158,7 @@ int main( int argc, char** argv )
 			
 			if ( *pp == NULL )
 			{
-				std::fprintf( stderr, "setleds: unrecognized led '%s'\n", arg );
+				fprintf( stderr, "setleds: unrecognized led '%s'\n", arg );
 				
 				return 2;
 			}
