@@ -17,6 +17,9 @@
 #include <MacTypes.h>
 #endif
 
+// POSIX
+#include <unistd.h>
+
 // iota
 #include "iota/strings.hh"
 
@@ -28,9 +31,6 @@
 #include "ADB/KeyboardLEDs.hh"
 #endif
 
-// poseven
-#include "poseven/functions/write.hh"
-
 
 namespace Nitrogen
 {
@@ -38,7 +38,6 @@ namespace Nitrogen
 }
 
 namespace N = Nitrogen;
-namespace p7 = poseven;
 
 
 #if !TARGET_API_MAC_CARBON
@@ -87,7 +86,7 @@ static void PrintLEDs( UInt8 leds )
 	message += status[ scroll ];
 	message += "\n";
 	
-	p7::write( p7::stdout_fileno, message );
+	write( STDOUT_FILENO, message.data(), message.size() );
 }
 
 static
@@ -120,7 +119,7 @@ int main( int argc, char** argv )
 {
 #if TARGET_API_MAC_CARBON
 	
-	p7::write( p7::stderr_fileno, STR_LEN( "setleds: ADB unsupported in Carbon\n" ) );
+	write( STDERR_FILENO, STR_LEN( "setleds: ADB unsupported in Carbon\n" ) );
 	
 	return 1;
 	
