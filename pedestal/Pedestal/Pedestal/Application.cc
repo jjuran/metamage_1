@@ -258,7 +258,7 @@ namespace Pedestal
 	static inline
 	Byte GetKeyboardFromEvent( const EventRecord& event )
 	{
-		return (event.message & adbAddrMask) >> 16;
+		return event.message >> 16;
 	}
 	
 	static
