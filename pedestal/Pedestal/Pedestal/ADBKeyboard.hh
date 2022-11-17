@@ -10,9 +10,11 @@
 namespace Pedestal
 {
 	
+	typedef unsigned char Byte;
+	
 	extern bool gKeyboardConfigured;
 	
-	void ConfigureKeyboard( signed char kbd, bool active, bool capsLock_on );
+	void ConfigureKeyboard( Byte address, bool active, bool capsLock_on );
 	
 }
 

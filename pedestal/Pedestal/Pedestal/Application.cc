@@ -130,7 +130,7 @@ namespace Pedestal
 	static monotonic_clock::clock_t gClockAtLastContextSwitch = 0;
 	
 	// ADB address of the keyboard from the last key-down event.
-	static SInt8 gLastKeyboard;  // ADBAddress
+	static Byte gLastKeyboard;
 	
 	static bool gNeedToConfigureKeyboard = false;
 	
@@ -256,7 +256,7 @@ namespace Pedestal
 	}
 	
 	static inline
-	SInt8 GetKeyboardFromEvent( const EventRecord& event )
+	Byte GetKeyboardFromEvent( const EventRecord& event )
 	{
 		return (event.message & adbAddrMask) >> 16;
 	}

@@ -20,11 +20,11 @@ namespace Pedestal
 	bool gKeyboardConfigured = false;
 	
 	
-	void ConfigureKeyboard( signed char kbd, bool active, bool capsLock_on )
+	void ConfigureKeyboard( Byte address, bool active, bool capsLock_on )
 	{
 		using namespace mac::adb;
 		
-		const address_t keyboard = kbd;
+		const address_t keyboard = address;
 		
 		Byte id = device_handler_ID_for_keyboard_with_remapping( active );
 		
