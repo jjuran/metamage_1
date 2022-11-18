@@ -77,8 +77,10 @@ static void PrintLEDs( UInt8 leds )
 }
 
 static
-void DoLEDs( N::GetIndADB_Result adbDevice )
+void DoLEDs( short i )
 {
+	N::GetIndADB_Result adbDevice = N::GetIndADB( i );
+	
 	if ( IsKeyboard( adbDevice ) )
 	{
 		UInt8 leds = GetLEDs( adbDevice );
@@ -154,7 +156,7 @@ int main( int argc, char** argv )
 	
 	for ( short i = 1;  i <= count;  ++i )
 	{
-		DoLEDs( N::GetIndADB( i ) );
+		DoLEDs( i );
 	}
 	
 	return 0;
