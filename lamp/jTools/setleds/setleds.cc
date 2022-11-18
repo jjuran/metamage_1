@@ -20,9 +20,6 @@
 // iota
 #include "iota/strings.hh"
 
-// gear
-#include "gear/parse_decimal.hh"
-
 // plus
 #include "plus/var_string.hh"
 
@@ -52,8 +49,6 @@ namespace p7 = poseven;
 
 #if !TARGET_API_MAC_CARBON
 
-
-const UInt8 kLEDValueMask = 7;
 
 static int gChangedBits     = 0;
 static int gChangedBitsMask = 0;
@@ -101,7 +96,8 @@ static void PrintLEDs( UInt8 leds )
 	p7::write( p7::stdout_fileno, message );
 }
 
-static void DoLEDs( N::GetIndADB_Result adbDevice, int leds )
+static
+void DoLEDs( N::GetIndADB_Result adbDevice )
 {
 	if ( IsKeyboard( adbDevice ) )
 	{
@@ -176,18 +172,13 @@ int Main( int argc, char** argv )
 		}
 	}
 	
-	bool setting = argc >= 2;
-	
-	int leds = setting ? gear::parse_unsigned_decimal( argv[1] ) & kLEDValueMask
-	                   : -1;
-	
 	N::ADBDevice_Container adbs;
 	
 	typedef N::ADBDevice_Container::const_iterator Iter;
 	
 	for ( Iter it = adbs.begin(), end = adbs.end();  it != end;  ++it )
 	{
-		DoLEDs( *it, leds );
+		DoLEDs( *it );
 	}
 	
 	return 0;
