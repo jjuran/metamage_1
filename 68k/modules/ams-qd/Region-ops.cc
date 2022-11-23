@@ -74,17 +74,20 @@ static inline short* rgn_extent( MacRegion* rgn )
 	return (short*) &rgn[ 1 ];
 }
 
-static geometry_t region_geometry( const MacRegion* rgn )
+static inline
+geometry_t region_geometry( const MacRegion* rgn )
 {
 	return region_geometry( rgn_extent( rgn ) );
 }
 
-static size_t max_new_region_size( geometry_t g )
+static inline
+size_t max_new_region_size( geometry_t g )
 {
 	return sizeof (MacRegion) + g.n_v_coords * (g.n_h_coords + 2) * 2 + 2;
 }
 
-static size_t max_new_region_size( geometry_t a, geometry_t b )
+static inline
+size_t max_new_region_size( geometry_t a, geometry_t b )
 {
 	const short v =      a.n_v_coords + b.n_v_coords;
 	const short h = max( a.n_h_coords,  b.n_h_coords );
