@@ -331,7 +331,7 @@ namespace Pedestal
 		
 		if ( err != errAEEventNotHandled )
 		{
-			Mac::ThrowOSStatus( err );
+			DebugBeep();
 		}
 	}
 	
