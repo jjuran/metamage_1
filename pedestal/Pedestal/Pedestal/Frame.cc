@@ -14,16 +14,20 @@
 #ifndef __EVENTS__
 #include <Events.h>
 #endif
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
 
-// Nitrogen
-#include "Nitrogen/Quickdraw.hh"
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAW_H
+#include "missing/Quickdraw.h"
+#endif
+#endif
 
 
 namespace Pedestal
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	static inline Rect GetPaddingBox( const Rect& bounds, const Rect& margin )
 	{
@@ -39,7 +43,11 @@ namespace Pedestal
 	
 	static inline Rect GetApertureFromBox( const Rect& box, short padding )
 	{
-		return N::InsetRect( box, padding, padding );
+		Rect aperture = box;
+		
+		InsetRect( &aperture, padding, padding );
+		
+		return aperture;
 	}
 	
 	static inline Rect GetAperture( const Rect& bounds, const Rect& margin, short padding )
@@ -58,7 +66,11 @@ namespace Pedestal
 		
 		const Rect box = GetPaddingBox( itsSavedBounds, margin );
 		
-		return N::PtInRect( N::GlobalToLocal( event.where ), box );
+		Point pt = event.where;
+		
+		GlobalToLocal( &pt );
+		
+		return PtInRect( pt, &box );
 	}
 	
 	void Frame::Draw( const Rect& bounds, bool erasing )
@@ -86,7 +98,9 @@ namespace Pedestal
 			Rect left  = frame;
 			Rect right = frame;
 			
-			const Rect offsets = erasing ? margin : N::SetRect( 0, 0, 0, 0 );
+			Rect empty = {};
+			
+			const Rect offsets = erasing ? margin : empty;
 			
 			top.bottom = top.top   + offsets.top  + padding;
 			left.right = left.left + offsets.left + padding;
@@ -94,10 +108,10 @@ namespace Pedestal
 			bottom.top = bottom.bottom - offsets.bottom - padding;
 			right.left = right.right   - offsets.right  - padding;
 			
-			N::EraseRect( top    );
-			N::EraseRect( left   );
-			N::EraseRect( right  );
-			N::EraseRect( bottom );
+			EraseRect( &top    );
+			EraseRect( &left   );
+			EraseRect( &right  );
+			EraseRect( &bottom );
 		}
 		
 		Subview().Draw( aperture, erasing );
@@ -108,20 +122,22 @@ namespace Pedestal
 			
 			const short outset = width + offset;
 			
-			const Rect outline_bounds = N::InsetRect( box, -outset, -outset );
+			Rect outline_bounds = box;
 			
-			N::PenSize( width, width );
+			InsetRect( &outline_bounds, -outset, -outset );
+			
+			PenSize( width, width );
 			
 			if ( const short diameter = OutlineCurvature() )
 			{
-				::FrameRoundRect( &outline_bounds, diameter, diameter );
+				FrameRoundRect( &outline_bounds, diameter, diameter );
 			}
 			else
 			{
-				N::FrameRect( outline_bounds );
+				FrameRect( &outline_bounds );
 			}
 			
-			N::PenNormal();
+			PenNormal();
 		}
 	}
 	
