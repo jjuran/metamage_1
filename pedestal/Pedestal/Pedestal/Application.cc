@@ -29,9 +29,6 @@
 // Annex
 #include "Annex/MacTypes.h"
 
-// Nostalgia
-#include "Nostalgia/LowMem.hh"
-
 // mac-config
 #include "mac_config/adb.hh"
 #include "mac_config/apple-events.hh"
@@ -67,10 +64,6 @@
 // Debug
 #include "debug/assert.hh"
 
-// Nitrogen
-#include "Nitrogen/MacErrors.hh"
-#include "Nitrogen/Quickdraw.hh"
-
 // Pedestal
 #include "Pedestal/ADBKeyboard.hh"
 #include "Pedestal/ClickTarget.hh"
@@ -99,9 +92,6 @@ bool has_WaitNextEvent()
 
 namespace Pedestal
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	const uint32_t gestaltAppleEventsAttr = 'evnt';
 	
@@ -353,7 +343,9 @@ namespace Pedestal
 	
 	static void RespondToContent( const EventRecord& event, WindowRef window )
 	{
-		Point pt = N::GlobalToLocal( event.where );
+		Point pt = event.where;
+		
+		GlobalToLocal( &pt );
 		
 		ControlRef control;
 		
