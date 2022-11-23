@@ -98,15 +98,20 @@ namespace Pedestal
 			Rect left  = frame;
 			Rect right = frame;
 			
-			Rect empty = {};
+			top.bottom = top.top   + padding;
+			left.right = left.left + padding;
 			
-			const Rect offsets = erasing ? margin : empty;
+			bottom.top = bottom.bottom - padding;
+			right.left = right.right   - padding;
 			
-			top.bottom = top.top   + offsets.top  + padding;
-			left.right = left.left + offsets.left + padding;
-			
-			bottom.top = bottom.bottom - offsets.bottom - padding;
-			right.left = right.right   - offsets.right  - padding;
+			if ( erasing )
+			{
+				top.bottom += margin.top;
+				left.right += margin.left;
+				
+				bottom.top -= margin.bottom;
+				right.left -= margin.right;
+			}
 			
 			EraseRect( &top    );
 			EraseRect( &left   );
