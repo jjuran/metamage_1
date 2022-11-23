@@ -17,12 +17,6 @@
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/scoped_clipRect.hh"
 
-// Nitrogen
-#include "Nitrogen/Quickdraw.hh"
-
-// ClassicToolbox
-#include "ClassicToolbox/MacWindows.hh"
-
 // Pedestal
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowStorage.hh"
@@ -33,9 +27,6 @@ using mac::qd::get_portRect;
 
 namespace Pedestal
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	static inline
 	bool window_is_resizable( WindowRef window )
@@ -71,6 +62,16 @@ namespace Pedestal
 	}
 	
 	
+	static inline
+	void inval_rect( const Rect& rect )
+	{
+	#if CALL_NOT_IN_CARBON
+		
+		InvalRect( &rect );
+		
+	#endif
+	}
+	
 	void window_activated( WindowRef window, bool activating )
 	{
 		if ( View* view = get_window_view( window ) )
@@ -80,7 +81,7 @@ namespace Pedestal
 		
 		if ( window_has_grow_icon( window ) )
 		{
-			N::InvalRect( GrowBoxBounds( window ) );
+			inval_rect( GrowBoxBounds( window ) );
 		}
 	}
 	
