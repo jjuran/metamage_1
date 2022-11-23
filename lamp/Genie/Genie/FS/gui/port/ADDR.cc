@@ -23,6 +23,7 @@
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/screenBits.hh"
+#include "mac_qd/scoped_port.hh"
 
 // mac-app-utils
 #include "mac_app/Window_menu.hh"
@@ -35,12 +36,6 @@
 #include "plus/serialize.hh"
 #include "plus/simple_map.hh"
 #include "plus/string/concat.hh"
-
-// nucleus
-#include "nucleus/saved.hh"
-
-// Nitrogen
-#include "Nitrogen/Quickdraw.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/MacWindows.hh"
@@ -498,25 +493,6 @@ namespace Genie
 	}
 	
 	
-	class SetWindowPort_Scope
-	{
-		private:
-			n::saved< N::Port > savePort;
-			
-			SetWindowPort_Scope           ( const SetWindowPort_Scope& );
-			SetWindowPort_Scope& operator=( const SetWindowPort_Scope& );
-		
-		public:
-			SetWindowPort_Scope()
-			{
-			}
-			
-			SetWindowPort_Scope( WindowRef window )
-			{
-				N::SetPortWindowPort( window );
-			}
-	};
-	
 	static void InvalidateWindowRef( WindowRef window )
 	{
 		ASSERT( window != NULL );
@@ -540,7 +516,7 @@ namespace Genie
 		{
 			if ( window == FrontWindow() )
 			{
-				SetWindowPort_Scope scope( window );
+				mac::qd::scoped_port scope( window );
 				
 				view.Focus();
 			}
@@ -553,7 +529,7 @@ namespace Genie
 		{
 			if ( window == FrontWindow() )
 			{
-				SetWindowPort_Scope scope( window );
+				mac::qd::scoped_port scope( window );
 				
 				view.Blur();
 			}
@@ -576,7 +552,7 @@ namespace Genie
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
 		{
-			SetWindowPort_Scope scope( window );
+			mac::qd::scoped_port scope( window );
 			
 			Rect bounds = mac::qd::get_portRect( window );
 			
@@ -595,7 +571,7 @@ namespace Genie
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
 		{
-			SetWindowPort_Scope scope( window );
+			mac::qd::scoped_port scope( window );
 			
 			view.Uninstall();
 			

@@ -27,6 +27,9 @@
 #include "mac_sys/has/ColorQuickDraw.hh"
 #include "mac_sys/windowlist_contains.hh"
 
+// mac-qd-utils
+#include "mac_qd/scoped_port.hh"
+
 // mac-ui-utils
 #include "mac_ui/windows.hh"
 
@@ -43,9 +46,6 @@
 #include "plus/reconstruct.hh"
 #include "plus/serialize.hh"
 #include "plus/var_string.hh"
-
-// nucleus
-#include "nucleus/saved.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -104,7 +104,6 @@ namespace Nitrogen
 namespace Genie
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
@@ -332,9 +331,7 @@ namespace Genie
 				p7::throw_errno( ENOENT );
 			}
 			
-			n::saved< N::Port > savePort;
-			
-			SetPortWindowPort( window );
+			mac::qd::scoped_port thePort( window );
 			
 			SetColor( color );
 			
@@ -351,9 +348,7 @@ namespace Genie
 		
 		static void Set( WindowRef window, short fontID )
 		{
-			n::saved< N::Port > savePort;
-			
-			SetPortWindowPort( window );
+			mac::qd::scoped_port thePort( window );
 			
 			::TextFont( fontID );
 			
@@ -370,9 +365,7 @@ namespace Genie
 		
 		static void Set( WindowRef window, short size )
 		{
-			n::saved< N::Port > savePort;
-			
-			SetPortWindowPort( window );
+			mac::qd::scoped_port thePort( window );
 			
 			::TextSize( size );
 			
