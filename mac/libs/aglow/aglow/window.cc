@@ -10,20 +10,18 @@
 #include <Carbon/Carbon.h>
 #endif
 
-// mac-config
-#include "mac_config/upp-macros.hh"
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAW_H
+#include "missing/Quickdraw.h"
+#endif
+#endif
 
 // mac-qd-utils
-#include "mac_qd/get_portRect.hh"
 #include "mac_qd/main_display_bounds.hh"
 
-// mac-ui-utils
-#include "mac_ui/windows.hh"
-
 // rasterlib
-#include "raster/clut.hh"
-#include "raster/clut_detail.hh"
-#include "raster/load.hh"
+#include "raster/raster.hh"
 
 
 using raster::raster_desc;
