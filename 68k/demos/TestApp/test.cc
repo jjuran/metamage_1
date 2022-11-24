@@ -23,6 +23,9 @@
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/wide_drag_area.hh"
 
+// mac-ui-utils
+#include "mac_ui/windows.hh"
+
 // Nostalgia
 #include "Nostalgia/MacWindows.hh"
 
@@ -46,31 +49,11 @@ static const Rect grow_size =
 };
 
 static
-Point get_window_topLeft( WindowRef w )
-{
-#if ! TARGET_API_MAC_CARBON
-	
-	const Rect& bitmap_bounds = w->portBits.bounds;
-	
-	Point topLeft = { -bitmap_bounds.top, -bitmap_bounds.left };
-	
-	return topLeft;
-	
-#endif
-	
-	Rect bounds;
-	
-	GetWindowBounds( w, kWindowContentRgn, &bounds );
-	
-	return *(Point*) &bounds;
-}
-
-static
 void move_front_window( short dh, short dv )
 {
 	if ( WindowRef front = FrontWindow() )
 	{
-		Point topLeft = get_window_topLeft( front );
+		Point topLeft = mac::ui::get_window_position( front );
 		
 		topLeft.h += dh;
 		topLeft.v += dv;
