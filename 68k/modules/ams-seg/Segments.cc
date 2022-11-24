@@ -293,10 +293,6 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	Ptr alloc = MemTop ? stack_bottom - total_alloc_size
 	                   : NewPtrClear( total_alloc_size );
 	
-	// 'ss' == 0x7373, an odd address and an invalid instruction.
-	
-	fast_memset( alloc, 's', stack_size );
-	
 	// 16. Set CurrentA5.
 	// 17. Set CurStackBase.
 	
@@ -328,11 +324,27 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	
 	void* start = (char*) jump_table + 2;
 	
+	/*
+		Poison the unused stack space.
+		
+		('ss' == 0x7373, an odd address and an invalid instruction.)
+		
+		But wait until we're finished with the stack before poisoning it,
+		and leave room for the return address when we call fast_memset().
+	*/
+	
 	asm
 	{
 		MOVEA.L  CurrentA5,A5
 		MOVEA.L  start,A3
 		MOVE.L   CurStackBase,SP
+		
+		MOVEA.L  alloc,A0
+		MOVE.L   stack_size,D0
+		SUBQ.L   #4,D0          // Don't clobber the return address
+		MOVEQ.L  #'s',D1
+		
+		JSR      0xffffffd6  // fast_memset
 		
 	// 23. Clear D7.
 		MOVEQ.L  #0,D7
