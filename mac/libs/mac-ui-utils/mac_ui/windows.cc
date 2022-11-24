@@ -30,19 +30,26 @@ Point get_window_position( WindowRef window )
 {
 #if ! OPAQUE_TOOLBOX_STRUCTS
 	
+	CGrafPtr port = (CGrafPtr) window;
+	
+	const Rect& bounds = port->portVersion < 0 ? port->portPixMap[0]->bounds
+	                                           : window->portBits.bounds;
+	
 	Point position;
 	
-	position.v = -window->portBits.bounds.top;
-	position.h = -window->portBits.bounds.left;
+	position.v = -bounds.top;
+	position.h = -bounds.left;
 	
 	return position;
 	
-#endif
+#else
 	
 	Rect bounds;
 	GetWindowBounds( window, kWindowGlobalPortRgn, &bounds );
 	
 	return (Point&) bounds;
+	
+#endif
 }
 
 Point get_window_size( WindowRef window )
