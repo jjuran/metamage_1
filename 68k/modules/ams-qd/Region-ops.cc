@@ -97,7 +97,8 @@ size_t max_new_region_size( geometry_t a, geometry_t b )
 	return max_new_region_size( aggregate_geometry );
 }
 
-static void extend_rectangular_region( const MacRegion& in, short* out )
+static inline
+void extend_rectangular_region( const MacRegion& in, short* out )
 {
 	// output buffer must be at least 28 bytes
 	
