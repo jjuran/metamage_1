@@ -29,8 +29,6 @@
 // TestApp
 #include "desktop.hh"
 #include "display.hh"
-#include "fullscreen.hh"
-#include "fullscreen_port.hh"
 
 
 #if TARGET_API_MAC_CARBON
@@ -208,9 +206,6 @@ int main()
 				case keyDown:
 					switch( (char) event.message )
 					{
-						case 0x08:  enter_fullscreen();  break;  // Delete
-						case 0x1B:  leave_fullscreen();  break;  // Esc
-						
 						case 0x1C:  move_front_window( -8, 0 );  break;
 						case 0x1D:  move_front_window(  8, 0 );  break;
 						case 0x1E:  move_front_window( 0, -8 );  break;
@@ -301,11 +296,6 @@ int main()
 					break;
 			}
 		}
-	}
-	
-	if ( ! TARGET_API_MAC_CARBON )
-	{
-		cleanup_screen();
 	}
 	
 	ExitToShell();
