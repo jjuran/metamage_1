@@ -72,7 +72,7 @@ let src_is_txt = -substr( -input_path, 0, 4 ) == ".txt"
 
 let config_data = if src_is_txt then {load input_path} else {""}
 
-let config_lines = config_data.lines() ver bool per comma-separated
+let config_lines = config_data.lines() ver bool per comma-separated or "()"
 
 let config = str^[eval( config_lines, realpath input_path )]
 
