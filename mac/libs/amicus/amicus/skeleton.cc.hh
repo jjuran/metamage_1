@@ -15,6 +15,7 @@
 // amicus
 #include "amicus/display.hh"
 #include "amicus/events.hh"
+#include "amicus/fade.hh"
 
 #include "amicus/shared.cc.hh"
 
@@ -42,7 +43,13 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
 	
+	transition_fader fader;
+	
+	fader.begin();
+	
 	display_capture captured_display;
+	
+	fader.end();
 	
 	CGRect display_bounds = CGDisplayBounds( captured_display.id() );
 	
@@ -151,6 +158,8 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		}
 	}
 	
+	fader.begin();
+	
 	/*
 		Move the native cursor to the same location where we last saw the
 		emulated cursor, so the cursor won't appear to jump when we release
@@ -163,6 +172,8 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	transformed_location.y = last_cursor_location.y * factor + y_offset;
 	
 	move_cursor_to( transformed_location );
+	
+	fader.end();
 }
 
 void initialize()
