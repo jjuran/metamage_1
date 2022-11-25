@@ -21,6 +21,9 @@
 #include <Movies.h>
 #endif
 
+// Tic-tac-toe
+#include "fade.hh"
+
 
 Ptr fullscreen_context;
 
@@ -28,6 +31,8 @@ void begin_fullscreen()
 {
 	if ( fullscreen_context == NULL )
 	{
+		transition_fader fader;
+		
 		WindowRef window;
 		
 		OSErr err = BeginFullScreen( &fullscreen_context,
@@ -46,6 +51,8 @@ void end_fullscreen()
 {
 	if ( fullscreen_context != NULL )
 	{
+		transition_fader fader;
+		
 		EndFullScreen( fullscreen_context, 0 );
 		
 		fullscreen_context = NULL;
