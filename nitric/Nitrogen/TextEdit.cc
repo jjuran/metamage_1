@@ -24,9 +24,6 @@ namespace Nitrogen
 	{
 		TEHandle hTE = ::TENew( &destRect, &viewRect );
 		
-		// Just a guess
-		MemError();
-		
 		if ( hTE == NULL )
 		{
 			Mac::ThrowOSStatus( memFullErr );
