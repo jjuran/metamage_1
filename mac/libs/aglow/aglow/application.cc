@@ -138,7 +138,10 @@ pascal OSStatus ProcessCommand( EventHandlerCallRef  handler,
 		case kZoom100Percent:  // 1/1
 		case kZoom150Percent:  // 3/2
 		case kZoom200Percent:  // 2/1
+		case kZoom250Percent:  // 5/2
 		case kZoom300Percent:  // 3/1
+		case kZoom350Percent:  // 7/2
+		case kZoom400Percent:  // 4/1
 			x_denom = 1 + (id >> 16 & 0x1);
 			x_numer = ((id >> 24 & 0xf) + 1) * x_denom - 1;
 			
@@ -387,18 +390,17 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	const Fixed max_zoom = maximum_zoom( desc.width, desc.height );
 	
-	do
+	const int shifted_max_zoom = max_zoom >> 15;
+	
+	for ( int i = 2 * 4;  i > shifted_max_zoom;  --i )
 	{
-		if ( max_zoom >= 0x30000 )  break;
-		DisableMenuCommand( View, kZoom300Percent );
+		OSType command_ID = ('0' + (i >> 1)) << 24
+		                  | "05"[ i & 1 ]    << 16
+		                  | '0'              <<  8
+		                  | '%';
 		
-		if ( max_zoom >= 0x20000 )  break;
-		DisableMenuCommand( View, kZoom200Percent );
-		
-		if ( max_zoom >= 0x18000 )  break;
-		DisableMenuCommand( View, kZoom150Percent );
+		DisableMenuCommand( View, command_ID );
 	}
-	while ( false );
 	
 	/*
 		Install a Carbon Event handler to respond to

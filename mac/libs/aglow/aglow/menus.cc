@@ -87,7 +87,10 @@ static const menu_item_description View_items[] =
 	{ "\p" "100%", kZoom100Percent },
 	{ "\p" "150%", kZoom150Percent },
 	{ "\p" "200%", kZoom200Percent },
+	{ "\p" "250%", kZoom250Percent },
 	{ "\p" "300%", kZoom300Percent },
+	{ "\p" "350%", kZoom350Percent },
+	{ "\p" "400%", kZoom400Percent },
 };
 
 DEFINE_MENU_WITH_TITLE( Apple, "\x14" );
