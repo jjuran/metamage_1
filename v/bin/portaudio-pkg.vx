@@ -31,7 +31,10 @@ def clone
 		
 		try
 		{
-			run ["grep", "-q", "define " symbol, header]
+			if exists header then
+			{
+				run ["grep", "-q", "define " symbol, header]
+			}
 		}
 		catch
 		{
