@@ -27,6 +27,8 @@
 namespace amicus
 {
 
+CommandMode_state commandmode_state;
+
 int events_fd = -1;
 
 CGPoint cursor_limit;
