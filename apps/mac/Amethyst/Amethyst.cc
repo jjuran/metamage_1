@@ -17,4 +17,6 @@
 	typedef CG_blitter Blitter;
 #endif
 
+static bool overlay_enabled;
+
 #include "amicus/skeleton.cc.hh"
