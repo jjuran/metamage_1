@@ -46,13 +46,34 @@ double x_scale_factor( CGRect frame, double width, double height )
 }
 
 static
+void blit( const raster_load& load )
+{
+	const raster_desc& desc = load.meta->desc;
+	
+	const uint32_t offset = desc.height * desc.stride * desc.frame;
+	
+	Blitter::blit( (Ptr) load.addr + offset );
+}
+
+static
 pascal OSStatus Modifiers_changed( EventHandlerCallRef  handler,
                                    EventRef             event,
                                    void*                userData )
 {
 	OSStatus err;
 	
+	const raster_load& load = *(raster_load*) userData;
+	
+	CommandMode_state prev_state = commandmode_state;
+	
 	err = amicus::send_key_event( event, '\0' );
+	
+	if ( ! commandmode_state != ! prev_state )
+	{
+		overlay_enabled = ! overlay_enabled;
+		
+		blit( load );
+	}
 	
 	return err;
 }
@@ -158,9 +179,20 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		
 		if ( CGEventRef cgevent = CopyEventCGEvent( event ) )
 		{
+			CommandMode_state prev_state = commandmode_state;
+			
 			const bool handled = handle_CGEvent( cgevent );
 			
 			CFRelease( cgevent );
+			
+			if ( ! commandmode_state != ! prev_state )
+			{
+				overlay_enabled = ! overlay_enabled;
+				
+				const uint32_t offset = height * stride * desc.frame;
+				
+				blitter.blit( (Ptr) addr + offset );
+			}
 			
 			if ( handled )
 			{
@@ -174,7 +206,20 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		
 		if ( bool ok = ConvertEventRefToEventRecord( event, &eventRec ) )
 		{
-			if ( handle_EventRecord( eventRec ) )
+			CommandMode_state prev_state = commandmode_state;
+			
+			const bool handled = handle_EventRecord( eventRec );
+			
+			if ( ! commandmode_state != ! prev_state )
+			{
+				overlay_enabled = ! overlay_enabled;
+				
+				const uint32_t offset = height * stride * desc.frame;
+				
+				blitter.blit( (Ptr) addr + offset );
+			}
+			
+			if ( handled )
 			{
 				goto next;
 			}
