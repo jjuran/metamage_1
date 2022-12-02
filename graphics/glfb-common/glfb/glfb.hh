@@ -10,6 +10,8 @@
 namespace glfb
 {
 	
+	extern bool overlay_enabled;
+	
 	void initialize();
 	
 	void set_dimensions( int width, int height );

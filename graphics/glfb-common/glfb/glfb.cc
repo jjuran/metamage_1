@@ -23,6 +23,8 @@
 namespace glfb
 {
 
+bool overlay_enabled;
+
 static int image_width;
 static int image_height;
 
@@ -76,6 +78,8 @@ void initialize()
 	// Leave GL_TEXTURE_BASE_LEVEL set to its default of zero.
 	
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0 );
+	
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 }
 
 void set_dimensions( int width, int height )
@@ -146,6 +150,25 @@ void blit( const void* src_addr )
 	
 	glEnd();
 	glDisable( texture_target );
+	
+	if ( overlay_enabled )
+	{
+		glEnable( GL_BLEND );
+		
+		glColor4f( 0, 0, 0, 0.50 );
+		glBegin( GL_QUADS );
+		
+		glVertex2i( 0,     height );  // top left
+		glVertex2i( width, height );  // top right
+		glVertex2i( width, 0      );  // bottom right
+		glVertex2i( 0,     0      );  // bottom left
+		
+		glEnd();
+		glColor4f( 1, 1, 1, 1 );
+		
+		glDisable( GL_BLEND );
+	}
+	
 	glBindTexture( texture_target, 0 );
 }
 
