@@ -27,6 +27,10 @@ namespace qd  {
 }
 
 #endif  // #if ! OPAQUE_TOOLBOX_STRUCTS
+#else  // #if ! __LP64__
+
+int dummy;
+
 #endif  // #if ! __LP64__
 	
 }
