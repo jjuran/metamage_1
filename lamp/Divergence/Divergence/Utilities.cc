@@ -68,6 +68,10 @@ namespace Divergence
 	#endif
 	}
 	
+#else
+	
+	int dummy;
+	
 #endif  // #if ! __LP64__
 	
 }
