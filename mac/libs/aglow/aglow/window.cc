@@ -69,7 +69,9 @@ Fixed maximum_zoom( short window_width, short window_height )
 	Fixed X_zoom = FixRatio( desk_width,  window_width  );
 	Fixed Y_zoom = FixRatio( desk_height, window_height );
 	
-	Fixed max = X_zoom > Y_zoom ? X_zoom : Y_zoom;
+	// The maximum zoom is the /lesser/ of the max X zoom and max Y zoom.
+	
+	Fixed max = X_zoom < Y_zoom ? X_zoom : Y_zoom;
 	
 	return max;
 }
