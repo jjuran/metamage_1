@@ -268,6 +268,22 @@ static EventTypeSpec Mouse_event[] =
 	{ kEventClassMouse, kEventMouseDragged },
 };
 
+static inline
+bool any_keys_down()
+{
+	KeyMap  keymap;
+	UInt32* keys = (UInt32*) keymap;
+	
+	GetKeys( keymap );
+	
+	/*
+		These will be endian-swapped on x86 and ARM,
+		but we're only checking for zero so we don't care.
+	*/
+	
+	return keys[ 0 ]  ||  keys[ 1 ]  ||  keys[ 2 ]  ||  keys[ 3 ];
+}
+
 static
 pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
                                  EventRef             event,
@@ -297,6 +313,36 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 	
 	const uint8_t action = kind ^ (kind > 1);  // 1, 2, 3 -> 1, 3, 2
 	const uint8_t keypad = is_keypad( vcode ) ? Keypad : 0;
+	
+	if ( commandmode_state )
+	{
+		switch ( kind )
+		{
+			case kEventRawKeyUp:
+				switch ( commandmode_state )
+				{
+					case CommandMode_activated:
+						commandmode_state = CommandMode_quasimode;
+						break;
+					
+					case CommandMode_oneshot:
+						if ( ! any_keys_down() )
+						{
+							commandmode_state = CommandMode_off;
+						}
+						break;
+					
+					default:
+						break;
+				}
+				break;
+		
+			default:
+				break;
+		}
+		
+		return noErr;
+	}
 	
 	err = amicus::send_key_event( event, c, keypad | action );
 	
