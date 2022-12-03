@@ -219,6 +219,32 @@ MenuCommand MenuCommand_for_shifted_zoom( int zoom )
 }
 
 static
+MenuCommand command_to_zoom_in()
+{
+	const int shifted_zoom = shifted_current_zoom + 1;
+	
+	if ( shifted_zoom > shifted_max_zoom )
+	{
+		return current_zoom;
+	}
+	
+	return MenuCommand_for_shifted_zoom( shifted_zoom );
+}
+
+static
+MenuCommand command_to_zoom_out()
+{
+	const int shifted_zoom = shifted_current_zoom - 1;
+	
+	if ( shifted_zoom == 0 )
+	{
+		return current_zoom;
+	}
+	
+	return MenuCommand_for_shifted_zoom( shifted_zoom );
+}
+
+static
 OSStatus choose_zoom( MenuCommand id, const raster_desc& desc );
 
 static
@@ -401,6 +427,14 @@ void command_handler( char c, const raster_desc& desc )
 	{
 		case 'q':  Q_hit = true;  break;
 		case 'x':  X_hit = true;  break;
+		
+		case '=':  // same key as '+'
+			choose_zoom( command_to_zoom_in(), desc );
+			break;
+		
+		case '-':
+			choose_zoom( command_to_zoom_out(), desc );
+			break;
 		
 		default:
 			break;
