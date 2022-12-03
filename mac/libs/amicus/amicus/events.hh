@@ -31,8 +31,6 @@ bool handle_CGEvent( CGEventRef event );
 
 bool handle_EventRecord( const EventRecord& event );
 
-void install_rawKey_handler();
-
 }
 
 #endif

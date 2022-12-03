@@ -8,6 +8,9 @@
 #include <Carbon/Carbon.h>
 #endif
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 // mac-app-utils
 #include "mac_app/event_handlers.hh"
 #include "mac_app/state.hh"
@@ -18,6 +21,9 @@
 #include "amicus/fade.hh"
 
 #include "amicus/shared.cc.hh"
+
+
+#define LENGTH( array )  (sizeof (array) / sizeof *(array))
 
 
 namespace amicus
@@ -38,6 +44,25 @@ double x_scale_factor( CGRect frame, double width, double height )
 	
 	return factor;
 }
+
+static
+pascal OSStatus Modifiers_changed( EventHandlerCallRef  handler,
+                                   EventRef             event,
+                                   void*                userData )
+{
+	OSStatus err;
+	
+	err = amicus::send_key_event( event, '\0' );
+	
+	return err;
+}
+
+DEFINE_CARBON_UPP( EventHandler, Modifiers_changed )
+
+static EventTypeSpec Modifiers_event[] =
+{
+	{ kEventClassKeyboard, kEventRawKeyModifiersChanged },
+};
 
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
@@ -73,7 +98,12 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		active modifier keys.  OS X 10.5+ uses CGEvents and doesn't need this.
 	*/
 	
-	amicus::install_rawKey_handler();
+	EventHandlerRef modifiersHandler;
+	err = InstallApplicationEventHandler( UPP_ARG( Modifiers_changed ),
+	                                      LENGTH( Modifiers_event ),
+	                                      Modifiers_event,
+	                                      (void*) &load,
+	                                      &modifiersHandler );
 	
 #endif
 	

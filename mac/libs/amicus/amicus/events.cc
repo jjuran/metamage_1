@@ -84,14 +84,6 @@ bool is_mouse_moved_event( const EventRecord& event )
 	return event.what == osEvt  &&  masked_message == target_message;
 }
 
-static
-pascal OSStatus eventtap_RawKey( EventHandlerCallRef  handler,
-                                 EventRef             event,
-                                 void*                userData )
-{
-	return send_key_event( event, '\0' );
-}
-
 long send_key_event( EventRef event, char c, uint8_t more_attrs )
 {
 	OSStatus err;
@@ -118,13 +110,6 @@ long send_key_event( EventRef event, char c, uint8_t more_attrs )
 	
 	return noErr;
 }
-
-DEFINE_CARBON_UPP( EventHandler, eventtap_RawKey )
-
-static EventTypeSpec rawKey_event[] =
-{
-	{ kEventClassKeyboard, kEventRawKeyModifiersChanged },
-};
 
 #ifdef MAC_OS_X_VERSION_10_5
 
@@ -256,18 +241,6 @@ bool handle_EventRecord( const EventRecord& event )
 	}
 	
 	return true;
-}
-
-void install_rawKey_handler()
-{
-	OSStatus err;
-	
-	EventHandlerRef rawKeyHandler;
-	err = InstallApplicationEventHandler( UPP_ARG( eventtap_RawKey ),
-	                                      LENGTH( rawKey_event ),
-	                                      rawKey_event,
-	                                      NULL,
-	                                      &rawKeyHandler );
 }
 
 }

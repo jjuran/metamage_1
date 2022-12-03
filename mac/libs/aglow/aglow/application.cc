@@ -312,6 +312,25 @@ static EventTypeSpec Keyboard_event[] =
 	{ kEventClassKeyboard, kEventRawKeyUp     },
 };
 
+static
+pascal OSStatus Modifiers_changed( EventHandlerCallRef  handler,
+                                   EventRef             event,
+                                   void*                userData )
+{
+	OSStatus err;
+	
+	err = amicus::send_key_event( event, '\0' );
+	
+	return err;
+}
+
+DEFINE_CARBON_UPP( EventHandler, Modifiers_changed )
+
+static EventTypeSpec Modifiers_event[] =
+{
+	{ kEventClassKeyboard, kEventRawKeyModifiersChanged },
+};
+
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
@@ -369,6 +388,13 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	                                      NULL,
 	                                      &keyboardHandler );
 	
+	EventHandlerRef modifiersHandler;
+	err = InstallApplicationEventHandler( UPP_ARG( Modifiers_changed ),
+	                                      LENGTH( Modifiers_event ),
+	                                      Modifiers_event,
+	                                      (void*) &load,
+	                                      &modifiersHandler );
+	
 	mac::app::set_Aqua_menu_key( kHICommandQuit, '\0' );
 	mac::app::set_Aqua_menu_key( kHICommandHide, '\0' );
 	
@@ -385,13 +411,6 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		
 		DisableMenuCommand( View, command_ID );
 	}
-	
-	/*
-		Install a Carbon Event handler to respond to
-		changes to the currently active modifier keys.
-	*/
-	
-	amicus::install_rawKey_handler();
 	
 	RunApplicationEventLoop();
 	
