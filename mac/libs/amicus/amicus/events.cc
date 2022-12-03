@@ -89,6 +89,11 @@ pascal OSStatus eventtap_RawKey( EventHandlerCallRef  handler,
                                  EventRef             event,
                                  void*                userData )
 {
+	return send_key_event( event, '\0' );
+}
+
+long send_key_event( EventRef event, char c, uint8_t more_attrs )
+{
 	OSStatus err;
 	
 	UInt32 modifiers = 0;
@@ -109,7 +114,7 @@ pascal OSStatus eventtap_RawKey( EventHandlerCallRef  handler,
 	const uint8_t modes = (modifiers >> 8) & mode_mask;
 	const uint8_t attrs = (modifiers >> 8) & attr_mask;
 	
-	send_key_event( events_fd, '\0', modes, attrs );
+	send_key_event( events_fd, c, modes, attrs | more_attrs );
 	
 	return noErr;
 }
