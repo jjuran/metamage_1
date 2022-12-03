@@ -200,6 +200,17 @@ static EventTypeSpec AmicusUpdate_event[] =
 };
 
 static
+MenuCommand MenuCommand_for_shifted_zoom( int zoom )
+{
+	MenuCommand command_ID = ('0' + (zoom >> 1)) << 24
+	                       | "05"[ zoom & 1 ]    << 16
+	                       | '0'                 <<  8
+	                       | '%';
+	
+	return command_ID;
+}
+
+static
 OSStatus choose_zoom( MenuCommand id, const raster_desc& desc );
 
 static
@@ -610,10 +621,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	for ( int i = 2 * 4;  i > shifted_max_zoom;  --i )
 	{
-		OSType command_ID = ('0' + (i >> 1)) << 24
-		                  | "05"[ i & 1 ]    << 16
-		                  | '0'              <<  8
-		                  | '%';
+		MenuCommand command_ID = MenuCommand_for_shifted_zoom( i );
 		
 		DisableMenuCommand( View, command_ID );
 	}
