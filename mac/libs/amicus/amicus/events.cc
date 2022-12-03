@@ -78,6 +78,83 @@ void handle_mouse_moved_event( CGPoint next_cursor_location )
 }
 
 static inline
+bool any_keys_down()
+{
+	KeyMap  keymap;
+	UInt32* keys = (UInt32*) keymap;
+	
+	GetKeys( keymap );
+	
+	/*
+		These will be endian-swapped on x86 and ARM,
+		but we're only checking for zero so we don't care.
+	*/
+	
+	return keys[ 0 ]  ||  keys[ 1 ]  ||  keys[ 2 ]  ||  keys[ 3 ];
+}
+
+static
+bool strike_commandmode_state()
+{
+	switch ( commandmode_state )
+	{
+		case CommandMode_activated:
+			commandmode_state = CommandMode_quasimode;
+			break;
+		
+		case CommandMode_oneshot:
+			if ( ! any_keys_down() )
+			{
+				commandmode_state = CommandMode_off;
+			}
+			break;
+		
+		default:
+			break;
+	}
+	
+	return true;
+}
+
+static
+void modify_commandmode_state( uint8_t modes )
+{
+	using namespace splode::modes;
+	
+	const uint8_t command_option_control = modes & ~Shift;
+	
+	switch ( commandmode_state )
+	{
+		case CommandMode_off:
+			if ( command_option_control == (Command | Option | Control) )
+			{
+				// Command, Option, Control all down
+				commandmode_state = CommandMode_activated;
+			}
+			break;
+		
+		case CommandMode_oneshot:
+			break;
+		
+		case CommandMode_quasimode:
+			if ( command_option_control == 0 )
+			{
+				// Command, Option, Control all up
+				commandmode_state = CommandMode_off;
+			}
+			break;
+		
+		case CommandMode_activated:
+			if ( command_option_control == 0 )
+			{
+				// Command, Option, Control all up
+				commandmode_state = CommandMode_oneshot;
+			}
+			break;
+	}
+}
+
+static inline
 bool is_mouse_moved_event( const EventRecord& event )
 {
 	const uint32_t target_message = mouseMovedMessage << 24;
@@ -107,6 +184,8 @@ long send_key_event( EventRef event, char c, uint8_t more_attrs )
 	
 	const uint8_t modes = (modifiers >> 8) & mode_mask;
 	const uint8_t attrs = (modifiers >> 8) & attr_mask;
+	
+	modify_commandmode_state( modes );
 	
 	send_key_event( events_fd, c, modes, attrs | more_attrs );
 	
@@ -168,6 +247,21 @@ bool handle_CGEvent( CGEventRef event )
 	
 	uint8_t c = '\0';
 	
+	if ( commandmode_state )
+	{
+		switch ( type )
+		{
+			case kCGEventKeyDown:
+				return true;
+			
+			case kCGEventKeyUp:
+				return strike_commandmode_state();
+			
+			default:
+				break;
+		}
+	}
+	
 	switch ( type )
 	{
 		case kCGEventKeyDown:
@@ -192,6 +286,8 @@ bool handle_CGEvent( CGEventRef event )
 			// fall through
 		case kCGEventFlagsChanged:
 			send_key_event( events_fd, c, modes, attrs );
+			
+			modify_commandmode_state( modes );
 			return true;
 		
 		default:
@@ -219,6 +315,22 @@ bool handle_EventRecord( const EventRecord& event )
 		case mouseUp:
 			handle_mouse_moved_event( CGPointMake( where.h, where.v ) );
 			break;
+	}
+	
+	if ( commandmode_state )
+	{
+		switch ( event.what )
+		{
+			case keyDown:
+			case autoKey:
+				return true;
+			
+			case keyUp:
+				return strike_commandmode_state();
+			
+			default:
+				break;
+		}
 	}
 	
 	switch ( event.what )
