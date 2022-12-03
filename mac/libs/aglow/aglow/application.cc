@@ -298,6 +298,8 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 	
 	OSStatus err;
 	
+	const raster_load& load = *(raster_load*) userData;
+	
 	if ( FrontWindow() != screen_window )
 	{
 		return eventNotHandledErr;
@@ -334,6 +336,9 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 						if ( ! any_keys_down() )
 						{
 							commandmode_state = CommandMode_off;
+							overlay_enabled   = false;
+							
+							blit( load );
 						}
 						break;
 					
@@ -349,7 +354,16 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 		return noErr;
 	}
 	
+	CommandMode_state prev_state = commandmode_state;
+	
 	err = amicus::send_key_event( event, c, keypad | action );
+	
+	if ( ! commandmode_state != ! prev_state )
+	{
+		overlay_enabled = ! overlay_enabled;
+		
+		blit( load );
+	}
 	
 	return err;
 }
@@ -370,7 +384,18 @@ pascal OSStatus Modifiers_changed( EventHandlerCallRef  handler,
 {
 	OSStatus err;
 	
+	const raster_load& load = *(raster_load*) userData;
+	
+	CommandMode_state prev_state = commandmode_state;
+	
 	err = amicus::send_key_event( event, '\0' );
+	
+	if ( ! commandmode_state != ! prev_state )
+	{
+		overlay_enabled = ! overlay_enabled;
+		
+		blit( load );
+	}
 	
 	return err;
 }
@@ -436,7 +461,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	err = InstallApplicationEventHandler( UPP_ARG( Keyboard_action ),
 	                                      LENGTH( Keyboard_event ),
 	                                      Keyboard_event,
-	                                      NULL,
+	                                      (void*) &load,
 	                                      &keyboardHandler );
 	
 	EventHandlerRef modifiersHandler;
