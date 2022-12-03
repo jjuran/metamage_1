@@ -273,7 +273,6 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
                                  EventRef             event,
                                  void*                userData )
 {
-	using namespace splode::modes;
 	using namespace splode::key;
 	
 	OSStatus err;
@@ -292,31 +291,16 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 	                         NULL,
 	                         &vcode );
 	
-	UInt32 modifiers = 0;
-	err = GetEventParameter( event,
-	                         kEventParamKeyModifiers,
-	                         typeUInt32,
-	                         NULL,
-	                         sizeof (UInt32),
-	                         NULL,
-	                         &modifiers );
-	
 	const signed char c = lookup_from_virtual[ vcode & 0x7f ];
-	
-	const uint8_t mode_mask = Command | Shift | Option | Control;
-	const uint8_t attr_mask = Alpha;
 	
 	EventKind kind = GetEventKind( event );
 	
 	const uint8_t action = kind ^ (kind > 1);  // 1, 2, 3 -> 1, 3, 2
 	const uint8_t keypad = is_keypad( vcode ) ? Keypad : 0;
 	
-	const uint8_t modes =  (modifiers >> 8) & mode_mask;
-	const uint8_t attrs = ((modifiers >> 8) & attr_mask) | keypad | action;
+	err = amicus::send_key_event( event, c, keypad | action );
 	
-	send_key_event( events_fd, c, modes, attrs );
-	
-	return noErr;
+	return err;
 }
 
 DEFINE_CARBON_UPP( EventHandler, Keyboard_action )
