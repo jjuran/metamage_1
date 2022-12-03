@@ -200,6 +200,9 @@ static EventTypeSpec AmicusUpdate_event[] =
 };
 
 static
+OSStatus choose_zoom( MenuCommand id, const raster_desc& desc );
+
+static
 pascal OSStatus ProcessCommand( EventHandlerCallRef  handler,
                                 EventRef             event,
                                 void*                userData )
@@ -218,8 +221,12 @@ pascal OSStatus ProcessCommand( EventHandlerCallRef  handler,
 	                         NULL,
 	                         &command );
 	
-	const MenuCommand id = command.commandID;
-	
+	return choose_zoom( command.commandID, desc );
+}
+
+static
+OSStatus choose_zoom( MenuCommand id, const raster_desc& desc )
+{
 	if ( id == current_zoom )
 	{
 		return noErr;
