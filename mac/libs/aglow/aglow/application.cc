@@ -32,6 +32,9 @@
 // rasterlib
 #include "raster/raster.hh"
 
+// glfb-common
+#include "glfb/glfb.hh"
+
 // amicus
 #include "amicus/events.hh"
 #include "amicus/keycodes.hh"
@@ -56,6 +59,8 @@ static bool mid_click;
 
 namespace amicus
 {
+
+using glfb::overlay_enabled;
 
 using raster::raster_desc;
 using raster::raster_load;
