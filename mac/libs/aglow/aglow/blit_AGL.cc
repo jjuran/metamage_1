@@ -17,8 +17,8 @@
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 
-// transcodex
-#include "transcode/8x_1bpp_to_8bpp.hh"
+// glfb-common
+#include "glfb/glfb.hh"
 
 
 static int image_width;
@@ -81,35 +81,12 @@ void create_AGL_context()
 	
 	aglSetCurrentContext( context );
 	
-	/*
-		Don't even check for bitmap support if we don't have rectangle
-		textures.  It's always supported with 2D textures, but not in the
-		older OpenGL hardware -- and falling back to software rendering
-		kills performance.
-	*/
-	
-	glGenTextures( 1, &texture );
-	
-	glBindTexture( texture_target, texture );
-	
-	/*
-		Leave GL_TEXTURE_MAG_FILTER set to its default of GL_LINEAR for now.
-		Perhaps in the future we'll have a switch to use GL_NEAREST instead.
-		
-		Set GL_TEXTURE_MIN_FILTER to GL_LINEAR.  Apparently NVIDIA's GPUs
-		default to GL_NEAREST, which looks terrible when viewing at 50%.
-	*/
-	
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	
-	// Leave GL_TEXTURE_BASE_LEVEL set to its default of zero.
-	
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0 );
+	glfb::initialize();
 }
 
 void destroy_AGL_context()
 {
-	free( texture_data );
+	glfb::terminate();
 	
 	aglDestroyContext( context );
 }
@@ -134,77 +111,12 @@ void attach_to_window( WindowRef window )
 
 void set_AGL_geometry( int stride, int width, int height )
 {
-	glMatrixMode( GL_PROJECTION );
-	glOrtho( 0, width, 0, height, -1, 1 );
-	glMatrixMode( GL_MODELVIEW );
-	
-	image_width  = width;
-	image_height = height;
-	
-	int greater = width > height ? width : height;
-	
-	tex_width  =
-	tex_height = binary_power_up( greater );
-	
-	tex_x1 = 1.0 * image_width  / tex_width;
-	tex_y1 = 1.0 * image_height / tex_height;
-	
-	glTexImage2D( texture_target,
-	              0,
-	              GL_LUMINANCE,
-	              tex_width,
-	              tex_height,
-	              0,
-	              texture_format,
-	              texture_type,
-	              0 );  // NULL
-	
-	if ( ! bitmaps_make_textures )
-	{
-		texture_data = (uint8_t*) malloc( tex_width * tex_height );
-	}
+	glfb::set_dimensions( width, height );
 }
 
 void blit_AGL( const void* src_addr )
 {
-	if ( ! bitmaps_make_textures )
-	{
-		const int n_octets = image_width * image_height / 8u;
-		
-		transcode_8x_1bpp_to_8bpp( src_addr, texture_data, n_octets );
-		
-		src_addr = texture_data;
-	}
-	
-	glBindTexture( texture_target, texture );
-	
-	glTexSubImage2D( texture_target,
-	                 0,
-	                 0,
-	                 0,
-	                 image_width,
-	                 image_height,
-	                 texture_format,
-	                 texture_type,
-	                 src_addr );
-	
-	glClear( GL_COLOR_BUFFER_BIT );
-	
-	glBindTexture( texture_target, texture );
-	glEnable( texture_target );
-	glBegin( GL_QUADS );
-	
-	const int width  = image_width;
-	const int height = image_height;
-	
-	glTexCoord_( 0,      0      ); glVertex2i( 0,     height );  // top left
-	glTexCoord_( tex_x1, 0      ); glVertex2i( width, height );  // top right
-	glTexCoord_( tex_x1, tex_y1 ); glVertex2i( width, 0      );  // bottom right
-	glTexCoord_( 0,      tex_y1 ); glVertex2i( 0,     0      );  // bottom left
-	
-	glEnd();
-	glDisable( texture_target );
-	glBindTexture( texture_target, 0 );
+	glfb::blit( src_addr );
 	
 	glFlush();
 	aglSwapBuffers( context );
