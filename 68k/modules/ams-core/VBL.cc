@@ -144,6 +144,15 @@ short VInstall_patch( QElem* vbl : __A0 )
 		auto_vsync = false;
 	}
 	
+	if ( vbl == VBLQueue.qTail )
+	{
+		ERROR = "VInstall:  Ignoring already-installed VBL task (the tail)";
+		
+		// If we return an error code here, we get no sound in Lemmings.
+		
+		return noErr;
+	}
+	
 	VBLTask* task = (VBLTask*) vbl;
 	
 	short saved_SR = disable_interrupts();
