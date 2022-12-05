@@ -76,6 +76,7 @@ void schedule_VBL_timer()
 	schedule( &VBL_timer_node );
 }
 
+static
 void do_VBL()
 {
 	QElemPtr volatile* slot = &VBLQueue.qHead;
