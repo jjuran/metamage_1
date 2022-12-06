@@ -29,7 +29,7 @@ def mkdir-p
 
 def copy
 {
-	run [ "cp", "-pR", _ ]
+	run [ "cp", "-fpR", _ ]
 }
 
 def vx_Z (script_filename) { "minivx", "-Z", bindir "/" script_filename }
