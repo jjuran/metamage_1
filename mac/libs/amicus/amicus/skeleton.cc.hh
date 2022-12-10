@@ -145,9 +145,11 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	CGRect bounds = CGRectInset( display_bounds, x_offset, y_offset );
 	
-	Blitter blitter( captured_display.id(), bounds );
+	Blitter blitter( captured_display.id() );
 	
 	blitter.prep( stride, width, height );
+	
+	blitter.area( bounds );
 	
 #ifndef MAC_OS_X_VERSION_10_5
 	

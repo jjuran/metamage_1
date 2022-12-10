@@ -21,10 +21,12 @@ class QD_blitter
 		QD_blitter& operator=( const QD_blitter& );
 	
 	public:
-		QD_blitter( CGDirectDisplayID id, CGRect bounds );
+		explicit QD_blitter( CGDirectDisplayID id );
 		~QD_blitter();
 		
 		static void prep( int stride, int width, int height );
+		
+		static void area( CGRect bounds );
 		
 		static void blit( const void* src_addr );
 };

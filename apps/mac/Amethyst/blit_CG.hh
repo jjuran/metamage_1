@@ -21,10 +21,12 @@ class CG_blitter
 		CG_blitter& operator=( const CG_blitter& );
 	
 	public:
-		CG_blitter( CGDirectDisplayID id, CGRect bounds );
+		explicit CG_blitter( CGDirectDisplayID id );
 		~CG_blitter();
 		
 		static void prep( int stride, int width, int height );
+		
+		static void area( CGRect bounds );
 		
 		static void blit( const void* src_addr );
 };

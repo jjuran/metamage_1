@@ -16,13 +16,8 @@ static Rect   dstRect;
 
 #if CONFIG_QUICKDRAW
 
-QD_blitter::QD_blitter( CGDirectDisplayID id, CGRect bounds )
+QD_blitter::QD_blitter( CGDirectDisplayID id )
 {
-	dstRect.top    = (short)  bounds.origin.y;
-	dstRect.left   = (short)  bounds.origin.x;
-	dstRect.bottom = (short) (bounds.origin.y + bounds.size.height);
-	dstRect.right  = (short) (bounds.origin.x + bounds.size.width);
-	
 	// UInt32 cast required for 10.4 PPC, at least
 	
 	captured_display_port = CreateNewPortForCGDisplayID( (UInt32) id );
@@ -41,6 +36,14 @@ void QD_blitter::prep( int stride, int width, int height )
 	srcBits.rowBytes      = stride;
 	srcBits.bounds.bottom = height;
 	srcBits.bounds.right  = width;
+}
+
+void QD_blitter::area( CGRect bounds )
+{
+	dstRect.top    = (short)  bounds.origin.y;
+	dstRect.left   = (short)  bounds.origin.x;
+	dstRect.bottom = (short) (bounds.origin.y + bounds.size.height);
+	dstRect.right  = (short) (bounds.origin.x + bounds.size.width);
 }
 
 void QD_blitter::blit( const void* src_addr )

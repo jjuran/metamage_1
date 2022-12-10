@@ -21,10 +21,12 @@ class CGL_blitter
 		CGL_blitter& operator=( const CGL_blitter& );
 	
 	public:
-		CGL_blitter( CGDirectDisplayID id, CGRect bounds );
+		explicit CGL_blitter( CGDirectDisplayID id );
 		~CGL_blitter();
 		
 		static void prep( int stride, int width, int height );
+		
+		static void area( CGRect bounds );
 		
 		static void blit( const void* src_addr );
 };

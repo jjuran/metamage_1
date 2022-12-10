@@ -19,7 +19,7 @@
 
 static CGLContextObj context;
 
-CGL_blitter::CGL_blitter( CGDirectDisplayID id, CGRect bounds )
+CGL_blitter::CGL_blitter( CGDirectDisplayID id )
 {
 	CGLError err;
 	
@@ -79,11 +79,6 @@ CGL_blitter::CGL_blitter( CGDirectDisplayID id, CGRect bounds )
 	CGLSetCurrentContext( context );
 	
 	glfb::initialize();
-	
-	glViewport( (int) bounds.origin.x,
-	            (int) bounds.origin.y,
-	            (int) bounds.size.width,
-	            (int) bounds.size.height );
 }
 
 CGL_blitter::~CGL_blitter()
@@ -105,6 +100,14 @@ CGL_blitter::~CGL_blitter()
 void CGL_blitter::prep( int stride, int width, int height )
 {
 	glfb::set_dimensions( width, height );
+}
+
+void CGL_blitter::area( CGRect bounds )
+{
+	glViewport( (int) bounds.origin.x,
+	            (int) bounds.origin.y,
+	            (int) bounds.size.width,
+	            (int) bounds.size.height );
 }
 
 void CGL_blitter::blit( const void* src_addr )

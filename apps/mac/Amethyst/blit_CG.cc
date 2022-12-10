@@ -15,10 +15,8 @@ static CGContextRef captured_display_context;
 
 static int w, h, rowBytes;
 
-CG_blitter::CG_blitter( CGDirectDisplayID id, CGRect bounds )
+CG_blitter::CG_blitter( CGDirectDisplayID id )
 {
-	image_bounds = bounds;
-	
 #ifdef MAC_OS_X_VERSION_10_3
 	
 	captured_display_context = CGDisplayGetDrawingContext( id );
@@ -42,6 +40,11 @@ void CG_blitter::prep( int stride, int width, int height )
 	w        = width;
 	h        = height;
 	rowBytes = stride;
+}
+
+void CG_blitter::area( CGRect bounds )
+{
+	image_bounds = bounds;
 }
 
 void CG_blitter::blit( const void* src_addr )
