@@ -78,18 +78,22 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	CGRect display_bounds = CGDisplayBounds( captured_display.id() );
 	
+	const int width  = desc.width;
+	const int height = desc.height;
+	const int stride = desc.stride;
+	
 	void* addr = load.addr;
 	
-	double factor = x_scale_factor( display_bounds, desc.width, desc.height );
+	double factor = x_scale_factor( display_bounds, width, height );
 	
-	double x_offset = (display_bounds.size.width  - factor * desc.width ) / 2;
-	double y_offset = (display_bounds.size.height - factor * desc.height) / 2;
+	double x_offset = (display_bounds.size.width  - factor * width ) / 2;
+	double y_offset = (display_bounds.size.height - factor * height) / 2;
 	
 	CGRect bounds = CGRectInset( display_bounds, x_offset, y_offset );
 	
 	Blitter blitter( captured_display.id(), bounds );
 	
-	blitter.prep( desc.stride, desc.width, desc.height );
+	blitter.prep( stride, width, height );
 	
 #ifndef MAC_OS_X_VERSION_10_5
 	
@@ -107,7 +111,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 #endif
 	
-	cursor_limit = CGPointMake( desc.width, desc.height );
+	cursor_limit = CGPointMake( width, height );
 	
 	CGWarpMouseCursorPosition( CGPointMake( 15, 15 ) );
 	
@@ -137,7 +141,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		
 		if ( eventClass == kEventClassAmicus )
 		{
-			const uint32_t offset = desc.height * desc.stride * desc.frame;
+			const uint32_t offset = height * stride * desc.frame;
 			
 			blitter.blit( (Ptr) addr + offset );
 			goto next;
