@@ -38,6 +38,8 @@ enum CommandMode_state
 	CommandMode_oneshot,
 };
 
+typedef void (*command_handler_proc)( char c );
+
 extern CommandMode_state commandmode_state;
 
 extern int events_fd;
@@ -49,9 +51,10 @@ void move_cursor_to( CGPoint location );
 
 long send_key_event( EventRef event, char c, uint8_t more_attrs = 0 );
 
-bool handle_CGEvent( CGEventRef event );
+bool handle_CGEvent( CGEventRef event, command_handler_proc handler = 0 );
 
-bool handle_EventRecord( const EventRecord& event );
+bool handle_EventRecord( const EventRecord&    event,
+                         command_handler_proc  command_handler = 0 );
 
 }
 

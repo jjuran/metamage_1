@@ -194,7 +194,7 @@ long send_key_event( EventRef event, char c, uint8_t more_attrs )
 
 #ifdef MAC_OS_X_VERSION_10_5
 
-bool handle_CGEvent( CGEventRef event )
+bool handle_CGEvent( CGEventRef event, command_handler_proc command_handler )
 {
 	CGEventType type = CGEventGetType( event );
 	
@@ -257,6 +257,11 @@ bool handle_CGEvent( CGEventRef event )
 		switch ( type )
 		{
 			case kCGEventKeyDown:
+				if ( ! repeat  &&  command_handler )
+				{
+					command_handler( c );
+				}
+				
 				return true;
 			
 			case kCGEventKeyUp:
@@ -299,7 +304,8 @@ bool handle_CGEvent( CGEventRef event )
 
 #endif  // #ifdef MAC_OS_X_VERSION_10_5
 
-bool handle_EventRecord( const EventRecord& event )
+bool handle_EventRecord( const EventRecord&    event,
+                         command_handler_proc  command_handler )
 {
 	Point where = event.where;
 	
@@ -322,6 +328,22 @@ bool handle_EventRecord( const EventRecord& event )
 		switch ( event.what )
 		{
 			case keyDown:
+				if ( command_handler )
+				{
+					/*
+						We can't just grab the low byte of event.message
+						as the char, because the user might be holding the
+						Option key, which would modify the character.
+					*/
+					
+					int8_t key = event.message >> 8;
+					
+					uint8_t c = lookup_from_virtual[ key & 0x7F ];
+					
+					command_handler( c );
+				}
+				
+				// fall through
 			case autoKey:
 				return true;
 			
