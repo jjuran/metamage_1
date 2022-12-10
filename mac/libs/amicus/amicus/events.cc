@@ -245,7 +245,12 @@ bool handle_CGEvent( CGEventRef event )
 	
 	uint8_t attrs = (flags & kCGEventFlagMaskAlphaShift) >> 14;
 	
-	uint8_t c = '\0';
+	bool repeat;
+	repeat = CGEventGetIntegerValueField( event, kCGKeyboardEventAutorepeat );
+	
+	int8_t key = CGEventGetIntegerValueField( event, kCGKeyboardEventKeycode );
+	
+	uint8_t c = lookup_from_virtual[ key & 0x7F ];
 	
 	if ( commandmode_state )
 	{
@@ -265,7 +270,7 @@ bool handle_CGEvent( CGEventRef event )
 	switch ( type )
 	{
 		case kCGEventKeyDown:
-			if ( CGEventGetIntegerValueField( event, kCGKeyboardEventAutorepeat ) )
+			if ( repeat )
 			{
 				attrs += 2;  // augment from key-down to auto-key
 			}
@@ -273,15 +278,10 @@ bool handle_CGEvent( CGEventRef event )
 		case kCGEventKeyUp:
 			attrs += type - (kCGEventKeyDown - 1);  // splode::key::down
 			
-			int8_t key;
-			key = CGEventGetIntegerValueField( event, kCGKeyboardEventKeycode );
-			
 			if ( is_keypad( key ) )
 			{
 				attrs |= splode::key::Keypad;
 			}
-			
-			c = lookup_from_virtual[ key & 0x7F ];
 			
 			// fall through
 		case kCGEventFlagsChanged:
