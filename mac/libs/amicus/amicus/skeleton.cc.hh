@@ -30,6 +30,16 @@ namespace amicus
 {
 
 static
+void command_handler( char c )
+{
+	switch ( c )
+	{
+		default:
+			break;
+	}
+}
+
+static
 double x_scale_factor( CGRect frame, double width, double height )
 {
 	double x_factor = frame.size.width  / width;
@@ -181,7 +191,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		{
 			CommandMode_state prev_state = commandmode_state;
 			
-			const bool handled = handle_CGEvent( cgevent );
+			const bool handled = handle_CGEvent( cgevent, &command_handler );
 			
 			CFRelease( cgevent );
 			
@@ -208,7 +218,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		{
 			CommandMode_state prev_state = commandmode_state;
 			
-			const bool handled = handle_EventRecord( eventRec );
+			bool handled = handle_EventRecord( eventRec, &command_handler );
 			
 			if ( ! commandmode_state != ! prev_state )
 			{
