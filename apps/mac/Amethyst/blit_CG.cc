@@ -9,6 +9,7 @@
 #include "image.hh"
 
 
+static CGRect display_bounds;
 static CGRect image_bounds;
 
 static CGContextRef captured_display_context;
@@ -17,6 +18,8 @@ static int w, h, rowBytes;
 
 CG_blitter::CG_blitter( CGDirectDisplayID id )
 {
+	display_bounds = CGDisplayBounds( id );
+	
 #ifdef MAC_OS_X_VERSION_10_3
 	
 	captured_display_context = CGDisplayGetDrawingContext( id );
@@ -31,8 +34,8 @@ CG_blitter::~CG_blitter()
 		CGContextFlush() doesn't help.
 	*/
 	
-	CGContextFillRect ( captured_display_context, image_bounds );
-	CGContextClearRect( captured_display_context, image_bounds );
+	CGContextFillRect ( captured_display_context, display_bounds );
+	CGContextClearRect( captured_display_context, display_bounds );
 }
 
 void CG_blitter::prep( int stride, int width, int height )
@@ -44,6 +47,8 @@ void CG_blitter::prep( int stride, int width, int height )
 
 void CG_blitter::area( CGRect bounds )
 {
+	CGContextFillRect( captured_display_context, display_bounds );
+	
 	image_bounds = bounds;
 }
 
