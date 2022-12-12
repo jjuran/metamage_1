@@ -24,9 +24,9 @@ class CGL_blitter
 		CGL_blitter( CGDirectDisplayID id, CGRect bounds );
 		~CGL_blitter();
 		
-		void prep( int stride, int width, int height );
+		static void prep( int stride, int width, int height );
 		
-		void blit( const void* src_addr );
+		static void blit( const void* src_addr );
 };
 
 #endif
