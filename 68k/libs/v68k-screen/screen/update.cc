@@ -41,8 +41,6 @@ struct end_sync
 	{
 		if ( the_sync_relay )
 		{
-			memset( the_screen_buffer, '\xFF', the_screen_size );
-			
 			terminate( *the_sync_relay );
 		}
 	}
