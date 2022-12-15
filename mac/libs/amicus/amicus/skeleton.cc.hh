@@ -29,13 +29,31 @@
 namespace amicus
 {
 
+static bool Q_hit;
+static bool X_hit;
+
+static
+void clear_chords()
+{
+	Q_hit = false;
+	X_hit = false;
+}
+
 static
 void command_handler( char c )
 {
 	switch ( c )
 	{
+		case 'q':  Q_hit = true;  break;
+		case 'x':  X_hit = true;  break;
+		
 		default:
 			break;
+	}
+	
+	if ( Q_hit  &&  X_hit )
+	{
+		mac::app::quitting = true;
 	}
 }
 
@@ -77,6 +95,11 @@ pascal OSStatus Modifiers_changed( EventHandlerCallRef  handler,
 	CommandMode_state prev_state = commandmode_state;
 	
 	err = amicus::send_key_event( event, '\0' );
+	
+	if ( ! commandmode_state )
+	{
+		clear_chords();
+	}
 	
 	if ( ! commandmode_state != ! prev_state )
 	{
@@ -195,6 +218,11 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 			
 			CFRelease( cgevent );
 			
+			if ( ! commandmode_state )
+			{
+				clear_chords();
+			}
+			
 			if ( ! commandmode_state != ! prev_state )
 			{
 				overlay_enabled = ! overlay_enabled;
@@ -246,6 +274,8 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 			ReleaseEvent( event );
 		}
 	}
+	
+	close( events_fd );
 	
 	fader.begin();
 	
