@@ -29,6 +29,9 @@
 namespace amicus
 {
 
+static double max_scale_factor = 1;
+static double scale_factor = 1;
+
 static bool Q_hit;
 static bool X_hit;
 
@@ -58,17 +61,12 @@ void command_handler( char c )
 }
 
 static
-double x_scale_factor( CGRect frame, double width, double height )
+double max_scale( CGRect frame, double width, double height )
 {
 	double x_factor = frame.size.width  / width;
 	double y_factor = frame.size.height / height;
 	
 	double factor = x_factor < y_factor ? x_factor : y_factor;
-	
-	if ( factor > 1 )
-	{
-		factor = (int) factor;
-	}
 	
 	return factor;
 }
@@ -138,10 +136,15 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	void* addr = load.addr;
 	
-	double factor = x_scale_factor( display_bounds, width, height );
+	max_scale_factor = max_scale( display_bounds, width, height );
 	
-	double x_offset = (display_bounds.size.width  - factor * width ) / 2;
-	double y_offset = (display_bounds.size.height - factor * height) / 2;
+	if ( max_scale_factor > 1 )
+	{
+		scale_factor = floor( max_scale_factor );
+	}
+	
+	double x_offset = (display_bounds.size.width  - scale_factor * width ) / 2;
+	double y_offset = (display_bounds.size.height - scale_factor * height) / 2;
 	
 	CGRect bounds = CGRectInset( display_bounds, x_offset, y_offset );
 	
@@ -289,8 +292,8 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	CGPoint transformed_location;
 	
-	transformed_location.x = last_cursor_location.x * factor + x_offset;
-	transformed_location.y = last_cursor_location.y * factor + y_offset;
+	transformed_location.x = last_cursor_location.x * scale_factor + x_offset;
+	transformed_location.y = last_cursor_location.y * scale_factor + y_offset;
 	
 	move_cursor_to( transformed_location );
 	
