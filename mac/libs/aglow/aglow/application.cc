@@ -67,6 +67,16 @@ using raster::raster_load;
 
 static bool cursor_hidden;
 
+static bool Q_hit;
+static bool X_hit;
+
+static
+void clear_chords()
+{
+	Q_hit = false;
+	X_hit = false;
+}
+
 static
 void blit( const raster_load& load )
 {
@@ -290,6 +300,24 @@ bool any_keys_down()
 }
 
 static
+void command_handler( char c )
+{
+	switch ( c )
+	{
+		case 'q':  Q_hit = true;  break;
+		case 'x':  X_hit = true;  break;
+		
+		default:
+			break;
+	}
+	
+	if ( Q_hit  &&  X_hit )
+	{
+		QuitApplicationEventLoop();
+	}
+}
+
+static
 pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
                                  EventRef             event,
                                  void*                userData )
@@ -325,6 +353,10 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 	{
 		switch ( kind )
 		{
+			case kEventRawKeyDown:
+				command_handler( c );
+				break;
+			
 			case kEventRawKeyUp:
 				switch ( commandmode_state )
 				{
@@ -389,6 +421,11 @@ pascal OSStatus Modifiers_changed( EventHandlerCallRef  handler,
 	CommandMode_state prev_state = commandmode_state;
 	
 	err = amicus::send_key_event( event, '\0' );
+	
+	if ( ! commandmode_state )
+	{
+		clear_chords();
+	}
 	
 	if ( ! commandmode_state != ! prev_state )
 	{
