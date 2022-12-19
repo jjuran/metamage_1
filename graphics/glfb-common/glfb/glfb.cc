@@ -31,12 +31,25 @@ static int image_height;
 static int tex_width;
 static int tex_height;
 
+#ifdef GL_TEXTURE_RECTANGLE_ARB
+
+const GLenum texture_target = GL_TEXTURE_RECTANGLE_ARB;
+
+#define glTexCoord_ glTexCoord2i
+
+static int tex_x1;
+static int tex_y1;
+
+#else
+
 const GLenum texture_target = GL_TEXTURE_2D;
 
 #define glTexCoord_ glTexCoord2f
 
 static float tex_x1;
 static float tex_y1;
+
+#endif
 
 static GLenum texture_format = GL_LUMINANCE;
 static GLenum texture_type   = GL_UNSIGNED_BYTE;
@@ -75,9 +88,13 @@ void initialize()
 		matter what GL_TEXTURE_MIN_FILTER is set to.
 	*/
 	
+#ifndef GL_TEXTURE_RECTANGLE_ARB
+	
 	// Leave GL_TEXTURE_BASE_LEVEL set to its default of zero.
 	
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0 );
+	
+#endif
 	
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 }
@@ -91,6 +108,16 @@ void set_dimensions( int width, int height )
 	image_width  = width;
 	image_height = height;
 	
+#ifdef GL_TEXTURE_RECTANGLE_ARB
+	
+	tex_width  = image_width;
+	tex_height = image_height;
+	
+	tex_x1 = image_width;
+	tex_y1 = image_height;
+	
+#else
+	
 	int greater = width > height ? width : height;
 	
 	tex_width  =
@@ -98,6 +125,8 @@ void set_dimensions( int width, int height )
 	
 	tex_x1 = 1.0 * image_width  / tex_width;
 	tex_y1 = 1.0 * image_height / tex_height;
+	
+#endif
 	
 	glTexImage2D( texture_target,
 	              0,
