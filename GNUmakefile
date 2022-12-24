@@ -201,7 +201,7 @@ ams-x11-install: ams-x11-build ams-68k-install ams-common-install
 	@echo 'exec interact-x11 "$$@"' >> var/install/bin/interact
 	@chmod +x var/install/bin/interact
 
-ams-quartz-build: $(AMS_REPOS)
+ams-quartz-build: $(AMS_REPOS) macward-compat.git
 	$(BUILD) graft mbin xv68k macvx minivx freemountd Amethyst Amphitheatre
 
 RETROMATIC := PATH="$$PWD/var/out:$$PATH" v/bin/retromatic.vx
