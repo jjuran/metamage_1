@@ -50,6 +50,7 @@ def clone
 	
 	if not exists "var/links/" portaudio_repo then
 	{
+		system "mkdir -p var/links"
 		system "cd var/links && ln -s ../../" portaudio_repo_path
 		system "rm -f var/cache/compile-driver/catalog"
 	}
