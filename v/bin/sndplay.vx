@@ -35,6 +35,30 @@ let sndpipe = import "sndpipe"
 
 let sound = sndpipe.player { output_fd <== _ }
 
+def normalize (wave)
+{
+	let w = wave.key
+	let i = wave.value
+	
+	return w[ i -> 256 ] w[ 0 -> i ] => 0
+}
+
+def blend (waves)
+{
+	let weight = waves map .key per Math.sum
+	
+	let samples = 0 -> 256 map
+	{
+		let i = v
+		
+		byte ((waves map { v.key * (u8 v.value.key[i] - 128) }
+		             per Math.sum)
+		      div weight + 128),
+	}
+	
+	return packed samples => 0
+}
+
 let triangle = do
 {
 	let tooth = 1 -> 128 map {byte (2 * v)} per packed
@@ -42,7 +66,14 @@ let triangle = do
 	packed (tooth x"FF" -tooth x"01") => 64,
 }
 
-def play (score, wave=triangle)
+let root = normalize triangle
+
+let root_x2 = mince root.key    * 2 => 0
+let root_x4 = mince root_x2.key * 2 => 0
+
+let organ = blend [5: root, 2: root_x2, 1: root_x4]
+
+def play (score, wave=organ)
 {
 	sound.four_tone (32767, [ (0: wave) (*) 4 ])
 	
