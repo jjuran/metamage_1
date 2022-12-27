@@ -158,15 +158,18 @@ namespace vlib
 		
 		list_iterator args( v );
 		
-		const plus::string& string = args.use().string();
-		const size_t        stride = args.get().number().clipped();
+		const Value& arg1 = args.use();
+		
+		const size_t stride = args.get().number().clipped();
 		
 		if ( stride == 0 )
 		{
 			THROW( "mince() stride must be positive" );
 		}
 		
-		return String( mince( string, stride ) );
+		return VBytes( mince( arg1.string(), stride ),
+		               arg1.type(),
+		               arg1.dispatch_methods() );
 	}
 	
 	static
@@ -395,11 +398,12 @@ namespace vlib
 	static const Type i32 = i32_vtype;
 	static const Type u32 = u32_vtype;
 	
-	static const Value u32_2( u32, Op_duplicate, two );
-	static const Value mince( string, u32_2 );
-	
 	static const Value bytes( string, Op_union, packed );
-	static const Value x32( u32, Op_union, i32 );
+	static const Value x32  ( u32,    Op_union, i32    );
+	
+	static const Value u32_2( u32, Op_duplicate, two );
+	static const Value mince( bytes, u32_2 );
+	
 	static const Value s_offset( x32, Op_duplicate, zero );
 	static const Value s_length( u32, Op_duplicate, npos );
 	static const Value substr( string, Value( s_offset, s_length ) );
