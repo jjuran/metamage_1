@@ -6,9 +6,11 @@
 #include "mac_qd/get_visRgn.hh"
 
 // missing-macos
+#if ! __LP64__
 #ifdef MAC_OS_X_VERSION_10_7
 #ifndef MISSING_QUICKDRAW_H
 #include "missing/Quickdraw.h"
+#endif
 #endif
 #endif
 
