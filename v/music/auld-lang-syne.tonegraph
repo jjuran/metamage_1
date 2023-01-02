@@ -1,0 +1,111 @@
+# Auld Lang Syne (8-bit arrangement)
+#
+# Copyright 2023 Josh Juran.
+#
+# This /software/ is provided under the terms of the GNU AGPL v3 or later.
+#
+# This /song/ is provided for non-commercial use only.
+#
+# Feel free to perform, record, and share it for the benefit of loved ones.
+# However, you are not permitted to use this song as part of any commercial
+# transaction (unless such permission has been granted separately).
+# Bundling this song with audio or video advertising is absolutely forbidden.
+#
+# (The original melody on which this song is based is in the public domain.)
+#
+# https://en.wikipedia.org/wiki/Auld_Lang_Syne
+
+# 1.059463094359295^12 ~= 2
+# 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
+
+let semitone_numer = 69433
+let semitone_denom = 2^16
+
+def transpose (n, pitch) { pitch * semitone_numer^n div semitone_denom^n }
+
+let C8 = 0x184ada * 2;
+
+let adj = 4  # Key of E major
+let bpm = 96
+let lag = 120 / bpm
+
+def C  (o) { transpose( adj, C8 div 2^(8 - o) ) }
+def Ct (o) { transpose( 1, C o ) }
+def D  (o) { transpose( 2, C o ) }
+def E  (o) { transpose( 4, C o ) }
+def F  (o) { transpose( 5, C o ) }
+def G  (o) { transpose( 7, C o ) }
+def A  (o) { transpose( 9, C o ) }
+def B  (o) { transpose( 11, C o ) }
+
+def h (chord) {8: chord}
+def q (chord) {4: chord}
+def e (chord) {2: chord}
+def x (chord) {1: chord}
+
+def qe (chord) {6: chord}
+def qx (chord) {5: chord}
+
+def qe_ (chord) {qx chord, x chord[ 0 .. 2 ]}
+def e_  (chord) {x  chord, x chord[ 0 .. 2 ]}
+
+def tempo (chords) { *chords }
+
+def rit (chords)
+{
+	var x = 1.0
+	
+	return *(chords map { v.key * (x += 1/12) => v.value })
+}
+
+let audiograph =
+[
+	# 8-bit arrangement and notation copyright 2023 Joshua Juran.
+	
+	tempo
+	[
+		q   [ G 3 ],
+		
+		qe_ [ C 3, E 3, G 3,  C 4 ],
+		e_  [ C 3, E 3, G 3,  C 4 ],
+		q   [ C 3, E 3, G 3,  C 4 ],
+		q   [ C 3, E 3, G 3,  E 4 ],
+		
+		qe  [ D 3, G 3, B 3,  D 4 ],
+		e   [ D 3, G 3, B 3,  Ct 4 ],
+		q   [ D 3, G 3, B 3,  D 4 ],
+		e   [ D 3, G 3, B 3,  E 4 ],
+		e   [ D 3, G 3, B 3,  D 4 ],
+		
+		qe_ [ C 3, E 3, A 3,  C 4 ],
+		e   [ C 3, E 3, A 3,  C 4 ],
+		q   [ C 3, E 3, G 3,  E 4 ],
+		q   [ C 3, E 3, G 3,  G 4 ],
+		
+		h   [ F 2, C 3, A 3,  A 4 ],
+		q   [ F 2, C 3, A 3,      ],
+		q   [ F 2, C 3, A 3,  A 4 ],
+		
+		qe  [ C 3, E 3, G 3,  G 4 ],
+		e_  [ C 3, E 3, G 3,  E 4 ],
+		q   [ A 2, C 3, E 3,  E 4 ],
+		q   [ A 2, C 3, E 3,  C 4 ],
+		
+		qe  [ G 2, B 2, D 3,  D 4 ],
+		e   [ G 2, B 2, D 3,  C 4 ],
+		q   [ G 2, B 2, D 3,  D 4 ],
+		q   [ G 2, B 2, D 3,  E 4 ],
+	],
+	
+	rit
+	[
+		qe  [ E 2, A 2, E 3,  C 4 ],
+		e_  [ E 2, A 2, C 3,  A 3 ],
+		q   [ F 2, C 3, F 3,  A 3 ],
+		q   [ F 2, C 3, F 3,  G 3 ],
+		
+		q   [ C 2, F 3, G 3,  C 4 ],
+		h   [ C 2, E 3, G 3,  C 4 ],
+	]
+]
+map { v.key * lag => v.value }
