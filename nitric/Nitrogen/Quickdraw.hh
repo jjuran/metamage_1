@@ -25,9 +25,11 @@
 #endif
 
 // missing-macos
+#if ! __LP64__
 #ifdef MAC_OS_X_VERSION_10_7
 #ifndef MISSING_QUICKDRAW_H
 #include "missing/Quickdraw.h"
+#endif
 #endif
 #endif
 
@@ -66,6 +68,8 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( QuickDraw );
 	
 	
+#if ! __LP64__
+	
 	// Constants of types defined elsewhere
 	
 	static const Mac::ResID sysPatListID = Mac::ResID( ::sysPatListID );
@@ -74,6 +78,8 @@ namespace Nitrogen
 	static const Mac::ResID crossCursor = Mac::ResID( ::crossCursor );
 	static const Mac::ResID plusCursor  = Mac::ResID( ::plusCursor  );
 	static const Mac::ResID watchCursor = Mac::ResID( ::watchCursor );
+	
+#endif
 	
 	#pragma mark -
 	#pragma mark ** Types **
@@ -87,15 +93,21 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( TransferMode )
 	
+#if ! __LP64__
+	
 	enum PixelType
 	{
 		kPixelType_Max = nucleus::enumeration_traits< ::PixelType >::max
 	};
 	
+#endif
+	
 }
 
 namespace nucleus
 {
+	
+#if ! __LP64__
 	
 	template <> struct disposer< RgnHandle >
 	{
@@ -189,6 +201,8 @@ namespace nucleus
 		}
 	};
 	
+#endif  // #if ! __LP64__
+	
 	
 	template <> struct disposer_class< CGrafPtr >
 	{
@@ -235,6 +249,8 @@ namespace nucleus
 
 namespace Nitrogen
 {
+	
+#if ! __LP64__
 	
 	#pragma mark -
 	#pragma mark ** Routines **
@@ -411,8 +427,12 @@ namespace Nitrogen
 	// RoundRect
 	// Arc
 	
+#endif  // #if ! __LP64__
+	
 //	Region handling
 	nucleus::owned< RgnHandle > NewRgn();
+	
+#if ! __LP64__
 	
 //	extern void OpenRgn(void)
 	using ::OpenRgn;
@@ -937,10 +957,14 @@ namespace Nitrogen
 			void set( param_type region ) const  { SetClip( region ); }
 	};
 	
+#endif  // #if ! __LP64__
+	
 }
 
 namespace nucleus
 {
+	
+#if ! __LP64__
 	
 	template <>
 	struct swap_with_saved< Nitrogen::Port >
@@ -994,6 +1018,8 @@ namespace nucleus
 	{
 		return Nitrogen::MacOffsetRect( r, -pt );
 	}
+	
+#endif  // #if ! __LP64__
 	
 	inline bool operator==( const Point& a, const Point& b )
 	{

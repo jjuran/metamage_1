@@ -48,6 +48,8 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
 	nucleus::owned< RgnHandle > GetClip()
 	{
 		nucleus::owned< RgnHandle > result = NewRgn();
@@ -243,6 +245,8 @@ namespace Nitrogen
 	}
 	
 #endif
+	
+#endif  // #if ! __LP64__
 	
 	void RegisterQuickDrawErrors()
 	{

@@ -78,12 +78,16 @@ namespace Nitrogen {
 		return nucleus::owned<HIShapeRef>::seize ( result );
 		}
 
+#if ! __LP64__
+
 	inline nucleus::owned<RgnHandle> HIShapeGetAsQDRgn ( HIShapeRef inShape ) {
 		nucleus::owned<RgnHandle> result = nucleus::owned<RgnHandle>::seize ( NewRgn ());
 		Mac::ThrowOSStatus ( ::HIShapeGetAsQDRgn ( inShape, result ));
 		return result;
 		}
 	
+#endif  // #if ! __LP64__
+
 /*======================================================================================*/
 /*  MUTABLE FUNCTIONS                                                                   */
 /*======================================================================================*/

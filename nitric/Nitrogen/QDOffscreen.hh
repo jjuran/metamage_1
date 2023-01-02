@@ -27,9 +27,11 @@
 #endif
 
 // missing-macos
+#if ! __LP64__
 #ifdef MAC_OS_X_VERSION_10_7
 #ifndef MISSING_QDOFFSCREEN_H
 #include "missing/QDOffscreen.h"
+#endif
 #endif
 #endif
 
