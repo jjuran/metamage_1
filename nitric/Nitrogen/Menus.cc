@@ -56,20 +56,6 @@ namespace Nitrogen
       return nucleus::owned<MenuRef>::seize( result );
      }
    
-   MenuFont GetMenuFont( MenuRef menu )
-     {
-      MenuFont result;
-      SInt16 fontID;
-      ThrowOSStatus( ::GetMenuFont( menu, &fontID, &result.fontSize ) );
-      result.fontID = FontID( fontID );
-      return result;
-     }
-
-   void SetMenuFont( MenuRef menu, FontID inFontID, UInt16 inFontSize )
-     {
-      ThrowOSStatus( ::SetMenuFont( menu, inFontID, inFontSize ) );
-     }
-   
    void SetMenuExcludesMarkColumn( MenuRef menu, bool excludesMark )
      {
       ThrowOSStatus( ::SetMenuExcludesMarkColumn( menu, excludesMark ) );

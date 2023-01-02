@@ -55,8 +55,8 @@
 #include "Mac/Resources/Utilities/Checked_Resource.hh"
 #endif
 
-#ifndef NITROGEN_FONTS_HH
-#include "Nitrogen/Fonts.hh"
+#ifndef NITROGEN_STR_HH
+#include "Nitrogen/Str.hh"
 #endif
 
 #ifdef GetMenuRef
@@ -168,17 +168,6 @@ namespace Nitrogen
 	
 	using ::CountMenuItems;
 	
-   struct MenuFont
-     {
-      FontID fontID;
-      UInt16 fontSize;
-     };
-   
-   MenuFont GetMenuFont( MenuRef menu );
-
-   void SetMenuFont( MenuRef menu, FontID inFontID, UInt16 inFontSize );
-   inline void SetMenuFont( MenuRef menu, MenuFont font )         { SetMenuFont( menu, font.fontID, font.fontSize ); }
-   
    inline bool GetMenuExcludesMarkColumn( MenuRef menu )          { return ::GetMenuExcludesMarkColumn( menu ); }
    void SetMenuExcludesMarkColumn( MenuRef menu, bool excludesMark ); 
    
