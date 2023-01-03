@@ -6,16 +6,17 @@
 #ifndef GETMACPATHNAME_HH
 #define GETMACPATHNAME_HH
 
+// mac-types
+#include "mac_types/VRefNum_DirID.hh"
+
 // plus
 #include "plus/string.hh"
 
-// Nitrogen
-#ifndef MAC_FILES_TYPES_FSDIRSPEC_HH
-#include "Mac/Files/Types/FSDirSpec.hh"
-#endif
+// #include <Files.h>
+struct FSSpec;
 
 
-plus::string GetMacPathname( const Mac::FSDirSpec&  dir  );
-plus::string GetMacPathname( const FSSpec&          file );
+plus::string GetMacPathname( const mac::types::VRefNum_DirID&  dir  );
+plus::string GetMacPathname( const FSSpec&                     file );
 
 #endif
