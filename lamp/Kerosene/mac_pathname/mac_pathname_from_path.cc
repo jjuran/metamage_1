@@ -23,7 +23,7 @@
 #include "Mac/Toolbox/Types/OSStatus.hh"
 
 // GetPathname
-#include "GetPathname.hh"
+#include "GetMacPathname.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"

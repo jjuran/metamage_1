@@ -1,11 +1,9 @@
 /*
 	GetMacPathname.cc
 	-----------------
-	
-	Joshua Juran
 */
 
-#include "GetPathname.hh"
+#include "GetMacPathname.hh"
 
 // plus
 #include "plus/var_string.hh"

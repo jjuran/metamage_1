@@ -17,7 +17,7 @@
 #include "plus/mac_utf8.hh"
 
 // GetPathname
-#include "GetPathname.hh"
+#include "GetMacPathname.hh"
 
 // vfs
 #include "vfs/node.hh"

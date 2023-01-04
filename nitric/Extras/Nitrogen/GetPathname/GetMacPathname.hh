@@ -1,10 +1,10 @@
-/*	==============
- *	GetPathname.hh
- *	==============
- */
+/*
+	GetMacPathname.hh
+	-----------------
+*/
 
-#ifndef GETPATHNAME_HH
-#define GETPATHNAME_HH
+#ifndef GETMACPATHNAME_HH
+#define GETMACPATHNAME_HH
 
 // plus
 #include "plus/string.hh"
