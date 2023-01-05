@@ -208,7 +208,7 @@ namespace Genie
 		const short outer_width  = (bounds.right - bounds.left) - 2 * padding;
 		const short outer_height = (bounds.bottom - bounds.top) - 2 * padding;
 		
-		Rect margin = N::SetRect( 0, 0, 0, 0 );
+		Rect margin = {};
 		
 		if ( width.flags  &&  !margin_left.flags )
 		{
