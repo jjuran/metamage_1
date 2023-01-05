@@ -265,7 +265,10 @@ namespace TestEdit
 		
 		TERec& te = **itsTE;
 		
-		te.destRect = N::OffsetRect( te.viewRect, 0, -v );
+		te.destRect = te.viewRect;
+		
+		te.destRect.top    -= v;
+		te.destRect.bottom -= v;
 	}
 	
 	class Frame : public Ped::Frame
@@ -285,10 +288,17 @@ namespace TestEdit
 			short OutlineOffset   () const  { return 0; }
 			short OutlineCurvature() const  { return 0; }
 			
-			Rect Margin( const Rect& bounds ) const  { return N::SetRect( 0, 0, 0, 0 ); }
+			Rect Margin( const Rect& bounds ) const;
 			
 			Ped::View& Subview()  { return itsScroller; }
 	};
+	
+	Rect Frame::Margin( const Rect& bounds ) const
+	{
+		Rect margin = {};
+		
+		return margin;
+	}
 	
 	
 	static Rect MakeVBounds( const Rect& bounds )
@@ -432,12 +442,22 @@ namespace TestEdit
 	{
 		const Rect& screenBounds = mac::qd::screenBits().bounds;
 		
-		Rect rect = N::SetRect(0, 18, 2*4+6*80+16, 18+2*4+11*25+16);
+		Rect rect = { 18, 0, 18+2*4+11*25+16, 2*4+6*80+16 };
+		
 		short mbarHeight = ::GetMBarHeight();
 		short vMargin = (screenBounds.bottom - rect.bottom) - mbarHeight;
 		short hMargin = (screenBounds.right - rect.right);
 		
-		return N::OffsetRect(rect, hMargin / 2, mbarHeight + vMargin / 3);
+		hMargin /= 2;
+		vMargin /= 3;
+		vMargin += mbarHeight;
+		
+		rect.left  += hMargin;
+		rect.right += hMargin;
+		rect.top    += vMargin;
+		rect.bottom += vMargin;
+		
+		return rect;
 	}
 	
 	static inline boost::intrusive_ptr< Ped::View > MakeView()
