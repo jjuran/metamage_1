@@ -73,21 +73,21 @@ namespace Vertice
 			return Ped::CreateWindow( bounds, "\p" );
 		}
 		
-		Mac::WindowAttributes attrs = Mac::kWindowCloseBoxAttribute
-		                            | Mac::kWindowResizableAttribute
-		                            | Mac::kWindowCollapseBoxAttribute
-		                          #ifdef MAC_OS_X_VERSION_10_3  // not 10.2
-		                            | Mac::kWindowCompositingAttribute
-		                          #endif
-		                          #ifdef MAC_OS_X_VERSION_10_3
-		                            | Mac::kWindowAsyncDragAttribute
-		                          #endif
-		                          #ifdef MAC_OS_X_VERSION_10_7
-		                            | Mac::kWindowHighResolutionCapableAttribute
-		                          #endif
-		                            ;
+		WindowAttributes attrs = kWindowCloseBoxAttribute
+		                       | kWindowResizableAttribute
+		                       | kWindowCollapseBoxAttribute
+		                     #ifdef MAC_OS_X_VERSION_10_3  // not 10.2
+		                       | kWindowCompositingAttribute
+		                     #endif
+		                     #ifdef MAC_OS_X_VERSION_10_3
+		                       | kWindowAsyncDragAttribute
+		                     #endif
+		                     #ifdef MAC_OS_X_VERSION_10_7
+		                       | kWindowHighResolutionCapableAttribute
+		                     #endif
+		                       ;
 		
-		return Ped::CreateWindow( Mac::kDocumentWindowClass, attrs, bounds );
+		return Ped::CreateWindow( kDocumentWindowClass, attrs, bounds );
 	}
 	
 	static

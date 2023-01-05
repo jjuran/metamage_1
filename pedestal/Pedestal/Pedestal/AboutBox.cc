@@ -403,17 +403,17 @@ namespace Pedestal
 	static
 	n::owned< WindowRef > NewAboutBox()
 	{
-		const Mac::WindowAttributes attrs = Mac::kWindowCloseBoxAttribute
-		                                #if CONFIG_COMPOSITING
-		                                  | Mac::kWindowCompositingAttribute
-		                                #endif
-		                                #ifdef MAC_OS_X_VERSION_10_3
-		                                  | Mac::kWindowAsyncDragAttribute
-		                                #endif
-		                                #ifdef MAC_OS_X_VERSION_10_7
-		                                  | Mac::kWindowHighResolutionCapableAttribute
-		                                #endif
-		                                  ;
+		const WindowAttributes attrs = kWindowCloseBoxAttribute
+		                           #if CONFIG_COMPOSITING
+		                             | kWindowCompositingAttribute
+		                           #endif
+		                           #ifdef MAC_OS_X_VERSION_10_3
+		                             | kWindowAsyncDragAttribute
+		                           #endif
+		                           #ifdef MAC_OS_X_VERSION_10_7
+		                             | kWindowHighResolutionCapableAttribute
+		                           #endif
+		                             ;
 		
 		Rect bounds = { 0, 0, kAboutBoxHeight, kAboutBoxWidth };
 		
@@ -424,11 +424,11 @@ namespace Pedestal
 		n::owned< WindowRef > window = CreateWindow( bounds,
 		                                             "\p" "About",
 		                                             true,
-		                                             Mac::noGrowDocProc );
+		                                             noGrowDocProc );
 		
 	#else
 		
-		n::owned< WindowRef > window = CreateWindow( Mac::kDocumentWindowClass,
+		n::owned< WindowRef > window = CreateWindow( kDocumentWindowClass,
 		                                             attrs,
 		                                             bounds );
 		

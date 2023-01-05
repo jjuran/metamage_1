@@ -371,11 +371,11 @@ namespace Pedestal
 		return result;
 	}
 	
-	n::owned< WindowRef > CreateWindow( const Rect&           bounds,
-	                                    ConstStr255Param      title,
-	                                    bool                  visible,
-	                                    Mac::WindowDefProcID  procID,
-	                                    bool                  goAwayFlag )
+	n::owned< WindowRef > CreateWindow( const Rect&       bounds,
+	                                    ConstStr255Param  title,
+	                                    bool              visible,
+	                                    WindowDefProcID   procID,
+	                                    bool              goAwayFlag )
 	{
 		using mac::app::new_window;
 		
@@ -427,9 +427,9 @@ namespace Pedestal
 		return finish_window( window, disposer );
 	}
 	
-	n::owned< WindowRef > CreateWindow( Mac::WindowClass       wClass,
-	                                    Mac::WindowAttributes  attrs,
-	                                    const Rect&            bounds )
+	n::owned< WindowRef > CreateWindow( WindowClass       wClass,
+	                                    WindowAttributes  attrs,
+	                                    const Rect&       bounds )
 	{
 		OSStatus err;
 		

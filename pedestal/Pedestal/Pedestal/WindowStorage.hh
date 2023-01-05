@@ -22,15 +22,6 @@
 #endif
 
 // Nitrogen
-#ifndef MAC_WINDOWS_TYPES_WINDOWATTRIBUTES_HH
-#include "Mac/Windows/Types/WindowAttributes.hh"
-#endif
-#ifndef MAC_WINDOWS_TYPES_WINDOWCLASS_HH
-#include "Mac/Windows/Types/WindowClass.hh"
-#endif
-#ifndef MAC_WINDOWS_TYPES_WINDOWDEFPROCID_HH
-#include "Mac/Windows/Types/WindowDefProcID.hh"
-#endif
 #ifndef MAC_WINDOWS_TYPES_WINDOWREF_HH
 #include "Mac/Windows/Types/WindowRef.hh"
 #endif
@@ -38,6 +29,8 @@
 
 namespace Pedestal
 {
+	
+	typedef short WindowDefProcID;
 	
 	typedef void (*WindowClosed_proc )( WindowRef window );
 	typedef void (*WindowResized_proc)( WindowRef window );
@@ -66,15 +59,15 @@ namespace Pedestal
 	
 	nucleus::owned< WindowRef >
 	//
-	CreateWindow( const Rect&           bounds,
-	              ConstStr255Param      title     = "\p",
-	              bool                  visible   = true,
-	              Mac::WindowDefProcID  procID    = Mac::documentProc,
-	              bool                  hasGoAway = true );
+	CreateWindow( const Rect&       bounds,
+	              ConstStr255Param  title     = "\p",
+	              bool              visible   = true,
+	              WindowDefProcID   procID    = documentProc,
+	              bool              hasGoAway = true );
 	
-	nucleus::owned< WindowRef > CreateWindow( Mac::WindowClass       wClass,
-	                                          Mac::WindowAttributes  attrs,
-	                                          const Rect&            bounds );
+	nucleus::owned< WindowRef > CreateWindow( WindowClass       wClass,
+	                                          WindowAttributes  attrs,
+	                                          const Rect&       bounds );
 	
 }
 
