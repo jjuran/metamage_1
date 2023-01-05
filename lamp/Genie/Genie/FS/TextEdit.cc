@@ -92,7 +92,6 @@ namespace Genie
 	
 	TextEditParameters::TextEditParameters()
 	:
-		itsTextDimensions( N::SetPt( 0, 0 ) ),
 		itsValidLength(),
 		itHasChangedAttributes(),
 		itIsAtBottom( true ),
@@ -102,6 +101,8 @@ namespace Genie
 		itIsSingular(),
 		itIsWrapped( true )
 	{
+		itsTextDimensions.v = 0;
+		itsTextDimensions.h = 0;
 	}
 	
 	TextEditParameters* TextEditParameters::Find( const vfs::node* key )
@@ -494,10 +495,12 @@ namespace Genie
 		TERec& te = **hTE;
 		
 		te.viewRect = bounds;
+		te.destRect = bounds;
 		
-		te.destRect = N::OffsetRect( te.viewRect,
-		                             -params.itsHOffset,
-		                             -params.itsVOffset );
+		te.destRect.left  -= params.itsHOffset;
+		te.destRect.right -= params.itsHOffset;
+		te.destRect.top    -= params.itsVOffset;
+		te.destRect.bottom -= params.itsVOffset;
 		
 		const short viewWidth  = bounds.right - bounds.left;
 		const short viewHeight = bounds.bottom - bounds.top;
@@ -505,9 +508,10 @@ namespace Genie
 		const short rows = viewHeight / te.lineHeight;
 		const short cols = viewWidth  / ::CharWidth( 'M' );
 		
-		editParams.itsTextDimensions = N::SetPt( cols, rows );
+		editParams.itsTextDimensions.v = rows;
+		editParams.itsTextDimensions.h = cols;
 		
-		N::TECalText( hTE );
+		TECalText( hTE );
 		
 		params.itsLastViewBounds = bounds;
 		
@@ -626,9 +630,12 @@ namespace Genie
 			TERec& te = **hTE;
 			
 			// Propagate changes made to 'x' and 'y' files
-			te.destRect = N::OffsetRect( te.viewRect,
-			                             -scroller_params.itsHOffset,
-			                             -scroller_params.itsVOffset );
+			te.destRect = te.viewRect;
+			
+			te.destRect.left  -= scroller_params.itsHOffset;
+			te.destRect.right -= scroller_params.itsHOffset;
+			te.destRect.top    -= scroller_params.itsVOffset;
+			te.destRect.bottom -= scroller_params.itsVOffset;
 			
 			te.selStart = params.itsSelection.start;
 			te.selEnd   = params.itsSelection.end;
