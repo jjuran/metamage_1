@@ -17,6 +17,9 @@
 
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAW_H
+#include "missing/Quickdraw.h"
+#endif
 #ifndef MISSING_QUICKDRAWTEXT_H
 #include "missing/QuickdrawText.h"
 #endif
@@ -40,9 +43,6 @@
 
 // Nitrogen
 #include "Carbon/CF/Types/CFMutableStringRef.hh"
-
-#include "Nitrogen/Icons.hh"
-#include "Nitrogen/Quickdraw.hh"
 
 // Pedestal
 #include "Pedestal/BundleIcon.hh"
@@ -70,7 +70,6 @@ namespace Pedestal
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	
 	
 	const int kAboutBoxIconEdgeLength       =  32 << TARGET_API_MAC_CARBON;
@@ -135,7 +134,7 @@ namespace Pedestal
 	{
 		if ( erasing )
 		{
-			N::EraseRect( bounds );
+			EraseRect( &bounds );
 		}
 		
 		short top  = bounds.top  + kAboutBoxTopMargin;
@@ -396,7 +395,7 @@ namespace Pedestal
 		
 		if ( CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw() )
 		{
-			N::RGBBackColor( kAboutBoxBackgroundColor );
+			RGBBackColor( &kAboutBoxBackgroundColor );
 		}
 		
 		set_window_closed_proc( window, &AboutClosed );
