@@ -98,9 +98,12 @@ namespace Pedestal
 		const bool scrollHoriz = false;
 		const bool scrollVert  = true;
 		
+		const Rect dataBounds = { 0, 0, 0, 1 };  // one column, zero rows
+		const Point cSize = {};
+		
 		itsList = N::LNew( AdjustedListBounds( bounds, scrollHoriz, scrollVert ),
-		                   N::SetRect( 0, 0, 1, 0 ),  // one column, zero rows
-		                   N::SetPt( 0, 0 ),
+		                   dataBounds,
+		                   cSize,
 		                   Mac::ResID( 0 ),
 		                   mac::qd::thePort_window(),
 		                   drawIt,
@@ -173,7 +176,9 @@ namespace Pedestal
 			LAddRow( n_new_rows, bounds.bottom, itsList );
 		}
 		
-		LSetCell( data, length, N::SetPt( 0, offset ), itsList );
+		const Point loc = { offset, 0 };
+		
+		LSetCell( data, length, loc, itsList );
 	}
 	
 	void ListView::AppendCell( const char* data, std::size_t length )
@@ -182,7 +187,9 @@ namespace Pedestal
 		
 		const short i_row = LAddRow( 1, bounds.bottom, itsList );
 		
-		LSetCell( data, length, N::SetPt( 0, i_row ), itsList );
+		const Point loc = { i_row, 0 };
+		
+		LSetCell( data, length, loc, itsList );
 	}
 	
 	void ListView::DeleteCells()
