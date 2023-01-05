@@ -687,7 +687,10 @@ namespace Pedestal
 			short dv = te.viewRect.top - te.destRect.top;
 			
 			te.viewRect = bounds;
-			te.destRect = N::OffsetRect( bounds, 0, -dv );
+			te.destRect = bounds;
+			
+			te.destRect.top    -= dv;
+			te.destRect.bottom -= dv;
 			
 			TECalText( hTE );
 		}
