@@ -206,6 +206,7 @@ typedef struct stat	Stat_t;
 #define NIL(t)		((t)0)
 #define reg		register
 #define uchar		unsigned char
+#define ushort		unsigned short
 #define ulong		unsigned long
 #define uint		unsigned int
 
