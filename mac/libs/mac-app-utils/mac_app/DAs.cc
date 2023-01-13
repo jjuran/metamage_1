@@ -48,7 +48,12 @@ bool close_DA_window( WindowRef window )
 
 bool close_front_DA()
 {
-	return close_DA_window( FrontWindow() );
+	if ( WindowRef window = FrontWindow() )
+	{
+		return close_DA_window( window );
+	}
+	
+	return false;
 }
 
 #endif  // #if __LP64__
