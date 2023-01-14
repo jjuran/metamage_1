@@ -899,6 +899,8 @@ pascal void TEScroll_patch( short dh, short dv, TERec** hTE )
 	
 	static RgnHandle updateRgn = NewRgn();
 	
+	scoped_TERec scope = te;
+	
 	raster_lock lock;
 	
 	ScrollRect( &te.viewRect, dh, dv, updateRgn );
