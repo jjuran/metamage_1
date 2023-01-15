@@ -54,8 +54,8 @@ enum { kMachineNameStrID = -16395 };
 #define TARGET_CPU_X86_64  0
 #endif
 
-#ifndef TARGET_CPU_ARM
-#define TARGET_CPU_ARM  0
+#ifndef TARGET_CPU_ARM64
+#define TARGET_CPU_ARM64  0
 #endif
 
 
@@ -68,7 +68,7 @@ using mac::sys::gestalt_defined;
 #define PPC     "PowerPC"
 #define X86     "x86"
 #define X86_64  "x86_64"
-#define ARM     "ARM"
+#define ARM     "Apple Silicon"
 #define WHAT    "???"
 
 #define MOD_TYPE  "Execution module type:  "
@@ -130,7 +130,7 @@ void compiled()
 	                 : TARGET_CPU_PPC    ? COMPILED PPC
 	                 : TARGET_CPU_X86    ? COMPILED X86
 	                 : TARGET_CPU_X86_64 ? COMPILED X86_64
-	                 : TARGET_CPU_ARM    ? COMPILED ARM
+	                 : TARGET_CPU_ARM64  ? COMPILED ARM
 	                 :                     COMPILED WHAT;
 	
 	puts( arch );
@@ -256,11 +256,22 @@ void host_env()
 	gear::inscribe_unsigned_decimal_r( sys2, b );
 	gear::inscribe_unsigned_decimal_r( sys3, c );
 	
+#if ! __LP64__
+	
 	const char* os_name = sysv < 0x0760 ? "Macintosh System"
 	                    : sysv < 0x1000 ? "Mac OS"
 	                    : sysv < 0x1080 ? "Mac OS X"
 	                    : sys2 <     12 ? "OS X"
 	                    :                 "macOS";
+	
+#else
+	
+	const char* os_name = sys1 > 10 ? "macOS"
+	                    : sys2 > 11 ? "macOS"
+	                    : sys2 >  7 ? "OS X"
+	                    :             "Mac OS X";
+	
+#endif
 	
 	if ( sysv == 0 )
 	{
