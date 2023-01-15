@@ -533,14 +533,16 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
 	thePort = saved_port;
 }
 
-pascal void ScrollRect_patch( const Rect*  srcRect,
+pascal void ScrollRect_patch( const Rect*  rect,
                               short        dh,
                               short        dv,
                               MacRegion**  updateRgn )
 {
 	GrafPtr thePort = *get_addrof_thePort();
 	
-	Rect dstRect = *srcRect;
+	const Rect& srcRect = *rect;
+	
+	Rect dstRect = srcRect;
 	
 	// Start with the visRgn (omitting any occluded parts of the source).
 	CopyRgn( thePort->visRgn, updateRgn );
@@ -553,14 +555,14 @@ pascal void ScrollRect_patch( const Rect*  srcRect,
 	
 	CopyBits( &thePort->portBits,
 	          &thePort->portBits,
-	          srcRect,
+	          &srcRect,
 	          &dstRect,
 	          srcCopy,
 	          updateRgn );
 	
 	// The actual update region is (srcRect - dstRect).
 	
-	RectRgn( updateRgn, srcRect );
+	RectRgn( updateRgn, &srcRect );
 	
 	DiffRgn( updateRgn, rectangular_utility_region( dstRect ), updateRgn );
 	
