@@ -347,7 +347,7 @@ void update_loop( raster::sync_relay*  sync,
 			}
 			else
 			{
-				raster::wait( *sync );
+				usleep( 10000 );  // 10ms
 			}
 		}
 		
