@@ -11,6 +11,12 @@
 
 #include "Carbonate/AEDataModel.hh"
 
+static inline
+short mem_error()
+{
+	return *(short*) 0x220;  // MemErr
+}
+
 // These functions are always declared in the headers and are always extern.
 
 // The comments in AEDataModel.h are wrong -- these functions ARE in CarbonAccessors.o.
@@ -102,9 +108,9 @@ pascal OSErr AEReplaceDescData( DescType     typeCode,
 		// Replace the data.  Resize the handle, copy the data, and set the type.
 		SetHandleSize( desc->dataHandle, dataSize );
 		
-		if ( MemError() != noErr )
+		if ( mem_error() != noErr )
 		{
-			return MemError();
+			return mem_error();
 		}
 		
 		::BlockMoveData( dataPtr, *desc->dataHandle, dataSize );
