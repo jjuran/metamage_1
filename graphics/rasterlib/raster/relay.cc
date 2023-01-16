@@ -5,9 +5,6 @@
 
 #include "raster/relay.hh"
 
-// Standard C
-#include <errno.h>
-
 // config
 #include "config/setpshared.h"
 
@@ -119,30 +116,6 @@ namespace raster
 		int err = pthread_cond_broadcast( &relay.cond );
 		
 	#endif
-	}
-	
-	void wait( sync_relay& relay )
-	{
-	#if CONFIG_CONDVARS
-		
-		must_pthread_mutex_lock( &relay.mutex );
-		
-		int err = pthread_cond_wait( &relay.cond, &relay.mutex );
-		
-		must_pthread_mutex_unlock( &relay.mutex );
-		
-	#else
-		
-		const int err = ENOSYS;
-		
-	#endif
-		
-		if ( err )
-		{
-			wait_failed exception = { err };
-			
-			throw exception;
-		}
 	}
 	
 }

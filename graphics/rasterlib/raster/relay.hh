@@ -10,11 +10,6 @@
 namespace raster
 {
 	
-	struct wait_failed
-	{
-		int error;
-	};
-	
 	struct sync_relay;
 	
 	void publish  ( sync_relay& relay );
@@ -22,7 +17,6 @@ namespace raster
 	
 	void broadcast( sync_relay& relay );
 	void terminate( sync_relay& relay );
-	void wait     ( sync_relay& relay );
 	
 }
 
