@@ -12,16 +12,6 @@
 namespace raster
 {
 	
-	void publish( sync_relay& relay )
-	{
-		relay.status = Sync_ready;
-		relay.seed   = 0;
-	}
-	
-	void unpublish( sync_relay& relay )
-	{
-	}
-	
 	void broadcast( sync_relay& relay )
 	{
 		++relay.seed;

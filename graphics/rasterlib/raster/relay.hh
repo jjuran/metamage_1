@@ -12,9 +12,6 @@ namespace raster
 	
 	struct sync_relay;
 	
-	void publish  ( sync_relay& relay );
-	void unpublish( sync_relay& relay );
-	
 	void broadcast( sync_relay& relay );
 	void terminate( sync_relay& relay );
 	
