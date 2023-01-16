@@ -16,7 +16,6 @@
 
 // rasterlib
 #include "raster/raster.hh"
-#include "raster/relay.hh"
 #include "raster/relay_detail.hh"
 #include "raster/sync.hh"
 
@@ -99,7 +98,8 @@ raster_monitor::raster_monitor( const raster::raster_load& load )
 	
 	raster::sync_relay* sync = find_sync( load );
 	
-	publish( *sync );
+	sync->status = raster::Sync_ready;
+	sync->seed   = 0;
 	
 	monitoring = true;
 	
