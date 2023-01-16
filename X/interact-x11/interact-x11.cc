@@ -24,7 +24,6 @@
 
 // raster
 #include "raster/load.hh"
-#include "raster/relay.hh"
 #include "raster/relay_detail.hh"
 #include "raster/sync.hh"
 
@@ -155,7 +154,7 @@ void update_loop( raster::sync_relay*  sync,
 			}
 			else
 			{
-				raster::wait( *sync );
+				usleep( 10000 );  // 10ms
 			}
 			
 			p7::thread::testcancel();
