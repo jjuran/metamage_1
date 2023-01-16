@@ -66,16 +66,4 @@ void bump_relay( const raster_load& raster )
 	broadcast( relay );
 }
 
-bool wait_relay( const raster_load& raster )
-{
-	sync_relay& relay = get_relay( raster );
-	
-	if ( relay.status == Sync_ready )
-	{
-		wait( relay );
-	}
-	
-	return relay.status == Sync_ready;
-}
-
 }  // namespace raster
