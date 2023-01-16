@@ -8,9 +8,6 @@
 // Standard C
 #include <stdlib.h>
 
-// config
-#include "config/setpshared.h"
-
 
 void must_pthread_mutexattr_init( pthread_mutexattr_t* attr )
 {
@@ -51,30 +48,6 @@ void must_pthread_condattr_destroy( pthread_condattr_t* attr )
 		abort();
 	}
 }
-
-#if CONFIG_SETPSHARED
-
-void must_pthread_mutexattr_setpshared( pthread_mutexattr_t* attr, int value )
-{
-	int error = pthread_mutexattr_setpshared( attr, value );
-	
-	if ( error )
-	{
-		abort();
-	}
-}
-
-void must_pthread_condattr_setpshared( pthread_condattr_t* attr, int value )
-{
-	int error = pthread_condattr_setpshared( attr, value );
-	
-	if ( error )
-	{
-		abort();
-	}
-}
-
-#endif
 
 void must_pthread_mutex_init( pthread_mutex_t* obj, pthread_mutexattr_t* attr )
 {
