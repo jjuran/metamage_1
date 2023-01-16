@@ -183,52 +183,6 @@ void exec_or_exit_endpoint( const char* const  argv[],
 }
 
 static
-void init_raster( const char* raster_path )
-{
-	pid_t pid = fork();
-	
-	if ( pid < 0 )
-	{
-		report_error( "fork", errno );
-		exit( 1 );
-	}
-	
-	if ( pid == 0 )
-	{
-		const char* argv[] = { "skif", "init", raster_path, NULL };
-		
-		exec_or_exit( argv );
-	}
-	
-	int wait_status;
-	pid_t child_pid = wait( &wait_status );
-	
-	if ( child_pid < 0 )
-	{
-		report_error( "wait", errno );
-		exit( 1 );
-	}
-	
-	if ( WIFSIGNALED( wait_status ) )
-	{
-		WARN( "skif init: fatal signal" );
-		exit( 1 );
-	}
-	
-	if ( ! WIFEXITED( wait_status ) )
-	{
-		WARN( "skif init: non-signal, non-exit termination (I'm confused)" );
-		exit( 1 );
-	}
-	
-	if ( const int exit_status = WEXITSTATUS( wait_status ) )
-	{
-		WARN( "skif init failed" );
-		exit( 1 );
-	}
-}
-
-static
 void launch_viewer( const char* raster_path )
 {
 	viewer_pid = fork();
@@ -450,12 +404,6 @@ int main( int argc, char** argv )
 	{
 		write( STDERR_FILENO, STR_LEN( USAGE ) );
 		return 2;
-	}
-	
-	if ( argn > 0 )
-	{
-		// Only init the sync relay if we have an interactive author.
-		init_raster( raster_path );
 	}
 	
 	struct sigaction action;
