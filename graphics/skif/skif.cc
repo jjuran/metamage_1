@@ -84,21 +84,6 @@ int raster_info( char** args )
 }
 
 static
-int raster_init( char** args )
-{
-	while ( const char* path = *args++ )
-	{
-		open_raster( path );
-		
-		init_relay( loaded_raster );
-		
-		close_raster( loaded_raster );
-	}
-	
-	return 0;
-}
-
-static
 int raster_stop( char** args )
 {
 	while ( const char* path = *args++ )
@@ -165,11 +150,6 @@ int main( int argc, char** argv )
 	}
 	
 #ifndef __RELIX__
-	
-	if ( strcmp( subcommand, "init" ) == 0 )
-	{
-		return raster_init( args );
-	}
 	
 	if ( strcmp( subcommand, "stop" ) == 0 )
 	{

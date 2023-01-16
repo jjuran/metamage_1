@@ -42,11 +42,6 @@ sync_relay& get_relay( const raster_load& loaded_raster )
 	return *(sync_relay*) data( sync );
 }
 
-void init_relay( const raster_load& raster )
-{
-	publish( get_relay( raster ) );
-}
-
 void stop_relay( const raster_load& raster )
 {
 	terminate( get_relay( raster ) );
