@@ -13,9 +13,6 @@
 #include <AEHelpers.h>
 #endif
 
-// Standard C++
-#include <vector>
-
 // Standard C
 #include <stdlib.h>
 #include <string.h>
@@ -28,6 +25,9 @@
 
 // gear
 #include "gear/quad.hh"
+
+// plus
+#include "plus/string.hh"
 
 // poseven
 #include "poseven/functions/write.hh"
@@ -152,9 +152,11 @@ namespace tool
 	{
 		std::size_t addrSize = N::AEGetDescDataSize( address );
 		
-		std::vector< char > addrData( addrSize );
+		plus::string s;
 		
-		N::AEGetDescData( address, &addrData.front(), addrSize );
+		char* p = s.reset( addrSize );
+		
+		N::AEGetDescData( address, p, addrSize );
 		
 		Mac::AppleEvent appleEvent;
 		AEBuildError aeErr;
@@ -162,7 +164,7 @@ namespace tool
 		Mac::ThrowOSStatus( ::vAEBuildAppleEvent( eventClass,
 		                                          eventID,
 		                                          address.descriptorType,
-		                                          &addrData.front(),
+		                                          p,
 		                                          addrSize,
 		                                          returnID,
 		                                          transactionID,
