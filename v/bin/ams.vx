@@ -401,8 +401,6 @@ run [ "mkfifo", update ]
 
 run [ "skif make -fg " screen_res "*1 -c2 -m paint -R" / ' ', screen ]
 
-run [ "skif init" / ' ', screen ]
-
 let zoom = "-x" (getenv "AMS_ZOOM" or 1)
 let event_input = events_fd_opt, ev_opt
 let command-prefix = "exhibit", "-t", title, raster, event_input, zoom
