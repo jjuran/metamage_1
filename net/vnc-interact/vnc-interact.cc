@@ -13,9 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// config
-#include "config/setpshared.h"
-
 // more-libc
 #include "more/string.h"
 
@@ -36,7 +33,6 @@
 
 // raster
 #include "raster/load.hh"
-#include "raster/relay.hh"
 #include "raster/relay_detail.hh"
 #include "raster/sync.hh"
 
@@ -57,7 +53,7 @@
 #define PUT( s )  put( STR_LEN( s ) )
 
 #define POLLING_ENSUES  \
-	"WARNING: pthread_cond_wait() is broken -- will poll every 10ms instead"
+"WARNING: GRAPHICS_UPDATE_SIGNAL_FIFO is unset -- will poll every 10ms instead"
 
 #define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
 
@@ -581,7 +577,10 @@ void update_loop( raster::sync_relay*  sync,
 {
 	uint32_t seed = 0;
 	
-	bool wait_is_broken = ! CONFIG_SETPSHARED;
+	if ( ! update_fifo )
+	{
+		WARN( POLLING_ENSUES );
+	}
 	
 	while ( sync->status == raster::Sync_ready )
 	{
@@ -600,22 +599,9 @@ void update_loop( raster::sync_relay*  sync,
 				
 				close( fd );
 			}
-			else if ( wait_is_broken )
-			{
-				usleep( 10000 );  // 10ms
-			}
 			else
 			{
-				try
-				{
-					raster::wait( *sync );
-				}
-				catch ( const raster::wait_failed& )
-				{
-					WARN( POLLING_ENSUES );
-					
-					wait_is_broken = true;
-				}
+				usleep( 10000 );  // 10ms
 			}
 			
 			p7::thread::testcancel();
