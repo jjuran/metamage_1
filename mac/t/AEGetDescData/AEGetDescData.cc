@@ -11,6 +11,7 @@
 // Mac OS
 #include <AEDataModel.h>
 #include <MacErrors.h>
+#include <MacMemory.h>
 
 #undef check
 
