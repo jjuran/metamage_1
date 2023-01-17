@@ -24,6 +24,9 @@
 #include "window.hh"
 
 
+#pragma exceptions off
+
+
 #define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
 
 using mac::file::FSIORefNum;
