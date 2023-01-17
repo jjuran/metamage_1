@@ -24,6 +24,9 @@
 #include "mac_sys/has/Aqua_menus.hh"
 
 
+#pragma exceptions off
+
+
 namespace mac {
 namespace app {
 
