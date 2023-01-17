@@ -21,6 +21,9 @@
 #endif
 
 
+#pragma exceptions off
+
+
 namespace mac {
 namespace app {
 
