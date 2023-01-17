@@ -26,6 +26,9 @@
 #include "raster/validity.hh"
 
 
+#pragma exceptions off
+
+
 namespace raster
 {
 	
