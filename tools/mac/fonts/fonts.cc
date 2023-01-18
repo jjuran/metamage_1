@@ -27,6 +27,9 @@
 #include "conv/mac_utf8.hh"
 
 
+#pragma exceptions off
+
+
 int main( int argc, char** argv )
 {
 	Str255 mac_name;
