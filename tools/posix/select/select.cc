@@ -26,6 +26,9 @@
 #include "vxo/ptrvec.hh"
 
 
+#pragma exceptions off
+
+
 #define PROGRAM  "select"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
