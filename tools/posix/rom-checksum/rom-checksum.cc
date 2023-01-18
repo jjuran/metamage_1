@@ -19,6 +19,9 @@
 #include "gear/hexadecimal.hh"
 
 
+#pragma exceptions off
+
+
 #define PROGRAM  "rom-checksum"
 
 #define MISMATCH_PREFIX  "12345678 in file DOES NOT MATCH computed "
