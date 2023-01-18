@@ -19,6 +19,9 @@
 #include "raster_lock.hh"
 
 
+#pragma exceptions off
+
+
 static
 pascal long WDEF_1( short varCode, WindowPtr w, short message, long param );
 
