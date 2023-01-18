@@ -13,6 +13,9 @@
 #include "mac_sys/get_machine_name.hh"
 
 
+#pragma exceptions off
+
+
 int main( int argc, char** argv )
 {
 	const unsigned char* mnam = mac::sys::get_machine_name();
