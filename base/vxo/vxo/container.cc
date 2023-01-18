@@ -16,6 +16,9 @@
 #include "vxo/extent.hh"
 
 
+#pragma exceptions off
+
+
 namespace vxo
 {
 
