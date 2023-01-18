@@ -13,6 +13,9 @@
 #include "trace.hh"
 
 
+#pragma exceptions off
+
+
 #define DEBUGGER_TEXT  "User Break"
 
 
