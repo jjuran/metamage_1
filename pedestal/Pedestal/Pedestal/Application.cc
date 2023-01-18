@@ -298,7 +298,7 @@ namespace Pedestal
 		
 		OSErr err = AEProcessAppleEvent( &event );
 		
-		if ( err != errAEEventNotHandled )
+		if ( err != noErr  &&  err != errAEEventNotHandled )
 		{
 			DebugBeep();
 		}
