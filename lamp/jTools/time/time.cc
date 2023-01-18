@@ -17,6 +17,9 @@
 #include "clock/time.h"
 
 
+#pragma exceptions off
+
+
 static inline
 int exit_from_wait( int status )
 {
