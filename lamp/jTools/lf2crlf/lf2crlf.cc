@@ -16,6 +16,9 @@
 #include "more/perror.hh"
 
 
+#pragma exceptions off
+
+
 static ssize_t checked_read( int fd, char* buffer, size_t length )
 {
 	ssize_t n_read = read( fd, buffer, length );

@@ -13,6 +13,9 @@
 #include <unistd.h>
 
 
+#pragma exceptions off
+
+
 int main( int argc, const char *const argv[] )
 {
 	while ( true )
