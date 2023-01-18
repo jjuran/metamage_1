@@ -18,6 +18,9 @@
 #include "more/perror.hh"
 
 
+#pragma exceptions off
+
+
 #define PROGRAM  "deicon"
 
 
