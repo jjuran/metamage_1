@@ -14,6 +14,9 @@
 #include <string.h>
 
 
+#pragma exceptions off
+
+
 #define PROGRAM  "fifo-read"
 
 #define USAGE  "usage: " PROGRAM " path\n"
