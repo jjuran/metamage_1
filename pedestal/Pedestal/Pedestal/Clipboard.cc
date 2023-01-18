@@ -45,7 +45,7 @@ namespace Pedestal
 	{
 		ClearCarbonScrap();
 		
-		TECut( hTE );
+		::TECut( hTE );
 		
 		FlushScrap();
 	}
@@ -54,7 +54,7 @@ namespace Pedestal
 	{
 		ClearCarbonScrap();
 		
-		TECopy( hTE );
+		::TECopy( hTE );
 		
 		FlushScrap();
 	}
@@ -66,7 +66,7 @@ namespace Pedestal
 		
 		if ( err == noErr )
 		{
-			TEPaste( hTE );
+			::TEPaste( hTE );
 		}
 	}
 	
