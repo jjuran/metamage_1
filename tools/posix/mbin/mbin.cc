@@ -18,6 +18,9 @@
 #include "macbinary.hh"
 
 
+#pragma exceptions off
+
+
 #define ARRAY_LEN(a)  (sizeof (a) / sizeof (a)[0])
 
 #define STR_LEN(s)  "" s, (sizeof s - 1)
