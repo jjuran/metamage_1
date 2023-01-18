@@ -17,6 +17,9 @@
 #include "gear/hexadecimal.hh"
 
 
+#pragma exceptions off
+
+
 struct rom_info
 {
 	unsigned checksum;
