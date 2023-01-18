@@ -37,6 +37,9 @@
 #include "bitmap.hh"
 
 
+#pragma exceptions off
+
+
 #define PROGRAM  "nyancat"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
