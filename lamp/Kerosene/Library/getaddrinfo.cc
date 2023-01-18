@@ -26,6 +26,9 @@
 #include "relix/_OTInetStringToAddress.h"
 
 
+#pragma exceptions off
+
+
 struct combined_addrinfo_sockaddr
 {
 	addrinfo     info;
