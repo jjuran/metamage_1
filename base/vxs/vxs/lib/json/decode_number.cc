@@ -16,6 +16,9 @@
 #include "vxo/number.hh"
 
 
+#pragma exceptions off
+
+
 namespace vxo
 {
 namespace json

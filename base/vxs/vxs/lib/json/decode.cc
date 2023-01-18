@@ -26,6 +26,9 @@
 #include "vxs/lib/json/decode_string.hh"
 
 
+#pragma exceptions off
+
+
 #define STRLEN( s )  (sizeof s - 1)
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 

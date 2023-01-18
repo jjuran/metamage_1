@@ -18,6 +18,9 @@
 #include "vxs/string.hh"
 
 
+#pragma exceptions off
+
+
 /*
 	There's no way to make this not be a macro
 	without Metrowerks generating larger code.

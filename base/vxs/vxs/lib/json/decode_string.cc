@@ -21,6 +21,9 @@
 #include "vxs/string.hh"
 
 
+#pragma exceptions off
+
+
 #define OutOfMemory Error( out_of_memory )
 
 
