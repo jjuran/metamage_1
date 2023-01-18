@@ -13,6 +13,19 @@
 #include "more/perror.hh"
 
 
+#pragma exceptions off
+
+
+#define PROGRAM "utf82mac"
+
+static
+void error( const char* msg, int exit_status )
+{
+	more::perror( PROGRAM, msg );
+	
+	_exit( exit_status );
+}
+
 static ssize_t checked_read( int fd, char* buffer, size_t length )
 {
 	ssize_t n_read = read( fd, buffer, length );
@@ -67,10 +80,19 @@ int main( int argc, char** argv )
 			break;  // EOF
 		}
 		
-		const size_t n_mac_bytes = conv::mac_from_utf8( data_out,
-		                                                sizeof data_out,
-		                                                data_in,
-		                                                bytes_read );
+		const size_t n_mac_bytes = conv::mac_from_utf8_nothrow( data_out,
+		                                                        sizeof data_out,
+		                                                        data_in,
+		                                                        bytes_read );
+		
+		switch ( n_mac_bytes )
+		{
+			case conv::invalid_utf8:  error( "UTF-8 decoding error", 3 );
+			case conv::non_Mac_utf8:  error( "Unrepresentable character", 4 );
+			
+			default:
+				break;
+		}
 		
 		checked_write( STDOUT_FILENO, data_out, n_mac_bytes );
 	}
