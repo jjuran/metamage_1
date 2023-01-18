@@ -13,6 +13,9 @@
 #include "gear/inscribe_decimal.hh"
 
 
+#pragma exceptions off
+
+
 namespace plus
 {
 	
