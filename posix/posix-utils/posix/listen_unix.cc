@@ -16,6 +16,9 @@
 #include <string.h>
 
 
+#pragma exceptions off
+
+
 namespace posix
 {
 
