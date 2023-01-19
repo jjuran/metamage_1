@@ -2,12 +2,12 @@
 
 def seq_sum (x)
 {
-	const even = x % 2 == 0;
+	let even = x % 2 == 0;
 	
 	return (x + 1) div 2 * (x + +even)
 }
 
-const counts =
+let counts =
 [
 	0, 0, 0, 1,
 	1, 2, 3, 3,
@@ -15,20 +15,20 @@ const counts =
 	6, 6, 6
 ]
 
-const tails = [ 0, 3, 8, 14, 23, 33, 45 ]
+let tails = [ 0, 3, 8, 14, 23, 33, 45 ]
 
-const m =  7  # number of multiples in 0 .. 14
-const v = 45  # sum    of multiples in 0 .. 14
+let m =  7  # number of multiples in 0 .. 14
+let v = 45  # sum    of multiples in 0 .. 14
 
-const bound = 1000
+let bound = 1000
 
-const n = bound - 1
+let n = bound - 1
 
-const q = n div 15  # 66
-const r = n mod 15  #  9
+let q = n div 15  # 66
+let r = n mod 15  #  9
 
-const count = counts[ r ]
+let count = counts[ r ]
 
-const sum = 15 * (q * (v/15 + count + 1) + m * seq_sum (q - 1)) + tails[ count ]
+let sum = 15 * (q * (v/15 + count + 1) + m * seq_sum (q - 1)) + tails[ count ]
 
 print sum

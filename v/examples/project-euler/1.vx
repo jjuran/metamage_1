@@ -1,6 +1,6 @@
 #!/usr/bin/env minivx
 
-const sum =
+let sum =
 	1 -> 1000
 	ver {(v % 3) * (v % 5) == 0}
 	per Math.sum

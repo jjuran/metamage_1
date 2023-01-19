@@ -1,6 +1,6 @@
 #!/usr/bin/env minivx
 
-const target = 1000
+let target = 1000
 
 def answer
 {
@@ -8,7 +8,7 @@ def answer
 	{
 		for a in 1 -> b do
 		{
-			const c = target - (a + b)
+			let c = target - (a + b)
 			
 			if a^2 + b^2 == c^2 then
 			{

@@ -1,11 +1,11 @@
 #!/usr/bin/env vx
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/lib/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/lib/"
 
 def import (lib) { eval (load, realpath) libdir lib ".vy" }
 
-const generate = import "prime-numbers"
+let generate = import "prime-numbers"
 
 var prime-numbers = channel()
 

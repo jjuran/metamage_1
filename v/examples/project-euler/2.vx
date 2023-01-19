@@ -1,6 +1,6 @@
 #!/usr/bin/env minivx
 
-const max = 4000000
+let max = 4000000
 
 var sum = 0
 

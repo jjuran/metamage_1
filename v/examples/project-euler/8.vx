@@ -1,13 +1,13 @@
 #!/usr/bin/env minivx
 
-const number = str DATA.lines()
+let number = str DATA.lines()
 
-const digits = packed (   '0' ..    '9')
-const values = packed ('\x00' .. '\x09')
+let digits = packed (   '0' ..    '9')
+let values = packed ('\x00' .. '\x09')
 
-const width = 13
+let width = 13
 
-const last = number.length - width
+let last = number.length - width
 
 print (0 .. last map { substr( number, v, width ) }
                  ver { not '0' in v }

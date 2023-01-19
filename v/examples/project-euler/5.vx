@@ -1,11 +1,11 @@
 #!/usr/bin/env minivx
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/lib/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/lib/"
 
 def import (lib) { eval (load, realpath) libdir lib ".vy" }
 
-const nth_prime = import "nth_prime"
+let nth_prime = import "nth_prime"
 
 def prime_factorization (product)
 {
@@ -15,7 +15,7 @@ def prime_factorization (product)
 	
 	while product > 1 do
 	{
-		const factor = nth_prime( i++ )
+		let factor = nth_prime( i++ )
 		
 		var n = 0
 		
@@ -43,7 +43,7 @@ def merge_maps (maps)
 	{
 		for m in map do
 		{
-			const k = m.key
+			let k = m.key
 			
 			if not k in result  or  m.value > result[ k ] then
 			{
@@ -57,9 +57,9 @@ def merge_maps (maps)
 
 def lcm (operands)
 {
-	const pf = merge_maps( operands map prime_factorization )
+	let pf = merge_maps( operands map prime_factorization )
 	
-	const factors = pf map { v.key ^ v.value }
+	let factors = pf map { v.key ^ v.value }
 	
 	return Math.product *factors
 }

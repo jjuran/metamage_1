@@ -1,7 +1,7 @@
 #!/usr/bin/env minivx
 
-const max = 999
-const min = 100
+let max = 999
+let min = 100
 
 var solution = 0
 
@@ -18,14 +18,14 @@ while a >= min do
 	
 	while b >= min do
 	{
-		const x = a * b
+		let x = a * b
 		
 		if x <= solution then
 		{
 			break
 		}
 		
-		const s = str x
+		let s = str x
 		
 		if s == -s then
 		{
