@@ -40,7 +40,7 @@ int main( int argc, char** argv )
 {
 #if TARGET_API_MAC_CARBON
 	
-	if ( &CSCopyMachineName != NULL )
+	if ( &CSCopyUserName != NULL )
 	{
 		const bool useShortName = false;
 		
