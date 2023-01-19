@@ -1,4 +1,4 @@
-#!/usr/bin/env vx
+#!/usr/bin/env minivx
 
 const max = 4000000
 

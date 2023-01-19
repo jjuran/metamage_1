@@ -1,4 +1,4 @@
-#!/usr/bin/env vx
+#!/usr/bin/env minivx
 
 def seq_sum (x)
 {

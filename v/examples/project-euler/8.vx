@@ -1,4 +1,4 @@
-#!/usr/bin/env vx
+#!/usr/bin/env minivx
 
 const number = str DATA.lines()
 
