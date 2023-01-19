@@ -7,10 +7,8 @@ def import (lib) { eval (load, realpath) libdir lib ".vy" }
 
 const nth_prime = import "nth_prime"
 
-def prime_factorization
+def prime_factorization (product)
 {
-	var product = _
-	
 	var result = []
 	
 	var i = 0
@@ -37,11 +35,11 @@ def prime_factorization
 	return result
 }
 
-def merge_maps
+def merge_maps (maps)
 {
 	var result = int^[]
 	
-	for map in _ do
+	for map in maps do
 	{
 		for m in map do
 		{
@@ -57,9 +55,9 @@ def merge_maps
 	return result
 }
 
-def lcm
+def lcm (operands)
 {
-	const pf = merge_maps( _ map prime_factorization )
+	const pf = merge_maps( operands map prime_factorization )
 	
 	const factors = pf map { v.key ^ v.value }
 	

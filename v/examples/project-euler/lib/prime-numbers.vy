@@ -3,10 +3,8 @@ var primes (int[]) = [ 2, 3 ]
 var last_index = 1
 
 export
-def generate
+def generate (prime-numbers)
 {
-	var prime-numbers = _
-	
 	prime-numbers <== 2
 	prime-numbers <== 3
 	

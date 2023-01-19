@@ -11,10 +11,8 @@ var prime-numbers = channel()
 
 var generator = thread { generate prime-numbers }
 
-def nth_prime
+def nth_prime (n)
 {
-	var n = _
-	
 	while --n > 0 do
 	{
 		<=prime-numbers

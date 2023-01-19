@@ -23,9 +23,9 @@ def next_prime
 	}
 }
 
-def nth_prime
+def nth_prime (n)
 {
-	while last_index < _ do
+	while last_index < n do
 	{
 		last_prime = next_prime()
 		++last_index
@@ -33,7 +33,7 @@ def nth_prime
 		primes <-- last_prime
 	}
 	
-	return if _ == last_index then { last_prime } else { primes[ _ ] }
+	return if n == last_index then { last_prime } else { primes[ n ] }
 }
 
 export nth_prime
