@@ -416,7 +416,7 @@ int main( int argc, char** argv )
 		while ( XPending( display ) );
 	}
 	
-	raster_update_thread.cancel( &sync->cond );
+	raster_update_thread.cancel( NULL );
 	raster_update_thread.join();
 	
 	image->data = NULL;

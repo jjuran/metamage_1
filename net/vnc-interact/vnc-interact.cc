@@ -747,7 +747,7 @@ int main( int argc, char** argv )
 	
 	kill( 0, SIGUSR1 );
 	
-	raster_update_thread.cancel( update_fifo ? NULL : &sync->cond );
+	raster_update_thread.cancel( NULL );
 	raster_update_thread.join();
 	
 	return 0;
