@@ -3,7 +3,7 @@
 const bindir = dirname realpath argv[ 0 ]
 const libdir = bindir "/lib/"
 
-const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+def import (lib) { eval (load, realpath) libdir lib ".vy" }
 
 const generate = import "prime-numbers"
 
