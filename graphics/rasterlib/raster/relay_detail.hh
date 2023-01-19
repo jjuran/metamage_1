@@ -6,9 +6,6 @@
 #ifndef RASTER_RELAYDETAIL_HH
 #define RASTER_RELAYDETAIL_HH
 
-// POSIX
-#include <pthread.h>
-
 // Standard C
 #include <stdint.h>
 
@@ -27,9 +24,6 @@ namespace raster
 	{
 		int16_t   status;
 		uint16_t  seed;
-		
-		pthread_mutex_t  mutex;
-		pthread_cond_t   cond;
 	};
 	
 }
