@@ -15,46 +15,68 @@
 #include <OSUtils.h>
 #endif
 
+// more-libc
+#include "more/string.h"
+
 // mac-sys-utils
 #include "mac_sys/has/native_Carbon.hh"
 
-// Nitrogen
-#include "Nitrogen/CFBase.hh"
+// mac-rsrc-utils
+#include "mac_rsrc/get_string_from_resource.hh"
 
-// Genie
-#include "Genie/Utilities/CFStringGetStdString.hh"
-#include "Genie/Utilities/GetStringResource.hh"
 
+#pragma exceptions off
+
+
+static inline
+unsigned min( unsigned a, unsigned b )
+{
+	return b < a ? b : a;
+}
 
 namespace Genie
 {
 	
-	namespace n = nucleus;
-	
-	
-	static const void* kUnresolvedCFragSymbolAddress = NULL;
-	
-	
-	plus::string GetWorkstationName()
+	void GetWorkstationName( char* buffer, unsigned size )
 	{
+		const unsigned max_len = size - 1;
+		
 		if ( ! mac::sys::has_native_Carbon() )
 		{
-			plus::string result = GetStringResource( -16413 );
+			Str255 str;
 			
-			return result;
-		}
-		
-		if ( CSCopyMachineName != kUnresolvedCFragSymbolAddress )
-		{
-			if ( CFStringRef name = CSCopyMachineName() )
+			if ( mac::rsrc::get_STR_resource( str, -16413 ) )
 			{
-				CFStringEncoding encoding = kCFStringEncodingMacRoman;
+				ConstStr255Param p = str;
+				const unsigned   n = min( *p++, max_len );
 				
-				return CFStringGetStdString( n::owned< CFStringRef >::seize( name ), encoding );
+				mempcpy( buffer, p, n );
+				
+				buffer[ n ] = '\0';
 			}
 		}
-		
-		return plus::string::null;
+		else if ( CFStringRef name = CSCopyMachineName() )
+		{
+			const CFStringEncoding encoding = kCFStringEncodingMacRoman;
+			
+			CFIndex length = CFStringGetLength( name );
+			CFRange range  = CFRangeMake( 0, length );
+			
+			CFIndex usedBufLen = 0;
+			
+			(void) CFStringGetBytes( name,
+			                         range,
+			                         encoding,
+			                         '\0',
+			                         false,
+			                         (UInt8*) buffer,
+			                         max_len,
+			                         &usedBufLen );
+			
+			buffer[ usedBufLen ] = '\0';
+			
+			CFRelease( name );
+		}
 	}
 	
 }

@@ -19,14 +19,14 @@
 // Debug
 #include "debug/assert.hh"
 
-// plus
-#include "plus/var_string.hh"
-
 // relix
 #include "relix/syscall/registry.hh"
 
 // Genie
 #include "Genie/Utilities/GetWorkstationName.hh"
+
+
+#pragma exceptions off
 
 
 #define SYSNAME  "Relix"
@@ -75,20 +75,9 @@ namespace Genie
 	
 	static int uname( struct utsname *uts )
 	{
-		plus::var_string nodename;
+		GetWorkstationName( uts->nodename, sizeof uts->nodename );
 		
-		try
-		{
-			nodename = GetWorkstationName();
-		}
-		catch ( ... )
-		{
-		}
-		
-		char *const begin = &*nodename.begin();
-		char *const end   = &*nodename.end();
-		
-		for ( char *p = begin;  p != end;  ++p )
+		for ( char *p = uts->nodename;  *p != '\0';  ++p )
 		{
 			const char c = *p;
 			
@@ -103,7 +92,6 @@ namespace Genie
 		}
 		
 		string_copy( uts->sysname,  STR_LEN( SYSNAME ) );
-		string_copy( uts->nodename, nodename.c_str(), nodename.length() );
 		string_copy( uts->release,  STR_LEN( RELEASE ) );
 		string_copy( uts->version,  STR_LEN( VERSION ) );
 		string_copy( uts->machine,  STR_LEN( HARDWARE_CLASS ) );
