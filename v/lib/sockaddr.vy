@@ -1,10 +1,8 @@
 module sockaddr
 
 export
-def display
+def display (sa)
 {
-	const sa = _
-	
 	const family = u8 (sa[ 1 ] or sa[ 0 ])
 	
 	var addr

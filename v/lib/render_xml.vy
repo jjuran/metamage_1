@@ -2,7 +2,7 @@ const invalid-node = "invalid XML node"
 
 const mapping = ... => ...
 
-def qq { str ('"', _, '"') }
+def qq (s) { str ('"', s, '"') }
 
 const entities = byte^
 [
@@ -12,10 +12,8 @@ const entities = byte^
 	'>': "gt",
 ]
 
-def escaped
+def escaped (c: byte)
 {
-	const c (byte)  = _
-	
 	if c in entities then
 	{
 		return "&" entities[ c ] ";"
@@ -26,19 +24,15 @@ def escaped
 	return "&#" code ";"
 }
 
-def escape_text
+def escape_text (text)
 {
-	const text = _
-	
 	const echars = text map { if v in "<&" then {escaped v} else {v} }
 	
 	return str echars
 }
 
-def get-name-attrs-content
+def get-name-attrs-content (node)
 {
-	const node = _
-	
 	assert node isa mapping
 	
 	const name = node.key
@@ -58,10 +52,8 @@ def get-name-attrs-content
 	return name, attrs, content
 }
 
-def render_at_depth
+def render_at_depth (printer, node, depth)
 {
-	const printer, const node, const depth = _
-	
 	const print = printer % depth
 	
 	if node isa string then
@@ -110,9 +102,7 @@ def render_at_depth
 }
 
 export
-def render_xml
+def render_xml (printer, doc)
 {
-	const printer, const doc = _
-	
 	render_at_depth( printer, doc, 0 )
 }

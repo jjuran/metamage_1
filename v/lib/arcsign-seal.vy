@@ -1,7 +1,5 @@
-def arcsign-seal
+def arcsign-seal (arcsign, params)
 {
-	const arcsign, const params = _
-	
 	const key   = params[ "key"   ]
 	const hash  = params[ "hash"  ]
 	const stamp = params[ "stamp" ]

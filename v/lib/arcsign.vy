@@ -19,10 +19,8 @@ const hash_functions = str^
 	SHA-256: sha256,
 ]
 
-def field
+def field (name, value)
 {
-	const name, const value = _
-	
 	if value isa null then
 	{
 		return ""
@@ -32,10 +30,8 @@ def field
 }
 
 export
-def seal
+def seal (key, msg, date, hash)
 {
-	const key, const msg, const date, const hash = _
-	
 	const f = if hash then { hash_functions[ hash ] } else { ... }
 	
 	const ext = "\n" ext_tag "\n" field( "Date", date ) field( "Hash", hash )
@@ -46,11 +42,11 @@ def seal
 	return ext prefix "\n".join (pub, sig / 2, "")
 }
 
-def strict_unhex
+def strict_unhex (hex_input)
 {
-	const result = unhex _
+	const result = unhex hex_input
 	
-	if hex result != _ then
+	if hex result != hex_input then
 	{
 		throw "malformed or non-canonical hexadecimal data"
 	}
@@ -58,10 +54,8 @@ def strict_unhex
 	return result
 }
 
-def parts_from_keysig
+def parts_from_keysig (keysig)
 {
-	const keysig = _
-	
 	assert keysig.length == signature_block_length
 	
 	if keysig[ 0 -> pre_length ] != prefix then
@@ -79,10 +73,8 @@ def parts_from_keysig
 	return key, sig
 }
 
-def message_parts
+def message_parts (sealed_message)
 {
-	const sealed_message = _
-	
 	var n = sealed_message.length
 	
 	var parts = ()
@@ -103,10 +95,8 @@ def message_parts
 	return ()
 }
 
-def msgext_parts
+def msgext_parts (msgext)
 {
-	const msgext = _
-	
 	var i = msgext.length
 	
 	if msgext[ --i ] != '\n' then
@@ -141,9 +131,9 @@ def msgext_parts
 }
 
 export
-def validate
+def validate (sealed_message)
 {
-	if const parts = message_parts _ then
+	if const parts = message_parts sealed_message then
 	{
 		const msgext, const key, const sig = parts
 		

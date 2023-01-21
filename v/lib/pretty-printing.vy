@@ -23,10 +23,8 @@ assert not is-bareword "foo:bar"
 
 assert is-bareword "foo-bar"
 
-def level-depth
+def level-depth (v: ...)
 {
-	const v = _
-	
 	if (+) v > 1 then
 	{
 		return level-depth [ v ]

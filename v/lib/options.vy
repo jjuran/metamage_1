@@ -4,10 +4,8 @@ const reference = 0
 const interpret = 1
 
 export
-def parse
+def parse (argv, defs, error)
 {
-	const argv, const defs, const error = _
-	
 	const argc = argv.length
 	
 	var i = 0

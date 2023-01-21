@@ -1,6 +1,6 @@
 module info_plist
 
-def qq { str ('"', _, '"') }
+def qq (s) { str ('"', s, '"') }
 
 const encoding = qq "UTF-8"
 const dtd_name = qq "-//Apple//DTD PLIST 1.0//EN"
@@ -13,13 +13,13 @@ const mapping = ... => ...
 
 const reifiers
 
-def reify
+def reify (info)
 {
 	for r in reifiers do
 	{
-		if _ isa r.key then
+		if info isa r.key then
 		{
-			return r.value( _ )
+			return r.value( info )
 		}
 	}
 	

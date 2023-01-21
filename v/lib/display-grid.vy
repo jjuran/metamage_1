@@ -14,17 +14,17 @@ def pad (width, x)
 	return s
 }
 
-def check
+def check (grid)
 {
 	const mapping = ... => ...
 	
-	if not (_ isa mapping) then
+	if not (grid isa mapping) then
 	{
 		throw "non-mapping can't be a grid"
 	}
 	
-	const k = _.key
-	const v = _.value
+	const k = grid.key
+	const v = grid.value
 	
 	if not (v isa ...[]) then
 	{
