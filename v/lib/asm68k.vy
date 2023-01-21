@@ -3,10 +3,7 @@ module asm68k
 def NOP { x"4E71" }
 def RTS { x"4E75" }
 
-def word
-{
-	return unhex substr( hex (u16 _ + 2^16), 2 )
-}
+let word = (big-endian u16).encode
 
 def PEA (smode, sreg, sext)
 {
