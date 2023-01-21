@@ -38,9 +38,7 @@
 
 // AEObjectModel
 #include "AEObjectModel/AEObjectModel.hh"
-#include "AEObjectModel/Count.hh"
 #include "AEObjectModel/GetData.hh"
-#include "AEObjectModel/GetObjectClass.hh"
 
 // Pedestal
 #include "Pedestal/AboutBox.hh"
@@ -239,11 +237,9 @@ struct Count_AppleEvent
 		// AEResolve can't handle a null descriptor.
 		n::owned< Mac::AEDesc_Token > containerToken = containerIsRoot ? N::GetRootToken()
 		                                                               : N::AEResolve( containerObjSpec );
-		// The kind of container of the things we're counting, e.g. 'folder'
-		Mac::AEObjectClass containerClass = N::GetObjectClass( containerToken );
 		
 		// The kind of thing we're counting, e.g. 'file'
-		Mac::AEObjectClass desiredClass;
+		DescType desiredClass;
 		
 		/*
 			g++ 3 can't handle this:
@@ -257,7 +253,16 @@ struct Count_AppleEvent
 		                  &desiredClass,
 		                  sizeof desiredClass );
 		
-		std::size_t count = N::Count( desiredClass, containerClass, containerToken );
+		std::size_t count;
+		
+		if ( containerToken.get().descriptorType == typeNull  &&  desiredClass == cDocument )
+		{
+			count = count_document_windows();
+		}
+		else
+		{
+			Mac::ThrowOSStatus( errAEEventNotHandled );
+		}
 		
 		N::AEPutParamDesc( reply,
 		                   Mac::keyDirectObject,
@@ -419,23 +424,6 @@ n::owned< Mac::AEDesc_Token > doc_name( const Mac::AEDesc_Token& containerToken 
 	
 	return window_name_token( window );
 }
-
-// Count
-
-struct Documents_Count
-{
-	static std::size_t Get( Mac::AEObjectClass        desiredClass,
-	                        Mac::AEObjectClass        containerClass,
-	                        const Mac::AEDesc_Token&  containerToken )
-	{
-		return count_document_windows();
-	}
-	
-	static void Install()
-	{
-		N::RegisterCounter( Mac::cDocument, Mac::typeNull, Get );
-	}
-};
 
 // Get data
 
@@ -728,8 +716,6 @@ void SetUpAppleEvents()
 	
 	// Set up AEObjectModel
 	N::AESetObjectCallbacks();
-	
-	Documents_Count::Install();
 	
 	LiteralData_Token::Install_DataGetter( Mac::typeBoolean  );
 	LiteralData_Token::Install_DataGetter( Mac::typeChar     );
