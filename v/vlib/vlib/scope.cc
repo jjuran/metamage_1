@@ -66,6 +66,19 @@ namespace vlib
 			THROW( "keyword override attempt" );
 		}
 		
+		/*
+			In the event of declaring a `for` loop iteration variable after
+			a variable from an ancestor scope has been resolved in the loop
+			variable's scope, we need to cull the ancestor symbol from the
+			symbol cache so that subsequent resolutions see the new symbol,
+			not the previously resolved one which should now be hidden.
+			
+			See v/vx/t/let-for-x-hidden.t and v/vx/t/var-for-x-hidden.t for
+			examples that failed prior to adding the forget_symbol() call.
+		*/
+		
+		forget_symbol( its_symbol_cache, name );
+		
 		return its_symbols.create( name, type );
 	}
 	

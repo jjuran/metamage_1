@@ -68,6 +68,18 @@ namespace vlib
 		return NIL;
 	}
 	
+	void forget_symbol( Symbols& syms, const plus::string& name )
+	{
+		if ( const Value* it = find_symbol( syms, name ) )
+		{
+			int offset = it - &*syms.begin();
+			
+			Value& target = syms[ offset ];
+			
+			target = Term( Symbol_const, plus::string::null );
+		}
+	}
+	
 	const Value& symbol_table::create( const plus::string& name, symbol_type type )
 	{
 		if ( const Value* it = find_symbol( its_symbols, name ) )

@@ -23,6 +23,8 @@ namespace vlib
 	
 	const Value& locate_symbol( const Symbols& syms, const plus::string& name );
 	
+	void forget_symbol( Symbols& syms, const plus::string& name );
+	
 	class symbol_table
 	{
 		private:
