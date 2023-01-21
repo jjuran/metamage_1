@@ -36,7 +36,7 @@ def seal
 {
 	const key, const msg, const date, const hash = _
 	
-	const f = if hash then { hash_functions[ hash ] } else { {_} }
+	const f = if hash then { hash_functions[ hash ] } else { ... }
 	
 	const ext = "\n" ext_tag "\n" field( "Date", date ) field( "Hash", hash )
 	
@@ -149,7 +149,7 @@ def validate
 		
 		const msg, const ext = msgext_parts msgext
 		
-		var f = {_}
+		var f = ...
 		
 		if "Hash: SHA-256" in ext.lines() then
 		{
