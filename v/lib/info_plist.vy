@@ -34,7 +34,7 @@ reifiers =
 	fraction  => { real:   str float _ },
 	float     => { real:   str _ },
 	mb32      => { string: str _ },
-	mapping[] => { dict:   _ map { key: _.key, reify _.value } },
+	mapping[] => { dict:   _ map { key: v.key, reify v.value } },
 	array     => { array:  _ map reify },
 ]
 

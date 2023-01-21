@@ -30,5 +30,5 @@ def arcsign-unseal
 		return [ null, "INVALID SEAL" ]
 	}
 	
-	return params[ "kits" ] map { _.key => unsealed _.value }
+	return params[ "kits" ] map { v.key => unsealed v.value }
 }

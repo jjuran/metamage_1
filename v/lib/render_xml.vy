@@ -30,7 +30,7 @@ def escape_text
 {
 	const text = _
 	
-	const echars = text map { if _ in "<&" then {escaped _} else {_} }
+	const echars = text map { if v in "<&" then {escaped v} else {v} }
 	
 	return str echars
 }
@@ -74,7 +74,7 @@ def render_at_depth
 	{
 		const name, const attrs, const content = get-name-attrs-content node
 		
-		const attr = str( attrs map { " " _.key, "=", qq _.value } )
+		const attr = str( attrs map { " " v.key, "=", qq v.value } )
 		
 		if content isa null then
 		{
