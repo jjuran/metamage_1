@@ -17,7 +17,7 @@ def readline (fd, fail)
 		
 		if c != '\r' then
 		{
-			line = line c
+			line .= "" c
 		}
 	}
 	
