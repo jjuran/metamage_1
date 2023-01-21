@@ -276,6 +276,85 @@ struct Count_AppleEvent
 	}
 };
 
+static
+nucleus::owned< Mac::AEDesc_Data >
+//
+GetData( const Mac::AEDesc_Token&  obj,
+         Mac::DescType             desiredType = Mac::typeWildCard );
+
+static
+nucleus::owned< Mac::AEDesc_Data >
+//
+GetDataFromTokenList( const Mac::AEDescList_Token& obj, Mac::DescType desiredType )
+{
+	using N::AECreateList;
+	using N::AECountItems;
+	using N::AEPutDesc;
+	using N::AEDesc_Cast;
+	using N::AEGetNthDesc;
+	
+	nucleus::owned< Mac::AEDescList_Data > list = AECreateList< Mac::AEDesc_Data >( false );
+	
+	UInt32 count = AECountItems( obj );
+	
+	for ( UInt32 i = 1;  i <= count;  ++i )
+	{
+		AEPutDesc( list,
+		           0,
+		           GetData( AEDesc_Cast< const Mac::AEDesc_Token >( AEGetNthDesc( obj, i ).get() ),
+		                    desiredType ).get() );
+	}
+	
+	return list;
+}
+
+static
+nucleus::owned< Mac::AEDesc_Data >
+//
+GetDocumentObjSpec( const Mac::AEDesc_Token& obj )
+{
+	const WindowRef window = N::AEGetDescData< typeDocument >( obj );
+	
+	const long id = id_of_window( window );
+	
+	n::owned< Mac::AEDesc_Data > keyData = N::AECreateDesc< Mac::typeSInt32 >( id );
+	
+	return N::AECreateObjectSpecifier( Mac::cDocument,
+	                                   N::GetRootObjectSpecifier(),
+	                                   Mac::formUniqueID,
+	                                   keyData );
+}
+
+static
+nucleus::owned< Mac::AEDesc_Data >
+//
+GetData( const Mac::AEDesc_Token& obj, Mac::DescType desiredType )
+{
+	switch ( obj.descriptorType )
+	{
+		case typeNull:
+			return N::GetRootObjectSpecifier();
+		
+		case typeAEList:
+			return GetDataFromTokenList( obj, desiredType );
+		
+		case typeBoolean:
+		case typeChar:
+		case typeAERecord:
+		case typeUnicodeText:
+			return N::AEDuplicateDesc( obj );
+		
+		case typeDocument:
+			return GetDocumentObjSpec( obj );
+		
+		default:
+			Mac::ThrowOSStatus( errAEEventNotHandled );
+	}
+	
+	// not reached
+	return nucleus::owned< Mac::AEDesc_Data >();
+}
+
 struct GetData_AppleEvent
 {
 	static void Handler( Mac::AppleEvent const&  event,
@@ -283,8 +362,8 @@ struct GetData_AppleEvent
 	{
 		N::AEPutParamDesc( reply,
 		                   Mac::keyDirectObject,
-		                   N::GetData( N::AEResolve( N::AEGetParamDesc( event,
-		                                                                Mac::keyDirectObject ) ) ) );
+		                   GetData( N::AEResolve( N::AEGetParamDesc( event,
+		                                                             Mac::keyDirectObject ) ) ) );
 	}
 	
 	static void Install_Handler()
@@ -424,45 +503,6 @@ n::owned< Mac::AEDesc_Token > doc_name( const Mac::AEDesc_Token& containerToken 
 	
 	return window_name_token( window );
 }
-
-// Get data
-
-struct LiteralData_Token
-{
-	static n::owned< Mac::AEDesc_Data > Get( const Mac::AEDesc_Token&  obj,
-	                                         Mac::DescType             desiredType )
-	{
-		return N::AEDuplicateDesc( obj );
-	}
-	
-	static void Install_DataGetter( Mac::DescType type )
-	{
-		N::RegisterDataGetter( type, Get );
-	}
-};
-
-struct Document_Token
-{
-	static n::owned< Mac::AEDesc_Data > Get( const Mac::AEDesc_Token&  obj,
-	                                         Mac::DescType             desiredType )
-	{
-		const WindowRef window = N::AEGetDescData< typeDocument >( obj );
-		
-		const long id = id_of_window( window );
-		
-		n::owned< Mac::AEDesc_Data > keyData = N::AECreateDesc< Mac::typeSInt32 >( id );
-		
-		return N::AECreateObjectSpecifier( Mac::cDocument,
-		                                   N::GetRootObjectSpecifier(),
-		                                   Mac::formUniqueID,
-		                                   keyData );
-	}
-	
-	static void Install_DataGetter()
-	{
-		N::RegisterDataGetter( typeDocument, Get );
-	}
-};
 
 
 static bool About( Ped::CommandCode )
@@ -716,17 +756,6 @@ void SetUpAppleEvents()
 	
 	// Set up AEObjectModel
 	N::AESetObjectCallbacks();
-	
-	LiteralData_Token::Install_DataGetter( Mac::typeBoolean  );
-	LiteralData_Token::Install_DataGetter( Mac::typeChar     );
-	LiteralData_Token::Install_DataGetter( Mac::typeAERecord );
-	
-	if ( TARGET_API_MAC_CARBON )
-	{
-		LiteralData_Token::Install_DataGetter( Mac::typeUnicodeText );
-	}
-	
-	Document_Token::Install_DataGetter();
 }
 
 }
