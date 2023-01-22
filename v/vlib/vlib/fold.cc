@@ -256,6 +256,14 @@ namespace vlib
 		return sym->get();
 	}
 	
+	static inline
+	bool is_foldable_declaration( const Value& decl )
+	{
+		Expr* expr = decl.expr();
+		
+		return expr->op <= Op_let  &&  expr->right.sym();
+	}
+	
 	static
 	Value inner_fold( const Value& v, lexical_scope* scope )
 	{
@@ -349,7 +357,7 @@ namespace vlib
 					}
 				}
 				
-				if ( decl  &&  decl->expr()->op <= Op_let )
+				if ( decl  &&  is_foldable_declaration( *decl ) )
 				{
 					const bool coercive = op == Op_approximate;
 					
