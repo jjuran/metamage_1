@@ -10,7 +10,7 @@ let sockaddr  = import "sockaddr"
 
 let port = getenv "PAIRUP_PORT"
 
-if not bool port then
+if not port then
 {
 	warn "pair-up: Please set PAIRUP_PORT to an available TCP port."
 	exit 2
@@ -20,10 +20,8 @@ let listener-fd = tcp-listen port
 
 def respond { print "\r" "[" (date-time.stamp time()) "]" "  " _ }
 
-def recruit
+def recruit (name)
 {
-	const name = _
-	
 	OUT <== "Waiting for " name "..."
 	
 	let n = "Alice".length - name.length  # We know that "Bob" is shorter
@@ -35,10 +33,8 @@ def recruit
 	return connection.socket
 }
 
-def relay
+def relay (input, output)
 {
-	const input, const output = _
-	
 	while var line = input.read 1024 do
 	{
 		output <== line
