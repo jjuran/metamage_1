@@ -64,7 +64,7 @@ def render_at_depth (printer, node, depth)
 	
 	if node isa mapping then
 	{
-		const name, const attrs, const content = get-name-attrs-content node
+		const (name, attrs, content) = get-name-attrs-content node
 		
 		const attr = str( attrs map { " " v.key, "=", qq v.value } )
 		

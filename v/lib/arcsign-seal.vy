@@ -8,7 +8,7 @@ def arcsign-seal (arcsign, params)
 	
 	for kit in params[ "kits" ] do
 	{
-		const load, const append = *kit.value
+		const (load, append) = *kit.value
 		
 		const msg = load()
 		

@@ -135,9 +135,9 @@ def validate (sealed_message)
 {
 	if const parts = message_parts sealed_message then
 	{
-		const msgext, const key, const sig = parts
+		const (msgext, key, sig) = parts
 		
-		const msg, const ext = msgext_parts msgext
+		const (msg, ext) = msgext_parts msgext
 		
 		var f = ...
 		

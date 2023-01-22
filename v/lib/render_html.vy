@@ -88,7 +88,7 @@ def render_html (printer, node, depth=0)
 	}
 	else if node isa mapping then
 	{
-		const name, const attrs, const content = get-name-attrs-content node
+		const (name, attrs, content) = get-name-attrs-content node
 		
 		const attr = str (attrs map { " " v.key, "=", quote_attr v.value })
 		
