@@ -87,7 +87,7 @@ def display (send, extra)
 	
 	if extra then
 	{
-		const n, const src, const dst = *extra
+		const (n, src, dst) = *extra
 		
 		rows[ 0 ] =
 		rows[ 1 ] = [ empty-space (*) 3 ]
