@@ -395,6 +395,30 @@ namespace vlib
 	}
 	
 	static
+	Value unfolded_list( const Value& list )
+	{
+		list_iterator it( list );
+		
+		list_builder result;
+		
+		do
+		{
+			const Value& sublist = it.use();
+			
+			list_iterator it( sublist );
+			
+			do
+			{
+				result.append( it.use() );
+			}
+			while ( it );
+		}
+		while ( it );
+		
+		return result;
+	}
+	
+	static
 	bool permissive( const Value& v )
 	{
 		Symbol* sym = v.sym();
@@ -411,7 +435,7 @@ namespace vlib
 			{
 				source_spec source;
 				
-				list_iterator a( left  );
+				list_iterator a( unfolded_list( left ) );
 				list_iterator b( right );
 				
 				list_builder results;

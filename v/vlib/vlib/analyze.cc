@@ -28,6 +28,30 @@ namespace vlib
 {
 	
 	static
+	bool is_identifier_list( const Value& list )
+	{
+		list_iterator it( list );
+		
+		if ( ! it )
+		{
+			return false;  // no empty lists
+		}
+		
+		do
+		{
+			const Value& item = it.use();
+			
+			if ( ! item.is< Identifier >() )
+			{
+				return false;
+			}
+		}
+		while ( it );
+		
+		return true;
+	}
+	
+	static
 	void insert_code_to_unpack_arguments( const Value& f, const Value& params )
 	{
 		if ( Expr* expr = f.expr() )
@@ -411,19 +435,45 @@ namespace vlib
 				
 				if ( ! x->is< Identifier >() )
 				{
-					THROW( "declared symbol must be an identifier" );
+					if ( op > Op_var )
+					{
+						THROW( "declared symbol must be an identifier" );
+					}
+					else if ( ! is_identifier_list( *x ) )
+					{
+						THROW( "declared symbols must all be identifiers" );
+					}
+					
+					Expr* expr = v.expr();
+					
+					const op_type op  = expr->op;
+					const Value& list = expr->right;
+					
+					list_iterator it( list );
+					
+					do
+					{
+						const Value& identifier = it.use();
+						
+						Value decl( op, identifier );
+						
+						visit( decl, expr->source );
+					}
+					while ( it );
 				}
-				
-				bool is_var = op == Op_var;
-				symbol_type type = symbol_type( is_var );
-				
-				try
+				else
 				{
-					its_scope->declare( x->string(), type );
-				}
-				catch ( const exception& e )
-				{
-					throw user_exception( String( e.message ), expr->source );
+					bool is_var = op == Op_var;
+					symbol_type type = symbol_type( is_var );
+					
+					try
+					{
+						its_scope->declare( x->string(), type );
+					}
+					catch ( const exception& e )
+					{
+						throw user_exception( String( e.message ), expr->source );
+					}
 				}
 			}
 			

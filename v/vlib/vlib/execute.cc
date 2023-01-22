@@ -26,6 +26,7 @@
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/iterators/generic_iterator.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
@@ -541,6 +542,30 @@ namespace vlib
 		return false;
 	}
 	
+	static
+	bool is_symbol_list( const Value& list )
+	{
+		list_iterator it( list );
+		
+		if ( ! it )
+		{
+			return false;  // no empty lists
+		}
+		
+		do
+		{
+			const Value& item = it.use();
+			
+			if ( item.type() != Value_symbol )
+			{
+				return false;
+			}
+		}
+		while ( it );
+		
+		return true;
+	}
+	
 	Value_in_flight execute( const Value& tree, const Value& stack )
 	{
 		const Value* next = &tree;
@@ -572,7 +597,33 @@ namespace vlib
 			{
 				if ( expr->right.type() != Value_symbol )
 				{
-					THROW( "declarator operand must be a symbol" );
+					if ( expr->op > Op_var )
+					{
+						THROW( "declarator operand must be a symbol" );
+					}
+					else if ( ! is_symbol_list( expr->right ) )
+					{
+						THROW( "declarator operand must be all symbols" );
+					}
+					
+					const op_type op  = expr->op;
+					const Value& list = expr->right;
+					
+					list_iterator it( list );
+					
+					list_builder result;
+					
+					do
+					{
+						const Value& symbol = it.use();
+						
+						Value decl( op, symbol );
+						
+						result.append( execute( decl, stack ) );
+					}
+					while ( it );
+					
+					return Value( result );
 				}
 				
 				const Value& resolved = resolve_symbol( expr->right, stack );
