@@ -109,7 +109,7 @@ def get_modem_fd
 {
 	if let modem = getenv "AMS_MODEM" then
 	{
-		let host, let port = modem / ':'
+		let (host, port) = modem / ':'
 		
 		let command = "tcpclient", host, port, "duplex", "6-1", "0-7"
 		
