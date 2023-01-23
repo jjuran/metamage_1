@@ -12,6 +12,7 @@ let Tab = "\t"
 
 let info_txt = argv[ 1 ]
 let info_dir = dirname info_txt
+let info_path = realpath info_txt
 
 let info-txt = load info_txt
 
@@ -51,7 +52,7 @@ def comma-terminated { if _[ _.length - 1 ] in ":[" then { _ } else { _ "," } }
 
 let lines = (info-txt more-txt).lines() ver bool map comma-terminated
 
-let info = eval( "[" join( "\n", *lines, "]" ), realpath info_txt )
+let info = eval( "[" join( "\n", *lines, "]" ), info_path )
 
 let plist = info_plist.convert info
 
