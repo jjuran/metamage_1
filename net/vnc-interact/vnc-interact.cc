@@ -53,7 +53,7 @@
 #define PUT( s )  put( STR_LEN( s ) )
 
 #define POLLING_ENSUES  \
-"WARNING: GRAPHICS_UPDATE_SIGNAL_FIFO is unset -- will poll every 10ms instead"
+	"GRAPHICS_UPDATE_SIGNAL_FIFO unset -- will poll every 10ms instead"
 
 #define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
 
