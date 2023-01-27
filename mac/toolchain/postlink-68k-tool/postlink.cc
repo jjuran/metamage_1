@@ -170,7 +170,7 @@ int main( int argc, char** argv )
 	
 	if ( mac::relix::FSSpec_from_existing_path( target_path, target_filespec ) )
 	{
-		return 1;
+		return 43;  // producing an FSSpec failed; presumably nonexistent
 	}
 	
 	if ( dry_run )
@@ -182,7 +182,7 @@ int main( int argc, char** argv )
 	
 	if ( resfile <= 0 )
 	{
-		return 1;
+		return 1;  // opening the resource file failed
 	}
 	
 	Handle code = Patch68KStartup();
