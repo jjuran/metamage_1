@@ -173,11 +173,6 @@ int main( int argc, char** argv )
 		return 43;  // producing an FSSpec failed; presumably nonexistent
 	}
 	
-	if ( dry_run )
-	{
-		return 0;
-	}
-	
 	short resfile = FSpOpenResFile( &target_filespec, fsRdWrPerm );
 	
 	if ( resfile <= 0 )
@@ -197,9 +192,12 @@ int main( int argc, char** argv )
 		
 		if ( err == noErr )
 		{
-			SInt32 size = GetHandleSize( code );
-			
-			err = FSWrite( refnum, &size, *code );
+			if ( ! dry_run )
+			{
+				SInt32 size = GetHandleSize( code );
+				
+				err = FSWrite( refnum, &size, *code );
+			}
 			
 			OSErr err2 = FSClose( refnum );
 			
