@@ -19,9 +19,6 @@
 // Standard C
 #include <stdlib.h>
 
-// iota
-#include "iota/strings.hh"
-
 // command
 #include "command/get_option.hh"
 
@@ -36,6 +33,8 @@
 
 
 #define PREFIX  "postlink-68k-tool: "
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define ERROR( e, msg )  (wrote( 2, STR_LEN( PREFIX msg "\n" ) ) ? e : 13)
 
