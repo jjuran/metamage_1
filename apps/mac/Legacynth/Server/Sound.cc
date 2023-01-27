@@ -4,7 +4,7 @@
 	
 	Legacynth Server for classic Mac OS
 	
-	Copyright 2022-2025, Joshua Juran.  All rights reserved.
+	Copyright 2022-2026, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
@@ -49,6 +49,7 @@
 #include "legacynth/common.hh"
 
 // LegacynthServer
+#include "fourtone.hh"
 #include "lock_high_bit.hh"
 #include "squarewave.hh"
 #include "status.hh"
@@ -95,6 +96,12 @@ struct PrivateStorage
 	SndChannelPtr channel;
 	SoundHeader   header;
 	char          buffer[ kBufferSize ];
+	
+	short          index;
+	ExtSoundHeader xheader[ 2 ];
+	FTSoundRec*    sndRec;
+	IOParam*       pb;
+	ToneSpec       previous[ 4 ];
 };
 
 static PrivateStorage* private_storage;
@@ -193,14 +200,89 @@ OSErr MyIODone( DCtlEntry* dce, OSErr err )
 	return IONext( dce );
 }
 
+#ifdef __MC68K__
+#pragma parameter fourtone_queue( __A0 )
+#endif
+
+static
+OSErr fourtone_queue( PrivateStorage& storage )
+{
+	enum
+	{
+		sample_size = 2,  // two bytes for 16-bit samples
+		packet_size = sample_size * 370,
+	};
+	
+	short duration = storage.sndRec->duration;
+	
+	if ( duration < 0 )
+	{
+		return noErr;
+	}
+	
+	bool last = duration == 0  ||  storage.pb == NULL;
+	
+	SndChannelPtr channel = storage.channel;
+	
+	Ptr p = storage.buffer + storage.index * packet_size;
+	
+	fourtone_fill( storage.sndRec, storage.previous, (SInt16*) p, last );
+	
+	if ( --storage.sndRec->duration == 0  &&  storage.pb )
+	{
+		storage.pb = NULL;
+		
+		MyIODone( SoundDCE, noErr );
+		
+		storage.previous[ 0 ].rate = 0;
+		storage.previous[ 1 ].rate = 0;
+		storage.previous[ 2 ].rate = 0;
+		storage.previous[ 3 ].rate = 0;
+	}
+	
+	ExtSoundHeader& header = storage.xheader[ storage.index ];
+	
+	storage.index = ! storage.index;
+	
+	header.samplePtr   = p;
+	header.numChannels = 1;
+	header.sampleRate  = rate22khz;
+	header.encode      = extSH;
+	header.numFrames   = 370;
+	header.sampleSize  = 16;
+	
+	OSErr err;
+	
+	SndCommand playback = { bufferCmd,   0, (long) &header  };
+	SndCommand callback = { callBackCmd, 1, (long) &storage };
+	
+	err = SndDoCommand( channel, &playback, true );
+	
+	if ( ! err  &&  ! last )
+	{
+		err = SndDoCommand( channel, &callback, true );
+	}
+	
+	return err;
+}
+
 static
 pascal void sound_callback( SndChannelPtr channel, SndCommand* command )
 {
 	channel;
 	
-	DCtlEntry* dce = (DCtlEntry*) command->param2;
+	const short selector = command->param1;
 	
-	MyIODone( dce, noErr );
+	if ( selector == 0 )
+	{
+		DCtlEntry* dce = (DCtlEntry*) command->param2;
+		
+		MyIODone( dce, noErr );
+	}
+	else if ( selector == 1 )
+	{
+		fourtone_queue( *(PrivateStorage*) command->param2 );
+	}
 }
 
 DEFINE_UPP( SndCallBack, sound_callback )
@@ -270,6 +352,19 @@ OSErr Sound_prime( IOParam*  pb  IN_REGISTER( __A0 ),
 		(err = SndDoCommand( channel, &playback, true ))  ||
 		(err = SndDoCommand( channel, &callback, true ));
 	}
+	else if ( mode == ftMode )
+	{
+		FTSoundRec* sndRec = *(FTSoundRec**) p16;
+		
+		if ( sndRec->duration > 0 )
+		{
+			storage.sndRec = sndRec;
+			storage.pb     = pb;
+			
+			// FIXME:  Error handling
+			err = fourtone_queue( storage );
+		}
+	}
 	
 	if ( err )
 	{
@@ -330,7 +425,13 @@ OSErr stop_sound()
 {
 	OSErr err = noErr;
 	
-	if ( SndChannelPtr channel = private_storage->channel )
+	if ( private_storage->pb )
+	{
+		private_storage->sndRec->duration = 0;
+		
+		private_storage->pb = NULL;
+	}
+	else if ( SndChannelPtr channel = private_storage->channel )
 	{
 		SndCommand flush = { flushCmd };
 		SndCommand quiet = { quietCmd };
@@ -531,7 +632,12 @@ OSErr Sound_cleanup()
 		
 		SoundDCE = (DCtlPtr) -1;
 		
-		SndDisposeChannel( private_storage->channel, true );
+		/*
+			In case there's a frame of four-tone audio remaining,
+			let it finish playing.
+		*/
+		
+		SndDisposeChannel( private_storage->channel, false );
 		
 		DisposePtr( (Ptr) private_storage );
 		
