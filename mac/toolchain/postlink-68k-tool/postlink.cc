@@ -68,7 +68,8 @@ bool wrote( int fd, const void* buffer, size_t n )
 	return write( fd, buffer, n ) == n;
 }
 
-static char* const* get_options( char* const* argv )
+static
+char* const* get_options( char* const* argv )
 {
 	++argv;  // skip arg 0
 	
@@ -166,6 +167,7 @@ int main( int argc, char** argv )
 	const char* target_path = args[ 0 ];
 	
 	FSSpec target_filespec;
+	
 	if ( mac::relix::FSSpec_from_existing_path( target_path, target_filespec ) )
 	{
 		return 1;
