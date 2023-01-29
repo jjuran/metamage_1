@@ -4,7 +4,7 @@
 	
 	Lode Runner Music Fix INIT for Advanced Mac Substitute
 	
-	Copyright 2020, Joshua Juran.  All rights reserved.
+	Copyright 2020-2023, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
@@ -18,8 +18,8 @@
 	logical level 0.  The jump from silence at level 0 to the wave start at
 	level -128 is audible as a popping noise.
 	
-	This program overwrites the four phase fields in Lode Runner's global
-	variables, setting each voice's phase to 64, avoiding the level jump.
+	This program rotates the waveform data in the wave table enbedded in
+	the code, aligning it to a phase of zero, which avoids the level jump.
 	
 	This code is designed to run in Advanced Mac Substitute.  If Lode Runner
 	is found to exhibit the same audio defect on real hardware, or in another
@@ -43,21 +43,116 @@
 #pragma exceptions off
 
 
-static UniversalProcPtr old_VInstall;
+static inline
+void my_memcpy( void* dst, const void* src, long n )
+{
+	BlockMoveData( src, dst, n );
+}
+
+static inline
+void my_memmove( void* dst, const void* src, long n )
+{
+	BlockMoveData( src, dst, n );
+}
+
 static UniversalProcPtr old_TEInit;
 
 
-static
-asm void VInstall_patch()
+static inline
+void install_patch( Handle h )
 {
-	MOVEQ.L  #64,D0
-	MOVE.L   D0,-218(A5)  // soundRec.sound1Phase = 64
-	MOVE.L   D0,-210(A5)  // soundRec.sound2Phase = 64
-	MOVE.L   D0,-202(A5)  // soundRec.sound3Phase = 64
-	MOVE.L   D0,-194(A5)  // soundRec.sound4Phase = 64
+	/*
+		Lode Runner defines a triangle wave like this:
+		
+			           /\
+			          /  \
+			         /    \
+			        /      \
+		
+		(Each segment above represents 32 bytes of a 256-byte waveform.)
+		
+		That would be fine if it set the phase to 64 (i.e. at pi/2).
+		But it sets the phase to 0, resulting in popping when a voice enters.
+		
+		Here's the same diagram with the preceding silence marked:
+		
+			+          /\
+			________  /  \
+			         /    \
+			-       /      \
+		
+		The Y axis represents wave amplitude.  Notice the jump from Y=0
+		(indicating zero amplitude, i.e. silence) to the wave's nadir.
+		This is audible as a pop during playback.
+		
+		We'll rotate the waveform to resemble a sine wave rather than
+		an inverse cosine wave (and thereby match the phase of 0):
+		
+			+        /\
+			________/  \
+			            \  /
+			-            \/
+		
+		This eliminates the signal jump (and consequently the resulting pop).
+	*/
 	
-	MOVE.L   old_VInstall,-(SP)
-	RTS
+	enum
+	{
+		// These are offsets relative to the start of the 'CODE' resource.
+		
+		offset_to_wavetable = 0x29fc,
+		offset_to_wave_LEA  = 0x6c7a,  // LEA *-17022,A0    ; $0029fc
+		offset_to_wave_disp = offset_to_wave_LEA + 2,
+		minimum_handle_size = offset_to_wave_LEA + 4,
+	};
+	
+	if ( h  &&  GetHandleSize( h ) > minimum_handle_size )
+	{
+		Ptr p = *h;
+		
+		// Verify that the wavetable is referenced by the code.
+		
+		const short displacement = *(short*) &p[ offset_to_wave_disp ];
+		
+		if ( offset_to_wave_disp + displacement == offset_to_wavetable )
+		{
+			Ptr wave = p + offset_to_wavetable;
+			
+			/*
+				Rotate the wave, in effect removing the first 64 bytes
+				and reinserting them at the end.
+				
+				Temp:   Wave:
+				
+				           /\
+				          /  \
+				         /    \
+				        /      \
+				        
+				           /\
+				          /  \
+				 /       /    \
+				/       /      \
+				        
+				         /\
+				        /  \
+				 /          \ \
+				/            \ \
+				        
+				         /\
+				        /  \
+				 /          \  /
+				/            \/
+				
+			*/
+			
+			Byte temp[ 64 ];
+			
+			my_memcpy ( temp,       wave,       64 );
+			my_memmove( wave,       wave + 64, 192 );
+			my_memcpy ( wave + 192, temp,       64 );
+		}
+	}
 }
 
 static
@@ -67,9 +162,7 @@ void TEInit_handler()
 	{
 		ReleaseResource( h );
 		
-		old_VInstall = mac::sys::get_trap_address( _VInstall );
-		
-		mac::sys::set_trap_address( (ProcPtr) VInstall_patch, _VInstall );
+		install_patch( Get1Resource( 'CODE', 1 ) );
 	}
 }
 
