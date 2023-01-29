@@ -2,7 +2,7 @@
 	LRMusicFix.cc
 	-------------
 	
-	Lode Runner Music Fix INIT for Advanced Mac Substitute
+	Lode Runner Music Fix INIT for Mac OS
 	
 	Copyright 2020-2023, Joshua Juran.  All rights reserved.
 	
@@ -21,10 +21,8 @@
 	This program rotates the waveform data in the wave table enbedded in
 	the code, aligning it to a phase of zero, which avoids the level jump.
 	
-	This code is designed to run in Advanced Mac Substitute.  If Lode Runner
-	is found to exhibit the same audio defect on real hardware, or in another
-	emulator with otherwise usable sound output, then this program can be
-	extended to support Mac OS.
+	The reported audio defect might not be noticeable with period hardware,
+	but it has been observed in emulators including Advanced Mac Substitute.
 	
 */
 
@@ -179,6 +177,10 @@ pascal asm void TEInit_patch()
 
 int main()
 {
+	Handle self = Get1Resource( 'INIT', 0 );
+	
+	DetachResource( self );
+	
 	old_TEInit = mac::sys::get_trap_address( _TEInit );
 	
 	mac::sys::set_trap_address( (ProcPtr) TEInit_patch, _TEInit );
