@@ -429,38 +429,6 @@ void menu_item_chosen( long choice )
 	HiliteMenu( 0 );
 }
 
-#ifdef __MC68K__
-
-UInt8 SdVolume : 0x0260;
-UInt8 SdEnable : 0x0261;
-
-#else
-
-const UInt8 SdVolume = 0;
-const UInt8 SdEnable = 0;
-
-#endif
-
-static
-void set_up_Options_menu()
-{
-#if ! TARGET_API_MAC_CARBON
-	
-	if ( SdVolume > 0 )
-	{
-		sound_enabled = true;
-		
-		CheckMenuItem( Options_menu, Sound, sound_enabled );
-	}
-	else if ( ! SdEnable )
-	
-#endif
-	
-	{
-		mac::ui::disable_menu_item( Options_menu, Sound );
-	}
-}
-
 static inline
 bool has_WaitNextEvent()
 {
@@ -502,7 +470,6 @@ int main()
 	mac::app::install_menus();
 	
 	set_up_menus();
-	set_up_Options_menu();
 	
 	if ( apple_events_present )
 	{

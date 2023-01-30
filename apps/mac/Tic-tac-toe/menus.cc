@@ -8,6 +8,8 @@
 // mac-ui-utils
 #include "mac_ui/menus.hh"
 
+// Tic-tac-toe
+#include "sound.hh"
 
 MenuRef Edit_menu;
 MenuRef Options_menu;
@@ -24,8 +26,30 @@ const UInt8 SdEnable = 0;
 
 #endif
 
+static
+void set_up_Options_menu()
+{
+#if ! TARGET_API_MAC_CARBON
+	
+	if ( SdVolume > 0 )
+	{
+		sound_enabled = true;
+		
+		CheckMenuItem( Options_menu, Sound, sound_enabled );
+	}
+	else if ( ! SdEnable )
+	
+#endif
+	
+	{
+		mac::ui::disable_menu_item( Options_menu, Sound );
+	}
+}
+
 void set_up_menus()
 {
 	Edit_menu    = GetMenuHandle( Edit    );
 	Options_menu = GetMenuHandle( Options );
+	
+	set_up_Options_menu();
 }
