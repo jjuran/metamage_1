@@ -21,7 +21,7 @@ namespace Pedestal
 	int
 	min( int a, int b )
 	{
-		return b > a ? b : a;
+		return b < a ? b : a;
 	}
 	
 	static inline

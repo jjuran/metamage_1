@@ -59,7 +59,7 @@ namespace Pedestal
 	short
 	min( short a, short b )
 	{
-		return b > a ? b : a;
+		return b < a ? b : a;
 	}
 	
 	static inline
