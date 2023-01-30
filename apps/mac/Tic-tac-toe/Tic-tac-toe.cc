@@ -193,7 +193,7 @@ void draw_window( WindowRef window )
 static
 void click( Point where )
 {
-	if ( RgnHandle rgn = click( where, sound_enabled ) )
+	if ( RgnHandle rgn = click_board( where ) )
 	{
 		gMouseRgn = rgn;
 		

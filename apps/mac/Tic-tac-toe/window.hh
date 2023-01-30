@@ -38,7 +38,7 @@ void propagate_to_dock_tile();
 void draw_window( CGContextRef context );
 void draw_window( const Rect& portRect );
 
-RgnHandle click( Point where, bool sound_enabled );
+RgnHandle click_board( Point where );
 
 void erase_token_in_region( RgnHandle rgn );
 

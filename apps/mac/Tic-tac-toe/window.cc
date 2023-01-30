@@ -303,7 +303,7 @@ short hit_test( Point where )
 }
 
 static
-RgnHandle play( short i, bool sound_enabled )
+RgnHandle play( short i )
 {
 	player_t playing_player = current_player;
 	
@@ -330,9 +330,9 @@ RgnHandle play( short i, bool sound_enabled )
 	return deactivate_region( 1 + i );
 }
 
-RgnHandle click( Point where, bool sound_enabled )
+RgnHandle click_board( Point where )
 {
-	return play( hit_test( where ), sound_enabled );
+	return play( hit_test( where ) );
 }
 
 void erase_token_in_region( RgnHandle rgn )
