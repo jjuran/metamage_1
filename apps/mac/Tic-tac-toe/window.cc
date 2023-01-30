@@ -31,6 +31,7 @@
 #include "menus.hh"
 #include "play_tone.hh"
 #include "regions.hh"
+#include "sound.hh"
 #include "state.hh"
 
 
@@ -321,7 +322,7 @@ RgnHandle play( short i, bool sound_enabled )
 	
 	if ( sound_enabled )
 	{
-		const UInt16 tone = playing_player == tictactoe::Player_X ? 629 : 1497;
+		const UInt16 tone = tone_for_player( playing_player );
 		
 		play_tone( tone );
 	}

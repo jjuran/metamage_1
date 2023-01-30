@@ -51,6 +51,7 @@
 #include "fullscreen.hh"
 #include "menus.hh"
 #include "regions.hh"
+#include "sound.hh"
 #include "state.hh"
 #include "window.hh"
 #include "window_events.hh"
@@ -74,7 +75,6 @@ const bool apple_events_present =
 		(CONFIG_APPLE_EVENTS_GRANTED  ||
 			mac::sys::gestalt( 'evnt' ) != 0);
 
-static bool sound_enabled;
 static bool is_fullscreen;
 
 static const Rect grow_size =
