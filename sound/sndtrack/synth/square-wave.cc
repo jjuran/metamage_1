@@ -141,7 +141,7 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	
 	output_sample_t* p = output.data;
 	
-	size_t samples_remaining = samples_per_buffer;
+	size_t n_samples_to_fill = samples_per_buffer;
 	
 	goto start;
 	
@@ -168,16 +168,16 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 			samples_in_run = (next_demiperiod >> shift) - elapsed_samples;
 		}
 		
-		size_t n = min( samples_remaining, samples_in_run );
+		size_t n = min( n_samples_to_fill, samples_in_run );
 		
 		memset( p, sample ^ 0x80, n * sizeof (output_sample_t) );
 		
 		p += n;
 		
 		elapsed_samples   += n;
-		samples_remaining -= n;
+		n_samples_to_fill -= n;
 	}
-	while ( samples_remaining );
+	while ( n_samples_to_fill );
 	
 	return samples_per_buffer;
 }
