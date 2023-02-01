@@ -80,12 +80,11 @@ Fixed samples_from_count( uint16_t count )
 
 static Tone* tone;
 static Fixed demiperiod_samples;
+static Fixed remaining_run_length;
 
 static int sample;
 
 static uint16_t last_count;
-static uint32_t elapsed_samples;
-static uint64_t next_demiperiod;  // a sample count in 32.16 fixed-point format
 
 short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 {
@@ -130,10 +129,9 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 			
 			sample = nadir;
 			
-			elapsed_samples = 0;
-			next_demiperiod = 0;
-			
 			demiperiod_samples = samples_from_count( tone->count );
+			
+			remaining_run_length = demiperiod_samples;
 		}
 	}
 	
@@ -159,13 +157,13 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 		
 	start:
 		
-		size_t samples_in_run = (next_demiperiod >> shift) - elapsed_samples;
+		size_t samples_in_run = remaining_run_length >> shift;
 		
 		if ( samples_in_run == 0 )
 		{
-			next_demiperiod += demiperiod_samples;
+			remaining_run_length += demiperiod_samples;
 			
-			samples_in_run = (next_demiperiod >> shift) - elapsed_samples;
+			samples_in_run = remaining_run_length >> shift;
 		}
 		
 		size_t n = min( n_samples_to_fill, samples_in_run );
@@ -174,8 +172,8 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 		
 		p += n;
 		
-		elapsed_samples   += n;
 		n_samples_to_fill -= n;
+		remaining_run_length -= n << shift;
 	}
 	while ( n_samples_to_fill );
 	
