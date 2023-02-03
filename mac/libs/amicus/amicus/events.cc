@@ -50,16 +50,28 @@ CGPoint pin_cursor( CGPoint next_cursor_location )
 	{
 		next_cursor_location.x = cursor_limit.x - 1;
 	}
+	else if ( next_cursor_location.x < 0 )
+	{
+		next_cursor_location.x = 0;
+	}
 	
 	if ( next_cursor_location.y >= cursor_limit.y )
 	{
 		next_cursor_location.y = cursor_limit.y - 1;
 	}
+	else if ( next_cursor_location.y < 0 )
+	{
+		next_cursor_location.y = 0;
+	}
+	
+#ifndef MAC_OS_X_VERSION_10_5
 	
 	if ( ! CGPointEqualToPoint( next_cursor_location, unpinned_location ) )
 	{
 		move_cursor_to( next_cursor_location );
 	}
+	
+#endif
 	
 	return next_cursor_location;
 }
@@ -75,6 +87,20 @@ void handle_mouse_moved_event( CGPoint next_cursor_location )
 		
 		last_cursor_location = pinned_cursor;
 	}
+}
+
+static
+void handle_mouse_moved_event( CGEventRef event )
+{
+	long dx = CGEventGetIntegerValueField( event, kCGMouseEventDeltaX );
+	long dy = CGEventGetIntegerValueField( event, kCGMouseEventDeltaY );
+	
+	CGPoint next = last_cursor_location;
+	
+	next.x += dx;
+	next.y += dy;
+	
+	handle_mouse_moved_event( next );
 }
 
 static inline
@@ -216,7 +242,7 @@ bool handle_CGEvent( CGEventRef event, command_handler_proc command_handler )
 		case kCGEventMouseMoved:
 		case kCGEventLeftMouseDragged:
 		case kCGEventRightMouseDragged:
-			handle_mouse_moved_event( CGEventGetLocation( event ) );
+			handle_mouse_moved_event( event );
 			break;
 		
 		default:

@@ -200,7 +200,13 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	cursor_limit = CGPointMake( width, height );
 	
-	CGWarpMouseCursorPosition( CGPointMake( 15, 15 ) );
+	last_cursor_location = CGPointMake( 15, 15 );
+	
+#ifndef MAC_OS_X_VERSION_10_5
+	
+	CGWarpMouseCursorPosition( last_cursor_location );
+	
+#endif
 	
 	EventTargetRef target = GetEventDispatcherTarget();
 	
