@@ -10,6 +10,7 @@
 #include <string.h>
 
 // SoundDriver
+#include "SoundDriver/samples_from_count.h"
 #include "SoundDriver/SoundDriver.h"
 
 // libsndtrack
@@ -46,37 +47,6 @@ size_t min( size_t a, size_t b )
 }
 
 const int shift = 16;
-
-static inline
-Fixed samples_from_count( uint16_t count )
-{
-	const long long ns_per_sec = 1000 * 1000 * 1000;
-	
-	/*
-		The wave's "frequency" (half-cycles per second) is (783360 / count) Hz,
-		according to Inside Macintosh, Volume II.  (They mean half frequency.)
-		Therefore a half-period is (count / 783360) seconds long.
-		
-		(Note that 783360 is a multiple of 256.  So we can think of `count` as
-		being in 8.8 fixed-point format, in which case a half-period duration
-		is (count / 3060) seconds and a full period is (count / 1530) seconds.)
-		
-		The duration of a sample is 44.93us == (44930 / 10^9)s.
-		
-		Dividing the half-period duration by the sample duration yields the
-		number of samples per half-period: (count / 783360) / (44930 / 10^9)
-		
-		Multiplying numerator and denominator by (783360 * 10^9) yields
-		(count * 10^9) / (44930 * 783360).  We'll also shift left to preserve
-		some fraction bits.
-		
-		Divide `ns_per_sec` and the (44930 * 783360) divisor by 100 so the
-		latter fits into 32 bits.
-		
-	*/
-	
-	return ((count << shift) * (ns_per_sec / 100)) / (4493 * 78336);
-}
 
 static Tone* tone;
 static Fixed demiperiod_samples;
