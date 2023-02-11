@@ -18,7 +18,7 @@
 	logical level 0.  The jump from silence at level 0 to the wave start at
 	level -128 is audible as a popping noise.
 	
-	This program rotates the waveform data in the wave table enbedded in
+	This program rotates the waveform data in the wave table embedded in
 	the code, aligning it to a phase of zero, which avoids the level jump.
 	
 	The reported audio defect might not be noticeable with period hardware,
