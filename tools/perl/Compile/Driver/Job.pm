@@ -95,7 +95,7 @@ sub up_to_date
 	
 	-f $out or return 0;
 	
-	my @in = @_;
+	my @in = $self->input_files;
 	
 	my $out_date = (stat _)[9];
 	
@@ -145,9 +145,9 @@ sub perform
 {
 	my $self = shift;
 	
-	my @input = $self->input_files;
+	return ""  if $self->up_to_date;
 	
-	return ""  if $self->up_to_date( @input );
+	my @input = $self->input_files;
 	
 	my @command = ($self->command, @input, $self->imports);
 	
