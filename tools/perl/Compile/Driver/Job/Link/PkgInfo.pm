@@ -32,6 +32,17 @@ sub new
 	return bless \%self, $class;
 }
 
+sub input_files
+{
+	my $self = shift;
+	
+	my $module = $self->{FROM};
+	my $desc = $module->{DESC};
+	my $path = $desc->{PATH};
+	
+	return $path;
+}
+
 sub unquote
 {
 	my ( $code ) = @_;
