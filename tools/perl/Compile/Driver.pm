@@ -117,8 +117,7 @@ sub jobs_for
 					TYPE => "COPY",
 					FROM => $module,
 					ORIG => $resource,
-					PATH => $basename,
-					DEST => "$bundle/Contents/Resources/",
+					DEST => "$bundle/Contents/Resources/$basename",
 				);
 			}
 			
