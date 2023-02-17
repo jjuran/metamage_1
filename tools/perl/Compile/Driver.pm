@@ -250,6 +250,11 @@ sub main
 					$last_type = $job->{TYPE};
 				}
 				
+				if ( $job->up_to_date )
+				{
+					next;
+				}
+				
 				spawn $job;
 			}
 			
