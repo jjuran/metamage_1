@@ -60,12 +60,36 @@ sub has_framework
 	return -d "/System/Library/Frameworks/$name.framework";
 }
 
+my $macOS_SDK_version;
+
+sub macOS_SDK_version
+{
+	return $macOS_SDK_version if defined $macOS_SDK_version;
+	
+	$macOS_SDK_version = 0;
+	
+	my $header = "/usr/include/Availability.h";
+	
+	if ( -f $header )
+	{
+		if ( my $last = `grep "^#define __MAC_" $header | tail -n1` )
+		{
+			my ($version) = $last =~ m{(\d+)$};
+			
+			$macOS_SDK_version = $version;
+		}
+	}
+	
+	return $macOS_SDK_version;
+}
+
 sub command
 {
 	my $self = shift;
 	
 	my $module = $self->{FROM};
 	
+	my @w;
 	my @mode;
 	my $dest = $self->{DEST};
 	
@@ -78,6 +102,19 @@ sub command
 	if ( $conf->is_apple_gcc )
 	{
 		my @names = @{$module->{DESC}{DATA}{frameworks} || []};
+		
+		if ( ! exists $ENV{SDKROOT} )
+		{
+			my $vers = int macOS_SDK_version() / 100;
+			
+			if ( $vers == 1013 )
+			{
+				if ( @names  ||  $arch[ 1 ] eq 'i386' )
+				{
+					@w = '-w';
+				}
+			}
+		}
 		
 		if ( my $bundle_type = $module->bundle_type )
 		{
@@ -99,7 +136,7 @@ sub command
 		push @frameworks, map { -framework => $_ } @names;
 	}
 	
-	return $self->tool_name, @mode, -o => $dest, @arch, @frameworks;
+	return $self->tool_name, @w, @mode, -o => $dest, @arch, @frameworks;
 }
 
 1;
