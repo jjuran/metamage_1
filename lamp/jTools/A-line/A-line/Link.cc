@@ -923,9 +923,10 @@ namespace tool
 		{
 			bool has_frameworks = !project.Frameworks().empty();
 			
-			AddFrameworks( has_frameworks ? project.Frameworks()
-			                              : StringVector( "Carbon" ),
-			               link_input_arguments );
+			if ( has_frameworks )
+			{
+				AddFrameworks( project.Frameworks(), link_input_arguments );
+			}
 		}
 		
 		
