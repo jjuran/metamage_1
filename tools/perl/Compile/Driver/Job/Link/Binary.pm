@@ -96,8 +96,6 @@ sub command
 			}
 		}
 		
-		@names = "Carbon"  if @names == 0;
-		
 		push @frameworks, map { -framework => $_ } @names;
 	}
 	
