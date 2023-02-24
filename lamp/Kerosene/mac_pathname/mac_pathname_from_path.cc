@@ -7,9 +7,28 @@
 
 #include "mac_pathname_from_path.hh"
 
-// POSIX
-#include <fcntl.h>
-#include <unistd.h>
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __FILES__
+#include <Files.h>
+#endif
+
+#ifdef __RELIX__
+
+// mac-sys-utils
+#include "mac_sys/errno_from_mac_error.hh"
+
+// mac-file-utils
+#include "mac_file/HFS_pathname.hh"
+
+// mac-relix-utils
+#include "mac_relix/FSSpec_from_path.hh"
+
+#endif
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -58,18 +77,47 @@ plus::string mac_pathname_from_path( const char* path )
 	
 #ifdef __RELIX__
 	
-	char buffer[ 4096 ];
+	using mac::file::HFS_pathname;
 	
-	const int flags = REALPATH_OUTPUT_HFS;
+	using mac::relix::FSSpec_from_optional_path;
 	
-	ssize_t size = _realpathat( AT_FDCWD, path, buffer, sizeof buffer, flags );
+	using mac::sys::Error;
+	using mac::sys::errno_from_mac_error;
 	
-	if ( size < 0 )
+	plus::string result;
+	
+	FSSpec file;
+	
+	Error err = FSSpec_from_optional_path( path, file );
+	
+	if ( ! err )
 	{
-		p7::throw_errno( errno );
+		long got = HFS_pathname( NULL, 0, file );
+		
+		if ( (SInt32) got <= (SInt32) 0x80008000 )
+		{
+			UInt32 length = (UInt16) got;
+			
+			char* p = result.reset( length );
+			
+			got = HFS_pathname( p, length, file );
+		}
+		
+		if ( got < 0 )
+		{
+			err = Error( got );
+		}
 	}
 	
-	return plus::string( buffer, size );
+	if ( err )
+	{
+		int errnum = is_errno( err ) ? errno_from_muxed( err )
+		                             : errno_from_mac_error( err );
+		
+		p7::throw_errno( errnum );
+	}
+	
+	return result;
 	
 #endif
 }
