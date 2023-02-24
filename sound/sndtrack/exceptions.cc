@@ -76,6 +76,8 @@ static const exception_spec exceptions[] =
 	{ empty, "tone duration is zero" },
 	{ badid, "no such ID for four-tone update" },
 	{ audio, "gap in audio playback detected" },
+	{ ioerr, "error writing output stream" },
+	{ ioerr, "short write to output stream" },
 };
 
 bool take_exception_internal( exception_type type )

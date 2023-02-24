@@ -175,6 +175,34 @@ void read_and_enqueue( int fd, const command_header& header, rt_queue& queue )
 }
 
 static
+void ping_pong( int fd, const command_header& header )
+{
+	/*
+		These fields should in theory be byte-swapped to big-endian,
+		but each field is a pair of identical bytes, so it's a no-op.
+	*/
+	
+	command_header pong =
+	{
+		0,  // reserved
+		0,  // length
+		basic_domain,  // $0101
+		pong_sent,     // '<<'
+	};
+	
+	ssize_t n_written = write( fd, &pong, sizeof pong );
+	
+	if ( n_written < 0 )
+	{
+		take_exception( socket_write_error );
+	}
+	else if ( n_written < sizeof pong )
+	{
+		take_exception( socket_write_short );
+	}
+}
+
+static
 void do_full_stop()
 {
 	if ( queue_node* node = queue_alloc_node( sizeof (queue_node) ) )
@@ -241,6 +269,10 @@ void event_loop( int fd )
 					
 					case allow_eof:
 						play_past_EOF = true;
+						break;
+					
+					case ping_sent:
+						ping_pong( fd, header );
 						break;
 					
 					case full_stop:
