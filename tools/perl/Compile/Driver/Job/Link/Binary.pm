@@ -76,7 +76,7 @@ sub macOS_SDK_version
 		{
 			my ($version) = $last =~ m{(\d+)$};
 			
-			$macOS_SDK_version = $version;
+			$macOS_SDK_version = $version || 0;
 		}
 	}
 	
