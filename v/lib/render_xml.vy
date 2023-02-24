@@ -1,10 +1,10 @@
-const invalid-node = "invalid XML node"
+let invalid-node = "invalid XML node"
 
-const mapping = ... => ...
+let mapping = ... => ...
 
 def qq (s) { str ('"', s, '"') }
 
-const entities = byte^
+let entities = byte^
 [
 	'"': "quot",
 	'&': "amp",
@@ -19,14 +19,14 @@ def escaped (c: byte)
 		return "&" entities[ c ] ";"
 	}
 	
-	const code = str int c
+	let code = str int c
 	
 	return "&#" code ";"
 }
 
 def escape_text (text)
 {
-	const echars = text map { if v in "<&" then {escaped v} else {v} }
+	let echars = text map { if v in "<&" then {escaped v} else {v} }
 	
 	return str echars
 }
@@ -35,8 +35,8 @@ def get-name-attrs-content (node)
 {
 	assert node isa mapping
 	
-	const name = node.key
-	const data = node.value
+	let name = node.key
+	let data = node.value
 	
 	var attrs   = []
 	var content = data
@@ -54,7 +54,7 @@ def get-name-attrs-content (node)
 
 def render_at_depth (printer, node, depth)
 {
-	const print = printer % depth
+	let print = printer % depth
 	
 	if node isa string then
 	{
@@ -64,9 +64,9 @@ def render_at_depth (printer, node, depth)
 	
 	if node isa mapping then
 	{
-		const (name, attrs, content) = get-name-attrs-content node
+		let (name, attrs, content) = get-name-attrs-content node
 		
-		const attr = str( attrs map { " " v.key, "=", qq v.value } )
+		let attr = str( attrs map { " " v.key, "=", qq v.value } )
 		
 		if content isa null then
 		{
@@ -74,7 +74,7 @@ def render_at_depth (printer, node, depth)
 		}
 		else if content isa string then
 		{
-			const inner = escape_text content
+			let inner = escape_text content
 			
 			print "<" name attr ">" inner "</" name ">"
 		}

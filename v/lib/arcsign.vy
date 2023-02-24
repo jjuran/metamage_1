@@ -1,20 +1,20 @@
 module arcsign
 
-const ext_tag = "----- ARCSIGN EXTENSION -----"
-const sig_tag = "----- ARCSIGN SIGNATURE -----"
+let ext_tag = "----- ARCSIGN EXTENSION -----"
+let sig_tag = "----- ARCSIGN SIGNATURE -----"
 
-const prefix = "\n" sig_tag "\n"
+let prefix = "\n" sig_tag "\n"
 
-const pre_length = prefix.length
-const key_length = 32 * 2
-const sig_length = 64 * 2
+let pre_length = prefix.length
+let key_length = 32 * 2
+let sig_length = 64 * 2
 
-const signature_block_length = pre_length
-                             + key_length + 1
-                             + sig_length + 2
+let signature_block_length = pre_length
+                           + key_length + 1
+                           + sig_length + 2
 
 export
-const hash_functions = str^
+let hash_functions = str^
 [
 	SHA-256: sha256,
 ]
@@ -32,19 +32,19 @@ def field (name, value)
 export
 def seal (key, msg, date, hash)
 {
-	const f = if hash then { hash_functions[ hash ] } else { ... }
+	let f = if hash then { hash_functions[ hash ] } else { ... }
 	
-	const ext = "\n" ext_tag "\n" field( "Date", date ) field( "Hash", hash )
+	let ext = "\n" ext_tag "\n" field( "Date", date ) field( "Hash", hash )
 	
-	const pub = ed25519-publickey key
-	const sig = ed25519-sign( key, f msg ext )
+	let pub = ed25519-publickey key
+	let sig = ed25519-sign( key, f msg ext )
 	
 	return ext prefix "\n".join (pub, sig / 2, "")
 }
 
 def strict_unhex (hex_input)
 {
-	const result = unhex hex_input
+	let result = unhex hex_input
 	
 	if hex result != hex_input then
 	{
@@ -63,12 +63,12 @@ def parts_from_keysig (keysig)
 		return ()
 	}
 	
-	const hex_lines = keysig[ pre_length -> signature_block_length ].lines()
+	let hex_lines = keysig[ pre_length -> signature_block_length ].lines()
 	
-	const data = hex_lines map strict_unhex
+	let data = hex_lines map strict_unhex
 	
-	const key = data[ 0 ]
-	const sig = packed data[ 1 .. 2 ]
+	let key = data[ 0 ]
+	let sig = packed data[ 1 .. 2 ]
 	
 	return key, sig
 }
@@ -81,12 +81,12 @@ def message_parts (sealed_message)
 	
 	if n >= signature_block_length then
 	{
-		const boundary = n - signature_block_length
+		let boundary = n - signature_block_length
 		
-		const msgext = sealed_message[ 0 -> boundary ]
-		const keysig = sealed_message[ boundary -> n ]
+		let msgext = sealed_message[ 0 -> boundary ]
+		let keysig = sealed_message[ boundary -> n ]
 		
-		if const parts = parts_from_keysig keysig then
+		if let parts = parts_from_keysig keysig then
 		{
 			return msgext, parts  # msg ext, key, sig
 		}
@@ -122,10 +122,10 @@ def msgext_parts (msgext)
 	
 	++j
 	
-	const n = msgext.length
+	let n = msgext.length
 	
-	const msg = msgext[ 0 -> i ]
-	const ext = msgext[ j -> n ]
+	let msg = msgext[ 0 -> i ]
+	let ext = msgext[ j -> n ]
 	
 	return msg, ext
 }
@@ -133,11 +133,11 @@ def msgext_parts (msgext)
 export
 def validate (sealed_message)
 {
-	if const parts = message_parts sealed_message then
+	if let parts = message_parts sealed_message then
 	{
-		const (msgext, key, sig) = parts
+		let (msgext, key, sig) = parts
 		
-		const (msg, ext) = msgext_parts msgext
+		let (msg, ext) = msgext_parts msgext
 		
 		var f = ...
 		

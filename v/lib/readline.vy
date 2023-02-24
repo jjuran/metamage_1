@@ -6,7 +6,7 @@ def readline (fd, fail)
 	
 	while true do
 	{
-		const c = readchar fd or return fail line
+		let c = readchar fd or return fail line
 		
 		# Postel's Law applies:  Accept LF in place of CRLF.
 		

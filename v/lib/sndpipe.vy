@@ -1,31 +1,31 @@
 module sndpipe
 
-const basic = x"0101"
-const admin = x"4a4a"
-const sound = x"4b4b"
+let basic = x"0101"
+let admin = x"4a4a"
+let sound = x"4b4b"
 
-const switch_on = x"0000"
-const allow_eof = x"2e2e"
-const full_stop = x"5858"
+let switch_on = x"0000"
+let allow_eof = x"2e2e"
+let full_stop = x"5858"
 
-const squarewave = x"ffff"
-const freeform   = x"0000"
-const fourtone_b = x"0101"
-const fourtone_u = x"0201"
+let squarewave = x"ffff"
+let freeform   = x"0000"
+let fourtone_b = x"0101"
+let fourtone_u = x"0201"
 
-const big_u16 = (big-endian u16).encode
-const big_u32 = (big-endian u32).encode
+let big_u16 = (big-endian u16).encode
+let big_u32 = (big-endian u32).encode
 
 def headerize (domain, opcode, extent=x"")
 {
-	const reserved = x"0000"
+	let reserved = x"0000"
 	
 	return reserved (big_u16 extent.size) domain opcode extent
 }
 
-const startup   = headerize (basic, switch_on)
-const carry_on  = headerize (basic, allow_eof)
-const interrupt = headerize (basic, full_stop)
+let startup   = headerize (basic, switch_on)
+let carry_on  = headerize (basic, allow_eof)
+let interrupt = headerize (basic, full_stop)
 
 def triplet (wavelength-amplitude-duration)
 {
@@ -34,7 +34,7 @@ def triplet (wavelength-amplitude-duration)
 
 def square_wave_tones (tones)
 {
-	const triplets = (tones map triplet per packed) triplet [0, 0, 0]
+	let triplets = (tones map triplet per packed) triplet [0, 0, 0]
 	
 	return headerize (sound, squarewave, triplets)
 }
@@ -46,32 +46,32 @@ def free_form_sound (playrate, samples)
 
 def four_tone_start (duration, notes)
 {
-	const recID = x"00000000"
+	let recID = x"00000000"
 	
-	const n0 = 4 - notes.length
+	let n0 = 4 - notes.length
 	
-	const meta = notes map {big_u32(v.key) big_u32 v.value.value}
-	const data = notes map {v.value.key}
+	let meta = notes map {big_u32(v.key) big_u32 v.value.value}
+	let data = notes map {v.value.key}
 	
-	const mgap = x"00" * 8 * n0
-	const dgap = x"00" * 256 * n0
+	let mgap = x"00" * 8 * n0
+	let dgap = x"00" * 256 * n0
 	
-	const sndrec = packed (recID, big_u16 duration, meta, mgap, data, dgap)
+	let sndrec = packed (recID, big_u16 duration, meta, mgap, data, dgap)
 	
 	return headerize (sound, fourtone_b, sndrec)
 }
 
 def four_tone_update (duration, notes)
 {
-	const recID = x"00000000"
+	let recID = x"00000000"
 	
-	const n0 = 4 - notes.length
+	let n0 = 4 - notes.length
 	
-	const meta = notes map {big_u32(v.key) big_u32 v.value.value}
+	let meta = notes map {big_u32(v.key) big_u32 v.value.value}
 	
-	const mgap = x"00" * 8 * n0
+	let mgap = x"00" * 8 * n0
 	
-	const sndrec = packed (recID, big_u16 duration, meta, mgap)
+	let sndrec = packed (recID, big_u16 duration, meta, mgap)
 	
 	return headerize (admin, fourtone_u, sndrec)
 }
@@ -81,15 +81,15 @@ def player (send)
 {
 	send startup
 	
-	const stop = send % interrupt
-	const detach = send % carry_on
+	let stop = send % interrupt
+	let detach = send % carry_on
 	
-	const square_wave = send * square_wave_tones
-	const free_form   = send * free_form_sound
-	const four_tone   = send * four_tone_start
-	const tone_update = send * four_tone_update
+	let square_wave = send * square_wave_tones
+	let free_form   = send * free_form_sound
+	let four_tone   = send * four_tone_start
+	let tone_update = send * four_tone_update
 	
-	const basic = :stop, :detach
+	let basic = :stop, :detach
 	
 	return record( basic, :square_wave, :free_form, :four_tone, :tone_update )
 }

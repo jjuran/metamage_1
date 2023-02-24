@@ -1,12 +1,12 @@
 def arcsign-unseal (arcsign, params)
 {
-	const key = params[ "key" ]
+	let key = params[ "key" ]
 	
 	def unsealed (load, truncate)
 	{
 		if var valid = arcsign.validate( load() ) then
 		{
-			const msg_key = valid[ 2 ]
+			let msg_key = valid[ 2 ]
 			
 			if msg_key != key then
 			{

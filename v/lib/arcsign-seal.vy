@@ -1,16 +1,16 @@
 def arcsign-seal (arcsign, params)
 {
-	const key   = params[ "key"   ]
-	const hash  = params[ "hash"  ]
-	const stamp = params[ "stamp" ]
+	let key   = params[ "key"   ]
+	let hash  = params[ "hash"  ]
+	let stamp = params[ "stamp" ]
 	
-	const date = stamp();
+	let date = stamp();
 	
 	for kit in params[ "kits" ] do
 	{
-		const (load, append) = *kit.value
+		let (load, append) = *kit.value
 		
-		const msg = load()
+		let msg = load()
 		
 		append( arcsign.seal( key, msg, date, hash ) )
 	}

@@ -1,12 +1,12 @@
-const invalid-node = "invalid HTML node"
+let invalid-node = "invalid HTML node"
 
-const mapping = ... => ...
+let mapping = ... => ...
 
-const inline-level = ["a", "span"]
+let inline-level = ["a", "span"]
 
 def qq (s) { '"' s '"' }
 
-const entities = byte^
+let entities = byte^
 [
 	'"': "quot",
 	'&': "amp",
@@ -16,7 +16,7 @@ const entities = byte^
 
 def escaped (c: byte)
 {
-	const entity =
+	let entity =
 		if c in entities
 			then { entities[ c ] }
 			else { "#" int c }
@@ -43,8 +43,8 @@ def get-name-attrs-content (node)
 {
 	assert node isa mapping
 	
-	const name = node.key
-	const data = node.value
+	let name = node.key
+	let data = node.value
 	
 	var attrs   = []
 	var content = data
@@ -73,7 +73,7 @@ def is-single-element (node)
 export
 def render_html (printer, node, depth=0)
 {
-	const print = printer % depth
+	let print = printer % depth
 	
 	if node isa string then
 	{
@@ -88,9 +88,9 @@ def render_html (printer, node, depth=0)
 	}
 	else if node isa mapping then
 	{
-		const (name, attrs, content) = get-name-attrs-content node
+		let (name, attrs, content) = get-name-attrs-content node
 		
-		const attr = str (attrs map { " " v.key, "=", quote_attr v.value })
+		let attr = str (attrs map { " " v.key, "=", quote_attr v.value })
 		
 		if content isa null then
 		{
@@ -98,7 +98,7 @@ def render_html (printer, node, depth=0)
 		}
 		else if content isa string then
 		{
-			const inner = escape_text content
+			let inner = escape_text content
 			
 			print "<" name attr ">" inner "</" name ">"
 		}

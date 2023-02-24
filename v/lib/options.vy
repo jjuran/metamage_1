@@ -1,12 +1,12 @@
 module options
 
-const reference = 0
-const interpret = 1
+let reference = 0
+let interpret = 1
 
 export
 def parse (argv, defs, error)
 {
-	const argc = argv.length
+	let argc = argv.length
 	
 	var i = 0
 	
@@ -28,18 +28,18 @@ def parse (argv, defs, error)
 		
 		while p do
 		{
-			const c = *p++
+			let c = *p++
 			
 			if not c in defs then
 			{
 				error()
 			}
 			
-			const opt = defs[ c ]
+			let opt = defs[ c ]
 			
-			const optvar = opt[ reference ]
+			let optvar = opt[ reference ]
 			
-			if const f = opt[ interpret ] then
+			if let f = opt[ interpret ] then
 			{
 				const param
 				
@@ -63,7 +63,7 @@ def parse (argv, defs, error)
 		}
 	}
 	
-	const args = argv[ i -> argc ]
+	let args = argv[ i -> argc ]
 	
 	return args
 }

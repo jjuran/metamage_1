@@ -2,14 +2,14 @@ module info_plist
 
 def qq (s) { str ('"', s, '"') }
 
-const encoding = qq "UTF-8"
-const dtd_name = qq "-//Apple//DTD PLIST 1.0//EN"
-const dtd_url  = qq "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
+let encoding = qq "UTF-8"
+let dtd_name = qq "-//Apple//DTD PLIST 1.0//EN"
+let dtd_url  = qq "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
 
-export const version = "<?xml version=" (qq 1.0) " encoding=" encoding "?>"
-export const doctype = "<!DOCTYPE plist PUBLIC " dtd_name " " dtd_url ">"
+export let version = "<?xml version=" (qq 1.0) " encoding=" encoding "?>"
+export let doctype = "<!DOCTYPE plist PUBLIC " dtd_name " " dtd_url ">"
 
-const mapping = ... => ...
+let mapping = ... => ...
 
 const reifiers
 

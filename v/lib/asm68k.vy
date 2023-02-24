@@ -33,9 +33,9 @@ def UNLK (An)
 
 def Bcc (cc, offset)
 {
-	const disp = word offset
+	let disp = word offset
 	
-	const base = x"6000" | (packed byte cc) x"00"
+	let base = x"6000" | (packed byte cc) x"00"
 	
 	return if disp[ 0 ] or offset == 0 then { base, disp } else { base | disp }
 }
@@ -56,51 +56,51 @@ def parse_int (s)
 		else {int   s}
 }
 
-const digit = '0' .. '9'
-const xdigit = digit | 'a' .. 'f' | 'A' .. 'F'
+let digit = '0' .. '9'
+let xdigit = digit | 'a' .. 'f' | 'A' .. 'F'
 
-const non_neg = "0" | ['1' .. '9', digit*]
-const decimal = [ '-'?, non_neg ]
-const hexadec = ["0x", xdigit+]
-const numeral = (hexadec | decimal) => parse_int
+let non_neg = "0" | ['1' .. '9', digit*]
+let decimal = [ '-'?, non_neg ]
+let hexadec = ["0x", xdigit+]
+let numeral = (hexadec | decimal) => parse_int
 
-const lwb = '.', ('L' => {2})
-               | ('W' => {1})
-               | ('B' => {0})
+let lwb = '.', ('L' => {2})
+             | ('W' => {1})
+             | ('B' => {0})
 
-const lw = '.', ('L' => {1})
-              | ('W' => {0})
+let lw = '.', ('L' => {1})
+            | ('W' => {0})
 
-const gr_range = '0' .. '7'
+let gr_range = '0' .. '7'
 
-const Dn = 'D', gr_range => int
-const An = ['A', gr_range => int] | ("SP" => {7})
+let Dn = 'D', gr_range => int
+let An = ['A', gr_range => int] | ("SP" => {7})
 
-const Xn = [Dn] | (An => {8 + _})
-const PC = "PC"
+let Xn = [Dn] | (An => {8 + _})
+let PC = "PC"
 
-const indirect = '(', An, ')'
+let indirect = '(', An, ')'
 
-const postinc = '(', An, ")+"
-const predec  = "-(", An, ')'
+let postinc = '(', An, ")+"
+let predec  = "-(", An, ')'
 
-const displacement = [numeral, "("] | ["(", numeral, ","]
-const displacement_0 = displacement | ["(" => {0}]
+let displacement = [numeral, "("] | ["(", numeral, ","]
+let displacement_0 = displacement | ["(" => {0}]
 
-const scales = 0 .. 3 map { byte (48 + 2^v) => {v} } per {a | b}
-const scale = ["*", scales]? => {_ or 0}
+let scales = 0 .. 3 map { byte (48 + 2^v) => {v} } per {a | b}
+let scale = ["*", scales]? => {_ or 0}
 
-const displace = displacement,   An, ")"
-const indexed  = displacement_0, An, ",", Xn, lw, scale, ")"
+let displace = displacement,   An, ")"
+let indexed  = displacement_0, An, ",", Xn, lw, scale, ")"
 
 def less2 (x) { int x - 2 }
 
-const PCr-star = "*", [ "+", non_neg => less2 ] | ([ "-", non_neg ] => less2)
-const PCr-disp = displacement,   PC, ")"
-const PCr-indx = displacement_0, PC, ",", Xn, lw, scale, ")"
+let PCr-star = "*", [ "+", non_neg => less2 ] | ([ "-", non_neg ] => less2)
+let PCr-disp = displacement,   PC, ")"
+let PCr-indx = displacement_0, PC, ",", Xn, lw, scale, ")"
 
-const absolute = hexadec => {+(i16 _ != _), _} * unhex
-const immed = '#', numeral
+let absolute = hexadec => {+(i16 _ != _), _} * unhex
+let immed = '#', numeral
 
 def split_long (x)
 {
@@ -115,7 +115,7 @@ def sized_ea (size_code, mode, reg, exts)
 			else { _ }
 }
 
-const ea =
+let ea =
 	([ Dn       ] => {0, _, []}) |
 	([ An       ] => {1, _, []}) |
 	([ indirect ] => {2, _, []}) |
@@ -134,39 +134,39 @@ const ea =
 	
 	byteclass()
 
-const whitespace = ' ' | '\t'
+let whitespace = ' ' | '\t'
 
-const space = whitespace+
+let space = whitespace+
 
-const line_comment = ["//", ~byteclass('\n')*]
+let line_comment = ["//", ~byteclass('\n')*]
 
-const separator = [line_comment?, '\n'] | ';'
+let separator = [line_comment?, '\n'] | ';'
 
-const dc_w = [ "DC.W", space, numeral ] => word
-const dc_l = [ "DC.L", space, numeral ] => {word (u32 _ div 2^16), word u16 _}
+let dc_w = [ "DC.W", space, numeral ] => word
+let dc_l = [ "DC.L", space, numeral ] => {word (u32 _ div 2^16), word u16 _}
 
-const pea = [ "PEA", space, ea ] => PEA
+let pea = [ "PEA", space, ea ] => PEA
 
-const trap = [ "TRAP", space, immed ] => TRAP
+let trap = [ "TRAP", space, immed ] => TRAP
 
-const link = [ "LINK", space, An, ',', immed ] => LINK
-const unlk = [ "UNLK", space, An             ] => UNLK
+let link = [ "LINK", space, An, ',', immed ] => LINK
+let unlk = [ "UNLK", space, An             ] => UNLK
 
-const bsr = [ "BSR.S" => {1}, space, PCr-star ] => Bcc
+let bsr = [ "BSR.S" => {1}, space, PCr-star ] => Bcc
 
-const moveq = [ "MOVEQ", ".L"?, space, immed, ',', Dn ] => MOVEQ
+let moveq = [ "MOVEQ", ".L"?, space, immed, ',', Dn ] => MOVEQ
 
-const instruction = dc_w
-                  | dc_l
-                  | pea
-                  | trap
-                  | link
-                  | unlk
-                  | :NOP
-                  | :RTS
-                  | bsr
-                  | moveq
+let instruction = dc_w
+                | dc_l
+                | pea
+                | trap
+                | link
+                | unlk
+                | :NOP
+                | :RTS
+                | bsr
+                | moveq
 
-const instructions = [ whitespace*, instruction?, whitespace*, separator ]*
+let instructions = [ whitespace*, instruction?, whitespace*, separator ]*
 
-export const grammar = instructions
+export let grammar = instructions

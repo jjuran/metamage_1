@@ -2,11 +2,11 @@ def pad (width, x)
 {
 	var s = str x
 	
-	const gap = width - s.length
+	let gap = width - s.length
 	
 	if gap > 0 then
 	{
-		const space = " " * gap
+		let space = " " * gap
 		
 		s = if x isa int then {space s} else {s space}
 	}
@@ -16,29 +16,29 @@ def pad (width, x)
 
 def check (grid)
 {
-	const mapping = ... => ...
+	let mapping = ... => ...
 	
 	if not (grid isa mapping) then
 	{
 		throw "non-mapping can't be a grid"
 	}
 	
-	const k = grid.key
-	const v = grid.value
+	let k = grid.key
+	let v = grid.value
 	
 	if not (v isa ...[]) then
 	{
 		throw "non-array value can't be a grid"
 	}
 	
-	const dimensions (int[]) = k
+	let dimensions (int[]) = k
 	
 	if not (dimensions isa u8[]) then
 	{
 		throw "grid dimensions must be non-negative integers, within reason"
 	}
 	
-	const count = v.length
+	let count = v.length
 	
 	if dimensions per Math.product != count then
 	{
@@ -70,15 +70,15 @@ def display-grid (grid)
 {
 	check grid
 	
-	const dimensions (int[]) = grid.key
+	let dimensions (int[]) = grid.key
 	
-	const elements (str[]) = grid.value map str
+	let elements (str[]) = grid.value map str
 	
-	const max_width = elements map { str( v ).length } per Math.max
+	let max_width = elements map { str( v ).length } per Math.max
 	
-	const cells (str[]) = elements map pad % max_width
+	let cells (str[]) = elements map pad % max_width
 	
-	const g (str[]) = groups( dimensions[ 0 ], cells )
+	let g (str[]) = groups( dimensions[ 0 ], cells )
 	
 	return "\n".join *g
 }

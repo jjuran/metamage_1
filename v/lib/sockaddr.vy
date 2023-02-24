@@ -3,7 +3,7 @@ module sockaddr
 export
 def display (sa)
 {
-	const family = u8 (sa[ 1 ] or sa[ 0 ])
+	let family = u8 (sa[ 1 ] or sa[ 0 ])
 	
 	var addr
 	
@@ -17,7 +17,7 @@ def display (sa)
 		
 		if var p = (begin addr).find "0000:0000" then
 		{
-			const q = p
+			let q = p
 			
 			p += ["0000", ":0000"+]
 			
@@ -36,7 +36,7 @@ def display (sa)
 		return sa
 	}
 	
-	const port = u8 sa[ 2 ] * 256 + u8 sa[ 3 ]
+	let port = u8 sa[ 2 ] * 256 + u8 sa[ 3 ]
 	
 	return addr ":" port
 }

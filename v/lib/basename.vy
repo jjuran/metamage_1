@@ -5,7 +5,7 @@ def basename (path)
 	
 	while *p == '/' do {++p}
 	
-	if const q = p.find '/' then
+	if let q = p.find '/' then
 	{
 		return -(q - p)
 	}

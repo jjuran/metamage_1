@@ -1,4 +1,4 @@
-const services =
+let services =
 [
 	"tcpmux",
 	"daytime",

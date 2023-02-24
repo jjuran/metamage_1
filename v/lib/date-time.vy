@@ -1,7 +1,7 @@
 module date-time
 
 export
-const days =
+let days =
 [
 	"Sunday",
 	"Monday",
@@ -13,7 +13,7 @@ const days =
 ]
 
 export
-const months =
+let months =
 [
 	"January",
 	"February",
@@ -29,7 +29,7 @@ const months =
 	"December",
 ]
 
-const month_days =
+let month_days =
 [
 	31, 28, 31,
 	30, 31, 30,
@@ -37,18 +37,18 @@ const month_days =
 	31, 30, 31,
 ]
 
-const utc = "UTC"
+let utc = "UTC"
 
 export
 def time_pieces (secs)
 {
-	const q = 365 * 4 + 1
+	let q = 365 * 4 + 1
 	
 	# 365 * n           is Jan 1
 	# 365 * n + 31      is Feb 1
 	# 365 * n + 31 + 28 is Feb 29
 	
-	const feb29 = 365 * 2 + 31 + 28
+	let feb29 = 365 * 2 + 31 + 28
 	
 	var mins = secs div 60
 	    secs = secs mod 60
@@ -59,14 +59,14 @@ def time_pieces (secs)
 	var days  = hours div 24
 	    hours = hours mod 24
 	
-	const wday = (days + 4) mod 7
+	let wday = (days + 4) mod 7
 	
 	var quads = days div q
 	    days  = days mod q
 	
 	var years = quads * 4
 	
-	const leap_diff = days - feb29
+	let leap_diff = days - feb29
 	
 	days -= +(leap_diff > 0)
 	
@@ -96,9 +96,9 @@ def tens (x)
 export
 def gmtime (secs)
 {
-	const (y, m, d, H, M, S, w) = time_pieces secs
+	let (y, m, d, H, M, S, w) = time_pieces secs
 	
-	const fields =
+	let fields =
 	(
 		sec:  S,
 		min:  M,
@@ -116,11 +116,11 @@ def gmtime (secs)
 export
 def stamp (secs)
 {
-	const (y, m, d, H, M, S), ... = time_pieces secs
+	let (y, m, d, H, M, S), ... = time_pieces secs
 	
-	const date = "-".join (     y, tens m, tens d)
-	const time = ":".join (tens H, tens M, tens S)
-	const zone = utc
+	let date = "-".join (     y, tens m, tens d)
+	let time = ":".join (tens H, tens M, tens S)
+	let zone = utc
 
 	return date " " time " " zone
 }

@@ -1,10 +1,10 @@
-const mapping = ... => ...
+let mapping = ... => ...
 
-const digit = '0' .. '9'
-const upper = 'A' .. 'Z'
-const lower = 'a' .. 'z'
-const alpha = upper | lower
-const alnum = alpha | digit
+let digit = '0' .. '9'
+let upper = 'A' .. 'Z'
+let lower = 'a' .. 'z'
+let alpha = upper | lower
+let alnum = alpha | digit
 
 def is-bareword (s)
 {
@@ -80,7 +80,7 @@ assert level-depth (foo: [1]) == 1
 
 def render_at_depth (printer, node, depth=0, maybe_comma="")
 {
-	const print = printer % depth
+	let print = printer % depth
 	
 	if (+) node > 1 and level-depth-at-least( 2, node ) then
 	{
@@ -106,9 +106,9 @@ def render_at_depth (printer, node, depth=0, maybe_comma="")
 	}
 	else if node isa mapping then
 	{
-		const make-key = if is-bareword node.key then {str} else {rep}
+		let make-key = if is-bareword node.key then {str} else {rep}
 		
-		const key = make-key node.key
+		let key = make-key node.key
 		
 		if not level-depth-at-least( 1, node ) then
 		{
@@ -118,7 +118,7 @@ def render_at_depth (printer, node, depth=0, maybe_comma="")
 		{
 			print key ":"
 			
-			const indent = node.value isa mapping
+			let indent = node.value isa mapping
 			
 			render_at_depth( printer, node.value, depth + +indent, maybe_comma )
 		}
@@ -151,17 +151,17 @@ end.
 Example
 -------
 
-const pretty-printing = import "pretty-printing"
+let pretty-printing = import "pretty-printing"
 
-const Tab = "\t"
+let Tab = "\t"
 
 def printer (depth, text)
 {
-	const tabs = Tab * depth
+	let tabs = Tab * depth
 	
 	print tabs text
 }
 
-const pretty-print = pretty-printing printer
+let pretty-print = pretty-printing printer
 
 pretty-print ...
