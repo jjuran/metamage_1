@@ -77,7 +77,7 @@ def four_tone_update (duration, notes)
 }
 
 export
-def player (send)
+def player (send, recv=null)
 {
 	send startup
 	
