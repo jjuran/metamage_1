@@ -25,7 +25,7 @@ def import (lib) { eval (load, realpath) libdir lib ".vy" }
 
 let sndpipe = import "sndpipe"
 
-let sound = sndpipe.player { output_fd <== _ }
+let sound = sndpipe.player ({ output_fd <== _ }, output_fd.read)
 
 let square_2 = packed (x"40" * 128, x"c0" * 128) => 0
 let sawtooth = 0 -> 256 map byte per packed => 128

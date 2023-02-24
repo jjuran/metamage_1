@@ -25,7 +25,7 @@ def import (lib) { eval (load, realpath) libdir lib ".vy" }
 
 let sndpipe = import "sndpipe"
 
-let sound = sndpipe.player { output_fd <== _ }
+let sound = sndpipe.player ({ output_fd <== _ }, output_fd.read)
 
 let tones =
 [
