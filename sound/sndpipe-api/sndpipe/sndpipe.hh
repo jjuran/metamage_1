@@ -34,6 +34,8 @@ enum
 {
 	switch_on = 0x0000,  // basic
 	allow_eof = 0x2e2e,  // basic ('..')
+	pong_sent = 0x3c3c,  // basic ('<<')
+	ping_sent = 0x3e3e,  // basic ('>>')
 	full_stop = 0x5858,  // basic ('XX')
 	
 	set_loudness_level = 0x6c6c,  // admin ('ll')
