@@ -6,6 +6,8 @@ let sound = x"4b4b"
 
 let switch_on = x"0000"
 let allow_eof = x"2e2e"
+let pong_sent = x"3c3c"
+let ping_sent = x"3e3e"
 let full_stop = x"5858"
 
 let squarewave = x"ffff"
@@ -25,6 +27,7 @@ def headerize (domain, opcode, extent=x"")
 
 let startup   = headerize (basic, switch_on)
 let carry_on  = headerize (basic, allow_eof)
+let send_ping = headerize (basic, ping_sent)
 let interrupt = headerize (basic, full_stop)
 
 def triplet (wavelength-amplitude-duration)
@@ -80,6 +83,13 @@ export
 def player (send, recv=null)
 {
 	send startup
+	
+	if recv then
+	{
+		send send_ping
+		
+		let pong = recv 8
+	}
 	
 	let stop = send % interrupt
 	let detach = send % carry_on
