@@ -16,16 +16,10 @@
 // gear
 #include "gear/parse_decimal.hh"
 
-// GetPathname
-#include "GetMacPathname.hh"
-
 // vfs
 #include "vfs/node.hh"
 #include "vfs/functions/pathname.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
-
-// MacVFS
-#include "MacVFS/util/FSSpec_from_node.hh"
 
 // relix-kernel
 #include "relix/api/errno.hh"
@@ -36,14 +30,6 @@
 // Genie
 #include "Genie/FS/FSSpec.hh"
 
-
-#ifndef REALPATH_OUTPUT_HFS
-#define REALPATH_OUTPUT_HFS (-1)
-#endif
-
-#ifndef REALPATH_OUTPUT_HFS_UTF8
-#define REALPATH_OUTPUT_HFS_UTF8 (-1)
-#endif
 
 #define STRLEN(s)  (sizeof "" s - 1)
 
@@ -72,15 +58,6 @@ bool begins_with( const char* s, const char* prefix, size_t length )
 	}
 	
 	return true;
-}
-
-
-static
-plus::string mac_pathname_from_file( const vfs::node& file, int flags )
-{
-	bool utf8 = (flags & REALPATH_OUTPUT_HFS_UTF8) == REALPATH_OUTPUT_HFS_UTF8;
-	
-	return GetMacPathname( vfs::FSSpec_from_node( file ), utf8 );
 }
 
 
@@ -139,10 +116,7 @@ ssize_t _realpathat( int dirfd, const char* path, char* p, size_t n, int flags )
 		
 		vfs::resolve_links_in_place( *relix::root(), file );
 		
-		const bool is_mac = flags & REALPATH_OUTPUT_HFS;
-		
-		plus::string resolved = is_mac ? mac_pathname_from_file( *file, flags )
-		                               : pathname( *file );
+		plus::string resolved = pathname( *file );
 		
 		const size_t resolved_size = resolved.size();
 		
