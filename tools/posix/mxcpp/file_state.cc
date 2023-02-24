@@ -14,6 +14,11 @@
 // plus
 #include "plus/var_string.hh"
 
+// mac_pathname
+#ifdef __RELIX__
+#include "mac_pathname_from_path.hh"
+#endif
+
 // text-input
 #include "text_input/get_line_from_feed.hh"
 
@@ -34,22 +39,12 @@ namespace tool
 	int global_include_depth = -1;
 	
 	
-	static void convert_unix_path_to_mac( plus::string& path )
+	static inline
+	void convert_unix_path_to_mac( plus::string& path )
 	{
 	#ifdef __RELIX__
 		
-		char buffer[ 1024 ];  // should be more than enough for a full pathname
-		
-		ssize_t size = _realpathat( AT_FDCWD, path.c_str(), buffer, sizeof buffer, REALPATH_OUTPUT_HFS );
-		
-		if ( size >= 0 )
-		{
-			path.assign( buffer, size );
-		}
-		else
-		{
-			p7::throw_errno( errno );
-		}
+		mac_pathname_from_path( path.c_str() ).swap( path );
 		
 	#else
 		
