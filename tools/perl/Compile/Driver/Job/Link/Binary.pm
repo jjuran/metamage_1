@@ -103,19 +103,6 @@ sub command
 	{
 		my @names = @{$module->{DESC}{DATA}{frameworks} || []};
 		
-		if ( ! exists $ENV{SDKROOT} )
-		{
-			my $vers = int macOS_SDK_version() / 100;
-			
-			if ( $vers == 1013 )
-			{
-				if ( @names  ||  $arch[ 1 ] eq 'i386' )
-				{
-					@w = '-w';
-				}
-			}
-		}
-		
 		if ( my $bundle_type = $module->bundle_type )
 		{
 			if ( $bundle_type ne "app" )
@@ -129,6 +116,19 @@ sub command
 					             : "ApplicationServices";
 					
 					push @names, "QuickLook";
+				}
+			}
+		}
+		
+		if ( ! exists $ENV{SDKROOT} )
+		{
+			my $vers = int macOS_SDK_version() / 100;
+			
+			if ( $vers == 1013 )
+			{
+				if ( @names  ||  $arch[ 1 ] eq 'i386' )
+				{
+					@w = '-w';
 				}
 			}
 		}
