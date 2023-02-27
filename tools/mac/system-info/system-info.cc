@@ -12,6 +12,9 @@
 #ifndef __CONDITIONALMACROS__
 #include <ConditionalMacros.h>
 #endif
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
 #ifndef __TEXTUTILS__
 #include <TextUtils.h>
 #endif
@@ -40,6 +43,8 @@
 
 #pragma exceptions off
 
+
+#define STRLEN( s )  (sizeof "" s - 1)
 
 #ifndef TARGET_CPU_X86_64
 #define TARGET_CPU_X86_64  0
@@ -251,6 +256,30 @@ void host_env()
 	                    : sys2 <     12 ? "OS X"
 	                    :                 "macOS";
 	
+	if ( sysv == 0 )
+	{
+		if ( Handle h = GetResource( 'STR ', 0 ) )
+		{
+			Byte* p = (Byte*) *h;
+			
+			UInt32 len = *p++;
+			
+			if ( len < GetHandleSize( h )  &&  len >= STRLEN( "Version 1.0" ) )
+			{
+				Byte* end = p + len;
+				
+				p += STRLEN( "Version " );
+				
+				a[ 0 ] = p[ 0 ];
+				b[ 0 ] = p[ 2 ];
+			}
+			
+			ReleaseResource( h );
+			
+			os_name = "Mac Software";
+		}
+	}
+	
 	printf( "Host CPU architecture:  %s\n", arch_name );
 	
 	if ( TARGET_CPU_68K  &&  sysa <= 1 )
@@ -320,7 +349,7 @@ void host_env()
 		print_clock_speed( "Bus", bclm ? bclm : bclk, bclm ? 2 : 0 );
 	}
 	
-	if ( sys1 != 0 )
+	if ( a[ 0 ] != 0 )
 	{
 		const char* o = ".";
 		
