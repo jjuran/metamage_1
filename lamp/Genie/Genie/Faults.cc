@@ -178,12 +178,17 @@ namespace relix
 	{
 		_ExitToShell  = 0xA9F4,
 		_GetNextEvent = 0xA970,
+		_StripAddress = 0xA055,
 		
+		_Unimplemented = 0xA89F,
+		
+		_SetOSTrapAddress   = 0xA247,
 		_SetToolTrapAddress = 0xA647,
 	};
 	
 	static UniversalProcPtr old_ExitToShell;
 	static UniversalProcPtr old_GetNextEvent;
+	static UniversalProcPtr old_StripAddress;
 	
 	static
 	asm
@@ -192,6 +197,10 @@ namespace relix
 		LINK     A6,#0
 		
 		JSR      remove_68k_exception_handlers
+		
+		MOVEA.L  old_StripAddress,A0
+		MOVE.W   #_StripAddress,D0
+		_SetOSTrapAddress
 		
 		MOVEA.L  old_GetNextEvent,A0
 		MOVE.W   #_GetNextEvent,D0
@@ -232,6 +241,17 @@ namespace relix
 		RTS
 	}
 	
+	long Lo3Bytes : 0x031A;
+	
+	static
+	asm
+	long StripAddress_patch( long addr : __D0 )
+	{
+		AND.L    Lo3Bytes,D0
+		
+		RTS
+	}
+	
 	void InstallExceptionHandlers()
 	{
 		using namespace mac::sys;
@@ -240,9 +260,15 @@ namespace relix
 		
 		old_ExitToShell  = get_trap_address( _ExitToShell  );
 		old_GetNextEvent = get_trap_address( _GetNextEvent );
+		old_StripAddress = get_trap_address( _StripAddress );
 		
 		set_trap_address( (ProcPtr) &ExitToShell_patch,  _ExitToShell  );
 		set_trap_address( (ProcPtr) &GetNextEvent_patch, _GetNextEvent );
+		
+		if ( old_StripAddress == get_trap_address( _Unimplemented ) )
+		{
+			set_trap_address( (ProcPtr) &StripAddress_patch, _StripAddress );
+		}
 	}
 	
 #endif
