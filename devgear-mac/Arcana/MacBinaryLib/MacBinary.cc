@@ -36,6 +36,7 @@
 #include "more/string.h"
 
 // mac-file-utils
+#include "mac_file/desktop.hh"
 #include "mac_file/directory.hh"
 
 // Debug
@@ -583,17 +584,18 @@ namespace MacBinary
 	
 	static void EncodeFile( const FSSpec& file, HFileInfo& hFileInfo, BlockWriter blockWrite, int output )
 	{
+		using mac::file::get_desktop_comment;
+		
 		char comment[ 256 ] = {};
 		
 		long comment_size = 0;
 		long padded_size;
 		
-		try
+		comment_size = get_desktop_comment( file, comment, sizeof comment );
+		
+		if ( comment_size < 0 )
 		{
-			comment_size = N::FSpDTGetComment( file, comment, sizeof comment );
-		}
-		catch ( ... )
-		{
+			comment_size = 0;
 		}
 		
 		HeaderBlock u;
@@ -933,7 +935,13 @@ namespace MacBinary
 				
 				if ( !itsFrame.comment.empty() )
 				{
-					N::FSpDTSetComment( itsFrame.file, itsFrame.comment );
+					using mac::file::set_desktop_comment;
+					
+					OSErr err = set_desktop_comment( itsFrame.file,
+					                                 itsFrame.comment.data(),
+					                                 itsFrame.comment.size() );
+					
+					Mac::ThrowOSStatus( err );
 				}
 				
 				CInfoPBRec pb;
