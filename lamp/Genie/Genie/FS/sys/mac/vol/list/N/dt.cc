@@ -73,14 +73,6 @@ namespace Genie
 	using MacScribe::parse_utf8_quad_name;
 	
 	
-	static N::FSVolumeRefNum GetKeyFromParent( const vfs::node& parent )
-	{
-		const vfs::node* grandparent = parent.owner();
-		
-		return N::FSVolumeRefNum( -gear::parse_unsigned_decimal( grandparent->name().c_str() ) );
-	}
-	
-	
 	static FSSpec DTGetAPPL( const vfs::node* appls_quad, short index = 0 )
 	{
 		const ::OSType creator = parse_utf8_quad_name( appls_quad->name() );
