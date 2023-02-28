@@ -14,6 +14,37 @@ namespace file {
 
 #if ! __LP64__
 
+OSErr get_desktop_APPL( FSSpec&  result,
+                        short    vRefNum,
+                        OSType   signature,
+                        short    index )
+{
+	OSErr err;
+	DTPBRec pb;
+	
+	pb.ioVRefNum = vRefNum;
+	pb.ioNamePtr = NULL;
+	
+	err = PBDTGetPath( &pb );
+	
+	if ( err == noErr )
+	{
+		pb.ioNamePtr     = result.name;
+		pb.ioIndex       = index;
+		pb.ioFileCreator = signature;
+		
+		err = PBDTGetAPPLSync( &pb );
+		
+		if ( err == noErr )
+		{
+			result.vRefNum = vRefNum;
+			result.parID   = pb.ioAPPLParID;
+		}
+	}
+	
+	return err;
+}
+
 long get_desktop_comment( short            vRefNum,
                           long             dirID,
                           ConstStr63Param  name,

@@ -20,6 +20,11 @@
 namespace mac  {
 namespace file {
 	
+	OSErr get_desktop_APPL( FSSpec&  result,
+	                        short    vRefNum,
+	                        OSType   signature,
+	                        short    index );
+	
 	long get_desktop_comment( short            vRefNum,
 	                          long             dirID,
 	                          ConstStr63Param  name,
