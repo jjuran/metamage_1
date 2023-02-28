@@ -194,11 +194,11 @@ namespace relix
 		JSR      remove_68k_exception_handlers
 		
 		MOVEA.L  old_GetNextEvent,A0
-		MOVE.W   #0xA970,D0
+		MOVE.W   #_GetNextEvent,D0
 		_SetToolTrapAddress
 		
 		MOVEA.L  old_ExitToShell,A0
-		MOVE.W   #0xA9F4,D0
+		MOVE.W   #_ExitToShell,D0
 		_SetToolTrapAddress
 		
 		UNLK     A6
