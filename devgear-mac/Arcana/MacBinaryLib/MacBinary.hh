@@ -40,7 +40,6 @@ namespace MacBinary
 	
 	class InvalidMacBinaryHeader      {};  // The stream lacks a valid MacBinary header.
 	class IncompatibleMacBinaryHeader {};  // The header says we're too old to decode it.
-	class MacBinaryIIPlusNotSupported {};  // The file has a valid MacBinary II+ header
 	class TooManyEndBlocks            {};  // Directory end block received without start
 	
 	struct Block
