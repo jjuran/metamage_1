@@ -16,20 +16,6 @@
 #include "Nitrogen/Resources.hh"
 
 
-namespace Nitrogen
-{
-	
-	static ResFileRefNum GetTopResourceFile()
-	{
-		::ResFileRefNum topRefNum = -1;
-		
-		Mac::ThrowOSStatus( ::GetTopResourceFile( &topRefNum ) );
-		
-		return ResFileRefNum( topRefNum );
-	}
-	
-}
-
 namespace Genie
 {
 	
@@ -47,11 +33,21 @@ namespace Genie
 #endif
 	
 	
+	static inline
+	::ResFileRefNum GetTopResourceFile()
+	{
+		::ResFileRefNum topRefNum = -1;
+		
+		Mac::ThrowOSStatus( ::GetTopResourceFile( &topRefNum ) );
+		
+		return topRefNum;
+	}
+	
 	static inline TopOfResourceChain GetTop()
 	{
 	#if TARGET_API_MAC_CARBON
 		
-		return N::GetTopResourceFile();
+		return GetTopResourceFile();
 		
 	#else
 		
