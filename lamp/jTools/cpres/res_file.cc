@@ -240,8 +240,7 @@ void set_BNDL_bit( const char* path, bool value )
 	
 	if ( value == ! (info.fdFlags & kHasBundle) )
 	{
-		info.fdFlags &= ~kHasBundle;
-		info.fdFlags |=  kHasBundle * value;
+		info.fdFlags ^= kHasBundle;
 		
 		N::FSpSetFInfo( file, info );
 	}
