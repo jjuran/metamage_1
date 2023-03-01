@@ -18,6 +18,9 @@
 // gear
 #include "gear/hexadecimal.hh"
 
+// mac-rsrc-utils
+#include "mac_rsrc/open_res_file.hh"
+
 // plus
 #include "plus/hexadecimal.hh"
 #include "plus/mac_utf8.hh"
@@ -55,6 +58,25 @@
 #include "Genie/IO/Handle.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
+
+namespace Nitrogen
+{
+	
+	namespace n = nucleus;
+	
+	static
+	n::owned< ResFileRefNum > open_res_file( const FSSpec& file, SInt8 perm )
+	{
+		::ResFileRefNum opened = mac::rsrc::open_res_file( file, perm );
+		
+		ResError();
+		
+		ResFileRefNum refNum = ResFileRefNum( opened );
+		
+		return nucleus::owned< ResFileRefNum >::seize( refNum );
+	}
+	
+}
 
 namespace Genie
 {
@@ -96,7 +118,7 @@ namespace Genie
 	
 	void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
 	{
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::open_res_file( file, fsRdPerm );
 		
 		const short n_types = N::Count1Types();
 		
@@ -168,7 +190,7 @@ namespace Genie
 		
 		const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
 		
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::open_res_file( fileSpec, fsRdPerm );
 		
 		const ResSpec resSpec = GetResSpec_from_name( that->name() );
 		
@@ -429,7 +451,7 @@ namespace Genie
 	
 	static bool has_resource( const FSSpec& file, const ResSpec& resSpec )
 	{
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::open_res_file( file, fsRdPerm );
 		
 		return ::Get1Resource( resSpec.type, resSpec.id ) != NULL;
 	}
@@ -489,7 +511,7 @@ namespace Genie
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::open_res_file( fileSpec, fsRdPerm );
 		
 		const ResSpec resSpec = GetResSpec_from_name( that->name() );
 		
@@ -541,7 +563,7 @@ namespace Genie
 		
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
+		n::owned< N::ResFileRefNum > resFile = N::open_res_file( fileSpec, fsRdPerm );
 		
 		const ResSpec resSpec = GetResSpec_from_name( that->name() );
 		

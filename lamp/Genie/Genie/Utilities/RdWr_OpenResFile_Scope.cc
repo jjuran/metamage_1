@@ -11,16 +11,21 @@
 #ifndef __LOWMEM__
 #include <LowMem.h>
 #endif
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
+
+// mac-rsrc-utils
+#include "mac_rsrc/open_res_file.hh"
 
 // Nitrogen
-#include "Nitrogen/Resources.hh"
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+#endif
 
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	
 	
 #if TARGET_API_MAC_CARBON
 	
@@ -62,7 +67,14 @@ namespace Genie
 	{
 		const TopOfResourceChain top = GetTop();
 		
-		itsResFile = N::FSpOpenResFile( resFile, Mac::fsRdWrPerm ).release();
+		short opened = mac::rsrc::open_res_file( resFile, fsRdWrPerm );
+		
+		if ( opened < 0 )
+		{
+			Mac::ThrowOSStatus( opened );
+		}
+		
+		itsResFile = opened;
 		
 		const bool map_reused = GetTop() == top;
 		
