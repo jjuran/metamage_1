@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 
 // mac-rsrc-utils
+#include "mac_rsrc/create_res_file.hh"
 #include "mac_rsrc/open_res_file.hh"
 
 // poseven
@@ -151,30 +152,9 @@ namespace Genie
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
-		CInfoPBRec cInfo = {{ 0 }};
+		using mac::rsrc::create_res_file;
 		
-		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, false, fileSpec );
-		
-		::OSType creator;
-		::OSType type;
-		
-		if ( !exists || is_rsrc_file( cInfo, fileSpec.name ) )
-		{
-			creator = 'RSED';
-			type    = 'rsrc';
-		}
-		else
-		{
-			const FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
-			
-			creator = fInfo.fdCreator;
-			type    = fInfo.fdType;
-		}
-		
-		N::FSpCreateResFile( fileSpec,
-		                     Mac::FSCreator( creator ),
-		                     Mac::FSType   ( type    ),
-		                     Mac::smSystemScript );
+		Mac::ThrowOSStatus( create_res_file( fileSpec ) );
 	}
 	
 	static vfs::node_ptr resfile_dir_lookup( const vfs::node*     that,
