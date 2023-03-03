@@ -145,9 +145,11 @@ namespace Genie
 		
 		plus::var_string s = plus::utf8_from_mac( params.its_mac_text );
 		
-		if ( offset + n_bytes > s.size() )
+		const size_t end_offset = offset + n_bytes;
+		
+		if ( end_offset > s.size() )
 		{
-			s.resize( offset + n_bytes );
+			s.resize( end_offset );
 		}
 		
 		mempcpy( s.begin() + offset, buffer, n_bytes );
