@@ -58,9 +58,6 @@
 // plus
 #include "plus/var_string.hh"
 
-// Divergence
-#include "Divergence/Utilities.hh"
-
 // nucleus
 #include "nucleus/shared.hh"
 
@@ -115,7 +112,6 @@
 namespace N = Nitrogen;
 namespace n = nucleus;
 namespace p7 = poseven;
-namespace Div = Divergence;
 
 
 static int TestUnit( int argc, char** argv )
@@ -884,45 +880,6 @@ static int TestMangling( int argc, char** argv )
 	return 0;
 }
 
-typedef pascal void (*CallbackProcPtr)();
-
-typedef DragGrayRgnUPP CallbackUPP;
-
-static pascal void MyCallback()
-{
-	abort();
-}
-
-typedef pascal unsigned char (*InitMainProcPtr)( RGBColor* );
-
-static int TestCallback( int argc, char** argv )
-{
-	if ( argc <= 2 )
-	{
-		std::fputs( "Missing argument", stderr );
-		
-		return 1;
-	}
-	
-	const char* pathname = argv[2];
-	
-	FSSpec file = Div::ResolvePathToFSSpec( pathname );
-	
-	n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
-	
-	n::owned< N::Handle > init = N::DetachResource( N::Get1Resource( N::ResType( 'INIT' ), N::ResID( 0 ) ) );
-	
-	N::HLock( init );
-	
-	ColorComplementUPP initMain = (ColorComplementUPP) *init.get();
-	
-	CallbackUPP callback = NewDragGrayRgnUPP( MyCallback );
-	
-	InvokeColorComplementUPP( (RGBColor*) callback, initMain );
-	
-	return 0;
-}
-
 
 static recall::frame_data gStackCrawl[ 64 ];
 
@@ -1006,24 +963,6 @@ static int TestForkAndStop( int argc, char** argv )
 	int stat = -1;
 	
 	waitpid( pid, &stat, 0 );
-	
-	return 0;
-}
-
-static int TestDefaultThreadStackSize( int argc, char** argv )
-{
-	Size size = 0;
-	
-	OSErr err = GetDefaultThreadStackSize( kCooperativeThread, &size );
-	
-	if ( err != noErr )
-	{
-		std::fprintf( stderr, "GetDefaultThreadStackSize() returned OSErr %d\n", err );
-		
-		return 1;
-	}
-	
-	std::fprintf( stdout, "Default thread stack size:  %ld\n", size );
 	
 	return 0;
 }
@@ -1147,7 +1086,6 @@ static const command_t global_commands[] =
 #endif
 	
 	{ "assert",    TestAssert     },
-	{ "callback",  TestCallback   },
 	{ "crc16",     TestCRC16      },
 	{ "crc32",     TestCRC32      },
 	{ "date",      TestDate       },
@@ -1164,7 +1102,6 @@ static const command_t global_commands[] =
 	{ "null",      TestNull       },
 	{ "owned",     TestNucleusOwnedShared },
 	{ "path",      TestPath       },
-	{ "stack",     TestDefaultThreadStackSize },
 	{ "strerror",  TestStrError   },
 	{ "svcs",      TestServices   },
 	{ "throw",     TestThrow      },
