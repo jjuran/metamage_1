@@ -66,7 +66,6 @@
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 #include "Nitrogen/CodeFragments.hh"
-#include "Nitrogen/DateTimeUtils.hh"
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/MacMemory.hh"
 #include "Nitrogen/Resources.hh"
@@ -415,13 +414,6 @@ static int TestAFP( int argc, char** argv )
 	return 0;
 }
 
-
-static int TestDate( int argc, char** argv )
-{
-	std::printf( "DateTime == %.8lx\n", N::GetDateTime() );
-	
-	return 0;
-}
 
 static unsigned short crctable[] = {
      0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
@@ -1088,7 +1080,6 @@ static const command_t global_commands[] =
 	{ "assert",    TestAssert     },
 	{ "crc16",     TestCRC16      },
 	{ "crc32",     TestCRC32      },
-	{ "date",      TestDate       },
 	{ "forkstop",  TestForkAndStop },
 	
 #if TARGET_RT_MAC_CFM
