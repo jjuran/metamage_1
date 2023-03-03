@@ -14,6 +14,9 @@
 // plus
 #include "plus/mac_utf8.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
@@ -31,6 +34,7 @@
 namespace Genie
 {
 	
+	namespace p7  = poseven;
 	namespace Ped = Pedestal;
 	
 	
@@ -146,6 +150,11 @@ namespace Genie
 		plus::var_string s = plus::utf8_from_mac( params.its_mac_text );
 		
 		const size_t end_offset = offset + n_bytes;
+		
+		if ( end_offset > 30000 )
+		{
+			p7::throw_errno( ENOSPC );
+		}
 		
 		if ( end_offset > s.size() )
 		{
