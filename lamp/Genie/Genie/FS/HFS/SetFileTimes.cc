@@ -12,7 +12,6 @@
 #include "mac_types/epoch.hh"
 
 // Nitrogen
-#include "Nitrogen/DateTimeUtils.hh"
 #include "Nitrogen/Files.hh"
 
 // MacIO
@@ -51,7 +50,7 @@ namespace Genie
 		{
 			if ( now == 0 )
 			{
-				now = N::GetDateTime();
+				GetDateTime( &now );
 			}
 			
 			date = now;
