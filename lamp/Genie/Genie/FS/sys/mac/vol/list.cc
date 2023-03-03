@@ -5,6 +5,11 @@
 
 #include "Genie/FS/sys/mac/vol/list.hh"
 
+// Mac OS
+#ifndef __FOLDERS__
+#include <Folders.h>
+#endif
+
 // POSIX
 #include <sys/stat.h>
 
@@ -33,7 +38,6 @@
 
 // Nitrogen
 #include "Nitrogen/Files.hh"
-#include "Nitrogen/Folders.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -465,15 +469,28 @@ namespace Genie
 	
 	static vfs::node_ptr folder_link_resolve( const vfs::node* that )
 	{
+		using mac::types::VRefNum_DirID;
+		
 		const char* name = that->name().c_str();
 		
-		const N::FolderType type = name[0] == 's' ? N::kSystemFolderType
-		                         : name[0] == 't' ? N::kTemporaryFolderType
-		                         :                  N::FolderType();
+		const OSType folder_type = name[0] == 's' ? kSystemFolderType
+		                         : name[0] == 't' ? kTemporaryFolderType
+		                         :                  0;
 		
-		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( *that->owner() );
+		const FSVolumeRefNum vRefNum = GetKeyFromParent( *that->owner() );
 		
-		return FSTreeFromFSDirSpec( N::FindFolder( vRefNum, type, false ) );
+		OSErr err;
+		VRefNum_DirID folder;
+		
+		err = FindFolder( vRefNum,
+		                  folder_type,
+		                  false,
+		                  &folder.vRefNum,
+		                  &folder.dirID );
+		
+		Mac::ThrowOSStatus( err );
+		
+		return FSTreeFromFSDirSpec( folder );
 	}
 	
 	static const vfs::link_method_set folder_link_link_methods =
