@@ -5,6 +5,11 @@
 
 #include "Genie/FS/sys/mac/vol/list.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __FOLDERS__
 #include <Folders.h>
@@ -37,7 +42,9 @@
 #include "plus/string/concat.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
+#include "Nitrogen/Str.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -67,7 +74,6 @@
 namespace Genie
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
@@ -78,9 +84,10 @@ namespace Genie
 	const int gestaltFSSupports2TBVols = 5;
 	
 	
-	static N::FSVolumeRefNum GetKeyFromParent( const vfs::node& parent )
+	static
+	FSVolumeRefNum GetKeyFromParent( const vfs::node& parent )
 	{
-		return N::FSVolumeRefNum( -gear::parse_unsigned_decimal( parent.name().c_str() ) );
+		return -gear::parse_unsigned_decimal( parent.name().c_str() );
 	}
 	
 	
@@ -145,7 +152,8 @@ namespace Genie
 #endif
 	
 	
-	static bool is_valid_VolumeRefNum( N::FSVolumeRefNum key )
+	static inline
+	bool is_valid_VolumeRefNum( FSVolumeRefNum key )
 	{
 		using mac::types::VRefNum_DirID;
 		
@@ -172,7 +180,7 @@ namespace Genie
 				
 				if ( (i & 0xffff8000) == 0 )
 				{
-					return is_valid_VolumeRefNum( N::FSVolumeRefNum( -i ) );
+					return is_valid_VolumeRefNum( -i );
 				}
 			}
 			
@@ -343,7 +351,8 @@ namespace Genie
 	};
 	
 	
-	static void PBHGetVInfoSync( HVolumeParam& pb, N::FSVolumeRefNum vRefNum, StringPtr name = NULL )
+	static
+	void PBHGetVInfoSync( HVolumeParam& pb, FSVolumeRefNum vRefNum, StringPtr name = NULL )
 	{
 		pb.ioNamePtr  = name;
 		pb.ioVRefNum  = vRefNum;
@@ -353,12 +362,14 @@ namespace Genie
 		Mac::ThrowOSStatus( ::PBHGetVInfoSync( (HParamBlockRec*) &pb ) );
 	}
 	
-	static inline void PBHGetVInfoSync( XVolumeParam& pb, N::FSVolumeRefNum vRefNum, StringPtr name = NULL )
+	static inline
+	void PBHGetVInfoSync( XVolumeParam& pb, FSVolumeRefNum vRefNum, StringPtr name = NULL )
 	{
 		PBHGetVInfoSync( (HVolumeParam&) pb, vRefNum, name );
 	}
 	
-	static void PBXGetVolInfoSync( XVolumeParam& pb, N::FSVolumeRefNum vRefNum, StringPtr name = NULL )
+	static
+	void PBXGetVolInfoSync( XVolumeParam& pb, FSVolumeRefNum vRefNum, StringPtr name = NULL )
 	{
 		pb.ioNamePtr  = name;
 		pb.ioVRefNum  = vRefNum;
@@ -370,7 +381,7 @@ namespace Genie
 	
 	static void GetVolInfo( XVolumeParam& pb, const vfs::node& that, StringPtr name )
 	{
-		const N::FSVolumeRefNum vRefNum = GetKeyFromParent( that );
+		const FSVolumeRefNum vRefNum = GetKeyFromParent( that );
 		
 		if ( Has_PBXGetVolInfo() )
 		{
@@ -458,7 +469,7 @@ namespace Genie
 	static
 	void name_set( const vfs::node* that, const char* begin, const char* end, bool binary, const plus::string& name )
 	{
-		const N::FSVolumeRefNum vRefNum = GetKeyFromParent( *that );
+		const FSVolumeRefNum vRefNum = GetKeyFromParent( *that );
 		
 		OSErr err;
 		
@@ -527,9 +538,11 @@ namespace Genie
 	                                   const plus::string&  name,
 	                                   const void*          args )
 	{
-		N::FSVolumeRefNum key = GetKeyFromParent( *parent );
+		using mac::types::VRefNum_DirID;
 		
-		const Mac::FSDirSpec volume = n::make< Mac::FSDirSpec >( key, N::fsRtDirID );
+		FSVolumeRefNum key = GetKeyFromParent( *parent );
+		
+		const VRefNum_DirID volume = { key, fsRtDirID };
 		
 		return FSTreeFromFSDirSpec( volume );
 	}
@@ -592,7 +605,7 @@ namespace Genie
 		return vfs::new_basic_directory( parent, name, vol_lookup, vol_iterate );
 	}
 	
-	vfs::node_ptr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
+	vfs::node_ptr Get_sys_mac_vol_N( int vRefNum )
 	{
 		vfs::node_ptr parent = vfs::resolve_absolute_path( *relix::root(), STR_LEN( "/sys/mac/vol/list" ) );
 		

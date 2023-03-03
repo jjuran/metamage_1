@@ -6,11 +6,6 @@
 #ifndef GENIE_FS_SYS_MAC_VOL_LIST_HH
 #define GENIE_FS_SYS_MAC_VOL_LIST_HH
 
-// Nitrogen
-#ifndef MAC_FILES_TYPES_FSVOLUMEREFNUM_HH
-#include "Mac/Files/Types/FSVolumeRefNum.hh"
-#endif
-
 // plus
 #include "plus/string.hh"
 
@@ -25,7 +20,7 @@ namespace Genie
 	                                      const plus::string&  name,
 	                                      const void*          args );
 	
-	vfs::node_ptr Get_sys_mac_vol_N( Mac::FSVolumeRefNum vRefNum );
+	vfs::node_ptr Get_sys_mac_vol_N( int vRefNum );
 	
 }
 

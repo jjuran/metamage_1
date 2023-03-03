@@ -661,7 +661,7 @@ namespace Genie
 		
 		if ( extra.fsspec.parID == fsRtParID )
 		{
-			return Get_sys_mac_vol_N( N::FSVolumeRefNum( extra.fsspec.vRefNum ) );
+			return Get_sys_mac_vol_N( extra.fsspec.vRefNum );
 		}
 		
 		const VRefNum_DirID& root = root_DirSpec();
