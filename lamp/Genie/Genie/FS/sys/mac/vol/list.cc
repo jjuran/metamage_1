@@ -510,8 +510,6 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		N::FSVolumeRefNum key = GetKeyFromParent( *parent );
-		
 		return new vfs::node( parent, name, S_IFLNK | 0777, &folder_link_methods );
 	}
 	

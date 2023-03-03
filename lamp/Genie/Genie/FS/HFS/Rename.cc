@@ -166,8 +166,6 @@ namespace Genie
 			p7::throw_errno( EXDEV );
 		}
 		
-		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( srcFileSpec.vRefNum );
-		
 		const plus::string& destName = slashes_from_colons( plus::mac_from_utf8( destFile.name() ) );
 		
 		const char* dest = destName.begin();
