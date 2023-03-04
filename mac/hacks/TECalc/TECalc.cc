@@ -97,7 +97,7 @@ pass:
 
 int main()
 {
-	Handle self = Get1Resource( 'INIT', 0 );
+	Handle self = GetResource( 'INIT', 0 );
 	
 	DetachResource( self );
 	

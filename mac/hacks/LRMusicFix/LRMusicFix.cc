@@ -156,11 +156,11 @@ void install_patch( Handle h )
 static
 void TEInit_handler()
 {
-	if ( Handle h = Get1Resource( 'GLEN', 0 ) )
+	if ( Handle h = GetResource( 'GLEN', 0 ) )
 	{
 		ReleaseResource( h );
 		
-		install_patch( Get1Resource( 'CODE', 1 ) );
+		install_patch( GetResource( 'CODE', 1 ) );
 	}
 }
 
@@ -177,7 +177,7 @@ pascal asm void TEInit_patch()
 
 int main()
 {
-	Handle self = Get1Resource( 'INIT', 0 );
+	Handle self = GetResource( 'INIT', 0 );
 	
 	DetachResource( self );
 	
