@@ -865,6 +865,15 @@ namespace tool
 				
 				p7::execvp( postlink_argv );
 			}
+			else if ( gProductType == kProductCodeResource )
+			{
+				const char *const postlink_argv[] =
+				{
+					"postlink-68k-standalone", output_pathname, NULL
+				};
+				
+				p7::execvp( postlink_argv );
+			}
 		}
 		
 		return exit_status;
