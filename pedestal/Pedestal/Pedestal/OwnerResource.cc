@@ -13,6 +13,9 @@
 // more-libc
 #include "more/string.h"
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -55,7 +58,9 @@ namespace Pedestal
 	{
 		if ( Handle h = GetResource( creator, 0 ) )
 		{
-			if ( const UInt32 physical_size = GetHandleSize( h ) )
+			const Size physical_size = mac::glue::GetHandleSize_raw( h );
+			
+			if ( physical_size > 0 )
 			{
 				const unsigned char* text = (unsigned char*) *h;
 				

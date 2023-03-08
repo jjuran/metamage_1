@@ -13,6 +13,9 @@
 // more-libc
 #include "more/string.h"
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -26,7 +29,7 @@ namespace Pedestal
 	{
 		if ( Handle h = Get1Resource( 'vers', id ) )
 		{
-			const UInt32 physical_size = GetHandleSize( h );
+			const Size physical_size = mac::glue::GetHandleSize_raw( h );
 			
 			/*
 				Contents: 4-byte version, 2-byte country code, 2 Pascal strings
@@ -38,7 +41,7 @@ namespace Pedestal
 			
 			if ( physical_size < 4 + 2 + 1 + 1 )
 			{
-				// Less than minimum length
+				// Less than minimum length, or an error somehow occurred
 				mempcpy( data, "\p" STR_LEN( TRUNCATED ) + 1 );
 				return true;
 			}
