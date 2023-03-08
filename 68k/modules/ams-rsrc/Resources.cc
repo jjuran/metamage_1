@@ -19,6 +19,9 @@
 // Standard C
 #include <stddef.h>
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -1055,7 +1058,7 @@ long SizeRsrc_handler( Handle resource : __A0 )
 		{
 			ResErr = noErr;
 			
-			return GetHandleSize( resource );
+			return mac::glue::GetHandleSize_raw( resource );
 		}
 	}
 	
