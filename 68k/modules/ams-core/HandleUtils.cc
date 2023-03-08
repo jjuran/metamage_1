@@ -13,6 +13,9 @@
 #include <Traps.h>
 #endif
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // ams-common
 #include "callouts.hh"
 
@@ -24,7 +27,7 @@ pascal long Munger_patch( Handle h, long i, Ptr p1, long n1, Ptr p2, long n2 )
 		return -1;
 	}
 	
-	Size size = GetHandleSize( h );
+	Size size = mac::glue::GetHandleSize_raw( h );
 	
 	if ( i > size )
 	{
