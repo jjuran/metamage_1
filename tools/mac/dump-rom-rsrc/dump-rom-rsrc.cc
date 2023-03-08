@@ -14,6 +14,9 @@
 // Standard C
 #include <string.h>
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // gear
 #include "gear/parse_decimal.hh"
 
@@ -69,7 +72,7 @@ int main( int argc, char** argv )
 		return 0;
 	}
 	
-	Size size = GetHandleSize( h );
+	Size size = mac::glue::GetHandleSize( h );
 	
 	write( STDOUT_FILENO, *h, size );
 	
