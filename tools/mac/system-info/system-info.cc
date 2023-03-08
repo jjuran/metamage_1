@@ -25,6 +25,9 @@
 // more-libc
 #include "more/string.h"
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 
@@ -259,9 +262,10 @@ void host_env()
 		{
 			Byte* p = (Byte*) *h;
 			
-			UInt32 len = *p++;
+			long len  = *p++;
+			long size = mac::glue::GetHandleSize_raw( h );
 			
-			if ( len < GetHandleSize( h )  &&  len >= STRLEN( "Version 1.0" ) )
+			if ( len < size  &&  len >= STRLEN( "Version 1.0" ) )
 			{
 				Byte* end = p + len;
 				
