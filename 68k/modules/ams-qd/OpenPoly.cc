@@ -10,6 +10,9 @@
 #include <Quickdraw.h>
 #endif
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // ams-common
 #include "QDGlobals.hh"
 
@@ -54,7 +57,7 @@ void add_polygon_point( Point pt )
 		return;
 	}
 	
-	Size size = GetHandleSize( port.polySave );
+	Size size = mac::glue::GetHandleSize_raw( port.polySave );
 	
 	if ( poly[0]->polySize + sizeof (Point) > size )
 	{

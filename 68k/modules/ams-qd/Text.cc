@@ -10,6 +10,9 @@
 #include <Fonts.h>
 #endif
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // ams-common
 #include "math.hh"
 #include "QDGlobals.hh"
@@ -206,7 +209,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	
 	if ( Handle h = port.picSave )
 	{
-		Size size = GetHandleSize( h );
+		Size size = mac::glue::GetHandleSize_raw( h );
 		
 		SetHandleSize( h, size + 3 + 3 + 3 + 6 + (Byte) n );
 		

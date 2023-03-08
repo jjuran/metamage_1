@@ -16,6 +16,9 @@
 // Standard C
 #include <stdlib.h>
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // quickdraw
 #include "qd/convex_region_generator.hh"
 
@@ -136,7 +139,7 @@ RgnHandle circular_region( short diameter, short width, short height )
 	
 	Size rgnSize = sizeof (Region) + mulu_w( 2 * 6, diameter );  // close enough
 	
-	if ( GetHandleSize( (Handle) tmp ) < rgnSize )
+	if ( mac::glue::GetHandleSize_raw( (Handle) tmp ) < rgnSize )
 	{
 		SetHandleSize( (Handle) tmp, rgnSize );
 	}

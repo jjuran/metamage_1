@@ -16,6 +16,9 @@
 // Standard C
 #include <stdlib.h>
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -73,7 +76,7 @@ RgnHandle ovoid_region( short hdiam, short vdiam, short width, short height )
 	
 	Size rgnSize = sizeof (MacRegion) + max_diam * 2 * 6;  // close enough
 	
-	if ( GetHandleSize( (Handle) tmp ) < rgnSize )
+	if ( mac::glue::GetHandleSize_raw( (Handle) tmp ) < rgnSize )
 	{
 		SetHandleSize( (Handle) tmp, rgnSize );
 	}

@@ -16,6 +16,9 @@
 // Standard C
 #include <stdlib.h>
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // quickdraw
 #include "qd/region_detail.hh"
 #include "qd/segments.hh"
@@ -282,7 +285,7 @@ pascal void StdPoly_patch( signed char verb, PolyHandle poly )
 	
 	if ( Handle h = port.picSave )
 	{
-		Size size = GetHandleSize( h );
+		Size size = mac::glue::GetHandleSize_raw( h );
 		
 		Size new_size = size + 1 + poly[0]->polySize;
 		

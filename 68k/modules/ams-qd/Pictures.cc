@@ -13,6 +13,9 @@
 // Standard C
 #include <stdlib.h>  // for alloca()
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 #include "logofwar/print.hh"
@@ -67,7 +70,7 @@ pascal void ClosePicture_patch()
 	{
 		ShowPen();
 		
-		Size size = GetHandleSize( h );
+		Size size = mac::glue::GetHandleSize_raw( h );
 		
 		SetHandleSize( h, size + 1 );
 		h[0][ size++ ] = 0xFF;  // EndOfPicture
@@ -657,7 +660,7 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 {
 	GrafPort& port = **get_addrof_thePort();
 	
-	Size size = GetHandleSize( (Handle) pic );
+	Size size = mac::glue::GetHandleSize_raw( (Handle) pic );
 	
 	if ( size < sizeof (Picture) + 4 )
 	{

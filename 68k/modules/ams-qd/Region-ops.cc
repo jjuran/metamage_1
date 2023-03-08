@@ -13,6 +13,9 @@
 // iota
 #include "iota/swap.hh"
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // debug
 #include "debug/assert.hh"
 
@@ -174,7 +177,7 @@ bool check_region( RgnHandle rgn, const char* func, int line )
 		return false;
 	}
 	
-	const Size h_size = GetHandleSize( (Handle) rgn );
+	const Size h_size = mac::glue::GetHandleSize_raw( (Handle) rgn );
 	
 	if ( h_size < sizeof (MacRegion) )
 	{
