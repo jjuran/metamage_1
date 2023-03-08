@@ -25,9 +25,6 @@
 // more-libc
 #include "more/string.h"
 
-// iota
-#include "iota/freestore_free.hh"
-
 // gear
 #include "gear/inscribe_decimal.hh"
 
