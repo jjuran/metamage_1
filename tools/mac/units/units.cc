@@ -13,6 +13,9 @@
 // Standard C
 #include <stdio.h>
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // chars
 #include "conv/mac_utf8.hh"
 
@@ -38,7 +41,7 @@ int main( int argc, char** argv )
 			continue;
 		}
 		
-		Size size = GetHandleSize( (Handle) dch );
+		Size size = mac::glue::GetHandleSize_raw( (Handle) dch );
 		
 		const AuxDCE& dce = **dch;
 		
