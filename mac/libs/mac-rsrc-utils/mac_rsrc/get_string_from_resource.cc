@@ -18,6 +18,9 @@
 // more-libc
 #include "more/string.h"
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 
 #pragma exceptions off
 
@@ -31,7 +34,9 @@ namespace rsrc {
 	{
 		if ( Handle h = GetResource( type, id ) )
 		{
-			if ( Size size = GetHandleSize( h ) )
+			const Size size = mac::glue::GetHandleSize_raw( h );
+			
+			if ( size > 0 )
 			{
 				unsigned char len = **h;
 				
