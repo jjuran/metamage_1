@@ -11,6 +11,9 @@
 
 #include "Carbonate/AEDataModel.hh"
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 static inline
 short mem_error()
 {
@@ -64,7 +67,7 @@ pascal OSErr AEGetDescData( const AEDesc*  desc,
 		return noErr;
 	}
 	
-	Size handleSize = GetHandleSize( desc->dataHandle );
+	Size handleSize = mac::glue::GetHandleSize( desc->dataHandle );
 	
 	if ( handleSize < maximumSize )
 	{
@@ -83,7 +86,7 @@ pascal Size AEGetDescDataSize( const AEDesc* desc )
 		return 0;
 	}
 	
-	return GetHandleSize( desc->dataHandle );
+	return mac::glue::GetHandleSize( desc->dataHandle );
 }
 
 pascal OSErr AEReplaceDescData( DescType     typeCode,
