@@ -11,6 +11,9 @@
 // more-libc
 #include "more/string.h"
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // mac-sys-utils
 #include "mac_sys/mem_error.hh"
 
@@ -108,7 +111,7 @@ namespace Genie
 	{
 		Mac_Handle_extra& extra = *(Mac_Handle_extra*) that->extra();
 		
-		const size_t size = ::GetHandleSize( extra.handle );
+		const Size size = mac::glue::GetHandleSize_raw( extra.handle );
 		
 		if ( offset >= size )
 		{
@@ -142,9 +145,10 @@ namespace Genie
 			return 0;
 		}
 		
-		const size_t required_size = offset + n_bytes;
+		using mac::glue::GetHandleSize_raw;
 		
-		const size_t existing_size = ::GetHandleSize( extra.handle );
+		const Size required_size = offset + n_bytes;
+		const Size existing_size = GetHandleSize_raw( extra.handle );
 		
 		if ( required_size > existing_size )
 		{
@@ -171,7 +175,7 @@ namespace Genie
 	{
 		Mac_Handle_extra& extra = *(Mac_Handle_extra*) that->extra();
 		
-		return ::GetHandleSize( extra.handle );
+		return mac::glue::GetHandleSize( extra.handle );
 	}
 	
 	static

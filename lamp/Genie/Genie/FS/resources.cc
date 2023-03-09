@@ -12,6 +12,9 @@
 // more-libc
 #include "more/string.h"
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // iota
 #include "iota/char_types.hh"
 
@@ -343,7 +346,7 @@ namespace Genie
 		
 		const N::Handle r = GetOrAddResource( resSpec );
 		
-		const size_t size = ::GetHandleSize( extra.handle );
+		const size_t size = mac::glue::GetHandleSize( extra.handle );
 		
 		N::SetHandleSize( r, size );
 		
@@ -517,7 +520,7 @@ namespace Genie
 		
 		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 		
-		return GetHandleSize( r );
+		return mac::glue::GetHandleSize( r );
 	}
 	
 	static vfs::filehandle_ptr unrsrc_file_open( const vfs::node* that, int flags, mode_t mode )

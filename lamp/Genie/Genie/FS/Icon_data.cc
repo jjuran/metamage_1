@@ -12,6 +12,9 @@
 // more-libc
 #include "more/string.h"
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // mac-sys-utils
 #include "mac_sys/has/IconUtilities.hh"
 
@@ -190,13 +193,10 @@ namespace Genie
 			return;
 		}
 		
-		const std::size_t size = GetHandleSize( GetHandle() );
+		const ssize_t size = mac::glue::GetHandleSize_raw( GetHandle() );
 		
 		switch ( size )
 		{
-			case 0:
-				return;
-			
 			case sizeof (N::PlainIcon):
 			case sizeof (N::MaskedIcon):
 				PlotIconHandle( &area, align, transform, GetHandle() );
@@ -210,7 +210,9 @@ namespace Genie
 			
 		#endif
 			
+			case 0:
 			default:
+				// size may be negative, if the handle is somehow invalid
 				break;
 		}
 	}
@@ -229,7 +231,7 @@ namespace Genie
 			return sizeof (::ResID);
 		}
 		
-		return GetHandleSize( h );
+		return mac::glue::GetHandleSize( h );
 	}
 	
 	ssize_t IconData::Read( char* buffer, std::size_t n_bytes, off_t mark ) const
@@ -248,10 +250,10 @@ namespace Genie
 			p7::throw_errno( EPERM );
 		}
 		
-		const std::size_t size = use_handle ? GetHandleSize( h )
-		                                    : sizeof (::ResID);
+		const Size size = use_handle ? mac::glue::GetHandleSize_raw( h )
+		                             : sizeof (::ResID);
 		
-		if ( size == 0 )
+		if ( size <= 0 )
 		{
 			p7::throw_errno( EIO );
 		}
