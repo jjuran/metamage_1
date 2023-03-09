@@ -14,6 +14,9 @@
 // Standard C
 #include <string.h>
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // chars
 #include "conv/mac_utf8.hh"
 
@@ -61,7 +64,7 @@ int main( int argc, char** argv )
 	{
 		if ( Handle bndl = get_bndl() )
 		{
-			Size size = GetHandleSize( bndl );
+			Size size = mac::glue::GetHandleSize_raw( bndl );
 			
 			if ( size >= sizeof (OSType) )
 			{
