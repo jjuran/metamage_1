@@ -172,6 +172,12 @@ def fs_opts
 	{
 		"--disk", config[ "disk" ],
 	}
+	else if "disks" in config then
+	{
+		let disks = config[ "disks" ]
+		
+		*(disks map {"--disk", v}),
+	}
 	
 	const appfs_opt =
 	if const appfs_fd = get_appfs_fd() then
