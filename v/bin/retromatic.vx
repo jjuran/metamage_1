@@ -99,7 +99,7 @@ var name_path = parent_dir "/" name
 
 var new_disk = ""
 
-const disk
+var disk = null
 
 if "disk" in config then
 {
@@ -120,10 +120,6 @@ else if -substr( -name, 0, 5 ) == ".mbin" then
 	
 	new_disk = ("disk: " rep disk) "\n"
 }
-else
-{
-	disk = null
-}
 
 const name_to_copy
 
@@ -131,7 +127,7 @@ if disk then
 {
 	name_to_copy = disk
 	
-	setenv( "AMS_DISK", name_to_copy )
+	setenv( "AMS_DISK", disk )
 }
 else
 {
