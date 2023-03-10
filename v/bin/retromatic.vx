@@ -100,12 +100,17 @@ var name_path = parent_dir "/" name
 var new_disk = ""
 
 var disk = null
+var disks = []
 
 var files_to_copy = []
 
 if "disk" in config then
 {
 	disk = config[ "disk" ]
+}
+else if "disks" in config then
+{
+	disks = config[ "disks" ]
 }
 else if src_is_txt and not exists name_path and exists name_path ".mbin" then
 {
@@ -128,6 +133,12 @@ if disk then
 	files_to_copy = [disk]
 	
 	setenv( "AMS_DISK", disk )
+}
+else if disks then
+{
+	files_to_copy = disks
+	
+	setenv( "AMS_DISK", disks[ 0 ] )
 }
 else
 {
