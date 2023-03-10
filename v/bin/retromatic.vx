@@ -101,6 +101,8 @@ var new_disk = ""
 
 var disk = null
 
+var files_to_copy = []
+
 if "disk" in config then
 {
 	disk = config[ "disk" ]
@@ -121,17 +123,15 @@ else if -substr( -name, 0, 5 ) == ".mbin" then
 	new_disk = ("disk: " rep disk) "\n"
 }
 
-const name_to_copy
-
 if disk then
 {
-	name_to_copy = disk
+	files_to_copy = [disk]
 	
 	setenv( "AMS_DISK", disk )
 }
 else
 {
-	name_to_copy = name
+	files_to_copy = [name]
 }
 
 let new_app_dir = output_dir "/" name ".app"
@@ -169,14 +169,14 @@ let respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
 
 run [ vx_Z "mkrsrc.vx", "-o", Files "/AMS Resources/rsrc", *respaths ]
 
-copy( parent_dir "/" name_to_copy, Files )
-
 if "files" in config then
 {
-	let files = config[ "files" ] map { parent_dir "/" v }
-	
-	copy( *files, Files )
+	files_to_copy <-- *config[ "files" ]
 }
+
+let paths_to_copy = files_to_copy map { parent_dir "/" v }
+
+copy( *paths_to_copy, Files )
 
 let ams_bin = "../ams-68k-bin/bin"
 let ams_lib = "../ams-68k-bin/lib"
