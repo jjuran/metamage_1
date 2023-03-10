@@ -14,6 +14,9 @@
 // Standard C
 #include <string.h>
 
+// chars
+#include "conv/mac_utf8.hh"
+
 
 const int sizeof_icon = 256;
 
@@ -127,23 +130,23 @@ int main( int argc, char** argv )
 		return 0;
 	}
 	
+	using conv::mac_from_utf8;
+	
 	const char* path = argv[ 1 ];
 	const char* type = argv[ 2 ];
 	
 	const size_t len = strlen( path );
 	
-	if ( len > 31 )
+	Str31 appName;
+	
+	size_t n_utf8_bytes = mac_from_utf8( (char*) appName + 1, 31, path, len );
+	
+	if ( n_utf8_bytes > 31 )
 	{
 		return 2;
 	}
 	
-	Str31 appName;
-	
-	unsigned char* p = appName;
-	
-	*p++ = len;
-	
-	memcpy( p, path, len );
+	appName[ 0 ] = n_utf8_bytes;
 	
 	OSType file_type;
 	
