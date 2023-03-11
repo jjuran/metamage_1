@@ -105,6 +105,16 @@ unsigned long EqualString_sans_case( const unsigned char*  a : __A0,
 
 inline
 unsigned long EqualString_sans_case( const unsigned char*  a : __A0,
+                                     unsigned char         n : __D1,
+                                     const unsigned char*  b : __A1 )
+{
+	unsigned char m = *b++;
+	
+	return EqualString_sans_case( a, n, b, m );
+}
+
+inline
+unsigned long EqualString_sans_case( const unsigned char*  a : __A0,
                                      const unsigned char*  b : __A1 )
 {
 	unsigned char n = *a++;
