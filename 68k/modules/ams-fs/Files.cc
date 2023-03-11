@@ -224,11 +224,42 @@ short open_fork( short trap_word : __D1, HFileParam* pb : __A0 )
 		INFO = "-> ioDirID:   ", pb->ioDirID;
 	}
 	
+	Str255 subpath;
+	
 	StringPtr name = pb->ioNamePtr;
 	
 	if ( ! name )
 	{
 		return pb->ioResult = bdNamErr;
+	}
+	
+	Byte* begin = name + 1;
+	Byte* end   = begin + name[ 0 ];
+	
+	Byte* colon = begin;
+	
+	while ( (colon < end  ||  (colon = NULL))  &&  *colon != ':' )
+	{
+		++colon;
+	}
+	
+	if ( colon  &&  name[ 0 ] != ':' )
+	{
+		// Absolute pathname
+		
+		++colon;  // TODO:  Retain everything but volume name, for HFS
+		
+		Byte* p = subpath;
+		
+		Size len = end - colon;
+		
+		*p++ = len;
+		
+		fast_memcpy( p, colon, len );
+		
+		// TODO:  Actually check volume names
+		
+		name = subpath;
 	}
 	
 	INFO = "-> ioNamePtr: \"", CSTR( pb->ioNamePtr ), "\"";
