@@ -62,6 +62,11 @@ VCB* VCB_lookup( const unsigned char* name )
 	
 	UInt8 name_len = *name++;
 	
+	if ( name[ name_len - 1 ] == ':' )
+	{
+		--name_len;
+	}
+	
 	while ( vcb  &&  EqualString_sans_case( name, name_len, vcb->vcbVN ) )
 	{
 		vcb = (VCB*) vcb->qLink;
