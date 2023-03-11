@@ -60,7 +60,9 @@ VCB* VCB_lookup( const unsigned char* name )
 {
 	VCB* vcb = (VCB*) VCBQHdr.qHead;
 	
-	while ( vcb != NULL  &&  EqualString_sans_case( vcb->vcbVN, name ) )
+	UInt8 name_len = *name++;
+	
+	while ( vcb  &&  EqualString_sans_case( name, name_len, vcb->vcbVN ) )
 	{
 		vcb = (VCB*) vcb->qLink;
 	}
