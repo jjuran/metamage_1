@@ -37,6 +37,8 @@ namespace file {
 	                           const char*      buffer,
 	                           UInt32           length );
 	
+#ifndef __LP64__
+	
 	inline
 	long get_desktop_comment( const FSSpec& item, char* p, UInt32 n )
 	{
@@ -48,6 +50,12 @@ namespace file {
 	{
 		return set_desktop_comment( item.vRefNum, item.parID, item.name, p, n );
 	}
+	
+#else
+	
+	int dummy;
+	
+#endif
 	
 }
 }
