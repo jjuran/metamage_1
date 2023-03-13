@@ -25,6 +25,9 @@ namespace file {
 	                        OSType   signature,
 	                        short    index );
 	
+	OSErr get_desktop_APPL( FSSpec&  result,
+	                        OSType   signature );
+	
 	long get_desktop_comment( short            vRefNum,
 	                          long             dirID,
 	                          ConstStr63Param  name,

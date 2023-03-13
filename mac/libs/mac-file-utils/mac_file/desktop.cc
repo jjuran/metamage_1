@@ -5,6 +5,9 @@
 
 #include "mac_file/desktop.hh"
 
+// mac-file-utils
+#include "mac_file/directory.hh"
+
 
 #pragma exceptions off
 
@@ -43,6 +46,35 @@ OSErr get_desktop_APPL( FSSpec&  result,
 	}
 	
 	return err;
+}
+
+OSErr get_desktop_APPL( FSSpec&  result,
+                        OSType   signature )
+{
+	OSErr err;
+	short vRefNum = -1;
+	
+	do
+	{
+		err = get_desktop_APPL( result, vRefNum, signature, 0 );
+		
+		if ( err == noErr )
+		{
+			types::VRefNum_DirID parent = directory( result );
+			
+			if ( parent.vRefNum )
+			{
+				return err;  // noErr
+			}
+			
+			err = parent.dirID;
+		}
+		
+		--vRefNum;
+	}
+	while ( err != nsvErr );
+	
+	return afpItemNotFound;
 }
 
 long get_desktop_comment( short            vRefNum,
