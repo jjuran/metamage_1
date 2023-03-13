@@ -32,6 +32,9 @@
 #include "mac_sys/current_process.hh"
 #include "mac_sys/is_front_process.hh"
 
+// mac-file-utils
+#include "mac_file/desktop.hh"
+
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/pointer_to_function.hh"
@@ -55,7 +58,6 @@
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
-#include "Nitrogen/Files.hh"
 #include "Nitrogen/Processes.hh"
 
 // FindProcess
@@ -179,9 +181,13 @@ namespace tool
 	
 	static ProcessSerialNumber launch_ToolServer_from_ramdisk( int dev )
 	{
-		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -dev );
+		using mac::file::get_desktop_APPL;
 		
-		return N::LaunchApplication( N::DTGetAPPL( sigToolServer, vRefNum ) );
+		FSSpec appFile;
+		
+		Mac::ThrowOSStatus( get_desktop_APPL( appFile, -dev, sigToolServer ) );
+		
+		return N::LaunchApplication( appFile );
 	}
 	
 	
@@ -262,7 +268,13 @@ namespace tool
 		
 		try
 		{
-			return N::LaunchApplication( N::DTGetAPPL( sigToolServer ) );
+			using mac::file::get_desktop_APPL;
+			
+			FSSpec appFile;
+			
+			Mac::ThrowOSStatus( get_desktop_APPL( appFile, sigToolServer ) );
+			
+			return N::LaunchApplication( appFile );
 		}
 		catch ( const Mac::OSStatus& err )
 		{
