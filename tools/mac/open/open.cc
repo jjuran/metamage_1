@@ -20,6 +20,9 @@
 #include "mac_sys/current_process.hh"
 #include "mac_sys/is_front_process.hh"
 
+// mac-file-utils
+#include "mac_file/desktop.hh"
+
 // Nitrogen
 #include "Mac/Files/Types/FSCreator.hh"
 
@@ -355,8 +358,10 @@ namespace tool
 					throw;
 				}
 				
+				using mac::file::get_desktop_APPL;
+				
 				// No such process
-				appFile = N::DTGetAPPL( signature );
+				Mac::ThrowOSStatus( get_desktop_APPL( appFile, signature ) );
 			}
 		}
 		
