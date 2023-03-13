@@ -23,7 +23,7 @@ namespace file {
 	OSErr get_desktop_APPL( FSSpec&  result,
 	                        short    vRefNum,
 	                        OSType   signature,
-	                        short    index );
+	                        short    index = 0 );
 	
 	OSErr get_desktop_APPL( FSSpec&  result,
 	                        OSType   signature );
