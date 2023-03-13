@@ -584,69 +584,6 @@ namespace Nitrogen
 	
 	GetVolParmsInfoBuffer PBHGetVolParmsSync( FSVolumeRefNum vRefNum );
 	
-	// Desktop Manager
-	// ---------------
-	
-	void PBDTGetPath( DTPBRec& pb );
-	void PBDTGetPath( FSVolumeRefNum vRefNum, DTPBRec& pb );
-	
-	DTPBRec& FSpDTGetPath( const FSSpec& file, DTPBRec& pb );
-	
-	// PBDTCloseDown
-	// PBDTAddIconSync
-	// PBDTGetIconSync
-	// PBDTGetIconInfoSync
-	// PBDTAddAPPLSync
-	// PBDTRemoveAPPLSync
-	
-	void PBDTGetAPPLSync( DTPBRec& pb );
-	
-	FSSpec DTGetAPPL( Mac::FSCreator signature, FSVolumeRefNum vRefNum );
-	
-	void PBDTSetCommentSync( DTPBRec& pb );
-	
-	void DTSetComment( DTPBRec& pb, const char* comment, unsigned length );
-	
-	template < class String >
-	void DTSetComment( DTPBRec& pb, const String& comment )
-	{
-		using iota::get_string_data;
-		using iota::get_string_size;
-		
-		DTSetComment( pb,
-		              get_string_data( comment ),
-		              get_string_size( comment ) );
-	}
-	
-	void FSpDTSetComment( const FSSpec& file, const char* comment, unsigned length );
-	
-	template < class String >
-	void FSpDTSetComment( const FSSpec& file, const String& comment )
-	{
-		using iota::get_string_data;
-		using iota::get_string_size;
-		
-		FSpDTSetComment( file,
-		                 get_string_data( comment ),
-		                 get_string_size( comment ) );
-	}
-	
-	// PBDTRemoveCommentSync
-	
-	void PBDTGetCommentSync( DTPBRec& pb );
-	
-	nucleus::string DTGetComment( DTPBRec& pb );
-	
-	nucleus::string FSpDTGetComment( const FSSpec& file );
-	
-	long FSpDTGetComment( const FSSpec& file, char* buffer, long length );
-	
-	// PBDTFlushSync
-	// PBDTResetSync
-	// PBDTGetInfoSync
-	// PBDTOpenInform
-	// PBDTDeleteSync
-	
 	FSSpec FSMakeFSSpec( FSVolumeRefNum    vRefNum,
 	                     FSDirID           dirID,
 	                     ConstStr255Param  name = NULL );
@@ -2039,52 +1976,6 @@ namespace nucleus
 			return Nitrogen::FSRefMakePath( ref );
 		}
 	};
-}
-
-namespace Nitrogen
-{
-	
-#if ! __LP64__
-	
-	template < class VolumeIter >
-	FSSpec DTGetAPPL( Mac::FSCreator signature, VolumeIter begin, VolumeIter end )
-	{
-		for ( ;  begin != end;  ++begin )
-		{
-			FSVolumeRefNum vRefNum = *begin;
-			
-			try
-			{
-				FSSpec appl = DTGetAPPL( signature, vRefNum );  // Succeeds or throws
-				
-				CInfoPBRec pb;
-				
-				const bool exists = FSpGetCatInfo( appl, pb, FNF_Returns() );
-				
-				if ( exists )
-				{
-					return appl;
-				}
-			}
-			catch ( ... )
-			{
-				
-			}
-		}
-		
-		Mac::ThrowOSStatus( afpItemNotFound );
-		
-		// Not reached
-		return FSSpec();
-	}
-	
-	inline FSSpec DTGetAPPL( Mac::FSCreator signature )
-	{
-		return DTGetAPPL( signature, Volumes().begin(), Volumes().end() );
-	}
-	
-#endif  // #if ! __LP64__
-	
 }
 
 #endif
