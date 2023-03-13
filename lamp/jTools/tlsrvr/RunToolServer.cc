@@ -35,6 +35,9 @@
 // mac-file-utils
 #include "mac_file/desktop.hh"
 
+// mac-proc-utils
+#include "mac_proc/find_process.hh"
+
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/pointer_to_function.hh"
@@ -60,9 +63,6 @@
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/Processes.hh"
 
-// FindProcess
-#include "FindProcess.hh"
-
 // Divergence
 #include "Divergence/Utilities.hh"
 
@@ -77,7 +77,6 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
-	namespace NX = NitrogenExtras;
 	
 	
 	static plus::string q( const plus::string& str )
@@ -232,16 +231,11 @@ namespace tool
 	
 	static ProcessSerialNumber find_or_launch_ToolServer()
 	{
-		try
+		ProcessSerialNumber psn;
+		
+		if ( mac::proc::find_process( psn, sigToolServer ) == noErr )
 		{
-			return NX::FindProcess( sigToolServer );
-		}
-		catch ( const Mac::OSStatus& err )
-		{
-			if ( err != procNotFound )
-			{
-				throw;
-			}
+			return psn;
 		}
 		
 		if ( const char* ToolServer_path = getenv( "ToolServer" ) )
