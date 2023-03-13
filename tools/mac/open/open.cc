@@ -23,6 +23,9 @@
 // mac-file-utils
 #include "mac_file/desktop.hh"
 
+// mac-proc-utils
+#include "mac_proc/find_process.hh"
+
 // Nitrogen
 #include "Mac/Files/Types/FSCreator.hh"
 
@@ -42,9 +45,6 @@
 
 // Nitrogen
 #include "Mac/AppleEvents/Types/DescType_scribe_dynamic.hh"
-
-// FindProcess
-#include "FindProcess.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
@@ -137,7 +137,6 @@ namespace tool
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace NX = NitrogenExtras;
 	namespace Div = Divergence;
 	
 	
@@ -311,27 +310,20 @@ namespace tool
 			// Resolve to FSSpec
 			appFile = Div::ResolvePathToFSSpec( gAppNameToOpenIn );
 			
-			try
+			// Find it if running
+			ProcessSerialNumber psn;
+			
+			if ( mac::proc::find_process( psn, appFile ) == noErr )
 			{
-				// Find it if running
-				ProcessSerialNumber psn = NX::FindProcess( appFile );
-				
 				// The app is already running -- send it an odoc event
 				OpenItemsWithRunningApp( items, psn );
 				
 				// We're done
 				return;
 			}
-			catch ( const Mac::OSStatus& err )
-			{
-				if ( err != procNotFound )
-				{
-					throw;
-				}
-				
-				// No such process
-				// appFile is already set
-			}
+			
+			// No such process
+			// appFile is already set
 		}
 		else
 		{
@@ -343,7 +335,9 @@ namespace tool
 			try
 			{
 				// Find it if running
-				ProcessSerialNumber psn = NX::FindProcess( signature );
+				ProcessSerialNumber psn;
+				
+				Mac::ThrowOSStatus( mac::proc::find_process( psn, signature ) );
 				
 				// The app is already running -- send it an odoc event
 				OpenItemsWithRunningApp( items, psn );
