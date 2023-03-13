@@ -16,9 +16,9 @@
 #include <Devices.h>
 #endif
 #endif
-#ifndef __STRINGCOMPARE__
-#include <StringCompare.h>
-#endif
+
+// mac-glue-utils
+#include "mac_glue/StringCompare.hh"
 
 // mac-sys-utils
 #include "mac_sys/unit_table.hh"
@@ -47,7 +47,7 @@ bool is_driver_installed( const unsigned char* driver_name )
 			
 			ConstStr255Param name = drvr->drvrName;
 			
-			if ( ::EqualString( name, driver_name, false, true ) )
+			if ( mac::glue::EqualString_sans_case( name, driver_name ) )
 			{
 				return true;
 			}
