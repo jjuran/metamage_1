@@ -16,6 +16,9 @@
 #include <TextUtils.h>
 #endif
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // gear
 #include "gear/find.hh"
 
@@ -595,7 +598,7 @@ void insert_char( TEHandle hTE, char c )
 	
 	const Handle hText = te.hText;
 	
-	const Size size = GetHandleSize( hText );
+	const Size size = mac::glue::GetHandleSize_raw( hText );
 	
 	if ( size <= te.teLength )
 	{
@@ -624,7 +627,7 @@ void insert_chars( TEHandle hTE, const char* p, long n )
 	
 	const Handle hText = te.hText;
 	
-	Size size = GetHandleSize( hText );
+	Size size = mac::glue::GetHandleSize_raw( hText );
 	
 	if ( size < te.teLength + n )
 	{
@@ -776,7 +779,7 @@ pascal void TEPaste_patch( TERec** hTE )
 	
 	Munger( hText, te.selStart, NULL, selLength, *TEScrpHandle, TEScrpLength );
 	
-	te.teLength  = GetHandleSize( hText );
+	te.teLength  = mac::glue::GetHandleSize( hText );
 	te.selStart += TEScrpLength;
 	te.selEnd    = te.selStart;
 	

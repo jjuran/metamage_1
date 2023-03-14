@@ -19,6 +19,9 @@
 #include <TextUtils.h>
 #endif
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -262,7 +265,7 @@ pascal short LAddRow_call( short row_count, short row, ListHandle listH )
 	
 	const int n_cells = (n_rows + row_count) * n_cols;
 	
-	const Size previous_size = GetHandleSize( (Handle) listH );
+	const Size previous_size = mac::glue::GetHandleSize_raw( (Handle) listH );
 	const Size required_size = sizeof (ListRec) + n_cells * sizeof (short);
 	
 	if ( required_size > previous_size )

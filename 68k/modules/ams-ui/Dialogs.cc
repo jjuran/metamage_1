@@ -19,6 +19,9 @@
 #include <Sound.h>
 #endif
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // mac-sys-utils
 #include "mac_sys/delay.hh"
 
@@ -419,7 +422,7 @@ void update_edit_record( TEHandle hTE, const DialogItem* item )
 	hTE[0]->viewRect = item->bounds;
 	hTE[0]->destRect = item->bounds;
 	
-	hTE[0]->teLength = GetHandleSize( item->handle );
+	hTE[0]->teLength = mac::glue::GetHandleSize( item->handle );
 	hTE[0]->hText    = item->handle;
 	
 	TECalText( hTE );
@@ -1347,7 +1350,7 @@ pascal void SetDItem_patch( DialogRef    dialog,
 
 pascal void GetIText_patch( Handle h, Str255 text )
 {
-	Size size = GetHandleSize( h );
+	Size size = mac::glue::GetHandleSize( h );
 	
 	if ( size > 255 )
 	{
@@ -1425,7 +1428,7 @@ pascal void SelIText_patch( GrafPort*  dialog,
 		
 		SetHandleSize( hTE[0]->hText, hTE[0]->teLength );
 		
-		hTE[0]->teLength = GetHandleSize( edit->handle );
+		hTE[0]->teLength = mac::glue::GetHandleSize( edit->handle );
 		hTE[0]->hText    = edit->handle;
 		
 		TECalText( hTE );

@@ -16,6 +16,9 @@
 #include <TextUtils.h>
 #endif
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // iota
 #include "iota/char_types.hh"
 
@@ -336,7 +339,7 @@ short decode_item_format( UInt8 const* format, UInt8 len,
 static
 short append_one_item( MenuRef menu, const UInt8* format, UInt8 length )
 {
-	const Size oldSize = GetHandleSize( (Handle) menu );
+	const Size oldSize = mac::glue::GetHandleSize( (Handle) menu );
 	
 	const UInt8 text_len = actual_item_text_length( format, length );
 	
@@ -642,7 +645,7 @@ void save_bits( BitMap& savedBits )
 	{
 		SavedHandle = NewHandle( height * rowBytes );
 	}
-	else if ( GetHandleSize( SavedHandle ) < height * rowBytes )
+	else if ( mac::glue::GetHandleSize_raw( SavedHandle ) < height * rowBytes )
 	{
 		SetHandleSize( SavedHandle, height * rowBytes );
 	}
@@ -1169,7 +1172,7 @@ short insert_one_item( MenuRef menu, const UInt8* format, UInt8 length, short i 
 	const UInt8 text_len = actual_item_text_length( format, length );
 	
 	const Size increase = 1 + text_len + 4;
-	const Size old_size = GetHandleSize( (Handle) menu );
+	const Size old_size = mac::glue::GetHandleSize( (Handle) menu );
 	const Size new_size = old_size + increase;
 	
 	SetHandleSize( (Handle) menu, new_size );

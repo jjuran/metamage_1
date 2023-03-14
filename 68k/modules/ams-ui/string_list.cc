@@ -13,6 +13,9 @@
 // Standard C
 #include <stddef.h>
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // ams-common
 #include "callouts.hh"
 #include "QDGlobals.hh"
@@ -95,7 +98,7 @@ void clear_string_list( string_list_handle slh )
 
 void append_to_string_list( string_list_handle slh, const unsigned char* str )
 {
-	Size size = GetHandleSize( (Handle) slh );
+	Size size = mac::glue::GetHandleSize( (Handle) slh );
 	
 	short capacity = cell_capacity( size );
 	
