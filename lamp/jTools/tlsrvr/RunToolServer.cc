@@ -40,7 +40,6 @@
 
 // plus
 #include "plus/mac_utf8.hh"
-#include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
 
@@ -358,9 +357,10 @@ namespace tool
 		// It's okay if command has the fancy quotes, because we don't actually
 		// refer to it in the Apple event itself.
 		
-		std::for_each( temp_file_paths,
-		               temp_file_paths + n_files,
-		               plus::ptr_fun( make_temp_file ) );
+		for ( int i = 0;  i < n_files;  ++i )
+		{
+			make_temp_file( temp_file_paths[ i ] );
+		}
 		
 		plus::string inner_script = make_script_from_command( command );
 		
@@ -557,9 +557,10 @@ namespace tool
 		ConvertAndDumpMacText( output, p7::stdout_fileno );
 		
 		// Delete temp files
-		std::for_each( temp_file_paths,
-		               temp_file_paths + n_files,
-		               plus::ptr_fun( ::unlink ) );
+		for ( int i = 0;  i < n_files;  ++i )
+		{
+			unlink( temp_file_paths[ i ] );
+		}
 		
 		return result;
 	}
