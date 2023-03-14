@@ -189,22 +189,6 @@ namespace tool
 	}
 	
 	
-	class AppendWithSpace
-	{
-		public:
-			AppendWithSpace( plus::var_string& ioString ) : myString( ioString )  {}
-			
-			void operator()( const plus::string& inNew )
-			{
-				myString += " ";
-				myString += inNew;
-			}
-		
-		private:
-			plus::var_string& myString;
-	};
-	
-	
 	static inline
 	int count_argv( char** argv )
 	{
@@ -253,11 +237,10 @@ namespace tool
 			{
 				single_result = gParameters[ 0 ];
 				
-				AppendWithSpace append( single_result );
-				
 				for ( int i = 1;  i < gParameterCount;  ++i )
 				{
-					append( gParameters[ i ] );
+					single_result += " ";
+					single_result += gParameters[ i ];
 				}
 			}
 		}
