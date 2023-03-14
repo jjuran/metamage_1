@@ -253,9 +253,12 @@ namespace tool
 			{
 				single_result = gParameters[ 0 ];
 				
-				std::for_each( gParameters + 1,
-				               gParameters + gParameterCount,
-				               AppendWithSpace( single_result ) );
+				AppendWithSpace append( single_result );
+				
+				for ( int i = 1;  i < gParameterCount;  ++i )
+				{
+					append( gParameters[ i ] );
+				}
 			}
 		}
 		else if ( param == "@"  ||  param == "*" )
