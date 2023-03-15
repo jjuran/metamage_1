@@ -1246,10 +1246,14 @@ namespace Genie
 		                   mac::sys::item_is_on_server( item )  &&
 		                   ! mac::sys::has_BlueBox();
 		
+	#ifndef __MACH__
+		
 		if ( async )
 		{
 			cInfo.dirInfo.ioCompletion = N::StaticUPP< N::IOCompletionUPP, IterateIntoCache_Completion >();
 		}
+		
+	#endif
 		
 		UInt16 n_items = 0;
 		
