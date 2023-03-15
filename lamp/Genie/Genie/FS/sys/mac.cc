@@ -24,7 +24,6 @@
 // Genie
 #include "Genie/FS/sys/mac/gestalt.hh"
 #include "Genie/FS/sys/mac/proc.hh"
-#include "Genie/FS/sys/mac/soundin.hh"
 #include "Genie/FS/sys/mac/thng.hh"
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 #include "Genie/FS/sys/mac/crm.hh"
@@ -38,10 +37,6 @@
 #define CONFIG_SYS_MAC_CRM  (!CONFIG_MINI)
 #endif
 
-#ifndef CONFIG_SYS_MAC_SOUNDIN
-#define CONFIG_SYS_MAC_SOUNDIN  (!CONFIG_MINI)
-#endif
-
 namespace Genie
 {
 	
@@ -52,12 +47,6 @@ namespace Genie
 	const vfs::fixed_mapping sys_mac_Mappings[] =
 	{
 		{ "proc",    &New_FSTree_sys_mac_proc    },
-		
-	#if CONFIG_SYS_MAC_SOUNDIN
-		
-		{ "soundin", &New_FSTree_sys_mac_soundin },
-		
-	#endif
 		
 		{ "tempmem", &vfs::new_sys_mac_tempmem },
 		{ "thng",    &New_FSTree_sys_mac_thng  },
