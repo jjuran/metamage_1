@@ -29,7 +29,6 @@
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/has/BlueBox.hh"
 #include "mac_sys/has/native_Carbon.hh"
-#include "mac_sys/volume_params.hh"
 
 // mac-file-utils
 #include "mac_file/desktop.hh"
@@ -1242,9 +1241,7 @@ namespace Genie
 		
 		long dirID = cInfo.dirInfo.ioDrDirID;
 		
-		const bool async = ! TARGET_CPU_68K                     &&
-		                   mac::sys::item_is_on_server( item )  &&
-		                   ! mac::sys::has_BlueBox();
+		const bool async = false;  // TODO:  Make async I/O work
 		
 	#ifndef __MACH__
 		
