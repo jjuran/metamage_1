@@ -19,23 +19,17 @@
 
 // relix-kernel
 #include "relix/config/color.hh"
-#include "relix/config/mini.hh"
 
 // Genie
 #include "Genie/FS/sys/mac/gestalt.hh"
 #include "Genie/FS/sys/mac/proc.hh"
 #include "Genie/FS/sys/mac/thng.hh"
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
-#include "Genie/FS/sys/mac/crm.hh"
 #include "Genie/FS/sys/mac/xpram.hh"
 #endif
 #include "Genie/FS/sys/mac/user.hh"
 #include "Genie/FS/sys/mac/vol.hh"
 
-
-#ifndef CONFIG_SYS_MAC_CRM
-#define CONFIG_SYS_MAC_CRM  (!CONFIG_MINI)
-#endif
 
 namespace Genie
 {
@@ -52,12 +46,6 @@ namespace Genie
 		{ "thng",    &New_FSTree_sys_mac_thng  },
 		
 	#if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
-		
-	#if CONFIG_SYS_MAC_CRM
-		
-		{ "crm",  PREMAPPED( sys_mac_crm_Mappings  ) },
-		
-	#endif
 		
 		{ "xpram", &vfs::new_generated, (void*) &sys_mac_xpram::Read },
 		
