@@ -16,6 +16,9 @@
 // Standard C
 #include <stdlib.h>
 
+// mac-sys-utils
+#include "mac_sys/errno_from_mac_error.hh"
+
 // command
 #include "command/get_option.hh"
 
@@ -31,9 +34,6 @@
 
 // poseven
 #include "poseven/functions/perror.hh"
-
-// OSErrno
-#include "OSErrno/OSErrno.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -152,10 +152,14 @@ int Main( int argc, char** argv )
 			
 			status += gear::inscribe_decimal( err );
 			
-			const int errnum = OSErrno::ErrnoFromOSStatus( err );
+			const int errnum = mac::sys::errno_from_mac_error( err );
 			
 			p7::perror( "SetFile", pathname, status );
-			p7::perror( "SetFile", pathname, errnum );
+			
+			if ( errnum > 0 )
+			{
+				p7::perror( "SetFile", pathname, errnum );
+			}
 			
 			exit_status = 1;
 		}
