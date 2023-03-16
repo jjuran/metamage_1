@@ -21,8 +21,7 @@
 
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
-
-#include "Nitrogen/Files.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
@@ -85,36 +84,42 @@ static char* const* get_options( char* const* argv )
 }
 
 
+static
+OSErr set_FInfo( short vRefNum, long parID, ConstStr255Param name )
+{
+	OSErr err;
+	FInfo fInfo;
+	
+	err = HGetFInfo( vRefNum, parID, name, &fInfo );
+	
+	if ( err == noErr )
+	{
+		if ( creator_arg )
+		{
+			fInfo.fdCreator = the_creator;
+		}
+		
+		if ( type_arg )
+		{
+			fInfo.fdType = the_type;
+		}
+		
+		err = HSetFInfo( vRefNum, parID, name, &fInfo );
+	}
+	
+	return err;
+}
+
 namespace tool
 {
 
-namespace N = Nitrogen;
 namespace p7 = poseven;
 namespace Div = Divergence;
 
 
 static void SetFileInfo( const FSSpec& file )
 {
-	CInfoPBRec cInfo;
-	
-	N::FSpGetCatInfo( file, cInfo );
-	
-	FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
-	
-	if ( creator_arg )
-	{
-		fInfo.fdCreator = the_creator;
-	}
-	
-	if ( type_arg )
-	{
-		fInfo.fdType = the_type;
-	}
-	
-	cInfo.hFileInfo.ioNamePtr = const_cast< StringPtr >( file.name );
-	cInfo.hFileInfo.ioDirID   = file.parID;
-	
-	N::PBSetCatInfoSync( cInfo );
+	Mac::ThrowOSStatus( set_FInfo( file.vRefNum, file.parID, file.name ) );
 }
 
 
