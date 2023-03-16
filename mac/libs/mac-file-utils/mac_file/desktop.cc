@@ -5,9 +5,6 @@
 
 #include "mac_file/desktop.hh"
 
-// mac-file-utils
-#include "mac_file/directory.hh"
-
 
 #pragma exceptions off
 
@@ -60,14 +57,13 @@ OSErr get_desktop_APPL( FSSpec&  result,
 		
 		if ( err == noErr )
 		{
-			types::VRefNum_DirID parent = directory( result );
+			FInfo info;
+			err = HGetFInfo( result.vRefNum, result.parID, result.name, &info );
 			
-			if ( parent.vRefNum )
+			if ( err == noErr )
 			{
 				return err;  // noErr
 			}
-			
-			err = parent.dirID;
 		}
 		
 		--vRefNum;
