@@ -3,6 +3,16 @@
  *	==========
  */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __FILES__
+#include <Files.h>
+#endif
+
 // Standard C
 #include <stdlib.h>
 
@@ -13,18 +23,14 @@
 #include "gear/inscribe_decimal.hh"
 #include "gear/quad.hh"
 
+// mac-relix-utils
+#include "mac_relix/FSSpec_from_path.hh"
+
 // plus
 #include "plus/var_string.hh"
 
 // poseven
 #include "poseven/functions/perror.hh"
-
-// Nitrogen
-#include "Mac/Toolbox/Types/OSStatus.hh"
-#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
-
-// Divergence
-#include "Divergence/Utilities.hh"
 
 // OSErrno
 #include "OSErrno/OSErrno.hh"
@@ -114,13 +120,6 @@ namespace tool
 {
 
 namespace p7 = poseven;
-namespace Div = Divergence;
-
-
-static void SetFileInfo( const FSSpec& file )
-{
-	Mac::ThrowOSStatus( set_FInfo( file.vRefNum, file.parID, file.name ) );
-}
 
 
 int Main( int argc, char** argv )
@@ -137,11 +136,17 @@ int Main( int argc, char** argv )
 	{
 		const char* pathname = *free_args++;
 		
-		try
+		OSErr err;
+		FSSpec file;
+		
+		err = mac::relix::FSSpec_from_existing_path( pathname, file );
+		
+		if ( err == noErr )
 		{
-			SetFileInfo( Div::ResolvePathToFSSpec( pathname ) );
+			err = set_FInfo( file.vRefNum, file.parID, file.name );
 		}
-		catch ( const Mac::OSStatus& err )
+		
+		if ( err != noErr )
 		{
 			plus::var_string status = "OSStatus ";
 			
