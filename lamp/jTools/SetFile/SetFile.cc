@@ -13,6 +13,9 @@
 #include <Files.h>
 #endif
 
+// POSIX
+#include <unistd.h>
+
 // Standard C
 #include <stdlib.h>
 
@@ -29,14 +32,16 @@
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
 
-// plus
-#include "plus/var_string.hh"
-
-// poseven
-#include "poseven/functions/perror.hh"
-
 // Orion
 #include "Orion/Main.hh"
+
+
+#pragma exceptions off
+
+
+#define PROGRAM "SetFile"
+
+#define STR_LEN(s)  "" s, (sizeof s - 1)
 
 
 using namespace command::constants;
@@ -119,9 +124,6 @@ OSErr set_FInfo( short vRefNum, long parID, ConstStr255Param name )
 namespace tool
 {
 
-namespace p7 = poseven;
-
-
 int Main( int argc, char** argv )
 {
 	char *const *args = get_options( argv );
@@ -148,18 +150,16 @@ int Main( int argc, char** argv )
 		
 		if ( err != noErr )
 		{
-			plus::var_string status = "OSStatus ";
-			
-			status += gear::inscribe_decimal( err );
-			
 			const int errnum = mac::sys::errno_from_mac_error( err );
 			
-			p7::perror( "SetFile", pathname, status );
+			const char* message = errnum > 0 ? strerror( errnum )
+			                                 : gear::inscribe_decimal( err );
 			
-			if ( errnum > 0 )
-			{
-				p7::perror( "SetFile", pathname, errnum );
-			}
+			write( STDERR_FILENO, STR_LEN( PROGRAM ": " ) );
+			write( STDERR_FILENO, pathname, strlen( pathname ) );
+			write( STDERR_FILENO, STR_LEN( ": " ) );
+			write( STDERR_FILENO, message, strlen( message ) );
+			write( STDERR_FILENO, STR_LEN( "\n" ) );
 			
 			exit_status = 1;
 		}
