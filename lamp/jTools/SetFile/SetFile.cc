@@ -1,7 +1,7 @@
-/*	==========
- *	SetFile.cc
- *	==========
- */
+/*
+	SetFile.cc
+	----------
+*/
 
 // Mac OS X
 #ifdef __APPLE__
@@ -31,9 +31,6 @@
 
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
-
-// Orion
-#include "Orion/Main.hh"
 
 
 #pragma exceptions off
@@ -121,10 +118,7 @@ OSErr set_FInfo( short vRefNum, long parID, ConstStr255Param name )
 	return err;
 }
 
-namespace tool
-{
-
-int Main( int argc, char** argv )
+int main( int argc, char** argv )
 {
 	char *const *args = get_options( argv );
 	
@@ -166,6 +160,4 @@ int Main( int argc, char** argv )
 	}
 	
 	return exit_status;
-}
-
 }
