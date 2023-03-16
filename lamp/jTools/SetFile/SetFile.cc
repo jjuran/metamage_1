@@ -87,71 +87,71 @@ static char* const* get_options( char* const* argv )
 
 namespace tool
 {
+
+namespace N = Nitrogen;
+namespace p7 = poseven;
+namespace Div = Divergence;
+
+
+static void SetFileInfo( const FSSpec& file )
+{
+	CInfoPBRec cInfo;
 	
-	namespace N = Nitrogen;
-	namespace p7 = poseven;
-	namespace Div = Divergence;
+	N::FSpGetCatInfo( file, cInfo );
 	
+	FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
 	
-	static void SetFileInfo( const FSSpec& file )
+	if ( creator_arg )
 	{
-		CInfoPBRec cInfo;
-		
-		N::FSpGetCatInfo( file, cInfo );
-		
-		FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
-		
-		if ( creator_arg )
-		{
-			fInfo.fdCreator = the_creator;
-		}
-		
-		if ( type_arg )
-		{
-			fInfo.fdType = the_type;
-		}
-		
-		cInfo.hFileInfo.ioNamePtr = const_cast< StringPtr >( file.name );
-		cInfo.hFileInfo.ioDirID   = file.parID;
-		
-		N::PBSetCatInfoSync( cInfo );
+		fInfo.fdCreator = the_creator;
 	}
 	
-	
-	int Main( int argc, char** argv )
+	if ( type_arg )
 	{
-		char *const *args = get_options( argv );
+		fInfo.fdType = the_type;
+	}
+	
+	cInfo.hFileInfo.ioNamePtr = const_cast< StringPtr >( file.name );
+	cInfo.hFileInfo.ioDirID   = file.parID;
+	
+	N::PBSetCatInfoSync( cInfo );
+}
+
+
+int Main( int argc, char** argv )
+{
+	char *const *args = get_options( argv );
+	
+	const int argn = argc - (args - argv);
+	
+	char const *const *free_args = args;
+	
+	int exit_status = 0;
+	
+	while ( *free_args )
+	{
+		const char* pathname = *free_args++;
 		
-		const int argn = argc - (args - argv);
-		
-		char const *const *free_args = args;
-		
-		int exit_status = 0;
-		
-		while ( *free_args )
+		try
 		{
-			const char* pathname = *free_args++;
+			SetFileInfo( Div::ResolvePathToFSSpec( pathname ) );
+		}
+		catch ( const Mac::OSStatus& err )
+		{
+			plus::var_string status = "OSStatus ";
 			
-			try
-			{
-				SetFileInfo( Div::ResolvePathToFSSpec( pathname ) );
-			}
-			catch ( const Mac::OSStatus& err )
-			{
-				plus::var_string status = "OSStatus ";
-				
-				status += gear::inscribe_decimal( err );
-				
-				const int errnum = OSErrno::ErrnoFromOSStatus( err );
-				
-				p7::perror( "SetFile", pathname, status );
-				p7::perror( "SetFile", pathname, errnum );
-				
-				exit_status = 1;
-			}
+			status += gear::inscribe_decimal( err );
+			
+			const int errnum = OSErrno::ErrnoFromOSStatus( err );
+			
+			p7::perror( "SetFile", pathname, status );
+			p7::perror( "SetFile", pathname, errnum );
+			
+			exit_status = 1;
 		}
-		
-		return exit_status;
 	}
 	
+	return exit_status;
+}
+
 }
