@@ -20,7 +20,7 @@
 	native endianness at both levels -- i.e. the most significant byte of the
 	most significant word is the lowest in memory on big-endian systems, and
 	the highest in memory on little-endian systems.  The library provides
-	separate functions for operating on big-endian and little-endian varants,
+	separate functions for operating on big-endian and little-endian variants,
 	of which the caller must select one appropriately.  Optimized assembly
 	language implementations are provided for the Motorola 68K series of
 	processors.
