@@ -6,8 +6,10 @@
 #include "Debugger.hh"
 
 // POSIX
-#include <string.h>
 #include <unistd.h>
+
+// more-libc
+#include "more/string.h"
 
 // vdb
 #include "trace.hh"
@@ -32,7 +34,8 @@ void Debugger_message()
 	write( STDERR_FILENO, STR_LEN( DEBUGGER_TEXT "\n" ) );
 }
 
-static void DebugStr_message( const unsigned char* message : __A0 )
+static
+void DebugStr_message( const unsigned char* message : __A0 )
 {
 	const size_t max_length = 255;
 	
@@ -40,9 +43,9 @@ static void DebugStr_message( const unsigned char* message : __A0 )
 	
 	const size_t length = message[0];
 	
-	memcpy( buffer, message + 1, length );
+	char* p = (char*) mempcpy( buffer, message + 1, length );
 	
-	buffer[ length ] = '\n';
+	*p = '\n';
 	
 	write( STDERR_FILENO, buffer, length + 1 );
 }
