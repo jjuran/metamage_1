@@ -16,6 +16,8 @@
 #pragma exceptions off
 
 
+#define STR_LEN(s)  "" s, (sizeof s - 1)
+
 #define DEBUGGER_TEXT  "User Break"
 
 
@@ -24,9 +26,10 @@ enum
 	trace_on = 0xFFFFFFF4
 };
 
-static void Debugger_message()
+static
+void Debugger_message()
 {
-	write( STDERR_FILENO, DEBUGGER_TEXT "\n", sizeof DEBUGGER_TEXT - 1 + 1 );
+	write( STDERR_FILENO, STR_LEN( DEBUGGER_TEXT "\n" ) );
 }
 
 static void DebugStr_message( const unsigned char* message : __A0 )
