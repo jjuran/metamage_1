@@ -47,6 +47,11 @@ void SysError_patch( short error : __D0 )
 	_exit( error );
 }
 
+enum
+{
+	_SysError = 0xA9C9,
+};
+
 static
 asm void syserr_handler()
 {
@@ -54,6 +59,12 @@ asm void syserr_handler()
 	MOVE.B   7(SP),D0
 	LSR.W    #2,D0
 	SUBQ.W   #1,D0
+	
+	ANDI     #0xDFFF,SR  // leave supervisor mode
+	
+	_SysError
+	
+	// SysError() shouldn't return, but in case it does...
 	JMP      SysError_patch
 }
 
