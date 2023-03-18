@@ -40,21 +40,20 @@ namespace sys {
 
 #if TARGET_CPU_68K
 
+short ROM85 : 0x028E;
+
 static
 bool has_Microseconds_trap()
 {
-	/*
-		_MoveTo is A893 and _Microseconds is A193.  With a unified, compact
-		trap table, only the low byte is significant, so we have to make sure
-		that our check for _Microseconds doesn't yield a false positive from
-		_MoveTo.
-	*/
+	if ( ROM85 < 0 )
+	{
+		return false;  // 64K ROM never has _Microseconds
+	}
 	
 	UniversalProcPtr microseconds  = get_trap_address( _Microseconds  );
-	UniversalProcPtr moveto        = get_trap_address( _MoveTo        );
 	UniversalProcPtr unimplemented = get_trap_address( _Unimplemented );
 	
-	return microseconds != unimplemented  &&  microseconds != moveto;
+	return microseconds != unimplemented;
 }
 
 static const bool has_Microseconds = has_Microseconds_trap();
