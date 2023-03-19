@@ -248,6 +248,18 @@ namespace vxo
 		return required( extend_capacity_nothrow( datum, new_capacity ) );
 	}
 	
+	char* curtail_capacity_nothrow( datum_storage& datum, long new_capacity )
+	{
+		if ( char* alloc = extend_capacity_nothrow( datum, new_capacity ) )
+		{
+			return alloc;
+		}
+		
+		// Failure to decrease capacity is not an error
+		
+		return begin( datum );
+	}
+	
 	char* curtail_capacity( datum_storage& datum, long new_capacity )
 	{
 		char* p = extend_capacity_nothrow( datum, new_capacity );
