@@ -17,7 +17,8 @@ namespace vxo
 namespace plus
 {
 	
-	void string_reserve( vxo::datum_storage& datum, long capacity );
+	char* string_reserve_nothrow( vxo::datum_storage& datum, long capacity );
+	void  string_reserve        ( vxo::datum_storage& datum, long capacity );
 	
 	void string_set_length( vxo::datum_storage& datum, long length, char* data );
 	

@@ -13,6 +13,11 @@
 #include "vxo/datum_alloc.hh"
 
 
+#ifndef NULL
+#define NULL  0L
+#endif
+
+
 namespace plus
 {
 	
@@ -22,6 +27,28 @@ namespace plus
 	using vxo::size;
 	using vxo::string_check_size;
 	
+	
+	char* string_reserve_nothrow( datum_storage& datum, long capacity )
+	{
+		if ( capacity < 0 )
+		{
+			return NULL;
+		}
+		
+		const long length = size( datum );
+		
+		if ( capacity < datum_max_offset )
+		{
+			capacity = datum_max_offset;
+		}
+		
+		if ( capacity < length )
+		{
+			capacity = length;
+		}
+		
+		return set_capacity_nothrow( datum, capacity );
+	}
 	
 	void string_reserve( datum_storage& datum, long capacity )
 	{
