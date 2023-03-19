@@ -91,7 +91,7 @@ sub build_output
 
 sub tmpdir
 {
-	my $root = `vols --ram`;
+	my $root = `ram-disks`;
 
 	chomp $root;
 	
