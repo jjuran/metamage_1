@@ -217,7 +217,8 @@ my %fsmap =
 			\ qw( chain copier divide graft jtest pause ptrace th zpipe ),
 			# Mac-specific
 			\ qw( adbs beep cds crsr deicon drives drvr err2text gdev keymods
-				location mac-id macbin mnam qdscreencap rom-checksum rominfo
+				location mac-id macbin mnam qdscreencap ram-disks
+				rom-checksum rominfo
 				screenBits system-info thds units vcbs vols ),
 			# Mac-specific scripts
 			qw( gestalt ),
