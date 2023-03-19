@@ -272,6 +272,27 @@ namespace vxo
 		return begin( datum );
 	}
 	
+	char* set_capacity_nothrow( datum_storage& datum, long new_capacity )
+	{
+		new_capacity = adjusted_capacity( new_capacity );
+		
+		const long old_capacity = capacity( datum );
+		
+		if ( new_capacity != old_capacity )
+		{
+			if ( new_capacity > old_capacity )
+			{
+				return extend_capacity_nothrow( datum, new_capacity );
+			}
+			else
+			{
+				return curtail_capacity_nothrow( datum, new_capacity );
+			}
+		}
+		
+		return begin( datum );
+	}
+	
 	char* set_capacity( datum_storage& datum, long new_capacity )
 	{
 		new_capacity = adjusted_capacity( new_capacity );
