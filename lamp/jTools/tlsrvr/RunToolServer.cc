@@ -123,10 +123,10 @@ namespace tool
 		
 		script += DirectoryCommandForMPW();
 		script += command;
-		script += "\r";
-		script += "Set CommandStatus {Status}" "\r";
-		script += "Directory \"{MPW}\"" "\r";  // don't keep the cwd busy
-		script += "Exit {CommandStatus}" "\r";
+		script += "\r"
+		          "Set CommandStatus {Status}" "\r"
+		          "Directory \"{MPW}\"" "\r"   // don't keep the cwd busy
+		          "Exit {CommandStatus}" "\r";
 		
 		return script;
 	}
