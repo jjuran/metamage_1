@@ -91,11 +91,16 @@ sub build_output
 
 sub tmpdir
 {
-	my $root = `ram-disks`;
-
-	chomp $root;
+	my $root = "";
 	
-	$root .= "/mnt" if length $root;
+	if ( my $ramdisks = `ram-disks` )
+	{
+		chomp $ramdisks;
+		
+		my @ramdisks = split '\n', $ramdisks;
+		
+		$root = $ramdisks[ 0 ] . "/mnt";
+	}
 	
 	"$root/tmp";
 }
