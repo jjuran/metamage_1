@@ -24,16 +24,16 @@
 namespace p7 = poseven;
 
 
-static const char env_intfs_libs[] = "INTERFACES_LIBRARIES";
+static const char env_sdk_dir[] = "SDK_DIR";
 static const char txt_intfs_libs[] = "Interfaces&Libraries";
 static const char sig_ToolServer[] = "MPSX";
 
 
 plus::string find_SDK_dir()
 {
-	if ( const char* interfaces_libraries = getenv( env_intfs_libs ) )
+	if ( const char* sdk_dir = getenv( env_sdk_dir ) )
 	{
-		return interfaces_libraries;
+		return sdk_dir;
 	}
 	
 	plus::var_string pathname = find_appl( sig_ToolServer ).move();
