@@ -310,8 +310,6 @@ namespace tool
 		const StringVector& projects_via_USE  = get_values( config, "use"  );
 		const StringVector& projects_via_USES = get_values( config, "uses" );
 		
-		const plus::string& product_name = get_first( config, "product" );
-		
 		used.insert( used.end(),
 		             projects_via_USES.begin(),
 		             projects_via_USES.end() );
