@@ -28,7 +28,7 @@ plus::string find_MPW_dir()
 		return mpw_dir;
 	}
 	
-	plus::string path = find_appl( "MPSX" );
+	plus::string path = find_MPSX();
 	
 	const char* p = path.data();
 	

@@ -12,6 +12,6 @@
 #include "plus/string.hh"
 
 
-plus::string find_appl( const char* appl );
+plus::string find_MPSX();
 
 #endif

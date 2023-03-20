@@ -10,9 +10,6 @@
 // Extended API Set Part 2
 #include "extended-api-set/part-2.h"
 
-// more-libc
-#include "more/string.h"
-
 // iota
 #include "iota/strings.hh"
 
@@ -32,12 +29,10 @@ static const char list[]        = "list";
 static const char sys_mac_vol[] = "/sys/mac/vol/";
 
 
-static char ram_path[] = "ram/dt/appls/APPL/latest";
+static char ram_path[] = "ram/dt/appls/MPSX/latest";
 
-plus::string find_appl( const char* appl )
+plus::string find_MPSX()
 {
-	mempcpy( ram_path + STRLEN( "ram/dt/appls/" ), appl, STRLEN( "APPL" ) );
-	
 	const char* path = ram_path + STRLEN( "ram/" );
 	
 	n::owned< p7::fd_t > vol = p7::open( sys_mac_vol, p7::o_rdonly | p7::o_directory );
