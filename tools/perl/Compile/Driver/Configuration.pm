@@ -139,7 +139,7 @@ sub get_module
 	
 	my ( $name, $mandatory ) = @_;
 	
-	my $optional = !$mandatory  &&  $name =~ m{^ _ }x;
+	my $optional = !$mandatory  &&  ($name =~ m{^ _ }x  ||  $name =~ s{\?$}{});
 	
 	my $mask = $self->platform_mask;
 	
