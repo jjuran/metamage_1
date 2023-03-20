@@ -8,7 +8,6 @@
 #include <vector>
 
 // gear
-#include "gear/find.hh"
 #include "gear/parse_decimal.hh"
 
 // Debug
@@ -24,7 +23,7 @@
 #include "poseven/functions/write.hh"
 
 // one_path
-#include "one_path/find_appl.hh"
+#include "one_path/find_MPW_dir.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -64,20 +63,11 @@ namespace tool
 	
 	static plus::string Find_SysErrsDotErr()
 	{
-		plus::var_string path = find_appl( "MPSX" );
+		plus::var_string path = find_MPW_dir();
 		
-		const char* p = path.data();
+		path += "/SysErrs.err";
 		
-		if ( const char* it = gear::find_last_match( p, path.size(), '/' ) )
-		{
-			path.resize( it + 1 - p );
-			
-			path += "SysErrs.err";
-			
-			return path;
-		}
-		
-		throw p7::errno_t( ENOENT );
+		return path;
 	}
 	
 	static OSErr get_error_from_entry( toc_entry entry )
