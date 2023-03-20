@@ -325,9 +325,15 @@ namespace tool
 	                                      const plus::string&  used_name,
 	                                      Platform             platform )
 	{
+		bool optional = used_name.back() == '?';
+		
+		size_t name_size = used_name.size() - optional;
+		
+		plus::string lookup_name = used_name.substr( 0, name_size );
+		
 		try
 		{
-			return GetProject( used_name, platform );
+			return GetProject( lookup_name, platform, optional );
 		}
 		catch ( const NoSuchProject& )
 		{
@@ -336,7 +342,7 @@ namespace tool
 				return global_empty_project;
 			}
 			
-			throw NoSuchUsedProject( user_name, used_name );
+			throw NoSuchUsedProject( user_name, lookup_name );
 		}
 		
 		// Not reached, but MWC 2.4.1 is unable to determine this

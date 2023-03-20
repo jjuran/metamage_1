@@ -47,7 +47,9 @@ namespace tool
 	static ProjectPlatformMap gProjectPlatformMap;
 	
 	
-	Project& GetProject( const plus::string& project_name, Platform platform )
+	Project& GetProject( const plus::string&  project_name,
+	                     Platform             platform,
+	                     bool                 optional )
 	{
 		// Cache the platform lookup
 		ProjectMap& map = gProjectPlatformMap[ platform ];
@@ -61,7 +63,9 @@ namespace tool
 		{
 			// First encounter with this project; load it
 			
-			const ProjectConfig& config = GetProjectConfig( project_name, platform );
+			const ProjectConfig& config = GetProjectConfig( project_name,
+			                                                platform,
+			                                                optional );
 			
 			// Take a reference (auto-vivifying)
 			Project*& project_ptr = map[ project_name ];

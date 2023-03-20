@@ -18,7 +18,9 @@ namespace tool
 	
 	class Project;
 	
-	Project& GetProject( const plus::string& project_name, Platform platform );
+	Project& GetProject( const plus::string&  project_name,
+	                     Platform             platform,
+	                     bool                 optional = false );
 	
 }
 

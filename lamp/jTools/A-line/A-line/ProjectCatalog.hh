@@ -61,7 +61,9 @@ namespace tool
 	                           const PlatformDemands&  demands,
 	                           const ProjectConfig&    config );
 	
-	const ProjectConfig& GetProjectConfig( const plus::string& name, Platform platform );
+	const ProjectConfig& GetProjectConfig( const plus::string&  name,
+	                                       Platform             platform,
+	                                       bool                 optional );
 	
 	void ScanDirForProjects( const plus::string&  dirPath,
 	                         StringVector&        configs,

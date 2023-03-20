@@ -125,7 +125,11 @@ namespace tool
 		return it->second;
 	}
 	
-	const ProjectConfig& GetProjectConfig( const plus::string& name, Platform targetPlatform )
+	static ProjectConfig empty_config;
+	
+	const ProjectConfig& GetProjectConfig( const plus::string&  name,
+	                                       Platform             targetPlatform,
+	                                       bool                 optional )
 	{
 		ProjectConfigCandidates& candidates = find_project_config_candidates( name );
 		
@@ -134,6 +138,11 @@ namespace tool
 		                                                     platform_compatibility( targetPlatform ) );
 		if ( it == candidates.end() )
 		{
+			if ( optional )
+			{
+				return empty_config;
+			}
+			
 			// FIXME:  Indicate that there are projects with this name,
 			// but that they're not compatible with the current target
 			throw NoSuchProject( name );
