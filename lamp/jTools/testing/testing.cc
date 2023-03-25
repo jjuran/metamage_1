@@ -597,7 +597,7 @@ static void DoSomethingWithServiceFile( const plus::string& file )
 #endif
 
 #ifdef __RELIX__
-#define SYSTEM_PATH "/sys/mac/vol/boot/mnt/System"
+#define SYSTEM_PATH "/sys/mac/vol/list/1/mnt/System"
 #endif
 
 static int TestServices( int argc, char** argv )
