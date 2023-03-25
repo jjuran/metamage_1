@@ -93,13 +93,11 @@ sub tmpdir
 {
 	my $root = "";
 	
-	if ( my $ramdisks = `ram-disks` )
+	if ( my $ramdisk = `ram-disks -1` )
 	{
-		chomp $ramdisks;
+		chomp $ramdisk;
 		
-		my @ramdisks = split '\n', $ramdisks;
-		
-		$root = $ramdisks[ 0 ] . "/mnt";
+		$root = "$ramdisk/mnt";
 	}
 	
 	"$root/tmp";
