@@ -15,9 +15,6 @@
 #include <Files.h>
 #endif
 
-// mac-sys-utils
-#include "mac_sys/unit_table.hh"
-
 // mac-file-utils
 #include "mac_file/boot_volume.hh"
 
@@ -38,58 +35,10 @@
 #include "Genie/FS/sys/mac/vol/list.hh"
 
 
-#define PSTR_LEN( s )  "\p" s, sizeof s
-
-
 namespace Genie
 {
 	
 	namespace p7 = poseven;
-	
-	
-	static short find_ram_disk()
-	{
-		using mac::types::AuxDCE;
-		
-		AuxDCE*** const unit_table = mac::sys::get_unit_table_base();
-		
-		HParamBlockRec pb;
-		
-		pb.volumeParam.ioNamePtr = NULL;
-		
-		for ( short index = 1;  ;  ++index )
-		{
-			pb.volumeParam.ioVRefNum  = 0;
-			pb.volumeParam.ioVolIndex = index;
-			
-			if ( OSErr err = ::PBHGetVInfoSync( &pb ) )
-			{
-				if ( err == nsvErr )
-				{
-					break;
-				}
-				
-				// Unexpected error
-				break;
-			}
-			
-			if ( const short dRefNum = pb.volumeParam.ioVDRefNum )
-			{
-				const short unit_number = ~dRefNum;
-				
-				AuxDCE** const dceHandle = unit_table[ unit_number ];
-				
-				const unsigned char* name = mac::sys::get_driver_name( dceHandle );
-				
-				if ( memcmp( name, PSTR_LEN( ".EDisk" ) ) == 0 )
-				{
-					return pb.volumeParam.ioVRefNum;
-				}
-			}
-		}
-		
-		return 0;
-	}
 	
 	
 	static vfs::node_ptr new_volume_link( const vfs::node*     parent,
@@ -120,12 +69,6 @@ namespace Genie
 		{ "list", &New_FSTree_sys_mac_vol },
 		
 		{ "boot", &new_volume_link, (void*) &mac::file::boot_volume },
-		
-	#if !TARGET_API_MAC_CARBON
-		
-		{ "ram",  &new_volume_link, (void*) &find_ram_disk },
-		
-	#endif
 		
 		{ NULL, NULL }
 		
