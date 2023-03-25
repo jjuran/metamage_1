@@ -149,15 +149,17 @@ sub transfer
 
 sub check
 {
-	my $ramdisk = readlink "/sys/mac/vol/ram";
+	my $ramdisk = `ram-disks -1`;
 	
 	if ( $ramdisk )
 	{
-		my $name = read_file( "/sys/mac/vol/ram/name" );
+		chomp $ramdisk;
+		
+		my $name = read_file( "$ramdisk/name" );
 		
 		chomp $name;
 		
-		print "RAM disk '$name' found at /sys/mac/vol/$ramdisk\n";
+		print "RAM disk '$name' found at $ramdisk\n";
 	}
 }
 
@@ -173,19 +175,21 @@ sub auto
 	{
 		print "Ram volume not found.\n";
 		
-		if ( my $ramdisk = readlink "/sys/mac/vol/ram" )
+		if ( my $ramdisk = `ram-disks -1` )
 		{
-			my $name = read_file( "/sys/mac/vol/ram/name" );
+			chomp $ramdisk;
+			
+			my $name = read_file( "$ramdisk/name" );
 			
 			chomp $name;
 			
-			print "RAM disk '$name' found at /sys/mac/vol/$ramdisk\n";
+			print "RAM disk '$name' found at $ramdisk\n";
 			
-			write_file( "/sys/mac/vol/ram/name", "Ram\n" );
+			write_file( "$ramdisk/name", "Ram\n" );
 			
 			print "Renamed RAM disk volume to 'Ram'.\n";
 			
-			$ram = "/sys/mac/vol/ram/mnt";
+			$ram = "$ramdisk/mnt";
 		}
 		else
 		{
