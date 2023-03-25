@@ -66,8 +66,16 @@ bool report_disk( short vRefNum )
 	return wrote( STDOUT_FILENO, report_buffer, len );
 }
 
+static inline
+bool is_first_opt( const char* p )
+{
+	return *p++ == '-'  &&  *p++ == '1'  &&  *p++ == '\0';
+}
+
 int main( int argc, char** argv )
 {
+	const bool first_only = argc > 1  &&  is_first_opt( argv[ 1 ] );
+	
 	using mac::types::AuxDCE;
 	
 	AuxDCE*** const unit_table = mac::sys::get_unit_table_base();
@@ -96,6 +104,11 @@ int main( int argc, char** argv )
 					if ( ! report_disk( pb.volumeParam.ioVRefNum ) )
 					{
 						return 13;
+					}
+					
+					if ( first_only )
+					{
+						return 0;
 					}
 					
 					++count;
