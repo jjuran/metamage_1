@@ -1,19 +1,9 @@
 /*
-	find_InterfacesNLibraries.cc
-	----------------------------
-	
-	(With ccache and a slightly longer name that's consistent with the
-	header, we get "find_InterfacesAndLibraries.cc.ii" -- which is 33
-	characters, longer than HFS can handle.  That gets automatically clipped
-	to 31 characters: "find_InterfacesAndLibraries.cc.", which gets another
-	three characters (which are supposed to be ".ii") blindly trimmed from
-	it, yielding "find_InterfacesAndLibraries.", which Metrowerks' compiler
-	doesn't recognize as source (but treats as such anyway, with a warning).
-	
-	To avoid the confusion, we just shorten the name as above.
+	find_SDK_dir.cc
+	---------------
 */
 
-#include "one_path/find_InterfacesAndLibraries.hh"
+#include "one_path/find_SDK_dir.hh"
 
 // Standard C
 #include <stdlib.h>
@@ -39,7 +29,7 @@ static const char txt_intfs_libs[] = "Interfaces&Libraries";
 static const char sig_ToolServer[] = "MPSX";
 
 
-plus::string find_InterfacesAndLibraries()
+plus::string find_SDK_dir()
 {
 	if ( const char* interfaces_libraries = getenv( env_intfs_libs ) )
 	{

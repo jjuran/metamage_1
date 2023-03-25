@@ -50,7 +50,7 @@
 #include "metrowerks/object_file.hh"
 
 // one_path
-#include "one_path/find_InterfacesAndLibraries.hh"
+#include "one_path/find_SDK_dir.hh"
 
 
 namespace tool
@@ -140,7 +140,7 @@ namespace tool
 	
 	static const plus::string& get_Libraries_pathname()
 	{
-		static plus::string libraries = find_InterfacesAndLibraries() + "/Libraries/";
+		static plus::string libraries = find_SDK_dir() + "/Libraries/";
 		
 		return libraries;
 	}

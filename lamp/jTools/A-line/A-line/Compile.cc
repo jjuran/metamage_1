@@ -59,7 +59,7 @@
 #include "pfiles/common.hh"
 
 // one_path
-#include "one_path/find_InterfacesAndLibraries.hh"
+#include "one_path/find_SDK_dir.hh"
 
 // A-line
 #include "A-line/A-line.hh"
@@ -96,7 +96,7 @@ namespace tool
 	
 	static const plus::string& get_Interfaces()
 	{
-		static plus::string interfaces = find_InterfacesAndLibraries() + "/" "Interfaces" "/";
+		static plus::string interfaces = find_SDK_dir() + "/" "Interfaces" "/";
 		
 		return interfaces;
 	}
