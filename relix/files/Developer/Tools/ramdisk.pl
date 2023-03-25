@@ -197,16 +197,14 @@ sub auto
 		}
 	}
 	
-	my $toolserver = readlink "/sys/mac/vol/boot/dt/appls/MPSX/latest";
+	my $mpw = `mpw-select`;
 	
-	if ( !defined $toolserver )
+	if ( !defined $mpw )
 	{
-		die "ToolServer not found on the boot volume.\n";
+		die "MPW not found.\n";
 	}
 	
-	print "ToolServer found at $toolserver.\n";
-	
-	( my $mpw = $toolserver ) =~ s{ / [^/]+ $}{}x;
+	chomp $mpw;
 	
 	print "MPW found at $mpw.\n";
 	
