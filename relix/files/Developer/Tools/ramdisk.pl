@@ -206,7 +206,7 @@ sub auto
 	
 	chomp $mpw;
 	
-	print "MPW found at $mpw.\n";
+	print "MPW dir: $mpw\n";
 	
 	( my $dev_apps = $mpw ) =~ s{ / [^/]+ $}{}x;
 	
@@ -214,7 +214,7 @@ sub auto
 	
 	-d $intfs_libs or die "Interfaces&Libraries not found.\n";
 	
-	print "Interfaces&Libraries found at $intfs_libs.\n";
+	print "SDK dir: $intfs_libs\n";
 	
 	-d "$ram/tmp" or mkdir "$ram/tmp" or die "mkdir: $ram/tmp: $!\n";
 	
