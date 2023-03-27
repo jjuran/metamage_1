@@ -245,7 +245,9 @@ void paint_cursor( short h, short v )
 
 void hide_cursor()
 {
-	if ( CrsrState-- == 0 )
+	--CrsrState;
+	
+	if ( CrsrVis )
 	{
 		--CrsrBusy;
 		
@@ -261,7 +263,7 @@ void hide_cursor()
 
 void show_cursor()
 {
-	if ( CrsrState >= 0  ||  ++CrsrState < 0 )
+	if ( CrsrState >= 0  ||  ++CrsrState < 0  ||  CrsrVis )
 	{
 		return;
 	}
@@ -277,7 +279,7 @@ void show_cursor()
 
 void update_cursor_location()
 {
-	if ( CrsrState == 0  &&  lock_cursor() )
+	if ( CrsrVis  &&  lock_cursor() )
 	{
 		screen_lock lock;
 		
