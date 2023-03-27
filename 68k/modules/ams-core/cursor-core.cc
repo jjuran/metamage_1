@@ -28,10 +28,10 @@ Cursor TheCrsr  : 0x0844;
 Saved CrsrSave  : 0x088C;
 char  CrsrVis   : 0x08CC;
 char  CrsrBusy  : 0x08CD;
+short CrsrState : 0x08D0;
 
 static Ptr    CrsrAddr;
 static Buffer bits_under_cursor;
-static short  CrsrState = -1;  // Invisible cursor, at first
 
 
 static inline
@@ -63,6 +63,8 @@ void init_lowmem_Cursor()
 	JSetCrsr    = &set_cursor;
 	
 	CrsrSave = bits_under_cursor;
+	
+	CrsrState = -1;  // Invisible cursor, at first
 }
 
 static
