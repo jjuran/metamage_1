@@ -261,19 +261,16 @@ void hide_cursor()
 
 void show_cursor()
 {
-	if ( CrsrState >= 0 )
+	if ( CrsrState >= 0  ||  ++CrsrState < 0 )
 	{
 		return;
 	}
 	
 	--CrsrBusy;
 	
-	if ( ++CrsrState >= 0 )
-	{
-		CrsrVis = true;
-		
-		paint_cursor( Mouse.h, Mouse.v );
-	}
+	CrsrVis = true;
+	
+	paint_cursor( Mouse.h, Mouse.v );
 	
 	++CrsrBusy;
 }
