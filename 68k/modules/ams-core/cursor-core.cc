@@ -29,6 +29,7 @@ Saved CrsrSave  : 0x088C;
 char  CrsrVis   : 0x08CC;
 char  CrsrBusy  : 0x08CD;
 short CrsrState : 0x08D0;
+char CrsrObscure: 0x08D2;
 
 static Ptr    CrsrAddr;
 static Buffer bits_under_cursor;
@@ -62,6 +63,7 @@ void init_lowmem_Cursor()
 	JShieldCursor = &shield_cursor;
 	JInitCrsr     = &init_cursor;
 	JSetCrsr      = &set_cursor;
+	JCrsrObscure  = &obscure_cursor;
 	
 	CrsrSave = bits_under_cursor;
 	
@@ -264,7 +266,7 @@ void hide_cursor()
 
 void show_cursor()
 {
-	if ( CrsrState >= 0  ||  ++CrsrState < 0  ||  CrsrVis )
+	if ( CrsrState >= 0  ||  ++CrsrState < 0  ||  CrsrVis  ||  CrsrObscure )
 	{
 		return;
 	}
@@ -318,6 +320,8 @@ void update_cursor()
 
 void update_cursor_location()
 {
+	CrsrObscure = false;
+	
 	if ( CrsrVis )
 	{
 		if ( CrsrState == 0 )
@@ -345,10 +349,27 @@ void update_cursor_location()
 			unlock_cursor();
 		}
 	}
+	else if ( CrsrState == 0  &&  lock_cursor() )
+	{
+		/*
+			The cursor is invisible even with a zero cursor level,
+			due to a prior call to ObscureCursor().
+			
+			Mouse movement makes an obscured cursor visible again.
+		*/
+		
+		--CrsrState;
+		
+		show_cursor();
+		
+		unlock_cursor();
+	}
 }
 
 void init_cursor()
 {
+	CrsrObscure = false;
+	
 	if ( CrsrState < 0 )
 	{
 		CrsrState = -1;
@@ -362,4 +383,22 @@ pascal void set_cursor( const Cursor* crsr )
 	fast_memcpy( &TheCrsr, crsr, sizeof (Cursor) );
 	
 	update_cursor();
+}
+
+void obscure_cursor()
+{
+	/*
+		Obscure the cursor (usually while text is being entered).
+		
+		Make the cursor invisible, without decrementing the cursor level.
+	*/
+	
+	CrsrObscure = true;
+	
+	if ( CrsrVis )
+	{
+		hide_cursor();
+		
+		++CrsrState;
+	}
 }

@@ -23,4 +23,6 @@ pascal void shield_cursor( const Rect* r, Point pt );
 
 void update_cursor_location();
 
+void obscure_cursor();
+
 #endif
