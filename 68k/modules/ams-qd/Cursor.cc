@@ -54,14 +54,10 @@ pascal void ShowCursor_patch()
 
 pascal void ObscureCursor_patch()
 {
+	JCrsrObscure();
 }
 
 pascal void ShieldCursor_patch( const Rect* rect, Point offset )
 {
-	/*
-		ShieldCursor() is morally equivalent to HideCursor(), though the actual
-		hiding is possibly deferred until later.  For now, just hide now.
-	*/
-	
-	HideCursor();
+	JShieldCursor( rect, offset );
 }
