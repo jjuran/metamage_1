@@ -277,7 +277,8 @@ void show_cursor()
 	++CrsrBusy;
 }
 
-void update_cursor_location()
+static
+void update_cursor()
 {
 	if ( CrsrVis  &&  lock_cursor() )
 	{
@@ -287,6 +288,21 @@ void update_cursor_location()
 		paint_cursor( Mouse.h, Mouse.v );
 		
 		unlock_cursor();
+	}
+}
+
+void update_cursor_location()
+{
+	if ( CrsrVis )
+	{
+		if ( CrsrState == 0 )
+		{
+			/*
+				Normal cursor operation.
+			*/
+			
+			update_cursor();
+		}
 	}
 }
 
@@ -304,5 +320,5 @@ pascal void set_cursor( const Cursor* crsr )
 {
 	fast_memcpy( &TheCrsr, crsr, sizeof (Cursor) );
 	
-	update_cursor_location();
+	update_cursor();
 }
