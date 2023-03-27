@@ -28,6 +28,9 @@ namespace file {
 	OSErr get_desktop_APPL( FSSpec&  result,
 	                        OSType   signature );
 	
+	OSErr get_desktop_APPL_on_RAM_disk( FSSpec&  result,
+	                                    OSType   signature );
+	
 	long get_desktop_comment( short            vRefNum,
 	                          long             dirID,
 	                          ConstStr63Param  name,
