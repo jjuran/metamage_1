@@ -17,13 +17,8 @@
 #include "MacVFS/file/sys_mac_rom.hh"
 #include "MacVFS/file/tempmem.hh"
 
-// relix-kernel
-#include "relix/config/color.hh"
-
 // Genie
 #include "Genie/FS/sys/mac/gestalt.hh"
-#include "Genie/FS/sys/mac/proc.hh"
-#include "Genie/FS/sys/mac/thng.hh"
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 #include "Genie/FS/sys/mac/xpram.hh"
 #endif
@@ -40,10 +35,7 @@ namespace Genie
 	
 	const vfs::fixed_mapping sys_mac_Mappings[] =
 	{
-		{ "proc",    &New_FSTree_sys_mac_proc    },
-		
 		{ "tempmem", &vfs::new_sys_mac_tempmem },
-		{ "thng",    &New_FSTree_sys_mac_thng  },
 		
 	#if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 		
