@@ -7,6 +7,8 @@
 #define CURSORCORE_HH
 
 struct Cursor;
+struct Point;
+struct Rect;
 
 void init_lowmem_Cursor();
 
@@ -16,6 +18,8 @@ pascal void set_cursor( const Cursor* crsr );
 
 void hide_cursor();
 void show_cursor();
+
+pascal void shield_cursor( const Rect* r, Point pt );
 
 void update_cursor_location();
 

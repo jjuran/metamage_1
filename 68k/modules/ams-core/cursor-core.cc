@@ -57,10 +57,11 @@ void set_empty_rect( Rect* r : __A0 )
 
 void init_lowmem_Cursor()
 {
-	JHideCursor = &hide_cursor;
-	JShowCursor = &show_cursor;
-	JInitCrsr   = &init_cursor;
-	JSetCrsr    = &set_cursor;
+	JHideCursor   = &hide_cursor;
+	JShowCursor   = &show_cursor;
+	JShieldCursor = &shield_cursor;
+	JInitCrsr     = &init_cursor;
+	JSetCrsr      = &set_cursor;
 	
 	CrsrSave = bits_under_cursor;
 	
@@ -277,6 +278,30 @@ void show_cursor()
 	++CrsrBusy;
 }
 
+pascal void shield_cursor( const Rect* r, Point pt )
+{
+	/*
+		Shield the cursor from direct screen access.
+		
+		If the area of screen access might intersect the cursor image,
+		hide the cursor.  If not, decrement the cursor level anyway,
+		to match the eventual corresponding ShowCursor() call.
+	*/
+	
+	Rect shielded = *r;
+	
+	OffsetRect( &shielded, -pt.h, -pt.v );
+	
+	if ( SectRect( &CrsrRect, &shielded, &shielded ) )
+	{
+		hide_cursor();
+	}
+	else
+	{
+		--CrsrState;
+	}
+}
+
 static
 void update_cursor()
 {
@@ -302,6 +327,22 @@ void update_cursor_location()
 			*/
 			
 			update_cursor();
+		}
+		else if ( lock_cursor() )
+		{
+			/*
+				The cursor is visible even with a negative cursor level,
+				due to a ShieldCursor() call whose rect didn't intersect
+				CrsrRect, leaving the cursor exempt from shielding.
+				
+				Mouse movement ends that exemption.
+			*/
+			
+			hide_cursor();
+			
+			++CrsrState;
+			
+			unlock_cursor();
 		}
 	}
 }
