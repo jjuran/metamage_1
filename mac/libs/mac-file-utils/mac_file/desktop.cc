@@ -48,12 +48,26 @@ OSErr get_desktop_APPL( FSSpec&  result,
 OSErr get_desktop_APPL( FSSpec&  result,
                         OSType   signature )
 {
+	HParamBlockRec pb;
+	
+	pb.volumeParam.ioNamePtr = NULL;
+	
 	OSErr err;
-	short vRefNum = -1;
+	short index = 0;
 	
 	do
 	{
-		err = get_desktop_APPL( result, vRefNum, signature, 0 );
+		pb.volumeParam.ioVRefNum  = 0;
+		pb.volumeParam.ioVolIndex = ++index;
+		
+		err = PBHGetVInfoSync( &pb );
+		
+		if ( err == noErr )
+		{
+			short vRefNum = pb.volumeParam.ioVRefNum;
+			
+			err = get_desktop_APPL( result, vRefNum, signature, 0 );
+		}
 		
 		if ( err == noErr )
 		{
@@ -65,8 +79,6 @@ OSErr get_desktop_APPL( FSSpec&  result,
 				return err;  // noErr
 			}
 		}
-		
-		--vRefNum;
 	}
 	while ( err != nsvErr );
 	
