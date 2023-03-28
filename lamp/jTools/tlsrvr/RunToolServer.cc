@@ -47,7 +47,6 @@
 #include "poseven/extras/slurp.hh"
 #include "poseven/extras/spew.hh"
 #include "poseven/functions/open.hh"
-#include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
@@ -161,34 +160,6 @@ namespace tool
 	}
 	
 	
-	static inline int device_of_ramdisk()
-	{
-		if ( TARGET_API_MAC_CARBON )
-		{
-			// MacRelix Carbon doesn't check driver names, and
-			// OS X's BSD layer doesn't have /sys in the first place
-			return 0;
-		}
-		
-		struct stat ram_status = { 0 };
-		
-		const bool has_ramdisk = p7::stat( "/sys/mac/vol/ram/mnt", ram_status );
-		
-		return has_ramdisk ? ram_status.st_dev : 0;
-	}
-	
-	static ProcessSerialNumber launch_ToolServer_from_ramdisk( int dev )
-	{
-		using mac::file::get_desktop_APPL;
-		
-		FSSpec appFile;
-		
-		Mac::ThrowOSStatus( get_desktop_APPL( appFile, -dev, sigToolServer ) );
-		
-		return N::LaunchApplication( appFile );
-	}
-	
-	
 	static inline SInt32
 	//
 	AEGetParamPtr_stat( const AppleEvent& appleEvent )
@@ -244,28 +215,21 @@ namespace tool
 			return N::LaunchApplication( ToolServer );
 		}
 		
-		if ( const int device = device_of_ramdisk() )
-		{
-			try
-			{
-				return launch_ToolServer_from_ramdisk( device );
-			}
-			catch ( const Mac::OSStatus& err )
-			{
-				if ( err != afpItemNotFound )
-				{
-					throw;
-				}
-			}
-		}
-		
 		try
 		{
 			using mac::file::get_desktop_APPL;
+			using mac::file::get_desktop_APPL_on_RAM_disk;
 			
 			FSSpec appFile;
 			
-			Mac::ThrowOSStatus( get_desktop_APPL( appFile, sigToolServer ) );
+			OSErr err = get_desktop_APPL_on_RAM_disk( appFile, sigToolServer );
+			
+			if ( err )
+			{
+				err = get_desktop_APPL( appFile, sigToolServer );
+				
+				Mac::ThrowOSStatus( err );
+			}
 			
 			return N::LaunchApplication( appFile );
 		}
