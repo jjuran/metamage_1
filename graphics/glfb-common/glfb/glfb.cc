@@ -45,9 +45,9 @@ const GLenum texture_target = GL_TEXTURE_RECTANGLE_EXT;
 static GLenum texture_format = GL_LUMINANCE;
 static GLenum texture_type   = GL_UNSIGNED_BYTE;
 
-static uint8_t* texture_data;
+static uint8_t* screen_texture_data;
 
-static GLuint texture;
+static GLuint screen_texture;
 
 
 static inline
@@ -85,7 +85,7 @@ void init_texture( GLuint& texture )
 
 void initialize()
 {
-	init_texture( texture );
+	init_texture( screen_texture );
 }
 
 void set_dimensions( int width, int height )
@@ -121,20 +121,20 @@ void set_dimensions( int width, int height )
 	              texture_type,
 	              0 );  // NULL
 	
-	free( texture_data );
+	free( screen_texture_data );
 	
-	texture_data = (uint8_t*) malloc( tex_width * tex_height );
+	screen_texture_data = (uint8_t*) malloc( tex_width * tex_height );
 }
 
 void set_screen_image( const void* src_addr )
 {
 	const int n_octets = image_width * image_height / 8u;
 	
-	transcode_8x_1bpp_to_8bpp( src_addr, texture_data, n_octets );
+	transcode_8x_1bpp_to_8bpp( src_addr, screen_texture_data, n_octets );
 	
-	src_addr = texture_data;
+	src_addr = screen_texture_data;
 	
-	glBindTexture( texture_target, texture );
+	glBindTexture( texture_target, screen_texture );
 	
 	glTexSubImage2D( texture_target,
 	                 0,
@@ -151,7 +151,7 @@ void render()
 {
 	glClear( GL_COLOR_BUFFER_BIT );
 	
-	glBindTexture( texture_target, texture );
+	glBindTexture( texture_target, screen_texture );
 	glEnable( texture_target );
 	glBegin( GL_QUADS );
 	
@@ -189,7 +189,7 @@ void render()
 
 void terminate()
 {
-	free( texture_data );
+	free( screen_texture_data );
 }
 
 }
