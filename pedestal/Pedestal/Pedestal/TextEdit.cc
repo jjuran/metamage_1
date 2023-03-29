@@ -549,6 +549,8 @@ namespace Pedestal
 	
 	bool TextEdit::KeyDown( const EventRecord& event )
 	{
+		ObscureCursor();
+		
 		const unsigned char c =  event.message;
 		
 		if ( Preprocess_Key( event ) )
