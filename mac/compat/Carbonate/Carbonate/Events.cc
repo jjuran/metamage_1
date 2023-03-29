@@ -99,7 +99,7 @@ pascal Boolean CheckEventQueueForUserCancel()
 		if ( eventQueuePtr->evtQWhat == keyDown )
 		{
 			bool command = eventQueuePtr->evtQModifiers & cmdKey;
-			char keyChar = eventQueuePtr->evtQMessage   & charCodeMask;
+			char keyChar = eventQueuePtr->evtQMessage;
 			
 			if ( command && keyChar == '.' )
 			{
@@ -107,7 +107,7 @@ pascal Boolean CheckEventQueueForUserCancel()
 			}
 			else if ( keyChar == kEscapeCharCode )
 			{
-				char keyCode = ( eventQueuePtr->evtQMessage & keyCodeMask ) >> 8;
+				char keyCode = eventQueuePtr->evtQMessage >> 8;
 				
 				if ( keyCode == 0x35 )
 				{
