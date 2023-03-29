@@ -197,7 +197,7 @@ namespace Genie
 	{
 		const UInt32 kEitherControlKey = controlKey | rightControlKey;
 		
-		const char c = event.message & charCodeMask;
+		const char c = event.message;
 		
 		const UInt32 kPrimaryModifiers = cmdKey
 		                               | shiftKey   | rightShiftKey
@@ -293,8 +293,8 @@ namespace Genie
 		
 		ASSERT( hTE != NULL );
 		
-		const char c   =  event.message & charCodeMask;
-		const char key = (event.message & keyCodeMask) >> 8;
+		const char c   = event.message;
+		const char key = event.message >> 8;
 		
 		if ( c == kEnterCharCode  &&  key >= 0x30 )
 		{

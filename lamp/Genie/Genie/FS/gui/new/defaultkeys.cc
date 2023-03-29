@@ -71,7 +71,7 @@ namespace Genie
 			return false;
 		}
 		
-		const char c = event.message & charCodeMask;
+		const char c = event.message;
 		
 		switch ( c )
 		{
@@ -82,7 +82,7 @@ namespace Genie
 				return true;
 			
 			case kEscapeCharCode:
-				switch ( const char keyCode = (event.message & keyCodeMask) >> 8 )
+				switch ( const char keyCode = event.message >> 8 )
 				{
 					// Escape
 					case 0x35:

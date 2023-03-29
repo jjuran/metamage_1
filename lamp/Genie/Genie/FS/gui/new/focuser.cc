@@ -184,7 +184,7 @@ namespace Genie
 		
 		const bool advance = (event.modifiers & disqualifyingModifiers) == 0;
 		
-		const char c = event.message & charCodeMask;
+		const char c = event.message;
 		
 		if ( advance  &&  c == kTabCharCode )
 		{
