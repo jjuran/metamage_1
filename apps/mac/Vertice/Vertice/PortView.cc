@@ -296,17 +296,7 @@ namespace Vertice
 	
 	bool PortView::KeyDown( const EventRecord& event )
 	{
-		char c = event.message & charCodeMask;
-		
-		if ( 0 )
-		{
-			//short code = (inEvent.message & keyCodeMask) >> 8;
-			//short code = inEvent.KeyCode();
-		}
-		else
-		{
-			return KeyDown( c );
-		}
+		return KeyDown( event.message );
 	}
 	
 	bool PortView::KeyDown( char c )
