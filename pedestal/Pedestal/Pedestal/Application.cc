@@ -459,7 +459,7 @@ namespace Pedestal
 		if ( gQuasimode                   )  return false;
 		if ( gShiftKeyIsDownFromKeyStroke )  return false;
 		
-		const char c = event.message & charCodeMask;
+		const char c = event.message;
 		
 		if ( c != ' ' )  return false;
 		
@@ -507,7 +507,7 @@ namespace Pedestal
 			return;
 		}
 		
-		const char c = event.message & charCodeMask;
+		const char c = event.message;
 		
 		bool command = event.modifiers & cmdKey;
 		

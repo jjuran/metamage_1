@@ -219,13 +219,13 @@ namespace Pedestal
 		ASSERT(  kchr != NULL );
 		ASSERT( *kchr != NULL );
 		
-		UInt16 keyCode = (event.message & keyCodeMask) >> 8;
+		UInt16 keyCode = UInt8( event.message >> 8 );
 		
 		keyCode |= event.modifiers & (0xff00 - ignoredModifierMask);
 		
 		UInt32 key = KeyTranslate( *kchr, keyCode, &state );
 		
-		const char c = key & 0xff;
+		const char c = key;
 		
 		return c;
 	}
@@ -362,7 +362,7 @@ namespace Pedestal
 	
 	bool Try_RepeatSearch( IncrementalSearchEditor& editor, const EventRecord& event )
 	{
-		const char c = event.message & charCodeMask;
+		const char c = event.message;
 		
 		const UInt16 bothShiftKeys = shiftKey | rightShiftKey;
 		

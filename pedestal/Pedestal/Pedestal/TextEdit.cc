@@ -330,7 +330,7 @@ namespace Pedestal
 		const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
 		const UInt32 kEitherControlKey = controlKey | rightControlKey;
 		
-		char c =  event.message & charCodeMask;
+		char c =  event.message;
 		
 		bool cmdKeyIsDown    = event.modifiers & cmdKey;
 		bool shiftKeyIsDown  = event.modifiers & kEitherShiftKey;
@@ -513,7 +513,7 @@ namespace Pedestal
 		
 		return    Try_IgnoreAutoKey( event )
 		       || Try_RepeatSearch( *this, event )
-		       || (event.what == keyDown && Try_ArrowKeyChord( *this, event.message & charCodeMask ));
+		       || (event.what == keyDown && Try_ArrowKeyChord( *this, event.message ));
 	}
 	
 	bool TextEdit::Process_Key( const EventRecord& event )
@@ -522,7 +522,7 @@ namespace Pedestal
 		
 		ASSERT( hTE != NULL );
 		
-		const char c =  event.message & charCodeMask;
+		const char c =  event.message;
 		
 		if ( !KeyIsAllowedAgainstSelection( c, hTE ) )
 		{
@@ -549,7 +549,7 @@ namespace Pedestal
 	
 	bool TextEdit::KeyDown( const EventRecord& event )
 	{
-		const unsigned char c =  event.message & charCodeMask;
+		const unsigned char c =  event.message;
 		
 		if ( Preprocess_Key( event ) )
 		{
