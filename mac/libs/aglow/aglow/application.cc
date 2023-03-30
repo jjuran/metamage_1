@@ -23,6 +23,9 @@
 // mac-config
 #include "mac_config/upp-macros.hh"
 
+// v68k-cursor
+#include "cursor/cursor.hh"
+
 // mac-app-utils
 #include "mac_app/menus.hh"
 
@@ -36,6 +39,7 @@
 #include "glfb/glfb.hh"
 
 // amicus
+#include "amicus/cursor.hh"
 #include "amicus/events.hh"
 #include "amicus/keycodes.hh"
 #include "amicus/raster_task.hh"
@@ -64,6 +68,8 @@ using glfb::overlay_enabled;
 
 using raster::raster_desc;
 using raster::raster_load;
+
+using v68k::cursor::shared_cursor_state;
 
 static bool cursor_hidden;
 
@@ -110,6 +116,9 @@ pascal OSStatus AmicusUpdate( EventHandlerCallRef  handler,
                               EventRef             event,
                               void*                userData )
 {
+	EventKind kind = GetEventKind( event );
+	
+	if ( kind == kEventAmicusScreenBits )
 	{
 		const raster_load& load = *(raster_load*) userData;
 		const raster_desc& desc = load.meta->desc;
@@ -117,6 +126,27 @@ pascal OSStatus AmicusUpdate( EventHandlerCallRef  handler,
 		const uint32_t offset = desc.height * desc.stride * desc.frame;
 		
 		glfb::set_screen_image( (Ptr) load.addr + offset );
+		
+		return noErr;
+	}
+	
+	if ( const amicus::shared_cursor_state* cursor = amicus::cursor_state )
+	{
+		if ( kind == kEventAmicusCursorBits )
+		{
+			glfb::set_cursor_image( cursor );
+			
+			return noErr;
+		}
+		
+		int y  = cursor->pointer[ 0 ];
+		int x  = cursor->pointer[ 1 ];
+		int dy = cursor->hotspot[ 0 ];
+		int dx = cursor->hotspot[ 1 ];
+		
+		glfb::set_cursor_hotspot( dx, dy );
+		glfb::set_cursor_location( x, y );
+		glfb::set_cursor_visibility( cursor->visible );
 	}
 	
 	render_AGL();
@@ -129,6 +159,8 @@ DEFINE_CARBON_UPP( EventHandler, AmicusUpdate )
 static EventTypeSpec AmicusUpdate_event[] =
 {
 	{ kEventClassAmicus, kEventAmicusUpdate },
+	{ kEventClassAmicus, kEventAmicusScreenBits },
+	{ kEventClassAmicus, kEventAmicusCursorBits },
 };
 
 static
@@ -470,6 +502,8 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		socket, calling write() on which killed the process.
 	*/
 	
+	glfb::cursor_enabled = amicus::cursor_state != NULL;
+	
 	create_AGL_context();
 	
 	set_AGL_geometry( desc.stride, desc.width, desc.height );
@@ -477,6 +511,20 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	screen_window = create_window( desc, NULL );
 	
 	attach_to_window( screen_window );
+	
+	if ( const amicus::shared_cursor_state* cursor = amicus::cursor_state )
+	{
+		int y  = cursor->pointer[ 0 ];
+		int x  = cursor->pointer[ 1 ];
+		int dy = cursor->hotspot[ 0 ];
+		int dx = cursor->hotspot[ 1 ];
+		
+		glfb::set_cursor_hotspot( dx, dy );
+		glfb::set_cursor_location( x, y );
+		glfb::set_cursor_visibility( cursor->visible );
+		
+		glfb::set_cursor_image( cursor );
+	}
 	
 	blit( load );
 	
