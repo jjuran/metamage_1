@@ -65,7 +65,8 @@ unsigned binary_power_up( unsigned x )
 	return 1 << power;
 }
 
-void initialize()
+static
+void init_texture( GLuint& texture )
 {
 	glGenTextures( 1, &texture );
 	
@@ -80,6 +81,11 @@ void initialize()
 	*/
 	
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+}
+
+void initialize()
+{
+	init_texture( texture );
 }
 
 void set_dimensions( int width, int height )
