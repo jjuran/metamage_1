@@ -26,6 +26,15 @@ namespace glfb
 
 bool overlay_enabled;
 
+bool cursor_enabled;
+bool cursor_visible;
+
+int cursor_x;
+int cursor_y;
+
+int hotspot_dx;
+int hotspot_dy;
+
 static int image_width;
 static int image_height;
 
@@ -42,12 +51,23 @@ const GLenum texture_target = GL_TEXTURE_RECTANGLE_EXT;
 
 #endif
 
+const int cursor_width  = 16;
+const int cursor_height = 16;
+
+static int crsr_x0;
+static int crsr_y0;
+static int crsr_x1;
+static int crsr_y1;
+
 static GLenum texture_format = GL_LUMINANCE;
 static GLenum texture_type   = GL_UNSIGNED_BYTE;
 
 static uint8_t* screen_texture_data;
+static uint8_t* cursor_texture_data;
 
 static GLuint screen_texture;
+static GLuint cursor_face_texture;
+static GLuint cursor_mask_texture;
 
 
 static inline
@@ -85,6 +105,37 @@ void init_texture( GLuint& texture )
 
 void initialize()
 {
+	if ( cursor_enabled )
+	{
+		init_texture( cursor_face_texture );
+		
+		glTexImage2D( texture_target,
+		              0,
+		              GL_LUMINANCE,
+		              cursor_width,
+		              cursor_height,
+		              0,
+		              texture_format,
+		              texture_type,
+		              0 );  // NULL
+		
+		init_texture( cursor_mask_texture );
+		
+		glTexImage2D( texture_target,
+		              0,
+		              GL_LUMINANCE,
+		              cursor_width,
+		              cursor_height,
+		              0,
+		              texture_format,
+		              texture_type,
+		              0 );  // NULL
+		
+		size_t n_bytes = cursor_width * cursor_height * 2;
+		
+		cursor_texture_data = (uint8_t*) malloc( n_bytes );
+	}
+	
 	init_texture( screen_texture );
 }
 
@@ -147,6 +198,63 @@ void set_screen_image( const void* src_addr )
 	                 src_addr );
 }
 
+void set_cursor_image( const void* src_addr )
+{
+	if ( cursor_enabled )
+	{
+		const int n_octets = cursor_width * cursor_height / 8u * 2;  // 64 bytes
+		
+		const uint8_t* bits = (const uint8_t*) src_addr;
+		
+		transcode_8x_1bpp_to_8bpp( bits, cursor_texture_data, n_octets );
+		
+		glBindTexture( texture_target, cursor_mask_texture );
+		
+		glTexSubImage2D( texture_target,
+		                 0,
+		                 0,
+		                 0,
+		                 cursor_width,
+		                 cursor_height,
+		                 texture_format,
+		                 texture_type,
+		                 cursor_texture_data + 256 );
+		
+		glBindTexture( texture_target, cursor_face_texture );
+		
+		glTexSubImage2D( texture_target,
+		                 0,
+		                 0,
+		                 0,
+		                 cursor_width,
+		                 cursor_height,
+		                 texture_format,
+		                 texture_type,
+		                 cursor_texture_data );
+		
+	}
+}
+
+static
+void cursor_quad( GLuint texture )
+{
+	const int width  = cursor_width;
+	const int height = cursor_height;
+	
+	glBindTexture( texture_target, texture );
+	
+	glEnable( texture_target );
+	glBegin( GL_QUADS );
+	
+	glTexCoord2i( 0,     0      ); glVertex2i( crsr_x0, crsr_y1 );  // top L
+	glTexCoord2i( width, 0      ); glVertex2i( crsr_x1, crsr_y1 );  // top R
+	glTexCoord2i( width, height ); glVertex2i( crsr_x1, crsr_y0 );  // bottom R
+	glTexCoord2i( 0,     height ); glVertex2i( crsr_x0, crsr_y0 );  // bottom L
+	
+	glEnd();
+	glDisable( texture_target );
+}
+
 void render()
 {
 	glClear( GL_COLOR_BUFFER_BIT );
@@ -165,6 +273,22 @@ void render()
 	
 	glEnd();
 	glDisable( texture_target );
+	
+	if ( cursor_enabled  &&  cursor_visible )
+	{
+		crsr_x0 =          cursor_x - hotspot_dx;
+		crsr_y1 = height - cursor_y + hotspot_dy;
+		
+		crsr_x1 = crsr_x0 + cursor_width;
+		crsr_y0 = crsr_y1 - cursor_height;
+		
+		glEnable( GL_COLOR_LOGIC_OP );
+		
+		glLogicOp( GL_AND_REVERSE );  cursor_quad( cursor_mask_texture );
+		glLogicOp( GL_XOR );          cursor_quad( cursor_face_texture );
+		
+		glDisable( GL_COLOR_LOGIC_OP );
+	}
 	
 	if ( overlay_enabled )
 	{
