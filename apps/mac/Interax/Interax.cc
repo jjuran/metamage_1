@@ -19,6 +19,9 @@
 // mac-config
 #include "mac_config/upp-macros.hh"
 
+// shared_cursor
+#include "shared_cursor/cursor_file.hh"
+
 // rasterlib
 #include "raster/load.hh"
 
@@ -26,6 +29,7 @@
 #include "plus/string.hh"
 
 // amicus
+#include "amicus/cursor.hh"
 #include "amicus/events.hh"
 #include "amicus/raster_task.hh"
 
@@ -100,6 +104,9 @@ pascal OSErr handle_odoc_Apple_event( AppleEvent const* event,
 	if ( err )  return err;
 	
 	const char raster_path[] = "screen.skif";
+	const char cursor_path[] = "cursor.skif";
+	
+	amicus::cursor_state = open_cursor_file( cursor_path );
 	
 	amicus::events_fd = open( "events.fifo", O_WRONLY | O_NONBLOCK );
 	
