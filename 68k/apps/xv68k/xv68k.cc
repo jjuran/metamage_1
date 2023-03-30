@@ -63,6 +63,7 @@
 #include "syscall/handler.hh"
 
 // xv68k
+#include "cursor.hh"
 #include "diagnostics.hh"
 #include "memory.hh"
 #include "native.hh"
@@ -86,6 +87,16 @@ using v68k::callout::system_call;
 using v68k::callout::microseconds;
 using v68k::screen::ignore_screen_locks;
 
+enum
+{
+	/*
+		The presence of this value in CrsrSave at startup
+		indicates to ams-core that a hardware cursor exists.
+	*/
+	
+	kHardwareCursor = 0x68647772,  // 'hdwr'
+};
+
 static v68k::processor_model mc68k_model = v68k::mc68000;
 
 static bool turbo;
@@ -93,6 +104,7 @@ static bool polling;
 static bool tracing;
 static bool verbose;
 static bool has_screen;
+static bool has_cursor;
 
 static unsigned long n_instructions;
 
@@ -125,6 +137,7 @@ enum
 	Opt_mem,  // number of 512K memory chunks, or zero for 128K
 	Opt_pid,
 	Opt_raster,
+	Opt_cursor,
 	Opt_ignore_screen_locks,
 };
 
@@ -140,6 +153,7 @@ static command::option options[] =
 	{ "model",      Opt_model,  command::Param_required },
 	{ "pid",        Opt_pid,    command::Param_optional },
 	{ "raster",     Opt_raster, command::Param_required },
+	{ "cursor",     Opt_cursor, command::Param_required },
 	{ "module",     Opt_module, command::Param_required },
 	
 	{ "ignore-screen-locks", Opt_ignore_screen_locks },
@@ -757,6 +771,7 @@ int execute_68k( int argc, char* const* argv )
 		SoundBase = 0x0266,
 		ScrnBase  = 0x0824,
 		CrsrPin   = 0x0834,
+		CrsrSave  = 0x088C,
 	};
 	
 	emu.put_byte( CPUFlag, mc68k_model >> 4, v68k::user_data_space );
@@ -792,6 +807,11 @@ int execute_68k( int argc, char* const* argv )
 	emu.put_long( SoundBase,   main_sound_addr,  user_data_space );
 	emu.put_long( ScrnBase,    main_screen_addr, user_data_space );
 	emu.put_long( CrsrPin + 4, screen_res,       user_data_space );
+	
+	if ( has_cursor )
+	{
+		emu.put_long( CrsrSave, kHardwareCursor, user_data_space );
+	}
 	
 	load_Mac_traps( mem );
 	
@@ -1000,6 +1020,12 @@ char* const* get_options( char** argv )
 					main_screen_addr = 0x00E00000;
 				}
 				
+				break;
+			
+			case Opt_cursor:
+				set_cursor_backing_store_file( global_result.param );
+				
+				has_cursor = true;
 				break;
 			
 			case Opt_module:
