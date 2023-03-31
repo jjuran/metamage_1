@@ -25,6 +25,8 @@ enum
 	kEventClassAmicus = 'AMS*',
 	
 	kEventAmicusUpdate = 1,
+	kEventAmicusScreenBits = 2,
+	kEventAmicusCursorBits = 3,
 };
 
 class raster_monitor

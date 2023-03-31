@@ -15,7 +15,11 @@
 #include "mac_app/event_handlers.hh"
 #include "mac_app/state.hh"
 
+// v68k-cursor
+#include "cursor/cursor.hh"
+
 // amicus
+#include "amicus/cursor.hh"
 #include "amicus/display.hh"
 #include "amicus/events.hh"
 #include "amicus/fade.hh"
@@ -158,7 +162,7 @@ bool event_crashes_Ventura( EventRef event )
 	/*
 		An event sent when an application is launched normally (as
 		opposed to running its executable from a terminal) triggers
-		an assertion failure in Ventura's Skylight framework  during
+		an assertion failure in Ventura's Skylight framework during
 		the call to SendEventToEventTarget().
 		
 		HIToolbox's HandleAppShowHide() calls _ReorderWindowsTogether(),
@@ -257,6 +261,35 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		
 		if ( eventClass == kEventClassAmicus )
 		{
+			EventKind kind = GetEventKind( event );
+			
+			if ( kind == kEventAmicusScreenBits )
+			{
+				goto next;
+			}
+			
+		#if HARDWARE_CURSOR
+			
+			if ( const amicus::shared_cursor_state* cursor = cursor_state )
+			{
+				if ( kind == kEventAmicusCursorBits )
+				{
+					glfb::set_cursor_image( cursor );
+					goto next;
+				}
+				
+				int y  = cursor->pointer[ 0 ];
+				int x  = cursor->pointer[ 1 ];
+				int dy = cursor->hotspot[ 0 ];
+				int dx = cursor->hotspot[ 1 ];
+				
+				glfb::set_cursor_hotspot( dx, dy );
+				glfb::set_cursor_location( x, y );
+				glfb::set_cursor_visibility( cursor->visible );
+			}
+			
+		#endif
+			
 			const uint32_t offset = height * stride * desc.frame;
 			
 			blitter.blit( (Ptr) addr + offset );

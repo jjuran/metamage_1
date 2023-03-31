@@ -19,10 +19,15 @@
 #include "amicus/apple_events.hh"
 #include "amicus/coprocess.hh"
 #include "amicus/events.hh"
+#include "amicus/make_cursor.hh"
 #include "amicus/make_raster.hh"
 #include "amicus/raster_task.hh"
 #include "amicus/tempfile.hh"
 
+
+#ifndef HARDWARE_CURSOR
+#define HARDWARE_CURSOR 0
+#endif
 
 static
 void sigchld( int )
@@ -37,6 +42,7 @@ using raster::raster_desc;
 using raster::raster_load;
 
 static const char raster_path[] = "screen.skif";
+static const char cursor_path[] = "cursor.skif";
 
 class raster_updating
 {
@@ -60,6 +66,9 @@ class raster_updating
 class emulated_screen
 {
 	private:
+	#if HARDWARE_CURSOR
+		cursor_lifetime   live_cursor;
+	#endif
 		raster_lifetime   live_raster;
 		raster_updating   update_fifo;
 		raster_monitor    monitored_raster;
@@ -74,6 +83,9 @@ class emulated_screen
 
 emulated_screen::emulated_screen( int bindir_fd, const char* works_path )
 :
+#if HARDWARE_CURSOR
+	live_cursor       ( cursor_path ),
+#endif
 	live_raster       ( raster_path ),
 	monitored_raster  ( live_raster.get() ),
 	launched_coprocess( bindir_fd, works_path )
