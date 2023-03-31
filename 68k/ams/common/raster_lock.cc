@@ -10,6 +10,13 @@
 #include "screen_lock.hh"
 
 
+Rect CrsrPin : 0x0834;
+
+struct Point
+{
+	short v, h;
+};
+
 raster_lock::raster_lock( bool cursor, bool screen )
 :
 	cursor_locked( cursor ),
@@ -22,7 +29,9 @@ raster_lock::raster_lock( bool cursor, bool screen )
 	
 	if ( cursor )
 	{
-		JHideCursor();
+		Point no_offset = {};
+		
+		JShieldCursor( &CrsrPin, no_offset );
 	}
 }
 
