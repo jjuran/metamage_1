@@ -16,6 +16,9 @@
 // glfb-common
 #include "glfb/glfb.hh"
 
+// amicus
+#include "amicus/cursor.hh"
+
 
 static CGLContextObj context;
 
@@ -77,6 +80,8 @@ CGL_blitter::CGL_blitter( CGDirectDisplayID id )
 	}
 	
 	CGLSetCurrentContext( context );
+	
+	glfb::cursor_enabled = amicus::cursor_state != NULL;
 	
 	glfb::initialize();
 }

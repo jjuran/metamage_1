@@ -10,6 +10,8 @@
 #include "blit_CGL.hh"
 
 
+#define HARDWARE_CURSOR 1
+
 using glfb::overlay_enabled;
 
 typedef CGL_blitter Blitter;
