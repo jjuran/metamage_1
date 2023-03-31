@@ -1,8 +1,11 @@
 # This script is invoked explicitly with minivx by the application.
 
 let screen_fb_file = "screen.skif"
+let cursor_fb_file = "cursor.skif"
 let works_dir_path = argv[ 1 ]
 let events_fd_slot = argv[ 2 ]
+
+let has_cursor = bool getenv "AMS_CURSOR"
 
 setenv( "GRAPHICS_UPDATE_SIGNAL_FIFO", works_dir_path "/update-signal.fifo" )
 
@@ -252,8 +255,9 @@ let servers = sound-server, freemountd-server, appfs-server, docfs-server
 let xv68k_opts = model_opt, mem_opt, sound_opt, "-tSP"
 
 let xv68k-screen = "--raster=" works_dir_path "/" screen_fb_file
+let xv68k-cursor = "--cursor=" works_dir_path "/" cursor_fb_file (*) has_cursor
 
-let xv68k-subcmd = "./xv68k", xv68k_opts, xv68k-screen, *module_opts, app, app_name
+let xv68k-subcmd = "./xv68k", xv68k_opts, xv68k-screen, xv68k-cursor, *module_opts, app, app_name
 let graft-subcmd = "./graft", servers, xv68k-subcmd
 
 let command = [ graft-subcmd ]
