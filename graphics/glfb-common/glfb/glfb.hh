@@ -16,7 +16,11 @@ namespace glfb
 	
 	void set_dimensions( int width, int height );
 	
+	void set_screen_image( const void* src_addr );
+	
 	void blit( const void* src_addr );
+	
+	void render();
 	
 	void terminate();
 	

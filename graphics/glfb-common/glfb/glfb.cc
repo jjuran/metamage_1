@@ -120,7 +120,7 @@ void set_dimensions( int width, int height )
 	texture_data = (uint8_t*) malloc( tex_width * tex_height );
 }
 
-void blit( const void* src_addr )
+void set_screen_image( const void* src_addr )
 {
 	const int n_octets = image_width * image_height / 8u;
 	
@@ -139,7 +139,17 @@ void blit( const void* src_addr )
 	                 texture_format,
 	                 texture_type,
 	                 src_addr );
+}
+
+void blit( const void* src_addr )
+{
+	set_screen_image( src_addr );
 	
+	render();
+}
+
+void render()
+{
 	glClear( GL_COLOR_BUFFER_BIT );
 	
 	glBindTexture( texture_target, texture );
