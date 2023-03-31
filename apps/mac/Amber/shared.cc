@@ -3,6 +3,8 @@
 	---------
 */
 
+#define HARDWARE_CURSOR 1
+
 // amicus
 #include "amicus/shared.cc.hh"
 
