@@ -91,6 +91,9 @@ void SysError_patch( short error : __D0 )
 	top  += 8;
 	left += 8;
 	
+	const short bottom = top + height - 16;
+	const short right  = left + width - 16;
+	
 	const short icon_h = left + 23;
 	const short icon_v = top  + 12;
 	
@@ -130,6 +133,21 @@ void SysError_patch( short error : __D0 )
 	MoveTo( text_h, text_v );
 	
 	DrawString( "\p" "Sorry, a system error occurred." );
+	
+	if ( (UInt16) error < 100 )
+	{
+		const short id_h = right  - 80;
+		const short id_v = bottom - 20;
+		
+		MoveTo( id_h, id_v );
+		
+		unsigned char id[] = "\p" "ID = 00";
+		
+		id[ 6 ] += error / 10;
+		id[ 7 ] += error % 10;
+		
+		DrawString( id );
+	}
 	
 	InsetRect( &restart_bounds, 1, 1 );
 	
