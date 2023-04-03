@@ -149,10 +149,28 @@ const UInt8* pen_size( const UInt8* p )
 	return p + sizeof size;
 }
 
-static inline
+static
 const UInt8* set_pattern( const UInt8* p, Pattern& pattern )
 {
-	fast_memcpy( &pattern, p, sizeof pattern );
+	short dy = picture_origin.v & 7u;
+//	short dx = picture_origin.h & 7u;
+	
+	short yd = 8 - dy;
+//	short xd = 8 - dx;
+	
+	fast_memcpy( &pattern.pat[  0 ], p + yd, dy );
+	fast_memcpy( &pattern.pat[ dy ], p +  0, yd );
+	
+	if ( short dx = picture_origin.h & 7u )
+	{
+		short xd = 8 - dx;
+		
+		for ( int i = 0;  i < 8;  ++i )
+		{
+			pattern.pat[ i ] = pattern.pat[ i ] >> dx
+			                 | pattern.pat[ i ] << xd;
+		}
+	}
 	
 	return p + sizeof (Pattern);
 }
