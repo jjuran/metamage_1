@@ -150,22 +150,9 @@ const UInt8* pen_size( const UInt8* p )
 }
 
 static inline
-const UInt8* pen_pat( const UInt8* p )
+const UInt8* set_pattern( const UInt8* p, Pattern& pattern )
 {
-	Pattern pattern;
 	fast_memcpy( &pattern, p, sizeof pattern );
-	
-	PenPat( &pattern );
-	
-	return p + 8;
-}
-
-static inline
-const UInt8* fill_pat( const UInt8* p )
-{
-	GrafPort& port = **get_addrof_thePort();
-	
-	fast_memcpy( &port.fillPat, p, sizeof (Pattern) );
 	
 	return p + sizeof (Pattern);
 }
@@ -430,6 +417,8 @@ const Byte* do_opcode( const Byte* p )
 		last_used_rect = read_Rect( p );
 	}
 	
+	GrafPort& port = **get_addrof_thePort();
+	
 	switch ( opcode )
 	{
 		case 0x00:
@@ -476,11 +465,11 @@ const Byte* do_opcode( const Byte* p )
 			break;
 		
 		case 0x09:
-			p = pen_pat( p );
+			p = set_pattern( p, port.pnPat );
 			break;
 		
 		case 0x0A:
-			p = fill_pat( p );
+			p = set_pattern( p, port.fillPat );
 			break;
 		
 		case 0x0B:
