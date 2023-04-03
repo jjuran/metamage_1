@@ -323,7 +323,7 @@ def argify (name)
 let prefix_list = "core io fs snd rsrc pack seg qd ui print"
 var ams_modules = [ prefix_list / ' ' ] map {"ams-" v}
 
-ams_modules <-- "ams-dsat"
+ams_modules <-- "vdb"
 ams_modules <-- "umsp"
 
 let module_opts = ams_modules map {"-m", argify v}
