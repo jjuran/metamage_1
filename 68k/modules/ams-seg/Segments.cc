@@ -24,6 +24,9 @@
 #include "options.hh"
 
 
+#pragma exceptions off
+
+
 Ptr   MemTop       : 0x0108;
 Ptr   ApplLimit    : 0x0130;
 long  DefltStack   : 0x0322;
