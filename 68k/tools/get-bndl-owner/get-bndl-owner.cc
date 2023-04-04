@@ -41,7 +41,7 @@ int main( int argc, char** argv )
 		return 0;
 	}
 	
-	using conv::mac_from_utf8;
+	using conv::mac_from_utf8_nothrow;
 	
 	const char* path = argv[ 1 ];
 	
@@ -49,14 +49,16 @@ int main( int argc, char** argv )
 	
 	Str31 appName;
 	
-	size_t n_utf8_bytes = mac_from_utf8( (char*) appName + 1, 31, path, len );
+	char* buffer = (char*) appName + 1;
 	
-	if ( n_utf8_bytes > 31 )
+	size_t n_bytes = mac_from_utf8_nothrow( buffer, 31, path, len );
+	
+	if ( n_bytes > 31 )
 	{
 		return 2;
 	}
 	
-	appName[ 0 ] = n_utf8_bytes;
+	appName[ 0 ] = n_bytes;
 	
 	short refnum = OpenResFile( appName );
 	
