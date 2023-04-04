@@ -15,6 +15,9 @@
 #include "icon/icon.hh"
 
 
+#pragma exceptions off
+
+
 namespace icon
 {
 	
