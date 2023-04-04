@@ -16,6 +16,9 @@
 #include "screen_lock.hh"
 
 
+#pragma exceptions off
+
+
 typedef uint32_t* Saved;
 typedef uint32_t Buffer[ 16 ];
 

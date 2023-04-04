@@ -12,6 +12,9 @@
 #include "callouts.hh"
 
 
+#pragma exceptions off
+
+
 #define DEBUGGER_TEXT  "Debugger() was called!"
 
 

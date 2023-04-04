@@ -30,6 +30,9 @@
 #include "reactor-core.hh"
 
 
+#pragma exceptions off
+
+
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 

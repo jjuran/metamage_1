@@ -17,6 +17,9 @@
 #include "time.hh"
 
 
+#pragma exceptions off
+
+
 const timeval zero_timeout = { 0, 0 };
 
 static reactor_node* reactor_chain;
