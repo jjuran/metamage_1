@@ -25,6 +25,9 @@
 #include "reactor-gestalt.hh"
 
 
+#pragma exceptions off
+
+
 const short noQueueMask   = 1 << noQueueBit;
 const short asyncTrapMask = 1 << asyncTrpBit;
 

@@ -31,6 +31,9 @@
 #include "UnitTable.hh"
 
 
+#pragma exceptions off
+
+
 namespace logofwar
 {
 

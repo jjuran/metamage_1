@@ -34,6 +34,9 @@
 #include "time.hh"
 
 
+#pragma exceptions off
+
+
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
