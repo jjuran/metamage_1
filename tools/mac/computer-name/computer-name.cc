@@ -30,6 +30,9 @@
 #include "mac_rsrc/get_string_from_resource.hh"
 
 
+#pragma exceptions off
+
+
 static inline
 bool wrote( int fd, const void* buffer, size_t n )
 {
