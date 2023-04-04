@@ -16,6 +16,9 @@
 #include "icon/mask.hh"
 
 
+#pragma exceptions off
+
+
 #define PROGRAM  "mkiconmask"
 
 
