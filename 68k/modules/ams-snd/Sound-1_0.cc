@@ -19,6 +19,10 @@
 // ams-common
 #include "callouts.hh"
 
+
+#pragma exceptions off
+
+
 enum
 {
 	/*

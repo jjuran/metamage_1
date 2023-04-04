@@ -14,6 +14,9 @@
 #include "logofwar/report.hh"
 
 
+#pragma exceptions off
+
+
 static NumVersion version;
 
 static
