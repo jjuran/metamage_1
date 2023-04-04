@@ -25,6 +25,9 @@
 #include "raster/skif.hh"
 
 
+#pragma exceptions off
+
+
 #define PROGRAM  "icon2skif"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
