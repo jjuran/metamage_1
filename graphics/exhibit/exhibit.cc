@@ -22,6 +22,9 @@
 #include "command/get_option.hh"
 
 
+#pragma exceptions off
+
+
 #define EXHIBIT_DISPLAY   "EXHIBIT_DISPLAY"
 #define EXHIBIT_INTERACT  "EXHIBIT_INTERACT"
 
