@@ -11,8 +11,8 @@
 // POSIX
 #include <unistd.h>
 
-// Standard C
-#include <string.h>
+// more-libc
+#include "more/string.h"
 
 // chars
 #include "conv/mac_utf8.hh"
@@ -157,7 +157,7 @@ int main( int argc, char** argv )
 		return 2;
 	}
 	
-	memcpy( &file_type, type, sizeof file_type );
+	mempcpy( &file_type, type, sizeof file_type );
 	
 	short refnum = OpenResFile( appName );
 	
