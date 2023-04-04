@@ -38,6 +38,9 @@
 #include "scoped_port.hh"
 
 
+#pragma exceptions off
+
+
 static short ANumber;
 static short ACount = -1;
 

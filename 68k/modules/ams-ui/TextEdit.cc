@@ -33,6 +33,9 @@
 #include "utility_region.hh"
 
 
+#pragma exceptions off
+
+
 long Ticks     : 0x016A;
 long CaretTime : 0x02F4;
 

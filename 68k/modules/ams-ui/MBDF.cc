@@ -10,6 +10,9 @@
 #include "raster_lock.hh"
 
 
+#pragma exceptions off
+
+
 short MBarHeight : 0x0BAA;
 
 

@@ -29,6 +29,9 @@
 #include "scoped_port.hh"
 
 
+#pragma exceptions off
+
+
 static
 long call_CDEF( ControlRef control, short message, long param )
 {

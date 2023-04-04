@@ -25,6 +25,9 @@
 #include "c_string.hh"
 
 
+#pragma exceptions off
+
+
 static
 StringPtr NumToString_call( long x : __D0, StringPtr p : __A0 )
 {

@@ -23,6 +23,9 @@
 #include "QDGlobals.hh"
 
 
+#pragma exceptions off
+
+
 BitMap IconBitmap : 0x0A0E;
 OSErr  ResErr     : 0x0A60;
 

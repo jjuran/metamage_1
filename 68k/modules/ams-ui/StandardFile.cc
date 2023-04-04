@@ -27,6 +27,9 @@
 #include "string_list.hh"
 
 
+#pragma exceptions off
+
+
 #define PSTR_LEN( s )  ("\p" s), (sizeof s)
 
 

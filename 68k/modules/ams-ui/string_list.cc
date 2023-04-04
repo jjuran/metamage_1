@@ -25,6 +25,9 @@
 #include "utility_region.hh"
 
 
+#pragma exceptions off
+
+
 struct cell_data
 {
 	Str63 name;

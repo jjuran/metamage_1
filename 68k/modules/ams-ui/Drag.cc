@@ -15,6 +15,9 @@
 #include "raster_lock.hh"
 
 
+#pragma exceptions off
+
+
 GrafPtr   WMgrPort    : 0x09DE;
 RgnHandle GrayRgn     : 0x09EE;
 Pattern   DragPattern : 0x0A34;

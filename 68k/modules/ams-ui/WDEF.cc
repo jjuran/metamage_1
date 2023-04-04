@@ -22,6 +22,9 @@
 #include "utility_region.hh"
 
 
+#pragma exceptions off
+
+
 /*
 	This is the height added by a title bar.  This means that in window
 	coordinates, the top of the structure region is -19 instead of -1.

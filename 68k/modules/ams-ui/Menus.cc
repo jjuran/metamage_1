@@ -40,6 +40,9 @@
 #include "Windows.hh"
 
 
+#pragma exceptions off
+
+
 Byte SdVolume    : 0x0260;
 GrafPtr WMgrPort : 0x09DE;
 short TheMenu    : 0x0A26;
