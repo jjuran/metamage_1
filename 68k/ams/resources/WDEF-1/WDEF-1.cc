@@ -11,9 +11,6 @@
 #include <MacWindows.h>
 #endif
 
-// iota
-#include "iota/freestore_free.hh"
-
 // ams-common
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
