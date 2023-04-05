@@ -10,9 +10,6 @@
 // POSIX
 #include <unistd.h>
 
-// iota
-#include "iota/freestore_free.hh"
-
 // more-libc
 #include "more/string.h"
 
