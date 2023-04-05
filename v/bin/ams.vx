@@ -10,6 +10,54 @@ let ams_mnt = getenv "AMS_MNT" or amsdir "/mnt"
 
 let title = "Advanced Mac Substitute"
 
+var disks = []
+var app_name = null
+
+var args = begin argv
+
+++args
+
+var arg = null
+
+while args do
+{
+	arg = *args++
+	
+	if substr (arg, 0, 2) == "--" then
+	{
+		if arg == "--" then
+		{
+			arg = if args then { *args++ }
+			
+			break
+		}
+		else if arg == "--disk" then
+		{
+			disks <-- *args++
+		}
+		else
+		{
+			warn "ams.vx: Unrecognized option: " arg
+			
+			exit 50
+		}
+	}
+	else
+	{
+		break
+	}
+}
+
+if arg then
+{
+	app_name = arg
+}
+
+if args then
+{
+	warn "ams.vx: Ignoring extra arguments"
+}
+
 let model = getenv "AMS_CPU"                # may be ()
 let model_opt = if model then {"-M" model}  # may be ()
 
@@ -26,12 +74,13 @@ let screen_res = getenv "AMS_SCREENRES" or "512x342"
 
 let default_app = "Welcome"
 
-let app_name =
-	if argc > 1
-		then {argv[ 1 ]}
-	else if let ams_appname = getenv "AMS_APPNAME"
+if app_name isa null then
+{
+	app_name =
+	if let ams_appname = getenv "AMS_APPNAME"
 		then {ams_appname}
 	else {default_app}
+}
 
 def exists (path)
 {
@@ -250,10 +299,17 @@ def auto_mbin_disk
 
 def fs_opts
 {
-	let disk_opt =
-	if let disk = getenv "AMS_DISK" or auto_mbin_disk() then
+	if not disks then
 	{
-		"--disk", disk,
+		if let disk = getenv "AMS_DISK" or auto_mbin_disk() then
+		{
+			disks = [disk]
+		}
+	}
+	
+	let disk_opts = disks map
+	{
+		"--disk", v,
 	}
 	
 	let appfs_opt =
@@ -268,7 +324,7 @@ def fs_opts
 		"--docfs-fd", docfs_fd,
 	}
 	
-	let opts = disk_opt, appfs_opt, docfs_opt
+	let opts = *disk_opts, appfs_opt, docfs_opt
 	
 	return
 	if opts then
