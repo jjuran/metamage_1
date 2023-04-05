@@ -19,7 +19,6 @@
 
 // iota
 #include "iota/char_types.hh"
-#include "iota/freestore_free.hh"
 
 // command
 #include "command/get_option.hh"
