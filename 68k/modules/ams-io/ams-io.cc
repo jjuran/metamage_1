@@ -11,9 +11,6 @@
 // POSIX
 #include <unistd.h>
 
-// iota
-#include "iota/freestore_free.hh"
-
 // command
 #include "command/get_option.hh"
 
