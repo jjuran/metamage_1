@@ -14,8 +14,6 @@
 #include <sys/uio.h>
 #include <unistd.h>
 
-#include "iota/freestore_free.hh"
-
 // more-posix
 #include "more/perror.hh"
 
