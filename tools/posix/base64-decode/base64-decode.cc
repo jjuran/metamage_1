@@ -9,9 +9,6 @@
 // Standard C
 #include <string.h>
 
-// iota
-#include "iota/freestore_free.hh"
-
 // more-posix
 #include "more/perror.hh"
 
