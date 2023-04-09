@@ -8,7 +8,6 @@
 #include "more/perror.hh"
 
 // Standard C
-#include <stdlib.h>
 #include <string.h>
 
 // POSIX
@@ -34,7 +33,7 @@ namespace more
 		
 		if ( written == -1 )
 		{
-			abort();
+			_exit( 13 );
 		}
 	}
 	
