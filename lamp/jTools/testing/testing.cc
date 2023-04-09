@@ -96,9 +96,6 @@
 // Scaffold
 #include "Tests.hh"
 
-// Arcana
-#include "CRC32.hh"
-
 // Vectoria
 #include "Vectoria/Matrix.hh"
 #include "Vectoria/Vector.hh"
@@ -506,18 +503,6 @@ static int TestCRC16( int argc, char** argv )
 	             "LCS: %.8x\n",
 	                   mb3CRC,
 	                   lcsCRC );
-	
-	return 0;
-}
-
-static int TestCRC32( int argc, char** argv )
-{
-	if (argc < 3)  return 1;
-	
-	const char* text = argv[2];
-	unsigned int crc = CRC32::Checksum(text, std::strlen(text));
-	
-	std::printf( "%.8x\n", crc );
 	
 	return 0;
 }
@@ -1079,7 +1064,6 @@ static const command_t global_commands[] =
 	
 	{ "assert",    TestAssert     },
 	{ "crc16",     TestCRC16      },
-	{ "crc32",     TestCRC32      },
 	{ "forkstop",  TestForkAndStop },
 	
 #if TARGET_RT_MAC_CFM
