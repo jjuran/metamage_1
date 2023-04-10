@@ -1,13 +1,11 @@
-/*	=====
- *	ln.cc
- *	=====
- */
+/*
+	ln.cc
+	-----
+*/
 
 // Standard C
 #include <errno.h>
-
-// Standard C/C++
-#include <cstring>
+#include <string.h>
 
 // POSIX
 #include <unistd.h>
@@ -20,9 +18,6 @@
 
 // more-libc
 #include "more/string.h"
-
-// Iota
-#include "iota/strings.hh"
 
 // poseven
 #include "poseven/functions/fstatat.hh"
@@ -43,6 +38,8 @@
 #define LN_OPTIONS  "[-s]"
 #endif
 
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
 
 namespace tool
 {
@@ -50,9 +47,10 @@ namespace tool
 namespace p7 = poseven;
 
 
-static const char* Basename( const char* pathname )
+static
+const char* basename( const char* pathname )
 {
-	std::size_t length = std::strlen( pathname );
+	size_t length = strlen( pathname );
 	
 	const char* end = pathname + length;
 	
@@ -139,7 +137,7 @@ int Main( int argc, char** argv )
 			
 			const char* dir_path = loc;
 			
-			loc = Basename( target );
+			loc = basename( target );
 			
 			struct stat sb;
 			
