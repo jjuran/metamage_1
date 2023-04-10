@@ -15,11 +15,11 @@
 #include <sys/types.h>
 #include <sys/uio.h>
 
-// Iota
-#include "iota/strings.hh"
-
 
 #pragma exceptions off
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 namespace more
