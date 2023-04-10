@@ -29,9 +29,9 @@ namespace more
 	
 	static void write_iovec_to_stderr( const iovec* iov, size_t n )
 	{
-		int written = ::writev( STDERR_FILENO, iov, n );
+		ssize_t written = writev( STDERR_FILENO, iov, n );
 		
-		if ( written == -1 )
+		if ( written < 0 )
 		{
 			_exit( 13 );
 		}
