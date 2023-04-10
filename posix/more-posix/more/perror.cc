@@ -19,13 +19,17 @@
 #pragma exceptions off
 
 
+#define COUNT( v )  (sizeof v / sizeof *v)
+
+#define COUNTED( v )  v, COUNT( v )
+
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 namespace more
 {
 
-#define WRITE_IOVEC_TO_STDERR( iov )  write_iovec_to_stderr( iov, sizeof iov / sizeof iov[0] )
+#define WRITE_IOVEC_TO_STDERR( iov )  write_iovec_to_stderr( COUNTED( iov ) )
 
 static
 void write_iovec_to_stderr( const iovec* iov, size_t n )
