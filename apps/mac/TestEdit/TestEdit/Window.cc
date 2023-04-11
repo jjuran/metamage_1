@@ -184,9 +184,8 @@ namespace TestEdit
 		
 		const TERec& te = **itsTE;
 		
+		if ( short dv = v - (te.viewRect.top - te.destRect.top) )
 		{
-			short dv = v - (te.viewRect.top - te.destRect.top);
-			
 			if ( has_TEPinScroll() )
 			{
 				TEPinScroll( 0, -dv, itsTE );
@@ -195,9 +194,7 @@ namespace TestEdit
 			{
 				TEScroll( 0, -dv, itsTE );
 			}
-		}
-		
-		{
+			
 			TERec& te = **itsTE;
 			
 			te.destRect = te.viewRect;
