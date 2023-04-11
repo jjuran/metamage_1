@@ -22,6 +22,9 @@
 // gear
 #include "gear/find.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "callouts.hh"
 #include "QDGlobals.hh"
@@ -899,6 +902,11 @@ pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 
 pascal void TEScroll_patch( short dh, short dv, TERec** hTE )
 {
+	if ( dh == 0  &&  dv == 0 )
+	{
+		WARNING = "TEScroll() called with dh == 0 and dv == 0";
+	}
+	
 	TERec& te = **hTE;
 	
 	OffsetRect( &te.destRect, dh, dv );
