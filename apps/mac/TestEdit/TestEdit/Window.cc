@@ -182,9 +182,9 @@ namespace TestEdit
 	{
 		TEHandle itsTE = Get();
 		
+		const TERec& te = **itsTE;
+		
 		{
-			const TERec& te = **itsTE;
-			
 			short dv = v - (te.viewRect.top - te.destRect.top);
 			
 			if ( has_TEPinScroll() )
@@ -197,12 +197,14 @@ namespace TestEdit
 			}
 		}
 		
-		TERec& te = **itsTE;
-		
-		te.destRect = te.viewRect;
-		
-		te.destRect.top    -= v;
-		te.destRect.bottom -= v;
+		{
+			TERec& te = **itsTE;
+			
+			te.destRect = te.viewRect;
+			
+			te.destRect.top    -= v;
+			te.destRect.bottom -= v;
+		}
 	}
 	
 	class Frame : public Ped::Frame
