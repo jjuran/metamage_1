@@ -27,6 +27,12 @@ namespace adler32
 		max_i32_dividend = 0x7fffffff / modulus * modulus,
 	};
 	
+	static inline
+	hash_t modulo( hash_t x )
+	{
+		return x % modulus;
+	}
+	
 	hash_t checksum( const byte_t* data, size_t n_bytes )
 	{
 		const byte_t* end = data + n_bytes;
@@ -51,8 +57,8 @@ namespace adler32
 			}
 		}
 		
-		series     %= modulus;
-		metaseries %= modulus;
+		series     = modulo( series     );
+		metaseries = modulo( metaseries );
 		
 		return metaseries << 16 | series;
 	}
