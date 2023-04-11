@@ -501,15 +501,18 @@ namespace Genie
 	
 	void TextEdit_Scroller::Scroll( int dh, int dv )
 	{
-		TEHandle hTE = itsSubview.Get();
-		
-		if ( has_TEPinScroll() )
+		if ( dh != 0  ||  dv != 0 )
 		{
-			TEPinScroll( dh, dv, hTE );
-		}
-		else
-		{
-			TEScroll( dh, dv, hTE );
+			TEHandle hTE = itsSubview.Get();
+			
+			if ( has_TEPinScroll() )
+			{
+				TEPinScroll( dh, dv, hTE );
+			}
+			else
+			{
+				TEScroll( dh, dv, hTE );
+			}
 		}
 		
 		const vfs::node* key = GetKey();
