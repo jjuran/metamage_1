@@ -27,11 +27,27 @@ namespace adler32
 		max_i32_dividend = 0x7fffffff / modulus * modulus,
 	};
 	
+#ifdef __MC68K__
+	
+	static inline
+	asm
+	hash_t modulo( hash_t x : __D0 )
+	{
+		MOVE.W   #modulus,D1
+		DIVU.W   D1,D0
+		SWAP     D0
+		EXT.L    D0
+	}
+	
+#else
+	
 	static inline
 	hash_t modulo( hash_t x )
 	{
 		return x % modulus;
 	}
+	
+#endif
 	
 	hash_t checksum( const byte_t* data, size_t n_bytes )
 	{
