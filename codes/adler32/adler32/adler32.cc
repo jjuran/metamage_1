@@ -6,6 +6,17 @@
 #include "adler32/adler32.hh"
 
 
+#if __LP64__
+	
+	typedef int  signed_t;
+	
+#else
+	
+	typedef long signed_t;
+	
+#endif
+
+
 namespace adler32
 {
 	
@@ -27,14 +38,14 @@ namespace adler32
 		{
 			series += *data++;
 			
-			if ( (long) series < 0 )
+			if ( (signed_t) series < 0 )
 			{
 				series %= modulus;
 			}
 			
 			metaseries += series;
 			
-			if ( (long) metaseries < 0 )
+			if ( (signed_t) metaseries < 0 )
 			{
 				metaseries %= modulus;
 			}
