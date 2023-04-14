@@ -14,14 +14,19 @@ if title then
 rewrite "procid" <== 5 LF
 rewrite "size"   <== "280,76" LF
 
-link( "/gui/new/frame",    "view"   )
-link( "/gui/new/progress", "v/view" )
+link( "/gui/new/stack", "view" )
 
-rewrite "v/height" <== 11 LF
+link( "/gui/new/frame", "v/meter/view" )
 
-rewrite "v/.margin-left"   <== 10 LF
-rewrite "v/.margin-right"  <== 10 LF
-rewrite "v/.margin-bottom" <== 10 LF
+let meter = "v/meter/v/"
+
+rewrite meter "height" <== 11 LF
+
+rewrite meter ".margin-left"   <== 10 LF
+rewrite meter ".margin-right"  <== 10 LF
+rewrite meter ".margin-bottom" <== 10 LF
+
+link( "/gui/new/progress", meter "view" )
 
 touch "window"
 
@@ -62,10 +67,12 @@ for line in receiver line_buffered IN do
 	}
 	else if '/' in value then 
 	{
-		value = [value / '/'] map int per {a * 10000 div b}
+		let (numer, denom) = *([value / '/'] map int)
+		
+		value = numer * 10000 div denom
 	}
 	
-	rewrite "v/v/value" <== value LF
+	rewrite meter "v/value" <== value LF
 }
 
 end.
