@@ -6,22 +6,22 @@ if not argc in 2 .. 3 then
 	exit 2
 }
 
-const icon_id = if argc > 2 then {argv[ 1 ]} else {128}
+let icon_id = if argc > 2 then {argv[ 1 ]} else {128}
 
-const text = argv[ argc - 1 ]
+let text = argv[ argc - 1 ]
 
 chdir "/gui/new/port"
 
-const LF = "\n"
+let LF = "\n"
 
 rewrite "procid" <== 5 LF
 rewrite "size"   <== "300,100" LF
 
-const icon        = "v/icon/v/"
-const main        = "v/main/v/"
-const ok          = "v/ok/v/"
-const cancel      = "v/cancel/v/"
-const defaultkeys = "v/defaultkeys/v/"
+let icon        = "v/icon/v/"
+let main        = "v/main/v/"
+let ok          = "v/ok/v/"
+let cancel      = "v/cancel/v/"
+let defaultkeys = "v/defaultkeys/v/"
 
 link( "/gui/new/stack", "view" )
 
@@ -80,8 +80,8 @@ touch "window"
 
 rewrite "w/text-font" <== 0 LF
 
-const select = [ "select -1 -rv/ok/v/v/clicked -rv/cancel/v/v/clicked" / ' ' ]
+let select = [ "select -1 -rv/ok/v/v/clicked -rv/cancel/v/v/clicked" / ' ' ]
 
-const selected = try { output-from-run select } catch { exit 2 }
+let selected = try { output-from-run select } catch { exit 2 }
 
 exit int ("cancel" in selected)

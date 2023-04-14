@@ -1,12 +1,12 @@
 #!/usr/bin/vx -Z
 
-const host = "www.macrelix.org"
+let host = "www.macrelix.org"
 
-const relix_url = "http://%s/pub/channel/46e70108/" % host
+let relix_url = "http://%s/pub/channel/46e70108/" % host
 
-const key = "46e70108538e13868fc8d8454610d47e9ca09d934aa2224af806547190aa7a93"
+let key = "46e70108538e13868fc8d8454610d47e9ca09d934aa2224af806547190aa7a93"
 
-const platform =
+let platform =
 	if argc > 1
 		then {argv[ 1 ]}
 		else {(load "/etc/platform").lines()[ 0 ]}
@@ -23,9 +23,9 @@ catch
 	exit 1
 }
 
-const prefix = "relix-" platform "_"
+let prefix = "relix-" platform "_"
 
-const list = output-from-run [ "htget", relix_url ]
+let list = output-from-run [ "htget", relix_url ]
 
 var last = ()
 
@@ -33,7 +33,7 @@ for line in list.lines() do
 {
 	if var p = (begin line).find prefix then
 	{
-		const q = p + prefix.length + "20210307-1958".length  # minus the ".gz"
+		let q = p + prefix.length + "20210307-1958".length  # minus the ".gz"
 		
 		last = q - p
 	}
@@ -44,7 +44,7 @@ def exists (path)
 	return try {stat path; true} catch {false}
 }
 
-const dest = "/sys/app/dir/../" last
+let dest = "/sys/app/dir/../" last
 
 if exists dest then
 {
@@ -56,8 +56,8 @@ chdir "/tmp"
 
 warn "Downloading " last ".gz..."
 
-const file = last ".gz"
-const mbim = last ".mbim"
+let file = last ".gz"
+let mbim = last ".mbim"
 
 let download = "graft --fd 1 progress Downloading // "
                "htget --dump-progress -O" / ' ', relix_url file

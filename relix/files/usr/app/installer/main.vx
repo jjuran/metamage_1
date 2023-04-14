@@ -5,7 +5,7 @@ def exists (path)
 	return try {stat path; true} catch {false}
 }
 
-const temporary_tmp = not exists "/tmp"
+let temporary_tmp = not exists "/tmp"
 
 dup2( OUT, ERR )
 

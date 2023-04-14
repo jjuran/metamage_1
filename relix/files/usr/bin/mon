@@ -4,9 +4,9 @@ chdir "/gui/port/psmon"
 
 try { touch "w/select"; exit 0 } catch {}
 
-const lock = try { rewrite "lock" } catch { exit 0 }
+let lock = try { rewrite "lock" } catch { exit 0 }
 
-const LF = "\n"
+let LF = "\n"
 
 rewrite "vis"   <== 0 LF
 rewrite "pos"   <== "10,47" LF

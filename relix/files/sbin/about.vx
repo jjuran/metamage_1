@@ -4,11 +4,11 @@ chdir "/gui/port/about"
 
 try { touch "w/select"; exit 0 } catch {}
 
-const lock = try { rewrite "lock" } catch { exit 0 }
+let lock = try { rewrite "lock" } catch { exit 0 }
 
-const icon_id = 128
+let icon_id = 128
 
-const LF = "\n"
+let LF = "\n"
 
 rewrite "vis"   <== 0 LF
 rewrite "size"  <== "220x68" LF
@@ -25,8 +25,8 @@ link( "new/stack", "view" )
 link( "new/frame", "v/icon/view" )
 link( "new/frame", "v/main/view" )
 
-const icon = "v/icon/v/"
-const main = "v/main/v/"
+let icon = "v/icon/v/"
+let main = "v/main/v/"
 
 rewrite icon "width"  <== 32 LF
 rewrite icon "height" <== 32 LF

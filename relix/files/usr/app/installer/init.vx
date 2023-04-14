@@ -10,8 +10,8 @@ def has_gestalt (selector)
 	return exists "/sys/mac/gestalt/" selector
 }
 
-const platforms = ["68kos9osx" / 3]
-const flavors   = ["68K PPC Carbon" / ' ']
+let platforms = ["68kos9osx" / 3]
+let flavors   = ["68K PPC Carbon" / ' ']
 
 def select_platform
 {
@@ -20,11 +20,11 @@ def select_platform
 	       if not has_gestalt 'bbox' then {1} else {2}
 }
 
-const index = select_platform()
+let index = select_platform()
 
 setenv( "PLATFORM", platforms[ index ] )
 
-const prompt_template = "Proceed with automatic download of MacRelix/%s?"
+let prompt_template = "Proceed with automatic download of MacRelix/%s?"
 
 try
 {
@@ -36,9 +36,9 @@ chdir "/gui/port/install"
 
 try { touch "w/select"; exit 0 } catch {}
 
-const lock = try { rewrite "lock" } catch { exit 0 }
+let lock = try { rewrite "lock" } catch { exit 0 }
 
-const LF = "\n"
+let LF = "\n"
 
 rewrite "vis"   <== 0 LF
 rewrite "size"  <== "400x100" LF
