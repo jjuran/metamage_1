@@ -33,8 +33,6 @@
 
 // POSIX
 #include "fcntl.h"
-#include "sys/ioctl.h"
-#include "sys/stat.h"
 #include "sys/wait.h"
 #include "unistd.h"
 
@@ -590,29 +588,6 @@ static int TestServices( int argc, char** argv )
 	return 0;
 }
 
-static int ReadFromNull()
-{
-	int* null = NULL;
-	
-	return *null;
-}
-
-static void WriteToNull( int foo )
-{
-	int* null = NULL;
-	
-	*null = foo;
-}
-
-static int TestNull( int argc, char** argv )
-{
-	int foo = ReadFromNull();
-	
-	WriteToNull( foo );
-	
-	return 0;
-}
-
 static int TestStrError( int argc, char** argv )
 {
 	errno = 0;
@@ -988,7 +963,6 @@ static const command_t global_commands[] =
 	{ "forkstop",  TestForkAndStop },
 	{ "mangling",  TestMangling   },
 	{ "map",       TestMap        },
-	{ "null",      TestNull       },
 	{ "owned",     TestNucleusOwnedShared },
 	{ "path",      TestPath       },
 	{ "strerror",  TestStrError   },
