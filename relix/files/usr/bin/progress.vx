@@ -2,6 +2,8 @@
 
 let title = if argc > 1 then {argv[ 1 ]}
 
+let filename = if argc > 2 then {argv[ 2 ]}
+
 chdir "/gui/new/port"
 
 let LF = "\n"
@@ -16,9 +18,44 @@ rewrite "size"   <== "280,76" LF
 
 link( "/gui/new/stack", "view" )
 
+link( "/gui/new/frame", "v/cargo/view" )
+link( "/gui/new/frame", "v/label/view" )
+link( "/gui/new/frame", "v/count/view" )
 link( "/gui/new/frame", "v/meter/view" )
 
+let cargo = "v/cargo/v/"
+let label = "v/label/v/"
+let count = "v/count/v/"
 let meter = "v/meter/v/"
+
+rewrite cargo "height" <== 18 LF
+
+rewrite cargo ".margin-top"  <==  8 LF
+rewrite cargo ".margin-left" <== 10 LF
+
+link( "/gui/new/caption", cargo "view" )
+
+if filename then
+{
+	rewrite cargo "v/text" <== "File:    " filename
+}
+
+rewrite label "height" <==  18 LF
+rewrite label "width"  <== 200 LF
+
+rewrite label ".margin-top"  <== 30 LF
+rewrite label ".margin-left" <== 10 LF
+
+link( "/gui/new/caption", label "view" )
+
+rewrite label "v/text" <== "Remaining:"
+
+rewrite count "height" <== 18 LF
+
+rewrite count ".margin-top"  <==  30 LF
+rewrite count ".margin-left" <== 210 LF
+
+link( "/gui/new/caption", count "view" )
 
 rewrite meter "height" <== 11 LF
 
@@ -29,6 +66,8 @@ rewrite meter ".margin-bottom" <== 10 LF
 link( "/gui/new/progress", meter "view" )
 
 touch "window"
+
+rewrite "w/text-font" <== 0 LF
 
 def line_buffered (input)
 {
@@ -57,6 +96,23 @@ def line_buffered (input)
 	}
 }
 
+def report_remaining (numer, denom)
+{
+	let remaining_bytes = denom - numer
+	
+	var remaining = remaining_bytes
+	var units     = " bytes"
+	
+	if remaining > 9999 then
+	{
+		remaining = remaining div 1024
+		
+		units = " K"
+	}
+	
+	rewrite count "v/text" <== remaining units
+}
+
 for line in receiver line_buffered IN do
 {
 	var value = line
@@ -68,6 +124,8 @@ for line in receiver line_buffered IN do
 	else if '/' in value then 
 	{
 		let (numer, denom) = *([value / '/'] map int)
+		
+		report_remaining (numer, denom)
 		
 		value = numer * 10000 div denom
 	}

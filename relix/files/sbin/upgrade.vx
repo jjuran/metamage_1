@@ -59,7 +59,7 @@ warn "Downloading " last ".gz..."
 let file = last ".gz"
 let mbim = last ".mbim"
 
-let download = "graft --fd 1 progress Downloading // "
+let download = "graft --fd 1 progress Downloading" / ' ', file, "//",
                "htget --dump-progress -O" / ' ', relix_url file
 
 run [ download ]
