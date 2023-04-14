@@ -12,12 +12,6 @@
 #ifndef __EVENTS__
 #include <Events.h>
 #endif
-#ifndef __MACERRORS__
-#include <MacErrors.h>
-#endif
-#ifndef __THREADS__
-#include <Threads.h>
-#endif
 
 // Math
 #include <math.h>
@@ -65,10 +59,6 @@
 #include "Mac/Toolbox/Types/OSStatus.hh"
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
-#include "Nitrogen/CodeFragments.hh"
-#include "Nitrogen/Files.hh"
-#include "Nitrogen/MacMemory.hh"
-#include "Nitrogen/Resources.hh"
 #include "Nitrogen/Str.hh"
 #include "Nitrogen/Timer.hh"
 
@@ -623,75 +613,6 @@ static int TestNull( int argc, char** argv )
 	return 0;
 }
 
-	struct FragmentImage {};
-	
-	/*
-	static NX::DataPtr< FragmentImage > ReadFragmentImageFromPluginFile( const FSSpec& file )
-	{
-		n::owned< N::FSFileRefNum > filehandle = N::FSpOpenDF( file, N::fsRdPerm );
-		
-		std::size_t size = N::GetEOF( filehandle );
-		
-		std::auto_ptr< FragmentImage > result;
-		
-		result.reset( static_cast< FragmentImage* >( ::operator new( size ) ) );
-		
-		int bytes = N::FSRead( filehandle, size, reinterpret_cast< char* >( result.get() ) );
-		
-		return NX::DataPtr< FragmentImage >( result, size );
-	}
-	*/
-	
-	static n::owned< N::Ptr > ReadFragmentImageFromPluginFile( const char* pathname )
-	{
-		n::owned< p7::fd_t > filehandle = p7::open( pathname, p7::o_rdonly );
-		
-		struct stat stat_buffer;
-		
-		int statted = fstat( filehandle.get(), &stat_buffer );
-		
-		std::size_t size = stat_buffer.st_size;
-		
-		n::owned< N::Ptr > result = N::NewPtr( size );
-		
-		int bytes = read( filehandle, result.get(), size );
-		
-		return result;
-	}
-	
-static int TestGMFShared( int argc, char** argv )
-{
-#if TARGET_RT_MAC_CFM
-	
-	if ( argc < 3 )  return 1;
-	
-	const char* pathname = argv[2];
-	
-	n::owned< N::Ptr > fragment = ReadFragmentImageFromPluginFile( pathname );
-	
-	int len = N::GetPtrSize( fragment );
-	
-	std::printf( "Fragment length: %d bytes\n", len );
-	
-	n::owned< CFragConnectionID > one = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.get(), len );
-	
-	int* scratch;
-	
-	N::FindSymbol( one, "\p" "errno", &scratch );
-	
-	*scratch = 42;
-	
-	n::owned< CFragConnectionID > two = N::GetMemFragment< N::kPrivateCFragCopy >( fragment.get(), len );
-	
-	N::FindSymbol( two, "\p" "errno", &scratch );
-	
-	std::printf( "Second connection scratch value: %d\n", *scratch );
-	
-#endif
-	
-	return 0;
-}
-
 static int TestStrError( int argc, char** argv )
 {
 	errno = 0;
@@ -1065,13 +986,6 @@ static const command_t global_commands[] =
 	{ "assert",    TestAssert     },
 	{ "crc16",     TestCRC16      },
 	{ "forkstop",  TestForkAndStop },
-	
-#if TARGET_RT_MAC_CFM
-	
-	{ "gmf",       TestGMFShared  },
-	
-#endif
-	
 	{ "mangling",  TestMangling   },
 	{ "map",       TestMap        },
 	{ "null",      TestNull       },
