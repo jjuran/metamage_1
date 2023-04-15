@@ -131,6 +131,18 @@ sub command
 					@w = '-w';
 				}
 			}
+			elsif ( $vers <= 1005  &&  ! @names )
+			{
+				# Apple's g++ 4.0 and earlier don't work with Boost.Atomic
+				# for 32-bit builds, so instead we use OTAtomicAdd32() from
+				# CoreServices to implement vxo::reference_count_t.
+				
+				# The Mac OS X 10.6 SDK includes g++ 4.2 and clang, so the
+				# issue doesn't occur, but prior to that, we need to link
+				# with CoreServices to make OTAtomicAdd32() available.
+				
+				@names = "CoreServices";
+			}
 		}
 		
 		push @frameworks, map { -framework => $_ } @names;
