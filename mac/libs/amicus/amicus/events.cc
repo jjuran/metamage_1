@@ -89,6 +89,8 @@ void handle_mouse_moved_event( CGPoint next_cursor_location )
 	}
 }
 
+#ifdef MAC_OS_X_VERSION_10_4
+
 static
 void handle_mouse_moved_event( CGEventRef event )
 {
@@ -102,6 +104,8 @@ void handle_mouse_moved_event( CGEventRef event )
 	
 	handle_mouse_moved_event( next );
 }
+
+#endif
 
 static inline
 bool any_keys_down()
