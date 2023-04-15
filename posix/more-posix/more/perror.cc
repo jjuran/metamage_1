@@ -48,8 +48,8 @@ void perror( int errnum )
 	
 	struct iovec iov[] =
 	{
-		{ (void*) error, strlen( error ) },
-		{ (void*) STR_LEN( "\n" )        },
+		{ (char*) error, strlen( error ) },
+		{ (char*) STR_LEN( "\n" )        },
 	};
 	
 	WRITE_IOVEC_TO_STDERR( iov );
@@ -61,10 +61,10 @@ void perror( const char* s, int errnum )
 	
 	struct iovec iov[] =
 	{
-		{ (void*) s, strlen( s )         },
-		{ (void*) STR_LEN( ": " )        },
-		{ (void*) error, strlen( error ) },
-		{ (void*) STR_LEN( "\n" )        },
+		{ (char*) s, strlen( s )         },
+		{ (char*) STR_LEN( ": " )        },
+		{ (char*) error, strlen( error ) },
+		{ (char*) STR_LEN( "\n" )        },
 	};
 	
 	if ( errnum == 0 )
@@ -82,12 +82,12 @@ void perror( const char* s1, const char* s2, int errnum )
 	
 	struct iovec iov[] =
 	{
-		{ (void*) s1, strlen( s1 )       },
-		{ (void*) STR_LEN( ": " )        },
-		{ (void*) s2, strlen( s2 )       },
-		{ (void*) STR_LEN( ": " )        },
-		{ (void*) error, strlen( error ) },
-		{ (void*) STR_LEN( "\n" )        },
+		{ (char*) s1, strlen( s1 )       },
+		{ (char*) STR_LEN( ": " )        },
+		{ (char*) s2, strlen( s2 )       },
+		{ (char*) STR_LEN( ": " )        },
+		{ (char*) error, strlen( error ) },
+		{ (char*) STR_LEN( "\n" )        },
 	};
 	
 	if ( errnum == 0 )
@@ -103,12 +103,12 @@ void perror( const char* s1, const char* s2, const char* s3 )
 {
 	struct iovec iov[] =
 	{
-		{ (void*) s1, strlen( s1 ) },
-		{ (void*) STR_LEN( ": " )  },
-		{ (void*) s2, strlen( s2 ) },
-		{ (void*) STR_LEN( ": " )  },
-		{ (void*) s3, strlen( s3 ) },
-		{ (void*) STR_LEN( "\n" )  },
+		{ (char*) s1, strlen( s1 ) },
+		{ (char*) STR_LEN( ": " )  },
+		{ (char*) s2, strlen( s2 ) },
+		{ (char*) STR_LEN( ": " )  },
+		{ (char*) s3, strlen( s3 ) },
+		{ (char*) STR_LEN( "\n" )  },
 	};
 	
 	WRITE_IOVEC_TO_STDERR( iov );
