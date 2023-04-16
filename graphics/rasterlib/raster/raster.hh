@@ -88,8 +88,7 @@ namespace raster
 			    This corresponds with a TIFF PhotometricInterpretation value
 			    of BlackIsZero.
 			2:  Palette.  Each pixel value is an index into a lookup table of
-			    actual color values.
-			    (TODO:  Palettes aren't supported yet.)
+			    actual color values, provided in a note of type 'clut'.
 			3:  RGB (red/green/blue).  Pixels are divided into 3 groups of bits
 			    corresponding to red, green, and blue light intensities.  There
 			    are no unused bits in a pixel; some color components might have
