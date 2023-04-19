@@ -38,6 +38,9 @@
 // mac-proc-utils
 #include "mac_proc/find_process.hh"
 
+// mac-relix-utils
+#include "mac_relix/FSSpec_from_path.hh"
+
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
@@ -61,9 +64,6 @@
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/Processes.hh"
 
-// Divergence
-#include "Divergence/Utilities.hh"
-
 // tlsrvr
 #include "ToolServer.hh"
 
@@ -74,7 +74,6 @@ namespace tool
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace Div = Divergence;
 	
 	
 	static plus::string q( const plus::string& str )
@@ -212,12 +211,11 @@ namespace tool
 		
 		if ( const char* ToolServer_path = getenv( "ToolServer" ) )
 		{
-			FSSpec ToolServer = Div::ResolvePathToFSSpec( ToolServer_path );
+			using mac::relix::FSSpec_from_existing_path;
 			
-			return N::LaunchApplication( ToolServer );
+			err = FSSpec_from_existing_path( ToolServer_path, appFile );
 		}
-		
-		try
+		else
 		{
 			using mac::file::get_desktop_APPL;
 			using mac::file::get_desktop_APPL_on_RAM_disk;
@@ -227,10 +225,20 @@ namespace tool
 			if ( err )
 			{
 				err = get_desktop_APPL( appFile, sigToolServer );
-				
-				Mac::ThrowOSStatus( err );
 			}
+		}
+		
+		if ( err == afpItemNotFound )
+		{
+			p7::write( p7::stderr_fileno, STR_LEN( "tlsrvr: ToolServer not found\n" ) );
 			
+			exit( 43 );
+		}
+		
+		Mac::ThrowOSStatus( err );
+		
+		try
+		{
 			return N::LaunchApplication( appFile );
 		}
 		catch ( const Mac::OSStatus& err )
