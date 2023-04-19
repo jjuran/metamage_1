@@ -63,7 +63,6 @@
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
-#include "Nitrogen/Processes.hh"
 
 // tlsrvr
 #include "ToolServer.hh"
@@ -440,7 +439,7 @@ namespace tool
 		
 		if ( is_front_process( from ) )
 		{
-			N::SetFrontProcess( to );
+			SetFrontProcess( &to );
 			
 			while ( is_front_process( from ) )
 			{
