@@ -181,7 +181,7 @@ int clock_getres( clockid_t clock_id, struct timespec* ts )
 		
 		(Nanoseconds&) res = AbsoluteToNanoseconds( (const AbsoluteTime&) one );
 		
-		ts->tv_nsec = res % billion;
+		ts->tv_nsec = res;
 		
 		return 0;
 	}
