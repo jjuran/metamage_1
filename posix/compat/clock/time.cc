@@ -143,21 +143,20 @@ int clock_gettime( clockid_t clock_id, struct timespec* ts )
 
 #if TARGET_CPU_68K
 
+short ROM85 : 0x028E;
+
 static
 bool has_Microseconds_trap()
 {
-	/*
-		_MoveTo is A893 and _Microseconds is A193.  With a unified, compact
-		trap table, only the low byte is significant, so we have to make sure
-		that our check for _Microseconds doesn't yield a false positive from
-		_MoveTo.
-	*/
+	if ( ROM85 < 0 )
+	{
+		return false;  // 64K ROM never has _Microseconds
+	}
 	
 	UniversalProcPtr microseconds  = GetOSTrapAddress     ( _Microseconds  );
-	UniversalProcPtr moveto        = GetToolboxTrapAddress( _MoveTo        );
 	UniversalProcPtr unimplemented = GetToolboxTrapAddress( _Unimplemented );
 	
-	return microseconds != moveto  &&  microseconds != unimplemented;
+	return microseconds != unimplemented;
 }
 
 const bool has_Microseconds = has_Microseconds_trap();
