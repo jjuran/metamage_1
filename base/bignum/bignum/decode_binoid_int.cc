@@ -8,10 +8,13 @@
 // iota
 #include "iota/endian.hh"
 
+// vxo-string
+#include "vxo-string/lib/unbin.hh"
+#include "vxo-string/lib/unhex.hh"
+
 // plus
-#include "plus/binary.hh"
-#include "plus/hexadecimal.hh"
 #include "plus/reverse.hh"
+#include "plus/string.hh"
 
 
 namespace bignum
@@ -21,7 +24,7 @@ namespace bignum
 	
 	typedef integer::int_t  int_t;
 	
-	typedef string (*int_decoder)( const char*, unsigned long, plus::align_t );
+	typedef vxo::Box (*int_decoder)( const char*, unsigned long, vxo::align_t );
 	
 	
 	static
@@ -43,7 +46,14 @@ namespace bignum
 		
 		const int align = sizeof (int_t);
 		
-		string s = f( p, n_digits, align );
+		/*
+			The VXO decoders can return errors, but we assume
+			that the input has been validated via tokenization.
+		*/
+		
+		vxo::Box box = f( p, n_digits, align );
+		
+		string& s = *(string*) &box;
 		
 		if ( iota::is_little_endian() )
 		{
@@ -64,12 +74,12 @@ namespace bignum
 	
 	integer unbin_int( const char* p, unsigned n )
 	{
-		return decode_binoid_int( &plus::unbin, p, n );
+		return decode_binoid_int( &vxo::unbin, p, n );
 	}
 	
 	integer unhex_int( const char* p, unsigned n )
 	{
-		return decode_binoid_int( &plus::unhex, p, n );
+		return decode_binoid_int( &vxo::unhex, p, n );
 	}
 	
 }
