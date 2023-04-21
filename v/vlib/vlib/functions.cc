@@ -13,7 +13,6 @@
 #include "sha256/sha256.hh"
 
 // plus
-#include "plus/binary.hh"
 #include "plus/hexadecimal.hh"
 #include "plus/var_string.hh"
 #include "plus/string/mince.hh"
