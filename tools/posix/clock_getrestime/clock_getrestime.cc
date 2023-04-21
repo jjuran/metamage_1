@@ -15,6 +15,9 @@
 #include "clock/time.h"
 
 
+#pragma exceptions off
+
+
 #define RUN(clock)  run_for_clock(clock, #clock)
 
 const uint64_t billion = 1000 * 1000 * 1000;
