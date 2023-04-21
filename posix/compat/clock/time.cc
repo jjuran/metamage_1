@@ -228,8 +228,8 @@ int clock_gettime( clockid_t clock_id, struct timespec* ts )
 		
 		Microseconds( (UnsignedWide*) &now );
 		
-		ts->tv_sec  = now / million;
-		ts->tv_nsec = now % million * 1000;
+		ts->tv_sec  =           now / million;
+		ts->tv_nsec = uint32_t( now % million ) * 1000;
 		
 		return 0;
 	}
