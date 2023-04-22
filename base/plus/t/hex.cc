@@ -3,25 +3,39 @@
 	------
 */
 
-// plus
-#include "plus/hexadecimal.hh"
+// vxo-string
+#include "vxo-string/lib/unhex.hh"
 
 // tap-out
 #include "tap/check.hh"
 #include "tap/test.hh"
 
+/*
+	Granted, it's a little weird that we're testing code from another
+	library.  However, vxo::unhex() replaced plus::unhex(), and it's
+	better to keep a working test than to delete it.  At some point it
+	can get moved to vxo-tests (when that exists), but for now it's here.
+*/
+
+using vxo::unhex;
 
 static const unsigned n_tests = 6 + 21 + 24;
 
 
 #define EXPECT_EQ_HEX( a, b )  EXPECT_CMP( a.data(), a.size(), b.data(), b.size() )
 
-#define UNHEX( s )  plus::unhex( s )
+#define UNHEX( s )  string_cast( unhex( plus::string( s ) ) )
 
-#define UNHEX_ALIGN( s, a )  plus::unhex( s, a )
+#define UNHEX_ALIGN( s, a )  string_cast( unhex( plus::string( s ), a ) )
 
 #define STRING( s )  ::plus::string( STR_LEN( s ) )
 
+
+static inline
+plus::string string_cast( const vxo::Box& box )
+{
+	return *(const plus::string*) &box;
+}
 
 static void zero()
 {
