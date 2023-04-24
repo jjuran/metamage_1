@@ -6,10 +6,10 @@
 #ifndef ONEPATH_FINDMPWDIR_HH
 #define ONEPATH_FINDMPWDIR_HH
 
-// plus
-#include "plus/string.hh"
+// vxo
+#include "vxo/box.hh"
 
 
-plus::string find_MPW_dir();
+vxo::Box find_MPW_dir();
 
 #endif

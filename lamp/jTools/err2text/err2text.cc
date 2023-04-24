@@ -13,6 +13,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// vxo
+#include "vxo/errno.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -63,7 +66,14 @@ namespace tool
 	
 	static plus::string Find_SysErrsDotErr()
 	{
-		plus::var_string path = find_MPW_dir();
+		vxo::Box xstring = find_MPW_dir();
+		
+		if ( const vxo::Errno* error = xstring.is< vxo::Errno >() )
+		{
+			throw p7::errno_t( error->get() );
+		}
+		
+		plus::var_string path = *(const plus::string*) &xstring;
 		
 		path += "/SysErrs.err";
 		

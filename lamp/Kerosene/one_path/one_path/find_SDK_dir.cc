@@ -14,6 +14,9 @@
 // gear
 #include "gear/find.hh"
 
+// vxo
+#include "vxo/errno.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -35,7 +38,14 @@ plus::string find_SDK_dir()
 		return sdk_dir;
 	}
 	
-	const plus::string& pathname = find_MPW_dir();
+	vxo::Box xstring = find_MPW_dir();
+	
+	if ( const vxo::Errno* error = xstring.is< vxo::Errno >() )
+	{
+		throw p7::errno_t( error->get() );
+	}
+	
+	const plus::string& pathname = *(const plus::string*) &xstring;
 	
 	const char* p = pathname.data();
 	

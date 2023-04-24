@@ -9,6 +9,7 @@
 #include <unistd.h>
 
 // Standard C
+#include <errno.h>
 #include <stdlib.h>
 
 // mac-file-utils
@@ -19,25 +20,29 @@
 // gear
 #include "gear/inscribe_decimal.hh"
 
-// poseven
-#include "poseven/types/errno_t.hh"
+// vxo
+#include "vxo/errno.hh"
+
+// vxo-string
+#include "vxo-string/string.hh"
+
+
+#pragma exceptions off
 
 
 #define STRLEN(s)  (sizeof "" s - 1)
-
-
-namespace p7 = poseven;
 
 
 const int max_path_len = sizeof "/.hfs/12345/1234567890";
 
 static char path_buffer[ max_path_len ] = "/.hfs/";
 
-plus::string find_MPW_dir()
+vxo::Box find_MPW_dir()
+
 {
 	if ( const char* mpw_dir = getenv( "MPW_DIR" ) )
 	{
-		return mpw_dir;
+		return vxo::StaticString( mpw_dir );
 	}
 	
 #ifdef __RELIX__
@@ -57,7 +62,7 @@ plus::string find_MPW_dir()
 	
 	if ( err )
 	{
-		throw p7::errno_t( ENOENT );
+		return vxo::Errno( ENOENT );
 	}
 	
 	char* p = path_buffer + STRLEN( "/.hfs/" );
@@ -76,21 +81,24 @@ plus::string find_MPW_dir()
 	{
 		if ( size == -1 )
 		{
-			p7::throw_errno( errno );
+			return vxo::Errno( errno );
 		}
 		
 		size = ~size;
 		
 		plus::string result;
 		
-		char* p = result.reset( size );
+		if ( char* p = result.reset_nothrow( size ) )
+		{
+			size = _realpath( path_buffer, p, size );
+			
+			return vxo::String( result );
+		}
 		
-		size = _realpath( path_buffer, p, size );
-		
-		return result;
+		return vxo::Error( vxo::out_of_memory );
 	}
 	
 #endif  // #ifdef __RELIX__
 	
-	throw p7::errno_t( ENOSYS );
+	return vxo::Errno( ENOSYS );
 }
