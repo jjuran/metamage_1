@@ -18,17 +18,25 @@ bool wrote( int fd, const void* buffer, size_t n )
 
 int main( int argc, char** argv )
 {
+	int exit_status = 0;
+	int fd          = STDOUT_FILENO;
+	
 	plus::string path = find_MPW_dir();
 	
-	const char* data = path.data();
-	size_t      size = path.size();
+	const char* data;
+	size_t      size;
 	
-	if ( ! wrote( STDOUT_FILENO, data, size ) )
+	{
+		data = path.data();
+		size = path.size();
+	}
+	
+	if ( ! wrote( fd, data, size ) )
 	{
 		return 13;
 	}
 	
-	write( STDOUT_FILENO, "\n", 1 );
+	write( fd, "\n", 1 );
 	
-	return 0;
+	return exit_status;
 }
