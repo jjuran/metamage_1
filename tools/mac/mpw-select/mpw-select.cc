@@ -20,15 +20,15 @@ int main( int argc, char** argv )
 {
 	plus::string path = find_MPW_dir();
 	
-	char*  data = (char*) path.c_str();
-	size_t size = path.size();
-	
-	data[ size++ ] = '\n';
+	const char* data = path.data();
+	size_t      size = path.size();
 	
 	if ( ! wrote( STDOUT_FILENO, data, size ) )
 	{
 		return 13;
 	}
+	
+	write( STDOUT_FILENO, "\n", 1 );
 	
 	return 0;
 }
