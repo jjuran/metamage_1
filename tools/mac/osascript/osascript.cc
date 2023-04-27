@@ -365,11 +365,9 @@ namespace tool
 		
 		char* there = result.reset( total_length );
 		
-		typedef std::vector< const char* >::const_iterator Iter;
-		
-		for ( Iter it  = pieces.begin();  it != pieces.end();  ++it )
+		for ( size_t i = 0;  i < pieces.size();  ++i )
 		{
-			const char* string = *it;
+			const char* string = pieces[ i ];
 			
 			const size_t length = strlen( string );
 			
