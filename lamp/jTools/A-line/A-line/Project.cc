@@ -26,7 +26,6 @@
 
 // poseven
 #include "poseven/functions/basename.hh"
-#include "poseven/functions/stat.hh"
 
 // pfiles
 #include "pfiles/common.hh"
@@ -199,16 +198,15 @@ namespace tool
 			return GetProject( project_name, its_platform ).FindResourceFile( filename );
 		}
 		
-		try
+		plus::string file = its_dir_pathname / "Rez" / filespec;
+		
+		struct stat st;
+		
+		int nok = stat( file.c_str(), &st );
+		
+		if ( nok == 0 )
 		{
-			plus::string file = its_dir_pathname / "Rez" / filespec;
-			
-			(void) p7::stat( file );  // throw if nonexistent
-			
 			return file;
-		}
-		catch ( ... )
-		{
 		}
 		
 		std::fprintf( stderr, "A-line: %s: can't find resource file '%s'\n",
