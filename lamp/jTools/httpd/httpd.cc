@@ -444,13 +444,20 @@ namespace tool
 			if ( !component.empty() && component[0] == '.' )
 			{
 				// No screwing around with the pathname, please.
-				p7::throw_errno( ENOENT );
+				return "";
 			}
 			
 			pathname = pathname / component;
 		}
 		
-		p7::stat( pathname );  // Throw if nonexistent
+		struct stat st;
+		
+		int nok = stat( pathname.c_str(), &st );
+		
+		if ( nok )
+		{
+			pathname.reset();
+		}
 		
 		return pathname;
 	}
@@ -538,15 +545,7 @@ namespace tool
 		
 		ParsedRequest parsed = ParseRequest( status_line );
 		
-		plus::string pathname;
-		
-		try
-		{
-			pathname = LocateResource( parsed.resource );
-		}
-		catch ( ... )
-		{
-		}
+		plus::string pathname = LocateResource( parsed.resource );
 		
 		if ( pathname.empty() )
 		{
