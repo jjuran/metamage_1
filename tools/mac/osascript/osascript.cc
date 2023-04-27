@@ -358,11 +358,9 @@ namespace tool
 			total_length += strlen( pieces[ i ] );
 		}
 		
-		plus::var_string result;
+		plus::string result;
 		
-		result.resize( total_length );
-		
-		plus::var_string::iterator there = result.begin();
+		char* there = result.reset( total_length );
 		
 		typedef std::vector< const char* >::const_iterator Iter;
 		
