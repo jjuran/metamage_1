@@ -118,6 +118,4 @@ namespace HTTP
 		return name + ": " + value + "\r\n";
 	}
 	
-	plus::string GetContentLengthLine( poseven::fd_t message_body );
-	
 }

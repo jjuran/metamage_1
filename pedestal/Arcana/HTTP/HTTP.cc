@@ -6,27 +6,20 @@
 #include "HTTP.hh"
 
 // Standard C/C++
-#include <cerrno>
 #include <cstring>
-
-// Standard C++
-#include <vector>
 
 // iota
 #include "iota/char_types.hh"
 #include "iota/strings.hh"
 
 // gear
-#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // Debug
 #include "debug/assert.hh"
 
 // poseven
-#include "poseven/functions/fstat.hh"
 #include "poseven/functions/read.hh"
-#include "poseven/types/errno_t.hh"
 
 
 namespace p7 = poseven;
@@ -34,24 +27,6 @@ namespace p7 = poseven;
 
 namespace HTTP
 {
-	
-	static std::size_t GetContentLength( p7::fd_t message_body )
-	{
-		struct stat sb = p7::fstat( message_body );
-		
-		if ( !S_ISREG( sb.st_mode ) )
-		{
-			p7::throw_errno( ESPIPE );
-		}
-		
-		return sb.st_size;
-	}
-	
-	plus::string GetContentLengthLine( p7::fd_t message_body )
-	{
-		return HeaderFieldLine( "Content-Length", gear::inscribe_decimal( GetContentLength( message_body ) ) );
-	}
-	
 	
 	static inline HeaderFieldEntry MakeHeaderFieldEntry( std::size_t name,
 	                                                     std::size_t colon,
