@@ -20,6 +20,9 @@
 #include "iota/convert_string.hh"
 #include "iota/strings.hh"
 
+// more-libc
+#include "more/string.h"
+
 // command
 #include "command/get_option.hh"
 
@@ -370,9 +373,7 @@ namespace tool
 			
 			const size_t length = strlen( string );
 			
-			std::copy( string, string + length, there );
-			
-			there += length;
+			there = (char*) mempcpy( there, string, length );
 			
 			*there++ = '\r';
 		}
