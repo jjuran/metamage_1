@@ -104,7 +104,7 @@ namespace tool
 			
 			p7::stat( destDir, sb );
 			
-			if ( bool not_a_dir = sb.st_mode & S_IFDIR == 0 )
+			if ( bool not_a_dir = (sb.st_mode & S_IFDIR) == 0 )
 			{
 				std::fprintf( stderr, "cp: copying multiple files, but last argument (%s) is not a directory.\n",
 				                                                                      destDir );
