@@ -26,6 +26,9 @@
 // vxo-string
 #include "vxo-string/string.hh"
 
+// vxo-posix
+#include "vxo-posix/realpath.hh"
+
 
 #pragma exceptions off
 
@@ -75,28 +78,7 @@ vxo::Box find_MPW_dir()
 	
 	*p = '\0';
 	
-	ssize_t size = _realpath( path_buffer, NULL, 0 );
-	
-	if ( size < 0 )
-	{
-		if ( size == -1 )
-		{
-			return vxo::Errno( errno );
-		}
-		
-		size = ~size;
-		
-		plus::string result;
-		
-		if ( char* p = result.reset_nothrow( size ) )
-		{
-			size = _realpath( path_buffer, p, size );
-			
-			return vxo::String( result );
-		}
-		
-		return vxo::Error( vxo::out_of_memory );
-	}
+	return vxo::realpath( path_buffer );
 	
 #endif  // #ifdef __RELIX__
 	
