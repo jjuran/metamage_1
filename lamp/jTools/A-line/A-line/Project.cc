@@ -22,6 +22,12 @@
 // Debug
 #include "debug/assert.hh"
 
+// vxo-string
+#include "vxo-string/lib/string_or_nothing.hh"
+
+// vxo-posix
+#include "vxo-posix/realpath.hh"
+
 // poseven
 #include "poseven/functions/basename.hh"
 
@@ -44,37 +50,9 @@ namespace poseven
 	
 #ifdef __MWERKS__
 	
-	static plus::string realpath( const char* pathname )
-	{
-		plus::var_string result;
-		
-		ssize_t size = 128;
-		
-		while ( size > result.size() )
-		{
-			char* p = result.reset( size );
-			
-			size = _realpath( pathname, p, result.size() );
-			
-			if ( size == -1 )
-			{
-				throw_errno( errno );
-			}
-			
-			if ( size < -1 )
-			{
-				size = ~size;
-			}
-		}
-		
-		result.resize( size );
-		
-		return result;
-	}
-	
 	inline plus::string realpath( const plus::string& pathname )
 	{
-		return realpath( pathname.c_str() );
+		return vxo::string_or_nothing( vxo::realpath( pathname.c_str() ) );
 	}
 	
 #else
