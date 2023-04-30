@@ -5,11 +5,11 @@
 
 #include "recall/demangle.hh"
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <algorithm>
-
-// Standard C/C++
-#include <cstring>
 
 // iota
 #include "iota/char_types.hh"
@@ -161,7 +161,7 @@ static const char* ReadOperator( const char*& p, const char* end )
 
 static plus::string LastName( const plus::string& qualified_name )
 {
-	std::size_t colon = qualified_name.find_last_of( ":" );
+	size_t colon = qualified_name.find_last_of( ":" );
 	
 	return qualified_name.substr( colon + 1 );
 }
@@ -308,7 +308,7 @@ class MWC68K_Unmangler : public Unmangler
 class MWCPPC_Unmangler : public Unmangler
 {
 	public:
-		const char* FindTemplateParameters( const char* p )  { return std::strchr( p, '<' ); }
+		const char* FindTemplateParameters( const char* p )  { return strchr( p, '<' ); }
 		
 		bool TemplateParameterFollows( const char* p )  { return *p == ','; }
 		
@@ -336,7 +336,7 @@ bool MWC68K_Unmangler::TemplateParameterListEndsHere( const char* p )
 
 const char* MWC68K_Unmangler::FindTemplateParameters( const char* name )
 {
-	while ( const char* underscore = std::strchr( name, '_' ) )
+	while ( const char* underscore = strchr( name, '_' ) )
 	{
 		if ( TemplateParameterFollows( underscore ) )
 		{
@@ -619,7 +619,7 @@ void Unmangler::ReadSpecialName( plus::var_string& out, const char*& p )
 		++q;
 	}
 	
-	const char* double_underscore = std::strstr( q, "__" );
+	const char* double_underscore = strstr( q, "__" );
 	
 	if ( double_underscore == NULL )
 	{
@@ -663,10 +663,10 @@ void Unmangler::ReadIdentifier( plus::var_string& out, const char*& p )
 {
 	const char* params = FindTemplateParameters( p );
 	
-	const char* double_underscore = std::strstr( p + 1, "__" );
+	const char* double_underscore = strstr( p + 1, "__" );
 	
 	const char* id_end = double_underscore ? double_underscore
-	                                       : p + std::strlen( p );
+	                                       : p + strlen( p );
 	
 	if ( params != NULL  &&  params < id_end )
 	{
@@ -686,7 +686,7 @@ void Unmangler::ReadIdentifier( plus::var_string& out, const char*& p )
 
 void Unmangler::ReadEntityName( plus::var_string& out, const char*& p )
 {
-	if ( std::strcmp( p, "__end__catch" ) == 0 )
+	if ( strcmp( p, "__end__catch" ) == 0 )
 	{
 		p += STRLEN( "__end__catch" );
 		
@@ -695,7 +695,7 @@ void Unmangler::ReadEntityName( plus::var_string& out, const char*& p )
 		return;
 	}
 	
-	if ( std::strcmp( p, "__throw_bad_alloc__3stdFv" ) == 0 )
+	if ( strcmp( p, "__throw_bad_alloc__3stdFv" ) == 0 )
 	{
 		p += STRLEN( "__throw_bad_alloc__3stdFv" );
 		
