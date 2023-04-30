@@ -5,7 +5,6 @@
 
 // Standard C
 #include <errno.h>
-#include <stdlib.h>
 #include <string.h>
 
 // POSIX
@@ -16,6 +15,9 @@
 
 // more-posix
 #include "more/perror.hh"
+
+// gear
+#include "gear/parse_decimal.hh"
 
 
 #pragma exceptions off
@@ -194,7 +196,7 @@ int main( int argc, char** argv )
 		{
 			++args;
 			
-			chosen_fd = atoi( *args++ );
+			chosen_fd = gear::parse_unsigned_decimal( *args++ );
 			
 			if ( chosen_fd == 2 )
 			{
