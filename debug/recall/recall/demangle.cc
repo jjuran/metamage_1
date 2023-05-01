@@ -231,15 +231,17 @@ static void ReadInteger( plus::var_string& out, const char* begin, const char* e
 	{
 		char code[] = "'code'";
 		
-		code[4] = x;
-		code[3] = x >>= 8;
-		code[2] = x >>= 8;
-		code[1] = x >>= 8;
+		char* p = code + 5;
 		
-		bool isCode =    iota::is_print( code[1] )
-		              && iota::is_print( code[2] )
-		              && iota::is_print( code[3] )
-		              && iota::is_print( code[4] );
+		*--p = x;
+		*--p = x >>= 8;
+		*--p = x >>= 8;
+		*--p = x >>= 8;
+		
+		bool isCode =    iota::is_print( *p++ )
+		              && iota::is_print( *p++ )
+		              && iota::is_print( *p++ )
+		              && iota::is_print( *p++ );
 		
 		if ( isCode )
 		{
