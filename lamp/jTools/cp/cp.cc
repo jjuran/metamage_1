@@ -119,7 +119,7 @@ int Main( int argc, char** argv )
 			
 			plus::var_string destFilePath = destDir;
 			
-			if ( *(destFilePath.end() - 1) != '/' )
+			if ( destFilePath.back() != '/' )
 			{
 				destFilePath += '/';
 			}
@@ -159,7 +159,7 @@ int Main( int argc, char** argv )
 				// Copy this -> that/this
 				// set that = that/this
 				
-				if ( *(destFilePath.end() - 1) != '/' )
+				if ( destFilePath.back() != '/' )
 				{
 					destFilePath += '/';
 				}
