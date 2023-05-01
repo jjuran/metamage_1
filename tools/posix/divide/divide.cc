@@ -3,9 +3,6 @@
  *	=========
  */
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
@@ -13,6 +10,9 @@
 // iota
 #include "iota/char_types.hh"
 #include "iota/strings.hh"
+
+// gear
+#include "gear/find.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -33,26 +33,6 @@ namespace tool
 	namespace n = nucleus;
 	namespace p7 = poseven;
 	
-	
-	static const char* FindSequenceInMemory( const char* mem_begin,
-	                                         const char* mem_end,
-	                                         const char* seq_begin,
-	                                         const char* seq_end )
-	{
-		std::ptrdiff_t sequence_length = seq_end - seq_begin;
-		
-		while ( sequence_length <= mem_end - mem_begin )
-		{
-			if ( std::equal( seq_begin, seq_end, mem_begin ) )
-			{
-				return mem_begin;
-			}
-			
-			++mem_begin;
-		}
-		
-		return mem_end;
-	}
 	
 	template < class Iter >
 	char decode_octal_byte( Iter begin, Iter end )
@@ -161,22 +141,27 @@ namespace tool
 			
 			first_blocks.append( data, data + bytes );
 			
-			const char* div = FindSequenceInMemory( &*first_blocks.begin(),
-			                                        &*first_blocks.end(),
-			                                        &*divider_string.begin(),
-			                                        &*divider_string.end() );
+			const char* fb_data = first_blocks.data();
 			
-			if ( div != data + bytes )
+			size_t fb_size = first_blocks.size();
+			size_t ds_size = divider_string.size();
+			
+			const char* div = gear::find_first_match( fb_data,
+			                                          fb_size,
+			                                          divider_string.data(),
+			                                          ds_size );
+			
+			if ( div != NULL )
 			{
-				const char* stop = div + divider_string.size();
+				const char* stop = div + ds_size;
 				
 				divided = true;
 				
-				unsigned part_one_size = stop - first_blocks.data();
-				unsigned part_two_size = first_blocks.size() - part_one_size;
+				unsigned part_one_size = stop    - fb_data;
+				unsigned part_two_size = fb_size - part_one_size;
 				
-				p7::write( out1, first_blocks.data(), part_one_size );
-				p7::write( out2, stop,                part_two_size );
+				p7::write( out1, fb_data, part_one_size );
+				p7::write( out2, stop,    part_two_size );
 			}
 		}
 		
