@@ -52,7 +52,7 @@ namespace vxo
 				this is the wrong facility to use.
 			*/
 			
-			abort();
+			return NULL;
 		}
 		
 		extent_header* header = (extent_header*) malloc( extent_size );
