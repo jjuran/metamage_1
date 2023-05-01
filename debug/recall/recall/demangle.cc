@@ -166,11 +166,14 @@ static plus::string LastName( const plus::string& qualified_name )
 	return qualified_name.substr( colon + 1 );
 }
 
-static const char* GetBuiltinType( char c )
+static inline
+const char* basic_type_entry( unsigned char c )
 {
-	if ( c < 'a'  ||  c > 'z' )  return NULL;
+	const unsigned char i = c - 'a';
 	
-	return gBasicTypes[ c - 'a' ];
+	if ( i > 'z' - 'a' )  return NULL;
+	
+	return gBasicTypes[ i ];
 }
 
 static void ReadBasicType( plus::var_string& out, const char*& p )
@@ -324,7 +327,7 @@ bool MWC68K_Unmangler::TemplateParameterFollows( const char* p )
 	
 	if ( p[1] == 'Q'  &&  iota::is_digit( p[2] ) )  return true;
 	
-	if ( GetBuiltinType( p[1] ) != NULL  &&  p[2] == '_' )  return true;
+	if ( basic_type_entry( p[1] ) != NULL  &&  p[2] == '_' )  return true;
 	
 	return false;
 }
