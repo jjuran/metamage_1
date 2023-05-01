@@ -176,6 +176,12 @@ const char* basic_type_entry( unsigned char c )
 	return gBasicTypes[ i ];
 }
 
+static inline
+bool is_basic_type( char c )
+{
+	return basic_type_entry( c ) != NULL;
+}
+
 static void ReadBasicType( plus::var_string& out, const char*& p )
 {
 	if ( *p == 'U' )
@@ -322,7 +328,7 @@ bool MWC68K_Unmangler::TemplateParameterFollows( const char* p )
 	
 	if ( p[1] == 'Q'  &&  iota::is_digit( p[2] ) )  return true;
 	
-	if ( basic_type_entry( p[1] ) != NULL  &&  p[2] == '_' )  return true;
+	if ( is_basic_type( p[1] )  &&  p[2] == '_' )  return true;
 	
 	return false;
 }
