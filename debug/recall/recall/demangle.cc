@@ -601,16 +601,16 @@ void Unmangler::ReadType( plus::var_string& out, const char*& p )
 		return;
 	}
 	
-	if ( *p == 'A' )
-	{
-		throw demangle_failed();
-	}
-	
 	if ( *p == 'F' )
 	{
 		ReadFunctionType( out, ++p );
 		
 		return;
+	}
+	
+	if ( *p == 'A' )
+	{
+		// currently unsupported
 	}
 	
 	throw demangle_failed();
