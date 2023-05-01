@@ -490,11 +490,6 @@ namespace tool
 					
 					continue;
 				}
-				
-				if ( *(absolute_path.end() - 1) == '*' )
-				{
-					
-				}
 			}
 		}
 	}
