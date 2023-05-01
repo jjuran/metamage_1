@@ -184,20 +184,22 @@ bool is_basic_type( char c )
 
 static void ReadBasicType( plus::var_string& out, const char*& p )
 {
-	if ( *p == 'U' )
+	const char* signage = "unsigned ";
+	
+	char c = *p++;
+	
+	if ( c < 'a' )
 	{
-		out += "unsigned ";
+		int skip = 'U' - c;  //  2 for 'S', 0 for 'U'
 		
-		++p;
-	}
-	else if ( *p == 'S' )
-	{
-		out += "signed ";
+		signage += skip;
 		
-		++p;
+		out += signage;
+		
+		c = *p++;
 	}
 	
-	const char* type = basic_type_entry( *p++ );
+	const char* type = basic_type_entry( c );
 	
 	if ( type == NULL )
 	{
