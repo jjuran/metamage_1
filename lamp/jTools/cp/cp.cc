@@ -3,14 +3,14 @@
  *	=====
  */
 
-// Standard C/C++
-#include <cstdio>
-#include <cstring>
-
 // POSIX
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
+
+// Standard C
+#include <stdio.h>
+#include <string.h>
 
 // relix
 #include "relix/copyfile.h"
@@ -87,8 +87,8 @@ namespace tool
 		// Check for sufficient number of args
 		if ( argc < 3 )
 		{
-			std::fprintf( stderr, "cp: missing %s\n", (argc == 1) ? "file arguments"
-			                                                      : "destination file" );
+			fprintf( stderr, "cp: missing %s\n", (argc == 1) ? "file arguments"
+			                                                 : "destination file" );
 			
 			return 1;
 		}
@@ -106,14 +106,14 @@ namespace tool
 			
 			if ( bool not_a_dir = (sb.st_mode & S_IFDIR) == 0 )
 			{
-				std::fprintf( stderr, "cp: copying multiple files, but last argument (%s) is not a directory.\n",
-				                                                                      destDir );
+				fprintf( stderr, "cp: copying multiple files, but last argument (%s) is not a directory.\n",
+				                                                                 destDir );
 				
 				return 1;
 			}
 			
 			// Try to copy each file.  Return whether any errors occurred.
-			for ( std::size_t index = 1;  index < argc - 1;  ++index )
+			for ( size_t index = 1;  index < argc - 1;  ++index )
 			{
 				const char* sourcePath = argv[index];
 				
@@ -140,7 +140,7 @@ namespace tool
 			
 			if ( -1 == lstat( sourcePath, &sb ) )
 			{
-				std::fprintf( stderr, "cp: %s: %s\n", sourcePath, strerror( errno ) );
+				fprintf( stderr, "cp: %s: %s\n", sourcePath, strerror( errno ) );
 				
 				return 1;
 			}
