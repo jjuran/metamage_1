@@ -191,12 +191,7 @@ static void ReadBasicType( plus::var_string& out, const char*& p )
 		++p;
 	}
 	
-	if ( *p < 'a'  ||  *p > 'z' )
-	{
-		throw demangle_failed();
-	}
-	
-	const char* type = gBasicTypes[ *p++ - 'a' ];
+	const char* type = basic_type_entry( *p++ );
 	
 	if ( type == NULL )
 	{
