@@ -245,7 +245,7 @@ static void ReadInteger( plus::var_string& out, const char* begin, const char* e
 		
 		if ( isCode )
 		{
-			out.append( code, sizeof code );
+			out.append( code, sizeof code - 1 );
 			
 			return;
 		}
