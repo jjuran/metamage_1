@@ -6,7 +6,7 @@
 // Standard C
 #include "stdlib.h"
 
-// Kerosene
+// stacked-environ
 #include "environ_store.hh"
 
 // getenv
