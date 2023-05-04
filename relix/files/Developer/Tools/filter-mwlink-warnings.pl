@@ -79,7 +79,6 @@ qw
 	relix-libc.lib
 	stacked-environ.lib
 	syscalls.c
-	Kerosene-Library.lib
 	MSL-fixup.lib
 	openbsd-libc.lib
 	PosixLib.lib
