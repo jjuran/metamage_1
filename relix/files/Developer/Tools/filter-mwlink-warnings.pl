@@ -76,6 +76,7 @@ qw
 	nomalloc.c.cpp
 	readonly-environ.cc
 	readonly-environ.cc.cpp
+	relix-libc.lib
 	stacked-environ.lib
 	syscalls.c
 	Kerosene-Library.lib
