@@ -1,36 +1,43 @@
-/*	==========
- *	MSL_exit.c
- *	==========
- */
+/*
+	MSL_exit.c
+	----------
+*/
 
 #ifdef __MWERKS__
 
+// MSL
 #include "abort_exit.h"
 
-// From unistd.h
+// <unistd.h>
 extern void _exit( int status );
 
 
-// Replace __atexit() so in case it's called it returns -1
+/*
+	Override __atexit() to fail linking if it's called.
+*/
+
+int MSL_private_atexit_is_undefined();
 
 int __atexit( void (*func)(void) )
 {	
 	// Not supported because it isn't used
-	return -1;
+	return MSL_private_atexit_is_undefined();
 }
 
-
-// Replace __exit() to call POSIX _exit()
+// Override __exit() to call POSIX _exit().
 
 void __exit( int status )
 {
 	_exit( status );  // Doesn't return
 }
 
-#if defined( __MC68K__ ) && !__A5__
+#if defined( __MC68K__ )  &&  !__A5__
 
-// We need to override exit() for 68K Kerosene, since MSL makes a point of
-// specifically omitting the call to __destroy_global_chain() for A4 code.
+/*
+	We need to override exit() for 68K MacRelix tools,
+	since MSL specifically makes a point of omitting
+	the call to __destroy_global_chain() in A4 code.
+*/
 
 extern int  atexit( void (*func)(void) );
 extern void exit( int status );
@@ -46,7 +53,6 @@ void (*__stdio_exit)(void) = 0;
 
 int atexit( void (*func)(void) )
 {
-	
 	if ( atexit_curr_func == max_funcs )
 	{
 		return -1;
@@ -60,7 +66,6 @@ int atexit( void (*func)(void) )
 
 void exit( int status )
 {
-	
 	while ( atexit_curr_func > 0 )
 	{
 		(*atexit_funcs[ --atexit_curr_func ])();
@@ -78,6 +83,6 @@ void exit( int status )
 	_exit( status );
 }
 
-#endif  // defined( __MC68K__ ) && !__A5__
+#endif  // #if defined( __MC68K__ )  &&  !__A5__
 
-#endif
+#endif  // #ifdef __MWERKS__
