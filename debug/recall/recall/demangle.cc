@@ -257,16 +257,19 @@ static void ReadInteger( plus::var_string& out, const char* begin, const char* e
 
 class Unmangler
 {
+	private:
+		bool it_is_punctuated;  // PPC symbols use [<,>] for templates
+	
 	public:
-		virtual ~Unmangler()
+		Unmangler( bool punctuated ) : it_is_punctuated( punctuated )
 		{
 		}
 		
-		virtual const char* FindTemplateParameters( const char* p ) = 0;
+		const char* FindTemplateParameters( const char* p );
 		
-		virtual bool TemplateParameterFollows( const char* p ) = 0;
+		bool TemplateParameterFollows( const char* p );
 		
-		virtual bool TemplateParameterListEndsHere( const char* p ) = 0;
+		bool TemplateParameterListEndsHere( const char* p );
 		
 		
 		void ReadTemplateParameter( plus::var_string& out, const char*& p );
@@ -306,26 +309,27 @@ class Unmangler
 class MWC68K_Unmangler : public Unmangler
 {
 	public:
-		const char* FindTemplateParameters( const char* name );
-		
-		bool TemplateParameterFollows( const char* p );
-		
-		bool TemplateParameterListEndsHere( const char* p );
+		MWC68K_Unmangler() : Unmangler( false )
+		{
+		}
 };
 
 class MWCPPC_Unmangler : public Unmangler
 {
 	public:
-		const char* FindTemplateParameters( const char* p )  { return strchr( p, '<' ); }
-		
-		bool TemplateParameterFollows( const char* p )  { return *p == ','; }
-		
-		bool TemplateParameterListEndsHere( const char* p )  { return *p == '>'; }
+		MWCPPC_Unmangler() : Unmangler( true )
+		{
+		}
 };
 
 
-bool MWC68K_Unmangler::TemplateParameterFollows( const char* p )
+bool Unmangler::TemplateParameterFollows( const char* p )
 {
+	if ( it_is_punctuated )
+	{
+		return *p == ',';
+	}
+	
 	if ( p[0] != '_' )  return false;
 	
 	if ( iota::is_digit( p[1] ) )  return true;
@@ -337,13 +341,23 @@ bool MWC68K_Unmangler::TemplateParameterFollows( const char* p )
 	return false;
 }
 
-bool MWC68K_Unmangler::TemplateParameterListEndsHere( const char* p )
+bool Unmangler::TemplateParameterListEndsHere( const char* p )
 {
+	if ( it_is_punctuated )
+	{
+		return *p == '>';
+	}
+	
 	return p[0] == '_'  &&  ( p[1] == '_'  ||  p[1] == '\0' );
 }
 
-const char* MWC68K_Unmangler::FindTemplateParameters( const char* name )
+const char* Unmangler::FindTemplateParameters( const char* name )
 {
+	if ( it_is_punctuated )
+	{
+		return strchr( name, '<' );
+	}
+	
 	while ( const char* underscore = strchr( name, '_' ) )
 	{
 		if ( TemplateParameterFollows( underscore ) )
