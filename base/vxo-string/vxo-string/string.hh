@@ -3,8 +3,8 @@
 	---------
 */
 
-#ifndef VXS_STRING_HH
-#define VXS_STRING_HH
+#ifndef VXOSTRING_STRING_HH
+#define VXOSTRING_STRING_HH
 
 // plus
 #include "plus/string.hh"

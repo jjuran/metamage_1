@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "vxs/string.hh"
+#include "vxo-string/string.hh"
 
 // vxo
 #include "vxo/extent.hh"

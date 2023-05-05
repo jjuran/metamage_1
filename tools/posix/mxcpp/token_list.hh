@@ -6,8 +6,8 @@
 #ifndef MXCPP_TOKENLIST_HH
 #define MXCPP_TOKENLIST_HH
 
-// vxs
-#include "vxs/strvec.hh"
+// vxo-string
+#include "vxo-string/strvec.hh"
 
 typedef vxo::StrVec token_list;
 

@@ -15,8 +15,8 @@
 // plus
 #include "plus/string.hh"
 
-// vxs
-#include "vxs/strmap.hh"
+// vxo-string
+#include "vxo-string/strmap.hh"
 
 // A-line
 #include "A-line/ProjectConfig.hh"

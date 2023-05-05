@@ -3,14 +3,14 @@
 	---------
 */
 
-#ifndef VXS_STRVEC_HH
-#define VXS_STRVEC_HH
+#ifndef VXOSTRING_STRVEC_HH
+#define VXOSTRING_STRVEC_HH
 
 // vxo
 #include "vxo/container.hh"
 
-// vxs
-#include "vxs/string.hh"
+// vxo-string
+#include "vxo-string/string.hh"
 
 
 namespace vxo

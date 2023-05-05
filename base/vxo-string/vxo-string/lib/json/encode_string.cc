@@ -3,7 +3,7 @@
 	----------------
 */
 
-#include "vxs/lib/json/encode_string.hh"
+#include "vxo-string/lib/json/encode_string.hh"
 
 // iota
 #include "iota/char_types.hh"
@@ -14,8 +14,8 @@
 // vxo
 #include "vxo/error.hh"
 
-// vxs
-#include "vxs/string.hh"
+// vxo-string
+#include "vxo-string/string.hh"
 
 
 #pragma exceptions off

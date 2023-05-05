@@ -3,7 +3,7 @@
 	--------------
 */
 
-#include "vxs/lib/json/decode.hh"
+#include "vxo-string/lib/json/decode.hh"
 
 // Standard C
 #include <string.h>
@@ -21,9 +21,9 @@
 #include "vxo/ptrvec.hh"
 #include "vxo/symbol.hh"
 
-// vxs
-#include "vxs/lib/json/decode_number.hh"
-#include "vxs/lib/json/decode_string.hh"
+// vxo-string
+#include "vxo-string/lib/json/decode_number.hh"
+#include "vxo-string/lib/json/decode_string.hh"
 
 
 #pragma exceptions off

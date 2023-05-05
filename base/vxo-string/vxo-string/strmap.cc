@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "vxs/strmap.hh"
+#include "vxo-string/strmap.hh"
 
 // Standard C++
 #include <algorithm>

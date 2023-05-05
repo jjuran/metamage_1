@@ -5,8 +5,8 @@
 
 #include "macro.hh"
 
-// vxs
-#include "vxs/strmap.hh"
+// vxo-string
+#include "vxo-string/strmap.hh"
 
 // mxcpp
 #include "exception.hh"

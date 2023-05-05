@@ -3,8 +3,8 @@
 	----------------
 */
 
-#ifndef VXS_LIB_BASE64DECODE_HH
-#define VXS_LIB_BASE64DECODE_HH
+#ifndef VXOSTRING_LIB_BASE64DECODE_HH
+#define VXOSTRING_LIB_BASE64DECODE_HH
 
 // vxo
 #include "vxo/box.hh"

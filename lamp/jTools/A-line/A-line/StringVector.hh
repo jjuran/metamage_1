@@ -6,8 +6,8 @@
 #ifndef ALINE_STRINGVECTOR_HH
 #define ALINE_STRINGVECTOR_HH
 
-// vxs
-#include "vxs/strvec.hh"
+// vxo-string
+#include "vxo-string/strvec.hh"
 
 typedef vxo::StrVec StringVector;
 

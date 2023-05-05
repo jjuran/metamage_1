@@ -3,14 +3,14 @@
 	----------
 */
 
-#ifndef VXS_STRPOOL_HH
-#define VXS_STRPOOL_HH
+#ifndef VXOSTRING_STRPOOL_HH
+#define VXOSTRING_STRPOOL_HH
 
 // vxo
 #include "vxo/ptrvec.hh"
 
-// vxs
-#include "vxs/string.hh"
+// vxo-string
+#include "vxo-string/string.hh"
 
 
 namespace vxo

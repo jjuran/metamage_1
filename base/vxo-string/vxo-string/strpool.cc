@@ -3,7 +3,7 @@
 	----------
 */
 
-#include "vxs/strpool.hh"
+#include "vxo-string/strpool.hh"
 
 // Standard C
 #include <stdlib.h>

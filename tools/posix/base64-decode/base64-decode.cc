@@ -18,8 +18,8 @@
 // vxo
 #include "vxo/error.hh"
 
-// vxs
-#include "vxs/lib/base64_decode.hh"
+// vxo-string
+#include "vxo-string/lib/base64_decode.hh"
 
 
 #pragma exceptions off

@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "vxs/strset.hh"
+#include "vxo-string/strset.hh"
 
 // Standard C++
 #include <algorithm>

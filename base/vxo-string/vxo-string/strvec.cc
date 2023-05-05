@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "vxs/strvec.hh"
+#include "vxo-string/strvec.hh"
 
 // Standard C++
 #include <algorithm>

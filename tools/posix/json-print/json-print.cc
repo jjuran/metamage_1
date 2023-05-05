@@ -31,10 +31,10 @@
 #include "vxo/ptrvec.hh"
 #include "vxo/symbol.hh"
 
-// vxs
-#include "vxs/lib/json/decode.hh"
-#include "vxs/lib/json/encode_string.hh"
-#include "vxs/string.hh"
+// vxo-string
+#include "vxo-string/lib/json/decode.hh"
+#include "vxo-string/lib/json/encode_string.hh"
+#include "vxo-string/string.hh"
 
 
 #pragma exceptions off

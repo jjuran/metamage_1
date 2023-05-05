@@ -25,9 +25,9 @@
 #include "vxo/error.hh"
 #include "vxo/ptrvec.hh"
 
-// vxs
-#include "vxs/lib/json/decode.hh"
-#include "vxs/string.hh"
+// vxo-string
+#include "vxo-string/lib/json/decode.hh"
+#include "vxo-string/string.hh"
 
 
 #pragma exceptions off

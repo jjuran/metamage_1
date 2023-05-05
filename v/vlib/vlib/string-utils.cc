@@ -24,8 +24,8 @@
 // vxo
 #include "vxo/container.hh"
 
-// vxs
-#include "vxs/string.hh"
+// vxo-string
+#include "vxo-string/string.hh"
 
 // vlib
 #include "vlib/array-utils.hh"

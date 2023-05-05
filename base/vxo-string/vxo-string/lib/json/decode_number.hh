@@ -3,8 +3,8 @@
 	---------------------
 */
 
-#ifndef VXS_LIB_JSON_DECODENUMBER_HH
-#define VXS_LIB_JSON_DECODENUMBER_HH
+#ifndef VXOSTRING_LIB_JSON_DECODENUMBER_HH
+#define VXOSTRING_LIB_JSON_DECODENUMBER_HH
 
 // vxo
 #include "vxo/box.hh"

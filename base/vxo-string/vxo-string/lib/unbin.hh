@@ -3,14 +3,14 @@
 	--------
 */
 
-#ifndef VXS_LIB_UNBIN_HH
-#define VXS_LIB_UNBIN_HH
+#ifndef VXOSTRING_LIB_UNBIN_HH
+#define VXOSTRING_LIB_UNBIN_HH
 
 // vxo
 #include "vxo/error.hh"
 
-// vxs
-#include "vxs/string.hh"
+// vxo-string
+#include "vxo-string/string.hh"
 
 
 namespace vxo

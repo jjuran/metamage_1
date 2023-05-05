@@ -3,7 +3,7 @@
 	---------------------
 */
 
-#include "vxs/lib/json/decode_number.hh"
+#include "vxo-string/lib/json/decode_number.hh"
 
 // Standard C
 #include <math.h>

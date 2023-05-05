@@ -21,9 +21,9 @@
 // plus
 #include "plus/var_string.hh"
 
-// vxs
-#include "vxs/strmap.hh"
-#include "vxs/strset.hh"
+// vxo-string
+#include "vxo-string/strmap.hh"
+#include "vxo-string/strset.hh"
 
 // poseven
 #include "poseven/functions/fstatat.hh"
