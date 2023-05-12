@@ -129,6 +129,7 @@ namespace vlib
 		define_keyword( proc_md5    );
 		define_keyword( proc_mince  );
 		define_keyword( proc_rep    );
+		define_keyword( proc_sha1   );
 		define_keyword( proc_sha256 );
 		define_keyword( proc_substr );
 		define_keyword( proc_tail   );

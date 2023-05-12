@@ -10,6 +10,7 @@
 
 // crypto
 #include "md5/md5.hh"
+#include "sha1/sha1.hh"
 #include "sha256/sha256.hh"
 
 // plus
@@ -53,6 +54,14 @@ namespace vlib
 	plus::string md5( const plus::string& s )
 	{
 		crypto::md5_digest hash = crypto::md5( s.data(), s.size() );
+		
+		return plus::string( (const char*) &hash, sizeof hash );
+	}
+	
+	static
+	plus::string sha1( const plus::string& s )
+	{
+		crypto::sha1_digest hash = crypto::sha1( s.data(), s.size() );
 		
 		return plus::string( (const char*) &hash, sizeof hash );
 	}
@@ -229,6 +238,12 @@ namespace vlib
 		const size_t length = substr_length( s, arg3.number() );
 		
 		return String( s.substr( offset, length ) );
+	}
+	
+	static
+	Value v_sha1( const Value& v )
+	{
+		return Packed( sha1( v.string() ) );
 	}
 	
 	static
@@ -431,6 +446,7 @@ namespace vlib
 	const proc_info proc_mince  = { "mince",  &v_mince,  &mince,   pure };
 	const proc_info proc_rep    = { "rep",    &v_rep,    NULL,     pure };
 	const proc_info proc_secret = { DESTRUCT, &v_secret, NULL           };
+	const proc_info proc_sha1   = { "sha1",   &v_sha1,   &bytes,   pure };
 	const proc_info proc_sha256 = { "sha256", &v_sha256, &bytes,   pure };
 	const proc_info proc_substr = { "substr", &v_substr, &substr,  pure };
 	const proc_info proc_tail   = { "tail",   &v_tail,   NULL,     pure };
