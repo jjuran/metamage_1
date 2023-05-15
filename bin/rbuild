@@ -16,4 +16,8 @@ SDK_DIR=~/opt/relix/SDK
 
 export SDK_DIR
 
+if [ `command -v ccache < /dev/null` ]; then
+	export CC=ccache-mwcc
+fi
+
 A-line --cpp -j1 $*
