@@ -1,5 +1,15 @@
 #!/bin/sh -e
 
+if [ -z "$NEXUS_ROOT" ]; then
+	echo >&2 "rbuild: NEXUS_ROOT is unset"
+	exit 1
+fi
+
+if [ -z "$NEXUS_PEER" ]; then
+	echo >&2 "rbuild: NEXUS_PEER is unset"
+	exit 1
+fi
+
 PATH="$PWD/scripts/nexus:$PWD/bin:$PATH"
 
 SDK_DIR=~/opt/relix/SDK
