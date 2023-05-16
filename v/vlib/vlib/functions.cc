@@ -13,6 +13,9 @@
 #include "sha1/sha1.hh"
 #include "sha256/sha256.hh"
 
+// vxo
+#include "vxo/error.hh"
+
 // plus
 #include "plus/hexadecimal.hh"
 #include "plus/var_string.hh"
@@ -21,6 +24,7 @@
 // vxo-string
 #include "vxo-string/lib/unbin.hh"
 #include "vxo-string/lib/unhex.hh"
+#include "vxo-string/string.hh"
 
 // bignum
 #include "bignum/decode_binoid_int.hh"
@@ -75,14 +79,18 @@ namespace vlib
 	}
 	
 	static
-	const plus::string& get_string( const vxo::Expected_String& box )
+	const plus::string& get_string( const vxo::Box& box )
 	{
-		if ( const char* error = box.error() )
+		typedef vxo::Expected< vxo::String > Expected_String;
+		
+		const Expected_String& xstring = *(const Expected_String*) &box;
+		
+		if ( const char* error = xstring.error() )
 		{
 			throw_exception( error );
 		}
 		
-		return box.value_cast().get();
+		return xstring.value_cast().get();
 	}
 	
 	static
