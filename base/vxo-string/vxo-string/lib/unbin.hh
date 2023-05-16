@@ -7,10 +7,7 @@
 #define VXOSTRING_LIB_UNBIN_HH
 
 // vxo
-#include "vxo/error.hh"
-
-// vxo-string
-#include "vxo-string/string.hh"
+#include "vxo/box.hh"
 
 
 namespace vxo
@@ -18,13 +15,11 @@ namespace vxo
 	
 	typedef unsigned align_t;
 	
-	typedef Expected< String > Expected_String;
-	
-	Expected_String unbin( const char* data, size_t size, align_t align );
+	Box unbin( const char* data, size_t size, align_t align );
 	
 	template < class String >
 	inline
-	Expected_String unbin( const String& s, align_t align = 1 )
+	Box unbin( const String& s, align_t align = 1 )
 	{
 		return unbin( get_string_data( s ), get_string_size( s ), align );
 	}

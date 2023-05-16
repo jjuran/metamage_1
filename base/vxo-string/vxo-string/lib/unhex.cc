@@ -14,11 +14,17 @@
 // debug
 #include "debug/assert.hh"
 
+// vxo
+#include "vxo/error.hh"
+
+// vxo-string
+#include "vxo-string/string.hh"
+
 
 namespace vxo
 {
 
-Expected_String unhex( const char* data, size_t size, align_t align )
+Box unhex( const char* data, size_t size, align_t align )
 {
 	// Alignment must be a power of two.
 	
