@@ -69,9 +69,14 @@
 	For now, just use 32-bit bilevel pixels in all cases.  It works fine on
 	the Raspberry Pi, memory's not an issue, and it opens up opportunities
 	for post-processing, including mixing with other graphics sources.
+	
+	Update:  Raspberry OS "Bullseye" has a new graphics driver that prevents
+	switching to 32-bit depth.  So, (a) we need code to handle 16-bit depth,
+	(b) we won't know until run time if we need to use it, so (c) we may as
+	well use it opportunistically if we're already at 16-bit depth and the
+	image can be displayed losslessly.  TODO:  For 32-bit images, we should
+	attempt the depth switch but fall back to downsampling if it fails.
 */
-
-typedef uint32_t bilevel_pixel_t;
 
 enum
 {
@@ -177,6 +182,36 @@ enum byte_remapping
 };
 
 using namespace raster;
+
+static
+draw_proc select_16b_draw_proc( const raster_desc& desc, byte_remapping remap )
+{
+	typedef uint16_t bilevel_pixel_t;
+	
+	#define CASE_MONOCHROME( bpp )  \
+		case bpp:  \
+			return doubling ? &lookup_N_to_direct< bilevel_pixel_t, bpp, 2 >  \
+			                : &lookup_N_to_direct< bilevel_pixel_t, bpp, 1 >
+	
+	uint8_t last_pixel;
+	
+	switch ( desc.weight )
+	{
+		CASE_MONOCHROME( 1 );
+		CASE_MONOCHROME( 2 );
+		CASE_MONOCHROME( 4 );
+		CASE_MONOCHROME( 8 );
+		
+		case 16:
+			return doubling ? &copy_16_2x
+			                : &copy_16;
+		
+		default:
+			return NULL;
+	}
+	
+	#undef CASE_MONOCHROME
+}
 
 static
 draw_proc select_32b_draw_proc( const raster_desc& desc, byte_remapping remap )
@@ -716,7 +751,7 @@ int main( int argc, char** argv )
 	
 	if ( desc.weight <= 8 )
 	{
-		bpp = sizeof (bilevel_pixel_t) * 8;
+		bpp = var_info.bits_per_pixel;
 	}
 	else if ( desc.weight < var_info.bits_per_pixel )
 	{
@@ -811,7 +846,7 @@ int main( int argc, char** argv )
 	
 	if ( bpp == 16 )
 	{
-		draw = doubling ? &copy_16_2x : &copy_16;
+		draw = select_16b_draw_proc( desc, remap );
 	}
 	
 	if ( desc.model == Model_monochrome_paint )

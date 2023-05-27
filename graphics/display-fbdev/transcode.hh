@@ -18,6 +18,16 @@ extern const uint8_t monochrome_1bit[];
 extern const uint8_t monochrome_2bit[];
 extern const uint8_t monochrome_4bit[];
 
+inline
+uint16_t downsample( uint32_t zrgb )
+{
+	uint16_t r = (zrgb & 0x00f80000) >> (16 + 3 - 11);
+	uint16_t g = (zrgb & 0x0000fc00) >> ( 8 + 2 -  5);
+	uint16_t b = (zrgb & 0x000000f8) >> ( 0 + 3 -  0);
+	
+	return r | g | b;
+}
+
 template < class UInt, int bpp, int X >
 void transcode_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 {
@@ -43,7 +53,8 @@ void transcode_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 			const uint32_t zrgb = gray ? (bpp < 8 ? ramp[ i ] : byte) * 0x010101
 			                           : palette_entries[ i ];
 			
-			const UInt pixel = 0xFF000000 | zrgb;
+			const UInt pixel = sizeof (UInt) == 4 ? 0xFF000000 | zrgb
+			                                      : downsample( zrgb );
 			
 			for ( int i = 0;  i < X;  ++i )
 			{
