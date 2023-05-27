@@ -179,8 +179,10 @@ enum byte_remapping
 using namespace raster;
 
 static
-draw_proc select_draw_proc( const raster_desc& desc, byte_remapping remap )
+draw_proc select_32b_draw_proc( const raster_desc& desc, byte_remapping remap )
 {
+	typedef uint32_t bilevel_pixel_t;
+	
 	#define CASE_MONOCHROME( bpp )  \
 		case bpp:  \
 			return doubling ? &lookup_N_to_direct< bilevel_pixel_t, bpp, 2 >  \
@@ -805,7 +807,7 @@ int main( int argc, char** argv )
 	byte_remapping remap = byte_remapping( is_rgbx_or_rgba( desc ) << 1
 	                                     | is_byte_swapped( loaded_raster ) );
 	
-	draw_proc draw = select_draw_proc( desc, remap );
+	draw_proc draw = select_32b_draw_proc( desc, remap );
 	
 	if ( bpp == 16 )
 	{
