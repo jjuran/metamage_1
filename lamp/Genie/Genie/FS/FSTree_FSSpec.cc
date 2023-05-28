@@ -620,7 +620,7 @@ namespace Genie
 	                                const plus::string&  name,
 	                                const void*          args )
 	{
-		return FSTreeFromFSDirSpec( GetUsersDirectory() );
+		return FSTreeFromFSSpec( Users_FSSpec() );
 	}
 	
 	
@@ -678,7 +678,7 @@ namespace Genie
 		
 		try
 		{
-			if ( extra.fsspec == make_FSSpec( GetUsersDirectory() ) )
+			if ( extra.fsspec == Users_FSSpec() )
 			{
 				return relix::root();
 			}
