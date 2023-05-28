@@ -287,6 +287,19 @@ namespace Genie
 		return Dir_From_CInfo( cInfo );
 	}
 	
+	static
+	const FSSpec& Users_FSSpec()
+	{
+		static FSSpec users =
+		{
+			mac::file::program_file().vRefNum,
+			fsRtDirID,
+			"\p" "Users"
+		};
+		
+		return users;
+	}
+	
 	const VRefNum_DirID& root_DirSpec()
 	{
 		static VRefNum_DirID j = FindJDirectory();
@@ -294,14 +307,10 @@ namespace Genie
 		return j;
 	}
 	
-	static
+	static inline
 	VRefNum_DirID FindUsersDirectory()
 	{
-		const short vRefNum = mac::file::program_file().vRefNum;
-		
-		FSSpec users = { vRefNum, fsRtDirID, "\p" "Users" };
-		
-		return Dir_From_FSSpec( users );
+		return Dir_From_FSSpec( Users_FSSpec() );
 	}
 	
 	static
