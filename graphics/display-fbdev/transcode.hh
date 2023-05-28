@@ -38,7 +38,7 @@ void transcode_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 		
 		const uint8_t mask = (1 << bpp) - 1;
 		
-		for ( ;  n_pixels--; )
+		for ( ;  (n_pixels -= 1) >= 0; )
 		{
 			const uint8_t i = (byte >> n_pixels * bpp) & mask;
 			
