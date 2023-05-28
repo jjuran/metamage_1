@@ -307,20 +307,6 @@ namespace Genie
 		return j;
 	}
 	
-	static inline
-	VRefNum_DirID FindUsersDirectory()
-	{
-		return Dir_From_FSSpec( Users_FSSpec() );
-	}
-	
-	static
-	const VRefNum_DirID& GetUsersDirectory()
-	{
-		static VRefNum_DirID users = FindUsersDirectory();
-		
-		return users;
-	}
-	
 	
 	static plus::string MakeName( const FSSpec& fileSpec )
 	{

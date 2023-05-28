@@ -22,8 +22,6 @@ namespace Genie
 	
 	mac::types::VRefNum_DirID Dir_From_CInfo( const CInfoPBRec& cInfo );
 	
-	mac::types::VRefNum_DirID Dir_From_FSSpec( const FSSpec& dir );
-	
 	vfs::node_ptr FSTreeFromFSSpec( const FSSpec& item );
 	
 	vfs::node_ptr node_from_dirID( short vRefNum, long dirID );

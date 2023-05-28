@@ -15,8 +15,6 @@
 namespace Genie
 {
 	
-	namespace n = nucleus;
-	
 	using mac::types::VRefNum_DirID;
 	
 	
@@ -36,15 +34,6 @@ namespace Genie
 		const VRefNum_DirID result = { vRefNum, dirID };
 		
 		return result;
-	}
-	
-	VRefNum_DirID Dir_From_FSSpec( const FSSpec& dir )
-	{
-		CInfoPBRec cInfo = {{ 0 }};
-		
-		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo, dir );
-		
-		return Dir_From_CInfo( cInfo );
 	}
 	
 }
