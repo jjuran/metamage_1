@@ -662,15 +662,9 @@ namespace Genie
 			return relix::root();
 		}
 		
-		try
+		if ( extra.fsspec == Users_FSSpec() )
 		{
-			if ( extra.fsspec == Users_FSSpec() )
-			{
-				return relix::root();
-			}
-		}
-		catch ( ... )
-		{
+			return relix::root();
 		}
 		
 		return FSTreeFromFSDirSpec( parent_directory( extra.fsspec ) );
