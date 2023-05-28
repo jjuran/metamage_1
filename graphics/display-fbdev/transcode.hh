@@ -34,11 +34,9 @@ void transcode_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 	{
 		uint8_t byte = *src++ ^ monochrome_toggle;
 		
-		int n_bits = 8;
-		
 		const uint8_t mask = (1 << bpp) - 1;
 		
-		for ( ;  (n_bits -= bpp) >= 0; )
+		for ( int n_bits = 8;  (n_bits -= bpp) >= 0; )
 		{
 			const uint8_t i = (byte >> n_bits) & mask;
 			
