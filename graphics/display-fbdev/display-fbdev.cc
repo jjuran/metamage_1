@@ -747,24 +747,11 @@ int main( int argc, char** argv )
 		doubling = false;
 	}
 	
-	uint8_t bpp = desc.weight;
-	
-	if ( desc.weight <= 8 )
-	{
-		bpp = var_info.bits_per_pixel;
-	}
-	else if ( desc.weight < var_info.bits_per_pixel )
-	{
-		// Don't downgrade to 16-bit if we're already at 32-bit depth.
-		
-		bpp = var_info.bits_per_pixel;
-	}
-	
-	const bool changing_depth = bpp != var_info.bits_per_pixel;
+	const bool changing_depth = desc.weight > var_info.bits_per_pixel;
 	
 	if ( changing_depth )
 	{
-		var_info.bits_per_pixel = bpp;
+		var_info.bits_per_pixel = desc.weight;
 		
 		if ( preserving_console_text() )
 		{
@@ -844,7 +831,7 @@ int main( int argc, char** argv )
 	
 	draw_proc draw = select_32b_draw_proc( desc, remap );
 	
-	if ( bpp == 16 )
+	if ( var_info.bits_per_pixel == 16 )
 	{
 		draw = select_16b_draw_proc( desc, remap );
 	}
