@@ -40,8 +40,10 @@ void transcode_N_to_direct( const uint8_t* src, uint8_t* dst, int width )
 		{
 			const uint8_t i = (byte >> n_bits) & mask;
 			
-			const UInt pixel = gray ? (bpp < 8 ? ramp[ i ] : byte) * 0x01010101
-			                        : palette_entries[ i ];
+			const uint32_t zrgb = gray ? (bpp < 8 ? ramp[ i ] : byte) * 0x010101
+			                           : palette_entries[ i ];
+			
+			const UInt pixel = 0xFF000000 | zrgb;
 			
 			for ( int i = 0;  i < X;  ++i )
 			{
