@@ -5,9 +5,6 @@
 
 #include "Genie/FS/ResFile_Dir.hh"
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include <sys/stat.h>
 
@@ -116,21 +113,6 @@ namespace Genie
 		}
 		
 		return exists;
-	}
-	
-	static inline bool contains( const char* s, size_t length, char c )
-	{
-		const char* end = s + length;
-		
-		return std::find( s, end, c ) != end;
-	}
-	
-	static inline bool is_rsrc_file( const CInfoPBRec&  cInfo,
-	                                 ConstStr255Param   name )
-	{
-		return cInfo.hFileInfo.ioFlLgLen == 0  &&  !contains( (char*) &name[ 1 ],
-		                                                      1 + name[0],
-		                                                      '.' );
 	}
 	
 	static void resfile_dir_remove( const vfs::node* that )
