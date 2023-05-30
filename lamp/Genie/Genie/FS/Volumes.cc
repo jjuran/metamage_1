@@ -23,7 +23,6 @@
 #include "plus/replaced_string.hh"
 
 // Nitrogen
-#include "Mac/Files/Types/FSVolumeRefNum.hh"
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 #include "Nitrogen/Str.hh"
@@ -63,7 +62,8 @@ namespace Genie
 	}
 	
 	
-	static Mac::FSVolumeRefNum GetVRefNum( const plus::string& name )
+	static
+	FSVolumeRefNum GetVRefNum( const plus::string& name )
 	{
 		OSErr err = bdNamErr;
 		
@@ -88,7 +88,7 @@ namespace Genie
 		
 		Mac::ThrowOSStatus( err );
 		
-		return Mac::FSVolumeRefNum( pb.volumeParam.ioVRefNum );
+		return pb.volumeParam.ioVRefNum;
 	}
 	
 	
@@ -97,7 +97,7 @@ namespace Genie
 		// Convert UTF-8 to MacRoman, ':' to '/'
 		plus::string mac_name = slashes_from_colons( plus::mac_from_utf8( that->name() ) );
 		
-		const Mac::FSVolumeRefNum vRefNum = GetVRefNum( mac_name );
+		const FSVolumeRefNum vRefNum = GetVRefNum( mac_name );
 		
 		return node_from_dirID( vRefNum, fsRtDirID );
 	}
