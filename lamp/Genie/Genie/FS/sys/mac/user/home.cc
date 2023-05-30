@@ -70,7 +70,7 @@ namespace Genie
 			return result;
 		}
 		
-		CInfoPBRec cInfo = {{ 0 }};
+		CInfoPBRec cInfo;
 		
 		const FSSpec users = { vRefNum, fsRtDirID, "\p" "Users" };
 		

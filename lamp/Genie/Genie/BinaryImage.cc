@@ -95,7 +95,7 @@ namespace Genie
 	
 	static BinaryFileMetadata GetFileMetadata( const FSSpec& file )
 	{
-		CInfoPBRec pb = {{ 0 }};
+		CInfoPBRec pb;
 		
 		MacIO::GetCatInfo< MacIO::Throw_All >( pb, file );
 		

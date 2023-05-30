@@ -244,7 +244,7 @@ namespace Genie
 	static
 	VRefNum_DirID FindJDirectory()
 	{
-		CInfoPBRec cInfo = {{ 0 }};
+		CInfoPBRec cInfo;
 		
 		N::Str63 name = const_root_directory_name;  // overkill
 		
