@@ -39,6 +39,18 @@ typedef int SInt32;
 		return !( a == b );
 	}
 	
+	inline
+	bool is_error( const VRefNum_DirID& dir )
+	{
+		return dir.vRefNum == 0;
+	}
+	
+	inline
+	long error( const VRefNum_DirID& dir )
+	{
+		return dir.dirID;
+	}
+	
 }
 }
 
