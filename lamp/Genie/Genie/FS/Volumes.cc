@@ -76,6 +76,10 @@ namespace Genie
 		
 		if ( len <= 27 )
 		{
+			name_copy[ ++len ] = ':';
+			
+			name_copy[ 0 ] = len;
+			
 			pb.volumeParam.ioVRefNum  = 0;
 			pb.volumeParam.ioNamePtr  = name_copy;
 			pb.volumeParam.ioVolIndex = -1;  // use ioNamePtr/ioVRefNum combo
@@ -93,8 +97,6 @@ namespace Genie
 	{
 		// Convert UTF-8 to MacRoman, ':' to '/'
 		plus::var_string mac_name = slashes_from_colons( plus::mac_from_utf8( that->name() ) );
-		
-		mac_name += ":";
 		
 		const Mac::FSVolumeRefNum vRefNum = GetVRefNum( mac_name );
 		
