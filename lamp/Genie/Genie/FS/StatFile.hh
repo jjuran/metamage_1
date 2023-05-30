@@ -6,13 +6,10 @@
 // POSIX
 #include <sys/types.h>
 
-// Nitrogen
-#ifndef MAC_FILES_TYPES_FSDIRID_HH
-#include "Mac/Files/Types/FSDirID.hh"
-#endif
-#ifndef MAC_FILES_TYPES_FSVOLUMEREFNUM_HH
-#include "Mac/Files/Types/FSVolumeRefNum.hh"
-#endif
+// <Files.h>
+union  CInfoPBRec;
+struct FSSpec;
+struct HFileInfo;
 
 // <sys/stat.h>
 struct stat;
