@@ -30,7 +30,6 @@
 // Genie
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSTree_FSSpec.hh"
-#include "Genie/Utilities/AsyncIO.hh"
 #include "Genie/Utilities/OpenDataFork.hh"
 
 
@@ -242,7 +241,7 @@ namespace Genie
 	{
 		CInfoPBRec paramBlock = {{ 0 }};
 		
-		MacIO::GetCatInfo< FNF_Throws >( paramBlock, file );
+		MacIO::GetCatInfo< MacIO::Throw_All >( paramBlock, file );
 		
 		HFileInfo& hFileInfo = paramBlock.hFileInfo;
 		

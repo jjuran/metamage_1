@@ -36,7 +36,6 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/Utilities/AsyncIO.hh"
 
 
 namespace Genie
@@ -75,7 +74,7 @@ namespace Genie
 		
 		const FSSpec users = { vRefNum, fsRtDirID, "\p" "Users" };
 		
-		MacIO::GetCatInfo< FNF_Throws >( cInfo, users );
+		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo, users );
 		
 		return Dir_From_CInfo( cInfo );
 	}

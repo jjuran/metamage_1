@@ -36,7 +36,6 @@
 
 // Genie
 #include "Genie/FileSignature.hh"
-#include "Genie/Utilities/AsyncIO.hh"
 
 
 namespace Genie

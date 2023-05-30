@@ -109,7 +109,6 @@
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Kernel/native_syscalls.hh"
 #include "Genie/Process/AsyncYield.hh"
-#include "Genie/Utilities/AsyncIO.hh"
 #include "Genie/Utilities/FinderSync.hh"
 #include "Genie/Utilities/OpenDataFork.hh"
 
@@ -270,16 +269,14 @@ namespace Genie
 			}
 		}
 		
-		const bool exists = MacIO::GetCatInfo< FNF_Returns >( cInfo,
-		                                                      vRefNum,
-		                                                      dirID,
-		                                                      name );
+		const bool exists = MacIO::GetCatInfo< MacIO::Return_FNF >( cInfo,
+		                                                            vRefNum,
+		                                                            dirID,
+		                                                            name );
 		
 		if ( !exists )
 		{
-			MacIO::GetCatInfo< FNF_Returns >( cInfo,
-			                                  vRefNum,
-			                                  dirID );
+			MacIO::GetCatInfo< MacIO::Return_FNF >( cInfo, vRefNum, dirID );
 		}
 		
 		cInfo.dirInfo.ioVRefNum = GetVRefNum( cInfo.dirInfo.ioVRefNum );
@@ -569,11 +566,7 @@ namespace Genie
 	{
 		CInfoPBRec cInfo;
 		
-		const bool async = false;
-		
-		FSpGetCatInfo< FNF_Returns >( cInfo,
-		                              async,
-		                              item );
+		MacIO::GetCatInfo< MacIO::Return_FNF >( cInfo, item );
 		
 		const plus::string name = MakeName( item );
 		
@@ -586,14 +579,11 @@ namespace Genie
 		
 		CInfoPBRec cInfo;
 		
-		const bool async = false;
-		
-		FSpGetCatInfo< FNF_Throws >( cInfo,
-		                             async,
-		                             vRefNum,
-		                             dirID,
-		                             mac_name,
-		                             0 );
+		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo,
+		                                       vRefNum,
+		                                       dirID,
+		                                       mac_name,
+		                                       0 );
 		
 		const FSSpec fsspec = FSMakeFSSpec( cInfo );
 		
@@ -1089,6 +1079,9 @@ namespace Genie
 	                                     const plus::string&   name,
 	                                     const vfs::node*      parent )
 	{
+		using MacIO::GetCatInfo;
+		using MacIO::Return_FNF;
+		
 		plus::string long_name = slashes_from_colons( plus::mac_from_utf8( name ) );
 		
 		Str31 macName;
@@ -1097,9 +1090,7 @@ namespace Genie
 		
 		CInfoPBRec cInfo;
 		
-		const bool async = false;
-		
-		FSpGetCatInfo< FNF_Returns >( cInfo, async, dir.vRefNum, dir.dirID, macName, 0 );
+		GetCatInfo< Return_FNF >( cInfo, dir.vRefNum, dir.dirID, macName, 0 );
 		
 		if ( mac::sys::has_BlueBox()  &&  is_possibly_masked_symlink( cInfo ) )
 		{

@@ -34,7 +34,6 @@
 // Genie
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/FS/HFS/MoveRename.hh"
-#include "Genie/Utilities/AsyncIO.hh"
 
 
 namespace Genie
@@ -48,7 +47,7 @@ namespace Genie
 	{
 		CInfoPBRec cInfo = {{ 0 }};
 		
-		MacIO::GetCatInfo< FNF_Throws >( cInfo, file );
+		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo, file );
 		
 		bool locked = cInfo.hFileInfo.ioFlAttrib & kioFlAttribLockedMask;
 		

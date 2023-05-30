@@ -19,11 +19,13 @@
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
+// MacIO
+#include "MacIO/GetCatInfo_Sync.hh"
+
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/StatFile.hh"
 #include "Genie/IO/MacFile.hh"
-#include "Genie/Utilities/AsyncIO.hh"
 
 
 namespace Genie
@@ -36,9 +38,7 @@ namespace Genie
 	{
 		CInfoPBRec cInfo;
 		
-		const bool async = false;
-		
-		FSpGetCatInfo< FNF_Throws >( cInfo, async, file );
+		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo, file );
 		
 		if ( bool locked = cInfo.hFileInfo.ioFlAttrib & kioFlAttribLockedMask )
 		{
@@ -54,13 +54,9 @@ namespace Genie
 	{
 		CInfoPBRec cInfo = {{ 0 }};
 		
-		const bool async = false;
-		
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
-		FSpGetCatInfo< FNF_Throws >( cInfo,
-		                             async,
-		                             fileSpec );
+		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo, fileSpec );
 		
 		Stat_HFS( &sb, cInfo, fileSpec.name, true );
 	}
