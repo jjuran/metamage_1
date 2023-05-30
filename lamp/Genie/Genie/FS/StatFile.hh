@@ -23,8 +23,7 @@ namespace Genie
 	
 	mode_t GetItemMode( const HFileInfo& hFileInfo );
 	
-	void Stat_HFS( bool                  async,
-	               struct stat*          sb,
+	void Stat_HFS( struct stat*          sb,
 	               const CInfoPBRec&     cInfo,
 	               const unsigned char*  name,
 	               bool                  is_rsrc_fork = false );

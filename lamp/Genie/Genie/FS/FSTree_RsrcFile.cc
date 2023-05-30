@@ -62,7 +62,7 @@ namespace Genie
 		                             async,
 		                             fileSpec );
 		
-		Stat_HFS( async, &sb, cInfo, fileSpec.name, true );
+		Stat_HFS( &sb, cInfo, fileSpec.name, true );
 	}
 	
 	static vfs::filehandle_ptr rsrcfile_open( const vfs::node* that, int flags, mode_t mode )

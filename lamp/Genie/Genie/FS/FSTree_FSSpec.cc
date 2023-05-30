@@ -682,11 +682,9 @@ namespace Genie
 	static void hfs_stat( const vfs::node*  that,
 	                      struct stat&      sb )
 	{
-		const bool async = false;
-		
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		Stat_HFS( async, &sb, extra.cinfo, extra.fsspec.name, false );
+		Stat_HFS( &sb, extra.cinfo, extra.fsspec.name, false );
 	}
 	
 	static void hfs_chmod( const vfs::node*  that,
