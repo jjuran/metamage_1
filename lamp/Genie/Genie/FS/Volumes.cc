@@ -21,7 +21,6 @@
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/replaced_string.hh"
-#include "plus/var_string.hh"
 
 // Nitrogen
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
@@ -96,7 +95,7 @@ namespace Genie
 	static vfs::node_ptr volumes_link_resolve( const vfs::node* that )
 	{
 		// Convert UTF-8 to MacRoman, ':' to '/'
-		plus::var_string mac_name = slashes_from_colons( plus::mac_from_utf8( that->name() ) );
+		plus::string mac_name = slashes_from_colons( plus::mac_from_utf8( that->name() ) );
 		
 		const Mac::FSVolumeRefNum vRefNum = GetVRefNum( mac_name );
 		
