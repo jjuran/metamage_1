@@ -26,29 +26,32 @@ namespace file {
 	
 	VRefNum_DirID directory( const FSSpec& dir )
 	{
+		VRefNum_DirID result;
+		
+		result.vRefNum = 0;
+		
 		CInfoPBRec pb;
 		
 		DirInfo& dirInfo = pb.dirInfo;
 		
-		short vRefNum = dir.vRefNum;
-		
 		dirInfo.ioNamePtr = (StringPtr) dir.name;
-		dirInfo.ioVRefNum = vRefNum;
+		dirInfo.ioVRefNum = dir.vRefNum;
 		dirInfo.ioDrDirID = dir.parID;
 		dirInfo.ioFDirIndex = 0;
 		
 		if ( OSStatus err = PBGetCatInfoSync( &pb ) )
 		{
-			dirInfo.ioDrDirID = err;
-			vRefNum           = 0;
+			result.dirID = err;
 		}
 		else if ( ! (pb.hFileInfo.ioFlAttrib & kioFlAttribDirMask) )
 		{
-			dirInfo.ioDrDirID = errFSNotAFolder;
-			vRefNum           = 0;
+			result.dirID = errFSNotAFolder;
 		}
-		
-		VRefNum_DirID result = { vRefNum, pb.dirInfo.ioDrDirID };
+		else
+		{
+			result.vRefNum = dir.vRefNum;
+			result.dirID   = pb.dirInfo.ioDrDirID;
+		}
 		
 		return result;
 	}
