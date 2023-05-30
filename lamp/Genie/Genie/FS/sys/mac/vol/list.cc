@@ -160,12 +160,12 @@ namespace Genie
 		VRefNum_DirID root   = { key, fsRtDirID };
 		VRefNum_DirID parent = mac::file::parent_directory( root );
 		
-		if ( parent.vRefNum == 0  &&  parent.dirID != nsvErr )
+		if ( is_error( parent )  &&  error( parent ) != nsvErr )
 		{
-			Mac::ThrowOSStatus( parent.dirID );
+			Mac::ThrowOSStatus( error( parent ) );
 		}
 		
-		return parent.vRefNum != 0;
+		return ! is_error( parent );
 	}
 	
 	struct valid_name_of_vol_number

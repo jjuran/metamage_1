@@ -42,8 +42,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	
 	using mac::types::VRefNum_DirID;
 	using mac::sys::has_FindFolder;
 	using mac::file::parent_directory;
@@ -98,9 +96,9 @@ namespace Genie
 			
 			parent = mac::file::parent_directory( child );
 			
-			if ( parent.vRefNum == 0 )
+			if ( is_error( parent ) )
 			{
-				Mac::ThrowOSStatus( parent.dirID );
+				Mac::ThrowOSStatus( error( parent ) );
 			}
 		}
 		while ( parent != users );
@@ -112,7 +110,7 @@ namespace Genie
 	{
 		VRefNum_DirID folder = mac::sys::get_user_home();
 		
-		if ( folder.vRefNum != 0 )
+		if ( ! is_error( folder ) )
 		{
 			return folder;
 		}
