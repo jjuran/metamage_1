@@ -66,15 +66,24 @@ namespace Genie
 	
 	static Mac::FSVolumeRefNum GetVRefNum( const plus::string& name )
 	{
-		N::Str255 name_copy = name;
+		OSErr err = bdNamErr;
 		
 		HParamBlockRec pb;
 		
-		pb.volumeParam.ioVRefNum  = 0;
-		pb.volumeParam.ioNamePtr  = name_copy;
-		pb.volumeParam.ioVolIndex = -1;  // use use ioNamePtr/ioVRefNum combination
+		N::Str255 name_copy = name;
 		
-		Mac::ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
+		uint8_t len = name_copy[ 0 ];
+		
+		if ( len <= 27 )
+		{
+			pb.volumeParam.ioVRefNum  = 0;
+			pb.volumeParam.ioNamePtr  = name_copy;
+			pb.volumeParam.ioVolIndex = -1;  // use ioNamePtr/ioVRefNum combo
+			
+			err = ::PBHGetVInfoSync( &pb );
+		}
+		
+		Mac::ThrowOSStatus( err );
 		
 		return Mac::FSVolumeRefNum( pb.volumeParam.ioVRefNum );
 	}
