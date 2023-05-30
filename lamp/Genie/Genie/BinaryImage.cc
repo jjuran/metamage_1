@@ -5,8 +5,10 @@
 
 #include "Genie/BinaryImage.hh"
 
+// Standard C
+#include <string.h>
+
 // Standard C++
-#include <algorithm>
 #include <map>
 
 // mac-sys-utils
@@ -187,9 +189,13 @@ namespace Genie
 		return code;
 	}
 	
-	static bool SuffixMatches( const unsigned char* name, const unsigned char* endOfName, const char* pattern, std::size_t length )
+	static bool
+	ends_with( const uint8_t* whole, const char* part, size_t len )
 	{
-		return name[0] >= length  &&  std::equal( endOfName - length, endOfName, pattern );
+		size_t length = whole[ 0 ];
+		size_t offset = 1 + length - len;
+		
+		return length >= len  &&  memcmp( whole + offset, part, len ) == 0;
 	}
 	
 	static bool CFragResourceMemberIsLoadable( const CFragResourceMember& member )
@@ -208,14 +214,12 @@ namespace Genie
 		// Check if fragment name is or ends with "Carbon"
 		ConstStr255Param name = member.name;
 		
-		const unsigned char* endOfName = name + 1 + name[0];
-		
-		if ( SuffixMatches( name, endOfName, "(None)", 6 ) )
+		if ( ends_with( name, "(None)", 6 ) )
 		{
 			return true;
 		}
 		
-		bool forCarbon = SuffixMatches( name, endOfName, "Carbon", 6 );
+		bool forCarbon = ends_with( name, "Carbon", 6 );
 		
 		return forCarbon == TARGET_API_MAC_CARBON;
 	}
