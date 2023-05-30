@@ -10,9 +10,6 @@
 #ifndef MAC_FILES_TYPES_FSDIRID_HH
 #include "Mac/Files/Types/FSDirID.hh"
 #endif
-#ifndef MAC_FILES_TYPES_FSDIRSPEC_HH
-#include "Mac/Files/Types/FSDirSpec.hh"
-#endif
 #ifndef MAC_FILES_TYPES_FSFILEREFNUM_HH
 #include "Mac/Files/Types/FSFileRefNum.hh"
 #endif
@@ -103,20 +100,6 @@ namespace Genie
 		                                -1 );
 	}
 	
-	template < class Policy >
-	typename Policy::Result
-	inline 
-	//
-	FSpGetCatInfo( CInfoPBRec&            pb,
-	               bool                   async,
-	               const Mac::FSDirSpec&  dir )
-	{
-		return FSpGetCatInfo< Policy >( pb,
-		                                async,
-		                                dir.vRefNum,
-		                                dir.dirID );
-	}
-	
 	
 	// FSMakeFSSpec
 	// ------------
@@ -125,13 +108,6 @@ namespace Genie
 	FSSpec FSMakeFSSpec( Mac::FSVolumeRefNum   vRefNum,
 	                     Mac::FSDirID          dirID,
 	                     const unsigned char*  name );
-	
-	template < class Policy >
-	inline FSSpec FSMakeFSSpec( const Mac::FSDirSpec&  dir,
-	                            const unsigned char*   name )
-	{
-		return FSMakeFSSpec< Policy >( dir.vRefNum, dir.dirID, name );
-	}
 	
 }
 
