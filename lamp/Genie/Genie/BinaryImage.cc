@@ -33,6 +33,12 @@
 #include "Genie/Utilities/OpenDataFork.hh"
 
 
+#if TARGET_CPU_68K
+#define CACHE_LINKAGE extern
+#else
+#define CACHE_LINKAGE static
+#endif
+
 namespace Genie
 {
 	
@@ -91,7 +97,7 @@ namespace Genie
 	
 	typedef std::map< UInt32, BinaryImageCacheEntry > BinaryImageCache;
 	
-	static BinaryImageCache gBinaryImageCache;
+	CACHE_LINKAGE BinaryImageCache gBinaryImageCache;
 	
 	static BinaryFileMetadata GetFileMetadata( const FSSpec& file )
 	{
