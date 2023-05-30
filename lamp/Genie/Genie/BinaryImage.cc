@@ -310,17 +310,6 @@ namespace Genie
 		return *image.get() == NULL;
 	}
 	
-	template < class Container, class Predicate >
-	static void erase_if( Container& container, Predicate f )
-	{
-		typename Container::iterator it;
-		
-		while ( (it = std::find_if( container.begin(), container.end(), f )) != container.end() )
-		{
-			container.erase( it );
-		}
-	}
-	
 	static void ReleaseCachedImageIfUnused( const BinaryImageCache::value_type& value )
 	{
 		const BinaryImageCacheEntry& cacheEntry = value.second;
@@ -335,11 +324,28 @@ namespace Genie
 	
 	static void ReleaseUnusedCode()
 	{
-		erase_if( gBinaryImageCache, std::ptr_fun( CachedImageIsPurged ) );
+		typedef BinaryImageCache::iterator Iter;
 		
-		std::for_each( gBinaryImageCache.begin(),
-		               gBinaryImageCache.end(),
-		               std::ptr_fun( ReleaseCachedImageIfUnused ) );
+		Iter begin = gBinaryImageCache.begin();
+		Iter end   = gBinaryImageCache.end();
+		
+		while ( begin != end )
+		{
+			Iter it = begin;
+			
+			++begin;
+			
+			const BinaryImageCache::value_type& value = *it;
+			
+			if ( CachedImageIsPurged( value ) )
+			{
+				gBinaryImageCache.erase( it );
+			}
+			else
+			{
+				ReleaseCachedImageIfUnused( value );
+			}
+		}
 	}
 	
 	BinaryImage GetBinaryImage( const FSSpec& file )
