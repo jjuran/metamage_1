@@ -650,6 +650,8 @@ namespace Genie
 	{
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
+		const VRefNum_DirID& parent = parent_directory( extra.fsspec );
+		
 		if ( extra.fsspec.parID == fsRtParID )
 		{
 			return Get_sys_mac_vol_N( extra.fsspec.vRefNum );
@@ -657,7 +659,7 @@ namespace Genie
 		
 		const VRefNum_DirID& root = root_DirSpec();
 		
-		if ( extra.fsspec.vRefNum == root.vRefNum  &&  extra.fsspec.parID == root.dirID )
+		if ( parent.vRefNum == root.vRefNum  &&  parent.dirID == root.dirID )
 		{
 			return relix::root();
 		}
@@ -667,7 +669,7 @@ namespace Genie
 			return relix::root();
 		}
 		
-		return FSTreeFromFSDirSpec( parent_directory( extra.fsspec ) );
+		return FSTreeFromFSDirSpec( parent );
 	}
 	
 	static ino_t hfs_inode( const vfs::node* that )
