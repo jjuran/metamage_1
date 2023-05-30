@@ -24,7 +24,6 @@
 #include "plus/var_string.hh"
 
 // Nitrogen
-#include "Mac/Files/Types/FSDirSpec.hh"
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
@@ -46,7 +45,6 @@
 namespace Genie
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
 	
@@ -91,9 +89,7 @@ namespace Genie
 		
 		const Mac::FSVolumeRefNum vRefNum = GetVRefNum( mac_name );
 		
-		const Mac::FSDirSpec dir = n::make< Mac::FSDirSpec >( vRefNum, Mac::fsRtDirID );
-		
-		return FSTreeFromFSDirSpec( dir );
+		return node_from_dirID( vRefNum, fsRtDirID );
 	}
 	
 	static const vfs::link_method_set volumes_link_link_methods =

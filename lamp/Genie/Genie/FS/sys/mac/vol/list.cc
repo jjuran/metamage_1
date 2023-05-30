@@ -496,28 +496,26 @@ namespace Genie
 	
 	static vfs::node_ptr folder_link_resolve( const vfs::node* that )
 	{
-		using mac::types::VRefNum_DirID;
-		
 		const char* name = that->name().c_str();
 		
 		const OSType folder_type = name[0] == 's' ? kSystemFolderType
 		                         : name[0] == 't' ? kTemporaryFolderType
 		                         :                  0;
 		
-		const FSVolumeRefNum vRefNum = GetKeyFromParent( *that->owner() );
+		FSVolumeRefNum vRefNum = GetKeyFromParent( *that->owner() );
 		
 		OSErr err;
-		VRefNum_DirID folder;
+		long  dirID;
 		
 		err = FindFolder( vRefNum,
 		                  folder_type,
 		                  false,
-		                  &folder.vRefNum,
-		                  &folder.dirID );
+		                  &vRefNum,
+		                  &dirID );
 		
 		Mac::ThrowOSStatus( err );
 		
-		return FSTreeFromFSDirSpec( folder );
+		return node_from_dirID( vRefNum, dirID );
 	}
 	
 	static const vfs::link_method_set folder_link_link_methods =
@@ -538,13 +536,9 @@ namespace Genie
 	                                   const plus::string&  name,
 	                                   const void*          args )
 	{
-		using mac::types::VRefNum_DirID;
-		
 		FSVolumeRefNum key = GetKeyFromParent( *parent );
 		
-		const VRefNum_DirID volume = { key, fsRtDirID };
-		
-		return FSTreeFromFSDirSpec( volume );
+		return node_from_dirID( key, fsRtDirID );
 	}
 	
 	static vfs::node_ptr Folder_Link_Factory( const vfs::node*     parent,
