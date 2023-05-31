@@ -7,6 +7,8 @@ def existing (path)
 	return try {stat path; path} catch {}
 }
 
+let exists = existing
+
 let amsdir = bindir "/../share/ams/"
 
 let ams_bin = getenv "AMS_BIN" or amsdir "/bin"
@@ -85,11 +87,6 @@ if app_name isa null then
 	if let ams_appname = getenv "AMS_APPNAME"
 		then {ams_appname}
 	else {default_app}
-}
-
-def exists (path)
-{
-	return try {stat path; true} catch {false}
 }
 
 def which (program)
