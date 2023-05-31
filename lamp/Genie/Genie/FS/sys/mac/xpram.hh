@@ -16,14 +16,6 @@
 namespace Genie
 {
 	
-	class sys_mac_xpram_Query
-	{
-		public:
-			sys_mac_xpram_Query()  {}
-			
-			plus::string Get() const;
-	};
-	
 	struct sys_mac_xpram
 	{
 		static plus::string Read( const vfs::node* parent, const plus::string& name );

@@ -75,11 +75,6 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	plus::string sys_mac_xpram_Query::Get() const
-	{
-		return N::ReadXPRam();
-	}
-	
 	plus::string sys_mac_xpram::Read( const vfs::node* parent, const plus::string& name )
 	{
 		return N::ReadXPRam();
