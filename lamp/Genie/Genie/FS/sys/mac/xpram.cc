@@ -53,11 +53,14 @@ inline void ReadXPRam( void* buffer, UInt16 length, UInt16 offset )
 
 #endif
 
-namespace Nitrogen
+namespace Genie
 {
 	
-	inline plus::string ReadXPRam( UInt16 length = 256, UInt16 offset = 0 )
+	plus::string sys_mac_xpram::Read( const vfs::node* parent, const plus::string& name )
 	{
+		const UInt16 length = 256;
+		const UInt16 offset = 0;
+		
 		plus::string xpram;
 		
 		char* p = xpram.reset( length );
@@ -65,19 +68,6 @@ namespace Nitrogen
 		::ReadXPRam( p, length, offset );
 		
 		return xpram;
-	}
-	
-}
-
-namespace Genie
-{
-	
-	namespace N = Nitrogen;
-	
-	
-	plus::string sys_mac_xpram::Read( const vfs::node* parent, const plus::string& name )
-	{
-		return N::ReadXPRam();
 	}
 	
 }
