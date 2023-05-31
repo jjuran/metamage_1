@@ -2,6 +2,11 @@
 
 let bindir = dirname realpath argv[ 0 ]
 
+def existing (path)
+{
+	return try {stat path; path} catch {}
+}
+
 let amsdir = bindir "/../share/ams/"
 
 let ams_bin = getenv "AMS_BIN" or amsdir "/bin"
@@ -98,9 +103,8 @@ def which (program)
 }
 
 let home     = getenv "HOME"
-let home_68k = home "/68k"
 
-let root_dir = if exists home_68k then {home_68k} else {ams_mnt}
+let root_dir = existing home "/68k" or ams_mnt
 
 let resfiles = [ "AMS Resources", "System" ]
 let respaths = resfiles map { root_dir "/" v } ver { exists v "/r" }
