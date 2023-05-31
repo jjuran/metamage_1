@@ -9,7 +9,9 @@ def existing (path)
 
 let exists = existing
 
-let amsdir = bindir "/../share/ams/"
+let amsdir = getenv "AMS_ROOT" or existing bindir "/../share/ams/"
+                               or existing bindir "/../../../ams-68k-bin"
+                               or throw "AMS_ROOT not set; can't find AMS files"
 
 let ams_bin = getenv "AMS_BIN" or amsdir "/bin"
 let ams_lib = getenv "AMS_LIB" or amsdir "/lib"
