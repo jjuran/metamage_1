@@ -915,16 +915,21 @@ namespace Genie
 		
 		hfs_extra& extra = *(hfs_extra*) file.extra();
 		
+		short vRefNum = extra.fsspec.vRefNum;
+		long  dirID   = extra.fsspec.parID;
+		
+		ConstStr63Param name = extra.fsspec.name;
+		
 		// Note:  The update could fail if the file has already been deleted.
 		
 		FInfo fInfo;
-		err = FSpGetFInfo( &extra.fsspec, &fInfo );
+		err = HGetFInfo( vRefNum, dirID, name, &fInfo );
 		
 		if ( err == noErr )
 		{
 			fInfo.fdType = type;
 			
-			err = FSpSetFInfo( &extra.fsspec, &fInfo );
+			err = HSetFInfo( vRefNum, dirID, name, &fInfo );
 			
 			if ( err == noErr )
 			{
