@@ -181,7 +181,7 @@ namespace Genie
 		return false;
 	}
 	
-	static void ToggleBinaryFileSignature( const FSSpec& file, bool to_binary )
+	static void CheckFileSignature( const FSSpec& file, const char* data, size_t n_bytes )
 	{
 		OSErr err;
 		FInfo fInfo;
@@ -190,6 +190,8 @@ namespace Genie
 		
 		if ( err == noErr )
 		{
+			const bool to_binary = gear::is_binary_data( data, n_bytes );
+			
 			if ( ToggleBinaryFileSignature( fInfo, to_binary ) )
 			{
 				err = HSetFInfo( file.vRefNum, file.parID, file.name, &fInfo );
@@ -197,11 +199,6 @@ namespace Genie
 		}
 		
 		// ignore errors
-	}
-	
-	static void CheckFileSignature( const FSSpec& file, const char* data, size_t n_bytes )
-	{
-		ToggleBinaryFileSignature( file, gear::is_binary_data( data, n_bytes ) );
 	}
 	
 	
