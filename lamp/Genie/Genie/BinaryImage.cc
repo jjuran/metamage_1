@@ -18,6 +18,7 @@
 #include "mac_sys/mem_error.hh"
 
 // mac-file-utils
+#include "mac_file/open_data_fork.hh"
 #include "mac_file/rw.hh"
 
 // Debug
@@ -29,9 +30,6 @@
 
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"
-
-// Genie
-#include "Genie/Utilities/OpenDataFork.hh"
 
 
 #if TARGET_CPU_68K
@@ -124,7 +122,16 @@ namespace Genie
 	{
 		Handle h;
 		
-		n::owned< N::FSFileRefNum > refNum = OpenDataFork( file, N::fsRdPerm );
+		short opened = mac::file::open_data_fork( file, fsRdPerm );
+		
+		if ( opened < 0 )
+		{
+			Mac::ThrowOSStatus( opened );
+		}
+		
+		typedef n::owned< N::FSFileRefNum > Owned;
+		
+		Owned refNum = Owned::seize( N::FSFileRefNum( opened ) );
 		
 		if ( length == kCFragGoesToEOF )
 		{
