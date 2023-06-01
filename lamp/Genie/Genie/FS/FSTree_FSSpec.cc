@@ -204,11 +204,24 @@ namespace Genie
 	
 	static void SpewFile( const FSSpec& file, const plus::string& contents )
 	{
-		n::owned< N::FSFileRefNum > output = OpenDataFork( file, N::fsWrPerm );
+		using mac::file::FSIORefNum;
+		using mac::file::open_data_fork;
 		
-		N::SetEOF( output, 0 );
+		FSIORefNum output = open_data_fork( file, fsWrPerm );
 		
-		N::FSWrite( output, contents.size(), contents.data() );
+		OSStatus err = output;
+		
+		if ( output >= 0 )
+		{
+			Size n_bytes = contents.size();
+			
+			(err = SetEOF( output, 0 ))  ||
+			(err = FSWrite( output, &n_bytes, contents.data() ));
+			
+			FSClose( output );
+		}
+		
+		Mac::ThrowOSStatus( err );
 	}
 	
 	static plus::string get_long_name( const FSSpec& item )
