@@ -9,8 +9,8 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-// Nitrogen
-#include "Nitrogen/Files.hh"
+// mac-file-utils
+#include "mac_file/open_rsrc_fork.hh"
 
 // vfs
 #include "vfs/filehandle.hh"
@@ -30,9 +30,6 @@
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	static mode_t file_mode( const FSSpec& file )
 	{
@@ -67,7 +64,7 @@ namespace Genie
 		
 		return OpenMacFileHandle( fileSpec,
 		                          flags,
-		                          &N::HOpenRF,
+		                          &mac::file::open_rsrc_fork,
 		                          &GetRsrcForkFSTree );
 	}
 	

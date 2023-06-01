@@ -6,28 +6,19 @@
 #ifndef GENIE_IO_MACFILE_HH
 #define GENIE_IO_MACFILE_HH
 
-// nucleus
-#ifndef NUCLEUS_OWNED_HH
-#include "nucleus/owned.hh"
-#endif
-
-// Nitrogen
-#ifndef MAC_FILES_TYPES_FSFILEREFNUM_HH
-#include "Mac/Files/Types/FSFileRefNum.hh"
-#endif
-#ifndef MAC_FILES_TYPES_FSIOPERM_HH
-#include "Mac/Files/Types/FSIOPerm.hh"
-#endif
-
 // vfs
 #include "vfs/filehandle_ptr.hh"
 #include "vfs/node_ptr.hh"
+
+// <Files.h>
+typedef signed char SInt8;
+struct FSSpec;
 
 
 namespace Genie
 {
 	
-	typedef nucleus::owned< Mac::FSFileRefNum > (*ForkOpener)( const FSSpec&, Mac::FSIOPerm );
+	typedef short (*ForkOpener)( const FSSpec& file, SInt8 perm );
 	
 	typedef vfs::node_ptr (*FileGetter)( const FSSpec& );
 	

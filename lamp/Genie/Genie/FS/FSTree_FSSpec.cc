@@ -112,7 +112,6 @@
 #include "Genie/Kernel/native_syscalls.hh"
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/Utilities/FinderSync.hh"
-#include "Genie/Utilities/OpenDataFork.hh"
 
 
 namespace Genie
@@ -1048,7 +1047,7 @@ namespace Genie
 		
 		vfs::filehandle_ptr opened = OpenMacFileHandle( extra.fsspec,
 		                                                flags,
-		                                                &OpenDataFork,
+		                                                &mac::file::open_data_fork,
 		                                                &FSTreeFromFSSpec );
 		
 		if ( created )

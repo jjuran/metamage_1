@@ -316,12 +316,21 @@ namespace Genie
 	                   ForkOpener     openFork,
 	                   FileGetter     getFile )
 	{
+		typedef n::owned< Mac::FSFileRefNum > Owned;
+		
 		const bool writable = (flags + 1 - O_RDONLY) & 2;
 		
 		const Mac::FSIOPermissions perm = writable ? Mac::fsRdWrShPerm
 		                                           : Mac::fsRdPerm;
 		
-		n::owned< Mac::FSFileRefNum > fileHandle = openFork( fileSpec, perm );
+		short refnum = openFork( fileSpec, perm );
+		
+		if ( refnum < 0 )
+		{
+			Mac::ThrowOSStatus( refnum );
+		}
+		
+		Owned fileHandle = Owned::seize( Mac::FSFileRefNum( refnum ) );
 		
 		return new_Mac_filehandle( fileHandle, flags, getFile );
 	}
