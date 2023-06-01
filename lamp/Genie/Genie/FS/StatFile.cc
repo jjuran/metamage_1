@@ -15,6 +15,9 @@
 // mac-types
 #include "mac_types/epoch.hh"
 
+// mac-file-utils
+#include "mac_file/open_data_fork.hh"
+
 // gear
 #include "gear/is_binary_data.hh"
 
@@ -30,13 +33,11 @@
 // Genie
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSTree_FSSpec.hh"
-#include "Genie/Utilities/OpenDataFork.hh"
 
 
 namespace Genie
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
@@ -226,15 +227,32 @@ namespace Genie
 	
 	static bool is_text_file( const FSSpec& file )
 	{
-		n::owned< N::FSFileRefNum > in = OpenDataFork( file, N::fsRdPerm );
+		using mac::file::FSIORefNum;
+		using mac::file::open_data_fork;
 		
 		const size_t buffer_size = TARGET_API_MAC_CARBON ? 4096 : 512;
 		
 		char buffer[ buffer_size ];
 		
-		const size_t n_read = N::FSRead( in, buffer, N::ThrowEOF_Never() );
+		bool result = false;
 		
-		return !gear::is_binary_data( buffer, n_read );
+		FSIORefNum in = open_data_fork( file, fsRdPerm );
+		
+		if ( in >= 0 )
+		{
+			Size n_bytes = buffer_size;
+			
+			OSErr err = FSRead( in, &n_bytes, buffer );
+			
+			if ( err == noErr  ||  err == eofErr )
+			{
+				result = ! gear::is_binary_data( buffer, n_bytes );
+			}
+			
+			FSClose( in );
+		}
+		
+		return result;
 	}
 	
 	void ChangeFileMode( const FSSpec& file, mode_t new_mode )
