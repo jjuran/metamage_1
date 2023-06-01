@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac.hh"
 
+// mac-sys-utils
+#include "mac_sys/xpram.hh"
+
 // vfs
 #include "vfs/node.hh"
 #include "vfs/property.hh"
@@ -19,15 +22,31 @@
 
 // Genie
 #include "Genie/FS/sys/mac/gestalt.hh"
-#if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
-#include "Genie/FS/sys/mac/xpram.hh"
-#endif
 #include "Genie/FS/sys/mac/user.hh"
 #include "Genie/FS/sys/mac/vol.hh"
 
 
 namespace Genie
 {
+	
+	static
+	plus::string read_xpram( const vfs::node* parent, const plus::string& name )
+	{
+		const UInt16 length = 256;
+		const UInt16 offset = 0;
+		
+		plus::string xpram;
+		
+		char* p = xpram.reset( length );
+		
+	#if ! TARGET_API_MAC_CARBON
+		
+		mac::sys::ReadXPRam( p, length, offset );
+		
+	#endif
+		
+		return xpram;
+	}
 	
 	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
@@ -39,7 +58,7 @@ namespace Genie
 		
 	#if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 		
-		{ "xpram", &vfs::new_generated, (void*) &sys_mac_xpram::Read },
+		{ "xpram", &vfs::new_generated, (void*) &read_xpram },
 		
 	#endif
 		
