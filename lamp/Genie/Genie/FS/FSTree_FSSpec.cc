@@ -33,6 +33,7 @@
 // mac-file-utils
 #include "mac_file/desktop.hh"
 #include "mac_file/make_FSSpec.hh"
+#include "mac_file/open_data_fork.hh"
 #include "mac_file/parent_directory.hh"
 #include "mac_file/program_file.hh"
 
@@ -168,15 +169,35 @@ namespace Genie
 	
 	static plus::string SlurpFile( const FSSpec& file )
 	{
+		using mac::file::FSIORefNum;
+		using mac::file::open_data_fork;
+		
 		plus::string result;
 		
-		n::owned< N::FSFileRefNum > input = OpenDataFork( file, N::fsRdPerm );
+		FSIORefNum input = open_data_fork( file, fsRdPerm );
 		
-		const std::size_t size = N::GetEOF( input );
+		OSErr err = input;
 		
-		char* p = result.reset( size );
+		if ( input >= 0 )
+		{
+			Size size;
+			char* p;
+			
+			try
+			{
+				(err = GetEOF( input, &size ))  ||
+				! (p = result.reset( size ))    ||
+				(err = FSRead( input, &size, p ));
+			}
+			catch ( ... )
+			{
+				err = memFullErr;
+			}
+			
+			FSClose( input );
+		}
 		
-		const std::size_t bytes_read = N::FSRead( input, size, p, N::ThrowEOF_Always() );
+		Mac::ThrowOSStatus( err );
 		
 		return result;
 	}
