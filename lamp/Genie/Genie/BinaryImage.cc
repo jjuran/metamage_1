@@ -156,9 +156,7 @@ namespace Genie
 		
 		err = mac::file::read_all( refNum, *data.get().Get(), length, offset );
 		
-		Mac::ThrowOSStatus( err );
-		
-		if ( TARGET_CPU_68K )
+		if ( TARGET_CPU_68K  &&  err == noErr )
 		{
 			code_rsrc_header& header = *(code_rsrc_header*) *data.get().Get();
 			
@@ -166,9 +164,11 @@ namespace Genie
 			
 			if ( header.branch != 0x600A )
 			{
-				Mac::ThrowOSStatus( paramErr );  // converts to EINVAL
+				err = paramErr;  // converts to EINVAL
 			}
 		}
+		
+		Mac::ThrowOSStatus( err );
 		
 		return data;
 	}
