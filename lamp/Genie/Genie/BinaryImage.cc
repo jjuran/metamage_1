@@ -30,9 +30,6 @@
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"
 
-// poseven
-#include "poseven/types/errno_t.hh"
-
 // Genie
 #include "Genie/Utilities/OpenDataFork.hh"
 
@@ -48,7 +45,6 @@ namespace Genie
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace p7 = poseven;
 	
 	
 	struct code_rsrc_header
@@ -146,7 +142,7 @@ namespace Genie
 			
 			if ( offset >= eof )
 			{
-				p7::throw_errno( EINVAL );
+				Mac::ThrowOSStatus( paramErr );  // converts to EINVAL
 			}
 			
 			length = eof - offset;
@@ -170,7 +166,7 @@ namespace Genie
 			
 			if ( header.branch != 0x600A )
 			{
-				p7::throw_errno( EINVAL );
+				Mac::ThrowOSStatus( paramErr );  // converts to EINVAL
 			}
 		}
 		
@@ -258,7 +254,7 @@ namespace Genie
 		
 		if ( member == NULL )
 		{
-			p7::throw_errno( EINVAL );
+			Mac::ThrowOSStatus( paramErr );  // converts to EINVAL
 		}
 		
 		UInt32 offset = member->offset;
