@@ -124,57 +124,67 @@ namespace Genie
 		
 		short opened = mac::file::open_data_fork( file, fsRdPerm );
 		
-		if ( opened < 0 )
+		OSErr err = opened;
+		
+		if ( opened >= 0 )
 		{
-			Mac::ThrowOSStatus( opened );
-		}
-		
-		typedef n::owned< N::FSFileRefNum > Owned;
-		
-		Owned refNum = Owned::seize( N::FSFileRefNum( opened ) );
-		
-		if ( length == kCFragGoesToEOF )
-		{
-			UInt32 eof = N::GetEOF( refNum );
+			short refNum = opened;
 			
-			if ( offset >= eof )
+			if ( length == kCFragGoesToEOF )
 			{
-				Mac::ThrowOSStatus( paramErr );  // converts to EINVAL
+				Size eof;
+				
+				err = GetEOF( refNum, &eof );
+				
+				if ( err )  goto closing;
+				
+				if ( offset >= eof )
+				{
+					err = paramErr;  // converts to EINVAL
+					goto closing;
+				}
+				
+				length = eof - offset;
 			}
 			
-			length = eof - offset;
-		}
-		
-		h = new_handle_nothrow( length );
-		
-		if ( h == NULL )
-		{
-			Mac::ThrowOSStatus( memFullErr );
-		}
-		
-		BinaryImage data = n::owned< Mac::Handle >::seize( h );
-		
-		HLockHi( h );
-		
-		OSStatus err;
-		
-		err = mac::file::read_all( refNum, *h, length, offset );
-		
-		if ( TARGET_CPU_68K  &&  err == noErr )
-		{
-			code_rsrc_header& header = *(code_rsrc_header*) *h;
+			h = new_handle_nothrow( length );
 			
-			// Handle dereferenced here
-			
-			if ( header.branch != 0x600A )
+			if ( h == NULL )
 			{
-				err = paramErr;  // converts to EINVAL
+				err = memFullErr;
+				
+				goto closing;
 			}
+			
+			HLockHi( h );
+			
+			err = mac::file::read_all( refNum, *h, length, offset );
+			
+			if ( TARGET_CPU_68K  &&  err == noErr )
+			{
+				code_rsrc_header& header = *(code_rsrc_header*) *h;
+				
+				// Handle dereferenced here
+				
+				if ( header.branch != 0x600A )
+				{
+					err = paramErr;  // converts to EINVAL
+				}
+			}
+			
+			if ( err != noErr )
+			{
+				DisposeHandle( h );
+			}
+			
+		closing:
+			
+			FSClose( refNum );
 		}
 		
 		Mac::ThrowOSStatus( err );
 		
-		return data;
+		return n::owned< Mac::Handle >::seize( h );
 	}
 	
 	
