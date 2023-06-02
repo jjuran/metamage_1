@@ -122,6 +122,8 @@ namespace Genie
 	
 	static BinaryImage ReadProgramFromDataFork( const FSSpec& file, UInt32 offset, UInt32 length )
 	{
+		Handle h;
+		
 		n::owned< N::FSFileRefNum > refNum = OpenDataFork( file, N::fsRdPerm );
 		
 		if ( length == kCFragGoesToEOF )
@@ -136,7 +138,7 @@ namespace Genie
 			length = eof - offset;
 		}
 		
-		Handle h = new_handle_nothrow( length );
+		h = new_handle_nothrow( length );
 		
 		if ( h == NULL )
 		{
@@ -145,15 +147,15 @@ namespace Genie
 		
 		BinaryImage data = n::owned< Mac::Handle >::seize( h );
 		
-		HLockHi( data.get() );
+		HLockHi( h );
 		
 		OSStatus err;
 		
-		err = mac::file::read_all( refNum, *data.get().Get(), length, offset );
+		err = mac::file::read_all( refNum, *h, length, offset );
 		
 		if ( TARGET_CPU_68K  &&  err == noErr )
 		{
-			code_rsrc_header& header = *(code_rsrc_header*) *data.get().Get();
+			code_rsrc_header& header = *(code_rsrc_header*) *h;
 			
 			// Handle dereferenced here
 			
