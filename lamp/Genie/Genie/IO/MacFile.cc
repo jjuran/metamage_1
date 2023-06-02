@@ -16,6 +16,7 @@
 
 // mac-file-utils
 #include "mac_file/refnum_file.hh"
+#include "mac_file/rw.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -29,10 +30,6 @@
 
 // Nitrogen
 #include "Nitrogen/Files.hh"
-
-// MacIO
-#include "MacIO/FSRead_Sync.hh"
-#include "MacIO/FSWrite_Sync.hh"
 
 // Genie
 #include "Genie/FileSignature.hh"
@@ -244,12 +241,12 @@ namespace Genie
 			p7::throw_errno( EBADF );
 		}
 		
-		ssize_t read = MacIO::FSRead( MacIO::kThrowEOF_Never,
-		                              Mac::FSFileRefNum( extra.refnum ),
-		                              N::fsFromStart,
-		                              offset,
-		                              n,
-		                              buffer );
+		long read = mac::file::read( extra.refnum, buffer, n, offset );
+		
+		if ( read < 0 )
+		{
+			Mac::ThrowOSStatus( read );
+		}
 		
 		return read;
 	}
@@ -262,25 +259,21 @@ namespace Genie
 	{
 		Mac_file_extra& extra = *(Mac_file_extra*) that->extra();
 		
-		const N::FSIOPosMode mode = N::fsFromStart;
-		
 		if ( offset > hfs_geteof( that ) )
 		{
 			hfs_seteof( that, offset );
 		}
 		
-		ssize_t written = MacIO::FSWrite( Mac::FSFileRefNum( extra.refnum ),
-		                                  mode,
-		                                  offset,
-		                                  n,
-		                                  buffer );
+		OSErr err = mac::file::write( extra.refnum, buffer, n, offset );
+		
+		Mac::ThrowOSStatus( err );
 		
 		if ( offset == 0 )
 		{
 			CheckFileSignature( refnum_file( extra.refnum ), buffer, n );
 		}
 		
-		return written;
+		return n;
 	}
 	
 	static
@@ -288,16 +281,11 @@ namespace Genie
 	{
 		Mac_file_extra& extra = *(Mac_file_extra*) that->extra();
 		
-		const N::FSIOPosMode  mode   = N::fsFromLEOF;
-		const SInt32          offset = 0;
+		OSErr err = mac::file::append( extra.refnum, buffer, n );
 		
-		ssize_t written = MacIO::FSWrite( Mac::FSFileRefNum( extra.refnum ),
-		                                  mode,
-		                                  offset,
-		                                  n,
-		                                  buffer );
+		Mac::ThrowOSStatus( err );
 		
-		return written;
+		return n;
 	}
 	
 	static

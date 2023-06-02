@@ -17,6 +17,9 @@
 #include "mac_sys/has/RealTempMemory.hh"
 #include "mac_sys/mem_error.hh"
 
+// mac-file-utils
+#include "mac_file/rw.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -25,7 +28,6 @@
 #include "Nitrogen/Resources.hh"
 
 // MacIO
-#include "MacIO/FSRead_Sync.hh"
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // poseven
@@ -154,12 +156,11 @@ namespace Genie
 		
 		HLockHi( data.get() );
 		
-		MacIO::FSRead( MacIO::kThrowEOF_Always,
-		               refNum,
-		               N::fsFromStart,
-		               offset,
-		               length,
-		               *data.get().Get() );
+		OSStatus err;
+		
+		err = mac::file::read_all( refNum, *data.get().Get(), length, offset );
+		
+		Mac::ThrowOSStatus( err );
 		
 		if ( TARGET_CPU_68K )
 		{
