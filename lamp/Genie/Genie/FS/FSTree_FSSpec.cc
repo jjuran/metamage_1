@@ -36,6 +36,7 @@
 #include "mac_file/open_data_fork.hh"
 #include "mac_file/parent_directory.hh"
 #include "mac_file/program_file.hh"
+#include "mac_file/rw.hh"
 
 // mac-app-utils
 #include "mac_app/create_alias.hh"
@@ -187,7 +188,7 @@ namespace Genie
 			{
 				(err = GetEOF( input, &size ))  ||
 				! (p = result.reset( size ))    ||
-				(err = FSRead( input, &size, p ));
+				(err = mac::file::read_all( input, p, size ));
 			}
 			catch ( ... )
 			{
@@ -213,10 +214,11 @@ namespace Genie
 		
 		if ( output >= 0 )
 		{
-			Size n_bytes = contents.size();
+			const char* data = contents.data();
+			Size        size = contents.size();
 			
 			(err = SetEOF( output, 0 ))  ||
-			(err = FSWrite( output, &n_bytes, contents.data() ));
+			(err = mac::file::write( output, data, size ));
 			
 			FSClose( output );
 		}

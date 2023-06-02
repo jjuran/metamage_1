@@ -17,6 +17,7 @@
 
 // mac-file-utils
 #include "mac_file/open_data_fork.hh"
+#include "mac_file/rw.hh"
 
 // gear
 #include "gear/is_binary_data.hh"
@@ -240,11 +241,9 @@ namespace Genie
 		
 		if ( in >= 0 )
 		{
-			Size n_bytes = buffer_size;
+			Size n_bytes = mac::file::read( in, buffer, buffer_size );
 			
-			OSErr err = FSRead( in, &n_bytes, buffer );
-			
-			if ( err == noErr  ||  err == eofErr )
+			if ( n_bytes >= 0 )
 			{
 				result = ! gear::is_binary_data( buffer, n_bytes );
 			}
