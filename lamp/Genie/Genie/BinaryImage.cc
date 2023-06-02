@@ -108,28 +108,16 @@ namespace Genie
 		return BinaryFileMetadata( pb.hFileInfo );
 	}
 	
-	static
-	n::owned< N::Handle > new_handle( size_t size )
+	static inline
+	Handle new_handle_nothrow( size_t size )
 	{
+		OSErr err;
 		Handle h;
 		
-		if ( mac::sys::has_RealTempMemory() )
-		{
-			OSErr err;
-			
-			if (( h = TempNewHandle( size, &err ) ))  goto done;
-		}
+		(mac::sys::has_RealTempMemory()  &&  (h = TempNewHandle( size, &err )))
+		                                 ||  (h = NewHandle    ( size       ));
 		
-		if (( h = NewHandle( size ) ))  goto done;
-		
-		OSErr err;
-		err = mac::sys::mem_error();
-		
-		Mac::ThrowOSStatus( err );
-		
-	done:
-		
-		return n::owned< N::Handle >::seize( N::Handle( h ) );
+		return h;
 	}
 	
 	static BinaryImage ReadProgramFromDataFork( const FSSpec& file, UInt32 offset, UInt32 length )
@@ -148,7 +136,14 @@ namespace Genie
 			length = eof - offset;
 		}
 		
-		BinaryImage data = new_handle( length );
+		Handle h = new_handle_nothrow( length );
+		
+		if ( h == NULL )
+		{
+			Mac::ThrowOSStatus( memFullErr );
+		}
+		
+		BinaryImage data = n::owned< Mac::Handle >::seize( h );
 		
 		HLockHi( data.get() );
 		
