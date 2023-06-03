@@ -320,8 +320,7 @@ namespace Genie
 		
 		const bool writable = (flags + 1 - O_RDONLY) & 2;
 		
-		const Mac::FSIOPermissions perm = writable ? Mac::fsRdWrShPerm
-		                                           : Mac::fsRdPerm;
+		const SInt8 perm = writable ? fsRdWrShPerm : fsRdPerm;
 		
 		short refnum = openFork( fileSpec, perm );
 		
