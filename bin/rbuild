@@ -10,6 +10,10 @@ if [ -z "$NEXUS_PEER" ]; then
 	exit 1
 fi
 
+if [ -z "$NEXUS_HOST" ]; then
+	NEXUS_HOST=`hostname -s`
+fi
+
 PATH="$PWD/scripts/nexus:$PWD/bin:$PATH"
 
 SDK_DIR=~/opt/relix/SDK
