@@ -22,9 +22,9 @@ namespace gear
 	void encode_quad( unsigned long q, unsigned char* s )
 	{
 		s[ 0 ] = q >> 24;
-		s[ 1 ] = q >> 16 & 0xff;
-		s[ 2 ] = q >>  8 & 0xff;
-		s[ 3 ] = q >>  0 & 0xff;
+		s[ 1 ] = q >> 16;
+		s[ 2 ] = q >>  8;
+		s[ 3 ] = q >>  0;
 	}
 	
 }
