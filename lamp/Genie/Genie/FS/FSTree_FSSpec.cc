@@ -183,16 +183,9 @@ namespace Genie
 			Size size;
 			char* p;
 			
-			try
-			{
-				(err = GetEOF( input, &size ))  ||
-				! (p = result.reset( size ))    ||
-				(err = mac::file::read_all( input, p, size ));
-			}
-			catch ( ... )
-			{
-				err = memFullErr;
-			}
+			(err = GetEOF( input, &size ))                                  ||
+			(! (p = result.reset_nothrow( size ))  &&  (err = memFullErr))  ||
+			(err = mac::file::read_all( input, p, size ));
 			
 			FSClose( input );
 		}
