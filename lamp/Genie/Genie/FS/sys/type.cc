@@ -5,11 +5,13 @@
 
 #include "Genie/FS/sys/type.hh"
 
+// iota
+#include "iota/endian.hh"
+
 // gear
 #include "gear/quad.hh"
 
 // plus
-#include "plus/quad.hh"
 #include "plus/var_string.hh"
 
 // poseven
@@ -36,7 +38,11 @@ namespace Genie
 		
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
-			result = plus::encode_quad( gTextFileCreator );
+			char* p = result.reset_nothrow( fixed_size );
+			
+			OSType* q = (OSType*) p;
+			
+			*q = iota::big_u32( gTextFileCreator );
 		}
 		
 		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
