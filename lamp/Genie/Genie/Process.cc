@@ -402,7 +402,7 @@ namespace Genie
 	{
 		const size_t buffer_length = 512;
 		
-		plus::var_string result;
+		plus::string result;
 		
 		char* p = result.reset( buffer_length );
 		
@@ -418,9 +418,9 @@ namespace Genie
 		{
 		}
 		
-		result.resize( n_read );
+		p[ n_read ] = '\0';
 		
-		return result.move();
+		return result.substr( 0, n_read );
 	}
 	
 	static void Normalize( const char* path, ExecContext& context, const vfs::node& cwd )
