@@ -368,6 +368,20 @@ namespace Genie
 		if ( TARGET_CPU_68K )
 		{
 			// Can't share code resources among threads, so don't bother caching it
+			
+			if ( ! CONFIG_DEBUGGING )
+			{
+				/*
+					The 68K tool post-linker moves the code resource
+					into the data fork.  We would only ever need to
+					load an actual code resource if we were using
+					the CodeWarrior debugger (in which case the call
+					to DetachResource() needs to be skipped).
+				*/
+				
+				return ReadProgramFromDataFork( file, 0, kCFragGoesToEOF );
+			}
+			
 			return ReadImageFromFile( file );
 		}
 		
