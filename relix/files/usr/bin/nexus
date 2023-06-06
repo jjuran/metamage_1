@@ -246,12 +246,7 @@ sub nexus_accept
 	
 	rename "$in_dir", "$host_dir/jobs/$job_name" or die "rename $in_dir: $!\n";
 	
-	if ( $next )
-	{
-		return $job_name;
-	}
-	
-	return;
+	return $job_name;
 }
 
 sub nexus_run
@@ -381,13 +376,16 @@ sub nexus_do
 	
 	if ( defined $result )
 	{
-		$job_name = $result;
+		if ( $job_name eq 'next' )
+		{
+			$job_name = $result;
+			
+			print "$job_name\n";
+		}
 		
-		print "$job_name\n";
+		nexus_run   ( $job_name );
+		nexus_return( $job_name );
 	}
-	
-	nexus_run   ( $job_name );
-	nexus_return( $job_name );
 	
 	return;
 }
