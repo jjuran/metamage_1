@@ -134,7 +134,7 @@ foreach my $path ( keys %input )
 
 splat( "$job/INPUT", join "\n", values( %input ), "" );
 
-system $NEXUS, 'call', $PEER, $job_name;
+system( $NEXUS, 'call', $PEER, $job_name ) == 0 or die "nexus call: $?\n";
 
 if ( -f "$job/SUCCESS" )
 {
@@ -144,7 +144,7 @@ if ( -f "$job/SUCCESS" )
 	
 	unlink @job_files;
 	
-	system $NEXUS, 'delete', $job_name;
+	system( $NEXUS, 'delete', $job_name ) == 0 or die "nexus delete: $?\n";
 }
 
 if ( -f "$job/FAILURE" )

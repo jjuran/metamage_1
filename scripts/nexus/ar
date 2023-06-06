@@ -84,7 +84,7 @@ foreach my $path ( @input_paths )
 
 splat( "$job/INPUT", join "\n", (map { "$_.o" } (1 .. scalar @input_paths)), "" );
 
-system $NEXUS, 'call', $PEER, $job_name;
+system( $NEXUS, 'call', $PEER, $job_name ) == 0 or die "nexus call: $?\n";
 
 if ( -f "$job/SUCCESS" )
 {
@@ -94,7 +94,7 @@ if ( -f "$job/SUCCESS" )
 	
 	unlink "$job/$output_file", map { "$job/" . ++$i . ".o" } @input_paths;
 	
-	system $NEXUS, 'delete', $job_name;
+	system( $NEXUS, 'delete', $job_name ) == 0 or die "nexus delete: $?\n";
 }
 
 if ( -f "$job/FAILURE" )
