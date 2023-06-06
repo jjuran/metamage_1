@@ -237,16 +237,21 @@ sub nexus_accept
 	
 	if ( $next )
 	{
-		$job_name = head_of_dir( "$host_dir/in" ) or exit 5;
+		$job_name = head_of_dir( "$host_dir/in" ) or return;
 	}
 	
 	my $in_dir = "$host_dir/in/$job_name";
 	
-	-d $in_dir or die "accept $job_name: not found\n";
+	if ( rename "$in_dir", "$host_dir/jobs/$job_name" )
+	{
+		return $job_name;  # rename succeeded, it's ours
+	}
 	
-	rename "$in_dir", "$host_dir/jobs/$job_name" or die "rename $in_dir: $!\n";
+	my $errno = $!;
 	
-	return $job_name;
+	-d $in_dir and die "rename $in_dir: $errno\n";  # rename failed!
+	
+	return;  # rename failed because it's gone; we lost the race
 }
 
 sub nexus_run
