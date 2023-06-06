@@ -171,14 +171,7 @@ sub nexus_new
 	
 	chop $date;
 	
-	my $stamp = $date;
-	
-	my $n = 0;
-	
-	while ( -d "$jobs_dir/$stamp" )
-	{
-		$stamp = join ".", $date, ++$n;
-	}
+	my $stamp = "$date-$$";  # date and PID should be unique
 	
 	my $job_dir = "$jobs_dir/$stamp";
 	
