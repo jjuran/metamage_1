@@ -1,19 +1,19 @@
 #!/usr/bin/env vx -Z
 
-const bindir = dirname realpath argv[ 0 ]
-const libdir = bindir "/"
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/"
 
 def import (lib) { eval (load, realpath) libdir lib ".vy" }
 
-const fifo-icons = import "fifo-icons"
+let fifo-icons = import "fifo-icons"
 
 assert argv[ 1 ] == "-o"
 
-const output_dir = argv[ 2 ] "/"
+let output_dir = argv[ 2 ] "/"
 
-const levels = fifo-icons.guage_levels
+let levels = fifo-icons.guage_levels
 
-const manifest =
+let manifest =
 [
 	131: fifo-icons.basic_icon,
 	132: fifo-icons.half_open_reading,
@@ -31,11 +31,11 @@ const manifest =
 
 for icon in manifest do
 {
-	const base = "00" hex icon.key
-	const stem = output_dir base
-	const data = icon.value
+	let base = "00" hex icon.key
+	let stem = output_dir base
+	let data = icon.value
 	
-	const get = fifo-icons.get % data
+	let get = fifo-icons.get % data
 	
 	for icon-type in ["ICN# icl4 icl8" / ' '] do
 	{

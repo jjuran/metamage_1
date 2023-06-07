@@ -1,42 +1,42 @@
 module fifo-icons
 
-const vacuum = x"48"  # cyan
-const air    = x"2a"  # light grey-blue
-const stuff  = x"e3"  # green
-const error  = x"d8"  # red
-const shade  = x"f9"  # grey
-const white  = x"00"  # self-
-const black  = x"FF"  # explanatory
+let vacuum = x"48"  # cyan
+let air    = x"2a"  # light grey-blue
+let stuff  = x"e3"  # green
+let error  = x"d8"  # red
+let shade  = x"f9"  # grey
+let white  = x"00"  # self-
+let black  = x"FF"  # explanatory
 
-const blank_row = white * 32
+let blank_row = white * 32
 
 def kv (f) { {f _.key => f _.value} }
 
 def frame (src_width, dst_width, dst_height, x, y, src)
 {
-	const src_height = src.size / src_width
+	let src_height = src.size / src_width
 	
-	const left  = (white * x)
-	const right = (white * (dst_width - src_width - x))
+	let left  = (white * x)
+	let right = (white * (dst_width - src_width - x))
 	
-	const top    = white * (dst_width * y)
-	const bottom = white * (dst_width * (dst_height - src_height - y))
+	let top    = white * (dst_width * y)
+	let bottom = white * (dst_width * (dst_height - src_height - y))
 	
-	const rows = [src / -src_width] map { left v right }
+	let rows = [src / -src_width] map { left v right }
 	
 	return top (packed rows) bottom
 }
 
 def LSR_L (icon)
 {
-	const width = 32
+	let width = 32
 	
 	return packed ([icon / -width] map { white v[ 0 -> width - 1] }) 
 }
 
 def calc_mask (width, icon)
 {
-	const N = icon.size
+	let N = icon.size
 	
 	def neighbors (i)
 	{
@@ -51,16 +51,16 @@ def calc_mask (width, icon)
 	
 	var mask = black * N
 	
-	const outer_width = width
-	const inner_width = width - 2
+	let outer_width = width
+	let inner_width = width - 2
 	
-	const outer_height = N / width
-	const inner_height = outer_height - 2
+	let outer_height = N / width
+	let inner_height = outer_height - 2
 	
-	const cap = black * outer_width
-	const mid = white * inner_width
+	let cap = black * outer_width
+	let mid = white * inner_width
 	
-	const middle = black mid black * inner_height
+	let middle = black mid black * inner_height
 	
 	var frontier = cap middle cap
 	
@@ -87,7 +87,7 @@ def calc_mask (width, icon)
 
 def make_clock
 {
-	const clock_data =
+	let clock_data =
 	[
 		"    X X X    ",
 		"  X       X  ",
@@ -101,57 +101,57 @@ def make_clock
 	
 	def place (image) { frame (7, 32, 7, 17, 0, image) }
 	
-	const clock = packed translated (clock_data, " X", x"00FF")
+	let clock = packed translated (clock_data, " X", x"00FF")
 	
 	return place clock => place calc_mask (7, clock)
 }
 
-const any_clock = make_clock()
-const low_clock = (kv { (blank_row * 19) _ (blank_row *  6) }) any_clock
-const high_time = (kv { (blank_row *  6) _ (blank_row * 19) }) any_clock
+let any_clock = make_clock()
+let low_clock = (kv { (blank_row * 19) _ (blank_row *  6) }) any_clock
+let high_time = (kv { (blank_row *  6) _ (blank_row * 19) }) any_clock
 
 def make_porthole
 {
-	const edge = x"00FFFFFF00"
-	const hole = x"FF050505FF"
+	let edge = x"00FFFFFF00"
+	let hole = x"FF050505FF"
 	
 	def place (image) { frame (5, 32, 32, 18, 21, image) }
 	
-	const porthole = edge (hole * 3) edge
+	let porthole = edge (hole * 3) edge
 	
 	return place porthole => place translated (porthole, x"05", black)
 }
 
 def make_blank_guage
 {
-	const edge = x"00FFFFFF00"
-	const tube = x"FF000000FF"
+	let edge = x"00FFFFFF00"
+	let tube = x"FF000000FF"
 	
 	def place (image) { frame (5, 32, 32, 18, 6, image) }
 	
-	const guage = edge (tube * 18) edge
+	let guage = edge (tube * 18) edge
 	
 	return place guage => place calc_mask (5, guage)
 }
 
-const blank_guage = make_blank_guage()
+let blank_guage = make_blank_guage()
 
 def make_pipe
 {
-	const edge = (white * 13) x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" (white * 4)
-	const Head = (white * 13) x"FFf8f72bf6f5f62bf7f8f9fafbfcFF" (white * 4)
-	const tube = (white * 15)     x"FFf72bf6f5f62bf7f8f9FF"     (white * 6)
+	let edge = (white * 13) x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" (white * 4)
+	let Head = (white * 13) x"FFf8f72bf6f5f62bf7f8f9fafbfcFF" (white * 4)
+	let tube = (white * 15)     x"FFf72bf6f5f62bf7f8f9FF"     (white * 6)
 	
-	const cap = edge Head Head edge
+	let cap = edge Head Head edge
 	
-	const pipe = cap (tube * 24) cap
+	let pipe = cap (tube * 24) cap
 	
 	return pipe => translated (pipe, x"2be3f5f6f7f8f9fafbfc", black * 10)
 }
 
 def make_fat_pipe
 {
-	const sections =
+	let sections =
 	[
 		6: blank_row,
 		1: (white * 14)     x"FFf72bf6f5FFFFFF2bf7f8f9FF"     (white * 5),
@@ -161,47 +161,47 @@ def make_fat_pipe
 		3: (white * 12) x"FFf72bf6f5FFe3e3e3e3e3FF2bf7f8f9FF" (white * 3),
 	]
 	
-	const upper = sections map { v.value * v.key }
-	const lower = -upper
+	let upper = sections map { v.value * v.key }
+	let lower = -upper
 	
-	const fat_pipe = packed (upper, lower)
+	let fat_pipe = packed (upper, lower)
 	
 	return fat_pipe => translated (fat_pipe, x"2be3f5f6f7f8f9", black * 7)
 }
 
 def solid_guage (color)
 {
-	const left  = white * 19
-	const right = white * 10
+	let left  = white * 19
+	let right = white * 10
 	
-	const fill = left (color * 3) right
+	let fill = left (color * 3) right
 	
-	const blank = blank_row * 7
+	let blank = blank_row * 7
 	
 	return blank_guage.key | blank (fill * 18) blank => blank_guage.value
 }
 
 def mixed_guage (top, level, bottom)
 {
-	const left  = white * 19
-	const right = white * 10
+	let left  = white * 19
+	let right = white * 10
 	
-	const upper = left (top    * 3) right
-	const bound = left (black  * 3) right
-	const lower = left (bottom * 3) right
+	let upper = left (top    * 3) right
+	let bound = left (black  * 3) right
+	let lower = left (bottom * 3) right
 	
-	const stuff = lower * level
-	const empty = upper * (17 - level)
-	const blank = blank_row * 7
+	let stuff = lower * level
+	let empty = upper * (17 - level)
+	let blank = blank_row * 7
 	
 	return blank_guage.key | blank empty bound stuff blank => blank_guage.value
 }
 
 def broken (pipe)
 {
-	const invariant = (white * 4) (black * 23)
+	let invariant = (white * 4) (black * 23)
 	
-	const mask = 0 -> 32 map { (black * (36 - v))(invariant)[ 0 -> 32 ] }
+	let mask = 0 -> 32 map { (black * (36 - v))(invariant)[ 0 -> 32 ] }
 	
 	return (kv {_ & packed mask}) pipe
 }
@@ -213,7 +213,7 @@ def compose_masked (dst, src)
 
 export const basic_icon = make_pipe()
 
-const pipify = compose_masked % basic_icon
+let pipify = compose_masked % basic_icon
 
 export const half_open_reading = pipify low_clock
 export const half_open_writing = pipify high_time
@@ -231,7 +231,7 @@ export const broken_pipe = broken pipify mixed_guage (error, 7, white)
 
 def make_simple_badge
 {
-	const cube_data =
+	let cube_data =
 	[
 		"      X X      ",
 		"  X X . . X X  ",
@@ -245,58 +245,58 @@ def make_simple_badge
 	]
 	map { mince v }
 	
-	const open_cube   = cube_data map { translated (v, "* ", "+\0") }
-	const closed_cube = cube_data map { translated (v, "* ", "X\0") }
+	let open_cube   = cube_data map { translated (v, "* ", "+\0") }
+	let closed_cube = cube_data map { translated (v, "* ", "X\0") }
 	
-	const top   = packed (closed_cube map { ("\0" * 4) v ("\0" * 4) })
-	const left  = packed (open_cube   map {            v ("\0" * 8) })
-	const right = packed (closed_cube map { ("\0" * 8) v            })
+	let top   = packed (closed_cube map { ("\0" * 4) v ("\0" * 4) })
+	let left  = packed (open_cube   map {            v ("\0" * 8) })
+	let right = packed (closed_cube map { ("\0" * 8) v            })
 	
-	const upper =                         top       (white * (16 * 6))
-	const lower = (white * (16 * 6)) (left | right)
+	let upper =                         top       (white * (16 * 6))
+	let lower = (white * (16 * 6)) (left | right)
 	
 	return frame (16, 32, 32, 1, 8, upper | lower)
 }
 
 def make_1_from_8 (icon)
 {
-	const light = x"00052a2b48f5f6f7f8f9fafbfc"
-	const white = "0" * light.size
-	const paint = x"d8e3FF"
-	const black = "1" * paint.size
+	let light = x"00052a2b48f5f6f7f8f9fafbfc"
+	let white = "0" * light.size
+	let paint = x"d8e3FF"
+	let black = "1" * paint.size
 	
 	return unbin translated (icon.string, paint light, black white)
 }
 
 def make_4_from_8 (icon)
 {
-	const light = x"0048"
-	const white = "0" * light.size
-	const dull = x"2a2bf5f6f7f8f9fafbfc"
-	const gray = "c" * dull.size
-	const other = x"05d8e3FF"
-	const color = "138f"
+	let light = x"0048"
+	let white = "0" * light.size
+	let dull = x"2a2bf5f6f7f8f9fafbfc"
+	let gray = "c" * dull.size
+	let other = x"05d8e3FF"
+	let color = "138f"
 	
 	return unhex translated (icon.string, light dull other, white gray color)
 }
 
-const simple_badge_spec = make_simple_badge()
-const simple_badge_mask = translated (simple_badge_spec, ".-^+X\xf9", black * 6)
-const shadow_badge_mask = simple_badge_mask | LSR_L simple_badge_mask
-const badge_shadow_mask = ~simple_badge_mask & shadow_badge_mask
-const badge_shadow      = translated (badge_shadow_mask, black, shade)
-const shadow_badge_spec = simple_badge_spec | badge_shadow
+let simple_badge_spec = make_simple_badge()
+let simple_badge_mask = translated (simple_badge_spec, ".-^+X\xf9", black * 6)
+let shadow_badge_mask = simple_badge_mask | LSR_L simple_badge_mask
+let badge_shadow_mask = ~simple_badge_mask & shadow_badge_mask
+let badge_shadow      = translated (badge_shadow_mask, black, shade)
+let shadow_badge_spec = simple_badge_spec | badge_shadow
 
-const badge_spec = shadow_badge_spec.string
+let badge_spec = shadow_badge_spec.string
 
-const badge_data_8 = packed translated (badge_spec, ".-^+X",   x"2a7f7fb0FF")
-const badge_data_4 = unhex  translated (badge_spec, ".-^+X\xf9\0", "cddefd0")
-const badge_data_1 = unbin  translated (badge_spec, ".-^+X\xf9\0", "0011100")
+let badge_data_8 = packed translated (badge_spec, ".-^+X",   x"2a7f7fb0FF")
+let badge_data_4 = unhex  translated (badge_spec, ".-^+X\xf9\0", "cddefd0")
+let badge_data_1 = unbin  translated (badge_spec, ".-^+X\xf9\0", "0011100")
 
-const shadow_badge_mask_8 = shadow_badge_mask
-const shadow_badge_mask_4 = make_4_from_8 shadow_badge_mask
-const shadow_badge_mask_1 = make_1_from_8 shadow_badge_mask
-const simple_badge_mask_1 = make_1_from_8 simple_badge_mask
+let shadow_badge_mask_8 = shadow_badge_mask
+let shadow_badge_mask_4 = make_4_from_8 shadow_badge_mask
+let shadow_badge_mask_1 = make_1_from_8 shadow_badge_mask
+let simple_badge_mask_1 = make_1_from_8 simple_badge_mask
 
 def badged_icl8 (data) { data & ~shadow_badge_mask_8 | badge_data_8 }
 def badged_icl4 (data) { data & ~shadow_badge_mask_4 | badge_data_4 }
@@ -322,7 +322,7 @@ def make_ICN_ (icl8)
 	return badged_ICN_ make_1_from_8 packed (icl8.key, icl8.value)
 }
 
-const handlers = str^
+let handlers = str^
 [
 	icl8: badged_icl8 * .key,
 	icl4: badged_icl4 * make_4_from_8 * .key,
