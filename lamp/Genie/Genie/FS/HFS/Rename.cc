@@ -59,6 +59,10 @@ namespace Genie
 		private:
 			FSSpec  itsFileSpec;
 			bool    itWasLocked;
+			
+			// non-copyable
+			FileLockBypass           ( const FileLockBypass& );
+			FileLockBypass& operator=( const FileLockBypass& );
 		
 		public:
 			FileLockBypass( const FSSpec& file ) : itsFileSpec( file ),
@@ -74,9 +78,9 @@ namespace Genie
 			{
 				if ( itWasLocked )
 				{
-					::HSetFLock( itsFileSpec.vRefNum,
-					             itsFileSpec.parID,
-					             itsFileSpec.name );
+					HSetFLock( itsFileSpec.vRefNum,
+					           itsFileSpec.parID,
+					           itsFileSpec.name );
 				}
 			}
 			
