@@ -20,6 +20,9 @@
 #include "mac_sys/res_error.hh"
 
 
+#pragma exceptions off
+
+
 namespace mac  {
 namespace rsrc {
 
