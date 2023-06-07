@@ -156,7 +156,7 @@ namespace Genie
 	{
 		CInfoPBRec src_pb;
 		
-		N::FSpGetCatInfo( srcFileSpec, src_pb, N::FNF_Throws() );
+		MacIO::GetCatInfo< MacIO::Throw_All >( src_pb, srcFileSpec );
 		
 		bool destExists = exists( destFile );
 		
