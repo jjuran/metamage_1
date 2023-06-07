@@ -14,6 +14,10 @@ if [ -z "$NEXUS_HOST" ]; then
 	NEXUS_HOST=`hostname -s`
 fi
 
+if [ -z "$NEXUS_JOBS" ]; then
+	NEXUS_JOBS=3
+fi
+
 PATH="$PWD/scripts/nexus:$PWD/bin:$PATH"
 
 SDK_DIR=~/opt/relix/SDK
@@ -24,4 +28,4 @@ if [ `command -v ccache < /dev/null` ]; then
 	export CC=ccache-mwcc
 fi
 
-A-line --cpp -j1 $*
+A-line --cpp -j"$NEXUS_JOBS" $*
