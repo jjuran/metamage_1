@@ -18,6 +18,11 @@ if [ -z "$NEXUS_JOBS" ]; then
 	NEXUS_JOBS=3
 fi
 
+if [ -z `command -v mxcpp` ]; then
+	echo >&2 "rbuild: mxcpp not found"
+	exit 1
+fi
+
 PATH="$PWD/scripts/nexus:$PWD/bin:$PATH"
 
 SDK_DIR=~/opt/relix/SDK
