@@ -3,7 +3,7 @@
 const bindir = dirname realpath argv[ 0 ]
 const libdir = bindir "/"
 
-def import (lib) { eval (load, realpath) libdir lib ".vsl" }
+def import (lib) { eval (load, realpath) libdir lib ".vy" }
 
 const fifo-icons = import "fifo-icons"
 
