@@ -397,11 +397,15 @@ sub nexus_do
 
 sub nexus_loop
 {
+	my $in_dir = "$host_dir/in";
+	
+	warn "nexus: polling $in_dir for jobs...\n";
+	
 	for ( ;; )
 	{
 		my $delay = 0;
 		
-		until ( defined head_of_dir( "$host_dir/in" ) )
+		until ( defined head_of_dir( $in_dir ) )
 		{
 			$delay += $delay < 10;
 			
