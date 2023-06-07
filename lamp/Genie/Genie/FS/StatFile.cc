@@ -256,6 +256,7 @@ namespace Genie
 	
 	void ChangeFileMode( const FSSpec& file, mode_t new_mode )
 	{
+		OSErr err;
 		CInfoPBRec paramBlock;
 		
 		MacIO::GetCatInfo< MacIO::Throw_All >( paramBlock, file );
@@ -280,6 +281,8 @@ namespace Genie
 			p7::throw_errno( EPERM );
 		}
 		
+		err = noErr;
+		
 		if ( changed_bits & S_IXUSR )
 		{
 			FInfo& info = hFileInfo.ioFlFndrInfo;
@@ -300,22 +303,24 @@ namespace Genie
 			info.fdFlags = (info.fdFlags & ~kIsShared) | (kIsShared * x_bit);
 			info.fdCreator = x_bit ? 'Poof' : TextFileCreator();
 			
-			N::HSetFInfo( file, info );
+			err = HSetFInfo( file.vRefNum, file.parID, file.name, &info );
 		}
 		
-		if ( changed_bits & S_IWUSR )
+		if ( err == noErr  &&  changed_bits & S_IWUSR )
 		{
 			if ( new_mode & S_IWUSR )
 			{
 				// writeable: reset the lock
-				N::HRstFLock( file );
+				err = HRstFLock( file.vRefNum, file.parID, file.name );
 			}
 			else
 			{
 				// not writeable: set the lock
-				N::HSetFLock( file );
+				err = HSetFLock( file.vRefNum, file.parID, file.name );
 			}
 		}
+		
+		Mac::ThrowOSStatus( err );
 	}
 	
 }
