@@ -1195,6 +1195,8 @@ namespace Genie
 			}
 		}
 		
+		remove_task( this );
+		
 		if ( gCurrentProcess != this )
 		{
 			return;
@@ -1207,13 +1209,7 @@ namespace Genie
 			Otherwise, reset() is safe because it swaps with a temporary
 			before destroying the thread (so the copy that doesn't get
 			nulled out when the thread terminates is on the stack).
-			
-			Mark the thread inactive now, in case it doesn't get joined
-			right away.  If the OS thread still lives after reset, mark
-			the thread active again.
 		*/
-		
-		remove_task( this );
 		
 		reset_os_thread();
 		
