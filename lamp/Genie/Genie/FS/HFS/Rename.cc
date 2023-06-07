@@ -16,7 +16,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // vfs
 #include "vfs/node.hh"
@@ -39,7 +39,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -154,6 +153,7 @@ namespace Genie
 	
 	void Rename_HFS( const FSSpec& srcFileSpec, const vfs::node& destFile )
 	{
+		OSErr err;
 		CInfoPBRec src_pb;
 		
 		MacIO::GetCatInfo< MacIO::Throw_All >( src_pb, srcFileSpec );
@@ -215,7 +215,11 @@ namespace Genie
 		{
 			// Can't be the same file, because it's in a different directory.
 			
-			N::HDelete( destFileSpec );
+			const FSSpec& dest = destFileSpec;
+			
+			err = HDelete( dest.vRefNum, dest.parID, dest.name );
+			
+			Mac::ThrowOSStatus( err );
 		}
 		
 		if ( keeping_name )
