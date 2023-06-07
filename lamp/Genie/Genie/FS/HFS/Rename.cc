@@ -70,7 +70,15 @@ namespace Genie
 			{
 				if ( itWasLocked )
 				{
-					N::HRstFLock( file );
+					/*
+						Ignore errors.  If something prevents unlocking,
+						the operation which requires unlocking will fail
+						anyway, so we can handle it then.
+					*/
+					
+					HRstFLock( itsFileSpec.vRefNum,
+					           itsFileSpec.parID,
+					           itsFileSpec.name );
 				}
 			}
 			
