@@ -29,7 +29,7 @@
 #include "vfs/filehandle/methods/general_method_set.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // Genie
 #include "Genie/FileSignature.hh"
@@ -38,8 +38,6 @@
 namespace Genie
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	using mac::file::refnum_file;
@@ -200,20 +198,31 @@ namespace Genie
 	
 	
 	static
-	vfs::filehandle* new_Mac_filehandle( n::owned< N::FSFileRefNum >&  refNum,
-	                                     int                           flags,
-	                                     FileGetter                    getFile )
+	vfs::filehandle* new_Mac_filehandle( short       refNum,
+	                                     int         flags,
+	                                     FileGetter  getFile )
 	{
-		vfs::filehandle* result = new vfs::filehandle( NULL,
-		                                               flags,
-		                                               &hfs_methods,
-		                                               sizeof (Mac_file_extra),
-		                                               &close_Mac_file );
+		vfs::filehandle* result = NULL;
+		
+		try
+		{
+			result = new vfs::filehandle( NULL,
+			                              flags,
+			                              &hfs_methods,
+			                              sizeof (Mac_file_extra),
+			                              &close_Mac_file );
+		}
+		catch ( ... )
+		{
+			FSClose( refNum );
+			
+			throw;
+		}
 		
 		Mac_file_extra& extra = *(Mac_file_extra*) result->extra();
 		
 		extra.getfile = getFile;
-		extra.refnum  = refNum.release();
+		extra.refnum  = refNum;
 		
 		return result;
 	}
@@ -316,8 +325,6 @@ namespace Genie
 	                   ForkOpener     openFork,
 	                   FileGetter     getFile )
 	{
-		typedef n::owned< Mac::FSFileRefNum > Owned;
-		
 		const bool writable = (flags + 1 - O_RDONLY) & 2;
 		
 		const SInt8 perm = writable ? fsRdWrShPerm : fsRdPerm;
@@ -329,9 +336,7 @@ namespace Genie
 			Mac::ThrowOSStatus( refnum );
 		}
 		
-		Owned fileHandle = Owned::seize( Mac::FSFileRefNum( refnum ) );
-		
-		return new_Mac_filehandle( fileHandle, flags, getFile );
+		return new_Mac_filehandle( refnum, flags, getFile );
 	}
 	
 }
