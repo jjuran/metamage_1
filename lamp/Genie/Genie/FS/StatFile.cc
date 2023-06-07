@@ -26,7 +26,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"
@@ -39,7 +39,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -151,7 +150,7 @@ namespace Genie
 		
 		if ( name[0] > 31 )
 		{
-			throw N::StringTooLong();
+			p7::throw_errno( ENAMETOOLONG );
 		}
 		
 	#ifdef __RELIX__
