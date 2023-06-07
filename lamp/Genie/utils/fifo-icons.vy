@@ -303,7 +303,7 @@ def badged_icl4 (data) { data & ~shadow_badge_mask_4 | badge_data_4 }
 
 def badged_ICN_ (icon)
 {
-	var data, var mask = icon / 2
+	var (data, mask) = icon / 2
 	
 	# Use the simple (unshadowed) mask for the Bic operation, so we don't
 	# clear pixels that would belong to the shadow (if we had one).
