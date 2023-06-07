@@ -146,7 +146,7 @@ namespace tool
 		return time;
 	}
 	
-	static void quote_string( plus::string& s )
+	static plus::string quote_string( const plus::string& s )
 	{
 		const size_t s_size = s.size();
 		const size_t length = s_size + 2 * sizeof (char);
@@ -161,15 +161,13 @@ namespace tool
 		
 		mempcpy( p, s.data(), s_size );
 		
-		s.swap( result );
+		return result;
 	}
 	
 	static plus::string predefined_file( const void* )
 	{
-		plus::string file = get_current_FILE();
-		
 		// FIXME:  Need to escape metacharacters
-		quote_string( file );
+		static plus::string file = quote_string( get_current_FILE() );
 		
 		return file;
 	}
