@@ -30,7 +30,7 @@
 namespace tool
 {
 	
-	typedef plus::string (*predefined_handler)( const void* param );
+	typedef const char* (*predefined_handler)( const void* param );
 	
 	struct predefined_t
 	{
@@ -45,19 +45,22 @@ namespace tool
 	}
 	
 	
-	static plus::string predefined_string( const void* param )
+	static
+	const char* predefined_string( const void* param )
 	{
 		return (const char*) param;
 	}
 	
-	static plus::string predefined_option( const void* param )
+	static
+	const char* predefined_option( const void* param )
 	{
 		const char* name = (const char*) param;
 		
 		return check_option( name ) ? "1" : "";
 	}
 	
-	static plus::string predefined_68k_option( const void* param )
+	static
+	const char* predefined_68k_option( const void* param )
 	{
 		const char* name = (const char*) param;
 		
@@ -66,22 +69,26 @@ namespace tool
 		       :                        "0";
 	}
 	
-	static plus::string predefined_bool( const void* param )
+	static
+	const char* predefined_bool( const void* param )
 	{
 		return *(const bool*) param ? "1" : "";
 	}
 	
-	static plus::string predefined_not( const void* param )
+	static
+	const char* predefined_not( const void* param )
 	{
 		return !*(const bool*) param ? "1" : "";
 	}
 	
-	static plus::string predefined_cfm68k( const void* )
+	static
+	const char* predefined_cfm68k( const void* )
 	{
 		return global_config_68k && global_config_cfm ? "1" : "";
 	}
 	
-	static plus::string predefined_a5( const void* )
+	static
+	const char* predefined_a5( const void* )
 	{
 		return   global_config_a4  ? "0"
 		       : global_config_68k ? "1"
@@ -132,18 +139,20 @@ namespace tool
 		return plus::string( buffer, sizeof buffer );
 	}
 	
-	static plus::string predefined_date( const void* )
+	static
+	const char* predefined_date( const void* )
 	{
 		static plus::string date = make_date();
 		
-		return date;
+		return date.c_str();
 	}
 	
-	static plus::string predefined_time( const void* )
+	static
+	const char* predefined_time( const void* )
 	{
 		static plus::string time = make_time();
 		
-		return time;
+		return time.c_str();
 	}
 	
 	static plus::string quote_string( const plus::string& s )
@@ -164,15 +173,17 @@ namespace tool
 		return result;
 	}
 	
-	static plus::string predefined_file( const void* )
+	static
+	const char* predefined_file( const void* )
 	{
 		// FIXME:  Need to escape metacharacters
 		static plus::string file = quote_string( get_current_FILE() );
 		
-		return file;
+		return file.c_str();
 	}
 	
-	static plus::string predefined_line( const void* )
+	static
+	const char* predefined_line( const void* )
 	{
 		return gear::inscribe_unsigned_decimal( get_current_LINE() );
 	}
