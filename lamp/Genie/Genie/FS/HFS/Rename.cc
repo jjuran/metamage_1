@@ -25,9 +25,6 @@
 // MacVFS
 #include "MacVFS/util/FSSpec_from_node.hh"
 
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
-
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"
 
@@ -151,6 +148,12 @@ namespace Genie
 	}
 	
 	
+	static inline
+	bool item_is_directory( const CInfoPBRec& cInfo )
+	{
+		return cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+	}
+	
 	void Rename_HFS( const FSSpec& srcFileSpec, const vfs::node& destFile )
 	{
 		OSErr err;
@@ -160,7 +163,7 @@ namespace Genie
 		
 		bool destExists = exists( destFile );
 		
-		bool srcIsDir  = io::item_is_directory( src_pb );
+		bool srcIsDir  = item_is_directory( src_pb );
 		bool destIsDir = is_directory( destFile );
 		
 		if ( destExists  &&  srcIsDir != destIsDir )
