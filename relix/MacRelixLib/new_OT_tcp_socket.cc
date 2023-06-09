@@ -106,77 +106,71 @@ namespace relix
 	{
 		mac::sys::request_async_wakeup();
 		
-		try
+		if ( OT_socket_extra* socket = (OT_socket_extra*) context )
 		{
-			if ( OT_socket_extra* socket = (OT_socket_extra*) context )
+			switch ( code )
 			{
-				switch ( code )
-				{
-					case T_LISTEN:
-						if ( TARGET_API_MAC_CARBON )
-						{
-							// Notifiers may be preempted in OS X
-							::OTAtomicAdd32( 1, &socket->n_incoming_connections );
-						}
-						else
-						{
-							++socket->n_incoming_connections;
-						}
-						break;
+				case T_LISTEN:
+					if ( TARGET_API_MAC_CARBON )
+					{
+						// Notifiers may be preempted in OS X
+						::OTAtomicAdd32( 1, &socket->n_incoming_connections );
+					}
+					else
+					{
+						++socket->n_incoming_connections;
+					}
+					break;
+				
+				case T_CONNECT:
+					(void) ::OTRcvConnect( socket->endpoint, NULL );
 					
-					case T_CONNECT:
-						(void) ::OTRcvConnect( socket->endpoint, NULL );
-						
-						socket->it_is_connecting = false;
-						socket->it_is_connected  = true;
-						break;
+					socket->it_is_connecting = false;
+					socket->it_is_connected  = true;
+					break;
+				
+				case T_DISCONNECT:
+					(void) ::OTRcvDisconnect( socket->endpoint, NULL );
 					
-					case T_DISCONNECT:
-						(void) ::OTRcvDisconnect( socket->endpoint, NULL );
-						
-						socket->it_is_connecting    = false;
-						socket->it_has_received_RST = true;
-						break;
+					socket->it_is_connecting    = false;
+					socket->it_has_received_RST = true;
+					break;
+				
+				case T_ORDREL:
+					(void) ::OTRcvOrderlyDisconnect( socket->endpoint );
 					
-					case T_ORDREL:
-						(void) ::OTRcvOrderlyDisconnect( socket->endpoint );
-						
-						socket->it_has_received_FIN = true;
-						
-						break;
+					socket->it_has_received_FIN = true;
 					
-					case T_BINDCOMPLETE:
-						socket->its_result = result;
-						
-						if ( result == noErr )
-						{
-							socket->it_is_bound = true;
-						}
-						
-						break;
+					break;
+				
+				case T_BINDCOMPLETE:
+					socket->its_result = result;
 					
-					case T_ACCEPTCOMPLETE:
-						socket->its_result = result;
-						
-						break;
+					if ( result == noErr )
+					{
+						socket->it_is_bound = true;
+					}
 					
-					case T_OPENCOMPLETE:
-						socket->its_result = result;
-						
-						if ( result == noErr )
-						{
-							socket->endpoint = (EndpointRef) cookie;
-						}
-						
-						break;
+					break;
+				
+				case T_ACCEPTCOMPLETE:
+					socket->its_result = result;
 					
-					default:
-						break;
-				}
+					break;
+				
+				case T_OPENCOMPLETE:
+					socket->its_result = result;
+					
+					if ( result == noErr )
+					{
+						socket->endpoint = (EndpointRef) cookie;
+					}
+					
+					break;
+				
+				default:
+					break;
 			}
-		}
-		catch ( ... )
-		{
 		}
 	}
 	
