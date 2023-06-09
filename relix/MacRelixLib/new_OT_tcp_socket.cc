@@ -367,11 +367,6 @@ namespace relix
 	{
 		OT_socket_extra& extra = *(OT_socket_extra*) that->extra();
 		
-		if ( extra.it_has_received_FIN )
-		{
-			return 0;
-		}
-		
 		::OTByteCount n_readable_bytes;
 		
 		OSStatus err_count;
