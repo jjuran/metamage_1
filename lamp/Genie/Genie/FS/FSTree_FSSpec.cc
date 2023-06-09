@@ -272,6 +272,7 @@ namespace Genie
 	static
 	VRefNum_DirID FindJDirectory()
 	{
+		OSErr err;
 		CInfoPBRec cInfo;
 		
 		N::Str63 name = const_root_directory_name;  // overkill
@@ -286,12 +287,13 @@ namespace Genie
 			const ProcessSerialNumber current = { 0, kCurrentProcess };
 			
 			FSRef location;
-			OSErr err = GetProcessBundleLocation( &current, &location );
+			FSSpec locationSpec;
+			
+			(err = GetProcessBundleLocation( &current, &location ))  ||
+			(err = FSGetCatalogInfo( &location, 0, 0, 0, &locationSpec, 0 ));
 			
 			if ( err == noErr )
 			{
-				const FSSpec locationSpec = N::FSMakeFSSpec( location );
-				
 				vRefNum = Mac::FSVolumeRefNum( locationSpec.vRefNum );
 				dirID   = Mac::FSDirID       ( locationSpec.parID   );
 			}
