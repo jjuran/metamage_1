@@ -45,15 +45,6 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	struct code_rsrc_header
-	{
-		uint16_t branch;
-		uint16_t flags;
-		uint32_t type;
-		uint16_t id;
-		uint16_t version;
-	};
-	
 	struct BinaryFileMetadata
 	{
 		UInt32 dataForkLength;
@@ -159,18 +150,6 @@ namespace Genie
 			HLockHi( h );
 			
 			err = mac::file::read_all( refNum, *h, length, offset );
-			
-			if ( TARGET_CPU_68K  &&  err == noErr )
-			{
-				code_rsrc_header& header = *(code_rsrc_header*) *h;
-				
-				// Handle dereferenced here
-				
-				if ( header.branch != 0x600A )
-				{
-					err = paramErr;  // converts to EINVAL
-				}
-			}
 			
 			if ( err != noErr )
 			{
