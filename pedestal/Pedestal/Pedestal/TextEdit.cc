@@ -802,13 +802,16 @@ namespace Pedestal
 		On_UserSelect();
 	}
 	
-	static short TESearch( TEHandle              hTE,
-	                       const char*           pattern,
-	                       std::size_t           pattern_length,
-	                       const TextSelection&  selection,
-	                       bool                  backward,
-	                       bool                  matchAtPosition )
+	int TextEdit::Search( const char*           pattern,
+	                      std::size_t           pattern_length,
+	                      const TextSelection&  selection,
+	                      bool                  searchBackwards,
+	                      bool                  matchAtPosition ) const
 	{
+		TEHandle hTE = Get();
+		
+		ASSERT( hTE != NULL );
+		
 		const TERec& te = **hTE;
 		
 		return TextSearch( *te.hText,
@@ -816,24 +819,8 @@ namespace Pedestal
 		                   pattern,
 		                   pattern_length,
 		                   selection,
-		                   backward,
+		                   searchBackwards,
 		                   matchAtPosition );
-	}
-	
-	int TextEdit::Search( const char*           pattern,
-	                      std::size_t           pattern_length,
-	                      const TextSelection&  selection,
-	                      bool                  searchBackwards,
-	                      bool                  matchAtPosition ) const
-	{
-		ASSERT( Get() != NULL );
-		
-		return TESearch( Get(),
-		                 pattern,
-		                 pattern_length,
-		                 selection,
-		                 searchBackwards,
-		                 matchAtPosition );
 	}
 	
 	
