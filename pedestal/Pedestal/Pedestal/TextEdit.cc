@@ -777,8 +777,10 @@ namespace Pedestal
 	}
 	
 	
-	static TextSelection GetSelection( TEHandle hTE )
+	TextSelection TextEdit::GetCurrentSelection() const
 	{
+		TEHandle hTE = Get();
+		
 		ASSERT( hTE != NULL );
 		
 		struct TextSelection result;
@@ -789,11 +791,6 @@ namespace Pedestal
 		result.end   = te.selEnd;
 		
 		return result;
-	}
-	
-	TextSelection TextEdit::GetCurrentSelection() const
-	{
-		return GetSelection( Get() );
 	}
 	
 	void TextEdit::Select( unsigned start, unsigned end )
