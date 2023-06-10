@@ -113,16 +113,7 @@ namespace Genie
 		public:
 			TextEdit( Key               key,
 			          KeyDown_Hook      keyDown = NULL,
-			          UserCommand_Hook  cmdHook = NULL )
-			:
-				itsKey( key ),
-				itsKeyDown( keyDown ),
-				itsUserCommand( cmdHook )
-			{
-				itsSelectionPriorToSearch.undefine();
-				
-				its_TEClickLoop_callback = (TEClickLoop_callback) &TEClickLoop;
-			}
+			          UserCommand_Hook  cmdHook = NULL );
 			
 			void Install( const Rect& bounds );
 			void Uninstall();

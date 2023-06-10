@@ -206,6 +206,19 @@ namespace Genie
 		that->UpdateScrollOffsets();
 	}
 	
+	TextEdit::TextEdit( Key               key,
+	                    KeyDown_Hook      keyDown,
+	                    UserCommand_Hook  cmdHook )
+	:
+		itsKey( key ),
+		itsKeyDown( keyDown ),
+		itsUserCommand( cmdHook )
+	{
+		itsSelectionPriorToSearch.undefine();
+		
+		its_TEClickLoop_callback = (TEClickLoop_callback) &TEClickLoop;
+	}
+	
 	void TextEdit::Install( const Rect& bounds )
 	{
 		Ped::TextEdit::Install( bounds );
