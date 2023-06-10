@@ -167,7 +167,7 @@ namespace TestEdit
 			TEAutoView( true, itsTE );  // enable auto-scrolling
 		}
 		
-		InstallCustomTEClickLoop( itsTE );
+		mac::app::install_custom_TEClickLoop( itsTE );
 	}
 	
 	void TextEdit::Uninstall()

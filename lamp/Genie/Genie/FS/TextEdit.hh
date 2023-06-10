@@ -97,7 +97,7 @@ namespace Genie
 			void UpdateClientHeight();
 			void UpdateScrollOffsets();
 			
-			void ClickInLoop()  { UpdateScrollOffsets(); }
+			static void TEClickLoop( TextEdit* that );
 			
 			void SetActive( bool activating );
 			
@@ -120,6 +120,8 @@ namespace Genie
 				itsUserCommand( cmdHook )
 			{
 				itsSelectionPriorToSearch.undefine();
+				
+				its_TEClickLoop_callback = (TEClickLoop_callback) &TEClickLoop;
 			}
 			
 			void Install( const Rect& bounds );

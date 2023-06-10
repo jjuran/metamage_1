@@ -33,7 +33,6 @@
 #include "Pedestal/AutoKey.hh"
 #include "Pedestal/Clipboard.hh"
 #include "Pedestal/CurrentFocus.hh"
-#include "Pedestal/CustomTEClickLoop.hh"
 #include "Pedestal/IncrementalSearch.hh"
 #include "Pedestal/Quasimode.hh"
 
@@ -174,7 +173,9 @@ namespace Pedestal
 		
 		ASSERT( Get() != NULL );
 		
-		TEClickLoop_Scope scope( this );
+		using mac::app::TEClick_contents_scope;
+		
+		TEClick_contents_scope scope( its_TEClickLoop_callback, this );
 		
 		TEClick( N::GlobalToLocal( event.where ),
 		         (event.modifiers & shiftKey) != 0,

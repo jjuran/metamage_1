@@ -201,6 +201,11 @@ namespace Genie
 		params.itsSelection.end   = start;
 	}
 	
+	void TextEdit::TEClickLoop( TextEdit* that )
+	{
+		that->UpdateScrollOffsets();
+	}
+	
 	void TextEdit::Install( const Rect& bounds )
 	{
 		Ped::TextEdit::Install( bounds );
@@ -214,7 +219,7 @@ namespace Genie
 			TEAutoView( true, itsTE );  // enable auto-scrolling
 		}
 		
-		InstallCustomTEClickLoop( itsTE );
+		mac::app::install_custom_TEClickLoop( itsTE );
 		
 		add_focusable_view( itsKey, this );
 	}

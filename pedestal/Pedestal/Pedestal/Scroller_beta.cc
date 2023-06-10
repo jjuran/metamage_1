@@ -10,6 +10,9 @@
 #include "mac_qd/globals/thePort.hh"
 #include "mac_qd/scoped_clipRect.hh"
 
+// mac-app-utils
+#include "mac_app/textedit.hh"
+
 // Pedestal
 #include "Pedestal/Scrollbar.hh"
 
@@ -95,7 +98,8 @@ namespace Pedestal
 	}
 	
 	
-	void ScrollFrame::ClickInLoop()
+	static
+	void scrollframe_TEClickLoop( void* data )
 	{
 		using namespace mac::qd;
 		
@@ -103,7 +107,9 @@ namespace Pedestal
 		
 		scoped_clipRect clipRect( get_portRect( thePort() ), tmp );
 		
-		UpdateScrollbars();
+		ScrollFrame* that = (ScrollFrame*) data;
+		
+		that->UpdateScrollbars();
 	}
 	
 	void ScrollFrame::Activate( bool activating )
@@ -127,7 +133,9 @@ namespace Pedestal
 	{
 		if ( HitTest( event ) )
 		{
-			TEClickLoop_Scope scope( this );
+			using mac::app::TEClick_scroller_scope;
+			
+			TEClick_scroller_scope scope( &scrollframe_TEClickLoop, this );
 			
 			Subview().MouseDown( event );
 			

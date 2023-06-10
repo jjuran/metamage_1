@@ -6,12 +6,12 @@
 #ifndef PEDESTAL_TEXTEDIT_HH
 #define PEDESTAL_TEXTEDIT_HH
 
+// mac-app-utils
+#include "mac_app/textedit.hh"
+
 // Pedestal
 #ifndef PEDESTAL_COMMANDCODE_HH
 #include "Pedestal/CommandCode.hh"
-#endif
-#ifndef PEDESTAL_CUSTOMTECLICKLOOP_HH
-#include "Pedestal/CustomTEClickLoop.hh"
 #endif
 #ifndef PEDESTAL_INCREMENTALSEARCH_HH
 #include "Pedestal/IncrementalSearch.hh"
@@ -39,7 +39,6 @@ namespace Pedestal
 	
 	
 	class TextEdit : public View,
-	                 public TEClickLoop_Subject,
 	                 public IncrementalSearchEditor
 	{
 		private:
@@ -61,7 +60,16 @@ namespace Pedestal
 			
 			void Apply_Key( const EventRecord& event );
 		
+		protected:
+			typedef mac::app::TEClickLoop_callback TEClickLoop_callback;
+			
+			TEClickLoop_callback its_TEClickLoop_callback;
+		
 		public:
+			TextEdit() : its_TEClickLoop_callback()
+			{
+			}
+			
 			virtual void On_UserSelect()  {}
 			virtual void On_UserEdit()  {}
 			
