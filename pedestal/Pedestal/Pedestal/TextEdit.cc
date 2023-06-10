@@ -224,7 +224,8 @@ namespace Pedestal
 		return false;
 	}
 	
-	static inline bool KeyIsAllowedAgainstSelection( char c, TEHandle aTE )
+	static inline
+	bool KeyIsAllowedAgainstSelection( unsigned char c, TEHandle aTE )
 	{
 		if ( NewContentReplacesSelection() )
 		{
