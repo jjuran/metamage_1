@@ -24,6 +24,13 @@
 #include "mac_qd/globals/screenBits.hh"
 #include "mac_qd/globals/thePort.hh"
 
+// debug
+#include "debug/assert.hh"
+#include "debug/boost_assert.hh"
+
+// Boost
+#include <boost/intrusive_ptr.hpp>
+
 // plus
 #include "plus/string.hh"
 

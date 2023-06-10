@@ -11,6 +11,11 @@
 #include "Pedestal/View.hh"
 
 
+#ifndef NULL
+#define NULL  0
+#endif
+
+
 namespace Pedestal
 {
 	

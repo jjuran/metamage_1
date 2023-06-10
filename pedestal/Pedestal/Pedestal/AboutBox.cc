@@ -41,6 +41,12 @@
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 
+// debug
+#include "debug/boost_assert.hh"
+
+// Boost
+#include <boost/intrusive_ptr.hpp>
+
 // Nitrogen
 #include "Carbon/CF/Types/CFMutableStringRef.hh"
 

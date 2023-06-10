@@ -15,6 +15,12 @@
 // mac-app-utils
 #include "mac_app/Window_menu.hh"
 
+// debug
+#include "debug/boost_assert.hh"
+
+// Boost
+#include <boost/intrusive_ptr.hpp>
+
 // text-input
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
