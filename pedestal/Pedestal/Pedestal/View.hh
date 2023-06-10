@@ -6,14 +6,8 @@
 #ifndef PEDESTAL_VIEW_HH
 #define PEDESTAL_VIEW_HH
 
-// Debug
-#include "debug/boost_assert.hh"
-
 // vxo
 #include "vxo/ref_count.hh"
-
-// Boost
-#include <boost/intrusive_ptr.hpp>
 
 // Pedestal
 #ifndef PEDESTAL_COMMANDCODE_HH
@@ -37,7 +31,7 @@ typedef struct CGContext *CGContextRef;  // CGContext.h
 namespace Pedestal
 {
 	
-	class Quasimode;
+	class TextEdit;
 	
 	class View : public vxo::ref_count< View >
 	{
@@ -56,7 +50,7 @@ namespace Pedestal
 			virtual void KeyUp    ( const EventRecord& event )  {}
 			virtual bool HitTest  ( const EventRecord& event )  { return true;  }
 			
-			virtual boost::intrusive_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& );
+			virtual TextEdit* EnterShiftSpaceQuasimode( const EventRecord& );
 			
 			virtual void Draw( const Rect& bounds, bool erasing );
 			

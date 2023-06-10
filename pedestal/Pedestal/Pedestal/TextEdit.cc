@@ -36,7 +36,6 @@
 #include "Pedestal/Clipboard.hh"
 #include "Pedestal/CurrentFocus.hh"
 #include "Pedestal/IncrementalSearch.hh"
-#include "Pedestal/Quasimode.hh"
 
 
 static inline
@@ -605,7 +604,7 @@ namespace Pedestal
 		return true;
 	}
 	
-	boost::intrusive_ptr< Quasimode >
+	TextEdit*
 	//
 	TextEdit::EnterShiftSpaceQuasimode( const EventRecord& event )
 	{
@@ -614,9 +613,7 @@ namespace Pedestal
 			return View::EnterShiftSpaceQuasimode( event );
 		}
 		
-		const bool backward = event.modifiers & shiftKey;
-		
-		return New_IncrementalSearchQuasimode( *this, backward );
+		return this;
 	}
 	
 	

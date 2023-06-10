@@ -65,7 +65,7 @@ namespace Pedestal
 				return Subview().HitTest( event );
 			}
 			
-			boost::intrusive_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& event );
+			TextEdit* EnterShiftSpaceQuasimode( const EventRecord& event );
 			
 			void Activate( bool activating )  { Subview().Activate( activating ); }
 			

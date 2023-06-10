@@ -36,7 +36,7 @@ namespace Pedestal
 			
 			bool HitTest( const EventRecord& event );
 			
-			boost::intrusive_ptr< Quasimode >
+			TextEdit*
 			//
 			EnterShiftSpaceQuasimode( const EventRecord& event );
 			

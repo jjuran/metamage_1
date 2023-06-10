@@ -63,6 +63,10 @@
 
 // Debug
 #include "debug/assert.hh"
+#include "debug/boost_assert.hh"
+
+// Boost
+#include <boost/intrusive_ptr.hpp>
 
 // Pedestal
 #include "Pedestal/ADBKeyboard.hh"
@@ -70,8 +74,8 @@
 #include "Pedestal/Commands.hh"
 #include "Pedestal/Initialize.hh"
 #include "Pedestal/MenuBar.hh"
+#include "Pedestal/TextEdit.hh"
 #include "Pedestal/TrackControl.hh"
-#include "Pedestal/Quasimode.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/Window.hh"
 #include "Pedestal/WindowEventHandlers.hh"
@@ -475,8 +479,12 @@ namespace Pedestal
 	{
 		if ( View* view = get_window_view_ready( FrontWindow() ) )
 		{
-			if (( gQuasimode = view->EnterShiftSpaceQuasimode( event ) ))
+			if ( TextEdit* that = view->EnterShiftSpaceQuasimode( event ) )
 			{
+				const bool backward = event.modifiers & shiftKey;
+				
+				gQuasimode = New_IncrementalSearchQuasimode( *that, backward );
+				
 				gShiftSpaceQuasimodeMask = event.modifiers & kEitherShiftKey;
 				
 				return;

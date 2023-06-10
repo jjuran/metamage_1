@@ -101,7 +101,7 @@ namespace Pedestal
 			bool MouseDown( const EventRecord& event );
 			bool KeyDown  ( const EventRecord& event );
 			
-			boost::intrusive_ptr< Quasimode >
+			TextEdit*
 			//
 			EnterShiftSpaceQuasimode( const EventRecord& event );
 			

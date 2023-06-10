@@ -5,9 +5,6 @@
 
 #include "Pedestal/Superview.hh"
 
-// Pedestal
-#include "Pedestal/Quasimode.hh"
-
 
 namespace Pedestal
 {
@@ -31,7 +28,7 @@ namespace Pedestal
 		View::Uninstall();
 	}
 	
-	boost::intrusive_ptr< Quasimode >
+	TextEdit*
 	//
 	Superview::EnterShiftSpaceQuasimode( const EventRecord& event )
 	{

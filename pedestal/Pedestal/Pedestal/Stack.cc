@@ -17,8 +17,8 @@
 #endif
 #endif
 
-// Pedestal
-#include "Pedestal/Quasimode.hh"
+// debug
+#include "debug/assert.hh"
 
 
 namespace Pedestal
@@ -240,7 +240,7 @@ namespace Pedestal
 		return false;
 	}
 	
-	boost::intrusive_ptr< Quasimode >
+	TextEdit*
 	//
 	Stack::EnterShiftSpaceQuasimode( const EventRecord& event )
 	{
@@ -250,9 +250,9 @@ namespace Pedestal
 		{
 			View& view = GetNthView( i );
 			
-			if ( boost::intrusive_ptr< Quasimode > mode = view.EnterShiftSpaceQuasimode( event ) )
+			if ( TextEdit* textedit = view.EnterShiftSpaceQuasimode( event ) )
 			{
-				return mode;
+				return textedit;
 			}
 		}
 		

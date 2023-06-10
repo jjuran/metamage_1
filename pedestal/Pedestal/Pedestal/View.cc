@@ -25,7 +25,6 @@
 // Pedestal
 #include "Pedestal/ClickTarget.hh"
 #include "Pedestal/CurrentFocus.hh"
-#include "Pedestal/Quasimode.hh"
 
 
 namespace Pedestal
@@ -54,9 +53,9 @@ namespace Pedestal
 	{
 	}
 	
-	boost::intrusive_ptr< Quasimode > View::EnterShiftSpaceQuasimode( const EventRecord& )
+	TextEdit* View::EnterShiftSpaceQuasimode( const EventRecord& )
 	{
-		return boost::intrusive_ptr< Quasimode >();
+		return NULL;
 	}
 	
 }
