@@ -69,14 +69,6 @@ bool has_TEPinScroll()
 	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _TEPinScroll );
 }
 
-static inline
-bool has_TEAutoView()
-{
-	enum { _TEAutoView = 0xA813 };
-	
-	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _TEAutoView );
-}
-
 namespace Genie
 {
 	
@@ -214,8 +206,6 @@ namespace Genie
 		itsKeyDown( keyDown ),
 		itsUserCommand( cmdHook )
 	{
-		itsSelectionPriorToSearch.undefine();
-		
 		its_TEClickLoop_callback = (TEClickLoop_callback) &TEClickLoop;
 	}
 	
@@ -223,25 +213,12 @@ namespace Genie
 	{
 		Ped::TextEdit::Install( bounds );
 		
-		ASSERT( itsTE == NULL );
-		
-		itsTE = N::TENew( bounds );
-		
-		if ( has_TEAutoView() )
-		{
-			TEAutoView( true, itsTE );  // enable auto-scrolling
-		}
-		
-		mac::app::install_custom_TEClickLoop( itsTE );
-		
 		add_focusable_view( itsKey, this );
 	}
 	
 	void TextEdit::Uninstall()
 	{
 		remove_focusable_view( itsKey );
-		
-		itsTE.reset();
 		
 		Ped::TextEdit::Uninstall();
 	}
@@ -259,6 +236,8 @@ namespace Genie
 	
 	bool TextEdit::KeyDown( const EventRecord& event )
 	{
+		TEHandle itsTE = Get();
+		
 		Update_TE_From_Model( itsTE, itsKey );
 		
 		return itsKeyDown != NULL ? itsKeyDown( *this, event )
@@ -267,6 +246,8 @@ namespace Genie
 	
 	bool TextEdit::UserCommand( Ped::CommandCode code )
 	{
+		TEHandle itsTE = Get();
+		
 		Update_TE_From_Model( itsTE, itsKey );
 		
 		if ( itsUserCommand != NULL  &&  itsUserCommand( *this, code ) )
@@ -295,6 +276,8 @@ namespace Genie
 	
 	void TextEdit::UpdateClientHeight()
 	{
+		TEHandle itsTE = Get();
+		
 		ASSERT( itsTE != NULL );
 		
 		ScrollerParameters& params = ScrollerParameters::Get( itsKey );
@@ -304,6 +287,8 @@ namespace Genie
 	
 	void TextEdit::UpdateScrollOffsets()
 	{
+		TEHandle itsTE = Get();
+		
 		ASSERT( itsTE != NULL );
 		
 		ScrollerParameters& params = ScrollerParameters::Get( itsKey );
@@ -324,16 +309,6 @@ namespace Genie
 	void TextEdit::EndQuasimode()
 	{
 		N::InvalRect( mac::qd::get_portRect( mac::qd::thePort() ) );
-	}
-	
-	Ped::TextSelection TextEdit::GetPriorSelection() const
-	{
-		return itsSelectionPriorToSearch;
-	}
-	
-	void TextEdit::SetPriorSelection( const Ped::TextSelection& selection )
-	{
-		itsSelectionPriorToSearch = selection;
 	}
 	
 	

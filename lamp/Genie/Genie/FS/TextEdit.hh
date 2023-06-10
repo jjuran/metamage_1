@@ -9,16 +9,6 @@
 // plus
 #include "plus/var_string.hh"
 
-// nucleus
-#ifndef NUCLEUS_OWNED_HH
-#include "nucleus/owned.hh"
-#endif
-
-// Nitrogen
-#ifndef MAC_TEXTEDIT_TYPES_TEHANDLE_HH
-#include "Mac/TextEdit/Types/TEHandle.hh"
-#endif
-
 // vfs
 #include "vfs/property.hh"
 
@@ -84,10 +74,6 @@ namespace Genie
 			KeyDown_Hook      itsKeyDown;
 			UserCommand_Hook  itsUserCommand;
 			
-			nucleus::owned< TEHandle >  itsTE;
-			
-			Pedestal::TextSelection  itsSelectionPriorToSearch;
-			
 			bool IsSecret() const;
 			bool IsSingular() const;
 			
@@ -124,14 +110,8 @@ namespace Genie
 			
 			const vfs::node* GetKey() const  { return itsKey; }
 			
-			TEHandle Get() const  { return itsTE; }
-			
 			void BeginQuasimode();
 			void EndQuasimode();
-			
-			Pedestal::TextSelection GetPriorSelection() const;
-			
-			void SetPriorSelection( const Pedestal::TextSelection& selection );
 			
 			bool Wrapped() const;
 	};

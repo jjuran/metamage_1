@@ -32,7 +32,6 @@
 #include "Nitrogen/MacMemory.hh"
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Quickdraw.hh"
-#include "Nitrogen/TextEdit.hh"
 
 // Pedestal
 #include "Pedestal/Frame.hh"
@@ -49,14 +48,6 @@ bool has_TEPinScroll()
 	enum { _TEPinScroll = 0xA812 };
 	
 	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _TEPinScroll );
-}
-
-static inline
-bool has_TEAutoView()
-{
-	enum { _TEAutoView = 0xA813 };
-	
-	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _TEAutoView );
 }
 
 namespace TestEdit
@@ -112,30 +103,16 @@ namespace TestEdit
 	
 	class TextEdit : public Ped::TextEdit, public Ped::ScrollerAPI
 	{
-		private:
-			n::owned< TEHandle >  itsTE;
-			
-			Ped::TextSelection  itsSelectionPriorToSearch;
-		
 		public:
 			TextEdit( const Rect& bounds )
 			{
-				itsSelectionPriorToSearch.undefine();
-				
 				Install( bounds );
 			}
 			
 			void Install( const Rect& bounds );
-			void Uninstall();
-			
-			TEHandle Get() const  { return itsTE; }
 			
 			void BeginQuasimode();
 			void EndQuasimode();
-			
-			Ped::TextSelection GetPriorSelection() const;
-			
-			void SetPriorSelection( const Ped::TextSelection& selection );
 			
 			bool KeyDown( const EventRecord& event );
 			
@@ -154,25 +131,11 @@ namespace TestEdit
 	
 	void TextEdit::Install( const Rect& bounds )
 	{
-		ASSERT( itsTE == NULL );
-		
 		::TextFont( kFontIDMonaco );
 		
 		::TextSize( 9 );
 		
-		itsTE = N::TENew( bounds );
-		
-		if ( has_TEAutoView() )
-		{
-			TEAutoView( true, itsTE );  // enable auto-scrolling
-		}
-		
-		mac::app::install_custom_TEClickLoop( itsTE );
-	}
-	
-	void TextEdit::Uninstall()
-	{
-		itsTE.reset();
+		Ped::TextEdit::Install( bounds );
 	}
 	
 	
@@ -201,16 +164,6 @@ namespace TestEdit
 		N::PenPat( mac::qd::black() );
 	}
 	
-	Ped::TextSelection TextEdit::GetPriorSelection() const
-	{
-		return itsSelectionPriorToSearch;
-	}
-	
-	void TextEdit::SetPriorSelection( const Ped::TextSelection& selection )
-	{
-		itsSelectionPriorToSearch = selection;
-	}
-	
 	
 	typedef TextEdit Scroller;
 	
@@ -222,6 +175,8 @@ namespace TestEdit
 	
 	short TextEdit::ViewWidth() const
 	{
+		TEHandle itsTE = Get();
+		
 		const Rect& viewRect = itsTE[0]->viewRect;
 		
 		return viewRect.right - viewRect.left;
@@ -229,6 +184,8 @@ namespace TestEdit
 	
 	short TextEdit::ViewHeight() const
 	{
+		TEHandle itsTE = Get();
+		
 		const Rect& viewRect = itsTE[0]->viewRect;
 		
 		return viewRect.bottom - viewRect.top;
@@ -236,11 +193,15 @@ namespace TestEdit
 	
 	int TextEdit::ClientHeight() const
 	{
+		TEHandle itsTE = Get();
+		
 		return GetTextEditingHeight( itsTE );
 	}
 	
 	int TextEdit::GetVOffset() const
 	{
+		TEHandle itsTE = Get();
+		
 		const TERec& te = **itsTE;
 		
 		return te.viewRect.top - te.destRect.top;
@@ -248,6 +209,8 @@ namespace TestEdit
 	
 	void TextEdit::SetVOffset( int v )
 	{
+		TEHandle itsTE = Get();
+		
 		{
 			const TERec& te = **itsTE;
 			

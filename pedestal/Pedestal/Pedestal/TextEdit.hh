@@ -9,6 +9,14 @@
 // mac-app-utils
 #include "mac_app/textedit.hh"
 
+// nucleus
+#include "nucleus/owned.hh"
+
+// Nitrogen
+#ifndef MAC_TEXTEDIT_TYPES_TEHANDLE_HH
+#include "Mac/TextEdit/Types/TEHandle.hh"
+#endif
+
 // Pedestal
 #ifndef PEDESTAL_COMMANDCODE_HH
 #include "Pedestal/CommandCode.hh"
@@ -21,13 +29,8 @@
 #endif
 
 
-struct TERec;
-
-
 namespace Pedestal
 {
-	
-	typedef TERec** TEHandle;
 	
 	class NotEnoughSpaceForTEKey;
 	class NotEnoughSpaceForTEPaste;
@@ -42,7 +45,9 @@ namespace Pedestal
 	                 public IncrementalSearchEditor
 	{
 		private:
-			virtual TEHandle Get() const = 0;
+			nucleus::owned< TEHandle > itsTE;
+			
+			TextSelection  itsSelectionPriorToSearch;
 			
 			virtual bool IsSecret  () const  { return false; }
 			virtual bool IsSingular() const  { return false; }
@@ -68,6 +73,7 @@ namespace Pedestal
 		public:
 			TextEdit() : its_TEClickLoop_callback()
 			{
+				itsSelectionPriorToSearch.undefine();
 			}
 			
 			virtual void On_UserSelect()  {}
@@ -76,6 +82,12 @@ namespace Pedestal
 			virtual bool Preprocess_Key ( const EventRecord& event );
 			virtual bool Process_Key    ( const EventRecord& event );
 			virtual void Postprocess_Key( const EventRecord& event )  {}
+			
+			TEHandle Get() const  { return itsTE; }
+			
+			void Install( const Rect& bounds );
+			
+			void Uninstall();
 			
 			void Activate( bool activating );
 			
@@ -100,6 +112,10 @@ namespace Pedestal
 			bool UserCommand( CommandCode code );
 			
 			TextSelection GetCurrentSelection() const;
+			
+			TextSelection GetPriorSelection() const;
+			
+			void SetPriorSelection( const TextSelection& selection );
 			
 			void Select( unsigned start, unsigned end );
 			

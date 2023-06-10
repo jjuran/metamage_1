@@ -20,6 +20,7 @@
 
 // mac-sys-utils
 #include "mac_sys/beep.hh"
+#include "mac_sys/trap_available.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -27,6 +28,7 @@
 // Nitrogen
 #include "Nitrogen/Events.hh"
 #include "Nitrogen/Quickdraw.hh"
+#include "Nitrogen/TextEdit.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -36,6 +38,14 @@
 #include "Pedestal/IncrementalSearch.hh"
 #include "Pedestal/Quasimode.hh"
 
+
+static inline
+bool has_TEAutoView()
+{
+	enum { _TEAutoView = 0xA813 };
+	
+	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _TEAutoView );
+}
 
 namespace Pedestal
 {
@@ -84,6 +94,25 @@ namespace Pedestal
 		}
 	}
 	
+	
+	void TextEdit::Install( const Rect& bounds )
+	{
+		ASSERT( itsTE == NULL );
+		
+		itsTE = N::TENew( bounds );
+		
+		if ( has_TEAutoView() )
+		{
+			TEAutoView( true, itsTE );  // enable auto-scrolling
+		}
+		
+		mac::app::install_custom_TEClickLoop( itsTE );
+	}
+	
+	void TextEdit::Uninstall()
+	{
+		itsTE.reset();
+	}
 	
 	void TextEdit::Insert_Key( char c )
 	{
@@ -791,6 +820,16 @@ namespace Pedestal
 		result.end   = te.selEnd;
 		
 		return result;
+	}
+	
+	TextSelection TextEdit::GetPriorSelection() const
+	{
+		return itsSelectionPriorToSearch;
+	}
+	
+	void TextEdit::SetPriorSelection( const TextSelection& selection )
+	{
+		itsSelectionPriorToSearch = selection;
 	}
 	
 	void TextEdit::Select( unsigned start, unsigned end )
