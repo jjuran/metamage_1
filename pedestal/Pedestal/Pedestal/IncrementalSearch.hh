@@ -12,16 +12,17 @@
 // Debug
 #include "debug/boost_assert.hh"
 
+// vxo
+#include "vxo/ref_count.hh"
+
 // plus
 #include "plus/var_string.hh"
 
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
-// Pedestal
-#ifndef PEDESTAL_QUASIMODE_HH
-#include "Pedestal/Quasimode.hh"
-#endif
+// <Events.h>
+struct EventRecord;
 
 
 namespace Pedestal
@@ -54,7 +55,7 @@ namespace Pedestal
 	}
 	
 	
-	class IncrementalSearchQuasimode : public Quasimode
+	class IncrementalSearchQuasimode : public vxo::ref_count< IncrementalSearchQuasimode >
 	{
 		private:
 			TextEdit&                     itsView;
@@ -71,6 +72,8 @@ namespace Pedestal
 			
 			bool KeyDown( const EventRecord& event );
 	};
+	
+	typedef IncrementalSearchQuasimode Quasimode;
 	
 	
 	short TextSearch( const char*           text,
