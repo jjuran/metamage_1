@@ -22,6 +22,10 @@
 #include "mac_sys/beep.hh"
 #include "mac_sys/trap_available.hh"
 
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+#include "mac_qd/globals/thePort.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -29,6 +33,9 @@
 #include "Nitrogen/Events.hh"
 #include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/TextEdit.hh"
+
+// ClassicToolbox
+#include "ClassicToolbox/MacWindows.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -803,6 +810,16 @@ namespace Pedestal
 		return true;
 	}
 	
+	
+	void TextEdit::BeginQuasimode()
+	{
+		N::FrameRect( mac::qd::get_portRect( mac::qd::thePort() ) );
+	}
+	
+	void TextEdit::EndQuasimode()
+	{
+		N::InvalRect( mac::qd::get_portRect( mac::qd::thePort() ) );
+	}
 	
 	TextSelection TextEdit::GetCurrentSelection() const
 	{

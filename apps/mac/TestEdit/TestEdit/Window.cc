@@ -118,9 +118,6 @@ namespace TestEdit
 			
 			void Install( const Rect& bounds );
 			
-			void BeginQuasimode();
-			void EndQuasimode();
-			
 			bool KeyDown( const EventRecord& event );
 			
 			short ViewWidth () const;
@@ -143,32 +140,6 @@ namespace TestEdit
 		::TextSize( 9 );
 		
 		Ped::TextEdit::Install( bounds );
-	}
-	
-	
-	static inline
-	void DrawQuasimodeFrame( const Rect& frame )
-	{
-		N::FrameRect( frame );
-	}
-	
-	static void DrawQuasimodeFrame()
-	{
-		DrawQuasimodeFrame( mac::qd::get_portRect( mac::qd::thePort() ) );
-	}
-	
-	void TextEdit::BeginQuasimode()
-	{
-		DrawQuasimodeFrame();
-	}
-	
-	void TextEdit::EndQuasimode()
-	{
-		N::PenPat( mac::qd::white() );
-		
-		DrawQuasimodeFrame();
-		
-		N::PenPat( mac::qd::black() );
 	}
 	
 	

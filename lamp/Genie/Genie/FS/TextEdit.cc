@@ -5,6 +5,11 @@
 
 #include "Genie/FS/TextEdit.hh"
 
+// Mac OS
+#ifndef __EVENTS__
+#include <Events.h>
+#endif
+
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
 #ifndef MISSING_QUICKDRAWTEXT_H
@@ -24,10 +29,6 @@
 // mac-sys-utils
 #include "mac_sys/trap_available.hh"
 
-// mac-qd-utils
-#include "mac_qd/get_portRect.hh"
-#include "mac_qd/globals/thePort.hh"
-
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -41,12 +42,7 @@
 
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
-#include "Nitrogen/MacWindows.hh"
-#include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/TextEdit.hh"
-
-// ClassicToolbox
-#include "ClassicToolbox/MacWindows.hh"
 
 // vfs
 #include "vfs/node.hh"
@@ -299,16 +295,6 @@ namespace Genie
 		params.itsVOffset = te.viewRect.top  - te.destRect.top;
 		
 		TextEditParameters::Get( itsKey ).itIsAtBottom = IsScrolledToBottom( params );
-	}
-	
-	void TextEdit::BeginQuasimode()
-	{
-		N::FrameRect( mac::qd::get_portRect( mac::qd::thePort() ) );
-	}
-	
-	void TextEdit::EndQuasimode()
-	{
-		N::InvalRect( mac::qd::get_portRect( mac::qd::thePort() ) );
 	}
 	
 	

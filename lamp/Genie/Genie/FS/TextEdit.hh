@@ -110,9 +110,6 @@ namespace Genie
 			
 			const vfs::node* GetKey() const  { return itsKey; }
 			
-			void BeginQuasimode();
-			void EndQuasimode();
-			
 			bool Wrapped() const;
 	};
 	

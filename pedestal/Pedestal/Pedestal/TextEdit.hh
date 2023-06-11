@@ -110,8 +110,8 @@ namespace Pedestal
 			
 			bool UserCommand( CommandCode code );
 			
-			virtual void BeginQuasimode() = 0;
-			virtual void EndQuasimode() = 0;
+			void BeginQuasimode();
+			void EndQuasimode();
 			
 			TextSelection GetCurrentSelection() const;
 			
