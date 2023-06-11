@@ -41,8 +41,7 @@ namespace Pedestal
 	void Preflight_TEPaste( TEHandle hTE );
 	
 	
-	class TextEdit : public View,
-	                 public IncrementalSearchEditor
+	class TextEdit : public View
 	{
 		private:
 			nucleus::owned< TEHandle > itsTE;
@@ -111,13 +110,23 @@ namespace Pedestal
 			
 			bool UserCommand( CommandCode code );
 			
+			virtual void BeginQuasimode() = 0;
+			virtual void EndQuasimode() = 0;
+			
 			TextSelection GetCurrentSelection() const;
+			
+			void SetCurrentSelection( const TextSelection& selection )
+			{
+				Select( selection.start, selection.end );
+			}
 			
 			TextSelection GetPriorSelection() const;
 			
 			void SetPriorSelection( const TextSelection& selection );
 			
 			void Select( unsigned start, unsigned end );
+			
+			void AugmentSelection();
 			
 			int Search( const char*           pattern,
 			            std::size_t           pattern_length,

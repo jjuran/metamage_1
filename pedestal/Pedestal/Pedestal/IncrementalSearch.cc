@@ -33,6 +33,9 @@
 // plus
 #include "plus/var_string.hh"
 
+// Pedestal
+#include "Pedestal/TextEdit.hh"
+
 
 namespace Pedestal
 {
@@ -72,7 +75,7 @@ namespace Pedestal
 	}
 	
 	
-	void IncrementalSearchEditor::AugmentSelection()
+	void TextEdit::AugmentSelection()
 	{
 		TextSelection current = GetCurrentSelection();
 		TextSelection prior   = GetPriorSelection();
@@ -95,7 +98,7 @@ namespace Pedestal
 		gArrowKeyMayBeChorded = false;
 	}
 	
-	bool Try_ArrowKeyChord( IncrementalSearchEditor& editor, char c )
+	bool Try_ArrowKeyChord( TextEdit& editor, char c )
 	{
 		if ( !CharIsHorizontalArrow( c ) )
 		{
@@ -234,7 +237,7 @@ namespace Pedestal
 	class IncrementalSearchQuasimode : public Quasimode
 	{
 		private:
-			IncrementalSearchEditor&      itsView;
+			TextEdit&                     itsView;
 			bool                          itSearchesBackward;
 			unsigned short                itsModifierMask;
 			TextSelection                 itsSavedSelection;
@@ -242,7 +245,7 @@ namespace Pedestal
 			plus::var_string              itsPattern;
 		
 		public:
-			IncrementalSearchQuasimode( IncrementalSearchEditor& editor, bool backward );
+			IncrementalSearchQuasimode( TextEdit& editor, bool backward );
 			
 			~IncrementalSearchQuasimode();
 			
@@ -250,8 +253,8 @@ namespace Pedestal
 	};
 	
 	
-	IncrementalSearchQuasimode::IncrementalSearchQuasimode( IncrementalSearchEditor&  editor,
-	                                                        bool                      backward )
+	IncrementalSearchQuasimode::IncrementalSearchQuasimode( TextEdit&  editor,
+	                                                        bool       backward )
 	:
 		itsView           ( editor   ),
 		itSearchesBackward( backward ),
@@ -354,13 +357,13 @@ namespace Pedestal
 	
 	boost::intrusive_ptr< Quasimode >
 	//
-	New_IncrementalSearchQuasimode( IncrementalSearchEditor& editor, bool backward )
+	New_IncrementalSearchQuasimode( TextEdit& editor, bool backward )
 	{
 		return boost::intrusive_ptr< Quasimode >( new IncrementalSearchQuasimode( editor, backward ) );
 	}
 	
 	
-	bool Try_RepeatSearch( IncrementalSearchEditor& editor, const EventRecord& event )
+	bool Try_RepeatSearch( TextEdit& editor, const EventRecord& event )
 	{
 		const char c = event.message;
 		

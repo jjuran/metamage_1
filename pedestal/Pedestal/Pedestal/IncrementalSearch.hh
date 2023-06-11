@@ -24,6 +24,8 @@
 namespace Pedestal
 {
 	
+	class TextEdit;
+	
 	struct TextSelection
 	{
 		unsigned  start;
@@ -58,51 +60,18 @@ namespace Pedestal
 	                  bool                  matchAtPosition );
 	
 	
-	class IncrementalSearchEditor
-	{
-		public:
-			virtual ~IncrementalSearchEditor()
-			{
-			}
-			
-			virtual void BeginQuasimode() = 0;
-			virtual void EndQuasimode() = 0;
-			
-			virtual TextSelection GetCurrentSelection() const = 0;
-			
-			virtual void Select( unsigned start, unsigned end ) = 0;
-			
-			void SetCurrentSelection( const TextSelection& selection )
-			{
-				Select( selection.start, selection.end );
-			}
-			
-			virtual TextSelection GetPriorSelection() const = 0;
-			
-			virtual void SetPriorSelection( const TextSelection& selection ) = 0;
-			
-			void AugmentSelection();
-			
-			virtual int Search( const char*           pattern,
-			                    std::size_t           pattern_length,
-			                    const TextSelection&  selection,
-			                    bool                  searchBackwards,
-			                    bool                  matchAtPosition ) const = 0;
-	};
-	
-	
 	void ResetArrowKeyChordability();
 	
-	bool Try_ArrowKeyChord( IncrementalSearchEditor& editor, char c );
+	bool Try_ArrowKeyChord( TextEdit& editor, char c );
 	
 	
 	const plus::string& GetLastSearchPattern();
 	
 	boost::intrusive_ptr< Quasimode >
 	//
-	New_IncrementalSearchQuasimode( IncrementalSearchEditor& editor, bool backward );
+	New_IncrementalSearchQuasimode( TextEdit& editor, bool backward );
 	
-	bool Try_RepeatSearch( IncrementalSearchEditor& editor, const EventRecord& event );
+	bool Try_RepeatSearch( TextEdit& editor, const EventRecord& event );
 	
 }
 
