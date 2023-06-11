@@ -18,6 +18,9 @@
 #include <Resources.h>
 #endif
 
+// Standard C
+#include <string.h>
+
 // iota
 #include "iota/char_types.hh"
 
@@ -323,13 +326,6 @@ namespace Pedestal
 		}
 		
 		return true;
-	}
-	
-	boost::intrusive_ptr< Quasimode >
-	//
-	New_IncrementalSearchQuasimode( TextEdit& editor, bool backward )
-	{
-		return boost::intrusive_ptr< Quasimode >( new IncrementalSearchQuasimode( editor, backward ) );
 	}
 	
 	

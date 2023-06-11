@@ -9,17 +9,11 @@
 // Standard C++
 #include <vector>
 
-// Debug
-#include "debug/boost_assert.hh"
-
 // vxo
 #include "vxo/ref_count.hh"
 
 // plus
 #include "plus/var_string.hh"
-
-// Boost
-#include <boost/intrusive_ptr.hpp>
 
 // <Events.h>
 struct EventRecord;
@@ -88,11 +82,6 @@ namespace Pedestal
 	void ResetArrowKeyChordability();
 	
 	bool Try_ArrowKeyChord( TextEdit& editor, char c );
-	
-	
-	boost::intrusive_ptr< Quasimode >
-	//
-	New_IncrementalSearchQuasimode( TextEdit& editor, bool backward );
 	
 	bool Try_RepeatSearch( TextEdit& editor, const EventRecord& event );
 	

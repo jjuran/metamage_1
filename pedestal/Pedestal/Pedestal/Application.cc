@@ -483,7 +483,7 @@ namespace Pedestal
 			{
 				const bool backward = event.modifiers & shiftKey;
 				
-				gQuasimode = New_IncrementalSearchQuasimode( *that, backward );
+				gQuasimode.reset( new Quasimode( *that, backward ) );
 				
 				gShiftSpaceQuasimodeMask = event.modifiers & kEitherShiftKey;
 				
