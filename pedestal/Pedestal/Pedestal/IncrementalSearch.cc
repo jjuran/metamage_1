@@ -18,9 +18,6 @@
 #include <Resources.h>
 #endif
 
-// Standard C++
-#include <vector>
-
 // iota
 #include "iota/char_types.hh"
 
@@ -29,9 +26,6 @@
 
 // Debug
 #include "debug/assert.hh"
-
-// plus
-#include "plus/var_string.hh"
 
 // Pedestal
 #include "Pedestal/TextEdit.hh"
@@ -227,25 +221,6 @@ namespace Pedestal
 		
 		return c;
 	}
-	
-	
-	class IncrementalSearchQuasimode : public Quasimode
-	{
-		private:
-			TextEdit&                     itsView;
-			bool                          itSearchesBackward;
-			unsigned short                itsModifierMask;
-			TextSelection                 itsSavedSelection;
-			std::vector< TextSelection >  itsMatches;
-			plus::var_string              itsPattern;
-		
-		public:
-			IncrementalSearchQuasimode( TextEdit& editor, bool backward );
-			
-			~IncrementalSearchQuasimode();
-			
-			bool KeyDown( const EventRecord& event );
-	};
 	
 	
 	IncrementalSearchQuasimode::IncrementalSearchQuasimode( TextEdit&  editor,

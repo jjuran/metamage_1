@@ -6,11 +6,14 @@
 #ifndef PEDESTAL_INCREMENTALSEARCH_HH
 #define PEDESTAL_INCREMENTALSEARCH_HH
 
+// Standard C++
+#include <vector>
+
 // Debug
 #include "debug/boost_assert.hh"
 
 // plus
-#include "plus/string_fwd.hh"
+#include "plus/var_string.hh"
 
 // Boost
 #include <boost/intrusive_ptr.hpp>
@@ -49,6 +52,25 @@ namespace Pedestal
 	{
 		return !( a == b );
 	}
+	
+	
+	class IncrementalSearchQuasimode : public Quasimode
+	{
+		private:
+			TextEdit&                     itsView;
+			bool                          itSearchesBackward;
+			unsigned short                itsModifierMask;
+			TextSelection                 itsSavedSelection;
+			std::vector< TextSelection >  itsMatches;
+			plus::var_string              itsPattern;
+		
+		public:
+			IncrementalSearchQuasimode( TextEdit& editor, bool backward );
+			
+			~IncrementalSearchQuasimode();
+			
+			bool KeyDown( const EventRecord& event );
+	};
 	
 	
 	short TextSearch( const char*           text,
