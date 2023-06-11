@@ -24,6 +24,8 @@
 namespace mac  {
 namespace file {
 
+#if ! __LP64__
+
 long read( short refnum, void* buffer, long n, short mode, long offset )
 {
 	ParamBlockRec pb;
@@ -62,6 +64,12 @@ short write( short refnum, const void* buffer, long n, short mode, long offset )
 	
 	return err;
 }
+
+#else  // #if ! __LP64__
+
+int dummy;
+
+#endif  // #else  // #if ! __LP64__
 
 }
 }
