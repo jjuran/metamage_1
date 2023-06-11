@@ -65,8 +65,6 @@ namespace Pedestal
 	bool Try_ArrowKeyChord( TextEdit& editor, char c );
 	
 	
-	const plus::string& GetLastSearchPattern();
-	
 	boost::intrusive_ptr< Quasimode >
 	//
 	New_IncrementalSearchQuasimode( TextEdit& editor, bool backward );

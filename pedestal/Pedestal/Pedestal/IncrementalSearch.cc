@@ -203,11 +203,6 @@ namespace Pedestal
 	
 	static plus::string gLastSearchPattern;
 	
-	const plus::string& GetLastSearchPattern()
-	{
-		return gLastSearchPattern;
-	}
-	
 	static char GetTranslatedKeyFromEvent( const EventRecord& event, UInt16 ignoredModifierMask )
 	{
 		static UInt32 state = 0;
@@ -384,7 +379,7 @@ namespace Pedestal
 			
 			TextSelection selection = editor.GetCurrentSelection();
 			
-			const plus::string& last_pattern = GetLastSearchPattern();
+			const plus::string& last_pattern = gLastSearchPattern;
 			
 			short match = editor.Search( last_pattern.data(), last_pattern.size(), selection, backward, false );
 			
