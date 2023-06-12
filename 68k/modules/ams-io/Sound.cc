@@ -84,12 +84,39 @@ UInt32 sizeof_SWSynthRec( const SWSynthRec* rec, UInt16 length )
 	return byte_distance( rec, tone );
 }
 
+static Wave stocked_wave_1;
+static Wave stocked_wave_2;
+static Wave stocked_wave_3;
+static Wave stocked_wave_4;
+
 static Wave zeroWave;
 
 static inline
 WavePtr checked( WavePtr wave )
 {
 	return wave ? wave : zeroWave;
+}
+
+static inline
+int Wave_cmp( const Wave a, const Wave b )
+{
+	if ( a == NULL )
+	{
+		/*
+			If either pointer is NULL, return 0 to avoid dereferencing
+			either in the caller.  However, b is a stocked wave, never NULL.
+		*/
+		
+		return 0;
+	}
+	
+	return fast_memcmp( a, b, sizeof (Wave) );
+}
+
+static inline
+void Wave_cpy( Wave dst, const Wave src )
+{
+	return fast_memcpy( dst, src, sizeof (Wave) );
 }
 
 static
@@ -131,6 +158,11 @@ ssize_t start_sound( const void* buffer, UInt32 length )
 		fast_memcpy( flat.sound2Wave, checked( sndRec->sound2Wave ), wave_len );
 		fast_memcpy( flat.sound3Wave, checked( sndRec->sound3Wave ), wave_len );
 		fast_memcpy( flat.sound4Wave, checked( sndRec->sound4Wave ), wave_len );
+		
+		Wave_cpy( stocked_wave_1, flat.sound1Wave );
+		Wave_cpy( stocked_wave_2, flat.sound2Wave );
+		Wave_cpy( stocked_wave_3, flat.sound3Wave );
+		Wave_cpy( stocked_wave_4, flat.sound4Wave );
 		
 		buffer = &flat;
 		length = sizeof flat;
@@ -207,8 +239,36 @@ static bool FTSound_was_modified;
 static VBLTask SoundVBL;
 
 static
+void update_wave( short channel, Wave current, Wave stocked )
+{
+	if ( Wave_cmp( current, stocked ) != 0 )
+	{
+		using namespace sndpipe;
+		
+		Wave_cpy( stocked, current );
+		
+		FTSynthRec_wave_update update;
+		
+		update.mode    = ftMode_wave_update;
+		update.recID   = (RecID) current_FTSound;
+		update.channel = channel;
+		
+		Wave_cpy( update.waveform, stocked );
+		
+		send_command( admin_domain, &update, sizeof update );
+	}
+}
+
+static
 pascal void SoundVBL_Proc()
 {
+	FTSoundRec& current = *current_FTSound;
+	
+	update_wave( 1 - 1, current.sound1Wave, stocked_wave_1 );
+	update_wave( 2 - 1, current.sound2Wave, stocked_wave_2 );
+	update_wave( 3 - 1, current.sound3Wave, stocked_wave_3 );
+	update_wave( 4 - 1, current.sound4Wave, stocked_wave_4 );
+	
 	if ( FTSoundRec_cmp( *current_FTSound, copy_of_FTSoundRec ) != 0 )
 	{
 		using namespace sndpipe;
