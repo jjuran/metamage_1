@@ -23,6 +23,7 @@
 using sndpipe::set_loudness_level;
 using sndpipe::ftMode_flat_buffer;
 using sndpipe::ftMode_flat_update;
+using sndpipe::ftMode_wave_update;
 
 
 static inline
@@ -36,6 +37,16 @@ void update_fourtone( sound_node* dst, const sound_node* src )
 	memcpy( &dst->sound.four_tone.duration,
 	        &src->sound.four_tone.duration,
 	        size );
+}
+
+static inline
+void update_fourtone_wave( sound_node* dst, const sound_node* src )
+{
+	int channel = src->sound.wave_data.channel;
+	
+	uint8_t* wave = dst->sound.four_tone.sound1Wave + channel * sizeof (Wave);
+	
+	memcpy( wave, src->sound.wave_data.waveform, sizeof (Wave) );
 }
 
 static
@@ -148,6 +159,14 @@ short synthesize( sample_buffer& output )
 				if ( sound_node* node = find_fourtone( update ) )
 				{
 					update_fourtone( node, update );
+				}
+			}
+			
+			if ( update->sound.mode == ftMode_wave_update )
+			{
+				if ( sound_node* node = find_fourtone( update ) )
+				{
+					update_fourtone_wave( node, update );
 				}
 			}
 		}

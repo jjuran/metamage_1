@@ -158,6 +158,10 @@ void read_and_enqueue( int fd, const command_header& header, rt_queue& queue )
 				endianize( node->sound.four_tone );
 				break;
 			
+			case ftMode_wave_update:
+				// No endianization needed.
+				break;
+			
 			case set_loudness_level:
 				if ( header.length < 2 )
 				{
