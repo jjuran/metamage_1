@@ -42,6 +42,7 @@ enum
 	
 	ftMode_flat_buffer = ftMode | 0x0100,  // sound
 	ftMode_flat_update = ftMode | 0x0200,  // admin
+	ftMode_wave_update = ftMode | 0x0300,  // admin
 };
 
 struct volume_setting
@@ -70,6 +71,15 @@ struct FTSynthRec_flat_header
 	Phase  sound3Phase;
 	Fixed  sound4Rate;
 	Phase  sound4Phase;
+};
+
+struct FTSynthRec_wave_update
+{
+	short  mode;
+	RecID  recID;        // This is the FTSoundRec buffer address
+	Byte   channel;      // 0, 1, 2, or 3 for FTSoundRec channel 1, 2, 3, or 4
+	char   _filler;
+	Wave   waveform;
 };
 
 #ifdef __GNUC__
