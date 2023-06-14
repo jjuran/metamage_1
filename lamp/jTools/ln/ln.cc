@@ -42,7 +42,7 @@
 
 
 static
-const char* basename( const char* pathname )
+const char* base_name( const char* pathname )
 {
 	size_t length = strlen( pathname );
 	
@@ -130,7 +130,7 @@ int main( int argc, char** argv )
 			
 			const char* dir_path = loc;
 			
-			loc = basename( target );
+			loc = base_name( target );
 			
 			struct stat st;
 			
