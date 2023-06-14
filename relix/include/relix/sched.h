@@ -33,7 +33,11 @@
 extern "C" {
 #endif
 
+#ifndef __linux__
+
 pid_t gettid();
+
+#endif
 
 int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int flags, void* arg );
 
