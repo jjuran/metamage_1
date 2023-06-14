@@ -9,14 +9,14 @@
 // must
 #include "must/write.h"
 
-// Iota
-#include "iota/strings.hh"
-
 // more-posix
 #include "more/perror.hh"
 
 
 #pragma exceptions off
+
+
+#define STR_LEN( s ) "" s, (sizeof s - 1)
 
 
 int main( int argc, char *const *argv )
