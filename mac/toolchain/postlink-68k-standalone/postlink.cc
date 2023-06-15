@@ -4,7 +4,7 @@
 	
 	Post-linker for classic Mac OS stand-alone 68K code resources
 	
-	Copyright 2023, Joshua Juran.  All rights reserved.
+	Copyright 2023-2024, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
@@ -17,7 +17,7 @@
 	purpose of documenting the behavior of the post-linker, whose own
 	purpose is that of interoperability.  Fair use applies.
 	
-	However, get_address_mask() is original code copyright Joshua Juran.
+	However, the new startup code is original code copyright Joshua Juran.
 	====================================================================
 	
 	Overview
@@ -58,8 +58,8 @@
 	in the first place is a post-linking phase that patches the faulty
 	runtime after the fact.  Fortunately, both the logic written in C and
 	the Metrowerks tools used to build it left enough redundancy for us to
-	squeeze in a system version check.  Our modified startup code only
-	calls StripAddress() in System 6[1] and later, where it's guaranteed
+	squeeze in a system version check.  Our modified startup code[1] only
+	calls StripAddress() in System 6[2] and later, where it's guaranteed
 	to exist.  In earlier systems, it defaults to Lo3Bytes ($00FFFFFF) as
 	an address mask.
 	
@@ -68,7 +68,10 @@
 	code will never be loaded above $00800000, and which mechanism is used
 	to mask the address is moot.
 	
-	[1] More specifically, the modified startup code calls StripAddress()
+	[1] The first version of this tool only minimally patched the Metrowerks
+	runtime to fix the problem; the current version replaces it completely.
+	
+	[2] More specifically, the modified startup code calls StripAddress()
 	in System 6.0.4 and later.  Connectix Optima is documented as enabling
 	32-bit mode on certain machines running 6.0.4 or later, but no earlier.
 	It's also been reported that System 6.0.3 can be trivially patched to
@@ -161,48 +164,47 @@
 	Strategy
 	--------
 	
-	The goal is to insert new code that determines whether or not to call
-	StripAddress(), or assume 24-bit mode and mask with Lo3Bytes.  We'll
-	make some space by consolidating redundant code.
+	Previously, the goal was to insert new code that determines whether
+	or not to call StripAddress(), or assume 24-bit mode and mask with
+	Lo3Bytes, making space for it by consolidating redundant code.
 	
-	SetCurrentA4() and __GetMainXRef__() each contain an offset that we
-	need, but are otherwise replaced completely.  SetCurrentA4() becomes
-	get_address_mask(), which returns either 0x00FFFFFF or 0xFFFFFFFF in
-	D0.  __Startup__() places the stripped code start address in D0.  Then
-	A4 is set to the stripped data start address, using the offset taken
-	from SetCurrentA4().  The additional code in __Startup__() overwrites
-	the beginning of __GetMainXRef__(); the rest is filled with NOPs.
+	The new goal is replacing the Metrowerks runtime in its entirety.
 	
-	Next, __Startup__() calls __SetupMainRsrc__(), passing the stripped
-	code start address in D0.  __SetupMainRsrc__() checks to see whether
-	the code address is unchanged (in which case no relocation is needed),
-	whether this is a subsequent relocation, and if not, whether _HWPriv
-	is implemented (which is cached for next time).
+	We extract the data offset, xref offset, and main() offset from
+	their known locations in the code.  The entire startup code becomes
+	a single function.  Other than the relocation data processing loop,
+	execution flow proceeds only forward.
 	
-	The Metrowerks code for __SetupMainRsrc__() calls __GetMainXRef__() to
-	get the stripped xref start address, and then calls __relocate_compr()
-	with three arguments pushed in this order: the relocation delta, the
-	stripped code start address, and the stripped xref start address.  Our
-	patched code replaces the __GetMainXRef__() with a register move that
-	places the stripped code start address directly into A1 (where it will
-	be used) and a NOP.  The two instructions in __relocate_compr() that
-	unpack the xref start and code start parameters are replaced with code
-	to calculate the xref start in A0 (using the offset originally from
-	__GetMainXRef__()).  (A1 is set to the code start by the caller.)
+	First, we save registers onto the stack.  In addition to the usual
+	volatile registers and A4, we also save A2 and A3 now so we can use
+	them later, at no further cost in code size (since we're using MOVEM).
 	
-	After __SetupMainRsrc__() returns, __Startup__() restores registers
-	and tail-calls main(), thus completing startup.
+	The next code (which used to be the body of get_address_mask()) yields
+	either 0x00FFFFFF or 0xFFFFFFFF in D0 as the address mask.  The mask
+	is used to produce a stripped address of the start of the code, which
+	in turn is used as the base for computing the start-of-data address.
 	
-	Legend
-	------
+	The first longword of data is the previous code start address.  If it
+	matches the current start of code, then no relocation is necessary.
+	If it's zero, then this code is running for the first time and some
+	initialization is required.  Since we're going to be modifying code
+	that's already executing, we'll need to flush the code cache (if any)
+	when we're done.  The HWPriv trap can be used to do that, though only
+	if it's implemented.  We check whether it is, and store the result for
+	later.  If this isn't the first run, we reuse the result from earlier.
 	
-			instruction unchanged
-		!	instruction slightly changed (e.g. different register operand)
-		^	instruction moved up (possibly with minor changes)
-		v	instruction moved down within its function
-		V	instruction moved down to a different function
-		x	instruction deleted
-		*	instruction inserted
+	The relocation data processor implements the same algorithm as in
+	Metrowerks' runtime, but it's written from scratch.  It decodes a
+	compressed series of offsets into the code, each of which points to
+	an address requiring relocation (by adding the relocation delta).
+	
+	After relocation is performed, the code cache (if there is one) must
+	be flushed.  We consult the result of our previous trap check and call
+	HWPriv() if it's present.  Then we place the start-of-code address in
+	the previous code start field.  (It won't be seen until (and unless)
+	the code resource is called again, by which point it will be the
+	previous code start).  Finally, we restore the saved registers and
+	tail-call into main(), thus completing startup.
 	
 	Old startup code:
 	
@@ -211,99 +213,144 @@
 		00000c:  MOVEM.L  D0-D2/A0-A1/A4,-(A7)    // save registers
 		000010:  JSR      *+244    // $000104     // SetCurrentA4
 		000014:  LEA      *-20,A0    // $000000
-!		000018:  MOVE.L   A0,D0                   // start of code
-x		00001a:  _StripAddress
-v		00001c:  JSR      *+146    // $0000ae     // __SetupMainRsrc__
-v		000020:  MOVEM.L  (A7)+,D0-D2/A0-A1/A4    // restore registers
-v		000024:  JMP      *+694    // $0002da     // main
+		000018:  MOVE.L   A0,D0                   // start of code
+		00001a:  _StripAddress
+		00001c:  JSR      *+146    // $0000ae     // __SetupMainRsrc__
+		000020:  MOVEM.L  (A7)+,D0-D2/A0-A1/A4    // restore registers
+		000024:  JMP      *+694    // $0002da     // main
 		
 		__GetMainXRef__:
-x		000028:  LEA      *-40,A0    // $000000
-V		00002c:  ADDA.L   #0x00000yyy,A0          // moved to __relocate_compr
-x		000032:  MOVE.L   A0,D0
-x		000034:  _StripAddress
-x		000036:  RTS
+		000028:  LEA      *-40,A0    // $000000
+		00002c:  ADDA.L   #0x00000yyy,A0          // moved to __relocate_compr
+		000032:  MOVE.L   A0,D0
+		000034:  _StripAddress
+		000036:  RTS
 		
 		__relocate_compr:
-		000038:  MOVEM.L  D5-D6,-(A7)
-		00003c:  SUBQ.W   #4,A7
-x		00003e:  MOVEA.L  (16,A7),A0              // stripped start of xref
-x		000042:  MOVEA.L  (20,A7),A1              // stripped start of code
-		000046:  MOVE.L   (24,A7),D6              // relocation delta
 		...
-		0000ac:  RTS
 		
 		__SetupMainRsrc__:
-		0000ae:  MOVEM.L  D3/A2,-(A7)
-		0000b2:  MOVEA.L  D0,A2
 		...
-		0000de:  MOVE.L   D3,-(A7)                // relocation delta
-		0000e0:  MOVE.L   A2,-(A7)                // stripped start of code
-x		0000e2:  JSR      *-186    // $000028     // __GetMainXRef__
-		0000e6:  MOVE.L   D0,-(A7)                // stripped start of xref
-		0000e8:  JSR      *-176    // $000038     // __relocate_compr
-		...
-		000102:  RTS
 		
 		SetCurrentA4:
-x		000104:  LEA      *-260,A0    // $000000
-^		000108:  ADDA.L   #0x00000xxx,A0          // moved to __Startup__
-x		00010e:  MOVE.L   A0,D0
-v		000110:  _StripAddress
-x		000112:  EXG      D0,A4                   // stripped start of data
+		000104:  LEA      *-260,A0    // $000000
+		000108:  ADDA.L   #0x00000xxx,A0          // moved to __Startup__
+		00010e:  MOVE.L   A0,D0
+		000110:  _StripAddress
+		000112:  EXG      D0,A4                   // stripped start of data
 		000114:  RTS
 		
 	New startup code:
 	
 		__Startup__:
-		...
-		00000c:  MOVEM.L  D0-D2/A0-A1/A4,-(A7)    // save registers
-		000010:  JSR      *+244    // $000104     // get_address_mask
-		000014:  LEA      *-20,A0    // $000000
-!		000018:  MOVE.L   A0,D1                   // start of code
-*		00001a:  AND.L    D1,D0                   // stripped start of code
-*		00001c:  MOVEA.L  D0,A4
-^		00001e:  ADDA.L   #0x00000xxx,A4          // stripped start of data
-v		000024:  JSR      *+138    // $0000ae     // __SetupMainRsrc__
-v		000028:  MOVEM.L  (A7)+,D0-D2/A0-A1/A4    // restore registers
-v		00002c:  JMP      *+???    // $000zzz     // main (addr varies)
-		
-*		000030:  NOP
-*		000032:  NOP
-*		000034:  NOP
-*		000036:  NOP
-		
-		__relocate_compr:
-		000038:  MOVEM.L  D5-D6,-(A7)
-		00003c:  SUBQ.W   #4,A7
-*		00003e:  MOVEA.L  A2,A0                   // stripped start of code
-V		000040:  ADDA.L   #0x00000yyy,A0          // stripped start of xref
-		000046:  MOVE.L   (24,A7),D6              // relocation delta
-		...
-		0000ac:  RTS
+			
+			MOVEM.L  D0-D2/A0-A4,-(A7)       // save registers
+			LEA      *-4,A0   // $000000
+			
+			// get_address_mask (inlined)
+			MOVE.L   Lo3Bytes,D0
+			CMPI.W   #0x0604,SysVersion      // at least System 6.0.4?
+			BLT.S    mask_set
+			
+			MOVEQ    #-1,D0
+			_StripAddress
+			
+		mask_set:
+			
+			MOVE.L   A0,D2
+			AND.L    D0,D2                   // strip the address
+			MOVEA.L  D2,A2                   // stripped start of code
+			MOVEA.L  D2,A4
+			ADDA.L   #0x00000xxx,A4          // stripped start of data
+			
+			// __SetupMainRsrc__ (inlined)
+			MOVE.L   (A4)+,D0                // previous start of code
+			SUB.L    D0,D2                   // relocation delta
+			BEQ.S    reloc_done
+			
+			TST.L    D0                      // previous start of code
+			BNE.S    HWPriv_known
+			
+			// check _HWPriv
+			MOVE.W   #_Unimplemented,D0
+			_GetToolBoxTrapAddress
+			MOVEA.L  A0,A1
+			MOVE.W   #_HWPriv,D0
+			_GetOSTrapAddress
+			CMPA.L   A0,A1
+			SNE.B    D0                      // HWPriv_present?
+			MOVE.B   D0,(A4)
+			
+		HWPriv_known:
+			
+			MOVEA.L  A2,A0                   // stripped start of code
+			ADDA.L   #0x00000yyy,A0          // stripped start of xref
+			
+			// __relocate_compr (inlined)
+			SUBQ.W   #4,A7
+			MOVEA.L  A7,A3                   // scratch space
+			MOVE.L   (A0)+,D1                // xref length
+			SUBQ.L   #1,D1
+			SUBA.L   A1,A1
+			
+		loop:
+			
+			MOVE.B   (A0)+,D0
+			BGE.S    bit_7_clear
+			
+			// bit 7 set:  7-bit word delta
+			ADD.B    D0,D0
+			EXT.W    D0
+			BRA.S    add_delta
+			
+		bit_7_clear:
+			
+			MOVE.B   D0,(A3)+
+			MOVE.B   (A0)+,(A3)+
+			ANDI.W   #0x40,D0
+			BNE.S    bit_6_set
+			
+			// bits 6 and 7 clear:  30-bit word offset
+			MOVE.B   (A0)+,(A3)+
+			MOVE.B   (A0)+,(A3)+
+			MOVE.L   -(A3),D0
+			LSL.L    #2,D0
+			ASR.L    #1,D0
+			MOVEA.L  D0,A1
+			BRA.S    relocate
+			
+		bit_6_set:
+			
+			// bit 7 clear, bit 6 set:  14-bit word delta
+			MOVE.W   -(A3),D0
+			LSL.W    #2,D0
+			ASR.W    #1,D0
+			
+		add_delta:
+			
+			ADDA.W   D0,A1
+			
+		relocate:
+			
+			ADD.L    D2,(A2,A1.L)
+			DBLE     D1,loop
+			
+			ADDQ.W   #4,A7
+			TST.B    (A4)                    // HWPriv_present?
+			BEQ.S    no_HWPriv
+			
+			MOVEQ    #1,D0
+			_HWPriv
+			
+		no_HWPriv:
+			
+			MOVE.L   A2,-(A4)                // new previous start of code
+			
+		reloc_done:
+			
+			MOVEM.L  (A7)+,D0-D2/A0-A4       // restore registers
+			JMP      ...                     // jump to main()
 	
-		__SetupMainRsrc__:
-		0000ae:  MOVEM.L  D3/A2,-(A7)
-		0000b2:  MOVEA.L  D0,A2
-		...
-		0000de:  MOVE.L   D3,-(A7)                // relocation delta
-		0000e0:  MOVE.L   A2,-(A7)                // stripped start of code
-*		0000e2:  MOVEA.L  A2,A1
-*		0000e4:  NOP
-		0000e6:  MOVE.L   D0,-(A7)                // stripped start of xref
-		0000e8:  JSR      *-176    // $000038     // __relocate_compr
-		...
-		000102:  RTS
-		
-		get_address_mask:
-*		000104:  MOVE.L   Lo3Bytes,D0
-*		000108:  CMPI.W   #minimum_sysv,SysVersion
-*		00010e:  BLT.S    *+6                     // mask_set
-*		000110:  MOVEQ.L  #-1,D0
-v		000112:  _StripAddress
-	mask_set:
-		000114:  RTS
-		
 */
 
 // Mac OS X
@@ -393,52 +440,126 @@ char* const* get_options( char* const* argv )
 	return argv;
 }
 
-const UInt16 minimum_sysv = 0x0604;  // System 6.0.4
+const UInt16 _StripAddress  = 0xA055;
 
-const UInt16 SysVersion = 0x015a;
-const UInt16 Lo3Bytes =   0x031a;
-
-const UInt16 _StripAddress = 0xA055;
-
-const UInt16 AND_L_D1_D0  = 0xc081;  // AND.L    D1,D0
-const UInt16 BLT_S_6      = 0x6d04;  // BLT.S    *+6
 const UInt16 BRA_S_12     = 0x600a;  // BRA.S    *+12
-const UInt16 CMPI_W_abs_W = 0x0c78;  // CMPI.W   #imm,0x____
 const UInt16 JMP_PCrel    = 0x4efa;  // JMP      *...
 const UInt16 MOVE_L_A0_D0 = 0x2008;  // MOVE.L   A0,D0
-const UInt16 MOVE_L_A0_D1 = 0x2208;  // MOVE.L   A0,D1
-const UInt16 MOVE_L_A2_A0 = 0x204a;  // MOVEA.L  A2,A0
-const UInt16 MOVE_L_A2_A1 = 0x224a;  // MOVEA.L  A2,A1
-const UInt16 MOVE_L_D0_A4 = 0x2840;  // MOVEA.L  D0,A4
-const UInt16 MOVEQ_FF_D0  = 0x70FF;  // MOVEQ    #-1,D0
-const UInt16 NOP          = 0x4e71;  // NOP
-const UInt16 RTS          = 0x4e75;  // RTS
-
-const UInt16 ADDA_L_abs_L_A0 = 0xd1fc;  // ADDA.L   #0x________,A0
-const UInt16 ADDA_L_abs_L_A4 = 0xd9fc;  // ADDA.L   #0x________,A4
-const UInt16 MOVE_L_abs_W_D0 = 0x2038;  // MOVE.L   0x____,D0
 
 const UInt32 JMP_6                     = JMP_PCrel    << 16 | 0x0004;
 
 const UInt32 MOVE_L_A0_D0_StripAddress = MOVE_L_A0_D0 << 16 | _StripAddress;
-const UInt32 MOVE_L_A2_A1_NOP          = MOVE_L_A2_A1 << 16 | NOP;
 
-const UInt32 NOP_NOP = 0x4e714e71;
-
-static const UInt16 get_address_mask[] =
+static const UInt16 startup_code[] =
 {
-	MOVE_L_abs_W_D0,
-	Lo3Bytes,         // MOVE.L   Lo3Bytes,D0
+	0x48e7, 0xe0f8,          // 000000:  MOVEM.L  D0-D2/A0-A4,-(A7)
+	0x41fa, 0xfffa,          // 000004:  LEA      *-4,A0     // $000000
+	0x2038, 0x031a,          // 000008:  MOVE.L   Lo3Bytes,D0
+	0x0c78, 0x0604, 0x015a,  // 00000c:  CMPI.W   #0x0604,SysVersion
+	0x6d04,                  // 000012:  BLT.S    *+6    // $000018 mask_set
 	
-	CMPI_W_abs_W,
-	minimum_sysv,
-	SysVersion,       // CMPI.W   #minimum_sysv,SysVersion
+	0x70ff,                  // 000014:  MOVEQ    #-1,D0
+	0xa055,                  // 000016:  _StripAddress
 	
-	BLT_S_6,          // BLT.S    *+6
-	MOVEQ_FF_D0,      // MOVEQ.L  #-1,D0
-	_StripAddress,    // _StripAddress
-	RTS,              // RTS
+// mask_set:
+	
+	0x2408,                  // 000018:  MOVE.L   A0,D2
+	0xc480,                  // 00001a:  AND.L    D0,D2
+	0x2442,                  // 00001c:  MOVEA.L  D2,A2
+	0x2842,                  // 00001e:  MOVEA.L  D2,A4
+	0xd9fc, 0x0000, 0x0000,  // 000020:  ADDA.L   #0x00000000,A4
+	0x201c,                  // 000026:  MOVE.L   (A4)+,D0
+	0x9480,                  // 000028:  SUB.L    D0,D2
+	0x6768,                  // 00002a:  BEQ.S    *+106  // $000094 reloc_done
+	
+	0x4a80,                  // 00002c:  TST.L    D0
+	0x6614,                  // 00002e:  BNE.S    *+22   // $000044 HWPriv_known
+	
+	0x303c, 0xa89f,          // 000030:  MOVE.W   #_Unimplemented,D0
+	0xa746,                  // 000034:  _GetToolBoxTrapAddress
+	0x2248,                  // 000036:  MOVEA.L  A0,A1
+	0x303c, 0xa198,          // 000038:  MOVE.W   #_HWPriv,D0
+	0xa346,                  // 00003c:  _GetOSTrapAddress
+	0xb3c8,                  // 00003e:  CMPA.L   A0,A1
+	0x56c0,                  // 000040:  SNE.B    D0
+	0x1880,                  // 000042:  MOVE.B   D0,(A4)
+	
+// HWPriv_known:
+	
+	0x204a,                  // 000044:  MOVEA.L  A2,A0
+	0xd1fc, 0x0000, 0x0000,  // 000046:  ADDA.L   #0x00000000,A0
+	0x594f,                  // 00004c:  SUBQ.W   #4,A7
+	0x264f,                  // 00004e:  MOVEA.L  A7,A3
+	0x2218,                  // 000050:  MOVE.L   (A0)+,D1
+	0x5381,                  // 000052:  SUBQ.L   #1,D1
+	0x93c9,                  // 000054:  SUBA.L   A1,A1
+	
+// loop:
+	
+	0x1018,                  // 000056:  MOVE.B   (A0)+,D0
+	0x6c06,                  // 000058:  BGE.S    *+8    // $000060 bit_7_clear
+	
+	0xd000,                  // 00005a:  ADD.B    D0,D0
+	0x4880,                  // 00005c:  EXT.W    D0
+	0x601e,                  // 00005e:  BRA.S    *+32   // $00007e add_delta
+	
+// bit_7_clear:
+	
+	0x16c0,                  // 000060:  MOVE.B   D0,(A3)+
+	0x16d8,                  // 000062:  MOVE.B   (A0)+,(A3)+
+	0x0240, 0x0040,          // 000064:  ANDI.W   #0x40,D0
+	0x660e,                  // 000068:  BNE.S    *+16   // $000078 bit_6_set
+	
+	0x16d8,                  // 00006a:  MOVE.B   (A0)+,(A3)+
+	0x16d8,                  // 00006c:  MOVE.B   (A0)+,(A3)+
+	0x2023,                  // 00006e:  MOVE.L   -(A3),D0
+	0xe588,                  // 000070:  LSL.L    #2,D0
+	0xe280,                  // 000072:  ASR.L    #1,D0
+	0x2240,                  // 000074:  MOVEA.L  D0,A1
+	0x6008,                  // 000076:  BRA.S    *+10   // $000080 relocate
+	
+// bit_6_set:
+	
+	0x3023,                  // 000078:  MOVE.W   -(A3),D0
+	0xe548,                  // 00007a:  LSL.W    #2,D0
+	0xe240,                  // 00007c:  ASR.W    #1,D0
+	
+// add_delta:
+	
+	0xd2c0,                  // 00007e:  ADDA.W   D0,A1
+	
+// relocate:
+	
+	0xd5b2, 0x9800,          // 000080:  ADD.L    D2,(A2,A1.L)
+	0x5fc9, 0xffd0,          // 000084:  DBLE     D1,*-46    // $000056 loop
+	
+	0x584f,                  // 000088:  ADDQ.W   #4,A7
+	0x4a14,                  // 00008a:  TST.B    (A4)
+	0x6704,                  // 00008c:  BEQ.S    *+6    // $000092 no_HWPriv
+	
+	0x7001,                  // 00008e:  MOVEQ    #1,D0
+	0xa198,                  // 000090:  _HWPriv
+	
+// no_HWPriv:
+	
+	0x290a,                  // 000092:  MOVE.L   A2,-(A4)
+	
+// reloc_done:
+	
+	0x4cdf, 0x1f07,          // 000094:  MOVEM.L  (A7)+,D0-D2/A0-A4
+	0x4efa, 0x0000,          // 000098:  JMP      ...
 };
+
+#define SPACE  \
+            "    "  \
+"            This"  \
+"                "  \
+" s  p  a  c  e  "  \
+"                "  \
+"  intentionally "  \
+"          left  "  \
+"blank.          "  \
+"      "
 
 static
 bool fix_up_far_code( Handle code )
@@ -469,77 +590,23 @@ bool fix_up_far_code( Handle code )
 		return false;
 	}
 	
-	UInt32* pL = NULL;
-	UInt32* qL = NULL;
+	const UInt32 data_offset = *(UInt32*) (p + 0x010a);
+	const UInt32 xref_offset = *(UInt32*) (p + 0x002e);
+	
+	const UInt16 main_offset = *(UInt16*) (p + 0x0026) + 0x0026;
+	const UInt16 jump_offset = sizeof startup_code - 2;
+	const UInt16 init_offset = 0x0116;
 	
 	UInt16* qW = NULL;
 	
-	/*
-		__SetupMainRsrc__
-		
-		  * replace the call to __GetMainXRef__() with a register move
-	*/
+	qW = (UInt16*) mempcpy( p, startup_code, jump_offset );
 	
-	qL = (UInt32*) (p + 0x00e2);
+	*qW++ = main_offset - jump_offset;
 	
-	*qL = MOVE_L_A2_A1_NOP;
+	mempcpy( qW, STR_LEN( SPACE ) );
 	
-	/*
-		__relocate_compr
-		
-		  * replace arg loads to A0 and A1 with A0 = A2 + xref offset
-	*/
-	
-	qW = (UInt16*) (p + 0x003e);
-	
-	*qW++ = MOVE_L_A2_A0;     // MOVEA.L  A2,A0
-	
-	*qW++ = ADDA_L_abs_L_A0;  // ADDA.L   #0x________,A0
-	
-	pL = (UInt32*) (p + 0x002e);
-	qL = (UInt32*) qW;
-	
-	*qL = *pL;                // copy ADDA immediate operand (xref offset)
-	
-	/*
-		__Startup__, __GetMainXRef__
-		
-		  * NOP out end of __GetMainXRef__()
-		  * move JSR, MOVEM, and JMP at end of __Startup__() down 8 bytes
-		  * copy ADDA instruction from SetCurrentA4()
-		  * insert new MOVE and AND instructions
-	*/
-	
-	qL = (UInt32*) (p + 0x0038);
-	
-	*--qL = NOP_NOP;
-	*--qL = NOP_NOP;
-	
-	pL = qL - 2;
-	
-	*--qL = *--pL - 8;   // move JMP to main down
-	*--qL = *--pL;       // move MOVEM restore down
-	*--qL = *--pL - 8;   // move JSR to __SetupMainRsrc__ down
-	
-	pL = (UInt32*) (p + 0x010a);
-	
-	*--qL = *pL;         // copy ADDA immediate operand (data offset)
-	
-	qW = (UInt16*) qL;
-	
-	*--qW = ADDA_L_abs_L_A4;  // ADDA.L   #0x________,A4
-	
-	*--qW = MOVE_L_D0_A4;  // MOVEA.L  D0,A4
-	*--qW = AND_L_D1_D0;   // AND.L    D1,D0
-	*--qW = MOVE_L_A0_D1;  // MOVE.L   A0,D1
-	
-	/*
-		SetCurrentA4 -> get_address_mask
-		
-		  * overwrite with new code
-	*/
-	
-	mempcpy( p + 0x0104, get_address_mask, sizeof get_address_mask );
+	*(UInt32*) (p + 0x0022) = data_offset;
+	*(UInt32*) (p + 0x0048) = xref_offset;
 	
 	return true;
 }
