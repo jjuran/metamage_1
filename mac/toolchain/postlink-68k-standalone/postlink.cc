@@ -538,6 +538,20 @@ bool fix_up_code_resource( Handle code )
 	return true;
 }
 
+static
+OSErr CompactResFile( short refnum )
+{
+	using mac::sys::res_error;
+	
+	short attrs;
+	
+	(attrs = GetResFileAttrs( refnum ), res_error())  ||
+	(attrs |= mapCompact, false)                      ||
+	(SetResFileAttrs( refnum, attrs ), res_error());
+	
+	return res_error();
+}
+
 int main( int argc, char** argv )
 {
 	using mac::relix::FSSpec_from_existing_path;
@@ -595,6 +609,7 @@ int main( int argc, char** argv )
 					if ( ! dry_run )
 					{
 						exit_status = (ChangedResource( h ), res_error())  ||
+						              (CompactResFile( resfile ))          ||
 						              (UpdateResFile( resfile ), res_error());
 						
 						if ( exit_status )
