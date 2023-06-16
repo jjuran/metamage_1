@@ -4,7 +4,7 @@
 	
 	Prince of Persia Legacy Enabler for Mac OS
 	
-	Copyright 2022, Joshua Juran.  All rights reserved.
+	Copyright 2022-2023, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
@@ -37,11 +37,14 @@
 QHdr VBLQueue : 0x0160;
 
 static
+asm
 void dummy_VBL_proc( VBLTask* task : __A0 )
 {
 	// Don't do anything; just stick around in the queue
 	
-	task->vblCount = 0x7FFF;
+	MOVE.W   #0x7fff,10(A0)  // task->vblCount = 0x7FFF;
+	
+	RTS
 }
 
 static VBLTask dummy_VBL_task;
