@@ -75,7 +75,7 @@ namespace tool
 			
 			const char* convert = "make-info-plist";
 			
-			execlp( convert, convert, txt, NULL );
+			execlp( convert, convert, txt, (void*) NULL );
 			
 			const int exit_status = errno == ENOENT ? 127 : 126;
 			
