@@ -8,9 +8,6 @@
 // Standard C++
 #include <algorithm>
 
-// Standard C
-#include <stdlib.h>
-
 // Iota
 #include "iota/strings.hh"
 
@@ -575,16 +572,6 @@ namespace tool
 		}
 	}
 	
-	static const char* ar_name()
-	{
-		if ( const char* ar = getenv( "AR" ) )
-		{
-			return ar;
-		}
-		
-		return "ar";
-	}
-	
 	template < class Iter >
 	static TaskPtr make_link_task( const Command&       link_command,
 	                               const plus::string&  output_path,
@@ -617,15 +604,16 @@ namespace tool
 	}
 	
 	template < class Iter >
-	static TaskPtr MakeStaticLibTask( const plus::string&  output_pathname,
+	static TaskPtr MakeStaticLibTask( const char*          ar_name,
+	                                  const plus::string&  output_pathname,
 	                                  Iter                 begin,
 	                                  Iter                 end,
 	                                  const plus::string&  diagnostics_dir )
 	{
 		Command link_command;
 		
-		link_command.push_back( ar_name() );
-		link_command.push_back( "rcs"    );
+		link_command.push_back( ar_name );
+		link_command.push_back( "rcs"   );
 		
 		return make_link_task( link_command,
 		                       output_pathname,
@@ -746,6 +734,8 @@ namespace tool
 		
 		TaskPtr lib_task;
 		
+		CommandGenerator cmdgen( targetInfo );
+		
 		const bool non_empty_lib = hasStaticLib  &&  objectFiles.size() > n_tools;
 		
 		if ( non_empty_lib )
@@ -757,7 +747,8 @@ namespace tool
 			
 			library_pathname = libsDir / library_filename;
 			
-			lib_task = MakeStaticLibTask( library_pathname,
+			lib_task = MakeStaticLibTask( cmdgen.ArchiverName(),
+			                              library_pathname,
 			                              objectFiles.begin() + n_tools,
 			                              objectFiles.end(),
 			                              diagnosticsDir );
@@ -789,8 +780,6 @@ namespace tool
 			return;
 		}
 		
-		
-		CommandGenerator cmdgen( targetInfo );
 		
 		Command command;
 		
