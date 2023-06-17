@@ -110,6 +110,13 @@
 #endif
 
 
+#ifdef __MWERKS__
+#if __MWERKS__ <= 0x2401
+#define NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS 1
+#endif
+#endif
+
+
 #undef PBGetCatInfo
 
 #if ! __LP64__
@@ -1836,5 +1843,7 @@ namespace nucleus
 		}
 	};
 }
+
+#undef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
 
 #endif
