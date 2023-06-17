@@ -378,7 +378,7 @@ namespace tool
 		
 		AugmentCommand( compile, cmdgen.AllCompilerOptions() );
 		
-		if ( !ALINE_RELIX_DEVELOPMENT  ||  options.Target().toolchain & toolchainGNU )
+		if ( !ALINE_RELIX_DEVELOPMENT  ||  cmdgen.gnu )
 		{
 			compile.push_back( "-Wno-deprecated-declarations" );  // since we're using legacy API's
 			
