@@ -76,7 +76,7 @@ namespace tool
 			carbon( target.platform & apiMacCarbon          ),
 			sym   ( target.build     == buildSymbolics ),
 			debug ( target.build     != buildRelease   ),
-			gnu   ( target.toolchain == toolchainGNU   )
+			gnu   ( target.toolchain == toolchainUnix  )
 		{}
 		
 		const char* UnixCompilerName() const;

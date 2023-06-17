@@ -596,7 +596,7 @@ namespace tool
 		
 		if ( !ALINE_CROSS_DEVELOPMENT  ||  target.platform & runtimeMachO )
 		{
-			target.toolchain = toolchainGNU;
+			target.toolchain = toolchainUnix;
 		}
 		else
 		{

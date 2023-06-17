@@ -31,7 +31,7 @@ enum Toolchain
 {
 	toolchainUnspecified = 0,
 	toolchainMetrowerks,
-	toolchainGNU
+	toolchainUnix,
 };
 
 enum EnvType

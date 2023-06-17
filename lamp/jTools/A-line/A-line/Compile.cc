@@ -643,7 +643,7 @@ namespace tool
 	{
 		plus::string prefix_dir_pathname = ProjectPrecompiledDirPath( project_name );
 		
-		const bool gnu = target_info.toolchain == toolchainGNU;
+		const bool gnu = target_info.toolchain == toolchainUnix;
 		
 		const char* extension = (gnu ? ".gch" : ".mwch");
 		
