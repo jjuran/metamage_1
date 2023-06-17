@@ -658,12 +658,6 @@ namespace tool
 	
 	static void DefineMacros( CompilerOptions& options, const TargetInfo& target_info )
 	{
-		if ( target_info.toolchain == toolchainMetrowerks )
-		{
-			// Assume CW Pro 6
-			options.DEFINE_MACRO( "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS" );
-		}
-		
 		if ( options.Target().envType & envRelix )
 		{
 			options.DEFINE_MACRO( "__RELIX__" );
