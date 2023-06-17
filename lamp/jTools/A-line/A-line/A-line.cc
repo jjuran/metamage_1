@@ -72,8 +72,6 @@
 using namespace command::constants;
 
 using tool::OptionsRecord;
-using tool::BuildVariety;
-using tool::buildDefault;
 
 enum
 {

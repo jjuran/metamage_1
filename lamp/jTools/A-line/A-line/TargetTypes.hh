@@ -7,51 +7,46 @@
 #define ALINE_TARGET_TYPES_HH
 
 
-namespace tool
+enum ProductType
 {
-	
-	enum ProductType
-	{
-		productNotBuilt = 0,
-		productSource,
-		productApplication,
-		productDropIn,
-		productStaticLib,
-		productSharedLib,
-		productTool,
-		productToolkit,
-		productINIT,
-		productDA,
-		productDriver
-	};
-	
-	inline bool ProductGetsBuilt( ProductType product )
-	{
-		return product > productSource;
-	}
-	
-	enum Toolchain
-	{
-		toolchainUnspecified = 0,
-		toolchainMetrowerks,
-		toolchainGNU
-	};
-	
-	enum EnvType
-	{
-		envUnspecified = 0,
-		envRelix,
-		envUnix
-	};
-	
-	enum BuildVariety
-	{
-		buildDefault,
-		buildSymbolics,
-		buildDebug,
-		buildRelease
-	};
-	
+	productNotBuilt = 0,
+	productSource,
+	productApplication,
+	productDropIn,
+	productStaticLib,
+	productSharedLib,
+	productTool,
+	productToolkit,
+	productINIT,
+	productDA,
+	productDriver
+};
+
+inline bool ProductGetsBuilt( ProductType product )
+{
+	return product > productSource;
 }
+
+enum Toolchain
+{
+	toolchainUnspecified = 0,
+	toolchainMetrowerks,
+	toolchainGNU
+};
+
+enum EnvType
+{
+	envUnspecified = 0,
+	envRelix,
+	envUnix
+};
+
+enum BuildVariety
+{
+	buildDefault,
+	buildSymbolics,
+	buildDebug,
+	buildRelease
+};
 
 #endif
