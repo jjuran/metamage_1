@@ -610,9 +610,6 @@ namespace tool
 	{
 		TargetInfo targetInfo( platform, build );
 		
-		//targetInfo.DeduceFromProduct( project.Product() );
-		//targetInfo.ApplyOptions( gOptions.target );
-		
 		ApplyTargetDefaults( targetInfo );
 		
 		return targetInfo;

@@ -35,12 +35,6 @@ namespace tool
 		                                    build    ( build                )
 		{
 		}
-		
-		void DeduceFromProduct( ProductType product );
-		
-		void ApplyOptions( TargetInfo options );
-		
-		void ApplyDefaults();
 	};
 	
 }
