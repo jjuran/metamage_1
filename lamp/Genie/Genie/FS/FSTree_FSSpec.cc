@@ -20,6 +20,7 @@
 
 // mac-config
 #include "mac_config/aliases.hh"
+#include "mac_config/upp-macros.hh"
 
 // mac-types
 #include "mac_types/VRefNum_DirID.hh"
@@ -1195,6 +1196,10 @@ namespace Genie
 	namespace
 	{
 		
+		#if TARGET_CPU_68K
+		#pragma parameter IterateIntoCache_Completion( __A0 )
+		#endif
+		
 		pascal void IterateIntoCache_Completion( ParamBlockRec* _pb )
 		{
 			IterateIntoCache_CInfoPBRec& pb = *(IterateIntoCache_CInfoPBRec*) _pb;
@@ -1263,7 +1268,9 @@ namespace Genie
 		
 		if ( async )
 		{
-			cInfo.dirInfo.ioCompletion = N::StaticUPP< N::IOCompletionUPP, IterateIntoCache_Completion >();
+			DEFINE_UPP( IOCompletion, IterateIntoCache_Completion )
+			
+			cInfo.dirInfo.ioCompletion = (IOCompletionUPP) UPP_ARG( IterateIntoCache_Completion );
 		}
 		
 	#endif
