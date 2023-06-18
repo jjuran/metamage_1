@@ -26,15 +26,8 @@ namespace Nitrogen
 	using Mac::Basic_UPP_Details;
 	using Mac::NewUPP;
 	using Mac::UPP;
-	using Mac::GlueUPP;
 	using Mac::StaticUPP;
 	using Mac::StaticUPPWorkaround;
-	
-#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-	
-	using Mac::Call_With_A0_Glue;
-	
-#endif
 	
 }
 

@@ -369,38 +369,6 @@ namespace Mac
 		}
 	};
 	
-	
-#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-	
-	template < class ProcPtr, ProcPtr procPtr >
-	inline pascal void Call_With_A0_Glue()
-	{
-		asm
-		{
-			MOVE.L  A0,-(SP)  ; // push param onto the stack
-			JSR     procPtr
-		}
-	}
-	
-#endif
-	
-	template < class UPP_Details >
-	struct GlueUPP : BasicUPP< typename UPP_Details::UPPType >
-	{
-		typedef typename UPP_Details::UPPType UPPType;
-		typedef typename UPP_Details::ProcPtr ProcPtr;
-		typedef UPP_Details Details;
-		
-		GlueUPP()  {}
-		
-		GlueUPP( UPPType upp ) : BasicUPP< UPPType >( upp )
-		{
-		}
-		
-		template < ProcPtr procPtr >
-		static GlueUPP Static()  { return Details::template Glue< procPtr >; }
-	};
-	
 }
 
 namespace nucleus
@@ -415,18 +383,6 @@ namespace nucleus
 		void operator()( Mac::UPP< UPP_Details > upp ) const
 		{
 			UPP_Details::Dispose( upp );
-		}
-	};
-	
-	template < class UPP_Details >
-	struct disposer< Mac::GlueUPP< UPP_Details > >
-	{
-		typedef Mac::GlueUPP< UPP_Details >  argument_type;
-		typedef void                         result_type;
-		
-		void operator()( Mac::GlueUPP< UPP_Details > upp ) const
-		{
-			// Do nothing; glue UPPs aren't dynamically allocated
 		}
 	};
 	
