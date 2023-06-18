@@ -101,9 +101,6 @@
 #ifndef NITROGEN_OSSTATUS_HH
 #include "Nitrogen/OSStatus.hh"
 #endif
-#ifndef NITROGEN_UPP_HH
-#include "Nitrogen/UPP.hh"
-#endif
 
 #ifndef __RELIX__
 #include <vector>
@@ -244,38 +241,6 @@ namespace Nitrogen
 	{
 		kHFSCatalogNodeID_Max = nucleus::enumeration_traits< UInt32 >::max
 	};
-	
-#if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
-	
-	struct IOCompletionUPP_Details
-	{
-		typedef ::IOCompletionUPP UPPType;
-		
-		// This is the stack-based function signature
-		typedef pascal void (*ProcPtr)( ::ParamBlockRec* pb );
-		
-		template < ProcPtr procPtr >
-		static pascal void Glue()
-		{
-			Call_With_A0_Glue< ProcPtr, procPtr >();
-		}
-	};
-	
-	typedef GlueUPP< IOCompletionUPP_Details > IOCompletionUPP;
-	
-#else
-	
-	struct IOCompletionUPP_Details : Basic_UPP_Details< ::IOCompletionUPP,
-	                                                    ::IOCompletionProcPtr,
-	                                                    ::NewIOCompletionUPP,
-	                                                    ::DisposeIOCompletionUPP,
-	                                                    ::InvokeIOCompletionUPP >
-	{
-	};
-	
-	typedef UPP< IOCompletionUPP_Details > IOCompletionUPP;
-	
-#endif
 	
 }
 
