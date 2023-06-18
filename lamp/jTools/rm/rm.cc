@@ -39,6 +39,7 @@ enum
 	Option_Recursive = 'R',
 	Option_force     = 'f',
 	Option_recursive = 'r',
+	Option_verbose   = 'v',
 };
 
 static command::option options[] =
@@ -46,12 +47,14 @@ static command::option options[] =
 	{ "", Option_force     },
 	{ "", Option_recursive },
 	{ "", Option_Recursive },
+	{ "", Option_verbose   },
 	
 	{ NULL }
 };
 
 static bool globally_forced = false;
 static bool recursive = false;
+static bool verbose = false;
 
 static char* const* get_options( char* const* argv )
 {
@@ -70,6 +73,10 @@ static char* const* get_options( char* const* argv )
 			case Option_recursive:
 			case Option_Recursive:
 				recursive = true;
+				break;
+			
+			case Option_verbose:
+				verbose = true;
 				break;
 			
 			default:
@@ -148,6 +155,11 @@ namespace tool
 		for ( int index = 0;  index < argn;  ++index )
 		{
 			const char* path = args[ index ];
+			
+			if (verbose)
+			{
+				std::printf("removed '%s'\n", path);
+			}
 			
 			deleter( path );
 		}
