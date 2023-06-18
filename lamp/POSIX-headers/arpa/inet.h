@@ -70,18 +70,14 @@ in_addr_t	 inet_addr(const char *);
 int		 inet_aton(const char *, struct in_addr *);
 in_addr_t	 inet_lnaof(struct in_addr);
 struct in_addr	 inet_makeaddr(in_addr_t , in_addr_t);
-char *		 inet_neta(in_addr_t, char *, socklen_t)
-			__attribute__((__bounded__(__string__,2,3)));
+char *		 inet_neta(in_addr_t, char *, socklen_t);
 in_addr_t	 inet_netof(struct in_addr);
 in_addr_t	 inet_network(const char *);
-char		*inet_net_ntop(int, const void *, int, char *, socklen_t)
-			__attribute__((__bounded__(__string__,4,5)));
-int		 inet_net_pton(int, const char *, void *, socklen_t)
-			__attribute__((__bounded__(__string__,3,4)));
+char		*inet_net_ntop(int, const void *, int, char *, socklen_t);
+int		 inet_net_pton(int, const char *, void *, socklen_t);
 char		*inet_ntoa(struct in_addr);
 int		 inet_pton(int, const char *, void *);
-const char	*inet_ntop(int, const void *, char *, socklen_t)
-			__attribute__ ((__bounded__(__string__,3,4)));
+const char	*inet_ntop(int, const void *, char *, socklen_t);
 unsigned int	 inet_nsap_addr(const char *, unsigned char *, int);
 char		*inet_nsap_ntoa(int, const unsigned char *, char *);
 __END_DECLS
