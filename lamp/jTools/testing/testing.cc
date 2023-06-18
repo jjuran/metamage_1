@@ -36,6 +36,9 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
+// mac-sys-utils
+#include "mac_sys/microseconds.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -58,7 +61,6 @@
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 #include "Nitrogen/Str.hh"
-#include "Nitrogen/Timer.hh"
 
 // poseven
 #include "poseven/extras/slurp.hh"
@@ -696,7 +698,9 @@ static int TestPath( int argc, char** argv )
 		time_length *= 4;
 	}
 	
-	UInt64 start_time = N::Microseconds();
+	using mac::sys::microseconds;
+	
+	UInt64 start_time = microseconds();
 	
 	//UInt64 stop_time = start_time + time_length;
 	
@@ -704,7 +708,7 @@ static int TestPath( int argc, char** argv )
 	
 	UInt64 elapsed_time;
 	
-	while ( (elapsed_time = N::Microseconds() - start_time) < time_length )
+	while ( (elapsed_time = microseconds() - start_time) < time_length )
 	{
 		location.h = start_pos + path.sample( elapsed_time ) * pix;
 		
