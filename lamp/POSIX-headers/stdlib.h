@@ -156,8 +156,7 @@ int putenv(char *);
 long a64l(const char *);
 char* l64a(long);
 
-char* initstate(unsigned int, char *, size_t)
-	__attribute__((__bounded__ (__string__,2,3)));
+char* initstate(unsigned int, char *, size_t);
 long random(void);
 char* setstate(const char *);
 void srandom(unsigned int);
@@ -245,8 +244,7 @@ u_quad_t strtouq(const char *, char **, int);
 
 u_int32_t arc4random(void);
 void arc4random_stir(void);
-void arc4random_addrandom(unsigned char *, int)
-	__attribute__((__bounded__ (__string__,1,2)));
+void arc4random_addrandom(unsigned char *, int);
 #endif /* __BSD_VISIBLE */
 
 __END_DECLS

@@ -46,17 +46,13 @@ void* memmem( const void* haystack, size_t haystack_len, const void* needle, siz
 char	*strtok_r(char *, const char *, char **);
 
 #if __BSD_VISIBLE || __XPG_VISIBLE
-void	*memccpy(void *, const void *, int, size_t)
-		__attribute__ ((__bounded__(__buffer__,1,4)));
+void	*memccpy(void *, const void *, int, size_t);
 #endif
 
 #if __BSD_VISIBLE || __XPG_VISIBLE >= 420
 int	 bcmp(const void *, const void *, size_t);
-void	 bcopy(const void *, void *, size_t)
-		__attribute__ ((__bounded__(__buffer__,1,3)))
-		__attribute__ ((__bounded__(__buffer__,2,3)));
-void	 bzero(void *, size_t)
-		__attribute__ ((__bounded__(__buffer__,1,2)));
+void	 bcopy(const void *, void *, size_t);
+void	 bzero(void *, size_t);
 int	 ffs(int);
 char	*index(const char *, int);
 char	*rindex(const char *, int);
@@ -66,16 +62,13 @@ char	*strdup(const char *);
 #endif
 
 #if __BSD_VISIBLE || __XPG_VISIBLE >= 600
-int	 strerror_r(int, char *, size_t)
-	    __attribute__ ((__bounded__(__string__,2,3)));
+int	 strerror_r(int, char *, size_t);
 #endif
 
 #if __BSD_VISIBLE
 char	*strcasestr(const char *, const char *);
-size_t	 strlcat(char *, const char *, size_t)
-		__attribute__ ((__bounded__(__string__,1,3)));
-size_t	 strlcpy(char *, const char *, size_t)
-		__attribute__ ((__bounded__(__string__,1,3)));
+size_t	 strlcat(char *, const char *, size_t);
+size_t	 strlcpy(char *, const char *, size_t);
 void	 strmode(mode_t, char *);
 char	*strsep(char **, const char *);
 const char	*strsignal(int);

@@ -107,9 +107,7 @@ int	 execvp(const char *, char * const *);
 int	 execvpe(const char *, char * const *, char * const *);
 pid_t	 fork(void);
 long	 fpathconf(int, int);
-char	*getcwd(char *, size_t)
-		__attribute__((__bounded__(__string__,1,2)))
-		__attribute__((__bounded__(__minbytes__,1,1024)));
+char	*getcwd(char *, size_t);
 gid_t	 getegid(void);
 uid_t	 geteuid(void);
 gid_t	 getgid(void);
@@ -125,8 +123,7 @@ off_t	 lseek(int, off_t, int);
 long	 pathconf(const char *, int);
 int	 pause(void);
 int	 pipe(int *);
-ssize_t	 read(int, void *, size_t)
-		__attribute__((__bounded__(__buffer__,2,3)));
+ssize_t	 read(int, void *, size_t);
 int	 rmdir(const char *);
 int	 setgid(gid_t);
 int	 setuid(uid_t);
@@ -138,8 +135,7 @@ char	*ttyname(int);
 ssize_t ttyname_k( int, char*, size_t );  // jjuran
 int	 unlink(const char *);
 int updateat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, unsigned flags );  // jjuran
-ssize_t	 write(int, const void *, size_t)
-		__attribute__((__bounded__(__buffer__,2,3)));
+ssize_t	 write(int, const void *, size_t);
 
 #if __POSIX_VISIBLE || __XPG_VISIBLE >= 300
 pid_t	 setsid(void);
@@ -147,8 +143,7 @@ int	 setpgid(pid_t, pid_t);
 #endif
 
 #if __POSIX_VISIBLE >= 199209 || __XPG_VISIBLE
-size_t	 confstr(int, char *, size_t)
-		__attribute__((__bounded__(__string__,2,3)));
+size_t	 confstr(int, char *, size_t);
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
 int	 getopt(int, char * const *, const char *);
@@ -163,9 +158,7 @@ extern	 char *suboptarg;		/* getsubopt(3) external variable */
 #if __POSIX_VISIBLE >= 199506 || __XPG_VISIBLE
 int	 fsync(int);
 int	 ftruncate(int, off_t);
-int	 getlogin_r(char *, size_t)
-		__attribute__((__bounded__(__string__,1,2)))
-		__attribute__((__bounded__(__minbytes__,1,32)));
+int	 getlogin_r(char *, size_t);
 #endif
 
 #if __XPG_VISIBLE || __BSD_VISIBLE
@@ -174,14 +167,12 @@ int	 encrypt(char *, int);
 int	 fchdir(int);
 int	 fchown(int, uid_t, gid_t);
 long	 gethostid(void);
-char	*getwd(char *)
-		__attribute__ ((__bounded__(__minbytes__,1,1024)));
+char	*getwd(char *);
 int	 lchown(const char *, uid_t, gid_t);
 int	 mkstemp(char *);
 char	*mktemp(char *);
 int	 nice(int);
-ssize_t	 readlink(const char *, char *, size_t)
-		__attribute__ ((__bounded__(__string__,2,3)));
+ssize_t	 readlink(const char *, char *, size_t);
 int	 setkey(const char *);
 int	 setpgrp(pid_t pid, pid_t pgrp);	/* obsoleted by setpgid() */
 int	 setregid(gid_t, gid_t);
@@ -202,8 +193,7 @@ pid_t	 getsid(pid_t);
 #if __XPG_VISIBLE >= 500
 ssize_t  pread(int, void *, size_t, off_t);
 ssize_t  pwrite(int, const void *, size_t, off_t);
-int	 ttyname_r(int, char *, size_t)
-	    __attribute__((__bounded__(__string__,2,3)));
+int	 ttyname_r(int, char *, size_t);
 #endif
 
 #if __BSD_VISIBLE ||  __XPG_VISIBLE <= 500
@@ -222,8 +212,7 @@ int     lockf(int, int, off_t);
 
 #if __POSIX_VISIBLE >= 200112 || __XPG_VISIBLE >= 420 || __BSD_VISIBLE
 int	 symlink(const char *, const char *);
-int	 gethostname(char *, size_t)
-		__attribute__ ((__bounded__(__string__,1,2)));
+int	 gethostname(char *, size_t);
 int	 setegid(gid_t);
 int	 seteuid(uid_t);
 #endif
@@ -236,8 +225,7 @@ int	 des_setkey(const char *);
 void	 endusershell(void);
 int	 exect(const char *, char * const *, char * const *);
 char	*fflagstostr(u_int32_t);
-int	 getdomainname(char *, size_t)
-		__attribute__ ((__bounded__(__string__,1,2)));
+int	 getdomainname(char *, size_t);
 int	 getgrouplist(const char *, gid_t, gid_t *, int *);
 mode_t	 getmode(const void *, mode_t);
 int	 getresgid(gid_t *, gid_t *, gid_t *);
@@ -251,8 +239,7 @@ char	*mkdtemp(char *);
 int	 mkstemps(char *, int);
 int	 nfssvc(int, void *);
 void	 psignal(unsigned int, const char *);
-int	 profil(char *, size_t, unsigned long, unsigned int)
-		__attribute__ ((__bounded__(__string__,1,2)));
+int	 profil(char *, size_t, unsigned long, unsigned int);
 int	 quotactl(const char *, int, int, char *);
 int	 rcmd(char **, int, const char *,
 	    const char *, const char *, int *);
