@@ -1193,60 +1193,56 @@ namespace Genie
 		volatile bool  done;
 	};
 	
-	namespace
+	#if TARGET_CPU_68K
+	#pragma parameter IterateIntoCache_Completion( __A0 )
+	#endif
+	
+	static
+	pascal void IterateIntoCache_Completion( ParamBlockRec* _pb )
 	{
+		IterateIntoCache_CInfoPBRec& pb = *(IterateIntoCache_CInfoPBRec*) _pb;
 		
-		#if TARGET_CPU_68K
-		#pragma parameter IterateIntoCache_Completion( __A0 )
-		#endif
+		CInfoPBRec& cInfo = pb.cInfo;
 		
-		pascal void IterateIntoCache_Completion( ParamBlockRec* _pb )
+		if ( cInfo.dirInfo.ioResult != noErr )
 		{
-			IterateIntoCache_CInfoPBRec& pb = *(IterateIntoCache_CInfoPBRec*) _pb;
-			
-			CInfoPBRec& cInfo = pb.cInfo;
-			
-			if ( cInfo.dirInfo.ioResult != noErr )
-			{
-				goto done;
-			}
-			
-			pb.items[ pb.n_items ].id = cInfo.dirInfo.ioDrDirID;
-			
-			++pb.n_items;
-			
-			if ( pb.n_items == kMaxItems )
-			{
-				goto done;
-			}
-			
-			cInfo.dirInfo.ioNamePtr = pb.items[ pb.n_items ].name;
-			
-			cInfo.dirInfo.ioNamePtr[ 0 ] = '\0';
-			
-			cInfo.dirInfo.ioDrDirID = cInfo.dirInfo.ioDrParID;
-			
-			++cInfo.dirInfo.ioFDirIndex;
-			
-			(void) ::PBGetCatInfoAsync( &cInfo );
-			
-			if ( cInfo.dirInfo.ioResult >= 0 )
-			{
-				// Successfully queued
-				return;
-			}
-			
-			// We don't know if this was queued or not, so set done below
-			
-		done:
-			
-			pb.done = true;
-			
-			async_resume_task( pb.task );
-			
-			mac::sys::request_async_wakeup();
+			goto done;
 		}
 		
+		pb.items[ pb.n_items ].id = cInfo.dirInfo.ioDrDirID;
+		
+		++pb.n_items;
+		
+		if ( pb.n_items == kMaxItems )
+		{
+			goto done;
+		}
+		
+		cInfo.dirInfo.ioNamePtr = pb.items[ pb.n_items ].name;
+		
+		cInfo.dirInfo.ioNamePtr[ 0 ] = '\0';
+		
+		cInfo.dirInfo.ioDrDirID = cInfo.dirInfo.ioDrParID;
+		
+		++cInfo.dirInfo.ioFDirIndex;
+		
+		(void) ::PBGetCatInfoAsync( &cInfo );
+		
+		if ( cInfo.dirInfo.ioResult >= 0 )
+		{
+			// Successfully queued
+			return;
+		}
+		
+		// We don't know if this was queued or not, so set done below
+		
+	done:
+		
+		pb.done = true;
+		
+		async_resume_task( pb.task );
+		
+		mac::sys::request_async_wakeup();
 	}
 	
 	static void IterateFilesIntoCache( IterateIntoCache_CInfoPBRec&  pb,
@@ -1264,16 +1260,12 @@ namespace Genie
 		
 		const bool async = mac::sys::item_is_on_server( item );
 		
-	#ifndef __MACH__
-		
 		if ( async )
 		{
 			DEFINE_UPP( IOCompletion, IterateIntoCache_Completion )
 			
 			cInfo.dirInfo.ioCompletion = (IOCompletionUPP) UPP_ARG( IterateIntoCache_Completion );
 		}
-		
-	#endif
 		
 		UInt16 n_items = 0;
 		
