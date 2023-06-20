@@ -29,6 +29,7 @@
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/has/BlueBox.hh"
 #include "mac_sys/has/native_Carbon.hh"
+#include "mac_sys/volume_params.hh"
 
 // mac-file-utils
 #include "mac_file/desktop.hh"
@@ -1256,7 +1257,7 @@ namespace Genie
 		
 		long dirID = cInfo.dirInfo.ioDrDirID;
 		
-		const bool async = false;  // TODO:  Make async I/O work
+		const bool async = mac::sys::item_is_on_server( item );
 		
 	#ifndef __MACH__
 		
