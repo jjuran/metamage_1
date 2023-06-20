@@ -1184,8 +1184,8 @@ namespace Genie
 	
 	struct IterateIntoCache_CInfoPBRec
 	{
-		relix::task*   task;
 		CInfoPBRec     cInfo;
+		relix::task*   task;
 		NameAndID      items[ kMaxItems ];
 		UInt16         n_items;
 		volatile bool  done;
