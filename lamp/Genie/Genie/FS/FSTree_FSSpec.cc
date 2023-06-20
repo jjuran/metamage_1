@@ -1248,6 +1248,8 @@ namespace Genie
 	static void IterateFilesIntoCache( IterateIntoCache_CInfoPBRec&  pb,
 	                                   vfs::dir_contents&            cache )
 	{
+		OSErr err;
+		
 		CInfoPBRec& cInfo = pb.cInfo;
 		
 		FSSpec item;
@@ -1286,7 +1288,14 @@ namespace Genie
 			
 			if ( async )
 			{
-				N::PBGetCatInfoAsync( cInfo, N::FNF_Returns() );
+				(void) PBGetCatInfoAsync( &cInfo );
+				
+				err = cInfo.dirInfo.ioResult;
+				
+				if ( err != fnfErr )
+				{
+					N::ThrowIOResult( err );
+				}
 				
 				while ( !pb.done )
 				{
