@@ -421,7 +421,7 @@ namespace Nitrogen
 	{
 		typedef void Result;
 		
-		static void HandleOSStatus( ::OSStatus err )
+		static void HandleIOResult( ::OSErr err )
 		{
 			ThrowIOResult( err );
 		}
@@ -431,7 +431,7 @@ namespace Nitrogen
 	{
 		typedef bool Result;
 		
-		static bool HandleOSStatus( ::OSStatus err )
+		static bool HandleIOResult( ::OSErr err )
 		{
 			if ( err == fnfErr )
 			{

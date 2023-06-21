@@ -185,23 +185,23 @@ namespace Nitrogen
 	
 	void PBGetCatInfoSync( CInfoPBRec& pb, FNF_Throws policy )
 	{
-		FNF_Throws::HandleOSStatus( ::PBGetCatInfoSync( &pb ) );
+		FNF_Throws::HandleIOResult( ::PBGetCatInfoSync( &pb ) );
 	}
 	
 	bool PBGetCatInfoSync( CInfoPBRec& pb, FNF_Returns policy )
 	{
-		return FNF_Returns::HandleOSStatus( ::PBGetCatInfoSync( &pb ) );
+		return FNF_Returns::HandleIOResult( ::PBGetCatInfoSync( &pb ) );
 	}
 	
 	
 	void PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Throws policy )
 	{
-		policy.HandleOSStatus( FixedAsyncResult( ::PBGetCatInfoAsync( &pb ), pb ) );
+		policy.HandleIOResult( FixedAsyncResult( ::PBGetCatInfoAsync( &pb ), pb ) );
 	}
 	
 	bool PBGetCatInfoAsync( CInfoPBRec& pb, FNF_Returns policy )
 	{
-		return policy.HandleOSStatus( FixedAsyncResult( ::PBGetCatInfoAsync( &pb ), pb ) );
+		return policy.HandleIOResult( FixedAsyncResult( ::PBGetCatInfoAsync( &pb ), pb ) );
 	}
 	
 	
