@@ -1302,11 +1302,15 @@ namespace Genie
 					AsyncYield();
 				}
 			}
-			else if ( const bool exists = N::PBGetCatInfoSync( cInfo, N::FNF_Returns() ) )
+			else if ( (err = PBGetCatInfoSync( &cInfo )) == noErr )
 			{
 				pb.items[ 0 ].id = cInfo.dirInfo.ioDrDirID;
 				
 				++pb.n_items;
+			}
+			else if ( err != fnfErr )
+			{
+				N::ThrowIOResult( err );
 			}
 			
 			n_items += pb.n_items;
