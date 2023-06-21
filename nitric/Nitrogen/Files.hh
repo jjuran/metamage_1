@@ -423,7 +423,7 @@ namespace Nitrogen
 		
 		static void HandleOSStatus( ::OSStatus err )
 		{
-			Mac::ThrowOSStatus( err );
+			ThrowIOResult( err );
 		}
 	};
 	
@@ -438,7 +438,7 @@ namespace Nitrogen
 				return false;
 			}
 			
-			Mac::ThrowOSStatus( err );
+			ThrowIOResult( err );
 			
 			return true;
 		}

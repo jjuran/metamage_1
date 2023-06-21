@@ -63,6 +63,15 @@ namespace Nitrogen
 	
 #if ! __LP64__
 	
+	inline
+	void ThrowIOResult( OSErr err )
+	{
+		if ( err < 0 )
+		{
+			Mac::ThrowOSStatus_Internal( err );
+		}
+	}
+	
 	inline OSErr FixedAsyncResult( OSErr err, const ParamBlockRec& pb )
 	{
 		if ( TARGET_CPU_68K )
@@ -111,7 +120,7 @@ namespace Nitrogen
 	{
 		if ( !policy.SuppressError( err, bytesRead ) )
 		{
-			Mac::ThrowOSStatus( err );
+			ThrowIOResult( err );
 		}
 	}
 	
@@ -134,7 +143,7 @@ namespace Nitrogen
 	
 	inline void PBWriteAsync( ParamBlockRec& pb )
 	{
-		Mac::ThrowOSStatus( FixedAsyncResult( ::PBWriteAsync( &pb ), pb ) );
+		ThrowIOResult( FixedAsyncResult( ::PBWriteAsync( &pb ), pb ) );
 	}
 	
 #endif  // #if ! __LP64__

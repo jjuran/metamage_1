@@ -116,7 +116,7 @@ namespace Nitrogen
 	
 	void PBHOpenDFAsync( HParamBlockRec& pb )
 	{
-		ThrowOSStatus( FixedAsyncResult( ::PBHOpenDFAsync( &pb ), pb ) );
+		ThrowIOResult( FixedAsyncResult( ::PBHOpenDFAsync( &pb ), pb ) );
 	}
 	
 	void PBHOpenRFSync( HParamBlockRec& pb )
@@ -126,7 +126,7 @@ namespace Nitrogen
 	
 	void PBHOpenRFAsync( HParamBlockRec& pb )
 	{
-		ThrowOSStatus( FixedAsyncResult( ::PBHOpenRFAsync( &pb ), pb ) );
+		ThrowIOResult( FixedAsyncResult( ::PBHOpenRFAsync( &pb ), pb ) );
 	}
 	
 	
