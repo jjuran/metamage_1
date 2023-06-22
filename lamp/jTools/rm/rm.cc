@@ -7,9 +7,14 @@
 #include <unistd.h>
 
 // Standard C
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+// more-libc
+#include "more/string.h"
+
+// more-posix
+#include "more/perror.hh"
 
 // command
 #include "command/get_option.hh"
@@ -24,8 +29,10 @@
 #include "Orion/Main.hh"
 
 
-#define PREFIX  "rm: "
+#define PROGRAM  "rm"
+#define PREFIX   PROGRAM ": "
 
+#define STRLEN( s )   (sizeof "" s - 1)
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define ERROR( e, msg )  (wrote( 2, STR_LEN( PREFIX msg "\n" ) ) ? e : 13)
@@ -64,7 +71,19 @@ bool wrote( int fd, const void* buffer, size_t n )
 static inline
 void print_removed( const char* path )
 {
-	printf( "removed '%s'\n", path );
+	size_t path_len = strlen( path );
+	
+	size_t size = STRLEN( "removed ''\n" ) + path_len;
+	
+	char* buffer = (char*) alloca( size );
+	
+	char* p = buffer;
+	
+	p = (char*) mempcpy( p, STR_LEN( "removed '" ) );
+	p = (char*) mempcpy( p, path, path_len );
+	p = (char*) mempcpy( p, STR_LEN( "'\n" ) );
+	
+	write( STDOUT_FILENO, buffer, size );
 }
 
 static char* const* get_options( char* const* argv )
@@ -111,7 +130,7 @@ namespace tool
 		
 		if ( unlinked < 0  &&  !(globally_forced && errno == ENOENT) )
 		{
-			fprintf( stderr, "rm: %s: %s\n", path, strerror( errno ) );
+			more::perror( PROGRAM, path );
 			
 			global_exit_status = 1;
 		}
