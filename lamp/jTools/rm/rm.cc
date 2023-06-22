@@ -4,6 +4,7 @@
  */
 
 // POSIX
+#include <sys/stat.h>
 #include <unistd.h>
 
 // Standard C
@@ -19,8 +20,11 @@
 // command
 #include "command/get_option.hh"
 
-// pfiles
-#include "pfiles/common.hh"
+// plus
+#include "plus/string.hh"
+
+// poseven
+#include "poseven/functions/opendir.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -174,7 +178,20 @@ void recursively_delete_subtrees( const char* path );
 static
 void recursively_delete( const char* path )
 {
-	if ( io::file_exists( path ) )
+	struct stat st;
+	
+	int nok = lstat( path, &st );
+	
+	if ( nok < 0  &&  ! (globally_forced  &&  errno == ENOENT) )
+	{
+		more::perror( PROGRAM, path );
+		
+		global_exit_status = 1;
+		
+		return;
+	}
+	
+	if ( ! S_ISDIR( st.st_mode ) )
 	{
 		delete_file( path );
 	}
@@ -182,7 +199,12 @@ void recursively_delete( const char* path )
 	{
 		recursively_delete_subtrees( path );
 		
-		poseven::rmdir( path );
+		nok = rmdir( path );
+		
+		if ( nok < 0  &&  ! (globally_forced  &&  errno == EACCES) )
+		{
+			more::perror( PROGRAM, path );
+		}
 	}
 }
 
@@ -207,17 +229,6 @@ void recursively_delete_subtrees( const char* path )
 }
 
 
-static void recursive_delete( const char* path )
-{
-	if ( globally_forced && !io::item_exists( path ) )
-	{
-		return;
-	}
-	
-	recursively_delete( path );
-}
-
-
 namespace tool
 {
 	
@@ -235,7 +246,7 @@ namespace tool
 		
 		typedef void (*deleter_f)(const char*);
 		
-		deleter_f deleter = recursive ? recursive_delete
+		deleter_f deleter = recursive ? recursively_delete
 		                              : delete_file;
 		
 		for ( int index = 0;  index < argn;  ++index )
