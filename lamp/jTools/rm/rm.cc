@@ -61,6 +61,12 @@ bool wrote( int fd, const void* buffer, size_t n )
 	return write( fd, buffer, n ) == n;
 }
 
+static inline
+void print_removed( const char* path )
+{
+	printf( "removed '%s'\n", path );
+}
+
 static char* const* get_options( char* const* argv )
 {
 	++argv;  // skip arg 0
@@ -158,7 +164,7 @@ namespace tool
 			
 			if ( verbose )
 			{
-				printf( "removed '%s'\n", path );
+				print_removed( path );
 			}
 			
 			deleter( path );
