@@ -4,6 +4,7 @@
  */
 
 // POSIX
+#include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -22,9 +23,6 @@
 
 // plus
 #include "plus/string.hh"
-
-// poseven
-#include "poseven/functions/opendir.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -217,7 +215,14 @@ void recursively_delete_tree( const plus::string& path )
 static
 void recursively_delete_subtrees( const char* path )
 {
-	nucleus::owned< poseven::dir_t > dir = poseven::opendir( path );
+	DIR* dir = opendir( path );
+	
+	if ( dir == NULL )
+	{
+		more::perror( PROGRAM, path );
+		
+		return;
+	}
 	
 	while ( const dirent* entry = readdir( dir ) )
 	{
@@ -226,6 +231,8 @@ void recursively_delete_subtrees( const char* path )
 			recursively_delete_tree( path_descent( path, entry->d_name ) );
 		}
 	}
+	
+	closedir( dir );
 }
 
 
