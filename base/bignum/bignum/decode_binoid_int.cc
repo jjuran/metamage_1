@@ -24,7 +24,7 @@ namespace bignum
 	
 	typedef integer::int_t  int_t;
 	
-	typedef vxo::Box (*int_decoder)( const char*, unsigned long, vxo::align_t );
+	typedef vxo::Box (*int_decoder)( const char*, size_t, vxo::align_t );
 	
 	
 	static
