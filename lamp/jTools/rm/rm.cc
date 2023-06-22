@@ -4,11 +4,9 @@
  */
 
 // Standard C
+#include <stdio.h>
 #include <stdlib.h>
-
-// Standard C/C++
-#include <cstdio>
-#include <cstring>
+#include <string.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -99,11 +97,11 @@ namespace tool
 	
 	static void delete_file( const char* path )
 	{
-		int unlinked = ::unlink( path );
+		int unlinked = unlink( path );
 		
 		if ( unlinked < 0  &&  !(globally_forced && errno == ENOENT) )
 		{
-			std::fprintf( stderr, "rm: %s: %s\n", path, std::strerror( errno ) );
+			fprintf( stderr, "rm: %s: %s\n", path, strerror( errno ) );
 			
 			global_exit_status = p7::exit_failure;
 		}
@@ -158,7 +156,7 @@ namespace tool
 			
 			if ( verbose )
 			{
-				std::printf( "removed '%s'\n", path );
+				printf( "removed '%s'\n", path );
 			}
 			
 			deleter( path );
