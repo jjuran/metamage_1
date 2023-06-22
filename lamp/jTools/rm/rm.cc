@@ -149,7 +149,12 @@ plus::string path_descent( const char* path, const char* name )
 	
 	plus::string result;
 	
-	char* p = result.reset( size );
+	char* p = result.reset_nothrow( size );
+	
+	if ( p == NULL )
+	{
+		_exit( ERROR( 108, "out of memory!" ) );
+	}
 	
 	p = (char*) mempcpy( p, path, path_size );
 	
