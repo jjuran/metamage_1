@@ -3,19 +3,16 @@
  *	=====
  */
 
+// POSIX
+#include <unistd.h>
+
 // Standard C
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-// Iota
-#include "iota/strings.hh"
-
 // command
 #include "command/get_option.hh"
-
-// poseven
-#include "poseven/functions/write.hh"
 
 // pfiles
 #include "pfiles/common.hh"
@@ -25,6 +22,13 @@
 
 // Orion
 #include "Orion/Main.hh"
+
+
+#define PREFIX  "rm: "
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+#define ERROR( e, msg )  (wrote( 2, STR_LEN( PREFIX msg "\n" ) ) ? e : 13)
 
 
 using namespace command::constants;
@@ -50,6 +54,12 @@ static command::option options[] =
 static bool globally_forced = false;
 static bool recursive = false;
 static bool verbose = false;
+
+static inline
+bool wrote( int fd, const void* buffer, size_t n )
+{
+	return write( fd, buffer, n ) == n;
+}
 
 static char* const* get_options( char* const* argv )
 {
@@ -88,9 +98,6 @@ static int global_exit_status = 0;
 
 namespace tool
 {
-	
-	namespace p7 = poseven;
-	
 	
 	static void delete_file( const char* path )
 	{
@@ -137,9 +144,7 @@ namespace tool
 		// Check for sufficient number of args
 		if ( argn < 1 )
 		{
-			p7::write( p7::stderr_fileno, STR_LEN( "rm: missing arguments\n" ) );
-			
-			return 1;
+			return ERROR( 50, "missing arguments" );
 		}
 		
 		typedef void (*deleter_f)(const char*);
