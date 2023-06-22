@@ -137,6 +137,33 @@ static void delete_file( const char* path )
 }
 
 static
+plus::string path_descent( const plus::string& path, const char* name )
+{
+	size_t length = strlen( name );
+	
+	const bool has_trailing_slash = path.back() == '/';
+	
+	const size_t path_size = path.size();
+	
+	const size_t size = path_size + ! has_trailing_slash + length;
+	
+	plus::string result;
+	
+	char* p = result.reset( size );
+	
+	p = (char*) mempcpy( p, path.data(), path_size );
+	
+	if ( ! has_trailing_slash )
+	{
+		*p++ = '/';
+	}
+	
+	p = (char*) mempcpy( p, name, length );
+	
+	return result.move();
+}
+
+static
 void recursively_delete_subtrees( const plus::string& path );
 
 static
@@ -163,7 +190,7 @@ void recursively_delete_subtrees( const plus::string& path )
 	{
 		if ( ! name_is_dots( entry->d_name ) )
 		{
-			recursively_delete_tree( io::path_descent( path, entry->d_name ) );
+			recursively_delete_tree( path_descent( path, entry->d_name ) );
 		}
 	}
 }
