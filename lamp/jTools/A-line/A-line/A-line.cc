@@ -352,7 +352,8 @@ namespace tool
 		return pid;
 	}
 	
-	static void report_diagnostics( size_t size, bool had_errors, const char* diagnostics_path )
+	static
+	void report_diagnostics( long size, bool had_errors, const char* diagnostics_path )
 	{
 		const char* stuff = had_errors ? "errors" : "warnings";
 		
@@ -779,7 +780,7 @@ namespace tool
 		
 		reap_jobs( false );
 		
-		if ( std::size_t n = CountFailures() )
+		if ( long n = CountFailures() )
 		{
 			std::fprintf( stderr, "###\n"
 			                      "### A-line: %ld task%s had errors\n"
