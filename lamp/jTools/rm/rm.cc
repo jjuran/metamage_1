@@ -15,10 +15,7 @@
 #include "command/get_option.hh"
 
 // poseven
-#include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
-#include "poseven/sequences/directory_contents.hh"
-#include "poseven/types/exit_t.hh"
 
 // pfiles
 #include "pfiles/common.hh"
@@ -86,13 +83,13 @@ static char* const* get_options( char* const* argv )
 }
 
 
+static int global_exit_status = 0;
+
+
 namespace tool
 {
 	
 	namespace p7 = poseven;
-	
-	
-	static p7::exit_t global_exit_status = p7::exit_success;
 	
 	
 	static void delete_file( const char* path )
@@ -103,7 +100,7 @@ namespace tool
 		{
 			fprintf( stderr, "rm: %s: %s\n", path, strerror( errno ) );
 			
-			global_exit_status = p7::exit_failure;
+			global_exit_status = 1;
 		}
 	}
 	
@@ -142,7 +139,7 @@ namespace tool
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "rm: missing arguments\n" ) );
 			
-			return p7::exit_failure;
+			return 1;
 		}
 		
 		typedef void (*deleter_f)(const char*);
