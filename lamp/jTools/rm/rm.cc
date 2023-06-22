@@ -137,13 +137,13 @@ static void delete_file( const char* path )
 }
 
 static
-plus::string path_descent( const plus::string& path, const char* name )
+plus::string path_descent( const char* path, const char* name )
 {
 	size_t length = strlen( name );
 	
-	const bool has_trailing_slash = path.back() == '/';
+	const size_t path_size = strlen( path );
 	
-	const size_t path_size = path.size();
+	const bool has_trailing_slash = path[ path_size - 1 ] == '/';
 	
 	const size_t size = path_size + ! has_trailing_slash + length;
 	
@@ -151,7 +151,7 @@ plus::string path_descent( const plus::string& path, const char* name )
 	
 	char* p = result.reset( size );
 	
-	p = (char*) mempcpy( p, path.data(), path_size );
+	p = (char*) mempcpy( p, path, path_size );
 	
 	if ( ! has_trailing_slash )
 	{
@@ -164,14 +164,14 @@ plus::string path_descent( const plus::string& path, const char* name )
 }
 
 static
-void recursively_delete_subtrees( const plus::string& path );
+void recursively_delete_subtrees( const char* path );
 
 static
-void recursively_delete_tree( const plus::string& path )
+void recursively_delete( const char* path )
 {
 	if ( io::file_exists( path ) )
 	{
-		delete_file( path.c_str() );
+		delete_file( path );
 	}
 	else
 	{
@@ -181,8 +181,14 @@ void recursively_delete_tree( const plus::string& path )
 	}
 }
 
+static inline
+void recursively_delete_tree( const plus::string& path )
+{
+	recursively_delete( path.data() );  // morally c_str()
+}
+
 static
-void recursively_delete_subtrees( const plus::string& path )
+void recursively_delete_subtrees( const char* path )
 {
 	nucleus::owned< poseven::dir_t > dir = poseven::opendir( path );
 	
@@ -203,7 +209,7 @@ static void recursive_delete( const char* path )
 		return;
 	}
 	
-	recursively_delete_tree( path );
+	recursively_delete( path );
 }
 
 
