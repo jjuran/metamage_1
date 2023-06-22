@@ -1,7 +1,7 @@
-/*	=====
- *	rm.cc
- *	=====
- */
+/*
+	rm.cc
+	-----
+*/
 
 // POSIX
 #include <dirent.h>
@@ -24,8 +24,8 @@
 // plus
 #include "plus/string.hh"
 
-// Orion
-#include "Orion/Main.hh"
+
+#pragma exceptions off
 
 
 #define PROGRAM  "rm"
@@ -235,40 +235,34 @@ void recursively_delete_subtrees( const char* path )
 	closedir( dir );
 }
 
-
-namespace tool
+int main( int argc, char** argv )
 {
+	char *const *args = get_options( argv );
 	
-	int Main( int argc, char** argv )
+	const int argn = argc - (args - argv);
+	
+	// Check for sufficient number of args
+	if ( argn < 1 )
 	{
-		char *const *args = get_options( argv );
-		
-		const int argn = argc - (args - argv);
-		
-		// Check for sufficient number of args
-		if ( argn < 1 )
-		{
-			return ERROR( 50, "missing arguments" );
-		}
-		
-		typedef void (*deleter_f)(const char*);
-		
-		deleter_f deleter = recursive ? recursively_delete
-		                              : delete_file;
-		
-		for ( int index = 0;  index < argn;  ++index )
-		{
-			const char* path = args[ index ];
-			
-			if ( verbose )
-			{
-				print_removed( path );
-			}
-			
-			deleter( path );
-		}
-		
-		return global_exit_status;
+		return ERROR( 50, "missing arguments" );
 	}
 	
+	typedef void (*deleter_f)(const char*);
+	
+	deleter_f deleter = recursive ? recursively_delete
+	                              : delete_file;
+	
+	for ( int index = 0;  index < argn;  ++index )
+	{
+		const char* path = args[ index ];
+		
+		if ( verbose )
+		{
+			print_removed( path );
+		}
+		
+		deleter( path );
+	}
+	
+	return global_exit_status;
 }
