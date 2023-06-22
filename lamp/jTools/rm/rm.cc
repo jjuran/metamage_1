@@ -121,44 +121,42 @@ static char* const* get_options( char* const* argv )
 static int global_exit_status = 0;
 
 
+static void delete_file( const char* path )
+{
+	int unlinked = unlink( path );
+	
+	if ( unlinked < 0  &&  !(globally_forced && errno == ENOENT) )
+	{
+		more::perror( PROGRAM, path );
+		
+		global_exit_status = 1;
+	}
+}
+
+struct file_deleter
+{
+	void operator()( const plus::string& path, unsigned depth ) const
+	{
+		delete_file( path.c_str() );
+	}
+};
+
+static void recursive_delete( const char* path )
+{
+	if ( globally_forced && !io::item_exists( path ) )
+	{
+		return;
+	}
+	
+	recursively_walk_tree( plus::string( path ),
+	                       io::walk_noop(),
+	                       file_deleter(),
+	                       io::directory_deleter< plus::string >() );
+}
+
+
 namespace tool
 {
-	
-	static void delete_file( const char* path )
-	{
-		int unlinked = unlink( path );
-		
-		if ( unlinked < 0  &&  !(globally_forced && errno == ENOENT) )
-		{
-			more::perror( PROGRAM, path );
-			
-			global_exit_status = 1;
-		}
-	}
-	
-	
-	struct file_deleter
-	{
-		void operator()( const plus::string& path, unsigned depth ) const
-		{
-			delete_file( path.c_str() );
-		}
-	};
-	
-	
-	static void recursive_delete( const char* path )
-	{
-		if ( globally_forced && !io::item_exists( path ) )
-		{
-			return;
-		}
-		
-		recursively_walk_tree( plus::string( path ),
-		                       io::walk_noop(),
-		                       file_deleter(),
-		                       io::directory_deleter< plus::string >() );
-	}
-	
 	
 	int Main( int argc, char** argv )
 	{
