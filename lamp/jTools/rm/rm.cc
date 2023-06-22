@@ -22,9 +22,6 @@
 // pfiles
 #include "pfiles/common.hh"
 
-// Io
-#include "io/walk.hh"
-
 // Orion
 #include "Orion/Main.hh"
 
@@ -121,6 +118,12 @@ static char* const* get_options( char* const* argv )
 static int global_exit_status = 0;
 
 
+static inline
+bool name_is_dots( const char* name )
+{
+	return name[0] == '.'  &&  ( name[ 1 + (name[1] == '.') ] == '\0' );
+}
+
 static void delete_file( const char* path )
 {
 	int unlinked = unlink( path );
@@ -133,13 +136,38 @@ static void delete_file( const char* path )
 	}
 }
 
-struct file_deleter
+static
+void recursively_delete_subtrees( const plus::string& path );
+
+static
+void recursively_delete_tree( const plus::string& path )
 {
-	void operator()( const plus::string& path, unsigned depth ) const
+	if ( io::file_exists( path ) )
 	{
 		delete_file( path.c_str() );
 	}
-};
+	else
+	{
+		recursively_delete_subtrees( path );
+		
+		poseven::rmdir( path );
+	}
+}
+
+static
+void recursively_delete_subtrees( const plus::string& path )
+{
+	nucleus::owned< poseven::dir_t > dir = poseven::opendir( path );
+	
+	while ( const dirent* entry = readdir( dir ) )
+	{
+		if ( ! name_is_dots( entry->d_name ) )
+		{
+			recursively_delete_tree( io::path_descent( path, entry->d_name ) );
+		}
+	}
+}
+
 
 static void recursive_delete( const char* path )
 {
@@ -148,10 +176,7 @@ static void recursive_delete( const char* path )
 		return;
 	}
 	
-	recursively_walk_tree( plus::string( path ),
-	                       io::walk_noop(),
-	                       file_deleter(),
-	                       io::directory_deleter< plus::string >() );
+	recursively_delete_tree( path );
 }
 
 
