@@ -5,11 +5,12 @@
 
 #include "A-line/ProjectConfig.hh"
 
+// Standard C
+#include <stdio.h>
+#include <string.h>
+
 // Standard C++
 #include <algorithm>
-
-// Standard C/C++
-#include <cstdio>
 
 // Iota
 #include "iota/strings.hh"
@@ -40,7 +41,7 @@ namespace tool
 	{
 		bool operator()( const char* a, const char* b )
 		{
-			return std::strcmp( a, b ) < 0;
+			return strcmp( a, b ) < 0;
 		}
 	};
 	
@@ -74,7 +75,7 @@ namespace tool
 			"~"
 		};
 		
-		std::size_t length = sizeof recognized / sizeof (const char*);
+		size_t length = sizeof recognized / sizeof (const char*);
 		
 		char const* const* end = recognized + length;
 		
@@ -180,7 +181,7 @@ namespace tool
 		return dir / path;
 	}
 	
-	static bool ends_with( const plus::string& string, const char* substring, std::size_t length )
+	static bool ends_with( const plus::string& string, const char* substring, size_t length )
 	{
 		return std::equal( string.end() - length, string.end(), substring );
 	}
@@ -221,9 +222,9 @@ namespace tool
 		}
 		catch ( const NoSuchPlatform& e )
 		{
-			std::fprintf( stderr, "No such platform '%s' in %s\n",
-			                                         e.name.c_str(),
-			                                                config_pathname.c_str() );
+			fprintf( stderr, "No such platform '%s' in %s\n",
+			                                    e.name.c_str(),
+			                                           config_pathname.c_str() );
 			
 			throw p7::exit_failure;
 		}
@@ -313,9 +314,9 @@ namespace tool
 			{
 				if ( !DirectiveIsRecognized( line.key ) )
 				{
-					std::fprintf( stderr,
-					              "Unrecognized directive '%s' in project config\n",
-					                                       line.key.c_str() );
+					fprintf( stderr,
+					         "Unrecognized directive '%s' in project config\n",
+					                                  line.key.c_str() );
 				}
 				
 				StringVector& conf_key = conf[ line.key ];

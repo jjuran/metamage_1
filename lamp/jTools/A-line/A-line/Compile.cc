@@ -10,10 +10,8 @@
 #include <set>
 #include <vector>
 
-// Standard C/C++
-#include <cstdio>
-
 // Standard C
+#include <stdio.h>
 #include <stdlib.h>
 
 // POSIX
@@ -615,7 +613,7 @@ namespace tool
 	{
 		Command command = its_command_maker( its_options, its_source_pathname, OutputPath() );
 		
-		const char* source_path = std::strstr( its_source_pathname.c_str(), "//" );
+		const char* source_path = strstr( its_source_pathname.c_str(), "//" );
 		
 		if ( source_path == NULL )
 		{
@@ -874,7 +872,7 @@ namespace tool
 				
 				if ( prefix_source_pathname.empty() )
 				{
-					std::fprintf( stderr, "Missing precompiled header '%s'\n", prefix_source_path.c_str() );
+					fprintf( stderr, "Missing precompiled header '%s'\n", prefix_source_path.c_str() );
 				}
 				else
 				{
@@ -924,7 +922,7 @@ namespace tool
 		
 		const StringVector& sources = project.Sources();
 		
-		const std::size_t n_tools = project.ToolCount();
+		const size_t n_tools = project.ToolCount();
 		
 		tool_dependencies.resize( n_tools );
 		

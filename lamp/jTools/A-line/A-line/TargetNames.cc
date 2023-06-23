@@ -3,11 +3,13 @@
  *	==============
  */
 
-#include <cstdio>
+// Standard C
+#include <stdio.h>
 
 // plus
 #include "plus/var_string.hh"
 
+// A-line
 #include "A-line/TargetNames.hh"
 
 
@@ -28,7 +30,7 @@ namespace tool
 				break;
 		};
 		
-		std::fprintf( stderr, "Invalid arch: %x\n", arch );
+		fprintf( stderr, "Invalid arch: %x\n", arch );
 		
 		throw InvalidPlatform();
 	}

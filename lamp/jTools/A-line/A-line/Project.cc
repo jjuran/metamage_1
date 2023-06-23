@@ -6,14 +6,12 @@
 #include "A-line/Project.hh"
 
 // Standard C
+#include <stdio.h>
 #include <string.h>
 
 // Standard C++
 #include <algorithm>
 #include <set>
-
-// Standard C/C++
-#include <cstdio>
 
 // Iota
 #include "iota/strings.hh"
@@ -189,7 +187,7 @@ namespace tool
 	
 	plus::string Project::FindResourceFile( const plus::string& filespec ) const
 	{
-		if ( const char* colon = std::strchr( filespec.c_str(), ':' ) )
+		if ( const char* colon = strchr( filespec.c_str(), ':' ) )
 		{
 			plus::string project_name( filespec.c_str(), colon );
 			
@@ -209,8 +207,8 @@ namespace tool
 			return file;
 		}
 		
-		std::fprintf( stderr, "A-line: %s: can't find resource file '%s'\n",
-		                               its_name.c_str(),             filespec.c_str() );
+		fprintf( stderr, "A-line: %s: can't find resource file '%s'\n",
+		                          its_name.c_str(),             filespec.c_str() );
 		
 		p7::throw_errno( ENOENT );
 		
@@ -231,13 +229,13 @@ namespace tool
 				return dirPath;
 			}
 			
-			std::fprintf( stderr, "Missing search directory '%s'\n", pathname.c_str() );
+			fprintf( stderr, "Missing search directory '%s'\n", pathname.c_str() );
 			
 			throw;
 		}
 		catch ( ... )
 		{
-			std::fprintf( stderr, "Unrecognized exception for '%s'\n", pathname.c_str() );
+			fprintf( stderr, "Unrecognized exception for '%s'\n", pathname.c_str() );
 			
 			throw;
 		}
@@ -412,14 +410,14 @@ namespace tool
 		return false;
 	}
 	
-	static inline bool match_backwards( const char* a_end, const char* b_begin, std::size_t length )
+	static inline bool match_backwards( const char* a_end, const char* b_begin, size_t length )
 	{
 		return std::equal( a_end - length, a_end, b_begin );
 	}
 	
 	static bool IsCompilableFilename( const plus::string& filename )
 	{
-		std::size_t lastDot = filename.find_last_of( "." );
+		size_t lastDot = filename.find_last_of( "." );
 		
 		return    lastDot != plus::string::npos
 		       && IsCompilableExtension( filename.substr( lastDot ) )
@@ -450,7 +448,7 @@ namespace tool
 			}
 		}
 		
-		std::fprintf( stderr, "Missing source file %s\n", relative_path.c_str() );
+		fprintf( stderr, "Missing source file %s\n", relative_path.c_str() );
 		
 		p7::throw_errno( ENOENT );
 		
@@ -577,13 +575,13 @@ namespace tool
 			}
 	};
 	
-	static std::size_t partition_sources( const StringVector&  tool_filenames,
-	                                      StringVector&        source_paths )
+	static size_t partition_sources( const StringVector&  tool_filenames,
+	                                 StringVector&        source_paths )
 	{
-		std::size_t n_tools = std::partition( source_paths.begin(),
-		                                      source_paths.end(),
-		                                      filename_belonging_check( tool_filenames )
-		                                    ) - source_paths.begin();
+		size_t n_tools = std::partition( source_paths.begin(),
+		                                 source_paths.end(),
+		                                 filename_belonging_check( tool_filenames )
+		                               ) - source_paths.begin();
 		
 		return n_tools;
 	}

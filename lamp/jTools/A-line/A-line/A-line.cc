@@ -5,21 +5,19 @@
 
 #include "A-line/A-line.hh"
 
+// POSIX
+#include <fcntl.h>
+#include <sys/wait.h>
+
+// Standard C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 // Standard C++
 #include <algorithm>
 #include <map>
 #include <vector>
-
-// Standard C/C++
-#include <cstdio>
-#include <cstring>
-
-// Standard C
-#include "stdlib.h"
-
-// POSIX
-#include "fcntl.h"
-#include <sys/wait.h>
 
 // iota
 #include "iota/char_types.hh"
@@ -131,7 +129,7 @@ static bool gDryRun = false;
 
 static OptionsRecord gOptions;
 
-static std::size_t global_job_limit = 1;
+static size_t global_job_limit = 1;
 
 static Platform arch    = platformUnspecified;
 static Platform model   = platformUnspecified;
@@ -341,7 +339,7 @@ namespace tool
 		{
 			if ( !is_null( diagnostics_path ) && !open_diagnostics_file( diagnostics_path ) )
 			{
-				std::perror( diagnostics_path );
+				perror( diagnostics_path );
 				
 				p7::_exit( p7::exit_failure );
 			}
@@ -366,8 +364,8 @@ namespace tool
 			pathname = diagnostics_path;
 		}
 		
-		std::fprintf( stderr, "#\n# %ld bytes of %s\n#\n" "    report %s\n#\n",
-		                            size,        stuff,               pathname );
+		fprintf( stderr, "#\n# %ld bytes of %s\n#\n" "    report %s\n#\n",
+		                       size,        stuff,               pathname );
 	}
 	
 	void check_diagnostics( bool succeeded, const char* diagnostics_path )
@@ -427,7 +425,7 @@ namespace tool
 			const char* ended  = signaled ? "terminated via signal" : "exited with status";
 			int         status = signaled ? WTERMSIG( wait_status ) : WEXITSTATUS( wait_status );
 			
-			std::fprintf( stderr, "The last command %s %d.  Aborting.\n", ended, status );
+			fprintf( stderr, "The last command %s %d.  Aborting.\n", ended, status );
 			
 			throw signaled ? p7::exit_t( 2 ) : p7::exit_failure;
 		}
@@ -486,7 +484,7 @@ namespace tool
 		ASSERT( command.size() > 1 );
 		ASSERT( command.back() == NULL );
 		
-		std::printf( "%s\n", caption.c_str() );
+		printf( "%s\n", caption.c_str() );
 		
 		PrintCommandForShell( command );
 		
@@ -696,50 +694,50 @@ namespace tool
 			}
 			catch ( const NoSuchProject& )
 			{
-				std::fprintf( stderr, "A-line: No such project '%s'\n", project_name );
+				fprintf( stderr, "A-line: No such project '%s'\n", project_name );
 				
 				if ( !cache_was_written )
 				{
-					std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
+					fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
 				}
 				
 				return 1;
 			}
 			catch ( const NoSuchUsedProject& ex )
 			{
-				std::fprintf( stderr, "A-line: No such project '%s' used by %s\n",
-				                                                ex.used.c_str(),
-				                                                            ex.projName.c_str() );
+				fprintf( stderr, "A-line: No such project '%s' used by %s\n",
+				                                           ex.used.c_str(),
+				                                                       ex.projName.c_str() );
 				
 				if ( !cache_was_written )
 				{
-					std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
+					fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
 				}
 				
 				return 1;
 			}
 			catch ( const missing_project_config& missing )
 			{
-				std::fprintf( stderr, "A-line: project %s's config %s doesn't exist\n",
-				                                       missing.project_name.c_str(),
-				                                                   missing.config_pathname.c_str() );
+				fprintf( stderr, "A-line: project %s's config %s doesn't exist\n",
+				                                  missing.project_name.c_str(),
+				                                              missing.config_pathname.c_str() );
 				
 				if ( !cache_was_written )
 				{
-					std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
+					fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
 				}
 				
 				throw p7::exit_t( 3 );
 			}
 			catch ( const circular_dependency& circular )
 			{
-				std::fprintf( stderr, "A-line: Circular dependency on '%s'\n", circular.project_name.c_str() );
+				fprintf( stderr, "A-line: Circular dependency on '%s'\n", circular.project_name.c_str() );
 				
 				throw p7::exit_t( 4 );
 			}
 			catch ( const p7::errno_t& err )
 			{
-				std::fprintf( stderr, "A-line: %s: %s\n", project_name, std::strerror( err ) );
+				fprintf( stderr, "A-line: %s: %s\n", project_name, strerror( err ) );
 				
 				throw;
 			}
@@ -765,7 +763,7 @@ namespace tool
 			}
 			catch ( const p7::errno_t& err )
 			{
-				std::fprintf( stderr, "A-line: %s: %s\n", proj, std::strerror( err ) );
+				fprintf( stderr, "A-line: %s: %s\n", proj, strerror( err ) );
 				
 				throw;
 			}
@@ -782,10 +780,10 @@ namespace tool
 		
 		if ( long n = CountFailures() )
 		{
-			std::fprintf( stderr, "###\n"
-			                      "### A-line: %ld task%s had errors\n"
-			                      "###\n",     n,      n == 1 ? ""
-			                                                  : "s" );
+			fprintf( stderr, "###\n"
+			                 "### A-line: %ld task%s had errors\n"
+			                 "###\n",     n,      n == 1 ? ""
+			                                             : "s" );
 			
 			return 1;
 		}
