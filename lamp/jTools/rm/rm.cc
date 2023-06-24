@@ -1,35 +1,40 @@
-/*	=====
- *	rm.cc
- *	=====
- */
+/*
+	rm.cc
+	-----
+*/
+
+// POSIX
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
-// Standard C/C++
-#include <cstdio>
-#include <cstring>
+// more-libc
+#include "more/string.h"
 
-// Iota
-#include "iota/strings.hh"
+// more-posix
+#include "more/perror.hh"
 
 // command
 #include "command/get_option.hh"
 
-// poseven
-#include "poseven/functions/stat.hh"
-#include "poseven/functions/write.hh"
-#include "poseven/sequences/directory_contents.hh"
-#include "poseven/types/exit_t.hh"
+// plus
+#include "plus/string.hh"
 
-// pfiles
-#include "pfiles/common.hh"
 
-// Io
-#include "io/walk.hh"
+#pragma exceptions off
 
-// Orion
-#include "Orion/Main.hh"
+
+#define PROGRAM  "rm"
+#define PREFIX   PROGRAM ": "
+
+#define STRLEN( s )   (sizeof "" s - 1)
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+#define ERROR( e, msg )  (wrote( 2, STR_LEN( PREFIX msg "\n" ) ) ? e : 13)
 
 
 using namespace command::constants;
@@ -55,6 +60,30 @@ static command::option options[] =
 static bool globally_forced = false;
 static bool recursive = false;
 static bool verbose = false;
+
+static inline
+bool wrote( int fd, const void* buffer, size_t n )
+{
+	return write( fd, buffer, n ) == n;
+}
+
+static inline
+void print_removed( const char* path )
+{
+	size_t path_len = strlen( path );
+	
+	size_t size = STRLEN( "removed ''\n" ) + path_len;
+	
+	char* buffer = (char*) alloca( size );
+	
+	char* p = buffer;
+	
+	p = (char*) mempcpy( p, STR_LEN( "removed '" ) );
+	p = (char*) mempcpy( p, path, path_len );
+	p = (char*) mempcpy( p, STR_LEN( "'\n" ) );
+	
+	write( STDOUT_FILENO, buffer, size );
+}
 
 static char* const* get_options( char* const* argv )
 {
@@ -88,83 +117,152 @@ static char* const* get_options( char* const* argv )
 }
 
 
-namespace tool
+static int global_exit_status = 0;
+
+
+static inline
+bool name_is_dots( const char* name )
 {
+	return name[0] == '.'  &&  ( name[ 1 + (name[1] == '.') ] == '\0' );
+}
+
+static void delete_file( const char* path )
+{
+	int unlinked = unlink( path );
 	
-	namespace p7 = poseven;
-	
-	
-	static p7::exit_t global_exit_status = p7::exit_success;
-	
-	
-	static void delete_file( const char* path )
+	if ( unlinked < 0  &&  !(globally_forced && errno == ENOENT) )
 	{
-		int unlinked = ::unlink( path );
+		more::perror( PROGRAM, path );
 		
-		if ( unlinked < 0  &&  !(globally_forced && errno == ENOENT) )
+		global_exit_status = 1;
+	}
+}
+
+static
+plus::string path_descent( const char* path, const char* name )
+{
+	size_t length = strlen( name );
+	
+	const size_t path_size = strlen( path );
+	
+	const bool has_trailing_slash = path[ path_size - 1 ] == '/';
+	
+	const size_t size = path_size + ! has_trailing_slash + length;
+	
+	plus::string result;
+	
+	char* p = result.reset_nothrow( size );
+	
+	if ( p == NULL )
+	{
+		_exit( ERROR( 108, "out of memory!" ) );
+	}
+	
+	p = (char*) mempcpy( p, path, path_size );
+	
+	if ( ! has_trailing_slash )
+	{
+		*p++ = '/';
+	}
+	
+	p = (char*) mempcpy( p, name, length );
+	
+	return result.move();
+}
+
+static
+void recursively_delete_subtrees( const char* path );
+
+static
+void recursively_delete( const char* path )
+{
+	struct stat st;
+	
+	int nok = lstat( path, &st );
+	
+	if ( nok < 0  &&  ! (globally_forced  &&  errno == ENOENT) )
+	{
+		more::perror( PROGRAM, path );
+		
+		global_exit_status = 1;
+		
+		return;
+	}
+	
+	if ( ! S_ISDIR( st.st_mode ) )
+	{
+		delete_file( path );
+	}
+	else
+	{
+		recursively_delete_subtrees( path );
+		
+		nok = rmdir( path );
+		
+		if ( nok < 0  &&  ! (globally_forced  &&  errno == EACCES) )
 		{
-			std::fprintf( stderr, "rm: %s: %s\n", path, std::strerror( errno ) );
-			
-			global_exit_status = p7::exit_failure;
+			more::perror( PROGRAM, path );
+		}
+	}
+}
+
+static inline
+void recursively_delete_tree( const plus::string& path )
+{
+	recursively_delete( path.data() );  // morally c_str()
+}
+
+static
+void recursively_delete_subtrees( const char* path )
+{
+	DIR* dir = opendir( path );
+	
+	if ( dir == NULL )
+	{
+		more::perror( PROGRAM, path );
+		
+		return;
+	}
+	
+	while ( const dirent* entry = readdir( dir ) )
+	{
+		if ( ! name_is_dots( entry->d_name ) )
+		{
+			recursively_delete_tree( path_descent( path, entry->d_name ) );
 		}
 	}
 	
+	closedir( dir );
+}
+
+int main( int argc, char** argv )
+{
+	char *const *args = get_options( argv );
 	
-	struct file_deleter
+	const int argn = argc - (args - argv);
+	
+	// Check for sufficient number of args
+	if ( argn < 1 )
 	{
-		void operator()( const plus::string& path, unsigned depth ) const
-		{
-			delete_file( path.c_str() );
-		}
-	};
-	
-	
-	static void recursive_delete( const char* path )
-	{
-		if ( globally_forced && !io::item_exists( path ) )
-		{
-			return;
-		}
-		
-		recursively_walk_tree( plus::string( path ),
-		                       io::walk_noop(),
-		                       file_deleter(),
-		                       io::directory_deleter< plus::string >() );
+		return ERROR( 50, "missing arguments" );
 	}
 	
+	typedef void (*deleter_f)(const char*);
 	
-	int Main( int argc, char** argv )
+	deleter_f deleter = recursive ? recursively_delete
+	                              : delete_file;
+	
+	for ( int index = 0;  index < argn;  ++index )
 	{
-		char *const *args = get_options( argv );
+		const char* path = args[ index ];
 		
-		const int argn = argc - (args - argv);
-		
-		// Check for sufficient number of args
-		if ( argn < 1 )
+		if ( verbose )
 		{
-			p7::write( p7::stderr_fileno, STR_LEN( "rm: missing arguments\n" ) );
-			
-			return p7::exit_failure;
+			print_removed( path );
 		}
 		
-		typedef void (*deleter_f)(const char*);
-		
-		deleter_f deleter = recursive ? recursive_delete
-		                              : delete_file;
-		
-		for ( int index = 0;  index < argn;  ++index )
-		{
-			const char* path = args[ index ];
-			
-			if ( verbose )
-			{
-				std::printf( "removed '%s'\n", path );
-			}
-			
-			deleter( path );
-		}
-		
-		return global_exit_status;
+		deleter( path );
 	}
 	
+	return global_exit_status;
 }
