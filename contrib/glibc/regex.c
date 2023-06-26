@@ -159,24 +159,6 @@ init_syntax_once ()
 
 #else /* not REGEX_MALLOC  */
 
-/* Emacs already defines alloca, sometimes.  */
-#ifndef alloca
-
-/* Make alloca work the best possible way.  */
-#ifdef __GNUC__
-#define alloca __builtin_alloca
-#else /* not __GNUC__ */
-#if HAVE_ALLOCA_H
-#include <alloca.h>
-#else /* not __GNUC__ or HAVE_ALLOCA_H */
-#ifndef _AIX /* Already did AIX, up at the top.  */
-char *alloca ();
-#endif /* not _AIX */
-#endif /* not HAVE_ALLOCA_H */
-#endif /* not __GNUC__ */
-
-#endif /* not alloca */
-
 #define REGEX_ALLOCATE(size) alloca(size)
 
 /* Assumes a `char *destination' variable.  */

@@ -30,7 +30,6 @@
 
 #include <fnmatch.h>
 
-#include <alloca.h>
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
