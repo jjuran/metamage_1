@@ -202,7 +202,13 @@ namespace tool
 		{ "__MC68881__",      &predefined_68k_option, "code68881"              },
 		{ "__MC68K__",        &predefined_bool,       &global_config_68k       },
 		{ "__MWBROWSER__",    &predefined_string,     "0"                      },
+	#ifdef __MC68K__
+		// Assume CodeWarrior Pro 4
+		{ "__MWERKS__",       &predefined_string,     "0x2200"                 },
+	#else
+		// Assume CodeWarrior Pro 6.3
 		{ "__MWERKS__",       &predefined_string,     "0x2401"                 },
+	#endif
 		{ "__POWERPC__",      &predefined_bool,       &global_config_powerpc   },
 		{ "__TIME__",         &predefined_time                                 },
 		{ "__STDC__",         &predefined_not,        &global_config_cplusplus },
