@@ -38,11 +38,6 @@
 #include <sys/types.h>
 
 /*
- * needed for ALIGNBYTES
- */
-#include <machine/param.h>
-
-/*
  * Definitions related to sockets: types, address families, options.
  */
 
@@ -358,11 +353,10 @@ struct cmsghdr {
 	 (struct cmsghdr *)(mhdr)->msg_control : \
 	 (struct cmsghdr *)NULL)
 
+#define __CMSG_ALIGNBYTES 3
+
 /* Round len up to next alignment boundary */
-#define	__CMSG_ALIGN(len)	ALIGN(len)
-#ifdef _KERNEL
-#define CMSG_ALIGN(n)		__CMSG_ALIGN(n)
-#endif
+#define __CMSG_ALIGN(len)  ((len) + __CMSG_ALIGNBYTES & ~__CMSG_ALIGNBYTES)
 
 /* Length of the contents of a control message of length len */
 #define	CMSG_LEN(len)	(__CMSG_ALIGN(sizeof(struct cmsghdr)) + (len))
