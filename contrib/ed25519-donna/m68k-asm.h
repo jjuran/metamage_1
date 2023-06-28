@@ -47,7 +47,13 @@ void long_multiply( uint64_t*  x : __A0,
 		*/
 		
 		MOVEQ.L  #2,D2
+		
+	#if __MWERKS__ > 0x2200
 		JMP      (PC, D2.W*2)
+	#else
+		DC.L     0x4efb2200  // JMP (PC, D2.W*2)
+	#endif
+		
 		BRA.S    foil
 		
 	#endif
