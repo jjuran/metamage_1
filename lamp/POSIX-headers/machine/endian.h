@@ -37,10 +37,6 @@
 #ifndef _ENDIAN_H_
 #define	_ENDIAN_H_
 
-/* xtonx() now defined in terms of inttypes -- neeri */
-
-#include <inttypes.h>
-
 /*
  * Define the order of 32-bit words in 64-bit words.
  */
@@ -50,15 +46,6 @@
 #ifndef _POSIX_SOURCE
 
 #define	_BYTE_ORDER	_BIG_ENDIAN
-
-#include <sys/cdefs.h>
-
-__BEGIN_DECLS
-uint32_t	htonl __P((uint32_t));
-uint16_t	htons __P((uint16_t));
-uint32_t	ntohl __P((uint32_t));
-uint16_t	ntohs __P((uint16_t));
-__END_DECLS
 
 /*
  * Macros for network/external number representation conversion.
