@@ -12,17 +12,13 @@
 
 // Mac OS
 #ifdef __RELIX__
+#ifndef __MC68K__
 #ifndef __DRIVERSERVICES__
 #include <DriverServices.h>
 #endif
-#ifndef __LOWMEM__
-#include <LowMem.h>
 #endif
 #ifndef __TIMER__
 #include <Timer.h>
-#endif
-#ifndef __TRAPS__
-#include <Traps.h>
 #endif
 #endif
 
@@ -143,7 +139,15 @@ int clock_gettime( clockid_t clock_id, struct timespec* ts )
 
 #if TARGET_CPU_68K
 
+UInt32 Ticks : 0x016A;
+
 short ROM85 : 0x028E;
+
+enum
+{
+	_Microseconds  = 0xA193,
+	_Unimplemented = 0xA89F,
+};
 
 static
 bool has_Microseconds_trap()
@@ -173,7 +177,9 @@ int clock_getres( clockid_t clock_id, struct timespec* ts )
 {
 	ts->tv_sec = 0;
 	
-	if ( clock_id == CLOCK_MONOTONIC  &&  TARGET_CPU_PPC  &&  &UpTime != 0 )
+#if TARGET_CPU_PPC
+	
+	if ( clock_id == CLOCK_MONOTONIC  &&  &UpTime != 0 )
 	{
 		uint64_t one = 1;
 		uint64_t res;
@@ -184,6 +190,8 @@ int clock_getres( clockid_t clock_id, struct timespec* ts )
 		
 		return 0;
 	}
+	
+#endif
 	
 	ts->tv_nsec = has_Microseconds ? 1000 : ns_per_tick;
 	
@@ -201,7 +209,9 @@ int clock_gettime( clockid_t clock_id, struct timespec* ts )
 	{
 		uint64_t now;
 		
-		if ( TARGET_CPU_PPC  &&  &UpTime != 0 )
+	#if TARGET_CPU_PPC
+		
+		if ( &UpTime != 0 )
 		{
 			(Nanoseconds&) now = AbsoluteToNanoseconds( UpTime() );
 			
@@ -211,11 +221,13 @@ int clock_gettime( clockid_t clock_id, struct timespec* ts )
 			return 0;
 		}
 		
+	#endif
+		
 	#if TARGET_CPU_68K
 		
 		if ( ! has_Microseconds )
 		{
-			now = LMGetTicks() * ns_per_tick;
+			now = Ticks * ns_per_tick;
 			
 			ts->tv_sec  = now / billion;
 			ts->tv_nsec = now % billion;
