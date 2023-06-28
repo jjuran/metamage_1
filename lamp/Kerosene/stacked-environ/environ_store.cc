@@ -12,6 +12,7 @@
 
 // Standard C++
 #include <algorithm>
+#include <functional>
 
 // more-libc
 #include "more/string.h"
