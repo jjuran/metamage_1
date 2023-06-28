@@ -61,12 +61,12 @@
  *	@(#)in.h	8.3 (Berkeley) 1/3/94
  */
 
+#ifndef _NETINET6_IN6_H_
+#define _NETINET6_IN6_H_
+
 #ifndef __KAME_NETINET_IN_H_INCLUDED_
 #error "do not include netinet6/in6.h directly, include netinet/in.h.  see RFC2553"
 #endif
-
-#ifndef _NETINET6_IN6_H_
-#define _NETINET6_IN6_H_
 
 /*
  * Identification of the network protocol stack
