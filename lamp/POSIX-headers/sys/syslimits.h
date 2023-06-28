@@ -32,6 +32,9 @@
  *	@(#)syslimits.h	8.1 (Berkeley) 6/2/93
  */
 
+#ifndef _SYS_SYSLIMITS_H_
+#define _SYS_SYSLIMITS_H_
+
 #include <sys/cdefs.h>
 
 #if __POSIX_VISIBLE || __XPG_VISIBLE || __BSD_VISIBLE
@@ -70,3 +73,5 @@
 #define TTY_NAME_MAX		260	/* max tty device name length w/ NUL */
 #define LOGIN_NAME_MAX          32	/* max login name length w/ NUL */
 #endif /* __XPG_VISIBLE >= 500 || __POSIX_VISIBLE >= 199506 || __BSD_VISIBLE */
+
+#endif

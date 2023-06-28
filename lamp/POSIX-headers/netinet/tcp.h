@@ -34,6 +34,9 @@
 
 /* Adapted for GUSI by Matthias Neeracher <neeri@iis.ee.ethz.ch> */
 
+#ifndef _NETINET_TCP_
+#define _NETINET_TCP_
+
 typedef	unsigned long  tcp_seq;
 /*
  * TCP header.
@@ -92,3 +95,5 @@ struct tcphdr {
 #define	TCP_NODELAY		0x01	/* don't delay send to coalesce packets */
 #define	TCP_MAXSEG		0x02	/* set maximum segment size */
 #define TCP_KEEPALIVE	0x08	/* seconds between keepalive packets */
+
+#endif

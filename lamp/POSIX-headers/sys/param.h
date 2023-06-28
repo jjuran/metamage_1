@@ -37,6 +37,9 @@
  *	@(#)param.h	8.2 (Berkeley) 1/21/94
  */
 
+#ifndef _SYS_PARAM_H_
+#define _SYS_PARAM_H_
+
 /*
  * Machine-independent constants (some used in following include files).
  * Redefined constants are from POSIX 1003.1 limits file.
@@ -69,3 +72,5 @@
  */
 #define	MAXPATHLEN	PATH_MAX
 #define MAXSYMLINKS	SYMLOOP_MAX
+
+#endif
