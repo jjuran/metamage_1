@@ -46,13 +46,7 @@
 
 #define NSIG	32		/* counting 0; could be 33 (mask is 1-32) */
 
-#ifndef _ANSI_SOURCE
-#include <machine/signal.h>	/* sigcontext; codes for SIGILL, SIGFPE */
-#endif
-
-#ifdef __cplusplus
-//extern "C" {
-#endif
+typedef int sig_atomic_t;
 
 __BEGIN_DECLS
 typedef void (*__sig_handler)(int);
@@ -142,9 +136,5 @@ struct	sigaction {
 __BEGIN_DECLS
 __sig_handler signal (int, __sig_handler);
 __END_DECLS
-
-#ifdef __cplusplus
-//}
-#endif
 
 #endif	/* !_SYS_SIGNAL_H_ */
