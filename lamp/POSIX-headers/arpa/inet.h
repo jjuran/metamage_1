@@ -61,7 +61,6 @@
 
 /* External definitions for functions in inet(3) */
 
-#include <sys/param.h>
 #include <sys/types.h>
 #include <sys/cdefs.h>
 

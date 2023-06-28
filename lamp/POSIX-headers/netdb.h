@@ -87,7 +87,7 @@
 #ifndef _NETDB_H_
 #define _NETDB_H_
 
-#include <sys/param.h>
+#include <sys/types.h>
 #include <sys/cdefs.h>
 
 #define	_PATH_HEQUIV	"/etc/hosts.equiv"
