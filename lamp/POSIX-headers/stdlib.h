@@ -35,89 +35,28 @@
 #ifndef _STDLIB_H_
 #define _STDLIB_H_
 
+#define abort  __MSL_abort
+#define getenv __MSL_getenv
+#define system __MSL_system
+
+#include <CWANSIIncludes/stdlib.h>
+
+#undef abort
+#undef getenv
+#undef system
+
 #include <sys/cdefs.h>
 #include <machine/_types.h>
 #if __BSD_VISIBLE  /* for quad_t, etc. (XXX - use protected types) */
 #include <sys/types.h>
 #endif
 
-/* in C++, wchar_t is a built-in type */
-#if !defined(_WCHAR_T_DEFINED_) && !defined(__cplusplus)
-#define _WCHAR_T_DEFINED_
-typedef __wchar_t wchar_t;
-#endif
-
-#ifdef __MWERKS__
-#include <div_t.h>
-#if defined( __cplusplus )  &&  defined( _MSL_USING_NAMESPACE )
-#if __MSL__ < 0x6000
-using namespace std;
-#else
-using std::div_t;
-using std::ldiv_t;
-#endif
-#endif
-#else
-typedef struct {
-	int quot;  /* quotient */
-	int rem;   /* remainder */
-} div_t;
-
-typedef struct {
-	long quot;  /* quotient */
-	long rem;   /* remainder */
-} ldiv_t;
-#endif
-
-#if __ISO_C_VISIBLE >= 1999
-typedef struct {
-	long long quot;  /* quotient */
-	long long rem;   /* remainder */
-} lldiv_t;
-#endif
-
-
-#define EXIT_FAILURE 1
-#define EXIT_SUCCESS 0
-
 #include <sys/cdefs.h>
-
-/*
- * Some header files may define an abs macro.
- * If defined, undef it to prevent a syntax error and issue a warning.
- */
-#ifdef abs
-#undef abs
-//#warning abs macro collides with abs() prototype, undefining
-#endif
 
 __BEGIN_DECLS
 __dead void abort(void);
-int abs(int);
-int atexit(void (*)(void));
-double  atof(const char *);
-int atoi(const char *);
-long atol(const char *);
-void* bsearch(const void *, const void *, size_t, size_t,
-              int (*)(const void *, const void *));
-void* calloc(size_t, size_t);
 int clearenv( void );
-div_t div(int, int);
-__dead void exit(int);
-__dead void _Exit(int);
-void free(void *);
 char* getenv(const char *);
-long labs(long);
-ldiv_t ldiv(long, long);
-void* malloc(size_t);
-void qsort(void *, size_t, size_t, int (*)(const void *, const void *));
-int rand(void);
-void* realloc(void *, size_t);
-void srand(unsigned);
-double strtod(const char *, char **);
-long strtol(const char *, char **, int);
-unsigned long
- strtoul(const char *, char **, int);
 int system(const char *);
 
 #if __BSD_VISIBLE || __XPG_VISIBLE >= 400
@@ -127,17 +66,6 @@ int putenv(char *);
 #if __BSD_VISIBLE || __XPG_VISIBLE >= 420
 char* realpath(const char *, char *);
 #endif /* __BSD_VISIBLE || __XPG_VISIBLE >= 420 */
-
-/*
- * ISO C99
- */
-#if __ISO_C_VISIBLE >= 1999
-long long atoll(const char *);
-long long llabs(long long);
-lldiv_t lldiv(long long, long long);
-long long strtoll(const char *, char **, int);
-unsigned long long strtoull(const char *, char **, int);
-#endif
 
 /*
  * The Open Group Base Specifications, Issue 6; IEEE Std 1003.1-2001 (POSIX)

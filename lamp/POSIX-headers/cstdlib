@@ -1,0 +1,34 @@
+/*
+	cstdlib
+	-------
+*/
+
+#ifndef _CSTDLIB_
+#define _CSTDLIB_
+
+/*
+	If we're being included from outside of <stdlib.h>,
+	then divert abort(), getenv(), and system() so we can
+	declare them ourselves at global scope.
+	
+	If we are being included from <stdlib.h>, do nothing
+	(other than chain-include) because (a) our <stdlib.h>
+	wrapper has already defined the macros, and (b) it's
+	required to keep them defined throughout <stdlib.h>.
+*/
+
+#ifndef _STDLIB_H
+	#define abort  __MSL_abort
+	#define getenv __MSL_getenv
+	#define system __MSL_system
+#endif
+
+#include <CWANSIIncludes/cstdlib>
+
+#ifndef _STDLIB_H
+	#undef abort
+	#undef getenv
+	#undef system
+#endif
+
+#endif
