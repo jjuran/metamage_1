@@ -24,139 +24,27 @@
 /* avoid conflict with BSDI's SF_APPEND */
 #undef SF_APPEND
 
-/* file system info */
-#if _PACKAGE_ast
-
-#include	<ast.h>
-#include	<ast_time.h>
-#include	<ast_tty.h>
-#include	<ls.h>
-
-#if _mem_st_blksize_stat
-#define _stat_blksize	1
-#endif
-
-#if _lib_localeconv && _hdr_locale
-#define _lib_locale	1
-#endif
-
-#else /*!PACKAGE_ast*/
-
-#if _hdr_stdlib
 #include	<stdlib.h>
-#endif
-
-#if __STD_C
 #include	<string.h>
-#endif
-
-#if _hdr_time
 #include	<time.h>
-#endif
-#if _sys_time
 #include	<sys/time.h>
-#endif
-
-#if _sys_stat
 #include	<sys/stat.h>
-#else
-#if _hdr_stat
-#include	<stat.h>
-#ifndef _sys_stat
-#define	_sys_stat	1
-#endif
-#endif
-#endif /*_sys_stat*/
-
-#ifndef _sys_stat
-#define _sys_stat	0
-#endif
-
 #include	<fcntl.h>
-
-#ifndef F_SETFD
-#ifndef FIOCLEX
-#if _hdr_filio
-#include	<filio.h>
-#else
-#if _sys_filio
-#include	<sys/filio.h>
-#endif /*_sys_filio*/
-#endif /*_hdr_filio*/
-#endif /*_FIOCLEX*/
-#endif /*F_SETFD*/
-
-#if _hdr_unistd
 #include	<unistd.h>
-#endif
-
-#endif /*_PACKAGE_ast*/
-
 #include	<errno.h>
 #include	<ctype.h>
 
-#if _lib_select
-#undef _lib_poll
-#else
-#if _lib_poll_fd_1 || _lib_poll_fd_2
-#define _lib_poll	1
-#endif
-#endif /*_lib_select_*/
-
-#if _lib_poll
-#include	<poll.h>
-
-#if _lib_poll_fd_1
-#define SFPOLL(pfd,n,tm)	poll((pfd),(ulong)(n),(tm))
-#else
-#define SFPOLL(pfd,n,tm)	poll((ulong)(n),(pfd),(tm))
-#endif
-#endif /*_lib_poll*/
-
-#if _stream_peek
-#include	<stropts.h>
-#endif
-
-#if _socket_peek
-#include	<sys/socket.h>
-#endif
-
 #ifndef X_OK	/* executable */
 #define X_OK	01
-#endif
-
-#if _lib_vfork && !defined(sparc) && !defined(__sparc)
-#if _hdr_vfork
-#include	<vfork.h>
-#endif
-#if _sys_vfork
-#include	<sys/vfork.h>
-#endif
-#define fork	vfork
 #endif
 
 #if _lib_unlink
 #define remove	unlink
 #endif
 
-#if _hdr_floatingpoint
-#include	<floatingpoint.h>
-#endif
-#if _hdr_values
-#include	<values.h>
-#endif
 #if _hdr_math
 #include	<math.h>
 #endif
-
-#if !_ast_fltmax_double
-#if !defined(MAXDOUBLE) && defined(DBL_MAX)
-#define MAXDOUBLE	DBL_MAX
-#endif
-#if !defined(MAXDOUBLE)
-#define MAXDOUBLE	1.79769313486231570e+308
-#endif
-#endif/*_ast_fltmax_double*/
 
 /* 64-bit vs 32-bit file stuff */
 #if _sys_stat
@@ -173,11 +61,7 @@ typedef struct stat	Stat_t;
 #endif
 
 /* to get rid of pesky compiler warnings */
-#if __STD_C
 #define NOTUSED(x)	(void)(x)
-#else
-#define NOTUSED(x)	(&x,1)
-#endif
 
 /* Private flags */
 #define SF_MMAP		00000001	/* in memory mapping mode		*/
@@ -221,41 +105,6 @@ typedef struct stat	Stat_t;
 
 #define SECOND		1000	/* millisecond units */
 
-/* macros do determine stream types from Stat_t data */
-#ifndef S_IFMT
-#define S_IFMT	0
-#endif
-#ifndef S_IFDIR
-#define S_IFDIR	0
-#endif
-#ifndef S_IFREG
-#define S_IFREG	0
-#endif
-#ifndef S_IFCHR
-#define S_IFCHR	0
-#endif
-#ifndef S_IFIFO
-#define S_IFIFO	0
-#endif
-
-#ifndef S_ISDIR
-#define S_ISDIR(m)	(((m)&S_IFMT) == S_IFDIR)
-#endif
-#ifndef S_ISREG
-#define S_ISREG(m)	(((m)&S_IFMT) == S_IFREG)
-#endif
-#ifndef S_ISCHR
-#define S_ISCHR(m)	(((m)&S_IFMT) == S_IFCHR)
-#endif
-
-#ifndef S_ISFIFO
-#	ifdef S_IFIFO
-#		define S_ISFIFO(m)	(((m)&S_IFIFO) == S_IFIFO)
-#	else
-#		define S_ISFIFO(m)	(0)
-#	endif
-#endif
-
 #ifdef S_IRUSR
 #define SF_CREATMODE	(S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH)
 #else
@@ -264,9 +113,6 @@ typedef struct stat	Stat_t;
 
 /* set close-on-exec */
 #ifdef F_SETFD
-#	ifndef FD_CLOEXEC
-#		define FD_CLOEXEC	1
-#	endif /*FD_CLOEXEC*/
 #	define SETCLOEXEC(fd)		((void)fcntl((fd),F_SETFD,FD_CLOEXEC))
 #else
 #	ifdef FIOCLEX
@@ -278,9 +124,6 @@ typedef struct stat	Stat_t;
 
 /* see if we can use memory mapping for io */
 #if _mmap_worthy
-#	if _hdr_mman
-#		include	<mman.h>
-#	endif
 #	if _sys_mman
 #		include	<sys/mman.h>
 #	endif
@@ -378,10 +221,6 @@ struct _fmtpos_s
 #define LEFTP		'('
 #define RIGHTP		')'
 #define QUOTE		'\''
-
-#ifndef CHAR_BIT
-#define CHAR_BIT	8
-#endif
 
 #define FMTSET(ft, frm,ags, fv, sz, flgs, wid,pr,bs, ts,ns) \
 	((ft->form = (char*)frm), va_copy(ft->args,ags), \
@@ -483,11 +322,6 @@ typedef struct _sfext_s
 #endif
 
 /* the bottomless bit bucket */
-#ifdef macintosh
-#define DEVNULL		"Dev:Null"
-#else
-#define DEVNULL		"/dev/null"
-#endif
 #define SFSETNULL(f)	((f)->extent = (Sfoff_t)(-1), (f)->bits |= SF_NULL)
 #define SFISNULL(f)	((f)->extent < 0 && ((f)->bits&SF_NULL) )
 
@@ -571,22 +405,6 @@ typedef struct _sfext_s
 /* control flags for open() */
 #ifdef O_CREAT
 #define _has_oflags	1
-#else	/* for example, research UNIX */
-#define _has_oflags	0
-#define O_CREAT		004
-#define O_TRUNC		010
-#define O_APPEND	020
-#define O_EXCL		040
-
-#ifndef O_RDONLY
-#define	O_RDONLY	000
-#endif
-#ifndef O_WRONLY
-#define O_WRONLY	001
-#endif
-#ifndef O_RDWR
-#define O_RDWR		002
-#endif
 #endif /*O_CREAT*/
 
 #ifndef O_BINARY
@@ -711,18 +529,7 @@ typedef struct _sftab_
 #endif
 
 /* fast functions for memory copy and memory clear */
-#if _PACKAGE_ast
-#define memclear(s,n)	memzero(s,n)
-#else
-#if _lib_bcopy && !_lib_memcpy
-#define memcpy(to,fr,n)	bcopy((fr),(to),(n))
-#endif
-#if _lib_bzero && !_lib_memset
-#define memclear(s,n)	bzero((s),(n))
-#else
 #define memclear(s,n)	memset((s),'\0',(n))
-#endif
-#endif /*_PACKAGE_ast*/
 
 /* note that MEMCPY advances the associated pointers */
 #define MEMCPY(to,fr,n) \
@@ -781,98 +588,11 @@ extern int	munmap _ARG_((Void_t*, size_t));
 
 #if !_PACKAGE_ast
 
-#if !__STDC__ && !_hdr_stdlib
-extern void	abort _ARG_((void));
-extern int	atexit _ARG_((void(*)(void)));
-extern char*	getenv _ARG_((const char*));
-extern void*	malloc _ARG_((size_t));
-extern void*	realloc _ARG_((void*, size_t));
-extern void	free _ARG_((void*));
-extern size_t	strlen _ARG_((const char*));
-extern char*	strcpy _ARG_((char*, const char*));
-
-extern Void_t*	memset _ARG_((void*, int, size_t));
-extern Void_t*	memchr _ARG_((const void*, int, size_t));
-extern Void_t*	memccpy _ARG_((void*, const void*, int, size_t));
-#ifndef memcpy
-extern Void_t*	memcpy _ARG_((void*, const void*, size_t));
-#endif
-#if !defined(remove)
-extern int	remove _ARG_((const char*));
-#endif
-#endif /* !__STDC__ && !_hdr_stdlib */
-
-#if !_hdr_unistd
-extern int	close _ARG_((int));
-extern ssize_t	read _ARG_((int, void*, size_t));
-extern ssize_t	write _ARG_((int, const void*, size_t));
-extern off_t	lseek _ARG_((int, off_t, int));
-extern int	dup _ARG_((int));
-extern int	isatty _ARG_((int));
-extern int	wait _ARG_((int*));
-extern int	pipe _ARG_((int*));
-extern int	access _ARG_((const char*, int));
-extern uint	sleep _ARG_((uint));
-extern int	execl _ARG_((const char*, const char*,...));
-#if !defined(fork)
-extern int	fork _ARG_((void));
-#endif
-#if _lib_unlink
-extern int	unlink _ARG_((const char*));
-#endif
-
-#endif /*_hdr_unistd*/
-
-#if _lib_bcopy /*&& !_lib_memcpy*/
-#ifdef __linux__
-extern void	bcopy _ARG_((const void*, void*, int));
-#else
-extern void	bcopy _ARG_((const void*, void*, size_t));
-#endif
-#endif
-#if _lib_bzero /*&& !_lib_memset*/
-#ifdef __linux__
-extern void	bzero _ARG_((void*, int));
-#else
-extern void	bzero _ARG_((void*, size_t));
-#endif
-#endif
-extern time_t	time _ARG_((time_t*));
 extern int	waitpid _ARG_((int,int*,int));
-extern void	_exit _ARG_((int));
-extern int	onexit _ARG_((void(*)(void)));
 
 #if _sys_stat
 extern int	fstat _ARG_((int, Stat_t*));
 #endif
-
-#if _lib_vfork && !_hdr_vfork && !_sys_vfork
-extern pid_t	vfork _ARG_((void));
-#endif /*_lib_vfork*/
-
-#if _lib_poll
-#if _lib_poll_fd_1
-extern int	poll _ARG_((struct pollfd*, ulong, int));
-#else
-extern int	poll _ARG_((ulong, struct pollfd*, int));
-#endif
-#endif /*_lib_poll*/
-
-#if _proto_open && __cplusplus
-extern int	open _ARG_((const char*, int, ...));
-#endif
-
-#if _stream_peek
-extern int	ioctl _ARG_((int, int, ...));
-#endif /*_stream_peek*/
-
-#if _socket_peek && !__STDC__
-#ifdef macintosh
-extern ssize_t	recv _ARG_((int, void*, size_t, int));
-#else
-extern int	recv _ARG_((int, void*, int, int));
-#endif
-#endif /*_socket_peek*/
 
 #endif /* _PACKAGE_ast */
 
