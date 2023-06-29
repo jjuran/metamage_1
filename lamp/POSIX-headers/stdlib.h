@@ -76,13 +76,6 @@ typedef struct {
 } lldiv_t;
 #endif
 
-#if __BSD_VISIBLE
-typedef struct {
-	quad_t quot;  /* quotient */
-	quad_t rem;   /* remainder */
-} qdiv_t;
-#endif
-
 
 #define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
@@ -110,12 +103,9 @@ void* bsearch(const void *, const void *, size_t, size_t,
 void* calloc(size_t, size_t);
 int clearenv( void );
 div_t div(int, int);
-char* ecvt(double, int, int *, int *);
 __dead void exit(int);
 __dead void _Exit(int);
-char* fcvt(double, int, int *, int *);
 void free(void *);
-char* gcvt(double, int, char *);
 char* getenv(const char *);
 long labs(long);
 ldiv_t ldiv(long, long);
@@ -123,7 +113,6 @@ void* malloc(size_t);
 void qsort(void *, size_t, size_t, int (*)(const void *, const void *));
 int rand(void);
 void* realloc(void *, size_t);
-void* recalloc(void *, size_t, size_t);
 void srand(unsigned);
 double strtod(const char *, char **);
 long strtol(const char *, char **, int);
@@ -131,46 +120,12 @@ unsigned long
  strtoul(const char *, char **, int);
 int system(const char *);
 
-/*
- * IEEE Std 1003.1c-95, also adopted by X/Open CAE Spec Issue 5 Version 2
- */
-#if __BSD_VISIBLE || __POSIX_VISIBLE >= 199506 || __XPG_VISIBLE >= 500 || defined(_REENTRANT)
-int rand_r(unsigned int *);
-#endif
-
 #if __BSD_VISIBLE || __XPG_VISIBLE >= 400
-double drand48(void);
-double erand48(unsigned short[3]);
-long jrand48(unsigned short[3]);
-void lcong48(unsigned short[7]);
-long lrand48(void);
-long mrand48(void);
-long nrand48(unsigned short[3]);
-unsigned short *seed48(unsigned short[3]);
-void srand48(long);
-
 int putenv(char *);
 #endif
 
 #if __BSD_VISIBLE || __XPG_VISIBLE >= 420
-long a64l(const char *);
-char* l64a(long);
-
-char* initstate(unsigned int, char *, size_t);
-long random(void);
-char* setstate(const char *);
-void srandom(unsigned int);
-
-int mkstemp(char *);
-char* mktemp(char *);
-
 char* realpath(const char *, char *);
-
-int setkey(const char *);
-
-int ttyslot(void);
-
-void* valloc(size_t);  /* obsoleted by malloc() */
 #endif /* __BSD_VISIBLE || __XPG_VISIBLE >= 420 */
 
 /*
@@ -194,57 +149,6 @@ int unsetenv(const char *);
 
 #if __BSD_VISIBLE
 #include <alloca.h>
-
-char* getbsize(int *, long *);
-char* cgetcap(char *, const char *, int);
-int cgetclose(void);
-int cgetent(char **, char **, const char *);
-int cgetfirst(char **, char **);
-int cgetmatch(char *, const char *);
-int cgetnext(char **, char **);
-int cgetnum(char *, const char *, long *);
-int cgetset(const char *);
-int cgetusedb(int);
-int cgetstr(char *, const char *, char **);
-int cgetustr(char *, const char *, char **);
-
-int daemon(int, int);
-char* devname(int, mode_t);
-int getloadavg(double [], int);
-
-void cfree(void *);
-
-#ifndef _GETOPT_DEFINED_
-#define _GETOPT_DEFINED_
-int getopt(int, char * const *, const char *);
-extern char *optarg;  /* getopt(3) external variables */
-extern int opterr, optind, optopt, optreset;
-int getsubopt(char **, char * const *, char **);
-extern char *suboptarg;  /* getsubopt(3) external variable */
-#endif /* _GETOPT_DEFINED_ */
-
-char* mkdtemp(char *);
-int mkstemps(char *, int);
-
-int heapsort(void *, size_t, size_t, int (*)(const void *, const void *));
-int mergesort(void *, size_t, size_t, int (*)(const void *, const void *));
-int radixsort(const unsigned char **, int, const unsigned char *, unsigned);
-int sradixsort(const unsigned char **, int, const unsigned char *, unsigned);
-
-void srandomdev(void);
-long long strtonum(const char *, long long, long long, const char **);
-
-void setproctitle(const char *, ...)
-	__attribute__((__format__ (__printf__, 1, 2)));
-
-quad_t qabs(quad_t);
-qdiv_t qdiv(quad_t, quad_t);
-quad_t strtoq(const char *, char **, int);
-u_quad_t strtouq(const char *, char **, int);
-
-u_int32_t arc4random(void);
-void arc4random_stir(void);
-void arc4random_addrandom(unsigned char *, int);
 #endif /* __BSD_VISIBLE */
 
 __END_DECLS
