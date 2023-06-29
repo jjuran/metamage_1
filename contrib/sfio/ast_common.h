@@ -63,55 +63,21 @@
 
 /* dynamic linked library external scope handling */
 #undef extern
-#if _dll_import && !defined(__EXPORT__) && _DLL_BLD
-#define __EXPORT__	__declspec(dllexport)
-#endif
-#if _dll_import && !defined(__IMPORT__)
-#define __IMPORT__	__declspec(dllimport)
-#endif
-#if !defined(_astimport)
-#if defined(__IMPORT__) && _DLL_BLD
-#define _astimport	__IMPORT__
-#else
 #define _astimport	extern
-#endif
-#endif /*_astimport*/
 
-#if !_DLL_BLD && _dll_import
-#	ifdef __STDC__
-#	define __EXTERN__(T,obj)	extern T obj; T* _imp__ ## obj = &obj
-#	define __DEFINE__(T,obj,val)	T obj = val; T* _imp__ ## obj = &obj
-#	else
-#	define __EXTERN__(T,obj)	extern T obj; T* _imp__/**/obj = &obj
-#	define __DEFINE__(T,obj,val)	T obj = val; T* _imp__/**/obj = &obj
-#	endif
-#else
 #	define __EXTERN__(T,obj)	extern T obj
 #	define __DEFINE__(T,obj,val)	T obj = val
-#endif
 
-#ifndef _AST_STD_H
 #	if __STD_C && _hdr_stddef
 #	include	<stddef.h>
 #	endif
-#	if _sys_types
 #	include	<sys/types.h>
-#	endif
-#endif
-#if !_typ_size_t
-#	define _typ_size_t	1
-typedef int size_t;
-#endif
-#if !_typ_ssize_t
-#	define _typ_ssize_t	1
-typedef int ssize_t;
-#endif
+
 #define _ast_int1_t char
 #define _ast_int2_t short
 #define _ast_int4_t int
 #define _ast_int8_t long long
 #define _ast_intmax_t _ast_int4_t
-#define _ast_intswap 7
 
 #define _ast_flt4_t float
 #define _ast_flt8_t double
@@ -119,24 +85,12 @@ typedef int ssize_t;
 
 #define _ast_fltmax_t _ast_flt12_t
 
-#ifndef va_listref
-#define va_listref(p) (p)	/* pass va_list to varargs function */
-#define va_listval(p) (p)	/* retrieve va_list from va_arg(ap,va_listarg) */
-#define va_listarg va_list	/* va_arg() va_list type */
 /* CodeWarrior 5 defines va_copy, luckily in a compatible way */
 #ifdef __MWERKS__
 #include <stdarg.h>
 #endif
 #ifndef va_copy 
 #define va_copy(to,fr) ((to)=(fr))	/* copy va_list fr -> to */
-#endif
-#undef _ast_va_list
-#ifdef va_start
-#define _ast_va_list va_list
-#else
-#define _ast_va_list void*	/* va_list that avoids #include */
-#endif
-
 #endif
 
 #endif
