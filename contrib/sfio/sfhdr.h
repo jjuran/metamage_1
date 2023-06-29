@@ -754,11 +754,6 @@ extern int		_sfsetpool _ARG_((Sfio_t*));
 extern void		_sfswap _ARG_((Sfio_t*, Sfio_t*, int));
 extern char*		_sfcvt _ARG_((Void_t*, int, int*, int*, int));
 extern char**		_sfgetpath _ARG_((char*));
-extern Sfdouble_t	_sfstrtod _ARG_((const char*, char**));
-
-#if !_lib_strtod
-#define strtod		_sfstrtod
-#endif
 
 #ifndef errno
 _astimport int		errno;
@@ -792,9 +787,6 @@ extern Void_t*	memchr _ARG_((const void*, int, size_t));
 extern Void_t*	memccpy _ARG_((void*, const void*, int, size_t));
 #ifndef memcpy
 extern Void_t*	memcpy _ARG_((void*, const void*, size_t));
-#endif
-#if !defined(strtod)
-extern double	strtod _ARG_((const char*, char**));
 #endif
 #if !defined(remove)
 extern int	remove _ARG_((const char*));
