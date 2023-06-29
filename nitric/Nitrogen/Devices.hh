@@ -61,8 +61,6 @@ namespace Nitrogen
 		not been witnessed in PPC code and almost certainly doesn't exist.
 	*/
 	
-#if ! __LP64__
-	
 	inline
 	void ThrowIOResult( OSErr err )
 	{
@@ -71,6 +69,8 @@ namespace Nitrogen
 			Mac::ThrowOSStatus_Internal( err );
 		}
 	}
+	
+#if ! __LP64__
 	
 	inline OSErr FixedAsyncResult( OSErr err, const ParamBlockRec& pb )
 	{
