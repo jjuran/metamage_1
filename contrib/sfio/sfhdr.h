@@ -33,6 +33,7 @@
 #include	<unistd.h>
 #include	<errno.h>
 #include	<ctype.h>
+#include	<limits.h>
 
 #ifndef X_OK	/* executable */
 #define X_OK	01
