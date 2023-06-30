@@ -785,7 +785,13 @@ namespace tool
 			return 0;
 		}
 		
-		const bool filtering = arch == arch_ppc;
+		/*
+			In our PPC-hosted builds with CodeWarrior Pro 6, we've never
+			had to filter 68K link warnings.  But with 68K-hosted builds
+			in CodeWarrior Pro 4, we do.
+		*/
+		
+		const bool filtering = arch == arch_default;
 		
 		int pipe_ends[2];
 		
@@ -823,7 +829,15 @@ namespace tool
 				
 				close( pipe_ends[0] );  // close spare reader
 				
+			#if __MC68K__
+				
+				const char* filter = "filter-mwlink68k22-warnings.pl";
+				
+			#else
+				
 				const char* filter = "filter-mwlinkppc24-warnings.pl";
+				
+			#endif
 				
 				const char *const filter_argv[] = { filter, NULL };
 				
