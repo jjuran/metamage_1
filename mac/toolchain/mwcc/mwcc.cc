@@ -33,6 +33,24 @@
 #include "Orion/Main.hh"
 
 
+#define COMMON_WARNINGS  "all,nounusedarg,nonotinlined,noextracomma,"
+
+/*
+	CodeWarrior Pro 6 takes `implicit` as an abbreviation of `implicitconv`,
+	while Pro 4 only accepts the latter.  Whereas it's common to warn about
+	"possible unwanted assignment" for `if (dst = src)`, modern compilers
+	(and even CW Pro 6) suppress that warning for `if ((dst = src))`, where
+	the extra parentheses are construed to indicate that the assignment is
+	intended.  Pro 4 doesn't recognize that idiom, so disable such warnings.
+*/
+
+#ifdef __MC68K__
+#define WARNINGS COMMON_WARNINGS "noimplicitconv,nopossible"
+#else
+#define WARNINGS COMMON_WARNINGS "noimplicit"
+#endif
+
+
 namespace tool
 {
 	
@@ -433,17 +451,7 @@ namespace tool
 		command.push_back( "-nomapcr"        );
 		
 		command.push_back( "-w" );
-		
-	#ifdef __MC68K__
-		
-		// Don't assume noimplicit is recognized (which it's not in CW Pro 3)
-		command.push_back( "all,nounusedarg,nonotinlined,noextracomma" );
-		
-	#else
-		
-		command.push_back( "all,nounusedarg,noimplicit,nonotinlined,noextracomma" );
-		
-	#endif
+		command.push_back( WARNINGS );
 		
 		command.push_back( "-ext" );
 		command.push_back( "o"    );
