@@ -17,6 +17,16 @@ namespace tool
 	const Project* get_project_providing_prefix( const Project&  project,
 	                                             Platform        platform )
 	{
+	#ifdef __MC68K__
+		
+		/*
+			CodeWarrior Pro 4 doesn't have the -convertpaths option, so we
+			need to preprocess with mxcpp to deal with POSIX include paths.
+		*/
+		return NULL;
+		
+	#endif
+		
 	#ifndef __RELIX__
 		
 		if ( Options().preprocess )
