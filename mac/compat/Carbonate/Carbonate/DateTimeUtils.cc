@@ -19,6 +19,8 @@
 extern "C"
 {
 	
+#ifndef __MC68K__
+	
 	pascal void DateString( long      dateTime,
 							DateForm  longFlag,
 							Str255    result,
@@ -40,6 +42,8 @@ extern "C"
 		               result,
 		               intlHandle );
 	}
+	
+#endif
 	
 	pascal void LongDateString( const LongDateTime*  dateTime,
 								DateForm             longFlag,
