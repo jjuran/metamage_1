@@ -181,9 +181,7 @@ void relix_async_check();
 
 #define dXSUB_SYS
 
-#ifndef CLK_TCK
-#define CLK_TCK  60
-#endif
+#define CLK_TCK  CLOCKS_PER_SEC
 
 /* MacOS 68K defines atan2 et al. as macros */
 
