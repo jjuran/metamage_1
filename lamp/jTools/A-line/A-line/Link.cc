@@ -707,16 +707,7 @@ namespace tool
 		
 		StringVector objectFiles;
 		
-	#ifdef __RELIX__
-		
 		const bool preprocessing = Options().preprocess  &&  !get_project_providing_prefix( project, targetInfo.platform );
-		
-	#else
-		
-		// On non-MacRelix, precompiling does *not* override preprocessing
-		const bool preprocessing = Options().preprocess;
-		
-	#endif
 		
 		NameObjectFiles( project, objectFiles, preprocessing );
 		

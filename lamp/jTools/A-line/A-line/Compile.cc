@@ -828,16 +828,6 @@ namespace tool
 		
 		const Project* project_providing_prefix = get_project_providing_prefix( project, target_info.platform );
 		
-	#ifndef __RELIX__
-		
-		if ( Options().preprocess )
-		{
-			// On non-MacRelix, precompiling does *not* override preprocessing
-			project_providing_prefix = NULL;
-		}
-		
-	#endif
-		
 		const bool preprocessing = Options().preprocess  &&  !project_providing_prefix;
 		
 		// If we're preprocessing, then only the preprocessor gets macros and includes,

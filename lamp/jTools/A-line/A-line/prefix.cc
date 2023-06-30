@@ -6,6 +6,7 @@
 #include "A-line/prefix.hh"
 
 // A-line
+#include "A-line/A-line.hh"
 #include "A-line/Project.hh"
 #include "A-line/ProjectCommon.hh"
 
@@ -16,6 +17,16 @@ namespace tool
 	const Project* get_project_providing_prefix( const Project&  project,
 	                                             Platform        platform )
 	{
+	#ifndef __RELIX__
+		
+		if ( Options().preprocess )
+		{
+			// On non-MacRelix, precompiling does *not* override preprocessing
+			return NULL;
+		}
+		
+	#endif
+		
 		if ( project.HasPrecompiledHeader() )
 		{
 			return &project;
