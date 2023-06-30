@@ -144,7 +144,7 @@ my %fsmap =
 			# Git repository repair
 			qw( gitfix.pl ),
 			# Misc scripts
-			qw( filter-mwlinkppc24-warnings.pl
+			qw( filter-mwlink68k22-warnings.pl filter-mwlinkppc24-warnings.pl
 			    ramdisk.pl report run-tests strip-all ),
 		],
 	},
