@@ -823,7 +823,9 @@ namespace tool
 				
 				close( pipe_ends[0] );  // close spare reader
 				
-				const char *const filter_argv[] = { "filter-mwlink-warnings.pl", NULL };
+				const char* filter = "filter-mwlinkppc24-warnings.pl";
+				
+				const char *const filter_argv[] = { filter, NULL };
 				
 				p7::execvp( filter_argv );
 			}
