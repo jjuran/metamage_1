@@ -22,6 +22,13 @@
 #include "plus/string_details.hh"
 
 
+#if defined(__MWERKS__)  &&  __MWERKS__ < 0x2300
+	#define THROW( type, s )  throw std::exception()
+#else
+	#define THROW( type, s )  throw std::type( s )
+#endif
+
+
 namespace plus
 {
 	
@@ -56,7 +63,7 @@ namespace plus
 		
 		if ( pos > old_size )
 		{
-			throw std::out_of_range( __func__ );
+			THROW( out_of_range, "cow_string::erase" );
 		}
 		
 		n = std::min( n, old_size - pos );
@@ -153,7 +160,7 @@ namespace plus
 	{
 		if ( pos > size() )
 		{
-			throw std::out_of_range( __func__ );
+			THROW( out_of_range, "cow_string::insert" );
 		}
 		
 		return insert( pos, s.data(), s.size() );
@@ -165,7 +172,7 @@ namespace plus
 		
 		if ( pos > size()  ||  offset > s_size )
 		{
-			throw std::out_of_range( __func__ );
+			THROW( out_of_range, "cow_string::insert" );
 		}
 		
 		n = std::min( n, s_size - offset );
@@ -179,7 +186,7 @@ namespace plus
 		
 		if ( pos > size() )
 		{
-			throw std::out_of_range( __func__ );
+			THROW( out_of_range, "cow_string::insert" );
 		}
 		
 		char* data = mutable_data();
@@ -200,7 +207,7 @@ namespace plus
 		
 		if ( pos > size() )
 		{
-			throw std::out_of_range( __func__ );
+			THROW( out_of_range, "cow_string::insert" );
 		}
 		
 		char* data = mutable_data();
@@ -284,7 +291,7 @@ namespace plus
 		
 		if ( pos > other_size )
 		{
-			throw std::out_of_range( __func__ );
+			THROW( out_of_range, "cow_string::append" );
 		}
 		
 		n = std::min( n, other_size - pos );
@@ -322,7 +329,7 @@ namespace plus
 	{
 		if ( pos > size() )
 		{
-			throw std::out_of_range( __func__ );
+			THROW( out_of_range, "cow_string::replace" );
 		}
 		
 		return replace( pos, m, s.data(), s.size() );
@@ -334,7 +341,7 @@ namespace plus
 		
 		if ( pos > size()  ||  offset > s_size )
 		{
-			throw std::out_of_range( __func__ );
+			THROW( out_of_range, "cow_string::replace" );
 		}
 		
 		n = std::min( n, s_size - offset );
@@ -350,7 +357,7 @@ namespace plus
 		
 		if ( pos > old_size )
 		{
-			throw std::out_of_range( __func__ );
+			THROW( out_of_range, "cow_string::replace" );
 		}
 		
 		m = std::min( m, old_size - pos );
@@ -379,7 +386,7 @@ namespace plus
 		
 		if ( pos > old_size )
 		{
-			throw std::out_of_range( __func__ );
+			THROW( out_of_range, "cow_string::replace" );
 		}
 		
 		m = std::min( m, old_size - pos );

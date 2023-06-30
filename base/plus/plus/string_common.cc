@@ -16,6 +16,12 @@
 #include "vxo/datum_alloc.hh"
 
 
+#if defined(__MWERKS__)  &&  __MWERKS__ < 0x2300
+	#define THROW( type, s )  throw std::exception()
+#else
+	#define THROW( type, s )  throw std::type( s )
+#endif
+
 #define LENGTH_ERROR_MESSAGE  "string size can't exceed 0x7fffffff"
 
 
@@ -39,7 +45,7 @@ namespace plus
 			const char* message = _32bit ? LENGTH_ERROR_MESSAGE
 			                             : LENGTH_ERROR_MESSAGE "ffffffff";
 			
-			throw std::length_error( message );
+			THROW( length_error, message );
 		}
 	}
 	

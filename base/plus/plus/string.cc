@@ -29,6 +29,13 @@
 #include "plus/string_details.hh"
 
 
+#if defined(__MWERKS__)  &&  __MWERKS__ < 0x2300
+	#define THROW( type, s )  throw std::exception()
+#else
+	#define THROW( type, s )  throw std::type( s )
+#endif
+
+
 namespace plus
 {
 	
@@ -347,7 +354,7 @@ namespace plus
 		
 		if ( pos > size )
 		{
-			throw std::out_of_range( "plus::string" );
+			THROW( out_of_range, "string::copy" );
 		}
 		
 		n = std::min( n, size - pos );
@@ -578,7 +585,7 @@ namespace plus
 		
 		if ( pos > len )
 		{
-			throw std::out_of_range( "plus::string" );
+			THROW( out_of_range, "string::substr" );
 		}
 		
 		if ( len - pos < n )
@@ -613,7 +620,7 @@ namespace plus
 		
 		if ( a_pos > a_size )
 		{
-			throw std::out_of_range( "plus::string" );
+			THROW( out_of_range, "string::compare" );
 		}
 		
 		a_n = std::min( a_n, a_size - a_pos );
@@ -627,7 +634,7 @@ namespace plus
 		
 		if ( a_pos > a_size )
 		{
-			throw std::out_of_range( "plus::string" );
+			THROW( out_of_range, "string::compare" );
 		}
 		
 		a_n = std::min( a_n, a_size - a_pos );
@@ -636,7 +643,7 @@ namespace plus
 		
 		if ( b_pos > b_size )
 		{
-			throw std::out_of_range( "plus::string" );
+			THROW( out_of_range, "string::compare" );
 		}
 		
 		b_n = std::min( b_n, b_size - b_pos );
@@ -655,7 +662,7 @@ namespace plus
 		
 		if ( a_pos > a_size )
 		{
-			throw std::out_of_range( "plus::string" );
+			THROW( out_of_range, "string::compare" );
 		}
 		
 		a_n = std::min( a_n, a_size - a_pos );
