@@ -30,8 +30,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wchar.h>
-#include <wctype.h>
 
 #include "gettext.h"
 #define _(msgid) gettext (msgid)
