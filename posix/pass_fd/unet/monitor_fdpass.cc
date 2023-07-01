@@ -31,6 +31,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if defined(__MWERKS__)  &&  __MWERKS__ < 0x2400
+
+/*
+	This doesn't compile under CodeWarrior Pro 4, but it's not needed.
+	(It's not needed under Pro 6 either, but at least it compiles.)
+*/
+
+#else  // #if defined(__MWERKS__)  &&  __MWERKS__ < 0x2400
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/uio.h>
@@ -170,3 +179,5 @@ mm_receive_fd(int sock)
 int dummy;
 
 #endif  // #if ! defined( __APPLE__ )  ||  defined( _SOCKLEN_T )
+
+#endif  // #else  // #if defined(__MWERKS__)  &&  __MWERKS__ < 0x2400
