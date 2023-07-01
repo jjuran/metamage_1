@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 // Standard C++
-#include <functional>
+#include <algorithm>
 #include <vector>
 
 // POSIX
