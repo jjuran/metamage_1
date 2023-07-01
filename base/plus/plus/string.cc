@@ -32,6 +32,8 @@
 namespace plus
 {
 	
+	using vxo::destroy;  // disambiguate from std::destroy() for CW Pro 4
+	
 	const string string::null;
 	
 	

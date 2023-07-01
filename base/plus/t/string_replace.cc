@@ -180,7 +180,7 @@ int main( int argc, const char *const *argv )
 {
 	tap::start( "string_replace", n_tests );
 	
-	string();
+	::string();  // disambiguate from std::string for CW Pro 4
 	
 	substring();
 	

@@ -98,7 +98,7 @@ namespace plus
 			{
 				if ( has_dynamic_extent( store ) )
 				{
-					destroy( store );
+					::vxo::destroy( store );  // disambiguate for CW Pro 4
 				}
 			}
 			
