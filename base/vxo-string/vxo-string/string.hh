@@ -22,6 +22,10 @@ namespace vxo
 			typedef plus::string string;
 		
 		public:
+			DynamicString()
+			{
+			}
+			
 			DynamicString( const string& s );
 			
 			string&       get()        { return *(string*)       this; }
