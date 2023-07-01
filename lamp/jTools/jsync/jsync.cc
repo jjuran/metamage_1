@@ -3,13 +3,13 @@
  *	========
  */
 
+// Standard C
+#include <stdio.h>
+#include <stdlib.h>
+
 // Standard C++
 #include <functional>
 #include <vector>
-
-// Standard C/C++
-#include <cstdio>
-#include <cstdlib>
 
 // POSIX
 #include <errno.h>
@@ -144,7 +144,7 @@ static char* const* get_options( char* const* argv )
 				break;
 			
 			default:
-				std::abort();
+				abort();
 		}
 	}
 	
@@ -366,7 +366,7 @@ namespace tool
 	                             bool&     b_matches_c,
 	                             bool&     c_matches_a )
 	{
-		const std::size_t buffer_size = 4096;
+		const size_t buffer_size = 4096;
 		
 		// Avoid large local allocations to prevent stack overruns
 		static char a_buffer[ buffer_size ];
@@ -426,7 +426,7 @@ namespace tool
 	{
 		if ( globally_verbose )
 		{
-			//std::printf( "%s\n", subpath );
+			//printf( "%s\n", subpath );
 		}
 		
 		n::owned< p7::fd_t > a_fd = p7::openat( a_dirfd, filename, p7::o_rdonly | p7::o_nofollow );
@@ -482,7 +482,7 @@ namespace tool
 				const char* status = b_exists ? "requires 3-way merge"
 				                              : "added simultaneously with different contents";
 				
-				std::printf( "### %s %s\n", subpath, status );
+				printf( "### %s %s\n", subpath, status );
 				
 				return;
 			}
@@ -492,10 +492,10 @@ namespace tool
 			
 			const bool doable = a_matches_b ? globally_down : globally_up;
 			
-			std::printf( "%s %s\n", a_matches_b ? doable ? "--->"
-			                                             : "---|"
-			                                    : doable ? "<---"
-			                                             : "|---", subpath );
+			printf( "%s %s\n", a_matches_b ? doable ? "--->"
+			                                        : "---|"
+			                               : doable ? "<---"
+			                                        : "|---", subpath );
 			
 			if ( !doable || global_dry_run )
 			{
@@ -517,7 +517,7 @@ namespace tool
 		}
 		else
 		{
-			std::printf( "%s %s\n", b_exists ? "----" : "+--+", subpath );
+			printf( "%s %s\n", b_exists ? "----" : "+--+", subpath );
 		}
 		
 		if ( global_dry_run )
@@ -616,7 +616,7 @@ namespace tool
 					{
 						if ( b_target != a_target )
 						{
-							std::printf( "%s %s\n", b_mode ? "----" : "+--+", subpath );
+							printf( "%s %s\n", b_mode ? "----" : "+--+", subpath );
 							
 							if ( !global_dry_run )
 							{
@@ -631,7 +631,7 @@ namespace tool
 					}
 					else if ( b_target == c_target )
 					{
-						std::printf( "%s %s\n", globally_up ? "<---" : "|---", subpath );
+						printf( "%s %s\n", globally_up ? "<---" : "|---", subpath );
 						
 						if ( globally_up  &&  !global_dry_run )
 						{
@@ -641,7 +641,7 @@ namespace tool
 					}
 					else if ( b_target == a_target )
 					{
-						std::printf( "%s %s\n", globally_down ? "--->" : "---|", subpath );
+						printf( "%s %s\n", globally_down ? "--->" : "---|", subpath );
 						
 						if ( globally_down  &&  !global_dry_run )
 						{
@@ -651,12 +651,12 @@ namespace tool
 					}
 					else
 					{
-						std::printf( "### %s %s\n", subpath, "symlink conflict" );
+						printf( "### %s %s\n", subpath, "symlink conflict" );
 					}	
 				}
 				else
 				{
-					std::printf( "### %s %s\n", subpath, "symlink conversion" );
+					printf( "### %s %s\n", subpath, "symlink conversion" );
 				}
 			}
 		}
@@ -665,21 +665,21 @@ namespace tool
 			// file vs. directory
 			if ( a_is_dir != b_is_dir )
 			{
-				std::printf( "### %s changed from %s to %s\n",
-				                  subpath,        b_is_dir ? "directory" : "file",
-				                                        a_is_dir ? "directory" : "file" );
+				printf( "### %s changed from %s to %s\n",
+				             subpath,        b_is_dir ? "directory" : "file",
+				                                   a_is_dir ? "directory" : "file" );
 			}
 			
 			if ( c_is_dir != b_is_dir )
 			{
-				std::printf( "### %s changed from %s to %s\n",
-				                  subpath,        b_is_dir ? "directory" : "file",
-				                                        c_is_dir ? "directory" : "file" );
+				printf( "### %s changed from %s to %s\n",
+				             subpath,        b_is_dir ? "directory" : "file",
+				                                   c_is_dir ? "directory" : "file" );
 			}
 		}
 		else
 		{
-			std::printf( "### Add conflict in %s (file vs. directory)\n", subpath );
+			printf( "### Add conflict in %s (file vs. directory)\n", subpath );
 		}
 	}
 	
@@ -919,7 +919,7 @@ namespace tool
 			
 			const bool doable = globally_up;
 			
-			std::printf( "%s %s%s\n", doable ? "<+++" : "|+++", path, filename.c_str() );
+			printf( "%s %s%s\n", doable ? "<+++" : "|+++", path, filename.c_str() );
 			
 			if ( doable && !global_dry_run )
 			{
@@ -939,7 +939,7 @@ namespace tool
 			
 			const bool doable = globally_down;
 			
-			std::printf( "%s %s%s\n", doable ? "+++>" : "+++|", path, filename.c_str() );
+			printf( "%s %s%s\n", doable ? "+++>" : "+++|", path, filename.c_str() );
 			
 			if ( doable && !global_dry_run )
 			{
@@ -957,7 +957,7 @@ namespace tool
 		{
 			const plus::string& filename = *it;
 			
-			std::printf( "++++ %s%s\n", path, filename.c_str() );
+			printf( "++++ %s%s\n", path, filename.c_str() );
 			
 			recursively_sync( a_dirfd,
 			                  b_dirfd,
@@ -972,7 +972,7 @@ namespace tool
 			
 			plus::string child_subpath = subpath + filename;
 			
-			std::printf( "%s %s%s\n", doable ? "<--X" : "|--X", path, filename.c_str() );
+			printf( "%s %s%s\n", doable ? "<--X" : "|--X", path, filename.c_str() );
 			
 			if ( doable && !global_dry_run )
 			{
@@ -992,7 +992,7 @@ namespace tool
 			
 			plus::string child_subpath = subpath + filename;
 			
-			std::printf( "%s %s%s\n", doable ? "X-->" : "X--|", path, filename.c_str() );
+			printf( "%s %s%s\n", doable ? "X-->" : "X--|", path, filename.c_str() );
 			
 			if ( doable && !global_dry_run )
 			{
@@ -1010,7 +1010,7 @@ namespace tool
 			
 			plus::string child_subpath = subpath + filename;
 			
-			std::printf( "X--X %s%s\n", path, filename.c_str() );
+			printf( "X--X %s%s\n", path, filename.c_str() );
 			
 			if ( !global_dry_run )
 			{
@@ -1045,7 +1045,7 @@ namespace tool
 		
 		if ( globally_verbose )
 		{
-			std::printf( "%s\n", subpath );
+			printf( "%s\n", subpath );
 		}
 		
 		plus::string subpath_dir = plus::concat( subpath, STR_LEN( "/" ) );
@@ -1056,7 +1056,7 @@ namespace tool
 	
 	static plus::string home_dir_pathname()
 	{
-		if ( const char* home = std::getenv( "HOME" ) )
+		if ( const char* home = getenv( "HOME" ) )
 		{
 			return home;
 		}
@@ -1105,9 +1105,9 @@ namespace tool
 		
 		if ( !jsync_is_dir )
 		{
-			std::fprintf( stderr, "jsync: no such sync path '%s'\n"
-			                      "(No such directory %s)\n",path,
-			                      jsync_path.c_str() );
+			fprintf( stderr, "jsync: no such sync path '%s'\n"
+			                 "(No such directory %s)\n",path,
+			                 jsync_path.c_str() );
 			
 			return 1;
 		}
