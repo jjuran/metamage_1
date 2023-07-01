@@ -9,9 +9,9 @@
 #include <dirent.h>
 #include <pwd.h>
 
-// Standard C/C++
-#include <cstdlib>
-#include <cstring>
+// Standard C
+#include <stdlib.h>
+#include <string.h>
 
 // more-libc
 #include "more/string.h"
@@ -350,7 +350,7 @@ namespace ShellShock
 	
 	static plus::string quoted_tilde_expansion( const char* homedir, const plus::string& subpath )
 	{
-		const size_t home_len = std::strlen( homedir );
+		const size_t home_len = strlen( homedir );
 		const size_t path_len = subpath.size();
 		
 		size_t n_quotes = 0;
@@ -414,7 +414,7 @@ namespace ShellShock
 				// Tilde is single first path element; expand to $HOME.
 				// ~ -> /home/jjuran
 				
-				const char* homedir = std::getenv( "HOME" );
+				const char* homedir = getenv( "HOME" );
 				
 				// ... but only if $HOME is defined.
 				if ( homedir != NULL )
@@ -502,8 +502,8 @@ namespace ShellShock
 			return true;
 		}
 		
-		const char* name_end    = name    + std::strlen( name    ) - 1;
-		const char* pattern_end = pattern + std::strlen( pattern ) - 1;
+		const char* name_end    = name    + strlen( name    ) - 1;
+		const char* pattern_end = pattern + strlen( pattern ) - 1;
 		
 		while ( name_end >= name && pattern_end >= pattern && *pattern_end != '*' )
 		{
