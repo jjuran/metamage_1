@@ -16,23 +16,15 @@
 #ifndef __CURSORDEVICES__
 #include <CursorDevices.h>
 #endif
-#ifndef __LOWMEM__
-#include <LowMem.h>
-#endif
 
 // mac-sys-utils
 #include "mac_sys/has/CursorDevices.hh"
 
 
-#if TARGET_CPU_68K
+Point MouseTemp : 0x0828;
+Point RawMouse  : 0x082C;
 
 short CrsrNew_CrsrCouple : 0x8ce;
-
-#else
-
-static short CrsrNew_CrsrCouple;
-
-#endif
 
 
 namespace mac {
@@ -52,7 +44,7 @@ Point get_cursor_location()
 		}
 	}
 	
-	return LMGetRawMouseLocation();
+	return RawMouse;
 }
 
 void set_cursor_location( Point location )
@@ -70,8 +62,8 @@ void set_cursor_location( Point location )
 	}
 	else
 	{
-		LMSetRawMouseLocation( location );
-		LMSetMouseTemp       ( location );
+		RawMouse  = location;
+		MouseTemp = location;
 		
 		CrsrNew_CrsrCouple = -1;
 	}
