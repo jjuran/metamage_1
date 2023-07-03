@@ -11,8 +11,12 @@
 #endif
 
 // Mac OS
+#if TARGET_API_MAC_CARBON
 #ifndef __LOWMEM__
 #include <LowMem.h>
+#endif
+#else
+#define LMGetSysMap()  (*(short*) 0x0A58)
 #endif
 
 // mac-file-utils

@@ -11,8 +11,12 @@
 #endif
 
 // Mac OS
+#if TARGET_API_MAC_CARBON
 #ifndef __LOWMEM__
 #include <LowMem.h>
+#endif
+#else
+#define LMGetCurApRefNum()  (*(short*) 0x0900)
 #endif
 
 // mac-file-utils
