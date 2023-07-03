@@ -328,8 +328,23 @@ namespace tool
 			void Return( bool succeeded );
 	};
 	
+	static const char out_of_order[] = "[68K-hosted Rez is out of order]";
+	
 	void RezzingTask::Make()
 	{
+	#ifdef __MC68K__
+		
+		if ( ! UpToDate() )
+		{
+			plus::string name = p7::basename( OutputPath() );
+			
+			fprintf( stderr, "SKIP  %s %s\n", name.c_str(), out_of_order );
+		}
+		
+		return;
+		
+	#endif
+		
 		Command rezCommand;
 		
 	#ifdef __APPLE__
