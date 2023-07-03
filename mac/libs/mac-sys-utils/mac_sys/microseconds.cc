@@ -11,19 +11,13 @@
 #endif
 
 // Mac OS
+#ifndef __MC68K__
 #ifndef __DRIVERSERVICES__
 #include <DriverServices.h>
 #endif
-#ifndef __LOWMEM__
-#include <LowMem.h>
 #endif
 #ifndef __TIMER__
 #include <Timer.h>
-#endif
-#ifdef __MACOS__
-#ifndef __TRAPS__
-#include <Traps.h>
-#endif
 #endif
 
 // math
@@ -38,9 +32,20 @@
 namespace mac {
 namespace sys {
 
+typedef UInt32 uint32_t;
+typedef UInt64 uint64_t;
+
 #if TARGET_CPU_68K
 
+UInt32 Ticks : 0x016A;
+
 short ROM85 : 0x028E;
+
+enum
+{
+	_Microseconds  = 0xA193,
+	_Unimplemented = 0xA89F,
+};
 
 static
 bool has_Microseconds_trap()
@@ -103,14 +108,14 @@ void microseconds( unsigned long long* count )
 		
 		const uint32_t tick_mibimicroseconds = 1024 * trillion / 60147420;
 		
-		*count = long_multiply( LMGetTicks(), tick_mibimicroseconds ) >> 10;
+		*count = long_multiply( Ticks, tick_mibimicroseconds ) >> 10;
 		
 		return;
 	}
 	
-#endif
+#else
 	
-	if ( ! TARGET_CPU_68K  &&  &UpTime != 0 )
+	if ( &UpTime != 0 )
 	{
 		uint64_t now;
 		(Nanoseconds&) now = AbsoluteToNanoseconds( UpTime() );
@@ -119,6 +124,8 @@ void microseconds( unsigned long long* count )
 		
 		return;
 	}
+	
+#endif
 	
 	Microseconds( (UnsignedWide*) count );
 }
