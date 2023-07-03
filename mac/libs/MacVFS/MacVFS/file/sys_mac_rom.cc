@@ -14,9 +14,6 @@
 #endif
 
 // Mac OS
-#ifndef __LOWMEM__
-#include <LowMem.h>
-#endif
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
@@ -46,11 +43,7 @@ static short ROM85;
 
 #endif
 
-#if TARGET_API_MAC_CARBON
-
-static inline char* LMGetROMBase()  { return 0; }
-
-#endif
+#define ROMBase  *(char**) 0x02AE
 
 
 namespace vfs
@@ -58,6 +51,12 @@ namespace vfs
 	
 	namespace p7 = poseven;
 	
+	
+	static inline
+	char* LMGetROMBase()
+	{
+		return TARGET_API_MAC_CARBON ? 0 : ROMBase;
+	}
 	
 	static
 	off_t get_rom_size()
