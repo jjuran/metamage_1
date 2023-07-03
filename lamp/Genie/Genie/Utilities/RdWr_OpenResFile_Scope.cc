@@ -8,9 +8,6 @@
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
 // Mac OS
-#ifndef __LOWMEM__
-#include <LowMem.h>
-#endif
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
@@ -22,6 +19,9 @@
 #ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 #endif
+
+
+#define TopMapHndl  (*(Handle*) 0x0A50)
 
 
 namespace Genie
@@ -56,7 +56,7 @@ namespace Genie
 		
 	#else
 		
-		return LMGetTopMapHndl();
+		return TopMapHndl;
 		
 	#endif
 	}

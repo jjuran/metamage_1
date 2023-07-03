@@ -11,9 +11,6 @@
 #endif
 
 // Mac OS
-#ifndef __LOWMEM__
-#include <LowMem.h>
-#endif
 #ifndef __MENUS__
 #include <Menus.h>
 #endif
@@ -35,6 +32,9 @@
 #include "Genie/FS/sys/app/menu/list/ID.hh"
 
 
+#define MenuList  (*(Handle*) 0x0A1C)
+
+
 namespace Genie
 {
 	
@@ -54,7 +54,7 @@ namespace Genie
 	{
 	#if !TARGET_API_MAC_CARBON
 		
-		Handle h = LMGetMenuList();
+		Handle h = MenuList;
 		
 		MenuBarHeader header = **(MenuBarHeader**) h;
 		
