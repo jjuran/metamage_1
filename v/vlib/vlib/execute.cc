@@ -705,12 +705,6 @@ namespace vlib
 				
 				swap( left, right );
 			}
-			else if ( expr->op == Op_typeof )
-			{
-				// This is an endec type, not a typeof operation
-				
-				return tree;
-			}
 			
 			if ( is_right_varop( expr->op ) )
 			{
