@@ -4,7 +4,10 @@
 */
 
 // Mac OS
-#include <Sound.h>
+#include <ConditionalMacros.h>
+
+// <Sound.h>
+extern "C" pascal void SysBeep( short ticks )  ONEWORDINLINE( 0xA9C8 );
 
 // gear
 #include "gear/parse_decimal.hh"
