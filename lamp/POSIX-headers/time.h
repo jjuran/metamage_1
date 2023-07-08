@@ -33,16 +33,11 @@ extern "C" {
 		char* tm_zone;
 	};
 	
-#ifndef _TIMESPEC_DECLARED
-#define _TIMESPEC_DECLARED
-	
 	struct timespec
 	{
 		time_t	tv_sec;		/* seconds */
 		long	tv_nsec;	/* and nanoseconds */
 	};
-	
-#endif
 	
 	char* ctime( const time_t* time );
 	
@@ -53,9 +48,6 @@ extern "C" {
 	struct tm* localtime_r( const time_t*, struct tm *result );
 	
 	time_t mktime( struct tm *tm );
-	
-	int gettimeofday( struct timeval *tv, struct timezone *tz );
-	int settimeofday( const struct timeval *tv , const struct timezone *tz );
 	
 	time_t time( time_t* t );
 	

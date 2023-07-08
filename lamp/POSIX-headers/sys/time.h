@@ -51,17 +51,6 @@ struct timeval {
 	suseconds_t	tv_usec;	/* and microseconds */
 };
 
-#ifndef _TIMESPEC_DECLARED
-#define _TIMESPEC_DECLARED
-/*
- * Structure defined by POSIX.1b to be like a timeval.
- */
-struct timespec {
-	time_t	tv_sec;		/* seconds */
-	long	tv_nsec;	/* and nanoseconds */
-};
-#endif
-
 struct timezone {
 	int	tz_minuteswest;	/* minutes west of Greenwich */
 	int	tz_dsttime;	/* type of dst correction */
