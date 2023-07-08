@@ -28,7 +28,7 @@ namespace vfs
 	typedef void (*chmod_method)( const node*, mode_t );
 	
 	typedef void (*touch_method)( const node* );
-	typedef void (*utime_method)( const node*, const struct timespec times[2] );
+	typedef void (*utime_method)( const node*, const struct timespec* times );
 	
 	typedef void (*remove_method)( const node* );
 	
