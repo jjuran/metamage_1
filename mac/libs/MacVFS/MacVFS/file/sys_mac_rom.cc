@@ -33,16 +33,7 @@
 #include "vfs/methods/node_method_set.hh"
 
 
-#if TARGET_CPU_68K
-
-short ROM85 : 0x28E;
-
-#else
-
-static short ROM85;
-
-#endif
-
+#define ROM85    *(short*) 0x028E
 #define ROMBase  *(char**) 0x02AE
 
 
