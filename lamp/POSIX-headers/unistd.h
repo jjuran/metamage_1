@@ -255,11 +255,6 @@ int	 rfork(int opts);
 int	 rresvport(int *);
 int	 rresvport_af(int *, int);
 int	 ruserok(const char *, int, const char *, const char *);
-#ifndef _SELECT_DEFINED_
-#define _SELECT_DECLARED
-struct timeval;
-int	 select(int, struct fd_set *, struct fd_set *, struct fd_set *, struct timeval *);
-#endif
 int	 setdomainname(const char *, size_t);
 int	 setgroups(int, const gid_t *);
 int	 sethostid(long);

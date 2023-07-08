@@ -85,14 +85,9 @@ typedef	struct fd_set {
 #endif
 #endif /* __BSD_VISIBLE */
 
-#ifndef _KERNEL
-#ifndef _SELECT_DEFINED_
-#define _SELECT_DEFINED_
 __BEGIN_DECLS
 struct timeval;
 int	select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
 __END_DECLS
-#endif
-#endif /* !_KERNEL */
 
 #endif /* !_SYS_SELECT_H_ */
