@@ -212,11 +212,11 @@ struct in_addr {
  * IP Version 4 socket address.
  */
 struct sockaddr_in {
-	u_int8_t    sin_len;
-	sa_family_t sin_family;
-	in_port_t   sin_port;
-	struct	    in_addr sin_addr;
-	int8_t	    sin_zero[8];
+	__uint8_t       sin_len;
+	sa_family_t     sin_family;
+	in_port_t       sin_port;
+	struct in_addr  sin_addr;
+	__int8_t        sin_zero[8];
 };
 
 /*
@@ -229,9 +229,9 @@ struct sockaddr_in {
 struct ip_opts {
 	struct in_addr	ip_dst;		/* first hop, 0 w/o src rt */
 #if defined(__cplusplus)
-	int8_t		Ip_opts[40];	/* cannot have same name as class */
+	__int8_t        Ip_opts[40];	/* cannot have same name as class */
 #else
-	int8_t		ip_opts[40];	/* actually variable in size */
+	__int8_t        ip_opts[40];	/* actually variable in size */
 #endif
 };
 

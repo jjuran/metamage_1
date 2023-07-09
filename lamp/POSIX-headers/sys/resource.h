@@ -93,8 +93,8 @@ struct	rusage {
 #define	RLIM_SAVED_CUR	RLIM_INFINITY
 
 struct orlimit {
-	int32_t	rlim_cur;		/* current (soft) limit */
-	int32_t	rlim_max;		/* maximum value for rlim_cur */
+	__int32_t	rlim_cur;	/* current (soft) limit */
+	__int32_t	rlim_max;	/* maximum value for rlim_cur */
 };
 
 struct rlimit {

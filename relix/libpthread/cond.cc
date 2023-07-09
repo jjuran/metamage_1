@@ -46,7 +46,7 @@ int pthread_cond_timedwait( pthread_cond_t*         cond,
                             pthread_mutex_t*        mutex,
                             const struct timespec*  deadline )
 {
-	if ( uint32_t( deadline->tv_nsec ) >= 1000000000 )
+	if ( (__uint32_t) deadline->tv_nsec >= 1000000000 )
 	{
 		return EINVAL;
 	}

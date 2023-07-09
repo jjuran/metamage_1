@@ -65,12 +65,12 @@ typedef struct
 
 typedef struct
 {
-    uint32_t flags;
+    __uint32_t flags;
     void * stack_base;
     size_t stack_size;
     size_t guard_size;
-    int32_t sched_policy;
-    int32_t sched_priority;
+    __int32_t sched_policy;
+    __int32_t sched_priority;
 } pthread_attr_t;
 
 typedef long pthread_mutexattr_t;

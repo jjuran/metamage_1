@@ -54,7 +54,7 @@
  * Non-underscore versions are exposed later #if __BSD_VISIBLE
  */
 #define	__NBBY	8				/* number of bits in a byte */
-typedef int32_t	__fd_mask;
+typedef __int32_t	__fd_mask;
 #define __NFDBITS ((unsigned)(sizeof(__fd_mask) * __NBBY)) /* bits per mask */
 #define	__howmany(x, y)	(((x) + ((y) - 1)) / (y))
 
