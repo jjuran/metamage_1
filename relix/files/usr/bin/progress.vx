@@ -113,8 +113,14 @@ def report_remaining (numer, denom)
 	rewrite count "v/text" <== remaining units
 }
 
+var last_update_clock = 0
+var last_update_value = 0
+
 for line in receiver line_buffered IN do
 {
+	let clock = utime()
+	let stale = clock - last_update_clock >= 100000  # 100ms
+	
 	var value = line
 	
 	if '%' in value then
@@ -125,12 +131,21 @@ for line in receiver line_buffered IN do
 	{
 		let (numer, denom) = *([value / '/'] map int)
 		
-		report_remaining (numer, denom)
-		
 		value = numer * 10000 div denom
+		
+		if value != last_update_value and (stale or value == 10000) then
+		{
+			report_remaining (numer, denom)
+		}
 	}
 	
-	rewrite meter "v/value" <== value LF
+	if value != last_update_value and (stale or value == 10000) then
+	{
+		last_update_clock = clock
+		last_update_value = value
+		
+		rewrite meter "v/value" <== value LF
+	}
 }
 
 end.
