@@ -44,6 +44,8 @@
 #include <sys/_types.h>
 #include <machine/endian.h>
 
+#include <stddef.h>
+
 #ifdef __MWERKS__
 	
 	typedef	char *		caddr_t;	/* core address */

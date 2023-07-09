@@ -50,14 +50,6 @@
 #define F_TEST          3	/* test a section for locks by other procs */
 #endif
 
-#ifndef NULL
-#ifdef 	__GNUG__
-#define	NULL	__null
-#else
-#define	NULL	0L
-#endif
-#endif
-
 #define DUP_DUP2  (-1)
 
 __BEGIN_DECLS
