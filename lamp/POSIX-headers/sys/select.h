@@ -35,7 +35,7 @@
 #define	_SYS_SELECT_H_
 
 #include <sys/cdefs.h>
-#include <sys/time.h>		/* for types and struct timeval */
+#include <sys/types.h>
 
 #include <string.h>
 

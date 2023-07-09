@@ -150,8 +150,4 @@ int	 truncate(const char *, off_t);
 __END_DECLS
 #endif /* __BSD_VISIBLE && !_KERNEL */
 
-#if __BSD_VISIBLE
-#include <sys/select.h>	/* must be after type declarations */
-#endif
-
 #endif /* !_SYS_TYPES_H_ */

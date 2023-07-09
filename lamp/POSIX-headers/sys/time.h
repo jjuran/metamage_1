@@ -38,10 +38,6 @@
 #include <sys/cdefs.h>
 #include <sys/types.h>
 
-#if __XPG_VISIBLE >= 420 && __XPG_VISIBLE < 600
-#include <sys/select.h>
-#endif
-
 /*
  * Structure returned by gettimeofday(2) system call,
  * and used in other calls.
@@ -73,8 +69,6 @@ struct	itimerval {
 #define CLOCK_VIRTUAL	1
 #define CLOCK_PROF	2
 #define	CLOCK_MONOTONIC	3
-
-#include <time.h>
 
 __BEGIN_DECLS
 
