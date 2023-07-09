@@ -19,15 +19,15 @@
 #include "debug/assert.hh"
 
 
-// Exceptions are off here
 #pragma exceptions off
 
 
-ssize_t ttyname_k( int fd, char* buffer, size_t buffer_size )
+static
+ssize_t _ttyname( int fd, char* buffer, size_t buffer_size )
 {
-	if ( !isatty( fd ) )
+	if ( ! isatty( fd ) )
 	{
-		//errno = ENOTTY;
+		// errno is already set to ENOTTY.
 		
 		return -1;
 	}
@@ -45,7 +45,7 @@ ssize_t ttyname_k( int fd, char* buffer, size_t buffer_size )
 
 int ttyname_r( int fd, char* buffer, size_t buffer_size )
 {
-	ssize_t length = ttyname_k( fd, buffer, buffer_size - 1 );
+	ssize_t length = _ttyname( fd, buffer, buffer_size - 1 );
 	
 	if ( length < 0 )
 	{
@@ -63,7 +63,7 @@ char* ttyname( int fd )
 {
 	static char buffer[ 256 ];  // should be enough for a terminal name
 	
-	ssize_t length = ttyname_k( fd, buffer, sizeof buffer - 1 );
+	ssize_t length = _ttyname( fd, buffer, sizeof buffer - 1 );
 	
 	if ( length < 0 )
 	{

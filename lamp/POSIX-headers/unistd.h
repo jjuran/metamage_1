@@ -132,7 +132,6 @@ long	 sysconf(int);
 pid_t	 tcgetpgrp(int);
 int	 tcsetpgrp(int, pid_t);
 char	*ttyname(int);
-ssize_t ttyname_k( int, char*, size_t );  // jjuran
 int	 unlink(const char *);
 int updateat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, unsigned flags );  // jjuran
 ssize_t	 write(int, const void *, size_t);
