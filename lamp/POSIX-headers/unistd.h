@@ -167,7 +167,6 @@ int	 encrypt(char *, int);
 int	 fchdir(int);
 int	 fchown(int, uid_t, gid_t);
 long	 gethostid(void);
-char	*getwd(char *);
 int	 lchown(const char *, uid_t, gid_t);
 int	 mkstemp(char *);
 char	*mktemp(char *);
@@ -198,12 +197,10 @@ int	 ttyname_r(int, char *, size_t);
 
 #if __BSD_VISIBLE ||  __XPG_VISIBLE <= 500
 /* Interfaces withdrawn by X/Open Issue 5 Version 0 */
-void	 *brk(void *);
 int	 chroot(const char *);
 int	 getdtablesize(void);
 int	 getpagesize(void);
 char	*getpass(const char *);
-void	*sbrk(int);
 #endif
 
 #if __POSIX_VISIBLE >= 200112 || __XPG_VISIBLE >= 420
@@ -218,58 +215,31 @@ int	 seteuid(uid_t);
 #endif
 
 #if __BSD_VISIBLE
-int	 acct(const char *);
-int	 closefrom(int);
-int	 des_cipher(const char *, char *, int32_t, int);
-int	 des_setkey(const char *);
 void	 endusershell(void);
-int	 exect(const char *, char * const *, char * const *);
-char	*fflagstostr(u_int32_t);
 int	 getdomainname(char *, size_t);
 int	 getgrouplist(const char *, gid_t, gid_t *, int *);
-mode_t	 getmode(const void *, mode_t);
 int	 getresgid(gid_t *, gid_t *, gid_t *);
 int	 getresuid(uid_t *, uid_t *, uid_t *);
 char	*getusershell(void);
 int	 initgroups(const char *, gid_t);
-int	 iruserok(u_int32_t, int, const char *, const char *);
-int	 iruserok_sa(const void *, int, int, const char *, const char *);
 int	 issetugid(void);
 char	*mkdtemp(char *);
 int	 mkstemps(char *, int);
-int	 nfssvc(int, void *);
 void	 psignal(unsigned int, const char *);
 int	 profil(char *, size_t, unsigned long, unsigned int);
-int	 quotactl(const char *, int, int, char *);
-int	 rcmd(char **, int, const char *,
-	    const char *, const char *, int *);
-int	 rcmd_af(char **, int, const char *,
-	    const char *, const char *, int *, int);
-int	 rcmdsh(char **, int, const char *,
-	    const char *, const char *, char *);
-char	*re_comp(const char *);
-int	 re_exec(const char *);
 int	 reboot(int);
 int	 revoke(const char *);
-int	 rfork(int opts);
-int	 rresvport(int *);
-int	 rresvport_af(int *, int);
-int	 ruserok(const char *, int, const char *, const char *);
 int	 setdomainname(const char *, size_t);
 int	 setgroups(int, const gid_t *);
 int	 sethostid(long);
 int	 sethostname(const char *, size_t);
 int	 setlogin(const char *);
-void	*setmode(const char *);
 int	 setresgid(gid_t, gid_t, gid_t);
 int	 setresuid(uid_t, uid_t, uid_t);
 int	 setrgid(gid_t);
 int	 setruid(uid_t);
 void	 setusershell(void);
-int	 strtofflags(char **, u_int32_t *, u_int32_t *);
-int	 swapctl(int cmd, const void *arg, int misc);
 int	 syscall(int, ...);
-extern __const char *__const sys_siglist[]; /* XXX - also in signal.h */
 #endif /* __BSD_VISIBLE */
 __END_DECLS
 
