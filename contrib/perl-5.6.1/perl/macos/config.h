@@ -830,7 +830,11 @@
  *	This symbol, if defined, indicates to the C program that it should
  *	include <sys/select.h> in order to get definition of struct timeval.
  */
-#undef I_SYS_SELECT	/**/
+/*
+	MacRelix defines struct timeval in <sys/time.h>, but <sys/select.h>
+	must be included to see the declaration of the select() system call.
+*/
+#define I_SYS_SELECT	/**/
 
 /* I_SYS_STAT:
  *	This symbol, if defined, indicates to the C program that it should
