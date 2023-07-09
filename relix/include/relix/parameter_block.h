@@ -1,12 +1,6 @@
 #ifndef RELIX_PARAMETERBLOCK_H
 #define RELIX_PARAMETERBLOCK_H
 
-// Standard C
-#include <stdint.h>
-
-// POSIX
-#include <sys/types.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -43,12 +37,12 @@ struct _relix_system_parameter_block
 {
 	_relix_user_parameter_block* current_user;
 	
-	const size_t system_block_length;
-	const size_t user_block_length;
+	const unsigned long system_block_length;  // size_t
+	const unsigned long user_block_length;    // size_t
 	
 	void (*const dispatcher)( ... );
 	
-	uint64_t (*const microsecond_timer)();
+	unsigned long long (*const microsecond_timer)();  // uint64_t
 	
 	long (*const runctl)( long selector );
 };
