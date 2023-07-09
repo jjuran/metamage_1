@@ -46,18 +46,10 @@
 
 #include <stddef.h>
 
-#ifdef __MWERKS__
-	
-	typedef	char *		caddr_t;	/* core address */
-	typedef	__dev_t		dev_t;		/* device number */
-	typedef	__gid_t		gid_t;		/* group id */
-	typedef	__uid_t		uid_t;		/* user id */
-	
-	#include <stdint.h>
-	
-	#define _WCHAR_T_DEFINED_
-	
-#endif
+typedef	char *		caddr_t;	/* core address */
+typedef	__dev_t		dev_t;		/* device number */
+typedef	__gid_t		gid_t;		/* group id */
+typedef	__uid_t		uid_t;		/* user id */
 
 #if __BSD_VISIBLE
 typedef	unsigned char	u_char;
