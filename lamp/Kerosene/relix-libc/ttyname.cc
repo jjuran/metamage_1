@@ -9,17 +9,14 @@
 // POSIX
 #include "unistd.h"
 
-// Iota
-#include "iota/strings.hh"
-
 // gear
 #include "gear/inscribe_decimal.hh"
 
-// Debug
-#include "debug/assert.hh"
-
 
 #pragma exceptions off
+
+
+#define STRLEN( s )  (sizeof "" s - 1)
 
 
 static
@@ -49,8 +46,6 @@ int ttyname_r( int fd, char* buffer, size_t buffer_size )
 	
 	if ( length < 0 )
 	{
-		ASSERT( errno != 0 );
-		
 		return errno;
 	}
 	
