@@ -1,13 +1,13 @@
-/*	==========
- *	ttyname.cc
- *	==========
- */
-
-// Standard C
-#include "errno.h"
+/*
+	ttyname.cc
+	----------
+*/
 
 // POSIX
-#include "unistd.h"
+#include <unistd.h>
+
+// Standard C
+#include <errno.h>
 
 // gear
 #include "gear/inscribe_decimal.hh"
