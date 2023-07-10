@@ -5,11 +5,11 @@
 
 #include "A-line/Link.hh"
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <algorithm>
-
-// Iota
-#include "iota/strings.hh"
 
 // plus
 #include "plus/string/concat.hh"
@@ -38,6 +38,9 @@
 #include "A-line/prefix.hh"
 #include "A-line/Project.hh"
 #include "A-line/ProjectCommon.hh"
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 namespace tool

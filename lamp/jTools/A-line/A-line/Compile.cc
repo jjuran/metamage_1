@@ -13,6 +13,7 @@
 // Standard C
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // POSIX
 #include <sys/stat.h>
@@ -20,9 +21,6 @@
 
 // Extended API Set, Part 2
 #include "extended-api-set/part-2.h"
-
-// iota
-#include "iota/strings.hh"
 
 // gear
 #include "gear/find.hh"
@@ -71,6 +69,9 @@
 #include "A-line/Project.hh"
 #include "A-line/ProjectCommon.hh"
 #include "A-line/Task.hh"
+
+
+#define STRLEN( s )  (sizeof "" s - 1)
 
 
 namespace tool
