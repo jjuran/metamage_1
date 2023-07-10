@@ -4,11 +4,9 @@
 
 #include "ReadExecuteLoop.hh"
 
-// Standard C/C++
-#include <cstring>
-
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // POSIX
 #include <fcntl.h>
@@ -71,7 +69,7 @@ namespace tool
 			prompt_string = prompt.defaultValue;
 		}
 		
-		p7::write( p7::stdout_fileno, prompt_string, std::strlen( prompt_string ) );
+		p7::write( p7::stdout_fileno, prompt_string, strlen( prompt_string ) );
 	}
 	
 	static inline

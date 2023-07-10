@@ -4,19 +4,19 @@
 
 #include "Options.hh"
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <algorithm>
 #include <set>
-
-// Standard C/C++
-#include <cstring>
 
 // Debug
 #include "debug/assert.hh"
 
 
 namespace tool
-	{
+{
 	
 	struct OptionData
 	{
@@ -40,7 +40,7 @@ namespace tool
 	
 	static bool operator==( const OptionData& option, const char* name )
 	{
-		return std::strcmp( option.name, name ) == 0;
+		return strcmp( option.name, name ) == 0;
 	}
 	
 	ShellOption LookupShellOption( const char* name )

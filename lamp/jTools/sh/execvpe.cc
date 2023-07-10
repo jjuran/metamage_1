@@ -6,15 +6,13 @@
 #include "execvpe.hh"
 
 // POSIX
-#include <unistd.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 // Standard C
 #include <errno.h>
 #include <stdlib.h>
-
-// Standard C/C++
-#include <cstring>
+#include <string.h>
 
 
 #ifdef __APPLE__
@@ -41,7 +39,7 @@ static inline const char* find_in_str( const char* s, char c )
 
 static int lookup_path( const char* filename, char* path, size_t buffer_length )
 {
-	const std::size_t filename_length = std::strlen( filename );
+	const size_t filename_length = strlen( filename );
 	
 	const char* pathVar = getpath();
 	
@@ -49,7 +47,7 @@ static int lookup_path( const char* filename, char* path, size_t buffer_length )
 	{
 		const char* separator = find_in_str( pathVar, ':' );
 		
-		std::size_t dir_path_length = separator - pathVar;
+		size_t dir_path_length = separator - pathVar;
 		
 		// Empty PATH element means current directory
 		const bool has_separator = dir_path_length != 0;
@@ -59,9 +57,9 @@ static int lookup_path( const char* filename, char* path, size_t buffer_length )
 			--dir_path_length;
 		}
 		
-		const std::size_t filename_offset = dir_path_length + has_separator;
+		const size_t filename_offset = dir_path_length + has_separator;
 		
-		const std::size_t path_length = filename_offset + filename_length;
+		const size_t path_length = filename_offset + filename_length;
 		
 		if ( path_length + 1 > buffer_length )
 		{
@@ -70,12 +68,12 @@ static int lookup_path( const char* filename, char* path, size_t buffer_length )
 		
 		if ( has_separator )
 		{
-			std::memcpy( path, pathVar, dir_path_length );
+			memcpy( path, pathVar, dir_path_length );
 			
 			path[ dir_path_length ] = '/';
 		}
 		
-		std::memcpy( path + filename_offset, filename, filename_length + 1 );
+		memcpy( path + filename_offset, filename, filename_length + 1 );
 		
 		struct stat sb;
 		
@@ -101,7 +99,7 @@ int execvpe( const char* file, char* const argv[], char* const envp[] )
 {
 	char path[ 4096 ];
 	
-	if ( std::strchr( file, '/' ) == NULL )
+	if ( strchr( file, '/' ) == NULL )
 	{
 		if ( -1 == lookup_path( file, path, sizeof path ) )
 		{

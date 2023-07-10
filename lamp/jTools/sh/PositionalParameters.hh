@@ -1,12 +1,10 @@
-// =======================
-// PositionalParameters.hh
-// =======================
+/*
+	PositionalParameters.hh
+	-----------------------
+*/
 
 #ifndef POSITIONALPARAMETERS_HH
 #define POSITIONALPARAMETERS_HH
-
-// Standard C/C++
-#include <cstddef>
 
 
 namespace tool
@@ -14,7 +12,7 @@ namespace tool
 	
 	extern const char* gArgZero;
 	
-	extern std::size_t         gParameterCount;
+	extern unsigned            gParameterCount;
 	extern char const* const*  gParameters;
 	
 }

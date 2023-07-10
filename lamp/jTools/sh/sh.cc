@@ -138,7 +138,7 @@ namespace tool
 	
 	
 	const char*         gArgZero        = NULL;
-	std::size_t         gParameterCount = 0;
+	unsigned            gParameterCount = 0;
 	char const* const*  gParameters     = NULL;
 	
 	

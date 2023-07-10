@@ -7,11 +7,9 @@
 // Standard C++
 #include <algorithm>
 
-// Standard C/C++
-#include <cstring>
-
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // POSIX
 #include <fcntl.h>
@@ -361,7 +359,7 @@ namespace tool
 		{
 			const char* const arg1 = argv[ 1 ];
 			
-			if ( const char* eq = std::strchr( arg1, '=' ) )
+			if ( const char* eq = strchr( arg1, '=' ) )
 			{
 				// $ export foo=bar
 				plus::string name( arg1, eq - arg1 );
@@ -487,11 +485,11 @@ namespace tool
 	class ReplacedParametersScope
 	{
 		private:
-			std::size_t         itsSavedParameterCount;
+			size_t              itsSavedParameterCount;
 			char const* const*  itsSavedParameters;
 		
 		public:
-			ReplacedParametersScope( std::size_t count, char const* const* params )
+			ReplacedParametersScope( size_t count, char const* const* params )
 			:
 				itsSavedParameterCount( gParameterCount ),
 				itsSavedParameters    ( gParameters     )
