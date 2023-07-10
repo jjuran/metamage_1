@@ -18,6 +18,7 @@
 
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // mac-sys-utils
 #include "mac_sys/errno_from_mac_error.hh"
