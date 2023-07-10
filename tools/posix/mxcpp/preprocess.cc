@@ -10,6 +10,7 @@
 
 // Standard C
 #include <ctype.h>
+#include <string.h>
 
 // gear
 #include "gear/find.hh"
