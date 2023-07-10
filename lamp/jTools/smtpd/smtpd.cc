@@ -7,11 +7,9 @@
 #include <memory>
 #include <vector>
 
-// Standard C/C++
-#include <cstdio>
-#include <cstdlib>
-
 // Standard C
+#include <stdio.h>
+#include <string.h>
 #include <time.h>
 
 // POSIX
@@ -281,7 +279,7 @@ namespace tool
 		{
 			if ( word != "EHLO" )
 			{
-				std::fprintf( stderr, "Unrecognized command '%s'\n", word.c_str() );
+				fprintf( stderr, "Unrecognized command '%s'\n", word.c_str() );
 			}
 			
 			p7::write( p7::stdout_fileno, STR_LEN( "500 Unrecognized command"  "\r\n" ) );
@@ -314,7 +312,7 @@ namespace tool
 			const char* message = queued ? "250 Message accepted"      "\r\n"
 			                             : "554 Can't accept message"  "\r\n";
 			
-			p7::write( p7::stdout_fileno, message, std::strlen( message ) );
+			p7::write( p7::stdout_fileno, message, strlen( message ) );
 			
 			myMessage.reset();
 		}
@@ -343,9 +341,9 @@ namespace tool
 		
 		if ( getpeername( 0, (sockaddr*)&peer, &peerlen ) == 0 )
 		{
-			std::fprintf( stderr, "Connection from %s, port %d\n",
-			                                       inet_ntoa( peer.sin_addr ),
-			                                                peer.sin_port );
+			fprintf( stderr, "Connection from %s, port %d\n",
+			                                  inet_ntoa( peer.sin_addr ),
+			                                           peer.sin_port );
 		}
 		
 		const size_t max_hostname_length = 255;
