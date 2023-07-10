@@ -20,6 +20,7 @@
 
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // more-libc
 #include "more/string.h"
