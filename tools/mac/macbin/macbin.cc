@@ -10,6 +10,7 @@
 
 // Standard C
 #include <stdio.h>
+#include <string.h>
 
 // Iota
 #include "iota/strings.hh"
