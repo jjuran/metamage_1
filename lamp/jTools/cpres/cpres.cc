@@ -6,6 +6,7 @@
 // Standard C
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // mac-sys-utils
 #include "mac_sys/res_error.hh"
