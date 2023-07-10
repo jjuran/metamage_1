@@ -4,6 +4,7 @@
 */
 
 // POSIX
+#include <sys/time.h>
 #include <sys/times.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -12,6 +13,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 // compat
 #include "clock/time.h"
