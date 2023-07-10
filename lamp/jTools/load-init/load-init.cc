@@ -16,6 +16,7 @@
 // Standard C
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // iota
 #include "iota/strings.hh"
