@@ -10,6 +10,7 @@
 // Standard C
 #include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -180,7 +181,8 @@ namespace tool
 	}
 	
 	
-	static inline const char* DocName( const char* url_path, std::size_t length )
+	static inline
+	const char* DocName( const char* url_path, size_t length )
 	{
 		return gear::find_last_match( url_path, length, '/', url_path - 1 ) + 1;
 	}
