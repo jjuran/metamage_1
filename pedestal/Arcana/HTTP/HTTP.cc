@@ -5,8 +5,8 @@
 
 #include "HTTP.hh"
 
-// Standard C/C++
-#include <cstring>
+// Standard C
+#include <string.h>
 
 // iota
 #include "iota/char_types.hh"
@@ -28,10 +28,10 @@ namespace p7 = poseven;
 namespace HTTP
 {
 	
-	static inline HeaderFieldEntry MakeHeaderFieldEntry( std::size_t name,
-	                                                     std::size_t colon,
-	                                                     std::size_t value,
-	                                                     std::size_t crlf )
+	static inline HeaderFieldEntry MakeHeaderFieldEntry( size_t name,
+	                                                     size_t colon,
+	                                                     size_t value,
+	                                                     size_t crlf )
 	{
 		HeaderFieldEntry result;
 		
@@ -54,7 +54,7 @@ namespace HTTP
 		{
 			const char* field = p;
 			
-			const char* crlf = std::strstr( p, "\r\n" );
+			const char* crlf = strstr( p, "\r\n" );
 			
 			if ( crlf == p )
 			{
@@ -64,7 +64,7 @@ namespace HTTP
 			
 			ASSERT( crlf != NULL );
 			
-			const char* colon = std::strchr( p, ':' );
+			const char* colon = strchr( p, ':' );
 			
 			if ( colon == NULL  ||  colon > crlf )
 			{
@@ -91,8 +91,8 @@ namespace HTTP
 		throw MalformedHeader();
 	}
 	
-	static bool strings_case_insensitively_equal( const char* a, std::size_t a_len,
-	                                              const char* b, std::size_t b_len )
+	static bool strings_case_insensitively_equal( const char* a, size_t a_len,
+	                                              const char* b, size_t b_len )
 	{
 		if ( a_len != b_len )  return false;
 		
@@ -110,13 +110,13 @@ namespace HTTP
 	static const HeaderFieldEntry* FindHeaderFieldInStream( const char*         stream,
 	                                                        const HeaderIndex&  index,
 	                                                        const char*         name,
-	                                                        std::size_t         name_length )
+	                                                        size_t              name_length )
 	{
 		for ( HeaderIndex::const_iterator it = index.begin();  it != index.end();  ++it )
 		{
 			const char* field = stream + it->field_offset;
 			
-			std::size_t length = it->colon_offset - it->field_offset;
+			size_t length = it->colon_offset - it->field_offset;
 			
 			if ( strings_case_insensitively_equal( field, length, name, name_length ) )
 			{
@@ -128,14 +128,14 @@ namespace HTTP
 	}
 	
 	
-	void MessageReceiver::ReceiveContent( const char* data, std::size_t byteCount )
+	void MessageReceiver::ReceiveContent( const char* data, size_t byteCount )
 	{
 		itsContentBytesReceived += byteCount;
 		
 		itsPartialContent.append( data, byteCount );
 	}
 	
-	void MessageReceiver::ReceiveData( const char* data, std::size_t byteCount )
+	void MessageReceiver::ReceiveData( const char* data, size_t byteCount )
 	{
 		// Are we receiving header or content?
 		if ( !itHasReceivedEntireHeader )
@@ -225,15 +225,15 @@ namespace HTTP
 	
 	bool MessageReceiver::ReceiveBlock( p7::fd_t socket )
 	{
-		const std::size_t blockSize = 4096;
+		const size_t blockSize = 4096;
 		
 		char data[ blockSize ];
 		
-		std::size_t bytesToRead = blockSize;
+		size_t bytesToRead = blockSize;
 		
 		if ( itHasReceivedEntireHeader && itsContentLengthIsKnown )
 		{
-			std::size_t bytesToGo = itsContentLength - itsContentBytesReceived;
+			size_t bytesToGo = itsContentLength - itsContentBytesReceived;
 			
 			if ( bytesToGo == 0 )
 			{
@@ -311,7 +311,7 @@ namespace HTTP
 	{
 		const plus::string& message = GetMessageStream();
 		
-		if ( const char* p = std::strchr( message.data(), ' ' ) )
+		if ( const char* p = strchr( message.data(), ' ' ) )
 		{
 			return plus::string( p + 1, GetHeaderStream() - 2 );
 		}
@@ -323,7 +323,7 @@ namespace HTTP
 	{
 		const plus::string& message = GetMessageStream();
 		
-		if ( const char* p = std::strchr( message.data(), ' ' ) )
+		if ( const char* p = strchr( message.data(), ' ' ) )
 		{
 			return gear::parse_unsigned_decimal( p + 1 );
 		}
