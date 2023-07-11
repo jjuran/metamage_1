@@ -9,9 +9,6 @@
 #include <math.h>
 #include <stddef.h>
 
-// Standard C/C++
-#include <cmath>
-
 // Vectoria
 #include "Vectoria/Clipping3D.hh"
 #include "Vectoria/LinearAlgebra3D.hh"
@@ -32,10 +29,10 @@ namespace worldview
 		RGB::Color color = Color();
 		const double scale = 20;
 		
-		int x = std::floor( pt.x * scale );
-		int y = std::floor( pt.y * scale );
+		int x = floor( pt.x * scale );
+		int y = floor( pt.y * scale );
 		
-		if ( std::abs( x % 2 )  ==  std::abs( y % 2 ) )
+		if ( abs( x % 2 )  ==  abs( y % 2 ) )
 		{
 			color *= 0.9;
 		}
@@ -44,7 +41,7 @@ namespace worldview
 	}
 	*/
 	
-	void Port::SendCameraCommand( std::size_t contextIndex, short cmd )
+	void Port::SendCameraCommand( size_t contextIndex, short cmd )
 	{
 		double incrMove = 0.5;
 		double incrRotate = 5.0 * 3.14159 / 180;
@@ -142,11 +139,11 @@ namespace worldview
 				itsTransformStack.push_back( V::XMatrix( V::IdentityMatrix() ) );
 			}
 			
-			void operator()( std::size_t index = 0 );
+			void operator()( size_t index = 0 );
 	};
 	
 	
-	void GetMeshModels::operator()( std::size_t index )
+	void GetMeshModels::operator()( size_t index )
 	{
 		const Context& context = itsScene.GetContext( index );
 		
@@ -158,7 +155,7 @@ namespace worldview
 		
 		itsResultFrame.AddModel( model );
 		
-		const std::vector< std::size_t >& subs = context.Subcontexts();
+		const std::vector< size_t >& subs = context.Subcontexts();
 		
 		std::for_each( subs.begin(), subs.end(), *this );
 		
@@ -168,7 +165,7 @@ namespace worldview
 	
 	static double FocalLength( V::Radians alpha )
 	{
-		double e = 1 / std::tan( alpha / 2.0 );
+		double e = 1 / tan( alpha / 2.0 );
 		return e;
 	}
 	
@@ -188,7 +185,7 @@ namespace worldview
 	
 	static V::Plane3D::Type VerticalClippingPlane( double e, double x )
 	{
-		double denom = std::sqrt( e*e + x*x );
+		double denom = sqrt( e*e + x*x );
 		
 		return V::Plane3D::Make( e / denom,
 		                         0,
@@ -198,7 +195,7 @@ namespace worldview
 	
 	static V::Plane3D::Type HorizontalClippingPlane( double e, double a, double y )
 	{
-		double denom = std::sqrt( e*e + a*a * y*y );
+		double denom = sqrt( e*e + a*a * y*y );
 		
 		return V::Plane3D::Make( 0,
 		                         e / denom,
@@ -320,14 +317,14 @@ namespace worldview
 				
 				points.reserve( offsets.size() );
 				
-				for ( std::size_t i = 0;  i < offsets.size();  ++i )
+				for ( size_t i = 0;  i < offsets.size();  ++i )
 				{
 					points.push_back( model.Mesh()( offsets[ i ] ) );
 				}
 				
 				V::Plane3D::Type plane = V::PlaneVector( points );
 				
-				for ( std::size_t i = 0;  i < points.size();  ++i )
+				for ( size_t i = 0;  i < points.size();  ++i )
 				{
 					points[ i ] = PerspectiveDivision( points[ i ] );
 				}
@@ -338,7 +335,7 @@ namespace worldview
 				
 				points2d.reserve( points.size() );
 				
-				for ( std::size_t i = 0;  i < points.size();  ++i )
+				for ( size_t i = 0;  i < points.size();  ++i )
 				{
 					points2d.push_back( Point3DTo2D( points[ i ] ) );
 				}

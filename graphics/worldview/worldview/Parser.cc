@@ -5,8 +5,8 @@
 
 #include "worldview/Parser.hh"
 
-// Standard C/C++
-#include <cstring>
+// Standard C
+#include <string.h>
 
 // Standard C++
 #include <algorithm>
@@ -116,7 +116,8 @@ namespace worldview
 		return values;
 	}
 	
-	static unsigned WidthFromTileSize( std::size_t size )
+	static
+	unsigned WidthFromTileSize( size_t size )
 	{
 		bool size_is_even_power_of_2 = (size & (size - 1)) == 0  &&  (size & 0x55555555) != 0;
 		
@@ -143,13 +144,13 @@ namespace worldview
 	{
 		std::vector< ColorMatrix > colors;
 		
-		std::size_t size = values.size();
+		size_t size = values.size();
 		
 		if ( size % 3 != 0 )
 		{
 			colors.reserve( size );
 			
-			for ( std::size_t i = 0;  i < size;  ++i )
+			for ( size_t i = 0;  i < size;  ++i )
 			{
 				colors.push_back( V::MakeGray( values[ i ] ) );
 			}
@@ -206,7 +207,7 @@ namespace worldview
 		plus::string contextName( begin, end );
 		
 		Scene*                   itsScene     = parser.itsScene;
-		std::size_t&             itsContextID = parser.itsContextID;
+		size_t&                  itsContextID = parser.itsContextID;
 		Vectoria::Point3D::Type& itsOrigin    = parser.itsOrigin;
 		
 		itsContextID = itsScene->AddSubcontext( itsContextID,
@@ -475,11 +476,11 @@ namespace worldview
 	
 	void Loader::LoadLine( const plus::string& line )
 	{
-		if ( std::strchr( line.c_str(), '{' ) )
+		if ( strchr( line.c_str(), '{' ) )
 		{
 			itsSavedParsers.push_back( itsParser );
 		}
-		else if ( std::strchr( line.c_str(), '}' ) )
+		else if ( strchr( line.c_str(), '}' ) )
 		{
 			itsParser = itsSavedParsers.back();
 			itsSavedParsers.pop_back();

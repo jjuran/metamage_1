@@ -5,8 +5,9 @@
 
 #include "worldview/Objects.hh"
 
-// Standard C/C++
-#include <cstdio>
+// Standard C
+#include <math.h>
+#include <stdio.h>
 
 // Vectoria
 #include "Vectoria/Coordinates.hh"
@@ -222,7 +223,7 @@ namespace worldview
 		
 		double cosine = V::DotProduct( b, a ) / V::Magnitude( a ) / V::Magnitude( b );
 		
-		double angle = std::acos( cosine );
+		double angle = acos( cosine );
 		
 		double tilt = V::DotProduct( b, cross_a );
 		
@@ -241,13 +242,13 @@ namespace worldview
 	                       const PointMesh&                mesh,
 	                       Container&                      output )
 	{
-		std::size_t size = offsets.size();
+		size_t size = offsets.size();
 		
 		std::vector< V::Point3D::Type > points;
 		
 		points.reserve( size );
 		
-		for ( std::size_t i = 0;  i < size;  ++i )
+		for ( size_t i = 0;  i < size;  ++i )
 		{
 			points.push_back( mesh( offsets[ i ] ) );
 		}
@@ -291,7 +292,7 @@ namespace worldview
 			
 		#ifndef __RELIX__
 			
-			std::fprintf( stderr, "Angular deviation: %f\n", total_deviation );
+			fprintf( stderr, "Angular deviation: %f\n", total_deviation );
 			
 		#endif
 			
@@ -311,7 +312,7 @@ namespace worldview
 		
 		std::vector< unsigned > triangle( 3 );
 		
-		std::size_t i = 0;
+		size_t i = 0;
 		
 		while ( concave_vertices )
 		{
@@ -405,7 +406,7 @@ namespace worldview
 			
 			if ( visible )
 			{
-				for ( std::size_t i = 0;  i < 3;  ++i )
+				for ( size_t i = 0;  i < 3;  ++i )
 				{
 					points[ i ] = itsMesh( offsets[ i ] );
 				}
