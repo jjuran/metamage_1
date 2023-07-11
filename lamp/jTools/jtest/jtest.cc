@@ -6,12 +6,10 @@
 // Standard C++
 #include <vector>
 
-// Standard C/C++
-#include <cstdio>
-#include <cstring>
-
 // Standard C
 #include <errno.h>
+#include <stdio.h>
+#include <string.h>
 
 // POSIX
 #include <fcntl.h>
@@ -128,17 +126,17 @@ namespace tool
 	                                           text_input::feed&    feed,
 	                                           p7::fd_reader        reader )
 	{
-		std::size_t end_of_fd = line.find_first_not_of( "0123456789" );
+		size_t end_of_fd = line.find_first_not_of( "0123456789" );
 		
 		int fd_to_redirect = gear::parse_unsigned_decimal( line.substr( 0, end_of_fd - 0 ).c_str() );
 		
-		std::size_t start_of_op = line.find_first_not_of( " \t", end_of_fd );
+		size_t start_of_op = line.find_first_not_of( " \t", end_of_fd );
 		
-		std::size_t end_of_op = start_of_op + 2;
+		size_t end_of_op = start_of_op + 2;
 		
 		if ( line.size() < end_of_op )
 		{
-			std::fprintf( stderr, "Missing operator in line: %s\n", line.c_str() );
+			fprintf( stderr, "Missing operator in line: %s\n", line.c_str() );
 			
 			throw p7::exit_failure;
 		}
@@ -147,7 +145,7 @@ namespace tool
 		
 		if ( op == kNoOp )
 		{
-			std::fprintf( stderr, "Unrecognized operator in line: %s\n", line.c_str() );
+			fprintf( stderr, "Unrecognized operator in line: %s\n", line.c_str() );
 			
 			throw p7::exit_failure;
 		}
@@ -156,7 +154,7 @@ namespace tool
 		
 		if ( op != kClosed )
 		{
-			std::size_t start_of_param = line.find_first_not_of( " \t", end_of_op );
+			size_t start_of_param = line.find_first_not_of( " \t", end_of_op );
 			
 			char param0 = line[ start_of_param ];
 			char delimiter = ' ';
@@ -168,7 +166,7 @@ namespace tool
 				++start_of_param;
 			}
 			
-			std::size_t end_of_param = line.find( delimiter, start_of_param );
+			size_t end_of_param = line.find( delimiter, start_of_param );
 			
 			param = line.substr( start_of_param, end_of_param - start_of_param );
 			
@@ -201,7 +199,7 @@ namespace tool
 				
 				if ( premature_EOF )
 				{
-					std::fprintf( stderr, "Missing heredoc terminator '%s'\n", param.c_str() );
+					fprintf( stderr, "Missing heredoc terminator '%s'\n", param.c_str() );
 					
 					throw p7::exit_failure;
 				}
@@ -225,7 +223,7 @@ namespace tool
 		
 		const char* p = text.c_str();
 		
-		while ( const char* q = std::strchr( p, '\n' ) )
+		while ( const char* q = strchr( p, '\n' ) )
 		{
 			result += prefix;
 			
@@ -252,7 +250,7 @@ namespace tool
 			if ( bytes_read == -1 )
 			{
 				bytes_read = 0;
-				std::perror( "Error reading captured output" );
+				perror( "Error reading captured output" );
 				
 				return true;
 			}
@@ -267,9 +265,9 @@ namespace tool
 		
 		if ( !match )
 		{
-			std::fprintf( stdout, "# EXPECTED:\n%s"
-			                      "# RECEIVED:\n%s", PrefixLines( redir.data    ).c_str(),
-			                                         PrefixLines( actual_output ).c_str() );
+			fprintf( stdout, "# EXPECTED:\n%s"
+			                 "# RECEIVED:\n%s", PrefixLines( redir.data    ).c_str(),
+			                                    PrefixLines( actual_output ).c_str() );
 		}
 		
 		return !match;
@@ -345,7 +343,7 @@ namespace tool
 	{
 		if ( itsCommand.empty() )
 		{
-			std::fprintf( stderr, "Command missing\n" );
+			fprintf( stderr, "Command missing\n" );
 			
 			throw p7::exit_failure;
 		}
@@ -398,7 +396,7 @@ namespace tool
 				break;
 			
 			default:
-				std::fprintf( stderr, "Error in redirection\n" );
+				fprintf( stderr, "Error in redirection\n" );
 				break;
 		}
 	}
@@ -507,7 +505,7 @@ namespace tool
 			
 			if ( fd == -1 )
 			{
-				std::fprintf( stderr, "%s: %s: %s\n", jtest, argv[1], std::strerror( errno ) );
+				fprintf( stderr, "%s: %s: %s\n", jtest, argv[1], strerror( errno ) );
 				
 				return 1;
 			}
@@ -574,7 +572,7 @@ namespace tool
 				continue;
 			}
 			
-			std::fprintf( stderr, "Unprocessed line: %s\n", line.c_str() );
+			fprintf( stderr, "Unprocessed line: %s\n", line.c_str() );
 		}
 		
 		battery.push_back( test );
