@@ -3,13 +3,10 @@
  *	=====
  */
 
-// Standard C/C++
-#include <cstdio>
-#include <cstring>
-
 // Standard C
 #include <errno.h>
 #include <stdio.h>
+#include <string.h>
 
 // POSIX
 #include <fcntl.h>
@@ -25,7 +22,7 @@
 
 static const char* Basename( const char* path )
 {
-	const char* slash = std::strrchr( path, '/' );
+	const char* slash = strrchr( path, '/' );
 	
 	if ( slash == NULL )
 	{
@@ -49,7 +46,7 @@ int main( int argc, char const *const argv[] )
 	{
 		const char* prerequisite = (argc == 1) ? "file arguments" : "destination file";
 		
-		std::fprintf( stderr, "%s: missing %s\n", argv[0], prerequisite );
+		fprintf( stderr, "%s: missing %s\n", argv[0], prerequisite );
 		
 		return 1;
 	}
@@ -70,11 +67,11 @@ int main( int argc, char const *const argv[] )
 			{
 				const char* format = "%s: moving multiple files, but last argument (%s) is not a directory.\n";
 				
-				std::fprintf( stderr, format, argv[ 0 ], destPath );
+				fprintf( stderr, format, argv[ 0 ], destPath );
 			}
 			else
 			{
-				std::fprintf( stderr, "mv: %s: %s\n", destPath, std::strerror( errno ) );
+				fprintf( stderr, "mv: %s: %s\n", destPath, strerror( errno ) );
 			}
 			
 			return 1;
@@ -92,13 +89,13 @@ int main( int argc, char const *const argv[] )
 		const char* srcPath  = argv[ 1 ];
 		
 		int renamed = dest_dirfd >= 0 ? move_into_dir( srcPath, dest_dirfd )
-		                              : std::rename  ( srcPath, destPath   );
+		                              : rename       ( srcPath, destPath   );
 		
 		if ( renamed == -1 )
 		{
-			const char* error_msg = errno == EXDEV ? "can't move across partitions" : std::strerror( errno );
+			const char* error_msg = errno == EXDEV ? "can't move across partitions" : strerror( errno );
 			
-			std::fprintf( stderr, "%s: rename %s to %s: %s\n", argv[ 0 ], srcPath, destPath, error_msg );
+			fprintf( stderr, "%s: rename %s to %s: %s\n", argv[ 0 ], srcPath, destPath, error_msg );
 			
 			return 1;
 		}
