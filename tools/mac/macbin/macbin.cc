@@ -3,13 +3,13 @@
 	---------
 */
 
-// Standard C/C++
-#include <cstdio>
-
 // POSIX
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
+
+// Standard C
+#include <stdio.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -69,7 +69,7 @@ namespace tool
 		return 1;
 	}
 	
-	static void BlockWrite( int fd, const void* data, std::size_t byteCount )
+	static void BlockWrite( int fd, const void* data, size_t byteCount )
 	{
 		p7::write( p7::fd_t( fd ), (const char*) data, byteCount );
 	}
@@ -79,15 +79,15 @@ namespace tool
 	{
 		MacBinary::Decoder decoder( destDir );
 		
-		const std::size_t blockSize = 4096;
+		const size_t blockSize = 4096;
 		
 		char data[ blockSize ];
 		
-		std::size_t totalBytes = 0;
+		size_t totalBytes = 0;
 		
 		try
 		{
-			while ( std::size_t bytes = p7::read( input, data, blockSize ) )
+			while ( size_t bytes = p7::read( input, data, blockSize ) )
 			{
 				decoder.Write( data, bytes );
 				
@@ -96,7 +96,7 @@ namespace tool
 		}
 		catch ( const MacBinary::InvalidMacBinaryHeader& )
 		{
-			std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %lx\n", totalBytes );
+			fprintf( stderr, "Invalid MacBinary header somewhere past offset %lx\n", totalBytes );
 			
 			throw p7::exit_failure;
 		}
@@ -161,7 +161,7 @@ namespace tool
 			
 			if ( !io::item_exists( targetFile ) )
 			{
-				std::fprintf( stderr, "macbin: %s: %s\n", encode_target, std::strerror( ENOENT ) );
+				fprintf( stderr, "macbin: %s: %s\n", encode_target, strerror( ENOENT ) );
 				
 				return 1;
 			}
@@ -190,12 +190,12 @@ namespace tool
 			}
 			catch ( const MacBinary::InvalidMacBinaryHeader& )
 			{
-				std::fprintf( stderr, "macbin: %s: invalid MacBinary header\n", decode_target );
+				fprintf( stderr, "macbin: %s: invalid MacBinary header\n", decode_target );
 				return 1;
 			}
 			catch ( const MacBinary::IncompatibleMacBinaryHeader& )
 			{
-				std::fprintf( stderr, "macbin: %s: incompatible (newer) MacBinary header\n", decode_target );
+				fprintf( stderr, "macbin: %s: incompatible (newer) MacBinary header\n", decode_target );
 				return 2;
 			}
 		}
