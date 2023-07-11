@@ -3,12 +3,12 @@
  *	========
  */
 
-// Standard C/C++
-#include <cmath>
-
 // POSIX
 #include <time.h>
 #include <unistd.h>
+
+// Standard C
+#include <math.h>
 
 // must
 #include "must/write.h"
@@ -39,7 +39,7 @@ int main( int argc, char const *const argv[] )
 	
 	if ( const bool parsed = sleep_arg != argv[1] )
 	{
-		const float int_sleep_time = std::floor( sleep_time );
+		const float int_sleep_time = floor( sleep_time );
 		
 		const long seconds     = static_cast< long >( int_sleep_time );
 		const long nanoseconds = static_cast< long >( (sleep_time - int_sleep_time) * 1000 * 1000 * 1000 );
