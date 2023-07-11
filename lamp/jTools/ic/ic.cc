@@ -16,6 +16,9 @@
 // POSIX
 #include <sys/uio.h>
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -103,7 +106,7 @@ int main( int argc, char** argv )
 						HLock( h );
 						
 						Ptr p = *h;
-						Ptr end = p + GetHandleSize( h );
+						Ptr end = p + mac::glue::GetHandleSize_raw( h );
 						
 						while ( p < end )
 						{
