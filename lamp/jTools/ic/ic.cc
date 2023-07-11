@@ -3,107 +3,28 @@
  *	=====
  */
 
-// Standard C++
-#include <algorithm>
-#include <functional>
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
+#ifndef __INTERNETCONFIG__
+#include <InternetConfig.h>
+#endif
 
 // Standard C/C++
 #include <cstdio>
 
-// Debug
-#include "debug/assert.hh"
-
 // plus
 #include "plus/string.hh"
-
-// nucleus
-#include "nucleus/advance_until_done_sequence.hh"
-#include "nucleus/shared.hh"
-
-// Nitrogen
-#include "Mac/Files/Types/FSCreator.hh"
-#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
-
-#include "Nitrogen/InternetConfig.hh"
 
 // Orion
 #include "Orion/Main.hh"
 
 
-namespace Nitrogen
-{
-	
-	class ICMapEntry_ContainerSpecifics
-	{
-		private:
-			const ICMapEntry* itsEntries;
-			const void* itsEntriesEnd;
-		
-		public:
-			ICMapEntry_ContainerSpecifics( ICMapEntryHandle handle ) : itsEntries( *handle ),
-			                                                           itsEntriesEnd( reinterpret_cast< const char* >( itsEntries ) + Nitrogen::GetHandleSize( handle ) )
-			{
-			}
-			
-			typedef ICMapEntry value_type;
-			//typedef std::size_t value_type;
-			typedef UInt32 size_type;
-			typedef SInt32 difference_type;
-			typedef const value_type* key_type;
-			
-			key_type get_next_key( const key_type& value ) const
-			{
-				const char* next = reinterpret_cast< const char* >( value ) + value->totalLength;
-				
-				ASSERT( next >  (const void*) itsEntries );
-				ASSERT( next <= itsEntriesEnd );
-				
-				if ( next >= itsEntriesEnd )
-				{
-					return end_key();
-				}
-				
-				return reinterpret_cast< const ICMapEntry* >( next );
-			}
-			
-			static const value_type* GetPointer( key_type ptr )  { return ptr; }
-			
-			       key_type begin_key() const  { return itsEntries; }
-			static key_type end_key()          { return NULL;       }
-	};
-	
-	class ICMapEntry_Container : public nucleus::advance_until_done_sequence< ::Nitrogen::ICMapEntry_ContainerSpecifics >
-	{
-		friend ICMapEntry_Container ICMapEntries( nucleus::shared< ICMapEntryHandle > entries );
-		
-		private:
-			nucleus::shared< ICMapEntryHandle > itsEntries;
-			
-			typedef ::Nitrogen::ICMapEntry_ContainerSpecifics Specifics;
-			
-			ICMapEntry_Container( const nucleus::shared< ICMapEntryHandle >& entries ) : nucleus::advance_until_done_sequence< Specifics >( Specifics( entries ) ),
-			                                                                             itsEntries( entries )
-			{
-				if ( !TARGET_API_MAC_OSX )
-				{
-					Nitrogen::HLock( entries.get() );
-				}
-			}
-	};
-	
-	inline ICMapEntry_Container ICMapEntries( nucleus::shared< ICMapEntryHandle > entries )
-	{
-		return ICMapEntry_Container( entries );
-	}
-	
-}
-
 namespace tool
 {
-	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
-	
 	
 	struct ICMapEntryStrings
 	{
@@ -165,25 +86,57 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		Mac::FSCreator signature = Mac::FSCreator( 'Poof' );
+		OSErr err;
+		ICInstance instance;
 		
-		n::owned< ICInstance > ic = N::ICStart( signature );
+		err = ICStart( &instance, 'Poof' );
 		
-	#if !TARGET_API_MAC_CARBON
-		
-		Mac::ThrowOSStatus( ::ICFindConfigFile( ic, 0, NULL ) );
-		
-	#endif
-		
-		Mac::ThrowOSStatus( ::ICBegin( ic, icReadWritePerm ) );
-		
-		N::ICMapEntry_Container mappings = N::ICMapEntries( N::Handle_Cast< ICMapEntry >( N::ICFindPrefHandle( ic, kICMapping ) ) );
-		
-		std::for_each( mappings.begin(),
-		               mappings.end(),
-		               std::ptr_fun( ReportMapping ) );
-		
-		::ICEnd( ic );
+		if ( err == noErr )
+		{
+		#if ! TARGET_API_MAC_CARBON
+			
+			err = ICFindConfigFile( instance, 0, NULL );
+			
+		#endif
+			
+			if ( err == noErr )
+			{
+				err = ICBegin( instance, icReadWritePerm );
+				
+				if ( err == noErr )
+				{
+					if ( Handle h = NewHandle( 0 ) )
+					{
+						ICAttr attr;
+						
+						err = ICFindPrefHandle( instance, kICMapping, &attr, h );
+						
+						if ( err == noErr )
+						{
+							HLock( h );
+							
+							Ptr p = *h;
+							Ptr end = p + GetHandleSize( h );
+							
+							while ( p < end )
+							{
+								ICMapEntry& entry = *(ICMapEntry*) p;
+								
+								ReportMapping( entry );
+								
+								p += entry.totalLength;
+							}
+						}
+						
+						DisposeHandle( h );
+					}
+					
+					ICEnd( instance );
+				}
+			}
+			
+			ICStop( instance );
+		}
 		
 		return 0;
 	}
