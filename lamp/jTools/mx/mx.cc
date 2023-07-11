@@ -3,12 +3,12 @@
  *	=====
  */
 
+// Standard C
+#include <stdio.h>
+
 // Standard C++
 #include <algorithm>
 #include <vector>
-
-// Standard C/C++
-#include <cstdio>
 
 // Nitrogen
 #include "Nitrogen/OpenTransportProviders.hh"
@@ -36,7 +36,7 @@ namespace tool
 	
 	static void PrintMX( const InetMailExchange& mx )
 	{
-		std::printf( "(missing) MX %d %s\n", mx.preference, mx.exchange );
+		printf( "(missing) MX %d %s\n", mx.preference, mx.exchange );
 		
 		//N::InetHost ip = N::OTInetStringToAddress( InternetServices(), (char*) mx.exchange ).addrs[ 0 ];
 		
