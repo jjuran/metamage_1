@@ -14,10 +14,8 @@
 #endif
 
 // Standard C
+#include <stdio.h>
 #include <stdlib.h>
-
-// Standard C/C++
-#include <cstdio>
 
 // iota
 #include "iota/strings.hh"
@@ -163,7 +161,7 @@ namespace tool
 		
 		if ( result != 0 )
 		{
-			std::fprintf( stderr, "load-init: %s: returned %d\n", file, result );
+			fprintf( stderr, "load-init: %s: returned %d\n", file, result );
 		}
 		
 	#endif
