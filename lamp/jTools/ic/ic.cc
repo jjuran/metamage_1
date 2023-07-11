@@ -16,9 +16,6 @@
 // POSIX
 #include <sys/uio.h>
 
-// Orion
-#include "Orion/Main.hh"
-
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -26,9 +23,6 @@
 #define STDOUT_FILENO  1
 #endif
 
-
-namespace tool
-{
 
 static inline void advance( const unsigned char*& p )
 {
@@ -77,7 +71,7 @@ static void ReportMapping( const ICMapEntry& entry )
 	writev( STDOUT_FILENO, iov, sizeof iov / sizeof iov[0] );
 }
 
-int Main( int argc, char** argv )
+int main( int argc, char** argv )
 {
 	OSErr err;
 	ICInstance instance;
@@ -132,6 +126,4 @@ int Main( int argc, char** argv )
 	}
 	
 	return 0;
-}
-
 }
