@@ -7,9 +7,6 @@
 #include <algorithm>
 #include <vector>
 
-// Standard C/C++
-#include <cstdio>
-
 // Mac OS X
 #ifdef __APPLE__
 #include <CoreServices/CoreServices.h>
@@ -27,6 +24,7 @@
 #include <netdb.h>
 
 // Standard C
+#include <stdio.h>
 #include <stdlib.h>
 
 // iota
@@ -198,7 +196,7 @@ namespace tool
 			return;
 		}
 		
-		std::printf( "Relaying from %s to %s\n", returnPath.c_str(), forwardPath.c_str() );
+		printf( "Relaying from %s to %s\n", returnPath.c_str(), forwardPath.c_str() );
 		
 		plus::string smtpServer;
 		
@@ -206,7 +204,7 @@ namespace tool
 		{
 			smtpServer = gRelayServer;
 			
-			std::printf( "Using relay %s\n", gRelayServer );
+			printf( "Using relay %s\n", gRelayServer );
 		}
 		else
 		{
@@ -217,13 +215,13 @@ namespace tool
 			
 			if ( !smtpServer.empty() )
 			{
-				std::printf( "MX for %s is %s\n", rcptDomain.c_str(), smtpServer.c_str() );
+				printf( "MX for %s is %s\n", rcptDomain.c_str(), smtpServer.c_str() );
 			}
 			else
 			{
 				smtpServer = rcptDomain;
 				
-				std::printf( "Using domain %s as server\n", rcptDomain.c_str() );
+				printf( "Using domain %s as server\n", rcptDomain.c_str() );
 			}
 			
 		}
@@ -234,7 +232,7 @@ namespace tool
 		
 		struct in_addr sin_addr = { addr };
 		
-		std::printf( "Address of %s is %s\n", smtpServer.c_str(), inet_ntoa( sin_addr ) );
+		printf( "Address of %s is %s\n", smtpServer.c_str(), inet_ntoa( sin_addr ) );
 		
 		// Make a new socket
 		// and connect to the server.  This could fail, thanks to a bunch of Cox.
@@ -251,11 +249,11 @@ namespace tool
 		
 		smtpSession.BeginData();
 		
-		const std::size_t blockSize = 4096;
+		const size_t blockSize = 4096;
 		
 		char data[ blockSize ];
 		
-		while ( std::size_t bytes = io::read( messageStream, data, blockSize ) )
+		while ( size_t bytes = io::read( messageStream, data, blockSize ) )
 		{
 			p7::write( smtp_server, data, bytes );
 		}
@@ -284,7 +282,7 @@ namespace tool
 		                                              p + file_size,
 		                                              std::ptr_fun( IsControlChar ) );
 		
-		const std::size_t length_of_first_line = end_of_first_line - p;
+		const size_t length_of_first_line = end_of_first_line - p;
 		
 		contents.resize( length_of_first_line );
 		
