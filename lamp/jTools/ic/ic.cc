@@ -13,75 +13,68 @@
 #include <InternetConfig.h>
 #endif
 
-// Standard C/C++
-#include <cstdio>
-
-// plus
-#include "plus/string.hh"
+// POSIX
+#include <sys/uio.h>
 
 // Orion
 #include "Orion/Main.hh"
 
 
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+#ifndef STDOUT_FILENO
+#define STDOUT_FILENO  1
+#endif
+
+
 namespace tool
 {
-	
-	struct ICMapEntryStrings
-	{
-		plus::string  extension;
-		plus::string  creatorAppName;
-		plus::string  postAppName;
-		plus::string  MIMEType;
-		plus::string  entryName;
-	};
 	
 	static inline void advance( const unsigned char*& p )
 	{
 		p += 1 + p[0];
 	}
 	
-	static ICMapEntryStrings GetStringsFromICMapEntry( const ICMapEntry& entry )
-	{
-		ICMapEntryStrings result;
-		
-		const unsigned char* p = (const unsigned char*) &entry + entry.fixedLength;
-		
-		result.extension = p;
-		
-		advance( p );
-		
-		result.creatorAppName = p;
-		
-		advance( p );
-		
-		result.postAppName = p;
-		
-		advance( p );
-		
-		result.MIMEType = p;
-		
-		advance( p );
-		
-		result.entryName = p;
-		
-		return result;
-	}
-	
 	static void ReportMapping( const ICMapEntry& entry )
 	{
 		short version = entry.version;
 		
-		//const unsigned char* ext_ension = (const unsigned char*) entry + entry.fixedLength;
+		const Byte* p = (const Byte*) &entry + entry.fixedLength;
 		
-		ICMapEntryStrings strings = GetStringsFromICMapEntry( entry );
+		const Byte* extension = p;
 		
-		const char* extension      = strings.extension     .c_str();
-		const char* creatorAppName = strings.creatorAppName.c_str();
-		const char* postAppName    = strings.postAppName   .c_str();
-		const char* MIMEType       = strings.MIMEType      .c_str();
-		const char* entryName      = strings.entryName     .c_str();
+		advance( p );
 		
-		std::printf( "v%d: %s - %s: %s\n", version, extension, creatorAppName, MIMEType );
+		const Byte* creatorAppName = p;
+		
+		advance( p );
+		
+		const Byte* postAppName = p;
+		
+		advance( p );
+		
+		const Byte* MIMEType = p;
+		
+		advance( p );
+		
+		const Byte* entryName = p;
+		
+		char vers_char = '0' + version;
+		
+		struct iovec iov[] =
+		{
+			{ (char*) STR_LEN( "v"   )                        },
+			{ &vers_char,                 sizeof (char)       },
+			{ (char*) STR_LEN( ": "  )                        },
+			{ (char*) extension      + 1, extension     [ 0 ] },
+			{ (char*) STR_LEN( " - " )                        },
+			{ (char*) creatorAppName + 1, creatorAppName[ 0 ] },
+			{ (char*) STR_LEN( ": "  )                        },
+			{ (char*) MIMEType       + 1, MIMEType      [ 0 ] },
+			{ (char*) STR_LEN( "\n"  )                        },
+		};
+		
+		writev( STDOUT_FILENO, iov, sizeof iov / sizeof iov[0] );
 	}
 	
 	int Main( int argc, char** argv )
