@@ -3,11 +3,11 @@
 	-------
 */
 
+// Standard C
+#include <stdio.h>
+
 // Standard C++
 #include <list>
-
-// Standard C/C++
-#include <cstdio>
 
 // plus
 #include "plus/var_string.hh"
@@ -92,12 +92,12 @@ namespace tool
 	
 	static Architecture read_arch( const char* arch )
 	{
-		if ( std::strcmp( arch, "m68k" ) == 0 )
+		if ( strcmp( arch, "m68k" ) == 0 )
 		{
 			return arch_m68k;
 		}
 		
-		if ( std::strcmp( arch, "ppc" ) == 0 )
+		if ( strcmp( arch, "ppc" ) == 0 )
 		{
 			return arch_ppc;
 		}
@@ -166,7 +166,7 @@ namespace tool
 		{
 			const bool trailing_colon = *(mac_cwd.end() - 1) == ':';
 			
-			const std::size_t common = mac_cwd.length() - trailing_colon;
+			const size_t common = mac_cwd.length() - trailing_colon;
 			
 			mac_path.erase( 0, common );
 		}
@@ -176,8 +176,8 @@ namespace tool
 	
 	static bool extension_begins_with_char( const char* path, char c )
 	{
-		const char* dot   = std::strrchr( path, '.' );
-		const char* slash = std::strrchr( path, '/' );
+		const char* dot   = strrchr( path, '.' );
+		const char* slash = strrchr( path, '/' );
 		
 		const bool has_dot = dot > slash;  // Works even if slash or dot is NULL
 		
@@ -209,7 +209,7 @@ namespace tool
 		
 		prefix_image_path += ".mwch";
 		
-		const bool filename_only = std::strchr( prefix_path, '/' ) == NULL;
+		const bool filename_only = strchr( prefix_path, '/' ) == NULL;
 		
 		if ( !filename_only )
 		{
@@ -300,7 +300,7 @@ namespace tool
 						break;
 					
 					case 'a':
-						if ( std::strcmp( arg + 1, "arch" ) == 0 )
+						if ( strcmp( arg + 1, "arch" ) == 0 )
 						{
 							arch = read_arch( *++argv );
 						}
@@ -333,7 +333,7 @@ namespace tool
 						break;
 					
 					case 'i':
-						if ( std::strcmp( arg + 1, "include" ) == 0 )
+						if ( strcmp( arg + 1, "include" ) == 0 )
 						{
 							plus::string prefix_path = get_prefix_image_path( *++argv );
 							
@@ -355,7 +355,7 @@ namespace tool
 		
 		if ( output_pathname == NULL )
 		{
-			std::fprintf( stderr, "%s\n", "mwcc: -o is required" );
+			fprintf( stderr, "%s\n", "mwcc: -o is required" );
 			
 			return 1;
 		}
@@ -370,7 +370,7 @@ namespace tool
 		{
 			default:
 			case arch_none:
-				std::fprintf( stderr, "%s\n", "mwcc: invalid architecture" );
+				fprintf( stderr, "%s\n", "mwcc: invalid architecture" );
 				
 				return 1;
 			
