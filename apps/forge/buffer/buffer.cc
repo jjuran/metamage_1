@@ -3,12 +3,9 @@
 	---------
 */
 
-// Standard C/C++
-#include <cstddef>
-#include <cstring>
-
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // POSIX
 #include <sys/ttycom.h>
@@ -121,7 +118,7 @@ namespace tool
 		
 		p7::spew( p7::open( ".~title", p7::o_wronly | p7::o_trunc ),
 		          title,
-		          std::strlen( title ) );
+		          strlen( title ) );
 		
 		const short width  = 2 * 4 +  6 * 80 + 15;
 		const short height = 2 * 4 + 11 * 24;
