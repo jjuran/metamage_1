@@ -29,109 +29,109 @@
 
 namespace tool
 {
+
+static inline void advance( const unsigned char*& p )
+{
+	p += 1 + p[0];
+}
+
+static void ReportMapping( const ICMapEntry& entry )
+{
+	short version = entry.version;
 	
-	static inline void advance( const unsigned char*& p )
-	{
-		p += 1 + p[0];
-	}
+	const Byte* p = (const Byte*) &entry + entry.fixedLength;
 	
-	static void ReportMapping( const ICMapEntry& entry )
-	{
-		short version = entry.version;
-		
-		const Byte* p = (const Byte*) &entry + entry.fixedLength;
-		
-		const Byte* extension = p;
-		
-		advance( p );
-		
-		const Byte* creatorAppName = p;
-		
-		advance( p );
-		
-		const Byte* postAppName = p;
-		
-		advance( p );
-		
-		const Byte* MIMEType = p;
-		
-		advance( p );
-		
-		const Byte* entryName = p;
-		
-		char vers_char = '0' + version;
-		
-		struct iovec iov[] =
-		{
-			{ (char*) STR_LEN( "v"   )                        },
-			{ &vers_char,                 sizeof (char)       },
-			{ (char*) STR_LEN( ": "  )                        },
-			{ (char*) extension      + 1, extension     [ 0 ] },
-			{ (char*) STR_LEN( " - " )                        },
-			{ (char*) creatorAppName + 1, creatorAppName[ 0 ] },
-			{ (char*) STR_LEN( ": "  )                        },
-			{ (char*) MIMEType       + 1, MIMEType      [ 0 ] },
-			{ (char*) STR_LEN( "\n"  )                        },
-		};
-		
-		writev( STDOUT_FILENO, iov, sizeof iov / sizeof iov[0] );
-	}
+	const Byte* extension = p;
 	
-	int Main( int argc, char** argv )
+	advance( p );
+	
+	const Byte* creatorAppName = p;
+	
+	advance( p );
+	
+	const Byte* postAppName = p;
+	
+	advance( p );
+	
+	const Byte* MIMEType = p;
+	
+	advance( p );
+	
+	const Byte* entryName = p;
+	
+	char vers_char = '0' + version;
+	
+	struct iovec iov[] =
 	{
-		OSErr err;
-		ICInstance instance;
+		{ (char*) STR_LEN( "v"   )                        },
+		{ &vers_char,                 sizeof (char)       },
+		{ (char*) STR_LEN( ": "  )                        },
+		{ (char*) extension      + 1, extension     [ 0 ] },
+		{ (char*) STR_LEN( " - " )                        },
+		{ (char*) creatorAppName + 1, creatorAppName[ 0 ] },
+		{ (char*) STR_LEN( ": "  )                        },
+		{ (char*) MIMEType       + 1, MIMEType      [ 0 ] },
+		{ (char*) STR_LEN( "\n"  )                        },
+	};
+	
+	writev( STDOUT_FILENO, iov, sizeof iov / sizeof iov[0] );
+}
+
+int Main( int argc, char** argv )
+{
+	OSErr err;
+	ICInstance instance;
+	
+	err = ICStart( &instance, 'Poof' );
+	
+	if ( err == noErr )
+	{
+	#if ! TARGET_API_MAC_CARBON
 		
-		err = ICStart( &instance, 'Poof' );
+		err = ICFindConfigFile( instance, 0, NULL );
+		
+	#endif
 		
 		if ( err == noErr )
 		{
-		#if ! TARGET_API_MAC_CARBON
-			
-			err = ICFindConfigFile( instance, 0, NULL );
-			
-		#endif
+			err = ICBegin( instance, icReadWritePerm );
 			
 			if ( err == noErr )
 			{
-				err = ICBegin( instance, icReadWritePerm );
-				
-				if ( err == noErr )
+				if ( Handle h = NewHandle( 0 ) )
 				{
-					if ( Handle h = NewHandle( 0 ) )
+					ICAttr attr;
+					
+					err = ICFindPrefHandle( instance, kICMapping, &attr, h );
+					
+					if ( err == noErr )
 					{
-						ICAttr attr;
+						HLock( h );
 						
-						err = ICFindPrefHandle( instance, kICMapping, &attr, h );
+						Ptr p = *h;
+						Ptr end = p + GetHandleSize( h );
 						
-						if ( err == noErr )
+						while ( p < end )
 						{
-							HLock( h );
+							ICMapEntry& entry = *(ICMapEntry*) p;
 							
-							Ptr p = *h;
-							Ptr end = p + GetHandleSize( h );
+							ReportMapping( entry );
 							
-							while ( p < end )
-							{
-								ICMapEntry& entry = *(ICMapEntry*) p;
-								
-								ReportMapping( entry );
-								
-								p += entry.totalLength;
-							}
+							p += entry.totalLength;
 						}
-						
-						DisposeHandle( h );
 					}
 					
-					ICEnd( instance );
+					DisposeHandle( h );
 				}
+				
+				ICEnd( instance );
 			}
-			
-			ICStop( instance );
 		}
 		
-		return 0;
+		ICStop( instance );
 	}
+	
+	return 0;
+}
 
 }
