@@ -1,10 +1,7 @@
-/*	========
- *	mkdir.cc
- *	========
- */
-
-// Standard C/C++
-#include <cstdio>
+/*
+	mkdir.cc
+	--------
+*/
 
 // Standard C
 #include <errno.h>
@@ -23,7 +20,8 @@
 static int failures = 0;
 
 
-static void make_dir( const char* path, int ignored_err = 0 )
+static
+void make_dir( const char* path, int ignored_err = 0 )
 {
 	int f = mkdir( path, 0700 );
 	
@@ -35,7 +33,8 @@ static void make_dir( const char* path, int ignored_err = 0 )
 	}
 }
 
-static void make_dirs( char* path, char* end )
+static
+void make_dirs( char* path, char* end )
 {
 	char* p = end;
 	
@@ -53,7 +52,8 @@ static void make_dirs( char* path, char* end )
 	make_dir( path, EEXIST );
 }
 
-static void make_dirs( char* path )
+static
+void make_dirs( char* path )
 {
 	const size_t length = strlen( path );
 	
