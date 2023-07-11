@@ -10,8 +10,8 @@
 // POSIX
 #include "unistd.h"
 
-// plus
-#include "plus/string/concat.hh"
+// more-libc
+#include "more/string.h"
 
 // relix
 #include "relix/syscall/registry.hh"
@@ -63,7 +63,11 @@ int execve( char  const*  path,
 			return set_errno( EINVAL );
 		}
 		
-		plus::string errMsg = "\n";
+		const char* glue = "";
+		
+		char mesg[ 256 ];
+		
+		mesg[ 0 ] = '\0';
 		
 		try
 		{
@@ -71,7 +75,13 @@ int execve( char  const*  path,
 		}
 		catch ( const N::ErrMessage& msg )
 		{
-			errMsg = ", errMessage: " + plus::string( msg.errMessage ) + "\n";
+			glue = ", errMessage: ";
+			
+			const uint8_t* p = msg.errMessage;
+			
+			char* q = (char*) mempcpy( mesg, p + 1, p[ 0 ] );
+			
+			*q = '\0';
 		}
 		catch ( ... )  {}
 		
@@ -79,7 +89,7 @@ int execve( char  const*  path,
 		
 		if ( num != fnfErr )
 		{
-			printf( "execve: %s: OSStatus %d%s", path, num, errMsg.c_str() );
+			printf( "execve: %s: OSStatus %d%s%s\n", path, num, glue, mesg );
 		}
 		
 		return set_errno_from_exception();
