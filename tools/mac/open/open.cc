@@ -3,10 +3,8 @@
 	-------
 */
 
-// Standard C/C++
-#include <cstdio>
-
 // Standard C
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -387,11 +385,11 @@ namespace tool
 			}
 			catch ( const Mac::OSStatus& err )
 			{
-				std::fprintf( stderr, "open: %s: OSStatus %ld\n", pathname, err.Get() );
+				fprintf( stderr, "open: %s: OSStatus %ld\n", pathname, err.Get() );
 			}
 			catch ( const p7::errno_t& errnum )
 			{
-				std::fprintf( stderr, "open: %s: %s\n", pathname, std::strerror( errnum ) );
+				fprintf( stderr, "open: %s: %s\n", pathname, strerror( errnum ) );
 			}
 		}
 		
