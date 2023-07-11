@@ -10,9 +10,6 @@
 // POSIX
 #include "unistd.h"
 
-// Debug
-#include "debug/assert.hh"
-
 // plus
 #include "plus/string/concat.hh"
 
@@ -42,9 +39,13 @@ int execve( char  const*  path,
 {
 	using namespace Genie;
 	
-	// On a successful exec, we don't return to the dispatcher, but we compensate.
-	// Exec() calls Suspend(), which is equivalent to LeaveSystemCall().
-	// ResumeAfterFork() calls Resume() and LeaveSystemCall().
+	/*
+		On a successful exec, we don't return to the dispatcher, but we
+		compensate:
+		
+		Exec() calls Suspend(), which is equivalent to LeaveSystemCall().
+		ResumeAfterFork() calls Resume() and LeaveSystemCall().
+	*/
 	
 	try
 	{
@@ -74,9 +75,11 @@ int execve( char  const*  path,
 		}
 		catch ( ... )  {}
 		
-		if ( err.Get() != fnfErr )
+		int num = err;
+		
+		if ( num != fnfErr )
 		{
-			std::printf( "execve: %s: OSStatus %d%s", path, int( err.Get() ), errMsg.c_str() );
+			printf( "execve: %s: OSStatus %d%s", path, num, errMsg.c_str() );
 		}
 		
 		return set_errno_from_exception();
