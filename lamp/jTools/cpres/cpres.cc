@@ -4,10 +4,8 @@
  */
 
 // Standard C
+#include <stdio.h>
 #include <stdlib.h>
-
-// Standard C/C++
-#include <cstdio>
 
 // mac-sys-utils
 #include "mac_sys/res_error.hh"
@@ -92,7 +90,7 @@ namespace tool
 		if ( p7::s_isdir( st ) )
 		{
 			// Source item is a directory.
-			std::fprintf( stderr, "cpres: %s: omitting directory\n", source_path );
+			fprintf( stderr, "cpres: %s: omitting directory\n", source_path );
 			
 			return 1;
 		}
@@ -156,7 +154,7 @@ namespace tool
 		
 		if ( globally_using_data_fork  &&  ! has_FSOpenResourceFile() )
 		{
-			std::fprintf( stderr, "cpres: FSOpenResourceFile() unavailable for data fork\n" );
+			fprintf( stderr, "cpres: FSOpenResourceFile() unavailable for data fork\n" );
 			
 			return 2;
 		}
@@ -166,8 +164,8 @@ namespace tool
 		// Check for sufficient number of args
 		if ( argn < 2 )
 		{
-			std::fprintf( stderr, "cpres: missing %s\n", (argn == 0) ? "file arguments"
-			                                                         : "destination file" );
+			fprintf( stderr, "cpres: missing %s\n", (argn == 0) ? "file arguments"
+			                                                    : "destination file" );
 			
 			return 1;
 		}
@@ -181,7 +179,7 @@ namespace tool
 		
 		if ( exists  &&  p7::s_isdir( st ) )
 		{
-			std::fprintf( stderr, "cpres: last argument (%s) is not a file.\n", dest_path );
+			fprintf( stderr, "cpres: last argument (%s) is not a file.\n", dest_path );
 			
 			return 1;
 		}
@@ -206,9 +204,9 @@ namespace tool
 				const char* slash = strrchr( dest_path, '/' );
 				const char* dest_name = slash ? slash + 1 : dest_path;
 				
-				std::fprintf( stderr, "OSStatus %ld copying from %s to %s.\n",
-				                                err.Get(),       source_path,
-				                                                       dest_name );
+				fprintf( stderr, "OSStatus %ld copying from %s to %s.\n",
+				                           err.Get(),       source_path,
+				                                                  dest_name );
 			}
 		}
 		
