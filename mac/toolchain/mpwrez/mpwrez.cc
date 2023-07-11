@@ -3,6 +3,9 @@
 	---------
 */
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <list>
 
@@ -114,7 +117,7 @@ namespace tool
 						break;
 				}
 			}
-			else if ( std::strchr( arg, '/' ) )
+			else if ( strchr( arg, '/' ) )
 			{
 				// translate path
 				command.push_back( StoreMacPathFromPOSIXPath( arg ) );
