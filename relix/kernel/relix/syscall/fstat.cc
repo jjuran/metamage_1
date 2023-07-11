@@ -8,8 +8,8 @@
 // POSIX
 #include <sys/stat.h>
 
-// Standard C/C++
-#include <cstring>
+// Standard C
+#include <string.h>
 
 // vfs
 #include "vfs/filehandle.hh"
@@ -28,7 +28,7 @@ namespace relix
 	
 	int fstat( int fd, struct stat* sb )
 	{
-		std::memset( (void*) sb, '\0', sizeof (struct stat) );
+		memset( (void*) sb, '\0', sizeof (struct stat) );
 		
 		try
 		{

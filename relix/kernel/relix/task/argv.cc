@@ -5,11 +5,11 @@
 
 #include "relix/task/argv.hh"
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <algorithm>
-
-// Standard C/C++
-#include <cstring>
 
 // debug
 #include "debug/assert.hh"
@@ -30,7 +30,7 @@ namespace relix
 			{
 				const char* p = *argv++;
 				
-				result.append( p, std::strlen( p ) + 1 );  // include trailing NUL
+				result.append( p, strlen( p ) + 1 );  // include trailing NUL
 			}
 		}
 		

@@ -8,8 +8,8 @@
 // POSIX
 #include <sys/stat.h>
 
-// Standard C/C++
-#include <cstring>
+// Standard C
+#include <string.h>
 
 // vfs
 #include "vfs/node.hh"
@@ -32,7 +32,7 @@ namespace relix
 	
 	int fstatat( int dirfd, const char* path, struct stat* sb, int flags )
 	{
-		std::memset( (void*) sb, '\0', sizeof (struct stat) );
+		memset( (void*) sb, '\0', sizeof (struct stat) );
 		
 		try
 		{
