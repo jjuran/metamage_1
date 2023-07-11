@@ -5,11 +5,11 @@
 
 #include "A-line/derived_filename.hh"
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <algorithm>
-
-// Standard C/C++
-#include <cstring>
 
 // more-libc
 #include "more/string.h"
@@ -32,15 +32,15 @@ namespace tool
 	{
 		const char* source_data = source_path.data();
 		
-		const std::size_t source_size = source_path.size();
+		const size_t source_size = source_path.size();
 		
 		// Offset of project-relative path within the source pathname.
-		std::size_t path_offset = 0;
+		size_t path_offset = 0;
 		
 		// The sentinel is a double slash inserted in the full pathname
 		// to mark the project directory -- the portion following the
 		// mark is the project-relative path.
-		const std::size_t sentinel = source_path.find( "//" );
+		const size_t sentinel = source_path.find( "//" );
 		
 		if ( ~sentinel )
 		{
@@ -48,7 +48,7 @@ namespace tool
 		}
 		else
 		{
-			const std::size_t last_slash = source_path.find_last_of( "/" );
+			const size_t last_slash = source_path.find_last_of( "/" );
 			
 			if ( ~last_slash )
 			{
@@ -57,7 +57,7 @@ namespace tool
 		}
 		
 		// Length of project-relative path:
-		const std::size_t subpath_length = source_size - path_offset;
+		const size_t subpath_length = source_size - path_offset;
 		
 		plus::string result;
 		
@@ -85,11 +85,11 @@ namespace tool
 		
 		const bool has_trailing_slash = dir.back() == '/';
 		
-		const std::size_t dir_size = dir.size();
-		const std::size_t src_size = filename.size();
-		const std::size_t ext_size = std::strlen( extension );
+		const size_t dir_size = dir.size();
+		const size_t src_size = filename.size();
+		const size_t ext_size = strlen( extension );
 		
-		const std::size_t size = dir_size + !has_trailing_slash + src_size + ext_size;
+		const size_t size = dir_size + !has_trailing_slash + src_size + ext_size;
 		
 		plus::string result;
 		

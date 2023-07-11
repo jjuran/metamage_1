@@ -5,6 +5,9 @@
 
 #include "A-line/ProjectCatalog.hh"
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <vector>
 
@@ -66,7 +69,8 @@ namespace tool
 	static ProjectCatalog gProjectCatalog;
 	
 	
-	static bool ends_with( const plus::string& string, const char* substring, std::size_t length )
+	static
+	bool ends_with( const plus::string& string, const char* substring, size_t length )
 	{
 		return std::equal( string.end() - length, string.end(), substring );
 	}
@@ -306,11 +310,11 @@ namespace tool
 			
 			const char* begin = text.c_str();
 			
-			if ( const char* tab1 = std::strchr( begin, '\t' ) )
+			if ( const char* tab1 = strchr( begin, '\t' ) )
 			{
-				if ( const char* slash = std::strchr( tab1 + 1, '/' ) )
+				if ( const char* slash = strchr( tab1 + 1, '/' ) )
 				{
-					if ( const char* tab2 = std::strchr( slash + 1, '\t' ) )
+					if ( const char* tab2 = strchr( slash + 1, '\t' ) )
 					{
 						plus::string project_name( begin, tab1 );
 						
