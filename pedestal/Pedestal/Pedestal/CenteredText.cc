@@ -24,8 +24,8 @@ enum
 #include <MacTextEditor.h>
 #endif
 
-// Standard C/C++
-#include <cstring>
+// Standard C
+#include <string.h>
 
 // nucleus
 #ifndef NUCLEUS_OWNED_HH
@@ -91,7 +91,7 @@ namespace Nitrogen
 	static inline
 	ATSUFontID ATSUFindFontFromName( const char* name )
 	{
-		return ATSUFindFontFromName( name, std::strlen( name ) );
+		return ATSUFindFontFromName( name, strlen( name ) );
 	}
 	
 }
