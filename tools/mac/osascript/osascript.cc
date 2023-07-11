@@ -6,10 +6,8 @@
 // Standard C++
 #include <vector>
 
-// Standard C/C++
-#include <cstdio>
-
 // Standard C
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -166,7 +164,7 @@ namespace tool
 		
 		if ( errorNumber < 0 )
 		{
-			std::fprintf( stderr, "OSA script error %d during %s:\n", errorNumber, step );
+			fprintf( stderr, "OSA script error %d during %s:\n", errorNumber, step );
 		}
 		
 		errorMessage += "\n";
@@ -187,11 +185,11 @@ namespace tool
 	{
 		plus::var_string result;
 		
-		const std::size_t block_size = 4096;
+		const size_t block_size = 4096;
 		
 		char buffer[ block_size ];
 		
-		while ( std::size_t bytes = p7::read( stream, buffer, block_size ) )
+		while ( size_t bytes = p7::read( stream, buffer, block_size ) )
 		{
 			result.append( buffer, bytes );
 		}
