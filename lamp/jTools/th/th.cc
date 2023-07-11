@@ -8,9 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Standard C/C++
-#include <cstring>
-
 // Standard C++
 #include <algorithm>
 
@@ -181,7 +178,7 @@ namespace tool
 				continue;
 			}
 			
-			const char* comment = std::strchr( begin, '#' );
+			const char* comment = strchr( begin, '#' );
 			
 			const bool todo = comment  &&  memcmp( comment,
 			                                       STR_LEN( "# TODO" ) ) == 0;
@@ -299,7 +296,7 @@ namespace tool
 				test_name += 2;
 			}
 			
-			unsigned name_length = std::strlen( test_name );
+			unsigned name_length = strlen( test_name );
 			
 			if ( test_name[ name_length - 1 ] == 't'  &&  test_name[ name_length - 2 ] == '.' )
 			{
