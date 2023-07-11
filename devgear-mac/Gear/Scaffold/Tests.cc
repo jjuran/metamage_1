@@ -16,8 +16,8 @@ static registration -- a file-static object registers the test in its constructo
 
 #include "Tests.hh"
 
-// Standard C/C++
-#include <cstdio>
+// Standard C
+#include <stdio.h>
 
 // Standard C++
 #include <algorithm>
@@ -112,13 +112,13 @@ namespace Test
 	{
 		ASSERT( group != NULL );
 		
-		std::printf( "Testing case %s\n", group->label );
+		printf( "Testing case %s\n", group->label );
 		
 		fResults.push_back( GroupResult( *group ) );
 		
 		TesterBase::Run( group );
 		
-		std::printf( "\n" );
+		printf( "\n" );
 	}
 	
 	void SampleTester::Assert( bool condition, const char* test, const char* file, int line )
@@ -127,7 +127,7 @@ namespace Test
 		
 		if ( verbose )
 		{
-			std::printf( "%s: %s\n", (condition ? "PASSED" : "FAILED"), test );
+			printf( "%s: %s\n", (condition ? "PASSED" : "FAILED"), test );
 		}
 		
 		fResults.back().fResults.push_back( Result( condition ? kTestPassed
