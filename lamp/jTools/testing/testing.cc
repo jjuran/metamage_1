@@ -22,10 +22,8 @@
 // Standard C
 #include "errno.h"
 #include "signal.h"
+#include "stdio.h"
 #include "stdlib.h"
-
-// Standard C/C++
-#include <cstdio>
 
 // Standard C++
 #include <functional>
@@ -287,8 +285,8 @@ static int TestVectoria( int argc, char** argv )
 {
 	namespace V = Vectoria;
 	
-	std::printf( "%s\n%s\n", PrintableValue( V::IdentityMatrix::Make< int, 1 >() ).c_str(),
-	                         PrintableValue( V::IdentityMatrix::Make< int, 2 >() ).c_str() );
+	printf( "%s\n%s\n", PrintableValue( V::IdentityMatrix::Make< int, 1 >() ).c_str(),
+	                    PrintableValue( V::IdentityMatrix::Make< int, 2 >() ).c_str() );
 	
 	return 0;
 }
@@ -485,14 +483,14 @@ static int TestCRC16( int argc, char** argv )
 	
 	const char* text = argv[ 2 ];
 	
-	unsigned int mb3CRC = CalculateCRC( (const unsigned char*)text, std::strlen( text ) );
+	unsigned int mb3CRC = CalculateCRC( (const uint8_t*) text, strlen( text ) );
 	
-	unsigned int lcsCRC = CalcCRC     ( (const unsigned char*)text, std::strlen( text ) );
+	unsigned int lcsCRC = CalcCRC     ( (const uint8_t*) text, strlen( text ) );
 	
-	std::printf( "MB3: %.8x\n"
-	             "LCS: %.8x\n",
-	                   mb3CRC,
-	                   lcsCRC );
+	printf( "MB3: %.8x\n"
+	        "LCS: %.8x\n",
+	              mb3CRC,
+	              lcsCRC );
 	
 	return 0;
 }
@@ -512,7 +510,7 @@ static int TestOADC( int argc, char** argv )
 			::CloseComponent( ci );
 		}
 		
-		std::printf( "OpenADefaultComponent returned %d.\n", err );
+		printf( "OpenADefaultComponent returned %d.\n", err );
 	}
 	
 	return 0;
@@ -530,7 +528,7 @@ static void DoSomethingWithServiceFile( const plus::string& file )
 	plus::string infoPList = p7::slurp( infoPListFile.c_str() );
 	
 	// Search for a menu item
-	std::size_t iNSMenuItem = infoPList.find( "<key>NSMenuItem</key>" );
+	size_t iNSMenuItem = infoPList.find( "<key>NSMenuItem</key>" );
 	
 	if ( iNSMenuItem == infoPList.npos )
 	{
@@ -539,11 +537,11 @@ static void DoSomethingWithServiceFile( const plus::string& file )
 	}
 	
 	// Keep track of where we left off
-	std::size_t iLast = iNSMenuItem;
+	size_t iLast = iNSMenuItem;
 	
 	while ( true )
 	{
-		std::size_t iDefault = infoPList.find( "<key>default</key>", iLast );
+		size_t iDefault = infoPList.find( "<key>default</key>", iLast );
 		
 		if ( iDefault == infoPList.npos )
 		{
@@ -553,15 +551,15 @@ static void DoSomethingWithServiceFile( const plus::string& file )
 		
 		plus::string stringElement = "<string>";
 		// Find the <string> start tag
-		std::size_t iString = infoPList.find( stringElement, iDefault );
+		size_t iString = infoPList.find( stringElement, iDefault );
 		// Skip the tag
-		std::size_t iValue = iString + stringElement.size();
+		size_t iValue = iString + stringElement.size();
 		// Find the end tag
-		std::size_t iEndString = infoPList.find( "</string>", iValue );
+		size_t iEndString = infoPList.find( "</string>", iValue );
 		// Grab the intervening text
 		plus::string value = infoPList.substr( iValue, iEndString - iValue );
 		
-		std::printf( "Service: %s\n", value.c_str() );
+		printf( "Service: %s\n", value.c_str() );
 		
 		iLast = iEndString;
 	}
@@ -600,7 +598,7 @@ static int TestStrError( int argc, char** argv )
 		
 		if ( str == NULL || errno != 0 )  break;
 		
-		std::printf( "strerror(%d): %s\n", errnum, str );
+		printf( "strerror(%d): %s\n", errnum, str );
 	}
 	
 	return 0;
@@ -869,7 +867,7 @@ static void CheckObjects( int trial )
 {
 	if ( gObjectCount )
 	{
-		std::fprintf( stderr, "%d: Object count: %d\n", trial, gObjectCount );
+		fprintf( stderr, "%d: Object count: %d\n", trial, gObjectCount );
 		
 		gObjectCount = 0;
 	}
