@@ -5,8 +5,8 @@
 
 #include "vfs/functions/resolve_pathname.hh"
 
-// Standard C/C++
-#include <cstring>
+// Standard C
+#include <string.h>
 
 // Standard C++
 #include <algorithm>
@@ -56,7 +56,7 @@ namespace vfs
 	
 	node_ptr resolve_relative_path( const node&  root,
 	                                const char*  begin,
-	                                std::size_t  length,
+	                                size_t       length,
 	                                const node&  current )
 	{
 		if ( length == 0 )
@@ -101,7 +101,7 @@ namespace vfs
 	
 	node_ptr resolve_absolute_path( const node&  root,
 	                                const char*  begin,
-	                                std::size_t  length )
+	                                size_t       length )
 	{
 		ASSERT( length != 0 );
 		
@@ -126,7 +126,7 @@ namespace vfs
 	
 	node_ptr resolve_pathname( const node&  root,
 	                           const char*  begin,
-	                           std::size_t  length,
+	                           size_t       length,
 	                           const node&  current )
 	{
 		if ( length == 0 )
@@ -146,7 +146,7 @@ namespace vfs
 	                           const char*  pathname,
 	                           const node&  current )
 	{
-		return resolve_pathname( root, pathname, std::strlen( pathname ), current );
+		return resolve_pathname( root, pathname, strlen( pathname ), current );
 	}
 	
 	node_ptr resolve_pathname( const node&          root,
