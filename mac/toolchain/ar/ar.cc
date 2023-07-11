@@ -3,11 +3,11 @@
 	-----
 */
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <list>
-
-// Standard C/C++
-#include <cstring>
 
 // Iota
 #include "iota/strings.hh"
@@ -172,14 +172,14 @@ namespace tool
 			return 2;
 		}
 		
-		if ( std::strcmp( argv[1], "rcs" ) != 0 )
+		if ( strcmp( argv[1], "rcs" ) != 0 )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "ar: arg 1 must be 'rcs'\nUsage: ar rcs out.lib in1.o ...\n" ) );
 			
 			return 2;
 		}
 		
-		std::size_t n_inputs = argc - 3;
+		size_t n_inputs = argc - 3;
 		
 		const char* output_path = argv[ 2 ];
 		
