@@ -6,10 +6,8 @@
 // Standard C++
 #include <list>
 
-// Standard C/C++
-#include <cstdio>
-
 // Standard C
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -198,7 +196,7 @@ namespace tool
 			}
 		}
 		
-		std::fprintf( stderr, "System library missing: %s\n", libName.c_str() );
+		fprintf( stderr, "System library missing: %s\n", libName.c_str() );
 		
 		throw p7::exit_failure;
 	}
@@ -206,12 +204,12 @@ namespace tool
 	
 	static Architecture read_arch( const char* arch )
 	{
-		if ( std::strcmp( arch, "m68k" ) == 0 )
+		if ( strcmp( arch, "m68k" ) == 0 )
 		{
 			return arch_m68k;
 		}
 		
-		if ( std::strcmp( arch, "ppc" ) == 0 )
+		if ( strcmp( arch, "ppc" ) == 0 )
 		{
 			return arch_ppc;
 		}
@@ -242,7 +240,7 @@ namespace tool
 			}
 		}
 		
-		std::fprintf( stderr, "ld: can't find library: %s\n", lib );
+		fprintf( stderr, "ld: can't find library: %s\n", lib );
 		
 		throw p7::exit_failure;
 	}
@@ -347,7 +345,7 @@ namespace tool
 				break;
 			
 			case 'a':
-				if ( std::strcmp( arg + 1, "arch" ) == 0 )
+				if ( strcmp( arg + 1, "arch" ) == 0 )
 				{
 					arch = read_arch( *++argv );
 				}
@@ -355,7 +353,7 @@ namespace tool
 				break;
 			
 			case 'd':
-				if ( std::strcmp( arg + 1, "dynamic" ) == 0 )
+				if ( strcmp( arg + 1, "dynamic" ) == 0 )
 				{
 					gProductType = kProductSharedLib;
 				}
@@ -452,7 +450,7 @@ namespace tool
 	static
 	void do_plus_option( const char* arg, CStrVec& command_args )
 	{
-		if ( const char* equals = std::strchr( arg, '=' ) )
+		if ( const char* equals = strchr( arg, '=' ) )
 		{
 			plus::var_string option( arg, equals );
 			
@@ -486,7 +484,7 @@ namespace tool
 			
 			if ( pkgInfo.length() < sizeof 'Type' + sizeof 'Crtr' )
 			{
-				std::fprintf( stderr, "%s\n", "ld: PkgInfo is shorter than 8 bytes" );
+				fprintf( stderr, "%s\n", "ld: PkgInfo is shorter than 8 bytes" );
 				
 				throw p7::exit_failure;
 			}
@@ -515,7 +513,7 @@ namespace tool
 					break;
 				
 				default:
-					std::fprintf( stderr, "%s\n", "ld: file type in PkgInfo is not recognized" );
+					fprintf( stderr, "%s\n", "ld: file type in PkgInfo is not recognized" );
 			}
 			
 			return false;  // Not a library
@@ -534,7 +532,7 @@ namespace tool
 			return;
 		}
 		
-		const bool is_pathname = std::strchr( arg, '/' ) != NULL;
+		const bool is_pathname = strchr( arg, '/' ) != NULL;
 		
 		if ( is_pathname  &&  gFirstObjectFilePath == NULL )
 		{
@@ -575,7 +573,7 @@ namespace tool
 		
 		if ( output_pathname == NULL )
 		{
-			std::fprintf( stderr, "%s\n", "ld: -o is required" );
+			fprintf( stderr, "%s\n", "ld: -o is required" );
 			
 			return 1;
 		}
@@ -590,7 +588,7 @@ namespace tool
 		{
 			default:
 			case arch_none:
-				std::fprintf( stderr, "%s\n", "ld: invalid architecture" );
+				fprintf( stderr, "%s\n", "ld: invalid architecture" );
 				
 				return 1;
 			
