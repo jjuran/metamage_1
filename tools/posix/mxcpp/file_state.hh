@@ -6,8 +6,8 @@
 #ifndef MXCPP_FILESTATE_HH
 #define MXCPP_FILESTATE_HH
 
-// Standard C/C++
-#include <cstddef>
+// Standard C
+#include <stddef.h>
 
 // plus
 #include "plus/string.hh"
@@ -35,11 +35,11 @@ namespace tool
 			const char*         its_dir_path;
 			text_input::feed    its_feed;
 			poseven::fd_reader  its_reader;
-			std::size_t         its_nth_line;
+			size_t              its_nth_line;
 			plus::string        its_logical_line;
 		
 		public:
-			std::size_t  its_buffered_blank_line_count;
+			size_t  its_buffered_blank_line_count;
 			
 			file_state( const char*          dir,
 			            const plus::string&  path,

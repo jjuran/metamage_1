@@ -27,9 +27,6 @@ typedef vxo::StrMap_to< token_list > token_list_map;
 namespace tool
 {
 	
-	using std::size_t;
-	
-	
 	static inline bool is_initial( char c )
 	{
 		return isalpha( c )  ||  c == '_';

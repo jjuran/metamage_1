@@ -6,9 +6,6 @@
 #ifndef MXCPP_PREPROCESS_HH
 #define MXCPP_PREPROCESS_HH
 
-// Standard C/C++
-#include <cstddef>
-
 // plus
 #include "plus/string_fwd.hh"
 
