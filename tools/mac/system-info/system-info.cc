@@ -184,11 +184,9 @@ void host_env()
 	
 	const unsigned char* mnam = mac::sys::get_machine_name();
 	
-#if ! TARGET_API_MAC_CARBON
-	
 	Str255 indexed_mnam = {};
 	
-	if ( mnam == NULL )
+	if ( ! TARGET_API_MAC_CARBON  &&  mnam == NULL )
 	{
 		/*
 			The 'mnam' Gestalt selector is not present.  Index the list of
@@ -200,15 +198,17 @@ void host_env()
 		
 		const short machine_id = mac::sys::get_machine_id();
 		
+	#if ! __LP64__
+		
 		GetIndString( indexed_mnam, -16395, machine_id );
+		
+	#endif
 		
 		if ( indexed_mnam[ 0 ] > 0  &&  indexed_mnam[ 1 ] != ' ' )
 		{
 			mnam = indexed_mnam;
 		}
 	}
-	
-#endif
 	
 	if ( mnam != NULL )
 	{
