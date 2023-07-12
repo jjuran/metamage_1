@@ -40,6 +40,10 @@
 #include "mac_sys/has/virtualization.hh"
 #include "mac_sys/rom_size.hh"
 
+#ifndef __GESTALT__
+enum { kMachineNameStrID = -16395 };
+#endif
+
 
 #pragma exceptions off
 
@@ -184,7 +188,7 @@ void host_env()
 	
 	const unsigned char* mnam = mac::sys::get_machine_name();
 	
-	Str255 indexed_mnam = {};
+	Str255 indexed_mnam;
 	
 	if ( ! TARGET_API_MAC_CARBON  &&  mnam == NULL )
 	{
@@ -198,9 +202,11 @@ void host_env()
 		
 		const short machine_id = mac::sys::get_machine_id();
 		
+		indexed_mnam[ 0 ] = 0;
+		
 	#if ! __LP64__
 		
-		GetIndString( indexed_mnam, -16395, machine_id );
+		GetIndString( indexed_mnam, kMachineNameStrID, machine_id );
 		
 	#endif
 		
