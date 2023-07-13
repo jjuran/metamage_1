@@ -5,15 +5,8 @@
 
 #include "mac_sys/gestalt.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
-
-// Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
+// mac-glue-utils
+#include "mac_glue/Gestalt.hh"
 
 // mac-sys-utils
 #include "mac_sys/has/Gestalt.hh"
@@ -29,11 +22,7 @@ long gestalt( unsigned long selector, long default_value )
 		return default_value;
 	}
 	
-	SInt32 result;
-	
-	const OSErr err = ::Gestalt( selector, &result );
-	
-	return err == noErr ? result : default_value;
+	return mac::glue::gestalt_or( selector, default_value );
 }
 
 bool gestalt_defined( unsigned long selector )
@@ -43,11 +32,7 @@ bool gestalt_defined( unsigned long selector )
 		return false;
 	}
 	
-	SInt32 unused_Gestalt_result;
-	
-	const OSErr err = ::Gestalt( selector, &unused_Gestalt_result );
-	
-	return err == noErr;
+	return ! mac::glue::gestalt_err( selector );
 }
 
 }
