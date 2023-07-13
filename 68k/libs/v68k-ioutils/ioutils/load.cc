@@ -5,13 +5,6 @@
 
 #include "ioutils/load.hh"
 
-// Mac OS
-#ifdef __MC68K__
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
-#endif
-
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
@@ -21,6 +14,11 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+
+// mac-glue-utils
+#ifdef __MC68K__
+#include "mac_glue/Gestalt.hh"
+#endif
 
 // v68k-alloc
 #include "v68k-alloc/memory.hh"
@@ -81,9 +79,7 @@ void* load_file( const char* path, uint32_t* size )
 {
 #ifdef __MC68K__
 	
-	SInt32 response;
-	
-	if ( ::Gestalt( 'v68k', &response ) == noErr )
+	if ( ! mac::glue::gestalt_err( 'v68k' ) )
 	{
 		return size ? load_with_size( path, size ) : load( path );
 	}
