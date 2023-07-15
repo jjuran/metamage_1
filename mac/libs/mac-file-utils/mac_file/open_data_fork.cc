@@ -17,6 +17,9 @@
 #endif
 #endif
 
+// more-libc
+#include "more/string.h"
+
 // mac-sys-utils
 #include "mac_sys/has/FSSpec_calls.hh"
 
@@ -37,7 +40,25 @@ FSIORefNum open_data_fork( const FSSpec& file, signed char perm )
 	}
 	else
 	{
-		err = HOpen( file.vRefNum, file.parID, file.name, perm, &result );
+		ConstStr255Param namePtr = file.name;
+		
+		Str255 name;
+		
+		if ( file.name[ 1 ] == '.' )
+		{
+			Byte len = file.name[ 0 ];
+			
+			namePtr = name;
+			
+			Byte* p = name;
+			
+			*p++ = len + 1;
+			*p++ = ':';
+			
+			mempcpy( p, file.name + 1, len );
+		}
+		
+		err = HOpen( file.vRefNum, file.parID, namePtr, perm, &result );
 	}
 	
 	return err ? err : result;
