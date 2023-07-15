@@ -6,7 +6,7 @@
 #include "file_save.hh"
 
 // mac-sys-utils
-#include "mac_sys/has/FSSpec_calls.hh"
+#include "mac_sys/gestalt.hh"
 
 // mac-file-utils
 #include "mac_file/file_traits.hh"
@@ -132,18 +132,6 @@ long FSSpec_saver( const FSSpec& file )
 static
 FSIORefNum HFS_opener( short vRefNum, long dirID, const Byte* name )
 {
-	if ( mac::sys::has_FSSpec_calls() )
-	{
-		FSSpec file;
-		
-		file.vRefNum = vRefNum;
-		file.parID   = dirID;
-		
-		BlockMoveData( name, file.name, 1 + name[ 0 ] );
-		
-		return FSSpec_opener( file );
-	}
-	
 	if ( OSErr err = HCreate( vRefNum, dirID, name, creator, doctype ) )
 	{
 		return err;
