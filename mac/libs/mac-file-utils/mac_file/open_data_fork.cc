@@ -27,6 +27,41 @@
 namespace mac  {
 namespace file {
 
+FSIORefNum open_data_fork( short                 vRefNum,
+                           long                  dirID,
+                           const unsigned char*  name,
+                           signed char           perm )
+{
+	OSErr err;
+	FSIORefNum result;
+	
+#if ! __LP64__
+	
+	Str255 path;
+	
+	if ( name[ 1 ] == '.' )
+	{
+		Byte len = name[ 0 ];
+		
+		Byte* p = path;
+		
+		*p++ = len + 1;
+		*p++ = ':';
+		
+		mempcpy( p, name + 1, len );
+		
+		name = path;
+	}
+	
+	err = HOpen( vRefNum, dirID, name, perm, &result );
+	
+	return err ? err : result;
+	
+#endif
+	
+	return 0;
+}
+
 FSIORefNum open_data_fork( const FSSpec& file, signed char perm )
 {
 	OSErr err;
@@ -40,25 +75,7 @@ FSIORefNum open_data_fork( const FSSpec& file, signed char perm )
 	}
 	else
 	{
-		ConstStr255Param namePtr = file.name;
-		
-		Str255 name;
-		
-		if ( file.name[ 1 ] == '.' )
-		{
-			Byte len = file.name[ 0 ];
-			
-			namePtr = name;
-			
-			Byte* p = name;
-			
-			*p++ = len + 1;
-			*p++ = ':';
-			
-			mempcpy( p, file.name + 1, len );
-		}
-		
-		err = HOpen( file.vRefNum, file.parID, namePtr, perm, &result );
+		return open_data_fork( file.vRefNum, file.parID, file.name, perm );
 	}
 	
 	return err ? err : result;

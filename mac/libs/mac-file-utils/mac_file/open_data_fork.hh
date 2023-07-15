@@ -16,6 +16,11 @@ struct FSSpec;
 namespace mac  {
 namespace file {
 	
+	FSIORefNum open_data_fork( short                 vRefNum,
+	                           long                  dirID,
+	                           const unsigned char*  name,
+	                           signed char           perm );
+	
 	FSIORefNum open_data_fork( const FSSpec& file, signed char perm );
 	FSIORefNum open_data_fork( const FSRef&  file, signed char perm );
 	
