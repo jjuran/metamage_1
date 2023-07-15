@@ -5,8 +5,24 @@
 
 #include "Genie/FS/ResFile_Dir.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __FILES__
+#include <Files.h>
+#endif
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
+
 // POSIX
 #include <sys/stat.h>
+
+// mac-file-utils
+#include "mac_file/open_rsrc_fork.hh"
 
 // mac-rsrc-utils
 #include "mac_rsrc/create_res_file.hh"
@@ -16,8 +32,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
-#include "Nitrogen/Resources.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // vfs
 #include "vfs/node.hh"
@@ -34,8 +49,6 @@
 namespace Genie
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -119,14 +132,35 @@ namespace Genie
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
-		n::owned< Mac::FSFileRefNum > resource_fork = N::HOpenRF( fileSpec, Mac::fsRdWrPerm );
+		Size size;
 		
-		if ( N::GetEOF( resource_fork ) > 286 )
+		short refnum = mac::file::open_rsrc_fork( fileSpec, fsRdWrPerm );
+		
+		OSErr err = refnum;
+		
+		if ( refnum >= 0 )
+		{
+			err = GetEOF( refnum, &size );
+			
+			if ( err == noErr )
+			{
+				if ( size <= 286 )
+				{
+					size = 0;
+					
+					err = SetEOF( refnum, 0 );
+				}
+			}
+			
+			FSClose( refnum );
+		}
+		
+		Mac::ThrowOSStatus( err );
+		
+		if ( size )
 		{
 			p7::throw_errno( ENOTEMPTY );
 		}
-		
-		N::SetEOF( resource_fork, 0 );
 	}
 	
 	static void empty_rsrc_fork_mkdir( const vfs::node* that, mode_t mode )
