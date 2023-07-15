@@ -582,7 +582,8 @@ namespace MacBinary
 		blockWrite( output, &buffer[0], paddedCount );
 	}
 	
-	static void EncodeFile( const FSSpec& file, HFileInfo& hFileInfo, BlockWriter blockWrite, int output )
+	static
+	void EncodeFile( const FSSpec& file, const HFileInfo& hFileInfo, BlockWriter blockWrite, int output )
 	{
 		using mac::file::get_desktop_comment;
 		
@@ -624,7 +625,8 @@ namespace MacBinary
 		}
 	}
 	
-	static void EncodeFolder( CInfoPBRec& cInfo, BlockWriter blockWrite, int output )
+	static
+	void EncodeFolder( const CInfoPBRec& cInfo, BlockWriter blockWrite, int output )
 	{
 		HeaderBlock u;
 		
