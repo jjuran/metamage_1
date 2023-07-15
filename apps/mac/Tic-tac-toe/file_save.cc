@@ -149,10 +149,7 @@ FSIORefNum HFS_opener( short vRefNum, long dirID, const Byte* name )
 		return err;
 	}
 	
-	FSIORefNum refnum;
-	OSErr err = HOpen( vRefNum, dirID, name, fsRdWrPerm, &refnum );
-	
-	return err ? err : refnum;
+	return mac::file::open_data_fork( vRefNum, dirID, name, fsRdWrPerm );
 }
 
 static
