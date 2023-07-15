@@ -38,6 +38,7 @@
 // mac-file-utils
 #include "mac_file/desktop.hh"
 #include "mac_file/directory.hh"
+#include "mac_file/listing.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -46,8 +47,8 @@
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/MacMemory.hh"
 
-// FSContents
-#include "FSContents.h"
+// Io: MacFiles
+#include "MacFiles/Classic.hh"
 
 
 /*
@@ -631,21 +632,31 @@ namespace MacBinary
 	static
 	void EncodeFolder( const CInfoPBRec& cInfo, BlockWriter blockWrite, int output )
 	{
+		using mac::file::directory_listing;
+		using mac::file::list_entry;
+		
 		HeaderBlock u;
 		
 		MakeFolderHeader( cInfo.hFileInfo, u.h );
 		
 		blockWrite( output, u.block.data, sizeof u.block );
 		
-		N::FSDirSpec dir = n::make< N::FSDirSpec >( cInfo );
+		short vRefNum = cInfo.dirInfo.ioVRefNum;
+		long  dirID   = cInfo.dirInfo.ioDrDirID;
 		
-		N::FSSpecContents_Container contents = N::FSContents( dir );
+		directory_listing listing;
 		
-		typedef N::FSSpecContents_Container::const_iterator const_iterator;
+		OSErr err = list_directory( listing, vRefNum, dirID );
 		
-		for ( const_iterator it = contents.begin();  it != contents.end();  ++it )
+		Mac::ThrowOSStatus( err );
+		
+		unsigned n = listing.count();
+		
+		for ( unsigned i = 0;  i < n;  ++i )
 		{
-			Encode( dir / *it, blockWrite, output );
+			const list_entry& entry = listing.get_nth( i );
+			
+			Encode( entry.cInfo, blockWrite, output );
 		}
 		
 		u.h.Set< kFileCreator >( 0xFFFFFFFE );
