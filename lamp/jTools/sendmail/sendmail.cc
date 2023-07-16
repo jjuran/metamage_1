@@ -34,7 +34,6 @@
 #include "command/get_option.hh"
 
 // plus
-#include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
 
 // Nitrogen
@@ -262,11 +261,6 @@ namespace tool
 		smtpSession.Quit();
 	}
 	
-	static bool IsControlChar( char c )
-	{
-		return iota::is_cntrl( c );
-	}
-	
 	template < class Stream >
 	static plus::string ReadOneLinerFromStream( Stream fileH )
 	{
@@ -278,9 +272,13 @@ namespace tool
 		
 		io::read( fileH, p, file_size );
 		
-		const char* end_of_first_line = std::find_if( p,
-		                                              p + file_size,
-		                                              std::ptr_fun( IsControlChar ) );
+		char* q = p;
+		
+		while ( ! iota::is_cntrl( *q++ ) )  continue;
+		
+		--q;
+		
+		const char* end_of_first_line = q;
 		
 		const size_t length_of_first_line = end_of_first_line - p;
 		
