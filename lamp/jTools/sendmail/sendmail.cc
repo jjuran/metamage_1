@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <vector>
 
 // Mac OS X
 #ifdef __APPLE__
@@ -153,9 +152,7 @@ namespace tool
 		
 		const int max_results = 10;  // Should be more than enough
 		
-		std::vector< InetMailExchange > results;	
-		
-		results.resize( 10 );  // Should be more than enough
+		InetMailExchange results[ max_results ];
 		
 		UInt16 n = N::OTInetMailExchange( NULL,
 		                                  (char*) domain.c_str(),
