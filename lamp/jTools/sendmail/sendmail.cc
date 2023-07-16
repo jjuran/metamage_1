@@ -34,7 +34,7 @@
 #include "command/get_option.hh"
 
 // plus
-#include "plus/var_string.hh"
+#include "plus/string.hh"
 
 // Nitrogen
 #include "Nitrogen/Folders.hh"
@@ -266,7 +266,7 @@ namespace tool
 	{
 		const size_t file_size = io::get_file_size( fileH );
 		
-		plus::var_string contents;
+		plus::string contents;
 		
 		char* p = contents.reset( file_size );
 		
@@ -282,9 +282,7 @@ namespace tool
 		
 		const size_t length_of_first_line = end_of_first_line - p;
 		
-		contents.resize( length_of_first_line );
-		
-		return contents;
+		return contents.substr( 0, length_of_first_line );
 	}
 	
 	template < class FileSpec >
