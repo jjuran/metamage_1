@@ -135,16 +135,6 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 #define __BIG_ENDIAN__
 #endif
 
-#if !defined(NSIG) || defined(M_UNIX) || defined(M_XENIX) || defined(__NetBSD__)
-# include <signal.h>
-#endif
-
-#ifndef SIGABRT
-#    define SIGABRT SIGILL
-#endif
-#ifndef SIGILL
-#    define SIGILL 6         /* blech */
-#endif
 #define ABORT() abort();
 
 /*
