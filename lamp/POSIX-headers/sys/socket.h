@@ -390,8 +390,6 @@ struct omsghdr {
 
 #define SA_LEN(x) ((x)->sa_len)
 
-#ifndef	_KERNEL
-
 #include <sys/cdefs.h>
 
 __BEGIN_DECLS
@@ -415,15 +413,5 @@ int	shutdown(int, int);
 int	socket(int, int, int);
 int	socketpair(int, int, int, int *);
 __END_DECLS
-#else
-# if defined(COMPAT_43) || defined(COMPAT_SUNOS) || defined(COMPAT_LINUX) || \
-     defined(COMPAT_HPUX) || defined(COMPAT_FREEBSD) || defined(COMPAT_BSDOS) \
-     || defined(COMPAT_OSF1)
-#  define COMPAT_OLDSOCK
-#  define MSG_COMPAT	0x8000
-# endif
-
-void	pfctlinput(int, struct sockaddr *);
-#endif /* !_KERNEL */
 
 #endif /* !_SYS_SOCKET_H_ */
