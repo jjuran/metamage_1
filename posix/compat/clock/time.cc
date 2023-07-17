@@ -171,7 +171,7 @@ const bool has_Microseconds = true;
 
 #endif
 
-const uint64_t ns_per_tick = billion * 100000ull / 6014742;  // 16625817
+const UInt64 ns_per_tick = billion * 100000ull / 6014742;  // 16625817
 
 int clock_getres( clockid_t clock_id, struct timespec* ts )
 {
@@ -181,8 +181,8 @@ int clock_getres( clockid_t clock_id, struct timespec* ts )
 	
 	if ( clock_id == CLOCK_MONOTONIC  &&  &UpTime != 0 )
 	{
-		uint64_t one = 1;
-		uint64_t res;
+		UInt64 one = 1;
+		UInt64 res;
 		
 		(Nanoseconds&) res = AbsoluteToNanoseconds( (const AbsoluteTime&) one );
 		
@@ -207,7 +207,7 @@ int clock_gettime( clockid_t clock_id, struct timespec* ts )
 	
 	if ( clock_id == CLOCK_MONOTONIC )
 	{
-		uint64_t now;
+		UInt64 now;
 		
 	#if TARGET_CPU_PPC
 		
@@ -239,8 +239,8 @@ int clock_gettime( clockid_t clock_id, struct timespec* ts )
 		
 		Microseconds( (UnsignedWide*) &now );
 		
-		ts->tv_sec  =           now / million;
-		ts->tv_nsec = uint32_t( now % million ) * 1000;
+		ts->tv_sec  =         now / million;
+		ts->tv_nsec = UInt32( now % million ) * 1000;
 		
 		return 0;
 	}
