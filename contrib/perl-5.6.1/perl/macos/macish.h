@@ -127,14 +127,6 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
  */
 /* #define ALTERNATE_SHEBANG "#!" / **/
 
-/* Since we have CROSSCOMPILE and MULTIARCH defined, we need to make
- * sure everyone knows we are big-endian.
- */
-
-#ifdef __MC68K__
-#define __BIG_ENDIAN__
-#endif
-
 #define ABORT() abort();
 
 /*
