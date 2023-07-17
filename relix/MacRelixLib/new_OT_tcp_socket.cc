@@ -483,7 +483,7 @@ namespace relix
 		
 		::OTMemzero( &reqAddr, sizeof (TBind) );
 		
-		reqAddr.addr.buf = (uint8_t*) &extra.sock_addr;  // reinterpret_cast
+		reqAddr.addr.buf = (Byte*) &extra.sock_addr;  // reinterpret_cast
 		reqAddr.addr.len = sizeof extra.sock_addr;
 		reqAddr.qlen = backlog;
 		
