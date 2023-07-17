@@ -8,6 +8,7 @@
 
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // Standard C++
 #include <algorithm>
