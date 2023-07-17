@@ -157,10 +157,6 @@ struct syslog_data {
 
 #define SYSLOG_DATA_INIT {-1, 0, 0, 0, (const char *)0, LOG_USER, 0xff}
 
-#ifdef _KERNEL
-#define	LOG_PRINTF	-1	/* pseudo-priority to indicate use of printf */
-#endif
-
 /*
  * arguments to setlogmask.
  */
@@ -179,8 +175,6 @@ struct syslog_data {
 #define	LOG_NDELAY	0x08	/* don't delay open */
 #define	LOG_NOWAIT	0x10	/* don't wait for console forks: DEPRECATED */
 #define	LOG_PERROR	0x20	/* log to stderr as well */
-
-#ifndef _KERNEL
 
 /*
  * Don't use va_list in the vsyslog() prototype.   Va_list is typedef'd in two
@@ -207,14 +201,4 @@ void	syslog_r(int, struct syslog_data *, const char *, ...)
 void	vsyslog_r(int, struct syslog_data *, const char *, __va_list);
 __END_DECLS
 
-#else /* !_KERNEL */
-
-void	logpri(int);
-void	log(int, const char *, ...)
-    __attribute__((__format__(__kprintf__,2,3)));
-int	addlog(const char *, ...)
-    __attribute__((__format__(__kprintf__,1,2)));
-void	logwakeup(void);
-
-#endif /* !_KERNEL */
 #endif /* !_SYS_SYSLOG_H_ */
