@@ -108,12 +108,6 @@ struct loadavg {
 	long	fscale;
 };
 
-#ifdef _KERNEL
-extern struct loadavg averunnable;
-int	dosetrlimit(struct proc *, u_int, struct rlimit *);
-int	donice(struct proc *, struct proc *, int);
-
-#else
 #include <sys/cdefs.h>
 
 __BEGIN_DECLS
@@ -124,5 +118,4 @@ int	setpriority(int, id_t, int);
 int	setrlimit(int, const struct rlimit *);
 __END_DECLS
 
-#endif	/* _KERNEL */
 #endif	/* !_SYS_RESOURCE_H_ */
