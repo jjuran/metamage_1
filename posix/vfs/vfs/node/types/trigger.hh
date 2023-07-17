@@ -6,6 +6,9 @@
 #ifndef VFS_NODE_TYPES_TRIGGER_HH
 #define VFS_NODE_TYPES_TRIGGER_HH
 
+// Standard C
+#include <stdint.h>
+
 // plus
 #include "plus/string_fwd.hh"
 
