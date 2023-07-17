@@ -36,6 +36,9 @@ extern char** environ;
 
 void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 
+#define u_short unsigned short
+#define u_long  unsigned long
+
 #define Big_time_t	unsigned long
 
 /* These defined following should be defined in 5.8 in config.h */
