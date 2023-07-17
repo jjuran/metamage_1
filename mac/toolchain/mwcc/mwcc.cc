@@ -5,6 +5,7 @@
 
 // Standard C
 #include <stdio.h>
+#include <string.h>
 
 // Standard C++
 #include <list>
