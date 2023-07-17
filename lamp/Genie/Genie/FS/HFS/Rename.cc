@@ -190,7 +190,7 @@ namespace Genie
 		
 		const unsigned char* src = srcFileSpec.name;
 		
-		const uint8_t n_src = *src++;
+		const UInt8 n_src = *src++;
 		
 		const bool keeping_name = n_src == n_dest  &&  memcmp( src, dest, n_dest ) == 0;
 		

@@ -71,7 +71,7 @@ namespace Genie
 		
 		N::Str255 name_copy = name;
 		
-		uint8_t len = name_copy[ 0 ];
+		UInt8 len = name_copy[ 0 ];
 		
 		if ( len <= 27 )
 		{

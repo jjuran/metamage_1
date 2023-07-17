@@ -77,7 +77,7 @@ int execve( char  const*  path,
 		{
 			glue = ", errMessage: ";
 			
-			const uint8_t* p = msg.errMessage;
+			const Byte* p = msg.errMessage;
 			
 			char* q = (char*) mempcpy( mesg, p + 1, p[ 0 ] );
 			

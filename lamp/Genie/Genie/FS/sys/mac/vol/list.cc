@@ -78,7 +78,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	const uint32_t gestaltFSAttr = 'fs  ';
+	const OSType gestaltFSAttr = 'fs  ';
 	
 	const int gestaltFSSupports4GBVols = 4;
 	const int gestaltFSSupports2TBVols = 5;
