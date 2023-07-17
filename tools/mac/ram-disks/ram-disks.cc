@@ -16,6 +16,9 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <string.h>
+
 // mac-sys-utils
 #include "mac_sys/unit_table.hh"
 
