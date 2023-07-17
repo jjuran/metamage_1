@@ -44,29 +44,7 @@ struct	sockaddr_un {
 	char	sun_path[104];		/* path name (gag) */
 };
 
-#ifdef _KERNEL
-struct unpcb;
-struct socket;
-
-int	unp_attach(struct socket *so);
-int	unp_bind(struct unpcb *unp, struct mbuf *nam, struct proc *p);
-int	unp_connect(struct socket *so, struct mbuf *nam, struct proc *p);
-int	unp_connect2(struct socket *so, struct socket *so2);
-void	unp_detach(struct unpcb *unp);
-void	unp_discard(struct file *fp);
-void	unp_disconnect(struct unpcb *unp);
-void	unp_drop(struct unpcb *unp, int errno);
-void	unp_gc(void);
-void	unp_mark(struct file *fp);
-void	unp_scan(struct mbuf *m0, void (*op)(struct file *), int);
-void	unp_shutdown(struct unpcb *unp);
-int 	unp_externalize(struct mbuf *);
-int	unp_internalize(struct mbuf *, struct proc *);
-void 	unp_dispose(struct mbuf *);
-#else /* !_KERNEL */
-
 /* actual length of an initialized sockaddr_un */
 #define SUN_LEN(su) \
 	(sizeof(*(su)) - sizeof((su)->sun_path) + strlen((su)->sun_path))
-#endif /* _KERNEL */
 #endif /* !_SYS_UN_H_ */
