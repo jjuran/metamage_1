@@ -101,7 +101,7 @@ void		 endpwent(void);
 #if __BSD_VISIBLE
 int		 setpassent(int);
 char		*user_from_uid(uid_t, int);
-char		*bcrypt_gensalt(u_int8_t);
+char		*bcrypt_gensalt(__uint8_t);
 char		*bcrypt(const char *, const char *);
 char		*md5crypt(const char *, const char *);
 struct passwd	*pw_dup(const struct passwd *);

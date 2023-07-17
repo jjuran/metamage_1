@@ -151,32 +151,32 @@ struct in_addr {
  * on these macros not doing byte-swapping.
  */
 #ifdef _KERNEL
-#define	__IPADDR(x)	((u_int32_t) htonl((u_int32_t)(x)))
+#define	__IPADDR(x)	((__uint32_t) htonl((__uint32_t)(x)))
 #else
-#define	__IPADDR(x)	((u_int32_t)(x))
+#define	__IPADDR(x)	((__uint32_t)(x))
 #endif
 
-#define	IN_CLASSA(i)		(((u_int32_t)(i) & __IPADDR(0x80000000)) == \
+#define	IN_CLASSA(i)		(((__uint32_t)(i) & __IPADDR(0x80000000)) == \
 				 __IPADDR(0x00000000))
 #define	IN_CLASSA_NET		__IPADDR(0xff000000)
 #define	IN_CLASSA_NSHIFT	24
 #define	IN_CLASSA_HOST		__IPADDR(0x00ffffff)
 #define	IN_CLASSA_MAX		128
 
-#define	IN_CLASSB(i)		(((u_int32_t)(i) & __IPADDR(0xc0000000)) == \
+#define	IN_CLASSB(i)		(((__uint32_t)(i) & __IPADDR(0xc0000000)) == \
 				 __IPADDR(0x80000000))
 #define	IN_CLASSB_NET		__IPADDR(0xffff0000)
 #define	IN_CLASSB_NSHIFT	16
 #define	IN_CLASSB_HOST		__IPADDR(0x0000ffff)
 #define	IN_CLASSB_MAX		65536
 
-#define	IN_CLASSC(i)		(((u_int32_t)(i) & __IPADDR(0xe0000000)) == \
+#define	IN_CLASSC(i)		(((__uint32_t)(i) & __IPADDR(0xe0000000)) == \
 				 __IPADDR(0xc0000000))
 #define	IN_CLASSC_NET		__IPADDR(0xffffff00)
 #define	IN_CLASSC_NSHIFT	8
 #define	IN_CLASSC_HOST		__IPADDR(0x000000ff)
 
-#define	IN_CLASSD(i)		(((u_int32_t)(i) & __IPADDR(0xf0000000)) == \
+#define	IN_CLASSD(i)		(((__uint32_t)(i) & __IPADDR(0xf0000000)) == \
 				 __IPADDR(0xe0000000))
 /* These ones aren't really net and host fields, but routing needn't know. */
 #define	IN_CLASSD_NET		__IPADDR(0xf0000000)
@@ -184,12 +184,12 @@ struct in_addr {
 #define	IN_CLASSD_HOST		__IPADDR(0x0fffffff)
 #define	IN_MULTICAST(i)		IN_CLASSD(i)
 
-#define	IN_EXPERIMENTAL(i)	(((u_int32_t)(i) & __IPADDR(0xf0000000)) == \
+#define	IN_EXPERIMENTAL(i)	(((__uint32_t)(i) & __IPADDR(0xf0000000)) == \
 				 __IPADDR(0xf0000000))
-#define	IN_BADCLASS(i)		(((u_int32_t)(i) & __IPADDR(0xf0000000)) == \
+#define	IN_BADCLASS(i)		(((__uint32_t)(i) & __IPADDR(0xf0000000)) == \
 				 __IPADDR(0xf0000000))
 
-#define	IN_LOCAL_GROUP(i)	(((u_int32_t)(i) & __IPADDR(0xffffff00)) == \
+#define	IN_LOCAL_GROUP(i)	(((__uint32_t)(i) & __IPADDR(0xffffff00)) == \
 				 __IPADDR(0xe0000000))
 
 #define	INADDR_ANY		__IPADDR(0x00000000)
