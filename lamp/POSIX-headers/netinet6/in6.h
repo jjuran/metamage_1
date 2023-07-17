@@ -146,56 +146,6 @@ struct sockaddr_in6 {
 };
 
 /*
- * Local definition for masks
- */
-#ifdef _KERNEL	/* XXX nonstandard */
-#define IN6MASK0	{{{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }}}
-#define IN6MASK32	{{{ 0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, \
-			    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }}}
-#define IN6MASK64	{{{ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, \
-			    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }}}
-#define IN6MASK96	{{{ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, \
-			    0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00 }}}
-#define IN6MASK128	{{{ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, \
-			    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }}}
-#endif
-
-#ifdef _KERNEL
-extern const struct sockaddr_in6 sa6_any;
-
-extern const struct in6_addr in6mask0;
-extern const struct in6_addr in6mask32;
-extern const struct in6_addr in6mask64;
-extern const struct in6_addr in6mask96;
-extern const struct in6_addr in6mask128;
-#endif /* _KERNEL */
-
-/*
- * Macros started with IPV6_ADDR is KAME local
- */
-#ifdef _KERNEL	/* XXX nonstandard */
-#if BYTE_ORDER == BIG_ENDIAN
-#define IPV6_ADDR_INT32_ONE	1
-#define IPV6_ADDR_INT32_TWO	2
-#define IPV6_ADDR_INT32_MNL	0xff010000
-#define IPV6_ADDR_INT32_MLL	0xff020000
-#define IPV6_ADDR_INT32_SMP	0x0000ffff
-#define IPV6_ADDR_INT16_ULL	0xfe80
-#define IPV6_ADDR_INT16_USL	0xfec0
-#define IPV6_ADDR_INT16_MLL	0xff02
-#elif BYTE_ORDER == LITTLE_ENDIAN
-#define IPV6_ADDR_INT32_ONE	0x01000000
-#define IPV6_ADDR_INT32_TWO	0x02000000
-#define IPV6_ADDR_INT32_MNL	0x000001ff
-#define IPV6_ADDR_INT32_MLL	0x000002ff
-#define IPV6_ADDR_INT32_SMP	0xffff0000
-#define IPV6_ADDR_INT16_ULL	0x80fe
-#define IPV6_ADDR_INT16_USL	0xc0fe
-#define IPV6_ADDR_INT16_MLL	0x02ff
-#endif
-#endif
-
-/*
  * Definition of some useful macros to handle IP6 addresses
  */
 #if __BSD_VISIBLE
@@ -227,20 +177,9 @@ extern const struct in6_addr in6addr_linklocal_allnodes;
 extern const struct in6_addr in6addr_linklocal_allrouters;
 #endif
 
-/*
- * Equality
- * NOTE: Some of kernel programming environment (for example, openbsd/sparc)
- * does not supply memcmp().  For userland memcmp() is preferred as it is
- * in ANSI standard.
- */
-#ifdef _KERNEL
-#define IN6_ARE_ADDR_EQUAL(a, b)			\
-    (bcmp(&(a)->s6_addr[0], &(b)->s6_addr[0], sizeof(struct in6_addr)) == 0)
-#else
 #if __BSD_VISIBLE
 #define IN6_ARE_ADDR_EQUAL(a, b)			\
     (memcmp(&(a)->s6_addr[0], &(b)->s6_addr[0], sizeof(struct in6_addr)) == 0)
-#endif
 #endif
 
 /*
@@ -283,21 +222,12 @@ extern const struct in6_addr in6addr_linklocal_allrouters;
  * KAME Scope Values
  */
 
-#ifdef _KERNEL	/* XXX nonstandard */
-#define IPV6_ADDR_SCOPE_NODELOCAL	0x01
-#define IPV6_ADDR_SCOPE_INTFACELOCAL	0x01
-#define IPV6_ADDR_SCOPE_LINKLOCAL	0x02
-#define IPV6_ADDR_SCOPE_SITELOCAL	0x05
-#define IPV6_ADDR_SCOPE_ORGLOCAL	0x08	/* just used in this file */
-#define IPV6_ADDR_SCOPE_GLOBAL		0x0e
-#else
 #define __IPV6_ADDR_SCOPE_NODELOCAL	0x01
 #define __IPV6_ADDR_SCOPE_INTFACELOCAL	0x01
 #define __IPV6_ADDR_SCOPE_LINKLOCAL	0x02
 #define __IPV6_ADDR_SCOPE_SITELOCAL	0x05
 #define __IPV6_ADDR_SCOPE_ORGLOCAL	0x08	/* just used in this file */
 #define __IPV6_ADDR_SCOPE_GLOBAL	0x0e
-#endif
 
 /*
  * Unicast Scope
@@ -313,35 +243,11 @@ extern const struct in6_addr in6addr_linklocal_allrouters;
  */
 #define IN6_IS_ADDR_MULTICAST(a)	((a)->s6_addr[0] == 0xff)
 
-#ifdef _KERNEL	/* XXX nonstandard */
-#define IPV6_ADDR_MC_SCOPE(a)		((a)->s6_addr[1] & 0x0f)
-#else
 #define __IPV6_ADDR_MC_SCOPE(a)		((a)->s6_addr[1] & 0x0f)
-#endif
 
 /*
  * Multicast Scope
  */
-#ifdef _KERNEL	/* refers nonstandard items */
-#define IN6_IS_ADDR_MC_NODELOCAL(a)	\
-	(IN6_IS_ADDR_MULTICAST(a) &&	\
-	 (IPV6_ADDR_MC_SCOPE(a) == IPV6_ADDR_SCOPE_NODELOCAL))
-#define IN6_IS_ADDR_MC_INTFACELOCAL(a)	\
-	(IN6_IS_ADDR_MULTICAST(a) &&	\
-	 (IPV6_ADDR_MC_SCOPE(a) == IPV6_ADDR_SCOPE_INTFACELOCAL))
-#define IN6_IS_ADDR_MC_LINKLOCAL(a)	\
-	(IN6_IS_ADDR_MULTICAST(a) &&	\
-	 (IPV6_ADDR_MC_SCOPE(a) == IPV6_ADDR_SCOPE_LINKLOCAL))
-#define IN6_IS_ADDR_MC_SITELOCAL(a)	\
-	(IN6_IS_ADDR_MULTICAST(a) && 	\
-	 (IPV6_ADDR_MC_SCOPE(a) == IPV6_ADDR_SCOPE_SITELOCAL))
-#define IN6_IS_ADDR_MC_ORGLOCAL(a)	\
-	(IN6_IS_ADDR_MULTICAST(a) &&	\
-	 (IPV6_ADDR_MC_SCOPE(a) == IPV6_ADDR_SCOPE_ORGLOCAL))
-#define IN6_IS_ADDR_MC_GLOBAL(a)	\
-	(IN6_IS_ADDR_MULTICAST(a) &&	\
-	 (IPV6_ADDR_MC_SCOPE(a) == IPV6_ADDR_SCOPE_GLOBAL))
-#else
 #define IN6_IS_ADDR_MC_NODELOCAL(a)	\
 	(IN6_IS_ADDR_MULTICAST(a) &&	\
 	 (__IPV6_ADDR_MC_SCOPE(a) == __IPV6_ADDR_SCOPE_NODELOCAL))
@@ -360,29 +266,6 @@ extern const struct in6_addr in6addr_linklocal_allrouters;
 #define IN6_IS_ADDR_MC_GLOBAL(a)	\
 	(IN6_IS_ADDR_MULTICAST(a) &&	\
 	 (__IPV6_ADDR_MC_SCOPE(a) == __IPV6_ADDR_SCOPE_GLOBAL))
-#endif
-
-#ifdef _KERNEL	/* nonstandard */
-/*
- * KAME Scope
- */
-#define IN6_IS_SCOPE_LINKLOCAL(a)	\
-	((IN6_IS_ADDR_LINKLOCAL(a)) ||	\
-	 (IN6_IS_ADDR_MC_LINKLOCAL(a)))
-#define IN6_IS_SCOPE_EMBED(a)	\
-	((IN6_IS_ADDR_LINKLOCAL(a)) ||	\
-	 (IN6_IS_ADDR_MC_LINKLOCAL(a)) || \
-	 (IN6_IS_ADDR_MC_INTFACELOCAL(a)))
-
-#define IFA6_IS_DEPRECATED(a) \
-	((a)->ia6_lifetime.ia6t_pltime != ND6_INFINITE_LIFETIME && \
-	 (u_int32_t)((time_second - (a)->ia6_updatetime)) > \
-	 (a)->ia6_lifetime.ia6t_pltime)
-#define IFA6_IS_INVALID(a) \
-	((a)->ia6_lifetime.ia6t_vltime != ND6_INFINITE_LIFETIME && \
-	 (u_int32_t)((time_second - (a)->ia6_updatetime)) > \
-	 (a)->ia6_lifetime.ia6t_vltime)
-#endif
 
 /*
  * IP6 route structure
@@ -715,21 +598,6 @@ struct ip6_mtuinfo {
 }
 
 #endif /* __BSD_VISIBLE */
-
-#ifdef _KERNEL
-struct cmsghdr;
-
-int	in6_cksum(struct mbuf *, u_int8_t, u_int32_t, u_int32_t);
-int	in6_localaddr(struct in6_addr *);
-int	in6_addrscope(struct in6_addr *);
-struct	in6_ifaddr *in6_ifawithscope(struct ifnet *, struct in6_addr *);
-struct	in6_ifaddr *in6_ifawithifp(struct ifnet *, struct in6_addr *);
-extern void in6_if_up(struct ifnet *);
-
-#define	satosin6(sa)	((struct sockaddr_in6 *)(sa))
-#define	sin6tosa(sin6)	((struct sockaddr *)(sin6))
-#define	ifatoia6(ifa)	((struct in6_ifaddr *)(ifa))
-#endif /* _KERNEL */
 
 __BEGIN_DECLS
 struct cmsghdr;
