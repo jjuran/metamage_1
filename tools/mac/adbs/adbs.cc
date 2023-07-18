@@ -44,7 +44,7 @@ int main( int argc, char** argv )
 		return 1;
 	}
 	
-	const uint8_t kADBTalkCommand = 12;
+	const UInt8 kADBTalkCommand = 12;
 	
 #if ! TARGET_API_MAC_CARBON
 	
@@ -56,7 +56,7 @@ int main( int argc, char** argv )
 		
 		short address = GetIndADB( &data, i );
 		
-		uint8_t registers[ 9 ][ 4 ];
+		Byte registers[ 9 ][ 4 ];
 		
 		short command = address << 4 | kADBTalkCommand | 0;
 		
@@ -65,7 +65,7 @@ int main( int argc, char** argv )
 			mac::adb::send_command( registers[ r ], command );
 		}
 		
-		const uint8_t id = registers[ 3 ][ 2 ];
+		const UInt8 id = registers[ 3 ][ 2 ];
 		
 		printf( "Type:   %.2x -> %.2x\n", data.devType, id );
 		printf( "Origin: %c\n",     '0' + data.origADBAddr );
@@ -74,13 +74,13 @@ int main( int argc, char** argv )
 		
 		for ( short r = 0;  r < 4;  ++r )
 		{
-			const uint8_t* reg = registers[ r ];
+			const Byte* reg = registers[ r ];
 			
-			const int8_t n = reg[ 0 ];
+			const short n = reg[ 0 ];
 			
 			printf( "    %c: ", '0' + r );
 			
-			for ( int8_t i = 1;  i <= n;  ++i )
+			for ( short i = 1;  i <= n;  ++i )
 			{
 				printf( " %.2x", reg[ i ] );
 			}
