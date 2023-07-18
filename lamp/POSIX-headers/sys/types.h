@@ -51,26 +51,6 @@ typedef	__dev_t		dev_t;		/* device number */
 typedef	__gid_t		gid_t;		/* group id */
 typedef	__uid_t		uid_t;		/* user id */
 
-#if __BSD_VISIBLE
-typedef	unsigned char	u_char;
-typedef	unsigned short	u_short;
-typedef	unsigned int	u_int;
-typedef	unsigned long	u_long;
-#endif /* __BSD_VISIBLE */
-
-/* BSD-style unsigned bits types */
-#ifndef __CGBASE__
-#define _MACHTYPES_H_
-typedef	__uint8_t	u_int8_t;
-typedef	__uint16_t	u_int16_t;
-typedef	__uint32_t	u_int32_t;
-#endif
-typedef	__uint64_t	u_int64_t;
-
-/* quads, deprecated in favor of 64 bit int types */
-typedef	__int64_t	quad_t;
-typedef	__uint64_t	u_quad_t;
-
 /* Standard system types */
 typedef	__fixpt_t	fixpt_t;	/* fixed point number */
 typedef	__id_t		id_t;		/* may contain pid, uid or gid */
