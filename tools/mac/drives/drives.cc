@@ -29,10 +29,10 @@ int main( int argc, char** argv )
 	{
 		const int qType = drv->qType;
 		
-		const uint32_t flags = ((uint32_t*) drv)[ -1 ];
+		const UInt32 flags = ((UInt32*) drv)[ -1 ];
 		
-		const uint16_t fsid = drv->dQFSID;
-		const uint32_t size = drv->dQDrvSz + (qType ? drv->dQDrvSz2 << 16 : 0);
+		const UInt16 fsid = drv->dQFSID;
+		const UInt32 size = drv->dQDrvSz + (qType ? drv->dQDrvSz2 << 16 : 0);
 		
 		printf( "Drive:   %d\n",   drv->dQDrive  );
 		printf( "Flags:   %.8x\n", flags );
