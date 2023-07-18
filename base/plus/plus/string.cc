@@ -231,7 +231,7 @@ namespace plus
 		
 		char* last = u.small + max_offset;
 		
-		if ( (int8_t) *last >= 0 )
+		if ( (signed char) *last >= 0 )
 		{
 			char* tail = last - *last;
 			
