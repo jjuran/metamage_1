@@ -40,8 +40,8 @@ int main( int argc, char** argv )
 		
 		utf[ n ] = '\0';
 		
-		const uint16_t sig  = vcb->vcbSigWord;
-		const uint16_t fsid = vcb->vcbFSID;
+		const UInt16 sig  = vcb->vcbSigWord;
+		const UInt16 fsid = vcb->vcbFSID;
 		
 		printf( "Name:     %s\n",   utf              );
 		printf( "DrvNum:   %d\n",   vcb->vcbDrvNum   );
