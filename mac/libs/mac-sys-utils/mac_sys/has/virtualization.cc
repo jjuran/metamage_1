@@ -17,6 +17,8 @@ namespace sys {
 
 #ifdef __MC68K__
 
+typedef unsigned long uint32_t;
+
 asm unsigned long core_signature()
 {
 	MOVE     #0,CCR
