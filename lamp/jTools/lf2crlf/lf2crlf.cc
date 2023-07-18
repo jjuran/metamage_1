@@ -9,14 +9,14 @@
 // POSIX
 #include <unistd.h>
 
-// iota
-#include "iota/strings.hh"
-
 // more-posix
 #include "more/perror.hh"
 
 
 #pragma exceptions off
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 static ssize_t checked_read( int fd, char* buffer, size_t length )
