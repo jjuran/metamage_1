@@ -713,9 +713,9 @@ void draw_frame( bitmap& bits, int t )
 	const int head_base_x = body_base_x + 10;
 	const int head_base_y = body_base_y +  5;
 	
-	const int body_y = body_base_y + (t/2 % 3 > 0);
-	const int head_x = head_base_x + (t + 2) / 3 % 2;
-	const int head_y = head_base_y + (t + 1) / 3 % 2;
+	const int body_y = body_base_y + (t/2u % 3 > 0);
+	const int head_x = head_base_x + (t + 2) / 3 % 2u;
+	const int head_y = head_base_y + (t + 1) / 3 % 2u;
 	
 	const int tail_x = body_base_x;
 	const int tail_y = body_y + 11;
