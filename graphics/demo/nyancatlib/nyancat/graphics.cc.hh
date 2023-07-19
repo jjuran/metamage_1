@@ -699,6 +699,13 @@ void draw_head( bitmap& bits, int x, int y )
 	bits.fill_rect( x +  3, y, 10, 1, black );
 }
 
+static int div_3_mod_2[ 14 ] =
+{
+	0, 0, 0, 1, 1, 1,
+	0, 0, 0, 1, 1, 1,
+	0, 0,
+};
+
 void draw_frame( bitmap& bits, int t )
 {
 	const bool step = t & 0x2;
@@ -714,8 +721,8 @@ void draw_frame( bitmap& bits, int t )
 	const int head_base_y = body_base_y +  5;
 	
 	const int body_y = body_base_y + (t/2u % 3 > 0);
-	const int head_x = head_base_x + (t + 2) / 3 % 2u;
-	const int head_y = head_base_y + (t + 1) / 3 % 2u;
+	const int head_x = head_base_x + div_3_mod_2[ t + 2 ];
+	const int head_y = head_base_y + div_3_mod_2[ t + 1 ];
 	
 	const int tail_x = body_base_x;
 	const int tail_y = body_y + 11;
