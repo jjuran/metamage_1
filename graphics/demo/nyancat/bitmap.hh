@@ -57,6 +57,9 @@ class bitmap
 		}
 	
 	public:
+		typedef unsigned Coord;
+		typedef unsigned Delta;
+		
 		bitmap( uint32_t* buffer, size_t length, size_t stride )
 		:
 			its_store( (uint8_t*) buffer, length, stride )
@@ -80,6 +83,20 @@ class bitmap
 			if ( y < its_height  &&  x < its_width )
 			{
 				row( y )[ x ] = pixel;
+			}
+		}
+		
+		void fill_rect( Coord x, Coord y, Delta dx, Delta dy, uint32_t pixel )
+		{
+			if ( y + dy <= its_height  &&  x + dx <= its_width )
+			{
+				for ( Coord i = y;  i < y + dy;  ++i )
+				{
+					for ( Coord j = x;  j < x + dx;  ++j )
+					{
+						row( i )[ j ] = pixel;
+					}
+				}
 			}
 		}
 };
