@@ -56,6 +56,19 @@ void bitmap::set_pixel( unsigned x, unsigned y, const Pattern& color )
 	FillRect( &r, &color );
 }
 
+void bitmap::fill_rect( Coord x, Coord y, Delta dx, Delta dy, Color color )
+{
+	x *= its_magnifier;
+	y *= its_magnifier;
+	
+	dx *= its_magnifier;
+	dy *= its_magnifier;
+	
+	Rect r = { y, x, y + dy, x + dx };
+	
+	FillRect( &r, &color );
+}
+
 static bool using_frame_deltas;
 
 static int current_frame;
