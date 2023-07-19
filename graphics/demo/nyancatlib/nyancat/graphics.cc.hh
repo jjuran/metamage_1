@@ -91,32 +91,13 @@ void draw_wave( bitmap& bits, int x, int y, int stage, ColorRef color )
 	const int a = ! stage;
 	const int b = !! stage;
 	
-	bits.set_pixel( x++, y +   a, color );
-	bits.set_pixel( x++, y +   a, color );
-	bits.set_pixel( x++, y + 1, color );
-	bits.set_pixel( x++, y +   b, color );
-	bits.set_pixel( x++, y +   b, color );
-	bits.set_pixel( x++, y +   b, color );
-	bits.set_pixel( x++, y +   b, color );
-	bits.set_pixel( x++, y +   b, color );
-	bits.set_pixel( x++, y +   b, color );
-	bits.set_pixel( x++, y +   b, color );
-	bits.set_pixel( x++, y +     0, color );
-	bits.set_pixel( x++, y +   a, color );
-	bits.set_pixel( x++, y +   a, color );
-	bits.set_pixel( x++, y +   a, color );
-	bits.set_pixel( x++, y +   a, color );
-	bits.set_pixel( x++, y +   a, color );
-	bits.set_pixel( x++, y +   a, color );
-	bits.set_pixel( x++, y +   a, color );
-	bits.set_pixel( x++, y + 1, color );
-	bits.set_pixel( x++, y +   b, color );
-	bits.set_pixel( x++, y +   b, color );
-	bits.set_pixel( x++, y +   b, color );
-	bits.set_pixel( x++, y +   b, color );
-	bits.set_pixel( x++, y +   b, color );
-	bits.set_pixel( x++, y +   b, color );
-	bits.set_pixel( x++, y +   b, color );
+	int dx = 2 + a;
+	int dy = 3;
+	
+	bits.fill_rect( x, y + a, dx, dy, color );  x += dx;  dx = 8;
+	bits.fill_rect( x, y + b, dx, dy, color );  x += dx;  dx = 8;
+	bits.fill_rect( x, y + a, dx, dy, color );  x += dx;  dx = 7 + b;
+	bits.fill_rect( x, y + b, dx, dy, color );  x += dx;
 	
 	if ( stage == 0 )
 	{
@@ -131,9 +112,9 @@ void draw_waves( bitmap& bits, int x, int y, bool step )
 	{
 		ColorRef color = wave_colors[ i ];
 		
-		draw_wave( bits, 0, y++, step, color );
-		draw_wave( bits, 0, y++, step, color );
-		draw_wave( bits, 0, y++, step, color );
+		draw_wave( bits, 0, y, step, color );
+		
+		y += 3;
 	}
 }
 
@@ -154,26 +135,18 @@ void draw_star( bitmap& bits, int x, int y, int stage )
 			break;
 		
 		case 2:
-			bits.set_pixel( x, y - 2, white );
-			bits.set_pixel( x, y - 1, white );
-			bits.set_pixel( x - 2, y, white );
-			bits.set_pixel( x - 1, y, white );
-			bits.set_pixel( x + 1, y, white );
-			bits.set_pixel( x + 2, y, white );
-			bits.set_pixel( x, y + 1, white );
-			bits.set_pixel( x, y + 2, white );
+			bits.fill_rect( x, y - 2, 1, 2, white );
+			bits.fill_rect( x - 2, y, 2, 1, white );
+			bits.fill_rect( x + 1, y, 2, 1, white );
+			bits.fill_rect( x, y + 1, 1, 2, white );
 			break;
 		
 		case 3:
-			bits.set_pixel( x, y - 3, white );
-			bits.set_pixel( x, y - 2, white );
-			bits.set_pixel( x - 3, y, white );
-			bits.set_pixel( x - 2, y, white );
+			bits.fill_rect( x, y - 3, 1, 2, white );
+			bits.fill_rect( x - 3, y, 2, 1, white );
 			bits.set_pixel( x, y, white );
-			bits.set_pixel( x + 2, y, white );
-			bits.set_pixel( x + 3, y, white );
-			bits.set_pixel( x, y + 2, white );
-			bits.set_pixel( x, y + 3, white );
+			bits.fill_rect( x + 2, y, 2, 1, white );
+			bits.fill_rect( x, y + 2, 1, 2, white );
 			break;
 		
 		case 4:
@@ -224,48 +197,31 @@ void draw_tail_0( bitmap& bits, int x, int y )
 {
 	y -= 4;
 	
-	bits.set_pixel( x - 6, y, black );
-	bits.set_pixel( x - 5, y, black );
-	bits.set_pixel( x - 4, y, black );
-	bits.set_pixel( x - 3, y, black );
+	bits.fill_rect( x - 6, y, 4, 1, black );
 	
 	++y;
 	
-	bits.set_pixel( x - 6, y, black );
-	bits.set_pixel( x - 5, y, furrr );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, black );
-	bits.set_pixel( x - 2, y, black );
+	bits.fill_rect( x - 6, y, 5, 1, black );
+	bits.fill_rect( x - 5, y, 2, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 6, y, black );
-	bits.set_pixel( x - 5, y, black );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, furrr );
-	bits.set_pixel( x - 2, y, black );
-	bits.set_pixel( x - 1, y, black );
+	bits.fill_rect( x - 6, y, 6, 1, black );
+	bits.fill_rect( x - 4, y, 2, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 5, y, black );
-	bits.set_pixel( x - 4, y, black );
-	bits.set_pixel( x - 3, y, furrr );
-	bits.set_pixel( x - 2, y, furrr );
-	bits.set_pixel( x - 1, y, black );
+	bits.fill_rect( x - 5, y, 5, 1, black );
+	bits.fill_rect( x - 3, y, 2, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 4, y, black );
-	bits.set_pixel( x - 3, y, black );
-	bits.set_pixel( x - 2, y, furrr );
-	bits.set_pixel( x - 1, y, furrr );
+	bits.fill_rect( x - 4, y, 2, 1, black );
+	bits.fill_rect( x - 2, y, 2, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 3, y, black );
-	bits.set_pixel( x - 2, y, black );
-	bits.set_pixel( x - 1, y, black );
+	bits.fill_rect( x - 3, y, 3, 1, black );
 	
 	++y;
 	
@@ -277,44 +233,31 @@ void draw_tail_1( bitmap& bits, int x, int y )
 {
 	y -= 3;
 	
-	bits.set_pixel( x - 5, y, black );
-	bits.set_pixel( x - 4, y, black );
+	bits.fill_rect( x - 5, y, 2, 1, black );
 	
 	++y;
 	
-	bits.set_pixel( x - 6, y, black );
-	bits.set_pixel( x - 5, y, furrr );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, black );
+	bits.fill_rect( x - 6, y, 4, 1, black );
+	bits.fill_rect( x - 5, y, 2, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 6, y, black );
-	bits.set_pixel( x - 5, y, furrr );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, black );
-	bits.set_pixel( x - 2, y, black );
-	bits.set_pixel( x - 1, y, black );
+	bits.fill_rect( x - 6, y, 6, 1, black );
+	bits.fill_rect( x - 5, y, 2, 1, furrr );
 	
 	++y;
 	
 	bits.set_pixel( x - 5, y, black );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, furrr );
-	bits.set_pixel( x - 2, y, furrr );
-	bits.set_pixel( x - 1, y, furrr );
+	bits.fill_rect( x - 4, y, 4, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 4, y, black );
-	bits.set_pixel( x - 3, y, black );
-	bits.set_pixel( x - 2, y, furrr );
-	bits.set_pixel( x - 1, y, furrr );
+	bits.fill_rect( x - 4, y, 2, 1, black );
+	bits.fill_rect( x - 2, y, 2, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 2, y, black );
-	bits.set_pixel( x - 1, y, black );
+	bits.fill_rect( x - 2, y, 2, 1, black );
 }
 
 static
@@ -322,76 +265,49 @@ void draw_tail_2( bitmap& bits, int x, int y )
 {
 	bits.set_pixel( x - 1, y - 1, black );
 	
-	bits.set_pixel( x - 4, y, black );
-	bits.set_pixel( x - 3, y, black );
-	bits.set_pixel( x - 2, y, black );
-	bits.set_pixel( x - 1, y, black );
+	bits.fill_rect( x - 4, y, 4, 1, black );
 	
 	++y;
 	
-	bits.set_pixel( x - 6, y, black );
-	bits.set_pixel( x - 5, y, black );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, furrr );
-	bits.set_pixel( x - 2, y, furrr );
-	bits.set_pixel( x - 1, y, furrr );
+	bits.fill_rect( x - 6, y, 2, 1, black );
+	bits.fill_rect( x - 4, y, 4, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 6, y, black );
-	bits.set_pixel( x - 5, y, furrr );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, furrr );
-	bits.set_pixel( x - 2, y, black );
-	bits.set_pixel( x - 1, y, black );
+	bits.fill_rect( x - 6, y, 6, 1, black );
+	bits.fill_rect( x - 5, y, 3, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 5, y, black );
-	bits.set_pixel( x - 4, y, black );
-	bits.set_pixel( x - 3, y, black );
-	bits.set_pixel( x - 2, y, black );
+	bits.fill_rect( x - 5, y, 4, 1, black );
 }
 
 static
 void draw_tail_3( bitmap& bits, int x, int y )
 {
-	bits.set_pixel( x - 2, y - 1, black );
-	bits.set_pixel( x - 1, y - 1, black );
+	bits.fill_rect( x - 2, y - 1, 2, 1, black );
 	
-	bits.set_pixel( x - 4, y, black );
-	bits.set_pixel( x - 3, y, black );
-	bits.set_pixel( x - 2, y, furrr );
-	bits.set_pixel( x - 1, y, furrr );
+	bits.fill_rect( x - 4, y, 2, 1, black );
+	bits.fill_rect( x - 2, y, 2, 1, furrr );
 	
 	++y;
 	
 	bits.set_pixel( x - 5, y, black );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, furrr );
-	bits.set_pixel( x - 2, y, furrr );
-	bits.set_pixel( x - 1, y, furrr );
+	bits.fill_rect( x - 4, y, 4, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 6, y, black );
-	bits.set_pixel( x - 5, y, furrr );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, black );
-	bits.set_pixel( x - 2, y, black );
-	bits.set_pixel( x - 1, y, black );
+	bits.fill_rect( x - 6, y, 6, 1, black );
+	bits.fill_rect( x - 5, y, 2, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 6, y, black );
-	bits.set_pixel( x - 5, y, furrr );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, black );
+	bits.fill_rect( x - 6, y, 4, 1, black );
+	bits.fill_rect( x - 5, y, 2, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 5, y, black );
-	bits.set_pixel( x - 4, y, black );
+	bits.fill_rect( x - 5, y, 2, 1, black );
 }
 
 static
@@ -399,37 +315,20 @@ void draw_tail_4( bitmap& bits, int x, int y )
 {
 	y -= 3;
 	
-	bits.set_pixel( x - 6, y, black );
-	bits.set_pixel( x - 5, y, black );
-	bits.set_pixel( x - 4, y, black );
-	bits.set_pixel( x - 3, y, black );
+	bits.fill_rect( x - 6, y, 4, 1, black );
 	
 	++y;
 	
-	bits.set_pixel( x - 7, y, black );
-	bits.set_pixel( x - 6, y, furrr );
-	bits.set_pixel( x - 5, y, furrr );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, black );
-	bits.set_pixel( x - 2, y, black );
-	bits.set_pixel( x - 1, y, black );
+	bits.fill_rect( x - 7, y, 7, 2, black );
+	bits.fill_rect( x - 6, y, 3, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 7, y, black );
-	bits.set_pixel( x - 6, y, black );
-	bits.set_pixel( x - 5, y, furrr );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, furrr );
-	bits.set_pixel( x - 2, y, furrr );
-	bits.set_pixel( x - 1, y, black );
+	bits.fill_rect( x - 5, y, 4, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 5, y, black );
-	bits.set_pixel( x - 4, y, black );
-	bits.set_pixel( x - 3, y, black );
-	bits.set_pixel( x - 2, y, black );
+	bits.fill_rect( x - 5, y, 4, 1, black );
 	bits.set_pixel( x - 1, y, furrr );
 	
 	++y;
@@ -443,44 +342,31 @@ void draw_tail_5( bitmap& bits, int x, int y )
 {
 	y -= 4;
 	
-	bits.set_pixel( x - 5, y, black );
-	bits.set_pixel( x - 4, y, black );
+	bits.fill_rect( x - 5, y, 2, 1, black );
 	
 	++y;
 	
-	bits.set_pixel( x - 6, y, black );
-	bits.set_pixel( x - 5, y, furrr );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, black );
+	bits.fill_rect( x - 6, y, 4, 1, black );
+	bits.fill_rect( x - 5, y, 2, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 6, y, black );
-	bits.set_pixel( x - 5, y, furrr );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, black );
-	bits.set_pixel( x - 2, y, black );
-	bits.set_pixel( x - 1, y, black );
+	bits.fill_rect( x - 6, y, 6, 1, black );
+	bits.fill_rect( x - 5, y, 2, 1, furrr );
 	
 	++y;
 	
 	bits.set_pixel( x - 5, y, black );
-	bits.set_pixel( x - 4, y, furrr );
-	bits.set_pixel( x - 3, y, furrr );
-	bits.set_pixel( x - 2, y, furrr );
-	bits.set_pixel( x - 1, y, furrr );
+	bits.fill_rect( x - 4, y, 4, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 4, y, black );
-	bits.set_pixel( x - 3, y, black );
-	bits.set_pixel( x - 2, y, furrr );
-	bits.set_pixel( x - 1, y, furrr );
+	bits.fill_rect( x - 4, y, 2, 1, black );
+	bits.fill_rect( x - 2, y, 2, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x - 2, y, black );
-	bits.set_pixel( x - 1, y, black );
+	bits.fill_rect( x - 2, y, 2, 1, black );
 }
 
 static
@@ -503,15 +389,12 @@ void draw_tail( bitmap& bits, int x, int y, int stage )
 static
 void draw_paw_a( bitmap& bits, int x, int y )
 {
-	bits.set_pixel( x,     y, black );
-	bits.set_pixel( x + 1, y, furrr );
-	bits.set_pixel( x + 2, y, furrr );
-	bits.set_pixel( x + 3, y, black );
+	bits.fill_rect( x,     y, 4, 1, black );
+	bits.fill_rect( x + 1, y, 2, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x + 1, y, black );
-	bits.set_pixel( x + 2, y, black );
+	bits.fill_rect( x + 1, y, 2, 1, black );
 }
 
 static
@@ -520,8 +403,7 @@ void draw_paw_b( bitmap& bits, int x, int y )
 	draw_paw_a( bits, x, y );
 	
 	bits.set_pixel( x + 2, y - 1, furrr );
-	bits.set_pixel( x + 3, y - 1, black );
-	bits.set_pixel( x + 3, y + 1, black );
+	bits.fill_rect( x + 3, y - 1, 1, 3, black );
 }
 
 static
@@ -544,9 +426,7 @@ void draw_paw_d( bitmap& bits, int x, int y )
 	++y;
 	
 	bits.set_pixel( x - 2, y, black );
-	bits.set_pixel( x - 1, y, furrr );
-	bits.set_pixel( x,     y, furrr );
-	bits.set_pixel( x + 1, y, furrr );
+	bits.fill_rect( x - 1, y, 3, 1, furrr );
 	
 	++y;
 	
@@ -565,8 +445,7 @@ void draw_paw_e( bitmap& bits, int x, int y )
 	--y;
 	
 	bits.set_pixel( x - 1, y, black );
-	bits.set_pixel( x,     y, furrr );
-	bits.set_pixel( x + 1, y, furrr );
+	bits.fill_rect( x,     y, 2, 1, furrr );
 }
 
 static
@@ -704,47 +583,34 @@ void draw_body( bitmap& bits, int x, int y )
 	const int width  = 21;
 	const int height = 18;
 	
-	for ( int i = x + 2;  i < x + width - 2;  ++i )
-	{
-		bits.set_pixel( i, y,              black );
-		bits.set_pixel( i, y + 1,          toast );
-		bits.set_pixel( i, y + height - 2, toast );
-		bits.set_pixel( i, y + height - 1, black );
-	}
+	bits.fill_rect( x + 2, y,              width - 4, 1, black );
+	bits.fill_rect( x + 2, y + 1,          width - 4, 1, toast );
+	bits.fill_rect( x + 2, y + height - 2, width - 4, 1, toast );
+	bits.fill_rect( x + 2, y + height - 1, width - 4, 1, black );
 	
 	bits.set_pixel( x +         1, y +          1, black );
 	bits.set_pixel( x + width - 2, y +          1, black );
 	bits.set_pixel( x +         1, y + height - 2, black );
 	bits.set_pixel( x + width - 2, y + height - 2, black );
 	
-	for ( int j = y + 2;  j < y + height - 2;  ++j )
-	{
-		bits.set_pixel( x,             j, black );
-		bits.set_pixel( x +         1, j, toast );
-		
-		for ( int i = x + 2;  i < x + width - 2;  ++i )
-		{
-			bits.set_pixel( i, j, icing );
-		}
-		
-		bits.set_pixel( x + width - 2, j, toast );
-		bits.set_pixel( x + width - 1, j, black );
-	}
+	bits.fill_rect( x,             y + 2, 1, height - 4, black );
+	bits.fill_rect( x +         1, y + 2, 1, height - 4, toast );
+	
+	bits.fill_rect( x + 2, y + 2, width - 4, height - 4, icing );
+	
+	bits.fill_rect( x + width - 2, y + 2, 1, height - 4, toast );
+	bits.fill_rect( x + width - 1, y + 2, 1, height - 4, black );
 	
 	bits.set_pixel( x, y + height - 2, black );
 	
-	bits.set_pixel( x +         2, y +          2, toast );
-	bits.set_pixel( x +         3, y +          2, toast );
-	bits.set_pixel( x + width - 4, y +          2, toast );
-	bits.set_pixel( x + width - 3, y +          2, toast );
+	bits.fill_rect( x +         2, y +          2, 2, 1, toast );
+	bits.fill_rect( x + width - 4, y +          2, 2, 1, toast );
 	bits.set_pixel( x +         2, y +          3, toast );
 	bits.set_pixel( x + width - 3, y +          3, toast );
 	bits.set_pixel( x +         2, y + height - 4, toast );
 	bits.set_pixel( x + width - 3, y + height - 4, toast );
-	bits.set_pixel( x +         2, y + height - 3, toast );
-	bits.set_pixel( x +         3, y + height - 3, toast );
-	bits.set_pixel( x + width - 4, y + height - 3, toast );
-	bits.set_pixel( x + width - 3, y + height - 3, toast );
+	bits.fill_rect( x +         2, y + height - 3, 2, 1, toast );
+	bits.fill_rect( x + width - 4, y + height - 3, 2, 1, toast );
 	
 	bits.set_pixel( x +  9, y +  3, spots );
 	bits.set_pixel( x + 12, y +  3, spots );
@@ -764,211 +630,73 @@ void draw_head( bitmap& bits, int x, int y )
 	const int width  = 16;
 	const int height = 13;
 	
-	bits.set_pixel( x +  2, y, black );
-	bits.set_pixel( x +  3, y, black );
-	
-	bits.set_pixel( x + 12, y, black );
-	bits.set_pixel( x + 13, y, black );
+	bits.fill_rect( x +  2, y, 2, 1, black );
+	bits.fill_rect( x + 12, y, 2, 1, black );
 	
 	++y;
 	
-	bits.set_pixel( x +  1, y, black );
-	bits.set_pixel( x +  2, y, furrr );
-	bits.set_pixel( x +  3, y, furrr );
-	bits.set_pixel( x +  4, y, black );
+	bits.fill_rect( x +  1, y, 4, 4, black );
+	bits.fill_rect( x +  2, y, 2, 1, furrr );
 	
-	bits.set_pixel( x + 11, y, black );
-	bits.set_pixel( x + 12, y, furrr );
-	bits.set_pixel( x + 13, y, furrr );
-	bits.set_pixel( x + 14, y, black );
+	bits.fill_rect( x + 11, y, 4, 4, black );
+	bits.fill_rect( x + 12, y, 2, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x +  1, y, black );
-	bits.set_pixel( x +  2, y, furrr );
-	bits.set_pixel( x +  3, y, furrr );
-	bits.set_pixel( x +  4, y, furrr );
+	bits.fill_rect( x +  2, y, 3, 1, furrr );
 	bits.set_pixel( x +  5, y, black );
 	
 	bits.set_pixel( x + 10, y, black );
-	bits.set_pixel( x + 11, y, furrr );
-	bits.set_pixel( x + 12, y, furrr );
-	bits.set_pixel( x + 13, y, furrr );
-	bits.set_pixel( x + 14, y, black );
+	bits.fill_rect( x + 11, y, 3, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x +  1, y, black );
-	bits.set_pixel( x +  2, y, furrr );
-	bits.set_pixel( x +  3, y, furrr );
-	bits.set_pixel( x +  4, y, furrr );
-	bits.set_pixel( x +  5, y, furrr );
-	bits.set_pixel( x +  6, y, black );
-	bits.set_pixel( x +  7, y, black );
-	bits.set_pixel( x +  8, y, black );
-	bits.set_pixel( x +  9, y, black );
-	bits.set_pixel( x + 10, y, furrr );
-	bits.set_pixel( x + 11, y, furrr );
-	bits.set_pixel( x + 12, y, furrr );
-	bits.set_pixel( x + 13, y, furrr );
-	bits.set_pixel( x + 14, y, black );
+	bits.fill_rect( x +  2, y, 12, 2, furrr );
+	bits.fill_rect( x +  6, y,  4, 1, black );
+	
+	++y;
+	++y;
+	
+	bits.fill_rect( x +  0, y, 16, 5, black );
+	bits.fill_rect( x +  1, y, 14, 5, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x +  1, y, black );
-	bits.set_pixel( x +  2, y, furrr );
-	bits.set_pixel( x +  3, y, furrr );
-	bits.set_pixel( x +  4, y, furrr );
-	bits.set_pixel( x +  5, y, furrr );
-	bits.set_pixel( x +  6, y, furrr );
-	bits.set_pixel( x +  7, y, furrr );
-	bits.set_pixel( x +  8, y, furrr );
-	bits.set_pixel( x +  9, y, furrr );
-	bits.set_pixel( x + 10, y, furrr );
-	bits.set_pixel( x + 11, y, furrr );
-	bits.set_pixel( x + 12, y, furrr );
-	bits.set_pixel( x + 13, y, furrr );
-	bits.set_pixel( x + 14, y, black );
-	
-	++y;
-	
-	bits.set_pixel( x +  0, y, black );
-	bits.set_pixel( x +  1, y, furrr );
-	bits.set_pixel( x +  2, y, furrr );
-	bits.set_pixel( x +  3, y, furrr );
-	bits.set_pixel( x +  4, y, furrr );
-	bits.set_pixel( x +  5, y, furrr );
-	bits.set_pixel( x +  6, y, furrr );
-	bits.set_pixel( x +  7, y, furrr );
-	bits.set_pixel( x +  8, y, furrr );
-	bits.set_pixel( x +  9, y, furrr );
-	bits.set_pixel( x + 10, y, furrr );
-	bits.set_pixel( x + 11, y, furrr );
-	bits.set_pixel( x + 12, y, furrr );
-	bits.set_pixel( x + 13, y, furrr );
-	bits.set_pixel( x + 14, y, furrr );
-	bits.set_pixel( x + 15, y, black );
-	
-	++y;
-	
-	bits.set_pixel( x +  0, y, black );
-	bits.set_pixel( x +  1, y, furrr );
-	bits.set_pixel( x +  2, y, furrr );
-	bits.set_pixel( x +  3, y, furrr );
+	bits.fill_rect( x +  4, y, 2, 2, black );
 	bits.set_pixel( x +  4, y, white );
-	bits.set_pixel( x +  5, y, black );
-	bits.set_pixel( x +  6, y, furrr );
-	bits.set_pixel( x +  7, y, furrr );
-	bits.set_pixel( x +  8, y, furrr );
-	bits.set_pixel( x +  9, y, furrr );
-	bits.set_pixel( x + 10, y, furrr );
+	
+	bits.fill_rect( x + 11, y, 2, 2, black );
 	bits.set_pixel( x + 11, y, white );
-	bits.set_pixel( x + 12, y, black );
-	bits.set_pixel( x + 13, y, furrr );
-	bits.set_pixel( x + 14, y, furrr );
-	bits.set_pixel( x + 15, y, black );
 	
 	++y;
 	
-	bits.set_pixel( x +  0, y, black );
-	bits.set_pixel( x +  1, y, furrr );
-	bits.set_pixel( x +  2, y, furrr );
-	bits.set_pixel( x +  3, y, furrr );
-	bits.set_pixel( x +  4, y, black );
-	bits.set_pixel( x +  5, y, black );
-	bits.set_pixel( x +  6, y, furrr );
-	bits.set_pixel( x +  7, y, furrr );
-	bits.set_pixel( x +  8, y, furrr );
 	bits.set_pixel( x +  9, y, black );
-	bits.set_pixel( x + 10, y, furrr );
-	bits.set_pixel( x + 11, y, black );
-	bits.set_pixel( x + 12, y, black );
-	bits.set_pixel( x + 13, y, furrr );
-	bits.set_pixel( x + 14, y, furrr );
-	bits.set_pixel( x + 15, y, black );
 	
 	++y;
 	
-	bits.set_pixel( x +  0, y, black );
-	bits.set_pixel( x +  1, y, furrr );
-	bits.set_pixel( x +  2, y, blush );
-	bits.set_pixel( x +  3, y, blush );
-	bits.set_pixel( x +  4, y, furrr );
-	bits.set_pixel( x +  5, y, furrr );
-	bits.set_pixel( x +  6, y, furrr );
-	bits.set_pixel( x +  7, y, furrr );
-	bits.set_pixel( x +  8, y, furrr );
-	bits.set_pixel( x +  9, y, furrr );
-	bits.set_pixel( x + 10, y, furrr );
-	bits.set_pixel( x + 11, y, furrr );
-	bits.set_pixel( x + 12, y, furrr );
-	bits.set_pixel( x + 13, y, blush );
-	bits.set_pixel( x + 14, y, blush );
-	bits.set_pixel( x + 15, y, black );
+	bits.fill_rect( x +  2, y, 2, 2, blush );
+	bits.fill_rect( x + 13, y, 2, 2, blush );
 	
 	++y;
 	
-	bits.set_pixel( x +  0, y, black );
-	bits.set_pixel( x +  1, y, furrr );
-	bits.set_pixel( x +  2, y, blush );
-	bits.set_pixel( x +  3, y, blush );
-	bits.set_pixel( x +  4, y, furrr );
 	bits.set_pixel( x +  5, y, black );
-	bits.set_pixel( x +  6, y, furrr );
-	bits.set_pixel( x +  7, y, furrr );
 	bits.set_pixel( x +  8, y, black );
-	bits.set_pixel( x +  9, y, furrr );
-	bits.set_pixel( x + 10, y, furrr );
 	bits.set_pixel( x + 11, y, black );
-	bits.set_pixel( x + 12, y, furrr );
-	bits.set_pixel( x + 13, y, blush );
-	bits.set_pixel( x + 14, y, blush );
-	bits.set_pixel( x + 15, y, black );
 	
 	++y;
 	
-	bits.set_pixel( x +  1, y, black );
-	bits.set_pixel( x +  2, y, furrr );
-	bits.set_pixel( x +  3, y, furrr );
-	bits.set_pixel( x +  4, y, furrr );
-	bits.set_pixel( x +  5, y, black );
-	bits.set_pixel( x +  6, y, black );
-	bits.set_pixel( x +  7, y, black );
-	bits.set_pixel( x +  8, y, black );
-	bits.set_pixel( x +  9, y, black );
-	bits.set_pixel( x + 10, y, black );
-	bits.set_pixel( x + 11, y, black );
-	bits.set_pixel( x + 12, y, furrr );
-	bits.set_pixel( x + 13, y, furrr );
-	bits.set_pixel( x + 14, y, black );
+	bits.fill_rect( x +  1, y, 14, 1, black );
+	bits.fill_rect( x +  2, y,  3, 1, furrr );
+	bits.fill_rect( x + 12, y,  2, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x +  2, y, black );
-	bits.set_pixel( x +  3, y, furrr );
-	bits.set_pixel( x +  4, y, furrr );
-	bits.set_pixel( x +  5, y, furrr );
-	bits.set_pixel( x +  6, y, furrr );
-	bits.set_pixel( x +  7, y, furrr );
-	bits.set_pixel( x +  8, y, furrr );
-	bits.set_pixel( x +  9, y, furrr );
-	bits.set_pixel( x + 10, y, furrr );
-	bits.set_pixel( x + 11, y, furrr );
-	bits.set_pixel( x + 12, y, furrr );
-	bits.set_pixel( x + 13, y, black );
+	bits.fill_rect( x +  2, y, 12, 1, black );
+	bits.fill_rect( x +  3, y, 10, 1, furrr );
 	
 	++y;
 	
-	bits.set_pixel( x +  3, y, black );
-	bits.set_pixel( x +  4, y, black );
-	bits.set_pixel( x +  5, y, black );
-	bits.set_pixel( x +  6, y, black );
-	bits.set_pixel( x +  7, y, black );
-	bits.set_pixel( x +  8, y, black );
-	bits.set_pixel( x +  9, y, black );
-	bits.set_pixel( x + 10, y, black );
-	bits.set_pixel( x + 11, y, black );
-	bits.set_pixel( x + 12, y, black );
+	bits.fill_rect( x +  3, y, 10, 1, black );
 }
 
 void draw_frame( bitmap& bits, int t )
