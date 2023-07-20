@@ -10,7 +10,7 @@ let semitone_denom = 2^16
 
 def transpose (n, pitch) { pitch * semitone_numer^n div semitone_denom^n }
 
-let C8 = 0x184ada * 2;
+let C8 = 0x1812eb * 2;
 let C0 = C8 div 2^8
 
 let adj = 6  # Scored in F sharp or G flat major
