@@ -3,15 +3,15 @@
 # 1.059463094359295^12 ~= 2
 # 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
 
-const semitone_numer = 69433
-const semitone_denom = 2^16
+let semitone_numer = 69433
+let semitone_denom = 2^16
 
 def transpose (n, pitch) { pitch * semitone_numer^n div semitone_denom^n }
 
-const C8 = 0x184ada * 2;
-const C0 = C8 div 2^8
+let C8 = 0x184ada * 2;
+let C0 = C8 div 2^8
 
-const adj = 3
+let adj = 3
 
 def C  (o) { transpose( adj, C8 div 2^(8 - o) ) }
 def D  (o) { transpose( 2, C o ) }
@@ -22,7 +22,7 @@ def G  (o) { transpose( 7, C o ) }
 def Ab (o) { transpose( 8, C o ) }
 def Bb (o) { transpose( 10, C o ) }
 
-const audiograph =
+let audiograph =
 [
 	# By Nobuo Uematsu.
 	# 8-bit arrangement and notation copyright 2021 Joshua Juran.

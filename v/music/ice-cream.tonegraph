@@ -3,14 +3,14 @@
 # 1.059463094359295^12 ~= 2
 # 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
 
-const semitone_numer = 69433
-const semitone_denom = 2^16
+let semitone_numer = 69433
+let semitone_denom = 2^16
 
 def transpose (n, pitch) { pitch * semitone_numer^n div semitone_denom^n }
 
-const C8 = 0x184ada * 2;
+let C8 = 0x184ada * 2;
 
-const adj = 0
+let adj = 0
 
 def C  (o) { transpose( adj, C8 div 2^(8 - o) ) }
 def Ct (o) { transpose( 1, C o ) }
@@ -24,7 +24,7 @@ def Gt (o) { transpose( 8, C o ) }
 def A  (o) { transpose( 9, C o ) }
 def B  (o) { transpose( 11, C o ) }
 
-const tonegraph =
+let tonegraph =
 [
 	# The chords of "Ice Cream" from The Music Man, by Meredith Willson
 	

@@ -3,14 +3,14 @@
 # 1.059463094359295^12 ~= 2
 # 1.059463094359295 * 2^16 ~= 69432.9733519308 ~= 69433
 
-const semitone_numer = 69433
-const semitone_denom = 2^16
+let semitone_numer = 69433
+let semitone_denom = 2^16
 
 def transpose (n, pitch) { pitch * semitone_numer^n div semitone_denom^n }
 
-const C8 = 0x184ada * 2;
+let C8 = 0x184ada * 2;
 
-const adj = 0
+let adj = 0
 
 def C  (o) { transpose( adj, C8 div 2^(8 - o) ) }
 def D  (o) { transpose( 2, C o ) }
@@ -96,9 +96,9 @@ def truncate_at (sequence, cutoff)
 	return result
 }
 
-const silence = [ 0 ]
+let silence = [ 0 ]
 
-const round =
+let round =
 [
 	# "What a queer bird" set as a round, authorship uncertain.
 	#
@@ -194,21 +194,21 @@ def delayed (sequence)
 
 def truncated (sequence)
 {
-	const q = 8
-	const m = q * 4 * 3/2
-	const r = m * 8
-	const t = r * 4 - q * 2
+	let q = 8
+	let m = q * 4 * 3/2
+	let r = m * 8
+	let t = r * 4 - q * 2
 	
 	return truncate_at( sequence, t )
 }
 
-const voice = repeated round
+let voice = repeated round
 
-const vox1 = higher voice
-const vox2 = delayed lower voice
-const vox3 = delayed^2 voice
-const vox4 = delayed^3 higher^2 voice
+let vox1 = higher voice
+let vox2 = delayed lower voice
+let vox3 = delayed^2 voice
+let vox4 = delayed^3 higher^2 voice
 
-const ensemble = [vox1, vox2, vox3, vox4] per multiplex
+let ensemble = [vox1, vox2, vox3, vox4] per multiplex
 
-const tonegraph = truncated ensemble map { v.key * 5/16 => v.value }
+let tonegraph = truncated ensemble map { v.key * 5/16 => v.value }
