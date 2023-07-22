@@ -48,21 +48,21 @@ using nyancat::n_frames;
 
 void bitmap::set_pixel( unsigned x, unsigned y, const Pattern& color )
 {
-	x *= its_magnifier;
-	y *= its_magnifier;
+	x *= zoom;
+	y *= zoom;
 	
-	Rect r = { y, x, y + its_magnifier, x + its_magnifier };
+	Rect r = { y, x, y + zoom, x + zoom };
 	
 	FillRect( &r, &color );
 }
 
 void bitmap::fill_rect( Coord x, Coord y, Delta dx, Delta dy, Color color )
 {
-	x *= its_magnifier;
-	y *= its_magnifier;
+	x *= zoom;
+	y *= zoom;
 	
-	dx *= its_magnifier;
-	dy *= its_magnifier;
+	dx *= zoom;
+	dy *= zoom;
 	
 	Rect r = { y, x, y + dy, x + dx };
 	
@@ -141,7 +141,7 @@ void render_offscreen()
 {
 	make_offscreen_port();
 	
-	bitmap bits( zoom );
+	bitmap bits;
 	
 	FillRect( &buffer_bounds, &veryDarkGray );
 	
