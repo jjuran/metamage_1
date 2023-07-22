@@ -46,7 +46,7 @@ using nyancat::bitmap;
 using nyancat::n_frames;
 
 
-void bitmap::set_pixel( unsigned x, unsigned y, const Pattern& color )
+void bitmap::set_pixel( Coord x, Coord y, Color color )
 {
 	x *= zoom;
 	y *= zoom;

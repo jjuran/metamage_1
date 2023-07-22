@@ -21,7 +21,7 @@ class bitmap
 		typedef const Pattern& Color;
 		
 		static
-		void set_pixel( unsigned x, unsigned y, const Pattern& color );
+		void set_pixel( Coord x, Coord y, Color color );
 		
 		static
 		void fill_rect( Coord x, Coord y, Delta dx, Delta dy, Color color );
