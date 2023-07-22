@@ -25,7 +25,6 @@
 #include "mac_config/desk-accessories.hh"
 
 // mac-sys-utils
-#include "mac_sys/clock.hh"
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/trap_available.hh"
 
@@ -43,6 +42,7 @@
 // NyanochromeCat
 #include "Geometry.hh"
 #include "Offscreen.hh"
+#include "Timer.hh"
 
 
 #define CONFIG_DAs CONFIG_DESK_ACCESSORIES
@@ -61,21 +61,6 @@ const bool apple_events_present =
 	CONFIG_APPLE_EVENTS  &&
 		(CONFIG_APPLE_EVENTS_GRANTED  ||
 			mac::sys::gestalt( 'evnt' ) != 0);
-
-#ifdef __MC68K__
-	
-	namespace monotonic_clock = mac::sys::tick_clock;
-	
-#else
-	
-	namespace monotonic_clock = mac::sys::microsecond_clock;
-	
-#endif
-
-const int fps = 15;
-
-const monotonic_clock::clock_t clock_period =
-	monotonic_clock::clocks_per_kilosecond / 1000 / fps;
 
 static inline
 short aligned( short x, short alignment )
@@ -115,78 +100,6 @@ void make_main_window()
 	                         0 );
 	
 	SetPortWindowPort( main_window );
-}
-
-class timer
-{
-	private:
-		typedef monotonic_clock::clock_t clock_t;
-		
-		clock_t its_pulse_interval;
-		clock_t its_next_pulse;
-		bool it_is_paused;
-	
-	public:
-		static const clock_t arbitrarily_long = clock_t( -1 );
-		
-		static void get_clock( clock_t* t )  { monotonic_clock::get( t ); }
-		
-		timer() : its_next_pulse(), it_is_paused( true )
-		{
-			its_pulse_interval = clock_period;  // e.g. 4 ticks for 15fps
-		}
-		
-		void start()  { play();  its_next_pulse += its_pulse_interval; }
-		
-		void play()  { it_is_paused = false;  get_clock( &its_next_pulse ); }
-		void pause()  { it_is_paused = true; }
-		
-		bool pulse();
-		
-		bool paused() const  { return it_is_paused; }
-		
-		clock_t clocks_until_next_pulse() const
-		{
-			if ( paused() )
-			{
-				return arbitrarily_long;
-			}
-			
-			clock_t t;
-			get_clock( &t );
-			
-			if ( t >= its_next_pulse )
-			{
-				return 0;
-			}
-			
-			return its_next_pulse - t;
-		}
-};
-
-bool timer::pulse()
-{
-	if ( it_is_paused )
-	{
-		return false;
-	}
-	
-	clock_t now;
-	get_clock( &now );
-	
-	if ( now >= its_next_pulse )
-	{
-		its_next_pulse += its_pulse_interval;
-		
-		if ( its_next_pulse <= now )
-		{
-			its_next_pulse = now + its_pulse_interval;
-		}
-		
-		return true;
-	}
-	
-	return false;
 }
 
 static timer animation_timer;
