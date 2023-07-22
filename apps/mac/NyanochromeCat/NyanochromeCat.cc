@@ -141,11 +141,6 @@ class timer
 		void play()  { it_is_paused = false;  get_clock( &its_next_pulse ); }
 		void pause()  { it_is_paused = true; }
 		
-		void play_pause()
-		{
-			it_is_paused ? play() : pause();
-		}
-		
 		bool pulse();
 		
 		bool paused() const  { return it_is_paused; }
@@ -195,6 +190,13 @@ bool timer::pulse()
 }
 
 static timer animation_timer;
+
+static
+void play_pause()
+{
+	animation_timer.paused() ? animation_timer.play()
+	                         : animation_timer.pause();
+}
 
 static
 unsigned next_sleep()
@@ -374,7 +376,7 @@ int main()
 								break;
 							}
 							
-							animation_timer.play_pause();
+							play_pause();
 							break;
 						
 						default:
@@ -394,7 +396,7 @@ int main()
 					switch( (char) event.message )
 					{
 						case ' ':
-							animation_timer.play_pause();
+							play_pause();
 							break;
 						
 						case 0x1C:
