@@ -11,6 +11,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// math
+#include "math/fractions.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -189,6 +192,8 @@ namespace Genie
 	
 	Rect Frame::Margin( const Rect& bounds ) const
 	{
+		using math::fractions::half;
+		
 		const FrameParameters& params = gFrameParametersMap[ itsKey ];
 		
 		const Value& width  = params.width;
@@ -212,7 +217,7 @@ namespace Genie
 			{
 				const short h_margin = outer_width - width.number;
 				
-				const short left_margin  = h_margin / 2;
+				const short left_margin  = half( h_margin );
 				const short right_margin = h_margin - left_margin;
 				
 				margin.left  = left_margin;
@@ -241,7 +246,7 @@ namespace Genie
 			{
 				const short v_margin = outer_height - height.number;
 				
-				const short top_margin    = v_margin / 2;
+				const short top_margin    = half( v_margin );
 				const short bottom_margin = v_margin - top_margin;
 				
 				margin.top    = top_margin;
