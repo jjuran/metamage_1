@@ -19,8 +19,8 @@ void time( timeval* now )
 
 timeval timeval_sub( const timeval& a, const timeval& b )
 {
-	time_t  sec  = a.tv_sec  - b.tv_sec;
-	int32_t usec = a.tv_usec - b.tv_usec;
+	time_t      sec  = a.tv_sec  - b.tv_sec;
+	suseconds_t usec = a.tv_usec - b.tv_usec;
 	
 	if ( usec < 0 )
 	{
