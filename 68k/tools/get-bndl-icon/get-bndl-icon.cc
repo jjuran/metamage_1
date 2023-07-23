@@ -11,6 +11,9 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <string.h>
+
 // more-libc
 #include "more/string.h"
 
