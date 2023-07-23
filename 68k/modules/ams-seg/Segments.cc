@@ -13,6 +13,9 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <stdint.h>
+
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 

@@ -20,6 +20,9 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <string.h>
+
 // command
 #include "command/get_option.hh"
 
@@ -150,7 +153,7 @@ static char* const* get_options( char** argv )
 					break;
 				}
 				
-				uint8_t* p = file.fName;
+				Byte* p = file.fName;
 				
 				*p++ = n;
 				
