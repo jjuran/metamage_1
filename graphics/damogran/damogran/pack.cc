@@ -5,8 +5,13 @@
 
 #include "damogran/pack.hh"
 
-// Standard C
-#include <string.h>
+// more-libc
+#include "more/string.h"
+
+
+#ifndef NULL
+#define NULL  0L
+#endif
 
 
 namespace damogran
@@ -98,7 +103,7 @@ unsigned long pack_preflight( const uint8_t* src, const uint8_t* end )
 uint8_t* pack( const uint8_t* src, const uint8_t* end, uint8_t* dst )
 {
 	#define WRITE_1( c )       *dst++ = c
-	#define WRITE_N( src, n )  memcpy( dst, src, n ); dst += n
+	#define WRITE_N( src, n )  dst = (uint8_t*) mempcpy( dst, src, n )
 	
 	#include "damogran/pack_body.hh"
 	
