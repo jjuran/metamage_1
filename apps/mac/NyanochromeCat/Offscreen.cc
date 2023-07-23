@@ -76,8 +76,13 @@ static int current_frame;
 const Pattern veryDarkGray = { 0x77, 0xFF, 0xDD, 0xFF, 0x77, 0xFF, 0xDD, 0xFF };
 
 const short buffer_height = nyan_height * n_frames;
-static Rect buffer_bounds = { 0, 0, buffer_height, nyan_width };
-static BitMap buffer_bits = { 0, nyan_stride, buffer_bounds };
+
+static BitMap buffer_bits =
+{
+	NULL,
+	nyan_stride,
+	{ 0, 0, buffer_height, nyan_width },
+};
 
 static GrafPtr offscreen_port;
 
@@ -125,6 +130,8 @@ void make_offscreen_port()
 	
 #else
 	
+	const Rect& buffer_bounds = buffer_bits.bounds;
+	
 	QDErr err = NewGWorld( &offscreen_port, 1, &buffer_bounds, NULL, NULL, 0 );
 	
 	if ( err )
@@ -143,7 +150,7 @@ void render_offscreen()
 	
 	bitmap bits;
 	
-	FillRect( &buffer_bounds, &veryDarkGray );
+	FillRect( &buffer_bits.bounds, &veryDarkGray );
 	
 	draw_frame( bits, 0 );
 	
@@ -173,7 +180,7 @@ void render_offscreen()
 		{
 			baseAddr = (Ptr) dst;
 			
-			FillRect( &buffer_bounds, &veryDarkGray );
+			FillRect( &buffer_bits.bounds, &veryDarkGray );
 		}
 		else
 		{
@@ -220,8 +227,8 @@ void render_offscreen()
 	
 	CopyBits( GetPortBitMapForCopyBits( (CGrafPtr) offscreen_port ),
 	          &buffer_bits,
-	          &buffer_bounds,
-	          &buffer_bounds,
+	          &buffer_bits.bounds,
+	          &buffer_bits.bounds,
 	          srcCopy,
 	          NULL );
 	
