@@ -10,6 +10,7 @@
 
 // Standard C
 #include <errno.h>
+#include <string.h>
 
 // gear
 #include "gear/hexadecimal.hh"

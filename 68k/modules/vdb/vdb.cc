@@ -11,6 +11,9 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <string.h>
+
 // vdb
 #include "Debugger.hh"
 #include "trace.hh"
@@ -46,7 +49,7 @@ static char hex[] =
 #define UNIMPLEMENTED_TRAP_MSG     UNIMPLEMENTED_TRAP_PREFIX       "A123 ***\n"
 
 static
-void report_unimplemented_trap( uint16_t trap_word : __D1 )
+void report_unimplemented_trap( unsigned short trap_word : __D1 )
 {
 	char buffer[] = UNIMPLEMENTED_TRAP_MSG;
 	
