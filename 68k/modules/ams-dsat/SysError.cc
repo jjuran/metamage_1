@@ -16,6 +16,9 @@
 // POSIX
 #include <unistd.h>
 
+// math
+#include "math/fractions.hh"
+
 
 BitMap IconBitmap : 0x0A0E;
 
@@ -57,6 +60,8 @@ static const UInt32 icon[] =
 
 void SysError_patch( short error : __D0 )
 {
+	using math::fractions::half;
+	
 	const short width  = 428;
 	const short height = 112;
 	
@@ -69,8 +74,8 @@ void SysError_patch( short error : __D0 )
 	
 	OpenPort( &port );
 	
-	short left = (port.portRect.right  - width ) / 2;
-	short top  = (port.portRect.bottom - height) / 3 - 4;
+	short left = half(port.portRect.right  - width );
+	short top  =     (port.portRect.bottom - height) / 3 - 4;
 	
 	Rect bounds = port.portRect;
 	
