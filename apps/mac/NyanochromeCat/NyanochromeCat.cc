@@ -80,14 +80,23 @@ void make_main_window()
 	
 	Rect bounds = main_display_bounds();
 	
-	const short exact_left = (bounds.left + bounds.right - nyan_width ) / 2;
+	/*
+		Using unsigned division here assumes that the main display's bounds
+		has non-negative coordinates (i.e. it hangs down and to the right of
+		the origin), and that it's big enough to enclose the window bounds.
+		
+		(We expect that the screen will be no smaller than 512x342,
+		and our window is sized to fit within that area.)
+	*/
+	
+	const short exact_left = (bounds.left + bounds.right - nyan_width ) / 2u;
 	
 	const short aligned_left = aligned( exact_left, alignment );
 	
 	bounds.left  = aligned_left;
 	bounds.right = bounds.left + nyan_width;
 	
-	bounds.top    = (bounds.top + bounds.bottom - nyan_height - 41) / 2 + 39;
+	bounds.top    = (bounds.top + bounds.bottom - nyan_height - 41) / 2u + 39;
 	bounds.bottom = bounds.top + nyan_height;
 	
 	main_window = NewWindow( NULL,
