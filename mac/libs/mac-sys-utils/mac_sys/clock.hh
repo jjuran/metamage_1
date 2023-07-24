@@ -12,7 +12,9 @@
 #endif
 
 #if TARGET_API_MAC_CARBON
-//#include <>
+#ifndef __OSUTILS__
+#include <OSUtils.h>
+#endif
 #endif
 
 // mac-sys-utils
