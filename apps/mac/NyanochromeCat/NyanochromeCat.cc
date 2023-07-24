@@ -41,6 +41,7 @@
 
 // NyanochromeCat
 #include "About.hh"
+#include "Magic.hh"
 #include "Offscreen.hh"
 #include "Timer.hh"
 #include "Window.hh"
@@ -158,6 +159,12 @@ Boolean GetNextEvent( EventRecord& event )
 	
 	return GetNextEvent( everyEvent, &event );
 }
+
+#if CALL_NOT_IN_CARBON
+
+#define TrackGoAway( w, pt )  TrackGoAway_magic( w, pt )
+
+#endif  // #if CALL_NOT_IN_CARBON
 
 int main()
 {
