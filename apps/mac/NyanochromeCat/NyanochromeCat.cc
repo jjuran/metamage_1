@@ -40,6 +40,7 @@
 #include "mac_app/state.hh"
 
 // NyanochromeCat
+#include "About.hh"
 #include "Geometry.hh"
 #include "Offscreen.hh"
 #include "Timer.hh"
@@ -139,12 +140,14 @@ void menu_item_chosen( long choice )
 		case 1:  // (Apple)
 			if ( item == 1 )
 			{
-				// About...
+				show_About_box();
 			}
 			else if ( ! TARGET_API_MAC_CARBON )
 			{
 				mac::app::open_DA_from_menu( item );
 			}
+			
+			SetPortWindowPort( main_window );
 			break;
 		
 		case 2:  // File
@@ -157,6 +160,12 @@ void menu_item_chosen( long choice )
 				case 3:  // Close
 					if ( CONFIG_DAs  &&  mac::app::close_front_DA() )
 					{
+						break;
+					}
+					
+					if ( FrontWindow() == gAboutBox )
+					{
+						close_About_box();
 						break;
 					}
 				
@@ -284,21 +293,31 @@ int main()
 						case inGoAway:
 							if ( TrackGoAway( window, event.where ) )
 							{
-								DisposeWindow( main_window );
-								
-								main_window = NULL;
-								quitting = true;
+								if ( window == gAboutBox )
+								{
+									close_About_box();
+								}
+								else
+								{
+									DisposeWindow( main_window );
+									
+									main_window = NULL;
+									quitting = true;
+								}
 							}
 							break;
 						
 						case inContent:
-							if ( CONFIG_DAs  &&  window != FrontWindow() )
+							if ( window != FrontWindow() )
 							{
 								SelectWindow( window );
 								break;
 							}
 							
-							play_pause();
+							if ( window == main_window )
+							{
+								play_pause();
+							}
 							break;
 						
 						default:
@@ -343,7 +362,20 @@ int main()
 					window = (WindowRef) event.message;
 					
 					BeginUpdate( window );
-					draw_window( window );
+					
+					if ( window == gAboutBox )
+					{
+						SetPortWindowPort( gAboutBox );
+						
+						draw_About_box();
+						
+						SetPortWindowPort( main_window );
+					}
+					else
+					{
+						draw_window( window );
+					}
+					
 					EndUpdate  ( window );
 					break;
 				

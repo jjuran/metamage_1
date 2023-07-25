@@ -18,3 +18,8 @@ resource 'vers' (1) {
 	"0.8.0",
 	"0.8.0, " COPY " " COPYRIGHT
 };
+
+resource 'STR#' (128) {{
+	"About",
+	"(With apologies to Chris Torres)",
+}};
