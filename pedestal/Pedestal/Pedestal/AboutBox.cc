@@ -115,17 +115,14 @@ namespace Pedestal
 	{
 		// Pre-conditions:  bounds is set to { 0, 0, v, h }
 		
-		const short topMargin = ::GetMBarHeight() + 18;  // FIXME:  Calculate title bar height
-		
 		const Rect& screenBounds = mac::qd::screenBits().bounds;
 		
-		short spareWidth = screenBounds.right - bounds.right;
-		
-		short spareHeight = screenBounds.bottom - bounds.bottom - topMargin;
+		short spareWidth  = screenBounds.right  - bounds.right;
+		short spareHeight = screenBounds.bottom - bounds.bottom;
 		
 		::OffsetRect( &bounds,
 		              spareWidth / 2,
-		              topMargin + spareHeight / 3 );
+		              spareHeight * 3 / 8 );
 	}
 	
 	class AboutBoxView : public View
