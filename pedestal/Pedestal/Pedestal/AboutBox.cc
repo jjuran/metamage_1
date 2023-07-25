@@ -120,9 +120,15 @@ namespace Pedestal
 		short spareWidth  = screenBounds.right  - bounds.right;
 		short spareHeight = screenBounds.bottom - bounds.bottom;
 		
+		/*
+			Use unsigned division for smaller 68K code.
+			This assumes that main screen coordinates are non-negative,
+			and that the window fits within the screen bounds.
+		*/
+		
 		::OffsetRect( &bounds,
-		              spareWidth / 2,
-		              spareHeight * 3 / 8 );
+		              spareWidth / 2u,
+		              spareHeight * 3 / 8u );
 	}
 	
 	class AboutBoxView : public View
