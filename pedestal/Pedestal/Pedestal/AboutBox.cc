@@ -138,13 +138,10 @@ namespace Pedestal
 	
 	void AboutBoxView::Draw( const Rect& bounds, bool erasing )
 	{
-		if ( erasing )
-		{
-			EraseRect( &bounds );
-		}
+		EraseRect( &bounds );
 		
-		short top  = bounds.top  + kAboutBoxTopMargin;
-		short left = bounds.left + kAboutBoxIconHorizontalMargin;
+		short top  = kAboutBoxTopMargin;
+		short left = kAboutBoxIconHorizontalMargin;
 		
 		const Rect iconBounds =
 		{
@@ -157,7 +154,7 @@ namespace Pedestal
 		mac::qd::plot_icon_id( iconBounds, 128 );
 		
 		top += kAboutBoxIconEdgeLength + kAboutBoxIconToTextGap;
-		left = bounds.left + kAboutBoxTextHorizontalMargin;
+		left = kAboutBoxTextHorizontalMargin;
 		
 		const Rect nameBounds =
 		{
