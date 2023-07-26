@@ -27,32 +27,32 @@
 
 namespace mac  {
 namespace rsrc {
-	
-	signed char get_string_from_resource( unsigned char*  result,
-	                                      unsigned long   type,
-	                                      short           id )
+
+signed char get_string_from_resource( unsigned char*  result,
+                                      unsigned long   type,
+                                      short           id )
+{
+	if ( Handle h = GetResource( type, id ) )
 	{
-		if ( Handle h = GetResource( type, id ) )
+		const Size size = mac::glue::GetHandleSize_raw( h );
+		
+		if ( size > 0 )
 		{
-			const Size size = mac::glue::GetHandleSize_raw( h );
+			unsigned char len = **h;
 			
-			if ( size > 0 )
+			if ( size > len )
 			{
-				unsigned char len = **h;
+				mempcpy( result, *h, len + 1 );
 				
-				if ( size > len )
-				{
-					mempcpy( result, *h, len + 1 );
-					
-					return true;
-				}
+				return true;
 			}
 		}
-		
-		result[ 0 ] = 0;
-		
-		return false;
 	}
 	
+	result[ 0 ] = 0;
+	
+	return false;
+}
+
 }
 }
