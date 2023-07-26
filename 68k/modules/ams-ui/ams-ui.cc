@@ -157,7 +157,7 @@ void install_Menus()
 	TBTRAP( SetItemCmd   );  // A84F
 	
 	TBTRAP( SetWindowPic );  // A92E
-	
+	TBTRAP( GetWindowPic );  // A92F
 	TBTRAP( InitMenus    );  // A930
 	TBTRAP( NewMenu      );  // A931
 	TBTRAP( DisposeMenu  );  // A932

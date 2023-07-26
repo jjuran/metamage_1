@@ -89,7 +89,8 @@ pascal void EndUpdate_patch  ( WindowRef window );
 pascal void SetWRefCon_patch( WindowPeek window, long data );
 pascal long GetWRefCon_patch( WindowPeek window );
 
-pascal void SetWindowPic_patch( WindowPeek window, PicHandle pic );
+pascal void      SetWindowPic_patch( WindowPeek window, PicHandle pic );
+pascal PicHandle GetWindowPic_patch( WindowPeek window );
 
 pascal Boolean CheckUpdate_patch( EventRecord* event );
 

@@ -1429,6 +1429,11 @@ pascal void SetWindowPic_patch( WindowPeek window, PicHandle pic )
 	window->windowPic = pic;
 }
 
+pascal PicHandle GetWindowPic_patch( WindowPeek window )
+{
+	return window->windowPic;
+}
+
 #pragma mark -
 #pragma mark Low-Level Routines
 #pragma mark -
