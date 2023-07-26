@@ -483,11 +483,6 @@ pascal void CloseWindow_patch( WindowRef port )
 	
 	WindowPeek window = (WindowPeek) port;
 	
-	if ( window->windowPic )
-	{
-		KillPicture( window->windowPic );
-	}
-	
 	call_WDEF( window, wDispose, 0 );
 	
 	const bool frontmost = window == WindowList;
