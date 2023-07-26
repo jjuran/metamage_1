@@ -10,12 +10,12 @@
 namespace mac  {
 namespace rsrc {
 	
-	bool get_string_from_resource( unsigned char*  result,
-	                               unsigned long   type,
-	                               short           id );
+	signed char get_string_from_resource( unsigned char*  result,
+	                                      unsigned long   type,
+	                                      short           id );
 	
 	inline
-	bool get_STR_resource( unsigned char* result, short id )
+	signed char get_STR_resource( unsigned char* result, short id )
 	{
 		return get_string_from_resource( result, 'STR ', id );
 	}

@@ -28,9 +28,9 @@
 namespace mac  {
 namespace rsrc {
 	
-	bool get_string_from_resource( unsigned char*  result,
-	                               unsigned long   type,
-	                               short           id )
+	signed char get_string_from_resource( unsigned char*  result,
+	                                      unsigned long   type,
+	                                      short           id )
 	{
 		if ( Handle h = GetResource( type, id ) )
 		{
