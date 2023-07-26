@@ -34,15 +34,17 @@ signed char get_string_from_resource( unsigned char*  result,
 {
 	if ( Handle h = GetResource( type, id ) )
 	{
-		const Size size = mac::glue::GetHandleSize_raw( h );
+		const Size physical_size = mac::glue::GetHandleSize_raw( h );
 		
-		if ( size > 0 )
+		if ( physical_size > 0 )
 		{
-			unsigned char len = **h;
+			const Byte* text = (Byte*) *h;
 			
-			if ( size > len )
+			const UInt16 logical_size = 1 + text[ 0 ];
+			
+			if ( logical_size <= physical_size )
 			{
-				mempcpy( result, *h, len + 1 );
+				mempcpy( result, text, logical_size );
 				
 				return true;
 			}
