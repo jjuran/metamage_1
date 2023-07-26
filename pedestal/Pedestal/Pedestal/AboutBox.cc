@@ -149,12 +149,11 @@ namespace Pedestal
 	class AboutBoxView : public View
 	{
 		public:
-			void Draw( const Rect& bounds, bool erasing );
-			
 			void DrawInContext( CGContextRef context, CGRect bounds );
 	};
 	
-	void AboutBoxView::Draw( const Rect& bounds, bool erasing )
+	static
+	void draw_About_box( const Rect& bounds )
 	{
 		EraseRect( &bounds );
 		
@@ -367,11 +366,23 @@ namespace Pedestal
 	
 	static n::owned< WindowRef > sAboutBox;
 	
+#if CONFIG_COMPOSITING
+#define GetWindowPic( window )  NULL
+#define KillPicture( picture )  /**/
+#endif
+	
 	static
 	void AboutClosed( WindowRef window )
 	{
+		PicHandle pic = GetWindowPic( window );
+		
 		sAboutBox.reset();
+		
+		KillPicture( pic );
 	}
+	
+#undef GetWindowPic
+#undef KillPicture
 	
 	static
 	n::owned< WindowRef > NewAboutBox()
@@ -414,9 +425,25 @@ namespace Pedestal
 		
 		set_window_closed_proc( window, &AboutClosed );
 		
+	#if CONFIG_COMPOSITING
+		
 		boost::intrusive_ptr< View > view( new AboutBoxView() );
 		
 		set_window_view( window, view.get() );
+		
+	#else
+		
+		Rect frame = { 0, 0, kAboutBoxHeight, kAboutBoxWidth };
+		
+		PicHandle pic = OpenPicture( &frame );
+		
+		draw_About_box( frame );
+		
+		ClosePicture();
+		
+		SetWindowPic( window, pic );
+		
+	#endif
 		
 	#if TARGET_API_MAC_CARBON
 		
