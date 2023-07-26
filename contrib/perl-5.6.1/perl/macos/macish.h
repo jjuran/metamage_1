@@ -168,6 +168,16 @@ void relix_async_check();
 
 #define CLK_TCK  CLOCKS_PER_SEC
 
+/* MacOS 68K defines atan2 et al. as macros */
+
+#define atan2d_amg  atan2_amg
+#define cosd_amg    cos_amg
+#define expd_amg    exp_amg
+#define logd_amg    log_amg
+#define powd_amg    pow_amg
+#define sind_amg    sin_amg
+#define sqrtd_amg   sqrt_amg
+
 // Casualties of the libc upgrade
 #undef HAS_ACCESS
 #undef HAS_GETHOSTBYADDR
