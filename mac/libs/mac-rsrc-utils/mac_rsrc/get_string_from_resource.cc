@@ -25,6 +25,14 @@
 #pragma exceptions off
 
 
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+#define STR_RESOURCE  "'STR ' RESOURCE (or equivalent type)"
+
+#define TRUNCATED_STR  "TRUNCATED " STR_RESOURCE
+#define EMPTY_STR      "EMPTY " STR_RESOURCE
+
+
 namespace mac  {
 namespace rsrc {
 
@@ -34,6 +42,11 @@ signed char get_string_from_resource( unsigned char*  result,
 {
 	if ( Handle h = GetResource( type, id ) )
 	{
+		/*
+			We're not going to release the resource -- we have
+			no way to know if anyone else might be using it.
+		*/
+		
 		const Size physical_size = mac::glue::GetHandleSize_raw( h );
 		
 		if ( physical_size > 0 )
@@ -48,7 +61,22 @@ signed char get_string_from_resource( unsigned char*  result,
 				
 				return true;
 			}
+			else
+			{
+				mempcpy( result, "\p" STR_LEN( TRUNCATED_STR ) + 1 );
+			}
 		}
+		else
+		{
+			mempcpy( result, "\p" STR_LEN( EMPTY_STR ) + 1 );
+		}
+		
+		/*
+			Indicate errors with a special value that evaluates as true,
+			so that by default, the error message will be visible.
+		*/
+		
+		return -true;
 	}
 	
 	result[ 0 ] = 0;
