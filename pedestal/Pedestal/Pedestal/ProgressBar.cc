@@ -29,6 +29,9 @@
 #include "mac_sys/has/ColorQuickDraw.hh"
 
 
+#pragma exceptions off
+
+
 static inline
 bool has_color_quickdraw()
 {

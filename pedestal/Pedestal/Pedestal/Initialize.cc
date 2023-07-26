@@ -16,6 +16,9 @@
 #endif
 
 
+#pragma exceptions off
+
+
 namespace Pedestal
 {
 	

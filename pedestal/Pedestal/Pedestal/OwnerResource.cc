@@ -17,6 +17,9 @@
 #include "mac_glue/Memory.hh"
 
 
+#pragma exceptions off
+
+
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define TRUNCATED  "TRUNCATED 'STR ' RESOURCE"
