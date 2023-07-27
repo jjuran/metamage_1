@@ -20,6 +20,8 @@ namespace rsrc {
 		return get_string_from_resource( result, 'STR ', id );
 	}
 	
+	signed char get_vers_ShortVersionString( unsigned char* result, short id );
+	
 }
 }
 
