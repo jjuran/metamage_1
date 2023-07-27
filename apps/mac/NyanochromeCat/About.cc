@@ -205,6 +205,32 @@ short get_menubar_height()
 	return GetMBarHeight();
 }
 
+static inline
+const Rect& window_structure_bounds( WindowRef window )
+{
+	/*
+		This is not generic -- we assume the window is at v=0.
+		
+		Also, in the non-opaque structs case, we return an address
+		which lies within a relocatable block -- handle with care. ;-)
+	*/
+	
+#if ! OPAQUE_TOOLBOX_STRUCTS
+	
+	WindowPeek w = (WindowPeek) window;
+	
+	const Rect& box = w->strucRgn[0]->rgnBBox;
+	
+#else
+	
+	static Rect box;
+	GetWindowBounds( window, kWindowStructureRgn, &box );
+	
+#endif
+	
+	return box;
+}
+
 void show_About_box()
 {
 	if ( gAboutBox )
@@ -220,10 +246,18 @@ void show_About_box()
 	short v_lower_bound = get_menubar_height();
 	short v_upper_bound = screen_bounds.bottom;
 	
-	short v_margin = v_upper_bound - v_lower_bound - kAboutBoxHeight;
+	if ( WindowRef front = FrontWindow() )
+	{
+		v_upper_bound = window_structure_bounds( front ).top;
+	}
 	
-	short top  = v_lower_bound + v_margin / 2u;
-	short left = (screen_bounds.right - kAboutBoxWidth) / 2u;
+	/*
+		Create the window at v=0 and offscreen, so we can measure
+		the structure and calculate a suitable window location.
+	*/
+	
+	short top  = 0;
+	short left = -16384;
 	
 	Rect rect = { top, left, top + kAboutBoxHeight, left + kAboutBoxWidth };
 	
@@ -235,6 +269,32 @@ void show_About_box()
 	WindowRef behind = (WindowRef) -1;
 	
 	gAboutBox = NewWindow( NULL, &rect, title, vis, proc, behind, closable, 0 );
+	
+	/*
+		With non-opaque Toolbox structs, the value assigned to `box`
+		becomes invalid with the call to MoveWindow() below.
+	*/
+	
+	const Rect& box = window_structure_bounds( gAboutBox );
+	
+	short title_bar_height = -box.top;
+	short structure_height = box.bottom - box.top;
+	
+	v_lower_bound += 2;
+	v_upper_bound -= 2;
+	
+	short v_space = v_upper_bound - v_lower_bound;
+	
+	if ( v_space > structure_height )
+	{
+		v_lower_bound += (v_space - structure_height) / 2u;
+	}
+	
+	v_lower_bound += title_bar_height;
+	
+	left = (screen_bounds.right - kAboutBoxWidth) / 2u;
+	
+	MoveWindow( gAboutBox, left, v_lower_bound, false );
 }
 
 void close_About_box()
