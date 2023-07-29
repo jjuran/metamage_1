@@ -38,11 +38,10 @@
 namespace mac  {
 namespace rsrc {
 
-signed char get_string_from_resource( unsigned char*  result,
-                                      unsigned long   type,
-                                      short           id )
+signed char get_string_from_handle( unsigned char*  result,
+                                    Handle          h )
 {
-	if ( Handle h = GetResource( type, id ) )
+	if ( h != NULL )
 	{
 		/*
 			We're not going to release the resource -- we have
@@ -84,6 +83,13 @@ signed char get_string_from_resource( unsigned char*  result,
 	result[ 0 ] = 0;
 	
 	return false;
+}
+
+signed char get_string_from_resource( unsigned char*  result,
+                                      unsigned long   type,
+                                      short           id )
+{
+	return get_string_from_handle( result, GetResource( type, id ) );
 }
 
 signed char get_vers_ShortVersionString( unsigned char* result, short id )

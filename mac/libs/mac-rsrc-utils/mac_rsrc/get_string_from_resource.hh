@@ -10,6 +10,11 @@
 namespace mac  {
 namespace rsrc {
 	
+	typedef char** Handle;
+	
+	signed char get_string_from_handle( unsigned char*  result,
+	                                    Handle          h );
+	
 	signed char get_string_from_resource( unsigned char*  result,
 	                                      unsigned long   type,
 	                                      short           id );
