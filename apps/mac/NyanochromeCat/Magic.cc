@@ -14,6 +14,7 @@
 #endif
 
 // NyanochromeCat
+#include "Geometry.hh"
 #include "Offscreen.hh"
 #include "PatchUPPs.hh"
 #include "Timer.hh"
@@ -108,6 +109,29 @@ Boolean TrackGoAway_magic( WindowRef window, Point pt )
 	set_trap_address( (UPP) old_StillDown, _StillDown );
 	
 	return result;
+}
+
+void DragWindow_magic( WindowRef    window,
+                       Point        pt,
+                       const Rect*  area )
+{
+	old_StillDown = (StillDownPatchUPP) get_trap_address( _StillDown );
+	
+	if ( using_frame_deltas  ||  (temp_blit_buffer = NewPtr( frame_size )) )
+	{
+		set_trap_address( (UPP) UPP_ARG( StillDown_patch ), _StillDown );
+	}
+	
+	DragWindow( window, pt, area );
+	
+	set_trap_address( (UPP) old_StillDown, _StillDown );
+	
+	if ( temp_blit_buffer )
+	{
+		DisposePtr( temp_blit_buffer );
+		
+		temp_blit_buffer = NULL;
+	}
 }
 
 #endif  // #if CALL_NOT_IN_CARBON

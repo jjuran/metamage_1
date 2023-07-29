@@ -45,6 +45,7 @@
 
 #if CALL_NOT_IN_CARBON
 	#define TrackGoAway( w, pt )  TrackGoAway_magic( w, pt )
+	#define DragWindow( w, pt, r )  DragWindow_magic( w, pt, r )
 #else
 	#define SystemTask()  /**/
 #endif  // #if CALL_NOT_IN_CARBON
