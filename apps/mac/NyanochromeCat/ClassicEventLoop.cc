@@ -158,7 +158,7 @@ void classic_event_loop()
 			if ( animation_timer.pulse() )
 			{
 				prepare_next_frame();
-				draw_window( main_window );
+				blit_window( main_window );
 			}
 		}
 		
@@ -237,12 +237,12 @@ void classic_event_loop()
 						
 						case 0x1C:
 							prepare_prev_frame();
-							draw_window( main_window );
+							blit_window( main_window );
 							break;
 						
 						case 0x1D:
 							prepare_next_frame();
-							draw_window( main_window );
+							blit_window( main_window );
 							break;
 						
 						default:

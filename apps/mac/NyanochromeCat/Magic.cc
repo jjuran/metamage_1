@@ -41,8 +41,7 @@ void StillDown_payload()
 		SetPortWindowPort( main_window );
 		
 		prepare_next_frame();
-		
-		draw_window( main_window );
+		blit_window( main_window );
 		
 		SetPort( port );
 	}

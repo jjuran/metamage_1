@@ -23,5 +23,6 @@ void prepare_next_frame();
 void prepare_prev_frame();
 
 void blit( CGrafPtr port );
+void draw( CGrafPtr port );
 
 #endif

@@ -109,6 +109,12 @@ void make_main_window()
 inline
 void draw_window( WindowRef window )
 {
+	draw( GetWindowPort( window ) );
+}
+
+inline
+void blit_window( WindowRef window )
+{
 	blit( GetWindowPort( window ) );
 }
 

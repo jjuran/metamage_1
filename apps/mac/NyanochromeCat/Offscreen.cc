@@ -291,6 +291,27 @@ void prepare_prev_frame()
 
 void blit( CGrafPtr port )
 {
+	ptrdiff_t addr_diff = frame_size;
+	
+	if ( ! using_frame_deltas )
+	{
+		draw( port );
+		
+		return;
+	}
+	
+	buffer_bits.baseAddr += addr_diff;
+	
+	mac::qd::copy_bits( buffer_bits,
+	                    port,
+	                    get_portRect( port ),
+	                    srcXor );
+	
+	buffer_bits.baseAddr -= addr_diff;
+}
+
+void draw( CGrafPtr port )
+{
 	const Rect& portRect = get_portRect( port );
 	
 	mac::qd::copy_bits( buffer_bits,
