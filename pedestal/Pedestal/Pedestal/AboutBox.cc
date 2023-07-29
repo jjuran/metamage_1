@@ -34,6 +34,9 @@
 // mac-sys-utils
 #include "mac_sys/has/ColorQuickDraw.hh"
 
+// mac-rsrc-utils
+#include "mac_rsrc/get_string_from_resource.hh"
+
 // mac-qd-utils
 #include "mac_qd/plot_icon_id.hh"
 #include "mac_qd/globals/screenBits.hh"
@@ -58,7 +61,6 @@
 #include "Pedestal/OwnerResource.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowStorage.hh"
-#include "Pedestal/vers_Resource.hh"
 
 
 /*
@@ -196,10 +198,14 @@ namespace Pedestal
 		Str255 data = "\p";
 		Str255 vers = "\p" VERSION_FALLBACK;
 		
-		GetOwnerResourceName( creator, name );
-		GetOwnerResourceData( creator, data );
+		if ( Handle h = GetResource( creator, 0 ) )
+		{
+			GetResInfo( h, NULL, NULL, name );
+			
+			mac::rsrc::get_string_from_handle( data, h );
+		}
 		
-		if ( Get_vers_ShortVersionString( 1, vers ) )
+		if ( mac::rsrc::get_vers_ShortVersionString( vers, 1 ) )
 		{
 			if ( vers[ 0 ] <= 255 - STRLEN( "Version " ) )
 			{

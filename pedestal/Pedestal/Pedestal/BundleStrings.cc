@@ -12,9 +12,11 @@
 #endif
 #endif
 
+// mac-rsrc-utils
+#include "mac_rsrc/get_string_from_resource.hh"
+
 // Pedestal
 #include "Pedestal/OwnerResource.hh"
-#include "Pedestal/vers_Resource.hh"
 
 
 namespace Pedestal
@@ -45,7 +47,7 @@ namespace Pedestal
 	{
 		Str255 data;
 		
-		if ( GetOwnerResourceData( GetCreator(), data ) )
+		if ( mac::rsrc::get_string_from_resource( data, GetCreator(), 0 ) )
 		{
 			return CFStringCreateWithPascalString( NULL,
 			                                       data,
@@ -60,7 +62,7 @@ namespace Pedestal
 	{
 		Str255 data;
 		
-		if ( Get_vers_ShortVersionString( 1, data ) )
+		if ( mac::rsrc::get_vers_ShortVersionString( data, 1 ) )
 		{
 			return CFStringCreateWithPascalString( NULL,
 			                                       data,
