@@ -368,7 +368,8 @@ void MDEF_0_Size( MenuRef menu )
 	menu[0]->menuHeight = height;
 }
 
-void MDEF_0( short msg, MenuRef menu, const Rect* r, Point hit, short* which )
+pascal
+void MDEF_0( short msg, MenuRef menu, Rect* r, Point hit, short* which )
 {
 	switch ( msg )
 	{

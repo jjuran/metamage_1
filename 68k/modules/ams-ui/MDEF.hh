@@ -22,7 +22,8 @@ bool large_icon_key( unsigned char key )
 	return ! small_icon_key( key );
 }
 
-void MDEF_0( short msg, MenuInfo** menu, const Rect* r, Point pt, short* item );
+pascal
+void MDEF_0( short msg, MenuInfo** menu, Rect* r, Point pt, short* item );
 
 class menu_item_iterator
 {

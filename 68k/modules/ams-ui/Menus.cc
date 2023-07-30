@@ -741,7 +741,7 @@ void draw_menu_frame( const Rect& menuRect )
 }
 
 static
-void flash_menu_item( MenuRef menu, const Rect& r, Point pt, short item, int n )
+void flash_menu_item( MenuRef menu, Rect& r, Point pt, short item, int n )
 {
 	long delay = 3;
 	
