@@ -35,7 +35,6 @@
 
 // ams-ui
 #include "MBDF.hh"
-#include "MDEF.hh"
 #include "Windows.hh"
 
 
@@ -138,6 +137,16 @@ done:
 }
 
 static
+void call_MDEF( short msg, MenuRef menu, Rect* r, Point hit, short* out )
+{
+	Handle h = menu[0]->menuProc;
+	
+	MenuDefProcPtr mdef = (MenuDefProcPtr) *h;
+	
+	mdef( msg, menu, r, hit, out );
+}
+
+static
 MenuList_entry* find_menu_id( short menuID )
 {
 	if ( menuID == 0 )
@@ -234,6 +243,8 @@ pascal MenuInfo** NewMenu_patch( short menuID, const unsigned char* title )
 	menu[0]->menuID      = menuID;
 	menu[0]->enableFlags = 0xFFFFFFFF;
 	
+	menu[0]->menuProc = GetResource( 'MDEF', 0 );
+	
 	fast_memcpy( menu[0]->menuData, title, 1 + title[ 0 ] );
 	
 	return menu;
@@ -242,6 +253,11 @@ pascal MenuInfo** NewMenu_patch( short menuID, const unsigned char* title )
 pascal MenuInfo** GetMenu_patch( short resID )
 {
 	Handle h = GetResource( 'MENU', resID );
+	
+	if ( MenuRef menu = (MenuRef) h )
+	{
+		menu[0]->menuProc = GetResource( 'MDEF', 0 );
+	}
 	
 	return (MenuRef) h;
 }
@@ -415,7 +431,7 @@ pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 	}
 	while ( length > 0 );
 	
-	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+	call_MDEF( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
 pascal void AddResMenu_patch( MenuInfo** menu, ResType type )
@@ -463,7 +479,7 @@ pascal void InsertMenu_patch( MenuInfo** menu, short beforeID )
 	
 	header->extent_bytes += sizeof (MenuList_entry);
 	
-	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+	call_MDEF( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
 pascal void DrawMenuBar_patch()
@@ -606,7 +622,7 @@ pascal Handle GetNewMBar_patch( ResID menuBarID )
 			
 			right_edge += gap_between_titles + StringWidth( menu[0]->menuData );
 			
-			MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+			call_MDEF( mSizeMsg, menu, NULL, zero_Point, NULL );
 		}
 		
 		header->right_edge = right_edge;
@@ -754,7 +770,7 @@ void flash_menu_item( MenuRef menu, Rect& r, Point pt, short item, int n )
 		
 		mac::glue::delay( delay );
 		
-		MDEF_0( mChooseMsg, menu, &r, pt, &item );
+		call_MDEF( mChooseMsg, menu, &r, pt, &item );
 	}
 }
 
@@ -793,7 +809,7 @@ pascal long MenuSelect_patch( Point pt )
 			if ( opened  &&  whichItem != 0 )
 			{
 				// Unhighlight the highlighted menu item.
-				MDEF_0( mChooseMsg, opened->menu, &menuRect, pt, &whichItem );
+				call_MDEF( mChooseMsg, opened->menu, &menuRect, pt, &whichItem );
 			}
 			
 			// Hit test the menu titles.
@@ -855,7 +871,7 @@ pascal long MenuSelect_patch( Point pt )
 						
 						draw_menu_frame( menuRect );
 						
-						MDEF_0( mDrawMsg, menu, &menuRect, zero_Point, NULL );
+						call_MDEF( mDrawMsg, menu, &menuRect, zero_Point, NULL );
 					}
 				}
 			}
@@ -865,7 +881,7 @@ pascal long MenuSelect_patch( Point pt )
 			// The mouse cursor is below the menu bar, and a menu is open.
 			// Hit-test its menu items and update which one is highlighted.
 			
-			MDEF_0( mChooseMsg, opened->menu, &menuRect, pt, &whichItem );
+			call_MDEF( mChooseMsg, opened->menu, &menuRect, pt, &whichItem );
 		}
 		
 		/*
@@ -1030,7 +1046,7 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 			
 			Munger( (Handle) menu, offset, NULL, 1 + oldLen, text, 1 + newLen );
 			
-			MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+			call_MDEF( mSizeMsg, menu, NULL, zero_Point, NULL );
 			
 			return;
 		}
@@ -1138,7 +1154,7 @@ pascal void SetItmIcon_patch( MenuInfo** menu, short item, CharParameter icon )
 			if ( iconicity_changed  &&  large_icon_key( *p ) )
 			{
 				// We added or removed a large icon, so the size has changed.
-				MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+				call_MDEF( mSizeMsg, menu, NULL, zero_Point, NULL );
 			}
 			
 			return;
@@ -1165,7 +1181,7 @@ pascal void SetItemStyle_patch( MenuRef menu, short item, short style )
 				*p = style;
 				
 				// We changed the style, so the size may have changed.
-				MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+				call_MDEF( mSizeMsg, menu, NULL, zero_Point, NULL );
 			}
 			
 			return;
@@ -1295,7 +1311,7 @@ pascal void InsMenuItem_patch( MenuInfo**            menu,
 	}
 	while ( length > 0 );
 	
-	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+	call_MDEF( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
 pascal void DelMenuItem_patch( MenuInfo** menu, short item )
@@ -1326,7 +1342,7 @@ pascal void DelMenuItem_patch( MenuInfo** menu, short item )
 	
 	Munger( (Handle) menu, addr - (Byte*) *menu, NULL, next - addr, "", 0 );
 	
-	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+	call_MDEF( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
 pascal void GetItemCmd_patch( MenuInfo** menu, short item, CharParameter* key )
@@ -1369,7 +1385,7 @@ pascal void SetItemCmd_patch( MenuInfo** menu, short item, CharParameter key )
 			if ( icon  &&  resized )
 			{
 				// We changed an icon's size, so the menu size has changed.
-				MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
+				call_MDEF( mSizeMsg, menu, NULL, zero_Point, NULL );
 			}
 			
 			return;
