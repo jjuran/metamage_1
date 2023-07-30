@@ -226,8 +226,6 @@ int main()
 		mac::app::install_basic_event_handlers();
 	}
 	
-	SetEventMask( everyEvent );
-	
 	CursHandle cursor_handle = GetCursor( watchCursor );
 	
 	if ( cursor_handle )
