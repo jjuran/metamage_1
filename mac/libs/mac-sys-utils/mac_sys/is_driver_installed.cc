@@ -35,7 +35,7 @@ bool is_driver_installed( const unsigned char* driver_name )
 	
 	for ( short unit = 0;  unit < count;  ++unit )
 	{
-		DCtlHandle dceHandle = GetDCtlEntry( -unit );
+		DCtlHandle dceHandle = GetDCtlEntry( ~unit );
 		
 		if ( dceHandle != NULL  &&  dceHandle[0]->dCtlDriver != NULL )
 		{
