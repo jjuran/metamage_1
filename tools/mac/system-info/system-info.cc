@@ -176,7 +176,7 @@ static const uint32_t sysa = gestalt( 'sysa' );
 static
 void host_env()
 {
-	const uint32_t sysv = gestalt( 'sysv' );
+	uint32_t sysv = gestalt( 'sysv' );
 	
 	const char* arch_name = sysa <=  1 ? M68K
 	                      : sysa ==  2 ? PPC
@@ -233,7 +233,10 @@ void host_env()
 	}
 	else
 	{
-		const uint32_t vers = (TARGET_CPU_68K  &&  ! sysv) ? SysVersion : sysv;
+		if ( TARGET_CPU_68K  &&  ! sysv )
+		{
+			sysv = SysVersion;
+		}
 		
 		if ( sysv >= 0x1000 )
 		{
@@ -241,11 +244,11 @@ void host_env()
 		}
 		else
 		{
-			sys1 = (vers >> 8) & 0xF;
+			sys1 = (sysv >> 8) & 0xF;
 		}
 		
-		sys2 = (vers >> 4) & 0xF;
-		sys3 = (vers >> 0) & 0xF;
+		sys2 = (sysv >> 4) & 0xF;
+		sys3 = (sysv >> 0) & 0xF;
 	}
 	
 	char a[ 4 ] = { 0 };
