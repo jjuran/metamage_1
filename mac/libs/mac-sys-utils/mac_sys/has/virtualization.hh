@@ -64,6 +64,12 @@ namespace sys {
 	}
 	
 	inline
+	bool has_AMax()
+	{
+		return is_driver_installed( "\p" ".HDisk" );
+	}
+	
+	inline
 	bool has_MacOnLinux_classicMacOS()
 	{
 		return is_driver_installed( "\p" ".MacOnLinuxVideo" );
