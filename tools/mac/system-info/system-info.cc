@@ -563,6 +563,11 @@ void virt_env()
 		printf( "%s" "Paravirtualization:     A/UX\n", blank );
 		blank = "";
 	}
+	else if ( mac::sys::has_AMax() )
+	{
+		printf( "%s" "Paravirtualization:     A-Max\n", blank );
+		blank = "";
+	}
 	
 	if ( mac::sys::has_BlueBox() )
 	{
