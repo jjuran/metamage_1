@@ -276,7 +276,7 @@ void host_env()
 	
 #endif
 	
-	if ( sysv == 0 )
+	if ( TARGET_CPU_68K  &&  sysv == 0 )
 	{
 		if ( Handle h = GetResource( 'STR ', 0 ) )
 		{
@@ -294,8 +294,6 @@ void host_env()
 				a[ 0 ] = p[ 0 ];
 				b[ 0 ] = p[ 2 ];
 			}
-			
-			ReleaseResource( h );
 			
 			os_name = "Mac Software";
 		}
