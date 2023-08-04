@@ -162,7 +162,7 @@ my %fsmap =
 			v =>
 			{
 				map { copy_vy $_ }
-					qw( arcsign arcsign-unseal options ),
+					qw( arcsign arcsign-unseal date-time options ),
 			},
 		},
 	},
