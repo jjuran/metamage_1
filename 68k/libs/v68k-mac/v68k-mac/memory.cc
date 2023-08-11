@@ -180,6 +180,8 @@ enum
 	tag_MenuList,
 	tag_MenuList_low_word,
 	tag_TheMenu,
+	tag_MBarHook,
+	tag_MBarHook_low_word,
 	tag_MenuHook,
 	tag_MenuHook_low_word,
 	tag_DragPattern,
@@ -390,6 +392,7 @@ static const global globals[] =
 	
 	{ 0x0A26, 2,    tag_TheMenu     },
 	
+	{ 0x0A2C, 4,    tag_MBarHook    },
 	{ 0x0A30, 4,    tag_MenuHook    },
 	{ 0x0A34, 8,    tag_DragPattern },
 	{ 0x0A3C, 8,    tag_DeskPattern },
