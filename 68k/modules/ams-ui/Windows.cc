@@ -50,6 +50,7 @@
 #pragma exceptions off
 
 
+Point      Mouse       : 0x0830;
 Byte       WWExist     : 0x08F2;
 
 short      ApFontID    : 0x0984;
@@ -65,6 +66,26 @@ Pattern    DeskPattern : 0x0A3C;
 WindowRef  CurActivate : 0x0A64;
 WindowRef  CurDeactive : 0x0A68;
 short      MBarHeight  : 0x0BAA;
+
+void* toolbox_trap_table[] : 0x0C00;
+
+/*
+	We don't patch _StillDown ourselves, so we don't need to call a
+	prior handler.  We only need to know if _StillDown subsequently
+	gets patched by the application, so we can make a point of calling
+	it (via A-trap) if so.  Since we'll just be comparing addresses,
+	the actual pointer type doesn't matter and `void*` is sufficient.
+*/
+
+static void* old_StillDown;
+
+static inline
+bool is_StillDown_patched()
+{
+	enum { _StillDown = 0xA973 };
+	
+	return toolbox_trap_table[ _StillDown & 0x03FF ] != old_StillDown;
+}
 
 /*
 	BezelRgn is a made-up global (i.e. not a Mac OS low memory global).
@@ -292,6 +313,10 @@ pascal void InitWindows_patch()
 	InitMenus();  // Some applications assume this.
 	
 	WWExist = 0;
+	
+	enum { _StillDown = 0xA973 };
+	
+	old_StillDown = toolbox_trap_table[ _StillDown & 0x03FF ];
 }
 
 pascal void GetWMgrPort_patch( GrafPtr* port )
@@ -898,19 +923,33 @@ pascal Boolean TrackGoAway_patch( WindowRef window, Point pt )
 			call_WDEF( w, wDraw, wInGoAway );
 		}
 		
-		SetRectRgn( mouseRgn, pt.h, pt.v, pt.h + 1, pt.v + 1 );
-		
-		EventRecord event;
-		
-		if ( WaitNextEvent( mUpMask, &event, 0xFFFFFFFF, mouseRgn ) )
+		if ( is_StillDown_patched() )
 		{
-			if ( event.what == mouseUp )
+			if ( ! StillDown() )
 			{
 				break;
 			}
+			
+			mac::sys::delay( 1 );
+			
+			pt = Mouse;
 		}
-		
-		pt = event.where;
+		else
+		{
+			SetRectRgn( mouseRgn, pt.h, pt.v, pt.h + 1, pt.v + 1 );
+			
+			EventRecord event;
+			
+			if ( WaitNextEvent( mUpMask, &event, 0xFFFFFFFF, mouseRgn ) )
+			{
+				if ( event.what == mouseUp )
+				{
+					break;
+				}
+			}
+			
+			pt = event.where;
+		}
 	}
 	
 	if ( is_inside )
