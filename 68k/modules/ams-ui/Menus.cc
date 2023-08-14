@@ -690,13 +690,13 @@ void draw_menu_frame( const Rect& menuRect )
 	
 	Rect right_edge =
 	{
-		frame.top + 3, frame.right,
+		frame.top + 2, frame.right,
 		frame.bottom,  frame.right + 1,
 	};
 	
 	Rect bottom_edge =
 	{
-		frame.bottom,     frame.left  + 3,
+		frame.bottom,     frame.left  + 2,
 		frame.bottom + 1, frame.right + 1,
 	};
 	
