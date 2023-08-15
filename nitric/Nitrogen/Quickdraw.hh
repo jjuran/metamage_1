@@ -920,11 +920,6 @@ namespace Nitrogen
 	// QDRestoreRegionBits
 	// QDDisposeRegionBits
 	
-	/*
-		CreateNewPortForCGDisplayID() is declared in CGDirectDisplay.hh, since
-		it requires CGDirectDisplayID.
-	*/
-	
 	// QDDisplayWaitCursor
 	// QDSetPatternOrigin
 	// QDGetPatternOrigin

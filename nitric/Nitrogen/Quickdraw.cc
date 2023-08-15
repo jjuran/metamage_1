@@ -18,10 +18,6 @@
 #include "Nitrogen/OSStatus.hh"
 #include "Nitrogen/Resources.hh"
 
-#if TARGET_RT_MAC_MACHO || TARGET_API_MAC_OSX
-#include "Nitrogen/CGDirectDisplay.hh"
-#endif
-
 
 namespace Nitrogen
 {
@@ -231,20 +227,6 @@ namespace Nitrogen
 		return nucleus::owned< CGrafPtr >::seize( ::CreateNewPort(),
 		                                          &::DisposePort );
 	}
-	
-#if TARGET_API_MAC_OSX
-	
-	// Declared in Nitrogen/CGDirectDisplay.hh, since it depends on CGDirectDisplayID
-	
-	nucleus::owned< CGrafPtr > CreateNewPortForCGDisplayID( CGDirectDisplayID display )
-	{
-		UInt32 id = (UInt32) display;
-		
-		return nucleus::owned< CGrafPtr >::seize( ::CreateNewPortForCGDisplayID( id ),
-		                                          &::DisposePort );
-	}
-	
-#endif
 	
 #endif  // #if ! __LP64__
 	
