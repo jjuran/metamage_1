@@ -30,6 +30,7 @@
 
 // mac-qd-utils
 #include "mac_qd/main_display_bounds.hh"
+#include "mac_qd/set_cursor_by_id.hh"
 #include "mac_qd/wide_drag_area.hh"
 
 // mac-app-utils
@@ -226,18 +227,11 @@ int main()
 		mac::app::install_basic_event_handlers();
 	}
 	
-	CursHandle cursor_handle = GetCursor( watchCursor );
-	
-	if ( cursor_handle )
-	{
-		Cursor cursor = **cursor_handle;
-		
-		SetCursor( &cursor );
-	}
+	OSErr err = mac::qd::set_cursor_by_id( watchCursor );
 	
 	render_offscreen();
 	
-	if ( cursor_handle )
+	if ( err == noErr )
 	{
 		InitCursor();
 	}
