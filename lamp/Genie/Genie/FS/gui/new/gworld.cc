@@ -460,8 +460,14 @@ namespace Genie
 		params.stride           = 0;
 		params.depth            = 0;
 		params.grayscale        = 0;
+		
+	#ifdef MAC_OS_X_VERSION_10_4
+		
 		params.alpha_last       = 0;
 		params.little_endian    = 0;
+		
+	#endif
+		
 		params.bounds_are_valid = false;
 		
 		return new GWorld( delegate );
@@ -850,11 +856,15 @@ namespace Genie
 		{ "grayscale",   PROPERTY( PixMap_grayscale ) },
 		{ ".~grayscale", PROPERTY( PixMap_grayscale ) },
 		
+	#ifdef MAC_OS_X_VERSION_10_4
+		
 		{ "alpha-last",   PROPERTY( PixMap_alpha_last ) },
 		{ ".~alpha-last", PROPERTY( PixMap_alpha_last ) },
 		
 		{ "little-endian",   PROPERTY( PixMap_little_endian ) },
 		{ ".~little-endian", PROPERTY( PixMap_little_endian ) },
+		
+	#endif
 		
 		{ "data", &gworld_pixels_factory },
 		{ "pixels", &gworld_pixels_factory },
