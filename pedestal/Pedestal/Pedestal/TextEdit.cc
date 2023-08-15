@@ -26,6 +26,7 @@
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/thePort.hh"
 #include "mac_qd/globals/thePort_window.hh"
+#include "mac_qd/set_cursor_by_id.hh"
 
 // mac-ui-utils
 #include "mac_ui/windows.hh"
@@ -195,7 +196,7 @@ namespace Pedestal
 	
 	bool TextEdit::SetCursor( const EventRecord& event )
 	{
-		N::SetCursor( N::GetCursor( N::iBeamCursor ) );
+		mac::qd::set_cursor_by_id( iBeamCursor );
 		
 		return true;
 	}
