@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// Standard C
+#include <string.h>
+
 // more-libc
 #include "more/string.h"
 
@@ -17,15 +20,12 @@
 // plus
 #include "plus/serialize.hh"
 #include "plus/simple_map.hh"
-
-// nucleus
-#include "nucleus/shared.hh"
+#include "plus/string.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/MacMemory.hh"
 #include "Nitrogen/Quickdraw.hh"
 
 // vfs
@@ -66,9 +66,9 @@ namespace Genie
 	
 	struct BitMap_Parameters
 	{
-		n::shared< N::Ptr >  bits;
+		plus::string  bits;
 		
-		BitMap               bitmap;
+		BitMap        bitmap;
 	};
 	
 	typedef plus::simple_map< const vfs::node*, BitMap_Parameters > BitMapMap;
@@ -196,7 +196,7 @@ namespace Genie
 	static inline
 	bool has_bits( const vfs::node* view )
 	{
-		return gBitMapMap[ view ].bits.get() != NULL;
+		return ! gBitMapMap[ view ].bits.empty();
 	}
 	
 	static off_t bitmap_bits_geteof( const vfs::node* that )
@@ -348,28 +348,28 @@ namespace Genie
 		
 		::Ptr const old_base = params.bitmap.baseAddr;
 		
-		const size_t old_size = old_base ? GetPtrSize( old_base ) : 0;
+		const size_t old_size = old_base ? params.bits.size() : 0;
 		
-		params.bits.reset();
+		char* p = params.bits.reset_nothrow( new_size );
 		
-		params.bitmap.baseAddr = ::NewPtrClear( new_size );
+		params.bitmap.baseAddr = p;
 		
 		if ( params.bitmap.baseAddr == NULL  &&  old_base != NULL )
 		{
 			/*
 				Try to reallocate old block.  This shouldn't fail, but
-				theoretically it might throw memFullErr.
+				theoretically it might throw std::bad_alloc.
 			*/
-			params.bits = N::NewPtrClear( old_size );
 			
-			params.bitmap.baseAddr = params.bits.get();
+			params.bitmap.baseAddr = params.bits.reset( old_size );
+			
+			memset( params.bitmap.baseAddr, '\0', old_size );
 			
 			// Even if we succeed here, it's still a failure mode.
 			p7::throw_errno( ENOMEM );
 		}
 		
-		// Seize the newly allocated block
-		params.bits = n::owned< N::Ptr >::seize( params.bitmap.baseAddr );
+		memset( params.bitmap.baseAddr, '\0', new_size );
 		
 		params.bitmap.bounds   = bounds;
 		params.bitmap.rowBytes = rowBytes;
