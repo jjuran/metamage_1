@@ -276,7 +276,8 @@ namespace Genie
 	}
 	
 	
-	static bool has_bits( const vfs::node* view )
+	static inline
+	bool has_bits( const vfs::node* view )
 	{
 		return gBitMapMap[ view ].bits.get() != NULL;
 	}
