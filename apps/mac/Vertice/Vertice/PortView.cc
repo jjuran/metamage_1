@@ -10,6 +10,7 @@
 
 // mac-qd-utils
 #include "mac_qd/globals/thePort_window.hh"
+#include "mac_qd/set_cursor_by_id.hh"
 
 // mac-ui-utils
 #include "mac_ui/windows.hh"
@@ -251,7 +252,7 @@ namespace Vertice
 	
 	bool PortView::DispatchCursor( const EventRecord& event )
 	{
-		N::SetCursor( N::GetCursor( N::crossCursor ) );
+		mac::qd::set_cursor_by_id( crossCursor );
 		
 		return true;
 	}
