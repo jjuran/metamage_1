@@ -6,7 +6,6 @@
 #include "Genie/FS/gui/new/bitmap.hh"
 
 // POSIX
-#include <sys/mman.h>
 #include <sys/stat.h>
 
 // more-libc
@@ -39,9 +38,6 @@
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/property_file.hh"
-
-// MacVFS
-#include "MacVFS/mmap/Ptr_memory_mapping.hh"
 
 // Pedestal
 #include "Pedestal/View.hh"
@@ -115,13 +111,6 @@ namespace Genie
 	                     size_t            n_bytes,
 	                     off_t             offset );
 	
-	static
-	vfs::memory_mapping_ptr bits_mmap( vfs::filehandle*  that,
-	                                   size_t            length,
-	                                   int               prot,
-	                                   int               flags,
-	                                   off_t             offset );
-	
 	static const vfs::bstore_method_set bits_bstore_methods =
 	{
 		&bits_pread,
@@ -129,57 +118,10 @@ namespace Genie
 		&bits_pwrite,
 	};
 	
-	static const vfs::general_method_set bits_general_methods =
-	{
-		&bits_mmap,
-	};
-	
 	static const vfs::filehandle_method_set bits_methods =
 	{
 		&bits_bstore_methods,
-		NULL,
-		NULL,
-		&bits_general_methods,
 	};
-	
-	
-	class bits_memory_mapping : public vfs::Ptr_memory_mapping
-	{
-		private:
-			vfs::filehandle_ptr its_file;
-		
-		public:
-			bits_memory_mapping( const nucleus::shared< Mac::Ptr >&  p,
-			                     size_t                              length,
-			                     int                                 flags,
-			                     vfs::filehandle&                    file,
-			                     off_t                               offset );
-			
-			~bits_memory_mapping();
-			
-			void msync( void* addr, size_t len, int flags ) const;
-	};
-	
-	bits_memory_mapping::bits_memory_mapping( const nucleus::shared< Mac::Ptr >&  p,
-	                                          size_t                              length,
-	                                          int                                 flags,
-	                                          vfs::filehandle&                    file,
-	                                          off_t                               offset )
-	:
-		vfs::Ptr_memory_mapping( p, length, flags, offset ),
-		its_file( &file )
-	{
-	}
-	
-	bits_memory_mapping::~bits_memory_mapping()
-	{
-		msync( get_address(), get_size(), MS_SYNC );
-	}
-	
-	void bits_memory_mapping::msync( void* addr, size_t len, int flags ) const
-	{
-		InvalidateWindowForView( bitmap_data_view_key( its_file.get() ) );
-	}
 	
 	
 	static
@@ -248,31 +190,6 @@ namespace Genie
 		InvalidateWindowForView( view );
 		
 		return n_bytes;
-	}
-	
-	static
-	vfs::memory_mapping_ptr bits_mmap( vfs::filehandle*  that,
-	                                   size_t            length,
-	                                   int               prot,
-	                                   int               flags,
-	                                   off_t             offset )
-	{
-		const vfs::node* view = bitmap_data_view_key( that );
-		
-		BitMap_Parameters& params = gBitMapMap[ view ];
-		
-		const size_t pix_size = BitMap_n_bytes( params.bitmap );
-		
-		if ( offset + length > pix_size )
-		{
-			p7::throw_errno( ENXIO );
-		}
-		
-		return new bits_memory_mapping( params.bits,
-		                                length,
-		                                flags,
-		                                *that,
-		                                offset );
 	}
 	
 	
