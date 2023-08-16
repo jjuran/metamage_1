@@ -282,13 +282,13 @@ namespace Genie
 		
 		Str255 driver_name;
 		
-		uint8_t* p = driver_name;
+		Byte* p = driver_name;
 		
 		*p++ = base_size + 1 + 3;
 		
 		*p++ = '.';
 		
-		p = (uint8_t*) mempcpy( p, base_addr, base_size );
+		p = (Byte*) mempcpy( p, base_addr, base_size );
 		
 		*p++ = 'O';
 		*p++ = 'u';

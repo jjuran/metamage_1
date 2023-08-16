@@ -6,10 +6,11 @@
 #include "Genie/FS/gui/new/list.hh"
 
 // POSIX
+#include <fcntl.h>
 #include <sys/stat.h>
 
-// POSIX
-#include <fcntl.h>
+// Standard C
+#include <string.h>
 
 // plus
 #include "plus/serialize.hh"

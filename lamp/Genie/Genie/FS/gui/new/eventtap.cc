@@ -31,6 +31,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// Standard C
+#include <string.h>
+
 // iota
 #include "iota/endian.hh"
 
