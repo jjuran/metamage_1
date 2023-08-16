@@ -11,6 +11,9 @@
 #endif
 
 // Mac OS
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
 #endif
@@ -24,6 +27,9 @@
 #include "missing/QuickdrawText.h"
 #endif
 #endif
+
+// Standard C
+#include <string.h>
 
 // more-libc
 #include "more/string.h"
