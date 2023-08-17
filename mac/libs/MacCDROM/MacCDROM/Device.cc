@@ -30,7 +30,7 @@ namespace MacCDROM
 		// just return the known reference number?
 		// Unless we're sure the driver is already open, better to be safe
 		// than stupid.
-		return N::OpenDriver( ".AppleCD" ).release();
+		return N::OpenDriver( "\p" ".AppleCD" ).release();
 	}
 	
 #endif  // CALL_NOT_IN_CARBON
