@@ -5,6 +5,18 @@
 
 #include "Genie/IO/SerialDevice.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#if ! TARGET_API_MAC_CARBON
+#ifndef __SERIAL__
+#include <Serial.h>
+#endif
+#endif
+
 // Standard C++
 #include <map>
 
@@ -35,7 +47,7 @@
 
 // ClassicToolbox
 #if !TARGET_API_MAC_CARBON
-#include "ClassicToolbox/Serial.hh"
+#include "ClassicToolbox/Devices.hh"
 #endif
 
 // vfs
@@ -54,6 +66,22 @@ enum
 	
 	gestaltSerialPortArbitratorExists = 0
 };
+
+static
+long serial_bytes_buffered( short refnum )
+{
+#if ! TARGET_API_MAC_CARBON
+	
+	long count;
+	
+	OSErr err = SerGetBuf( refnum, &count );
+	
+	return err == noErr ? count : 0;
+	
+#endif
+	
+	return 0;
+}
 
 namespace Genie
 {
@@ -354,17 +382,12 @@ namespace Genie
 		
 		const Mac::DriverRefNum output = drivers.get().output();
 		
-		namespace N = Nitrogen;
+		OSErr err;
 		
-		using N::kSERDHandshake;
-		using N::baud19200;
-		using N::data8;
-		using N::noParity;
-		using N::stop10;
+		(err = Control ( output, kSERDHandshake, &handshaking ))  ||
+		(err = SerReset( output, baud19200 | data8 | noParity | stop10 ));
 		
-		N::Control< kSERDHandshake >( output, handshaking );
-		
-		N::SerReset( output, baud19200 | data8 | noParity | stop10 );
+		Mac::ThrowOSStatus( err );
 		
 	#endif
 		
@@ -396,13 +419,11 @@ namespace Genie
 		
 	#if ! TARGET_API_MAC_CARBON
 		
-		namespace N = Nitrogen;
-		
 		const Mac::DriverRefNum input = extra.drivers.get().input();
 		
 		bool unblocked = ! preempted( extra );
 		
-		bool readable = unblocked  &&  N::SerGetBuf( input ) > 0;
+		bool readable = unblocked  &&  serial_bytes_buffered( input ) > 0;
 		bool writable = unblocked;
 		
 		unsigned readability = readable * vfs::Poll_read;
@@ -435,7 +456,7 @@ namespace Genie
 					return 0;
 				}
 				
-				if ( std::size_t bytesAvailable = N::SerGetBuf( input ) )
+				if ( size_t bytesAvailable = serial_bytes_buffered( input ) )
 				{
 					n = min( n, bytesAvailable );
 					
