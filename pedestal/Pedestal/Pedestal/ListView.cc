@@ -5,6 +5,9 @@
 
 #include "Pedestal/ListView.hh"
 
+// Nostalgia
+#include "Nostalgia/MacWindows.hh"
+
 // mac-qd-utils
 #include "mac_qd/get_visRgn.hh"
 #include "mac_qd/globals/thePort.hh"
@@ -14,9 +17,6 @@
 #include "Nitrogen/Events.hh"
 #include "Nitrogen/Lists.hh"
 #include "Nitrogen/Quickdraw.hh"
-
-// ClassicToolbox
-#include "ClassicToolbox/MacWindows.hh"
 
 
 namespace Nitrogen
@@ -81,7 +81,7 @@ namespace Pedestal
 			Rect bounds;
 			GetControlBounds( scrollbar, &bounds );
 			
-			N::InvalRect( bounds );
+			InvalRect(& bounds );
 			
 			(scrollVert ? bounds.bottom : bounds.right) -= 15;
 			

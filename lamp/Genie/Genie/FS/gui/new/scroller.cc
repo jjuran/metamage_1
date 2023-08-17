@@ -5,6 +5,9 @@
 
 #include "Genie/FS/gui/new/scroller.hh"
 
+// Nostalgia
+#include "Nostalgia/MacWindows.hh"
+
 // plus
 #include "plus/simple_map.hh"
 
@@ -13,9 +16,6 @@
 
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
-
-// ClassicToolbox
-#include "ClassicToolbox/MacWindows.hh"
 
 // Pedestal
 #include "Pedestal/EmptyView.hh"
@@ -127,7 +127,7 @@ namespace Genie
 		
 		Draw_Clipped( *this, bounds, true, N::ScrollRect( bounds, dh, dv ) );
 		
-		N::ValidRect( bounds );
+		ValidRect( &bounds );
 	}
 	
 	
