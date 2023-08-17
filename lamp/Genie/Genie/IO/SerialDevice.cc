@@ -350,6 +350,8 @@ namespace Genie
 		
 	#if ! TARGET_API_MAC_CARBON
 		
+		static SerShk handshaking;
+		
 		const Mac::DriverRefNum output = drivers.get().output();
 		
 		namespace N = Nitrogen;
@@ -360,7 +362,7 @@ namespace Genie
 		using N::noParity;
 		using N::stop10;
 		
-		N::Control< kSERDHandshake >( output, n::make< SerShk >() );
+		N::Control< kSERDHandshake >( output, handshaking );
 		
 		N::SerReset( output, baud19200 | data8 | noParity | stop10 );
 		
