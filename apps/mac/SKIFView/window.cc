@@ -38,6 +38,7 @@
 #include "mac_sys/has/ColorQuickDraw.hh"
 
 // mac-qd-utils
+#include "mac_qd/copy_bits.hh"
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/main_display_bounds.hh"
 
@@ -633,11 +634,10 @@ void draw_window( WindowRef window )
 		
 		SetPort( (GrafPtr) port );
 		
-		CopyBits( (const BitMap*) &state->pixmap,
-		          GetPortBitMapForCopyBits( port ),
-		          &state->pixmap.bounds,
-		          &bounds,
-		          state->mode,
-		          NULL );
+		mac::qd::copy_bits( state->pixmap,
+		                    port,
+		                    state->pixmap.bounds,
+		                    bounds,
+		                    state->mode );
 	}
 }
