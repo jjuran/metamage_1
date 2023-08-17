@@ -13,9 +13,6 @@
 
 #include "Nitrogen/MacWindows.hh"
 
-// nucleus
-#include "nucleus/saved.hh"
-
 // Nitrogen
 #include "Nitrogen/OSStatus.hh"
 
@@ -147,35 +144,6 @@ namespace Nitrogen
 		}
 		
 		return Detail::GrowWindow( window, startPt, unbounded );
-	}
-	
-	static inline
-	bool has_InvalWindowRect()
-	{
-		return   TARGET_API_MAC_CARBON ? true
-		       : TARGET_CPU_68K        ? false
-		       :                         &::InvalWindowRect != NULL;
-	}
-	
-	void InvalWindowRect( WindowRef window, const Rect& bounds )
-	{
-		if ( has_InvalWindowRect() )
-		{
-			::InvalWindowRect( window, &bounds );
-		}
-		
-	#if CALL_NOT_IN_CARBON
-		
-		else
-		{
-			nucleus::saved< Port > savedPort;
-			
-			SetPortWindowPort( window );
-			
-			::InvalRect( &bounds );
-		}
-		
-	#endif
 	}
 	
    WindowAttributes GetWindowAttributes( WindowRef window )
