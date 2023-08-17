@@ -24,6 +24,7 @@
 #endif
 
 // mac-qd-utils
+#include "mac_qd/copy_bits.hh"
 #include "mac_qd/get_portRect.hh"
 
 // nyancatlib
@@ -225,12 +226,9 @@ void render_offscreen()
 	
 	MovePortTo( 0, 0 );
 	
-	CopyBits( GetPortBitMapForCopyBits( (CGrafPtr) offscreen_port ),
-	          &buffer_bits,
-	          &buffer_bits.bounds,
-	          &buffer_bits.bounds,
-	          srcCopy,
-	          NULL );
+	mac::qd::copy_bits( offscreen_port,
+	                    buffer_bits,
+	                    buffer_bits.bounds );
 	
 	DisposeGWorld( offscreen_port );
 	
@@ -293,10 +291,7 @@ void blit( CGrafPtr port )
 {
 	const Rect& portRect = get_portRect( port );
 	
-	CopyBits( &buffer_bits,
-	          GetPortBitMapForCopyBits( port ),
-	          &portRect,
-	          &portRect,
-	          srcCopy,
-	          NULL );
+	mac::qd::copy_bits( buffer_bits,
+	                    port,
+	                    portRect );
 }
