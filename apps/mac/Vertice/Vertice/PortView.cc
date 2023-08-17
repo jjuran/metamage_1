@@ -17,9 +17,6 @@
 // nucleus
 #include "nucleus/saved.hh"
 
-// ClassicToolbox
-#include "ClassicToolbox/MacWindows.hh"
-
 // Nitrogen
 #include "Nitrogen/CGDataProvider.hh"
 #include "Nitrogen/Quickdraw.hh"
