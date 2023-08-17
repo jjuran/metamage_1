@@ -37,9 +37,6 @@
 #ifndef NUCLEUS_FLAGOPS_HH
 #include "nucleus/flag_ops.hh"
 #endif
-#ifndef NUCLEUS_LINKEDLISTSEQUENCE_HH
-#include "nucleus/linked_list_sequence.hh"
-#endif
 #ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
 #endif
@@ -759,38 +756,6 @@ namespace Nitrogen
 		Mac::ThrowOSStatus ( ::GetWindowProxyIcon ( inWindow, &result ));
 		return nucleus::owned<IconRef>::seize ( result );
 		}
-	
-	
-	class WindowList_ContainerSpecifics
-	{
-		public:
-			typedef WindowRef value_type;
-			typedef UInt32 size_type;
-			typedef SInt32 difference_type;
-			
-			value_type get_next_value( value_type value )
-			{
-				return GetNextWindow( value );
-			}
-			
-			static value_type begin_value()  { return GetWindowList(); }
-	};
-	
-	class WindowList_Container: public nucleus::linked_list_sequence< ::Nitrogen::WindowList_ContainerSpecifics >
-	{
-		friend WindowList_Container WindowList();
-		
-		private:
-			WindowList_Container()
-			: nucleus::linked_list_sequence< ::Nitrogen::WindowList_ContainerSpecifics >( ::Nitrogen::WindowList_ContainerSpecifics() )
-			{
-			}
-	};
-	
-	inline WindowList_Container WindowList()
-	{
-		return WindowList_Container();
-	}
 	
 }
 
