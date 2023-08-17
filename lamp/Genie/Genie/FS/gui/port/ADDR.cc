@@ -38,9 +38,6 @@
 #include "plus/simple_map.hh"
 #include "plus/string/concat.hh"
 
-// ClassicToolbox
-#include "ClassicToolbox/MacWindows.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 

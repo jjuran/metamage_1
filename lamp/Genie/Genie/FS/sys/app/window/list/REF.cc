@@ -54,8 +54,8 @@
 #include "Nitrogen/ATSTypes.hh"
 #include "Nitrogen/Quickdraw.hh"
 
-// ClassicToolbox
-#include "ClassicToolbox/MacWindows.hh"
+// Nitrogen
+#include "Nitrogen/MacWindows.hh"
 
 // vfs
 #include "vfs/node.hh"
