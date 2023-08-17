@@ -9,6 +9,7 @@
 #include <vector>
 
 // mac-qd-utils
+#include "mac_qd/copy_bits.hh"
 #include "mac_qd/globals/thePort_window.hh"
 #include "mac_qd/set_cursor_by_id.hh"
 
@@ -77,7 +78,7 @@ namespace Vertice
 		n::saved< N::Pixels_State > savedPixelsState( pix );
 		N::LockPixels( pix );
 		
-		N::CopyBits( src, thePort );
+		mac::qd::copy_bits( src, thePort );
 	}
 	
 	static inline
