@@ -12,6 +12,7 @@
 #include "more/string.h"
 
 // mac-qd-utils
+#include "mac_qd/copy_bits.hh"
 #include "mac_qd/get_pix_rowBytes.hh"
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/thePort.hh"
@@ -411,13 +412,6 @@ namespace Genie
 	
 	void GWorld::Draw( const Rect& bounds, bool erasing )
 	{
-		const N::TransferMode mode = N::srcCopy;
-		
-		if ( erasing  &&  mode != N::srcCopy )
-		{
-			N::EraseRect( bounds );
-		}
-		
 		GWorld_Parameters& params = gGWorldMap[ itsKey ];
 		
 		GWorldPtr gworld = params.gworld.get();
@@ -432,11 +426,10 @@ namespace Genie
 		if ( const bool locked = ::LockPixels( pix ) )
 		{
 			// Copy to dest
-			N::CopyBits( gworld,
-			             (CGrafPtr) mac::qd::thePort(),
-			             mac::qd::get_portRect( gworld ),
-			             bounds,
-			             mode );
+			mac::qd::copy_bits( gworld,
+			                    mac::qd::thePort(),
+			                    mac::qd::get_portRect( gworld ),
+			                    bounds );
 			
 			::UnlockPixels( pix );
 		}

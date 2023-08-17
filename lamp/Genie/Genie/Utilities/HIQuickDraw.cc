@@ -16,6 +16,7 @@
 #include <string.h>
 
 // mac-qd-utils
+#include "mac_qd/copy_bits.hh"
 #include "mac_qd/get_pix_rowBytes.hh"
 #include "mac_qd/is_monochrome.hh"
 
@@ -353,7 +354,7 @@ namespace Genie
 			
 			if ( ::LockPixels( tmp ) &&  ::LockPixels( pix ) )
 			{
-				N::CopyBits( gworld, native );
+				mac::qd::copy_bits( gworld, native );
 				
 				::UnlockPixels( pix );
 				::UnlockPixels( tmp );

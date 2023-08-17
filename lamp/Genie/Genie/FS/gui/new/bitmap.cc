@@ -15,6 +15,7 @@
 #include "more/string.h"
 
 // mac-qd-utils
+#include "mac_qd/copy_bits.hh"
 #include "mac_qd/globals/thePort.hh"
 
 // plus
@@ -24,9 +25,6 @@
 
 // poseven
 #include "poseven/types/errno_t.hh"
-
-// Nitrogen
-#include "Nitrogen/Quickdraw.hh"
 
 // vfs
 #include "vfs/filehandle.hh"
@@ -51,8 +49,6 @@
 namespace Genie
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
@@ -256,13 +252,6 @@ namespace Genie
 	
 	void BitMapView::Draw( const Rect& bounds, bool erasing )
 	{
-		const N::TransferMode mode = N::srcCopy;
-		
-		if ( erasing  &&  mode != N::srcCopy )
-		{
-			N::EraseRect( bounds );
-		}
-		
 		BitMap_Parameters& params = gBitMapMap[ itsKey ];
 		
 		if ( params.bitmap.baseAddr == NULL )
@@ -271,11 +260,10 @@ namespace Genie
 		}
 		
 		// Copy to dest
-		N::CopyBits( &params.bitmap,
-		             N::GetPortBitMapForCopyBits( (CGrafPtr) mac::qd::thePort() ),
-		             params.bitmap.bounds,
-		             bounds,
-		             mode );
+		mac::qd::copy_bits( params.bitmap,
+		                    mac::qd::thePort(),
+		                    params.bitmap.bounds,
+		                    bounds );
 	}
 	
 	void BitMapView::DrawInContext( CGContextRef context, CGRect bounds )
