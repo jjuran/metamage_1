@@ -108,18 +108,8 @@ namespace Nitrogen
 	
 	void PBControlSync( ParamBlockRec& paramBlock );
 	
-	void OpenDeskAcc( ConstStr255Param deskAccName );
-	
 	int Read ( Mac::DriverRefNum driverRefNum,       char* data, std::size_t byteCount );
 	int Write( Mac::DriverRefNum driverRefNum, const char* data, std::size_t byteCount );
-	
-}
-
-namespace Io
-{
-	
-	using Nitrogen::Read;
-	using Nitrogen::Write;
 	
 }
 

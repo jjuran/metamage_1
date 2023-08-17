@@ -5,13 +5,8 @@
 
 #include "ClassicToolbox/Devices.hh"
 
-// nucleus
-#include "nucleus/saved.hh"
-
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
-
-#include "Nitrogen/Quickdraw.hh"
 
 
 namespace Nitrogen
@@ -51,13 +46,6 @@ namespace Nitrogen
 	void PBControlSync( ParamBlockRec& paramBlock )
 	{
 		ThrowOSStatus( ::PBControlSync( &paramBlock ) );
-	}
-	
-	void OpenDeskAcc( ConstStr255Param deskAccName )
-	{
-		nucleus::saved< Port > savedPort;
-
-		::OpenDeskAcc( deskAccName );
 	}
 	
 	int Read( Mac::DriverRefNum driverRefNum, char* data, std::size_t byteCount )
