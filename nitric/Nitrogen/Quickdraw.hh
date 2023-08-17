@@ -49,9 +49,6 @@
 #ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
 #endif
-#ifndef NUCLEUS_SAVED_HH
-#include "nucleus/saved.hh"
-#endif
 
 // Nitrogen
 #ifndef MAC_QUICKDRAW_UTILITIES_PORTDISPOSER_HH
@@ -934,29 +931,6 @@ namespace Nitrogen
 	
 	// LowMem accessors
 	
-	#pragma mark -
-	#pragma mark ** Pseudoreferences **
-	
-	class Port
-	{
-		public:
-			typedef GrafPtr  value_type;
-			typedef GrafPtr  param_type;
-			
-			value_type get() const             { return GetPort();          }
-			void set( param_type port ) const  { Nitrogen::SetPort( port ); }
-	};
-	
-	class Clip
-	{
-		public:
-			typedef nucleus::owned< RgnHandle >  value_type;
-			typedef                 RgnHandle    param_type;
-			
-			value_type get() const               { return GetClip();  }
-			void set( param_type region ) const  { SetClip( region ); }
-	};
-	
 #endif  // #if ! __LP64__
 	
 }
@@ -965,15 +939,6 @@ namespace nucleus
 {
 	
 #if ! __LP64__
-	
-	template <>
-	struct swap_with_saved< Nitrogen::Port >
-	{
-		static GrafPtr apply( Nitrogen::Port, GrafPtr port )
-		{
-			return Nitrogen::QDSwapPort( port );
-		}
-	};
 	
 	#pragma mark -
 	#pragma mark ** Operators **
