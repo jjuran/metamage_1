@@ -713,7 +713,7 @@ void flash_menu_item( MenuRef menu, const Rect& r, Point pt, short item, int n )
 	{
 		pt.v = -pt.v;
 		
-		delay = ~delay & 0x7;  // 4 ticks on, 3 ticks off
+		delay = 7 - delay;  // 4 ticks on, 3 ticks off
 		
 		mac::sys::delay( delay );
 		
