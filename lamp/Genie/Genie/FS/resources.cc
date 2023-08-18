@@ -24,6 +24,9 @@
 // gear
 #include "gear/hexadecimal.hh"
 
+// mac-sys-utils
+#include "mac_sys/mem_error.hh"
+
 // mac-rsrc-utils
 #include "mac_rsrc/open_res_file.hh"
 
@@ -351,7 +354,9 @@ namespace Genie
 		
 		const size_t size = mac::glue::GetHandleSize( extra.handle );
 		
-		N::SetHandleSize( r, size );
+		SetHandleSize( r, size );
+		
+		Mac::ThrowOSStatus( mac::sys::mem_error() );
 		
 		mempcpy( *r.Get(), *extra.handle, size );
 		

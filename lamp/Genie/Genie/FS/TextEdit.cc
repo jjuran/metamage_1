@@ -27,6 +27,7 @@
 #include "more/string.h"
 
 // mac-sys-utils
+#include "mac_sys/mem_error.hh"
 #include "mac_sys/trap_available.hh"
 
 // gear
@@ -41,7 +42,6 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/MacMemory.hh"
 #include "Nitrogen/TextEdit.hh"
 
 // vfs
@@ -538,7 +538,9 @@ namespace Genie
 		
 		if ( params.itsValidLength < mac_text_length )
 		{
-			N::SetHandleSize( hTE[0]->hText, mac_text_length );
+			SetHandleSize( hTE[0]->hText, mac_text_length );
+			
+			Mac::ThrowOSStatus( mac::sys::mem_error() );
 			
 			const bool secret = params.itIsSecret;
 			
@@ -575,7 +577,7 @@ namespace Genie
 			
 			te.teLength = params.itsValidLength;
 			
-			N::SetHandleSize( te.hText, params.itsValidLength );
+			SetHandleSize( te.hText, params.itsValidLength );
 		}
 		else
 		{

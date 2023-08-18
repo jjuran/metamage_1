@@ -18,7 +18,9 @@
 #include "mac_sys/mem_error.hh"
 
 // Nitrogen
-#include "Nitrogen/MacMemory.hh"
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+#endif
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -32,7 +34,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -183,7 +184,9 @@ namespace Genie
 	{
 		Mac_Handle_extra& extra = *(Mac_Handle_extra*) that->extra();
 		
-		N::SetHandleSize( extra.handle, length );
+		SetHandleSize( extra.handle, length );
+		
+		Mac::ThrowOSStatus( mac::sys::mem_error() );
 	}
 	
 }
