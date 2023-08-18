@@ -42,7 +42,9 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/TextEdit.hh"
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+#endif
 
 // vfs
 #include "vfs/node.hh"
@@ -68,7 +70,6 @@ bool has_TEPinScroll()
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
@@ -353,7 +354,7 @@ namespace Genie
 		
 		params.its_mac_text.insert( params.its_mac_text.begin() + offset, unix_char );
 		
-		N::TEKey( params.itIsSecret ? 0xA5 : c, hTE );  // bullet
+		TEKey( params.itIsSecret ? 0xA5 : c, hTE );  // bullet
 		
 		params.itsSelection.start =
 		params.itsSelection.end   = offset + 1;
@@ -585,7 +586,7 @@ namespace Genie
 			return;
 		}
 		
-		N::TECalText( hTE );
+		TECalText( hTE );
 		
 		Rect bounds = hTE[0]->viewRect;
 		
