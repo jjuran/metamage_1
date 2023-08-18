@@ -283,7 +283,9 @@ void MDEF_0_Choose( MenuRef menu, const Rect& rect, Point hit, short* which )
 {
 	short enabledItem = 0;
 	
-	if ( PtInRect( hit, &rect )  &&  menu[0]->enableFlags & 1 )
+	UInt32 enableFlags = menu[0]->enableFlags;
+	
+	if ( PtInRect( hit, &rect )  &&  enableFlags & 1 )
 	{
 		const short dv = hit.v - rect.top;
 		
@@ -291,7 +293,7 @@ void MDEF_0_Choose( MenuRef menu, const Rect& rect, Point hit, short* which )
 		
 		const short item = enabled_item_from_row( menu, row );
 		
-		const short enabled = item > 31  ||  menu[0]->enableFlags & (1 << item);
+		const short enabled = item > 31  ||  enableFlags & (1u << item);
 		
 		enabledItem = enabled ? item : 0;
 		
