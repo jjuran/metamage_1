@@ -13,41 +13,32 @@
 // mac-qd-utils
 #include "mac_qd/globals/thePort_window.hh"
 
-// Nitrogen
-#include "Nitrogen/Str.hh"
+
+#pragma exceptions off
 
 
 namespace Pedestal
 {
 	
-	namespace N = Nitrogen;
-	
-	
 	static inline ControlRef NewMacPushButton( WindowRef owningWindow,
-	                                           const Rect& boundsRect,
-	                                           ConstStr255Param title,
-	                                           const void* refCon )
+	                                           const Rect& boundsRect )
 	{
 		return NewControl( owningWindow,
 		                   &boundsRect,
-		                   title,
+		                   "\p",
 		                   true,
 		                   0,
 		                   0,
 		                   1,
 		                   pushButProc,
-		                   (long) refCon );
+		                   0 );
 	}
 	
 	
 	void PushButton::Install( const Rect& bounds )
 	{
-		N::Str255 title = Title();
-		
 		itsControl = NewMacPushButton( mac::qd::thePort_window(),
-		                               bounds,
-		                               title,
-		                               RefCon() );
+		                               bounds );
 		
 		HiliteControl( itsControl, kControlInactivePart );
 	}

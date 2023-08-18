@@ -16,11 +16,6 @@
 #include <Controls.h>
 #endif
 
-// Nitrogen
-#ifndef NITROGEN_STR_HH
-#include "Nitrogen/Str.hh"
-#endif
-
 // Pedestal
 #ifndef PEDESTAL_VIEW_HH
 #include "Pedestal/View.hh"
@@ -39,10 +34,6 @@ namespace Pedestal
 			PushButton() : itsControl()
 			{
 			}
-			
-			virtual Nitrogen::Str255 Title() const = 0;
-			
-			virtual const void* RefCon() const = 0;
 			
 			ControlRef Get() const  { return itsControl; }
 			

@@ -130,10 +130,6 @@ namespace Genie
 				itsUserData.key = key;
 			}
 			
-			N::Str255 Title() const  { return gButtonMap[ itsUserData.key ].title; }
-			
-			const void* RefCon() const  { return &itsUserData; }
-			
 			void Install( const Rect& bounds );
 			
 			void Uninstall();
@@ -147,7 +143,15 @@ namespace Genie
 	{
 		Ped::PushButton::Install( bounds );
 		
-		gButtonMap[ itsUserData.key ].installed = true;
+		ControlRef control = Get();
+		
+		Button_Parameters& params = gButtonMap[ itsUserData.key ];
+		
+		SetControlTitle( control, params.title );
+		
+		SetControlReference( control, (long) &itsUserData );
+		
+		params.installed = true;
 	}
 	
 	void PushButton::Uninstall()
@@ -199,7 +203,7 @@ namespace Genie
 		{
 			params.title_changed = false;
 			
-			N::SetControlTitle( Get(), Title() );
+			SetControlTitle( Get(), params.title );
 		}
 	}
 	
