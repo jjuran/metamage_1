@@ -534,15 +534,17 @@ namespace Genie
 	{
 		TextEditParameters& params = TextEditParameters::Get( viewKey );
 		
-		if ( params.itsValidLength < params.its_mac_text.length() )
+		size_t mac_text_length = params.its_mac_text.length();
+		
+		if ( params.itsValidLength < mac_text_length )
 		{
-			N::SetHandleSize( hTE[0]->hText, params.its_mac_text.length() );
+			N::SetHandleSize( hTE[0]->hText, mac_text_length );
 			
 			const bool secret = params.itIsSecret;
 			
 			TERec& te = **hTE;
 			
-			te.teLength = params.its_mac_text.length();
+			te.teLength = mac_text_length;
 			
 			char* text = *te.hText;
 			
