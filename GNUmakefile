@@ -219,7 +219,7 @@ ams-osx-build: $(AMS_REPOS) macward-compat.git
 	bin/build-app -N Interax
 	$(BUILD) $(AMS_TOOLS) interact-shim
 
-INTERAX := var/build/dbg/bin/Interax/Interax.app
+INTERAX := var/build/*-mach-carb-dbg/bin/Interax/Interax.app
 
 ams-osx: ams-osx-build
 	open $(INTERAX)
