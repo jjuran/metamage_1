@@ -5,6 +5,11 @@
 
 #include "blit_QD.hh"
 
+// mac-qd-utils
+#if ! __LP64__
+#include "mac_qd/copy_bits.hh"
+#endif
+
 // amicus
 #include "amicus/quickdraw.hh"
 
@@ -50,12 +55,10 @@ void QD_blitter::blit( const void* src_addr )
 {
 	srcBits.baseAddr = (Ptr) src_addr;
 	
-	CopyBits( &srcBits,
-	          GetPortBitMapForCopyBits( captured_display_port ),
-	          &srcBits.bounds,
-	          &dstRect,
-	          srcCopy,
-	          NULL );
+	mac::qd::copy_bits( srcBits,
+	                    captured_display_port,
+	                    srcBits.bounds,
+	                    dstRect );
 }
 
 #endif
