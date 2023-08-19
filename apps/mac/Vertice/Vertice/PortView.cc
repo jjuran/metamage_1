@@ -68,22 +68,6 @@ namespace Vertice
 		render( &*models.begin(), &*models.end(), base, width, height, stride );
 	}
 	
-	static
-	void blit_to_thePort( CGrafPtr src )
-	{
-		CGrafPtr thePort = (CGrafPtr) mac::qd::thePort();
-		
-		PixMapHandle pix = GetGWorldPixMap( thePort );
-		
-		GWorldFlags flags = GetPixelsState( pix );
-		
-		LockPixels( pix );  // thePort pixels shouldn't be purgeable
-		
-		mac::qd::copy_bits( src, thePort );
-		
-		SetPixelsState( pix, flags );
-	}
-	
 	static inline
 	CGBitmapInfo skipFirst32Bit()
 	{
@@ -165,7 +149,7 @@ namespace Vertice
 		
 	#endif
 		
-		blit_to_thePort( itsGWorld );
+		mac::qd::copy_bits( itsGWorld, mac::qd::thePort() );
 	}
 	
 	void PortView::Draw( const Rect& bounds, bool erasing )
