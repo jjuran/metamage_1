@@ -24,20 +24,25 @@
 #endif
 
 // mac-qd-utils
+#include "mac_qd/CGContext_for_port.hh"
 #include "mac_qd/copy_bits.hh"
 #include "mac_qd/get_portRect.hh"
-
-// nyancatlib
-#include "nyancat/graphics.hh"
 
 // NyanochromeCat
 #include "Bitmap.hh"
 #include "FrameDeltas.hh"
 #include "Geometry.hh"
+#include "Image.hh"
 
 
 #pragma exceptions off
 
+
+#ifdef MAC_OS_X_VERSION_10_4
+	#define CONFIG_CGIMAGES  1
+#else
+	#define CONFIG_CGIMAGES  0
+#endif
 
 #define CONFIG_PORTBITS  ! TARGET_API_MAC_CARBON
 
@@ -236,9 +241,17 @@ void render_offscreen()
 	
 	MovePortTo( 0, 0 );
 	
+#if CONFIG_CGIMAGES
+	
+	make_images_from_gworld( offscreen_port );
+	
+#else
+	
 	mac::qd::copy_bits( offscreen_port,
 	                    buffer_bits,
 	                    buffer_bits.bounds );
+	
+#endif
 	
 	DisposeGWorld( offscreen_port );
 	
@@ -348,6 +361,23 @@ void blit( CGrafPtr port )
 
 void draw( CGrafPtr port )
 {
+	if ( CONFIG_CGIMAGES )
+	{
+		static mac::qd::CGContext_for_port context( port );
+		
+		const CGRect& bounds = context.bounds();
+		
+	#ifdef __APPLE__
+		
+		HIViewDrawCGImage( context, &bounds, images[ current_frame ] );
+		
+	#endif
+		
+		CGContextFlush( context );
+		
+		return;
+	}
+	
 	const Rect& portRect = get_portRect( port );
 	
 	mac::qd::copy_bits( buffer_bits,
