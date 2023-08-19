@@ -215,16 +215,6 @@ sub main
 	
 	my $configuration = Compile::Driver::Configuration::->new( Compile::Driver::Options::specs );
 	
-	if ( !Compile::Driver::Options::specs  &&  $configuration->{mac} )
-	{
-		my $dir = $Compile::Driver::Job::build_dir;
-		
-		my $target = $configuration->target;
-		my $alias  = $configuration->{build};
-		
-		symlink $target, "$dir/$alias";
-	}
-	
 	foreach my $name ( @args )
 	{
 		my $module = $configuration->get_module( $name, "[mandatory]" );
