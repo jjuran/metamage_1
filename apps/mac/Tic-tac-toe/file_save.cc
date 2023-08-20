@@ -15,6 +15,9 @@
 #include <Resources.h>
 #endif
 
+// Standard C
+#include <string.h>
+
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/res_error.hh"
@@ -45,6 +48,13 @@
 #include "window.hh"
 
 
+#define UNTITLED  "Untitled"
+#define EXTENSION ".tic-tac-toe"
+
+#define STRLEN( s )  (sizeof "" s - 1)
+
+#define STR_LEN( s )  s, STRLEN( s )
+
 #define POD( x )  &(x), (sizeof (x))
 
 using mac::file::FSIORefNum;
@@ -69,6 +79,19 @@ static inline
 void my_memcpy( void* dst, const void* src, size_t n )
 {
 	BlockMoveData( src, dst, n );
+}
+
+static inline
+size_t ext_len_if_present( const Byte* s, const char* ext, size_t ext_len )
+{
+	size_t len = *s++;
+	
+	if ( len > ext_len  &&  memcmp( s + (len - ext_len), ext, ext_len ) == 0 )
+	{
+		return ext_len;
+	}
+	
+	return 0;
 }
 
 template < class File >
@@ -359,9 +382,18 @@ void file_save_as()
 	}
 	else
 	{
-		const Byte* name = "\p";
+		const Byte* name = "\p" UNTITLED EXTENSION;
 		
-		const int ext_len = 0;
+	#if ! TARGET_API_MAC_CARBON
+		
+		if ( document_assigned )
+		{
+			name = mac::file::get_name( file );
+		}
+		
+	#endif
+		
+		const int ext_len = ext_len_if_present( name, STR_LEN( EXTENSION ) );
 		
 		if ( has_StandardFile_5_thru_8 )
 		{
