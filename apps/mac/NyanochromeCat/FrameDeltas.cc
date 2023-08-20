@@ -26,6 +26,9 @@
 #include "Geometry.hh"
 
 
+#pragma exceptions off
+
+
 using nyancat::n_frames;
 
 

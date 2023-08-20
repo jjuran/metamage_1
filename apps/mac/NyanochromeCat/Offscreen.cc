@@ -36,6 +36,9 @@
 #include "Geometry.hh"
 
 
+#pragma exceptions off
+
+
 #define CONFIG_PORTBITS  ! TARGET_API_MAC_CARBON
 
 #define CONFIG_FRAME_DELTAS  TARGET_CPU_68K

@@ -37,6 +37,9 @@
 #include "Bitmap.hh"
 
 
+#pragma exceptions off
+
+
 namespace nyancat {
 
 typedef Pattern         Color;

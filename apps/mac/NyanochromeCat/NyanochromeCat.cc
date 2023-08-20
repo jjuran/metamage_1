@@ -47,6 +47,9 @@
 #include "Timer.hh"
 
 
+#pragma exceptions off
+
+
 #define CONFIG_DAs CONFIG_DESK_ACCESSORIES
 
 #if TARGET_API_MAC_CARBON
