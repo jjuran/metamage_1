@@ -16,13 +16,13 @@
 #include "mac_qd/get_pix_rowBytes.hh"
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/thePort.hh"
+#include "mac_qd/scoped_GWorld.hh"
 
 // plus
 #include "plus/serialize.hh"
 #include "plus/simple_map.hh"
 
 // nucleus
-#include "nucleus/saved.hh"
 #include "nucleus/shared.hh"
 
 // poseven
@@ -403,9 +403,7 @@ namespace Genie
 	
 	static void Erase_GWorld( GWorldPtr gworld, const Rect& bounds )
 	{
-		n::saved< N::GWorld > saved_gworld;
-		
-		N::SetGWorld( gworld );
+		mac::qd::scoped_GWorld scoped( gworld );
 		
 		EraseRect( &bounds );
 	}
