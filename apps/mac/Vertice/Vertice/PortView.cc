@@ -57,7 +57,7 @@ namespace Vertice
 	                         render_proc                      render,
 	                         GWorldPtr                        gworld )
 	{
-		PixMapHandle pix = N::GetGWorldPixMap( gworld );
+		PixMapHandle pix = GetGWorldPixMap( gworld );
 		
 		const Rect  bounds = pix[0]->bounds;
 		::Ptr       base   = pix[0]->baseAddr;
@@ -204,7 +204,7 @@ namespace Vertice
 		
 		n::owned< GWorldPtr > gworld = N::NewGWorld( 32, bounds );
 		
-		N::LockPixels( N::GetGWorldPixMap( gworld ) );
+		N::LockPixels( GetGWorldPixMap( gworld ) );
 		
 		return gworld;
 	}
@@ -236,8 +236,8 @@ namespace Vertice
 		
 		target.ContextTranslate( -eyeRadius, 0, 0 );
 		
-		PixMapHandle pixL = N::GetGWorldPixMap( altGWorld );
-		PixMapHandle pixR = N::GetGWorldPixMap( itsGWorld );
+		PixMapHandle pixL = GetGWorldPixMap( altGWorld );
+		PixMapHandle pixR = GetGWorldPixMap( itsGWorld );
 		
 		::Ptr baseL = pixL[0]->baseAddr;
 		::Ptr baseR = pixR[0]->baseAddr;
