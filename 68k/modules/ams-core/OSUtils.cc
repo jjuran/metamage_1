@@ -17,6 +17,7 @@
 #endif
 
 // POSIX
+#include <sys/time.h>
 #include <unistd.h>
 
 // iota
@@ -36,17 +37,17 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
-uint8_t  CPUFlag    : 0x012F;
-uint16_t SysVersion : 0x015A;
-uint32_t Ticks      : 0x016A;
-uint32_t Time       : 0x020C;
-int16_t  BootDrive  : 0x0210;
+UInt8  CPUFlag    : 0x012F;
+UInt16 SysVersion : 0x015A;
+UInt32 Ticks      : 0x016A;
+UInt32 Time       : 0x020C;
+SInt16 BootDrive  : 0x0210;
 
 
 static inline
-uint64_t Microseconds()
+UInt64 Microseconds()
 {
-	uint64_t result;
+	UInt64 result;
 	
 	Microseconds( (UnsignedWide*) &result );
 	
@@ -59,7 +60,7 @@ uint64_t Microseconds()
 #pragma mark -
 
 static
-bool case_insensitive_equal( const uint8_t* a, const uint8_t* b, uint16_t len )
+bool case_insensitive_equal( const Byte* a, const Byte* b, UInt16 len )
 {
 	while ( len-- > 0 )
 	{
@@ -73,12 +74,12 @@ bool case_insensitive_equal( const uint8_t* a, const uint8_t* b, uint16_t len )
 }
 
 static
-int case_insensitive_order( const uint8_t* a, const uint8_t* b, uint16_t len )
+int case_insensitive_order( const Byte* a, const Byte* b, UInt16 len )
 {
 	while ( len-- > 0 )
 	{
-		uint8_t c = iota::to_lower( *a++ );
-		uint8_t d = iota::to_lower( *b++ );
+		Byte c = iota::to_lower( *a++ );
+		Byte d = iota::to_lower( *b++ );
 		
 		if ( c != d )
 		{
@@ -105,7 +106,7 @@ unsigned long CmpString_patch( const unsigned char* a : __A0,
 		return 0;  // Empty strings are equal
 	}
 	
-	uint16_t len = m;
+	UInt16 len = m;
 	
 	if ( (m >> 16) != len )
 	{
@@ -141,10 +142,10 @@ long RelString_patch( const unsigned char* a : __A0,
 		return 0;  // Empty strings are equal
 	}
 	
-	const uint16_t a_len = m >> 16;
-	const uint16_t b_len = m;
+	const UInt16 a_len = m >> 16;
+	const UInt16 b_len = m;
 	
-	const uint16_t min_len = b_len < a_len ? b_len : a_len;
+	const UInt16 min_len = b_len < a_len ? b_len : a_len;
 	
 	const int result_by_length = (b_len < a_len) - (a_len < b_len);
 	
@@ -184,7 +185,7 @@ unsigned char* UprString_patch( unsigned char* s : __A0,
 	
 	for ( int i = 0;  i < len;  ++i )
 	{
-		const int8_t c = s[ i ];
+		const signed char c = s[ i ];
 		
 		if ( c < 0 )
 		{
@@ -431,7 +432,7 @@ bail:
 #pragma mark -
 
 static inline
-bool reactor_wait( uint64_t dt )
+bool reactor_wait( UInt64 dt )
 {
 	timeval timeout;
 	
@@ -448,11 +449,11 @@ bool reactor_wait( uint64_t dt )
 
 long Delay_patch( long numTicks : __A0, short trap_word : __D1 )
 {
-	const uint64_t start = Ticks * tick_microseconds;
+	const UInt64 start = Ticks * tick_microseconds;
 	
-	int64_t dt = (uint32_t) numTicks * tick_microseconds;
+	SInt64 dt = (UInt32) numTicks * tick_microseconds;
 	
-	const uint64_t end_time = start + dt;
+	const UInt64 end_time = start + dt;
 	
 	// If numTicks is negative, return after one reactor-wait.
 	

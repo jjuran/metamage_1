@@ -10,6 +10,9 @@
 #include <Retrace.h>
 #endif
 
+// POSIX
+#include <sys/time.h>
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -50,7 +53,7 @@ void dummy_VBL_proc( VBLTask* task : __A0 )
 }
 
 static
-void timeval_add( timeval& tv, uint32_t more_usecs )
+void timeval_add( timeval& tv, UInt32 more_usecs )
 {
 	if ( (tv.tv_usec += more_usecs) >= 1000000 )
 	{

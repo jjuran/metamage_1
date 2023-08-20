@@ -16,6 +16,10 @@
 #include "Zones.hh"
 
 
+typedef unsigned char  uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned long  uint32_t;
+
 THz   TheZone : 0x0118;
 short MemErr  : 0x0220;
 THz   SysZone : 0x02A6;
