@@ -54,6 +54,9 @@
 #include "CGSKIF.hh"
 
 
+#pragma exceptions off
+
+
 /*
 	Compositing mode is introduced in Mac OS X 10.2,
 	but doesn't work without major problems until 10.3.
