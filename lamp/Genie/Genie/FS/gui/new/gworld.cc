@@ -401,13 +401,6 @@ namespace Genie
 			void DrawInContext( CGContextRef context, CGRect bounds );
 	};
 	
-	static void Erase_GWorld( GWorldPtr gworld, const Rect& bounds )
-	{
-		mac::qd::scoped_GWorld scoped( gworld );
-		
-		EraseRect( &bounds );
-	}
-	
 	void GWorld::Draw( const Rect& bounds, bool erasing )
 	{
 		GWorld_Parameters& params = gGWorldMap[ itsKey ];
@@ -526,7 +519,11 @@ namespace Genie
 			temp = N::NewGWorld( weight, params.bounds, colorTable );
 		}
 		
-		Erase_GWorld( temp, params.bounds );
+		{
+			mac::qd::scoped_GWorld gworld( temp );
+			
+			EraseRect( &params.bounds );
+		}
 		
 	#ifdef MAC_OS_X_VERSION_10_4
 		
