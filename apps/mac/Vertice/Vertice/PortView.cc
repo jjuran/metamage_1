@@ -24,7 +24,6 @@
 
 // Nitrogen
 #include "Nitrogen/CGDataProvider.hh"
-#include "Nitrogen/Quickdraw.hh"
 
 // worldview
 #include "worldview/Render.hh"
@@ -271,7 +270,9 @@ namespace Vertice
 	
 	bool PortView::MouseDown( const EventRecord& event )
 	{
-		Point macPt = N::GlobalToLocal( event.where );
+		Point macPt = event.where;
+		
+		GlobalToLocal( &macPt );
 		
 		itsPort.MakeFrame( itsFrame );
 		
