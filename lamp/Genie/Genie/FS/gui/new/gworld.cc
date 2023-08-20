@@ -191,7 +191,7 @@ namespace Genie
 			p7::throw_errno( EIO );
 		}
 		
-		PixMapHandle pix = N::GetGWorldPixMap( gworld );
+		PixMapHandle pix = GetGWorldPixMap( gworld );
 		
 		const size_t pix_size = PixMap_n_bytes( pix, params.stride );
 		
@@ -419,7 +419,7 @@ namespace Genie
 			return;
 		}
 		
-		PixMapHandle pix = N::GetGWorldPixMap( gworld );
+		PixMapHandle pix = GetGWorldPixMap( gworld );
 		
 		if ( const bool locked = ::LockPixels( pix ) )
 		{
