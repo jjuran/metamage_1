@@ -12,11 +12,15 @@
 #endif
 
 // Mac OS
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
+
+// This is only needed for GetWindowPort().
+#if OPAQUE_TOOLBOX_STRUCTS
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
-#ifndef __QUICKDRAW__
-#include <Quickdraw.h>
 #endif
 
 // missing-macos
@@ -55,9 +59,17 @@ const BitMap* get_BitMap_for_CopyBits( CGrafPtr port )
 inline
 const BitMap* get_BitMap_for_CopyBits( WindowRef window )
 {
+#if OPAQUE_TOOLBOX_STRUCTS
+	
 	CGrafPtr port = GetWindowPort( window );
 	
 	return GetPortBitMapForCopyBits( port );
+	
+#else
+	
+	return &window->portBits;
+	
+#endif
 }
 
 }
