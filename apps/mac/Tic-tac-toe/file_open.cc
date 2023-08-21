@@ -64,6 +64,8 @@ long file_opener( const File& file )
 		{
 			reload( block, n );
 			
+			set_window_title( traits::get_name( file ) );
+			
 			return noErr;
 		}
 		

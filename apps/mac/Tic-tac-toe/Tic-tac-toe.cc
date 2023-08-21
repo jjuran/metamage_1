@@ -335,6 +335,8 @@ void menu_item_chosen( long choice )
 				case NewGame:
 					gMouseRgn = reset();
 					
+					set_window_untitled();
+					
 					propagate_to_dock_tile();
 					break;
 				

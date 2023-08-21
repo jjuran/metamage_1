@@ -21,6 +21,7 @@
 #include <Quickdraw.h>
 #endif
 
+struct HFSUniStr255;
 
 /*
 	Compositing mode is introduced in Mac OS X 10.2,
@@ -61,5 +62,14 @@ RgnHandle reset();
 RgnHandle mouse_moved( Point where );
 
 void reload( const unsigned char* data, unsigned short size );
+
+void set_window_title( const Byte*         name );
+void set_window_title( const HFSUniStr255& name );
+
+inline
+void set_window_untitled()
+{
+	return set_window_title( "\p" "Tic-tac-toe" );
+}
 
 #endif
