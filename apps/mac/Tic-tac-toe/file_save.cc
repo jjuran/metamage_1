@@ -177,7 +177,7 @@ long HFS_file_saver( short vRefNum, long dirID, const Byte* name )
 	return write_and_close_stream< traits >( refnum );
 }
 
-void file_save()
+void file_save_as()
 {
 	using mac::app::file_save_dialog;
 	

@@ -349,7 +349,7 @@ void menu_item_chosen( long choice )
 				case Save:
 				case SaveAs:
 					InitCursor();
-					file_save();
+					file_save_as();
 					gMouseRgn = gInertRgn;
 					break;
 				
