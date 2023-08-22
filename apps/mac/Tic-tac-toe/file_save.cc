@@ -108,6 +108,18 @@ OSErr create_FSRef( const FSRef&  parent,
 	return err;
 }
 
+template < class File >
+static inline
+FSIORefNum open_file( OSErr create_err, const File& file )
+{
+	if ( create_err != noErr  &&  create_err != dupFNErr )
+	{
+		return create_err;
+	}
+	
+	return mac::file::open_data_fork( file, fsRdWrPerm );
+}
+
 static inline
 FSIORefNum FSRef_opener( const FSRef& parent, CFStringRef name )
 {
@@ -115,12 +127,7 @@ FSIORefNum FSRef_opener( const FSRef& parent, CFStringRef name )
 	
 	OSErr err = create_FSRef( parent, name, creator, doctype, &file );
 	
-	if ( err != noErr  &&  err != dupFNErr )
-	{
-		return err;
-	}
-	
-	return mac::file::open_data_fork( file, fsRdWrPerm );
+	return open_file( err, file );
 }
 
 static
@@ -136,12 +143,7 @@ FSIORefNum FSSpec_opener( const FSSpec& file )
 {
 	OSErr err = FSpCreate( &file, creator, doctype, 0 );
 	
-	if ( err != noErr  &&  err != dupFNErr )
-	{
-		return err;
-	}
-	
-	return mac::file::open_data_fork( file, fsRdWrPerm );
+	return open_file( err, file );
 }
 
 static
