@@ -27,6 +27,8 @@
 #endif
 
 
+#if ! __LP64__
+
 namespace mac {
 namespace qd  {
 
@@ -58,5 +60,7 @@ const BitMap* get_BitMap_for_CopyBits( WindowRef window )
 
 }
 }
+
+#endif  // #if ! __LP64__
 
 #endif

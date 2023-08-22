@@ -20,6 +20,8 @@
 #include "mac_qd/get_portRect.hh"
 
 
+#if ! __LP64__
+
 namespace mac {
 namespace qd  {
 
@@ -55,5 +57,7 @@ portRect_result_type get_bounds_for_CopyBits( WindowRef window )
 
 }
 }
+
+#endif  // #if ! __LP64__
 
 #endif
