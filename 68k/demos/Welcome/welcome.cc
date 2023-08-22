@@ -23,18 +23,17 @@
 #endif
 #endif
 
-// mac-config
-#include "mac_config/color-quickdraw.hh"
-
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
-#include "mac_sys/has/ColorQuickDraw.hh"
 #include "mac_sys/trap_available.hh"
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/main_display_bounds.hh"
 #include "mac_qd/plot_icon_id.hh"
+
+// mac-app-utils
+#include "mac_app/new_window.hh"
 
 
 #if TARGET_API_MAC_CARBON
@@ -50,7 +49,6 @@
 short MBarHeight AT( 0x0BAA );  // only used in v68k for AMS
 
 
-using mac::sys::has_ColorQuickDraw;
 
 using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
@@ -62,34 +60,11 @@ bool in_v68k()
 	return mac::sys::gestalt_defined( 'v68k' );
 }
 
-static inline
-bool has_color_quickdraw()
-{
-	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  has_ColorQuickDraw();
-}
-
-static
-WindowRef new_window( const Rect*           bounds,
-                      const unsigned char*  title,
-                      Boolean               vis,
-                      short                 proc,
-                      WindowRef             behind,
-                      Boolean               closable,
-                      SInt32                ref )
-{
-	if ( CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw() )
-	{
-		return NewCWindow( 0, bounds, title, vis, proc, behind, closable, ref );
-	}
-	else
-	{
-		return NewWindow( 0, bounds, title, vis, proc, behind, closable, ref );
-	}
-}
-
 static
 WindowRef create_window()
 {
+	using mac::app::new_window;
+	
 	Rect bounds = main_display_bounds();
 	
 	const short width  = 428;
@@ -101,7 +76,7 @@ WindowRef create_window()
 	bounds.top    = (bounds.bottom - height) / 3 - 4;
 	bounds.bottom = bounds.top + height;
 	
-	return new_window( &bounds, "\p", true, dBoxProc, (WindowRef) -1, false, 0 );
+	return new_window( bounds, "\p", true, dBoxProc, (WindowRef) -1, false );
 }
 
 #define WELCOME( name ) "\p" "Welcome to " name "."
