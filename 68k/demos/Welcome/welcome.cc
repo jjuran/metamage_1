@@ -40,14 +40,7 @@
 #define SystemTask()  /**/
 #endif
 
-#ifdef __MC68K__
-#define AT( addr )  : addr
-#else
-#define AT( addr )
-#endif
-
-short MBarHeight AT( 0x0BAA );  // only used in v68k for AMS
-
+#define MBarHeight  *(short*) 0x0BAA  // only used in v68k for AMS
 
 
 using mac::qd::get_portRect;
