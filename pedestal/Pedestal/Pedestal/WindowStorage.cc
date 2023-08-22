@@ -11,11 +11,9 @@
 #endif
 
 // mac-config
-#include "mac_config/color-quickdraw.hh"
 #include "mac_config/desk-accessories.hh"
 
 // mac-sys-utils
-#include "mac_sys/has/ColorQuickDraw.hh"
 #include "mac_sys/mem_error.hh"
 
 // mac-ui-utils
@@ -23,11 +21,9 @@
 
 // mac-app-utils
 #include "mac_app/DAs.hh"
+#include "mac_app/new_window.hh"
 #include "mac_app/state.hh"
 #include "mac_app/Window_menu.hh"
-
-// MacGlue
-#include "MacGlue/MacGlue.hh"
 
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
@@ -39,25 +35,6 @@
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowEventHandlers.hh"  // codependent
 
-
-static inline
-bool has_color_quickdraw()
-{
-	if ( ! CONFIG_COLOR_QUICKDRAW )
-	{
-		return false;
-	}
-	
-	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  mac::sys::has_ColorQuickDraw();
-}
-
-namespace MacGlue
-{
-	
-	DECLARE_MAC_GLUE( NewWindow  );
-	DECLARE_MAC_GLUE( NewCWindow );
-	
-}
 
 namespace Pedestal
 {
@@ -359,19 +336,6 @@ namespace Pedestal
 	}
 	
 	
-	typedef pascal WindowRef (*NewWindow_ProcPtr)( void*             storage,
-	                                               const Rect*       bounds,
-	                                               ConstStr255Param  title,
-	                                               Boolean           visible,
-	                                               short             procID,
-	                                               WindowRef         behind,
-	                                               Boolean           goAwayFlag,
-	                                               long              refCon );
-	
-	static const NewWindow_ProcPtr gNewWindow = has_color_quickdraw() ? &MacGlue::NewCWindow
-	                                                                  : &MacGlue::NewWindow;
-	
-	
 	static inline
 	bool has_grow_box( short procID )
 	{
@@ -417,6 +381,8 @@ namespace Pedestal
 	                                    Mac::WindowDefProcID  procID,
 	                                    bool                  goAwayFlag )
 	{
+		using mac::app::new_window;
+		
 		Disposer disposer;
 		
 		WindowRef substorage = NULL;
@@ -435,7 +401,7 @@ namespace Pedestal
 		
 	#endif
 		
-		WindowRef window = gNewWindow( substorage,
+		WindowRef window = new_window( substorage,
 		                               &bounds,
 		                               title,
 		                               visible,
