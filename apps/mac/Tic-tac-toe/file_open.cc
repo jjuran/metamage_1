@@ -20,6 +20,7 @@
 #include "mac_app/file_open_dialog.hh"
 
 // Tic-tac-toe
+#include "document.hh"
 #include "state.hh"
 #include "window.hh"
 
@@ -63,6 +64,11 @@ long file_opener( const File& file )
 		if ( restore( block, n ) )
 		{
 			reload( block, n );
+			
+			global_document_file< File >::value = file;
+			
+			document_assigned = true;
+			document_modified = false;
 			
 			set_window_title( traits::get_name( file ) );
 			
