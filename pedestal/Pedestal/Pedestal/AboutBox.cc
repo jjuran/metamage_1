@@ -176,8 +176,6 @@ namespace Pedestal
 			left + kAboutBoxIconWidth,
 		};
 		
-		mac::qd::plot_icon_id( iconBounds, 128 );
-		
 		top += kAboutBoxIconEdgeLength + kAboutBoxIconToTextGap;
 		left = kAboutBoxTextHorizontalMargin;
 		
@@ -248,6 +246,10 @@ namespace Pedestal
 		detailBounds.bottom += kAboutBoxDetailHeight + kAboutBoxInterTextGap;
 		
 		TETextBox( data + 1, data[ 0 ], &detailBounds, teJustCenter );
+		
+		BackColor( whiteColor );
+		
+		mac::qd::plot_icon_id( iconBounds, 128 );
 	}
 	
 	static inline
