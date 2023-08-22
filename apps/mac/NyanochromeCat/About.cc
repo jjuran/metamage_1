@@ -53,6 +53,9 @@
 #include "mac_qd/plot_icon_id.hh"
 #include "mac_qd/globals/screenBits.hh"
 
+// mac-app-utils
+#include "mac_app/new_window.hh"
+
 
 #pragma exceptions off
 
@@ -239,6 +242,8 @@ void show_About_box()
 		return;
 	}
 	
+	using mac::app::new_window;
+	
 	static bool got_data = get_data();
 	
 	const Rect& screen_bounds = mac::qd::screenBits().bounds;
@@ -268,7 +273,7 @@ void show_About_box()
 	
 	WindowRef behind = (WindowRef) -1;
 	
-	gAboutBox = NewWindow( NULL, &rect, title, vis, proc, behind, closable, 0 );
+	gAboutBox = new_window( rect, title, vis, proc, behind, closable );
 	
 	/*
 		With non-opaque Toolbox structs, the value assigned to `box`
