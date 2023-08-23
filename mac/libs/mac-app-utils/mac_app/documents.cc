@@ -6,7 +6,7 @@
 #include "mac_app/documents.hh"
 
 // Mac OS
-#ifdef __MC68K__
+#if ! TARGET_API_MAC_CARBON
 #ifndef __SEGLOAD__
 #include <SegLoad.h>
 #endif
@@ -21,7 +21,7 @@ namespace app {
 
 void open_AppFiles_with( HFS_callback callback )
 {
-#ifdef __MC68K__
+#if TARGET_CPU_68K  &&  ! TARGET_RT_MAC_CFM
 	
 	short action;
 	short count;
