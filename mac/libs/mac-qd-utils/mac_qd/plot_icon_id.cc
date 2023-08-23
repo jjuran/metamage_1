@@ -30,7 +30,7 @@ namespace qd  {
 
 short plot_icon_id( const Rect& bounds, short id )
 {
-	if ( mac::sys::has_IconUtilities() )
+	if ( ! TARGET_CPU_68K  ||  mac::sys::has_IconUtilities() )
 	{
 		return PlotIconID( &bounds, 0, 0, id );
 	}
