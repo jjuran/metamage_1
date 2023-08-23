@@ -46,6 +46,7 @@
 Byte SdVolume    : 0x0260;
 GrafPtr WMgrPort : 0x09DE;
 short TheMenu    : 0x0A26;
+MBarHookProcPtr MBarHook : 0x0A2C;
 short MBarHeight : 0x0BAA;
 
 void* toolbox_trap_table[] : 3 * 1024;
@@ -102,6 +103,36 @@ WMgrPort_bezel_scope::~WMgrPort_bezel_scope()
 	*get_addrof_thePort() = oldPort;
 }
 
+
+static inline
+asm
+short call_MBarHook( Rect& menuRect )
+{
+	/*
+		MBarHook may be NULL, in which case we simply return, and
+		the caller will clean up the stack (C calling convention).
+	*/
+	
+	MOVE.L   MBarHook,D0
+	BEQ.S    done
+	
+	/*
+		Call the MBarHook handler, which is a special case that
+		doesn't conform to any calling convention.  It pops menuRect
+		off the stack (like the Pascal convention), but returns its
+		result in D0 (like the C convention).
+		
+		Afterward, we need to fudge a longword back onto the stack,
+		as our caller is expecting to pop menuRect off the stack.
+	*/
+	
+	MOVEA.L  D0,A0
+	JSR      (A0)
+	SUBQ.L   #4,SP
+	
+done:
+	
+}
 
 static
 MenuList_entry* find_menu_id( short menuID )
@@ -805,6 +836,11 @@ pascal long MenuSelect_patch( Point pt )
 					
 					if ( menu[0]->menuHeight != 0 )
 					{
+						if ( call_MBarHook( menuRect ) != 0 )
+						{
+							break;
+						}
+						
 						// Save the bits under the menu and draw it.
 						
 						savedBits.bounds.left   = menuRect.left  - 1     & ~0x7;
