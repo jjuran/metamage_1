@@ -31,7 +31,7 @@ namespace adb {
 
 #if ! TARGET_API_MAC_CARBON
 
-#if TARGET_CPU_68K
+#if TARGET_CPU_68K  &&  ! TARGET_RT_MAC_CFM
 
 static
 asm pascal void ADBOp_completion()
@@ -44,7 +44,7 @@ asm pascal void ADBOp_completion()
 	RTS
 }
 
-#else
+#else  // #if TARGET_CPU_68K  &&  ! TARGET_RT_MAC_CFM
 
 static
 pascal void ADBOp_completion( Ptr buffer, Ptr refCon, long command )
@@ -52,7 +52,7 @@ pascal void ADBOp_completion( Ptr buffer, Ptr refCon, long command )
 	*refCon = true;
 }
 
-#endif  // #if TARGET_CPU_68K
+#endif  // #else  // #if TARGET_CPU_68K  &&  ! TARGET_RT_MAC_CFM
 
 OSErr send_command( Ptr buffer, short command )
 {
