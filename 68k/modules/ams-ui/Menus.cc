@@ -47,6 +47,7 @@ Byte SdVolume    : 0x0260;
 GrafPtr WMgrPort : 0x09DE;
 short TheMenu    : 0x0A26;
 MBarHookProcPtr MBarHook : 0x0A2C;
+MenuHookProcPtr MenuHook : 0x0A30;
 short MBarHeight : 0x0BAA;
 
 void* toolbox_trap_table[] : 3 * 1024;
@@ -864,9 +865,20 @@ pascal long MenuSelect_patch( Point pt )
 			MDEF_0( mChooseMsg, opened->menu, &menuRect, pt, &whichItem );
 		}
 		
-		// Wait for mouse movement or mouse-up.
+		/*
+			Wait for mouse movement or mouse-up.  If a MenuHook handler
+			is installed, call that first, and only wait one tick so we
+			can keep calling it regularly.  Otherwise, wait forever.
+		*/
 		
-		const long sleep = 0xFFFFFFFF;
+		long sleep = 0xFFFFFFFF;
+		
+		if ( MenuHook )
+		{
+			MenuHook();
+			
+			sleep = 1;
+		}
 		
 		EventRecord event;
 		
