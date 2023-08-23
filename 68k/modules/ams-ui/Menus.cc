@@ -798,7 +798,7 @@ pascal long MenuSelect_patch( Point pt )
 					menuRect.right = menuRect.left + menu[0]->menuWidth;
 					menuRect.bottom = menuRect.top + menu[0]->menuHeight;
 					
-					if ( menuRect.right > menuLimit )
+					if ( menuLimit - menuRect.right < 0 )
 					{
 						OffsetRect( &menuRect, menuLimit - menuRect.right, 0 );
 					}
