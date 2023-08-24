@@ -3,6 +3,9 @@
 	------------
 */
 
+#ifndef OFFSCREEN_HH
+#define OFFSCREEN_HH
+
 // Mac OS X
 #ifdef __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
@@ -20,3 +23,5 @@ void prepare_next_frame();
 void prepare_prev_frame();
 
 void blit( CGrafPtr port );
+
+#endif
