@@ -9,6 +9,8 @@
 #pragma exceptions off
 
 
+timer animation_timer;
+
 bool timer::pulse()
 {
 	if ( it_is_paused )

@@ -72,4 +72,6 @@ class timer
 		}
 };
 
+extern timer animation_timer;
+
 #endif

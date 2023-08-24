@@ -116,8 +116,6 @@ void make_main_window()
 	SetPortWindowPort( main_window );
 }
 
-static timer animation_timer;
-
 static
 void play_pause()
 {
