@@ -2,13 +2,13 @@
 	MacFixup/MixedMode.h
 	--------------------
 	
-	This source file contains code similar to that from Apple's MixedMode.h for
-	the purpose of interoperability.  It provides essentially the same effect as
-	patching the original file (and like a patch, is required to duplicate some
-	of the code it's patching in order to provide context).
+	This source file contains code similar to that in Apple's MixedMode.h
+	for the purpose of interoperability.  It provides essentially the same
+	effect as patching the original file (and like a patch, is required to
+	duplicate some of the code it's patching in order to provide context).
 	
-	Notwithstanding Apple's copyright on the original code, the patch itself was
-	written in 2010 by Joshua Juran, who places it in the public domain.
+	Notwithstanding Apple's copyright on the original code, the patch itself
+	was written in 2010 by Joshua Juran, who places it in the public domain.
 */
 
 #ifndef MACFIXUP_MIXEDMODE_H
