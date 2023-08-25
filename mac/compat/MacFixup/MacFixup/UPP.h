@@ -12,12 +12,16 @@
 #endif
 
 // Mac OS
-#ifndef __MIXEDMODE__
-#include <MixedMode.h>
+#ifndef __CONDITIONALMACROS__
+#include <ConditionalMacros.h>
 #endif
 
 
 #if TARGET_RT_MAC_CFM
+
+/*
+	To use these macros, you must first include <MixedMode.h>.
+*/
 
 #define DEFINE_UPP_TYPE( Name )  typedef struct Opaque##Name##ProcPtr* Name##UPP;
 

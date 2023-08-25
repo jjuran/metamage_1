@@ -14,6 +14,11 @@
 #ifndef MACFIXUP_TIMER_H
 #define MACFIXUP_TIMER_H
 
+// Mac OS
+#ifndef __MIXEDMODE__
+#include <MixedMode.h>
+#endif
+
 // MacFixup
 #include "UPP.h"
 

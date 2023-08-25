@@ -14,6 +14,11 @@
 #ifndef MACFIXUP_THREADS_H
 #define MACFIXUP_THREADS_H
 
+// Mac OS
+#ifndef __MIXEDMODE__
+#include <MixedMode.h>
+#endif
+
 // MacFixup
 #include "UPP.h"
 

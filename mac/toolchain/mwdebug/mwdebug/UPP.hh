@@ -10,6 +10,9 @@
 #ifndef __CODEFRAGMENTS__
 #include <CodeFragments.h>
 #endif
+#ifndef __MIXEDMODE__
+#include <MixedMode.h>
+#endif
 
 // MacFixup
 #if ! TARGET_API_MAC_CARBON
