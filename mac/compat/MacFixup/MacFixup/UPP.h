@@ -122,6 +122,6 @@ inline R Invoke##Name##UPP( P1 p1, P2 p2, Name##UPP upp )  \
         DEFINE_UPP_TYPE( Name )          \
         DEFINE_UPP_CONSTRUCTOR( Name )   \
         DEFINE_UPP_DESTRUCTOR( Name )    \
-        DEFINE_UPP_INVOKER_1( Name, R, P1, P2 )
+        DEFINE_UPP_INVOKER_2( Name, R, P1, P2 )
 
 #endif
