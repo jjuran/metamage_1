@@ -1,6 +1,6 @@
 /*
-	MacFixup/MixedMode.h
-	--------------------
+	MixedMode.h
+	-----------
 	
 	This source file contains code similar to that in Apple's MixedMode.h
 	for the purpose of interoperability.  It provides essentially the same
@@ -11,19 +11,22 @@
 	was written in 2010 by Joshua Juran, who places it in the public domain.
 */
 
-#ifndef MACFIXUP_MIXEDMODE_H
-#define MACFIXUP_MIXEDMODE_H
+#ifndef UNIQUECFMUPPS_MIXEDMODE_H
+#define UNIQUECFMUPPS_MIXEDMODE_H
 
 #ifndef __MIXEDMODE__
 #include <CIncludes/MixedMode.h>
 #endif
 
 
-#if TARGET_RT_MAC_CFM && !OPAQUE_UPP_TYPES
+#if TARGET_RT_MAC_CFM  &&  ! OPAQUE_UPP_TYPES
 	
-	// Nitrogen requires unique UPP types for template parameters.
-	// Non-CFM UPPs are just ProcPtrs (and therefore unique).
-	// Opaque UPPs are unique.
+	/*
+		Nitrogen requires unique UPP types for template parameters.
+		
+		Non-CFM UPPs are just ProcPtrs (and therefore unique).
+		Opaque UPPs are unique.
+	*/
 	
 	#undef STACK_UPP_TYPE
 	#undef REGISTER_UPP_TYPE
@@ -60,6 +63,7 @@
 	#define CALL_ELEVEN_PARAMETER_UPP(   upp, procInfo, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11           )  CallUniversalProc( (UniversalProcPtr) upp, procInfo, (p1), (p2), (p3), (p4), (p5), (p6), (p7), (p8), (p9), (p10), (p11)               )
 	#define CALL_TWELVE_PARAMETER_UPP(   upp, procInfo, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12      )  CallUniversalProc( (UniversalProcPtr) upp, procInfo, (p1), (p2), (p3), (p4), (p5), (p6), (p7), (p8), (p9), (p10), (p11), (p12)        )
 	#define CALL_THIRTEEN_PARAMETER_UPP( upp, procInfo, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13 )  CallUniversalProc( (UniversalProcPtr) upp, procInfo, (p1), (p2), (p3), (p4), (p5), (p6), (p7), (p8), (p9), (p10), (p11), (p12), (p13) )
-#endif  // !OPAQUE_UPP_TYPES
+
+#endif  // #if TARGET_RT_MAC_CFM  &&  ! OPAQUE_UPP_TYPES
 
 #endif
