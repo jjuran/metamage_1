@@ -13,27 +13,9 @@
 #include "mac_qd/globals/thePort.hh"
 #include "mac_qd/globals/thePort_window.hh"
 
-// Nitrogen
-#include "Nitrogen/Events.hh"
-#include "Nitrogen/Lists.hh"
-#include "Nitrogen/Quickdraw.hh"
-
-
-namespace Nitrogen
-{
-	
-	inline void SetListViewBounds( ListHandle list, const Rect& bounds )
-	{
-		::SetListViewBounds( list, &bounds );
-	}
-	
-}
 
 namespace Pedestal
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	// Mac OS places the scrollbars outside the bounds.
 	// We adjust the bounds inward so they draw within the original bounds.
@@ -98,18 +80,26 @@ namespace Pedestal
 		const bool scrollHoriz = false;
 		const bool scrollVert  = true;
 		
+		const short proc = 0;
+		
 		const Rect dataBounds = { 0, 0, 0, 1 };  // one column, zero rows
 		const Point cSize = {};
 		
-		itsList = N::LNew( AdjustedListBounds( bounds, scrollHoriz, scrollVert ),
-		                   dataBounds,
-		                   cSize,
-		                   Mac::ResID( 0 ),
-		                   mac::qd::thePort_window(),
-		                   drawIt,
-		                   hasGrow,
-		                   scrollHoriz,
-		                   scrollVert );
+		Rect rView = AdjustedListBounds( bounds, scrollHoriz, scrollVert );
+		
+		ListHandle list = ::LNew( &rView,
+		                          &dataBounds,
+		                          cSize,
+		                          proc,
+		                          mac::qd::thePort_window(),
+		                          drawIt,
+		                          hasGrow,
+		                          scrollHoriz,
+		                          scrollVert );
+		
+		// FIXME:  Check for null handle
+		
+		itsList = nucleus::owned< ListHandle >::seize( list );
 		
 		if ( hasGrow )
 		{
@@ -126,11 +116,11 @@ namespace Pedestal
 	{
 		const Rect r = AdjustedListBounds( bounds, false, true );
 		
-		N::SetListViewBounds( itsList, r );
+		SetListViewBounds( itsList, &r );
 		
-		N::LSize( r.right - r.left,
-		          r.bottom - r.top,
-		          itsList );
+		LSize( r.right - r.left,
+		       r.bottom - r.top,
+		       itsList );
 		
 		itsList.get()[0]->cellSize.h = r.right - r.left;
 		
@@ -142,9 +132,18 @@ namespace Pedestal
 	
 	bool ListView::MouseDown( const EventRecord& event )
 	{
-		N::LClick( N::GlobalToLocal( event.where ),
-		           N::EventModifiers( event.modifiers ),
-		           itsList );
+		Point where = event.where;
+		
+		GlobalToLocal( &where );
+		
+		/*
+			MWC68K mysteriously generates smaller code
+			with the (int) cast than without it.
+		*/
+		
+		LClick( where,
+		        (int) event.modifiers,
+		        itsList.get() );
 		
 		return true;
 	}
@@ -161,13 +160,16 @@ namespace Pedestal
 		using mac::qd::thePort;
 		
 		//Rect bounds = Bounds( itsList );
-		//N::EraseRect( bounds );
+		//EraseRect( &bounds );
+		
 		LUpdate( get_visRgn( thePort() ), itsList );
 	}
 	
 	void ListView::SetCell( UInt16 offset, const char* data, std::size_t length )
 	{
-		Rect bounds = N::GetListDataBounds( itsList );
+		Rect bounds;
+		
+		GetListDataBounds( itsList, &bounds );
 		
 		if ( offset >= bounds.bottom )
 		{
@@ -183,7 +185,9 @@ namespace Pedestal
 	
 	void ListView::AppendCell( const char* data, std::size_t length )
 	{
-		Rect bounds = N::GetListDataBounds( itsList );
+		Rect bounds;
+		
+		GetListDataBounds( itsList, &bounds );
 		
 		const short i_row = LAddRow( 1, bounds.bottom, itsList );
 		
