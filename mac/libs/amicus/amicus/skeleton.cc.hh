@@ -149,6 +149,29 @@ static EventTypeSpec Modifiers_event[] =
 	{ kEventClassKeyboard, kEventRawKeyModifiersChanged },
 };
 
+static
+bool event_crashes_Ventura( EventRef event )
+{
+	OSType eventClass = GetEventClass( event );
+	UInt32 eventKind  = GetEventKind ( event );
+	
+	/*
+		An event sent when an application is launched normally (as
+		opposed to running its executable from a terminal) triggers
+		an assertion failure in Ventura's Skylight framework  during
+		the call to SendEventToEventTarget().
+		
+		HIToolbox's HandleAppShowHide() calls _ReorderWindowsTogether(),
+		which calls Skylight's SLSReorderWindows().  Since applications
+		using amicus don't have any windows at all, their order seems
+		unimportant, and these events can probably be safely discarded.
+		
+		https://github.com/jjuran/metamage_1/issues/26
+	*/
+	
+	return eventClass == kEventClassApplication  &&  eventKind == 103;
+}
+
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
@@ -324,7 +347,10 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		
 	#endif  // #ifdef MAC_OS_X_VERSION_10_5
 		
-		err = SendEventToEventTarget( event, target );
+		if ( ! event_crashes_Ventura( event ) )
+		{
+			err = SendEventToEventTarget( event, target );
+		}
 		
 	next:
 		
