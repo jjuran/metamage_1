@@ -31,7 +31,6 @@
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/AppleEvents.hh"
-#include "Nitrogen/Processes.hh"
 #include "Nitrogen/Str.hh"
 
 // Io: MacFiles
@@ -198,7 +197,7 @@ namespace tool
 	{
 		if ( gActivate )
 		{
-			N::SetFrontProcess( psn );
+			SetFrontProcess( &psn );
 		}
 		
 		N::AESend( MakeOpenDocsEvent( items, psn ),
@@ -219,8 +218,10 @@ namespace tool
 	static void LaunchApplicationWithDocsToOpen( const FSSpec&                app,
 	                                             const Mac::AEDescList_Data&  items )
 	{
+		static ProcessSerialNumber no_process = {};
+		
 		std::auto_ptr< AppParameters > appParameters
-			= N::AEGetDescData< Mac::typeAppParameters >( N::AECoerceDesc( MakeOpenDocsEvent( items, N::NoProcess() ),
+			= N::AEGetDescData< Mac::typeAppParameters >( N::AECoerceDesc( MakeOpenDocsEvent( items, no_process ),
 		                                                                   Mac::typeAppParameters ) );
 		
 		mac::proc::launch_application( app, appParameters.get() );
