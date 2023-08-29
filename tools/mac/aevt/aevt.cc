@@ -35,7 +35,6 @@
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
-#include "Nitrogen/Processes.hh"
 #include "Nitrogen/Str.hh"
 
 #if CALL_NOT_IN_CARBON
@@ -184,12 +183,6 @@ namespace tool
 	{
 		PPCPortRec name = n::make< PPCPortRec >( N::Str32( appName ), "\p=" );
 		
-		/*
-		LocationNameRec location = machine.empty() ? host.empty() ? n::make< LocationNameRec >()
-		                                                          : n::make< LocationNameRec >( n::make< PPCAddrRec >( n::make< PPCXTIAddress >( host ) ) )
-		                                           : n::make< LocationNameRec >( n::make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) );
-		*/
-		
 		LocationNameRec location = machine != NULL ? n::make< LocationNameRec >( n::make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) )
 		                         : host    != NULL ? n::make< LocationNameRec >( n::make< PPCAddrRec >( n::make< PPCXTIAddress >( host ) ) )
 		                                           : n::make< LocationNameRec >();
@@ -208,7 +201,11 @@ namespace tool
 	{
 		if ( front )
 		{
-			return N::AECreateDesc< Mac::typeProcessSerialNumber >( N::GetFrontProcess() );
+			ProcessSerialNumber psn;
+			
+			Mac::ThrowOSStatus( GetFrontProcess( &psn ) );
+			
+			return N::AECreateDesc< Mac::typeProcessSerialNumber >( psn );
 		}
 		else if ( sig != Mac::kUnknownFSCreator )
 		{
