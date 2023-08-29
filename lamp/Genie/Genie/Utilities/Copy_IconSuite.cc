@@ -5,8 +5,8 @@
 
 #include "Genie/Utilities/Copy_IconSuite.hh"
 
-// mac-config
-#include "mac_config/upp-macros.hh"
+// mac-icon-utils
+#include "mac_icon/copy_IconSuite.hh"
 
 
 namespace Genie
@@ -16,51 +16,16 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	#pragma exceptions off
-	
-	static pascal OSErr CopyIconToSuite( ::ResType type, ::Handle* icon, void* userData )
-	{
-		::IconSuiteRef newSuite = (::IconSuiteRef) userData;
-		
-		::Handle copy = *icon;
-		
-		if ( copy == NULL )
-		{
-			return noErr;
-		}
-		
-		OSErr err = ::HandToHand( &copy );
-		
-		if ( err != noErr )
-		{
-			return err;
-		}
-		
-		err = ::AddIconToSuite( copy, newSuite, type );
-		
-		if ( err != noErr )
-		{
-			::DisposeHandle( copy );
-		}
-		
-		return err;
-	}
-	
-	#pragma exceptions reset
-	
-	
 	n::owned< N::IconSuiteRef > Copy_IconSuite( N::IconSuiteRef iconSuite )
 	{
-		DEFINE_UPP( IconAction, CopyIconToSuite )
+		iconSuite = mac::icon::copy_IconSuite( iconSuite );
 		
-		n::owned< N::IconSuiteRef > copy = N::NewIconSuite();
+		if ( iconSuite )
+		{
+			return n::owned< N::IconSuiteRef >::seize( iconSuite );
+		}
 		
-		Mac::ThrowOSStatus( ::ForEachIconDo( iconSuite,
-		                                     kSelectorAllAvailableData,
-		                                     UPP_ARG( CopyIconToSuite ),
-		                                     copy.get().Get() ) );
-		
-		return copy;
+		return n::owned< N::IconSuiteRef >();
 	}
 	
 }
