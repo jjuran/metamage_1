@@ -47,6 +47,9 @@
 #include "mac_qd/plot_icon_id.hh"
 #include "mac_qd/globals/screenBits.hh"
 
+// mac-icon-utils
+#include "mac_icon/plot_IconRef.hh"
+
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 
@@ -63,7 +66,6 @@
 #include "Pedestal/BundleIcon.hh"
 #include "Pedestal/BundleStrings.hh"
 #include "Pedestal/CenteredText.hh"
-#include "Pedestal/HIViewPlotIconRef.hh"
 #include "Pedestal/OwnerResource.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowStorage.hh"
@@ -342,7 +344,7 @@ namespace Pedestal
 			{ kAboutBoxIconWidth, kAboutBoxIconHeight },
 		};
 		
-		HIViewPlotIconRef( context, iconBounds, BundleIcon() );
+		mac::icon::plot_IconRef( context, iconBounds, BundleIcon() );
 		
 		x = bounds.origin.x + kAboutBoxTextHorizontalMargin;
 		y += kAboutBoxIconHeight + kAboutBoxIconToTextGap;
