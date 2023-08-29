@@ -23,6 +23,7 @@
 
 // mac-proc-utils
 #include "mac_proc/find_process.hh"
+#include "mac_proc/launch_application.hh"
 
 // Nitrogen
 #include "Mac/Files/Types/FSCreator.hh"
@@ -222,7 +223,7 @@ namespace tool
 			= N::AEGetDescData< Mac::typeAppParameters >( N::AECoerceDesc( MakeOpenDocsEvent( items, N::NoProcess() ),
 		                                                                   Mac::typeAppParameters ) );
 		
-		N::LaunchApplication( app, N::LaunchFlags(), appParameters.get() );
+		mac::proc::launch_application( app, appParameters.get() );
 	}
 	
 	
