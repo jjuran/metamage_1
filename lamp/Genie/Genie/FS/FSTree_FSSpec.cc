@@ -5,6 +5,16 @@
 
 #include "Genie/FS/FSTree_FSSpec.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
+#ifndef __PROCESSES__
+#include <Processes.h>
+#endif
+
 // POSIX
 #include "fcntl.h"
 #include "sys/stat.h"
@@ -56,7 +66,6 @@
 // Nitrogen
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/Files.hh"
-#include "Nitrogen/Processes.hh"
 #include "Nitrogen/Resources.hh"
 
 // MacIO
