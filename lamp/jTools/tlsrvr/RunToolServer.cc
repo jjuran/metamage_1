@@ -37,6 +37,7 @@
 
 // mac-proc-utils
 #include "mac_proc/find_process.hh"
+#include "mac_proc/launch_application.hh"
 
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
@@ -237,11 +238,7 @@ namespace tool
 		
 		Mac::ThrowOSStatus( err );
 		
-		try
-		{
-			return N::LaunchApplication( appFile );
-		}
-		catch ( const Mac::OSStatus& err )
+		if ( (err = mac::proc::launch_application( &psn, appFile )) )
 		{
 			if ( err == afpItemNotFound )
 			{
@@ -253,11 +250,13 @@ namespace tool
 			}
 			else
 			{
-				throw;
+				Mac::ThrowOSStatus( err );
 			}
+			
+			throw p7::exit_failure;
 		}
 		
-		throw p7::exit_failure;
+		return psn;
 	}
 	
 	static n::owned< Mac::AppleEvent > CreateScriptEvent( const ProcessSerialNumber&  psn,
