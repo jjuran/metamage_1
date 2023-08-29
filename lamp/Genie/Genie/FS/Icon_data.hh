@@ -6,16 +6,24 @@
 #ifndef GENIE_FILESYSTEM_ICON_DATA_HH
 #define GENIE_FILESYSTEM_ICON_DATA_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
+#ifndef __ICONS__
+#include <Icons.h>
+#endif
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
+
 // vxo
 #include "vxo/ref_count.hh"
 
 // plus
 #include "plus/string.hh"
-
-// Nitrogen
-#ifndef NITROGEN_ICONS_HH
-#include "Nitrogen/Icons.hh"
-#endif
 
 // vfs
 #include "vfs/node_ptr.hh"
@@ -51,12 +59,6 @@ namespace Genie
 			~IconData();
 			
 			void Destroy();
-			
-			void SetPlainIcon( nucleus::owned< Nitrogen::Handle > h );
-			
-			void SetIconID( Nitrogen::ResID id );
-			
-			void SetIconSuite( nucleus::owned< Nitrogen::IconSuiteRef > suite );
 			
 			void Plot( const Rect&        area,
 			           IconAlignmentType  align,

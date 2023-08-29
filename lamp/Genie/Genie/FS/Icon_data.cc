@@ -28,6 +28,11 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// Nitrogen
+#ifndef NITROGEN_MACMEMORY_HH
+#include "Nitrogen/MacMemory.hh"
+#endif
+
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
@@ -41,18 +46,20 @@
 
 // relix-kernel
 #include "relix/config/color.hh"
-#include "relix/config/iconsuites.hh"
 
 // Genie
-#include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/Copy_IconSuite.hh"
 
+
+enum
+{
+	sizeof_plain_icon  = 128,
+	sizeof_masked_icon = 256,
+};
 
 namespace Genie
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
@@ -80,14 +87,6 @@ namespace Genie
 		}
 	}
 	
-	static void dispose_iconsuite( void* h )
-	{
-		if ( h != NULL )
-		{
-			::DisposeIconSuite( (::Handle) h, true );
-		}
-	}
-	
 	IconData::~IconData()
 	{
 		Destroy();
@@ -101,39 +100,6 @@ namespace Genie
 			
 			itsRef = NULL;
 		}
-	}
-	
-	void IconData::SetPlainIcon( n::owned< N::Handle > h )
-	{
-		Destroy();
-		
-		itsRef = h.release().Get();
-		
-		itsDeleter = dispose_handle;
-		
-		itIsSet = true;
-		itIsPOD = true;
-	}
-	
-	void IconData::SetIconID( N::ResID id )
-	{
-		Destroy();
-		
-		itsResID = id;
-		
-		itIsSet = true;
-	}
-	
-	void IconData::SetIconSuite( n::owned< N::IconSuiteRef > suite )
-	{
-		Destroy();
-		
-		itsRef = suite.release().Get();
-		
-		itsDeleter = dispose_iconsuite;
-		
-		itIsSet = true;
-		itIsPOD = false;
 	}
 	
 	void IconData::Plot( const Rect&        area,
@@ -197,18 +163,10 @@ namespace Genie
 		
 		switch ( size )
 		{
-			case sizeof (N::PlainIcon):
-			case sizeof (N::MaskedIcon):
+			case sizeof_plain_icon:
+			case sizeof_masked_icon:
 				PlotIconHandle( &area, align, transform, GetHandle() );
 				break;
-			
-		#if CONFIG_ICONSUITES
-			
-			case 76:
-				PlotIconSuite( &area, align, transform, GetHandle() );
-				break;
-			
-		#endif
 			
 			case 0:
 			default:
@@ -286,7 +244,7 @@ namespace Genie
 			return sizeof (::ResID);
 		}
 		
-		if ( n_bytes != sizeof (N::PlainIcon)  &&  n_bytes != sizeof (N::MaskedIcon) )
+		if ( n_bytes != sizeof_plain_icon  &&  n_bytes != sizeof_masked_icon )
 		{
 			p7::throw_errno( EINVAL );
 		}
@@ -544,42 +502,16 @@ namespace Genie
 		return extra.data->GetSize();
 	}
 	
-	static void icon_data_attach( const vfs::node* that, const vfs::node* target )
-	{
-	#if CONFIG_ICONSUITES
-		
-		icon_data_extra& extra = *(icon_data_extra*) that->extra();
-		
-		extra.data->SetIconSuite( Copy_IconSuite( Fetch_IconSuite() ) );
-		
-		InvalidateWindowForView( that->owner() );
-		
-	#else
-		
-		// FIXME:  Support monochrome icons
-		p7::throw_errno( ENOSYS );
-		
-	#endif
-	}
-	
 	static const vfs::data_method_set icon_data_data_methods =
 	{
 		&icon_data_open,
 		&icon_data_geteof
 	};
 	
-	static const vfs::file_method_set icon_data_file_methods =
-	{
-		&icon_data_attach
-	};
-	
 	static const vfs::node_method_set icon_data_methods =
 	{
 		NULL,
 		&icon_data_data_methods,
-		NULL,
-		NULL,
-		&icon_data_file_methods
 	};
 	
 	
