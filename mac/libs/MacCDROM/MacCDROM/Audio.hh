@@ -8,9 +8,6 @@
 #ifndef MACCDROM_AUDIO_HH
 #define MACCDROM_AUDIO_HH
 
-// Standard C++
-#include <vector>
-
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
@@ -89,7 +86,7 @@ namespace MacCDROM
 		kTrackControl_Max = nucleus::enumeration_traits< ::UInt8 >::max
 	};
 	
-	typedef std::size_t Frames;
+	typedef unsigned long Frames;
 	
 	class CDTime
 	{
@@ -129,7 +126,7 @@ namespace MacCDROM
 		Frames       a2;
 		Frames       leadOut;
 		
-		std::vector< Frames > trackStarts;
+		Frames       trackStarts[ 99 ];
 	};
 	
 	inline TrackCount CountTracks     ( const CDROMTableOfContents& toc )  { return toc.lastTrack;      }

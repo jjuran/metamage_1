@@ -9,6 +9,9 @@
 #include "MacCDROM/Audio.hh"
 #endif
 
+// Standard C
+#include <string.h>
+
 // iota
 #ifdef __GNUC__
 #include "iota/dummy.hh"
@@ -163,7 +166,7 @@ namespace MacCDROM
 	
 	static void Initialize( AudioCDControlParameterBlock& pb )
 	{
-		std::memset( &pb, 0, sizeof pb );
+		memset( &pb, 0, sizeof pb );
 	}
 	
 	CDROMTableOfContents ReadTOC( const CDROMDrive& drive )
@@ -219,8 +222,6 @@ namespace MacCDROM
 		entry = reinterpret_cast< const RawEntry* >( point + 5 );
 		toc.lastAudioTrack = DecodeBCD( entry->min );
 		ASSERT( toc.lastAudioTrack <= toc.lastTrack );
-		
-		toc.trackStarts.resize( toc.lastTrack );
 		
 		entry = reinterpret_cast< const RawEntry* >( point + 5*2 );
 		toc.a2 = CountFramesBCD( *entry );
