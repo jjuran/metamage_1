@@ -490,6 +490,10 @@ namespace tool
 		{
 			return "text/css";
 		}
+		else if ( ext == ".js" )
+		{
+			return "text/javascript";
+		}
 	#if TARGET_OS_MAC
 		else if ( type == 'TEXT' )
 		{
