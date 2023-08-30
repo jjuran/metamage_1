@@ -17,6 +17,11 @@
 // Debug
 #include "debug/assert.hh"
 
+// Nitrogen Extras / ClassicToolbox
+#ifndef CLASSICTOOLBOX_DEVICES_HH
+#include "ClassicToolbox/Devices.hh"
+#endif
+
 // MacCDROM
 #ifdef __MACOS__
 #include "MacCDROM/AppleCD.hh"
@@ -25,6 +30,8 @@
 
 namespace MacCDROM
 {
+	
+	namespace N = Nitrogen;
 	
 #if CALL_NOT_IN_CARBON
 	

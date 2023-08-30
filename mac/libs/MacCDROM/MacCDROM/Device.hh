@@ -14,20 +14,16 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_DEVICES_TYPES_DRIVERREFNUM_HH
+#include "Mac/Devices/Types/DriverRefNum.hh"
+#endif
 #ifndef MAC_FILES_TYPES_FSVOLUMEREFNUM_HH
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
-#endif
-
-// Nitrogen Extras / ClassicToolbox
-#ifndef CLASSICTOOLBOX_DEVICES_HH
-#include "ClassicToolbox/Devices.hh"
 #endif
 
 
 namespace MacCDROM
 {
-	
-	namespace N = Nitrogen;
 	
 	enum CDROMPowerLevel
 	{

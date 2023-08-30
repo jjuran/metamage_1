@@ -9,6 +9,11 @@
 #include "MacCDROM/Device.hh"
 #endif
 
+// Mac OS
+#ifndef __DEVICES__
+#include <Devices.h>
+#endif
+
 // iota
 #ifdef __GNUC__
 #include "iota/dummy.hh"
@@ -16,9 +21,6 @@
 
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
-
-// MacCDROM
-#include "MacCDROM/AppleCD.hh"
 
 
 namespace MacCDROM
