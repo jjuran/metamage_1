@@ -25,9 +25,6 @@
 #include "mac_proc/find_process.hh"
 #include "mac_proc/launch_application.hh"
 
-// Nitrogen
-#include "Mac/Files/Types/FSCreator.hh"
-
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/AppleEvents.hh"
@@ -228,7 +225,8 @@ namespace tool
 	}
 	
 	
-	static Mac::FSCreator DefaultTextFileCreator()
+	static
+	OSType DefaultTextFileCreator()
 	{
 	#ifdef __RELIX__
 		
@@ -236,16 +234,17 @@ namespace tool
 		
 		const plus::string code = p7::slurp( p7::open( path, p7::o_rdonly ) );
 		
-		return Mac::FSCreator( gear::decode_quad( code.data() ) );
+		return gear::decode_quad( code.data() );
 		
 	#else
 		
-		return Mac::FSCreator( 'ttxt' );  // for OS X
+		return 'ttxt';  // for OS X
 		
 	#endif
 	}
 	
-	static Mac::FSCreator SignatureOfAppForOpening()
+	static
+	OSType SignatureOfAppForOpening()
 	{
 		if ( gOpenInEditor )
 		{
@@ -257,7 +256,7 @@ namespace tool
 			{
 				if ( strlen( macEditorSignature ) == sizeof 'quad' )
 				{
-					return Mac::FSCreator( gear::decode_quad( macEditorSignature ) );
+					return gear::decode_quad( macEditorSignature );
 				}
 				
 				// Treat a malformed quad value the same as no value.  Move on.
@@ -277,12 +276,12 @@ namespace tool
 				Mac::ThrowOSStatus( paramErr );
 			}
 			
-			return Mac::FSCreator( gear::decode_quad( gAppSigToOpenIn ) );
+			return gear::decode_quad( gAppSigToOpenIn );
 		}
 		
 		// Otherwise, give everything to the Finder.
 		
-		return Mac::FSCreator( sigFinder );
+		return sigFinder;
 	}
 	
 	static void OpenItemsUsingOptions( const Mac::AEDescList_Data& items )
@@ -330,7 +329,7 @@ namespace tool
 			// Look up by signature.
 			
 			// Pick a signature
-			Mac::FSCreator signature = SignatureOfAppForOpening();
+			OSType signature = SignatureOfAppForOpening();
 			
 			// Find it if running
 			ProcessSerialNumber psn;
