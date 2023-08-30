@@ -332,18 +332,23 @@ namespace tool
 			// Pick a signature
 			Mac::FSCreator signature = SignatureOfAppForOpening();
 			
-			try
+			// Find it if running
+			ProcessSerialNumber psn;
+			
+			OSErr err = mac::proc::find_process( psn, signature );
+			
+			if ( err == noErr )
 			{
-				// Find it if running
-				ProcessSerialNumber psn;
-				
-				Mac::ThrowOSStatus( mac::proc::find_process( psn, signature ) );
-				
 				// The app is already running -- send it an odoc event
 				OpenItemsWithRunningApp( items, psn );
 				
 				// We're done
 				return;
+			}
+			
+			try
+			{
+				Mac::ThrowOSStatus( err );
 			}
 			catch ( const Mac::OSStatus& err )
 			{
