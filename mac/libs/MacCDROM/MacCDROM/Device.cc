@@ -14,6 +14,9 @@
 #include "iota/dummy.hh"
 #endif
 
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 // MacCDROM
 #include "MacCDROM/AppleCD.hh"
 
@@ -25,12 +28,22 @@ namespace MacCDROM
 	
 	Mac::DriverRefNum OpenCDROMDriver()
 	{
-		// We definitely don't want to close the driver.
-		// The question is, do we really need to open it at all, or could we
-		// just return the known reference number?
-		// Unless we're sure the driver is already open, better to be safe
-		// than stupid.
-		return N::OpenDriver( "\p" ".AppleCD" ).release();
+		/*
+			We definitely don't want to close the driver.
+			The question is, do we really need to open it at all,
+			or could we just return the known reference number?
+			
+			Unless we're sure the driver is already open,
+			it's better to play it safe.
+		*/
+		
+		short refnum;
+		
+		OSErr err = OpenDriver( "\p" ".AppleCD", &refnum );
+		
+		Mac::ThrowOSStatus( err );
+		
+		return Mac::DriverRefNum( refnum );
 	}
 	
 #endif  // CALL_NOT_IN_CARBON
