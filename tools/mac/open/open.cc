@@ -346,22 +346,12 @@ namespace tool
 				return;
 			}
 			
-			try
+			if ( err == procNotFound )
 			{
-				Mac::ThrowOSStatus( err );
+				err = mac::file::get_desktop_APPL( appFile, signature );
 			}
-			catch ( const Mac::OSStatus& err )
-			{
-				if ( err != procNotFound )
-				{
-					throw;
-				}
-				
-				using mac::file::get_desktop_APPL;
-				
-				// No such process
-				Mac::ThrowOSStatus( get_desktop_APPL( appFile, signature ) );
-			}
+			
+			Mac::ThrowOSStatus( err );
 		}
 		
 		LaunchApplicationWithDocsToOpen( appFile, items );
