@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 // Standard C
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,9 +37,6 @@
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/AppleEvents.hh"
 #include "Nitrogen/Str.hh"
-
-// poseven
-#include "poseven/types/errno_t.hh"
 
 // Nitrogen
 #include "Mac/AppleEvents/Types/DescType_scribe_dynamic.hh"
@@ -130,7 +128,6 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace p7 = poseven;
 	
 	
 	enum
@@ -414,10 +411,6 @@ namespace tool
 			catch ( const Mac::OSStatus& err )
 			{
 				fprintf( stderr, "open: %s: OSStatus %ld\n", pathname, err.Get() );
-			}
-			catch ( const p7::errno_t& errnum )
-			{
-				fprintf( stderr, "open: %s: %s\n", pathname, strerror( errnum ) );
 			}
 		}
 		
