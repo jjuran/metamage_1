@@ -3,6 +3,10 @@
 	-------
 */
 
+// POSIX
+#include <fcntl.h>
+#include <unistd.h>
+
 // Standard C
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,8 +38,6 @@
 #include "MacFiles/Classic.hh"
 
 // poseven
-#include "poseven/extras/slurp.hh"
-#include "poseven/functions/open.hh"
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
@@ -232,15 +234,34 @@ namespace tool
 		
 		const char* path = "/sys/type/text/.~DEFAULT";
 		
-		const plus::string code = p7::slurp( p7::open( path, p7::o_rdonly ) );
+		int fd = open( path, O_RDONLY );
 		
-		return gear::decode_quad( code.data() );
+		if ( fd >= 0 )
+		{
+			OSType result;
+			
+			ssize_t n_read = read( fd, &result, sizeof result );
+			
+			close( fd );
+			
+			if ( n_read == sizeof result )
+			{
+				return result;
+			}
+		}
 		
-	#else
-		
-		return 'ttxt';  // for OS X
+		/*
+			If we get here, either the file /sys/type/text/.~DEFAULT
+			got removed from MacRelix without updating open, or we're so
+			resource-constrained that the open() failed, in which case
+			reporting the error will be similarly dicey.
+			
+			Either way, fall back to 'ttxt'.
+		*/
 		
 	#endif
+		
+		return 'ttxt';
 	}
 	
 	static
