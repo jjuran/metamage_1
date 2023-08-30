@@ -29,6 +29,9 @@
 #include "mac_proc/find_process.hh"
 #include "mac_proc/launch_application.hh"
 
+// mac-relix-utils
+#include "mac_relix/FSSpec_from_path.hh"
+
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/AppleEvents.hh"
@@ -42,9 +45,6 @@
 
 // Nitrogen
 #include "Mac/AppleEvents/Types/DescType_scribe_dynamic.hh"
-
-// Divergence
-#include "Divergence/Utilities.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -134,7 +134,6 @@ namespace tool
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace Div = Divergence;
 	
 	
 	enum
@@ -143,10 +142,22 @@ namespace tool
 	};
 	
 	
-	static FSSpec ResolvePathname( const char* pathname, bool macPathname )
+	static
+	FSSpec ResolvePathname( const char* path, bool macPathname )
 	{
-		return macPathname ? N::FSMakeFSSpec         ( N::Str255( pathname ) ) 
-		                   : Div::ResolvePathToFSSpec(            pathname   );
+		using mac::relix::FSSpec_from_existing_path;
+		
+		FSSpec file;
+		
+		OSErr err = macPathname ? FSMakeFSSpec( 0, 0, N::Str255( path ), &file )
+		                        : FSSpec_from_existing_path( path, file );
+		
+		if ( err != fnfErr )
+		{
+			Mac::ThrowOSStatus( err );
+		}
+		
+		return file;
 	}
 	
 	static inline n::owned< Mac::AEDesc_Data > AECoerce_Alias_From_FSSpec( const FSSpec& item )
@@ -327,8 +338,12 @@ namespace tool
 		{
 			// User has specified an application by its pathname
 			
+			using mac::relix::FSSpec_from_existing_path;
+			
 			// Resolve to FSSpec
-			appFile = Div::ResolvePathToFSSpec( gAppNameToOpenIn );
+			OSErr err = FSSpec_from_existing_path( gAppNameToOpenIn, appFile );
+			
+			Mac::ThrowOSStatus( err );
 			
 			// Find it if running
 			ProcessSerialNumber psn;
