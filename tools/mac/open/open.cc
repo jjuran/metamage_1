@@ -391,12 +391,12 @@ namespace tool
 		{
 			const char* pathname = *it;
 			
+			FSSpec item;
+			
+			OSErr err = ResolvePathname( item, pathname, gUseMacPathnames );
+			
 			try
 			{
-				FSSpec item;
-				
-				OSErr err = ResolvePathname( item, pathname, gUseMacPathnames );
-				
 				if ( err == fnfErr )
 				{
 					fprintf( stderr, "open: %s: %s\n", pathname, strerror( ENOENT ) );
@@ -405,13 +405,13 @@ namespace tool
 				}
 				
 				Mac::ThrowOSStatus( err );
-				
-				N::AEPutDesc( items, 0, CoerceFSSpecToAliasDesc( item ) );
 			}
 			catch ( const Mac::OSStatus& err )
 			{
 				fprintf( stderr, "open: %s: OSStatus %ld\n", pathname, err.Get() );
 			}
+			
+			N::AEPutDesc( items, 0, CoerceFSSpecToAliasDesc( item ) );
 		}
 		
 		OpenItemsUsingOptions( items );
