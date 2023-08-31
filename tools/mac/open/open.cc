@@ -395,20 +395,18 @@ namespace tool
 			
 			OSErr err = ResolvePathname( item, pathname, gUseMacPathnames );
 			
-			try
+			if ( err )
 			{
 				if ( err == fnfErr )
 				{
 					fprintf( stderr, "open: %s: %s\n", pathname, strerror( ENOENT ) );
-					
-					continue;
+				}
+				else
+				{
+					fprintf( stderr, "open: %s: OSErr %d\n", pathname, err );
 				}
 				
-				Mac::ThrowOSStatus( err );
-			}
-			catch ( const Mac::OSStatus& err )
-			{
-				fprintf( stderr, "open: %s: OSStatus %ld\n", pathname, err.Get() );
+				continue;
 			}
 			
 			N::AEPutDesc( items, 0, CoerceFSSpecToAliasDesc( item ) );
