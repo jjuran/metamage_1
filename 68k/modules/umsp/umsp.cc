@@ -175,6 +175,22 @@ bool handle_exception( registers& regs )
 		}
 	}
 	
+	// 0000 0010 0111 1100:  ANDI to SR
+	
+	if ( opcode == 0x027C )
+	{
+		uint16_t bits = read_word( regs.pc );
+		
+		if ( (bits & 0xFF00) == 0xFF00 )
+		{
+			// We allow user-mode to alter the CCR only
+			
+			regs.sr &= bits;
+			
+			return true;
+		}
+	}
+	
 	regs.pc = old_pc;
 	
 	return false;
