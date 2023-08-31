@@ -37,9 +37,6 @@
 #include "Nitrogen/AppleEvents.hh"
 #include "Nitrogen/Str.hh"
 
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -143,21 +140,14 @@ namespace tool
 	
 	
 	static
-	FSSpec ResolvePathname( const char* path, bool macPathname )
+	OSErr ResolvePathname( FSSpec& file, const char* path, bool macPathname )
 	{
 		using mac::relix::FSSpec_from_existing_path;
-		
-		FSSpec file;
 		
 		OSErr err = macPathname ? FSMakeFSSpec( 0, 0, N::Str255( path ), &file )
 		                        : FSSpec_from_existing_path( path, file );
 		
-		if ( err != fnfErr )
-		{
-			Mac::ThrowOSStatus( err );
-		}
-		
-		return file;
+		return err;
 	}
 	
 	static inline n::owned< Mac::AEDesc_Data > AECoerce_Alias_From_FSSpec( const FSSpec& item )
@@ -406,12 +396,18 @@ namespace tool
 			
 			try
 			{
-				FSSpec item = ResolvePathname( pathname, gUseMacPathnames );
+				FSSpec item;
 				
-				if ( !io::item_exists( item ) )
+				OSErr err = ResolvePathname( item, pathname, gUseMacPathnames );
+				
+				if ( err == fnfErr )
 				{
-					throw p7::errno_t( ENOENT );
+					fprintf( stderr, "open: %s: %s\n", pathname, strerror( ENOENT ) );
+					
+					continue;
 				}
+				
+				Mac::ThrowOSStatus( err );
 				
 				N::AEPutDesc( items, 0, CoerceFSSpecToAliasDesc( item ) );
 			}
