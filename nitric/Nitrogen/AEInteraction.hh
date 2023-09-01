@@ -28,12 +28,6 @@
 #ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSEDESC_HH
 #include "Mac/AppleEvents/Functions/AEDisposeDesc.hh"
 #endif
-#ifndef MAC_APPLEEVENTS_TYPES_AEEVENTCLASS_HH
-#include "Mac/AppleEvents/Types/AEEventClass.hh"
-#endif
-#ifndef MAC_APPLEEVENTS_TYPES_AEEVENTID_HH
-#include "Mac/AppleEvents/Types/AEEventID.hh"
-#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AESENDMODE_HH
 #include "Mac/AppleEvents/Types/AESendMode.hh"
 #endif
@@ -75,12 +69,6 @@ namespace Nitrogen
 	        SInt32                  timeOutInTicks = kAEDefaultTimeout,
 	        AEIdleUPP               idleProc       = NULL,
 	        AEFilterUPP             filterProc     = NULL );
-	
-	nucleus::owned< Mac::AppleEvent >
-	//
-	AESend( Mac::AEEventClass eventClass, Mac::AEEventID eventID );
-	
-	void AEProcessAppleEvent( const EventRecord& event );
 	
 	inline nucleus::owned< AEIdleUPP > NewAEIdleUPP( AEIdleProcPtr p )
 	{

@@ -15,7 +15,6 @@
 
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"
-#include "Nitrogen/Processes.hh"
 
 
 namespace Nitrogen
@@ -46,19 +45,6 @@ namespace Nitrogen
 		                         filterProc ) );
 		
 		return nucleus::owned< Mac::AppleEvent >::seize( reply );
-	}
-	
-	nucleus::owned< Mac::AppleEvent > AESend( Mac::AEEventClass eventClass, Mac::AEEventID eventID )
-	{
-		return AESend( AECreateAppleEvent( eventClass,
-				                           eventID,
-				                           AECreateDesc< Mac::typeProcessSerialNumber >( CurrentProcess() ) ),
-				       Mac::kAEWaitReply );
-	}
-	
-	void AEProcessAppleEvent( const EventRecord& event )
-	{
-		ThrowOSStatus( ::AEProcessAppleEvent( &event ) );
 	}
 	
 }
