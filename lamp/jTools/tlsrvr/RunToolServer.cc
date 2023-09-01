@@ -201,6 +201,8 @@ namespace tool
 	
 	static ProcessSerialNumber find_or_launch_ToolServer()
 	{
+		OSErr err;
+		FSSpec appFile;
 		ProcessSerialNumber psn;
 		
 		if ( mac::proc::find_process( psn, sigToolServer ) == noErr )
@@ -220,9 +222,7 @@ namespace tool
 			using mac::file::get_desktop_APPL;
 			using mac::file::get_desktop_APPL_on_RAM_disk;
 			
-			FSSpec appFile;
-			
-			OSErr err = get_desktop_APPL_on_RAM_disk( appFile, sigToolServer );
+			err = get_desktop_APPL_on_RAM_disk( appFile, sigToolServer );
 			
 			if ( err )
 			{
