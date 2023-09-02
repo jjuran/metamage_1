@@ -178,7 +178,7 @@ namespace Genie
 	{
 	}
 	
-	static
+	static inline
 	bool preempted( const serial_device_extra& extra )
 	{
 		return extra.passive  &&  ! extra.drivers.sole();
@@ -199,14 +199,16 @@ namespace Genie
 	
 	static SerialDeviceMap gSerialDevices;
 	
-	static SerialDevicePair& GetSerialDevicePair( const plus::string& portName )
+	static inline
+	SerialDevicePair& GetSerialDevicePair( const plus::string& portName )
 	{
 		SerialDevicePair& pair = gSerialDevices[ portName ];
 		
 		return pair;
 	}
 	
-	static void UnreferenceSerialDevice( const plus::string& portName, bool isPassive )
+	static inline
+	void UnreferenceSerialDevice( const plus::string& portName, bool isPassive )
 	{
 		SerialDeviceMap::iterator it = gSerialDevices.find( portName );
 		
