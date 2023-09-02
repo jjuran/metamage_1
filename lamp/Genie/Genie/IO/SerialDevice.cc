@@ -318,27 +318,6 @@ namespace Genie
 	#endif
 	}
 	
-	typedef serial_driver_pair dyad;
-	
-	static
-	vfs::filehandle* new_device( const plus::string&       name,
-	                             const n::shared< dyad >&  drivers,
-	                             bool                      passive )
-	{
-		vfs::filehandle* result = new vfs::filehandle( NULL,
-		                                               O_RDWR,
-		                                               &serial_methods,
-		                                               sizeof (serial_device_extra),
-		                                               &destroy_serial_device );
-		
-		serial_device_extra& extra = *(serial_device_extra*) result->extra();
-		
-		// doesn't throw
-		new (&extra) serial_device_extra( name, drivers, passive );
-		
-		return result;
-	}
-	
 	static
 	void destroy_serial_device( vfs::filehandle* that )
 	{
@@ -432,6 +411,27 @@ namespace Genie
 	#endif
 		
 		return 0;
+	}
+	
+	typedef serial_driver_pair dyad;
+	
+	static
+	vfs::filehandle* new_device( const plus::string&       name,
+	                             const n::shared< dyad >&  drivers,
+	                             bool                      passive )
+	{
+		vfs::filehandle* result = new vfs::filehandle( NULL,
+		                                               O_RDWR,
+		                                               &serial_methods,
+		                                               sizeof (serial_device_extra),
+		                                               &destroy_serial_device );
+		
+		serial_device_extra& extra = *(serial_device_extra*) result->extra();
+		
+		// doesn't throw
+		new (&extra) serial_device_extra( name, drivers, passive );
+		
+		return result;
 	}
 	
 	static
