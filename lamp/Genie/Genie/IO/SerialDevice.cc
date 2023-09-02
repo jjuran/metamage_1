@@ -340,37 +340,6 @@ namespace Genie
 	}
 	
 	static
-	vfs::filehandle* fresh_device( const plus::string& portName, bool passive )
-	{
-		n::shared< dyad > drivers = n::owned< dyad >::seize( dyad( portName ) );
-		
-	#if ! TARGET_API_MAC_CARBON
-		
-		static SerShk handshaking;
-		
-		const Mac::DriverRefNum output = drivers.get().output();
-		
-		OSErr err;
-		
-		(err = Control ( output, kSERDHandshake, &handshaking ))  ||
-		(err = SerReset( output, baud19200 | data8 | noParity | stop10 ));
-		
-		Mac::ThrowOSStatus( err );
-		
-	#endif
-		
-		return new_device( portName, drivers, passive );
-	}
-	
-	static
-	vfs::filehandle* other_device( vfs::filehandle& other, bool passive )
-	{
-		serial_device_extra const* extra = (serial_device_extra*) other.extra();
-		
-		return new_device( extra->base_name, extra->drivers, passive );
-	}
-	
-	static
 	void destroy_serial_device( vfs::filehandle* that )
 	{
 		serial_device_extra& extra = *(serial_device_extra*) that->extra();
@@ -463,6 +432,37 @@ namespace Genie
 	#endif
 		
 		return 0;
+	}
+	
+	static
+	vfs::filehandle* fresh_device( const plus::string& portName, bool passive )
+	{
+		n::shared< dyad > drivers = n::owned< dyad >::seize( dyad( portName ) );
+		
+	#if ! TARGET_API_MAC_CARBON
+		
+		static SerShk handshaking;
+		
+		const Mac::DriverRefNum output = drivers.get().output();
+		
+		OSErr err;
+		
+		(err = Control ( output, kSERDHandshake, &handshaking ))  ||
+		(err = SerReset( output, baud19200 | data8 | noParity | stop10 ));
+		
+		Mac::ThrowOSStatus( err );
+		
+	#endif
+		
+		return new_device( portName, drivers, passive );
+	}
+	
+	static
+	vfs::filehandle* other_device( vfs::filehandle& other, bool passive )
+	{
+		serial_device_extra const* extra = (serial_device_extra*) other.extra();
+		
+		return new_device( extra->base_name, extra->drivers, passive );
 	}
 	
 	vfs::filehandle_ptr OpenSerialDevice( const plus::string&  portName,
