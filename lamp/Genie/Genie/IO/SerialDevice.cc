@@ -184,19 +184,6 @@ namespace Genie
 		return extra.passive  &&  ! extra.drivers.sole();
 	}
 	
-	static
-	void destroy_serial_device( vfs::filehandle* that );
-	
-	
-	static
-	unsigned serial_poll( vfs::filehandle* that );
-	
-	static
-	ssize_t serial_read( vfs::filehandle* that, char* buffer, size_t n );
-	
-	static
-	ssize_t serial_write( vfs::filehandle* that, const char* buffer, size_t n );
-	
 	
 	struct SerialDevicePair
 	{
@@ -230,12 +217,6 @@ namespace Genie
 			(isPassive ? pair.passive : pair.active) = NULL;
 		}
 	}
-	
-	static
-	vfs::filehandle* fresh_device( const plus::string& name, bool passive );
-	
-	static
-	vfs::filehandle* other_device( vfs::filehandle& other, bool passive );
 	
 	
 	static inline bool SerialPortsAreArbitrated()
