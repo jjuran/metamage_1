@@ -114,10 +114,10 @@ namespace tool
 			
 			using gear::fill_unsigned_decimal;
 			
-			fill_unsigned_decimal( track, buffer, STRLEN( "Track  n" ) );
+			fill_unsigned_decimal( track, buffer + STRLEN( "Track " ), 2 );
 			
-			fill_unsigned_decimal( minutes, buffer, STRLEN( "Track  n: 0m"    ) );
-			fill_unsigned_decimal( seconds, buffer, STRLEN( "Track  n: 0m:0s" ) );
+			fill_unsigned_decimal( minutes, buffer + STRLEN( "Track  n: "    ), 2 );
+			fill_unsigned_decimal( seconds, buffer + STRLEN( "Track  n: 0m:" ), 2 );
 			
 			p7::write( p7::stdout_fileno, buffer, sizeof buffer - 1 );
 		}
