@@ -197,20 +197,6 @@ namespace Genie
 	static
 	ssize_t serial_write( vfs::filehandle* that, const char* buffer, size_t n );
 	
-	static const vfs::stream_method_set serial_stream_methods =
-	{
-		&serial_poll,
-		&serial_read,
-		&serial_write,
-	};
-	
-	static const vfs::filehandle_method_set serial_methods =
-	{
-		NULL,
-		NULL,
-		&serial_stream_methods,
-	};
-	
 	
 	struct SerialDevicePair
 	{
@@ -412,6 +398,20 @@ namespace Genie
 		
 		return 0;
 	}
+	
+	static const vfs::stream_method_set serial_stream_methods =
+	{
+		&serial_poll,
+		&serial_read,
+		&serial_write,
+	};
+	
+	static const vfs::filehandle_method_set serial_methods =
+	{
+		NULL,
+		NULL,
+		&serial_stream_methods,
+	};
 	
 	typedef serial_driver_pair dyad;
 	
