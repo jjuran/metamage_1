@@ -252,38 +252,6 @@ namespace Genie
 	vfs::filehandle* other_device( vfs::filehandle& other, bool passive );
 	
 	
-	vfs::filehandle_ptr OpenSerialDevice( const plus::string&  portName,
-	                                      bool                 isPassive,
-	                                      bool                 nonblocking )
-	{
-	#if TARGET_API_MAC_CARBON
-		
-		p7::throw_errno( ENOENT );
-		
-		return vfs::filehandle_ptr();
-		
-	#else
-		
-		SerialDevicePair& pair = GetSerialDevicePair( portName );
-		
-		vfs::filehandle*& same  = isPassive ? pair.passive : pair.active;
-		vfs::filehandle*  other = isPassive ? pair.active : pair.passive;
-		
-		while ( same != NULL )
-		{
-			relix::try_again( nonblocking );
-		}
-		
-		vfs::filehandle* result = ! other ? fresh_device( portName, isPassive )
-		                                  : other_device( *other,   isPassive );
-		
-		same = result;
-		
-		return result;
-		
-	#endif
-	}
-	
 	static inline bool SerialPortsAreArbitrated()
 	{
 		return mac::sys::gestalt_bit_set( gestaltSerialPortArbitratorAttr, gestaltSerialPortArbitratorExists );
@@ -495,6 +463,38 @@ namespace Genie
 	#endif
 		
 		return 0;
+	}
+	
+	vfs::filehandle_ptr OpenSerialDevice( const plus::string&  portName,
+	                                      bool                 isPassive,
+	                                      bool                 nonblocking )
+	{
+	#if TARGET_API_MAC_CARBON
+		
+		p7::throw_errno( ENOENT );
+		
+		return vfs::filehandle_ptr();
+		
+	#else
+		
+		SerialDevicePair& pair = GetSerialDevicePair( portName );
+		
+		vfs::filehandle*& same  = isPassive ? pair.passive : pair.active;
+		vfs::filehandle*  other = isPassive ? pair.active : pair.passive;
+		
+		while ( same != NULL )
+		{
+			relix::try_again( nonblocking );
+		}
+		
+		vfs::filehandle* result = ! other ? fresh_device( portName, isPassive )
+		                                  : other_device( *other,   isPassive );
+		
+		same = result;
+		
+		return result;
+		
+	#endif
 	}
 	
 }
