@@ -183,7 +183,6 @@ namespace MacCDROM
 		
 		Initialize( pb );
 		
-		pb.ioCompletion = NULL;
 		pb.ioVRefNum = drive.vRefNum;
 		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDReadTOC;
@@ -264,7 +263,6 @@ namespace MacCDROM
 		
 		Initialize( pb );
 		
-		pb.ioCompletion = 0;
 		pb.ioVRefNum = drive.vRefNum;
 		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDReadTheQSubcode;
@@ -298,7 +296,6 @@ namespace MacCDROM
 		
 		Initialize( pb );
 		
-		pb.ioCompletion = 0;
 		pb.ioVRefNum = drive.vRefNum;
 		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDAudioTrackSearch;
@@ -333,7 +330,6 @@ namespace MacCDROM
 		
 		Initialize( pb );
 		
-		pb.ioCompletion = 0;
 		pb.ioVRefNum = drive.vRefNum;
 		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDAudioPlay;
@@ -376,7 +372,6 @@ namespace MacCDROM
 		
 		Initialize( pb );
 		
-		pb.ioCompletion = 0;
 		pb.ioVRefNum = drive.vRefNum;
 		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDAudioPause;
@@ -392,7 +387,6 @@ namespace MacCDROM
 		
 		Initialize( pb );
 		
-		pb.ioCompletion = 0;
 		pb.ioVRefNum = drive.vRefNum;
 		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDAudioStop;
@@ -409,7 +403,6 @@ namespace MacCDROM
 		
 		Initialize( pb );
 		
-		pb.ioCompletion = 0;
 		pb.ioVRefNum = drive.vRefNum;
 		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDAudioStop;
@@ -426,7 +419,6 @@ namespace MacCDROM
 		
 		Initialize( pb );
 		
-		pb.ioCompletion = 0;
 		pb.ioVRefNum = drive.vRefNum;
 		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDAudioStatus;
