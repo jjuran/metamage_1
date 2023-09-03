@@ -54,11 +54,11 @@ const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
 		return result->flAttrib < 0 ? result : NULL;
 	}
 	
-	const logical_block* all_blocks = (logical_block*) vcb->vcbBufAdr;
+	const uint16_t drDirSt = vcb->vcbVBMSt;     // file directory first block
 	
-	const logical_block* master_directory_block = all_blocks + 2;
+	const Byte* disk_start = (const Byte*) vcb->vcbBufAdr;
 	
-	const logical_block* file_directory = all_blocks + vcb->vcbVBMSt;  // drDirSt
+	const Byte* file_directory = disk_start + 512 * drDirSt;
 	
 	return (const mfs::file_directory_entry*) file_directory;
 }
