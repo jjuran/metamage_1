@@ -26,6 +26,8 @@ namespace qd  {
 
 typedef SInt16 TransferMode;
 
+#if ! __LP64__
+
 template < class Src, class Dst >
 inline
 void copy_bits( const Src&    src,
@@ -66,6 +68,8 @@ void copy_bits( const Src&    src,
 	           mode,
 	           maskRgn );
 }
+
+#endif
 
 }
 }
