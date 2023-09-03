@@ -165,9 +165,13 @@ namespace MacCDROM
 		return CountFramesBCD( entry.min, entry.sec, entry.frame );
 	}
 	
-	static void Initialize( AudioCDControlParameterBlock& pb )
+	static
+	void Initialize( AudioCDControlParameterBlock& pb, const CDROMDrive& drive )
 	{
 		memset( &pb, 0, sizeof pb );
+		
+		pb.ioVRefNum = drive.vRefNum;
+		pb.ioCRefNum = drive.dRefNum;
 	}
 	
 	static
@@ -181,10 +185,8 @@ namespace MacCDROM
 		CDROMTableOfContents toc;
 		AudioCDControlParameterBlock pb;
 		
-		Initialize( pb );
+		Initialize( pb, drive );
 		
-		pb.ioVRefNum = drive.vRefNum;
-		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDReadTOC;
 		
 		// ReadTOC transfer type 1:
@@ -261,10 +263,8 @@ namespace MacCDROM
 	{
 		AudioCDControlParameterBlock pb;
 		
-		Initialize( pb );
+		Initialize( pb, drive );
 		
-		pb.ioVRefNum = drive.vRefNum;
-		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDReadTheQSubcode;
 		
 		PBControlSync( pb );
@@ -294,10 +294,8 @@ namespace MacCDROM
 	{
 		AudioCDControlParameterBlock pb;
 		
-		Initialize( pb );
+		Initialize( pb, drive );
 		
-		pb.ioVRefNum = drive.vRefNum;
-		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDAudioTrackSearch;
 		
 		pb.AudioTrackSearch.opticalPositioningType = positioningType;
@@ -328,10 +326,8 @@ namespace MacCDROM
 	{
 		AudioCDControlParameterBlock pb;
 		
-		Initialize( pb );
+		Initialize( pb, drive );
 		
-		pb.ioVRefNum = drive.vRefNum;
-		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDAudioPlay;
 		
 		pb.AudioPlay.opticalPositioningType = positioningType;
@@ -370,10 +366,8 @@ namespace MacCDROM
 	{
 		AudioCDControlParameterBlock pb;
 		
-		Initialize( pb );
+		Initialize( pb, drive );
 		
-		pb.ioVRefNum = drive.vRefNum;
-		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDAudioPause;
 		
 		pb.AudioPause.pausing = pausing;
@@ -385,10 +379,8 @@ namespace MacCDROM
 	{
 		AudioCDControlParameterBlock pb;
 		
-		Initialize( pb );
+		Initialize( pb, drive );
 		
-		pb.ioVRefNum = drive.vRefNum;
-		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDAudioStop;
 		
 		pb.AudioStop.opticalPositioningType = 0;
@@ -401,10 +393,8 @@ namespace MacCDROM
 	{
 		AudioCDControlParameterBlock pb;
 		
-		Initialize( pb );
+		Initialize( pb, drive );
 		
-		pb.ioVRefNum = drive.vRefNum;
-		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDAudioStop;
 		
 		pb.AudioStop.opticalPositioningType = kOpticalPositioningTrackNumberBCD;
@@ -417,10 +407,8 @@ namespace MacCDROM
 	{
 		AudioCDControlParameterBlock pb;
 		
-		Initialize( pb );
+		Initialize( pb, drive );
 		
-		pb.ioVRefNum = drive.vRefNum;
-		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDAudioStatus;
 		
 		PBControlSync( pb );
