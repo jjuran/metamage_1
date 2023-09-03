@@ -54,11 +54,6 @@ const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
 		return result->flAttrib < 0 ? result : NULL;
 	}
 	
-	if ( vcb->vcbSigWord != 0xD2D7 )
-	{
-		return NULL;
-	}
-	
 	const logical_block* all_blocks = (logical_block*) vcb->vcbBufAdr;
 	
 	const logical_block* master_directory_block = all_blocks + 2;
