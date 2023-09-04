@@ -59,6 +59,7 @@ const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
 	*/
 	
 	const uint16_t drDirSt = vcb->vcbVBMSt;     // file directory first block
+	const uint16_t drBlLen = vcb->vcbAllocPtr;  // file directory block count
 	
 	const Byte* disk_start = (const Byte*) vcb->vcbBufAdr;
 	
@@ -88,12 +89,32 @@ const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
 		
 		/*
 			Either we ran off the end, or reached an unused entry.
+			Advance to the next block.
 		*/
 		
-		fd_block = NULL;
+		fd_block = block_end;
 	}
 	
-	return (const mfs::file_directory_entry*) fd_block;
+	/*
+		Either we exhausted the previous entry's block, or the first entry
+		is requested.  Either way, we're at the beginning of a block.  Since
+		entries are consecutive within a block, if a block's first entry is
+		unused, the entire block is unused, so we advance to the next block.
+	*/
+	
+	const Byte* file_directory_end = file_directory + 512 * drBlLen;
+	
+	while ( fd_block < file_directory_end )
+	{
+		if ( (int8_t) *fd_block < 0 )
+		{
+			return (const mfs::file_directory_entry*) fd_block;
+		}
+		
+		fd_block += 512;
+	}
+	
+	return NULL;
 }
 
 const mfs::file_directory_entry* MFS_get_nth( VCB* vcb, short n )
