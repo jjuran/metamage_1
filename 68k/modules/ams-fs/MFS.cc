@@ -40,19 +40,23 @@ const fork_spec& get_fork( const mfs::file_directory_entry* entry, Byte rsrc )
 static
 const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
 {
-	if ( prev )
-	{
-		const uint8_t* next = prev->flNam + (1 + prev->flNam[ 0 ] + 1 & 0xFE);
+	/*
+		Successive calls to MFS_iterate() return each file on an MFS volume.
+		The first call passes prev=NULL; subsequent calls pass the result of
+		the previous call.
 		
-		const mfs::_fde* result = (const mfs::_fde*) next;
+		Each entry is contained in the file directory, which spans a number
+		of disk blocks.  Each block contains zero or more entries; entries
+		do not cross block boundaries.  The number of entries that fit in a
+		block depends on the lengths of those entries' filenames:  A block
+		can store as many as nine entries with filenames of five characters
+		long on average, whereas an entry whose filename is 206 characters
+		consumes over half the block.
 		
-		if ( result->flAttrib < 0 )
-		{
-			return result;
-		}
-		
-		return result->flAttrib < 0 ? result : NULL;
-	}
+		Entries are word-aligned and consecutive within a block.  (It's not
+		possible to skip over an unused entry unless it's somehow known that
+		the filename length can be trusted.)
+	*/
 	
 	const uint16_t drDirSt = vcb->vcbVBMSt;     // file directory first block
 	
@@ -60,7 +64,36 @@ const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
 	
 	const Byte* file_directory = disk_start + 512 * drDirSt;
 	
-	return (const mfs::file_directory_entry*) file_directory;
+	const Byte* fd_block = file_directory;
+	
+	if ( prev )
+	{
+		const uint32_t fde_disk_offset  = (const Byte*) prev - disk_start;
+		const uint32_t fde_block_offset = fde_disk_offset % 512u;
+		
+		fd_block = disk_start + (fde_disk_offset - fde_block_offset);
+		
+		const Byte* block_end = fd_block + 512;
+		
+		// Advance to the next entry in the block, if there is one.
+		
+		const Byte* name = prev->flNam;
+		
+		const Byte* next_fde = name + (1 + name[ 0 ] + 1 & 0xFE);
+		
+		if ( next_fde < block_end  &&  (int8_t) *next_fde < 0 )
+		{
+			return (const mfs::file_directory_entry*) next_fde;
+		}
+		
+		/*
+			Either we ran off the end, or reached an unused entry.
+		*/
+		
+		fd_block = NULL;
+	}
+	
+	return (const mfs::file_directory_entry*) fd_block;
 }
 
 const mfs::file_directory_entry* MFS_get_nth( VCB* vcb, short n )
