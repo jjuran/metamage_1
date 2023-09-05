@@ -39,8 +39,6 @@
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 #endif
 
-#include "Nitrogen/Quickdraw.hh"
-
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/AutoKey.hh"
@@ -72,9 +70,6 @@ bool equal_rects( const Rect& a, const Rect& b )
 
 namespace Pedestal
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	static bool gExtendingSelection = false;
 	
@@ -240,7 +235,11 @@ namespace Pedestal
 		
 		TEClick_contents_scope scope( its_TEClickLoop_callback, this );
 		
-		TEClick( N::GlobalToLocal( event.where ),
+		Point where = event.where;
+		
+		GlobalToLocal( &where );
+		
+		TEClick( where,
 		         (event.modifiers & shiftKey) != 0,
 		         Get() );
 		
@@ -735,7 +734,7 @@ namespace Pedestal
 			// So we need to erase it ourselves.
 			viewRect.top = textBottom;
 			
-			N::EraseRect( viewRect );
+			EraseRect( &viewRect );
 		}
 	}
 	
@@ -839,9 +838,15 @@ namespace Pedestal
 	}
 	
 	
+	static inline
+	void frame_rect( const Rect& rect )
+	{
+		FrameRect( &rect );
+	}
+	
 	void TextEdit::BeginQuasimode()
 	{
-		N::FrameRect( mac::qd::get_portRect( mac::qd::thePort() ) );
+		frame_rect( mac::qd::get_portRect( mac::qd::thePort() ) );
 	}
 	
 	void TextEdit::EndQuasimode()
