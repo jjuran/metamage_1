@@ -55,6 +55,19 @@ bool has_TEAutoView()
 	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _TEAutoView );
 }
 
+static inline
+bool equal_rects( const Rect& a, const Rect& b )
+{
+	/*
+		This code only runs in Mac OS, where access to 32-bit fields with
+		merely 16-bit alignment is defined to succeed.  Furthermore, this
+		code only runs in 32-bit Mac OS, so a value of a 64-bit C++ type
+		is addressed as a pair of 32-bit values at the machine level.
+	*/
+	
+	return *(const UInt64*) &a == *(const UInt64*) &b;
+}
+
 namespace Pedestal
 {
 	
@@ -721,7 +734,7 @@ namespace Pedestal
 		
 		TERec& te = **hTE;
 		
-		if ( nucleus::operator!=( bounds, te.viewRect ) )
+		if ( ! equal_rects( bounds, te.viewRect ) )
 		{
 			short dv = te.viewRect.top - te.destRect.top;
 			
