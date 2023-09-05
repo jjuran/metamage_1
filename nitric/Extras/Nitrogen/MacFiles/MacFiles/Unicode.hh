@@ -26,9 +26,6 @@
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
 #endif
-#ifndef NITROGEN_TEXTCOMMON_HH
-#include "Nitrogen/TextCommon.hh"
-#endif
 
 
 namespace Nitrogen
@@ -80,7 +77,7 @@ namespace io
 		
 		inline FSRef operator/( const FSRef& dir, const HFSUniStr255& name )
 		{
-			return Nitrogen::FSMakeFSRefUnicode( dir, name, Nitrogen::TextEncoding( kTextEncodingUnknown ) );
+			return Nitrogen::FSMakeFSRefUnicode( dir, name );
 		}
 		
 	}
