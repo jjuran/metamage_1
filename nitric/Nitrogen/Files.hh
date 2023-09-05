@@ -714,17 +714,17 @@ namespace Nitrogen
 	FSRef FSMakeFSRefUnicode( const FSRef&   parentRef,
 	                          UniCharCount   nameLength,
 	                          const UniChar *name,
-	                          TextEncoding   textEncodingHint );
+	                          TextEncoding   textEncodingHint = kTextEncodingUnknown );
 	
 	inline FSRef FSMakeFSRefUnicode( const FSRef&        parentRef,
 	                                 const HFSUniStr255& name,
-	                                 TextEncoding        textEncodingHint )
+	                                 TextEncoding        textEncodingHint = kTextEncodingUnknown )
 	{
 		return FSMakeFSRefUnicode( parentRef, name.length, name.unicode, textEncodingHint );
 	}
 	
 	inline FSRef FSMakeFSRefUnicode( const FSRefNameSpec&  file,
-	                                 TextEncoding          textEncodingHint )
+	                                 TextEncoding          textEncodingHint = kTextEncodingUnknown )
 	{
 		return FSMakeFSRefUnicode( file.parent, file.name, textEncodingHint );
 	}
@@ -732,7 +732,7 @@ namespace Nitrogen
 	template < class UniString >
 	FSRef FSMakeFSRefUnicode( const FSRef&     parentRef,
 	                          const UniString& name,
-	                          TextEncoding     textEncodingHint )
+	                          TextEncoding     textEncodingHint = kTextEncodingUnknown )
 	{
 		return FSMakeFSRefUnicode( parentRef, name.size(), name.data(), textEncodingHint );
 	}
@@ -849,12 +849,12 @@ namespace Nitrogen
 	void FSRenameUnicode( FSRef&         ref,
 	                      UniCharCount   nameLength,
 	                      const UniChar *name,
-	                      TextEncoding   textEncodingHint );
+	                      TextEncoding   textEncodingHint = kTextEncodingUnknown );
 	
 	template < class UniString >
 	void FSRenameUnicode( FSRef&            ref,
 	                      const UniString&  name,
-	                      TextEncoding      textEncodingHint )
+	                      TextEncoding      textEncodingHint = kTextEncodingUnknown )
 	{
 		FSRenameUnicode( ref, name.size(), name.data(), textEncodingHint );
 	}
