@@ -6,8 +6,11 @@
 #include "Pedestal/BundleIcon.hh"
 
 // Nitrogen
+#ifndef MAC_ICONS_TYPES_ICONREF_HH
+#include "Mac/Icons/Types/IconRef.hh"
+#endif
+
 #include "Nitrogen/CFURL.hh"
-#include "Nitrogen/Icons.hh"
 
 // Pedestal
 #include "Pedestal/IconRefFromIconFile.hh"
@@ -46,7 +49,22 @@ namespace Pedestal
 			return IconRefFromIconFile( N::CFURLGetFSRef( url ) );
 		}
 		
-		return N::GetIconRef( Mac::FSType( kGenericApplicationIcon ) );
+		enum
+		{
+			kOnSystemDisk = -32768L,
+		};
+		
+		OSType creator  = kSystemIconsCreator;
+		OSType iconType = kGenericApplicationIcon;
+		
+		IconRef icon;
+		
+		if ( OSErr err = GetIconRef( kOnSystemDisk, creator, iconType, &icon ) )
+		{
+			return n::owned< IconRef >();
+		}
+		
+		return n::owned< IconRef >::seize( icon );
 	}
 	
 }
