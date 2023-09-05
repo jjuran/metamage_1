@@ -35,7 +35,6 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/Events.hh"
 #include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/TextEdit.hh"
 
@@ -177,9 +176,13 @@ namespace Pedestal
 	
 	static bool LeftOrRightArrowsKeyed()
 	{
-		N::GetKeys_Result keys = N::GetKeys();
+		KeyMap keyMap;
 		
-		const UInt8 high7x = keys.keyMapByteArray[ 0x7b >> 3 ];
+		GetKeys( keyMap );
+		
+		const UInt8* keys = (UInt8*) keyMap;
+		
+		const UInt8 high7x = keys[ 0x7b >> 3 ];
 		
 		const UInt8 leftRightArrowBits = 1 << (0x7b & 0x07) | 1 << (0x7c & 0x07);
 		
