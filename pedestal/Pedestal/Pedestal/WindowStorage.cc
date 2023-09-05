@@ -28,9 +28,6 @@
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
-#include "Nitrogen/MacWindows.hh"
-#include "Nitrogen/Quickdraw.hh"
-
 // Pedestal
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowEventHandlers.hh"  // codependent
@@ -40,7 +37,6 @@ namespace Pedestal
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	
 	enum
 	{
