@@ -35,8 +35,11 @@
 #include "debug/assert.hh"
 
 // Nitrogen
+#ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+#endif
+
 #include "Nitrogen/Quickdraw.hh"
-#include "Nitrogen/TextEdit.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -119,7 +122,14 @@ namespace Pedestal
 	{
 		ASSERT( itsTE == NULL );
 		
-		itsTE = N::TENew( bounds );
+		TEHandle hTE = TENew( &bounds, &bounds );
+		
+		if ( hTE == NULL )
+		{
+			Mac::ThrowOSStatus( memFullErr );
+		}
+		
+		itsTE = nucleus::owned< TEHandle >::seize( hTE );
 		
 		if ( has_TEAutoView() )
 		{
