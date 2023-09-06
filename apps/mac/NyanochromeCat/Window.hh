@@ -64,14 +64,43 @@ void make_main_window()
 	bounds.top    = (bounds.top + bounds.bottom - nyan_height - 41) / 2u + 39;
 	bounds.bottom = bounds.top + nyan_height;
 	
-	main_window = NewWindow( NULL,
-	                         &bounds,
-	                         "\p" "Nyanochrome Cat",
-	                         true,
-	                         noGrowDocProc,
-	                         (WindowRef) -1,
-	                         true,
-	                         0 );
+	ConstStr255Param title = "\p" "Nyanochrome Cat";
+	
+	if ( TARGET_API_MAC_CARBON )
+	{
+		const WindowAttributes attrs = kWindowCloseBoxAttribute
+		                             | kWindowCollapseBoxAttribute
+		                           #ifdef MAC_OS_X_VERSION_10_3
+		                             | kWindowAsyncDragAttribute
+		                           #endif
+		                             ;
+		
+		OSStatus err;
+		WindowRef window;
+		err = CreateNewWindow( kDocumentWindowClass, attrs, &bounds, &window );
+		
+		if ( err != noErr )
+		{
+			ExitToShell();
+		}
+		
+		SetWTitle( window, title );
+		
+		ShowWindow( window );
+		
+		main_window = window;
+	}
+	else
+	{
+		main_window = NewWindow( NULL,
+		                         &bounds,
+		                         title,
+		                         true,
+		                         noGrowDocProc,
+		                         (WindowRef) -1,
+		                         true,
+		                         0 );
+	}
 	
 	SetPortWindowPort( main_window );
 }

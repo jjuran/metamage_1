@@ -294,8 +294,32 @@ void show_About_box()
 	short proc = noGrowDocProc;
 	
 	WindowRef behind = (WindowRef) -1;
+	WindowRef window;
 	
-	WindowRef window = new_window( rect, title, vis, proc, behind, closable );
+	if ( TARGET_API_MAC_CARBON )
+	{
+		const WindowAttributes attrs = kWindowCloseBoxAttribute
+		                           #ifdef MAC_OS_X_VERSION_10_3
+		                             | kWindowAsyncDragAttribute
+		                           #endif
+		                             ;
+		
+		OSStatus err;
+		err = CreateNewWindow( kDocumentWindowClass, attrs, &rect, &window );
+		
+		if ( err != noErr )
+		{
+			ExitToShell();
+		}
+		
+		SetWTitle( window, title );
+		
+		ShowWindow( window );
+	}
+	else
+	{
+		window = new_window( rect, title, vis, proc, behind, closable );
+	}
 	
 	SetWindowKind( window, kAboutWindowKind );
 	
