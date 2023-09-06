@@ -311,7 +311,33 @@ namespace Genie
 		typedef plus::reconstruct< RGBColor, thaw, vivify >  reconstruct;
 	};
 	
-	template < RGBColor (*GetColor)(CGrafPtr), void (*SetColor)(const RGBColor&) >
+	struct fore_color_traits
+	{
+		static void get( RGBColor& color, CGrafPtr port )
+		{
+			GetPortForeColor( port, &color );
+		}
+		
+		static void set( const RGBColor& color )
+		{
+			RGBForeColor( &color );
+		}
+	};
+	
+	struct back_color_traits
+	{
+		static void get( RGBColor& color, CGrafPtr port )
+		{
+			GetPortBackColor( port, &color );
+		}
+		
+		static void set( const RGBColor& color )
+		{
+			RGBBackColor( &color );
+		}
+	};
+	
+	template < class Traits >
 	struct Access_WindowColor : serialize_RGBColor
 	{
 		static RGBColor Get( WindowRef window )
@@ -321,7 +347,11 @@ namespace Genie
 				p7::throw_errno( ENOENT );
 			}
 			
-			return GetColor( GetWindowPort( window ) );
+			RGBColor color;
+			
+			Traits::get( color, GetWindowPort( window ) );
+			
+			return color;
 		}
 		
 		static void Set( WindowRef window, const RGBColor& color )
@@ -333,7 +363,7 @@ namespace Genie
 			
 			mac::qd::scoped_port thePort( window );
 			
-			SetColor( color );
+			Traits::set( color );
 			
 			Ped::invalidate_window( window );
 		}
@@ -518,8 +548,8 @@ namespace Genie
 		(vfs::property_set_hook) &title_set,
 	};
 	
-	typedef Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > Access_WindowBackColor;
-	typedef Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > Access_WindowForeColor;
+	typedef Access_WindowColor< back_color_traits > Access_WindowBackColor;
+	typedef Access_WindowColor< fore_color_traits > Access_WindowForeColor;
 	
 	DEFINE_GETTER( Access_WindowPosition  );
 	DEFINE_GETTER( Access_WindowSize      );
