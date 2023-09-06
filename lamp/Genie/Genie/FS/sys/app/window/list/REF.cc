@@ -51,10 +51,6 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/ATSTypes.hh"
-#include "Nitrogen/Quickdraw.hh"
-
-// Nitrogen
 #include "Nitrogen/MacWindows.hh"
 
 // vfs
@@ -83,11 +79,6 @@ bool has_color_quickdraw()
 
 namespace Nitrogen
 {
-	
-	inline FontID GetPortTextFont( CGrafPtr port )
-	{
-		return FontID( ::GetPortTextFont( port ) );
-	}
 	
 	static
 	float GetWindowAlpha( WindowRef window )
@@ -373,7 +364,7 @@ namespace Genie
 	{
 		static short Get( WindowRef window )
 		{
-			return N::GetPortTextFont( GetWindowPort( window ) );
+			return GetPortTextFont( GetWindowPort( window ) );
 		}
 		
 		static void Set( WindowRef window, short fontID )

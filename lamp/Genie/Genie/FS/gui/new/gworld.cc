@@ -407,7 +407,7 @@ namespace Genie
 		
 		N::SetGWorld( gworld );
 		
-		N::EraseRect( bounds );
+		EraseRect( &bounds );
 	}
 	
 	void GWorld::Draw( const Rect& bounds, bool erasing )

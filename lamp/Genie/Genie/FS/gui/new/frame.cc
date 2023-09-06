@@ -19,9 +19,6 @@
 #include "plus/serialize.hh"
 #include "plus/simple_map.hh"
 
-// Nitrogen
-#include "Nitrogen/Quickdraw.hh"
-
 // Pedestal
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Frame.hh"
@@ -39,7 +36,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
 	

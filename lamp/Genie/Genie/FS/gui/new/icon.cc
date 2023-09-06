@@ -15,9 +15,6 @@
 #include "plus/serialize.hh"
 #include "plus/simple_map.hh"
 
-// Nitrogen
-#include "Nitrogen/Quickdraw.hh"
-
 // Pedestal
 #include "Pedestal/View.hh"
 
@@ -34,7 +31,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
 	
@@ -90,7 +86,7 @@ namespace Genie
 	{
 		if ( erasing )
 		{
-			N::EraseRect( bounds );
+			EraseRect( &bounds );
 		}
 		
 		Icon_Parameters& params = gIconMap[ itsKey ];
