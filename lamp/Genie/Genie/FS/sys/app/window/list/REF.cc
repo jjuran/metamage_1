@@ -16,9 +16,8 @@
 #endif
 #endif
 
-// Standard C/C++
-#include <cstdio>
-#include <cstring>
+// Standard C
+#include <stdio.h>
 
 // mac-config
 #include "mac_config/color-quickdraw.hh"
@@ -270,9 +269,9 @@ namespace Genie
 	{
 		char encoded[] = "#rrrrggggbbbb";
 		
-		std::sprintf( encoded + 1, "%.4x%.4x%.4x", color.red,
-		                                           color.green,
-		                                           color.blue );
+		sprintf( encoded + 1, "%.4x%.4x%.4x", color.red,
+		                                      color.green,
+		                                      color.blue );
 		
 		return encoded;
 	}
