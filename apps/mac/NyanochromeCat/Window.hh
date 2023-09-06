@@ -70,6 +70,7 @@ void make_main_window()
 	{
 		const WindowAttributes attrs = kWindowCloseBoxAttribute
 		                             | kWindowCollapseBoxAttribute
+		                             | kWindowStandardHandlerAttribute
 		                           #ifdef MAC_OS_X_VERSION_10_3
 		                             | kWindowAsyncDragAttribute
 		                           #endif

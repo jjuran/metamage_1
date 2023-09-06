@@ -29,6 +29,7 @@
 
 // NyanochromeCat
 #include "About.hh"
+#include "CarbonEventLoop.hh"
 #include "ClassicEventLoop.hh"
 #include "Offscreen.hh"
 #include "Timer.hh"
@@ -50,7 +51,7 @@ int main()
 	mac::app::init_toolbox();
 	mac::app::install_menus();
 	
-	if ( apple_events_present )
+	if ( ! TARGET_API_MAC_CARBON  &&  apple_events_present )
 	{
 		mac::app::install_basic_event_handlers();
 	}
@@ -70,7 +71,14 @@ int main()
 	
 	animation_timer.start();
 	
-	classic_event_loop();
+	if ( TARGET_API_MAC_CARBON )
+	{
+		Carbon_event_loop();
+	}
+	else
+	{
+		classic_event_loop();
+	}
 	
 	return 0;
 }
