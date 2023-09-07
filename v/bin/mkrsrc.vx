@@ -10,6 +10,34 @@ var types = mb32^[]
 let encode_u16BE = (big-endian u16).encode
 let encode_u32BE = (big-endian u32).encode
 
+# Dirty unhex:
+# 
+# Produce correct values for valid hexadecimal input,
+# but also return something for invalid input.
+
+def dirty_unhex_digit (x)
+{
+	let alpha = *(packed x & x"40")
+	let digit = u8 x % 16
+	
+	return
+		if alpha
+			then {digit + 9}
+			else {digit}
+}
+
+def dirty_unhex (x)
+{
+	return x map dirty_unhex_digit per 0>-{ L * 16 + v }
+}
+
+assert dirty_unhex "0000" == 0
+assert dirty_unhex "0001" == 1
+assert dirty_unhex "0009" == 9
+assert dirty_unhex "000a" == 10
+assert dirty_unhex "000f" == 15
+assert dirty_unhex "ffff" == 65535
+
 def add_rsrc (data, name)
 {
 	if name.length != 9 or name[ 0 ] == '.' then
@@ -17,8 +45,8 @@ def add_rsrc (data, name)
 		return ()
 	}
 	
-	let resid = i16 unhex "0x" name[ 0 -> 4 ]
-	let rtype = mb32           name[ 5 -> 9 ]
+	let resid = dirty_unhex name[ 0 -> 4 ] mod 2^16
+	let rtype = mb32        name[ 5 -> 9 ]
 	
 	if not rtype in types then
 	{
