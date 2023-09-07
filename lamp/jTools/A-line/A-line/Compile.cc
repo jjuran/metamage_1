@@ -915,17 +915,18 @@ namespace tool
 		
 		const size_t n_tools = project.ToolCount();
 		
-		tool_dependencies.resize( n_tools );
+		tool_dependencies.reserve( n_tools );
 		
-		std::transform( source_paths.begin(),
-		                source_paths.begin() + n_tools,
-		                object_paths.begin(),
-		                tool_dependencies.begin(),
-		                ToolTaskMaker( project,
-		                               preprocess_options,
-		                               options,
-		                               cpp_dir,
-		                               precompile_task ) );
+		ToolTaskMaker task_maker( project,
+		                          preprocess_options,
+		                          options,
+		                          cpp_dir,
+		                          precompile_task );
+		
+		for ( size_t i = 0;  i < n_tools;  ++i )
+		{
+			tool_dependencies.push_back( task_maker( source_paths[ i ], object_paths[ i ] ) );
+		}
 		
 		StringVector::const_iterator the_source, the_object, end = source_paths.end();
 		
