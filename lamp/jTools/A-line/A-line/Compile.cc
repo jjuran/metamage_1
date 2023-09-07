@@ -911,14 +911,14 @@ namespace tool
 		
 		NameObjectFiles( project, object_paths, preprocessing );
 		
-		const StringVector& sources = project.Sources();
+		const StringVector& source_paths = project.Sources();
 		
 		const size_t n_tools = project.ToolCount();
 		
 		tool_dependencies.resize( n_tools );
 		
-		std::transform( sources.begin(),
-		                sources.begin() + n_tools,
+		std::transform( source_paths.begin(),
+		                source_paths.begin() + n_tools,
 		                object_paths.begin(),
 		                tool_dependencies.begin(),
 		                ToolTaskMaker( project,
@@ -927,9 +927,9 @@ namespace tool
 		                               cpp_dir,
 		                               precompile_task ) );
 		
-		StringVector::const_iterator the_source, the_object, end = sources.end();
+		StringVector::const_iterator the_source, the_object, end = source_paths.end();
 		
-		for ( the_source = sources     .begin() + n_tools,
+		for ( the_source = source_paths.begin() + n_tools,
 		      the_object = object_paths.begin() + n_tools;  the_source != end;  ++the_source,
 		                                                                        ++the_object )
 		{
