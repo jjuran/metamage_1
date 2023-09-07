@@ -130,24 +130,6 @@ namespace Genie
 		}
 	};
 	
-	struct Access_WindowZOrder : plus::serialize_unsigned< unsigned >
-	{
-		static unsigned Get( WindowRef window )
-		{
-			unsigned z = 0;
-			
-			for ( WindowRef it = GetWindowList();  it != window;  ++z, it = GetNextWindow( it ) )
-			{
-				if ( it == NULL )
-				{
-					p7::throw_errno( ENOENT );
-				}
-			}
-			
-			return z;
-		}
-	};
-	
 	static inline UInt16 ReadIntensity_1n( const char* p )
 	{
 		const unsigned char nibble = gear::decoded_hex_digit( p[ 0 ] );
@@ -542,7 +524,6 @@ namespace Genie
 	DEFINE_GETTER( Access_WindowBackColor );
 	DEFINE_GETTER( Access_WindowForeColor );
 	DEFINE_GETTER( Access_WindowAlpha     );
-	DEFINE_GETTER( Access_WindowZOrder    );
 	
 	DEFINE_SETTER( Access_WindowPosition  );
 	DEFINE_SETTER( Access_WindowSize      );
@@ -564,12 +545,6 @@ namespace Genie
 	DEFINE_PARAMS( Access_WindowBackColor );
 	DEFINE_PARAMS( Access_WindowForeColor );
 	DEFINE_PARAMS( Access_WindowAlpha     );
-	
-	static const vfs::property_params Access_WindowZOrder_params =
-	{
-		Access_WindowZOrder::fixed_size,
-		&Access_WindowZOrder_get,
-	};
 	
 	const vfs::fixed_mapping sys_app_window_list_REF_Mappings[] =
 	{
@@ -609,10 +584,6 @@ namespace Genie
 	#endif
 		
 		{ "select", &window_trigger_factory },
-		
-		{ "z", PROPERTY_CONST_ACCESS( Access_WindowZOrder ) },
-		
-		{ ".~z", PROPERTY_CONST_ACCESS( Access_WindowZOrder ) },
 		
 		{ NULL, NULL }
 	};
