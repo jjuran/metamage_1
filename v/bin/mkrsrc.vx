@@ -7,23 +7,8 @@ let input_files = argv[ 3 -> argc ]
 
 var types = mb32^[]
 
-def encode_u16BE
-{
-	let x = unhex hex u16 _
-	
-	let pad = x"00" * (2 - x.size)
-	
-	return pad x
-}
-
-def encode_u32BE
-{
-	let x = unhex hex u32 _
-	
-	let pad = x"00" * (4 - x.size)
-	
-	return pad x
-}
+let encode_u16BE = (big-endian u16).encode
+let encode_u32BE = (big-endian u32).encode
 
 def add_rsrc (data, name)
 {
