@@ -302,40 +302,24 @@ namespace tool
 		return subprojects.size() > 0;
 	}
 	
-	class ConfDataMaker
-	{
-		private:
-			ConfData& conf;
-		
-		public:
-			ConfDataMaker( ConfData& conf ) : conf( conf )  {}
-			
-			void operator()( const DotConfLine& line ) const
-			{
-				if ( !DirectiveIsRecognized( line.key ) )
-				{
-					fprintf( stderr,
-					         "Unrecognized directive '%s' in project config\n",
-					                                  line.key.c_str() );
-				}
-				
-				StringVector& conf_key = conf[ line.key ];
-				
-				conf_key.insert( conf_key.end(), line.values.begin(), line.values.end() );
-			}
-	};
-	
 	ConfData MakeConfData( const DotConfData& data )
 	{
 		ConfData conf;
-		
-		ConfDataMaker confDataMaker( conf );
 		
 		for ( size_t i = 0;  i < data.size();  ++i )
 		{
 			const DotConfLine& line = data[ i ];
 			
-			confDataMaker( line );
+			if ( ! DirectiveIsRecognized( line.key ) )
+			{
+				fprintf( stderr,
+				         "Unrecognized directive '%s' in project config\n",
+				                                  line.key.c_str() );
+			}
+			
+			StringVector& conf_key = conf[ line.key ];
+			
+			conf_key.insert( conf_key.end(), line.values.begin(), line.values.end() );
 		}
 		
 		return conf;
