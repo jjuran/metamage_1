@@ -564,12 +564,12 @@ namespace tool
 		
 		const StringVector& prereqs = project.AllUsedProjects();
 		
-		std::for_each
-		(
-			prereqs.begin(), 
-			prereqs.end(), 
-			project_builder( targetInfo )
-		);
+		project_builder builder( targetInfo );
+		
+		for ( size_t i = 0;  i < prereqs.size();  ++i )
+		{
+			builder( prereqs[ i ] );
+		}
 	}
 	
 	static void ApplyTargetDefaults( TargetInfo& target )

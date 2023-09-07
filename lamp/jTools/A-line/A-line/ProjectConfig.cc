@@ -329,9 +329,14 @@ namespace tool
 	{
 		ConfData conf;
 		
-		std::for_each( data.begin(),
-		               data.end(),
-		               ConfDataMaker( conf ) );
+		ConfDataMaker confDataMaker( conf );
+		
+		for ( size_t i = 0;  i < data.size();  ++i )
+		{
+			const DotConfLine& line = data[ i ];
+			
+			confDataMaker( line );
+		}
 		
 		return conf;
 	}
