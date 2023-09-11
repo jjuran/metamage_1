@@ -5,6 +5,9 @@
 
 #include "Vertice/PortView.hh"
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <vector>
 
