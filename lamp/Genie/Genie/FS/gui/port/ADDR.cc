@@ -43,7 +43,7 @@
 
 // Nitrogen
 #include "Nitrogen/CFString.hh"
-#include "Nitrogen/MacWindows.hh"
+#include "Nitrogen/Str.hh"
 
 // Pedestal
 #include "Pedestal/EmptyView.hh"
@@ -121,15 +121,17 @@ namespace Genie
 	
 	static const Point gZeroPoint = { 0 };
 	
+	typedef short WindowDefProcID;
+	
 	struct WindowParameters
 	{
-		plus::string        itsTitle;
-		Point               itsOrigin;
-		Point               itsSize;
-		N::WindowDefProcID  itsProcID;
-		bool                itIsVisible;
-		bool                itHasCloseBox;
-		bool                itIsLocked;
+		plus::string     itsTitle;
+		Point            itsOrigin;
+		Point            itsSize;
+		WindowDefProcID  itsProcID;
+		bool             itIsVisible;
+		bool             itHasCloseBox;
+		bool             itIsLocked;
 		
 	#if CONFIG_COMPOSITING
 		
@@ -156,7 +158,7 @@ namespace Genie
 		
 		WindowParameters() : itsOrigin( gZeroPoint ),
 		                     itsSize  ( gZeroPoint ),
-		                     itsProcID( N::documentProc ),
+		                     itsProcID( documentProc ),
 		                     itIsVisible  ( true ),
 		                     itHasCloseBox( true ),
 		                     itIsLocked(),
@@ -347,26 +349,26 @@ namespace Genie
 		
 	#endif
 		
-		Mac::WindowClass wClass = Mac::kDocumentWindowClass;
+		WindowClass wClass = kDocumentWindowClass;
 		
-		Mac::WindowAttributes attrs = Mac::kWindowNoAttributes;
+		WindowAttributes attrs = kWindowNoAttributes;
 		
 		switch ( params.itsProcID )
 		{
 			case dBoxProc:
-				wClass = Mac::kModalWindowClass;
+				wClass = kModalWindowClass;
 				break;
 			
 			case plainDBox:
-				wClass = Mac::kPlainWindowClass;
+				wClass = kPlainWindowClass;
 				break;
 			
 			case altDBoxProc:
-				wClass = Mac::kAltPlainWindowClass;
+				wClass = kAltPlainWindowClass;
 				break;
 			
 			case movableDBoxProc:
-				wClass = Mac::kMovableModalWindowClass;
+				wClass = kMovableModalWindowClass;
 				break;
 			
 			default:
@@ -376,27 +378,27 @@ namespace Genie
 					p7::throw_errno( EINVAL );
 				}
 				
-				attrs = Mac::kWindowCollapseBoxAttribute;
+				attrs = kWindowCollapseBoxAttribute;
 				
 				if ( params.itHasCloseBox )
 				{
-					attrs |= Mac::kWindowCloseBoxAttribute;
+					attrs |= kWindowCloseBoxAttribute;
 				}
 				
 				if ( (params.itsProcID & 0x4) == 0 )
 				{
-					attrs |= Mac::kWindowResizableAttribute;
+					attrs |= kWindowResizableAttribute;
 				}
 				
 				if ( (params.itsProcID & 0x8) != 0 )
 				{
-					attrs |= Mac::kWindowFullZoomAttribute;
+					attrs |= kWindowFullZoomAttribute;
 				}
 		}
 		
 	#ifdef MAC_OS_X_VERSION_10_3
 		
-		attrs |= Mac::kWindowAsyncDragAttribute;
+		attrs |= kWindowAsyncDragAttribute;
 		
 	#endif
 		
@@ -404,11 +406,11 @@ namespace Genie
 		
 		if ( params.it_is_compositing )
 		{
-			attrs |= Mac::kWindowCompositingAttribute;
+			attrs |= kWindowCompositingAttribute;
 			
 		#ifdef MAC_OS_X_VERSION_10_7
 		
-			attrs |= Mac::kWindowHighResolutionCapableAttribute;
+			attrs |= kWindowHighResolutionCapableAttribute;
 			
 		#endif
 		}
@@ -441,7 +443,7 @@ namespace Genie
 		
 	#endif
 		
-		N::SetWRefCon( window, key );
+		SetWRefCon( window, (long) key );
 		
 		Ped::set_window_closed_proc ( window, &WindowClosed  );
 		Ped::set_window_resized_proc( window, &WindowResized );
@@ -1000,7 +1002,7 @@ namespace Genie
 			return params.itsSize;
 		}
 		
-		N::WindowDefProcID& ProcID( WindowParameters& params )
+		WindowDefProcID& ProcID( WindowParameters& params )
 		{
 			return params.itsProcID;
 		}
@@ -1034,7 +1036,7 @@ namespace Genie
 	
 	using plus::serialize_bool;
 	
-	typedef plus::serialize_unsigned< N::WindowDefProcID > serialize_ProcID;
+	typedef plus::serialize_unsigned< WindowDefProcID > serialize_ProcID;
 	
 	
 	struct port_property_params
