@@ -50,7 +50,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/MacWindows.hh"
+#include "Nitrogen/Str.hh"
 
 // vfs
 #include "vfs/node.hh"
@@ -74,21 +74,6 @@ static inline
 bool has_color_quickdraw()
 {
 	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  mac::sys::has_ColorQuickDraw();
-}
-
-namespace Nitrogen
-{
-	
-	static
-	float GetWindowAlpha( WindowRef window )
-	{
-		float alpha;
-		
-		Mac::ThrowOSStatus( ::GetWindowAlpha( window, &alpha ) );
-		
-		return alpha;
-	}
-	
 }
 
 namespace Genie
@@ -129,7 +114,7 @@ namespace Genie
 	{
 		static bool Get( WindowRef window )
 		{
-			return N::IsWindowVisible( window );
+			return IsWindowVisible( window );
 		}
 		
 		static void Set( WindowRef window, bool visible )
@@ -397,7 +382,11 @@ namespace Genie
 	{
 		static short Get( WindowRef window )
 		{
-			return short( N::GetWindowAlpha( window ) * 10000 );
+			float alpha = 1.0;
+			
+			OSErr err = GetWindowAlpha( window, &alpha );
+			
+			return short( alpha * 10000 );
 		}
 		
 		static void Set( WindowRef window, short alpha )
@@ -460,7 +449,11 @@ namespace Genie
 	{
 		WindowRef window = get_node_window( that );
 		
-		result = N::GetWTitle( window );
+		Str255 title;
+		
+		GetWTitle( window, title );
+		
+		result = title;
 		
 		/*
 			title
