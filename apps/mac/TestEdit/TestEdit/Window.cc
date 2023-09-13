@@ -34,12 +34,6 @@
 // plus
 #include "plus/string.hh"
 
-// Nitrogen
-#include "Nitrogen/Controls.hh"
-#include "Nitrogen/MacMemory.hh"
-#include "Nitrogen/MacWindows.hh"
-#include "Nitrogen/Quickdraw.hh"
-
 // Pedestal
 #include "Pedestal/Frame.hh"
 #include "Pedestal/Scrollbar.hh"
@@ -61,7 +55,6 @@ namespace TestEdit
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
 	
@@ -267,9 +260,15 @@ namespace TestEdit
 
 	};
 	
+	static inline
+	Scrollbar_UserData* get_scrollbar_userdata( ControlRef control )
+	{
+		return (Scrollbar_UserData*) GetControlReference( control );
+	}
+	
 	static Ped::ScrollerAPI* RecoverScrollerFromControl( ControlRef control )
 	{
-		Scrollbar_UserData* userData = N::GetControlReference( control );
+		Scrollbar_UserData* userData = get_scrollbar_userdata( control );
 		
 		ASSERT( userData      != NULL );
 		ASSERT( userData->key != NULL );
@@ -279,7 +278,7 @@ namespace TestEdit
 	
 	static void DebriefAfterTrack( ControlRef control )
 	{
-		Scrollbar_UserData* userData = N::GetControlReference( control );
+		Scrollbar_UserData* userData = get_scrollbar_userdata( control );
 		
 		ASSERT( userData      != NULL );
 		ASSERT( userData->key != NULL );
@@ -292,7 +291,7 @@ namespace TestEdit
 		
 		short max_offset = max( clientLength - viewLength, offset );
 		
-		N::SetControlMaximum( control, max_offset );
+		SetControlMaximum( control, max_offset );
 	}
 	
 	class ScrollFrame : public Ped::ScrollFrame
