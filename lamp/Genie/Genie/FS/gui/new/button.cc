@@ -6,7 +6,12 @@
 #include "Genie/FS/gui/new/button.hh"
 
 #ifdef __APPLE__
-#include <AvailabilityMacros.h>
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __CONTROLDEFINITIONS__
+#include <ControlDefinitions.h>
 #endif
 
 // missing-macos
@@ -31,7 +36,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Controls.hh"
+#include "Nitrogen/Str.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -100,9 +105,15 @@ namespace Genie
 		}
 	};
 	
+	static inline
+	Control_UserData* get_control_userdata( ControlRef control )
+	{
+		return (Control_UserData*) GetControlReference( control );
+	}
+	
 	static void DebriefAfterTrack( ControlRef control )
 	{
-		Control_UserData* userData = N::GetControlReference( control );
+		Control_UserData* userData = get_control_userdata( control );
 		
 		ASSERT( userData      != NULL );
 		ASSERT( userData->key != NULL );
@@ -179,13 +190,13 @@ namespace Genie
 		{
 			params.pseudoclicked = false;
 			
-			N::HiliteControl( Get(), Mac::kControlButtonPart );
+			HiliteControl( Get(), kControlButtonPart );
 			
 			QDFlushPortBuffer();
 			
 			mac::sys::delay( 8 );
 			
-			N::HiliteControl( Get(), N::kControlNoPart );
+			HiliteControl( Get(), kControlNoPart );
 			
 			QDFlushPortBuffer();
 			

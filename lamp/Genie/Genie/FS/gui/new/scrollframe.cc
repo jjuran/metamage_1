@@ -12,9 +12,6 @@
 #include "plus/serialize.hh"
 #include "plus/simple_map.hh"
 
-// Nitrogen
-#include "Nitrogen/Controls.hh"
-
 // Pedestal
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Scrollbar.hh"
@@ -43,7 +40,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
 	
@@ -87,9 +83,15 @@ namespace Genie
 			void Update( const Rect& bounds, const vfs::node* viewKey );
 	};
 	
+	static inline
+	Scrollbar_UserData* get_scrollbar_userdata( ControlRef control )
+	{
+		return (Scrollbar_UserData*) GetControlReference( control );
+	}
+	
 	static Ped::ScrollerAPI* RecoverScrollerFromControl( ControlRef control )
 	{
-		Scrollbar_UserData* userData = N::GetControlReference( control );
+		Scrollbar_UserData* userData = get_scrollbar_userdata( control );
 		
 		ASSERT( userData      != NULL );
 		ASSERT( userData->key != NULL );
@@ -108,7 +110,7 @@ namespace Genie
 	
 	static void DebriefAfterTrack( ControlRef control )
 	{
-		Scrollbar_UserData* userData = N::GetControlReference( control );
+		Scrollbar_UserData* userData = get_scrollbar_userdata( control );
 		
 		ASSERT( userData      != NULL );
 		ASSERT( userData->key != NULL );
@@ -127,7 +129,7 @@ namespace Genie
 				
 				short max_offset = max( clientLength - viewLength, offset );
 				
-				N::SetControlMaximum( control, max_offset );
+				SetControlMaximum( control, max_offset );
 			}
 		}
 	}
