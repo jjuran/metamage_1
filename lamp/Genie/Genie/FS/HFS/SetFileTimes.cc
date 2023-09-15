@@ -5,6 +5,16 @@
 
 #include "Genie/FS/HFS/SetFileTimes.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __FILES__
+#include <Files.h>
+#endif
+
 // POSIX
 #include <utime.h>
 
@@ -55,8 +65,8 @@ namespace Genie
 		}
 	}
 	
-	void SetFileTimes( Mac::FSVolumeRefNum    vRefNum,
-	                   Mac::FSDirID           dirID,
+	void SetFileTimes( short                  vRefNum,
+	                   long                   dirID,
 	                   const unsigned char*   name,
 	                   const struct timespec  times[2] )
 	{
