@@ -12,10 +12,7 @@
 #include "mac_types/epoch.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
-
-// MacIO
-#include "MacIO/GetCatInfo_Sync.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 
 #ifndef UTIME_ARCHIVE
@@ -33,9 +30,6 @@
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	static void update_time( UInt32& date, const timespec& time, UInt32& now )
 	{
@@ -66,20 +60,34 @@ namespace Genie
 	                   const unsigned char*   name,
 	                   const struct timespec  times[2] )
 	{
+		OSErr err;
+		
 		const timespec& atime = times[0];
 		const timespec& mtime = times[1];
 		
 		const bool atime_is_backup = atime.tv_nsec & UTIME_ARCHIVE;
 		
-		N::Str63 name_copy = name;
-		
 		CInfoPBRec pb;
 		
-		MacIO::GetCatInfo< MacIO::Throw_All >( pb, vRefNum, dirID, name_copy );
+		DirInfo& dirInfo = pb.dirInfo;
+		
+		dirInfo.ioNamePtr = (StringPtr) name;
+		dirInfo.ioVRefNum = vRefNum;
+		dirInfo.ioDrDirID = dirID;
+		dirInfo.ioFDirIndex = 0;
+		
+		err = PBGetCatInfoSync( &pb );
+		
+		if ( err )
+		{
+			goto errorcheck;
+		}
 		
 		pb.hFileInfo.ioDirID = dirID;
 		
-		UInt32 now = 0;
+		UInt32 now;
+		
+		now = 0;
 		
 		//pb.hFileInfo.ioFlCrDat
 		
@@ -90,7 +98,11 @@ namespace Genie
 			update_time( pb.hFileInfo.ioFlBkDat, atime, now );
 		}
 		
-		N::PBSetCatInfoSync( pb );
+		err = PBSetCatInfoSync( &pb );
+		
+	errorcheck:
+		
+		Mac::ThrowOSStatus( err );
 	}
 	
 }
