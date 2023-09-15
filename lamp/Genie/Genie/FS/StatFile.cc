@@ -256,11 +256,11 @@ namespace Genie
 	void ChangeFileMode( const FSSpec& file, mode_t new_mode )
 	{
 		OSErr err;
-		CInfoPBRec paramBlock;
+		CInfoPBRec pb;
 		
-		MacIO::GetCatInfo< MacIO::Throw_All >( paramBlock, file );
+		MacIO::GetCatInfo< MacIO::Throw_All >( pb, file );
 		
-		HFileInfo& hFileInfo = paramBlock.hFileInfo;
+		HFileInfo& hFileInfo = pb.hFileInfo;
 		
 		bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 		

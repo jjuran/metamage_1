@@ -73,24 +73,24 @@ namespace Genie
 		
 		N::Str63 name_copy = name;
 		
-		CInfoPBRec paramBlock;
+		CInfoPBRec pb;
 		
-		MacIO::GetCatInfo< MacIO::Throw_All >( paramBlock, vRefNum, dirID, name_copy );
+		MacIO::GetCatInfo< MacIO::Throw_All >( pb, vRefNum, dirID, name_copy );
 		
-		paramBlock.hFileInfo.ioDirID = dirID;
+		pb.hFileInfo.ioDirID = dirID;
 		
 		UInt32 now = 0;
 		
-		//paramBlock.hFileInfo.ioFlCrDat
+		//pb.hFileInfo.ioFlCrDat
 		
-		update_time( paramBlock.hFileInfo.ioFlMdDat, mtime, now );
+		update_time( pb.hFileInfo.ioFlMdDat, mtime, now );
 		
 		if ( atime_is_backup )
 		{
-			update_time( paramBlock.hFileInfo.ioFlBkDat, atime, now );
+			update_time( pb.hFileInfo.ioFlBkDat, atime, now );
 		}
 		
-		N::PBSetCatInfoSync( paramBlock );
+		N::PBSetCatInfoSync( pb );
 	}
 	
 }
