@@ -95,8 +95,6 @@ enum
 	                + kAboutBoxBottomMargin,
 };
 
-WindowRef gAboutBox;
-
 static Str255 title;
 static Str255 name;
 static Str255 vers;
@@ -234,9 +232,33 @@ const Rect& window_structure_bounds( WindowRef window )
 	return box;
 }
 
+#define WindowList (*(WindowRef*) 0x09D6)
+
+static inline
+WindowRef get_WindowList()
+{
+	return ACCESSOR_CALLS_ARE_FUNCTIONS ? GetWindowList() : WindowList;
+}
+
+static
+WindowRef find_About_box()
+{
+	WindowRef w = get_WindowList();
+	
+	for ( ;  w != NULL;  w = GetNextWindow( w ) )
+	{
+		if ( GetWindowKind( w ) == kAboutWindowKind )
+		{
+			return w;
+		}
+	}
+	
+	return w;  // NULL
+}
+
 void show_About_box()
 {
-	if ( gAboutBox )
+	if ( WindowRef gAboutBox = find_About_box() )
 	{
 		SelectWindow( gAboutBox );
 		return;
@@ -273,7 +295,9 @@ void show_About_box()
 	
 	WindowRef behind = (WindowRef) -1;
 	
-	gAboutBox = new_window( rect, title, vis, proc, behind, closable );
+	WindowRef gAboutBox = new_window( rect, title, vis, proc, behind, closable );
+	
+	SetWindowKind( gAboutBox, kAboutWindowKind );
 	
 	/*
 		With non-opaque Toolbox structs, the value assigned to `box`
@@ -304,13 +328,11 @@ void show_About_box()
 
 bool close_About_box( WindowRef window )
 {
-	const bool is_About = window == gAboutBox;
+	const bool is_About = GetWindowKind( window ) == kAboutWindowKind;
 	
 	if ( is_About )
 	{
-		DisposeWindow( gAboutBox );
-		
-		gAboutBox = NULL;
+		DisposeWindow( window );
 	}
 	
 	return is_About;

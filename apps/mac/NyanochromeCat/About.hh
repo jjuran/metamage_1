@@ -16,7 +16,11 @@
 #include <Quickdraw.h>
 #endif
 
-extern WindowRef gAboutBox;
+
+enum
+{
+	kAboutWindowKind = 256,
+};
 
 void draw_About_box();
 void show_About_box();

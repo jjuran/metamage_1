@@ -290,9 +290,9 @@ int main()
 					
 					BeginUpdate( window );
 					
-					if ( window == gAboutBox )
+					if ( window != main_window )
 					{
-						SetPortWindowPort( gAboutBox );
+						SetPortWindowPort( window );
 						
 						draw_About_box();
 						
