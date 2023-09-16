@@ -258,9 +258,9 @@ WindowRef find_About_box()
 
 void show_About_box()
 {
-	if ( WindowRef gAboutBox = find_About_box() )
+	if ( WindowRef aboutBox = find_About_box() )
 	{
-		SelectWindow( gAboutBox );
+		SelectWindow( aboutBox );
 		return;
 	}
 	
@@ -295,16 +295,16 @@ void show_About_box()
 	
 	WindowRef behind = (WindowRef) -1;
 	
-	WindowRef gAboutBox = new_window( rect, title, vis, proc, behind, closable );
+	WindowRef window = new_window( rect, title, vis, proc, behind, closable );
 	
-	SetWindowKind( gAboutBox, kAboutWindowKind );
+	SetWindowKind( window, kAboutWindowKind );
 	
 	/*
 		With non-opaque Toolbox structs, the value assigned to `box`
 		becomes invalid with the call to MoveWindow() below.
 	*/
 	
-	const Rect& box = window_structure_bounds( gAboutBox );
+	const Rect& box = window_structure_bounds( window );
 	
 	short title_bar_height = -box.top;
 	short structure_height = box.bottom - box.top;
@@ -323,7 +323,7 @@ void show_About_box()
 	
 	left = (screen_bounds.right - kAboutBoxWidth) / 2u;
 	
-	MoveWindow( gAboutBox, left, v_lower_bound, false );
+	MoveWindow( window, left, v_lower_bound, false );
 }
 
 bool close_About_box( WindowRef window )
