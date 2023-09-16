@@ -81,6 +81,16 @@
 #define APP_NAME_FONT  "Lucida Grande Bold"
 #define APP_NAME_SIZE  14
 
+#define LOWMEM( addr, type )  (*(type*) (addr))
+
+#define WindowList  LOWMEM( 0x09D6, WindowRef )
+
+
+static inline
+WindowRef get_WindowList()
+{
+	return ACCESSOR_CALLS_ARE_FUNCTIONS ? GetWindowList() : WindowList;
+}
 
 static inline
 bool has_color_quickdraw()
@@ -93,6 +103,8 @@ namespace Pedestal
 	
 	namespace n = nucleus;
 	
+	
+	const short kAboutWindowKind = 256;
 	
 	static const RGBColor kAboutBoxBackgroundColor = { 0xEEEE, 0xEEEE, 0xEEEE };
 	
@@ -413,14 +425,6 @@ namespace Pedestal
 	}
 	
 	
-	static n::owned< WindowRef > sAboutBox;
-	
-	static
-	void AboutClosed( WindowRef window )
-	{
-		sAboutBox.reset();
-	}
-	
 	static
 	n::owned< WindowRef > NewAboutBox()
 	{
@@ -457,12 +461,12 @@ namespace Pedestal
 		
 	#endif
 		
+		SetWindowKind( window, kAboutWindowKind );
+		
 		if ( CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw() )
 		{
 			RGBBackColor( &kAboutBoxBackgroundColor );
 		}
-		
-		set_window_closed_proc( window, &AboutClosed );
 		
 	#if CONFIG_COMPOSITING
 		
@@ -493,16 +497,31 @@ namespace Pedestal
 		return window;
 	}
 	
+	static
+	WindowRef find_About_box()
+	{
+		WindowRef w = get_WindowList();
+		
+		for ( ;  w != NULL;  w = GetNextWindow( w ) )
+		{
+			if ( GetWindowKind( w ) == kAboutWindowKind )
+			{
+				return w;
+			}
+		}
+		
+		return w;  // NULL
+	}
 	
 	void ShowAboutBox()
 	{
-		if ( WindowRef aboutBox = sAboutBox )
+		if ( WindowRef aboutBox = find_About_box() )
 		{
 			SelectWindow( aboutBox );
 		}
 		else
 		{
-			sAboutBox = NewAboutBox();
+			NewAboutBox().release();
 		}
 	}
 	
