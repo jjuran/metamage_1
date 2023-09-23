@@ -92,6 +92,12 @@
 #endif
 
 
+static inline
+bool nonzero( Point pt )
+{
+	return *(long*) &pt;
+}
+
 namespace Genie
 {
 	
@@ -311,12 +317,12 @@ namespace Genie
 		
 		Rect bounds = { 0, 0, 90, 120 };
 		
-		if ( params.itsSize.h || params.itsSize.v )
+		if ( nonzero( params.itsSize ) )
 		{
 			reinterpret_cast< Point* >( &bounds )[1] = params.itsSize;
 		}
 		
-		if ( params.itsOrigin.h || params.itsOrigin.v )
+		if ( nonzero( params.itsOrigin ) )
 		{
 			::OffsetRect( &bounds, params.itsOrigin.h, params.itsOrigin.v );
 		}
