@@ -86,7 +86,7 @@
 
 static inline bool operator==( const Point& a, const Point& b )
 {
-	return a.v == b.v  &&  a.h == b.h;
+	return *(long*) &a == *(long*) &b;
 }
 
 static inline bool operator!=( const Point& a, const Point& b )
