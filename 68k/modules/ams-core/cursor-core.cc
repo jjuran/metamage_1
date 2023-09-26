@@ -234,13 +234,14 @@ void hide_cursor()
 	
 	if ( CrsrVis )
 	{
+		CrsrVis = false;
+		
 		--CrsrBusy;
 		
 		erase_cursor();
 		
 		set_empty_rect( &CrsrRect );
 		CrsrAddr = NULL;
-		CrsrVis = false;
 		
 		++CrsrBusy;
 	}
@@ -253,9 +254,9 @@ void show_cursor()
 		return;
 	}
 	
-	--CrsrBusy;
-	
 	CrsrVis = true;
+	
+	--CrsrBusy;
 	
 	paint_cursor( Mouse.h, Mouse.v );
 	
