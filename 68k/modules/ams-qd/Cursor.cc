@@ -5,17 +5,17 @@
 
 #include "Cursor.hh"
 
+// Mac OS
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
+
 // ams-common
-#include "QDGlobals.hh"
 #include "cursor_jump.hh"
 
 
 pascal void InitCursor_patch()
 {
-	QDGlobals& qd = get_QDGlobals();
-	
-	JSetCrsr( &qd.arrow );
-	
 	JInitCrsr();
 }
 
