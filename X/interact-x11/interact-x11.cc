@@ -53,13 +53,11 @@ enum
 	
 	Opt_last_byte = 255,
 	
-	Opt_feed,
 	Opt_raster,
 };
 
 static command::option options[] =
 {
-	{ "feed",    Opt_feed,    command::Param_required },
 	{ "raster",  Opt_raster,  command::Param_required },
 	{ "title",   Opt_title,   command::Param_required },
 	{ "magnify", Opt_magnify, command::Param_required },
@@ -208,9 +206,6 @@ char* const* get_options( char** argv )
 		
 		switch ( opt )
 		{
-			case Opt_feed:
-				break;
-			
 			case Opt_raster:
 				raster_path = global_result.param;
 				break;
