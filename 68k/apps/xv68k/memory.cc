@@ -5,9 +5,6 @@
 
 #include "memory.hh"
 
-// Standard C
-#include <string.h>
-
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -178,10 +175,6 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 			{
 				return page_1_virtual_buffer + offset;
 			}
-			
-			memcpy( page_1_transit_buffer + offset,
-			        page_1_virtual_buffer + offset,
-			        length );
 		}
 		
 		return screen::translate( offset, length, fc, access );
@@ -201,10 +194,6 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 			{
 				return page_2_virtual_buffer + offset;
 			}
-			
-			memcpy( page_2_transit_buffer + offset,
-			        page_2_virtual_buffer + offset,
-			        length );
 		}
 		
 		return screen::translate2( offset, length, fc, access );
