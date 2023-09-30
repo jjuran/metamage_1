@@ -65,6 +65,9 @@ enum
 	
 	// $FFBE - $FFB8
 	plot_cursor,
+	notify_cursor_moved,
+	notify_cursor_vis,
+	notify_cursor_set,
 	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block
