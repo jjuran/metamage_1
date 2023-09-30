@@ -5,8 +5,8 @@
 
 #include "callout/cursor.hh"
 
-// iota
-#include "iota/endian.hh"
+// cursorlib
+#include "plot_cursor.hh"
 
 // v68k-screen
 #include "screen/lock.hh"
@@ -72,30 +72,10 @@ int32_t plot_cursor_callout( v68k::processor_state& s )
 		return v68k::Bus_error;
 	}
 	
-	const uint16_t* p_face = (const uint16_t*)  p       + v_skip;
-	const uint16_t* p_mask = (const uint16_t*) (p + 32) + v_skip;
+	const uint16_t* p_face = (const uint16_t*) p;
+	const uint16_t* p_mask = (const uint16_t*) p + 16;
 	
-	for ( short i = 0;  i < n;  ++i )
-	{
-		uint16_t face = iota::u16_from_big( *p_face++ );
-		uint16_t mask = iota::u16_from_big( *p_mask++ );
-		
-		uint16_t* q = (uint16_t*) addr;
-		
-		if ( h_trim >= 0 )
-		{
-			*q   &= iota::big_u16( ~(mask >> shift) );
-			*q++ ^= iota::big_u16(   face >> shift  );
-		}
-		
-		if ( shift  &&  h_trim <= 0 )
-		{
-			*q &= iota::big_u16( ~(mask << (16 - shift)) );
-			*q ^= iota::big_u16(   face << (16 - shift)  );
-		}
-		
-		addr += stride;
-	}
+	plot_cursor( p_face, p_mask, addr, shift, h_trim, v_skip, n, stride );
 	
 	s.translate( dest_addr, dest_len, data_space, mem_update );
 	
