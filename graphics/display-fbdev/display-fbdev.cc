@@ -31,7 +31,7 @@
 // command
 #include "command/get_option.hh"
 
-// raster
+// rasterlib
 #include "raster/clut.hh"
 #include "raster/clut_detail.hh"
 #include "raster/load.hh"
@@ -372,11 +372,11 @@ void update_loop( raster::sync_relay*  sync,
 	const size_t src_stride = loaded_raster.meta->desc.stride;
 	const size_t image_size = src_stride * height;
 	
-	uint32_t seed = 0;
+	uint32_t raster_seed = 0;
 	
 	while ( sync->status == Sync_ready  &&  ! signalled )
 	{
-		while ( seed == sync->seed )
+		while ( raster_seed == sync->seed )
 		{
 			if ( update_fifo )
 			{
@@ -388,7 +388,7 @@ void update_loop( raster::sync_relay*  sync,
 			}
 		}
 		
-		seed = sync->seed;
+		raster_seed = sync->seed;
 		
 		const uint8_t* src = (uint8_t*) loaded_raster.addr;
 		
