@@ -35,6 +35,9 @@ using v68k::screen::the_screen_size;
 using v68k::screen::the_sync_relay;
 
 
+uint8_t* page_1_transit_buffer;
+uint8_t* page_2_transit_buffer;
+
 static raster_metadata* meta;
 
 static void* spare_transit_buffer;
@@ -107,6 +110,8 @@ int set_screen_backing_store_file( const char* path )
 	
 	transit_buffer = raster.addr;
 	
+	page_1_transit_buffer = (uint8_t*) transit_buffer;
+	
 	meta = raster.meta;
 	
 	using v68k::screen::the_surface_shape;
@@ -120,7 +125,9 @@ int set_screen_backing_store_file( const char* path )
 	
 	if ( raster.meta->desc.extra )
 	{
-		spare_transit_buffer = (uint8_t*) transit_buffer + the_screen_size;
+		page_2_transit_buffer = page_1_transit_buffer + the_screen_size;
+		
+		spare_transit_buffer = page_2_transit_buffer;
 	}
 	
 	uint32_t count = 1 + raster.meta->desc.extra;

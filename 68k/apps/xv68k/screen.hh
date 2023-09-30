@@ -10,6 +10,9 @@
 #include "v68k/memory.hh"
 
 
+extern uint8_t* page_1_transit_buffer;
+extern uint8_t* page_2_transit_buffer;
+
 void page_flip();
 
 int set_screen_backing_store_file( const char* path );

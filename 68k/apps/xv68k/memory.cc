@@ -167,7 +167,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 				goto skip_framebuffer;
 			}
 			
-			memcpy( screen::translate( offset, length, fc, v68k::mem_write ),
+			memcpy( page_1_transit_buffer + offset,
 			        low_memory_base + addr,
 			        length );
 		}
@@ -186,7 +186,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 				goto skip_framebuffer;
 			}
 			
-			memcpy( screen::translate2( offset, length, fc, v68k::mem_write ),
+			memcpy( page_2_transit_buffer + offset,
 			        low_memory_base + addr,
 			        length );
 		}
