@@ -50,6 +50,8 @@ uint32_t alt_screen_addr  = 0x00012700;
 uint32_t main_screen_addr = 0x0001A700;
 uint32_t main_sound_addr  = 0x0001FD00;
 
+const uint32_t sound_size = 740;
+
 static uint8_t* low_memory_base;
 static uint32_t low_memory_size;
 
@@ -194,10 +196,6 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return screen::translate2( offset, length, fc, access );
 	}
 	
-skip_framebuffer:
-	
-	const uint32_t sound_size = 740;
-	
 	if ( addr_within_span( addr, main_sound_addr, sound_size ) )
 	{
 		return sound::translate( addr - main_sound_addr, length, fc, access );
@@ -219,6 +217,8 @@ skip_framebuffer:
 			return v68k::mac::translate( addr, length, fc, access );
 		}
 	}
+	
+skip_framebuffer:
 	
 	if ( addr < low_memory_size )
 	{
