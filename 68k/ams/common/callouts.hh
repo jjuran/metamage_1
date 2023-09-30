@@ -60,6 +60,15 @@ DEFINE_CALLOUT( int,
                  unsigned    n : __D0 ),
                 0xFFC6 )
 
+DEFINE_CALLOUT( void,
+                plot_cursor,
+                (const struct Cursor* crsr : __A1,
+                 void*                dest : __A0,
+                 unsigned             ht_s : __D0,
+                 unsigned             n_vs : __D1,
+                 unsigned             rowB : __D2 ),
+                0xFFBE )
+
 #undef DEFINE_CALLOUT
 
 inline
@@ -87,6 +96,18 @@ inline asm
 void fast_memmove( void* : __A1, const void* : __A0, unsigned long : __D0 )
 {
 	0xA22E  // _BlockMoveData
+}
+
+inline
+void plot_cursor( const struct Cursor*  crsr,
+                  void*                 dest,
+                  short                 shift,
+                  short                 h_trim,
+                  short                 v_skip,
+                  short                 n,
+                  short                 rowBytes )
+{
+	plot_cursor( crsr, dest, shift | h_trim << 16, v_skip | n << 16, rowBytes );
 }
 
 unsigned long CmpString_sans_case( const unsigned char*  a : __A0,
