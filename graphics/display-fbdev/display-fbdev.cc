@@ -31,6 +31,15 @@
 // command
 #include "command/get_option.hh"
 
+// cursorlib
+#include "plot_cursor.hh"
+
+// v68k-cursor
+#include "cursor/cursor.hh"
+
+// shared_cursor
+#include "shared_cursor/cursor_file.hh"
+
 // rasterlib
 #include "raster/clut.hh"
 #include "raster/clut_detail.hh"
@@ -112,7 +121,13 @@ static bool exhibiting;
 static size_t reflection_height;
 static size_t output_byte_width;
 
+static const char* cursor_path = getenv( "DISPLAY_CURSOR" );
+
 static raster::raster_load loaded_raster;
+
+using v68k::cursor::shared_cursor_state;
+
+static const shared_cursor_state* cursor_state;
 
 
 static inline
@@ -357,6 +372,93 @@ void blit( const uint8_t*  src,
 	}
 }
 
+static
+void draw_hwcursor( uint8_t* base, size_t stride, size_t width, size_t height )
+{
+	short v = cursor_state->pointer[ 0 ];
+	short h = cursor_state->pointer[ 1 ];
+	
+	v -= cursor_state->hotspot[ 0 ];
+	h -= cursor_state->hotspot[ 1 ];
+	
+	short top    = v;
+	short bottom = v + 16;
+	
+	if ( top < 0 )
+	{
+		if ( bottom <= 0 )
+		{
+			return;
+		}
+		
+		top = 0;
+	}
+	else if ( bottom > height )
+	{
+		if ( top >= height )
+		{
+			return;
+		}
+		
+		bottom = height;
+	}
+	
+	short left  = h & ~0xF;
+	short right = left + 32;
+	
+	if ( left < 0 )
+	{
+		if ( right <= 0 )
+		{
+			return;
+		}
+		
+		left  = 0;
+		right = 32;
+	}
+	else if ( right > width )
+	{
+		if ( left >= width )
+		{
+			return;
+		}
+		
+		right = width;
+		left  = right - 32;
+	}
+	
+	uint8_t* addr = base + top * stride + (left >> 3);
+	
+	short h_trim = 0;
+	short v_skip = 0;
+	short v_count = bottom - top;
+	
+	if ( v < 0 )
+	{
+		v_skip = -v;
+	}
+	
+	if ( h < 0 )
+	{
+		h_trim = -1;
+	}
+	else if ( h >= width - 16 )
+	{
+		h_trim = 1;
+		
+		addr += 2;
+	}
+	
+	plot_cursor( cursor_state->face,
+	             cursor_state->mask,
+	             addr,
+	             h & 0xF,
+	             h_trim,
+	             v_skip,
+	             v_count,
+	             stride );
+}
+
 static volatile sig_atomic_t signalled;
 
 static
@@ -374,7 +476,17 @@ void update_loop( raster::sync_relay*  sync,
 	
 	uint8_t* frame_buffer = (uint8_t*) malloc( image_size );
 	
+	if ( cursor_path )
+	{
+		cursor_state = open_cursor_file( cursor_path );
+	}
+	
+	uint16_t cursor_seed = 0;
 	uint32_t raster_seed = 0;
+	
+	uint32_t cursor_loc = (uint32_t) -1;
+	
+	bool hwcursor_visible = false;
 	
 	while ( sync->status == Sync_ready  &&  ! signalled )
 	{
@@ -389,10 +501,45 @@ void update_loop( raster::sync_relay*  sync,
 		
 		if ( sync->seed == raster_seed )
 		{
-			continue;
+			if ( ! cursor_state )
+			{
+				continue;
+			}
+			
+			if ( ! hwcursor_visible  &&  ! cursor_state->visible )
+			{
+				/*
+					The cursor was and remains invisible, so do nothing.
+				*/
+				
+				continue;
+			}
+			
+			if ( hwcursor_visible  &&  cursor_state->visible )
+			{
+				if ( cursor_loc == *(uint32_t*) cursor_state->pointer )
+				{
+					if ( cursor_state->seed == cursor_seed )
+					{
+						/*
+							The cursor remains visible, in the same
+							location, with the same image.  Do nothing.
+						*/
+						
+						continue;
+					}
+				}
+			}
+			
 		}
 		
 		raster_seed = sync->seed;
+		
+		if ( cursor_state )
+		{
+			cursor_seed      = cursor_state->seed;
+			hwcursor_visible = cursor_state->visible;
+		}
 		
 		const uint8_t* src = (uint8_t*) loaded_raster.addr;
 		
@@ -408,6 +555,13 @@ void update_loop( raster::sync_relay*  sync,
 			memcpy( frame_buffer, src, image_size );
 			
 			src = frame_buffer;
+			
+			if ( hwcursor_visible )
+			{
+				cursor_loc = *(uint32_t*) cursor_state->pointer;
+				
+				draw_hwcursor( frame_buffer, src_stride, width, height );
+			}
 		}
 		
 		blit( src, src_stride, dst, dst_stride, width, height, draw );
