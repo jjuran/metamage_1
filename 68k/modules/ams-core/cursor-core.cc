@@ -73,7 +73,7 @@ void init_lowmem_Cursor()
 	CrsrState = -1;  // Invisible cursor, at first
 }
 
-static
+static inline
 void set_Crsr_vars( short h, short v )
 {
 	h -= TheCrsr.hotSpot.h;
@@ -139,7 +139,7 @@ empty:
 	CrsrAddr = NULL;
 }
 
-static
+static inline
 void save_bits_under_cursor( short n )
 {
 	Ptr addr = CrsrAddr;
@@ -154,7 +154,7 @@ void save_bits_under_cursor( short n )
 	}
 }
 
-static
+static inline
 void restore_bits_under_cursor( short n )
 {
 	Ptr addr = CrsrAddr;
@@ -169,7 +169,7 @@ void restore_bits_under_cursor( short n )
 	}
 }
 
-static
+static inline
 void plot_cursor( Ptr addr, short shift, short h_trim, short v_skip, short n )
 {
 	const uint16_t* p = (const uint16_t*) TheCrsr.data + v_skip;
