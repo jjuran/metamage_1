@@ -172,6 +172,8 @@ void restore_bits_under_cursor( short n )
 static inline
 void plot_cursor( Ptr addr, short shift, short h_trim, short v_skip, short n )
 {
+	screen_lock lock;
+	
 	const uint16_t* p = (const uint16_t*) TheCrsr.data + v_skip;
 	const uint16_t* m = (const uint16_t*) TheCrsr.mask + v_skip;
 	
@@ -218,11 +220,11 @@ void paint_cursor( short h, short v )
 		return;
 	}
 	
-	screen_lock lock;
-	
 	short h_trim = 0;
 	short v_skip = 0;
 	short v_count = CrsrRect.bottom - CrsrRect.top;
+	
+	save_bits_under_cursor( v_count );
 	
 	h -= TheCrsr.hotSpot.h;
 	v -= TheCrsr.hotSpot.v;
@@ -245,8 +247,7 @@ void paint_cursor( short h, short v )
 		plotAddr += 2;
 	}
 	
-	save_bits_under_cursor( v_count );
-	plot_cursor           ( plotAddr, h & 0xF, h_trim, v_skip, v_count );
+	plot_cursor( plotAddr, h & 0xF, h_trim, v_skip, v_count );
 }
 
 void hide_cursor()
