@@ -172,32 +172,7 @@ void restore_bits_under_cursor( short n )
 static inline
 void plot_cursor( Ptr addr, short shift, short h_trim, short v_skip, short n )
 {
-	screen_lock lock;
-	
-	const uint16_t* p = (const uint16_t*) TheCrsr.data + v_skip;
-	const uint16_t* m = (const uint16_t*) TheCrsr.mask + v_skip;
-	
-	for ( short i = 0;  i < n;  ++i )
-	{
-		uint16_t data = *p++;
-		uint16_t mask = *m++;
-		
-		uint16_t* q = (uint16_t*) addr;
-		
-		if ( h_trim >= 0 )
-		{
-			*q   &= ~(mask >> shift);
-			*q++ ^=   data >> shift;
-		}
-		
-		if ( shift  &&  h_trim <= 0 )
-		{
-			*q &= ~(mask << (16 - shift));
-			*q ^=   data << (16 - shift);
-		}
-		
-		addr += ScreenRow;
-	}
+	plot_cursor( &TheCrsr, addr, shift, h_trim, v_skip, n, ScreenRow );
 }
 
 static
