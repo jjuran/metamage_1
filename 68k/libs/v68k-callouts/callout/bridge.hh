@@ -63,6 +63,9 @@ enum
 	reserved11,
 	reserved12,
 	
+	// $FFBE - $FFB8
+	plot_cursor,
+	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block
 	

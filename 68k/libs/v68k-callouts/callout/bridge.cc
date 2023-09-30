@@ -30,6 +30,7 @@
 #include "utils/load.hh"
 
 // v68k-callouts
+#include "callout/cursor.hh"
 #include "callout/exceptions.hh"
 #include "callout/screen.hh"
 #include "callout/timeval.hh"
@@ -609,6 +610,8 @@ static const function_type the_callouts[] =
 	NULL,
 	NULL,
 	NULL,
+	
+	&plot_cursor_callout,
 	
 	&system_call_callout,
 	&microseconds_callout,
