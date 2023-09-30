@@ -372,6 +372,8 @@ void update_loop( raster::sync_relay*  sync,
 	const size_t src_stride = loaded_raster.meta->desc.stride;
 	const size_t image_size = src_stride * height;
 	
+	uint8_t* frame_buffer = (uint8_t*) malloc( image_size );
+	
 	uint32_t raster_seed = 0;
 	
 	while ( sync->status == Sync_ready  &&  ! signalled )
@@ -396,8 +398,22 @@ void update_loop( raster::sync_relay*  sync,
 		
 		src += loaded_raster.meta->desc.frame * image_size;
 		
+		if ( frame_buffer )
+		{
+			/*
+				Copy the frame out of shared memory all at once
+				to minimize tearing (at least theoretically).
+			*/
+			
+			memcpy( frame_buffer, src, image_size );
+			
+			src = frame_buffer;
+		}
+		
 		blit( src, src_stride, dst, dst_stride, width, height, draw );
 	}
+	
+	free( frame_buffer );
 }
 
 static
