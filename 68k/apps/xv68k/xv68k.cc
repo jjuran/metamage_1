@@ -300,7 +300,7 @@ const uint16_t argc_addr = params_addr + 40;  // 4 bytes
 const uint16_t argv_addr = params_addr + 44;  // 4 bytes
 const uint32_t args_addr = params_addr + 48;
 
-static uint32_t mem_size = code_address + code_max_size;
+static uint32_t mem_size = 1024 * 128;
 
 
 static
