@@ -98,6 +98,8 @@ static bool has_screen;
 
 static unsigned long n_instructions;
 
+static int n_512K_blocks = -1;
+
 struct module_spec
 {
 	const char*  name;
@@ -795,7 +797,7 @@ int execute_68k( int argc, char* const* argv )
 	
 	emu.put_byte( CPUFlag, mc68k_model >> 4, v68k::user_data_space );
 	
-	if ( mem_size >= 1024 * 128 )
+	if ( n_512K_blocks >= 0 )
 	{
 		alt_screen_addr  = mem_size - (0x20000 - 0x12700);
 		main_screen_addr = mem_size - (0x20000 - 0x1A700);
@@ -912,8 +914,6 @@ char* const* get_options( char** argv )
 		using command::global_result;
 		
 		using gear::parse_unsigned_decimal;
-		
-		int n_512K_blocks;
 		
 		switch ( opt )
 		{
