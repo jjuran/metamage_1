@@ -12,9 +12,19 @@ namespace screen {
 
 extern short lock_level;
 
-void ignore_screen_locks();
+extern bool ignoring_screen_locks;
 
-bool is_unlocked();
+inline
+void ignore_screen_locks()
+{
+	ignoring_screen_locks = true;
+}
+
+inline
+bool is_unlocked()
+{
+	return lock_level >= 0  ||  ignoring_screen_locks;
+}
 
 }  // namespace screen
 }  // namespace v68k
