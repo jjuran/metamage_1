@@ -37,7 +37,7 @@ using v68k::screen::the_sync_relay;
 
 static raster_metadata* meta;
 
-static void* spare_screen_buffer;
+static void* spare_transit_buffer;
 
 static bool using_alternate_buffer;
 
@@ -46,15 +46,15 @@ void page_flip()
 {
 	using_alternate_buffer = ! using_alternate_buffer;
 	
-	if ( spare_screen_buffer )
+	if ( spare_transit_buffer )
 	{
 		meta->desc.frame = using_alternate_buffer;
 		
 		void* old_addr = transit_buffer;
-		void* new_addr = spare_screen_buffer;
+		void* new_addr = spare_transit_buffer;
 		
-		transit_buffer      = new_addr;
-		spare_screen_buffer = old_addr;
+		transit_buffer       = new_addr;
+		spare_transit_buffer = old_addr;
 	}
 	
 	v68k::screen::update();
@@ -120,7 +120,7 @@ int set_screen_backing_store_file( const char* path )
 	
 	if ( raster.meta->desc.extra )
 	{
-		spare_screen_buffer = (uint8_t*) transit_buffer + the_screen_size;
+		spare_transit_buffer = (uint8_t*) transit_buffer + the_screen_size;
 	}
 	
 	uint32_t count = 1 + raster.meta->desc.extra;
@@ -180,7 +180,7 @@ uint8_t* translate_spare( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 		return 0;  // NULL
 	}
 	
-	if ( spare_screen_buffer == 0 )  // NULL
+	if ( spare_transit_buffer == 0 )  // NULL
 	{
 		return 0;  // NULL
 	}
@@ -198,7 +198,7 @@ uint8_t* translate_spare( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 		return 0;  // NULL
 	}
 	
-	return (uint8_t*) spare_screen_buffer + addr;
+	return (uint8_t*) spare_transit_buffer + addr;
 }
 
 uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
