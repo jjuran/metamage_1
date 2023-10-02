@@ -164,8 +164,6 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		the screen there, and on update, copy to the live graphics buffer.
 	*/
 	
-	const bool has_fixed_RAM = low_memory_size >= 128 * 1024;
-	
 	if ( addr_in_screen( addr, length, main_screen_addr ) )
 	{
 		if ( access == mem_exec  ||  ! page_1_virtual_buffer )
@@ -175,7 +173,6 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		
 		const uint32_t offset = addr - main_screen_addr;
 		
-		if ( has_fixed_RAM )
 		{
 			if ( access != v68k::mem_update )
 			{
@@ -199,7 +196,6 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		
 		const uint32_t offset = addr - alt_screen_addr;
 		
-		if ( has_fixed_RAM )
 		{
 			if ( access != v68k::mem_update )
 			{
