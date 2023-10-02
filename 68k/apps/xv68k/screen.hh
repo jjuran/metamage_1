@@ -10,6 +10,9 @@
 #include "v68k/memory.hh"
 
 
+extern uint8_t* page_1_virtual_buffer;
+extern uint8_t* page_2_virtual_buffer;
+
 extern uint8_t* page_1_transit_buffer;
 extern uint8_t* page_2_transit_buffer;
 

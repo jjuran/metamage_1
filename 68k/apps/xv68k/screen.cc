@@ -30,16 +30,21 @@ using raster::raster_load;
 using raster::raster_metadata;
 using raster::sync_relay;
 
+using v68k::screen::virtual_buffer;
 using v68k::screen::transit_buffer;
 using v68k::screen::the_screen_size;
 using v68k::screen::the_sync_relay;
 
+
+uint8_t* page_1_virtual_buffer;
+uint8_t* page_2_virtual_buffer;
 
 uint8_t* page_1_transit_buffer;
 uint8_t* page_2_transit_buffer;
 
 static raster_metadata* meta;
 
+static void* spare_virtual_buffer;
 static void* spare_transit_buffer;
 
 static bool using_alternate_buffer;
@@ -58,6 +63,20 @@ void page_flip()
 		
 		transit_buffer       = new_addr;
 		spare_transit_buffer = old_addr;
+	}
+	
+	if ( page_2_virtual_buffer )
+	{
+		if ( ! spare_virtual_buffer )
+		{
+			spare_virtual_buffer = page_2_virtual_buffer;
+		}
+		
+		void* old_addr = virtual_buffer;
+		void* new_addr = spare_virtual_buffer;
+		
+		virtual_buffer       = new_addr;
+		spare_virtual_buffer = old_addr;
 	}
 	
 	v68k::screen::update();

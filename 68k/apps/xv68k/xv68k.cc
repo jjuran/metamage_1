@@ -55,6 +55,7 @@
 
 // v68k-screen
 #include "screen/lock.hh"
+#include "screen/storage.hh"
 #include "screen/surface.hh"
 
 // v68k-syscalls
@@ -803,6 +804,16 @@ int execute_68k( int argc, char* const* argv )
 		memset( mem + main_screen_addr, 0xFF, 64 * 342 );  // paint it black
 		
 		emu.put_long( MemTop,      mem_size,         user_data_space );
+	}
+	
+	using v68k::screen::virtual_buffer;
+	
+	if ( ! virtual_buffer )
+	{
+		page_1_virtual_buffer = mem + main_screen_addr;
+		page_2_virtual_buffer = mem + alt_screen_addr;
+		
+		virtual_buffer = page_1_virtual_buffer;
 	}
 	
 	using v68k::screen::the_surface_shape;
