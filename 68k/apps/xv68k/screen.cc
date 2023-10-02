@@ -30,7 +30,7 @@ using raster::raster_load;
 using raster::raster_metadata;
 using raster::sync_relay;
 
-using v68k::screen::the_screen_buffer;
+using v68k::screen::transit_buffer;
 using v68k::screen::the_screen_size;
 using v68k::screen::the_sync_relay;
 
@@ -50,10 +50,10 @@ void page_flip()
 	{
 		meta->desc.frame = using_alternate_buffer;
 		
-		void* old_addr = the_screen_buffer;
+		void* old_addr = transit_buffer;
 		void* new_addr = spare_screen_buffer;
 		
-		the_screen_buffer   = new_addr;
+		transit_buffer      = new_addr;
 		spare_screen_buffer = old_addr;
 	}
 	
@@ -105,7 +105,7 @@ int set_screen_backing_store_file( const char* path )
 		return errno;
 	}
 	
-	the_screen_buffer = raster.addr;
+	transit_buffer = raster.addr;
 	
 	meta = raster.meta;
 	
@@ -120,7 +120,7 @@ int set_screen_backing_store_file( const char* path )
 	
 	if ( raster.meta->desc.extra )
 	{
-		spare_screen_buffer = (uint8_t*) the_screen_buffer + the_screen_size;
+		spare_screen_buffer = (uint8_t*) transit_buffer + the_screen_size;
 	}
 	
 	uint32_t count = 1 + raster.meta->desc.extra;
@@ -142,7 +142,7 @@ uint8_t* translate_live( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 		return 0;  // NULL
 	}
 	
-	if ( the_screen_buffer == 0 )  // NULL
+	if ( transit_buffer == 0 )  // NULL
 	{
 		return 0;  // NULL
 	}
@@ -162,7 +162,7 @@ uint8_t* translate_live( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 		return 0;  // NULL
 	}
 	
-	uint8_t* p = (uint8_t*) the_screen_buffer + addr;
+	uint8_t* p = (uint8_t*) transit_buffer + addr;
 	
 	if ( access == v68k::mem_update  &&  is_unlocked() )
 	{

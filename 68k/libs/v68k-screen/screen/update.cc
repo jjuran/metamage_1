@@ -71,7 +71,7 @@ void update()
 	
 	if ( previous_frame )
 	{
-		if ( memcmp( previous_frame, the_screen_buffer, the_screen_size ) == 0 )
+		if ( memcmp( previous_frame, transit_buffer, the_screen_size ) == 0 )
 		{
 			return;
 		}
@@ -98,7 +98,7 @@ void update()
 	
 	if ( previous_frame )
 	{
-		memcpy( previous_frame, the_screen_buffer, the_screen_size );
+		memcpy( previous_frame, transit_buffer, the_screen_size );
 	}
 }
 

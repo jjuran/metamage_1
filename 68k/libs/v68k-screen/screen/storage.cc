@@ -16,7 +16,8 @@ namespace screen {
 
 unsigned the_screen_size;
 
-void* the_screen_buffer;
+void* virtual_buffer;
+void* transit_buffer;
 
 }  // namespace screen
 }  // namespace v68k
