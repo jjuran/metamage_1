@@ -13,13 +13,6 @@
 #include <MacWindows.h>
 #endif
 
-// missing-macos
-#ifdef MAC_OS_X_VERSION_10_7
-#ifndef MISSING_QUICKDRAW_H
-#include "missing/Quickdraw.h"
-#endif
-#endif
-
 // mac-config
 #include "mac_config/apple-events.hh"
 #include "mac_config/desk-accessories.hh"
@@ -52,9 +45,11 @@
 
 #define CONFIG_DAs CONFIG_DESK_ACCESSORIES
 
-#if TARGET_API_MAC_CARBON
-#define SystemTask()  /**/
-#endif
+#if CALL_NOT_IN_CARBON
+	#define TrackGoAway( w, pt )  TrackGoAway_magic( w, pt )
+#else
+	#define SystemTask()  /**/
+#endif  // #if CALL_NOT_IN_CARBON
 
 using mac::qd::wide_drag_area;
 
@@ -159,12 +154,6 @@ Boolean GetNextEvent( EventRecord& event )
 	
 	return GetNextEvent( everyEvent, &event );
 }
-
-#if CALL_NOT_IN_CARBON
-
-#define TrackGoAway( w, pt )  TrackGoAway_magic( w, pt )
-
-#endif  // #if CALL_NOT_IN_CARBON
 
 int main()
 {
@@ -335,8 +324,6 @@ int main()
 			}
 		}
 	}
-	
-	ExitToShell();
 	
 	return 0;
 }
