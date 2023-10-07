@@ -254,9 +254,22 @@ namespace Pedestal
 		mac::qd::plot_icon_id( iconBounds, 128 );
 	}
 	
-	static inline
-	void DrawApplicationName( CFStringRef text, const Rect& bounds )
+	static
+	void DrawApplicationName( CFStringRef text )
 	{
+		short x = kAboutBoxTextHorizontalMargin;
+		short y = kAboutBoxTopMargin
+		        + kAboutBoxIconHeight
+		        + kAboutBoxIconToTextGap;
+		
+		const Rect bounds =
+		{
+			y,
+			x,
+			y + kAboutBoxAppNameHeight,
+			x + kAboutBoxTextWidth,
+		};
+		
 		DrawCenteredText( text, bounds, "Lucida Grande Bold", 14 );
 	}
 	
@@ -349,17 +362,9 @@ namespace Pedestal
 		x = kAboutBoxTextHorizontalMargin;
 		y += kAboutBoxIconHeight + kAboutBoxIconToTextGap;
 		
-		Rect nameBounds =
-		{
-			(short) y,
-			(short) x,
-			(short) y + kAboutBoxAppNameHeight,
-			(short) x + kAboutBoxTextWidth,
-		};
-		
 		CGContextSetGrayFillColor( context, 0.0, 1.0 );  // black
 		
-		DrawApplicationName( GetBundleName(), nameBounds );
+		DrawApplicationName( GetBundleName() );
 		
 		y += kAboutBoxAppNameHeight + kAboutBoxInterTextGap;
 		
