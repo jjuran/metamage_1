@@ -335,8 +335,8 @@ namespace Pedestal
 		CGContextSetGrayFillColor( context, 1.0 * 0xEEEE / 0xFFFF, 1.0 );
 		CGContextFillRect( context, bounds );
 		
-		float x = bounds.origin.x + kAboutBoxIconHorizontalMargin;
-		float y = bounds.origin.y + kAboutBoxTopMargin;
+		float x = kAboutBoxIconHorizontalMargin;
+		float y = kAboutBoxTopMargin;
 		
 		const CGRect iconBounds =
 		{
@@ -346,7 +346,7 @@ namespace Pedestal
 		
 		mac::icon::plot_IconRef( context, iconBounds, BundleIcon() );
 		
-		x = bounds.origin.x + kAboutBoxTextHorizontalMargin;
+		x = kAboutBoxTextHorizontalMargin;
 		y += kAboutBoxIconHeight + kAboutBoxIconToTextGap;
 		
 		Rect nameBounds =
