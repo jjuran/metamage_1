@@ -92,6 +92,9 @@
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
+#define APP_NAME_FONT  "Lucida Grande Bold"
+#define APP_NAME_SIZE  14
+
 
 static inline
 bool has_color_quickdraw()
@@ -196,7 +199,7 @@ namespace Pedestal
 		
 		if ( TARGET_API_MAC_CARBON  &&  mac::sys::gestalt( 'sysv' ) >= 0x1000 )
 		{
-			TextSize( 14 );
+			TextSize( APP_NAME_SIZE );
 			TextFace( bold );
 		}
 		
@@ -266,8 +269,8 @@ namespace Pedestal
 		
 	#ifdef __MAC_10_11
 		
-		CTFontRef font = CTFontCreateWithName( CFSTR( "Lucida Grande Bold" ),
-		                                       14,
+		CTFontRef font = CTFontCreateWithName( CFSTR( APP_NAME_FONT ),
+		                                       APP_NAME_SIZE,
 		                                       NULL );
 		
 		CFStringRef keys[] = { kCTFontAttributeName };
@@ -322,7 +325,7 @@ namespace Pedestal
 			x + kAboutBoxTextWidth,
 		};
 		
-		DrawCenteredText( text, bounds, "Lucida Grande Bold", 14 );
+		DrawCenteredText( text, bounds, APP_NAME_FONT, APP_NAME_SIZE );
 		
 	#endif
 	}
