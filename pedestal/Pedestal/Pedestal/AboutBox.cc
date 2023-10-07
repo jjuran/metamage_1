@@ -86,6 +86,8 @@
 #endif
 #endif
 
+#define LENGTH( array )  (sizeof (array) / sizeof (array)[0])
+
 #define STRLEN( s )  (sizeof "" s - 1)
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -255,12 +257,62 @@ namespace Pedestal
 	}
 	
 	static
-	void DrawApplicationName( CFStringRef text )
+	void DrawApplicationName( CFStringRef text, CGContextRef context )
 	{
 		short x = kAboutBoxTextHorizontalMargin;
 		short y = kAboutBoxTopMargin
 		        + kAboutBoxIconHeight
 		        + kAboutBoxIconToTextGap;
+		
+	#ifdef __MAC_10_11
+		
+		CTFontRef font = CTFontCreateWithName( CFSTR( "Lucida Grande Bold" ),
+		                                       14,
+		                                       NULL );
+		
+		CFStringRef keys[] = { kCTFontAttributeName };
+		CFTypeRef values[] = { font };
+		
+		CFDictionaryRef attributes;
+		attributes = CFDictionaryCreate( kCFAllocatorDefault,
+		                                 (const void**) keys,
+		                                 (const void**) values,
+		                                 LENGTH( keys ),
+		                                 &kCFTypeDictionaryKeyCallBacks,
+		                                 &kCFTypeDictionaryValueCallBacks );
+		
+		CFAttributedStringRef attrString;
+		attrString = CFAttributedStringCreate( kCFAllocatorDefault,
+		                                       GetBundleName(),
+		                                       attributes );
+		
+		CTLineRef line = CTLineCreateWithAttributedString( attrString );
+		
+		CGFloat ascent;
+		CGFloat descent;
+		CGFloat leading;
+		
+		double lineWidth = CTLineGetTypographicBounds( line, &ascent, &descent, &leading );
+		
+		double pen_x = CTLineGetPenOffsetForFlush( line, 0.5, kAboutBoxWidth );
+		double pen_y = y + leading + ascent;
+		
+		CGContextSaveGState( context );
+		
+		CGContextScaleCTM( context, 1.0, -1.0 );
+		
+		CGContextSetTextPosition( context, pen_x, -pen_y );
+		
+		CTLineDraw( line, context );
+		
+		CGContextRestoreGState( context );
+		
+		CFRelease( attrString );
+		CFRelease( attributes );
+		CFRelease( line );
+		CFRelease( font );
+		
+	#else
 		
 		const Rect bounds =
 		{
@@ -271,6 +323,8 @@ namespace Pedestal
 		};
 		
 		DrawCenteredText( text, bounds, "Lucida Grande Bold", 14 );
+		
+	#endif
 	}
 	
 	static
@@ -364,7 +418,7 @@ namespace Pedestal
 		
 		CGContextSetGrayFillColor( context, 0.0, 1.0 );  // black
 		
-		DrawApplicationName( GetBundleName() );
+		DrawApplicationName( GetBundleName(), context );
 		
 		y += kAboutBoxAppNameHeight + kAboutBoxInterTextGap;
 		
