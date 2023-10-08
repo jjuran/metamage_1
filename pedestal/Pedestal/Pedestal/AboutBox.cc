@@ -50,6 +50,9 @@
 // mac-icon-utils
 #include "mac_icon/plot_IconRef.hh"
 
+// mac-app-utils
+#include "mac_app/about_box_metrics.hh"
+
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 
@@ -108,36 +111,6 @@ namespace Pedestal
 	namespace n = nucleus;
 	
 	
-	const int kAboutBoxIconEdgeLength       =  32 << TARGET_API_MAC_CARBON;
-	
-	const int kAboutBoxIconWidth            = kAboutBoxIconEdgeLength;
-	const int kAboutBoxIconHorizontalMargin = 110;
-	const int kAboutBoxTextHorizontalMargin =  24;
-	
-	const int kAboutBoxTopMargin            =   8;
-	const int kAboutBoxIconHeight           = kAboutBoxIconEdgeLength;
-	const int kAboutBoxIconToTextGap        =  12;
-	const int kAboutBoxAppNameHeight        =  19;
-	const int kAboutBoxInterTextGap         =   8;
-	const int kAboutBoxDetailHeight         =  12;
-	const int kAboutBoxBottomMargin         =  20;
-	
-	const int kAboutBoxWidth = kAboutBoxIconWidth
-	                         + kAboutBoxIconHorizontalMargin * 2;
-	
-	const int kAboutBoxHeight = kAboutBoxTopMargin
-	                          + kAboutBoxIconHeight
-	                          + kAboutBoxIconToTextGap
-	                          + kAboutBoxAppNameHeight
-	                          + kAboutBoxInterTextGap
-	                          + kAboutBoxDetailHeight
-	                          + kAboutBoxInterTextGap
-	                          + kAboutBoxDetailHeight
-	                          + kAboutBoxBottomMargin;
-	
-	const int kAboutBoxTextWidth = kAboutBoxWidth
-	                             - kAboutBoxTextHorizontalMargin * 2;
-	
 	static const RGBColor kAboutBoxBackgroundColor = { 0xEEEE, 0xEEEE, 0xEEEE };
 	
 	
@@ -170,6 +143,8 @@ namespace Pedestal
 	static
 	void draw_About_box( const Rect& bounds )
 	{
+		using namespace mac::app;
+		
 		EraseRect( &bounds );
 		
 		short top  = kAboutBoxTopMargin;
@@ -262,6 +237,8 @@ namespace Pedestal
 	static
 	void DrawApplicationName( CFStringRef text, CGContextRef context )
 	{
+		using namespace mac::app;
+		
 		short x = kAboutBoxTextHorizontalMargin;
 		short y = kAboutBoxTopMargin
 		        + kAboutBoxIconHeight
@@ -402,6 +379,8 @@ namespace Pedestal
 	
 	void AboutBoxView::DrawInContext( CGContextRef context, CGRect bounds )
 	{
+		using namespace mac::app;
+		
 		CGContextSetGrayFillColor( context, 1.0 * 0xEEEE / 0xFFFF, 1.0 );
 		CGContextFillRect( context, bounds );
 		
@@ -465,6 +444,8 @@ namespace Pedestal
 	static
 	n::owned< WindowRef > NewAboutBox()
 	{
+		using namespace mac::app;
+		
 		const WindowAttributes attrs = kWindowCloseBoxAttribute
 		                           #if CONFIG_COMPOSITING
 		                             | kWindowCompositingAttribute
