@@ -83,6 +83,7 @@ enum
 	_SetItemMark    = _SetItmMark,
 	_SetItemStyle   = _SetItmStyle,
 	_UpdateControls = _UpdtControl,
+	_UpdateDialog   = _UpdtDialog,
 };
 
 
@@ -236,6 +237,7 @@ static void install_Dialogs()
 	TBTRAP( HideDItem );  // A827
 	TBTRAP( ShowDItem );  // A828
 	
+	TBTRAP( UpdateDialog  );  // A978
 	TBTRAP( CouldDialog   );  // A979
 	TBTRAP( FreeDialog    );  // A97A
 	TBTRAP( InitDialogs   );  // A97B

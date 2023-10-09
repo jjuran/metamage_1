@@ -8,10 +8,13 @@
 
 struct EventRecord;
 struct GrafPort;
+struct MacRegion;
 struct Point;
 struct Rect;
 
 typedef unsigned char Boolean;
+
+typedef MacRegion** RgnHandle;
 
 typedef GrafPort* WindowRef;
 typedef GrafPort* DialogRef;
@@ -94,5 +97,7 @@ pascal void HideDItem_patch( DialogRef dialog, short i );
 pascal void ShowDItem_patch( DialogRef dialog, short i );
 
 pascal short FindDItem_patch( DialogRef dialog, Point pt );
+
+pascal void UpdateDialog_patch( DialogRef dialog, RgnHandle updateRgn );
 
 #endif

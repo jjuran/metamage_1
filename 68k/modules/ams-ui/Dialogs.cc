@@ -1556,3 +1556,8 @@ pascal short FindDItem_patch( DialogRef dialog, Point pt )
 	
 	return -1;
 }
+
+pascal void UpdateDialog_patch( DialogRef dialog, RgnHandle updateRgn )
+{
+	DrawDialog( dialog );
+}
