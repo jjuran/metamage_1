@@ -14,6 +14,16 @@
 #endif
 
 
+#ifndef __MACERRORS__
+enum
+{
+	noScrapErr = -100,
+	noTypeErr  = -102,
+};
+#endif
+
+short MemErr : 0x0220;
+
 short  TEScrpLength : 0x0AB0;
 Handle TEScrpHandle : 0x0AB4;
 
@@ -58,12 +68,54 @@ pascal long LoadScrap_patch()
 
 pascal long ZeroScrap_patch()
 {
+	scrapVars.scrapSize = 0;
+	
+	if ( Handle h = scrapVars.scrapHandle )
+	{
+		SetHandleSize( h, 0 );
+	}
+	else
+	{
+		scrapVars.scrapHandle = NewHandle( 0 );
+	}
+	
+	scrapVars.scrapCount++;
+	scrapVars.scrapState = 1;
+	
 	return noErr;
 }
 
 pascal long PutScrap_patch( long length, ResType type, const char* src )
 {
-	return noErr;
+	Handle h = scrapVars.scrapHandle;
+	
+	if ( ! h )
+	{
+		return noScrapErr;
+	}
+	
+	/*
+		Append the new scrap entry to the scrap handle, starting with
+		the 8-byte type/length header.
+		
+		Keep each scrap entry a multiple of two bytes.  Since handle sizes
+		are also rounded up to (at least) two bytes, this won't fail.
+	*/
+	
+	OSErr err = (PtrAndHand( &type, h, 8            ), MemErr)  ||
+	            (PtrAndHand( src,   h, length       ), MemErr)  ||
+	            (PtrAndHand( "\0",  h, length & 0x1 ), MemErr);
+	
+	if ( err )
+	{
+		SetHandleSize( h, scrapVars.scrapSize );
+	}
+	else
+	{
+		scrapVars.scrapSize += 8 + length + (length & 0x1);
+	}
+	
+	return err;
 }
 
 #pragma mark -
@@ -72,15 +124,37 @@ pascal long PutScrap_patch( long length, ResType type, const char* src )
 
 pascal long GetScrap_patch( char** dst, ResType type, long* offset )
 {
-	*offset = 0;
+	Handle h = scrapVars.scrapHandle;
 	
-	if ( dst != NULL )
+	if ( ! h )
 	{
-		if ( OSErr err = PtrToXHand( *TEScrpHandle, dst, TEScrpLength ) )
-		{
-			return err;
-		}
+		return noTypeErr;
 	}
 	
-	return TEScrpLength;
+	Ptr p = *h;
+	
+	Ptr end = p + scrapVars.scrapSize;
+	
+	while ( p < end )
+	{
+		UInt32* p32 = (UInt32*) p;
+		
+		ResType entry_type = *p32++;
+		long    entry_size = *p32++;
+		
+		p = (Ptr) p32;
+		
+		if ( entry_type == type )
+		{
+			*offset = p - *h;
+			
+			return entry_size;
+		}
+		
+		entry_size += entry_size & 0x1;
+		
+		p += entry_size;
+	}
+	
+	return noTypeErr;
 }
