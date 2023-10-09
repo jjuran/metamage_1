@@ -259,7 +259,7 @@ void install_MemoryManager()
 	OSTRAP( PurgeMem         );  // A04D
 	
 	OSTRAP( MaxBlock         );  // A061
-	
+	OSTRAP( PurgeSpace       );  // A062
 	OSTRAP( MaxApplZone      );  // A063
 	OSTRAP( MoveHHi          );  // A064
 	

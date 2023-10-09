@@ -428,3 +428,13 @@ long MaxBlock_patch( short trap_word : __D1 )
 {
 	return 1024 * 1024;
 }
+
+asm
+long PurgeSpace_patch()
+{
+	MOVEQ.L  #0x10,D0
+	SWAP     D0          //      total space available after purge:  1 MiB
+	MOVEA.L  D0,A0       // contiguous space available after purge:  1 MiB
+	
+	RTS
+}

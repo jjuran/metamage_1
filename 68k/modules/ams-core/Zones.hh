@@ -50,4 +50,6 @@ void MoveHHi_patch( Handle h : __A0 );
 
 long MaxBlock_patch( short trap_word : __D1 );
 
+long PurgeSpace_patch();
+
 #endif
