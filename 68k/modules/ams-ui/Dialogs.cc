@@ -1404,7 +1404,7 @@ pascal void SetIText_patch( Handle h, const unsigned char* text )
 	}
 }
 
-pascal void SelIText_patch( GrafPort*  dialog,
+pascal void SelIText_patch( DialogRef  dialog,
                             short      item,
                             short      start,
                             short      end )
@@ -1445,7 +1445,7 @@ pascal void SelIText_patch( GrafPort*  dialog,
 	}
 }
 
-pascal void HideDItem_patch( GrafPort* dialog, short i )
+pascal void HideDItem_patch( DialogRef dialog, short i )
 {
 	DialogPeek d = (DialogPeek) dialog;
 	
@@ -1499,7 +1499,7 @@ pascal void HideDItem_patch( GrafPort* dialog, short i )
 	bounds->right += 16384;
 }
 
-pascal void ShowDItem_patch( GrafPort* dialog, short i )
+pascal void ShowDItem_patch( DialogRef dialog, short i )
 {
 	DialogPeek d = (DialogPeek) dialog;
 	
