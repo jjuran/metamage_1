@@ -179,12 +179,14 @@ end:
 asm short HandAndHand_patch( Handle src : __A0, Handle dest : __A1 )
 {
 	_GetHandleSize
+	TST.L    D0
 	BMI.S    end      // bail on error
 	
 	EXG      D0,D1    // D1 = src size
 	EXG      A0,A1    // place dest in A0 for _SetHandleSize, save src in A1
 	
 	_GetHandleSize
+	TST.L    D0
 	BMI.S    end      // bail on error
 	
 	MOVE.L   D0,D2    // copy dest size
@@ -217,6 +219,7 @@ asm short PtrAndHand_patch( Ptr p : __A0, Handle h : __A1, long n : __D0 )
 	EXG      A0,A1    // place dest in A0 for _GetHandleSize, save src in A1
 	
 	_GetHandleSize
+	TST.L    D0
 	BMI.S    end      // bail on error
 	
 	MOVE.L   D0,D2    // copy dest size
