@@ -1024,6 +1024,18 @@ char* const* get_options( char** argv )
 				
 				has_screen = true;
 				
+				using v68k::screen::the_screen_size;
+				using v68k::screen::virtual_buffer;
+				
+				if ( the_screen_size != 21888 )
+				{
+					virtual_buffer = malloc( the_screen_size );
+					
+					page_1_virtual_buffer = (uint8_t*) virtual_buffer;
+					
+					main_screen_addr = 0x00E00000;
+				}
+				
 				break;
 			
 			case Opt_module:
