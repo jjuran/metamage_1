@@ -55,6 +55,7 @@
 
 // v68k-screen
 #include "screen/lock.hh"
+#include "screen/surface.hh"
 
 // v68k-syscalls
 #include "syscall/bridge.hh"
@@ -803,13 +804,19 @@ int execute_68k( int argc, char* const* argv )
 		
 		memset( mem + main_screen_addr, 0xFF, 64 * 342 );  // paint it black
 		
-		emu.put_word( ScreenRow,   64,               user_data_space );
 		emu.put_long( MemTop,      mem_size,         user_data_space );
-		
-		emu.put_long( SoundBase,   main_sound_addr,  user_data_space );
-		emu.put_long( ScrnBase,    main_screen_addr, user_data_space );
-		emu.put_long( CrsrPin + 4, 512 | 342 << 16,  user_data_space );
 	}
+	
+	using v68k::screen::the_surface_shape;
+	
+	const uint32_t screen_row = the_surface_shape.stride;
+	const uint32_t screen_res = the_surface_shape.width
+	                          | the_surface_shape.height << 16;
+	
+	emu.put_word( ScreenRow,   screen_row,       user_data_space );
+	emu.put_long( SoundBase,   main_sound_addr,  user_data_space );
+	emu.put_long( ScrnBase,    main_screen_addr, user_data_space );
+	emu.put_long( CrsrPin + 4, screen_res,       user_data_space );
 	
 	load_Mac_traps( mem );
 	
