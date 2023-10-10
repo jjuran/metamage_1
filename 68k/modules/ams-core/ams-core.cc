@@ -95,8 +95,6 @@ static unsigned romgen;
 static unsigned System;
 
 
-long  MemTop      : 0x0108;
-
 void* UTableBase  : 0x011C;
 short UnitNtryCnt : 0x01D2;
 
@@ -107,18 +105,15 @@ short SysVersion : 0x015A;
 Byte  MBState   : 0x0172;
 
 void* SoundPtr  : 0x0262;
-void* SoundBase : 0x0266;
 short ROM85     : 0x028E;
 void* SysZone   : 0x02A6;
 void* ApplZone  : 0x02AA;
 
 long  DefltStack : 0x0322;
 
-short ScreenRow : 0x0106;
 void* ScrnBase  : 0x0824;
 Point RawMouse  : 0x082C;
 Point Mouse     : 0x0830;
-Rect  CrsrPin   : 0x0834;
 
 void* os_trap_table     [] : 1 * 1024;
 void* toolbox_trap_table[] : 3 * 1024;
@@ -133,12 +128,6 @@ enum
 	_SystemEdit       = _SysEdit,
 };
 
-
-static inline
-pascal asm void ScrnBitMap( BitMap* screenBits )
-{
-	DC.W     _ScrnBitMap
-}
 
 static
 void initialize_low_memory_globals()
@@ -159,19 +148,6 @@ void initialize_low_memory_globals()
 	UTableBase  = malloc( unit_table_bytesize );
 	
 	fast_memset( UTableBase, '\0', unit_table_bytesize );
-	
-	if ( MemTop == 0 )
-	{
-		BitMap screenBits;
-		
-		ScrnBitMap( &screenBits );
-		
-		ScrnBase  = screenBits.baseAddr;
-		ScreenRow = screenBits.rowBytes;
-		CrsrPin   = screenBits.bounds;
-		
-		SoundBase = (Ptr) ScrnBase - 0x1A700 + 0x1FD00;
-	}
 	
 	/*
 		Tetris stores a pointer to a private control block in SoundPtr
