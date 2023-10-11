@@ -144,11 +144,6 @@ namespace screen {
 static
 uint8_t* translate_live( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 {
-	if ( access == v68k::mem_exec )
-	{
-		return 0;  // NULL
-	}
-	
 	if ( transit_buffer == 0 )  // NULL
 	{
 		return 0;  // NULL
@@ -182,11 +177,6 @@ uint8_t* translate_live( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 static
 uint8_t* translate_spare( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 {
-	if ( access == v68k::mem_exec )
-	{
-		return 0;  // NULL
-	}
-	
 	if ( spare_transit_buffer == 0 )  // NULL
 	{
 		return 0;  // NULL

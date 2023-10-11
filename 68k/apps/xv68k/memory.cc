@@ -168,6 +168,11 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	if ( addr_in_screen( addr, length, main_screen_addr ) )
 	{
+		if ( access == mem_exec )
+		{
+			return 0;  // NULL
+		}
+		
 		const uint32_t offset = addr - main_screen_addr;
 		
 		if ( has_fixed_RAM )
@@ -187,6 +192,11 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	if ( vid_x2()  &&  addr_in_screen( addr, length, alt_screen_addr ) )
 	{
+		if ( access == mem_exec )
+		{
+			return 0;  // NULL
+		}
+		
 		const uint32_t offset = addr - alt_screen_addr;
 		
 		if ( has_fixed_RAM )
