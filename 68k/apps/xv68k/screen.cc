@@ -11,7 +11,6 @@
 
 // Standard C
 #include <errno.h>
-#include <string.h>
 
 // raster
 #include "raster/load.hh"
@@ -156,69 +155,3 @@ int set_screen_backing_store_file( const char* path )
 	
 	return 0;
 }
-
-namespace screen {
-
-static
-uint8_t* translate_live( addr_t addr, uint32_t length, fc_t fc, mem_t access )
-{
-	if ( transit_buffer == 0 )  // NULL
-	{
-		return 0;  // NULL
-	}
-	
-	const uint32_t screen_size = the_screen_size;
-	
-	if ( length > screen_size )
-	{
-		// The memory access is somehow wider than the buffer is long
-		return 0;  // NULL
-	}
-	
-	if ( addr > screen_size - length )
-	{
-		return 0;  // NULL
-	}
-	
-	uint8_t* p = (uint8_t*) transit_buffer + addr;
-	
-	return p;
-}
-
-static
-uint8_t* translate_spare( addr_t addr, uint32_t length, fc_t fc, mem_t access )
-{
-	if ( spare_transit_buffer == 0 )  // NULL
-	{
-		return 0;  // NULL
-	}
-	
-	const uint32_t screen_size = the_screen_size;
-	
-	if ( length > screen_size )
-	{
-		// The memory access is somehow wider than the buffer is long
-		return 0;  // NULL
-	}
-	
-	if ( addr > screen_size - length )
-	{
-		return 0;  // NULL
-	}
-	
-	return (uint8_t*) spare_transit_buffer + addr;
-}
-
-uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
-{
-	return using_alternate_buffer ? translate_spare( addr, length, fc, access )
-	                              : translate_live ( addr, length, fc, access );
-}
-
-uint8_t* translate2( addr_t addr, uint32_t length, fc_t fc, mem_t access )
-{
-	return using_alternate_buffer ? translate_live ( addr, length, fc, access )
-	                              : translate_spare( addr, length, fc, access );
-}
-
-}  // namespace screen
