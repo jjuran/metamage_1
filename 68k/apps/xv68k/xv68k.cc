@@ -55,6 +55,7 @@
 
 // v68k-screen
 #include "screen/lock.hh"
+#include "screen/storage.hh"
 #include "screen/surface.hh"
 
 // v68k-syscalls
@@ -96,6 +97,8 @@ static bool verbose;
 static bool has_screen;
 
 static unsigned long n_instructions;
+
+static int n_512K_blocks = -1;
 
 struct module_spec
 {
@@ -297,7 +300,7 @@ const uint16_t argc_addr = params_addr + 40;  // 4 bytes
 const uint16_t argv_addr = params_addr + 44;  // 4 bytes
 const uint32_t args_addr = params_addr + 48;
 
-static uint32_t mem_size = code_address + code_max_size;
+static uint32_t mem_size = 1024 * 128;
 
 
 static
@@ -794,7 +797,7 @@ int execute_68k( int argc, char* const* argv )
 	
 	emu.put_byte( CPUFlag, mc68k_model >> 4, v68k::user_data_space );
 	
-	if ( mem_size >= 1024 * 128 )
+	if ( n_512K_blocks >= 0 )
 	{
 		alt_screen_addr  = mem_size - (0x20000 - 0x12700);
 		main_screen_addr = mem_size - (0x20000 - 0x1A700);
@@ -803,6 +806,16 @@ int execute_68k( int argc, char* const* argv )
 		memset( mem + main_screen_addr, 0xFF, 64 * 342 );  // paint it black
 		
 		emu.put_long( MemTop,      mem_size,         user_data_space );
+	}
+	
+	using v68k::screen::virtual_buffer;
+	
+	if ( ! virtual_buffer )
+	{
+		page_1_virtual_buffer = mem + main_screen_addr;
+		page_2_virtual_buffer = mem + alt_screen_addr;
+		
+		virtual_buffer = page_1_virtual_buffer;
 	}
 	
 	using v68k::screen::the_surface_shape;
@@ -901,8 +914,6 @@ char* const* get_options( char** argv )
 		using command::global_result;
 		
 		using gear::parse_unsigned_decimal;
-		
-		int n_512K_blocks;
 		
 		switch ( opt )
 		{
@@ -1012,6 +1023,18 @@ char* const* get_options( char** argv )
 				}
 				
 				has_screen = true;
+				
+				using v68k::screen::the_screen_size;
+				using v68k::screen::virtual_buffer;
+				
+				if ( the_screen_size != 21888 )
+				{
+					virtual_buffer = malloc( the_screen_size );
+					
+					page_1_virtual_buffer = (uint8_t*) virtual_buffer;
+					
+					main_screen_addr = 0x00E00000;
+				}
 				
 				break;
 			

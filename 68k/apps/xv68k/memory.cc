@@ -5,9 +5,6 @@
 
 #include "memory.hh"
 
-// Standard C
-#include <string.h>
-
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -24,7 +21,9 @@
 #include "v68k-mac/memory.hh"
 
 // v68k-screen
+#include "screen/lock.hh"
 #include "screen/storage.hh"
+#include "screen/update.hh"
 
 // xv68k
 #include "screen.hh"
@@ -50,6 +49,8 @@ uint32_t alt_screen_addr  = 0x00012700;
 uint32_t main_screen_addr = 0x0001A700;
 uint32_t main_sound_addr  = 0x0001FD00;
 
+const uint32_t sound_size = 740;
+
 static uint8_t* low_memory_base;
 static uint32_t low_memory_size;
 
@@ -64,6 +65,16 @@ static inline
 bool addr_within_span( uint32_t addr, uint32_t base, uint32_t length )
 {
 	return addr >= base  &&  addr < base + length;
+}
+
+static inline
+bool addr_in_screen( uint32_t addr, uint32_t length, uint32_t base )
+{
+	const uint32_t screen_size = v68k::screen::the_screen_size;
+	
+	return addr          <  base + screen_size  &&
+	       addr + length <= base + screen_size  &&
+	       addr          >= base;
 }
 
 static
@@ -152,51 +163,39 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		the screen there, and on update, copy to the live graphics buffer.
 	*/
 	
-	const bool has_fixed_RAM = low_memory_size >= 128 * 1024;
-	
-	const uint32_t screen_size = v68k::screen::the_screen_size;
-	
-	if ( addr_within_span( addr, main_screen_addr, screen_size ) )
+	if ( addr_in_screen( addr, length, main_screen_addr ) )
 	{
+		if ( access == mem_exec  ||  ! page_1_virtual_buffer )
+		{
+			return 0;  // NULL
+		}
+		
+		using namespace v68k::screen;
+		
+		if ( is_unlocked()  &&  access == v68k::mem_update )
+		{
+			if ( virtual_buffer == page_1_virtual_buffer )
+			{
+				update();
+			}
+		}
+		
 		const uint32_t offset = addr - main_screen_addr;
 		
-		if ( has_fixed_RAM )
-		{
-			if ( access != v68k::mem_update )
-			{
-				goto skip_framebuffer;
-			}
-			
-			memcpy( screen::translate( offset, length, fc, v68k::mem_write ),
-			        low_memory_base + addr,
-			        length );
-		}
-		
-		return screen::translate( offset, length, fc, access );
+		return page_1_virtual_buffer + offset;
 	}
 	
-	if ( vid_x2()  &&  addr_within_span( addr, alt_screen_addr, screen_size ) )
+	if ( vid_x2()  &&  addr_in_screen( addr, length, alt_screen_addr ) )
 	{
+		if ( access == mem_exec  ||  ! page_2_virtual_buffer )
+		{
+			return 0;  // NULL
+		}
+		
 		const uint32_t offset = addr - alt_screen_addr;
 		
-		if ( has_fixed_RAM )
-		{
-			if ( access != v68k::mem_update )
-			{
-				goto skip_framebuffer;
-			}
-			
-			memcpy( screen::translate2( offset, length, fc, v68k::mem_write ),
-			        low_memory_base + addr,
-			        length );
-		}
-		
-		return screen::translate2( offset, length, fc, access );
+		return page_2_virtual_buffer + offset;
 	}
-	
-skip_framebuffer:
-	
-	const uint32_t sound_size = 740;
 	
 	if ( addr_within_span( addr, main_sound_addr, sound_size ) )
 	{

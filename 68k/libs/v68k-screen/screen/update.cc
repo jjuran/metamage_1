@@ -67,14 +67,16 @@ void update()
 	
 #endif
 	
-	static void* previous_frame;
+	void* previous_frame = virtual_buffer;
 	
 	if ( previous_frame )
 	{
-		if ( memcmp( previous_frame, the_screen_buffer, the_screen_size ) == 0 )
+		if ( memcmp( previous_frame, transit_buffer, the_screen_size ) == 0 )
 		{
 			return;
 		}
+		
+		memcpy( transit_buffer, virtual_buffer, the_screen_size );
 	}
 	
 	if ( the_sync_relay != 0 )  // NULL
@@ -89,16 +91,6 @@ void update()
 		{
 			raster::broadcast( *the_sync_relay );
 		}
-	}
-	
-	if ( previous_frame == NULL )
-	{
-		previous_frame = malloc( the_screen_size );
-	}
-	
-	if ( previous_frame )
-	{
-		memcpy( previous_frame, the_screen_buffer, the_screen_size );
 	}
 }
 
