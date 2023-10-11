@@ -17,7 +17,6 @@
 #include "raster/load.hh"
 
 // v68k-screen
-#include "screen/lock.hh"
 #include "screen/storage.hh"
 #include "screen/surface.hh"
 #include "screen/update.hh"
@@ -168,8 +167,6 @@ uint8_t* translate_live( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 		return 0;  // NULL
 	}
 	
-	using v68k::screen::is_unlocked;
-	
 	const uint32_t screen_size = the_screen_size;
 	
 	if ( length > screen_size )
@@ -184,11 +181,6 @@ uint8_t* translate_live( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 	}
 	
 	uint8_t* p = (uint8_t*) transit_buffer + addr;
-	
-	if ( access == v68k::mem_update  &&  is_unlocked() )
-	{
-		v68k::screen::update();
-	}
 	
 	return p;
 }

@@ -21,7 +21,9 @@
 #include "v68k-mac/memory.hh"
 
 // v68k-screen
+#include "screen/lock.hh"
 #include "screen/storage.hh"
+#include "screen/update.hh"
 
 // xv68k
 #include "screen.hh"
@@ -166,6 +168,16 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		if ( access == mem_exec  ||  ! page_1_virtual_buffer )
 		{
 			return 0;  // NULL
+		}
+		
+		using namespace v68k::screen;
+		
+		if ( is_unlocked()  &&  access == v68k::mem_update )
+		{
+			if ( virtual_buffer == page_1_virtual_buffer )
+			{
+				update();
+			}
 		}
 		
 		const uint32_t offset = addr - main_screen_addr;
