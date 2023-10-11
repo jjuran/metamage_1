@@ -168,7 +168,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	if ( addr_in_screen( addr, length, main_screen_addr ) )
 	{
-		if ( access == mem_exec )
+		if ( access == mem_exec  ||  ! page_1_virtual_buffer )
 		{
 			return 0;  // NULL
 		}
@@ -179,11 +179,11 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		{
 			if ( access != v68k::mem_update )
 			{
-				goto skip_framebuffer;
+				return page_1_virtual_buffer + offset;
 			}
 			
 			memcpy( page_1_transit_buffer + offset,
-			        low_memory_base + addr,
+			        page_1_virtual_buffer + offset,
 			        length );
 		}
 		
@@ -192,7 +192,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	if ( vid_x2()  &&  addr_in_screen( addr, length, alt_screen_addr ) )
 	{
-		if ( access == mem_exec )
+		if ( access == mem_exec  ||  ! page_2_virtual_buffer )
 		{
 			return 0;  // NULL
 		}
@@ -203,11 +203,11 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		{
 			if ( access != v68k::mem_update )
 			{
-				goto skip_framebuffer;
+				return page_2_virtual_buffer + offset;
 			}
 			
 			memcpy( page_2_transit_buffer + offset,
-			        low_memory_base + addr,
+			        page_2_virtual_buffer + offset,
 			        length );
 		}
 		
@@ -235,8 +235,6 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 			return v68k::mac::translate( addr, length, fc, access );
 		}
 	}
-	
-skip_framebuffer:
 	
 	if ( addr < low_memory_size )
 	{
