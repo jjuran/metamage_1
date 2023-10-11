@@ -182,14 +182,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		
 		const uint32_t offset = addr - main_screen_addr;
 		
-		{
-			if ( access != v68k::mem_update )
-			{
-				return page_1_virtual_buffer + offset;
-			}
-		}
-		
-		return screen::translate( offset, length, fc, access );
+		return page_1_virtual_buffer + offset;
 	}
 	
 	if ( vid_x2()  &&  addr_in_screen( addr, length, alt_screen_addr ) )
@@ -201,14 +194,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		
 		const uint32_t offset = addr - alt_screen_addr;
 		
-		{
-			if ( access != v68k::mem_update )
-			{
-				return page_2_virtual_buffer + offset;
-			}
-		}
-		
-		return screen::translate2( offset, length, fc, access );
+		return page_2_virtual_buffer + offset;
 	}
 	
 	if ( addr_within_span( addr, main_sound_addr, sound_size ) )
