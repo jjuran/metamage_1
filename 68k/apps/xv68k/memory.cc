@@ -68,6 +68,16 @@ bool addr_within_span( uint32_t addr, uint32_t base, uint32_t length )
 	return addr >= base  &&  addr < base + length;
 }
 
+static inline
+bool addr_in_screen( uint32_t addr, uint32_t length, uint32_t base )
+{
+	const uint32_t screen_size = v68k::screen::the_screen_size;
+	
+	return addr          <  base + screen_size  &&
+	       addr + length <= base + screen_size  &&
+	       addr          >= base;
+}
+
 static
 uint8_t* lowmem_translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 {
@@ -156,9 +166,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	const bool has_fixed_RAM = low_memory_size >= 128 * 1024;
 	
-	const uint32_t screen_size = v68k::screen::the_screen_size;
-	
-	if ( addr_within_span( addr, main_screen_addr, screen_size ) )
+	if ( addr_in_screen( addr, length, main_screen_addr ) )
 	{
 		const uint32_t offset = addr - main_screen_addr;
 		
@@ -177,7 +185,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return screen::translate( offset, length, fc, access );
 	}
 	
-	if ( vid_x2()  &&  addr_within_span( addr, alt_screen_addr, screen_size ) )
+	if ( vid_x2()  &&  addr_in_screen( addr, length, alt_screen_addr ) )
 	{
 		const uint32_t offset = addr - alt_screen_addr;
 		
