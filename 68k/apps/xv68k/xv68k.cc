@@ -443,8 +443,6 @@ void load_Mac_traps( uint8_t* mem )
 	os_traps[ 0x47 ] = big_no_op;  // SetTrapAddress
 	os_traps[ 0x55 ] = big_no_op;  // StripAddress
 	os_traps[ 0x98 ] = big_no_op;  // HWPriv
-	
-	tb_traps[ 0x33 ] = big_longword( callout_address( ScrnBitMap_trap ) );
 }
 
 static
