@@ -581,7 +581,7 @@ static const function_type the_callouts[] =
 	&set_trace_mode_callout,
 	&set_trace_mode_callout,
 	
-	&ScrnBitMap_callout,
+	NULL,
 	&lock_screen_callout,
 	&unlock_screen_callout,
 	NULL,

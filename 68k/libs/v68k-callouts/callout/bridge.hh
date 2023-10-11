@@ -28,7 +28,7 @@ enum
 	trace_off,
 	
 	// $FFEE - $FFE8
-	ScrnBitMap_trap,
+	obsolete_ScrnBitMap_trap,
 	lock_screen,
 	unlock_screen,
 	reserved1,
