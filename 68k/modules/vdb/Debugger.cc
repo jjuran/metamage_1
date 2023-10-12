@@ -75,7 +75,11 @@ asm
 pascal void Debugger_patch()
 {
 	LINK     A6,#0
+	MOVEM.L  D0-D2/A0-A1,-(SP)
+	
 	JSR      Debugger_message
+	
+	MOVEM.L  (SP)+,D0-D2/A0-A1
 	UNLK     A6
 	
 	JMP      trace_on
@@ -88,7 +92,11 @@ pascal void DebugStr_patch( const unsigned char* message )
 	MOVE.L   (SP)+,(SP)
 	
 	LINK     A6,#0
+	MOVEM.L  D0-D2/A0-A1,-(SP)
+	
 	JSR      DebugStr_message
+	
+	MOVEM.L  (SP)+,D0-D2/A0-A1
 	UNLK     A6
 	
 	JMP      trace_on
