@@ -88,16 +88,16 @@ pascal void Debugger_patch()
 asm
 pascal void DebugStr_patch( const unsigned char* message )
 {
-	MOVEA.L  4(SP),A0
-	MOVE.L   (SP)+,(SP)
-	
 	LINK     A6,#0
 	MOVEM.L  D0-D2/A0-A1,-(SP)
 	
+	MOVEA.L  8(A6),A0
 	JSR      DebugStr_message
 	
 	MOVEM.L  (SP)+,D0-D2/A0-A1
 	UNLK     A6
+	
+	MOVE.L   (SP)+,(SP)
 	
 	JMP      trace_on
 }
