@@ -69,7 +69,7 @@ namespace bignum
 			}
 			
 			// 0x8000 0000 0000 0000
-			const long long nadir = 1LL << (sizeof (long long) * 8 - 1);
+			const long long nadir = 1ULL << (sizeof (long long) * 8 - 1);
 			
 			if ( i != nadir )
 			{

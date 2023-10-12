@@ -100,7 +100,7 @@ namespace bignum
 				its.sign = (i > 0) - (i < 0);
 				
 				// 0x8000 0000 [0000 0000]
-				const long nadir = 1L << (sizeof (long) * 8 - 1);
+				const long nadir = 1UL << (sizeof (long) * 8 - 1);
 				
 				if ( i < 0  &&  i != nadir )
 				{
@@ -303,7 +303,7 @@ namespace bignum
 			unsigned.
 		*/
 		
-		const Int signed_min = Int( Int( 1 ) << (sizeof (Int) * 8 - 1) );
+		const Int signed_min = Int( 1ULL << (sizeof (Int) * 8 - 1) );
 		const Int signed_max = Int( ~signed_min );
 		
 		const bool is_signed = Int( -1 ) < 0;
