@@ -8,8 +8,8 @@
 // POSIX
 #include <unistd.h>
 
-// more-libc
-#include "more/string.h"
+// ams-common
+#include "callouts.hh"
 
 // vdb
 #include "trace.hh"
@@ -50,7 +50,7 @@ void DebugStr_message( const unsigned char* message : __A0 )
 	
 	const size_t length = message[0];
 	
-	char* p = (char*) mempcpy( buffer, message + 1, length );
+	char* p = (char*) fast_mempcpy( buffer, message + 1, length );
 	
 	*p = '\n';
 	
