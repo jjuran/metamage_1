@@ -47,18 +47,11 @@ void stop_relay( const raster_load& raster )
 	terminate( get_relay( raster ) );
 }
 
-void cast_relay( const raster_load& raster )
-{
-	broadcast( get_relay( raster ) );
-}
-
 void bump_relay( const raster_load& raster )
 {
 	sync_relay& relay = get_relay( raster );
 	
 	++relay.seed;
-	
-	broadcast( relay );
 }
 
 }  // namespace raster
