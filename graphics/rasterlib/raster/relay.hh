@@ -6,14 +6,26 @@
 #ifndef RASTER_RELAY_HH
 #define RASTER_RELAY_HH
 
+// raster
+#include "raster/relay_detail.hh"
+
 
 namespace raster
 {
 	
-	struct sync_relay;
+	inline
+	void broadcast( sync_relay& relay )
+	{
+		++relay.seed;
+	}
 	
-	void broadcast( sync_relay& relay );
-	void terminate( sync_relay& relay );
+	inline
+	void terminate( sync_relay& relay )
+	{
+		relay.status = Sync_ended;
+		
+		++relay.seed;
+	}
 	
 }
 
