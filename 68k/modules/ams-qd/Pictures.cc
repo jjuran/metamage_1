@@ -179,6 +179,18 @@ const UInt8* set_pattern( const UInt8* p, Pattern& pattern )
 }
 
 static
+const UInt8* text_ratio( const UInt8* p )
+{
+	const short v_numer = read_word( p );
+	const short h_numer = read_word( p );
+	
+	const short v_denom = read_word( p );
+	const short h_denom = read_word( p );
+	
+	return p;
+}
+
+static
 const UInt8* line( const UInt8* p )
 {
 	const short v0 = read_word( p );
@@ -511,6 +523,10 @@ const Byte* do_opcode( const Byte* p )
 		
 		case 0x0E:
 			ForeColor( read_long( p ) );
+			break;
+		
+		case 0x10:
+			p = text_ratio( p );
 			break;
 		
 		case 0x20:
