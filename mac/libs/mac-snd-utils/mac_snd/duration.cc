@@ -26,21 +26,26 @@ unsigned long long nanoseconds_from_ticks( unsigned ticks )
 static
 long long duration( const Tone* tones, unsigned count )
 {
+	if ( count == 0 )
+	{
+		return 0;
+	}
+	
 	unsigned ticks = 0;
 	
 	const Tone* tone = tones;
 	
 	/*
-		`count` is a multiple of the wavelength.  A zero wavelength is invalid,
-		regardless of what Inside Macintosh says.  So `count` can only be zero
-		when it's a terminator.
+		The `count` field is a multiple of the wavelength.  A zero
+		wavelength is invalid, regardless of what Inside Macintosh
+		says.  So `count` can only be zero when it's a terminator.
 	*/
 	
 	do
 	{
 		ticks += tone->duration;
 	}
-	while ( tone++->count != 0 );
+	while ( --count  &&  tone++->count != 0 );
 	
 	return nanoseconds_from_ticks( ticks );
 }
