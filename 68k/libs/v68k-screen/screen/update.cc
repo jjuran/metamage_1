@@ -81,15 +81,11 @@ void update()
 	
 	if ( the_sync_relay != 0 )  // NULL
 	{
+		++the_sync_relay->seed;
+		
 		if ( update_fifo )
 		{
-			++the_sync_relay->seed;
-			
 			close( open( update_fifo, O_RDONLY | O_NONBLOCK ) );
-		}
-		else
-		{
-			raster::broadcast( *the_sync_relay );
 		}
 	}
 }
