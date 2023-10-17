@@ -42,7 +42,7 @@ void byte_swap( command_header& header )
 }
 
 static
-void check_tones( const Tone* tone, short n )
+void check_tones( Tone* tone, short n )
 {
 	while ( n-- > 0 )
 	{
@@ -64,10 +64,12 @@ void check_tones( const Tone* tone, short n )
 	}
 	
 	take_exception( sound_unterminated );
+	
+	tone->count = 0;
 }
 
 static
-void check_squarewave( const command_header& header, const SWSynthRec& rec )
+void check_squarewave( const command_header& header, SWSynthRec& rec )
 {
 	if ( header.length % sizeof (Tone) != 0 )
 	{
