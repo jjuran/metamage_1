@@ -40,9 +40,14 @@ ProcPtr get_NewWindow_address()
 {
 	const ProcPtr unimplemented = get_trap_address( _Unimplemented );
 	const ProcPtr newCWindow    = get_trap_address( _NewCWindow );
+	const ProcPtr counterpart   = get_trap_address( _NewCWindow ^ 0x0200 );
 	
-	return newCWindow != unimplemented ? newCWindow
-	                                   : get_trap_address( _NewWindow );
+	if ( newCWindow != counterpart  &&  newCWindow != unimplemented )
+	{
+		return newCWindow;
+	}
+	
+	return get_trap_address( _NewWindow );
 }
 
 const ProcPtr gNewWindow = get_NewWindow_address();
