@@ -132,7 +132,26 @@ namespace Genie
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
-		Size size;
+		/*
+			Don't truncate the resource fork if opening the resfile fails.
+			It might contain data that's foreigh to the Resource Manager.
+		*/
+		
+		short n_types = -1;
+		
+		short resfile = mac::rsrc::open_res_file( fileSpec, fsRdWrPerm );
+		
+		if ( resfile > 0 )
+		{
+			n_types = Count1Types();
+			
+			CloseResFile( resfile );
+		}
+		
+		if ( n_types != 0 )
+		{
+			p7::throw_errno( ENOTEMPTY );
+		}
 		
 		short refnum = mac::file::open_rsrc_fork( fileSpec, fsRdWrPerm );
 		
@@ -140,27 +159,12 @@ namespace Genie
 		
 		if ( refnum >= 0 )
 		{
-			err = GetEOF( refnum, &size );
-			
-			if ( err == noErr )
-			{
-				if ( size <= 286 )
-				{
-					size = 0;
-					
-					err = SetEOF( refnum, 0 );
-				}
-			}
+			err = SetEOF( refnum, 0 );
 			
 			FSClose( refnum );
 		}
 		
 		Mac::ThrowOSStatus( err );
-		
-		if ( size )
-		{
-			p7::throw_errno( ENOTEMPTY );
-		}
 	}
 	
 	static void empty_rsrc_fork_mkdir( const vfs::node* that, mode_t mode )
