@@ -151,18 +151,21 @@ namespace tool
 		
 	#else
 		
+		const int max_results = 10;  // Should be more than enough
+		
 		std::vector< InetMailExchange > results;	
 		
 		results.resize( 10 );  // Should be more than enough
 		
-		N::OTInetMailExchange( NULL,
-		                       (char*) domain.c_str(),
-		                       results );
+		UInt16 n = N::OTInetMailExchange( NULL,
+		                                  (char*) domain.c_str(),
+		                                  max_results,
+		                                  &results[ 0 ] );
 		
-		std::sort( results.begin(),
-		           results.end() );
+		std::sort( &results[ 0 ],
+		           &results[ n ] );
 		
-		return results.front().exchange;
+		return results[ 0 ].exchange;
 		
 	#endif
 	}
