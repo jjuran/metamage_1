@@ -13,8 +13,15 @@
 
 // Mac OS
 #ifndef MAC_OS_X_VERSION_10_8
+// OpenTransportProviders.h depends on FSSpec but doesn't include Files.h.
+#ifndef __FILES__
+#include <Files.h>
+#endif
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
+#endif
+#ifndef __OPENTRANSPORTPROVIDERS__
+#include <OpenTransportProviders.h>
 #endif
 #endif
 
@@ -36,8 +43,9 @@
 #include "plus/string.hh"
 
 // Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 #include "Nitrogen/Folders.hh"
-#include "Nitrogen/OpenTransportProviders.hh"
 
 // poseven
 #include "poseven/bundles/inet.hh"
@@ -61,6 +69,17 @@
 inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
 {
 	return a.preference < b.preference;
+}
+
+static inline
+UInt16 OTInetMailExchange( InetSvcRef         ref,
+                           char*              name,
+                           UInt16             num,
+                           InetMailExchange*  mx )
+{
+	Mac::ThrowOSStatus( OTInetMailExchange( ref, name, &num, mx ) );
+	
+	return num;
 }
 
 #endif
@@ -154,10 +173,10 @@ namespace tool
 		
 		InetMailExchange results[ max_results ];
 		
-		UInt16 n = N::OTInetMailExchange( NULL,
-		                                  (char*) domain.c_str(),
-		                                  max_results,
-		                                  &results[ 0 ] );
+		UInt16 n = OTInetMailExchange( NULL,
+		                               (char*) domain.c_str(),
+		                               max_results,
+		                               &results[ 0 ] );
 		
 		std::sort( &results[ 0 ],
 		           &results[ n ] );
