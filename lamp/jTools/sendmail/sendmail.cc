@@ -178,10 +178,10 @@ namespace tool
 		                               max_results,
 		                               &results[ 0 ] );
 		
-		std::sort( &results[ 0 ],
-		           &results[ n ] );
+		InetMailExchange* min = std::min_element( &results[ 0 ],
+		                                          &results[ n ] );
 		
-		return results[ 0 ].exchange;
+		return min->exchange;
 		
 	#endif
 	}
