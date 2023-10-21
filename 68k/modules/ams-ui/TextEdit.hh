@@ -49,4 +49,6 @@ pascal void TECalText_patch( TERec** hTE );
 
 pascal TERec** TEStyleNew_patch( const Rect* destRect, const Rect* viewRect );
 
+void TEDispatch_patch( short selector );
+
 #endif

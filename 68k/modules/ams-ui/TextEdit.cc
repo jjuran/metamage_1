@@ -987,3 +987,20 @@ pascal TEHandle TEStyleNew_patch( const Rect* destRect, const Rect* viewRect )
 {
 	return TENew( destRect, viewRect );
 }
+
+static
+void unimplemented_call( short selector : __D0 )
+{
+	FATAL = "unimplemented TEDispatch call ", selector;
+	
+	asm { ILLEGAL }
+}
+
+asm void TEDispatch_patch( short selector )
+{
+	MOVEA.L  (SP)+,A0
+	MOVE.W   (SP)+,D0
+	MOVE.L   A0,-(SP)
+	
+	JMP      unimplemented_call
+}
