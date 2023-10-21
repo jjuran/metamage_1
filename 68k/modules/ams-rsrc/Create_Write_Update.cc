@@ -6,15 +6,18 @@
 #include "Create_Write_Update.hh"
 
 // Mac OS
-#ifndef __MACERRORS__
-#include <MacErrors.h>
+#ifndef __FILES__
+#include <Files.h>
 #endif
-#ifndef __MACTYPES__
-#include <MacTypes.h>
-#endif
+
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
 
 // log-of-war
 #include "logofwar/report.hh"
+
+// ams-common
+#include "callouts.hh"
 
 // ams-rsrc
 #include "RsrcMap.hh"
@@ -30,19 +33,102 @@ enum
 	resChanged   = 2,
 };
 
+enum
+{
+	mapReadOnly = 128,
+};
+
 
 short ResErr : 0x0A60;
 
+
+struct empty_resource_map : rsrc_map_header
+{
+	UInt16 empty_type_list;
+};
 
 static
 void CreateResFile_handler( const Byte* name : __A0, short vRefNum : __D0 )
 {
 	OSErr err;
+	short refNum;
 	
-	ERROR = "CreateResFile is unimplemented";
+	err = Create( name, vRefNum, 'RSED', 'rsrc' );
 	
-	err = wrgVolTypErr;
+	if ( err != noErr  &&  err != dupFNErr )
+	{
+		goto bail;
+	}
 	
+	err = OpenRF( name, vRefNum, &refNum );
+	
+	if ( err != noErr )
+	{
+		goto bail;
+	}
+	
+	SInt32 rsrc_fork_size;
+	
+	err = GetEOF( refNum, &rsrc_fork_size );
+	
+	if ( err == noErr  &&  rsrc_fork_size > 0 )
+	{
+		err = dupFNErr;
+	}
+	
+	if ( err != noErr )
+	{
+		goto close_and_bail;
+	}
+	
+	enum
+	{
+		offset_to_data = sizeof (rsrc_fork_superheader),
+		length_of_data = 0,
+		
+		offset_to_map = offset_to_data + length_of_data,
+		length_of_map = sizeof (empty_resource_map),
+		
+		offset_to_types = sizeof (rsrc_map_header),
+		offset_to_names = sizeof (empty_resource_map),
+		empty_type_list = -1,
+	};
+	
+	empty_resource_map empty_map;
+	
+	fast_memset( &empty_map, '\0', sizeof empty_map );
+	
+	rsrc_fork_header& fork_header = empty_map.fork_header;
+	
+	fork_header.offset_to_data = offset_to_data;  // 256
+	fork_header.offset_to_map  = offset_to_map;   // 256
+//	fork_header.length_of_data = length_of_data;  //   0
+	fork_header.length_of_map  = length_of_map;   //  30
+	
+//	empty_map.next_map = NULL;
+//	empty_map.refnum   = 0;
+//	empty_map.attrs    = 0;
+	empty_map.offset_to_types = offset_to_types;  // 28 bytes
+	empty_map.offset_to_names = offset_to_names;  // 30 bytes
+	empty_map.empty_type_list = empty_type_list;  //  0 types
+	
+	Size fork_header_size = sizeof (rsrc_fork_header);
+	Size size_of_rsrc_map = length_of_map;
+	
+	(err = SetEOF ( refNum, 286 ))                                    ||
+	(err = FSWrite( refNum, &fork_header_size, (Ptr) &fork_header ))  ||
+	(err = SetFPos( refNum, fsFromStart, 256 ))                       ||
+	(err = FSWrite( refNum, &size_of_rsrc_map, (Ptr) &empty_map   ));
+	
+	if ( err != noErr )
+	{
+		goto close_and_bail;
+	}
+	
+close_and_bail:
+	FSClose( refNum );
+	
+bail:
 	ResErr = err;
 }
 
