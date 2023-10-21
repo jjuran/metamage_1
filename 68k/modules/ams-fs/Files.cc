@@ -484,6 +484,30 @@ OSErr flush_file( FCB* fcb )
 	return vfs->FlushFile( fcb );
 }
 
+static
+OSErr extend_file( FCB* fcb, long new_eof )
+{
+	scoped_zone null_zone;
+	
+	Ptr buffer = NewPtr( new_eof );
+	
+	if ( buffer == NULL )
+	{
+		return ioErr;
+	}
+	
+	fast_memcpy( buffer, fcb->fcbBfAdr, fcb->fcbCrPs );
+	
+	DisposePtr( fcb->fcbBfAdr );
+	
+	fcb->fcbBfAdr = buffer;
+	
+	fcb->fcbEOF  = new_eof;
+	fcb->fcbPLen = new_eof;
+	
+	return noErr;
+}
+
 short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	if ( pb->ioRefNum < 0 )
@@ -530,25 +554,14 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		
 		if ( count > eof - mark )
 		{
-			scoped_zone null_zone;
-			
 			const long new_eof = mark + count;
 			
-			Ptr buffer = NewPtr( new_eof );
+			OSErr err = extend_file( fcb, new_eof );
 			
-			if ( buffer == NULL )
+			if ( err )
 			{
-				return pb->ioResult = ioErr;
+				return pb->ioResult = err;
 			}
-			
-			fast_memcpy( buffer, fcb->fcbBfAdr, mark );
-			
-			DisposePtr( fcb->fcbBfAdr );
-			
-			fcb->fcbBfAdr = buffer;
-			
-			fcb->fcbEOF  = new_eof;
-			fcb->fcbPLen = new_eof;
 		}
 		
 		const vfs_table* vfs = vfs_from_vcb( fcb->fcbVPtr );
