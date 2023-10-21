@@ -989,6 +989,12 @@ pascal TEHandle TEStyleNew_patch( const Rect* destRect, const Rect* viewRect )
 }
 
 static
+pascal
+void TEStyleInsert_call( const void* p, long n, StScrpHandle hST, TEHandle hTE )
+{
+}
+
+static
 void unimplemented_call( short selector : __D0 )
 {
 	FATAL = "unimplemented TEDispatch call ", selector;
@@ -1002,5 +1008,11 @@ asm void TEDispatch_patch( short selector )
 	MOVE.W   (SP)+,D0
 	MOVE.L   A0,-(SP)
 	
+	CMPI.W   #0x0007,D0
+	BEQ      dispatch_TEStyleInsert
+	
 	JMP      unimplemented_call
+	
+dispatch_TEStyleInsert:
+	JMP      TEStyleInsert_call
 }
