@@ -496,7 +496,7 @@ OSErr extend_file( FCB* fcb, long new_eof )
 		return ioErr;
 	}
 	
-	fast_memcpy( buffer, fcb->fcbBfAdr, fcb->fcbCrPs );
+	fast_memcpy( buffer, fcb->fcbBfAdr, fcb->fcbEOF );
 	
 	DisposePtr( fcb->fcbBfAdr );
 	
@@ -666,25 +666,36 @@ short SetEOF_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	const long new_eof = (long) pb->ioMisc;
 	
-	if ( new_eof > fcb->fcbEOF )
+	if ( new_eof == fcb->fcbEOF )
 	{
-		return pb->ioResult = extFSErr;
+		return pb->ioResult = noErr;
 	}
 	
 	if ( new_eof < fcb->fcbEOF )
 	{
 		fcb->fcbEOF  = new_eof;
 		fcb->fcbPLen = new_eof;
+	}
+	else
+	{
+		const long old_eof = fcb->fcbEOF;
 		
-		if ( is_servable( fcb ) )
-		{
-			return save_app_data( fcb, new_eof );
-		}
-		
-		if ( OSErr err = flush_file( fcb ) )
+		if ( OSErr err = extend_file( fcb, new_eof ) )
 		{
 			return pb->ioResult = err;
 		}
+		
+		fast_memset( fcb->fcbBfAdr + old_eof, '\0', new_eof - old_eof );
+	}
+	
+	if ( is_servable( fcb ) )
+	{
+		return save_app_data( fcb, new_eof );
+	}
+	
+	if ( OSErr err = flush_file( fcb ) )
+	{
+		return pb->ioResult = err;
 	}
 	
 	return pb->ioResult = noErr;
