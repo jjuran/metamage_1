@@ -995,6 +995,13 @@ void TEStyleInsert_call( const void* p, long n, StScrpHandle hST, TEHandle hTE )
 }
 
 static
+pascal
+long TEGetHeight_call( long endLine, long startLine, TEHandle hTE )
+{
+	return hTE[0]->lineHeight * (endLine - startLine + 1);
+}
+
+static
 void unimplemented_call( short selector : __D0 )
 {
 	FATAL = "unimplemented TEDispatch call ", selector;
@@ -1011,8 +1018,14 @@ asm void TEDispatch_patch( short selector )
 	CMPI.W   #0x0007,D0
 	BEQ      dispatch_TEStyleInsert
 	
+	CMPI.W   #0x0009,D0
+	BEQ      dispatch_TEGetHeight
+	
 	JMP      unimplemented_call
 	
 dispatch_TEStyleInsert:
 	JMP      TEStyleInsert_call
+	
+dispatch_TEGetHeight:
+	JMP      TEGetHeight_call
 }
