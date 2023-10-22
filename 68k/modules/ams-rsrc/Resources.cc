@@ -117,18 +117,19 @@ uint16_t count_rsrcs( const rsrc_map_header& map, ResType type )
 {
 	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
 	
-	uint16_t n_types_1 = types.count_1;
+	uint16_t n_types = types.count_1 + 1;
 	
 	const type_header* it = types.list;
 	
-	do
+	while ( n_types-- > 0 )
 	{
 		if ( it->type == type )
 		{
 			return it->count_1 + 1;
 		}
+		
+		++it;
 	}
-	while ( ++it, n_types_1-- > 0 );
 	
 	return 0;
 }
@@ -138,13 +139,17 @@ rsrc_header* get_nth_rsrc( const rsrc_map_header& map, ResType type, short i )
 {
 	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
 	
-	uint16_t n_types_1 = types.count_1;
+	uint16_t n_types = types.count_1 + 1;
 	
 	const type_header* it = types.list;
 	
-	do
+	while ( n_types-- > 0 )
 	{
-		if ( it->type != type )  continue;
+		if ( it->type != type )
+		{
+			++it;
+			continue;
+		}
 		
 		if ( --i > it->count_1 )
 		{
@@ -160,7 +165,6 @@ rsrc_header* get_nth_rsrc( const rsrc_map_header& map, ResType type, short i )
 		
 		return rsrc;
 	}
-	while ( ++it, n_types_1-- > 0 );
 	
 	return NULL;
 }
@@ -170,13 +174,17 @@ rsrc_header* find_rsrc( const rsrc_map_header& map, ResType type, short id )
 {
 	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
 	
-	uint16_t n_types_1 = types.count_1;
+	uint16_t n_types = types.count_1 + 1;
 	
 	const type_header* it = types.list;
 	
-	do
+	while ( n_types-- > 0 )
 	{
-		if ( it->type != type )  continue;
+		if ( it->type != type )
+		{
+			++it;
+			continue;
+		}
 		
 		uint16_t n_rsrcs_1 = it->count_1;
 		uint16_t offset    = it->offset;
@@ -191,8 +199,9 @@ rsrc_header* find_rsrc( const rsrc_map_header& map, ResType type, short id )
 			}
 		}
 		while ( ++rsrc, n_rsrcs_1-- > 0 );
+		
+		++it;
 	}
-	while ( ++it, n_types_1-- > 0 );
 	
 	return NULL;
 }
@@ -217,13 +226,17 @@ rsrc_header* find_rsrc( const rsrc_map_header&  map,
 {
 	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
 	
-	uint16_t n_types_1 = types.count_1;
+	uint16_t n_types = types.count_1 + 1;
 	
 	const type_header* it = types.list;
 	
-	do
+	while ( n_types-- > 0 )
 	{
-		if ( it->type != type )  continue;
+		if ( it->type != type )
+		{
+			++it;
+			continue;
+		}
 		
 		uint16_t n_rsrcs_1 = it->count_1;
 		uint16_t offset    = it->offset;
@@ -241,8 +254,9 @@ rsrc_header* find_rsrc( const rsrc_map_header&  map,
 			}
 		}
 		while ( ++rsrc, n_rsrcs_1-- > 0 );
+		
+		++it;
 	}
-	while ( ++it, n_types_1-- > 0 );
 	
 	return NULL;
 }
@@ -309,11 +323,11 @@ short OpenResFile_handler( ConstStr255Param name : __A0, short vRefNum : __D0 )
 	
 	type_list& types = *(type_list*) (*h + map.offset_to_types);
 	
-	uint16_t n_types_1 = types.count_1;
+	uint16_t n_types = types.count_1 + 1;
 	
 	type_header* type = types.list;
 	
-	do
+	while ( n_types-- > 0 )
 	{
 		uint16_t n_rsrcs_1 = type->count_1;
 		uint16_t offset    = type->offset;
@@ -330,7 +344,6 @@ short OpenResFile_handler( ConstStr255Param name : __A0, short vRefNum : __D0 )
 		
 		++type;
 	}
-	while ( n_types_1-- > 0 );
 	
 	TopMapHndl = h;
 	
@@ -384,11 +397,11 @@ void CloseResFile_core( short refnum : __D0 )
 	
 	type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
 	
-	uint16_t n_types_1 = types.count_1;
+	uint16_t n_types = types.count_1 + 1;
 	
 	type_header* type = types.list;
 	
-	do
+	while ( n_types-- > 0 )
 	{
 		uint16_t n_rsrcs_1 = type->count_1;
 		uint16_t offset    = type->offset;
@@ -412,7 +425,6 @@ void CloseResFile_core( short refnum : __D0 )
 		
 		++type;
 	}
-	while ( n_types_1-- > 0 );
 	
 	Handle h = (Handle) rsrc_map;
 	
@@ -542,11 +554,11 @@ void release_ApplZone_resources()
 	
 	type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
 	
-	uint16_t n_types_1 = types.count_1;
+	uint16_t n_types = types.count_1 + 1;
 	
 	type_header* type = types.list;
 	
-	do
+	while ( n_types-- > 0 )
 	{
 		uint16_t n_rsrcs_1 = type->count_1;
 		uint16_t offset    = type->offset;
@@ -566,8 +578,6 @@ void release_ApplZone_resources()
 		
 		++type;
 	}
-	while ( n_types_1-- > 0 );
-	
 }
 
 pascal void RsrcZoneInit_patch()
