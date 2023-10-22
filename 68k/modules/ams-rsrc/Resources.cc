@@ -57,6 +57,7 @@ enum
 };
 
 
+long  RndSeed     : 0x0156;
 short MemErr      : 0x0220;
 short CurApRefNum : 0x0900;
 Handle TopMapHndl : 0x0A50;
@@ -1737,6 +1738,47 @@ pascal Handle Get1NamedResource_patch( ResType type, ConstStr255Param name )
 	MOVEA.L  (SP)+,A0
 	
 	ADDQ.L   #8,SP
+	
+	JMP      (A0)
+}
+
+static
+short Unique1ID_handler( ResType type : __D0 )
+{
+	ResErr = noErr;
+	
+	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
+	
+	short id;
+	
+	do
+	{
+		next_pseudorandom( &RndSeed );
+		
+		id = RndSeed & 0x7fff;
+		
+	}
+	while ( id == 0  ||  find_rsrc(  **rsrc_map, type, id ) );
+	
+	return id;
+}
+
+asm
+pascal short Unique1ID_patch( ResType type )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.L   (A2)+,D0
+	
+	JSR      Unique1ID_handler
+	MOVE.W   D0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
 	
 	JMP      (A0)
 }

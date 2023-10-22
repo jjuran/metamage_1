@@ -89,6 +89,8 @@ pascal Handle Get1Resource_patch( ResType type, short id );
 pascal Handle Get1NamedResource_patch( ResType           type,
                                        ConstStr255Param  name );
 
+pascal short Unique1ID_patch( ResType type );
+
 pascal short OpenRFPerm_patch( ConstStr255Param name, short vRefNum, char perm );
 
 #endif
