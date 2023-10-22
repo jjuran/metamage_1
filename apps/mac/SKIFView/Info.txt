@@ -3,6 +3,8 @@ CFBundleIconFile:    "SKIFView.icns"
 CFBundleName:        "SKIFView"
 CFBundlePackageType: 'APPL'
 CFBundleSignature:   'SKIF'
+CFBundleGetInfoString: "Copyright 2021-2023 Josh Juran"
+CFBundleShortVersionString: "0.2"
 CFBundleDocumentTypes:
 [
 	[
