@@ -5,11 +5,6 @@
 
 #include "mac_icon/plot_IconRef.hh"
 
-// Mac OS
-#ifndef __ICONS__
-#include <Icons.h>
-#endif
-
 
 namespace mac  {
 namespace icon {

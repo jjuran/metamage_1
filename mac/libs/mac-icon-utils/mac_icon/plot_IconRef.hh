@@ -9,15 +9,26 @@
 // Mac OS X
 #ifdef __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
-#else
-typedef struct CGContext *CGContextRef;
-struct CGRect;
-typedef struct OpaqueIconRef* IconRef;
+#endif
+
+// Mac OS
+#ifndef __ICONS__
+#include <Icons.h>
 #endif
 
 
 namespace mac  {
 namespace icon {
+	
+#if ! __LP64__
+	
+	inline
+	void plot_IconRef( const Rect& bounds, IconRef icon )
+	{
+		PlotIconRef( &bounds, 0, 0, kIconServicesNormalUsageFlag, icon );
+	}
+	
+#endif
 	
 	void plot_IconRef( CGContextRef context, CGRect bounds, IconRef icon );
 	
