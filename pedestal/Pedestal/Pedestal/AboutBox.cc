@@ -52,6 +52,7 @@
 
 // mac-app-utils
 #include "mac_app/about_box_metrics.hh"
+#include "mac_app/draw_centered_text.hh"
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
@@ -68,7 +69,6 @@
 // Pedestal
 #include "Pedestal/BundleIcon.hh"
 #include "Pedestal/BundleStrings.hh"
-#include "Pedestal/CenteredText.hh"
 #include "Pedestal/OwnerResource.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowStorage.hh"
@@ -302,7 +302,9 @@ namespace Pedestal
 			x + kAboutBoxTextWidth,
 		};
 		
-		DrawCenteredText( text, bounds, APP_NAME_FONT, APP_NAME_SIZE );
+		using mac::app::draw_centered_text;
+		
+		draw_centered_text( text, bounds, APP_NAME_FONT, APP_NAME_SIZE );
 		
 	#endif
 	}
