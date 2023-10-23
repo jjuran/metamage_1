@@ -37,6 +37,7 @@
 #include "Region-ops.hh"
 #include "Regions.hh"
 #include "RoundRects.hh"
+#include "StdBits.hh"
 #include "Text.hh"
 
 
