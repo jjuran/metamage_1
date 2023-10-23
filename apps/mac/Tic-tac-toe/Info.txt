@@ -3,6 +3,8 @@ CFBundleIconFile:    "Tic-tac-toe.icns"
 CFBundleName:        "Tic-tac-toe"
 CFBundlePackageType: 'APPL'
 CFBundleSignature:   'XvO#'
+CFBundleGetInfoString: "Copyright 2018-2024 Josh Juran"
+CFBundleShortVersionString: "0.2"
 CFBundleDocumentTypes:
 [
 	[
