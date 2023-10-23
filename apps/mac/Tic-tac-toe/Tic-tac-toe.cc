@@ -38,6 +38,7 @@
 #include "mac_ui/windows.hh"
 
 // mac-app-utils
+#include "mac_app/about_box.hh"
 #include "mac_app/DAs.hh"
 #include "mac_app/documents.hh"
 #include "mac_app/event_handlers.hh"
@@ -317,6 +318,9 @@ void menu_item_chosen( long choice )
 			if ( item == About )
 			{
 				// About...
+				const OSType creator = 'XvO#';
+				
+				mac::app::show_About_box( creator );
 			}
 			else if ( ! TARGET_API_MAC_CARBON )
 			{
@@ -350,6 +354,13 @@ void menu_item_chosen( long choice )
 					if ( CONFIG_DAs  &&  mac::app::close_front_DA() )
 					{
 						break;
+					}
+					else if ( WindowRef window = FrontWindow() )
+					{
+						if ( mac::app::close_About_box( window ) )
+						{
+							break;
+						}
 					}
 					// fall through
 				
@@ -419,10 +430,10 @@ void menu_item_chosen( long choice )
 					
 					if ( is_fullscreen )
 					{
+						SelectWindow( main_window );
+						
 						if ( CONFIG_DAs )
 						{
-							SelectWindow( main_window );
-							
 							set_empty_updateRgn( main_window );
 						}
 						
@@ -556,23 +567,32 @@ int main()
 						
 						case inDrag:
 							DragWindow( window, event.where, wide_drag_area() );
-							calibrate_mouseRgns();
+							
+							if ( window == main_window )
+							{
+								calibrate_mouseRgns();
+							}
 							break;
 						
 						case inGoAway:
 							if ( TrackGoAway( window, event.where ) )
 							{
-								DisposeWindow( main_window );
-								
-								main_window = NULL;
-								quitting = true;
+								if ( ! mac::app::close_About_box( window ) )
+								{
+									quitting = true;
+								}
 							}
 							break;
 						
 						case inContent:
-							if ( CONFIG_DAs  &&  window != FrontWindow() )
+							if ( window != FrontWindow() )
 							{
 								SelectWindow( window );
+								
+								if ( window == main_window )
+								{
+									gMouseRgn = mouse_moved( event.where );
+								}
 								break;
 							}
 							
@@ -649,7 +669,12 @@ int main()
 					switch ( (event.message & osEvtMessageMask) >> 24 )
 					{
 						case mouseMovedMessage:
-							gMouseRgn = mouse_moved( event.where );
+							window = FrontWindow();
+							
+							if ( is_fullscreen  ||  window == main_window )
+							{
+								gMouseRgn = mouse_moved( event.where );
+							}
 							break;
 						
 						default:
