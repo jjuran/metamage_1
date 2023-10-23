@@ -52,6 +52,7 @@
 
 // mac-app-utils
 #include "mac_app/about_box_metrics.hh"
+#include "mac_app/copy_bundle_icon.hh"
 #include "mac_app/draw_centered_text.hh"
 
 // mac-sys-utils
@@ -67,7 +68,6 @@
 #include "Carbon/CF/Types/CFMutableStringRef.hh"
 
 // Pedestal
-#include "Pedestal/BundleIcon.hh"
 #include "Pedestal/BundleStrings.hh"
 #include "Pedestal/OwnerResource.hh"
 #include "Pedestal/View.hh"
@@ -395,7 +395,12 @@ namespace Pedestal
 			{ kAboutBoxIconWidth, kAboutBoxIconHeight },
 		};
 		
-		mac::icon::plot_IconRef( context, iconBounds, BundleIcon() );
+		if ( IconRef icon = mac::app::copy_bundle_icon() )
+		{
+			mac::icon::plot_IconRef( context, iconBounds, icon );
+			
+			ReleaseIconRef( icon );
+		}
 		
 		x = kAboutBoxTextHorizontalMargin;
 		y += kAboutBoxIconHeight + kAboutBoxIconToTextGap;
