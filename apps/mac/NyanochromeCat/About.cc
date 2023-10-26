@@ -11,6 +11,9 @@
 #endif
 
 // Mac OS
+#ifndef __CARBONEVENTS__
+#include <CarbonEvents.h>
+#endif
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
@@ -40,6 +43,9 @@
 // more-libc
 #include "more/string.h"
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
@@ -52,6 +58,7 @@
 // mac-qd-utils
 #include "mac_qd/plot_icon_id.hh"
 #include "mac_qd/globals/screenBits.hh"
+#include "mac_qd/scoped_port.hh"
 
 // mac-app-utils
 #include "mac_app/new_window.hh"
@@ -200,6 +207,40 @@ void draw_About_box()
 	TETextBox( more + 1, more[ 0 ], &text_bounds, teJustCenter );
 }
 
+static
+pascal OSStatus window_DrawContent( EventHandlerCallRef  handler,
+                                    EventRef             event,
+                                    void*                userData )
+{
+	OSStatus err;
+	
+	WindowRef window;
+	
+	err = GetEventParameter( event,
+	                         kEventParamDirectObject,
+	                         typeWindowRef,
+	                         NULL,
+	                         sizeof window,
+	                         NULL,
+	                         &window );
+	
+	if ( err == noErr )
+	{
+		mac::qd::scoped_port thePort( window );
+		
+		draw_About_box();
+	}
+	
+	return err;
+}
+
+DEFINE_CARBON_UPP( EventHandler, window_DrawContent )
+
+static EventTypeSpec windowDrawContent_event[] =
+{
+	{ kEventClassWindow, kEventWindowDrawContent },
+};
+
 static inline
 short get_menubar_height()
 {
@@ -299,6 +340,7 @@ void show_About_box()
 	if ( TARGET_API_MAC_CARBON )
 	{
 		const WindowAttributes attrs = kWindowCloseBoxAttribute
+		                             | kWindowStandardHandlerAttribute
 		                           #ifdef MAC_OS_X_VERSION_10_3
 		                             | kWindowAsyncDragAttribute
 		                           #endif
@@ -313,6 +355,13 @@ void show_About_box()
 		}
 		
 		SetWTitle( window, title );
+		
+		err = InstallWindowEventHandler( window,
+		                                 UPP_ARG( window_DrawContent ),
+		                                 1,
+		                                 windowDrawContent_event,
+		                                 NULL,
+		                                 NULL );
 		
 		ShowWindow( window );
 	}
