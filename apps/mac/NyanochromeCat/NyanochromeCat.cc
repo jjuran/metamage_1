@@ -110,9 +110,8 @@ void menu_item_chosen( long choice )
 						break;
 					}
 					
-					if ( FrontWindow() == gAboutBox )
+					if ( close_About_box( FrontWindow() ) )
 					{
-						close_About_box();
 						break;
 					}
 				
@@ -225,11 +224,7 @@ int main()
 						case inGoAway:
 							if ( TrackGoAway( window, event.where ) )
 							{
-								if ( window == gAboutBox )
-								{
-									close_About_box();
-								}
-								else
+								if ( ! close_About_box( window ) )
 								{
 									DisposeWindow( main_window );
 									

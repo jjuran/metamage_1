@@ -302,9 +302,16 @@ void show_About_box()
 	MoveWindow( gAboutBox, left, v_lower_bound, false );
 }
 
-void close_About_box()
+bool close_About_box( WindowRef window )
 {
-	DisposeWindow( gAboutBox );
+	const bool is_About = window == gAboutBox;
 	
-	gAboutBox = NULL;
+	if ( is_About )
+	{
+		DisposeWindow( gAboutBox );
+		
+		gAboutBox = NULL;
+	}
+	
+	return is_About;
 }

@@ -20,6 +20,7 @@ extern WindowRef gAboutBox;
 
 void draw_About_box();
 void show_About_box();
-void close_About_box();
+
+bool close_About_box( WindowRef window );
 
 #endif
