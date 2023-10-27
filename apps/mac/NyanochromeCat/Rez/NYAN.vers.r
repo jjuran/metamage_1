@@ -11,12 +11,12 @@ resource 'NYAN' (0, "Nyanochrome Cat")
 
 resource 'vers' (1) {
 	0x01,
-	0x20,
+	0x21,
 	release,
 	0,
 	smRoman,
-	"1.2",
-	"1.2, " COPY " " COPYRIGHT
+	"1.2.1",
+	"1.2.1, " COPY " " COPYRIGHT
 };
 
 resource 'STR#' (128) {{
