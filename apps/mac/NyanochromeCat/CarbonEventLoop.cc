@@ -42,26 +42,9 @@ pascal OSStatus window_WindowClose( EventHandlerCallRef  handler,
                                     EventRef             event,
                                     void*                userData )
 {
-	OSStatus err;
+	QuitApplicationEventLoop();
 	
-	WindowRef window;
-	err = GetEventParameter( event,
-	                         kEventParamDirectObject,
-	                         typeWindowRef,
-	                         NULL,
-	                         sizeof (WindowRef),
-	                         NULL,
-	                         &window );
-	
-	if ( err == noErr )
-	{
-		if ( window == main_window )
-		{
-			QuitApplicationEventLoop();
-		}
-	}
-	
-	return err;
+	return noErr;
 }
 
 DEFINE_CARBON_UPP( EventHandler, window_WindowClose )
