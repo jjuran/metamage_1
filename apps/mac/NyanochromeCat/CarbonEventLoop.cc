@@ -274,5 +274,15 @@ void Carbon_event_loop()
 	SetMenuItemCommandID( appl, 1, kHICommandAbout );
 	SetMenuItemCommandID( file, 3, kHICommandClose );
 	
+	if ( TARGET_RT_MAC_CFM )
+	{
+		/*
+			This is needed in Mac OS 9 (i.e. non-Aqua).
+			It's harmless in Mac OS X.
+		*/
+		
+		SetMenuItemCommandID( file, 5, kHICommandQuit );
+	}
+	
 	RunApplicationEventLoop();
 }
