@@ -99,6 +99,10 @@ bool close_About_box( WindowRef window )
 	return is_About;
 }
 
+#else  // #if ! __LP64__
+
+int dummy;
+
 #endif
 
 }
