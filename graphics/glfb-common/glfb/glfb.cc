@@ -184,7 +184,7 @@ void blit( const void* src_addr )
 	{
 		glEnable( GL_BLEND );
 		
-		glColor4f( 0, 0, 0, 0.50 );
+		glColor4f( 0.50, 0.50, 0.50, 0.50 );
 		glBegin( GL_QUADS );
 		
 		glVertex2i( 0,     height );  // top left
