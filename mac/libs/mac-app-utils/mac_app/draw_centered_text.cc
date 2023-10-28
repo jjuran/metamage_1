@@ -28,7 +28,7 @@ enum
 #include <string.h>
 
 
-#ifndef __MAC_10_11
+#ifndef MAC_OS_X_VERSION_10_5
 
 static inline
 ATSUFontID ATSUFindFontFromName( const char* name, size_t len )
@@ -65,7 +65,7 @@ void set_font_and_size( ATSUStyle style, ATSUFontID font, UInt32 size )
 	ATSUSetAttributes( style, 2, tags, sizes, values );
 }
 
-#endif  // #ifndef __MAC_10_11
+#endif  // #ifndef MAC_OS_X_VERSION_10_5
 
 namespace mac {
 namespace app {
@@ -79,7 +79,7 @@ namespace app {
 		
 	#if ! __LP64__
 		
-	#ifndef __MAC_10_11
+	#ifndef MAC_OS_X_VERSION_10_5
 		
 		ATSUFontID font = ATSUFindFontFromName( fontName );
 		
@@ -101,7 +101,7 @@ namespace app {
 		                        style,
 		                        &options );
 		
-	#ifndef __MAC_10_11
+	#ifndef MAC_OS_X_VERSION_10_5
 		
 		if ( style )
 		{

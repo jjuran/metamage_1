@@ -244,7 +244,7 @@ namespace Pedestal
 		        + kAboutBoxIconHeight
 		        + kAboutBoxIconToTextGap;
 		
-	#ifdef __MAC_10_11
+	#ifdef MAC_OS_X_VERSION_10_5
 		
 		CTFontRef font = CTFontCreateWithName( CFSTR( APP_NAME_FONT ),
 		                                       APP_NAME_SIZE,
