@@ -145,6 +145,10 @@ enum
 	tag_TheCrsr_word_33 = tag_TheCrsr + 33,  // 68 bytes
 	tag_CrsrSave,
 	tag_CrsrSave_low_word,
+	tag_MainDevice,
+	tag_MainDevice_low_word,
+	tag_DeviceList,
+	tag_DeviceList_low_word,
 	tag_DeepRow,
 	tag_DepthLog2,
 	tag_CrsrVisBusy,
@@ -384,6 +388,8 @@ static const global globals[] =
 	*/
 	
 	{ 0x088C, 4,    tag_CrsrSave    },
+	{ 0x08A4, 4,    tag_MainDevice  },
+	{ 0x08A8, 4,    tag_DeviceList  },
 	
 	/*
 		ScreenRow always contains the rowBytes of a bitmap that's
