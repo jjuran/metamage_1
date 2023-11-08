@@ -5,30 +5,55 @@
 
 #include "Genie/Kernel/native_syscalls.hh"
 
-#include "Nitrogen/CFBundle.hh"
-#include "Nitrogen/CFURL.hh"
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
+// Mac OS
+#ifndef __COREFOUNDATION_CFBUNDLE__
+#ifndef __CFBUNDLE__
+#include <CFBundle.h>
+#endif
+#endif
+#ifndef __COREFOUNDATION_CFURL__
+#ifndef __CFURL__
+#include <CFURL.h>
+#endif
+#endif
 
 // Standard C
 #include <errno.h>
 
 
+#pragma exceptions off
+
+
+#define SYSTEM_FRAMEWORK  "/System/Library/Frameworks/System.framework"
+
+
 namespace Genie
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
-	
+	static inline
+	CFURLRef CFURLCreateWithString( CFStringRef string )
+	{
+		return CFURLCreateWithString( kCFAllocatorDefault, string, NULL );
+	}
 	
 	static CFBundleRef get_System_bundle()
 	{
-		static CFBundleRef bundle = N::CFBundleCreate( N::CFURLCreateWithString( CFSTR( "/System/Library/Frameworks/System.framework" ) ) ).release();
+		static CFStringRef str = CFSTR( SYSTEM_FRAMEWORK );
+		static CFURLRef    url = CFURLCreateWithString( str );
+		
+		static CFBundleRef bundle = CFBundleCreate( kCFAllocatorDefault, url );
 		
 		return bundle;
 	}
 	
 	static void* get_native_syscall( CFStringRef syscall_name )
 	{
-		return N::CFBundleGetFunctionPointerForName( get_System_bundle(), syscall_name );
+		return CFBundleGetFunctionPointerForName( get_System_bundle(), syscall_name );
 	}
 	
 	static int get_errno()
@@ -39,6 +64,11 @@ namespace Genie
 		
 		static error_proc _error = (error_proc) get_native_syscall( CFSTR( "__error" ) );
 		
+		if ( _error == NULL )
+		{
+			return ENOSYS;
+		}
+		
 		return *_error();
 	}
 	
@@ -46,12 +76,12 @@ namespace Genie
 	{
 		typedef int (*symlink_proc)( const char*, const char* );
 		
-		try
+		(void) get_errno();  // Make sure loading __error() doesn't clobber errno
+		
+		symlink_proc _symlink = (symlink_proc) get_native_syscall( CFSTR( "symlink" ) );
+		
+		if ( _symlink )
 		{
-			(void) get_errno();  // Make sure loading __error() doesn't clobber errno
-			
-			symlink_proc _symlink = (symlink_proc) get_native_syscall( CFSTR( "symlink" ) );
-			
 			int result = _symlink( target_path, link_path );
 			
 			if ( result < 0 )
@@ -60,9 +90,6 @@ namespace Genie
 			}
 			
 			return result;
-		}
-		catch ( ... )
-		{
 		}
 		
 		errno = ENOSYS;
@@ -74,12 +101,12 @@ namespace Genie
 	{
 		typedef int (*unlink_proc)( const char* );
 		
-		try
+		(void) get_errno();  // Make sure loading __error() doesn't clobber errno
+		
+		unlink_proc _unlink = (unlink_proc) get_native_syscall( CFSTR( "unlink" ) );
+		
+		if ( _unlink )
 		{
-			(void) get_errno();  // Make sure loading __error() doesn't clobber errno
-			
-			unlink_proc _unlink = (unlink_proc) get_native_syscall( CFSTR( "unlink" ) );
-			
 			int result = _unlink( path );
 			
 			if ( result < 0 )
@@ -88,9 +115,6 @@ namespace Genie
 			}
 			
 			return result;
-		}
-		catch ( ... )
-		{
 		}
 		
 		errno = ENOSYS;
