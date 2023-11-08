@@ -26,6 +26,9 @@
 #include "mac_qd/globals/screenBits.hh"
 #include "mac_qd/scoped_port.hh"
 
+// mac-ui-utils
+#include "mac_ui/windows.hh"
+
 // mac-app-utils
 #include "mac_app/Window_menu.hh"
 
@@ -42,7 +45,6 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/CFString.hh"
 #include "Nitrogen/Str.hh"
 
 // Pedestal
@@ -427,15 +429,9 @@ namespace Genie
 		
 		WindowRef window = owner;
 		
-		const plus::string&            title = params.itsTitle;
-		const Carbon::CFStringEncoding utf8  = Carbon::kCFStringEncodingUTF8;
+		const plus::string& title = params.itsTitle;
 		
-		OSStatus err;
-		
-		err = SetWindowTitleWithCFString( window,
-		                                  N::CFStringCreateWithBytes( title,
-		                                                              utf8,
-		                                                              false ) );
+		mac::ui::set_window_title_UTF8( window, title.data(), title.size() );
 		
 		mac::app::Window_menu_remove( window );
 		mac::app::Window_menu_insert( window );
