@@ -11,9 +11,6 @@
 // mac-app-utils
 #include "mac_app/Window_menu.hh"
 
-// Nitrogen
-#include "Nitrogen/MacWindows.hh"
-
 // MacFiles
 #include "MacFiles/Classic.hh"
 #include "MacFiles/Unicode.hh"
@@ -110,7 +107,7 @@ namespace TestEdit
 	{
 		WindowRef window = itsWindow.get();
 		
-		N::SetWindowTitleWithCFString( window, GetFilenameAsCFString( file ) );
+		SetWindowTitleWithCFString( window, GetFilenameAsCFString( file ) );
 		
 		mac::app::Window_menu_remove( window );
 		mac::app::Window_menu_insert( window );
@@ -120,7 +117,11 @@ namespace TestEdit
 	
 	plus::string Document::GetName() const
 	{
-		return plus::string( N::GetWTitle( GetWindowRef() ) );
+		Str255 title;
+		
+		GetWTitle( GetWindowRef(), title );
+		
+		return plus::string( title );
 	}
 	
 }
