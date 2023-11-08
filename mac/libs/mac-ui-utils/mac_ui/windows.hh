@@ -28,6 +28,8 @@ namespace ui  {
 	
 	void invalidate_window( WindowRef window );
 	
+	OSStatus set_window_title_UTF8( WindowRef window, const char* p, int n );
+	
 }
 }
 
