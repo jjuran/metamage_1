@@ -3,6 +3,18 @@
 	-----------
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
+// Mac OS
+#ifndef __COREFOUNDATION_CFSTRING__
+#ifndef __CFSTRING__
+#include <CFString.h>
+#endif
+#endif
+
 // Standard C
 #include <stdlib.h>
 #include <string.h>
@@ -10,18 +22,12 @@
 // iota
 #include "iota/strings.hh"
 
-// Nitrogen
-#include "Nitrogen/CFString.hh"
-
-#undef check
-
 // tap-out
 #include "tap/check.hh"
 #include "tap/test.hh"
 
 
-namespace n = nucleus;
-namespace N = Nitrogen;
+#pragma exceptions off
 
 
 static const unsigned n_tests = 4 + 4;
@@ -31,8 +37,16 @@ static void UTF8_from_MacRoman()
 {
 	const char* macRoman = "foo\xA5";
 	
-	n::owned< CFStringRef > string = N::CFStringCreateWithCString( macRoman,
-	                                                               Carbon::kCFStringEncodingMacRoman );
+	CFStringRef string = CFStringCreateWithCString( kCFAllocatorDefault,
+	                                                macRoman,
+	                                                kCFStringEncodingMacRoman );
+	
+	if ( string == NULL )
+	{
+		EXPECT( ! "*** out of memory ***" );
+		
+		exit( 108 );
+	}
 	
 	const CFIndex length = CFStringGetLength( string );
 	
@@ -53,6 +67,8 @@ static void UTF8_from_MacRoman()
 	                                   sizeof buffer,
 	                                   &n_bytes );
 	
+	CFRelease( string );
+	
 	EXPECT( result == 4 );
 	
 	EXPECT( n_bytes == 6 );
@@ -64,8 +80,16 @@ static void MacRoman_from_UTF8()
 {
 	const char* utf8 = "foo\xE2\x80\xA2";
 	
-	n::owned< CFStringRef > string = N::CFStringCreateWithCString( utf8,
-	                                                               Carbon::kCFStringEncodingUTF8 );
+	CFStringRef string = CFStringCreateWithCString( kCFAllocatorDefault,
+	                                                utf8,
+	                                                kCFStringEncodingUTF8 );
+	
+	if ( string == NULL )
+	{
+		EXPECT( ! "*** out of memory ***" );
+		
+		exit( 108 );
+	}
 	
 	const CFIndex length = CFStringGetLength( string );
 	
@@ -85,6 +109,8 @@ static void MacRoman_from_UTF8()
 	                                   (UInt8*) &buffer[ 0 ],
 	                                   sizeof buffer,
 	                                   &n_bytes );
+	
+	CFRelease( string );
 	
 	EXPECT( result == 4 );
 	
