@@ -195,12 +195,6 @@ void DrawAboutBoxDetail( CFStringRef    text,
 }
 
 static
-CFStringRef VersionString()
-{
-	return GetBundleString( CFSTR( "CFBundleGetInfoString" ) );
-}
-
-static
 CFStringRef GetBundleShortVersionString()
 {
 	return GetBundleString( CFSTR( "CFBundleShortVersionString" ) );
