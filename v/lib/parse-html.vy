@@ -68,6 +68,14 @@ def tag-pattern
 	let metadata_body = (comments  => { comment: null })
 	                  | (until '>' => { doctype: ""   })
 	
+	let proc_inst_body =
+	[
+		tag_name,
+		space,
+		attr_list,
+	]
+	=> { processing-instruction: null }
+	
 	let start_tag_body =
 	[
 		tag_name  => str,
@@ -80,6 +88,7 @@ def tag-pattern
 	let end_tag_body = [ '/', tag_name => { end-tag: _ }, space ]
 	
 	let tag_body = ['!', metadata_body]
+	             | ['?', proc_inst_body, '?']
 	             | start_tag_body
 	             | end_tag_body
 	
