@@ -45,7 +45,7 @@ sub command
 	
 	unlink( $dest );
 	
-	return $self->tool_name, 'rcu', $dest;
+	return $self->tool_name, 'rcs', $dest;
 }
 
 1;
