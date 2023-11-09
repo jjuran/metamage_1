@@ -163,8 +163,13 @@ def parse-html (data)
 				stack = [value, *stack]  # push
 			}
 		}
-		else if token.key == "end-tag" then
+		else if token.key == "end-tag" and not token.value in separators then
 		{
+			# Known separators don't get pushed onto the stack.
+			# But <link ...></link> has been seen in the wild,
+			# so don't try to unwind the stack for </link> when
+			# <link> was never pushed in the first place.
+			
 			end token.value
 		}
 	}
