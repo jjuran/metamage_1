@@ -1,0 +1,25 @@
+#!/usr/bin/env minivx
+
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
+
+def import (lib) { eval (load, realpath) libdir lib ".vy" }
+
+let parse-html = import "parse-html"
+
+let pretty-printing = import "pretty-printing"
+
+let Tab = "\t"
+
+def printer (depth, text)
+{
+	let tabs = Tab * depth
+	
+	print tabs text
+}
+
+let pretty-print = pretty-printing printer
+
+let doc = parse-html load argv[ 1 ]
+
+pretty-print doc
