@@ -9,6 +9,7 @@ let alnum = alpha | digit
 
 let tag_name = (alnum | '-')+
 let attr_name = (alnum | '-')+
+let attr_value = (alnum | '-')+  # when unquoted
 let entity_name = alnum+
 
 def until (q) { ~(byteclass q)* }
@@ -41,13 +42,13 @@ def attr_list-pattern
 {
 	def delimited (q) { [q, [reference | ~byteclass(q) => str]* => str, q] }
 	
-	let quote = delimited '\'' | delimited '"'
+	let value = delimited '\'' | delimited '"' | attr_value
 	
 	def kv (k, v) { k => v }
 	
 	def make_attr (match: ...) { kv (match (*) (3 - (+) match)) }
 	
-	let attr = [ attr_name => str, ['=', quote]?, space ] => make_attr
+	let attr = [ attr_name => str, ['=', value]?, space ] => make_attr
 	
 	return (attr+ => {[_]}) | ("" => {[]})
 }
