@@ -32,7 +32,7 @@ static void UTF8_from_MacRoman()
 	const char* macRoman = "foo\xA5";
 	
 	n::owned< CFStringRef > string = N::CFStringCreateWithCString( macRoman,
-	                                                               kCFStringEncodingMacRoman );
+	                                                               Carbon::kCFStringEncodingMacRoman );
 	
 	const CFIndex length = CFStringGetLength( string );
 	
@@ -65,7 +65,7 @@ static void MacRoman_from_UTF8()
 	const char* utf8 = "foo\xE2\x80\xA2";
 	
 	n::owned< CFStringRef > string = N::CFStringCreateWithCString( utf8,
-	                                                               kCFStringEncodingUTF8 );
+	                                                               Carbon::kCFStringEncodingUTF8 );
 	
 	const CFIndex length = CFStringGetLength( string );
 	
