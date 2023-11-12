@@ -419,6 +419,20 @@ namespace vlib
 		{
 			return fold_if( b );
 		}
+		else if ( op == Op_else_if )
+		{
+			if ( Value folded = fold_if( b ) )
+			{
+				if ( folded.expr()  &&  folded.expr()->op == Op_if )
+				{
+					expr->right = folded.expr()->right;
+					
+					return v;
+				}
+				
+				return Value( a, Op_else, Value( Op_block, folded ) );
+			}
+		}
 		else if ( op == Op_assert )
 		{
 			if ( is_constant( b ) )

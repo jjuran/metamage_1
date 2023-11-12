@@ -326,24 +326,24 @@ $ vc '{if 1 then {2} else if 3 then {4} else {5}}'
 %
 
 $ vc '{if 0 then {2} else if 3 then {4} else {5}}'
-1 >= '{if (3 then ({4} else {5}))}'
+1 >= '{4}'
 
 %
 
 $ vc '{if 0 then {2} else if 0 then {4} else {5}}'
-1 >= '{if (0 then ({4} else {5}))}'
+1 >= '{5}'
 
 %
 
 $ vc '{if _ then {} else if 1 then {2} else if 3 then {4} else {5}}'
-1 >= '{if (_ then ({} else if (1 then ({2} else if (3 then ({4} else {5}))))))}'
+1 >= '{if (_ then ({} else {2}))}'
 
 %
 
 $ vc '{if _ then {} else if 0 then {2} else if 3 then {4} else {5}}'
-1 >= '{if (_ then ({} else if (0 then ({2} else if (3 then ({4} else {5}))))))}'
+1 >= '{if (_ then ({} else {4}))}'
 
 %
 
 $ vc '{if _ then {} else if 0 then {2} else if 0 then {4} else {5}}'
-1 >= '{if (_ then ({} else if (0 then ({2} else if (0 then ({4} else {5}))))))}'
+1 >= '{if (_ then ({} else {5}))}'
