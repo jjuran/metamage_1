@@ -310,6 +310,11 @@ namespace vlib
 			
 			if ( expr  &&  expr->op == Op_block )
 			{
+				if ( expr->right.is_evaluated() )
+				{
+					return expr->right;
+				}
+				
 				const Value& body = expr->right.expr()->right;
 				
 				if ( is_constant( body ) )

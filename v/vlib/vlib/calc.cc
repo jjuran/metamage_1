@@ -68,6 +68,11 @@ namespace vlib
 				return expr->right;
 			}
 			
+			if ( expr->op == Op_block  &&  expr->right.is_evaluated() )
+			{
+				return expr->right;
+			}
+			
 			if ( expr->op == Op_empower )
 			{
 				return generic_deref( expr->right );
@@ -351,6 +356,11 @@ namespace vlib
 	Value do_block( const Value& block )
 	{
 		Expr* expr = block.expr();
+		
+		if ( expr  &&  expr->op == Op_block  &&  expr->right.is_evaluated() )
+		{
+			return expr->right;
+		}
 		
 		if ( expr == NULL  ||  expr->op != Op_invocation )
 		{

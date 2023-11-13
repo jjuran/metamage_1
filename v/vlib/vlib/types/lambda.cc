@@ -140,6 +140,13 @@ namespace vlib
 			}
 		}
 		
+		Expr* expr = f.expr();
+		
+		if ( expr  &&  expr->op == Op_block  &&  expr->right.is_evaluated() )
+		{
+			return expr->right;
+		}
+		
 		THROW( "attempted call of lambda with invalid body" );
 		
 		return Value();  // not reached

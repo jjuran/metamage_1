@@ -95,6 +95,12 @@ namespace vlib
 		Expr* expr = body.expr();
 		
 		ASSERT( expr != 0 );  // NULL
+		
+		if ( expr->op == Op_block  &&  expr->right.is_evaluated() )
+		{
+			return;
+		}
+		
 		ASSERT( expr->op == Op_invocation );
 		
 		expr = expr->right.expr();

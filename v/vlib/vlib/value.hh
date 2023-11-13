@@ -411,7 +411,7 @@ namespace vlib
 	{
 		Expr* expr = v.expr();
 		
-		return expr  &&  expr->op == Op_invocation;
+		return expr  &&  (uint8_t) expr->op == Op_block;
 	}
 	
 	unsigned long area( const Value& v );

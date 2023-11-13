@@ -530,7 +530,10 @@ namespace vlib
 			}
 			else if ( op == Op_block )
 			{
-				expr->right = enscope( expr->right );
+				if ( ! expr->right.is_evaluated() )
+				{
+					expr->right = enscope( expr->right );
+				}
 				
 				its_scope.pop();
 			}

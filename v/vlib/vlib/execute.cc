@@ -287,7 +287,16 @@ namespace vlib
 		
 		Value invocation = execute( do_block, stack );
 		
-		if ( true )
+		expr = invocation.expr();
+		
+		if ( expr  &&  expr->op == Op_block  &&  expr->right.is_evaluated() )
+		{
+			/*
+				The loop body is a constant block.
+				We don't have an activation record.
+			*/
+		}
+		else
 		{
 			invocation.unshare();
 			
@@ -342,11 +351,13 @@ namespace vlib
 			{
 				if ( handler_1arg handler = ops->unary )
 				{
+					Value dummy;
+					
 					while ( true )
 					{
 						// This may block
 						
-						Value& result = sym->deref_unsafe();
+						Value& result = sym ? sym->deref_unsafe() : dummy;
 						
 						result = handler( Op_recv, container );
 						
@@ -358,6 +369,16 @@ namespace vlib
 						if ( is_empty_list( result ) )
 						{
 							return;
+						}
+						
+						if ( ! sym )
+						{
+							/*
+								The loop body is a constant block.
+								Don't invoke the loop body,
+								but continue calling the receiver.
+							*/
+							continue;
 						}
 						
 						temporary tmp( result );
@@ -377,6 +398,15 @@ namespace vlib
 					}
 				}
 			}
+		}
+		
+		if ( ! sym )
+		{
+			/*
+				Iteration is side-effect-free and the loop body
+				is constant, so we don't need to do anything.
+			*/
+			return;
 		}
 		
 		generic_iterator it( container );
@@ -521,7 +551,7 @@ namespace vlib
 			expr = expr->right.expr();
 		}
 		
-		if ( expr == 0  ||  expr->op != Op_invocation )  // NULL
+		if ( expr == 0  ||  (uint8_t) expr->op != Op_block )  // NULL
 		{
 			THROW( "`def` requires a block" );
 		}
@@ -665,6 +695,11 @@ namespace vlib
 			
 			if ( expr->op == Op_block )
 			{
+				if ( expr->right.is_evaluated() )
+				{
+					return subtree;
+				}
+				
 				const Value& scope = expr->right;
 				
 				return make_block_invocation( scope, stack );

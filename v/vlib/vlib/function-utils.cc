@@ -45,6 +45,11 @@ namespace vlib
 		
 		if ( Expr* expr = f.expr() )
 		{
+			if ( expr->op == Op_block  &&  expr->right.is_evaluated() )
+			{
+				return expr->right;
+			}
+			
 			if ( expr->op == Op_multiply )
 			{
 				return call_function( expr->left,

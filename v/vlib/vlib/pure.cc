@@ -66,6 +66,12 @@ namespace vlib
 					return false;
 				
 				case Op_block:
+					if ( expr->right.is_evaluated() )
+					{
+						return is_pure( expr->right );
+					}
+					// fall through
+					
 				case Op_invocation:
 					return is_pure( expr->right.expr()->right );
 				

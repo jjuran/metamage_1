@@ -51,6 +51,11 @@ const Value& unembrace( const Value& field_defs )
 	{
 		if ( (op_type) (uint8_t) expr->op == Op_block )
 		{
+			if ( expr->right.is_evaluated() )
+			{
+				return expr->right;
+			}
+			
 			expr = expr->right.expr();
 			
 			if ( expr  &&  (op_type) (uint8_t) expr->op == Op_scope )

@@ -23,6 +23,7 @@ namespace vlib
 		{
 			switch ( expr->op )
 			{
+				case Op_block:
 				case Op_bind_args:
 				case Op_invocation:
 				case Op_lambda:
