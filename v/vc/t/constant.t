@@ -307,3 +307,43 @@ $ vc '{byte.decode x"3f"}'
 
 $ vc '{i16.decode x"1616"}'
 1 >= "{5654}"
+
+%
+
+$ vc '{if 1 then {2} else {3}}'
+1 >= '{if (1 then ({2} else {3}))}'
+
+%
+
+$ vc '{if 0 then {2} else {3}}'
+1 >= '{if (0 then ({2} else {3}))}'
+
+%
+
+$ vc '{if 1 then {2} else if 3 then {4} else {5}}'
+1 >= '{if (1 then ({2} else (if (3 then ({4} else {5})))))}'
+
+%
+
+$ vc '{if 0 then {2} else if 3 then {4} else {5}}'
+1 >= '{if (0 then ({2} else (if (3 then ({4} else {5})))))}'
+
+%
+
+$ vc '{if 0 then {2} else if 0 then {4} else {5}}'
+1 >= '{if (0 then ({2} else (if (0 then ({4} else {5})))))}'
+
+%
+
+$ vc '{if _ then {} else if 1 then {2} else if 3 then {4} else {5}}'
+1 >= '{if (_ then ({} else (if (1 then ({2} else (if (3 then ({4} else {5}))))))))}'
+
+%
+
+$ vc '{if _ then {} else if 0 then {2} else if 3 then {4} else {5}}'
+1 >= '{if (_ then ({} else (if (0 then ({2} else (if (3 then ({4} else {5}))))))))}'
+
+%
+
+$ vc '{if _ then {} else if 0 then {2} else if 0 then {4} else {5}}'
+1 >= '{if (_ then ({} else (if (0 then ({2} else (if (0 then ({4} else {5}))))))))}'
