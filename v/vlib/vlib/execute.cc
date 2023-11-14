@@ -283,51 +283,58 @@ namespace vlib
 			THROW( "`for` expects an iteration symbol" );
 		}
 		
+		Symbol* sym = 0;  // NULL
+		
 		Value invocation = execute( do_block, stack );
 		
-		invocation.unshare();
+		if ( true )
+		{
+			invocation.unshare();
+			
+			expr = invocation.expr();
+			
+			ASSERT( expr != 0 );  // NULL
+			ASSERT( expr->op == Op_invocation );
+			
+			
+			Value& activation = expr->right;
+			
+			activation.unshare();
+			
+			expr = activation.expr();
+			
+			ASSERT( expr != 0 );  // NULL
+			ASSERT( expr->op == Op_activation );
+			
+			
+			Value& stack_head = expr->left;
+			
+			stack_head.unshare();
+			
+			expr = stack_head.expr();
+			
+			ASSERT( expr != 0 );  // NULL
+			ASSERT( expr->op == Op_frame );
+			
+			
+			Value& stack_next = expr->left;
+			
+			stack_next.unshare();
+			
+			expr = stack_next.expr();
+			
+			ASSERT( expr != 0 );  // NULL
+			ASSERT( expr->op == Op_frame );
+			
+			
+			Value& stack_frame = expr->right;
+			
+			Value& variable = get_nth_mutable( stack_frame, index );
+			
+			sym = variable.sym();
+		}
 		
-		expr = invocation.expr();
-		
-		ASSERT( expr != 0 );  // NULL
-		ASSERT( expr->op == Op_invocation );
-		
-		
-		Value& activation = expr->right;
-		
-		activation.unshare();
-		
-		expr = activation.expr();
-		
-		ASSERT( expr != 0 );  // NULL
-		ASSERT( expr->op == Op_activation );
-		
-		
-		Value& stack_head = expr->left;
-		
-		stack_head.unshare();
-		
-		expr = stack_head.expr();
-		
-		ASSERT( expr != 0 );  // NULL
-		ASSERT( expr->op == Op_frame );
-		
-		
-		Value& stack_next = expr->left;
-		
-		stack_next.unshare();
-		
-		expr = stack_next.expr();
-		
-		ASSERT( expr != 0 );  // NULL
-		ASSERT( expr->op == Op_frame );
-		
-		
-		Value& stack_frame = expr->right;
-		
-		Value& variable = get_nth_mutable( stack_frame, index );
-		
-		Symbol* sym = variable.sym();
+		const Value& activation = invocation.expr()->right;
 		
 		if ( const dispatch* methods = container.get().dispatch_methods() )
 		{
