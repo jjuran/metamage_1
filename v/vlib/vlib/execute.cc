@@ -327,6 +327,8 @@ namespace vlib
 		
 		Value& variable = get_nth_mutable( stack_frame, index );
 		
+		Symbol* sym = variable.sym();
+		
 		if ( const dispatch* methods = container.get().dispatch_methods() )
 		{
 			if ( const operators* ops = methods->ops )
@@ -337,7 +339,7 @@ namespace vlib
 					{
 						// This may block
 						
-						Value& result = variable.sym()->deref_unsafe();
+						Value& result = sym->deref_unsafe();
 						
 						result = handler( Op_recv, container );
 						
@@ -374,7 +376,7 @@ namespace vlib
 		
 		while ( it )
 		{
-			variable.sym()->deref_unsafe() = it.use();
+			sym->deref_unsafe() = it.use();
 			
 			try
 			{
