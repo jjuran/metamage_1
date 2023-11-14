@@ -10,6 +10,11 @@ if true then
 	
 	for x in [] do
 	{
+		OUT <== ""
+	}
+	
+	for y in [] do
+	{
 	}
 }
 
