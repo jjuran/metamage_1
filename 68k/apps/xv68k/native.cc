@@ -214,10 +214,6 @@ bool native_override( v68k::emulator& emu )
 			}
 			
 			emu.regs[ PC ] = trap_addr;
-			
-			emu.prefetch_instruction_word();
-			
-			return true;
 		}
 		else
 		{
@@ -264,11 +260,11 @@ bool native_override( v68k::emulator& emu )
 			emu.put_long( emu.regs[ SP ] -= 4, sp, data_space );
 			
 			emu.regs[ PC ] = trap_addr;
-			
-			emu.prefetch_instruction_word();
-			
-			return true;
 		}
+		
+		emu.prefetch_instruction_word();
+		
+		return true;
 	}
 	
 	if ( emu.opcode == 0x484F )
