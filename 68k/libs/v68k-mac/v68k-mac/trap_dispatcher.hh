@@ -3,8 +3,8 @@
 	------------------
 */
 
-#ifndef MAC_TRAPDISPATCHER_HH
-#define MAC_TRAPDISPATCHER_HH
+#ifndef V68KMAC_TRAPDISPATCHER_HH
+#define V68KMAC_TRAPDISPATCHER_HH
 
 // Standard C
 #include <stdint.h>

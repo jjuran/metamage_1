@@ -3,8 +3,8 @@
 	---------
 */
 
-#ifndef CALLOUTMEMORY_HH
-#define CALLOUTMEMORY_HH
+#ifndef CALLOUT_MEMORY_HH
+#define CALLOUT_MEMORY_HH
 
 // v68k
 #include "v68k/memory.hh"

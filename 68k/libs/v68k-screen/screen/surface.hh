@@ -3,8 +3,8 @@
 	----------
 */
 
-#ifndef SCREENSURFACE_HH
-#define SCREENSURFACE_HH
+#ifndef SCREEN_SURFACE_HH
+#define SCREEN_SURFACE_HH
 
 
 namespace v68k   {

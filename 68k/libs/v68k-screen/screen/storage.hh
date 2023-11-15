@@ -3,8 +3,8 @@
 	----------
 */
 
-#ifndef SCREENSTORAGE_HH
-#define SCREENSTORAGE_HH
+#ifndef SCREEN_STORAGE_HH
+#define SCREEN_STORAGE_HH
 
 
 namespace v68k   {

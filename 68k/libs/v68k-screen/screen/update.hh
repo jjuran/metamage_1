@@ -3,8 +3,8 @@
 	---------
 */
 
-#ifndef SCREENUPDATE_HH
-#define SCREENUPDATE_HH
+#ifndef SCREEN_UPDATE_HH
+#define SCREEN_UPDATE_HH
 
 
 namespace raster

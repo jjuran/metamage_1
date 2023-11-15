@@ -3,8 +3,8 @@
 	-------
 */
 
-#ifndef SCREENLOCK_HH
-#define SCREENLOCK_HH
+#ifndef SCREEN_LOCK_HH
+#define SCREEN_LOCK_HH
 
 
 namespace v68k   {

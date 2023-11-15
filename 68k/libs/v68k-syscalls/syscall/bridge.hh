@@ -3,8 +3,8 @@
 	---------
 */
 
-#ifndef SYSCALLBRIDGE_HH
-#define SYSCALLBRIDGE_HH
+#ifndef SYSCALL_BRIDGE_HH
+#define SYSCALL_BRIDGE_HH
 
 // v68k
 #include "v68k/state.hh"

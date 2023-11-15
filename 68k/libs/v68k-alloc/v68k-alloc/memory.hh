@@ -3,8 +3,8 @@
 	---------
 */
 
-#ifndef V68KALLOCMEMORY_HH
-#define V68KALLOCMEMORY_HH
+#ifndef V68KALLOC_MEMORY_HH
+#define V68KALLOC_MEMORY_HH
 
 // v68k
 #include "v68k/memory.hh"
