@@ -3,13 +3,14 @@
 	--------
 */
 
-#ifndef SOUND_HH
-#define SOUND_HH
+#ifndef SOUND_SOUND_HH
+#define SOUND_SOUND_HH
 
 // v68k
 #include "v68k/memory.hh"
 
 
+namespace v68k  {
 namespace sound {
 
 using v68k::addr_t;
@@ -29,7 +30,7 @@ void set_audio_level( short level );
 
 uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access );
 
-}
-
+}  // namespace sound
+}  // namespace v68k
 
 #endif

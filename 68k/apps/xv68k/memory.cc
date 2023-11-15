@@ -26,8 +26,10 @@
 #include "screen/storage.hh"
 #include "screen/update.hh"
 
+// v68k-sound
+#include "sound/sound.hh"
+
 // xv68k
-#include "sound.hh"
 #include "VIA.hh"
 
 
@@ -203,6 +205,8 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	if ( addr_within_span( addr, main_sound_addr, sound_size ) )
 	{
+		namespace sound = v68k::sound;
+		
 		return sound::translate( addr - main_sound_addr, length, fc, access );
 	}
 	

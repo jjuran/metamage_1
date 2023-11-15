@@ -61,6 +61,9 @@
 #include "screen/storage.hh"
 #include "screen/surface.hh"
 
+// v68k-sound
+#include "sound/sound.hh"
+
 // v68k-syscalls
 #include "syscall/bridge.hh"
 #include "syscall/handler.hh"
@@ -70,7 +73,6 @@
 #include "diagnostics.hh"
 #include "memory.hh"
 #include "native.hh"
-#include "sound.hh"
 
 
 #ifdef __MWERKS__
@@ -1110,7 +1112,7 @@ int main( int argc, char** argv )
 	
 	if ( const char* sound_fd_env = getenv( "XV68K_SOUND_FD" ) )
 	{
-		sound::sound_fd = gear::parse_unsigned_decimal( sound_fd_env );
+		v68k::sound::sound_fd = gear::parse_unsigned_decimal( sound_fd_env );
 	}
 	
 	module_specs = (module_spec*) alloca( argc * sizeof (module_spec) );

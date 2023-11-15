@@ -14,8 +14,8 @@
 // v68k-screen
 #include "screen/screen.hh"
 
-// xv68k
-#include "sound.hh"
+// v68k-sound
+#include "sound/sound.hh"
 
 
 namespace VIA {
@@ -251,7 +251,7 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 					
 					if ( diff & 0x07 )
 					{
-						sound::set_audio_level( mmio_byte & 7 );
+						v68k::sound::set_audio_level( mmio_byte & 7 );
 					}
 					break;
 				

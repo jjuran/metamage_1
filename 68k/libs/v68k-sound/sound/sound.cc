@@ -13,6 +13,7 @@
 #include <string.h>
 
 
+namespace v68k  {
 namespace sound {
 
 int sound_fd = -1;
@@ -162,3 +163,4 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 }
 
 }  // namespace sound
+}  // namespace v68k
