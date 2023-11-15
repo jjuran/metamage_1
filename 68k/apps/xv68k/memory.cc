@@ -29,8 +29,8 @@
 // v68k-sound
 #include "sound/sound.hh"
 
-// xv68k
-#include "VIA.hh"
+// v68k-VIA
+#include "VIA/VIA.hh"
 
 
 #ifdef __MWERKS__
@@ -236,7 +236,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	if ( (addr & 0x00FF0000) == 0xEF0000 )
 	{
-		return VIA::translate( addr, length, fc, access );
+		return v68k::VIA::translate( addr, length, fc, access );
 	}
 	
 #endif

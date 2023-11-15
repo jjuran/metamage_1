@@ -3,7 +3,7 @@
 	------
 */
 
-#include "VIA.hh"
+#include "VIA/VIA.hh"
 
 // log-of-war
 #include "logofwar/report.hh"
@@ -18,7 +18,8 @@
 #include "sound/sound.hh"
 
 
-namespace VIA {
+namespace v68k {
+namespace VIA  {
 
 /*
 	VIA Register A:
@@ -276,3 +277,4 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 }
 
 }  // namespace VIA
+}  // namespace v68k
