@@ -38,11 +38,11 @@ void* open_shared_memory( const char* path )
 	size = st.st_size;
 	
 	addr = mmap( NULL,
-				 size,
-				 PROT_READ | PROT_WRITE,
-				 MAP_SHARED,
-				 fd,
-				 0 );
+	             size,
+	             PROT_READ | PROT_WRITE,
+	             MAP_SHARED,
+	             fd,
+	             0 );
 	
 end:
 	

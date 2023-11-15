@@ -782,7 +782,7 @@ int execute_68k( int argc, char* const* argv )
 		main_screen_addr = mem_size - (0x20000 - 0x1A700);
 		main_sound_addr  = mem_size - (0x20000 - 0x1FD00);
 		
-		emu.put_long( MemTop,      mem_size,         user_data_space );
+		emu.put_long( MemTop, mem_size, user_data_space );
 	}
 	
 	using v68k::screen::virtual_buffer;
