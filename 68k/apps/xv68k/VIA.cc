@@ -11,8 +11,10 @@
 // v68k
 #include "v68k/print.hh"
 
+// v68k-screen
+#include "screen/screen.hh"
+
 // xv68k
-#include "screen.hh"
 #include "sound.hh"
 
 
@@ -229,7 +231,7 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 				case VIA_reg_A:
 					if ( diff & 0x40 )
 					{
-						page_flip();
+						v68k::screen::page_flip();
 						
 						if ( ! video_page_flips++ )
 						{

@@ -3,7 +3,7 @@
 	----------------
 */
 
-#include "shared_memory.hh"
+#include "screen/shared_memory.hh"
 
 // POSIX
 #include <errno.h>
@@ -12,6 +12,9 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 
+
+namespace v68k   {
+namespace screen {
 
 void* open_shared_memory( const char* path )
 {
@@ -54,3 +57,6 @@ end:
 	
 	return addr;
 }
+
+}  // namespace screen
+}  // namespace v68k

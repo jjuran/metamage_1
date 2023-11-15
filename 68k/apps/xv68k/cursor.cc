@@ -11,12 +11,14 @@
 // v68k-callouts
 #include "callout/cursor_state.hh"
 
-// xv68k
-#include "shared_memory.hh"
+// v68k-screen
+#include "screen/shared_memory.hh"
 
 
 int set_cursor_backing_store_file( const char* path )
 {
+	using v68k::screen::open_shared_memory;
+	
 	void* alloc = open_shared_memory( path );
 	
 	if ( alloc == 0 )  // NULL

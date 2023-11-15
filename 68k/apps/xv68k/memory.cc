@@ -21,12 +21,12 @@
 #include "lowmem/lowmem.hh"
 
 // v68k-screen
+#include "screen/screen.hh"
 #include "screen/lock.hh"
 #include "screen/storage.hh"
 #include "screen/update.hh"
 
 // xv68k
-#include "screen.hh"
 #include "sound.hh"
 #include "VIA.hh"
 
@@ -165,6 +165,8 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	if ( addr_in_screen( addr, length, main_screen_addr ) )
 	{
+		using v68k::screen::page_1_virtual_buffer;
+		
 		if ( access == mem_exec  ||  ! page_1_virtual_buffer )
 		{
 			return 0;  // NULL
@@ -187,6 +189,8 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	if ( vid_x2()  &&  addr_in_screen( addr, length, alt_screen_addr ) )
 	{
+		using v68k::screen::page_2_virtual_buffer;
+		
 		if ( access == mem_exec  ||  ! page_2_virtual_buffer )
 		{
 			return 0;  // NULL

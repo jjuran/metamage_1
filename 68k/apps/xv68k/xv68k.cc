@@ -57,6 +57,7 @@
 
 // v68k-screen
 #include "screen/lock.hh"
+#include "screen/screen.hh"
 #include "screen/storage.hh"
 #include "screen/surface.hh"
 
@@ -69,7 +70,6 @@
 #include "diagnostics.hh"
 #include "memory.hh"
 #include "native.hh"
-#include "screen.hh"
 #include "sound.hh"
 
 
@@ -792,6 +792,9 @@ int execute_68k( int argc, char* const* argv )
 	
 	if ( ! virtual_buffer )
 	{
+		using v68k::screen::page_1_virtual_buffer;
+		using v68k::screen::page_2_virtual_buffer;
+		
 		page_1_virtual_buffer = mem + main_screen_addr;
 		page_2_virtual_buffer = mem + alt_screen_addr;
 		
@@ -995,6 +998,8 @@ char* const* get_options( char** argv )
 					exit( 2 );
 				}
 				
+				using v68k::screen::set_screen_backing_store_file;
+				
 				const char* path;
 				path = global_result.param;
 				
@@ -1012,6 +1017,7 @@ char* const* get_options( char** argv )
 				
 				has_screen = true;
 				
+				using v68k::screen::page_1_virtual_buffer;
 				using v68k::screen::the_screen_size;
 				using v68k::screen::virtual_buffer;
 				

@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "screen.hh"
+#include "screen/screen.hh"
 
 // POSIX
 #include <fcntl.h>
@@ -16,10 +16,14 @@
 #include "raster/load.hh"
 
 // v68k-screen
+#include "screen/shared_memory.hh"
 #include "screen/storage.hh"
 #include "screen/surface.hh"
 #include "screen/update.hh"
 
+
+namespace v68k   {
+namespace screen {
 
 using raster::raster_load;
 using raster::raster_metadata;
@@ -152,3 +156,6 @@ int set_screen_backing_store_file( const char* path )
 	
 	return 0;
 }
+
+}  // namespace screen
+}  // namespace v68k
