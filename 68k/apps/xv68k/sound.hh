@@ -21,6 +21,8 @@ enum
 	buffer_size = 740,
 };
 
+extern int sound_fd;
+
 extern uint8_t* the_sound_buffer;
 
 void set_audio_level( short level );

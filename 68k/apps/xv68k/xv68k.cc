@@ -68,6 +68,7 @@
 #include "memory.hh"
 #include "native.hh"
 #include "screen.hh"
+#include "sound.hh"
 
 
 #ifdef __MWERKS__
@@ -1098,6 +1099,11 @@ int main( int argc, char** argv )
 	action.sa_handler = &sigint_handler;
 	
 	int nok = sigaction( SIGINT, &action, NULL );
+	
+	if ( const char* sound_fd_env = getenv( "XV68K_SOUND_FD" ) )
+	{
+		sound::sound_fd = gear::parse_unsigned_decimal( sound_fd_env );
+	}
 	
 	module_specs = (module_spec*) alloca( argc * sizeof (module_spec) );
 	

@@ -15,24 +15,13 @@
 
 namespace sound {
 
+int sound_fd = -1;
+
 uint8_t* the_sound_buffer;
 
 const int sndpipe_buffer_size = 8 + 4 + 370;
 
 static uint8_t message_buffer[ sndpipe_buffer_size ];
-
-static
-int get_sound_fd()
-{
-	if ( const char* sound_fd_env = getenv( "XV68K_SOUND_FD" ) )
-	{
-		return atoi( sound_fd_env );
-	}
-	
-	return -1;
-}
-
-static const int sound_fd = get_sound_fd();
 
 void set_audio_level( short level )
 {
