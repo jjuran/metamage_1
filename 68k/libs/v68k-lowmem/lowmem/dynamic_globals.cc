@@ -3,7 +3,7 @@
 	------------------
 */
 
-#include "v68k-mac/dynamic_globals.hh"
+#include "lowmem/dynamic_globals.hh"
 
 // POSIX
 #include <sys/time.h>
@@ -23,8 +23,8 @@
 #endif
 
 
-namespace v68k {
-namespace mac  {
+namespace v68k   {
+namespace lowmem {
 
 uint32_t get_Ticks()
 {
@@ -38,5 +38,5 @@ uint32_t get_Time()
 	return ::time( NULL ) + ::mac::types::epoch_delta();  // TODO:  Local time
 }
 
-}  // namespace mac
+}  // namespace lowmem
 }  // namespace v68k

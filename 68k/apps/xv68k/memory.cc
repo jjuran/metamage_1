@@ -17,8 +17,8 @@
 // v68k-callouts
 #include "callout/memory.hh"
 
-// v68k-mac
-#include "v68k-mac/memory.hh"
+// v68k-lowmem
+#include "lowmem/lowmem.hh"
 
 // v68k-screen
 #include "screen/lock.hh"
@@ -58,7 +58,7 @@ static uint32_t low_memory_size;
 static inline
 bool vid_x2()
 {
-	return v68k::mac::get_CurPageOption() < 0;
+	return v68k::lowmem::get_CurPageOption() < 0;
 }
 
 static inline
@@ -205,7 +205,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	if ( (addr >> 16) == 0x0040 )
 	{
 		// Mac ROM
-		return v68k::mac::translate( addr, length, fc, access );
+		return v68k::lowmem::translate( addr, length, fc, access );
 	}
 	
 #endif
@@ -215,7 +215,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		if ( fc <= v68k::user_program_space  &&  access != v68k::mem_exec )
 		{
 			// Mac OS low memory
-			return v68k::mac::translate( addr, length, fc, access );
+			return v68k::lowmem::translate( addr, length, fc, access );
 		}
 	}
 	

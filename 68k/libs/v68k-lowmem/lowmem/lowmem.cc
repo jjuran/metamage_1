@@ -1,9 +1,9 @@
 /*
-	memory.cc
+	lowmem.cc
 	---------
 */
 
-#include "v68k-mac/memory.hh"
+#include "lowmem/lowmem.hh"
 
 // Standard C
 #include <string.h>
@@ -11,8 +11,8 @@
 // v68k
 #include "v68k/endian.hh"
 
-// v68k-mac
-#include "v68k-mac/dynamic_globals.hh"
+// lowmem
+#include "lowmem/dynamic_globals.hh"
 
 
 #ifdef __MWERKS__
@@ -20,8 +20,8 @@
 #endif
 
 
-namespace v68k {
-namespace mac  {
+namespace v68k   {
+namespace lowmem {
 
 bool ticking;
 
@@ -618,5 +618,5 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 	return 0;
 }
 
-}  // namespace mac
+}  // namespace lowmem
 }  // namespace v68k

@@ -43,8 +43,10 @@
 #include "ioutils/load.hh"
 #include "ioutils/print_register_dump.hh"
 
+// v68k-lowmem
+#include "lowmem/lowmem.hh"
+
 // v68k-mac
-#include "v68k-mac/memory.hh"
 #include "v68k-mac/trap_dispatcher.hh"
 
 // v68k-user
@@ -635,7 +637,7 @@ void emulation_loop( v68k::emulator& emu )
 		
 	#endif
 		
-		using v68k::mac::ticking;
+		using v68k::lowmem::ticking;
 		
 		if ( (short( n_instructions ) == 0  ||  ticking)  &&  polling )
 		{
