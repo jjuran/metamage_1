@@ -9,8 +9,8 @@
 // Standard C
 #include <errno.h>
 
-// v68k-utils
-#include "utils/load.hh"
+// v68k-ioutils
+#include "ioutils/load.hh"
 
 #ifndef NULL
 #define NULL  0L
@@ -20,7 +20,7 @@ typedef int (*main_entry)(int, char**, char**, void*);
 
 int main( int argc, char** argv )
 {
-	using v68k::utils::load;
+	using v68k::ioutils::load;
 	
 	if ( argc < 2 )
 	{

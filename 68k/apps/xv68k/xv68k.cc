@@ -39,6 +39,10 @@
 // v68k-auth
 #include "auth/auth.hh"
 
+// v68k-ioutils
+#include "ioutils/load.hh"
+#include "ioutils/print_register_dump.hh"
+
 // v68k-mac
 #include "v68k-mac/memory.hh"
 #include "v68k-mac/trap_dispatcher.hh"
@@ -48,10 +52,6 @@
 
 // v68k-callouts
 #include "callout/bridge.hh"
-
-// v68k-utils
-#include "utils/load.hh"
-#include "utils/print_register_dump.hh"
 
 // v68k-screen
 #include "screen/lock.hh"
@@ -197,7 +197,7 @@ void atexit_report()
 static
 void dump( const v68k::processor_state& s )
 {
-	using v68k::utils::print_register_dump;
+	using v68k::ioutils::print_register_dump;
 	
 	print_register_dump( s.regs, s.get_SR() );
 }
@@ -696,7 +696,7 @@ void load_file( uint8_t* mem, const char* path )
 	
 	u32 size;
 	
-	void* alloc = v68k::utils::load_file( path, &size );
+	void* alloc = v68k::ioutils::load_file( path, &size );
 	
 	if ( alloc == NULL )
 	{

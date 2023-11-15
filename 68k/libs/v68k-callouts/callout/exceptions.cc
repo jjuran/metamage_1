@@ -14,8 +14,8 @@
 // must
 #include "must/write.h"
 
-// v68k-utils
-#include "utils/print_register_dump.hh"
+// v68k-ioutils
+#include "ioutils/print_register_dump.hh"
 
 
 #ifdef __MWERKS__
@@ -44,7 +44,7 @@ enum
 static
 void dump_and_raise( const v68k::processor_state& s, int signo )
 {
-	using v68k::utils::print_register_dump;
+	using v68k::ioutils::print_register_dump;
 	
 	print_register_dump( s.regs, s.get_SR() );
 	

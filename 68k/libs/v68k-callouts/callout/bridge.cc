@@ -26,8 +26,8 @@
 // v68k-syscalls
 #include "syscall/bridge.hh"
 
-// v68k-utils
-#include "utils/load.hh"
+// v68k-ioutils
+#include "ioutils/load.hh"
 
 // v68k-callouts
 #include "callout/cursor.hh"
@@ -141,7 +141,7 @@ int32_t load_callout( v68k::processor_state& s )
 	using v68k::alloc::page_size;
 	using v68k::alloc::page_size_bits;
 	using v68k::alloc::allocate_n_pages;
-	using v68k::utils::load_file;
+	using v68k::ioutils::load_file;
 	
 	const char* path = (const char*) p;
 	

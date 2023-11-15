@@ -1,17 +1,17 @@
 /*
-	utils.hh
-	--------
+	load.hh
+	-------
 */
 
-#ifndef UTILS_LOAD_HH
-#define UTILS_LOAD_HH
+#ifndef IOUTILS_LOAD_HH
+#define IOUTILS_LOAD_HH
 
 // Standard C
 #include <stdint.h>
 
 
-namespace v68k  {
-namespace utils {
+namespace v68k    {
+namespace ioutils {
 
 #ifdef __MC68K__
 
@@ -21,7 +21,7 @@ void* load( const char* path : __A0 ) : __A0;
 
 void* load_file( const char* path, uint32_t* size = 0 );  // NULL
 
-}  // namespace utils
+}  // namespace ioutils
 }  // namespace v68k
 
 

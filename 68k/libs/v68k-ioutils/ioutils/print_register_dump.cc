@@ -17,8 +17,8 @@
 #endif
 
 
-namespace v68k  {
-namespace utils {
+namespace v68k    {
+namespace ioutils {
 
 
 static char hexify( unsigned x )
@@ -141,5 +141,5 @@ void print_register_dump( const uint32_t regs[], uint16_t sr )
 	                     sr );
 }
 
-}  // namespace utils
+}  // namespace ioutils
 }  // namespace v68k

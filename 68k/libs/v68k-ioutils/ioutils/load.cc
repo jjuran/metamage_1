@@ -1,9 +1,9 @@
 /*
-	utils.cc
-	--------
+	load.cc
+	-------
 */
 
-#include "utils/load.hh"
+#include "ioutils/load.hh"
 
 // Mac OS
 #ifdef __MC68K__
@@ -31,8 +31,8 @@
 #endif
 
 
-namespace v68k  {
-namespace utils {
+namespace v68k    {
+namespace ioutils {
 
 
 #ifdef __MC68K__
@@ -153,5 +153,5 @@ void* load_file( const char* path, uint32_t* size )
 	return alloc;
 }
 
-}  // namespace utils
+}  // namespace ioutils
 }  // namespace v68k

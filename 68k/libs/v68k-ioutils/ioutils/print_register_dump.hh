@@ -3,15 +3,15 @@
 	----------------------
 */
 
-#ifndef UTILS_PRINTREGISTERDUMP_HH
-#define UTILS_PRINTREGISTERDUMP_HH
+#ifndef IOUTILS_PRINTREGISTERDUMP_HH
+#define IOUTILS_PRINTREGISTERDUMP_HH
 
 // Standard C
 #include <stdint.h>
 
 
-namespace v68k  {
-namespace utils {
+namespace v68k    {
+namespace ioutils {
 
 void print_register_dump( const uint32_t  d[],
                           const uint32_t  a[],
@@ -23,7 +23,7 @@ void print_register_dump( const uint32_t  d[],
 
 void print_register_dump( const uint32_t regs[], uint16_t sr );
 
-}  // namespace utils
+}  // namespace ioutils
 }  // namespace v68k
 
 #endif
