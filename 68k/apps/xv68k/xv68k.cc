@@ -149,6 +149,7 @@ enum
 	Opt_pid,
 	Opt_raster,
 	Opt_cursor,
+	Opt_snd_fd,
 	Opt_ignore_screen_locks,
 };
 
@@ -166,6 +167,7 @@ static command::option options[] =
 	{ "raster",     Opt_raster, command::Param_required },
 	{ "cursor",     Opt_cursor, command::Param_required },
 	{ "module",     Opt_module, command::Param_required },
+	{ "sound-fd",   Opt_snd_fd, command::Param_required },
 	
 	{ "ignore-screen-locks", Opt_ignore_screen_locks },
 	
@@ -1089,6 +1091,12 @@ char* const* get_options( char** argv )
 				
 				++module;
 				
+				break;
+			
+			case Opt_snd_fd:
+				using v68k::sound::sound_fd;
+				
+				sound_fd = parse_unsigned_decimal( global_result.param );
 				break;
 			
 			default:
