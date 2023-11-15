@@ -13,7 +13,6 @@
 namespace v68k    {
 namespace callout {
 
-int32_t ScrnBitMap_callout   ( v68k::processor_state& s );
 int32_t lock_screen_callout  ( v68k::processor_state& s );
 int32_t unlock_screen_callout( v68k::processor_state& s );
 
