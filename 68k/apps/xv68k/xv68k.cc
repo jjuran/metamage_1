@@ -74,8 +74,6 @@
 #endif
 
 
-#define STRLEN( s )  (sizeof "" s - 1)
-
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
@@ -677,40 +675,6 @@ void report_condition( v68k::emulator& emu )
 	}
 }
 
-static
-void load_module( uint8_t* mem, const char* module )
-{
-	if ( strchr( module, '/' ) == NULL )
-	{
-		const char* name = module;
-		
-		const char* home = getenv( "HOME" );
-		
-		if ( home == NULL )
-		{
-			home = "";
-		}
-		
-		const char* _68k = "/68k/";
-		
-		const size_t home_len = strlen( home );
-		const size_t _68k_len = STRLEN( "/68k/" );
-		const size_t name_len = strlen( name );
-		
-		char* p = (char*) alloca( home_len + _68k_len + name_len + 1 );
-		
-		module = p;
-		
-		p = (char*) mempcpy( p, home, home_len );
-		p = (char*) mempcpy( p, _68k, _68k_len );
-		p = (char*) mempcpy( p, name, name_len );
-		
-		*p = '\0';
-	}
-	
-	load_file( mem, module );
-}
-
 void load_file( uint8_t* mem, const char* path )
 {
 	typedef uint32_t u32;
@@ -847,7 +811,7 @@ int execute_68k( int argc, char* const* argv )
 		
 		load_argv( mem, module_argc, module_argv );
 		
-		load_module( mem, m->name );
+		load_file( mem, m->name );
 		
 		emu.reset();
 		
