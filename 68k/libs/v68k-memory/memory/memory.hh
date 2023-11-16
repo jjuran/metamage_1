@@ -3,12 +3,14 @@
 	---------
 */
 
-#ifndef MEMORY_HH
-#define MEMORY_HH
+#ifndef MEMORY_MEMORY_HH
+#define MEMORY_MEMORY_HH
 
 // v68k
 #include "v68k/memory.hh"
 
+
+namespace v68k {
 
 extern uint32_t alt_screen_addr;
 extern uint32_t main_screen_addr;
@@ -26,5 +28,7 @@ class memory_manager : public v68k::memory
 		                    v68k::function_code_t  fc,
 		                    v68k::memory_access_t  access );
 };
+
+}  // namespace v68k
 
 #endif

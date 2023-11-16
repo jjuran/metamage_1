@@ -68,10 +68,12 @@
 #include "syscall/bridge.hh"
 #include "syscall/handler.hh"
 
+// v68k-memory
+#include "memory/memory.hh"
+
 // xv68k
 #include "cursor.hh"
 #include "diagnostics.hh"
-#include "memory.hh"
 #include "native.hh"
 
 
@@ -91,6 +93,10 @@ using v68k::callout::callout_address;
 using v68k::callout::system_call;
 using v68k::callout::microseconds;
 using v68k::screen::ignore_screen_locks;
+
+using v68k::alt_screen_addr;
+using v68k::main_screen_addr;
+using v68k::main_sound_addr;
 
 enum
 {
@@ -756,7 +762,7 @@ int execute_68k( int argc, char* const* argv )
 		abort();
 	}
 	
-	const memory_manager memory( mem, mem_size );
+	const v68k::memory_manager memory( mem, mem_size );
 	
 	v68k::emulator emu( mc68k_model, memory, bkpt_handler );
 	

@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "memory.hh"
+#include "memory/memory.hh"
 
 // log-of-war
 #include "logofwar/report.hh"
@@ -38,14 +38,7 @@
 #endif
 
 
-using v68k::addr_t;
-using v68k::fc_t;
-using v68k::mem_t;
-
-using v68k::user_program_space;
-using v68k::mem_write;
-using v68k::mem_exec;
-
+namespace v68k {
 
 uint32_t alt_screen_addr  = 0x00012700;
 uint32_t main_screen_addr = 0x0001A700;
@@ -243,3 +236,5 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	return v68k::callout::translate( addr, length, fc, access );
 }
+
+}  // namespace v68k
