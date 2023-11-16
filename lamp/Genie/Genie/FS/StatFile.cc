@@ -188,7 +188,7 @@ namespace Genie
 		// physical fork length in 512-byte blocks
 		sb->st_blocks = is_dir ? 0
 		                       : (is_rsrc_fork ? hFileInfo.ioFlRPyLen
-		                                       : hFileInfo.ioFlPyLen) / 512;
+		                                       : hFileInfo.ioFlPyLen) / 512u;
 		// time of last access:  pretend mod time; provide backup stamp for rsrc.
 		sb->st_atime = (is_rsrc_fork ? hFileInfo.ioFlBkDat : hFileInfo.ioFlMdDat) - timeDiff;
 		// time of last modification.
