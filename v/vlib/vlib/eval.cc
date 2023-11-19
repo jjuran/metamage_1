@@ -17,7 +17,6 @@
 #include "vlib/symbol.hh"
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
-#include "vlib/tracker.hh"
 #include "vlib/types.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
@@ -103,15 +102,6 @@ namespace vlib
 		if ( type  &&  ! as_assigned( type, v ) )
 		{
 			THROW( "type mismatch in assignment" );
-		}
-	}
-	
-	static
-	void track_symbol_if_collectible( const Value& symbol )
-	{
-		if ( symbol_is_collectible( *symbol.sym() ) )
-		{
-			track_symbol( symbol );
 		}
 	}
 	

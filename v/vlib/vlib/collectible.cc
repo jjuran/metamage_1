@@ -8,6 +8,7 @@
 // vlib
 #include "vlib/error.hh"
 #include "vlib/symbol.hh"
+#include "vlib/tracker.hh"
 #include "vlib/types.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/refs.hh"
@@ -167,9 +168,18 @@ namespace vlib
 		return typed_value_is_collectible( *target.addr, *target.type );
 	}
 	
+	static inline
 	bool symbol_is_collectible( const Symbol& symbol )
 	{
 		return type_is_collectible( symbol.vtype() );
+	}
+	
+	void track_symbol_if_collectible( const Value& symbol )
+	{
+		if ( symbol_is_collectible( *symbol.sym() ) )
+		{
+			track_symbol( symbol );
+		}
 	}
 	
 	bool symbol_list_with_values_is_collectible( const Value& symlist )
