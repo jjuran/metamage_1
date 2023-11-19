@@ -185,6 +185,11 @@ namespace vlib
 			
 			const Value& v = sym->get();
 			
+			if ( v.is_cycle_free() )
+			{
+				continue;
+			}
+			
 			if ( value_has_custom_references( v ) )
 			{
 				return true;
