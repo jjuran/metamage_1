@@ -138,7 +138,7 @@ namespace vlib
 		return true;
 	}
 	
-	static
+	static inline
 	bool value_has_custom_references( const Value& v )
 	{
 		if ( const dispatch* methods = v.dispatch_methods() )
@@ -149,7 +149,7 @@ namespace vlib
 		return false;
 	}
 	
-	static
+	static inline
 	bool typed_value_is_collectible( const Value& v, const Value& type )
 	{
 		return ! v.is_cycle_free()  &&  type_is_collectible( type );
