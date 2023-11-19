@@ -103,11 +103,6 @@ namespace vlib
 		
 		const Value unshared = unshare_symbols( tail );
 		
-		if ( sym->is_immutable()  &&  unshared.expr() == tail.expr() )
-		{
-			return presets;
-		}
-		
 		return Value( new_head, unshared );
 	}
 	
@@ -145,13 +140,10 @@ namespace vlib
 		
 		const Value unshared = unshare_symbols( others );
 		
-		const bool skip_gc = unshared.expr() == others.expr();
-		
 		const Value new_frame( underscore, unshared );
 		const Value new_stack( caller, Op_frame, new_frame );
 		
-		const Value& unshared_locals = skip_gc ? NIL
-		                             : is_call ? new_frame
+		const Value& unshared_locals = is_call ? new_frame
 		                                       : new_frame.expr()->right;
 		
 		gc_cleanup gc( unshared_locals );
