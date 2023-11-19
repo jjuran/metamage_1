@@ -101,9 +101,7 @@ namespace vlib
 			return new_head;
 		}
 		
-		const Value unshared = unshare_symbols( tail );
-		
-		return Value( new_head, unshared );
+		return Value( new_head, unshare_symbols( tail ) );
 	}
 	
 	static
@@ -130,17 +128,12 @@ namespace vlib
 		const Value& caller = expr->left;
 		const Value& locals = expr->right;
 		
-		const Value& leader = first( locals );
-		const Value& others = rest ( locals );
-		
 		const bool is_call = arguments.type();
 		
 		const Value underscore = is_call ? gensym( Symbol_var, "_", arguments )
-		                                 : leader;
+		                                 : first( locals );
 		
-		const Value unshared = unshare_symbols( others );
-		
-		const Value new_frame( underscore, unshared );
+		const Value new_frame( underscore, unshare_symbols( rest( locals ) ) );
 		const Value new_stack( caller, Op_frame, new_frame );
 		
 		const Value& unshared_locals = is_call ? new_frame
