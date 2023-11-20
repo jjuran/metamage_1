@@ -74,7 +74,13 @@ def clone
 	{
 		run [ "bin/clone-repo", portaudio_repo ]
 		
-		system "cd -P " portaudio_repo_path " && git checkout origin/patches"
+		let tag_name = "last/osx/" major "." minor
+		let tag_list = "git tag -l " tag_name
+		
+		system "cd -P " portaudio_repo_path
+			" && commit=`" tag_list "`"
+			" && if [ -z \"$commit\" ]; then commit=origin/patches; fi"
+			" && git checkout $commit"
 	}
 	
 	if not exists "var/links/" portaudio_repo then
