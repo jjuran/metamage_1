@@ -47,6 +47,13 @@ def get_osx_vers
 
 def check_osx_vers(major, minor)
 {
+	if major == 0 and not exists "/mach_kernel" then
+	{
+		warn "portaudio-pkg.vx: portaudio19-dev package required"
+		
+		exit 1
+	}
+	
 	if major * 100 + minor < 1004 then
 	{
 		warn "portaudio-pkg.vx: PortAudio requires Mac OS X 10.4 minimum."
