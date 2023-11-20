@@ -20,29 +20,51 @@ def installed
 	return exists usr_include_portaudio_h
 }
 
+def get_osx_vers
+{
+	try
+	{
+		let version = output-from-run ["sw_vers -productVersion" / ' ']
+		
+		var p = begin version
+		var q = p.find('.')
+		
+		let major = int (q - p)
+		
+		++q
+		p = q.find('.' | '\n')
+		
+		let minor = int (p - q)
+		
+		return major, minor
+	}
+	catch
+	{
+	}
+	
+	return 0, 0
+}
+
+def check_osx_vers(major, minor)
+{
+	if major * 100 + minor < 1004 then
+	{
+		warn "portaudio-pkg.vx: PortAudio requires Mac OS X 10.4 minimum."
+		
+		exit 1
+	}
+}
+
 def clone
 {
 	if installed() then {return ()}
 	
+	let (major, minor) = get_osx_vers()
+	
+	check_osx_vers(major, minor)
+	
 	if not exists portaudio_repo_path "/.git" then
 	{
-		let symbol = "MAC_OS_X_VERSION_10_4"
-		let header = "/usr/include/AvailabilityMacros.h"
-		
-		try
-		{
-			if exists header then
-			{
-				run ["grep", "-q", "define " symbol, header]
-			}
-		}
-		catch
-		{
-			warn "portaudio-pkg.vx: PortAudio requires Mac OS X 10.4 minimum."
-			
-			exit 1
-		}
-		
 		run [ "bin/clone-repo", portaudio_repo ]
 		
 		system "cd -P " portaudio_repo_path " && git checkout origin/patches"
