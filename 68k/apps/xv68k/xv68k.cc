@@ -85,6 +85,8 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
+using logofwar::hex32_t;
+
 using v68k::big_longword;
 
 using v68k::auth::fully_authorized;
@@ -651,6 +653,13 @@ void emulation_loop( v68k::emulator& emu )
 		
 	#endif
 		
+		if ( emu.most_recent_PC_during_fault() == 0 )
+		{
+			uint32_t prev_addr = emu.current_instruction_address();
+			
+			WARNING = "Execution at $000000 after ", hex32_t( prev_addr );
+		}
+		
 		using v68k::lowmem::ticking;
 		
 		if ( (short( n_instructions ) == 0  ||  ticking)  &&  polling )
@@ -743,8 +752,6 @@ void load_file( uint8_t* mem, const char* path )
 	{
 		path = filename + 1;
 	}
-	
-	using v68k::hex32_t;
 	
 	NOTICE = hex32_t( addr ), " -> ", hex32_t( addr + size ), ": ", path;
 	
