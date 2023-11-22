@@ -151,7 +151,12 @@ namespace tool
 		
 		folder.dirID = Mac::fsRtDirID;  // root
 		
-		return N::FSpMake_FSDirSpec( folder / "j" / "var" / "spool" / "jmail" / "queue" );
+		return N::FSpMake_FSDirSpec( folder
+		                             / "\p" "j"
+		                             / "\p" "var"
+		                             / "\p" "spool"
+		                             / "\p" "jmail"
+		                             / "\p" "queue" );
 	}
 	
 	
@@ -372,9 +377,9 @@ namespace tool
 		
 		directory_spec msgFolder( N::FSpMake_FSDirSpec( msgFolderItem ) );
 		
-		FSSpec message      = msgFolder / "Message";
-		FSSpec returnPath   = msgFolder / "Return-Path";
-		FSSpec destinations = msgFolder / "Destinations";
+		FSSpec message      = msgFolder / "\p" "Message";
+		FSSpec returnPath   = msgFolder / "\p" "Return-Path";
+		FSSpec destinations = msgFolder / "\p" "Destinations";
 		
 		directory_spec destFolder( N::FSpMake_FSDirSpec( destinations ) );
 		
