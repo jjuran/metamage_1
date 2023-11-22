@@ -39,6 +39,9 @@
 // command
 #include "command/get_option.hh"
 
+// mac-file-utils
+#include "mac_file/listing.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -47,15 +50,15 @@
 
 #include "Nitrogen/Folders.hh"
 
+// Io: MacFiles
+#include "MacFiles/Classic.hh"
+
 // poseven
 #include "poseven/bundles/inet.hh"
 #include "poseven/functions/gethostname.hh"
 #include "poseven/functions/perror.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
-
-// FSContents
-#include "FSContents.h"
 
 // Arcana / SMTP
 #include "SMTP.hh"
@@ -359,6 +362,9 @@ namespace tool
 		
 		if ( !io::directory_exists( msgFolderItem ) )  return;  // Icon files, et al
 		
+		using mac::file::directory_listing;
+		using mac::file::list_entry;
+		
 		typedef io::filespec_traits< FSSpec >::optimized_directory_spec directory_spec;
 		
 		directory_spec msgFolder( N::FSpMake_FSDirSpec( msgFolderItem ) );
@@ -369,19 +375,26 @@ namespace tool
 		
 		directory_spec destFolder( N::FSpMake_FSDirSpec( destinations ) );
 		
-		typedef io::directory_contents_traits< directory_spec >::container_type directory_container;
+		short vRefNum = destFolder.vRefNum;
+		long  dirID   = destFolder.dirID;
 		
-		directory_container dests = io::directory_contents( destFolder );
+		directory_listing listing;
 		
-		typedef directory_container::const_iterator Iter;
+		OSErr err = list_directory( listing, vRefNum, dirID );
+		
+		Mac::ThrowOSStatus( err );
+		
+		unsigned n = listing.count();
 		
 		Transmitter transmitter( ReadOneLinerFromFile( returnPath ),
 		                         message,
 		                         destinations );
 		
-		for ( Iter it = dests.begin(), end = dests.end();  it != end;  ++it )
+		for ( unsigned i = 0;  i < n;  ++i )
 		{
-			transmitter( *it );
+			const list_entry& entry = listing.get_nth( i );
+			
+			transmitter( entry.name );
 		}
 		
 		io::delete_empty_directory( destFolder );  // this fails if destinations remain
@@ -393,19 +406,31 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
+		using mac::file::directory_listing;
+		using mac::file::list_entry;
+		
 		char *const *args = get_options( argv );
 		
 		const int argn = argc - (args - argv);
 		
 		N::FSDirSpec queue_dir = QueueDirectory();
 		
-		N::FSSpecContents_Container queue = io::directory_contents( queue_dir );
+		short vRefNum = queue_dir.vRefNum;
+		long  dirID   = queue_dir.dirID;
 		
-		typedef N::FSSpecContents_Container::const_iterator Iter;
+		directory_listing listing;
 		
-		for ( Iter it = queue.begin(), end = queue.end();  it != end;  ++it )
+		OSErr err = list_directory( listing, vRefNum, dirID );
+		
+		Mac::ThrowOSStatus( err );
+		
+		unsigned n = listing.count();
+		
+		for ( unsigned i = 0;  i < n;  ++i )
 		{
-			ProcessMessage( queue_dir, *it );
+			const list_entry& entry = listing.get_nth( i );
+			
+			ProcessMessage( queue_dir, entry.name );
 		}
 		
 		return 0;
