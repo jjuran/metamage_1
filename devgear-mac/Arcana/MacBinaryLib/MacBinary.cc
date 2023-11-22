@@ -626,6 +626,9 @@ namespace MacBinary
 	}
 	
 	static
+	void Encode( const CInfoPBRec& cInfo, BlockWriter blockWrite, int output );
+	
+	static
 	void EncodeFolder( const CInfoPBRec& cInfo, BlockWriter blockWrite, int output )
 	{
 		HeaderBlock u;
@@ -659,6 +662,11 @@ namespace MacBinary
 		
 		cInfo.hFileInfo.ioNamePtr = const_cast< unsigned char* >( file.name );
 		
+		Encode( cInfo, blockWrite, output );
+	}
+	
+	void Encode( const CInfoPBRec& cInfo, BlockWriter blockWrite, int output )
+	{
 		bool isDir = io::item_is_directory( cInfo );
 		
 		if ( isDir )
@@ -667,6 +675,15 @@ namespace MacBinary
 		}
 		else
 		{
+			FSSpec file;
+			
+			file.vRefNum = cInfo.hFileInfo.ioVRefNum;
+			file.parID   = cInfo.hFileInfo.ioFlParID;
+			
+			ConstStr63Param name = cInfo.hFileInfo.ioNamePtr;
+			
+			mempcpy( file.name, name, 1 + name[ 0 ] );
+			
 			EncodeFile( file, cInfo.hFileInfo, blockWrite, output );
 		}
 	}
