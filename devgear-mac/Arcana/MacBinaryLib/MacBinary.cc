@@ -577,7 +577,7 @@ namespace MacBinary
 		
 		if ( !TARGET_API_MAC_OSX )
 		{
-			N::HLock( tempMem );
+			HLock( tempMem.get() );
 		}
 		
 		blockWrite( output, &buffer[0], paddedCount );
