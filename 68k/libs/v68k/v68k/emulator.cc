@@ -23,7 +23,9 @@ namespace v68k
 	emulator::emulator( processor_model model, const memory& mem, bkpt_handler bkpt )
 	:
 		processor_state( model, mem, bkpt ),
-		its_instruction_counter()
+		its_instruction_counter(),
+		its_current_instruction_address(),
+		its_most_recent_PC_during_fault( -1 )
 	{
 	}
 	
@@ -101,6 +103,8 @@ namespace v68k
 		}
 		
 		const uint32_t instruction_address = pc();
+		
+		its_current_instruction_address = instruction_address;
 		
 		// advance pc
 		pc() += 2;
