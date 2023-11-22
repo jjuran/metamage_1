@@ -250,20 +250,18 @@ namespace tool
 		return 0;
 	}
 	
-	static void print_rsrc_by_handle( N::Handle h, bool showing )
+	static
+	void print_rsrc_by_handle( Handle h, bool showing )
 	{
-	#if ! __LP64__
+	#if ! TARGET_API_MAC_OSX
 		
-		if ( !TARGET_RT_MAC_MACHO )
-		{
-			N::HNoPurge( h );  // not needed on OS X
-		}
+		HNoPurge( h );  // not available in 64-bit, nor needed on OS X at all
 		
 	#endif
 		
-		const char* data = *h.Get();
+		const char* data = *h;
 		
-		std::size_t size = N::GetHandleSize( h );
+		std::size_t size = GetHandleSize( h );
 		
 		plus::string printout;
 		
@@ -294,7 +292,7 @@ namespace tool
 			return 1;
 		}
 		
-		Mac::Handle h = N::Get1Resource( the_type, the_id );
+		Handle h = N::Get1Resource( the_type, the_id );
 		
 		print_rsrc_by_handle( h, showing );
 		
