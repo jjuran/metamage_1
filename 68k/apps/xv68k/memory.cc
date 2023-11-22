@@ -120,7 +120,7 @@ uint8_t* translate_with_diagnostic( uint32_t               addr,
 	
 	if ( ! p )
 	{
-		ERROR = "Illegal memory access: ", length, "-byte ", access,
+		WARNING = "Illegal memory access: ", length, "-byte ", access,
 		" at ", v68k::hex32_t( addr ), " in ", fc;
 	}
 	
