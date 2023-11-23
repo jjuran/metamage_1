@@ -41,5 +41,15 @@ void set_up_menus()
 	Edit_menu    = GetMenuHandle( Edit    );
 	Options_menu = GetMenuHandle( Options );
 	
+	if ( TARGET_API_MAC_CARBON )
+	{
+		/*
+			The Copy menu item is enabled in the 'MENU' resource,
+			but the function isn't implemented in Carbon.
+		*/
+		
+		mac::ui::disable_menu_item( Edit_menu, Copy );
+	}
+	
 	set_up_Options_menu();
 }

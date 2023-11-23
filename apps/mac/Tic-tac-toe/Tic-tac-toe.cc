@@ -56,6 +56,7 @@
 #include "menus.hh"
 #include "play_tone.hh"
 #include "regions.hh"
+#include "scrap.hh"
 #include "sound.hh"
 #include "state.hh"
 #include "window.hh"
@@ -446,6 +447,10 @@ void menu_item_chosen( long choice )
 						mac::ui::disable_menu_item( Edit_menu, Undo );
 					}
 					
+					break;
+				
+				case Copy:
+					copy_to_clipboard();
 					break;
 				
 				default:

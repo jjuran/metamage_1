@@ -20,7 +20,7 @@ resource 'MENU' (129) {
 resource 'MENU' (130) {
 	3,
 	textMenuProc,
-	0x7FFFFFC0,
+	0x7FFFFFC8,
 	enabled,
 	"Edit",
 	{

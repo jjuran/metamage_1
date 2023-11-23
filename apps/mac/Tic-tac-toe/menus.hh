@@ -37,6 +37,11 @@ enum
 	
 	Edit_menu_items = 0,
 	Undo,
+	Edit_divider_before_Cut,
+	Cut,
+	Copy,
+	Paste,
+	Clear,
 	
 	Options_menu_items = 0,
 	Sound,
