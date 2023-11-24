@@ -234,7 +234,7 @@ short DisposeHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
-		ERROR = "DisposeHandle: NULL address";
+		WARNING = "DisposeHandle: NULL address";
 		
 		return MemErr = nilHandleErr;
 	}
@@ -263,6 +263,9 @@ long GetHandleSize_patch( char** h : __A0 )
 {
 	if ( h == NULL  ||  *h == NULL )
 	{
+		WARNING = h ? "GetHandleSize: empty handle"
+		            : "GetHandleSize: NULL address";
+		
 		MemErr = nilHandleErr;
 		
 		return 0;
@@ -279,6 +282,9 @@ short SetHandleSize_patch( char**  h         : __A0,
 {
 	if ( h == NULL  ||  *h == NULL )
 	{
+		WARNING = h ? "SetHandleSize: empty handle"
+		            : "SetHandleSize: NULL address";
+		
 		return MemErr = nilHandleErr;
 	}
 	
@@ -323,6 +329,8 @@ char** recover_handle( char* p : __A0 )
 {
 	if ( p == NULL )
 	{
+		WARNING = "RecoverHandle: NULL address";
+		
 		MemErr = paramErr;
 		
 		return 0;
@@ -356,6 +364,13 @@ short ReallocateHandle_patch( char**  h         : __A0,
                               long    size      : __D0,
                               short   trap_word : __D1 )
 {
+	if ( h == NULL )
+	{
+		WARNING = "ReallocateHandle: NULL address";
+		
+		return MemErr = nilHandleErr;
+	}
+	
 	if ( short err = EmptyHandle_patch( h ) )
 	{
 		return err;
@@ -383,6 +398,8 @@ short EmptyHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
+		WARNING = "EmptyHandle: NULL address";
+		
 		return MemErr = nilHandleErr;
 	}
 	
@@ -406,6 +423,8 @@ short HLock_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
+		WARNING = "HLock: NULL address";
+		
 		return MemErr = paramErr;
 	}
 	
@@ -418,6 +437,8 @@ short HUnlock_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
+		WARNING = "HUnlock: NULL address";
+		
 		return MemErr = paramErr;
 	}
 	
@@ -430,6 +451,8 @@ short HPurge_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
+		WARNING = "HPurge: NULL address";
+		
 		return MemErr = paramErr;
 	}
 	
@@ -442,6 +465,8 @@ short HNoPurge_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
+		WARNING = "HNoPurge: NULL address";
+		
 		return MemErr = paramErr;
 	}
 	
@@ -454,6 +479,8 @@ short HSetRBit_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
+		WARNING = "HSetRBit: NULL address";
+		
 		return MemErr = paramErr;
 	}
 	
@@ -466,6 +493,8 @@ short HClrRBit_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
+		WARNING = "HClrRBit: NULL address";
+		
 		return MemErr = paramErr;
 	}
 	
@@ -478,6 +507,8 @@ signed char HGetState_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
+		WARNING = "HGetState: NULL address";
+		
 		MemErr = paramErr;
 		
 		return -1;
@@ -492,6 +523,8 @@ short HSetState_patch( char** h : __A0, signed char state : __D0 )
 {
 	if ( h == NULL )
 	{
+		WARNING = "HSetState: NULL address";
+		
 		return MemErr = paramErr;
 	}
 	
