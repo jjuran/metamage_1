@@ -32,8 +32,8 @@ unsigned short muldivu_w( unsigned short a : __D0,
 
 inline
 asm
-unsigned short fixmulu_w( unsigned short a : __D0,
-                          unsigned long  b : __D1 )
+unsigned long fixmulu_w( unsigned short a : __D0,
+                         unsigned long  b : __D1 )
 {
 	MOVE.W   D0,D2    // a
 	MULU.W   D1,D2    // a * b.lo
