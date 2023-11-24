@@ -160,7 +160,7 @@ void stretch_bits( const BitMap&  srcBits,
 				++index;
 			}
 			
-			const uint32_t src_col = srcLeft + (x * x_sampling_factor >> 16);
+			uint32_t src_col = srcLeft + fixmulu_w( x, x_sampling_factor );
 			
 			const Byte byte = src[ src_col / 8u ];
 			const int bitnum = 7 - src_col % 8u;
