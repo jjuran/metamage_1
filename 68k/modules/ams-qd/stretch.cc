@@ -116,8 +116,8 @@ void stretch_bits( const BitMap&  srcBits,
 	const short srcTop = srcRect.top - srcBits.bounds.top;
 	const short dstTop = dstRect.top - dstBits.bounds.top;
 	
-	const short srcLeft = srcRect.left - srcBits.bounds.left;
-	const short dstLeft = dstRect.left - dstBits.bounds.left;
+	const int srcLeft = srcRect.left - srcBits.bounds.left;
+	const int dstLeft = dstRect.left - dstBits.bounds.left;
 	
 	const short srcRowBytes = srcBits.rowBytes;
 	const short dstRowBytes = dstBits.rowBytes;
@@ -150,7 +150,7 @@ void stretch_bits( const BitMap&  srcBits,
 		
 		for ( uint16_t x = 0;  x < dstWidth;  ++x )
 		{
-			const uint16_t src_col = srcLeft + (x * x_sampling_factor >> 16);
+			const uint32_t src_col = srcLeft + (x * x_sampling_factor >> 16);
 			
 			const Byte byte = src[ src_col / 8u ];
 			const int bitnum = 7 - src_col % 8u;
