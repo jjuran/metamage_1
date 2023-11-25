@@ -96,7 +96,7 @@ void remake_window( const raster_load& load )
 	
 	attach_to_window( window );
 	
-	blit( load );
+	render_AGL();
 	
 	ShowWindow( window );
 	
@@ -372,7 +372,7 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 							commandmode_state = CommandMode_off;
 							overlay_enabled   = false;
 							
-							blit( load );
+							render_AGL();
 						}
 						break;
 					
@@ -396,7 +396,7 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 	{
 		overlay_enabled = ! overlay_enabled;
 		
-		blit( load );
+		render_AGL();
 	}
 	
 	return err;
@@ -433,7 +433,7 @@ pascal OSStatus Modifiers_changed( EventHandlerCallRef  handler,
 	{
 		overlay_enabled = ! overlay_enabled;
 		
-		blit( load );
+		render_AGL();
 	}
 	
 	return err;
