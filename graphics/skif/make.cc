@@ -243,6 +243,7 @@ size_t note_size( bool included )
 }
 
 template <>
+inline
 size_t note_size< raster::clut_data >( bool included )
 {
 	if ( ! included )
