@@ -141,13 +141,6 @@ void set_screen_image( const void* src_addr )
 	                 src_addr );
 }
 
-void blit( const void* src_addr )
-{
-	set_screen_image( src_addr );
-	
-	render();
-}
-
 void render()
 {
 	glClear( GL_COLOR_BUFFER_BIT );
