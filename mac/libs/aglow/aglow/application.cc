@@ -110,9 +110,16 @@ pascal OSStatus AmicusUpdate( EventHandlerCallRef  handler,
                               EventRef             event,
                               void*                userData )
 {
-	const raster_load& load = *(raster_load*) userData;
+	{
+		const raster_load& load = *(raster_load*) userData;
+		const raster_desc& desc = load.meta->desc;
+		
+		const uint32_t offset = desc.height * desc.stride * desc.frame;
+		
+		glfb::set_screen_image( (Ptr) load.addr + offset );
+	}
 	
-	blit( load );
+	render_AGL();
 	
 	return noErr;
 }
