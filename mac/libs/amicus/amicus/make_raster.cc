@@ -25,30 +25,6 @@ namespace amicus
 {
 
 static
-uint32_t make_stride( uint32_t width, int weight )
-{
-	if ( weight > 8 )
-	{
-		return width * (weight / 8);
-	}
-	
-	if ( weight < 8 )
-	{
-		int pixels_per_byte = 8 / weight;
-		
-		width += pixels_per_byte - 1;
-		width /= pixels_per_byte;
-	}
-	
-	// width is now in bytes
-	
-	const int alignment = 2;
-	const int mask = alignment - 1;
-	
-	return width + mask & ~mask;
-}
-
-static
 void close_without_errno( int fd )
 {
 	const int saved_errno = errno;
