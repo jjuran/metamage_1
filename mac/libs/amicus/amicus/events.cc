@@ -89,7 +89,7 @@ void handle_mouse_moved_event( CGPoint next_cursor_location )
 	}
 }
 
-#ifdef MAC_OS_X_VERSION_10_4
+#ifdef MAC_OS_X_VERSION_10_5
 
 static
 void handle_mouse_moved_event( CGEventRef event )
