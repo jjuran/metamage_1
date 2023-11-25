@@ -29,6 +29,7 @@
 #include "raster/clut_detail.hh"
 #include "raster/load.hh"
 #include "raster/relay_detail.hh"
+#include "raster/size.hh"
 #include "raster/skif.hh"
 #include "raster/sync.hh"
 
@@ -257,31 +258,6 @@ size_t note_size< raster::clut_data >( bool included )
 }
 
 static
-uint32_t sizeof_raster( uint32_t raster_size )
-{
-	using namespace raster;
-	
-	const size_t minimum_footer_size = sizeof (raster_metadata)
-	                                 + note_size< sync_relay >( include_relay )
-	                                 + note_size< clut_data  >( include_clut  )
-	                                 + sizeof (uint32_t) * 2;
-	
-	const uint32_t disk_block_size = 512;
-	const uint32_t k               = disk_block_size - 1;
-	
-	// Round up the total file size to a multiple of the disk block size.
-	const uint32_t total_size = (raster_size + minimum_footer_size + k) & ~k;
-	
-	return total_size;
-}
-
-static inline
-uint32_t sizeof_footer( uint32_t raster_size )
-{
-	return sizeof_raster( raster_size ) - raster_size;
-}
-
-static
 void close_without_errno( int fd )
 {
 	const int saved_errno = errno;
@@ -314,7 +290,14 @@ int create_raster_file( const char* path, const geometry_spec& geometry )
 	const uint32_t image_size = height * stride;
 	const uint32_t raster_size = image_size * the_count;
 	
-	int nok = ftruncate( fd, sizeof_raster( raster_size ) );
+	const size_t footer_size_minimum = sizeof (raster_metadata)
+	                                 + note_size< sync_relay >( include_relay )
+	                                 + note_size< clut_data  >( include_clut  )
+	                                 + sizeof (uint32_t) * 2;
+	
+	const off_t file_size = good_file_size( raster_size, footer_size_minimum );
+	
+	int nok = ftruncate( fd, file_size );
 	
 	if ( nok < 0 )
 	{
@@ -330,7 +313,7 @@ int create_raster_file( const char* path, const geometry_spec& geometry )
 		return errno;
 	}
 	
-	const uint32_t footer_size = sizeof_footer( raster_size );
+	const uint32_t footer_size = file_size - raster_size;
 	
 	memset( raster.addr, '\xFF', raster.size );
 	
