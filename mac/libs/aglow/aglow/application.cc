@@ -84,7 +84,9 @@ void blit( const raster_load& load )
 	
 	const uint32_t offset = desc.height * desc.stride * desc.frame;
 	
-	blit_AGL( (Ptr) load.addr + offset );
+	glfb::set_screen_image( (Ptr) load.addr + offset );
+	
+	render_AGL();
 }
 
 static

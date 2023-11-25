@@ -114,13 +114,6 @@ void set_AGL_geometry( int stride, int width, int height )
 	glfb::set_dimensions( width, height );
 }
 
-void blit_AGL( const void* src_addr )
-{
-	glfb::set_screen_image( src_addr );
-	
-	render_AGL();
-}
-
 void render_AGL()
 {
 	glfb::render();
