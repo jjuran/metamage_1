@@ -8,6 +8,7 @@
 // OpenGL
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
+#include <OpenGL/glext.h>
 #endif
 #ifndef __gl_h_
 #include <GL/gl.h>
@@ -35,19 +36,9 @@ static int tex_height;
 
 const GLenum texture_target = GL_TEXTURE_RECTANGLE_ARB;
 
-#define glTexCoord_ glTexCoord2i
-
-static int tex_x1;
-static int tex_y1;
-
 #else
 
-const GLenum texture_target = GL_TEXTURE_2D;
-
-#define glTexCoord_ glTexCoord2f
-
-static float tex_x1;
-static float tex_y1;
+const GLenum texture_target = GL_TEXTURE_RECTANGLE_EXT;
 
 #endif
 
@@ -88,14 +79,6 @@ void initialize()
 		matter what GL_TEXTURE_MIN_FILTER is set to.
 	*/
 	
-#ifndef GL_TEXTURE_RECTANGLE_ARB
-	
-	// Leave GL_TEXTURE_BASE_LEVEL set to its default of zero.
-	
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0 );
-	
-#endif
-	
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 }
 
@@ -113,18 +96,12 @@ void set_dimensions( int width, int height )
 	tex_width  = image_width;
 	tex_height = image_height;
 	
-	tex_x1 = image_width;
-	tex_y1 = image_height;
-	
 #else
 	
 	int greater = width > height ? width : height;
 	
 	tex_width  =
 	tex_height = binary_power_up( greater );
-	
-	tex_x1 = 1.0 * image_width  / tex_width;
-	tex_y1 = 1.0 * image_height / tex_height;
 	
 #endif
 	
@@ -172,10 +149,10 @@ void blit( const void* src_addr )
 	const int width  = image_width;
 	const int height = image_height;
 	
-	glTexCoord_( 0,      0      ); glVertex2i( 0,     height );  // top left
-	glTexCoord_( tex_x1, 0      ); glVertex2i( width, height );  // top right
-	glTexCoord_( tex_x1, tex_y1 ); glVertex2i( width, 0      );  // bottom right
-	glTexCoord_( 0,      tex_y1 ); glVertex2i( 0,     0      );  // bottom left
+	glTexCoord2i( 0,     0      ); glVertex2i( 0,     height );  // top left
+	glTexCoord2i( width, 0      ); glVertex2i( width, height );  // top right
+	glTexCoord2i( width, height ); glVertex2i( width, 0      );  // bottom right
+	glTexCoord2i( 0,     height ); glVertex2i( 0,     0      );  // bottom left
 	
 	glEnd();
 	glDisable( texture_target );
