@@ -21,4 +21,6 @@ void set_AGL_geometry( int stride, int width, int height );
 
 void blit_AGL( const void* src_addr );
 
+void render_AGL();
+
 #endif

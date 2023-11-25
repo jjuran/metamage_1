@@ -118,6 +118,11 @@ void blit_AGL( const void* src_addr )
 {
 	glfb::set_screen_image( src_addr );
 	
+	render_AGL();
+}
+
+void render_AGL()
+{
 	glfb::render();
 	
 	glFlush();
