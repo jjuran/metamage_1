@@ -16,6 +16,7 @@
 // rasterlib
 #include "raster/load.hh"
 #include "raster/relay_detail.hh"
+#include "raster/size.hh"
 #include "raster/skif.hh"
 #include "raster/sync.hh"
 
@@ -45,31 +46,6 @@ uint32_t make_stride( uint32_t width, int weight )
 	const int mask = alignment - 1;
 	
 	return width + mask & ~mask;
-}
-
-static
-uint32_t sizeof_raster( uint32_t raster_size )
-{
-	using namespace raster;
-	
-	const uint32_t minimum_footer_size = sizeof (raster_metadata)
-	                                   + sizeof (raster_note)
-	                                   + sizeof (sync_relay)
-	                                   + sizeof (uint32_t);
-	
-	const uint32_t disk_block_size = 512;
-	const uint32_t k               = disk_block_size - 1;
-	
-	// Round up the total file size to a multiple of the disk block size.
-	const uint32_t total_size = (raster_size + minimum_footer_size + k) & ~k;
-	
-	return total_size;
-}
-
-static inline
-uint32_t sizeof_footer( uint32_t raster_size )
-{
-	return sizeof_raster( raster_size ) - raster_size;
 }
 
 static
@@ -104,7 +80,14 @@ int create_raster_file( const char* path, raster::raster_load& result )
 	const uint32_t image_size = height * stride;
 	const uint32_t raster_size = image_size * frame_count;
 	
-	int nok = ftruncate( fd, sizeof_raster( raster_size ) );
+	const uint32_t footer_size_minimum = sizeof (raster_metadata)
+	                                   + sizeof (raster_note)
+	                                   + sizeof (sync_relay)
+	                                   + sizeof (uint32_t);
+	
+	const off_t file_size = good_file_size( raster_size, footer_size_minimum );
+	
+	int nok = ftruncate( fd, file_size );
 	
 	if ( nok < 0 )
 	{
@@ -120,7 +103,7 @@ int create_raster_file( const char* path, raster::raster_load& result )
 		return errno;
 	}
 	
-	const uint32_t footer_size = sizeof_footer( raster_size );
+	const uint32_t footer_size = file_size - raster_size;
 	
 	memset( raster.addr, '\xFF', raster.size );
 	
