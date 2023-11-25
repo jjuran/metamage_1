@@ -116,7 +116,9 @@ void set_AGL_geometry( int stride, int width, int height )
 
 void blit_AGL( const void* src_addr )
 {
-	glfb::blit( src_addr );
+	glfb::set_screen_image( src_addr );
+	
+	glfb::render();
 	
 	glFlush();
 	aglSwapBuffers( context );

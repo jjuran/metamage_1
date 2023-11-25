@@ -112,7 +112,9 @@ void CGL_blitter::area( CGRect bounds )
 
 void CGL_blitter::blit( const void* src_addr )
 {
-	glfb::blit( src_addr );
+	glfb::set_screen_image( src_addr );
+	
+	glfb::render();
 	
 	CGLFlushDrawable( context );  // implicitly calls glFlush()
 }
