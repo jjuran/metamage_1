@@ -76,7 +76,9 @@ namespace vlib
 		{ Token_plus,     Postfix, Op_postfix_1_N },
 		
 		{ Token_dot,          Tight, Op_member    },
+		{ Token_plus,         Tight, Op_reserved  },
 		{ Token_plus,         Loose, Op_add       },
+		{ Token_minus,        Tight, Op_reserved  },
 		{ Token_minus,        Loose, Op_subtract  },
 		{ Token_asterisk,     Loose, Op_multiply  },
 		{ Token_slash,        Match, Op_divide    },
