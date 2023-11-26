@@ -43,7 +43,9 @@
 #pragma exceptions off
 
 
+UInt16 ScreenRow : 0x0106;
 Byte SdVolume    : 0x0260;
+Ptr ScrnBase     : 0x0824;
 GrafPtr WMgrPort : 0x09DE;
 short TheMenu    : 0x0A26;
 MBarHookProcPtr MBarHook : 0x0A2C;
@@ -667,8 +669,6 @@ static Handle SavedHandle;
 static
 void save_bits( BitMap& savedBits )
 {
-	QDGlobals& qd = get_QDGlobals();
-	
 	const Rect& bounds = savedBits.bounds;
 	
 	const short width  = bounds.right - bounds.left;
@@ -689,17 +689,29 @@ void save_bits( BitMap& savedBits )
 	
 	savedBits.baseAddr = *SavedHandle;
 	
-	CopyBits( &qd.screenBits, &savedBits, &bounds, &bounds, srcCopy, NULL );
+	Ptr dst = *SavedHandle;
+	Ptr src = ScrnBase
+	        + bounds.top  * ScreenRow
+	        + bounds.left / 8u;
+	
+	blit_bytes( src, ScreenRow, dst, rowBytes, rowBytes, height );
 }
 
 static
 void restore_bits( BitMap& savedBits )
 {
-	QDGlobals& qd = get_QDGlobals();
-	
 	const Rect& bounds = savedBits.bounds;
 	
-	CopyBits( &savedBits, &qd.screenBits, &bounds, &bounds, srcCopy, NULL );
+	const short height = bounds.bottom - bounds.top;
+	
+	const short rowBytes = savedBits.rowBytes;
+	
+	Ptr src = *SavedHandle;
+	Ptr dst = ScrnBase
+	        + bounds.top  * ScreenRow
+	        + bounds.left / 8u;
+	
+	blit_bytes( src, rowBytes, dst, ScreenRow, rowBytes, height );
 	
 	savedBits.baseAddr = NULL;
 }
@@ -913,7 +925,14 @@ pascal long MenuSelect_patch( Point pt )
 	
 	if ( savedBits.baseAddr != NULL )
 	{
-		// Restore the bits under the menu.
+		/*
+			Restore the bits under the menu.  Since restore_bits() just
+			calls blit_bytes(), we have to provide a raster lock in case
+			the cursor image intersects the saved bits area.
+		*/
+		
+		raster_lock lock;
+		
 		restore_bits( savedBits );
 	}
 	
