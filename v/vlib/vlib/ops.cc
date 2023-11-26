@@ -77,7 +77,7 @@ namespace vlib
 		
 		{ Token_dot,          Tight, Op_member    },
 		{ Token_plus,         Loose, Op_add       },
-		{ Token_minus,        Match, Op_subtract  },
+		{ Token_minus,        Loose, Op_subtract  },
 		{ Token_asterisk,     Loose, Op_multiply  },
 		{ Token_slash,        Match, Op_divide    },
 		{ Token_percent,      Match, Op_percent   },
