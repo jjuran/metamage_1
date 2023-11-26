@@ -470,6 +470,8 @@ pascal void DrawMenuBar_patch()
 	
 	WMgrPort_bezel_scope port_swap;
 	
+	raster_lock lock;
+	
 	draw_menu_bar_from_WMgr_port();
 	
 	const short pen_v = (MBarHeight + system_font_ascent) / 2u;
