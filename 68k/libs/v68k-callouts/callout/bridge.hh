@@ -69,6 +69,9 @@ enum
 	notify_cursor_vis,
 	notify_cursor_set,
 	
+	// $FFB6 - $FFB0
+	blit_bytes,
+	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block
 	

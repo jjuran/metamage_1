@@ -465,6 +465,63 @@ int32_t fast_memcmp_callout( v68k::processor_state& s )
 }
 
 static
+int32_t blit_bytes_callout( v68k::processor_state& s )
+{
+	const v68k::function_code_t data_space = s.data_space();
+	
+	uint16_t n = s.d(2);
+	
+	const uint32_t len = s.d(2) >> 16;
+	
+	const uint16_t src_stride = s.d(0);
+	const uint16_t dst_stride = s.d(1);
+	
+	uint32_t src = s.a(0);
+	uint32_t dst = s.a(1);
+	
+	/*
+		Limiting n, len, and stride to 16 bits ensures
+		that the multiplications won't overflow 32 bits.
+	*/
+	
+	const uint32_t src_span = (n - 1) * src_stride + len;
+	const uint32_t dst_span = (n - 1) * dst_stride + len;
+	
+	const uint8_t* p = s.translate( src, src_span, data_space, mem_read );
+	
+	if ( p == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	uint8_t* q = s.translate( dst, dst_span, data_space, mem_write );
+	
+	if ( q == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	while ( n-- )
+	{
+		/*
+			We have to use memmove(), not memcpy(), because we
+			don't know if userspace passed us overlapping ranges.
+		*/
+		
+		memmove( q, p, len );
+		
+		p += src_stride;
+		q += dst_stride;
+	}
+	
+	s.translate( dst, dst_span, data_space, mem_update );
+	
+	return rts;
+}
+
+static
 int32_t system_call_callout( v68k::processor_state& s )
 {
 	op_result result = bridge_call( s );
@@ -616,6 +673,8 @@ static const function_type the_callouts[] =
 	&notify_cursor_moved_callout,
 	&notify_cursor_vis_callout,
 	&notify_cursor_set_callout,
+	
+	&blit_bytes_callout,
 	
 	&system_call_callout,
 	&microseconds_callout,
