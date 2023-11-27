@@ -44,6 +44,7 @@
 Byte SdVolume    : 0x0260;
 Ptr ScrnBase     : 0x0824;
 UInt16 CrsrRow   : 0x08AC;
+UInt16 DepthLog2 : 0x08AE;
 GrafPtr WMgrPort : 0x09DE;
 short TheMenu    : 0x0A26;
 MBarHookProcPtr MBarHook : 0x0A2C;
@@ -670,7 +671,7 @@ void save_bits( BitMap& savedBits )
 	const short width  = bounds.right - bounds.left;
 	const short height = bounds.bottom - bounds.top;
 	
-	const short rowBytes = width + 15 >> 4 << 1;
+	const short rowBytes = width + 15 >> (4 - DepthLog2) << 1;
 	
 	savedBits.rowBytes = rowBytes;
 	
@@ -686,7 +687,7 @@ void save_bits( BitMap& savedBits )
 	Ptr dst = *SavedHandle;
 	Ptr src = ScrnBase
 	        + bounds.top  * CrsrRow
-	        + bounds.left / 8u;
+	        + (bounds.left >> (3 - DepthLog2));
 	
 	savedBits.baseAddr = src;
 	
