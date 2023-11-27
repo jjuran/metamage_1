@@ -687,8 +687,6 @@ void save_bits( BitMap& savedBits )
 		SetHandleSize( SavedHandle, height * rowBytes );
 	}
 	
-	savedBits.baseAddr = *SavedHandle;
-	
 	Ptr dst = *SavedHandle;
 	Ptr src = ScrnBase
 	        + bounds.top  * ScreenRow
@@ -712,8 +710,6 @@ void restore_bits( BitMap& savedBits )
 	        + bounds.left / 8u;
 	
 	blit_bytes( src, rowBytes, dst, ScreenRow, rowBytes, height );
-	
-	savedBits.baseAddr = NULL;
 }
 
 static
@@ -768,7 +764,6 @@ pascal long MenuSelect_patch( Point pt )
 	WMgrPort_bezel_scope port_swap;
 	
 	BitMap savedBits;
-	savedBits.baseAddr   = NULL;
 	savedBits.bounds.top = MBarHeight;
 	
 	Rect menuRect;
@@ -811,10 +806,7 @@ pascal long MenuSelect_patch( Point pt )
 				{
 					// Restore the open menu's bits and unhighlight the title.
 					
-					if ( savedBits.baseAddr != NULL )
-					{
-						restore_bits( savedBits );
-					}
+					restore_bits( savedBits );
 					
 					invert_menu_title( opened, titleRect );
 				}
@@ -923,18 +915,15 @@ pascal long MenuSelect_patch( Point pt )
 		TheMenu = 0;
 	}
 	
-	if ( savedBits.baseAddr != NULL )
-	{
-		/*
-			Restore the bits under the menu.  Since restore_bits() just
-			calls blit_bytes(), we have to provide a raster lock in case
-			the cursor image intersects the saved bits area.
-		*/
-		
-		raster_lock lock;
-		
-		restore_bits( savedBits );
-	}
+	/*
+		Restore the bits under the menu.  Since restore_bits() just
+		calls blit_bytes(), we have to provide a raster lock in case
+		the cursor image intersects the saved bits area.
+	*/
+	
+	raster_lock lock;
+	
+	restore_bits( savedBits );
 	
 	return result;
 }
