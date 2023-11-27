@@ -84,6 +84,15 @@ DEFINE_CALLOUT( void,
                 (const struct Cursor* crsr : __A0),
                 0xFFB8 )
 
+DEFINE_CALLOUT( void,
+                blit_bytes,
+                (const void* src  : __A0,
+                 void*       dst  : __A1,
+                 short       dsrc : __D0,
+                 short       ddst : __D1,
+                 unsigned    lenn : __D2 ),
+                 0xFFB6 )
+
 #undef DEFINE_CALLOUT
 
 inline
@@ -123,6 +132,15 @@ void plot_cursor( const struct Cursor*  crsr,
                   short                 rowBytes )
 {
 	plot_cursor( crsr, dest, shift | h_trim << 16, v_skip | n << 16, rowBytes );
+}
+
+inline
+void blit_bytes( const void* src, unsigned short src_stride,
+                 void*       dst, unsigned short dst_stride,
+                 unsigned short len,
+                 unsigned short n )
+{
+	blit_bytes( src, dst, src_stride, dst_stride, len << 16 | n );
 }
 
 unsigned long CmpString_sans_case( const unsigned char*  a : __A0,
