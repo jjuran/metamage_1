@@ -1015,6 +1015,8 @@ char* const* get_options( char** argv )
 				{
 					virtual_buffer = malloc( the_screen_size );
 					
+					memset( virtual_buffer, 0xFF, the_screen_size );
+					
 					page_1_virtual_buffer = (uint8_t*) virtual_buffer;
 					
 					main_screen_addr = 0x00E00000;
