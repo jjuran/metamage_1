@@ -502,18 +502,17 @@ void draw_rect( const rectangular_op_params&  params,
 	const uint16_t n_rows_skipped = top - bounds.top;
 	
 	Ptr rowBase = portBits.baseAddr
-	            + mulu_w( portBits.rowBytes, n_rows_skipped );
+	            + mulu_w( portBits.rowBytes, n_rows_skipped )
+	            + (rect.left - bounds.left) / 8u;
+	
+	const short n_pixels_skipped = (rect.left - bounds.left) & 0x7;
+	const short n_pixels_drawn   = rect.right - rect.left;
 	
 	for ( int i = top;  i < bottom;  ++i )
 	{
 		const uint8_t pat = pattern.pat[ pat_v ];
 		
-		Ptr start = rowBase + (rect.left - bounds.left) / 8u;
-		
-		const short n_pixels_skipped = (rect.left - bounds.left) & 0x7;
-		const short n_pixels_drawn   = rect.right - rect.left;
-		
-		draw_segment( start,
+		draw_segment( rowBase,
 		              n_pixels_skipped,
 		              n_pixels_drawn,
 		              transfer_mode_AND_0x03,
