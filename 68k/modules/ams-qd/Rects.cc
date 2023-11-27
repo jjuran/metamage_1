@@ -482,8 +482,9 @@ static void fill_rect( const rectangular_op_params& params )
 	}
 }
 
-static void draw_rect( const rectangular_op_params&  params,
-                       short                         pattern_transfer_mode )
+static
+void draw_rect( const rectangular_op_params&  params,
+                short                         transfer_mode_AND_0x03 )
 {
 	Pattern& pattern = *params.pattern;
 	
@@ -515,7 +516,7 @@ static void draw_rect( const rectangular_op_params&  params,
 		draw_segment( start,
 		              n_pixels_skipped,
 		              n_pixels_drawn,
-		              pattern_transfer_mode & 0x03,
+		              transfer_mode_AND_0x03,
 		              pat );
 		
 		pat_v = (pat_v + 1) & 0x7;
@@ -526,7 +527,7 @@ static void draw_rect( const rectangular_op_params&  params,
 
 static
 void draw_region( const rectangular_op_params&  params,
-                  short                         pattern_transfer_mode,
+                  short                         transfer_mode_AND_0x03,
                   RgnHandle                     region )
 {
 	const short* extent = (short*) (*region + 1);
@@ -569,7 +570,7 @@ void draw_region( const rectangular_op_params&  params,
 				draw_segment( start,
 				              n_pixels_skipped,
 				              n_pixels_drawn,
-				              pattern_transfer_mode & 0x03,
+				              transfer_mode_AND_0x03,
 				              pat );
 			}
 			
@@ -703,11 +704,11 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	
 	if ( ! clipping_to_rect )
 	{
-		draw_region( params, patMode, clipRgn );
+		draw_region( params, patMode & 0x03, clipRgn );
 	}
 	else
 	{
-		draw_rect( params, patMode );
+		draw_rect( params, patMode & 0x03 );
 	}
 }
 
