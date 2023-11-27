@@ -39,25 +39,6 @@ bool byte_aligned( short srcSkip, short dstSkip, short width )
 }
 
 static inline
-void copy_aligned_sector( Ptr    src,
-                          Ptr    dst,
-                          short  n_rows,
-                          short  n_per_row,
-                          short  src_stride,
-                          short  dst_stride )
-{
-	const short n_bytes = n_per_row * sizeof *src;
-	
-	while ( --n_rows >= 0 )
-	{
-		fast_memcpy( dst, src, n_bytes );
-		
-		src += src_stride;
-		dst += dst_stride;
-	}
-}
-
-static inline
 Ptr blit_byte_aligned_segment( Ptr    src,
                                Ptr    dst,
                                short  n_bytes,
@@ -413,12 +394,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		{
 			width /= 8;
 			
-			copy_aligned_sector( src,
-			                     dst,
-			                     n_rows,
-			                     width,
-			                     srcRowBytes,
-			                     dstRowBytes );
+			blit_bytes( src, srcRowBytes, dst, dstRowBytes, width, n_rows );
 		}
 		else
 		{
