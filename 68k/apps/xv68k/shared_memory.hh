@@ -7,7 +7,7 @@
 #define SHAREDMEMORY_HH
 
 
-void* open_shared_memory( const char* path, unsigned long size );
+void* open_shared_memory( const char* path );
 
 
 #endif

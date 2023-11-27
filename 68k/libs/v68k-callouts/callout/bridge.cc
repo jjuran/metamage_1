@@ -32,6 +32,7 @@
 // v68k-callouts
 #include "callout/cursor.hh"
 #include "callout/exceptions.hh"
+#include "callout/notify_cursor.hh"
 #include "callout/screen.hh"
 #include "callout/timeval.hh"
 #include "callout/uptime.hh"
@@ -612,6 +613,9 @@ static const function_type the_callouts[] =
 	NULL,
 	
 	&plot_cursor_callout,
+	&notify_cursor_moved_callout,
+	&notify_cursor_vis_callout,
+	&notify_cursor_set_callout,
 	
 	&system_call_callout,
 	&microseconds_callout,

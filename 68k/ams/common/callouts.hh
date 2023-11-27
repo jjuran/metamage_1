@@ -69,6 +69,21 @@ DEFINE_CALLOUT( void,
                  unsigned             rowB : __D2 ),
                 0xFFBE )
 
+DEFINE_CALLOUT( void,
+                notify_cursor_moved,
+                (long loc : __D0),
+                0xFFBC )
+
+DEFINE_CALLOUT( void,
+                notify_cursor_vis,
+                (unsigned char vis : __D0),
+                0xFFBA )
+
+DEFINE_CALLOUT( void,
+                notify_cursor_set,
+                (const struct Cursor* crsr : __A0),
+                0xFFB8 )
+
 #undef DEFINE_CALLOUT
 
 inline

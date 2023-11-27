@@ -13,9 +13,9 @@
 #include <sys/stat.h>
 
 
-void* open_shared_memory( const char* path, unsigned long size )
+void* open_shared_memory( const char* path )
 {
-	int fd = open( path, O_RDWR | O_CREAT, 0664 );
+	int fd = open( path, O_RDWR );
 	
 	if ( fd < 0 )
 	{
@@ -33,19 +33,9 @@ void* open_shared_memory( const char* path, unsigned long size )
 		goto end;
 	}
 	
-	if ( size == 0 )
-	{
-		size = st.st_size;
-	}
-	else if ( st.st_size != size )
-	{
-		nok = ftruncate( fd, size );
-		
-		if ( nok )
-		{
-			goto end;
-		}
-	}
+	size_t size;
+	
+	size = st.st_size;
 	
 	addr = mmap( NULL,
 				 size,

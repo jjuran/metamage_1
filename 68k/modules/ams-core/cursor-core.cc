@@ -22,6 +22,16 @@
 #pragma exceptions off
 
 
+enum
+{
+	/*
+		The presence of this value in CrsrSave at startup
+		indicates to ams-core that a hardware cursor exists.
+	*/
+	
+	kHardwareCursor = 0x68647772,  // 'hdwr'
+};
+
 typedef uint32_t* Saved;
 typedef uint32_t Buffer[ 16 ];
 
@@ -36,6 +46,8 @@ char  CrsrVis   : 0x08CC;
 char  CrsrBusy  : 0x08CD;
 short CrsrState : 0x08D0;
 char CrsrObscure: 0x08D2;
+
+static bool hardware_cursor;
 
 static Ptr    CrsrAddr;
 static Buffer bits_under_cursor;
@@ -64,6 +76,8 @@ void set_empty_rect( Rect* r : __A0 )
 
 void init_lowmem_Cursor()
 {
+	hardware_cursor = (OSType) CrsrSave == kHardwareCursor;
+	
 	JHideCursor   = &hide_cursor;
 	JShowCursor   = &show_cursor;
 	JShieldCursor = &shield_cursor;
@@ -74,6 +88,11 @@ void init_lowmem_Cursor()
 	CrsrSave = bits_under_cursor;
 	
 	CrsrState = -1;  // Invisible cursor, at first
+	
+	if ( hardware_cursor )
+	{
+		notify_cursor_moved( *(long*) &Mouse );
+	}
 }
 
 static inline
@@ -234,13 +253,20 @@ void hide_cursor()
 	
 	if ( CrsrVis )
 	{
+		CrsrVis = false;
+		
+		if ( hardware_cursor )
+		{
+			notify_cursor_vis( false );
+			return;
+		}
+		
 		--CrsrBusy;
 		
 		erase_cursor();
 		
 		set_empty_rect( &CrsrRect );
 		CrsrAddr = NULL;
-		CrsrVis = false;
 		
 		++CrsrBusy;
 	}
@@ -253,9 +279,15 @@ void show_cursor()
 		return;
 	}
 	
-	--CrsrBusy;
-	
 	CrsrVis = true;
+	
+	if ( hardware_cursor )
+	{
+		notify_cursor_vis( true );
+		return;
+	}
+	
+	--CrsrBusy;
 	
 	paint_cursor( Mouse.h, Mouse.v );
 	
@@ -289,7 +321,7 @@ pascal void shield_cursor( const Rect* r, Point pt )
 static
 void update_cursor()
 {
-	if ( CrsrVis  &&  lock_cursor() )
+	if ( CrsrVis  &&  ! hardware_cursor  &&  lock_cursor() )
 	{
 		screen_lock lock;
 		
@@ -314,7 +346,7 @@ void update_cursor_location()
 			
 			update_cursor();
 		}
-		else if ( lock_cursor() )
+		else if ( ! hardware_cursor  &&  lock_cursor() )
 		{
 			/*
 				The cursor is visible even with a negative cursor level,
@@ -346,6 +378,11 @@ void update_cursor_location()
 		
 		unlock_cursor();
 	}
+	
+	if ( hardware_cursor )
+	{
+		notify_cursor_moved( *(long*) &Mouse );
+	}
 }
 
 void init_cursor()
@@ -365,6 +402,11 @@ void init_cursor()
 pascal void set_cursor( const Cursor* crsr )
 {
 	fast_memcpy( &TheCrsr, crsr, sizeof (Cursor) );
+	
+	if ( hardware_cursor )
+	{
+		notify_cursor_set( crsr );
+	}
 	
 	update_cursor();
 }

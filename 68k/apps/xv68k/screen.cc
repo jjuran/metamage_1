@@ -20,9 +20,6 @@
 #include "screen/surface.hh"
 #include "screen/update.hh"
 
-// xv68k
-#include "shared_memory.hh"
-
 
 using raster::raster_load;
 using raster::raster_metadata;
