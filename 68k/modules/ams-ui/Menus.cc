@@ -687,13 +687,9 @@ void save_bits( BitMap& savedBits )
 		SetHandleSize( SavedHandle, height * rowBytes );
 	}
 	
-//	HLock( SavedHandle );
-	
 	savedBits.baseAddr = *SavedHandle;
 	
 	CopyBits( &qd.screenBits, &savedBits, &bounds, &bounds, srcCopy, NULL );
-	
-//	HUnlock( SavedHandle );
 }
 
 static
@@ -703,11 +699,7 @@ void restore_bits( BitMap& savedBits )
 	
 	const Rect& bounds = savedBits.bounds;
 	
-//	HLock( SavedHandle );
-	
 	CopyBits( &savedBits, &qd.screenBits, &bounds, &bounds, srcCopy, NULL );
-	
-//	HUnlock( SavedHandle );
 	
 	savedBits.baseAddr = NULL;
 }
