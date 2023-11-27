@@ -164,31 +164,17 @@ empty:
 static inline
 void save_bits_under_cursor( short n )
 {
-	Ptr addr = CrsrAddr;
+	const short rowBytes = 4;
 	
-	uint32_t* p = bits_under_cursor;
-	
-	while ( --n >= 0 )
-	{
-		*p++ = *(uint32_t*) addr;
-		
-		addr += ScreenRow;
-	}
+	blit_bytes( CrsrAddr, ScreenRow, bits_under_cursor, rowBytes, rowBytes, n );
 }
 
 static inline
 void restore_bits_under_cursor( short n )
 {
-	Ptr addr = CrsrAddr;
+	const short rowBytes = 4;
 	
-	uint32_t* p = bits_under_cursor;
-	
-	while ( --n >= 0 )
-	{
-		*(uint32_t*) addr = *p++;
-		
-		addr += ScreenRow;
-	}
+	blit_bytes( bits_under_cursor, rowBytes, CrsrAddr, ScreenRow, rowBytes, n );
 }
 
 static inline
