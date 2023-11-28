@@ -782,8 +782,6 @@ int execute_68k( int argc, char* const* argv )
 		main_screen_addr = mem_size - (0x20000 - 0x1A700);
 		main_sound_addr  = mem_size - (0x20000 - 0x1FD00);
 		
-		memset( mem + main_screen_addr, 0xFF, 64 * 342 );  // paint it black
-		
 		emu.put_long( MemTop,      mem_size,         user_data_space );
 	}
 	
@@ -795,6 +793,9 @@ int execute_68k( int argc, char* const* argv )
 		page_2_virtual_buffer = mem + alt_screen_addr;
 		
 		virtual_buffer = page_1_virtual_buffer;
+		
+		memset( page_1_virtual_buffer, 0xFF, 64 * 342 );
+		memset( page_2_virtual_buffer, 0xFF, 64 * 342 );
 	}
 	
 	using v68k::screen::the_surface_shape;
