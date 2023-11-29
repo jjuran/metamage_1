@@ -18,7 +18,9 @@
 #include "relix/syscall/getpeername.hh"
 #include "relix/syscall/getsockname.hh"
 #include "relix/syscall/listen.hh"
+#include "relix/syscall/recv.hh"
 #include "relix/syscall/registry.hh"
+#include "relix/syscall/send.hh"
 #include "relix/syscall/shutdown.hh"
 #include "relix/syscall/socket.hh"
 #include "relix/syscall/socketpair.hh"
@@ -37,6 +39,8 @@ using relix::connect;
 using relix::getpeername;
 using relix::getsockname;
 using relix::listen;
+using relix::recv;
+using relix::send;
 using relix::shutdown;
 using relix::socket;
 using relix::socketpair;
@@ -54,6 +58,8 @@ REGISTER_SYSTEM_CALL( accept      );
 REGISTER_SYSTEM_CALL( connect     );
 REGISTER_SYSTEM_CALL( getsockname );
 REGISTER_SYSTEM_CALL( getpeername );
+REGISTER_SYSTEM_CALL( recv        );
+REGISTER_SYSTEM_CALL( send        );
 REGISTER_SYSTEM_CALL( shutdown    );
 
 #pragma force_active reset
