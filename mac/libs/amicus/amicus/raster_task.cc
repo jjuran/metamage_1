@@ -44,12 +44,12 @@ static
 void raster_event_loop( raster::sync_relay* sync )
 {
 	const OSType   eventClass = kEventClassAmicus;
-	const uint32_t eventID    = kEventAmicusUpdate;
+	const uint32_t repaintDue = kEventAmicusUpdate;
 	
 	EventQueueRef queue = GetMainEventQueue();
 	
-	EventRef update;
-	CreateEvent( NULL, eventClass, eventID, 0, kEventAttributeNone, &update );
+	EventRef repaint_due;
+	CreateEvent( NULL, eventClass, repaintDue, 0, kEventAttributeNone, &repaint_due );
 	
 	uint32_t seed = 0;
 	
@@ -62,10 +62,10 @@ void raster_event_loop( raster::sync_relay* sync )
 		
 		seed = sync->seed;
 		
-		PostEventToQueue( queue, update, kEventPriorityStandard );
+		PostEventToQueue( queue, repaint_due, kEventPriorityStandard );
 	}
 	
-	ReleaseEvent( update );
+	ReleaseEvent( repaint_due );
 }
 
 static
