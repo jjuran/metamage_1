@@ -115,7 +115,12 @@ namespace tool
 			
 			const bool exists = dirfd >= 0  &&  p7::fstatat( dirfd, path, sb );
 			
-			if ( exists )
+			/*
+				Don't just match any existing item.  If we're including
+				<foo>, and foo/bar.h exists, we don't want to match foo/.
+			*/
+			
+			if ( exists  &&  S_ISREG( sb.st_mode ) )
 			{
 				return i;
 			}
