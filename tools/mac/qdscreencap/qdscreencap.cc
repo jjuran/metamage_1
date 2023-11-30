@@ -22,6 +22,7 @@
 
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // mac-config
 #include "mac_config/color-quickdraw.hh"
