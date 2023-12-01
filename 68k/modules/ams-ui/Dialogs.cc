@@ -1312,7 +1312,7 @@ pascal void GetDItem_patch( DialogRef  dialog,
 	
 	TEHandle hTE = d->textH;
 	
-	if ( hTE  &&  hTE[0]->hText == item->handle )
+	if ( item->handle  &&  hTE  &&  hTE[0]->hText == item->handle )
 	{
 		// Trim the handle so the caller knows the text length.
 		
