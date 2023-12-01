@@ -35,6 +35,7 @@
 #define	_SYS_SELECT_H_
 
 #include <sys/cdefs.h>
+#include <sys/signal.h>
 #include <sys/types.h>
 
 #include <string.h>
@@ -86,8 +87,10 @@ typedef	struct fd_set {
 #endif /* __BSD_VISIBLE */
 
 __BEGIN_DECLS
+struct timespec;
 struct timeval;
 int	select(int, fd_set *, fd_set *, fd_set *, struct timeval *);
+int	pselect(int, fd_set*, fd_set*, fd_set*, const struct timespec*, const sigset_t*);
 __END_DECLS
 
 #endif /* !_SYS_SELECT_H_ */
