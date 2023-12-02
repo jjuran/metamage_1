@@ -126,19 +126,19 @@ void sound_update()
 	{
 		p = message_buffer + 12;
 		
-		if ( is_silence_and_zeros( p, 370 ) )
+		if ( ! is_silence_and_zeros( p, 370 ) )
 		{
 			/*
 				Lemmings begins sound generation by filling the sound
 				buffer with zero bytes, resulting in a nasty click.
 				
-				Prevent that by substituting the actual silence byte value.
+				Since it's supposed to be silent anyway, prevent the
+				issue by dropping the faulty frame, as well as any
+				frames filled with actual silence (which are no-ops).
 			*/
 			
-			memset( p, '\x80', 370 );
+			write( sound_fd, message_buffer, sndpipe_buffer_size );
 		}
-		
-		write( sound_fd, message_buffer, sndpipe_buffer_size );
 	}
 }
 
