@@ -30,6 +30,9 @@
 // v68k-ioutils
 #include "ioutils/print_register_dump.hh"
 
+// v68k-record
+#include "record/start_end.hh"
+
 // v68k-callouts
 #include "callout/bridge.hh"
 #include "callout/cursor_file.hh"
@@ -125,6 +128,7 @@ enum
 	Opt_pid,
 	Opt_raster,
 	Opt_cursor,
+	Opt_record,
 	Opt_snd_fd,
 	Opt_ignore_screen_locks,
 };
@@ -143,6 +147,7 @@ static command::option options[] =
 	{ "pid",        Opt_pid,    command::Param_optional },
 	{ "raster",     Opt_raster, command::Param_required },
 	{ "cursor",     Opt_cursor, command::Param_required },
+	{ "record",     Opt_record, command::Param_required },
 	{ "module",     Opt_module, command::Param_required },
 	{ "sound-fd",   Opt_snd_fd, command::Param_required },
 	
@@ -382,6 +387,12 @@ int execute_68k( int argc, char* const* argv )
 	return 1;
 }
 
+static
+void atexit_end_recording()
+{
+	v68k::record::end_recording();
+}
+
 static inline
 bool begins_array( const char* param )
 {
@@ -551,6 +562,15 @@ char* const* get_options( char** argv )
 				set_cursor_backing_store_file( global_result.param );
 				
 				has_cursor = true;
+				break;
+			
+			case Opt_record:
+				using v68k::record::start_recording;
+				
+				if ( start_recording( global_result.param ) == 0 )
+				{
+					atexit( &atexit_end_recording );
+				}
 				break;
 			
 			case Opt_module:
