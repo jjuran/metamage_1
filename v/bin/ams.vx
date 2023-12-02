@@ -30,6 +30,7 @@ var mem = null
 var modem = null
 var app_name = null
 var coloring = 0
+var recording = null
 var screen_res = null
 var has_cursor = bool getenv "AMS_CURSOR"
 var welcome_ticks = 0
@@ -84,6 +85,10 @@ while args do
 		{
 			modem = *args++
 		}
+		else if arg in ["--rec", "--record"] then
+		{
+			recording = *args++
+		}
 		else if arg == "--res" then
 		{
 			screen_res = *args++
@@ -131,6 +136,8 @@ let mem_opt = if mem then
 	
 	"--mem=" mem,
 }
+
+let rec_opt = if recording then {"--record", recording}
 
 screen_res = screen_res or getenv "AMS_SCREENRES" or "512x342"
 
@@ -551,7 +558,7 @@ let command-prefix = "exhibit", "-t", title, raster, event_input, zoom
 let file-servers = freemountd-server, appfs-server, docfs-server
 let servers = sound-server, modem-server, file-servers
 
-let xv68k_opts = model_opt, mem_opt, sound_opt, "-tSP", crsr_opt, xv_opt
+let xv68k_opts = model_opt, mem_opt, sound_opt, rec_opt, "-tSP", crsr_opt, xv_opt
 
 let xv68k-subcmd = xv68k, xv68k_opts, raster, *module_opts, app, app_opts
 let graft-subcmd = "graft", servers, xv68k-subcmd
