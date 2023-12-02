@@ -21,6 +21,7 @@ let title = "Advanced Mac Substitute"
 
 var disks = []
 var app_name = null
+var screen_res = null
 
 var args = begin argv
 
@@ -43,6 +44,10 @@ while args do
 		else if arg == "--disk" then
 		{
 			disks <-- *args++
+		}
+		else if arg == "--res" then
+		{
+			screen_res = *args++
 		}
 		else
 		{
@@ -79,7 +84,7 @@ let mem_opt = if mem then
 	"--mem=" mem,
 }
 
-let screen_res = getenv "AMS_SCREENRES" or "512x342"
+screen_res = screen_res or getenv "AMS_SCREENRES" or "512x342"
 
 let default_app = "Welcome"
 
