@@ -34,6 +34,7 @@
 #include "callout/exceptions.hh"
 #include "callout/notify_cursor.hh"
 #include "callout/screen.hh"
+#include "callout/sound.hh"
 #include "callout/timeval.hh"
 #include "callout/uptime.hh"
 
@@ -675,6 +676,11 @@ static const function_type the_callouts[] =
 	&notify_cursor_set_callout,
 	
 	&blit_bytes_callout,
+	NULL,
+	NULL,
+	NULL,
+	
+	&send_sound_command_callout,
 	
 	&system_call_callout,
 	&microseconds_callout,

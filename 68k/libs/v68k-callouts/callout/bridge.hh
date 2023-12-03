@@ -71,6 +71,12 @@ enum
 	
 	// $FFB6 - $FFB0
 	blit_bytes,
+	reserved13,
+	reserved14,
+	reserved15,
+	
+	// $FFAE - $FFA8
+	send_sound_command,
 	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block
