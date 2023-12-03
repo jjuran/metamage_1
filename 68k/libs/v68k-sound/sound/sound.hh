@@ -26,6 +26,8 @@ extern int sound_fd;
 
 extern uint8_t* the_sound_buffer;
 
+long send_command( short domain, const void* buffer, long buffer_length );
+
 void set_audio_level( short level );
 
 uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access );

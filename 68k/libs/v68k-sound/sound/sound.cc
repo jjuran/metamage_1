@@ -6,11 +6,15 @@
 #include "sound.hh"
 
 // POSIX
+#include <sys/uio.h>
 #include <unistd.h>
 
 // Standard C
 #include <stdlib.h>
 #include <string.h>
+
+// iota
+#include "iota/endian.hh"
 
 
 namespace v68k  {
@@ -23,6 +27,31 @@ uint8_t* the_sound_buffer;
 const int sndpipe_buffer_size = 8 + 4 + 370;
 
 static uint8_t message_buffer[ sndpipe_buffer_size ];
+
+long send_command( short domain, const void* buffer, long buffer_length )
+{
+	/*
+		Callers of this function pass a buffer that includes a `mode` field,
+		but the wire protocol regards the mode as part of an 8-byte header --
+		therefore the length (which covers only the extent) should exclude it.
+	*/
+	
+	uint32_t length = buffer_length - sizeof (short);
+	
+	length = iota::big_u32( length );
+	domain = iota::big_u16( domain );
+	
+	const int n_iov = 3;
+	
+	iovec iov[ n_iov ] =
+	{
+		{ (char*) &length, sizeof length },
+		{ (char*) &domain, sizeof domain },
+		{ (char*) buffer,  buffer_length },
+	};
+	
+	return writev( sound_fd, iov, n_iov );
+}
 
 void set_audio_level( short level )
 {
