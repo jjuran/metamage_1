@@ -61,6 +61,11 @@ def get_sound_fd
 	return ()
 }
 
+let sound_opt = if let sound_fd = get_sound_fd() then
+{
+	"--sound-fd=" sound_fd,
+}
+
 var appfs-fd
 var appfs-server = ()
 
@@ -154,17 +159,6 @@ def core_opts
 	return ams-core: opts
 }
 
-def io_opts
-{
-	return
-	if let sound_fd = get_sound_fd() then
-	{
-		setenv( "XV68K_SOUND_FD", sound_fd )
-		
-		ams-io: [ "--sound-fd=" sound_fd ],
-	}
-}
-
 def fs_opts
 {
 	let disk_opt =
@@ -231,7 +225,6 @@ let module_args = str^
 [
 	core_opts(),
 	fs_opts(),
-	io_opts(),
 	seg_opts(),
 ]
 
@@ -256,7 +249,7 @@ let app = ams_bin "/app"
 
 let servers = sound-server, freemountd-server, appfs-server, docfs-server
 
-let xv68k_opts = model_opt, mem_opt, "-tSP"
+let xv68k_opts = model_opt, mem_opt, sound_opt, "-tSP"
 
 let xv68k-screen = "--raster=" works_dir_path "/" screen_fb_file
 
