@@ -20,6 +20,8 @@ let ams_mnt = getenv "AMS_MNT" or amsdir "/mnt"
 let title = "Advanced Mac Substitute"
 
 var disks = []
+
+var cpu = null
 var app_name = null
 var screen_res = null
 
@@ -40,6 +42,10 @@ while args do
 			arg = if args then { *args++ }
 			
 			break
+		}
+		else if arg == "--cpu" then
+		{
+			cpu = *args++
 		}
 		else if arg == "--disk" then
 		{
@@ -72,7 +78,7 @@ if args then
 	warn "ams.vx: Ignoring extra arguments"
 }
 
-let model = getenv "AMS_CPU"                # may be ()
+let model = cpu or getenv "AMS_CPU"         # may be ()
 let model_opt = if model then {"-M" model}  # may be ()
 
 let mem = getenv "AMS_MEM"
