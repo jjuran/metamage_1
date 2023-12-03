@@ -284,21 +284,19 @@ def core_opts
 	return ams-core: opts
 }
 
+let sound_opt = if let sound_fd = get_sound_fd() then
+{
+	"--sound-fd=" sound_fd,
+}
+
 def io_opts
 {
-	let sound = if let sound_fd = get_sound_fd() then
-	{
-		setenv( "XV68K_SOUND_FD", sound_fd )
-		
-		"--sound-fd=" sound_fd,
-	}
-	
 	let modem = if let modem_fd = get_modem_fd() then
 	{
 		"--modem-fd=" modem_fd,
 	}
 	
-	let opts = [ sound, modem ]
+	let opts = [ modem ]
 	
 	return
 	if opts then
@@ -433,7 +431,7 @@ let command-prefix = "exhibit", "-t", title, raster, event_input, zoom
 let file-servers = freemountd-server, appfs-server, docfs-server
 let servers = sound-server, modem-server, file-servers
 
-let xv68k_opts = model_opt, mem_opt, "-tSP"
+let xv68k_opts = model_opt, mem_opt, sound_opt, "-tSP"
 
 let xv68k-subcmd = xv68k, xv68k_opts, raster, *module_opts, app, app_name
 let graft-subcmd = "graft", servers, xv68k-subcmd
