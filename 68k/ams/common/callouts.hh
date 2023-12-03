@@ -93,6 +93,13 @@ DEFINE_CALLOUT( void,
                  unsigned    lenn : __D2 ),
                  0xFFB6 )
 
+DEFINE_CALLOUT( long,
+                send_sound_command,
+                (short        domain : __D1,
+                 const void*  buffer : __A0,
+                 long         length : __D0 ),
+                0xFFAE )
+
 #undef DEFINE_CALLOUT
 
 inline
