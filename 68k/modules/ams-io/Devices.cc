@@ -13,6 +13,9 @@
 #include <Traps.h>
 #endif
 
+// sndpipe
+#include "sndpipe/sndpipe.hh"
+
 // mac-sys-utils
 #include "mac_sys/delay.hh"
 
@@ -20,6 +23,7 @@
 #include "logofwar/report.hh"
 
 // ams-common
+#include "callouts.hh"
 #include "interrupts.hh"
 
 // ams-io
@@ -448,11 +452,21 @@ void assign_fd( short index, int fd )
 	UTableBase[ index ][0]->dCtlPosition = fd;
 }
 
+static inline
+bool audio_enabled()
+{
+	uint16_t start = sndpipe::switch_on;
+	
+	long n = send_sound_command( sndpipe::basic_domain, &start, sizeof start );
+	
+	return n >= 0;
+}
+
 void install_drivers()
 {
 	JIODone = &IODone_handler;
 	
-	if ( sound_fd >= 0 )
+	if ( audio_enabled() )
 	{
 		INSTALL_SYS_DRIVER( Sound, 3 );
 		
