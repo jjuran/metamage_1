@@ -95,6 +95,9 @@ namespace vlib
 			case Op_typeof:
 				return Type( byterange_vtype );
 			
+			case Op_unary_negate:
+				return ~v.to< ByteClass >();
+			
 			default:
 				break;
 		}

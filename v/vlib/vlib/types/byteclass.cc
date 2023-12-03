@@ -221,6 +221,13 @@ namespace vlib
 		data[ i >> 3 ] |= 1 << (i & 0x7);
 	}
 	
+	ByteClass operator~( const ByteClass& v )
+	{
+		Value result = negated_bytes( v );
+		
+		return static_cast< const ByteClass& >( result );
+	}
+	
 	ByteClass operator|( const ByteClass& a, const ByteClass& b )
 	{
 		Value result = binary_bitwise_op( Op_union, a, b.string().data() );

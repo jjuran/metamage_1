@@ -32,3 +32,8 @@ $ vc "['A', 'b', '3', 'D', 'e', 'f', '.'] ver {v in 'a' .. 'e'} per str"
 
 $ vc "string('a' .. 'e')"
 1 >= '"abcde"'
+
+%
+
+$ vc "['A', 'b', '3', '*', '0', '.'] ver {v in ~('1' .. '9')} per str"
+1 >= '"Ab*0."'

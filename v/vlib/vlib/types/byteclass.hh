@@ -36,6 +36,8 @@ namespace vlib
 			void set( unsigned char i );
 	};
 	
+	ByteClass operator~( const ByteClass& v );
+	
 	ByteClass operator|( const ByteClass& a, const ByteClass& b );
 	
 	extern const type_info byteclass_vtype;
