@@ -22,6 +22,7 @@ let title = "Advanced Mac Substitute"
 var disks = []
 
 var cpu = null
+var mem = null
 var modem = null
 var app_name = null
 var screen_res = null
@@ -51,6 +52,10 @@ while args do
 		else if arg == "--disk" then
 		{
 			disks <-- *args++
+		}
+		else if arg == "--mem" then
+		{
+			mem = *args++
 		}
 		else if arg == "--modem" then
 		{
@@ -86,7 +91,8 @@ if args then
 let model = cpu or getenv "AMS_CPU"         # may be ()
 let model_opt = if model then {"-M" model}  # may be ()
 
-let mem = getenv "AMS_MEM"
+mem = mem or getenv "AMS_MEM"
+
 let mem_opt = if mem then
 {
 	# 128K, 512K, 1 MiB, 2 MiB, 2.5 MiB, 4 MiB
