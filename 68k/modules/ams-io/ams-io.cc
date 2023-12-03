@@ -37,13 +37,11 @@ enum
 	Opt_last_byte = 255,
 	
 	Opt_modem_fd,
-	Opt_sound_fd,
 };
 
 static command::option options[] =
 {
 	{ "modem-fd", Opt_modem_fd, command::Param_required },
-	{ "sound-fd", Opt_sound_fd, command::Param_required },
 	
 	NULL,
 };
@@ -81,10 +79,6 @@ char* const* get_options( char** argv )
 		{
 			case Opt_modem_fd:
 				modem_fd = gear::parse_unsigned_decimal( global_result.param );
-				break;
-			
-			case Opt_sound_fd:
-				sound_fd = gear::parse_unsigned_decimal( global_result.param );
 				break;
 			
 			default:
