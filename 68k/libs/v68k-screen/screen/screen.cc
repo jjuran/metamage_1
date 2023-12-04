@@ -17,6 +17,9 @@
 #include "raster/load.hh"
 #include "raster/sync.hh"
 
+// v68k-record
+#include "record/graphics.hh"
+
 // v68k-screen
 #include "screen/shared_memory.hh"
 #include "screen/storage.hh"
@@ -131,6 +134,11 @@ int set_screen_backing_store_file( const char* path )
 	
 	the_screen_size = raster.meta->desc.height
 	                * raster.meta->desc.stride;
+	
+	record::screen_size( the_surface_shape.width,
+	                     the_surface_shape.height,
+	                     the_surface_shape.stride,
+	                     the_surface_shape.weight );
 	
 	if ( raster.meta->desc.extra )
 	{
