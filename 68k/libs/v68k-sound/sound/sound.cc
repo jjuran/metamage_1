@@ -55,6 +55,11 @@ long send_command( short domain, const void* buffer, long buffer_length )
 
 void set_audio_level( short level )
 {
+	if ( sound_fd < 0 )
+	{
+		return;
+	}
+	
 	uint8_t* p = message_buffer;
 	
 	const size_t payload_size = 2;
@@ -72,10 +77,7 @@ void set_audio_level( short level )
 	*p++ = 0;                  // semantics
 	*p++ = level & 7;          // volume
 	
-	if ( sound_fd > 0 )
-	{
-		write( sound_fd, message_buffer, message_size );
-	}
+	write( sound_fd, message_buffer, message_size );
 }
 
 static
@@ -95,6 +97,11 @@ bool is_silence_and_zeros( const uint8_t* p, short n )
 static
 void sound_update()
 {
+	if ( sound_fd < 0 )
+	{
+		return;
+	}
+	
 	uint8_t* p = message_buffer;
 	
 	const size_t size = sndpipe_buffer_size - 8;  // 374
@@ -122,23 +129,20 @@ void sound_update()
 		q += 2;
 	}
 	
-	if ( sound_fd > 0 )
+	p = message_buffer + 12;
+	
+	if ( ! is_silence_and_zeros( p, 370 ) )
 	{
-		p = message_buffer + 12;
-		
-		if ( ! is_silence_and_zeros( p, 370 ) )
-		{
-			/*
-				Lemmings begins sound generation by filling the sound
-				buffer with zero bytes, resulting in a nasty click.
-				
-				Since it's supposed to be silent anyway, prevent the
-				issue by dropping the faulty frame, as well as any
-				frames filled with actual silence (which are no-ops).
-			*/
+		/*
+			Lemmings begins sound generation by filling the sound
+			buffer with zero bytes, resulting in a nasty click.
 			
-			write( sound_fd, message_buffer, sndpipe_buffer_size );
-		}
+			Since it's supposed to be silent anyway, prevent the
+			issue by dropping the faulty frame, as well as any
+			frames filled with actual silence (which are no-ops).
+		*/
+		
+		write( sound_fd, message_buffer, sndpipe_buffer_size );
 	}
 }
 
