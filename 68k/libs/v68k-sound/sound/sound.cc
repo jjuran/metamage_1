@@ -16,6 +16,9 @@
 // iota
 #include "iota/endian.hh"
 
+// sndpipe
+#include "sndpipe/sndpipe.hh"
+
 
 namespace v68k  {
 namespace sound {
@@ -53,6 +56,14 @@ long send_command( short domain, const void* buffer, long buffer_length )
 	return writev( sound_fd, iov, n_iov );
 }
 
+struct set_audio_level_buffer
+{
+	short mode;  // 'll'
+	
+	uint8_t semantics;
+	uint8_t level;
+};
+
 void set_audio_level( short level )
 {
 	if ( sound_fd < 0 )
@@ -60,24 +71,13 @@ void set_audio_level( short level )
 		return;
 	}
 	
-	uint8_t* p = message_buffer;
+	set_audio_level_buffer buffer;
 	
-	const size_t payload_size = 2;
-	const size_t message_size = 8 + payload_size;
+	buffer.mode      = sndpipe::set_loudness_level;  // 'll'
+	buffer.semantics = 0;
+	buffer.level     = level & 7;
 	
-	*p++ = 0;
-	*p++ = 0;
-	*p++ = payload_size >> 8;  // 0
-	*p++ = payload_size;       // 2
-	*p++ = 'J';                // admin domain
-	*p++ = 'J';
-	*p++ = 'l';                // set_loudness_level
-	*p++ = 'l';
-	
-	*p++ = 0;                  // semantics
-	*p++ = level & 7;          // volume
-	
-	write( sound_fd, message_buffer, message_size );
+	send_command( sndpipe::admin_domain, &buffer, sizeof buffer );
 }
 
 static
@@ -94,6 +94,16 @@ bool is_silence_and_zeros( const uint8_t* p, short n )
 	return true;
 }
 
+struct audio_frame_buffer
+{
+	short mode;  // 0 (ffMode)
+	
+	uint16_t rate_high;
+	uint16_t rate_low;
+	
+	uint8_t samples[ 370 ];
+};
+
 static
 void sound_update()
 {
@@ -102,24 +112,13 @@ void sound_update()
 		return;
 	}
 	
-	uint8_t* p = message_buffer;
+	audio_frame_buffer buffer;
 	
-	const size_t size = sndpipe_buffer_size - 8;  // 374
+	buffer.mode = 0;  // ffMode
+	buffer.rate_high = iota::big_u16( 1 );  // identity playback rate
+	buffer.rate_low  = 0;
 	
-	*p++ = 0;
-	*p++ = 0;
-	*p++ = size >> 8;
-	*p++ = (uint8_t) size;
-	*p++ = 'K';  // sound domain
-	*p++ = 'K';
-	*p++ = 0;    // ffMode
-	*p++ = 0;
-	
-	*p++ = 0;
-	*p++ = 1;  // identity playback rate
-	*p++ = 0;
-	*p++ = 0;
-	
+	uint8_t* p = buffer.samples;
 	uint8_t* q = the_sound_buffer;
 	
 	for ( int i = 0;  i < 370;  ++i )
@@ -129,7 +128,7 @@ void sound_update()
 		q += 2;
 	}
 	
-	p = message_buffer + 12;
+	p = buffer.samples;
 	
 	if ( ! is_silence_and_zeros( p, 370 ) )
 	{
@@ -142,7 +141,7 @@ void sound_update()
 			frames filled with actual silence (which are no-ops).
 		*/
 		
-		write( sound_fd, message_buffer, sndpipe_buffer_size );
+		send_command( sndpipe::sound_domain, &buffer, sizeof buffer );
 	}
 }
 
