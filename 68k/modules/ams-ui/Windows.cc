@@ -504,8 +504,6 @@ pascal void CloseWindow_patch( WindowRef port )
 		CurDeactive = NULL;
 	}
 	
-	KillControls( port );
-	
 	WindowPeek window = (WindowPeek) port;
 	
 	call_WDEF( window, wDispose, 0 );
@@ -526,6 +524,10 @@ pascal void CloseWindow_patch( WindowRef port )
 			HiliteWindow_patch( WindowList, -true );
 		}
 	}
+	
+	window->visible = false;
+	
+	KillControls( port );
 	
 	DisposeRgn( window->strucRgn  );
 	DisposeRgn( window->contRgn   );
