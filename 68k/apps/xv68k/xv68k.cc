@@ -1124,11 +1124,6 @@ int main( int argc, char** argv )
 	
 	int nok = sigaction( SIGINT, &action, NULL );
 	
-	if ( const char* sound_fd_env = getenv( "XV68K_SOUND_FD" ) )
-	{
-		v68k::sound::sound_fd = gear::parse_unsigned_decimal( sound_fd_env );
-	}
-	
 	module_specs = (module_spec*) alloca( argc * sizeof (module_spec) );
 	
 	char* const* args = get_options( argv );
