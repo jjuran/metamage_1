@@ -278,7 +278,10 @@ namespace vlib
 		
 		if ( op == Op_push )
 		{
-			push( target, right );
+			if ( ! is_empty_list( right ) )
+			{
+				push( target, right );
+			}
 			
 			return value;
 		}
