@@ -1160,6 +1160,11 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, ResID icon_id )
 	
 	ReleaseResource( h );
 	
+	if ( bounds.left < 0 )
+	{
+		OffsetRect( &bounds, -bounds.left, -bounds.top );
+	}
+	
 	if ( *(long*) &bounds.top == 0 )
 	{
 		QDGlobals& qd = get_QDGlobals();
