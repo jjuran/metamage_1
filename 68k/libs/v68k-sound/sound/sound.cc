@@ -129,9 +129,7 @@ void sound_update()
 		q += 2;
 	}
 	
-	p = buffer.samples;
-	
-	if ( ! is_silence_and_zeros( p, 370 ) )
+	if ( ! is_silence_and_zeros( buffer.samples, 370 ) )
 	{
 		/*
 			Lemmings begins sound generation by filling the sound
