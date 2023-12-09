@@ -619,6 +619,8 @@ unsigned parse_instruction_limit( const char* var )
 static
 void emulation_loop( v68k::emulator& emu )
 {
+	emu.reset();
+	
 	emu.regs[ 8 + 6 ] = 0;
 	
 	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
@@ -850,8 +852,6 @@ int execute_68k( int argc, char* const* argv )
 		
 		load_file( mem, m->name );
 		
-		emu.reset();
-		
 		emulation_loop( emu );
 		
 		if ( emu.condition != v68k::startup )
@@ -877,8 +877,6 @@ int execute_68k( int argc, char* const* argv )
 	}
 	
 	load_code( mem, path );
-	
-	emu.reset();
 	
 	emulation_loop( emu );
 	
