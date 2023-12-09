@@ -1,0 +1,79 @@
+#!/usr/bin/env minivx
+
+# Counts the Significant Lines Of Code in a file or tree of files.
+
+let blacklist (str[]) =
+[
+	".git",
+	"var",
+]
+
+let trivial (str[]) =
+[
+	"{",
+	"}",
+	"[",
+	"]",
+	"];",
+	"/*",
+	"*/",
+]
+
+def is_significant_line (line)
+{
+	let n = line.length
+	
+	var i = 0
+	
+	while i < n and u8 line[ i ] <= u8 ' ' do
+	{
+		++i
+	}
+	
+	return i != n and line[ i ] != '#' and not substr( line, i ) in trivial
+}
+
+def count_sloc (code)
+{
+	return code.lines() map int * is_significant_line per Math.sum
+}
+
+def dispatch (path)
+{
+	const list (str[])
+	
+	let st = try {lstat path} catch {}
+	
+	let mode = str( [st] map {v["type"]} )
+	
+	if mode == "DIR" and (list = try {listdir path} catch {[]}) then
+	{
+		var total = 0
+		
+		for d in (list ver {not v in blacklist}) do
+		{
+			total += dispatch path "/" d
+		}
+		
+		print path ": " total
+		
+		return total
+	}
+	
+	if mode == "REG" then
+	{
+		try
+		{
+			let sloc = count_sloc load path
+			
+			print path ": " sloc
+			
+			return sloc
+		}
+		catch {}
+	}
+	
+	return 0
+}
+
+dispatch argv[ 1 ]
