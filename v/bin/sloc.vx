@@ -76,4 +76,7 @@ def dispatch (path)
 	return 0
 }
 
-dispatch argv[ 1 ]
+for i in 1 -> argc do
+{
+	dispatch argv[ i ]
+}
