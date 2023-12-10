@@ -474,6 +474,11 @@ int32_t blit_bytes_callout( v68k::processor_state& s )
 	
 	const uint32_t len = s.d(2) >> 16;
 	
+	if ( n == 0  ||  len == 0 )
+	{
+		return rts;
+	}
+	
 	const uint16_t src_stride = s.d(0);
 	const uint16_t dst_stride = s.d(1);
 	
