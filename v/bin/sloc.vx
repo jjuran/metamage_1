@@ -19,18 +19,13 @@ let trivial (str[]) =
 	"*/",
 ]
 
+let significant_char = ~('\0' .. ' ')
+
 def is_significant_line (line)
 {
-	let n = line.length
+	var p = (begin line).find significant_char
 	
-	var i = 0
-	
-	while i < n and u8 line[ i ] <= u8 ' ' do
-	{
-		++i
-	}
-	
-	return i != n and line[ i ] != '#' and not substr( line, i ) in trivial
+	return p and *p != '#' and not p.rest in trivial
 }
 
 def count_sloc (code)
