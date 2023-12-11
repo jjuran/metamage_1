@@ -265,15 +265,17 @@ void show_cursor()
 		return;
 	}
 	
-	CrsrVis = true;
-	
 	if ( hardware_cursor )
 	{
+		CrsrVis = true;
+		
 		notify_cursor_vis( true );
 		return;
 	}
 	
 	--CrsrBusy;
+	
+	CrsrVis = true;
 	
 	paint_cursor( Mouse.h, Mouse.v );
 	
