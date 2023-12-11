@@ -309,7 +309,7 @@ pascal void shield_cursor( const Rect* r, Point pt )
 static
 void update_cursor()
 {
-	if ( CrsrVis  &&  ! hardware_cursor  &&  lock_cursor() )
+	if ( lock_cursor() )
 	{
 		screen_lock lock;
 		
@@ -326,7 +326,7 @@ void update_cursor_location()
 	
 	if ( CrsrVis )
 	{
-		if ( CrsrState == 0 )
+		if ( ! hardware_cursor  &&  CrsrState == 0 )
 		{
 			/*
 				Normal cursor operation.
@@ -394,9 +394,13 @@ pascal void set_cursor( const Cursor* crsr )
 	if ( hardware_cursor )
 	{
 		notify_cursor_set( crsr );
+		return;
 	}
 	
-	update_cursor();
+	if ( CrsrVis )
+	{
+		update_cursor();
+	}
 }
 
 void obscure_cursor()
