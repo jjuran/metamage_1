@@ -12,7 +12,6 @@ namespace backend
 	
 	bool start();
 	bool wait();
-	bool stop();
 	
 	void finished();
 	void interrupted();

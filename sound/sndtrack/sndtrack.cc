@@ -299,7 +299,7 @@ bool start()
 static
 bool stop()
 {
-	backend::stop();
+	backend::wait();
 	
 	return portaudio::stop();
 }

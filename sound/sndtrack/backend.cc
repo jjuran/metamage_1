@@ -25,14 +25,6 @@ bool wait()
 	return read( pipe_fds[ 0 ], &dummy, 1 ) > 0;
 }
 
-bool stop()
-{
-	char dummy;
-	read( pipe_fds[ 0 ], &dummy, 1 );
-	
-	return 0;
-}
-
 void finished()
 {
 	close( pipe_fds[ 1 ] );
