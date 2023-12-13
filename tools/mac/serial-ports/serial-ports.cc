@@ -10,6 +10,7 @@
 #include "mac_sys/gestalt.hh"
 
 // serial-ports
+#include "classic.hh"
 #include "CTB.hh"
 #include "IOKit.hh"
 
@@ -96,6 +97,10 @@ int main( int argc, char** argv )
 	else if ( mac::sys::gestalt( gestaltCTBVersion ) )
 	{
 		list_CTB_serial_ports( verbosity );
+	}
+	else
+	{
+		list_classic_serial_ports( verbosity );
 	}
 	
 	return 0;
