@@ -8,7 +8,7 @@
 // Standard C
 #include <stdlib.h>
 
-// sndtrack
+// libsndtrack
 #include "exceptions.hh"
 
 

@@ -12,10 +12,12 @@
 // command
 #include "command/get_option.hh"
 
-// sndtrack
+// libsndtrack
 #include "event_loop.hh"
-#include "portaudio.hh"
 #include "recording.hh"
+
+// sndtrack
+#include "portaudio.hh"
 
 
 enum

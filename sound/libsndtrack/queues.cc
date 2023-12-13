@@ -10,7 +10,7 @@
 #include <boost/atomic.hpp>
 #endif
 
-// sndtrack
+// libsndtrack
 #include "buffers.hh"
 
 

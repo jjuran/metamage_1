@@ -7,9 +7,10 @@
 
 // Standard C
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 
-// sndtrack
+// libsndtrack
 #include "admin.hh"
 #include "exceptions.hh"
 #include "output.hh"

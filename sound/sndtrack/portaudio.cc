@@ -29,7 +29,7 @@
 // PortAudio
 #include "portaudio.h"
 
-// sndtrack
+// libsndtrack
 #include "exceptions.hh"
 #include "output.hh"
 #include "recording.hh"

@@ -11,7 +11,7 @@
 // SoundDriver
 #include "SoundDriver/SoundDriver.h"
 
-// sndtrack
+// libsndtrack
 #include "output.hh"
 
 

@@ -12,7 +12,7 @@
 // sndpipe-api
 #include "sndpipe/sndpipe.hh"
 
-// sndtrack
+// libsndtrack
 #include "output.hh"
 
 
