@@ -23,6 +23,7 @@
 #include "backend.hh"
 #include "exceptions.hh"
 #include "input.hh"
+#include "portaudio.hh"
 #include "recording.hh"
 #include "sound_node.hh"
 
@@ -289,6 +290,20 @@ void do_shutdown()
 	}
 }
 
+static
+bool start()
+{
+	return backend::start()  &&  portaudio::start();
+}
+
+static
+bool stop()
+{
+	backend::stop();
+	
+	return portaudio::stop();
+}
+
 static sig_atomic_t interrupted;
 
 static
@@ -312,7 +327,7 @@ void event_loop( int fd )
 				switch ( header.opcode )
 				{
 					case switch_on:
-						static bool init = audio_started = backend::start();
+						static bool init = audio_started = start();
 						break;
 					
 					case allow_eof:
@@ -371,7 +386,7 @@ void event_loop( int fd )
 			do_shutdown();
 		}
 		
-		backend::stop();
+		stop();
 	}
 }
 

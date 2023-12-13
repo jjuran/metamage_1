@@ -8,9 +8,6 @@
 // POSIX
 #include <unistd.h>
 
-// sndtrack
-#include "portaudio.hh"
-
 
 namespace backend
 {
@@ -19,7 +16,7 @@ static int pipe_fds[ 2 ];
 
 bool start()
 {
-	return pipe( pipe_fds ) == 0  &&  portaudio::start();
+	return pipe( pipe_fds ) == 0;
 }
 
 bool wait()
@@ -33,7 +30,7 @@ bool stop()
 	char dummy;
 	read( pipe_fds[ 0 ], &dummy, 1 );
 	
-	return portaudio::stop();
+	return 0;
 }
 
 void finished()
