@@ -654,7 +654,9 @@ namespace MacBinary
 		
 		for ( unsigned i = 0;  i < n;  ++i )
 		{
-			const list_entry& entry = listing.get_nth( i );
+			list_entry entry = listing.get_nth( i );
+			
+			entry.cInfo.hFileInfo.ioNamePtr = entry.name;
 			
 			Encode( entry.cInfo, blockWrite, output );
 		}
