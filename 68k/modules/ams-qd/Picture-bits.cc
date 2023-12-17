@@ -25,6 +25,7 @@
 // ams-common
 #include "callouts.hh"
 #include "math.hh"
+#include "redraw_lock.hh"
 
 // ams-qd
 #include "palette.hh"
@@ -175,6 +176,12 @@ struct PICT_bitmap_header
 		for each of $height rows:
 			if rowBytes < 8:
 				$rowBytes literal data bytes
+			else if rowBytes <= 250:
+				u8 count
+				$count bytes of PackBits output
+			else:
+				u16 count
+				$count bytes of PackBits output
 	*/
 };
 
@@ -182,6 +189,20 @@ enum
 {
 	true_header_size = sizeof (PICT_bitmap_header) - 1,
 };
+
+static inline
+size_t adequate_pack_buffer_size( size_t size )
+{
+	/*
+		  1 -  63: n + 1
+		 64 - 127: n + 2
+		128 - 191: n + 3
+		192 - 255: n + 4
+		...
+	*/
+	
+	return 1 + size + size / 64u;
+}
 
 void save_bits_to_picture( Handle         picSave,
                            const BitMap*  srcBits,
@@ -216,12 +237,6 @@ void save_bits_to_picture( Handle         picSave,
 		return;
 	}
 	
-	if ( rowBytes >= 8 )
-	{
-		ERROR = "Ignoring wide blit during Picture recording";
-		return;
-	}
-	
 	PICT_bitmap_header header;
 	
 	header.opcode   = 0x90;
@@ -232,6 +247,13 @@ void save_bits_to_picture( Handle         picSave,
 	header.mode     = mode;
 	
 	Size data_size = mulu_w( height, rowBytes );
+	
+	const bool loose = rowBytes < 8;
+	
+	if ( ! loose )
+	{
+		data_size = adequate_pack_buffer_size( data_size );
+	}
 	
 	Size size = mac::glue::GetHandleSize_raw( picSave );
 	
@@ -248,6 +270,7 @@ void save_bits_to_picture( Handle         picSave,
 	
 	Ptr src = srcBits->baseAddr - srcBits->rowBytes * srcBits->bounds.top;
 	
+	if ( loose )
 	{
 		/*
 			This can't possibly be the screen (since rowBytes < 8),
@@ -257,5 +280,26 @@ void save_bits_to_picture( Handle         picSave,
 		PtrAndHand( src, picSave, data_size );
 		
 		return;
+	}
+	
+	picSave[0][ size ] = 0x98;
+	
+	redraw_lock lock( *srcBits, *srcRect );
+	
+	Str255 buffer;
+	
+	Ptr start = (Ptr) buffer + 1;
+	
+	for ( int i = 0;  i < height;  ++i )
+	{
+		Ptr dst = start;
+		
+		PackBits( &src, &dst, rowBytes );
+		
+		short count = dst - start;
+		
+		buffer[ 0 ] = count++;
+		
+		PtrAndHand( buffer, picSave, count );
 	}
 }
