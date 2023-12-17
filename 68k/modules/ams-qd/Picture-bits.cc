@@ -13,6 +13,9 @@
 // Standard C
 #include <stdlib.h>  // for alloca()
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -30,6 +33,14 @@
 
 #pragma exceptions off
 
+
+short MemErr : 0x0220;
+
+static inline
+int rowBytes_from_bitwidth( int bits )
+{
+	return (bits + 15) / 16u * 2;
+}
 
 struct Picture_PixMap
 {
@@ -144,4 +155,100 @@ const Byte* draw_bits( const Byte* p, bool has_region )
 	while ( --n_rows > 0 );
 	
 	return p;
+}
+
+struct PICT_bitmap_header
+{
+	uint8_t skip;
+	// actual header starts here
+	uint8_t opcode;
+	short rowBytes;
+	Rect bounds;
+	Rect srcRect;
+	Rect dstRect;
+	short mode;
+	
+	/*
+		Following the header:
+		
+		for each of $height rows:
+			if rowBytes < 8:
+				$rowBytes literal data bytes
+	*/
+};
+
+void save_bits_to_picture( Handle         picSave,
+                           const BitMap*  srcBits,
+                           const Rect*    srcRect,
+                           const Rect*    dstRect,
+                           short          mode,
+                           MacRegion**    maskRgn )
+{
+	const UInt16 height = srcRect->bottom - srcRect->top;
+	const UInt16 width  = srcRect->right - srcRect->left;
+	
+	const UInt16 dst_height = dstRect->bottom - dstRect->top;
+	const UInt16 dst_width  = dstRect->right - dstRect->left;
+	
+	if ( dst_height != height  ||  dst_width != width )
+	{
+		ERROR = "Ignoring blit with incongruent rects during Picture recording";
+		return;
+	}
+	
+	const short rowBytes = rowBytes_from_bitwidth( width );
+	
+	if ( rowBytes != srcBits->rowBytes )
+	{
+		ERROR = "Ignoring partial-row blit during Picture recording";
+		return;
+	}
+	
+	if ( rowBytes > 250 )
+	{
+		ERROR = "Ignoring extra-wide blit during Picture recording";
+		return;
+	}
+	
+	if ( rowBytes >= 8 )
+	{
+		ERROR = "Ignoring wide blit during Picture recording";
+		return;
+	}
+	
+	Size size = mac::glue::GetHandleSize_raw( picSave );
+	
+	Size data_size = height * rowBytes;
+	Size pack_size = data_size;
+	
+	PICT_bitmap_header header;
+	
+	Size extra_size = sizeof header + pack_size;
+	
+	SetHandleSize( picSave, size + sizeof header + pack_size );
+	
+	if ( MemErr )
+	{
+		return;
+	}
+	
+	SetHandleSize( picSave, size );
+	
+	header.opcode   = 0x90;
+	header.rowBytes = rowBytes;
+	header.bounds   = srcBits->bounds;
+	header.srcRect  = *srcRect;
+	header.dstRect  = *dstRect;
+	header.mode     = mode;
+	
+	OSErr err = PtrAndHand( &header.opcode, picSave, sizeof header - 1 );
+	
+	Ptr src = srcBits->baseAddr - srcBits->rowBytes * srcBits->bounds.top;
+	
+	/*
+		This can't possibly be the screen (since rowBytes < 8),
+		so we don't need a cursor-hiding raster lock.
+	*/
+	
+	PtrAndHand( src, picSave, rowBytes * height );
 }

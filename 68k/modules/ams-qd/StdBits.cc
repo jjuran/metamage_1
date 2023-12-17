@@ -25,6 +25,7 @@
 
 // ams-qd
 #include "draw.hh"
+#include "Picture-bits.hh"
 #include "segments_box.hh"
 #include "stretch.hh"
 
@@ -256,12 +257,22 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		return;
 	}
 	
+	GrafPort& port = **get_addrof_thePort();
+	
+	if ( Handle h = port.picSave )
+	{
+		save_bits_to_picture( h, srcBits, srcRect, dstRect, mode, maskRgn );
+	}
+	
+	if ( port.pnVis < 0 )
+	{
+		return;
+	}
+	
 	const bool congruent  = dstWidth == srcWidth  &&  dstHeight == srcHeight;
 	const bool stretching = ! congruent;
 	
 	static RgnHandle clipRgn = (scoped_zone(), NewRgn());
-	
-	GrafPort& port = **get_addrof_thePort();
 	
 	BitMap stretched_bits;
 	
