@@ -128,7 +128,7 @@ const Byte* draw_bits( const Byte* p, bool has_region )
 		
 		quickdraw::unpack_bits( p, dst, rowBytes );
 		
-		if ( color )
+		if ( color  &&  pixmap.pixelSize == 8 )
 		{
 			apply_palette( bitmap, polarized_palette );
 			
