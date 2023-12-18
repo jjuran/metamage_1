@@ -14,6 +14,12 @@
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
+
+// mac-rsrc-utils
+#include "mac_rsrc/get_string_from_resource.hh"
 
 // mac-app-utils
 #include "mac_app/CGAboutBox.hh"
@@ -21,6 +27,11 @@
 
 
 #pragma exceptions off
+
+
+#define STRLEN( s )  (sizeof "" s - 1)
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 namespace mac {
@@ -58,8 +69,54 @@ WindowRef find_About_box()
 	return window;  // NULL
 }
 
-void show_About_box()
+/*
+	Avoid the need to link with libc for memmove()
+	by defining our own version.
+*/
+
+static inline
+void MemMove( void* dst, const void* src, size_t n )
 {
+	return BlockMoveData( src, dst, n );
+}
+
+#define MemCopy MemMove
+
+static
+bool get_About_box_data( OSType creator )
+{
+	static Str255 name;
+	static Str255 vers;
+	static Str255 copy;
+	
+	if ( Handle h = GetResource( creator, 0 ) )
+	{
+		GetResInfo( h, NULL, NULL, name );
+		
+		mac::rsrc::get_string_from_handle( copy, h );
+	}
+	
+	mac::rsrc::get_vers_ShortVersionString( vers, 1 );
+	
+	if ( vers[ 0 ] <= 255 - STRLEN( "Version " ) )
+	{
+		MemMove( vers + 1 + STRLEN( "Version " ), vers + 1, vers[ 0 ] );
+		MemCopy( vers + 1, STR_LEN( "Version " ) );
+		
+		vers[ 0 ] += STRLEN( "Version " );
+	}
+	
+	gAboutBoxAppName = name;
+	gAboutBoxAppVers = vers;
+	gAboutBoxAppCopy = copy;
+	
+	return true;
+}
+
+void show_About_box( OSType creator )
+{
+	static bool init = ! TARGET_RT_MAC_MACHO  &&  get_About_box_data( creator );
+	
 	WindowRef gAboutBox = find_About_box();
 	
 	if ( gAboutBox )

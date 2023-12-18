@@ -28,7 +28,7 @@ namespace app {
 		kAboutWindowKind = 256,
 	};
 	
-	void show_About_box();
+	void show_About_box( OSType creator );
 	
 	bool close_About_box( WindowRef window );
 	

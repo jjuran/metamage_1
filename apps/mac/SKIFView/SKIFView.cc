@@ -12,12 +12,6 @@
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
-#ifndef __RESOURCES__
-#include <Resources.h>
-#endif
-
-// more-libc
-#include "more/string.h"
 
 // mac-config
 #include "mac_config/apple-events.hh"
@@ -29,9 +23,6 @@
 
 // mac-qd-utils
 #include "mac_qd/wide_drag_area.hh"
-
-// mac-rsrc-utils
-#include "mac_rsrc/get_string_from_resource.hh"
 
 // mac-app-utils
 #include "mac_app/about_box.hh"
@@ -49,10 +40,6 @@
 #pragma exceptions off
 
 
-#define STRLEN( s )  (sizeof "" s - 1)
-
-#define STR_LEN( s )  "" s, (sizeof s - 1)
-
 #define CONFIG_DAs CONFIG_DESK_ACCESSORIES
 
 #if TARGET_API_MAC_CARBON
@@ -63,50 +50,6 @@ using mac::qd::wide_drag_area;
 
 
 extern "C" { int errno; }
-
-static Str255 name;
-static Str255 vers;
-static Str255 copy;
-
-/*
-	Avoid the need to link with libc for memmove()
-	by defining our own version.
-*/
-
-static inline
-void MemMove( void* dst, const void* src, size_t n )
-{
-	return BlockMoveData( src, dst, n );
-}
-
-static
-bool get_data()
-{
-	const OSType creator = 'SKIF';
-	
-	if ( Handle h = GetResource( creator, 0 ) )
-	{
-		GetResInfo( h, NULL, NULL, name );
-		
-		mac::rsrc::get_string_from_handle( copy, h );
-	}
-	
-	mac::rsrc::get_vers_ShortVersionString( vers, 1 );
-	
-	if ( vers[ 0 ] <= 255 - STRLEN( "Version " ) )
-	{
-		MemMove( vers + 1 + STRLEN( "Version " ), vers + 1, vers[ 0 ] );
-		mempcpy( vers + 1, STR_LEN( "Version " ) );
-		
-		vers[ 0 ] += STRLEN( "Version " );
-	}
-	
-	mac::app::gAboutBoxAppName = name;
-	mac::app::gAboutBoxAppVers = vers;
-	mac::app::gAboutBoxAppCopy = copy;
-	
-	return true;
-}
 
 static
 void close_window( WindowRef window )
@@ -129,9 +72,9 @@ void menu_item_chosen( long choice )
 			if ( item == 1 )
 			{
 				// About...
-				static bool got_data = get_data();
+				const OSType creator = 'SKIF';
 				
-				mac::app::show_About_box();
+				mac::app::show_About_box( creator );
 			}
 			else if ( ! TARGET_API_MAC_CARBON )
 			{
