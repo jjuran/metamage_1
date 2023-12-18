@@ -29,6 +29,7 @@
 
 // ams-qd
 #include "palette.hh"
+#include "Pictures-common.hh"
 #include "transcode.hh"
 
 
@@ -84,33 +85,11 @@ pascal void ClosePicture_patch()
 	}
 }
 
-static
-short read_word( const UInt8*& p )
-{
-	short result;
-	fast_memcpy( &result, p, sizeof result );
-	
-	p += sizeof result;
-	
-	return result;
-}
-
-static
+static inline
 long read_long( const UInt8*& p )
 {
 	long result;
 	
-	fast_memcpy( &result, p, sizeof result );
-	
-	p += sizeof result;
-	
-	return result;
-}
-
-static
-Rect read_Rect( const UInt8*& p )
-{
-	Rect result;
 	fast_memcpy( &result, p, sizeof result );
 	
 	p += sizeof result;
