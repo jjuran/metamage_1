@@ -26,6 +26,9 @@
 // mac-ui-utils
 #include "mac_ui/windows.hh"
 
+// mac-app-utils
+#include "mac_app/scoped_EventMask.hh"
+
 // Nostalgia
 #include "Nostalgia/MacWindows.hh"
 
@@ -40,6 +43,8 @@
 
 using mac::qd::get_portRect;
 using mac::qd::wide_drag_area;
+
+using mac::app::scoped_EventMask;
 
 
 static const Rect grow_size =
@@ -122,7 +127,7 @@ int main()
 	
 #endif
 	
-	SetEventMask( everyEvent );
+	scoped_EventMask eventMask( everyEvent );
 	
 	WindowRef main_window = NULL;
 	
