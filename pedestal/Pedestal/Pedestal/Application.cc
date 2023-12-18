@@ -58,6 +58,7 @@
 #include "mac_app/hooks.hh"
 #include "mac_app/init.hh"
 #include "mac_app/menus.hh"
+#include "mac_app/scoped_EventMask.hh"
 #include "mac_app/state.hh"
 #include "mac_app/Window_menu.hh"
 
@@ -939,6 +940,7 @@ namespace Pedestal
 	{
 		using mac::sys::current_process;
 		using mac::sys::is_front_process;
+		using mac::app::scoped_EventMask;
 		
 		gInForeground = is_front_process( current_process() );
 		
@@ -947,7 +949,7 @@ namespace Pedestal
 			gNeedToConfigureKeyboard = gInForeground;
 		}
 		
-		SetEventMask( everyEvent );
+		scoped_EventMask eventMask( everyEvent );
 		
 		EventLoop();
 		
