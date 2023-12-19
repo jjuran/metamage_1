@@ -27,7 +27,7 @@ void queue_append( rt_queue& queue, queue_node* node );
 
 queue_node* find( rt_queue& queue, node_predicate test, const void* data );
 
-bool void_until( rt_queue& queue, node_predicate test, const void* data );
+bool void_through( rt_queue& queue, node_predicate test, const void* data );
 
 queue_node* queue_get_next( rt_queue& queue );
 

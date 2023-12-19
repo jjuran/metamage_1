@@ -83,7 +83,7 @@ queue_node* find( rt_queue& queue, node_predicate test, const void* data )
 	return node;
 }
 
-bool void_until( rt_queue& queue, node_predicate test, const void* data )
+bool void_through( rt_queue& queue, node_predicate test, const void* data )
 {
 	queue_node* node = queue.next;
 	queue_node* tail = queue.tail;
@@ -100,7 +100,21 @@ bool void_until( rt_queue& queue, node_predicate test, const void* data )
 		node = node->next;
 	}
 	
-	return true;  // This is the sentinel terminating the full stop
+	/*
+		This is the sentinel terminating the full stop.
+		
+		Now that it's passed the test, invalidate it
+		so it will fail for any subsequent full stop.
+		
+		(If we don't do this, the first sentinel will limit
+		the range of every queued full stop, making the later ones
+		no-ops and leaving the next sound playing without end
+		(as well as leaving subsequent sound requests pending).)
+	*/
+	
+	node->invalidate();
+	
+	return true;
 }
 
 queue_node* queue_get_next( rt_queue& queue )

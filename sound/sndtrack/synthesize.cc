@@ -180,7 +180,7 @@ short synthesize( sample_buffer& output )
 		switch ( admin->size )
 		{
 			case full_stop_size:
-				if ( ! void_until( sound_queue, &is_sentinel, NULL ) )
+				if ( ! void_through( sound_queue, &is_sentinel, NULL ) )
 				{
 					/*
 						We got to the command node in the admin queue before
