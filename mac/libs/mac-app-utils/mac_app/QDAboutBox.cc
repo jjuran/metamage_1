@@ -61,6 +61,7 @@ ConstStr255Param gAboutBoxAppCopy;
 
 #if ! __LP64__
 
+static const RGBColor kRGBWhite                = { 0xFFFF, 0xFFFF, 0xFFFF };
 static const RGBColor kAboutBoxBackgroundColor = { 0xEEEE, 0xEEEE, 0xEEEE };
 
 static inline
@@ -89,22 +90,6 @@ void draw_About_box()
 		v + kAboutBoxIconHeight,
 		h + kAboutBoxIconWidth,
 	};
-	
-	if ( TARGET_RT_MAC_MACHO )
-	{
-		if ( IconRef icon = copy_bundle_icon() )
-		{
-			mac::icon::plot_IconRef( icon_bounds, icon );
-			
-			ReleaseIconRef( icon );
-			
-			goto icon_drawn;
-		}
-	}
-	
-	mac::qd::plot_icon_id( icon_bounds, 128 );
-	
-icon_drawn:
 	
 	v += kAboutBoxIconEdgeLength + kAboutBoxIconToTextGap;
 	h  = kAboutBoxTextHorizontalMargin;
@@ -149,6 +134,25 @@ icon_drawn:
 	text_bounds.bottom += dv;
 	
 	centered_text_box( gAboutBoxAppCopy, text_bounds );
+	
+	if ( TARGET_RT_MAC_MACHO )
+	{
+		if ( IconRef icon = copy_bundle_icon() )
+		{
+			mac::icon::plot_IconRef( icon_bounds, icon );
+			
+			ReleaseIconRef( icon );
+			
+			return;
+		}
+	}
+	
+	if ( CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw() )
+	{
+		RGBBackColor( &kRGBWhite );
+	}
+	
+	mac::qd::plot_icon_id( icon_bounds, 128 );
 }
 
 WindowRef QDAboutBox_make()
