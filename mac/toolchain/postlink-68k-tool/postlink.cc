@@ -182,7 +182,7 @@ int main( int argc, char** argv )
 	
 	Handle code = Patch68KStartup();
 	
-	OSErr err;
+	OSErr err = noErr;
 	
 	if ( in_data )
 	{
