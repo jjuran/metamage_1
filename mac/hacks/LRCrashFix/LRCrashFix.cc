@@ -2,21 +2,24 @@
 	LRCrashFix.cc
 	-------------
 	
-	Lode Runner Crash Fix INIT for Advanced Mac Substitute
+	Lode Runner Crash Fix INIT for Mac OS
 	
-	Copyright 2022, Joshua Juran.  All rights reserved.
+	Copyright 2022-2023, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
 	This is an application hot patch to prevent a crash in Lode Runner
-	due to an unmapped memory access when run in Advanced Mac Substitute.
+	due to an unmapped memory access.  The crash won't occur on 68000-based
+	Macs (on which there are no invalid memory addresses), but it has been
+	observed in both Advanced Mac Substitute and Basilisk II.  Presumably
+	it would also occur on at least some MMU-equipped physical machines.
 	
 	The problem is that Lode Runner's call to FindControl() is followed by
 	an instruction that mishandles the result:  Instead of storing it in a
 	dummy variable (which is presumably what was intended), it writes the
 	word into unmapped memory.
 	
-	On actual Macintosh hardware, this causes no problem because (a) the
+	On period Macintosh hardware, this causes no problem because (a) the
 	result is never looked at (in either location) so its absence isn't
 	missed, and (b) memory accesses never fail on 68000-based Macs.  Since
 	$ffae28 is in unmapped I/O space, writes to it are simply ignored.
@@ -50,10 +53,6 @@
 	for memory access, so clicking Lode Runner's game window writes to
 	unmapped memory and halts the emulator.  To avoid that, we'll hot-patch
 	the broken instruction.
-	
-	This code is designed to run only as an 'INIT' resource in the System
-	file (or equivalent, viz. AMS Resources).  It's not needed in Mac OS,
-	and will definitely crash Mac OS if installed there as an 'INIT' file.
 */
 
 // Mac OS
@@ -82,13 +81,13 @@ static UniversalProcPtr old_TEInit;
 static
 void TEInit_handler()
 {
-	if ( Handle h = Get1Resource( 'GLEN', 0 ) )
+	if ( Handle h = GetResource( 'GLEN', 0 ) )
 	{
 		ReleaseResource( h );
 		
 		const int query_offset = 0x003afe;
 		
-		h = Get1Resource( 'CODE', 1 );
+		h = GetResource( 'CODE', 1 );
 		
 		const Size size = GetHandleSize( h );
 		
@@ -119,6 +118,10 @@ pascal asm void TEInit_patch()
 
 int main()
 {
+	Handle self = GetResource( 'INIT', 0 );
+	
+	DetachResource( self );
+	
 	old_TEInit = mac::sys::get_trap_address( _TEInit );
 	
 	mac::sys::set_trap_address( (ProcPtr) TEInit_patch, _TEInit );
