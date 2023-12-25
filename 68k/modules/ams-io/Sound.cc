@@ -380,6 +380,11 @@ OSErr Sound_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 	
 	int64_t duration = mac::snd::duration( pb->ioBuffer, pb->ioReqCount );
 	
+	if ( duration == 0 )
+	{
+		goto done;
+	}
+	
 	if ( duration < 0 )
 	{
 		err = paramErr;
