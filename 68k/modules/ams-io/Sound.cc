@@ -36,6 +36,8 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
+DCtlEntry* SoundDCE : 0x027A;
+
 const short noQueueMask   = 1 << noQueueBit;
 const short asyncTrapMask = 1 << asyncTrpBit;
 
@@ -216,8 +218,6 @@ void FTSoundRec_cpy( FTSoundRec& dst, const FTSoundRec& src )
 static FTSoundRec* current_FTSound;
 static FTSoundRec  copy_of_FTSoundRec;
 
-static bool FTSound_was_modified;
-
 static VBLTask SoundVBL;
 
 static
@@ -257,8 +257,6 @@ pascal void SoundVBL_Proc()
 		
 		FTSoundRec_cpy( copy_of_FTSoundRec, *current_FTSound );
 		
-		FTSound_was_modified = true;
-		
 		FTSynthRec_flat_update flat;
 		
 		flat.mode = ftMode_flat_update;
@@ -275,6 +273,20 @@ pascal void SoundVBL_Proc()
 	--copy_of_FTSoundRec.duration;
 	
 	SoundVBL.vblCount = 1;
+	
+	if ( copy_of_FTSoundRec.duration == 0 )
+	{
+		current_FTSound = NULL;
+		
+		if ( IOParam* pb = (IOParam*) SoundDCE->dCtlQHdr.qHead )
+		{
+			pb->ioActCount = pb->ioReqCount;
+		}
+		
+		IODone( SoundDCE, noErr );
+		
+		SoundVBL.vblCount = 0;
+	}
 }
 
 static inline
@@ -305,13 +317,6 @@ void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 	timer_scheduled = true;
 	
 	reactor_core()->schedule( &Sound_timer_node );
-	
-	if ( *(short*) pb->ioBuffer == ftMode )
-	{
-		const FTSynthRec& synth = *(const FTSynthRec*) pb->ioBuffer;
-		
-		monitor_FTSoundRec( synth );
-	}
 }
 
 static
@@ -321,11 +326,15 @@ void cancel_timer()
 	
 	if ( timer_scheduled )
 	{
-		OSErr err = VRemove( (QElem*) &SoundVBL );
-		
 		reactor_core()->cancel( &Sound_timer_node );
 		
 		timer_scheduled = false;
+	}
+	else if ( SoundVBL.vblCount )
+	{
+		OSErr err = VRemove( (QElem*) &SoundVBL );
+		
+		SoundVBL.vblCount = 0;
 		
 		current_FTSound = NULL;
 	}
@@ -336,28 +345,11 @@ void cancel_timer()
 static
 void Sound_ready( timer_node* node )
 {
-	OSErr err = VRemove( (QElem*) &SoundVBL );
-	
 	timer_scheduled = false;
 	
 	DCtlEntry* dce = *GetDCtlEntry( kSoundDriverRefNum );
 	
 	IOParam* pb = (IOParam*) dce->dCtlQHdr.qHead;
-	
-	if ( const FTSoundRec* sndRec = current_FTSound )
-	{
-		if ( FTSound_was_modified  &&  sndRec->duration != 0 )
-		{
-			const int ns_per_sec = 1000 * 1000 * 1000;
-			
-			int64_t duration = sndRec->duration * (ns_per_sec * 100ull) / 6015;
-			
-			schedule_timer( pb, duration );
-			return;
-		}
-	}
-	
-	current_FTSound = NULL;
 	
 	if ( pb )
 	{
@@ -383,6 +375,8 @@ OSErr Sound_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 {
 	OSErr err = noErr;
 	
+	const short mode = *(short*) pb->ioBuffer;
+	
 	int64_t duration = mac::snd::duration( pb->ioBuffer, pb->ioReqCount );
 	
 	if ( duration <= 0 )
@@ -399,11 +393,18 @@ OSErr Sound_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 	
 	Sound_timer_node.ready = &Sound_ready;
 	
-	if ( ! timer_scheduled )
+	if ( ! timer_scheduled  &&  SoundVBL.vblCount == 0 )
 	{
 		start_sound( pb->ioBuffer, pb->ioReqCount );
 		
-		schedule_timer( pb, duration );
+		if ( mode == ftMode )
+		{
+			monitor_FTSoundRec( *(const FTSynthRec*) pb->ioBuffer );
+		}
+		else
+		{
+			schedule_timer( pb, duration );
+		}
 	}
 	
 	reenable_interrupts( saved_SR );
