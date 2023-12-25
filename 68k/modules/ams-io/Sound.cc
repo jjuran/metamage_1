@@ -277,6 +277,19 @@ pascal void SoundVBL_Proc()
 	SoundVBL.vblCount = 1;
 }
 
+static inline
+void monitor_FTSoundRec( const FTSynthRec& synth )
+{
+	current_FTSound = synth.sndRec;
+	
+	fast_memcpy( &copy_of_FTSoundRec, synth.sndRec, sizeof (FTSoundRec) );
+	
+	SoundVBL.vblAddr  = &SoundVBL_Proc;
+	SoundVBL.vblCount = 1;
+	
+	OSErr err = VInstall( (QElem*) &SoundVBL );
+}
+
 static
 void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 {
@@ -296,16 +309,7 @@ void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 	{
 		const FTSynthRec& synth = *(const FTSynthRec*) pb->ioBuffer;
 		
-		current_FTSound = synth.sndRec;
-		
-		fast_memcpy( &copy_of_FTSoundRec, synth.sndRec, sizeof (FTSoundRec) );
-		
-		FTSound_was_modified = false;
-		
-		SoundVBL.vblAddr  = &SoundVBL_Proc;
-		SoundVBL.vblCount = 1;
-		
-		OSErr err = VInstall( (QElem*) &SoundVBL );
+		monitor_FTSoundRec( synth );
 	}
 }
 
