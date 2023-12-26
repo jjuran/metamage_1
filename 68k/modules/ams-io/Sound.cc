@@ -347,16 +347,12 @@ void Sound_ready( timer_node* node )
 {
 	timer_scheduled = false;
 	
-	DCtlEntry* dce = *GetDCtlEntry( kSoundDriverRefNum );
-	
-	IOParam* pb = (IOParam*) dce->dCtlQHdr.qHead;
-	
-	if ( pb )
+	if ( IOParam* pb = (IOParam*) SoundDCE->dCtlQHdr.qHead )
 	{
 		pb->ioActCount = pb->ioReqCount;
 	}
 	
-	IODone( dce, noErr );
+	IODone( SoundDCE, noErr );
 }
 
 OSErr Sound_open( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
