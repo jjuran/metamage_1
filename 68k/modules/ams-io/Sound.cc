@@ -329,6 +329,8 @@ void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 	
 	timer_scheduled = true;
 	
+	Sound_timer_node.ready = &Sound_ready;
+	
 	reactor_core()->schedule( &Sound_timer_node );
 }
 
@@ -386,8 +388,6 @@ OSErr Sound_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 	}
 	
 	short saved_SR = disable_interrupts();
-	
-	Sound_timer_node.ready = &Sound_ready;
 	
 	if ( ! timer_scheduled  &&  SoundVBL.vblCount == 0 )
 	{
