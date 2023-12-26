@@ -304,6 +304,19 @@ void monitor_FTSoundRec( const FTSynthRec& synth )
 }
 
 static
+void Sound_ready( timer_node* node )
+{
+	timer_scheduled = false;
+	
+	if ( IOParam* pb = (IOParam*) SoundDCE->dCtlQHdr.qHead )
+	{
+		pb->ioActCount = pb->ioReqCount;
+	}
+	
+	IODone( SoundDCE, noErr );
+}
+
+static
 void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 {
 	time( &Sound_timer_node.wakeup );
@@ -340,19 +353,6 @@ void cancel_timer()
 	}
 	
 	reenable_interrupts( saved_SR );
-}
-
-static
-void Sound_ready( timer_node* node )
-{
-	timer_scheduled = false;
-	
-	if ( IOParam* pb = (IOParam*) SoundDCE->dCtlQHdr.qHead )
-	{
-		pb->ioActCount = pb->ioReqCount;
-	}
-	
-	IODone( SoundDCE, noErr );
 }
 
 OSErr Sound_open( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
