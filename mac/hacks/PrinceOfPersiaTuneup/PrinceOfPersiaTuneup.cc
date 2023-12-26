@@ -4,7 +4,7 @@
 	
 	Prince of Persia Tune-up INIT for Mac OS
 	
-	Copyright 2022, Joshua Juran.  All rights reserved.
+	Copyright 2022-2023, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
@@ -14,11 +14,18 @@
 	
 	(See <https://forum.princed.org/viewtopic.php?f=63&t=3009&start=15>.)
 	
+	Additionally, the same timing loop does nothing but call TickCount()
+	until some number of ticks has elapsed, but it does it by constantly
+	executing instructions.  In a virtual environment where idling saves
+	power or frees up computing resources for other processes (or both),
+	it's advantageous to do so in preference to busy-looping.  Examples
+	of such environments known to benefit include Mac OS X's Classic
+	(i.e. the Blue Box) and the author's own Advanced Mac Substitute.
+	
 	This is a hot patch for Prince of Persia that fixes the off-by-one
 	error by replacing the faulty BLE instruction with a BLT instruction.
-	
-	Also, if we're running in v68k (and Advanced Mac Substitute), throttle
-	the busy loop with Delay(1) calls so we don't waste so much CPU.
+	It also modifies the timing loop to call Delay() each time through,
+	reducing CPU use (and consequently, power consumption) considerably.
 	
 */
 
@@ -31,7 +38,6 @@
 #endif
 
 // mac-sys-utils
-#include "mac_sys/has/virtualization.hh"
 #include "mac_sys/trap_address.hh"
 
 
@@ -97,18 +103,15 @@ void install_patch( Handle h )
 		
 		if ( equal_words( (UInt16*) p, VEC_LEN( PoP_wait_loop ) ) )
 		{
-			if ( mac::sys::has_v68k() )
-			{
-				/*
-					We're running in Advanced Mac Substitute.  Graft a call
-					to our idle routine into the busy loop to save CPU.
-				*/
-				
-				UInt32* q = (UInt32*) p;
-				
-				*q++ = 0x4E714EB9;  // NOP; JSR
-				*q++ = (UInt32) &idle;
-			}
+			/*
+				Graft a call to our idle routine into the busy loop to save
+				power and CPU in case we're running in a virtual environment.
+			*/
+			
+			UInt32* q = (UInt32*) p;
+			
+			*q++ = 0x4E714EB9;  // NOP; JSR
+			*q++ = (UInt32) &idle;
 			
 			p += sizeof PoP_wait_loop - 2;
 			
