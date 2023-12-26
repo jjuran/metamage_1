@@ -42,7 +42,7 @@ int32_t send_sound_command_callout( v68k::processor_state& s )
 	
 	if ( p == NULL )
 	{
-		s.d(0) = -1;
+		s.d(0) = (uint32_t) -1;
 		s.d(1) = EFAULT;
 		
 		return rts;
