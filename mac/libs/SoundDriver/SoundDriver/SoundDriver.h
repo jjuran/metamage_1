@@ -29,7 +29,7 @@
 extern "C" {
 #endif
 
-#ifdef __GNUC__
+#if __LP64__
 #pragma pack(push, 2)
 #else
 #pragma options align=packed
@@ -101,7 +101,7 @@ struct FFSynthRec
 	FreeWave  waveBytes;
 };
 
-#ifdef __GNUC__
+#if __LP64__
 #pragma pack(pop)
 #else
 #pragma options align=reset

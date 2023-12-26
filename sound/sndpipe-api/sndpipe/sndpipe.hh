@@ -52,7 +52,7 @@ struct volume_setting
 	Byte   volume;     // $00 .. $07, other values reserved
 };
 
-#ifdef __GNUC__
+#if __LP64__
 #pragma pack(push, 2)
 #else
 #pragma options align=packed
@@ -82,7 +82,7 @@ struct FTSynthRec_wave_update
 	Wave   waveform;
 };
 
-#ifdef __GNUC__
+#if __LP64__
 #pragma pack(pop)
 #else
 #pragma options align=reset
