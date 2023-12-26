@@ -284,6 +284,7 @@ void monitor_FTSoundRec( const FTSynthRec& synth )
 	
 	fast_memcpy( &copy_of_FTSoundRec, synth.sndRec, sizeof (FTSoundRec) );
 	
+	SoundVBL.qType    = vType;
 	SoundVBL.vblAddr  = &SoundVBL_Proc;
 	SoundVBL.vblCount = 1;
 	
