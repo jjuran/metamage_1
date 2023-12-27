@@ -1,8 +1,8 @@
 /*
-	LemmingsMultipatch.cc
-	---------------------
+	LemmingsTuneup.cc
+	-----------------
 	
-	Lemmings Multipatch INIT for Mac OS
+	Lemmings Tune-up INIT for Mac OS
 	
 	Copyright 2022-2023, Joshua Juran.  All rights reserved.
 	
