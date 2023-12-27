@@ -2,9 +2,9 @@
 	LemmingsMultipatch.cc
 	---------------------
 	
-	Lemmings Multipatch INIT for Advanced Mac Substitute
+	Lemmings Multipatch INIT for Mac OS
 	
-	Copyright 2022, Joshua Juran.  All rights reserved.
+	Copyright 2022-2023, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
@@ -13,11 +13,7 @@
 	of the NULL address in Advanced Mac Substitute (which doesn't tolerate
 	such nonsense).  The other replaces a busy-wait loop with a call to
 	Delay(), which is a much more environmentally (and battery-) friendly
-	option in Advanced Mac Substitute.
-	
-	This code is designed to run only as an 'INIT' resource in the System
-	file (or equivalent, viz. AMS Resources).  It's not needed in Mac OS,
-	and will definitely crash Mac OS if installed there as an 'INIT' file.
+	option in Advanced Mac Substitute and Mac OS X's Classic (the Blue Box).
 	
 */
 
@@ -32,11 +28,13 @@
 // mac-sys-utils
 #include "mac_sys/trap_address.hh"
 
-// ams-common
-#include "callouts.hh"
-
 
 #pragma exceptions off
+
+
+#define LENGTH(array)  (sizeof (array) / sizeof (array)[0])
+
+#define VEC_LEN(array)  array, LENGTH(array)
 
 
 static UniversalProcPtr old_TEInit;
@@ -56,6 +54,27 @@ static const UInt16 Lemmings_wait_trap[] =
 	0x016A,  //          ^^^^^^
 	_Delay,
 };
+
+static inline
+void my_memcpy( void* dst, const void* src, long n )
+{
+	BlockMoveData( src, dst, n );
+}
+
+static inline
+bool equal_words( const UInt16* a, const UInt16* b, short n )
+{
+	do
+	{
+		if ( *a++ != *b++ )
+		{
+			return false;
+		}
+	}
+	while ( --n > 0 );
+	
+	return true;
+}
 
 static inline
 void install_patches( Handle h )
@@ -151,9 +170,9 @@ void install_patches( Handle h )
 		
 		UInt16* q = (UInt16*) (*h + 0x002aaa);
 		
-		if ( fast_memequ( q, Lemmings_wait_loop, sizeof Lemmings_wait_loop ) )
+		if ( equal_words( (UInt16*) q, VEC_LEN( Lemmings_wait_loop ) ) )
 		{
-			fast_memcpy( q, Lemmings_wait_trap, sizeof Lemmings_wait_trap );
+			my_memcpy( q, Lemmings_wait_trap, sizeof Lemmings_wait_trap );
 			
 			HNoPurge( h );
 		}
@@ -184,6 +203,10 @@ pascal asm void TEInit_patch()
 
 int main()
 {
+	Handle self = GetResource( 'INIT', 0 );
+	
+	DetachResource( self );
+	
 	old_TEInit = mac::sys::get_trap_address( _TEInit );
 	
 	mac::sys::set_trap_address( (ProcPtr) TEInit_patch, _TEInit );
