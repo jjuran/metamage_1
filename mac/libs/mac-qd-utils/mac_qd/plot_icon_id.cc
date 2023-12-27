@@ -54,6 +54,19 @@ short plot_icon_id( const Rect& bounds, short id )
 	{
 		GrafPtr port = thePort();
 		
+		UInt32 icon_data[ 32 ];
+		
+		BlockMoveData( *h + 128, icon_data, sizeof icon_data );  // icon mask
+		
+		BitMap icon =
+		{
+			(Ptr) icon_data,
+			4,
+			{ 0, 0, 32, 32 },
+		};
+		
+		copy_bits( icon, port, icon.bounds, bounds, srcBic );  // apply mask
+		
 		Handle icl8;
 		
 		if ( IsPortColor( port )  &&  (icl8 = GetResource( 'icl8', id )) )
@@ -63,19 +76,6 @@ short plot_icon_id( const Rect& bounds, short id )
 			
 			if ( CTabHandle ctab = GetCTable( clut_id ) )
 			{
-				UInt32 mask_data[ 32 ];
-				
-				BlockMoveData( *h + 128, mask_data, sizeof mask_data );
-				
-				BitMap mask =
-				{
-					(Ptr) mask_data,
-					4,
-					{ 0, 0, 32, 32 },
-				};
-				
-				copy_bits( mask, port, mask.bounds, bounds, srcBic );
-				
 				Byte hstate = HGetState( icl8 );
 				
 				HLock( icl8 );
@@ -108,7 +108,9 @@ short plot_icon_id( const Rect& bounds, short id )
 			}
 		}
 		
-		PlotIcon( &bounds, h );
+		BlockMoveData( *h, icon_data, sizeof icon_data );  // icon face
+		
+		copy_bits( icon, port, icon.bounds, bounds, srcXor );  // plot icon
 		
 	drawn:
 		
