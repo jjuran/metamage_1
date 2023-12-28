@@ -141,14 +141,6 @@ void initialize_low_memory_globals()
 	
 	DefltStack = 32 * 1024;
 	
-	const int n_unit_table_entries = 32;
-	const size_t unit_table_bytesize = n_unit_table_entries * sizeof (void**);
-	
-	UnitNtryCnt = n_unit_table_entries;
-	UTableBase  = malloc( unit_table_bytesize );
-	
-	fast_memset( UTableBase, '\0', unit_table_bytesize );
-	
 	/*
 		Tetris stores a pointer to a private control block in SoundPtr
 		(which otherwise wouldn't get used, since Tetris doesn't use the
@@ -175,6 +167,16 @@ void initialize_low_memory_globals()
 	
 	init_lowmem_Cursor();
 	init_cursor();
+}
+
+static
+void initialize_unit_table()
+{
+	const int n_unit_table_entries = 32;
+	const size_t unit_table_bytesize = n_unit_table_entries * sizeof (void**);
+	
+	UnitNtryCnt = n_unit_table_entries;
+	UTableBase  = NewPtrSysClear( unit_table_bytesize );
 }
 
 static
@@ -485,6 +487,8 @@ int main( int argc, char** argv )
 	install_DeskManager();
 	
 	install_Debugger();
+	
+	initialize_unit_table();
 	
 	module_suspend();  // doesn't return
 }
