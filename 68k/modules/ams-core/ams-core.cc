@@ -166,16 +166,6 @@ void initialize_low_memory_globals()
 	
 	SoundPtr = ScrnBase;
 	
-	const short n_max_events = 20;
-	
-	const int event_size = 4 + sizeof (EvQEl);
-	const size_t event_buffer_bytesize = n_max_events * event_size;
-	
-	SysEvtBuf = malloc( event_buffer_bytesize );
-	SysEvtCnt = n_max_events - 1;
-	
-	fast_memset( SysEvtBuf, '\0', event_buffer_bytesize );
-	
 	MBState = 0x80;
 	
 	const long initial_mouse_loc = 0x000F000F;  // 15, 15
@@ -308,6 +298,14 @@ void install_Gestalt()
 static
 void install_OSEventManager()
 {
+	const short n_max_events = 20;
+	
+	const int event_size = 4 + sizeof (EvQEl);
+	const size_t event_buffer_bytesize = n_max_events * event_size;
+	
+	SysEvtBuf = NewPtrSysClear( event_buffer_bytesize );
+	SysEvtCnt = n_max_events - 1;
+	
 	OSTRAP( PostEvent    );  // A02F
 	OSTRAP( OSEventAvail );  // A030
 	OSTRAP( GetOSEvent   );  // A031
