@@ -469,7 +469,11 @@ int main( int argc, char** argv )
 	
 	install_MemoryManager();
 	
+	create_system_heap();
+	
 	install_OSUtils();
+	
+	set_syserr_handler();
 	
 	install_VerticalRetraceManager();
 	
@@ -483,10 +487,6 @@ int main( int argc, char** argv )
 	install_DeskManager();
 	
 	install_Debugger();
-	
-	set_syserr_handler();
-	
-	create_system_heap();
 	
 	module_suspend();  // doesn't return
 }
