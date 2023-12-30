@@ -36,6 +36,14 @@
 
 QHdr VBLQueue : 0x0160;
 
+struct VBL_proc_task
+{
+	short move[ 3 ];
+	short rts;
+	
+	VBLTask data;
+};
+
 static
 asm
 void dummy_VBL_proc( VBLTask* task : __A0 )
@@ -45,23 +53,28 @@ void dummy_VBL_proc( VBLTask* task : __A0 )
 	MOVE.W   #0x7fff,10(A0)  // task->vblCount = 0x7FFF;
 	
 	RTS
+	
+	DC.L     0       // qLink
+	DC.W     vType   // qType
+	DC.L     0       // vblAddr
+	DC.W     0x7fff  // vblCount
+	DC.W     0       // vblPhase
 }
-
-static VBLTask dummy_VBL_task;
 
 int main()
 {
 	if ( VBLQueue.qHead == NULL )
 	{
-		Handle self = Get1Resource( 'INIT', 0 );
-		
-		DetachResource( self );
-		
-		dummy_VBL_task.qType    = vType;
-		dummy_VBL_task.vblAddr  = (VBLUPP) &dummy_VBL_proc;
-		dummy_VBL_task.vblCount = 0x7FFF;
-		
-		VInstall( (QElem*) &dummy_VBL_task );
+		if ( Ptr p = NewPtrSys( sizeof (VBL_proc_task) ) )
+		{
+			BlockMove( &dummy_VBL_proc, p, sizeof (VBL_proc_task) );
+			
+			VBL_proc_task* task = (VBL_proc_task*) p;
+			
+			task->data.vblAddr = (VBLUPP) task;
+			
+			VInstall( (QElem*) &task->data );
+		}
 	}
 	
 	return 0;
