@@ -15,35 +15,47 @@
 #include "vlib/types/proc.hh"
 
 
+#define LENGTH(array)  (sizeof (array) / sizeof *(array))
+
+#ifndef NULL
+#define NULL  0L
+#endif
+
+
 namespace vlib
 {
+	
+	static const proc_info* procs[] =
+	{
+		&proc_half,
+		&proc_max,
+		&proc_min,
+		&proc_product,
+		&proc_sum,
+	};
+	
+	static
+	const proc_info* find_proc( const plus::string& name )
+	{
+		for ( int i = 0;  i < LENGTH( procs );  ++i )
+		{
+			const proc_info* proc = procs[ i ];
+			
+			if ( proc->name == name )
+			{
+				return proc;
+			}
+		}
+		
+		return NULL;
+	}
 	
 	static
 	Value getter( const plus::string& name )
 	{
-		if ( name == "half" )
+		if ( const proc_info* proc = find_proc( name ) )
 		{
-			return Proc( proc_half );
-		}
-		
-		if ( name == "max" )
-		{
-			return Proc( proc_max );
-		}
-		
-		if ( name == "min" )
-		{
-			return Proc( proc_min );
-		}
-		
-		if ( name == "product" )
-		{
-			return Proc( proc_product );
-		}
-		
-		if ( name == "sum" )
-		{
-			return Proc( proc_sum );
+			return Proc( *proc );
 		}
 		
 		THROW( "nonexistent member of namespace Math" );
