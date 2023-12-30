@@ -13,7 +13,6 @@
 #include "vlib/value.hh"
 #include "vlib/types/namespace.hh"
 #include "vlib/types/proc.hh"
-#include "vlib/types/string.hh"
 
 
 namespace vlib
@@ -22,11 +21,6 @@ namespace vlib
 	static
 	Value getter( const plus::string& name )
 	{
-		if ( name == "name" )
-		{
-			return String( "Math" );
-		}
-		
 		if ( name == "half" )
 		{
 			return Proc( proc_half );

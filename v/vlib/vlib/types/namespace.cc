@@ -11,6 +11,7 @@
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/types/builtin.hh"
+#include "vlib/types/string.hh"
 
 
 namespace vlib
@@ -27,6 +28,11 @@ namespace vlib
 				if ( b.type() != V_str )
 				{
 					THROW( "non-string namespace member name" );
+				}
+				
+				if ( b.string() == "name" )
+				{
+					return String( space->name );
 				}
 				
 				return space->getter( b.string() );

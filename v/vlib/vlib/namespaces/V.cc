@@ -12,7 +12,6 @@
 #include "vlib/value.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/namespace.hh"
-#include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 
 
@@ -22,11 +21,6 @@ namespace vlib
 	static
 	Value getter( const plus::string& name )
 	{
-		if ( name == "name" )
-		{
-			return String( "V" );
-		}
-		
 		if ( name == "one" )
 		{
 			return Type( one_vtype );

@@ -14,7 +14,6 @@
 #include "vlib/types/integer.hh"
 #include "vlib/types/namespace.hh"
 #include "vlib/types/proc.hh"
-#include "vlib/types/string.hh"
 
 
 #define QUINE( name )  #name, &name
@@ -43,11 +42,6 @@ namespace vlib
 	static
 	Value getter( const plus::string& name )
 	{
-		if ( name == "name" )
-		{
-			return String( "Iter" );
-		}
-		
 		if ( name == "max" )
 		{
 			return Proc( proc_It_max );
