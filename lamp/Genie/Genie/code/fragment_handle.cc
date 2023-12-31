@@ -6,7 +6,7 @@
 #include "Genie/code/fragment_handle.hh"
 
 // Standard C
-#include <stdio.h>
+#include <string.h>
 
 // more-libc
 #include "more/string.h"
@@ -14,12 +14,20 @@
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
+// gear
+#include "gear/inscribe_decimal.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
+// relix-kernel
+#include "relix/fs/console.hh"
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 namespace Genie
@@ -47,13 +55,30 @@ namespace Genie
 		{
 			if ( errMessage[ 0 ] )
 			{
-				char message[ 256 ];
+				enum
+				{
+					buffer_size = sizeof "Code fragment error -12345: \n" + 255,
+				};
 				
 				const Byte* p = errMessage;
 				
-				char* q = (char*) mempcpy( message, p + 1, p[ 0 ] );
+				char message[ buffer_size ];
 				
-				printf( "Code fragment error %d: %s\n", err, message );
+				char* q = message;
+				
+				q = (char*) mempcpy( q, STR_LEN( "Code fragment error " ) );
+				
+				const char* errnum = gear::inscribe_decimal( err );
+				
+				q = (char*) mempcpy( q, errnum, strlen( errnum ) );
+				
+				q = (char*) mempcpy( q, STR_LEN( ": " ) );
+				
+				q = (char*) mempcpy( q, p + 1, p[ 0 ] );
+				
+				q = (char*) mempcpy( q, STR_LEN( "\n" ) );
+				
+				relix::console::log( message, q - message );
 			}
 			
 			Mac::ThrowOSStatus( err );
