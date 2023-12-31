@@ -315,6 +315,9 @@ v		000112:  _StripAddress
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
+#ifndef __TEXTUTILS__
+#include <TextUtils.h>
+#endif
 
 // POSIX
 #include <unistd.h>
@@ -401,6 +404,7 @@ const UInt16 AND_L_D1_D0  = 0xc081;  // AND.L    D1,D0
 const UInt16 BLT_S_6      = 0x6d04;  // BLT.S    *+6
 const UInt16 BRA_S_12     = 0x600a;  // BRA.S    *+12
 const UInt16 CMPI_W_abs_W = 0x0c78;  // CMPI.W   #imm,0x____
+const UInt16 JMP_PCrel    = 0x4efa;  // JMP      *...
 const UInt16 MOVE_L_A0_D0 = 0x2008;  // MOVE.L   A0,D0
 const UInt16 MOVE_L_A0_D1 = 0x2208;  // MOVE.L   A0,D1
 const UInt16 MOVE_L_A2_A0 = 0x204a;  // MOVEA.L  A2,A0
@@ -413,6 +417,8 @@ const UInt16 RTS          = 0x4e75;  // RTS
 const UInt16 ADDA_L_abs_L_A0 = 0xd1fc;  // ADDA.L   #0x________,A0
 const UInt16 ADDA_L_abs_L_A4 = 0xd9fc;  // ADDA.L   #0x________,A4
 const UInt16 MOVE_L_abs_W_D0 = 0x2038;  // MOVE.L   0x____,D0
+
+const UInt32 JMP_6                     = JMP_PCrel    << 16 | 0x0004;
 
 const UInt32 MOVE_L_A0_D0_StripAddress = MOVE_L_A0_D0 << 16 | _StripAddress;
 const UInt32 MOVE_L_A2_A1_NOP          = MOVE_L_A2_A1 << 16 | NOP;
@@ -435,7 +441,7 @@ static const UInt16 get_address_mask[] =
 };
 
 static
-bool fix_up_code_resource( Handle code )
+bool fix_up_far_code( Handle code )
 {
 	const Size expected_minimum_size = 0x0116;
 	
@@ -539,6 +545,40 @@ bool fix_up_code_resource( Handle code )
 }
 
 static
+bool fix_up_near_code( Handle code )
+{
+	const Size expected_minimum_size = 0x0014;
+	
+	Size size = GetHandleSize( code );
+	
+	char* p = *code;
+	
+	/*
+		Bail out if (a) the code is too short to look at, (b) the runtime
+		doesn't match what we're expecting, or (c) we already patched it.
+	*/
+	
+	if ( size < expected_minimum_size )
+	{
+		return false;
+	}
+	
+	if ( *(UInt16*) p != BRA_S_12 )
+	{
+		return false;
+	}
+	
+	if ( *(UInt32*) (p + 0x000c) != JMP_6 )
+	{
+		return false;
+	}
+	
+	Munger( code, 0, NULL, 0x0012, NULL, 0  );  // delete the first 18 bytes
+	
+	return true;
+}
+
+static inline
 OSErr CompactResFile( short refnum )
 {
 	using mac::sys::res_error;
@@ -602,7 +642,7 @@ int main( int argc, char** argv )
 		{
 			if ( Handle h = Get1IndResource( type, j ) )
 			{
-				if ( fix_up_code_resource( h ) )
+				if ( fix_up_far_code( h )  ||  fix_up_near_code( h ) )
 				{
 					patching_applicable = true;
 					
