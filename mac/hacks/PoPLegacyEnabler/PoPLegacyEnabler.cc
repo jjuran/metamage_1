@@ -45,21 +45,7 @@ struct VBL_proc_task
 };
 
 static
-asm
-void dummy_VBL_proc( VBLTask* task : __A0 )
-{
-	// Don't do anything; just stick around in the queue
-	
-	MOVE.W   #0x7fff,10(A0)  // task->vblCount = 0x7FFF;
-	
-	RTS
-	
-	DC.L     0       // qLink
-	DC.W     vType   // qType
-	DC.L     0       // vblAddr
-	DC.W     0x7fff  // vblCount
-	DC.W     0       // vblPhase
-}
+void dummy_VBL_proc( VBLTask* task : __A0 );
 
 int main()
 {
@@ -78,6 +64,23 @@ int main()
 	}
 	
 	return 0;
+}
+
+static
+asm
+void dummy_VBL_proc( VBLTask* task : __A0 )
+{
+	// Don't do anything; just stick around in the queue
+	
+	MOVE.W   #0x7fff,10(A0)  // task->vblCount = 0x7FFF;
+	
+	RTS
+	
+	DC.L     0       // qLink
+	DC.W     vType   // qType
+	DC.L     0       // vblAddr
+	DC.W     0x7fff  // vblCount
+	DC.W     0       // vblPhase
 }
 
 /*
