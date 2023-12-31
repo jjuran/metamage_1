@@ -26,8 +26,6 @@ namespace Genie
 	class fragment_handle : public loaded_handle
 	{
 		private:
-			vfs::relix_entry its_relix_main;
-			
 			CFragConnectionID  its_fragment_connection;
 			
 			// non-copyable

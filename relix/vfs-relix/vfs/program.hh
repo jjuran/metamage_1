@@ -23,10 +23,20 @@ namespace vfs
 	
 	class program : public vxo::ref_count< program >
 	{
+		protected:
+			relix_entry its_relix_main;
+		
 		public:
+			program() : its_relix_main()
+			{
+			}
+			
 			virtual ~program();
 			
-			virtual relix_entry get_main_entry_point() const = 0;
+			relix_entry get_main_entry_point() const
+			{
+				return its_relix_main;
+			}
 	};
 	
 }

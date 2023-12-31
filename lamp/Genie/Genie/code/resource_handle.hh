@@ -20,11 +20,7 @@ namespace Genie
 			:
 				loaded_handle( exec )
 			{
-			}
-			
-			vfs::relix_entry get_main_entry_point() const
-			{
-				return (vfs::relix_entry) *unit().get();  // reinterpret_cast
+				its_relix_main = (vfs::relix_entry) *unit().get();
 			}
 	};
 	

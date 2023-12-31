@@ -91,7 +91,6 @@ namespace Genie
 	fragment_handle::fragment_handle( const execution_unit& exec )
 	:
 		loaded_handle( exec ),
-		its_relix_main(),
 		its_fragment_connection( connect( exec.get(), &its_relix_main ) )
 	{
 		if ( its_relix_main == NULL )
@@ -105,11 +104,6 @@ namespace Genie
 	fragment_handle::~fragment_handle()
 	{
 		CloseConnection( &its_fragment_connection );
-	}
-	
-	vfs::relix_entry fragment_handle::get_main_entry_point() const
-	{
-		return its_relix_main;
 	}
 	
 }
