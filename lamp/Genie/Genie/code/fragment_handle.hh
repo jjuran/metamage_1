@@ -6,14 +6,14 @@
 #ifndef GENIE_CODE_FRAGMENTHANDLE_HH
 #define GENIE_CODE_FRAGMENTHANDLE_HH
 
-// nucleus
-#ifndef NUCLEUS_OWNED_HH
-#include "nucleus/owned.hh"
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
 #endif
 
-// Nitrogen
-#ifndef MAC_CODEFRAGMENTS_TYPES_CFRAGCONNECTIONID_HH
-#include "Mac/CodeFragments/Types/CFragConnectionID.hh"
+// Mac OS
+#ifndef __CODEFRAGMENTS__
+#include <CodeFragments.h>
 #endif
 
 // Genie
@@ -28,7 +28,11 @@ namespace Genie
 		private:
 			vfs::relix_entry its_relix_main;
 			
-			nucleus::owned< CFragConnectionID >  its_fragment_connection;
+			CFragConnectionID  its_fragment_connection;
+			
+			// non-copyable
+			fragment_handle           ( const fragment_handle& );
+			fragment_handle& operator=( const fragment_handle& );
 		
 		public:
 			fragment_handle( const execution_unit& exec );

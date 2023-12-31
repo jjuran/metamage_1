@@ -5,6 +5,12 @@
 
 #include "Genie/code/fragment_handle.hh"
 
+// Standard C
+#include <stdio.h>
+
+// more-libc
+#include "more/string.h"
+
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
@@ -12,26 +18,48 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/CodeFragments.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 
 
 namespace Genie
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
-	
-	static n::owned< CFragConnectionID > connect( const Mac::Handle  h,
-	                                              vfs::relix_entry*  main )
+	static
+	CFragConnectionID connect( Handle h, vfs::relix_entry* main )
 	{
 		const std::size_t size = mac::glue::GetHandleSize( h );
 		
-		return N::GetMemFragment< N::kPrivateCFragCopy >( *h,
-		                                                  size,
-		                                                  NULL,
-		                                                  main );
+		Str255 errMessage;
+		CFragConnectionID connID;
+		
+		OSErr err = GetMemFragment( *h,
+		                            size,
+		                            NULL,
+		                            kPrivateCFragCopy,
+		                            &connID,
+		                            (Ptr*) main,
+		                            errMessage );
+		
+		if ( err )
+		{
+			if ( errMessage[ 0 ] )
+			{
+				char message[ 256 ];
+				
+				const Byte* p = errMessage;
+				
+				char* q = (char*) mempcpy( message, p + 1, p[ 0 ] );
+				
+				printf( "Code fragment error %d: %s\n", err, message );
+			}
+			
+			Mac::ThrowOSStatus( err );
+		}
+		
+		return connID;
 	}
 	
 	
@@ -43,12 +71,15 @@ namespace Genie
 	{
 		if ( its_relix_main == NULL )
 		{
+			CloseConnection( &its_fragment_connection );
+			
 			p7::throw_errno( ENOEXEC );
 		}
 	}
 	
 	fragment_handle::~fragment_handle()
 	{
+		CloseConnection( &its_fragment_connection );
 	}
 	
 	vfs::relix_entry fragment_handle::get_main_entry_point() const

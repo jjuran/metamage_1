@@ -3,6 +3,16 @@
  *	=========
  */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __MACERRORS__
+#include <MacErrors.h>
+#endif
+
 // Standard C
 #include <errno.h>
 #include <stdio.h>
@@ -19,14 +29,9 @@
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
 
-#include "Nitrogen/CodeFragments.hh"
-
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
-
-
-namespace N = Nitrogen;
 
 
 #ifndef __MACOS__
@@ -63,33 +68,11 @@ int execve( char  const*  path,
 			return set_errno( EINVAL );
 		}
 		
-		const char* glue = "";
-		
-		char mesg[ 256 ];
-		
-		mesg[ 0 ] = '\0';
-		
-		try
-		{
-			throw;
-		}
-		catch ( const N::ErrMessage& msg )
-		{
-			glue = ", errMessage: ";
-			
-			const Byte* p = msg.errMessage;
-			
-			char* q = (char*) mempcpy( mesg, p + 1, p[ 0 ] );
-			
-			*q = '\0';
-		}
-		catch ( ... )  {}
-		
 		int num = err;
 		
 		if ( num != fnfErr )
 		{
-			printf( "execve: %s: OSStatus %d%s%s\n", path, num, glue, mesg );
+			printf( "execve: %s: OSStatus %d\n", path, num );
 		}
 		
 		return set_errno_from_exception();
