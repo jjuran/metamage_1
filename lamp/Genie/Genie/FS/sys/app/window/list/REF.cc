@@ -16,9 +16,6 @@
 #endif
 #endif
 
-// Standard C
-#include <stdio.h>
-
 // mac-config
 #include "mac_config/color-quickdraw.hh"
 
@@ -236,9 +233,9 @@ namespace Genie
 	{
 		char encoded[] = "#rrrrggggbbbb";
 		
-		sprintf( encoded + 1, "%.4x%.4x%.4x", color.red,
-		                                      color.green,
-		                                      color.blue );
+		gear::encode_16_bit_hex( color.red,   encoded + 1 );
+		gear::encode_16_bit_hex( color.green, encoded + 5 );
+		gear::encode_16_bit_hex( color.blue,  encoded + 9 );
 		
 		return encoded;
 	}
