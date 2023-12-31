@@ -15,7 +15,8 @@
 
 // Standard C
 #include <errno.h>
-#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // POSIX
 #include "unistd.h"
@@ -23,7 +24,11 @@
 // more-libc
 #include "more/string.h"
 
+// gear
+#include "gear/inscribe_decimal.hh"
+
 // relix
+#include "relix/fs/console.hh"
 #include "relix/syscall/registry.hh"
 
 // Nitrogen
@@ -32,6 +37,9 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 #ifndef __MACOS__
@@ -72,7 +80,30 @@ int execve( char  const*  path,
 		
 		if ( num != fnfErr )
 		{
-			printf( "execve: %s: OSStatus %d\n", path, num );
+			enum
+			{
+				submessage_max_len = sizeof "execve: : OSStatus -1234567890\n"
+			};
+			
+			const long buffer_size = submessage_max_len + strlen( path );
+			
+			char* message = (char*) alloca( buffer_size );
+			
+			char* q = message;
+			
+			q = (char*) mempcpy( q, STR_LEN( "execve: " ) );
+			
+			q = (char*) mempcpy( q, path, strlen( path ) );
+			
+			q = (char*) mempcpy( q, STR_LEN( ": OSStatus " ) );
+			
+			const char* errnum = gear::inscribe_decimal( err );
+			
+			q = (char*) mempcpy( q, errnum, strlen( errnum ) );
+			
+			q = (char*) mempcpy( q, STR_LEN( "\n" ) );
+			
+			relix::console::log( message, q - message );
 		}
 		
 		return set_errno_from_exception();
