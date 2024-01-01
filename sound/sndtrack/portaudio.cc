@@ -32,6 +32,7 @@
 // sndtrack
 #include "exceptions.hh"
 #include "output.hh"
+#include "recording.hh"
 #include "synthesize.hh"
 
 
@@ -106,6 +107,8 @@ int stream_callback( const void*                      input,
 		
 		memset( gap, ground, n_unset );  // fill gap with silence
 	}
+	
+	append_to_recording( output, buffer_size );
 	
 	return paContinue;
 }
