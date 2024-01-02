@@ -123,6 +123,7 @@ static bool silent_2ago;
 static bool silent_then;
 static bool silent_now = true;
 
+static
 short synthesize( sample_buffer& output )
 {
 	static sound_node* last_input;
@@ -284,4 +285,29 @@ short synthesize( sample_buffer& output )
 	silent_now = true;
  	
 	return 0;
+}
+
+const int ground = 0;  // signed samples are centered at 0, not e.g. 128
+
+short synthesize( void* output )
+{
+	sample_buffer buffer;
+	
+	short count = synthesize( buffer );
+	
+	if ( count )
+	{
+		memcpy( output, buffer.data, count * frame_size );
+	}
+	
+	if ( short n_unset = frames_per_buffer - count )
+	{
+		n_unset *= frame_size;
+		
+		char* gap = (char*) output + count * frame_size;
+		
+		memset( gap, ground, n_unset );  // fill gap with silence
+	}
+	
+	return count;
 }

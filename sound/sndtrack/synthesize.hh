@@ -6,8 +6,6 @@
 #ifndef SYNTHESIZE_HH
 #define SYNTHESIZE_HH
 
-struct sample_buffer;
-
-short synthesize( sample_buffer& output );
+short synthesize( void* output );
 
 #endif

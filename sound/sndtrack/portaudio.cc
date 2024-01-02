@@ -39,16 +39,8 @@
 namespace portaudio
 {
 
-const int channel_count = 1;  // monophonic
-const int sample_size   = sizeof (output_sample_t);
-
-const int ground = 0;  // signed samples are centered at 0, not e.g. 128
-
 const double sample_rate = 7833600.0 / 352;  // 22254.[54];
 
-const int frames_per_buffer = samples_per_buffer;
-
-const int frame_size = sample_size * channel_count;
 const int buffer_size = frame_size * frames_per_buffer;
 
 
@@ -90,23 +82,7 @@ int stream_callback( const void*                      input,
                      PaStreamCallbackFlags            statusFlags,
                      void*                            userData )
 {
-	sample_buffer buffer;
-	
-	short count = synthesize( buffer );
-	
-	if ( count )
-	{
-		memcpy( output, buffer.data, count * sizeof (output_sample_t) );
-	}
-	
-	if ( short n_unset = frames_per_buffer - count )
-	{
-		n_unset *= sizeof (output_sample_t);
-		
-		char* gap = (char*) output + count * sizeof (output_sample_t);
-		
-		memset( gap, ground, n_unset );  // fill gap with silence
-	}
+	synthesize( output );
 	
 	append_to_recording( output, buffer_size );
 	
