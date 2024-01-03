@@ -9,6 +9,6 @@ Special thanks to Keith Kaisershot for developing macsnddrvrsynth, on which sndt
 
 [pipeplayer]:  <https://bitbucket.org/blitter/pipeplayer.git>
 
-sndtrack is copyright 2019 Joshua Juran and Keith Kaisershot.  All rights reserved (unless explicitly stated otherwise).  sndtrack is free software; you may use it under the terms of the [GNU AGPL version 3][AGPL] (or later).
+sndtrack is copyright 2019-2024 Joshua Juran and copyright 2019 Keith Kaisershot.  All rights reserved (unless explicitly stated otherwise).  sndtrack is free software; you may use it under the terms of the [GNU AGPL version 3][AGPL] (or later).
 
 [AGPL]:  <../../LICENSE/AGPL-3.0.txt>
