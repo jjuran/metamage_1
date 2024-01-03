@@ -290,10 +290,12 @@ void do_shutdown()
 	}
 }
 
+typedef bool (*backend_api)();
+
 static sig_atomic_t interrupted;
 
 static
-void event_loop( int fd )
+void event_loop( int fd, backend_api backend_start, backend_api backend_stop )
 {
 	bool audio_started = false;
 	bool play_past_EOF = false;
@@ -314,7 +316,7 @@ void event_loop( int fd )
 				{
 					case switch_on:
 						static bool init = audio_started
-						                 = synch::start()  &&  portaudio::start();
+						                 = synch::start()  &&  backend_start();
 						break;
 					
 					case allow_eof:
@@ -375,7 +377,7 @@ void event_loop( int fd )
 		
 		synch::wait();
 		
-		portaudio::stop();
+		backend_stop();
 	}
 }
 
@@ -403,7 +405,7 @@ int main( int argc, char* argv[] )
 		signal( SIGINT, &interrupt );
 	}
 	
-	event_loop( STDIN_FILENO );
+	event_loop( STDIN_FILENO, &portaudio::start, &portaudio::stop );
 	
 	end_recording();
 	
