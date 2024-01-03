@@ -290,20 +290,6 @@ void do_shutdown()
 	}
 }
 
-static
-bool start()
-{
-	return synch::start()  &&  portaudio::start();
-}
-
-static
-bool stop()
-{
-	synch::wait();
-	
-	return portaudio::stop();
-}
-
 static sig_atomic_t interrupted;
 
 static
@@ -327,7 +313,8 @@ void event_loop( int fd )
 				switch ( header.opcode )
 				{
 					case switch_on:
-						static bool init = audio_started = start();
+						static bool init = audio_started
+						                 = synch::start()  &&  portaudio::start();
 						break;
 					
 					case allow_eof:
@@ -386,7 +373,9 @@ void event_loop( int fd )
 			do_shutdown();
 		}
 		
-		stop();
+		synch::wait();
+		
+		portaudio::stop();
 	}
 }
 
