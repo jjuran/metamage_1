@@ -265,6 +265,7 @@ namespace posix
 			{
 				case ENOTTY:
 				case EINVAL:
+				case ENOTSUP:  // in Mac OS X 10.3 "Panther" for pipe/socket
 				case ENXIO:
 				case 102:  // EOPNOTSUPP in later OS X, but not always
 				case EPERM:
