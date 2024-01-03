@@ -1,13 +1,13 @@
 /*
-	backend.hh
-	----------
+	synch.hh
+	--------
 */
 
-#ifndef BACKEND_HH
-#define BACKEND_HH
+#ifndef SYNCH_HH
+#define SYNCH_HH
 
 
-namespace backend
+namespace synch
 {
 	
 	bool start();

@@ -20,12 +20,12 @@
 
 // sndtrack
 #include "admin.hh"
-#include "backend.hh"
 #include "exceptions.hh"
 #include "input.hh"
 #include "portaudio.hh"
 #include "recording.hh"
 #include "sound_node.hh"
+#include "synch.hh"
 
 
 using namespace sndpipe;
@@ -293,13 +293,13 @@ void do_shutdown()
 static
 bool start()
 {
-	return backend::start()  &&  portaudio::start();
+	return synch::start()  &&  portaudio::start();
 }
 
 static
 bool stop()
 {
-	backend::wait();
+	synch::wait();
 	
 	return portaudio::stop();
 }
@@ -371,7 +371,7 @@ void event_loop( int fd )
 		{
 			do_full_stop();
 			
-			backend::wait();  // consume the interrupt
+			synch::wait();  // consume the interrupt
 		}
 		else if ( ! play_past_EOF )
 		{
@@ -380,7 +380,7 @@ void event_loop( int fd )
 		
 		do_shutdown();
 		
-		if ( backend::wait() )
+		if ( synch::wait() )
 		{
 			do_full_stop();
 			do_shutdown();
@@ -395,7 +395,7 @@ void interrupt( int )
 {
 	interrupted = true;
 	
-	backend::interrupted();
+	synch::interrupted();
 }
 
 int main( int argc, char* argv[] )

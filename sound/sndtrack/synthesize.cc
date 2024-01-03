@@ -11,10 +11,10 @@
 
 // sndtrack
 #include "admin.hh"
-#include "backend.hh"
 #include "exceptions.hh"
 #include "output.hh"
 #include "sound_node.hh"
+#include "synch.hh"
 #include "synth/four-tone.hh"
 #include "synth/free-form.hh"
 #include "synth/square-wave.hh"
@@ -221,7 +221,7 @@ short synthesize( sample_buffer& output )
 		switch ( sound.mode )
 		{
 			case shutdown_mode:
-				backend::finished();
+				synch::finished();
 				break;
 			
 			case swMode:

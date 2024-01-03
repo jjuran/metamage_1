@@ -1,15 +1,15 @@
 /*
-	backend.cc
-	----------
+	synch.cc
+	--------
 */
 
-#include "backend.hh"
+#include "synch.hh"
 
 // POSIX
 #include <unistd.h>
 
 
-namespace backend
+namespace synch
 {
 
 static int pipe_fds[ 2 ];
