@@ -120,17 +120,18 @@ void soften( sample_buffer& output )
 	}
 }
 
-static bool silent_2ago;
-static bool silent_then;
-static bool silent_now = true;
+static bool sounding_2ago;
+static bool sounding_then;
+static bool sounding_now;
 
 static
 short synthesize( sample_buffer& output )
 {
 	static sound_node* last_input;
 	
-	silent_2ago = silent_then;
-	silent_then = silent_now;
+	sounding_2ago = sounding_then;
+	sounding_then = sounding_now;
+	sounding_now  = false;
 	
 	output.count = samples_per_buffer;  // optimistic default
 	
@@ -232,7 +233,14 @@ short synthesize( sample_buffer& output )
 			case ffMode:
 				count = ff_synth( output, input->size, sound.free_form, reset );
 				
-				silent_now = false;
+				/*
+					For audio frame gap detection, we're only interested
+					in low-level audio produced by writing to the sound
+					buffer, which we'll heuristically characterize as any
+					freeform sound whose length is 370 bytes.
+				*/
+				
+				sounding_now = count > 0  &&  input->size == 370;
 				break;
 			
 			case ftMode_flat_buffer:
@@ -261,17 +269,13 @@ short synthesize( sample_buffer& output )
 				soften( output );
 			}
 			
-			if ( silent_then  &&  ! silent_2ago )
+			if ( sounding_now  &&  ! sounding_then  &&  sounding_2ago )
 			{
 				take_exception( audio_playback_gap );
 			}
 			
 			if ( stopping  ||  count == 0 )
 			{
-				// Defeat the audio gap detection to prevent a false positive.
-				silent_then = true;
-				silent_now = true;
-				
 				last_input = NULL;
 				
 				diminish( output );
@@ -283,8 +287,6 @@ short synthesize( sample_buffer& output )
 		queue_advance( sound_queue );
 	}
 	
-	silent_now = true;
- 	
 	return 0;
 }
 
