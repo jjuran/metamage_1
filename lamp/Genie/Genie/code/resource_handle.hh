@@ -13,6 +13,20 @@
 namespace Genie
 {
 	
+	extern unsigned long address_mask;
+	
+	inline
+	void* masked( void* address )
+	{
+	#ifdef __MC68K__
+		
+		address = (void*) ((unsigned long) address & address_mask);
+		
+	#endif
+		
+		return address;
+	}
+	
 	class resource_handle : public loaded_handle
 	{
 		public:
@@ -20,7 +34,7 @@ namespace Genie
 			:
 				loaded_handle( exec )
 			{
-				its_relix_main = (vfs::relix_entry) *unit().get();
+				its_relix_main = (vfs::relix_entry) masked( *unit().get() );
 			}
 	};
 	
