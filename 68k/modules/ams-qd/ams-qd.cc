@@ -264,6 +264,7 @@ static const trap_patch QuickDraw[] =
 	
 	TBTRAP( ScrollRect  ),  // A8EF
 	
+	TBTRAP( PicComment   ),  // A8F2
 	TBTRAP( OpenPicture  ),  // A8F3
 	TBTRAP( ClosePicture ),  // A8F4
 	TBTRAP( KillPicture  ),  // A8F5

@@ -78,6 +78,10 @@ pascal void ClosePicture_patch()
 	}
 }
 
+pascal void PicComment_patch( short kind, short dataSize, Handle data )
+{
+}
+
 static inline
 long read_long( const UInt8*& p )
 {
