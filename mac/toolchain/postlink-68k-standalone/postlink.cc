@@ -264,24 +264,11 @@
 			ADDA.L   #0x00000xxx,A4          // stripped start of data
 			
 			// __SetupMainRsrc__ (inlined)
-			MOVE.L   (A4)+,D0                // previous start of code
+			MOVE.L   (A4),D0                 // previous start of code
 			SUB.L    D0,D2                   // relocation delta
 			BEQ.S    reloc_done
 			
-			TST.L    D0                      // previous start of code
-			BNE.S    HWPriv_known
-			
-			// check _HWPriv
-			MOVE.W   #_Unimplemented,D0
-			_GetToolBoxTrapAddress
-			MOVEA.L  A0,A1
-			MOVE.W   #_HWPriv,D0
-			_GetOSTrapAddress
-			CMPA.L   A0,A1
-			SNE.B    D0                      // HWPriv_present?
-			MOVE.B   D0,(A4)
-			
-		HWPriv_known:
+			MOVE.L   A2,(A4)                 // new previous start of code
 			
 			MOVEA.L  A2,A0                   // stripped start of code
 			ADDA.L   #0x00000yyy,A0          // stripped start of xref
@@ -336,15 +323,11 @@
 			DBLE     D1,loop
 			
 			ADDQ.W   #4,A7
-			TST.B    (A4)                    // HWPriv_present?
-			BEQ.S    no_HWPriv
 			
-			MOVEQ    #1,D0
-			_HWPriv
-			
-		no_HWPriv:
-			
-			MOVE.L   A2,-(A4)                // new previous start of code
+			LEA      __InitCode__,A0
+			MOVE.L   #0x00000zzz,D0
+			MOVEA.L  A0,A1
+			_BlockMove
 			
 		reloc_done:
 			
@@ -468,96 +451,80 @@ static const UInt16 startup_code[] =
 	0x2442,                  // 00001c:  MOVEA.L  D2,A2
 	0x2842,                  // 00001e:  MOVEA.L  D2,A4
 	0xd9fc, 0x0000, 0x0000,  // 000020:  ADDA.L   #0x00000000,A4
-	0x201c,                  // 000026:  MOVE.L   (A4)+,D0
+	0x2014,                  // 000026:  MOVE.L   (A4),D0
 	0x9480,                  // 000028:  SUB.L    D0,D2
-	0x6768,                  // 00002a:  BEQ.S    *+106  // $000094 reloc_done
+	0x6756,                  // 00002a:  BEQ.S    *+88   // $000082 reloc_done
 	
-	0x4a80,                  // 00002c:  TST.L    D0
-	0x6614,                  // 00002e:  BNE.S    *+22   // $000044 HWPriv_known
-	
-	0x303c, 0xa89f,          // 000030:  MOVE.W   #_Unimplemented,D0
-	0xa746,                  // 000034:  _GetToolBoxTrapAddress
-	0x2248,                  // 000036:  MOVEA.L  A0,A1
-	0x303c, 0xa198,          // 000038:  MOVE.W   #_HWPriv,D0
-	0xa346,                  // 00003c:  _GetOSTrapAddress
-	0xb3c8,                  // 00003e:  CMPA.L   A0,A1
-	0x56c0,                  // 000040:  SNE.B    D0
-	0x1880,                  // 000042:  MOVE.B   D0,(A4)
-	
-// HWPriv_known:
-	
-	0x204a,                  // 000044:  MOVEA.L  A2,A0
-	0xd1fc, 0x0000, 0x0000,  // 000046:  ADDA.L   #0x00000000,A0
-	0x594f,                  // 00004c:  SUBQ.W   #4,A7
-	0x264f,                  // 00004e:  MOVEA.L  A7,A3
-	0x2218,                  // 000050:  MOVE.L   (A0)+,D1
-	0x5381,                  // 000052:  SUBQ.L   #1,D1
-	0x93c9,                  // 000054:  SUBA.L   A1,A1
+	0x288a,                  // 00002c:  MOVEA.L  A2,(A4)
+	0x204a,                  // 00002e:  MOVEA.L  A2,A0
+	0xd1fc, 0x0000, 0x0000,  // 000030:  ADDA.L   #0x00000000,A0
+	0x594f,                  // 000036:  SUBQ.W   #4,A7
+	0x264f,                  // 000038:  MOVEA.L  A7,A3
+	0x2218,                  // 00003a:  MOVE.L   (A0)+,D1
+	0x5381,                  // 00003c:  SUBQ.L   #1,D1
+	0x93c9,                  // 00003e:  SUBA.L   A1,A1
 	
 // loop:
 	
-	0x1018,                  // 000056:  MOVE.B   (A0)+,D0
-	0x6c06,                  // 000058:  BGE.S    *+8    // $000060 bit_7_clear
+	0x1018,                  // 000040:  MOVE.B   (A0)+,D0
+	0x6c06,                  // 000042:  BGE.S    *+8    // $00004a bit_7_clear
 	
-	0xd000,                  // 00005a:  ADD.B    D0,D0
-	0x4880,                  // 00005c:  EXT.W    D0
-	0x601e,                  // 00005e:  BRA.S    *+32   // $00007e add_delta
+	0xd000,                  // 000044:  ADD.B    D0,D0
+	0x4880,                  // 000046:  EXT.W    D0
+	0x601e,                  // 000048:  BRA.S    *+32   // $000068 add_delta
 	
 // bit_7_clear:
 	
-	0x16c0,                  // 000060:  MOVE.B   D0,(A3)+
-	0x16d8,                  // 000062:  MOVE.B   (A0)+,(A3)+
-	0x0240, 0x0040,          // 000064:  ANDI.W   #0x40,D0
-	0x660e,                  // 000068:  BNE.S    *+16   // $000078 bit_6_set
+	0x16c0,                  // 00004a:  MOVE.B   D0,(A3)+
+	0x16d8,                  // 00004c:  MOVE.B   (A0)+,(A3)+
+	0x0240, 0x0040,          // 00004e:  ANDI.W   #0x40,D0
+	0x660e,                  // 000052:  BNE.S    *+16   // $000062 bit_6_set
 	
-	0x16d8,                  // 00006a:  MOVE.B   (A0)+,(A3)+
-	0x16d8,                  // 00006c:  MOVE.B   (A0)+,(A3)+
-	0x2023,                  // 00006e:  MOVE.L   -(A3),D0
-	0xe588,                  // 000070:  LSL.L    #2,D0
-	0xe280,                  // 000072:  ASR.L    #1,D0
-	0x2240,                  // 000074:  MOVEA.L  D0,A1
-	0x6008,                  // 000076:  BRA.S    *+10   // $000080 relocate
+	0x16d8,                  // 000054:  MOVE.B   (A0)+,(A3)+
+	0x16d8,                  // 000056:  MOVE.B   (A0)+,(A3)+
+	0x2023,                  // 000058:  MOVE.L   -(A3),D0
+	0xe588,                  // 00005a:  LSL.L    #2,D0
+	0xe280,                  // 00005c:  ASR.L    #1,D0
+	0x2240,                  // 00005e:  MOVEA.L  D0,A1
+	0x6008,                  // 000060:  BRA.S    *+10   // $00006a relocate
 	
 // bit_6_set:
 	
-	0x3023,                  // 000078:  MOVE.W   -(A3),D0
-	0xe548,                  // 00007a:  LSL.W    #2,D0
-	0xe240,                  // 00007c:  ASR.W    #1,D0
+	0x3023,                  // 000062:  MOVE.W   -(A3),D0
+	0xe548,                  // 000064:  LSL.W    #2,D0
+	0xe240,                  // 000066:  ASR.W    #1,D0
 	
 // add_delta:
 	
-	0xd2c0,                  // 00007e:  ADDA.W   D0,A1
+	0xd2c0,                  // 000068:  ADDA.W   D0,A1
 	
 // relocate:
 	
-	0xd5b2, 0x9800,          // 000080:  ADD.L    D2,(A2,A1.L)
-	0x5fc9, 0xffd0,          // 000084:  DBLE     D1,*-46    // $000056 loop
+	0xd5b2, 0x9800,          // 00006a:  ADD.L    D2,(A2,A1.L)
+	0x5fc9, 0xffd0,          // 00006e:  DBLE     D1,*-46    // $000040 loop
 	
-	0x584f,                  // 000088:  ADDQ.W   #4,A7
-	0x4a14,                  // 00008a:  TST.B    (A4)
-	0x6704,                  // 00008c:  BEQ.S    *+6    // $000092 no_HWPriv
+	0x584f,                  // 000072:  ADDQ.W   #4,A7
 	
-	0x7001,                  // 00008e:  MOVEQ    #1,D0
-	0xa198,                  // 000090:  _HWPriv
-	
-// no_HWPriv:
-	
-	0x290a,                  // 000092:  MOVE.L   A2,-(A4)
+	0x41fa, 0x0014,          // 000074:  LEA      *+22,A0    // $00008a
+	0x203c, 0x0000, 0x0000,  // 000078:  MOVE.L   #0x00000zzz,D0
+	0x2248,                  // 00007e:  MOVEA.L  A0,A1
+	0xA02E,                  // 000080:  _BlockMove
 	
 // reloc_done:
 	
-	0x4cdf, 0x1f07,          // 000094:  MOVEM.L  (A7)+,D0-D2/A0-A4
-	0x4efa, 0x0000,          // 000098:  JMP      ...
+	0x4cdf, 0x1f07,          // 000082:  MOVEM.L  (A7)+,D0-D2/A0-A4
+	0x4efa, 0x0000,          // 000086:  JMP      ...
 };
 
 #define SPACE  \
-            "    "  \
-"            This"  \
+          "      "  \
+"           This "  \
 "                "  \
 " s  p  a  c  e  "  \
 "                "  \
 "  intentionally "  \
-"          left  "  \
+"                "  \
+"         left   "  \
 "blank.          "  \
 "      "
 
@@ -605,8 +572,11 @@ bool fix_up_far_code( Handle code )
 	
 	mempcpy( qW, STR_LEN( SPACE ) );
 	
+	const UInt32 target_size = data_offset - init_offset;
+	
 	*(UInt32*) (p + 0x0022) = data_offset;
-	*(UInt32*) (p + 0x0048) = xref_offset;
+	*(UInt32*) (p + 0x0032) = xref_offset;
+	*(UInt32*) (p + 0x007a) = target_size;
 	
 	return true;
 }
