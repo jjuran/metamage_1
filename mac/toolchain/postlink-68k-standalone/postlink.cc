@@ -276,8 +276,8 @@
 			// __relocate_compr (inlined)
 			SUBQ.W   #4,A7
 			MOVEA.L  A7,A3                   // scratch space
-			MOVE.L   (A0)+,D1                // xref length
-			SUBQ.L   #1,D1
+			MOVE.W   (A0)+,D1                // xref length
+			SUBQ.W   #1,D1
 			SUBA.L   A1,A1
 			
 		loop:
@@ -460,8 +460,8 @@ static const UInt16 startup_code[] =
 	0xd1fc, 0x0000, 0x0000,  // 000030:  ADDA.L   #0x00000000,A0
 	0x594f,                  // 000036:  SUBQ.W   #4,A7
 	0x264f,                  // 000038:  MOVEA.L  A7,A3
-	0x2218,                  // 00003a:  MOVE.L   (A0)+,D1
-	0x5381,                  // 00003c:  SUBQ.L   #1,D1
+	0x3218,                  // 00003a:  MOVE.W   (A0)+,D1
+	0x5341,                  // 00003c:  SUBQ.W   #1,D1
 	0x93c9,                  // 00003e:  SUBA.L   A1,A1
 	
 // loop:
@@ -559,6 +559,7 @@ bool fix_up_far_code( Handle code )
 	
 	const UInt32 data_offset = *(UInt32*) (p + 0x010a);
 	const UInt32 xref_offset = *(UInt32*) (p + 0x002e);
+	const UInt32 xref_is_odd = xref_offset & 1;
 	
 	const UInt16 main_offset = *(UInt16*) (p + 0x0026) + 0x0026;
 	const UInt16 jump_offset = sizeof startup_code - 2;
@@ -575,8 +576,23 @@ bool fix_up_far_code( Handle code )
 	const UInt32 target_size = data_offset - init_offset;
 	
 	*(UInt32*) (p + 0x0022) = data_offset;
-	*(UInt32*) (p + 0x0032) = xref_offset;
+	*(UInt32*) (p + 0x0032) = xref_offset + xref_is_odd;
 	*(UInt32*) (p + 0x007a) = target_size;
+	
+	/*
+		We limit the xref to 64K - 1 relocations
+		and force it to be word-aligned.
+		
+		If the xref starts on an odd byte offset, slide it down
+		one byte position and advance the offset by one byte.
+		
+		If the xref starts on a word boundary, slide it down
+		two byte positions.
+	*/
+	
+	const UInt32 xref_slack = 2 - xref_is_odd;
+	
+	Munger( code, xref_offset, NULL, xref_slack, NULL, 0  );
 	
 	return true;
 }
