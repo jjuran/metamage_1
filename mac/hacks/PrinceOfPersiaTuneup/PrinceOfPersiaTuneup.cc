@@ -49,6 +49,8 @@
 #define VEC_LEN(array)  array, LENGTH(array)
 
 
+short ROM85 : 0x028e;
+
 static UniversalProcPtr old_TEInit;
 
 static const UInt16 PoP_wait_loop[] =
@@ -138,13 +140,16 @@ void TEInit_patch()
 
 int main()
 {
-	Handle self = Get1Resource( 'INIT', 0 );
-	
-	DetachResource( self );
-	
-	old_TEInit = mac::sys::get_trap_address( _TEInit );
-	
-	mac::sys::set_trap_address( (ProcPtr) TEInit_patch, _TEInit );
+	if ( ROM85 > 0 )
+	{
+		Handle self = Get1Resource( 'INIT', 0 );
+		
+		DetachResource( self );
+		
+		old_TEInit = mac::sys::get_trap_address( _TEInit );
+		
+		mac::sys::set_trap_address( (ProcPtr) TEInit_patch, _TEInit );
+	}
 	
 	return 0;
 }
