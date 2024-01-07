@@ -36,6 +36,8 @@
 
 QHdr VBLQueue : 0x0160;
 
+short ROM85 : 0x028e;
+
 struct VBL_proc_task
 {
 	short move[ 3 ];
@@ -49,7 +51,7 @@ void dummy_VBL_proc( VBLTask* task : __A0 );
 
 int main()
 {
-	if ( VBLQueue.qHead == NULL )
+	if ( ROM85 > 0  &&  VBLQueue.qHead == NULL )
 	{
 		if ( Ptr p = NewPtrSys( sizeof (VBL_proc_task) ) )
 		{
