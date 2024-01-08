@@ -146,9 +146,7 @@ void set_servable( FCB* fcb )
 
 void initialize()
 {
-	FCBSPtr = (FCBS*) NewPtr( sizeof (FCBS) );
-	
-	fast_memset( FCBSPtr, '\0', sizeof (FCBS) );
+	FCBSPtr = (FCBS*) NewPtrClear( sizeof (FCBS) );
 	
 	FCBSPtr->bufSize = sizeof (FCBS);
 }
