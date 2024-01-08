@@ -47,8 +47,6 @@ void mount_virtual_documents_volume()
 	
 	VCB* vcb = &virtual_documents_volume_VCB;
 	
-	fast_memset( vcb, '\0', sizeof (VCB) );
-	
 	vcb->vcbSigWord = 0xD0C5;
 	vcb->vcbFSID    = 0xD0C5;
 	

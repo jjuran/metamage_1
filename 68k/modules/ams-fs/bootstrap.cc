@@ -38,8 +38,6 @@ void mount_virtual_bootstrap_volume()
 	
 	VCB* vcb = &virtual_bootstrap_volume_VCB;
 	
-	fast_memset( vcb, '\0', sizeof (VCB) );
-	
 	vcb->vcbSigWord = 'Ix';
 	vcb->vcbFSID    = 'Ix';
 	
