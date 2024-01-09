@@ -9,15 +9,10 @@
 #ifndef __FILES__
 #include <Files.h>
 #endif
-#ifndef __STRINGCOMPARE__
-#include <StringCompare.h>
-#endif
 
 // Standard C
 #include <errno.h>
-
-// Standard C++
-#include <algorithm>
+#include <stddef.h>
 
 // ams-common
 #include "callouts.hh"
@@ -67,47 +62,12 @@ void mount_virtual_documents_volume()
 
 static plus::var_string filename_cache;
 
-struct cached_filename
-{
-	Str63 name;
-};
-
-static
-bool operator<( const cached_filename& a, const cached_filename& b )
-{
-	return RelString_sans_case( a.name, b.name ) < 0;
-}
-
-static
-void sort_filenames( plus::var_string& cache )
-{
-	const size_t n = cache.size() / dirent_size;
-	
-	cached_filename* begin = (cached_filename*) &cache[ 0 ];
-	cached_filename* end   = begin + n;
-	
-	std::sort( begin, end );
-}
-
 const uint8_t* documents_get_nth( VCB* vcb, short n )
 {
-	if ( n == 1 )
-	{
-		temp_A4 a4;
-		
-		int err = try_to_list( docfs_fd, plus::string::null, filename_cache );
-		
-		sort_filenames( filename_cache );
-	}
+	const int in  = docfs_fd;
+	const int out = docfs_fd;
 	
-	const size_t offset = (n - 1) * dirent_size;
-	
-	if ( offset < filename_cache.size() )
-	{
-		return (const uint8_t*) &filename_cache[ offset ];
-	}
-	
-	return NULL;  // not yet implemented
+	return remotefs_get_nth( in, out, n, filename_cache );
 }
 
 OSErr documents_Close( FCB* fcb )
