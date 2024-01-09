@@ -178,6 +178,13 @@ OSErr bootstrap_GetFileInfo( HFileParam* pb, const uint8_t* name )
 		return paramErr;
 	}
 	
+	if ( pb->ioFDirIndex > 0  &&  pb->ioNamePtr )
+	{
+		--name;
+		
+		fast_memcpy( pb->ioNamePtr, name, 1 + name[ 0 ] );
+	}
+	
 	pb->ioFRefNum = 0;
 	
 	fast_memcpy( &pb->ioFlAttrib, file_info.data(), size );
