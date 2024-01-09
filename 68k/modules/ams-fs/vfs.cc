@@ -15,11 +15,12 @@
 #include "documents.hh"
 #include "macbinaryfs.hh"
 #include "MFS.hh"
+#include "remotefs.hh"
 
 
 static const filesystem_vtable< uint8_t > bootstrap_vtable =
 {
-	&bootstrap_lookup,
+	&remotefs_lookup,
 	&bootstrap_get_nth,
 	
 	NULL,
@@ -32,7 +33,7 @@ static const filesystem_vtable< uint8_t > bootstrap_vtable =
 
 static const filesystem_vtable< uint8_t > documents_vtable =
 {
-	&documents_lookup,
+	&remotefs_lookup,
 	&documents_get_nth,
 	
 	&documents_Close,

@@ -57,16 +57,6 @@ const uint8_t* bootstrap_get_nth( VCB* vcb, short n )
 	return NULL;  // not yet implemented
 }
 
-const uint8_t* bootstrap_lookup( VCB* vcb, const uint8_t* name )
-{
-	if ( name == NULL  ||  name[ 0 ] == '\0' )
-	{
-		return NULL;
-	}
-	
-	return name;
-}
-
 OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 {
 	const Byte is_rsrc = trap_word;  // Open is A000, OpenRF is A00A

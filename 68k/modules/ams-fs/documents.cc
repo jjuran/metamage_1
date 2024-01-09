@@ -110,16 +110,6 @@ const uint8_t* documents_get_nth( VCB* vcb, short n )
 	return NULL;  // not yet implemented
 }
 
-const uint8_t* documents_lookup( VCB* vcb, const uint8_t* name )
-{
-	if ( name == NULL  ||  name[ 0 ] == '\0' )
-	{
-		return NULL;
-	}
-	
-	return name;
-}
-
 OSErr documents_Close( FCB* fcb )
 {
 	Handle h = (Handle) fcb->fcbFlNum;
