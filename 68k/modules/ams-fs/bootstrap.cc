@@ -51,9 +51,14 @@ void mount_virtual_bootstrap_volume()
 	mount_VCB( vcb );
 }
 
+static plus::var_string filename_cache;
+
 const uint8_t* bootstrap_get_nth( VCB* vcb, short n )
 {
-	return NULL;  // not yet implemented
+	const int in  = 6;
+	const int out = 7;
+	
+	return remotefs_get_nth( in, out, n, filename_cache );
 }
 
 OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
