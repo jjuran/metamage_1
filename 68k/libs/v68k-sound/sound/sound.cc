@@ -32,7 +32,7 @@ const int sndpipe_buffer_size = 8 + 4 + 370;
 
 static uint8_t message_buffer[ sndpipe_buffer_size ];
 
-long send_command( short domain, const void* buffer, long buffer_length )
+long send_command( short domain, const void* buffer, uint32_t buffer_length )
 {
 	/*
 		Callers of this function pass a buffer that includes a `mode` field,
