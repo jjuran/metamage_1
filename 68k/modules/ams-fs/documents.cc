@@ -240,7 +240,7 @@ OSErr documents_GetFileInfo( HFileParam* pb, const uint8_t* name )
 		--len;
 	}
 	
-	char path[ 256 + STRLEN( "/" GETFINFO ) ] = {};
+	char path[ 256 + STRLEN( "/" GETFINFO ) ];
 	
 	fast_memcpy( path, name, len );
 	fast_memcpy( path + len, STR_LEN( "/" GETFINFO ) );
