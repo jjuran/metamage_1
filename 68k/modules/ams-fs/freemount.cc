@@ -54,12 +54,9 @@ int try_to_get( int in, int out, const string& path, var_string& data )
 	}
 }
 
-int try_to_get( const char* begin, unsigned len, plus::var_string& data )
+int try_to_get( int in, int out, const char* p, int n, plus::var_string& data )
 {
-	const int in  = 6;
-	const int out = 7;
-	
-	plus::string path( begin, len, vxo::delete_never );
+	plus::string path( p, n, vxo::delete_never );
 	
 	return try_to_get( in, out, path, data );
 }

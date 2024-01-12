@@ -16,13 +16,22 @@ enum
 
 int try_to_get( int I, int O, const plus::string& path, plus::var_string& r );
 
+int try_to_get( int in, int out, const char* p, int n, plus::var_string& data );
+
 inline
 int try_to_get( int fd, const plus::string& path, plus::var_string& data )
 {
 	return try_to_get( fd, fd, path, data );
 }
 
-int try_to_get( const char* begin, unsigned len, plus::var_string& data );
+inline
+int try_to_get( const char* path, int len, plus::var_string& data )
+{
+	const int in  = 6;
+	const int out = 7;
+	
+	return try_to_get( in, out, path, len, data );
+}
 
 int try_to_put( int fd, const plus::string& path, const plus::string& data );
 
