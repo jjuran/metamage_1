@@ -162,20 +162,23 @@ OSErr bootstrap_GetFileInfo( HFileParam* pb, const uint8_t* name )
 	fast_memcpy( path, name, len );
 	fast_memcpy( path + len, STR_LEN( "/" GETFINFO ) );
 	
+	len += STRLEN( "/" GETFINFO );
+	
 	plus::var_string file_info;
 	
-	int err = try_to_get( path, len + STRLEN( "/" GETFINFO ), file_info );
+	int err = try_to_get( path, len, file_info );
 	
 	if ( err < 0 )
 	{
-		return fnfErr;  // TODO:  Check for other errors.
+		// TODO:  Check for other errors.
+		return fnfErr;
 	}
 	
 	const Size size = sizeof (FileParam) - offsetof( FileParam, ioFlAttrib );
 	
 	if ( file_info.size() != size )
 	{
-		return paramErr;
+		return ioErr;
 	}
 	
 	if ( pb->ioFDirIndex > 0  &&  pb->ioNamePtr )
