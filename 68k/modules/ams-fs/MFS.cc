@@ -236,7 +236,7 @@ OSErr MFS_GetFileInfo( HFileParam* pb, const mfs::_fde* entry )
 	
 	fast_memcpy( &pb->ioFlAttrib, entry, n );
 	
-	if ( pb->ioNamePtr )
+	if ( pb->ioFDirIndex > 0  &&  pb->ioNamePtr )
 	{
 		ConstStr255Param name = entry->flNam;
 		

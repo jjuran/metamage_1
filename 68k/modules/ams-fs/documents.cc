@@ -264,7 +264,7 @@ OSErr documents_GetFileInfo( HFileParam* pb, const uint8_t* name )
 		return ioErr;
 	}
 	
-	if ( pb->ioNamePtr )
+	if ( pb->ioFDirIndex > 0  &&  pb->ioNamePtr )
 	{
 		--name;
 		

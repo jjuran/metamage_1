@@ -175,7 +175,7 @@ OSErr MacBinary_GetFileInfo( HFileParam* pb, const macbinary::hdr* h )
 	fast_memcpy( &pb->ioFlCrDat, h->crDate, 4 );
 	fast_memcpy( &pb->ioFlMdDat, h->mdDate, 4 );
 	
-	if ( pb->ioNamePtr )
+	if ( pb->ioFDirIndex > 0  &&  pb->ioNamePtr )
 	{
 		ConstStr255Param name = h->filename;
 		
