@@ -25,6 +25,12 @@ int try_to_get( int fd, const plus::string& path, plus::var_string& data )
 }
 
 inline
+int try_to_get( int fd, const char* path, int len, plus::var_string& data )
+{
+	return try_to_get( fd, fd, path, len, data );
+}
+
+inline
 int try_to_get( const char* path, int len, plus::var_string& data )
 {
 	const int in  = 6;

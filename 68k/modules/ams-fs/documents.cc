@@ -245,11 +245,11 @@ OSErr documents_GetFileInfo( HFileParam* pb, const uint8_t* name )
 	fast_memcpy( path, name, len );
 	fast_memcpy( path + len, STR_LEN( "/" GETFINFO ) );
 	
-	plus::string pathname( path, len + STRLEN( "/" GETFINFO ) );
+	len += STRLEN( "/" GETFINFO );
 	
 	plus::var_string file_info;
 	
-	int err = try_to_get( docfs_fd, pathname, file_info );
+	int err = try_to_get( docfs_fd, path, len, file_info );
 	
 	if ( err < 0 )
 	{
