@@ -1457,21 +1457,49 @@ pascal void EndUpdate_patch( WindowRef window )
 
 pascal void SetWRefCon_patch( WindowPeek window, long data )
 {
+	if ( ! window )
+	{
+		WARNING = "SetWRefCon:  Ignoring NULL window";
+		
+		return;
+	}
+	
 	window->refCon = data;
 }
 
 pascal long GetWRefCon_patch( WindowPeek window )
 {
+	if ( ! window )
+	{
+		WARNING = "GetWRefCon:  Ignoring NULL window";
+		
+		return 0;
+	}
+	
 	return window->refCon;
 }
 
 pascal void SetWindowPic_patch( WindowPeek window, PicHandle pic )
 {
+	if ( ! window )
+	{
+		WARNING = "SetWindowPic:  Ignoring NULL window";
+		
+		return;
+	}
+	
 	window->windowPic = pic;
 }
 
 pascal PicHandle GetWindowPic_patch( WindowPeek window )
 {
+	if ( ! window )
+	{
+		WARNING = "GetWindowPic:  Ignoring NULL window";
+		
+		return NULL;
+	}
+	
 	return window->windowPic;
 }
 
