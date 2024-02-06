@@ -112,13 +112,14 @@ CGImageRef create_image_from_data( size_t           width,
 	return NULL;
 }
 
-CGImageRef create_bilevel_image( const void* base, int rowBytes, int w, int h )
+CGImageRef
+create_monochrome_image( const void* base, int stride, int w, int h, int bpp )
 {
 	return create_image_from_data( w,
 	                               h,
-	                               1,  // bits per component
-	                               1,  // bits per pixel
-	                               rowBytes,
+	                               bpp,  // bits per component
+	                               bpp,  // bits per pixel
+	                               stride,
 	                               GrayColorSpace(),
 	                               kCGImageAlphaNone,
 	                               (char*) base );

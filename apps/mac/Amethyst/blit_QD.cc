@@ -16,7 +16,7 @@
 
 static CGrafPtr captured_display_port;
 
-static BitMap srcBits;
+static PixMap srcBits;
 static Rect   dstRect;
 
 #if CONFIG_QUICKDRAW
@@ -36,8 +36,20 @@ QD_blitter::~QD_blitter()
 	DisposePort( captured_display_port );
 }
 
-void QD_blitter::prep( int stride, int width, int height )
+void QD_blitter::prep( int stride, int width, int height, int depth )
 {
+	if ( depth > 1 )
+	{
+		srcBits.hRes =
+		srcBits.vRes = 72 << 16;
+		
+		srcBits.pixelSize = depth;
+		srcBits.cmpCount  = 1;
+		srcBits.cmpSize   = depth;
+		
+		stride |= 0x8000;
+	}
+	
 	srcBits.rowBytes      = stride;
 	srcBits.bounds.bottom = height;
 	srcBits.bounds.right  = width;

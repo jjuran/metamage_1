@@ -14,7 +14,7 @@ static CGRect image_bounds;
 
 static CGContextRef captured_display_context;
 
-static int w, h, rowBytes;
+static int w, h, rowBytes, bpp;
 
 CG_blitter::CG_blitter( CGDirectDisplayID id )
 {
@@ -38,10 +38,11 @@ CG_blitter::~CG_blitter()
 	CGContextClearRect( captured_display_context, display_bounds );
 }
 
-void CG_blitter::prep( int stride, int width, int height )
+void CG_blitter::prep( int stride, int width, int height, int depth )
 {
 	w        = width;
 	h        = height;
+	bpp      = depth;
 	rowBytes = stride;
 }
 
@@ -54,7 +55,9 @@ void CG_blitter::area( CGRect bounds )
 
 void CG_blitter::blit( const void* src_addr )
 {
-	if ( CGImageRef image = create_bilevel_image( src_addr, rowBytes, w, h ) )
+	const void* p = src_addr;
+	
+	if ( CGImageRef image = create_monochrome_image( p, rowBytes, w, h, bpp ) )
 	{
 		CGContextDrawImage( captured_display_context, image_bounds, image );
 		

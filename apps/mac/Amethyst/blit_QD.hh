@@ -24,7 +24,7 @@ class QD_blitter
 		explicit QD_blitter( CGDirectDisplayID id );
 		~QD_blitter();
 		
-		static void prep( int stride, int width, int height );
+		static void prep( int stride, int width, int height, int depth = 1 );
 		
 		static void area( CGRect bounds );
 		

@@ -12,6 +12,7 @@
 #endif
 
 
-CGImageRef create_bilevel_image( const void* base, int rowBytes, int w, int h );
+CGImageRef
+create_monochrome_image( const void* base, int stride, int w, int h, int bpp );
 
 #endif
