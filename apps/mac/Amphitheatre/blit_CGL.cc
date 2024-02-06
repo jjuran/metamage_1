@@ -102,9 +102,9 @@ CGL_blitter::~CGL_blitter()
 	CGLDestroyContext( context );
 }
 
-void CGL_blitter::prep( int stride, int width, int height )
+void CGL_blitter::prep( int stride, int width, int height, int depth )
 {
-	glfb::set_dimensions( width, height );
+	glfb::set_dimensions( width, height, depth );
 }
 
 void CGL_blitter::area( CGRect bounds )
