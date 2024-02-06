@@ -205,7 +205,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	Blitter blitter( captured_display.id() );
 	
-	blitter.prep( stride, width, height );
+	blitter.prep( stride, width, height, desc.weight );
 	
 	blitter.area( display_area( display_bounds, width, height ) );
 	
