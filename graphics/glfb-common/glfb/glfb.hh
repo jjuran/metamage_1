@@ -25,7 +25,7 @@ namespace glfb
 	
 	void initialize();
 	
-	void set_dimensions( int width, int height );
+	void set_dimensions( int width, int height, int depth = 1 );
 	
 	void set_screen_image( const void* src_addr );
 	void set_cursor_image( const void* src_addr );

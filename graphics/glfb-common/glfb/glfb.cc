@@ -37,6 +37,7 @@ int hotspot_dy;
 
 static int image_width;
 static int image_height;
+static int image_depth;
 
 static int tex_width;
 static int tex_height;
@@ -139,7 +140,7 @@ void initialize()
 	init_texture( screen_texture );
 }
 
-void set_dimensions( int width, int height )
+void set_dimensions( int width, int height, int depth )
 {
 	glMatrixMode( GL_PROJECTION );
 	glOrtho( 0, width, 0, height, -1, 1 );
@@ -147,6 +148,7 @@ void set_dimensions( int width, int height )
 	
 	image_width  = width;
 	image_height = height;
+	image_depth  = depth;
 	
 #ifdef GL_TEXTURE_RECTANGLE_ARB
 	
@@ -177,11 +179,31 @@ void set_dimensions( int width, int height )
 	screen_texture_data = (uint8_t*) malloc( tex_width * tex_height );
 }
 
+static inline
+void transcode_inverted( const uint8_t* src, uint8_t* dst, int n )
+{
+	while ( n-- > 0 )
+	{
+		*dst++ = ~*src++;
+	}
+}
+
 void set_screen_image( const void* src_addr )
 {
-	const int n_octets = image_width * image_height / 8u;
+	const uint8_t* src = (const uint8_t*) src_addr;
 	
-	transcode_8x_1bpp_to_8bpp( src_addr, screen_texture_data, n_octets );
+	const int n_octets = image_width * image_height * image_depth / 8;
+	
+	switch ( image_depth )
+	{
+		case 1:
+			transcode_8x_1bpp_to_8bpp( src, screen_texture_data, n_octets );
+			break;
+		
+		case 8:
+			transcode_inverted( src, screen_texture_data, n_octets );
+			break;
+	}
 	
 	src_addr = screen_texture_data;
 	
