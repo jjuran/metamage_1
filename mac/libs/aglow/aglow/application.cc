@@ -506,7 +506,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	create_AGL_context();
 	
-	set_AGL_geometry( desc.stride, desc.width, desc.height );
+	set_AGL_geometry( desc.stride, desc.width, desc.height, desc.weight );
 	
 	screen_window = create_window( desc, NULL );
 	

@@ -109,9 +109,9 @@ void attach_to_window( WindowRef window )
 	glViewport( 0, 0, portRect.right, portRect.bottom );
 }
 
-void set_AGL_geometry( int stride, int width, int height )
+void set_AGL_geometry( int stride, int width, int height, int depth )
 {
-	glfb::set_dimensions( width, height );
+	glfb::set_dimensions( width, height, depth );
 }
 
 void render_AGL()

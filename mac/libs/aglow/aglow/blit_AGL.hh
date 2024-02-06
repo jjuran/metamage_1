@@ -17,7 +17,7 @@ void destroy_AGL_context();
 
 void attach_to_window( WindowRef window );
 
-void set_AGL_geometry( int stride, int width, int height );
+void set_AGL_geometry( int stride, int width, int height, int depth = 1 );
 
 void render_AGL();
 
