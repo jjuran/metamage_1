@@ -24,6 +24,7 @@
 namespace glfb
 {
 
+bool palette_enabled;
 bool overlay_enabled;
 
 bool cursor_enabled;
@@ -167,9 +168,28 @@ void set_dimensions( int width, int height, int depth )
 	
 #endif
 	
+	size_t buffer_size = tex_width * tex_height;
+	
+	palette_enabled = depth > 1  &&  depth < 16;
+	
+	if ( depth > 8  ||  palette_enabled )
+	{
+		texture_format = GL_RGBA;
+		
+		texture_type = depth == 16 ? GL_UNSIGNED_SHORT_1_5_5_5_REV
+		                           : GL_UNSIGNED_BYTE;
+		
+		if ( depth != 16 )
+		{
+			buffer_size *= 2;
+		}
+		
+		buffer_size *= 2;
+	}
+	
 	glTexImage2D( texture_target,
 	              0,
-	              GL_LUMINANCE,
+	              GL_RGB,
 	              tex_width,
 	              tex_height,
 	              0,
@@ -179,7 +199,7 @@ void set_dimensions( int width, int height, int depth )
 	
 	free( screen_texture_data );
 	
-	screen_texture_data = (uint8_t*) malloc( tex_width * tex_height );
+	screen_texture_data = (uint8_t*) malloc( buffer_size );
 }
 
 static uint8_t bumpy_ramp[] =
@@ -261,6 +281,24 @@ void transcode_inverted( const uint8_t* src, uint8_t* dst, int n )
 	}
 }
 
+static
+void transcode_paletted( const uint8_t* src, uint8_t* dst, int n )
+{
+	static bool init_color_palette = (make_color_palette(), true);
+	
+	while ( n-- > 0 )
+	{
+		uint8_t i = *src++;
+		
+		const uint8_t* entry = &color_palette[ i * 3 ];
+		
+		*dst++ = *entry++;
+		*dst++ = *entry++;
+		*dst++ = *entry++;
+		*dst++ = 0xFF;
+	}
+}
+
 void set_screen_image( const void* src_addr )
 {
 	const uint8_t* src = (const uint8_t*) src_addr;
@@ -274,7 +312,14 @@ void set_screen_image( const void* src_addr )
 			break;
 		
 		case 8:
-			transcode_inverted( src, screen_texture_data, n_octets );
+			if ( palette_enabled )
+			{
+				transcode_paletted( src, screen_texture_data, n_octets );
+			}
+			else
+			{
+				transcode_inverted( src, screen_texture_data, n_octets );
+			}
 			break;
 	}
 	
