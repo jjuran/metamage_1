@@ -62,6 +62,9 @@ static int crsr_y0;
 static int crsr_x1;
 static int crsr_y1;
 
+static GLenum cursor_data_format = GL_LUMINANCE;
+static GLenum cursor_data_type   = GL_UNSIGNED_BYTE;
+
 static GLenum texture_format = GL_LUMINANCE;
 static GLenum texture_type   = GL_UNSIGNED_BYTE;
 
@@ -118,8 +121,8 @@ void initialize()
 		              cursor_width,
 		              cursor_height,
 		              0,
-		              texture_format,
-		              texture_type,
+		              cursor_data_format,
+		              cursor_data_type,
 		              0 );  // NULL
 		
 		init_texture( cursor_mask_texture );
@@ -130,8 +133,8 @@ void initialize()
 		              cursor_width,
 		              cursor_height,
 		              0,
-		              texture_format,
-		              texture_type,
+		              cursor_data_format,
+		              cursor_data_type,
 		              0 );  // NULL
 		
 		size_t n_bytes = cursor_width * cursor_height * 2;
@@ -296,8 +299,8 @@ void set_cursor_image( const void* src_addr )
 		                 0,
 		                 cursor_width,
 		                 cursor_height,
-		                 texture_format,
-		                 texture_type,
+		                 cursor_data_format,
+		                 cursor_data_type,
 		                 cursor_texture_data + 256 );
 		
 		glBindTexture( texture_target, cursor_face_texture );
@@ -308,8 +311,8 @@ void set_cursor_image( const void* src_addr )
 		                 0,
 		                 cursor_width,
 		                 cursor_height,
-		                 texture_format,
-		                 texture_type,
+		                 cursor_data_format,
+		                 cursor_data_type,
 		                 cursor_texture_data );
 		
 	}
