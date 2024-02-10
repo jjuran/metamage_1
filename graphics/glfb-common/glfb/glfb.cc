@@ -37,6 +37,10 @@ int cursor_y;
 int hotspot_dx;
 int hotspot_dy;
 
+static Byte palette[ 4 * 256 ];
+
+static int palette_size;
+
 static int image_width;
 static int image_height;
 static int image_depth;
@@ -171,10 +175,11 @@ void set_dimensions( int width, int height, int depth )
 	
 	size_t buffer_size = tex_width * tex_height;
 	
-	if ( depth > 8 )
+	if ( depth > 8  ||  palette_size > 0 )
 	{
 		/*
-			Switch to color output if the bit depth is 16 or 32.
+			Switch to color output if the bit depth is 16 or 32,
+			or if we have a palette (even for a bit depth of 1).
 		*/
 		
 		texture_format = GL_RGBA;
@@ -197,6 +202,38 @@ void set_dimensions( int width, int height, int depth )
 	screen_texture_data = (Byte*) malloc( buffer_size );
 }
 
+void set_palette( const unsigned short* colors, int n )
+{
+	palette_size = n;
+	
+	Byte* p = palette;
+	
+	const unsigned short* color = colors;
+	
+	for ( int i = 0;  i < n;  ++i )
+	{
+		++color;
+		
+		*p++ = *color++ >> 8;
+		*p++ = *color++ >> 8;
+		*p++ = *color++ >> 8;
+		*p++ = 0xFF;
+	}
+}
+
+static inline
+Byte* write_pixel_from_palette( Byte* dst, Byte index )
+{
+	const Byte* entry = &palette[ index * 4 ];
+	
+	*dst++ = *entry++;
+	*dst++ = *entry++;
+	*dst++ = *entry++;
+	*dst++ = *entry++;
+	
+	return dst;
+}
+
 static inline
 void transcode_8x_1bpp_to_8bpp( const Byte* src, Byte* dst, int n )
 {
@@ -207,6 +244,22 @@ void transcode_8x_1bpp_to_8bpp( const Byte* src, Byte* dst, int n )
 	*/
 	
 	transcode::_8x_1bpp_to_8bpp( src, dst, n, 0xFF, 0x00 );
+}
+
+static inline
+void transcode_1bpp_paletted( const Byte* src, Byte* dst, int n )
+{
+	while ( n-- > 0 )
+	{
+		Byte octet = *src++;
+		
+		for ( int i = 0;  i < 8;  ++i )
+		{
+			octet = octet << 1 | octet >> 7;  // rotate left 1 bit
+			
+			dst = write_pixel_from_palette( dst, octet & 0x1 );
+		}
+	}
 }
 
 static inline
@@ -223,6 +276,22 @@ void transcode_4x_2bpp_to_8bpp( const Byte* src, Byte* dst, int n )
 			octet = octet << 2 | octet >> 6;  // rotate left 2 bits
 			
 			*dst++ = ramp[ octet & 0x3 ];
+		}
+	}
+}
+
+static inline
+void transcode_2bpp_paletted( const Byte* src, Byte* dst, int n )
+{
+	while ( n-- > 0 )
+	{
+		Byte octet = *src++;
+		
+		for ( int i = 0;  i < 4;  ++i )
+		{
+			octet = octet << 2 | octet >> 6;  // rotate left 2 bits
+			
+			dst = write_pixel_from_palette( dst, octet & 0x3 );
 		}
 	}
 }
@@ -245,12 +314,36 @@ void transcode_2x_4bpp_to_8bpp( const Byte* src, Byte* dst, int n )
 	}
 }
 
+static
+void transcode_4bpp_paletted( const Byte* src, Byte* dst, int n )
+{
+	while ( n-- > 0 )
+	{
+		Byte octet = *src++;
+		
+		Byte i = octet >>  4;
+		Byte j = octet & 0xF;
+		
+		dst = write_pixel_from_palette( dst, i );
+		dst = write_pixel_from_palette( dst, j );
+	}
+}
+
 static inline
 void transcode_inverted( const Byte* src, Byte* dst, int n )
 {
 	while ( n-- > 0 )
 	{
 		*dst++ = ~*src++;
+	}
+}
+
+static
+void transcode_8bpp_paletted( const Byte* src, Byte* dst, int n )
+{
+	while ( n-- > 0 )
+	{
+		dst = write_pixel_from_palette( dst, *src++ );
 	}
 }
 
@@ -306,19 +399,47 @@ void set_screen_image( const void* src_addr )
 	switch ( image_depth )
 	{
 		case 1:
-			transcode_8x_1bpp_to_8bpp( src, screen_texture_data, n_octets );
+			if ( palette_size > 0 )
+			{
+				transcode_1bpp_paletted( src, screen_texture_data, n_octets );
+			}
+			else
+			{
+				transcode_8x_1bpp_to_8bpp( src, screen_texture_data, n_octets );
+			}
 			break;
 		
 		case 2:
-			transcode_4x_2bpp_to_8bpp( src, screen_texture_data, n_octets );
+			if ( palette_size > 0 )
+			{
+				transcode_2bpp_paletted( src, screen_texture_data, n_octets );
+			}
+			else
+			{
+				transcode_4x_2bpp_to_8bpp( src, screen_texture_data, n_octets );
+			}
 			break;
 		
 		case 4:
-			transcode_2x_4bpp_to_8bpp( src, screen_texture_data, n_octets );
+			if ( palette_size > 0 )
+			{
+				transcode_4bpp_paletted( src, screen_texture_data, n_octets );
+			}
+			else
+			{
+				transcode_2x_4bpp_to_8bpp( src, screen_texture_data, n_octets );
+			}
 			break;
 		
 		case 8:
-			transcode_inverted( src, screen_texture_data, n_octets );
+			if ( palette_size > 0 )
+			{
+				transcode_8bpp_paletted( src, screen_texture_data, n_octets );
+			}
+			else
+			{
+				transcode_inverted( src, screen_texture_data, n_octets );
+			}
 			break;
 		
 		case 16:
