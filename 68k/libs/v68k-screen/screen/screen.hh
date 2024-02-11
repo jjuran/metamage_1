@@ -10,8 +10,17 @@
 #include <stdint.h>
 
 
+namespace raster
+{
+	
+	struct clut_data;
+	
+}
+
 namespace v68k   {
 namespace screen {
+
+extern raster::clut_data* clut;
 
 extern uint8_t* page_1_virtual_buffer;
 extern uint8_t* page_2_virtual_buffer;
