@@ -13,6 +13,7 @@
 #include <errno.h>
 
 // raster
+#include "raster/clut.hh"
 #include "raster/load.hh"
 #include "raster/sync.hh"
 
@@ -41,6 +42,9 @@ uint8_t* page_2_virtual_buffer;
 
 uint8_t* page_1_transit_buffer;
 uint8_t* page_2_transit_buffer;
+
+raster::clut_data* virtual_clut;
+raster::clut_data* transit_clut;
 
 static raster_metadata* meta;
 
@@ -136,6 +140,7 @@ int set_screen_backing_store_file( const char* path )
 	}
 	
 	the_sync_relay = find_sync( &meta->note );
+	transit_clut   = find_clut( &meta->note );
 	
 	return 0;
 }
