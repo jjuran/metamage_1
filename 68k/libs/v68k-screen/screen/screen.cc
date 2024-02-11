@@ -14,6 +14,7 @@
 
 // raster
 #include "raster/load.hh"
+#include "raster/sync.hh"
 
 // v68k-screen
 #include "screen/shared_memory.hh"
@@ -134,12 +135,7 @@ int set_screen_backing_store_file( const char* path )
 		spare_transit_buffer = page_2_transit_buffer;
 	}
 	
-	/*
-		This assumes that the 'sync' note is the first note,
-		which we might have to revisit once we have a palette.
-	*/
-	
-	the_sync_relay = &data< sync_relay >( meta->note );
+	the_sync_relay = find_sync( &meta->note );
 	
 	return 0;
 }
