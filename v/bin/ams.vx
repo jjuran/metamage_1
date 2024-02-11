@@ -29,6 +29,7 @@ var cpu = null
 var mem = null
 var modem = null
 var app_name = null
+var coloring = 0
 var screen_res = null
 var has_cursor = bool getenv "AMS_CURSOR"
 
@@ -53,6 +54,10 @@ while args do
 		else if arg == "--bpp" then
 		{
 			bpp = int *args++
+		}
+		else if arg == "--color" then
+		{
+			coloring = 1
 		}
 		else if arg == "--cpu" then
 		{
@@ -513,7 +518,14 @@ let xv_opt = "--xv=" xv (*) bool xv
 
 run [ "mkfifo", update ]
 
-run [ "skif make -fg " screen_res "*" bpp " -c2 -m paint -R" / ' ', screen ]
+if bpp > 8 then
+{
+	coloring = 2
+}
+
+let raster_model = ["paint", "palette", "xRGB"][ coloring ]
+
+run [ "skif make -fg " screen_res "*" bpp " -c2 -R -m" / ' ', raster_model, screen ]
 
 if has_cursor then
 {
