@@ -362,6 +362,7 @@ int execute_68k( int argc, char* const* argv )
 	{
 		CPUFlag   = 0x012F,
 		CrsrSave  = 0x088C,
+		MainDevice  = 0x08A4,
 	};
 	
 	emu.put_byte( CPUFlag, mc68k_model >> 4, v68k::user_data_space );
@@ -369,6 +370,11 @@ int execute_68k( int argc, char* const* argv )
 	if ( has_cursor )
 	{
 		emu.put_long( CrsrSave, kHardwareCursor, user_data_space );
+	}
+	
+	if ( v68k::screen::transit_clut )
+	{
+		emu.put_long( MainDevice, 'clut', user_data_space );
 	}
 	
 	using v68k::exec::load_and_run;
