@@ -790,6 +790,8 @@ int execute_68k( int argc, char* const* argv )
 		ScrnBase  = 0x0824,
 		CrsrPin   = 0x0834,
 		CrsrSave  = 0x088C,
+		
+		MainDevice = 0x08A4,
 	};
 	
 	emu.put_byte( CPUFlag, mc68k_model >> 4, v68k::user_data_space );
@@ -833,6 +835,11 @@ int execute_68k( int argc, char* const* argv )
 	if ( has_cursor )
 	{
 		emu.put_long( CrsrSave, kHardwareCursor, user_data_space );
+	}
+	
+	if ( v68k::screen::transit_clut )
+	{
+		emu.put_long( MainDevice, 'clut', user_data_space );
 	}
 	
 	load_Mac_traps( mem );
