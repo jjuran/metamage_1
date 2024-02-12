@@ -5,6 +5,12 @@
 
 #include "memory/memory.hh"
 
+// Standard C
+#include <string.h>
+
+// raster
+#include "raster/clut_detail.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -201,6 +207,48 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		namespace sound = v68k::sound;
 		
 		return sound::translate( addr - main_sound_addr, length, fc, access );
+	}
+	
+	if ( v68k::screen::virtual_clut )
+	{
+		using v68k::screen::transit_clut;
+		using v68k::screen::virtual_clut;
+		
+		enum
+		{
+			clut_base = 0x00EFD800,
+		};
+		
+		uint32_t clut_size = sizeof_clut( *transit_clut );
+		
+		if ( addr_within_span( addr, clut_base, clut_size ) )
+		{
+			if ( access == mem_exec )
+			{
+				return 0;  // NULL
+			}
+			
+			uint8_t* p = (uint8_t*) virtual_clut + (addr - clut_base);
+			
+			const uint8_t* flags   = (const uint8_t*) &virtual_clut->flags;
+			const uint8_t* palette = (const uint8_t*) &virtual_clut->palette;
+			
+			if ( p >= flags  &&  p < palette )
+			{
+				return 0;  // NULL.  flags, reserved, and max are off-limits
+			}
+			
+			using namespace v68k::screen;
+			
+			if ( p < flags  &&  is_unlocked()  &&  access == v68k::mem_update )
+			{
+				memcpy( transit_clut, virtual_clut, clut_size );
+				
+				update();  // seed was updated
+			}
+			
+			return p;
+		}
 	}
 	
 	if ( (addr >> 16) == 0x0040 )
