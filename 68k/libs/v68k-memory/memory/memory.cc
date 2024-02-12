@@ -5,6 +5,12 @@
 
 #include "memory/memory.hh"
 
+// iota
+#include "iota/endian.hh"
+
+// raster
+#include "raster/clut_detail.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -29,6 +35,9 @@
 // v68k-sound
 #include "sound/sound.hh"
 
+// v68k-update
+#include "update/notify.hh"
+
 // v68k-VIA
 #include "VIA/VIA.hh"
 
@@ -41,6 +50,8 @@
 namespace v68k   {
 namespace memory {
 
+using raster::clut_data;
+
 usermode_memory_access major_system_vector_access;
 
 uint32_t alt_screen_addr  = 0x00012700;
@@ -52,6 +63,26 @@ const uint32_t sound_size = 740;
 static uint8_t* low_memory_base;
 static uint32_t low_memory_size;
 
+
+static
+void update_palette( const clut_data& src, clut_data& dst )
+{
+	for ( int i = 0;  i <= src.max;  ++i )
+	{
+		dst.palette[ i ].value = iota::u16_from_big( src.palette[ i ].value );
+		dst.palette[ i ].red   = iota::u16_from_big( src.palette[ i ].red   );
+		dst.palette[ i ].green = iota::u16_from_big( src.palette[ i ].green );
+		dst.palette[ i ].blue  = iota::u16_from_big( src.palette[ i ].blue  );
+	}
+	
+	/*
+		Update the seed last.  Don't touch the flags, reserved, or max fields.
+	*/
+	
+	dst.seed = iota::u32_from_big( src.seed );
+	
+	v68k::update::notify();
+}
 
 static inline
 bool vid_x2()
@@ -242,6 +273,74 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		namespace sound = v68k::sound;
 		
 		return sound::translate( addr - main_sound_addr, length, fc, access );
+	}
+	
+	using raster::clut_header;
+	
+	using v68k::screen::transit_clut;
+	using v68k::screen::virtual_clut;
+	
+	/*
+		CLUT memory is analogous to screen memory, in that it exists
+		both as a host-memory-mapped transit buffer (by which the back
+		end communicates with the front end) and as a virtual buffer
+		in emulated memory which 68K code can access.
+		
+		One difference is that the transit buffer is optional -- it
+		will only exist if the screen's SKIF file has a 'clut' note.
+		However, the virtual buffer is always present:  If there's a
+		transit buffer, a virtual buffer is allocated to match its
+		capacity; if not, an immutable null CLUT header (with zero
+		entries) is used.  The null CLUT header's `max` field contains
+		zero, although there are zero table entries, not one (max + 1).
+		
+		The CLUT header's address is always $EFD7F8.  If the CLUT has
+		entries, the first entry is at $EFD800.  A maximally sized CLUT
+		of 256 entries ends at $EFE000.
+	*/
+	
+	enum
+	{
+		clut_base = 0x00EFD7F8,  // extends up to $EFE000
+	};
+	
+	const uint32_t clut_size = transit_clut ? sizeof_clut( *transit_clut )
+	                                        : sizeof (clut_header);
+	
+	if ( addr_within_span( addr, clut_base, clut_size ) )
+	{
+		if ( access == mem_exec )
+		{
+			return 0;  // NULL
+		}
+		
+		uint8_t* p = (uint8_t*) virtual_clut + (addr - clut_base);
+		uint8_t* q = p + length;
+		
+		if ( access == mem_read )
+		{
+			return p;  // the whole CLUT is readable
+		}
+		
+		if ( ! transit_clut )
+		{
+			return 0;  // NULL:  the null CLUT header is immutable
+		}
+		
+		const uint8_t* flags   = (const uint8_t*) &virtual_clut->flags;
+		const uint8_t* palette = (const uint8_t*) &virtual_clut->palette;
+		
+		if ( q > flags  &&  p < palette )
+		{
+			return 0;  // NULL:  flags, reserved, and max are off-limits
+		}
+		
+		if ( p < flags  &&  access == mem_update )
+		{
+			update_palette( *virtual_clut, *transit_clut );
+		}
+		
+		return p;
 	}
 	
 	if ( (addr >> 16) == 0x0040 )
