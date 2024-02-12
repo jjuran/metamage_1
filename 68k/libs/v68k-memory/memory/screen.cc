@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// rasterlib
+#include "raster/clut_detail.hh"
+
 // v68k-screen
 #include "screen/screen.hh"
 #include "screen/storage.hh"
@@ -20,10 +23,16 @@
 namespace v68k   {
 namespace memory {
 
+using raster::clut_data;
+using raster::clut_header;
+
 using v68k::screen::page_1_virtual_buffer;
 using v68k::screen::the_screen_size;
+using v68k::screen::transit_clut;
 using v68k::screen::virtual_buffer;
+using v68k::screen::virtual_clut;
 
+static clut_header null_clut;
 
 int allocate_screen()
 {
@@ -41,6 +50,17 @@ int allocate_screen()
 		page_1_virtual_buffer = (uint8_t*) virtual_buffer;
 		
 		main_screen_addr = 0x00E00000;
+		
+		virtual_clut = (clut_data*) &null_clut;
+		
+		if ( transit_clut )
+		{
+			size_t size = sizeof_clut( *transit_clut );
+			
+			virtual_clut = (clut_data*) malloc( size );
+			
+			virtual_clut->max = transit_clut->max;
+		}
 	}
 	
 	return 0;
