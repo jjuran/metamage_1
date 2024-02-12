@@ -22,6 +22,9 @@
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
+// rasterlib
+#include "raster/clut_detail.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -1027,7 +1030,9 @@ char* const* get_options( char** argv )
 				
 				using v68k::screen::page_1_virtual_buffer;
 				using v68k::screen::the_screen_size;
+				using v68k::screen::transit_clut;
 				using v68k::screen::virtual_buffer;
+				using v68k::screen::virtual_clut;
 				
 				if ( the_screen_size != 21888 )
 				{
@@ -1038,6 +1043,15 @@ char* const* get_options( char** argv )
 					page_1_virtual_buffer = (uint8_t*) virtual_buffer;
 					
 					main_screen_addr = 0x00E00000;
+					
+					if ( transit_clut )
+					{
+						using raster::clut_data;
+						
+						size_t size = sizeof_clut( *transit_clut );
+						
+						virtual_clut = (clut_data*) malloc( size );
+					}
 				}
 				
 				break;
