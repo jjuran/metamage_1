@@ -43,7 +43,8 @@ uint8_t* page_2_virtual_buffer;
 uint8_t* page_1_transit_buffer;
 uint8_t* page_2_transit_buffer;
 
-raster::clut_data* clut;
+raster::clut_data* virtual_clut;
+raster::clut_data* transit_clut;
 
 static raster_metadata* meta;
 
@@ -114,7 +115,7 @@ void initialize( raster_load& raster, uint32_t raster_size )
 	
 	if ( raster_note* clut_note = find( &note, Note_clut ) )
 	{
-		clut = &data< clut_data >( *clut_note );
+		transit_clut = &data< clut_data >( *clut_note );
 	}
 }
 
