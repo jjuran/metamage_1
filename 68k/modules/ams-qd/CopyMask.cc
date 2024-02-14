@@ -11,7 +11,7 @@
 #endif
 
 // ams-common
-#include "redraw_lock.hh"
+#include "scoped_zone.hh"
 
 
 #pragma exceptions off
@@ -24,15 +24,13 @@ pascal void CopyMask_patch( const BitMap*  srcBits,
                             const Rect*    maskRect,
                             const Rect*    dstRect )
 {
-	redraw_lock lock( *dstBits, *dstRect );
+	static RgnHandle maskRgn = (scoped_zone(), NewRgn());
 	
-	/*
-		This approach doesn't clip the source to the mask, contrary to Inside
-		Macintosh, Volume IV.  But as long as the source doesn't contain any
-		bits outside the mask that are set (which it shouldn't, since Mac OS
-		wouldn't be drawing them anyway), we'll produce the correct result.
-	*/
+	BitMapToRegion( maskRgn, maskBits );
 	
-	CopyBits( maskBits, dstBits, maskRect, dstRect, srcBic, NULL );
-	CopyBits( srcBits,  dstBits, srcRect,  dstRect, srcXor, NULL );
+	OffsetRgn( maskRgn,
+	           dstRect->left - srcRect->left,
+	           dstRect->top  - srcRect->top );
+	
+	CopyBits( srcBits,  dstBits, srcRect,  dstRect, srcCopy, maskRgn );
 }
