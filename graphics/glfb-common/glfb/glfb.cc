@@ -171,9 +171,20 @@ void set_dimensions( int width, int height, int depth )
 	
 	size_t buffer_size = tex_width * tex_height;
 	
+	if ( depth > 8 )
+	{
+		/*
+			Switch to color output if the bit depth is 16 or 32.
+		*/
+		
+		texture_format = GL_RGBA;
+		
+		buffer_size *= 4;
+	}
+	
 	glTexImage2D( texture_target,
 	              0,
-	              GL_LUMINANCE,
+	              GL_RGB,
 	              tex_width,
 	              tex_height,
 	              0,
@@ -243,6 +254,23 @@ void transcode_inverted( const Byte* src, Byte* dst, int n )
 	}
 }
 
+static
+void transcode_argb_8888( const Byte* src, Byte* dst, int n )
+{
+	while ( (n -= 4) > 0 )
+	{
+		Byte a = *src++;
+		Byte r = *src++;
+		Byte g = *src++;
+		Byte b = *src++;
+		
+		*dst++ = r;
+		*dst++ = g;
+		*dst++ = b;
+		*dst++ = a;
+	}
+}
+
 void set_screen_image( const void* src_addr )
 {
 	const Byte* src = (const Byte*) src_addr;
@@ -265,6 +293,10 @@ void set_screen_image( const void* src_addr )
 		
 		case 8:
 			transcode_inverted( src, screen_texture_data, n_octets );
+			break;
+		
+		case 32:
+			transcode_argb_8888( src, screen_texture_data, n_octets );
 			break;
 	}
 	
