@@ -175,8 +175,14 @@ const UInt8* line( const UInt8* p )
 	const short v1 = read_word( p );
 	const short h1 = read_word( p );
 	
+	GrafPort& port = **get_addrof_thePort();
+	
+	Point pt = port.pnLoc;
+	
 	MoveTo( h0, v0 );
 	LineTo( h1, v1 );
+	
+	port.pnLoc = pt;
 	
 	return p;
 }
