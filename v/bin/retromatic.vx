@@ -327,7 +327,7 @@ copy( *paths_to_copy, Files )
 let ams_bin = "../ams-68k-bin/bin"
 let ams_lib = "../ams-68k-bin/lib"
 
-let prefix_list = "core io fs snd rsrc drvr pack seg qd ui print dsat"
+let prefix_list = "core io fs snd rsrc drvr pack seg qd qd8 ui print dsat"
 let ams_modules = [ prefix_list / ' ' ] map {ams_lib "/ams-" v}
 
 copy( *ams_modules, ams_lib "/umsp", ams_bin "/app", xv68k_dir )
