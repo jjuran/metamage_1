@@ -49,11 +49,11 @@ int create_raster_file( const char* path, raster::raster_load& result )
 		return errno;
 	}
 	
-	const uint32_t width  = 512;
-	const uint32_t height = 342;
-	const uint32_t weight = 1;
+	const uint32_t width  = 640;
+	const uint32_t height = 480;
+	const uint32_t weight = 8;
 	
-	const bool uses_color = false;
+	const bool uses_color = true;
 	
 	const raster_model model = weight > 8 ? Model_RGB
 	                         : uses_color ? Model_palette
