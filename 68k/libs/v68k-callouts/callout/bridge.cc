@@ -679,6 +679,102 @@ int32_t draw_bytes_callout( v68k::processor_state& s )
 }
 
 static
+int32_t fill_bytes_callout( v68k::processor_state& s )
+{
+	const v68k::function_code_t data_space = s.data_space();
+	
+	uint16_t src_n = s.d(0);
+	uint16_t dst_n = s.d(1);
+	
+	const uint32_t src_len = s.d(0) >> 16;
+	const uint32_t dst_len = s.d(1) >> 16;
+	
+	if ( dst_n == 0  ||  dst_len == 0 )
+	{
+		return rts;
+	}
+	
+	if ( src_n == 0  ||  src_len == 0 )
+	{
+		return rts;  // TODO:  This should be an error
+	}
+	
+	const uint16_t dst_stride = s.d(2);
+	
+	uint32_t src = s.a(0);
+	uint32_t dst = s.a(1);
+	
+	/*
+		Limiting n, len, and stride to 16 bits ensures
+		that the multiplications won't overflow 32 bits.
+	*/
+	
+	const uint32_t src_span =  src_n      * src_len;
+	const uint32_t dst_span = (dst_n - 1) * dst_stride + dst_len;
+	
+	const uint8_t* p_base = s.translate( src, src_span, data_space, mem_read );
+	
+	if ( p_base == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	uint8_t* q_base = s.translate( dst, dst_span, data_space, mem_write );
+	
+	if ( q_base == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	uint8_t const* p_row = p_base;
+	uint8_t*       q_row = q_base;
+	
+	int i = 0;
+	
+	while ( dst_n-- )
+	{
+		/*
+			We have to use memmove(), not memcpy(), because we
+			don't know if userspace passed us overlapping ranges.
+			
+			It /shouldn't/ have, but it /could/ have -- and if it did,
+			then using memcpy() instead is Undefined Behavior.
+		*/
+		
+		uint8_t* q = q_row;
+		
+		int len = dst_len;
+		
+		while ( len >= src_len )
+		{
+			memmove( q, p_row, src_len );
+			
+			q += src_len;
+			
+			len -= src_len;
+		}
+		
+		memmove( q, p_row, len );
+		
+		p_row += src_len;
+		q_row += dst_stride;
+		
+		if ( ++i == src_n )
+		{
+			i = 0;
+			
+			p_row = p_base;
+		}
+	}
+	
+	s.translate( dst, dst_span, data_space, mem_update );
+	
+	return rts;
+}
+
+static
 int32_t next_pseudorandom_callout( v68k::processor_state& s )
 {
 	uint32_t randSeed = s.d(0);
@@ -845,7 +941,7 @@ static const function_type the_callouts[] =
 	
 	&blit_bytes_callout,
 	&draw_bytes_callout,
-	NULL,
+	&fill_bytes_callout,
 	NULL,
 	
 	&send_sound_command_callout,
