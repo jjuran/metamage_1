@@ -18,86 +18,86 @@ DEFINE_CALLOUT( unsigned long, get_Ticks, (), 0xFFDE )
 
 DEFINE_CALLOUT( struct timeval*,
                 timeval_from_microseconds,
-                (struct timeval*     dst : __A0,
-                 unsigned long long* src : __A1 ),
+                ( struct timeval*      dst : __A0,
+                  unsigned long long*  src : __A1 ),
                 0xFFDA )
 
 DEFINE_CALLOUT( struct timeval*,
                 timeval_from_nanoseconds,
-                (struct timeval*     dst : __A0,
-                 unsigned long long* src : __A1 ),
+                ( struct timeval*      dst : __A0,
+                  unsigned long long*  src : __A1 ),
                 0xFFD8 )
 
 DEFINE_CALLOUT( void,
                 fast_memset,
-                (void* : __A0, char : __D1, unsigned long : __D0 ),
+                ( void* : __A0, char : __D1, unsigned long : __D0 ),
                 0xFFD6 )
 
 DEFINE_CALLOUT( void,
                 fast_memnot,
-                (void* : __A0, unsigned long : __D0 ),
+                ( void* : __A0, unsigned long : __D0 ),
                 0xFFD4 )
 
 DEFINE_CALLOUT( void,
                 fast_rshift,
-                (void*       dst : __A1,
-                 void const* src : __A0,
-                 unsigned    n   : __D0,  // src byte count; dst count is n + 1
-                 char        x   : __D1 ),  // right shift bit count
+                ( void*        dst : __A1,
+                  void const*  src : __A0,
+                  unsigned     n   : __D0,    // src n_bytes; dst n is src n + 1
+                  char         x   : __D1 ),  // right shift bit count
                 0xFFD2 )
 
 DEFINE_CALLOUT( void*,
                 fast_mempcpy,
-                (void*       dst : __A0,
-                 void const* src : __A1,
-                 unsigned    n   : __D0 ),
+                ( void*        dst : __A0,
+                  void const*  src : __A1,
+                  unsigned     n   : __D0 ),
                 0xFFD0 )
 
 DEFINE_CALLOUT( int,
                 fast_memcmp,
-                (void const* a : __A0,
-                 void const* b : __A1,
-                 unsigned    n : __D0 ),
+                ( void const*  a : __A0,
+                  void const*  b : __A1,
+                  unsigned     n : __D0 ),
                 0xFFC6 )
 
 DEFINE_CALLOUT( void,
                 plot_cursor,
-                (const struct Cursor* crsr : __A1,
-                 void*                dest : __A0,
-                 unsigned             ht_s : __D0,
-                 unsigned             n_vs : __D1,
-                 unsigned             rowB : __D2 ),
+                ( const struct Cursor*  crsr : __A1,
+                  void*                 dest : __A0,
+                  unsigned              ht_s : __D0,
+                  unsigned              n_vs : __D1,
+                  unsigned              rowB : __D2 ),
                 0xFFBE )
 
 DEFINE_CALLOUT( void,
                 notify_cursor_moved,
-                (long loc : __D0),
+                ( long loc : __D0 ),
                 0xFFBC )
 
 DEFINE_CALLOUT( void,
                 notify_cursor_vis,
-                (unsigned char vis : __D0),
+                ( unsigned char vis : __D0 ),
                 0xFFBA )
 
 DEFINE_CALLOUT( void,
                 notify_cursor_set,
-                (const struct Cursor* crsr : __A0),
+                ( const struct Cursor* crsr : __A0 ),
                 0xFFB8 )
 
 DEFINE_CALLOUT( void,
                 blit_bytes,
-                (const void* src  : __A0,
-                 void*       dst  : __A1,
-                 short       dsrc : __D0,
-                 short       ddst : __D1,
-                 unsigned    lenn : __D2 ),
-                 0xFFB6 )
+                ( const void*  src  : __A0,
+                  void*        dst  : __A1,
+                  short        dsrc : __D0,
+                  short        ddst : __D1,
+                  unsigned     lenn : __D2 ),
+                0xFFB6 )
 
 DEFINE_CALLOUT( long,
                 send_sound_command,
-                (short        domain : __D1,
-                 const void*  buffer : __A0,
-                 long         length : __D0 ),
+                ( short        domain : __D1,
+                  const void*  buffer : __A0,
+                  long         length : __D0 ),
                 0xFFAE )
 
 #undef DEFINE_CALLOUT
