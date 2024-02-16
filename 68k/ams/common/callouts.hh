@@ -88,8 +88,8 @@ DEFINE_CALLOUT( void,
                 blit_bytes,
                 ( const void*  src  : __A0,
                   void*        dst  : __A1,
-                  short        dsrc : __D0,
-                  short        ddst : __D1,
+                  unsigned     dsrc : __D0,
+                  unsigned     ddst : __D1,
                   unsigned     lenn : __D2 ),
                 0xFFB6 )
 
