@@ -59,3 +59,29 @@ Ptr draw_masked_byte( Byte   byte,
 	
 	return dst;
 }
+
+void draw_masked_column( Ptr    src,
+                         short  src_height,
+                         short  src_index,
+                         Ptr    dst,
+                         short  dst_height,
+                         short  dst_stride,
+                         Byte   mask,
+                         short  transfer_mode_AND_0x07 )
+{
+	Ptr p = src + src_index;
+	
+	while ( dst_height-- )
+	{
+		draw_masked_byte( *p++, mask, dst, transfer_mode_AND_0x07 );
+		
+		dst += dst_stride;
+		
+		if ( ++src_index == src_height )
+		{
+			src_index = 0;
+			
+			p = src;
+		}
+	}
+}

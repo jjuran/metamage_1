@@ -28,4 +28,13 @@ Ptr draw_masked_byte( Byte   byte,
                       Ptr    dst,
                       short  transfer_mode_AND_0x07 );
 
+void draw_masked_column( Ptr    src,
+                         short  src_height,
+                         short  src_index,
+                         Ptr    dst,
+                         short  dst_height,
+                         short  dst_stride,
+                         Byte   mask,
+                         short  transfer_mode_AND_0x07 );
+
 #endif
