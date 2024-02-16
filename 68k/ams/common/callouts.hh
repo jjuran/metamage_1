@@ -111,6 +111,15 @@ DEFINE_CALLOUT( void,
                   unsigned     rb_mode : __D2 ),
                 0xFFB4 )
 
+DEFINE_CALLOUT( void,
+                fill_bytes,
+                ( const void*  src  : __A0,
+                  unsigned     srcx : __D0,
+                  void*        dst  : __A1,
+                  unsigned     dstx : __D1,
+                  unsigned     ddst : __D2 ),
+                0xFFB2 )
+
 DEFINE_CALLOUT( long,
                 send_sound_command,
                 ( short        domain : __D1,
@@ -274,6 +283,22 @@ void draw_bytes( const void* pat, unsigned short h_index, unsigned short v_index
 	draw_bytes( pat, v_index << 16 | h_index,
 	            dst, dst_len << 16 | dst_n,
 	                 stride  << 16 | mode );
+}
+
+inline
+void fill_bytes( const void* src, unsigned short src_len, unsigned short src_n,
+                 void*       dst, unsigned short dst_len, unsigned short dst_n,
+                                  unsigned short dst_stride )
+{
+	fill_bytes( src, src_len << 16 | src_n,
+	            dst, dst_len << 16 | dst_n, dst_stride );
+}
+
+inline
+void fill_bytes( const void* src, unsigned short src_len,
+                 void*       dst, unsigned short dst_len )
+{
+	fill_bytes( src, src_len, 1, dst, dst_len, 1, 0 );
 }
 
 inline
