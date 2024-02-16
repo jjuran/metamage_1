@@ -156,14 +156,9 @@ Handle_header* allocate_Handle_mem( long   size      : __D0,
 	Handle_header* header = (Handle_header*) alloc;
 	Handle_footer* footer = (Handle_footer*) ((char*) &header[1] + padded_size);
 	
-	if ( trap_word & kClearFlagMask  ||  autoclear )
-	{
-		fast_memset( &header[ 1 ], '\0', padded_size );
-	}
-	else
-	{
-		fast_memset( &header[ 1 ], '\x75', padded_size );
-	}
+	char fill = (trap_word & kClearFlagMask  ||  autoclear) ? '\0' : '\x75';
+	
+	fast_memset( &header[ 1 ], fill, padded_size );
 	
 	header->size     = size;
 	header->capacity = padded_size;

@@ -102,14 +102,9 @@ char* NewPtr_handler( unsigned long size : __D0, short trap_word : __D1 )
 	
 coda:
 	
-	if ( trap_word & kClearFlagMask  ||  autoclear )
-	{
-		fast_memset( alloc, '\0', size );
-	}
-	else
-	{
-		fast_memset( alloc, '\x75', size );
-	}
+	char fill = (trap_word & kClearFlagMask  ||  autoclear) ? '\0' : '\x75';
+	
+	fast_memset( alloc, fill, size );
 	
 	MemErr = noErr;
 	
