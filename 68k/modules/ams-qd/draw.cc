@@ -33,10 +33,10 @@ void get_refined_clip_region( const GrafPort&  port,
 	SectRgn( port.clipRgn, result, result );
 }
 
-Ptr draw_masked_byte( uint8_t  byte,
-                      uint8_t  mask,
-                      Ptr      dst,
-                      short    transfer_mode_AND_0x07 )
+Ptr draw_masked_byte( Byte   byte,
+                      Byte   mask,
+                      Ptr    dst,
+                      short  transfer_mode_AND_0x07 )
 {
 	if ( transfer_mode_AND_0x07 >= 0x04 )
 	{
