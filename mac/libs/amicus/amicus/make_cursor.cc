@@ -84,7 +84,7 @@ int create_raster_file( const char* path, raster::raster_load& result )
 	
 	const uint32_t footer_size = file_size - raster_size;
 	
-	memset( raster.addr, '\xFF', raster.size );
+	memset( raster.addr, '\x00', raster.size );
 	
 	raster.meta = (raster_metadata*) ((char*) raster.addr + raster_size);
 	
