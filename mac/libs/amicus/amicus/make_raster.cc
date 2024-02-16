@@ -110,6 +110,10 @@ int create_raster_file( const char* path, raster::raster_load& result )
 	next_note->type = Note_sync;
 	next_note->size = sizeof (sync_relay);
 	
+	sync_relay& sync = data< sync_relay >( *next_note );
+	
+	memset( &sync, '\0', sizeof (sync_relay) );
+	
 	next_note = next( next_note );
 	
 	next_note->type = Note_end;
