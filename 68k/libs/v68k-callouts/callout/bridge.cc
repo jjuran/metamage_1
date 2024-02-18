@@ -471,6 +471,11 @@ enum
 	srcOr,
 	srcXor,
 	srcBic,
+	
+	notSrcCopy,
+	notSrcOr,
+	notSrcXor,
+	notSrcBic,
 };
 
 typedef unsigned char Byte;
@@ -485,6 +490,21 @@ void blit_srcCopy( const Byte* src, Byte* dst, size_t len )
 	
 	memmove( dst, src, len );
 }
+
+#define DEFINE_BLIT_MODE( name, op )  \
+static inline void  \
+blit_##name( const Byte* p, Byte* q, int n )  { while ( n-- )  *q++ op *p++; }
+
+DEFINE_BLIT_MODE( srcOr,      |=   )
+DEFINE_BLIT_MODE( srcXor,     ^=   )
+DEFINE_BLIT_MODE( srcBic,     &= ~ )
+
+DEFINE_BLIT_MODE( notSrcCopy,  = ~ )
+DEFINE_BLIT_MODE( notSrcOr,   |= ~ )
+DEFINE_BLIT_MODE( notSrcXor,  ^= ~ )
+DEFINE_BLIT_MODE( notSrcBic,  &=   )
+
+#undef DEFINE_BLIT_MODE
 
 static
 int32_t blit_bytes_callout( v68k::processor_state& s )
@@ -539,6 +559,13 @@ case name:  while ( n-- )       \
 	switch ( mode )
 	{
 		BLIT_MODE_CASE( srcCopy    );
+		BLIT_MODE_CASE( srcOr      );
+		BLIT_MODE_CASE( srcXor     );
+		BLIT_MODE_CASE( srcBic     );
+		BLIT_MODE_CASE( notSrcCopy );
+		BLIT_MODE_CASE( notSrcOr   );
+		BLIT_MODE_CASE( notSrcXor  );
+		BLIT_MODE_CASE( notSrcBic  );
 		
 		default:
 			break;
