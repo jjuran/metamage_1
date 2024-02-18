@@ -465,6 +465,27 @@ int32_t fast_memcmp_callout( v68k::processor_state& s )
 	return rts;
 }
 
+enum
+{
+	srcCopy,
+	srcOr,
+	srcXor,
+	srcBic,
+};
+
+typedef unsigned char Byte;
+
+static inline
+void blit_srcCopy( const Byte* src, Byte* dst, size_t len )
+{
+	/*
+		We have to use memmove(), not memcpy(), because we
+		don't know if userspace passed us overlapping ranges.
+	*/
+	
+	memmove( dst, src, len );
+}
+
 static
 int32_t blit_bytes_callout( v68k::processor_state& s )
 {
@@ -509,31 +530,26 @@ int32_t blit_bytes_callout( v68k::processor_state& s )
 		return nil;  // FIXME
 	}
 	
-	while ( n-- )
+	const uint16_t mode = s.d(1) >> 16;
+	
+#define BLIT_MODE_CASE( name )  \
+case name:  while ( n-- )       \
+{ blit_##name( p, q, len );  p += src_stride;  q += dst_stride; }  break
+	
+	switch ( mode )
 	{
-		/*
-			We have to use memmove(), not memcpy(), because we
-			don't know if userspace passed us overlapping ranges.
-		*/
+		BLIT_MODE_CASE( srcCopy    );
 		
-		memmove( q, p, len );
-		
-		p += src_stride;
-		q += dst_stride;
+		default:
+			break;
 	}
+	
+#undef BLIT_MODE_CASE
 	
 	s.translate( dst, dst_span, data_space, mem_update );
 	
 	return rts;
 }
-
-enum
-{
-	srcCopy,
-	srcOr,
-	srcXor,
-	srcBic,
-};
 
 static
 uint8_t* patcpy_mode( uint8_t* dst, uint8_t pat, size_t n, short mode )
