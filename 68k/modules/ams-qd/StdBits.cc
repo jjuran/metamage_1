@@ -39,31 +39,6 @@ bool byte_aligned( short srcSkip, short dstSkip, short width )
 	return srcSkip + dstSkip == 0  &&  width % 8 == 0;
 }
 
-static inline
-Ptr blit_byte_aligned_segment( Ptr    src,
-                               Ptr    dst,
-                               short  n_bytes,
-                               short  transfer_mode_AND_0x07 )
-{
-	switch ( transfer_mode_AND_0x07 )
-	{
-		// Use src vs. pat modes because we stripped off the 8 bit
-		
-		case srcCopy:
-			return (Ptr) fast_mempcpy( dst, src, n_bytes );
-		
-		case srcOr:       while ( --n_bytes >= 0 )  *dst++ |=  *src++;  break;
-		case srcXor:      while ( --n_bytes >= 0 )  *dst++ ^=  *src++;  break;
-		case srcBic:      while ( --n_bytes >= 0 )  *dst++ &= ~*src++;  break;
-		case notSrcCopy:  while ( --n_bytes >= 0 )  *dst++  = ~*src++;  break;
-		case notSrcOr:    while ( --n_bytes >= 0 )  *dst++ |= ~*src++;  break;
-		case notSrcXor:   while ( --n_bytes >= 0 )  *dst++ ^= ~*src++;  break;
-		case notSrcBic:   while ( --n_bytes >= 0 )  *dst++ &=  *src++;  break;
-	}
-	
-	return dst;
-}
-
 static
 void blit_segment_direct( Ptr      src,
                           Ptr      dst,
@@ -99,12 +74,10 @@ void blit_segment_direct( Ptr      src,
 	
 	if ( short n_bytes = n_pixels_drawn / 8u )
 	{
-		dst = blit_byte_aligned_segment( src,
-		                                 dst,
-		                                 n_bytes,
-		                                 transfer_mode_AND_0x07 );
+		blit_bytes( src, 0, dst, 0, n_bytes, 1, transfer_mode_AND_0x07 );
 		
 		src += n_bytes;
+		dst += n_bytes;
 	}
 	
 	n_pixels_drawn &= 0x7;
@@ -410,11 +383,11 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 				              mode );
 			}
 		}
-		else if ( mode == srcCopy  &&  byte_aligned( srcSkip, dstSkip, width ) )
+		else if ( byte_aligned( srcSkip, dstSkip, width ) )
 		{
 			width /= 8;
 			
-			blit_bytes( src, srcRowBytes, dst, dstRowBytes, width, n_rows );
+			blit_bytes( src, srcRowBytes, dst, dstRowBytes, width, n_rows, mode );
 		}
 		else
 		{
