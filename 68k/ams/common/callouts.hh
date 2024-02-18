@@ -154,9 +154,10 @@ inline
 void blit_bytes( const void* src, unsigned short src_stride,
                  void*       dst, unsigned short dst_stride,
                  unsigned short len,
-                 unsigned short n )
+                 unsigned short n,
+                 unsigned short mode = 0 )
 {
-	blit_bytes( src, dst, src_stride, dst_stride, len << 16 | n );
+	blit_bytes( src, dst, src_stride, dst_stride | mode << 16, len << 16 | n );
 }
 
 inline
