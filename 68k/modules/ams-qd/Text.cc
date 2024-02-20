@@ -205,7 +205,9 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		return;
 	}
 	
-	GrafPort& port = **get_addrof_thePort();
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPort& port = *qd.thePort;
 	
 	if ( Handle h = port.picSave )
 	{
@@ -333,8 +335,6 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		{
 			dstRect.left  = port.pnLoc.h;
 			dstRect.right = port.pnLoc.h + widMax;
-			
-			QDGlobals& qd = get_QDGlobals();
 			
 			FillRect( &dstRect, &qd.white );
 		}
