@@ -314,8 +314,6 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	srcRect = &clippedSrcRect;
 	dstRect = &clippedDstRect;
 	
-	redraw_lock lock( port.portBits, *dstRect, *srcBits, *srcRect );
-	
 	get_refined_clip_region( port, *dstRect, clipRgn );
 	
 	if ( maskRgn )
@@ -326,6 +324,16 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	const bool clipping_to_rect = clipRgn[0]->rgnSize <= sizeof (MacRegion);
 	
 	const Rect clipRect = clipRgn[0]->rgnBBox;
+	
+	uint16_t n_rows = clipRect.bottom - clipRect.top;
+	uint16_t width  = clipRect.right - clipRect.left;
+	
+	if ( width == 0  || n_rows == 0 )
+	{
+		return;
+	}
+	
+	redraw_lock lock( port.portBits, *dstRect, *srcBits, *srcRect );
 	
 	const uint16_t clippedTop  = clipRect.top  - dstRect->top;
 	const uint16_t clippedLeft = clipRect.left - dstRect->left;
@@ -354,9 +362,6 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	const short srcSkip = srcLeft & 0x7;
 	const short dstSkip = dstLeft & 0x7;
-	
-	uint16_t n_rows = clipRect.bottom - clipRect.top;
-	uint16_t width  = clipRect.right - clipRect.left;
 	
 	bool draw_bottom_to_top = false;
 	
