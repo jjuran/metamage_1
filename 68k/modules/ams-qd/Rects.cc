@@ -179,70 +179,16 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 }
 
 static
-Ptr draw_even_segment( Ptr    start,
-                       short  n_bytes,
-                       short  transfer_mode_AND_0x03,
-                       Byte   pattern_sample )
-{
-	if ( transfer_mode_AND_0x03 == srcCopy )
-	{
-		fast_memset( start, pattern_sample, n_bytes );
-		
-		return start + n_bytes;
-	}
-	
-	Ptr p = start;
-	
-	uint32_t src = pattern_sample << 8 | pattern_sample;
-	
-	src |= src << 16;
-	
-	while ( (uintptr_t) p & 0x3 )
-	{
-		p = draw_masked_byte( pattern_sample, 0xFF, p, transfer_mode_AND_0x03 );
-		
-		if ( --n_bytes == 0 )
-		{
-			return p;
-		}
-	}
-	
-	short n_longs = n_bytes / 4u;
-	
-	uint32_t* q = (uint32_t*) p;
-	
-	switch ( transfer_mode_AND_0x03 )
-	{
-		// Use src vs. pat modes because we stripped off the 8 bit
-		// For srcBic, src is already negated.
-		
-		case srcCopy:  while ( --n_longs >= 0 )  *q++  =  src;  break;
-		case srcOr:    while ( --n_longs >= 0 )  *q++ |=  src;  break;
-		case srcXor:   while ( --n_longs >= 0 )  *q++ ^=  src;  break;
-		case srcBic:   while ( --n_longs >= 0 )  *q++ &= ~src;  break;
-	}
-	
-	p = (Ptr) q;
-	
-	n_bytes &= 0x3;
-	
-	while ( --n_bytes >= 0 )
-	{
-		p = draw_masked_byte( pattern_sample, 0xFF, p, transfer_mode_AND_0x03 );
-	}
-	
-	return p;
-}
-
-static
-Ptr draw_segment( Ptr    start,
+void draw_sector( Ptr    src,
+                  short  src_height,
+                  short  src_v_index,
+                  Ptr    dst,
+                  short  dst_height,
+                  short  dst_stride,
                   short  n_pixels_skipped,
                   short  n_pixels_drawn,
-                  short  transfer_mode_AND_0x03,
-                  Byte   pattern_sample )
+                  short  transfer_mode_AND_0x03 )
 {
-	Ptr p = start;
-	
 	if ( n_pixels_skipped )
 	{
 		Byte mask = (1 << (8 - n_pixels_skipped)) - 1;
@@ -258,20 +204,27 @@ Ptr draw_segment( Ptr    start,
 			n_pixels_drawn = 0;
 		}
 		
-		p = draw_masked_byte( pattern_sample,
-		                      mask,
-		                      p,
-		                      transfer_mode_AND_0x03 );
+		draw_masked_column( src,
+		                    src_height,
+		                    src_v_index,
+		                    dst,
+		                    dst_height,
+		                    dst_stride,
+		                    mask,
+		                    transfer_mode_AND_0x03 );
+		
+		++dst;
 	}
 	
 	if ( n_pixels_drawn > 0 )
 	{
 		if ( short n_bytes = n_pixels_drawn / 8u )
 		{
-			p = draw_even_segment( p,
-			                       n_bytes,
-			                       transfer_mode_AND_0x03,
-			                       pattern_sample );
+			draw_bytes( src, 0, src_v_index,
+			            dst, n_bytes, dst_height, dst_stride,
+			            transfer_mode_AND_0x03 );
+			
+			dst += n_bytes;
 		}
 		
 		n_pixels_drawn &= 0x7;
@@ -282,14 +235,35 @@ Ptr draw_segment( Ptr    start,
 			
 			const Byte mask = -(1 << n_pixels_skipped);
 			
-			p = draw_masked_byte( pattern_sample,
-			                      mask,
-			                      p,
-			                      transfer_mode_AND_0x03 );
+			draw_masked_column( src,
+			                    src_height,
+			                    src_v_index,
+			                    dst,
+			                    dst_height,
+			                    dst_stride,
+			                    mask,
+			                    transfer_mode_AND_0x03 );
 		}
 	}
+}
+
+static inline
+void draw_sector( const Pattern&  pattern,
+                  short           pat_v_index,
+                  Ptr             dst,
+                  short           dst_height,
+                  short           dst_stride,
+                  short           n_pixels_skipped,
+                  short           n_pixels_drawn,
+                  short           transfer_mode_AND_0x03 )
+{
+	Ptr src = (Ptr) pattern.pat;
 	
-	return p;
+	draw_sector( src, sizeof pattern, pat_v_index,
+	             dst, dst_height, dst_stride,
+	             n_pixels_skipped,
+	             n_pixels_drawn,
+	             transfer_mode_AND_0x03 );
 }
 
 static void erase_rect( const rectangular_op_params& params )
@@ -508,20 +482,13 @@ void draw_rect( const rectangular_op_params&  params,
 	const short n_pixels_skipped = (rect.left - bounds.left) & 0x7;
 	const short n_pixels_drawn   = rect.right - rect.left;
 	
-	for ( int i = top;  i < bottom;  ++i )
-	{
-		const Byte pat = pattern.pat[ pat_v ];
-		
-		draw_segment( rowBase,
-		              n_pixels_skipped,
-		              n_pixels_drawn,
-		              transfer_mode_AND_0x03,
-		              pat );
-		
-		pat_v = (pat_v + 1) & 0x7;
-		
-		rowBase += portBits.rowBytes;
-	}
+	draw_sector( pattern, pat_v,
+	             rowBase,
+	             bottom - top,
+	             portBits.rowBytes,
+		         n_pixels_skipped,
+		         n_pixels_drawn,
+		         transfer_mode_AND_0x03 );
 }
 
 static
@@ -549,32 +516,33 @@ void draw_region( const rectangular_op_params&  params,
 		Ptr rowBase = portBits.baseAddr
 		            + mulu_w( portBits.rowBytes, n_rows_skipped );
 		
-		for ( short v = v0;  v < v1;  ++v )
+		short v = v0;
+		
+		short height = v1 - v0;
+		
+		const Byte pat = params.pattern->pat[ v & 0x7 ];
+		
+		const short* it  = band->h_begin;
+		const short* end = band->h_end;
+		
+		while ( it < end )
 		{
-			const Byte pat = params.pattern->pat[ v & 0x7 ];
+			const short h0 = *it++;
+			const short h1 = *it++;
 			
-			const short* it  = band->h_begin;
-			const short* end = band->h_end;
+			Ptr start = rowBase + (h0 - bounds.left) / 8u;
 			
-			while ( it < end )
-			{
-				const short h0 = *it++;
-				const short h1 = *it++;
-				
-				Ptr start = rowBase + (h0 - bounds.left) / 8u;
-				
-				const short n_pixels_skipped = (h0 - bounds.left) & 0x7;
-				const short n_pixels_drawn   =  h1 - h0;
-				
-				draw_segment( start,
-				              n_pixels_skipped,
-				              n_pixels_drawn,
-				              transfer_mode_AND_0x03,
-				              pat );
-			}
+			const short n_pixels_skipped = (h0 - bounds.left) & 0x7;
+			const short n_pixels_drawn   =  h1 - h0;
 			
-			rowBase += portBits.rowBytes;
+			draw_sector( *params.pattern, v & 0x7,
+			             start, height, portBits.rowBytes,
+			             n_pixels_skipped,
+			             n_pixels_drawn,
+			             transfer_mode_AND_0x03 );
 		}
+		
+		rowBase += portBits.rowBytes * height;
 	}
 }
 
