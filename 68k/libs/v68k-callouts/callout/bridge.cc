@@ -527,6 +527,93 @@ int32_t blit_bytes_callout( v68k::processor_state& s )
 	return rts;
 }
 
+enum
+{
+	srcCopy,
+	srcOr,
+	srcXor,
+	srcBic,
+};
+
+static
+uint8_t* patcpy_mode( uint8_t* dst, uint8_t pat, size_t n, short mode )
+{
+	switch ( mode )
+	{
+		case srcCopy:  for ( int i = 0; i < n; ++i )  *dst++  =  pat;  break;
+		case srcOr:    for ( int i = 0; i < n; ++i )  *dst++ |=  pat;  break;
+		case srcXor:   for ( int i = 0; i < n; ++i )  *dst++ ^=  pat;  break;
+		case srcBic:   for ( int i = 0; i < n; ++i )  *dst++ &= ~pat;  break;
+	}
+	
+	return dst;
+}
+
+static
+int32_t draw_bytes_callout( v68k::processor_state& s )
+{
+	const v68k::function_code_t data_space = s.data_space();
+	
+	uint16_t src_n = 8;  // sizeof (Pattern)
+	uint16_t dst_n = s.d(1);
+	
+	const uint32_t dst_len = s.d(1) >> 16;
+	
+	if ( dst_n == 0  ||  dst_len == 0 )
+	{
+		return rts;
+	}
+	
+	const uint32_t dst_stride = s.d(2) >> 16;
+	
+	uint32_t src = s.a(0);
+	uint32_t dst = s.a(1);
+	
+	/*
+		Limiting n, len, and stride to 16 bits ensures
+		that the multiplications won't overflow 32 bits.
+	*/
+	
+	const uint32_t src_span =  src_n;
+	const uint32_t dst_span = (dst_n - 1) * dst_stride + dst_len;
+	
+	const uint8_t* pattern = s.translate( src, src_span, data_space, mem_read );
+	
+	if ( pattern == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	uint8_t* q = s.translate( dst, dst_span, data_space, mem_write );
+	
+	if ( q == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+//	uint16_t h_index =  s.d(0)        & 0x07;  // not yet implemented
+	uint16_t v_index = (s.d(0) >> 16) & 0x07;
+	
+	const uint16_t mode = s.d(2);
+	
+	while ( dst_n-- )
+	{
+		patcpy_mode( q, pattern[ v_index ], dst_len, mode );
+		
+		q += dst_stride;
+		
+		++v_index;
+		
+		v_index &= 0x7;
+	}
+	
+	s.translate( dst, dst_span, data_space, mem_update );
+	
+	return rts;
+}
+
 static
 int32_t system_call_callout( v68k::processor_state& s )
 {
@@ -681,7 +768,7 @@ static const function_type the_callouts[] =
 	&notify_cursor_set_callout,
 	
 	&blit_bytes_callout,
-	NULL,
+	&draw_bytes_callout,
 	NULL,
 	NULL,
 	

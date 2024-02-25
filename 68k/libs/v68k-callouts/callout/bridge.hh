@@ -71,7 +71,7 @@ enum
 	
 	// $FFB6 - $FFB0
 	blit_bytes,
-	reserved13,
+	draw_bytes,
 	reserved14,
 	reserved15,
 	
