@@ -93,6 +93,15 @@ DEFINE_CALLOUT( void,
                   unsigned     lenn : __D2 ),
                 0xFFB6 )
 
+DEFINE_CALLOUT( void,
+                draw_bytes,
+                ( const void*  pattern : __A0,
+                  unsigned     pat_v_h : __D0,
+                  void*        dst_buf : __A1,
+                  unsigned     dst_h_w : __D1,
+                  unsigned     rb_mode : __D2 ),
+                0xFFB4 )
+
 DEFINE_CALLOUT( long,
                 send_sound_command,
                 ( short        domain : __D1,
@@ -148,6 +157,16 @@ void blit_bytes( const void* src, unsigned short src_stride,
                  unsigned short n )
 {
 	blit_bytes( src, dst, src_stride, dst_stride, len << 16 | n );
+}
+
+inline
+void draw_bytes( const void* pat, unsigned short h_index, unsigned short v_index,
+                 void*       dst, unsigned short dst_len, unsigned short dst_n,
+                                  unsigned short stride,  unsigned short mode )
+{
+	draw_bytes( pat, v_index << 16 | h_index,
+	            dst, dst_len << 16 | dst_n,
+	                 stride  << 16 | mode );
 }
 
 unsigned long CmpString_sans_case( const unsigned char*  a : __A0,
