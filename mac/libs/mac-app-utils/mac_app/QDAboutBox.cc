@@ -19,12 +19,14 @@
 #endif
 
 // missing-macos
+#if ! __LP64__
 #ifdef MAC_OS_X_VERSION_10_7
 #ifndef MISSING_QUICKDRAW_H
 #include "missing/Quickdraw.h"
 #endif
 #ifndef MISSING_QUICKDRAWTEXT_H
 #include "missing/QuickdrawText.h"
+#endif
 #endif
 #endif
 
