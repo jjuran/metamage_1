@@ -4,7 +4,7 @@
 	
 	System's Twilight Tune-up INIT for Advanced Mac Substitute
 	
-	Copyright 2022, Joshua Juran.  All rights reserved.
+	Copyright 2022-2024, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
@@ -25,15 +25,38 @@
 	animation function.  By bracketing the animation calls with callouts
 	that defer screen updates, we prevent the flickering entirely.
 	
+	A less significant (but still noticeable) visual defect when running
+	System's Twilight in Advanced Mac Substitute is the lack of support
+	for hierarchical menus.  The You menu is your inventory, containing
+	a menu item for each game item you're carrying.  One of those items
+	is a memory block, which itself can contain items, represented as a
+	submenu.  In AMS, it appears in the menu baras a regular menu, using
+	its provided name (which normally would never be displayed).  While
+	the name "intMemInv" is suggestive of its function ("internal memory
+	inventory", perhaps), it's quite un-Mac-like to have such cryptic
+	coder cant cluttering the user interface.
+	
+	This extension also patches InsertMenu() to rename the inadvertent
+	"intMemInv" menu to the more mainstream "Memory" moniker.
+	
 */
 
 // Mac OS
+#ifndef __MENUS__
+#include <Menus.h>
+#endif
 #ifndef __RESOURCES__
 #include <Resources.h>
+#endif
+#ifndef __TEXTUTILS__
+#include <TextUtils.h>
 #endif
 #ifndef __TRAPS__
 #include <Traps.h>
 #endif
+
+// Standard C
+#include <stddef.h>
 
 // mac-sys-utils
 #include "mac_sys/load_segment.hh"
@@ -50,7 +73,10 @@ Ptr CurrentA5 : 0x0904;
 
 typedef void (*generic_code)();
 
+typedef pascal void (*InsertMenu_ProcPtr)( MenuRef menu, short beforeID );
+
 static generic_code      animator;
+static UniversalProcPtr  old_InsertMenu;
 static UniversalProcPtr  old_TEInit;
 
 static
@@ -78,6 +104,35 @@ void install_portal_animation_patch()
 	jump_target = &animate_buffered;
 }
 
+static const Byte intMemInv[] = "\p" "intMemInv";
+static const Byte Memory[]    = "\p" "Memory";
+
+static
+pascal
+void InsertMenu_patch( MenuRef menu, short beforeID )
+{
+	const Byte* title = menu[0]->menuData;
+	
+	if ( fast_memcmp( title, intMemInv, sizeof intMemInv ) == 0 )
+	{
+		Munger( (Handle) menu, offsetof( MenuInfo, menuData ),
+		        NULL,   sizeof intMemInv,
+		        Memory, sizeof Memory );
+	}
+	
+	InsertMenu_ProcPtr InsertMenu = (InsertMenu_ProcPtr) old_InsertMenu;
+	
+	InsertMenu( menu, beforeID );
+}
+
+static inline
+void install_InsertMenu_patch()
+{
+	old_InsertMenu = mac::sys::get_trap_address( _InsertMenu );
+	
+	mac::sys::set_trap_address( (ProcPtr) InsertMenu_patch, _InsertMenu );
+}
+
 static
 pascal
 void TEInit_patch()
@@ -87,6 +142,8 @@ void TEInit_patch()
 		ReleaseResource( h );
 		
 		install_portal_animation_patch();
+		
+		install_InsertMenu_patch();
 	}
 	
 	old_TEInit();
