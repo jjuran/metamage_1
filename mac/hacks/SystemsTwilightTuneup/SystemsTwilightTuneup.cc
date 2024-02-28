@@ -64,7 +64,7 @@ void animate_buffered()
 }
 
 static inline
-void install_patch()
+void install_portal_animation_patch()
 {
 	mac::sys::load_segment( 5 );
 	
@@ -86,7 +86,7 @@ void TEInit_patch()
 	{
 		ReleaseResource( h );
 		
-		install_patch();
+		install_portal_animation_patch();
 	}
 	
 	old_TEInit();
