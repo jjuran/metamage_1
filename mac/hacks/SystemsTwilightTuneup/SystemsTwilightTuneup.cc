@@ -15,15 +15,15 @@
 	flickering, which is not just unsightly, but may pose a usability or
 	even a safety issue for users with certain neurological conditions.
 	
-	This extension patches the jump table in order to wrap calls to the
-	animation function.  By bracketing the animation calls with callouts
-	that defer screen updates, we prevent the flickering entirely.
-	
 	DISCLAIMER:  No medical professionals were consulted regarding the
 	development of this program.  None of the information contained herein
 	constitutes medical advice.  I make no guarantee that this program
 	will work as described or make System's Twilight safe for you to use.
 	Use at your own risk.
+	
+	This extension patches the jump table in order to wrap calls to the
+	animation function.  By bracketing the animation calls with callouts
+	that defer screen updates, we prevent the flickering entirely.
 	
 */
 
