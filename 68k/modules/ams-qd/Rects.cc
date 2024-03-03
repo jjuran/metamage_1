@@ -77,8 +77,8 @@ struct rectangular_op_params
 	uint16_t draw_bytes;
 	uint16_t skip_bytes;
 	
-	uint8_t left_mask;
-	uint8_t right_mask;
+	Byte left_mask;
+	Byte right_mask;
 	
 	Pattern*  pattern;
 	short     origin_h;
@@ -144,12 +144,12 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	const unsigned inner_bytes = inner_right_bytes - inner_left_bytes;
 	const unsigned outer_bytes = outer_right_bytes - outer_left_bytes;
 	
-	const uint8_t left_mask  = (left  & 0x7) ? ~((1 << 8 - (left  & 0x7)) - 1) : 0;
-	const uint8_t right_mask = (right & 0x7) ?   (1 << 8 - (right & 0x7)) - 1  : 0;
+	const Byte left_mask  = (left  & 0x7) ? ~((1 << 8 - (left  & 0x7)) - 1) : 0;
+	const Byte right_mask = (right & 0x7) ?   (1 << 8 - (right & 0x7)) - 1  : 0;
 	
 	const uint32_t rowBytes = portBits.rowBytes;
 	
-	char* baseAddr = portBits.baseAddr;
+	Ptr baseAddr = portBits.baseAddr;
 	
 	params.topLeft    = *(Point*) &rect;
 	params.start      = baseAddr + mulu_w( rowBytes, top ) + outer_left_bytes;
@@ -179,10 +179,10 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 }
 
 static
-Ptr draw_even_segment( Ptr      start,
-                       short    n_bytes,
-                       short    transfer_mode_AND_0x03,
-                       uint8_t  pattern_sample )
+Ptr draw_even_segment( Ptr    start,
+                       short  n_bytes,
+                       short  transfer_mode_AND_0x03,
+                       Byte   pattern_sample )
 {
 	if ( transfer_mode_AND_0x03 == srcCopy )
 	{
@@ -235,17 +235,17 @@ Ptr draw_even_segment( Ptr      start,
 }
 
 static
-Ptr draw_segment( Ptr      start,
-                  short    n_pixels_skipped,
-                  short    n_pixels_drawn,
-                  short    transfer_mode_AND_0x03,
-                  uint8_t  pattern_sample )
+Ptr draw_segment( Ptr    start,
+                  short  n_pixels_skipped,
+                  short  n_pixels_drawn,
+                  short  transfer_mode_AND_0x03,
+                  Byte   pattern_sample )
 {
 	Ptr p = start;
 	
 	if ( n_pixels_skipped )
 	{
-		uint8_t mask = (1 << (8 - n_pixels_skipped)) - 1;
+		Byte mask = (1 << (8 - n_pixels_skipped)) - 1;
 		
 		n_pixels_drawn -= 8 - n_pixels_skipped;
 		
@@ -280,7 +280,7 @@ Ptr draw_segment( Ptr      start,
 		{
 			n_pixels_skipped = 8 - n_pixels_drawn;
 			
-			const uint8_t mask = -(1 << n_pixels_skipped);
+			const Byte mask = -(1 << n_pixels_skipped);
 			
 			p = draw_masked_byte( pattern_sample,
 			                      mask,
@@ -454,7 +454,7 @@ static void fill_rect( const rectangular_op_params& params )
 	
 	for ( int i = params.height;  i > 0;  --i )
 	{
-		const uint8_t pat = pattern.pat[v];
+		const Byte pat = pattern.pat[v];
 		
 		if ( params.left_mask )
 		{
@@ -510,7 +510,7 @@ void draw_rect( const rectangular_op_params&  params,
 	
 	for ( int i = top;  i < bottom;  ++i )
 	{
-		const uint8_t pat = pattern.pat[ pat_v ];
+		const Byte pat = pattern.pat[ pat_v ];
 		
 		draw_segment( rowBase,
 		              n_pixels_skipped,
@@ -551,7 +551,7 @@ void draw_region( const rectangular_op_params&  params,
 		
 		for ( short v = v0;  v < v1;  ++v )
 		{
-			const uint8_t pat = params.pattern->pat[ v & 0x7 ];
+			const Byte pat = params.pattern->pat[ v & 0x7 ];
 			
 			const short* it  = band->h_begin;
 			const short* end = band->h_end;
