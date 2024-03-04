@@ -33,35 +33,6 @@
 #pragma exceptions off
 
 
-enum white_t { White };
-enum black_t { Black };
-
-static inline bool operator==( const Pattern& a, white_t )
-{
-	const UInt32* p = (const UInt32*) a.pat;
-	
-	return *p++ == '\0'  &&  *p == '\0';
-}
-
-static inline bool operator==( const Pattern& a, black_t )
-{
-	const UInt32* p = (const UInt32*) a.pat;
-	
-	return *p++ == 0xFFFFFFFF  &&  *p == 0xFFFFFFFF;
-}
-
-static inline
-bool erases_to_white( const GrafPort& port )
-{
-	return port.bkColor & Inverse  &&  port.bkPat == White;
-}
-
-static inline
-bool paints_to_black( const GrafPort& port )
-{
-	return ! (port.fgColor & Inverse)  &&  port.pnPat == Black;
-}
-
 struct rectangular_op_params
 {
 	Rect rect;
@@ -266,93 +237,6 @@ void draw_sector( const Pattern&  pattern,
 	             transfer_mode_AND_0x03 );
 }
 
-static void erase_rect( const rectangular_op_params& params )
-{
-	Ptr p = params.start;
-	
-	for ( int i = params.height;  i > 0;  --i )
-	{
-		if ( params.left_mask )
-		{
-			*p++ &= params.left_mask;
-		}
-		
-		fast_memset( p, '\0', params.draw_bytes );
-		
-		p += params.draw_bytes;
-		
-		if ( params.right_mask )
-		{
-			*p++ &= params.right_mask;
-		}
-		
-		p += params.skip_bytes;
-	}
-}
-
-static void paint_rect( const rectangular_op_params& params )
-{
-	Ptr p = params.start;
-	
-	for ( int i = params.height;  i > 0;  --i )
-	{
-		if ( params.left_mask )
-		{
-			*p++ |= ~params.left_mask;
-		}
-		
-		fast_memset( p, 0xFF, params.draw_bytes );
-		
-		p += params.draw_bytes;
-		
-		if ( params.right_mask )
-		{
-			*p++ |= ~params.right_mask;
-		}
-		
-		p += params.skip_bytes;
-	}
-}
-
-static void invert_rect( const rectangular_op_params& params )
-{
-	Ptr p = params.start;
-	
-	if ( params.left_mask == 0  &&  params.right_mask == 0 )
-	{
-		if ( params.skip_bytes == 0 )
-		{
-			fast_memnot( p, mulu_w( params.draw_bytes, params.height ) );
-			return;
-		}
-	}
-	
-	for ( int i = params.height;  i > 0;  --i )
-	{
-		if ( params.left_mask )
-		{
-			char out = *p &  params.left_mask;
-			char in = ~*p & ~params.left_mask;
-			
-			*p++ = out | in;
-		}
-		
-		fast_memnot( p, params.draw_bytes );
-		
-		p += params.draw_bytes;
-		
-		if ( params.right_mask )
-		{
-			char in = ~*p & ~params.right_mask;
-			char out = *p &  params.right_mask;
-			
-			*p++ = in | out;
-		}
-		
-		p += params.skip_bytes;
-	}
-}
-
 static void frame_rect( const Rect* rect )
 {
 	if ( rect->top >= rect->bottom  ||  rect->left >= rect->right )
@@ -406,54 +290,6 @@ static void frame_rect( const Rect* rect )
 	edge.bottom += penHeight;
 	
 	StdRect( kQDGrafVerbPaint, &edge );
-}
-
-static void fill_rect( const rectangular_op_params& params )
-{
-	Pattern& pattern = *params.pattern;
-	
-	short       v = params.topLeft.v & 0x7;
-	short const h = params.origin_h & 0x07;
-	
-	if ( h != 0 )
-	{
-		for ( int i = 0;  i < 8;  ++i )
-		{
-			pattern.pat[i] = pattern.pat[i] <<      h
-			               | pattern.pat[i] >> (8 - h);
-		}
-	}
-	
-	Ptr p = params.start;
-	
-	for ( int i = params.height;  i > 0;  --i )
-	{
-		const Byte pat = pattern.pat[v];
-		
-		if ( params.left_mask )
-		{
-			*p = (*p  &  params.left_mask)
-			   | (pat & ~params.left_mask);
-			
-			++p;
-		}
-		
-		fast_memset( p, pat, params.draw_bytes );
-		
-		p += params.draw_bytes;
-		
-		if ( params.right_mask )
-		{
-			*p = (*p  &  params.right_mask)
-			   | (pat & ~params.right_mask);
-			
-			++p;
-		}
-		
-		p += params.skip_bytes;
-		
-		v = (v + 1) & 0x7;
-	}
 }
 
 static
@@ -592,13 +428,6 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	
 	if ( verb == kQDGrafVerbErase )
 	{
-		if ( clipping_to_rect  &&  erases_to_white( port ) )
-		{
-			erase_rect( params );
-			
-			return;
-		}
-		
 		port.fillPat = port.bkPat;
 		
 		if ( ! (port.bkColor & Inverse) )
@@ -608,16 +437,6 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	}
 	else if ( verb == kQDGrafVerbPaint )
 	{
-		const short mode = port.pnMode & 0x7;
-		
-		if ( clipping_to_rect  &&  mode <= srcOr  &&  paints_to_black( port ) )
-		{
-			// patCopy or patOr -- use optimized paint routine
-			paint_rect( params );
-			
-			return;
-		}
-		
 		patMode      = port.pnMode;
 		port.fillPat = port.pnPat;
 		
@@ -628,24 +447,10 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	}
 	else if ( verb == kQDGrafVerbInvert )
 	{
-		if ( clipping_to_rect )
-		{
-			invert_rect( params );
-		
-			return;
-		}
-		
 		const QDGlobals& qd = get_QDGlobals();
 		
 		patMode      = patXor;
 		port.fillPat = qd.black;
-	}
-	
-	if ( clipping_to_rect  &&  patMode == patCopy )
-	{
-		fill_rect( params );
-		
-		return;
 	}
 	
 	Pattern& pattern = *params.pattern;
