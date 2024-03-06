@@ -182,6 +182,76 @@ void set_dimensions( int width, int height, int depth )
 	screen_texture_data = (uint8_t*) malloc( tex_width * tex_height );
 }
 
+static uint8_t bumpy_ramp[] =
+{
+	0xEE,
+	0xDD,
+	0xBB,
+	0xAA,
+	0x88,
+	0x77,
+	0x55,
+	0x44,
+	0x22,
+	0x11,
+	0x00,
+};
+
+static uint8_t color_palette[ 256 * 3 ];
+
+static
+void make_color_palette()
+{
+	uint8_t* p = color_palette;
+	
+	for ( int r = 0xFF;  r >= 0;  r -= 0x33 )
+	{
+		for ( int g = 0xFF;  g >= 0;  g -= 0x33 )
+		{
+			for ( int b = 0xFF;  b >= 0;  b -= 0x33 )
+			{
+				*p++ = r;
+				*p++ = g;
+				*p++ = b;
+			}
+		}
+	}
+	
+	p -= 3;
+	
+	for ( int i = 0;  i < 10;  ++i )
+	{
+		*p++ = bumpy_ramp[ i ];
+		
+		p += 2;
+	}
+	
+	for ( int i = 0;  i < 10;  ++i )
+	{
+		++p;
+		
+		*p++ = bumpy_ramp[ i ];
+		
+		++p;
+	}
+	
+	for ( int i = 0;  i < 10;  ++i )
+	{
+		p += 2;
+		
+		*p++ = bumpy_ramp[ i ];
+	}
+	
+	for ( int i = 0;  i < 11;  ++i )
+	{
+		uint16_t gray = bumpy_ramp[ i ];
+		
+		*p++ = gray;
+		*p++ = gray;
+		*p++ = gray;
+	}
+}
+
 static inline
 void transcode_inverted( const uint8_t* src, uint8_t* dst, int n )
 {
