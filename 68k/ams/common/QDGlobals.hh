@@ -37,4 +37,18 @@ QDGlobals& get_QDGlobals_from_CurrentA5()
 	return get_QDGlobals( *CurrentA5 );
 }
 
+#if CONFIG_DEBUGGING
+
+GrafPtr get_thePort();
+
+#else
+
+inline
+GrafPtr get_thePort()
+{
+	return *get_addrof_thePort();
+}
+
+#endif  // #if CONFIG_DEBUGGING
+
 #endif
