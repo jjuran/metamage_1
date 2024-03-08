@@ -16,7 +16,7 @@
 
 pascal PolyHandle OpenPoly_patch()
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	const Size initial_size = sizeof (Polygon) + 6 * sizeof (Point);
 	
@@ -38,7 +38,7 @@ pascal void ClosePoly_patch()
 {
 	ShowPen();
 	
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	PolyHandle poly = (PolyHandle) port.polySave;
 	

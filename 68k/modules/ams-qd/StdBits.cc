@@ -176,7 +176,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		return;
 	}
 	
-	GrafPort& port = **get_addrof_thePort();
+	const GrafPort& port = *get_thePort();
 	
 	/*
 		If we're drawing against a non-white background, swap Or and Bic.

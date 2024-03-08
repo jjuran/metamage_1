@@ -77,7 +77,7 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
                                                 const Rect&             input_rect,
                                                 bool                    clipping )
 {
-	GrafPtr thePort = *get_addrof_thePort();
+	GrafPtr thePort = get_thePort();
 	
 	params.port = thePort;
 	
@@ -380,7 +380,7 @@ static RgnHandle clipRgn = NewRgn_patch();
 
 pascal void StdRect_patch( signed char verb, const Rect* r )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	redraw_lock lock( port.portBits, *r );
 	
@@ -500,7 +500,7 @@ pascal void FrameRect_patch( const Rect* rect )
 
 pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	port.fillPat = *pattern;
 	

@@ -32,35 +32,35 @@ const Point OneOne : 0x0A02;
 
 pascal void TextFont_patch( short font )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	port.txFont = font;
 }
 
 pascal void TextFace_patch( short face )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	port.txFace = face;
 }
 
 pascal void TextMode_patch( short mode )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	port.txMode = mode;
 }
 
 pascal void TextSize_patch( short size )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	port.txSize = size;
 }
 
 pascal void SpaceExtra_patch( Fixed extra )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	port.spExtra = extra;
 }
@@ -103,7 +103,7 @@ pascal short TextWidth_patch( const char* buffer, short offset, short n )
 static
 FMOutPtr get_FontInfo( FontInfo* info, Point numer, Point denom )
 {
-	GrafPort& port = **get_addrof_thePort();
+	const GrafPort& port = *get_thePort();
 	
 	const FMInput input =
 	{
@@ -236,7 +236,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	
 	QDGlobals& qd = get_QDGlobals();
 	
-	GrafPort& port = *qd.thePort;
+	GrafPort& port = *get_thePort();
 	
 	if ( Handle h = port.picSave )
 	{

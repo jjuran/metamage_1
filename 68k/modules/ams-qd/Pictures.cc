@@ -35,7 +35,7 @@ typedef Byte Op;
 
 pascal PicHandle OpenPicture_patch( const Rect* frame )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	enum { initial_size = 12 };
 	
@@ -58,7 +58,7 @@ pascal PicHandle OpenPicture_patch( const Rect* frame )
 
 pascal void ClosePicture_patch()
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	if ( Handle h = port.picSave )
 	{
@@ -175,7 +175,7 @@ const UInt8* line( const UInt8* p )
 	const short v1 = read_word( p );
 	const short h1 = read_word( p );
 	
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	Point pt = port.pnLoc;
 	
@@ -196,7 +196,7 @@ const UInt8* short_line( const UInt8* p )
 	const SInt8 dh = *p++;
 	const SInt8 dv = *p++;
 	
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	Point pt = port.pnLoc;
 	
@@ -240,7 +240,7 @@ const UInt8* long_text( const UInt8* p )
 static
 const UInt8* text( const UInt8* p )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	Point pt = port.pnLoc;
 	
@@ -316,7 +316,7 @@ const Byte* do_opcode( const Byte* p )
 		last_used_rect = read_Rect( p );
 	}
 	
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	switch ( opcode )
 	{
@@ -544,7 +544,7 @@ pascal void KillPicture_patch( PicHandle picture )
 
 pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	Size size = mac::glue::GetHandleSize_raw( (Handle) pic );
 	

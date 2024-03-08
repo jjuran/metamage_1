@@ -70,7 +70,7 @@ pascal void ScrollRect_patch( const Rect*  rect,
                               short        dv,
                               MacRegion**  updateRgn )
 {
-	GrafPtr thePort = *get_addrof_thePort();
+	GrafPtr thePort = get_thePort();
 	
 	const Rect& srcRect = *rect;
 	

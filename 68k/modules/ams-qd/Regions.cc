@@ -34,7 +34,7 @@ pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 {
 	static RgnHandle utility_rgn = (scoped_zone(), NewRgn());
 	
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	if ( verb == kQDGrafVerbFrame )
 	{
@@ -93,7 +93,7 @@ pascal void InverRgn_patch( MacRegion** rgn )
 
 pascal void FillRgn_patch( MacRegion** rgn, const Pattern* pattern )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	port.fillPat = *pattern;
 	
@@ -114,7 +114,7 @@ pascal MacRegion** NewRgn_patch()
 
 pascal void OpenRgn_patch()
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	RgnHandle rgn = NewRgn();
 	
@@ -125,7 +125,7 @@ pascal void OpenRgn_patch()
 
 pascal void CloseRgn_patch( MacRegion** rgn )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	PolyHandle poly = (PolyHandle) port.polySave;
 	

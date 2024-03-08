@@ -30,7 +30,7 @@ void add_polygon_point( Point pt, PolyHandle poly )
 {
 	if ( poly[0]->polySize < sizeof (Polygon) )
 	{
-		const GrafPort& port = **get_addrof_thePort();
+		const GrafPort& port = *get_thePort();
 		
 		poly[0]->polySize = sizeof (Polygon);
 		
@@ -133,7 +133,7 @@ pascal void StdPoly_patch( signed char verb, PolyHandle poly )
 		return;
 	}
 	
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	if ( Handle h = port.picSave )
 	{
@@ -254,7 +254,7 @@ pascal void InvertPoly_patch( PolyHandle poly )
 
 pascal void FillPoly_patch( PolyHandle poly, const Pattern* pattern )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	port.fillPat = *pattern;
 	

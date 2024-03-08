@@ -40,7 +40,7 @@ pascal void StdRRect_patch( signed char  verb,
 	{
 		verb = kQDGrafVerbPaint;
 		
-		GrafPort& port = **get_addrof_thePort();
+		const GrafPort& port = *get_thePort();
 		
 		if ( RgnHandle rgnSave = (RgnHandle) port.rgnSave )
 		{
@@ -109,7 +109,7 @@ pascal void FillRoundRect_patch( const Rect*     rect,
                                  short           ovalHeight,
                                  const Pattern*  pattern )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	port.fillPat = *pattern;
 	

@@ -231,7 +231,7 @@ pascal void StdArc_patch( SInt8 verb, const Rect* r, short start, short extent )
 	{
 		verb = kQDGrafVerbPaint;
 		
-		GrafPort& port = **get_addrof_thePort();
+		const GrafPort& port = *get_thePort();
 		
 		const short penHeight = port.pnSize.v;
 		const short penWidth  = port.pnSize.h;
@@ -306,7 +306,7 @@ pascal void FillArc_patch( const Rect*     rect,
                            short           extent,
                            const Pattern*  pattern )
 {
-	GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	port.fillPat = *pattern;
 	

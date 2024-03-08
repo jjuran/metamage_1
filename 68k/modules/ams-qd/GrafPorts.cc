@@ -107,24 +107,14 @@ pascal void GetPort_patch( struct GrafPort** port_ptr )
 
 pascal void SetPortBits_patch( const BitMap* bitmap )
 {
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	if ( thePort == NULL )
-	{
-		return;
-	}
+	GrafPtr thePort = get_thePort();
 	
 	thePort->portBits = *bitmap;
 }
 
 pascal void PortSize_patch( short width, short height )
 {
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	if ( thePort == NULL )
-	{
-		return;
-	}
+	GrafPtr thePort = get_thePort();
 	
 	thePort->portRect.bottom = thePort->portRect.top + height;
 	thePort->portRect.right = thePort->portRect.left + width;
@@ -132,12 +122,7 @@ pascal void PortSize_patch( short width, short height )
 
 pascal void MovePortTo_patch( short left, short top )
 {
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	if ( thePort == NULL )
-	{
-		return;
-	}
+	GrafPtr thePort = get_thePort();
 	
 	Rect& bounds = thePort->portBits.bounds;
 	
@@ -149,12 +134,7 @@ pascal void MovePortTo_patch( short left, short top )
 
 pascal void SetOrigin_patch( short h, short v )
 {
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	if ( thePort == NULL )
-	{
-		return;
-	}
+	GrafPtr thePort = get_thePort();
 	
 	Rect& portRect = thePort->portRect;
 	Rect& bounds   = thePort->portBits.bounds;
@@ -170,48 +150,28 @@ pascal void SetOrigin_patch( short h, short v )
 
 pascal void SetClip_patch( struct MacRegion** clipRgn )
 {
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	if ( thePort == NULL )
-	{
-		return;
-	}
+	GrafPtr thePort = get_thePort();
 	
 	CopyRgn( clipRgn, thePort->clipRgn );
 }
 
 pascal void GetClip_patch( struct MacRegion** clipRgn )
 {
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	if ( thePort == NULL )
-	{
-		return;
-	}
+	GrafPtr thePort = get_thePort();
 	
 	CopyRgn( thePort->clipRgn, clipRgn );
 }
 
 pascal void ClipRect_patch( const struct Rect* clipRect )
 {
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	if ( thePort == NULL )
-	{
-		return;
-	}
+	GrafPtr thePort = get_thePort();
 	
 	RectRgn( thePort->clipRgn, clipRect );
 }
 
 pascal void BackPat_patch( const struct Pattern* pat )
 {
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	if ( thePort == NULL )
-	{
-		return;
-	}
+	GrafPtr thePort = get_thePort();
 	
 	thePort->bkPat = *pat;
 }
@@ -222,7 +182,7 @@ pascal void BackPat_patch( const struct Pattern* pat )
 
 pascal void ForeColor_patch( long color )
 {
-	GrafPtr thePort = *get_addrof_thePort();
+	GrafPtr thePort = get_thePort();
 	
 	if ( color == thePort->fgColor  &&  color == blackColor )
 	{
@@ -239,7 +199,7 @@ pascal void ForeColor_patch( long color )
 
 pascal void BackColor_patch( long color )
 {
-	GrafPtr thePort = *get_addrof_thePort();
+	GrafPtr thePort = get_thePort();
 	
 	if ( color == thePort->bkColor  &&  color == whiteColor )
 	{
@@ -298,12 +258,7 @@ bool intersects_cursor( const BitMap& bitmap, Point pt )
 
 pascal unsigned char GetPixel_patch( short h, short v )
 {
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	if ( thePort == NULL )
-	{
-		return false;
-	}
+	GrafPtr thePort = get_thePort();
 	
 	const BitMap& bits = thePort->portBits;
 	const Rect& bounds = bits.bounds;
