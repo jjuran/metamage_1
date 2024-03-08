@@ -1602,6 +1602,22 @@ pascal void ClipAbove_patch( WindowPeek window )
 	}
 }
 
+static inline
+bool might_intersect( RgnHandle a, RgnHandle b )
+{
+	Rect intersection;
+	
+	/*
+		Checking the bounding boxes is close enough for this purpose --
+		false positives merely yield unnecessary update events, and that
+		should happen only rarely, whereas a precise SectRgn() operation
+		(performed twice per window per damage-exposing event) is a much
+		more CPU-intensive calculation.
+	*/
+	
+	return SectRect( &a[0]->rgnBBox, &b[0]->rgnBBox, &intersection );
+}
+
 pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 {
 	if ( clobbered_region == NULL  ||  EmptyRgn( clobbered_region ) )
@@ -1621,16 +1637,25 @@ pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 	}
 	else if ( window->visible )
 	{
-		call_WDEF( window, wDraw, 0 );
-		
-		if ( SaveUpdate )
+		if ( might_intersect( clobbered_region, window->strucRgn ) )
 		{
-			UnionRgn( window->updateRgn, clobbered_region, window->updateRgn );
+			call_WDEF( window, wDraw, 0 );
 		}
 		
-		if ( PaintWhite )
+		RgnHandle contRgn   = window->contRgn;
+		RgnHandle updateRgn = window->updateRgn;
+		
+		if ( might_intersect( clobbered_region, contRgn ) )
 		{
-			EraseRgn( window->contRgn );
+			if ( SaveUpdate )
+			{
+				UnionRgn( updateRgn, clobbered_region, updateRgn );
+			}
+			
+			if ( PaintWhite )
+			{
+				EraseRgn( contRgn );
+			}
 		}
 	}
 }
