@@ -70,14 +70,14 @@ pascal void ScrollRect_patch( const Rect*  rect,
                               short        dv,
                               MacRegion**  updateRgn )
 {
-	GrafPtr thePort = get_thePort();
+	const GrafPort& port = *get_thePort();
 	
 	const Rect& srcRect = *rect;
 	
 	Rect dstRect = srcRect;
 	
 	// Start with the visRgn (omitting any occluded parts of the source).
-	CopyRgn( thePort->visRgn, updateRgn );
+	CopyRgn( port.visRgn, updateRgn );
 	
 	// Translate the visRgn (along with the dstRect itself).
 	OffsetRgn( updateRgn, dh, dv );
@@ -87,8 +87,8 @@ pascal void ScrollRect_patch( const Rect*  rect,
 	
 	// Use the translated visRgn as a mask region to omit occluded bits.
 	
-	CopyBits( &thePort->portBits,
-	          &thePort->portBits,
+	CopyBits( &port.portBits,
+	          &port.portBits,
 	          &srcRect,
 	          &dstRect,
 	          srcCopy,

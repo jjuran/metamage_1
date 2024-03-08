@@ -367,9 +367,9 @@ short* steep_sinister( RgnHandle rgn, Point penSize, Fixed h_increment )
 
 pascal void StdLine_patch( Point newPt )
 {
-	GrafPtr thePort = get_thePort();
+	const GrafPort& port = *get_thePort();
 	
-	Point pnLoc = thePort->pnLoc;
+	Point pnLoc = port.pnLoc;
 	
 	if ( pnLoc.v > newPt.v )
 	{
@@ -388,8 +388,8 @@ pascal void StdLine_patch( Point newPt )
 	const short descent = line.bottom - line.top;
 	const short advance = line.right - line.left;
 	
-	line.bottom += thePort->pnSize.v;
-	line.right  += thePort->pnSize.h;
+	line.bottom += port.pnSize.v;
+	line.right  += port.pnSize.h;
 	
 	if ( pnLoc.v == newPt.v  ||  pnLoc.h == newPt.h )
 	{
@@ -423,11 +423,11 @@ pascal void StdLine_patch( Point newPt )
 	{
 		if ( newPt.h >= pnLoc.h )
 		{
-			end = even_dexter( rgn, thePort->pnSize );
+			end = even_dexter( rgn, port.pnSize );
 		}
 		else
 		{
-			end = even_sinister( rgn, thePort->pnSize );
+			end = even_sinister( rgn, port.pnSize );
 		}
 	}
 	else if ( advance > descent )
@@ -436,11 +436,11 @@ pascal void StdLine_patch( Point newPt )
 		
 		if ( newPt.h >= pnLoc.h )
 		{
-			end = shallow_dexter( rgn, thePort->pnSize, h_increment );
+			end = shallow_dexter( rgn, port.pnSize, h_increment );
 		}
 		else
 		{
-			end = shallow_sinister( rgn, thePort->pnSize, h_increment );
+			end = shallow_sinister( rgn, port.pnSize, h_increment );
 		}
 	}
 	else
@@ -449,11 +449,11 @@ pascal void StdLine_patch( Point newPt )
 		
 		if ( newPt.h >= pnLoc.h )
 		{
-			end = steep_dexter( rgn, thePort->pnSize, h_increment );
+			end = steep_dexter( rgn, port.pnSize, h_increment );
 		}
 		else
 		{
-			end = steep_sinister( rgn, thePort->pnSize, h_increment );
+			end = steep_sinister( rgn, port.pnSize, h_increment );
 		}
 	}
 	
@@ -464,72 +464,72 @@ pascal void StdLine_patch( Point newPt )
 
 pascal void HidePen_patch()
 {
-	GrafPtr thePort = get_thePort();
+	GrafPort& port = *get_thePort();
 	
-	--thePort->pnVis;
+	--port.pnVis;
 }
 
 pascal void ShowPen_patch()
 {
-	GrafPtr thePort = get_thePort();
+	GrafPort& port = *get_thePort();
 	
-	++thePort->pnVis;
+	++port.pnVis;
 }
 
 pascal void GetPen_patch( Point* pt )
 {
-	GrafPtr thePort = get_thePort();
+	const GrafPort& port = *get_thePort();
 	
-	*pt = thePort->pnLoc;
+	*pt = port.pnLoc;
 }
 
 pascal void GetPenState_patch( PenState* state )
 {
-	GrafPtr thePort = get_thePort();
+	const GrafPort& port = *get_thePort();
 	
-	*state = *(const PenState*) &thePort->pnLoc;
+	*state = *(const PenState*) &port.pnLoc;
 }
 
 pascal void SetPenState_patch( const PenState* state )
 {
-	GrafPtr thePort = get_thePort();
+	GrafPort& port = *get_thePort();
 	
-	*(PenState*) &thePort->pnLoc = *state;
+	*(PenState*) &port.pnLoc = *state;
 }
 
 pascal void PenSize_patch( short width, short height )
 {
-	GrafPtr thePort = get_thePort();
+	GrafPort& port = *get_thePort();
 	
-	thePort->pnSize.v = height;
-	thePort->pnSize.h = width;
+	port.pnSize.v = height;
+	port.pnSize.h = width;
 }
 
 pascal void PenMode_patch( short mode )
 {
-	GrafPtr thePort = get_thePort();
+	GrafPort& port = *get_thePort();
 	
-	thePort->pnMode = mode;
+	port.pnMode = mode;
 }
 
 pascal void PenPat_patch( const Pattern* pat )
 {
-	GrafPtr thePort = get_thePort();
+	GrafPort& port = *get_thePort();
 	
-	thePort->pnPat = *pat;
+	port.pnPat = *pat;
 }
 
 pascal void PenNormal_patch()
 {
 	QDGlobals& qd = get_QDGlobals();
 	
-	GrafPtr thePort = get_thePort();
+	GrafPort& port = *get_thePort();
 	
-	thePort->pnSize.v = 1;
-	thePort->pnSize.h = 1;
+	port.pnSize.v = 1;
+	port.pnSize.h = 1;
 	
-	thePort->pnMode = patCopy;
-	thePort->pnPat  = qd.black;
+	port.pnMode = patCopy;
+	port.pnPat  = qd.black;
 }
 
 pascal void MoveTo_patch( short h, short v )
@@ -563,36 +563,36 @@ pascal void MoveTo_patch( short h, short v )
 
 pascal void Move_patch( short dh, short dv )
 {
-	GrafPtr thePort = get_thePort();
+	const GrafPort& port = *get_thePort();
 	
-	Point pnLoc = thePort->pnLoc;
+	Point pnLoc = port.pnLoc;
 	
 	MoveTo( pnLoc.h + dh, pnLoc.v + dv );
 }
 
 pascal void LineTo_patch( short h, short v )
 {
-	GrafPtr thePort = get_thePort();
+	GrafPort& port = *get_thePort();
 	
-	if ( thePort->pnVis >= 0 )
+	if ( port.pnVis >= 0 )
 	{
 		StdLine( *(const Point*) &v );
 	}
 	
-	if ( thePort->polySave )
+	if ( port.polySave )
 	{
-		add_polygon_point( *(Point*) &v, (PolyHandle) thePort->polySave );
+		add_polygon_point( *(Point*) &v, (PolyHandle) port.polySave );
 	}
 	
-	thePort->pnLoc.v = v;
-	thePort->pnLoc.h = h;
+	port.pnLoc.v = v;
+	port.pnLoc.h = h;
 }
 
 pascal void Line_patch( short dh, short dv )
 {
-	GrafPtr thePort = get_thePort();
+	const GrafPort& port = *get_thePort();
 	
-	Point pnLoc = thePort->pnLoc;
+	Point pnLoc = port.pnLoc;
 	
 	LineTo( pnLoc.h + dh, pnLoc.v + dv );
 }

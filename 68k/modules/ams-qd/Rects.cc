@@ -77,18 +77,18 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
                                                 const Rect&             input_rect,
                                                 bool                    clipping )
 {
-	GrafPtr thePort = get_thePort();
+	GrafPtr port = get_thePort();
 	
-	params.port = thePort;
+	params.port = port;
 	
-	const BitMap& portBits = thePort->portBits;
+	const BitMap& portBits = port->portBits;
 	
 	const Rect& bounds = portBits.bounds;
 	
 	Rect rect;
 	
 	do_Rect_intersection( rect, bounds, input_rect );
-	do_Rect_intersection( rect, thePort->portRect, rect );
+	do_Rect_intersection( rect, port->portRect, rect );
 	
 	params.rect = rect;
 	
