@@ -166,7 +166,6 @@ pascal short StdTxMeas_patch( short        n,
 
 static
 void smear( const BitMap&  srcBits,
-            const BitMap&  dstBits,
             const Rect&    srcRect,
             const Rect&    dstRect,
             short          m,
@@ -193,7 +192,7 @@ void smear( const BitMap&  srcBits,
 			r.left = j;
 			r.right = j + width;
 			
-			CopyBits( &srcBits, &dstBits, &srcRect, &r, srcOr, NULL );
+			StdBits( &srcBits, &srcRect, &r, srcOr, NULL );
 		}
 	}
 }
@@ -279,8 +278,6 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	
 	BitMap srcBits = { src, rowBytes, { 0, 0, fRectHeight, rowBytes * 8 } };
 	
-	const BitMap& dstBits = port.portBits;
-	
 	Rect srcRect;
 	Rect dstRect;
 	
@@ -358,19 +355,19 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 			
 			if ( edge )
 			{
-				smear( srcBits, dstBits, srcRect, dstRect, edge + bold, edge );
+				smear( srcBits, srcRect, dstRect, edge + bold, edge );
 				
 				mode = srcBic;
 			}
 			
-			CopyBits( &srcBits, &dstBits, &srcRect, &dstRect, mode, NULL );
+			StdBits( &srcBits, &srcRect, &dstRect, mode, NULL );
 			
 			while ( bold-- > 0 )
 			{
 				++dstRect.left;
 				++dstRect.right;
 				
-				CopyBits( &srcBits, &dstBits, &srcRect, &dstRect, mode, NULL );
+				StdBits( &srcBits, &srcRect, &dstRect, mode, NULL );
 			}
 		}
 		
