@@ -11,16 +11,16 @@
 #include <Quickdraw.h>
 #endif
 
-GrafPort*** CurrentA5 : 0x0904;
+GrafPtr** CurrentA5 : 0x0904;
 
 inline asm
-struct GrafPort** get_addrof_thePort()
+GrafPtr* get_addrof_thePort()
 {
 	MOVEA.L  (A5),A0
 }
 
 inline
-QDGlobals& get_QDGlobals( GrafPort** a5_world )
+QDGlobals& get_QDGlobals( GrafPtr* a5_world )
 {
 	return *(QDGlobals*) ((char*) a5_world - offsetof(QDGlobals, thePort));
 }
