@@ -276,17 +276,21 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	BitMap stretched_bits;
 	
-	stretched_bits.baseAddr = NULL;
-	
 	if ( stretching )
 	{
-		scoped_zone null_zone;
+		static Handle buffer = (scoped_zone(), NewHandle( 0 ));
 		
 		const short rowBytes = (dstWidth + 15) / 16u * 2;
 		
+		Size size = mulu_w( rowBytes, dstHeight );
+		
+		SetHandleSize( buffer, size );
+		
+		fast_memset( *buffer, '\0', size );
+		
 		const Rect bounds = { 0, 0, dstHeight, dstWidth };
 		
-		stretched_bits.baseAddr = NewPtrClear( mulu_w( rowBytes, dstHeight ) );
+		stretched_bits.baseAddr = *buffer;  // no locking needed yet
 		stretched_bits.rowBytes = rowBytes;
 		stretched_bits.bounds   = bounds;
 		
@@ -468,10 +472,5 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 			                  clipRgn,
 			                  blit );
 		}
-	}
-	
-	if ( stretched_bits.baseAddr )
-	{
-		DisposePtr( stretched_bits.baseAddr );
 	}
 }
