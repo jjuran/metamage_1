@@ -692,6 +692,8 @@ void save_bits( BitMap& savedBits )
 	        + bounds.top  * ScreenRow
 	        + bounds.left / 8u;
 	
+	savedBits.baseAddr = src;
+	
 	blit_bytes( src, ScreenRow, dst, rowBytes, rowBytes, height );
 }
 
@@ -705,9 +707,7 @@ void restore_bits( BitMap& savedBits )
 	const short rowBytes = savedBits.rowBytes;
 	
 	Ptr src = *SavedHandle;
-	Ptr dst = ScrnBase
-	        + bounds.top  * ScreenRow
-	        + bounds.left / 8u;
+	Ptr dst = savedBits.baseAddr;
 	
 	blit_bytes( src, rowBytes, dst, ScreenRow, rowBytes, height );
 }
