@@ -1071,6 +1071,8 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 		(and so we don't waste time creating a temporary port).
 	*/
 	
+	raster_lock lock;
+	
 	CopyBits( &WMgrPort->portBits,
 	          &WMgrPort->portBits,
 	          &srcRect,
