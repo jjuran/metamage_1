@@ -109,6 +109,13 @@ DEFINE_CALLOUT( long,
                   long         length : __D0 ),
                 0xFFAE )
 
+DEFINE_CALLOUT( long,
+                decode_MACE3,
+                ( const void*  src : __A0,
+                  void*        dst : __A1,
+                  long         len : __D0 ),
+                0xFFAC )
+
 #undef DEFINE_CALLOUT
 
 inline
