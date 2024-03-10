@@ -39,6 +39,8 @@
 #include "splode/write-a-splode.hh"
 
 // rasterlib
+#include "raster/clut.hh"
+#include "raster/clut_detail.hh"
 #include "raster/raster.hh"
 
 // glfb-common
@@ -480,6 +482,17 @@ static EventTypeSpec Modifiers_event[] =
 	{ kEventClassKeyboard, kEventRawKeyModifiersChanged },
 };
 
+static
+void set_palette( const raster_load& load )
+{
+	using namespace raster;
+	
+	if ( const clut_data* clut = find_clut( &load.meta->note ) )
+	{
+		glfb::set_palette( &clut->palette[ 0 ].value, clut->max + 1 );
+	}
+}
+
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
@@ -498,6 +511,8 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	*/
 	
 	glfb::cursor_enabled = frend::cursor_state != NULL;
+	
+	set_palette( load );
 	
 	create_AGL_context();
 	
