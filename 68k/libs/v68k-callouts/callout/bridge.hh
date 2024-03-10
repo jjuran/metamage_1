@@ -77,6 +77,7 @@ enum
 	
 	// $FFAE - $FFA8
 	send_sound_command,
+	decode_MACE3,
 	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block
