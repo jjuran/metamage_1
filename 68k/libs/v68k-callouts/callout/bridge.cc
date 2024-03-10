@@ -30,6 +30,7 @@
 #include "ioutils/load.hh"
 
 // v68k-callouts
+#include "callout/codec.hh"
 #include "callout/cursor.hh"
 #include "callout/exceptions.hh"
 #include "callout/fixed.hh"
@@ -848,7 +849,7 @@ static const function_type the_callouts[] =
 	NULL,
 	
 	&send_sound_command_callout,
-	NULL,
+	&decode_MACE3_callout,
 	NULL,
 	NULL,
 	
