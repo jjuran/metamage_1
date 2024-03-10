@@ -119,6 +119,13 @@ DEFINE_CALLOUT( long,
                 0xFFAE )
 
 DEFINE_CALLOUT( long,
+                decode_MACE3,
+                ( const void*  src : __A0,
+                  void*        dst : __A1,
+                  long         len : __D0 ),
+                0xFFAC )
+
+DEFINE_CALLOUT( long,
                 next_pseudorandom,
                 ( long randSeed : __D0 ),
                 0xFFA6 )
