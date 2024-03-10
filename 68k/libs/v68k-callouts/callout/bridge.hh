@@ -77,7 +77,7 @@ enum
 	
 	// $FFAE - $FFA8
 	send_sound_command,
-	reserved16,
+	decode_MACE3,
 	reserved17,
 	reserved18,
 	
