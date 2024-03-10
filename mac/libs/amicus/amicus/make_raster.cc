@@ -106,7 +106,7 @@ int create_raster_file( const char* path, raster::raster_load& result )
 	desc.height = height;
 	desc.stride = stride;
 	desc.weight = weight;
-	desc.model  = Model_monochrome_paint;
+	desc.model  = Model_RGB;
 	desc.extra  = frame_count - 1;
 	
 	raster_note* next_note = &note;
