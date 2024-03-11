@@ -6,6 +6,9 @@
 #include "Sound-1_0.hh"
 
 // Mac OS
+#ifndef __DEVICES__
+#include <Devices.h>
+#endif
 #ifndef __SOUND__
 #include <Sound.h>
 #endif
@@ -28,6 +31,11 @@
 
 #pragma exceptions off
 
+
+enum
+{
+	kSoundDriverRefNum = -4,
+};
 
 enum
 {
@@ -110,28 +118,38 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 			return notEnoughBufferSpace;
 		}
 		
+		buffer->ch = chan;
+		
 		buffer->ff.count = playback_rate;
 		
 		Byte* output = (Byte*) buffer->ff.waveBytes;
 		
 		fast_memcpy( output, samples, payload_len );
 		
-		err = FSWrite( -4, &buffer_size, &buffer->ff );
-		
 		samples           += payload_len;
 		samples_remaining -= payload_len;
+		
+		ParamBlockRec& pb = buffer->pb;
+		IOParam& io = pb.ioParam;
+		
+		io.ioPosOffset = samples_remaining;
+		
+	//	io.ioRefNum = kSoundDriverRefNum;
+	//	io.ioBuffer = buffer;
+		io.ioReqCount = buffer_size;
+	//	io.ioCompletion = NULL;
+		io.ioVRefNum = 0;
+		io.ioPosMode = 0;
+		
+		err = PBWriteAsync( &pb );
 		
 		if ( samples_remaining < payload_len )
 		{
 			payload_len = samples_remaining;
 			buffer_size = 6 + payload_len;
 		}
-		
-		return_buffer( buffer );
 	}
 	while ( samples_remaining > 0  &&  err == noErr );
-	
-	chan->cmdInProgress.cmd = nullCmd;
 	
 	return err;
 }
@@ -227,9 +245,40 @@ void start_next_command( SndChannel& chan )
 }
 
 static
+OSErr audio_completion( ParamBlockRec* pb : __A0 )
+{
+	IOParam& io = pb->ioParam;
+	
+	io.ioResult = noErr;
+	
+	const int pb_offset = offsetof(audio_buffer, pb);
+	
+	audio_buffer* buffer = (audio_buffer*) ((char*) pb - pb_offset);
+	
+	return_buffer( buffer );
+	
+	SndChannel* chan = buffer->ch;
+	
+	if ( io.ioPosOffset == 0 )
+	{
+		start_next_command( *chan );
+	}
+	
+	return noErr;
+}
+
+static
 void init_buffer( audio_buffer& buffer )
 {
 	buffer.next = NULL;
+	
+	IOParam& io = buffer.pb.ioParam;
+	
+	io.ioRefNum = kSoundDriverRefNum;
+	io.ioBuffer = (Ptr) &buffer.ff;
+	io.ioCompletion = (IOCompletionProcPtr) &audio_completion;
+	io.ioVRefNum = 0;
+	io.ioPosMode = 0;
 	
 	buffer.ff.mode = ffMode;
 }
@@ -287,7 +336,7 @@ OSErr SndPlay_patch( SndChannel* chan, SndListResource** h, Boolean async )
 	
 	if ( free_audio_buffer == NULL )
 	{
-		create_buffers( 1 );
+		create_buffers( 2 );
 	}
 	
 	const short format = h[0]->format;

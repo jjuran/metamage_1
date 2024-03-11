@@ -6,6 +6,11 @@
 #ifndef BUFFERS_HH
 #define BUFFERS_HH
 
+// Mac OS
+#ifndef __FILES__
+#include <Files.h>
+#endif
+
 // SoundDriver
 #include "SoundDriver/SoundDriver.h"
 
@@ -16,6 +21,7 @@ struct audio_buffer
 {
 	audio_buffer*  next;
 	SndChannel*    ch;
+	ParamBlockRec  pb;
 	FFSynthRec     ff;
 };
 
