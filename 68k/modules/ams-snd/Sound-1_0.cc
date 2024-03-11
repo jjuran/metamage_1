@@ -205,7 +205,7 @@ short SndNewChannel_patch( SndChannel** c, short s, long i, SndCallBackUPP u )
 }
 
 pascal
-short SndDisposeChannel_patch( SndChannel** c )
+short SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow )
 {
 	ERROR = "SndDisposeChannel is unimplemented";
 	
