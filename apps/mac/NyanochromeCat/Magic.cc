@@ -28,7 +28,8 @@ enum
 StillDownPatchUPP old_StillDown;
 
 static
-pascal void StillDown_payload()
+inline
+void StillDown_payload()
 {
 	if ( animation_timer.pulse() )
 	{
