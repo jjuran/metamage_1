@@ -10,14 +10,21 @@
 #include <MacWindows.h>
 #endif
 
+// mac-sys-utils
+#include "mac_sys/delay.hh"
+
 // ams-common
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
+
+// ams-ui
+#include "patches.hh"
 
 
 #pragma exceptions off
 
 
+Point     Mouse       : 0x0830;
 GrafPtr   WMgrPort    : 0x09DE;
 RgnHandle GrayRgn     : 0x09EE;
 Pattern   DragPattern : 0x0A34;
@@ -116,39 +123,53 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 	{
 		EventRecord event;
 		
-		const bool eventful = WaitNextEvent( mUpMask, &event, sleep, mouseRgn );
-		
-		// Events for DAs won't occur here, so we don't need to check.
-		
-		if ( event.what == mouseUp )
+		if ( is_StillDown_patched() )
 		{
-			break;
+			if ( ! StillDown() )
+			{
+				break;
+			}
+			
+			mac::sys::delay( 1 );
+			
+			event.where = Mouse;
 		}
-		
-		const Point& where = event.where;
-		
-		SetRectRgn( mouseRgn, where.h, where.v, where.h + 1, where.v + 1 );
-		
-		if ( event.what != nullEvent )
+		else
 		{
-			/*
-				Discard any mouse-moved events without redrawing the region.
-				This can be prohibitively CPU-taxing on lightweight systems.
+			bool eventful = WaitNextEvent( mUpMask, &event, sleep, mouseRgn );
+			
+			// Events for DAs won't occur here, so we don't need to check.
+			
+			if ( event.what == mouseUp )
+			{
+				break;
+			}
+			
+			const Point& where = event.where;
+			
+			SetRectRgn( mouseRgn, where.h, where.v, where.h + 1, where.v + 1 );
+			
+			if ( event.what != nullEvent )
+			{
+				/*
+					Discard any mouse-moved events without redrawing the region.
+					This can be prohibitively CPU-taxing on lightweight systems.
+					
+					Set sleep to 0 to ensure that we get a null event afterward.
+				*/
 				
-				Set sleep to 0 to ensure that we get a null event afterward.
+				sleep = 0;
+				
+				continue;
+			}
+			
+			/*
+				We got a null event -- redraw the dotted region outline (if it
+				actually moved, that is), and set sleep back to forever (approx).
 			*/
 			
-			sleep = 0;
-			
-			continue;
+			sleep = 0xFFFFFFFF;
 		}
-		
-		/*
-			We got a null event -- redraw the dotted region outline (if it
-			actually moved, that is), and set sleep back to forever (approx).
-		*/
-		
-		sleep = 0xFFFFFFFF;
 		
 		if ( *(long*) &pt != *(long*) &event.where )
 		{
