@@ -270,6 +270,8 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		return;
 	}
 	
+	bool no_more_blitting = false;
+	
 	Rect clipRect;
 	
 	if ( ! get_refined_clip_rect( port, clipRect ) )
@@ -297,7 +299,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	
 	if ( port.pnLoc.h - output->shadowPixels >= clipRect.right )
 	{
-		return;
+		no_more_blitting = true;
 	}
 	
 	const FontRec& rec = **(FontRec**) output->fontHandle;
@@ -343,12 +345,12 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	
 	if ( dstRect.top - output->shadowPixels >= clipRect.bottom )
 	{
-		return;
+		no_more_blitting = true;
 	}
 	
 	if ( dstRect.bottom + output->shadowPixels <= clipRect.top )
 	{
-		return;
+		no_more_blitting = true;
 	}
 	
 	// Worst case, for checking cursor intersection only
@@ -374,7 +376,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		const int8_t character_offset = fixmulu_w( *offset_width++, h_scale );
 		const int8_t character_width  = fixmulu_w( *offset_width,   h_scale );
 		
-		if ( port.pnLoc.h + widMax <= clipRect.left )
+		if ( no_more_blitting  ||  port.pnLoc.h + widMax <= clipRect.left )
 		{
 			goto advance;
 		}
@@ -436,7 +438,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		
 		if ( port.pnLoc.h - output->shadowPixels >= clipRect.right )
 		{
-			break;
+			no_more_blitting = true;
 		}
 	}
 }
