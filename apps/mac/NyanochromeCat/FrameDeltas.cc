@@ -45,19 +45,12 @@ Handle OK( Handle h )
 	return h;
 }
 
-static
 void memxor_long( long* dst, const long* src, unsigned n )
 {
 	while ( n-- > 0 )
 	{
 		*dst++ ^= *src++;
 	}
-}
-
-static inline
-void memxor_aligned_32b( Byte* dst, const Byte* src, unsigned n )
-{
-	memxor_long( (long*) dst, (const long*) src, n / sizeof (long) );
 }
 
 static
