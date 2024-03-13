@@ -47,9 +47,6 @@ pascal void StillDown_payload()
 
 #if CALL_NOT_IN_CARBON
 
-using mac::sys::get_trap_address;
-using mac::sys::set_trap_address;
-
 static
 pascal Boolean StillDown_patch()
 {
@@ -60,6 +57,11 @@ pascal Boolean StillDown_patch()
 
 DEFINE_UPP( StillDownPatch, StillDown_patch )
 
+using mac::sys::get_trap_address;
+using mac::sys::set_trap_address;
+
+typedef UniversalProcPtr UPP;
+
 Boolean TrackGoAway_magic( WindowRef window, Point pt )
 {
 	if ( animation_timer.paused() )
@@ -69,11 +71,11 @@ Boolean TrackGoAway_magic( WindowRef window, Point pt )
 	
 	old_StillDown = (StillDownPatchUPP) get_trap_address( _StillDown );
 	
-	set_trap_address( (UniversalProcPtr) UPP_ARG( StillDown_patch ), _StillDown );
+	set_trap_address( (UPP) UPP_ARG( StillDown_patch ), _StillDown );
 	
 	const Boolean result = TrackGoAway( window, pt );
 	
-	set_trap_address( (UniversalProcPtr) old_StillDown, _StillDown );
+	set_trap_address( (UPP) old_StillDown, _StillDown );
 	
 	return result;
 }
