@@ -1,4 +1,4 @@
-#define COPYRIGHT  "2017-2023 Josh Juran"
+#define COPYRIGHT  "2017-2024 Josh Juran"
 
 #define COPY "\0xA9"
 
@@ -11,12 +11,12 @@ resource 'NYAN' (0, "Nyanochrome Cat")
 
 resource 'vers' (1) {
 	0x01,
-	0x21,
+	0x30,
 	release,
 	0,
 	smRoman,
-	"1.2.1",
-	"1.2.1, " COPY " " COPYRIGHT
+	"1.3",
+	"1.3, " COPY " " COPYRIGHT
 };
 
 resource 'STR#' (128) {{
