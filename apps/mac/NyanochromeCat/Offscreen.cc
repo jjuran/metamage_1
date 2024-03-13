@@ -50,6 +50,16 @@ using nyancat::bitmap;
 using nyancat::n_frames;
 
 
+bool using_frame_deltas;
+
+Ptr temp_blit_buffer;
+
+static inline
+void my_memcpy( void* dst, const void* src, long n )
+{
+	BlockMoveData( src, dst, n );
+}
+
 void bitmap::set_pixel( Coord x, Coord y, Color color )
 {
 	x *= zoom;
@@ -72,8 +82,6 @@ void bitmap::fill_rect( Coord x, Coord y, Delta dx, Delta dy, Color color )
 	
 	FillRect( &r, &color );
 }
-
-static bool using_frame_deltas;
 
 static int current_frame;
 
@@ -255,11 +263,29 @@ void prepare_next_frame()
 	}
 	else
 	{
+		Ptr prev_baseAddr = buffer_bits.baseAddr;
+		
 		buffer_bits.baseAddr += frame_size;
 		
 		if ( current_frame == 0 )
 		{
 			buffer_bits.baseAddr -= frame_size * n_frames;
+		}
+		
+		/*
+			If the temporary XOR blitting buffer is allocated,
+			populate it with a frame delta of the current frame
+			and the next frame.  This won't occur in Carbon (or if
+			we're already using frame deltas to save memory).
+		*/
+		
+		if ( CALL_NOT_IN_CARBON  &&  temp_blit_buffer )
+		{
+			const Byte* next = (Byte*) buffer_bits.baseAddr;
+			
+			my_memcpy( temp_blit_buffer, prev_baseAddr, frame_size );
+			
+			memxor_aligned_32b( (Byte*) temp_blit_buffer, next, frame_size );
 		}
 	}
 }
@@ -295,9 +321,19 @@ void blit( CGrafPtr port )
 	
 	if ( ! using_frame_deltas )
 	{
-		draw( port );
+		if ( ! temp_blit_buffer )
+		{
+			draw( port );
+			
+			return;
+		}
 		
-		return;
+		/*
+			We're not using frame deltas generally, but we need
+			to use them temporarily if the buffer is allocated.
+		*/
+		
+		addr_diff = temp_blit_buffer - buffer_bits.baseAddr;
 	}
 	
 	buffer_bits.baseAddr += addr_diff;

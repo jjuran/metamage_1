@@ -17,6 +17,10 @@
 #endif
 
 
+extern bool using_frame_deltas;
+
+extern Ptr temp_blit_buffer;
+
 void render_offscreen();
 
 void prepare_next_frame();
