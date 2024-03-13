@@ -6,5 +6,7 @@
 // Standard C
 #include <stdint.h>
 
-void save_frame_delta( int i, uint8_t* dst, const uint8_t* src );
-void load_frame_delta( int i, uint8_t* dst,       uint8_t* tmp );
+typedef unsigned char Byte;
+
+void save_frame_delta( int i, Byte* dst, const Byte* src );
+void load_frame_delta( int i, Byte* dst,       Byte* tmp );

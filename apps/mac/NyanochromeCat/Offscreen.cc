@@ -164,10 +164,10 @@ void render_offscreen()
 	
 #endif
 	
-	uint8_t* tmp = (uint8_t*) buffer_bits.baseAddr;
+	Byte* tmp = (Byte*) buffer_bits.baseAddr;
 	
-	uint8_t* alt = tmp + frame_size;
-	uint8_t* dst = alt + frame_size;
+	Byte* alt = tmp + frame_size;
+	Byte* dst = alt + frame_size;
 	
 	if ( using_frame_deltas )
 	{
@@ -201,7 +201,7 @@ void render_offscreen()
 		
 		if ( using_frame_deltas )
 		{
-			uint8_t* src = dst;
+			Byte* src = dst;
 			dst = alt;
 			alt = src;
 			
@@ -211,8 +211,7 @@ void render_offscreen()
 	
 	if ( using_frame_deltas )
 	{
-		uint8_t* src = tmp;
-		
+		Byte* src = tmp;
 		dst = alt;
 		
 		save_frame_delta( 0, dst, src );
@@ -249,8 +248,8 @@ void prepare_next_frame()
 	
 	if ( using_frame_deltas )
 	{
-		uint8_t* dst = (uint8_t*) buffer_bits.baseAddr;
-		uint8_t* tmp = (uint8_t*) buffer_bits.baseAddr + frame_size;
+		Byte* dst = (Byte*) buffer_bits.baseAddr;
+		Byte* tmp = (Byte*) buffer_bits.baseAddr + frame_size;
 		
 		load_frame_delta( current_frame, dst, tmp );
 	}
@@ -269,8 +268,8 @@ void prepare_prev_frame()
 {
 	if ( using_frame_deltas )
 	{
-		uint8_t* dst = (uint8_t*) buffer_bits.baseAddr;
-		uint8_t* tmp = (uint8_t*) buffer_bits.baseAddr + frame_size;
+		Byte* dst = (Byte*) buffer_bits.baseAddr;
+		Byte* tmp = (Byte*) buffer_bits.baseAddr + frame_size;
 		
 		load_frame_delta( current_frame, dst, tmp );
 	}
