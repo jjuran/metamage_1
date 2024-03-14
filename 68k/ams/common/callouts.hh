@@ -109,6 +109,11 @@ DEFINE_CALLOUT( long,
                   long         length : __D0 ),
                 0xFFAE )
 
+DEFINE_CALLOUT( long,
+                next_pseudorandom,
+                ( long randSeed : __D0 ),
+                0xFFA6 )
+
 #undef DEFINE_CALLOUT
 
 inline
@@ -168,6 +173,12 @@ void draw_bytes( const void* pat, unsigned short h_index, unsigned short v_index
 	draw_bytes( pat, v_index << 16 | h_index,
 	            dst, dst_len << 16 | dst_n,
 	                 stride  << 16 | mode );
+}
+
+inline
+long next_pseudorandom( long* randSeed )
+{
+	return *randSeed = next_pseudorandom( *randSeed );
 }
 
 unsigned long CmpString_sans_case( const unsigned char*  a : __A0,
