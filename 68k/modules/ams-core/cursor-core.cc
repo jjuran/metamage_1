@@ -13,6 +13,7 @@
 // ams-common
 #include "callouts.hh"
 #include "cursor_jump.hh"
+#include "scoped_zone.hh"
 #include "screen_lock.hh"
 
 // ams-core
@@ -52,7 +53,11 @@ static bool hardware_cursor;
 static Ptr    CrsrAddr;
 static Buffer bits_under_cursor;
 
+static short cursor_rowBytes;
 static short CrsrSave_rowBytes = 4;
+
+static Ptr crsr_face;
+static Ptr crsr_mask;
 
 
 static inline
@@ -108,6 +113,21 @@ void init_lowmem_Cursor()
 	if ( hardware_cursor )
 	{
 		notify_cursor_moved( *(long*) &Mouse );
+	}
+	else if ( DepthLog2 == 3 )
+	{
+		cursor_rowBytes   = sizeof (UInt16) << DepthLog2;
+		CrsrSave_rowBytes = sizeof (UInt32) << DepthLog2;
+		
+		Size CrsrSave_size = CrsrSave_rowBytes * 16;
+		Size crsrtile_size = cursor_rowBytes   * 16;
+		
+		Size buffer_size = CrsrSave_size + crsrtile_size * 2;
+		
+		CrsrSave = (scoped_zone(), NewPtr( buffer_size ));
+		
+		crsr_face = CrsrSave + CrsrSave_size;
+		crsr_mask = CrsrSave + CrsrSave_size + crsrtile_size;
 	}
 }
 
@@ -196,6 +216,18 @@ void restore_bits_under_cursor( short n )
 static inline
 void plot_cursor( Ptr addr, short shift, short h_trim, short v_skip, short n )
 {
+	if ( crsr_face )
+	{
+		screen_lock lock;
+		
+		const short row_n = cursor_rowBytes;
+		
+		blit_bytes( crsr_mask, row_n, CrsrAddr, CrsrRow, row_n, n, srcBic );
+		blit_bytes( crsr_face, row_n, CrsrAddr, CrsrRow, row_n, n, srcXor );
+		
+		return;
+	}
+	
 	plot_cursor( &TheCrsr, addr, shift, h_trim, v_skip, n, CrsrRow );
 }
 
@@ -403,6 +435,12 @@ void init_cursor()
 	}
 }
 
+static inline
+void transcode_8x_1bpp_to_8bpp( const void* src, void* dst, int n )
+{
+	transcode_8x_1bpp_to_8bpp( src, dst, n, 0x00, 0xFF );
+}
+
 pascal void set_cursor( const Cursor* crsr )
 {
 	fast_memcpy( &TheCrsr, crsr, sizeof (Cursor) );
@@ -411,6 +449,14 @@ pascal void set_cursor( const Cursor* crsr )
 	{
 		notify_cursor_set( crsr );
 		return;
+	}
+	
+	if ( crsr_face )
+	{
+		const Size size = sizeof (UInt16) * 16;
+		
+		transcode_8x_1bpp_to_8bpp( TheCrsr.data, crsr_face, size );
+		transcode_8x_1bpp_to_8bpp( TheCrsr.mask, crsr_mask, size );
 	}
 	
 	if ( CrsrVis )
