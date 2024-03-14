@@ -180,6 +180,18 @@ void set_dimensions( int width, int height, int depth )
 }
 
 static inline
+void transcode_8x_1bpp_to_8bpp( const uint8_t* src, uint8_t* dst, int n )
+{
+	/*
+		This is actually inverted:  The 0 and 1 bits code for $FF and $00,
+		for transcoding classic Mac OS (black-on-white) binary image data to
+		conventional white-on-black grayscale as used in OpenGL.
+	*/
+	
+	transcode::_8x_1bpp_to_8bpp( src, dst, n, 0xFF, 0x00 );
+}
+
+static inline
 void transcode_inverted( const uint8_t* src, uint8_t* dst, int n )
 {
 	while ( n-- > 0 )
