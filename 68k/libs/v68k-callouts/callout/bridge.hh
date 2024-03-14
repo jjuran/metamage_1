@@ -99,6 +99,12 @@ enum
 	xor_regions,
 	polygon_region,
 	
+	// $FF8E - $FF88
+	transcode_8x_1bpp_to_8bpp,
+	reserved25,
+	reserved26,
+	reserved27,
+	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block
 	

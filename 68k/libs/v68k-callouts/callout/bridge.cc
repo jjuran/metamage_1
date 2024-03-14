@@ -39,6 +39,7 @@
 #include "callout/screen.hh"
 #include "callout/sound.hh"
 #include "callout/timeval.hh"
+#include "callout/transcode.hh"
 #include "callout/uptime.hh"
 
 
@@ -961,6 +962,11 @@ static const function_type the_callouts[] =
 	&sect_regions_callout,
 	&xor_regions_callout,
 	&polygon_region_callout,
+	
+	&transcode_8x_1bpp_to_8bpp_callout,
+	NULL,
+	NULL,
+	NULL,
 	
 	&system_call_callout,
 	&microseconds_callout,
