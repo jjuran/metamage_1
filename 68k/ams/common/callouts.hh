@@ -180,6 +180,15 @@ DEFINE_CALLOUT( unsigned,
                   unsigned          size : __D0 ),
                 0xFF8E )
 
+DEFINE_CALLOUT( long,
+                transcode_8x_1bpp_to_8bpp,
+                ( const void*  src  : __A0,
+                  void*        dst  : __A1,
+                  unsigned     srcn : __D0,
+                  unsigned     c0   : __D1,
+                  unsigned     c1   : __D2 ),
+                0xFF86 )
+
 #undef DEFINE_CALLOUT
 
 inline
