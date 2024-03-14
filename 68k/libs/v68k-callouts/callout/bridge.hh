@@ -105,6 +105,12 @@ enum
 	reserved23,
 	reserved24,
 	
+	// $FF86 - $FF80
+	transcode_8x_1bpp_to_8bpp,
+	reserved25,
+	reserved26,
+	reserved27,
+	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block
 	
