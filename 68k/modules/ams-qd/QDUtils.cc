@@ -83,7 +83,7 @@ pascal short Random_patch()
 {
 	QDGlobals& qd = get_QDGlobals();
 	
-	qd.randSeed = UInt64( qd.randSeed * 16807ull ) % 0x7FFFFFFF;
+	next_pseudorandom( &qd.randSeed );
 	
 	if ( (short) qd.randSeed == (short) 0x8000 )
 	{
