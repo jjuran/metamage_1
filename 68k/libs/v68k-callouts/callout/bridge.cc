@@ -816,6 +816,9 @@ static const function_type the_callouts[] =
 	NULL,
 	
 	&send_sound_command_callout,
+	NULL,
+	NULL,
+	NULL,
 	
 	&system_call_callout,
 	&microseconds_callout,
