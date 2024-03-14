@@ -658,6 +658,18 @@ int32_t draw_bytes_callout( v68k::processor_state& s )
 }
 
 static
+int32_t next_pseudorandom_callout( v68k::processor_state& s )
+{
+	uint32_t randSeed = s.d(0);
+	
+	randSeed = randSeed * 16807ull % 0x7FFFFFFF;
+	
+	s.d(0) = randSeed;
+	
+	return rts;
+}
+
+static
 int32_t system_call_callout( v68k::processor_state& s )
 {
 	op_result result = bridge_call( s );
@@ -816,6 +828,11 @@ static const function_type the_callouts[] =
 	NULL,
 	
 	&send_sound_command_callout,
+	NULL,
+	NULL,
+	NULL,
+	
+	&next_pseudorandom_callout,
 	NULL,
 	NULL,
 	NULL,

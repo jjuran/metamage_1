@@ -81,6 +81,12 @@ enum
 	reserved17,
 	reserved18,
 	
+	// $FFA6 - $FFA0
+	next_pseudorandom,
+	reserved19,
+	reserved20,
+	reserved21,
+	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block
 	
