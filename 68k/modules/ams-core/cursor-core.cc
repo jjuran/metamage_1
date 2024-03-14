@@ -32,8 +32,7 @@ enum
 	kHardwareCursor = 0x68647772,  // 'hdwr'
 };
 
-typedef UInt32* Saved;
-typedef UInt32  Buffer[ 16 ];
+typedef UInt32 Buffer[ 16 ];
 
 short ScreenRow : 0x0106;
 Ptr   ScrnBase  : 0x0824;
@@ -41,7 +40,7 @@ Point Mouse     : 0x0830;
 Rect  CrsrPin   : 0x0834;
 Rect  CrsrRect  : 0x083C;
 Cursor TheCrsr  : 0x0844;
-Saved CrsrSave  : 0x088C;
+Ptr   CrsrSave  : 0x088C;
 char  CrsrVis   : 0x08CC;
 char  CrsrBusy  : 0x08CD;
 short CrsrState : 0x08D0;
@@ -85,7 +84,7 @@ void init_lowmem_Cursor()
 	JSetCrsr      = &set_cursor;
 	JCrsrObscure  = &obscure_cursor;
 	
-	CrsrSave = bits_under_cursor;
+	CrsrSave = (Ptr) bits_under_cursor;
 	
 	CrsrState = -1;  // Invisible cursor, at first
 	
@@ -166,7 +165,7 @@ void save_bits_under_cursor( short n )
 {
 	const short rowBytes = 4;
 	
-	blit_bytes( CrsrAddr, ScreenRow, bits_under_cursor, rowBytes, rowBytes, n );
+	blit_bytes( CrsrAddr, ScreenRow, CrsrSave, rowBytes, rowBytes, n );
 }
 
 static inline
@@ -174,7 +173,7 @@ void restore_bits_under_cursor( short n )
 {
 	const short rowBytes = 4;
 	
-	blit_bytes( bits_under_cursor, rowBytes, CrsrAddr, ScreenRow, rowBytes, n );
+	blit_bytes( CrsrSave, rowBytes, CrsrAddr, ScreenRow, rowBytes, n );
 }
 
 static inline
