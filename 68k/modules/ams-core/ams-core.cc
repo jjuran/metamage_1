@@ -164,9 +164,6 @@ void initialize_low_memory_globals()
 	
 	*(long*) &RawMouse = initial_mouse_loc;
 	*(long*) &Mouse    = initial_mouse_loc;
-	
-	init_lowmem_Cursor();
-	init_cursor();
 }
 
 static
@@ -470,6 +467,9 @@ int main( int argc, char** argv )
 	install_MemoryManager();
 	
 	create_system_heap();
+	
+	init_lowmem_Cursor();
+	init_cursor();
 	
 	install_OSUtils();
 	
