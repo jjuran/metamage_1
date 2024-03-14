@@ -6,8 +6,11 @@
 #include "transcode/8x_1bpp_to_8bpp.hh"
 
 
+namespace transcode
+{
+
 static inline
-Byte* transcode_8x_1bpp_to_8bpp( Byte* p, Byte octet )
+Byte* _8x_1bpp_to_8bpp( Byte* p, Byte octet )
 {
 	typedef signed char int8_t;
 	
@@ -23,10 +26,12 @@ Byte* transcode_8x_1bpp_to_8bpp( Byte* p, Byte octet )
 	return p;
 }
 
-void transcode_8x_1bpp_to_8bpp( const Byte* src, Byte* dst, int n )
+void _8x_1bpp_to_8bpp( const Byte* src, Byte* dst, int n )
 {
 	while ( n-- > 0 )
 	{
-		dst = transcode_8x_1bpp_to_8bpp( dst, *src++ );
+		dst = _8x_1bpp_to_8bpp( dst, *src++ );
 	}
+}
+
 }
