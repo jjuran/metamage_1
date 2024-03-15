@@ -15,6 +15,10 @@
 #include "mac_app/event_handlers.hh"
 #include "mac_app/state.hh"
 
+// rasterlib
+#include "raster/clut.hh"
+#include "raster/clut_detail.hh"
+
 // v68k-cursor
 #include "cursor/cursor.hh"
 
@@ -178,6 +182,15 @@ bool event_crashes_Ventura( EventRef event )
 	return eventClass == kEventClassApplication  &&  eventKind == 103;
 }
 
+static
+void set_palette( Blitter& blitter, const raster_load& load )
+{
+	if ( const raster::clut_data* clut = find_clut( &load.meta->note ) )
+	{
+		blitter.set_palette( &clut->palette[ 0 ].value, clut->max + 1 );
+	}
+}
+
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
@@ -206,6 +219,8 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	}
 	
 	Blitter blitter( captured_display.id() );
+	
+	set_palette( blitter, load );
 	
 	blitter.prep( stride, width, height, desc.weight );
 	
