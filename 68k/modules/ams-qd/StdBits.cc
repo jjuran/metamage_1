@@ -39,31 +39,6 @@ bool byte_aligned( short srcSkip, short dstSkip, short width )
 	return srcSkip + dstSkip == 0  &&  width % 8 == 0;
 }
 
-static inline
-Ptr blit_byte_aligned_segment( Ptr    src,
-                               Ptr    dst,
-                               short  n_bytes,
-                               short  transfer_mode_AND_0x07 )
-{
-	switch ( transfer_mode_AND_0x07 )
-	{
-		// Use src vs. pat modes because we stripped off the 8 bit
-		
-		case srcCopy:
-			return (Ptr) fast_mempcpy( dst, src, n_bytes );
-		
-		case srcOr:       while ( --n_bytes >= 0 )  *dst++ |=  *src++;  break;
-		case srcXor:      while ( --n_bytes >= 0 )  *dst++ ^=  *src++;  break;
-		case srcBic:      while ( --n_bytes >= 0 )  *dst++ &= ~*src++;  break;
-		case notSrcCopy:  while ( --n_bytes >= 0 )  *dst++  = ~*src++;  break;
-		case notSrcOr:    while ( --n_bytes >= 0 )  *dst++ |= ~*src++;  break;
-		case notSrcXor:   while ( --n_bytes >= 0 )  *dst++ ^= ~*src++;  break;
-		case notSrcBic:   while ( --n_bytes >= 0 )  *dst++ &=  *src++;  break;
-	}
-	
-	return dst;
-}
-
 static
 void blit_segment_direct( Ptr      src,
                           Ptr      dst,
@@ -99,12 +74,10 @@ void blit_segment_direct( Ptr      src,
 	
 	if ( short n_bytes = n_pixels_drawn / 8u )
 	{
-		dst = blit_byte_aligned_segment( src,
-		                                 dst,
-		                                 n_bytes,
-		                                 transfer_mode_AND_0x07 );
+		blit_bytes( src, 0, dst, 0, n_bytes, 1, transfer_mode_AND_0x07 );
 		
 		src += n_bytes;
+		dst += n_bytes;
 	}
 	
 	n_pixels_drawn &= 0x7;
@@ -276,17 +249,21 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	BitMap stretched_bits;
 	
-	stretched_bits.baseAddr = NULL;
-	
 	if ( stretching )
 	{
-		scoped_zone null_zone;
+		static Handle buffer = (scoped_zone(), NewHandle( 0 ));
 		
 		const short rowBytes = (dstWidth + 15) / 16u * 2;
 		
+		Size size = mulu_w( rowBytes, dstHeight );
+		
+		SetHandleSize( buffer, size );
+		
+		fast_memset( *buffer, '\0', size );
+		
 		const Rect bounds = { 0, 0, dstHeight, dstWidth };
 		
-		stretched_bits.baseAddr = NewPtrClear( mulu_w( rowBytes, dstHeight ) );
+		stretched_bits.baseAddr = *buffer;  // no locking needed yet
 		stretched_bits.rowBytes = rowBytes;
 		stretched_bits.bounds   = bounds;
 		
@@ -310,8 +287,6 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	srcRect = &clippedSrcRect;
 	dstRect = &clippedDstRect;
 	
-	redraw_lock lock( port.portBits, *dstRect, *srcBits, *srcRect );
-	
 	get_refined_clip_region( port, *dstRect, clipRgn );
 	
 	if ( maskRgn )
@@ -322,6 +297,16 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	const bool clipping_to_rect = clipRgn[0]->rgnSize <= sizeof (MacRegion);
 	
 	const Rect clipRect = clipRgn[0]->rgnBBox;
+	
+	uint16_t n_rows = clipRect.bottom - clipRect.top;
+	uint16_t width  = clipRect.right - clipRect.left;
+	
+	if ( width == 0  || n_rows == 0 )
+	{
+		return;
+	}
+	
+	redraw_lock lock( port.portBits, *dstRect, *srcBits, *srcRect );
 	
 	const uint16_t clippedTop  = clipRect.top  - dstRect->top;
 	const uint16_t clippedLeft = clipRect.left - dstRect->left;
@@ -350,9 +335,6 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	const short srcSkip = srcLeft & 0x7;
 	const short dstSkip = dstLeft & 0x7;
-	
-	uint16_t n_rows = clipRect.bottom - clipRect.top;
-	uint16_t width  = clipRect.right - clipRect.left;
 	
 	bool draw_bottom_to_top = false;
 	
@@ -401,11 +383,11 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 				              mode );
 			}
 		}
-		else if ( mode == srcCopy  &&  byte_aligned( srcSkip, dstSkip, width ) )
+		else if ( byte_aligned( srcSkip, dstSkip, width ) )
 		{
 			width /= 8;
 			
-			blit_bytes( src, srcRowBytes, dst, dstRowBytes, width, n_rows );
+			blit_bytes( src, srcRowBytes, dst, dstRowBytes, width, n_rows, mode );
 		}
 		else
 		{
@@ -468,10 +450,5 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 			                  clipRgn,
 			                  blit );
 		}
-	}
-	
-	if ( stretched_bits.baseAddr )
-	{
-		DisposePtr( stretched_bits.baseAddr );
 	}
 }

@@ -15,4 +15,11 @@
 CGImageRef
 create_monochrome_image( const void* base, int stride, int w, int h, int bpp );
 
+CGImageRef image_from_indexed_data( const void*       baseAddr,
+                                    size_t            stride,
+                                    size_t            width,
+                                    size_t            height,
+                                    size_t            weight,
+                                    const ColorSpec*  colors );
+
 #endif

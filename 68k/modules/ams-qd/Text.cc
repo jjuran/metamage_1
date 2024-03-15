@@ -22,6 +22,8 @@
 #pragma exceptions off
 
 
+Ptr ScrnBase : 0x0824;
+
 const Point OneOne : 0x0A02;
 
 
@@ -166,7 +168,6 @@ pascal short StdTxMeas_patch( short        n,
 
 static
 void smear( const BitMap&  srcBits,
-            const BitMap&  dstBits,
             const Rect&    srcRect,
             const Rect&    dstRect,
             short          m,
@@ -193,9 +194,34 @@ void smear( const BitMap&  srcBits,
 			r.left = j;
 			r.right = j + width;
 			
-			CopyBits( &srcBits, &dstBits, &srcRect, &r, srcOr, NULL );
+			StdBits( &srcBits, &srcRect, &r, srcOr, NULL );
 		}
 	}
+}
+
+static
+bool get_refined_clip_rect( const GrafPort& port, Rect& result )
+{
+	const BitMap& bits = port.portBits;
+	
+	if ( ! SectRect( &bits.bounds, &port.portRect, &result ) )
+	{
+		return false;
+	}
+	
+	bool vis = bits.baseAddr == ScrnBase;
+	
+	if ( vis  &&  ! SectRect( &port.visRgn[0]->rgnBBox, &result, &result ) )
+	{
+		return false;
+	}
+	
+	if ( ! SectRect( &port.clipRgn[0]->rgnBBox, &result, &result ) )
+	{
+		return false;
+	}
+	
+	return true;
 }
 
 pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
@@ -205,7 +231,9 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		return;
 	}
 	
-	GrafPort& port = **get_addrof_thePort();
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPort& port = *qd.thePort;
 	
 	if ( Handle h = port.picSave )
 	{
@@ -242,6 +270,15 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		return;
 	}
 	
+	bool no_more_blitting = false;
+	
+	Rect clipRect;
+	
+	if ( ! get_refined_clip_rect( port, clipRect ) )
+	{
+		return;
+	}
+	
 	const FMInput input =
 	{
 		port.txFont,
@@ -260,6 +297,11 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		return;
 	}
 	
+	if ( port.pnLoc.h - output->shadowPixels >= clipRect.right )
+	{
+		no_more_blitting = true;
+	}
+	
 	const FontRec& rec = **(FontRec**) output->fontHandle;
 	
 	const short* owTable = (short*) &rec.owTLoc + rec.owTLoc;
@@ -276,8 +318,6 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	const short* locTable = (short*) (src + mulu_w( rowBytes, fRectHeight ));
 	
 	BitMap srcBits = { src, rowBytes, { 0, 0, fRectHeight, rowBytes * 8 } };
-	
-	const BitMap& dstBits = port.portBits;
 	
 	Rect srcRect;
 	Rect dstRect;
@@ -303,9 +343,19 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	dstRect.top    = port.pnLoc.v - ascent;
 	dstRect.bottom = port.pnLoc.v - ascent + fRectHeight;
 	
+	if ( dstRect.top - output->shadowPixels >= clipRect.bottom )
+	{
+		no_more_blitting = true;
+	}
+	
+	if ( dstRect.bottom + output->shadowPixels <= clipRect.top )
+	{
+		no_more_blitting = true;
+	}
+	
 	// Worst case, for checking cursor intersection only
-	dstRect.left  = port.portBits.bounds.left;
-	dstRect.right = port.portBits.bounds.right;
+	dstRect.left  = clipRect.left;
+	dstRect.right = clipRect.right;
 	
 	redraw_lock lock( port.portBits, dstRect );
 	
@@ -326,6 +376,11 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		const int8_t character_offset = fixmulu_w( *offset_width++, h_scale );
 		const int8_t character_width  = fixmulu_w( *offset_width,   h_scale );
 		
+		if ( no_more_blitting  ||  port.pnLoc.h + widMax <= clipRect.left )
+		{
+			goto advance;
+		}
+		
 		const short this_offset = locTable[ c ];
 		const short next_offset = locTable[ c + 1 ];
 		
@@ -333,8 +388,6 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		{
 			dstRect.left  = port.pnLoc.h;
 			dstRect.right = port.pnLoc.h + widMax;
-			
-			QDGlobals& qd = get_QDGlobals();
 			
 			FillRect( &dstRect, &qd.white );
 		}
@@ -356,25 +409,37 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 			UInt8 bold = output->boldPixels;
 			UInt8 edge = output->shadowPixels;
 			
+			if ( dstRect.right + edge + bold <= clipRect.left )
+			{
+				goto advance;
+			}
+			
 			if ( edge )
 			{
-				smear( srcBits, dstBits, srcRect, dstRect, edge + bold, edge );
+				smear( srcBits, srcRect, dstRect, edge + bold, edge );
 				
 				mode = srcBic;
 			}
 			
-			CopyBits( &srcBits, &dstBits, &srcRect, &dstRect, mode, NULL );
+			StdBits( &srcBits, &srcRect, &dstRect, mode, NULL );
 			
 			while ( bold-- > 0 )
 			{
 				++dstRect.left;
 				++dstRect.right;
 				
-				CopyBits( &srcBits, &dstBits, &srcRect, &dstRect, mode, NULL );
+				StdBits( &srcBits, &srcRect, &dstRect, mode, NULL );
 			}
 		}
 		
+	advance:
+		
 		port.pnLoc.h += character_width + output->extra;
+		
+		if ( port.pnLoc.h - output->shadowPixels >= clipRect.right )
+		{
+			no_more_blitting = true;
+		}
 	}
 }
 

@@ -25,6 +25,10 @@ long MenuSelect_magic( Point pt );
 
 Boolean TrackGoAway_magic( WindowRef window, Point pt );
 
+void DragWindow_magic( WindowRef    window,
+                       Point        pt,
+                       const Rect*  area );
+
 #endif  // #if CALL_NOT_IN_CARBON
 
 #endif

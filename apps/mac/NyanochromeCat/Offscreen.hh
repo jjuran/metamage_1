@@ -17,11 +17,16 @@
 #endif
 
 
+extern bool using_frame_deltas;
+
+extern Ptr temp_blit_buffer;
+
 void render_offscreen();
 
 void prepare_next_frame();
 void prepare_prev_frame();
 
 void blit( CGrafPtr port );
+void draw( CGrafPtr port );
 
 #endif

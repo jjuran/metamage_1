@@ -14,6 +14,8 @@
 #include <string.h>
 
 // rasterlib
+#include "raster/clut.hh"
+#include "raster/clut_detail.hh"
 #include "raster/load.hh"
 #include "raster/relay_detail.hh"
 #include "raster/size.hh"
@@ -46,9 +48,9 @@ int create_raster_file( const char* path, raster::raster_load& result )
 		return errno;
 	}
 	
-	const uint32_t width  = 512;
-	const uint32_t height = 342;
-	const uint32_t weight = 1;
+	const uint32_t width  = 640;
+	const uint32_t height = 480;
+	const uint32_t weight = 8;
 	
 	const uint32_t frame_count = 2;
 	
@@ -59,6 +61,8 @@ int create_raster_file( const char* path, raster::raster_load& result )
 	const uint32_t footer_size_minimum = sizeof (raster_metadata)
 	                                   + sizeof (raster_note)
 	                                   + sizeof (sync_relay)
+	                                   + sizeof (raster_note)
+	                                   + sizeof (clut_data)
 	                                   + sizeof (uint32_t);
 	
 	const off_t file_size = good_file_size( raster_size, footer_size_minimum );
@@ -102,7 +106,7 @@ int create_raster_file( const char* path, raster::raster_load& result )
 	desc.height = height;
 	desc.stride = stride;
 	desc.weight = weight;
-	desc.model  = Model_monochrome_paint;
+	desc.model  = Model_RGB;
 	desc.extra  = frame_count - 1;
 	
 	raster_note* next_note = &note;
@@ -113,6 +117,17 @@ int create_raster_file( const char* path, raster::raster_load& result )
 	sync_relay& sync = data< sync_relay >( *next_note );
 	
 	memset( &sync, '\0', sizeof (sync_relay) );
+	
+	next_note = next( next_note );
+	
+	const short n_colors = 1 << weight;
+	
+	next_note->type = Note_clut;
+	next_note->size = sizeof (clut_header) + sizeof (color) * n_colors;
+	
+	clut_data& clut = data< clut_data >( *next_note );
+	
+	memset( &clut, '\0', next_note->size );
 	
 	next_note = next( next_note );
 	

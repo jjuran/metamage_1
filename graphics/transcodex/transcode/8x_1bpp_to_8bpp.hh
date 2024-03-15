@@ -6,16 +6,21 @@
 #ifndef TRANSCODE_8X1BPPTO8BPP_HH
 #define TRANSCODE_8X1BPPTO8BPP_HH
 
-// Standard C
-#include <stdint.h>
 
-
-void transcode_8x_1bpp_to_8bpp( const uint8_t* src, uint8_t* dst, int n );
-
-inline
-void transcode_8x_1bpp_to_8bpp( const void* src, void* dst, int n )
+namespace transcode
 {
-	transcode_8x_1bpp_to_8bpp( (const uint8_t*) src, (uint8_t*) dst, n );
+	
+	typedef unsigned char Byte;
+	
+	
+	void _8x_1bpp_to_8bpp( const Byte* src, Byte* dst, int n, Byte z, Byte o );
+	
+	inline
+	void _8x_1bpp_to_8bpp( const void* src, void* dst, int n, Byte z, Byte o )
+	{
+		_8x_1bpp_to_8bpp( (const Byte*) src, (Byte*) dst, n, z, o );
+	}
+	
 }
 
 #endif

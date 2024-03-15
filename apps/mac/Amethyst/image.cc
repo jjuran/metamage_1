@@ -31,6 +31,55 @@ CGColorSpaceRef GrayColorSpace()
 }
 
 static
+CGColorSpaceRef RGBColorSpace()
+{
+	static CGColorSpaceRef colorSpace = 
+	
+#ifdef MAC_OS_X_VERSION_10_4
+	
+	true ? CGColorSpaceCreateWithName( kCGColorSpaceGenericRGB ) :
+	
+#endif
+	
+	CGColorSpaceCreateDeviceRGB();
+	
+	return colorSpace;
+}
+
+static
+CGColorSpaceRef IndexedColorSpace( const ColorSpec* colors )
+{
+	CGColorSpaceRef colorSpace = RGBColorSpace();
+	
+	CGColorSpaceRetain( colorSpace );
+	
+	short clut_max = 255;
+	
+	uint8_t* table = (uint8_t*) alloca( 3 * (clut_max + 1) );
+	
+	uint8_t* q = table;
+	
+	const uint16_t* p = (const uint16_t*) colors;
+	
+	for ( int i = 0;  i <= clut_max;  ++i )
+	{
+		++p;  // skip value
+		
+		*q++ = *p++ >> 8;
+		*q++ = *p++ >> 8;
+		*q++ = *p++ >> 8;
+	}
+	
+	CGColorSpaceRef index = CGColorSpaceCreateIndexed( colorSpace,
+	                                                   clut_max,
+	                                                   table );
+	
+	CGColorSpaceRelease( colorSpace );
+	
+	return index;
+}
+
+static
 void release_data( void* info, const void* data, size_t size )
 {
 	free( const_cast< void* >( data ) );
@@ -51,7 +100,7 @@ void inverted_copy( void* dst, const void* src, size_t n )
 }
 
 static
-CGDataProviderRef make_data_provider( char* data, size_t size )
+CGDataProviderRef make_data_provider( char* data, size_t size, bool invert )
 {
 	void* buffer = malloc( size );
 	
@@ -60,7 +109,14 @@ CGDataProviderRef make_data_provider( char* data, size_t size )
 		return NULL;
 	}
 	
-	inverted_copy( buffer, data, size );
+	if ( invert )
+	{
+		inverted_copy( buffer, data, size );
+	}
+	else
+	{
+		memcpy( buffer, data, size );
+	}
 	
 	CGDataProviderRef result = CGDataProviderCreateWithData( NULL,
 	                                                         buffer,
@@ -85,10 +141,12 @@ CGImageRef create_image_from_data( size_t           width,
                                    size_t           stride,
                                    CGColorSpaceRef  colorSpace,
                                    CGBitmapInfo     bitmapInfo,
-                                   char*            baseAddr )
+                                   char*            baseAddr,
+                                   bool             invert )
 {
 	CGDataProviderRef dataProvider = make_data_provider( baseAddr,
-	                                                     height * stride );
+	                                                     height * stride,
+	                                                     invert );
 	
 	if ( dataProvider )
 	{
@@ -122,5 +180,30 @@ create_monochrome_image( const void* base, int stride, int w, int h, int bpp )
 	                               stride,
 	                               GrayColorSpace(),
 	                               kCGImageAlphaNone,
-	                               (char*) base );
+	                               (char*) base,
+	                               true );
+}
+
+CGImageRef image_from_indexed_data( const void*       baseAddr,
+                                    size_t            stride,
+                                    size_t            width,
+                                    size_t            height,
+                                    size_t            weight,
+                                    const ColorSpec*  colors )
+{
+	CGColorSpaceRef colorSpace = IndexedColorSpace( colors );
+	
+	CGImageRef image = create_image_from_data( width,
+	                                           height,
+	                                           weight,  // bits per component
+	                                           weight,  // bits per pixel
+	                                           stride,
+	                                           colorSpace,
+	                                           kCGImageAlphaNone,
+	                                           (char*) baseAddr,
+	                                           false );
+	
+	CGColorSpaceRelease( colorSpace );
+	
+	return image;
 }

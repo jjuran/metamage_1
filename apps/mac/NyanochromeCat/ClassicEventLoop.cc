@@ -45,6 +45,7 @@
 
 #if CALL_NOT_IN_CARBON
 	#define TrackGoAway( w, pt )  TrackGoAway_magic( w, pt )
+	#define DragWindow( w, pt, r )  DragWindow_magic( w, pt, r )
 #else
 	#define SystemTask()  /**/
 #endif  // #if CALL_NOT_IN_CARBON
@@ -158,7 +159,7 @@ void classic_event_loop()
 			if ( animation_timer.pulse() )
 			{
 				prepare_next_frame();
-				draw_window( main_window );
+				blit_window( main_window );
 			}
 		}
 		
@@ -237,12 +238,12 @@ void classic_event_loop()
 						
 						case 0x1C:
 							prepare_prev_frame();
-							draw_window( main_window );
+							blit_window( main_window );
 							break;
 						
 						case 0x1D:
 							prepare_next_frame();
-							draw_window( main_window );
+							blit_window( main_window );
 							break;
 						
 						default:

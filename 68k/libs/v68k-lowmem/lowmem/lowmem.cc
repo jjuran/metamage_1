@@ -135,6 +135,10 @@ enum
 	tag_TheCrsr_word_33 = tag_TheCrsr + 33,  // 68 bytes
 	tag_CrsrSave,
 	tag_CrsrSave_low_word,
+	tag_MainDevice,
+	tag_MainDevice_low_word,
+	tag_DeviceList,
+	tag_DeviceList_low_word,
 	tag_CrsrVisBusy,
 	tag_CrsrNewCouple,
 	tag_CrsrState,
@@ -359,6 +363,8 @@ static const global globals[] =
 	*/
 	
 	{ 0x088C, 4,    tag_CrsrSave    },
+	{ 0x08A4, 4,    tag_MainDevice  },
+	{ 0x08A8, 4,    tag_DeviceList  },
 	{ 0x08CC, 2,    tag_CrsrVisBusy },  // CrsrVis, CrsrBusy
 	{ 0x08CE, 2,    tag_CrsrNewCouple},  // CrsrNew, CrsrCouple
 	{ 0x08D0, 2,    tag_CrsrState   },

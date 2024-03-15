@@ -14,6 +14,7 @@
 #endif
 
 // NyanochromeCat
+#include "Geometry.hh"
 #include "Offscreen.hh"
 #include "PatchUPPs.hh"
 #include "Timer.hh"
@@ -28,7 +29,10 @@ enum
 StillDownPatchUPP old_StillDown;
 
 static
-pascal void StillDown_payload()
+#ifndef __MC68K__
+inline
+#endif
+void StillDown_payload()
 {
 	if ( animation_timer.pulse() )
 	{
@@ -38,8 +42,7 @@ pascal void StillDown_payload()
 		SetPortWindowPort( main_window );
 		
 		prepare_next_frame();
-		
-		draw_window( main_window );
+		blit_window( main_window );
 		
 		SetPort( port );
 	}
@@ -47,8 +50,31 @@ pascal void StillDown_payload()
 
 #if CALL_NOT_IN_CARBON
 
-using mac::sys::get_trap_address;
-using mac::sys::set_trap_address;
+#ifdef __MC68K__
+
+/*
+	Our StillDown() patch gets called with a different value in A5
+	than when we call DragWindow(), so we have to save/set/restore it.
+	
+	(This hasn't been an issue with TrackGoAway().)
+*/
+
+static
+asm
+pascal Boolean StillDown_patch()
+{
+	MOVE.L   A5,-(SP)
+	MOVEA.L  0x0904,A5           // CurrentA5
+	
+	JSR      StillDown_payload
+	
+	MOVEA.L  old_StillDown,A0    // read A5-based global with our A5
+	MOVEA.L  (SP)+,A5
+	
+	JMP      (A0)
+}
+
+#else  // #ifdef __MC68K__
 
 static
 pascal Boolean StillDown_patch()
@@ -60,6 +86,13 @@ pascal Boolean StillDown_patch()
 
 DEFINE_UPP( StillDownPatch, StillDown_patch )
 
+#endif  // #ifdef __MC68K__
+
+using mac::sys::get_trap_address;
+using mac::sys::set_trap_address;
+
+typedef UniversalProcPtr UPP;
+
 Boolean TrackGoAway_magic( WindowRef window, Point pt )
 {
 	if ( animation_timer.paused() )
@@ -69,13 +102,36 @@ Boolean TrackGoAway_magic( WindowRef window, Point pt )
 	
 	old_StillDown = (StillDownPatchUPP) get_trap_address( _StillDown );
 	
-	set_trap_address( (UniversalProcPtr) UPP_ARG( StillDown_patch ), _StillDown );
+	set_trap_address( (UPP) UPP_ARG( StillDown_patch ), _StillDown );
 	
 	const Boolean result = TrackGoAway( window, pt );
 	
-	set_trap_address( (UniversalProcPtr) old_StillDown, _StillDown );
+	set_trap_address( (UPP) old_StillDown, _StillDown );
 	
 	return result;
+}
+
+void DragWindow_magic( WindowRef    window,
+                       Point        pt,
+                       const Rect*  area )
+{
+	old_StillDown = (StillDownPatchUPP) get_trap_address( _StillDown );
+	
+	if ( using_frame_deltas  ||  (temp_blit_buffer = NewPtr( frame_size )) )
+	{
+		set_trap_address( (UPP) UPP_ARG( StillDown_patch ), _StillDown );
+	}
+	
+	DragWindow( window, pt, area );
+	
+	set_trap_address( (UPP) old_StillDown, _StillDown );
+	
+	if ( temp_blit_buffer )
+	{
+		DisposePtr( temp_blit_buffer );
+		
+		temp_blit_buffer = NULL;
+	}
 }
 
 #endif  // #if CALL_NOT_IN_CARBON
