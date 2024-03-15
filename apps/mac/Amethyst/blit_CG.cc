@@ -38,7 +38,7 @@ CG_blitter::~CG_blitter()
 	CGContextClearRect( captured_display_context, display_bounds );
 }
 
-void CG_blitter::prep( int stride, int width, int height, int depth )
+void CG_blitter::prep( int stride, int width, int height, int depth, const uint16_t* colors )
 {
 	w        = width;
 	h        = height;

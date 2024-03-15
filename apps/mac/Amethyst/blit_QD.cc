@@ -36,7 +36,7 @@ QD_blitter::~QD_blitter()
 	DisposePort( captured_display_port );
 }
 
-void QD_blitter::prep( int stride, int width, int height, int depth )
+void QD_blitter::prep( int stride, int width, int height, int depth, const uint16_t* colors )
 {
 	if ( depth > 1 )
 	{
