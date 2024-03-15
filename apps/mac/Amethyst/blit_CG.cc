@@ -16,6 +16,8 @@ static CGContextRef captured_display_context;
 
 static int w, h, rowBytes, bpp;
 
+static const ColorSpec* palette_colors;
+
 CG_blitter::CG_blitter( CGDirectDisplayID id )
 {
 	display_bounds = CGDisplayBounds( id );
@@ -44,6 +46,8 @@ void CG_blitter::prep( int stride, int width, int height, int depth, const uint1
 	h        = height;
 	bpp      = depth;
 	rowBytes = stride;
+	
+	palette_colors = (const ColorSpec*) colors;
 }
 
 void CG_blitter::area( CGRect bounds )
@@ -57,7 +61,10 @@ void CG_blitter::blit( const void* src_addr )
 {
 	const void* p = src_addr;
 	
-	if ( CGImageRef image = create_monochrome_image( p, rowBytes, w, h, bpp ) )
+	CGImageRef image = palette_colors ? image_from_indexed_data( p, rowBytes, w, h, bpp, palette_colors )
+	                                  : create_monochrome_image( p, rowBytes, w, h, bpp );
+	
+	if ( image )
 	{
 		CGContextDrawImage( captured_display_context, image_bounds, image );
 		
