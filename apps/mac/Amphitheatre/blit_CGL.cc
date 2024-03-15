@@ -102,7 +102,7 @@ CGL_blitter::~CGL_blitter()
 	CGLDestroyContext( context );
 }
 
-void CGL_blitter::prep( int stride, int width, int height, int depth )
+void CGL_blitter::prep( int stride, int width, int height, int depth, const uint16_t* colors )
 {
 	glfb::set_dimensions( width, height, depth );
 }
