@@ -15,6 +15,10 @@
 #include "mac_app/event_handlers.hh"
 #include "mac_app/state.hh"
 
+// rasterlib
+#include "raster/clut.hh"
+#include "raster/clut_detail.hh"
+
 // v68k-cursor
 #include "cursor/cursor.hh"
 
@@ -176,6 +180,23 @@ bool event_crashes_Ventura( EventRef event )
 	return eventClass == kEventClassApplication  &&  eventKind == 103;
 }
 
+static
+const uint16_t* get_palette( const raster_load& load )
+{
+	using namespace raster;
+	
+	const raster_note& note = load.meta->note;
+	
+	if ( const raster_note* clut_note = find( &note, Note_clut ) )
+	{
+		const clut_data* clut = &data< clut_data >( *clut_note );
+		
+		return &clut->palette[ 0 ].value;
+	}
+	
+	return NULL;
+}
+
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
@@ -194,6 +215,8 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	const int height = desc.height;
 	const int stride = desc.stride;
 	
+	const uint16_t* colors = get_palette( load );
+	
 	void* addr = load.addr;
 	
 	max_scale_factor = max_scale( display_bounds, width, height );
@@ -205,7 +228,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	Blitter blitter( captured_display.id() );
 	
-	blitter.prep( stride, width, height, desc.weight );
+	blitter.prep( stride, width, height, desc.weight, colors );
 	
 	blitter.area( display_area( display_bounds, width, height ) );
 	
