@@ -7,6 +7,9 @@
 #ifndef __PACKAGES__
 #include <Packages.h>
 #endif
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
@@ -25,10 +28,26 @@ struct LaunchParamBlockRec
 	// ...
 };
 
+static QDGlobals qd;
+
 static inline
 short asm Launch( void* pb : __A0 ) : __D0
 {
 	DC.W     0xA9F2  // _Launch
+}
+
+static inline
+void paint_desktop()
+{
+	InitGraf( &qd.thePort );
+	
+	GrafPort port;
+	
+	OpenPort( &port );
+	
+	FillRoundRect( &port.portRect, 16, 16, &qd.gray );
+	
+	ClosePort( &port );
 }
 
 int main( int argc, char** argv )
@@ -43,6 +62,8 @@ int main( int argc, char** argv )
 	const char* path = argv[ 1 ];
 	
 	const size_t len = strlen( path );
+	
+	paint_desktop();
 	
 	InitResources();
 	InitAllPacks();
