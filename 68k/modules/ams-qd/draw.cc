@@ -60,6 +60,23 @@ Ptr draw_masked_byte( Byte   byte,
 	return dst;
 }
 
+void blit_masked_column( Ptr    src,
+                         short  src_stride,
+                         Ptr    dst,
+                         short  dst_stride,
+                         short  height,
+                         Byte   mask,
+                         short  transfer_mode_AND_0x07 )
+{
+	while ( height-- )
+	{
+		draw_masked_byte( *src, mask, dst, transfer_mode_AND_0x07 );
+		
+		src += src_stride;
+		dst += dst_stride;
+	}
+}
+
 void draw_masked_column( Ptr    src,
                          short  src_height,
                          short  src_index,
