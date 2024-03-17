@@ -352,11 +352,7 @@ void draw_region( const rectangular_op_params&  params,
 		Ptr rowBase = portBits.baseAddr
 		            + mulu_w( portBits.rowBytes, n_rows_skipped );
 		
-		short v = v0;
-		
 		short height = v1 - v0;
-		
-		const Byte pat = params.pattern->pat[ v & 0x7 ];
 		
 		const short* it  = band->h_begin;
 		const short* end = band->h_end;
@@ -371,14 +367,12 @@ void draw_region( const rectangular_op_params&  params,
 			const short n_pixels_skipped = (h0 - bounds.left) & 0x7;
 			const short n_pixels_drawn   =  h1 - h0;
 			
-			draw_sector( *params.pattern, v & 0x7,
+			draw_sector( *params.pattern, v0 & 0x7,
 			             start, height, portBits.rowBytes,
 			             n_pixels_skipped,
 			             n_pixels_drawn,
 			             transfer_mode_AND_0x03 );
 		}
-		
-		rowBase += portBits.rowBytes * height;
 	}
 }
 
