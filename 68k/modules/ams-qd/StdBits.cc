@@ -120,31 +120,33 @@ void blit_masked_bits( const BitMap&  srcBits,
 		Ptr p = srcBits.baseAddr + mulu_w( srcBits.rowBytes, v0 - srcVOffset );
 		Ptr q = dstBits.baseAddr + mulu_w( dstBits.rowBytes, v0 - dstVOffset );
 		
-		for ( short v = v0;  v < v1;  ++v )
+		short height = v1 - v0;
+		
+		const short* it  = band->h_begin;
+		const short* end = band->h_end;
+		
+		while ( it < end )
 		{
-			const short* it  = band->h_begin;
-			const short* end = band->h_end;
+			const short h0 = *it++;
+			const short h1 = *it++;
 			
-			while ( it < end )
+			Ptr src = p + (h0 - srcHOffset) / 8u;
+			Ptr dst = q + (h0 - dstHOffset) / 8u;
+			
+			const short n_dst_pixels_skipped = h0 - dstHOffset & 7;
+			const short n_pixels_drawn       = h1 - h0;
+			
+			for ( short v = v0;  v < v1;  ++v )
 			{
-				const short h0 = *it++;
-				const short h1 = *it++;
-				
-				Ptr const src = p + (h0 - srcHOffset) / 8u;
-				Ptr const dst = q + (h0 - dstHOffset) / 8u;
-				
-				const short n_dst_pixels_skipped = h0 - dstHOffset & 7;
-				const short n_pixels_drawn       = h1 - h0;
-				
 				blit_segment( src,
 				              dst,
 				              n_dst_pixels_skipped,
 				              n_pixels_drawn,
 				              mode );
+				
+				src += srcBits.rowBytes;
+				dst += dstBits.rowBytes;
 			}
-			
-			p += srcBits.rowBytes;
-			q += dstBits.rowBytes;
 		}
 	}
 }
