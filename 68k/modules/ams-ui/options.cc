@@ -8,3 +8,4 @@
 
 
 bool debug_updates;
+bool live_ModalFilter;

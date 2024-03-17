@@ -32,9 +32,11 @@
 #include "callouts.hh"
 #include "c_string.hh"
 #include "QDGlobals.hh"
+#include "raster_lock.hh"
 
 // ams-ui
 #include "modal_updating.hh"
+#include "options.hh"
 #include "scoped_port.hh"
 
 
@@ -745,6 +747,8 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 {
 	modal_update_scope updating( filterProc == NULL );
 	
+	bool short_sleep = filterProc != NULL  &&  live_ModalFilter;
+	
 	if ( filterProc == NULL )
 	{
 		filterProc = &basic_filterProc;
@@ -759,7 +763,9 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 	
 	while ( true )
 	{
-		const long sleep = blinks( d->textH ) ? CaretTime : 0xFFFFFFFF;
+		const long sleep = short_sleep        ? 1
+		                 : blinks( d->textH ) ? CaretTime
+		                 :                      0xFFFFFFFF;
 		
 		EventRecord event;
 		
@@ -775,9 +781,13 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 			}
 		}
 		
-		if ( filterProc( window, &event, itemHit ) )
 		{
-			return;
+			raster_lock lock;
+			
+			if ( filterProc( window, &event, itemHit ) )
+			{
+				return;
+			}
 		}
 		
 		if ( DialogSelect( &event, &window, itemHit ) )

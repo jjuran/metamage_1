@@ -52,11 +52,14 @@ enum
 	Opt_last_byte = 255,
 	
 	Opt_debug_updates,
+	Opt_live_ModalFilter,
 };
 
 static command::option options[] =
 {
-	{ "debug-updates", Opt_debug_updates },
+	{ "debug-updates",     Opt_debug_updates    },
+	{ "live-modal",        Opt_live_ModalFilter },
+	{ "live-modal-filter", Opt_live_ModalFilter },
 	
 	NULL,
 };
@@ -333,6 +336,10 @@ char* const* get_options( char** argv )
 		{
 			case Opt_debug_updates:
 				debug_updates = true;
+				break;
+			
+			case Opt_live_ModalFilter:
+				live_ModalFilter = true;
 				break;
 			
 			default:
