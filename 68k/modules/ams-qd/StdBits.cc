@@ -98,25 +98,6 @@ void blit_segment_direct( Ptr      src,
 typedef void (*segment_blitter)(Ptr, Ptr, short, short, uint16_t, short);
 
 static
-void blit_segment_buffered( Ptr       src,
-                            Ptr       dst,
-                            short     n_pixels_skipped,
-                            short     dummy,
-                            uint16_t  n_pixels_drawn,
-                            short     transfer_mode_AND_0x03 )
-{
-	const short mode = transfer_mode_AND_0x03;
-	
-	const size_t n_bytes = (n_pixels_skipped + n_pixels_drawn + 7) / 8u;
-	
-	Ptr buffer = (Ptr) alloca( n_bytes );
-	
-	fast_memcpy( buffer, src, n_bytes );
-	
-	blit_segment_direct( buffer, dst, n_pixels_skipped, n_pixels_drawn, mode );
-}
-
-static
 void blit_segment( Ptr       src,
                    Ptr       dst,
                    short     n_src_pixels_skipped,
@@ -321,8 +302,8 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	const short srcLeft = srcRect->left + clippedLeft - srcBits->bounds.left;
 	const short dstLeft = dstRect->left + clippedLeft - dstBits->bounds.left;
 	
-	const short srcRowBytes = srcBits->rowBytes;
-	const short dstRowBytes = dstBits->rowBytes;
+	short srcRowBytes = srcBits->rowBytes;
+	short dstRowBytes = dstBits->rowBytes;
 	
 	Ptr src = srcBits->baseAddr;
 	Ptr dst = dstBits->baseAddr;
@@ -335,6 +316,60 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	const short srcSkip = srcLeft & 0x7;
 	const short dstSkip = dstLeft & 0x7;
+	
+	bool buffering = false;
+	
+	if ( srcSkip != dstSkip )
+	{
+		// TODO:  Unaligned blits aren't supported for batch buffering yet.
+	}
+	else if ( const bool same_bitmap = srcBits->baseAddr == dstBits->baseAddr )
+	{
+		// Overlapping graphics
+		
+		buffering = dstTop  < srcTop  + n_rows  &&
+		            srcTop  < dstTop  + n_rows  &&
+		            dstLeft < srcLeft + width   &&
+		            srcLeft < dstLeft + width;
+	}
+	
+	BitMap buffered_bits;
+	Rect   buffered_bits_rect;
+	
+	if ( buffering )
+	{
+		static Handle buffer = (scoped_zone(), NewHandle( 0 ));
+		
+		const int rowBytes = width / 16u * 2 + 4;  // include a 2-byte margin
+		
+		Size size = mulu_w( rowBytes, n_rows );
+		
+		SetHandleSize( buffer, size );
+		
+		Ptr tmp = *buffer;
+		
+		fast_memset( tmp, '\0', size );
+		
+		blit_bytes( src, srcRowBytes, tmp, rowBytes, rowBytes, n_rows );
+		
+		src         = tmp;
+		srcRowBytes = rowBytes;
+		
+		const Rect bounds = { 0, 0, n_rows, rowBytes };
+		
+		buffered_bits_rect = bounds;
+		
+		buffered_bits_rect.right = width;
+		
+		OffsetRect( &buffered_bits_rect, dstSkip - clippedLeft, -clippedTop );
+		
+		buffered_bits.baseAddr = tmp;  // no locking needed yet
+		buffered_bits.rowBytes = rowBytes;
+		buffered_bits.bounds   = bounds;
+		
+		srcBits = &buffered_bits;
+		srcRect = &buffered_bits_rect;
+	}
 	
 	bool draw_bottom_to_top = false;
 	
@@ -353,10 +388,6 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 					if ( dstTop != srcTop )
 					{
 						draw_bottom_to_top = true;
-					}
-					else if ( srcSkip == dstSkip )
-					{
-						blit = &blit_segment_buffered;
 					}
 				}
 			}
