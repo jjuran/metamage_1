@@ -24,6 +24,8 @@
 namespace glfb
 {
 
+typedef unsigned char Byte;
+
 bool overlay_enabled;
 
 bool cursor_enabled;
@@ -63,8 +65,8 @@ static int crsr_y1;
 static GLenum texture_format = GL_LUMINANCE;
 static GLenum texture_type   = GL_UNSIGNED_BYTE;
 
-static uint8_t* screen_texture_data;
-static uint8_t* cursor_texture_data;
+static Byte* screen_texture_data;
+static Byte* cursor_texture_data;
 
 static GLuint screen_texture;
 static GLuint cursor_face_texture;
@@ -134,7 +136,7 @@ void initialize()
 		
 		size_t n_bytes = cursor_width * cursor_height * 2;
 		
-		cursor_texture_data = (uint8_t*) malloc( n_bytes );
+		cursor_texture_data = (Byte*) malloc( n_bytes );
 	}
 	
 	init_texture( screen_texture );
@@ -176,11 +178,11 @@ void set_dimensions( int width, int height, int depth )
 	
 	free( screen_texture_data );
 	
-	screen_texture_data = (uint8_t*) malloc( tex_width * tex_height );
+	screen_texture_data = (Byte*) malloc( tex_width * tex_height );
 }
 
 static inline
-void transcode_8x_1bpp_to_8bpp( const uint8_t* src, uint8_t* dst, int n )
+void transcode_8x_1bpp_to_8bpp( const Byte* src, Byte* dst, int n )
 {
 	/*
 		This is actually inverted:  The 0 and 1 bits code for $FF and $00,
@@ -192,7 +194,7 @@ void transcode_8x_1bpp_to_8bpp( const uint8_t* src, uint8_t* dst, int n )
 }
 
 static inline
-void transcode_inverted( const uint8_t* src, uint8_t* dst, int n )
+void transcode_inverted( const Byte* src, Byte* dst, int n )
 {
 	while ( n-- > 0 )
 	{
@@ -202,7 +204,7 @@ void transcode_inverted( const uint8_t* src, uint8_t* dst, int n )
 
 void set_screen_image( const void* src_addr )
 {
-	const uint8_t* src = (const uint8_t*) src_addr;
+	const Byte* src = (const Byte*) src_addr;
 	
 	const int n_octets = image_width * image_height * image_depth / 8;
 	
@@ -238,7 +240,7 @@ void set_cursor_image( const void* src_addr )
 	{
 		const int n_octets = cursor_width * cursor_height / 8u * 2;  // 64 bytes
 		
-		const uint8_t* bits = (const uint8_t*) src_addr;
+		const Byte* bits = (const Byte*) src_addr;
 		
 		transcode_8x_1bpp_to_8bpp( bits, cursor_texture_data, n_octets );
 		
