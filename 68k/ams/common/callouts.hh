@@ -43,7 +43,16 @@ DEFINE_CALLOUT( void,
                 ( void*        dst : __A1,
                   void const*  src : __A0,
                   unsigned     n   : __D0,    // src n_bytes; dst n is src n + 1
-                  char         x   : __D1 ),  // right shift bit count
+                  int          x   : __D1 ),  // right shift bit count
+                0xFFD2 )
+
+DEFINE_CALLOUT( void,
+                fast_lshift,
+                ( void*        dst : __A1,
+                  void const*  src : __A0,
+                  unsigned     n   : __D0,    // n_bytes
+                  int          x   : __D2,    // left shift bit count
+                  int          z   : __D1 = 0 ),
                 0xFFD2 )
 
 DEFINE_CALLOUT( void*,
@@ -115,6 +124,12 @@ DEFINE_CALLOUT( long,
                 0xFFA6 )
 
 #undef DEFINE_CALLOUT
+
+inline
+void fast_lshift( void* dst : __A1, unsigned n : __D0, int x : __D2 )
+{
+	return fast_lshift( dst, dst, n, x, 0 );
+}
 
 inline
 int fast_memequ( const void* a, const void* b, unsigned long n )
