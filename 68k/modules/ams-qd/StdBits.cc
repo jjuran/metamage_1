@@ -37,11 +37,14 @@ bool byte_aligned( short dstSkip, short width )
 }
 
 static
-void blit_segment( Ptr      src,
-                   Ptr      dst,
-                   short    n_pixels_skipped,
-                   short    n_pixels_drawn,
-                   short    transfer_mode_AND_0x07 )
+void blit_sector( Ptr    src,
+                  short  src_stride,
+                  Ptr    dst,
+                  short  dst_stride,
+                  short  height,
+                  short  n_pixels_skipped,
+                  short  n_pixels_drawn,
+                  short  transfer_mode_AND_0x07 )
 {
 	if ( n_pixels_skipped )
 	{
@@ -58,10 +61,14 @@ void blit_segment( Ptr      src,
 			n_pixels_drawn = 0;
 		}
 		
-		dst = draw_masked_byte( *src++,
-		                        mask,
-		                        dst,
-		                        transfer_mode_AND_0x07 );
+		blit_masked_column( src, src_stride,
+		                    dst, dst_stride,
+		                    height,
+		                    mask,
+		                    transfer_mode_AND_0x07 );
+		
+		++src;
+		++dst;
 	}
 	
 	if ( n_pixels_drawn == 0 )
@@ -71,7 +78,11 @@ void blit_segment( Ptr      src,
 	
 	if ( short n_bytes = n_pixels_drawn / 8u )
 	{
-		blit_bytes( src, 0, dst, 0, n_bytes, 1, transfer_mode_AND_0x07 );
+		blit_bytes( src, src_stride,
+		            dst, dst_stride,
+		            n_bytes,
+		            height,
+		            transfer_mode_AND_0x07 );
 		
 		src += n_bytes;
 		dst += n_bytes;
@@ -85,10 +96,11 @@ void blit_segment( Ptr      src,
 		
 		const uint8_t mask = -(1 << n_pixels_skipped);
 		
-		dst = draw_masked_byte( *src++,
-		                        mask,
-		                        dst,
-		                        transfer_mode_AND_0x07 );
+		blit_masked_column( src, src_stride,
+		                    dst, dst_stride,
+		                    height,
+		                    mask,
+		                    transfer_mode_AND_0x07 );
 	}
 }
 
@@ -136,17 +148,14 @@ void blit_masked_bits( const BitMap&  srcBits,
 			const short n_dst_pixels_skipped = h0 - dstHOffset & 7;
 			const short n_pixels_drawn       = h1 - h0;
 			
-			for ( short v = v0;  v < v1;  ++v )
-			{
-				blit_segment( src,
-				              dst,
-				              n_dst_pixels_skipped,
-				              n_pixels_drawn,
-				              mode );
-				
-				src += srcBits.rowBytes;
-				dst += dstBits.rowBytes;
-			}
+			blit_sector( src,
+			             srcBits.rowBytes,
+			             dst,
+			             dstBits.rowBytes,
+			             height,
+			             n_dst_pixels_skipped,
+			             n_pixels_drawn,
+			             mode );
 		}
 	}
 }
@@ -349,17 +358,14 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		}
 		else
 		{
-			while ( n_rows-- > 0 )
-			{
-				blit_segment( src,
-				              dst,
-				              dstSkip,
-				              width,
-				              mode );
-				
-				src += srcRowBytes;
-				dst += dstRowBytes;
-			}
+			blit_sector( src,
+			             srcRowBytes,
+			             dst,
+			             dstRowBytes,
+			             n_rows,
+			             dstSkip,
+			             width,
+			             mode );
 		}
 	}
 	else
