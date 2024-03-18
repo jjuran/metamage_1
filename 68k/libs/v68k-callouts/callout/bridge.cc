@@ -334,7 +334,7 @@ int32_t fast_memnot_callout( v68k::processor_state& s )
 }
 
 static
-int32_t fast_rshift_callout( v68k::processor_state& s )
+int32_t fast_shift_callout( v68k::processor_state& s )
 {
 	const v68k::function_code_t data_space = s.data_space();
 	
@@ -343,15 +343,16 @@ int32_t fast_rshift_callout( v68k::processor_state& s )
 	
 	const uint32_t n = s.d(0);
 	const uint32_t x = s.d(1);
+	const uint32_t y = s.d(2);
 	
-	if ( x >= 8 )
+	if ( (x ? x : y) >= 8 )
 	{
 		abort();
 		return nil;  // FIXME
 	}
 	
-	const uint8_t right_shift = x;
-	const uint8_t left_shift  = 8 - right_shift;
+	const uint8_t right_shift = x ? x : 8 - y;
+	const uint8_t left_shift  = x ? 8 - x : y;
 	
 	const uint8_t* src = s.translate( a, n, data_space, mem_read );
 	
@@ -361,7 +362,9 @@ int32_t fast_rshift_callout( v68k::processor_state& s )
 		return nil;  // FIXME
 	}
 	
-	uint8_t* dst = s.translate( b, n + 1, data_space, mem_write );
+	const uint32_t n_dst_bytes = n + (x != 0);
+	
+	uint8_t* dst = s.translate( b, n_dst_bytes, data_space, mem_write );
 	
 	if ( dst == NULL )
 	{
@@ -371,15 +374,28 @@ int32_t fast_rshift_callout( v68k::processor_state& s )
 	
 	uint32_t n_src_bytes = n;
 	
-	while ( n_src_bytes-- > 0 )
+	if ( x )
 	{
-		const uint8_t byte = *src++;
+		while ( n_src_bytes-- > 0 )
+		{
+			const uint8_t byte = *src++;
+			
+			*dst++ |= byte >> right_shift;
+			*dst    = byte << left_shift;
+		}
+	}
+	else if ( n_src_bytes )
+	{
+		while ( --n_src_bytes > 0 )
+		{
+			*dst    = *src++ << left_shift;
+			*dst++ |= *src   >> right_shift;
+		}
 		
-		*dst++ |= byte >> right_shift;
-		*dst    = byte << left_shift;
+		*dst = *src << left_shift;
 	}
 	
-	s.translate( b, n + 1, data_space, mem_update );
+	s.translate( b, n_dst_bytes, data_space, mem_update );
 	
 	return rts;
 }
@@ -804,7 +820,7 @@ static const function_type the_callouts[] =
 	
 	&fast_memset_callout,
 	&fast_memnot_callout,
-	&fast_rshift_callout,
+	&fast_shift_callout,
 	&fast_mempcpy_callout,
 	
 	&mem_test_callout,

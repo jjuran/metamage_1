@@ -48,7 +48,7 @@ enum
 	// $FFD6 - $FFD0
 	fast_memset,
 	fast_memnot,
-	fast_rshift,
+	fast_shift,
 	fast_mempcpy,
 	
 	// $FFCE - $FFC8
