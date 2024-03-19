@@ -10,9 +10,6 @@
 #include <Quickdraw.h>
 #endif
 
-// Standard C
-#include <stdlib.h>
-
 // quickdraw
 #include "qd/region_iterator.hh"
 
@@ -104,25 +101,6 @@ void blit_segment( Ptr       src,
                    short     transfer_mode_AND_0x07 )
 {
 	const short mode = transfer_mode_AND_0x07;
-	
-	if ( const short skip_delta = n_src_pixels_skipped - n_dst_pixels_skipped )
-	{
-		const uint8_t left_shift  = skip_delta & 0x7;
-		const uint8_t right_shift = 8 - left_shift;
-		
-		// Theoretical 8K maximum
-		const size_t buffer_size = n_pixels_drawn / 8u + 1;
-		
-		Ptr const buffer = (Ptr) alloca( buffer_size );
-		
-		buffer[ 0 ] = '\0';
-		
-		short n_src_bytes = (n_src_pixels_skipped + n_pixels_drawn + 7) / 8u;
-		
-		fast_rshift( buffer, src, n_src_bytes, right_shift );
-		
-		src = buffer + (skip_delta > 0);
-	}
 	
 	blit_segment_direct( src, dst, n_dst_pixels_skipped, n_pixels_drawn, mode );
 }
@@ -374,29 +352,9 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		srcRect = &buffered_bits_rect;
 	}
 	
-	bool draw_bottom_to_top = false;
-	
 	if ( clipping_to_rect )
 	{
-		if ( draw_bottom_to_top )
-		{
-			src += mulu_w( srcRowBytes, n_rows );
-			dst += mulu_w( dstRowBytes, n_rows );
-			
-			while ( n_rows-- > 0 )
-			{
-				src -= srcRowBytes;
-				dst -= dstRowBytes;
-				
-				blit_segment( src,
-				              dst,
-				              srcSkip,
-				              dstSkip,
-				              width,
-				              mode );
-			}
-		}
-		else if ( byte_aligned( dstSkip, width ) )
+		if ( byte_aligned( dstSkip, width ) )
 		{
 			width /= 8;
 			
@@ -420,39 +378,6 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	}
 	else
 	{
-		if ( draw_bottom_to_top )
-		{
-			scoped_zone null_zone;
-			
-			const short tmpRight = srcSkip + width;
-			const short tmpRowBytes = (tmpRight + 15) / 16u * 2;
-			
-			Ptr tmp = NewPtr( mulu_w( tmpRowBytes, n_rows ) );
-			
-			BitMap tmpBits = { tmp, tmpRowBytes, { 0, 0, n_rows, tmpRight } };
-			
-			while ( n_rows-- > 0 )
-			{
-				blit_segment_direct( src,
-				                     tmp,
-				                     srcSkip,
-				                     width,
-				                     mode );
-				
-				src += srcRowBytes;
-				tmp += tmpRowBytes;
-			}
-			
-			blit_masked_bits( tmpBits,
-			                  *dstBits,
-			                  dstLeft - srcSkip,
-			                  dstTop  - 0,
-			                  mode,
-			                  clipRgn );
-			
-			DisposePtr( tmpBits.baseAddr );
-		}
-		else
 		{
 			blit_masked_bits( *srcBits,
 			                  *dstBits,
