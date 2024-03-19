@@ -34,9 +34,9 @@
 
 
 static inline
-bool byte_aligned( short srcSkip, short dstSkip, short width )
+bool byte_aligned( short dstSkip, short width )
 {
-	return srcSkip + dstSkip == 0  &&  width % 8 == 0;
+	return dstSkip == 0  &&  width % 8u == 0;
 }
 
 static
@@ -318,7 +318,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	if ( srcSkip != dstSkip )
 	{
-		// TODO:  Unaligned blits aren't supported for batch buffering yet.
+		buffering = true;
 	}
 	else if ( const bool same_bitmap = srcBits->baseAddr == dstBits->baseAddr )
 	{
@@ -347,7 +347,13 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		
 		fast_memset( tmp, '\0', size );
 		
-		blit_bytes( src, srcRowBytes, tmp, rowBytes, rowBytes, n_rows );
+		int skip_delta = srcSkip - dstSkip;
+		
+		Ptr tmp1 = tmp + (skip_delta < 0);
+		
+		blit_bytes( src, srcRowBytes, tmp1, rowBytes, rowBytes - 1, n_rows );
+		
+		fast_lshift( tmp, size, skip_delta & 0x7 );
 		
 		src         = tmp;
 		srcRowBytes = rowBytes;
@@ -370,25 +376,6 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	bool draw_bottom_to_top = false;
 	
-	if ( const bool same_bitmap = srcBits->baseAddr == dstBits->baseAddr )
-	{
-		if ( const bool moved_to_higher_memory = dst + dstSkip > src + srcSkip )
-		{
-			if ( const bool vertically_overlapping = dstTop < srcTop + n_rows )
-			{
-				if ( dstLeft < srcLeft + width  &&  srcLeft < dstLeft + width )
-				{
-					// Overlapping
-					
-					if ( dstTop != srcTop )
-					{
-						draw_bottom_to_top = true;
-					}
-				}
-			}
-		}
-	}
-	
 	if ( clipping_to_rect )
 	{
 		if ( draw_bottom_to_top )
@@ -409,7 +396,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 				              mode );
 			}
 		}
-		else if ( byte_aligned( srcSkip, dstSkip, width ) )
+		else if ( byte_aligned( dstSkip, width ) )
 		{
 			width /= 8;
 			
