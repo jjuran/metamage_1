@@ -95,8 +95,6 @@ void blit_segment_direct( Ptr      src,
 	}
 }
 
-typedef void (*segment_blitter)(Ptr, Ptr, short, short, uint16_t, short);
-
 static
 void blit_segment( Ptr       src,
                    Ptr       dst,
@@ -130,13 +128,12 @@ void blit_segment( Ptr       src,
 }
 
 static
-void blit_masked_bits( const BitMap&    srcBits,
-                       const BitMap&    dstBits,
-                       short            dh,
-                       short            dv,
-                       short            mode,
-                       RgnHandle        maskRgn,
-                       segment_blitter  copy_segment )
+void blit_masked_bits( const BitMap&  srcBits,
+                       const BitMap&  dstBits,
+                       short          dh,
+                       short          dv,
+                       short          mode,
+                       RgnHandle      maskRgn )
 {
 	const short srcVOffset = srcBits.bounds.top  + dv;
 	const short srcHOffset = srcBits.bounds.left + dh;
@@ -175,7 +172,7 @@ void blit_masked_bits( const BitMap&    srcBits,
 				const short n_dst_pixels_skipped = h0 - dstHOffset & 7;
 				const short n_pixels_drawn       = h1 - h0;
 				
-				copy_segment( src,
+				blit_segment( src,
 				              dst,
 				              n_src_pixels_skipped,
 				              n_dst_pixels_skipped,
@@ -373,8 +370,6 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	bool draw_bottom_to_top = false;
 	
-	segment_blitter blit = &blit_segment;
-	
 	if ( const bool same_bitmap = srcBits->baseAddr == dstBits->baseAddr )
 	{
 		if ( const bool moved_to_higher_memory = dst + dstSkip > src + srcSkip )
@@ -424,12 +419,12 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		{
 			while ( n_rows-- > 0 )
 			{
-				blit( src,
-				      dst,
-				      srcSkip,
-				      dstSkip,
-				      width,
-				      mode );
+				blit_segment( src,
+				              dst,
+				              srcSkip,
+				              dstSkip,
+				              width,
+				              mode );
 				
 				src += srcRowBytes;
 				dst += dstRowBytes;
@@ -466,8 +461,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 			                  dstLeft - srcSkip,
 			                  dstTop  - 0,
 			                  mode,
-			                  clipRgn,
-			                  blit );
+			                  clipRgn );
 			
 			DisposePtr( tmpBits.baseAddr );
 		}
@@ -478,8 +472,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 			                  dstRect->left - srcRect->left,
 			                  dstRect->top  - srcRect->top,
 			                  mode,
-			                  clipRgn,
-			                  blit );
+			                  clipRgn );
 		}
 	}
 }
