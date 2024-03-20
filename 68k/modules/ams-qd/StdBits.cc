@@ -30,12 +30,6 @@
 #pragma exceptions off
 
 
-static inline
-bool byte_aligned( short dstSkip, short width )
-{
-	return dstSkip == 0  &&  width % 8u == 0;
-}
-
 static
 void blit_sector( Ptr    src,
                   short  src_stride,
@@ -350,23 +344,14 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	if ( clipping_to_rect )
 	{
-		if ( byte_aligned( dstSkip, width ) )
-		{
-			width /= 8;
-			
-			blit_bytes( src, srcRowBytes, dst, dstRowBytes, width, n_rows, mode );
-		}
-		else
-		{
-			blit_sector( src,
-			             srcRowBytes,
-			             dst,
-			             dstRowBytes,
-			             n_rows,
-			             dstSkip,
-			             width,
-			             mode );
-		}
+		blit_sector( src,
+		             srcRowBytes,
+		             dst,
+		             dstRowBytes,
+		             n_rows,
+		             dstSkip,
+		             width,
+		             mode );
 	}
 	else
 	{
