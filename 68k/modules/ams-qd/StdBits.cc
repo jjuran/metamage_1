@@ -37,11 +37,11 @@ bool byte_aligned( short dstSkip, short width )
 }
 
 static
-void blit_segment_direct( Ptr      src,
-                          Ptr      dst,
-                          short    n_pixels_skipped,
-                          short    n_pixels_drawn,
-                          short    transfer_mode_AND_0x07 )
+void blit_segment( Ptr      src,
+                   Ptr      dst,
+                   short    n_pixels_skipped,
+                   short    n_pixels_drawn,
+                   short    transfer_mode_AND_0x07 )
 {
 	if ( n_pixels_skipped )
 	{
@@ -93,19 +93,6 @@ void blit_segment_direct( Ptr      src,
 }
 
 static
-void blit_segment( Ptr       src,
-                   Ptr       dst,
-                   short     n_src_pixels_skipped,
-                   short     n_dst_pixels_skipped,
-                   uint16_t  n_pixels_drawn,
-                   short     transfer_mode_AND_0x07 )
-{
-	const short mode = transfer_mode_AND_0x07;
-	
-	blit_segment_direct( src, dst, n_dst_pixels_skipped, n_pixels_drawn, mode );
-}
-
-static
 void blit_masked_bits( const BitMap&  srcBits,
                        const BitMap&  dstBits,
                        short          dh,
@@ -146,13 +133,11 @@ void blit_masked_bits( const BitMap&  srcBits,
 				Ptr const src = p + (h0 - srcHOffset) / 8u;
 				Ptr const dst = q + (h0 - dstHOffset) / 8u;
 				
-				const short n_src_pixels_skipped = h0 - srcHOffset & 7;
 				const short n_dst_pixels_skipped = h0 - dstHOffset & 7;
 				const short n_pixels_drawn       = h1 - h0;
 				
 				blit_segment( src,
 				              dst,
-				              n_src_pixels_skipped,
 				              n_dst_pixels_skipped,
 				              n_pixels_drawn,
 				              mode );
@@ -366,7 +351,6 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 			{
 				blit_segment( src,
 				              dst,
-				              srcSkip,
 				              dstSkip,
 				              width,
 				              mode );
