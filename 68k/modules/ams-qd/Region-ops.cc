@@ -30,6 +30,7 @@
 #include "qd/xor_region.hh"
 
 // ams-common
+#include "callouts.hh"
 #include "scoped_zone.hh"
 
 // ams-qd
@@ -46,7 +47,6 @@ using quickdraw::offset_region;
 using quickdraw::Region_end;
 using quickdraw::region_geometry;
 using quickdraw::region_scanner;
-using quickdraw::sect_rect_region;
 using quickdraw::sect_regions;
 using quickdraw::set_region_bbox;
 using quickdraw::xor_region;
@@ -609,13 +609,7 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 		return;
 	}
 	
-	segments_box segments( max_bytes );
-	
-	sect_rect_region( (const short*) &rect,
-	                  (const short*) &src[0]->rgnBBox,
-	                  rgn_extent( *src ),
-	                  segments,
-	                  rgn_extent( *dst ) );
+	sect_rect_region( &rect, *src, *dst );
 	
 	finish_region( dst );
 	
