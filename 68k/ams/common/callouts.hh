@@ -123,6 +123,29 @@ DEFINE_CALLOUT( long,
                 ( long randSeed : __D0 ),
                 0xFFA6 )
 
+DEFINE_CALLOUT( long,
+                fast_fix_mul,
+                ( long a : __D0,
+                  long b : __D1 ),
+                0xFF9E )
+
+DEFINE_CALLOUT( long,
+                fast_fix_ratio,
+                ( short numer : __D0,
+                  short denom : __D1 ),
+                0xFF9C )
+
+DEFINE_CALLOUT( short,
+                fast_fix_round,
+                ( long x : __D0 ),
+                0xFF9A )
+
+DEFINE_CALLOUT( long,
+                fast_fix_div,
+                ( long numer : __D0,
+                  long denom : __D1 ),
+                0xFF98 )
+
 #undef DEFINE_CALLOUT
 
 inline
