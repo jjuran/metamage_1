@@ -146,6 +146,13 @@ DEFINE_CALLOUT( long,
                   long denom : __D1 ),
                 0xFF98 )
 
+DEFINE_CALLOUT( void,
+                sect_rect_region,
+                ( struct Rect      const*  rect : __D0,
+                  struct MacRegion const*  src  : __A0,
+                  struct MacRegion*        dst  : __A1 ),
+                0xFF96 )
+
 #undef DEFINE_CALLOUT
 
 inline
