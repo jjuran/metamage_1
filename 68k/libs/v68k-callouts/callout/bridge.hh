@@ -93,6 +93,12 @@ enum
 	fast_fix_round,
 	fast_fix_div,
 	
+	// $FF96 - $FF90
+	sect_rect_region,
+	reserved22,
+	reserved23,
+	reserved24,
+	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block
 	

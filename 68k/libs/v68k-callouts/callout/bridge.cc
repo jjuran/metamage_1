@@ -34,6 +34,7 @@
 #include "callout/exceptions.hh"
 #include "callout/fixed.hh"
 #include "callout/notify_cursor.hh"
+#include "callout/regions.hh"
 #include "callout/screen.hh"
 #include "callout/sound.hh"
 #include "callout/timeval.hh"
@@ -858,6 +859,11 @@ static const function_type the_callouts[] =
 	&fast_fix_ratio_callout,
 	&fast_fix_round_callout,
 	&fast_fix_div_callout,
+	
+	&sect_rect_region_callout,
+	NULL,
+	NULL,
+	NULL,
 	
 	&system_call_callout,
 	&microseconds_callout,
