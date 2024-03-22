@@ -87,6 +87,12 @@ enum
 	reserved20,
 	reserved21,
 	
+	// $FF9E - $FF98
+	fast_fix_mul,
+	fast_fix_ratio,
+	fast_fix_round,
+	fast_fix_div,
+	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block
 	

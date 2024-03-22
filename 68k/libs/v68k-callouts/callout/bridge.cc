@@ -32,6 +32,7 @@
 // v68k-callouts
 #include "callout/cursor.hh"
 #include "callout/exceptions.hh"
+#include "callout/fixed.hh"
 #include "callout/notify_cursor.hh"
 #include "callout/screen.hh"
 #include "callout/sound.hh"
@@ -852,6 +853,11 @@ static const function_type the_callouts[] =
 	NULL,
 	NULL,
 	NULL,
+	
+	&fast_fix_mul_callout,
+	&fast_fix_ratio_callout,
+	&fast_fix_round_callout,
+	&fast_fix_div_callout,
 	
 	&system_call_callout,
 	&microseconds_callout,
