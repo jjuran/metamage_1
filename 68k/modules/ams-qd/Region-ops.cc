@@ -26,7 +26,6 @@
 #include "qd/regions.hh"
 #include "qd/region_detail.hh"
 #include "qd/region_scanner.hh"
-#include "qd/sect_region.hh"
 #include "qd/xor_region.hh"
 
 // ams-common
@@ -37,7 +36,6 @@
 #include "Rect-utils.hh"
 #include "Rects.hh"
 #include "Regions.hh"
-#include "segments_box.hh"
 
 
 #pragma exceptions off
@@ -47,7 +45,6 @@ using quickdraw::offset_region;
 using quickdraw::Region_end;
 using quickdraw::region_geometry;
 using quickdraw::region_scanner;
-using quickdraw::sect_regions;
 using quickdraw::set_region_bbox;
 using quickdraw::xor_region;
 
@@ -562,23 +559,11 @@ static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 	const size_t a_max_bytes = a[0]->rgnSize;
 	const size_t b_max_bytes = b[0]->rgnSize;
 	
-	SetHandleSize( (Handle) dst, a_max_bytes + b_max_bytes );  // TODO:  Prove this is enough
-	
 	const size_t r_max_bytes = a_max_bytes + b_max_bytes;
 	
-	segments_box a_segments( a_max_bytes );
-	segments_box b_segments( b_max_bytes );
-	segments_box c_segments( r_max_bytes );
-	segments_box r_segments( r_max_bytes );
+	SetHandleSize( (Handle) dst, r_max_bytes );  // TODO:  Prove this is enough
 	
-	sect_regions( (const short*) &a[0]->rgnBBox,
-	              rgn_extent( *a ),
-	              a_segments,
-	              rgn_extent( *b ),
-	              b_segments,
-	              c_segments,
-	              r_segments,
-	              rgn_extent( *dst ) );
+	sect_regions( *a, *b, *dst );
 	
 	finish_region( dst );
 	
