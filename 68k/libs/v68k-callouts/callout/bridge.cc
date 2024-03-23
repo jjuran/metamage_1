@@ -861,7 +861,7 @@ static const function_type the_callouts[] =
 	&fast_fix_div_callout,
 	
 	&sect_rect_region_callout,
-	NULL,
+	&sect_regions_callout,
 	NULL,
 	NULL,
 	

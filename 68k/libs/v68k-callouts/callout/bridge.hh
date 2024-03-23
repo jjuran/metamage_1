@@ -95,7 +95,7 @@ enum
 	
 	// $FF96 - $FF90
 	sect_rect_region,
-	reserved22,
+	sect_regions,
 	reserved23,
 	reserved24,
 	

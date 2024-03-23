@@ -235,5 +235,114 @@ int32_t sect_rect_region_callout( v68k::processor_state& s )
 	return rts;
 }
 
+int32_t sect_regions_callout( v68k::processor_state& s )
+{
+	using iota::u16_from_big;
+	
+	const v68k::function_code_t data_space = s.data_space();
+	
+	const uint32_t one = s.a(0);
+	const uint32_t two = s.a(1);
+	const uint32_t dst = s.d(0);
+	
+	const Byte* p = NULL;
+	const Byte* q = NULL;
+	
+	Byte* r = NULL;
+	
+	short a_size = 0;
+	short b_size = 0;
+	
+	short r_size;
+	
+	bool ok = (p = s.translate( one, sizeof_region, data_space, mem_read ))  &&
+	          ((long) p & 0x1) == 0                                          &&
+	          (a_size = u16_from_big( *(short*) p )) >= sizeof_region        &&
+	          (p = s.translate( one, a_size, data_space, mem_read ))         &&
+	          (q = s.translate( two, sizeof_region, data_space, mem_read ))  &&
+	          ((long) q & 0x1) == 0                                          &&
+	          (b_size = u16_from_big( *(short*) q )) >= sizeof_region        &&
+	          (q = s.translate( two, b_size, data_space, mem_read ))         &&
+	          ((r_size = a_size + b_size), true)                             &&
+	          (r = s.translate( dst, r_size, data_space, mem_write ))        &&
+	          ((long) r & 0x1) == 0;
+	
+	if ( ! ok )
+	{
+		return ((long) p | (long) q | (long) r) & 0x1 ? v68k::Address_error
+		                                              : v68k::Bus_error;
+	}
+	
+	const short* p2 = (const short*) p;
+	const short* q2 = (const short*) q;
+	
+	if ( iota::is_little_endian() )
+	{
+		short* p = (short*) alloca( a_size );
+		
+		for ( int i = 0;  i < a_size / 2;  ++i )
+		{
+			p[ i ] = u16_from_big( p2[ i ] );
+		}
+		
+		p2 = p;
+		
+		
+		short* q = (short*) alloca( b_size );
+		
+		for ( int i = 0;  i < b_size / 2;  ++i )
+		{
+			q[ i ] = u16_from_big( q2[ i ] );
+		}
+		
+		q2 = q;
+	}
+	
+	if ( ! is_valid_region( p2, a_size ) )
+	{
+		return v68k::CHK_exception;
+	}
+	
+	if ( ! is_valid_region( q2, b_size ) )
+	{
+		return v68k::CHK_exception;
+	}
+	
+	const short* bbox = ++p2;
+	
+	p2 += 4;
+	q2 += 5;
+	
+	short* r2 = (short*) r + 5;
+	
+	quickdraw::segments_box a_segments( (short*) alloca( a_size ) );
+	quickdraw::segments_box b_segments( (short*) alloca( b_size ) );
+	quickdraw::segments_box c_segments( (short*) alloca( r_size ) );
+	quickdraw::segments_box r_segments( (short*) alloca( r_size ) );
+	
+	sect_regions( bbox,
+	              p2,
+	              a_segments,
+	              q2,
+	              b_segments,
+	              c_segments,
+	              r_segments,
+	              r2 );
+	
+	if ( iota::is_little_endian() )
+	{
+		const long r_extent_size = r_size - sizeof_region;
+		
+		for ( int i = 0;  i < r_extent_size / 2;  ++i )
+		{
+			r2[ i ] = iota::big_u16( r2[ i ] );
+		}
+	}
+	
+	s.translate( dst, r_size, data_space, mem_update );
+	
+	return rts;
+}
+
 }  // namespace callout
 }  // namespace v68k
