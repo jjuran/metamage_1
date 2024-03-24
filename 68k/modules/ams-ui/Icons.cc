@@ -35,9 +35,7 @@ void CopyIconBits( Ptr baseAddr, const Rect* r, short mode )
 {
 	IconBitmap.baseAddr = baseAddr;
 	
-	GrafPtr port = *get_addrof_thePort();
-	
-	CopyBits( &IconBitmap, &port->portBits, &IconBitmap.bounds, r, mode, NULL );
+	StdBits( &IconBitmap, &IconBitmap.bounds, r, mode, NULL );
 }
 
 pascal void PlotIcon_patch( const Rect* rect, char** icon )
