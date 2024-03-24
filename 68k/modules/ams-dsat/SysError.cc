@@ -111,12 +111,11 @@ void SysError_patch( short error : __D0 )
 	IconBitmap.bounds.bottom = 32;
 	IconBitmap.bounds.right  = 32;
 	
-	CopyBits( &IconBitmap,
-	          &port.portBits,
-	          &IconBitmap.bounds,
-	          &icon_rect,
-	          srcXor,
-	          NULL );
+	StdBits( &IconBitmap,
+	         &IconBitmap.bounds,
+	         &icon_rect,
+	         srcXor,
+	         NULL );
 	
 	short button_bottom = top + height - 16 - 12;
 	
