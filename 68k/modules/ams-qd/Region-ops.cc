@@ -80,20 +80,12 @@ geometry_t region_geometry( const MacRegion* rgn )
 }
 
 static inline
-size_t max_new_region_size( geometry_t g )
-{
-	return sizeof (MacRegion) + g.n_v_coords * (g.n_h_coords + 2) * 2 + 2;
-}
-
-static inline
 size_t max_new_region_size( geometry_t a, geometry_t b )
 {
 	const short v =      a.n_v_coords + b.n_v_coords;
 	const short h = max( a.n_h_coords,  b.n_h_coords );
 	
-	const geometry_t aggregate_geometry = { v, h };
-	
-	return max_new_region_size( aggregate_geometry );
+	return sizeof (MacRegion) + v * (h + 2) * 2 + 2;
 }
 
 static inline
