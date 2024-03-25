@@ -1,5 +1,5 @@
-#!/usr/bin/env vx
+#!/usr/bin/env lvx
 
-const s = "#!/usr/bin/env vx\n\nconst s = %s\n\nprint (s %% rep s)"
+let s = "#!/usr/bin/env lvx\n\nlet s = %s\n\nprint (s %% rep s)"
 
 print (s % rep s)

@@ -1,10 +1,10 @@
-#!/usr/bin/env vx
+#!/usr/bin/env lvx
 
-const args = argv[ 1 -> argc ]
+let args = argv[ 1 -> argc ]
 
-const abc = packed( 'A' .. 'M', 'a' .. 'm' )
-const nop = packed( 'N' .. 'Z', 'n' .. 'z' )
+let abc = packed( 'A' .. 'M', 'a' .. 'm' )
+let nop = packed( 'N' .. 'Z', 'n' .. 'z' )
 
-const text = join( " ", *args )
+let text = join( " ", *args )
 
 print translated( text, abc nop, nop abc )

@@ -1,6 +1,6 @@
-#!/usr/bin/env vx
+#!/usr/bin/env lvx
 
-const fizzbuzz = "Fizz", "Buzz", "FizzBuzz"
+let fizzbuzz = "Fizz", "Buzz", "FizzBuzz"
 
 for i in 1 .. 100 do
 {

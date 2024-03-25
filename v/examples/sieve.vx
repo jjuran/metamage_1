@@ -1,4 +1,4 @@
-#!/usr/bin/env vx
+#!/usr/bin/env lvx
 
 def make-sieve (limit)
 {
@@ -8,7 +8,7 @@ def make-sieve (limit)
 	
 	for i in 2 -> limit do
 	{
-		if not bool composites[ i ] then
+		if not composites[ i ] then
 		{
 			++n
 			

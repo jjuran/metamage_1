@@ -1,4 +1,4 @@
-#!/usr/bin/env minivx
+#!/usr/bin/env lvx
 
 # Given a one-based index into an array of columns,
 # return the name as given by a spreadsheet application.

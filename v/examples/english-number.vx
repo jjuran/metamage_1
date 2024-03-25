@@ -1,4 +1,4 @@
-#!/usr/bin/env vx
+#!/usr/bin/env lvx
 
 const units = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
 

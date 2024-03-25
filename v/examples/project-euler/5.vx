@@ -1,4 +1,4 @@
-#!/usr/bin/env minivx
+#!/usr/bin/env lvx
 
 let bindir = dirname realpath argv[ 0 ]
 let libdir = bindir "/lib/"

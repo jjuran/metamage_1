@@ -1,6 +1,6 @@
-#!/usr/bin/env vx
+#!/usr/bin/env lvx
 
-const limit = int argv[ 1 ]
+let limit = int argv[ 1 ]
 
 def fibonacci
 {
@@ -10,7 +10,7 @@ def fibonacci
 	return { a <-> b; b += a }
 }
 
-const f = fibonacci()
+let f = fibonacci()
 
 for i in 0 -> limit do
 {

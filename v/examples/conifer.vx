@@ -1,8 +1,8 @@
-#!/usr/bin/env minivx
+#!/usr/bin/env lvx
 #
 # <https://codegolf.stackexchange.com/questions/4244/code-golf-christmas-edition-how-to-print-out-a-christmas-tree-of-height-n/4293>
 
-const N = if argc > 1 then {int argv[ 1 ]} else {4}
+let N = if argc > 1 then {int argv[ 1 ]} else {4}
 
 [*(0 -> N), 0] map { print (" " * (N - v), "*" * (v * 2 + 1)) }
 
