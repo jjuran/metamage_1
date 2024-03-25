@@ -1,4 +1,4 @@
-#!/usr/bin/env vx
+#!/usr/bin/env lvx
 
 let input = if argc > 1 then {reader argv[ 1 ]} else {IN}
 

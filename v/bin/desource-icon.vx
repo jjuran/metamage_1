@@ -1,4 +1,4 @@
-#!/usr/bin/env vx
+#!/usr/bin/env lvx
 
 def pack_icon (source)
 {

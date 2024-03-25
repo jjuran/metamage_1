@@ -1,4 +1,4 @@
-#!/usr/bin/env vx
+#!/usr/bin/env lvx
 
 # cat /dev/input/eventN | spiel-keyboard.vx | ...
 

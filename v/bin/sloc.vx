@@ -1,4 +1,4 @@
-#!/usr/bin/env minivx
+#!/usr/bin/env lvx
 
 # Counts the Significant Lines Of Code in a file or tree of files.
 

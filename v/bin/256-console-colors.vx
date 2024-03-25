@@ -1,4 +1,4 @@
-#!/usr/bin/env vx
+#!/usr/bin/env lvx
 
 let ESC = "\x1b"
 let CSI = ESC "["

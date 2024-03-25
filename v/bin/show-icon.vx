@@ -1,4 +1,4 @@
-#!/usr/bin/env minivx
+#!/usr/bin/env lvx
 
 # This looks like a hot mess in Mac OS X 10.4, where the Terminal's fixed-width
 # font apparently lacks Unicode blocks and they're borrowed from some other

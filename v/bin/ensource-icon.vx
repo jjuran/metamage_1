@@ -1,4 +1,4 @@
-#!/usr/bin/env vx
+#!/usr/bin/env lvx
 
 def bitstrings { _ map { v "0", v "1" } }
 
