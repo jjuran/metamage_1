@@ -83,7 +83,7 @@ static command::option options[] =
 };
 
 static bool check_syntax = false;
-static bool unrestricted = false;
+static bool unrestricted = true;
 
 static const char* inline_script = NULL;
 
@@ -117,7 +117,7 @@ static char* const* get_options( char** argv )
 				break;
 			
 			case Opt_unrestricted:
-				unrestricted = true;
+				// always true
 				break;
 			
 			default:
