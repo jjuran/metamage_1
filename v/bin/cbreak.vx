@@ -1,4 +1,4 @@
-#!/usr/bin/env vx -Z
+#!/usr/bin/env minivx
 
 if argc > 1 then
 {

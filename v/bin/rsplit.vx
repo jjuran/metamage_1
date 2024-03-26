@@ -1,4 +1,4 @@
-#!/usr/bin/env vx -Z
+#!/usr/bin/env minivx
 
 let src = argv[ 1 ]
 let dst = argv[ 2 ]

@@ -1,4 +1,4 @@
-#!/usr/bin/env vx -Z
+#!/usr/bin/env minivx
 
 let args = argv[ 1 -> argc ]
 

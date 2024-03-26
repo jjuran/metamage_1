@@ -1,4 +1,4 @@
-#!/usr/bin/env minivx -Z
+#!/usr/bin/env minivx
 
 let usr_include_portaudio_h = "/usr/include/portaudio.h"
 

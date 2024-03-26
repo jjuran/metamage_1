@@ -1,4 +1,4 @@
-#!/usr/bin/env vx -Z
+#!/usr/bin/env minivx
 
 let host = getenv "INTERACT_VNC_HOST" or "127.0.0.1"
 let port = getenv "INTERACT_VNC_PORT" or 5900

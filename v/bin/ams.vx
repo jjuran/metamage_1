@@ -1,4 +1,4 @@
-#!/usr/bin/env vx -Z
+#!/usr/bin/env minivx
 
 let bindir = dirname realpath argv[ 0 ]
 

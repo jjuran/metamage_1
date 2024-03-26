@@ -1,4 +1,4 @@
-#!/usr/bin/env minivx -Z
+#!/usr/bin/env minivx
 
 # Set EXHIBIT_INTERACT=v/bin/interact-osx.vx to use Interax as a front end.
 
