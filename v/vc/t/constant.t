@@ -347,3 +347,8 @@ $ vc '{if _ then {} else if 0 then {2} else if 3 then {4} else {5}}'
 
 $ vc '{if _ then {} else if 0 then {2} else if 0 then {4} else {5}}'
 1 >= '{if (_ then ({} else {5}))}'
+
+%
+
+$ vc 'let kv = foo: 123; {*kv}'
+1 >= '{"foo", 123}'

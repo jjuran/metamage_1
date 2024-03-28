@@ -73,6 +73,11 @@ namespace vlib
 				return expr->right;
 			}
 			
+			if ( expr->op == Op_mapping )
+			{
+				return Value( expr->left, Op_list, expr->right );
+			}
+			
 			if ( expr->op == Op_empower )
 			{
 				return generic_deref( expr->right );
