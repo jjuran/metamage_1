@@ -81,8 +81,7 @@ var data_section = x""
 
 for type_rsrcs in types do
 {
-	let rtype = type_rsrcs.key
-	let rsrcs = type_rsrcs.value
+	let (rtype, rsrcs) = *type_rsrcs
 	
 	let offset = encode_u16BE (typelist_size + rsrc_headers.size)
 	
@@ -90,8 +89,7 @@ for type_rsrcs in types do
 	
 	for id_rsrc in rsrcs do
 	{
-		let id   = id_rsrc.key
-		let rsrc = id_rsrc.value
+		let (id, rsrc) = *id_rsrc
 		
 		let offset = encode_u32BE data_section.size
 		
