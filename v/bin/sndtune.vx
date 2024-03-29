@@ -90,7 +90,7 @@ def play (score, wave=triangle)
 	
 	for chord in score do
 	{
-		let duration = chord.key / 6
+		let duration = chord.key / 7
 		let notes    = chord.value map { v => wave }
 		
 		sound.tone_update (255, notes)
