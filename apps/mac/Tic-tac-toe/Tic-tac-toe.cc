@@ -427,6 +427,12 @@ void menu_item_chosen( long choice )
 						}
 						
 						enter_fullscreen();
+						
+						Point where;
+						
+						GetMouse( &where );
+						
+						gMouseRgn = mouse_moved( where );
 					}
 					else
 					{
@@ -469,7 +475,7 @@ Boolean wait_next_event( EventRecord& event )
 	
 	Boolean got = GetNextEvent( everyEvent, &event );
 	
-	if ( event.what == nullEvent  &&  ! PtInRgn( event.where, gMouseRgn ) )
+	if ( ! event.what  &&  gMouseRgn  &&  ! PtInRgn( event.where, gMouseRgn ) )
 	{
 		event.what    = osEvt;
 		event.message = mouseMovedMessage << 24;
@@ -604,6 +610,27 @@ int main()
 						leave_fullscreen();
 						
 						CheckMenuItem( Options_menu, Fullscreen, false );
+					}
+					
+					break;
+				
+				case activateEvt:
+					window = (WindowRef) event.message;
+					
+					if ( window == main_window  &&  ! is_fullscreen )
+					{
+						if ( event.modifiers & activeFlag )
+						{
+							SetPortWindowPort( window );
+							
+							gMouseRgn = mouse_moved( event.where );
+						}
+						else
+						{
+							InitCursor();
+							
+							gMouseRgn = NULL;
+						}
 					}
 					
 					break;
