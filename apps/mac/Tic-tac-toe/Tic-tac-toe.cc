@@ -293,6 +293,18 @@ void cleanup_fullscreen()
 	fullscreen::leave();
 }
 
+static inline
+void set_empty_updateRgn( WindowRef window )
+{
+#if ! OPAQUE_TOOLBOX_STRUCTS
+	
+	WindowPeek w = (WindowPeek) window;
+	
+	SetEmptyRgn( w->updateRgn );
+	
+#endif
+}
+
 static
 void menu_item_chosen( long choice )
 {
@@ -407,6 +419,13 @@ void menu_item_chosen( long choice )
 					
 					if ( is_fullscreen )
 					{
+						if ( CONFIG_DAs )
+						{
+							SelectWindow( main_window );
+							
+							set_empty_updateRgn( main_window );
+						}
+						
 						enter_fullscreen();
 					}
 					else
