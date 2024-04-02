@@ -41,7 +41,12 @@ var/links/%: var/links
 %.git: ../% var/links/%
 	@true
 
-app-build-tools:
+var/out/lib-static:
+	$(BUILD) lib-static
+
+build-tools: var/out/lib-static
+
+app-build-tools: build-tools
 	$(BUILD) minivx
 
 AMS_REPOS := freemount.git ams-68k-bin.git
@@ -149,7 +154,7 @@ RUN_AMS  = $(NEW_PATH) $(AMS_VARS) var/out/minivx -Z v/bin/ams.vx
 ams-linux-demo: ams-linux-check display-check
 	$(RUN_AMS)
 
-ams-vnc-build: $(AMS_REPOS)
+ams-vnc-build: $(AMS_REPOS) build-tools
 	$(BUILD) $(AMS_TOOLS) listen vnc-interact
 
 ams-vnc: ams-vnc-build
@@ -165,7 +170,7 @@ ams-x11-build: $(AMS_REPOS)
 ams-x11: ams-x11-build
 	EXHIBIT_INTERACT=interact-x11 $(RUN_AMS)
 
-ams-system-rsrcs:
+ams-system-rsrcs: build-tools
 	$(BUILD) minivx
 	var/out/minivx -Z v/bin/mkrsrc.vx -o $(AMS_RSRC)/rsrc $(AMS_RSRC)
 
@@ -201,7 +206,7 @@ ams-x11-install: ams-x11-build ams-68k-install ams-common-install
 	@echo 'exec interact-x11 "$$@"' >> var/install/bin/interact
 	@chmod +x var/install/bin/interact
 
-ams-quartz-build: $(AMS_REPOS)
+ams-quartz-build: $(AMS_REPOS) build-tools
 	$(BUILD) graft mbin xv68k macvx minivx freemountd Amethyst Amphitheatre
 
 RETROMATIC := PATH="$$PWD/var/out:$$PATH" v/bin/retromatic.vx
@@ -216,7 +221,7 @@ ams-quartz-demo-nosound: ams-quartz-build
 
 ams-quartz-demo: sndtrack ams-quartz-demo-nosound
 
-ams-osx-build: $(AMS_REPOS) macward-compat.git
+ams-osx-build: $(AMS_REPOS) macward-compat.git build-tools
 	bin/build-app -N Interax
 	$(BUILD) $(AMS_TOOLS) interact-shim
 
@@ -226,12 +231,12 @@ ams-osx: ams-osx-build
 	open $(INTERAX)
 	EXHIBIT_INTERACT=v/bin/interact-osx.vx $(RUN_AMS)
 
-sndtrack:
+sndtrack: build-tools
 	$(BUILD) minivx
 	var/out/minivx -Z v/bin/portaudio-pkg.vx make
 	$(BUILD) sndtrack
 
-freemountd-tcp: freemount.git
+freemountd-tcp: freemount.git build-tools
 	$(BUILD) freemountd listen
 
 var/freemount/hello.txt:
@@ -241,7 +246,7 @@ var/freemount/hello.txt:
 freemountd-tcp-test: freemountd-tcp var/freemount/hello.txt
 	var/out/listen 127.0.0.1:4564 var/out/freemountd --root var/freemount
 
-freemount-tcp: freemount.git
+freemount-tcp: freemount.git build-tools
 	$(BUILD) fls fcat fget utcp
 
 fls-test: freemount-tcp
