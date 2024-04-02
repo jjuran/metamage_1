@@ -10,4 +10,6 @@ use warnings FATAL => 'all';
 use strict;
 
 
+$ENV{PATH}="$ENV{PATH}:$RealBin/var/out";
+
 Compile::Driver::main( @ARGV );
