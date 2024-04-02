@@ -34,7 +34,7 @@ sub input_files
 
 sub tool_name
 {
-	return "ar";
+	return "lib-static";
 }
 
 sub command
@@ -43,9 +43,7 @@ sub command
 	
 	my $dest = $self->{DEST};
 	
-	unlink( $dest );
-	
-	return $self->tool_name, 'rcs', $dest;
+	return $self->tool_name, '-o', $dest;
 }
 
 1;

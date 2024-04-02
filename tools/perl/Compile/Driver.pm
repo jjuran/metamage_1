@@ -64,7 +64,7 @@ sub jobs_for
 	{
 		$link = Compile::Driver::Job::Link::Archive::->new
 		(
-			TYPE => "AR",
+			TYPE => "LIB",
 			FROM => $module,
 			OBJS => \@objs,
 			DEST => Compile::Driver::Job::lib_pathname( $target, $name ),
