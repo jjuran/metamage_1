@@ -188,6 +188,11 @@ my %fsmap =
 			\ qw( ed-mkpub ed-sign ed-verify ),
 			# Graphics
 			\ qw( skif skif-info ),
+			# Sound server
+			\ "sndtrack-jr",
+			{
+				sndtrack => sub { symlink "sndtrack-jr", $_[0] },
+			},
 			# unet
 			\ qw( uexec utcp uunix ),
 			# Freemount
