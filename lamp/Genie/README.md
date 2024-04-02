@@ -5,8 +5,6 @@ MacRelix is an ambitious effort to bring POSIX features to Mac OS as a means of 
 
 <https://www.macrelix.org/>
 
-<https://www.metamage.com/code/MacRelix/>
-
 Requirements
 ------------
 
@@ -21,5 +19,5 @@ Metrowerks CodeWarrior is required to build MacRelix.
 Legal
 -----
 
-MacRelix is copyright 1999-2021, Josh Juran.
+MacRelix is copyright 1999-2024, Josh Juran.
 MacRelix is distributed under the GNU AGPL version 3 or later.
