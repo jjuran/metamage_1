@@ -6,6 +6,9 @@
 #include "Text.hh"
 
 // Mac OS
+#ifndef __FIXMATH__
+#include <FixMath.h>
+#endif
 #ifndef __FONTS__
 #include <Fonts.h>
 #endif
@@ -330,8 +333,8 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	
 	if ( (long&) output->numer != (long&) denom )
 	{
-		v_scale = (output->numer.v << 16) / output->denom.v;
-		h_scale = (output->numer.h << 16) / output->denom.h;
+		v_scale = FixRatio( output->numer.v, output->denom.v );
+		h_scale = FixRatio( output->numer.h, output->denom.h );
 		
 		ascent      = fixmulu_w( ascent,      v_scale );
 		fRectHeight = fixmulu_w( fRectHeight, v_scale );
