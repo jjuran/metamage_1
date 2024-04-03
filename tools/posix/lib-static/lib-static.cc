@@ -35,6 +35,20 @@
 #define AR  "ar"
 #define RCS "rcs"
 
+#ifdef __GNUC__
+#if __GNUC__ < 3
+/*
+	The toolchain in the Mac OS X 10.1 SDK doesn't like `ar rcs`,
+	so we need to use `ar rcu` instead.  Since AvailabilityMacros.h
+	doesn't exist in the 10.1 SDK, we can't include it to test for
+	MAC_OS_X_VERSION_10_2, so instead we use the GCC version as a
+	distinguishing mark:  In 10.1 it's 2, whereas in 10.2 it's 3.
+*/
+#undef RCS
+#define RCS "rcu"
+#endif
+#endif
+
 
 static inline
 int usage()
