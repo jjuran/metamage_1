@@ -256,44 +256,9 @@ namespace tool
 			void Make();
 	};
 	
-	static bool is_dot_a( const plus::string& s )
-	{
-		const size_t size = s.size();
-		
-		if ( size > 2 )
-		{
-			const char* data = s.data();
-			
-			return data[ size - 2 ] == '.'  &&  data[ size - 1 ] == 'a';
-		}
-		
-		return false;
-	}
-	
 	void LinkingTask::Make()
 	{
 		plus::string output_filename = p7::basename( OutputPath() );
-		
-	#ifndef __RELIX__
-		
-		/*
-			Delete unix static library files before linking, since `ar rcs`
-			always appends and never replaces, and there's no option for it to
-			do that.
-			
-			Don't delete Metrowerks' files (ending in ".lib"), however, since
-			it doesn't have this problem.
-			
-			In MacRelix-hosted builds, only Metrowerks is targeted, so don't
-			even check.
-		*/
-		
-		if ( is_dot_a( output_filename ) )
-		{
-			unlink( OutputPath().c_str() );
-		}
-		
-	#endif
 		
 		ExecuteCommand( shared_from_this(), its_caption + output_filename, get_command(), get_diagnostics_file_path().c_str() );
 	}
@@ -630,15 +595,15 @@ namespace tool
 	{
 		Command link_command;
 		
-		link_command.push_back( ar_name );
-		link_command.push_back( "rcs"   );
+		link_command.push_back( "lib-static" );
+		link_command.push_back( "-o"         );
 		
 		return make_link_task( link_command,
 		                       output_pathname,
 		                       begin,
 		                       end,
 		                       diagnostics_dir,
-		                       "AR    " );
+		                       "LIB   " );
 	}
 	
 	
