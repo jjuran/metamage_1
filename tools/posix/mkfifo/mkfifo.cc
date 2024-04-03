@@ -7,11 +7,8 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-// Standard C
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+// more-posix
+#include "more/perror.hh"
 
 
 #define PROGRAM  "mkfifo"
@@ -29,7 +26,7 @@ static inline int check_n( int result, const char* code )
 {
 	if ( result < 0 )
 	{
-		fprintf( stderr, PROGRAM " error: %s: %s\n", code, strerror( errno ) );
+		more::perror( PROGRAM " error", code );
 		
 		exit_status = 1;
 	}
