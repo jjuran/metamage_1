@@ -6,7 +6,6 @@
 // Standard C
 #include <signal.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 // POSIX
@@ -45,11 +44,17 @@ int main( int argc, char const *const argv[] )
 {
 	CHECK_NEG( chdir( "/gui/new/port" ) );
 	
-	char port_buffer[ sizeof "/gui/port/abcd3210" ];
+	char port_buffer[ sizeof "PORT=/gui/port/abcd3210" ];
 	
-	CHECK_NULL( getcwd( port_buffer, sizeof port_buffer ) );
+	char* p = port_buffer;
 	
-	CHECK_NEG( setenv( "PORT", port_buffer, true ) );
+	*p++ = 'P';
+	*p++ = 'O';
+	*p++ = 'R';
+	*p++ = 'T';
+	*p++ = '=';
+	
+	CHECK_NULL( getcwd( p, sizeof "/gui/port/abcd3210" ) );
 	
 	const short width  = 2 * 4 +  6 * 80 + 15;
 	const short height = 2 * 4 + 11 * 24;
@@ -119,12 +124,19 @@ int main( int argc, char const *const argv[] )
 		
 		char* login_argv[] = { "/bin/login", NULL };
 		
+		char* envp[] =
+		{
+			"PATH=/bin:/sbin:/usr/bin:/usr/sbin",
+			port_buffer,
+			NULL
+		};
+		
 		const bool use_login = argc < 2;
 		
 		const char* const* next_argv = use_login ? login_argv
 		                                         : argv + 1;
 		
-		execv( next_argv[0], (char**) next_argv );
+		execve( next_argv[0], (char**) next_argv, envp );
 		
 		_exit( 1 );
 	}
