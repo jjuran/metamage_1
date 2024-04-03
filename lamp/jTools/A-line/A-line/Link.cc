@@ -587,8 +587,7 @@ namespace tool
 	}
 	
 	template < class Iter >
-	static TaskPtr MakeStaticLibTask( const char*          ar_name,
-	                                  const plus::string&  output_pathname,
+	static TaskPtr MakeStaticLibTask( const plus::string&  output_pathname,
 	                                  Iter                 begin,
 	                                  Iter                 end,
 	                                  const plus::string&  diagnostics_dir )
@@ -721,8 +720,7 @@ namespace tool
 			
 			library_pathname = libsDir / library_filename;
 			
-			lib_task = MakeStaticLibTask( cmdgen.ArchiverName(),
-			                              library_pathname,
+			lib_task = MakeStaticLibTask( library_pathname,
 			                              objectFiles.begin() + n_tools,
 			                              objectFiles.end(),
 			                              diagnosticsDir );

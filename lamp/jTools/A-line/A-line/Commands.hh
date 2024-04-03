@@ -86,7 +86,6 @@ namespace tool
 			return MakeCommand( UnixCompilerName(), "-c" );
 		}
 		
-		const char* ArchiverName() const;
 		const char* LinkerName() const;
 		
 		Command TargetArchitecture() const

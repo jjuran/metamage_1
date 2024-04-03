@@ -35,16 +35,6 @@ namespace tool
 		return gnu ? "cc" : "mwcc";
 	}
 	
-	const char* CommandGenerator::ArchiverName() const
-	{
-		if ( const char* ar = getenv( "AR" ) )
-		{
-			return ar;
-		}
-		
-		return "ar";
-	}
-	
 	const char* CommandGenerator::LinkerName() const
 	{
 		if ( const char* ld = getenv( "LD" ) )
