@@ -6,6 +6,7 @@
 // POSIX
 #include <errno.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 // Standard C
@@ -22,7 +23,6 @@
 #include "plus/var_string.hh"
 
 // poseven
-#include "poseven/functions/stat.hh"
 #include "poseven/types/errno_t.hh"
 
 // Orion
@@ -119,7 +119,14 @@ int Main( int argc, char** argv )
 		// Last arg should be the destination directory.
 		const char* destDir = argv[ argc - 1 ];
 		
-		p7::stat( destDir, sb );
+		int nok = stat( destDir, &sb );
+		
+		if ( nok < 0  &&  errno != ENOENT )
+		{
+			report_error( destDir );
+			
+			return 1;
+		}
 		
 		if ( bool not_a_dir = (sb.st_mode & S_IFDIR) == 0 )
 		{
@@ -175,9 +182,18 @@ int Main( int argc, char** argv )
 			return 1;
 		}
 		
+		nok = stat( destPath, &sb );
+		
+		if ( nok < 0  &&  errno != ENOENT )
+		{
+			report_error( destPath );
+			
+			return 1;
+		}
+		
 		plus::var_string destFilePath = destPath;
 		
-		if ( p7::stat( destPath, sb ) )
+		if ( nok == 0 )
 		{
 			// dest exists
 			
