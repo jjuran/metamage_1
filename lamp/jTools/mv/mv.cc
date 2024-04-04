@@ -20,6 +20,9 @@
 #pragma exceptions off
 
 
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+
 static
 const char* Basename( const char* path )
 {
@@ -41,14 +44,24 @@ int move_into_dir( const char* old_path, int new_dirfd )
 	return renameat( AT_FDCWD, old_path, new_dirfd, name );
 }
 
+#define str_len( s )  s, strlen( s )
+
+#define MOVING  "mv: moving multiple files, but last argument ("
+#define NOT_DIR  ") is not a directory.\n"
+
 int main( int argc, char const *const argv[] )
 {
 	// Check for sufficient number of args
 	if ( argc < 3 )
 	{
-		const char* prerequisite = (argc == 1) ? "file arguments" : "destination file";
-		
-		fprintf( stderr, "%s: missing %s\n", argv[0], prerequisite );
+		if ( argc == 1 )
+		{
+			write( STDERR_FILENO, STR_LEN( "mv: missing file arguments\n" ) );
+		}
+		else
+		{
+			write( STDERR_FILENO, STR_LEN( "mv: missing destination file\n" ) );
+		}
 		
 		return 1;
 	}
@@ -67,13 +80,19 @@ int main( int argc, char const *const argv[] )
 		{
 			if ( errno == ENOTDIR )
 			{
-				const char* format = "%s: moving multiple files, but last argument (%s) is not a directory.\n";
-				
-				fprintf( stderr, format, argv[ 0 ], destPath );
+				write( STDERR_FILENO, STR_LEN( MOVING   ) );
+				write( STDERR_FILENO, str_len( destPath ) );
+				write( STDERR_FILENO, STR_LEN( NOT_DIR  ) );
 			}
 			else
 			{
-				fprintf( stderr, "mv: %s: %s\n", destPath, strerror( errno ) );
+				const char* errmsg = strerror( errno );
+				
+				write( STDERR_FILENO, STR_LEN( "mv: "   ) );
+				write( STDERR_FILENO, str_len( destPath ) );
+				write( STDERR_FILENO, STR_LEN( ": "     ) );
+				write( STDERR_FILENO, str_len( errmsg   ) );
+				write( STDERR_FILENO, STR_LEN( "\n"     ) );
 			}
 			
 			return 1;
@@ -95,10 +114,18 @@ int main( int argc, char const *const argv[] )
 		
 		if ( renamed < 0 )
 		{
+			int saved_errno = errno;
+			
 			const char* errmsg = errno == EXDEV ? "can't move across partitions"
 			                                    : strerror( errno );
 			
-			fprintf( stderr, "%s: rename %s to %s: %s\n", argv[ 0 ], srcPath, destPath, errmsg );
+			write( STDERR_FILENO, STR_LEN( "mv: rename " ) );
+			write( STDERR_FILENO, str_len( srcPath       ) );
+			write( STDERR_FILENO, STR_LEN( " to "        ) );
+			write( STDERR_FILENO, str_len( destPath      ) );
+			write( STDERR_FILENO, STR_LEN( ": "          ) );
+			write( STDERR_FILENO, str_len( errmsg        ) );
+			write( STDERR_FILENO, STR_LEN( "\n"          ) );
 			
 			return 1;
 		}
