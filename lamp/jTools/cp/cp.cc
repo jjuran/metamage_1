@@ -9,8 +9,10 @@
 #include <unistd.h>
 
 // Standard C
-#include <stdio.h>
 #include <string.h>
+
+// more-posix
+#include "more/perror.hh"
 
 // relix
 #include "relix/copyfile.h"
@@ -26,6 +28,15 @@
 // Orion
 #include "Orion/Main.hh"
 
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+
+static
+void report_error( const char* path, int errnum = errno )
+{
+	more::perror( "cp", path, errnum );
+}
 
 namespace tool
 {
@@ -87,8 +98,14 @@ int Main( int argc, char** argv )
 	// Check for sufficient number of args
 	if ( argc < 3 )
 	{
-		fprintf( stderr, "cp: missing %s\n", (argc == 1) ? "file arguments"
-		                                                 : "destination file" );
+		if ( argc == 1 )
+		{
+			write( STDERR_FILENO, STR_LEN( "cp: missing file arguments\n" ) );
+		}
+		else
+		{
+			write( STDERR_FILENO, STR_LEN( "cp: missing destination file\n" ) );
+		}
 		
 		return 1;
 	}
@@ -106,8 +123,17 @@ int Main( int argc, char** argv )
 		
 		if ( bool not_a_dir = (sb.st_mode & S_IFDIR) == 0 )
 		{
-			fprintf( stderr, "cp: copying multiple files, but last argument (%s) is not a directory.\n",
-			                                                                 destDir );
+			#define COPYING  "cp: copying multiple files, but last argument ("
+			#define NOT_DIR  ") is not a directory.\n"
+			#define str_len( s )  s, strlen( s )
+			
+			write( STDERR_FILENO, STR_LEN( COPYING ) );
+			write( STDERR_FILENO, str_len( destDir ) );
+			write( STDERR_FILENO, STR_LEN( NOT_DIR ) );
+			
+			#undef COPYING
+			#undef NOT_DIR
+			#undef str_len
 			
 			return 1;
 		}
@@ -144,7 +170,7 @@ int Main( int argc, char** argv )
 		
 		if ( nok < 0 )
 		{
-			fprintf( stderr, "cp: %s: %s\n", sourcePath, strerror( errno ) );
+			report_error( sourcePath );
 			
 			return 1;
 		}
