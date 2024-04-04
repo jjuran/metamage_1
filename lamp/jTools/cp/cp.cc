@@ -22,9 +22,6 @@
 // plus
 #include "plus/var_string.hh"
 
-// poseven
-#include "poseven/types/errno_t.hh"
-
 // Orion
 #include "Orion/Main.hh"
 
@@ -40,9 +37,6 @@ void report_error( const char* path, int errnum = errno )
 
 namespace tool
 {
-
-namespace p7 = poseven;
-
 
 static const char* Basename( const char* pathname )
 {
@@ -216,7 +210,14 @@ int Main( int argc, char** argv )
 			}
 		}
 		
-		p7::throw_posix_result( copyfile_or_pump( sourcePath, destPath ) );
+		nok = copyfile_or_pump( sourcePath, destPath );
+		
+		if ( nok < 0 )
+		{
+			report_error( destPath );
+			
+			++fail;
+		}
 	}
 	
 	return fail;
