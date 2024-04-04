@@ -122,7 +122,9 @@ int Main( int argc, char** argv )
 			return 1;
 		}
 		
-		if ( bool not_a_dir = (sb.st_mode & S_IFDIR) == 0 )
+		bool is_dir = sb.st_mode & S_IFDIR;
+		
+		if ( ! is_dir )
 		{
 			#define COPYING  "cp: copying multiple files, but last argument ("
 			#define NOT_DIR  ") is not a directory.\n"
@@ -187,27 +189,23 @@ int Main( int argc, char** argv )
 		
 		plus::var_string destFilePath = destPath;
 		
-		if ( nok == 0 )
+		if ( nok == 0  &&  sb.st_mode & S_IFDIR )
 		{
-			// dest exists
+			/*
+				The dest exists and is a directory.
+				
+				Copy this -> that/this
+				set that = that/this
+			*/
 			
-			bool isDir = sb.st_mode & S_IFDIR;
-			
-			if ( isDir )
+			if ( destFilePath.back() != '/' )
 			{
-				// dest is a dir.
-				// Copy this -> that/this
-				// set that = that/this
-				
-				if ( destFilePath.back() != '/' )
-				{
-					destFilePath += '/';
-				}
-				
-				destFilePath += Basename( sourcePath );
-				
-				destPath = destFilePath.c_str();
+				destFilePath += '/';
 			}
+			
+			destFilePath += Basename( sourcePath );
+			
+			destPath = destFilePath.c_str();
 		}
 		
 		nok = copyfile_or_pump( sourcePath, destPath );
