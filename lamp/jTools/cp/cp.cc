@@ -12,15 +12,15 @@
 // Standard C
 #include <string.h>
 
+// more-libc
+#include "more/string.h"
+
 // more-posix
 #include "more/perror.hh"
 
 // relix
 #include "relix/copyfile.h"
 #include "relix/pump.h"
-
-// plus
-#include "plus/var_string.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -104,7 +104,26 @@ int Main( int argc, char** argv )
 		return 1;
 	}
 	
+	enum
+	{
+		max_path_len = 2047,
+		
+		path_buffer_len = max_path_len * 2 + 2,  // theoretical worst case
+	};
+	
+	for ( int i = 1;  i < argc;  ++i )
+	{
+		if ( strlen( argv[ i ] ) > max_path_len )
+		{
+			report_error( argv[ i ], ENAMETOOLONG );
+			
+			return 1;
+		}
+	}
+	
 	struct stat sb;
+	
+	char path_buffer[ path_buffer_len ];
 	
 	if ( argc > 3 )
 	{
@@ -141,21 +160,27 @@ int Main( int argc, char** argv )
 			return 1;
 		}
 		
+		size_t destDir_len = strlen( destDir );
+		
+		char* p = (char*) mempcpy( path_buffer, destDir, destDir_len );
+		
+		if ( p[ -1 ] != '/' )
+		{
+			*p++ = '/';
+		}
+		
 		// Try to copy each file.  Return whether any errors occurred.
 		for ( size_t index = 1;  index < argc - 1;  ++index )
 		{
 			const char* sourcePath = argv[index];
 			
-			plus::var_string destFilePath = destDir;
+			const char* base = Basename( sourcePath );
 			
-			if ( destFilePath.back() != '/' )
-			{
-				destFilePath += '/';
-			}
+			size_t base_len = strlen( base );
 			
-			destFilePath += Basename( sourcePath );
+			mempcpy( p, base, base_len + 1 );  // copy the trailing NUL
 			
-			int nok = copyfile_or_pump( sourcePath, destFilePath.c_str() );
+			int nok = copyfile_or_pump( sourcePath, path_buffer );
 			
 			if ( nok < 0 )
 			{
@@ -187,8 +212,6 @@ int Main( int argc, char** argv )
 			return 1;
 		}
 		
-		plus::var_string destFilePath = destPath;
-		
 		if ( nok == 0  &&  sb.st_mode & S_IFDIR )
 		{
 			/*
@@ -198,14 +221,22 @@ int Main( int argc, char** argv )
 				set that = that/this
 			*/
 			
-			if ( destFilePath.back() != '/' )
+			size_t destPath_len = strlen( destPath );
+			
+			char* p = (char*) mempcpy( path_buffer, destPath, destPath_len );
+			
+			if ( p[ -1 ] != '/' )
 			{
-				destFilePath += '/';
+				*p++ = '/';
 			}
 			
-			destFilePath += Basename( sourcePath );
+			const char* base = Basename( sourcePath );
 			
-			destPath = destFilePath.c_str();
+			size_t base_len = strlen( base );
+			
+			mempcpy( p, base, base_len + 1 );  // copy the trailing NUL
+			
+			destPath = path_buffer;
 		}
 		
 		nok = copyfile_or_pump( sourcePath, destPath );
