@@ -1,17 +1,17 @@
-/*	=====
- *	mv.cc
- *	=====
- */
-
-// Standard C
-#include <errno.h>
-#include <stdio.h>
-#include <string.h>
+/*
+	mv.cc
+	-----
+*/
 
 // POSIX
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+// Standard C
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
 
 // Extended API Set Part 2
 #include "extended-api-set/part-2.h"
@@ -20,7 +20,8 @@
 #pragma exceptions off
 
 
-static const char* Basename( const char* path )
+static
+const char* Basename( const char* path )
 {
 	const char* slash = strrchr( path, '/' );
 	
@@ -32,17 +33,18 @@ static const char* Basename( const char* path )
 	return slash + 1;
 }
 
-static int move_into_dir( const char* old_path, int new_dirfd )
+static
+int move_into_dir( const char* old_path, int new_dirfd )
 {
 	const char* name = Basename( old_path );
 	
-	return ::renameat( AT_FDCWD, old_path, new_dirfd, name );
+	return renameat( AT_FDCWD, old_path, new_dirfd, name );
 }
 
 int main( int argc, char const *const argv[] )
 {
 	// Check for sufficient number of args
-	if (argc < 3)
+	if ( argc < 3 )
 	{
 		const char* prerequisite = (argc == 1) ? "file arguments" : "destination file";
 		
@@ -77,9 +79,9 @@ int main( int argc, char const *const argv[] )
 			return 1;
 		}
 		
-		for ( int index = 1;  index < argc - 1;  ++index )
+		for ( int i = 1;  i < argc - 1;  ++i )
 		{
-			fail += move_into_dir( argv[ index ], dest_dirfd ) == -1;
+			fail += move_into_dir( argv[ i ], dest_dirfd ) < 0;
 		}
 	}
 	else
@@ -91,11 +93,12 @@ int main( int argc, char const *const argv[] )
 		int renamed = dest_dirfd >= 0 ? move_into_dir( srcPath, dest_dirfd )
 		                              : rename       ( srcPath, destPath   );
 		
-		if ( renamed == -1 )
+		if ( renamed < 0 )
 		{
-			const char* error_msg = errno == EXDEV ? "can't move across partitions" : strerror( errno );
+			const char* errmsg = errno == EXDEV ? "can't move across partitions"
+			                                    : strerror( errno );
 			
-			fprintf( stderr, "%s: rename %s to %s: %s\n", argv[ 0 ], srcPath, destPath, error_msg );
+			fprintf( stderr, "%s: rename %s to %s: %s\n", argv[ 0 ], srcPath, destPath, errmsg );
 			
 			return 1;
 		}
