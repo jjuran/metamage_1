@@ -22,9 +22,6 @@
 #include "relix/copyfile.h"
 #include "relix/pump.h"
 
-// Orion
-#include "Orion/Main.hh"
-
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -34,9 +31,6 @@ void report_error( const char* path, int errnum = errno )
 {
 	more::perror( "cp", path, errnum );
 }
-
-namespace tool
-{
 
 static const char* Basename( const char* pathname )
 {
@@ -85,7 +79,7 @@ static int copyfile_or_pump( const char* src, const char* dest )
 	return nok;
 }
 
-int Main( int argc, char** argv )
+int main( int argc, char** argv )
 {
 	int fail = 0;
 	
@@ -250,6 +244,4 @@ int Main( int argc, char** argv )
 	}
 	
 	return fail;
-}
-
 }
