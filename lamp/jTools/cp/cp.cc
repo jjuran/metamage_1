@@ -6,32 +6,31 @@
 // POSIX
 #include <errno.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 // Standard C
-#include <stdio.h>
 #include <string.h>
+
+// more-libc
+#include "more/string.h"
+
+// more-posix
+#include "more/perror.hh"
 
 // relix
 #include "relix/copyfile.h"
 #include "relix/pump.h"
 
-// plus
-#include "plus/var_string.hh"
 
-// poseven
-#include "poseven/functions/stat.hh"
-#include "poseven/types/errno_t.hh"
-
-// Orion
-#include "Orion/Main.hh"
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
-namespace tool
+static
+void report_error( const char* path, int errnum = errno )
 {
-
-namespace p7 = poseven;
-
+	more::perror( "cp", path, errnum );
+}
 
 static const char* Basename( const char* pathname )
 {
@@ -52,15 +51,15 @@ static const char* Basename( const char* pathname )
 
 static int copyfile_or_pump( const char* src, const char* dest )
 {
-	int ok = ::copyfile( src, dest );
+	int nok = ::copyfile( src, dest );
 	
-	if ( ok < 0  &&  (errno == EINVAL  ||  errno == EXDEV) )
+	if ( nok < 0  &&  (errno == EINVAL  ||  errno == EXDEV) )
 	{
-		int in = ok = open( src, O_RDONLY );
+		int in = nok = open( src, O_RDONLY );
 		
 		if ( in >= 0 )
 		{
-			int out = ok = open( dest, O_WRONLY|O_CREAT, 0666 );
+			int out = nok = open( dest, O_WRONLY|O_CREAT, 0666 );
 			
 			if ( out >= 0 )
 			{
@@ -68,7 +67,7 @@ static int copyfile_or_pump( const char* src, const char* dest )
 				
 				pumped = pump( in, NULL, out, NULL, 0, 0 );
 				
-				ok = -(pumped != 0);
+				nok = -(pumped != 0);
 				
 				close( out );
 			}
@@ -77,23 +76,48 @@ static int copyfile_or_pump( const char* src, const char* dest )
 		}
 	}
 	
-	return ok;
+	return nok;
 }
 
-int Main( int argc, char** argv )
+int main( int argc, char** argv )
 {
 	int fail = 0;
 	
 	// Check for sufficient number of args
 	if ( argc < 3 )
 	{
-		fprintf( stderr, "cp: missing %s\n", (argc == 1) ? "file arguments"
-		                                                 : "destination file" );
+		if ( argc == 1 )
+		{
+			write( STDERR_FILENO, STR_LEN( "cp: missing file arguments\n" ) );
+		}
+		else
+		{
+			write( STDERR_FILENO, STR_LEN( "cp: missing destination file\n" ) );
+		}
 		
 		return 1;
 	}
 	
+	enum
+	{
+		max_path_len = 2047,
+		
+		path_buffer_len = max_path_len * 2 + 2,  // theoretical worst case
+	};
+	
+	for ( int i = 1;  i < argc;  ++i )
+	{
+		if ( strlen( argv[ i ] ) > max_path_len )
+		{
+			report_error( argv[ i ], ENAMETOOLONG );
+			
+			return 1;
+		}
+	}
+	
 	struct stat sb;
+	
+	char path_buffer[ path_buffer_len ];
 	
 	if ( argc > 3 )
 	{
@@ -102,14 +126,41 @@ int Main( int argc, char** argv )
 		// Last arg should be the destination directory.
 		const char* destDir = argv[ argc - 1 ];
 		
-		p7::stat( destDir, sb );
+		int nok = stat( destDir, &sb );
 		
-		if ( bool not_a_dir = (sb.st_mode & S_IFDIR) == 0 )
+		if ( nok < 0  &&  errno != ENOENT )
 		{
-			fprintf( stderr, "cp: copying multiple files, but last argument (%s) is not a directory.\n",
-			                                                                 destDir );
+			report_error( destDir );
 			
 			return 1;
+		}
+		
+		bool is_dir = sb.st_mode & S_IFDIR;
+		
+		if ( ! is_dir )
+		{
+			#define COPYING  "cp: copying multiple files, but last argument ("
+			#define NOT_DIR  ") is not a directory.\n"
+			#define str_len( s )  s, strlen( s )
+			
+			write( STDERR_FILENO, STR_LEN( COPYING ) );
+			write( STDERR_FILENO, str_len( destDir ) );
+			write( STDERR_FILENO, STR_LEN( NOT_DIR ) );
+			
+			#undef COPYING
+			#undef NOT_DIR
+			#undef str_len
+			
+			return 1;
+		}
+		
+		size_t destDir_len = strlen( destDir );
+		
+		char* p = (char*) mempcpy( path_buffer, destDir, destDir_len );
+		
+		if ( p[ -1 ] != '/' )
+		{
+			*p++ = '/';
 		}
 		
 		// Try to copy each file.  Return whether any errors occurred.
@@ -117,16 +168,15 @@ int Main( int argc, char** argv )
 		{
 			const char* sourcePath = argv[index];
 			
-			plus::var_string destFilePath = destDir;
+			const char* base = Basename( sourcePath );
 			
-			if ( destFilePath.back() != '/' )
-			{
-				destFilePath += '/';
-			}
+			size_t base_len = strlen( base );
 			
-			destFilePath += Basename( sourcePath );
+			mempcpy( p, base, base_len + 1 );  // copy the trailing NUL
 			
-			if ( -1 == copyfile_or_pump( sourcePath, destFilePath.c_str() ) )
+			int nok = copyfile_or_pump( sourcePath, path_buffer );
+			
+			if ( nok < 0 )
 			{
 				++fail;
 			}
@@ -138,42 +188,60 @@ int Main( int argc, char** argv )
 		const char* sourcePath = argv[1];
 		const char* destPath   = argv[2];
 		
-		if ( -1 == lstat( sourcePath, &sb ) )
+		int nok = lstat( sourcePath, &sb );
+		
+		if ( nok < 0 )
 		{
-			fprintf( stderr, "cp: %s: %s\n", sourcePath, strerror( errno ) );
+			report_error( sourcePath );
 			
 			return 1;
 		}
 		
-		plus::var_string destFilePath = destPath;
+		nok = stat( destPath, &sb );
 		
-		if ( p7::stat( destPath, sb ) )
+		if ( nok < 0  &&  errno != ENOENT )
 		{
-			// dest exists
+			report_error( destPath );
 			
-			bool isDir = sb.st_mode & S_IFDIR;
-			
-			if ( isDir )
-			{
-				// dest is a dir.
-				// Copy this -> that/this
-				// set that = that/this
-				
-				if ( destFilePath.back() != '/' )
-				{
-					destFilePath += '/';
-				}
-				
-				destFilePath += Basename( sourcePath );
-				
-				destPath = destFilePath.c_str();
-			}
+			return 1;
 		}
 		
-		p7::throw_posix_result( copyfile_or_pump( sourcePath, destPath ) );
+		if ( nok == 0  &&  sb.st_mode & S_IFDIR )
+		{
+			/*
+				The dest exists and is a directory.
+				
+				Copy this -> that/this
+				set that = that/this
+			*/
+			
+			size_t destPath_len = strlen( destPath );
+			
+			char* p = (char*) mempcpy( path_buffer, destPath, destPath_len );
+			
+			if ( p[ -1 ] != '/' )
+			{
+				*p++ = '/';
+			}
+			
+			const char* base = Basename( sourcePath );
+			
+			size_t base_len = strlen( base );
+			
+			mempcpy( p, base, base_len + 1 );  // copy the trailing NUL
+			
+			destPath = path_buffer;
+		}
+		
+		nok = copyfile_or_pump( sourcePath, destPath );
+		
+		if ( nok < 0 )
+		{
+			report_error( destPath );
+			
+			++fail;
+		}
 	}
 	
 	return fail;
-}
-
 }
