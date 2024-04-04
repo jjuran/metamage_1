@@ -43,7 +43,7 @@ namespace relix
 			
 			if ( !exists( *file ) )
 			{
-				return set_errno( EACCES );
+				return set_errno( ENOENT );
 			}
 			
 			// FIXME: check permissions
