@@ -52,15 +52,15 @@ static const char* Basename( const char* pathname )
 
 static int copyfile_or_pump( const char* src, const char* dest )
 {
-	int ok = ::copyfile( src, dest );
+	int nok = ::copyfile( src, dest );
 	
-	if ( ok < 0  &&  (errno == EINVAL  ||  errno == EXDEV) )
+	if ( nok < 0  &&  (errno == EINVAL  ||  errno == EXDEV) )
 	{
-		int in = ok = open( src, O_RDONLY );
+		int in = nok = open( src, O_RDONLY );
 		
 		if ( in >= 0 )
 		{
-			int out = ok = open( dest, O_WRONLY|O_CREAT, 0666 );
+			int out = nok = open( dest, O_WRONLY|O_CREAT, 0666 );
 			
 			if ( out >= 0 )
 			{
@@ -68,7 +68,7 @@ static int copyfile_or_pump( const char* src, const char* dest )
 				
 				pumped = pump( in, NULL, out, NULL, 0, 0 );
 				
-				ok = -(pumped != 0);
+				nok = -(pumped != 0);
 				
 				close( out );
 			}
@@ -77,7 +77,7 @@ static int copyfile_or_pump( const char* src, const char* dest )
 		}
 	}
 	
-	return ok;
+	return nok;
 }
 
 int Main( int argc, char** argv )
@@ -126,7 +126,9 @@ int Main( int argc, char** argv )
 			
 			destFilePath += Basename( sourcePath );
 			
-			if ( -1 == copyfile_or_pump( sourcePath, destFilePath.c_str() ) )
+			int nok = copyfile_or_pump( sourcePath, destFilePath.c_str() );
+			
+			if ( nok < 0 )
 			{
 				++fail;
 			}
@@ -138,7 +140,9 @@ int Main( int argc, char** argv )
 		const char* sourcePath = argv[1];
 		const char* destPath   = argv[2];
 		
-		if ( -1 == lstat( sourcePath, &sb ) )
+		int nok = lstat( sourcePath, &sb );
+		
+		if ( nok < 0 )
 		{
 			fprintf( stderr, "cp: %s: %s\n", sourcePath, strerror( errno ) );
 			
