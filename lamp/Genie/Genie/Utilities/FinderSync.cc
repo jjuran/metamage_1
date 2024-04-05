@@ -34,6 +34,9 @@ enum
 #endif
 
 
+#define POD( obj )  (&(obj)), (sizeof (obj))
+
+
 namespace Genie
 {
 
@@ -75,6 +78,13 @@ void send_Finder_sync_event( const FSSpec& spec )
 	
 	if ( err == noErr )
 	{
+		err = AEPutParamPtr( &event, keyDirectObject, typeFSS, POD( spec ) );
+		
+		/*
+			Continue with AESend even if adding the parameter failed.
+			At least in Mac OS 9, the Finder will perform a sync anyway.
+		*/
+		
 		err = AESend( &event,
 		              &reply,
 		              kAENoReply,
