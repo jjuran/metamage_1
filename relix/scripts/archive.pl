@@ -224,7 +224,7 @@ my %fsmap =
 			# Mac-specific
 			\ qw( AFPServer CurPageOption adbs beep cds crsr deicon drives drvr
 				err2text gdev keymods
-				location mac-id macbin mnam qdscreencap ram-disks
+				location lowmem mac-id macbin mnam qdscreencap ram-disks
 				rom-checksum rominfo
 				screenBits serial-ports sound-info system-info
 				thds trap-info units vcbs ),
