@@ -64,34 +64,26 @@ void send_Finder_sync_event( const FSSpec& spec )
 	static AEAddressDesc address = create_Finder_address_AEDesc();
 	
 	OSErr err;
-	AEDesc desc;
 	AppleEvent event, reply;
 	
-	err = AECreateDesc( typeFSS, &spec, sizeof spec, &desc );
+	err = AECreateAppleEvent( kAEFinderSuite,  // 'fndr'
+	                          kAESync,         // 'fupd'
+	                          &address,
+	                          kAutoGenerateReturnID,
+	                          kAnyTransactionID,
+	                          &event );
 	
 	if ( err == noErr )
 	{
-		err = AECreateAppleEvent( kAEFinderSuite,  // 'fndr'
-		                          kAESync,         // 'fupd'
-		                          &address,
-		                          kAutoGenerateReturnID,
-		                          kAnyTransactionID,
-		                          &event );
+		err = AESend( &event,
+		              &reply,
+		              kAENoReply,
+		              kAENormalPriority,
+		              kNoTimeOut,
+		              NULL,
+		              NULL );
 		
-		if ( err == noErr )
-		{
-			err = AESend( &event,
-			              &reply,
-			              kAENoReply,
-			              kAENormalPriority,
-			              kNoTimeOut,
-			              NULL,
-			              NULL );
-			
-			AEDisposeDesc( &event );
-		}
-		
-		AEDisposeDesc( &desc );
+		AEDisposeDesc( &event );
 	}
 }	
 
