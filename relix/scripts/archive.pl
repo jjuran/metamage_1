@@ -225,7 +225,8 @@ my %fsmap =
 			\ qw( adbs beep cds crsr deicon drives drvr err2text gdev keymods
 				location mac-id macbin mnam qdscreencap ram-disks
 				rom-checksum rominfo
-				screenBits serial-ports system-info thds units vcbs ),
+				screenBits serial-ports sound-info system-info
+				thds units vcbs ),
 			# Mac-specific scripts
 			qw( gestalt ),
 			# Perl scripts
