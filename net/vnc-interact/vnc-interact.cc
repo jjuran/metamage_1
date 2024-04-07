@@ -223,7 +223,7 @@ void transcode_framebuffer_8x_1_to_8()
 	
 	q += desc.frame * image_size;
 	
-	transcode_8x_1bpp_to_8bpp( q, framebuffer, fb_len / 8u );
+	transcode::_8x_1bpp_to_8bpp( q, framebuffer, fb_len / 8u, 0xFF, 0x00 );
 }
 
 static
