@@ -158,11 +158,7 @@ ams-vnc-build: $(AMS_REPOS) build-tools
 	$(BUILD) $(AMS_TOOLS) listen vnc-interact
 
 ams-vnc: ams-vnc-build
-	@mkdir -p var/demo
-	@echo '#!/bin/sh'                                          >  var/demo/interact
-	@echo 'exec var/out/minivx -Z v/bin/interact-vnc.vx "$$@"' >> var/demo/interact
-	@chmod +x var/demo/interact
-	$(RUN_AMS)
+	EXHIBIT_INTERACT="$$PWD/v/bin/interact-vnc.vx" $(RUN_AMS)
 
 ams-x11-build: $(AMS_REPOS)
 	./build.pl -i $(AMS_TOOLS) interact-x11
