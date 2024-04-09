@@ -14,9 +14,6 @@
 // mac-sys-utils
 #include "mac_sys/has/Aqua_menus.hh"
 
-// mac-app-utils
-#include "mac_app/menus.hh"
-
 // Nitrogen
 #include "Carbon/CF/Types/CFMutableStringRef.hh"
 #include "Mac/Resources/Types/ResType.hh"
@@ -182,28 +179,6 @@ namespace Pedestal
 				SetMenuItemText( appleMenu, 1, about );
 			}
 		}
-	}
-	
-	
-	CommandCode HandleMenuItem( MenuID menuID, SInt16 item )
-	{
-		if ( CommandCode code = GetMenuItemCommandCode( menuID, item ) )
-		{
-			return code;
-		}
-		
-		const short gAppleMenuID = 1;
-		
-	#if CALL_NOT_IN_CARBON
-		
-		if ( menuID == gAppleMenuID )
-		{
-			mac::app::open_DA_from_menu( item );
-		}
-		
-	#endif
-		
-		return kCmdNone;
 	}
 	
 }

@@ -74,6 +74,7 @@
 #include "Pedestal/ClickTarget.hh"
 #include "Pedestal/Commands.hh"
 #include "Pedestal/MenuBar.hh"
+#include "Pedestal/MenuItemCommands.hh"
 #include "Pedestal/TextEdit.hh"
 #include "Pedestal/TrackControl.hh"
 #include "Pedestal/View.hh"
@@ -993,9 +994,15 @@ namespace Pedestal
 		
 		AtEnd< UnhighlightMenus > unhighlightMenus;
 		
-		if ( CommandCode code = HandleMenuItem( menuID, item ) )
+		const short gAppleMenuID = 1;
+		
+		if ( CommandCode code = GetMenuItemCommandCode( menuID, item ) )
 		{
 			DispatchMenuItem( code );
+		}
+		else if ( CALL_NOT_IN_CARBON  &&  menuID == gAppleMenuID )
+		{
+			mac::app::open_DA_from_menu( item );
 		}
 		else if ( menuID == GetMenuID( the_Window_menu ) )
 		{

@@ -16,11 +16,6 @@
 #include <Menus.h>
 #endif
 
-// Pedestal
-#ifndef PEDESTAL_COMMANDCODE_HH
-#include "Pedestal/CommandCode.hh"
-#endif
-
 
 namespace Pedestal
 {
@@ -28,8 +23,6 @@ namespace Pedestal
 	void AddMenu( MenuRef menu );
 	
 	void FixUpAboutMenuItem( MenuRef appleMenu );
-	
-	CommandCode HandleMenuItem( MenuID menuID, SInt16 item );
 	
 }
 
