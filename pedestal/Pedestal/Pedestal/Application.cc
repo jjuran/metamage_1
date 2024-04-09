@@ -996,7 +996,7 @@ namespace Pedestal
 		
 		const short gAppleMenuID = 1;
 		
-		if ( CommandCode code = GetMenuItemCommandCode( menuID, item ) )
+		if ( CommandCode code = GetMenuItemCommandCode( menuChoice ) )
 		{
 			DispatchMenuItem( code );
 		}
