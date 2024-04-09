@@ -56,15 +56,14 @@ namespace Genie
 	
 	struct menu_item_cmd : plus::serialize_hex< ::OSType >
 	{
-		static Ped::CommandCode Get( MenuRef menu, UInt16 index )
+		static Ped::CommandCode Get( MenuRef menu, UInt32 choice )
 		{
-			return Ped::GetMenuItemCommandCode( GetMenuID( menu ), index );
+			return Ped::GetMenuItemCommandCode( choice );
 		}
 		
-		static void Set( MenuRef menu, UInt16 index, ::OSType code )
+		static void Set( MenuRef menu, UInt32 choice, ::OSType code )
 		{
-			Ped::SetMenuItemCommandCode( GetMenuID( menu ),
-			                             index,
+			Ped::SetMenuItemCommandCode( choice,
 			                             Ped::CommandCode( code ) );
 		}
 	};
@@ -117,7 +116,7 @@ namespace Genie
 	struct menu_item_rec
 	{
 		MenuRef menu;
-		int16_t item;
+		int32_t item;  // actually, a full menu choice
 	};
 	
 	static
@@ -131,7 +130,9 @@ namespace Genie
 			p7::throw_errno( EIO );
 		}
 		
-		const menu_item_rec result = { menu, index };
+		long menu_choice = GetMenuID( menu ) << 16 | index;
+		
+		const menu_item_rec result = { menu, menu_choice };
 		
 		return result;
 	}
@@ -188,7 +189,7 @@ namespace Genie
 	{  \
 		const menu_item_rec menu_item = get_menu_item( that );  \
 		const MenuRef menu = menu_item.menu;                    \
-		const UInt16 index = menu_item.item;                    \
+		const UInt32 index = menu_item.item;                    \
 		const p::result_type data = p::Get( menu, index );      \
 		p::deconstruct::apply( result, data, binary );          \
 	}
@@ -198,7 +199,7 @@ namespace Genie
 	{  \
 		const menu_item_rec menu_item = get_menu_item( that );               \
 		const MenuRef menu = menu_item.menu;                                 \
-		const UInt16 index = menu_item.item;                                 \
+		const UInt32 index = menu_item.item;                                 \
 		p::Set( menu, index, p::reconstruct::apply( begin, end, binary ) );  \
 	}
 	
