@@ -7,7 +7,6 @@
 
 // Standard C++
 #include <map>
-#include <vector>
 
 
 namespace Pedestal
@@ -15,7 +14,7 @@ namespace Pedestal
 	
 	typedef unsigned long Code;
 	
-	typedef std::map< MenuID, std::vector< Code > > Menus;
+	typedef std::map< long, Code > Menus;
 	
 	
 	static Menus gMenus;
@@ -24,16 +23,13 @@ namespace Pedestal
 	CommandCode GetMenuItemCommandCode( MenuID         menu_id,
 	                                    MenuItemIndex  item_index )
 	{
-		Menus::const_iterator it = gMenus.find( menu_id );
+		long menu_choice = menu_id << 16 | item_index;
+		
+		Menus::const_iterator it = gMenus.find( menu_choice );
 		
 		if ( it != gMenus.end() )
 		{
-			const std::vector< Code >& commands = it->second;
-			
-			if ( item_index < commands.size() )
-			{
-				return (CommandCode) commands[ item_index ];
-			}
+			return (CommandCode) it->second;
 		}
 		
 		return CommandCode();
@@ -43,14 +39,9 @@ namespace Pedestal
 	                             MenuItemIndex  item_index,
 	                             CommandCode    code )
 	{
-		std::vector< Code >& commands = gMenus[ menu_id ];
+		long menu_choice = menu_id << 16 | item_index;
 		
-		if ( item_index >= commands.size() )
-		{
-			commands.resize( item_index + 1 );
-		}
-		
-		commands[ item_index ] = code;
+		gMenus[ menu_choice ] = code;
 	}
 	
 }
