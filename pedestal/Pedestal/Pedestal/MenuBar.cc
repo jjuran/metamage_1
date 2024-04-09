@@ -96,7 +96,7 @@ namespace Pedestal
 	
 	void AddMenu( MenuRef menu )
 	{
-		const MenuID menuID = GetMenuID( menu );
+		const long shifted_menuID = GetMenuID( menu ) << 16;
 		
 		const UInt16 count = CountMenuItems( menu );
 		
@@ -104,7 +104,7 @@ namespace Pedestal
 		{
 			const CommandCode code = ExtractItemCmdCode( menu, i );
 			
-			SetMenuItemCommandCode( menuID, i, code );
+			SetMenuItemCommandCode( shifted_menuID | i, code );
 		}
 	}
 	
