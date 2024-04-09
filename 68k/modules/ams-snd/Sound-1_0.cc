@@ -434,9 +434,26 @@ OSErr SndNewChannel_patch( SndChannel** c, short s, long i, SndCallBackUPP u )
 		return notEnoughHardwareErr;
 	}
 	
-	ERROR = "SndNewChannel is unimplemented";
+	SndChannel* chan = *c;
 	
-	return notEnoughHardwareErr;
+	if ( chan == NULL )
+	{
+		chan = get_default_channel();
+		
+		if ( chan == NULL )
+		{
+			return MemErr;
+		}
+		
+		*c = chan;
+	}
+	
+	chan->callBack = u;
+	
+	if ( free_audio_buffer == NULL )
+	{
+		create_buffers( 2 );
+	}
 	
 	++n_channels;
 	
