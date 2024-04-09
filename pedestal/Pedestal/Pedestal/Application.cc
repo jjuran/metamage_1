@@ -73,7 +73,6 @@
 #include "Pedestal/ADBKeyboard.hh"
 #include "Pedestal/ClickTarget.hh"
 #include "Pedestal/Commands.hh"
-#include "Pedestal/Initialize.hh"
 #include "Pedestal/MenuBar.hh"
 #include "Pedestal/TextEdit.hh"
 #include "Pedestal/TrackControl.hh"
@@ -674,6 +673,21 @@ namespace Pedestal
 			{
 				view->Idle( event );
 			}
+		}
+	}
+	
+	static inline
+	void Init_Memory( unsigned moreMasters )
+	{
+	#if ! TARGET_API_MAC_CARBON
+		
+		::MaxApplZone();
+		
+	#endif
+		
+		for ( unsigned i = 0;  i < moreMasters;  ++i )
+		{
+			::MoreMasters();
 		}
 	}
 	
