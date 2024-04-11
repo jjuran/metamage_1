@@ -15,6 +15,9 @@
 // Standard C++
 #include <map>
 
+// iota
+#include "iota/convertible_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -313,12 +316,19 @@ namespace Genie
 			
 			short    id;
 			ResType  type;
-			Str255   name;
+			
+			/*
+				The Get1IndResource() call above succeeded, so the
+				resource is in the resource map and GetResInfo()
+				should also succeed (and populate `name`).
+			*/
+			
+			iota::convertible_string name( iota::uninitialized );
 			
 			::GetResInfo( r, &id, &type, name );
 			
 			map_resfs_file( root,
-			                plus::string( name ).c_str(),
+			                name.c_str(),
 			                type,
 			                id );
 			
