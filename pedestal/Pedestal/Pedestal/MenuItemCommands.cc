@@ -5,16 +5,14 @@
 
 #include "Pedestal/MenuItemCommands.hh"
 
-// Standard C++
-#include <map>
+// plus
+#include "plus/simple_map.hh"
 
 
 namespace Pedestal
 {
 	
-	typedef unsigned long Code;
-	
-	typedef std::map< long, Code > Menus;
+	typedef plus::simple_map< long, CommandCode > Menus;
 	
 	
 	static Menus gMenus;
@@ -24,9 +22,9 @@ namespace Pedestal
 	{
 		Menus::const_iterator it = gMenus.find( menu_choice );
 		
-		if ( it != gMenus.end() )
+		if ( it )
 		{
-			return (CommandCode) it->second;
+			return *it;
 		}
 		
 		return CommandCode();
