@@ -21,7 +21,6 @@ namespace plus
 		NO_NEW_DELETE
 		
 		private:
-			typedef const void*  key_t;
 			typedef void*      (*allocator)();
 			typedef void*      (*duplicator)( const void* );
 			typedef void       (*deallocator)( const void* );
@@ -33,6 +32,8 @@ namespace plus
 			map_base& operator=( const map_base& );
 		
 		public:
+			typedef unsigned long  key_t;
+			
 			map_base( deallocator d ) : its_map(), its_deallocator( d )
 			{
 			}
@@ -95,9 +96,9 @@ namespace plus
 			{
 			}
 			
-			Data& get  ( Key key )  { return *(Data*) map_base::get  ( key, &map_allocate< Data > ); }
-			Data* find ( Key key )  { return  (Data*) map_base::find ( key ); }
-			void  erase( Key key )  {                 map_base::erase( key ); }
+			Data& get  ( Key key )  { return *(Data*) map_base::get  ( (key_t) key, &map_allocate< Data > ); }
+			Data* find ( Key key )  { return  (Data*) map_base::find ( (key_t) key ); }
+			void  erase( Key key )  {                 map_base::erase( (key_t) key ); }
 			
 			void clear()  { map_base::clear(); }
 			

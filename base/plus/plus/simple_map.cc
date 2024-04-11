@@ -109,7 +109,7 @@ namespace plus
 		
 		simple_map_type& map = its_map->map;
 		
-		const void*& result = map[ (unsigned long) key ];
+		const void*& result = map[ key ];
 		
 		if ( result == NULL )
 		{
@@ -125,7 +125,7 @@ namespace plus
 		{
 			const simple_map_type& map = its_map->map;
 			
-			simple_map_type::const_iterator it = map.find( (unsigned long) key );
+			simple_map_type::const_iterator it = map.find( key );
 			
 			if ( it != map.end() )
 			{
@@ -144,7 +144,7 @@ namespace plus
 			
 			simple_map_type& map = its_map->map;
 			
-			Iter it = map.find( (unsigned long) key );
+			Iter it = map.find( key );
 			
 			if ( it != map.end() )
 			{
