@@ -6,6 +6,9 @@
 #ifndef IOTA_CONVERTIBLESTRING_HH
 #define IOTA_CONVERTIBLESTRING_HH
 
+// iota
+#include "iota/uninitialized.hh"
+
 
 namespace iota
 {
@@ -18,6 +21,10 @@ namespace iota
 			Byte buffer[ 257 ];
 	
 		public:
+			convertible_string( uninitialized_t )
+			{
+			}
+			
 			convertible_string()
 			{
 				clear();
