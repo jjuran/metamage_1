@@ -111,7 +111,7 @@ static vector_of_windows the_windows_in_menu;
 
 #if ! __LP64__
 
-static
+static inline
 bool has_empty_title( WindowRef window )
 {
 #if ! OPAQUE_TOOLBOX_STRUCTS
