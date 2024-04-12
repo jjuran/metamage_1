@@ -64,9 +64,6 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
-// Nitrogen
-#include "Carbon/CF/Types/CFMutableStringRef.hh"
-
 // Pedestal
 #include "Pedestal/BundleStrings.hh"
 #include "Pedestal/OwnerResource.hh"
@@ -342,14 +339,14 @@ namespace Pedestal
 	}
 	
 	static
-	n::owned< CFStringRef > VersionString()
+	CFStringRef VersionString()
 	{
 		CFStringRef shortVersion = GetBundleShortVersionString();
 		CFStringRef buildNumber  = GetBundleVersion();
 		
 		if ( shortVersion == NULL  &&  buildNumber == NULL )
 		{
-			return n::owned< CFStringRef >::seize( CFSTR( VERSION_FALLBACK ) );
+			return CFSTR( VERSION_FALLBACK );
 		}
 		
 		CFMutableStringRef versionString = CFStringCreateMutable( NULL, 0 );
@@ -362,7 +359,7 @@ namespace Pedestal
 		{
 			CFStringAppend( versionString, buildNumber );
 			
-			return n::owned< CFStringRef >::seize( versionString );
+			return versionString;
 		}
 		
 		CFStringAppend( versionString, shortVersion );
@@ -376,7 +373,7 @@ namespace Pedestal
 			CFStringAppendPascalString( versionString, "\p" ")", macRoman );
 		}
 		
-		return n::owned< CFStringRef >::seize( versionString );
+		return versionString;
 	}
 	
 	void AboutBoxView::DrawInContext( CGContextRef context, CGRect bounds )
@@ -420,7 +417,9 @@ namespace Pedestal
 			},
 		};
 		
-		DrawAboutBoxDetail( VersionString(), detailBounds, context );
+		static CFStringRef version = VersionString();
+		
+		DrawAboutBoxDetail( version, detailBounds, context );
 		
 		detailBounds.origin.y += kAboutBoxDetailHeight + kAboutBoxInterTextGap;
 		
