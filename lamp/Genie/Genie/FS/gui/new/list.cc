@@ -119,6 +119,7 @@ namespace Genie
 			void Draw( const Rect& bounds, bool erasing );
 	};
 	
+	inline
 	bool ListView::IntersectsGrowBox() const
 	{
 		return gListParameterMap[ itsKey ].itIntersectsGrowBox;
