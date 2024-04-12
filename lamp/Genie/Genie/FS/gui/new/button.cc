@@ -164,33 +164,19 @@ namespace Genie
 			void Draw( const Rect& bounds, bool erasing );
 	};
 	
-	static inline
-	ControlRef NewMacPushButton( WindowRef    owningWindow,
-	                             const Rect&  boundsRect )
-	{
-		return NewControl( owningWindow,
-		                   &boundsRect,
-		                   "\p",
-		                   true,
-		                   0,
-		                   0,
-		                   1,
-		                   pushButProc,
-		                   0 );
-	}
-	
 	void PushButton::Install( const Rect& bounds )
 	{
-		itsControl = NewMacPushButton( mac::qd::thePort_window(),
-		                               bounds );
-		
-		ControlRef control = Get();
-		
 		Button_Parameters& params = gButtonMap[ itsUserData.key ];
 		
-		SetControlTitle( control, params.title );
-		
-		SetControlReference( control, (long) &itsUserData );
+		itsControl = NewControl( mac::qd::thePort_window(),
+		                         &bounds,
+		                         params.title,
+		                         true,
+		                         0,
+		                         0,
+		                         1,
+		                         pushButProc,
+		                         (long) &itsUserData );
 		
 		params.installed = true;
 		
