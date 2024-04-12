@@ -88,43 +88,7 @@ namespace Genie
 			void Draw( const Rect& bounds, bool erasing );
 	};
 	
-	static
-	void PaintRect_In_Color( const Rect& bounds, const RGBColor& color )
-	{
-		RGBForeColor( &color );
-		
-		PaintRect( &bounds );
-		
-		ForeColor( blackColor );
-	}
-	
-	static
-	void PaintProgress( const Rect& insetBounds )
-	{
-		if ( CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw() )
-		{
-			PaintRect_In_Color( insetBounds, gDarkGrey );
-		}
-		else
-		{
-			PaintRect( &insetBounds );
-		}
-	}
-	
-	static
-	void EraseProgress( const Rect& insetBounds )
-	{
-		if ( CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw() )
-		{
-			PaintRect_In_Color( insetBounds, gSkyBlue );
-		}
-		else
-		{
-			EraseRect( &insetBounds );
-		}
-	}
-	
-	static
+	static inline
 	void DrawProgress( Rect insetBounds, int value )
 	{
 		if ( value < 0 )
@@ -145,12 +109,25 @@ namespace Genie
 		
 		insetBounds.left += short( progressWidth );
 		
-		EraseProgress( insetBounds );
+		if ( CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw() )
+		{
+			RGBForeColor( &gSkyBlue );
+			
+			PaintRect( &insetBounds );
+			
+			RGBForeColor( &gDarkGrey );
+		}
+		else
+		{
+			EraseRect( &insetBounds );
+		}
 		
 		insetBounds.right = insetBounds.left;
 		insetBounds.left  = left;
 		
-		PaintProgress( insetBounds );
+		PaintRect( &insetBounds );
+		
+		ForeColor( blackColor );
 	}
 	
 	void ProgressBar::Draw( const Rect& bounds, bool erasing )
