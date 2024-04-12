@@ -14,10 +14,6 @@
 // mac-sys-utils
 #include "mac_sys/has/Aqua_menus.hh"
 
-// Nitrogen
-#include "Carbon/CF/Types/CFMutableStringRef.hh"
-#include "Mac/Resources/Types/ResType.hh"
-
 // Pedestal
 #include "Pedestal/BundleStrings.hh"
 #include "Pedestal/MenuItemCommands.hh"
@@ -28,42 +24,8 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
-namespace Nitrogen
-{
-	
-	class CFStringCreateMutable_Failed {};
-	
-	static
-	nucleus::owned< CFMutableStringRef >
-	//
-	CFStringCreateMutable( CFAllocatorRef alloc, CFIndex maxLength = 0 )
-	{
-		CFMutableStringRef result = ::CFStringCreateMutable( alloc, maxLength );
-		
-		if ( result == NULL )
-		{
-			throw CFStringCreateMutable_Failed();
-		}
-		
-		return nucleus::owned< CFMutableStringRef >::seize( result );
-	}
-	
-	static inline
-	nucleus::owned< CFMutableStringRef >
-	//
-	CFStringCreateMutable( CFIndex maxLength = 0 )
-	{
-		return CFStringCreateMutable( NULL, maxLength );
-	}
-	
-}
-
 namespace Pedestal
 {
-	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
-	
 	
 	static CommandCode TakeCodeFromItemText( Str255 ioItemText )
 	{
@@ -138,15 +100,20 @@ namespace Pedestal
 				
 				int max_length = about[ 0 ] + CFStringGetLength( name );
 				
-				n::owned< CFMutableStringRef > text;
-				text = N::CFStringCreateMutable( max_length );
+				CFMutableStringRef text;
+				text = CFStringCreateMutable( NULL, max_length );
 				
 				const CFStringEncoding macRoman = kCFStringEncodingMacRoman;
 				
-				CFStringAppendPascalString( text, about, macRoman );
-				CFStringAppend( text, name );
-				
-				SetMenuItemTextWithCFString( appleMenu, 1, text );
+				if ( text )
+				{
+					CFStringAppendPascalString( text, about, macRoman );
+					CFStringAppend( text, name );
+					
+					SetMenuItemTextWithCFString( appleMenu, 1, text );
+					
+					CFRelease( text );
+				}
 				
 				return;
 			}
