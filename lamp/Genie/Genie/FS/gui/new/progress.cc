@@ -85,17 +85,8 @@ namespace Genie
 			{
 			}
 			
-			int Value() const;
-			
 			void Draw( const Rect& bounds, bool erasing );
 	};
-	
-	int ProgressBar::Value() const
-	{
-		progress_extra& extra = *(progress_extra*) its_key->extra();
-		
-		return extra.value;
-	}
 	
 	static
 	void PaintRect_In_Color( const Rect& bounds, const RGBColor& color )
@@ -170,7 +161,9 @@ namespace Genie
 		
 		InsetRect( &insetBounds, 1, 1 );
 		
-		DrawProgress( insetBounds, Value() );
+		progress_extra& extra = *(progress_extra*) its_key->extra();
+		
+		DrawProgress( insetBounds, extra.value );
 	}
 	
 	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
