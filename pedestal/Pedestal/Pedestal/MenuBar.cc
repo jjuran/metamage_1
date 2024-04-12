@@ -156,7 +156,9 @@ namespace Pedestal
 		
 		if ( GetOwnerResourceName( GetCreatorFromBNDL(), name ) )
 		{
-			const UInt8 len = name[ 0 ];
+			const Byte* name_p = name;
+			
+			const UInt8 len = *name_p++;
 			
 			if ( len != 0  &&  about[ 0 ] + len <= 255 )
 			{
@@ -164,7 +166,7 @@ namespace Pedestal
 				
 				p[ -1 ] = ' ';
 				
-				p = (unsigned char*) mempcpy( p, name + 1, name[ 0 ] );
+				p = (unsigned char*) mempcpy( p, name_p, len );
 				
 				about[ 0 ] = p - about;
 				
