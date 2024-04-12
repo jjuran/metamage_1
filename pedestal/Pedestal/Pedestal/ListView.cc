@@ -17,29 +17,27 @@
 namespace Pedestal
 {
 	
-	// Mac OS places the scrollbars outside the bounds.
-	// We adjust the bounds inward so they draw within the original bounds.
-	
-	static void AdjustListBounds( short& right, short& bottom, bool scrollHoriz, bool scrollVert )
-	{
-		if ( scrollHoriz )
-		{
-			bottom -= 15;
-		}
-		
-		if ( scrollVert )
-		{
-			right -= 15;
-		}
-	}
-	
 	static Rect AdjustedListBounds( const Rect&  bounds,
 	                                bool         scrollHoriz,
 	                                bool         scrollVert )
 	{
 		Rect result = bounds;
 		
-		AdjustListBounds( result.right, result.bottom, scrollHoriz, scrollVert );
+		/*
+			Mac OS places the scroll bars outside the bounds.
+			We adjust the bounds inward so that the scroll bars
+			draw within the original bounds.
+		*/
+		
+		if ( scrollHoriz )
+		{
+			result.bottom -= 15;
+		}
+		
+		if ( scrollVert )
+		{
+			result.right -= 15;
+		}
 		
 		return result;
 	}
