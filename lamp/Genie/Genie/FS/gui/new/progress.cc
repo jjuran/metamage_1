@@ -49,6 +49,30 @@ bool has_color_quickdraw()
 	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  mac::sys::has_ColorQuickDraw();
 }
 
+#ifdef __MC68K__
+
+static inline
+asm
+unsigned short muldivu_w( unsigned short a : __D0,
+                          unsigned short b : __D1,
+                          unsigned short d : __D2 )  // divisor
+{
+	MULU.W   D1,D0
+	DIVU.W   D2,D0
+}
+
+#else
+
+static inline
+unsigned short muldivu_w( unsigned short a,
+                          unsigned short b,
+                          unsigned short d )  // divisor
+{
+	return a * b / d;
+}
+
+#endif
+
 namespace Genie
 {
 	
@@ -105,9 +129,9 @@ namespace Genie
 		
 		const int boundsWidth = insetBounds.right - insetBounds.left;
 		
-		int progressWidth = value * boundsWidth / 10000;
+		UInt16 progressWidth = muldivu_w( value, boundsWidth, 10000 );
 		
-		insetBounds.left += short( progressWidth );
+		insetBounds.left += progressWidth;
 		
 		if ( CONFIG_COLOR_QUICKDRAW  &&  has_color_quickdraw() )
 		{
