@@ -49,8 +49,6 @@ namespace Pedestal
 			
 			void Draw( const Rect& bounds, bool erasing );
 			
-			void SetCell( UInt16 offset, const char* data, std::size_t length );
-			
 			void AppendCell( const char* data, std::size_t length );
 			
 			void DeleteCells();

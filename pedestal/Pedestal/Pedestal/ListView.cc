@@ -163,24 +163,6 @@ namespace Pedestal
 		LUpdate( get_visRgn( thePort() ), itsList );
 	}
 	
-	void ListView::SetCell( UInt16 offset, const char* data, std::size_t length )
-	{
-		Rect bounds;
-		
-		GetListDataBounds( itsList, &bounds );
-		
-		if ( offset >= bounds.bottom )
-		{
-			const UInt16 n_new_rows = offset - bounds.bottom + 1;
-			
-			LAddRow( n_new_rows, bounds.bottom, itsList );
-		}
-		
-		const Point loc = { offset, 0 };
-		
-		LSetCell( data, length, loc, itsList );
-	}
-	
 	void ListView::AppendCell( const char* data, std::size_t length )
 	{
 		Rect bounds;
