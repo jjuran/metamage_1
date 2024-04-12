@@ -79,7 +79,8 @@ namespace Pedestal
 		return CommandCode( gear::decode_quad( &ioItemText[ len - 4 ] ) );
 	}
 	
-	static CommandCode ExtractItemCmdCode( MenuRef menu, short item )
+	static inline
+	CommandCode ExtractItemCmdCode( MenuRef menu, short item )
 	{
 		Str255 itemText;
 		GetMenuItemText( menu, item, itemText );
