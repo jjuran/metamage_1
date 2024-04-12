@@ -5,6 +5,16 @@
 
 #include "Genie/FS/gui/new/list.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __LISTS__
+#include <Lists.h>
+#endif
+
 // POSIX
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -28,11 +38,6 @@
 // nucleus
 #ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
-#endif
-
-// Nitrogen
-#ifndef MAC_LISTS_TYPES_LISTHANDLE_HH
-#include "Mac/Lists/Types/ListHandle.hh"
 #endif
 
 // poseven
@@ -89,7 +94,11 @@ namespace Genie
 			
 			Key itsKey;
 			
-			nucleus::owned< ListHandle > itsList;
+			ListHandle itsList;
+			
+			// non-copyable
+			ListView           ( const ListView& );
+			ListView& operator=( const ListView& );
 		
 		private:
 			void Install( const Rect& bounds );
@@ -97,9 +106,11 @@ namespace Genie
 			void Uninstall();
 		
 		public:
-			ListView( Key key ) : itsKey( key )
+			ListView( Key key ) : itsKey( key ), itsList()
 			{
 			}
+			
+			~ListView()  { LDispose( itsList ); }
 			
 			ListHandle Get() const  { return itsList; }
 			
@@ -205,7 +216,7 @@ namespace Genie
 		
 		// FIXME:  Check for null handle
 		
-		itsList = nucleus::owned< ListHandle >::seize( list );
+		itsList = list;
 		
 		if ( hasGrow )
 		{
@@ -215,7 +226,12 @@ namespace Genie
 	
 	void ListView::Uninstall()
 	{
-		itsList.reset();
+		if ( itsList )
+		{
+			LDispose( itsList );
+		}
+		
+		itsList = NULL;
 	}
 	
 	void ListView::SetBounds( const Rect& bounds )
@@ -228,7 +244,7 @@ namespace Genie
 		       r.bottom - r.top,
 		       itsList );
 		
-		itsList.get()[0]->cellSize.h = r.right - r.left;
+		itsList[0]->cellSize.h = r.right - r.left;
 		
 		if ( IntersectsGrowBox() )
 		{
@@ -269,7 +285,7 @@ namespace Genie
 		
 		LClick( where,
 		        (int) event.modifiers,
-		        itsList.get() );
+		        itsList );
 		
 		return true;
 	}
