@@ -149,8 +149,6 @@ namespace Genie
 				itsUserData.key = key;
 			}
 			
-			ControlRef Get() const  { return itsControl; }
-			
 			void Install( const Rect& bounds );
 			
 			void Uninstall();
@@ -223,13 +221,13 @@ namespace Genie
 		{
 			params.pseudoclicked = false;
 			
-			HiliteControl( Get(), kControlButtonPart );
+			HiliteControl( itsControl, kControlButtonPart );
 			
 			QDFlushPortBuffer();
 			
 			mac::sys::delay( 8 );
 			
-			HiliteControl( Get(), kControlNoPart );
+			HiliteControl( itsControl, kControlNoPart );
 			
 			QDFlushPortBuffer();
 			
@@ -247,7 +245,7 @@ namespace Genie
 		{
 			params.title_changed = false;
 			
-			SetControlTitle( Get(), params.title );
+			SetControlTitle( itsControl, params.title );
 		}
 	}
 	
