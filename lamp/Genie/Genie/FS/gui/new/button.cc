@@ -13,6 +13,9 @@
 #ifndef __CONTROLDEFINITIONS__
 #include <ControlDefinitions.h>
 #endif
+#ifndef __CONTROLS__
+#include <Controls.h>
+#endif
 
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
@@ -26,6 +29,9 @@
 
 // mac-sys-utils
 #include "mac_sys/delay.hh"
+
+// mac-qd-utils
+#include "mac_qd/globals/thePort_window.hh"
 
 // plus
 #include "plus/mac_utf8.hh"
@@ -41,7 +47,7 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/TrackControl.hh"
-#include "Pedestal/PushButton.hh"
+#include "Pedestal/View.hh"
 
 // vfs
 #include "vfs/filehandle.hh"
@@ -126,33 +132,57 @@ namespace Genie
 		}
 	}
 	
-	class PushButton : public Ped::PushButton
+	class PushButton : public Ped::View
 	{
 		private:
+			ControlRef  itsControl;
+			
 			typedef const vfs::node* Key;
 			
 			Control_UserData itsUserData;
 		
 		public:
-			PushButton( Key key )
+			PushButton( Key key ) : itsControl()
 			{
 				itsUserData.trackHook = &Ped::TrackControl;
 				itsUserData.afterHook = &DebriefAfterTrack;
 				itsUserData.key = key;
 			}
 			
+			ControlRef Get() const  { return itsControl; }
+			
 			void Install( const Rect& bounds );
 			
 			void Uninstall();
+			
+			void SetBounds( const Rect& bounds );
+			
+			void Activate( bool activating );
 			
 			void Idle( const EventRecord& event );
 			
 			void Draw( const Rect& bounds, bool erasing );
 	};
 	
+	static inline
+	ControlRef NewMacPushButton( WindowRef    owningWindow,
+	                             const Rect&  boundsRect )
+	{
+		return NewControl( owningWindow,
+		                   &boundsRect,
+		                   "\p",
+		                   true,
+		                   0,
+		                   0,
+		                   1,
+		                   pushButProc,
+		                   0 );
+	}
+	
 	void PushButton::Install( const Rect& bounds )
 	{
-		Ped::PushButton::Install( bounds );
+		itsControl = NewMacPushButton( mac::qd::thePort_window(),
+		                               bounds );
 		
 		ControlRef control = Get();
 		
@@ -163,13 +193,30 @@ namespace Genie
 		SetControlReference( control, (long) &itsUserData );
 		
 		params.installed = true;
+		
+		HiliteControl( itsControl, kControlInactivePart );
 	}
 	
 	void PushButton::Uninstall()
 	{
-		Ped::PushButton::Uninstall();
+		::DisposeControl( itsControl );
+		
+		itsControl = NULL;
 		
 		gButtonMap[ itsUserData.key ].installed = false;
+	}
+	
+	void PushButton::SetBounds( const Rect& bounds )
+	{
+		SetControlBounds( itsControl, &bounds );
+	}
+	
+	void PushButton::Activate( bool activating )
+	{
+		ControlPartCode code = activating ? kControlNoPart
+		                                  : kControlInactivePart;
+		
+		HiliteControl( itsControl, code );
 	}
 	
 	static inline void QDFlushPortBuffer()
@@ -182,7 +229,7 @@ namespace Genie
 	
 	void PushButton::Idle( const EventRecord& event )
 	{
-		Ped::PushButton::Idle( event );
+		Ped::View::Idle( event );
 		
 		Button_Parameters& params = gButtonMap[ itsUserData.key ];
 		
@@ -206,7 +253,7 @@ namespace Genie
 	
 	void PushButton::Draw( const Rect& bounds, bool erasing )
 	{
-		Ped::PushButton::Draw( bounds, erasing );
+		Ped::View::Draw( bounds, erasing );
 		
 		Button_Parameters& params = gButtonMap[ itsUserData.key ];
 		
