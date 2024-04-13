@@ -251,7 +251,7 @@ my %fsmap =
 			},
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
 		},
-		sbin => [ \ qw( superd inetd freemountd httpd listen ttyd ) ],
+		sbin => [ \ qw( inetd freemountd httpd listen ttyd ) ],
 		share =>
 		{
 			'git-core' =>
