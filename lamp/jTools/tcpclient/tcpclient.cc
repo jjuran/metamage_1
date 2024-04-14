@@ -5,6 +5,8 @@
 
 // POSIX
 #include <netdb.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -14,16 +16,65 @@
 // more-posix
 #include "more/perror.hh"
 
+// command
+#include "command/get_option.hh"
+
 
 #pragma exceptions off
 
 
 #define PROGRAM  "tcpclient"
 
-#define USAGE  "usage: " PROGRAM " <host> <port> <program argv>\n"
+#define USAGE  "usage: " PROGRAM " [-Dd] <host> <port> <program argv>\n"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
+
+using namespace command::constants;
+
+
+enum
+{
+	Option_no_delay = 'D',
+	Option_delay    = 'd',
+};
+
+static command::option options[] =
+{
+	{ "delay",    Option_delay    },
+	{ "no-delay", Option_no_delay },
+	
+	{ NULL }
+};
+
+static int delay = true;
+
+static
+char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_delay:
+				delay = true;
+				break;
+						
+			case Option_no_delay:
+				delay = false;
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
+	return argv;
+}
 
 class addrinfo_cleanup
 {
@@ -93,20 +144,38 @@ int tcp_connect( const char* node, const char* service )
 		return -1;
 	}
 	
+	if ( ! delay )
+	{
+		int value = 1;
+		
+		nok = setsockopt( fd, IPPROTO_TCP, TCP_NODELAY, &value, sizeof value );
+		
+		if ( nok < 0 )
+		{
+			more::perror( PROGRAM, "TCP_NODELAY" );
+			
+			// not a critical error; continue
+		}
+	}
+	
 	return fd;
 }
 
 int main( int argc, char** argv )
 {
-	if ( argc < 4 )
+	char *const *args = get_options( argv );
+	
+	int argn = argc - (args - argv);
+	
+	if ( argn < 3 )
 	{
 		write( STDERR_FILENO, STR_LEN( USAGE ) );
 		
 		return 1;
 	}
 	
-	const char* hostname = argv[ 1 ];
-	const char* port_str = argv[ 2 ];
+	const char* hostname = args[ 0 ];
+	const char* port_str = args[ 1 ];
 	
 	int fd = tcp_connect( hostname, port_str );
 	
@@ -125,7 +194,7 @@ int main( int argc, char** argv )
 		return 1;
 	}
 	
-	char** program_argv = argv + 3;
+	char** program_argv = (char**) args + 2;
 	
 	execvp( program_argv[ 0 ], program_argv );
 	
