@@ -6,13 +6,15 @@
 // POSIX
 #include <unistd.h>
 
-// Iota
-#include "iota/strings.hh"
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+#define PRINT( msg )  write( STDOUT_FILENO, STR_LEN( msg "\n" ) )
 
 
 int main( int argc, char** argv )
 {
-	ssize_t bytes = write( STDOUT_FILENO, STR_LEN( "Hit return to continue\n" ) );
+	ssize_t bytes = PRINT( "Hit return to continue" );
 	
 	char c;
 	
