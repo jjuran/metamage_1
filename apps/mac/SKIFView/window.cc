@@ -366,7 +366,7 @@ void populate_pixmap( window_state& state )
 		state.mode |= ditherCopy;
 	}
 	
-	const uint8_t depth = desc.weight;
+	const UInt8 depth = desc.weight;
 	
 	PixMap& pixmap = state.pixmap;
 	
