@@ -168,9 +168,9 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	{
 		const clut_data& clut = *(const clut_data*) (clut_note + 1);
 		
-		uint8_t* table = (uint8_t*) alloca( 3 * (clut.max + 1) );
+		Byte* table = (Byte*) alloca( 3 * (clut.max + 1) );
 		
-		uint8_t* p = table;
+		Byte* p = table;
 		
 		for ( int i = 0;  i <= clut.max;  ++i )
 		{
@@ -224,7 +224,7 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 					break;
 			}
 			
-			if ( (uint8_t) desc.layout.per_pixel == Channel_red )
+			if ( (Byte) desc.layout.per_pixel == Channel_red )
 			{
 				/*
 					Big-endian RGBA (or RGBx) data in a little-endian file.
