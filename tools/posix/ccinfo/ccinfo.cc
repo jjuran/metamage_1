@@ -40,6 +40,30 @@ int main( int argc, char** argv )
 	PRINT( d, __clang__ );
 #endif
 	
+#ifdef __BYTE_ORDER
+	PRINT( d, __BYTE_ORDER );
+#endif
+	
+#ifdef __BIG_ENDIAN
+	PRINT( d, __BIG_ENDIAN );
+#endif
+	
+#ifdef __LITTLE_ENDIAN
+	PRINT( d, __LITTLE_ENDIAN );
+#endif
+	
+#ifdef BYTE_ORDER
+	PRINT( d, BYTE_ORDER );
+#endif
+	
+#ifdef BIG_ENDIAN
+	PRINT( d, BIG_ENDIAN );
+#endif
+	
+#ifdef LITTLE_ENDIAN
+	PRINT( d, LITTLE_ENDIAN );
+#endif
+	
 #ifdef __MSL__
 	PRINT( x, __MSL__ );
 #endif
