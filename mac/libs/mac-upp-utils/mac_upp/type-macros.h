@@ -96,16 +96,34 @@ inline R Invoke##Name##UPP( Name##UPP upp )  \
 	return upp();                            \
 }
 
+#define DEFINE_UPP_VOID_INVOKER_0( Name )       \
+inline void Invoke##Name##UPP( Name##UPP upp )  \
+{                                               \
+	upp();                                      \
+}
+
 #define DEFINE_UPP_INVOKER_1( Name, R, P1 )         \
 inline R Invoke##Name##UPP( P1 p1, Name##UPP upp )  \
 {                                                   \
 	return upp( p1 );                               \
 }
 
+#define DEFINE_UPP_VOID_INVOKER_1( Name, P1 )          \
+inline void Invoke##Name##UPP( P1 p1, Name##UPP upp )  \
+{                                                      \
+	upp( p1 );                                         \
+}
+
 #define DEFINE_UPP_INVOKER_2( Name, R, P1, P2 )            \
 inline R Invoke##Name##UPP( P1 p1, P2 p2, Name##UPP upp )  \
 {                                                          \
 	return upp( p1, p2 );                                  \
+}
+
+#define DEFINE_UPP_VOID_INVOKER_2( Name, P1, P2 )             \
+inline void Invoke##Name##UPP( P1 p1, P2 p2, Name##UPP upp )  \
+{                                                             \
+	upp( p1, p2 );                                            \
 }
 
 #endif  // #else  // #if TARGET_RT_MAC_CFM
