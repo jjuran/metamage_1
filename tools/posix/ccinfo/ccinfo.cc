@@ -52,6 +52,14 @@ int main( int argc, char** argv )
 	PRINT( d, __LITTLE_ENDIAN );
 #endif
 	
+#ifdef _BIG_ENDIAN
+	PRINT( d, _BIG_ENDIAN );
+#endif
+	
+#ifdef _LITTLE_ENDIAN
+	PRINT( d, _LITTLE_ENDIAN );
+#endif
+	
 #ifdef BYTE_ORDER
 	PRINT( d, BYTE_ORDER );
 #endif
