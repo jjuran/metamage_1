@@ -1,6 +1,6 @@
 #!/usr/bin/vx -Z
 
-let host = "www.macrelix.org"
+let host = getenv "UPGRADE_HOST" or "www.macrelix.org"
 
 let relix_url = "http://%s/pub/channel/46e70108/" % host
 
