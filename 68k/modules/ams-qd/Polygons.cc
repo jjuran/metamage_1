@@ -176,34 +176,6 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 		poly[0]->polySize -= sizeof (Point);
 	}
 	
-	const Point** edges = (const Point**) alloca( n_unique * sizeof (void*) );
-	
-	const Point** p = edges;
-	
-	for ( short i = 0;  i < n_unique;  ++i )
-	{
-		short a_v = pt++->v;
-		short b_v = pt  ->v;
-		
-		if ( a_v != b_v )
-		{
-			*p++ = pt;
-		}
-	}
-	
-	const short edge_count = p - edges;  // non-horizontal edges only
-	
-	Fixed* antislopes = (Fixed*) alloca( edge_count * 4 );
-	Fixed* intercepts = (Fixed*) alloca( edge_count * 4 );  // X intercepts
-	
-	for ( short i = 0;  i < edge_count;  ++i )
-	{
-		const Point* pt = edges[ i ];
-		
-		antislopes[ i ] = antislope( pt[ -1 ], pt[ 0 ] );
-		intercepts[ i ] = 0x80000000;
-	}
-	
 	const Rect& bbox = poly[0]->polyBBox;
 	
 	/*
@@ -238,6 +210,34 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	Region* q = *rgn;
 	
 	short* r = rgn_extent( q );
+	
+	const Point** edges = (const Point**) alloca( n_unique * sizeof (void*) );
+	
+	const Point** ep = edges;
+	
+	for ( short i = 0;  i < n_unique;  ++i )
+	{
+		short a_v = pt++->v;
+		short b_v = pt  ->v;
+		
+		if ( a_v != b_v )
+		{
+			*ep++ = pt;
+		}
+	}
+	
+	const short edge_count = ep - edges;  // non-horizontal edges only
+	
+	Fixed* antislopes = (Fixed*) alloca( edge_count * 4 );
+	Fixed* intercepts = (Fixed*) alloca( edge_count * 4 );  // X intercepts
+	
+	for ( short i = 0;  i < edge_count;  ++i )
+	{
+		const Point* pt = edges[ i ];
+		
+		antislopes[ i ] = antislope( pt[ -1 ], pt[ 0 ] );
+		intercepts[ i ] = 0x80000000;
+	}
 	
 	/*
 		Yes, the assignments below are correct.
