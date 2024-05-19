@@ -34,6 +34,7 @@
 #include "callout/exceptions.hh"
 #include "callout/fixed.hh"
 #include "callout/notify_cursor.hh"
+#include "callout/polygons.hh"
 #include "callout/regions.hh"
 #include "callout/screen.hh"
 #include "callout/sound.hh"
@@ -863,7 +864,7 @@ static const function_type the_callouts[] =
 	&sect_rect_region_callout,
 	&sect_regions_callout,
 	&xor_regions_callout,
-	NULL,
+	&polygon_region_callout,
 	
 	&system_call_callout,
 	&microseconds_callout,

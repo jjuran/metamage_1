@@ -97,7 +97,7 @@ enum
 	sect_rect_region,
 	sect_regions,
 	xor_regions,
-	reserved24,
+	polygon_region,
 	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block

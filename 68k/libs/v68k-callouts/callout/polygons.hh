@@ -1,0 +1,22 @@
+/*
+	polygons.hh
+	-----------
+*/
+
+#ifndef CALLOUT_POLYGONS_HH
+#define CALLOUT_POLYGONS_HH
+
+// v68k
+#include "v68k/state.hh"
+
+
+namespace v68k    {
+namespace callout {
+
+int32_t polygon_region_callout( v68k::processor_state& s );
+
+}  // namespace callout
+}  // namespace v68k
+
+
+#endif
