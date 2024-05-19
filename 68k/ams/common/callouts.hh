@@ -167,6 +167,13 @@ DEFINE_CALLOUT( void,
                   struct MacRegion*        dst  : __D0 ),
                 0xFF92 )
 
+DEFINE_CALLOUT( void,
+                polygon_region,
+                ( struct MacPolygon const*  src : __A0,
+                  struct MacRegion*         dst : __A1,
+                  unsigned                  len : __D0 ),
+                0xFF90 )
+
 #undef DEFINE_CALLOUT
 
 inline
