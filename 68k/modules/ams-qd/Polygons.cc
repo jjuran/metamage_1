@@ -6,67 +6,25 @@
 #include "Polygons.hh"
 
 // Mac OS
-#ifndef __FIXMATH__
-#include <FixMath.h>
-#endif
 #ifndef __QUICKDRAW__
 #include <Quickdraw.h>
 #endif
 
-// Standard C
-#include <stdlib.h>
-
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
-// quickdraw
-#include "qd/region_detail.hh"
-#include "qd/segments.hh"
-
 // ams-common
+#include "callouts.hh"
 #include "QDGlobals.hh"
 #include "math.hh"
 #include "scoped_zone.hh"
-
-// ams-qd
-#include "antislope.hh"
-#include "segments_box.hh"
-
-
-using quickdraw::Region_end;
 
 
 #pragma exceptions off
 
 
-#define HIGH_WORD( x )  (*(short*) &(x))
-
 #define EQU32( a, b )  (*(long*) &(a) == *(long*) &(b))
 
-
-static inline
-short min( short a, short b )
-{
-	return b < a ? b : a;
-}
-
-static inline
-short max( short a, short b )
-{
-	return a > b ? a : b;
-}
-
-static inline
-const short* rgn_extent( const Region* rgn )
-{
-	return (const short*) &rgn[ 1 ];
-}
-
-static inline
-short* rgn_extent( Region* rgn )
-{
-	return (short*) &rgn[ 1 ];
-}
 
 void add_polygon_point( Point pt, PolyHandle poly )
 {
@@ -100,48 +58,6 @@ void add_polygon_point( Point pt, PolyHandle poly )
 	poly[0]->polySize += sizeof (Point);
 }
 
-static
-void shrinkwrap_region_bbox( RgnHandle rgn )
-{
-	const short End = 0x7FFF;
-	
-	short left  =  32767;
-	short right = -32767;
-	
-	const short* p = rgn_extent( *rgn );
-	
-	while ( *p++ != End )
-	{
-		// v skipped above
-		
-		do
-		{
-			short h = *p++;
-			
-			left  = min( left,  h );
-			right = max( right, h );
-		}
-		while ( *p != End );
-		
-		++p;  // skip row-ending sentinel
-	}
-	
-	Rect& bbox = rgn[0]->rgnBBox;
-	
-	bbox.left  = left;
-	bbox.right = right;
-}
-
-/*
-	The logic below for generating regions from polygons keeps track of
-	the bounding box of all pixels it considers.  However, sometimes some
-	of the pixels near a vertex cancel each other out, and sometimes there
-	are no pixels remaining just within the left or right edge of the box.
-	
-	Once we have the final region contents, we need to re-calculate the
-	left and right edges of the bounding box for an exact fit (done above).
-*/
-
 void PolyRgn( RgnHandle rgn, PolyHandle poly )
 {
 	const Point* pt = poly[0]->polyPoints;
@@ -172,8 +88,6 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 		add_polygon_point( *poly[0]->polyPoints, poly );
 		
 		pt = poly[0]->polyPoints;
-		
-		poly[0]->polySize -= sizeof (Point);
 	}
 	
 	const Rect& bbox = poly[0]->polyBBox;
@@ -204,137 +118,11 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	
 	SetHandleSize( (Handle) rgn, rgn_bytes );
 	
-	segments_box p_segments( seg_bytes );
-	segments_box r_segments( seg_bytes );
+	polygon_region( *poly, *rgn, rgn_bytes );
 	
-	Region* q = *rgn;
-	
-	short* r = rgn_extent( q );
-	
-	const Point** edges = (const Point**) alloca( n_unique * sizeof (void*) );
-	
-	const Point** ep = edges;
-	
-	for ( short i = 0;  i < n_unique;  ++i )
+	if ( unclosed )
 	{
-		short a_v = pt++->v;
-		short b_v = pt  ->v;
-		
-		if ( a_v != b_v )
-		{
-			*ep++ = pt;
-		}
-	}
-	
-	const short edge_count = ep - edges;  // non-horizontal edges only
-	
-	Fixed* antislopes = (Fixed*) alloca( edge_count * 4 );
-	Fixed* intercepts = (Fixed*) alloca( edge_count * 4 );  // X intercepts
-	
-	for ( short i = 0;  i < edge_count;  ++i )
-	{
-		const Point* pt = edges[ i ];
-		
-		antislopes[ i ] = antislope( pt[ -1 ], pt[ 0 ] );
-		intercepts[ i ] = 0x80000000;
-	}
-	
-	/*
-		Yes, the assignments below are correct.
-		
-		The region bbox might not occupy the entire poly bbox -- it could be
-		narrower, if the fractional number of pixels covered by a vertex at
-		the left or right edge is rounded down to zero.  So we track the
-		leftmost and rightmost horizontal coordinates (i.e. min and max), and
-		to do that we have to seed them with minimally left and right values.
-	*/
-	
-	short top   = -32767;
-	short left  =  32767;
-	short right = -32767;
-	
-	short bottom = bbox.top;
-	
-	short v = bbox.top;
-	
-	while ( v < bbox.bottom )
-	{
-		for ( short i = 0;  i < edge_count;  ++i )
-		{
-			const Point a = edges[ i ][ -1 ];
-			const Point b = edges[ i ][  0 ];
-			
-			if ( (a.v > v) == (b.v > v) )
-			{
-				continue;
-			}
-			
-			Fixed  w  = antislopes[ i ];
-			Fixed& xi = intercepts[ i ];
-			
-			short x = HIGH_WORD( xi );
-			
-			if ( x < bbox.left )
-			{
-				xi = ((a.v == v ? a.h : b.h) << 16) + w / 2;
-				
-				x = HIGH_WORD( xi );
-			}
-			
-			xi += w;
-			
-			if ( x < left  )  left  = x;
-			if ( x > right )  right = x;
-			
-			p_segments ^= x;
-		}
-		
-		xor_segments( r_segments, p_segments );
-		
-		if ( ! r_segments.empty() )
-		{
-			bottom = v;
-			
-			accumulate_row( r, v, r_segments );
-			
-			r_segments.clear();
-			
-			if ( top < bbox.top )
-			{
-				top = v;
-			}
-		}
-		
-		r_segments.swap( p_segments );
-		
-		++v;
-	}
-	
-	if ( ! r_segments.empty() )
-	{
-		bottom = v;
-		
-		accumulate_row( r, v, r_segments );
-	}
-	
-	*r++ = Region_end;
-	
-	const short rgn_size = (char*) r - (char*) q;
-	
-	if ( rgn_size == sizeof (Region) + sizeof (short) )
-	{
-		SetEmptyRgn( rgn );
-	}
-	else
-	{
-		rgn[0]->rgnSize = rgn_size;
-		
-		rgn[0]->rgnBBox.top    = top;
-		rgn[0]->rgnBBox.left   = left;
-		rgn[0]->rgnBBox.right  = right;
-		rgn[0]->rgnBBox.bottom = bottom;
-		
-		shrinkwrap_region_bbox( rgn );
+		poly[0]->polySize -= sizeof (Point);
 	}
 }
 
