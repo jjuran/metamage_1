@@ -138,7 +138,7 @@ void shrinkwrap_region_bbox( RgnHandle rgn )
 
 void PolyRgn( RgnHandle rgn, PolyHandle poly )
 {
-	Point* pt = poly[0]->polyPoints;
+	const Point* pt = poly[0]->polyPoints;
 	
 	const short n_lineTo = (poly[0]->polySize - sizeof (Polygon)) / 4;
 	
@@ -170,9 +170,9 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 		poly[0]->polySize -= sizeof (Point);
 	}
 	
-	Point** edges = (Point**) alloca( n_unique * sizeof (void*) );
+	const Point** edges = (const Point**) alloca( n_unique * sizeof (void*) );
 	
-	Point** p = edges;
+	const Point** p = edges;
 	
 	for ( short i = 0;  i < n_unique;  ++i )
 	{
@@ -192,7 +192,7 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	
 	for ( short i = 0;  i < edge_count;  ++i )
 	{
-		Point* pt = edges[ i ];
+		const Point* pt = edges[ i ];
 		
 		antislopes[ i ] = antislope( pt[ -1 ], pt[ 0 ] );
 		intercepts[ i ] = 0x80000000;
@@ -253,8 +253,8 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	{
 		for ( short i = 0;  i < edge_count;  ++i )
 		{
-			Point a = edges[ i ][ -1 ];
-			Point b = edges[ i ][  0 ];
+			const Point a = edges[ i ][ -1 ];
+			const Point b = edges[ i ][  0 ];
 			
 			if ( (a.v > v) == (b.v > v) )
 			{
