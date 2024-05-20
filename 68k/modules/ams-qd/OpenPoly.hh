@@ -9,14 +9,16 @@
 struct MacPolygon;
 struct Point;
 
-pascal MacPolygon** OpenPoly_patch();
+typedef MacPolygon** PolyHandle;
+
+pascal PolyHandle OpenPoly_patch();
 
 void add_polygon_point( Point pt );
 
 pascal void ClosePoly_patch();
 
-pascal void KillPoly_patch( MacPolygon** poly );
+pascal void KillPoly_patch( PolyHandle poly );
 
-pascal void OffsetPoly_patch( MacPolygon** poly, short dh, short dv );
+pascal void OffsetPoly_patch( PolyHandle poly, short dh, short dv );
 
 #endif
