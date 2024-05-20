@@ -53,7 +53,7 @@ short max( short a, short b )
 }
 
 static inline
-const short* rgn_extent( const MacRegion* rgn )
+const short* rgn_extent( const Region* rgn )
 {
 	return (const short*) &rgn[ 1 ];
 }
