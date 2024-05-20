@@ -67,8 +67,26 @@ bool is_valid_region( const short* rgn, short size )
 		return false;
 	}
 	
+	if ( top == -32768  ||  left == -32768 )
+	{
+		/*
+			-32768 is outside of QuickDraw coordinate space.
+		*/
+		
+		return false;
+	}
+	
 	if ( bottom == 0x7FFF  ||  right == 0x7FFF )
 	{
+		/*
+			32767 is within QuickDraw coordinate space,
+			but it's used as a sentinel value and hence
+			can't be used for complex regions.
+			
+			A rectangular region extending down or right to 32767
+			is fine, but we don't handle those in this function.
+		*/
+		
 		return false;
 	}
 	
