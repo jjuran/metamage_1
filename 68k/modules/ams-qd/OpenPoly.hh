@@ -8,13 +8,10 @@
 
 struct GrafPort;
 struct MacPolygon;
-struct Point;
 
 typedef MacPolygon** PolyHandle;
 
 pascal PolyHandle OpenPoly_patch();
-
-void add_polygon_point( Point pt, PolyHandle poly );
 
 pascal void ClosePoly_patch();
 

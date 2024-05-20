@@ -9,12 +9,15 @@
 struct MacPolygon;
 struct MacRegion;
 struct Pattern;
+struct Point;
 
 typedef MacPolygon Polygon;
 typedef MacRegion  Region;
 
 typedef Polygon** PolyHandle;
 typedef Region**  RgnHandle;
+
+void add_polygon_point( Point pt, PolyHandle poly );
 
 void PolyRgn( RgnHandle rgn, PolyHandle poly );
 

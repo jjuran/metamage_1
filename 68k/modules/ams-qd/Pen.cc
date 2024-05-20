@@ -21,7 +21,7 @@
 
 // ams-qd
 #include "antislope.hh"
-#include "OpenPoly.hh"
+#include "Polygons.hh"
 
 
 using quickdraw::convex_region_generator;

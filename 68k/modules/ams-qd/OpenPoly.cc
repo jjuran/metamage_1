@@ -10,9 +10,6 @@
 #include <Quickdraw.h>
 #endif
 
-// mac-glue-utils
-#include "mac_glue/Memory.hh"
-
 // ams-common
 #include "QDGlobals.hh"
 
@@ -35,38 +32,6 @@ pascal PolyHandle OpenPoly_patch()
 	}
 	
 	return poly;
-}
-
-void add_polygon_point( Point pt, PolyHandle poly )
-{
-	if ( poly[0]->polySize < sizeof (Polygon) )
-	{
-		const GrafPort& port = **get_addrof_thePort();
-		
-		poly[0]->polySize = sizeof (Polygon);
-		
-		poly[0]->polyPoints[ 0 ] = port.pnLoc;
-	}
-	
-	Point* next = (Point*) ((Ptr) *poly + poly[0]->polySize);
-	
-	if ( (long&) pt == (long&) next[ -1 ] )
-	{
-		return;
-	}
-	
-	Size size = mac::glue::GetHandleSize_raw( (Handle) poly );
-	
-	if ( poly[0]->polySize + sizeof (Point) > size )
-	{
-		SetHandleSize( (Handle) poly, 2 * size );
-		
-		next = (Point*) ((Ptr) *poly + poly[0]->polySize);
-	}
-	
-	*next = pt;
-	
-	poly[0]->polySize += sizeof (Point);
 }
 
 pascal void ClosePoly_patch()
