@@ -30,6 +30,7 @@
 
 // ams-qd
 #include "antislope.hh"
+#include "OpenPoly.hh"
 #include "segments_box.hh"
 
 
@@ -112,6 +113,25 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	if ( n_unique < 3 )
 	{
 		return;
+	}
+	
+	/*
+		Go through the motions of adding the starting point in order to
+		close the polygon (if necessary), but save and restore the size
+		so that logically it doesn't take effect.  The benefit of doing
+		so is that PolyRgn() can make use of the contiguous storage.
+		
+		We can't just auto-close the polygon because some applications
+		rely on FramePoly() drawing an unclosed chain of line segments.
+	*/
+	
+	if ( unclosed )
+	{
+		add_polygon_point( *poly[0]->polyPoints, poly );
+		
+		pt = poly[0]->polyPoints;
+		
+		poly[0]->polySize -= sizeof (Point);
 	}
 	
 	Point** edges = (Point**) alloca( n_unique * sizeof (void*) );
