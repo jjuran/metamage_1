@@ -39,6 +39,11 @@ using quickdraw::Region_end;
 #pragma exceptions off
 
 
+#define HIGH_WORD( x )  (*(short*) &(x))
+
+#define EQU32( a, b )  (*(long*) &(a) == *(long*) &(b))
+
+
 static inline
 short min( short a, short b )
 {
@@ -137,7 +142,7 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	
 	const short n_lineTo = (poly[0]->polySize - sizeof (Polygon)) / 4;
 	
-	const bool unclosed = *(long*) &pt[ 0 ] != *(long*) &pt[ n_lineTo ];
+	const bool unclosed = ! EQU32( pt[ 0 ], pt[ n_lineTo ] );
 	
 	const short n_unique = n_lineTo + unclosed;
 	
@@ -259,13 +264,13 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 			Fixed  w  = antislopes[ i ];
 			Fixed& xi = intercepts[ i ];
 			
-			short x = *(short*) &xi;
+			short x = HIGH_WORD( xi );
 			
 			if ( x < bbox.left )
 			{
 				xi = ((a.v == v ? a.h : b.h) << 16) + w / 2;
 				
-				x = *(short*) &xi;
+				x = HIGH_WORD( xi );
 			}
 			
 			xi += w;
