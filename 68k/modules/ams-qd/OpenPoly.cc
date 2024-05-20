@@ -50,20 +50,20 @@ void add_polygon_point( Point pt )
 		poly[0]->polyPoints[ 0 ] = port.pnLoc;
 	}
 	
-	Point* next = (Point*) (*port.polySave + poly[0]->polySize);
+	Point* next = (Point*) ((Ptr) *poly + poly[0]->polySize);
 	
 	if ( (long&) pt == (long&) next[ -1 ] )
 	{
 		return;
 	}
 	
-	Size size = mac::glue::GetHandleSize_raw( port.polySave );
+	Size size = mac::glue::GetHandleSize_raw( (Handle) poly );
 	
 	if ( poly[0]->polySize + sizeof (Point) > size )
 	{
-		SetHandleSize( port.polySave, 2 * size );
+		SetHandleSize( (Handle) poly, 2 * size );
 		
-		next = (Point*) (*port.polySave + poly[0]->polySize);
+		next = (Point*) ((Ptr) *poly + poly[0]->polySize);
 	}
 	
 	*next = pt;
