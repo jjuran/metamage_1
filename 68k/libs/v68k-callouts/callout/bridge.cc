@@ -862,7 +862,7 @@ static const function_type the_callouts[] =
 	
 	&sect_rect_region_callout,
 	&sect_regions_callout,
-	NULL,
+	&xor_regions_callout,
 	NULL,
 	
 	&system_call_callout,

@@ -96,7 +96,7 @@ enum
 	// $FF96 - $FF90
 	sect_rect_region,
 	sect_regions,
-	reserved23,
+	xor_regions,
 	reserved24,
 	
 	system_call,
