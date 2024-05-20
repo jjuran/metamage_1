@@ -583,7 +583,7 @@ pascal void LineTo_patch( short h, short v )
 	
 	if ( thePort->polySave )
 	{
-		add_polygon_point( *(Point*) &v );
+		add_polygon_point( *(Point*) &v, (PolyHandle) thePort->polySave );
 	}
 	
 	thePort->pnLoc.v = v;

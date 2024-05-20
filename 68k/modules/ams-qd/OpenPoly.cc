@@ -37,14 +37,12 @@ pascal PolyHandle OpenPoly_patch()
 	return poly;
 }
 
-void add_polygon_point( Point pt )
+void add_polygon_point( Point pt, PolyHandle poly )
 {
-	GrafPort& port = **get_addrof_thePort();
-	
-	PolyHandle poly = (PolyHandle) port.polySave;
-	
 	if ( poly[0]->polySize < sizeof (Polygon) )
 	{
+		const GrafPort& port = **get_addrof_thePort();
+		
 		poly[0]->polySize = sizeof (Polygon);
 		
 		poly[0]->polyPoints[ 0 ] = port.pnLoc;
@@ -91,7 +89,7 @@ pascal void ClosePoly_patch()
 	
 	const short polySize = poly[0]->polySize;
 	
-	add_polygon_point( *poly[0]->polyPoints );
+	add_polygon_point( *poly[0]->polyPoints, poly );
 	
 	poly[0]->polySize = polySize;
 	
