@@ -160,6 +160,13 @@ DEFINE_CALLOUT( void,
                   struct MacRegion*        dst  : __D0 ),
                 0xFF94 )
 
+DEFINE_CALLOUT( void,
+                xor_regions,
+                ( struct MacRegion const*  one  : __A0,
+                  struct MacRegion const*  two  : __A1,
+                  struct MacRegion*        dst  : __D0 ),
+                0xFF92 )
+
 #undef DEFINE_CALLOUT
 
 inline
