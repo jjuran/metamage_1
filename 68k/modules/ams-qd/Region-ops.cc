@@ -26,7 +26,6 @@
 #include "qd/regions.hh"
 #include "qd/region_detail.hh"
 #include "qd/region_scanner.hh"
-#include "qd/xor_region.hh"
 
 // ams-common
 #include "callouts.hh"
@@ -46,7 +45,6 @@ using quickdraw::Region_end;
 using quickdraw::region_geometry;
 using quickdraw::region_scanner;
 using quickdraw::set_region_bbox;
-using quickdraw::xor_region;
 
 typedef quickdraw::region_geometry_t geometry_t;
 
@@ -102,7 +100,7 @@ void extend_rectangular_region( const MacRegion& in, short* out )
 {
 	// output buffer must be at least 28 bytes
 	
-	*out++ = in.rgnSize;
+	*out++ = 28;
 	
 	*out++ = in.rgnBBox.top;
 	*out++ = in.rgnBBox.left;
@@ -823,7 +821,7 @@ pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 	
 	RgnHandle r = (RgnHandle) xor_scratch;
 	
-	xor_region( rgn_extent( *a ), rgn_extent( *b ), rgn_extent( *r ) );
+	xor_regions( *a, *b, *r );
 	
 	if ( *rgn_extent( *r ) == Region_end )
 	{
