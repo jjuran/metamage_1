@@ -62,6 +62,12 @@ const short* rgn_extent( const Region* rgn )
 	return (const short*) &rgn[ 1 ];
 }
 
+static inline
+short* rgn_extent( Region* rgn )
+{
+	return (short*) &rgn[ 1 ];
+}
+
 void add_polygon_point( Point pt, PolyHandle poly )
 {
 	if ( poly[0]->polySize < sizeof (Polygon) )
@@ -229,7 +235,7 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	segments_box p_segments( seg_bytes );
 	segments_box r_segments( seg_bytes );
 	
-	short* r = (short*) (*rgn + 1);
+	short* r = rgn_extent( *rgn );
 	
 	/*
 		Yes, the assignments below are correct.
