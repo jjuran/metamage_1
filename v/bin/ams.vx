@@ -21,6 +21,8 @@ let title = "Advanced Mac Substitute"
 
 var disks = []
 
+var live_modal = false
+
 var cpu = null
 var mem = null
 var modem = null
@@ -57,6 +59,10 @@ while args do
 		else if arg in ["--hardware-cursor", "--hwcursor"] then
 		{
 			has_cursor = true
+		}
+		else if arg == "--live-modal" then
+		{
+			live_modal = true
 		}
 		else if arg == "--mem" then
 		{
@@ -380,15 +386,30 @@ def seg_opts
 	}
 }
 
+def ui_opts
+{
+	let debug_updates = false
+	
+	let opts =
+	[
+		"--debug-updates" (*) debug_updates,
+		"--live-modal"    (*) live_modal,
+	]
+	
+	return
+	if opts then
+	{
+		ams-ui: opts,
+	}
+}
+
 let module_args = str^
 [
 	core_opts(),
 	fs_opts(),
 	io_opts(),
 	seg_opts(),
-	
-	# For debugging only:
-	#ams-ui: [ "--debug-updates" ],
+	ui_opts(),
 	
 	# This setting is not recommended, which is why no logic enables it.
 	#vdb: [ "--continue-on-bus-error" ],
