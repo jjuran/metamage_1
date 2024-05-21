@@ -235,7 +235,9 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	segments_box p_segments( seg_bytes );
 	segments_box r_segments( seg_bytes );
 	
-	short* r = rgn_extent( *rgn );
+	Region* q = *rgn;
+	
+	short* r = rgn_extent( q );
 	
 	/*
 		Yes, the assignments below are correct.
@@ -317,15 +319,15 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	
 	*r++ = Region_end;
 	
-	const short size = (char*) r - (char*) *rgn;
+	const short rgn_size = (char*) r - (char*) q;
 	
-	if ( size == sizeof (Region) + sizeof (short) )
+	if ( rgn_size == sizeof (Region) + sizeof (short) )
 	{
 		SetEmptyRgn( rgn );
 	}
 	else
 	{
-		rgn[0]->rgnSize = size;
+		rgn[0]->rgnSize = rgn_size;
 		
 		rgn[0]->rgnBBox.top    = top;
 		rgn[0]->rgnBBox.left   = left;
