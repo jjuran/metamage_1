@@ -1,6 +1,6 @@
 #define COPYRIGHT  "2022, 2024-2025 Josh Juran"
 
-#define CREATOR  '.Snd'
+#define CREATOR  'Snd*'
 
 #define VERSION  "1.0"
 
