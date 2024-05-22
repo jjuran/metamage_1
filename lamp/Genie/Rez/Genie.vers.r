@@ -4,7 +4,7 @@
 
 #define MAJOR 0
 #define MINOR 7
-#define TWEAK 9
+#define POINT 9
 #define STAGE alpha
 #define PATCH 2
 
@@ -12,7 +12,7 @@
 
 resource 'vers' (1) {
 	MAJOR,
-	MINOR << 4 | TWEAK,
+	MINOR << 4 | POINT,
 	STAGE,
 	PATCH,
 	smRoman,
