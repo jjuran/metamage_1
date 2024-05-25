@@ -459,7 +459,7 @@ pascal void SysBeep_patch( short duration )
 		swMode = -1,
 	};
 	
-	uint16_t buffer[] = { swMode, 650, 255, duration, 0, 0, 0 };
+	UInt16 buffer[] = { swMode, 650, 127, duration, 0, 0, 0 };
 	
 	SInt32 size = sizeof buffer;
 	
