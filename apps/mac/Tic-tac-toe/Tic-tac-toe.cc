@@ -51,6 +51,7 @@
 #include "file_save.hh"
 #include "fullscreen.hh"
 #include "menus.hh"
+#include "play_tone.hh"
 #include "regions.hh"
 #include "sound.hh"
 #include "state.hh"
@@ -706,6 +707,8 @@ int main()
 	{
 		cleanup_fullscreen();
 	}
+	
+	silence();
 	
 	return 0;
 }

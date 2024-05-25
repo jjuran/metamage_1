@@ -8,4 +8,6 @@
 
 void play_tone( unsigned short swCount );
 
+void silence();
+
 #endif
