@@ -5,6 +5,9 @@
 
 #include "menus.hh"
 
+// mac-sys-utils
+#include "mac_sys/has/lowmem.hh"
+
 // mac-ui-utils
 #include "mac_ui/menus.hh"
 
@@ -24,7 +27,9 @@ MenuRef Options_menu;
 static
 void set_up_Options_menu()
 {
-	const bool lowmem_present = ! TARGET_API_MAC_CARBON;
+	using mac::sys::has_lowmem;
+	
+	const bool lowmem_present = has_lowmem();
 	
 	if ( lowmem_present  &&  SdVolume > 0 )
 	{
