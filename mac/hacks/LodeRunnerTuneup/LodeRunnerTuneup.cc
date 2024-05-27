@@ -8,6 +8,16 @@
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
+	This is a pair of application hot patches for Lode Runner.  One of them
+	prevents a crash when clicking in the game window due to an unintended
+	write to I/O space, affecting Advanced Mac Substitute (which doesn't
+	tolerate such nonsense) but also some color Macs.  The other patches
+	the four-tone waveform used to play the end-of-level jingles in order
+	to match the specified phase, avoiding audible popping on playback.
+	
+	This extension incorporates the functionality of both LRCrashFix and
+	LRMusicFix and supersedes both.
+	
 */
 
 // Mac OS
@@ -42,6 +52,79 @@ void my_memmove( void* dst, const void* src, long n )
 
 static UniversalProcPtr old_TEInit;
 
+
+/*
+	This is an application hot patch to prevent a crash in Lode Runner
+	due to an unmapped memory access.  The crash won't occur on 68000-based
+	Macs (on which there are no invalid memory addresses), but it has been
+	observed in both Advanced Mac Substitute and Basilisk II.  Presumably
+	it would also occur on at least some MMU-equipped physical machines.
+	
+	The problem is that Lode Runner's call to FindControl() is followed by
+	an instruction that mishandles the result:  Instead of storing it in a
+	dummy variable (which is presumably what was intended), it writes the
+	word into unmapped memory.
+	
+	On period Macintosh hardware, this causes no problem because (a) the
+	result is never looked at (in either location) so its absence isn't
+	missed, and (b) memory accesses never fail on 68000-based Macs.  Since
+	$ffae28 is in unmapped I/O space, writes to it are simply ignored.
+	
+	A subsequent TrackControl() call is also followed by an instruction that
+	stores its result (after popping it off the stack), but this one actually
+	does write it to the very same dummy variable that the FindControl() call
+	missed.
+	
+	(I'm not sure how this happened; it's almost certainly not a compiler
+	bug, seeing how the correct instruction also occurs later in the same
+	function, but it seems a rather odd error to make when writing assembly
+	language by hand.  Perhaps the binary bitrotted before duplication?)
+	
+	003afe:  _FindControl
+	003b00:  MOVE.W   (SP)+,0xae28       // $31df ae28
+	003b04:  BEQ      *+26               // if (Z) goto $003b1e
+	...
+	003b14:  _TrackControl
+	003b16:  MOVE.W   (SP)+,(-20952,A5)  // $3b5f ae28
+	003b1a:  BNE      *+8                // if (!Z) goto $003b22
+	
+	Note that $ae28 and -20952 are the same bit pattern, just disassembled
+	differently.  Both instructions correctly pop the result off of the
+	stack, but one writes it to an application global (via an A5-relative
+	reference) and the other to the absolute address $ffffae28.  Both times,
+	the result is checked by using conditional branches, so to that end it
+	doesn't matter where the result goes as long as the CCR gets updated.
+	
+	However, xv68k is rather strict about what address ranges are defined
+	for memory access, so clicking Lode Runner's game window writes to
+	unmapped memory and halts the emulator.  To avoid that, we'll hot-patch
+	the broken instruction.
+*/
+
+static inline
+void install_hit_test_patch( Handle h, Size handle_size )
+{
+	enum
+	{
+		long_pop_to_absolute_short = 0x31DF,  // dst: mode 7, reg 0
+		long_pop_to_displaced_A5   = 0x3B5F,  // dst: mode 5, reg 5
+		
+		// These are offsets relative to the start of the 'CODE' resource.
+		
+		offset_to_FindControl = 0x3afe,
+		minimum_handle_size   = offset_to_FindControl + 4,
+	};
+	
+	if ( h  &&  handle_size > minimum_handle_size )
+	{
+		UInt16* p = (UInt16*) (*h + offset_to_FindControl);
+		
+		if ( *p++ == _FindControl  &&  *p == long_pop_to_absolute_short )
+		{
+			*p = long_pop_to_displaced_A5;
+		}
+	}
+}
 
 /*
 	This is a quick and dirty system patch to fix four-tone playback in
@@ -169,6 +252,7 @@ void TEInit_handler()
 		{
 			Size size = mac::glue::GetHandleSize_raw( h );
 			
+			install_hit_test_patch( h, size );
 			install_waveform_patch( h, size );
 		}
 	}
