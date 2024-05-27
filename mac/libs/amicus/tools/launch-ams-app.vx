@@ -224,11 +224,29 @@ def seg_opts
 	}
 }
 
+def ui_opts
+{
+	let live_modal_opt =
+	if "live-modal" in config then
+	{
+		"--live-modal",
+	}
+	
+	let opts = [ live_modal_opt ]
+	
+	return
+	if opts then
+	{
+		ams-ui: opts,
+	}
+}
+
 let module_args = str^
 [
 	core_opts(),
 	fs_opts(),
 	seg_opts(),
+	ui_opts(),
 ]
 
 def argify (name)
