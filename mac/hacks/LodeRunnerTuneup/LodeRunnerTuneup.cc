@@ -1,28 +1,12 @@
 /*
-	LRMusicFix.cc
-	-------------
+	LodeRunnerTuneup.cc
+	-------------------
 	
-	Lode Runner Music Fix INIT for Mac OS
+	Lode Runner Tune-up INIT for Mac OS
 	
 	Copyright 2020-2024, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
-	
-	This is a quick and dirty system patch to fix four-tone playback in
-	Lode Runner when run in the Advanced Mac Substitute environment.
-	
-	The problem is that Lode Runner populates the four-tone sound record
-	with triangle waves running from 00 to FE and back to 00, but with a
-	phase of zero, which corresponds to physical level 00 but logical level
-	-128, as opposed to a quarter rotation later, at physical level 80 and
-	logical level 0.  The jump from silence at level 0 to the wave start at
-	level -128 is audible as a popping noise.
-	
-	This program rotates the waveform data in the wave table embedded in
-	the code, aligning it to a phase of zero, which avoids the level jump.
-	
-	The reported audio defect might not be noticeable with period hardware,
-	but it has been observed in emulators including Advanced Mac Substitute.
 	
 */
 
@@ -58,6 +42,24 @@ void my_memmove( void* dst, const void* src, long n )
 
 static UniversalProcPtr old_TEInit;
 
+
+/*
+	This is a quick and dirty system patch to fix four-tone playback in
+	Lode Runner when run in the Advanced Mac Substitute environment.
+	
+	The problem is that Lode Runner populates the four-tone sound record
+	with triangle waves running from 00 to FE and back to 00, but with a
+	phase of zero, which corresponds to physical level 00 but logical level
+	-128, as opposed to a quarter rotation later, at physical level 80 and
+	logical level 0.  The jump from silence at level 0 to the wave start at
+	level -128 is audible as a popping noise.
+	
+	This patch rotates the waveform data in the wave table embedded in the
+	code, aligning it to a phase of zero -- which avoids the level jump.
+	
+	The reported audio defect might not be noticeable with period hardware,
+	but it has been observed in emulators including Advanced Mac Substitute.
+*/
 
 static inline
 void install_waveform_patch( Handle h, Size handle_size )
