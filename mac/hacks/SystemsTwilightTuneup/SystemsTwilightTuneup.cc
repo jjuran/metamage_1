@@ -30,7 +30,7 @@
 	for hierarchical menus.  The You menu is your inventory, containing
 	a menu item for each game item you're carrying.  One of those items
 	is a memory block, which itself can contain items, represented as a
-	submenu.  In AMS, it appears in the menu baras a regular menu, using
+	submenu.  In AMS, it appears in the menu bar as a regular menu, using
 	its provided name (which normally would never be displayed).  While
 	the name "intMemInv" is suggestive of its function ("internal memory
 	inventory", perhaps), it's quite un-Mac-like to have such cryptic
