@@ -4,7 +4,7 @@
 	
 	Lode Runner Music Fix INIT for Mac OS
 	
-	Copyright 2020-2023, Joshua Juran.  All rights reserved.
+	Copyright 2020-2024, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
@@ -34,6 +34,9 @@
 #include <Traps.h>
 #endif
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // mac-sys-utils
 #include "mac_sys/trap_address.hh"
 
@@ -57,7 +60,7 @@ static UniversalProcPtr old_TEInit;
 
 
 static inline
-void install_patch( Handle h )
+void install_waveform_patch( Handle h, Size handle_size )
 {
 	/*
 		Lode Runner defines a triangle wave like this:
@@ -104,7 +107,7 @@ void install_patch( Handle h )
 		minimum_handle_size = offset_to_wave_LEA + 4,
 	};
 	
-	if ( h  &&  GetHandleSize( h ) > minimum_handle_size )
+	if ( h  &&  handle_size > minimum_handle_size )
 	{
 		Ptr p = *h;
 		
@@ -160,7 +163,12 @@ void TEInit_handler()
 	{
 		ReleaseResource( h );
 		
-		install_patch( GetResource( 'CODE', 1 ) );
+		if ( (h = GetResource( 'CODE', 1 )) )
+		{
+			Size size = mac::glue::GetHandleSize_raw( h );
+			
+			install_waveform_patch( h, size );
+		}
 	}
 }
 
