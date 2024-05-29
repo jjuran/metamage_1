@@ -260,6 +260,12 @@ namespace Genie
 			
 			return true;
 		}
+		else if ( (event.modifiers & kPrimaryModifiers) == 0  &&  c == '\x09' )
+		{
+			mac::sys::beep();
+			
+			return true;  // don't insert a Tab
+		}
 		
 		return false;
 	}
