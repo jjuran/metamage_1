@@ -34,11 +34,11 @@ resource 'MENU' (130, "Edit") {
 		/* [4] */
 		"Copy [copy]", noIcon, "C", noMark, plain,
 		/* [5] */
-		"Paste [pste]", noIcon, "V", noMark, plain,
+		"Paste [past]", noIcon, "V", noMark, plain,
 		/* [6] */
 		"Clear [clea]", noIcon, noKey, noMark, plain,
 		/* [7] */
-		"Select All [slct]", noIcon, "A", noMark, plain
+		"Select All [sall]", noIcon, "A", noMark, plain
 	}
 };
 
