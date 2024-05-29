@@ -176,10 +176,13 @@ namespace Genie
 	
 	static void Console_On_EnterKey( TextEditParameters& params )
 	{
+		int start = params.itsSelection.start;
+		int end   = params.itsSelection.end;
+		
 		const plus::string& s = params.its_mac_text;
 		
-		plus::string command( s.begin() + params.itsSelection.start,
-		                      s.begin() + params.itsSelection.end );
+		plus::string command( s.begin() + start,
+		                      s.begin() + end );
 		
 		//command += '\n';
 		
