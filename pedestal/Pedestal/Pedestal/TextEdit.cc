@@ -803,7 +803,6 @@ namespace Pedestal
 				break;
 			
 			case 'past':  // kHICommandPaste
-			case 'pste':
 				// Update the TE scrap just-in-time
 				if ( OSErr err = TEFromScrap() )
 				{
@@ -825,7 +824,6 @@ namespace Pedestal
 				break;
 			
 			case 'sall':  // kHICommandSelectAll
-			case 'slct':
 				Select( 0, 32767 );
 				break;
 			

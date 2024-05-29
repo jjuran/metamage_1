@@ -141,7 +141,6 @@ namespace Genie
 			{
 				// Edit
 				case 'past':  // kHICommandPaste
-				case 'pste':
 					{
 						TEHandle hTE = that.Get();
 						
