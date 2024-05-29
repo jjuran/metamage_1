@@ -221,6 +221,8 @@ namespace Genie
 			
 			ConsoleParameters& consoleParams = gConsoleParametersMap[ key ];
 			
+			const unsigned mac_text_size = params.its_mac_text.size();
+			
 			const char cntrl = c | 0x40;
 			
 			switch ( cntrl )
@@ -231,8 +233,7 @@ namespace Genie
 					break;
 				
 				case 'E':
-					that.Select( params.its_mac_text.size(),
-					             params.its_mac_text.size() );
+					that.Select( mac_text_size, mac_text_size );
 					break;
 				
 				case 'C':
@@ -244,7 +245,7 @@ namespace Genie
 					break;
 				
 				case 'D':
-					if ( params.its_mac_text.size() - consoleParams.itsStartOfInput <= 0 )
+					if ( mac_text_size - consoleParams.itsStartOfInput <= 0 )
 					{
 						consoleParams.itHasReceivedEOF = true;
 					}
