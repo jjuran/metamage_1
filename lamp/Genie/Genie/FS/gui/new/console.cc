@@ -181,12 +181,7 @@ namespace Genie
 		
 		const plus::string& s = params.its_mac_text;
 		
-		plus::string command( s.begin() + start,
-		                      s.begin() + end );
-		
-		//command += '\n';
-		
-		RunShellCommand( plus::utf8_from_mac( command ) );
+		RunShellCommand( plus::utf8_from_mac( s.substr( start, end - start ) ) );
 	}
 	
 	static void SendSignalToProcessGroupForKey( int signo, const vfs::node* key )
