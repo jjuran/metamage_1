@@ -12,6 +12,9 @@ namespace Pedestal
 	
 	enum CommandCode
 	{
+		kHICommandPaste     = 'past',
+		kHICommandSelectAll = 'sall',
+		
 		kCmdNone = 0,
 		
 		kCmdAbout = 'abou',
@@ -24,13 +27,10 @@ namespace Pedestal
 		kCmdUndo  = 'undo',
 		kCmdCut   = 'cut ',
 		kCmdCopy  = 'copy',
-		kCmdPaste = 'pste',
+		kCmdPaste = kHICommandPaste,
 		kCmdClear = 'clea',
 		
-		kCmdSelectAll = 'slct',
-		
-		kHICommandPaste     = 'past',  // kHICommandPaste,
-		kHICommandSelectAll = 'sall',  // kHICommandSelectAll,
+		kCmdSelectAll = kHICommandSelectAll,
 		
 		kCommandCode_Max = 0xffffffff
 	};
