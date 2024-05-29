@@ -174,7 +174,8 @@ namespace Genie
 	}
 	
 	
-	static void Console_On_EnterKey( TextEditParameters& params )
+	static inline
+	void Console_On_EnterKey( TextEditParameters& params )
 	{
 		int start = params.itsSelection.start;
 		int end   = params.itsSelection.end;
