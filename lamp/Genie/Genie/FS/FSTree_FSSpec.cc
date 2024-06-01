@@ -555,15 +555,14 @@ namespace Genie
 	}
 	
 	
-	static void FSpFileCopy( const FSSpec&         source,
-	                         const FSSpec&         destDir,
-	                         const unsigned char*  copyName       = NULL,
-	                         void*                 copyBufferPtr  = NULL,
-	                         long                  copyBufferSize = 0,
-	                         bool                  preflight      = true )
+	static inline
+	void FSpFileCopy( const FSSpec&         source,
+	                  const FSSpec&         destDir,
+	                  const unsigned char*  copyName       = NULL,
+	                  void*                 copyBufferPtr  = NULL,
+	                  long                  copyBufferSize = 0,
+	                  bool                  preflight      = true )
 	{
-		NUCLEUS_REQUIRE_ERRORS( Nitrogen::FileManager );
-		
 		Mac::ThrowOSStatus( ::FSpFileCopy( &source,
 		                                   &destDir,
 		                                   copyName,
