@@ -297,15 +297,22 @@ static const scroll_action_rec scroll_action_context =
 };
 
 static
-pascal void SFPutFile_call( Point             where,
-                            ConstStr255Param  prompt,
-                            ConstStr255Param  origName,
-                            DlgHookUPP        dlgHook,
-                            SFReply*          reply )
+pascal void SFPPutFile_call( Point             where,
+                             ConstStr255Param  prompt,
+                             ConstStr255Param  origName,
+                             DlgHookUPP        dlgHook,
+                             SFReply*          reply,
+                             short             dialogID,
+                             ModalFilterUPP    filterProc )
 {
 	if ( dlgHook )
 	{
 		ERROR = "SFPutFile dlgHook is unimplemented";
+	}
+	
+	if ( dialogID != putDlgID )
+	{
+		ERROR = "SFPPutFile dialogID is unimplemented";
 	}
 	
 	const unsigned char* SysTwi_prompt = "\p" "File to save this new game in:";
@@ -370,7 +377,7 @@ pascal void SFPutFile_call( Point             where,
 	
 	do
 	{
-		ModalDialog( NULL, &hit );
+		ModalDialog( filterProc, &hit );
 		
 		if ( hit == 1 )
 		{
@@ -579,17 +586,13 @@ pascal void SFGetFile_call( Point               where,
 }
 
 static
-pascal void SFPPutFile_call( Point             where,
-                             ConstStr255Param  prompt,
-                             ConstStr255Param  origName,
-                             DlgHookUPP        dlgHook,
-                             SFReply*          reply,
-                             short             dialogID,
-                             ModalFilterUPP    filterProc )
+pascal void SFPutFile_call( Point             where,
+                            ConstStr255Param  prompt,
+                            ConstStr255Param  origName,
+                            DlgHookUPP        dlgHook,
+                            SFReply*          reply )
 {
-	WARNING = "SFPPutFile is incomplete";
-	
-	SFPutFile_call( where, prompt, origName, dlgHook, reply );
+	SFPPutFile_call( where, prompt, origName, dlgHook, reply, putDlgID, NULL );
 }
 
 static
