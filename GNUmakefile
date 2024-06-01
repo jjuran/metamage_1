@@ -149,7 +149,7 @@ NEW_PATH = PATH="$$PWD/var/demo:$$PWD/var/out:$$PATH"
 AMS_ROOT = var/links/ams-68k-bin
 AMS_RSRC = "$(AMS_ROOT)/mnt/AMS Resources"
 AMS_VARS = AMS_BIN=$(AMS_ROOT)/bin AMS_LIB=$(AMS_ROOT)/lib AMS_MNT=$(AMS_ROOT)/mnt
-RUN_AMS  = $(NEW_PATH) $(AMS_VARS) var/out/minivx -Z v/bin/ams.vx
+RUN_AMS  = $(NEW_PATH) $(AMS_VARS) var/out/minivx v/bin/ams.vx
 
 ams-linux-demo: ams-linux-check display-check
 	$(RUN_AMS)
@@ -168,7 +168,7 @@ ams-x11: ams-x11-build
 
 ams-system-rsrcs: build-tools
 	$(BUILD) minivx
-	var/out/minivx -Z v/bin/mkrsrc.vx -o $(AMS_RSRC)/rsrc $(AMS_RSRC)
+	var/out/minivx v/bin/mkrsrc.vx -o $(AMS_RSRC)/rsrc $(AMS_RSRC)
 
 ams-68k-install: var/install ams-system-rsrcs
 	install -d var/install/share/ams/bin
@@ -229,7 +229,7 @@ ams-osx: ams-osx-build
 
 sndtrack: build-tools
 	$(BUILD) minivx
-	var/out/minivx -Z v/bin/portaudio-pkg.vx make
+	var/out/minivx v/bin/portaudio-pkg.vx make
 	$(BUILD) sndtrack
 
 freemountd-tcp: freemount.git build-tools
