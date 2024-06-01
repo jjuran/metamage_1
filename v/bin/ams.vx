@@ -145,7 +145,7 @@ if exists bindir "/mkrsrc.vx" then
 {
 	let output = "-o", root_dir "/AMS Resources/rsrc"
 	
-	run [ "minivx", "-Z", bindir "/mkrsrc.vx", output, *respaths ]
+	run [ "minivx", bindir "/mkrsrc.vx", output, *respaths ]
 }
 
 def freemountd_rw (root) { "freemountd -qu --rw --root" / ' ', root, "//" }
