@@ -41,6 +41,8 @@ namespace vfs
 			typedef Vector::size_type        size_type;
 			typedef Vector::const_reference  const_reference;
 			
+			Vector& get()  { return its_entries; }
+			
 			size_type size() const  { return its_entries.size(); }
 			
 			const_reference at( size_type i ) const  { return its_entries.at( i ); }
