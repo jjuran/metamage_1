@@ -20,19 +20,44 @@
 #endif
 #endif
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 
 namespace mac {
 namespace app {
 
 #if ! TARGET_API_MAC_CARBON
 
+static short selection_end;
+
+static
+pascal
+Boolean filter_proc( DialogRef dialog, EventRecord* event, short* itemHit )
+{
+	if ( selection_end > 0  &&  event->what == updateEvt )
+	{
+		SelectDialogItemText( dialog, putName, 0, selection_end );
+		
+		selection_end = 0;
+	}
+	
+	return false;
+}
+
 long file_save_dialog( StrArg prompt, StrArg name, HFS_Proc proc, int ext_len )
 {
+	DEFINE_UPP( ModalFilter, filter_proc )
+	
+	selection_end = name[ 0 ] - ext_len;
+	
 	Point where = { 82, 82 };  // FIXME
+	
+	const short id = putDlgID;
 	
 	SFReply reply;
 	
-	SFPutFile( where, prompt, name, NULL, &reply );
+	SFPPutFile( where, prompt, name, NULL, &reply, id, UPP_ARG( filter_proc ) );
 	
 	if ( ! reply.good )
 	{
