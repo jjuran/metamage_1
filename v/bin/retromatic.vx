@@ -32,7 +32,7 @@ def copy
 	run [ "cp", "-fpR", _ ]
 }
 
-def vx_Z (script_filename) { "minivx", "-Z", bindir "/" script_filename }
+def vx_run (script_filename) { "minivx", bindir "/" script_filename }
 
 def choose_frontend
 {
@@ -160,7 +160,7 @@ def ams-get-app (property, args: ...)
 {
 	let path = name_path
 	
-	return packed output-from-run [ vx_Z "ams-get.vx", property, path, args ]
+	return packed output-from-run [ vx_run "ams-get.vx", property, path, args ]
 }
 
 def icns (icon)
@@ -178,7 +178,7 @@ rewrite Resources "/" name ".icns" <== icon
 let resfiles = [ "AMS Resources", "System" ]
 let respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
 
-run [ vx_Z "mkrsrc.vx", "-o", Files "/AMS Resources/rsrc", *respaths ]
+run [ vx_run "mkrsrc.vx", "-o", Files "/AMS Resources/rsrc", *respaths ]
 
 if "files" in config then
 {
