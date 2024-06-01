@@ -209,14 +209,15 @@ namespace Genie
 		return result;
 	}
 	
-	static void SpewFile( const FSSpec& file, const plus::string& contents )
+	static inline
+	OSErr SplatFile( const FSSpec& file, const plus::string& contents )
 	{
 		using mac::file::FSIORefNum;
 		using mac::file::open_data_fork;
 		
 		FSIORefNum output = open_data_fork( file, fsWrPerm );
 		
-		OSStatus err = output;
+		OSErr err = output;
 		
 		if ( output >= 0 )
 		{
@@ -229,7 +230,7 @@ namespace Genie
 			FSClose( output );
 		}
 		
-		Mac::ThrowOSStatus( err );
+		return err;
 	}
 	
 	static plus::string get_long_name( const FSSpec& item )
@@ -936,7 +937,9 @@ namespace Genie
 		
 	created:
 		
-		SpewFile( linkSpec, targetPath );
+		OSStatus err = SplatFile( linkSpec, targetPath );
+		
+		Mac::ThrowOSStatus( err );
 	}
 	
 	static void hfs_symlink( const vfs::node*     that,
