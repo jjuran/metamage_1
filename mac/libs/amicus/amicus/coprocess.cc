@@ -23,10 +23,9 @@ namespace amicus
 static const char* coprocess_argv[] =
 {
 	"./minivx",
-	"-Z",
 	"launch-ams-app.vx",
-	NULL,  // #3, raster path
-	NULL,  // #4, events fd
+	NULL,  // #2, raster path
+	NULL,  // #3, events fd
 	NULL,
 };
 
@@ -71,8 +70,8 @@ coprocess_launch::coprocess_launch( int bindir_fd, const char* works_path )
 		
 		const char* fd_arg = gear::inscribe_unsigned_decimal( other_fd );
 		
-		coprocess_argv[ 3 ] = works_path;
-		coprocess_argv[ 4 ] = fd_arg;       // --events-fd param
+		coprocess_argv[ 2 ] = works_path;
+		coprocess_argv[ 3 ] = fd_arg;       // --events-fd param
 		
 		exec_or_exit( coprocess_argv );
 	}
