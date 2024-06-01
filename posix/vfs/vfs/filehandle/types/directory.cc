@@ -57,50 +57,7 @@ namespace vfs
 	};
 	
 	static
-	ssize_t dir_readdir( filehandle* that, dirent& entry );
-	
-	static ssize_t dir_read( filehandle* that, char* buffer, size_t n )
-	{
-		ASSERT( n >= sizeof (dirent) );
-		
-		dirent& entry = *(dirent*) buffer;
-		
-		return dir_readdir( that, entry );
-	}
-	
-	const stream_method_set dir_stream_methods =
-	{
-		NULL,
-		&dir_read,
-	};
-	
-	static const filehandle_method_set dir_methods =
-	{
-		NULL,
-		NULL,
-		&dir_stream_methods,
-	};
-	
-	
-	filehandle_ptr new_dir_handle( const node* dir, filehandle_destructor dtor )
-	{
-		using vfs::filehandle;
-		
-		filehandle* result = new filehandle( dir,
-		                                     O_RDONLY | O_DIRECTORY,
-		                                     &dir_methods,
-		                                     sizeof (dir_handle_extra),
-		                                     &destroy_dir_handle );
-		
-		dir_handle_extra& extra = *(dir_handle_extra*) result->extra();
-		
-		extra.chained_destructor = dtor;
-		extra.contents           = NULL;
-		
-		return result;
-	}
-	
-	static void set_dir_entry( dirent& dir, ino_t inode, const plus::string& name )
+	void set_dir_entry( dirent& dir, ino_t inode, const plus::string& name )
 	{
 		dir.d_ino = inode;
 		
@@ -151,6 +108,46 @@ namespace vfs
 		set_dir_entry( entry, node.inode, node.name );
 		
 		return sizeof (dirent);
+	}
+	
+	static ssize_t dir_read( filehandle* that, char* buffer, size_t n )
+	{
+		ASSERT( n >= sizeof (dirent) );
+		
+		dirent& entry = *(dirent*) buffer;
+		
+		return dir_readdir( that, entry );
+	}
+	
+	const stream_method_set dir_stream_methods =
+	{
+		NULL,
+		&dir_read,
+	};
+	
+	static const filehandle_method_set dir_methods =
+	{
+		NULL,
+		NULL,
+		&dir_stream_methods,
+	};
+	
+	filehandle_ptr new_dir_handle( const node* dir, filehandle_destructor dtor )
+	{
+		using vfs::filehandle;
+		
+		filehandle* result = new filehandle( dir,
+		                                     O_RDONLY | O_DIRECTORY,
+		                                     &dir_methods,
+		                                     sizeof (dir_handle_extra),
+		                                     &destroy_dir_handle );
+		
+		dir_handle_extra& extra = *(dir_handle_extra*) result->extra();
+		
+		extra.chained_destructor = dtor;
+		extra.contents           = NULL;
+		
+		return result;
 	}
 	
 }
