@@ -82,20 +82,6 @@ namespace vfs
 	};
 	
 	
-	static dir_contents_box get_contents( const node& dir )
-	{
-		dir_contents_box result;
-		
-		dir_contents& contents = *result;
-		
-		contents.push_back( dir_entry( inode       ( dir ), "."  ) );
-		contents.push_back( dir_entry( parent_inode( dir ), ".." ) );
-		
-		listdir( dir, contents );
-		
-		return result;
-	}
-	
 	filehandle_ptr new_dir_handle( const node* dir, filehandle_destructor dtor )
 	{
 		using vfs::filehandle;
@@ -133,7 +119,18 @@ namespace vfs
 		
 		if ( ! extra.contents )
 		{
-			dir_contents_box box = get_contents( *get_file( *that ) );
+			node_ptr dir_node = get_file( *that );
+			
+			const node& dir = *dir_node;
+			
+			dir_contents_box box;
+			
+			dir_contents& contents = *box;
+			
+			contents.push_back( dir_entry( inode       ( dir ), "."  ) );
+			contents.push_back( dir_entry( parent_inode( dir ), ".." ) );
+			
+			listdir( dir, contents );
 			
 			intrusive_ptr_add_ref( extra.contents = box.get() );
 		}
