@@ -303,6 +303,11 @@ pascal void SFPutFile_call( Point             where,
                             DlgHookUPP        dlgHook,
                             SFReply*          reply )
 {
+	if ( dlgHook )
+	{
+		ERROR = "SFPutFile dlgHook is unimplemented";
+	}
+	
 	const unsigned char* SysTwi_prompt = "\p" "File to save this new game in:";
 	
 	if ( fast_memcmp( prompt, SysTwi_prompt, 1 + prompt[ 0 ] ) == 0 )
@@ -456,6 +461,16 @@ pascal void SFGetFile_call( Point               where,
                             DlgHookUPP          dlgHook,
                             SFReply*            reply )
 {
+	if ( dlgHook )
+	{
+		ERROR = "SFGetFile dlgHook is unimplemented";
+	}
+	
+	if ( fileFilter )
+	{
+		ERROR = "SFGetFile fileFilter is unimplemented";
+	}
+	
 	const short width  = 348;
 	const short height = 136;
 	
