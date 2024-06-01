@@ -460,13 +460,15 @@ short scrollmax()
 }
 
 static
-pascal void SFGetFile_call( Point               where,
-                            ConstStr255Param    prompt,
-                            FileFilterUPP       fileFilter,
-                            short               numTypes,
-                            ConstSFTypeListPtr  typeList,
-                            DlgHookUPP          dlgHook,
-                            SFReply*            reply )
+pascal void SFPGetFile_call( Point               where,
+                             ConstStr255Param    prompt,
+                             FileFilterUPP       fileFilter,
+                             short               numTypes,
+                             ConstSFTypeListPtr  typeList,
+                             DlgHookUPP          dlgHook,
+                             SFReply*            reply,
+                             short               dialogID,
+                             ModalFilterUPP      filterProc )
 {
 	if ( dlgHook )
 	{
@@ -476,6 +478,11 @@ pascal void SFGetFile_call( Point               where,
 	if ( fileFilter )
 	{
 		ERROR = "SFGetFile fileFilter is unimplemented";
+	}
+	
+	if ( dialogID != getDlgID )
+	{
+		ERROR = "SFPGetFile dialogID is unimplemented";
 	}
 	
 	const short width  = 348;
@@ -527,11 +534,16 @@ pascal void SFGetFile_call( Point               where,
 	GetDialogItem( dialog, getLine, &type, &h, &box );
 	SetDialogItem( dialog, getLine, type, (Handle) &draw_dotted_line, &box );
 	
+	if ( filterProc == NULL )
+	{
+		filterProc = &SFGet_filterProc;
+	}
+	
 	short hit = 0;
 	
 	do
 	{
-		ModalDialog( &SFGet_filterProc, &hit );
+		ModalDialog( filterProc, &hit );
 		
 		if ( hit == 1  &&  get_string_list_selection( filename_list ) )
 		{
@@ -596,19 +608,16 @@ pascal void SFPutFile_call( Point             where,
 }
 
 static
-pascal void SFPGetFile_call( Point               where,
-                             ConstStr255Param    prompt,
-                             FileFilterUPP       fileFilter,
-                             short               numTypes,
-                             ConstSFTypeListPtr  typeList,
-                             DlgHookUPP          dlgHook,
-                             SFReply*            reply,
-                             short               dialogID,
-                             ModalFilterUPP      filterProc )
+pascal void SFGetFile_call( Point               where,
+                            ConstStr255Param    prompt,
+                            FileFilterUPP       fileFilter,
+                            short               numTypes,
+                            ConstSFTypeListPtr  typeList,
+                            DlgHookUPP          dlgHook,
+                            SFReply*            reply )
 {
-	WARNING = "SFPGetFile is incomplete";
-	
-	SFGetFile_call( where, prompt, fileFilter, numTypes, typeList, dlgHook, reply );
+	SFPGetFile_call( where, prompt, fileFilter, numTypes, typeList,
+	                 dlgHook, reply, getDlgID, NULL );
 }
 
 static
