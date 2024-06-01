@@ -1,4 +1,4 @@
-#!/usr/bin/minivx -Z
+#!/usr/bin/minivx
 
 chdir "/gui/port/about"
 
