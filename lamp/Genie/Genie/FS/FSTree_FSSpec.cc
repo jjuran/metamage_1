@@ -740,23 +740,30 @@ namespace Genie
 		              times );
 	}
 	
-	static void Delete_HFS( const FSSpec& file )
+	static inline
+	void Delete_HFS( const FSSpec& file )
 	{
 		// returns fnfErr for directories
 		OSErr unlockErr = ::HRstFLock( file.vRefNum, file.parID, file.name );
 		OSErr deleteErr = ::HDelete  ( file.vRefNum, file.parID, file.name );
 		
-		if ( mac::sys::has_native_Carbon()  &&  unlockErr == noErr  &&  deleteErr == fBsyErr )
+		if ( mac::sys::has_native_Carbon() )
 		{
-			// If we're on OS X and the file was busy, try the native unlink().
-			
-			const FSRef fsRef = N::FSpMakeFSRef( file );
-			
-			const nucleus::string path = N::FSRefMakePath( fsRef );
-			
-			p7::throw_posix_result( native_unlink( path.c_str() ) );
-			
-			return;
+			if ( unlockErr == noErr  &&  deleteErr == fBsyErr )
+			{
+				/*
+					If we're in Mac OS X and the file
+					was busy, try the native unlink().
+				*/
+				
+				const FSRef fsRef = N::FSpMakeFSRef( file );
+				
+				const nucleus::string path = N::FSRefMakePath( fsRef );
+				
+				p7::throw_posix_result( native_unlink( path.c_str() ) );
+				
+				return;
+			}
 		}
 		
 		// Unfortunately, fBsyErr can mean different things.
