@@ -991,7 +991,8 @@ namespace Genie
 		}
 	}
 	
-	static bool hfs_is_fifo( const CInfoPBRec& cInfo )
+	static inline
+	bool hfs_is_fifo( const CInfoPBRec& cInfo )
 	{
 		if ( cInfo.hFileInfo.ioResult != noErr )
 		{
@@ -1003,7 +1004,8 @@ namespace Genie
 		return fInfo.fdCreator == 'Poof'  &&  (fInfo.fdType & 0xFFFFFF00) == 'FIF\0';
 	}
 	
-	static bool hfs_is_socket( const CInfoPBRec& cInfo )
+	static inline
+	bool hfs_is_socket( const CInfoPBRec& cInfo )
 	{
 		if ( cInfo.hFileInfo.ioResult != noErr )
 		{
@@ -1111,7 +1113,8 @@ namespace Genie
 	}
 	
 	
-	static bool is_possibly_masked_symlink( const CInfoPBRec& cInfo )
+	static inline
+	bool is_possibly_masked_symlink( const CInfoPBRec& cInfo )
 	{
 		const HFileInfo& hFileInfo = cInfo.hFileInfo;
 		
