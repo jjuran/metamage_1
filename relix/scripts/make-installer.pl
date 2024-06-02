@@ -7,7 +7,7 @@ use Fatal qw( close mkdir open chmod read rename );
 
 use Relix::Archiver;
 
-*spew = \&Relix::Archiver::spew;
+*splat = \&Relix::Archiver::splat;
 
 local $| = 1;  # piping hot output
 
@@ -57,7 +57,7 @@ print "\$OUTPUT = $build_output\n";
 #print "\$TMP    = $tmp_subdir\n";
 print "\$DIST   = $relix_dist\n";
 
-sub spew_to_rsrc
+sub splat_to_rsrc
 {
 	my ( $path, $contents, $type ) = @_;
 	
@@ -65,9 +65,9 @@ sub spew_to_rsrc
 	
 	my $dest_path = "$relix_dist/MacRelix/r/" . sprintf( "%.4x", $id ) . ".$type";
 	
-	spew( $dest_path, $contents );
+	splat( $dest_path, $contents );
 	
-	spew( "$dest_path/.~name", $path );
+	splat( "$dest_path/.~name", $path );
 }
 
 sub slurp
@@ -89,7 +89,7 @@ sub copy_to_rsrc
 	
 	$contents =~ s{^#!/usr/bin/env vx}{#!/usr/bin/vx};
 	
-	spew_to_rsrc( $path, $contents, $type );
+	splat_to_rsrc( $path, $contents, $type );
 }
 
 sub copy_script
@@ -126,11 +126,11 @@ my %fsmap =
 	etc =>
 	[
 		{
-			startup => sub { spew_to_rsrc( $_[1], <<'[END]', 'Exec' ) },
+			startup => sub { splat_to_rsrc( $_[1], <<'[END]', 'Exec' ) },
 #!/usr/bin/vx -Z /usr/app/installer/init
 [END]
-			platform => sub { spew_to_rsrc( $_[1], "$config_short_name\n", 'Data' ) unless $config_short_name eq 'xxx' },
-			build_date => sub { spew_to_rsrc( $_[1], `date`, 'Data' ) },
+			platform => sub { splat_to_rsrc( $_[1], "$config_short_name\n", 'Data' ) unless $config_short_name eq 'xxx' },
+			build_date => sub { splat_to_rsrc( $_[1], `date`, 'Data' ) },
 		},
 	],
 	sbin => {upgrade => "upgrade.vx"},

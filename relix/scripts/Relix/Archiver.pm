@@ -103,7 +103,7 @@ sub tmpdir
 	"$root/tmp";
 }
 
-sub spew
+sub splat
 {
 	my ( $path, $contents ) = @_;
 	
@@ -249,12 +249,12 @@ sub copy_file
 	
 	if ( defined $self->{ vers_1 }  &&  -d "$dest/r" )
 	{
-		spew( "$dest/r/0001.vers", $self->{ vers_1 } );
+		splat( "$dest/r/0001.vers", $self->{ vers_1 } );
 	}
 	
 	if ( defined $self->{ vers_2 }  &&  -d "$dest/r" )
 	{
-		spew( "$dest/r/0002.vers", $self->{ vers_2 } );
+		splat( "$dest/r/0002.vers", $self->{ vers_2 } );
 	}
 	
 	return;
@@ -283,7 +283,7 @@ sub copy_file_to_rsrc
 	
 	$system->( 'cp', $src, $dest_path );
 	
-	spew( "$dest_path/.~name", $path_from_root );
+	splat( "$dest_path/.~name", $path_from_root );
 }
 
 sub is_script
