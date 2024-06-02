@@ -1,7 +1,7 @@
-/*	========
- *	uname.cc
- *	========
- */
+/*
+	uname.cc
+	--------
+*/
 
 // Standard C
 #include <string.h>
@@ -65,44 +65,46 @@ static const unsigned kNameLength = _SYS_NAMELEN;
 
 namespace Genie
 {
+
+static
+void string_copy( char* dest, const char* str, size_t len )
+{
+	ASSERT( len < kNameLength );
 	
-	static void string_copy( char* dest, const char* str, size_t len )
-	{
-		ASSERT( len < kNameLength );
-		
-		mempcpy( dest, str, len + 1 );  // copy length byte too
-	}
+	mempcpy( dest, str, len + 1 );  // copy length byte too
+}
+
+static
+int uname( struct utsname *uts )
+{
+	GetWorkstationName( uts->nodename, sizeof uts->nodename );
 	
-	static int uname( struct utsname *uts )
+	for ( char *p = uts->nodename;  *p != '\0';  ++p )
 	{
-		GetWorkstationName( uts->nodename, sizeof uts->nodename );
+		const char c = *p;
 		
-		for ( char *p = uts->nodename;  *p != '\0';  ++p )
+		if ( ! iota::is_alnum( c ) )
 		{
-			const char c = *p;
-			
-			if ( ! iota::is_alnum( c ) )
-			{
-				*p = '-';
-			}
-			else if ( c >= 'A'  &&  c <= 'Z' )
-			{
-				*p = c | ' ';
-			}
+			*p = '-';
 		}
-		
-		string_copy( uts->sysname,  STR_LEN( SYSNAME ) );
-		string_copy( uts->release,  STR_LEN( RELEASE ) );
-		string_copy( uts->version,  STR_LEN( VERSION ) );
-		string_copy( uts->machine,  STR_LEN( HARDWARE_CLASS ) );
-		
-		return 0;
+		else if ( c >= 'A'  &&  c <= 'Z' )
+		{
+			*p = c | ' ';
+		}
 	}
 	
-	#pragma force_active on
+	string_copy( uts->sysname,  STR_LEN( SYSNAME ) );
+	string_copy( uts->release,  STR_LEN( RELEASE ) );
+	string_copy( uts->version,  STR_LEN( VERSION ) );
+	string_copy( uts->machine,  STR_LEN( HARDWARE_CLASS ) );
 	
-	REGISTER_SYSTEM_CALL( uname );
-	
-	#pragma force_active reset
-	
+	return 0;
+}
+
+#pragma force_active on
+
+REGISTER_SYSTEM_CALL( uname );
+
+#pragma force_active reset
+
 }
