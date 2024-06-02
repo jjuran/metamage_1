@@ -37,13 +37,13 @@ namespace console
 {
 
 static
-ssize_t spew( const vfs::node& file, const char* buffer, std::size_t length )
+ssize_t splat( const vfs::node& file, const char* buffer, size_t length )
 {
 	return write( *open( file, O_WRONLY | O_TRUNC, 0 ), buffer, length );
 }
 
 static
-ssize_t append( const vfs::node& file, const char* buffer, std::size_t length )
+ssize_t append( const vfs::node& file, const char* buffer, size_t length )
 {
 	return write( *open( file, O_WRONLY | O_APPEND, 0 ), buffer, length );
 }
@@ -73,14 +73,14 @@ void make_window( vfs::filehandle& port_dir )
 		view = resolve_relative_path( *root, STR_LEN( "view" ), cwd );
 	}
 	
-	spew( *resolve_relative_path( *root, STR_LEN( "title" ), cwd ), STR_LEN( "System Console" "\n" ) );
+	splat( *resolve_relative_path( *root, STR_LEN( "title" ), cwd ), STR_LEN( "System Console" "\n" ) );
 	
-	spew( *resolve_relative_path( *root, STR_LEN( "size" ),  cwd ), STR_LEN( "495x272" "\n" ) );
+	splat( *resolve_relative_path( *root, STR_LEN( "size" ),  cwd ), STR_LEN( "495x272" "\n" ) );
 	
 	touch( *window );
 	
-	spew( *resolve_relative_path( *root, STR_LEN( "w/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
-	spew( *resolve_relative_path( *root, STR_LEN( "w/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
+	splat( *resolve_relative_path( *root, STR_LEN( "w/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
+	splat( *resolve_relative_path( *root, STR_LEN( "w/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
 	
 	hardlink( *vfs::resolve_absolute_path( *root, STR_LEN( "/gui/new/scrollframe" ) ), *view );
 	
@@ -94,8 +94,8 @@ void make_window( vfs::filehandle& port_dir )
 	
 	symlink( *resolve_relative_path( *root, STR_LEN( "v/target" ), cwd ), "v/v" );
 	
-	spew( *resolve_relative_path( *root, STR_LEN( "v/vertical"  ), cwd ), STR_LEN( "1" "\n" ) );
-	spew( *resolve_relative_path( *root, STR_LEN( "v/v/padding" ), cwd ), STR_LEN( "4" "\n" ) );
+	splat( *resolve_relative_path( *root, STR_LEN( "v/vertical"  ), cwd ), STR_LEN( "1" "\n" ) );
+	splat( *resolve_relative_path( *root, STR_LEN( "v/v/padding" ), cwd ), STR_LEN( "4" "\n" ) );
 }
 
 static
