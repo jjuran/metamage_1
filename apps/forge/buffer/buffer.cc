@@ -116,9 +116,7 @@ namespace tool
 	{
 		p7::chdir( "/gui/new/port" );
 		
-		p7::splat( p7::open( ".~title", p7::o_wronly | p7::o_trunc ),
-		           title,
-		           strlen( title ) );
+		p7::splat( ".~title", title, strlen( title ) );
 		
 		const short width  = 2 * 4 +  6 * 80 + 15;
 		const short height = 2 * 4 + 11 * 24;
