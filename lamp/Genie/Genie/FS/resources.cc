@@ -334,13 +334,11 @@ void flush_resource( vfs::filehandle* that )
 	
 	const Handle r = GetOrAddResource( resSpec );
 	
-	const size_t size = mac::glue::GetHandleSize( extra.handle );
+	SetHandleSize( r, 0 );
 	
-	SetHandleSize( r, size );
+	HandAndHand( extra.handle, r );
 	
 	Mac::ThrowOSStatus( mac::sys::mem_error() );
-	
-	mempcpy( *r, *extra.handle, size );
 	
 	/*
 		Don't bother throwing exceptions,
