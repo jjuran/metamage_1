@@ -40,7 +40,7 @@ enum
 namespace Genie
 {
 
-static
+static inline
 AEAddressDesc create_Finder_address_AEDesc()
 {
 	const OSType sig = 'MACS';
