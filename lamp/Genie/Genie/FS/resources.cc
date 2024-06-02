@@ -69,6 +69,9 @@
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
 
+#define POD( obj )  (&(obj)), (sizeof (obj))
+
+
 namespace Nitrogen
 {
 	
@@ -367,8 +370,9 @@ vfs::filehandle* new_rsrc_handle( const vfs::node&        file,
 	
 	rsrc_extra& extra = *(rsrc_extra*) result->extra();
 	
-	extra.handle   = h.release();
-	extra.filespec = resFile;
+	extra.handle = h.release();
+	
+	mempcpy( &extra.filespec, POD( resFile ) );
 	
 	return result;
 }
@@ -620,7 +624,7 @@ vfs::node_ptr Get_RsrcFile_FSTree( const vfs::node*     parent,
 	
 	vfs::node* result = new vfs::node( parent, name, mode, methods, sizeof (FSSpec) );
 	
-	*(FSSpec*) result->extra() = file;
+	mempcpy( result->extra(), POD( file ) );
 	
 	return result;
 }
