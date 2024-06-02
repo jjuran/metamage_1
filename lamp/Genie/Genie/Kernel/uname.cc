@@ -52,18 +52,19 @@
 #endif
 
 
+#if defined(_UTSNAME_LENGTH)
+
+static const unsigned kNameLength = _UTSNAME_LENGTH;
+
+#elif defined(_SYS_NAMELEN)
+
+static const unsigned kNameLength = _SYS_NAMELEN;
+
+#endif
+
+
 namespace Genie
 {
-	
-#if defined(_UTSNAME_LENGTH)
-	
-	static const unsigned kNameLength = _UTSNAME_LENGTH;
-	
-#elif defined(_SYS_NAMELEN)
-	
-	static const unsigned kNameLength = _SYS_NAMELEN;
-	
-#endif
 	
 	static void string_copy( char* dest, const char* str, size_t len )
 	{
