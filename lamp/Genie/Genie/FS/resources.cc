@@ -292,25 +292,15 @@ Handle GetOrAddResource( const ResSpec& resSpec )
 	
 	Handle h = Get1Resource( resSpec.type, resSpec.id );
 	
-	if ( ! h )
+	if ( ! h  &&  res_error() == resNotFound  &&  (h = NewHandle( 0 )) )
 	{
-		OSErr err = res_error();
+		AddResource( h, resSpec.type, resSpec.id, NULL );
 		
-		if ( ! err  ||  err == resNotFound )
+		if ( res_error() )
 		{
-			h = NewHandle( 0 );
+			DisposeHandle( h );
 			
-			if ( h )
-			{
-				AddResource( h, resSpec.type, resSpec.id, NULL );
-				
-				if ( res_error() )
-				{
-					DisposeHandle( h );
-					
-					return NULL;
-				}
-			}
+			return NULL;
 		}
 	}
 	
