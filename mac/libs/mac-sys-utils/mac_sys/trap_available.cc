@@ -42,7 +42,7 @@ namespace sys {
 	static inline
 	bool out_of_bounds( unsigned short trap )
 	{
-		return trap & 0x800  &&  (trap & 0x3FF) >= 0x200  &&  fewer_traps();
+		return trap >= 0xAA00  &&  fewer_traps();
 	}
 	
 	static inline
