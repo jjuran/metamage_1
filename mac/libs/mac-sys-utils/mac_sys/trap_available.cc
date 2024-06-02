@@ -8,18 +8,6 @@
 
 #include "mac_sys/trap_available.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <Carbon/Carbon.h>
-#endif
-
-// Mac OS
-#ifdef __MACOS__
-#ifndef __TRAPS__
-#include <Traps.h>
-#endif
-#endif
-
 // mac-sys-utils
 #if ! TARGET_API_MAC_CARBON
 #include "mac_sys/trap_address.hh"
@@ -29,14 +17,21 @@
 namespace mac {
 namespace sys {
 	
+	enum
+	{
+		_InitGraf = 0xA86E,
+		
+		_Unimplemented = 0xA89F,
+	};
+	
 #if ! TARGET_API_MAC_CARBON
 	
 	static inline
 	bool fewer_traps()
 	{
 		return TARGET_CPU_68K  &&
-		       get_trap_address( 0xA86E ) ==
-		       get_trap_address( 0xAA6E );
+		       get_trap_address( _InitGraf          ) ==
+		       get_trap_address( _InitGraf | 0x0200 );
 	}
 	
 	static inline
