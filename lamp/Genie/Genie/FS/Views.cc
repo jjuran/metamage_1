@@ -66,8 +66,14 @@ struct ViewParameters
 	{
 	}
 	
+	~ViewParameters();
+	
 	void swap( ViewParameters& other );
 };
+
+ViewParameters::~ViewParameters()
+{
+}
 
 inline
 void ViewParameters::swap( ViewParameters& other )
