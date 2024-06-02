@@ -4,7 +4,7 @@ my $title = shift;
 
 chdir "/gui/new/port";
 
-sub spew
+sub splat
 {
 	my ( $path, $data ) = @_;
 	
@@ -19,7 +19,7 @@ sub set
 {
 	my ( $path, $data ) = @_;
 	
-	spew( $path, "$data\n" );
+	splat( $path, "$data\n" );
 }
 
 if ( defined $title )
@@ -40,7 +40,7 @@ set "v/.margin-left"   => 10;
 set "v/.margin-right"  => 10;
 set "v/.margin-bottom" => 10;
 
-spew( "window", "" );
+splat( "window", "" );
 
 while (<>)
 {
