@@ -367,7 +367,8 @@ namespace Genie
 		CInfoPBRec  cinfo;
 	};
 	
-	static FSSpec FSMakeFSSpec( const CInfoPBRec& cInfo )
+	static
+	void FSMakeFSSpec( const CInfoPBRec& cInfo, FSSpec& result )
 	{
 		const HFileInfo& hFileInfo = cInfo.hFileInfo;
 		
@@ -378,14 +379,10 @@ namespace Genie
 		const UInt32 parID = exists ? hFileInfo.ioFlParID
 		                            : hFileInfo.ioDirID;
 		
-		FSSpec result;
-		
 		result.vRefNum = vRefNum;
 		result.parID   = parID;
 		
 		mempcpy( result.name, hFileInfo.ioNamePtr, 1 + hFileInfo.ioNamePtr[0] );
-		
-		return result;
 	}
 	
 	static vfs::node_ptr hfs_parent( const vfs::node* that );
@@ -546,7 +543,8 @@ namespace Genie
 		
 		hfs_extra& extra = *(hfs_extra*) result->extra();
 		
-		extra.fsspec = FSMakeFSSpec( cInfo );
+		FSMakeFSSpec( cInfo, extra.fsspec );
+		
 		extra.cinfo  = cInfo;
 		
 		extra.cinfo.hFileInfo.ioNamePtr = extra.fsspec.name;
@@ -629,7 +627,9 @@ namespace Genie
 		                                       mac_name,
 		                                       0 );
 		
-		const FSSpec fsspec = FSMakeFSSpec( cInfo );
+		FSSpec fsspec;
+		
+		FSMakeFSSpec( cInfo, fsspec );
 		
 		const plus::string name = MakeName( fsspec );
 		
