@@ -5,9 +5,6 @@
 
 #include "Genie/FileSignature.hh"
 
-// Standard C++
-#include <algorithm>
-
 // Standard C
 #include <string.h>
 
@@ -123,26 +120,20 @@ const FileSignature gDefaultCreatorForTypeInput[] =
 
 
 static inline
-bool operator==( const ExtensionToTypeRecord& record, const char* extension )
-{
-	return strcmp( record.extension, extension ) == 0;
-}
-
-static inline
-bool operator==( const FileSignature& signature, ::OSType type )
-{
-	return signature.type == type;
-}
-
-static inline
 const ExtensionToTypeRecord* FindExtensionToTypeRecord( const char* extension )
 {
 	const ExtensionToTypeRecord* begin = gExtensionToTypeMappingInput;
 	const ExtensionToTypeRecord* end   = begin + sizeof gExtensionToTypeMappingInput / sizeof gExtensionToTypeMappingInput[0];
 	
-	const ExtensionToTypeRecord* it = std::find( begin, end, extension );
+	for ( const ExtensionToTypeRecord* it = begin;  it != end;  ++it )
+	{
+		if ( strcmp( it->extension, extension ) == 0 )
+		{
+			return it;
+		}
+	}
 	
-	return it != end ? it : NULL;
+	return NULL;
 }
 
 static
@@ -151,9 +142,15 @@ const FileSignature* FindFileSignature( ::OSType type )
 	const FileSignature* begin = gDefaultCreatorForTypeInput;
 	const FileSignature* end   = begin + sizeof gDefaultCreatorForTypeInput / sizeof gDefaultCreatorForTypeInput[0];
 	
-	const FileSignature* it = std::find( begin, end, type );
+	for ( const FileSignature* it = begin;  it != end;  ++it )
+	{
+		if ( it->type == type )
+		{
+			return it;
+		}
+	}
 	
-	return it != end ? it : NULL;
+	return NULL;
 }
 
 
