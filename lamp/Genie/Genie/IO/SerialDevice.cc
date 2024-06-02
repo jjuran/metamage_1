@@ -67,7 +67,7 @@ enum
 	gestaltSerialPortArbitratorExists = 0
 };
 
-static
+static inline
 long serial_bytes_buffered( short refnum )
 {
 #if ! TARGET_API_MAC_CARBON
@@ -227,7 +227,7 @@ bool SerialPortsAreArbitrated()
 	return mac::sys::gestalt_bit_set( gestaltSerialPortArbitratorAttr, gestaltSerialPortArbitratorExists );
 }
 
-static
+static inline
 bool SerialDriverMayBeOpened( const unsigned char* driverName )
 {
 	using mac::sys::is_driver_open;
@@ -442,7 +442,7 @@ vfs::filehandle* fresh_device( const plus::string& portName, bool passive )
 	return new_device( portName, drivers, passive );
 }
 
-static
+static inline
 vfs::filehandle* other_device( vfs::filehandle& other, bool passive )
 {
 	serial_device_extra const* extra = (serial_device_extra*) other.extra();
