@@ -65,7 +65,7 @@ plus::string colons_from_slashes( const unsigned char* mac_name )
 }
 
 
-static
+static inline
 FSVolumeRefNum GetVRefNum( const plus::string& name )
 {
 	OSErr err = bdNamErr;
