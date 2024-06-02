@@ -285,45 +285,6 @@ struct rsrc_extra : Mac_Handle_extra
 };
 
 static
-void flush_resource( vfs::filehandle* that );
-
-static
-void rsrc_cleanup( vfs::filehandle* that )
-{
-	rsrc_extra& extra = *(rsrc_extra*) that->extra();
-	
-	try
-	{
-		flush_resource( that );
-	}
-	catch ( ... )
-	{
-	}
-	
-	::DisposeHandle( extra.handle );
-}
-
-static
-vfs::filehandle* new_rsrc_handle( const vfs::node&        file,
-                                  int                     flags,
-                                  n::owned< N::Handle >&  h,
-                                  const FSSpec&           resFile )
-{
-	vfs::filehandle* result = new vfs::filehandle( &file,
-	                                               flags,
-	                                               &Mac_Handle_methods,
-	                                               sizeof (rsrc_extra),
-	                                               &rsrc_cleanup );
-	
-	rsrc_extra& extra = *(rsrc_extra*) result->extra();
-	
-	extra.handle   = h.release();
-	extra.filespec = resFile;
-	
-	return result;
-}
-
-static
 N::Handle GetOrAddResource( const ResSpec& resSpec )
 {
 	try
@@ -364,6 +325,42 @@ void flush_resource( vfs::filehandle* that )
 	
 	N::ChangedResource( r );
 	N::WriteResource  ( r );
+}
+
+static
+void rsrc_cleanup( vfs::filehandle* that )
+{
+	rsrc_extra& extra = *(rsrc_extra*) that->extra();
+	
+	try
+	{
+		flush_resource( that );
+	}
+	catch ( ... )
+	{
+	}
+	
+	::DisposeHandle( extra.handle );
+}
+
+static
+vfs::filehandle* new_rsrc_handle( const vfs::node&        file,
+                                  int                     flags,
+                                  n::owned< N::Handle >&  h,
+                                  const FSSpec&           resFile )
+{
+	vfs::filehandle* result = new vfs::filehandle( &file,
+	                                               flags,
+	                                               &Mac_Handle_methods,
+	                                               sizeof (rsrc_extra),
+	                                               &rsrc_cleanup );
+	
+	rsrc_extra& extra = *(rsrc_extra*) result->extra();
+	
+	extra.handle   = h.release();
+	extra.filespec = resFile;
+	
+	return result;
 }
 
 
