@@ -21,7 +21,7 @@
 
 // poseven
 #include "poseven/extras/pump.hh"
-#include "poseven/extras/spew.hh"
+#include "poseven/extras/splat.hh"
 #include "poseven/functions/chdir.hh"
 #include "poseven/functions/ftruncate.hh"
 #include "poseven/functions/ioctl.hh"
@@ -116,19 +116,19 @@ namespace tool
 	{
 		p7::chdir( "/gui/new/port" );
 		
-		p7::spew( p7::open( ".~title", p7::o_wronly | p7::o_trunc ),
-		          title,
-		          strlen( title ) );
+		p7::splat( p7::open( ".~title", p7::o_wronly | p7::o_trunc ),
+		           title,
+		           strlen( title ) );
 		
 		const short width  = 2 * 4 +  6 * 80 + 15;
 		const short height = 2 * 4 + 11 * 24;
 		
-		p7::spew( "size", STR_LEN( "503x272" "\n" ) );
+		p7::splat( "size", STR_LEN( "503x272" "\n" ) );
 		
 		p7::utime( "window" );
 		
-		p7::spew( "w/text-font", STR_LEN( "4" "\n" ) );
-		p7::spew( "w/text-size", STR_LEN( "9" "\n" ) );
+		p7::splat( "w/text-font", STR_LEN( "4" "\n" ) );
+		p7::splat( "w/text-size", STR_LEN( "9" "\n" ) );
 		
 		p7::link( "/gui/new/stack",       "view"          );
 		
@@ -138,8 +138,8 @@ namespace tool
 		
 		p7::symlink( "v/v", "v/main/v/target" );
 		
-		p7::spew( "v/main/v/vertical",  STR_LEN( "1" "\n" ) );
-		p7::spew( "v/main/v/v/padding", STR_LEN( "4" "\n" ) );
+		p7::splat( "v/main/v/vertical",  STR_LEN( "1" "\n" ) );
+		p7::splat( "v/main/v/v/padding", STR_LEN( "4" "\n" ) );
 		
 		p7::symlink( "v/main/v/v/v/unlock", "accept" );
 		

@@ -49,7 +49,7 @@
 
 // poseven
 #include "poseven/extras/slurp.hh"
-#include "poseven/extras/spew.hh"
+#include "poseven/extras/splat.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
@@ -334,8 +334,8 @@ namespace tool
 		
 		plus::string inner_script = make_script_from_command( command );
 		
-		p7::spew( p7::open( temp_file_paths[ kScriptFile ], p7::o_wronly ),
-		          inner_script );
+		p7::splat( p7::open( temp_file_paths[ kScriptFile ], p7::o_wronly ),
+		           inner_script );
 		
 		nucleus::string script = MakeToolServerScript( temp_file_paths[ kScriptFile ],
 		                                               temp_file_paths[ kOutputFile ],

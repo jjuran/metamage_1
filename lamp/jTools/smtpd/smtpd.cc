@@ -35,7 +35,7 @@
 
 // poseven
 #include "poseven/extras/fd_reader.hh"
-#include "poseven/extras/spew.hh"
+#include "poseven/extras/splat.hh"
 #include "poseven/functions/mkdir.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
@@ -125,7 +125,7 @@ namespace tool
 	{
 		plus::string output = line + "\n";
 		
-		p7::spew( p7::open( path, p7::o_wronly | p7::o_creat | p7::o_excl ), output );
+		p7::splat( p7::open( path, p7::o_wronly | p7::o_creat | p7::o_excl ), output );
 	}
 	
 	static void CreateDestinationFile( const plus::string& dest_dir_path, const plus::string& dest )
