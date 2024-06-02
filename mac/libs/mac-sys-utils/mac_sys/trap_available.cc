@@ -40,12 +40,6 @@ namespace sys {
 	}
 	
 	static inline
-	bool out_of_bounds( unsigned short trap )
-	{
-		return trap >= 0xAA00  &&  fewer_traps();
-	}
-	
-	static inline
 	UniversalProcPtr unimplemented()
 	{
 		return get_trap_address( _Unimplemented );
@@ -53,7 +47,7 @@ namespace sys {
 	
 	bool trap_available( unsigned short trap )
 	{
-		if ( out_of_bounds( trap ) )
+		if ( trap >= 0xAA00  &&  fewer_traps() )
 		{
 			return false;
 		}
