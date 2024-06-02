@@ -66,7 +66,7 @@ static const unsigned kNameLength = _SYS_NAMELEN;
 namespace Genie
 {
 
-static
+static inline
 void string_copy( char* dest, const char* str, size_t len )
 {
 	ASSERT( len < kNameLength );
