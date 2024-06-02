@@ -103,7 +103,7 @@ namespace Genie
 		return true;
 	}
 	
-	static
+	static inline
 	void install_handlers()
 	{
 		const bool apple_events_present =
