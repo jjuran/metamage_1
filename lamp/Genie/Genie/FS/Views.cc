@@ -69,6 +69,7 @@ struct ViewParameters
 	void swap( ViewParameters& other );
 };
 
+inline
 void ViewParameters::swap( ViewParameters& other )
 {
 	itsDelegate.swap( other.itsDelegate );
@@ -90,13 +91,13 @@ const ViewParameters* find_view( const vfs::node* parent )
 	return gViewParametersMap.find( parent );
 }
 
-static
+static inline
 bool view_exists( const vfs::node* parent )
 {
 	return find_view( parent ) != NULL;
 }
 
-static
+static inline
 void add_view_parameters( const vfs::node*  parent,
                           const vfs::node&  delegate,
                           ViewFactory       factory )
@@ -107,7 +108,7 @@ void add_view_parameters( const vfs::node*  parent,
 	params.itsDelegate = &delegate;
 }
 
-static
+static inline
 void add_view_port_key( const vfs::node* parent, const vfs::node* windowKey )
 {
 	ASSERT( find_view( parent ) != NULL );
@@ -117,7 +118,7 @@ void add_view_port_key( const vfs::node* parent, const vfs::node* windowKey )
 	gViewParametersMap[ parent ].itsWindowKey = windowKey;
 }
 
-static
+static inline
 void DeleteDelegate( vfs::node_ptr& delegate_ref )
 {
 	if ( const vfs::node* delegate = delegate_ref.get() )
@@ -299,7 +300,7 @@ struct view_extra
 };
 
 
-static
+static inline
 Pedestal::View* get_view( const vfs::node* that )
 {
 	ASSERT( that != NULL );
