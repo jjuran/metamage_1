@@ -33,28 +33,27 @@
 #define RELEASE  "0.7.2-alpha.1"
 #define VERSION  "MacRelix"
 
+#ifdef __MC68K__
+	
+	#define HARDWARE_CLASS "m68k"
+	
+#endif
+	
+#ifdef __POWERPC__
+	
+	#define HARDWARE_CLASS "powerpc"
+	
+#endif
+
+#ifdef __i386__
+	
+	#define HARDWARE_CLASS "x86"
+	
+#endif
+
 
 namespace Genie
 {
-	
-	#ifdef __MC68K__
-		
-		#define HARDWARE_CLASS "m68k"
-		
-	#endif
-		
-	#ifdef __POWERPC__
-		
-		#define HARDWARE_CLASS "powerpc"
-		
-	#endif
-	
-	#ifdef __i386__
-		
-		#define HARDWARE_CLASS "x86"
-		
-	#endif
-	
 	
 #if defined(_UTSNAME_LENGTH)
 	
