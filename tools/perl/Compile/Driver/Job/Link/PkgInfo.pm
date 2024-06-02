@@ -12,7 +12,7 @@ use strict;
 *make_ancestor_dirs = \&Compile::Driver::Files::make_ancestor_dirs;
 
 
-sub spew
+sub splat
 {
 	my ( $path, $data ) = @_;
 	
@@ -56,7 +56,7 @@ sub perform
 	
 	make_ancestor_dirs( $dest );
 	
-	spew( $dest, "APPL" . unquote $module->mac_creator );
+	splat( $dest, "APPL" . unquote $module->mac_creator );
 }
 
 1;
