@@ -33,7 +33,7 @@
 namespace Genie
 {
 
-static
+static inline
 void send_signal( Process& process, int signo )
 {
 	if ( signo != 0 )
@@ -42,7 +42,7 @@ void send_signal( Process& process, int signo )
 	}
 }
 
-static
+static inline
 int kill_pid( pid_t pid, int signo )
 {
 	if ( Process* process = FindProcess( pid ) )
@@ -55,7 +55,7 @@ int kill_pid( pid_t pid, int signo )
 	return relix::set_errno( ESRCH );
 }
 
-static
+static inline
 int kill_tid( pid_t tid, int signo )
 {
 	Process& current = current_process();
