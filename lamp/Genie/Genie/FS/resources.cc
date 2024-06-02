@@ -298,24 +298,20 @@ Handle GetOrAddResource( const ResSpec& resSpec )
 		
 		if ( ! err  ||  err == resNotFound )
 		{
-			err = memFullErr;
-			
 			h = NewHandle( 0 );
 			
 			if ( h )
 			{
 				AddResource( h, resSpec.type, resSpec.id, NULL );
 				
-				err = res_error();
-				
-				if ( err )
+				if ( res_error() )
 				{
 					DisposeHandle( h );
+					
+					return NULL;
 				}
 			}
 		}
-		
-		Mac::ThrowOSStatus( err );
 	}
 	
 	return h;
@@ -332,21 +328,22 @@ void flush_resource( vfs::filehandle* that )
 	
 	RdWr_OpenResFile_Scope openResFile( extra.filespec );
 	
-	const Handle r = GetOrAddResource( resSpec );
-	
-	SetHandleSize( r, 0 );
-	
-	HandAndHand( extra.handle, r );
-	
-	if ( ! mac::sys::mem_error() )
+	if ( const Handle r = GetOrAddResource( resSpec ) )
 	{
-		/*
-			Don't bother throwing exceptions,
-			because our only caller ignores them.
-		*/
+		SetHandleSize( r, 0 );
 		
-		ChangedResource( r );
-		WriteResource  ( r );
+		HandAndHand( extra.handle, r );
+		
+		if ( ! mac::sys::mem_error() )
+		{
+			/*
+				Don't bother throwing exceptions,
+				because our only caller ignores them.
+			*/
+			
+			ChangedResource( r );
+			WriteResource  ( r );
+		}
 	}
 }
 
