@@ -338,15 +338,16 @@ void flush_resource( vfs::filehandle* that )
 	
 	HandAndHand( extra.handle, r );
 	
-	Mac::ThrowOSStatus( mac::sys::mem_error() );
-	
-	/*
-		Don't bother throwing exceptions,
-		because our only caller ignores them.
-	*/
-	
-	ChangedResource( r );
-	WriteResource  ( r );
+	if ( ! mac::sys::mem_error() )
+	{
+		/*
+			Don't bother throwing exceptions,
+			because our only caller ignores them.
+		*/
+		
+		ChangedResource( r );
+		WriteResource  ( r );
+	}
 }
 
 static
