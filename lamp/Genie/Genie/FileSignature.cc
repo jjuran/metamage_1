@@ -122,7 +122,7 @@ const FileSignature gDefaultCreatorForTypeInput[] =
 };
 
 
-static
+static inline
 bool operator==( const ExtensionToTypeRecord& record, const char* extension )
 {
 	return strcmp( record.extension, extension ) == 0;
@@ -134,7 +134,7 @@ bool operator==( const FileSignature& signature, ::OSType type )
 	return signature.type == type;
 }
 
-static
+static inline
 const ExtensionToTypeRecord* FindExtensionToTypeRecord( const char* extension )
 {
 	const ExtensionToTypeRecord* begin = gExtensionToTypeMappingInput;
@@ -157,7 +157,7 @@ const FileSignature* FindFileSignature( ::OSType type )
 }
 
 
-static
+static inline
 Mac::FSCreator GetCreatorForType( Mac::FSType type )
 {
 	if ( const FileSignature* it = FindFileSignature( type ) )
