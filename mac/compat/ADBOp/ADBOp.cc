@@ -19,10 +19,12 @@
 #ifndef __PATCHES__
 #include <Patches.h>
 #endif
-#ifndef __TRAPS__
-#include <Traps.h>
-#endif
 
+
+enum
+{
+	_ADBOp = 0xA07C,
+};
 
 pascal OSErr ADBOp( Ptr               refCon,
                     ADBCompletionUPP  completion,
@@ -31,7 +33,7 @@ pascal OSErr ADBOp( Ptr               refCon,
 {
 	ADBOpBlock block = { buffer, (ADBServiceRoutineUPP) completion, refCon };
 	
-	UniversalProcPtr proc = (UniversalProcPtr) NGetTrapAddress( _ADBOp, kOSTrapType );
+	UniversalProcPtr proc = (UniversalProcPtr) GetOSTrapAddress( _ADBOp );
 	
 	ProcInfoType procInfo = kRegisterBased
 	                      | RESULT_SIZE( SIZE_CODE( sizeof (OSErr) ) )
