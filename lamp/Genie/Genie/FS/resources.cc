@@ -26,6 +26,7 @@
 
 // mac-sys-utils
 #include "mac_sys/mem_error.hh"
+#include "mac_sys/res_error.hh"
 
 // mac-rsrc-utils
 #include "mac_rsrc/open_res_file.hh"
@@ -285,21 +286,39 @@ struct rsrc_extra : Mac_Handle_extra
 };
 
 static
-N::Handle GetOrAddResource( const ResSpec& resSpec )
+Handle GetOrAddResource( const ResSpec& resSpec )
 {
-	try
+	using mac::sys::res_error;
+	
+	Handle h = Get1Resource( resSpec.type, resSpec.id );
+	
+	if ( ! h )
 	{
-		return N::Get1Resource( resSpec.type, resSpec.id );
-	}
-	catch ( const Mac::OSStatus& err )
-	{
-		if ( err != resNotFound )
+		OSErr err = res_error();
+		
+		if ( ! err  ||  err == resNotFound )
 		{
-			throw;
+			err = memFullErr;
+			
+			h = NewHandle( 0 );
+			
+			if ( h )
+			{
+				AddResource( h, resSpec.type, resSpec.id, NULL );
+				
+				err = res_error();
+				
+				if ( err )
+				{
+					DisposeHandle( h );
+				}
+			}
 		}
 		
-		return N::AddResource( N::NewHandle( 0 ), resSpec.type, resSpec.id, NULL );
+		Mac::ThrowOSStatus( err );
 	}
+	
+	return h;
 }
 
 static
@@ -313,7 +332,7 @@ void flush_resource( vfs::filehandle* that )
 	
 	RdWr_OpenResFile_Scope openResFile( extra.filespec );
 	
-	const N::Handle r = GetOrAddResource( resSpec );
+	const Handle r = GetOrAddResource( resSpec );
 	
 	const size_t size = mac::glue::GetHandleSize( extra.handle );
 	
@@ -321,10 +340,15 @@ void flush_resource( vfs::filehandle* that )
 	
 	Mac::ThrowOSStatus( mac::sys::mem_error() );
 	
-	mempcpy( *r.Get(), *extra.handle, size );
+	mempcpy( *r, *extra.handle, size );
 	
-	N::ChangedResource( r );
-	N::WriteResource  ( r );
+	/*
+		Don't bother throwing exceptions,
+		because our only caller ignores them.
+	*/
+	
+	ChangedResource( r );
+	WriteResource  ( r );
 }
 
 static
