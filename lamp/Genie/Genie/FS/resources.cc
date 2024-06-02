@@ -285,7 +285,7 @@ struct rsrc_extra : Mac_Handle_extra
 	FSSpec filespec;
 };
 
-static
+static inline
 Handle GetOrAddResource( const ResSpec& resSpec )
 {
 	using mac::sys::res_error;
