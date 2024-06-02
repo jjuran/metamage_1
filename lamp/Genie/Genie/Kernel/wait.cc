@@ -82,7 +82,7 @@ void* check_process( void* param, pid_t pid, Process& process )
 	return NULL;
 }
 
-static
+static inline
 Process* CheckAny( pid_t ppid, pid_t pid, bool match_untraced )
 {
 	pid_t pgid = pid == -1 ? 0
@@ -136,7 +136,7 @@ Process* CheckPID( pid_t ppid, pid_t pid, bool match_untraced )
 	return NULL;
 }
 
-static
+static inline
 Process* CheckTID( pid_t caller, pid_t tid )
 {
 	Process* thread = FindProcess( tid );
