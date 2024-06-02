@@ -42,158 +42,165 @@
 
 namespace Genie
 {
+
+namespace N = Nitrogen;
+
+
+static inline
+plus::string slashes_from_colons( const plus::string& unix_name )
+{
+	return plus::replaced_string( unix_name, ':', '/' );
+}
+
+static inline
+plus::string colons_from_slashes( const plus::string& mac_name )
+{
+	return plus::replaced_string( mac_name, '/', ':' );
+}
+
+static inline
+plus::string colons_from_slashes( const unsigned char* mac_name )
+{
+	return colons_from_slashes( plus::string( mac_name ) );
+}
+
+
+static
+FSVolumeRefNum GetVRefNum( const plus::string& name )
+{
+	OSErr err = bdNamErr;
 	
-	namespace N = Nitrogen;
+	HParamBlockRec pb;
 	
+	N::Str255 name_copy = name;
 	
-	static inline plus::string slashes_from_colons( const plus::string& unix_name )
+	UInt8 len = name_copy[ 0 ];
+	
+	if ( len <= 27 )
 	{
-		return plus::replaced_string( unix_name, ':', '/' );
+		name_copy[ ++len ] = ':';
+		
+		name_copy[ 0 ] = len;
+		
+		pb.volumeParam.ioVRefNum  = 0;
+		pb.volumeParam.ioNamePtr  = name_copy;
+		pb.volumeParam.ioVolIndex = -1;  // use ioNamePtr/ioVRefNum combo
+		
+		err = ::PBHGetVInfoSync( &pb );
 	}
 	
-	static inline plus::string colons_from_slashes( const plus::string& mac_name )
-	{
-		return plus::replaced_string( mac_name, '/', ':' );
-	}
+	Mac::ThrowOSStatus( err );
 	
-	static inline plus::string colons_from_slashes( const unsigned char* mac_name )
-	{
-		return colons_from_slashes( plus::string( mac_name ) );
-	}
+	return pb.volumeParam.ioVRefNum;
+}
+
+
+static
+vfs::node_ptr volumes_link_resolve( const vfs::node* that )
+{
+	// Convert UTF-8 to MacRoman, ':' to '/'
+	plus::string mac_name = slashes_from_colons( plus::mac_from_utf8( that->name() ) );
 	
+	const FSVolumeRefNum vRefNum = GetVRefNum( mac_name );
 	
-	static
-	FSVolumeRefNum GetVRefNum( const plus::string& name )
+	return node_from_dirID( vRefNum, fsRtDirID );
+}
+
+static const vfs::link_method_set volumes_link_link_methods =
+{
+	NULL,
+	&volumes_link_resolve
+};
+
+static const vfs::node_method_set volumes_link_methods =
+{
+	NULL,
+	NULL,
+	&volumes_link_link_methods
+};
+
+
+static
+vfs::node_ptr volumes_lookup( const vfs::node*     that,
+                                     const plus::string&  name,
+                                     const vfs::node*     parent )
+{
+	return new vfs::node( parent,
+	                      name,
+	                      S_IFLNK | 0777,
+	                      &volumes_link_methods );
+}
+
+static
+void volumes_listdir( const vfs::node*    that,
+                      vfs::dir_contents&  cache )
+{
+	for ( int i = 1;  true;  ++i )
 	{
-		OSErr err = bdNamErr;
+		Str27 mac_name = "\p";
 		
 		HParamBlockRec pb;
 		
-		N::Str255 name_copy = name;
+		pb.volumeParam.ioNamePtr  = mac_name;
+		pb.volumeParam.ioVRefNum  = 0;
+		pb.volumeParam.ioVolIndex = i;
 		
-		UInt8 len = name_copy[ 0 ];
+		const OSErr err = ::PBHGetVInfoSync( &pb );
 		
-		if ( len <= 27 )
+		if ( err == nsvErr )
 		{
-			name_copy[ ++len ] = ':';
-			
-			name_copy[ 0 ] = len;
-			
-			pb.volumeParam.ioVRefNum  = 0;
-			pb.volumeParam.ioNamePtr  = name_copy;
-			pb.volumeParam.ioVolIndex = -1;  // use ioNamePtr/ioVRefNum combo
-			
-			err = ::PBHGetVInfoSync( &pb );
+			break;
 		}
 		
 		Mac::ThrowOSStatus( err );
 		
-		return pb.volumeParam.ioVRefNum;
-	}
-	
-	
-	static vfs::node_ptr volumes_link_resolve( const vfs::node* that )
-	{
-		// Convert UTF-8 to MacRoman, ':' to '/'
-		plus::string mac_name = slashes_from_colons( plus::mac_from_utf8( that->name() ) );
+		const ino_t inode = -pb.volumeParam.ioVRefNum;
 		
-		const FSVolumeRefNum vRefNum = GetVRefNum( mac_name );
+		const plus::string name = plus::utf8_from_mac( colons_from_slashes( mac_name ) );
 		
-		return node_from_dirID( vRefNum, fsRtDirID );
+		cache.push_back( vfs::dir_entry( inode, name ) );
 	}
-	
-	static const vfs::link_method_set volumes_link_link_methods =
-	{
-		NULL,
-		&volumes_link_resolve
-	};
-	
-	static const vfs::node_method_set volumes_link_methods =
-	{
-		NULL,
-		NULL,
-		&volumes_link_link_methods
-	};
-	
-	
-	static vfs::node_ptr volumes_lookup( const vfs::node*     that,
-	                                     const plus::string&  name,
-	                                     const vfs::node*     parent )
-	{
-		return new vfs::node( parent,
-		                      name,
-		                      S_IFLNK | 0777,
-		                      &volumes_link_methods );
-	}
-	
-	static void volumes_listdir( const vfs::node*    that,
-	                             vfs::dir_contents&  cache )
-	{
-		for ( int i = 1;  true;  ++i )
-		{
-			Str27 mac_name = "\p";
-			
-			HParamBlockRec pb;
-			
-			pb.volumeParam.ioNamePtr  = mac_name;
-			pb.volumeParam.ioVRefNum  = 0;
-			pb.volumeParam.ioVolIndex = i;
-			
-			const OSErr err = ::PBHGetVInfoSync( &pb );
-			
-			if ( err == nsvErr )
-			{
-				break;
-			}
-			
-			Mac::ThrowOSStatus( err );
-			
-			const ino_t inode = -pb.volumeParam.ioVRefNum;
-			
-			const plus::string name = plus::utf8_from_mac( colons_from_slashes( mac_name ) );
-			
-			cache.push_back( vfs::dir_entry( inode, name ) );
-		}
-	}
-	
-	
-	static ino_t volumes_inode( const vfs::node* that )
-	{
-		return fsRtParID;
-	}
-	
-	static const vfs::dir_method_set volumes_dir_methods =
-	{
-		&volumes_lookup,
-		&volumes_listdir
-	};
-	
-	static const vfs::misc_method_set volumes_misc_methods =
-	{
-		NULL,
-		NULL,
-		&volumes_inode
-	};
-	
-	static const vfs::node_method_set volumes_methods =
-	{
-		NULL,
-		NULL,
-		NULL,
-		&volumes_dir_methods,
-		NULL,
-		&volumes_misc_methods
-	};
-	
-	
-	vfs::node_ptr New_FSTree_Volumes( const vfs::node*     parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
-	{
-		return new vfs::node( parent,
-		                      name,
-		                      S_IFDIR | 0700,
-		                      &volumes_methods );
-	}
-	
+}
+
+
+static
+ino_t volumes_inode( const vfs::node* that )
+{
+	return fsRtParID;
+}
+
+static const vfs::dir_method_set volumes_dir_methods =
+{
+	&volumes_lookup,
+	&volumes_listdir
+};
+
+static const vfs::misc_method_set volumes_misc_methods =
+{
+	NULL,
+	NULL,
+	&volumes_inode
+};
+
+static const vfs::node_method_set volumes_methods =
+{
+	NULL,
+	NULL,
+	NULL,
+	&volumes_dir_methods,
+	NULL,
+	&volumes_misc_methods
+};
+
+
+vfs::node_ptr New_FSTree_Volumes( const vfs::node*     parent,
+                                  const plus::string&  name,
+                                  const void*          args )
+{
+	return new vfs::node( parent,
+	                      name,
+	                      S_IFDIR | 0700,
+	                      &volumes_methods );
+}
+
 }
