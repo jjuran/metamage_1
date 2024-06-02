@@ -128,6 +128,9 @@
 #include "Genie/Utilities/FinderSync.hh"
 
 
+#define POD( obj )  (&(obj)), (sizeof (obj))
+
+
 namespace Genie
 {
 	
@@ -545,7 +548,7 @@ namespace Genie
 		
 		FSMakeFSSpec( cInfo, extra.fsspec );
 		
-		extra.cinfo  = cInfo;
+		mempcpy( &extra.cinfo, POD( cInfo ) );
 		
 		extra.cinfo.hFileInfo.ioNamePtr = extra.fsspec.name;
 		
@@ -1370,8 +1373,9 @@ namespace Genie
 		
 		IterateIntoCache_CInfoPBRec pb;
 		
-		pb.task  = relix::current_thread().get_task();
-		pb.cInfo = extra.cinfo;
+		pb.task = relix::current_thread().get_task();
+		
+		mempcpy( &pb.cInfo, POD( extra.cinfo ) );
 		
 		IterateFilesIntoCache( pb, cache );
 	}
