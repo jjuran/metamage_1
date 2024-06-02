@@ -195,7 +195,7 @@ bool is_front_process()
 	return mac::sys::is_front_process( mac::sys::current_process() );
 }
 
-static
+static inline
 void CenterWindowRect( Rect& bounds )
 {
 	// Pre-conditions:  bounds is set to { 0, 0, v, h }
@@ -214,7 +214,7 @@ void CenterWindowRect( Rect& bounds )
 }
 
 
-static
+static inline
 bool Disconnect_Window_Terminal( vfs::filehandle*& h )
 {
 	if ( h != NULL )
@@ -293,7 +293,7 @@ void WindowResized( WindowRef window )
 }
 
 
-static
+static inline
 bool port_is_locked( const vfs::node* key )
 {
 	return gWindowParametersMap[ key ].itIsLocked;
@@ -520,7 +520,7 @@ WindowRef GetWindowRef( const vfs::node* key )
 	return NULL;
 }
 
-static
+static inline
 void FocusViewInWindow( Ped::View& view, const vfs::node* window_key )
 {
 	if ( WindowRef window = GetWindowRef( window_key ) )
@@ -534,7 +534,7 @@ void FocusViewInWindow( Ped::View& view, const vfs::node* window_key )
 	}
 }
 
-static
+static inline
 void BlurViewInWindow( Ped::View& view, const vfs::node* window_key )
 {
 	if ( WindowRef window = GetWindowRef( window_key ) )
