@@ -15,16 +15,23 @@
 #include <Files.h>
 #endif
 
+// more-libc
+#include "more/string.h"
+
 // mac-file-utils
 #include "mac_file/make_FSSpec.hh"
 #include "mac_file/parent_directory.hh"
 
-// plus
-#include "plus/var_string.hh"
-
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
+
+struct path_component
+{
+	const path_component*  next;
+	const Byte*            name;
+	size_t                 size;
+};
 
 static inline
 bool is_error( const FSSpec& file )
@@ -38,7 +45,8 @@ long error( const FSSpec& file )
 	return file.parID;
 }
 
-static plus::string GetMacPathname_Internal( const FSSpec& file )
+static
+plus::string GetMacPathname( const FSSpec& file, const path_component* link )
 {
 	// make_FSSpec() may return errors, so check here.
 	
@@ -47,43 +55,57 @@ static plus::string GetMacPathname_Internal( const FSSpec& file )
 		Mac::ThrowOSStatus( error( file ) );
 	}
 	
-	const plus::string filename( file.name );
+	path_component node = { link, file.name, file.name[ 0 ] };
 	
-	if ( file.parID == fsRtParID )
+	if ( link )
 	{
-		return filename;
+		node.size += link->size + 1;
 	}
 	
-	plus::var_string pathname = GetMacPathname( mac::file::parent_directory( file ) ).move();
+	if ( file.parID != fsRtParID )
+	{
+		mac::types::VRefNum_DirID dir = mac::file::parent_directory( file );
+		
+		return GetMacPathname( mac::file::make_FSSpec( dir ), &node );
+	}
 	
-	pathname += filename;
+	plus::string result;
 	
-	return move( pathname );
+	char* p = result.reset( node.size );
+	
+	link = &node;
+	
+	goto start;
+	
+	do
+	{
+		*p++ = ':';
+		
+	start:
+		
+		const Byte* q = link->name;
+		
+		p = (char*) mempcpy( p, q + 1, q[ 0 ] );
+		
+		link = link->next;
+	}
+	while ( link != NULL );
+	
+	return result;
 }
 
 plus::string GetMacPathname( const mac::types::VRefNum_DirID& dir )
 {
-	plus::var_string pathname = GetMacPathname_Internal( mac::file::make_FSSpec( dir ) ).move();
-	
-	pathname += ':';
-	
-	return move( pathname );
+	return GetMacPathname( mac::file::make_FSSpec( dir ), NULL );
 }
 
 plus::string GetMacPathname( const FSSpec& file )
 {
-	plus::string pathname = GetMacPathname_Internal( file );
-	
 	bool needsTrailingColon = file.parID == fsRtParID;
 	
-	if ( needsTrailingColon )
-	{
-		plus::var_string volume_name = move( pathname );
-		
-		volume_name += ':';
-		
-		pathname = move( volume_name );
-	}
+	const path_component node = {};
 	
-	return pathname;
+	const path_component* link = needsTrailingColon ? &node : NULL;
+	
+	return GetMacPathname( file, link );
 }
