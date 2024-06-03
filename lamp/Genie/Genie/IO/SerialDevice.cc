@@ -12,6 +12,9 @@
 
 // Mac OS
 #if ! TARGET_API_MAC_CARBON
+#ifndef __DEVICES__
+#include <Devices.h>
+#endif
 #ifndef __SERIAL__
 #include <Serial.h>
 #endif
@@ -43,12 +46,8 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
+#include "Mac/Devices/Types/DriverRefNum.hh"
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
-
-// ClassicToolbox
-#if !TARGET_API_MAC_CARBON
-#include "ClassicToolbox/Devices.hh"
-#endif
 
 // vfs
 #include "vfs/enum/poll_result.hh"
@@ -330,8 +329,6 @@ ssize_t serial_read( vfs::filehandle* that, char* buffer, size_t n )
 	
 #if ! TARGET_API_MAC_CARBON
 	
-	namespace N = Nitrogen;
-	
 	const Mac::DriverRefNum input = extra.drivers.get().input();
 	
 	while ( true )
@@ -354,7 +351,16 @@ ssize_t serial_read( vfs::filehandle* that, char* buffer, size_t n )
 		relix::try_again( is_nonblocking( *that ) );
 	}
 	
-	return N::Read( input, buffer, n );
+	ParamBlockRec pb;
+	IOParam& io = pb.ioParam;
+	
+	io.ioRefNum = input;
+	io.ioBuffer = buffer;
+	io.ioReqCount = n;
+	
+	Mac::ThrowOSStatus( ::PBReadSync( &pb ) );
+	
+	return io.ioActCount;
 	
 #endif
 	
@@ -368,8 +374,6 @@ ssize_t serial_write( vfs::filehandle* that, const char* buffer, size_t n )
 	
 #if ! TARGET_API_MAC_CARBON
 	
-	namespace N = Nitrogen;
-	
 	const Mac::DriverRefNum output = extra.drivers.get().output();
 	
 	while ( preempted( extra ) )
@@ -377,7 +381,16 @@ ssize_t serial_write( vfs::filehandle* that, const char* buffer, size_t n )
 		relix::try_again( is_nonblocking( *that ) );
 	}
 	
-	return N::Write( output, buffer, n );
+	ParamBlockRec pb;
+	IOParam& io = pb.ioParam;
+	
+	io.ioRefNum = output;
+	io.ioBuffer = const_cast< char* >( buffer );
+	io.ioReqCount = n;
+	
+	Mac::ThrowOSStatus( ::PBWriteSync( &pb ) );
+	
+	return io.ioActCount;
 	
 #endif
 	
