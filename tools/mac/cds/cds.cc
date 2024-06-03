@@ -16,11 +16,6 @@
 // poseven
 #include "poseven/functions/write.hh"
 
-// Nitrogen Extras / ClassicToolbox
-#ifndef CLASSICTOOLBOX_DEVICES_HH
-#include "ClassicToolbox/Devices.hh"
-#endif
-
 // MacCDROM
 #include "MacCDROM/Audio.hh"
 
@@ -35,7 +30,6 @@ namespace tool
 	
 #if !TARGET_API_MAC_CARBON
 	
-	namespace N = Nitrogen;
 	namespace CD = MacCDROM;
 	
 	
