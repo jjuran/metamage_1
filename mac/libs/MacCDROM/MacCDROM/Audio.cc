@@ -9,6 +9,11 @@
 #include "MacCDROM/Audio.hh"
 #endif
 
+// Mac OS
+#ifndef __DEVICES__
+#include <Devices.h>
+#endif
+
 // Standard C
 #include <string.h>
 
@@ -20,10 +25,8 @@
 // Debug
 #include "debug/assert.hh"
 
-// Nitrogen Extras / ClassicToolbox
-#ifndef CLASSICTOOLBOX_DEVICES_HH
-#include "ClassicToolbox/Devices.hh"
-#endif
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // MacCDROM
 #ifdef __MACOS__
@@ -33,8 +36,6 @@
 
 namespace MacCDROM
 {
-	
-	namespace N = Nitrogen;
 	
 #if CALL_NOT_IN_CARBON
 	
@@ -169,6 +170,12 @@ namespace MacCDROM
 		memset( &pb, 0, sizeof pb );
 	}
 	
+	static
+	void PBControlSync( AudioCDControlParameterBlock& pb )
+	{
+		Mac::ThrowOSStatus( ::PBControlSync( (ParamBlockRec*) &pb ) );
+	}
+	
 	CDROMTableOfContents ReadTOC( const CDROMDrive& drive )
 	{
 		CDROMTableOfContents toc;
@@ -187,7 +194,7 @@ namespace MacCDROM
 		//       * last track of last session
 		
 		pb.ReadTOC.xferCode = 1;
-		N::PBControlSync( (ParamBlockRec&)pb );
+		PBControlSync( pb );
 		
 		int firstTrack = DecodeBCD( pb.ReadTOC.type1.firstTrack );
 		toc.lastTrack  = DecodeBCD( pb.ReadTOC.type1.lastTrack  );
@@ -208,7 +215,7 @@ namespace MacCDROM
 		
 		pb.ReadTOC.xferCode = 4;
 		pb.ReadTOC.type4.bufPtr = tocBuffer;
-		N::PBControlSync( (ParamBlockRec&)pb );
+		PBControlSync( pb );
 		
 		typedef TOCEntry RawEntry;
 		
@@ -241,7 +248,7 @@ namespace MacCDROM
 		{
 			// need to get the leadout of the last session
 			pb.ReadTOC.xferCode = 2;
-			N::PBControlSync( (ParamBlockRec&)pb );
+			PBControlSync( pb );
 			
 			toc.leadOut = CountFramesBCD( pb.ReadTOC.type2.min,
 			                              pb.ReadTOC.type2.sec,
@@ -262,7 +269,7 @@ namespace MacCDROM
 		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDReadTheQSubcode;
 		
-		N::PBControlSync( (ParamBlockRec&)pb );
+		PBControlSync( pb );
 		
 		ReadTheQSubcode_Result q;
 		
@@ -301,7 +308,7 @@ namespace MacCDROM
 		pb.AudioTrackSearch.startPlaying           = startPlaying;
 		pb.AudioTrackSearch.playMode               = playMode;
 		
-		N::PBControlSync( (ParamBlockRec&)pb );
+		PBControlSync( pb );
 	}
 	
 	void AudioTrackSearch( const CDROMDrive&  drive,
@@ -336,7 +343,7 @@ namespace MacCDROM
 		pb.AudioPlay.isStop = stopping;
 		pb.AudioPlay.playMode = playMode;
 		
-		N::PBControlSync( (ParamBlockRec&)pb );
+		PBControlSync( pb );
 	}
 	
 	void AudioPlayAtTime( const CDROMDrive&  drive,
@@ -376,7 +383,7 @@ namespace MacCDROM
 		
 		pb.AudioPause.pausing = pausing;
 		
-		N::PBControlSync( (ParamBlockRec&)pb );
+		PBControlSync( pb );
 	}
 	
 	void AudioStop( const CDROMDrive& drive )
@@ -393,7 +400,7 @@ namespace MacCDROM
 		pb.AudioStop.opticalPositioningType = 0;
 		pb.AudioStop.address                = 0;
 		
-		N::PBControlSync( (ParamBlockRec&)pb );
+		PBControlSync( pb );
 	}
 	
 	void AudioStopAtTrack( const CDROMDrive& drive, TrackNumber track )
@@ -410,7 +417,7 @@ namespace MacCDROM
 		pb.AudioStop.opticalPositioningType = kOpticalPositioningTrackNumberBCD;
 		pb.AudioStop.address                = EncodeBCD( track );
 		
-		N::PBControlSync( (ParamBlockRec&)pb );
+		PBControlSync( pb );
 	}
 	
 	AudioStatus_Result AudioStatus( const CDROMDrive& drive )
@@ -424,7 +431,7 @@ namespace MacCDROM
 		pb.ioCRefNum = drive.dRefNum;
 		pb.csCode = kAppleCDAudioStatus;
 		
-		N::PBControlSync( (ParamBlockRec&)pb );
+		PBControlSync( pb );
 		
 		AudioStatus_Result result;
 		
