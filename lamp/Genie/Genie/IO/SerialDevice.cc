@@ -46,7 +46,6 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Mac/Devices/Types/DriverRefNum.hh"
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // vfs
@@ -108,10 +107,8 @@ namespace Genie
 				::CloseDriver( its_output_refnum );
 			}
 			
-			typedef Mac::DriverRefNum MacType;
-			
-			MacType output() const  { return MacType( its_output_refnum ); }
-			MacType input () const  { return MacType( its_input_refnum  ); }
+			short output() const  { return its_output_refnum; }
+			short input () const  { return its_input_refnum;  }
 			
 		#endif
 			
@@ -305,7 +302,7 @@ unsigned serial_poll( vfs::filehandle* that )
 	
 #if ! TARGET_API_MAC_CARBON
 	
-	const Mac::DriverRefNum input = extra.drivers.get().input();
+	const DriverRefNum input = extra.drivers.get().input();
 	
 	bool unblocked = ! preempted( extra );
 	
@@ -329,7 +326,7 @@ ssize_t serial_read( vfs::filehandle* that, char* buffer, size_t n )
 	
 #if ! TARGET_API_MAC_CARBON
 	
-	const Mac::DriverRefNum input = extra.drivers.get().input();
+	const DriverRefNum input = extra.drivers.get().input();
 	
 	while ( true )
 	{
@@ -374,7 +371,7 @@ ssize_t serial_write( vfs::filehandle* that, const char* buffer, size_t n )
 	
 #if ! TARGET_API_MAC_CARBON
 	
-	const Mac::DriverRefNum output = extra.drivers.get().output();
+	const DriverRefNum output = extra.drivers.get().output();
 	
 	while ( preempted( extra ) )
 	{
@@ -441,7 +438,7 @@ vfs::filehandle* fresh_device( const plus::string& portName, bool passive )
 	
 	static SerShk handshaking;
 	
-	const Mac::DriverRefNum output = drivers.get().output();
+	const DriverRefNum output = drivers.get().output();
 	
 	OSErr err;
 	
