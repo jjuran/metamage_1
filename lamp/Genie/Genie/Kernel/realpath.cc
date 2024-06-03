@@ -150,9 +150,11 @@ ssize_t _realpathat( int dirfd, const char* path, char* p, size_t n, int flags )
 			resolved = plus::utf8_from_mac( resolved );
 		}
 		
-		const bool too_big = resolved.size() > n;
+		const size_t resolved_size = resolved.size();
 		
-		const size_t bytes_copied = min( n, resolved.size() );
+		const bool too_big = resolved_size > n;
+		
+		const size_t bytes_copied = min( n, resolved_size );
 		
 		mempcpy( p, resolved.data(), bytes_copied );
 		
@@ -161,7 +163,7 @@ ssize_t _realpathat( int dirfd, const char* path, char* p, size_t n, int flags )
 			errno = ERANGE;
 			
 			// Return the bitwise inverse of the data size.
-			return ~resolved.size();
+			return ~resolved_size;
 		}
 		
 		return bytes_copied;
