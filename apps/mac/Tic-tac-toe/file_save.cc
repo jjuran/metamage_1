@@ -80,13 +80,32 @@ OSErr create_FSRef( const FSRef&  parent,
 	
 	FSCatalogInfoBitmap whichInfo = kFSCatInfoFinderInfo;
 	
-	return FSCreateFileUnicode( &parent,
-	                            length,
-	                            buffer,
-	                            whichInfo,
-	                            &info,
-	                            result,
-	                            NULL );
+	OSErr err = FSCreateFileUnicode( &parent,
+	                                 length,
+	                                 buffer,
+	                                 whichInfo,
+	                                 &info,
+	                                 result,
+	                                 NULL );
+	
+	/*
+		In the event that a file already exists, return dupFNErr
+		as we would have but also populate the output parameter.
+	*/
+	
+	if ( err == dupFNErr )
+	{
+		const TextEncoding hint = kTextEncodingUnknown;
+		
+		err = FSMakeFSRefUnicode( &parent, length, buffer, hint, result );
+		
+		if ( err == noErr )
+		{
+			return dupFNErr;
+		}
+	}
+	
+	return err;
 }
 
 static
