@@ -5,18 +5,39 @@
 
 #include "file_save.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
+
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
+#include "mac_sys/res_error.hh"
 
 // mac-file-utils
 #include "mac_file/file_traits.hh"
+#include "mac_file/Finder_info.hh"
 #include "mac_file/open_data_fork.hh"
+
+// mac-rsrc-utils
+#include "mac_rsrc/create_res_file.hh"
+#include "mac_rsrc/open_res_file.hh"
 
 // mac-app-utils
 #include "mac_app/file_save_dialog.hh"
 
+// tictactoe-logic
+#include "tictactoe.hh"
+
 // Tic-tac-toe
+#include "custom_icons.hh"
 #include "document.hh"
+#include "set_custom_icon.hh"
 #include "state.hh"
 #include "window.hh"
 
@@ -45,6 +66,50 @@ static inline
 void my_memcpy( void* dst, const void* src, size_t n )
 {
 	BlockMoveData( src, dst, n );
+}
+
+template < class File >
+static inline
+void set_custom_icon_flag( const File& file )
+{
+	using namespace mac::file;
+	
+	typedef typename file_traits< File >::FileInfo FileInfo;
+	
+	FileInfo info;  // either FInfo or FSCatalogInfo
+	
+	if ( get_Finder_info( file, info ) == noErr )
+	{
+		UInt16& flags = Finder_flags( info );
+		
+		if ( (flags & kHasCustomIcon) == 0 )
+		{
+			flags |= kHasCustomIcon;
+			
+			set_Finder_info( file, info );
+		}
+	}
+}
+
+template < class File >
+static
+void set_custom_file_icon( const File& file, const Byte* data, Size size )
+{
+	using namespace mac::rsrc;
+	
+	create_res_file( file );
+	
+	short resfile = open_res_file( file, fsRdWrPerm );
+	
+	if ( resfile > 0 )
+	{
+		if ( set_custom_icon( data, size ) )
+		{
+			set_custom_icon_flag( file );
+		}
+		
+		CloseResFile( resfile );
+	}
 }
 
 template < class traits >
@@ -160,6 +225,8 @@ long FSRef_saver( const FSRef& parent, CFStringRef name )
 	if ( err == noErr )
 	{
 		my_memcpy( &global_document_file< FSRef >::value, POD( file ) );
+		
+		set_custom_file_icon( file, game, size );
 	}
 	
 	return err;
@@ -189,6 +256,8 @@ long FSSpec_saver( const FSSpec& file )
 	if ( err == noErr )
 	{
 		my_memcpy( &global_document_file< FSSpec >::value, POD( file ) );
+		
+		set_custom_file_icon( file, game, size );
 	}
 	
 	return err;
@@ -228,6 +297,8 @@ long HFS_file_saver( short vRefNum, long dirID, const Byte* name )
 		file.parID   = dirID;
 		
 		my_memcpy( file.name, name, sizeof file.name );
+		
+		set_custom_file_icon( file, game, size );
 	}
 	
 	return err;
@@ -249,6 +320,8 @@ void file_save()
 	
 	if ( write_and_close_stream< traits >( refnum, game, size ) == noErr )
 	{
+		set_custom_file_icon( file, game, size );
+		
 		document_modified = false;
 	}
 }
