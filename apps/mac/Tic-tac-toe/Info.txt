@@ -4,7 +4,7 @@ CFBundleName:        "Tic-tac-toe"
 CFBundlePackageType: 'APPL'
 CFBundleSignature:   'XvO#'
 CFBundleGetInfoString: "Copyright 2018-2024 Josh Juran"
-CFBundleShortVersionString: "0.2.1"
+CFBundleShortVersionString: "0.2.2"
 CFBundleDocumentTypes:
 [
 	[

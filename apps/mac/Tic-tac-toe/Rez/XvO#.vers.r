@@ -6,7 +6,7 @@
 #define MINOR 2
 #define POINT 1
 
-#define VERSION  "0.2.1"
+#define VERSION  "0.2.2"
 
 type 'XvO#' as 'STR ';
 
