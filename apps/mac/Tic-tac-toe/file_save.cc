@@ -113,7 +113,9 @@ FSIORefNum FSRef_opener( const FSRef& parent, CFStringRef name )
 {
 	FSRef file;
 	
-	if ( OSErr err = create_FSRef( parent, name, creator, doctype, &file ) )
+	OSErr err = create_FSRef( parent, name, creator, doctype, &file );
+	
+	if ( err != noErr  &&  err != dupFNErr )
 	{
 		return err;
 	}
@@ -132,7 +134,9 @@ long FSRef_saver( const FSRef& parent, CFStringRef name )
 static
 FSIORefNum FSSpec_opener( const FSSpec& file )
 {
-	if ( OSErr err = FSpCreate( &file, creator, doctype, 0 ) )
+	OSErr err = FSpCreate( &file, creator, doctype, 0 );
+	
+	if ( err != noErr  &&  err != dupFNErr )
 	{
 		return err;
 	}
@@ -151,7 +155,9 @@ long FSSpec_saver( const FSSpec& file )
 static
 FSIORefNum HFS_opener( short vRefNum, long dirID, const Byte* name )
 {
-	if ( OSErr err = HCreate( vRefNum, dirID, name, creator, doctype ) )
+	OSErr err = HCreate( vRefNum, dirID, name, creator, doctype );
+	
+	if ( err != noErr  &&  err != dupFNErr )
 	{
 		return err;
 	}
