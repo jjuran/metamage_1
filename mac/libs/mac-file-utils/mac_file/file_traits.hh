@@ -36,6 +36,7 @@ template <>
 struct file_traits< FSSpec >
 {
 	typedef FSSpec File;
+	typedef FInfo  FileInfo;
 	typedef SInt32 file_size_t;
 	
 	typedef ConstStr255Param Name;
@@ -77,8 +78,9 @@ struct file_traits< FSSpec >
 template <>
 struct file_traits< FSRef >
 {
-	typedef FSRef  File;
-	typedef SInt64 file_size_t;
+	typedef FSRef         File;
+	typedef FSCatalogInfo FileInfo;
+	typedef SInt64        file_size_t;
 	
 	typedef HFSUniStr255 Name;
 	
