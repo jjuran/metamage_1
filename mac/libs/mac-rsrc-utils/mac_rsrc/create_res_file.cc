@@ -76,5 +76,22 @@ OSErr create_res_file( const FSSpec& file )
 	return 0;
 }
 
+OSErr create_res_file( const FSRef& file )
+{
+	FSRef         parent;
+	HFSUniStr255  name;
+	
+	OSErr err = FSGetCatalogInfo( &file, 0, NULL, &name, NULL, &parent );
+	
+	if ( err == noErr )
+	{
+		FSCreateResFile( &parent, name.length, name.unicode, 0, 0, 0, 0 );
+		
+		err = mac::sys::res_error();
+	}
+	
+	return err;
+}
+
 }
 }
