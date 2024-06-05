@@ -279,6 +279,38 @@ const rsrc_data* get_data( const rsrc_map_header& map, const rsrc_header& rsrc )
 }
 
 static
+void CreateResFile_handler( ConstStr255Param name : __A0, short vRefNum : __D0 )
+{
+	OSErr err;
+	
+	ERROR = "CreateResFile is unimplemented";
+	
+	err = wrgVolTypErr;
+	
+	ResErr = err;
+}
+
+asm
+pascal void CreateResFile_patch( const unsigned char* name )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A0
+	MOVEQ.L  #0,D0    // vRefNum = 0
+	
+	JSR      CreateResFile_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
+	
+	JMP      (A0)
+}
+
+static
 short OpenResFile_handler( ConstStr255Param name : __A0, short vRefNum : __D0 )
 {
 	OSErr err;

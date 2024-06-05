@@ -10,6 +10,8 @@ pascal short InitResources_patch();
 
 pascal void RsrcZoneInit_patch();
 
+pascal void CreateResFile_patch( const unsigned char* name );
+
 pascal short OpenResFile_patch( const unsigned char* name );
 
 pascal void CloseResFile_patch( short refnum );

@@ -71,6 +71,7 @@ void install_ResourceManager()
 	
 	TBTRAP( ResError        );  // A9AF
 	TBTRAP( WriteResource   );  // A9B0
+	TBTRAP( CreateResFile   );  // A9B1
 	
 	TBTRAP( OpenRFPerm      );  // A9C4
 }
