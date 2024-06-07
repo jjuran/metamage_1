@@ -82,13 +82,9 @@ void calculate_window_metrics( const Rect& portRect )
 	margin.h = (portWidth  - unitLength * 32) / 2u;
 }
 
-void propagate_to_dock_tile()
+void draw_dock_tile()
 {
-#ifdef __APPLE__
-	
 	draw_dock_tile( tictactoe::squares );
-	
-#endif
 }
 
 class CGContextForPort

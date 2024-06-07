@@ -33,7 +33,17 @@
 #define CONFIG_COMPOSITING  0
 #endif
 
-void propagate_to_dock_tile();
+void draw_dock_tile();
+
+inline
+void propagate_to_dock_tile()
+{
+#ifdef __APPLE__
+	
+	draw_dock_tile();
+	
+#endif
+}
 
 void draw_window( CGContextRef context );
 void draw_window( const Rect& portRect );
