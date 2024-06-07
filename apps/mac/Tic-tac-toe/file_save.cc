@@ -121,10 +121,8 @@ FSIORefNum open_file( OSErr create_err, const File& file )
 }
 
 static inline
-FSIORefNum FSRef_opener( const FSRef& parent, CFStringRef name )
+FSIORefNum FSRef_opener( const FSRef& parent, CFStringRef name, FSRef& file )
 {
-	FSRef file;
-	
 	OSErr err = create_FSRef( parent, name, creator, doctype, &file );
 	
 	return open_file( err, file );
@@ -135,7 +133,11 @@ long FSRef_saver( const FSRef& parent, CFStringRef name )
 {
 	typedef file_traits< FSRef > traits;
 	
-	return write_and_close_stream< traits >( FSRef_opener( parent, name ) );
+	FSRef file;
+	
+	FSIORefNum refnum = FSRef_opener( parent, name, file );
+	
+	return write_and_close_stream< traits >( refnum );
 }
 
 static inline
