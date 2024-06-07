@@ -58,7 +58,7 @@ short min( short a, short b )
 static short unitLength;
 static Point margin;
 
-static
+static inline
 void calculate_window_metrics( const Rect& portRect )
 {
 	const short portWidth  = portRect.right - portRect.left;
@@ -250,7 +250,7 @@ void draw_window( const Rect& portRect )
 	SetOrigin( 0, 0 );
 }
 
-static
+static inline
 void draw_token( player_t token, short index )
 {
 	const short i = index / 3;
@@ -302,7 +302,7 @@ short hit_test( Point where )
 	return y / 9 * 3 + x / 9;
 }
 
-static
+static inline
 RgnHandle play( short i )
 {
 	player_t playing_player = current_player;
@@ -347,7 +347,7 @@ void erase_token_in_region( RgnHandle rgn )
 	SetOrigin( 0, 0 );
 }
 
-static
+static inline
 void calculate_token_regions( short unitLength )
 {
 	get_X_token( unitLength );

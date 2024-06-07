@@ -108,7 +108,7 @@ OSErr create_FSRef( const FSRef&  parent,
 	return err;
 }
 
-static
+static inline
 FSIORefNum FSRef_opener( const FSRef& parent, CFStringRef name )
 {
 	FSRef file;
@@ -131,7 +131,7 @@ long FSRef_saver( const FSRef& parent, CFStringRef name )
 	return write_and_close_stream< traits >( FSRef_opener( parent, name ) );
 }
 
-static
+static inline
 FSIORefNum FSSpec_opener( const FSSpec& file )
 {
 	OSErr err = FSpCreate( &file, creator, doctype, 0 );
@@ -152,7 +152,7 @@ long FSSpec_saver( const FSSpec& file )
 	return write_and_close_stream< traits >( FSSpec_opener( file ) );
 }
 
-static
+static inline
 FSIORefNum HFS_opener( short vRefNum, long dirID, const Byte* name )
 {
 	OSErr err = HCreate( vRefNum, dirID, name, creator, doctype );
