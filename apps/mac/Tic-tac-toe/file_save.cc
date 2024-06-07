@@ -49,16 +49,12 @@ void my_memcpy( void* dst, const void* src, size_t n )
 
 template < class traits >
 static
-long write_and_close_stream( FSIORefNum refnum )
+long write_and_close_stream( FSIORefNum refnum, const Byte* data, Size size )
 {
 	if ( refnum < 0 )
 	{
 		return refnum;
 	}
-	
-	const unsigned char* data = tictactoe::extract();
-	
-	Size size = *data++;
 	
 	Size n = traits::write( refnum, data, size );
 	
@@ -155,7 +151,11 @@ long FSRef_saver( const FSRef& parent, CFStringRef name )
 	
 	FSIORefNum refnum = FSRef_opener( parent, name, file );
 	
-	long err = write_and_close_stream< traits >( refnum );
+	const Byte* game = tictactoe::extract();
+	
+	Size size = *game++;
+	
+	long err = write_and_close_stream< traits >( refnum, game, size );
 	
 	if ( err == noErr )
 	{
@@ -178,7 +178,13 @@ long FSSpec_saver( const FSSpec& file )
 {
 	typedef file_traits< FSSpec > traits;
 	
-	long err = write_and_close_stream< traits >( FSSpec_opener( file ) );
+	FSIORefNum refnum = FSSpec_opener( file );
+	
+	const Byte* game = tictactoe::extract();
+	
+	Size size = *game++;
+	
+	long err = write_and_close_stream< traits >( refnum, game, size );
 	
 	if ( err == noErr )
 	{
@@ -208,7 +214,11 @@ long HFS_file_saver( short vRefNum, long dirID, const Byte* name )
 	
 	FSIORefNum refnum = HFS_opener( vRefNum, dirID, name );
 	
-	long err = write_and_close_stream< traits >( refnum );
+	const Byte* game = tictactoe::extract();
+	
+	Size size = *game++;
+	
+	long err = write_and_close_stream< traits >( refnum, game, size );
 	
 	if ( err == noErr )
 	{
@@ -233,7 +243,11 @@ void file_save()
 	
 	short refnum = open_data_fork( file, fsRdWrPerm );
 	
-	if ( write_and_close_stream< traits >( refnum ) == noErr )
+	const Byte* game = tictactoe::extract();
+	
+	Size size = *game++;
+	
+	if ( write_and_close_stream< traits >( refnum, game, size ) == noErr )
 	{
 		document_modified = false;
 	}
