@@ -3,10 +3,10 @@
 #define COPY "\0xA9"
 
 #define MAJOR 0
-#define MINOR 2
-#define POINT 3
+#define MINOR 3
+#define POINT 0
 
-#define VERSION  "0.2.3"
+#define VERSION  "0.3"
 
 type 'XvO#' as 'STR ';
 
