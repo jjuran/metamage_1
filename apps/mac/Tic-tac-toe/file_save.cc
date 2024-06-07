@@ -137,7 +137,9 @@ long FSRef_saver( const FSRef& parent, CFStringRef name )
 	
 	FSIORefNum refnum = FSRef_opener( parent, name, file );
 	
-	return write_and_close_stream< traits >( refnum );
+	long err = write_and_close_stream< traits >( refnum );
+	
+	return err;
 }
 
 static inline
@@ -153,7 +155,9 @@ long FSSpec_saver( const FSSpec& file )
 {
 	typedef file_traits< FSSpec > traits;
 	
-	return write_and_close_stream< traits >( FSSpec_opener( file ) );
+	long err = write_and_close_stream< traits >( FSSpec_opener( file ) );
+	
+	return err;
 }
 
 static inline
@@ -176,7 +180,9 @@ long HFS_file_saver( short vRefNum, long dirID, const Byte* name )
 	
 	FSIORefNum refnum = HFS_opener( vRefNum, dirID, name );
 	
-	return write_and_close_stream< traits >( refnum );
+	long err = write_and_close_stream< traits >( refnum );
+	
+	return err;
 }
 
 void file_save_as()
