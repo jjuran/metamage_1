@@ -38,6 +38,8 @@ struct file_traits< FSSpec >
 	typedef FSSpec File;
 	typedef SInt32 file_size_t;
 	
+	typedef ConstStr255Param Name;
+	
 	static ConstStr255Param get_name( const File& file )
 	{
 		return file.name;
@@ -78,6 +80,8 @@ struct file_traits< FSRef >
 	typedef FSRef  File;
 	typedef SInt64 file_size_t;
 	
+	typedef HFSUniStr255 Name;
+	
 	static HFSUniStr255 get_name( const File& file )
 	{
 		HFSUniStr255 result = {};
@@ -115,6 +119,13 @@ struct file_traits< FSRef >
 		return err ? err : result;
 	}
 };
+
+template < class File >
+inline
+typename file_traits< File >::Name get_name( const File& file )
+{
+	return file_traits< File >::get_name( file );
+}
 
 }
 }
