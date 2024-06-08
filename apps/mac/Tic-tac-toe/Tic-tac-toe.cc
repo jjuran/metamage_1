@@ -47,6 +47,7 @@
 #include "mac_app/state.hh"
 
 // Tic-tac-toe
+#include "document.hh"
 #include "file_open.hh"
 #include "file_save.hh"
 #include "fullscreen.hh"
@@ -202,6 +203,8 @@ void click( Point where )
 		propagate_to_dock_tile();
 		
 		mac::ui::enable_menu_item( Edit_menu, Undo );
+		
+		document_modified = true;
 	}
 }
 
@@ -335,6 +338,11 @@ void menu_item_chosen( long choice )
 				case NewGame:
 					gMouseRgn = reset();
 					
+					document_assigned = false;
+					document_modified = true;
+					
+					set_window_untitled();
+					
 					propagate_to_dock_tile();
 					break;
 				
@@ -345,9 +353,20 @@ void menu_item_chosen( long choice )
 					break;
 				
 				case Save:
+					if ( document_assigned )
+					{
+						if ( document_modified )
+						{
+							file_save();
+						}
+						
+						break;
+					}
+					// fall through
+					
 				case SaveAs:
 					InitCursor();
-					file_save();
+					file_save_as();
 					gMouseRgn = gInertRgn;
 					break;
 				

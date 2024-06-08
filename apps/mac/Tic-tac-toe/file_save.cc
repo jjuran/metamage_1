@@ -16,10 +16,12 @@
 #include "mac_app/file_save_dialog.hh"
 
 // Tic-tac-toe
+#include "document.hh"
 #include "state.hh"
+#include "window.hh"
 
 
-#define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
+#define POD( x )  &(x), (sizeof (x))
 
 using mac::file::FSIORefNum;
 using mac::file::file_traits;
@@ -28,6 +30,22 @@ const OSType creator = 'XvO#';
 const OSType doctype = 'XvO#';
 
 #define PROMPT "\p" "Save game as:"
+
+#if TARGET_API_MAC_CARBON
+
+typedef FSRef FileType;
+
+#else
+
+typedef FSSpec FileType;
+
+#endif
+
+static inline
+void my_memcpy( void* dst, const void* src, size_t n )
+{
+	BlockMoveData( src, dst, n );
+}
 
 template < class traits >
 static
@@ -108,19 +126,24 @@ OSErr create_FSRef( const FSRef&  parent,
 	return err;
 }
 
+template < class File >
 static inline
-FSIORefNum FSRef_opener( const FSRef& parent, CFStringRef name )
+FSIORefNum open_file( OSErr create_err, const File& file )
 {
-	FSRef file;
-	
-	OSErr err = create_FSRef( parent, name, creator, doctype, &file );
-	
-	if ( err != noErr  &&  err != dupFNErr )
+	if ( create_err != noErr  &&  create_err != dupFNErr )
 	{
-		return err;
+		return create_err;
 	}
 	
 	return mac::file::open_data_fork( file, fsRdWrPerm );
+}
+
+static inline
+FSIORefNum FSRef_opener( const FSRef& parent, CFStringRef name, FSRef& file )
+{
+	OSErr err = create_FSRef( parent, name, creator, doctype, &file );
+	
+	return open_file( err, file );
 }
 
 static
@@ -128,7 +151,18 @@ long FSRef_saver( const FSRef& parent, CFStringRef name )
 {
 	typedef file_traits< FSRef > traits;
 	
-	return write_and_close_stream< traits >( FSRef_opener( parent, name ) );
+	FSRef file;
+	
+	FSIORefNum refnum = FSRef_opener( parent, name, file );
+	
+	long err = write_and_close_stream< traits >( refnum );
+	
+	if ( err == noErr )
+	{
+		my_memcpy( &global_document_file< FSRef >::value, POD( file ) );
+	}
+	
+	return err;
 }
 
 static inline
@@ -136,12 +170,7 @@ FSIORefNum FSSpec_opener( const FSSpec& file )
 {
 	OSErr err = FSpCreate( &file, creator, doctype, 0 );
 	
-	if ( err != noErr  &&  err != dupFNErr )
-	{
-		return err;
-	}
-	
-	return mac::file::open_data_fork( file, fsRdWrPerm );
+	return open_file( err, file );
 }
 
 static
@@ -149,7 +178,14 @@ long FSSpec_saver( const FSSpec& file )
 {
 	typedef file_traits< FSSpec > traits;
 	
-	return write_and_close_stream< traits >( FSSpec_opener( file ) );
+	long err = write_and_close_stream< traits >( FSSpec_opener( file ) );
+	
+	if ( err == noErr )
+	{
+		my_memcpy( &global_document_file< FSSpec >::value, POD( file ) );
+	}
+	
+	return err;
 }
 
 static inline
@@ -172,10 +208,38 @@ long HFS_file_saver( short vRefNum, long dirID, const Byte* name )
 	
 	FSIORefNum refnum = HFS_opener( vRefNum, dirID, name );
 	
-	return write_and_close_stream< traits >( refnum );
+	long err = write_and_close_stream< traits >( refnum );
+	
+	if ( err == noErr )
+	{
+		FSSpec& file = global_document_file< FSSpec >::value;
+		
+		file.vRefNum = vRefNum;
+		file.parID   = dirID;
+		
+		my_memcpy( file.name, name, sizeof file.name );
+	}
+	
+	return err;
 }
 
 void file_save()
+{
+	using mac::file::open_data_fork;
+	
+	typedef file_traits< FileType > traits;
+	
+	const FileType& file = global_document_file< FileType >::value;
+	
+	short refnum = open_data_fork( file, fsRdWrPerm );
+	
+	if ( write_and_close_stream< traits >( refnum ) == noErr )
+	{
+		document_modified = false;
+	}
+}
+
+void file_save_as()
 {
 	using mac::app::file_save_dialog;
 	
@@ -190,16 +254,28 @@ void file_save()
 		mac::sys::gestalt_bit_set( gestaltStandardFileAttr,
 		                           gestaltStandardFile58 );
 	
+	OSStatus err;
+	
 	if ( TARGET_API_MAC_CARBON )
 	{
-		file_save_dialog( doctype, creator, &FSRef_saver );
+		err = file_save_dialog( doctype, creator, &FSRef_saver );
 	}
 	else if ( has_StandardFile_5_thru_8 )
 	{
-		file_save_dialog( PROMPT, "\p", &FSSpec_saver );
+		err = file_save_dialog( PROMPT, "\p", &FSSpec_saver );
 	}
 	else
 	{
-		file_save_dialog( PROMPT, "\p", &HFS_file_saver );
+		err = file_save_dialog( PROMPT, "\p", &HFS_file_saver );
+	}
+	
+	if ( err == noErr )
+	{
+		const FileType& file = global_document_file< FileType >::value;
+		
+		set_window_title( mac::file::get_name( file ) );
+		
+		document_assigned = true;
+		document_modified = false;
 	}
 }

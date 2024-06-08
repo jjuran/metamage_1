@@ -7,5 +7,6 @@
 #define FILESAVE_HH
 
 void file_save();
+void file_save_as();
 
 #endif

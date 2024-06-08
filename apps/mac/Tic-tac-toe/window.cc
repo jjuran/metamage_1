@@ -426,3 +426,19 @@ void reload( const unsigned char* data, unsigned short size )
 		mac::ui::enable_menu_item( Edit_menu, Undo );
 	}
 }
+
+void set_window_title( const Byte* name )
+{
+	SetWTitle( mac::qd::thePort_window(), name );
+}
+
+void set_window_title( const HFSUniStr255& name )
+{
+	if ( CFStringRef s = CFStringCreateWithCharacters( NULL, name.unicode,
+	                                                         name.length ) )
+	{
+		SetWindowTitleWithCFString( mac::qd::thePort_window(), s );
+		
+		CFRelease( s );
+	}
+}
