@@ -551,7 +551,7 @@ namespace Genie
 			
 			if ( const char* nl = strchr( p, '\n' ) )
 			{
-				command_size = nl + 1 - p;
+				command_size = nl - p;
 				
 				break;
 			}
@@ -570,6 +570,8 @@ namespace Genie
 		
 		const char* begin = s.begin() + params.itsStartOfInput;
 		const char* input = begin;
+		
+		command_size += 1;  // include LF
 		
 		n = conv::utf8_from_mac( buffer, n, &input, command_size );
 		
