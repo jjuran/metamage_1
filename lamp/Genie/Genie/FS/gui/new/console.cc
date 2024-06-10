@@ -107,6 +107,7 @@ namespace Genie
 	struct ConsoleParameters
 	{
 		vfs::filehandle_ptr  itsTerminal;
+		plus::string         itsPreviousInput;
 		std::size_t          itsStartOfInput;
 		std::size_t          itsStartOfOutput;
 		bool                 itHasReceivedEOF;
@@ -355,6 +356,23 @@ namespace Genie
 				return true;
 			}
 		}
+		else if ( c == kUpArrowCharCode )
+		{
+			if ( consoleParams.itsStartOfInput == params.its_mac_text.size() )
+			{
+				const char* p = consoleParams.itsPreviousInput.data();
+				size_t length = consoleParams.itsPreviousInput.size();
+				
+				if ( length > 0 )
+				{
+					params.its_mac_text.append( p, length );
+					
+					TEInsert( p, length, hTE );
+				}
+			}
+			
+			return true;
+		}
 		
 		if ( that.Process_Key( event ) )
 		{
@@ -570,6 +588,11 @@ namespace Genie
 		
 		const char* begin = s.begin() + params.itsStartOfInput;
 		const char* input = begin;
+		
+		if ( command_size > 0 )
+		{
+			params.itsPreviousInput.assign( input, command_size );
+		}
 		
 		command_size += 1;  // include LF
 		
