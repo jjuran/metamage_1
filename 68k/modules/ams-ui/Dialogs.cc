@@ -15,9 +15,9 @@
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
-#ifndef __SOUND__
-#include <Sound.h>
-#endif
+
+// <Sound.h>
+extern "C" pascal void SysBeep( short ticks )  ONEWORDINLINE( 0xA9C8 );
 
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
