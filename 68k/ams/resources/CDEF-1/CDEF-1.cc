@@ -63,7 +63,7 @@ asm int main()
 #define _ 0
 #define X 1
 
-static const uint8_t error_pattern[] =
+static const UInt8 error_pattern[] =
 {
 	PACK8( _,_,_,X,_,_,_,X ),
 	PACK8( _,_,X,_,_,_,X,_ ),
@@ -75,7 +75,7 @@ static const uint8_t error_pattern[] =
 	PACK8( X,_,_,_,X,_,_,_ ),
 };
 
-static const uint16_t up_bits[] =
+static const UInt16 up_bits[] =
 {
 	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
 	PACK16( X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X ),
@@ -95,7 +95,7 @@ static const uint16_t up_bits[] =
 	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
 };
 
-static const uint16_t down_bits[] =
+static const UInt16 down_bits[] =
 {
 	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
 	PACK16( X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X ),
@@ -115,7 +115,7 @@ static const uint16_t down_bits[] =
 	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
 };
 
-static const uint16_t left_bits[] =
+static const UInt16 left_bits[] =
 {
 	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
 	PACK16( X,_,_,_,_,_,_,X,_,_,_,_,_,_,_,X ),
@@ -135,7 +135,7 @@ static const uint16_t left_bits[] =
 	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
 };
 
-static const uint16_t right_bits[] =
+static const UInt16 right_bits[] =
 {
 	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
 	PACK16( X,_,_,_,_,_,_,_,X,_,_,_,_,_,_,X ),
