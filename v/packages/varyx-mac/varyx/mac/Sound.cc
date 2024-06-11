@@ -9,13 +9,16 @@
 
 // Mac OS X
 #ifdef __APPLE__
-#include <Carbon/Carbon.h>
+#include <CoreServices/CoreServices.h>
 #endif
 
 // Mac OS
-#ifndef __SOUND__
-#include <Sound.h>
+#ifndef __CONDITIONALMACROS__
+#include <ConditionalMacros.h>
 #endif
+
+// <Sound.h>
+extern "C" pascal void SysBeep( short ticks )  ONEWORDINLINE( 0xA9C8 );
 
 // vlib
 #include "vlib/proc_info.hh"
