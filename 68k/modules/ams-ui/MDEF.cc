@@ -35,7 +35,7 @@ const short right_padding = 6;
 static
 short keystroke_pen_offset_once()
 {
-	const uint8_t keystroke[] = { 2, kCommandCharCode, 'M' };
+	const Byte keystroke[] = { 2, kCommandCharCode, 'M' };
 	
 	const short width = StringWidth( keystroke );
 	
@@ -57,7 +57,7 @@ short total_keystroke_offset()
 }
 
 static inline
-bool should_draw_key( uint8_t key )
+bool should_draw_key( Byte key )
 {
 	return key > 0x1F;
 }
@@ -104,10 +104,10 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 		{
 			const unsigned char* p = text + 1 + text[ 0 ];
 			
-			const uint8_t icon  = *p++;
-			const uint8_t key   = *p++;
-			const uint8_t mark  = *p++;
-			const uint8_t style = *p++;
+			const Byte icon  = *p++;
+			const Byte key   = *p++;
+			const Byte mark  = *p++;
+			const Byte style = *p++;
 			
 			const bool large_icon = icon  &&  large_icon_key( key );
 			
@@ -156,7 +156,7 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 			{
 				MoveTo( right - keystroke_pen_offset(), v );
 				
-				const uint8_t keystroke[] = { 2, kCommandCharCode, key };
+				const Byte keystroke[] = { 2, kCommandCharCode, key };
 				
 				DrawString( keystroke );
 			}
@@ -250,7 +250,7 @@ long enabled_item_from_row( MenuRef menu, short row )
 	
 	while ( const unsigned char* p = it )
 	{
-		const uint8_t len = *p++;
+		const Byte len = *p++;
 		
 		const bool separator = len  &&  *p == '-';
 		
@@ -328,7 +328,7 @@ void MDEF_0_Size( MenuRef menu )
 		
 		const unsigned char* p = text + 1 + text[ 0 ];
 		
-		if ( const uint8_t icon = *p++ )
+		if ( const Byte icon = *p++ )
 		{
 			const bool large_icon = large_icon_key( *p );
 			

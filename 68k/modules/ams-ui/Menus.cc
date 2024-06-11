@@ -1313,10 +1313,10 @@ pascal void DelMenuItem_patch( MenuInfo** menu, short item )
 		++it;
 	}
 	
-	uint8_t      * addr =   it;
-	uint8_t const* next = (++it).get();
+	Byte      * addr =   it;
+	Byte const* next = (++it).get();
 	
-	Munger( (Handle) menu, addr - (uint8_t*) *menu, NULL, next - addr, "", 0 );
+	Munger( (Handle) menu, addr - (Byte*) *menu, NULL, next - addr, "", 0 );
 	
 	MDEF_0( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
@@ -1352,7 +1352,7 @@ pascal void SetItemCmd_patch( MenuInfo** menu, short item, CharParameter key )
 		{
 			p += 1 + p[ 0 ];
 			
-			const uint8_t icon = *p++;
+			const Byte icon = *p++;
 			
 			const bool resized = large_icon_key( *p ) != large_icon_key( key );
 			

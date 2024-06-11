@@ -77,7 +77,7 @@ const short close_box_width    = 11;
 #define _ 0
 #define X 1
 
-static const uint16_t splat_bits[] =
+static const UInt16 splat_bits[] =
 {
 	PACK9( _,_,_,_,X,_,_,_,_ ),
 	PACK9( _,X,_,_,X,_,_,X,_ ),
