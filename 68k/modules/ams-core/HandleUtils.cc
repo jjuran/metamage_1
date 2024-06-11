@@ -9,9 +9,6 @@
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
-#ifndef __TRAPS__
-#include <Traps.h>
-#endif
 
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
@@ -19,6 +16,18 @@
 // ams-common
 #include "callouts.hh"
 
+
+#ifndef __TRAPS__
+
+enum
+{
+	_NewHandle     = 0xA122,
+	_SetHandleSize = 0xA024,
+	_GetHandleSize = 0xA025,
+	_BlockMove     = 0xA02E,
+};
+
+#endif
 
 pascal long Munger_patch( Handle h, long i, Ptr p1, long n1, Ptr p2, long n2 )
 {
