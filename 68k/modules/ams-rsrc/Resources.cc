@@ -113,11 +113,11 @@ RsrcMapHandle& find_rsrc_map( short refnum )
 }
 
 static
-uint16_t count_rsrcs( const rsrc_map_header& map, ResType type )
+UInt16 count_rsrcs( const rsrc_map_header& map, ResType type )
 {
 	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
 	
-	uint16_t n_types = types.count_1 + 1;
+	UInt16 n_types = types.count_1 + 1;
 	
 	const type_header* it = types.list;
 	
@@ -139,7 +139,7 @@ rsrc_header* get_nth_rsrc( const rsrc_map_header& map, ResType type, short i )
 {
 	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
 	
-	uint16_t n_types = types.count_1 + 1;
+	UInt16 n_types = types.count_1 + 1;
 	
 	const type_header* it = types.list;
 	
@@ -174,7 +174,7 @@ rsrc_header* find_rsrc( const rsrc_map_header& map, ResType type, short id )
 {
 	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
 	
-	uint16_t n_types = types.count_1 + 1;
+	UInt16 n_types = types.count_1 + 1;
 	
 	const type_header* it = types.list;
 	
@@ -186,8 +186,8 @@ rsrc_header* find_rsrc( const rsrc_map_header& map, ResType type, short id )
 			continue;
 		}
 		
-		uint16_t n_rsrcs_1 = it->count_1;
-		uint16_t offset    = it->offset;
+		UInt16 n_rsrcs_1 = it->count_1;
+		UInt16 offset    = it->offset;
 		
 		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + offset);
 		
@@ -226,7 +226,7 @@ rsrc_header* find_rsrc( const rsrc_map_header&  map,
 {
 	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
 	
-	uint16_t n_types = types.count_1 + 1;
+	UInt16 n_types = types.count_1 + 1;
 	
 	const type_header* it = types.list;
 	
@@ -238,8 +238,8 @@ rsrc_header* find_rsrc( const rsrc_map_header&  map,
 			continue;
 		}
 		
-		uint16_t n_rsrcs_1 = it->count_1;
-		uint16_t offset    = it->offset;
+		UInt16 n_rsrcs_1 = it->count_1;
+		UInt16 offset    = it->offset;
 		
 		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + offset);
 		
@@ -268,8 +268,8 @@ const rsrc_data* get_data( const rsrc_map_header& map, const rsrc_header& rsrc )
 	
 	Ptr p = fcb->fcbBfAdr;
 	
-	uint32_t offset = rsrc.offset_high_byte << 16
-	                | rsrc.offset_low_word;
+	UInt32 offset = rsrc.offset_high_byte << 16
+	              | rsrc.offset_low_word;
 	
 	offset += map.fork_header.offset_to_data;
 	
@@ -355,14 +355,14 @@ short OpenResFile_handler( ConstStr255Param name : __A0, short vRefNum : __D0 )
 	
 	type_list& types = *(type_list*) (*h + map.offset_to_types);
 	
-	uint16_t n_types = types.count_1 + 1;
+	UInt16 n_types = types.count_1 + 1;
 	
 	type_header* type = types.list;
 	
 	while ( n_types-- > 0 )
 	{
-		uint16_t n_rsrcs_1 = type->count_1;
-		uint16_t offset    = type->offset;
+		UInt16 n_rsrcs_1 = type->count_1;
+		UInt16 offset    = type->offset;
 		
 		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + offset);
 		
@@ -429,14 +429,14 @@ void CloseResFile_core( short refnum : __D0 )
 	
 	type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
 	
-	uint16_t n_types = types.count_1 + 1;
+	UInt16 n_types = types.count_1 + 1;
 	
 	type_header* type = types.list;
 	
 	while ( n_types-- > 0 )
 	{
-		uint16_t n_rsrcs_1 = type->count_1;
-		uint16_t offset    = type->offset;
+		UInt16 n_rsrcs_1 = type->count_1;
+		UInt16 offset    = type->offset;
 		
 		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + offset);
 		
@@ -586,14 +586,14 @@ void release_ApplZone_resources()
 	
 	type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
 	
-	uint16_t n_types = types.count_1 + 1;
+	UInt16 n_types = types.count_1 + 1;
 	
 	type_header* type = types.list;
 	
 	while ( n_types-- > 0 )
 	{
-		uint16_t n_rsrcs_1 = type->count_1;
-		uint16_t offset    = type->offset;
+		UInt16 n_rsrcs_1 = type->count_1;
+		UInt16 offset    = type->offset;
 		
 		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + offset);
 		
@@ -747,7 +747,7 @@ Handle GetResource_core( ResType type : __D0, short id : __D1 )
 static
 short CountResources_handler( ResType type : __D0 )
 {
-	uint16_t count = 0;
+	UInt16 count = 0;
 	
 	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
 	
@@ -797,7 +797,7 @@ Handle GetIndResource_handler( unsigned long type : __D0, short index : __D1 )
 	
 	while ( rsrc_map != NULL )
 	{
-		uint16_t count = count_rsrcs( **rsrc_map, type );
+		UInt16 count = count_rsrcs( **rsrc_map, type );
 		
 		if ( index <= count )
 		{
@@ -868,7 +868,7 @@ pascal Handle GetResource_patch( ResType type, short id )
 }
 
 static
-Handle GetNamedResource_handler( ResType type : __D0, const UInt8* name : __A0 )
+Handle GetNamedResource_handler( ResType type : __D0, const Byte* name : __A0 )
 {
 	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
 	
