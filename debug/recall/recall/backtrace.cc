@@ -121,7 +121,12 @@ namespace recall
 	template < class SymbolPtr >
 	static inline plus::string get_name_from_symbol_pointer( SymbolPtr symbol )
 	{
-		return symbol != NULL ? get_symbol_string( symbol ) : "???";
+		if ( symbol )
+		{
+			return get_symbol_string( symbol );
+		}
+		
+		return "???";
 	}
 	
 	template < class ReturnAddr >
@@ -193,7 +198,7 @@ namespace recall
 		
 		if ( is_cfm )
 		{
-			--(long&) result.frame_pointer;
+			--*(long*) &result.frame_pointer;
 		}
 		
 		result.arch           = is_cfm ? "ppc" : "68k";
