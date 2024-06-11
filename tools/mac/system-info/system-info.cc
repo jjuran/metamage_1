@@ -94,7 +94,7 @@ bool in_supervisor_mode()
 {
 #ifdef __MC68K__
 	
-	uint16_t status;
+	UInt16 status;
 	
 	asm
 	{
@@ -136,9 +136,9 @@ static const char* clock_speed_unit_prefixes[] =
 };
 
 static
-void print_clock_speed( const char* part, uint32_t speed, int i )
+void print_clock_speed( const char* part, unsigned speed, int i )
 {
-	uint32_t x1000 = speed;
+	UInt32 x1000 = speed;
 	
 	while ( speed >= 1000 )
 	{
@@ -162,12 +162,12 @@ void print_clock_speed( const char* part, uint32_t speed, int i )
 	}
 }
 
-static const uint32_t sysa = gestalt( 'sysa' );
+static const UInt32 sysa = gestalt( 'sysa' );
 
 static
 void host_env()
 {
-	uint32_t sysv = gestalt( 'sysv' );
+	UInt32 sysv = gestalt( 'sysv' );
 	
 	const char* arch_name = sysa <=  1 ? M68K
 	                      : sysa ==  2 ? PPC
@@ -212,9 +212,9 @@ void host_env()
 		mempcpy( machine_name, mnam + 1, mnam[ 0 ] );
 	}
 	
-	uint8_t sys1;
-	uint8_t sys2;
-	uint8_t sys3;
+	UInt8 sys1;
+	UInt8 sys2;
+	UInt8 sys3;
 	
 	if ( sysv >= 0x1049 )
 	{
@@ -299,7 +299,7 @@ void host_env()
 	
 	if ( (TARGET_CPU_68K  &&  sysa == 2)  ||  TARGET_CPU_PPC )
 	{
-		const uint32_t cput = gestalt( 'cput' );
+		const UInt32 cput = gestalt( 'cput' );
 		
 		const char* type = cput == 0x0101 ? "601"
 		                 : cput == 0x0103 ? "603"
@@ -333,7 +333,7 @@ void host_env()
 		printf( "Cluster computing rig:  Radius Rocket\n" );
 	}
 	
-	if ( uint32_t rom = mac::sys::rom_size() )
+	if ( UInt32 rom = mac::sys::rom_size() )
 	{
 		rom /= 1024u;
 		
@@ -348,11 +348,11 @@ void host_env()
 		printf( "Read-only memory size:  %ld%s\n", (long) rom, units );
 	}
 	
-	if ( const uint32_t pclk = gestalt( 'pclk' ) )
+	if ( const UInt32 pclk = gestalt( 'pclk' ) )
 	{
-		const uint32_t bclk = gestalt( 'bclk' );
-		const uint32_t mclk = gestalt( 'mclk' );
-		const uint32_t bclm = gestalt( 'bclm' );
+		const UInt32 bclk = gestalt( 'bclk' );
+		const UInt32 mclk = gestalt( 'mclk' );
+		const UInt32 bclm = gestalt( 'bclm' );
 		
 		puts( "" );
 		print_clock_speed( "CPU", mclk ? mclk : pclk, mclk ? 2 : 0 );
@@ -374,7 +374,7 @@ void host_env()
 		printf( "Host operating system:  %s %s.%s%s%s\n", os_name, a, b, o, c );
 	}
 	
-	const uint32_t os = gestalt( 'os  ' );
+	const UInt32 os = gestalt( 'os  ' );
 	
 	if ( TARGET_RT_MAC_MACHO )
 	{
@@ -410,11 +410,11 @@ void host_env()
 		puts( "Cooperative threading:  Metamage threads" );
 	}
 	
-	const uint32_t gestaltOpenTptTCPPresentMask = 0x00000010;
+	const UInt32 gestaltOpenTptTCPPresentMask = 0x00000010;
 	
 	if ( gestalt( 'otan' ) & gestaltOpenTptTCPPresentMask )
 	{
-		const uint16_t version = gestalt( 'otvr' ) >> 16;
+		const UInt16 version = gestalt( 'otvr' ) >> 16;
 		
 		const int major = (version >> 8 & 0xF) + 10 * (version >> 12);
 		const int minor =  version >> 4 & 0xF;
@@ -443,11 +443,11 @@ void host_env()
 		puts( "TCP/IP protocol stack:  MacTCP (not yet supported)" );
 	}
 	
-	const uint32_t mmu = gestalt( 'mmu ' );
+	const UInt32 mmu = gestalt( 'mmu ' );
 	
 	if ( TARGET_CPU_68K )
 	{
-		const uint32_t fpu = gestalt( 'fpu ' );
+		const UInt32 fpu = gestalt( 'fpu ' );
 		
 		const char* fpu_name = fpu == 0 ? (has_fpmath() ? "SANE only" : "none")
 		                     : fpu == 1 ? "68881"
@@ -479,7 +479,7 @@ void host_env()
 		printf( "680x0 addressing mode:  %s-bit\n", _32bits ? "32" : "24" );
 	}
 	
-	int32_t ram;
+	SInt32 ram;
 	
 	if ( TARGET_API_MAC_CARBON  &&  (ram = gestalt( 'ramm' )) )
 	{
@@ -524,7 +524,7 @@ void host_env()
 	
 	if ( !! TARGET_RT_MAC_CFM  &&  TARGET_API_MAC_CARBON )
 	{
-		const uint32_t cbon = gestalt( 'cbon' );
+		const UInt32 cbon = gestalt( 'cbon' );
 		
 		const char a = 0x30 + ((cbon >> 8) & 0xF);
 		const char b = 0x30 + ((cbon >> 4) & 0xF);
