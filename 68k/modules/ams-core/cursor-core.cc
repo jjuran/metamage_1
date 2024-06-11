@@ -32,8 +32,8 @@ enum
 	kHardwareCursor = 0x68647772,  // 'hdwr'
 };
 
-typedef uint32_t* Saved;
-typedef uint32_t Buffer[ 16 ];
+typedef UInt32* Saved;
+typedef UInt32  Buffer[ 16 ];
 
 short ScreenRow : 0x0106;
 Ptr   ScrnBase  : 0x0824;

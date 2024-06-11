@@ -70,13 +70,13 @@ timeval approximate_timeval_from_ticks( unsigned long ticks )
 	*/
 	
 	/*
-	const uint64_t actual_microseconds_per_tick = 1000 * 1000 * 100 / 6015;
-	const uint64_t approx_microseconds_per_tick = 1024 * 1024       / 64;
+	const UInt64 actual_microseconds_per_tick = 1000 * 1000 * 100 / 6015;
+	const UInt64 approx_microseconds_per_tick = 1024 * 1024       / 64;
 	
-	const uint64_t dt = ticks * microseconds_per_tick;
+	const UInt64 dt = ticks * microseconds_per_tick;
 	*/
 	
-	uint32_t usec = (ticks & (1 << 6) - 1) << 14;
+	UInt32 usec = (ticks & (1 << 6) - 1) << 14;
 	
 	if ( usec >= 1000000 )
 	{
@@ -120,7 +120,7 @@ ssize_t read( int fd, unsigned char* buffer, size_t n, bool direct )
 }
 
 static
-UInt16 keymods_from_modifiers_high_byte( uint8_t mod )
+UInt16 keymods_from_modifiers_high_byte( Byte mod )
 {
 	UInt16 result = mod;
 	
@@ -143,15 +143,14 @@ void post_event( const splode::pointer_event_buffer& buffer )
 {
 	using namespace splode::modes;
 	using namespace splode::pointer;
-	using splode::uint8_t;
 	
-	const uint8_t mode_mask = Command | Shift | Option | Control;
+	const Byte mode_mask = Command | Shift | Option | Control;
 	
-	const uint8_t mod = buffer.modes & mode_mask;
+	const Byte mod = buffer.modes & mode_mask;
 	
 	KeyMods = keymods_from_modifiers_high_byte( mod );
 	
-	const uint8_t action = buffer.attrs & action_mask;
+	const Byte action = buffer.attrs & action_mask;
 	
 	if ( action <= 1 )
 	{
@@ -179,18 +178,17 @@ void post_event( const splode::ascii_event_buffer& buffer )
 	using namespace splode::ascii;
 	using namespace splode::modes;
 	using namespace splode::key;
-	using splode::uint8_t;
 	
 	const Boolean keypad = buffer.attrs & Keypad;
-	const uint8_t ascii = buffer.ascii;
+	const Byte    ascii  = buffer.ascii;
 	
-	const int8_t code = keypad ? reverse_lookup_from_keypad[ ascii & 0x1F ]
-	                           : reverse_lookup_general_key[ ascii & 0x7F ];
+	const SignedByte code = keypad ? reverse_lookup_from_keypad[ ascii & 0x1F ]
+	                               : reverse_lookup_general_key[ ascii & 0x7F ];
 	
-	const uint8_t mode_mask = Command | Shift | Option | Control;
-	const uint8_t attr_mask = Alpha;
+	const Byte mode_mask = Command | Shift | Option | Control;
+	const Byte attr_mask = Alpha;
 	
-	const uint8_t modes = buffer.modes & mode_mask;
+	const Byte modes = buffer.modes & mode_mask;
 	
 	if ( ascii == Esc  &&  modes == (Command | Option) )
 	{
@@ -209,7 +207,7 @@ void post_event( const splode::ascii_event_buffer& buffer )
 		_exit( 128 );
 	}
 	
-	const uint8_t mod = modes | (buffer.attrs & attr_mask);
+	const Byte mod = modes | (buffer.attrs & attr_mask);
 	
 	KeyMods = keymods_from_modifiers_high_byte( mod );
 	
@@ -218,11 +216,11 @@ void post_event( const splode::ascii_event_buffer& buffer )
 		return;  // Don't post events for NUL; just update KeyMods.
 	}
 	
-	uint8_t xascii = ascii;
+	Byte xascii = ascii;
 	
-	if ( mod & Shift  &&  (int8_t) ascii >= 0 )
+	if ( mod & Shift  &&  (SignedByte) ascii >= 0 )
 	{
-		if ( uint8_t c = keytrans_shift[ ascii ] )
+		if ( Byte c = keytrans_shift[ ascii ] )
 		{
 			xascii = c;
 		}
@@ -232,9 +230,9 @@ void post_event( const splode::ascii_event_buffer& buffer )
 		xascii = iota::to_upper( ascii );
 	}
 	
-	if ( mod & Option  &&  (int8_t) xascii >= 0 )
+	if ( mod & Option  &&  (SignedByte) xascii >= 0 )
 	{
-		if ( uint8_t c = keytrans_option[ xascii ] )
+		if ( Byte c = keytrans_option[ xascii ] )
 		{
 			xascii = c;
 		}
@@ -247,7 +245,7 @@ void post_event( const splode::ascii_event_buffer& buffer )
 	
 	const UInt32 message = code << 8 | xascii;
 	
-	const uint8_t action = buffer.attrs & action_mask;
+	const Byte action = buffer.attrs & action_mask;
 	
 	if ( action == 0 )
 	{

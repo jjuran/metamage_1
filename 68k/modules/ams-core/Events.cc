@@ -281,9 +281,9 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 	
 	if ( sleep == 0 )
 	{
-		static uint64_t then;
+		static UInt64 then;
 		
-		uint64_t now = 0;
+		UInt64 now = 0;
 		::Microseconds( (UnsignedWide*) &now );
 		
 		if ( now - then < 2000 )
