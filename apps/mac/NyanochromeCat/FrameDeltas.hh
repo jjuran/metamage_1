@@ -3,9 +3,6 @@
 	--------------
 */
 
-// Standard C
-#include <stdint.h>
-
 typedef unsigned char Byte;
 
 void memxor_long( long* dst, const long* src, unsigned n );
