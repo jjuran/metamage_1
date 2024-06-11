@@ -3,11 +3,6 @@
 	-----------
 */
 
-// Mac OS
-#ifndef __TRAPS__
-#include <Traps.h>
-#endif
-
 // POSIX
 #include <unistd.h>
 
@@ -24,6 +19,16 @@
 
 #define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
 
+
+#ifndef __TRAPS__
+
+enum
+{
+	_Unimplemented = 0xA89F,
+	_SysError      = 0xA9C9,
+};
+
+#endif
 
 void* os_trap_table     [] : 1 * 1024;
 void* toolbox_trap_table[] : 3 * 1024;
