@@ -46,6 +46,7 @@
 #include "mac_types/VRefNum_DirID.hh"
 
 // mac-file-utils
+#include "mac_file/boot_volume.hh"
 #include "mac_file/directory.hh"
 #include "mac_file/listing.hh"
 #include "mac_file/open_data_fork.hh"
@@ -57,8 +58,6 @@
 
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
-
-#include "Nitrogen/Folders.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
@@ -160,9 +159,9 @@ namespace tool
 	Mac::FSDirSpec
 	QueueDirectory()
 	{
-		Mac::FSDirSpec folder = N::FindFolder( N::kOnSystemDisk,
-		                                       N::kSystemFolderType,
-		                                       kDontCreateFolder );
+		Mac::FSDirSpec folder;
+		
+		folder.vRefNum = Mac::FSVolumeRefNum( mac::file::boot_volume() );
 		
 		folder.dirID = Mac::fsRtDirID;  // root
 		
