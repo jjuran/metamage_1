@@ -116,7 +116,7 @@ bool has_empty_title( WindowRef window )
 {
 #if ! OPAQUE_TOOLBOX_STRUCTS
 	
-	const unsigned char* title = *((WindowPeek) window)->titleHandle;
+	const Byte* title = *((WindowPeek) window)->titleHandle;
 	
 #else
 	
@@ -132,8 +132,8 @@ bool has_empty_title( WindowRef window )
 static
 bool window_title_less( const void* a_, const void* b_ )
 {
-	const unsigned char* a;
-	const unsigned char* b;
+	const Byte* a;
+	const Byte* b;
 	
 #if ! OPAQUE_TOOLBOX_STRUCTS
 	
@@ -153,11 +153,11 @@ bool window_title_less( const void* a_, const void* b_ )
 	
 #endif
 	
-	const uint8_t a_len = *a++;
-	const uint8_t b_len = *b++;
+	const Byte a_len = *a++;
+	const Byte b_len = *b++;
 	
-	const unsigned char* a_end = a + a_len;
-	const unsigned char* b_end = b + b_len;
+	const Byte* a_end = a + a_len;
+	const Byte* b_end = b + b_len;
 	
 	return std::lexicographical_compare( a, a_end, b, b_end );
 }
