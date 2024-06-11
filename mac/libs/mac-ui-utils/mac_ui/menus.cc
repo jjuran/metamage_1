@@ -29,7 +29,7 @@ void delete_all_menu_items( MenuRef menu )
 	
 #endif
 	
-	uint16_t n = CountMenuItems( menu );
+	UInt16 n = CountMenuItems( menu );
 	
 	while ( n > 0 )
 	{
