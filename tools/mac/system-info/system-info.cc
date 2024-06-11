@@ -58,6 +58,8 @@ enum { kMachineNameStrID = -16395 };
 #define TARGET_CPU_ARM64  0
 #endif
 
+#define LOWMEM( addr, type )  (*(type*) (addr))
+
 
 using mac::sys::gestalt;
 using mac::sys::gestalt_bit_set;
@@ -76,21 +78,10 @@ using mac::sys::gestalt_defined;
 
 #define MAE  "Macintosh Application Environment (MAE)"
 
+#define MemTop      LOWMEM( 0x0108, long  )
+#define CPUFlag     LOWMEM( 0x012F, UInt8 )
+#define SysVersion  LOWMEM( 0x015A, short )
 
-#if TARGET_CPU_68K
-
-long    MemTop  : 0x0108;
-uint8_t CPUFlag : 0x012F;
-
-short SysVersion : 0x015A;
-
-#else
-
-static long MemTop;
-static uint8_t CPUFlag;
-static short SysVersion;
-
-#endif
 
 static inline
 int has_fpmath()
