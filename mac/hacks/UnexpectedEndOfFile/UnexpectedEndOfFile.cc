@@ -22,9 +22,6 @@
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
-#ifndef __SOUND__
-#include <Sound.h>
-#endif
 
 // Silver
 #include "Silver/Install.hh"

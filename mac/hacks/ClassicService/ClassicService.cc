@@ -25,9 +25,6 @@
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
-#ifndef __SOUND__
-#include <Sound.h>
-#endif
 #ifndef __TOOLUTILS__
 #include <ToolUtils.h>
 #endif
