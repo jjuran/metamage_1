@@ -10,15 +10,15 @@
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
-#ifndef __SOUND__
-#include <Sound.h>
-#endif
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
 #endif
 #ifndef __TRAPS__
 #include <Traps.h>
 #endif
+
+// <Sound.h>
+extern "C" pascal void SysBeep( short ticks )  ONEWORDINLINE( 0xA9C8 );
 
 // Standard C
 #include <string.h>

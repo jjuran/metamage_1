@@ -85,10 +85,21 @@ Doug
 *	the operator and the one or two operands.
 */
 
-#include <Sound.h>
+// Mac OS
+#ifndef __CONDITIONALMACROS__
+#include <ConditionalMacros.h>
+#endif
+
+// <Sound.h>
+extern "C" pascal void SysBeep( short ticks )  ONEWORDINLINE( 0xA9C8 );
 
 // iota
 #include "iota/char_types.hh"
+
+
+#ifndef NULL
+#define NULL  0L
+#endif
 
 #define TOKEN char
 #define VALUE long
