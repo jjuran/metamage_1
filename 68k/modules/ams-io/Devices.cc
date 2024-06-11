@@ -9,9 +9,6 @@
 #ifndef __DEVICES__
 #include <Devices.h>
 #endif
-#ifndef __TRAPS__
-#include <Traps.h>
-#endif
 
 // sndpipe
 #include "sndpipe/sndpipe.hh"
@@ -37,6 +34,16 @@
 
 #pragma exceptions off
 
+
+#ifndef __TRAPS__
+
+enum
+{
+	_SysBeep     = 0xA9C8,
+	_ExitToShell = 0xA9F4,
+};
+
+#endif
 
 namespace logofwar
 {

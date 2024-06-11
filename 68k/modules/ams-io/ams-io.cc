@@ -3,11 +3,6 @@
 	---------
 */
 
-// Mac OS
-#ifndef __TRAPS__
-#include <Traps.h>
-#endif
-
 // POSIX
 #include <unistd.h>
 
@@ -32,6 +27,21 @@
 #define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
 
 
+#ifndef __TRAPS__
+
+enum
+{
+	_Open    = 0xA000,
+	_Close   = 0xA001,
+	_Read    = 0xA002,
+	_Write   = 0xA003,
+	_Control = 0xA004,
+	_Status  = 0xA005,
+	_KillIO  = 0xA006,
+};
+
+#endif
+
 enum
 {
 	Opt_last_byte = 255,
@@ -55,13 +65,13 @@ void* os_trap_table[] : 1 * 1024;
 static
 void install_DeviceManager()
 {
-	OSTRAP( Open   );  // A000
-	OSTRAP( Close  );  // A001
-	OSTRAP( Read   );  // A002
-	OSTRAP( Write  );  // A003
-	OSTRAP( Control);  // A004
-	OSTRAP( Status );  // A005
-	OSTRAP( KillIO );  // A006
+	OSTRAP( Open    );  // A000
+	OSTRAP( Close   );  // A001
+	OSTRAP( Read    );  // A002
+	OSTRAP( Write   );  // A003
+	OSTRAP( Control );  // A004
+	OSTRAP( Status  );  // A005
+	OSTRAP( KillIO  );  // A006
 }
 
 static
