@@ -168,9 +168,8 @@ namespace tool
 	{
 		VRefNum_DirID folder;
 		
-		folder.vRefNum = Mac::FSVolumeRefNum( mac::file::boot_volume() );
-		
-		folder.dirID = Mac::fsRtDirID;  // root
+		folder.vRefNum = mac::file::boot_volume();
+		folder.dirID   = fsRtDirID;
 		
 		folder.dirID = directory_ID( folder, "\p" "j"     );
 		folder.dirID = directory_ID( folder, "\p" "var"   );
