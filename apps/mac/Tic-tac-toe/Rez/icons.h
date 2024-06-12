@@ -1,0 +1,4 @@
+enum
+{
+	kBlankCustomIconResID = 256,
+};
