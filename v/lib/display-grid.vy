@@ -23,8 +23,7 @@ def check (grid)
 		throw "non-mapping can't be a grid"
 	}
 	
-	let k = grid.key
-	let v = grid.value
+	let (k, v) = *grid
 	
 	if not (v isa ...[]) then
 	{
