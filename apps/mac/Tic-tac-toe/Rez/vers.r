@@ -1,16 +1,11 @@
-#define COPYRIGHT  "2018-2024 Josh Juran"
+#include "app_name.h"
+#include "version.h"
 
 #define COPY "\0xA9"
 
-#define MAJOR 0
-#define MINOR 3
-#define POINT 0
+type CREATOR as 'STR ';
 
-#define VERSION  "0.3"
-
-type 'XvO#' as 'STR ';
-
-resource 'XvO#' (0, "Tic-tac-toe")
+resource CREATOR (0, APP_NAME)
 {
 	"Copyright " COPY " " COPYRIGHT
 };
@@ -19,8 +14,8 @@ resource 'vers' (1)
 {
 	MAJOR,
 	MINOR << 4 | POINT,
-	release,
-	0,
+	STAGE,
+	PATCH,
 	smRoman,
 	VERSION,
 	VERSION ", " COPY COPYRIGHT
