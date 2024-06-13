@@ -256,9 +256,12 @@ pascal void DrawControls_patch( GrafPort* window )
 
 pascal void HiliteControl_patch( ControlRef control, short hiliteState )
 {
-	control[0]->contrlHilite = hiliteState;
-	
-	draw_control( control );
+	if ( control[0]->contrlHilite != hiliteState )
+	{
+		control[0]->contrlHilite = hiliteState;
+		
+		draw_control( control );
+	}
 }
 
 #pragma mark -
