@@ -45,11 +45,19 @@ long call_CDEF( ControlRef control, short message, long param )
 static
 void draw_control( ControlRef control, short part )
 {
-	scoped_port thePort = control[0]->contrlOwner;
-	
-	raster_lock lock;
-	
-	call_CDEF( control, drawCntl, part );
+	if ( control[0]->contrlVis )
+	{
+		WindowRef window = control[0]->contrlOwner;
+		
+		if ( ((WindowPeek) window)->visible )
+		{
+			scoped_port thePort = window;
+			
+			raster_lock lock;
+			
+			call_CDEF( control, drawCntl, part );
+		}
+	}
 }
 
 static
@@ -106,10 +114,7 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
 		
 		w->controlList = (Handle) control;
 		
-		if ( visible )
-		{
-			draw_control( control );
-		}
+		draw_control( control );
 	}
 	
 	return control;
@@ -235,12 +240,9 @@ pascal void HideControl_patch( ControlRef control )
 
 pascal void ShowControl_patch( ControlRef control )
 {
-	if ( ! control[0]->contrlVis )
-	{
-		control[0]->contrlVis = -1;
-		
-		draw_control( control );
-	}
+	control[0]->contrlVis = -true;
+	
+	draw_control( control );
 }
 
 pascal void DrawControls_patch( GrafPort* window )
