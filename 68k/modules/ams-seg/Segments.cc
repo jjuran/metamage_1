@@ -307,7 +307,7 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	const uint32_t total_alloc_size = stack_size + total_a5_size;
 	
 	Ptr alloc = MemTop ? stack_bottom - total_alloc_size
-	                   : NewPtr( total_alloc_size );
+	                   : NewPtrClear( total_alloc_size );
 	
 	// 'ss' == 0x7373, an odd address and an invalid instruction.
 	
