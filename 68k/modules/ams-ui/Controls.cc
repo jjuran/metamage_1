@@ -72,15 +72,15 @@ void draw_control( ControlRef control )
 
 static Ptr gDefProcPtr = (Ptr) &CDEF_0;
 
-pascal ControlRecord** NewControl_patch( GrafPort*             window,
-                                         const Rect*           bounds,
-                                         const unsigned char*  title,
-                                         Boolean               visible,
-                                         short                 value,
-                                         short                 min,
-                                         short                 max,
-                                         short                 procID,
-                                         long                  refCon )
+pascal ControlRef NewControl_patch( WindowRef    window,
+                                    const Rect*  bounds,
+                                    const Byte*  title,
+                                    Boolean      visible,
+                                    short        value,
+                                    short        min,
+                                    short        max,
+                                    short        procID,
+                                    long         refCon )
 {
 	ControlRef control = (ControlRef) NewHandleClear( sizeof (ControlRecord) );
 	
@@ -132,7 +132,7 @@ struct CNTL_resource
 	Str255  title;
 };
 
-pascal ControlRecord** GetNewControl_patch( short controlID, WindowRef window )
+pascal ControlRef GetNewControl_patch( short controlID, WindowRef window )
 {
 	Handle h = GetResource( 'CNTL', controlID );
 	
@@ -158,7 +158,7 @@ pascal ControlRecord** GetNewControl_patch( short controlID, WindowRef window )
 	return control;
 }
 
-pascal void DisposeControl_patch( ControlRecord** control )
+pascal void DisposeControl_patch( ControlRef control )
 {
 	HideControl( control );
 	
@@ -189,7 +189,7 @@ pascal void DisposeControl_patch( ControlRecord** control )
 	DisposeHandle( (Handle) control );
 }
 
-pascal void KillControls_patch( GrafPort* window )
+pascal void KillControls_patch( WindowRef window )
 {
 	WindowPeek w = (WindowPeek) window;
 	
@@ -245,7 +245,7 @@ pascal void ShowControl_patch( ControlRef control )
 	draw_control( control );
 }
 
-pascal void DrawControls_patch( GrafPort* window )
+pascal void DrawControls_patch( WindowRef window )
 {
 	WindowPeek w = (WindowPeek) window;
 	
@@ -301,7 +301,7 @@ pascal short FindControl_patch( Point pt, WindowRef window, ControlRef* which )
 	return 0;
 }
 
-pascal short TrackControl_patch( ControlRecord**   control,
+pascal short TrackControl_patch( ControlRef        control,
                                  Point             start,
                                  ControlActionUPP  action )
 {
@@ -440,7 +440,7 @@ pascal short TrackControl_patch( ControlRecord**   control,
 	return 0;
 }
 
-pascal short TestControl_patch( ControlRecord** control, Point pt )
+pascal short TestControl_patch( ControlRef control, Point pt )
 {
 	if ( control[0]->contrlVis  &&  control[0]->contrlHilite != 255 )
 	{
@@ -458,7 +458,7 @@ pascal short TestControl_patch( ControlRecord** control, Point pt )
 #pragma mark Control Movement and Sizing
 #pragma mark -
 
-pascal void MoveControl_patch( ControlRecord** control, short h, short v )
+pascal void MoveControl_patch( ControlRef control, short h, short v )
 {
 	Rect* bounds = &control[0]->contrlRect;
 	
@@ -477,7 +477,7 @@ pascal void MoveControl_patch( ControlRecord** control, short h, short v )
 	}
 }
 
-pascal void SizeControl_patch( ControlRecord** control, short w, short h )
+pascal void SizeControl_patch( ControlRef control, short w, short h )
 {
 	Rect* bounds = &control[0]->contrlRect;
 	
@@ -501,7 +501,7 @@ pascal void SizeControl_patch( ControlRecord** control, short w, short h )
 #pragma mark Control Setting and Range
 #pragma mark -
 
-pascal void SetCtlValue_patch( ControlRecord** control, short value )
+pascal void SetCtlValue_patch( ControlRef control, short value )
 {
 	const short min = control[0]->contrlMin;
 	const short max = control[0]->contrlMax;
@@ -523,12 +523,12 @@ pascal void SetCtlValue_patch( ControlRecord** control, short value )
 	}
 }
 
-pascal short GetCtlValue_patch( ControlRecord** control )
+pascal short GetCtlValue_patch( ControlRef control )
 {
 	return control[0]->contrlValue;
 }
 
-pascal void SetMinCtl_patch( ControlRecord** control, short min )
+pascal void SetMinCtl_patch( ControlRef control, short min )
 {
 	if ( min != control[0]->contrlMin  &&  min <= control[0]->contrlMax )
 	{
@@ -543,12 +543,12 @@ pascal void SetMinCtl_patch( ControlRecord** control, short min )
 	}
 }
 
-pascal short GetMinCtl_patch( ControlRecord** control )
+pascal short GetMinCtl_patch( ControlRef control )
 {
 	return control[0]->contrlMin;
 }
 
-pascal void SetMaxCtl_patch( ControlRecord** control, short max )
+pascal void SetMaxCtl_patch( ControlRef control, short max )
 {
 	if ( max != control[0]->contrlMax  &&  max >= control[0]->contrlMin )
 	{
@@ -563,7 +563,7 @@ pascal void SetMaxCtl_patch( ControlRecord** control, short max )
 	}
 }
 
-pascal short GetMaxCtl_patch( ControlRecord** control )
+pascal short GetMaxCtl_patch( ControlRef control )
 {
 	return control[0]->contrlMax;
 }
@@ -572,22 +572,22 @@ pascal short GetMaxCtl_patch( ControlRecord** control )
 #pragma mark Miscellaneous Routines
 #pragma mark -
 
-pascal void SetCRefCon_patch( ControlRecord** control, long refCon )
+pascal void SetCRefCon_patch( ControlRef control, long refCon )
 {
 	control[0]->contrlRfCon = refCon;
 }
 
-pascal long GetCRefCon_patch( ControlRecord** control )
+pascal long GetCRefCon_patch( ControlRef control )
 {
 	return control[0]->contrlRfCon;
 }
 
-pascal void SetCtlAction_patch( ControlRecord** control, ControlActionProcPtr action )
+pascal void SetCtlAction_patch( ControlRef control, ControlActionProcPtr action )
 {
 	control[0]->contrlAction = action;
 }
 
-pascal ControlActionProcPtr GetCtlAction_patch( ControlRecord** control )
+pascal ControlActionProcPtr GetCtlAction_patch( ControlRef control )
 {
 	return control[0]->contrlAction;
 }
@@ -596,17 +596,17 @@ pascal ControlActionProcPtr GetCtlAction_patch( ControlRecord** control )
 #pragma mark 128K ROM Additions
 #pragma mark -
 
-pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn )
+pascal void UpdateControls_patch( WindowRef window, RgnHandle updateRgn )
 {
 	DrawControls_patch( window );
 }
 
-pascal void Draw1Control_patch( ControlRecord** control )
+pascal void Draw1Control_patch( ControlRef control )
 {
 	draw_control( control );
 }
 
-pascal short GetCVariant_patch( ControlRecord** control )
+pascal short GetCVariant_patch( ControlRef control )
 {
 	const short varCode = *(Byte*) &control[0]->contrlDefProc;
 	

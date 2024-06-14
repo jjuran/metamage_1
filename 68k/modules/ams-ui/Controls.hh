@@ -13,71 +13,78 @@ struct Rect;
 struct ControlRecord;
 
 typedef unsigned char Boolean;
+typedef unsigned char Byte;
 
-typedef pascal void (*ControlActionProcPtr)( ControlRecord**, short );
+typedef ControlRecord** ControlRef;
+
+typedef GrafPort* WindowRef;
+
+typedef MacRegion** RgnHandle;
+
+typedef pascal void (*ControlActionProcPtr)( ControlRef, short );
 
 typedef ControlActionProcPtr ControlActionUPP;
 
-pascal ControlRecord** NewControl_patch( GrafPort*             window,
-                                         const Rect*           bounds,
-                                         const unsigned char*  title,
-                                         Boolean               visible,
-                                         short                 value,
-                                         short                 min,
-                                         short                 max,
-                                         short                 procID,
-                                         long                  refCon );
+pascal ControlRef NewControl_patch( WindowRef    window,
+                                    const Rect*  bounds,
+                                    const Byte*  title,
+                                    Boolean      visible,
+                                    short        value,
+                                    short        min,
+                                    short        max,
+                                    short        procID,
+                                    long         refCon );
 
-pascal ControlRecord** GetNewControl_patch( short controlID, GrafPort* window );
+pascal ControlRef GetNewControl_patch( short controlID, WindowRef window );
 
-pascal void DisposeControl_patch( ControlRecord** control );
+pascal void DisposeControl_patch( ControlRef control );
 
-pascal void KillControls_patch( GrafPort* window );
+pascal void KillControls_patch( WindowRef window );
 
-pascal void SetCTitle_patch( ControlRecord** cntl, const unsigned char* title );
-pascal void GetCTitle_patch( ControlRecord** cntl,       unsigned char* title );
+pascal void SetCTitle_patch( ControlRef cntl, const Byte* title );
+pascal void GetCTitle_patch( ControlRef cntl,       Byte* title );
 
-pascal void HideControl_patch( ControlRecord** control );
-pascal void ShowControl_patch( ControlRecord** control );
+pascal void HideControl_patch( ControlRef control );
+pascal void ShowControl_patch( ControlRef control );
 
-pascal void DrawControls_patch( GrafPort* window );
+pascal void DrawControls_patch( WindowRef window );
 
-pascal void HiliteControl_patch( ControlRecord** control, short hiliteState );
+pascal void HiliteControl_patch( ControlRef control, short hiliteState );
 
-pascal short FindControl_patch( Point             where,
-                                GrafPort*         window,
-                                ControlRecord***  which );
+pascal short FindControl_patch( Point        where,
+                                WindowRef    window,
+                                ControlRef*  which );
 
-pascal short TrackControl_patch( ControlRecord**   control,
+pascal short TrackControl_patch( ControlRef        control,
                                  Point             start,
                                  ControlActionUPP  action );
 
-pascal short TestControl_patch( ControlRecord** control, Point pt );
+pascal short TestControl_patch( ControlRef control, Point pt );
 
-pascal void MoveControl_patch( ControlRecord** control, short w, short h );
-pascal void SizeControl_patch( ControlRecord** control, short w, short h );
+pascal void MoveControl_patch( ControlRef control, short w, short h );
+pascal void SizeControl_patch( ControlRef control, short w, short h );
 
-pascal void SetCtlValue_patch( ControlRecord** control, short value );
+pascal void SetCtlValue_patch( ControlRef control, short value );
 
-pascal short GetCtlValue_patch( ControlRecord** control );
+pascal short GetCtlValue_patch( ControlRef control );
 
-pascal void SetMinCtl_patch( ControlRecord** control, short min );
-pascal void SetMaxCtl_patch( ControlRecord** control, short max );
+pascal void SetMinCtl_patch( ControlRef control, short min );
+pascal void SetMaxCtl_patch( ControlRef control, short max );
 
-pascal short GetMinCtl_patch( ControlRecord** control );
-pascal short GetMaxCtl_patch( ControlRecord** control );
+pascal short GetMinCtl_patch( ControlRef control );
+pascal short GetMaxCtl_patch( ControlRef control );
 
-pascal void SetCRefCon_patch( ControlRecord** control, long refCon );
-pascal long GetCRefCon_patch( ControlRecord** control );
+pascal void SetCRefCon_patch( ControlRef control, long refCon );
+pascal long GetCRefCon_patch( ControlRef control );
 
-pascal void SetCtlAction_patch( ControlRecord** control, ControlActionProcPtr action );
+pascal void SetCtlAction_patch( ControlRef control, ControlActionProcPtr action );
 
-pascal ControlActionProcPtr GetCtlAction_patch( ControlRecord** control );
+pascal ControlActionProcPtr GetCtlAction_patch( ControlRef control );
 
-pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn );
+pascal void UpdateControls_patch( WindowRef window, RgnHandle updateRgn );
 
-pascal void Draw1Control_patch( ControlRecord** control );
+pascal void Draw1Control_patch( ControlRef control );
 
-pascal short GetCVariant_patch( ControlRecord** control );
+pascal short GetCVariant_patch( ControlRef control );
 
 #endif
