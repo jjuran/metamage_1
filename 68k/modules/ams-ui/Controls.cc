@@ -216,17 +216,20 @@ pascal void GetCTitle_patch( ControlRef control, Str255 title )
 
 pascal void HideControl_patch( ControlRef control )
 {
-	WindowRef window = control[0]->contrlOwner;
-	
-	if ( ((WindowPeek) window)->visible  &&  control[0]->contrlVis )
+	if ( control[0]->contrlVis )
 	{
 		control[0]->contrlVis = 0;
 		
-		scoped_port thePort = window;
+		WindowRef window = control[0]->contrlOwner;
 		
-		// TODO:  Erase the region instead
-		EraseRect( &control[0]->contrlRect );
-		InvalRect( &control[0]->contrlRect );
+		if ( ((WindowPeek) window)->visible )
+		{
+			scoped_port thePort = window;
+			
+			// TODO:  Erase the region instead
+			EraseRect( &control[0]->contrlRect );
+			InvalRect( &control[0]->contrlRect );
+		}
 	}
 }
 
