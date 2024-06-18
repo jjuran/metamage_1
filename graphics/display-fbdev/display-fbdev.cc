@@ -376,16 +376,18 @@ void update_loop( raster::sync_relay*  sync,
 	
 	while ( sync->status == Sync_ready  &&  ! signalled )
 	{
-		while ( raster_seed == sync->seed )
+		if ( update_fifo )
 		{
-			if ( update_fifo )
-			{
-				close( open( update_fifo, O_WRONLY ) );
-			}
-			else
-			{
-				usleep( 10000 );  // 10ms
-			}
+			close( open( update_fifo, O_WRONLY ) );
+		}
+		else
+		{
+			usleep( 10000 );  // 10ms
+		}
+		
+		if ( sync->seed == raster_seed )
+		{
+			continue;
 		}
 		
 		raster_seed = sync->seed;
