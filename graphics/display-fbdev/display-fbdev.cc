@@ -94,7 +94,7 @@ enum
 	Opt_gfxmode = 'g',
 	Opt_title   = 't',
 	Opt_wait    = 'w',
-	Opt_magnify = 'x',  // unimplemented, but accepted for compatibility
+	Opt_magnify = 'x',  // allowed values are 1 (no-op) and 2
 	
 	Opt_graphics_mode = Opt_gfxmode,
 };
