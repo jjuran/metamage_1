@@ -398,6 +398,8 @@ void menu_item_chosen( long choice )
 				case Undo:
 					if ( int rgn_index = tictactoe::undo_move() + 1 )
 					{
+						document_modified = true;
+						
 						RgnHandle rgn = reactivate_region( rgn_index );
 						
 						if ( CONFIG_COMPOSITING )
