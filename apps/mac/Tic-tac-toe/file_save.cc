@@ -123,11 +123,16 @@ long write_and_close_stream( FSIORefNum refnum, const Byte* data, Size size )
 	
 	Size n = traits::write( refnum, data, size );
 	
-	traits::close( refnum );
-	
 	OSErr err = n < 0    ? (OSErr) n
 	          : n < size ? (OSErr) ioErr
 	          :            (OSErr) noErr;
+	
+	if ( err == noErr )
+	{
+		err = traits::seteof( refnum );  // set EOF to current position
+	}
+	
+	traits::close( refnum );
 	
 	return err;
 }
