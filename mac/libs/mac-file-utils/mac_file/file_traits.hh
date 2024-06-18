@@ -73,6 +73,17 @@ struct file_traits< FSSpec >
 		
 		return err ? err : result;
 	}
+	
+	static OSErr seteof( FSIORefNum refnum )
+	{
+		OSErr  err;
+		SInt32 pos;
+		
+		(err = GetFPos( refnum, &pos ))  ||
+		(err = SetEOF ( refnum,  pos ));
+		
+		return err;
+	}
 };
 
 template <>
@@ -119,6 +130,11 @@ struct file_traits< FSRef >
 		OSErr err = FSGetForkSize( refnum, &result );
 		
 		return err ? err : result;
+	}
+	
+	static OSErr seteof( FSIORefNum refnum )
+	{
+		return FSSetForkSize( refnum, fsAtMark, 0 );
 	}
 };
 
