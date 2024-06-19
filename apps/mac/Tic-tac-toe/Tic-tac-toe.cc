@@ -46,11 +46,13 @@
 #include "mac_app/menus.hh"
 #include "mac_app/state.hh"
 
+// QDFullscreen
+#include "fullscreen.hh"
+
 // Tic-tac-toe
 #include "document.hh"
 #include "file_open.hh"
 #include "file_save.hh"
-#include "fullscreen.hh"
 #include "menus.hh"
 #include "play_tone.hh"
 #include "regions.hh"

@@ -21,13 +21,15 @@
 #include "mac_ui/menus.hh"
 #include "mac_ui/windows.hh"
 
+// QDFullscreen
+#include "fullscreen_QT.hh"
+
 // CGTictactoe
 #include "CGTictactoe.hh"
 
 // Tic-tac-toe
 #include "cursors.hh"
 #include "dock_tile.hh"
-#include "fullscreen_QT.hh"
 #include "menus.hh"
 #include "play_tone.hh"
 #include "regions.hh"

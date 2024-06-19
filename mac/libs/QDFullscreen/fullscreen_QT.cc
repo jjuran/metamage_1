@@ -21,7 +21,7 @@
 #include <Movies.h>
 #endif
 
-// Tic-tac-toe
+// QDFullscreen
 #include "fade.hh"
 
 

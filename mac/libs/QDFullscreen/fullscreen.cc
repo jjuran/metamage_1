@@ -18,7 +18,7 @@
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 
-// TestApp
+// QDFullscreen
 #include "fullscreen_QT.hh"
 #include "fullscreen_port.hh"
 

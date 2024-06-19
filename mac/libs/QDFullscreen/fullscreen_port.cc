@@ -62,4 +62,8 @@ void refresh_screen()
 	qd.thePort = LMGetWMgrPort();
 }
 
+#else
+
+int dummy;
+
 #endif
