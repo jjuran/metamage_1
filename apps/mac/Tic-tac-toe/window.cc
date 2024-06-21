@@ -137,11 +137,6 @@ CGContextForPort::CGContextForPort( bool erasing )
 	
 	CGContextTranslateCTM( context, 0, portRect.bottom );
 	CGContextScaleCTM    ( context, 1, -1 );
-	
-	CGContextTranslateCTM( context, margin.h, margin.v );
-	CGContextScaleCTM( context, unitLength, unitLength );
-	
-	CGContextSetGrayStrokeColor( context, white_or_black, 1 );
 }
 
 CGContextForPort::~CGContextForPort()
@@ -184,7 +179,14 @@ void draw_window( const Rect& portRect )
 {
 	if ( CONFIG_USE_COREGRAPHICS )
 	{
+		float white_or_black = is_fullscreen_via_QT();
+		
 		CGContextForPort port_context( true );
+		
+		CGContextTranslateCTM( port_context, margin.h, margin.v );
+		CGContextScaleCTM( port_context, unitLength, unitLength );
+		
+		CGContextSetGrayStrokeColor( port_context, white_or_black, 1 );
 		
 		draw_board( port_context, tictactoe::squares );
 		
@@ -259,7 +261,14 @@ void draw_token( player_t token, short index )
 	
 	if ( CONFIG_USE_COREGRAPHICS )
 	{
+		float white_or_black = is_fullscreen_via_QT();
+		
 		CGContextForPort port_context;
+		
+		CGContextTranslateCTM( port_context, margin.h, margin.v );
+		CGContextScaleCTM( port_context, unitLength, unitLength );
+		
+		CGContextSetGrayStrokeColor( port_context, white_or_black, 1 );
 		
 		draw_token( port_context, token, j, i );
 		
