@@ -94,49 +94,73 @@ class CGContextForPort
 	private:
 		CGContextRef context;
 		
+		Rect create();
+		
+		void erase( const Rect& portRect, float gray );
+		
+		void transform( int height );
+		
 		// non-copyable
 		CGContextForPort           ( const CGContextForPort& );
 		CGContextForPort& operator=( const CGContextForPort& );
 	
 	public:
-		CGContextForPort( bool erasing = false );
+		CGContextForPort();
+		CGContextForPort( float erase_gray );
 		
 		~CGContextForPort();
 		
 		operator CGContextRef() const  { return context; }
 };
 
-CGContextForPort::CGContextForPort( bool erasing )
+Rect CGContextForPort::create()
 {
-	const bool fullscreen = is_fullscreen_via_QT();
-	
-	float white_or_black = fullscreen;
-	
 	CGrafPtr port = GetQDGlobalsThePort();
 	
 	CreateCGContextForPort( port, &context );
 	
 	const Rect& portRect = get_portRect( port );
 	
-	if ( erasing )
-	{
-		CGRect whole = {};
-		
-		whole.size.width  = portRect.right;
-		whole.size.height = portRect.bottom;
-		
-		CGContextSetGrayFillColor( context, ! fullscreen, 1 );
-		
-		CGContextFillRect( context, whole );
-	}
+	return portRect;
+}
+
+void CGContextForPort::erase( const Rect& portRect, float gray )
+{
+	CGRect whole = {};
 	
+	whole.size.width  = portRect.right;
+	whole.size.height = portRect.bottom;
+	
+	CGContextSetGrayFillColor( context, gray, 1 );
+	
+	CGContextFillRect( context, whole );
+}
+
+void CGContextForPort::transform( int height )
+{
 	/*
 		Flip the coordinate system so that the Y axis increases
 		downward as in QuickDraw (and compositing-mode windows).
 	*/
 	
-	CGContextTranslateCTM( context, 0, portRect.bottom );
+	CGContextTranslateCTM( context, 0, height );
 	CGContextScaleCTM    ( context, 1, -1 );
+}
+
+CGContextForPort::CGContextForPort()
+{
+	const Rect& portRect = create();
+	
+	transform( portRect.bottom );
+}
+
+CGContextForPort::CGContextForPort( float erase_gray )
+{
+	const Rect& portRect = create();
+	
+	erase( portRect, erase_gray );
+	
+	transform( portRect.bottom );
 }
 
 CGContextForPort::~CGContextForPort()
@@ -180,8 +204,9 @@ void draw_window( const Rect& portRect )
 	if ( CONFIG_USE_COREGRAPHICS )
 	{
 		float white_or_black = is_fullscreen_via_QT();
+		float black_or_white = 1.0 - white_or_black;
 		
-		CGContextForPort port_context( true );
+		CGContextForPort port_context( black_or_white );
 		
 		CGContextTranslateCTM( port_context, margin.h, margin.v );
 		CGContextScaleCTM( port_context, unitLength, unitLength );
