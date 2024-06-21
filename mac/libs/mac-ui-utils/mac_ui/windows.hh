@@ -8,12 +8,12 @@
 
 // Mac OS X
 #ifdef __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
+#include <Carbon/Carbon.h>
 #endif
 
 // Mac OS
-#ifndef __QUICKDRAW__
-#include <Quickdraw.h>
+#ifndef __MACWINDOWS__
+#include <MacWindows.h>
 #endif
 
 
@@ -27,6 +27,12 @@ namespace ui  {
 	bool invalidate_if_compositing( WindowRef window );
 	
 	void invalidate_window( WindowRef window );
+	
+	inline
+	void set_window_title( WindowRef window, const Byte* name )
+	{
+		SetWTitle( window, name );
+	}
 	
 	OSStatus set_window_title( WindowRef window, const HFSUniStr255& name );
 	
