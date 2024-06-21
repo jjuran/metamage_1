@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// mac-ui-utils
+#include "mac_ui/windows.hh"
+
 // mac-app-utils
 #include "mac_app/Window_menu.hh"
 
@@ -64,11 +67,12 @@ namespace TestEdit
 		return result;
 	}
 	
-	static n::owned< CFStringRef > GetFilenameAsCFString( const FSRef& file )
+	static inline
+	void set_window_title_to_filename( WindowRef window, const FSRef& file )
 	{
 		N::FSGetCatalogInfo_Result info = N::FSGetCatalogInfo( file, kFSCatInfoNone );
 		
-		return n::convert< n::owned< CFStringRef > >( info.outName );
+		mac::ui::set_window_title( window, info.outName );
 	}
 	
 	
@@ -107,7 +111,7 @@ namespace TestEdit
 	{
 		WindowRef window = itsWindow.get();
 		
-		SetWindowTitleWithCFString( window, GetFilenameAsCFString( file ) );
+		set_window_title_to_filename( window, file );
 		
 		mac::app::Window_menu_remove( window );
 		mac::app::Window_menu_insert( window );
