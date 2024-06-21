@@ -184,7 +184,10 @@ void draw_window( const Rect& portRect )
 {
 	if ( CONFIG_USE_COREGRAPHICS )
 	{
-		draw_board( CGContextForPort( true ), tictactoe::squares );
+		CGContextForPort port_context( true );
+		
+		draw_board( port_context, tictactoe::squares );
+		
 		return;
 	}
 	
@@ -256,7 +259,10 @@ void draw_token( player_t token, short index )
 	
 	if ( CONFIG_USE_COREGRAPHICS )
 	{
-		draw_token( CGContextForPort(), token, j, i );
+		CGContextForPort port_context;
+		
+		draw_token( port_context, token, j, i );
+		
 		return;
 	}
 	
