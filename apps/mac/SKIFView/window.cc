@@ -517,14 +517,9 @@ WindowRef populate_window( WindowRef window, const raster_load& load )
 static inline
 WindowRef title( WindowRef window, const HFSUniStr255& name )
 {
-	CFStringRef s;
-	
-	if ( window  &&  (s = CFStringCreateWithCharacters( NULL, name.unicode,
-	                                                          name.length )) )
+	if ( window )
 	{
-		SetWindowTitleWithCFString( window, s );
-		
-		CFRelease( s );
+		mac::ui::set_window_title( window, name );
 	}
 	
 	return window;
