@@ -28,6 +28,12 @@
 #include "mac_rsrc/create_res_file.hh"
 #include "mac_rsrc/open_res_file.hh"
 
+// mac-qd-utils
+#include "mac_qd/globals/thePort_window.hh"
+
+// mac-ui-utils
+#include "mac_ui/windows.hh"
+
 // mac-app-utils
 #include "mac_app/file_save_dialog.hh"
 
@@ -363,9 +369,12 @@ void file_save_as()
 	
 	if ( err == noErr )
 	{
+		using mac::qd::thePort_window;
+		using mac::ui::set_window_title;
+		
 		const FileDesc& file = global_document_file< FileDesc >::value;
 		
-		set_window_title( mac::file::get_name( file ) );
+		set_window_title( thePort_window(), mac::file::get_name( file ) );
 		
 		document_assigned = true;
 		document_modified = false;

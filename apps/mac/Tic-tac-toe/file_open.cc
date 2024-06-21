@@ -15,6 +15,12 @@
 #include "mac_file/file_traits.hh"
 #include "mac_file/open_data_fork.hh"
 
+// mac-qd-utils
+#include "mac_qd/globals/thePort_window.hh"
+
+// mac-ui-utils
+#include "mac_ui/windows.hh"
+
 // mac-app-utils
 #include "mac_app/documents.hh"
 #include "mac_app/file_open_dialog.hh"
@@ -59,6 +65,9 @@ long file_opener( const File& file )
 	
 	if ( n <= 9 )
 	{
+		using mac::qd::thePort_window;
+		using mac::ui::set_window_title;
+		
 		using namespace tictactoe;
 		
 		if ( restore( block, n ) )
@@ -70,7 +79,7 @@ long file_opener( const File& file )
 			document_assigned = true;
 			document_modified = false;
 			
-			set_window_title( traits::get_name( file ) );
+			set_window_title( thePort_window(), traits::get_name( file ) );
 			
 			return noErr;
 		}
