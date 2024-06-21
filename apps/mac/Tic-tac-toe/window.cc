@@ -131,7 +131,7 @@ CGContextForPort::CGContextForPort( bool erasing )
 	}
 	
 	/*
-		Flip the coordinate system so that the Y axis increases,
+		Flip the coordinate system so that the Y axis increases
 		downward as in QuickDraw (and compositing-mode windows).
 	*/
 	
