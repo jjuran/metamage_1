@@ -54,11 +54,11 @@ const OSType doctype = 'XvO#';
 
 #if TARGET_API_MAC_CARBON
 
-typedef FSRef FileType;
+typedef FSRef FileDesc;
 
 #else
 
-typedef FSSpec FileType;
+typedef FSSpec FileDesc;
 
 #endif
 
@@ -313,9 +313,9 @@ void file_save()
 {
 	using mac::file::open_data_fork;
 	
-	typedef file_traits< FileType > traits;
+	typedef file_traits< FileDesc > traits;
 	
-	const FileType& file = global_document_file< FileType >::value;
+	const FileDesc& file = global_document_file< FileDesc >::value;
 	
 	short refnum = open_data_fork( file, fsRdWrPerm );
 	
@@ -363,7 +363,7 @@ void file_save_as()
 	
 	if ( err == noErr )
 	{
-		const FileType& file = global_document_file< FileType >::value;
+		const FileDesc& file = global_document_file< FileDesc >::value;
 		
 		set_window_title( mac::file::get_name( file ) );
 		
