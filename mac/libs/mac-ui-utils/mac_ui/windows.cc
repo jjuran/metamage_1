@@ -188,6 +188,21 @@ void invalidate_window( WindowRef window )
 	}
 }
 
+OSStatus set_window_title( WindowRef window, const HFSUniStr255& name )
+{
+	OSStatus err = memFullErr;  // Why else would CFStringCreate... fail?
+	
+	if ( CFStringRef s = CFStringCreateWithCharacters( NULL, name.unicode,
+	                                                         name.length ) )
+	{
+		err = SetWindowTitleWithCFString( window, s );
+		
+		CFRelease( s );
+	}
+	
+	return err;
+}
+
 OSStatus set_window_title_UTF8( WindowRef window, const char* p, int n )
 {
 	OSStatus err = memFullErr;  // Why else would CFStringCreate... fail?
