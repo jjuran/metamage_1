@@ -45,6 +45,9 @@
 // mac-ui-utils
 #include "mac_ui/windows.hh"
 
+// mac-app-utils
+#include "mac_app/new_window.hh"
+
 // rasterlib
 #include "raster/clut.hh"
 #include "raster/clut_detail.hh"
@@ -561,15 +564,12 @@ WindowRef new_window( const raster_desc& desc, ConstStr255Param name )
 		return window;
 	}
 	
+	using mac::app::new_window;
+	
 	const WindowRef behind = (WindowRef) -1;
 	const short     procid = noGrowDocProc;
 	
-	if ( ! has_Color_QuickDraw() )
-	{
-		return NewWindow( NULL, &bounds, name, true, procid, behind, true, 0 );
-	}
-	
-	return NewCWindow( NULL, &bounds, name, true, procid, behind, true, 0 );
+	return new_window( NULL, &bounds, name, true, procid, behind, true, 0 );
 }
 
 WindowRef create_window( const raster_load& load, ConstStr255Param name )
