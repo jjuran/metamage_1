@@ -8,15 +8,18 @@
 // Standard C++
 #include <algorithm>
 
+// mac-file-utils
+#include "mac_file/file_traits.hh"
+#include "mac_file/open_data_fork.hh"
+
 // mac-ui-utils
 #include "mac_ui/windows.hh"
 
 // mac-app-utils
 #include "mac_app/Window_menu.hh"
 
-// MacFiles
-#include "MacFiles/Classic.hh"
-#include "MacFiles/Unicode.hh"
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // Pedestal
 #include "Pedestal/WindowStorage.hh"
@@ -25,44 +28,78 @@
 namespace TestEdit
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
-	
-	static inline SInt32 ReadAll( N::FSFileRefNum input, char* buffer, SInt32 n )
-	{
-		return N::FSRead( input, n, buffer, N::ThrowEOF_Always() );
-	}
-	
-	static inline ByteCount ReadAll( N::FSForkRefNum input, char* buffer, ByteCount n )
-	{
-		return N::FSReadFork( input, n, buffer, N::ThrowEOF_Always() );
-	}
 	
 	template < class FileSpec >
 	static plus::string ReadFileData( const FileSpec& file )
 	{
-		typedef io::filespec_traits< FileSpec > traits;
+		using mac::file::FSIORefNum;
+		using mac::file::file_traits;
 		
-		typedef typename traits::stream     stream;
-		typedef typename traits::byte_count byte_count;
+		typedef file_traits< FileSpec > traits;
+		
+		typedef typename traits::file_size_t file_size_t;
 		
 		plus::string result;
 		
-		n::owned< stream > input = io::open_for_reading( file );
+		FSIORefNum refnum = mac::file::open_data_fork( file, fsRdPerm );
 		
-		const std::size_t size = io::get_file_size( input );
+		if ( refnum >= 0 )
+		{
+			file_size_t size = traits::geteof( refnum );
+			
+			if ( (file_size_t) -1 > (size_t) -1  &&  size > (size_t) -1 )
+			{
+				/*
+					When we have 64-bit file sizes in 32-bit Mac OS,
+					it's possible that a size could overflow size_t.
+				*/
+				
+				size = memFullErr;  // propagate the error
+			}
+			else if ( size > 0 )
+			{
+				if ( char* p = result.reset_nothrow( size ) )
+				{
+					long n_read = traits::read( refnum, p, size );
+					
+					if ( n_read == size )
+					{
+						// Allow LF newlines
+						std::replace( p,
+						              p + n_read,
+						              '\n',
+						              '\r' );
+					}
+					else
+					{
+						size = n_read < 0 ? n_read
+						                  : eofErr;  // propagate the error
+					}
+				}
+				else
+				{
+					size = memFullErr;  // propagate the error
+				}
+			}
+			else
+			{
+				// empty file -- no need to read or post=process
+			}
+			
+			traits::close( refnum );
+			
+			if ( size < 0 )
+			{
+				refnum = size;  // propagate the error
+			}
+		}
 		
-		char* p = result.reset( size );
-		
-		const byte_count bytes_read = ReadAll( input, p, size );
-		
-		// Allow LF newlines
-		std::replace( p,
-		              p + size,
-		              '\n',
-		              '\r' );
+		if ( refnum < 0 )
+		{
+			Mac::ThrowOSStatus( refnum );
+		}
 		
 		return result;
 	}
