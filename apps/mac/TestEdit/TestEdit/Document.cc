@@ -18,11 +18,17 @@
 // mac-app-utils
 #include "mac_app/Window_menu.hh"
 
+// plus
+#include "plus/string.hh"
+
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // Pedestal
 #include "Pedestal/WindowStorage.hh"
+
+// TestEdit
+#include "TestEdit/Window.hh"
 
 
 namespace TestEdit
@@ -159,15 +165,6 @@ namespace TestEdit
 		mac::app::Window_menu_insert( window );
 		
 		LoadText( itsWindow, ReadFileData( file ) );
-	}
-	
-	plus::string Document::GetName() const
-	{
-		Str255 title;
-		
-		GetWTitle( GetWindowRef(), title );
-		
-		return plus::string( title );
 	}
 	
 }

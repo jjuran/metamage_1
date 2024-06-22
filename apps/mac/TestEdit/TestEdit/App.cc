@@ -33,6 +33,7 @@
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEObjects.hh"
+#include "Nitrogen/MacWindows.hh"
 
 // AEObjectModel
 #include "AEObjectModel/AccessProperty.hh"
@@ -347,6 +348,34 @@ n::owned< Mac::AEDesc_Token > token_for_document_window( WindowRef window )
 	return N::AECreateDesc( typeDocument, N::AECreateDesc< Mac::typePtr, Mac::AEDesc_Token >( window ) );
 }
 
+static
+n::owned< Mac::AEDesc_Token > window_name_token( WindowRef window )
+{
+	if ( TARGET_API_MAC_CARBON )
+	{
+		n::owned< CFStringRef > title = N::CopyWindowTitleAsCFString( window );
+		
+		if ( const UniChar* characters = CFStringGetCharactersPtr( title ) )
+		{
+			CFIndex length = CFStringGetLength( title );
+			
+			Size size = length * sizeof (UniChar);
+			
+			return N::AECreateDesc< Mac::AEDesc_Token >( Mac::typeUnicodeText,
+			                                             characters,
+			                                             size );
+		}
+	}
+	
+	Str255 title;
+	
+	GetWTitle( window, title );
+	
+	return N::AECreateDesc< Mac::AEDesc_Token >( Mac::typeChar,
+	                                             title + 1,
+	                                             title[ 0 ] );
+}
+
 struct Document_Element
 {
 	static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEObjectClass        desiredClass,
@@ -404,9 +433,7 @@ struct DocName_Property
 	{
 		WindowRef window = N::AEGetDescData< typeDocument >( containerToken );
 		
-		const Document& document = *(Document*) GetWRefCon( window );
-		
-		return N::AECreateDesc< Mac::typeChar, Mac::AEDesc_Token >( iota::convert_string< n::string >( document.GetName() ) );
+		return window_name_token( window );
 	}
 	
 	static void Install_Accessor()
@@ -603,6 +630,11 @@ void SetUpAppleEvents()
 	LiteralData_Token::Install_DataGetter( Mac::typeBoolean  );
 	LiteralData_Token::Install_DataGetter( Mac::typeChar     );
 	LiteralData_Token::Install_DataGetter( Mac::typeAERecord );
+	
+	if ( TARGET_API_MAC_CARBON )
+	{
+		LiteralData_Token::Install_DataGetter( Mac::typeUnicodeText );
+	}
 	
 	Document_Token::Install_DataGetter();
 	

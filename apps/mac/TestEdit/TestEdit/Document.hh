@@ -9,11 +9,15 @@
 // vxo
 #include "vxo/ref_count.hh"
 
-// plus
-#include "plus/string.hh"
+// nucleus
+#ifndef NUCLEUS_OWNED_HH
+#include "nucleus/owned.hh"
+#endif
 
-// TestEdit
-#include "TestEdit/Window.hh"
+// Nitrogen
+#ifndef MAC_WINDOWS_TYPES_WINDOWREF_HH
+#include "Mac/Windows/Types/WindowRef.hh"
+#endif
 
 
 namespace TestEdit
@@ -32,8 +36,6 @@ namespace TestEdit
 			Document( const FSRef & file );
 			
 			WindowRef GetWindowRef() const  { return itsWindow; }
-			
-			plus::string GetName() const;
 	};
 	
 }
