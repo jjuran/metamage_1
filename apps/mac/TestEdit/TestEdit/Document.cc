@@ -70,9 +70,14 @@ namespace TestEdit
 	static inline
 	void set_window_title_to_filename( WindowRef window, const FSRef& file )
 	{
-		N::FSGetCatalogInfo_Result info = N::FSGetCatalogInfo( file, kFSCatInfoNone );
+		HFSUniStr255 name;
 		
-		mac::ui::set_window_title( window, info.outName );
+		OSErr err = FSGetCatalogInfo( &file, 0, NULL, &name, NULL, NULL );
+		
+		if ( err == noErr )
+		{
+			mac::ui::set_window_title( window, name );
+		}
 	}
 	
 	
