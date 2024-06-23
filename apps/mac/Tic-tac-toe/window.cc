@@ -22,7 +22,7 @@
 #include "mac_ui/windows.hh"
 
 // QDFullscreen
-#include "fullscreen_QT.hh"
+#include "fullscreen.hh"
 
 // CGTictactoe
 #include "CGTictactoe.hh"
@@ -94,10 +94,8 @@ void draw_window( CGContextRef context )
 {
 	// Caller saves and restores the graphics context as needed.
 	
-	const bool fullscreen = is_fullscreen_via_QT();
-	
-	const float fullscreen_white_or_window_black =   fullscreen;
-	const float fullscreen_black_or_window_white = ! fullscreen;
+	const float fullscreen_white_or_window_black =   fullscreen::in_effect;
+	const float fullscreen_black_or_window_white = ! fullscreen::in_effect;
 	
 	CGContextTranslateCTM( context, margin.h, margin.v );
 	CGContextScaleCTM( context, unitLength, unitLength );
@@ -124,8 +122,8 @@ void draw_window( const Rect& portRect )
 {
 	if ( CONFIG_USE_COREGRAPHICS )
 	{
-		float white_or_black = is_fullscreen_via_QT();
-		float black_or_white = 1.0 - white_or_black;
+		float white_or_black =   fullscreen::in_effect;
+		float black_or_white = ! fullscreen::in_effect;
 		
 		CGContextForPort port_context( black_or_white );
 		
@@ -139,7 +137,10 @@ void draw_window( const Rect& portRect )
 		return;
 	}
 	
-	EraseRect( &portRect );
+	if ( ! fullscreen::in_effect )
+	{
+		EraseRect( &portRect );
+	}
 	
 	SetOrigin( -margin.h, -margin.v );
 	
@@ -207,7 +208,7 @@ void draw_token( player_t token, short index )
 	
 	if ( CONFIG_USE_COREGRAPHICS )
 	{
-		float white_or_black = is_fullscreen_via_QT();
+		float white_or_black = fullscreen::in_effect;
 		
 		CGContextForPort port_context;
 		
