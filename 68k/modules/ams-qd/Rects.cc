@@ -446,6 +446,32 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		patMode      = patXor;
 		port.fillPat = qd.black;
 	}
+	else if ( verb == kQDGrafVerbFill )
+	{
+		long fg_inverted = port.fgColor & Inverse;
+		long bk_inverted = port.bkColor & Inverse;
+		
+		if ( fg_inverted == bk_inverted )
+		{
+			/*
+				Either black/color on black/color, or white on white.
+			*/
+			
+			const QDGlobals& qd = get_QDGlobals();
+			
+			patMode      = patCopy;
+			port.fillPat = qd.black;
+		}
+		
+		if ( fg_inverted )
+		{
+			/*
+				Either white on black or white on white.
+			*/
+			
+			patMode ^= 4;  // negate the pattern
+		}
+	}
 	
 	Pattern& pattern = *params.pattern;
 	
