@@ -45,6 +45,8 @@ static const bool has_QT_fullscreen = has_QT_v2_5();
 
 namespace fullscreen {
 
+bool in_effect;
+
 void enter()
 {
 	if ( has_QT_fullscreen )
@@ -55,6 +57,8 @@ void enter()
 	{
 		clobber_screen();
 	}
+	
+	in_effect = true;
 }
 
 void leave()
@@ -67,6 +71,8 @@ void leave()
 	{
 		refresh_screen();
 	}
+	
+	in_effect = false;
 	
 	SetPortWindowPort( FrontWindow() );
 }

@@ -10,6 +10,8 @@
 namespace fullscreen
 {
 	
+	extern bool in_effect;
+	
 	void enter();
 	void leave();
 	
