@@ -26,6 +26,11 @@
 #pragma exceptions off
 
 
+enum
+{
+	Inverse = 2,
+};
+
 BitMap IconBitmap : 0x0A0E;
 OSErr  ResErr     : 0x0A60;
 
@@ -63,8 +68,46 @@ pascal OSErr PlotIconID_call( const Rect*        rect,
 		return resNotFound;
 	}
 	
-	CopyIconBits( *h + 128, rect, srcBic );
-	CopyIconBits( *h,       rect, srcXor );
+	const GrafPort& port = **get_addrof_thePort();
+	
+	/*
+		Regarding fore-color and back-color, in a monobit environment
+		we have to consider four scenarious:
+		
+		Black on white:
+			This is the norm:  BIC the mask and XOR the face.
+		
+		White on black:
+			Inverse video mode:  OR the mask and XOR the face.
+		
+		Black on black:
+			Unusual, though "black" could actually be one of the six colors.
+			But in a basic graphics port, just OR the mask.
+		
+		White on white:
+			Rare if ever, but supported:  Just BIC the mask.
+	*/
+	
+	short mask_mode = port.bkColor & Inverse ? srcBic : srcOr;
+	
+	CopyIconBits( *h + 128, rect, mask_mode );
+	
+	if ( (port.fgColor ^ port.bkColor) & Inverse )
+	{
+		/*
+			Either black on white or white on black,
+			so draw the icon's face over the mask.
+		*/
+		
+		CopyIconBits( *h, rect, srcXor );
+	}
+	else
+	{
+		/*
+			Either black on black or white on white --
+			leave the mask drawn as is, as a silhouette.
+		*/
+	}
 	
 	ReleaseResource( h );
 	
