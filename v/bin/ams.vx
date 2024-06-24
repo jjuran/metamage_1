@@ -194,6 +194,15 @@ def get_modem_fd
 {
 	if modem = modem or getenv "AMS_MODEM" then
 	{
+		let required = ["tcpclient", "duplex"]
+		
+		if required ver { not which v } then
+		{
+			warn "ams.vx: TCP modem requires tcpclient and duplex; disabling"
+			
+			return ()
+		}
+		
 		let (host, port) = modem / ':'
 		
 		let command = "tcpclient", host, port, "duplex", "6-1", "0-7"
