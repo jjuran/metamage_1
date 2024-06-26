@@ -463,14 +463,14 @@ namespace tool
 	}
 	
 	
-	class ResourceFileCopyingTask : public FileTask
+	class FileCopyingTask : public FileTask
 	{
 		private:
 			const plus::string its_input_pathname;
 		
 		public:
-			ResourceFileCopyingTask( const plus::string&  input,
-			                         const plus::string&  output )
+			FileCopyingTask( const plus::string&  input,
+			                 const plus::string&  output )
 			:
 				FileTask          ( output ),
 				its_input_pathname( input  )
@@ -482,7 +482,7 @@ namespace tool
 			void Return( bool succeeded );
 	};
 	
-	void ResourceFileCopyingTask::Make()
+	void FileCopyingTask::Make()
 	{
 		Command command;
 		
@@ -496,7 +496,7 @@ namespace tool
 		ExecuteCommand( shared_from_this(), message, command );
 	}
 	
-	void ResourceFileCopyingTask::Return( bool succeeded )
+	void FileCopyingTask::Return( bool succeeded )
 	{
 	}
 	
@@ -519,7 +519,7 @@ namespace tool
 				const plus::string src_file = src / name;
 				const plus::string dst_file = dst / name;
 				
-				TaskPtr task( new ResourceFileCopyingTask( src_file, dst_file ) );
+				TaskPtr task( new FileCopyingTask( src_file, dst_file ) );
 				
 				UpdateInputStamp( task, src_file );
 				
