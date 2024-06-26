@@ -10,6 +10,8 @@ let basename = import "basename";
 let info_plist = import "info_plist"
 let render_xml = import "render_xml"
 
+let var_bin = "var/out"
+
 def comma-separated (prev, next)
 {
 	let c = prev[ prev.length - 1 ]
@@ -121,7 +123,7 @@ else if src_is_txt and not exists name_path and exists name_path ".mbin" then
 else if -substr( -name, 0, 5 ) == ".mbin" then
 {
 	disk = name
-	name = (output-from-run [ "var/out/mbin", "name", input_path ]).lines()[ 0 ]
+	name = (output-from-run [ var_bin "/mbin", "name", input_path ]).lines()[ 0 ]
 	
 	name_path = parent_dir "/" name
 	
@@ -204,21 +206,21 @@ rewrite Resources "/config.txt" <== new_data new_disk config_data
 let tools = "mac/libs/amicus/tools/launch-ams-app.vx"
 
 let native_binary_names = ["minivx graft xv68k freemountd" / ' ']
-let native_binary_paths = native_binary_names map {"var/out/" v}
+let native_binary_paths = native_binary_names map {var_bin "/" v}
 
 copy( tools, *native_binary_paths, MacOS_dir )
 
-if active "sound" and exists "var/out/sndtrack" then
+if active "sound" and exists var_bin "/sndtrack" then
 {
-	copy( "var/out/sndtrack", MacOS_dir )
+	copy( var_bin "/sndtrack", MacOS_dir )
 }
 
-if frontend != "Amber" and exists "var/out/Amber" then
+if frontend != "Amber" and exists var_bin "/Amber" then
 {
-	copy( "var/out/Amber", MacOS_dir )
+	copy( var_bin "/Amber", MacOS_dir )
 }
 
-copy( "var/out/" frontend, MacOS_dir )
+copy( var_bin "/" frontend, MacOS_dir )
 
 var plist_xml_lines = [ info_plist.version, info_plist.doctype ]
 
