@@ -149,7 +149,7 @@ NEW_PATH = PATH="$$PWD/var/demo:$$PWD/var/out:$$PATH"
 AMS_ROOT = var/links/ams-68k-bin
 AMS_RSRC = "$(AMS_ROOT)/mnt/AMS Resources"
 AMS_VARS = AMS_BIN=$(AMS_ROOT)/bin AMS_LIB=$(AMS_ROOT)/lib AMS_MNT=$(AMS_ROOT)/mnt
-RUN_AMS  = $(NEW_PATH) $(AMS_VARS) var/out/minivx v/bin/ams.vx
+RUN_AMS  = $(NEW_PATH) $(AMS_VARS) v/bin/ams.vx
 
 ams-linux-demo: ams-linux-check display-check
 	$(RUN_AMS)
