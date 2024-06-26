@@ -10,7 +10,7 @@ let basename = import "basename";
 let info_plist = import "info_plist"
 let render_xml = import "render_xml"
 
-let var_bin = "var/out"
+let var_bin = "var/bin"
 
 def comma-separated (prev, next)
 {

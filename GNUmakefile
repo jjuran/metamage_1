@@ -11,7 +11,7 @@ PLEASE_RUN = 'Please run `(cd .. && git clone' $(METAMAGE_1)')`.'
 
 BUILD = ./build.pl -i
 
-VAR_BIN := var/out
+VAR_BIN := var/bin
 
 default:
 	@echo 'For help, run `make help`.'

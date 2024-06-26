@@ -2,4 +2,4 @@
 
 make app-build-tools
 
-PATH="$PWD/var/out:$PATH" ./build.pl "$@"
+PATH="$PWD/var/bin:$PATH" ./build.pl "$@"

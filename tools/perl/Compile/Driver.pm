@@ -141,7 +141,7 @@ sub jobs_for
 				TYPE => "COPY",
 				FROM => $module,
 				ORIG => $path,
-				DEST => "var/out/$prog",
+				DEST => "var/bin/$prog",
 			);
 		}
 	}
