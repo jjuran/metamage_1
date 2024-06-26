@@ -76,7 +76,7 @@ namespace tool
 		return mkdir_path( home / cache );
 	}
 	
-	static plus::string UserLabDirPath()
+	static plus::string BuildsDirPath()
 	{
 		if ( const char* builds = getenv( "ALINE_BUILDS" ) )
 		{
@@ -105,7 +105,7 @@ namespace tool
 	
 	plus::string TargetDirPath( const plus::string& target )
 	{
-		return mkdir_path( UserLabDirPath() / target );
+		return mkdir_path( BuildsDirPath() / target );
 	}
 	
 	plus::string get_includes_union_pathname()
