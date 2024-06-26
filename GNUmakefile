@@ -11,6 +11,8 @@ PLEASE_RUN = 'Please run `(cd .. && git clone' $(METAMAGE_1)')`.'
 
 BUILD = ./build.pl -i
 
+VAR_BIN := var/out
+
 default:
 	@echo 'For help, run `make help`.'
 
@@ -41,10 +43,10 @@ var/links/%: var/links
 %.git: ../% var/links/%
 	@true
 
-var/out/lib-static:
+$(VAR_BIN)/lib-static:
 	$(BUILD) lib-static
 
-build-tools: var/out/lib-static
+build-tools: $(VAR_BIN)/lib-static
 
 app-build-tools: build-tools
 	$(BUILD) minivx
@@ -59,7 +61,7 @@ INSTALLED_VX := $(INSTALL_BIN)/minivx
 
 INSTALL_SCRIPT := INTERPRETER=$(INSTALLED_VX) scripts/install-script.pl
 
-DEMO_SCRIPT := INTERPRETER=$(PWD)/var/out/minivx scripts/install-script.pl
+DEMO_SCRIPT := INTERPRETER=$(PWD)/$(VAR_BIN)/minivx scripts/install-script.pl
 
 var/install:
 	@echo
@@ -80,10 +82,10 @@ ams-linux-install: ams-linux-tools ams-68k-install ams-common-install
 	@echo '#!/bin/sh'                 >  var/install/bin/interact
 	@echo 'exec interact-fbdev "$$@"' >> var/install/bin/interact
 	@chmod +x var/install/bin/display var/install/bin/interact
-	install var/out/display-fbdev   var/install/bin
-	install var/out/interact-fbdev  var/install/bin
+	install $(VAR_BIN)/display-fbdev   var/install/bin
+	install $(VAR_BIN)/interact-fbdev  var/install/bin
 	install -d $(AMS_UTILS_ROOT)
-	install -t $(AMS_UTILS_ROOT) var/out/kdmode var/out/reader
+	install -t $(AMS_UTILS_ROOT) $(VAR_BIN)/kdmode $(VAR_BIN)/reader
 	$(INSTALL_SCRIPT) v/bin/spiel-mouse.vx     var/install/bin/spiel-mouse
 	$(INSTALL_SCRIPT) v/bin/spiel-keyboard.vx  var/install/bin/spiel-keyboard
 
@@ -102,7 +104,7 @@ ams-linux: ams-linux-tools
 
 ams-linux-inst: var/install
 	install -d $(AMS_UTILS_ROOT)
-	install -t $(AMS_UTILS_ROOT) var/out/kdmode var/out/reader
+	install -t $(AMS_UTILS_ROOT) $(VAR_BIN)/kdmode $(VAR_BIN)/reader
 	@echo
 	@echo "Utilities installed.  Run \`make ams-linux-demo\` to continue."
 	@echo
@@ -145,7 +147,7 @@ display-check:
 	@test -z "$(DISPLAY)" || echo
 	@test -z "$(DISPLAY)" || exit 1
 
-NEW_PATH = PATH="$$PWD/var/demo:$$PWD/var/out:$$PATH"
+NEW_PATH = PATH="$$PWD/var/demo:$$PWD/$(VAR_BIN):$$PATH"
 AMS_ROOT = var/links/ams-68k-bin
 AMS_RSRC = "$(AMS_ROOT)/mnt/AMS Resources"
 AMS_VARS = AMS_BIN=$(AMS_ROOT)/bin AMS_LIB=$(AMS_ROOT)/lib AMS_MNT=$(AMS_ROOT)/mnt
@@ -168,7 +170,7 @@ ams-x11: ams-x11-build
 
 ams-system-rsrcs: build-tools
 	$(BUILD) minivx
-	var/out/minivx v/bin/mkrsrc.vx -o $(AMS_RSRC)/rsrc $(AMS_RSRC)
+	$(VAR_BIN)/minivx v/bin/mkrsrc.vx -o $(AMS_RSRC)/rsrc $(AMS_RSRC)
 
 ams-68k-install: var/install ams-system-rsrcs
 	install -d var/install/share/ams/bin
@@ -182,22 +184,22 @@ ams-68k-install: var/install ams-system-rsrcs
 
 ams-common-install: var/install
 	install -d var/install/bin
-	test \! -x var/out/sndtrack || install var/out/sndtrack var/install/bin
-	install var/out/minivx      var/install/bin
-	install var/out/skif        var/install/bin
-	install var/out/exhibit     var/install/bin
-	install var/out/graft       var/install/bin
-	install var/out/freemountd  var/install/bin
-	install var/out/xv68k       var/install/bin
+	test \! -x $(VAR_BIN)/sndtrack || install $(VAR_BIN)/sndtrack var/install/bin
+	install $(VAR_BIN)/minivx      var/install/bin
+	install $(VAR_BIN)/skif        var/install/bin
+	install $(VAR_BIN)/exhibit     var/install/bin
+	install $(VAR_BIN)/graft       var/install/bin
+	install $(VAR_BIN)/freemountd  var/install/bin
+	install $(VAR_BIN)/xv68k       var/install/bin
 	$(INSTALL_SCRIPT) v/bin/ams.vx var/install/bin/ams
 
 ams-vnc-install: ams-vnc-build ams-68k-install ams-common-install
-	install var/out/listen        var/install/bin
-	install var/out/vnc-interact  var/install/bin
+	install $(VAR_BIN)/listen        var/install/bin
+	install $(VAR_BIN)/vnc-interact  var/install/bin
 	$(INSTALL_SCRIPT) v/bin/interact-vnc.vx var/install/bin/interact
 
 ams-x11-install: ams-x11-build ams-68k-install ams-common-install
-	install var/out/interact-x11  var/install/bin
+	install $(VAR_BIN)/interact-x11  var/install/bin
 	@echo '#!/bin/sh'               >  var/install/bin/interact
 	@echo 'exec interact-x11 "$$@"' >> var/install/bin/interact
 	@chmod +x var/install/bin/interact
@@ -205,7 +207,7 @@ ams-x11-install: ams-x11-build ams-68k-install ams-common-install
 ams-quartz-build: $(AMS_REPOS) build-tools
 	$(BUILD) graft mbin xv68k macvx minivx freemountd Amethyst Amphitheatre
 
-RETROMATIC := PATH="$$PWD/var/out:$$PATH" v/bin/retromatic.vx
+RETROMATIC := PATH="$$PWD/$(VAR_BIN):$$PATH" v/bin/retromatic.vx
 RETRO_APPS := ~/Applications/"Advanced Mac Substitute"
 
 ams-quartz-demo-nosound: ams-quartz-build
@@ -229,7 +231,7 @@ ams-osx: ams-osx-build
 
 sndtrack: build-tools
 	$(BUILD) minivx
-	var/out/minivx v/bin/portaudio-pkg.vx make
+	$(VAR_BIN)/minivx v/bin/portaudio-pkg.vx make
 	$(BUILD) sndtrack
 
 freemountd-tcp: freemount.git build-tools
@@ -240,16 +242,16 @@ var/freemount/hello.txt:
 	echo Hello world > var/freemount/hello.txt
 
 freemountd-tcp-test: freemountd-tcp var/freemount/hello.txt
-	var/out/listen 127.0.0.1:4564 var/out/freemountd --root var/freemount
+	$(VAR_BIN)/listen 127.0.0.1:4564 $(VAR_BIN)/freemountd --root var/freemount
 
 freemount-tcp: freemount.git build-tools
 	$(BUILD) fls fcat fget utcp
 
 fls-test: freemount-tcp
-	PATH="$$PWD/var/out:$$PATH" var/out/fls mnt://127.0.0.1
+	PATH="$$PWD/$(VAR_BIN):$$PATH" $(VAR_BIN)/fls mnt://127.0.0.1
 
 fcat-test: freemount-tcp
-	PATH="$$PWD/var/out:$$PATH" var/out/fcat mnt://127.0.0.1/hello.txt
+	PATH="$$PWD/$(VAR_BIN):$$PATH" $(VAR_BIN)/fcat mnt://127.0.0.1/hello.txt
 
 .SECONDARY:
 
