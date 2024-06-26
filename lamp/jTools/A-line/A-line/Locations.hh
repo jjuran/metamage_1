@@ -21,6 +21,8 @@ namespace tool
 	
 	plus::string get_user_cache_pathname();
 	
+	plus::string InstallDirPath();
+	
 	plus::string SourceDotListFile( const plus::string& projectPath );
 	
 	plus::string TargetDirPath( const plus::string& target );

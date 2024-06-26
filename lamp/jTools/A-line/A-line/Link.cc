@@ -1029,6 +1029,18 @@ namespace tool
 			
 			link_task->AddDependent( rmdir_diagnostics_task );
 			
+			if ( product == productTool  &&  Options().install )
+			{
+				const plus::string& src_file = outFile;
+				const plus::string  dst_file = InstallDirPath() / linkName;
+				
+				TaskPtr task( new FileCopyingTask( src_file, dst_file ) );
+				
+				UpdateInputStamp( task, src_file );
+				
+				link_task->AddDependent( task );
+			}
+			
 			if ( ALINE_MAC_DEVELOPMENT )
 			{
 				StringVector rsrc_pathnames;

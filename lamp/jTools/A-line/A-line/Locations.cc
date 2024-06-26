@@ -86,6 +86,16 @@ namespace tool
 		return mkdir_path( home_dir_pathname() / "var/build" );
 	}
 	
+	plus::string InstallDirPath()
+	{
+		if ( const char* install_dir = getenv( "ALINE_INSTALL" ) )
+		{
+			return install_dir;
+		}
+		
+		return mkdir_path( home_dir_pathname() / "var/bin" );
+	}
+	
 	static plus::string ProjectConfigDirPath( const plus::string& projectPath )
 	{
 		plus::string confd = projectPath / "A-line.confd";

@@ -22,11 +22,13 @@ namespace tool
 		bool all;
 		bool verbose;
 		bool catalog;
+		bool install;
 		bool preprocess;
 		
 		OptionsRecord() : all       ( false ),
 		                  verbose   ( false ),
 		                  catalog   ( false ),
+		                  install   ( false ),
 		                  preprocess( false )
 		{
 		}

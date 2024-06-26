@@ -87,6 +87,7 @@ enum
 	Option_sym     = 'X',
 	Option_all     = 'a',
 	Option_debug   = 'g',
+	Option_install = 'i',
 	Option_n_jobs  = 'j',
 	Option_dry_run = 'n',
 	Option_cpp     = 'p',
@@ -102,6 +103,7 @@ static command::option options[] =
 	{ "cpp",     Option_cpp     },
 	{ "catalog", Option_catalog },
 	{ "dry-run", Option_dry_run },
+	{ "install", Option_install },
 	{ "verbose", Option_verbose },
 	
 	{ "68k", Option_68K },
@@ -162,6 +164,10 @@ static char* const* get_options( char* const* argv )
 			
 			case Option_dry_run:
 				gDryRun = true;
+				break;
+			
+			case Option_install:
+				gOptions.install = true;
 				break;
 			
 			case Option_verbose:
