@@ -245,9 +245,9 @@ namespace tool
 		
 		char data[ 4096 ];
 		
-		while ( int bytes_read = read( redir.fd, data, 4096 ) )
+		while ( ssize_t bytes_read = read( redir.fd, data, 4096 ) )
 		{
-			if ( bytes_read == -1 )
+			if ( bytes_read < 0 )
 			{
 				bytes_read = 0;
 				perror( "Error reading captured output" );
@@ -503,7 +503,7 @@ namespace tool
 		{
 			fd = open( argv[1], O_RDONLY | O_CLOEXEC );
 			
-			if ( fd == -1 )
+			if ( fd < 0 )
 			{
 				fprintf( stderr, "%s: %s: %s\n", jtest, argv[1], strerror( errno ) );
 				
