@@ -516,6 +516,8 @@ namespace tool
 			}
 		}
 		
+		bool succeeding = false;  // as in following, not as in winning
+		
 		std::vector< TestCase > battery;
 		TestCase test;
 		
@@ -531,7 +533,7 @@ namespace tool
 			
 			char c = line[ 0 ];
 			
-			if ( c == '#' )
+			if ( c == '#'  ||  c == '%' )
 			{
 				// comment
 				continue;
@@ -539,6 +541,15 @@ namespace tool
 			
 			if ( c == '$' )
 			{
+				if ( succeeding )
+				{
+					battery.push_back( test );
+					
+					test = TestCase();
+				}
+				
+				succeeding = true;
+				
 				plus::string command = line.substr( line.find_first_not_of( " \t", 1 ) );
 				
 				test.SetCommand( command );
@@ -558,13 +569,6 @@ namespace tool
 			{
 				test.AddRedirection( GetRedirectionFromLine( line, feed, reader ) );
 				
-				continue;
-			}
-			
-			if ( c == '%' )
-			{
-				battery.push_back( test );
-				test = TestCase();
 				continue;
 			}
 			
