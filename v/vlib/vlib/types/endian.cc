@@ -189,8 +189,16 @@ Value endianized( const Endianness& e, const Value& type )
 		while ( it )
 		{
 			const Value& mapping = it.use();
-			const Value& name = mapping.expr()->left;
-			const Value& type = mapping.expr()->right;
+			
+			Expr* expr = mapping.expr();
+			
+			if ( ! expr )
+			{
+				THROW( "malformed struct definition" );
+			}
+			
+			const Value& name = expr->left;
+			const Value& type = expr->right;
 			
 			Value new_field( name, Op_mapping, endianized( e, type ) );
 			

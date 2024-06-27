@@ -117,3 +117,8 @@ $ vc 'struct Foo {x: i16, y: i16}; let foo = Foo [1234]; [Foo, foo] map typeof'
 
 $ vc 'struct Point {v: i16, h: i16}; var pt = Point(); pt.h = 257; packed pt'
 1 >= x"00000101"
+
+%
+
+$ vc 'try { big-endian struct {;} } catch { "oops" }'
+1 >= '"oops"'
