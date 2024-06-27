@@ -568,13 +568,15 @@ namespace tool
 				continue;
 			}
 			
-			if ( memcmp( line.c_str(), STR_LEN( "TODO" ) ) == 0 )
+			const char* line_c_str = line.c_str();
+			
+			if ( memcmp( line_c_str, STR_LEN( "TODO" ) ) == 0 )
 			{
 				test.SetToDoReason( line.substr( 5 ) );
 				continue;
 			}
 			
-			fprintf( stderr, "Unprocessed line: %s\n", line.c_str() );
+			fprintf( stderr, "Unprocessed line: %s\n", line_c_str );
 		}
 		
 		battery.push_back( test );
