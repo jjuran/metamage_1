@@ -529,13 +529,15 @@ namespace tool
 			
 			if ( line.empty() )  continue;
 			
-			if ( line[0] == '#' )
+			char c = line[ 0 ];
+			
+			if ( c == '#' )
 			{
 				// comment
 				continue;
 			}
 			
-			if ( line[0] == '$' )
+			if ( c == '$' )
 			{
 				plus::string command = line.substr( line.find_first_not_of( " \t", 1 ) );
 				
@@ -544,7 +546,7 @@ namespace tool
 				continue;
 			}
 			
-			if ( line[0] == '?' )
+			if ( c == '?' )
 			{
 				int exit_status = gear::parse_unsigned_decimal( line.substr( line.find_first_not_of( " \t", 1 ) ).c_str() );
 				
@@ -552,14 +554,14 @@ namespace tool
 				continue;
 			}
 			
-			if ( iota::is_digit( line[0] ) )
+			if ( iota::is_digit( c ) )
 			{
 				test.AddRedirection( GetRedirectionFromLine( line, feed, reader ) );
 				
 				continue;
 			}
 			
-			if ( line[0] == '%' )
+			if ( c == '%' )
 			{
 				battery.push_back( test );
 				test = TestCase();
