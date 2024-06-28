@@ -1,0 +1,189 @@
+#!/usr/bin/env lvx
+
+if argc != 2 then
+{
+	warn "usage: " argv[ 0 ] " path/to/rsrc/fork"
+	
+	exit 50
+}
+
+let verbose_data = false
+
+let BE = big-endian
+
+let Handle = vector[ byte, 4 ]
+
+struct rsrc_fork_header
+{
+	offset_to_data: BE u32,
+	offset_to_map:  BE u32,
+	length_of_data: BE u32,
+	length_of_map:  BE u32,
+}
+
+struct rsrc_fork_system_reserved
+{
+	bytes: vector[ u8, 112 ],
+}
+
+struct rsrc_fork_application_data
+{
+	bytes: vector[ u8, 128 ],
+}
+
+struct rsrc_fork_superheader
+{
+	__base__: rsrc_fork_header,
+	reserved: rsrc_fork_system_reserved,
+	app_data: rsrc_fork_application_data,
+}
+
+struct type_header
+{
+	type:    BE mb32,  # a ResType
+	count_1: BE u16,
+	offset:  BE u16,
+}
+
+struct rsrc_header
+{
+	id:               BE i16,
+	name_offset:      BE i16,
+	attrs:            vector[ byte, 1 ],
+	offset_high_byte: u8,
+	offset_low_word:  BE u16,
+	handle:           Handle,
+}
+
+struct rsrc_map_header
+{
+	fork_header:     rsrc_fork_header,
+	next_map:        Handle,
+	refnum:          BE i16,
+	attrs:           vector[ byte, 2 ],
+	offset_to_types: BE u16,
+	offset_to_names: BE u16,
+}
+
+def dump (structure, indent="")
+{
+	for field in [*structure] do
+	{
+		let (k, v) = *field
+		
+		if v isa struct then
+		{
+			print indent k ":"
+			
+			dump (v, indent "    ")
+		}
+		else if v isa vector then
+		{
+			print indent k ": " rep packed v
+		}
+		else
+		{
+			print indent k ": " rep v
+		}
+	}
+}
+
+let src = argv[ 1 ]
+
+let fork = packed load src
+
+let fork_header = rsrc_fork_header fork[ 0 -> rsrc_fork_header.size ]
+
+let superheader = rsrc_fork_superheader fork[ 0 -> rsrc_fork_superheader.size ]
+
+print "fork header:"
+
+let header = if verbose_data then {superheader} else {fork_header}
+
+dump (header, "    ")
+
+let map_offset = fork_header.offset_to_map
+let map_length = fork_header.length_of_map
+
+let data_offset = fork_header.offset_to_data
+let data_length = fork_header.length_of_data
+
+let rsrc_map  = fork[ map_offset  -> map_offset  + map_length  ]
+let rsrc_data = fork[ data_offset -> data_offset + data_length ]
+
+let map_header = rsrc_map_header rsrc_map[ 0 -> rsrc_map_header.size ]
+
+print "map header:"
+
+dump (map_header, "    ")
+
+let types_block = rsrc_map[ map_header.offset_to_types -> rsrc_map.size ]
+let names_block = rsrc_map[ map_header.offset_to_names -> rsrc_map.size ]
+
+def dump_type (rsrc_type)
+{
+	let rtype = rep rsrc_type.type
+	
+	print "    " rtype ":"
+	
+	let count = rsrc_type.count_1 + 1
+	
+	let start = rsrc_type.offset
+	let end   = rsrc_type.offset + count * rsrc_header.size
+	
+	let type_data = types_block[ start -> end ]
+	
+	let rsrcs = [type_data / count] map rsrc_header
+	
+	var n = 0
+	
+	for rsrc in rsrcs do
+	{
+		print "        " "ind " ++n
+		
+		let indent = "            "
+		
+		dump (rsrc, indent)
+		
+		let i = rsrc.offset_high_byte * 2^16 + rsrc.offset_low_word
+		let j = i + 4
+		
+		let size = (BE u32).decode rsrc_data[ i -> j ]
+		let data = rsrc_data[ j -> j + size ]
+		
+		print indent "length: " size
+		
+		if verbose_data then
+		{
+			print indent "data: " rep data
+		}
+		
+		assert rsrc.name_offset >= -1
+		
+		var k = rsrc.name_offset
+		
+		if k >= 0 then
+		{
+			let len = u8 names_block[ k++ ]
+			
+			let name = names_block[ k -> k + len ].string
+			
+			print indent "name: " rep name
+		}
+	}
+}
+
+let type_list_count = (BE u16).decode types_block[ 0 -> 2 ] + 1
+
+let type_list_size = type_list_count * type_header.size
+
+let type_list_bytes = types_block[ 2 -> 2 + type_list_size ]
+
+let type_list = [type_list_bytes / type_list_count] map type_header
+
+print "types:"
+
+for rsrc_type in type_list do
+{
+	dump_type rsrc_type
+}
