@@ -93,7 +93,6 @@ namespace vlib
 		return false;
 	}
 	
-	static
 	bool single_type_mismatch( const Value& one, const Value& two )
 	{
 		if ( ! is_single( one )  ||  ! is_single( two ) )
