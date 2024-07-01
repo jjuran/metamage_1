@@ -85,6 +85,7 @@ namespace vlib
 			case Op_map:
 			case Op_ver:
 			case Op_per:
+			case Op_via:
 			case Op_lambda:
 				return Fold_if_pure_right;
 			
