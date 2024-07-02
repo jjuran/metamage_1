@@ -581,8 +581,6 @@ pascal DialogRef GetNewDialog_patch( short id, void* storage, WindowRef behind )
 	
 	const DialogTemplate dlog = *(const DialogTemplate*) *h;
 	
-	ReleaseResource( h );
-	
 	h = GetResource( 'DITL', dlog.itemsID );
 	
 	if ( h == NULL )
@@ -590,7 +588,10 @@ pascal DialogRef GetNewDialog_patch( short id, void* storage, WindowRef behind )
 		return NULL;
 	}
 	
-	DetachResource( h );
+	if ( OSErr err = HandToHand( &h ) )
+	{
+		return NULL;
+	}
 	
 	DialogRef dialog = NewDialog( storage,
 	                              &dlog.boundsRect,
@@ -601,6 +602,11 @@ pascal DialogRef GetNewDialog_patch( short id, void* storage, WindowRef behind )
 	                              dlog.goAwayFlag,
 	                              dlog.refCon,
 	                              h );
+	
+	if ( dialog == NULL )
+	{
+		DisposeHandle( h );
+	}
 	
 	return dialog;
 }
@@ -1168,8 +1174,6 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, ResID icon_id )
 	const short itemsID = alert[0]->itemsID;
 	const short stages  = alert[0]->stages;
 	
-	ReleaseResource( h );
-	
 	if ( bounds.left < 0 )
 	{
 		OffsetRect( &bounds, -bounds.left, -bounds.top );
@@ -1194,7 +1198,10 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, ResID icon_id )
 		return ResErr;
 	}
 	
-	DetachResource( h );
+	if ( OSErr err = HandToHand( &h ) )
+	{
+		return err;
+	}
 	
 	if ( icon_id >= 0 )
 	{
@@ -1213,7 +1220,11 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, ResID icon_id )
 	
 	if ( dialog == NULL )
 	{
-		return MemErr;
+		OSErr err = MemErr;
+		
+		DisposeHandle( h );
+		
+		return err;
 	}
 	
 	DITL_append_userItem( h, &default_button_outline, dialog->portRect );
