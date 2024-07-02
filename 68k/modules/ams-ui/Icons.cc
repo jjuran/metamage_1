@@ -109,8 +109,6 @@ pascal OSErr PlotIconID_call( const Rect*        rect,
 		*/
 	}
 	
-	ReleaseResource( h );
-	
 	return noErr;
 }
 
@@ -135,8 +133,6 @@ pascal OSErr IconIDToRgn_call( RgnHandle          rgn,
 	IconBitmap.baseAddr = *h + 128;
 	
 	BitMapToRegion( rgn, &IconBitmap );
-	
-	ReleaseResource( h );
 	
 	OffsetRgn( rgn, iconRect->left, iconRect->top );
 	

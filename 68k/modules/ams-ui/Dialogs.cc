@@ -638,7 +638,6 @@ pascal void CloseDialog_patch( DialogRef dialog )
 				
 				case iconItem:
 				case picItem:
-					ReleaseResource( h );
 					break;
 				
 				default:

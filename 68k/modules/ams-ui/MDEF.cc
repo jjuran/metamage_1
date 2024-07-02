@@ -141,8 +141,6 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 				
 				PlotIcon( &r, h );
 				
-				ReleaseResource( h );
-				
 				Move( icon_width + 6, 0 );
 			}
 			
