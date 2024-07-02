@@ -28,11 +28,15 @@ namespace ui  {
 	
 	void invalidate_window( WindowRef window );
 	
+#if ! __LP64__
+	
 	inline
 	void set_window_title( WindowRef window, const Byte* name )
 	{
 		SetWTitle( window, name );
 	}
+	
+#endif
 	
 	OSStatus set_window_title( WindowRef window, const HFSUniStr255& name );
 	
