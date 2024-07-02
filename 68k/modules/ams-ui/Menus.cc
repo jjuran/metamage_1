@@ -611,8 +611,6 @@ pascal Handle GetNewMBar_patch( ResID menuBarID )
 		
 		header->right_edge = right_edge;
 		
-		ReleaseResource( h );
-		
 		return menuList;
 	}
 	
