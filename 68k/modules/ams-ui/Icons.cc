@@ -47,6 +47,11 @@ void CopyIconBits( Ptr baseAddr, const Rect* r, short mode )
 
 pascal void PlotIcon_patch( const Rect* rect, char** icon )
 {
+	IconBitmap.rowBytes = 4;
+	
+	IconBitmap.bounds.bottom = 32;
+	IconBitmap.bounds.right  = 32;
+	
 	CopyIconBits( *icon, rect, srcCopy );
 }
 
@@ -56,9 +61,26 @@ pascal OSErr PlotIconID_call( const Rect*        rect,
                               IconTransformType  xform,
                               short              resID )
 {
-	Handle h = GetResource( 'ICN#', resID );
+	Handle h;
+	short px;
+	short mask_offset;
 	
-	if ( h == NULL )
+	const bool small = rect->bottom - rect->top
+	                 + rect->right - rect->left < 32 * 2;
+	
+	if ( small  &&  (h = GetResource( 'ics#', resID )) )
+	{
+		px = 16;
+		
+		mask_offset = 32;
+	}
+	else if ( (h = GetResource( 'ICN#', resID )) )
+	{
+		px = 32;
+		
+		mask_offset = 128;
+	}
+	else
 	{
 		if ( ResErr != noErr )
 		{
@@ -67,6 +89,11 @@ pascal OSErr PlotIconID_call( const Rect*        rect,
 		
 		return resNotFound;
 	}
+	
+	IconBitmap.rowBytes = px / 8u;
+	
+	IconBitmap.bounds.bottom = px;
+	IconBitmap.bounds.right  = px;
 	
 	const GrafPort& port = **get_addrof_thePort();
 	
@@ -90,7 +117,7 @@ pascal OSErr PlotIconID_call( const Rect*        rect,
 	
 	short mask_mode = port.bkColor & Inverse ? srcBic : srcOr;
 	
-	CopyIconBits( *h + 128, rect, mask_mode );
+	CopyIconBits( *h + mask_offset, rect, mask_mode );
 	
 	if ( (port.fgColor ^ port.bkColor) & Inverse )
 	{

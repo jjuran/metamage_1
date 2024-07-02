@@ -91,16 +91,6 @@ enum
 
 
 static
-void initialize_low_memory_globals()
-{
-	IconBitmap.rowBytes = 4;
-	IconBitmap.bounds.top  = 0;
-	IconBitmap.bounds.left = 0;
-	IconBitmap.bounds.bottom = 32;
-	IconBitmap.bounds.right  = 32;
-}
-
-static
 void install_Windows()
 {
 	TBTRAP( ZoomWindow    );  // A83A
@@ -363,8 +353,6 @@ int main( int argc, char** argv )
 			_exit( 1 );
 		}
 	}
-	
-	initialize_low_memory_globals();
 	
 	install_Windows();
 	install_Menus();
