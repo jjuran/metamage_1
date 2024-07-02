@@ -162,7 +162,7 @@ ams-vnc-build: $(AMS_REPOS) build-tools
 ams-vnc: ams-vnc-build
 	EXHIBIT_INTERACT="$$PWD/v/bin/interact-vnc.vx" $(RUN_AMS)
 
-ams-x11-build: $(AMS_REPOS)
+ams-x11-build: $(AMS_REPOS) build-tools
 	./build.pl -i $(AMS_TOOLS) interact-x11
 
 ams-x11: ams-x11-build
