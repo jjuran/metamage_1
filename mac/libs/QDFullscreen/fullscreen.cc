@@ -20,7 +20,7 @@
 
 // QDFullscreen
 #include "fullscreen_QT.hh"
-#include "fullscreen_port.hh"
+#include "fullscreen_window.hh"
 
 
 static inline
@@ -30,8 +30,11 @@ bool has_QT_v2_5()
 	{
 		/*
 			Actually, we might be running in Mac OS 9 with the QuickTime
-			extension disabled, but port-based screen clobbering doesn't
-			work in Carbon anyway.  TODO:  Deal with this eventually.
+			extension disabled, but in this scenario, Carbon applications
+			that use QuickTime don't launch at all, even if you weak-link
+			CarbonLib -- because CarbonLib strong-links InterfaceLib and
+			can't resolve GetComponentResource().  So if a Carbon app
+			gets here in the first place, we can assume we have QuickTime.
 		*/
 		return true;
 	}
@@ -55,7 +58,7 @@ void enter()
 	}
 	else if ( ! TARGET_API_MAC_CARBON )
 	{
-		clobber_screen();
+		open_fullscreen_window();
 	}
 	
 	in_effect = true;
@@ -69,7 +72,7 @@ void leave()
 	}
 	else if ( ! TARGET_API_MAC_CARBON )
 	{
-		refresh_screen();
+		close_fullscreen_window();
 	}
 	
 	in_effect = false;
