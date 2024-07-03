@@ -137,10 +137,7 @@ void draw_window( const Rect& portRect )
 		return;
 	}
 	
-	if ( ! fullscreen::in_effect )
-	{
-		EraseRect( &portRect );
-	}
+	EraseRect( &portRect );
 	
 	SetOrigin( -margin.h, -margin.v );
 	
