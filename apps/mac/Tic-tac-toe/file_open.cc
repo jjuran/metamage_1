@@ -61,7 +61,7 @@ long file_opener( const File& file )
 	
 	traits::close( refnum );
 	
-	// Read errors will appear as extreely large positive integers.
+	// Read errors will appear as extremely large positive integers.
 	
 	if ( n <= 9 )
 	{
