@@ -27,6 +27,9 @@
 #include "mac_qd/globals/thePort.hh"
 
 
+#pragma exceptions off
+
+
 namespace mac {
 namespace qd  {
 
