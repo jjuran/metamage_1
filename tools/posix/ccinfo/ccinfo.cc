@@ -20,6 +20,10 @@
 
 int main( int argc, char** argv )
 {
+#ifdef __APPLE_CC__
+	PRINT( d, __APPLE_CC__ );
+#endif
+	
 #ifdef __cplusplus
 	PRINT( ld, __cplusplus );
 #endif
