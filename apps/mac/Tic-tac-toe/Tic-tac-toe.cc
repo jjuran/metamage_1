@@ -30,7 +30,6 @@
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
-#include "mac_qd/globals/thePort_window.hh"
 #include "mac_qd/main_display_bounds.hh"
 #include "mac_qd/wide_drag_area.hh"
 
@@ -314,10 +313,9 @@ void set_empty_updateRgn( WindowRef window )
 static inline
 void set_window_untitled()
 {
-	using mac::qd::thePort_window;
 	using mac::ui::set_window_title;
 	
-	return set_window_title( thePort_window(), "\p" "Tic-tac-toe" );
+	return set_window_title( main_window, "\p" "Tic-tac-toe" );
 }
 
 static
