@@ -32,6 +32,9 @@
 #define CONFIG_COMPOSITING  0
 #endif
 
+
+extern WindowRef main_window;
+
 void draw_dock_tile();
 
 inline

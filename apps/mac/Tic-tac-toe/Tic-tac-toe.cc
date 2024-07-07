@@ -114,8 +114,6 @@ enum
 	kMargin = 3,
 };
 
-static WindowRef main_window;
-
 static
 void make_main_window()
 {

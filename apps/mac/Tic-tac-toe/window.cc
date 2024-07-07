@@ -44,6 +44,7 @@
 #define CONFIG_USE_COREGRAPHICS  0
 #endif
 
+
 using mac::qd::get_portRect;
 
 using tictactoe::move_t;
@@ -51,6 +52,10 @@ using tictactoe::player_t;
 
 using tictactoe::current_player;
 using tictactoe::winning_player;
+
+
+WindowRef main_window;
+
 
 static inline
 short min( short a, short b )
