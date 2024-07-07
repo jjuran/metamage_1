@@ -16,7 +16,7 @@
 #include <ConditionalMacros.h>
 #endif
 
-#define PRINT( format, name )  printf( "%s: %" #format "\n", #name, name )
+#define PRINT( format, name )  printf( "%s: %" #format "\n", #name, (int) name )
 
 int main( int argc, char** argv )
 {
@@ -25,7 +25,7 @@ int main( int argc, char** argv )
 #endif
 	
 #ifdef __cplusplus
-	PRINT( ld, __cplusplus );
+	PRINT( d, __cplusplus );
 #endif
 	
 #ifdef __LP64__
