@@ -264,7 +264,16 @@ void enter_fullscreen()
 	ForeColor( whiteColor );
 	BackColor( blackColor );
 	
+#if TARGET_API_MAC_CARBON
+	
+	/*
+		Mostly this isn't needed, since the blanking window will get
+		an update event.  But Mac OS X 10.2, at least, does need it.
+	*/
+	
 	draw_window( portRect );
+	
+#endif
 }
 
 static
