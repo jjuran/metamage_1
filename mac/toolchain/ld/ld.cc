@@ -888,6 +888,24 @@ namespace tool
 				
 				p7::execvp( postlink_argv );
 			}
+			else if ( gProductType == kProductApp  &&  ! sym )
+			{
+				/*
+					Patch the application runtime to avoid _HWPriv,
+					so it can run on older systems -- unless this is
+					a symbolics build, in which case (a) we don't want
+					to modify the code (which might confuse the debugger)
+					and (b) older systems aren't important, since you
+					won't be running a source-level debugger there.
+				*/
+				
+				const char *const postlink_argv[] =
+				{
+					"postlink-68k-appl", output_pathname, NULL
+				};
+				
+				p7::execvp( postlink_argv );
+			}
 		}
 		
 		return exit_status;
