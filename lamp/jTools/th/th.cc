@@ -8,9 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -49,6 +46,20 @@
 // Orion
 #include "Orion/Main.hh"
 
+
+#define DOTS  ".................................."
+
+enum
+{
+	report_width = 32u,
+};
+
+
+static inline
+unsigned max( unsigned a, unsigned b )
+{
+	return a > b ? a : b;
+}
 
 namespace tool
 {
@@ -303,10 +314,10 @@ namespace tool
 				name_length -= 2;
 			}
 			
-			unsigned width = std::max( 32U, name_length );
+			unsigned width = max( report_width, name_length );
 			
-			p7::write( p7::stdout_fileno, test_name,                                    name_length );
-			p7::write( p7::stdout_fileno, "..................................", width - name_length );
+			p7::write( p7::stdout_fileno, test_name,    name_length );
+			p7::write( p7::stdout_fileno, DOTS, width - name_length );
 			
 			TestResults results = run_test( test_file );
 			
