@@ -47,11 +47,11 @@
 #include "Orion/Main.hh"
 
 
-#define DOTS  ".................................."
+#define DOTS  ".........................................."
 
 enum
 {
-	report_width = 32u,
+	report_width = 40u,
 };
 
 
