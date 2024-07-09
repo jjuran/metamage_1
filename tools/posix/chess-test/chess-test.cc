@@ -132,6 +132,45 @@ Square find_pawn( const Game& game, int file, Square target )
 }
 
 static
+Square find_pawn_capture( const Game& game, int source_file, int delta )
+{
+	using namespace chess;
+	
+	const Army& current = game.current();
+	
+	Square result = Square_none;
+	
+	for ( int i = 8;  i < 16;  ++i )
+	{
+		if ( current.type[ i ] == Type_pawn )
+		{
+			Square source = current.addr[ i ];
+			
+			if ( (source ^ source_file) % 8u != 0 )
+			{
+				continue;  // file mismatch
+			}
+			
+			Square target = Square( source + delta );
+			
+			Game hypothetical = game;
+			
+			if ( play( hypothetical, source, target ) )
+			{
+				if ( result )
+				{
+					FAIL( "ambiguous source inference" );
+				}
+				
+				result = source;
+			}
+		}
+	}
+	
+	return result;
+}
+
+static
 Square find_piece( const Game& game, Type type, int file, Square target )
 {
 	using namespace chess;
@@ -479,6 +518,26 @@ unsigned parse( const char* arg )
 		else if ( rank )
 		{
 			source = find_pawn( game, source_file, target );
+		}
+		else
+		{
+			int file_delta = file - source_file;
+			
+			if ( file_delta != 1  &&  file_delta != -1 )
+			{
+				FAIL( "impossible pawn capture" );
+			}
+			
+			int forward = game.mid_move ? -8 : 8;
+			
+			int delta = forward + file_delta;
+			
+			source = find_pawn_capture( game, source_file, delta );
+			
+			if ( source )
+			{
+				target = Square( source + delta );
+			}
 		}
 		
 		if ( ! source )
