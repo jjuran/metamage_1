@@ -919,9 +919,12 @@ pascal long MenuSelect_patch( Point pt )
 		the cursor image intersects the saved bits area.
 	*/
 	
-	raster_lock lock;
-	
-	restore_bits( savedBits );
+	if ( opened )
+	{
+		raster_lock lock;
+		
+		restore_bits( savedBits );
+	}
 	
 	return result;
 }
