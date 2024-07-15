@@ -153,6 +153,61 @@ pascal void CreateResFile_patch( const Byte* name )
 }
 
 static
+OSErr write_resource_data( rsrc_header* rsrc )
+{
+	if ( (rsrc->attrs & (resProtected | resChanged)) != resChanged )
+	{
+		return noErr;
+	}
+	
+	rsrc_map_header& map = **home_rsrc_map( rsrc->handle );
+	
+	if ( map.attrs & mapReadOnly )
+	{
+		return noErr;
+	}
+	
+	OSErr err;
+	
+	long& attrs_offset = *(long*) &rsrc->attrs;
+	
+	Size data_offset = attrs_offset & 0x00FFFFFF;
+	
+	Size new_data_size = mac::glue::GetHandleSize( rsrc->handle );
+	Size old_data_size = -1;
+	
+	Size data_size_size = sizeof old_data_size;
+	
+	short refnum = map.refnum;
+	
+	if ( (SInt8) rsrc->offset_high_byte >= 0 )
+	{
+		(err = SetFPos( refnum, fsFromStart, 256 + data_offset  ))  ||
+		(err = FSRead ( refnum, &data_size_size, &old_data_size ));
+		
+		if ( err )
+		{
+			return err;
+		}
+	}
+	
+	/*
+		Write the resource data.
+	*/
+	
+	(err = SetFPos( refnum, fsFromStart, 256 + data_offset  ))  ||
+	(err = FSWrite( refnum, &data_size_size, &new_data_size ))  ||
+	(err = FSWrite( refnum, &new_data_size, *rsrc->handle   ));
+	
+	if ( err == noErr )
+	{
+		rsrc->attrs &= ~resChanged;
+	}
+	
+	return err;
+}
+
+static
 void UpdateResFile_handler( short refnum : __D0 )
 {
 	ERROR = "UpdateResFile is unimplemented";
@@ -182,16 +237,7 @@ void WriteResource_handler( Handle resource : __A0 )
 {
 	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
 	{
-		if ( (rsrc->attrs & (resProtected | resChanged)) != resChanged )
-		{
-			// noErr
-		}
-		else
-		{
-			ERROR = "WriteResource is unimplemented";
-			
-			ResErr = paramErr;
-		}
+		ResErr = write_resource_data( rsrc );
 	}
 }
 
