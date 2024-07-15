@@ -1289,9 +1289,116 @@ void AddResource_handler( Handle            data : __A0,
                           short             id   : __D1,
                           ConstStr255Param  name : __A1 )
 {
-	ERROR = "AddResource is unimplemented";
+	Size data_size = mac::glue::GetHandleSize_raw( data );
 	
-	ResErr = wrgVolTypErr;
+	if ( data_size < 0 )
+	{
+		ResErr = data_size;
+		
+		return;
+	}
+	
+	Size name_size = (name  &&  name[ 0 ]) ? 1 + name[ 0 ] : 0;
+	
+	Size map_increase = sizeof (rsrc_header) + sizeof (type_header) + name_size;
+	
+	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
+	
+	Size map_size = mac::glue::GetHandleSize_raw( (Handle) rsrc_map );
+	
+	SetHandleSize( (Handle) rsrc_map, map_size + map_increase );
+	
+	if ( OSErr err = MemErr )
+	{
+		ResErr = err;
+		
+		return;
+	}
+	
+	/*
+		Now that we've successfully expanded the handle, we can be sure
+		that future expansions up to the new size (after reducing to the
+		original size) will (a) also succeed, and (b) not move memory.
+	*/
+	
+	SetHandleSize( (Handle) rsrc_map, map_size );
+	
+	rsrc_map_header& map = **rsrc_map;
+	
+	rsrc_fork_header& fork = map.fork_header;
+	
+	rsrc_header rsrc;
+	
+	rsrc.id               = id;
+	rsrc.name_offset      = -1;
+	rsrc.attrs            = resChanged;
+	rsrc.offset_high_byte = -1;
+	rsrc.offset_low_word  = -1;
+	rsrc.handle           = data;
+	
+	if ( name_size )
+	{
+		SInt32 length_of_map = fork.length_of_map;
+		
+		rsrc.name_offset = length_of_map - map.offset_to_names;
+		
+		Munger( (Handle) rsrc_map, length_of_map, NULL, 0, name, name_size );
+	}
+	
+	type_list& types = *(type_list*) ((Ptr) *rsrc_map + map.offset_to_types);
+	
+	SInt16 n_types = types.count_1 + 1;
+	
+	type_header* it = types.list;
+	
+	while ( n_types-- > 0  &&  it->type != type )
+	{
+		++it;
+	}
+	
+	if ( n_types < 0 )
+	{
+		n_types = types.count_1 += 1;
+		
+		for ( int i = 0;  i < n_types;  ++i )
+		{
+			types.list[ i ].offset += sizeof (type_header);
+		}
+		
+		type_header th;
+		
+		UInt16 type_offset = (Ptr) it - (Ptr) &map;
+		
+		map.offset_to_names += sizeof th;
+		
+		Munger( (Handle) rsrc_map, type_offset, NULL, 0, &th, sizeof th );
+		
+		it->type    = type;
+		it->count_1 = -1;
+		it->offset  = map.offset_to_names - map.offset_to_types;
+	}
+	else
+	{
+		map_increase -= sizeof (type_header);
+	}
+	
+	it->count_1 += 1;
+	
+	Size offset = map.offset_to_types + it->offset;
+	
+	Munger( (Handle) rsrc_map, offset, NULL, 0, &rsrc, sizeof rsrc );
+	
+	map.offset_to_names += sizeof (rsrc_header);
+	
+	fork.length_of_map  += map_increase;
+	
+	master_pointer& mp = *(master_pointer*) data;
+	
+	mp.flags |= kHandleIsResourceMask;
+	mp.type  = type;
+	mp.base  = rsrc_map;
+	
+	ResErr = noErr;
 }
 
 asm
