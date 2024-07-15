@@ -562,15 +562,26 @@ pascal short CurResFile_patch()
 }
 
 static
-short HomeResFile_handler( Handle resource : __A0 )
+RsrcMapHandle home_rsrc_map( Handle resource : __A0 )
 {
 	const master_pointer& mp = *(const master_pointer*) resource;
 	
 	if ( mp.flags & kHandleIsResourceMask )
 	{
-		ResErr = noErr;
-		
 		RsrcMapHandle map = (RsrcMapHandle) mp.base;
+		
+		return map;
+	}
+	
+	return NULL;
+}
+
+static
+short HomeResFile_handler( Handle resource : __A0 )
+{
+	if ( RsrcMapHandle map = home_rsrc_map( resource ) )
+	{
+		ResErr = noErr;
 		
 		return map[0]->refnum;
 	}
