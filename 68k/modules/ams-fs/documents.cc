@@ -95,9 +95,25 @@ OSErr documents_Write( FCB* fcb, const char* buffer, uint32_t length )
 
 OSErr documents_Create( VCB* vcb, const uint8_t* name )
 {
+	int err;
+	
 	temp_A4 a4;
 	
-	int err = try_to_put( docfs_fd, name, plus::string::null );
+	plus::var_string file_data;
+	
+	err = try_to_get( docfs_fd, name, file_data );
+	
+	if ( ! err )
+	{
+		return dupFNErr;
+	}
+	
+	if ( err != -ENOENT )
+	{
+		return ioErr;
+	}
+	
+	err = try_to_put( docfs_fd, name, plus::string::null );
 	
 	return err ? ioErr : noErr;
 }
