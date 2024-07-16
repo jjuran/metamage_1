@@ -220,7 +220,7 @@ my %fsmap =
 			# App utilities
 			\ qw( daemonize follower idle overwrite select stream ),
 			# Misc
-			\ qw( chain copier divide graft jtest pause th zpipe ),
+			\ qw( chain chess-test copier divide graft jtest pause th zpipe ),
 			# Mac-specific
 			\ qw( adbs beep cds crsr deicon drives drvr err2text gdev keymods
 				location mac-id macbin mnam qdscreencap ram-disks
