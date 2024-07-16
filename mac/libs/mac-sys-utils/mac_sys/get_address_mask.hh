@@ -16,9 +16,9 @@
 namespace mac {
 namespace sys {
 
-#define CPUFlag     (*(unsigned short*) 0x012f)
-#define SysVersion  (*(unsigned short*) 0x015a)
-#define Lo3Bytes    (*(unsigned long *) 0x031a)
+#define CPUFlag     (*(UInt8 *) 0x012f)
+#define SysVersion  (*(UInt16*) 0x015a)
+#define Lo3Bytes    (*(UInt32*) 0x031a)
 
 inline
 unsigned long get_address_mask()
