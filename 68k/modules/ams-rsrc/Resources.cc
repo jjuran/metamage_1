@@ -719,19 +719,57 @@ pascal short GetResAttrs_patch( Handle resource )
 static
 long SizeRsrc_handler( Handle resource : __A0 )
 {
+	ResErr = resNotFound;
+	
+	Size data_size = -1;
+	
 	if ( const master_pointer* mp = (const master_pointer*) resource )
 	{
 		if ( mp->flags & kHandleIsResourceMask )
 		{
-			ResErr = noErr;
+			if ( *resource )
+			{
+				ResErr = noErr;
+				
+				return mac::glue::GetHandleSize_raw( resource );
+			}
 			
-			return mac::glue::GetHandleSize_raw( resource );
+			if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
+			{
+				if ( (SInt8) rsrc->offset_high_byte < 0 )
+				{
+					// resource added, but purged before written
+				}
+				else
+				{
+					Size data_size_size = sizeof data_size;
+					
+					RsrcMapHandle rsrc_map = (RsrcMapHandle) mp->base;
+					
+					const rsrc_map_header& map = **rsrc_map;
+					
+					const rsrc_fork_header& fork = map.fork_header;
+					
+					Size offset_to_data = fork.offset_to_data;
+					
+					Size offset = *(long*) &rsrc->attrs & 0x00FFFFFF;
+					
+					Size total_offset = offset_to_data + offset;
+					
+					short refnum = map.refnum;
+					
+					OSErr err;
+					
+					(err = SetFPos( refnum, fsFromStart, total_offset ))  ||
+					(err = FSRead ( refnum, &data_size_size, &data_size ));
+					
+					ResErr = err;
+				}
+			}
 		}
 	}
 	
-	ResErr = resNotFound;
-	
-	return -1;
+	return data_size;
 }
 
 asm
