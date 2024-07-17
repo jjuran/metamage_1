@@ -662,17 +662,13 @@ namespace Genie
 		
 		vfs::node_ptr bottom;
 		
-	#if CONFIG_RESFS
-		
-		vfs::node_ptr resfs = new_resfs_root();
-		
-	#endif
-		
 		{
 			bottom = FSTreeFromFSDirSpec( root_DirSpec() );  // diskfs
 		}
 		
 	#if CONFIG_RESFS
+		
+		vfs::node_ptr resfs = new_resfs_root();
 		
 		{
 			bottom = vfs::new_union_directory( NULL,
