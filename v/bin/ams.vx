@@ -23,6 +23,7 @@ var disks = []
 
 var live_modal = false
 
+var xv = null
 var cpu = null
 var mem = null
 var modem = null
@@ -75,6 +76,10 @@ while args do
 		else if arg == "--res" then
 		{
 			screen_res = *args++
+		}
+		else if arg == "--xv" then
+		{
+			xv = *args++
 		}
 		else
 		{
@@ -456,6 +461,7 @@ let cursor = works "/cursor.skif"
 let crsr_opt = "--cursor=" cursor (*) has_cursor
 let ev_opt = "--events-fifo=" events
 let raster = "--raster=" screen
+let xv_opt = "--xv=" xv (*) bool xv
 
 run [ "mkfifo", update ]
 
@@ -475,7 +481,7 @@ let command-prefix = "exhibit", "-t", title, raster, event_input, zoom
 let file-servers = freemountd-server, appfs-server, docfs-server
 let servers = sound-server, modem-server, file-servers
 
-let xv68k_opts = model_opt, mem_opt, sound_opt, "-tSP", crsr_opt
+let xv68k_opts = model_opt, mem_opt, sound_opt, "-tSP", crsr_opt, xv_opt
 
 let xv68k-subcmd = xv68k, xv68k_opts, raster, *module_opts, app, app_name
 let graft-subcmd = "graft", servers, xv68k-subcmd
