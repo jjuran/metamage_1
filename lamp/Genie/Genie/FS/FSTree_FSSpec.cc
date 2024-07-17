@@ -660,20 +660,26 @@ namespace Genie
 		                                     plus::string::null,
 		                                     Root_Overlay_Mappings );
 		
+		vfs::node_ptr bottom;
+		
 	#if CONFIG_RESFS
 		
 		vfs::node_ptr resfs = new_resfs_root();
 		
 	#endif
 		
-		vfs::node_ptr bottom = FSTreeFromFSDirSpec( root_DirSpec() );  // diskfs
+		{
+			bottom = FSTreeFromFSDirSpec( root_DirSpec() );  // diskfs
+		}
 		
 	#if CONFIG_RESFS
 		
-		bottom = vfs::new_union_directory( NULL,
-		                                   plus::string::null,
-		                                   resfs.get(),
-		                                   bottom.get() );
+		{
+			bottom = vfs::new_union_directory( NULL,
+			                                   plus::string::null,
+			                                   resfs.get(),
+			                                   bottom.get() );
+		}
 		
 	#endif
 		
