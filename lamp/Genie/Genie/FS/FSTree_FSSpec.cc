@@ -666,18 +666,14 @@ namespace Genie
 		
 	#endif
 		
-		vfs::node_ptr diskfs = FSTreeFromFSDirSpec( root_DirSpec() );
+		vfs::node_ptr bottom = FSTreeFromFSDirSpec( root_DirSpec() );  // diskfs
 		
 	#if CONFIG_RESFS
 		
-		vfs::node_ptr bottom = vfs::new_union_directory( NULL,
-		                                                 plus::string::null,
-		                                                 resfs.get(),
-		                                                 diskfs.get() );
-		
-	#else
-		
-		const vfs::node_ptr& bottom = diskfs;
+		bottom = vfs::new_union_directory( NULL,
+		                                   plus::string::null,
+		                                   resfs.get(),
+		                                   bottom.get() );
 		
 	#endif
 		
