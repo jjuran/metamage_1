@@ -145,6 +145,7 @@ enum
 	
 	Opt_last_byte = 255,
 	
+	Opt_xv,   // exception vector access
 	Opt_mem,  // number of 512K memory chunks, or zero for 128K
 	Opt_pid,
 	Opt_raster,
@@ -161,6 +162,7 @@ static command::option options[] =
 	{ "trace",      Opt_trace      },
 	{ "turbo",      Opt_turbo      },
 	{ "verbose",    Opt_verbose    },
+	{ "xv",         Opt_xv,     command::Param_required },
 	{ "mem",        Opt_mem,    command::Param_required },
 	{ "model",      Opt_model,  command::Param_required },
 	{ "pid",        Opt_pid,    command::Param_optional },
@@ -948,6 +950,23 @@ char* const* get_options( char** argv )
 			
 			case Opt_verbose:
 				verbose = true;
+				break;
+			
+			case Opt_xv:
+				int xv;
+				
+				xv = (strcmp( global_result.param, "real" ) == 0)
+				   - (strcmp( global_result.param, "fake" ) == 0);
+				
+				if ( ! xv  &&  strcmp( global_result.param, "none" ) != 0 )
+				{
+					EXIT( 2, "xv68k: invalid --xv parameter" );
+				}
+				
+				using v68k::major_system_vector_access;
+				using v68k::usermode_memory_access;
+				
+				major_system_vector_access = usermode_memory_access( xv );
 				break;
 			
 			case Opt_mem:
