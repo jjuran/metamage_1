@@ -42,6 +42,7 @@
 #include "mac_sys/async_wakeup.hh"
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/has/BlueBox.hh"
+#include "mac_sys/has/MFS_only.hh"
 #include "mac_sys/has/native_Carbon.hh"
 #include "mac_sys/volume_params.hh"
 
@@ -90,6 +91,7 @@
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/misc_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/null.hh"
 #include "vfs/node/types/union.hh"
 #include "vfs/primitives/stat.hh"
 
@@ -643,6 +645,11 @@ namespace Genie
 	                                const plus::string&  name,
 	                                const void*          args )
 	{
+		if ( mac::sys::has_MFS_only() )
+		{
+			return vfs::null();
+		}
+		
 		return FSTreeFromFSSpec( Users_FSSpec() );
 	}
 	
@@ -653,24 +660,30 @@ namespace Genie
 		                                     plus::string::null,
 		                                     Root_Overlay_Mappings );
 		
+		vfs::node_ptr bottom;
+		
+		if ( ! mac::sys::has_MFS_only() )
+		{
+			bottom = FSTreeFromFSDirSpec( root_DirSpec() );  // diskfs
+		}
+		
 	#if CONFIG_RESFS
 		
 		vfs::node_ptr resfs = new_resfs_root();
 		
-	#endif
-		
-		vfs::node_ptr diskfs = FSTreeFromFSDirSpec( root_DirSpec() );
-		
-	#if CONFIG_RESFS
-		
-		vfs::node_ptr bottom = vfs::new_union_directory( NULL,
-		                                                 plus::string::null,
-		                                                 resfs.get(),
-		                                                 diskfs.get() );
-		
-	#else
-		
-		const vfs::node_ptr& bottom = diskfs;
+		if ( mac::sys::has_MFS_only() )
+		{
+			bottom.swap( resfs );
+		}
+		else
+		{
+			// current bottom is diskfs
+			
+			bottom = vfs::new_union_directory( NULL,
+			                                   plus::string::null,
+			                                   resfs.get(),
+			                                   bottom.get() );
+		}
 		
 	#endif
 		

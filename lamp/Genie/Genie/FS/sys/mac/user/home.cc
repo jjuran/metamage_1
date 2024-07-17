@@ -21,6 +21,7 @@
 // mac-sys-utils
 #include "mac_sys/get_user_home.hh"
 #include "mac_sys/has/FindFolder.hh"
+#include "mac_sys/has/MFS_only.hh"
 
 // mac-file-utils
 #include "mac_file/parent_directory.hh"
@@ -33,6 +34,9 @@
 #include "vfs/node.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+
+// relix-kernel
+#include "relix/api/root.hh"
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
@@ -120,6 +124,11 @@ namespace Genie
 	
 	static vfs::node_ptr mac_user_home_resolve( const vfs::node* that )
 	{
+		if ( mac::sys::has_MFS_only() )
+		{
+			return relix::root();
+		}
+		
 		return FSTreeFromFSDirSpec( GetUserHomeFolder() );
 	}
 	
