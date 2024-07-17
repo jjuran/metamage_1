@@ -40,6 +40,8 @@
 
 namespace v68k {
 
+usermode_memory_access major_system_vector_access;
+
 uint32_t alt_screen_addr  = 0x00012700;
 uint32_t main_screen_addr = 0x0001A700;
 uint32_t main_sound_addr  = 0x0001FD00;
@@ -72,6 +74,8 @@ bool addr_in_screen( uint32_t addr, uint32_t length, uint32_t base )
 	       addr          >= base;
 }
 
+static uint32_t fake_system_vectors[ 64 ];
+
 static
 uint8_t* lowmem_translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 {
@@ -79,9 +83,45 @@ uint8_t* lowmem_translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 	{
 		if ( fc <= user_program_space )
 		{
-			// No user access to system vectors
+			/*
+				In general, code running in User mode can't access the
+				first 256 bytes of memory.  Ideally, this restriction
+				would extend to 1K, but Mac OS has low memory globals
+				starting at offset $0100, so as a workaround we have
+				two different instances of the first 1K of memory --
+				one for User mode (with the Mac OS lowmem globals) and
+				one for Supervisor mode (with actual exception vectors,
+				including some beyond the first 256 bytes).
+				
+				Encroaching further still are some applications that use
+				the longword at $00E4 as an alternative ROMBase global.
+				This coincides with vector 57, which is actually defined
+				for 68851 use, so in practice we'll limit our workaround
+				to just the first 192 bytes (including the TRAP vectors,
+				but excluding all the subsequent ones).
+				
+				An AMS-savvy program can elect to enter Supervisor mode
+				temporarily for the purpose of accessing vector memory
+				(as is the case with ams-dsat, umsp, and vdb), but we'd
+				prefer not to impose this burden on programs that run in
+				Mac OS generally.  Consequently, we have an option to
+				enable User-mode access to the major system vectors --
+				i.e. the ones that are defined by Motorola (as opposed
+				to the vectors allocated for use by interrupts and such).
+			*/
 			
-			return 0;  // NULL
+			if ( addr < 192  &&  (addr & 0x3) == 0  &&  length == 4 )
+			{
+				if ( usermode_sees_fake_system_vectors() )
+				{
+					return (uint8_t*) fake_system_vectors + addr;
+				}
+				
+				if ( ! usermode_sees_real_system_vectors() )
+				{
+					return 0;  // NULL
+				}
+			}
 		}
 		
 		if ( access == mem_exec )
@@ -216,7 +256,11 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		if ( fc <= v68k::user_program_space  &&  access != v68k::mem_exec )
 		{
 			// Mac OS low memory
-			return v68k::lowmem::translate( addr, length, fc, access );
+			
+			if ( addr >= 192 )
+			{
+				return v68k::lowmem::translate( addr, length, fc, access );
+			}
 		}
 	}
 	

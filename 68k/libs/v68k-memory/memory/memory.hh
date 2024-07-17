@@ -12,6 +12,27 @@
 
 namespace v68k {
 
+enum usermode_memory_access
+{
+	Usermode_memory_none,
+	Usermode_memory_real,
+	Usermode_memory_fake = -1,
+};
+
+extern usermode_memory_access major_system_vector_access;
+
+inline
+bool usermode_sees_real_system_vectors()
+{
+	return major_system_vector_access > 0;
+}
+
+inline
+bool usermode_sees_fake_system_vectors()
+{
+	return major_system_vector_access < 0;
+}
+
 extern uint32_t alt_screen_addr;
 extern uint32_t main_screen_addr;
 extern uint32_t main_sound_addr;
