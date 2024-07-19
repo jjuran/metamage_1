@@ -86,6 +86,26 @@ namespace tool
 		kClosed = 4                             // 4  --
 	};
 	
+	struct Output
+	{
+		plus::string expected;
+		
+		int readable_fd;
+		int closable_fd;
+		int redirect_fd;
+		
+		Output()  {}
+		
+		Output( const plus::string& s, int x, int y, int z )
+		:
+			expected( s ),
+			readable_fd( x ),
+			closable_fd( y ),
+			redirect_fd( z )
+		{
+		}
+	};
+	
 	static IoOperator ReadOp( const char* s )
 	{
 		bool input = false;
@@ -253,15 +273,18 @@ namespace tool
 		return result;
 	}
 	
-	static bool DiscrepantOutput( const Redirection& redir )
+	static
+	bool DiscrepantOutput( const Output& output )
 	{
-		if ( redir.op != kOutput )  return false;
+		int fd = output.readable_fd;
+		
+		const plus::string& expected = output.expected;
 		
 		plus::var_string actual_output;
 		
 		char data[ 4096 ];
 		
-		while ( ssize_t bytes_read = read( redir.fd, data, 4096 ) )
+		while ( ssize_t bytes_read = read( fd, data, 4096 ) )
 		{
 			if ( bytes_read < 0 )
 			{
@@ -275,29 +298,19 @@ namespace tool
 		}
 		
 		
-		close( redir.fd );
+		close( fd );
 		
-		bool match = actual_output == redir.data;
+		bool match = actual_output == expected;
 		
 		if ( !match )
 		{
 			fprintf( stdout, "# EXPECTED:\n%s"
-			                 "# RECEIVED:\n%s", PrefixLines( redir.data    ).c_str(),
+			                 "# RECEIVED:\n%s", PrefixLines( expected      ).c_str(),
 			                                    PrefixLines( actual_output ).c_str() );
 		}
 		
 		return !match;
 	}
-	
-	
-	struct Pipe
-	{
-		int itsFDs[2];
-		
-		Pipe()  {}
-		
-		Pipe( const int fds[2] )  { std::copy( fds, fds + 2, itsFDs ); }
-	};
 	
 	
 	class TestCase
@@ -307,37 +320,23 @@ namespace tool
 			plus::string itsToDoReason;
 			int itsExpectedExitStatus;
 			std::vector< Redirection > itsRedirections;
-			unsigned itsCountOfPipesNeeded;
-			std::vector< Pipe > itsPipes;
-			std::vector< int > itsWriteEnds;
+			std::vector< int > its_input_fds;
+			std::vector< Output > its_outputs;
 		
 		public:
-			TestCase() : itsExpectedExitStatus(), itsCountOfPipesNeeded()  {}
+			TestCase() : itsExpectedExitStatus()  {}
 			
 			void SetCommand( const plus::string& command )  { itsCommand = command; }
 			const plus::string& GetToDoReason() const  { return itsToDoReason; }
 			void SetToDoReason( const plus::string& reason )  { itsToDoReason = reason; }
 			void SetExitStatus( int status )  { itsExpectedExitStatus = status; }
 			void AddRedirection( const Redirection& redir );
-			
 			void Redirect( Redirection& redir );
 			
 			bool Run();
 		
 		private:
-			struct Redirecting
-			{
-				TestCase& test;
-				
-				Redirecting( TestCase& test ) : test( test )  {}
-				void operator()( Redirection& redir )  { test.Redirect( redir ); }
-			};
-			
-			Redirecting Redirector()  { return Redirecting( *this ); }
-			
 			void CheckForCompleteness();
-			
-			void CreatePipes();
 			
 			void ClosePipeWriters();
 			
@@ -348,11 +347,6 @@ namespace tool
 	void TestCase::AddRedirection( const Redirection& redir )
 	{
 		itsRedirections.push_back( redir );
-		
-		if ( redir.op == kOutput )
-		{
-			++itsCountOfPipesNeeded;
-		}
 	}
 	
 	void TestCase::CheckForCompleteness()
@@ -365,79 +359,46 @@ namespace tool
 		}
 	}
 	
-	
-	void TestCase::CreatePipes()
+	void TestCase::ClosePipeWriters()
 	{
-		unsigned pipes = itsCountOfPipesNeeded;
-		
-		while ( pipes-- )
+		for ( int i = 0;  i < its_outputs.size();  ++i )
 		{
-			int fds[2];
+			int fd = its_outputs[ i ].closable_fd;
 			
-			must_pipe( fds );
-			
-			itsPipes.push_back( fds );
+			close( fd );
 		}
 	}
 	
 	void TestCase::Redirect( Redirection& redir )
 	{
 		int pipe_fds[2];
-		int* fds = pipe_fds;
 		
-		switch ( redir.op )
+		must_pipe( pipe_fds );
+		
+		if ( redir.op == kInput )
 		{
-			case kClosed:
-				close( redir.fd );
-				break;
+			must_write( pipe_fds[ 1 ], redir.data.data(), redir.data.size() );
 			
-			case kInputLine:
-				must_pipe( fds );
-				
-				must_write( fds[1], redir.data.data(), redir.data.size() );
-				
-				close( fds[1] );
-				dup2( fds[0], redir.fd );
-				close( fds[0] );
-				break;
+			dup2( pipe_fds[ 0 ], redir.fd );
 			
-			case kMatchOutputLine:
-				fds = itsPipes.back().itsFDs;
-				dup2( fds[1], redir.fd );
-				close( fds[1] );
-				redir.fd = fds[0];
-				close( fds[0] );
-				itsWriteEnds.push_back( fds[1] );
-				itsPipes.pop_back();
-				break;
+			close( pipe_fds[ 0 ] );
+			close( pipe_fds[ 1 ] );
 			
-			default:
-				fprintf( stderr, "Error in redirection\n" );
-				break;
+			its_input_fds.push_back( redir.fd );
 		}
-	}
-	
-	void TestCase::ClosePipeWriters()
-	{
-		typedef std::vector< int >::const_iterator Iter;
-		
-		for ( Iter it = itsWriteEnds.begin();  it != itsWriteEnds.end();  ++it )
+		else
 		{
-			close( *it );
+			Output output( redir.data, pipe_fds[ 0 ], pipe_fds[ 1 ], redir.fd );
+			
+			its_outputs.push_back( output );
 		}
-		
-		itsWriteEnds.clear();
 	}
 	
 	bool TestCase::DoesOutputMatch() const
 	{
-		typedef std::vector< Redirection >::const_iterator Iter;
-		
-		const Iter end = itsRedirections.end();
-		
-		for ( Iter it = itsRedirections.begin();  it != end;  ++it )
+		for ( int i = 0;  i < its_outputs.size();  ++i )
 		{
-			if ( DiscrepantOutput( *it ) )
+			if ( DiscrepantOutput( its_outputs[ i ] ) )
 			{
 				return false;
 			}
@@ -451,15 +412,24 @@ namespace tool
 	{
 		CheckForCompleteness();
 		
-		CreatePipes();
+		for ( int i = 0;  i < itsRedirections.size();  ++i )
+		{
+			Redirect( itsRedirections[ i ] );
+		}
 		
 		p7::pid_t pid = POSEVEN_VFORK();
 		
 		if ( pid == 0 )
 		{
-			std::for_each( itsRedirections.begin(),
-			               itsRedirections.end(),
-			               Redirector() );
+			for ( int i = 0;  i < its_outputs.size();  ++i )
+			{
+				int old_fd = its_outputs[ i ].closable_fd;
+				int new_fd = its_outputs[ i ].redirect_fd;
+				
+				dup2( old_fd, new_fd );
+				
+				close( old_fd );
+			}
 			
 			const char* argv[] = { "sh", "-c", "", NULL };
 			
