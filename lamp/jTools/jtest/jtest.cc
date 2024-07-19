@@ -88,9 +88,6 @@ namespace tool
 		
 		switch ( s[0] )
 		{
-			case '-':
-				return s[1] == '-' ? kClosed : kNoOp;
-			
 			case '<':
 				input = true;
 				// fall through
@@ -100,6 +97,13 @@ namespace tool
 				else if ( s[1] != '='  )  return kNoOp;
 				
 				return IoOperator( (input ? kInput : kOutput)  |  (here ? kHereDoc : kOneLine) );
+			
+			case '-':
+				if ( s[1] == '-' )
+				{
+					return kClosed;
+				}
+				// fall through
 			
 			default:
 				return kNoOp;
