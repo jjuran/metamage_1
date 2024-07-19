@@ -48,6 +48,11 @@
 #include "Orion/Main.hh"
 
 
+#define PROGRAM  "jtest"
+
+#define NO_CLOSURE  "using '--' to close an fd is unimplemented"
+
+
 namespace tool
 {
 	
@@ -101,7 +106,14 @@ namespace tool
 			case '-':
 				if ( s[1] == '-' )
 				{
-					return kClosed;
+					/*
+						This feature doesn't appear to have
+						ever been used, much less tested.
+					*/
+					
+					fprintf( stderr, "%s", PROGRAM ": " NO_CLOSURE "\n" );
+					
+//					return kClosed;
 				}
 				// fall through
 			
