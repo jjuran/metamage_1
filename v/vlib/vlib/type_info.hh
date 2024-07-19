@@ -27,7 +27,7 @@ namespace vlib
 		assign_proc const  assign;
 		coerce_proc const  coerce;
 		member_proc const  member;
-		int                flags;
+		int         const  flags;
 	};
 	
 }
