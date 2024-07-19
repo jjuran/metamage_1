@@ -426,6 +426,7 @@ const type_info AEDesc_vtype =
 	"AEDesc",
 	apple_events_present ? (assign_proc) &assign_to< AEDesc > : NULL,
 	&AEDesc::coerce,
+	NULL,
 	&AEDesc_member,
 };
 

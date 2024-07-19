@@ -103,6 +103,7 @@ namespace vlib
 		"record",
 		&assign_to< Record >,
 		&Record::coerce,
+		0,
 		0,  // member lookup handled in binary_op_handler()
 		Type_pure,
 	};

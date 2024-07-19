@@ -124,6 +124,7 @@ namespace vlib
 		&assign_to< Iterator >,
 		NULL,
 		NULL,
+		NULL,
 		Type_pure,
 	};
 	

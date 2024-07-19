@@ -380,6 +380,7 @@ namespace vlib
 		&assign_to< Integer >,
 		&Integer::coerce,
 		0,
+		0,
 		Type_pure,
 	};
 	

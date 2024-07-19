@@ -218,6 +218,7 @@ const type_info FSSpec_vtype =
 	"FSSpec",
 	&assign_to< FSSpec >,
 	&FSSpec::coerce,
+	NULL,
 	&FSSpec_member,
 };
 

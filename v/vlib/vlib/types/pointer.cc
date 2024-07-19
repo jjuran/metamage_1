@@ -677,6 +677,7 @@ namespace vlib
 		"pointer",
 		&assign_to< Pointer >,
 		NULL,
+		NULL,
 		&pointer_member,
 		Type_pure,
 	};

@@ -308,6 +308,7 @@ namespace vlib
 		&assign_to< Fraction >,
 		&Fraction::coerce,
 		0,
+		0,
 		Type_pure,
 	};
 	

@@ -31,8 +31,8 @@ namespace vlib
 		return v;
 	}
 	
-	const type_info etc_vtype = { "...", &identity, 0, 0, Type_pure };
-	const type_info one_vtype = { "one", &singular, 0, 0, Type_pure };
+	const type_info etc_vtype = { "...", &identity, 0, 0, 0, Type_pure };
+	const type_info one_vtype = { "one", &singular, 0, 0, 0, Type_pure };
 	
 	bool is_etc( const Value& type )
 	{

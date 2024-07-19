@@ -17,6 +17,7 @@ namespace vlib
 	
 	typedef Value (*assign_proc)( const Value& v );
 	typedef Value (*coerce_proc)( const Value& v );
+	typedef Value (*extend_proc)( const Value& v );
 	
 	typedef Value (*member_proc)( const Value& obj,
 	                              const plus::string& member );
@@ -26,6 +27,7 @@ namespace vlib
 		char const* const  name;
 		assign_proc const  assign;
 		coerce_proc const  coerce;
+		extend_proc const  extend;
 		member_proc const  member;
 		int         const  flags;
 	};

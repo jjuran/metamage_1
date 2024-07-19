@@ -287,6 +287,7 @@ namespace posix
 		"fd",
 		&assign_to< FileDescriptor >,
 		&FileDescriptor::coerce,
+		NULL,
 		&fd_member,
 		Type_pure,
 	};

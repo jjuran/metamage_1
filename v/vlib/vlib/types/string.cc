@@ -158,6 +158,7 @@ namespace vlib
 		"string",
 		&assign_to< String >,
 		&String::coerce,
+		0,
 		&string_member,
 		Type_pure,
 	};

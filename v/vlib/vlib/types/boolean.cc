@@ -124,6 +124,7 @@ namespace vlib
 		&assign_to< Boolean >,
 		&Boolean::coerce,
 		0,
+		0,
 		Type_pure,
 	};
 	

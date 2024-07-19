@@ -172,6 +172,7 @@ namespace posix
 		"thread",
 		&assign_to< Thread >,
 		&Thread::coerce,
+		NULL,
 		&thread_member,
 	};
 	

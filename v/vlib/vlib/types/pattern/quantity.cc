@@ -62,6 +62,7 @@ namespace vlib
 		&assign_to< PatternQuantity >,
 		0,
 		0,
+		0,
 		Type_pure,
 	};
 	

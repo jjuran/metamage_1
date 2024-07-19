@@ -282,6 +282,7 @@ namespace vlib
 		&assign_to< MB32 >,
 		&MB32::coerce,
 		0,
+		0,
 		Type_pure,
 	};
 	

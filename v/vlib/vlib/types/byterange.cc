@@ -167,6 +167,7 @@ namespace vlib
 		&assign_to< ByteRange >,
 		NULL,
 		NULL,
+		NULL,
 		Type_pure,
 	};
 	

@@ -106,6 +106,7 @@ namespace vlib
 		&assign_to< Type >,
 		0,
 		0,
+		0,
 		Type_pure,
 	};
 	

@@ -23,6 +23,7 @@ namespace vlib
 		&assign_to< Null >,
 		&Null::coerce,
 		0,
+		0,
 		Type_pure,
 	};
 	

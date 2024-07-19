@@ -287,6 +287,7 @@ namespace vlib
 		"packed",
 		&assign_to< Packed >,
 		&Packed::coerce,
+		NULL,
 		&packed_member,
 		Type_pure,
 	};

@@ -200,6 +200,7 @@ namespace vlib
 		&assign_to< Byte >,
 		&Byte::coerce,
 		0,
+		0,
 		Type_pure,
 	};
 	

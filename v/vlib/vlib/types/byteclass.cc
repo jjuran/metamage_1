@@ -252,6 +252,7 @@ namespace vlib
 		"byteclass",
 		&assign_to< ByteClass >,
 		&ByteClass::coerce,
+		NULL,
 		&byteclass_member,
 		Type_pure,
 	};
