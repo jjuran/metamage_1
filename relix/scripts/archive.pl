@@ -134,7 +134,7 @@ my %fsmap =
 			# Functionality testing
 			\ qw( clock_getrestime fifo-read fifo-write ),
 			# Exceptions
-			\ qw( abort buserror div0 illegal privileged trapv ),
+			\ qw( abort addrerror buserror chk div0 illegal privileged trapv ),
 			# Mac-specific
 			\ qw( SetFile aevt ic load-init mwnub rsrc-patch tlsrvr ),
 			# AppleScript
