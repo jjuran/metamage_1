@@ -21,9 +21,7 @@ extern "C" pascal void SysBeep( short ticks )  ONEWORDINLINE( 0xA9C8 );
 
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
-
-// mac-sys-utils
-#include "mac_sys/delay.hh"
+#include "mac_glue/OSUtils.hh"
 
 // log-of-war
 #include "logofwar/report.hh"
@@ -690,7 +688,9 @@ bool invoke_defItem( DialogPeek d )
 		ControlRef button = (ControlRef) item->handle;
 		
 		HiliteControl( button, kControlButtonPart );
-		mac::sys::delay( 8 );
+		
+		mac::glue::delay( 8 );
+		
 		HiliteControl( button, kControlNoPart );
 	}
 	

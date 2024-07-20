@@ -22,11 +22,11 @@
 #include <Resources.h>
 #endif
 
+// mac-glue-utils
+#include "mac_glue/OSUtils.hh"
+
 // iota
 #include "iota/swap.hh"
-
-// mac-sys-utils
-#include "mac_sys/delay.hh"
 
 // log-of-war
 #include "logofwar/report.hh"
@@ -911,7 +911,7 @@ pascal Boolean TrackGoAway_patch( WindowRef window, Point pt )
 				break;
 			}
 			
-			mac::sys::delay( 1 );
+			mac::glue::delay( 1 );
 			
 			pt = Mouse;
 		}
@@ -1405,7 +1405,7 @@ pascal void BeginUpdate_patch( WindowRef window )
 		
 		FrameRgn( window->visRgn );
 		
-		mac::sys::delay( 15 );
+		mac::glue::delay( 15 );
 		
 		FillRgn( window->visRgn, &qd.ltGray );
 		
@@ -1413,7 +1413,7 @@ pascal void BeginUpdate_patch( WindowRef window )
 		
 		PenSize( 1, 1 );
 		
-		mac::sys::delay( 45 );
+		mac::glue::delay( 45 );
 		
 		EraseRgn( window->visRgn );
 		

@@ -10,8 +10,8 @@
 #include <MacWindows.h>
 #endif
 
-// mac-sys-utils
-#include "mac_sys/delay.hh"
+// mac-glue-utils
+#include "mac_glue/OSUtils.hh"
 
 // ams-common
 #include "QDGlobals.hh"
@@ -130,7 +130,7 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 				break;
 			}
 			
-			mac::sys::delay( 1 );
+			mac::glue::delay( 1 );
 			
 			event.where = Mouse;
 		}

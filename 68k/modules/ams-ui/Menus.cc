@@ -18,12 +18,10 @@
 
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
+#include "mac_glue/OSUtils.hh"
 
 // iota
 #include "iota/char_types.hh"
-
-// mac-sys-utils
-#include "mac_sys/delay.hh"
 
 // log-of-war
 #include "logofwar/report.hh"
@@ -747,7 +745,7 @@ void flash_menu_item( MenuRef menu, const Rect& r, Point pt, short item, int n )
 		
 		delay = 7 - delay;  // 4 ticks on, 3 ticks off
 		
-		mac::sys::delay( delay );
+		mac::glue::delay( delay );
 		
 		MDEF_0( mChooseMsg, menu, &r, pt, &item );
 	}
@@ -1384,7 +1382,7 @@ pascal void SysBeep_patch( short duration )
 	
 	FlashMenuBar_patch( 0 );
 	
-	mac::sys::delay( 8 );
+	mac::glue::delay( 8 );
 	
 	FlashMenuBar_patch( 0 );
 }
