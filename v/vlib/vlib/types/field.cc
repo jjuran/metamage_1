@@ -121,6 +121,14 @@ namespace vlib
 		{
 			case Op_function:
 			case Op_named_unary:
+				if ( extend_proc extend = type.base_type().extend )
+				{
+					if ( Value v = extend( b ) )
+					{
+						return v;
+					}
+				}
+				
 				return type.base_type().coerce( b );
 			
 			case Op_subscript:

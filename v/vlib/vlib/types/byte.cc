@@ -50,6 +50,17 @@ namespace vlib
 		}
 	}
 	
+	static
+	Value Byte_extend( const Value& v )
+	{
+		if ( v.type() == Value_base_type  &&  &v.typeinfo() == &string_vtype )
+		{
+			return Type( packed_vtype );
+		}
+		
+		return Value();
+	}
+	
 	unsigned char Byte::get() const
 	{
 		return pod_cast< unsigned char >();
@@ -199,7 +210,7 @@ namespace vlib
 		"byte",
 		&assign_to< Byte >,
 		&Byte::coerce,
-		0,
+		&Byte_extend,
 		0,
 		Type_pure,
 	};

@@ -17,3 +17,6 @@ $ vc '"[" x"1234" "]"'
 
 $ vc 'mince x"1234567890"'
 1 >= 'x"125690"'
+
+$ vc 'byte string'
+1 >= packed
