@@ -1,13 +1,11 @@
 /*
-	addrerror.cc
-	------------
+	addrerror.c
+	-----------
 */
 
 
-#pragma exceptions off
-
-
-static int address_error_read_test()
+static
+int address_error_read_test()
 {
 	int x = 0;
 	

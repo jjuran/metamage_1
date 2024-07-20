@@ -1,10 +1,7 @@
 /*
-	buserror.cc
-	-----------
+	buserror.c
+	----------
 */
-
-
-#pragma exceptions off
 
 
 static

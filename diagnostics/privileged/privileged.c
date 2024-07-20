@@ -1,10 +1,7 @@
 /*
-	privileged.cc
-	-------------
+	privileged.c
+	------------
 */
-
-
-#pragma exceptions off
 
 
 #ifdef __MC68K__

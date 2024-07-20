@@ -1,13 +1,11 @@
 /*
-	trapv.cc
-	--------
+	trapv.c
+	-------
 */
 
 
-#pragma exceptions off
-
-
-static void trapv_test()
+static
+void trapv_test()
 {
 #ifdef __MC68K__
 	
