@@ -145,10 +145,13 @@ my %fsmap =
 			\ qw( minivx ),
 			# App utilities
 			\ qw( daemonize idle ),
+			# Instrumentation
+			\ qw( clock_getrestime ),
 			# Exceptions
 			\ qw( abort addrerror buserror chk div0 illegal privileged trapv ),
 			# Mac-specific
-			\ qw( drvr sound-info system-info ),
+			\ qw( crsr drvr fonts keymods mac-id mnam NewPtr
+			      serial-ports sound-info system-info units vcbs ),
 			# Mac-specific scripts
 			qw( gestalt ),
 		],
