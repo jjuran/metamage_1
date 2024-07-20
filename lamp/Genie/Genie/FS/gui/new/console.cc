@@ -367,6 +367,11 @@ namespace Genie
 				{
 					params.its_mac_text.append( p, length );
 					
+					size_t new_end = consoleParams.itsStartOfInput + length;
+					
+					params.itsSelection.start =
+					params.itsSelection.end   = new_end;
+					
 					TEInsert( p, length, hTE );
 				}
 			}
