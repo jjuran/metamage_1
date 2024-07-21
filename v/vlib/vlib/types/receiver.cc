@@ -77,6 +77,8 @@ namespace vlib
 		&assign_to< Receiver >,
 		&Receiver::coerce,
 		NULL,
+		NULL,
+		0,
 	};
 	
 }

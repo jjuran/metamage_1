@@ -220,6 +220,7 @@ const type_info FSSpec_vtype =
 	&FSSpec::coerce,
 	NULL,
 	&FSSpec_member,
+	0,
 };
 
 #endif  // #if ! __LP64__

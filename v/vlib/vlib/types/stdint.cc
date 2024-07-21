@@ -66,7 +66,7 @@ namespace vlib
 	DEFINE_ADAPT_TO_INT( u, 8  )
 	
 	#define DEFINE_TYPE_INFO_A_C( T )  \
-	const type_info T##_vtype = { #T, &assign_to_##T, &coerce_to_##T, 0 }
+	const type_info T##_vtype = { #T, &assign_to_##T, &coerce_to_##T, 0, 0, 0 }
 	
 	DEFINE_TYPE_INFO_A_C( i64 );
 	DEFINE_TYPE_INFO_A_C( u64 );

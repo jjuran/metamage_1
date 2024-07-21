@@ -61,12 +61,12 @@ namespace vlib
 	}
 	
 	#define DEFINE_TYPE_INFO( type )  \
-	const type_info type##_vtype = { #type, &assign_to_##type, 0, 0 }
+	const type_info type##_vtype = { #type, &assign_to_##type, 0, 0, 0, 0 }
 	
 	DEFINE_TYPE_INFO( function );
 	DEFINE_TYPE_INFO( c_str    );
 	
-	static const type_info no_typeinfo = { 0, 0, 0, 0 };
+	static const type_info no_typeinfo = { 0, 0, 0, 0, 0, 0 };
 	
 	static
 	Type basic_typeof( const Value& v )

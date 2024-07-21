@@ -174,6 +174,7 @@ namespace posix
 		&Thread::coerce,
 		NULL,
 		&thread_member,
+		0,
 	};
 	
 }

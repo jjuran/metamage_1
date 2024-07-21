@@ -428,6 +428,7 @@ const type_info AEDesc_vtype =
 	&AEDesc::coerce,
 	NULL,
 	&AEDesc_member,
+	0,
 };
 
 }

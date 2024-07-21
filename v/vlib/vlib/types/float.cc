@@ -309,6 +309,8 @@ namespace vlib
 		&assign_to< Float >,
 		&Float::coerce,
 		0,
+		0,
+		0,
 	};
 	
 }
