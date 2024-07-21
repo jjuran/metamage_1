@@ -214,6 +214,7 @@ ams-quartz-demo-nosound: ams-quartz-build
 	@mkdir -p $(RETRO_APPS)
 	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/"Nyanochrome Cat".mbin
 	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/tic-tac-toe.txt
+	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/"Black Knight's Chess".mbin
 	$(RETROMATIC) $(RETRO_APPS) ../ams-68k-bin/mnt/organ-console.txt
 	@open $(RETRO_APPS)
 
