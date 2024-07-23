@@ -1,0 +1,246 @@
+#!/usr/bin/env minivx
+
+struct Point
+{
+	v: i16,
+	h: i16,
+}
+
+struct FInfo
+{
+	fdType:     mb32,
+	fdCreator:  mb32,
+	fdFlags:    u16,
+	fdLocation: Point,
+	fdFldr:     i16,
+}
+
+struct FXInfo
+{
+	fdIconID:   i16,
+	fdReserved: vector[i16, 3],
+	fdScript:   byte,
+	fdXFlags:   byte,
+	fdComment:  i16,
+	fdPutAway:  i32,
+}
+
+struct FileInfo
+{
+	ioFlAttrib:    byte,
+	ioACUser:      byte,
+	ioFlFndrInfo:  FInfo,
+	ioDirID:       i32,
+	ioFlStBlk:     u16,
+	ioFlLgLen:     i32,
+	ioFlPyLen:     i32,
+	ioFlRStBlk:    u16,
+	ioFlRLgLen:    i32,
+	ioFlRPyLen:    i32,
+	ioFlCrDat:     u32,
+	ioFlMdDat:     u32,
+	ioFlBkDat:     u32,
+	ioFlXFndrInfo: FXInfo,
+	ioFlParID:     i32,
+	ioFlClpSiz:    i32,
+}
+
+struct MDB
+{
+	sig-word:    vector[byte, 2],
+	create-date: big-endian u32,
+	backup-date: big-endian u32,
+	attrs:       vector[u8, 2],
+	n-files:     big-endian u16,
+	drDirSt:     big-endian u16,
+	drBlLen:     big-endian u16,
+	drNmAlBlks:  big-endian u16,
+	drAlBlkSiz:  big-endian u32,
+	drClpSiz:    big-endian u32,
+	drAlBlSt:    big-endian u16,
+	drNxtFNum:   big-endian u32,
+	drFreeBks:   big-endian u16,
+	name-len:    u8,
+	name-buf:    vector[byte, 27],
+	block-map:   vector[byte, 1024 - 64],
+}
+
+assert MDB.size == 1024
+
+struct FileEntryHeader
+{
+	flags:     byte,
+	vers-num:  u8,
+	user-words: vector[ byte, 16 ],
+	file-num:  big-endian u32,
+	
+	flStBlk:   big-endian u16,
+	flLgLen:   big-endian u32,
+	flPyLen:   big-endian u32,
+	
+	flRStBlk:  big-endian u16,
+	flRLgLen:  big-endian u32,
+	flRPyLen:  big-endian u32,
+	
+	flCrDat:   big-endian u32,
+	flMdDat:   big-endian u32,
+}
+
+def basename (path)
+{
+	if let last_slash = (begin -path).find('/') then
+	{
+		return -last_slash.past
+	}
+	
+	return path
+}
+
+def NUL-padded (s, n)
+{
+	return packed( s, ("\0" * n) )[ 0 -> n ]
+}
+
+def aligned (s, factor)
+{
+	let n = s.size
+	
+	let padding = -n mod factor
+	
+	return packed (s, x"00" * padding)
+}
+
+def map_blocks (n, k)
+{
+	return [ if n then {*(1 -> n map { v + k + 2 }), 1} ]
+}
+
+def compress_block_map (data)
+{
+	if data.length % 2 then
+	{
+		data <-- 0
+	}
+	
+	let BE_u16 = big-endian u16
+	
+	let xdigits = data map { (hex BE_u16.encode v)[ 1 -> 4 ] } per string or ""
+	
+	return unhex xdigits
+}
+
+let path = argv[ 1 ]
+
+let file_name = basename path
+let file_info = packed output-from-run [ "GetCatInfo", path ]
+
+let data_fork = packed load path
+let rsrc_fork = packed load path "/..namedfork/rsrc"
+
+if isatty OUT then
+{
+	warn "mkmfs:  This program produces binary data; please redirect output"
+	
+	exit 1
+}
+
+def mkmfs (file_name, file_info, data_fork, rsrc_fork)
+{
+	let disk_name = file_name
+	
+	var result = x""
+	
+	let drBlLen = 4
+	
+	let drDirSt  = 4
+	let drAlBlSt = drDirSt + drBlLen
+	
+	var drNxtFNum = 1
+	
+	let zero_4K = x"00" * 4096
+	
+	let data_alloc = aligned( data_fork, 1024 )
+	let rsrc_alloc = aligned( rsrc_fork, 1024 )
+	
+	let n_data = data_alloc.size / 1024
+	let n_rsrc = rsrc_alloc.size / 1024
+	
+	# boot blocks, MDB, file directory, space for Desktop file
+	
+	let min_KB = 1 + 1 + 2 + 2 + n_data + n_rsrc
+	
+	let n_KB = min_KB + 1
+	
+	let drNmAlBlks = n_KB - drAlBlSt div 2 - 1
+	
+	let data_map = map_blocks (n_data, 0)
+	let rsrc_map = map_blocks (n_rsrc, n_data)
+	
+	let block_map = compress_block_map [*data_map, *rsrc_map]
+	
+	let padded_block_map = NUL-padded (block_map, 1024 - 64)
+	
+	let allocation = data_alloc rsrc_alloc
+	
+	let n_allocation_blocks = allocation.size / 1024
+	
+	let info = (big-endian FileInfo) file_info
+	
+	var feh = FileEntryHeader()
+	
+	feh.flags = '\x80'
+	feh.user-words = info.ioFlFndrInfo
+	feh.file-num = drNxtFNum++
+	feh.flStBlk = 2 * int bool n_data
+	feh.flLgLen = data_fork.size
+	feh.flPyLen = data_alloc.size
+	feh.flRStBlk = (2 + n_data) * int bool n_rsrc
+	feh.flRLgLen = rsrc_fork.size
+	feh.flRPyLen = rsrc_alloc.size
+	feh.flCrDat = info.ioFlCrDat
+	feh.flMdDat = info.ioFlMdDat
+	
+	let fname = packed (byte file_name.length, file_name)
+	
+	let directory = NUL-padded( packed (feh, fname), 2048 )
+	
+	var mdb = MDB()
+	
+	mdb.sig-word   = x"d2d7"
+	mdb.drDirSt    = drDirSt
+	mdb.drBlLen    = drBlLen
+	mdb.drNmAlBlks = drNmAlBlks
+	mdb.drAlBlkSiz = 1024
+	mdb.drClpSiz   = 8192
+	mdb.drAlBlSt   = drAlBlSt
+	mdb.drNxtFNum  = drNxtFNum
+	mdb.drFreeBks  = drNmAlBlks - n_allocation_blocks
+	mdb.name-len   = disk_name.length
+	mdb.name-buf   = NUL-padded( disk_name, 27 )
+	mdb.block-map  = padded_block_map
+	
+	result .= zero_4K[ 0 -> 1024 ]  # boot blocks, 1K
+	
+	result .= packed mdb  # master directory block (including block map) 1K
+	
+	result .= directory  # file directory, 2K
+	
+	result .= allocation
+	
+	var kb = n_KB - 4 - n_allocation_blocks
+	
+	for i in 0 -> kb div 4 do
+	{
+		result .= zero_4K
+	}
+	
+	kb = kb mod 4
+	
+	result .= zero_4K[ 0 -> 1024 * kb ]
+	
+	return result
+}
+
+OUT <== mkmfs (file_name, file_info, data_fork, rsrc_fork)
+
+end.
