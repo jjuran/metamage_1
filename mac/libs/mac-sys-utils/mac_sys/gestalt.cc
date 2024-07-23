@@ -15,8 +15,10 @@
 #include <Gestalt.h>
 #endif
 
-// mac-sys-utils
-#include "mac_sys/trap_available.hh"
+
+#define LOWMEM( addr, type )  (*(type*) (addr))
+
+#define SysVersion  LOWMEM( 0x015A, short )
 
 
 namespace mac {
@@ -25,9 +27,7 @@ namespace sys {
 static inline
 bool has_Gestalt_trap()
 {
-	enum { _Gestalt = 0xA1AD };
-	
-	return ! TARGET_CPU_68K  ||  trap_available( _Gestalt );
+	return ! TARGET_CPU_68K  ||  SysVersion >= 0x0604;
 }
 
 long gestalt( unsigned long selector, long default_value )
