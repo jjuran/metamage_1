@@ -13,11 +13,6 @@
 
 #if defined(__MACOS__) || defined(__APPLE__)
 #include <TargetConditionals.h>
-#ifndef TARGET_API_MAC_CARBON
-// TargetConditionals.h in Universal Interfaces just includes ConditionalMacros.h
-// Therefore, if TARGET_API_MAC_CARBON is still not defined, we're targeting OS X
-#define TARGET_API_MAC_CARBON 1
-#endif
 #define ALINE_MAC_DEVELOPMENT 1
 #else
 #define ALINE_MAC_DEVELOPMENT 0
