@@ -15,24 +15,16 @@
 #include <Gestalt.h>
 #endif
 
-
-#define LOWMEM( addr, type )  (*(type*) (addr))
-
-#define SysVersion  LOWMEM( 0x015A, short )
+// mac-sys-utils
+#include "mac_sys/has/Gestalt.hh"
 
 
 namespace mac {
 namespace sys {
 
-static inline
-bool has_Gestalt_trap()
-{
-	return ! TARGET_CPU_68K  ||  SysVersion >= 0x0604;
-}
-
 long gestalt( unsigned long selector, long default_value )
 {
-	if ( ! has_Gestalt_trap() )
+	if ( ! has_Gestalt() )
 	{
 		return default_value;
 	}
@@ -46,7 +38,7 @@ long gestalt( unsigned long selector, long default_value )
 
 bool gestalt_defined( unsigned long selector )
 {
-	if ( ! has_Gestalt_trap() )
+	if ( ! has_Gestalt() )
 	{
 		return false;
 	}
