@@ -19,7 +19,7 @@
 #endif
 
 // mac-sys-utils
-#include "mac_sys/trap_available.hh"
+#include "mac_sys/has/Gestalt.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -75,9 +75,7 @@ namespace vfs
 	
 	filehandle_ptr open_gestalt( const node* that, int flags, mode_t mode )
 	{
-		enum { _Gestalt = 0xA1AD };
-		
-		if ( TARGET_CPU_68K  &&  ! mac::sys::trap_available( _Gestalt ) )
+		if ( ! mac::sys::has_Gestalt() )
 		{
 			p7::throw_errno( ENOENT );
 		}
