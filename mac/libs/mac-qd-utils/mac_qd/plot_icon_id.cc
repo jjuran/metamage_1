@@ -33,6 +33,11 @@
 namespace mac {
 namespace qd  {
 
+enum
+{
+	Inverse = 2,
+};
+
 const Fixed fixed_72dpi = 72 << 16;
 
 #if ! __LP64__
@@ -46,6 +51,26 @@ Boolean IsPortColor( GrafPtr port )
 }
 
 #endif
+
+static inline
+bool silhouetted( GrafPtr port )
+{
+	/*
+		The port is assumed to be a basic (non-color) graphics port.
+		
+		This predicate is not correct for opaque Toolbox structs,
+		nor (by extension) for Carbon.  However, it's only used as
+		a fallback for Icon Utilities, which well precedes Carbon.
+	*/
+	
+#if ! OPAQUE_TOOLBOX_STRUCTS
+	
+	return ! ((port->fgColor ^ port->bkColor) & Inverse);
+	
+#endif
+	
+	return false;
+}
 
 short plot_icon_id( const Rect& bounds, short id )
 {
@@ -111,6 +136,11 @@ short plot_icon_id( const Rect& bounds, short id )
 				
 				goto drawn;
 			}
+		}
+		
+		if ( ! is_color  &&  silhouetted( port ) )
+		{
+			goto drawn;
 		}
 		
 		BlockMoveData( *h, icon_data, sizeof icon_data );  // icon face
