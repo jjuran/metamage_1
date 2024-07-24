@@ -178,6 +178,19 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	GrafPort& port = **get_addrof_thePort();
 	
+	/*
+		If we're drawing against a non-white background, swap Or and Bic.
+		
+		The low bit is clear for white and set for all non-white colors;
+		srcOr and srcBic are 1 and 3 respectively.  So if the low bit of
+		the port's bkColor and the low bit of the mode are both set,
+		then we need to toggle bit 2 of the mode.
+	*/
+	
+	short inverse_masking = (short) port.bkColor & mode & 0x1;
+	
+	mode ^= inverse_masking << 1;
+	
 	if ( Handle h = port.picSave )
 	{
 		save_bits_to_picture( h, srcBits, srcRect, dstRect, mode, maskRgn );
