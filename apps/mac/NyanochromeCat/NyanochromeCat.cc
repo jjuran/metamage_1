@@ -49,12 +49,6 @@ const bool apple_events_present =
 int main()
 {
 	mac::app::init_toolbox();
-	mac::app::install_menus();
-	
-	if ( ! TARGET_API_MAC_CARBON  &&  apple_events_present )
-	{
-		mac::app::install_basic_event_handlers();
-	}
 	
 	OSErr err = mac::qd::set_cursor_by_id( watchCursor );
 	
@@ -63,6 +57,13 @@ int main()
 	if ( err == noErr )
 	{
 		InitCursor();
+	}
+	
+	mac::app::install_menus();
+	
+	if ( ! TARGET_API_MAC_CARBON  &&  apple_events_present )
+	{
+		mac::app::install_basic_event_handlers();
 	}
 	
 	make_main_window();
