@@ -70,9 +70,11 @@ short plot_icon_id( const Rect& bounds, short id )
 		
 		copy_bits( icon, port, icon.bounds, bounds, srcBic );  // apply mask
 		
+		bool is_color = IsPortColor( port );
+		
 		Handle icl8;
 		
-		if ( IsPortColor( port )  &&  (icl8 = GetResource( 'icl8', id )) )
+		if ( is_color  &&  (icl8 = GetResource( 'icl8', id )) )
 		{
 			const short bpp     = 8;
 			const short clut_id = bpp;
