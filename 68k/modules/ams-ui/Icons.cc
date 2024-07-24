@@ -113,11 +113,12 @@ pascal OSErr PlotIconID_call( const Rect*        rect,
 		
 		White on white:
 			Rare if ever, but supported:  Just BIC the mask.
+		
+		NOTE:  Always pass srcBic, because StdBits() will
+		substitute srcOr when there's a black background.
 	*/
 	
-	short mask_mode = port.bkColor & Inverse ? srcBic : srcOr;
-	
-	CopyIconBits( *h + mask_offset, rect, mask_mode );
+	CopyIconBits( *h + mask_offset, rect, srcBic );
 	
 	if ( (port.fgColor ^ port.bkColor) & Inverse )
 	{
