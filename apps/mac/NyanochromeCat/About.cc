@@ -71,6 +71,10 @@
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
+#define LOWMEM( addr, type )  (*(type*) (addr))
+
+#define ROM85  LOWMEM( 0x028E, short )
+
 
 enum
 {
@@ -244,6 +248,11 @@ static EventTypeSpec windowDrawContent_event[] =
 static inline
 short get_menubar_height()
 {
+	if ( TARGET_CPU_68K  &&  ROM85 < 0 )
+	{
+		return 20;
+	}
+	
 	return GetMBarHeight();
 }
 
