@@ -175,7 +175,7 @@ def icns (icon)
 let creator = mb32 ams-get-app "bndl-owner"
 let icon    = icns ams-get-app ("bndl-icon", "APPL")
 
-rewrite Resources "/" name ".icns" <== icon
+rewrite Resources "/APPL.icns" <== icon
 
 let resfiles = [ "AMS Resources", "System" ]
 let respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
@@ -268,8 +268,8 @@ if "document-types" in config then
 let info =
 [
 	CFBundleExecutable:  frontend,
-	CFBundleIconFile:    name,
 	CFBundleName:        name,
+	CFBundleIconFile:    "APPL",
 	CFBundlePackageType: 'APPL',
 	CFBundleSignature:   creator,
 	CFBundleVersion:     "for Advanced Mac Substitute",
