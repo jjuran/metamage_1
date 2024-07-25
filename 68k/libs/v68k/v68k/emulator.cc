@@ -25,7 +25,7 @@ namespace v68k
 		processor_state( model, mem, bkpt ),
 		its_instruction_counter(),
 		its_current_instruction_address(),
-		its_most_recent_PC_during_fault( -1 )
+		its_most_recent_PC_during_fault( (uint32_t) -1 )
 	{
 	}
 	
