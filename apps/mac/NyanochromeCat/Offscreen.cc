@@ -174,12 +174,12 @@ void render_offscreen()
 	
 	Byte* tmp = (Byte*) buffer_bits.baseAddr;
 	
-	Byte* alt = tmp + frame_size;
-	Byte* dst = alt + frame_size;
+	Byte* dst = tmp + frame_size;
+	Byte* alt = dst + frame_size;
 	
 	if ( using_frame_deltas )
 	{
-		// Copy frame 0 from cell 0 to cell 1.
+		// Copy frame 0 from cell 0 to cell 2.
 		
 		BlockMoveData( tmp, alt, frame_size );
 	}
@@ -219,12 +219,12 @@ void render_offscreen()
 	
 	if ( using_frame_deltas )
 	{
+		SetPtrSize( buffer_bits.baseAddr, 2 * frame_size );
+		
 		Byte* src = tmp;
 		dst = alt;
 		
 		save_frame_delta( 0, dst, src );
-		
-		SetPtrSize( buffer_bits.baseAddr, 2 * frame_size );
 	}
 	
 #if CONFIG_PORTBITS
