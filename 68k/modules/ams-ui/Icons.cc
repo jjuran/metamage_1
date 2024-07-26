@@ -26,11 +26,6 @@
 #pragma exceptions off
 
 
-enum
-{
-	Inverse = 2,
-};
-
 BitMap IconBitmap : 0x0A0E;
 OSErr  ResErr     : 0x0A60;
 
@@ -120,7 +115,7 @@ pascal OSErr PlotIconID_call( const Rect*        rect,
 	
 	CopyIconBits( *h + mask_offset, rect, srcBic );
 	
-	if ( (port.fgColor ^ port.bkColor) & Inverse )
+	if ( port.fgColor != port.bkColor )
 	{
 		/*
 			Either black on white or white on black,
