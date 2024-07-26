@@ -22,7 +22,11 @@
 #endif
 #endif
 
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // mac-qd-utils
+#include "mac_qd/globals/patterns.hh"
 #include "mac_qd/scoped_clipRect.hh"
 
 
@@ -56,9 +60,26 @@ namespace Pedestal
 	#endif
 	}
 	
+	static inline
+	long has_grayishTextOr()
+	{
+		enum
+		{
+			gestaltQuickdrawFeatures = 'qdrw',
+			
+			gestaltHasGrayishTextOr = 3,
+		};
+		
+		long features = mac::sys::gestalt( gestaltQuickdrawFeatures );
+		
+		return features & (1 << gestaltHasGrayishTextOr);
+	}
+	
 	void Caption::Draw( const Rect& bounds, bool erasing )
 	{
 		static RgnHandle tmp = NewRgn();
+		
+		static long has_grayishTextOr_mode = has_grayishTextOr();
 		
 		mac::qd::scoped_clipRect clipRect( bounds, tmp );
 		
@@ -71,12 +92,24 @@ namespace Pedestal
 		
 		const short saved_txMode = get_TextMode();
 		
-		if ( Disabled() )
+		bool disabled = Disabled();
+		
+		if ( disabled  &&  has_grayishTextOr_mode )
 		{
 			::TextMode( grayishTextOr );
 		}
 		
 		TETextBox( Text(), newBounds );
+		
+		if ( disabled  &&  ! has_grayishTextOr_mode )
+		{
+			PenPat( &mac::qd::gray() );
+			PenMode( patBic );
+			
+			PaintRect( &bounds );
+			
+			PenNormal();
+		}
 		
 		::TextMode( saved_txMode );
 	}
