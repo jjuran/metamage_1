@@ -42,7 +42,7 @@ namespace Pedestal
 		           teFlushLeft );
 	}
 	
-	static
+	static inline
 	short get_TextMode()
 	{
 	#if OPAQUE_TOOLBOX_STRUCTS
