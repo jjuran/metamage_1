@@ -5,8 +5,16 @@
 
 #include "OT.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// mac-config
+#include "mac_config/open-transport.hh"
+
 // Mac OS
-#ifdef __MACOS__
+#if CONFIG_OPEN_TRANSPORT_HEADERS
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
 #endif
@@ -18,7 +26,7 @@
 
 int list_OT_serial_ports( int verbosity )
 {
-#ifdef __MACOS__
+#if CONFIG_OPEN_TRANSPORT_HEADERS
 	
 	OTPortRecord port;
 	

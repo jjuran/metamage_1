@@ -6,6 +6,9 @@
 // command
 #include "command/get_option.hh"
 
+// mac-config
+#include "mac_config/open-transport.hh"
+
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 
@@ -28,27 +31,55 @@
 #endif
 #endif
 
+/*
+	Open Transport is available in pre-Carbon (and the headers
+	are always present for all builds via Universal Interfaces),
+	but linking is an issue.  For PPC, we may want to split up
+	the OpenTransportApp pseudoproject and may need to update the
+	symbol redefinition warning filter for `errno`.  For 68K, we
+	may need to create wrappers that preserve A4 around API calls.
+*/
+
+#ifndef CONFIG_OT
+#define CONFIG_OT (CONFIG_OPEN_TRANSPORT_HEADERS  &&  TARGET_API_MAC_CARBON)
+#endif
+
+
+#ifndef __GESTALT__
 
 enum
 {
 	gestaltCTBVersion = 'ctbv',
 };
 
+#endif
+
 enum
 {
 	Opt_all     = 'a',
 	Opt_verbose = 'v',
+	
+	Opt_last_byte = 255,
+	
+	Opt_OT,
 };
 
 static command::option options[] =
 {
+#if CONFIG_OT
+	{ "OT",      Opt_OT      },
+#endif
 	{ "all",     Opt_all     },
+#if CONFIG_OT
+	{ "ot",      Opt_OT      },
+#endif
 	{ "verbose", Opt_verbose },
 	
 	{}
 };
 
 static bool all_types;
+static bool use_OT;
 
 static int verbosity;
 
@@ -69,6 +100,14 @@ char* const* get_options( char** argv )
 				all_types = true;
 				break;
 			
+		#if CONFIG_OT
+			
+			case Opt_OT:
+				use_OT = true;
+				break;
+			
+		#endif
+			
 			case Opt_verbose:
 				++verbosity;
 				break;
@@ -87,7 +126,7 @@ int main( int argc, char** argv )
 	
 	int argn = argc - (args - argv);
 	
-	if ( TARGET_RT_MAC_MACHO )
+	if ( TARGET_RT_MAC_MACHO  &&  ! use_OT )
 	{
 		list_IOKit_serial_ports( all_types );
 	}
