@@ -13,6 +13,7 @@
 #include "classic.hh"
 #include "CTB.hh"
 #include "IOKit.hh"
+#include "OT.hh"
 
 
 #ifndef TARGET_API_MAC_CARBON
@@ -92,7 +93,7 @@ int main( int argc, char** argv )
 	}
 	else if ( TARGET_API_MAC_CARBON )
 	{
-		// do nothing
+		list_OT_serial_ports( verbosity );
 	}
 	else if ( mac::sys::gestalt( gestaltCTBVersion ) )
 	{
