@@ -294,4 +294,4 @@ let plist = "\n".join( *plist_xml_lines, "" )
 
 rewrite contents "/Info.plist" <== plist
 
-run [ bindir "/fndr-sync.vx", new_app_dir ]
+run [ "fndr-sync", new_app_dir ]
