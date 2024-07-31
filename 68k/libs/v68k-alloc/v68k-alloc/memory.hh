@@ -13,13 +13,13 @@
 namespace v68k  {
 namespace alloc {
 
-const uint32_t start = 0x00800000;  //  8 MiB
+const uint32_t start = 0x00500000;  //  5 MiB
 const uint32_t limit = 0x00E00000;  // 14 MiB
 
 const int page_size_bits = 16;
 const int page_size      = 1 << page_size_bits;  // 64K
 
-const uint32_t n_alloc_bytes = limit - start;  // 6 MiB
+const uint32_t n_alloc_bytes = limit - start;  // 9 MiB
 
 const uint32_t n_alloc_pages = n_alloc_bytes / page_size;
 
