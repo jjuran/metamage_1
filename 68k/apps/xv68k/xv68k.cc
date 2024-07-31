@@ -54,6 +54,7 @@
 
 // v68k-callouts
 #include "callout/bridge.hh"
+#include "callout/cursor_file.hh"
 
 // v68k-screen
 #include "screen/lock.hh"
@@ -72,7 +73,6 @@
 #include "memory/memory.hh"
 
 // xv68k
-#include "cursor.hh"
 #include "diagnostics.hh"
 #include "native.hh"
 
@@ -1069,6 +1069,8 @@ char* const* get_options( char** argv )
 				break;
 			
 			case Opt_cursor:
+				using v68k::callout::set_cursor_backing_store_file;
+				
 				set_cursor_backing_store_file( global_result.param );
 				
 				has_cursor = true;

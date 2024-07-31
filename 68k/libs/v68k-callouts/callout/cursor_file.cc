@@ -1,9 +1,9 @@
 /*
-	cursor.cc
-	---------
+	cursor_file.cc
+	--------------
 */
 
-#include "cursor.hh"
+#include "cursor_file.hh"
 
 // Standard C
 #include <errno.h>
@@ -14,6 +14,9 @@
 // v68k-screen
 #include "screen/shared_memory.hh"
 
+
+namespace v68k    {
+namespace callout {
 
 int set_cursor_backing_store_file( const char* path )
 {
@@ -26,7 +29,10 @@ int set_cursor_backing_store_file( const char* path )
 		return errno;
 	}
 	
-	v68k::callout::cursor_state = (v68k::cursor::shared_cursor_state*) alloc;
+	cursor_state = (v68k::cursor::shared_cursor_state*) alloc;
 	
 	return 0;
 }
+
+}  // namespace callout
+}  // namespace v68k
