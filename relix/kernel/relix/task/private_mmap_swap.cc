@@ -60,7 +60,10 @@ namespace relix
 	
 	private_mmap_swap::~private_mmap_swap()
 	{
-		DisposeHandle( h );
+		if ( h )
+		{
+			DisposeHandle( h );
+		}
 	}
 	
 	allocation_result private_mmap_swap::allocate( unsigned long size )
@@ -91,9 +94,12 @@ namespace relix
 	
 	void private_mmap_swap::reset()
 	{
-		DisposeHandle( h );
-		
-		h = NULL;
+		if ( h )
+		{
+			DisposeHandle( h );
+			
+			h = NULL;
+		}
 	}
 	
 	void private_mmap_swap::back_up( const void* canon, unsigned long size ) const
