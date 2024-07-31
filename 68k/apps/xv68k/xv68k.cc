@@ -72,11 +72,11 @@
 // v68k-memory
 #include "memory/memory.hh"
 
+// v68k-diagnostics
+#include "diagnostics/diagnostics.hh"
+
 // v68k-native
 #include "native/native.hh"
-
-// xv68k
-#include "diagnostics.hh"
 
 
 #ifdef __MWERKS__
@@ -86,6 +86,8 @@
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
+
+using namespace v68k::diagnostics;
 
 using logofwar::hex32_t;
 

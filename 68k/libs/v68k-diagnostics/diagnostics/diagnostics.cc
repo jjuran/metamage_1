@@ -3,7 +3,7 @@
 	--------------
 */
 
-#include "diagnostics.hh"
+#include "diagnostics/diagnostics.hh"
 
 // POSIX
 #include <string.h>
@@ -17,6 +17,9 @@
 
 #define ERR( msg )  ::write( STDERR_FILENO, "" msg "\n", sizeof msg )
 
+
+namespace v68k        {
+namespace diagnostics {
 
 void err_allocation_failed( uint32_t n_bytes )
 {
@@ -65,3 +68,6 @@ void print_breakpoint( int number )
 	
 	write( STDERR_FILENO, msg, sizeof msg - 1 );
 }
+
+}  // namespace diagnostics
+}  // namespace v68k
