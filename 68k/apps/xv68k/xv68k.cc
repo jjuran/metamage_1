@@ -72,9 +72,11 @@
 // v68k-memory
 #include "memory/memory.hh"
 
+// v68k-native
+#include "native/native.hh"
+
 // xv68k
 #include "diagnostics.hh"
-#include "native.hh"
 
 
 #ifdef __MWERKS__
@@ -623,6 +625,8 @@ unsigned parse_instruction_limit( const char* var )
 static
 void emulation_loop( v68k::emulator& emu )
 {
+	using v68k::native::native_override;
+	
 	emu.reset();
 	
 	emu.regs[ 8 + 6 ] = 0;

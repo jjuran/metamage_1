@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "native.hh"
+#include "native/native.hh"
 
 // Standard C
 #include <string.h>
@@ -19,6 +19,9 @@
 #pragma exceptions off
 #endif
 
+
+namespace v68k   {
+namespace native {
 
 const uint32_t os_trap_table_address = 1024;
 const uint32_t tb_trap_table_address = 3072;
@@ -318,3 +321,6 @@ bool native_override( v68k::emulator& emu )
 	
 	return false;
 }
+
+}  // namespace native
+}  // namespace v68k
