@@ -1,4 +1,4 @@
-#!/usr/bin/vx -Z
+#!/usr/bin/minivx
 
 chdir "/gui/port/psmon"
 
