@@ -143,6 +143,8 @@ my %fsmap =
 			\ qw( perl ),
 			# Varyx executor
 			\ qw( minivx ),
+			# Script apps
+			qw( mon ),
 			# App utilities
 			\ qw( daemonize idle ),
 			# Instrumentation
@@ -150,7 +152,7 @@ my %fsmap =
 			# Exceptions
 			\ qw( abort addrerror buserror chk div0 illegal privileged trapv ),
 			# Mac-specific
-			\ qw( crsr drvr fonts keymods mac-id mnam NewPtr
+			\ qw( crsr drvr fonts keymods location mac-id mnam NewPtr screenBits
 			      serial-ports sound-info system-info units vcbs ),
 			# Mac-specific scripts
 			qw( gestalt ),
