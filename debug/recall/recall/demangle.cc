@@ -8,9 +8,6 @@
 // Standard C
 #include <string.h>
 
-// Standard C++
-#include <algorithm>
-
 // iota
 #include "iota/char_types.hh"
 #include "iota/strings.hh"
@@ -130,19 +127,20 @@ static bool begins_with( const char* s, const char* sub )
 	return true;
 }
 
-static inline bool operator==( const Operator& op, const char* code )
-{
-	return begins_with( code, op.code );
-}
-
 static const Operator* find_operator( const char* code )
 {
 	const Operator* begin = gOperators;
 	const Operator* end   = begin + sizeof gOperators / sizeof gOperators[0];
 	
-	const Operator* it = std::find( begin, end, code );
+	for ( const Operator* it = begin;  it != end;  ++it )
+	{
+		if ( begins_with( code, it->code ) )
+		{
+			return it;
+		}
+	}
 	
-	return it != end ? it : NULL;
+	return NULL;
 }
 
 static const char* ReadOperator( const char*& p, const char* end )
