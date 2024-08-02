@@ -69,43 +69,36 @@ OSStatus AESendBlocking( const AppleEvent* event, AppleEvent* reply )
 		return err;  // This really shouldn't happen
 	}
 	
+	// Subscribe to AEWakeup's queued reply delivery and wake-up service
+	AEWakeup::Request( returnID, reply );
+	
+	thread& current = current_thread();
+	
+	suspend_task( current.get_task() );
+	
+stop_and_wait:
+	
+	current.mark_current_stack_frame();
+	
+	// Sleep until the reply is delivered
+	if ( OSErr err = stop_os_thread_nothrow( current.get_os_thread() ) )
+	{
+		return err;
+	}
+	
+	/*
+		Check for fatal signals; ignore caught ones (for now).
+		
+		TODO:  Return errAEWaitCanceled for a caught signal, and check
+		on entry to determine if the Apple event has already been sent by
+		a prior entry to this call.  We could possibly use keyReturnIDAttr
+		for this, as long as the caller doesn't provide us with an event
+		that's been sent previously.
+	*/
+	
 	try
 	{
-		// Subscribe to AEWakeup's queued reply delivery and wake-up service
-		AEWakeup::Request( returnID, reply );
-		
-		thread& current = current_thread();
-		
-		suspend_task( current.get_task() );
-		
-	stop_and_wait:
-		
-		current.mark_current_stack_frame();
-		
-		// Sleep until the reply is delivered
-		if ( OSErr err = stop_os_thread_nothrow( current.get_os_thread() ) )
-		{
-			return err;
-		}
-		
-		/*
-			Check for fatal signals; ignore caught ones (for now).
-			
-			TODO:  Return errAEWaitCanceled for a caught signal, and check
-			on entry to determine if the Apple event has already been sent by
-			a prior entry to this call.  We could possibly use keyReturnIDAttr
-			for this, as long as the caller doesn't provide us with an event
-			that's been sent previously.
-		*/
-		
 		check_signals( false );  // Don't throw caught signals
-		
-		if ( reply->dataHandle == NULL )
-		{
-			goto stop_and_wait;
-		}
-		
-		resume_task( current.get_task() );
 	}
 	catch ( const relix::signal& sig )
 	{
@@ -114,6 +107,13 @@ OSStatus AESendBlocking( const AppleEvent* event, AppleEvent* reply )
 		// Only a fatal signal gets here, so actual error code doesn't matter
 		return errAEWaitCanceled;
 	}
+	
+	if ( reply->dataHandle == NULL )
+	{
+		goto stop_and_wait;
+	}
+	
+	resume_task( current.get_task() );
 	
 	return noErr;
 }
