@@ -9,6 +9,9 @@
 #include "recall/stack_frame.hh"
 
 
+#pragma exceptions off
+
+
 #ifndef NULL
 #define NULL  0L
 #endif
