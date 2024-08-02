@@ -20,9 +20,6 @@
 #include "relix/AESendBlocking.h"
 #include "relix/syscall/registry.hh"
 
-// Nitrogen
-#include "Mac/Toolbox/Types/OSStatus.hh"
-
 // relix
 #include "relix/api/current_thread.hh"
 #include "relix/signal/check_signals.hh"
@@ -116,10 +113,6 @@ OSStatus AESendBlocking( const AppleEvent* event, AppleEvent* reply )
 		
 		// Only a fatal signal gets here, so actual error code doesn't matter
 		return errAEWaitCanceled;
-	}
-	catch ( const Mac::OSStatus& err )
-	{
-		return err;
 	}
 	
 	return noErr;
