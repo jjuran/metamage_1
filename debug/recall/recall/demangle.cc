@@ -662,6 +662,24 @@ Stat Unmangler::ReadType( plus::var_string& out, const char*& p )
 	return Stat_failed;
 }
 
+struct string_view
+{
+	const char* data;
+	size_t      size;
+	
+	string_view( const char* p, const char* q ) : data( p ), size( q - p )
+	{
+	}
+};
+
+static inline
+bool operator==( const string_view& sv, const char* s )
+{
+	size_t len = strlen( s );
+	
+	return len == sv.size  &&  memcmp( sv.data, s, len ) == 0;
+}
+
 Stat Unmangler::ReadSpecialName( plus::var_string& out, const char*& p )
 {
 	const char* q = p;
@@ -678,7 +696,7 @@ Stat Unmangler::ReadSpecialName( plus::var_string& out, const char*& p )
 		return Stat_special;
 	}
 	
-	plus::string name( p, double_underscore );
+	string_view name( p, double_underscore );
 	
 	if ( name == "__ct" )  { p = double_underscore;/*out += "";*/ return Stat_ok; }
 	if ( name == "__dt" )  { p = double_underscore;  out += "~";  return Stat_ok; }
