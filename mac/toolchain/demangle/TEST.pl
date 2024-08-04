@@ -77,7 +77,7 @@ foreach my $test ( @tests )
 		print "# EXPECTED: $pretty\n";
 		print "# RECEIVED: $got";
 		
-		print "not " 
+		print "\n" . "not ";
 	}
 	
 	print "ok " . ++$nth . "\n";
