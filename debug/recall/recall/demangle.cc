@@ -818,11 +818,9 @@ Stat Unmangler::ReadSymbol( plus::var_string& out, const char*& p )
 }
 
 
-void demangle_MWC68K( plus::var_string& result, const plus::string& name )
+void demangle_MWC68K( plus::var_string& result, const char* name )
 {
-	const char* p = name.c_str();
-	
-	Stat stat = MWC68K_Unmangler().ReadSymbol( result, p );
+	Stat stat = MWC68K_Unmangler().ReadSymbol( result, name );
 	
 	if ( ! stat )
 	{
@@ -830,7 +828,7 @@ void demangle_MWC68K( plus::var_string& result, const plus::string& name )
 	}
 }
 
-void demangle_MWCPPC( plus::var_string& result, const plus::string& name )
+void demangle_MWCPPC( plus::var_string& result, const char* name )
 {
 	if ( name[0] != '.' )
 	{
@@ -839,9 +837,7 @@ void demangle_MWCPPC( plus::var_string& result, const plus::string& name )
 		return;
 	}
 	
-	const char* p = name.c_str();
-	
-	Stat stat = MWCPPC_Unmangler().ReadSymbol( result, p );
+	Stat stat = MWCPPC_Unmangler().ReadSymbol( result, name );
 	
 	if ( ! stat )
 	{
