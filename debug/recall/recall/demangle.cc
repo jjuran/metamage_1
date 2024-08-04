@@ -6,11 +6,15 @@
 #include "recall/demangle.hh"
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // iota
 #include "iota/char_types.hh"
 #include "iota/strings.hh"
+
+// more-libc
+#include "more/string.h"
 
 // gear
 #include "gear/parse_decimal.hh"
@@ -282,7 +286,7 @@ class Unmangler
 		
 		Stat ReadTemplateParameters( plus::var_string& out, const char*& p );
 		
-		Stat ExpandTemplates( plus::var_string& out, const plus::string& name );
+		Stat ExpandTemplates( plus::var_string& out, const char* name );
 		
 		Stat ReadQualName( plus::var_string& out, const char*& p );
 		
@@ -450,9 +454,9 @@ Stat Unmangler::ReadTemplateParameters( plus::var_string& out, const char*&p )
 	return Stat_ok;
 }
 
-Stat Unmangler::ExpandTemplates( plus::var_string& out, const plus::string& name )
+Stat Unmangler::ExpandTemplates( plus::var_string& out, const char* name )
 {
-	const char* params = FindTemplateParameters( name.c_str() );
+	const char* params = FindTemplateParameters( name );
 	
 	if ( params == NULL )
 	{
@@ -463,7 +467,7 @@ Stat Unmangler::ExpandTemplates( plus::var_string& out, const plus::string& name
 	
 	const char* p = params;
 	
-	out.append( name.data(), params );
+	out.append( name, params );
 	
 	return ReadTemplateParameters( out, p );
 }
@@ -472,7 +476,15 @@ Stat Unmangler::ReadQualName( plus::var_string& out, const char*& p )
 {
 	const char* name = ReadLName( p );
 	
-	return ExpandTemplates( out, plus::string( name, p ) );
+	size_t len = p - name;
+	
+	char* c_str = (char*) alloca( len + 1 );
+	
+	char* q = (char*) mempcpy( c_str, name, len );
+	
+	*q = '\0';
+	
+	return ExpandTemplates( out, c_str );
 }
 
 Stat Unmangler::ReadQualifiedName( plus::var_string& out, const char*& p )
