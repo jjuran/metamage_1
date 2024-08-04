@@ -17,6 +17,7 @@
 #include "more/string.h"
 
 // gear
+#include "gear/find.hh"
 #include "gear/parse_decimal.hh"
 
 // plus
@@ -159,11 +160,16 @@ static const char* ReadOperator( const char*& p, const char* end )
 	return NULL;
 }
 
-static plus::string LastName( const plus::string& qualified_name )
+template < class String >
+static inline
+unsigned last_name_offset( const String& qualified_name )
 {
-	size_t colon = qualified_name.find_last_of( ":" );
+	const char* data = qualified_name.data();
+	size_t      size = qualified_name.size();
 	
-	return qualified_name.substr( colon + 1 );
+	const char* found = gear::find_last_match( data, size, ":", 1 );
+	
+	return found ? found + 1 - data : 0;
 }
 
 static inline
@@ -816,7 +822,10 @@ Stat Unmangler::ReadSymbol( plus::var_string& out, const char*& p )
 	if ( function_name.empty()  ||  function_name == "~" )
 	{
 		// The class name was the last thing appended
-		function_name += LastName( out );
+		
+		size_t offset = last_name_offset( out );
+		
+		function_name.append( out.data() + offset, out.size() - offset );
 	}
 	
 	if ( has_class_name )
