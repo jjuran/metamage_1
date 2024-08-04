@@ -20,8 +20,8 @@
 #include "gear/find.hh"
 #include "gear/parse_decimal.hh"
 
-// plus
-#include "plus/var_string.hh"
+
+#pragma exceptions off
 
 
 namespace recall
@@ -196,7 +196,7 @@ enum Stat
 };
 
 static
-Stat ReadBasicType( plus::var_string& out, const char*& p )
+Stat ReadBasicType( enough_string& out, const char*& p )
 {
 	const char* signage = "unsigned ";
 	
@@ -241,7 +241,7 @@ static const char* ReadLName( const char*& p )
 	return begin;
 }
 
-static void ReadInteger( plus::var_string& out, const char* begin, const char* end, unsigned x )
+static void ReadInteger( enough_string& out, const char* begin, const char* end, unsigned x )
 {
 	if ( *begin != '-' )
 	{
@@ -288,38 +288,38 @@ class Unmangler
 		bool TemplateParameterListEndsHere( const char* p );
 		
 		
-		Stat ReadTemplateParameter( plus::var_string& out, const char*& p );
+		Stat ReadTemplateParameter( enough_string& out, const char*& p );
 		
-		Stat ReadTemplateParameters( plus::var_string& out, const char*& p );
+		Stat ReadTemplateParameters( enough_string& out, const char*& p );
 		
-		Stat ExpandTemplates( plus::var_string& out, const char* name );
+		Stat ExpandTemplates( enough_string& out, const char* name );
 		
-		Stat ReadQualName( plus::var_string& out, const char*& p );
+		Stat ReadQualName( enough_string& out, const char*& p );
 		
-		Stat ReadQualifiedName( plus::var_string& out, const char*& p );
+		Stat ReadQualifiedName( enough_string& out, const char*& p );
 		
-		Stat ReadFunctionType( plus::var_string& out, const char*& p );
+		Stat ReadFunctionType( enough_string& out, const char*& p );
 		
-		Stat ReadIndirectType( plus::var_string& out, const char*& p );
+		Stat ReadIndirectType( enough_string& out, const char*& p );
 		
-		Stat ReadQualifiedType( plus::var_string& out, const char*& p );
+		Stat ReadQualifiedType( enough_string& out, const char*& p );
 		
-		Stat ReadType( plus::var_string& out, const char*& p );
+		Stat ReadType( enough_string& out, const char*& p );
 		
-		Stat ReadConversion( plus::var_string& out, const char*& p )
+		Stat ReadConversion( enough_string& out, const char*& p )
 		{
 			out += "operator ";
 			
 			return ReadType( out, p );
 		}
 		
-		Stat ReadSpecialName( plus::var_string& out, const char*& p );
+		Stat ReadSpecialName( enough_string& out, const char*& p );
 		
-		Stat ReadIdentifier( plus::var_string& out, const char*& p );
+		Stat ReadIdentifier( enough_string& out, const char*& p );
 		
-		Stat ReadEntityName( plus::var_string& out, const char*& p );
+		Stat ReadEntityName( enough_string& out, const char*& p );
 		
-		Stat ReadSymbol( plus::var_string& out, const char*& p );
+		Stat ReadSymbol( enough_string& out, const char*& p );
 };
 
 class MWC68K_Unmangler : public Unmangler
@@ -388,7 +388,7 @@ const char* Unmangler::FindTemplateParameters( const char* name )
 }
 
 
-Stat Unmangler::ReadTemplateParameter( plus::var_string& out, const char*& p )
+Stat Unmangler::ReadTemplateParameter( enough_string& out, const char*& p )
 {
 	if ( *p == '&' )
 	{
@@ -421,7 +421,7 @@ Stat Unmangler::ReadTemplateParameter( plus::var_string& out, const char*& p )
 	return ReadType( out, p );
 }
 
-Stat Unmangler::ReadTemplateParameters( plus::var_string& out, const char*&p )
+Stat Unmangler::ReadTemplateParameters( enough_string& out, const char*&p )
 {
 	out += "< ";
 	
@@ -460,7 +460,7 @@ Stat Unmangler::ReadTemplateParameters( plus::var_string& out, const char*&p )
 	return Stat_ok;
 }
 
-Stat Unmangler::ExpandTemplates( plus::var_string& out, const char* name )
+Stat Unmangler::ExpandTemplates( enough_string& out, const char* name )
 {
 	const char* params = FindTemplateParameters( name );
 	
@@ -478,7 +478,7 @@ Stat Unmangler::ExpandTemplates( plus::var_string& out, const char* name )
 	return ReadTemplateParameters( out, p );
 }
 
-Stat Unmangler::ReadQualName( plus::var_string& out, const char*& p )
+Stat Unmangler::ReadQualName( enough_string& out, const char*& p )
 {
 	const char* name = ReadLName( p );
 	
@@ -493,7 +493,7 @@ Stat Unmangler::ReadQualName( plus::var_string& out, const char*& p )
 	return ExpandTemplates( out, c_str );
 }
 
-Stat Unmangler::ReadQualifiedName( plus::var_string& out, const char*& p )
+Stat Unmangler::ReadQualifiedName( enough_string& out, const char*& p )
 {
 	int count = *p++ - '0';
 	
@@ -509,9 +509,11 @@ Stat Unmangler::ReadQualifiedName( plus::var_string& out, const char*& p )
 	return stat;
 }
 
-Stat Unmangler::ReadFunctionType( plus::var_string& out, const char*& p )
+Stat Unmangler::ReadFunctionType( enough_string& out, const char*& p )
 {
-	plus::var_string params;
+	char buffer[ 256 ];
+	
+	enough_string params( buffer, sizeof buffer );
 	
 	Stat stat = Stat_ok;
 	
@@ -546,9 +548,11 @@ Stat Unmangler::ReadFunctionType( plus::var_string& out, const char*& p )
 	return stat;
 }
 
-Stat Unmangler::ReadIndirectType( plus::var_string& out, const char*& p )
+Stat Unmangler::ReadIndirectType( enough_string& out, const char*& p )
 {
-	plus::var_string result;
+	char buffer[ 256 ];
+	
+	enough_string result( buffer, sizeof buffer );
 	
 	Stat stat = Stat_ok;
 	
@@ -591,7 +595,7 @@ Stat Unmangler::ReadIndirectType( plus::var_string& out, const char*& p )
 	return stat;
 }
 
-Stat Unmangler::ReadQualifiedType( plus::var_string& out, const char*& p )
+Stat Unmangler::ReadQualifiedType( enough_string& out, const char*& p )
 {
 	bool is_const = *p == 'C';
 	
@@ -622,7 +626,7 @@ Stat Unmangler::ReadQualifiedType( plus::var_string& out, const char*& p )
 	return stat;
 }
 
-Stat Unmangler::ReadType( plus::var_string& out, const char*& p )
+Stat Unmangler::ReadType( enough_string& out, const char*& p )
 {
 	if ( (*p >= 'a'  &&  *p <= 'z')  ||  *p == 'S'  ||  *p == 'U' )
 	{
@@ -680,7 +684,7 @@ bool operator==( const string_view& sv, const char* s )
 	return len == sv.size  &&  memcmp( sv.data, s, len ) == 0;
 }
 
-Stat Unmangler::ReadSpecialName( plus::var_string& out, const char*& p )
+Stat Unmangler::ReadSpecialName( enough_string& out, const char*& p )
 {
 	const char* q = p;
 	
@@ -732,7 +736,7 @@ Stat Unmangler::ReadSpecialName( plus::var_string& out, const char*& p )
 	return Stat_special;
 }
 
-Stat Unmangler::ReadIdentifier( plus::var_string& out, const char*& p )
+Stat Unmangler::ReadIdentifier( enough_string& out, const char*& p )
 {
 	const char* params = FindTemplateParameters( p );
 	
@@ -757,7 +761,7 @@ Stat Unmangler::ReadIdentifier( plus::var_string& out, const char*& p )
 	return Stat_ok;
 }
 
-Stat Unmangler::ReadEntityName( plus::var_string& out, const char*& p )
+Stat Unmangler::ReadEntityName( enough_string& out, const char*& p )
 {
 	if ( strcmp( p, "__end__catch" ) == 0 )
 	{
@@ -792,14 +796,16 @@ Stat Unmangler::ReadEntityName( plus::var_string& out, const char*& p )
 	return ReadIdentifier( out, p );
 }
 
-Stat Unmangler::ReadSymbol( plus::var_string& out, const char*& p )
+Stat Unmangler::ReadSymbol( enough_string& out, const char*& p )
 {
 	if ( p[0] == '.' )
 	{
 		++p;
 	}
 	
-	plus::var_string function_name;
+	char buffer[ 256 ];
+	
+	enough_string function_name( buffer, sizeof buffer );
 	
 	Stat stat = ReadEntityName( function_name, p );
 	
@@ -859,7 +865,7 @@ Stat Unmangler::ReadSymbol( plus::var_string& out, const char*& p )
 }
 
 
-void demangle_MWC68K( plus::var_string& result, const char* name )
+void demangle_MWC68K( enough_string& result, const char* name )
 {
 	Stat stat = MWC68K_Unmangler().ReadSymbol( result, name );
 	
@@ -869,7 +875,7 @@ void demangle_MWC68K( plus::var_string& result, const char* name )
 	}
 }
 
-void demangle_MWCPPC( plus::var_string& result, const char* name )
+void demangle_MWCPPC( enough_string& result, const char* name )
 {
 	if ( name[0] != '.' )
 	{

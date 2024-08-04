@@ -16,7 +16,9 @@
 static
 void demangle( const char* name )
 {
-	plus::var_string demangled;
+	char buffer[ 512 ];
+	
+	recall::enough_string demangled( buffer, sizeof buffer );
 	
 	name[0] == '.' ? recall::demangle_MWCPPC( demangled, name )
 	               : recall::demangle_MWC68K( demangled, name );

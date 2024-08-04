@@ -66,7 +66,7 @@ namespace recall
 	
 	template <> struct demangler_traits< return_address_68k >
 	{
-		static void demangle( plus::var_string& result, const char* name )
+		static void demangle( enough_string& result, const char* name )
 		{
 			demangle_MWC68K( result, name );
 		}
@@ -74,7 +74,7 @@ namespace recall
 	
 	template <> struct demangler_traits< return_address_cfm >
 	{
-		static void demangle( plus::var_string& result, const char* name )
+		static void demangle( enough_string& result, const char* name )
 		{
 			demangle_MWCPPC( result, name );
 		}
@@ -160,13 +160,31 @@ namespace recall
 		
 		if ( CONFIG_DEMANGLING )
 		{
+		#ifdef __GNUC__
+			
 			plus::var_string result;
+			
+		#else
+			
+			char buffer[ 512 ];
+			
+			enough_string result( buffer, sizeof buffer );
+			
+		#endif
 			
 			try
 			{
 				demangler_traits< ReturnAddr >::demangle( result, name.c_str() );
 				
+			#ifdef __GNUC__
+				
 				return move( result );
+				
+			#else
+				
+				return plus::string( result.data(), result.size() );
+				
+			#endif
 			}
 			catch ( ... )
 			{
