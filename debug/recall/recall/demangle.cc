@@ -837,7 +837,9 @@ Stat Unmangler::ReadSymbol( plus::var_string& out, const char*& p )
 		return stat;
 	}
 	
-	if ( function_name.empty()  ||  function_name == "~" )
+	const size_t name_size = function_name.size();
+	
+	if ( name_size == 0  ||  (name_size == 1  &&  function_name[ 0 ] == '~') )
 	{
 		// The class name was the last thing appended
 		
