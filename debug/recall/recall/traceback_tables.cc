@@ -59,9 +59,9 @@ namespace recall
 		return 0;  // NULL
 	}
 	
-	plus::string get_symbol_string( const traceback_table* table )
+	const Byte* get_symbol_string( const traceback_table* table )
 	{
-		return plus::string( table->name, table->name_size );
+		return (const Byte*) table->name - 1;
 	}
 	
 }
