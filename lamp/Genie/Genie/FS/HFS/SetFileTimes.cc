@@ -21,6 +21,9 @@
 // mac-types
 #include "mac_types/epoch.hh"
 
+// mac-glue-utils
+#include "mac_glue/DateTimeUtils.hh"
+
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
@@ -54,7 +57,7 @@ namespace Genie
 		{
 			if ( now == 0 )
 			{
-				GetDateTime( &now );
+				now = mac::glue::get_Time();
 			}
 			
 			date = now;
