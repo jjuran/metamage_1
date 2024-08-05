@@ -21,12 +21,24 @@
 #include "nucleus/flag_ops.hh"
 #endif
 
-// MacCDROM
-#include "MacCDROM/Device.hh"
-
 
 namespace MacCDROM
 {
+	
+	struct CDROMDrive
+	{
+		short vRefNum;
+		short dRefNum;
+		
+		CDROMDrive()  {}
+		
+		CDROMDrive( short d, short v = 1 )  // volume index starts at 1
+		:
+			vRefNum( v ),
+			dRefNum( d )
+		{
+		}
+	};
 	
 	enum OpticalPositioningType
 	{
