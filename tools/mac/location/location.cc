@@ -24,11 +24,24 @@
 #include "mac_types/gmtDelta.hh"
 
 
+#ifdef __MC68K__
+
+static inline
+asm
+short div_3600( int x : __D0 )
+{
+	DIVS.W   #3600,D0
+}
+
+#else
+
 static inline
 short div_3600( int x )
 {
 	return x / 3600;
 }
+
+#endif
 
 static inline
 int degrees_from_fract( long fract )
