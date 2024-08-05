@@ -3,6 +3,11 @@
 	------
 */
 
+// Mac OS
+#ifndef __DEVICES__
+#include <Devices.h>
+#endif
+
 // Iota
 #include "iota/strings.hh"
 
@@ -13,6 +18,9 @@
 // plus
 #include "plus/var_string.hh"
 
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 // poseven
 #include "poseven/functions/write.hh"
 
@@ -22,6 +30,29 @@
 // Orion
 #include "Orion/Main.hh"
 
+
+/*
+	open_CDROM_driver() returns a signed 32-bit value.
+	If it's negative, it's a sign-extended OSErr.
+	If it's positive, it's a zero-extended driver reference
+	number (which is, itself, a 16-bit negative value).
+*/
+
+static inline
+long open_CDROM_driver()
+{
+	short refnum;
+	
+	OSErr err = unitEmptyErr;
+	
+#if CALL_NOT_IN_CARBON
+	
+	err = OpenDriver( "\p" ".AppleCD", &refnum );
+	
+#endif
+	
+	return err ? err : (UInt16) refnum;
+}
 
 namespace tool
 {
@@ -257,7 +288,14 @@ namespace tool
 			return 1;
 		}
 		
-		gDrive  = CD::OpenCDROMDriver();
+		long opened = open_CDROM_driver();
+		
+		if ( opened < 0 )
+		{
+			Mac::ThrowOSStatus( opened );
+		}
+		
+		gDrive = opened;
 		
 		gTOC    = CD::ReadTOC    ( gDrive );
 		gStatus = CD::AudioStatus( gDrive );
