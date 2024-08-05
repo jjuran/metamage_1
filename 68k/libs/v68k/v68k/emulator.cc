@@ -33,9 +33,15 @@ namespace v68k
 	{
 		condition = normal;
 		
-		regs[ VBR ] = 0;
-		
 		/*
+			On a real machine, control registers like the VBR would be
+			cleared to zero on reset.  Here, we'll leave it as is,
+			though we fetch the initial SP and initial PC vectors
+			using a vector base of $0000 regardless.  Leaving the VBR
+			untouched here allows umsp to set things up so that its
+			Privilege Violation exception handler takes priority over
+			MacRelix's, letting system-info work on a 68010 or later.
+			
 			The reset vector is taken from Supervisor Program Space, but it
 			*is* in fact a read operation, not execution.
 		*/
