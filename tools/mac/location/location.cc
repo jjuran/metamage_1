@@ -42,10 +42,8 @@ int get_degrees_longitude( const MachineLocation& location )
 }
 
 static
-int get_GMT_delta_hours( const MachineLocation& location )
+int get_GMT_delta_hours( long gmtDelta )
 {
-	long gmtDelta = location.u.gmtDelta;
-	
 	if ( gmtDelta & 0x00800000 )
 	{
 		gmtDelta |= 0xFF000000;
@@ -56,6 +54,12 @@ int get_GMT_delta_hours( const MachineLocation& location )
 	}
 	
 	return gmtDelta / 3600;
+}
+
+static inline
+int get_GMT_delta_hours( const MachineLocation& location )
+{
+	return get_GMT_delta_hours( location.u.gmtDelta );
 }
 
 static inline
