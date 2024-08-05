@@ -29,15 +29,15 @@ namespace MacCDROM
 	
 	struct CDROMDrive
 	{
-		short dRefNum;
 		short vRefNum;
+		short dRefNum;
 		
 		CDROMDrive()  {}
 		
 		CDROMDrive( short d, short v = 1 )  // volume index starts at 1
 		:
-			dRefNum( d ),
-			vRefNum( v )
+			vRefNum( v ),
+			dRefNum( d )
 		{
 		}
 	};
