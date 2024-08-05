@@ -43,11 +43,6 @@ namespace MacCDROM
 	};
 	
 	#pragma mark -
-	#pragma mark ** Open **
-	
-	short OpenCDROMDriver();
-	
-	#pragma mark -
 	#pragma mark ** Special CD-ROM Control Calls **
 	
 	// csCode 70
