@@ -13,6 +13,9 @@
 #include "plus/var_string.hh"
 
 
+#pragma exceptions off
+
+
 static
 void demangle( const char* name )
 {
