@@ -259,13 +259,9 @@ serial_driver_pair::serial_driver_pair( const plus::string& base_name )
 	
 #if ! TARGET_API_MAC_CARBON
 	
-	OSErr err;
+	OSErr err = portInUse;
 	
-	if ( ! SerialDriverMayBeOpened( driver_name ) )
-	{
-		err = portInUse;
-	}
-	else
+	if ( SerialDriverMayBeOpened( driver_name ) )
 	{
 		err = OpenDriver( driver_name, &its_output_refnum );
 	}
