@@ -3,11 +3,6 @@
 	---------------
 */
 
-// Mac OS
-#ifndef __DATETIMEUTILS__
-#include <DateTimeUtils.h>
-#endif
-
 // POSIX
 #include <sys/time.h>
 
@@ -17,9 +12,20 @@
 // mac-types
 #include "mac_types/epoch.hh"
 
+// mac-glue-utils
+#include "mac_glue/DateTimeUtils.hh"
+
 // mac-sys-utils
 #include "mac_sys/gmt_delta.hh"
 #include "mac_sys/microseconds.hh"
+
+
+#ifndef __MACTYPES__
+
+typedef unsigned long       UInt32;
+typedef unsigned long long  UInt64;
+
+#endif
 
 
 namespace PosixLib
@@ -30,13 +36,7 @@ namespace PosixLib
 	
 	static inline UInt32 GetGlobalDateTime()
 	{
-		UInt32 result;
-		
-		::GetDateTime( &result );
-		
-		result -= mac::sys::gmt_delta();
-		
-		return result;
+		return mac::glue::get_Time() - mac::sys::gmt_delta();
 	}
 	
 	static inline time_t UnixTime()
