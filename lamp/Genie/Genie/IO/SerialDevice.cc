@@ -259,12 +259,21 @@ serial_driver_pair::serial_driver_pair( const plus::string& base_name )
 	
 #if ! TARGET_API_MAC_CARBON
 	
+	OSErr err;
+	
 	if ( ! SerialDriverMayBeOpened( driver_name ) )
 	{
-		Mac::ThrowOSStatus( portInUse );
+		err = portInUse;
+	}
+	else
+	{
+		err = OpenDriver( driver_name, &its_output_refnum );
 	}
 	
-	Mac::ThrowOSStatus( OpenDriver( driver_name, &its_output_refnum ) );
+	if ( err )
+	{
+		goto error;
+	}
 	
 #endif
 	
@@ -275,12 +284,16 @@ serial_driver_pair::serial_driver_pair( const plus::string& base_name )
 	
 #if ! TARGET_API_MAC_CARBON
 	
-	if ( OSErr err = OpenDriver( driver_name, &its_input_refnum ) )
+	err = OpenDriver( driver_name, &its_input_refnum );
+	
+	if ( err )
 	{
 		::CloseDriver( its_output_refnum );
-		
-		Mac::ThrowOSStatus( err );
 	}
+	
+error:
+	
+	Mac::ThrowOSStatus( err );
 	
 #endif
 }
