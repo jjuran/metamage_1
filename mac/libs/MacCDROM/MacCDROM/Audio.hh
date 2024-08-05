@@ -8,6 +8,11 @@
 #ifndef MACCDROM_AUDIO_HH
 #define MACCDROM_AUDIO_HH
 
+// Mac OS
+#ifndef __MACTYPES__
+#include <MacTypes.h>
+#endif
+
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"

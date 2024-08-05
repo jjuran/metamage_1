@@ -13,14 +13,6 @@
 #include "nucleus/enumeration_traits.hh"
 #endif
 
-// Nitrogen
-#ifndef MAC_DEVICES_TYPES_DRIVERREFNUM_HH
-#include "Mac/Devices/Types/DriverRefNum.hh"
-#endif
-#ifndef MAC_FILES_TYPES_FSVOLUMEREFNUM_HH
-#include "Mac/Files/Types/FSVolumeRefNum.hh"
-#endif
-
 
 namespace MacCDROM
 {
@@ -37,13 +29,12 @@ namespace MacCDROM
 	
 	struct CDROMDrive
 	{
-		Mac::DriverRefNum    dRefNum;
-		Mac::FSVolumeRefNum  vRefNum;
+		short dRefNum;
+		short vRefNum;
 		
 		CDROMDrive()  {}
 		
-		CDROMDrive( Mac::DriverRefNum    d,
-		            Mac::FSVolumeRefNum  v = Mac::FSVolumeRefNum( 1 ) )  // index
+		CDROMDrive( short d, short v = 1 )  // volume index starts at 1
 		:
 			dRefNum( d ),
 			vRefNum( v )
@@ -51,12 +42,10 @@ namespace MacCDROM
 		}
 	};
 	
-#if CALL_NOT_IN_CARBON
-	
 	#pragma mark -
 	#pragma mark ** Open **
 	
-	Mac::DriverRefNum OpenCDROMDriver();
+	short OpenCDROMDriver();
 	
 	#pragma mark -
 	#pragma mark ** Special CD-ROM Control Calls **
@@ -105,9 +94,6 @@ namespace MacCDROM
 	
 	// csCode 121
 	// GetCDFeatures
-	
-	
-#endif
 	
 }
 

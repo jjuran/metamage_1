@@ -28,7 +28,7 @@ namespace MacCDROM
 	
 #if CALL_NOT_IN_CARBON
 	
-	Mac::DriverRefNum OpenCDROMDriver()
+	short OpenCDROMDriver()
 	{
 		/*
 			We definitely don't want to close the driver.
@@ -45,7 +45,7 @@ namespace MacCDROM
 		
 		Mac::ThrowOSStatus( err );
 		
-		return Mac::DriverRefNum( refnum );
+		return refnum;
 	}
 	
 #endif  // CALL_NOT_IN_CARBON
