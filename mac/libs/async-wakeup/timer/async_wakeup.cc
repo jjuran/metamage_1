@@ -30,7 +30,7 @@
 
 
 #if TARGET_CPU_68K
-	short CPUFlag : 0x12F;
+	Byte CPUFlag : 0x12F;
 	
 	#define IN( reg ) : __##reg
 #else
@@ -149,7 +149,7 @@ static bool lock_timer()
 	
 #if TARGET_CPU_68K
 	
-	const short cpu68000 = 0;
+	const Byte cpu68000 = 0;
 	
 	if ( CPUFlag == cpu68000 )
 	{
