@@ -143,7 +143,8 @@ bool is_multiproc_PSN( const ProcessSerialNumber& psn )
 
 const bool multiproc_available = is_multiproc_PSN( *the_wakeup_timer.psn );
 
-static bool lock_timer()
+static
+Boolean lock_timer()
 {
 	register void** mutex = (void**) &the_wakeup_timer.tm.qLink;
 	
@@ -155,13 +156,12 @@ static bool lock_timer()
 	{
 		// 68000 only
 		
-		register bool acquired = false;  // Initialize to squelch warning
+		register Boolean acquired = false;  // Initialize to squelch warning
 		
 		asm
 		{
 			TAS    (mutex)
 			SEQ    acquired
-			NEG.B  acquired
 		}
 		
 		return acquired;
