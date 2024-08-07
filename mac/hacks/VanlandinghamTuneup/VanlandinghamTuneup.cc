@@ -8,13 +8,31 @@
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
-	This is an application hot patch for Vanlandingham.
-	It replaces a 20-word busy loop with a 4-word Delay call.
+	This is a pair of application hot patches for Vanlandingham.
+	One replaces a 20-word busy loop with a 4-word Delay call.
+	Another rewrites a dissolve routine to use only non-volatile
+	registers across a Toolbox trap call to HideCursor().
 	
 	Although Vanlandingham's "sleep" function is only called
 	once at startup (for 10 ticks) and once on Quit (for 12 ticks),
 	the patch does measurably reduce CPU time by those amounts
 	when run in Advanced Mac Substitute.
+	
+	HideCursor() is a Toolbox trap call, which is allowed to clobber
+	the usual volatile registers: D0-D2 and A0-A1.  In practice,
+	the implementation in Advanced Mac Substitute would clobber A0
+	had it not been written in assembly language to avoid this very
+	outcome.  This patch allows the asm rewrite to be reverted.
+	
+	(Earlier in the development of Advanced Mac Substitute, the
+	HideCursor() implementation did clobber other registers, which
+	caused Vanlandingham to crash, necessitating the asm rewrite.
+	Now, the only symptom would be drawing garbage to the screen
+	on account of the clobbered source address.  Presumably, Mac OS'
+	HideCursor() implementation in early ROMs doesn't clobber any of
+	the volatile registers (except possibly D0, which Vanlandingham
+	doesn't use here), but nothing prevents an INIT from patching it
+	with its own code that does.
 	
 */
 
@@ -87,6 +105,62 @@ static const UInt16 patched_sleep_trap[] =
 	0x4e71,  // 000102:  NOP
 };
 
+static const UInt16 shipped_byte_dissolve_A[] =
+{
+	0x4e56,      0,  // 002566:  LINK     A6,#0
+	0x48e7, 0x1020,  // 00256a:  MOVEM.L  D3/A2,-(A7)
+};
+
+static const UInt16 shipped_byte_dissolve_B[] =
+{
+	0x45fa, 0x002a,          // 0025c4:  LEA      *+44,A2    ; $0025f0
+	0x2232, 0x0000,          // 0025c8:  MOVE.L   (A2,D0.W),D1
+	0x2401,                  // 0025cc:  MOVE.L   D1,D2
+	0x2050,                  // 0025ce:  MOVEA.L  (A0),A0     // srcBase
+	0x2251,                  // 0025d0:  MOVEA.L  (A1),A1     // dstBase
+	0xa852,                  // 0025d2:  _HideCursor
+	0x6002,                  // 0025d4:  BRA.S    *+4    ; $0025d8
+	0xb342,                  // 0025d6:  EOR.W    D1,D2
+	0xb642,                  // 0025d8:  CMP.W    D2,D3
+	0x6f06,                  // 0025da:  BLE.S    *+8    ; $0025e2
+	0x13b0, 0x2000, 0x2000,  // 0025dc:  MOVE.B   (A0,D2.W),(A1,D2.W)
+	0xe24a,                  // 0025e2:  LSR.W    #1,D2
+	0x62f6,                  // 0025e4:  BHI.S    *-8    ; $0025dc
+	0x66ee,                  // 0025e6:  BNE.S    *-16    ; $0025d6
+	0x1290,                  // 0025e8:  MOVE.B   (A0),(A1)
+	0xa853,                  // 0025ea:  _ShowCursor
+	0x4cdf, 0x0408,          // 0025ec:  MOVEM.L  (A7)+,D3/A2
+	0x4e5e,                  // 0025f0:  UNLK     A6
+};
+
+static const UInt16 patched_byte_dissolve_A[] =
+{
+	0x4e56,      0,  // 002566:  LINK     A6,#0
+	0x48e7, 0x1c30,  // 00256a:  MOVEM.L  D3-D5/A2-A3,-(A7)
+};
+
+static const UInt16 patched_byte_dissolve_B[] =
+{
+	0x45fa, 0x002a,          // 0025c4:  LEA      *+44,A2    ; $0025f0
+	0x2832, 0x0000,          // 0025c8:  MOVE.L   (A2,D0.W),D4
+	0x2a04,                  // 0025cc:  MOVE.L   D4,D5
+	0x2450,                  // 0025ce:  MOVEA.L  (A0),A2     // srcBase
+	0x2651,                  // 0025d0:  MOVEA.L  (A1),A3     // dstBase
+	0xa852,                  // 0025d2:  _HideCursor
+	0x6002,                  // 0025d4:  BRA.S    *+4    ; $0025d8
+	0xb945,                  // 0025d6:  EOR.W    D4,D5
+	0xb645,                  // 0025d8:  CMP.W    D5,D3
+	0x6f06,                  // 0025da:  BLE.S    *+8    ; $0025e2
+	0x17b2, 0x5000, 0x5000,  // 0025dc:  MOVE.B   (A2,D5.W),(A3,D5.W)
+	0xe24d,                  // 0025e2:  LSR.W    #1,D5
+	0x62f6,                  // 0025e4:  BHI.S    *-8    ; $0025dc
+	0x66ee,                  // 0025e6:  BNE.S    *-16    ; $0025d6
+	0x1692,                  // 0025e8:  MOVE.B   (A2),(A3)
+	0xa853,                  // 0025ea:  _ShowCursor
+	0x4cdf, 0x0c38,          // 0025ec:  MOVEM.L  (A7)+,D3-D5/A2-A3
+	0x4e5e,                  // 0025f0:  UNLK     A6
+};
+
 static inline
 void my_memcpy( void* dst, const void* src, long n )
 {
@@ -122,6 +196,26 @@ void install_sleep_patch( Handle h, Size handle_size )
 	}
 }
 
+static inline
+void install_byte_dissolve_patch( Handle h, Size handle_size )
+{
+	if ( handle_size >= 0x0025f2 )
+	{
+		UInt16* pA = (UInt16*) (*h + 0x002566);
+		UInt16* pB = (UInt16*) (*h + 0x0025c4);
+		
+		bool patch_byte_dissolve =
+			equal_words( pA, VEC_LEN( shipped_byte_dissolve_A ) )  &&
+			equal_words( pB, VEC_LEN( shipped_byte_dissolve_B ) );
+		
+		if ( patch_byte_dissolve )
+		{
+			my_memcpy( pA, patched_byte_dissolve_A, sizeof patched_byte_dissolve_A );
+			my_memcpy( pB, patched_byte_dissolve_B, sizeof patched_byte_dissolve_B );
+		}
+	}
+}
+
 static
 void InitFonts_handler()
 {
@@ -134,6 +228,8 @@ void InitFonts_handler()
 			Size size = mac::glue::GetHandleSize_raw( h );
 			
 			install_sleep_patch( h, size );
+			
+			install_byte_dissolve_patch( h, size );
 		}
 	}
 }
