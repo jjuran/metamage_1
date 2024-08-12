@@ -243,7 +243,20 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	
 	if ( const short title_width = window->titleWidth )
 	{
-		const short h = (content.left + content.right - title_width) / 2u;
+		short h = (content.left + content.right - title_width) / 2u;
+		
+		short min_left_offset = (window->goAwayFlag ?   close_box_h_offset
+		                                              + close_box_width
+		                                              + close_box_margin
+		                                            : stripes_h_offset)
+		                      + 6 + 6;
+		
+		short min_left = content.left + min_left_offset;
+		
+		if ( h < min_left )
+		{
+			h = min_left;
+		}
 		
 		MoveTo( h, title_bar.top - stripes_v_offset + title_baseline_v );
 		
