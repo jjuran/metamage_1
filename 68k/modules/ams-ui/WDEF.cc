@@ -241,7 +241,7 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	
 	StringPtr title = window->titleHandle ? *window->titleHandle : NULL;
 	
-	if ( const short title_width = window->titleWidth )
+	if ( short title_width = window->titleWidth )
 	{
 		short h = (content.left + content.right - title_width) / 2u;
 		
@@ -260,6 +260,19 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 		
 		MoveTo( h, title_bar.top - stripes_v_offset + title_baseline_v );
 		
+		RgnHandle clipRgn = NULL;
+		
+		short max_title_width = content.right - min_left_offset - min_left;
+		
+		if ( title_width > max_title_width )
+		{
+			title_width = max_title_width;
+			
+			static RgnHandle rgn = (scoped_zone(), NewRgn());
+			
+			clipRgn = rgn;
+		}
+		
 		Rect title_area =
 		{
 			title_bar.top,
@@ -270,7 +283,22 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 		
 		GrafPort& port = **get_addrof_thePort();
 		
+		RgnHandle saved_clipRgn = port.clipRgn;
+		
+		if ( clipRgn )
+		{
+			CopyRgn( port.clipRgn, clipRgn );
+			
+			RgnHandle title_region = rectangular_utility_region( title_area );
+			
+			SectRgn( clipRgn, title_region, clipRgn );
+			
+			port.clipRgn = clipRgn;
+		}
+		
 		DrawString( title );
+		
+		port.clipRgn = saved_clipRgn;
 		
 		if ( window->hilited )
 		{
