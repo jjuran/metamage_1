@@ -245,12 +245,12 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 		
 		MoveTo( h, title_bar.top + title_baseline_v );
 		
+		GrafPort& port = **get_addrof_thePort();
+		
 		DrawString( title );
 		
 		if ( window->hilited )
 		{
-			QDGlobals& qd = get_QDGlobals();
-			
 			Rect title_area =
 			{
 				title_bar.top + stripes_v_offset,
@@ -261,7 +261,7 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 			
 			RgnHandle title_region = rectangular_utility_region( title_area );
 			
-			DiffRgn( qd.thePort->clipRgn, title_region, qd.thePort->clipRgn );
+			DiffRgn( port.clipRgn, title_region, port.clipRgn );
 		}
 	}
 	
