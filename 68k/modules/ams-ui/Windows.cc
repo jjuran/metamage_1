@@ -246,6 +246,8 @@ pascal void InitWindows_patch()
 	
 	const Rect& bounds = WMgrPort->portBits.bounds;
 	
+	raster_lock lock;
+	
 	PaintRect( &bounds );
 	
 	BezelRgn = NewRgn();
