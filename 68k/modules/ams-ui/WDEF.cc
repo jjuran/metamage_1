@@ -237,13 +237,23 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	
 	PaintRect( &edge );
 	
+	InsetRect( &title_bar, stripes_h_offset, stripes_v_offset );
+	
 	StringPtr title = window->titleHandle ? *window->titleHandle : NULL;
 	
 	if ( const short title_width = window->titleWidth )
 	{
 		const short h = (content.left + content.right - title_width) / 2u;
 		
-		MoveTo( h, title_bar.top + title_baseline_v );
+		MoveTo( h, title_bar.top - stripes_v_offset + title_baseline_v );
+		
+		Rect title_area =
+		{
+			title_bar.top,
+			h,
+			title_bar.bottom,
+			h + title_width,
+		};
 		
 		GrafPort& port = **get_addrof_thePort();
 		
@@ -251,13 +261,7 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 		
 		if ( window->hilited )
 		{
-			Rect title_area =
-			{
-				title_bar.top + stripes_v_offset,
-				h - 6,
-				title_bar.bottom - stripes_v_offset,
-				h + title_width + 6,
-			};
+			InsetRect( &title_area, -6, 0 );
 			
 			RgnHandle title_region = rectangular_utility_region( title_area );
 			
@@ -269,8 +273,6 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	{
 		return 0;
 	}
-	
-	InsetRect( &title_bar, stripes_h_offset, stripes_v_offset );
 	
 	FillRect( &title_bar, content.top & 1 ? &odd_stripes : &even_stripes );
 	
