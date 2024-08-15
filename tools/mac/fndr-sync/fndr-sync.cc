@@ -117,7 +117,12 @@ int main( int argc, char** argv )
 	
 	++argv;
 	
-#ifdef __APPLE__
+	/*
+		In Mac OS X 10.2, all calls return noErr, but the
+		Finder doesn't perform the update if given an FSRef.
+	*/
+	
+#ifdef MAC_OS_X_VERSION_10_3
 	
 	const DescType typeFSObj = typeFSRef;
 	
