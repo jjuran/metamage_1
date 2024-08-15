@@ -197,7 +197,7 @@ sub auto
 		}
 	}
 	
-	my $mpw = `mpw-select`;
+	my $mpw = `mpw-select -p`;
 	
 	if ( !defined $mpw )
 	{
