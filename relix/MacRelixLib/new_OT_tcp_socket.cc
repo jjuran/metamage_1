@@ -400,7 +400,19 @@ namespace relix
 		
 		OTFlags flags;
 		
+	retry:
+		
 		OTResult result = ::OTRcv( extra.endpoint, buffer, n, &flags );
+		
+		if ( result == kOTLookErr )
+		{
+			OTResult event = OTLook( extra.endpoint );
+			
+			if ( event == T_GODATA  ||  event == T_GOEXDATA )
+			{
+				goto retry;
+			}
+		}
 		
 		return N::ThrowOTResult( result );
 	}
