@@ -398,7 +398,11 @@ namespace relix
 			n = n_readable_bytes;
 		}
 		
-		return N::OTRcv( extra.endpoint, buffer, n );
+		OTFlags flags;
+		
+		OTResult result = ::OTRcv( extra.endpoint, buffer, n, &flags );
+		
+		return N::ThrowOTResult( result );
 	}
 	
 	static
