@@ -162,35 +162,9 @@ namespace bignum
 				construct( i );
 			}
 			
-			ibox( unsigned long long i )
-			{
-				if ( i == (unsigned long) i )
-				{
-					construct( (unsigned long) i );
-				}
-				else
-				{
-					const int n_limbs = sizeof (long long) / sizeof (int_t);
-					
-					construct( (int_t const*) &i, n_limbs, Sign_positive );
-				}
-			}
+			ibox( unsigned long long i );
 			
-			ibox( long long i )
-			{
-				if ( i == (long) i )
-				{
-					construct( (long) i );
-				}
-				else if ( i == (long long) (unsigned long) i )
-				{
-					construct( (unsigned long) i );
-				}
-				else
-				{
-					construct( i );
-				}
-			}
+			ibox( long long i );
 			
 			ibox( const ibox& that );
 			

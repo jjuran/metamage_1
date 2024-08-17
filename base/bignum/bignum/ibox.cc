@@ -102,6 +102,36 @@ namespace bignum
 		its.sign    = sign;
 	}
 	
+	ibox::ibox( long long i )
+	{
+		if ( i == (long) i )
+		{
+			construct( (long) i );
+		}
+		else if ( i == (long long) (unsigned long) i )
+		{
+			construct( (unsigned long) i );
+		}
+		else
+		{
+			construct( i );
+		}
+	}
+	
+	ibox::ibox( unsigned long long i )
+	{
+		if ( i == (unsigned long) i )
+		{
+			construct( (unsigned long) i );
+		}
+		else
+		{
+			const int n_limbs = sizeof (long long) / sizeof (int_t);
+			
+			construct( (int_t const*) &i, n_limbs, Sign_positive );
+		}
+	}
+	
 	ibox::ibox( const ibox& that )
 	{
 		(ibox_structure&) *this = (const ibox_structure&) that;
