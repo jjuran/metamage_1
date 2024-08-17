@@ -68,9 +68,14 @@ if not exists input_path then
 	exit 1
 }
 
-let parent_dir = dirname input_path
+var parent_dir = dirname input_path
 
 let src_is_txt = -substr( -input_path, 0, 4 ) == ".txt"
+
+if src_is_txt and exists parent_dir "/../mnt" then
+{
+	parent_dir .= "/../mnt"
+}
 
 let config_data = if src_is_txt then {load input_path} else {""}
 
