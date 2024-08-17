@@ -6,6 +6,9 @@
 #ifndef VLIB_VALUE_HH
 #define VLIB_VALUE_HH
 
+// iota
+#include "iota/typed_enum.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -37,7 +40,7 @@ namespace vlib
 	struct Expr;
 	class Symbol;
 	
-	enum value_type
+	TYPED_ENUM( value_type, unsigned char )
 	{
 		Value_NIL,
 		Value_dummy_operand,
