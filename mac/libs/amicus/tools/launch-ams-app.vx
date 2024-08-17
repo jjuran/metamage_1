@@ -130,6 +130,12 @@ let model_opt = if "cpu" in config then {"-M" config[ "cpu" ]}  # may be ()
 
 let mem_opt = if "mem" in config then {"--mem=" config[ "mem" ]}  # may be ()
 
+let xv = active "xv" or ""
+
+assert xv in ["", "none", "fake", "real"]
+
+let xv_opt = if xv then {"--xv=" xv}
+
 def core_opts
 {
 	var opts = [ "--events-fd=" events_fd_slot ]
@@ -270,7 +276,7 @@ let app = ams_bin "/app"
 
 let servers = sound-server, freemountd-server, appfs-server, docfs-server
 
-let xv68k_opts = model_opt, mem_opt, sound_opt, "-tSP"
+let xv68k_opts = model_opt, mem_opt, sound_opt, xv_opt, "-tSP"
 
 let xv68k-screen = "--raster=" works_dir_path "/" screen_fb_file
 let xv68k-cursor = "--cursor=" works_dir_path "/" cursor_fb_file (*) has_cursor
