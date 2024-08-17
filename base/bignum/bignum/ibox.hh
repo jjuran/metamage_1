@@ -220,7 +220,6 @@ namespace bignum
 	};
 	
 	template < class Int >
-	inline
 	Int ibox::clipped_to() const
 	{
 		const bool larger_type = sizeof (Int) > sizeof (int_t);
@@ -250,7 +249,6 @@ namespace bignum
 	}
 	
 	template < class Int >
-	inline
 	bool ibox::demotes_to() const
 	{
 		const bool smaller_type = sizeof (Int) < sizeof (int_t);
