@@ -153,6 +153,7 @@ enum
 };
 
 Ptr      ScrnBase   : 0x0824;
+GDHandle MainDevice : 0x08A4;
 short    MBarHeight : 0x0BAA;
 
 static Boolean payload_enabled;
@@ -491,6 +492,16 @@ void InitCursor_handler()
 			
 			if ( has_expanded_graphics() )
 			{
+				if ( MainDevice )
+				{
+					UInt16 depth = MainDevice[0]->gdPMap[0]->pixelSize;
+					
+					if ( depth > 1 )
+					{
+						return;  // multibit depth currently unsupported
+					}
+				}
+				
 				install_heavy_patches( h, size );
 				
 				install_screen_buffer();
@@ -534,7 +545,7 @@ pascal asm void GetAppParms_patch( Ptr a, Ptr b, Ptr c )
 
 int main()
 {
-	if ( mac::sys::has_v68k() )
+	if ( has_expanded_graphics()  ||  mac::sys::has_v68k() )
 	{
 		Handle self = Get1Resource( 'INIT', 0 );
 		
