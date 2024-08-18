@@ -62,7 +62,12 @@
 #define VEC_SIZE(array)  array, sizeof (array)
 
 
-static UniversalProcPtr old_InitFonts;
+enum
+{
+	_InitCursor  = 0xA850,
+};
+
+static UniversalProcPtr old_InitCursor;
 
 static inline
 void my_memcpy( void* dst, const void* src, long n )
@@ -120,7 +125,7 @@ void install_dissolve_bytes_patch( Handle h, Size handle_size )
 }
 
 static
-void InitFonts_handler()
+void InitCursor_handler()
 {
 	if ( Handle h = Get1Resource( 'VANL', 0 ) )
 	{
@@ -138,32 +143,27 @@ void InitFonts_handler()
 }
 
 static
-pascal asm void InitFonts_patch()
+pascal asm void InitCursor_patch()
 {
 	LINK     A6,#0
-	JSR      InitFonts_handler
+	JSR      InitCursor_handler
 	UNLK     A6
 	
-	MOVEA.L  old_InitFonts,A0
+	MOVEA.L  old_InitCursor,A0
 	JMP      (A0)
 }
 
 int main()
 {
-	enum
-	{
-		_InitFonts = 0xA8FE,
-	};
-	
 	if ( mac::sys::has_v68k() )
 	{
 		Handle self = Get1Resource( 'INIT', 0 );
 		
 		DetachResource( self );
 		
-		old_InitFonts = mac::sys::get_trap_address( _InitFonts );
+		old_InitCursor  = mac::sys::get_trap_address( _InitCursor );
 		
-		mac::sys::set_trap_address( (ProcPtr) InitFonts_patch, _InitFonts );
+		mac::sys::set_trap_address( (ProcPtr) InitCursor_patch,  _InitCursor  );
 	}
 	
 	return 0;
