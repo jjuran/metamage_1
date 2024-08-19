@@ -349,12 +349,19 @@ pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap )
 	const UInt16 height = bounds.bottom - bounds.top;
 	const UInt16 width  = bounds.right - bounds.left;
 	
-	// width and height are at least 1 and at most 65534 (32767 - -32767)
+	/*
+		width and height are at least 1 and have a theoretical maximum
+		of 65534 (32767 - -32767), so we can safely add 1 to each.
+		
+		If width is exactly 65534, then max_h_longs will be 32768,
+		which is still small enough to fit in a UInt16 (which is why
+		we're counting longwords instead of words or bytes).
+	*/
 	
-	const UInt16 max_h_coords = width + 1 & ~0x1;
+	const UInt16 half_max_h_coords = width + 1 >> 1;
 	
-	const unsigned max_h_words = 2 + max_h_coords;
-	const unsigned max_rgn_size = 10 + max_h_words * (height + 1) * 2 + 2;
+	const UInt16 max_h_longs = 1 + half_max_h_coords;
+	const UInt32 max_rgn_size = 10 + max_h_longs * (height + 1) * 4 + 2;
 	
 	SetHandleSize( (Handle) rgn, max_rgn_size + rowBytes );
 	
