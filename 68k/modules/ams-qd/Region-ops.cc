@@ -353,8 +353,8 @@ pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap )
 	
 	const UInt16 max_h_coords = width + 1 & ~0x1;
 	
-	const unsigned max_h_bytes = (1 + max_h_coords + 1) * 2;
-	const unsigned max_rgn_size = 10 + max_h_bytes * (height + 1) + 2;
+	const unsigned max_h_words = 2 + max_h_coords;
+	const unsigned max_rgn_size = 10 + max_h_words * (height + 1) * 2 + 2;
 	
 	SetHandleSize( (Handle) rgn, max_rgn_size + rowBytes );
 	
