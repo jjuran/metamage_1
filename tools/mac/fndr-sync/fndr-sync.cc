@@ -148,7 +148,7 @@ int main( int argc, char** argv )
 	
 	if ( err )
 	{
-		ERROR( 0, "adding file parameter failed" );
+		(void) ERROR( 0, "adding file parameter failed" );
 	}
 	
 	/*
