@@ -212,7 +212,10 @@ pascal void StdArc_patch( SInt8 verb, const Rect* r, short start, short extent )
 	
 	if ( start < 0 )
 	{
-		start = 360 - (-start % 360);
+		start = -start;
+		start %= 360;
+		
+		start = 360 - start;
 	}
 	else if ( start >= 360 )
 	{
@@ -250,7 +253,11 @@ pascal void StdArc_patch( SInt8 verb, const Rect* r, short start, short extent )
 		{
 			static RgnHandle clip2 = (scoped_zone(), NewRgn());
 			
-			short end = (start + extent + 180) % 360;
+			short end = start;
+			
+			end += extent;
+			end += 180;
+			end %= 360;
 			
 			clip_from_angle( clip2, width, height, end );
 			
