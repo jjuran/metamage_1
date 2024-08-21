@@ -83,9 +83,9 @@ static inline
 size_t max_new_region_size( geometry_t a, geometry_t b )
 {
 	const short v =      a.n_v_coords + b.n_v_coords;
-	const short h = max( a.n_h_coords,  b.n_h_coords );
+	const short h = max( a.n_h_coords,  b.n_h_coords ) + 2;
 	
-	return sizeof (MacRegion) + v * (h + 2) * 2 + 2;
+	return sizeof (MacRegion) + v * h * 2 + 2;
 }
 
 static inline
