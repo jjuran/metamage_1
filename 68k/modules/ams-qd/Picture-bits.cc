@@ -24,6 +24,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "math.hh"
 
 // ams-qd
 #include "palette.hh"
@@ -218,7 +219,7 @@ void save_bits_to_picture( Handle         picSave,
 	
 	Size size = mac::glue::GetHandleSize_raw( picSave );
 	
-	Size data_size = height * rowBytes;
+	Size data_size = mulu_w( height, rowBytes );
 	Size pack_size = data_size;
 	
 	PICT_bitmap_header header;
@@ -250,5 +251,5 @@ void save_bits_to_picture( Handle         picSave,
 		so we don't need a cursor-hiding raster lock.
 	*/
 	
-	PtrAndHand( src, picSave, rowBytes * height );
+	PtrAndHand( src, picSave, mulu_w( rowBytes, height ) );
 }
