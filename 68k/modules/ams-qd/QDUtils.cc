@@ -353,11 +353,11 @@ pascal void MapRgn_patch( RgnHandle rgn, const Rect* src, const Rect* dst )
 {
 	using quickdraw::Region_end;
 	
-	const int srcHeight = src->bottom - src->top;
-	const int dstHeight = dst->bottom - dst->top;
+	const UInt16 srcHeight = src->bottom - src->top;
+	const UInt16 dstHeight = dst->bottom - dst->top;
 	
-	const int srcWidth = src->right - src->left;
-	const int dstWidth = dst->right - dst->left;
+	const UInt16 srcWidth = src->right - src->left;
+	const UInt16 dstWidth = dst->right - dst->left;
 	
 	short* p = (short*) (*rgn + 1);
 	
@@ -365,13 +365,13 @@ pascal void MapRgn_patch( RgnHandle rgn, const Rect* src, const Rect* dst )
 	{
 		const short v = *p;
 		
-		*p++ = (v - src->top ) * dstHeight / srcHeight + dst->top;
+		*p++ = muldivu_w( v - src->top, dstHeight, srcHeight ) + dst->top;
 		
 		while ( *p != Region_end )
 		{
 			const short h = *p;
 			
-			*p++ = (h - src->left) * dstWidth / srcWidth + dst->left;
+			*p++ = muldivu_w( h - src->left, dstWidth, srcWidth ) + dst->left;
 		}
 		
 		++p;  // skip end-of-row sentinel
