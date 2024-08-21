@@ -17,6 +17,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "math.hh"
 #include "QDGlobals.hh"
 
 
@@ -145,14 +146,14 @@ pascal void StuffHex_patch( char* dst, const unsigned char* srcHex )
 
 pascal void MapPt_patch( Point* pt, const Rect* src, const Rect* dst )
 {
-	const int srcHeight = src->bottom - src->top;
-	const int dstHeight = dst->bottom - dst->top;
+	const UInt16 srcHeight = src->bottom - src->top;
+	const UInt16 dstHeight = dst->bottom - dst->top;
 	
-	const int srcWidth = src->right - src->left;
-	const int dstWidth = dst->right - dst->left;
+	const UInt16 srcWidth = src->right - src->left;
+	const UInt16 dstWidth = dst->right - dst->left;
 	
-	pt->v = (pt->v - src->top ) * dstHeight / srcHeight + dst->top;
-	pt->h = (pt->h - src->left) * dstWidth  / srcWidth + dst->left;
+	pt->v = muldivu_w( pt->v - src->top,  dstHeight, srcHeight ) + dst->top;
+	pt->h = muldivu_w( pt->h - src->left, dstWidth,  srcWidth  ) + dst->left;
 }
 
 pascal void MapRect_patch( Rect* r, const Rect* src, const Rect* dst )
