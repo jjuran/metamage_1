@@ -286,8 +286,8 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	Ptr src = srcBits->baseAddr;
 	Ptr dst = dstBits->baseAddr;
 	
-	src += srcTop * srcRowBytes;
-	dst += dstTop * dstRowBytes;
+	src += mulu_w( srcTop, srcRowBytes );
+	dst += mulu_w( dstTop, dstRowBytes );
 	
 	src += srcLeft / 8u;
 	dst += dstLeft / 8u;
