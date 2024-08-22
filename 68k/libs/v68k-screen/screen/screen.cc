@@ -13,7 +13,9 @@
 #include <errno.h>
 
 // raster
+#include "raster/clut.hh"
 #include "raster/load.hh"
+#include "raster/sync.hh"
 
 // v68k-screen
 #include "screen/shared_memory.hh"
@@ -40,6 +42,9 @@ uint8_t* page_2_virtual_buffer;
 
 uint8_t* page_1_transit_buffer;
 uint8_t* page_2_transit_buffer;
+
+raster::clut_data* virtual_clut;
+raster::clut_data* transit_clut;
 
 static raster_metadata* meta;
 
@@ -92,7 +97,7 @@ void close_without_errno( int fd )
 }
 
 static
-sync_relay& initialize( raster_load& raster, uint32_t raster_size )
+void initialize( raster_load& raster, uint32_t raster_size )
 {
 	using namespace raster;
 	
@@ -103,7 +108,15 @@ sync_relay& initialize( raster_load& raster, uint32_t raster_size )
 	raster_desc& desc = meta.desc;
 	raster_note& note = meta.note;
 	
-	return data< sync_relay >( note );
+	if ( raster_note* sync_note = find( &note, Note_sync ) )
+	{
+		the_sync_relay = &data< sync_relay >( *sync_note );
+	}
+	
+	if ( raster_note* clut_note = find( &note, Note_clut ) )
+	{
+		transit_clut = &data< clut_data >( *clut_note );
+	}
 }
 
 int set_screen_backing_store_file( const char* path )
@@ -150,9 +163,7 @@ int set_screen_backing_store_file( const char* path )
 	
 	uint32_t count = 1 + raster.meta->desc.extra;
 	
-	sync_relay& sync = initialize( raster, the_screen_size * count );
-	
-	the_sync_relay = &sync;
+	initialize( raster, the_screen_size * count );
 	
 	return 0;
 }

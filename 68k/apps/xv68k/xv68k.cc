@@ -22,6 +22,9 @@
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
+// rasterlib
+#include "raster/clut_detail.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -796,6 +799,8 @@ int execute_68k( int argc, char* const* argv )
 		ScrnBase  = 0x0824,
 		CrsrPin   = 0x0834,
 		CrsrSave  = 0x088C,
+		
+		MainDevice = 0x08A4,
 	};
 	
 	emu.put_byte( CPUFlag, mc68k_model >> 4, v68k::user_data_space );
@@ -839,6 +844,11 @@ int execute_68k( int argc, char* const* argv )
 	if ( has_cursor )
 	{
 		emu.put_long( CrsrSave, kHardwareCursor, user_data_space );
+	}
+	
+	if ( v68k::screen::transit_clut )
+	{
+		emu.put_long( MainDevice, 'clut', user_data_space );
 	}
 	
 	load_Mac_traps( mem );
@@ -1053,7 +1063,9 @@ char* const* get_options( char** argv )
 				
 				using v68k::screen::page_1_virtual_buffer;
 				using v68k::screen::the_screen_size;
+				using v68k::screen::transit_clut;
 				using v68k::screen::virtual_buffer;
+				using v68k::screen::virtual_clut;
 				
 				if ( the_screen_size != 21888 )
 				{
@@ -1064,6 +1076,15 @@ char* const* get_options( char** argv )
 					page_1_virtual_buffer = (uint8_t*) virtual_buffer;
 					
 					main_screen_addr = 0x00E00000;
+					
+					if ( transit_clut )
+					{
+						using raster::clut_data;
+						
+						size_t size = sizeof_clut( *transit_clut );
+						
+						virtual_clut = (clut_data*) malloc( size );
+					}
 				}
 				
 				break;

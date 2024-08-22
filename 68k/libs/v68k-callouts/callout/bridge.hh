@@ -72,12 +72,12 @@ enum
 	// $FFB6 - $FFB0
 	blit_bytes,
 	draw_bytes,
-	reserved14,
+	fill_bytes,
 	reserved15,
 	
 	// $FFAE - $FFA8
 	send_sound_command,
-	reserved16,
+	decode_MACE3,
 	reserved17,
 	reserved18,
 	
@@ -98,6 +98,12 @@ enum
 	sect_regions,
 	xor_regions,
 	polygon_region,
+	
+	// $FF8E - $FF88
+	transcode_8x_1bpp_to_8bpp,
+	reserved25,
+	reserved26,
+	reserved27,
 	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block

@@ -5,6 +5,12 @@
 
 #include "memory/memory.hh"
 
+// iota
+#include "iota/endian.hh"
+
+// raster
+#include "raster/clut_detail.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -40,6 +46,8 @@
 
 namespace v68k {
 
+using raster::clut_data;
+
 usermode_memory_access major_system_vector_access;
 
 uint32_t alt_screen_addr  = 0x00012700;
@@ -51,6 +59,29 @@ const uint32_t sound_size = 740;
 static uint8_t* low_memory_base;
 static uint32_t low_memory_size;
 
+
+static
+void copy_byte_swapped_clut( const clut_data& src, clut_data& dst )
+{
+	if ( dst.max == 0 )
+	{
+		dst.max = src.max;
+	}
+	
+	for ( int i = 0;  i <= dst.max;  ++i )
+	{
+		dst.palette[ i ].value = iota::u16_from_big( src.palette[ i ].value );
+		dst.palette[ i ].red   = iota::u16_from_big( src.palette[ i ].red   );
+		dst.palette[ i ].green = iota::u16_from_big( src.palette[ i ].green );
+		dst.palette[ i ].blue  = iota::u16_from_big( src.palette[ i ].blue  );
+	}
+	
+	/*
+		Update the seed last.  Don't touch the flags, reserved, or max fields.
+	*/
+	
+	dst.seed = iota::u32_from_big( src.seed );
+}
 
 static inline
 bool vid_x2()
@@ -241,6 +272,48 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		namespace sound = v68k::sound;
 		
 		return sound::translate( addr - main_sound_addr, length, fc, access );
+	}
+	
+	if ( v68k::screen::virtual_clut )
+	{
+		using v68k::screen::transit_clut;
+		using v68k::screen::virtual_clut;
+		
+		enum
+		{
+			clut_base = 0x00EFD800,
+		};
+		
+		const uint32_t clut_size = sizeof_clut( *transit_clut );
+		
+		if ( addr_within_span( addr, clut_base, clut_size ) )
+		{
+			if ( access == mem_exec )
+			{
+				return 0;  // NULL
+			}
+			
+			uint8_t* p = (uint8_t*) virtual_clut + (addr - clut_base);
+			
+			const uint8_t* flags   = (const uint8_t*) &virtual_clut->flags;
+			const uint8_t* palette = (const uint8_t*) &virtual_clut->palette;
+			
+			if ( p >= flags  &&  p < palette )
+			{
+				return 0;  // NULL.  flags, reserved, and max are off-limits
+			}
+			
+			using namespace v68k::screen;
+			
+			if ( p < flags  &&  is_unlocked()  &&  access == v68k::mem_update )
+			{
+				copy_byte_swapped_clut( *virtual_clut, *transit_clut );
+				
+				update();  // seed was updated
+			}
+			
+			return p;
+		}
 	}
 	
 	if ( (addr >> 16) == 0x0040 )

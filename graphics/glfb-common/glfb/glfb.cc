@@ -26,6 +26,7 @@ namespace glfb
 
 typedef unsigned char Byte;
 
+bool palette_enabled;
 bool overlay_enabled;
 
 bool cursor_enabled;
@@ -61,6 +62,9 @@ static int crsr_x0;
 static int crsr_y0;
 static int crsr_x1;
 static int crsr_y1;
+
+static GLenum cursor_data_format = GL_LUMINANCE;
+static GLenum cursor_data_type   = GL_UNSIGNED_BYTE;
 
 static GLenum texture_format = GL_LUMINANCE;
 static GLenum texture_type   = GL_UNSIGNED_BYTE;
@@ -118,8 +122,8 @@ void initialize()
 		              cursor_width,
 		              cursor_height,
 		              0,
-		              texture_format,
-		              texture_type,
+		              cursor_data_format,
+		              cursor_data_type,
 		              0 );  // NULL
 		
 		init_texture( cursor_mask_texture );
@@ -130,8 +134,8 @@ void initialize()
 		              cursor_width,
 		              cursor_height,
 		              0,
-		              texture_format,
-		              texture_type,
+		              cursor_data_format,
+		              cursor_data_type,
 		              0 );  // NULL
 		
 		size_t n_bytes = cursor_width * cursor_height * 2;
@@ -166,9 +170,28 @@ void set_dimensions( int width, int height, int depth )
 	
 #endif
 	
+	size_t buffer_size = tex_width * tex_height;
+	
+	palette_enabled = depth > 1  &&  depth < 16;
+	
+	if ( depth > 8  ||  palette_enabled )
+	{
+		texture_format = GL_RGBA;
+		
+		texture_type = depth == 16 ? GL_UNSIGNED_SHORT_1_5_5_5_REV
+		                           : GL_UNSIGNED_BYTE;
+		
+		if ( depth != 16 )
+		{
+			buffer_size *= 2;
+		}
+		
+		buffer_size *= 2;
+	}
+	
 	glTexImage2D( texture_target,
 	              0,
-	              GL_LUMINANCE,
+	              GL_RGB,
 	              tex_width,
 	              tex_height,
 	              0,
@@ -178,7 +201,77 @@ void set_dimensions( int width, int height, int depth )
 	
 	free( screen_texture_data );
 	
-	screen_texture_data = (Byte*) malloc( tex_width * tex_height );
+	screen_texture_data = (Byte*) malloc( buffer_size );
+}
+
+static uint8_t bumpy_ramp[] =
+{
+	0xEE,
+	0xDD,
+	0xBB,
+	0xAA,
+	0x88,
+	0x77,
+	0x55,
+	0x44,
+	0x22,
+	0x11,
+	0x00,
+};
+
+static uint8_t color_palette[ 256 * 3 ];
+
+static
+void make_color_palette()
+{
+	uint8_t* p = color_palette;
+	
+	for ( int r = 0xFF;  r >= 0;  r -= 0x33 )
+	{
+		for ( int g = 0xFF;  g >= 0;  g -= 0x33 )
+		{
+			for ( int b = 0xFF;  b >= 0;  b -= 0x33 )
+			{
+				*p++ = r;
+				*p++ = g;
+				*p++ = b;
+			}
+		}
+	}
+	
+	p -= 3;
+	
+	for ( int i = 0;  i < 10;  ++i )
+	{
+		*p++ = bumpy_ramp[ i ];
+		
+		p += 2;
+	}
+	
+	for ( int i = 0;  i < 10;  ++i )
+	{
+		++p;
+		
+		*p++ = bumpy_ramp[ i ];
+		
+		++p;
+	}
+	
+	for ( int i = 0;  i < 10;  ++i )
+	{
+		p += 2;
+		
+		*p++ = bumpy_ramp[ i ];
+	}
+	
+	for ( int i = 0;  i < 11;  ++i )
+	{
+		uint16_t gray = bumpy_ramp[ i ];
+		
+		*p++ = gray;
+		*p++ = gray;
+		*p++ = gray;
+	}
 }
 
 static inline
@@ -202,6 +295,24 @@ void transcode_inverted( const Byte* src, Byte* dst, int n )
 	}
 }
 
+static
+void transcode_paletted( const uint8_t* src, uint8_t* dst, int n )
+{
+	static bool init_color_palette = (make_color_palette(), true);
+	
+	while ( n-- > 0 )
+	{
+		uint8_t i = *src++;
+		
+		const uint8_t* entry = &color_palette[ i * 3 ];
+		
+		*dst++ = *entry++;
+		*dst++ = *entry++;
+		*dst++ = *entry++;
+		*dst++ = 0xFF;
+	}
+}
+
 void set_screen_image( const void* src_addr )
 {
 	const Byte* src = (const Byte*) src_addr;
@@ -215,7 +326,14 @@ void set_screen_image( const void* src_addr )
 			break;
 		
 		case 8:
-			transcode_inverted( src, screen_texture_data, n_octets );
+			if ( palette_enabled )
+			{
+				transcode_paletted( src, screen_texture_data, n_octets );
+			}
+			else
+			{
+				transcode_inverted( src, screen_texture_data, n_octets );
+			}
 			break;
 	}
 	
@@ -252,8 +370,8 @@ void set_cursor_image( const void* src_addr )
 		                 0,
 		                 cursor_width,
 		                 cursor_height,
-		                 texture_format,
-		                 texture_type,
+		                 cursor_data_format,
+		                 cursor_data_type,
 		                 cursor_texture_data + 256 );
 		
 		glBindTexture( texture_target, cursor_face_texture );
@@ -264,8 +382,8 @@ void set_cursor_image( const void* src_addr )
 		                 0,
 		                 cursor_width,
 		                 cursor_height,
-		                 texture_format,
-		                 texture_type,
+		                 cursor_data_format,
+		                 cursor_data_type,
 		                 cursor_texture_data );
 		
 	}
