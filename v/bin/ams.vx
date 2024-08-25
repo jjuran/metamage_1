@@ -332,7 +332,7 @@ def io_opts
 
 let extensions = [ ".mbin", ".mbim" ]
 
-def auto_mbin_disk
+def auto_mbin_disk (app_name)
 {
 	let path = root_dir "/" app_name
 	
@@ -350,11 +350,47 @@ def auto_mbin_disk
 	return ()
 }
 
+def drop (x)
+{
+	return lambda (s) { string (s / x) }
+}
+
+def repl (x)
+{
+	return lambda (s) { translated (s, x / 2) }
+}
+
+let mutations =
+[
+	drop '\'',
+	repl " -",
+	repl str ('A' .. 'Z', 'a' .. 'z'),
+]
+
+def auto_disk_name
+{
+	var disk_name
+	
+	if disk_name = auto_mbin_disk app_name then
+	{
+		return disk_name
+	}
+	
+	let name = mutations per app_name>-{ v L }
+	
+	if name != app_name and (disk_name = auto_mbin_disk name) then
+	{
+		return disk_name
+	}
+	
+	return ()
+}
+
 def fs_opts
 {
 	if not disks then
 	{
-		if let disk = getenv "AMS_DISK" or auto_mbin_disk() then
+		if let disk = getenv "AMS_DISK" or auto_disk_name() then
 		{
 			disks = [disk]
 		}
