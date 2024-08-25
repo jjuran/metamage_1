@@ -330,19 +330,24 @@ def io_opts
 	}
 }
 
+let extensions = [ ".mbin", ".mbim" ]
+
 def auto_mbin_disk
 {
 	let path = root_dir "/" app_name
 	
-	return if exists path then {}
-	else if exists path ".mbin" then
+	if not exists path then
 	{
-		app_name ".mbin",
+		for ext in extensions do
+		{
+			if exists path ext then
+			{
+				return app_name ext
+			}
+		}
 	}
-	else if exists path ".mbim" then
-	{
-		app_name ".mbim",
-	}
+	
+	return ()
 }
 
 def fs_opts
