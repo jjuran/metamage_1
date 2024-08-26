@@ -45,6 +45,11 @@ pascal void PlotIcon_patch( const Rect* rect, char** icon )
 	IconBitmap.bounds.bottom = 32;
 	IconBitmap.bounds.right  = 32;
 	
+	/*
+		Technical Note #55 claims that PlotIcon() draws using the srcOr
+		mode, but the observed behavior in System 6 is clearly srcCopy.
+	*/
+	
 	CopyIconBits( *icon, rect, srcCopy );
 }
 
