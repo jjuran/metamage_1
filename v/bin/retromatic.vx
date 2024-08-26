@@ -111,6 +111,62 @@ var disks = []
 
 var files_to_copy = []
 
+let extensions = [ ".mbin", ".mbim" ]
+
+def auto_mbin_disk (name)
+{
+	let path = parent_dir "/" name
+	
+	if not exists path then
+	{
+		for ext in extensions do
+		{
+			if exists path ext then
+			{
+				return name ext
+			}
+		}
+	}
+	
+	return ()
+}
+
+def drop (x)
+{
+	return lambda (s) { string (s / x) }
+}
+
+def repl (x)
+{
+	return lambda (s) { translated (s, x / 2) }
+}
+
+let mutations =
+[
+	drop '\'',
+	repl " -",
+	repl str ('A' .. 'Z', 'a' .. 'z'),
+]
+
+def auto_disk_name (app_name)
+{
+	var disk_name
+	
+	if disk_name = auto_mbin_disk app_name then
+	{
+		return disk_name
+	}
+	
+	let name = mutations per app_name>-{ v L }
+	
+	if name != app_name and (disk_name = auto_mbin_disk name) then
+	{
+		return disk_name
+	}
+	
+	return ()
+}
+
 if "disk" in config then
 {
 	disk = config[ "disk" ]
@@ -119,9 +175,16 @@ else if "disks" in config then
 {
 	disks = config[ "disks" ]
 }
-else if src_is_txt and not exists name_path and exists name_path ".mbin" then
+else if src_is_txt and not exists name_path then
 {
-	disk = name ".mbin"
+	disk = auto_disk_name name
+	
+	if not disk then
+	{
+		warn "retromatic.vx: " name ": not found"
+		
+		exit 1
+	}
 	
 	new_disk = ("disk: " rep disk) "\n"
 }
