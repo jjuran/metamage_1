@@ -45,7 +45,6 @@ using quickdraw::offset_region;
 using quickdraw::Region_end;
 using quickdraw::region_geometry;
 using quickdraw::region_scanner;
-using quickdraw::set_region_bbox;
 
 typedef quickdraw::region_geometry_t geometry_t;
 
@@ -123,23 +122,6 @@ static RgnHandle reify_region( RgnHandle in, short** out )
 	extend_rectangular_region( **in, *out );
 	
 	return (RgnHandle) out;
-}
-
-static short region_size( MacRegion* region, const short* end )
-{
-	const short rgn_size = (char*) end - (char*) region;
-	
-	if ( rgn_size <= 28 )
-	{
-		const geometry_t g = region_geometry( region );
-		
-		if ( g.n_v_coords <= 2  &&  g.n_h_coords <= 2 )
-		{
-			return sizeof (MacRegion);
-		}
-	}
-	
-	return rgn_size;
 }
 
 #define CHECK_REGION(func, rgn)  check_region( rgn, func, __LINE__ )
@@ -389,20 +371,7 @@ pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap )
 	
 	scanner.finish( bounds.left, v, prev, margin );
 	
-	if ( *extent == Region_end )
-	{
-		SetEmptyRgn( rgn );
-		
-		return noErr;
-	}
-	
-	const short* end = set_region_bbox( &rgn[0]->rgnBBox.top, extent );
-	
-	const short rgn_size = region_size( *rgn, end );
-	
-	rgn[0]->rgnSize = rgn_size;
-	
-	SetHandleSize( (Handle) rgn, rgn_size );
+	finish_region( rgn, max_rgn_size + rowBytes );
 	
 	return noErr;
 }
@@ -528,22 +497,6 @@ pascal void InsetRgn_patch ( MacRegion** rgn, short dh, short dv )
 	}
 }
 
-static void finish_region( RgnHandle r )
-{
-	if ( const bool empty = *rgn_extent( *r ) == Region_end )
-	{
-		SetEmptyRgn( r );
-	}
-	else
-	{
-		const short* end = set_region_bbox( &r[0]->rgnBBox.top, rgn_extent( *r ) );
-		
-		const size_t size = r[0]->rgnSize = region_size( *r, end );
-		
-		SetHandleSize( (Handle) r, size );
-	}
-}
-
 static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 {
 	CHECK_REGION( "sect_regions", a );
@@ -563,7 +516,7 @@ static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 	
 	sect_regions( *a, *b, *dst );
 	
-	finish_region( dst );
+	finish_region( dst, r_max_bytes );
 	
 	ASSERT( CHECK_REGION( "sect_regions", dst ) );
 }
@@ -594,7 +547,7 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 	
 	sect_rect_region( &rect, *src, *dst );
 	
-	finish_region( dst );
+	finish_region( dst, max_bytes );
 	
 	ASSERT( CHECK_REGION( "sect_rect_region", dst ) );
 }
@@ -823,18 +776,9 @@ pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 	
 	xor_regions( *a, *b, *r );
 	
-	if ( *rgn_extent( *r ) == Region_end )
-	{
-		SetEmptyRgn( dst );
-	}
-	else
-	{
-		const short* end = set_region_bbox( &r[0]->rgnBBox.top, rgn_extent( *r ) );
-		
-		r[0]->rgnSize = region_size( *r, end );
-		
-		CopyRgn( r, dst );
-	}
+	finish_region( r, size );
+	
+	CopyRgn( r, dst );
 	
 	ASSERT( CHECK_REGION( "XOrRgn", dst ) );
 }

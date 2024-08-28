@@ -12,7 +12,6 @@
 
 // quickdraw
 #include "qd/pack_bits.hh"
-#include "qd/regions.hh"
 #include "qd/region_detail.hh"
 
 // ams-common
@@ -338,13 +337,11 @@ void compact_region_horizontally( RgnHandle rgn )
 static
 void compact_region( RgnHandle rgn )
 {
-	using quickdraw::set_region_bbox;
-	
 	while ( compact_region_vertically  ( rgn ) )  continue;
 	
 	compact_region_horizontally( rgn );
 	
-	set_region_bbox( &rgn[0]->rgnBBox.top, (short*) (*rgn + 1) );
+	finish_region( *rgn, rgn[0]->rgnSize );
 	
 	SetHandleSize( (Handle) rgn, rgn[0]->rgnSize );
 }
