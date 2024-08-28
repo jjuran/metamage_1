@@ -37,6 +37,8 @@ typedef unsigned char Byte;
 
 typedef short coord_t;
 
+typedef unsigned short coord_t_BE;
+
 enum
 {
 	rts = 0x4E75,
@@ -47,9 +49,11 @@ enum
 	sizeof_rect   = sizeof (coord_t) * 4,
 	sizeof_region = sizeof (coord_t) * 5,
 	
+	min_rgn_size  =    28,  // minimum size of a non-bbox-only region
 	max_rgn_size  = 32766,
 	
-	Region_end = 0x7FFF,
+	Region_end    = 0x7FFF,
+	Region_end_BE = 0xFF7F,
 };
 
 static
@@ -169,6 +173,195 @@ bool is_valid_region( const coord_t* rgn, short size )
 	}
 	
 	return last_v == bottom  &&  hit_left  &&  hit_right;
+}
+
+static
+const coord_t_BE* find_full_stop( const coord_t_BE* p, const coord_t_BE* limit )
+{
+	while ( p < limit )
+	{
+		if ( *p++ == Region_end_BE  &&  p < limit  &&  *p++ == Region_end_BE )
+		{
+			return p;
+		}
+	}
+	
+	return NULL;
+}
+
+static
+coord_t scan_for_last_h_coord( const coord_t*& p, const coord_t* end )
+{
+	while ( p < end  &&  *p++ != Region_end )  continue;
+	
+	return p[ -2 ];
+}
+
+static
+bool set_region_bbox( coord_t* bbox, const coord_t* p, const coord_t* end )
+{
+	*bbox++ = *p++;  // top
+	
+	coord_t left  = *p++;
+	coord_t right = scan_for_last_h_coord( p, end );
+	
+	if ( p == end )
+	{
+		return false;
+	}
+	
+	// pointing at second v coordinate
+	
+	coord_t v;
+	coord_t bottom;
+	
+	while ( (v = *p++) != Region_end )
+	{
+		bottom = v;
+		
+		// pointing at first h coordinate in the line
+		
+		const coord_t next = *p;
+		const coord_t last = scan_for_last_h_coord( p, end );
+		
+		// pointing at next v coordinate, or v terminator
+		
+		if ( p == end )
+		{
+			return false;
+		}
+		
+		if ( next < left )
+		{
+			left = next;
+		}
+		
+		if ( last > right )
+		{
+			right = last;
+		}
+	}
+	
+	*bbox++ = left;
+	*bbox++ = bottom;
+	*bbox++ = right;
+	
+	return true;
+}
+
+int32_t finish_region_callout( v68k::processor_state& s )
+{
+	using iota::u16_from_big;
+	
+	const v68k::function_code_t data_space = s.data_space();
+	
+	const uint32_t size = s.d(0);
+	const uint32_t rgn  = s.a(1);
+	
+	Byte* p = NULL;
+	
+	bool ok = size >= sizeof_region                                  &&
+	          size <= max_rgn_size                                   &&
+	          (size & 0x1) == 0                                      &&
+	          (p = s.translate( rgn, size, data_space, mem_write ))  &&
+	          ((long) p & 0x1) == 0;
+	
+	if ( ! ok )
+	{
+		return (long) p & 0x1 ? v68k::Address_error
+		                      : v68k::Bus_error;
+	}
+	
+	s.d(0) = sizeof_region;
+	
+	coord_t_BE* p_BE = (coord_t_BE*) p;
+	
+	*p_BE = iota::big_u16( sizeof_region );
+	
+	for ( int i = 1;  i < 5;  ++i )
+	{
+		p_BE[ i ] = 0;
+	}
+	
+	if ( size < min_rgn_size  ||  p_BE[ 5 ] == Region_end_BE )
+	{
+		s.translate( rgn, sizeof_region, data_space, mem_update );
+		
+		return rts;
+	}
+	
+	const coord_t_BE* limit = (const coord_t_BE*) (p + size);
+	
+	const coord_t_BE* rgn_end = find_full_stop( p_BE, limit );
+	
+	if ( rgn_end == NULL )
+	{
+		return v68k::CHK_exception;
+	}
+	
+	unsigned rgn_size = (const Byte*) rgn_end - p;
+	
+	coord_t* p2 = (coord_t*) p;
+	
+	if ( iota::is_little_endian() )
+	{
+		p2 = (coord_t*) alloca( rgn_size );
+		
+		for ( int i = 0;  i < rgn_size / 2;  ++i )
+		{
+			p2[ i ] = u16_from_big( p_BE[ i ] );
+		}
+	}
+	
+	p = (Byte*) p2;
+	
+	coord_t* bbox = p2 + 1;
+	
+	if ( rgn_size == min_rgn_size )
+	{
+		rgn_size = sizeof_region;  // bbox-only region
+		
+		const coord_t* p = p2 + 5;
+		
+		coord_t top = *p++;
+		coord_t left = *p++;
+		coord_t right = *p++;
+		coord_t marker = *p++;
+		coord_t bottom = *p++;
+		
+		if ( marker == Region_end  &&  *p++ == left  &&  *p++ == right )
+		{
+			bbox[ 0 ] = top;
+			bbox[ 1 ] = left;
+			bbox[ 2 ] = bottom;
+			bbox[ 3 ] = right;
+		}
+	}
+	else if ( set_region_bbox( bbox, p2 + 5, (const coord_t*) (p + rgn_size) ) )
+	{
+		if ( ! is_valid_region( p2, rgn_size ) )
+		{
+			return v68k::CHK_exception;
+		}
+	}
+	else
+	{
+		return v68k::CHK_exception;
+	}
+	
+	s.d(0) = *p2 = rgn_size;
+	
+	if ( iota::is_little_endian() )
+	{
+		for ( int i = 0;  i < 5;  ++i )
+		{
+			p_BE[ i ] = iota::big_u16( p2[ i ] );
+		}
+	}
+	
+	s.translate( rgn, sizeof_region, data_space, mem_update );
+	
+	return rts;
 }
 
 int32_t sect_rect_region_callout( v68k::processor_state& s )

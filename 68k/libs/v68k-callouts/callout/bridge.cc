@@ -866,6 +866,11 @@ static const function_type the_callouts[] =
 	&xor_regions_callout,
 	&polygon_region_callout,
 	
+	&finish_region_callout,
+	NULL,
+	NULL,
+	NULL,
+	
 	&system_call_callout,
 	&microseconds_callout,
 	

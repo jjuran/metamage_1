@@ -13,6 +13,7 @@
 namespace v68k    {
 namespace callout {
 
+int32_t finish_region_callout   ( v68k::processor_state& s );
 int32_t sect_rect_region_callout( v68k::processor_state& s );
 int32_t sect_regions_callout    ( v68k::processor_state& s );
 int32_t xor_regions_callout     ( v68k::processor_state& s );
