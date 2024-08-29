@@ -35,6 +35,8 @@ namespace callout {
 
 typedef unsigned char Byte;
 
+typedef short coord_t;
+
 enum
 {
 	rts = 0x4E75,
@@ -42,28 +44,28 @@ enum
 
 enum
 {
-	sizeof_rect   = sizeof (short) * 4,
-	sizeof_region = sizeof (short) * 5,
+	sizeof_rect   = sizeof (coord_t) * 4,
+	sizeof_region = sizeof (coord_t) * 5,
 	
 	max_rgn_size  = 32766,
 };
 
 static
-bool is_valid_region( const short* rgn, short size )
+bool is_valid_region( const coord_t* rgn, short size )
 {
 	if ( size & 1  ||  size < 12 )
 	{
 		return false;
 	}
 	
-	const short* end = (const short*) ((const char*) rgn + size);
+	const coord_t* end = (const coord_t*) ((const char*) rgn + size);
 	
 	++rgn;
 	
-	const short top    = *rgn++;
-	const short left   = *rgn++;
-	const short bottom = *rgn++;
-	const short right  = *rgn++;
+	const coord_t top    = *rgn++;
+	const coord_t left   = *rgn++;
+	const coord_t bottom = *rgn++;
+	const coord_t right  = *rgn++;
 	
 	bool hit_left  = false;
 	bool hit_right = false;
@@ -98,9 +100,9 @@ bool is_valid_region( const short* rgn, short size )
 	
 	short v_count = 0;
 	
-	short last_v = -32768;
+	coord_t last_v = -32768;
 	
-	short v = *rgn++;
+	coord_t v = *rgn++;
 	
 	if ( v != top )
 	{
@@ -120,9 +122,9 @@ bool is_valid_region( const short* rgn, short size )
 		
 		short h_count = 0;
 		
-		short last_h = -32768;
+		coord_t last_h = -32768;
 		
-		short h = *rgn++;
+		coord_t h = *rgn++;
 		
 		if ( h == left )
 		{
@@ -188,7 +190,7 @@ int32_t sect_rect_region_callout( v68k::processor_state& s )
 	          ((long) r & 0x1) == 0                                          &&
 	          (p = s.translate( src, sizeof_region, data_space, mem_read ))  &&
 	          ((long) p & 0x1) == 0                                          &&
-	          (src_size = u16_from_big( *(short*) p )) >= sizeof_region      &&
+	          (src_size = u16_from_big( *(coord_t*) p )) >= sizeof_region    &&
 	          src_size <= max_rgn_size                                       &&
 	          (p = s.translate( src, src_size, data_space, mem_read ))       &&
 	          (q = s.translate( dst, src_size, data_space, mem_write ))      &&
@@ -202,14 +204,14 @@ int32_t sect_rect_region_callout( v68k::processor_state& s )
 	
 	const long extent_size = src_size - sizeof_region;
 	
-	const short* r2 = (const short*) r;
-	const short* p2 = (const short*) p;
+	const coord_t* r2 = (const coord_t*) r;
+	const coord_t* p2 = (const coord_t*) p;
 	
-	const short* rect = r2;
+	const coord_t* rect = r2;
 	
 	if ( iota::is_little_endian() )
 	{
-		short* r = (short*) alloca( sizeof (short) * 8 );
+		coord_t* r = (coord_t*) alloca( sizeof (coord_t) * 8 );
 		
 		rect = r;
 		
@@ -218,7 +220,7 @@ int32_t sect_rect_region_callout( v68k::processor_state& s )
 		*r++ = u16_from_big( *r2++ );
 		*r++ = u16_from_big( *r2++ );
 		
-		short* p = (short*) alloca( src_size );
+		coord_t* p = (coord_t*) alloca( src_size );
 		
 		for ( int i = 0;  i < src_size / 2;  ++i )
 		{
@@ -233,13 +235,13 @@ int32_t sect_rect_region_callout( v68k::processor_state& s )
 		return v68k::CHK_exception;
 	}
 	
-	const short* bbox = ++p2;
+	const coord_t* bbox = ++p2;
 	
 	p2 += 4;
 	
-	short* q2 = (short*) q + 5;
+	coord_t* q2 = (coord_t*) q + 5;
 	
-	quickdraw::segments_box segments( (short*) alloca( src_size ) );
+	quickdraw::segments_box segments( (coord_t*) alloca( src_size ) );
 	
 	sect_rect_region( rect,
 	                  bbox,
@@ -282,12 +284,12 @@ int32_t sect_regions_callout( v68k::processor_state& s )
 	
 	bool ok = (p = s.translate( one, sizeof_region, data_space, mem_read ))  &&
 	          ((long) p & 0x1) == 0                                          &&
-	          (a_size = u16_from_big( *(short*) p )) >= sizeof_region        &&
+	          (a_size = u16_from_big( *(coord_t*) p )) >= sizeof_region      &&
 	          a_size <= max_rgn_size                                         &&
 	          (p = s.translate( one, a_size, data_space, mem_read ))         &&
 	          (q = s.translate( two, sizeof_region, data_space, mem_read ))  &&
 	          ((long) q & 0x1) == 0                                          &&
-	          (b_size = u16_from_big( *(short*) q )) >= sizeof_region        &&
+	          (b_size = u16_from_big( *(coord_t*) q )) >= sizeof_region      &&
 	          b_size <= max_rgn_size                                         &&
 	          (q = s.translate( two, b_size, data_space, mem_read ))         &&
 	          ((r_size = a_size + b_size), true)                             &&
@@ -300,12 +302,12 @@ int32_t sect_regions_callout( v68k::processor_state& s )
 		                                              : v68k::Bus_error;
 	}
 	
-	const short* p2 = (const short*) p;
-	const short* q2 = (const short*) q;
+	const coord_t* p2 = (const coord_t*) p;
+	const coord_t* q2 = (const coord_t*) q;
 	
 	if ( iota::is_little_endian() )
 	{
-		short* p = (short*) alloca( a_size );
+		coord_t* p = (coord_t*) alloca( a_size );
 		
 		for ( int i = 0;  i < a_size / 2;  ++i )
 		{
@@ -315,7 +317,7 @@ int32_t sect_regions_callout( v68k::processor_state& s )
 		p2 = p;
 		
 		
-		short* q = (short*) alloca( b_size );
+		coord_t* q = (coord_t*) alloca( b_size );
 		
 		for ( int i = 0;  i < b_size / 2;  ++i )
 		{
@@ -335,17 +337,17 @@ int32_t sect_regions_callout( v68k::processor_state& s )
 		return v68k::CHK_exception;
 	}
 	
-	const short* bbox = ++p2;
+	const coord_t* bbox = ++p2;
 	
 	p2 += 4;
 	q2 += 5;
 	
-	short* r2 = (short*) r + 5;
+	coord_t* r2 = (coord_t*) r + 5;
 	
-	quickdraw::segments_box a_segments( (short*) alloca( a_size ) );
-	quickdraw::segments_box b_segments( (short*) alloca( b_size ) );
-	quickdraw::segments_box c_segments( (short*) alloca( r_size ) );
-	quickdraw::segments_box r_segments( (short*) alloca( r_size ) );
+	quickdraw::segments_box a_segments( (coord_t*) alloca( a_size ) );
+	quickdraw::segments_box b_segments( (coord_t*) alloca( b_size ) );
+	quickdraw::segments_box c_segments( (coord_t*) alloca( r_size ) );
+	quickdraw::segments_box r_segments( (coord_t*) alloca( r_size ) );
 	
 	sect_regions( bbox,
 	              p2,
@@ -393,12 +395,12 @@ int32_t xor_regions_callout( v68k::processor_state& s )
 	
 	bool ok = (p = s.translate( one, sizeof_region, data_space, mem_read ))  &&
 	          ((long) p & 0x1) == 0                                          &&
-	          (a_size = u16_from_big( *(short*) p )) >= sizeof_region        &&
+	          (a_size = u16_from_big( *(coord_t*) p )) >= sizeof_region      &&
 	          a_size <= max_rgn_size                                         &&
 	          (p = s.translate( one, a_size, data_space, mem_read ))         &&
 	          (q = s.translate( two, sizeof_region, data_space, mem_read ))  &&
 	          ((long) q & 0x1) == 0                                          &&
-	          (b_size = u16_from_big( *(short*) q )) >= sizeof_region        &&
+	          (b_size = u16_from_big( *(coord_t*) q )) >= sizeof_region      &&
 	          b_size <= max_rgn_size                                         &&
 	          (q = s.translate( two, b_size, data_space, mem_read ))         &&
 	          ((r_size = a_size + b_size), true)                             &&
@@ -411,12 +413,12 @@ int32_t xor_regions_callout( v68k::processor_state& s )
 		                                              : v68k::Bus_error;
 	}
 	
-	const short* p2 = (const short*) p;
-	const short* q2 = (const short*) q;
+	const coord_t* p2 = (const coord_t*) p;
+	const coord_t* q2 = (const coord_t*) q;
 	
 	if ( iota::is_little_endian() )
 	{
-		short* p = (short*) alloca( a_size );
+		coord_t* p = (coord_t*) alloca( a_size );
 		
 		for ( int i = 0;  i < a_size / 2;  ++i )
 		{
@@ -426,7 +428,7 @@ int32_t xor_regions_callout( v68k::processor_state& s )
 		p2 = p;
 		
 		
-		short* q = (short*) alloca( b_size );
+		coord_t* q = (coord_t*) alloca( b_size );
 		
 		for ( int i = 0;  i < b_size / 2;  ++i )
 		{
@@ -453,7 +455,7 @@ int32_t xor_regions_callout( v68k::processor_state& s )
 	p2 += 5;
 	q2 += 5;
 	
-	short* r2 = (short*) r + 5;
+	coord_t* r2 = (coord_t*) r + 5;
 	
 	quickdraw::xor_region( p2, q2, r2 );
 	
