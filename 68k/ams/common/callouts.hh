@@ -174,7 +174,23 @@ DEFINE_CALLOUT( void,
                   unsigned                  len : __D0 ),
                 0xFF90 )
 
+DEFINE_CALLOUT( unsigned,
+                finish_region,
+                ( struct MacRegion* rgn  : __A1,
+                  unsigned          size : __D0 ),
+                0xFF8E )
+
 #undef DEFINE_CALLOUT
+
+inline
+asm
+void finish_region( struct MacRegion** rgn  : __A0,
+                    unsigned           size : __D0 )
+{
+	MOVEA.L  (A0),A1
+	JSR      0xFFFFFF8E  // finish_region (sets D0, preserves A0)
+	DC.W     0xA024      // _SetHandleSize
+}
 
 inline
 void fast_lshift( void* dst : __A1, unsigned n : __D0, int x : __D2 )
