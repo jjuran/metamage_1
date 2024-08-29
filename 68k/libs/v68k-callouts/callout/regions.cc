@@ -48,6 +48,8 @@ enum
 	sizeof_region = sizeof (coord_t) * 5,
 	
 	max_rgn_size  = 32766,
+	
+	Region_end = 0x7FFF,
 };
 
 static
@@ -84,7 +86,7 @@ bool is_valid_region( const coord_t* rgn, short size )
 		return false;
 	}
 	
-	if ( bottom == 0x7FFF  ||  right == 0x7FFF )
+	if ( bottom == Region_end  ||  right == Region_end )
 	{
 		/*
 			32767 is within QuickDraw coordinate space,
@@ -109,7 +111,7 @@ bool is_valid_region( const coord_t* rgn, short size )
 		return false;
 	}
 	
-	while ( v != 0x7FFF )
+	while ( v != Region_end )
 	{
 		if ( v <= last_v  ||  rgn == end )
 		{
@@ -135,7 +137,7 @@ bool is_valid_region( const coord_t* rgn, short size )
 			return false;
 		}
 		
-		while ( h != 0x7FFF )
+		while ( h != Region_end )
 		{
 			if ( h <= last_h  ||  rgn == end )
 			{
