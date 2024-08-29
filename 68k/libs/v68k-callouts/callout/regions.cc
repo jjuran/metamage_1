@@ -44,6 +44,8 @@ enum
 {
 	sizeof_rect   = sizeof (short) * 4,
 	sizeof_region = sizeof (short) * 5,
+	
+	max_rgn_size  = 32766,
 };
 
 static
@@ -187,6 +189,7 @@ int32_t sect_rect_region_callout( v68k::processor_state& s )
 	          (p = s.translate( src, sizeof_region, data_space, mem_read ))  &&
 	          ((long) p & 0x1) == 0                                          &&
 	          (src_size = u16_from_big( *(short*) p )) >= sizeof_region      &&
+	          src_size <= max_rgn_size                                       &&
 	          (p = s.translate( src, src_size, data_space, mem_read ))       &&
 	          (q = s.translate( dst, src_size, data_space, mem_write ))      &&
 	          ((long) q & 0x1) == 0;
@@ -280,10 +283,12 @@ int32_t sect_regions_callout( v68k::processor_state& s )
 	bool ok = (p = s.translate( one, sizeof_region, data_space, mem_read ))  &&
 	          ((long) p & 0x1) == 0                                          &&
 	          (a_size = u16_from_big( *(short*) p )) >= sizeof_region        &&
+	          a_size <= max_rgn_size                                         &&
 	          (p = s.translate( one, a_size, data_space, mem_read ))         &&
 	          (q = s.translate( two, sizeof_region, data_space, mem_read ))  &&
 	          ((long) q & 0x1) == 0                                          &&
 	          (b_size = u16_from_big( *(short*) q )) >= sizeof_region        &&
+	          b_size <= max_rgn_size                                         &&
 	          (q = s.translate( two, b_size, data_space, mem_read ))         &&
 	          ((r_size = a_size + b_size), true)                             &&
 	          (r = s.translate( dst, r_size, data_space, mem_write ))        &&
@@ -389,10 +394,12 @@ int32_t xor_regions_callout( v68k::processor_state& s )
 	bool ok = (p = s.translate( one, sizeof_region, data_space, mem_read ))  &&
 	          ((long) p & 0x1) == 0                                          &&
 	          (a_size = u16_from_big( *(short*) p )) >= sizeof_region        &&
+	          a_size <= max_rgn_size                                         &&
 	          (p = s.translate( one, a_size, data_space, mem_read ))         &&
 	          (q = s.translate( two, sizeof_region, data_space, mem_read ))  &&
 	          ((long) q & 0x1) == 0                                          &&
 	          (b_size = u16_from_big( *(short*) q )) >= sizeof_region        &&
+	          b_size <= max_rgn_size                                         &&
 	          (q = s.translate( two, b_size, data_space, mem_read ))         &&
 	          ((r_size = a_size + b_size), true)                             &&
 	          (r = s.translate( dst, r_size, data_space, mem_write ))        &&
