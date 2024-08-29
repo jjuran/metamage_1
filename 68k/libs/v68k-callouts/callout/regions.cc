@@ -11,6 +11,9 @@
 // iota
 #include "iota/endian.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // quickdraw
 #include "qd/sect_region.hh"
 #include "qd/segments.hh"
@@ -428,12 +431,16 @@ int32_t xor_regions_callout( v68k::processor_state& s )
 	
 	if ( ! is_valid_region( p2, a_size ) )
 	{
-		return v68k::CHK_exception;
+//		return v68k::CHK_exception;
+		
+		WARNING = "Invalid region A in xor_regions()";
 	}
 	
 	if ( ! is_valid_region( q2, b_size ) )
 	{
-		return v68k::CHK_exception;
+//		return v68k::CHK_exception;
+		
+		WARNING = "Invalid region B in xor_regions()";
 	}
 	
 	p2 += 5;
