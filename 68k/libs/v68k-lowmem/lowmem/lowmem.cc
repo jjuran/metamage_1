@@ -142,6 +142,7 @@ enum
 	tag_TheCrsr_word_33 = tag_TheCrsr + 33,  // 68 bytes
 	tag_CrsrSave,
 	tag_CrsrSave_low_word,
+	tag_DeepRow,
 	tag_CrsrVisBusy,
 	tag_CrsrNewCouple,
 	tag_CrsrState,
@@ -376,6 +377,19 @@ static const global globals[] =
 	*/
 	
 	{ 0x088C, 4,    tag_CrsrSave    },
+	
+	/*
+		ScreenRow always contains the rowBytes of a bitmap that's
+		the size of the main screen, even if the main screen is a
+		multibit device and no such (1-bit deep) bitmap exists.
+		
+		In Mac OS with Color QuickDraw, the word at $08AC appears
+		to be the actual rowBytes of the main screen device -- in
+		other words, it equals ScreenRow * pm.pixelSize (where pm
+		is the main screen device's PixMap).  We name it DeepRow.
+	*/
+	
+	{ 0x08AC, 2,    tag_DeepRow     },
 	{ 0x08CC, 2,    tag_CrsrVisBusy },  // CrsrVis, CrsrBusy
 	{ 0x08CE, 2,    tag_CrsrNewCouple},  // CrsrNew, CrsrCouple
 	{ 0x08D0, 2,    tag_CrsrState   },
