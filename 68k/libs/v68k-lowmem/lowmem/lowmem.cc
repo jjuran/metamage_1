@@ -143,6 +143,7 @@ enum
 	tag_CrsrSave,
 	tag_CrsrSave_low_word,
 	tag_DeepRow,
+	tag_DepthLog2,
 	tag_CrsrVisBusy,
 	tag_CrsrNewCouple,
 	tag_CrsrState,
@@ -387,9 +388,13 @@ static const global globals[] =
 		to be the actual rowBytes of the main screen device -- in
 		other words, it equals ScreenRow * pm.pixelSize (where pm
 		is the main screen device's PixMap).  We name it DeepRow.
+		
+		We also define the word at $08AE to be the binary log of
+		the main screen device's depth, which we call DepthLog2.
 	*/
 	
 	{ 0x08AC, 2,    tag_DeepRow     },
+	{ 0x08AE, 2,    tag_DepthLog2   },
 	{ 0x08CC, 2,    tag_CrsrVisBusy },  // CrsrVis, CrsrBusy
 	{ 0x08CE, 2,    tag_CrsrNewCouple},  // CrsrNew, CrsrCouple
 	{ 0x08D0, 2,    tag_CrsrState   },
