@@ -521,9 +521,7 @@ pascal void CloseWindow_patch( WindowRef port )
 	
 	ClosePort( port );
 	
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	if ( thePort == port )
+	if ( port == get_thePort() )
 	{
 		SetPort( WindowList ? (WindowRef) WindowList : WMgrPort );
 	}
@@ -1359,12 +1357,12 @@ pascal void InvalRect_patch( const Rect* rect )
 static
 void update_updateRgn( RgnHandle rgn : __A0, region_op_proc region_op : __A1 )
 {
-	GrafPtr thePort = *get_addrof_thePort();
+	const GrafPort* port = get_thePort();
 	
-	WindowPeek w = (WindowPeek) thePort;
+	WindowPeek w = (WindowPeek) port;
 	
-	const short csdx = thePort->portBits.bounds.left;
-	const short csdy = thePort->portBits.bounds.top;
+	const short csdx = port->portBits.bounds.left;
+	const short csdy = port->portBits.bounds.top;
 	
 	OffsetRgn( rgn, -csdx, -csdy );  // local to global
 	

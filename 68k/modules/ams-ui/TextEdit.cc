@@ -307,7 +307,7 @@ pascal TERec** TENew_patch( const Rect* destRect, const Rect* viewRect )
 		hTE[0]->hText = hText;
 	}
 	
-	GrafPtr thePort = *get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
 	FontInfo fontInfo;
 	GetFontInfo( &fontInfo );
@@ -324,11 +324,11 @@ pascal TERec** TENew_patch( const Rect* destRect, const Rect* viewRect )
 	te.lineHeight = line_height;
 	te.fontAscent = fontInfo.ascent;
 	
-	te.txFont = thePort->txFont;
-	te.txFace = thePort->txFace;
-	te.txMode = thePort->txMode;
-	te.txSize = thePort->txSize;
-	te.inPort = thePort;
+	te.txFont = port.txFont;
+	te.txFace = port.txFace;
+	te.txMode = port.txMode;
+	te.txSize = port.txSize;
+	te.inPort = &port;
 	
 	return hTE;
 }

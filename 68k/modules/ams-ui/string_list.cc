@@ -127,11 +127,11 @@ void draw_string_list( string_list_handle slh )
 	
 	Rect box = list.rView;
 	
-	GrafPtr& thePort = *get_addrof_thePort();
+	GrafPort& port = *get_thePort();
 	
-	RgnHandle savedClip = thePort->clipRgn;
+	RgnHandle savedClip = port.clipRgn;
 	
-	thePort->clipRgn = rectangular_utility_region( box );
+	port.clipRgn = rectangular_utility_region( box );
 	
 	raster_lock lock;
 	
@@ -166,7 +166,7 @@ void draw_string_list( string_list_handle slh )
 		}
 	}
 	
-	thePort->clipRgn = savedClip;
+	port.clipRgn = savedClip;
 }
 
 void scroll_string_list_to( string_list_handle slh, short offset )

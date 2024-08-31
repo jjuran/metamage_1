@@ -281,7 +281,7 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 			h + title_width,
 		};
 		
-		GrafPort& port = **get_addrof_thePort();
+		GrafPort& port = *get_thePort();
 		
 		RgnHandle saved_clipRgn = port.clipRgn;
 		

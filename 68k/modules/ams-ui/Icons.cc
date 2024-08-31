@@ -88,7 +88,7 @@ pascal OSErr PlotIconID_call( const Rect*        rect,
 	IconBitmap.bounds.bottom = px;
 	IconBitmap.bounds.right  = px;
 	
-	const GrafPort& port = **get_addrof_thePort();
+	const GrafPort& port = *get_thePort();
 	
 	/*
 		Regarding fore-color and back-color, in a monobit environment
