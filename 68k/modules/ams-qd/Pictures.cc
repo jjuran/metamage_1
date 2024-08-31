@@ -86,7 +86,7 @@ pascal void PicComment_patch( short kind, short dataSize, Handle data )
 }
 
 static inline
-long read_long( const UInt8*& p )
+long read_long( const Byte*& p )
 {
 	long result;
 	
@@ -100,7 +100,7 @@ long read_long( const UInt8*& p )
 static Point curvature;
 
 static inline
-const UInt8* set_curvature( const UInt8* p )
+const Byte* set_curvature( const Byte* p )
 {
 	fast_memcpy( &curvature, p, sizeof curvature );
 	
@@ -110,7 +110,7 @@ const UInt8* set_curvature( const UInt8* p )
 static Point picture_origin;
 
 static inline
-const UInt8* origin( const UInt8* p )
+const Byte* origin( const Byte* p )
 {
 	picture_origin.h += read_word( p );
 	picture_origin.v += read_word( p );
@@ -121,7 +121,7 @@ const UInt8* origin( const UInt8* p )
 }
 
 static inline
-const UInt8* pen_size( const UInt8* p )
+const Byte* pen_size( const Byte* p )
 {
 	Point size;
 	fast_memcpy( &size, p, sizeof size );
@@ -132,7 +132,7 @@ const UInt8* pen_size( const UInt8* p )
 }
 
 static
-const UInt8* set_pattern( const UInt8* p, Pattern& pattern )
+const Byte* set_pattern( const Byte* p, Pattern& pattern )
 {
 	short dy = picture_origin.v & 7u;
 //	short dx = picture_origin.h & 7u;
@@ -158,7 +158,7 @@ const UInt8* set_pattern( const UInt8* p, Pattern& pattern )
 }
 
 static
-const UInt8* text_ratio( const UInt8* p )
+const Byte* text_ratio( const Byte* p )
 {
 	const short v_numer = read_word( p );
 	const short h_numer = read_word( p );
@@ -170,7 +170,7 @@ const UInt8* text_ratio( const UInt8* p )
 }
 
 static
-const UInt8* line( const UInt8* p )
+const Byte* line( const Byte* p )
 {
 	const short v0 = read_word( p );
 	const short h0 = read_word( p );
@@ -191,7 +191,7 @@ const UInt8* line( const UInt8* p )
 }
 
 static
-const UInt8* short_line( const UInt8* p )
+const Byte* short_line( const Byte* p )
 {
 	const short v = read_word( p );
 	const short h = read_word( p );
@@ -213,7 +213,7 @@ const UInt8* short_line( const UInt8* p )
 }
 
 static inline
-const UInt8* short_line_from( const UInt8* p )
+const Byte* short_line_from( const Byte* p )
 {
 	const SInt8 dh = *p++;
 	const SInt8 dv = *p++;
@@ -224,7 +224,7 @@ const UInt8* short_line_from( const UInt8* p )
 }
 
 static
-const UInt8* long_text( const UInt8* p )
+const Byte* long_text( const Byte* p )
 {
 	const short v = read_word( p );
 	const short h = read_word( p );
@@ -235,13 +235,13 @@ const UInt8* long_text( const UInt8* p )
 	
 	MoveTo( h, v );
 	
-	const UInt8 n = *p++;
+	const Byte n = *p++;
 	
 	return p + n;
 }
 
 static
-const UInt8* text( const UInt8* p )
+const Byte* text( const Byte* p )
 {
 	GrafPort& port = *get_thePort();
 	
@@ -251,15 +251,15 @@ const UInt8* text( const UInt8* p )
 	
 	port.pnLoc = pt;
 	
-	const UInt8 n = *p++;
+	const Byte n = *p++;
 	
 	return p + n;
 }
 
 static inline
-const UInt8* text_dh( const UInt8* p )
+const Byte* text_dh( const Byte* p )
 {
-	const UInt8 dh = *p++;
+	const Byte dh = *p++;
 	
 	Move( dh, 0 );
 	
@@ -267,9 +267,9 @@ const UInt8* text_dh( const UInt8* p )
 }
 
 static inline
-const UInt8* text_dv( const UInt8* p )
+const Byte* text_dv( const Byte* p )
 {
-	const UInt8 dv = *p++;
+	const Byte dv = *p++;
 	
 	Move( 0, dv );
 	
@@ -277,10 +277,10 @@ const UInt8* text_dv( const UInt8* p )
 }
 
 static inline
-const UInt8* text_dhdv( const UInt8* p )
+const Byte* text_dhdv( const Byte* p )
 {
-	const UInt8 dh = *p++;
-	const UInt8 dv = *p++;
+	const Byte dh = *p++;
+	const Byte dv = *p++;
 	
 	Move( dh, dv );
 	
@@ -290,9 +290,9 @@ const UInt8* text_dhdv( const UInt8* p )
 static Rect last_used_rect;
 
 static
-const UInt8* poly( const Byte* p, Op op )
+const Byte* poly( const Byte* p, Op op )
 {
-	const UInt8* q = p;
+	const Byte* q = p;
 	
 	const short polySize = read_word( q );
 	
@@ -567,15 +567,15 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	const short txMode = port.txMode;
 	const short txSize = port.txSize;
 	
-	const UInt8* end = (UInt8*) pic[0] + size;
-	const UInt8* p   = (UInt8*) (pic[0] + 1);
+	const Byte* end = (Byte*) pic[0] + size;
+	const Byte* p   = (Byte*) (pic[0] + 1);
 	
 	PenState penState;
 	GetPenState( &penState );
 	
 	port.pnMode = patCopy;
 	
-	UInt8 c = *p++;
+	Byte c = *p++;
 	
 	if ( c == 0 )
 	{
@@ -602,7 +602,7 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	
 	OffsetRgn( port.clipRgn, -dh, -dv );
 	
-	uint8_t version = *p++;
+	Byte version = *p++;
 	
 	if ( version == 1 )
 	{
