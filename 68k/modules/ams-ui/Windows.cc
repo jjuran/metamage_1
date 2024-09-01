@@ -1326,6 +1326,29 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 	subtract negative ones.
 */
 
+enum
+{
+	_UnionRgn_autopop = 0xA8E5 | 0x400,
+	_DiffRgn_autopop  = 0xA8E6 | 0x400,
+};
+
+typedef pascal void (*region_op_proc)( RgnHandle a, RgnHandle b, RgnHandle r );
+
+static
+pascal
+asm
+void UnionRgn_autopop( RgnHandle a, RgnHandle b, RgnHandle r )
+{
+	DC.W     _UnionRgn_autopop
+}
+static
+pascal
+asm
+void DiffRgn_autopop( RgnHandle a, RgnHandle b, RgnHandle r )
+{
+	DC.W     _DiffRgn_autopop
+}
+
 pascal void InvalRect_patch( const Rect* rect )
 {
 	RgnHandle rgn = rectangular_utility_region( *rect );
@@ -1333,7 +1356,8 @@ pascal void InvalRect_patch( const Rect* rect )
 	InvalRgn( rgn );
 }
 
-pascal void InvalRgn_patch( RgnHandle rgn )
+static
+void update_updateRgn( RgnHandle rgn : __A0, region_op_proc region_op : __A1 )
 {
 	GrafPtr thePort = *get_addrof_thePort();
 	
@@ -1344,9 +1368,14 @@ pascal void InvalRgn_patch( RgnHandle rgn )
 	
 	OffsetRgn( rgn, -csdx, -csdy );  // local to global
 	
-	UnionRgn( w->updateRgn, rgn, w->updateRgn );
+	region_op( w->updateRgn, rgn, w->updateRgn );
 	
 	OffsetRgn( rgn, csdx, csdy );  // global to local
+}
+
+pascal void InvalRgn_patch( RgnHandle rgn )
+{
+	update_updateRgn( rgn, &UnionRgn_autopop );
 }
 
 pascal void ValidRect_patch( const Rect* rect )
@@ -1358,18 +1387,7 @@ pascal void ValidRect_patch( const Rect* rect )
 
 pascal void ValidRgn_patch( RgnHandle rgn )
 {
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	WindowPeek w = (WindowPeek) thePort;
-	
-	const short csdx = thePort->portBits.bounds.left;
-	const short csdy = thePort->portBits.bounds.top;
-	
-	OffsetRgn( rgn, -csdx, -csdy );  // local to global
-	
-	DiffRgn( w->updateRgn, rgn, w->updateRgn );
-	
-	OffsetRgn( rgn, csdx, csdy );  // global to local
+	update_updateRgn( rgn, &DiffRgn_autopop );
 }
 
 const  short max_update_attempts = 2;
