@@ -1373,9 +1373,16 @@ void update_updateRgn( RgnHandle rgn : __A0, region_op_proc region_op : __A1 )
 	OffsetRgn( rgn, csdx, csdy );  // global to local
 }
 
+asm
 pascal void InvalRgn_patch( RgnHandle rgn )
 {
-	update_updateRgn( rgn, &UnionRgn_autopop );
+	MOVEA.L  (SP)+,A1  // pop return address
+	MOVEA.L  (SP)+,A0  // rgn
+	MOVE.L   A1,-(SP)  // push return address
+	
+	LEA      UnionRgn_autopop,A1
+	
+	JMP      update_updateRgn
 }
 
 pascal void ValidRect_patch( const Rect* rect )
@@ -1385,9 +1392,16 @@ pascal void ValidRect_patch( const Rect* rect )
 	ValidRgn( rgn );
 }
 
+asm
 pascal void ValidRgn_patch( RgnHandle rgn )
 {
-	update_updateRgn( rgn, &DiffRgn_autopop );
+	MOVEA.L  (SP)+,A1  // pop return address
+	MOVEA.L  (SP)+,A0  // rgn
+	MOVE.L   A1,-(SP)  // push return address
+	
+	LEA      DiffRgn_autopop,A1
+	
+	JMP      update_updateRgn
 }
 
 const  short max_update_attempts = 2;
