@@ -152,7 +152,8 @@ my %fsmap =
 			# Exceptions
 			\ qw( abort addrerror buserror chk div0 illegal privileged trapv ),
 			# Mac-specific
-			\ qw( crsr drvr fonts keymods location mac-id mnam NewPtr screenBits
+			\ qw( crsr CurPageOption drvr fonts keymods location
+			      mac-id mnam NewPtr screenBits
 			      serial-ports sound-info system-info units vcbs ),
 			# Mac-specific scripts
 			qw( gestalt ),

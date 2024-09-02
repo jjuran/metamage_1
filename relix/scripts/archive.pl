@@ -222,7 +222,8 @@ my %fsmap =
 			# Misc
 			\ qw( chain chess-test copier divide graft jtest pause th zpipe ),
 			# Mac-specific
-			\ qw( adbs beep cds crsr deicon drives drvr err2text gdev keymods
+			\ qw( CurPageOption adbs beep cds crsr deicon drives drvr
+				err2text gdev keymods
 				location mac-id macbin mnam qdscreencap ram-disks
 				rom-checksum rominfo
 				screenBits serial-ports sound-info system-info
