@@ -137,6 +137,11 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	
 	--tone->duration;
 	
+	if ( demiperiod_samples == 0 )
+	{
+		return 0;  // emit silence when tone->count == 0
+	}
+	
 	output_sample_t* p = output.data;
 	
 	size_t n_samples_to_fill = samples_per_buffer;
