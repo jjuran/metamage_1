@@ -17,8 +17,8 @@
 #include <unistd.h>
 #include <sys/select.h>
 
-// mac-sys-utils
-#include "mac_sys/gestalt.hh"
+// mac-glue-utils
+#include "mac_glue/gestalt.hh"
 
 // ams-common
 #include "reactor.hh"
@@ -27,6 +27,8 @@
 
 #pragma exceptions off
 
+
+using mac::glue::gestalt_or;
 
 const short noQueueMask   = 1 << noQueueBit;
 const short asyncTrapMask = 1 << asyncTrpBit;
@@ -133,7 +135,7 @@ void xIn_ready( reactor_node* node )
 {
 	typedef reactor_core_parameter_block pb_t;
 	
-	pb_t* reactor = (pb_t*) mac::sys::gestalt( gestaltReactorCoreAddr );
+	pb_t* reactor = (pb_t*) gestalt_or( gestaltReactorCoreAddr, 0 );
 	
 	reactor->remove( node );
 	
@@ -147,7 +149,7 @@ void xIn_watch( int fd )
 {
 	typedef reactor_core_parameter_block pb_t;
 	
-	if ( pb_t* reactor = (pb_t*) mac::sys::gestalt( gestaltReactorCoreAddr ) )
+	if ( pb_t* reactor = (pb_t*) gestalt_or( gestaltReactorCoreAddr, 0 ) )
 	{
 		if ( xIn_reactor_node.ready == NULL )
 		{

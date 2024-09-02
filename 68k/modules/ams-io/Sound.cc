@@ -16,8 +16,8 @@
 // sndpipe
 #include "sndpipe/sndpipe.hh"
 
-// mac-sys-utils
-#include "mac_sys/gestalt.hh"
+// mac-glue-utils
+#include "mac_glue/gestalt.hh"
 
 // mac-snd-utils
 #include "mac_snd/duration.hh"
@@ -181,7 +181,7 @@ reactor_core_parameter_block* reactor_core()
 {
 	typedef reactor_core_parameter_block pb_t;
 	
-	pb_t* reactor = (pb_t*) mac::sys::gestalt( gestaltReactorCoreAddr );
+	pb_t* reactor = (pb_t*) mac::glue::gestalt_or( gestaltReactorCoreAddr, 0 );
 	
 	return reactor;
 }
