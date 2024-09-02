@@ -6,6 +6,9 @@
 // POSIX
 #include <unistd.h>
 
+// mac-glue-utils
+#include "mac_glue/gestalt.hh"
+
 // command
 #include "command/get_option.hh"
 
@@ -14,10 +17,13 @@
 
 // ams-common
 #include "callouts.hh"
+#include "reactor.hh"
+#include "reactor-gestalt.hh"
 
 // ams-io
 #include "Devices.hh"
 #include "options.hh"
+#include "reactor-core.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -112,6 +118,12 @@ int main( int argc, char** argv )
 			_exit( 1 );
 		}
 	}
+	
+	using mac::glue::gestalt_or;
+	
+	typedef reactor_core_parameter_block pb_t;
+	
+	the_reactor_core = (pb_t*) gestalt_or( gestaltReactorCoreAddr, 0 );
 	
 	install_DeviceManager();
 	

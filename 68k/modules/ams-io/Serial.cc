@@ -17,18 +17,15 @@
 #include <unistd.h>
 #include <sys/select.h>
 
-// mac-glue-utils
-#include "mac_glue/gestalt.hh"
-
 // ams-common
 #include "reactor.hh"
-#include "reactor-gestalt.hh"
+
+// ams-io
+#include "reactor-core.hh"
 
 
 #pragma exceptions off
 
-
-using mac::glue::gestalt_or;
 
 const short noQueueMask   = 1 << noQueueBit;
 const short asyncTrapMask = 1 << asyncTrpBit;
@@ -133,11 +130,7 @@ static reactor_node xIn_reactor_node;
 static
 void xIn_ready( reactor_node* node )
 {
-	typedef reactor_core_parameter_block pb_t;
-	
-	pb_t* reactor = (pb_t*) gestalt_or( gestaltReactorCoreAddr, 0 );
-	
-	reactor->remove( node );
+	the_reactor_core->remove( node );
 	
 	xIn_reactor_node.ready = NULL;  // Needed to prevent double insertion
 	
@@ -147,16 +140,14 @@ void xIn_ready( reactor_node* node )
 static
 void xIn_watch( int fd )
 {
-	typedef reactor_core_parameter_block pb_t;
-	
-	if ( pb_t* reactor = (pb_t*) gestalt_or( gestaltReactorCoreAddr, 0 ) )
+	if ( the_reactor_core )
 	{
 		if ( xIn_reactor_node.ready == NULL )
 		{
 			xIn_reactor_node.fd    = fd;
 			xIn_reactor_node.ready = &xIn_ready;
 			
-			reactor->insert( &xIn_reactor_node );
+			the_reactor_core->insert( &xIn_reactor_node );
 		}
 	}
 }

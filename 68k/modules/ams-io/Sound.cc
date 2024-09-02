@@ -16,9 +16,6 @@
 // sndpipe
 #include "sndpipe/sndpipe.hh"
 
-// mac-glue-utils
-#include "mac_glue/gestalt.hh"
-
 // mac-snd-utils
 #include "mac_snd/duration.hh"
 
@@ -26,8 +23,10 @@
 #include "callouts.hh"
 #include "interrupts.hh"
 #include "reactor.hh"
-#include "reactor-gestalt.hh"
 #include "time.hh"
+
+// ams-io
+#include "reactor-core.hh"
 
 
 #pragma exceptions off
@@ -176,16 +175,6 @@ ssize_t abort_sound()
 static timer_node Sound_timer_node;
 static bool       timer_scheduled;
 
-static inline
-reactor_core_parameter_block* reactor_core()
-{
-	typedef reactor_core_parameter_block pb_t;
-	
-	pb_t* reactor = (pb_t*) mac::glue::gestalt_or( gestaltReactorCoreAddr, 0 );
-	
-	return reactor;
-}
-
 static
 void timeval_add( timeval& a, const timeval& b )
 {
@@ -331,7 +320,7 @@ void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 	
 	Sound_timer_node.ready = &Sound_ready;
 	
-	reactor_core()->schedule( &Sound_timer_node );
+	the_reactor_core->schedule( &Sound_timer_node );
 }
 
 static
@@ -341,7 +330,7 @@ void cancel_timer()
 	
 	if ( timer_scheduled )
 	{
-		reactor_core()->cancel( &Sound_timer_node );
+		the_reactor_core->cancel( &Sound_timer_node );
 		
 		timer_scheduled = false;
 	}
