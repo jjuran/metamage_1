@@ -9,6 +9,11 @@
 #endif
 
 // Mac OS
+#ifndef __APPLE__
+#ifndef __DEVICES__
+#include <Devices.h>
+#endif
+#endif
 #ifndef __EVENTS__
 #include <Events.h>
 #endif
@@ -24,6 +29,7 @@
 #include "signal.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "string.h"
 
 // Standard C++
 #include <functional>
@@ -75,7 +81,6 @@
 // Nitrogen Extras / ClassicToolbox
 #if !TARGET_API_MAC_CARBON
 #include "ClassicToolbox/AppleTalk.hh"
-#include "ClassicToolbox/Serial.hh"
 #endif
 
 // OSErrno
