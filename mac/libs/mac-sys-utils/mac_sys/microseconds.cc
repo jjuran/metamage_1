@@ -21,6 +21,7 @@
 #endif
 
 // math
+#include "math/fractions.hh"
 #include "math/integer.hh"
 
 // mac-sys-utils
@@ -71,6 +72,7 @@ void microseconds( unsigned long long* count )
 	
 	if ( ! has_Microseconds )
 	{
+		using math::fractions::div_65536_ULL;
 		using math::integer::long_multiply;
 		
 		/*
@@ -115,7 +117,9 @@ void microseconds( unsigned long long* count )
 		
 		const uint32_t tick_chronofragments = 65536 * trillion / 60147420;
 		
-		*count = long_multiply( Ticks, tick_chronofragments ) >> 16;
+		*count = long_multiply( Ticks, tick_chronofragments );
+		
+		div_65536_ULL( count );
 		
 		return;
 	}
