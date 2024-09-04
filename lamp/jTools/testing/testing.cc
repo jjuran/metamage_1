@@ -32,7 +32,7 @@
 #include "string.h"
 
 // Standard C++
-#include <functional>
+#include <algorithm>
 #include <vector>
 
 // POSIX
@@ -67,8 +67,6 @@
 #include "Nitrogen/Str.hh"
 
 // poseven
-#include "poseven/extras/slurp.hh"
-#include "poseven/functions/chdir.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
 #include "poseven/functions/perror.hh"
@@ -522,77 +520,6 @@ static int TestOADC( int argc, char** argv )
 }
 
 
-static void DoSomethingWithServiceFile( const plus::string& file )
-{
-	using namespace io::path_descent_operators;
-	
-	// Find Info.plist
-	plus::string infoPListFile = file / "Contents" / "Info.plist";
-	
-	// Read the entire file contents
-	plus::string infoPList = p7::slurp( infoPListFile.c_str() );
-	
-	// Search for a menu item
-	size_t iNSMenuItem = infoPList.find( "<key>NSMenuItem</key>" );
-	
-	if ( iNSMenuItem == infoPList.npos )
-	{
-		// No menu items, we're done
-		return;
-	}
-	
-	// Keep track of where we left off
-	size_t iLast = iNSMenuItem;
-	
-	while ( true )
-	{
-		size_t iDefault = infoPList.find( "<key>default</key>", iLast );
-		
-		if ( iDefault == infoPList.npos )
-		{
-			// No more entries, we're done
-			break;
-		}
-		
-		plus::string stringElement = "<string>";
-		// Find the <string> start tag
-		size_t iString = infoPList.find( stringElement, iDefault );
-		// Skip the tag
-		size_t iValue = iString + stringElement.size();
-		// Find the end tag
-		size_t iEndString = infoPList.find( "</string>", iValue );
-		// Grab the intervening text
-		plus::string value = infoPList.substr( iValue, iEndString - iValue );
-		
-		printf( "Service: %s\n", value.c_str() );
-		
-		iLast = iEndString;
-	}
-}
-
-#ifdef __APPLE__
-#define SYSTEM_PATH "/System"
-#endif
-
-#ifdef __RELIX__
-#define SYSTEM_PATH "/sys/mac/vol/list/1/mnt/System"
-#endif
-
-static int TestServices( int argc, char** argv )
-{
-	const char* services_dir = SYSTEM_PATH "/" "Library/Services";
-	
-	p7::chdir( services_dir );
-	
-	p7::directory_contents_container services = p7::directory_contents( "." );
-	
-	std::for_each( services.begin(),
-	               services.end(),
-	               std::ptr_fun( DoSomethingWithServiceFile ) );
-	
-	return 0;
-}
-
 static int TestStrError( int argc, char** argv )
 {
 	errno = 0;
@@ -973,7 +900,6 @@ static const command_t global_commands[] =
 	{ "owned",     TestNucleusOwnedShared },
 	{ "path",      TestPath       },
 	{ "strerror",  TestStrError   },
-	{ "svcs",      TestServices   },
 	{ "throw",     TestThrow      },
 	{ "unit",      TestUnit       },
 	{ "unwind",    TestUnwind     },
