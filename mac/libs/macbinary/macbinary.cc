@@ -11,42 +11,9 @@
 // iota
 #include "iota/endian.hh"
 
+// macbinary
+#include "macbinary-crc16.hh"
 
-static
-uint16_t CalcCRC( const uint8_t* dataBuf, uint32_t size )
-{
-	//#define CCITT_CRC_GEN	0x1021
-	
-	const unsigned long kMagicNumber = 0x1021;
-	
-	const uint8_t* dataEnd = dataBuf + size;
-	
-	unsigned long crc = 0;
-	
-	while ( dataBuf != dataEnd )
-	{
-		unsigned long dataByte = *dataBuf++;
-		dataByte <<= 8;
-		
-		long i = 8;
-		
-		do
-		{	
-			long bit = dataByte;
-			dataByte += dataByte;
-			bit ^= crc;
-			crc += crc;
-			
-			if ( bit &= 0x8000 )
-			{
-				crc ^= kMagicNumber;
-			}
-		}
-		while ( --i );
-	}
-	
-	return crc;
-}
 
 namespace macbinary
 {
@@ -68,7 +35,7 @@ bool sig_check( const header& h )
 static inline
 bool crc_check( const header& h )
 {
-	return CalcCRC( (const uint8_t*) &h, 124 ) == iota::u16_from_big( h.crc );
+	return header_checksum( &h ) == iota::u16_from_big( h.crc );
 }
 
 int8_t version( const header& h )
