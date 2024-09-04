@@ -1,0 +1,37 @@
+#!/usr/bin/env lvx
+
+let arg = if argc > 1 then { argv[ 1 ] }
+
+let Services = arg or "/System/Library/Services"
+
+let dir = listdir Services
+
+for f in dir do
+{
+	let Info = Services "/" f "/Contents/Info.plist"
+	
+	let info = load Info
+	
+	var p = begin info
+	
+	p = p.find "<key>NSMenuItem</key>" or continue
+	
+	print f
+	
+	while true do
+	{
+		p = p.find "<key>default</key>" or break
+		
+		p = p.find "<string>"
+		
+		assert bool p
+		
+		p += "<string>".length
+		
+		let q = p.find "</string>"
+		
+		print "    " (q - p)
+		
+		p = q + "</string>".length
+	}
+}
