@@ -80,7 +80,7 @@ loop:
 	MOVE.L   2(SP),D0
 	
 loop_entry:
-	DBRA.S   D3,loop
+	DBRA     D3,loop
 	
 	/*
 		Return the octave number to the low word of D3.
