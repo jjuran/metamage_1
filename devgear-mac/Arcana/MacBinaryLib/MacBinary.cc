@@ -40,6 +40,9 @@
 #include "mac_file/directory.hh"
 #include "mac_file/listing.hh"
 
+// macbinary
+#include "macbinary-crc16.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -195,42 +198,6 @@ namespace MacBinary
 	};
 	
 #endif
-	
-	static
-	unsigned short CalcCRC( register const unsigned char *dataBuf, size_t size )
-	{
-		//#define CCITT_CRC_GEN	0x1021
-		
-		const unsigned long kMagicNumber = 0x1021;
-		
-		register const unsigned char* dataEnd = dataBuf + size;
-		
-		register unsigned long crc = 0;
-		
-		while ( dataBuf != dataEnd )
-		{
-			register unsigned long dataByte = *dataBuf++;
-			dataByte <<= 8;
-			
-			register long i = 8;
-			
-			do
-			{	
-				register long bit = dataByte;
-				dataByte += dataByte;
-				bit ^= crc;
-				crc += crc;
-				
-				if ( bit &= 0x8000 )
-				{
-					crc ^= kMagicNumber;
-				}
-			}
-			while ( --i );
-		}
-		
-		return crc;
-	}
 	
 	
 	const UInt8 kVersionMacBinaryII  = 129;
@@ -477,7 +444,7 @@ namespace MacBinary
 		
 		typedef POD_Field_Traits< UInt16, offset > Field;
 		
-		static UInt16 CRC( const unsigned char* data )  { return CalcCRC( data, dataLength ); }
+		static UInt16 CRC( const Byte* data )  { return macbinary::header_checksum( data ); }
 		
 		static bool Check( const Header& h )  { return Field::Get( h ) == CRC( h.data ); }
 		
