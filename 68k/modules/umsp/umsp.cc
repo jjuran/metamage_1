@@ -335,7 +335,7 @@ asm int set_exception_handler()
 	MOVE.W  #255,D6
 loop:
 	MOVE.L  A0,(A1)+
-	DBRA.S  D6,loop
+	DBRA    D6,loop
 	
 	MOVEC   A2,VBR
 	
