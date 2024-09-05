@@ -102,7 +102,7 @@ memcpy_even_4x:
 	
 memcpy_loop:
 	MOVE.L   (A0)+,(A1)+
-	DBRA.S   D0,memcpy_loop
+	DBRA     D0,memcpy_loop
 	BRA.S    loop_bottom
 	
 c0_zero_c1_positive:
@@ -139,7 +139,7 @@ memset_even_4x:
 	
 memset_loop:
 	MOVE.L   D2,(A1)+
-	DBRA.S   D0,memset_loop
+	DBRA     D0,memset_loop
 	
 loop_bottom:
 	CMPA.L   4(SP),A1
