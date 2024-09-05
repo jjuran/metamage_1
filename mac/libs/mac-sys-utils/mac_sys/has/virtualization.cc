@@ -30,7 +30,7 @@ loop:
 	MOVE     SR,D2
 	OR.B     D2,D0
 	ROR.L    #4,D0
-	DBRA.S   D1,loop
+	DBRA     D1,loop
 	
 	RTS
 }
