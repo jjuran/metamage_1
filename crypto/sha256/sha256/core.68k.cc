@@ -51,7 +51,7 @@ namespace crypto
 		EOR.L    D2,D1
 		ADD.L    D1,(A1)+
 		
-		DBRA.S   D0,loop
+		DBRA     D0,loop
 		
 		UNLK     A6
 		RTS
@@ -132,7 +132,7 @@ namespace crypto
 		EXG      D2,D1
 		EXG      D1,D0
 		
-		DBRA.S   D7,loop
+		DBRA     D7,loop
 		
 		MOVE.L   A3,D3  // restore d
 		MOVE.L   A5,D5  // restore f

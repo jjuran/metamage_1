@@ -33,7 +33,7 @@ namespace crypto
 		ROL.L    #1,D1
 		MOVE.L   D1,(A1)+
 		
-		DBRA.S   D0,loop
+		DBRA     D0,loop
 		
 		UNLK     A6
 		RTS
@@ -80,7 +80,7 @@ namespace crypto
 		EXG      D2,D1
 		EXG      D1,D0
 		
-		DBRA.S   D7,round1
+		DBRA     D7,round1
 		
 		MOVEQ.L  #19,D7
 	round2:
@@ -105,7 +105,7 @@ namespace crypto
 		EXG      D2,D1
 		EXG      D1,D0
 		
-		DBRA.S   D7,round2
+		DBRA     D7,round2
 		
 		MOVEQ.L  #19,D7
 	round3:
@@ -135,7 +135,7 @@ namespace crypto
 		EXG      D2,D1
 		EXG      D1,D0
 		
-		DBRA.S   D7,round3
+		DBRA     D7,round3
 		
 		MOVEQ.L  #19,D7
 	round4:
@@ -160,7 +160,7 @@ namespace crypto
 		EXG      D2,D1
 		EXG      D1,D0
 		
-		DBRA.S   D7,round4
+		DBRA     D7,round4
 		
 		// Accumulate the result.
 		ADD.L    D4,-(A0)
