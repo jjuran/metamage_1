@@ -34,7 +34,7 @@ namespace integer {
 		SUBQ.W   #1,D1
 	loop:
 		CMPM.L   (A1)+,(A0)+
-		DBNE.S   D1,loop
+		DBNE     D1,loop
 		
 		// Set the result to -1, 0, or 1.
 		
@@ -139,7 +139,7 @@ namespace integer {
 		CMPI.L   #-1,(A0)+
 		BNE.S    end
 	a_only_loop_start:
-		DBRA.S   D2,a_only_loop
+		DBRA     D2,a_only_loop
 		
 		// Compare contents until we know adding will or won't carry.
 		
@@ -149,7 +149,7 @@ namespace integer {
 		ADD.L    (A1)+,D2
 		BCS.S    carry
 		ADDQ.L   #1,D2
-		DBNE.S   D1,loop
+		DBNE     D1,loop
 		
 		// Return the size.
 		
@@ -245,7 +245,7 @@ namespace integer {
 		SUBQ.W   #1,D1
 	add_loop:
 		ADDX.L   -(A1),-(A0)
-		DBRA.S   D1,add_loop
+		DBRA     D1,add_loop
 		
 		// The second operand is exhausted.
 		
@@ -353,7 +353,7 @@ namespace integer {
 		SUBQ.W   #1,D1
 	subtract_loop:
 		SUBX.L   -(A1),-(A0)
-		DBRA.S   D1,subtract_loop
+		DBRA     D1,subtract_loop
 		
 		// The second operand is exhausted.
 		
