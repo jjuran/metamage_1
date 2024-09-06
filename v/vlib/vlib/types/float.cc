@@ -37,7 +37,7 @@ namespace vlib
 
 using math::integer::cmp_t;
 
-static
+static inline
 cmp_t compare( float_type a, float_type b )
 {
 	return a < b ? -1 :
@@ -45,7 +45,7 @@ cmp_t compare( float_type a, float_type b )
 	                0;
 }
 
-static inline
+static
 float_type to_float( const bignum::integer& i )
 {
 	using math::integer::float_cast;
@@ -209,9 +209,7 @@ Value unary_op_handler( op_type op, const Value& v )
 			return v;
 		
 		case Op_unary_minus:
-			{
-				return Float( -static_cast< const Float& >( v ).get() );
-			}
+			return Float( -static_cast< const Float& >( v ).get() );
 		
 		default:
 			break;
