@@ -16,6 +16,9 @@
 // math
 #include "math/integer.hh"
 
+// bignum
+#include "bignum/float.hh"
+
 // vlib
 #include "vlib/assign.hh"
 #include "vlib/symbol.hh"
@@ -45,21 +48,10 @@ cmp_t compare( float_type a, float_type b )
 	                0;
 }
 
-static
+static inline
 float_type to_float( const bignum::integer& i )
 {
-	using math::integer::float_cast;
-	
-	const bool little = iota::is_little_endian();
-	
-	float_type f = float_cast< float_type >( little, i.data(), i.size() );
-	
-	if ( i.is_negative() )
-	{
-		f = -f;
-	}
-	
-	return f;
+	return bignum::to_float< float_type >( i );
 }
 
 Float::Float( float_type f )
