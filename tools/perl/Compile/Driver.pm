@@ -214,6 +214,14 @@ sub main
 	
 	my $configuration = Compile::Driver::Configuration::->new( Compile::Driver::Options::specs );
 	
+	if ( $configuration->{ mac }  &&  $configuration->{ arch } eq "ppc" )
+	{
+		# Developer Tools 5247 (Xcode 2.2) complains if this is not set,
+		# because it defaults to the 10.1 SDK, which has no weak linking.
+		
+		$ENV{ MACOSX_DEPLOYMENT_TARGET } ||= "10.2";
+	}
+	
 	foreach my $name ( @args )
 	{
 		my $module = $configuration->get_module( $name, "[mandatory]" );
