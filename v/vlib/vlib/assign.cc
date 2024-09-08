@@ -91,6 +91,11 @@ namespace vlib
 		{
 			if ( const typing* typ = methods->type )
 			{
+				if ( constructor construct = typ->construct )
+				{
+					return construct( type, v );
+				}
+				
 				if ( typechecker typecheck = typ->typecheck )
 				{
 					return typecheck( type, v ) ? v : NIL;
