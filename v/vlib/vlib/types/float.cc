@@ -61,12 +61,18 @@ Float::Float( float_type f )
 	pod_cast< float_type >() = f;
 }
 
-Value Float::coerce( const Value& v )
+static
+Value assign_to_float( const Value& v )
 {
 	if ( Float::test( v ) )
 	{
 		return v;
 	}
+	
+	/*
+		Allow integers and fractions to be assigned to
+		`float` variables and parameters implicitly.
+	*/
 	
 	if ( const Integer* i = v.is< Integer >() )
 	{
@@ -79,6 +85,16 @@ Value Float::coerce( const Value& v )
 		const float_type denom = to_float( v.expr()->right.number() );
 		
 		return Float( numer / denom );
+	}
+	
+	return Value_NIL;
+}
+
+Value Float::coerce( const Value& v )
+{
+	if ( Value assigned = assign_to_float( v ) )
+	{
+		return assigned;
 	}
 	
 	switch ( v.type() )
@@ -296,7 +312,7 @@ const dispatch float_dispatch =
 const type_info float_vtype =
 {
 	"float",
-	&assign_to< Float >,
+	&assign_to_float,
 	&Float::coerce,
 	0,
 	0,
