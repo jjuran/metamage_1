@@ -36,6 +36,8 @@
 #include "vlib/types/record.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
+#include "vlib/types/endec/f32.hh"
+#include "vlib/types/endec/f64.hh"
 #include "vlib/types/endec/mb32.hh"
 #include "vlib/types/integer/stdint.hh"
 #include "vlib/types/struct/metatype.hh"
@@ -99,6 +101,8 @@ namespace vlib
 		define_keyword( "mb32",     mb32_type()    );
 		define_keyword( "byte",     byte_type()    );
 		define_keyword( "float",    float_vtype    );
+		define_keyword( "f64",      f64_type()     );
+		define_keyword( "f32",      f32_type()     );
 		define_keyword( "i64",      i64_type()     );
 		define_keyword( "u64",      u64_type()     );
 		define_keyword( "i32",      i32_type()     );
