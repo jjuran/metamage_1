@@ -88,6 +88,7 @@ static const typing type =
 {
 	&typecheck,
 	NULL,
+	NULL,
 	Type_pure,
 };
 

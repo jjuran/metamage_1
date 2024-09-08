@@ -516,6 +516,7 @@ Value transform( const Value& type, const Value& v )
 static const typing type =
 {
 	&typecheck,
+	NULL,
 	&transform,
 	Type_pure,
 };

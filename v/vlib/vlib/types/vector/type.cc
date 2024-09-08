@@ -213,6 +213,7 @@ namespace vlib
 	static const typing type =
 	{
 		&typecheck,
+		NULL,
 		&transform,
 		Type_pure,
 	};

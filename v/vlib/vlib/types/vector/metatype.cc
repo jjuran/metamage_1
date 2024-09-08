@@ -88,6 +88,7 @@ namespace vlib
 	{
 		&typecheck,
 		NULL,
+		NULL,
 		Type_pure,
 	};
 	
