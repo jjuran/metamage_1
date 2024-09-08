@@ -169,6 +169,14 @@ namespace vlib
 	}
 	
 	static
+	Value construct( const Value& t, const Value& v )
+	{
+		const Field& type = (const Field&) t;
+		
+		return type.base_type().assign( v );
+	}
+	
+	static
 	Value transform( const Value& t, const Value& v )
 	{
 		const Field& type = (const Field&) t;
@@ -179,7 +187,7 @@ namespace vlib
 	static const typing type =
 	{
 		&typecheck,
-		NULL,
+		&construct,
 		&transform,
 		Type_pure,
 	};
