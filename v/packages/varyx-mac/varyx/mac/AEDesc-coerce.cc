@@ -163,7 +163,7 @@ AEDesc coerce_to_AEDesc( const Value& v )
 		return desc;
 	}
 	
-	if ( v.is< Table >() )
+	if ( Table::test( v ) )
 	{
 		const Value& array = v.expr()->right;
 		
@@ -296,12 +296,12 @@ AEDesc coerce_to_AEDesc( const Value& v )
 		size = sizeof (float_type);
 	}
 	
-	if ( v.is< Fraction >() )
+	if ( Fraction::test( v ) )
 	{
 		return coerce_to_AEDesc( v.to< Float >() );
 	}
 	
-	if ( v.is< Null >() )
+	if ( Null::test( v ) )
 	{
 		type = typeNull;
 	}
