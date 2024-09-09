@@ -791,13 +791,13 @@ namespace posix
 		public:
 			static bool test( const Value& v )
 			{
-				return v.is< Unitary >()  &&  v.string() == "FIN";
+				return Unitary::test( v )  &&  v.string() == "FIN";
 			}
 	};
 	
 	void send_data( int fd, const Value& v )
 	{
-		if ( v.is< FIN >() )
+		if ( FIN::test( v ) )
 		{
 			int nok = shutdown( fd, SHUT_WR );
 			
