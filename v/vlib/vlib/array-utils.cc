@@ -94,7 +94,7 @@ namespace vlib
 				}
 				while ( next_item );
 			}
-			else if ( index.is< Range >() )
+			else if ( Range::test( index ) )
 			{
 				const unsigned a = subscript_integer( expr->left  );
 				const unsigned b = subscript_integer( expr->right );
@@ -132,7 +132,7 @@ namespace vlib
 				return sliced_subscript( array, index );
 			}
 			
-			if ( index.is< Range >() )
+			if ( Range::test( index ) )
 			{
 				if ( array.type() == V_str  ||  array.type() == V_pack )
 				{

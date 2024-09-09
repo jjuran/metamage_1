@@ -163,12 +163,12 @@ namespace vlib
 	{
 		if ( op == Op_function  ||  op == Op_named_unary )
 		{
-			if ( b.is< String >() )
+			if ( String::test( b ) )
 			{
 				return String( str( Value( a, b ) ) );
 			}
 			
-			if ( b.is< Packed >() )
+			if ( Packed::test( b ) )
 			{
 				return Packed( pack( Value( a, b ) ) );
 			}

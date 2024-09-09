@@ -77,7 +77,7 @@ namespace vlib
 	static
 	bool is_table( Expr* tx, const Value& v )
 	{
-		return v.is< Table >()  &&  equal( tx->left, v.expr()->left );
+		return Table::test( v )  &&  equal( tx->left, v.expr()->left );
 	}
 	
 	Value as_assigned( const Value& type, const Value& v )

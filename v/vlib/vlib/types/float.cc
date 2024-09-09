@@ -63,7 +63,7 @@ Float::Float( float_type f )
 
 Value Float::coerce( const Value& v )
 {
-	if ( v.is< Float >() )
+	if ( Float::test( v ) )
 	{
 		return v;
 	}

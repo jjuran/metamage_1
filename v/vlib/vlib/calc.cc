@@ -688,7 +688,7 @@ namespace vlib
 			
 			case Op_gamut:
 			case Op_delta:
-				if ( left.is< Byte >()  &&  right.is< Byte >() )
+				if ( Byte::test( left )  &&  Byte::test( right ) )
 				{
 					return ByteRange( left, op, right );
 				}
@@ -717,7 +717,7 @@ namespace vlib
 		
 		if ( op == Op_mapping )
 		{
-			if ( ! is_single( left )  ||  left.is< Null >() )
+			if ( ! is_single( left )  ||  Null::test( left ) )
 			{
 				THROW( "mapping keys must be singular and non-null" );
 			}
@@ -808,7 +808,7 @@ namespace vlib
 		
 		if ( op == Op_empower )
 		{
-			if ( is_functional( left )  &&  right.is< Integer >() )
+			if ( is_functional( left )  &&  Integer::test( right ) )
 			{
 				goto no_op;
 			}

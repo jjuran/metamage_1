@@ -55,7 +55,7 @@ namespace vlib
 		switch ( op )
 		{
 			case Op_typeof:
-				if ( v.is< Null >() )
+				if ( Null::test( v ) )
 				{
 					// null is its own type
 					return v;

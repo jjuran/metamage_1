@@ -330,7 +330,7 @@ namespace vlib
 			
 			list_builder results;
 			
-			if ( ! result.is< Pointer >() )
+			if ( ! Pointer::test( result ) )
 			{
 				results.append( result );
 			}
@@ -339,7 +339,7 @@ namespace vlib
 			{
 				if ( ! result )  return result;
 				
-				if ( ! result.is< Pointer >() )
+				if ( ! Pointer::test( result ) )
 				{
 					results.append( result );
 				}
@@ -381,7 +381,7 @@ namespace vlib
 				
 				if ( result  &&  ! is_empty_list( result ) )
 				{
-					if ( result.is< Pointer >() )
+					if ( Pointer::test( result ) )
 					{
 						result = substring( start, v );
 					}
@@ -411,7 +411,7 @@ namespace vlib
 						return result;
 					}
 					
-					if ( ! result.is< Pointer >() )
+					if ( ! Pointer::test( result ) )
 					{
 						results.append( result );
 					}

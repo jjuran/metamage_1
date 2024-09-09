@@ -44,7 +44,7 @@ namespace vlib
 				break;
 		}
 		
-		if ( container.is< ByteRange >() )
+		if ( ByteRange::test( container ) )
 		{
 			its_impl = new_iterator< byterange_iterator >( container );
 			return;

@@ -81,7 +81,7 @@ static const operators ops =
 static
 bool typecheck( const Value& type, const Value& v )
 {
-	return v.is< Struct >();
+	return Struct::test( v );
 }
 
 static const typing type =

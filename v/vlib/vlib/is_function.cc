@@ -14,7 +14,7 @@ namespace vlib
 	
 	bool is_function( const Value& v )
 	{
-		if ( v.is< Proc >() )
+		if ( Proc::test( v ) )
 		{
 			return true;
 		}

@@ -81,7 +81,7 @@ namespace vlib
 	static
 	bool typecheck( const Value& type, const Value& v )
 	{
-		return v.is< Vector >();
+		return Vector::test( v );
 	}
 	
 	static const typing type =

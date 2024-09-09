@@ -142,7 +142,7 @@ Endian::Endian( const Endianness& e, const Value& type )
 
 Value endianized( const Endianness& e, const Value& type )
 {
-	if ( type.is< Endian >() )
+	if ( Endian::test( type ) )
 	{
 		// The type is already endianized; pass it through.
 		return type;

@@ -41,7 +41,7 @@ namespace vlib
 		{
 			const Value& item = it.use();
 			
-			if ( ! item.is< Identifier >() )
+			if ( ! Identifier::test( item ) )
 			{
 				return false;
 			}

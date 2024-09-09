@@ -203,12 +203,12 @@ namespace vlib
 		const integer* numer;
 		const integer* denom;
 		
-		if ( b.is< Integer >() )
+		if ( Integer::test( b ) )
 		{
 			numer = &b.number();
 			denom = &integer_one;
 		}
-		else if ( b.is< Fraction >() )
+		else if ( Fraction::test( b ) )
 		{
 			numer = &b.expr()->left.number();
 			denom = &b.expr()->right.number();

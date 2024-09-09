@@ -201,7 +201,7 @@ namespace vlib
 		{
 			case Op_function:
 			case Op_named_unary:
-				return flatten( Value( a, b ), b.is< String >() ? b : a );
+				return flatten( Value( a, b ), String::test( b ) ? b : a );
 			
 			case Op_intersection:
 			case Op_exclusion:

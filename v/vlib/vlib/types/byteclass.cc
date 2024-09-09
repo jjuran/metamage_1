@@ -35,12 +35,12 @@ namespace vlib
 	
 	Value ByteClass::coerce( const Value& v )
 	{
-		if ( v.is< ByteClass >() )
+		if ( ByteClass::test( v ) )
 		{
 			return v;
 		}
 		
-		if ( v.is< ByteRange >() )
+		if ( ByteRange::test( v ) )
 		{
 			iota::byte_range br = v.as< ByteRange >().get();
 			

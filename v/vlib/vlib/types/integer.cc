@@ -200,13 +200,13 @@ namespace vlib
 	{
 		if ( op == Op_function  ||  op == Op_named_unary )
 		{
-			if ( b.is< String >() )
+			if ( String::test( b ) )
 			{
 				return String( str( Value( a, b ) ) );
 			}
 		}
 		
-		if ( b.is< Integer >() )
+		if ( Integer::test( b ) )
 		{
 			const bignum::integer& one = a.number();
 			const bignum::integer& two = b.number();
@@ -236,7 +236,7 @@ namespace vlib
 			return Integer( result );
 		}
 		
-		if ( b.is< Fraction >() )
+		if ( Fraction::test( b ) )
 		{
 			Fraction a_ = bignum::fraction( a.number() );
 			
