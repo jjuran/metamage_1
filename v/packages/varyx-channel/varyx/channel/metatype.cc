@@ -97,7 +97,7 @@ namespace channel
 	static
 	bool typecheck( const Value& type, const Value& v )
 	{
-		return v.is< Channel >();
+		return Channel::test( v );
 	}
 	
 	static const typing type =
