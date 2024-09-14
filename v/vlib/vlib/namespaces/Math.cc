@@ -7,6 +7,7 @@
 
 // vlib
 #include "vlib/functions.hh"
+#include "vlib/lib/math.hh"
 #include "vlib/namespace_info.hh"
 #include "vlib/reduce.hh"
 #include "vlib/throw.hh"
@@ -31,6 +32,7 @@ namespace vlib
 		&proc_max,
 		&proc_min,
 		&proc_product,
+		&proc_sincospi,
 		&proc_sum,
 	};
 	
