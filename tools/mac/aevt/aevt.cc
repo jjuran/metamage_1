@@ -12,10 +12,18 @@
 #ifndef  __AEHELPERS__
 #include <AEHelpers.h>
 #endif
+#if CALL_NOT_IN_CARBON
+#ifndef __APPLETALK__
+#include <AppleTalk.h>
+#endif
+#endif
 
 // Standard C
 #include <stdlib.h>
 #include <string.h>
+
+// more-libc
+#include "more/string.h"
 
 // iota
 #include "iota/strings.hh"
@@ -43,7 +51,6 @@
 #if CALL_NOT_IN_CARBON
 
 // ClassicToolbox
-#include "ClassicToolbox/AppleTalk.hh"
 #include "ClassicToolbox/EPPC.hh"
 #include "ClassicToolbox/PPCToolbox.hh"
 
@@ -193,9 +200,54 @@ namespace tool
 	{
 		PPCPortRec name = n::make< PPCPortRec >( N::Str32( appName ), "\p=" );
 		
-		LocationNameRec location = machine != NULL ? n::make< LocationNameRec >( n::make< EntityName >( N::Str32( machine ), "\pPPCToolbox" ) )
-		                         : host    != NULL ? n::make< LocationNameRec >( n::make< PPCAddrRec >( n::make< PPCXTIAddress >( host ) ) )
-		                                           : n::make< LocationNameRec >();
+		LocationNameRec location;
+		
+		if ( machine )
+		{
+			N::Str32 name = machine;
+			
+			const Byte* type = "\p" "PPCToolbox";
+			const Byte* zone = "\p" "*";
+			
+			NBPSetEntity( (Ptr) &location.u.nbpEntity, name, type, zone );
+			
+			location.locationKindSelector = ppcNBPLocation;
+		}
+		else if ( host )
+		{
+			size_t len = strlen( host );
+			
+			if ( len > kMaxPPCXTIAddress )
+			{
+				// FIXME:  Should throw or something
+				
+				len = kMaxPPCXTIAddress;
+			}
+			
+			PPCXTIAddress& xtiAddr = location.u.xtiType.xtiAddr;
+			
+			xtiAddr.fAddressType = kDNSAddrType;
+			
+			char* p = (char*) mempcpy( xtiAddr.fAddress, host, len );
+			
+			*p = '\0';
+			
+			size_t size = len + 1 + sizeof (PPCXTIAddressType);
+			
+			/*
+				There are three reserved bytes that must be set to zero,
+				followed by a byte-wide xtiAddrLen.  We populate all
+				four bytes in one go.
+			*/
+			
+			*(UInt32*) location.u.xtiType.Reserved = size;
+			
+			location.locationKindSelector = ppcXTIAddrLocation;
+		}
+		else
+		{
+			location.locationKindSelector = ppcNoLocation;
+		}
 		
 		return n::make< TargetID >( N::IPCListPortsSync( name, location ).name, location );
 	}
