@@ -200,6 +200,8 @@ namespace tool
 	                              const char*  machine,
 	                              const char*  host )
 	{
+		OSErr err;
+		
 		PPCPortRec port;
 		
 		port.nameScript = smSystemScript;  // FIXME
@@ -258,7 +260,21 @@ namespace tool
 			location.locationKindSelector = ppcNoLocation;
 		}
 		
-		return n::make< TargetID >( N::IPCListPortsSync( port, location ).name, location );
+		PortInfoRec portInfo;
+		
+		IPCListPortsPBRec pb;
+		
+		pb.startIndex   = 0;
+		pb.requestCount = 1;
+		pb.portName     = &port;
+		pb.locationName = &location;
+		pb.bufferPtr    = &portInfo;
+		
+		err = IPCListPortsSync( &pb );
+		
+		Mac::ThrowOSStatus( err );
+		
+		return n::make< TargetID >( portInfo.name, location );
 	}
 	
 #endif
