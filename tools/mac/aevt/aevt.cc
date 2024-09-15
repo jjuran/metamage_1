@@ -16,6 +16,9 @@
 #ifndef __APPLETALK__
 #include <AppleTalk.h>
 #endif
+#ifndef __PPCTOOLBOX__
+#include <PPCToolbox.h>
+#endif
 #endif
 
 // Standard C
@@ -52,7 +55,6 @@
 
 // ClassicToolbox
 #include "ClassicToolbox/EPPC.hh"
-#include "ClassicToolbox/PPCToolbox.hh"
 
 #endif
 
@@ -198,7 +200,14 @@ namespace tool
 	                              const char*  machine,
 	                              const char*  host )
 	{
-		PPCPortRec name = n::make< PPCPortRec >( N::Str32( appName ), "\p=" );
+		PPCPortRec port;
+		
+		port.nameScript = smSystemScript;  // FIXME
+		
+		N::CopyToPascalString( N::Str32( appName ), port.name,          32 );
+		N::CopyToPascalString( "\p=",               port.u.portTypeStr, 32 );
+		
+		port.portKindSelector = ppcByString;
 		
 		LocationNameRec location;
 		
@@ -249,7 +258,7 @@ namespace tool
 			location.locationKindSelector = ppcNoLocation;
 		}
 		
-		return n::make< TargetID >( N::IPCListPortsSync( name, location ).name, location );
+		return n::make< TargetID >( N::IPCListPortsSync( port, location ).name, location );
 	}
 	
 #endif
