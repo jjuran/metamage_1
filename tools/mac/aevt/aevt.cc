@@ -16,6 +16,9 @@
 #ifndef __APPLETALK__
 #include <AppleTalk.h>
 #endif
+#ifndef __EPPC__
+#include <EPPC.h>
+#endif
 #ifndef __PPCTOOLBOX__
 #include <PPCToolbox.h>
 #endif
@@ -50,13 +53,6 @@
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/Str.hh"
-
-#if CALL_NOT_IN_CARBON
-
-// ClassicToolbox
-#include "ClassicToolbox/EPPC.hh"
-
-#endif
 
 // Orion
 #include "Orion/Main.hh"
@@ -274,7 +270,13 @@ namespace tool
 		
 		Mac::ThrowOSStatus( err );
 		
-		return n::make< TargetID >( portInfo.name, location );
+		TargetID target;
+		
+		target.sessionID = 0;
+		target.name      = portInfo.name;
+		target.location  = location;
+		
+		return target;
 	}
 	
 #endif
