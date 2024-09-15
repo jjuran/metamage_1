@@ -227,7 +227,7 @@ my %fsmap =
 				location mac-id macbin mnam qdscreencap ram-disks
 				rom-checksum rominfo
 				screenBits serial-ports sound-info system-info
-				thds units vcbs ),
+				thds trap-info units vcbs ),
 			# Mac-specific scripts
 			qw( gestalt ),
 			# Perl scripts
