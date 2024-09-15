@@ -9,11 +9,6 @@
 #endif
 
 // Mac OS
-#ifndef __APPLE__
-#ifndef __DEVICES__
-#include <Devices.h>
-#endif
-#endif
 #ifndef __EVENTS__
 #include <Events.h>
 #endif
@@ -64,8 +59,6 @@
 #include "Mac/Toolbox/Types/OSStatus.hh"
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
-#include "Nitrogen/Str.hh"
-
 // poseven
 #include "poseven/functions/open.hh"
 #include "poseven/functions/openat.hh"
@@ -75,11 +68,6 @@
 
 // pfiles
 #include "pfiles/common.hh"
-
-// Nitrogen Extras / ClassicToolbox
-#if !TARGET_API_MAC_CARBON
-#include "ClassicToolbox/AppleTalk.hh"
-#endif
 
 // OSErrno
 #include "OSErrno/OSErrno.hh"
@@ -96,7 +84,6 @@
 #include "Orion/Main.hh"
 
 
-namespace N = Nitrogen;
 namespace n = nucleus;
 namespace p7 = poseven;
 
@@ -290,114 +277,6 @@ static int TestVectoria( int argc, char** argv )
 	
 	printf( "%s\n%s\n", PrintableValue( V::IdentityMatrix::Make< int, 1 >() ).c_str(),
 	                    PrintableValue( V::IdentityMatrix::Make< int, 2 >() ).c_str() );
-	
-	return 0;
-}
-
-
-#if !TARGET_API_MAC_CARBON
-
-namespace Test {
-	
-	struct LookupFailed  {};
-	
-	static AddrBlock LookupName(EntityName& entityName)
-	{
-		NBPparms pb;
-		char buf[104];
-		
-		pb.ioCompletion = NULL;
-		pb.csCode = lookupName;
-		pb.interval = 7;
-		pb.count = 5;
-		pb.nbpPtrs.entityPtr = (char*)&entityName;
-		pb.parm.Lookup.retBuffPtr = buf;
-		pb.parm.Lookup.retBuffSize = 104;
-		pb.parm.Lookup.maxToGet = 1;
-		
-		OSErr err = ::PLookupNameSync((MPPPBPtr)&pb);
-		Mac::ThrowOSStatus(err);
-		if (pb.parm.Lookup.numGotten != 1)  throw LookupFailed();
-		
-		AddrBlock addr;
-		err = ::NBPExtract(buf, 1, 1, &entityName, &addr);
-		Mac::ThrowOSStatus(err);
-		
-		return addr;
-	}
-	
-	static AddrBlock LookupName(const EntityName& entityName)
-	{
-		EntityName result = entityName;
-		return LookupName(result);
-	}
-	
-	static const unsigned char* ASPGetStatus(AddrBlock addr)
-	{
-		short refNum;
-		OSErr err = ::OpenDriver("\p.XPP", &refNum);
-		Mac::ThrowOSStatus(err);
-		
-		ASPOpenPrm pbASP;
-		XPPPrmBlk& pbXPP = (XPPPrmBlk&)pbASP;
-		//char scb[scbMemSize];
-		pbASP.ioCompletion = NULL;
-		pbASP.ioRefNum = refNum;
-		pbASP.csCode = getStatus;
-		pbASP.aspTimeout = 7;
-		pbASP.aspRetry = 5;
-		pbASP.serverAddr = addr;
-		
-		static char status[512];
-		pbXPP.rbSize = 512;
-		pbXPP.rbPtr = status;
-		
-		err = ::ASPGetStatus((XPPParmBlkPtr)&pbASP, false);
-		Mac::ThrowOSStatus(err);
-		
-		return reinterpret_cast<const unsigned char*>(status);
-	}
-	
-}
-
-static bool TestAFPServer( const unsigned char* serverName )
-{
-	const Byte* status = Test::ASPGetStatus( Test::LookupName( N::NBPSetEntity( serverName,
-	                                                                            "\pAFPServer" ) ) );
-	
-	return status[ 9 ] == 0xFB;
-	//if (status[9] == -5)  return true;
-}
-
-static bool TestAFPServer( const char* serverName )
-{
-	return TestAFPServer( N::Str255( serverName ) );
-}
-
-#endif  // #if !TARGET_API_MAC_CARBON
-
-static int TestAFP( int argc, char** argv )
-{
-	const char* server = argv[ 2 ];
-	
-#if !TARGET_API_MAC_CARBON
-	
-	bool isRunningOSX = TestAFPServer( server );
-	
-	const char* supports = isRunningOSX ? "does not support"
-	                                    : "supports";
-	
-	plus::var_string message;
-	
-	message += "Server '";
-	message += server;
-	message += "' ";
-	message += supports;
-	message += " AppleTalk.\n";
-	
-	p7::write( p7::stdout_fileno, message );
-	
-#endif
 	
 	return 0;
 }
@@ -885,13 +764,6 @@ struct command_t
 static const command_t global_commands[] =
 {
 	{ "OADC",      TestOADC       },
-	
-#if !TARGET_API_MAC_CARBON
-	
-	{ "afp",       TestAFP        },
-	
-#endif
-	
 	{ "assert",    TestAssert     },
 	{ "crc16",     TestCRC16      },
 	{ "forkstop",  TestForkAndStop },
