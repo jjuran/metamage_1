@@ -117,7 +117,7 @@ void microseconds( unsigned long long* count )
 		
 		const uint32_t tick_chronofragments = 65536 * trillion / 60147420;
 		
-		*count = long_multiply( Ticks, tick_chronofragments );
+		long_multiply( count, Ticks, tick_chronofragments );
 		
 		div_65536_ULL( count );
 		
