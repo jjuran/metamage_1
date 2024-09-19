@@ -63,16 +63,19 @@
 #include "vfs/primitives/attach.hh"
 
 // relix
+#include "relix/api/getcwd.hh"
 #include "relix/api/root.hh"
 #include "relix/api/try_again.hh"
 #include "relix/fs/con_group.hh"
 #include "relix/signal/signal_process_group.hh"
 
 // Genie
+#include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/TabCompletion.hh"
 
 
 namespace Genie
@@ -195,6 +198,75 @@ namespace Genie
 		relix::signal_process_group( signo, pgid );
 	}
 	
+	static inline
+	bool failed( TabCompletion tc )
+	{
+		return tc < 0;
+	}
+	
+	static inline
+	bool stuck( TabCompletion tc )
+	{
+		return tc == 0;
+	}
+	
+	static inline
+	bool done( TabCompletion tc )
+	{
+		return tc > 0;
+	}
+	
+	static
+	vfs::node_ptr get_terminal_cwd_dir( vfs::filehandle* terminal )
+	{
+		if ( terminal )
+		{
+			const pid_t pgid = getpgrp( *terminal );
+			
+			if ( Process* proc = lookup_process( pgid ) )
+			{
+				if ( proc->GetPGID() == pgid )
+				{
+					return getcwd( proc->get_process() );
+				}
+			}
+		}
+		
+		return NULL;
+	}
+	
+	static
+	TabCompletion tab_complete( TextEdit& that )
+	{
+		typedef const vfs::node* Key;
+		
+		const Key key = that.GetKey();
+		
+		TextEditParameters& params = TextEditParameters::Get( key );
+		
+		ConsoleParameters& consoleParams = gConsoleParametersMap[ key ];
+		
+		size_t i = params.itsSelection.start;
+		size_t j = params.itsSelection.end;
+		size_t n = params.its_mac_text.size();
+		
+		if ( i == j  &&  i == n )
+		{
+			i = consoleParams.itsStartOfInput;
+			
+			vfs::filehandle* terminal = consoleParams.itsTerminal.get();
+			
+			if ( const vfs::node_ptr dir = get_terminal_cwd_dir( terminal ) )
+			{
+				plus::var_string& s = params.its_mac_text;
+				
+				return tab_complete( dir.get(), s, i, n );
+			}
+		}
+		
+		return TabCompletion_failed;
+	}
+	
 	static bool Try_Control_Character( TextEdit& that, const EventRecord& event )
 	{
 		const UInt32 kEitherControlKey = controlKey | rightControlKey;
@@ -262,7 +334,32 @@ namespace Genie
 		}
 		else if ( (event.modifiers & kPrimaryModifiers) == 0  &&  c == '\x09' )
 		{
-			mac::sys::beep();
+			TabCompletion tc = tab_complete( that );
+			
+			typedef const vfs::node* Key;
+			
+			const Key key = that.GetKey();
+			
+			TextEditParameters& params = TextEditParameters::Get( key );
+			
+			if ( ! failed( tc ) )
+			{
+				unsigned end = params.its_mac_text.size();
+				
+				params.itsSelection.start =
+				params.itsSelection.end   = end;
+				
+//				that.Select( end, end );
+				
+				params.itHasChangedAttributes = true;
+				
+				InvalidateWindowForView( key );
+			}
+			
+			if ( ! done( tc ) )
+			{
+				mac::sys::beep();
+			}
 			
 			return true;  // don't insert a Tab
 		}
