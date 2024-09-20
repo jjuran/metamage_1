@@ -81,6 +81,9 @@ static wav_header header =
 
 static int recording_fd = -1;
 
+static bool live;               // Initial silence broken?
+static long length_of_silence;  // Byte size of most recent silence (if live)
+
 static inline
 void write_header()
 {
@@ -100,11 +103,61 @@ void start_recording( const char* path )
 	write_header();
 }
 
+static inline
+bool is_nonzero( const char* data, unsigned size )
+{
+	while ( size-- )
+	{
+		if ( *data++ != '\0' )
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+static inline
+bool is_live( const void* data, unsigned size )
+{
+	return is_nonzero( (const char*) data, size );
+}
+
 void append_to_recording( const void* data, unsigned size )
 {
-	if ( is_recording() )
+	/*
+		Note:  In this context, we're using "packet"
+		to mean a buffer's worth of audio frames.
+		
+		A "live" packet is one that doesn't consist entirely
+		of silence.  The recording generally is considered
+		"live" once a live packet has been received.
+		
+		We initially discard silent audio packets.  Once the
+		recording goes live, we record silence but track the
+		length of the current stretch of it.  At the end of
+		the recording, any trailing silence is truncated.
+		
+		Silent packets contain only zero bytes and don't need
+		to be byte-swapped.
+	*/
+	
+	bool live_packet;
+	
+	if ( is_recording()  &&  ((live_packet = is_live( data, size ))  ||  live) )
 	{
-		if ( ! iota::is_little_endian() )
+		if ( live_packet )
+		{
+			live = true;
+			
+			length_of_silence = 0;
+		}
+		else
+		{
+			length_of_silence += size;
+		}
+		
+		if ( ! iota::is_little_endian()  &&  live_packet )
 		{
 			uint16_t const* p = (uint16_t const*) data;
 			uint16_t      * q = (uint16_t      *) alloca( size );
@@ -129,6 +182,13 @@ void end_recording()
 {
 	if ( is_recording() )
 	{
+		if ( length_of_silence  &&  length_of_silence < header.dlen )
+		{
+			header.dlen -= length_of_silence;
+			
+			ftruncate( recording_fd, header.dlen );
+		}
+		
 		header.size = iota::little_u32( sizeof header + header.dlen );
 		header.dlen = iota::little_u32( header.dlen );
 		
