@@ -11,7 +11,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 11 * 3;
+static const unsigned n_tests = 11 * 3 + 1;
 
 template < class Int >
 void test_half( Int x )
@@ -70,6 +70,17 @@ void longword()
 	test_half( (long) -2147483647  );
 }
 
+static
+void div_65536()
+{
+	unsigned long long a = 0xfedcba9876543210;
+	unsigned long long b = a / 65536;
+	
+	math::fractions::div_65536_ULL( &a );
+	
+	EXPECT_EQ( a, b );
+}
+
 int main( int argc, char** argv )
 {
 	tap::start( "fractions", n_tests );
@@ -77,6 +88,8 @@ int main( int argc, char** argv )
 	byte();
 	word();
 	longword();
+	
+	div_65536();
 	
 	return 0;
 }
