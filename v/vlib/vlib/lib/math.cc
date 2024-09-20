@@ -8,6 +8,13 @@
 // Standard C
 #include <math.h>
 
+#ifndef M_PI
+	#ifndef __FP__
+	#include <fp.h>
+	#endif
+	#define M_PI  pi
+#endif
+
 // vlib
 #include "vlib/proc_info.hh"
 #include "vlib/types/float.hh"
