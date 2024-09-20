@@ -4,10 +4,10 @@
 
 #define CREATOR  'Poof'
 
-#define VERSION  "0.7.9-alpha.3"
+#define VERSION  "0.7.9-alpha.4"
 
 #define MAJOR  0
 #define MINOR  7
 #define POINT  9
 #define STAGE  alpha
-#define PATCH  3
+#define PATCH  4
