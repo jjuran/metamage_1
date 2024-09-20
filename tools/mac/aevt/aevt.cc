@@ -228,6 +228,12 @@ namespace tool
 		return n::owned< Mac::AEAddressDesc >();
 	}
 	
+	static inline
+	void AESend( const Mac::AppleEvent& event )
+	{
+		N::AESend( event, Mac::kAENoReply | Mac::kAECanInteract );
+	}
+	
 	int Main( int argc, char** argv )
 	{
 		char *const *args = get_options( argv );
@@ -280,12 +286,11 @@ namespace tool
 		Mac::AEEventClass eventClass = decode_quad< Mac::AEEventClass >( argEventClass );
 		Mac::AEEventID    eventID    = decode_quad< Mac::AEEventID    >( argEventID    );
 		
-		N::AESend( BuildAppleEvent( eventClass,
-		                            eventID,
-		                            SelectAddress( front, sigCode, app, machine, host, url ),
-		                            argBuild,
-		                            NULL ),
-		           Mac::kAENoReply | Mac::kAECanInteract );
+		AESend( BuildAppleEvent( eventClass,
+		                         eventID,
+		                         SelectAddress( front, sigCode, app, machine, host, url ),
+		                         argBuild,
+		                         NULL ) );
 		
 		return 0;
 	}
