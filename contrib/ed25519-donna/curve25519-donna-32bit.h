@@ -123,99 +123,99 @@ curve25519_neg(bignum25519 out, const bignum25519 a) {
 #define curve25519_mul_noinline curve25519_mul
 static void
 curve25519_mul(bignum25519 out, const bignum25519 a, const bignum25519 b) {
-	uint32_t r0,r1,r2,r3,r4,r5,r6,r7,r8,r9;
-	uint32_t s0,s1,s2,s3,s4,s5,s6,s7,s8,s9;
-	uint64_t m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,c;
+	uint32_t r[ 10 ];
+	uint32_t s[ 10 ];
+	uint64_t m[ 10 ], c;
 	uint32_t p;
 
-	r0 = b[0];
-	r1 = b[1];
-	r2 = b[2];
-	r3 = b[3];
-	r4 = b[4];
-	r5 = b[5];
-	r6 = b[6];
-	r7 = b[7];
-	r8 = b[8];
-	r9 = b[9];
+	r[0] = b[0];
+	r[1] = b[1];
+	r[2] = b[2];
+	r[3] = b[3];
+	r[4] = b[4];
+	r[5] = b[5];
+	r[6] = b[6];
+	r[7] = b[7];
+	r[8] = b[8];
+	r[9] = b[9];
 
-	s0 = a[0];
-	s1 = a[1];
-	s2 = a[2];
-	s3 = a[3];
-	s4 = a[4];
-	s5 = a[5];
-	s6 = a[6];
-	s7 = a[7];
-	s8 = a[8];
-	s9 = a[9];
+	s[0] = a[0];
+	s[1] = a[1];
+	s[2] = a[2];
+	s[3] = a[3];
+	s[4] = a[4];
+	s[5] = a[5];
+	s[6] = a[6];
+	s[7] = a[7];
+	s[8] = a[8];
+	s[9] = a[9];
 
-	m1 = mul32x32_64(r0, s1) + mul32x32_64(r1, s0);
-	m3 = mul32x32_64(r0, s3) + mul32x32_64(r1, s2) + mul32x32_64(r2, s1) + mul32x32_64(r3, s0);
-	m5 = mul32x32_64(r0, s5) + mul32x32_64(r1, s4) + mul32x32_64(r2, s3) + mul32x32_64(r3, s2) + mul32x32_64(r4, s1) + mul32x32_64(r5, s0);
-	m7 = mul32x32_64(r0, s7) + mul32x32_64(r1, s6) + mul32x32_64(r2, s5) + mul32x32_64(r3, s4) + mul32x32_64(r4, s3) + mul32x32_64(r5, s2) + mul32x32_64(r6, s1) + mul32x32_64(r7, s0);
-	m9 = mul32x32_64(r0, s9) + mul32x32_64(r1, s8) + mul32x32_64(r2, s7) + mul32x32_64(r3, s6) + mul32x32_64(r4, s5) + mul32x32_64(r5, s4) + mul32x32_64(r6, s3) + mul32x32_64(r7, s2) + mul32x32_64(r8, s1) + mul32x32_64(r9, s0);
+	m[1] = mul32x32_64(r[0], s[1]) + mul32x32_64(r[1], s[0]);
+	m[3] = mul32x32_64(r[0], s[3]) + mul32x32_64(r[1], s[2]) + mul32x32_64(r[2], s[1]) + mul32x32_64(r[3], s[0]);
+	m[5] = mul32x32_64(r[0], s[5]) + mul32x32_64(r[1], s[4]) + mul32x32_64(r[2], s[3]) + mul32x32_64(r[3], s[2]) + mul32x32_64(r[4], s[1]) + mul32x32_64(r[5], s[0]);
+	m[7] = mul32x32_64(r[0], s[7]) + mul32x32_64(r[1], s[6]) + mul32x32_64(r[2], s[5]) + mul32x32_64(r[3], s[4]) + mul32x32_64(r[4], s[3]) + mul32x32_64(r[5], s[2]) + mul32x32_64(r[6], s[1]) + mul32x32_64(r[7], s[0]);
+	m[9] = mul32x32_64(r[0], s[9]) + mul32x32_64(r[1], s[8]) + mul32x32_64(r[2], s[7]) + mul32x32_64(r[3], s[6]) + mul32x32_64(r[4], s[5]) + mul32x32_64(r[5], s[4]) + mul32x32_64(r[6], s[3]) + mul32x32_64(r[7], s[2]) + mul32x32_64(r[8], s[1]) + mul32x32_64(r[9], s[0]);
 
-	r1 *= 2;
-	r3 *= 2;
-	r5 *= 2;
-	r7 *= 2;
+	r[1] *= 2;
+	r[3] *= 2;
+	r[5] *= 2;
+	r[7] *= 2;
 
-	m0 = mul32x32_64(r0, s0);
-	m2 = mul32x32_64(r0, s2) + mul32x32_64(r1, s1) + mul32x32_64(r2, s0);
-	m4 = mul32x32_64(r0, s4) + mul32x32_64(r1, s3) + mul32x32_64(r2, s2) + mul32x32_64(r3, s1) + mul32x32_64(r4, s0);
-	m6 = mul32x32_64(r0, s6) + mul32x32_64(r1, s5) + mul32x32_64(r2, s4) + mul32x32_64(r3, s3) + mul32x32_64(r4, s2) + mul32x32_64(r5, s1) + mul32x32_64(r6, s0);
-	m8 = mul32x32_64(r0, s8) + mul32x32_64(r1, s7) + mul32x32_64(r2, s6) + mul32x32_64(r3, s5) + mul32x32_64(r4, s4) + mul32x32_64(r5, s3) + mul32x32_64(r6, s2) + mul32x32_64(r7, s1) + mul32x32_64(r8, s0);
+	m[0] = mul32x32_64(r[0], s[0]);
+	m[2] = mul32x32_64(r[0], s[2]) + mul32x32_64(r[1], s[1]) + mul32x32_64(r[2], s[0]);
+	m[4] = mul32x32_64(r[0], s[4]) + mul32x32_64(r[1], s[3]) + mul32x32_64(r[2], s[2]) + mul32x32_64(r[3], s[1]) + mul32x32_64(r[4], s[0]);
+	m[6] = mul32x32_64(r[0], s[6]) + mul32x32_64(r[1], s[5]) + mul32x32_64(r[2], s[4]) + mul32x32_64(r[3], s[3]) + mul32x32_64(r[4], s[2]) + mul32x32_64(r[5], s[1]) + mul32x32_64(r[6], s[0]);
+	m[8] = mul32x32_64(r[0], s[8]) + mul32x32_64(r[1], s[7]) + mul32x32_64(r[2], s[6]) + mul32x32_64(r[3], s[5]) + mul32x32_64(r[4], s[4]) + mul32x32_64(r[5], s[3]) + mul32x32_64(r[6], s[2]) + mul32x32_64(r[7], s[1]) + mul32x32_64(r[8], s[0]);
 
-	r1 *= 19;
-	r2 *= 19;
-	r3 = (r3 / 2) * 19;
-	r4 *= 19;
-	r5 = (r5 / 2) * 19;
-	r6 *= 19;
-	r7 = (r7 / 2) * 19;
-	r8 *= 19;
-	r9 *= 19;
+	r[1] *= 19;
+	r[2] *= 19;
+	r[3] = (r[3] / 2) * 19;
+	r[4] *= 19;
+	r[5] = (r[5] / 2) * 19;
+	r[6] *= 19;
+	r[7] = (r[7] / 2) * 19;
+	r[8] *= 19;
+	r[9] *= 19;
 
-	m1 += (mul32x32_64(r9, s2) + mul32x32_64(r8, s3) + mul32x32_64(r7, s4) + mul32x32_64(r6, s5) + mul32x32_64(r5, s6) + mul32x32_64(r4, s7) + mul32x32_64(r3, s8) + mul32x32_64(r2, s9));
-	m3 += (mul32x32_64(r9, s4) + mul32x32_64(r8, s5) + mul32x32_64(r7, s6) + mul32x32_64(r6, s7) + mul32x32_64(r5, s8) + mul32x32_64(r4, s9));
-	m5 += (mul32x32_64(r9, s6) + mul32x32_64(r8, s7) + mul32x32_64(r7, s8) + mul32x32_64(r6, s9));
-	m7 += (mul32x32_64(r9, s8) + mul32x32_64(r8, s9));
+	m[1] += (mul32x32_64(r[9], s[2]) + mul32x32_64(r[8], s[3]) + mul32x32_64(r[7], s[4]) + mul32x32_64(r[6], s[5]) + mul32x32_64(r[5], s[6]) + mul32x32_64(r[4], s[7]) + mul32x32_64(r[3], s[8]) + mul32x32_64(r[2], s[9]));
+	m[3] += (mul32x32_64(r[9], s[4]) + mul32x32_64(r[8], s[5]) + mul32x32_64(r[7], s[6]) + mul32x32_64(r[6], s[7]) + mul32x32_64(r[5], s[8]) + mul32x32_64(r[4], s[9]));
+	m[5] += (mul32x32_64(r[9], s[6]) + mul32x32_64(r[8], s[7]) + mul32x32_64(r[7], s[8]) + mul32x32_64(r[6], s[9]));
+	m[7] += (mul32x32_64(r[9], s[8]) + mul32x32_64(r[8], s[9]));
 
-	r3 *= 2;
-	r5 *= 2;
-	r7 *= 2;
-	r9 *= 2;
+	r[3] *= 2;
+	r[5] *= 2;
+	r[7] *= 2;
+	r[9] *= 2;
 
-	m0 += (mul32x32_64(r9, s1) + mul32x32_64(r8, s2) + mul32x32_64(r7, s3) + mul32x32_64(r6, s4) + mul32x32_64(r5, s5) + mul32x32_64(r4, s6) + mul32x32_64(r3, s7) + mul32x32_64(r2, s8) + mul32x32_64(r1, s9));
-	m2 += (mul32x32_64(r9, s3) + mul32x32_64(r8, s4) + mul32x32_64(r7, s5) + mul32x32_64(r6, s6) + mul32x32_64(r5, s7) + mul32x32_64(r4, s8) + mul32x32_64(r3, s9));
-	m4 += (mul32x32_64(r9, s5) + mul32x32_64(r8, s6) + mul32x32_64(r7, s7) + mul32x32_64(r6, s8) + mul32x32_64(r5, s9));
-	m6 += (mul32x32_64(r9, s7) + mul32x32_64(r8, s8) + mul32x32_64(r7, s9));
-	m8 += (mul32x32_64(r9, s9));
+	m[0] += (mul32x32_64(r[9], s[1]) + mul32x32_64(r[8], s[2]) + mul32x32_64(r[7], s[3]) + mul32x32_64(r[6], s[4]) + mul32x32_64(r[5], s[5]) + mul32x32_64(r[4], s[6]) + mul32x32_64(r[3], s[7]) + mul32x32_64(r[2], s[8]) + mul32x32_64(r[1], s[9]));
+	m[2] += (mul32x32_64(r[9], s[3]) + mul32x32_64(r[8], s[4]) + mul32x32_64(r[7], s[5]) + mul32x32_64(r[6], s[6]) + mul32x32_64(r[5], s[7]) + mul32x32_64(r[4], s[8]) + mul32x32_64(r[3], s[9]));
+	m[4] += (mul32x32_64(r[9], s[5]) + mul32x32_64(r[8], s[6]) + mul32x32_64(r[7], s[7]) + mul32x32_64(r[6], s[8]) + mul32x32_64(r[5], s[9]));
+	m[6] += (mul32x32_64(r[9], s[7]) + mul32x32_64(r[8], s[8]) + mul32x32_64(r[7], s[9]));
+	m[8] += (mul32x32_64(r[9], s[9]));
 
-	                             r0 = (uint32_t)m0 & reduce_mask_26; c = (m0 >> 26);
-	m1 += c;                     r1 = (uint32_t)m1 & reduce_mask_25; c = (m1 >> 25);
-	m2 += c;                     r2 = (uint32_t)m2 & reduce_mask_26; c = (m2 >> 26);
-	m3 += c;                     r3 = (uint32_t)m3 & reduce_mask_25; c = (m3 >> 25);
-	m4 += c;                     r4 = (uint32_t)m4 & reduce_mask_26; c = (m4 >> 26);
-	m5 += c;                     r5 = (uint32_t)m5 & reduce_mask_25; c = (m5 >> 25);
-	m6 += c;                     r6 = (uint32_t)m6 & reduce_mask_26; c = (m6 >> 26);
-	m7 += c;                     r7 = (uint32_t)m7 & reduce_mask_25; c = (m7 >> 25);
-	m8 += c;                     r8 = (uint32_t)m8 & reduce_mask_26; c = (m8 >> 26);
-	m9 += c;                     r9 = (uint32_t)m9 & reduce_mask_25; p = (uint32_t)(m9 >> 25);
-	m0 = r0 + mul32x32_64(p,19); r0 = (uint32_t)m0 & reduce_mask_26; p = (uint32_t)(m0 >> 26);
-	r1 += p;
+	                                 r[0] = (uint32_t)m[0] & reduce_mask_26; c = (m[0] >> 26);
+	m[1] += c;                       r[1] = (uint32_t)m[1] & reduce_mask_25; c = (m[1] >> 25);
+	m[2] += c;                       r[2] = (uint32_t)m[2] & reduce_mask_26; c = (m[2] >> 26);
+	m[3] += c;                       r[3] = (uint32_t)m[3] & reduce_mask_25; c = (m[3] >> 25);
+	m[4] += c;                       r[4] = (uint32_t)m[4] & reduce_mask_26; c = (m[4] >> 26);
+	m[5] += c;                       r[5] = (uint32_t)m[5] & reduce_mask_25; c = (m[5] >> 25);
+	m[6] += c;                       r[6] = (uint32_t)m[6] & reduce_mask_26; c = (m[6] >> 26);
+	m[7] += c;                       r[7] = (uint32_t)m[7] & reduce_mask_25; c = (m[7] >> 25);
+	m[8] += c;                       r[8] = (uint32_t)m[8] & reduce_mask_26; c = (m[8] >> 26);
+	m[9] += c;                       r[9] = (uint32_t)m[9] & reduce_mask_25; p = (uint32_t)(m[9] >> 25);
+	m[0] = r[0] + mul32x32_64(p,19); r[0] = (uint32_t)m[0] & reduce_mask_26; p = (uint32_t)(m[0] >> 26);
+	r[1] += p;
 
-	out[0] = r0;
-	out[1] = r1;
-	out[2] = r2;
-	out[3] = r3;
-	out[4] = r4;
-	out[5] = r5;
-	out[6] = r6;
-	out[7] = r7;
-	out[8] = r8;
-	out[9] = r9;
+	out[0] = r[0];
+	out[1] = r[1];
+	out[2] = r[2];
+	out[3] = r[3];
+	out[4] = r[4];
+	out[5] = r[5];
+	out[6] = r[6];
+	out[7] = r[7];
+	out[8] = r[8];
+	out[9] = r[9];
 }
 
 /* out = in*in */
