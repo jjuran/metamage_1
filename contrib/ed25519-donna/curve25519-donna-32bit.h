@@ -127,6 +127,7 @@ curve25519_mul(bignum25519 out, const bignum25519 a, const bignum25519 b) {
 	uint32_t s[ 10 ];
 	uint64_t m[ 10 ], c;
 	uint32_t p;
+	int i, j;
 
 	r[0] = b[0];
 	r[1] = b[1];
@@ -150,12 +151,16 @@ curve25519_mul(bignum25519 out, const bignum25519 a, const bignum25519 b) {
 	s[8] = a[8];
 	s[9] = a[9];
 
-	m[1] = mul32x32_64(r[0], s[1]) + mul32x32_64(r[1], s[0]);
-	m[3] = mul32x32_64(r[0], s[3]) + mul32x32_64(r[1], s[2]) + mul32x32_64(r[2], s[1]) + mul32x32_64(r[3], s[0]);
-	m[5] = mul32x32_64(r[0], s[5]) + mul32x32_64(r[1], s[4]) + mul32x32_64(r[2], s[3]) + mul32x32_64(r[3], s[2]) + mul32x32_64(r[4], s[1]) + mul32x32_64(r[5], s[0]);
-	m[7] = mul32x32_64(r[0], s[7]) + mul32x32_64(r[1], s[6]) + mul32x32_64(r[2], s[5]) + mul32x32_64(r[3], s[4]) + mul32x32_64(r[4], s[3]) + mul32x32_64(r[5], s[2]) + mul32x32_64(r[6], s[1]) + mul32x32_64(r[7], s[0]);
-	m[9] = mul32x32_64(r[0], s[9]) + mul32x32_64(r[1], s[8]) + mul32x32_64(r[2], s[7]) + mul32x32_64(r[3], s[6]) + mul32x32_64(r[4], s[5]) + mul32x32_64(r[5], s[4]) + mul32x32_64(r[6], s[3]) + mul32x32_64(r[7], s[2]) + mul32x32_64(r[8], s[1]) + mul32x32_64(r[9], s[0]);
-
+	for ( i = 1;  i < 10;  i += 2 )
+	{
+		m[i] = 0;
+		
+		for ( j = 0;  j <= i;  ++j )
+		{
+			m[i] += mul32x32_64(r[j], s[i - j]);
+		}
+	}
+	
 	r[1] *= 2;
 	r[3] *= 2;
 	r[5] *= 2;
