@@ -9,10 +9,10 @@ let width = 13
 
 let last = number.length - width
 
-print (0 .. last map { substr( number, v, width ) }
-                 ver { not '0' in v }
-                 map { translated( v, digits, values ) map int per {a * b} }
-                 per Math.max)
+put (0 .. last map { substr( number, v, width ) }
+               ver { not '0' in v }
+               map { translated( v, digits, values ) map int per {a * b} }
+               per Math.max)
 
 end.
 

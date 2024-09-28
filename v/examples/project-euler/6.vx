@@ -8,4 +8,4 @@ let sum_of_squares = set map { v^2 } per {a + b}
 
 let diff = sum^2 - sum_of_squares
 
-print diff
+put diff

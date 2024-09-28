@@ -31,4 +31,4 @@ let count = counts[ r ]
 
 let sum = 15 * (q * (v/15 + count + 1) + m * seq_sum (q - 1)) + tails[ count ]
 
-print sum
+put sum

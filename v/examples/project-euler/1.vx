@@ -5,4 +5,4 @@ let sum =
 	ver {(v % 3) * (v % 5) == 0}
 	per Math.sum
 
-print sum
+put sum
