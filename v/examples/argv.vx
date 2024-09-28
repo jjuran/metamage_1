@@ -1,1 +1,1 @@
-print rep argv
+put rep argv

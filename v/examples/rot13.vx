@@ -7,4 +7,4 @@ let nop = packed( 'N' .. 'Z', 'n' .. 'z' )
 
 let text = join( " ", *args )
 
-print translated( text, abc nop, nop abc )
+put translated( text, abc nop, nop abc )

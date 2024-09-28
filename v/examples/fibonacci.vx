@@ -14,5 +14,5 @@ let f = fibonacci()
 
 for i in 0 -> limit do
 {
-	print f()
+	put f()
 }

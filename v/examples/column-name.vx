@@ -22,4 +22,4 @@ def column_name (index)
 	return -name
 }
 
-print column_name int argv[ 1 ]
+put column_name int argv[ 1 ]

@@ -26,4 +26,4 @@ def make-sieve (limit)
 	return n
 }
 
-print make-sieve int argv[ 1 ]
+put make-sieve int argv[ 1 ]

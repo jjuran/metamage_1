@@ -1,5 +1,5 @@
 #!/usr/bin/env lvx
 
-let s = "#!/usr/bin/env lvx\n\nlet s = %s\n\nprint (s %% rep s)"
+let s = "#!/usr/bin/env lvx\n\nlet s = %s\n\nput (s %% rep s)"
 
-print (s % rep s)
+put (s % rep s)

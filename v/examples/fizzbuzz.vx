@@ -4,5 +4,5 @@ let fizzbuzz = "Fizz", "Buzz", "FizzBuzz"
 
 for i in 1 .. 100 do
 {
-	print( [i, fizzbuzz][ +(i % 3 == 0) + 2 * +(i % 5 == 0) ] )
+	put [i, fizzbuzz][ +(i % 3 == 0) + 2 * +(i % 5 == 0) ]
 }

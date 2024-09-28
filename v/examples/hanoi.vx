@@ -30,7 +30,7 @@ let pegs = "ABC"
 
 def move (n, src, dst)
 {
-	print ("Move disc %s from peg %s to peg %s" % (n, pegs[ src ], pegs[ dst ]))
+	put ("Move disc %s from peg %s to peg %s" % (n, pegs[ src ], pegs[ dst ]))
 }
 
 let disc-mover = if silent then {{}} else {move}
