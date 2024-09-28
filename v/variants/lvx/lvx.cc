@@ -208,6 +208,7 @@ int main( int argc, char** argv )
 	define( proc_lstat    );
 	define( proc_pipe     );
 	define( proc_print    );
+	define( proc_put      );
 	define( proc_read     );
 	define( proc_reader   );
 	define( proc_readlink );

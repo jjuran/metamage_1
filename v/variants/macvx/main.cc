@@ -172,6 +172,7 @@ int main( int argc, char** argv )
 	define( proc_exit   );
 	define( proc_getenv );
 	define( proc_print  );
+	define( proc_put    );
 	define( proc_warn   );
 	
 	define( AEDesc_vtype  );
