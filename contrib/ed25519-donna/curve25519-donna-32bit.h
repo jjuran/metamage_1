@@ -218,26 +218,15 @@ curve25519_mul(bignum25519 out, const bignum25519 a, const bignum25519 b) {
 	out[9] = r[9];
 }
 
-/* out = in*in */
+/* r = r*r */
 static void
-curve25519_square(bignum25519 out, const bignum25519 in) {
+curve25519_square_in_place( bignum25519 r )
+{
 	#define D(i_6)  d[i_6 - 6]
 	
-	uint32_t r[10];
 	uint32_t d[4];
 	uint64_t m[10], c;
 	uint32_t p;
-
-	r[0] = in[0];
-	r[1] = in[1];
-	r[2] = in[2];
-	r[3] = in[3];
-	r[4] = in[4];
-	r[5] = in[5];
-	r[6] = in[6];
-	r[7] = in[7];
-	r[8] = in[8];
-	r[9] = in[9];
 
 	m[0] = mul32x32_64(r[0], r[0]);
 	r[0] *= 2;
@@ -282,18 +271,24 @@ curve25519_square(bignum25519 out, const bignum25519 in) {
 	m[0] = r[0] + mul32x32_64(p,19); r[0] = (uint32_t)m[0] & reduce_mask_26; p = (uint32_t)(m[0] >> 26);
 	r[1] += p;
 
-	out[0] = r[0];
-	out[1] = r[1];
-	out[2] = r[2];
-	out[3] = r[3];
-	out[4] = r[4];
-	out[5] = r[5];
-	out[6] = r[6];
-	out[7] = r[7];
-	out[8] = r[8];
-	out[9] = r[9];
-	
 	#undef D
+}
+
+/* out = in*in */
+static void
+curve25519_square(bignum25519 out, const bignum25519 in) {
+	out[0] = in[0];
+	out[1] = in[1];
+	out[2] = in[2];
+	out[3] = in[3];
+	out[4] = in[4];
+	out[5] = in[5];
+	out[6] = in[6];
+	out[7] = in[7];
+	out[8] = in[8];
+	out[9] = in[9];
+
+	curve25519_square_in_place( out );
 }
 
 
