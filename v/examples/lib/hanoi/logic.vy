@@ -12,7 +12,7 @@ def make-tower-mover (move-disc)
 	{
 		if n > 0 then
 		{
-			const mid = other-peg( src, dst )
+			let mid = other-peg( src, dst )
 			
 			move-tower( n - 1, src, mid )
 			

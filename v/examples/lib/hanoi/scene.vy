@@ -4,45 +4,44 @@ export
 def make (depth, get-tower)
 {
 
-const padding = 0
-const margin  = 2
+let padding = 0
+let margin  = 2
 
-const height = depth + 2
+let height = depth + 2
 
-const min-disc-width = 5 + 2 * padding
-const max-disc-width = min-disc-width + 2 * (depth - 1)
-const pedestal-width = max-disc-width + 4
-const spindle-margin = margin + 2 + depth + padding + 1
+let min-disc-width = 5 + 2 * padding
+let max-disc-width = min-disc-width + 2 * (depth - 1)
+let pedestal-width = max-disc-width + 4
+let spindle-margin = margin + 2 + depth + padding + 1
 
-const spindle = spindle-margin => "|"
+let spindle = spindle-margin => "|"
 
-const pedestal-top    = margin + 1 => "_" * (pedestal-width - 2)
-const pedestal-bottom = margin     => '|' ("_" * (pedestal-width - 2)) '|'
+let pedestal-top    = margin + 1 => "_" * (pedestal-width - 2)
+let pedestal-bottom = margin     => '|' ("_" * (pedestal-width - 2)) '|'
 
-const max-width = margin + pedestal-bottom.value.length
+let max-width = margin + pedestal-bottom.value.length
 
-const empty-space = " " * max-width
+let empty-space = " " * max-width
 
 def composite (src, dst)
 {
-	const margin = src.key
-	const image  = src.value
+	let (margin, image) = *src
 	
-	const space = " " * margin
+	let space = " " * margin
 	
 	return dst[ 0 -> margin ] image dst[ margin + image.length -> dst.length ]
 }
 
 def render-disc-top (i)
 {
-	const offset = margin + 3 + (depth - i)
+	let offset = margin + 3 + (depth - i)
 	
 	return offset => "_" * (2 * (i + padding) + 1)
 }
 
 def render-disc (i)
 {
-	const offset = margin + 2 + (depth - i)
+	let offset = margin + 2 + (depth - i)
 	
 	return offset => '(' ("_" * (2 * (i + padding) + 1)) ')'
 }
@@ -81,13 +80,13 @@ def display (send, extra)
 {
 	var pegs = 0 .. 2 map render-peg
 	
-	var rows = 0 -> height map { const r = v; 0 .. 2 map { pegs[ v ][ r ] } }
+	var rows = 0 -> height map { let r = v; 0 .. 2 map { pegs[ v ][ r ] } }
 	
 	rows = ["", "", "", *rows, ""]
 	
 	if extra then
 	{
-		const (n, src, dst) = *extra
+		let (n, src, dst) = *extra
 		
 		rows[ 0 ] =
 		rows[ 1 ] = [ empty-space (*) 3 ]
