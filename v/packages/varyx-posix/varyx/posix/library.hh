@@ -23,6 +23,7 @@ namespace posix
 	extern const proc_info proc_getenv;
 	extern const proc_info proc_getpid;
 	extern const proc_info proc_print;
+	extern const proc_info proc_put;
 	extern const proc_info proc_RUN;
 	extern const proc_info proc_RUNOUT;
 	extern const proc_info proc_setenv;

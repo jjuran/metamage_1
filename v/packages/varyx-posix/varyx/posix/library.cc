@@ -476,6 +476,7 @@ namespace posix
 	const proc_info proc_getenv = { "getenv", &v_getenv, &c_str      };
 	const proc_info proc_getpid = { "getpid", &v_getpid, &empty_list };
 	const proc_info proc_print  = { "print",  &v_print,  NULL        };
+	const proc_info proc_put    = { "put",    &v_print,  NULL        };
 	const proc_info proc_RUN    = { "run",    &v_run,    &c_str_array};
 	const proc_info proc_RUNOUT = { RUNOUT,   &v_runout, &c_str_array};
 	const proc_info proc_setenv = { "setenv", &v_setenv, &cstr_x2    };
