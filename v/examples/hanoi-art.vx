@@ -28,27 +28,20 @@ let CSI = ESC "["
 
 let CLEAN = CSI "H" CSI "J"  # home, clear to end
 
+def send (rows)
+{
+	OUT <== CLEAN
+	
+	put "\n".join *rows
+}
+
 def display
 {
-	def send (rows)
-	{
-		OUT <== CLEAN
-		
-		print "\n".join *rows
-	}
-	
 	rendering( send, null )
 }
 
 def visual-move (n, src, dst)
 {
-	def send (rows)
-	{
-		OUT <== CLEAN
-		
-		print "\n".join *rows
-	}
-	
 	sleep 0.3
 	
 	#simulator.move _
