@@ -295,77 +295,20 @@ curve25519_square(bignum25519 out, const bignum25519 in) {
 /* out = in ^ (2 * count) */
 static void
 curve25519_square_times(bignum25519 out, const bignum25519 in, int count) {
-	uint32_t r0,r1,r2,r3,r4,r5,r6,r7,r8,r9;
-	uint32_t d6,d7,d8,d9;
-	uint64_t m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,c;
-	uint32_t p;
-
-	r0 = in[0];
-	r1 = in[1];
-	r2 = in[2];
-	r3 = in[3];
-	r4 = in[4];
-	r5 = in[5];
-	r6 = in[6];
-	r7 = in[7];
-	r8 = in[8];
-	r9 = in[9];
+	out[0] = in[0];
+	out[1] = in[1];
+	out[2] = in[2];
+	out[3] = in[3];
+	out[4] = in[4];
+	out[5] = in[5];
+	out[6] = in[6];
+	out[7] = in[7];
+	out[8] = in[8];
+	out[9] = in[9];
 
 	do {
-		m0 = mul32x32_64(r0, r0);
-		r0 *= 2;
-		m1 = mul32x32_64(r0, r1);
-		m2 = mul32x32_64(r0, r2) + mul32x32_64(r1, r1 * 2);
-		r1 *= 2;
-		m3 = mul32x32_64(r0, r3) + mul32x32_64(r1, r2    );
-		m4 = mul32x32_64(r0, r4) + mul32x32_64(r1, r3 * 2) + mul32x32_64(r2, r2);
-		r2 *= 2;
-		m5 = mul32x32_64(r0, r5) + mul32x32_64(r1, r4    ) + mul32x32_64(r2, r3);
-		m6 = mul32x32_64(r0, r6) + mul32x32_64(r1, r5 * 2) + mul32x32_64(r2, r4) + mul32x32_64(r3, r3 * 2);
-		r3 *= 2;
-		m7 = mul32x32_64(r0, r7) + mul32x32_64(r1, r6    ) + mul32x32_64(r2, r5) + mul32x32_64(r3, r4    );
-		m8 = mul32x32_64(r0, r8) + mul32x32_64(r1, r7 * 2) + mul32x32_64(r2, r6) + mul32x32_64(r3, r5 * 2) + mul32x32_64(r4, r4    );
-		m9 = mul32x32_64(r0, r9) + mul32x32_64(r1, r8    ) + mul32x32_64(r2, r7) + mul32x32_64(r3, r6    ) + mul32x32_64(r4, r5 * 2);
-
-		d6 = r6 * 19;
-		d7 = r7 * 2 * 19;
-		d8 = r8 * 19;
-		d9 = r9 * 2 * 19;
-
-		m0 += (mul32x32_64(d9, r1    ) + mul32x32_64(d8, r2    ) + mul32x32_64(d7, r3    ) + mul32x32_64(d6, r4 * 2) + mul32x32_64(r5, r5 * 2 * 19));
-		m1 += (mul32x32_64(d9, r2 / 2) + mul32x32_64(d8, r3    ) + mul32x32_64(d7, r4    ) + mul32x32_64(d6, r5 * 2));
-		m2 += (mul32x32_64(d9, r3    ) + mul32x32_64(d8, r4 * 2) + mul32x32_64(d7, r5 * 2) + mul32x32_64(d6, r6    ));
-		m3 += (mul32x32_64(d9, r4    ) + mul32x32_64(d8, r5 * 2) + mul32x32_64(d7, r6    ));
-		m4 += (mul32x32_64(d9, r5 * 2) + mul32x32_64(d8, r6 * 2) + mul32x32_64(d7, r7    ));
-		m5 += (mul32x32_64(d9, r6    ) + mul32x32_64(d8, r7 * 2));
-		m6 += (mul32x32_64(d9, r7 * 2) + mul32x32_64(d8, r8    ));
-		m7 += (mul32x32_64(d9, r8    ));
-		m8 += (mul32x32_64(d9, r9    ));
-
-		                             r0 = (uint32_t)m0 & reduce_mask_26; c = (m0 >> 26);
-		m1 += c;                     r1 = (uint32_t)m1 & reduce_mask_25; c = (m1 >> 25);
-		m2 += c;                     r2 = (uint32_t)m2 & reduce_mask_26; c = (m2 >> 26);
-		m3 += c;                     r3 = (uint32_t)m3 & reduce_mask_25; c = (m3 >> 25);
-		m4 += c;                     r4 = (uint32_t)m4 & reduce_mask_26; c = (m4 >> 26);
-		m5 += c;                     r5 = (uint32_t)m5 & reduce_mask_25; c = (m5 >> 25);
-		m6 += c;                     r6 = (uint32_t)m6 & reduce_mask_26; c = (m6 >> 26);
-		m7 += c;                     r7 = (uint32_t)m7 & reduce_mask_25; c = (m7 >> 25);
-		m8 += c;                     r8 = (uint32_t)m8 & reduce_mask_26; c = (m8 >> 26);
-		m9 += c;                     r9 = (uint32_t)m9 & reduce_mask_25; p = (uint32_t)(m9 >> 25);
-		m0 = r0 + mul32x32_64(p,19); r0 = (uint32_t)m0 & reduce_mask_26; p = (uint32_t)(m0 >> 26);
-		r1 += p;
+		curve25519_square_in_place( out );
 	} while (--count);
-
-	out[0] = r0;
-	out[1] = r1;
-	out[2] = r2;
-	out[3] = r3;
-	out[4] = r4;
-	out[5] = r5;
-	out[6] = r6;
-	out[7] = r7;
-	out[8] = r8;
-	out[9] = r9;
 }
 
 /* Take a little-endian, 32-byte number and expand it into polynomial form */
