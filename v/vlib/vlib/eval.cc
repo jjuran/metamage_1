@@ -336,6 +336,9 @@ namespace vlib
 			{
 				validate( left );
 				
+				defined_value( left  );
+				defined_value( right );
+				
 				return calc( left, op, right );
 			}
 			

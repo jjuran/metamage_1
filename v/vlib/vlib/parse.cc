@@ -438,6 +438,10 @@ namespace vlib
 				receive_value( Type( etc_vtype ) );
 				break;
 			
+			case Token_question_x3:
+				receive_value( Value_undefined );
+				break;
+			
 			case Token_bin:
 				receive_value( Integer( unbin_int( token.text.substr( 2 ) ) ) );
 				break;

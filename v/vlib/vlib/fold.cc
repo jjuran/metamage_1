@@ -126,7 +126,7 @@ namespace vlib
 	{
 		if ( v.is_evaluated() )
 		{
-			return true;
+			return ! is_undefined( v );
 		}
 		
 		if ( Expr* expr = v.expr() )

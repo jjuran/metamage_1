@@ -43,7 +43,7 @@
 
 #define STRLEN( s ) (sizeof "" s - 1)
 
-#define UNDEFINED  "<UNDEFINED>"
+#define UNDEFINED  "???"
 
 
 namespace vlib

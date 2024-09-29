@@ -153,6 +153,7 @@ namespace vlib
 		{ ">>",  Token_gt_x2 },
 		{ "?",   Token_question },
 		{ "??",  Token_question_x2 },
+		{ "???", Token_question_x3 },
 		
 		// A - Z
 		
