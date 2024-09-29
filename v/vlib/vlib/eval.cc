@@ -56,6 +56,12 @@ namespace vlib
 		return v;
 	}
 	
+	static
+	void defined_value( const Value& v )
+	{
+		defined( v, "undefined value" );
+	}
+	
 	const Value& eval( const Value& v )
 	{
 		if ( v.type() == Value_symbol )
@@ -94,10 +100,7 @@ namespace vlib
 	static
 	void check_type( const Value& type, const Value& v )
 	{
-		if ( is_undefined( v ) )
-		{
-			THROW( "undefined value" );
-		}
+		defined_value( v );
 		
 		if ( type  &&  ! as_assigned( type, v ) )
 		{
