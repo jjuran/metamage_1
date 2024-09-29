@@ -45,12 +45,12 @@ namespace vlib
 		}
 	}
 	
-	static
-	const Value& defined( const Value& v )
+	static inline
+	const Value& defined( const Value& v, const char* message )
 	{
 		if ( is_undefined( v ) )
 		{
-			THROW( "undefined symbol" );
+			THROW( message );
 		}
 		
 		return v;
@@ -60,7 +60,7 @@ namespace vlib
 	{
 		if ( v.type() == Value_symbol )
 		{
-			return defined( lookup_symbol( v.sym() ) );
+			return defined( lookup_symbol( v.sym() ), "undefined symbol" );
 		}
 		
 		return v;
