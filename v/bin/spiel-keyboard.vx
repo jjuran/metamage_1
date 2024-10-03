@@ -19,10 +19,10 @@ let right_Alt_id     = 100
 let left_Meta_id     = 125
 let right_Meta_id    = 126
 
-const left_Option_id
-const left_Command_id
-const right_Option_id
-const right_Command_id
+let left_Option_id   = ???
+let left_Command_id  = ???
+let right_Option_id  = ???
+let right_Command_id = ???
 
 if getenv "SPIEL_SWAP_CMD_OPT" then
 {
