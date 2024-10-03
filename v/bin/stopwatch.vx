@@ -20,9 +20,9 @@ var reader = thread lambda
 	}
 }
 
-def tens
+def tens (x)
 {
-	return ("0" * (_ < 10)) _
+	return ("0" * (x < 10)) x
 }
 
 for ev in events do
