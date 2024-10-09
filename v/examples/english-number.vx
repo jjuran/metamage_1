@@ -1,12 +1,12 @@
 #!/usr/bin/env lvx
 
-const units = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+let units = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
 
-const teens = ["ten", "eleven", "twelve", "thirteen", "", "fifteen", "", "", "eighteen", ""]
+let teens = ["ten", "eleven", "twelve", "thirteen", "", "fifteen", "", "", "eighteen", ""]
 
-const ten_x = ["", "", "twenty", "thirty", "forty", "fifty", "", "", "eighty", ""]
+let ten_x = ["", "", "twenty", "thirty", "forty", "fifty", "", "", "eighty", ""]
 
-const powers = ["", "thousand", "million", "billion", "trillion"]
+let powers = ["", "thousand", "million", "billion", "trillion"]
 
 def English (x)
 {
@@ -22,22 +22,22 @@ def English (x)
 	
 	if x < 100 then
 	{
-		const k = x mod 10
+		let k = x mod 10
 		
-		const ones = if k then {"-" units[ k ]} else {""}
+		let ones = if k then {"-" units[ k ]} else {""}
 		
-		const tens = ten_x[ x div 10 ] or units[ x div 10 ] "ty"
+		let tens = ten_x[ x div 10 ] or units[ x div 10 ] "ty"
 		
 		return tens ones
 	}
 	
 	if x < 1000 then
 	{
-		const cents = x mod 100
+		let cents = x mod 100
 		
-		const tens_ones = if cents then {" " English cents} else {""}
+		let tens_ones = if cents then {" " English cents} else {""}
 		
-		const hundreds = English( x div 100 ) " hundred"
+		let hundreds = English( x div 100 ) " hundred"
 		
 		return hundreds tens_ones
 	}
@@ -52,19 +52,19 @@ def English (x)
 		
 		if x < next then
 		{
-			const major = x div power
-			const minor = x mod power
+			let major = x div power
+			let minor = x mod power
 			
-			const majority = English( major ) " " powers[ i ]
+			let majority = English( major ) " " powers[ i ]
 			
 			if minor == 0 then
 			{
 				return majority
 			}
 			
-			const separator = if minor > 99 then {", "} else {" "}
+			let separator = if minor > 99 then {", "} else {" "}
 			
-			const minority = English minor
+			let minority = English minor
 			
 			return majority separator minority
 		}
@@ -82,11 +82,11 @@ def english-number (x)
 	
 	if x in 100 -> 10000 and x div 100 mod 10 != 0 then
 	{
-		const cents = x mod 100
+		let cents = x mod 100
 		
-		const tens_ones = if cents then {" " English cents} else {""}
+		let tens_ones = if cents then {" " English cents} else {""}
 		
-		const hundreds = English( x div 100 ) " hundred"
+		let hundreds = English( x div 100 ) " hundred"
 		
 		return hundreds tens_ones
 	}
