@@ -4,10 +4,8 @@ let args = argv[ 1 -> argc ]
 
 let results = channel()
 
-def worker
+def worker (path)
 {
-	const path = _
-	
 	return thread { results <== path => str sha256 load path }
 }
 
