@@ -30,7 +30,7 @@ def is_significant_line (line)
 
 def count_sloc (code)
 {
-	return code.lines() map int * is_significant_line per Math.sum
+	return code.lines() map int * is_significant_line per Math.sum or 0
 }
 
 def dispatch (path)
