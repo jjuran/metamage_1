@@ -2,8 +2,8 @@
 
 def relay
 {
-	const input  = fd head _
-	const output = fd tail _
+	let input  = fd head _
+	let output = fd tail _
 	
 	while var data = input.read 1024 do
 	{
