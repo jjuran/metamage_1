@@ -202,6 +202,13 @@ namespace vlib
 		Value& dst         = *target.addr;
 		Value const& vtype = *target.type;
 		
+		if ( is_undefined( v )  &&  is_undefined( dst ) )
+		{
+			// Don't subject `let x (T) = ???` to type checks.
+			
+			return;
+		}
+		
 		if ( vtype )
 		{
 			Value tmp = (coercive ? as_coerced : as_assigned)( vtype, v );
