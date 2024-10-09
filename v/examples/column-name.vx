@@ -11,7 +11,7 @@ def column_name (index)
 	{
 		--index
 		
-		const shift
+		let shift = ???
 		
 		shift = index mod 26
 		index = index div 26

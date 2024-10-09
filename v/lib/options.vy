@@ -41,7 +41,7 @@ def parse (argv, defs, error)
 			
 			if let f = opt[ interpret ] then
 			{
-				const param
+				let param = ???
 				
 				if p then
 				{

@@ -11,7 +11,7 @@ export let doctype = "<!DOCTYPE plist PUBLIC " dtd_name " " dtd_url ">"
 
 let mapping = ... => ...
 
-const reifiers
+let reifiers = ???
 
 def reify (info)
 {

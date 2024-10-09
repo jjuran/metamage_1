@@ -35,7 +35,7 @@ def count_sloc (code)
 
 def dispatch (path)
 {
-	const list (str[])
+	let list (str[]) = ???
 	
 	let st = try {lstat path} catch {}
 	
