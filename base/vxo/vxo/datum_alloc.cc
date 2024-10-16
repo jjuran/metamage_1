@@ -177,7 +177,8 @@ namespace vxo
 		}
 	}
 	
-	static void dispose( const char* pointer, signed char _policy )
+	static inline
+	void dispose( const char* pointer, signed char _policy )
 	{
 		switch ( _policy )
 		{
