@@ -442,8 +442,8 @@ namespace tool
 				N::OSAModeFlags displayFlags( humanReadable ? N::kOSAModeDisplayForHumans : N::kOSAModeNull );
 				
 				nucleus::mutable_string output = N::AEGetDescData< Mac::typeChar >( N::OSADisplay( result,
-				                                                                                 Mac::typeChar,
-				                                                                                 displayFlags ) );
+				                                                                                   Mac::typeChar,
+				                                                                                   displayFlags ) );
 				
 				if ( *(output.end() - 1) != '\n' )
 				{
