@@ -48,7 +48,7 @@
 #include "plus/string/concat.hh"
 
 // poseven
-#include "poseven/extras/slurp.hh"
+#include "poseven/extras/load.hh"
 #include "poseven/extras/splat.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/write.hh"
@@ -353,7 +353,7 @@ namespace tool
 	
 	static void dump_file( const char* path, p7::fd_t fd )
 	{
-		plus::var_string text = p7::slurp( path );
+		plus::var_string text = p7::load( path );
 		
 		ConvertAndDumpMacText( text, fd );
 	}
@@ -479,8 +479,8 @@ namespace tool
 			return 128;
 		}
 		
-		plus::var_string output = p7::slurp( temp_file_paths[ kOutputFile ] );
-		plus::var_string errors = p7::slurp( temp_file_paths[ kErrorFile  ] );
+		plus::var_string output = p7::load( temp_file_paths[ kOutputFile ] );
+		plus::var_string errors = p7::load( temp_file_paths[ kErrorFile  ] );
 		
 		// A Metrowerks tool returns 1 on error and 2 on user break, except that
 		// if you limit the number of diagnostics displayed and there more errors

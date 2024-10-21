@@ -25,7 +25,7 @@
 #include "vxo/ptrvec.hh"
 
 // poseven
-#include "poseven/extras/slurp.hh"
+#include "poseven/extras/load.hh"
 #include "poseven/functions/basename.hh"
 #include "poseven/functions/execvp.hh"
 #include "poseven/functions/open.hh"
@@ -480,7 +480,7 @@ namespace tool
 		}
 		else if ( filename == "PkgInfo" )
 		{
-			plus::string pkgInfo = p7::slurp( arg );
+			plus::string pkgInfo = p7::load( arg );
 			
 			if ( pkgInfo.length() < sizeof 'Type' + sizeof 'Crtr' )
 			{

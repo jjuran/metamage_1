@@ -7,7 +7,7 @@
 #include "iota/strings.hh"
 
 // poseven
-#include "poseven/extras/slurp.hh"
+#include "poseven/extras/load.hh"
 #include "poseven/functions/fchmod.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/stat.hh"
@@ -58,9 +58,9 @@ namespace tool
 		
 		RUN_TEST( (p7::stat( path ).st_mode & 0200) == 0, 1 );
 		
-		plus::string slurped = p7::slurp( path );
+		plus::string loaded = p7::load( path );
 		
-		const bool match = slurped == TEST_STRING;
+		const bool match = loaded == TEST_STRING;
 		
 		RUN_TEST( match, 2 );
 		

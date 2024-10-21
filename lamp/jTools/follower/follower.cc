@@ -14,7 +14,7 @@
 #include "gear/parse_float.hh"
 
 // poseven
-#include "poseven/extras/slurp.hh"
+#include "poseven/extras/load.hh"
 #include "poseven/functions/ftruncate.hh"
 #include "poseven/functions/pwrite.hh"
 
@@ -103,7 +103,7 @@ namespace tool
 		
 	again:
 		
-		output = p7::slurp( pathname );
+		output = p7::load( pathname );
 		
 		if ( output != previous )
 		{
