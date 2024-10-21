@@ -24,7 +24,7 @@ namespace poseven
 		
 		result = ::read( fd, buffer, n_bytes );
 		
-		if ( result == -1 )
+		if ( result < 0 )
 		{
 			if ( errno == EINTR )
 			{
