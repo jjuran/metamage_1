@@ -18,7 +18,6 @@
 #include "plus/string.hh"
 
 // poseven
-#include "poseven/extras/slurp.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/opendir.hh"
 #include "poseven/functions/stat.hh"
@@ -135,15 +134,6 @@ namespace vfs
 		return result;
 	}
 	
-	static plus::string posix_slurp( const node* that )
-	{
-		posix_extra& extra = *(posix_extra*) that->extra();
-		
-		const plus::string& path = reinterpret_cast< const plus::string& >( extra.path );
-		
-		return p7::slurp( path.c_str() );
-	}
-	
 	static node_ptr posix_lookup( const node*          that,
 	                              const plus::string&  name,
 	                              const node*          parent )
@@ -219,9 +209,6 @@ namespace vfs
 	static const data_method_set posix_data_methods =
 	{
 		&posix_open,
-		NULL,
-		NULL,
-		&posix_slurp,
 	};
 	
 	static const dir_method_set posix_dir_methods =
