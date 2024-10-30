@@ -26,15 +26,12 @@
 
 // plus
 #include "plus/mac_utf8.hh"
-#include "plus/var_string.hh"
 
 // Debug
 #include "debug/assert.hh"
 
 // poseven
 #include "poseven/extras/slurp.hh"
-#include "poseven/functions/open.hh"
-#include "poseven/functions/read.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
@@ -185,39 +182,9 @@ namespace tool
 		                                N::kOSAGenericScriptingComponentSubtype );
 	}
 	
-	static plus::string ReadUntilEOF( p7::fd_t stream )
-	{
-		plus::var_string result;
-		
-		const size_t block_size = 4096;
-		
-		char buffer[ block_size ];
-		
-		while ( size_t bytes = p7::read( stream, buffer, block_size ) )
-		{
-			result.append( buffer, bytes );
-		}
-		
-		return result;
-	}
-	
 	static nucleus::string ReadFileData( const char* file )
 	{
-		plus::string slurped;
-		
-		try
-		{
-			slurped = p7::slurp( file );
-		}
-		catch ( const p7::errno_t& err )
-		{
-			if ( err != ESPIPE )
-			{
-				throw;	
-			}
-			
-			slurped = ReadUntilEOF( p7::open( file, p7::o_rdonly ) );
-		}
+		plus::string slurped = p7::slurp( file );
 		
 		try
 		{
