@@ -4,7 +4,7 @@
 */
 
 // Standard C++
-#include <vector>
+#include <algorithm>
 
 // Standard C
 #include <stdio.h>
@@ -81,11 +81,15 @@ static command::option options[] =
 static bool humanReadable = true;
 static bool getsCWDProperty = false;
 
-static std::vector< const char* > inlineScriptPieces;
+static const char** inline_script_begin;
+static const char** inline_script_end;
 
 static char* const* get_options( char* const* argv )
 {
 	++argv;  // skip arg 0
+	
+	inline_script_begin =
+	inline_script_end   = (const char**) argv;
 	
 	short opt;
 	
@@ -106,7 +110,7 @@ static char* const* get_options( char* const* argv )
 				break;
 			
 			case Option_inline_script:
-				inlineScriptPieces.push_back( command::global_result.param );
+				*inline_script_end++ = command::global_result.param;
 				break;
 			
 			default:
@@ -343,18 +347,19 @@ namespace tool
 	}
 	
 	
-	static plus::string JoinScriptPieces( const std::vector< const char* >& pieces )
+	static
+	plus::string JoinScriptPieces( const char** pieces, int count )
 	{
-		ASSERT( !pieces.empty() );
+		ASSERT( count > 0 );
 		
-		if ( pieces.size() == 1 )
+		if ( count == 1 )
 		{
 			return pieces[0];
 		}
 		
-		size_t total_length = pieces.size();  // add 1 byte for each CR
+		size_t total_length = count;  // add 1 byte for each CR
 		
-		for ( size_t i = 0;  i < pieces.size();  ++i )
+		for ( size_t i = 0;  i < count;  ++i )
 		{
 			total_length += strlen( pieces[ i ] );
 		}
@@ -363,7 +368,7 @@ namespace tool
 		
 		char* there = result.reset( total_length );
 		
-		for ( size_t i = 0;  i < pieces.size();  ++i )
+		for ( size_t i = 0;  i < count;  ++i )
 		{
 			const char* string = pieces[ i ];
 			
@@ -393,9 +398,11 @@ namespace tool
 		
 		n::owned< N::OSAID > script;
 		
-		if ( !inlineScriptPieces.empty() )
+		if ( int count = inline_script_end - inline_script_begin )
 		{
-			plus::string joined_script = JoinScriptPieces( inlineScriptPieces );
+			const char** begin = inline_script_begin;
+			
+			plus::string joined_script = JoinScriptPieces( begin, count );
 			
 			joined_script = plus::mac_from_utf8( joined_script );
 			
