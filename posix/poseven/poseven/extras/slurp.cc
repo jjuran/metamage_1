@@ -1,15 +1,13 @@
 /*
 	slurp.cc
 	--------
-	
-	Copyright 2009, Joshua Juran
 */
 
 
 #include "poseven/extras/slurp.hh"
 
 // plus
-#include "plus/string.hh"
+#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/extras/read_all.hh"
@@ -22,7 +20,25 @@ namespace poseven
 	
 	plus::string slurp( fd_t fd )
 	{
-		const size_t size = fstat( fd ).st_size;
+		struct stat st = fstat( fd );
+		
+		if ( ! S_ISREG( st.st_mode ) )
+		{
+			plus::var_string result;
+			
+			const size_t block_size = 4096;
+			
+			char buffer[ block_size ];
+			
+			while ( ssize_t bytes = read_all( fd, buffer, block_size ) )
+			{
+				result.append( buffer, bytes );
+			}
+			
+			return result;
+		}
+		
+		const size_t size = st.st_size;
 		
 		plus::string result;
 		
