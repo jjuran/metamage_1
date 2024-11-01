@@ -319,7 +319,7 @@ def badged_ICN_ (icon)
 
 def make_ICN_ (icl8)
 {
-	return badged_ICN_ make_1_from_8 packed (icl8.key, icl8.value)
+	return badged_ICN_ make_1_from_8 packed *icl8
 }
 
 let handlers = str^
