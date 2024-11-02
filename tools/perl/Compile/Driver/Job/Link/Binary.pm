@@ -146,6 +146,8 @@ sub command
 		}
 		
 		push @frameworks, map { -framework => $_ } @names;
+		
+		push @mode, "-dead_strip";
 	}
 	
 	return $self->tool_name, @w, @mode, -o => $dest, @arch, @frameworks;
