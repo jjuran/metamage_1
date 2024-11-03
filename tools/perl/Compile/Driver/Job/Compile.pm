@@ -121,6 +121,11 @@ sub command
 		$d{ TARGET_API_MAC_CARBON } = 1;
 	}
 	
+	if ( $conf->{ccname} ne "gcc"  ||  $conf->{ccvers} ge "4" )
+	{
+		push @f, "-fvisibility=hidden";
+	}
+	
 	if ( $conf->is_apple_gcc )
 	{
 		push @f, "-fpascal-strings";

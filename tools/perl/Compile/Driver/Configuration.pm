@@ -90,6 +90,13 @@ sub new
 	
 	$self{ build } = $build  if !exists $self{ build };
 	
+	my $ccv = `cc -v 2>&1 | grep version | tail -1`;
+	
+	my ( $name, $vers ) = $ccv =~ m{^(.*) version ([\d.]+)};
+	
+	$self{ ccname } = $name;
+	$self{ ccvers } = $vers;
+	
 	return bless \%self, $class;
 }
 
@@ -99,7 +106,9 @@ sub platform_mask
 	
 	my %platform = %$self;
 	
-	delete $platform{ build };
+	delete $platform{ build  };
+	delete $platform{ ccname };
+	delete $platform{ ccvers };
 	
 	return Compile::Driver::Platform::mask_for_values( values %platform );
 }
