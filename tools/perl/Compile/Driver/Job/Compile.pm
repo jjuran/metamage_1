@@ -128,7 +128,10 @@ sub command
 		
 		push @w, "-Wno-long-double"  if ($conf->{arch} || "") eq "ppc";
 		
-		$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_2';
+		if ( $conf->{ arch } ne "ppc" )
+		{
+			$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_2';
+		}
 	}
 	
 	my @d = map { "-D$_=" . $d{ $_ } } keys %d;
