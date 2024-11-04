@@ -616,17 +616,6 @@ v68k::op_result bkpt_handler( v68k::processor_state& s, int vector )
 	}
 }
 
-static inline
-unsigned parse_instruction_limit( const char* var )
-{
-	if ( var == NULL )
-	{
-		return 0;
-	}
-	
-	return gear::parse_unsigned_decimal( var );
-}
-
 static
 void emulation_loop( v68k::emulator& emu )
 {
@@ -636,22 +625,11 @@ void emulation_loop( v68k::emulator& emu )
 	
 	emu.regs[ 8 + 6 ] = 0;
 	
-	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
-	
-	const unsigned max_steps = parse_instruction_limit( instruction_limit_var );
-	
 	bool event_poll_interrupt_pending = false;
 	
 	while ( (turbo  &&  native_override( emu ))  ||  emu.step() )
 	{
 		n_instructions = emu.instruction_count();
-		
-		if ( max_steps != 0  &&  emu.instruction_count() > max_steps )
-		{
-			print_instruction_limit_exceeded( instruction_limit_var );
-			
-			dump_and_raise( emu, SIGXCPU );
-		}
 		
 	#ifdef __RELIX__
 		
