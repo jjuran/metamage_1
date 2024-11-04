@@ -557,11 +557,6 @@ void load_code( uint8_t* mem, const char* path )
 	{
 		EXIT( 1, "xv68k: WARNING: Zero-length code input, exiting" );
 	}
-	
-	if ( path != NULL )
-	{
-		close( fd );
-	}
 }
 
 static
