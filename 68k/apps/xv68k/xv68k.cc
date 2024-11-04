@@ -43,9 +43,6 @@
 #include "ioutils/load.hh"
 #include "ioutils/print_register_dump.hh"
 
-// v68k-lowmem
-#include "lowmem/lowmem.hh"
-
 // v68k-mac
 #include "v68k-mac/trap_dispatcher.hh"
 
@@ -75,8 +72,8 @@
 // v68k-diagnostics
 #include "diagnostics/diagnostics.hh"
 
-// v68k-native
-#include "native/native.hh"
+// v68k-exec
+#include "exec/loop.hh"
 
 
 #ifdef __MWERKS__
@@ -116,14 +113,15 @@ enum
 
 static v68k::processor_model mc68k_model = v68k::mc68000;
 
-static bool turbo;
-static bool polling;
+using v68k::exec::turbo;
+using v68k::exec::polling;
+
 static bool tracing;
 static bool verbose;
 static bool has_screen;
 static bool has_cursor;
 
-static unsigned long n_instructions;
+using v68k::exec::n_instructions;
 
 static int n_512K_blocks = -1;
 
@@ -183,7 +181,7 @@ static command::option options[] =
 };
 
 
-static sig_atomic_t sigint_pending;
+using v68k::exec::sigint_pending;
 
 static
 void sigint_handler( int )
@@ -616,67 +614,7 @@ v68k::op_result bkpt_handler( v68k::processor_state& s, int vector )
 	}
 }
 
-static
-void emulation_loop( v68k::emulator& emu )
-{
-	using v68k::native::native_override;
-	
-	emu.reset();
-	
-	emu.regs[ 8 + 6 ] = 0;
-	
-	bool event_poll_interrupt_pending = false;
-	
-	while ( (turbo  &&  native_override( emu ))  ||  emu.step() )
-	{
-		n_instructions = emu.instruction_count();
-		
-	#ifdef __RELIX__
-		
-		if ( short( n_instructions ) == 0 )
-		{
-			kill( 1, 0 );  // Guaranteed yield point in MacRelix
-		}
-		
-	#endif
-		
-		if ( emu.most_recent_PC_during_fault() == 0 )
-		{
-			uint32_t prev_addr = emu.current_instruction_address();
-			
-			WARNING = "Execution at $000000 after ", hex32_t( prev_addr );
-		}
-		
-		using v68k::lowmem::ticking;
-		
-		if ( (short( n_instructions ) == 0  ||  ticking)  &&  polling )
-		{
-			ticking = false;
-			
-			event_poll_interrupt_pending = true;
-		}
-		
-		if ( event_poll_interrupt_pending  &&  emu.sr.iii == 0 )
-		{
-			event_poll_interrupt_pending = false;
-			
-			const int level  = 1;
-			const int vector = 64;
-			
-			emu.interrupt( level, vector );
-		}
-		
-		if ( sigint_pending )
-		{
-			sigint_pending = false;
-			
-			const int signal_number =  2;
-			const int signal_vector = 64 + signal_number;
-			
-			emu.interrupt( 7, signal_vector );
-		}
-	}
-}
+using v68k::exec::emulation_loop;
 
 static
 void report_condition( v68k::emulator& emu )
