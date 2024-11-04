@@ -519,24 +519,32 @@ void load_argv( uint8_t* mem, int argc, char* const* argv )
 	*args = 0;  // trailing NULL of argv
 }
 
+static inline
+bool is_hyphen( const char* s )
+{
+	return s[ 0 ] == '-'  &&  s[ 1 ] == '\0';
+}
+
+static inline
+bool is_real_path( const char* path )
+{
+	return path  &&  ! is_hyphen( path );
+}
+
 static
 void load_file( uint8_t* mem, const char* path );
 
 static
 void load_code( uint8_t* mem, const char* path )
 {
-	int fd;
-	
-	if ( path == NULL  ||  (path[0] == '-'  &&  path[1] == '\0') )
-	{
-		fd = STDIN_FILENO;
-	}
-	else
+	if ( is_real_path( path ) )
 	{
 		load_file( mem, path );
 		
 		return;
 	}
+	
+	int fd = STDIN_FILENO;
 	
 	ssize_t n_read = read( fd, mem + code_address, code_max_size );
 	
