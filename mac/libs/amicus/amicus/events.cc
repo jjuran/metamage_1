@@ -16,6 +16,9 @@
 // splode
 #include "splode/splode.hh"
 
+// write-a-splode
+#include "splode/write-a-splode.hh"
+
 // amicus
 #include "amicus/keycodes.hh"
 #include "amicus/splode.hh"
@@ -83,6 +86,8 @@ void handle_mouse_moved_event( CGPoint next_cursor_location )
 	
 	if ( ! CGPointEqualToPoint( pinned_cursor, last_cursor_location ) )
 	{
+		using splode::send_mouse_moved_event;
+		
 		send_mouse_moved_event( events_fd, pinned_cursor.x, pinned_cursor.y );
 		
 		last_cursor_location = pinned_cursor;
@@ -209,6 +214,8 @@ long send_key_event( EventRef event, char c, uint8_t more_attrs )
 	using namespace splode::modes;
 	using namespace splode::key;
 	
+	using splode::send_key_event;
+	
 	const uint8_t mode_mask = Command | Shift | Option | Control;
 	const uint8_t attr_mask = Alpha;
 	
@@ -252,6 +259,9 @@ bool handle_CGEvent( CGEventRef event, command_handler_proc command_handler )
 		default:
 			break;
 	}
+	
+	using splode::send_key_event;
+	using splode::send_mouse_event;
 	
 	switch ( type )
 	{

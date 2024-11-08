@@ -10,14 +10,11 @@
 #include <Carbon/Carbon.h>
 #endif
 
-// POSIX
-#include <unistd.h>
-
-// iota
-#include "iota/endian.hh"
-
 // splode
 #include "splode/splode.hh"
+
+// write-a-splode
+#include "splode/write-a-splode.hh"
 
 // amicus
 #include "amicus/keycodes.hh"
@@ -26,61 +23,16 @@
 namespace amicus
 {
 
-void send_mouse_moved_event( int fd, short x, short y )
-{
-	splode::pointer_location_buffer buffer =
-	{
-		sizeof buffer - 1,
-		0,
-		iota::big_u16( x ),
-		iota::big_u16( y ),
-	};
-	
-	write( fd, &buffer.len, sizeof buffer );
-}
-
-void send_mouse_event( int fd, short flags, short action )
-{
-	using namespace splode::modes;
-	
-	const uint8_t general_modifiers = flags;
-	const uint8_t button_attributes = action;
-	
-	splode::pointer_event_buffer buffer =
-	{
-		sizeof buffer - 1,
-		general_modifiers,
-		button_attributes,
-		0,  // unspecified device
-	};
-	
-	write( fd, &buffer.len, sizeof buffer );
-}
-
 void send_mouse_event( int fd, const EventRecord& event )
 {
 	using namespace splode::modes;
-	namespace pointer = splode::pointer;
 	
 	const uint8_t mode_mask = Command | Shift | Option | Control;
 	
 	const uint8_t general_modifiers = (event.modifiers >> 8) & mode_mask;
 	const uint8_t button_attributes = event.what;  // Yes, the codes match.
 	
-	send_mouse_event( fd, general_modifiers, button_attributes );
-}
-
-void send_key_event( int fd, char c, short modes, short attrs )
-{
-	splode::ascii_event_buffer buffer =
-	{
-		sizeof buffer - 1,
-		c,
-		modes,
-		attrs,
-	};
-	
-	write( fd, &buffer.len, sizeof buffer );
+	splode::send_mouse_event( fd, general_modifiers, button_attributes );
 }
 
 void send_key_event( int fd, const EventRecord& event )
@@ -107,7 +59,7 @@ void send_key_event( int fd, const EventRecord& event )
 	uint8_t modes =  (event.modifiers >> 8) & mode_mask;
 	uint8_t attrs = ((event.modifiers >> 8) & attr_mask) | keypad | action;
 	
-	send_key_event( fd, c, modes, attrs );
+	splode::send_key_event( fd, c, modes, attrs );
 }
 
 }

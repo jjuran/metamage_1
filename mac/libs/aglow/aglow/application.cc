@@ -32,6 +32,9 @@
 // splode
 #include "splode/splode.hh"
 
+// write-a-splode
+#include "splode/write-a-splode.hh"
+
 // rasterlib
 #include "raster/raster.hh"
 
@@ -233,6 +236,9 @@ pascal OSStatus Mouse_action( EventHandlerCallRef  handler,
 {
 	using namespace splode::modes;
 	using namespace splode::key;
+	
+	using splode::send_mouse_event;
+	using splode::send_mouse_moved_event;
 	
 	OSStatus err;
 	
