@@ -78,15 +78,7 @@ void send_mouse_event( int fd, const EventRecord& event )
 	const uint8_t general_modifiers = (event.modifiers >> 8) & mode_mask;
 	const uint8_t button_attributes = event.what;  // Yes, the codes match.
 	
-	splode::pointer_event_buffer buffer =
-	{
-		sizeof buffer - 1,
-		general_modifiers,
-		button_attributes,
-		0,  // unspecified device
-	};
-	
-	write( fd, &buffer.len, sizeof buffer );
+	send_mouse_event( fd, general_modifiers, button_attributes );
 }
 
 void send_key_event( int fd, char c, short modes, short attrs )
@@ -123,15 +115,10 @@ void send_key_event( int fd, const EventRecord& event )
 	const uint8_t action = event.what - 2;
 	const uint8_t keypad = is_keypad( vcode ) ? Keypad : 0;
 	
-	splode::ascii_event_buffer buffer =
-	{
-		sizeof buffer - 1,
-		c,
-		 (event.modifiers >> 8) & mode_mask,
-		((event.modifiers >> 8) & attr_mask) | keypad | action,
-	};
+	uint8_t modes =  (event.modifiers >> 8) & mode_mask;
+	uint8_t attrs = ((event.modifiers >> 8) & attr_mask) | keypad | action;
 	
-	write( fd, &buffer.len, sizeof buffer );
+	send_key_event( fd, c, modes, attrs );
 }
 
 }
