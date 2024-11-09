@@ -3,7 +3,7 @@
 	------------
 */
 
-#include "amicus/coprocess.hh"
+#include "frend/coprocess.hh"
 
 // POSIX
 #include <unistd.h>
@@ -17,7 +17,7 @@
 #include "gear/inscribe_decimal.hh"
 
 
-namespace amicus
+namespace frend
 {
 
 static const char* coprocess_argv[] =

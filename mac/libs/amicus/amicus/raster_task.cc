@@ -25,8 +25,8 @@
 // poseven
 #include "poseven/types/thread.hh"
 
-// amicus
-#include "amicus/cursor.hh"
+// frontend-common
+#include "frend/cursor.hh"
 
 
 namespace amicus
@@ -68,6 +68,8 @@ void raster_event_loop( raster::sync_relay* sync )
 	
 	while ( monitoring  &&  sync->status == raster::Sync_ready )
 	{
+		using frend::cursor_state;
+		
 		close( open( UPDATE_FIFO, O_WRONLY ) );
 		
 		if ( cursor_state  &&  cursor_state->seed != cursor_seed )

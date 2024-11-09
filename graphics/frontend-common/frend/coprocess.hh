@@ -3,10 +3,11 @@
 	------------
 */
 
-#ifndef AMICUS_COPROCESS_HH
-#define AMICUS_COPROCESS_HH
+#ifndef FREND_COPROCESS_HH
+#define FREND_COPROCESS_HH
 
-namespace amicus
+
+namespace frend
 {
 
 struct coprocess_failed {};

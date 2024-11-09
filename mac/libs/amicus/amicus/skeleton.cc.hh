@@ -18,8 +18,10 @@
 // v68k-cursor
 #include "cursor/cursor.hh"
 
+// frontend-common
+#include "frend/cursor.hh"
+
 // amicus
-#include "amicus/cursor.hh"
 #include "amicus/display.hh"
 #include "amicus/events.hh"
 #include "amicus/fade.hh"
@@ -270,7 +272,10 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 			
 		#if HARDWARE_CURSOR
 			
-			if ( const amicus::shared_cursor_state* cursor = cursor_state )
+			using frend::cursor_state;
+			using frend::shared_cursor_state;
+			
+			if ( const shared_cursor_state* cursor = cursor_state )
 			{
 				if ( kind == kEventAmicusCursorBits )
 				{

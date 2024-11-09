@@ -3,10 +3,10 @@
 	---------
 */
 
-#include "amicus/cursor.hh"
+#include "frend/cursor.hh"
 
 
-namespace amicus
+namespace frend
 {
 
 const shared_cursor_state* cursor_state;

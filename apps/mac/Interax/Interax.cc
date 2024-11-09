@@ -28,8 +28,10 @@
 // plus
 #include "plus/string.hh"
 
+// frontend-common
+#include "frend/cursor.hh"
+
 // amicus
-#include "amicus/cursor.hh"
 #include "amicus/events.hh"
 #include "amicus/raster_task.hh"
 
@@ -106,7 +108,7 @@ pascal OSErr handle_odoc_Apple_event( AppleEvent const* event,
 	const char raster_path[] = "screen.skif";
 	const char cursor_path[] = "cursor.skif";
 	
-	amicus::cursor_state = open_cursor_file( cursor_path );
+	frend::cursor_state = open_cursor_file( cursor_path );
 	
 	amicus::events_fd = open( "events.fifo", O_WRONLY | O_NONBLOCK );
 	

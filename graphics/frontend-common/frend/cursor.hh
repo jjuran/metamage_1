@@ -3,14 +3,14 @@
 	---------
 */
 
-#ifndef AMICUS_CURSOR_HH
-#define AMICUS_CURSOR_HH
+#ifndef FREND_CURSOR_HH
+#define FREND_CURSOR_HH
 
 // v68k-cursor
 #include "cursor/cursor_fwd.hh"
 
 
-namespace amicus
+namespace frend
 {
 
 using v68k::cursor::shared_cursor_state;

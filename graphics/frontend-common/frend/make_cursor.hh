@@ -1,21 +1,21 @@
 /*
-	make_raster.hh
+	make_cursor.hh
 	--------------
 */
 
-#ifndef AMICUS_MAKERASTER_HH
-#define AMICUS_MAKERASTER_HH
+#ifndef FREND_MAKECURSOR_HH
+#define FREND_MAKECURSOR_HH
 
-// raster
+// rasterlib
 #include "raster/raster.hh"
 
 
-namespace amicus
+namespace frend
 {
 
-struct raster_creation_error {};
+struct cursor_creation_error {};
 
-class raster_lifetime
+class cursor_lifetime
 {
 	typedef raster::raster_load raster_load;
 	
@@ -24,13 +24,13 @@ class raster_lifetime
 		raster_load its_load;
 		
 		// non-copyable
-		raster_lifetime           ( const raster_lifetime& );
-		raster_lifetime& operator=( const raster_lifetime& );
+		cursor_lifetime           ( const cursor_lifetime& );
+		cursor_lifetime& operator=( const cursor_lifetime& );
 	
 	public:
-		raster_lifetime( const char* raster_path );
+		cursor_lifetime( const char* cursor_path );
 		
-		~raster_lifetime();
+		~cursor_lifetime();
 		
 		const raster::raster_load& get() const  { return its_load; }
 		

@@ -38,8 +38,10 @@
 // glfb-common
 #include "glfb/glfb.hh"
 
+// frontend-common
+#include "frend/cursor.hh"
+
 // amicus
-#include "amicus/cursor.hh"
 #include "amicus/events.hh"
 #include "amicus/keycodes.hh"
 #include "amicus/raster_task.hh"
@@ -130,7 +132,7 @@ pascal OSStatus AmicusUpdate( EventHandlerCallRef  handler,
 		return noErr;
 	}
 	
-	if ( const amicus::shared_cursor_state* cursor = amicus::cursor_state )
+	if ( const frend::shared_cursor_state* cursor = frend::cursor_state )
 	{
 		if ( kind == kEventAmicusCursorBits )
 		{
@@ -502,7 +504,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		socket, calling write() on which killed the process.
 	*/
 	
-	glfb::cursor_enabled = amicus::cursor_state != NULL;
+	glfb::cursor_enabled = frend::cursor_state != NULL;
 	
 	create_AGL_context();
 	
@@ -512,7 +514,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	attach_to_window( screen_window );
 	
-	if ( const amicus::shared_cursor_state* cursor = amicus::cursor_state )
+	if ( const frend::shared_cursor_state* cursor = frend::cursor_state )
 	{
 		int y  = cursor->pointer[ 0 ];
 		int x  = cursor->pointer[ 1 ];

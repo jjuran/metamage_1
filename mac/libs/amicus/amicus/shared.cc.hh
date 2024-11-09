@@ -15,12 +15,14 @@
 // Extended API Set, Part 2
 #include "extended-api-set/part-2.h"
 
+// frontend-common
+#include "frend/coprocess.hh"
+#include "frend/make_cursor.hh"
+#include "frend/make_raster.hh"
+
 // amicus
 #include "amicus/apple_events.hh"
-#include "amicus/coprocess.hh"
 #include "amicus/events.hh"
-#include "amicus/make_cursor.hh"
-#include "amicus/make_raster.hh"
 #include "amicus/raster_task.hh"
 #include "amicus/tempfile.hh"
 
@@ -65,6 +67,10 @@ class raster_updating
 
 class emulated_screen
 {
+	typedef frend::coprocess_launch coprocess_launch;
+	typedef frend::cursor_lifetime  cursor_lifetime;
+	typedef frend::raster_lifetime  raster_lifetime;
+	
 	private:
 	#if HARDWARE_CURSOR
 		cursor_lifetime   live_cursor;
