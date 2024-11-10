@@ -31,6 +31,9 @@
 // splode
 #include "splode/splode.hh"
 
+// write-a-splode
+#include "splode/write-a-splode.hh"
+
 // raster
 #include "raster/load.hh"
 #include "raster/relay_detail.hh"
@@ -349,19 +352,9 @@ bool do_KeyEvent( const KeyEvent_message& msg )
 	
 	const byte attrs = 2 - down;
 	
-	splode::ascii_event_buffer buffer =
-	{
-		sizeof buffer - 1,
-		(uint8_t) c,
-		modes,
-		attrs,
-	};
-		
 	if ( events_fd )
 	{
-		const size_t n = sizeof buffer;
-		
-		return write( events_fd, &buffer, n ) == n;
+		return splode::send_key_event( events_fd, c, modes, attrs ) > 0;
 	}
 	
 	return true;
@@ -372,20 +365,9 @@ bool do_PointerEvent( const PointerEvent_message& msg )
 {
 	const byte mask = msg.button_mask;
 	
-	using splode::pointer_location_buffer;
-	
-	pointer_location_buffer& buffer = (pointer_location_buffer&) msg;
-	
-	if ( PointerEvent != sizeof buffer - 1 )
-	{
-		buffer.len = sizeof buffer - 1;
-	}
-	
-	buffer.device = 0;
-	
 	if ( events_fd )
 	{
-		write( events_fd, &buffer, sizeof buffer );
+		splode::send_mouse_moved_event( events_fd, msg.x, msg.y );
 	}
 	
 	static byte button_mask;
@@ -396,18 +378,9 @@ bool do_PointerEvent( const PointerEvent_message& msg )
 		
 		const byte attrs = mask ? 1 : 2;
 		
-		splode::pointer_event_buffer buffer =
-		{
-			sizeof buffer - 1,
-			0,
-			attrs,
-		};
-		
 		if ( events_fd )
 		{
-			const size_t n = sizeof buffer;
-			
-			return write( events_fd, &buffer, n ) == n;
+			return splode::send_mouse_event( events_fd, 0, attrs ) > 0;
 		}
 	}
 	
