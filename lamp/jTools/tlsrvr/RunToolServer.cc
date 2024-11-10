@@ -351,13 +351,6 @@ namespace tool
 		p7::write( fd, plus::utf8_from_mac( text ) );
 	}
 	
-	static void dump_file( const char* path, p7::fd_t fd )
-	{
-		plus::var_string text = p7::load( path );
-		
-		ConvertAndDumpMacText( text, fd );
-	}
-	
 	static inline bool matches_at_end( const char* a_end,
 	                                   size_t a_length,
 	                                   const char* b_begin,
