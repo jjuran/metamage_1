@@ -26,19 +26,8 @@
 namespace amicus
 {
 
-static short last_x;
-static short last_y;
-
 void send_mouse_moved_event( int fd, short x, short y )
 {
-	if ( x == last_x  &&  y == last_y )
-	{
-		return;
-	}
-	
-	last_x = x;
-	last_y = y;
-	
 	splode::pointer_location_buffer buffer =
 	{
 		sizeof buffer - 1,
