@@ -294,7 +294,7 @@ pascal OSStatus Mouse_action( EventHandlerCallRef  handler,
 		{
 			mid_click = kind == 1;
 			
-			send_mouse_event( events_fd, kind, modes );
+			send_mouse_event( events_fd, modes, kind );
 			return noErr;
 		}
 	}
@@ -309,7 +309,7 @@ pascal OSStatus Mouse_action( EventHandlerCallRef  handler,
 	{
 		mid_click = false;
 		
-		send_mouse_event( events_fd, kind, modes );
+		send_mouse_event( events_fd, modes, kind );
 		return noErr;
 	}
 	

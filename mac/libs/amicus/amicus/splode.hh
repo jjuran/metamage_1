@@ -26,7 +26,7 @@ void send_mouse_moved_event( int fd, Coord x, Coord y )
 	send_mouse_moved_event( fd, (short) x, (short) y );
 }
 
-void send_mouse_event( int fd, short action, unsigned flags );
+void send_mouse_event( int fd, short flags, short action );
 
 void send_key_event( int fd, char c, short modes, short attrs );
 

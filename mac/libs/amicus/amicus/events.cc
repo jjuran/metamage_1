@@ -257,7 +257,7 @@ bool handle_CGEvent( CGEventRef event, command_handler_proc command_handler )
 	{
 		case kCGEventLeftMouseDown:
 		case kCGEventLeftMouseUp:
-			send_mouse_event( events_fd, type, modes );
+			send_mouse_event( events_fd, modes, type );
 			return true;
 		
 		case kCGEventRightMouseDown:

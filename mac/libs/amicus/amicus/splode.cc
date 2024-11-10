@@ -50,7 +50,7 @@ void send_mouse_moved_event( int fd, short x, short y )
 	write( fd, &buffer.len, sizeof buffer );
 }
 
-void send_mouse_event( int fd, short action, unsigned flags )
+void send_mouse_event( int fd, short flags, short action )
 {
 	using namespace splode::modes;
 	
