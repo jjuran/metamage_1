@@ -27,6 +27,7 @@
 
 // frontend-common
 #include "frend/cursor.hh"
+#include "frend/update_fifo.hh"
 
 
 namespace amicus

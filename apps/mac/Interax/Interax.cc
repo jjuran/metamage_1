@@ -30,6 +30,7 @@
 
 // frontend-common
 #include "frend/cursor.hh"
+#include "frend/update_fifo.hh"
 
 // amicus
 #include "amicus/events.hh"

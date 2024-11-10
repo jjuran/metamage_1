@@ -19,6 +19,7 @@
 #include "frend/coprocess.hh"
 #include "frend/make_cursor.hh"
 #include "frend/make_raster.hh"
+#include "frend/update_fifo.hh"
 
 // amicus
 #include "amicus/apple_events.hh"
