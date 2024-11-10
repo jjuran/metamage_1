@@ -18,8 +18,8 @@
 // splode
 #include "splode/splode.hh"
 
-
-#define WRITE( buffer )  write( STDOUT_FILENO, &buffer, sizeof buffer )
+// write-a-splode
+#include "splode/write-a-splode.hh"
 
 
 bool swap_Command_and_Option;
@@ -52,15 +52,7 @@ static const uint8_t mode_shift[ 16 ] =
 
 void send_cursor_location( int x, int y )
 {
-	splode::pointer_location_buffer buffer =
-	{
-		sizeof buffer - 1,
-		0,
-		(int16_t) iota::big_u16( x ),
-		(int16_t) iota::big_u16( y ),
-	};
-	
-	WRITE( buffer );
+	splode::send_mouse_moved_event( STDOUT_FILENO, x, y );
 }
 
 void send_motion_event( XMotionEvent& event )
@@ -73,14 +65,7 @@ void send_button_event( XButtonEvent& event )
 	uint8_t modes = 0;
 	uint8_t attrs = 1 + (event.type == ButtonRelease);
 	
-	splode::pointer_event_buffer buffer =
-	{
-		sizeof buffer - 1,
-		modes,
-		attrs,
-	};
-	
-	WRITE( buffer );
+	splode::send_mouse_event( STDOUT_FILENO, modes, attrs );
 }
 
 void send_key_event( XKeyEvent& event )
@@ -157,13 +142,5 @@ void send_key_event( XKeyEvent& event )
 	
 	uint8_t attrs = 2 - pressed;
 	
-	splode::ascii_event_buffer buffer =
-	{
-		sizeof buffer - 1,
-		c,
-		modes,
-		attrs,
-	};
-	
-	WRITE( buffer );
+	splode::send_key_event( STDOUT_FILENO, c, modes, attrs );
 }
