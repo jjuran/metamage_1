@@ -19,6 +19,7 @@
 #include "frend/coprocess.hh"
 #include "frend/make_cursor.hh"
 #include "frend/make_raster.hh"
+#include "frend/raster_updating.hh"
 #include "frend/update_fifo.hh"
 
 // amicus
@@ -47,30 +48,12 @@ using raster::raster_load;
 static const char raster_path[] = "screen.skif";
 static const char cursor_path[] = "cursor.skif";
 
-class raster_updating
-{
-	private:
-		// non-copyable
-		raster_updating           ( const raster_updating& );
-		raster_updating& operator=( const raster_updating& );
-	
-	public:
-		raster_updating()
-		{
-			mkfifo( UPDATE_FIFO, 0666 );
-		}
-		
-		~raster_updating()
-		{
-			unlink( UPDATE_FIFO );
-		}
-};
-
 class emulated_screen
 {
 	typedef frend::coprocess_launch coprocess_launch;
 	typedef frend::cursor_lifetime  cursor_lifetime;
 	typedef frend::raster_lifetime  raster_lifetime;
+	typedef frend::raster_updating  raster_updating;
 	
 	private:
 	#if HARDWARE_CURSOR
