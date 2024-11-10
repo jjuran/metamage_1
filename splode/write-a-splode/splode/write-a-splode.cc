@@ -40,8 +40,8 @@ int send_mouse_moved_event( int fd, short x, short y )
 	{
 		sizeof buffer - 1,
 		0,
-		iota::big_u16( x ),
-		iota::big_u16( y ),
+		(int16_t) iota::big_u16( x ),
+		(int16_t) iota::big_u16( y ),
 	};
 	
 	return write_buffer( fd, &buffer.len, sizeof buffer );
