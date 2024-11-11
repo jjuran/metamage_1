@@ -44,7 +44,6 @@
 #include "raster/clut.hh"
 #include "raster/clut_detail.hh"
 #include "raster/load.hh"
-#include "raster/relay.hh"
 #include "raster/relay_detail.hh"
 #include "raster/skif.hh"
 #include "raster/sync.hh"
@@ -783,11 +782,6 @@ static
 void signal_handler( int )
 {
 	signalled = true;
-	
-	if ( raster_sync )
-	{
-		raster::broadcast( *raster_sync );
-	}
 }
 
 enum display_format
