@@ -218,8 +218,9 @@ namespace raster
 		return result;
 	}
 	
-	raster_load open_raster( int fd, bool synchronized )
+	raster_load open_raster( int fd, int raster_sync )
 	{
+		const bool synchronized        = raster_sync;
 		const bool mac_screens_allowed = ! synchronized;
 		
 		const off_t end = size_of_file_if_valid( fd );
