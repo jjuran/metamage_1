@@ -220,8 +220,7 @@ namespace raster
 	
 	raster_load open_raster( int fd, bool synchronized )
 	{
-		const bool mac_screens_allowed   = ! synchronized;
-		const bool byte_swapping_allowed = ! synchronized;
+		const bool mac_screens_allowed = ! synchronized;
 		
 		const off_t end = size_of_file_if_valid( fd );
 		
