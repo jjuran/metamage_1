@@ -18,6 +18,7 @@ namespace raster
 	
 	inline raster_load load_raster( int fd )  { return open_raster( fd, 0 ); }
 	inline raster_load play_raster( int fd )  { return open_raster( fd, 1 ); }
+	inline raster_load drive_raster( int fd )  { return open_raster( fd, -1 ); }
 	
 	raster_load create_raster( int fd );
 	
