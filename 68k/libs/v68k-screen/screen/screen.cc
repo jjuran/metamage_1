@@ -91,21 +91,6 @@ void close_without_errno( int fd )
 	errno = saved_errno;
 }
 
-static
-sync_relay& initialize( raster_load& raster, uint32_t raster_size )
-{
-	using namespace raster;
-	
-	raster.meta = (raster_metadata*) ((char*) raster.addr + raster_size);
-	
-	raster_metadata& meta = *raster.meta;
-	
-	raster_desc& desc = meta.desc;
-	raster_note& note = meta.note;
-	
-	return data< sync_relay >( note );
-}
-
 int set_screen_backing_store_file( const char* path )
 {
 	int fd = open( path, O_RDWR );
@@ -148,11 +133,12 @@ int set_screen_backing_store_file( const char* path )
 		spare_transit_buffer = page_2_transit_buffer;
 	}
 	
-	uint32_t count = 1 + raster.meta->desc.extra;
+	/*
+		This assumes that the 'sync' note is the first note,
+		which we might have to revisit once we have a palette.
+	*/
 	
-	sync_relay& sync = initialize( raster, the_screen_size * count );
-	
-	the_sync_relay = &sync;
+	the_sync_relay = &data< sync_relay >( meta->note );
 	
 	return 0;
 }
