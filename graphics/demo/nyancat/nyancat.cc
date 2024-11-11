@@ -115,7 +115,7 @@ int create_raster( const char* path )
 		return errno;
 	}
 	
-	loaded_raster = play_raster( fd );
+	loaded_raster = drive_raster( fd );
 	
 	close_without_errno( fd );
 	

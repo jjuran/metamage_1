@@ -102,7 +102,7 @@ int set_screen_backing_store_file( const char* path )
 	
 	using namespace raster;
 	
-	raster_load raster = play_raster( fd );
+	raster_load raster = drive_raster( fd );
 	
 	close_without_errno( fd );
 	
