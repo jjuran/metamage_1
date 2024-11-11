@@ -125,9 +125,6 @@ raster_monitor::raster_monitor( const raster::raster_load& load )
 	
 	raster::sync_relay* sync = find_sync( load );
 	
-	sync->status = raster::Sync_ready;
-	sync->seed   = 0;
-	
 	monitoring = true;
 	
 	raster_thread.create( &raster_thread_entry, sync );
