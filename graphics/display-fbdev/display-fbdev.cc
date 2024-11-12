@@ -144,9 +144,7 @@ void report_error( const char* path, uint32_t err )
 static
 const raster::sync_relay* open_raster( const char* path )
 {
-	const int flags = watching ? O_RDWR : O_RDONLY;
-	
-	int raster_fd = open( path, flags );
+	int raster_fd = open( path, O_RDONLY );
 	
 	if ( raster_fd < 0 )
 	{
@@ -157,8 +155,7 @@ const raster::sync_relay* open_raster( const char* path )
 	
 	using namespace raster;
 	
-	loaded_raster = watching ? play_raster( raster_fd )
-	                         : load_raster( raster_fd );
+	loaded_raster = open_raster( raster_fd, watching );
 	
 	if ( loaded_raster.addr == NULL )
 	{
