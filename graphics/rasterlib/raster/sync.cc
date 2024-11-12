@@ -17,4 +17,16 @@ namespace raster
 		return note != NULL  &&  note->size >= sizeof (sync_relay);
 	}
 	
+	const sync_relay* find_sync( const raster_note* note )
+	{
+		note = find( note, Note_sync );
+		
+		if ( note  &&  is_valid_sync( note ) )
+		{
+			return (const sync_relay*) data( note );
+		}
+		
+		return NULL;
+	}
+	
 }
