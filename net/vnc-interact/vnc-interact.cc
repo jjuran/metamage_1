@@ -459,16 +459,16 @@ const raster::sync_relay* open_raster( const char* path )
 	
 	close( raster_fd );
 	
-	raster_note* sync = find_note( *loaded_raster.meta, Note_sync );
+	const sync_relay* sync = find_sync( &loaded_raster.meta->note );
 	
-	if ( ! is_valid_sync( sync ) )
+	if ( ! sync )
 	{
 		report_error( path, ENOSYS );
 		
 		exit( 3 );
 	}
 	
-	return (sync_relay*) data( sync );
+	return sync;
 }
 
 static
