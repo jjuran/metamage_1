@@ -435,7 +435,7 @@ bool handle_event()
 }
 
 static
-raster::sync_relay* open_raster( const char* path )
+const raster::sync_relay* open_raster( const char* path )
 {
 	int raster_fd = open( path, O_RDWR );
 	
@@ -519,12 +519,12 @@ void wait_for_update_request()
 }
 
 static
-void update_loop( raster::sync_relay*  sync,
-                  uint8_t const*       src,
-                  uint8_t*             dst,
-                  unsigned             width,
-                  unsigned             height,
-                  unsigned             stride )
+void update_loop( const raster::sync_relay*  sync,
+                  uint8_t const*             src,
+                  uint8_t*                   dst,
+                  unsigned                   width,
+                  unsigned                   height,
+                  unsigned                   stride )
 {
 	uint32_t seed = 0;
 	
@@ -567,7 +567,7 @@ void update_loop( raster::sync_relay*  sync,
 static
 void* raster_update_start( void* arg )
 {
-	raster::sync_relay* sync = (raster::sync_relay*) arg;
+	const raster::sync_relay* sync = (const raster::sync_relay*) arg;
 	
 	const raster::raster_desc& desc = loaded_raster.meta->desc;
 	
@@ -615,7 +615,7 @@ int main( int argc, char** argv )
 		signal( SIGUSR1, &sigusr1 );
 	}
 	
-	raster::sync_relay* sync = open_raster( raster_path );
+	const raster::sync_relay* sync = open_raster( raster_path );
 	
 	const raster::raster_desc& desc = loaded_raster.meta->desc;
 	
@@ -685,7 +685,7 @@ int main( int argc, char** argv )
 		return 1;
 	}
 	
-	raster_update_thread.create( &raster_update_start, sync );
+	raster_update_thread.create( &raster_update_start, (void*) sync );
 	
 	while ( handle_event() )
 	{
