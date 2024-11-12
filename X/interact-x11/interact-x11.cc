@@ -78,7 +78,7 @@ void report_error( const char* path, uint32_t err )
 }
 
 static
-raster::sync_relay* open_raster( const char* path )
+const raster::sync_relay* open_raster( const char* path )
 {
 	int raster_fd = open( path, O_RDWR );
 	
@@ -129,10 +129,10 @@ void update_image( unsigned width, unsigned height )
 }
 
 static
-void update_loop( raster::sync_relay*  sync,
-                  unsigned             width,
-                  unsigned             height,
-                  unsigned             stride )
+void update_loop( const raster::sync_relay*  sync,
+                  unsigned                   width,
+                  unsigned                   height,
+                  unsigned                   stride )
 {
 	const char* update_fifo = getenv( "GRAPHICS_UPDATE_SIGNAL_FIFO" );
 	
@@ -227,7 +227,7 @@ char* const* get_options( char** argv )
 static
 void* raster_update_start( void* arg )
 {
-	raster::sync_relay* sync = (raster::sync_relay*) arg;
+	const raster::sync_relay* sync = (const raster::sync_relay*) arg;
 	
 	const raster::raster_desc& desc = loaded_raster.meta->desc;
 	
@@ -260,7 +260,7 @@ int main( int argc, char** argv )
 		swap_Command_and_Option = atoi( var );
 	}
 	
-	raster::sync_relay* sync = open_raster( raster_path );
+	const raster::sync_relay* sync = open_raster( raster_path );
 	
 	const raster::raster_desc& desc = loaded_raster.meta->desc;
 	
@@ -342,7 +342,7 @@ int main( int argc, char** argv )
 	
 	XFlush( display );
 	
-	raster_update_thread.create( &raster_update_start, sync );
+	raster_update_thread.create( &raster_update_start, (void*) sync );
 	
 	int x11_fd = ConnectionNumber( display );
 	
