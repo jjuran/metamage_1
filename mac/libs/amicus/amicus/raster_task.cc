@@ -48,7 +48,7 @@ raster::sync_relay* find_sync( const raster::raster_load& load )
 }
 
 static
-void raster_event_loop( raster::sync_relay* sync )
+void raster_event_loop( const raster::sync_relay* sync )
 {
 	const OSType   eventClass = kEventClassAmicus;
 	const uint32_t repaintDue = kEventAmicusUpdate;
@@ -100,7 +100,7 @@ void* raster_thread_entry( void* arg )
 {
 	OSStatus err;
 	
-	raster::sync_relay* sync = (raster::sync_relay*) arg;
+	const raster::sync_relay* sync = (const raster::sync_relay*) arg;
 	
 	raster_event_loop( sync );
 	
@@ -123,11 +123,11 @@ raster_monitor::raster_monitor( const raster::raster_load& load )
 {
 	GetMainEventQueue();  // initialization is thread-unsafe before 10.4
 	
-	raster::sync_relay* sync = find_sync( load );
+	const raster::sync_relay* sync = find_sync( load );
 	
 	monitoring = true;
 	
-	raster_thread.create( &raster_thread_entry, sync );
+	raster_thread.create( &raster_thread_entry, (void*) sync );
 }
 
 raster_monitor::~raster_monitor()
