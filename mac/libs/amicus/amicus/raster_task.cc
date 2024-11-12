@@ -38,16 +38,6 @@ static bool monitoring;
 static poseven::thread raster_thread;
 
 static
-raster::sync_relay* find_sync( const raster::raster_load& load )
-{
-	using namespace raster;
-	
-	raster_note* sync = find_note( *load.meta, Note_sync );
-	
-	return (sync_relay*) data( sync );
-}
-
-static
 void raster_event_loop( const raster::sync_relay* sync )
 {
 	const OSType   eventClass = kEventClassAmicus;
@@ -123,7 +113,7 @@ raster_monitor::raster_monitor( const raster::raster_load& load )
 {
 	GetMainEventQueue();  // initialization is thread-unsafe before 10.4
 	
-	const raster::sync_relay* sync = find_sync( load );
+	const raster::sync_relay* sync = find_sync( &load.meta->note );
 	
 	monitoring = true;
 	
