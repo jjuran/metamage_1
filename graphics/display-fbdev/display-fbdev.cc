@@ -142,7 +142,7 @@ void report_error( const char* path, uint32_t err )
 }
 
 static
-raster::sync_relay* open_raster( const char* path )
+const raster::sync_relay* open_raster( const char* path )
 {
 	const int flags = watching ? O_RDWR : O_RDONLY;
 	
@@ -461,12 +461,12 @@ void draw_hwcursor( uint8_t* base, size_t stride, size_t width, size_t height )
 static volatile sig_atomic_t signalled;
 
 static
-void update_loop( raster::sync_relay*  sync,
-                  uint8_t*             dst,
-                  size_t               dst_stride,
-                  size_t               width,
-                  size_t               height,
-                  draw_proc            draw )
+void update_loop( const raster::sync_relay*  sync,
+                  uint8_t*                   dst,
+                  size_t                     dst_stride,
+                  size_t                     width,
+                  size_t                     height,
+                  draw_proc                  draw )
 {
 	const char* update_fifo = getenv( "GRAPHICS_UPDATE_SIGNAL_FIFO" );
 	
@@ -776,7 +776,7 @@ void launch_coprocess()
 	}
 }
 
-static raster::sync_relay* raster_sync;
+static const raster::sync_relay* raster_sync;
 
 static
 void signal_handler( int )
@@ -1027,7 +1027,7 @@ int main( int argc, char** argv )
 		}
 	}
 	
-	if ( raster::sync_relay* sync = raster_sync )
+	if ( const raster::sync_relay* sync = raster_sync )
 	{
 		update_loop( sync, dst, dst_stride, width, height, draw );
 	}
