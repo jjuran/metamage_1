@@ -437,7 +437,7 @@ bool handle_event()
 static
 const raster::sync_relay* open_raster( const char* path )
 {
-	int raster_fd = open( path, O_RDWR );
+	int raster_fd = open( path, O_RDONLY );
 	
 	if ( raster_fd < 0 )
 	{
