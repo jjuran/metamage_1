@@ -1,9 +1,9 @@
 /*
-	input.cc
-	--------
+	read_all.cc
+	-----------
 */
 
-#include "input.hh"
+#include "posix/read_all.hh"
 
 // POSIX
 #include <unistd.h>

@@ -17,10 +17,12 @@
 // sndpipe-api
 #include "sndpipe/endian.hh"
 
+// posix-utils
+#include "posix/read_all.hh"
+
 // libsndtrack
 #include "admin.hh"
 #include "exceptions.hh"
-#include "input.hh"
 #include "sound_node.hh"
 #include "synch.hh"
 

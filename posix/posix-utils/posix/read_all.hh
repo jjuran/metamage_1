@@ -1,13 +1,14 @@
 /*
-	input.hh
-	--------
+	read_all.hh
+	-----------
 */
 
-#ifndef INPUT_HH
-#define INPUT_HH
+#ifndef POSIX_READALL_HH
+#define POSIX_READALL_HH
 
 // POSIX
 #include <sys/types.h>
+
 
 ssize_t read_all( int fd, char* p, size_t n );
 
