@@ -53,7 +53,7 @@ void open_raster( const char* path )
 	
 	using namespace raster;
 	
-	loaded_raster = open_raster( raster_fd, true );
+	loaded_raster = drive_raster( raster_fd );
 	
 	if ( loaded_raster.addr == NULL )
 	{
