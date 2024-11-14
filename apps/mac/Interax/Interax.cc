@@ -115,7 +115,7 @@ pascal OSErr handle_odoc_Apple_event( AppleEvent const* event,
 	
 	int raster_fd = open( raster_path, O_RDWR );
 	
-	loaded_raster = raster::open_raster( raster_fd, true );
+	loaded_raster = raster::play_raster( raster_fd );
 	
 	running = true;
 	
