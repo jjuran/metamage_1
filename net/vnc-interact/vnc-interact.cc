@@ -34,6 +34,9 @@
 // write-a-splode
 #include "splode/write-a-splode.hh"
 
+// posix-utils
+#include "posix/read_all.hh"
+
 // raster
 #include "raster/load.hh"
 #include "raster/relay_detail.hh"
@@ -136,31 +139,6 @@ static
 void report_error( const char* path, uint32_t err )
 {
 	more::perror( PROGRAM, path, err );
-}
-
-static
-ssize_t read_all( int fd, char* p, size_t n )
-{
-	const size_t m = n;
-	
-	ssize_t n_read = 1;
-	
-	while ( n > 0  &&  (n_read = read( fd, p, n )) > 0 )
-	{
-		p += n_read;
-		n -= n_read;
-	}
-	
-	return + n == 0 ? m          // success, return original n
-	       : n_read ? n_read     // read() error, return -1
-	       : m == n ? 0          // EOF at zero bytes, return 0
-	       :          ~(m - n);  // EOF later, return total read as value < -1
-}
-
-static inline
-ssize_t read_all( int fd, void* p, size_t n )
-{
-	return read_all( fd, (char*) p, n );
 }
 
 static inline
