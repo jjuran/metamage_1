@@ -12,8 +12,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-// Extended API Set, Part 2
-#include "extended-api-set/part-2.h"
+// posix-utils
+#include "posix/bindir.hh"
 
 // frontend-common
 #include "frend/coprocess.hh"
@@ -88,27 +88,6 @@ void initialize();
 void run_event_loop( const raster_load& load, const raster_desc& desc );
 
 }  // namespace amicus
-
-static
-int bindir( char* argv0 )
-{
-	int dirfd;
-	
-	if ( char* slash = strrchr( argv0, '/' ) )
-	{
-		*slash = '\0';
-		
-		dirfd = open( argv0, O_RDONLY | O_DIRECTORY );
-		
-		*slash = '/';
-	}
-	else
-	{
-		dirfd = open( ".", O_RDONLY | O_DIRECTORY );
-	}
-	
-	return dirfd;
-}
 
 int main( int argc, char** argv )
 {
