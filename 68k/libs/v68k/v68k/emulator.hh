@@ -30,7 +30,7 @@ namespace v68k
 			uint32_t address_error()  { condition = halted;  return 0; }
 		
 		public:
-			emulator( processor_model model, const memory& mem, bkpt_handler bkpt = 0 );  // NULL
+			emulator( processor_model model, const mem_base& mem, bkpt_handler bkpt = 0 );  // NULL
 			
 			unsigned long instruction_count() const  { return its_instruction_counter; }
 			

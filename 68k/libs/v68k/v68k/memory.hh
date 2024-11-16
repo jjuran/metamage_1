@@ -39,13 +39,13 @@ namespace v68k
 	
 	typedef uint8_t* (*translate_f)( addr_t a, uint32_t n, fc_t fc, mem_t mem );
 	
-	class memory
+	class mem_base
 	{
 		private:
 			translate_f its_translate;
 		
 		public:
-			memory( translate_f f ) : its_translate( f )
+			mem_base( translate_f f ) : its_translate( f )
 			{
 			}
 			

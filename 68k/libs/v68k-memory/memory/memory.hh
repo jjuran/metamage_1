@@ -37,7 +37,7 @@ extern uint32_t alt_screen_addr;
 extern uint32_t main_screen_addr;
 extern uint32_t main_sound_addr;
 
-class memory_manager : public v68k::memory
+class memory_manager : public v68k::mem_base
 {
 	public:
 		memory_manager( uint8_t*  low_mem_base,

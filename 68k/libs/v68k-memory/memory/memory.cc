@@ -165,7 +165,7 @@ uint8_t* translate_with_diagnostic( uint32_t               addr,
 memory_manager::memory_manager( uint8_t*  low_mem_base,
                                 uint32_t  low_mem_size )
 :
-	v68k::memory( &translate_with_diagnostic )
+	v68k::mem_base( &translate_with_diagnostic )
 {
 	low_memory_base = low_mem_base;
 	low_memory_size = low_mem_size;

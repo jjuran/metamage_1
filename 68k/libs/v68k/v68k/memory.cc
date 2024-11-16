@@ -100,7 +100,7 @@ namespace v68k
 	}
 	
 	
-	bool memory::get_byte( uint32_t addr, uint8_t& x, function_code_t fc ) const
+	bool mem_base::get_byte( uint32_t addr, uint8_t& x, function_code_t fc ) const
 	{
 		if ( const uint8_t* p = translate( addr, sizeof (uint8_t), fc, mem_read ) )
 		{
@@ -112,7 +112,7 @@ namespace v68k
 		return false;
 	}
 	
-	bool memory::get_word( uint32_t addr, uint16_t& x, function_code_t fc ) const
+	bool mem_base::get_word( uint32_t addr, uint16_t& x, function_code_t fc ) const
 	{
 		if ( const uint8_t* p = translate( addr, sizeof (uint16_t), fc, mem_read ) )
 		{
@@ -124,7 +124,7 @@ namespace v68k
 		return false;
 	}
 	
-	bool memory::get_long( uint32_t addr, uint32_t& x, function_code_t fc ) const
+	bool mem_base::get_long( uint32_t addr, uint32_t& x, function_code_t fc ) const
 	{
 		if ( const uint8_t* p = translate( addr, sizeof (uint32_t), fc, mem_read ) )
 		{
@@ -137,7 +137,7 @@ namespace v68k
 	}
 	
 	
-	bool memory::put_byte( uint32_t addr, uint8_t x, function_code_t fc ) const
+	bool mem_base::put_byte( uint32_t addr, uint8_t x, function_code_t fc ) const
 	{
 		if ( uint8_t* p = translate( addr, sizeof (uint8_t), fc, mem_write ) )
 		{
@@ -151,7 +151,7 @@ namespace v68k
 		return false;
 	}
 	
-	bool memory::put_word( uint32_t addr, uint16_t x, function_code_t fc ) const
+	bool mem_base::put_word( uint32_t addr, uint16_t x, function_code_t fc ) const
 	{
 		if ( uint8_t* p = translate( addr, sizeof (uint16_t), fc, mem_write ) )
 		{
@@ -165,7 +165,7 @@ namespace v68k
 		return false;
 	}
 	
-	bool memory::put_long( uint32_t addr, uint32_t x, function_code_t fc ) const
+	bool mem_base::put_long( uint32_t addr, uint32_t x, function_code_t fc ) const
 	{
 		if ( uint8_t* p = translate( addr, sizeof (uint32_t), fc, mem_write ) )
 		{
@@ -180,7 +180,7 @@ namespace v68k
 	}
 	
 	
-	bool memory::get_instruction_word( uint32_t addr, uint16_t& x, function_code_t fc ) const
+	bool mem_base::get_instruction_word( uint32_t addr, uint16_t& x, function_code_t fc ) const
 	{
 		if ( const uint8_t* p = translate( addr, sizeof (uint16_t), fc, mem_exec ) )
 		{
