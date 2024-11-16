@@ -728,7 +728,12 @@ char* const* get_options( char** argv )
 				const char* path;
 				path = global_result.param;
 				
-				if ( int nok = set_screen_backing_store_file( path ) )
+				int nok;
+				
+				nok = set_screen_backing_store_file( path )  ||
+				      allocate_screen();
+				
+				if ( nok )
 				{
 					const char* error = strerror( nok );
 					
@@ -741,8 +746,6 @@ char* const* get_options( char** argv )
 				}
 				
 				has_screen = true;
-				
-				allocate_screen();
 				
 				break;
 			
