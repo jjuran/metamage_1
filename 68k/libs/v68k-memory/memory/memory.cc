@@ -38,7 +38,8 @@
 #endif
 
 
-namespace v68k {
+namespace v68k   {
+namespace memory {
 
 usermode_memory_access major_system_vector_access;
 
@@ -281,4 +282,5 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	return v68k::callout::translate( addr, length, fc, access );
 }
 
+}  // namespace memory
 }  // namespace v68k

@@ -86,9 +86,9 @@ using v68k::callout::system_call;
 using v68k::callout::microseconds;
 using v68k::screen::ignore_screen_locks;
 
-using v68k::alt_screen_addr;
-using v68k::main_screen_addr;
-using v68k::main_sound_addr;
+using v68k::memory::alt_screen_addr;
+using v68k::memory::main_screen_addr;
+using v68k::memory::main_sound_addr;
 
 enum
 {
@@ -508,7 +508,7 @@ int execute_68k( int argc, char* const* argv )
 		abort();
 	}
 	
-	const v68k::memory_manager memory( mem, mem_size );
+	const v68k::memory::memory_manager memory( mem, mem_size );
 	
 	v68k::emulator emu( mc68k_model, memory, bkpt_handler );
 	
@@ -659,8 +659,8 @@ char* const* get_options( char** argv )
 					EXIT( 2, "xv68k: invalid --xv parameter" );
 				}
 				
-				using v68k::major_system_vector_access;
-				using v68k::usermode_memory_access;
+				using v68k::memory::major_system_vector_access;
+				using v68k::memory::usermode_memory_access;
 				
 				major_system_vector_access = usermode_memory_access( xv );
 				break;

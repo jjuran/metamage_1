@@ -10,7 +10,8 @@
 #include "v68k/memory.hh"
 
 
-namespace v68k {
+namespace v68k   {
+namespace memory {
 
 enum usermode_memory_access
 {
@@ -50,6 +51,7 @@ class memory_manager : public v68k::mem_base
 		                    v68k::memory_access_t  access );
 };
 
+}  // namespace memory
 }  // namespace v68k
 
 #endif
