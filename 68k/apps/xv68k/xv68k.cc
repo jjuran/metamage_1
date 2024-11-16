@@ -56,6 +56,7 @@
 
 // v68k-memory
 #include "memory/memory.hh"
+#include "memory/screen.hh"
 
 // v68k-diagnostics
 #include "diagnostics/diagnostics.hh"
@@ -722,6 +723,7 @@ char* const* get_options( char** argv )
 				}
 				
 				using v68k::screen::set_screen_backing_store_file;
+				using v68k::memory::allocate_screen;
 				
 				const char* path;
 				path = global_result.param;
@@ -740,20 +742,7 @@ char* const* get_options( char** argv )
 				
 				has_screen = true;
 				
-				using v68k::screen::page_1_virtual_buffer;
-				using v68k::screen::the_screen_size;
-				using v68k::screen::virtual_buffer;
-				
-				if ( the_screen_size != 21888 )
-				{
-					virtual_buffer = malloc( the_screen_size );
-					
-					memset( virtual_buffer, 0xFF, the_screen_size );
-					
-					page_1_virtual_buffer = (uint8_t*) virtual_buffer;
-					
-					main_screen_addr = 0x00E00000;
-				}
+				allocate_screen();
 				
 				break;
 			
