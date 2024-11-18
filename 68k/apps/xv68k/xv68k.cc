@@ -44,8 +44,6 @@
 // v68k-screen
 #include "screen/lock.hh"
 #include "screen/screen.hh"
-#include "screen/storage.hh"
-#include "screen/surface.hh"
 
 // v68k-sound
 #include "sound/sound.hh"
@@ -55,6 +53,7 @@
 #include "syscall/handler.hh"
 
 // v68k-memory
+#include "memory/buffers.hh"
 #include "memory/memory.hh"
 #include "memory/screen.hh"
 
@@ -86,10 +85,6 @@ using v68k::callout::callout_address;
 using v68k::callout::system_call;
 using v68k::callout::microseconds;
 using v68k::screen::ignore_screen_locks;
-
-using v68k::memory::alt_screen_addr;
-using v68k::memory::main_screen_addr;
-using v68k::memory::main_sound_addr;
 
 enum
 {
@@ -521,54 +516,17 @@ int execute_68k( int argc, char* const* argv )
 	
 	load_vectors( load );
 	
+	const uint32_t mem_top = n_512K_blocks >= 0 ? mem_size : 0;
+	
+	v68k::memory::place_buffers( emu, mem, mem_top );
+	
 	enum
 	{
-		ScreenRow = 0x0106,
-		MemTop    = 0x0108,
 		CPUFlag   = 0x012F,
-		SoundBase = 0x0266,
-		ScrnBase  = 0x0824,
-		CrsrPin   = 0x0834,
 		CrsrSave  = 0x088C,
 	};
 	
 	emu.put_byte( CPUFlag, mc68k_model >> 4, v68k::user_data_space );
-	
-	if ( n_512K_blocks >= 0 )
-	{
-		alt_screen_addr  = mem_size - (0x20000 - 0x12700);
-		main_screen_addr = mem_size - (0x20000 - 0x1A700);
-		main_sound_addr  = mem_size - (0x20000 - 0x1FD00);
-		
-		emu.put_long( MemTop, mem_size, user_data_space );
-	}
-	
-	using v68k::screen::virtual_buffer;
-	
-	if ( ! virtual_buffer )
-	{
-		using v68k::screen::page_1_virtual_buffer;
-		using v68k::screen::page_2_virtual_buffer;
-		
-		page_1_virtual_buffer = mem + main_screen_addr;
-		page_2_virtual_buffer = mem + alt_screen_addr;
-		
-		virtual_buffer = page_1_virtual_buffer;
-		
-		memset( page_1_virtual_buffer, 0xFF, 64 * 342 );
-		memset( page_2_virtual_buffer, 0xFF, 64 * 342 );
-	}
-	
-	using v68k::screen::the_surface_shape;
-	
-	const uint32_t screen_row = the_surface_shape.stride;
-	const uint32_t screen_res = the_surface_shape.width
-	                          | the_surface_shape.height << 16;
-	
-	emu.put_word( ScreenRow,   screen_row,       user_data_space );
-	emu.put_long( SoundBase,   main_sound_addr,  user_data_space );
-	emu.put_long( ScrnBase,    main_screen_addr, user_data_space );
-	emu.put_long( CrsrPin + 4, screen_res,       user_data_space );
 	
 	if ( has_cursor )
 	{
