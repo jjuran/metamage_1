@@ -76,6 +76,9 @@ using v68k::auth::fully_authorized;
 using v68k::auth::supervisor_mode_switch_allowed;
 using v68k::screen::ignore_screen_locks;
 
+using v68k::syscall::errno_ptr_addr;
+using v68k::syscall::fake_pid;
+
 enum
 {
 	/*
@@ -280,7 +283,7 @@ static uint32_t mem_size = 1024 * 128;
 static
 int32_t bkpt_2( v68k::processor_state& s )
 {
-	v68k::op_result result = bridge_call( s );
+	int32_t result = v68k::syscall::bridge( s );
 	
 	if ( result >= 0 )
 	{

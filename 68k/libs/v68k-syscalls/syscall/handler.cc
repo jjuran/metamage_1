@@ -6,7 +6,10 @@
 #include "syscall/handler.hh"
 
 
-const uint16_t syscall_patch_handler[ syscall_patch_handler_word_count ] =
+namespace v68k    {
+namespace syscall {
+
+const uint16_t patch_handler[ patch_handler_word_count ] =
 {
 	0x41EF,  // LEA  (2,A7),A0
 	0x0002,
@@ -20,3 +23,6 @@ const uint16_t syscall_patch_handler[ syscall_patch_handler_word_count ] =
 	
 	0x4E73   // RTE
 };
+
+}  // namespace syscall
+}  // namespace v68k

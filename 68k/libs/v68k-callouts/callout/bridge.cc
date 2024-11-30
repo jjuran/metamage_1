@@ -691,7 +691,7 @@ int32_t next_pseudorandom_callout( v68k::processor_state& s )
 static
 int32_t system_call_callout( v68k::processor_state& s )
 {
-	op_result result = bridge_call( s );
+	int32_t result = v68k::syscall::bridge( s );
 	
 	if ( result >= 0 )
 	{

@@ -38,6 +38,8 @@ namespace os   {
 using v68k::callout::system_call;
 using v68k::callout::microseconds;
 
+using v68k::syscall::patch_handler;
+
 using v68k::exec::code_address;
 using v68k::exec::params_addr;
 
@@ -143,7 +145,7 @@ void load( uint8_t* mem, uint32_t mem_size )
 	
 	install_exception_handler( os,  1, HANDLER( loader_code ) );
 	install_exception_handler( os, 10, HANDLER( trap_dispatcher ) );
-	install_exception_handler( os, 32 + 2, HANDLER( syscall_patch_handler ) );
+	install_exception_handler( os, 32 + 2, HANDLER( patch_handler ) );
 	
 	install_exception_handler( os, 64, HANDLER( no_op_exception ) );
 	install_exception_handler( os, 88, HANDLER( no_op_exception ) );

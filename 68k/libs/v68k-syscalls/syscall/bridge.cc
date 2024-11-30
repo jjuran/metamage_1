@@ -34,6 +34,9 @@
 #endif
 
 
+namespace v68k    {
+namespace syscall {
+
 using v68k::auth::fully_authorized;
 
 
@@ -651,7 +654,7 @@ v68k::op_result emu_nanosleep( v68k::processor_state& s )
 	return set_result( s, result );
 }
 
-v68k::op_result bridge_call( v68k::processor_state& s )
+int32_t bridge( v68k::processor_state& s )
 {
 	const uint16_t call_number = s.d(0);
 	
@@ -675,3 +678,6 @@ v68k::op_result bridge_call( v68k::processor_state& s )
 			return v68k::Illegal_instruction;
 	}
 }
+
+}  // namespace syscall
+}  // namespace v68k

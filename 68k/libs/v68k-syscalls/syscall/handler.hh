@@ -10,9 +10,14 @@
 #include <stdint.h>
 
 
-const int syscall_patch_handler_word_count = 7;
+namespace v68k    {
+namespace syscall {
 
-extern const uint16_t syscall_patch_handler[ syscall_patch_handler_word_count ];
+const int patch_handler_word_count = 7;
 
+extern const uint16_t patch_handler[ patch_handler_word_count ];
+
+}  // namespace syscall
+}  // namespace v68k
 
 #endif
