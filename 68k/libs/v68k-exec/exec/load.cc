@@ -29,7 +29,6 @@
 
 // v68k-ioutils
 #include "ioutils/load.hh"
-//#include "ioutils/print_register_dump.hh"
 
 // v68k-callouts
 #include "callout/bridge.hh"
