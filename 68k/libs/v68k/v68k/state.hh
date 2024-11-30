@@ -40,9 +40,14 @@ namespace v68k
 		normal = 1
 	};
 	
+	enum
+	{
+		n_BKPT_vectors = 8,
+	};
+	
 	struct processor_state;
 	
-	typedef op_result (*bkpt_handler)(processor_state& s, int vector);
+	typedef int32_t (*bkpt_handler)( processor_state& s );
 	
 	struct processor_state
 	{
@@ -52,7 +57,7 @@ namespace v68k
 		
 		const mem_base& mem;
 		
-		bkpt_handler bkpt;
+		bkpt_handler bkpt[ n_BKPT_vectors ];
 		
 		const processor_model model;
 		

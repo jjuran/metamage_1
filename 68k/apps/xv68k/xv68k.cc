@@ -278,13 +278,13 @@ static uint32_t mem_size = 1024 * 128;
 
 
 static
-v68k::op_result bkpt_2( v68k::processor_state& s )
+int32_t bkpt_2( v68k::processor_state& s )
 {
 	v68k::op_result result = bridge_call( s );
 	
 	if ( result >= 0 )
 	{
-		s.acknowledge_breakpoint( 0x4E75 );  // RTS
+		return 0x4E75;  // RTS
 	}
 	else if ( result == v68k::Illegal_instruction )
 	{
@@ -298,40 +298,6 @@ v68k::op_result bkpt_2( v68k::processor_state& s )
 	}
 	
 	return result;
-}
-
-static
-v68k::op_result bkpt_3( v68k::processor_state& s )
-{
-	int32_t new_opcode = v68k::callout::bridge( s );
-	
-	if ( new_opcode < 0 )
-	{
-		return v68k::op_result( new_opcode );
-	}
-	
-	if ( new_opcode > 0 )
-	{
-		s.acknowledge_breakpoint( new_opcode );
-	}
-	
-	return v68k::Ok;
-}
-
-static
-v68k::op_result bkpt_handler( v68k::processor_state& s, int vector )
-{
-	switch ( vector )
-	{
-		case 2:
-			return ::bkpt_2( s );
-		
-		case 3:
-			return ::bkpt_3( s );
-		
-		default:
-			return v68k::Illegal_instruction;
-	}
 }
 
 using v68k::exec::emulation_loop;
@@ -376,7 +342,8 @@ int execute_68k( int argc, char* const* argv )
 	
 	v68k::emulator emu( mc68k_model, memory );
 	
-	emu.bkpt = &bkpt_handler;
+	emu.bkpt[ 2 ] = &bkpt_2;
+	emu.bkpt[ 3 ] = &v68k::callout::bridge;
 	
 	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
 	

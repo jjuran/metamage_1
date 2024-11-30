@@ -351,16 +351,21 @@ namespace v68k
 		
 		s.pc() -= 2;
 		
-		if ( bkpt_handler f = s.bkpt )
+		if ( bkpt_handler f = s.bkpt[ data ] )
 		{
-			op_result result = f( s, data );
+			op_result result = (op_result) f( s );
+			
+			if ( result > 0 )
+			{
+				s.acknowledge_breakpoint( result );  // new opcode
+				
+				return Breakpoint;
+			}
 			
 			if ( result < 0 )
 			{
 				return result;
 			}
-			
-			return Breakpoint;
 		}
 		
 		return Illegal_instruction;
