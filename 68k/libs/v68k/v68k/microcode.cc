@@ -351,8 +351,6 @@ namespace v68k
 		
 		s.pc() -= 2;
 		
-		s.opcode = 0x4AFC;  // ILLEGAL
-		
 		if ( bkpt_handler f = s.bkpt )
 		{
 			op_result result = f( s, data );
@@ -361,9 +359,11 @@ namespace v68k
 			{
 				return result;
 			}
+			
+			return Breakpoint;
 		}
 		
-		return Breakpoint;
+		return Illegal_instruction;
 	}
 	
 	op_result microcode_PEA( processor_state& s, op_params& pb )
