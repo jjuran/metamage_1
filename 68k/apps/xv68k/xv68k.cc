@@ -374,7 +374,9 @@ int execute_68k( int argc, char* const* argv )
 	
 	const v68k::memory::memory_manager memory( mem, mem_size );
 	
-	v68k::emulator emu( mc68k_model, memory, bkpt_handler );
+	v68k::emulator emu( mc68k_model, memory );
+	
+	emu.bkpt = &bkpt_handler;
 	
 	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
 	

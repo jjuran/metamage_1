@@ -52,7 +52,7 @@ namespace v68k
 		
 		const mem_base& mem;
 		
-		const bkpt_handler bkpt;
+		bkpt_handler bkpt;
 		
 		const processor_model model;
 		
@@ -60,7 +60,7 @@ namespace v68k
 		
 		uint16_t opcode;  // current instruction opcode
 		
-		processor_state( processor_model model, const mem_base& mem, bkpt_handler bkpt );
+		processor_state( processor_model model, const mem_base& mem );
 		
 		uint32_t& d( int i )  { return regs[ D0 + i ]; }
 		uint32_t& a( int i )  { return regs[ A0 + i ]; }
