@@ -13,11 +13,18 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <errno.h>
+#include <string.h>
+
 // iota
 #include "iota/char_types.hh"
 
 // splode
 #include "splode/splode.hh"
+
+// log-of-war
+#include "logofwar/report.hh"
 
 // ams-common
 #include "reactor.hh"
@@ -335,7 +342,23 @@ void queue_event( int fd )
 	
 	if ( 1 + len != n_read )
 	{
-		write( STDERR_FILENO, STR_LEN( "ams-core: SPIEL protocol error\n" ) );
+		if ( n_read < 0 )
+		{
+			const char* error = strerror( errno );
+			
+			FATAL = "ams-core: event stream error: read failed: ", error;
+		}
+		else if ( n_read == 0 )
+		{
+			FATAL = "ams-core: event stream error: writer closed";
+		}
+		else
+		{
+			const ssize_t n = n_read;
+			const ssize_t d = 1 + len;
+			
+			FATAL = "ams-core: event stream error: only got ", n, "/", d;
+		}
 		
 		_exit( 1 );
 	}
