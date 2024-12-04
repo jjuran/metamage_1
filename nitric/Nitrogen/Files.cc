@@ -459,6 +459,8 @@ namespace Nitrogen
       return result;
      }
 
+#endif  // #if ! __LP64__
+
    FSRef FSMakeFSRefUnicode( const FSRef& parentRef,
                              UniCharCount nameLength,
                              const UniChar *name,
@@ -473,8 +475,6 @@ namespace Nitrogen
       return result;
      }
 
-#endif  // #if ! __LP64__
-	
 /*
 Return Value
 	A result code. See "File Manager Result Codes".
