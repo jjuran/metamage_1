@@ -21,6 +21,8 @@ namespace tool
 	
 	plus::string get_user_cache_pathname();
 	
+	plus::string get_Interfaces_subdir( const char* name );
+	
 	plus::string InstallDirPath();
 	
 	plus::string SourceDotListFile( const plus::string& projectPath );

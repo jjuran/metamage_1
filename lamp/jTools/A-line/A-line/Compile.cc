@@ -54,9 +54,6 @@
 // pfiles
 #include "pfiles/common.hh"
 
-// one_path
-#include "one_path/find_SDK_dir.hh"
-
 // A-line
 #include "A-line/A-line.hh"
 #include "A-line/Commands.hh"
@@ -91,23 +88,6 @@ namespace tool
 	                                           const plus::string&  target_path )
 	{
 		return derived_pathname( dir_path, target_path, ".txt" );
-	}
-	
-	static const plus::string& get_Interfaces()
-	{
-		static plus::string interfaces = find_SDK_dir() + "/" "Interfaces" "/";
-		
-		return interfaces;
-	}
-	
-	static plus::string get_Interfaces_subdir( const char* name )
-	{
-		if ( const char* path = getenv( name ) )
-		{
-			return path;
-		}
-		
-		return get_Interfaces() + name;
 	}
 	
 	class CompilingTask : public FileTask

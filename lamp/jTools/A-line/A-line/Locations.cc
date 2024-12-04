@@ -8,12 +8,18 @@
 // Standard C
 #include <stdlib.h>
 
+// plus
+#include "plus/string/concat.hh"
+
 // poseven
 #include "poseven/functions/mkdir.hh"
 #include "poseven/functions/stat.hh"
 
 // pfiles
 #include "pfiles/common.hh"
+
+// one_path
+#include "one_path/find_SDK_dir.hh"
 
 // A-line
 #include "A-line/Platform.hh"
@@ -74,6 +80,24 @@ namespace tool
 		                                          : "var/cache/a-line";
 		
 		return mkdir_path( home / cache );
+	}
+	
+	static
+	const plus::string& get_Interfaces()
+	{
+		static plus::string interfaces = find_SDK_dir() + "/" "Interfaces" "/";
+		
+		return interfaces;
+	}
+	
+	plus::string get_Interfaces_subdir( const char* name )
+	{
+		if ( const char* path = getenv( name ) )
+		{
+			return path;
+		}
+		
+		return get_Interfaces() + name;
 	}
 	
 	static plus::string BuildsDirPath()
