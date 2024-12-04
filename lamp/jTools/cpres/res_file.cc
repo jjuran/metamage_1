@@ -106,10 +106,14 @@ struct file_manager_traits : FSRef_traits
 {
 };
 
+#if ! __LP64__
+
 template <>
 struct file_manager_traits< false > : FSSpec_traits
 {
 };
+
+#endif
 
 static
 void throw_error( Error err )
@@ -196,6 +200,8 @@ void resolve_new_path( const char* path, N::FSRefNameSpec& node )
 }
 
 
+#if ! __LP64__
+
 static inline
 const FSSpec& create_res_file( const FSSpec& file, ForkType fork, FSSpec& spec )
 {
@@ -203,6 +209,8 @@ const FSSpec& create_res_file( const FSSpec& file, ForkType fork, FSSpec& spec )
 	
 	return file;
 }
+
+#endif
 
 static
 const FSRef& create_res_file( const Mac::FSRefNameSpec& file, ForkType fork, FSRef& ref )
@@ -214,12 +222,16 @@ const FSRef& create_res_file( const Mac::FSRefNameSpec& file, ForkType fork, FSR
 	return ref = N::FSMakeFSRefUnicode( file, kTextEncodingUnknown );
 }
 
+#if ! __LP64__
+
 static n::owned< N::ResFileRefNum > open_res_file( const FSSpec&   filespec,
                                                    ForkType        fork,
                                                    N::FSIOPermssn  perm )
 {
 	return N::FSpOpenResFile( filespec, perm );
 }
+
+#endif
 
 static n::owned< N::ResFileRefNum > open_res_file( const FSRef&    file,
                                                    ForkType        fork,
@@ -312,14 +324,21 @@ open_res_file( const char* path, ForkType fork, bool exists )
 
 void set_BNDL_bit( const char* path, bool value )
 {
+#ifdef __RELIX__
+	
 	typedef FSSpec File;
+	
+#else
+	
+	typedef FSRef File;
+	
+#endif
 	
 	using namespace mac::file;
 	
 	typedef file_traits< File >::FileInfo FileInfo;
 	
-	FSSpec file;
-	
+	File     file;
 	FileInfo info;  // either FInfo or FSCatalogInfo
 	
 	resolve_path( path, file );

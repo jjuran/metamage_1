@@ -29,6 +29,11 @@
 #include "res_file.hh"
 
 
+#if __LP64__
+#define HNoPurge( h )  /**/
+#endif
+
+
 namespace n = nucleus;
 namespace N = Nitrogen;
 namespace p7 = poseven;
@@ -227,9 +232,10 @@ namespace tool
 				const char* slash = strrchr( dest_path, '/' );
 				const char* dest_name = slash ? slash + 1 : dest_path;
 				
-				fprintf( stderr, "OSStatus %ld copying from %s to %s.\n",
-				                           err.Get(),       source_path,
-				                                                  dest_name );
+				fprintf( stderr, "OSErr %d copying from %s to %s.\n",
+				                        (int) err.Get(),
+				                                        source_path,
+				                                              dest_name );
 			}
 		}
 		
