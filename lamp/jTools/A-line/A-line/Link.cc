@@ -330,9 +330,9 @@ namespace tool
 		{
 			const char* rez = "/Developer/Tools/Rez";
 			
-			struct stat sb;
+			struct stat st;
 			
-			if ( stat( rez, &sb ) != 0 )
+			if ( stat( rez, &st ) != 0 )
 			{
 				rez = "Rez";  // It's at /usr/bin/Rez on Lion.
 			}
@@ -345,6 +345,14 @@ namespace tool
 			{
 				// ... but only use the data fork for OS X apps
 				rezCommand.push_back( "-useDF" );
+			}
+			else
+			{
+				static plus::string rincludes = get_Interfaces_subdir( "RIncludes" );
+				
+				if ( stat( rincludes.c_str(), &st ) == 0 )
+				
+				rezCommand.back() = rincludes.c_str();
 			}
 		}
 		else
