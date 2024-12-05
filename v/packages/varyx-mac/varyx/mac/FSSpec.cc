@@ -18,11 +18,11 @@
 // Standard C
 #include <string.h>
 
+// mac-relix-utils
+#include "mac_relix/FSSpec_from_path.hh"
+
 // plus
 #include "plus/mac_utf8.hh"
-
-// Divergence
-#include "Divergence/Utilities.hh"
 
 // vlib
 #include "vlib/type_info.hh"
@@ -44,8 +44,6 @@ namespace varyx
 {
 namespace mac
 {
-
-namespace Div = Divergence;
 
 /*
 	An FSSpec can be constructed from a string which is taken to be a Unix-
@@ -195,9 +193,15 @@ FSSpec::FSSpec( const char* unix_path )
 	       Value_other,
 	       &FSSpec_dispatch )
 {
+	using ::mac::relix::FSSpec_from_optional_path;
+	
+	OSErr err;
+	
 	::FSSpec& spec = *pointer();
 	
-	spec = Div::ResolvePathToFSSpec( unix_path );
+	err = FSSpec_from_optional_path( unix_path, spec );
+	
+	throw_MacOS_error( err, unix_path );
 	
 	size_t name_len = 1 + *spec.name;
 	size_t n_unused = sizeof spec.name - name_len;
