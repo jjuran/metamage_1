@@ -232,27 +232,32 @@ ResFileRefNum open_new_res_file( const Mac::FSRefNameSpec& file, ForkType fork )
 
 #if ! __LP64__
 
-static n::owned< N::ResFileRefNum > open_res_file( const FSSpec&   filespec,
-                                                   ForkType        fork,
-                                                   N::FSIOPermssn  perm )
+static inline
+ResFileRefNum open_res_file( const FSSpec&  filespec,
+                             ForkType       fork,
+                             signed char    perm )
 {
-	return N::FSpOpenResFile( filespec, perm );
+	return FSpOpenResFile( &filespec, perm );
 }
 
 #endif
 
-static n::owned< N::ResFileRefNum > open_res_file( const FSRef&    file,
-                                                   ForkType        fork,
-                                                   N::FSIOPermssn  perm )
+static inline
+ResFileRefNum open_res_file( const FSRef&  file,
+                             ForkType      fork,
+                             signed char   perm )
 {
+	using mac::rsrc::open_res_file;
+	
 	const HFSUniStr255& forkName = getForkName( fork );
 	
-	return N::FSOpenResourceFile( file, forkName, perm );
+	return open_res_file( file, forkName, perm );
 }
 
 
 template < bool unicode >
-static n::owned< N::ResFileRefNum >
+static inline
+ResFileRefNum
 open_res_file_template( const char* path, ForkType fork, N::FSIOPermssn perm )
 {
 	typedef file_manager_traits< unicode > Traits;
@@ -265,7 +270,8 @@ open_res_file_template( const char* path, ForkType fork, N::FSIOPermssn perm )
 }
 
 template < bool unicode >
-static n::owned< N::ResFileRefNum >
+static inline
+ResFileRefNum
 open_new_res_file_template( const char* path, ForkType fork )
 {
 	typedef file_manager_traits< unicode > Traits;
@@ -278,12 +284,7 @@ open_new_res_file_template( const char* path, ForkType fork )
 	
 	ResFileRefNum refnum = open_new_res_file( destNode, fork );
 	
-	if ( refnum < 0 )
-	{
-		Mac::ThrowOSStatus( refnum );
-	}
-	
-	return n::owned< N::ResFileRefNum >::seize( N::ResFileRefNum( refnum ) );
+	return refnum;
 }
 
 n::owned< N::ResFileRefNum >
@@ -293,12 +294,19 @@ open_res_file( const char* path, ForkType fork )
 	
 	const N::FSIOPermssn ro = N::fsRdPerm;
 	
-	if ( has_FSOpenResourceFile() )
+	const bool uni = has_FSOpenResourceFile();
+	
+	ResFileRefNum refnum;
+	
+	refnum = uni ? open_res_file_template< unicode    >( path, fork, ro )
+	             : open_res_file_template< no_unicode >( path, fork, ro );
+	
+	if ( refnum < 0 )
 	{
-		return open_res_file_template< unicode >( path, fork, ro );
+		Mac::ThrowOSStatus( refnum );
 	}
 	
-	return open_res_file_template< no_unicode >( path, fork, ro );
+	return n::owned< N::ResFileRefNum >::seize( N::ResFileRefNum( refnum ) );
 }
 
 n::owned< N::ResFileRefNum >
@@ -308,22 +316,27 @@ open_res_file( const char* path, ForkType fork, bool exists )
 	
 	const N::FSIOPermssn rw = N::fsRdWrPerm;
 	
+	const bool uni = has_FSOpenResourceFile();
+	
+	ResFileRefNum refnum;
+	
 	if ( exists )
 	{
-		if ( has_FSOpenResourceFile() )
-		{
-			return open_res_file_template< unicode >( path, fork, rw );
-		}
-		
-		return open_res_file_template< no_unicode >( path, fork, rw );
+		refnum = uni ? open_res_file_template< unicode    >( path, fork, rw )
+		             : open_res_file_template< no_unicode >( path, fork, rw );
 	}
-	
-	if ( has_FSOpenResourceFile() )
+	else
 	{
-		return open_new_res_file_template< unicode >( path, fork );
+		refnum = uni ? open_new_res_file_template< unicode    >( path, fork )
+		             : open_new_res_file_template< no_unicode >( path, fork );
 	}
 	
-	return open_new_res_file_template< no_unicode >( path, fork );
+	if ( refnum < 0 )
+	{
+		Mac::ThrowOSStatus( refnum );
+	}
+	
+	return n::owned< N::ResFileRefNum >::seize( N::ResFileRefNum( refnum ) );
 }
 
 void set_BNDL_bit( const char* path, bool value )
