@@ -35,7 +35,7 @@
 #include "poseven/functions/write.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Nitrogen/OSStatus.hh"
 #include "Nitrogen/Resources.hh"
 
 // Orion
@@ -353,29 +353,27 @@ namespace tool
 		
 		const char* path = free_args[ 1 ];
 		
-		FSRef ref;
+		OSStatus err;
 		
-		try
-		{
-			const N::FSPathMakeRef_Result madeRef = N::FSPathMakeRef( path );
-			
-			if ( madeRef.isDirectory )
-			{
-				more::perror( "rsrc", path, EISDIR );
-				
-				return 1;
-			}
-			
-			ref = madeRef.ref;
-		}
-		catch ( const Mac::OSStatus& err )
+		FSRef ref;
+		Boolean isDir;
+		
+		err = FSPathMakeRef( (const Byte*) path, &ref, &isDir );
+		
+		if ( err )
 		{
 			if ( err != fnfErr )
 			{
-				throw;
+				Mac::ThrowOSStatus( err );
 			}
 			
 			more::perror( "rsrc", path, ENOENT );
+			
+			return 1;
+		}
+		else if ( isDir )
+		{
+			more::perror( "rsrc", path, EISDIR );
 			
 			return 1;
 		}
