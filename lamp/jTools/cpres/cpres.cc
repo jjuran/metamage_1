@@ -115,17 +115,17 @@ namespace tool
 			{
 				N::Handle h = N::Get1IndResource( type, iRsrc );
 				
-				::HNoPurge( h );
+				HNoPurge( h );
 				
 				n::saved< N::ResFile > savedResFile( destRes );
 				
 				mac::types::ResInfo resInfo = N::GetResInfo( h );
 				
-				Handle existing = ::Get1Resource( resInfo.type, resInfo.id );
+				Handle existing = Get1Resource( resInfo.type, resInfo.id );
 				
 				if ( existing )
 				{
-					::RemoveResource( existing );
+					RemoveResource( existing );
 				}
 				else
 				{
