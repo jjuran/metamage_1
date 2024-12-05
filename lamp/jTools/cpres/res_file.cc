@@ -87,20 +87,28 @@ static inline UniCharCount get_string_size( const HFSUniStr255& str )
 	return str.length;
 }
 
-template < bool unicode >
-struct file_manager_traits
+struct FSSpec_traits
 {
 	typedef FSSpec File;
 	typedef FSSpec Node;
 };
 
-template <>
-struct file_manager_traits< true >
+struct FSRef_traits
 {
 	typedef N::FSRefNameSpec FSRefNameSpec;
 	
 	typedef FSRef          File;
 	typedef FSRefNameSpec  Node;
+};
+
+template < bool unicode >
+struct file_manager_traits : FSRef_traits
+{
+};
+
+template <>
+struct file_manager_traits< false > : FSSpec_traits
+{
 };
 
 static
