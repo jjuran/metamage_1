@@ -25,7 +25,7 @@
 
 // plus
 #include "plus/mac_utf8.hh"
-#include "plus/var_string.hh"
+#include "plus/string.hh"
 
 // MacScribe
 #include "quad/utf8_quad_name.hh"
@@ -196,11 +196,27 @@ namespace tool
 		
 		plus::string name = MacScribe::get_utf8_name_from_ResInfo( resInfo );
 		
-		plus::var_string line = name.move();
+		const char* data = name.data();
+		size_t      size = name.size();
 		
-		line += '\n';
+		/*
+			We created a string from scratch, so
+			we're not sharing an extent buffer.
+			
+			There's always at least one byte beyond
+			the end of the string data (for a trailing NUL).
+			
+			In the event of a maximum-sized small string, we're
+			overwriting the byte that marks it as a small string,
+			but since that byte remains non-negative (0 -> 10),
+			it has no effect on object destruction.
+			
+			So in all cases, this is safe.
+		*/
 		
-		p7::write( p7::stdout_fileno, line );
+		const_cast< char* >( data )[ size++ ] = '\n';
+		
+		p7::write( p7::stdout_fileno, data, size );
 	}
 	
 	static void list_rsrc_by_id( Mac::ResType type, Mac::ResID id )
@@ -413,7 +429,7 @@ namespace tool
 			return print_rsrc( true );
 		}
 		
-		more::perror( "rsrc", cmd, "not a valid command" );
+		more::perror( "rsrc", cmd.c_str(), "not a valid command" );
 		
 		return 1;
 	}
