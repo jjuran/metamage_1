@@ -19,6 +19,7 @@ namespace relix {
 	using mac::sys::Error;
 	
 	Error FSSpec_from_existing_path( const char* path, FSSpec& result );
+	Error FSSpec_from_optional_path( const char* path, FSSpec& result );
 	
 	inline
 	Error FSObj_from_existing_path( const char* path, FSSpec& result )

@@ -58,6 +58,26 @@ Error FSSpec_from_existing_path( const char* path, FSSpec& result )
 #endif
 }
 
+Error FSSpec_from_optional_path( const char* path, FSSpec& result )
+{
+#ifdef __RELIX__
+	
+	struct stat st;
+	
+	int nok = stat( path, &st );
+	
+	if ( ! nok  ||  errno == ENOENT )
+	{
+		nok = FSSpec_from_stat( st, result );
+	}
+	
+	return nok ? muxed_errno( errno ) : Error();
+	
+#endif
+	
+	return muxed_errno( ENOSYS );
+}
+
 #endif  // #if defined( __RELIX__ )  ||  defined( __APPLE__ )
 
 }
