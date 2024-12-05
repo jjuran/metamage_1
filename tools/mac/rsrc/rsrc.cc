@@ -7,6 +7,9 @@
 #include <errno.h>
 #include <stdlib.h>
 
+// Standard C++
+#include <algorithm>
+
 // command
 #include "command/get_option.hh"
 
@@ -132,6 +135,8 @@ namespace tool
 	static
 	void install_null_flipper( ResType type )
 	{
+	#ifdef __LITTLE_ENDIAN__
+		
 		OSStatus err;
 		
 		err = CoreEndianInstallFlipper( kCoreEndianResourceManagerDomain,
@@ -140,6 +145,8 @@ namespace tool
 		                                NULL );
 		
 		Mac::ThrowOSStatus( err );
+		
+	#endif
 	}
 	
 	static
