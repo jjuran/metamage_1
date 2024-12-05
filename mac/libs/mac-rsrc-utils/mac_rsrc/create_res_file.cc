@@ -102,5 +102,19 @@ OSErr create_res_file( const FSRef& file )
 	return err;
 }
 
+OSErr create_res_file( FSRef&               result,
+                       const FSRef&         parent,
+                       const HFSUniStr255&  file_name,
+                       const HFSUniStr255&  fork_name )
+{
+	UInt16         n0 = file_name.length;
+	const UniChar* s0 = file_name.unicode;
+	
+	UInt16         n1 = fork_name.length;
+	const UniChar* s1 = fork_name.unicode;
+	
+	return FSCreateResourceFile( &parent, n0, s0, 0, 0, n1, s1, &result, 0 );
+}
+
 }
 }
