@@ -13,6 +13,10 @@
 // mac-sys-utils
 #include "mac_sys/errno_from_mac_error.hh"
 
+// mac-file-utils
+#include "mac_file/file_traits.hh"
+#include "mac_file/Finder_info.hh"
+
 // mac-relix-utils
 #include "mac_relix/FSRef_from_path.hh"
 #include "mac_relix/FSSpec_from_path.hh"
@@ -300,16 +304,27 @@ open_res_file( const char* path, ForkType fork, bool exists )
 
 void set_BNDL_bit( const char* path, bool value )
 {
+	typedef FSSpec File;
+	
+	using namespace mac::file;
+	
+	typedef file_traits< File >::FileInfo FileInfo;
+	
 	FSSpec file;
+	
+	FileInfo info;  // either FInfo or FSCatalogInfo
 	
 	resolve_path( path, file );
 	
-	FInfo info = N::FSpGetFInfo( file );
-	
-	if ( value == ! (info.fdFlags & kHasBundle) )
+	if ( get_Finder_info( file, info ) == noErr )
 	{
-		info.fdFlags ^= kHasBundle;
+		UInt16& flags = Finder_flags( info );
 		
-		N::FSpSetFInfo( file, info );
+		if ( value == ! (flags & kHasBundle) )
+		{
+			flags ^= kHasBundle;
+			
+			set_Finder_info( file, info );
+		}
 	}
 }
