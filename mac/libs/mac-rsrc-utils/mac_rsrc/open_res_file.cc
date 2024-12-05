@@ -81,5 +81,19 @@ ResFileRefNum open_res_file( const FSRef& file, signed char perm )
 	return err ? err : result;
 }
 
+ResFileRefNum open_res_file( const FSRef&         file,
+                             const HFSUniStr255&  forkName,
+                             signed char          perm )
+{
+	ResFileRefNum result;
+	
+	UInt16         n = forkName.length;
+	const UniChar* s = forkName.unicode;
+	
+	OSErr err = FSOpenResourceFile( &file, n, s, perm, &result );
+	
+	return err ? err : result;
+}
+
 }
 }

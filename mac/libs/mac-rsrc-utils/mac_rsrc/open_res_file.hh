@@ -12,12 +12,17 @@
 
 struct FSRef;
 struct FSSpec;
+struct HFSUniStr255;
 
 namespace mac  {
 namespace rsrc {
 	
 	ResFileRefNum open_res_file( const FSSpec& file, signed char perm );
 	ResFileRefNum open_res_file( const FSRef&  file, signed char perm );
+	
+	ResFileRefNum open_res_file( const FSRef&         file,
+	                             const HFSUniStr255&  forkName,
+	                             signed char          perm );
 	
 }
 }
