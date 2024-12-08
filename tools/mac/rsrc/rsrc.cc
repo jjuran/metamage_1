@@ -13,6 +13,9 @@
 // command
 #include "command/get_option.hh"
 
+// mac-rsrc-utils
+#include "mac_rsrc/open_res_file.hh"
+
 // gear
 #include "gear/hexadecimal.hh"
 #include "gear/parse_decimal.hh"
@@ -160,14 +163,6 @@ namespace tool
 			
 			install_null_flipper( type );
 		}
-	}
-	
-	static n::owned< N::ResFileRefNum > open_res_file( const FSRef& ref )
-	{
-		return N::FSOpenResourceFile( ref,
-		                              the_fork_name.length,
-		                              the_fork_name.unicode,
-		                              Mac::fsRdPerm );
 	}
 	
 	static void list_rsrc_by_handle( N::Handle h )
@@ -367,14 +362,16 @@ namespace tool
 			return 1;
 		}
 		
+		using mac::rsrc::open_res_file;
+		
 		n::owned< N::ResFileRefNum > resFile;
 		
-		try
+		ResFileRefNum refnum = open_res_file( ref, the_fork_name, fsRdPerm );
+		
+		if ( refnum < 0 )
 		{
-			resFile = open_res_file( ref );
-		}
-		catch ( const Mac::OSStatus& err )
-		{
+			OSErr err = refnum;
+			
 			switch ( err )
 			{
 				case eofErr:
@@ -386,11 +383,14 @@ namespace tool
 					break;
 				
 				default:
-					throw;
+					p7::perror( "rsrc", path, "unexpected error" );
+					break;
 			}
 			
 			return 1;
 		}
+		
+		resFile = n::owned< N::ResFileRefNum >::seize( N::ResFileRefNum( refnum ) );
 		
 	#ifdef __LITTLE_ENDIAN__
 		
