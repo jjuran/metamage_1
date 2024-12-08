@@ -26,6 +26,7 @@
 #include "mac_sys/gestalt.hh"
 
 // mac-relix-utils
+#include "mac_relix/FSRef_from_path.hh"
 #include "mac_relix/FSSpec_from_path.hh"
 
 
@@ -81,12 +82,6 @@ AEAddressDesc create_Finder_address_AEDesc()
 	return addr;
 }
 
-static inline
-OSStatus FSRef_from_path( const char* path, FSRef& result )
-{
-	return FSPathMakeRef( (const Byte*) path, &result, NULL );
-}
-
 int main( int argc, char** argv )
 {
 	if ( ! apple_events_present )
@@ -101,7 +96,7 @@ int main( int argc, char** argv )
 	
 	const char* target_path = argv[ 1 ];
 	
-	using mac::relix::FSSpec_from_existing_path;
+	using mac::relix::FSObj_from_existing_path;
 	
 	AEAddressDesc address = create_Finder_address_AEDesc();
 	
@@ -124,27 +119,24 @@ int main( int argc, char** argv )
 	
 #ifdef __APPLE__
 	
-	FSRef ref;
+	const DescType typeFSObj = typeFSRef;
 	
-	if ( FSRef_from_path( target_path, ref ) )
-	{
-		return ERROR( 43, "path lookup failed" );
-	}
-	
-	err = AEPutParamPtr( &event, keyDirectObject, typeFSRef, POD( ref ) );
+	FSRef obj;
 	
 #else
 	
-	FSSpec spec;
+	const DescType typeFSObj = typeFSS;
 	
-	if ( FSSpec_from_existing_path( target_path, spec ) )
+	FSSpec obj;
+	
+#endif
+	
+	if ( FSObj_from_existing_path( target_path, obj ) )
 	{
 		return ERROR( 43, "path lookup failed" );
 	}
 	
-	err = AEPutParamPtr( &event, keyDirectObject, typeFSS, POD( spec ) );
-	
-#endif
+	err = AEPutParamPtr( &event, keyDirectObject, typeFSObj, POD( obj ) );
 	
 	if ( err )
 	{
