@@ -19,40 +19,40 @@
 
 namespace mac   {
 namespace relix {
-	
+
 #if defined( __RELIX__ )  ||  defined( __APPLE__ )
+
+int FSSpec_from_existing_path( const char* path, FSSpec& result )
+{
+#ifdef __RELIX__
 	
-	int FSSpec_from_existing_path( const char* path, FSSpec& result )
+	struct stat st;
+	
+	int nok = stat( path, &st );
+	
+	if ( ! nok )
 	{
-	#ifdef __RELIX__
-		
-		struct stat st;
-		
-		int nok = stat( path, &st );
-		
-		if ( ! nok )
-		{
-			nok = FSSpec_from_stat( st, result );
-		}
-		
-		return nok;
-		
-	#endif
-		
-	#ifdef __APPLE__
-		
-		OSStatus err;
-		FSRef ref;
-		
-		(err = FSPathMakeRef( (const UInt8*) path, &ref, NULL ))  ||
-		(err = FSGetCatalogInfo( &ref, 0, 0, 0, &result, 0 ));
-		
-		return err;
-		
-	#endif
+		nok = FSSpec_from_stat( st, result );
 	}
 	
-#endif  // #if defined( __RELIX__ )  ||  defined( __APPLE__ )
+	return nok;
 	
+#endif
+	
+#ifdef __APPLE__
+	
+	OSStatus err;
+	FSRef ref;
+	
+	(err = FSPathMakeRef( (const UInt8*) path, &ref, NULL ))  ||
+	(err = FSGetCatalogInfo( &ref, 0, 0, 0, &result, 0 ));
+	
+	return err;
+	
+#endif
+}
+
+#endif  // #if defined( __RELIX__ )  ||  defined( __APPLE__ )
+
 }
 }
