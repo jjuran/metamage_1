@@ -15,6 +15,12 @@ namespace relix {
 	
 	int FSSpec_from_existing_path( const char* path, FSSpec& result );
 	
+	inline
+	int FSObj_from_existing_path( const char* path, FSSpec& result )
+	{
+		return FSSpec_from_existing_path( path, result );
+	}
+	
 }
 }
 
