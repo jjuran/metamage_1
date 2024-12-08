@@ -10,6 +10,9 @@
 // Standard C++
 #include <algorithm>
 
+// more-posix
+#include "more/perror.hh"
+
 // command
 #include "command/get_option.hh"
 
@@ -29,7 +32,6 @@
 #include "rsrc/utf8_resinfo_name.hh"
 
 // poseven
-#include "poseven/functions/perror.hh"
 #include "poseven/functions/write.hh"
 
 // Nitrogen
@@ -289,7 +291,7 @@ namespace tool
 	{
 		if ( the_type_opt == NULL  ||  the_id_opt == NULL )
 		{
-			p7::perror( "rsrc", showing ? "show" : "cat", "type and id must be specified" );
+			more::perror( "rsrc", showing ? "show" : "cat", "type and id must be specified" );
 			
 			return 1;
 		}
@@ -326,7 +328,7 @@ namespace tool
 		
 		if ( argn < 2 )
 		{
-			p7::perror( "rsrc: a command and argument are required", 0 );
+			more::perror( "rsrc: a command and argument are required", 0 );
 			
 			return 1;
 		}
@@ -343,7 +345,7 @@ namespace tool
 			
 			if ( madeRef.isDirectory )
 			{
-				p7::perror( "rsrc", path, EISDIR );
+				more::perror( "rsrc", path, EISDIR );
 				
 				return 1;
 			}
@@ -357,7 +359,7 @@ namespace tool
 				throw;
 			}
 			
-			p7::perror( "rsrc", path, ENOENT );
+			more::perror( "rsrc", path, ENOENT );
 			
 			return 1;
 		}
@@ -375,15 +377,15 @@ namespace tool
 			switch ( err )
 			{
 				case eofErr:
-					p7::perror( "rsrc", path, "not a resource file" );
+					more::perror( "rsrc", path, "not a resource file" );
 					break;
 				
 				case afpAccessDenied:
-					p7::perror( "rsrc", path, EACCES );
+					more::perror( "rsrc", path, EACCES );
 					break;
 				
 				default:
-					p7::perror( "rsrc", path, "unexpected error" );
+					more::perror( "rsrc", path, "unexpected error" );
 					break;
 			}
 			
@@ -411,7 +413,7 @@ namespace tool
 			return print_rsrc( true );
 		}
 		
-		p7::perror( "rsrc", cmd, "not a valid command" );
+		more::perror( "rsrc", cmd, "not a valid command" );
 		
 		return 1;
 	}
