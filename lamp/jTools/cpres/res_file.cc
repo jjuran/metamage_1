@@ -39,14 +39,15 @@ class ForkNames
 			/*
 				Notice that we check for FSOpenResourceFile() here, not
 				FSGetResourceForkName().  In Mac OS 9.0 (or earlier with
-				CarbonLib), the former is available and the latter is not.
-				But we check for FSOpenResourceFile(), because without it,
-				we don't ever use the resource fork name.
+				CarbonLib), the latter is available and the former is not.
+				In that case, we'll skip the FSGetResourceForkName() call
+				even though it's available, because we only actually use
+				the resource fork name when FSOpenResourceFile() exists.
 			*/
 			
 			if ( has_FSOpenResourceFile() )
 			{
-				if (OSErr err = ::FSGetResourceForkName( &name[ rsrcFork ] ) )
+				if ( OSErr err = ::FSGetResourceForkName( &name[ rsrcFork ] ) )
 				{
 					abort();
 				}
