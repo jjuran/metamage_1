@@ -113,6 +113,10 @@ namespace tool
 			
 			for ( int iRsrc = 1;  iRsrc <= rsrcs;  ++iRsrc )
 			{
+				using mac::sys::res_error;
+				
+				OSErr err;
+				
 				N::Handle h = N::Get1IndResource( type, iRsrc );
 				
 				HNoPurge( h );
@@ -127,19 +131,24 @@ namespace tool
 				{
 					RemoveResource( existing );
 				}
+				else if ( (err = res_error()) != resNotFound )
+				{
+					goto error;
+				}
 				else
 				{
-					OSErr err = mac::sys::res_error();
-					
-					if ( err != resNotFound )
-					{
-						Mac::ThrowOSStatus( err );
-					}
-					
 					// Okay, resource didn't exist in dest file
 				}
 				
-				N::AddResource( N::DetachResource( h ), resInfo );
+				DetachResource( h );
+				
+				AddResource( h, resInfo.type, resInfo.id, resInfo.name );
+				
+				err = res_error();
+				
+			error:
+				
+				Mac::ThrowOSStatus( err );
 			}
 		}
 		
