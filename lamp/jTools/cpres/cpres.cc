@@ -123,9 +123,13 @@ namespace tool
 				
 				n::saved< N::ResFile > savedResFile( destRes );
 				
-				mac::types::ResInfo resInfo = N::GetResInfo( h );
+				ResType type;
+				short   id;
+				Str255  name;
 				
-				Handle existing = Get1Resource( resInfo.type, resInfo.id );
+				GetResInfo( h, &id, &type, name );
+				
+				Handle existing = Get1Resource( type, id );
 				
 				if ( existing )
 				{
@@ -142,7 +146,7 @@ namespace tool
 				
 				DetachResource( h );
 				
-				AddResource( h, resInfo.type, resInfo.id, resInfo.name );
+				AddResource( h, type, id, name );
 				
 				err = res_error();
 				
