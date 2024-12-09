@@ -114,7 +114,17 @@ namespace tool
 				
 				OSErr err;
 				
-				N::Handle h = N::Get1IndResource( type, iRsrc );
+				Handle h = Get1IndResource( type, iRsrc );
+				
+				if ( ! h )
+				{
+					if ( ! (err = res_error()) )
+					{
+						err = resNotFound;
+					}
+					
+					goto error;
+				}
 				
 				HNoPurge( h );
 				
@@ -126,9 +136,7 @@ namespace tool
 				
 				GetResInfo( h, &id, &type, name );
 				
-				Handle existing = Get1Resource( type, id );
-				
-				if ( existing )
+				if ( Handle existing = Get1Resource( type, id ) )
 				{
 					RemoveResource( existing );
 				}
