@@ -11,6 +11,9 @@
 // mac-sys-utils
 #include "mac_sys/res_error.hh"
 
+// mac-rsrc-utils
+#include "mac_rsrc/scoped_open_resfile.hh"
+
 // command
 #include "command/get_option.hh"
 
@@ -34,9 +37,9 @@
 #endif
 
 
-namespace n = nucleus;
-namespace N = Nitrogen;
 namespace p7 = poseven;
+
+using mac::rsrc::scoped_open_resfile;
 
 
 enum
@@ -84,9 +87,9 @@ namespace tool
 	
 	static bool has_BNDL = false;
 	
-	static int TryResCopy( const char*       source_path,
-	                       N::ResFileRefNum  destRes,
-	                       ForkType          fork )
+	static int TryResCopy( const char*    source_path,
+	                       ResFileRefNum  destRes,
+	                       ForkType       fork )
 	{
 		struct stat st = p7::stat( source_path );
 		
@@ -98,7 +101,7 @@ namespace tool
 			return 1;
 		}
 		
-		n::owned< N::ResFileRefNum > sourceRes = open_res_file( source_path, fork );
+		scoped_open_resfile sourceRes( open_res_file( source_path, fork ) );
 		
 		int types = Count1Types();
 		
@@ -214,7 +217,7 @@ namespace tool
 		
 		ForkType fork = globally_using_data_fork ? dataFork : rsrcFork;
 		
-		n::owned< N::ResFileRefNum > resFileH = open_res_file( dest_path, fork, exists );
+		scoped_open_resfile resfile( open_res_file( dest_path, fork, exists ) );
 		
 		// Try to copy each file.  Return whether any errors occurred.
 		for ( int index = 0;  index < argn - 1;  ++index )
@@ -223,7 +226,7 @@ namespace tool
 			
 			try
 			{
-				fail += TryResCopy( source_path, resFileH, fork );
+				fail += TryResCopy( source_path, resfile, fork );
 			}
 			catch ( const Mac::OSStatus& err )
 			{

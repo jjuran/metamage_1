@@ -38,7 +38,6 @@
 #include "res_file.hh"
 
 
-namespace n = nucleus;
 namespace N = Nitrogen;
 namespace p7 = poseven;
 
@@ -287,7 +286,7 @@ open_new_res_file_template( const char* path, ForkType fork )
 	return refnum;
 }
 
-n::owned< N::ResFileRefNum >
+ResFileRefNum
 open_res_file( const char* path, ForkType fork )
 {
 	enum { no_unicode, unicode };
@@ -306,10 +305,10 @@ open_res_file( const char* path, ForkType fork )
 		Mac::ThrowOSStatus( refnum );
 	}
 	
-	return n::owned< N::ResFileRefNum >::seize( N::ResFileRefNum( refnum ) );
+	return refnum;
 }
 
-n::owned< N::ResFileRefNum >
+ResFileRefNum
 open_res_file( const char* path, ForkType fork, bool exists )
 {
 	enum { no_unicode, unicode };
@@ -336,7 +335,7 @@ open_res_file( const char* path, ForkType fork, bool exists )
 		Mac::ThrowOSStatus( refnum );
 	}
 	
-	return n::owned< N::ResFileRefNum >::seize( N::ResFileRefNum( refnum ) );
+	return refnum;
 }
 
 void set_BNDL_bit( const char* path, bool value )
