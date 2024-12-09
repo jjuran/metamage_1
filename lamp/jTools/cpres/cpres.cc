@@ -95,18 +95,20 @@ namespace tool
 		
 		n::owned< N::ResFileRefNum > sourceRes = open_res_file( source_path, fork );
 		
-		int types = N::Count1Types();
+		int types = Count1Types();
 		
 		for ( int iType = 1;  iType <= types;  ++iType )
 		{
-			N::ResType type = N::Get1IndType( iType );
+			ResType type;
+			
+			Get1IndType( &type, iType );
 			
 			if ( type == 'BNDL' )
 			{
 				has_BNDL = true;
 			}
 			
-			int rsrcs = N::Count1Resources( type );
+			int rsrcs = Count1Resources( type );
 			
 			for ( int iRsrc = 1;  iRsrc <= rsrcs;  ++iRsrc )
 			{
