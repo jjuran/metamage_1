@@ -256,7 +256,7 @@ ResFileRefNum open_res_file( const FSRef&  file,
 template < bool unicode >
 static inline
 ResFileRefNum
-open_res_file_template( const char* path, ForkType fork, N::FSIOPermssn perm )
+open_res_file_template( const char* path, ForkType fork, signed char perm )
 {
 	typedef file_manager_traits< unicode > Traits;
 	
@@ -290,7 +290,7 @@ open_res_file( const char* path, ForkType fork )
 {
 	enum { no_unicode, unicode };
 	
-	const N::FSIOPermssn ro = N::fsRdPerm;
+	const signed char ro = fsRdPerm;
 	
 	const bool uni = has_FSOpenResourceFile();
 	
@@ -312,7 +312,7 @@ open_res_file( const char* path, ForkType fork, bool exists )
 {
 	enum { no_unicode, unicode };
 	
-	const N::FSIOPermssn rw = N::fsRdWrPerm;
+	const signed char rw = fsRdWrPerm;
 	
 	const bool uni = has_FSOpenResourceFile();
 	
