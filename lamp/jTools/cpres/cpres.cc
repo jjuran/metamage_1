@@ -14,9 +14,6 @@
 // command
 #include "command/get_option.hh"
 
-// nucleus
-#include "nucleus/saved.hh"
-
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
@@ -121,7 +118,7 @@ namespace tool
 				
 				HNoPurge( h );
 				
-				n::saved< N::ResFile > savedResFile( destRes );
+				UseResFile( destRes );
 				
 				ResType type;
 				short   id;
@@ -151,6 +148,8 @@ namespace tool
 				err = res_error();
 				
 			error:
+				
+				UseResFile( sourceRes );
 				
 				Mac::ThrowOSStatus( err );
 			}
