@@ -23,3 +23,21 @@ $ vc '[u8, u16, u32] ver {v.size > 1}'
 
 $ vc '"gullible" pop {v == *"l"}'
 1 >= 3
+
+$ vc '["egg", "sausage", "bacon"] any { v == "spam" }'
+1 >= false
+
+$ vc '["bacon", "egg", "sausage", "spam"] any { v == "spam" }'
+1 >= true
+
+$ vc '["spam", "egg", "sausage", "spam"] all { v == "spam" }'
+1 >= false
+
+$ vc '["spam" (*) 11] all { v == "spam" }'
+1 >= true
+
+$ vc '[] any { v == "spam" }'
+1 >= false
+
+$ vc '[] all { v == "spam" }'
+1 >= true

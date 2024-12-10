@@ -137,6 +137,32 @@ namespace vlib
 		return Integer( n );
 	}
 	
+	Value anyall( const Value& container, const Value& f, bool end_case )
+	{
+		if ( ! is_functional( f ) )
+		{
+			THROW( "filter requires a function" );
+		}
+		
+		generic_iterator it( container );
+		
+		list_builder result;
+		
+		while ( it )
+		{
+			const Value& x = it.use();
+			
+			Boolean passed = call_function( f, x ).to< Boolean >();
+			
+			if ( passed == end_case )
+			{
+				return passed;
+			}
+		}
+		
+		return Boolean( ! end_case );
+	}
+	
 	Value filter( const Value& container, const Value& f )
 	{
 		if ( ! is_functional( f ) )

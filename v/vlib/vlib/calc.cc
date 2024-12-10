@@ -648,6 +648,16 @@ namespace vlib
 			return seqpop( left, right );
 		}
 		
+		if ( op == Op_any )
+		{
+			return if_any( left, right );
+		}
+		
+		if ( op == Op_all )
+		{
+			return if_all( left, right );
+		}
+		
 		if ( op == Op_ver )
 		{
 			return filter( left, right );

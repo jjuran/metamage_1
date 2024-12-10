@@ -147,6 +147,8 @@ namespace vlib
 			case Op_map:  return " map ";
 			case Op_gap:  return " gap ";
 			case Op_pop:  return " pop ";
+			case Op_any:  return " any ";
+			case Op_all:  return " all ";
 			case Op_ver:  return " ver ";
 			case Op_per:  return " per ";
 			

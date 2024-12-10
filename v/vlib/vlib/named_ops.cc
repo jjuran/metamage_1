@@ -22,7 +22,9 @@ namespace vlib
 	static
 	const named_op_mapping named_ops[] =
 	{
+		{ "all",   Op_all     },
 		{ "and",   Op_and     },
+		{ "any",   Op_any     },
 		{ "catch", Op_catch   },
 		{ "div",   Op_DIV     },
 		{ "do",    Op_do_2    },

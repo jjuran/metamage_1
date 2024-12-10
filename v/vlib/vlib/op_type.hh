@@ -105,6 +105,8 @@ namespace vlib
 		Op_gap,
 		Op_map,
 		Op_pop,
+		Op_all,
+		Op_any,
 		Op_ver,
 		Op_per,
 		Op_isa,
