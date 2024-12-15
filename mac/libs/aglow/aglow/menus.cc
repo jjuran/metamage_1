@@ -68,17 +68,17 @@ static const menu_item_description Apple_items[] =
 
 static const menu_item_description File_items[] =
 {
-	{ "\p" "Close/W", kHICommandClose },
+	{ "\p" "Close", kHICommandClose },
 };
 
 static const menu_item_description Edit_items[] =
 {
-	{ "\p" "Undo/Z",  kHICommandUndo  },
+	{ "\p" "Undo",  kHICommandUndo  },
 	{},
-	{ "\p" "Cut/X",   kHICommandCut   },
-	{ "\p" "Copy/C",  kHICommandCopy  },
-	{ "\p" "Paste/V", kHICommandPaste },
-	{ "\p" "Clear",   kHICommandClear },
+	{ "\p" "Cut",   kHICommandCut   },
+	{ "\p" "Copy",  kHICommandCopy  },
+	{ "\p" "Paste", kHICommandPaste },
+	{ "\p" "Clear", kHICommandClear },
 };
 
 static const menu_item_description View_items[] =
