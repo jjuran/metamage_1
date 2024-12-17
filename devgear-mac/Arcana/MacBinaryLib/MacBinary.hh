@@ -12,12 +12,15 @@
 // mac-types
 #include "mac_types/VRefNum_DirID.hh"
 
+// mac-file-utils
+#include "mac_file/FSIORefNum.hh"
+
+// plus
+#include "plus/var_string.hh"
+
 // nucleus
 #ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
-#endif
-#ifndef NUCLEUS_STRING_HH
-#include "nucleus/string.hh"
 #endif
 
 // Nitrogen
@@ -29,6 +32,7 @@
 namespace MacBinary
 {
 	
+	using mac::file::FSIORefNum;
 	using mac::types::VRefNum_DirID;
 	
 	typedef void (*BlockWriter)( int, const void*, std::size_t );
@@ -52,10 +56,10 @@ namespace MacBinary
 		private:
 			struct Frame
 			{
-				VRefNum_DirID            destDir;
-				FSSpec                   file;
-				UInt32                   modificationDate;
-				nucleus::mutable_string  comment;
+				VRefNum_DirID     destDir;
+				FSSpec            file;
+				UInt32            modificationDate;
+				plus::var_string  comment;
 			};
 			
 			Frame itsFrame;
