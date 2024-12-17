@@ -189,11 +189,6 @@ namespace tool
 				
 				Decode( p7::open( decode_target, p7::o_rdonly ), destDir );
 			}
-			catch ( const MacBinary::InvalidMacBinaryHeader& )
-			{
-				fprintf( stderr, "macbin: %s: invalid MacBinary header\n", decode_target );
-				return 1;
-			}
 			catch ( const MacBinary::IncompatibleMacBinaryHeader& )
 			{
 				fprintf( stderr, "macbin: %s: incompatible (newer) MacBinary header\n", decode_target );
