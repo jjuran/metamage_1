@@ -961,18 +961,15 @@ namespace MacBinary
 				{
 					// Let Finder init the top-level item
 					flagsToClear |= kHasBeenInited;
-				}
-				
-				pb.hFileInfo.ioFlFndrInfo.fdFlags &= ~flagsToClear;
-				
-				if ( itsFrameStack.empty() )
-				{
+					
 					// Root folder / file
 					static const Point emptyPoint = { 0, 0 };
 					
 					pb.hFileInfo.ioFlFndrInfo.fdLocation = emptyPoint;
 					pb.hFileInfo.ioFlFndrInfo.fdFldr     = 0;
 				}
+				
+				pb.hFileInfo.ioFlFndrInfo.fdFlags &= ~flagsToClear;
 				
 				N::PBSetCatInfoSync( pb );
 			}
