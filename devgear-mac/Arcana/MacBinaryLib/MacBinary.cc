@@ -666,19 +666,22 @@ namespace MacBinary
 		}
 	}
 	
-	static bool VerifyMacBinaryI( const Header& h )
+	static inline
+	bool VerifyMacBinaryI( const Header& h )
 	{
-		bool zeroByte82   = h.Check< kZeroByte82 >();
+		bool zeroByte82 = h.Check< kZeroByte82 >();
 		
 		return zeroByte82;
 	}
 	
-	static bool VerifyMacBinaryII( const Header& )
+	static inline
+	bool VerifyMacBinaryII( const Header& )
 	{
 		return true;
 	}
 	
-	static bool VerifyMacBinaryIII( const Header& )
+	static inline
+	bool VerifyMacBinaryIII( const Header& )
 	{
 		return true;
 	}
