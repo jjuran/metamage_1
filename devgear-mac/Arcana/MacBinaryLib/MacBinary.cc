@@ -134,8 +134,6 @@ namespace MacBinary
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
-	using namespace io::path_descent_operators;
-	
 	using N::fsRdPerm;
 	using N::fsWrPerm;
 	
