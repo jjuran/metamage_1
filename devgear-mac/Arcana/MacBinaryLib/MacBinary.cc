@@ -39,6 +39,8 @@
 #include "mac_file/desktop.hh"
 #include "mac_file/directory.hh"
 #include "mac_file/listing.hh"
+#include "mac_file/open_data_fork.hh"
+#include "mac_file/open_rsrc_fork.hh"
 
 // macbinary
 #include "macbinary-crc16.hh"
@@ -745,6 +747,22 @@ namespace MacBinary
 		return 0;
 	}
 	
+	void Decoder::CloseFiles()
+	{
+		if ( itsDataFork > 0 )
+		{
+			FSClose( itsDataFork );
+		}
+		
+		if ( itsResourceFork > 0 )
+		{
+			FSClose( itsResourceFork );
+		}
+		
+		itsDataFork     = 0;
+		itsResourceFork = 0;
+	}
+	
 	Decoder::Decoder( const VRefNum_DirID& destination )
 	:
 		//fDestDir( destination ),
@@ -841,8 +859,17 @@ namespace MacBinary
 		
 		if ( !itIsFolder )
 		{
-			itsDataFork     = N::HOpen  ( itsFrame.file, fsWrPerm );
-			itsResourceFork = N::HOpenRF( itsFrame.file, fsWrPerm );
+			using namespace mac::file;
+			
+			itsDataFork     = open_data_fork( itsFrame.file, fsWrPerm );
+			itsResourceFork = open_rsrc_fork( itsFrame.file, fsWrPerm );
+			
+			OSErr err;
+			
+			if ( (err = itsDataFork) < 0  ||  (err = itsResourceFork) < 0 )
+			{
+				Mac::ThrowOSStatus( err );
+			}
 		}
 		
 		itsHeaderWasReceived = true;
@@ -945,8 +972,11 @@ namespace MacBinary
 				}
 				else
 				{
-					N::FSClose( itsDataFork     );
-					N::FSClose( itsResourceFork );
+					FSClose( itsDataFork     );
+					FSClose( itsResourceFork );
+					
+					itsDataFork     = 0;
+					itsResourceFork = 0;
 				}
 				
 				if ( !itsFrame.comment.empty() )

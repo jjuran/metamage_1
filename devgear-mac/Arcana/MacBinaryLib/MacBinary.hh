@@ -6,6 +6,16 @@
 #ifndef MACBINARY_HH
 #define MACBINARY_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __FILES__
+#include <Files.h>
+#endif
+
 // Standard C++
 #include <vector>
 
@@ -17,16 +27,6 @@
 
 // plus
 #include "plus/var_string.hh"
-
-// nucleus
-#ifndef NUCLEUS_OWNED_HH
-#include "nucleus/owned.hh"
-#endif
-
-// Nitrogen
-#ifndef MAC_FILES_TYPES_FSFILEREFNUM_HH
-#include "Mac/Files/Types/FSFileRefNum.hh"
-#endif
 
 
 namespace MacBinary
@@ -74,13 +74,21 @@ namespace MacBinary
 			UInt16    itsSecondaryHeaderLength;
 			UInt16    itsCommentLength;
 			
-			nucleus::owned< Mac::FSFileRefNum > itsDataFork;
-			nucleus::owned< Mac::FSFileRefNum > itsResourceFork;
+			FSIORefNum itsDataFork;
+			FSIORefNum itsResourceFork;
 			
 			void DecodeHeader( const char* header );
 			
+			void CloseFiles();
+			
+			// non-copyable
+			Decoder           ( const Decoder& );
+			Decoder& operator=( const Decoder& );
+			
 		public:
 			Decoder( const VRefNum_DirID& destination );
+			
+			~Decoder()  { CloseFiles(); }
 			
 			int Write( const char* data, ByteCount byteCount );
 	};
