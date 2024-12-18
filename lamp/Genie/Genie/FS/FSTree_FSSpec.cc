@@ -63,6 +63,7 @@
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/replaced_string.hh"
+#include "plus/var_string.hh"
 
 // Nitrogen
 #include "Nitrogen/Aliases.hh"
@@ -756,6 +757,44 @@ namespace Genie
 		              times );
 	}
 	
+	/*
+		These two functions, upon success, populate `result` with a
+		string that's NUL-terminated in the correct place but whose
+		length may be excessive.  It's the caller's responsibility
+		to consider only the portion of the string prior to the NUL.
+	*/
+	
+	static inline
+	OSErr FSRefMakePath_untrimmed( const FSRef& file, plus::string& result )
+	{
+		OSErr  err;
+		UInt32 size = 512;
+		
+		do
+		{
+			size *= 2;
+			
+			char* p = result.reset( size );  // throws if size >= 2 GiB
+			
+			err = FSRefMakePath( &file, (Byte*) p, size );
+		}
+		while (err == pathTooLongErr  ||  err == buffersTooSmall );
+		
+		return err;
+	}
+	
+	static
+	void FSpMakePath_untrimmed( const FSSpec& file, plus::string& result )
+	{
+		OSErr err;
+		FSRef ref;
+		
+		(err = FSpMakeFSRef( &file, &ref ))  ||
+		(err = FSRefMakePath_untrimmed( ref, result ));
+		
+		Mac::ThrowOSStatus( err );
+	}
+	
 	static inline
 	void Delete_HFS( const FSSpec& file )
 	{
@@ -772,9 +811,9 @@ namespace Genie
 					was busy, try the native unlink().
 				*/
 				
-				const FSRef fsRef = N::FSpMakeFSRef( file );
+				plus::string path;
 				
-				const nucleus::string path = N::FSRefMakePath( fsRef );
+				FSpMakePath_untrimmed( file, path );
 				
 				p7::throw_posix_result( native_unlink( path.c_str() ) );
 				
@@ -894,9 +933,11 @@ namespace Genie
 		
 		FSSpec parent_spec = make_FSSpec( parent_directory( link_spec ) );
 		
-		FSRef parent_ref = N::FSpMakeFSRef( parent_spec );
+		plus::var_string path;
 		
-		nucleus::mutable_string path = N::FSRefMakePath( parent_ref );
+		FSpMakePath_untrimmed( parent_spec, path );
+		
+		path.resize( strlen( path.c_str() ) );
 		
 		path += '/';
 		
