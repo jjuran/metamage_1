@@ -554,46 +554,6 @@ namespace Nitrogen
 	
 	FSSpec FSMakeFSSpec( const FSRef& ref );
 	
-#endif  // #if ! __LP64__
-	
-}
-
-namespace nucleus
-{
-	
-#if ! __LP64__
-	
-	template <> struct converter< FSSpec, Nitrogen::FSDirSpec >
-	{
-		typedef Nitrogen::FSDirSpec  argument_type;
-		typedef FSSpec               result_type;
-		
-		FSSpec operator()( const Nitrogen::FSDirSpec& dir ) const
-		{
-			return Nitrogen::FSMakeFSSpec( dir );
-		}
-	};
-	
-	template <> struct converter< Nitrogen::FSDirSpec, FSSpec >
-	{
-		typedef FSSpec               argument_type;
-		typedef Nitrogen::FSDirSpec  result_type;
-		
-		Nitrogen::FSDirSpec operator()( const FSSpec& dir ) const
-		{
-			return Nitrogen::FSpMake_FSDirSpec( dir );
-		}
-	};
-	
-#endif  // #if ! __LP64__
-	
-}
-
-namespace Nitrogen
-{
-	
-#if ! __LP64__
-	
 	FSSpec FSMakeFSSpec( ConstStr255Param pathname );
 	
 	bool FSCompareFSSpecs( const FSSpec& a, const FSSpec& b );
@@ -671,31 +631,6 @@ namespace Nitrogen
 	FSRef FSpMakeFSRef( const FSSpec& );
 	
 #endif  // #if ! __LP64__
-	
-}
-
-namespace nucleus
-{
-	
-#if ! __LP64__
-	
-	template <> struct converter< FSRef, FSSpec >
-	{
-		typedef FSSpec  argument_type;
-		typedef FSRef   result_type;
-		
-		FSRef operator()( const FSSpec& spec ) const
-		{
-			return Nitrogen::FSpMakeFSRef( spec );
-		}
-	};
-	
-#endif  // #if ! __LP64__
-	
-}
-
-namespace Nitrogen
-{
 	
 	using Mac::FSRefNameSpec;
 	
@@ -919,32 +854,6 @@ namespace Nitrogen
 
 namespace nucleus
 {
-	
-#if ! __LP64__
-	
-	template <> struct converter< FSSpec, FSRef >
-	{
-		typedef FSRef   argument_type;
-		typedef FSSpec  result_type;
-		
-		FSSpec operator()( const FSRef& ref ) const
-		{
-			return Nitrogen::FSMakeFSSpec( ref );
-		}
-	};
-	
-	template <> struct converter< Nitrogen::FSDirSpec, FSRef >
-	{
-		typedef FSRef                argument_type;
-		typedef Nitrogen::FSDirSpec  result_type;
-		
-		Nitrogen::FSDirSpec operator()( const FSRef& ref ) const
-		{
-			return Nitrogen::FSpMake_FSDirSpec( Nitrogen::FSMakeFSSpec( ref ) );
-		}
-	};
-	
-#endif  // #if ! __LP64__
 	
 	template <> struct disposer< FSIterator >
 	{
@@ -1293,31 +1202,6 @@ namespace Nitrogen
 		return FSPathMakeRef( reinterpret_cast< const UInt8* >( get_string_c_str( path ) ) );
 	}
 	
-}
-
-namespace nucleus
-{
-	template < class String > struct converter< FSRef, String >
-	{
-		typedef String  argument_type;
-		typedef FSRef   result_type;
-		
-		FSRef operator()( const String& path ) const
-		{
-			return Nitrogen::FSPathMakeRef( path );
-		}
-	};
-	
-	template <> struct converter< nucleus::string, FSRef >
-	{
-		typedef FSRef            argument_type;
-		typedef nucleus::string  result_type;
-		
-		nucleus::string operator()( const FSRef& ref ) const
-		{
-			return Nitrogen::FSRefMakePath( ref );
-		}
-	};
 }
 
 #endif
