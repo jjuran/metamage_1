@@ -48,7 +48,6 @@
 
 // Nitrogen
 #include "Nitrogen/Files.hh"
-#include "Nitrogen/MacMemory.hh"
 
 
 /*
@@ -128,7 +127,6 @@ Offset	Type	Description
 namespace MacBinary
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
 	using N::fsRdPerm;
@@ -527,29 +525,36 @@ namespace MacBinary
 	static
 	void ReadWrite( FSIORefNum file, BlockWriter blockWrite, int output, SInt32 byteCount )
 	{
-		size_t paddedCount = PaddedLength( byteCount, kMacBinaryBlockSize );
+		OSErr err;
 		
-		n::owned< N::Handle > tempMem = N::TempNewHandle( paddedCount );
+		char buffer[ 4096 ];
 		
-		char* buffer = *tempMem.get().Get();
-		
-		OSErr err = FSRead( file, &byteCount, buffer );
-		
-		if ( err != eofErr )
+		while ( byteCount > 0 )
 		{
-			Mac::ThrowOSStatus( err );
+			SInt32 n_reading = sizeof buffer;
+			SInt32 n_writing = sizeof buffer;
+			
+			if ( byteCount < n_reading )
+			{
+				n_reading = byteCount;
+				n_writing = PaddedLength( byteCount, kMacBinaryBlockSize );
+				
+				size_t n_cleared = n_writing - n_reading;
+				
+				memset( buffer + n_reading, '\0', n_cleared );
+			}
+			
+			err = FSRead( file, &n_reading, buffer );
+			
+			if ( err != eofErr )
+			{
+				Mac::ThrowOSStatus( err );
+			}
+			
+			blockWrite( output, buffer, n_writing );
+			
+			byteCount -= n_reading;
 		}
-		
-		UInt32 bytesRead = byteCount;
-		
-		memset( buffer + bytesRead, '\0', paddedCount - bytesRead );
-		
-		if ( !TARGET_API_MAC_OSX )
-		{
-			HLock( tempMem.get() );
-		}
-		
-		blockWrite( output, &buffer[0], paddedCount );
 	}
 	
 	static
