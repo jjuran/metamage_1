@@ -102,10 +102,6 @@
 #include "Nitrogen/OSStatus.hh"
 #endif
 
-#ifndef __RELIX__
-#include <vector>
-#endif
-
 
 #ifdef __MWERKS__
 #if __MWERKS__ <= 0x2401
@@ -1205,17 +1201,6 @@ namespace Nitrogen
 	                                                  FSRef *             refs = 0,
 	                                                  FSSpec *            specs = 0,
 	                                                  HFSUniStr255 *      names = 0 );
-	
-#ifndef __RELIX__
-	
-	void FSGetCatalogInfoBulk( FSIterator                  iterator,
-	                           FSCatalogInfoBitmap         whichInfo,
-	                           std::vector<FSCatalogInfo> *catalogInfos,
-	                           std::vector<FSRef>         *refs = 0,
-	                           std::vector<FSSpec>        *specs = 0,
-	                           std::vector<HFSUniStr255>  *names = 0 );
-	
-#endif
 	
 #if 0
 	
