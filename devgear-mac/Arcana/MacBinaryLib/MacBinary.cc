@@ -836,6 +836,26 @@ namespace MacBinary
 		itsHeaderWasReceived = true;
 	}
 	
+	static
+	void write_to_fork( const char*&  data,
+	                    const char*   end,
+	                    FSIORefNum    refnum,
+	                    ByteCount&    n_remaining )
+	{
+		if ( n_remaining  &&  data < end )
+		{
+			SInt32 dataBytes = min( n_remaining, end - data );
+			
+			OSErr err = FSWrite( refnum, &dataBytes, data );
+			
+			Mac::ThrowOSStatus( err );
+			
+			n_remaining -= dataBytes;
+			
+			data += PaddedLength( dataBytes, kMacBinaryBlockSize );
+		}
+	}
+	
 	int Decoder::Write( const char* data, ByteCount byteCount )
 	{
 		const char* const start = data;
@@ -868,27 +888,8 @@ namespace MacBinary
 			data += PaddedLength( headerBytes, kMacBinaryBlockSize );
 		}
 		
-		if ( itsDataForkLength  &&  data < end )
-		{
-			ByteCount dataBytes = min( itsDataForkLength, end - data );
-			
-			itsDataForkLength -= dataBytes;
-			
-			N::FSWrite( itsDataFork, dataBytes, data );
-			
-			data += PaddedLength( dataBytes, kMacBinaryBlockSize );
-		}
-		
-		if ( itsResourceForkLength  &&  data < end )
-		{
-			ByteCount resourceBytes = min( itsResourceForkLength, end - data );
-			
-			itsResourceForkLength -= resourceBytes;
-			
-			N::FSWrite( itsResourceFork, resourceBytes, data );
-			
-			data += PaddedLength( resourceBytes, kMacBinaryBlockSize );
-		}
+		write_to_fork( data, end, itsDataFork,     itsDataForkLength     );
+		write_to_fork( data, end, itsResourceFork, itsResourceForkLength );
 		
 		if ( itsCommentLength  &&  data < end )
 		{
