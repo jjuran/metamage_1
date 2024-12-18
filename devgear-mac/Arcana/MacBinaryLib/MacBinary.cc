@@ -525,7 +525,7 @@ namespace MacBinary
 	};
 	
 	static
-	void ReadWrite( N::FSFileRefNum file, BlockWriter blockWrite, int output, size_t byteCount )
+	void ReadWrite( FSIORefNum file, BlockWriter blockWrite, int output, SInt32 byteCount )
 	{
 		size_t paddedCount = PaddedLength( byteCount, kMacBinaryBlockSize );
 		
@@ -533,7 +533,14 @@ namespace MacBinary
 		
 		char* buffer = *tempMem.get().Get();
 		
-		UInt32 bytesRead = N::FSRead( file, byteCount, buffer, N::ThrowEOF_Never() );
+		OSErr err = FSRead( file, &byteCount, buffer );
+		
+		if ( err != eofErr )
+		{
+			Mac::ThrowOSStatus( err );
+		}
+		
+		UInt32 bytesRead = byteCount;
 		
 		memset( buffer + bytesRead, '\0', paddedCount - bytesRead );
 		
