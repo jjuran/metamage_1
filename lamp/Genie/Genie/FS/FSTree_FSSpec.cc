@@ -1212,15 +1212,19 @@ namespace Genie
 		
 		if ( mac::sys::has_BlueBox()  &&  is_possibly_masked_symlink( cInfo ) )
 		{
+			OSErr  err;
+			FSRef  ref;
 			FSSpec spec;
 			
 			*(VRefNum_DirID*) &spec = dir;
 			
 			mempcpy( spec.name, macName, 1 + macName[0] );
 			
-			FSRef ref = N::FSpMakeFSRef( spec );
-			
 			FSCatalogInfo info;
+			
+			err = FSpMakeFSRef( &spec, &ref );
+			
+			Mac::ThrowOSStatus( err );
 			
 			N::FSGetCatalogInfo( ref, kFSCatInfoFinderInfo, &info, NULL, NULL, NULL );
 			
