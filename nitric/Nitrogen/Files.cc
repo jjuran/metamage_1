@@ -18,12 +18,6 @@
 #include <StringCompare.h>
 #endif
 
-// Standard C++
-#include <limits>
-
-// Debug
-#include "debug/assert.hh"
-
 
 #ifndef MAC_OS_X_VERSION_10_5
 typedef SInt16 FSIORefNum;
@@ -1131,28 +1125,6 @@ Return Value
                        UInt32       maxPathSize )
      {
       ThrowOSStatus( ::FSRefMakePath( &ref, path, maxPathSize ) );
-     }
-   
-   nucleus::string FSRefMakePath( const FSRef& ref )
-     {
-      for ( UInt32 maxPathSize = 1024; true; maxPathSize *= 2 )
-        {
-         try
-           {
-            nucleus::mutable_string result( maxPathSize, '\0' );
-            FSRefMakePath( ref, reinterpret_cast<UInt8 *>( &result[0] ), result.size() );
-            result.resize( std::strlen( result.c_str() ) );
-            return result;
-           }
-         catch ( const Mac::OSStatus& err )
-           {
-            if ( err != pathTooLongErr  &&  err != buffersTooSmall )
-               throw;
-            if ( maxPathSize > std::numeric_limits<UInt32>::max() / 2 )
-               throw;
-            // Otherwise, try again with a larger string
-           }
-        }
      }
    
    FSPathMakeRef_Result FSPathMakeRef( const UInt8 *path )

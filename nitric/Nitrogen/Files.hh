@@ -1182,8 +1182,6 @@ namespace Nitrogen
 		FSRefMakePath( ref, path, size );
 	}
 	
-	nucleus::string FSRefMakePath( const FSRef& ref );
-	
 	struct FSPathMakeRef_Result
 	{
 		FSRef ref;
