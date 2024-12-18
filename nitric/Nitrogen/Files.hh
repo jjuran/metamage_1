@@ -103,13 +103,6 @@
 #endif
 
 
-#ifdef __MWERKS__
-#if __MWERKS__ <= 0x2401
-#define NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS 1
-#endif
-#endif
-
-
 #undef PBGetCatInfo
 
 #if ! __LP64__
@@ -909,97 +902,6 @@ namespace Nitrogen
 		operator ExtendedFolderInfo&()                              { return extFolderInfo; }
 	};
 	
-	struct Permissions
-	{
-		UInt32 permissions[4];
-	};
-	
-#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
-	
-	template < class DesiredType, class MemberType, MemberType FSCatalogInfo::*member >
-	struct Basic_FSCatalogInfoBit_Traits
-	{
-		typedef DesiredType Type;
-		static Type Get( const FSCatalogInfo& info )                { return info.*member; }
-		static void Set( FSCatalogInfo& info, const Type& value )   { info.*member = value; }
-	};
-	
-	template < class DesiredType, class MemberType, MemberType FSCatalogInfo::*member >
-	struct Const_FSCatalogInfoBit_Traits
-	{
-		typedef DesiredType Type;
-		static Type Get( const FSCatalogInfo& info )                { return info.*member; }
-	};
-	
-	
-	template < UInt64 FSCatalogInfo::*logical, UInt64 FSCatalogInfo::*physical >
-	struct ForkSizes_FSCatalogInfoBit_Traits
-	{
-		typedef ForkSizes Type;
-		
-		static Type Get( const FSCatalogInfo& info )
-		{
-			ForkSizes result;
-			result.logicalSize  = info.*logical;
-			result.physicalSize = info.*physical;
-			return result;
-		}
-	};
-	
-	template < class DesiredType,
-	           class MemberType,
-	           std::size_t size,
-	           MemberType (FSCatalogInfo::*infoMember)[size],
-	           MemberType (DesiredType::*desiredMember)[size] >
-	struct Array_FSCatalogInfoBit_Traits
-	{
-		typedef DesiredType Type;
-		
-		static Type Get( const FSCatalogInfo& info )
-		{
-			DesiredType result;
-			for ( std::size_t i = 0; i < size; ++i )
-				(result.*desiredMember)[i] = (info.*infoMember)[i];
-			return result;
-		}
-		
-		static void Set( FSCatalogInfo& info, const Type& value )
-		{
-			for ( std::size_t i = 0; i < size; ++i )
-				(info.*infoMember)[i] = (value.*desiredMember)[i];
-		}
-	};
-	
-	
-	template < ::FSCatalogInfoBitmap bit > struct FSCatalogInfoBit_Traits;
-	
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoTextEncoding > : Basic_FSCatalogInfoBit_Traits< TextEncoding,     ::TextEncoding,   &FSCatalogInfo::textEncodingHint > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoNodeFlags    > : Basic_FSCatalogInfoBit_Traits< FSNodeFlags,      ::UInt16,         &FSCatalogInfo::nodeFlags        > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoVolume       > : Const_FSCatalogInfoBit_Traits< FSVolumeRefNum,   ::FSVolumeRefNum, &FSCatalogInfo::volume           > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoParentDirID  > : Const_FSCatalogInfoBit_Traits< FSDirID,          ::UInt32,         &FSCatalogInfo::parentDirID      > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoNodeID       > : Const_FSCatalogInfoBit_Traits< FSNodeID,         ::UInt32,         &FSCatalogInfo::nodeID           > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoCreateDate   > : Basic_FSCatalogInfoBit_Traits< UTCDateTime,      ::UTCDateTime,    &FSCatalogInfo::createDate       > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoContentMod   > : Basic_FSCatalogInfoBit_Traits< UTCDateTime,      ::UTCDateTime,    &FSCatalogInfo::contentModDate   > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoAttrMod      > : Basic_FSCatalogInfoBit_Traits< UTCDateTime,      ::UTCDateTime,    &FSCatalogInfo::attributeModDate > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoAccessDate   > : Basic_FSCatalogInfoBit_Traits< UTCDateTime,      ::UTCDateTime,    &FSCatalogInfo::accessDate       > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoBackupDate   > : Basic_FSCatalogInfoBit_Traits< UTCDateTime,      ::UTCDateTime,    &FSCatalogInfo::backupDate       > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoValence      > : Const_FSCatalogInfoBit_Traits< UInt32,           ::UInt32,         &FSCatalogInfo::valence          > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoSharingFlags > : Const_FSCatalogInfoBit_Traits< FSSharingFlags,   ::UInt8,          &FSCatalogInfo::sharingFlags     > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoUserPrivs    > : Const_FSCatalogInfoBit_Traits< FSUserPrivileges, ::UInt8,          &FSCatalogInfo::userPrivileges   > {};
-
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoDataSizes > : ForkSizes_FSCatalogInfoBit_Traits< &FSCatalogInfo::dataLogicalSize, &FSCatalogInfo::dataPhysicalSize > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoRsrcSizes > : ForkSizes_FSCatalogInfoBit_Traits< &FSCatalogInfo::rsrcLogicalSize, &FSCatalogInfo::rsrcPhysicalSize > {};
-
-#if ! __LP64__
-	
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoPermissions  > : Array_FSCatalogInfoBit_Traits< Permissions,   ::UInt32, 4, &FSCatalogInfo::permissions,   &Permissions::permissions     > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoFinderInfo   > : Array_FSCatalogInfoBit_Traits< FinderInfo,    ::UInt8, 16, &FSCatalogInfo::finderInfo,    &FinderInfo::finderInfo       > {};
-	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoFinderXInfo  > : Array_FSCatalogInfoBit_Traits< ExtFinderInfo, ::UInt8, 16, &FSCatalogInfo::extFinderInfo, &ExtFinderInfo::extFinderInfo > {};
-	
-#endif  // #if ! __LP64__
-	
-#endif
-	
 	void FSGetCatalogInfo( const FSRef&        ref,
 	                       FSCatalogInfoBitmap whichInfo,
 	                       FSCatalogInfo *     catalogInfo,
@@ -1008,24 +910,6 @@ namespace Nitrogen
 	                       FSRef *             parentRef );
 	
 	FSGetCatalogInfo_Result FSGetCatalogInfo( const FSRef& ref, FSCatalogInfoBitmap whichInfo );
-	
-#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
-	
-	template < ::FSCatalogInfoBitmap bit >
-	struct FSGetCatalogInfo_Traits
-	{
-		typedef typename FSCatalogInfoBit_Traits<bit>::Type Result;
-	};
-	
-	template < ::FSCatalogInfoBitmap bit >
-	inline typename FSGetCatalogInfo_Traits<bit>::Result FSGetCatalogInfo( const FSRef& ref )
-	{
-		FSCatalogInfo info;
-		FSGetCatalogInfo( ref, bit, &info, 0, 0, 0 );
-		return FSCatalogInfoBit_Traits<bit>::Get( info );
-	}
-	
-#endif
 	
 	void FSSetCatalogInfo( const FSRef&         ref,
 	                       FSCatalogInfoBitmap  whichInfo,
@@ -1061,36 +945,6 @@ namespace nucleus
 	};
 	
 #endif  // #if ! __LP64__
-	
-}
-
-namespace Nitrogen
-{
-	
-#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
-	
-	template< ::FSCatalogInfoBitmap bit >
-	struct FSSetCatalogInfo_Traits
-	{
-		typedef const typename FSCatalogInfoBit_Traits<bit>::Type& ParameterType;
-	};
-	
-	template< ::FSCatalogInfoBitmap bit >
-	inline void FSSetCatalogInfo( const FSRef& ref, typename FSSetCatalogInfo_Traits<bit>::ParameterType value )
-	{
-		FSCatalogInfo info;
-		FSCatalogInfoBit_Traits<bit>::Set( info, value );
-		FSSetCatalogInfo( ref, bit, info );
-	}
-	
-#endif
-	
-	using ::FSIterator;
-	
-}
-
-namespace nucleus
-{
 	
 	template <> struct disposer< FSIterator >
 	{
@@ -1477,167 +1331,6 @@ namespace Nitrogen
 	
 	FSGetForkCBInfo_Result FSGetForkCBInfo( FSForkIterator& iterator );
 	
-	
-#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
-	
-	template < class DesiredType, class MemberType, MemberType FSVolumeInfo::*member >
-	struct Basic_FSVolumeInfoBit_Traits
-	{
-		typedef DesiredType Type;
-		static Type Get( const FSVolumeInfo& info )                { return info.*member; }
-		static void Set( FSVolumeInfo& info, const Type& value )   { info.*member = value; }
-	};
-	
-	template < class DesiredType, class MemberType, MemberType FSVolumeInfo::*member >
-	struct Const_FSVolumeInfoBit_Traits
-	{
-		typedef DesiredType Type;
-		static Type Get( const FSVolumeInfo& info )                { return info.*member; }
-	};
-	
-	template < ::FSVolumeInfoBitmap bit > struct FSVolumeInfoBit_Traits;
-	
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoCreateDate  > : Const_FSVolumeInfoBit_Traits< UTCDateTime,       ::UTCDateTime,   &FSVolumeInfo::createDate     > {};
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoModDate     > : Const_FSVolumeInfoBit_Traits< UTCDateTime,       ::UTCDateTime,   &FSVolumeInfo::modifyDate     > {};
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoBackupDate  > : Basic_FSVolumeInfoBit_Traits< UTCDateTime,       ::UTCDateTime,   &FSVolumeInfo::backupDate     > {};
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoCheckedDate > : Const_FSVolumeInfoBit_Traits< UTCDateTime,       ::UTCDateTime,   &FSVolumeInfo::checkedDate    > {};
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoFileCount   > : Const_FSVolumeInfoBit_Traits< UInt32,            ::UInt32,        &FSVolumeInfo::fileCount      > {};
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoDirCount    > : Const_FSVolumeInfoBit_Traits< UInt32,            ::UInt32,        &FSVolumeInfo::folderCount    > {};
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoNextAlloc   > : Const_FSVolumeInfoBit_Traits< UInt32,            ::UInt32,        &FSVolumeInfo::nextAllocation > {};
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoRsrcClump   > : Const_FSVolumeInfoBit_Traits< UInt32,            ::UInt32,        &FSVolumeInfo::rsrcClumpSize  > {};
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoDataClump   > : Const_FSVolumeInfoBit_Traits< UInt32,            ::UInt32,        &FSVolumeInfo::dataClumpSize  > {};
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoNextID      > : Const_FSVolumeInfoBit_Traits< HFSCatalogNodeID,  ::UInt32,        &FSVolumeInfo::nextCatalogID  > {};
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoFlags       > : Basic_FSVolumeInfoBit_Traits< FSVolumeInfoFlags, ::UInt16,        &FSVolumeInfo::flags          > {};
-	
-#endif
-	
-	struct FSVolumeInfoSizes
-	{
-		UInt64 totalBytes;
-		UInt64 freeBytes;
-	};
-
-#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
-	
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoSizes >
-	{
-		typedef FSVolumeInfoSizes Type;
-		
-		static Type Get( const FSVolumeInfo& info )
-		{
-			FSVolumeInfoSizes result;
-			result.totalBytes = info.totalBytes;
-			result.freeBytes = info.freeBytes;
-			return result;
-		}
-	};
-	
-#endif
-	
-	struct FSVolumeInfoBlocks
-	{
-		UInt32 blockSize;
-		UInt32 totalBlocks;
-		UInt32 freeBlocks;
-	};
-	
-#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
-	
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoBlocks >
-	{
-		typedef FSVolumeInfoBlocks Type;
-		
-		static Type Get( const FSVolumeInfo& info )
-		{
-			FSVolumeInfoBlocks result;
-			result.blockSize = info.blockSize;
-			result.totalBlocks = info.totalBlocks;
-			result.freeBlocks = info.freeBlocks;
-			return result;
-		}
-	};
-	
-#endif
-	
-	struct FSVolumeInfoFinderInfo
-	{
-		UInt8 finderInfo[32];
-	};
-	
-#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
-	
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoFinderInfo >
-	{
-		typedef FSVolumeInfoFinderInfo Type;
-		
-		template < class Element, std::size_t size >
-		static void ArrayAssign( Element (&destination)[size], const Element (&source)[size] )
-		{
-			std::copy( source, source + size, destination );
-		}
-		
-		static Type Get( const FSVolumeInfo& info )
-		{
-			FSVolumeInfoFinderInfo result;
-			ArrayAssign( result.finderInfo, info.finderInfo );
-			return result;
-		}
-		
-		static void Set( FSVolumeInfo& info, const FSVolumeInfoFinderInfo& value )
-		{
-			ArrayAssign( info.finderInfo, value.finderInfo );
-		}
-	};
-	
-#endif
-	
-	struct FSVolumeInfoFSInfo
-	{
-		FSFileSystemID filesystemID;
-		UInt16 signature;
-	};
-
-#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
-	
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoFSInfo >
-	{
-		typedef FSVolumeInfoFSInfo Type;
-		
-		static Type Get( const FSVolumeInfo& info )
-		{
-			FSVolumeInfoFSInfo result;
-			result.filesystemID = FSFileSystemID( info.filesystemID );
-			result.signature = info.signature;
-			return result;
-		}
-	};
-	
-#endif
-	
-	struct FSVolumeInfoDriveInfo
-	{
-		UInt16 driveNumber;
-		DriverReferenceNumber driverRefNum;
-	};
-	
-#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
-	
-	template <> struct FSVolumeInfoBit_Traits< kFSVolInfoDriveInfo >
-	{
-		typedef FSVolumeInfoDriveInfo Type;
-		
-		static Type Get( const FSVolumeInfo& info )
-		{
-			FSVolumeInfoDriveInfo result;
-			result.driveNumber = info.driveNumber;
-			result.driverRefNum = DriverReferenceNumber( info.driverRefNum );
-			return result;
-		}
-	};
-	
-#endif
-	
-	
 	struct FSGetVolumeInfo_Result
 	{
 		FSVolumeRefNum actualVolume;
@@ -1674,32 +1367,6 @@ namespace Nitrogen
 	FSGetVolumeInfo_Result FSGetVolumeInfo( FSVolumeIndex volumeIndex,
 	                                        FSVolumeInfoBitmap whichInfo);
 	
-#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
-	
-	template< ::FSVolumeInfoBitmap bit >
-	struct FSGetVolumeInfo_Traits
-	{
-		typedef typename FSVolumeInfoBit_Traits<bit>::Type Result;
-	};
-	
-	template< ::FSVolumeInfoBitmap bit >
-	inline typename FSGetVolumeInfo_Traits<bit>::Result FSGetVolumeInfo( FSVolumeRefNum volume )
-	{
-		FSVolumeInfo info;
-		FSGetVolumeInfo( volume, 0, bit, &info, 0, 0 );
-		return FSVolumeInfoBit_Traits<bit>::Get( info );
-	}
-	
-	template< ::FSVolumeInfoBitmap bit >
-	inline typename FSGetVolumeInfo_Traits<bit>::Result FSGetVolumeInfo( FSVolumeIndex volume )
-	{
-		FSVolumeInfo info;
-		FSGetVolumeInfo( volume, 0, bit, &info, 0, 0 );
-		return FSVolumeInfoBit_Traits<bit>::Get( info );
-	}
-	
-#endif
-	
 	FSVolumeRefNum FSGetVolumeRefNum( FSVolumeIndex volumeIndex );
 	
 	HFSUniStr255 FSGetVolumeName( FSVolumeRefNum volume );
@@ -1712,25 +1379,6 @@ namespace Nitrogen
 	void FSSetVolumeInfo( FSVolumeRefNum volume,
 	                      FSVolumeInfoBitmap  whichInfo,
 	                      const FSVolumeInfo& volumeInfo );
-	
-#ifndef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
-	
-	template< ::FSVolumeInfoBitmap bit >
-	struct FSSetVolumeInfo_Traits
-	{
-		typedef const typename FSVolumeInfoBit_Traits<bit>::Type& ParameterType;
-	};
-	
-	template< ::FSVolumeInfoBitmap bit >
-	inline void FSSetVolumeInfo( FSVolumeRefNum volume, typename FSSetVolumeInfo_Traits<bit>::ParameterType value )
-	{
-		FSVolumeInfo info;
-		FSVolumeInfoBit_Traits<bit>::Set( info, value );
-		FSSetVolumeInfo( volume, bit, info );
-	}
-	
-#endif
-	
 	
 	HFSUniStr255 FSGetDataForkName();
 	
@@ -1793,7 +1441,5 @@ namespace nucleus
 		}
 	};
 }
-
-#undef NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
 
 #endif
