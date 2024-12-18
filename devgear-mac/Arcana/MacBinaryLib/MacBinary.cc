@@ -50,9 +50,6 @@
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/MacMemory.hh"
 
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
-
 
 /*
 
@@ -643,9 +640,15 @@ namespace MacBinary
 		Encode( cInfo, blockWrite, output );
 	}
 	
+	static inline
+	bool item_is_directory( const CInfoPBRec& cInfo )
+	{
+		return cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
+	}
+	
 	void Encode( const CInfoPBRec& cInfo, BlockWriter blockWrite, int output )
 	{
-		bool isDir = io::item_is_directory( cInfo );
+		bool isDir = item_is_directory( cInfo );
 		
 		if ( isDir )
 		{
@@ -871,7 +874,7 @@ namespace MacBinary
 			
 			itsDataForkLength -= dataBytes;
 			
-			io::write( itsDataFork, data, dataBytes );
+			N::FSWrite( itsDataFork, dataBytes, data );
 			
 			data += PaddedLength( dataBytes, kMacBinaryBlockSize );
 		}
@@ -882,7 +885,7 @@ namespace MacBinary
 			
 			itsResourceForkLength -= resourceBytes;
 			
-			io::write( itsResourceFork, data, resourceBytes );
+			N::FSWrite( itsResourceFork, resourceBytes, data );
 			
 			data += PaddedLength( resourceBytes, kMacBinaryBlockSize );
 		}
