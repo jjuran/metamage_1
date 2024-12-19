@@ -6,14 +6,15 @@
 #ifndef RASTER_MB32_HH
 #define RASTER_MB32_HH
 
+// Standard C
+#include <stdint.h>
+
 // iota
 #include "iota/endian.hh"
 
 
 namespace raster
 {
-	
-	typedef unsigned char uint8_t;
 	
 	inline
 	uint32_t mb32_native_endian( uint8_t a, uint8_t b, uint8_t c, uint8_t d )
