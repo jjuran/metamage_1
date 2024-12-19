@@ -92,6 +92,8 @@ sub new
 	
 	my $ccv = `cc -v 2>&1 | grep version | tail -1`;
 	
+	$ccv =~ s{^.* based on }{};
+	
 	my ( $name, $vers ) = $ccv =~ m{^(.*) version ([\d.]+)};
 	
 	$self{ ccname } = $name;
