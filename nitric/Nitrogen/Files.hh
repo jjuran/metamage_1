@@ -968,78 +968,6 @@ namespace Nitrogen
 	 
 	void FSCloseIterator( nucleus::owned<FSIterator> );
 	
-#if 0
-	
-	template < class Specifics >
-	class FSIteratedContainer: private Specifics
-	{
-		private:
-			FSRef root;
-			
-			// not implemented:
-				FSIteratedContainer& operator=( const FSIteratedContainer& );
-		
-		public:
-			typedef typename Specifics::value_type value_type;
-			typedef typename Specifics::size_type size_type;
-			typedef typename Specifics::difference_type difference_type;
-			
-			typedef value_type& reference;
-			typedef const value_type& const_reference;
-			
-			class const_iterator
-			{
-				friend class FSIteratedContainer;
-				
-				public:
-					typedef IndexUntilFailureContainer::difference_type difference_type;
-					typedef IndexUntilFailureContainer::value_type value_type;
-					typedef const value_type *pointer;
-					typedef const value_type& reference;
-					typedef std::input_iterator_tag iterator_category;
-				
-				private:
-					Shared<FSIterator> fsIterator;
-					value_type value;
-					
-					void GetValue()
-					{
-						FSGetCatalogInfoBulk_Result infoResult;
-						do
-							infoResult = Specifics::GetValue( fsIterator, &value );
-						while ( infoResult.actualObjects == 0 && !infoResult.noMoreItems );
-						if ( infoResult.noMoreItems )
-							fsIterator = Shared<FSIterator>();
-					}
-					
-					const_iterator( const FSRef& root, FSIteratorFlags flags )
-					  : fsIterator( FSOpenIterator( root, flags ) )
-					{
-						GetValue();
-					}
-					
-				public:
-					const_iterator()                          {}
-					
-					const_iterator& operator++()              { GetValue(); return *this; }
-					const_iterator operator++(int)            { GetValue(); return *this; }
-					
-					reference operator*() const               { return value; }
-					pointer operator->() const                { return &value; }
-					
-					friend bool operator==( const const_iterator& a, const const_iterator& b )    { return a.fsIterator == b.fsIterator; }
-					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
-			};
-			
-			FSIteratedContainer( const Specifics& base )
-			  : Specifics( base )
-			{}
-			
-			const_iterator begin() const                    { return const_iterator( *this, Specifics::begin_position() ); }
-			const_iterator end() const                      { return const_iterator(); }
-	};
-#endif
-	
 	struct FSGetCatalogInfoBulk_Result
 	{
 		ItemCount actualObjects;
@@ -1055,56 +983,6 @@ namespace Nitrogen
 	                                                  FSRef *             refs = 0,
 	                                                  FSSpec *            specs = 0,
 	                                                  HFSUniStr255 *      names = 0 );
-	
-#if 0
-	
-	template < ::FSCatalogInfoBitmap whichInfo >
-	class FSCatalogInfo_ContainerSpecifics
-	{
-		public:
-			typedef FSCatalogInfo value_type;
-			typedef FSCatalogIndex size_type;
-			typedef SInt64 difference_type;
-		
-			static size_type begin_position()   { return 1; }
-			static size_type end_position()     { return 0; }
-			
-			typedef ErrFSNoMoreItems end_of_enumeration;
-			
-			value_type GetValue( size_type position )
-			{
-				return FSGetCatalogInfo( position, whichInfo );
-			}
-	};
-	
-	template < ::FSCatalogInfoBitmap whichInfo > class FSCatalogInfo_Container;
-	template < ::FSCatalogInfoBitmap whichInfo > inline FSCatalogInfo_Container<whichInfo> FSCatalogInfos();
-	
-	template < ::FSCatalogInfoBitmap whichInfo >
-	class FSCatalogInfo_Container: public IndexUntilFailureContainer< FSCatalogInfo_ContainerSpecifics<whichInfo> >
-	{
-		friend FSCatalogInfo_Container<whichInfo> FSCatalogInfos<whichInfo>();
-		
-		private:
-			FSCatalogInfo_Container()
-			  : IndexUntilFailureContainer< FSCatalogInfo_ContainerSpecifics<whichInfo> >( FSCatalogInfo_ContainerSpecifics<whichInfo>() )
-			{}
-	};
-	
-	template < ::FSCatalogInfoBitmap whichInfo >
-	inline FSCatalogInfo_Container<whichInfo> FSCatalogInfos()
-	{
-		return FSCatalogInfo_Container<whichInfo>();
-	}
-	
-	
-	template < ::FSCatalogInfoBitmap whichInfo >
-	CatalogInfo_Container<whichInfo> CatalogInfos( const FSRef& container );
-	CatalogRef_Container  CatalogRefs( const FSRef& container );
-	CatalogSpec_Container CatalogSpecs( const FSRef& container );
-	CatalogName_Container CatalogNames( const FSRef& container );
-	
-#endif
 	
 	typedef FSGetCatalogInfoBulk_Result FSCatalogSearch_Result;
 	
