@@ -29,9 +29,9 @@ namespace command
 	{
 		const iovec iov[] =
 		{
-			{ (void*) text, text_size    },
-			{ (void*) arg, strlen( arg ) },
-			{ (void*) STR_LEN( "\n" )    },
+			{ (char*) text, text_size    },
+			{ (char*) arg, strlen( arg ) },
+			{ (char*) STR_LEN( "\n" )    },
 		};
 	
 		ssize_t n_written = writev( STDERR_FILENO, iov, ARRAYLEN( iov ) );
