@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/select.h>
+#include <sys/time.h>
 
 // Standard C
 #include <errno.h>
@@ -150,7 +151,7 @@ void fill_frame( bitmap& bits )
 static
 timeval timeval_from_us( unsigned long long microseconds )
 {
-	timeval tv = { 0, (suseconds_t) microseconds };
+	timeval tv = { 0, (int32_t) microseconds };
 	
 	if ( microseconds > 999999 )
 	{
