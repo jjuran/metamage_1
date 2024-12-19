@@ -42,12 +42,6 @@
 #ifndef MAC_DEVICES_TYPES_DRIVERREFNUM_HH
 #include "Mac/Devices/Types/DriverRefNum.hh"
 #endif
-#ifndef MAC_FILES_FUNCTIONS_FLUSHVOL_HH
-#include "Mac/Files/Functions/FlushVol.hh"
-#endif
-#ifndef MAC_FILES_FUNCTIONS_UNMOUNTVOL_HH
-#include "Mac/Files/Functions/UnmountVol.hh"
-#endif
 #ifndef MAC_FILES_TYPES_FSCREATOR_HH
 #include "Mac/Files/Types/FSCreator.hh"
 #endif
@@ -277,9 +271,6 @@ namespace Nitrogen
 	void PBHOpenDFAsync( HParamBlockRec& pb );
 	void PBHOpenRFSync ( HParamBlockRec& pb );
 	void PBHOpenRFAsync( HParamBlockRec& pb );
-	
-	using Mac::UnmountVol;
-	using Mac::FlushVol;
 	
 	// HSetVol
 	
