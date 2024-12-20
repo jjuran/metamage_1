@@ -13,11 +13,6 @@
 
 #include "Nitrogen/Files.hh"
 
-// Mac OS
-#ifndef __STRINGCOMPARE__
-#include <StringCompare.h>
-#endif
-
 
 #ifndef MAC_OS_X_VERSION_10_5
 typedef SInt16 FSIORefNum;
@@ -359,21 +354,6 @@ namespace Nitrogen
 	FSSpec FSMakeFSSpec( ConstStr255Param pathname )
 	{
 		return FSMakeFSSpec( FSVolumeRefNum(), FSDirID(), pathname );
-	}
-	
-	static bool FSCompareNames( ConstStr255Param a, ConstStr255Param b )
-	{
-		const bool caseSensitive        = false;
-		const bool diacriticalSensitive = true;
-		
-		return ::EqualString( a, b, caseSensitive, diacriticalSensitive );
-	}
-	
-	bool FSCompareFSSpecs( const FSSpec& a, const FSSpec& b )
-	{
-		return    a.vRefNum == b.vRefNum
-		       && a.parID   == b.parID
-		       && FSCompareNames( a.name, b.name );
 	}
 	
 	nucleus::owned< FSFileRefNum > FSpOpenDF( const FSSpec&   spec,
