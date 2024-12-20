@@ -623,7 +623,9 @@ namespace Genie
 	
 	vfs::node_ptr node_from_dirID( short vRefNum, long dirID )
 	{
-		N::Str31 mac_name = "\p";
+		Str63 mac_name;
+		
+		mac_name[ 0 ] = 0;
 		
 		CInfoPBRec cInfo;
 		
