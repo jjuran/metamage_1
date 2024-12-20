@@ -288,7 +288,7 @@ namespace Genie
 	}
 	
 	
-	static const unsigned char* const_root_directory_name = "\p" "/";
+	static const Byte const_root_directory_name[] = "\p" "/";
 	
 	static
 	VRefNum_DirID find_root_directory()
