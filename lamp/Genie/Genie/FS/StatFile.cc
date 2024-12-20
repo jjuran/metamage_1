@@ -95,7 +95,7 @@ namespace Genie
 		
 		if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
-			const mac::types::VRefNum_DirID& root = root_DirSpec();
+			const mac::types::VRefNum_DirID& root = root_directory();
 			
 			const bool is_root = hFileInfo.ioVRefNum == root.vRefNum  &&  hFileInfo.ioDirID == root.dirID;
 			

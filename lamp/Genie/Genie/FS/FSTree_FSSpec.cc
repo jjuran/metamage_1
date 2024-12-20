@@ -291,7 +291,7 @@ namespace Genie
 	static const unsigned char* const_root_directory_name = "\p" "/";
 	
 	static
-	VRefNum_DirID FindJDirectory()
+	VRefNum_DirID find_root_directory()
 	{
 		OSErr err;
 		CInfoPBRec cInfo;
@@ -348,11 +348,11 @@ namespace Genie
 		return users;
 	}
 	
-	const VRefNum_DirID& root_DirSpec()
+	const VRefNum_DirID& root_directory()
 	{
-		static VRefNum_DirID j = FindJDirectory();
+		static VRefNum_DirID root = find_root_directory();
 		
-		return j;
+		return root;
 	}
 	
 	
@@ -665,7 +665,7 @@ namespace Genie
 		
 		if ( ! mac::sys::has_MFS_only() )
 		{
-			bottom = FSTreeFromFSDirSpec( root_DirSpec() );  // diskfs
+			bottom = FSTreeFromFSDirSpec( root_directory() );  // diskfs
 		}
 		
 	#if CONFIG_RESFS
@@ -708,7 +708,7 @@ namespace Genie
 			return Get_sys_mac_vol_N( extra.fsspec.vRefNum );
 		}
 		
-		const VRefNum_DirID& root = root_DirSpec();
+		const VRefNum_DirID& root = root_directory();
 		
 		if ( parent.vRefNum == root.vRefNum  &&  parent.dirID == root.dirID )
 		{

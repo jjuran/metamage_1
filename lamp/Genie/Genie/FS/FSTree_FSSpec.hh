@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	const mac::types::VRefNum_DirID& root_DirSpec();
+	const mac::types::VRefNum_DirID& root_directory();
 	
 }
 
