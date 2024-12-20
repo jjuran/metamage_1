@@ -11,6 +11,9 @@
 #endif
 
 // Mac OS
+#ifndef __ALIASES__
+#include <Aliases.h>
+#endif
 #ifndef __PROCESSES__
 #include <Processes.h>
 #endif
@@ -66,9 +69,7 @@
 #include "plus/var_string.hh"
 
 // Nitrogen
-#include "Nitrogen/Aliases.hh"
 #include "Nitrogen/Files.hh"
-#include "Nitrogen/Resources.hh"
 
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"
@@ -914,7 +915,17 @@ namespace Genie
 			}
 			else if ( aliases_present  &&  fInfo.fdFlags & kIsAlias )
 			{
-				FSSpec target = N::ResolveAliasFile( extra.fsspec, false );
+				OSErr  err;
+				FSSpec target;
+				
+				Boolean dir;
+				Boolean alias;
+				
+				bool resolveChains = false;
+				
+				err = ResolveAliasFile( &target, resolveChains, &dir, &alias );
+				
+				Mac::ThrowOSStatus( err );
 				
 				return FSTreeFromFSSpec( target );
 			}
