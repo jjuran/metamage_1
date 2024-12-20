@@ -296,8 +296,6 @@ namespace Genie
 		OSErr err;
 		CInfoPBRec cInfo;
 		
-		N::Str63 name = const_root_directory_name;  // overkill
-		
 		// Try current directory first
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum();
@@ -319,6 +317,8 @@ namespace Genie
 				dirID   = Mac::FSDirID       ( locationSpec.parID   );
 			}
 		}
+		
+		StringPtr name = (StringPtr) const_root_directory_name;
 		
 		const bool exists = MacIO::GetCatInfo< MacIO::Return_FNF >( cInfo,
 		                                                            vRefNum,
