@@ -1237,9 +1237,17 @@ namespace Genie
 			
 			err = FSpMakeFSRef( &spec, &ref );
 			
-			Mac::ThrowOSStatus( err );
+			if ( err == noErr )
+			{
+				err = FSGetCatalogInfo( &ref,
+				                        kFSCatInfoFinderInfo,
+				                        &info,
+				                        NULL,
+				                        NULL,
+				                        NULL );
+			}
 			
-			N::FSGetCatalogInfo( ref, kFSCatInfoFinderInfo, &info, NULL, NULL, NULL );
+			Mac::ThrowOSStatus( err );
 			
 			const FileInfo& fileInfo = *(const FileInfo*) info.finderInfo;
 			
