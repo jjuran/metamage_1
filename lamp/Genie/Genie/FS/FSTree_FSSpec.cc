@@ -753,8 +753,8 @@ namespace Genie
 	{
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		SetFileTimes( N::FSVolumeRefNum( extra.fsspec.vRefNum ),
-		              N::FSDirID       ( extra.fsspec.parID   ),
+		SetFileTimes( extra.fsspec.vRefNum,
+		              extra.fsspec.parID,
 		              extra.fsspec.name,
 		              times );
 	}
