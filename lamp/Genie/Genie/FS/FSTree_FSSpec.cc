@@ -69,11 +69,8 @@
 #include "plus/var_string.hh"
 
 // Nitrogen
-#include "Mac/Files/Types/FSDirID.hh"
 #include "Mac/Files/Types/FSSignature.hh"
-#include "Mac/Files/Types/FSVolumeRefNum.hh"
 
-#include "Nitrogen/Devices.hh"
 #include "Nitrogen/OSStatus.hh"
 #include "Nitrogen/Str.hh"
 
@@ -310,8 +307,8 @@ namespace Genie
 		
 		// Try current directory first
 		
-		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum();
-		Mac::FSDirID        dirID   = Mac::FSDirID       ();
+		short vRefNum = 0;
+		long  dirID   = 0;
 		
 		if ( TARGET_API_MAC_CARBON  &&  &GetProcessBundleLocation != NULL )
 		{
@@ -325,8 +322,8 @@ namespace Genie
 			
 			if ( err == noErr )
 			{
-				vRefNum = Mac::FSVolumeRefNum( locationSpec.vRefNum );
-				dirID   = Mac::FSDirID       ( locationSpec.parID   );
+				vRefNum = locationSpec.vRefNum;
+				dirID   = locationSpec.parID;
 			}
 		}
 		
