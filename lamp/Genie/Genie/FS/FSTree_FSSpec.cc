@@ -133,6 +133,7 @@
 #include "Genie/Kernel/native_syscalls.hh"
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/Utilities/FinderSync.hh"
+#include "Genie/Utilities/GetCatInfo.hh"
 
 
 #define POD( obj )  (&(obj)), (sizeof (obj))
@@ -329,17 +330,24 @@ namespace Genie
 			}
 		}
 		
-		StringPtr name = (StringPtr) const_root_directory_name;
+		DirInfo& dirInfo = cInfo.dirInfo;
 		
-		const bool exists = MacIO::GetCatInfo< MacIO::Return_FNF >( cInfo,
-		                                                            vRefNum,
-		                                                            dirID,
-		                                                            name );
+		err = GetCatInfo( cInfo, vRefNum, dirID, const_root_directory_name );
 		
-		if ( !exists )
+		if ( err == fnfErr )
 		{
-			MacIO::GetCatInfo< MacIO::Return_FNF >( cInfo, vRefNum, dirID );
+			Str255 name;
+			
+			name[ 0 ] = 0;
+			
+			dirInfo.ioNamePtr = name;
+			dirInfo.ioDrDirID = dirID;
+			dirInfo.ioFDirIndex = -1;
+			
+			err = PBGetCatInfoSync( &cInfo );
 		}
+		
+		Mac::ThrowOSStatus( err );
 		
 		cInfo.dirInfo.ioVRefNum = GetVRefNum( cInfo.dirInfo.ioVRefNum );
 		
@@ -629,12 +637,15 @@ namespace Genie
 	
 	vfs::node_ptr node_from_HFS( short vRefNum, long dirID, const Byte* name )
 	{
+		OSErr err;
 		CInfoPBRec cInfo;
 		
-		MacIO::GetCatInfo< MacIO::Return_FNF >( cInfo,
-		                                        vRefNum,
-		                                        dirID,
-		                                        (StringPtr) name );
+		err = GetCatInfo( cInfo, vRefNum, dirID, name );
+		
+		if ( err != fnfErr )
+		{
+			Mac::ThrowOSStatus( err );
+		}
 		
 		return new_HFS_node( cInfo, MakeName( vRefNum, dirID, name ) );
 	}
@@ -1257,22 +1268,26 @@ namespace Genie
 	                                     const plus::string&   name,
 	                                     const vfs::node*      parent )
 	{
-		using MacIO::GetCatInfo;
-		using MacIO::Return_FNF;
-		
 		plus::string long_name = slashes_from_colons( plus::mac_from_utf8( name ) );
 		
 		Str31 macName;
 		
 		hash_long_name( macName, long_name.data(), long_name.size() );
 		
+		OSErr err;
 		CInfoPBRec cInfo;
 		
-		GetCatInfo< Return_FNF >( cInfo, dir.vRefNum, dir.dirID, macName, 0 );
+		err = GetCatInfo( cInfo, dir.vRefNum, dir.dirID, macName );
+		
+		if ( err == fnfErr )
+		{
+			err = noErr;
+		}
+		
+		Mac::ThrowOSStatus( err );
 		
 		if ( mac::sys::has_BlueBox()  &&  is_possibly_masked_symlink( cInfo ) )
 		{
-			OSErr  err;
 			FSRef  ref;
 			FSSpec spec;
 			
