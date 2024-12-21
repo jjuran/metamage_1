@@ -142,7 +142,7 @@ namespace tool
 				{
 					RemoveResource( existing );
 				}
-				else if ( (err = res_error()) != resNotFound )
+				else if ( (err = res_error())  &&  err != resNotFound )
 				{
 					goto error;
 				}
