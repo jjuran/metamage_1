@@ -372,12 +372,6 @@ namespace tool
 		try
 		{
 			resFile = open_res_file( ref );
-			
-		#ifdef __LITTLE_ENDIAN__
-			
-			install_null_flippers();
-			
-		#endif
 		}
 		catch ( const Mac::OSStatus& err )
 		{
@@ -397,6 +391,12 @@ namespace tool
 			
 			return 1;
 		}
+		
+	#ifdef __LITTLE_ENDIAN__
+		
+		install_null_flippers();
+		
+	#endif
 		
 		if ( cmd == "list" )
 		{
