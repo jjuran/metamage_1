@@ -145,6 +145,11 @@ sub command
 			{
 				$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_5';
 			}
+			
+			if ( $arch eq "arm64" )
+			{
+				$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = '__MAC_11_0';
+			}
 		}
 	}
 	
