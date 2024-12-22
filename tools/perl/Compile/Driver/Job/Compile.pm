@@ -140,6 +140,11 @@ sub command
 		else
 		{
 			$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_4';
+			
+			if ( $arch =~ m{ 64 $}x )
+			{
+				$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_5';
+			}
 		}
 	}
 	
