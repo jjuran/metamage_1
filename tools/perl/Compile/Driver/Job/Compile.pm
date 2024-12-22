@@ -135,7 +135,7 @@ sub command
 		
 		if ( $conf->{ arch } ne "ppc" )
 		{
-			$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_2';
+			$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_4';
 		}
 	}
 	
