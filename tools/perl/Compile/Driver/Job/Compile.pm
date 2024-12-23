@@ -139,17 +139,21 @@ sub command
 		}
 		else
 		{
-			$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_4';
+			my $min = 1040;  # non-PPC OS X starts at 10.4
 			
 			if ( $arch =~ m{ 64 $}x )
 			{
-				$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_5';
+				$min = 1050;  # 64-bit OS X starts at 10.5
 			}
 			
 			if ( $arch eq "arm64" )
 			{
-				$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = '__MAC_11_0';
+				$min = 1100;  # macOS on Apple Silicon starts at 11.0
 			}
+			
+			$min = $module->macosx_version_min_transitive( $min );
+			
+			$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = $min;
 		}
 	}
 	
