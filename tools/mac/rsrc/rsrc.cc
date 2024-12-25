@@ -319,6 +319,8 @@ namespace tool
 		return 0;
 	}
 	
+	typedef FSRef FSObj;
+	
 	int Main( int argc, char** argv )
 	{
 		char *const *args = get_options( argv );
@@ -355,10 +357,10 @@ namespace tool
 		
 		OSStatus err;
 		
-		FSRef ref;
+		FSObj file;
 		Boolean isDir;
 		
-		err = FSPathMakeRef( (const Byte*) path, &ref, &isDir );
+		err = FSPathMakeRef( (const Byte*) path, &file, &isDir );
 		
 		if ( err )
 		{
@@ -371,18 +373,12 @@ namespace tool
 			
 			return 1;
 		}
-		else if ( isDir )
-		{
-			more::perror( "rsrc", path, EISDIR );
-			
-			return 1;
-		}
 		
 		using mac::rsrc::open_res_file;
 		
 		n::owned< N::ResFileRefNum > resFile;
 		
-		ResFileRefNum refnum = open_res_file( ref, the_fork_name, fsRdPerm );
+		ResFileRefNum refnum = open_res_file( file, the_fork_name, fsRdPerm );
 		
 		if ( refnum < 0 )
 		{
@@ -396,6 +392,10 @@ namespace tool
 				
 				case afpAccessDenied:
 					more::perror( "rsrc", path, EACCES );
+					break;
+				
+				case errFSForkNotFound:
+					more::perror( "rsrc", path, EISDIR );
 					break;
 				
 				default:
