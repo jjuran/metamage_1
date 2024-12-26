@@ -176,7 +176,11 @@ namespace Genie
 	                         Mac::FSCreator       creator,
 	                         Mac::FSType          type )
 	{
-		N::HCreate( file, creator, type );
+		OSErr err;
+		
+		err = HCreate( file.vRefNum, file.parID, file.name, creator, type );
+		
+		Mac::ThrowOSStatus( err );
 		
 		finish_creation( file, name );
 	}
@@ -976,6 +980,8 @@ namespace Genie
 			goto no_alias;
 		}
 		
+		OSErr err;
+		
 		try
 		{
 			VRefNum_DirID linkParent = parent_directory( linkSpec );
@@ -988,7 +994,7 @@ namespace Genie
 			
 			FSSpec targetSpec = vfs::FSSpec_from_node( *target );
 			
-			OSErr err = mac::app::create_alias( linkSpec, targetSpec );
+			err = mac::app::create_alias( linkSpec, targetSpec );
 			
 			if ( err == noErr )
 			{
@@ -1009,11 +1015,23 @@ namespace Genie
 	no_alias:
 		
 		// Non-aliases get creator and type for OS X symlinks
-		N::HCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );
+		
+		err = HCreate( linkSpec.vRefNum,
+		               linkSpec.parID,
+		               linkSpec.name,
+		               Mac::kSymLinkCreator,
+		               Mac::kSymLinkFileType );
+		
+		if ( err )
+		{
+			goto failed;
+		}
 		
 	created:
 		
-		OSStatus err = SplatFile( linkSpec, targetPath );
+		err = SplatFile( linkSpec, targetPath );
+		
+	failed:
 		
 		Mac::ThrowOSStatus( err );
 	}
