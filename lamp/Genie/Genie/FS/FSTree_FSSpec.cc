@@ -69,7 +69,10 @@
 #include "plus/var_string.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Files/Types/FSSignature.hh"
+
+#include "Nitrogen/Devices.hh"
+#include "Nitrogen/OSStatus.hh"
 
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"
@@ -187,7 +190,7 @@ namespace Genie
 	
 	static void create_file( const FSSpec& file, const plus::string& name )
 	{
-		N::FileSignature sig = PickFileSignatureForName( name.data(), name.size() );
+		Mac::FSSignature sig = PickFileSignatureForName( name.data(), name.size() );
 		
 		create_file( file, name, sig.creator, sig.type );
 	}
