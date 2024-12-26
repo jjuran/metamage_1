@@ -1177,9 +1177,15 @@ namespace Genie
 	{
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		N::DirCreate( extra.fsspec );
+		const FSSpec& file = extra.fsspec;
 		
-		finish_creation( extra.fsspec, that->name() );
+		SInt32 dirID;
+		
+		OSErr err = DirCreate( file.vRefNum, file.parID, file.name, &dirID );
+		
+		Mac::ThrowOSStatus( err );
+		
+		finish_creation( file, that->name() );
 	}
 	
 	
