@@ -1121,7 +1121,14 @@ namespace Genie
 					
 					if ( !equal )
 					{
-						N::HRename( file, name );
+						N::Str255 new_name( name.data(), name.size() );
+						
+						OSErr err = HRename( file.vRefNum,
+						                     file.parID,
+						                     file.name,
+						                     new_name );
+						
+						Mac::ThrowOSStatus( err );
 					}
 				}
 			}
