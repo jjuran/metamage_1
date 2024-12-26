@@ -1095,11 +1095,13 @@ namespace Genie
 		
 		if ( const bool creating = flags & O_CREAT )
 		{
+			const FSSpec& file = extra.fsspec;
+			
 			const bool exists = extra.cinfo.hFileInfo.ioResult == noErr;
 			
 			if ( !exists )
 			{
-				create_file( extra.fsspec, that->name() );
+				create_file( file, that->name() );
 				
 				created = true;
 			}
@@ -1114,12 +1116,12 @@ namespace Genie
 					const plus::string name = slashes_from_colons( name_MacRoman );
 					
 					const bool equal = memcmp( name.begin(),
-					                           (extra.fsspec.name + 1),
+					                           (file.name + 1),
 					                           name.size() ) == 0;
 					
 					if ( !equal )
 					{
-						N::HRename( extra.fsspec, name );
+						N::HRename( file, name );
 					}
 				}
 			}
