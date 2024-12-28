@@ -5,9 +5,6 @@
 
 #include "Vertice/Document.hh"
 
-// Standard C++
-#include <algorithm>
-
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/screenBits.hh"
@@ -55,7 +52,14 @@ namespace Vertice
 		rect.bottom -= 7;
 		rect.left = 6;
 		rect.right -= 7;
-		short length = std::min( rect.bottom - rect.top, 400 );
+		
+		short length = rect.bottom - rect.top;
+		
+		if ( length > 400 )
+		{
+			length = 400;
+		}
+		
 		rect.bottom = rect.top + length;
 		//short vMargin = ( screenBounds.bottom - rect.bottom ) - mbarHeight;
 		short hMargin = ( screenBounds.right - length );
