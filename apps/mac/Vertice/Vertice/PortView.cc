@@ -19,9 +19,6 @@
 // mac-ui-utils
 #include "mac_ui/windows.hh"
 
-// nucleus
-#include "nucleus/saved.hh"
-
 // Nitrogen
 #include "Nitrogen/CGDataProvider.hh"
 
@@ -76,11 +73,15 @@ namespace Vertice
 	{
 		CGrafPtr thePort = (CGrafPtr) mac::qd::thePort();
 		
-		PixMapHandle pix = N::GetGWorldPixMap( thePort );
-		n::saved< N::Pixels_State > savedPixelsState( pix );
-		N::LockPixels( pix );
+		PixMapHandle pix = GetGWorldPixMap( thePort );
+		
+		GWorldFlags flags = GetPixelsState( pix );
+		
+		LockPixels( pix );  // thePort pixels shouldn't be purgeable
 		
 		mac::qd::copy_bits( src, thePort );
+		
+		SetPixelsState( pix, flags );
 	}
 	
 	static inline
@@ -204,7 +205,7 @@ namespace Vertice
 		
 		n::owned< GWorldPtr > gworld = N::NewGWorld( 32, bounds );
 		
-		N::LockPixels( GetGWorldPixMap( gworld ) );
+		LockPixels( GetGWorldPixMap( gworld ) );  // pixels not purgeable
 		
 		return gworld;
 	}
