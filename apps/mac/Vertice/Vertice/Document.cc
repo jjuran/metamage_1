@@ -55,7 +55,7 @@ namespace Vertice
 		
 		short length = rect.bottom - rect.top;
 		
-		if ( length > 400 )
+		if ( ! TARGET_API_MAC_CARBON  &&  length > 400 )
 		{
 			length = 400;
 		}
