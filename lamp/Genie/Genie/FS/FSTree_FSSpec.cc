@@ -1333,7 +1333,7 @@ namespace Genie
 	
 	struct NameAndID
 	{
-		Str31  name;
+		Str63  name;
 		long   id;
 	};
 	
