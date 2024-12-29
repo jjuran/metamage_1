@@ -109,18 +109,6 @@ namespace Genie
 		return child;
 	}
 	
-	static VRefNum_DirID GetUserHomeFolder()
-	{
-		VRefNum_DirID folder = mac::sys::get_user_home();
-		
-		if ( ! is_error( folder ) )
-		{
-			return folder;
-		}
-		
-		return FindUserHomeFolder();
-	}
-	
 	
 	static vfs::node_ptr mac_user_home_resolve( const vfs::node* that )
 	{
@@ -129,7 +117,14 @@ namespace Genie
 			return relix::root();
 		}
 		
-		return node_from_dir( GetUserHomeFolder() );
+		VRefNum_DirID folder = mac::sys::get_user_home();
+		
+		if ( is_error( folder ) )
+		{
+			folder = FindUserHomeFolder();
+		}
+		
+		return node_from_dir( folder );
 	}
 	
 	static const vfs::link_method_set mac_user_home_link_methods =
