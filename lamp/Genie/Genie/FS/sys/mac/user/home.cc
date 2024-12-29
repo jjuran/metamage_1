@@ -86,16 +86,15 @@ namespace Genie
 	static
 	VRefNum_DirID FindUserHomeFolder()
 	{
-		VRefNum_DirID appFolder = parent_directory( program_file() );
-		
-		VRefNum_DirID users = GetUsersFolder( appFolder.vRefNum );
-		
-		VRefNum_DirID parent = appFolder;
+		VRefNum_DirID parent = parent_directory( program_file() );
+		VRefNum_DirID users  = GetUsersFolder( parent.vRefNum );
 		VRefNum_DirID child;
+		
+		child.vRefNum = parent.vRefNum;
 		
 		do
 		{
-			child = parent;
+			child.dirID = parent.dirID;
 			
 			parent = mac::file::parent_directory( child );
 			
@@ -104,7 +103,7 @@ namespace Genie
 				Mac::ThrowOSStatus( error( parent ) );
 			}
 		}
-		while ( parent != users );
+		while ( parent.dirID != users.dirID );
 		
 		return child;
 	}
