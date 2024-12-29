@@ -15,8 +15,14 @@
 // Iota
 #include "iota/strings.hh"
 
+// mac-sys-utils
+#include "mac_sys/errno_from_mac_error.hh"
+
 // mac-file-utils
 #include "mac_file/directory.hh"
+
+// mac-relix-utils
+#include "mac_relix/FSSpec_from_path.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -24,8 +30,8 @@
 // plus
 #include "plus/string/concat.hh"
 
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // poseven
 #include "poseven/functions/open.hh"
@@ -33,9 +39,6 @@
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
-
-// Divergence
-#include "Divergence/Utilities.hh"
 
 // Misc
 #include "MacBinary.hh"
@@ -48,7 +51,9 @@ namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace Div = Divergence;
+	
+	using mac::sys::Error;
+	using mac::sys::errno_from_mac_error;
 	
 	using mac::types::VRefNum_DirID;
 	
@@ -155,17 +160,27 @@ namespace tool
 			return Usage();
 		}
 		
+		using mac::relix::FSSpec_from_existing_path;
+		
 		if ( encode_target )
 		{
 			// FIXME:  Can't encode to a non-file stream, including stdout
-			FSSpec targetFile = Div::ResolvePathToFSSpec( encode_target );
 			
-			if ( !io::item_exists( targetFile ) )
+			FSSpec targetFile;
+			
+			Error err = FSSpec_from_existing_path( encode_target, targetFile );
+			
+			int errnum = is_errno( err ) ? errno_from_muxed( err )
+			                             : errno_from_mac_error( err );
+			
+			if ( errnum > 0 )
 			{
-				fprintf( stderr, "macbin: %s: %s\n", encode_target, strerror( ENOENT ) );
+				fprintf( stderr, "macbin: %s: %s\n", encode_target, strerror( errnum ) );
 				
 				return 1;
 			}
+			
+			Mac::ThrowOSStatus( err );
 			
 			MacBinary::Encode( targetFile,
 			                   &BlockWrite,
@@ -176,14 +191,28 @@ namespace tool
 		{
 			const char* destDirPath = dest ? dest : ".";
 			
+			FSSpec dest;
+			
+			Error err = FSSpec_from_existing_path( destDirPath, dest );
+			
+			int errnum = is_errno( err ) ? errno_from_muxed( err )
+			                             : errno_from_mac_error( err );
+			
+			if ( errnum > 0 )
+			{
+				fprintf( stderr, "macbin: %s: %s\n", destDirPath, strerror( errnum ) );
+				
+				return 1;
+			}
+			
+			Mac::ThrowOSStatus( err );
+			
 			try
 			{
 				if ( bool use_stdin = decode_target[0] == '-'  &&  decode_target[1] == '\0' )
 				{
 					decode_target = "/dev/fd/0";
 				}
-				
-				FSSpec dest = Div::ResolvePathToFSSpec( destDirPath );
 				
 				VRefNum_DirID destDir = mac::file::directory( dest );
 				
