@@ -1530,15 +1530,18 @@ namespace Genie
 		
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		Mac::ThrowOSStatus( extra.cinfo.hFileInfo.ioResult );
+		err = extra.cinfo.hFileInfo.ioResult;
 		
-		IterateIntoCache_CInfoPBRec pb;
-		
-		pb.task = relix::current_thread().get_task();
-		
-		mempcpy( &pb.cInfo, POD( extra.cinfo ) );
-		
-		err = IterateFilesIntoCache( pb, cache );
+		if ( err == noErr )
+		{
+			IterateIntoCache_CInfoPBRec pb;
+			
+			pb.task = relix::current_thread().get_task();
+			
+			mempcpy( &pb.cInfo, POD( extra.cinfo ) );
+			
+			err = IterateFilesIntoCache( pb, cache );
+		}
 		
 		Mac::ThrowOSStatus( err );
 	}
