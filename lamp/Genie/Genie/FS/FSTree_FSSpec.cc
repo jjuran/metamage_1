@@ -1398,8 +1398,9 @@ namespace Genie
 		mac::sys::request_async_wakeup();
 	}
 	
-	static void IterateFilesIntoCache( IterateIntoCache_CInfoPBRec&  pb,
-	                                   vfs::dir_contents&            cache )
+	static
+	OSErr IterateFilesIntoCache( IterateIntoCache_CInfoPBRec&  pb,
+	                             vfs::dir_contents&            cache )
 	{
 		OSErr err;
 		
@@ -1445,9 +1446,9 @@ namespace Genie
 				
 				err = cInfo.dirInfo.ioResult;
 				
-				if ( err != fnfErr )
+				if ( err < 0  &&  err != fnfErr )
 				{
-					N::ThrowIOResult( err );
+					return err;
 				}
 				
 				while ( !pb.done )
@@ -1461,9 +1462,9 @@ namespace Genie
 				
 				++pb.n_items;
 			}
-			else if ( err != fnfErr )
+			else if ( err < 0  &&  err != fnfErr )
 			{
-				N::ThrowIOResult( err );
+				return err;
 			}
 			
 			n_items += pb.n_items;
@@ -1481,16 +1482,23 @@ namespace Genie
 			
 			if ( cInfo.dirInfo.ioResult == fnfErr )
 			{
-				return;
+				return noErr;
 			}
 			
-			Mac::ThrowOSStatus( cInfo.dirInfo.ioResult );
+			if ( cInfo.dirInfo.ioResult )
+			{
+				return cInfo.dirInfo.ioResult;
+			}
 		}
+		
+		return noErr;
 	}
 	
 	static void hfs_listdir( const vfs::node*    that,
 	                         vfs::dir_contents&  cache )
 	{
+		OSErr err;
+		
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		Mac::ThrowOSStatus( extra.cinfo.hFileInfo.ioResult );
@@ -1501,7 +1509,9 @@ namespace Genie
 		
 		mempcpy( &pb.cInfo, POD( extra.cinfo ) );
 		
-		IterateFilesIntoCache( pb, cache );
+		err = IterateFilesIntoCache( pb, cache );
+		
+		Mac::ThrowOSStatus( err );
 	}
 	
 }
