@@ -59,7 +59,7 @@ enum
 	Option_app_sig,
 	
 	Option_activate,
-	Option_mac_paths,
+	Option_HFS_paths,
 };
 
 static command::option options[] =
@@ -72,7 +72,8 @@ static command::option options[] =
 	
 	{ "activate", Option_activate  },
 	{ "actv",     Option_activate  },
-	{ "mac",      Option_mac_paths },
+	{ "hfs",      Option_HFS_paths },
+	{ "mac",      Option_HFS_paths },
 	
 	{ NULL }
 };
@@ -82,7 +83,7 @@ static const char* gAppSigToOpenIn  = NULL;
 
 static bool gOpenInEditor    = false;
 static bool gActivate        = false;
-static bool gUseMacPathnames = false;
+static bool gUseHFSPathnames = false;
 
 static char* const* get_options( char* const* argv )
 {
@@ -111,8 +112,8 @@ static char* const* get_options( char* const* argv )
 				gActivate = true;
 				break;
 			
-			case Option_mac_paths:
-				gUseMacPathnames = true;
+			case Option_HFS_paths:
+				gUseHFSPathnames = true;
 				break;
 			
 			default:
@@ -397,7 +398,7 @@ namespace tool
 			
 			FSSpec item;
 			
-			Error err = ResolvePathname( item, pathname, gUseMacPathnames );
+			Error err = ResolvePathname( item, pathname, gUseHFSPathnames );
 			
 			if ( err )
 			{
