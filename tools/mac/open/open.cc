@@ -21,6 +21,7 @@
 
 // mac-sys-utils
 #include "mac_sys/current_process.hh"
+#include "mac_sys/errno_from_mac_error.hh"
 #include "mac_sys/is_front_process.hh"
 
 // mac-file-utils
@@ -129,6 +130,9 @@ namespace tool
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
+	using mac::sys::Error;
+	using mac::sys::errno_from_mac_error;
+	
 	
 	enum
 	{
@@ -137,12 +141,12 @@ namespace tool
 	
 	
 	static
-	OSErr ResolvePathname( FSSpec& file, const char* path, bool macPathname )
+	Error ResolvePathname( FSSpec& file, const char* path, bool hfs )
 	{
 		using mac::relix::FSSpec_from_existing_path;
 		
-		OSErr err = macPathname ? FSMakeFSSpec( 0, 0, N::Str255( path ), &file )
-		                        : FSSpec_from_existing_path( path, file );
+		Error err = hfs ? (Error) FSMakeFSSpec( 0, 0, N::Str255( path ), &file )
+		                : FSSpec_from_existing_path( path, file );
 		
 		return err;
 	}
@@ -393,13 +397,16 @@ namespace tool
 			
 			FSSpec item;
 			
-			OSErr err = ResolvePathname( item, pathname, gUseMacPathnames );
+			Error err = ResolvePathname( item, pathname, gUseMacPathnames );
 			
 			if ( err )
 			{
-				if ( err == fnfErr )
+				int errnum = is_errno( err ) ? errno_from_muxed( err )
+				                             : errno_from_mac_error( err );
+				
+				if ( errnum > 0 )
 				{
-					fprintf( stderr, "open: %s: %s\n", pathname, strerror( ENOENT ) );
+					fprintf( stderr, "open: %s: %s\n", pathname, strerror( errnum ) );
 				}
 				else
 				{
