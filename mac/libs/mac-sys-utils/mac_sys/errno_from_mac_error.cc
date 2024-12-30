@@ -11,10 +11,8 @@
 #endif
 
 // Mac OS
-#if ! __LP64__  &&  ! defined( MAC_OS_X_VERSION_10_8 )
-#ifndef __OPENTRANSPORT__
-#include <OpenTransport.h>
-#endif
+#ifndef __MACERRORS__
+#include <MacErrors.h>
 #endif
 
 // Standard C
