@@ -23,6 +23,8 @@ struct ProcessSerialNumber;
 namespace mac  {
 namespace proc {
 	
+	OSErr test_process( const ProcessSerialNumber& psn );
+	
 	OSErr find_process( ProcessSerialNumber& psn, OSType signature );
 	
 	OSErr find_process( ProcessSerialNumber& psn, const FSSpec& app_file );

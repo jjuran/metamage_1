@@ -22,6 +22,21 @@
 namespace mac  {
 namespace proc {
 
+OSErr test_process( const ProcessSerialNumber& psn )
+{
+	ProcessInfoRec processInfo;
+	
+	processInfo.processInfoLength = sizeof processInfo;
+	processInfo.processName       = NULL;
+#if __LP64__
+	processInfo.processAppRef     = NULL;
+#else
+	processInfo.processAppSpec    = NULL;
+#endif
+	
+	return GetProcessInformation( &psn, &processInfo );
+}
+
 OSErr find_process( ProcessSerialNumber& psn, OSType signature )
 {
 	psn.highLongOfPSN = 0;
