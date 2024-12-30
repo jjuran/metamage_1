@@ -39,9 +39,6 @@
 #include "mac_proc/find_process.hh"
 #include "mac_proc/launch_application.hh"
 
-// mac-relix-utils
-#include "mac_relix/FSSpec_from_path.hh"
-
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
@@ -199,23 +196,14 @@ namespace tool
 			return psn;
 		}
 		
-		if ( const char* ToolServer_path = getenv( "ToolServer" ) )
+		using mac::file::get_desktop_APPL;
+		using mac::file::get_desktop_APPL_on_RAM_disk;
+		
+		err = get_desktop_APPL_on_RAM_disk( appFile, sigToolServer );
+		
+		if ( err )
 		{
-			using mac::relix::FSSpec_from_existing_path;
-			
-			err = FSSpec_from_existing_path( ToolServer_path, appFile );
-		}
-		else
-		{
-			using mac::file::get_desktop_APPL;
-			using mac::file::get_desktop_APPL_on_RAM_disk;
-			
-			err = get_desktop_APPL_on_RAM_disk( appFile, sigToolServer );
-			
-			if ( err )
-			{
-				err = get_desktop_APPL( appFile, sigToolServer );
-			}
+			err = get_desktop_APPL( appFile, sigToolServer );
 		}
 		
 		if ( err == afpItemNotFound )
