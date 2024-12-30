@@ -13,6 +13,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// Standard C
+#include <errno.h>
+
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_stat.hh"
 
@@ -22,7 +25,10 @@ namespace relix {
 
 #if defined( __RELIX__ )  ||  defined( __APPLE__ )
 
-int FSSpec_from_existing_path( const char* path, FSSpec& result )
+using mac::sys::muxed_errno;
+using mac::sys::muxed_OSStatus;
+
+Error FSSpec_from_existing_path( const char* path, FSSpec& result )
 {
 #ifdef __RELIX__
 	
@@ -35,7 +41,7 @@ int FSSpec_from_existing_path( const char* path, FSSpec& result )
 		nok = FSSpec_from_stat( st, result );
 	}
 	
-	return nok;
+	return nok ? muxed_errno( errno ) : Error();
 	
 #endif
 	
@@ -47,7 +53,7 @@ int FSSpec_from_existing_path( const char* path, FSSpec& result )
 	(err = FSPathMakeRef( (const UInt8*) path, &ref, NULL ))  ||
 	(err = FSGetCatalogInfo( &ref, 0, 0, 0, &result, 0 ));
 	
-	return err;
+	return muxed_OSStatus( err );
 	
 #endif
 }
