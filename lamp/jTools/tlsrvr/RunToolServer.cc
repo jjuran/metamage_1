@@ -182,20 +182,10 @@ namespace tool
 	}
 	
 	
-	static
+	static inline
 	bool process_exists( const ProcessSerialNumber& psn )
 	{
-		OSErr err;
-		
-		ProcessInfoRec processInfo;
-		
-		processInfo.processInfoLength = sizeof processInfo;
-		processInfo.processName       = NULL;
-		processInfo.processAppSpec    = NULL;
-		
-		err = GetProcessInformation( &psn, &processInfo );
-		
-		return err == noErr;
+		return mac::proc::test_process( psn ) == noErr;
 	}
 	
 	static ProcessSerialNumber find_or_launch_ToolServer()
