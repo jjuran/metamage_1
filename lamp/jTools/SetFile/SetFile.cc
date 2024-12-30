@@ -131,21 +131,24 @@ int main( int argc, char** argv )
 	
 	while ( *free_args )
 	{
+		using mac::sys::Error;
+		using mac::sys::errno_from_mac_error;
+		
 		const char* pathname = *free_args++;
 		
-		OSErr err;
 		FSSpec file;
 		
-		err = mac::relix::FSSpec_from_existing_path( pathname, file );
+		Error err = mac::relix::FSSpec_from_existing_path( pathname, file );
 		
 		if ( err == noErr )
 		{
-			err = set_FInfo( file.vRefNum, file.parID, file.name );
+			err = (Error) set_FInfo( file.vRefNum, file.parID, file.name );
 		}
 		
 		if ( err != noErr )
 		{
-			const int errnum = mac::sys::errno_from_mac_error( err );
+			const int errnum = is_errno( err ) ? errno_from_muxed( err )
+			                                   : errno_from_mac_error( err );
 			
 			const char* message = errnum > 0 ? strerror( errnum )
 			                                 : gear::inscribe_decimal( err );
