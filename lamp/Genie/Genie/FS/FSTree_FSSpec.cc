@@ -923,12 +923,13 @@ namespace Genie
 			else if ( aliases_present  &&  fInfo.fdFlags & kIsAlias )
 			{
 				OSErr  err;
-				FSSpec target;
 				
 				Boolean dir;
 				Boolean alias;
 				
 				bool resolveChains = false;
+				
+				FSSpec target = extra.fsspec;
 				
 				err = ResolveAliasFile( &target, resolveChains, &dir, &alias );
 				
