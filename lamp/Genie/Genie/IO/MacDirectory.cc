@@ -34,7 +34,7 @@ namespace Genie
 	{
 		Mac_dir_extra& extra = *(Mac_dir_extra*) that->extra();
 		
-		return FSTreeFromFSDirSpec( extra.dir_spec );
+		return node_from_dir( extra.dir_spec );
 	}
 	
 	static const vfs::general_method_set macdir_general_methods =

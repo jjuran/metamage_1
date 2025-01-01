@@ -30,7 +30,7 @@ namespace Genie
 	
 	static vfs::node_ptr app_dir_resolve( const vfs::node* that )
 	{
-		return FSTreeFromFSDirSpec( parent_directory( program_file() ) );
+		return node_from_dir( parent_directory( program_file() ) );
 	}
 	
 	static const vfs::link_method_set app_dir_link_methods =

@@ -129,7 +129,7 @@ namespace Genie
 			return relix::root();
 		}
 		
-		return FSTreeFromFSDirSpec( GetUserHomeFolder() );
+		return node_from_dir( GetUserHomeFolder() );
 	}
 	
 	static const vfs::link_method_set mac_user_home_link_methods =

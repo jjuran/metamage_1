@@ -675,7 +675,7 @@ namespace Genie
 		
 		if ( ! mac::sys::has_MFS_only() )
 		{
-			bottom = FSTreeFromFSDirSpec( root_directory() );  // diskfs
+			bottom = node_from_dir( root_directory() );  // diskfs
 		}
 		
 	#if CONFIG_RESFS
@@ -730,7 +730,7 @@ namespace Genie
 			return relix::root();
 		}
 		
-		return FSTreeFromFSDirSpec( parent );
+		return node_from_dir( parent );
 	}
 	
 	static ino_t hfs_inode( const vfs::node* that )
@@ -992,7 +992,7 @@ namespace Genie
 			
 			// Target path is resolved relative to the location of the link file
 			// This throws if a nonterminal path component is missing
-			const vfs::node_ptr target = resolve_pathname( *relix::root(), targetPath, *FSTreeFromFSDirSpec( linkParent ) );
+			const vfs::node_ptr target = resolve_pathname( *relix::root(), targetPath, *node_from_dir( linkParent ) );
 			
 			// Do not resolve links -- if the target of this link is another symlink, so be it
 			

@@ -94,7 +94,7 @@ namespace Genie
 			return relix::root();
 		}
 		
-		return FSTreeFromFSDirSpec( GetPrefsFolder() );
+		return node_from_dir( GetPrefsFolder() );
 	}
 	
 	static const vfs::link_method_set mac_user_prefs_link_methods =

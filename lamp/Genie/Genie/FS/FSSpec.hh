@@ -10,6 +10,7 @@
 #include "mac_types/VRefNum_DirID.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/node_ptr.hh"
 
 // Files.h
@@ -26,8 +27,8 @@ namespace Genie
 	
 	vfs::node_ptr node_from_dirID( short vRefNum, long dirID );
 	
-	template < class Dir >
-	inline vfs::node_ptr FSTreeFromFSDirSpec( const Dir& dir )
+	inline
+	vfs::node_ptr node_from_dir( const mac::types::VRefNum_DirID& dir )
 	{
 		return node_from_dirID( dir.vRefNum, dir.dirID );
 	}
