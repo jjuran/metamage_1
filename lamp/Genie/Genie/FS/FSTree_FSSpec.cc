@@ -279,12 +279,6 @@ namespace Genie
 	}
 	
 	static
-	plus::string get_long_name( const FSSpec& item )
-	{
-		return get_long_name( item.vRefNum, item.parID, item.name );
-	}
-	
-	static
 	plus::string GetUnixName( short vRefNum, long dirID, const uint8_t* name )
 	{
 		return plus::utf8_from_mac( colons_from_slashes( get_long_name( vRefNum, dirID, name ) ) );
@@ -382,12 +376,6 @@ namespace Genie
 		}
 		
 		return GetUnixName( vRefNum, dirID, name );
-	}
-	
-	static
-	plus::string MakeName( const FSSpec& fileSpec )
-	{
-		return MakeName( fileSpec.vRefNum, fileSpec.parID, fileSpec.name );
 	}
 	
 	
