@@ -1,6 +1,6 @@
 #define APP_NAME "MacRelix"
 
-#define COPYRIGHT  "1999-2024 Josh Juran"
+#define COPYRIGHT  "1999-2025 Josh Juran"
 
 #define CREATOR  'Poof'
 
