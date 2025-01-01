@@ -5,11 +5,18 @@
 
 #include "Genie/FS/FSSpec.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __FILES__
+#include <Files.h>
+#endif
+
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
-
-// MacIO
-#include "MacIO/GetCatInfo_Sync.hh"
 
 
 namespace Genie
