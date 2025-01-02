@@ -329,7 +329,12 @@ namespace Genie
 		
 		DirInfo& dirInfo = cInfo.dirInfo;
 		
-		err = GetCatInfo( cInfo, vRefNum, dirID, const_root_directory_name );
+		dirInfo.ioNamePtr = (StringPtr) const_root_directory_name;
+		dirInfo.ioVRefNum = vRefNum;
+		dirInfo.ioDrDirID = dirID;
+		dirInfo.ioFDirIndex = 0;
+		
+		err = PBGetCatInfoSync( &cInfo );
 		
 		if ( err == fnfErr )
 		{
@@ -632,7 +637,14 @@ namespace Genie
 		OSErr err;
 		CInfoPBRec cInfo;
 		
-		err = GetCatInfo( cInfo, vRefNum, dirID, name );
+		DirInfo& dirInfo = cInfo.dirInfo;
+		
+		dirInfo.ioNamePtr = (StringPtr) name;
+		dirInfo.ioVRefNum = vRefNum;
+		dirInfo.ioDrDirID = dirID;
+		dirInfo.ioFDirIndex = 0;
+		
+		err = PBGetCatInfoSync( &cInfo );
 		
 		if ( err != fnfErr )
 		{
@@ -1272,7 +1284,14 @@ namespace Genie
 		OSErr err;
 		CInfoPBRec cInfo;
 		
-		err = GetCatInfo( cInfo, dir.vRefNum, dir.dirID, macName );
+		DirInfo& dirInfo = cInfo.dirInfo;
+		
+		dirInfo.ioNamePtr = macName;
+		dirInfo.ioVRefNum = dir.vRefNum;
+		dirInfo.ioDrDirID = dir.dirID;
+		dirInfo.ioFDirIndex = 0;
+		
+		err = PBGetCatInfoSync( &cInfo );
 		
 		if ( err == fnfErr )
 		{
