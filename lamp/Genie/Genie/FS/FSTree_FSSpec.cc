@@ -1279,9 +1279,9 @@ namespace Genie
 			err = noErr;
 		}
 		
-		Mac::ThrowOSStatus( err );
+		using mac::sys::has_BlueBox;
 		
-		if ( mac::sys::has_BlueBox()  &&  is_possibly_masked_symlink( cInfo ) )
+		if ( ! err  &&  has_BlueBox()  &&  is_possibly_masked_symlink( cInfo ) )
 		{
 			FSRef  ref;
 			FSSpec spec;
@@ -1304,13 +1304,13 @@ namespace Genie
 				                        NULL );
 			}
 			
-			Mac::ThrowOSStatus( err );
-			
 			const FileInfo& fileInfo = *(const FileInfo*) info.finderInfo;
 			
 			cInfo.hFileInfo.ioFlFndrInfo.fdType    = fileInfo.fileType;
 			cInfo.hFileInfo.ioFlFndrInfo.fdCreator = fileInfo.fileCreator;
 		}
+		
+		Mac::ThrowOSStatus( err );
 		
 		return new_HFS_node( cInfo, name, parent );
 	}
