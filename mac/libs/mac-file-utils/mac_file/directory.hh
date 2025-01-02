@@ -9,6 +9,8 @@
 // mac-types
 #include "mac_types/VRefNum_DirID.hh"
 
+typedef unsigned char Byte;
+
 struct FSRef;
 struct FSSpec;
 
@@ -22,6 +24,15 @@ namespace file {
 	const VRefNum_DirID& directory( const VRefNum_DirID& dir )
 	{
 		return dir;
+	}
+	
+	VRefNum_DirID directory( short vRefNum, long parID, const Byte* name );
+	
+	inline
+	VRefNum_DirID directory( const VRefNum_DirID&  dir,
+	                         const Byte*           name )
+	{
+		return directory( dir.vRefNum, dir.dirID, name );
 	}
 	
 	VRefNum_DirID directory( const FSSpec& file );

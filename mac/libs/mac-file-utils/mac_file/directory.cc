@@ -21,6 +21,38 @@ namespace file {
 	
 #if ! __LP64__
 	
+	VRefNum_DirID directory( short vRefNum, long parID, const Byte* name )
+	{
+		VRefNum_DirID result;
+		
+		result.vRefNum = 0;
+		
+		CInfoPBRec pb;
+		
+		DirInfo& dirInfo = pb.dirInfo;
+		
+		dirInfo.ioNamePtr = (StringPtr) name;
+		dirInfo.ioVRefNum = vRefNum;
+		dirInfo.ioDrDirID = parID;
+		dirInfo.ioFDirIndex = 0;
+		
+		if ( OSStatus err = PBGetCatInfoSync( &pb ) )
+		{
+			result.dirID = err;
+		}
+		else if ( ! (pb.hFileInfo.ioFlAttrib & kioFlAttribDirMask) )
+		{
+			result.dirID = errFSNotAFolder;
+		}
+		else
+		{
+			result.vRefNum = vRefNum;
+			result.dirID   = pb.dirInfo.ioDrDirID;
+		}
+		
+		return result;
+	}
+	
 	VRefNum_DirID directory( const FSSpec& dir )
 	{
 		VRefNum_DirID result;
