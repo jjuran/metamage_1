@@ -28,12 +28,10 @@
 // MacVFS
 #include "MacVFS/util/FSSpec_from_node.hh"
 
-// MacIO
-#include "MacIO/GetCatInfo_Sync.hh"
-
 // Genie
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/FS/HFS/MoveRename.hh"
+#include "Genie/Utilities/GetCatInfo.hh"
 
 
 namespace Genie
@@ -46,7 +44,9 @@ namespace Genie
 	{
 		CInfoPBRec cInfo;
 		
-		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo, file );
+		OSErr err = GetCatInfo( cInfo, file );
+		
+		Mac::ThrowOSStatus( err );
 		
 		bool locked = cInfo.hFileInfo.ioFlAttrib & kioFlAttribLockedMask;
 		
@@ -162,7 +162,9 @@ namespace Genie
 		OSErr err;
 		CInfoPBRec src_pb;
 		
-		MacIO::GetCatInfo< MacIO::Throw_All >( src_pb, srcFileSpec );
+		err = GetCatInfo( src_pb, srcFileSpec );
+		
+		Mac::ThrowOSStatus( err );
 		
 		bool destExists = exists( destFile );
 		

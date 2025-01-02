@@ -69,13 +69,13 @@
 #include "plus/var_string.hh"
 
 // Nitrogen
+#include "Mac/Files/Types/FSDirID.hh"
 #include "Mac/Files/Types/FSSignature.hh"
+#include "Mac/Files/Types/FSVolumeRefNum.hh"
 
 #include "Nitrogen/Devices.hh"
 #include "Nitrogen/OSStatus.hh"
-
-// MacIO
-#include "MacIO/GetCatInfo_Sync.hh"
+#include "Nitrogen/Str.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -658,11 +658,9 @@ namespace Genie
 		
 		CInfoPBRec cInfo;
 		
-		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo,
-		                                       vRefNum,
-		                                       dirID,
-		                                       mac_name,
-		                                       0 );
+		OSErr err = GetCatInfo_name( cInfo, vRefNum, dirID, mac_name );
+		
+		Mac::ThrowOSStatus( err );
 		
 		const DirInfo& dirInfo = cInfo.dirInfo;
 		

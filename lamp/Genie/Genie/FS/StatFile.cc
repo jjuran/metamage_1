@@ -28,12 +28,10 @@
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
-// MacIO
-#include "MacIO/GetCatInfo_Sync.hh"
-
 // Genie
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSTree_FSSpec.hh"
+#include "Genie/Utilities/GetCatInfo.hh"
 
 
 namespace Genie
@@ -258,7 +256,9 @@ namespace Genie
 		OSErr err;
 		CInfoPBRec pb;
 		
-		MacIO::GetCatInfo< MacIO::Throw_All >( pb, file );
+		err = GetCatInfo( pb, file );
+		
+		Mac::ThrowOSStatus( err );
 		
 		HFileInfo& hFileInfo = pb.hFileInfo;
 		

@@ -27,8 +27,8 @@
 #include "mac_file/parent_directory.hh"
 #include "mac_file/program_file.hh"
 
-// MacIO
-#include "MacIO/GetCatInfo_Sync.hh"
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // vfs
 #include "vfs/node.hh"
@@ -40,6 +40,7 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/Utilities/GetCatInfo.hh"
 
 
 namespace Genie
@@ -76,9 +77,9 @@ namespace Genie
 		
 		CInfoPBRec cInfo;
 		
-		const FSSpec users = { vRefNum, fsRtDirID, "\p" "Users" };
+		OSErr err = GetCatInfo( cInfo, vRefNum, fsRtDirID, "\p" "Users" );
 		
-		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo, users );
+		Mac::ThrowOSStatus( err );
 		
 		return Dir_From_CInfo( cInfo );
 	}

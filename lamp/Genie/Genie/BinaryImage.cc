@@ -28,8 +28,8 @@
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Resources.hh"
 
-// MacIO
-#include "MacIO/GetCatInfo_Sync.hh"
+// Genie
+#include "Genie/Utilities/GetCatInfo.hh"
 
 
 #if TARGET_CPU_68K
@@ -92,7 +92,9 @@ namespace Genie
 	{
 		CInfoPBRec pb;
 		
-		MacIO::GetCatInfo< MacIO::Throw_All >( pb, file );
+		OSErr err = GetCatInfo( pb, file );
+		
+		Mac::ThrowOSStatus( err );
 		
 		return BinaryFileMetadata( pb.hFileInfo );
 	}

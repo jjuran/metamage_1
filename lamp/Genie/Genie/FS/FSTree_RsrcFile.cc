@@ -12,6 +12,9 @@
 // mac-file-utils
 #include "mac_file/open_rsrc_fork.hh"
 
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
@@ -19,13 +22,11 @@
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
-// MacIO
-#include "MacIO/GetCatInfo_Sync.hh"
-
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/StatFile.hh"
 #include "Genie/IO/MacFile.hh"
+#include "Genie/Utilities/GetCatInfo.hh"
 
 
 namespace Genie
@@ -35,7 +36,9 @@ namespace Genie
 	{
 		CInfoPBRec cInfo;
 		
-		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo, file );
+		OSErr err = GetCatInfo( cInfo, file );
+		
+		Mac::ThrowOSStatus( err );
 		
 		if ( bool locked = cInfo.hFileInfo.ioFlAttrib & kioFlAttribLockedMask )
 		{
@@ -53,7 +56,9 @@ namespace Genie
 		
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
-		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo, fileSpec );
+		OSErr err = GetCatInfo( cInfo, fileSpec );
+		
+		Mac::ThrowOSStatus( err );
 		
 		Stat_HFS( &sb, cInfo, fileSpec.name, true );
 	}
