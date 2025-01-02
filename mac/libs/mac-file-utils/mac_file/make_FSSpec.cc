@@ -24,7 +24,7 @@ namespace file {
 	
 #if ! __LP64__
 	
-	OSErr make_FSSpec( FSSpec& result, const types::VRefNum_DirID& dir )
+	OSErr make_FSSpec( FSSpec& result, const VRefNum_DirID& dir )
 	{
 		CInfoPBRec pb;
 		
@@ -52,9 +52,7 @@ namespace file {
 	
 #else
 	
-	void dummy()
-	{
-	}
+	int dummy;
 	
 #endif  // #if ! __LP64__
 	

@@ -16,15 +16,17 @@ struct FSSpec;
 namespace mac  {
 namespace file {
 	
+	using types::VRefNum_DirID;
+	
 	inline
-	const types::VRefNum_DirID& parent_directory( const FSSpec& file )
+	const VRefNum_DirID& parent_directory( const FSSpec& file )
 	{
-		return (const types::VRefNum_DirID&) file;
+		return (const VRefNum_DirID&) file;
 	}
 	
-	types::VRefNum_DirID parent_directory( const types::VRefNum_DirID& dir );
+	VRefNum_DirID parent_directory( const VRefNum_DirID& dir );
 	
-	types::VRefNum_DirID parent_directory( const FSRef& file );
+	VRefNum_DirID parent_directory( const FSRef& file );
 	
 }
 }

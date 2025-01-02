@@ -19,9 +19,6 @@
 namespace mac  {
 namespace file {
 	
-	using types::VRefNum_DirID;
-	
-	
 #if ! __LP64__
 	
 	VRefNum_DirID directory( const FSSpec& dir )
@@ -58,7 +55,7 @@ namespace file {
 	
 #endif  // #if ! __LP64__
 	
-	types::VRefNum_DirID directory( const FSRef& file )
+	VRefNum_DirID directory( const FSRef& file )
 	{
 		FSSpec spec;
 		if ( OSStatus err = FSGetCatalogInfo( &file, 0, 0, 0, &spec, 0 ) )

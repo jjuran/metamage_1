@@ -17,7 +17,9 @@ typedef short OSErr;
 namespace mac  {
 namespace file {
 	
-	OSErr make_FSSpec( FSSpec& result, const types::VRefNum_DirID& dir );
+	using types::VRefNum_DirID;
+	
+	OSErr make_FSSpec( FSSpec& result, const VRefNum_DirID& dir );
 	
 }
 }
