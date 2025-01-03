@@ -13,6 +13,11 @@
 #include <MacWindows.h>
 #endif
 
+// POSIX
+#ifdef __APPLE__
+#include <unistd.h>
+#endif
+
 // mac-config
 #include "mac_config/apple-events.hh"
 #include "mac_config/desk-accessories.hh"
@@ -34,7 +39,9 @@
 #include "mac_app/state.hh"
 
 // posix-utils
+#ifdef __APPLE__
 #include "posix/bindir.hh"
+#endif
 
 // OrganConsole
 #include "fourtone.hh"
