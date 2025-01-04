@@ -84,20 +84,20 @@ namespace MacScribe
 			case 0:
 				safe = char_is_safe( d );
 				
-				if ( !safe )  break;
+				// fall through
 			
 			case 1:
-				safe = char_is_safe( c );
+				safe &= char_is_safe( c );
 				
-				if ( !safe )  break;
+				// fall through
 			
 			case 2:
-				safe = char_is_safe( b );
+				safe &= char_is_safe( b );
 				
-				if ( !safe )  break;
+				// fall through
 			
 			case 3:
-				safe = char_is_initial_safe( a );
+				safe &= char_is_initial_safe( a );
 				break;
 			
 			case 4:
