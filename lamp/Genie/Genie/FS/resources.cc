@@ -44,10 +44,6 @@
 #include "nucleus/owned.hh"
 
 // Nitrogen
-#ifndef MAC_TOOLBOX_TYPES_OSSTATUS_HH
-#include "Mac/Toolbox/Types/OSStatus.hh"
-#endif
-
 #include "Nitrogen/Resources.hh"
 
 // poseven
@@ -62,9 +58,6 @@
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/property_file.hh"
-
-// MacVFS
-#include "MacVFS/util/iterate_resources.hh"
 
 // Genie
 #include "Genie/IO/Handle.hh"
@@ -130,22 +123,6 @@ class ResLoad_false_scope
 		}
 };
 
-
-void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
-{
-	ResFileRefNum resFile = mac::rsrc::open_res_file( file, fsRdPerm );
-	
-	OSErr err = resFile;
-	
-	if ( resFile > 0 )
-	{
-		err = vfs::iterate_resources( cache );
-		
-		CloseResFile( resFile );
-	}
-	
-	Mac::ThrowOSStatus( err );
-}
 
 static
 ResSpec GetResSpec_from_name( const plus::string& name )

@@ -41,6 +41,9 @@
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
+// MacVFS
+#include "MacVFS/util/iterate_resources.hh"
+
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/resources.hh"
@@ -188,6 +191,23 @@ namespace Genie
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		return Get_RsrcFile_FSTree( parent, name, fileSpec );
+	}
+	
+	static inline
+	void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
+	{
+		ResFileRefNum resFile = mac::rsrc::open_res_file( file, fsRdPerm );
+		
+		OSErr err = resFile;
+		
+		if ( resFile > 0 )
+		{
+			err = vfs::iterate_resources( cache );
+			
+			CloseResFile( resFile );
+		}
+		
+		Mac::ThrowOSStatus( err );
 	}
 	
 	static void resfile_dir_listdir( const vfs::node*    that,
