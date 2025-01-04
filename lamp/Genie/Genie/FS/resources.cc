@@ -151,7 +151,14 @@ void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
 		
 		for ( short j = 1;  j <= n_rsrcs;  ++j )
 		{
-			const N::Handle r = N::Get1IndResource( type, j );
+			const Handle r = Get1IndResource( type, j );
+			
+			if ( ! r )
+			{
+				OSErr err = mac::sys::res_error();
+				
+				Mac::ThrowOSStatus( err ? err : memFullErr );
+			}
 			
 			short    id;
 			ResType  type;
