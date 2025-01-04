@@ -32,9 +32,7 @@ namespace MacScribe
 		
 		char* p = result.reset( size );
 		
-		gear::encode_16_bit_hex( info.id, p );
-		
-		p += 4;
+		p = gear::encode_16_bit_hex( info.id, p );
 		
 		if ( has_name )
 		{
