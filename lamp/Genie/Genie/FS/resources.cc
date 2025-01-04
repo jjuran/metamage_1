@@ -38,6 +38,7 @@
 
 // MacScribe
 #include "quad/quad_name.hh"
+#include "quad/safe.hh"
 
 // nucleus
 #include "nucleus/owned.hh"
@@ -99,7 +100,7 @@ namespace N = Nitrogen;
 namespace p7 = poseven;
 
 
-using MacScribe::make_quad_name;
+using MacScribe::is_safe_quad;
 using MacScribe::parse_quad_name;
 
 
@@ -133,11 +134,18 @@ void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
 {
 	n::owned< N::ResFileRefNum > resFile = N::open_res_file( file, fsRdPerm );
 	
+	plus::string name;
+	
 	const short n_types = N::Count1Types();
 	
 	for ( short i = 1;  i <= n_types;  ++i )
 	{
 		const N::ResType type = N::Get1IndType( i );
+		
+		const bool safe = is_safe_quad( type );
+		
+		const size_t size = safe ? 4 + 1 + 4
+		                         : 4 + 1 + 8;
 		
 		const short n_rsrcs = N::Count1Resources( type );
 		
@@ -147,11 +155,25 @@ void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
 			
 			const mac::types::ResInfo info = N::GetResInfo( r );
 			
-			plus::var_string name = plus::encode_16_bit_hex( info.id );
+			char* p = name.reset_nothrow( size );  // can't fail
 			
-			name += '.';
+			p = gear::encode_16_bit_hex( info.id, p );
 			
-			name += make_quad_name( type );
+			*p++ = '.';
+			
+			if ( safe )
+			{
+				const char* q = (const char*) &type;
+				
+				*p++ = *q++;
+				*p++ = *q++;
+				*p++ = *q++;
+				*p++ = *q++;
+			}
+			else
+			{
+				gear::encode_32_bit_hex( type, p );
+			}
 			
 			const vfs::dir_entry node( info.id, name );
 			
