@@ -68,29 +68,29 @@ namespace plus
 	
 	string encode_8_bit_hex( unsigned char x )
 	{
-		var_string result;
+		char buffer[ 8 / n_bits_per_nibble ];
 		
-		encode_8_bit_hex( result, x );
+		gear::encode_8_bit_hex( x, buffer );
 		
-		return result;
+		return string( buffer, sizeof buffer );
 	}
 	
 	string encode_16_bit_hex( unsigned short x )
 	{
-		var_string result;
+		char buffer[ 16 / n_bits_per_nibble ];
 		
-		encode_16_bit_hex( result, x );
+		gear::encode_16_bit_hex( x, buffer );
 		
-		return result;
+		return string( buffer, sizeof buffer );
 	}
 	
 	string encode_32_bit_hex( unsigned x )
 	{
-		var_string result;
+		char buffer[ 32 / n_bits_per_nibble ];
 		
-		encode_32_bit_hex( result, x );
+		gear::encode_32_bit_hex( x, buffer );
 		
-		return result;
+		return string( buffer, sizeof buffer );
 	}
 	
 	string hex_lower( const void* in, unsigned long n )
