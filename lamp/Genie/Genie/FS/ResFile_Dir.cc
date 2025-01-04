@@ -219,10 +219,11 @@ namespace Genie
 	}
 	
 	
-	vfs::node_ptr Get_ResFileDir_FSTree( const vfs::node*     parent,
-	                                     const plus::string&  name,
-	                                     const FSSpec&        file )
+	vfs::node_ptr Get_ResFileDir_FSTree( const vfs::node*  parent,
+	                                     const FSSpec&     file )
 	{
+		enum { size = sizeof (FSSpec) };
+		
 		const bool exists = ResFile_dir_exists( file );
 		
 		const mode_t mode = exists ? S_IFDIR | 0755 : 0;
@@ -230,7 +231,7 @@ namespace Genie
 		const vfs::node_method_set* methods = exists ? &resfile_dir_methods
 		                                             : &empty_rsrc_fork_methods;
 		
-		vfs::node* result = new vfs::node( parent, name, mode, methods, sizeof (FSSpec) );
+		vfs::node* result = new vfs::node( parent, "r", mode, methods, size );
 		
 		*(FSSpec*) result->extra() = file;
 		

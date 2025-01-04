@@ -1331,7 +1331,7 @@ namespace Genie
 		
 		if ( name == "r"  &&  is_file( *that ) )
 		{
-			return Get_ResFileDir_FSTree( that, "r", extra.fsspec );
+			return Get_ResFileDir_FSTree( that, extra.fsspec );
 		}
 		
 		Mac::ThrowOSStatus( extra.cinfo.dirInfo.ioResult );
