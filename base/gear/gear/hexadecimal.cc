@@ -67,59 +67,71 @@ namespace gear
 		return x;
 	}
 	
-	void encode_8_bit_hex( unsigned char x, char* s )
+	char* encode_8_bit_hex( unsigned char x, char* p )
 	{
-		s[ 0 ] = encoded_hex_char( x >>  4 );
-		s[ 1 ] = encoded_hex_char( x >>  0 );
+		*p++ = encoded_hex_char( x >>  4 );
+		*p++ = encoded_hex_char( x >>  0 );
+		
+		return p;
 	}
 	
-	void encode_8_bit_HEX( unsigned char x, char* s )
+	char* encode_8_bit_HEX( unsigned char x, char* p )
 	{
-		s[ 0 ] = encoded_HEX_char( x >>  4 );
-		s[ 1 ] = encoded_HEX_char( x >>  0 );
+		*p++ = encoded_HEX_char( x >>  4 );
+		*p++ = encoded_HEX_char( x >>  0 );
+		
+		return p;
 	}
 	
-	void encode_16_bit_hex( unsigned short x, char* s )
+	char* encode_16_bit_hex( unsigned short x, char* p )
 	{
-		s[ 0 ] = encoded_hex_char( x >> 12 );
-		s[ 1 ] = encoded_hex_char( x >>  8 );
-		s[ 2 ] = encoded_hex_char( x >>  4 );
-		s[ 3 ] = encoded_hex_char( x >>  0 );
+		*p++ = encoded_hex_char( x >> 12 );
+		*p++ = encoded_hex_char( x >>  8 );
+		*p++ = encoded_hex_char( x >>  4 );
+		*p++ = encoded_hex_char( x >>  0 );
+		
+		return p;
 	}
 	
-	void encode_16_bit_HEX( unsigned short x, char* s )
+	char* encode_16_bit_HEX( unsigned short x, char* p )
 	{
-		s[ 0 ] = encoded_HEX_char( x >> 12 );
-		s[ 1 ] = encoded_HEX_char( x >>  8 );
-		s[ 2 ] = encoded_HEX_char( x >>  4 );
-		s[ 3 ] = encoded_HEX_char( x >>  0 );
+		*p++ = encoded_HEX_char( x >> 12 );
+		*p++ = encoded_HEX_char( x >>  8 );
+		*p++ = encoded_HEX_char( x >>  4 );
+		*p++ = encoded_HEX_char( x >>  0 );
+		
+		return p;
 	}
 	
-	void encode_32_bit_hex( unsigned x, char* s )
+	char* encode_32_bit_hex( unsigned x, char* p )
 	{
-		s[ 0 ] = encoded_hex_char( x >> 28 );
-		s[ 1 ] = encoded_hex_char( x >> 24 );
-		s[ 2 ] = encoded_hex_char( x >> 20 );
-		s[ 3 ] = encoded_hex_char( x >> 16 );
-		s[ 4 ] = encoded_hex_char( x >> 12 );
-		s[ 5 ] = encoded_hex_char( x >>  8 );
-		s[ 6 ] = encoded_hex_char( x >>  4 );
-		s[ 7 ] = encoded_hex_char( x >>  0 );
+		*p++ = encoded_hex_char( x >> 28 );
+		*p++ = encoded_hex_char( x >> 24 );
+		*p++ = encoded_hex_char( x >> 20 );
+		*p++ = encoded_hex_char( x >> 16 );
+		*p++ = encoded_hex_char( x >> 12 );
+		*p++ = encoded_hex_char( x >>  8 );
+		*p++ = encoded_hex_char( x >>  4 );
+		*p++ = encoded_hex_char( x >>  0 );
+		
+		return p;
 	}
 	
-	void encode_32_bit_HEX( unsigned x, char* s )
+	char* encode_32_bit_HEX( unsigned x, char* p )
 	{
-		s[ 0 ] = encoded_HEX_char( x >> 28 );
-		s[ 1 ] = encoded_HEX_char( x >> 24 );
-		s[ 2 ] = encoded_HEX_char( x >> 20 );
-		s[ 3 ] = encoded_HEX_char( x >> 16 );
-		s[ 4 ] = encoded_HEX_char( x >> 12 );
-		s[ 5 ] = encoded_HEX_char( x >>  8 );
-		s[ 6 ] = encoded_HEX_char( x >>  4 );
-		s[ 7 ] = encoded_HEX_char( x >>  0 );
+		*p++ = encoded_HEX_char( x >> 28 );
+		*p++ = encoded_HEX_char( x >> 24 );
+		*p++ = encoded_HEX_char( x >> 20 );
+		*p++ = encoded_HEX_char( x >> 16 );
+		*p++ = encoded_HEX_char( x >> 12 );
+		*p++ = encoded_HEX_char( x >>  8 );
+		*p++ = encoded_HEX_char( x >>  4 );
+		*p++ = encoded_HEX_char( x >>  0 );
+		
+		return p;
 	}
 	
-	void inscribe_n_hex_digits( char* p, unsigned long x, unsigned short n )
+	char* inscribe_n_hex_digits( char* p, unsigned long x, unsigned short n )
 	{
 		switch ( n )
 		{
@@ -166,9 +178,11 @@ namespace gear
 			case 0:
 				break;
 		}
+		
+		return p;
 	}
 	
-	void inscribe_n_HEX_digits( char* p, unsigned long x, unsigned short n )
+	char* inscribe_n_HEX_digits( char* p, unsigned long x, unsigned short n )
 	{
 		switch ( n )
 		{
@@ -215,6 +229,8 @@ namespace gear
 			case 0:
 				break;
 		}
+		
+		return p;
 	}
 	
 	char* hexpcpy_lower( char* out, const void* in, unsigned long n )

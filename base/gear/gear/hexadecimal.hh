@@ -40,14 +40,14 @@ namespace gear
 	
 	unsigned decode_32_bit_hex( const char* s );
 	
-	void encode_8_bit_hex( unsigned char x, char* s );
-	void encode_8_bit_HEX( unsigned char x, char* s );
+	char* encode_8_bit_hex( unsigned char x, char* p );
+	char* encode_8_bit_HEX( unsigned char x, char* p );
 	
-	void encode_16_bit_hex( unsigned short x, char* s );
-	void encode_16_bit_HEX( unsigned short x, char* s );
+	char* encode_16_bit_hex( unsigned short x, char* p );
+	char* encode_16_bit_HEX( unsigned short x, char* p );
 	
-	void encode_32_bit_hex( unsigned x, char* s );
-	void encode_32_bit_HEX( unsigned x, char* s );
+	char* encode_32_bit_hex( unsigned x, char* p );
+	char* encode_32_bit_HEX( unsigned x, char* p );
 	
 	
 	inline unsigned short hexadecimal_magnitude( unsigned x )
@@ -64,8 +64,8 @@ namespace gear
 		return result;
 	}
 	
-	void inscribe_n_hex_digits( char* p, unsigned long x, unsigned short n );
-	void inscribe_n_HEX_digits( char* p, unsigned long x, unsigned short n );
+	char* inscribe_n_hex_digits( char* p, unsigned long x, unsigned short n );
+	char* inscribe_n_HEX_digits( char* p, unsigned long x, unsigned short n );
 	
 	char* hexpcpy_lower( char* out, const void* in, unsigned long n );
 	char* hexpcpy_upper( char* out, const void* in, unsigned long n );
