@@ -67,9 +67,9 @@ namespace MacScribe
 	plus::string make_quad_name( quad_t q )
 	{
 		const char a = q >> 24;
-		const char b = q >> 16 & 0xFF;
-		const char c = q >>  8 & 0xFF;
-		const char d = q >>  0 & 0xFF;
+		const char b = q >> 16;
+		const char c = q >>  8;
+		const char d = q >>  0;
 		
 		int n_spaces = d != ' ' ? 0
 		             : c != ' ' ? 1
