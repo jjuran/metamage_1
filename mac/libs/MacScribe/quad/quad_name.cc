@@ -5,12 +5,12 @@
 
 #include "quad/quad_name.hh"
 
-// iota
-#include "iota/char_types.hh"
-
 // gear
 #include "gear/hexadecimal.hh"
 #include "gear/quad.hh"
+
+// MacScribe
+#include "quad/safe.hh"
 
 
 namespace MacScribe
@@ -54,16 +54,6 @@ namespace MacScribe
 		return parse_quad_name( name.data(), name.size() );
 	}
 	
-	static bool char_is_initial_safe( char c )
-	{
-		return iota::is_alnum( c )  ||  c == '_'  ||  c & 0x80;
-	}
-	
-	static bool char_is_safe( char c )
-	{
-		return char_is_initial_safe( c )  ||  c == '!'  ||  c == '#'  ||  c == '.';
-	}
-	
 	plus::string make_quad_name( quad_t q )
 	{
 		const char a = q >> 24;
@@ -71,38 +61,7 @@ namespace MacScribe
 		const char c = q >>  8;
 		const char d = q >>  0;
 		
-		int n_spaces = d != ' ' ? 0
-		             : c != ' ' ? 1
-		             : b != ' ' ? 2
-		             : a != ' ' ? 3
-		             :            4;
-		
-		bool safe = true;
-		
-		switch ( n_spaces )
-		{
-			case 0:
-				safe = char_is_safe( d );
-				
-				// fall through
-			
-			case 1:
-				safe &= char_is_safe( c );
-				
-				// fall through
-			
-			case 2:
-				safe &= char_is_safe( b );
-				
-				// fall through
-			
-			case 3:
-				safe &= char_is_initial_safe( a );
-				break;
-			
-			case 4:
-				safe = false;
-		}
+		bool safe = is_safe_quad( q );
 		
 		plus::string result;
 		
