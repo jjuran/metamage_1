@@ -153,11 +153,15 @@ void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
 		{
 			const N::Handle r = N::Get1IndResource( type, j );
 			
-			const mac::types::ResInfo info = N::GetResInfo( r );
+			short    id;
+			ResType  type;
+			Str255   res_name;
+			
+			GetResInfo( r, &id, &type, res_name );
 			
 			char* p = name.reset_nothrow( size );  // can't fail
 			
-			p = gear::encode_16_bit_hex( info.id, p );
+			p = gear::encode_16_bit_hex( id, p );
 			
 			*p++ = '.';
 			
@@ -175,7 +179,7 @@ void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
 				gear::encode_32_bit_hex( type, p );
 			}
 			
-			const vfs::dir_entry node( info.id, name );
+			const vfs::dir_entry node( id, name );
 			
 			cache.push_back( node );
 		}
@@ -234,11 +238,15 @@ void mac_name_get( plus::var_string& result, const vfs::node* that, bool binary 
 	
 	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 	
-	const mac::types::ResInfo resInfo = N::GetResInfo( r );
+	short    id;
+	ResType  type;
+	Str255   name;
+	
+	GetResInfo( r, &id, &type, name );
 	
 	::ReleaseResource( r );
 	
-	result.assign( resInfo.name );
+	result.assign( name );
 }
 
 static
@@ -552,9 +560,13 @@ void rsrc_file_rename( const vfs::node* that, const vfs::node* destination )
 	
 	const N::Handle r = N::Get1Resource( old_resSpec.type, old_resSpec.id );
 	
-	const mac::types::ResInfo resInfo = N::GetResInfo( r );
+	short    id;
+	ResType  type;
+	Str255   name;
 	
-	N::SetResInfo( r, new_resSpec.id, resInfo.name );
+	GetResInfo( r, &id, &type, name );
+	
+	N::SetResInfo( r, new_resSpec.id, name );
 }
 
 static
