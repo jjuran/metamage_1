@@ -152,20 +152,18 @@ namespace Genie
 		
 		OSErr err = kENOTEMPTYErr;  // translates to errno = ENOTEMPTY
 		
-		if ( n_types != 0 )
+		if ( n_types == 0 )
 		{
-			Mac::ThrowOSStatus( err );
-		}
-		
-		short refnum = mac::file::open_rsrc_fork( fileSpec, fsRdWrPerm );
-		
-		err = refnum;
-		
-		if ( refnum >= 0 )
-		{
-			err = SetEOF( refnum, 0 );
+			short refnum = mac::file::open_rsrc_fork( fileSpec, fsRdWrPerm );
 			
-			FSClose( refnum );
+			err = refnum;
+			
+			if ( refnum >= 0 )
+			{
+				err = SetEOF( refnum, 0 );
+				
+				FSClose( refnum );
+			}
 		}
 		
 		Mac::ThrowOSStatus( err );
