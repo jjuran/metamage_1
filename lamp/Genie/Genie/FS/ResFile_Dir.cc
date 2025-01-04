@@ -28,9 +28,6 @@
 #include "mac_rsrc/create_res_file.hh"
 #include "mac_rsrc/open_res_file.hh"
 
-// poseven
-#include "poseven/types/errno_t.hh"
-
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
@@ -51,9 +48,6 @@
 
 namespace Genie
 {
-	
-	namespace p7 = poseven;
-	
 	
 	static void empty_rsrc_fork_mkdir( const vfs::node* that, mode_t mode );
 	
@@ -151,14 +145,21 @@ namespace Genie
 			CloseResFile( resfile );
 		}
 		
+		enum
+		{
+			kENOTEMPTYErr = -3265,
+		};
+		
+		OSErr err = kENOTEMPTYErr;  // translates to errno = ENOTEMPTY
+		
 		if ( n_types != 0 )
 		{
-			p7::throw_errno( ENOTEMPTY );
+			Mac::ThrowOSStatus( err );
 		}
 		
 		short refnum = mac::file::open_rsrc_fork( fileSpec, fsRdWrPerm );
 		
-		OSErr err = refnum;
+		err = refnum;
 		
 		if ( refnum >= 0 )
 		{
@@ -185,7 +186,7 @@ namespace Genie
 	{
 		if ( !exists( *that ) )
 		{
-			p7::throw_errno( ENOENT );
+			Mac::ThrowOSStatus( fnfErr );
 		}
 		
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
