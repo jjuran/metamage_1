@@ -54,8 +54,6 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
-#include "vfs/dir_contents.hh"
-#include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
 #include "vfs/property.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
@@ -64,6 +62,9 @@
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/property_file.hh"
+
+// MacVFS
+#include "MacVFS/util/iterate_resources.hh"
 
 // Genie
 #include "Genie/IO/Handle.hh"
@@ -134,65 +135,9 @@ void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
 {
 	n::owned< N::ResFileRefNum > resFile = N::open_res_file( file, fsRdPerm );
 	
-	plus::string name;
+	OSErr err = vfs::iterate_resources( cache );
 	
-	const short n_types = Count1Types();
-	
-	for ( short i = 1;  i <= n_types;  ++i )
-	{
-		ResType type;
-		
-		Get1IndType( &type, i );
-		
-		const bool safe = is_safe_quad( type );
-		
-		const size_t size = safe ? 4 + 1 + 4
-		                         : 4 + 1 + 8;
-		
-		const short n_rsrcs = Count1Resources( type );
-		
-		for ( short j = 1;  j <= n_rsrcs;  ++j )
-		{
-			const Handle r = Get1IndResource( type, j );
-			
-			if ( ! r )
-			{
-				OSErr err = mac::sys::res_error();
-				
-				Mac::ThrowOSStatus( err ? err : memFullErr );
-			}
-			
-			short    id;
-			ResType  type;
-			Str255   res_name;
-			
-			GetResInfo( r, &id, &type, res_name );
-			
-			char* p = name.reset_nothrow( size );  // can't fail
-			
-			p = gear::encode_16_bit_hex( id, p );
-			
-			*p++ = '.';
-			
-			if ( safe )
-			{
-				const char* q = (const char*) &type;
-				
-				*p++ = *q++;
-				*p++ = *q++;
-				*p++ = *q++;
-				*p++ = *q++;
-			}
-			else
-			{
-				gear::encode_32_bit_hex( type, p );
-			}
-			
-			const vfs::dir_entry node( id, name );
-			
-			cache.push_back( node );
-		}
-	}
+	Mac::ThrowOSStatus( err );
 }
 
 static
