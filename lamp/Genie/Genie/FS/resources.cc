@@ -133,9 +133,16 @@ class ResLoad_false_scope
 
 void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
 {
-	n::owned< N::ResFileRefNum > resFile = N::open_res_file( file, fsRdPerm );
+	ResFileRefNum resFile = mac::rsrc::open_res_file( file, fsRdPerm );
 	
-	OSErr err = vfs::iterate_resources( cache );
+	OSErr err = resFile;
+	
+	if ( resFile > 0 )
+	{
+		err = vfs::iterate_resources( cache );
+		
+		CloseResFile( resFile );
+	}
 	
 	Mac::ThrowOSStatus( err );
 }
