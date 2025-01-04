@@ -21,6 +21,9 @@
 // gear
 #include "gear/hexadecimal.hh"
 
+// plus
+#include "plus/mac_utf8.hh"
+
 // MacScribe
 #include "quad/safe.hh"
 
@@ -90,7 +93,7 @@ OSErr iterate_resources( vfs::dir_contents& cache )
 				gear::encode_32_bit_hex( type, p );
 			}
 			
-			const vfs::dir_entry node( id, name );
+			const vfs::dir_entry node( id, plus::utf8_from_mac( name ) );
 			
 			cache.push_back( node );
 		}
