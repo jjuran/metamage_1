@@ -136,18 +136,20 @@ void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
 	
 	plus::string name;
 	
-	const short n_types = N::Count1Types();
+	const short n_types = Count1Types();
 	
 	for ( short i = 1;  i <= n_types;  ++i )
 	{
-		const N::ResType type = N::Get1IndType( i );
+		ResType type;
+		
+		Get1IndType( &type, i );
 		
 		const bool safe = is_safe_quad( type );
 		
 		const size_t size = safe ? 4 + 1 + 4
 		                         : 4 + 1 + 8;
 		
-		const short n_rsrcs = N::Count1Resources( type );
+		const short n_rsrcs = Count1Resources( type );
 		
 		for ( short j = 1;  j <= n_rsrcs;  ++j )
 		{
