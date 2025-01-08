@@ -207,6 +207,9 @@ ams-x11-install: ams-x11-build ams-68k-install ams-common-install
 ams-quartz-build: $(AMS_REPOS) build-tools
 	$(BUILD) graft mbin xv68k fndr-sync minivx freemountd Amethyst Amphitheatre
 
+ams-sdl-build: $(AMS_REPOS) build-tools
+	$(BUILD) graft mbin xv68k fndr-sync minivx freemountd Pearl
+
 RETROMATIC := PATH="$$PWD/$(VAR_BIN):$$PATH" v/bin/retromatic.vx
 RETRO_APPS := ~/Applications/"Advanced Mac Substitute"
 
