@@ -53,7 +53,16 @@ var sound-server = ()
 
 def get_sound_fd
 {
-	if active "sound" and exists "./sndtrack" then
+	if not active "sound" then
+	{
+		return ()
+	}
+
+	if let sound_fd = getenv "AMS_SOUND_FD" then
+	{
+		return sound_fd
+	}
+	else if exists "./sndtrack" then
 	{
 		let sound_fd_slot = str (sound-fd = reader "/dev/null")
 		sound-server = "--fd", sound_fd_slot, "./sndtrack", "//"
