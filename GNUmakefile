@@ -73,7 +73,7 @@ var/install:
 	@echo
 	@exit 1
 
-ams-linux-tools: $(AMS_REPOS) var/install
+ams-linux-tools: $(AMS_REPOS) var/install build-tools
 	./build.pl -i $(AMS_TOOLS) display-fbdev interact-fbdev kdmode reader
 
 ams-linux-install: ams-linux-tools ams-68k-install ams-common-install
