@@ -47,8 +47,6 @@ void move_cursor_to( CGPoint location )
 static
 CGPoint pin_cursor( CGPoint next_cursor_location )
 {
-	CGPoint unpinned_location = next_cursor_location;
-	
 	if ( next_cursor_location.x >= cursor_limit.x )
 	{
 		next_cursor_location.x = cursor_limit.x - 1;
@@ -67,22 +65,24 @@ CGPoint pin_cursor( CGPoint next_cursor_location )
 		next_cursor_location.y = 0;
 	}
 	
-#ifndef MAC_OS_X_VERSION_10_5
-	
-	if ( ! CGPointEqualToPoint( next_cursor_location, unpinned_location ) )
-	{
-		move_cursor_to( next_cursor_location );
-	}
-	
-#endif
-	
 	return next_cursor_location;
 }
 
 static
 void handle_mouse_moved_event( CGPoint next_cursor_location )
 {
+	CGPoint unpinned_location = next_cursor_location;
+	
 	CGPoint pinned_cursor = pin_cursor( next_cursor_location );
+	
+#ifndef MAC_OS_X_VERSION_10_5
+	
+	if ( ! CGPointEqualToPoint( pinned_cursor, unpinned_location ) )
+	{
+		move_cursor_to( pinned_cursor );
+	}
+	
+#endif
 	
 	if ( ! CGPointEqualToPoint( pinned_cursor, last_cursor_location ) )
 	{
