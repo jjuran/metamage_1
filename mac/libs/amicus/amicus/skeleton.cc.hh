@@ -227,7 +227,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 #endif
 	
-	cursor_limit = CGPointMake( width, height );
+	cursor_limit = CGPointMake( width - 1, height - 1 );
 	
 	last_cursor_location = CGPointMake( 15, 15 );
 	

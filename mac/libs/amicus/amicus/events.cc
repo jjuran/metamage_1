@@ -47,18 +47,18 @@ void move_cursor_to( CGPoint location )
 static
 CGPoint pin_cursor( CGPoint next_cursor_location )
 {
-	if ( next_cursor_location.x >= cursor_limit.x )
+	if ( next_cursor_location.x > cursor_limit.x )
 	{
-		next_cursor_location.x = cursor_limit.x - 1;
+		next_cursor_location.x = cursor_limit.x;
 	}
 	else if ( next_cursor_location.x < 0 )
 	{
 		next_cursor_location.x = 0;
 	}
 	
-	if ( next_cursor_location.y >= cursor_limit.y )
+	if ( next_cursor_location.y > cursor_limit.y )
 	{
-		next_cursor_location.y = cursor_limit.y - 1;
+		next_cursor_location.y = cursor_limit.y;
 	}
 	else if ( next_cursor_location.y < 0 )
 	{
