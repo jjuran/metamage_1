@@ -19,6 +19,9 @@
 // write-a-splode
 #include "splode/write-a-splode.hh"
 
+// frontend-common
+#include "frend/pinned.hh"
+
 // amicus
 #include "amicus/keycodes.hh"
 #include "amicus/splode.hh"
@@ -44,28 +47,10 @@ void move_cursor_to( CGPoint location )
 	CGAssociateMouseAndMouseCursorPosition( true );
 }
 
-static
+static inline
 CGPoint pin_cursor( CGPoint next_cursor_location )
 {
-	if ( next_cursor_location.x > cursor_limit.x )
-	{
-		next_cursor_location.x = cursor_limit.x;
-	}
-	else if ( next_cursor_location.x < 0 )
-	{
-		next_cursor_location.x = 0;
-	}
-	
-	if ( next_cursor_location.y > cursor_limit.y )
-	{
-		next_cursor_location.y = cursor_limit.y;
-	}
-	else if ( next_cursor_location.y < 0 )
-	{
-		next_cursor_location.y = 0;
-	}
-	
-	return next_cursor_location;
+	return frend::pinned_location( next_cursor_location, cursor_limit );
 }
 
 static
