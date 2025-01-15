@@ -26,6 +26,9 @@
 // v68k-cursor
 #include "cursor/cursor.hh"
 
+// mac-evt-utils
+#include "mac_evt/any_keys_down.hh"
+
 // mac-app-utils
 #include "mac_app/menus.hh"
 
@@ -332,22 +335,6 @@ static EventTypeSpec Mouse_event[] =
 	{ kEventClassMouse, kEventMouseDragged },
 };
 
-static inline
-bool any_keys_down()
-{
-	KeyMap  keymap;
-	UInt32* keys = (UInt32*) keymap;
-	
-	GetKeys( keymap );
-	
-	/*
-		These will be endian-swapped on x86 and ARM,
-		but we're only checking for zero so we don't care.
-	*/
-	
-	return keys[ 0 ]  ||  keys[ 1 ]  ||  keys[ 2 ]  ||  keys[ 3 ];
-}
-
 static
 void command_handler( char c )
 {
@@ -414,7 +401,7 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 						break;
 					
 					case CommandMode_oneshot:
-						if ( ! any_keys_down() )
+						if ( ! mac::evt::any_keys_down() )
 						{
 							commandmode_state = CommandMode_off;
 							overlay_enabled   = false;
