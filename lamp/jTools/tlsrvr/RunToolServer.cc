@@ -77,7 +77,8 @@ namespace tool
 		return escaped( mac_pathname_from_path( path ) );
 	}
 	
-	static nucleus::mutable_string& operator<<( nucleus::mutable_string& str, const plus::string& appendage )
+	static
+	plus::var_string& operator<<( plus::var_string& str, const plus::string& appendage )
 	{
 		if ( appendage.size() > 0 )
 		{
@@ -125,11 +126,11 @@ namespace tool
 		return script;
 	}
 	
-	static nucleus::string MakeToolServerScript( const char*  script_path,
-	                                             const char*  out_path,
-	                                             const char*  err_path )
+	static plus::string MakeToolServerScript( const char*  script_path,
+	                                          const char*  out_path,
+	                                          const char*  err_path )
 	{
-		nucleus::mutable_string script;
+		plus::var_string script;
 		
 		script << "Set Exit 0;";
 		
@@ -249,7 +250,7 @@ namespace tool
 	}
 	
 	static n::owned< Mac::AppleEvent > CreateScriptEvent( const ProcessSerialNumber&  psn,
-	                                                      const nucleus::string&      script )
+	                                                      const plus::string&         script )
 	{
 		OSErr           err;
 		AEAddressDesc   addr;
@@ -346,7 +347,7 @@ namespace tool
 		"/tmp/.tlsrvr-" "stderr"
 	};
 	
-	static nucleus::string SetUpScript( const plus::string& command )
+	static plus::string SetUpScript( const plus::string& command )
 	{
 		// Send a Do Script event with the command as the direct object.
 		// Better yet:
@@ -369,9 +370,9 @@ namespace tool
 		p7::splat( p7::open( temp_file_paths[ kScriptFile ], p7::o_wronly ),
 		           inner_script );
 		
-		nucleus::string script = MakeToolServerScript( temp_file_paths[ kScriptFile ],
-		                                               temp_file_paths[ kOutputFile ],
-		                                               temp_file_paths[ kErrorFile  ] );
+		plus::string script = MakeToolServerScript( temp_file_paths[ kScriptFile ],
+		                                            temp_file_paths[ kOutputFile ],
+		                                            temp_file_paths[ kErrorFile  ] );
 		
 		return script;
 	}
