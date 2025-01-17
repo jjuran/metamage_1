@@ -291,13 +291,27 @@ namespace tool
 	static
 	n::owned< Mac::AppleEvent > CreateQuitEvent( const ProcessSerialNumber& psn )
 	{
-		const Mac::AEEventClass aevt = Mac::kCoreEventClass;
-		const Mac::AEEventID    quit = Mac::kAEQuitApplication;
-		const Mac::DescType  typePSN = Mac::typeProcessSerialNumber;
+		OSErr           err;
+		AEAddressDesc   addr;
+		Mac::AppleEvent event;
 		
-		using namespace Nitrogen;
+		err = AECreateDesc( typeProcessSerialNumber, &psn, sizeof psn, &addr );
 		
-		return AECreateAppleEvent( aevt, quit, AECreateDesc< typePSN >( psn ) );
+		if ( err == noErr )
+		{
+			err = AECreateAppleEvent( kCoreEventClass,
+			                          kAEQuitApplication,
+			                          &addr,
+			                          kAutoGenerateReturnID,
+			                          kAnyTransactionID,
+			                          &event );
+			
+			AEDisposeDesc( &addr );
+		}
+		
+		Mac::ThrowOSStatus( err );
+		
+		return n::owned< Mac::AppleEvent >::seize( event );
 	}
 	
 	static n::owned< Mac::AppleEvent > AESendBlocking( const Mac::AppleEvent& appleEvent )
