@@ -173,7 +173,8 @@ namespace tool
 		return stat;
 	}
 	
-	static long GetResult( const Mac::AppleEvent& reply )
+	static inline
+	long GetResult( const AppleEvent& reply )
 	{
 		SInt32 stat = AEGetParamPtr_stat( reply );
 		
