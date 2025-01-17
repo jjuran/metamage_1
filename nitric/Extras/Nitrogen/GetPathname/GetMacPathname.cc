@@ -22,6 +22,9 @@
 #include "mac_file/make_FSSpec.hh"
 #include "mac_file/parent_directory.hh"
 
+// plus
+#include "plus/mac_utf8.hh"
+
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
@@ -34,7 +37,9 @@ struct path_component
 };
 
 static
-plus::string GetMacPathname( const FSSpec& file, const path_component* link )
+plus::string GetMacPathname( const FSSpec&          file,
+                             const path_component*  link,
+                             bool                   utf8 )
 {
 	path_component node = { link, file.name, file.name[ 0 ] };
 	
@@ -51,7 +56,7 @@ plus::string GetMacPathname( const FSSpec& file, const path_component* link )
 		
 		Mac::ThrowOSStatus( mac::file::make_FSSpec( dir_spec, dir ) );
 		
-		return GetMacPathname( dir_spec, &node );
+		return GetMacPathname( dir_spec, &node, utf8 );
 	}
 	
 	plus::string result;
@@ -76,10 +81,15 @@ plus::string GetMacPathname( const FSSpec& file, const path_component* link )
 	}
 	while ( link != NULL );
 	
+	if ( utf8 )
+	{
+		return plus::utf8_from_mac( result );
+	}
+	
 	return result;
 }
 
-plus::string GetMacPathname( const FSSpec& file )
+plus::string GetMacPathname( const FSSpec& file, bool utf8 )
 {
 	path_component* link = NULL;
 	
@@ -96,5 +106,5 @@ plus::string GetMacPathname( const FSSpec& file )
 		link = &node;
 	}
 	
-	return GetMacPathname( file, link );
+	return GetMacPathname( file, link, utf8 );
 }

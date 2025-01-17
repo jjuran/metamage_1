@@ -13,6 +13,6 @@
 struct FSSpec;
 
 
-plus::string GetMacPathname( const FSSpec& file );
+plus::string GetMacPathname( const FSSpec& file, bool utf8 = false );
 
 #endif
