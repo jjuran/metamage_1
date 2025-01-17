@@ -16,9 +16,6 @@
 // gear
 #include "gear/parse_decimal.hh"
 
-// plus
-#include "plus/mac_utf8.hh"
-
 // GetPathname
 #include "GetMacPathname.hh"
 
@@ -79,9 +76,11 @@ bool begins_with( const char* s, const char* prefix, size_t length )
 
 
 static
-plus::string mac_pathname_from_file( const vfs::node& file )
+plus::string mac_pathname_from_file( const vfs::node& file, int flags )
 {
-	return GetMacPathname( vfs::FSSpec_from_node( file ) );
+	bool utf8 = (flags & REALPATH_OUTPUT_HFS_UTF8) == REALPATH_OUTPUT_HFS_UTF8;
+	
+	return GetMacPathname( vfs::FSSpec_from_node( file ), utf8 );
 }
 
 
@@ -142,13 +141,8 @@ ssize_t _realpathat( int dirfd, const char* path, char* p, size_t n, int flags )
 		
 		const bool is_mac = flags & REALPATH_OUTPUT_HFS;
 		
-		plus::string resolved = is_mac ? mac_pathname_from_file( *file )
+		plus::string resolved = is_mac ? mac_pathname_from_file( *file, flags )
 		                               : pathname( *file );
-		
-		if ( (flags & REALPATH_OUTPUT_HFS_UTF8) == REALPATH_OUTPUT_HFS_UTF8 )
-		{
-			resolved = plus::utf8_from_mac( resolved );
-		}
 		
 		const size_t resolved_size = resolved.size();
 		
