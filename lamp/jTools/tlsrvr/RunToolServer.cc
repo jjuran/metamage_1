@@ -14,6 +14,9 @@
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif
+#ifndef __PROCESSES__
+#include <Processes.h>
+#endif
 
 // POSIX
 #include <unistd.h>
@@ -57,8 +60,8 @@
 #include "mac_pathname_from_path.hh"
 
 // Nitrogen
-#include "Nitrogen/AEDataModel.hh"
-#include "Nitrogen/AEInteraction.hh"
+#include "Mac/AppleEvents/Functions/AEDisposeDesc.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // tlsrvr
 #include "escape.hh"
