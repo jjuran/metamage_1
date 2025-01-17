@@ -156,14 +156,21 @@ namespace tool
 	}
 	
 	
-	static inline SInt32
-	//
-	AEGetParamPtr_stat( const AppleEvent& appleEvent )
+	static inline
+	SInt32 AEGetParamPtr_stat( const AppleEvent& event )
 	{
-		const Mac::DescType type = Mac::typeSInt32;
-		const Mac::AEKeyword key = Mac::AEKeyword( 'stat' );
+		OSErr  err;
+		SInt32 stat;
 		
-		return N::DescType_get< type >( N::AEGetParamPtr_Getter< type >( appleEvent, key ) );
+		AEKeyword key  = 'stat';
+		DescType  type = typeSInt32;
+		Size      size = sizeof stat;
+		
+		err = AEGetParamPtr( &event, key, type, &type, &stat, size, &size );
+		
+		Mac::ThrowOSStatus( err );
+		
+		return stat;
 	}
 	
 	static long GetResult( const Mac::AppleEvent& reply )
