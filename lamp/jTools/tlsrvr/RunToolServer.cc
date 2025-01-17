@@ -68,7 +68,6 @@ namespace tool
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -252,13 +251,41 @@ namespace tool
 	static n::owned< Mac::AppleEvent > CreateScriptEvent( const ProcessSerialNumber&  psn,
 	                                                      const nucleus::string&      script )
 	{
-		n::owned< Mac::AppleEvent > appleEvent = N::AECreateAppleEvent( Mac::kAEMiscStandards,
-		                                                                Mac::kAEDoScript,
-		                                                                N::AECreateDesc< Mac::typeProcessSerialNumber >( psn ) );
+		OSErr           err;
+		AEAddressDesc   addr;
+		Mac::AppleEvent event;
 		
-		N::AEPutParamDesc( appleEvent, Mac::keyDirectObject, N::AECreateDesc< Mac::typeChar >( script ) );
+		err = AECreateDesc( typeProcessSerialNumber, &psn, sizeof psn, &addr );
 		
-		return appleEvent;
+		if ( err == noErr )
+		{
+			err = AECreateAppleEvent( kAEMiscStandards,
+			                          kAEDoScript,
+			                          &addr,
+			                          kAutoGenerateReturnID,
+			                          kAnyTransactionID,
+			                          &event );
+			
+			AEDisposeDesc( &addr );
+			
+			if ( err == noErr )
+			{
+				err = AEPutParamPtr( &event,
+				                     keyDirectObject,
+				                     typeChar,
+				                     script.data(),
+				                     script.size() );
+				
+				if ( err )
+				{
+					AEDisposeDesc( &event );
+				}
+			}
+		}
+		
+		Mac::ThrowOSStatus( err );
+		
+		return n::owned< Mac::AppleEvent >::seize( event );
 	}
 	
 	static
