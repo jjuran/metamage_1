@@ -42,7 +42,6 @@
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
-#include "plus/string/concat.hh"
 
 // poseven
 #include "poseven/extras/load.hh"
@@ -61,6 +60,9 @@
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
 
+// tlsrvr
+#include "escape.hh"
+
 
 namespace tool
 {
@@ -70,9 +72,10 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	static plus::string q( const plus::string& str )
+	static
+	plus::string escaped_HFS_path( const char* path )
 	{
-		return "'" + str + "'";
+		return escaped( mac_pathname_from_path( path ) );
 	}
 	
 	static nucleus::mutable_string& operator<<( nucleus::mutable_string& str, const plus::string& appendage )
@@ -95,11 +98,11 @@ namespace tool
 	{
 		try
 		{
-			plus::var_string directory_cmd = "Directory '";
+			plus::var_string directory_cmd = "Directory ";
 			
-			directory_cmd += mac_pathname_from_path( "." );
+			directory_cmd += escaped_HFS_path( "." );
 			
-			directory_cmd += "'" "\r";
+			directory_cmd += "\r";
 			
 			return directory_cmd;
 		}
@@ -131,22 +134,22 @@ namespace tool
 		
 		script << "Set Exit 0;";
 		
-		script << q( mac_pathname_from_path( script_path ) );
+		script << escaped_HFS_path( script_path );
 		script << "< Dev:Null";
 		
-		plus::string outPath = mac_pathname_from_path( out_path );
-		plus::string errPath = mac_pathname_from_path( err_path );
+		plus::string outPath = escaped_HFS_path( out_path );
+		plus::string errPath = escaped_HFS_path( err_path );
 		// FIXME:  This is case-sensitive
 		//bool identicalOutputAndError = outPath == errPath;
 		bool identicalOutputAndError = false;
 		if ( identicalOutputAndError )
 		{
-			script << "\xB7" << q( outPath );  // sum symbol
+			script << "\xB7" << outPath;  // sum symbol
 		}
 		else
 		{
-			script << ">"    << q( outPath );
-			script << "\xB3" << q( errPath );  // greater-than-or-equal-to
+			script << ">"    << outPath;
+			script << "\xB3" << errPath;  // greater-than-or-equal-to
 		}
 		
 		return script;
