@@ -8,9 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// iota
-#include "iota/char_types.hh"
-
 // command
 #include "command/get_option.hh"
 
@@ -34,6 +31,7 @@
 #include "Orion/Main.hh"
 
 // tlsrvr
+#include "escape.hh"
 #include "RunToolServer.hh"
 
 
@@ -91,47 +89,6 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	static const char sEscapedQuote[] = "'\xB6''";  // little delta
-	
-	static plus::string QuoteForMPW( const plus::string& str )
-	{
-		const char* p = str.c_str();
-		const char* q = p;
-		
-		bool needsQuoting = false;
-		
-		plus::var_string result = "'";
-		
-		while ( *p != '\0' )
-		{
-			while ( *q != '\0'  &&  *q != '\'' )
-			{
-				needsQuoting |= ! iota::is_alnum( *q++ );
-			}
-			
-			result.append( p, q );
-			
-			if ( *q != '\0' )
-			{
-				needsQuoting = true;
-				result += sEscapedQuote;
-				++q;
-			}
-			
-			p = q;
-		}
-		
-		if ( !needsQuoting )
-		{
-			return str;
-		}
-		
-		result += "'";
-		
-		return result;
-	}
-	
-	
 	static plus::string MakeCommand( char const *const *begin, char const *const *end, bool needToEscape )
 	{
 		plus::var_string command;
@@ -144,7 +101,7 @@ namespace tool
 			
 			word = plus::mac_from_utf8( word );
 			
-			command += needToEscape ? QuoteForMPW( word ) : word;
+			command += needToEscape ? escaped( word ) : word;
 			
 			command += " ";
 		}
