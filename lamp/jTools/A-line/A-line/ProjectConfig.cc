@@ -56,6 +56,7 @@ namespace tool
 			"distributor",
 			"frameworks",
 			"imports",
+			"macosx-version-min",
 			"name",
 			"platform",
 			"precompile",
