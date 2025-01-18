@@ -106,8 +106,7 @@ namespace tool
 		{
 			while ( *q != '\0'  &&  *q != '\'' )
 			{
-				needsQuoting = needsQuoting || !iota::is_alnum( *q );
-				++q;
+				needsQuoting |= ! iota::is_alnum( *q++ );
 			}
 			
 			result.append( p, q );
