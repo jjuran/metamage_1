@@ -34,7 +34,6 @@
 #include "Orion/Main.hh"
 
 // tlsrvr
-#include "ToolServer.hh"
 #include "RunToolServer.hh"
 
 
@@ -91,6 +90,8 @@ namespace tool
 	
 	namespace p7 = poseven;
 	
+	
+	static const char sEscapedQuote[] = "'\xB6''";  // little delta
 	
 	static plus::string QuoteForMPW( const plus::string& str )
 	{

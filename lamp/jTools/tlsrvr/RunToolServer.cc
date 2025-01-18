@@ -61,9 +61,6 @@
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
 
-// tlsrvr
-#include "ToolServer.hh"
-
 
 namespace tool
 {
@@ -190,6 +187,11 @@ namespace tool
 		OSErr err;
 		FSSpec appFile;
 		ProcessSerialNumber psn;
+		
+		enum
+		{
+			sigToolServer = 'MPSX',
+		};
 		
 		if ( mac::proc::find_process( psn, sigToolServer ) == noErr )
 		{
