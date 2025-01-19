@@ -80,32 +80,16 @@ namespace tool
 		return escaped( mac_pathname_from_path( path ) );
 	}
 	
-	static
-	plus::var_string& operator<<( plus::var_string& str, const plus::string& appendage )
-	{
-		if ( appendage.size() > 0 )
-		{
-			if ( str.size() > 0 )
-			{
-				str += " ";
-			}
-			
-			str.append( appendage.data(), appendage.size() );
-		}
-		
-		return str;
-	}
-	
 	
 	static plus::string DirectoryCommandForMPW()
 	{
 		try
 		{
-			plus::var_string directory_cmd = "Directory ";
+			plus::var_string directory_cmd;
 			
+			directory_cmd  = "Directory ";
 			directory_cmd += escaped_HFS_path( "." );
-			
-			directory_cmd += "\r";
+			directory_cmd += '\r';
 			
 			return directory_cmd;
 		}
@@ -119,7 +103,7 @@ namespace tool
 	{
 		plus::var_string script;
 		
-		script += DirectoryCommandForMPW();
+		script  = DirectoryCommandForMPW();
 		script += command;
 		script += "\r"
 		          "Set CommandStatus {Status}" "\r"
@@ -135,24 +119,25 @@ namespace tool
 	{
 		plus::var_string script;
 		
-		script << "Set Exit 0;";
+		script += "Set Exit 0; ";
 		
-		script << escaped_HFS_path( script_path );
-		script << "< Dev:Null";
+		script += escaped_HFS_path( script_path );
+		script += " < Dev:Null ";
 		
 		plus::string outPath = escaped_HFS_path( out_path );
 		plus::string errPath = escaped_HFS_path( err_path );
 		// FIXME:  This is case-sensitive
 		//bool identicalOutputAndError = outPath == errPath;
 		bool identicalOutputAndError = false;
+		
 		if ( identicalOutputAndError )
 		{
-			script << "\xB7" << outPath;  // sum symbol
+			(script += "\xB7 ") += outPath;  // sum symbol
 		}
 		else
 		{
-			script << ">"    << outPath;
-			script << "\xB3" << errPath;  // greater-than-or-equal-to
+			(script += "\xB3 ") += errPath;  // greater-than-or-equal-to
+			(script += " > "  ) += outPath;
 		}
 		
 		return script;
