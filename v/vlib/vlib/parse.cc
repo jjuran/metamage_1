@@ -646,9 +646,9 @@ namespace vlib
 				
 				if ( stack.size() == 1 )
 				{
-					value = stack.back().v;
+					value = stack.front().v;
 					
-					stack.pop_back();
+					stack.clear();
 				}
 				else if ( last_open( stack ) == Op_braces )
 				{
