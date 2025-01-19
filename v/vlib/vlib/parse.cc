@@ -205,6 +205,7 @@ namespace vlib
 		return stack.empty()  ||  stack.back().op != Op_none;
 	}
 	
+	inline
 	bool Parser::has_higher_precedence_op_than( op_type new_op ) const
 	{
 		if ( stack.size() < 2 )
@@ -241,7 +242,7 @@ namespace vlib
 		stack.push_back( op );
 	}
 	
-	static
+	static inline
 	bool ends_in_empty_statement( const std::vector< dyad >& stack )
 	{
 		ASSERT( ! stack.empty() );
