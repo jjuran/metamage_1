@@ -156,15 +156,6 @@ namespace vlib
 		return Value();  // not reached
 	}
 	
-	static
-	Value expression( const Value&        left,
-	                  op_type             op,
-	                  const Value&        right,
-	                  const source_spec&  source )
-	{
-		return Value( left, op, right, source );
-	}
-	
 	class Parser
 	{
 		private:
@@ -230,7 +221,7 @@ namespace vlib
 			dyad right = stack.back();  stack.pop_back();
 			dyad& left = stack.back();
 			
-			left.v  = expression( left.v, left.op, right.v, its_source );
+			left.v  = Value( left.v, left.op, right.v, its_source );
 		}
 		
 		stack.back().op = op;
