@@ -25,7 +25,7 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-#ifndef MAC_OS_X_VERSION_10_8
+#if CONFIG_OPEN_TRANSPORT_HEADERS
 
 // Mac OS
 #ifndef __OPENTRANSPORTPROVIDERS__
@@ -614,4 +614,4 @@ namespace relix
 
 int dummy;
 
-#endif  // #ifndef MAC_OS_X_VERSION_10_8
+#endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
