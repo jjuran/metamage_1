@@ -112,43 +112,6 @@ sub mac_creator
 	return $self->{DESC}{DATA}{ creator }[0] || "????";
 }
 
-sub macosx_version_min
-{
-	my $self = shift;
-	
-	my $min = $self->{DESC}{DATA}{ 'macosx-version-min' }[0]  or return;
-	
-	$min =~ m{^ 1 \d (\.\d){0,2} $}x or die "Malformed macosx-version-min '$min'\n";
-	
-	$min .= ".0" x (3 - (length $min) / 2);
-	
-	my ($a, $b, $c) = split( /\./, $min );
-	
-	return $a * 100 + $b * 10 + $c;
-}
-
-sub macosx_version_min_transitive
-{
-	my $self = shift;
-	
-	my ( $default ) = @_;
-	
-	my $minimum = $self->macosx_version_min;
-	
-	my @immediate = $self->immediate_prerequisites;
-	
-	my @versions = map { $self->get( $_ )->macosx_version_min_transitive } @immediate;
-	
-	push @versions, $default  if $default;
-	push @versions, $minimum  if $minimum;
-	
-	return  if ! @versions;
-	
-	my @descending = reverse sort @versions;
-	
-	my $max_min = $descending[ 0 ];
-}
-
 sub immediate_prerequisites
 {
 	my $self = shift;
