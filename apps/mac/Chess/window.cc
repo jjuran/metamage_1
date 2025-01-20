@@ -19,6 +19,7 @@
 #include "mac_qd/main_display_bounds.hh"
 
 // Chess
+#include "ideal.hh"
 #include "Rez/app_name.h"
 
 
@@ -47,7 +48,7 @@ short make_main_window()
 	bounds.top    += 38;  // approximate menu bar height + title bar height
 	bounds.bottom -=  2;  // approximate window frame thickness
 	
-	const short ideal_length = 37 * 8;
+	const short ideal_length = ideal_unit_length * 8;
 	
 	const short usable_height = bounds.bottom - bounds.top;
 	const short usable_width  = bounds.right - bounds.left;
