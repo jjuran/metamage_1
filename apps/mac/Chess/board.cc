@@ -38,6 +38,7 @@
 // Chess
 #include "graphics.hh"
 #include "icons.hh"
+#include "ideal.hh"
 #include "offscreen.hh"
 #include "state.hh"
 
@@ -156,7 +157,7 @@ Square drag_unit( GrafPtr port, Square source )
 	
 	const short height = unit_length;
 	
-	const short size = 32;
+	const short size = ideal_icon_size( unit_length );
 	
 	Rect rect;
 	
@@ -168,8 +169,8 @@ Square drag_unit( GrafPtr port, Square source )
 	
 	Point where;
 	
-	where.v = rect.top  + 16;
-	where.h = rect.left + 16;
+	where.v = rect.top  + size / 2;
+	where.h = rect.left + size / 2;
 	
 	HideCursor();
 	

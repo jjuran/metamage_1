@@ -49,13 +49,16 @@ short make_main_window()
 	bounds.bottom -=  2;  // approximate window frame thickness
 	
 	const short ideal_length = ideal_unit_length * 8;
+	const short ideal_2x_len = ideal_2x_length   * 8;
 	
 	const short usable_height = bounds.bottom - bounds.top;
 	const short usable_width  = bounds.right - bounds.left;
 	
 	short usable_length = min( usable_height, usable_width );
 	
-	short length = usable_length < ideal_length ? usable_length : ideal_length;
+	short length = usable_length >= ideal_2x_len ? ideal_2x_len
+	             : usable_length >= ideal_length ? ideal_length
+	             :                                 usable_length;
 	
 	length -= length % 8u;  // make it an exact multiple
 	

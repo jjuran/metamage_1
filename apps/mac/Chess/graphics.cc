@@ -36,6 +36,7 @@
 
 // Chess
 #include "icons.hh"
+#include "ideal.hh"
 #include "state.hh"
 
 
@@ -104,7 +105,7 @@ void draw_square( int square, Layers layers )
 		
 		const short height = unit_length;
 		
-		const short size = 32;
+		const short size = ideal_icon_size( unit_length );
 		
 		rect.top  += (height - size    ) / 2;
 		rect.left += (height - size + 1) / 2;
