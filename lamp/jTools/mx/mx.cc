@@ -8,8 +8,11 @@
 #include <CoreServices/CoreServices.h>
 #endif
 
+// mac-config
+#include "mac_config/open-transport.hh"
+
 // Mac OS
-#ifndef MAC_OS_X_VERSION_10_8
+#if CONFIG_OPEN_TRANSPORT_HEADERS
 // OpenTransportProviders.h depends on FSSpec but doesn't include Files.h.
 #ifndef __FILES__
 #include <Files.h>
@@ -33,7 +36,7 @@
 #include "Orion/Main.hh"
 
 
-#ifndef MAC_OS_X_VERSION_10_8
+#if CONFIG_OPEN_TRANSPORT_HEADERS
 
 inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
 {
@@ -51,12 +54,12 @@ UInt16 OTInetMailExchange( InetSvcRef         ref,
 	return num;
 }
 
-#endif  // #ifndef MAC_OS_X_VERSION_10_8
+#endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
 
 namespace tool
 {
 	
-#ifndef MAC_OS_X_VERSION_10_8
+#if CONFIG_OPEN_TRANSPORT_HEADERS
 	
 	static void PrintMX( const InetMailExchange& mx )
 	{
@@ -67,13 +70,13 @@ namespace tool
 		//Io::Out << mx.exchange << " A " << ip << "\n";
 	}
 	
-#endif  // #ifndef MAC_OS_X_VERSION_10_8
+#endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
 	
 	int Main( int argc, char** argv )
 	{
 		if ( argc < 2 )  return 1;
 		
-	#ifndef MAC_OS_X_VERSION_10_8
+	#if CONFIG_OPEN_TRANSPORT_HEADERS
 		
 		const char* domain = argv[ 1 ];
 		
@@ -93,7 +96,7 @@ namespace tool
 		               &results[ n ],
 		               std::ptr_fun( PrintMX ) );
 		
-	#endif  // #ifndef MAC_OS_X_VERSION_10_8
+	#endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
 		
 		return 0;
 	}
