@@ -3,16 +3,16 @@
  *	===========
  */
 
-// Standard C++
-#include <algorithm>
-
 // Mac OS X
 #ifdef __APPLE__
 #include <CoreServices/CoreServices.h>
 #endif
 
+// mac-config
+#include "mac_config/open-transport.hh"
+
 // Mac OS
-#ifndef MAC_OS_X_VERSION_10_8
+#if CONFIG_OPEN_TRANSPORT_HEADERS
 // OpenTransportProviders.h depends on FSSpec but doesn't include Files.h.
 #ifndef __FILES__
 #include <Files.h>
@@ -32,6 +32,9 @@
 // Standard C
 #include <stdio.h>
 #include <stdlib.h>
+
+// Standard C++
+#include <algorithm>
 
 // iota
 #include "iota/char_types.hh"
@@ -67,7 +70,7 @@
 #include "Orion/Main.hh"
 
 
-#ifndef MAC_OS_X_VERSION_10_8
+#if CONFIG_OPEN_TRANSPORT_HEADERS
 
 inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
 {
