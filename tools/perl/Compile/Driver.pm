@@ -212,9 +212,9 @@ sub main
 {
 	my @args = Compile::Driver::Options::set_options( @_ );
 	
-	my $configuration = Compile::Driver::Configuration::->new( Compile::Driver::Options::specs );
+	my $conf = Compile::Driver::Configuration::->new( Compile::Driver::Options::specs );
 	
-	if ( $configuration->{ mac }  &&  $configuration->{ arch } eq "ppc" )
+	if ( $conf->{ mac }  &&  $conf->{ arch } eq "ppc" )
 	{
 		# Developer Tools 5247 (Xcode 2.2) complains if this is not set,
 		# because it defaults to the 10.1 SDK, which has no weak linking.
@@ -224,18 +224,18 @@ sub main
 	
 	foreach my $name ( @args )
 	{
-		my $module = $configuration->get_module( $name, "[mandatory]" );
+		my $module = $conf->get_module( $name, "[mandatory]" );
 	}
 	
 	my $desc = { NAME => "[program args]", DATA => { use => [ @args ] } };
 	
-	my $module = Compile::Driver::Module::->new( $configuration, $desc );
+	my $module = Compile::Driver::Module::->new( $conf, $desc );
 	
 	my @prereqs = @{ $module->recursive_prerequisites };
 	
 	pop @prereqs;
 	
-	my @jobs = map { Compile::Driver::jobs_for( $configuration->get_module( $_ ) ) } @prereqs;
+	my @jobs = map { Compile::Driver::jobs_for( $conf->get_module( $_ ) ) } @prereqs;
 	
 	my $n_jobs = Compile::Driver::Options::job_count;
 	
