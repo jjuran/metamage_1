@@ -111,6 +111,11 @@ struct file_manager_traits< true >
 	
 	static Node resolve_new_path( const char* path )
 	{
+		enum
+		{
+			utf8 = kCFStringEncodingUTF8,
+		};
+		
 		const char* slash = strrchr( path, '/' );
 		
 		const char* filename = slash ? slash + 1 : path;
@@ -121,14 +126,20 @@ struct file_manager_traits< true >
 		
 		node.parent = parent;
 		
-		// FIXME:  This breaks if the filename isn't ASCII.
-		const UniCharCount length = strlen( filename );
+		CFStringRef string = CFStringCreateWithCString( NULL, filename, utf8 );
 		
-		node.name.length = length;
+		if ( ! string )
+		{
+			Mac::ThrowOSStatus( memFullErr );
+		}
 		
-		std::copy( filename,
-		           filename + length,
-		           node.name.unicode );
+		CFIndex n = CFStringGetLength( string );
+		
+		node.name.length = n;
+		
+		CFStringGetCharacters( string, CFRangeMake( 0, n ), node.name.unicode );
+		
+		CFRelease( string );
 		
 		return node;
 	}
