@@ -219,7 +219,16 @@ sub main
 		# Developer Tools 5247 (Xcode 2.2) complains if this is not set,
 		# because it defaults to the 10.1 SDK, which has no weak linking.
 		
-		$ENV{ MACOSX_DEPLOYMENT_TARGET } ||= "10.2";
+		# On the other hand, Developer Tools 1495 (Xcode 1.0) is failing
+		# to link applications that use HiThemeDrawTextBox() now, due to
+		# "mismatching weak references", so we need the 10.1 default.
+		# It's possibly the switch from GCC 3 to GCC 4 that accounts for
+		# the difference in behavior, and that's what we'll check below.
+		
+		if ( $conf->{ccname} eq "gcc"  &&  $conf->{ccvers} ge "4" )
+		{
+			$ENV{ MACOSX_DEPLOYMENT_TARGET } ||= "10.2";
+		}
 	}
 	
 	foreach my $name ( @args )
