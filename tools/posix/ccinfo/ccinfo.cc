@@ -3,9 +3,6 @@
 	---------
 */
 
-// Standard C
-#include <stdio.h>
-
 // Mac OS X
 #ifdef __APPLE__
 #include <CoreServices/CoreServices.h>
@@ -15,6 +12,9 @@
 #ifdef __MACOS__
 #include <ConditionalMacros.h>
 #endif
+
+// Standard C
+#include <stdio.h>
 
 #define PRINT( format, name )  printf( "%s: %" #format "\n", #name, (int) name )
 
