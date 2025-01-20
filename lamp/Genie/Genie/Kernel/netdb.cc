@@ -8,7 +8,10 @@
 #include <CoreServices/CoreServices.h>
 #endif
 
-#ifndef MAC_OS_X_VERSION_10_8
+// mac-config
+#include "mac_config/open-transport.hh"
+
+#if CONFIG_OPEN_TRANSPORT_HEADERS
 
 // Mac OS
 #ifndef __OPENTRANSPORT__
@@ -19,7 +22,6 @@
 #include "netdb.h"
 
 // mac-config
-#include "mac_config/open-transport.hh"
 #include "mac_config/upp-macros.hh"
 
 // mac-app-utils
@@ -172,4 +174,4 @@ namespace relix
 	
 }
 
-#endif  // #ifndef MAC_OS_X_VERSION_10_8
+#endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
