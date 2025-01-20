@@ -25,6 +25,9 @@
 #endif
 #endif
 
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/patterns.hh"
@@ -53,12 +56,28 @@ static const Pattern ltGray_28_bytes =
 	0x22, 0x88,
 };
 
-static const Pattern ltGray_14_bytes =
+static const Pattern ltGray_14_bytes_ok =
 {
 	0x11, 0x44,
 	0x11, 0x44,
 	0x11, 0x44,
 	0x11, 0x44,
+};
+
+static const Pattern ltGray_14_bytes_41 =
+{
+	0x44, 0x11,
+	0x44, 0x11,
+	0x44, 0x11,
+	0x44, 0x11,
+};
+
+static const Pattern dkGray_7D_bytes_D7 =
+{
+	0xDD, 0x77,
+	0xDD, 0x77,
+	0xDD, 0x77,
+	0xDD, 0x77,
 };
 
 static const Pattern dkGray_BE_bytes =
@@ -68,6 +87,24 @@ static const Pattern dkGray_BE_bytes =
 	0xBB, 0xEE,
 	0xBB, 0xEE,
 };
+
+static inline
+bool has_buggy_pattern_origin()
+{
+	if ( TARGET_API_MAC_CARBON )
+	{
+		static bool buggy_origin = mac::sys::gestalt( 'sysv' ) >= 0x1040;
+		
+		return buggy_origin;
+	}
+	
+	return false;
+}
+
+#define buggy_origin has_buggy_pattern_origin()
+
+#define ltGray_14_bytes (buggy_origin ? ltGray_14_bytes_41 : ltGray_14_bytes_ok)
+#define dkGray_7D_bytes (buggy_origin ? dkGray_7D_bytes_D7 : mac::qd::dkGray())
 
 void draw_square( int square, Layers layers )
 {
@@ -87,7 +124,7 @@ void draw_square( int square, Layers layers )
 	{
 		int dark = (row ^ col) & 1;
 		
-		const Pattern& gray = dark ? col & 1 ? mac::qd::dkGray()  // 7D
+		const Pattern& gray = dark ? col & 1 ? dkGray_7D_bytes
 		                                     : dkGray_BE_bytes
 		                           : col & 1 ? ltGray_28_bytes
 		                                     : ltGray_14_bytes;
