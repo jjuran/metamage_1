@@ -137,20 +137,6 @@ sub command
 		{
 			push @w, "-Wno-long-double";
 		}
-		else
-		{
-			$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_4';
-			
-			if ( $arch =~ m{ 64 $}x )
-			{
-				$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_5';
-			}
-			
-			if ( $arch eq "arm64" )
-			{
-				$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = '__MAC_11_0';
-			}
-		}
 	}
 	
 	my @d = map { "-D$_=" . $d{ $_ } } keys %d;
