@@ -5,16 +5,9 @@
 
 #include "mac_sys/async_wakeup.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
-#endif
-
 // Mac OS
-#ifndef MAC_OS_X_VERSION_10_8
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
-#endif
 #endif
 #ifndef __PROCESSES__
 #include <Processes.h>
@@ -169,13 +162,7 @@ Boolean lock_timer()
 	
 #endif
 	
-#ifndef MAC_OS_X_VERSION_10_8
-	
 	return ::OTCompareAndSwapPtr( NULL, (void*) 0xFFFFFFFF, mutex );
-	
-#endif
-	
-	return false;
 }
 
 void request_async_wakeup()
