@@ -11,22 +11,13 @@
 // in the public domain.
 
 
-#if __LP64__
-int dummy;
-#else
-
 #include "Nitrogen/OpenTransportProviders.hh"
-
-// iota
-#ifdef MAC_OS_X_VERSION_10_8
-#include "iota/dummy.hh"
-#endif
 
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 
-#ifndef MAC_OS_X_VERSION_10_8
+#if CONFIG_OPEN_TRANSPORT_HEADERS
 
 using Nitrogen::DefaultInternetServicesPath;
 
@@ -136,6 +127,8 @@ namespace Nitrogen
 	
 }
 
-#endif  // #ifndef MAC_OS_X_VERSION_10_8
+#else  // #if CONFIG_OPEN_TRANSPORT_HEADERS
 
-#endif  // #if __LP64__
+int dummy;
+
+#endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS

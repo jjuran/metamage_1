@@ -11,10 +11,6 @@
 // in the public domain.
 
 
-#if __LP64__
-int dummy;
-#else
-
 #include "Nitrogen/OpenTransport.hh"
 
 // Nitrogen
@@ -24,7 +20,7 @@ int dummy;
 namespace Nitrogen
 {
 	
-#ifndef MAC_OS_X_VERSION_10_8
+#if CONFIG_OPEN_TRANSPORT_HEADERS
 	
 	using Mac::ThrowOSStatus;
 	
@@ -242,7 +238,7 @@ namespace Nitrogen
 		return nucleus::owned< OTConfigurationRef >::seize( ::OTCloneConfiguration( config ) );
 	}
 	
-#endif  // #ifndef MAC_OS_X_VERSION_10_8
+#endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
 	
 	void RegisterOpenTransportErrors()
 	{
@@ -345,5 +341,3 @@ namespace Nitrogen
 	}
 	
 }
-
-#endif  // #if __LP64__

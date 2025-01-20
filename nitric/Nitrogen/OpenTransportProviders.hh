@@ -19,7 +19,10 @@
 #include <CoreServices/CoreServices.h>
 #endif
 
-#ifndef MAC_OS_X_VERSION_10_8
+// mac-config
+#include "mac_config/open-transport.hh"
+
+#if CONFIG_OPEN_TRANSPORT_HEADERS
 
 // Mac OS
 // OpenTransportProviders.h depends on FSSpec but doesn't include Files.h.
@@ -222,6 +225,6 @@ namespace Nitrogen
 	
 }
 
-#endif  // #ifndef MAC_OS_X_VERSION_10_8
+#endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
 
 #endif
