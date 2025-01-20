@@ -88,5 +88,9 @@ int main( int argc, char** argv )
 	PRINT( d, MAC_OS_X_VERSION_MIN_REQUIRED );
 #endif
 	
+#ifdef __MAC_OS_X_VERSION_MIN_REQUIRED
+	PRINT( d, __MAC_OS_X_VERSION_MIN_REQUIRED );
+#endif
+	
 	return 0;
 }
