@@ -14,7 +14,10 @@
 #include <CoreServices/CoreServices.h>
 #endif
 
-#if ! __LP64__  &&  ! defined( MAC_OS_X_VERSION_10_8 )
+// mac-config
+#include "mac_config/open-transport.hh"
+
+#if CONFIG_OPEN_TRANSPORT_HEADERS
 
 // Mac OS
 #ifndef __OPENTRANSPORT__
@@ -62,11 +65,11 @@ namespace app {
 }
 }
 
-#else  // #if ! __LP64__  &&  ! defined( MAC_OS_X_VERSION_10_8 )
+#else  // #if CONFIG_OPEN_TRANSPORT_HEADERS
 
 void dummy()
 {
 	// Silence a warning about a unit with no symbols
 }
 
-#endif  // #if ! __LP64__  &&  ! defined( MAC_OS_X_VERSION_10_8 )
+#endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
