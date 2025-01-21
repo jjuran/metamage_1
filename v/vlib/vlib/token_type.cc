@@ -68,6 +68,8 @@ namespace vlib
 	{
 		if ( ! is< type >::digit( *p++ ) )
 		{
+			--p;
+			
 			return false;
 		}
 		
