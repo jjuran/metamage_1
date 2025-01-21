@@ -545,8 +545,18 @@ void OpenDocument( const File& file )
 	StoreNewDocument( new Document( file ) );
 }
 
+#if TARGET_API_MAC_CARBON
+	
+	typedef FSRef FileSpec;
+	
+#else
+	
+	typedef FSSpec FileSpec;
+	
+#endif
+
 static
-long file_opener( const Io_Details::file_spec& file )
+long file_opener( const FileSpec& file )
 {
 	try
 	{

@@ -11,39 +11,9 @@
 #include "Nitrogen/AppleEvents.hh"
 #endif
 
-// MacFiles
-#include "MacFiles/Classic.hh"
-#include "MacFiles/Unicode.hh"
-
-// Pedestal
-#ifndef PEDESTAL_WINDOW_HH
-#include "Pedestal/Window.hh"
-#endif
-
 
 namespace TestEdit
 {
-	
-	struct FSSpec_Io_Details : public Nitrogen::FSSpec_Io_Details
-	{
-		static const Mac::DescType typeFileSpec = Mac::typeFSS;
-	};
-	
-	struct FSRef_Io_Details : public Nitrogen::FSRef_Io_Details
-	{
-		static const Mac::DescType typeFileSpec = Mac::typeFSRef;
-	};
-	
-#if TARGET_API_MAC_CARBON
-	
-	typedef FSRef_Io_Details Io_Details;
-	
-#else
-	
-	typedef FSSpec_Io_Details Io_Details;
-	
-#endif
-	
 	
 	class DocumentContainer
 	{
