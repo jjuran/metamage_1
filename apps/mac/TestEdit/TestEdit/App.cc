@@ -33,6 +33,7 @@
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEObjects.hh"
+#include "Nitrogen/AppleEvents.hh"
 #include "Nitrogen/MacWindows.hh"
 
 // AEObjectModel
@@ -49,7 +50,6 @@
 #include "Pedestal/WindowStorage.hh"
 
 // TestEdit
-#include "TestEdit/App.hh"
 #include "TestEdit/Document.hh"
 
 
@@ -176,8 +176,6 @@ WindowRef get_document_window_by_id( long id )
 	
 	return window;
 }
-
-static DocumentContainer gDocuments;
 
 
 static
@@ -376,6 +374,19 @@ n::owned< Mac::AEDesc_Token > window_name_token( WindowRef window )
 	                                             title[ 0 ] );
 }
 
+static
+n::owned< Mac::AEDesc_Token > get_nth_document_token( std::size_t index )
+{
+	return token_for_document_window( get_nth_document_window( index ) );
+}
+
+static
+n::owned< Mac::AEDesc_Token > get_document_token_by_id( UInt32 id )
+{
+	return token_for_document_window( get_document_window_by_id( id ) );
+}
+
+
 struct Document_Element
 {
 	static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEObjectClass        desiredClass,
@@ -386,7 +397,7 @@ struct Document_Element
 	{
 		if ( keyForm == Mac::formUniqueID )
 		{
-			return gDocuments.GetElementByID( N::AEGetDescData< Mac::typeSInt32 >( keyData ) );
+			return get_document_token_by_id( N::AEGetDescData< Mac::typeSInt32 >( keyData ) );
 		}
 		
 		if ( keyForm == Mac::formAbsolutePosition )
@@ -397,7 +408,7 @@ struct Document_Element
 			
 			if ( index > 0 )
 			{
-				return gDocuments.GetElementByIndex( index );
+				return get_nth_document_token( index );
 			}
 			
 			// All documents
@@ -407,7 +418,7 @@ struct Document_Element
 			{
 				N::AEPutDesc( list,
 				              0,
-				              gDocuments.GetElementByIndex( i ) );
+				              get_nth_document_token( i ) );
 			}
 			
 			return list;
@@ -497,17 +508,6 @@ struct Document_Token
 		N::RegisterDataGetter( typeDocument, Get );
 	}
 };
-
-
-n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByIndex( std::size_t index ) const
-{
-	return token_for_document_window( get_nth_document_window( index ) );
-}
-
-n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByID( UInt32 id ) const
-{
-	return token_for_document_window( get_document_window_by_id( id ) );
-}
 
 
 static void StoreNewDocument( Document* doc )
