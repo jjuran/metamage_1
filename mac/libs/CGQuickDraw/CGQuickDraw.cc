@@ -321,8 +321,10 @@ CGImageRef image_from_RGB_data( size_t        width,
 	                        &straight_copy );
 }
 
-CGImageRef CreateCGImageFromPixMap( const PixMap& pixmap )
+CGImageRef CreateCGImageFromPixMap( PixMapHandle pix )
 {
+	const PixMap& pixmap = **pix;
+	
 	long rowBytes = pixmap.rowBytes & 0x3FFF;
 	
 	const short width  = pixmap.bounds.right - pixmap.bounds.left;

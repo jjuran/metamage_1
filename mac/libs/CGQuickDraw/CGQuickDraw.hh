@@ -21,6 +21,8 @@
 
 struct PixMap;
 
-CGImageRef CreateCGImageFromPixMap( const PixMap& pixmap );
+typedef PixMap** PixMapHandle;
+
+CGImageRef CreateCGImageFromPixMap( PixMapHandle pix );
 
 #endif
