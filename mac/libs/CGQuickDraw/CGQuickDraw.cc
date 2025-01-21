@@ -11,6 +11,11 @@
 #endif
 
 // Mac OS
+#ifndef MAC_OS_X_VERSION_10_7
+#ifndef __QDOFFSCREEN__
+#include <QDOffscreen.h>
+#endif
+#endif
 #ifndef __QUICKDRAW__
 #include <Quickdraw.h>
 #endif
@@ -18,6 +23,13 @@
 // Standard C
 #include <stdlib.h>
 #include <string.h>
+
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QDOFFSCREEN_H
+#include "missing/QDOffscreen.h"
+#endif
+#endif
 
 // mac-qd-utils
 #include "mac_qd/is_monochrome.hh"
@@ -325,7 +337,7 @@ CGImageRef CreateCGImageFromPixMap( PixMapHandle pix )
 {
 	const PixMap& pixmap = **pix;
 	
-	long rowBytes = pixmap.rowBytes & 0x3FFF;
+	long rowBytes = GetPixRowBytes( pix );
 	
 	const short width  = pixmap.bounds.right - pixmap.bounds.left;
 	const short height = pixmap.bounds.bottom - pixmap.bounds.top;
