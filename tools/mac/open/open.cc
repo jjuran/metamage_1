@@ -35,7 +35,6 @@
 #include "mac_relix/FSSpec_from_path.hh"
 
 #include "Nitrogen/AEInteraction.hh"
-#include "Nitrogen/Aliases.hh"
 #include "Nitrogen/AppleEvents.hh"
 #include "Nitrogen/Str.hh"
 
@@ -152,34 +151,35 @@ namespace tool
 		return err;
 	}
 	
-	static inline n::owned< Mac::AEDesc_Data > AECoerce_Alias_From_FSSpec( const FSSpec& item )
-	{
-		return N::AECoercePtr< Mac::typeFSS >( item, Mac::typeAlias );
-	}
-	
 	static n::owned< Mac::AEDesc_Data > CoerceFSSpecToAliasDesc( const FSSpec& item )
 	{
-		if ( TARGET_API_MAC_CARBON )
-		{
-			// Don't catch errAECoercionFail; it shouldn't happen
-			return AECoerce_Alias_From_FSSpec( item );
-		}
+		OSErr err;
 		
-		try
+		Mac::AEDesc_Data result;
+		
+		err = AECoercePtr( typeFSS, &item, sizeof item, typeAlias, &result );
+		
+		if ( ! TARGET_API_MAC_CARBON  &&  err == errAECoercionFail )
 		{
-			return AECoerce_Alias_From_FSSpec( item );
-		}
-		catch ( const Mac::OSStatus& err )
-		{
-			if ( err != errAECoercionFail )
+			/*
+				Older systems don't provide FSSpec->alias
+				coercion, so do it manually.
+			*/
+			
+			AliasHandle alias;
+			
+			err = NewAlias( NULL, &item, &alias );
+			
+			if ( err == noErr )
 			{
-				throw;
+				result.descriptorType = typeAlias;
+				result.dataHandle     = (AEDataStorage) alias;
 			}
 		}
 		
-		// Older systems don't provide alias->FSSpec coercion, so do it manually.
+		Mac::ThrowOSStatus( err );
 		
-		return N::AECreateDesc( Mac::typeAlias, N::NewAlias( item ) );
+		return n::owned< Mac::AEDesc_Data >::seize( result );
 	}
 	
 	static n::owned< Mac::AppleEvent > MakeOpenDocsEvent( const Mac::AEDescList_Data&  items,
