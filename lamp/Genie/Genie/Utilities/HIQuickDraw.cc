@@ -12,16 +12,12 @@
 #include <Carbon/Carbon.h>
 #endif
 
-// Standard C
-#include <string.h>
-
 // mac-qd-utils
 #include "mac_qd/copy_bits.hh"
-#include "mac_qd/get_pix_rowBytes.hh"
 #include "mac_qd/is_monochrome.hh"
 
-// nucleus
-#include "nucleus/saved.hh"
+// CGQuickDraw
+#include "CGQuickDraw.hh"
 
 // Nitrogen
 #include "Nitrogen/CGColorSpace.hh"
@@ -41,7 +37,6 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
-	using mac::qd::get_pix_rowBytes;
 	using mac::qd::is_monochrome;
 	
 	
@@ -58,30 +53,12 @@ namespace Genie
 	}
 	
 	static
-	n::owned< CGColorSpaceRef > RGBColorSpace()
-	{
-	#ifdef MAC_OS_X_VERSION_10_4
-		
-		return N::CGColorSpaceCreateWithName( kCGColorSpaceGenericRGB );
-		
-	#endif
-		
-		return N::CGColorSpaceCreateDeviceRGB();
-	}
-	
-	static
 	void release_data( void* info, const void* data, size_t size )
 	{
 		::operator delete( const_cast< void* >( data ) );
 	}
 	
 	typedef void (*copier)( void* dst, const void* src, size_t n );
-	
-	static
-	void straight_copy( void* dst, const void* src, size_t n )
-	{
-		memcpy( dst, src, n );
-	}
 	
 	static
 	void inverted_copy( void* dst, const void* src, size_t n )
@@ -173,38 +150,6 @@ namespace Genie
 	}
 	
 	static
-	CGBitmapInfo BitmapInfo_from_PixMap( const PixMap& pixmap )
-	{
-		/*
-			This function is only called for direct color pixels.
-			Weight is either 16 or 32.  It returns kCGImageAlphaNoneSkipFirst
-			unless pixmap.pixelFormat has been set to a recognized value which
-			requires a different configuration.
-		*/
-		
-	#ifdef MAC_OS_X_VERSION_10_4
-		
-		switch ( pixmap.pixelFormat )
-		{
-			case k16LE555PixelFormat:  // Mac OS X
-				return kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder16Little;
-			
-			case k32BGRAPixelFormat:  // Mac OS X, Linux, Android (e.g Nexus S)
-				return kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little;
-			
-			case k32RGBAPixelFormat:  // Android (e.g. Nexus 4)
-				return kCGImageAlphaNoneSkipLast;
-			
-			default:
-				break;
-		}
-		
-	#endif
-		
-		return kCGImageAlphaNoneSkipFirst;
-	}
-	
-	static
 	n::owned< CGImageRef > image_from_data( size_t           width,
 	                                        size_t           height,
 	                                        size_t           degree,
@@ -245,26 +190,6 @@ namespace Genie
 		                        &inverted_copy );
 	}
 	
-	static inline
-	n::owned< CGImageRef > image_from_RGB_data( size_t        width,
-	                                            size_t        height,
-	                                            size_t        degree,
-	                                            size_t        weight,
-	                                            size_t        stride,
-	                                            CGBitmapInfo  bitmapInfo,
-	                                            char*         baseAddr )
-	{
-		return image_from_data( width,
-		                        height,
-		                        degree,  // bits per component
-		                        weight,  // bits per pixel
-		                        stride,
-		                        RGBColorSpace(),
-		                        bitmapInfo,
-		                        baseAddr,
-		                        &straight_copy );
-	}
-	
 	static
 	n::owned< CGImageRef > image_from_bitmap( const BitMap& bitmap )
 	{
@@ -282,43 +207,11 @@ namespace Genie
 	static
 	n::owned< CGImageRef > image_from_pixmap( PixMapHandle pix )
 	{
-		const PixMap& pixmap = **pix;  // Blocks don't move in OS X
-		
-		const short width  = pixmap.bounds.right - pixmap.bounds.left;
-		const short height = pixmap.bounds.bottom - pixmap.bounds.top;
-		
-		const long stride = get_pix_rowBytes( pix );
-		
-		n::saved< N::Pixels_State > saved_pixels_state( pix );
-		
-		const bool locked = ::LockPixels( pix );
-		
-		if ( ! locked )
+		if ( CGImageRef image = CreateCGImageFromPixMap( pix ) )
 		{
-			return n::owned< CGImageRef >();
+			return n::owned< CGImageRef >::seize( image );
 		}
 		
-		if ( const bool direct = pixmap.pixelType != 0 )
-		{
-			return image_from_RGB_data( width,
-			                            height,
-			                            pixmap.cmpSize,
-			                            pixmap.pixelSize,
-			                            stride,
-			                            BitmapInfo_from_PixMap( pixmap ),
-			                            pixmap.baseAddr );
-		}
-		
-		if ( const bool monochrome = is_monochrome( pixmap ) )
-		{
-			return image_from_monochrome_data( width,
-			                                   height,
-			                                   pixmap.pixelSize,
-			                                   stride,
-			                                   pixmap.baseAddr );
-		}
-		
-		// Indexed (non-gray, non-direct) pixmaps are not supported yet
 		return n::owned< CGImageRef >();
 	}
 	
