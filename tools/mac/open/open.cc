@@ -34,8 +34,8 @@
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
 
+#include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
-#include "Nitrogen/AppleEvents.hh"
 #include "Nitrogen/Str.hh"
 
 // Nitrogen
@@ -185,13 +185,39 @@ namespace tool
 	static n::owned< Mac::AppleEvent > MakeOpenDocsEvent( const Mac::AEDescList_Data&  items,
 	                                                      const ProcessSerialNumber&   psn )
 	{
-		n::owned< Mac::AppleEvent > appleEvent = N::AECreateAppleEvent( Mac::kCoreEventClass,
-		                                                                Mac::kAEOpenDocuments,
-		                                                                N::AECreateDesc< Mac::typeProcessSerialNumber >( psn ) );
+		OSErr           err;
+		AEAddressDesc   addr;
+		Mac::AppleEvent event;
 		
-		N::AEPutParamDesc( appleEvent, Mac::keyDirectObject, items );
+		err = AECreateDesc( typeProcessSerialNumber, &psn, sizeof psn, &addr );
 		
-		return appleEvent;
+		if ( err == noErr )
+		{
+			err = AECreateAppleEvent( kCoreEventClass,
+			                          kAEOpenDocuments,
+			                          &addr,
+			                          kAutoGenerateReturnID,
+			                          kAnyTransactionID,
+			                          &event );
+			
+			AEDisposeDesc( &addr );
+			
+			if ( err == noErr )
+			{
+				err = AEPutParamDesc( &event,
+				                      keyDirectObject,
+				                      &items );
+				
+				if ( err )
+				{
+					AEDisposeDesc( &event );
+				}
+			}
+		}
+		
+		Mac::ThrowOSStatus( err );
+		
+		return n::owned< Mac::AppleEvent >::seize( event );
 	}
 	
 	static void OpenItemsWithRunningApp( const Mac::AEDescList_Data&  items,
