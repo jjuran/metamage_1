@@ -144,6 +144,7 @@ def repl (x)
 let mutations =
 [
 	drop '\'',
+	drop "\u2019",  # typographer's apostrophe / closing single quote
 	drop '.',
 	repl " -",
 	repl str ('A' .. 'Z', 'a' .. 'z'),
