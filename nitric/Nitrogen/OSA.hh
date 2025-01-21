@@ -38,11 +38,15 @@
 #include "nucleus/shared.hh"
 #endif
 
-#ifndef NITROGEN_APPLEEVENTS_HH
-#include "Nitrogen/AppleEvents.hh"
+// Nitrogen
+#ifndef NITROGEN_AEDATAMODEL_HH
+#include "Nitrogen/AEDataModel.hh"
 #endif
 #ifndef NITROGEN_COMPONENTS_HH
 #include "Nitrogen/Components.hh"
+#endif
+#ifndef NITROGEN_OSSTATUS_HH
+#include "Nitrogen/OSStatus.hh"
 #endif
 
 
