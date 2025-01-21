@@ -34,12 +34,10 @@
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
 
+// Nitrogen
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/Str.hh"
-
-// Nitrogen
-#include "Mac/AppleEvents/Types/DescType_scribe_dynamic.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -248,11 +246,44 @@ namespace tool
 	{
 		static ProcessSerialNumber no_process = {};
 		
-		std::auto_ptr< AppParameters > appParameters
-			= N::AEGetDescData< Mac::typeAppParameters >( N::AECoerceDesc( MakeOpenDocsEvent( items, no_process ),
-		                                                                   Mac::typeAppParameters ) );
+		OSErr  err;
+		AEDesc params;
 		
-		mac::proc::launch_application( app, appParameters.get() );
+		n::owned< Mac::AppleEvent > event = MakeOpenDocsEvent( items, no_process );
+		
+		err = AECoerceDesc( &event.get(), typeAppParameters, &params );
+		
+		if ( err == noErr )
+		{
+			Handle h;
+			
+			if ( TARGET_API_MAC_CARBON )
+			{
+				Size size = AEGetDescDataSize( &params );
+				
+				if ( (h = NewHandle( size )) )
+				{
+					AEGetDescData( &params, *h, size );
+				}
+				
+				AEDisposeDesc( &params );
+			}
+			else
+			{
+				h = (Handle) params.dataHandle;
+			}
+			
+			if ( h )
+			{
+				HLock( h );
+				
+				AppParameters* params = (AppParameters*) *h;
+				
+				mac::proc::launch_application( app, params );
+				
+				DisposeHandle( h );
+			}
+		}
 	}
 	
 	
