@@ -25,6 +25,13 @@
 namespace mac  {
 namespace file {
 
+bool FSRefs_are_same( const FSRef& a, const FSRef& b )
+{
+	OSStatus err = FSCompareFSRefs( &a, &b );
+	
+	return err == noErr;
+}
+
 #if ! __LP64__
 
 bool FSSpecs_are_same( const FSSpec& a, const FSSpec& b )
@@ -33,10 +40,6 @@ bool FSSpecs_are_same( const FSSpec& a, const FSSpec& b )
 	       a.parID   == b.parID    &&
 	       mac::glue::EqualString_sans_case( a.name, b.name );
 }
-
-#else
-
-int dummy;
 
 #endif  // #if ! __LP64__
 
