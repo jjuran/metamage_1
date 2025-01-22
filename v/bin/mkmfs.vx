@@ -131,8 +131,19 @@ def compress_block_map (data)
 
 let path = argv[ 1 ]
 
-let file_name = basename path
+var file_name = basename path
 let file_info = packed output-from-run [ "GetCatInfo", path ]
+
+if file_name any { u8 v > 127 } then
+{
+	let (r, w) = pipe()
+	
+	w <== file_name
+	
+	close w
+	
+	file_name = output-from-run [ "sh", "-c", "utf82mac < /dev/fd/" r ]
+}
 
 let data_fork = packed load path
 let rsrc_fork = packed load path "/..namedfork/rsrc"
