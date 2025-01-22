@@ -17,6 +17,7 @@
 #endif
 
 struct AppParameters;
+struct FSRef;
 struct FSSpec;
 struct ProcessSerialNumber;
 
@@ -25,8 +26,18 @@ namespace mac  {
 namespace proc {
 	
 	OSErr launch_application( ProcessSerialNumber*  psn,
+	                          const FSRef&          file,
+	                          AppParameters*        params = NULL );
+	
+	OSErr launch_application( ProcessSerialNumber*  psn,
 	                          const FSSpec&         file,
 	                          AppParameters*        params = NULL );
+	
+	inline
+	OSErr launch_application( const FSRef& file, AppParameters* params = NULL )
+	{
+		return launch_application( NULL, file, params );
+	}
 	
 	inline
 	OSErr launch_application( const FSSpec& file, AppParameters* params = NULL )
