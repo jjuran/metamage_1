@@ -70,8 +70,6 @@ void close_fullscreen_window()
 		return;
 	}
 	
-	FillRect( &fullscreen_window->portRect, &qd.black );
-	
 	LMSetMBarHeight( saved_MBarHeight );
 	
 	DisposeWindow( fullscreen_window );
