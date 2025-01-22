@@ -73,7 +73,42 @@ OSErr find_process( ProcessSerialNumber& psn, OSType signature )
 	return err;
 }
 
-#ifndef __LP64__
+#ifdef __LP64__
+
+OSErr find_process( ProcessSerialNumber& psn, const FSRef& app_file )
+{
+	psn.highLongOfPSN = 0;
+	psn.lowLongOfPSN  = 0;
+	
+	OSErr err;
+	FSRef file;
+	ProcessInfoRec processInfo;
+	
+	processInfo.processInfoLength = sizeof processInfo;
+	processInfo.processName       = NULL;
+	processInfo.processAppRef     = &file;
+	
+	while ( true )
+	{
+		err = GetNextProcess( &psn );
+		
+		if ( err != noErr )
+		{
+			break;
+		}
+		
+		err = GetProcessInformation( &psn, &processInfo );
+		
+		if ( err == noErr  &&  mac::file::FSRefs_are_same( file, app_file ) )
+		{
+			return err;
+		}
+	}
+	
+	return err;
+}
+
+#else
 
 OSErr find_process( ProcessSerialNumber& psn, const FSSpec& app_file )
 {

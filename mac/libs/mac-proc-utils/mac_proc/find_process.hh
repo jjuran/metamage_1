@@ -16,6 +16,7 @@
 #include <MacTypes.h>
 #endif
 
+struct FSRef;
 struct FSSpec;
 struct ProcessSerialNumber;
 
@@ -27,6 +28,7 @@ namespace proc {
 	
 	OSErr find_process( ProcessSerialNumber& psn, OSType signature );
 	
+	OSErr find_process( ProcessSerialNumber& psn, const FSRef&  app_file );
 	OSErr find_process( ProcessSerialNumber& psn, const FSSpec& app_file );
 	
 }
