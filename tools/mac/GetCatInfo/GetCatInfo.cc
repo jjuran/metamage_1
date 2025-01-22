@@ -16,10 +16,17 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <time.h>
+
 // iota
 #include "iota/endian.hh"
 
+// mac-types
+#include "mac_types/epoch.hh"
+
 // mac-relix-utils
+#include "mac_relix/FSRef_from_path.hh"
 #include "mac_relix/FSSpec_from_path.hh"
 
 
@@ -33,10 +40,60 @@
 #define ERROR( e, msg )  (wrote( 2, STR_LEN( PREFIX msg "\n" ) ) ? e : 13)
 
 
+#if __LP64__
+
+#pragma pack(push, 2)
+
+struct HFileInfo
+{
+	SInt8   ioFlAttrib;
+	SInt8   ioACUser;
+	FInfo   ioFlFndrInfo;
+	SInt32  ioDirID;
+	UInt16  ioFlStBlk;
+	SInt32  ioFlLgLen;
+	SInt32  ioFlPyLen;
+	UInt16  ioFlRStBlk;
+	SInt32  ioFlRLgLen;
+	SInt32  ioFlRPyLen;
+	UInt32  ioFlCrDat;
+	UInt32  ioFlMdDat;
+	UInt32  ioFlBkDat;
+	FXInfo  ioFlXFndrInfo;
+	SInt32  ioFlParID;
+	SInt32  ioFlClpSiz;
+};
+
+union CInfoPBRec
+{
+	HFileInfo hFileInfo;
+};
+
+#pragma pack(pop)
+
+#endif
+
 static inline
 bool wrote( int fd, const void* buffer, size_t n )
 {
 	return write( fd, buffer, n ) == n;
+}
+
+static
+UInt32 localize( UInt32 mac_time )
+{
+	if ( mac_time )
+	{
+		const unsigned delta = mac::types::epoch_delta();
+		
+		time_t c_time = mac_time - delta;
+		
+		tm* t = localtime( &c_time );
+		
+		return mac_time + t->tm_gmtoff;
+	}
+	
+	return 0;
 }
 
 int main( int argc, char** argv )
@@ -48,11 +105,21 @@ int main( int argc, char** argv )
 	
 	const char* target_path = argv[ 1 ];
 	
-	FSSpec target_filespec;
+#if __LP64__
 	
-	if ( mac::relix::FSSpec_from_existing_path( target_path, target_filespec ) )
+	typedef FSRef FSObj;
+	
+#else
+	
+	typedef FSSpec FSObj;
+	
+#endif
+	
+	FSObj target_filespec;
+	
+	if ( mac::relix::FSObj_from_existing_path( target_path, target_filespec ) )
 	{
-		return 43;  // producing an FSSpec failed; presumably nonexistent
+		return 43;  // producing an FSObj failed; presumably nonexistent
 	}
 	
 	CInfoPBRec cInfo;
@@ -60,13 +127,60 @@ int main( int argc, char** argv )
 	HFileInfo& pb = cInfo.hFileInfo;
 	
 	/*
-		Zero ioACUser in advance, in case a file system doesn't set it.
+		Zero ioACUser in advance, in case a file system doesn't
+		set it (32-bit), or because we set everything (64-bit).
 		
 		From Files.h:  "Note: you must clear ioACUser before calling
 		PBGetCatInfo because some file systems do not use this field"
 	*/
 	
 	pb.ioACUser = 0;
+	
+#if __LP64__
+	
+	const FSCatalogInfoBitmap bitmap_for_HFileInfo
+		= kFSCatInfoNodeFlags
+		| kFSCatInfoParentDirID
+		| kFSCatInfoNodeID
+		| kFSCatInfoCreateDate
+		| kFSCatInfoContentMod
+		| kFSCatInfoBackupDate
+		| kFSCatInfoFinderInfo
+		| kFSCatInfoFinderXInfo
+		| kFSCatInfoDataSizes
+		| kFSCatInfoRsrcSizes;
+	
+	FSCatalogInfoBitmap bits = bitmap_for_HFileInfo;
+	FSCatalogInfo       info;
+	
+	OSStatus err = FSGetCatalogInfo( &target_filespec, bits, &info, 0, 0, 0 );
+	
+	if ( err )
+	{
+		return ERROR( 36, "can't get catalog info" );
+	}
+	
+	pb.ioFlAttrib = info.nodeFlags;
+	
+	pb.ioFlFndrInfo = *(const FInfo*) &info.finderInfo;
+	
+	pb.ioDirID = info.nodeID;
+	pb.ioFlStBlk = 0;
+	pb.ioFlLgLen = info.dataLogicalSize;
+	pb.ioFlPyLen = info.dataPhysicalSize;
+	pb.ioFlRStBlk = 0;
+	pb.ioFlRLgLen = info.rsrcLogicalSize;
+	pb.ioFlRPyLen = info.rsrcPhysicalSize;
+	pb.ioFlCrDat = localize( info.createDate    .lowSeconds );
+	pb.ioFlMdDat = localize( info.contentModDate.lowSeconds );
+	pb.ioFlBkDat = localize( info.backupDate    .lowSeconds );
+	
+	pb.ioFlXFndrInfo = *(const FXInfo*) &info.extFinderInfo;
+	
+	pb.ioFlParID  = info.parentDirID;
+	pb.ioFlClpSiz = 0;
+	
+#else
 	
 	pb.ioNamePtr   = target_filespec.name;
 	pb.ioVRefNum   = target_filespec.vRefNum;
@@ -79,6 +193,8 @@ int main( int argc, char** argv )
 	{
 		return ERROR( 36, "can't get catalog info" );
 	}
+	
+#endif
 	
 	if ( isatty( STDOUT_FILENO ) )
 	{
