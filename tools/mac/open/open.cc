@@ -32,6 +32,7 @@
 #include "mac_proc/launch_application.hh"
 
 // mac-relix-utils
+#include "mac_relix/FSRef_from_path.hh"
 #include "mac_relix/FSSpec_from_path.hh"
 
 // Nitrogen
@@ -44,6 +45,26 @@
 
 
 using namespace command::constants;
+
+#if __LP64__
+
+typedef FSRef FSObj;
+
+enum
+{
+	typeFSObj = typeFSRef,
+};
+
+#else
+
+typedef FSSpec FSObj;
+
+enum
+{
+	typeFSObj = typeFSS,
+};
+
+#endif
 
 enum
 {
@@ -138,6 +159,8 @@ namespace tool
 	};
 	
 	
+#if ! __LP64__
+	
 	static
 	Error ResolvePathname( FSSpec& file, const char* path, bool hfs )
 	{
@@ -149,13 +172,24 @@ namespace tool
 		return err;
 	}
 	
-	static n::owned< Mac::AEDesc_Data > CoerceFSSpecToAliasDesc( const FSSpec& item )
+#endif
+	
+	static inline
+	Error ResolvePathname( FSRef& file, const char* path, bool hfs )
+	{
+		using mac::relix::FSRef_from_path;
+		
+		return (Error) FSRef_from_path( path, file );
+	}
+	
+	static
+	n::owned< Mac::AEDesc_Data > CoerceFSObjToAliasDesc( const FSObj& item )
 	{
 		OSErr err;
 		
 		Mac::AEDesc_Data result;
 		
-		err = AECoercePtr( typeFSS, &item, sizeof item, typeAlias, &result );
+		err = AECoercePtr( typeFSObj, &item, sizeof item, typeAlias, &result );
 		
 		if ( ! TARGET_API_MAC_CARBON  &&  err == errAECoercionFail )
 		{
@@ -166,7 +200,11 @@ namespace tool
 			
 			AliasHandle alias;
 			
+		#if ! __LP64__
+			
 			err = NewAlias( NULL, &item, &alias );
+			
+		#endif
 			
 			if ( err == noErr )
 			{
@@ -241,8 +279,9 @@ namespace tool
 		}
 	}
 	
-	static void LaunchApplicationWithDocsToOpen( const FSSpec&                app,
-	                                             const Mac::AEDescList_Data&  items )
+	static
+	void LaunchApplicationWithDocsToOpen( const FSObj&                 app,
+	                                      const Mac::AEDescList_Data&  items )
 	{
 		static ProcessSerialNumber no_process = {};
 		
@@ -381,16 +420,16 @@ namespace tool
 		// -e or -t: either?
 		// default: sig
 		
-		FSSpec appFile;
+		FSObj appFile;
 		
 		if ( gAppNameToOpenIn != NULL )
 		{
 			// User has specified an application by its pathname
 			
-			using mac::relix::FSSpec_from_existing_path;
+			using mac::relix::FSObj_from_existing_path;
 			
 			// Resolve to FSSpec
-			OSErr err = FSSpec_from_existing_path( gAppNameToOpenIn, appFile );
+			OSErr err = FSObj_from_existing_path( gAppNameToOpenIn, appFile );
 			
 			Mac::ThrowOSStatus( err );
 			
@@ -432,7 +471,11 @@ namespace tool
 			
 			if ( err == procNotFound )
 			{
+			#if ! __LP64__
+				
 				err = mac::file::get_desktop_APPL( appFile, signature );
+				
+			#endif
 			}
 			
 			Mac::ThrowOSStatus( err );
@@ -447,13 +490,22 @@ namespace tool
 		
 		const int argn = argc - (args - argv);
 		
+	#if __LP64__
+		
+		if ( gUseHFSPathnames )
+		{
+			fprintf( stderr, "open: HFS pathnames are unsupported in 64-bit\n" );
+		}
+		
+	#endif
+		
 		n::owned< Mac::AEDescList_Data > items = N::AECreateList< Mac::AEDescList_Data >( false );
 		
 		for ( char const *const *it = args;  *it != NULL;  ++it )
 		{
 			const char* pathname = *it;
 			
-			FSSpec item;
+			FSObj item;
 			
 			Error err = ResolvePathname( item, pathname, gUseHFSPathnames );
 			
@@ -474,7 +526,7 @@ namespace tool
 				continue;
 			}
 			
-			N::AEPutDesc( items, 0, CoerceFSSpecToAliasDesc( item ) );
+			N::AEPutDesc( items, 0, CoerceFSObjToAliasDesc( item ) );
 		}
 		
 		OpenItemsUsingOptions( items );
