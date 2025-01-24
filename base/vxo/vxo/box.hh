@@ -10,6 +10,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// iota
+#include "iota/typed_enum.hh"
+
 // vxo
 #include "vxo/datum_alloc.hh"
 
@@ -30,7 +33,7 @@ namespace vxo
 		ternary_byte_loc = box_size - 3,
 	};
 	
-	enum box_type
+	TYPED_ENUM( box_type, signed char )
 	{
 		Box_shared  = -2,  // 1111 1110
 		Box_pointer = -1,  // 1111 1111
