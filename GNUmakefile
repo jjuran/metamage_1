@@ -5,6 +5,8 @@ REPOS += ams-68k-bin
 REPOS += freemount
 REPOS += git
 REPOS += macward-compat
+REPOS += scripts
+REPOS += skif-samples
 
 METAMAGE_1 = `git remote -v | grep '^origin.*\(fetch\)' | awk '{print $$2}'`
 PLEASE_RUN = 'Please run `(cd .. && git clone' $(METAMAGE_1)')`.'
