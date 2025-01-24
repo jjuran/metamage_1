@@ -6,11 +6,14 @@
 #ifndef VLIB_OPTYPE_HH
 #define VLIB_OPTYPE_HH
 
+// iota
+#include "iota/typed_enum.hh"
+
 
 namespace vlib
 {
 	
-	enum op_type
+	TYPED_ENUM( op_type, short )
 	{
 	// begin right-associative
 		

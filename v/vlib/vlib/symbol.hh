@@ -6,6 +6,9 @@
 #ifndef VLIB_SYMBOL_HH
 #define VLIB_SYMBOL_HH
 
+// iota
+#include "iota/typed_enum.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -17,7 +20,7 @@
 namespace vlib
 {
 	
-	enum mark_type
+	TYPED_ENUM( mark_type, unsigned char )
 	{
 		Mark_none,   // not participating in GC
 		Mark_white,  // not reached

@@ -6,11 +6,14 @@
 #ifndef VLIB_TOKENTYPE_HH
 #define VLIB_TOKENTYPE_HH
 
+// iota
+#include "iota/typed_enum.hh"
+
 
 namespace vlib
 {
 	
-	enum token_type
+	TYPED_ENUM( token_type, signed char )
 	{
 		Token_reserved = -3,
 		Token_control = -2,  // a control character

@@ -5,6 +5,9 @@
 
 #include "vlib/ops.hh"
 
+// iota
+#include "iota/typed_enum.hh"
+
 
 namespace vlib
 {
@@ -26,7 +29,7 @@ namespace vlib
 		Spacing_loose,  //  a : b
 	};
 	
-	enum spacing
+	TYPED_ENUM( spacing, unsigned char )
 	{
 		Tight = 1 << Spacing_tight,
 		OnlyR = 1 << Spacing_onlyR,

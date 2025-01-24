@@ -5,6 +5,9 @@
 
 #include "vlib/precedence.hh"
 
+// iota
+#include "iota/typed_enum.hh"
+
 
 #define ARRAY_LEN( a ) (sizeof (a) / sizeof (a)[0])
 #define ARRAY_END( a ) ((a) + ARRAY_LEN(a))
@@ -13,7 +16,7 @@
 namespace vlib
 {
 	
-	enum precedence_level
+	TYPED_ENUM( precedence_level, unsigned char )
 	{
 		Precedence_none = 0,
 		
