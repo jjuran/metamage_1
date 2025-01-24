@@ -44,6 +44,7 @@
 #include "vlib/types/fraction.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/mb32.hh"
+#include "vlib/types/null.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
@@ -82,6 +83,11 @@ namespace vlib
 	static
 	Value decimal_float( const plus::string& token )
 	{
+		if ( ! has_floating_point_math() )
+		{
+			return Null();
+		}
+		
 		Value fraction = decimal_fraction( token.substr( 0, token.size() - 1 ) );
 		
 		return Float::coerce( fraction );

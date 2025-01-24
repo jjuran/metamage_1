@@ -13,6 +13,31 @@
 namespace vlib
 {
 	
+	static inline
+	bool has_floating_point_math()
+	{
+	#ifdef __MACOS__
+	#ifdef __MC68K__
+		
+		#define LOWMEM_ADDR( addr, type )  ((type*) (addr))
+		
+		#define AppPacks  LOWMEM_ADDR( 0x0AB8, char** )
+		
+		/*
+			Return true if 'PACK' 4 has been loaded.
+		*/
+		
+		return (int) AppPacks[ 4 ];
+		
+		#undef AppPacks
+		#undef LOWMEM_ADDR
+		
+	#endif
+	#endif
+		
+		return true;
+	}
+	
 	typedef double float_type;
 	
 	class Integer;

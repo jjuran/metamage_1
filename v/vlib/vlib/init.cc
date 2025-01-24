@@ -100,9 +100,14 @@ namespace vlib
 		define_keyword( "null",     null_vtype     );
 		define_keyword( "mb32",     mb32_type()    );
 		define_keyword( "byte",     byte_type()    );
-		define_keyword( "float",    float_vtype    );
-		define_keyword( "f64",      f64_type()     );
-		define_keyword( "f32",      f32_type()     );
+		
+		if ( has_floating_point_math() )
+		{
+			define_keyword( "float", float_vtype );
+			define_keyword( "f64",   f64_type()  );
+			define_keyword( "f32",   f32_type()  );
+		}
+		
 		define_keyword( "i64",      i64_type()     );
 		define_keyword( "u64",      u64_type()     );
 		define_keyword( "i32",      i32_type()     );
