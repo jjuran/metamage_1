@@ -176,12 +176,14 @@ ams-system-rsrcs: build-tools
 
 ams-68k-install: var/install ams-system-rsrcs
 	install -d var/install/share/ams/bin
+	install -d var/install/share/ams/cfg
 	install -d var/install/share/ams/lib
 	install -d var/install/share/ams/mnt
 	install -m444 $(AMS_ROOT)/bin/app    var/install/share/ams/bin
 	install -m444 $(AMS_ROOT)/lib/ams-*  var/install/share/ams/lib
 	install -m444 $(AMS_ROOT)/lib/vdb    var/install/share/ams/lib
 	install -m444 $(AMS_ROOT)/lib/umsp   var/install/share/ams/lib
+	cp -R $(AMS_ROOT)/cfg/*              var/install/share/ams/cfg
 	cp -R $(AMS_ROOT)/mnt/*              var/install/share/ams/mnt
 
 ams-common-install: var/install
