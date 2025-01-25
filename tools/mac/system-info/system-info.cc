@@ -28,6 +28,9 @@
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
+// iota
+#include "iota/convertible_string.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 
@@ -175,13 +178,15 @@ void host_env()
 	                      : sysa == 20 ? ARM
 	                      :              WHAT;
 	
-	char machine_name[ 256 ] = { 0 };
+	iota::convertible_string machine_name;
 	
 	const unsigned char* mnam = mac::sys::get_machine_name();
 	
-	Str255 indexed_mnam;
-	
-	if ( ! TARGET_API_MAC_CARBON  &&  mnam == NULL )
+	if ( mnam )
+	{
+		mempcpy( machine_name, mnam, 1 + mnam[ 0 ] );
+	}
+	else if ( ! TARGET_API_MAC_CARBON )
 	{
 		/*
 			The 'mnam' Gestalt selector is not present.  Index the list of
@@ -193,23 +198,16 @@ void host_env()
 		
 		const short machine_id = mac::sys::get_machine_id();
 		
-		indexed_mnam[ 0 ] = 0;
-		
 	#if ! __LP64__
 		
-		GetIndString( indexed_mnam, kMachineNameStrID, machine_id );
+		GetIndString( machine_name, kMachineNameStrID, machine_id );
 		
 	#endif
 		
-		if ( indexed_mnam[ 0 ] > 0  &&  indexed_mnam[ 1 ] != ' ' )
+		if ( machine_name.size() > 0  &&  machine_name.get()[ 1 ] == ' ' )
 		{
-			mnam = indexed_mnam;
+			machine_name.clear();
 		}
-	}
-	
-	if ( mnam != NULL )
-	{
-		mempcpy( machine_name, mnam + 1, mnam[ 0 ] );
 	}
 	
 	UInt8 sys1;
@@ -323,9 +321,9 @@ void host_env()
 		printf( "Host CPU model number:  PowerPC %s\n", type );
 	}
 	
-	if ( mnam != NULL )
+	if ( machine_name.size() )
 	{
-		printf( "Host CPU machine name:  %s\n", machine_name );
+		printf( "Host CPU machine name:  %s\n", machine_name.c_str() );
 	}
 	
 	if ( TARGET_CPU_68K  &&  mac::sys::has_RadiusRocket() )
