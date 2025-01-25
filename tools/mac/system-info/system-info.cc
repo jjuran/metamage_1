@@ -180,9 +180,7 @@ void host_env()
 	
 	iota::convertible_string machine_name;
 	
-	const unsigned char* mnam = mac::sys::get_machine_name();
-	
-	if ( mnam )
+	if ( const Byte* mnam = mac::sys::get_machine_name() )
 	{
 		mempcpy( machine_name, mnam, 1 + mnam[ 0 ] );
 	}
