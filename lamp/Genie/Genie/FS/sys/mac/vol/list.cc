@@ -67,7 +67,6 @@
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/serialize_Str255.hh"
-#include "Genie/FS/sys/mac/vol/list/N/dt.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
@@ -554,8 +553,6 @@ namespace Genie
 	}
 	
 	
-	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
-	
 	#define PROPERTY( prop )  &vfs::new_property, &prop##_params
 	
 	#define PROPERTY_ACCESS( access )  PROPERTY( access )
@@ -579,8 +576,6 @@ namespace Genie
 		{ "writes", PROPERTY_ACCESS( GetVolumeWriteCount ) },
 		{ "files",  PROPERTY_ACCESS( GetVolumeFileCount  ) },
 		{ "dirs",   PROPERTY_ACCESS( GetVolumeDirCount   ) },
-		
-		{ "dt",    PREMAPPED( sys_mac_vol_list_N_dt_Mappings ) },
 		
 		// volume roots are named "mnt", not the volume name
 		{ "mnt",  &Root_Factory },
