@@ -232,9 +232,33 @@ sub auto
 	
 	print "\r";
 	
+=pod
+	
+	We need to have the MPW window open long enough for the Finder
+	to inform the Desktop Manager of the new ToolServer installation.
+	
+	We used to do this by explicitly querying the Desktop Manager
+	by way of the vfs mapping in MacRelix.  Though as the only client
+	to use it, the cost of maintaining it was not well compensated.
+	
+	Now we run mpw-select, which specifically asks the Desktop Manager
+	about ToolServer, but only if MPW_DIR is unset.  So in order to use
+	it thus, we may need to unset MPW_DIR ourselves.  It's at least
+	theoretically possible that mpw-select might fail when MPW_DIR is
+	unset, so guard against an undefined value by substituting "".
+	
+=cut
+	
+	if ( exists $ENV{MPW_DIR} )
+	{
+		delete $ENV{MPW_DIR};
+		
+		$mpw = `mpw-select -p` || "";
+	}
+	
 	system "open /Volumes/Ram/Applications/MPW";
 	
-	sleep 0.1 until readlink "$ram/../dt/appls/MPSX/latest";
+	sleep 0.1 until (`mpw-select -p` || "") != $mpw;
 	
 	my $script = 'tell app "Finder" to close the window of alias "Ram:Applications:MPW:"';
 	
