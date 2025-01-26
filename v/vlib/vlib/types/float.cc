@@ -69,6 +69,11 @@ Value assign_to_float( const Value& v )
 		return v;
 	}
 	
+	if ( ! has_floating_point_math() )
+	{
+		return Value_NIL;
+	}
+	
 	/*
 		Allow integers and fractions to be assigned to
 		`float` variables and parameters implicitly.
