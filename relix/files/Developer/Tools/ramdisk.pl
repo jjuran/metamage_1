@@ -204,11 +204,9 @@ sub auto
 		die "MPW not found.\n";
 	}
 	
-	chomp $mpw;
+	print "MPW dir: $mpw";  # $mpw ends with LF
 	
-	print "MPW dir: $mpw\n";
-	
-	( my $dev_apps = $mpw ) =~ s{ / [^/]+ $}{}x;
+	( my $dev_apps = $mpw ) =~ s{ / [^/]+ \n$}{}x;
 	
 	my $intfs_libs = "$dev_apps/Interfaces&Libraries";
 	
