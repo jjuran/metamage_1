@@ -165,6 +165,17 @@ sub check
 
 sub auto
 {
+	my $ramdisk = `ram-disks -1`;
+	
+	if ( ! $ramdisk )
+	{
+		print "No RAM disk found.\n";
+		
+		return;
+	}
+	
+	chomp $ramdisk;
+	
 	my $ram = readlink "/Volumes/Ram";
 	
 	if ( defined $ram )
@@ -175,26 +186,17 @@ sub auto
 	{
 		print "Ram volume not found.\n";
 		
-		if ( my $ramdisk = `ram-disks -1` )
-		{
-			chomp $ramdisk;
-			
-			my $name = read_file( "$ramdisk/name" );
-			
-			chomp $name;
-			
-			print "RAM disk '$name' found at $ramdisk\n";
-			
-			write_file( "$ramdisk/name", "Ram\n" );
-			
-			print "Renamed RAM disk volume to 'Ram'.\n";
-			
-			$ram = "$ramdisk/mnt";
-		}
-		else
-		{
-			return;
-		}
+		my $name = read_file( "$ramdisk/name" );
+		
+		chomp $name;
+		
+		print "RAM disk '$name' found at $ramdisk\n";
+		
+		write_file( "$ramdisk/name", "Ram\n" );
+		
+		print "Renamed RAM disk volume to 'Ram'.\n";
+		
+		$ram = "$ramdisk/mnt";
 	}
 	
 	my $mpw = `mpw-select -p`;
