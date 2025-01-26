@@ -178,24 +178,11 @@ sub auto
 	
 	my $ram = "$ramdisk/mnt";
 	
-	if ( defined readlink "/Volumes/Ram" )
-	{
-		print "Ram found at $ram\n";
-	}
-	else
-	{
-		print "Ram volume not found.\n";
-		
-		my $name = read_file( "$ramdisk/name" );
-		
-		chomp $name;
-		
-		print "RAM disk '$name' found at $ramdisk\n";
-		
-		write_file( "$ramdisk/name", "Ram\n" );
-		
-		print "Renamed RAM disk volume to 'Ram'.\n";
-	}
+	my $name = read_file( "$ramdisk/name" );
+	
+	chomp $name;
+	
+	print "RAM disk '$name' found at $ramdisk\n";
 	
 	my $mpw = `mpw-select -p`;
 	
