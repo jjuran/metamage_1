@@ -453,16 +453,31 @@ namespace tool
 				// project_dir has trailing slash, add another for sentinel
 				plus::string absolute_path = project_dir + "/" + project_relative_path;
 				
-				if ( io::directory_exists( absolute_path ) )
+				StringVector* pathnames = NULL;
+				
+				struct stat st;
+				
+				int nok = stat( absolute_path.c_str(), &st );
+				
+				if ( nok == 0 )
 				{
-					source_file_search_dirs.push_back( absolute_path );
-					
-					continue;
+					if ( S_ISDIR( st.st_mode ) )
+					{
+						pathnames = &source_file_search_dirs;
+					}
+					else if ( S_ISREG( st.st_mode ) )
+					{
+						pathnames = &source_file_pathnames;
+					}
+				}
+				else if ( errno != ENOENT )
+				{
+					p7::throw_errno( errno );
 				}
 				
-				if ( io::file_exists( absolute_path ) )
+				if ( pathnames )
 				{
-					source_file_pathnames.push_back( absolute_path );
+					pathnames->push_back( absolute_path );
 					
 					continue;
 				}
