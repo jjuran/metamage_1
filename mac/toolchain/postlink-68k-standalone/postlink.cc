@@ -186,12 +186,10 @@
 	
 	The first longword of data is the previous code start address.  If it
 	matches the current start of code, then no relocation is necessary.
-	If it's zero, then this code is running for the first time and some
-	initialization is required.  Since we're going to be modifying code
-	that's already executing, we'll need to flush the code cache (if any)
-	when we're done.  The HWPriv trap can be used to do that, though only
-	if it's implemented.  We check whether it is, and store the result for
-	later.  If this isn't the first run, we reuse the result from earlier.
+	OTherwise, we store the new start-of-code address in the field for
+	the previous code start.  (It won't be seen until (and unless)
+	the code resource is called again, by which point it will be the
+	previous code start).
 	
 	The relocation data processor implements the same algorithm as in
 	Metrowerks' runtime, but it's written from scratch.  It decodes a
@@ -199,11 +197,15 @@
 	an address requiring relocation (by adding the relocation delta).
 	
 	After relocation is performed, the code cache (if there is one) must
-	be flushed.  We consult the result of our previous trap check and call
-	HWPriv() if it's present.  Then we place the start-of-code address in
-	the previous code start field.  (It won't be seen until (and unless)
-	the code resource is called again, by which point it will be the
-	previous code start).  Finally, we restore the saved registers and
+	be flushed over the range of the modified code.  Previously, we used
+	HWPriv() to do this provided the trap exists.  Now, we'll just call
+	BlockMove() (not BlockMoveData()), which always exists and also has
+	the effect of flushing the instruction cache (if there is one) --
+	and at least theoretically, might flush just the relatively few
+	cache lines affected, rather than all of them (as HWPriv() must
+	necessarily do, as it isn't given the affected address range).
+	
+	After any relocation is done, we restore the saved registers and
 	tail-call into main(), thus completing startup.
 	
 	Old startup code:
