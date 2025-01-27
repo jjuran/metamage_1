@@ -8,7 +8,6 @@
 
 // Standard C
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 // iota
@@ -138,11 +137,6 @@ namespace tool
 	
 	static plus::string get_Libraries_subdir( const char* name )
 	{
-		if ( const char* path = getenv( name ) )
-		{
-			return path;
-		}
-		
 		static plus::string Libraries = find_SDK_dir() + "/Libraries/";
 		
 		return Libraries + name;
