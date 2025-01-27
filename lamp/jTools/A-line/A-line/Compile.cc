@@ -126,13 +126,24 @@ namespace tool
 				
 				if ( options.Target().envType & envRelix  &&  !options.GetMacros().empty() )
 				{
+					/*
+						Search Metrowerks' includes before Apple's
+						so the MSL libc headers take precedence.
+						
+						Finally, search "Interfaces", so includes like
+						<CWANSIIncludes/ctime> and <CIncludes/Threads.h>
+						work without requiring any other configuration.
+					*/
+					
 					static const plus::string cwansiincludes = get_Interfaces_subdir( "CWANSIIncludes" );
 					static const plus::string cwcincludes    = get_Interfaces_subdir( "CWCIncludes" );
 					static const plus::string cincludes      = get_Interfaces_subdir( "CIncludes" );
+					static const plus::string interfaces     = get_Interfaces_subdir( "" );
 					
 					its_options.AppendIncludeDir( cwansiincludes );
 					its_options.AppendIncludeDir( cwcincludes    );
 					its_options.AppendIncludeDir( cincludes      );
+					its_options.AppendIncludeDir( interfaces     );
 				}
 			}
 			
