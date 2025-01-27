@@ -84,11 +84,6 @@ namespace tool
 	
 	plus::string get_Interfaces_subdir( const char* name )
 	{
-		if ( const char* path = getenv( name ) )
-		{
-			return path;
-		}
-		
 		static plus::string interfaces = find_SDK_dir() + "/" "Interfaces" "/";
 		
 		return interfaces + name;
