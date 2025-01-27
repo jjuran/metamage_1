@@ -136,13 +136,6 @@ namespace tool
 	}
 	
 	
-	static const plus::string& get_Libraries_pathname()
-	{
-		static plus::string libraries = find_SDK_dir() + "/Libraries/";
-		
-		return libraries;
-	}
-	
 	static plus::string get_Libraries_subdir( const char* name )
 	{
 		if ( const char* path = getenv( name ) )
@@ -150,7 +143,9 @@ namespace tool
 			return path;
 		}
 		
-		return get_Libraries_pathname() + name;
+		static plus::string Libraries = find_SDK_dir() + "/Libraries/";
+		
+		return Libraries + name;
 	}
 	
 	static plus::string get_PPCLibraries()
