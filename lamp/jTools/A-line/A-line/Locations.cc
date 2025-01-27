@@ -82,14 +82,6 @@ namespace tool
 		return mkdir_path( home / cache );
 	}
 	
-	static
-	const plus::string& get_Interfaces()
-	{
-		static plus::string interfaces = find_SDK_dir() + "/" "Interfaces" "/";
-		
-		return interfaces;
-	}
-	
 	plus::string get_Interfaces_subdir( const char* name )
 	{
 		if ( const char* path = getenv( name ) )
@@ -97,7 +89,9 @@ namespace tool
 			return path;
 		}
 		
-		return get_Interfaces() + name;
+		static plus::string interfaces = find_SDK_dir() + "/" "Interfaces" "/";
+		
+		return interfaces + name;
 	}
 	
 	static plus::string BuildsDirPath()
