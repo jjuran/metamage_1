@@ -35,21 +35,21 @@ namespace Mac
 	
 	struct FSSignature
 	{
-		FSCreator  creator;
 		FSType     type;
+		FSCreator  creator;
 		
-		FSSignature() : creator(), type()
+		FSSignature() : type(), creator()
 		{
 		}
 		
-		FSSignature( FSCreator  c,
-		             FSType     t ) : creator( c ),
-		                              type   ( t )
+		FSSignature( FSType     t,
+		             FSCreator  c ) : type   ( t ),
+		                              creator( c )
 		{
 		}
 		
-		FSSignature( const FInfo& fInfo ) : creator( FSCreator( fInfo.fdCreator ) ),
-		                                    type   ( FSType   ( fInfo.fdType    ) )
+		FSSignature( const FInfo& fInfo ) : type   ( FSType   ( fInfo.fdType    ) ),
+		                                    creator( FSCreator( fInfo.fdCreator ) )
 		{
 		}
 	};

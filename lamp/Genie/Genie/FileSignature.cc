@@ -176,13 +176,13 @@ Mac::FSSignature PickFileSignatureForName( const char*  name,
 		{
 			Mac::FSType type = Mac::FSType( it->type );
 			
-			Mac::FSSignature signature( GetCreatorForType( type ), type );
+			Mac::FSSignature signature( type, GetCreatorForType( type ) );
 			
 			return signature;
 		}
 	}
 	
-	return Mac::FSSignature( TextFileCreator(), Mac::FSType( 'TEXT' ) );
+	return Mac::FSSignature( Mac::FSType( 'TEXT' ), TextFileCreator() );
 }
 
 }
