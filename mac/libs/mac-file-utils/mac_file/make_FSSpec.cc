@@ -24,10 +24,8 @@ namespace file {
 	
 #if ! __LP64__
 	
-	types::FSSpec make_FSSpec( const types::VRefNum_DirID& dir )
+	OSErr make_FSSpec( FSSpec& result, const types::VRefNum_DirID& dir )
 	{
-		types::FSSpec result;
-		
 		CInfoPBRec pb;
 		
 		DirInfo& dirInfo = pb.dirInfo;
@@ -41,14 +39,26 @@ namespace file {
 		dirInfo.ioDrDirID = dir.dirID;
 		dirInfo.ioFDirIndex = -1;
 		
-		if ( OSStatus err = PBGetCatInfoSync( &pb ) )
+		if ( OSErr err = PBGetCatInfoSync( &pb ) )
 		{
-			vRefNum           = 0;
-			dirInfo.ioDrParID = err;
+			return err;
 		}
 		
 		result.vRefNum = vRefNum;
 		result.parID   = dirInfo.ioDrParID;
+		
+		return noErr;
+	}
+	
+	types::FSSpec make_FSSpec( const types::VRefNum_DirID& dir )
+	{
+		types::FSSpec result;
+		
+		if ( OSStatus err = make_FSSpec( result, dir ) )
+		{
+			result.vRefNum = 0;
+			result.parID   = err;
+		}
 		
 		return result;
 	}
