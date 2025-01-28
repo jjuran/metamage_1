@@ -103,7 +103,11 @@ plus::string GetMacPathname( const FSSpec& file )
 {
 	bool needsTrailingColon = file.parID == fsRtParID;
 	
-	const path_component node = {};
+	path_component node;
+	
+	node.next = NULL;
+	node.name = "\p";
+	node.size = 0;
 	
 	const path_component* link = needsTrailingColon ? &node : NULL;
 	
