@@ -33,28 +33,9 @@ struct path_component
 	size_t                 size;
 };
 
-static inline
-bool is_error( const FSSpec& file )
-{
-	return file.vRefNum == 0;
-}
-
-static inline
-long error( const FSSpec& file )
-{
-	return file.parID;
-}
-
 static
 plus::string GetMacPathname( const FSSpec& file, const path_component* link )
 {
-	// make_FSSpec() may return errors, so check here.
-	
-	if ( is_error( file ) )
-	{
-		Mac::ThrowOSStatus( error( file ) );
-	}
-	
 	path_component node = { link, file.name, file.name[ 0 ] };
 	
 	if ( link )
@@ -66,7 +47,11 @@ plus::string GetMacPathname( const FSSpec& file, const path_component* link )
 	{
 		mac::types::VRefNum_DirID dir = mac::file::parent_directory( file );
 		
-		return GetMacPathname( mac::file::make_FSSpec( dir ), &node );
+		FSSpec dir_spec;
+		
+		Mac::ThrowOSStatus( mac::file::make_FSSpec( dir_spec, dir ) );
+		
+		return GetMacPathname( dir_spec, &node );
 	}
 	
 	plus::string result;
