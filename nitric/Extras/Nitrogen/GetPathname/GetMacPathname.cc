@@ -101,15 +101,20 @@ plus::string GetMacPathname( const mac::types::VRefNum_DirID& dir )
 
 plus::string GetMacPathname( const FSSpec& file )
 {
-	bool needsTrailingColon = file.parID == fsRtParID;
+	path_component* link = NULL;
 	
 	path_component node;
 	
-	node.next = NULL;
-	node.name = "\p";
-	node.size = 0;
-	
-	const path_component* link = needsTrailingColon ? &node : NULL;
+	if ( file.parID == fsRtParID )
+	{
+		// This gets us a trailing colon for a volume pathname.
+		
+		node.next = NULL;
+		node.name = "\p";
+		node.size = 0;
+		
+		link = &node;
+	}
 	
 	return GetMacPathname( file, link );
 }
