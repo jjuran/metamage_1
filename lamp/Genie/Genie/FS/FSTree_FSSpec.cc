@@ -969,8 +969,6 @@ namespace Genie
 	
 	static void create_native_symlink( const FSSpec& link_spec, const char* target_path )
 	{
-		plus::string utf8_link_name = plus::utf8_from_mac( link_spec.name );
-		
 		FSSpec parent_spec = make_FSSpec( parent_directory( link_spec ) );
 		
 		plus::var_string path;
@@ -981,7 +979,7 @@ namespace Genie
 		
 		path += '/';
 		
-		path.append( utf8_link_name.data(), utf8_link_name.size() );
+		path.append( plus::utf8_from_mac( link_spec.name ) );
 		
 		p7::throw_posix_result( native_symlink( target_path,
 		                                        path.c_str() ) );
