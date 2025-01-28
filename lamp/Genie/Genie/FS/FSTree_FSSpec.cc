@@ -626,7 +626,16 @@ namespace Genie
 			Mac::ThrowOSStatus( err );
 		}
 		
-		FSpFileCopy( srcFile, make_FSSpec( destDir ), name );
+		/*
+			destFile is produced from a vfs::node, so even if
+			it doesn't exist, its parent directory should.
+		*/
+		
+		FSSpec dst;
+		
+		err = make_FSSpec( dst, destDir );
+		
+		FSpFileCopy( srcFile, dst, name );
 	}
 	
 	
@@ -969,7 +978,14 @@ namespace Genie
 	
 	static void create_native_symlink( const FSSpec& link_spec, const char* target_path )
 	{
-		FSSpec parent_spec = make_FSSpec( parent_directory( link_spec ) );
+		/*
+			link_spec is produced from a vfs::node, so even if
+			it doesn't exist, its parent directory should.
+		*/
+		
+		FSSpec parent_spec;
+		
+		OSErr err = make_FSSpec( parent_spec, parent_directory( link_spec ) );
 		
 		plus::var_string path;
 		
