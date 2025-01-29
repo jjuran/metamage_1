@@ -579,22 +579,6 @@ namespace Genie
 	}
 	
 	
-	static inline
-	void FSpFileCopy( const FSSpec&         source,
-	                  const FSSpec&         destDir,
-	                  const unsigned char*  copyName       = NULL,
-	                  void*                 copyBufferPtr  = NULL,
-	                  long                  copyBufferSize = 0,
-	                  bool                  preflight      = true )
-	{
-		Mac::ThrowOSStatus( ::FSpFileCopy( &source,
-		                                   &destDir,
-		                                   copyName,
-		                                   copyBufferPtr,
-		                                   copyBufferSize,
-		                                   preflight ) );
-	}
-	
 	static void hfs_copyfile( const vfs::node*  that,
 	                          const vfs::node*  destination )
 	{
@@ -635,7 +619,9 @@ namespace Genie
 		
 		err = make_FSSpec( dst, destDir );
 		
-		FSpFileCopy( srcFile, dst, name );
+		err = FSpFileCopy( &srcFile, &dst, name, NULL, 0, true );
+		
+		Mac::ThrowOSStatus( err );
 	}
 	
 	
