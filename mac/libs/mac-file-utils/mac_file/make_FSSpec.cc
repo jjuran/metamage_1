@@ -50,19 +50,6 @@ namespace file {
 		return noErr;
 	}
 	
-	types::FSSpec make_FSSpec( const types::VRefNum_DirID& dir )
-	{
-		types::FSSpec result;
-		
-		if ( OSStatus err = make_FSSpec( result, dir ) )
-		{
-			result.vRefNum = 0;
-			result.parID   = err;
-		}
-		
-		return result;
-	}
-	
 #else
 	
 	void dummy()
