@@ -169,7 +169,8 @@ namespace tool
 		plus::string resources = DirCreate_Idempotent(     contents / "Resources" );
 	}
 	
-	static void WritePkgInfo( const char* pathname, const plus::string& contents )
+	static inline
+	void WritePkgInfo( const char* pathname, const plus::string& contents )
 	{
 		using posix::update_file;
 		
