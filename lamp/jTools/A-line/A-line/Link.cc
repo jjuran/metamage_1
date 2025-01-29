@@ -11,6 +11,9 @@
 // Standard C++
 #include <algorithm>
 
+// posix-utils
+#include "posix/update_file.hh"
+
 // plus
 #include "plus/string/concat.hh"
 
@@ -19,9 +22,6 @@
 
 // poseven
 #include "poseven/functions/basename.hh"
-#include "poseven/functions/fstat.hh"
-#include "poseven/functions/open.hh"
-#include "poseven/functions/pread.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
@@ -169,37 +169,13 @@ namespace tool
 		plus::string resources = DirCreate_Idempotent(     contents / "Resources" );
 	}
 	
-	static bool check_file_contents( p7::fd_t fd, const plus::string& desired )
-	{
-		const size_t size = desired.size();
-		
-		const bool sizes_match = p7::fstat( fd ).st_size == size;
-		
-		if ( sizes_match )
-		{
-			plus::string actual;
-			
-			char* p = actual.reset( size );
-			
-			if ( p7::pread( fd, p, size, 0 ) == size )
-			{
-				return actual == desired;
-			}
-		}
-		
-		return false;
-	}
-	
 	static void WritePkgInfo( const char* pathname, const plus::string& contents )
 	{
-		n::owned< p7::fd_t > pkgInfo = p7::open( pathname, p7::o_rdwr | p7::o_creat );
+		using posix::update_file;
 		
-		const bool match = check_file_contents( pkgInfo, contents );
+		int nok = update_file( pathname, contents.data(), contents.size() );
 		
-		if ( !match )
-		{
-			p7::write( pkgInfo, contents );
-		}
+		p7::throw_posix_result( nok );
 	}
 	
 	
