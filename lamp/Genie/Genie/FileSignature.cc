@@ -154,11 +154,11 @@ const signature* FindFileSignature( ::OSType type )
 
 
 static inline
-Mac::FSCreator GetCreatorForType( Mac::FSType type )
+OSType GetCreatorForType( OSType type )
 {
 	if ( const signature* it = FindFileSignature( type ) )
 	{
-		return Mac::FSCreator( it->creator );
+		return it->creator;
 	}
 	
 	return Mac::kUnknownFSCreator;  // '????'
@@ -173,7 +173,7 @@ FileSignature PickFileSignatureForName( const char*  name,
 		
 		if ( const ExtensionToTypeRecord* it = FindExtensionToTypeRecord( extension ) )
 		{
-			Mac::FSType type = Mac::FSType( it->type );
+			OSType type = it->type;
 			
 			FileSignature signature( type, GetCreatorForType( type ) );
 			
