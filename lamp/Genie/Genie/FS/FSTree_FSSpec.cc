@@ -174,8 +174,8 @@ namespace Genie
 	
 	static void create_file( const FSSpec&        file,
 	                         const plus::string&  name,
-	                         Mac::FSType          type,
-	                         Mac::FSCreator       creator )
+	                         OSType               type,
+	                         OSType               creator )
 	{
 		OSErr err;
 		
@@ -472,10 +472,10 @@ namespace Genie
 		
 		const mode_t type = mode & S_IFMT;
 		
-		const Mac::FSCreator Creator = Mac::FSCreator( 'Poof' );
+		const OSType Creator = 'Poof';
 		
-		const Mac::FSType Type_FIFO = Mac::FSType( 'FIFO' );
-		const Mac::FSType Type_SOCK = Mac::FSType( 'SOCK' );
+		const OSType Type_FIFO = 'FIFO';
+		const OSType Type_SOCK = 'SOCK';
 		
 		switch ( type )
 		{
