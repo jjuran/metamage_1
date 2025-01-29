@@ -94,11 +94,6 @@ plus::string GetMacPathname( const FSSpec& file, const path_component* link )
 	return result;
 }
 
-plus::string GetMacPathname( const mac::types::VRefNum_DirID& dir )
-{
-	return GetMacPathname( mac::file::make_FSSpec( dir ), NULL );
-}
-
 plus::string GetMacPathname( const FSSpec& file )
 {
 	path_component* link = NULL;
