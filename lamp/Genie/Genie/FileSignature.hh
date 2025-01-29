@@ -15,6 +15,22 @@
 namespace Genie
 {
 	
+	struct FileSignature
+	{
+		OSType  type;
+		OSType  creator;
+		
+		FileSignature() : type(), creator()
+		{
+		}
+		
+		FileSignature( OSType  t,
+		               OSType  c ) : type   ( t ),
+		                             creator( c )
+		{
+		}
+	};
+	
 	extern ::OSType gTextFileCreator;
 	
 	inline Mac::FSCreator TextFileCreator()
@@ -22,8 +38,8 @@ namespace Genie
 		return Mac::FSCreator( gTextFileCreator );
 	}
 	
-	Mac::FSSignature PickFileSignatureForName( const char*  name,
-	                                           unsigned     length );
+	FileSignature PickFileSignatureForName( const char*  name,
+	                                        unsigned     length );
 	
 }
 

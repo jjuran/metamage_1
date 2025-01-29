@@ -164,8 +164,8 @@ Mac::FSCreator GetCreatorForType( Mac::FSType type )
 	return Mac::kUnknownFSCreator;  // '????'
 }
 
-Mac::FSSignature PickFileSignatureForName( const char*  name,
-                                           unsigned     length )
+FileSignature PickFileSignatureForName( const char*  name,
+                                        unsigned     length )
 {
 	if ( const char* dot = gear::find_last_match( name, length, '.' ) )
 	{
@@ -175,13 +175,13 @@ Mac::FSSignature PickFileSignatureForName( const char*  name,
 		{
 			Mac::FSType type = Mac::FSType( it->type );
 			
-			Mac::FSSignature signature( type, GetCreatorForType( type ) );
+			FileSignature signature( type, GetCreatorForType( type ) );
 			
 			return signature;
 		}
 	}
 	
-	return Mac::FSSignature( Mac::FSType( 'TEXT' ), TextFileCreator() );
+	return FileSignature( 'TEXT', TextFileCreator() );
 }
 
 }
