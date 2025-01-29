@@ -6,9 +6,14 @@
 #ifndef GENIE_FILESIGNATURE_HH
 #define GENIE_FILESIGNATURE_HH
 
-// Nitrogen
-#ifndef MAC_FILES_TYPES_FSSIGNATURE_HH
-#include "Mac/Files/Types/FSSignature.hh"
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __MACTYPES__
+#include <MacTypes.h>
 #endif
 
 
@@ -47,9 +52,10 @@ namespace Genie
 	
 	extern ::OSType gTextFileCreator;
 	
-	inline Mac::FSCreator TextFileCreator()
+	inline
+	OSType TextFileCreator()
 	{
-		return Mac::FSCreator( gTextFileCreator );
+		return gTextFileCreator;
 	}
 	
 	FileSignature PickFileSignatureForName( const char*  name,
