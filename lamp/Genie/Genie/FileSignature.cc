@@ -11,12 +11,17 @@
 // mac-sys-utils
 #include "mac_sys/has/Darwin_kernel.hh"
 
+// mac-file-utils
+#include "mac_file/signature.hh"
+
 // gear
 #include "gear/find.hh"
 
 
 namespace Genie
 {
+
+using mac::file::signature;
 
 enum
 {
@@ -96,13 +101,7 @@ const ExtensionToTypeRecord gExtensionToTypeMappingInput[] =
 	{ "lib", 'MPLF', "Metrowerks static library" },
 };
 
-struct FileSignature
-{
-	::OSType type;
-	::OSType creator;
-};
-
-const FileSignature gDefaultCreatorForTypeInput[] =
+const signature gDefaultCreatorForTypeInput[] =
 {
 	{ 'rsrc', 'RSED' },
 	{ 'mBIN', 'mBin' },
@@ -137,12 +136,12 @@ const ExtensionToTypeRecord* FindExtensionToTypeRecord( const char* extension )
 }
 
 static
-const FileSignature* FindFileSignature( ::OSType type )
+const signature* FindFileSignature( ::OSType type )
 {
-	const FileSignature* begin = gDefaultCreatorForTypeInput;
-	const FileSignature* end   = begin + sizeof gDefaultCreatorForTypeInput / sizeof gDefaultCreatorForTypeInput[0];
+	const signature* begin = gDefaultCreatorForTypeInput;
+	const signature* end   = begin + sizeof gDefaultCreatorForTypeInput / sizeof gDefaultCreatorForTypeInput[0];
 	
-	for ( const FileSignature* it = begin;  it != end;  ++it )
+	for ( const signature* it = begin;  it != end;  ++it )
 	{
 		if ( it->type == type )
 		{
@@ -157,7 +156,7 @@ const FileSignature* FindFileSignature( ::OSType type )
 static inline
 Mac::FSCreator GetCreatorForType( Mac::FSType type )
 {
-	if ( const FileSignature* it = FindFileSignature( type ) )
+	if ( const signature* it = FindFileSignature( type ) )
 	{
 		return Mac::FSCreator( it->creator );
 	}
