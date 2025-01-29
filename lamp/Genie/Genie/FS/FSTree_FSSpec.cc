@@ -177,8 +177,8 @@ namespace Genie
 	
 	static void create_file( const FSSpec&        file,
 	                         const plus::string&  name,
-	                         Mac::FSCreator       creator,
-	                         Mac::FSType          type )
+	                         Mac::FSType          type,
+	                         Mac::FSCreator       creator )
 	{
 		OSErr err;
 		
@@ -193,7 +193,7 @@ namespace Genie
 	{
 		Mac::FSSignature sig = PickFileSignatureForName( name.data(), name.size() );
 		
-		create_file( file, name, sig.creator, sig.type );
+		create_file( file, name, sig.type, sig.creator );
 	}
 	
 	static plus::string SlurpFile( const FSSpec& file )
@@ -483,11 +483,11 @@ namespace Genie
 				break;
 			
 			case S_IFIFO:
-				create_file( extra.fsspec, that->name(), Creator, Type_FIFO );
+				create_file( extra.fsspec, that->name(), Type_FIFO, Creator );
 				break;
 			
 			case S_IFSOCK:
-				create_file( extra.fsspec, that->name(), Creator, Type_SOCK );
+				create_file( extra.fsspec, that->name(), Type_SOCK, Creator );
 				break;
 			
 			default:
