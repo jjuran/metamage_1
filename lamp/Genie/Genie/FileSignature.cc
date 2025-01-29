@@ -98,24 +98,24 @@ const ExtensionToTypeRecord gExtensionToTypeMappingInput[] =
 
 struct FileSignature
 {
-	::OSType creator;
 	::OSType type;
+	::OSType creator;
 };
 
 const FileSignature gDefaultCreatorForTypeInput[] =
 {
-	{ 'RSED', 'rsrc' },
-	{ 'mBin', 'mBIN' },
-	{ 'mBin', 'BIN+' },
-	{ 'CARO', 'PDF ' },
-	{ 'ogle', 'PICT' },
-	{ 'ogle', 'PNGf' },
-	{ 'ogle', 'GIFf' },
-	{ 'ogle', 'TIFF' },
-	{ 'ogle', 'JPEG' },
-	{ 'TVOD', 'MPEG' },
-	{ 'TVOD', 'MooV' },
-	{ 'CWIE', 'MPLF' },
+	{ 'rsrc', 'RSED' },
+	{ 'mBIN', 'mBin' },
+	{ 'BIN+', 'mBin' },
+	{ 'PDF ', 'CARO' },
+	{ 'PICT', 'ogle' },
+	{ 'PNGf', 'ogle' },
+	{ 'GIFf', 'ogle' },
+	{ 'TIFF', 'ogle' },
+	{ 'JPEG', 'ogle' },
+	{ 'MPEG', 'TVOD' },
+	{ 'MooV', 'TVOD' },
+	{ 'MPLF', 'CWIE' },
 };
 
 
