@@ -11,9 +11,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-// plus
-#include "plus/mac_utf8.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -45,14 +42,7 @@ plus::string mac_pathname_from_path( const char* path, bool utf8 )
 	
 	try
 	{
-		plus::string mac_path = GetMacPathname( Div::ResolvePathToFSSpec( path ) );
-		
-		if ( utf8 )
-		{
-			mac_path = plus::utf8_from_mac( mac_path );
-		}
-		
-		return mac_path;
+		return GetMacPathname( Div::ResolvePathToFSSpec( path ), utf8 );
 	}
 	catch ( const Mac::OSStatus& err )
 	{
