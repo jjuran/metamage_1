@@ -1049,8 +1049,8 @@ namespace Genie
 		err = HCreate( linkSpec.vRefNum,
 		               linkSpec.parID,
 		               linkSpec.name,
-		               Mac::kSymLinkCreator,
-		               Mac::kSymLinkFileType );
+		               kSymLinkCreator,
+		               kSymLinkFileType );
 		
 		if ( err )
 		{

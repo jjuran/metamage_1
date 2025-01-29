@@ -15,6 +15,20 @@
 namespace Genie
 {
 	
+	enum
+	{
+		kUnknownFSType = ::kUnknownType,  // '????'
+		
+		kSymLinkFileType  = 'slnk',
+	};
+	
+	enum
+	{
+		kUnknownFSCreator = ::kUnknownType,  // '????'
+		
+		kSymLinkCreator  = 'rhap',
+	};
+	
 	struct FileSignature
 	{
 		OSType  type;

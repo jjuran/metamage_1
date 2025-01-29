@@ -80,8 +80,8 @@ namespace Genie
 	
 	static inline bool is_osx_symlink( const FInfo& fInfo )
 	{
-		return    fInfo.fdCreator == Mac::kSymLinkCreator
-		       && fInfo.fdType    == Mac::kSymLinkFileType;
+		return    fInfo.fdCreator == kSymLinkCreator
+		       && fInfo.fdType    == kSymLinkFileType;
 	}
 	
 	mode_t GetItemMode( const HFileInfo& hFileInfo )

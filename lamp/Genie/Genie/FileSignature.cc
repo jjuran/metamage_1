@@ -161,7 +161,7 @@ OSType GetCreatorForType( OSType type )
 		return it->creator;
 	}
 	
-	return Mac::kUnknownFSCreator;  // '????'
+	return kUnknownFSCreator;  // '????'
 }
 
 FileSignature PickFileSignatureForName( const char*  name,
