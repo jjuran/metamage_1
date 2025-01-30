@@ -313,7 +313,7 @@ namespace Pedestal
 			
 			short match = itsView.Search( itsPattern.data(), itsPattern.size(), selection, itSearchesBackward, true );
 			
-			if ( match == -1 )
+			if ( match < 0 )
 			{
 				itsView.SetCurrentSelection( itsSavedSelection );
 				
@@ -354,7 +354,7 @@ namespace Pedestal
 			
 			short match = editor.Search( last_pattern.data(), last_pattern.size(), selection, backward, false );
 			
-			if ( match == -1 )
+			if ( match < 0 )
 			{
 				mac::sys::beep();
 			}
