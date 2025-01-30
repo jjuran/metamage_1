@@ -133,7 +133,7 @@ namespace ShellShock
 						op = kRedirectInput;
 				}
 				
-				if ( fd == -1  &&  op != kRedirectInputAndOutput )
+				if ( fd < 0  &&  op != kRedirectInputAndOutput )
 				{
 					fd = 0;
 				}
@@ -161,7 +161,7 @@ namespace ShellShock
 						op = kRedirectOutput;
 					}
 					
-					if ( fd == -1 )
+					if ( fd < 0 )
 					{
 						fd = 1;
 					}

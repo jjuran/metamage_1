@@ -296,7 +296,7 @@ namespace tool
 		// Try a non-creative open first.
 		int opened = open( path, O_WRONLY );
 		
-		if ( opened == -1 )
+		if ( opened < 0 )
 		{
 			if ( errno != ENOENT )
 			{
@@ -314,10 +314,10 @@ namespace tool
 		
 		int status = fstat( opened, &sb );
 		
-		if ( status == -1  ||  S_ISREG( sb.st_mode ) )
+		if ( status < 0  ||  S_ISREG( sb.st_mode ) )
 		{
 			// Either the stat failed and something's wrong, or a regular file exists.
-			int error = status == -1 ? errno : EEXIST;
+			int error = status < 0 ? errno : EEXIST;
 			
 			// Close the file.
 			int closed = close( opened );
@@ -353,10 +353,10 @@ namespace tool
 		
 		int status = fstat( opened, &sb );
 		
-		if ( status == -1  ||  S_ISREG( sb.st_mode ) )
+		if ( status < 0  ||  S_ISREG( sb.st_mode ) )
 		{
 			// Either the stat failed and something's wrong, or a regular file exists.
-			int error = status == -1 ? errno : EEXIST;
+			int error = status < 0 ? errno : EEXIST;
 			
 			// Close the file.
 			int closed = close( opened );
@@ -423,7 +423,7 @@ namespace tool
 				case Sh::kRedirectInputAndOutput:
 					file = Open( param, O_RDWR );
 					
-					if ( fd == -1 )
+					if ( fd < 0 )
 					{
 						Dup2( file, 0 );
 						Dup2( file, 1 );
