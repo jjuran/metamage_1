@@ -6,6 +6,9 @@
 #ifndef MACRELIX_FSREFFROMPATH_HH
 #define MACRELIX_FSREFFROMPATH_HH
 
+// mac-sys-utils
+#include "mac_sys/error.hh"
+
 
 struct FSRef;
 
@@ -13,10 +16,12 @@ struct FSRef;
 namespace mac   {
 namespace relix {
 	
-	int FSRef_from_path( const char* path, FSRef& result );
+	using mac::sys::Error;
+	
+	Error FSRef_from_path( const char* path, FSRef& result );
 	
 	inline
-	int FSObj_from_existing_path( const char* path, FSRef& result )
+	Error FSObj_from_existing_path( const char* path, FSRef& result )
 	{
 		return FSRef_from_path( path, result );
 	}

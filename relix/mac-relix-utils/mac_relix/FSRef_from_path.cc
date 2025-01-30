@@ -24,11 +24,11 @@ namespace relix {
 
 #if defined( __RELIX__ )  ||  defined( __APPLE__ )
 
-int FSRef_from_path( const char* path, FSRef& result )
+Error FSRef_from_path( const char* path, FSRef& result )
 {
 #ifdef __APPLE__
 	
-	return FSPathMakeRef( (const UInt8*) path, &result, NULL );
+	return (Error) FSPathMakeRef( (const UInt8*) path, &result, NULL );
 	
 #endif
 	
@@ -36,14 +36,14 @@ int FSRef_from_path( const char* path, FSRef& result )
 	
 	FSSpec spec;
 	
-	int nok = FSSpec_from_existing_path( path, spec );
+	Error err = FSSpec_from_existing_path( path, spec );
 	
-	if ( ! nok )
+	if ( ! err )
 	{
-		nok = FSpMakeFSRef( &spec, &result );
+		err = (Error) FSpMakeFSRef( &spec, &result );
 	}
 	
-	return nok;
+	return err;
 	
 #endif
 }
