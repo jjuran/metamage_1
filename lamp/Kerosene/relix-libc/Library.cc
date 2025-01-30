@@ -444,7 +444,7 @@ FILE* fdopen( int fd, const char* type )
 {
 	int flags = ::fcntl( fd, F_GETFL, 0 );
 	
-	if ( flags == -1 )
+	if ( flags < 0 )
 	{
 		return NULL;
 	}

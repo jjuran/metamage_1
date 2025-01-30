@@ -49,7 +49,7 @@ DIR* opendir( const char* pathname )
 	{
 		int fd = open( pathname, O_RDONLY | O_DIRECTORY | O_CLOEXEC );
 		
-		if ( fd == -1 )
+		if ( fd < 0 )
 		{
 			free( dir );
 		}
