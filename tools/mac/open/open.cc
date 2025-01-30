@@ -179,7 +179,7 @@ namespace tool
 	{
 		using mac::relix::FSRef_from_path;
 		
-		return (Error) FSRef_from_path( path, file );
+		return FSRef_from_path( path, file );
 	}
 	
 	static
