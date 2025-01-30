@@ -17,6 +17,8 @@
 #include <CoreServices/CoreServices.h>
 #include <QuickLook/QuickLook.h>
 
+#pragma GCC visibility push(default)
+
 // -----------------------------------------------------------------------------
 //	constants
 // -----------------------------------------------------------------------------
@@ -215,3 +217,5 @@ void *QuickLookGeneratorPluginFactory(CFAllocatorRef allocator,CFUUIDRef typeID)
         /* If the requested type is incorrect, return NULL. */
     return NULL;
 }
+
+#pragma GCC visibility pop
