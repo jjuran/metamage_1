@@ -634,7 +634,7 @@ static int TestForkAndStop( int argc, char** argv )
 {
 	pid_t pid = vfork();
 	
-	if ( pid == -1 )
+	if ( pid < 0 )
 	{
 		return 1;
 	}

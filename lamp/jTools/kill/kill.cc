@@ -58,7 +58,7 @@ int main( int argc, char **argv )
 	
 	const int killed = kill( pid, sig_number );
 	
-	if ( killed == -1 )
+	if ( killed < 0 )
 	{
 		more::perror( "kill", argp[1] );
 		

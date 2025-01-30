@@ -30,7 +30,7 @@ int main( int argc, const char *const argv[] )
 		{
 			break;  // EOF
 		}
-		else if ( bytes_read == -1 )
+		else if ( bytes_read < 0 )
 		{
 			return 1;
 		}
@@ -39,7 +39,7 @@ int main( int argc, const char *const argv[] )
 		
 		int bytes_written = write( STDOUT_FILENO, data, bytes_read );
 		
-		if ( bytes_written == -1 )
+		if ( bytes_written < 0 )
 		{
 			return 2;
 		}

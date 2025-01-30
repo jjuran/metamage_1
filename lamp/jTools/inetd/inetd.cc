@@ -113,7 +113,7 @@ namespace tool
 			// This blocks and yields to other threads
 			int selected = select( maxFD + 1, &readfds, NULL, NULL, NULL );
 			
-			if ( selected == -1 && errno != EINTR )
+			if ( selected < 0  &&  errno != EINTR )
 			{
 				p7::perror( "inetd: select()" );
 				

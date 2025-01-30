@@ -33,7 +33,7 @@ static int strip( const char* path )
 	
 	int status = stat( path, &stat_buffer );
 	
-	if ( status == -1 )
+	if ( status < 0 )
 	{
 		more::perror( "strip", path );
 		
