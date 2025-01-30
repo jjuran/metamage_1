@@ -2,7 +2,7 @@ CFBundleDevelopmentRegion: "English"
 CFBundleDocumentTypes:
 [
 	[
-		CFBundleTypeName: "Kinetic Raster Backing Store"
+		CFBundleTypeName: "Simple Kinetic Image Format file"
 		CFBundleTypeRole: "QLGenerator"
 		LSItemContentTypes:
 		[
@@ -13,14 +13,14 @@ CFBundleDocumentTypes:
 		]
 	]
 ]
-CFBundleIdentifier: "com.metamage.QLRaster"
+CFBundleIdentifier: "com.metamage.QLSKIF"
 CFPlugInFactories:
 [
-	"A6BD9F85-362C-A833-B179-DF559F700C02": "QuickLookGeneratorPluginFactory"
+	"E38922DD-A2BC-4253-EE4C-78D6C3B0C141": "QuickLookGeneratorPluginFactory"
 ]
 CFPlugInTypes:
 [
-	"5E2D9680-5022-40FA-B806-43349622E5B9": ["A6BD9F85-362C-A833-B179-DF559F700C02"]
+	"5E2D9680-5022-40FA-B806-43349622E5B9": ["E38922DD-A2BC-4253-EE4C-78D6C3B0C141"]
 ]
 NSHumanReadableCopyright: "Copyright 2021 Josh Juran. All rights reserved."
 QLNeedsToBeRunInMainThread: false
