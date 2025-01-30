@@ -70,7 +70,7 @@ namespace app {
 		
 		ResFileRefNum res = FSpOpenResFile( &alias_file, fsRdWrPerm );
 		
-		if ( res == -1 )
+		if ( res < 0 )
 		{
 			return mac::sys::res_error();
 		}
