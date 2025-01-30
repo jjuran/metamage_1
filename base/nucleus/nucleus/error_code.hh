@@ -83,7 +83,7 @@
 	
 		template < class Exception > void throw_exception()
 	
-	may be specialized to modify the way a perticular code is thrown.
+	may be specialized to modify the way a particular code is thrown.
 */
 
 #ifndef NUCLEUS_ERRORCODE_HH
