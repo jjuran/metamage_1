@@ -44,7 +44,7 @@ namespace poseven
 	
 	inline int throw_posix_result( int result )
 	{
-		if ( result == -1 )
+		if ( result < 0 )
 		{
 			throw_errno_internal( errno );
 		}

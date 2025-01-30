@@ -19,7 +19,7 @@ namespace poseven
 	{
 		int status = ::fstatat( dirfd, path, &sb, flags );
 		
-		if ( status == -1 )
+		if ( status < 0 )
 		{
 			if ( errno == ENOENT  ||  errno == ENOTDIR )
 			{
