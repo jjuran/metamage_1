@@ -3,13 +3,13 @@
 	--------------------------
 */
 
-#include <QuickLook/QuickLook.h>
+// qlgenerator
+#include "Thumbnail.h"
 
 // QLTicTacToe
 #include "DrawGameFromURLIntoContext.hh"
 
 
-extern "C"
 OSStatus GenerateThumbnailForURL( void*                  interface,
                                   QLThumbnailRequestRef  request,
                                   CFURLRef               url,
@@ -55,7 +55,6 @@ OSStatus GenerateThumbnailForURL( void*                  interface,
 	return noErr;
 }
 
-extern "C"
 void CancelThumbnailGeneration( void* interface, QLThumbnailRequestRef request )
 {
 }

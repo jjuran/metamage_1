@@ -3,13 +3,13 @@
 	------------------------
 */
 
-#include <QuickLook/QuickLook.h>
+// qlgenerator
+#include "Preview.h"
 
 // QLSKIF
 #include "CGImageFromURL.hh"
 
 
-extern "C"
 OSStatus GeneratePreviewForURL( void*                interface,
                                 QLPreviewRequestRef  request,
                                 CFURLRef             url,
@@ -41,7 +41,6 @@ OSStatus GeneratePreviewForURL( void*                interface,
 	return noErr;
 }
 
-extern "C"
 void CancelPreviewGeneration( void* interface, QLPreviewRequestRef request )
 {
 }

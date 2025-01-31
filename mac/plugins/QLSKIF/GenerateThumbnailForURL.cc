@@ -3,13 +3,13 @@
 	--------------------------
 */
 
-#include <QuickLook/QuickLook.h>
+// qlgenerator
+#include "Thumbnail.h"
 
 // QLSKIF
 #include "CGImageFromURL.hh"
 
 
-extern "C"
 OSStatus GenerateThumbnailForURL( void*                  interface,
                                   QLThumbnailRequestRef  request,
                                   CFURLRef               url,
@@ -28,7 +28,6 @@ OSStatus GenerateThumbnailForURL( void*                  interface,
 	return noErr;
 }
 
-extern "C"
 void CancelThumbnailGeneration( void* interface, QLThumbnailRequestRef request )
 {
 }
