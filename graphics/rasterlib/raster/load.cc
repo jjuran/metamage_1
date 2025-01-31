@@ -237,10 +237,10 @@ namespace raster
 			return invalid_raster();
 		}
 		
-		const int mmap_prot  = raster_sync < 0 ? PROT_READ | PROT_WRITE
-		                                       : PROT_READ;
-		const int mmap_flags = synchronized    ? MAP_SHARED
-		                                       : MAP_PRIVATE;
+		const int mmap_prot  = raster_sync <= 0 ? PROT_READ | PROT_WRITE
+		                                        : PROT_READ;
+		const int mmap_flags = synchronized     ? MAP_SHARED
+		                                        : MAP_PRIVATE;
 		
 		void* const addr = mmap( NULL, end, mmap_prot, mmap_flags, fd, 0 );
 		
