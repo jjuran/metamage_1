@@ -14,7 +14,7 @@ CFBundleDocumentTypes:
 CFBundleIdentifier: "com.metamage.QLTicTacToe"
 CFPlugInFactories:
 [
-	"F4520E14-E458-4615-479A-FA4B24E7E04D": "QuickLookGeneratorPluginFactory"
+	"F4520E14-E458-4615-479A-FA4B24E7E04D": "QLGeneratorFactory"
 ]
 CFPlugInTypes:
 [

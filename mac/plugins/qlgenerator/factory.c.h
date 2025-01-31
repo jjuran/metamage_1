@@ -199,7 +199,7 @@ ULONG QuickLookGeneratorPluginRelease(void *thisInstance)
 //  QuickLookGeneratorPluginFactory
 // -----------------------------------------------------------------------------
 __attribute__ ((visibility ("default")))
-void *QuickLookGeneratorPluginFactory(CFAllocatorRef allocator,CFUUIDRef typeID)
+void* QLGeneratorFactory( CFAllocatorRef allocator, CFUUIDRef typeID )
 {
     QuickLookGeneratorPluginType *result;
     CFUUIDRef                 uuid;

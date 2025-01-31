@@ -16,7 +16,7 @@ CFBundleDocumentTypes:
 CFBundleIdentifier: "com.metamage.QLSKIF"
 CFPlugInFactories:
 [
-	"E38922DD-A2BC-4253-EE4C-78D6C3B0C141": "QuickLookGeneratorPluginFactory"
+	"E38922DD-A2BC-4253-EE4C-78D6C3B0C141": "QLGeneratorFactory"
 ]
 CFPlugInTypes:
 [
