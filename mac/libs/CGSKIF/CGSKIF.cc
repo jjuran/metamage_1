@@ -193,7 +193,7 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 		}
 	}
 	
-	CGBitmapInfo bitmapInfo = kCGImageAlphaNoneSkipFirst;
+	CGBitmapInfo bitmapInfo = kCGImageAlphaNone;
 	
 	if ( desc.model > Model_RGB  &&  desc.model <= Model_RGBA_premultiplied )
 	{
@@ -201,6 +201,8 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	}
 	else if ( desc.model == Model_RGB  &&  desc.magic == kSKIFFileType )
 	{
+		bitmapInfo = kCGImageAlphaNoneSkipFirst;
+		
 		if ( weight == 32 )
 		{
 			switch ( desc.layout.per_pixel )
@@ -242,6 +244,8 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	
 	if ( little_endian  &&  weight == 16  &&  is_16bit_565( desc ) )
 	{
+		bitmapInfo = kCGImageAlphaNoneSkipFirst;
+		
 		/*
 			This is a lossy conversion, as it drops the rightmost green bit.
 			TODO:  Convert to 8/8/8/8 instead.
