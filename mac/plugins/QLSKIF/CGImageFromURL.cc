@@ -29,12 +29,12 @@ CGImageRef CGSKIFCreateImageFromPath( const char* path )
 	
 	raster_load loaded_raster = load_raster( raster_fd );
 	
+	close( raster_fd );
+	
 	if ( loaded_raster.addr == NULL )
 	{
 		return NULL;
 	}
-	
-	close( raster_fd );
 	
 	CGImageRef image = CGSKIFCreateImageFromRaster( loaded_raster );
 	
