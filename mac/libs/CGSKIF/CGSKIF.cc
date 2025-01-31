@@ -207,6 +207,7 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 			{
 				default:
 				case xRGB:
+//					bitmapInfo = kCGImageAlphaNoneSkipFirst;
 					break;
 				
 				case ARGB:
@@ -236,17 +237,6 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 		}
 	}
 	
-#ifdef MAC_OS_X_VERSION_10_4
-	
-	if ( little_endian )
-	{
-		bitmapInfo |= weight == 16 ? kCGBitmapByteOrder16Little
-		            : weight == 32 ? kCGBitmapByteOrder32Little
-		            :                kCGBitmapByteOrderDefault;
-	}
-	
-#endif
-	
 	copier cpy = desc.model == Model_monochrome_paint ? inverted_copy
 	                                                  : straight_copy;
 	
@@ -259,6 +249,17 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 		
 		cpy = &converting_LE_565_to_555_copy;
 	}
+	
+#ifdef MAC_OS_X_VERSION_10_4
+	
+	if ( little_endian )
+	{
+		bitmapInfo |= weight == 16 ? kCGBitmapByteOrder16Little
+		            : weight == 32 ? kCGBitmapByteOrder32Little
+		            :                kCGBitmapByteOrderDefault;
+	}
+	
+#endif
 	
 	CGDataProviderRef dataProvider = make_data_provider( base,
 	                                                     height * stride,
