@@ -271,6 +271,8 @@ CGImageRef CreateCGImageFromBitMap( const BitMap& bitmap )
 	                                   bitmap.baseAddr );
 }
 
+#if ! __LP64__
+
 CGImageRef CreateCGImageFromPixMap( PixMapHandle pix )
 {
 	const PixMap& pixmap = **pix;
@@ -312,3 +314,9 @@ CGImageRef CreateCGImageFromPixMap( PixMapHandle pix )
 	
 	return NULL;
 }
+
+#else
+
+int dummy;
+
+#endif
