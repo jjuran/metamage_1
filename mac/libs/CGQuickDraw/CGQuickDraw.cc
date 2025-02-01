@@ -337,6 +337,7 @@ CGImageRef CreateCGImageFromPixMap( PixMapHandle pix )
 {
 	const PixMap& pixmap = **pix;
 	
+	Ptr baseAddr  = GetPixBaseAddr( pix );
 	long rowBytes = GetPixRowBytes( pix );
 	
 	const short width  = pixmap.bounds.right - pixmap.bounds.left;
@@ -350,7 +351,7 @@ CGImageRef CreateCGImageFromPixMap( PixMapHandle pix )
 		                            pixmap.pixelSize,
 		                            rowBytes,
 		                            BitmapInfo_from_PixMap( pixmap ),
-		                            pixmap.baseAddr );
+		                            baseAddr );
 	}
 	else if ( const bool monochrome = is_monochrome( pixmap ) )
 	{
@@ -358,7 +359,7 @@ CGImageRef CreateCGImageFromPixMap( PixMapHandle pix )
 		                                   height,
 		                                   pixmap.pixelSize,
 		                                   rowBytes,
-		                                   pixmap.baseAddr );
+		                                   baseAddr );
 	}
 	else if ( CTabHandle ctab = pixmap.pmTable )
 	{
@@ -367,7 +368,7 @@ CGImageRef CreateCGImageFromPixMap( PixMapHandle pix )
 		                                pixmap.pixelSize,
 		                                rowBytes,
 		                                ctab[0]->ctTable,
-		                                pixmap.baseAddr );
+		                                baseAddr );
 	}
 	
 	return NULL;
