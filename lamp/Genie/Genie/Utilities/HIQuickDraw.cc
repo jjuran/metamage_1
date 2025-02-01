@@ -350,17 +350,9 @@ namespace Genie
 			
 			n::owned< GWorldPtr > native = N::NewGWorld( 32, pix[0]->bounds );
 			
-			PixMapHandle tmp = GetGWorldPixMap( native );
+			mac::qd::copy_bits( gworld, native );
 			
-			if ( ::LockPixels( tmp ) &&  ::LockPixels( pix ) )
-			{
-				mac::qd::copy_bits( gworld, native );
-				
-				::UnlockPixels( pix );
-				::UnlockPixels( tmp );
-				
-				return image_from_pixmap( tmp );
-			}
+			return image_from_pixmap( GetGWorldPixMap( native ) );
 		}
 		
 		return image_from_pixmap( pix );

@@ -399,18 +399,10 @@ namespace Genie
 			return;
 		}
 		
-		PixMapHandle pix = GetGWorldPixMap( gworld );
-		
-		if ( const bool locked = ::LockPixels( pix ) )
-		{
-			// Copy to dest
-			mac::qd::copy_bits( gworld,
-			                    mac::qd::thePort(),
-			                    mac::qd::get_portRect( gworld ),
-			                    bounds );
-			
-			::UnlockPixels( pix );
-		}
+		mac::qd::copy_bits( gworld,
+		                    mac::qd::thePort(),
+		                    mac::qd::get_portRect( gworld ),
+		                    bounds );
 	}
 	
 	void GWorld::DrawInContext( CGContextRef context, CGRect bounds )
