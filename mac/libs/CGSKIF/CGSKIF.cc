@@ -22,6 +22,10 @@
 typedef CGImageAlphaInfo CGBitmapInfo;
 #endif
 
+#ifndef MAC_OS_X_VERSION_10_5
+typedef float CGFloat;
+#endif
+
 
 using namespace raster;
 
@@ -76,20 +80,6 @@ static
 void straight_copy( void* dst, const void* src, size_t n )
 {
 	memcpy( dst, src, n );
-}
-
-static
-void inverted_copy( void* dst, const void* src, size_t n )
-{
-	uint32_t const* p   = (const uint32_t*) src;
-	uint32_t const* end = (const uint32_t*) src + n / 4;
-	
-	uint32_t* q = (uint32_t*) dst;
-	
-	while ( p < end )
-	{
-		*q++ = ~*p++;
-	}
 }
 
 static
@@ -239,8 +229,12 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 		}
 	}
 	
-	copier cpy = desc.model == Model_monochrome_paint ? inverted_copy
-	                                                  : straight_copy;
+	const CGFloat inverted[] = { 1.0, 0.0 };
+	
+	const CGFloat* decode = desc.model == Model_monochrome_paint ? inverted
+	                                                             : NULL;
+	
+	copier cpy = straight_copy;
 	
 	if ( little_endian  &&  weight == 16  &&  is_16bit_565( desc ) )
 	{
@@ -278,7 +272,7 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	                       colorSpace,
 	                       bitmapInfo,
 	                       dataProvider,
-	                       NULL,
+	                       decode,
 	                       false,
 	                       kCGRenderingIntentDefault );
 	
