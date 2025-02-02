@@ -39,6 +39,10 @@
 typedef CGImageAlphaInfo CGBitmapInfo;
 #endif
 
+#ifndef MAC_OS_X_VERSION_10_5
+typedef float CGFloat;
+#endif
+
 
 using mac::qd::is_monochrome;
 
@@ -93,20 +97,6 @@ static
 void straight_copy( void* dst, const void* src, size_t n )
 {
 	memcpy( dst, src, n );
-}
-
-static
-void inverted_copy( void* dst, const void* src, size_t n )
-{
-	uint32_t const* p   = (const uint32_t*) src;
-	uint32_t const* end = (const uint32_t*) src + n / 4;
-	
-	uint32_t* q = (uint32_t*) dst;
-	
-	while ( p < end )
-	{
-		*q++ = ~*p++;
-	}
 }
 
 static
@@ -180,7 +170,8 @@ CGImageRef image_from_data( size_t           width,
                             CGColorSpaceRef  colorSpace,
                             CGBitmapInfo     bitmapInfo,
                             char*            baseAddr,
-                            copier           cpy )
+                            copier           cpy,
+                            const CGFloat    decode[] = NULL )
 {
 	CGDataProviderRef dataProvider = make_data_provider( baseAddr,
 	                                                     height * stride,
@@ -194,7 +185,7 @@ CGImageRef image_from_data( size_t           width,
 	                                  colorSpace,
 	                                  bitmapInfo,
 	                                  dataProvider,
-	                                  NULL,
+	                                  decode,
 	                                  false,
 	                                  kCGRenderingIntentDefault );
 	
@@ -210,6 +201,8 @@ CGImageRef image_from_monochrome_data( size_t  width,
                                        size_t  stride,
                                        char*   baseAddr )
 {
+	const CGFloat decode[] = { 1.0, 0.0 };
+	
 	return image_from_data( width,
 	                        height,
 	                        weight,  // bits per component
@@ -218,7 +211,8 @@ CGImageRef image_from_monochrome_data( size_t  width,
 	                        GrayColorSpace(),
 	                        kCGImageAlphaNone,
 	                        baseAddr,
-	                        &inverted_copy );
+	                        &straight_copy,
+	                        decode );
 }
 
 static
