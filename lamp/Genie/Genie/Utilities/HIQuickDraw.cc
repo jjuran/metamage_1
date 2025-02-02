@@ -217,20 +217,11 @@ namespace Genie
 	{
 		PixMapHandle pix = GetGWorldPixMap( gworld );
 		
-		short converting = false;
-		
 	#ifdef MAC_OS_X_VERSION_10_4
 		
 		const uint32_t pixelFormat = pix[0]->pixelFormat;
 		
 		if ( TARGET_RT_LITTLE_ENDIAN  &&  pixelFormat == k16LE565PixelFormat )
-		{
-			converting = true;
-		}
-		
-	#endif
-		
-		if ( converting )
 		{
 			/*
 				This format is not supported by Core Graphics, but it is by
@@ -244,6 +235,8 @@ namespace Genie
 			
 			return image_from_pixmap( GetGWorldPixMap( native ) );
 		}
+		
+	#endif
 		
 		return image_from_pixmap( pix );
 	}
