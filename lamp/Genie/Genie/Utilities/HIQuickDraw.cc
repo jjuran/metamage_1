@@ -24,15 +24,9 @@
 // CGQuickDraw
 #include "CGQuickDraw.hh"
 
-// Nitrogen
-#include "Nitrogen/CGImage.hh"
-
 
 namespace Genie
 {
-	
-	namespace n = nucleus;
-	
 	
 	static inline
 	bool is_multiple( float dst, size_t src )
@@ -94,45 +88,17 @@ namespace Genie
 		return err;
 	}
 	
-	static
-	n::owned< CGImageRef > image_from_bitmap( const BitMap& bitmap )
-	{
-		if ( CGImageRef image = CreateCGImageFromBitMap( bitmap ) )
-		{
-			return n::owned< CGImageRef >::seize( image );
-		}
-		
-		return n::owned< CGImageRef >();
-	}
-	
-	static
-	n::owned< CGImageRef > image_from_pixmap( PixMapHandle pix )
-	{
-		if ( CGImageRef image = CreateCGImageFromPixMap( pix ) )
-		{
-			return n::owned< CGImageRef >::seize( image );
-		}
-		
-		return n::owned< CGImageRef >();
-	}
-	
-	static
-	n::owned< CGImageRef > image_from_gworld( GWorldPtr gworld )
-	{
-		PixMapHandle pix = GetGWorldPixMap( gworld );
-		
-		return image_from_pixmap( pix );
-	}
-	
 	void HIViewDrawBitMap( CGContextRef   context,
 	                       CGRect         bounds,
 	                       const BitMap&  bitmap )
 	{
 		OSStatus err;
 		
-		err = HIViewDrawCGImageUninterpolated( context,
-		                                       bounds,
-		                                       image_from_bitmap( bitmap ) );
+		CGImageRef image = CreateCGImageFromBitMap( bitmap );
+		
+		err = HIViewDrawCGImageUninterpolated( context, bounds, image );
+		
+		CGImageRelease( image );
 	}
 	
 	void HIViewDrawPixMap( CGContextRef  context,
@@ -141,20 +107,18 @@ namespace Genie
 	{
 		OSStatus err;
 		
-		err = HIViewDrawCGImageUninterpolated( context,
-		                                       bounds,
-		                                       image_from_pixmap( pix ) );
+		CGImageRef image = CreateCGImageFromPixMap( pix );
+		
+		err = HIViewDrawCGImageUninterpolated( context, bounds, image );
+		
+		CGImageRelease( image );
 	}
 	
 	void HIViewDrawGWorld( CGContextRef  context,
 	                       CGRect        bounds,
 	                       GWorldPtr     gworld )
 	{
-		OSStatus err;
-		
-		err = HIViewDrawCGImageUninterpolated( context,
-		                                       bounds,
-		                                       image_from_gworld( gworld ) );
+		HIViewDrawPixMap( context, bounds, GetGWorldPixMap( gworld ) );
 	}
 	
 }
