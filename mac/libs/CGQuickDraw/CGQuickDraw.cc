@@ -333,6 +333,18 @@ CGImageRef image_from_RGB_data( size_t        width,
 	                        &straight_copy );
 }
 
+CGImageRef CreateCGImageFromBitMap( const BitMap& bitmap )
+{
+	const short width  = bitmap.bounds.right - bitmap.bounds.left;
+	const short height = bitmap.bounds.bottom - bitmap.bounds.top;
+	
+	return image_from_monochrome_data( width,
+	                                   height,
+	                                   1,  // weight / depth
+	                                   bitmap.rowBytes,
+	                                   bitmap.baseAddr );
+}
+
 CGImageRef CreateCGImageFromPixMap( PixMapHandle pix )
 {
 	const PixMap& pixmap = **pix;

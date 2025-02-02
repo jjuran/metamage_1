@@ -19,10 +19,12 @@
 #endif
 
 
+struct BitMap;
 struct PixMap;
 
 typedef PixMap** PixMapHandle;
 
-CGImageRef CreateCGImageFromPixMap( PixMapHandle pix );
+CGImageRef CreateCGImageFromBitMap( const BitMap& bitmap );
+CGImageRef CreateCGImageFromPixMap( PixMapHandle  pix    );
 
 #endif
