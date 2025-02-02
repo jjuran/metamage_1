@@ -210,9 +210,7 @@ namespace Genie
 		
 		const size_t n_read = n_bytes;
 		
-		const bool locked = ::LockPixels( pix );
-		
-		const char* baseAddr = pix[0]->baseAddr;
+		const char* baseAddr = GetPixBaseAddr( pix );
 		
 		short nth_row = offset / stride;
 		
@@ -245,11 +243,6 @@ namespace Genie
 		if ( n_bytes > 0 )
 		{
 			mempcpy( buffer, &baseAddr[ nth_row * rowBytes ], n_bytes );
-		}
-		
-		if ( locked )
-		{
-			::UnlockPixels( pix );
 		}
 		
 		return n_read;
@@ -294,9 +287,7 @@ namespace Genie
 		
 		const size_t n_written = n_bytes;
 		
-		const bool locked = ::LockPixels( pix );
-		
-		char* baseAddr = pix[0]->baseAddr;
+		char* baseAddr = GetPixBaseAddr( pix );
 		
 		short nth_row = offset / stride;
 		
@@ -329,11 +320,6 @@ namespace Genie
 		if ( n_bytes > 0 )
 		{
 			mempcpy( &baseAddr[ nth_row * rowBytes ], buffer, n_bytes );
-		}
-		
-		if ( locked )
-		{
-			::UnlockPixels( pix );
 		}
 		
 		InvalidateWindowForView( view );
