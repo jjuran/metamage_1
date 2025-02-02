@@ -14,7 +14,6 @@
 
 // mac-qd-utils
 #include "mac_qd/copy_bits.hh"
-#include "mac_qd/is_monochrome.hh"
 
 // CGQuickDraw
 #include "CGQuickDraw.hh"
@@ -36,8 +35,6 @@ namespace Genie
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	
-	using mac::qd::is_monochrome;
 	
 	
 	static
@@ -220,7 +217,7 @@ namespace Genie
 	{
 		PixMapHandle pix = GetGWorldPixMap( gworld );
 		
-		short converting = ! is_monochrome( **pix )  &&  pix[0]->pixelSize <= 8;
+		short converting = false;
 		
 	#ifdef MAC_OS_X_VERSION_10_4
 		
