@@ -342,7 +342,8 @@ namespace Genie
 	}
 	
 	
-	static bool has_pixels( const vfs::node* view )
+	static inline
+	bool has_pixels( const vfs::node* view )
 	{
 		if ( GWorldPtr gworld = gGWorldMap[ view ].gworld.get() )
 		{
@@ -563,7 +564,7 @@ namespace Genie
 		params.gworld = temp;
 	}
 	
-	static
+	static inline
 	PixMapHandle get_pixmap( const GWorld_Parameters& params )
 	{
 		return ::GetGWorldPixMap( params.gworld.get() );
@@ -688,7 +689,7 @@ namespace Genie
 		static void Set( GWorld_Parameters& params, const Rect& bounds );
 	};
 	
-	static
+	static inline
 	bool is_valid_depth( short depth )
 	{
 		if ( depth > 32 )
