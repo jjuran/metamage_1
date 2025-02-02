@@ -12,22 +12,26 @@
 #include <Carbon/Carbon.h>
 #endif
 
-// mac-qd-utils
-#include "mac_qd/copy_bits.hh"
+// missing-macos
+#if ! __LP64__
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QDOFFSCREEN_H
+#include "missing/QDOffscreen.h"
+#endif
+#endif
+#endif
 
 // CGQuickDraw
 #include "CGQuickDraw.hh"
 
 // Nitrogen
 #include "Nitrogen/CGImage.hh"
-#include "Nitrogen/QDOffscreen.hh"
 
 
 namespace Genie
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	
 	
 	static inline
@@ -116,27 +120,6 @@ namespace Genie
 	n::owned< CGImageRef > image_from_gworld( GWorldPtr gworld )
 	{
 		PixMapHandle pix = GetGWorldPixMap( gworld );
-		
-	#ifdef MAC_OS_X_VERSION_10_4
-		
-		const uint32_t pixelFormat = pix[0]->pixelFormat;
-		
-		if ( TARGET_RT_LITTLE_ENDIAN  &&  pixelFormat == k16LE565PixelFormat )
-		{
-			/*
-				This format is not supported by Core Graphics, but it is by
-				QuickDraw.  Create a new GWorld with the same bounds and new
-				depth, and call CopyBits() to transcode the pixels for us.
-			*/
-			
-			n::owned< GWorldPtr > native = N::NewGWorld( 32, pix[0]->bounds );
-			
-			mac::qd::copy_bits( gworld, native );
-			
-			return image_from_pixmap( GetGWorldPixMap( native ) );
-		}
-		
-	#endif
 		
 		return image_from_pixmap( pix );
 	}

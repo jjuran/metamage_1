@@ -510,8 +510,6 @@ namespace Genie
 			Try to handle little-endian image data.  This works for creating a
 			CGImage in 10.4 and later.  It also works with CopyBits() on x86,
 			but not on PPC.
-			
-			TODO:  Manually byte-swap pixels when the OS won't do it.
 		*/
 		
 		if ( params.little_endian )
@@ -522,8 +520,7 @@ namespace Genie
 			
 			if ( weight == 16 )
 			{
-				pix[0]->pixelFormat = params.depth == 15 ? k16LE555PixelFormat
-				                                         : k16LE565PixelFormat;
+				pix[0]->pixelFormat = k16LE555PixelFormat;
 			}
 			else if ( weight == 32 )
 			{
