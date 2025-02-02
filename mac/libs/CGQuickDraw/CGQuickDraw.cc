@@ -91,30 +91,17 @@ void release_data( void* info, const void* data, size_t size )
 	free( const_cast< void* >( data ) );
 }
 
-typedef void (*copier)( void* dst, const void* src, size_t n );
-
 static
-void straight_copy( void* dst, const void* src, size_t n )
+CGDataProviderRef make_data_provider( char* data, size_t size )
 {
-	memcpy( dst, src, n );
-}
-
-static
-CGDataProviderRef make_data_provider( char* data, size_t size, copier cpy )
-{
-	void* buffer = data;
+	void* buffer = malloc( size );
 	
-	if ( cpy )
+	if ( buffer == NULL )
 	{
-		buffer = malloc( size );
-		
-		if ( buffer == NULL )
-		{
-			return NULL;
-		}
-		
-		cpy( buffer, data, size );
+		return NULL;
 	}
+	
+	memcpy( buffer, data, size );
 	
 	CGDataProviderRef result = CGDataProviderCreateWithData( NULL,
 	                                                         buffer,
@@ -170,12 +157,10 @@ CGImageRef image_from_data( size_t           width,
                             CGColorSpaceRef  colorSpace,
                             CGBitmapInfo     bitmapInfo,
                             char*            baseAddr,
-                            copier           cpy,
                             const CGFloat    decode[] = NULL )
 {
 	CGDataProviderRef dataProvider = make_data_provider( baseAddr,
-	                                                     height * stride,
-	                                                     cpy );
+	                                                     height * stride );
 	
 	CGImageRef image = CGImageCreate( width,
 	                                  height,
@@ -211,7 +196,6 @@ CGImageRef image_from_monochrome_data( size_t  width,
 	                        GrayColorSpace(),
 	                        kCGImageAlphaNone,
 	                        baseAddr,
-	                        &straight_copy,
 	                        decode );
 }
 
@@ -248,8 +232,7 @@ CGImageRef image_from_indexed_data( size_t            width,
 	                                     stride,
 	                                     index,
 	                                     kCGImageAlphaNone,
-	                                     baseAddr,
-	                                     &straight_copy );
+	                                     baseAddr );
 	
 	CGColorSpaceRelease( index );
 	
@@ -273,8 +256,7 @@ CGImageRef image_from_RGB_data( size_t        width,
 	                        stride,
 	                        RGBColorSpace(),
 	                        bitmapInfo,
-	                        baseAddr,
-	                        &straight_copy );
+	                        baseAddr );
 }
 
 CGImageRef CreateCGImageFromBitMap( const BitMap& bitmap )
