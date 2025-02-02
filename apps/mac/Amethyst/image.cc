@@ -7,10 +7,15 @@
 
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 
 #ifndef MAC_OS_X_VERSION_10_4
 typedef CGImageAlphaInfo CGBitmapInfo;
+#endif
+
+#ifndef MAC_OS_X_VERSION_10_5
+typedef float CGFloat;
 #endif
 
 
@@ -37,20 +42,6 @@ void release_data( void* info, const void* data, size_t size )
 }
 
 static
-void inverted_copy( void* dst, const void* src, size_t n )
-{
-	uint32_t const* p   = (const uint32_t*) src;
-	uint32_t const* end = (const uint32_t*) src + n / 4;
-	
-	uint32_t* q = (uint32_t*) dst;
-	
-	while ( p < end )
-	{
-		*q++ = ~*p++;
-	}
-}
-
-static
 CGDataProviderRef make_data_provider( char* data, size_t size )
 {
 	void* buffer = malloc( size );
@@ -60,7 +51,7 @@ CGDataProviderRef make_data_provider( char* data, size_t size )
 		return NULL;
 	}
 	
-	inverted_copy( buffer, data, size );
+	memcpy( buffer, data, size );
 	
 	CGDataProviderRef result = CGDataProviderCreateWithData( NULL,
 	                                                         buffer,
@@ -92,6 +83,8 @@ CGImageRef create_image_from_data( size_t           width,
 	
 	if ( dataProvider )
 	{
+		const CGFloat decode[] = { 1.0, 0.0 };
+		
 		CGImageRef image = CGImageCreate( width,
 		                                  height,
 		                                  degree,  // bits per component
@@ -100,7 +93,7 @@ CGImageRef create_image_from_data( size_t           width,
 		                                  colorSpace,
 		                                  bitmapInfo,
 		                                  dataProvider,
-		                                  NULL,
+		                                  decode,
 		                                  false,
 		                                  kCGRenderingIntentDefault );
 		
