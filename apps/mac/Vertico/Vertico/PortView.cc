@@ -11,9 +11,6 @@
 // Standard C++
 #include <vector>
 
-// mac-cg-utils
-#include "mac_cg/images.hh"
-
 // mac-qd-utils
 #include "mac_qd/copy_bits.hh"
 #include "mac_qd/globals/thePort_window.hh"
@@ -22,15 +19,11 @@
 // mac-ui-utils
 #include "mac_ui/windows.hh"
 
+// CGQuickDraw
+#include "CGQuickDraw.hh"
+
 // worldview
 #include "worldview/Render.hh"
-
-
-#ifndef MAC_OS_X_VERSION_10_4
-	
-	typedef CGImageAlphaInfo CGBitmapInfo;
-	
-#endif
 
 
 namespace Vertico
@@ -93,28 +86,6 @@ namespace Vertico
 		memset( base, '\0', height * stride );
 		
 		render( &*models.begin(), &*models.end(), base, width, height, stride );
-	}
-	
-	static
-	CGImageRef CGImage_from_GWorld( CGrafPtr gworld )
-	{
-		using mac::cg::create_xRGB_8888_image;
-		
-		PixMapHandle pix = ::GetPortPixMap( gworld );
-		
-		const Rect  bounds = pix[0]->bounds;
-		::Ptr       base   = pix[0]->baseAddr;
-		unsigned    stride = pix[0]->rowBytes & 0x3fff;
-		
-		const size_t width  = bounds.right - bounds.left;
-		const size_t height = bounds.bottom - bounds.top;
-		
-		CGImageRef image = create_xRGB_8888_image( width,
-		                                           height,
-		                                           stride,
-		                                           base );
-		
-		return image;
 	}
 	
 	static
@@ -186,7 +157,9 @@ namespace Vertico
 	{
 	#if CONFIG_COMPOSITING
 		
-		if ( CGImageRef image = CGImage_from_GWorld( itsGWorld ) )
+		PixMapHandle pix = GetGWorldPixMap( itsGWorld );
+		
+		if ( CGImageRef image = CreateCGImageFromPixMap( pix ) )
 		{
 			if ( itsImage )
 			{
@@ -488,6 +461,14 @@ namespace Vertico
 		}
 		
 		itsGWorld = new_GWorld( itsBounds );
+		
+	#ifdef __LITTLE_ENDIAN__
+		
+		PixMapHandle pix = GetGWorldPixMap( itsGWorld );
+		
+		pix[0]->pixelFormat = k32BGRAPixelFormat;
+		
+	#endif
 		
 		Render();
 	}
