@@ -19,15 +19,8 @@
 #include "CGQuickDraw.hh"
 
 // Nitrogen
-#include "Nitrogen/CGColorSpace.hh"
-#include "Nitrogen/CGDataProvider.hh"
 #include "Nitrogen/CGImage.hh"
 #include "Nitrogen/QDOffscreen.hh"
-
-
-#ifndef MAC_OS_X_VERSION_10_4
-typedef CGImageAlphaInfo CGBitmapInfo;
-#endif
 
 
 namespace Genie
@@ -36,55 +29,6 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
-	
-	static
-	n::owned< CGColorSpaceRef > GrayColorSpace()
-	{
-	#ifdef MAC_OS_X_VERSION_10_4
-		
-		return N::CGColorSpaceCreateWithName( kCGColorSpaceGenericGray );
-		
-	#endif
-		
-		return N::CGColorSpaceCreateDeviceGray();
-	}
-	
-	static
-	void release_data( void* info, const void* data, size_t size )
-	{
-		::operator delete( const_cast< void* >( data ) );
-	}
-	
-	typedef void (*copier)( void* dst, const void* src, size_t n );
-	
-	static
-	void inverted_copy( void* dst, const void* src, size_t n )
-	{
-		uint32_t const* p   = (const uint32_t*) src;
-		uint32_t const* end = (const uint32_t*) src + n / 4;
-		
-		uint32_t* q = (uint32_t*) dst;
-		
-		while ( p < end )
-		{
-			*q++ = ~*p++;
-		}
-	}
-	
-	static
-	n::owned< CGDataProviderRef >
-	//
-	make_data_provider( char* data, size_t size, copier cpy )
-	{
-		void* buffer = ::operator new( size );
-		
-		cpy( buffer, data, size );
-		
-		return N::CGDataProviderCreateWithData( buffer,
-		                                        size,
-		                                        &release_data,
-		                                        &release_data );
-	}
 	
 	static inline
 	bool is_multiple( float dst, size_t src )
@@ -147,58 +91,14 @@ namespace Genie
 	}
 	
 	static
-	n::owned< CGImageRef > image_from_data( size_t           width,
-	                                        size_t           height,
-	                                        size_t           degree,
-	                                        size_t           weight,
-	                                        size_t           stride,
-	                                        CGColorSpaceRef  colorSpace,
-	                                        CGBitmapInfo     bitmapInfo,
-	                                        char*            baseAddr,
-	                                        copier           cpy )
-	{
-		return N::CGImageCreate( width,
-		                         height,
-		                         degree,  // bits per component
-		                         weight,  // bits per pixel
-		                         stride,
-		                         colorSpace,
-		                         bitmapInfo,
-		                         make_data_provider( baseAddr,
-		                                             height * stride,
-		                                             cpy ) );
-	}
-	
-	static
-	n::owned< CGImageRef > image_from_monochrome_data( size_t  width,
-	                                                   size_t  height,
-	                                                   size_t  weight,
-	                                                   size_t  stride,
-	                                                   char*   baseAddr )
-	{
-		return image_from_data( width,
-		                        height,
-		                        weight,  // bits per component
-		                        weight,  // bits per pixel
-		                        stride,
-		                        GrayColorSpace(),
-		                        kCGImageAlphaNone,
-		                        baseAddr,
-		                        &inverted_copy );
-	}
-	
-	static
 	n::owned< CGImageRef > image_from_bitmap( const BitMap& bitmap )
 	{
-		const short width  = bitmap.bounds.right - bitmap.bounds.left;
-		const short height = bitmap.bounds.bottom - bitmap.bounds.top;
-		const short stride = bitmap.rowBytes;
+		if ( CGImageRef image = CreateCGImageFromBitMap( bitmap ) )
+		{
+			return n::owned< CGImageRef >::seize( image );
+		}
 		
-		return image_from_monochrome_data( width,
-		                                   height,
-		                                   1,  // weight
-		                                   stride,
-		                                   bitmap.baseAddr );
+		return n::owned< CGImageRef >();
 	}
 	
 	static
