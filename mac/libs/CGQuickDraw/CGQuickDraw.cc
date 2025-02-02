@@ -221,87 +221,37 @@ CGImageRef image_from_indexed_data( size_t            width,
                                     size_t            weight,
                                     size_t            stride,
                                     const ColorSpec*  colors,
+                                    size_t            count,
                                     char*             baseAddr )
 {
-	CGImageRef result = NULL;
+	Byte* table = (Byte*) alloca( 3 * count );
 	
-	const size_t new_stride = width * 4;
+	Byte* p = table;
 	
-	if ( uint32_t* pixel_data = (uint32_t*) malloc( height * new_stride ) )
+	for ( int i = 0;  i < count;  ++i )
 	{
-		uint32_t* p = pixel_data;
+		const RGBColor& c = colors[ i ].rgb;
 		
-		Ptr row = baseAddr;
-		
-		for ( int i = 0;  i < height;  ++i )
-		{
-			Ptr q = row;
-			
-			for ( int j = 0;  j < width;  j += 8u / weight )
-			{
-				uint8_t pixel = *q++;
-				
-				if ( weight == 2 )
-				{
-					const ColorSpec& color = colors[ pixel >> 6 ];
-					
-					*p++ = color.rgb.red   >> 8 << 16
-					     | color.rgb.green >> 8 <<  8
-					     | color.rgb.blue  >> 8;
-					
-					pixel &= 0x3F;
-				}
-				
-				if ( weight <= 4 )
-				{
-					const ColorSpec& color = colors[ pixel >> 4 ];
-					
-					*p++ = color.rgb.red   >> 8 << 16
-					     | color.rgb.green >> 8 <<  8
-					     | color.rgb.blue  >> 8;
-					
-					pixel &= 0xF;
-				}
-				
-				if ( weight == 2 )
-				{
-					const ColorSpec& color = colors[ pixel >> 2 ];
-					
-					*p++ = color.rgb.red   >> 8 << 16
-					     | color.rgb.green >> 8 <<  8
-					     | color.rgb.blue  >> 8;
-					
-					pixel &= 0x03;
-				}
-				
-				const ColorSpec& color = colors[ pixel ];
-				
-				*p++ = color.rgb.red   >> 8 << 16
-				     | color.rgb.green >> 8 <<  8
-				     | color.rgb.blue  >> 8;
-			}
-			
-			row += stride;
-		}
-		
-		CGBitmapInfo bitmapInfo = kCGImageAlphaNoneSkipFirst;
-		
-	#if TARGET_RT_LITTLE_ENDIAN
-		
-		bitmapInfo |= kCGBitmapByteOrder32Little;
-		
-	#endif
-		
-		result = image_from_data( width,
-		                          height,
-		                          8,   // bits per component
-		                          32,  // bits per pixel
-		                          new_stride,
-		                          RGBColorSpace(),
-		                          bitmapInfo,
-		                          (Ptr) pixel_data,
-		                          NULL );
+		*p++ = c.red   >> 8;
+		*p++ = c.green >> 8;
+		*p++ = c.blue  >> 8;
 	}
+	
+	CGColorSpaceRef rgb = RGBColorSpace();
+	
+	CGColorSpaceRef index = CGColorSpaceCreateIndexed( rgb, count - 1, table );
+	
+	CGImageRef result = image_from_data( width,
+	                                     height,
+	                                     weight,  // bits per component
+	                                     weight,  // bits per pixel
+	                                     stride,
+	                                     index,
+	                                     kCGImageAlphaNone,
+	                                     baseAddr,
+	                                     &straight_copy );
+	
+	CGColorSpaceRelease( index );
 	
 	return result;
 }
@@ -374,6 +324,7 @@ CGImageRef CreateCGImageFromPixMap( PixMapHandle pix )
 		                                pixmap.pixelSize,
 		                                rowBytes,
 		                                ctab[0]->ctTable,
+		                                ctab[0]->ctSize,
 		                                baseAddr );
 	}
 	
