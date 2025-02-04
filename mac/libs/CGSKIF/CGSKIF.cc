@@ -83,6 +83,20 @@ void straight_copy( void* dst, const void* src, size_t n )
 }
 
 static
+void inverted_copy( void* dst, const void* src, size_t n )
+{
+	uint32_t const* p   = (const uint32_t*) src;
+	uint32_t const* end = (const uint32_t*) src + n / 4;
+	
+	uint32_t* q = (uint32_t*) dst;
+	
+	while ( p < end )
+	{
+		*q++ = ~*p++;
+	}
+}
+
+static
 void converting_LE_565_to_555_copy( void* dst, const void* src, size_t n )
 {
 	uint16_t const* p   = (const uint16_t*) src;
@@ -235,6 +249,22 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	                                                             : NULL;
 	
 	copier cpy = straight_copy;
+	
+#if TARGET_CPU_ARM64
+	
+	if ( decode  &&  (weight == 2  ||  weight == 4) )
+	{
+		/*
+			Using a decode array with 2-bit or 4-bit image data
+			is known to be broken in macOS 14.5 on Apple Silicon.
+		*/
+		
+		decode = NULL;
+		
+		cpy = &inverted_copy;
+	}
+	
+#endif
 	
 	if ( little_endian  &&  weight == 16  &&  is_16bit_565( desc ) )
 	{
