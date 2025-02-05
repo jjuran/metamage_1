@@ -79,9 +79,7 @@ namespace Genie
 	{
 		const short n_rows = bits.bounds.bottom - bits.bounds.top;
 		
-		const short rowBytes = bits.rowBytes & 0x3FFF;
-		
-		return n_rows * rowBytes;
+		return n_rows * bits.rowBytes;
 	}
 	
 	static off_t Bits_GetEOF( const vfs::node* key )
@@ -305,7 +303,7 @@ namespace Genie
 		
 		static short Get( const BitMap& bits )
 		{
-			return bits.rowBytes & 0x3FFF;
+			return bits.rowBytes;
 		}
 	};
 	
