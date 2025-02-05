@@ -64,6 +64,7 @@ namespace Genie
 	{
 		plus::string  bits;
 		
+		UInt32        byte_size;
 		BitMap        bitmap;
 	};
 	
@@ -75,17 +76,9 @@ namespace Genie
 	static
 	const vfs::node* bitmap_data_view_key( vfs::filehandle* that );
 	
-	static inline
-	unsigned BitMap_n_bytes( const BitMap& bits )
-	{
-		const short n_rows = bits.bounds.bottom - bits.bounds.top;
-		
-		return n_rows * bits.rowBytes;
-	}
-	
 	static off_t Bits_GetEOF( const vfs::node* key )
 	{
-		return BitMap_n_bytes( gBitMapMap[ key ].bitmap );
+		return gBitMapMap[ key ].byte_size;
 	}
 	
 	
@@ -135,7 +128,7 @@ namespace Genie
 		
 		BitMap_Parameters& params = gBitMapMap[ view ];
 		
-		const size_t pix_size = BitMap_n_bytes( params.bitmap );
+		const size_t pix_size = params.byte_size;
 		
 		if ( offset >= pix_size )
 		{
@@ -166,7 +159,7 @@ namespace Genie
 			p7::throw_errno( EIO );
 		}
 		
-		const size_t pix_size = BitMap_n_bytes( params.bitmap );
+		const size_t pix_size = params.byte_size;
 		
 		if ( offset + n_bytes > pix_size )
 		{
@@ -280,6 +273,8 @@ namespace Genie
 	{
 		BitMap_Parameters& params = gBitMapMap[ delegate ];
 		
+		params.byte_size = 0;
+		
 		params.bitmap.baseAddr = 0;
 		params.bitmap.rowBytes = 0;
 		
@@ -353,6 +348,8 @@ namespace Genie
 			// Even if we succeed here, it's still a failure mode.
 			p7::throw_errno( ENOMEM );
 		}
+		
+		params.byte_size = new_size;
 		
 		memset( params.bitmap.baseAddr, '\0', new_size );
 		
