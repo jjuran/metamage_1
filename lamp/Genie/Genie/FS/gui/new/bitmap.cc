@@ -75,7 +75,8 @@ namespace Genie
 	static
 	const vfs::node* bitmap_data_view_key( vfs::filehandle* that );
 	
-	static unsigned BitMap_n_bytes( const BitMap& bits )
+	static inline
+	unsigned BitMap_n_bytes( const BitMap& bits )
 	{
 		const short n_rows = bits.bounds.bottom - bits.bounds.top;
 		
