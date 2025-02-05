@@ -307,8 +307,6 @@ namespace Genie
 		{
 			return bits.rowBytes & 0x3FFF;
 		}
-		
-		static void Set( BitMap_Parameters& params, short depth );
 	};
 	
 	struct BitMap_bounds : serialize_Rect
