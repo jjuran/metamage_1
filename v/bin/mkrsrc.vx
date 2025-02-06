@@ -40,10 +40,12 @@ assert dirty_unhex "ffff" == 65535
 
 def add_rsrc (data, name)
 {
-	if name.length != 9 or name[ 0 ] == '.' then
+	if not name.length in 8 .. 9 or name[ 0 ] == '.' then
 	{
 		return ()
 	}
+	
+	name .= " "  # padding in case the type is short
 	
 	let resid = dirty_unhex name[ 0 -> 4 ] mod 2^16
 	let rtype = mb32        name[ 5 -> 9 ]
