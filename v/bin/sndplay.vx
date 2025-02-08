@@ -79,13 +79,19 @@ let triangle = do
 	packed (tooth x"FF" -tooth x"01") => 64,
 }
 
+let env_vox  = do { (let file = getenv "SNDPLAY_VOX" ) and packed load file }
 let env_wave = do { (let file = getenv "SNDPLAY_WAVE") and packed load file }
+
+if env_vox and env_wave then
+{
+	warn "note: SNDPLAY_VOX takes precedence over SNDPLAY_WAVE"
+}
 
 let root = env_wave or normalize triangle
 
 let weights = [5, 2, 0, 1]
 
-let vox = blend harmonics (env_wave or normalize triangle, weights)
+let vox = env_vox or blend harmonics (env_wave or normalize triangle, weights)
 
 def play (score, wave=(vox => 0))
 {
