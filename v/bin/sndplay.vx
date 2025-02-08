@@ -59,6 +59,19 @@ def blend (waves)
 	return packed samples
 }
 
+def harmonics (wave, weights)
+{
+	let n = weights.length
+	
+	return 0 -> n map
+	{
+		let i = v + 1
+		let x = weights[ v ]
+		
+		x and x => mince (wave * i, i),
+	}
+}
+
 let triangle = do
 {
 	let tooth = 1 -> 128 map {byte (2 * v)} per packed
@@ -70,12 +83,11 @@ let env_wave = do { (let file = getenv "SNDPLAY_WAVE") and packed load file }
 
 let root = env_wave or normalize triangle
 
-let root_x2 = mince root    * 2
-let root_x4 = mince root_x2 * 2
+let weights = [5, 2, 0, 1]
 
-let organ = blend [5: root, 2: root_x2, 1: root_x4] => 0
+let vox = blend harmonics (env_wave or normalize triangle, weights)
 
-def play (score, wave=organ)
+def play (score, wave=(vox => 0))
 {
 	sound.four_tone (32767, [ (0: wave) (*) 4 ])
 	
