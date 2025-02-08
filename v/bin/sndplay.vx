@@ -87,9 +87,16 @@ if env_vox and env_wave then
 	warn "note: SNDPLAY_VOX takes precedence over SNDPLAY_WAVE"
 }
 
+let env_harmonics = getenv "SNDPLAY_HARMONICS"
+
+if env_vox and env_harmonics then
+{
+	warn "note: SNDPLAY_VOX takes precedence over SNDPLAY_HARMONICS"
+}
+
 let root = env_wave or normalize triangle
 
-let weights = [5, 2, 0, 1]
+let weights = [(env_harmonics or "5 2 0 1") / ' '] map { int (v or 0) }
 
 let vox = env_vox or blend harmonics (env_wave or normalize triangle, weights)
 
