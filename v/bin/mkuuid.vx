@@ -1,0 +1,17 @@
+#!/usr/bin/env lvx
+#
+# Example:
+#
+#     $ mkuuid.vx com.example.QLPluginExample
+#     986C62D8-07FB-4479-62C2-0C366A8E06BD
+
+let upper = 'A' .. 'Z'
+let lower = 'a' .. 'z'
+
+var x = translated( hex md5 argv[ 1 ], packed lower, packed upper )
+
+# The output of uuidgen invariably has 4 as the 13th digit.
+
+x[ 12 ] = '4'
+
+put "-".join *([0, 8, 12, 16, 20, 32] gap {x[a -> b]})
