@@ -40,7 +40,7 @@ def normalize (wave)
 	let w = wave.key
 	let i = wave.value
 	
-	return w[ i -> 256 ] w[ 0 -> i ] => 0
+	return w[ i -> 256 ] w[ 0 -> i ]
 }
 
 def blend (waves)
@@ -51,12 +51,12 @@ def blend (waves)
 	{
 		let i = v
 		
-		byte ((waves map { v.key * (u8 v.value.key[i] - 128) }
+		byte ((waves map { v.key * (u8 v.value[ i ] - 128) }
 		             per Math.sum)
 		      div weight + 128),
 	}
 	
-	return packed samples => 0
+	return packed samples
 }
 
 let triangle = do
@@ -68,10 +68,10 @@ let triangle = do
 
 let root = normalize triangle
 
-let root_x2 = mince root.key    * 2 => 0
-let root_x4 = mince root_x2.key * 2 => 0
+let root_x2 = mince root    * 2
+let root_x4 = mince root_x2 * 2
 
-let organ = blend [5: root, 2: root_x2, 1: root_x4]
+let organ = blend [5: root, 2: root_x2, 1: root_x4] => 0
 
 def play (score, wave=organ)
 {
