@@ -237,6 +237,11 @@ def ams-get-app (property, args: ...)
 
 def icns (icon)
 {
+	if icon.size == 0 then
+	{
+		return x""
+	}
+	
 	assert icon.size == 256
 	
 	return packed ('icns', x"00000110", 'ICN#', x"00000108", icon)
