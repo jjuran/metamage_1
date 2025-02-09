@@ -18,6 +18,13 @@
 #include <unistd.h>
 #endif
 
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAW_H
+#include "missing/Quickdraw.h"
+#endif
+#endif
+
 // mac-config
 #include "mac_config/apple-events.hh"
 #include "mac_config/desk-accessories.hh"
@@ -44,6 +51,7 @@
 #endif
 
 // OrganConsole
+#include "file_open.hh"
 #include "fourtone.hh"
 #include "keymap.hh"
 #include "rate.hh"
@@ -107,6 +115,8 @@ void menu_item_chosen( long choice )
 					break;
 				
 				case 2:  // Open
+					InitCursor();
+					file_open();
 					break;
 				
 				case 3:  // Close
@@ -192,6 +202,8 @@ int main( int argc, char** argv )
 #endif
 	
 	scoped_EventMask eventMask( everyEvent );
+	
+	open_launched_documents();
 	
 	const bool has_WNE = has_WaitNextEvent();
 	

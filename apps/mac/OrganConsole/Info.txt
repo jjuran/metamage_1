@@ -5,3 +5,12 @@ CFBundlePackageType: 'APPL'
 CFBundleSignature:   '|gan'
 CFBundleGetInfoString: "Copyright 2021-2023 Josh Juran"
 CFBundleShortVersionString: "0.5"
+CFBundleDocumentTypes:
+[
+	[
+		CFBundleTypeName:        "256-entry 8-bit wave table"
+		CFBundleTypeExtensions:  [ "v8r8" ]
+		CFBundleTypeOSTypes:     [ 'V8R8' ]
+		CFBundleTypeRole:        "Viewer"
+	]
+]
