@@ -181,10 +181,10 @@ void fourtone_start( FTRate rate )
 		fill_triangle
 	*/
 	
-	fill_wavetable( 0, organ );
-	fill_wavetable( 1, organ );
-	fill_wavetable( 2, organ );
-	fill_wavetable( 3, organ );
+	fill_wavetable( 0, harmonic_wave );
+	fill_wavetable( 1, harmonic_wave );
+	fill_wavetable( 2, harmonic_wave );
+	fill_wavetable( 3, harmonic_wave );
 	
 	memcpy( fourtone_update, fourtone_buffer, sizeof fourtone_update );
 	

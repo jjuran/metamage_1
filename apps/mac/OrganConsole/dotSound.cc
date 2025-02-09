@@ -40,10 +40,10 @@ void fourtone_assign_wave( int channel, UInt8* normal_wave )
 static
 void initialize()
 {
-	fourtone_assign_wave( 0, organ );
-	fourtone_assign_wave( 1, organ );
-	fourtone_assign_wave( 2, organ );
-	fourtone_assign_wave( 3, organ );
+	fourtone_assign_wave( 0, harmonic_wave );
+	fourtone_assign_wave( 1, harmonic_wave );
+	fourtone_assign_wave( 2, harmonic_wave );
+	fourtone_assign_wave( 3, harmonic_wave );
 }
 
 void fourtone_amend_rate( int channel, FTRate rate )

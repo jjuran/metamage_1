@@ -22,12 +22,12 @@
 typedef signed char  SInt8;
 typedef signed short SInt16;
 
-Byte organ[ 256 ];
+Byte triangle_wave[ 256 ];
+Byte harmonic_wave[ 256 ];
 
-static Byte triangle_wave[ 256 ];
-static Byte triangle_wave_x2[ 256 ];
-static Byte triangle_wave_x3[ 256 ];
-static Byte triangle_wave_x4[ 256 ];
+static Byte temp_wave_x2[ 256 ];
+static Byte temp_wave_x3[ 256 ];
+static Byte temp_wave_x4[ 256 ];
 
 
 static inline
@@ -93,20 +93,24 @@ static
 bool make_waves()
 {
 	fill_triangle( triangle_wave );
+	set_waveform ( triangle_wave );
 	
-	wavecopy_octave( triangle_wave_x2, triangle_wave );
-	wavecopy_octave( triangle_wave_x4, triangle_wave_x2 );
+	return true;
+}
+
+void set_waveform( const Byte* wave )
+{
+	wavecopy_octave( temp_wave_x2, wave );
+	wavecopy_octave( temp_wave_x4, temp_wave_x2 );
 	
-	wavecopy_oct_5th( triangle_wave_x3, triangle_wave );
+	wavecopy_oct_5th( temp_wave_x3, wave );
 	
 	Byte tmp[ 256 ];
 	
-	blend( tmp, triangle_wave_x3, triangle_wave_x4 );
-	blend( tmp, triangle_wave_x2, tmp );
+	blend( tmp, temp_wave_x3, temp_wave_x4 );
+	blend( tmp, temp_wave_x2, tmp );
 	
-	blend( organ, triangle_wave, tmp );
-	
-	return true;
+	blend( harmonic_wave, wave, tmp );
 }
 
 static bool made_waves = make_waves();
