@@ -14,31 +14,13 @@
 namespace vlib
 {
 	
-	class StdInt : public Field
-	{
-		public:
-			StdInt( unsigned          size,
-			        const type_info&  type,
-			        const proc_info&  encode,
-			        const proc_info&  decode );
-	};
-	
-	StdInt::StdInt( unsigned          size,
-	                const type_info&  type,
-	                const proc_info&  encode,
-	                const proc_info&  decode )
-	:
-		Field( size, type, encode, decode )
-	{
-	}
-	
 	#define DEFINE_STDINT_2( n_bits, type )  \
 	Value type##_type()  \
 	{                    \
-		return StdInt( n_bits / 8,            \
-		               type##_vtype,          \
-		               proc_encode_##type,    \
-		               proc_decode_##type );  \
+		return Field( n_bits / 8,            \
+		              type##_vtype,          \
+		              proc_encode_##type,    \
+		              proc_decode_##type );  \
 	}
 	
 	#define DEFINE_STDINT( signedness, n_bits )  \
