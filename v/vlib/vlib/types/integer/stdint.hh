@@ -3,8 +3,8 @@
 	---------
 */
 
-#ifndef VLIB_TYPES_INTEGER_U8_HH
-#define VLIB_TYPES_INTEGER_U8_HH
+#ifndef VLIB_TYPES_INTEGER_STDINT_HH
+#define VLIB_TYPES_INTEGER_STDINT_HH
 
 // vlib
 #include "vlib/value.hh"
