@@ -11,11 +11,9 @@
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/typing.hh"
 #include "vlib/types/string.hh"
-#include "vlib/types/type.hh"
-
-// vx
 #include "vlib/types/struct/struct.hh"
 #include "vlib/types/struct/type.hh"
+#include "vlib/types/type.hh"
 
 
 namespace vlib

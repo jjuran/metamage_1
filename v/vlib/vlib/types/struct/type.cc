@@ -30,10 +30,8 @@
 #include "vlib/types/integer.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/string.hh"
-#include "vlib/types/type.hh"
-
-// vx
 #include "vlib/types/struct/struct.hh"
+#include "vlib/types/type.hh"
 
 
 #define ANONYMOUS_STRUCT  "<anonymous struct>"
