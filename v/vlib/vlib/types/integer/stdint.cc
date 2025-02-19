@@ -53,7 +53,7 @@ namespace vlib
 	{
 	}
 	
-	#define DEFINE_STDINT( type )  \
+	#define DEFINE_STDINT_2( type )  \
 	Value type##_type()  \
 	{                    \
 		return StdInt( type##_vtype,          \
@@ -61,13 +61,16 @@ namespace vlib
 		               proc_decode_##type );  \
 	}
 	
-	DEFINE_STDINT( i8  )
-	DEFINE_STDINT( i16 )
-	DEFINE_STDINT( i32 )
-	DEFINE_STDINT( i64 )
-	DEFINE_STDINT( u8  )
-	DEFINE_STDINT( u16 )
-	DEFINE_STDINT( u32 )
-	DEFINE_STDINT( u64 )
+	#define DEFINE_STDINT( signedness, n_bits )  \
+		DEFINE_STDINT_2( signedness##n_bits )
+	
+	DEFINE_STDINT( i, 8  )
+	DEFINE_STDINT( i, 16 )
+	DEFINE_STDINT( i, 32 )
+	DEFINE_STDINT( i, 64 )
+	DEFINE_STDINT( u, 8  )
+	DEFINE_STDINT( u, 16 )
+	DEFINE_STDINT( u, 32 )
+	DEFINE_STDINT( u, 64 )
 	
 }
