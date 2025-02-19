@@ -39,7 +39,7 @@
 #include "vlib/types/endec/f32.hh"
 #include "vlib/types/endec/f64.hh"
 #include "vlib/types/endec/mb32.hh"
-#include "vlib/types/integer/stdint.hh"
+#include "vlib/types/endec/stdint.hh"
 #include "vlib/types/struct/metatype.hh"
 #include "vlib/types/vector/metatype.hh"
 

@@ -19,7 +19,7 @@
 #endif
 
 // vlib
-#include "vlib/types/integer/stdint.hh"
+#include "vlib/types/endec/stdint.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/struct/type.hh"
 

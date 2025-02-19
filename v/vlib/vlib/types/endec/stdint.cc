@@ -12,9 +12,12 @@
 #include "vlib/proc_info.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/types/endec/stdint.hh"
+#include "vlib/types/field.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/proc.hh"
+#include "vlib/types/stdint.hh"
 #include "vlib/types/type.hh"
 
 
@@ -87,5 +90,26 @@ namespace vlib
 	
 	const proc_info proc_encode_u64 = ENCODE( uint64_t );
 	const proc_info proc_decode_u64 = DECODE( uint64_t );
+	
+	#define DEFINE_STDINT_2( n_bits, type )  \
+	Value type##_type()  \
+	{                    \
+		return Field( n_bits / 8,            \
+		              type##_vtype,          \
+		              proc_encode_##type,    \
+		              proc_decode_##type );  \
+	}
+	
+	#define DEFINE_STDINT( signedness, n_bits )  \
+		DEFINE_STDINT_2( n_bits, signedness##n_bits )
+	
+	DEFINE_STDINT( i, 8  )
+	DEFINE_STDINT( i, 16 )
+	DEFINE_STDINT( i, 32 )
+	DEFINE_STDINT( i, 64 )
+	DEFINE_STDINT( u, 8  )
+	DEFINE_STDINT( u, 16 )
+	DEFINE_STDINT( u, 32 )
+	DEFINE_STDINT( u, 64 )
 	
 }
