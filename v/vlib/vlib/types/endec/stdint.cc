@@ -67,29 +67,29 @@ namespace vlib
 	#define ENCODE( I )  { "encode", &v_encode< I >, &integer, Proc_pure }
 	#define DECODE( I )  { "decode", &v_decode< I >, &packed,  Proc_pure }
 	
-	const proc_info proc_encode_i8 = ENCODE( int8_t );
-	const proc_info proc_decode_i8 = DECODE( int8_t );
+	static const proc_info proc_encode_i8 = ENCODE( int8_t );
+	static const proc_info proc_decode_i8 = DECODE( int8_t );
 	
-	const proc_info proc_encode_i16 = ENCODE( int16_t );
-	const proc_info proc_decode_i16 = DECODE( int16_t );
+	static const proc_info proc_encode_i16 = ENCODE( int16_t );
+	static const proc_info proc_decode_i16 = DECODE( int16_t );
 	
-	const proc_info proc_encode_i32 = ENCODE( int32_t );
-	const proc_info proc_decode_i32 = DECODE( int32_t );
+	static const proc_info proc_encode_i32 = ENCODE( int32_t );
+	static const proc_info proc_decode_i32 = DECODE( int32_t );
 	
-	const proc_info proc_encode_i64 = ENCODE( int64_t );
-	const proc_info proc_decode_i64 = DECODE( int64_t );
+	static const proc_info proc_encode_i64 = ENCODE( int64_t );
+	static const proc_info proc_decode_i64 = DECODE( int64_t );
 	
-	const proc_info proc_encode_u8 = ENCODE( uint8_t );
-	const proc_info proc_decode_u8 = DECODE( uint8_t );
+	static const proc_info proc_encode_u8 = ENCODE( uint8_t );
+	static const proc_info proc_decode_u8 = DECODE( uint8_t );
 	
-	const proc_info proc_encode_u16 = ENCODE( uint16_t );
-	const proc_info proc_decode_u16 = DECODE( uint16_t );
+	static const proc_info proc_encode_u16 = ENCODE( uint16_t );
+	static const proc_info proc_decode_u16 = DECODE( uint16_t );
 	
-	const proc_info proc_encode_u32 = ENCODE( uint32_t );
-	const proc_info proc_decode_u32 = DECODE( uint32_t );
+	static const proc_info proc_encode_u32 = ENCODE( uint32_t );
+	static const proc_info proc_decode_u32 = DECODE( uint32_t );
 	
-	const proc_info proc_encode_u64 = ENCODE( uint64_t );
-	const proc_info proc_decode_u64 = DECODE( uint64_t );
+	static const proc_info proc_encode_u64 = ENCODE( uint64_t );
+	static const proc_info proc_decode_u64 = DECODE( uint64_t );
 	
 	#define DEFINE_STDINT_2( n_bits, type )  \
 	Value type##_type()  \
