@@ -16,6 +16,7 @@
 
 // vlib
 #include "vlib/array-utils.hh"
+#include "vlib/block-utils.hh"
 #include "vlib/equal.hh"
 #include "vlib/function-utils.hh"
 #include "vlib/string-utils.hh"
@@ -41,30 +42,6 @@
 
 namespace vlib
 {
-
-static
-const Value& unembrace( const Value& field_defs )
-{
-	if ( Expr* expr = field_defs.expr() )
-	{
-		if ( (op_type) (uint8_t) expr->op == Op_block )
-		{
-			if ( expr->right.is_evaluated() )
-			{
-				return expr->right;
-			}
-			
-			expr = expr->right.expr();
-			
-			if ( expr  &&  (op_type) (uint8_t) expr->op == Op_scope )
-			{
-				return expr->right;
-			}
-		}
-	}
-	
-	return field_defs;
-}
 
 Struct_Type::Struct_Type( const Value& fields, const Value& name )
 :
