@@ -119,10 +119,24 @@ Value Float::coerce( const Value& v )
 
 const size_t float_output_length = 320;
 
-static inline
+static
 void inscribe_float( char* buffer, size_t size, float_type x )
 {
 	snprintf( buffer, size, "%f", x );
+	
+	char* p = buffer;
+	
+	if ( *p++ == '-'  &&  *p == 'n' )
+	{
+		char* q = buffer;
+		
+		// Normalize -nan to nan.
+		
+		*q++ = *p++;  // 'n'
+		*q++ = *p++;  // 'a'
+		*q++ = *p++;  // 'n'
+		*q++ = *p++;  // '\0'
+	}
 }
 
 static
