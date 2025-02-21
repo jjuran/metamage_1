@@ -126,16 +126,27 @@ void inscribe_float( char* buffer, size_t size, float_type x )
 	
 	char* p = buffer;
 	
-	if ( *p++ == '-'  &&  *p == 'n' )
+	if ( *p == '-' )
+	{
+		++p;
+	}
+	
+	if ( *p == 'i' )
+	{
+		// Normalize inf and -inf to Inf and -Inf.
+		
+		*p = 'I';
+	}
+	else if ( *p == 'n' )
 	{
 		char* q = buffer;
 		
-		// Normalize -nan to nan.
+		// Normalize nan and -nan to NaN.
 		
-		*q++ = *p++;  // 'n'
-		*q++ = *p++;  // 'a'
-		*q++ = *p++;  // 'n'
-		*q++ = *p++;  // '\0'
+		*q++ = 'N';
+		*q++ = 'a';
+		*q++ = 'N';
+		*q++ = '\0';
 	}
 }
 

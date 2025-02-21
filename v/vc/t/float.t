@@ -1,7 +1,7 @@
 #!/usr/bin/env jtest
 
 $ vc '(1.0f/0, -1.0f/0, 0.0f/0)'
-1 >= '(inf, -inf, nan)'
+1 >= '(Inf, -Inf, NaN)'
 
 $ vc '0.0f == -0.0f'
 1 >= true
