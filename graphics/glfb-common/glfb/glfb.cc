@@ -194,6 +194,42 @@ void transcode_8x_1bpp_to_8bpp( const Byte* src, Byte* dst, int n )
 }
 
 static inline
+void transcode_4x_2bpp_to_8bpp( const Byte* src, Byte* dst, int n )
+{
+	const Byte ramp[] = { 0xFF, 0xAA, 0x55, 0x00 };
+	
+	while ( n-- > 0 )
+	{
+		Byte octet = *src++;
+		
+		for ( int i = 0;  i < 4;  ++i )
+		{
+			octet = octet << 2 | octet >> 6;  // rotate left 2 bits
+			
+			*dst++ = ramp[ octet & 0x3 ];
+		}
+	}
+}
+
+static inline
+void transcode_2x_4bpp_to_8bpp( const Byte* src, Byte* dst, int n )
+{
+	const Byte ramp[] =
+	{
+		0xFF, 0xEE, 0xDD, 0xCC, 0xBB, 0xAA, 0x99, 0x88,
+		0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x00,
+	};
+	
+	while ( n-- > 0 )
+	{
+		Byte octet = *src++;
+		
+		*dst++ = ramp[ octet >>  4 ];
+		*dst++ = ramp[ octet & 0xF ];
+	}
+}
+
+static inline
 void transcode_inverted( const Byte* src, Byte* dst, int n )
 {
 	while ( n-- > 0 )
@@ -212,6 +248,14 @@ void set_screen_image( const void* src_addr )
 	{
 		case 1:
 			transcode_8x_1bpp_to_8bpp( src, screen_texture_data, n_octets );
+			break;
+		
+		case 2:
+			transcode_4x_2bpp_to_8bpp( src, screen_texture_data, n_octets );
+			break;
+		
+		case 4:
+			transcode_2x_4bpp_to_8bpp( src, screen_texture_data, n_octets );
 			break;
 		
 		case 8:
