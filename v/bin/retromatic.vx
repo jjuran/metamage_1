@@ -247,10 +247,24 @@ def icns (icon)
 	return packed ('icns', x"00000110", 'ICN#', x"00000108", icon)
 }
 
-let creator = mb32 ams-get-app "bndl-owner"
-let icon    = icns ams-get-app ("bndl-icon", "APPL")
+let creator = ???
+let icon    = ???
 
-rewrite Resources "/APPL.icns" <== icon
+try
+{
+	creator = mb32 ams-get-app "bndl-owner"
+	icon    = icns ams-get-app ("bndl-icon", "APPL")
+}
+catch
+{
+	creator = '????'
+	icon    = null
+}
+
+if icon then
+{
+	rewrite Resources "/APPL.icns" <== icon
+}
 
 let resfiles = [ "AMS Resources", "System" ]
 let respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
@@ -344,7 +358,7 @@ let info =
 [
 	CFBundleExecutable:  frontend,
 	CFBundleName:        name,
-	CFBundleIconFile:    "APPL",
+	(CFBundleIconFile:   "APPL") (*) bool icon,
 	CFBundlePackageType: 'APPL',
 	CFBundleSignature:   creator,
 	CFBundleVersion:     "for Advanced Mac Substitute",
