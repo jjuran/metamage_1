@@ -24,6 +24,7 @@ var disks = []
 var live_modal = false
 
 var xv = null
+var bpp = 1
 var cpu = null
 var mem = null
 var modem = null
@@ -48,6 +49,10 @@ while args do
 			arg = if args then { *args++ }
 			
 			break
+		}
+		else if arg == "--bpp" then
+		{
+			bpp = int *args++
 		}
 		else if arg == "--cpu" then
 		{
@@ -508,7 +513,7 @@ let xv_opt = "--xv=" xv (*) bool xv
 
 run [ "mkfifo", update ]
 
-run [ "skif make -fg " screen_res "*1 -c2 -m paint -R" / ' ', screen ]
+run [ "skif make -fg " screen_res "*" bpp " -c2 -m paint -R" / ' ', screen ]
 
 if has_cursor then
 {
