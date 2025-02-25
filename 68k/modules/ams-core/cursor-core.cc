@@ -41,6 +41,7 @@ Rect  CrsrRect  : 0x083C;
 Cursor TheCrsr  : 0x0844;
 Ptr   CrsrSave  : 0x088C;
 short CrsrRow   : 0x08AC;
+short DepthLog2 : 0x08AE;
 char  CrsrVis   : 0x08CC;
 char  CrsrBusy  : 0x08CD;
 short CrsrState : 0x08D0;
@@ -57,13 +58,13 @@ static short CrsrSave_rowBytes = 4;
 static inline
 unsigned bytes_from_px( UInt16 px )
 {
-	return px >> 3;
+	return px >> (3 - DepthLog2);
 }
 
 static inline
 UInt16 equal_or_lesser_even_byte_boundary( UInt16 px )
 {
-	const UInt16 mask = 0xF;
+	const UInt16 mask = 0xF >> DepthLog2;
 	
 	return px & ~mask;
 }
