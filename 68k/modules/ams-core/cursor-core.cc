@@ -34,13 +34,13 @@ enum
 
 typedef UInt32 Buffer[ 16 ];
 
-short ScreenRow : 0x0106;
 Ptr   ScrnBase  : 0x0824;
 Point Mouse     : 0x0830;
 Rect  CrsrPin   : 0x0834;
 Rect  CrsrRect  : 0x083C;
 Cursor TheCrsr  : 0x0844;
 Ptr   CrsrSave  : 0x088C;
+short CrsrRow   : 0x08AC;
 char  CrsrVis   : 0x08CC;
 char  CrsrBusy  : 0x08CD;
 short CrsrState : 0x08D0;
@@ -167,7 +167,7 @@ void set_Crsr_vars( short h, short v )
 	CrsrRect.bottom = bottom;
 	CrsrRect.right  = right;
 	
-	CrsrAddr = ScrnBase + top * ScreenRow + bytes_from_px( left );
+	CrsrAddr = ScrnBase + top * CrsrRow + bytes_from_px( left );
 	
 	return;
 	
@@ -181,7 +181,7 @@ void save_bits_under_cursor( short n )
 {
 	const short rowBytes = CrsrSave_rowBytes;
 	
-	blit_bytes( CrsrAddr, ScreenRow, CrsrSave, rowBytes, rowBytes, n );
+	blit_bytes( CrsrAddr, CrsrRow, CrsrSave, rowBytes, rowBytes, n );
 }
 
 static inline
@@ -189,13 +189,13 @@ void restore_bits_under_cursor( short n )
 {
 	const short rowBytes = CrsrSave_rowBytes;
 	
-	blit_bytes( CrsrSave, rowBytes, CrsrAddr, ScreenRow, rowBytes, n );
+	blit_bytes( CrsrSave, rowBytes, CrsrAddr, CrsrRow, rowBytes, n );
 }
 
 static inline
 void plot_cursor( Ptr addr, short shift, short h_trim, short v_skip, short n )
 {
-	plot_cursor( &TheCrsr, addr, shift, h_trim, v_skip, n, ScreenRow );
+	plot_cursor( &TheCrsr, addr, shift, h_trim, v_skip, n, CrsrRow );
 }
 
 static
