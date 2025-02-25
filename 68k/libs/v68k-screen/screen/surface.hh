@@ -15,6 +15,7 @@ struct surface_shape
 	unsigned width;
 	unsigned height;
 	unsigned stride;
+	unsigned weight;
 };
 
 extern surface_shape the_surface_shape;

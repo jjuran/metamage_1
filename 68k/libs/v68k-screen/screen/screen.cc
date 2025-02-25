@@ -122,6 +122,7 @@ int set_screen_backing_store_file( const char* path )
 	the_surface_shape.width  = raster.meta->desc.width;
 	the_surface_shape.height = raster.meta->desc.height;
 	the_surface_shape.stride = raster.meta->desc.stride;
+	the_surface_shape.weight = raster.meta->desc.weight;
 	
 	the_screen_size = raster.meta->desc.height
 	                * raster.meta->desc.stride;
