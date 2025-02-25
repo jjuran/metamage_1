@@ -41,9 +41,9 @@
 #pragma exceptions off
 
 
-UInt16 ScreenRow : 0x0106;
 Byte SdVolume    : 0x0260;
 Ptr ScrnBase     : 0x0824;
+UInt16 CrsrRow   : 0x08AC;
 GrafPtr WMgrPort : 0x09DE;
 short TheMenu    : 0x0A26;
 MBarHookProcPtr MBarHook : 0x0A2C;
@@ -685,12 +685,12 @@ void save_bits( BitMap& savedBits )
 	
 	Ptr dst = *SavedHandle;
 	Ptr src = ScrnBase
-	        + bounds.top  * ScreenRow
+	        + bounds.top  * CrsrRow
 	        + bounds.left / 8u;
 	
 	savedBits.baseAddr = src;
 	
-	blit_bytes( src, ScreenRow, dst, rowBytes, rowBytes, height );
+	blit_bytes( src, CrsrRow, dst, rowBytes, rowBytes, height );
 }
 
 static
@@ -705,7 +705,7 @@ void restore_bits( BitMap& savedBits )
 	Ptr src = *SavedHandle;
 	Ptr dst = savedBits.baseAddr;
 	
-	blit_bytes( src, rowBytes, dst, ScreenRow, rowBytes, height );
+	blit_bytes( src, rowBytes, dst, CrsrRow, rowBytes, height );
 }
 
 static
