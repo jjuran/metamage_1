@@ -35,7 +35,8 @@ int place_buffers( const processor_state& emu, uint8_t* mem, uint32_t mem_top )
 		SoundBase = 0x0266,
 		ScrnBase  = 0x0824,
 		CrsrPin   = 0x0834,
-		DeepRow   = 0x08AC,
+		CrsrRow   = 0x08AC,
+		DepthLog2 = 0x08AE,
 	};
 	
 	if ( mem_top )
@@ -58,14 +59,18 @@ int place_buffers( const processor_state& emu, uint8_t* mem, uint32_t mem_top )
 		memset( page_2_virtual_buffer, 0xFF, 64 * 342 );
 	}
 	
-	/*
-		TODO:  To support deeper screen bit depths,
-		we'll need a way to set DeepRow larger than
-		ScreenRow and set DepthLog2 to non-zero.
-	*/
+	const uint32_t pixel_weight = the_surface_shape.weight;
+	
+	const uint32_t log2_depth = pixel_weight ==  1 ? 0
+	                          : pixel_weight ==  2 ? 1
+	                          : pixel_weight ==  4 ? 2
+	                          : pixel_weight ==  8 ? 3
+	                          : pixel_weight == 16 ? 4
+	                          : pixel_weight == 32 ? 5
+	                          :                      (uint32_t) -1;
 	
 	const uint32_t deep_row   = the_surface_shape.stride;
-	const uint32_t screen_row = the_surface_shape.stride;
+	const uint32_t screen_row = the_surface_shape.stride >> log2_depth;
 	const uint32_t screen_res = the_surface_shape.width
 	                          | the_surface_shape.height << 16;
 	
@@ -73,7 +78,8 @@ int place_buffers( const processor_state& emu, uint8_t* mem, uint32_t mem_top )
 	emu.put_long( SoundBase,   main_sound_addr,  user_data_space );
 	emu.put_long( ScrnBase,    main_screen_addr, user_data_space );
 	emu.put_long( CrsrPin + 4, screen_res,       user_data_space );
-	emu.put_word( DeepRow,     deep_row,         user_data_space );
+	emu.put_word( CrsrRow,     deep_row,         user_data_space );
+	emu.put_word( DepthLog2,   log2_depth,       user_data_space );
 	
 	return 0;
 }
