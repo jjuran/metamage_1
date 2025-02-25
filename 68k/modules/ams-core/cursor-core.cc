@@ -53,6 +53,20 @@ static Buffer bits_under_cursor;
 
 
 static inline
+unsigned bytes_from_px( UInt16 px )
+{
+	return px >> 3;
+}
+
+static inline
+UInt16 equal_or_lesser_even_byte_boundary( UInt16 px )
+{
+	const UInt16 mask = 0xF;
+	
+	return px & ~mask;
+}
+
+static inline
 asm char lock_cursor()
 {
 	TAS.B    CrsrBusy
@@ -122,7 +136,7 @@ void set_Crsr_vars( short h, short v )
 		bottom = CrsrPin.bottom;
 	}
 	
-	short left  = h & ~0xF;
+	short left  = equal_or_lesser_even_byte_boundary( h );
 	short right = left + 32;
 	
 	if ( left < 0 )
@@ -151,7 +165,7 @@ void set_Crsr_vars( short h, short v )
 	CrsrRect.bottom = bottom;
 	CrsrRect.right  = right;
 	
-	CrsrAddr = ScrnBase + top * ScreenRow + (left >> 3);
+	CrsrAddr = ScrnBase + top * ScreenRow + bytes_from_px( left );
 	
 	return;
 	
