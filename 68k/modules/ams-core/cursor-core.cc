@@ -51,6 +51,8 @@ static bool hardware_cursor;
 static Ptr    CrsrAddr;
 static Buffer bits_under_cursor;
 
+static short CrsrSave_rowBytes = 4;
+
 
 static inline
 unsigned bytes_from_px( UInt16 px )
@@ -177,7 +179,7 @@ empty:
 static inline
 void save_bits_under_cursor( short n )
 {
-	const short rowBytes = 4;
+	const short rowBytes = CrsrSave_rowBytes;
 	
 	blit_bytes( CrsrAddr, ScreenRow, CrsrSave, rowBytes, rowBytes, n );
 }
@@ -185,7 +187,7 @@ void save_bits_under_cursor( short n )
 static inline
 void restore_bits_under_cursor( short n )
 {
-	const short rowBytes = 4;
+	const short rowBytes = CrsrSave_rowBytes;
 	
 	blit_bytes( CrsrSave, rowBytes, CrsrAddr, ScreenRow, rowBytes, n );
 }
