@@ -169,6 +169,8 @@ void set_dimensions( int width, int height, int depth )
 	
 #endif
 	
+	size_t buffer_size = tex_width * tex_height;
+	
 	glTexImage2D( texture_target,
 	              0,
 	              GL_LUMINANCE,
@@ -181,7 +183,7 @@ void set_dimensions( int width, int height, int depth )
 	
 	free( screen_texture_data );
 	
-	screen_texture_data = (Byte*) malloc( tex_width * tex_height );
+	screen_texture_data = (Byte*) malloc( buffer_size );
 }
 
 static inline
