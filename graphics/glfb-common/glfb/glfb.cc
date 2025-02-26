@@ -255,6 +255,32 @@ void transcode_inverted( const Byte* src, Byte* dst, int n )
 }
 
 static
+void transcode_argb_1555( const Byte* src, Byte* dst, int n )
+{
+	while ( (n -= 2) > 0 )
+	{
+		Byte high = *src++;
+		Byte low  = *src++;
+		
+		// ARRRRRGG GGGBBBBB
+		
+		Byte a = (int8_t) high >> 7;
+		Byte r = (high << 1) & 0xf8;
+		Byte g = (high << 6) | ((low >> 2) & 0xf8);
+		Byte b = (low  << 3) & 0xf8;
+		
+		r |= r >> 5;
+		g |= g >> 5;
+		b |= b >> 5;
+		
+		*dst++ = r;
+		*dst++ = g;
+		*dst++ = b;
+		*dst++ = a;
+	}
+}
+
+static
 void transcode_argb_8888( const Byte* src, Byte* dst, int n )
 {
 	while ( (n -= 4) > 0 )
@@ -293,6 +319,10 @@ void set_screen_image( const void* src_addr )
 		
 		case 8:
 			transcode_inverted( src, screen_texture_data, n_octets );
+			break;
+		
+		case 16:
+			transcode_argb_1555( src, screen_texture_data, n_octets );
 			break;
 		
 		case 32:
