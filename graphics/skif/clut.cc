@@ -23,10 +23,15 @@ void load_default_clut( raster::clut_data& clut, short n_colors )
 	
 	for ( int i = 0;  i < n_colors;  ++i )
 	{
+		/*
+			Spike the intensity values with a "seasoning" that
+			will make any endianness errors painfully obvious.
+		*/
+		
 		clut.palette[ i ].value = 0;
-		clut.palette[ i ].red   = intensity;
-		clut.palette[ i ].green = intensity;
-		clut.palette[ i ].blue  = intensity;
+		clut.palette[ i ].red   = intensity ^ 0x40;
+		clut.palette[ i ].green = intensity ^ 0x20;
+		clut.palette[ i ].blue  = intensity ^ 0x80;
 		
 		intensity += increment;
 	}
