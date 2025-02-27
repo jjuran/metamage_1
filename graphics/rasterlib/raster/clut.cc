@@ -24,4 +24,16 @@ bool is_valid_clut( const raster_note* note )
 	return clut.max > 0  &&  note->size >= sizeof_clut( clut );
 }
 
+const clut_data* find_clut( const raster_note* note )
+{
+	note = find( note, Note_clut );
+	
+	if ( note  &&  is_valid_clut( note ) )
+	{
+		return (const clut_data*) data( note );
+	}
+	
+	return NULL;
+}
+
 }
