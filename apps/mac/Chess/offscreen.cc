@@ -131,7 +131,7 @@ void animate_icon( GrafPtr port, BitMap& icon_bits, const Rect& rect, short mode
 {
 	using mac::qd::copy_bits;
 	
-#ifdef __APPLE__
+#if ! CONFIG_PORTBITS
 	
 	const BitMap& work_bits = *GetPortBitMapForCopyBits( port );
 	
@@ -151,7 +151,7 @@ void animate_icon( GrafPtr port, BitMap& icon_bits, const Rect& rect, short mode
 	
 	copy_bits( icon_bits, work_bits, icon_bits.bounds, rect, srcXor );
 	
-#ifndef __APPLE__
+#if CONFIG_PORTBITS
 	
 	copy_bits( work_bits, port );
 	
