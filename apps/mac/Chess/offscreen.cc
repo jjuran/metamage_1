@@ -131,9 +131,40 @@ void animate_icon( GrafPtr port, BitMap& icon_bits, const Rect& rect, short mode
 {
 	using mac::qd::copy_bits;
 	
+	/*
+		Animate a single frame of an icon being dragged around.
+		
+		We already have the game board with all units (including
+		the dragged unit rendered as a silhouette) in offscreen_port.
+		
+		Here's the agenda:
+		
+		(a) copy the game board to the work area
+		(b) Or/Bic the icon mask into the work area, for black/white
+		(c) Xor the icon face into the work area
+		
+		If we're not built for the Carbon API, then we need to
+		(d) copy the work area into the window.  If we are Carbon,
+		then the window *is* the work area, and we rely on Aqua's
+		default behavior of double-buffering its windows.
+		
+		NOTE:  Carbon builds running in classic Mac OS aren't double-
+		buffered, which makes animation a flickery mess.  In this case,
+		"live" animation is disabled and we merely draw an outline.
+	*/
+	
 #if ! CONFIG_PORTBITS
 	
 	const BitMap& work_bits = *GetPortBitMapForCopyBits( port );
+	
+	/*
+		It looks like these two copy_bits() calls could be coalesced
+		into a single `copy_bits( offscreen_port, work_bits )` call,
+		since work_bits is the port's bitmap -- but that isn't true
+		anymore in Carbon; the "bitmap" is just an opaque token to
+		pass to CopyBits(), and it's invalid to peek at the contents,
+		including the bounds (which copy_bits() does internally).
+	*/
 	
 	copy_bits( offscreen_port, port );
 	
