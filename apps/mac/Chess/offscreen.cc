@@ -158,8 +158,8 @@ void animate_icon( GrafPtr port, BitMap& icon_bits, const Rect& rect, short mode
 	const BitMap& work_bits = *GetPortBitMapForCopyBits( port );
 	
 	/*
-		It looks like these two copy_bits() calls could be coalesced
-		into a single `copy_bits( offscreen_port, work_bits )` call,
+		It looks like this call to copy_bits() could have instead
+		been written as `copy_bits( offscreen_port, work_bits )`,
 		since work_bits is the port's bitmap -- but that isn't true
 		anymore in Carbon; the "bitmap" is just an opaque token to
 		pass to CopyBits(), and it's invalid to peek at the contents,
@@ -170,7 +170,11 @@ void animate_icon( GrafPtr port, BitMap& icon_bits, const Rect& rect, short mode
 	
 #else
 	
-	copy_bits( offscreen_port, work_bits );
+	SetPort( offscreen_port );
+	
+	offscreen_port->portBits.baseAddr = work_bits.baseAddr;
+	
+	copy_bits( back_bits, work_bits );
 	
 #endif
 	
@@ -183,6 +187,10 @@ void animate_icon( GrafPtr port, BitMap& icon_bits, const Rect& rect, short mode
 	copy_bits( icon_bits, work_bits, icon_bits.bounds, rect, srcXor );
 	
 #if CONFIG_PORTBITS
+	
+	offscreen_port->portBits.baseAddr = back_bits.baseAddr;
+	
+	SetPort( port );
 	
 	copy_bits( work_bits, port );
 	
