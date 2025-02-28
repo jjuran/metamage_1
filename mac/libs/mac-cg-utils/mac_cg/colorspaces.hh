@@ -16,6 +16,7 @@ namespace mac {
 namespace cg  {
 
 CGColorSpaceRef generic_or_device_gray();
+CGColorSpaceRef generic_or_device_RGB();
 
 CGColorSpaceRef create_inverted_grayscale( CGColorSpaceRef gray, int count );
 

@@ -40,6 +40,42 @@ create_simple_image( size_t           width,
                      CGColorSpaceRef  colorSpace,
                      void*            baseAddr );
 
+inline
+CGImageRef
+create_xRGB_1555_BE_image( size_t           width,
+                           size_t           height,
+                           size_t           stride,
+                           CGColorSpaceRef  colorSpace,
+                           void*            baseAddr )
+{
+	return create_image_from_data( width,
+	                               height,
+	                               5,   // bits per component
+	                               16,  // bits per pixel
+	                               stride,
+	                               colorSpace,
+	                               kCGImageAlphaNoneSkipFirst,
+	                               baseAddr );
+}
+
+inline
+CGImageRef
+create_xRGB_8888_BE_image( size_t           width,
+                           size_t           height,
+                           size_t           stride,
+                           CGColorSpaceRef  colorSpace,
+                           void*            baseAddr )
+{
+	return create_image_from_data( width,
+	                               height,
+	                               8,   // bits per component
+	                               32,  // bits per pixel
+	                               stride,
+	                               colorSpace,
+	                               kCGImageAlphaNoneSkipFirst,
+	                               baseAddr );
+}
+
 }
 }
 

@@ -16,8 +16,10 @@
 
 #if CONFIG_GENERIC_COLORSPACES
 #define CREATE_GRAY_CS() CGColorSpaceCreateWithName( kCGColorSpaceGenericGray )
+#define CREATE_RGB_CS()  CGColorSpaceCreateWithName( kCGColorSpaceGenericRGB  )
 #else
 #define CREATE_GRAY_CS() CGColorSpaceCreateDeviceGray()
+#define CREATE_RGB_CS()  CGColorSpaceCreateDeviceRGB()
 #endif
 
 
@@ -27,6 +29,13 @@ namespace cg  {
 CGColorSpaceRef generic_or_device_gray()
 {
 	static CGColorSpaceRef colorSpace = CREATE_GRAY_CS();
+	
+	return colorSpace;
+}
+
+CGColorSpaceRef generic_or_device_RGB()
+{
+	static CGColorSpaceRef colorSpace = CREATE_RGB_CS();
 	
 	return colorSpace;
 }
