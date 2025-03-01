@@ -22,6 +22,14 @@ namespace raster
 	
 	const sync_relay* find_sync( const raster_note* note );
 	
+	inline
+	sync_relay* find_sync( raster_note* note )
+	{
+		const raster_note* const_note = note;
+		
+		return const_cast< sync_relay* >( find_sync( const_note ) );
+	}
+	
 }
 
 #endif
