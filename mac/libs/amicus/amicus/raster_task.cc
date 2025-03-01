@@ -33,6 +33,9 @@
 namespace amicus
 {
 
+using raster::raster_metadata;
+using raster::sync_relay;
+
 static bool monitoring;
 
 static poseven::thread raster_thread;
@@ -90,7 +93,9 @@ void* raster_thread_entry( void* arg )
 {
 	OSStatus err;
 	
-	const raster::sync_relay* sync = (const raster::sync_relay*) arg;
+	const raster_metadata* meta = (const raster_metadata*) arg;
+	
+	const sync_relay* sync = find_sync( &meta->note );
 	
 	raster_event_loop( sync );
 	
@@ -113,11 +118,9 @@ raster_monitor::raster_monitor( const raster::raster_load& load )
 {
 	GetMainEventQueue();  // initialization is thread-unsafe before 10.4
 	
-	const raster::sync_relay* sync = find_sync( &load.meta->note );
-	
 	monitoring = true;
 	
-	raster_thread.create( &raster_thread_entry, (void*) sync );
+	raster_thread.create( &raster_thread_entry, (void*) load.meta );
 }
 
 raster_monitor::~raster_monitor()
