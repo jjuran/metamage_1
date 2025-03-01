@@ -122,11 +122,31 @@ void remake_window( const raster_load& load )
 }
 
 static
+void set_palette( const raster_load& load )
+{
+	using namespace raster;
+	
+	if ( const clut_data* clut = find_clut( &load.meta->note ) )
+	{
+		glfb::set_palette( &clut->palette[ 0 ].value, clut->max + 1 );
+	}
+}
+
+static
 pascal OSStatus AmicusUpdate( EventHandlerCallRef  handler,
                               EventRef             event,
                               void*                userData )
 {
 	EventKind kind = GetEventKind( event );
+	
+	if ( kind == kEventAmicusNewPalette )
+	{
+		const raster_load& load = *(raster_load*) userData;
+		
+		set_palette( load );
+		
+		kind = kEventAmicusScreenBits;  // force redraw with new palette
+	}
 	
 	if ( kind == kEventAmicusScreenBits )
 	{
@@ -171,6 +191,7 @@ static EventTypeSpec AmicusUpdate_event[] =
 	{ kEventClassAmicus, kEventAmicusUpdate },
 	{ kEventClassAmicus, kEventAmicusScreenBits },
 	{ kEventClassAmicus, kEventAmicusCursorBits },
+	{ kEventClassAmicus, kEventAmicusNewPalette },
 };
 
 static
@@ -481,17 +502,6 @@ static EventTypeSpec Modifiers_event[] =
 {
 	{ kEventClassKeyboard, kEventRawKeyModifiersChanged },
 };
-
-static
-void set_palette( const raster_load& load )
-{
-	using namespace raster;
-	
-	if ( const clut_data* clut = find_clut( &load.meta->note ) )
-	{
-		glfb::set_palette( &clut->palette[ 0 ].value, clut->max + 1 );
-	}
-}
 
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
