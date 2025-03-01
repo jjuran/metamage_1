@@ -24,6 +24,7 @@ enum
 	kEventAmicusUpdate = 1,
 	kEventAmicusScreenBits = 2,
 	kEventAmicusCursorBits = 3,
+	kEventAmicusNewPalette = 4,
 };
 
 class raster_monitor
