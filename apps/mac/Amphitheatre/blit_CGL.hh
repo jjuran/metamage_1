@@ -24,6 +24,8 @@ class CGL_blitter
 		explicit CGL_blitter( CGDirectDisplayID id );
 		~CGL_blitter();
 		
+		static void set_palette( const unsigned short* colors, int n );
+		
 		static void prep( int stride, int width, int height, int depth );
 		
 		static void area( CGRect bounds );

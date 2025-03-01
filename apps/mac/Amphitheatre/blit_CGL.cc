@@ -102,6 +102,11 @@ CGL_blitter::~CGL_blitter()
 	CGLDestroyContext( context );
 }
 
+void CGL_blitter::set_palette( const unsigned short* colors, int n )
+{
+	glfb::set_palette( colors, n );
+}
+
 void CGL_blitter::prep( int stride, int width, int height, int depth )
 {
 	glfb::set_dimensions( width, height, depth );
