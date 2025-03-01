@@ -29,7 +29,7 @@ class Blitter
 
 		operator SDL_Renderer*() const;
 
-		static bool prep( int stride, int width, int height, int depth = 1 );
+		static bool prep( int stride, int width, int height, int depth );
 
 		static bool blit( const void* src_addr );
 
