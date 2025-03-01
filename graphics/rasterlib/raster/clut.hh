@@ -22,6 +22,14 @@ namespace raster
 	
 	const clut_data* find_clut( const raster_note* note );
 	
+	inline
+	clut_data* find_clut( raster_note* note )
+	{
+		const raster_note* const_note = note;
+		
+		return const_cast< clut_data* >( find_clut( const_note ) );
+	}
+	
 }
 
 #endif
