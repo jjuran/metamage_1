@@ -20,6 +20,10 @@ CGColorSpaceRef generic_or_device_RGB();
 
 CGColorSpaceRef create_inverted_grayscale( CGColorSpaceRef gray, int count );
 
+CGColorSpaceRef create_RGB_palette( CGColorSpaceRef  rgb,
+                                    const UInt16*    colors,
+                                    int              count );
+
 }
 }
 

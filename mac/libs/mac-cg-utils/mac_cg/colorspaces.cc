@@ -71,5 +71,31 @@ CGColorSpaceRef create_inverted_grayscale( CGColorSpaceRef gray, int count )
 	return CGColorSpaceCreateIndexed( gray, count - 1, table );
 }
 
+CGColorSpaceRef create_RGB_palette( CGColorSpaceRef  rgb,
+                                    const UInt16*    colors,
+                                    int              count )
+{
+	if ( (unsigned) count > 256 )
+	{
+		return NULL;
+	}
+	
+	Byte table[ 3 * 256 ];
+	
+	Byte* p = table;
+	
+	for ( int i = 0;  i < count;  ++i )
+	{
+		++colors;  // skip non-channel value
+		
+		*p++ = *colors++ >> 8;  // red
+		*p++ = *colors++ >> 8;  // green
+		*p++ = *colors++ >> 8;  // blue
+	}
+	
+	return CGColorSpaceCreateIndexed( rgb, count - 1, table );
+	
+}
+
 }
 }
