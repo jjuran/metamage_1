@@ -5,17 +5,15 @@
 
 #include "screen/update.hh"
 
-// POSIX
-#include <fcntl.h>
-#include <unistd.h>
-
 // Standard C
-#include <stdlib.h>
 #include <string.h>
 
 // raster
 #include "raster/relay.hh"
 #include "raster/relay_detail.hh"
+
+// v68k-update
+#include "update/notify.hh"
 
 // v68k-screen
 #include "screen/storage.hh"
@@ -56,9 +54,6 @@ struct end_sync
 
 static end_sync finally_end_sync;
 
-static const char* update_fifo = getenv( "GRAPHICS_UPDATE_SIGNAL_FIFO" );
-
-
 void update_bits()
 {
 	void* previous_frame = virtual_buffer;
@@ -77,10 +72,7 @@ void update_bits()
 	{
 		++the_sync_relay->seed;
 		
-		if ( update_fifo )
-		{
-			close( open( update_fifo, O_RDONLY | O_NONBLOCK ) );
-		}
+		v68k::update::notify();
 	}
 }
 

@@ -5,16 +5,14 @@
 
 #include "callout/notify_cursor.hh"
 
-// POSIX
-#include <fcntl.h>
-#include <unistd.h>
-
 // Standard C
-#include <stdlib.h>
 #include <string.h>
 
 // iota
 #include "iota/endian.hh"
+
+// v68k-update
+#include "update/notify.hh"
 
 // v68k-cursor
 #include "cursor/cursor.hh"
@@ -41,16 +39,6 @@ enum
 	rts = 0x4E75,
 };
 
-#ifndef __RELIX__
-
-static const char* update_fifo = getenv( "GRAPHICS_UPDATE_SIGNAL_FIFO" );
-
-#else
-
-const char* update_fifo;
-
-#endif
-
 static
 void update_cursor()
 {
@@ -60,10 +48,7 @@ void update_cursor()
 	
 #endif
 	
-	if ( cursor_state  &&  update_fifo )
-	{
-		close( open( update_fifo, O_RDONLY | O_NONBLOCK ) );
-	}
+	v68k::update::notify();
 }
 
 int32_t notify_cursor_moved_callout( v68k::processor_state& s )
