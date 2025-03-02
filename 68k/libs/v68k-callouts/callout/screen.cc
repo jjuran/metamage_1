@@ -37,7 +37,7 @@ int32_t unlock_screen_callout( v68k::processor_state& s )
 {
 	if ( ++lock_level == 0 )
 	{
-		v68k::screen::update();
+		v68k::screen::update_bits();
 	}
 	
 	return rts;

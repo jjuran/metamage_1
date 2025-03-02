@@ -35,6 +35,14 @@ using raster::sync_relay;
 sync_relay* the_sync_relay;
 
 
+#ifdef __RELIX__
+
+void update_bits()
+{
+}
+
+#else
+
 struct end_sync
 {
 	~end_sync()
@@ -46,27 +54,13 @@ struct end_sync
 	}
 };
 
-#ifndef __RELIX__
-
 static end_sync finally_end_sync;
 
 static const char* update_fifo = getenv( "GRAPHICS_UPDATE_SIGNAL_FIFO" );
 
-#else
 
-const char* update_fifo;
-
-#endif
-
-
-void update()
+void update_bits()
 {
-#ifdef __RELIX__
-	
-	return;
-	
-#endif
-	
 	void* previous_frame = virtual_buffer;
 	
 	if ( previous_frame )
@@ -89,6 +83,8 @@ void update()
 		}
 	}
 }
+
+#endif
 
 }  // namespace screen
 }  // namespace v68k

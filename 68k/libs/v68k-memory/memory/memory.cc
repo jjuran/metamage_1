@@ -214,7 +214,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		{
 			if ( virtual_buffer == page_1_virtual_buffer )
 			{
-				update();
+				update_bits();
 			}
 		}
 		

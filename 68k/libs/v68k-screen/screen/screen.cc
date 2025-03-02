@@ -78,7 +78,7 @@ void page_flip()
 		spare_virtual_buffer = old_addr;
 	}
 	
-	v68k::screen::update();
+	v68k::screen::update_bits();
 }
 
 static
