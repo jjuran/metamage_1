@@ -17,6 +17,8 @@ static CGContextRef captured_display_context;
 
 static int w, h, rowBytes, bpp;
 
+static CGColorSpaceRef palette;
+
 CG_blitter::CG_blitter( CGDirectDisplayID id )
 {
 	display_bounds = CGDisplayBounds( id );
@@ -37,6 +39,18 @@ CG_blitter::~CG_blitter()
 	
 	CGContextFillRect ( captured_display_context, display_bounds );
 	CGContextClearRect( captured_display_context, display_bounds );
+}
+
+void CG_blitter::set_palette( const unsigned short* colors, int n )
+{
+	using mac::cg::create_RGB_palette;
+	using mac::cg::generic_or_device_RGB;
+	
+	CGColorSpaceRelease( palette );  // ok with NULL
+	
+	CGColorSpaceRef rgb = generic_or_device_RGB();
+	
+	palette = create_RGB_palette( rgb, colors, n );
 }
 
 void CG_blitter::prep( int stride, int width, int height, int depth )
@@ -76,9 +90,16 @@ void CG_blitter::blit( const void* src_addr )
 	
 	if ( bpp <= 8 )
 	{
-		int n = 1 << bpp;
+		CGColorSpaceRef color_space = palette;  // possibly NULL
 		
-		static CGColorSpaceRef color_space = create_Mac_grayscale( n );
+		if ( ! color_space )
+		{
+			int n = 1 << bpp;
+			
+			static CGColorSpaceRef black_on_white = create_Mac_grayscale( n );
+			
+			color_space = black_on_white;
+		}
 		
 		image = create_simple_image( w, h, bpp, rowBytes, color_space, p );
 	}
