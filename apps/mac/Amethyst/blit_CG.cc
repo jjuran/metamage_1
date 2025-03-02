@@ -66,6 +66,9 @@ CGColorSpaceRef create_Mac_grayscale( int n )
 void CG_blitter::blit( const void* src_addr )
 {
 	using mac::cg::create_simple_image;
+	using mac::cg::create_xRGB_1555_BE_image;
+	using mac::cg::create_xRGB_8888_BE_image;
+	using mac::cg::generic_or_device_RGB;
 	
 	void* p = const_cast< void* >( src_addr );
 	
@@ -78,6 +81,13 @@ void CG_blitter::blit( const void* src_addr )
 		static CGColorSpaceRef color_space = create_Mac_grayscale( n );
 		
 		image = create_simple_image( w, h, bpp, rowBytes, color_space, p );
+	}
+	else
+	{
+		CGColorSpaceRef rgb = generic_or_device_RGB();
+		
+		image = bpp == 16 ? create_xRGB_1555_BE_image( w, h, rowBytes, rgb, p )
+		                  : create_xRGB_8888_BE_image( w, h, rowBytes, rgb, p );
 	}
 	
 	if ( image )
