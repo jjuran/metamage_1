@@ -310,6 +310,11 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 			
 		#endif
 			
+			if ( kind == kEventAmicusNewPalette )
+			{
+				set_palette( blitter, load );
+			}
+			
 			const uint32_t offset = height * stride * desc.frame;
 			
 			blitter.blit( (Ptr) addr + offset );
