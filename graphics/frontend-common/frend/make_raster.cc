@@ -50,6 +50,9 @@ int create_raster_file( const char* path, raster::raster_load& result )
 	const uint32_t height = 342;
 	const uint32_t weight = 1;
 	
+	const raster_model model = weight > 8 ? Model_RGB
+	                         :              Model_monochrome_paint;
+	
 	const uint32_t frame_count = 2;
 	
 	const uint32_t stride     = make_stride( width, weight );
@@ -102,7 +105,7 @@ int create_raster_file( const char* path, raster::raster_load& result )
 	desc.height = height;
 	desc.stride = stride;
 	desc.weight = weight;
-	desc.model  = Model_monochrome_paint;
+	desc.model  = model;
 	desc.extra  = frame_count - 1;
 	
 	raster_note* next_note = &note;
