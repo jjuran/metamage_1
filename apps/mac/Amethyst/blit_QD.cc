@@ -33,7 +33,38 @@ QD_blitter::~QD_blitter()
 	Rect bounds;
 	PaintRect( GetPortBounds( captured_display_port, &bounds ) );
 	
+	if ( CTabHandle ctab = srcBits.pmTable )
+	{
+		srcBits.pmTable = NULL;
+		
+		DisposeCTable( ctab );
+	}
+	
 	DisposePort( captured_display_port );
+}
+
+void QD_blitter::set_palette( const unsigned short* colors, int n )
+{
+	if ( ! srcBits.pmTable )
+	{
+		short clut_id = n > 16 ? 8
+		              : n >  4 ? 4
+		              : n >  2 ? 2
+		              :          1;
+		
+		srcBits.pmTable = GetCTable( clut_id );
+	}
+	
+	if ( CTabHandle ctab = srcBits.pmTable )
+	{
+		ColorTable& ctable = **ctab;
+		
+		const Size size = n * sizeof (ColorSpec);
+		
+		memcpy( ctable.ctTable, colors, size );
+		
+		ctable.ctSeed += 1024;
+	}
 }
 
 void QD_blitter::prep( int stride, int width, int height, int depth )
