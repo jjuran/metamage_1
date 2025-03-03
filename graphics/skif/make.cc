@@ -27,14 +27,12 @@
 // rasterlib
 #include "raster/clut.hh"
 #include "raster/clut_detail.hh"
+#include "raster/default_clut.hh"
 #include "raster/load.hh"
 #include "raster/relay_detail.hh"
 #include "raster/size.hh"
 #include "raster/skif.hh"
 #include "raster/sync.hh"
-
-// skif
-#include "clut.hh"
 
 
 #define PROGRAM  "skif"

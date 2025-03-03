@@ -1,12 +1,18 @@
 /*
-	clut.cc
-	-------
+	default_clut.cc
+	---------------
 */
 
-#include "clut.hh"
+#include "raster/default_clut.hh"
+
+// rasterlib
+#include "raster/clut_detail.hh"
 
 
-void load_default_clut( raster::clut_data& clut, short n_colors )
+namespace raster
+{
+
+void load_default_clut( clut_data& clut, short n_colors )
 {
 	clut.seed  = 0;
 	clut.flags = 0;
@@ -35,4 +41,6 @@ void load_default_clut( raster::clut_data& clut, short n_colors )
 		
 		intensity += increment;
 	}
+}
+
 }
