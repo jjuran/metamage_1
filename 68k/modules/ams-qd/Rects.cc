@@ -50,8 +50,6 @@ struct rectangular_op_params
 	
 	Byte left_mask;
 	Byte right_mask;
-	
-	Pattern*  pattern;
 };
 
 static inline
@@ -300,8 +298,6 @@ static
 void draw_rect( const rectangular_op_params&  params,
                 short                         transfer_mode_AND_0x03 )
 {
-	Pattern& pattern = *params.pattern;
-	
 	const BitMap& portBits = params.port->portBits;
 	
 	const Rect& bounds = portBits.bounds;
@@ -321,6 +317,8 @@ void draw_rect( const rectangular_op_params&  params,
 	
 	const short n_pixels_skipped = (rect.left - bounds.left) & 0x7;
 	const short n_pixels_drawn   = rect.right - rect.left;
+	
+	Pattern& pattern = params.port->fillPat;
 	
 	draw_sector( pattern, pat_v,
 	             rowBase,
@@ -371,7 +369,7 @@ void draw_region( const rectangular_op_params&  params,
 			const short n_pixels_skipped = (h0 - bounds.left) & 0x7;
 			const short n_pixels_drawn   =  h1 - h0;
 			
-			draw_sector( *params.pattern, v0 & 0x7,
+			draw_sector( params.port->fillPat, v0 & 0x7,
 			             start, height, portBits.rowBytes,
 			             n_pixels_skipped,
 			             n_pixels_drawn,
@@ -418,8 +416,6 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	rectangular_op_params params;
 	
 	get_rectangular_op_params_for_rect( params, clipRect, !clipping_to_rect );
-	
-	params.pattern = &port.fillPat;
 	
 	short origin_h = port.portBits.bounds.left;
 	
@@ -478,7 +474,7 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		}
 	}
 	
-	Pattern& pattern = *params.pattern;
+	Pattern& pattern = port.fillPat;
 	
 	if ( const bool negated = patMode & 0x04 )
 	{
