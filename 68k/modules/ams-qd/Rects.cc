@@ -44,6 +44,7 @@ struct rectangular_op_params
 	Ptr start;
 	
 	uint16_t height;
+	uint16_t rowBytes;
 	
 	uint16_t draw_bytes;
 	uint16_t skip_bytes;
@@ -120,6 +121,8 @@ void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	const Byte right_mask = (right & 0x7) ?   (1 << 8 - (right & 0x7)) - 1  : 0;
 	
 	const uint32_t rowBytes = portBits.rowBytes;
+	
+	params.rowBytes = rowBytes;
 	
 	Ptr baseAddr = portBits.baseAddr;
 	
@@ -311,8 +314,10 @@ void draw_rect( const rectangular_op_params&  params,
 	
 	const uint16_t n_rows_skipped = top - bounds.top;
 	
+	UInt16 rowBytes = params.rowBytes;
+	
 	Ptr rowBase = portBits.baseAddr
-	            + mulu_w( portBits.rowBytes, n_rows_skipped )
+	            + mulu_w( rowBytes, n_rows_skipped )
 	            + (rect.left - bounds.left) / 8u;
 	
 	const short n_pixels_skipped = (rect.left - bounds.left) & 0x7;
@@ -323,7 +328,7 @@ void draw_rect( const rectangular_op_params&  params,
 	draw_sector( pattern, pat_v,
 	             rowBase,
 	             bottom - top,
-	             portBits.rowBytes,
+	             rowBytes,
 		         n_pixels_skipped,
 		         n_pixels_drawn,
 		         transfer_mode_AND_0x03 );
@@ -344,6 +349,8 @@ void draw_region( const rectangular_op_params&  params,
 	
 	const Rect& bounds = portBits.bounds;
 	
+	UInt16 rowBytes = params.rowBytes;
+	
 	while ( const quickdraw::region_band* band = it.next() )
 	{
 		const short v0 = band->v0;
@@ -352,7 +359,7 @@ void draw_region( const rectangular_op_params&  params,
 		const uint16_t n_rows_skipped = v0 - bounds.top;
 		
 		Ptr rowBase = portBits.baseAddr
-		            + mulu_w( portBits.rowBytes, n_rows_skipped );
+		            + mulu_w( rowBytes, n_rows_skipped );
 		
 		short height = v1 - v0;
 		
@@ -370,7 +377,7 @@ void draw_region( const rectangular_op_params&  params,
 			const short n_pixels_drawn   =  h1 - h0;
 			
 			draw_sector( params.port->fillPat, v0 & 0x7,
-			             start, height, portBits.rowBytes,
+			             start, height, rowBytes,
 			             n_pixels_skipped,
 			             n_pixels_drawn,
 			             transfer_mode_AND_0x03 );
