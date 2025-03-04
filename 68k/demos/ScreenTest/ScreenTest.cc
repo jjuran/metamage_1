@@ -12,7 +12,7 @@
 	
 	[1] It's not an 8x8 Pattern in the QuickDraw sense.  The base
 	pattern is one byte wide and 256 rows tall, tiled to fill the
-	entire screen.  Then, every 255th byte of screen memory is
+	entire screen.  Then, a series of bytes of screen memory is
 	perturbed to create a further diagonal line pattern (by which
 	we avoid the undesirable scenario of 32-bit formats being
 	indistinguishable from one another or even 8-bit grayscale).
@@ -65,7 +65,7 @@ int main()
 	{
 		*q ^= 0xED;
 		
-		q += 255;
+		q += DeepRow / 8u + 1;
 	}
 	
 	ShowCursor();
