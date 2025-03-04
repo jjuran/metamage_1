@@ -14,7 +14,8 @@
 #pragma exceptions off
 
 
-short ScreenRow  : 0x0106;
+short CrsrRow    : 0x08AC;
+short DepthLog2  : 0x08AE;
 short MBarHeight : 0x0BAA;
 
 
@@ -32,7 +33,7 @@ void draw_menu_bar_from_WMgr_port()
 {
 	// WMgrPort and a suitable clipRgn have already been set.
 	
-	const Byte black = 0xFF;
+	const Byte black = (DepthLog2 > 3) - 1;  // $00 for RGB, $FF for gray/CLUT
 	
 	const QDGlobals& qd = get_QDGlobals();
 	
@@ -40,7 +41,7 @@ void draw_menu_bar_from_WMgr_port()
 	
 	raster_lock lock;
 	
-	fast_memset( qd.screenBits.baseAddr, black, ScreenRow * MBarHeight );
+	fast_memset( qd.screenBits.baseAddr, black, CrsrRow * MBarHeight );
 	
 	menu_bar.bottom = MBarHeight - 1;
 	
