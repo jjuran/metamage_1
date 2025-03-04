@@ -52,7 +52,6 @@ struct rectangular_op_params
 	Byte right_mask;
 	
 	Pattern*  pattern;
-	short     origin_h;
 };
 
 static inline
@@ -421,7 +420,8 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	get_rectangular_op_params_for_rect( params, clipRect, !clipping_to_rect );
 	
 	params.pattern = &port.fillPat;
-	params.origin_h = port.portBits.bounds.left;
+	
+	short origin_h = port.portBits.bounds.left;
 	
 	short patMode = patCopy;
 	
@@ -490,7 +490,7 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		}
 	}
 	
-	if ( const short h = params.origin_h & 0x07 )
+	if ( const short h = origin_h & 0x07 )
 	{
 		for ( int i = 0;  i < 8;  ++i )
 		{
