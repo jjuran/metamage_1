@@ -55,17 +55,20 @@ struct rectangular_op_params
 	short     origin_h;
 };
 
-static inline short min( short a, short b )
+static inline
+short min( short a, short b )
 {
 	return b < a ? b : a;
 }
 
-static inline short max( short a, short b )
+static inline
+short max( short a, short b )
 {
 	return a > b ? a : b;
 }
 
-static void do_Rect_intersection( Rect& result, const Rect& a, const Rect& b )
+static
+void do_Rect_intersection( Rect& result, const Rect& a, const Rect& b )
 {
 	result.top    = max( a.top,    b.top    );
 	result.left   = max( a.left,   b.left   );
@@ -73,9 +76,10 @@ static void do_Rect_intersection( Rect& result, const Rect& a, const Rect& b )
 	result.right  = min( a.right,  b.right  );
 }
 
-static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
-                                                const Rect&             input_rect,
-                                                bool                    clipping )
+static
+void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
+                                         const Rect&             input_rect,
+                                         bool                    clipping )
 {
 	GrafPtr port = get_thePort();
 	
@@ -237,7 +241,8 @@ void draw_sector( const Pattern&  pattern,
 	             transfer_mode_AND_0x03 );
 }
 
-static void frame_rect( const Rect* rect )
+static
+void frame_rect( const Rect* rect )
 {
 	if ( rect->top >= rect->bottom  ||  rect->left >= rect->right )
 	{
