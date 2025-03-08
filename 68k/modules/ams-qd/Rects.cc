@@ -538,7 +538,7 @@ pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
 	StdRect( kQDGrafVerbFill, rect );
 }
 
-pascal unsigned char EqualRect_patch( const Rect* a, const Rect* b )
+pascal Boolean EqualRect_patch( const Rect* a, const Rect* b )
 {
 	return a->top    == b->top     &&
 	       a->left   == b->left    &&
@@ -584,7 +584,7 @@ pascal void InsetRect_patch( Rect* rect, short dh, short dv )
 	rect->right  -= dh;
 }
 
-pascal unsigned char SectRect_patch( const Rect* a, const Rect* b, Rect* c )
+pascal Boolean SectRect_patch( const Rect* a, const Rect* b, Rect* c )
 {
 	c->top    = a->top    > b->top    ? a->top    : b->top;
 	c->left   = a->left   > b->left   ? a->left   : b->left;
@@ -637,7 +637,7 @@ pascal void Pt2Rect_patch( Point a, Point b, Rect* c )
 	}
 }
 
-pascal unsigned char PtInRect_patch( Point pt, const Rect* rect )
+pascal Boolean PtInRect_patch( Point pt, const Rect* rect )
 {
 	return rect->top  <= pt.v  &&  pt.v < rect->bottom  &&  
 	       rect->left <= pt.h  &&  pt.h < rect->right;
@@ -686,7 +686,7 @@ pascal void PtToAngle_patch( const Rect* rect, Point pt, short* result )
 	*result = angle;
 }
 
-pascal unsigned char EmptyRect_patch( const Rect* rect )
+pascal Boolean EmptyRect_patch( const Rect* rect )
 {
 	return rect->top >= rect->bottom  ||  rect->left >= rect->right;
 }
