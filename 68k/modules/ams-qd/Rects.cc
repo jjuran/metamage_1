@@ -39,8 +39,6 @@ struct rectangular_op_params
 	
 	GrafPtr port;
 	
-	Point topLeft;
-	
 	Ptr start;
 	
 	uint16_t height;
@@ -100,7 +98,6 @@ void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	
 	Ptr baseAddr = portBits.baseAddr;
 	
-	params.topLeft    = *(Point*) &rect;
 	params.start      = baseAddr + mulu_w( rowBytes, top ) + outer_left_bytes;
 	params.height     = height_px;
 	params.skip_bytes = rowBytes - outer_bytes;
@@ -281,8 +278,8 @@ void draw_rect( const rectangular_op_params&  params,
 	
 	const Rect& rect = params.rect;
 	
-	const short top    = params.topLeft.v;
-	const short bottom = params.topLeft.v + params.height;
+	const short top    = params.rect.top;
+	const short bottom = params.rect.top + params.height;
 	
 	short pat_v = top & 0x7;
 	
