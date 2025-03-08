@@ -279,7 +279,6 @@ void draw_rect( const rectangular_op_params&  params,
 	const Rect& rect = params.rect;
 	
 	const short top    = params.rect.top;
-	const short bottom = params.rect.top + params.height;
 	
 	short pat_v = top & 0x7;
 	
@@ -298,7 +297,7 @@ void draw_rect( const rectangular_op_params&  params,
 	
 	draw_sector( pattern, pat_v,
 	             rowBase,
-	             bottom - top,
+	             params.height,
 	             rowBytes,
 		         n_pixels_skipped,
 		         n_pixels_drawn,
