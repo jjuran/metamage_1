@@ -65,36 +65,34 @@ void blit_sector( Ptr    src,
 		++dst;
 	}
 	
-	if ( n_pixels_drawn == 0 )
-	{
-		return;
-	}
-	
-	if ( short n_bytes = n_pixels_drawn / 8u )
-	{
-		blit_bytes( src, src_stride,
-		            dst, dst_stride,
-		            n_bytes,
-		            height,
-		            transfer_mode_AND_0x07 );
-		
-		src += n_bytes;
-		dst += n_bytes;
-	}
-	
-	n_pixels_drawn &= 0x7;
-	
 	if ( n_pixels_drawn > 0 )
 	{
-		n_pixels_skipped = 8 - n_pixels_drawn;
+		if ( short n_bytes = n_pixels_drawn / 8u )
+		{
+			blit_bytes( src, src_stride,
+			            dst, dst_stride,
+			            n_bytes,
+			            height,
+			            transfer_mode_AND_0x07 );
+			
+			src += n_bytes;
+			dst += n_bytes;
+		}
 		
-		const Byte mask = -(1 << n_pixels_skipped);
+		n_pixels_drawn &= 0x7;
 		
-		blit_masked_column( src, src_stride,
-		                    dst, dst_stride,
-		                    height,
-		                    mask,
-		                    transfer_mode_AND_0x07 );
+		if ( n_pixels_drawn > 0 )
+		{
+			n_pixels_skipped = 8 - n_pixels_drawn;
+			
+			const Byte mask = -(1 << n_pixels_skipped);
+			
+			blit_masked_column( src, src_stride,
+			                    dst, dst_stride,
+			                    height,
+			                    mask,
+			                    transfer_mode_AND_0x07 );
+		}
 	}
 }
 
