@@ -53,30 +53,9 @@ struct rectangular_op_params
 	Byte right_mask;
 };
 
-static inline
-short min( short a, short b )
-{
-	return b < a ? b : a;
-}
-
-static inline
-short max( short a, short b )
-{
-	return a > b ? a : b;
-}
-
-static
-void do_Rect_intersection( Rect& result, const Rect& a, const Rect& b )
-{
-	result.top    = max( a.top,    b.top    );
-	result.left   = max( a.left,   b.left   );
-	result.bottom = min( a.bottom, b.bottom );
-	result.right  = min( a.right,  b.right  );
-}
-
 static
 void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
-                                         const Rect&             input_rect,
+                                         const Rect&             rect,
                                          bool                    clipping )
 {
 	GrafPtr port = get_thePort();
@@ -86,11 +65,6 @@ void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	const BitMap& portBits = port->portBits;
 	
 	const Rect& bounds = portBits.bounds;
-	
-	Rect rect;
-	
-	do_Rect_intersection( rect, bounds, input_rect );
-	do_Rect_intersection( rect, port->portRect, rect );
 	
 	params.rect = rect;
 	
@@ -413,8 +387,12 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		return;
 	}
 	
+	Rect clipRect;
+	
+	SectRect( r, &port.portRect, &clipRect );
+	
 	// This initializes clipRgn by calling RectRgn().
-	get_refined_clip_region( port, *r, clipRgn );
+	get_refined_clip_region( port, clipRect, clipRgn );
 	
 	bool clipping_to_rect = clipRgn[0]->rgnSize <= sizeof (MacRegion);
 	
