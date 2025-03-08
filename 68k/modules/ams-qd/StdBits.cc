@@ -51,8 +51,6 @@ void blit_sector( Ptr    src,
 			n_pixels_skipped = -n_pixels_drawn;
 			
 			mask &= -(1 << n_pixels_skipped);
-			
-			n_pixels_drawn = 0;
 		}
 		
 		blit_masked_column( src, src_stride,
