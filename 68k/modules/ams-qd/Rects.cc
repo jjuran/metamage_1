@@ -39,16 +39,7 @@ struct rectangular_op_params
 	
 	GrafPtr port;
 	
-	Ptr start;
-	
-	uint16_t height;
 	uint16_t rowBytes;
-	
-	uint16_t draw_bytes;
-	uint16_t skip_bytes;
-	
-	Byte left_mask;
-	Byte right_mask;
 };
 
 static
@@ -62,59 +53,11 @@ void get_rectangular_op_params( rectangular_op_params&  params,
 	
 	const BitMap& portBits = port->portBits;
 	
-	const Rect& bounds = portBits.bounds;
-	
 	params.rect = rect;
-	
-	const int width_px  = rect.right - rect.left;
-	const int height_px = rect.bottom - rect.top;
-	
-	const unsigned top  = rect.top  - bounds.top;
-	const unsigned left = rect.left - bounds.left;
-	
-	const unsigned right = left + width_px;
-	
-	const unsigned outer_left_bytes  =  left      / 8;
-	const unsigned inner_left_bytes  = (left + 7) / 8;
-	const unsigned inner_right_bytes =  right      / 8;
-	const unsigned outer_right_bytes = (right + 7) / 8;
-	
-	const unsigned inner_bytes = inner_right_bytes - inner_left_bytes;
-	const unsigned outer_bytes = outer_right_bytes - outer_left_bytes;
-	
-	const Byte left_mask  = (left  & 0x7) ? ~((1 << 8 - (left  & 0x7)) - 1) : 0;
-	const Byte right_mask = (right & 0x7) ?   (1 << 8 - (right & 0x7)) - 1  : 0;
 	
 	const uint32_t rowBytes = portBits.rowBytes;
 	
 	params.rowBytes = rowBytes;
-	
-	Ptr baseAddr = portBits.baseAddr;
-	
-	params.start      = baseAddr + mulu_w( rowBytes, top ) + outer_left_bytes;
-	params.height     = height_px;
-	params.skip_bytes = rowBytes - outer_bytes;
-	
-	if ( clipping )
-	{
-		params.draw_bytes = outer_bytes;
-		params.left_mask  = 0;
-		params.right_mask = 0;
-	}
-	else
-	{
-		params.draw_bytes = inner_bytes;
-		params.left_mask  = left_mask;
-		params.right_mask = right_mask;
-	
-		if ( int( inner_bytes ) < 0 )
-		{
-			params.left_mask  |= right_mask;
-			params.right_mask  = 0;
-		
-			params.draw_bytes = 0;
-		}
-	}
 }
 
 static
@@ -288,7 +231,7 @@ void draw_rect( const rectangular_op_params&  params,
 	
 	draw_sector( pattern, pat_v,
 	             rowBase,
-	             params.height,
+	             rect.bottom - rect.top,
 	             rowBytes,
 		         n_pixels_skipped,
 		         n_pixels_drawn,
