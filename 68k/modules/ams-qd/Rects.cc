@@ -416,13 +416,13 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	// This initializes clipRgn by calling RectRgn().
 	get_refined_clip_region( port, *r, clipRgn );
 	
-	const Rect clipRect = clipRgn[0]->rgnBBox;
-	
 	bool clipping_to_rect = clipRgn[0]->rgnSize <= sizeof (MacRegion);
 	
 	rectangular_op_params params;
 	
-	get_rectangular_op_params_for_rect( params, clipRect, !clipping_to_rect );
+	get_rectangular_op_params_for_rect( params,
+	                                    clipRgn[0]->rgnBBox,
+	                                    ! clipping_to_rect );
 	
 	short origin_h = port.portBits.bounds.left;
 	
