@@ -49,14 +49,9 @@ void get_rectangular_op_params( rectangular_op_params&  params,
 	GrafPtr port = get_thePort();
 	
 	params.port = port;
-	
-	const BitMap& portBits = port->portBits;
-	
 	params.rect = rect;
 	
-	const uint32_t rowBytes = portBits.rowBytes;
-	
-	params.rowBytes = rowBytes;
+	params.rowBytes = port->portBits.rowBytes;
 }
 
 static
