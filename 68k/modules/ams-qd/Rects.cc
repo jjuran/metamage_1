@@ -69,13 +69,6 @@ void get_rectangular_op_params( rectangular_op_params&  params,
 	const int width_px  = rect.right - rect.left;
 	const int height_px = rect.bottom - rect.top;
 	
-	if ( width_px <= 0  ||  height_px <= 0 )
-	{
-		params.height = 0;
-		
-		return;
-	}
-	
 	const unsigned top  = rect.top  - bounds.top;
 	const unsigned left = rect.left - bounds.left;
 	
@@ -387,6 +380,11 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	
 	// This initializes clipRgn by calling RectRgn().
 	get_refined_clip_region( port, clipRect, clipRgn );
+	
+	if ( EmptyRgn( clipRgn ) )
+	{
+		return;
+	}
 	
 	bool clipping_to_rect = clipRgn[0]->rgnSize <= sizeof (MacRegion);
 	
