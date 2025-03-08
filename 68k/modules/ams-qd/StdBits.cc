@@ -42,7 +42,7 @@ void blit_sector( Ptr    src,
 {
 	if ( n_pixels_skipped )
 	{
-		uint8_t mask = (1 << (8 - n_pixels_skipped)) - 1;
+		Byte mask = (1 << (8 - n_pixels_skipped)) - 1;
 		
 		n_pixels_drawn -= 8 - n_pixels_skipped;
 		
@@ -88,7 +88,7 @@ void blit_sector( Ptr    src,
 	{
 		n_pixels_skipped = 8 - n_pixels_drawn;
 		
-		const uint8_t mask = -(1 << n_pixels_skipped);
+		const Byte mask = -(1 << n_pixels_skipped);
 		
 		blit_masked_column( src, src_stride,
 		                    dst, dst_stride,
@@ -158,7 +158,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
                            const Rect*    srcRect,
                            const Rect*    dstRect,
                            short          mode,
-                           MacRegion**    maskRgn )
+                           RgnHandle      maskRgn )
 {
 	const int srcWidth  = srcRect->right - srcRect->left;
 	const int srcHeight = srcRect->bottom - srcRect->top;

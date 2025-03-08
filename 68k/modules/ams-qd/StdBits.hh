@@ -10,10 +10,12 @@ struct BitMap;
 struct MacRegion;
 struct Rect;
 
+typedef MacRegion** RgnHandle;
+
 pascal void StdBits_patch( const BitMap*  srcBits,
                            const Rect*    srcRect,
                            const Rect*    dstRect,
                            short          mode,
-                           MacRegion**    maskRgn );
+                           RgnHandle      maskRgn );
 
 #endif
