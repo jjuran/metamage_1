@@ -44,8 +44,7 @@ struct rectangular_op_params
 
 static
 void get_rectangular_op_params( rectangular_op_params&  params,
-                                const Rect&             rect,
-                                bool                    clipping )
+                                const Rect&             rect )
 {
 	GrafPtr port = get_thePort();
 	
@@ -333,9 +332,7 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	
 	rectangular_op_params params;
 	
-	get_rectangular_op_params( params,
-	                           clipRgn[0]->rgnBBox,
-	                           ! clipping_to_rect );
+	get_rectangular_op_params( params, clipRgn[0]->rgnBBox );
 	
 	short origin_h = port.portBits.bounds.left;
 	
