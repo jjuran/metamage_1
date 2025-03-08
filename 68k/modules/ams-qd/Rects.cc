@@ -278,11 +278,7 @@ void draw_rect( const rectangular_op_params&  params,
 	
 	const Rect& rect = params.rect;
 	
-	const short top    = params.rect.top;
-	
-	short pat_v = top & 0x7;
-	
-	const uint16_t n_rows_skipped = top - bounds.top;
+	const uint16_t n_rows_skipped = params.rect.top - bounds.top;
 	
 	UInt16 rowBytes = params.rowBytes;
 	
@@ -294,6 +290,8 @@ void draw_rect( const rectangular_op_params&  params,
 	const short n_pixels_drawn   = rect.right - rect.left;
 	
 	Pattern& pattern = params.port->fillPat;
+	
+	short pat_v = params.rect.top & 0x7;
 	
 	draw_sector( pattern, pat_v,
 	             rowBase,
