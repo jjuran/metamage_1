@@ -42,7 +42,7 @@ struct rectangular_op_params
 	uint16_t rowBytes;
 };
 
-static
+static inline
 void get_rectangular_op_params( rectangular_op_params&  params,
                                 const Rect&             rect )
 {
