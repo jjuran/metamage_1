@@ -486,17 +486,27 @@ void update_loop( const raster::sync_relay*  sync,
 	
 	while ( sync->status == Sync_ready  &&  ! signalled )
 	{
-		if ( update_fifo )
-		{
-			close( open( update_fifo, O_WRONLY ) );
-		}
-		else
-		{
-			usleep( 10000 );  // 10ms
-		}
+		/*
+			If the raster seed has already changed, it indicates
+			that the back end produced a second graphics update
+			very shortly after the previous one (that we just
+			finished working on), whose notification we probably
+			missed (since we weren't waiting).  Handle the new
+			update immediately (and any others after that, etc.)
+			before waiting again.
+		*/
 		
 		if ( sync->seed == raster_seed )
 		{
+			if ( update_fifo )
+			{
+				close( open( update_fifo, O_WRONLY ) );
+			}
+			else
+			{
+				usleep( 10000 );  // 10ms
+			}
+			
 			if ( ! cursor_state )
 			{
 				continue;
