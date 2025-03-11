@@ -20,10 +20,6 @@
 #include <Quickdraw.h>
 #endif
 
-// Standard C
-#include <stdlib.h>
-#include <string.h>
-
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
 #ifndef MISSING_QDOFFSCREEN_H
@@ -43,113 +39,9 @@
 typedef CGImageAlphaInfo CGBitmapInfo;
 #endif
 
-#ifndef MAC_OS_X_VERSION_10_5
-typedef float CGFloat;
-#endif
-
 
 using mac::qd::is_monochrome;
 
-
-static
-CGColorSpaceRef GrayColorSpace()
-{
-	static CGColorSpaceRef colorSpace =
-	
-#ifdef MAC_OS_X_VERSION_10_4
-	
-	CGColorSpaceCreateWithName( kCGColorSpaceGenericGray )
-	
-#else
-	
-	CGColorSpaceCreateDeviceGray()
-	
-#endif
-	;
-	
-	return colorSpace;
-}
-
-static
-CGColorSpaceRef RGBColorSpace()
-{
-	static CGColorSpaceRef colorSpace =
-	
-#ifdef MAC_OS_X_VERSION_10_4
-	
-	CGColorSpaceCreateWithName( kCGColorSpaceGenericRGB )
-	
-#else
-	
-	CGColorSpaceCreateDeviceRGB()
-	
-#endif
-	;
-	
-	return colorSpace;
-}
-
-static
-void release_data( void* info, const void* data, size_t size )
-{
-	free( const_cast< void* >( data ) );
-}
-
-static
-CGDataProviderRef make_data_provider( char* data, size_t size )
-{
-	void* buffer = malloc( size );
-	
-	if ( buffer == NULL )
-	{
-		return NULL;
-	}
-	
-	memcpy( buffer, data, size );
-	
-	CGDataProviderRef result = CGDataProviderCreateWithData( NULL,
-	                                                         buffer,
-	                                                         size,
-	                                                         &release_data );
-	
-	if ( result == NULL )
-	{
-		free( buffer );
-	}
-	
-	return result;
-}
-
-static
-CGImageRef image_from_data( size_t           width,
-                            size_t           height,
-                            size_t           degree,
-                            size_t           weight,
-                            size_t           stride,
-                            CGColorSpaceRef  colorSpace,
-                            CGBitmapInfo     bitmapInfo,
-                            char*            baseAddr,
-                            const CGFloat    decode[] = NULL )
-{
-	CGDataProviderRef dataProvider = make_data_provider( baseAddr,
-	                                                     height * stride );
-	
-	CGImageRef image = CGImageCreate( width,
-	                                  height,
-	                                  degree,  // bits per component
-	                                  weight,  // bits per pixel
-	                                  stride,
-	                                  colorSpace,
-	                                  bitmapInfo,
-	                                  dataProvider,
-	                                  decode,
-	                                  false,
-	                                  kCGRenderingIntentDefault );
-	
-	CFRelease( dataProvider );
-	
-	return image;
-}
 
 static
 CGColorSpaceRef create_Mac_grayscale( int n )
