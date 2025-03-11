@@ -117,38 +117,6 @@ CGDataProviderRef make_data_provider( char* data, size_t size )
 }
 
 static
-CGBitmapInfo BitmapInfo_from_PixMap( const PixMap& pixmap )
-{
-	/*
-		This function is only called for direct color pixels.
-		Weight is either 16 or 32.  It returns kCGImageAlphaNoneSkipFirst
-		unless pixmap.pixelFormat has been set to a recognized value which
-		requires a different configuration.
-	*/
-	
-#ifdef MAC_OS_X_VERSION_10_4
-	
-	switch ( pixmap.pixelFormat )
-	{
-		case k16LE555PixelFormat:  // Mac OS X
-			return kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder16Little;
-		
-		case k32BGRAPixelFormat:  // Mac OS X, Linux, Android (e.g Nexus S)
-			return kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little;
-		
-		case k32RGBAPixelFormat:  // Android (e.g. Nexus 4)
-			return kCGImageAlphaNoneSkipLast;
-		
-		default:
-			break;
-	}
-	
-#endif
-	
-	return kCGImageAlphaNoneSkipFirst;
-}
-
-static
 CGImageRef image_from_data( size_t           width,
                             size_t           height,
                             size_t           degree,
@@ -269,6 +237,38 @@ CGImageRef CreateCGImageFromBitMap( const BitMap& bitmap )
 	                                   1,  // weight / depth
 	                                   bitmap.rowBytes,
 	                                   bitmap.baseAddr );
+}
+
+static
+CGBitmapInfo BitmapInfo_from_PixMap( const PixMap& pixmap )
+{
+	/*
+		This function is only called for direct color pixels.
+		Weight is either 16 or 32.  It returns kCGImageAlphaNoneSkipFirst
+		unless pixmap.pixelFormat has been set to a recognized value which
+		requires a different configuration.
+	*/
+	
+#ifdef MAC_OS_X_VERSION_10_4
+	
+	switch ( pixmap.pixelFormat )
+	{
+		case k16LE555PixelFormat:  // Mac OS X
+			return kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder16Little;
+		
+		case k32BGRAPixelFormat:  // Mac OS X, Linux, Android (e.g Nexus S)
+			return kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little;
+		
+		case k32RGBAPixelFormat:  // Android (e.g. Nexus 4)
+			return kCGImageAlphaNoneSkipLast;
+		
+		default:
+			break;
+	}
+	
+#endif
+	
+	return kCGImageAlphaNoneSkipFirst;
 }
 
 #if ! __LP64__
