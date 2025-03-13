@@ -35,11 +35,26 @@ void load_default_clut( clut_data& clut, short n_colors )
 		*/
 		
 		clut.palette[ i ].value = 0;
-		clut.palette[ i ].red   = intensity ^ 0x40;
-		clut.palette[ i ].green = intensity ^ 0x20;
-		clut.palette[ i ].blue  = intensity ^ 0x80;
+		clut.palette[ i ].red   = intensity ^ 0x1040;
+		clut.palette[ i ].green = intensity ^ 0x0820;
+		clut.palette[ i ].blue  = intensity ^ 0x2080;
 		
 		intensity += increment;
+	}
+	
+	if ( n_colors == 2 )
+	{
+		/*
+			Override the 1-bit case to make it more colorful.
+		*/
+		
+		clut.palette[ 0 ].red   = 0x0000 ^ 0x2040;
+		clut.palette[ 0 ].green = 0x0000 ^ 0x0020;
+		clut.palette[ 0 ].blue  = 0x0000 ^ 0x4080;
+		
+		clut.palette[ 1 ].red   = 0xFFFF ^ 0x2040;
+		clut.palette[ 1 ].green = 0xFFFF ^ 0x4020;
+		clut.palette[ 1 ].blue  = 0xFFFF ^ 0x0080;
 	}
 }
 
