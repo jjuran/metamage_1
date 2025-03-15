@@ -88,7 +88,7 @@ rsrc_header* recover_rsrc_header( Handle resource )
 	
 	if ( resource  &&  mp.flags & kHandleIsResourceMask )
 	{
-		return (rsrc_header*) (*(char**) mp.base + mp.offset);
+		return (rsrc_header*) (*(Handle) mp.base + mp.offset);
 	}
 	
 	return NULL;
@@ -214,7 +214,7 @@ ConstStr255Param get_name( const rsrc_map_header& map, const rsrc_header& rsrc )
 		return NULL;
 	}
 	
-	ConstStr255Param names = (const unsigned char*) &map + map.offset_to_names;
+	ConstStr255Param names = (const Byte*) &map + map.offset_to_names;
 	
 	return names + rsrc.name_offset;
 }
@@ -291,7 +291,7 @@ void CreateResFile_handler( ConstStr255Param name : __A0, short vRefNum : __D0 )
 }
 
 asm
-pascal void CreateResFile_patch( const unsigned char* name )
+pascal void CreateResFile_patch( ConstStr255Param name )
 {
 	MOVEM.L  D1-D2/A1-A2,-(SP)
 	
@@ -675,7 +675,7 @@ pascal void UseResFile_patch( short refnum )
 	CurMap = refnum;
 }
 
-pascal void SetResLoad_patch( unsigned char load )
+pascal void SetResLoad_patch( Boolean load )
 {
 }
 
@@ -784,7 +784,7 @@ pascal short CountResources_patch( ResType type )
 }
 
 static
-Handle GetIndResource_handler( unsigned long type : __D0, short index : __D1 )
+Handle GetIndResource_handler( ResType type : __D0, short index : __D1 )
 {
 	if ( index <= 0 )
 	{
@@ -989,10 +989,10 @@ pascal void DetachResource_patch( Handle resource )
 
 struct GetResInfo_args
 {
-	unsigned char*  name;
-	unsigned long*  type;
-	short*          id;
-	Handle          resource;
+	StringPtr  name;
+	ResType*   type;
+	short*     id;
+	Handle     resource;
 };
 
 static
@@ -1036,10 +1036,10 @@ void GetResInfo_handler( const GetResInfo_args* args : __A0 )
 }
 
 asm
-pascal void GetResInfo_patch( Handle          resource,
-                              short*          id,
-                              unsigned long*  type,
-                              unsigned char*  name )
+pascal void GetResInfo_patch( Handle    resource,
+                              short*    id,
+                              ResType*  type,
+                              Str255    name )
 {
 	MOVEM.L  D1-D2/A1-A2,-(SP)
 	
@@ -1305,7 +1305,7 @@ pascal void WriteResource_patch( Handle resource )
 	JMP      (A0)
 }
 
-pascal void SetResPurge_patch( unsigned char install )
+pascal void SetResPurge_patch( Boolean install )
 {
 }
 
@@ -1340,7 +1340,7 @@ pascal short Count1Resources_patch( ResType type )
 }
 
 static
-Handle Get1IxResource_handler( unsigned long type : __D0, short index : __D1 )
+Handle Get1IxResource_handler( ResType type : __D0, short index : __D1 )
 {
 	if ( index <= 0 )
 	{
