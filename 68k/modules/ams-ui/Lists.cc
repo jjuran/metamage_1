@@ -730,6 +730,14 @@ fail:
 }
 
 static
+pascal void LScroll_call( short cols, short rows, ListHandle listH )
+{
+	ListRec& list = **listH;
+	
+	scroll_to( cols, rows, list );
+}
+
+static
 pascal void LSetCell_call( const void* p, short n, Cell cell, ListHandle listH )
 {
 	ListRec& list = **listH;
@@ -864,7 +872,7 @@ static void* dispatch_table[] =
 	(void*) LNew_call,
 	(void*) unimplemented_call,
 	(void*) unimplemented_call,
-	(void*) unimplemented_call,
+	(void*) LScroll_call,
 	(void*) unimplemented_call,
 	(void*) LSetCell_call,
 	(void*) unimplemented_call,
