@@ -122,6 +122,31 @@ pascal void IUDateString_call( long dateTime, DateForm form, Str255 result )
 }
 
 static
+pascal void IUTimeString_call( long dateTime, Boolean seconds, Str255 result )
+{
+	DateTimeRec rec;
+	
+	SecondsToDate( dateTime, &rec );
+	
+	Byte* p = result;
+	
+	*p++ = 5 + seconds * 3;  // hh:mm or hh:mm:ss
+	
+	*p++ = rec.hour / 10 + '0';
+	*p++ = rec.hour % 10 + '0';
+	*p++ = ':';
+	*p++ = rec.minute / 10 + '0';
+	*p++ = rec.minute % 10 + '0';
+	
+	if ( seconds )
+	{
+		*p++ = ':';
+		*p++ = rec.second / 10 + '0';
+		*p++ = rec.second % 10 + '0';
+	}
+}
+
+static
 pascal short IUMagString_call( char* a, char* b, short an, short bn )
 {
 	typedef unsigned char uint8_t;
@@ -154,6 +179,9 @@ asm void Pack6_patch( short selector )
 	TST.W    D0
 	BEQ.S    dispatch_IUDateString
 	
+	CMPI.W   #0x0002,D0
+	BEQ      dispatch_IUTimeString
+	
 	CMPI.W   #0x000A,D0
 	BEQ      dispatch_IUMagString
 	
@@ -164,6 +192,9 @@ asm void Pack6_patch( short selector )
 	
 dispatch_IUDateString:
 	JMP      IUDateString_call
+	
+dispatch_IUTimeString:
+	JMP      IUTimeString_call
 	
 dispatch_IUMagString:
 	JMP      IUMagString_call
