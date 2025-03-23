@@ -168,6 +168,28 @@ void draw_list_cells( const ListRec& list, const Rect& range, RgnHandle clip )
 	}
 }
 
+static
+void scroll_to( short cols, short rows, ListRec& list )
+{
+	short dh = 0;
+	short dv = 0;
+	
+	dv = (list.visible.top - rows) * list.cellSize.v;
+	
+	list.visible.bottom = list.visible.bottom - list.visible.top + rows;
+	list.visible.top = rows;
+	
+	RgnHandle updateRgn = NewRgn();
+	
+	raster_lock lock;
+	
+	ScrollRect( &list.rView, dh, dv, updateRgn );
+	
+	draw_list_cells( list, list.visible, updateRgn );
+	
+	DisposeRgn( updateRgn );
+}
+
 /*
 	Ideally, Lists_scroll_action_rec would be a derived struct of
 	scroll_action_rec, but that prevents a simple brace initialization.
@@ -193,26 +215,15 @@ void Lists_scroll_to( const scroll_action_rec& action, short value )
 	
 	ListRec& list = **list_action.listH;
 	
-	short dh = 0;
-	short dv = 0;
+	short cols = 0;
+	short rows = 0;
 	
 	if ( ! list_action.horizontal )
 	{
-		dv = (list.visible.top - value) * list.cellSize.v;
-		
-		list.visible.bottom = list.visible.bottom - list.visible.top + value;
-		list.visible.top = value;
+		rows = value;
 	}
 	
-	RgnHandle updateRgn = NewRgn();
-	
-	raster_lock lock;
-	
-	ScrollRect( &list.rView, dh, dv, updateRgn );
-	
-	draw_list_cells( list, list.visible, updateRgn );
-	
-	DisposeRgn( updateRgn );
+	scroll_to( cols, rows, list );
 }
 
 static Lists_scroll_action_rec scroll_action_context =
