@@ -519,6 +519,21 @@ pascal void LDispose_call( ListHandle listH )
 }
 
 static
+pascal void LSetDrawingMode_call( Boolean drawing, ListHandle listH )
+{
+	ListRec& list = **listH;
+	
+	if ( drawing )
+	{
+		list.listFlags &= ~lDrawingModeOff;
+	}
+	else
+	{
+		list.listFlags |= lDrawingModeOff;
+	}
+}
+
+static
 void get_vscroll_bounds( const Rect& view, Rect* bounds )
 {
 	const short edge = view.right;
@@ -730,6 +745,11 @@ pascal void LSetCell_call( const void* p, short n, Cell cell, ListHandle listH )
 		list.cellArray[ c + 1 ] += d;
 	}
 	
+	if ( list.listFlags & lDrawingModeOff )
+	{
+		return;
+	}
+	
 	List_drawing scope( list );
 	
 	if ( PtInRect( cell, &list.visible ) )
@@ -824,7 +844,7 @@ static void* dispatch_table[] =
 	(void*) unimplemented_call,
 	(void*) LDelRow_call,
 	(void*) LDispose_call,
-	(void*) unimplemented_call,
+	(void*) LSetDrawingMode_call,
 	(void*) unimplemented_call,
 	(void*) unimplemented_call,
 	(void*) unimplemented_call,
