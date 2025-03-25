@@ -18,10 +18,6 @@ typedef const Byte* ConstStr255Param;
 typedef Byte Str255[ 256 ];
 
 
-pascal short InitResources_patch();
-
-pascal void RsrcZoneInit_patch();
-
 pascal void CreateResFile_patch( ConstStr255Param name );
 
 pascal short OpenResFile_patch( ConstStr255Param name );
