@@ -307,6 +307,10 @@ short SetHandleSize_patch( char**  h         : __A0,
 		
 		new_header->backlink = header->backlink;
 		
+		char fill = autoclear ? '\0' : '\x79';
+		
+		fast_memset( *h, fill, header->size );
+		
 		*h = (char*) &new_header[1];
 		
 		free( header );
@@ -401,6 +405,10 @@ short EmptyHandle_patch( char** h : __A0 )
 	if ( *h != NULL )
 	{
 		Handle_header* header = get_header( *h );
+		
+		char fill = autoclear ? '\0' : '\x79';
+		
+		fast_memset( *h, fill, header->size );
 		
 		free( header );
 		

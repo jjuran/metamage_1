@@ -127,6 +127,12 @@ short DisposePtr_handler( char* alloc : __A0 )
 		return MemErr = paramErr;
 	}
 	
+	long size = GetPtrSize_patch( alloc );
+	
+	char fill = autoclear ? '\0' : '\x79';
+	
+	fast_memset( alloc, fill, size );
+	
 	if ( zone_free_nonrel( alloc ) )
 	{
 		return MemErr = noErr;
