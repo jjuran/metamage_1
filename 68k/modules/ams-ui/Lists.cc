@@ -192,8 +192,10 @@ void draw_list_cells( const ListRec& list, RgnHandle clip )
 }
 
 static
-void scroll_by( short cols, short rows, ListRec& list )
+void scroll_by( short cols, short rows, ListHandle listH )
 {
+	ListRec& list = **listH;
+	
 	short dh = 0;
 	short dv = 0;
 	
@@ -230,11 +232,13 @@ void scroll_by( short cols, short rows, ListRec& list )
 }
 
 static inline
-void scroll_to( short cols, short rows, ListRec& list )
+void scroll_to( short cols, short rows, ListHandle listH )
 {
+	ListRec& list = **listH;
+	
 	scroll_by( cols - list.visible.left,
 	           rows - list.visible.top,
-	           list );
+	           listH );
 }
 
 /*
@@ -270,7 +274,7 @@ void Lists_scroll_to( const scroll_action_rec& action, short value )
 		rows = value;
 	}
 	
-	scroll_to( cols, rows, list );
+	scroll_to( cols, rows, list_action.listH );
 }
 
 static Lists_scroll_action_rec scroll_action_context =
@@ -786,9 +790,7 @@ fail:
 static
 pascal void LScroll_call( short cols, short rows, ListHandle listH )
 {
-	ListRec& list = **listH;
-	
-	scroll_by( cols, rows, list );
+	scroll_by( cols, rows, listH );
 }
 
 static
