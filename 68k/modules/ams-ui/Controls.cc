@@ -114,6 +114,8 @@ pascal ControlRef NewControl_patch( WindowRef    window,
 		
 		w->controlList = (Handle) control;
 		
+		call_CDEF( control, initCntl, 0 );
+		
 		draw_control( control );
 	}
 	
@@ -161,6 +163,8 @@ pascal ControlRef GetNewControl_patch( short controlID, WindowRef window )
 pascal void DisposeControl_patch( ControlRef control )
 {
 	HideControl( control );
+	
+	call_CDEF( control, dispCntl, 0 );
 	
 	WindowPeek w = (WindowPeek) control[0]->contrlOwner;
 	
