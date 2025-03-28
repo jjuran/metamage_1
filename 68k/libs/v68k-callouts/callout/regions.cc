@@ -53,7 +53,6 @@ enum
 	max_rgn_size  = 32766,
 	
 	Region_end    = 0x7FFF,
-	Region_end_BE = 0xFF7F,
 };
 
 static
@@ -178,6 +177,8 @@ bool is_valid_region( const coord_t* rgn, short size )
 static
 const coord_t_BE* find_full_stop( const coord_t_BE* p, const coord_t_BE* limit )
 {
+	const coord_t_BE Region_end_BE = iota::big_u16( Region_end );
+	
 	while ( p < limit )
 	{
 		if ( *p++ == Region_end_BE  &&  p < limit  &&  *p++ == Region_end_BE )
@@ -282,6 +283,8 @@ int32_t finish_region_callout( v68k::processor_state& s )
 	{
 		p_BE[ i ] = 0;
 	}
+	
+	const coord_t_BE Region_end_BE = iota::big_u16( Region_end );
 	
 	if ( size < min_rgn_size  ||  p_BE[ 5 ] == Region_end_BE )
 	{
