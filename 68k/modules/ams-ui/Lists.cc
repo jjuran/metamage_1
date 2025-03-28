@@ -15,6 +15,9 @@
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
 #ifndef __TEXTUTILS__
 #include <TextUtils.h>
 #endif
@@ -143,6 +146,8 @@ void draw_list_cells( ListHandle listH, RgnHandle clip )
 {
 	const ListRec& list = **listH;
 	
+	ListDefProcPtr defProc = (ListDefProcPtr) *list.listDefProc;
+	
 	if ( ! clip )
 	{
 		clip = rectangular_utility_region( list.rView );
@@ -176,19 +181,15 @@ void draw_list_cells( ListHandle listH, RgnHandle clip )
 				left + list.cellSize.h,
 			};
 			
-			MoveTo( left + list.indent.h,
-			        top  + list.indent.v );
-			
 			const short i = row * n_cols + col;
 			const short p = list.cellArray[ i     ] & 0x7fff;
 			const short q = list.cellArray[ i + 1 ] & 0x7fff;
 			
-			DrawText( *list.cells, p, q - p );
+			Boolean select = is_selected( list, i );
 			
-			if ( is_selected( list, i ) )
-			{
-				InvertRect( &rect );
-			}
+			Cell cell = { col, row };
+			
+			defProc( lDrawMsg, select, &rect, cell, p, q - p, listH );
 		}
 	}
 }
@@ -414,6 +415,8 @@ pascal Boolean LClick_call( Point pt, EventModifiers mods, ListHandle listH )
 		return false;
 	}
 	
+	ListDefProcPtr defProc = (ListDefProcPtr) *list.listDefProc;
+	
 	const Rect& dataBounds = list.dataBounds;
 	
 	const UInt32 now = TickCount();
@@ -460,7 +463,7 @@ pascal Boolean LClick_call( Point pt, EventModifiers mods, ListHandle listH )
 				left + list.cellSize.h,
 			};
 			
-			InvertRect( &rect );
+			defProc( lHiliteMsg, false, &rect, clicked, 0, 0, listH );
 		}
 		
 		// Mark the clicked cell unselected so we don't invert it below.
@@ -497,7 +500,7 @@ pascal Boolean LClick_call( Point pt, EventModifiers mods, ListHandle listH )
 				left + list.cellSize.h,
 			};
 			
-			InvertRect( &rect );
+			defProc( lHiliteMsg, true, &rect, clicked, 0, 0, listH );
 		}
 	}
 	
@@ -582,6 +585,10 @@ static
 pascal void LDispose_call( ListHandle listH )
 {
 	ListRec& list = **listH;
+	
+	ListDefProcPtr defProc = (ListDefProcPtr) *list.listDefProc;
+	
+	defProc( lCloseMsg, 0, NULL, list.lastClick, 0, 0, listH );
 	
 	if ( list.hScroll )
 	{
@@ -695,6 +702,13 @@ pascal ListHandle LNew_call( const Rect*        view,
                              Boolean            hScroll,
                              Boolean            vScroll )
 {
+	Handle ldef = GetResource( 'LDEF', procID );
+	
+	if ( ! ldef )
+	{
+		return NULL;
+	}
+	
 	const short n_rows = dataBounds->bottom - dataBounds->top;
 	const short n_cols = dataBounds->right - dataBounds->left;
 	
@@ -773,13 +787,18 @@ pascal ListHandle LNew_call( const Rect*        view,
 	
 	list.indent.h = 4;
 	
-	list.rView      = *view;
-	list.port       = window;
-	list.cellSize   = cellSize;
-	list.dataBounds = *dataBounds;
-	list.maxIndex   = n_cells;
+	list.rView       = *view;
+	list.port        = window;
+	list.cellSize    = cellSize;
+	list.listDefProc = ldef;
+	list.dataBounds  = *dataBounds;
+	list.maxIndex    = n_cells;
 	
 	calc_visible( listH );
+	
+	ListDefProcPtr defProc = (ListDefProcPtr) *ldef;
+	
+	defProc( lInitMsg, 0, NULL, list.lastClick, 0, 0, listH );
 	
 	return listH;
 	
@@ -827,6 +846,8 @@ pascal void LSetCell_call( const void* p, short n, Cell cell, ListHandle listH )
 		return;
 	}
 	
+	ListDefProcPtr defProc = (ListDefProcPtr) *list.listDefProc;
+	
 	List_drawing scope( list );
 	
 	if ( PtInRect( cell, &list.visible ) )
@@ -834,10 +855,21 @@ pascal void LSetCell_call( const void* p, short n, Cell cell, ListHandle listH )
 		const short y = cell.v - list.visible.top;
 		const short x = cell.h - list.visible.left;
 		
-		MoveTo( list.rView.left + list.cellSize.h * x + list.indent.h,
-		        list.rView.top  + list.cellSize.v * y + list.indent.v );
+		const short top  = list.rView.top  + list.cellSize.v * y;
+		const short left = list.rView.left + list.cellSize.h * x;
 		
-		DrawText( p, 0, n );
+		Rect rect =
+		{
+			top,
+			left,
+			top  + list.cellSize.v,
+			left + list.cellSize.h,
+		};
+		
+		const short p = list.cellArray[ i     ] & 0x7fff;
+		const short q = list.cellArray[ i + 1 ] & 0x7fff;
+		
+		defProc( lDrawMsg, false, &rect, cell, p, q - p, listH );
 	}
 }
 
