@@ -734,6 +734,13 @@ pascal void LScroll_call( short cols, short rows, ListHandle listH )
 {
 	ListRec& list = **listH;
 	
+	/*
+		Convert relative cell coordinates to absolute.
+	*/
+	
+	cols += list.visible.left;
+	rows += list.visible.top;
+	
 	scroll_to( cols, rows, list );
 }
 
