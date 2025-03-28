@@ -139,8 +139,10 @@ void mark_unselected( ListRec& list, short i )
 }
 
 static
-void draw_list_cells( const ListRec& list, RgnHandle clip )
+void draw_list_cells( ListHandle listH, RgnHandle clip )
 {
+	const ListRec& list = **listH;
+	
 	if ( ! clip )
 	{
 		clip = rectangular_utility_region( list.rView );
@@ -224,7 +226,7 @@ void scroll_by( short cols, short rows, ListHandle listH )
 	
 	ScrollRect( &list.rView, dh, dv, updateRgn );
 	
-	draw_list_cells( list, updateRgn );
+	draw_list_cells( listH, updateRgn );
 	
 	DisposeRgn( updateRgn );
 	
@@ -896,7 +898,7 @@ pascal void LUpdate_call( RgnHandle rgn, ListHandle listH )
 	
 	EraseRect( &list.rView );
 	
-	draw_list_cells( list, NULL );
+	draw_list_cells( listH, NULL );
 }
 
 static
