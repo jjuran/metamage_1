@@ -11,6 +11,13 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+// Mac OS
+#ifndef CGCOLORSPACE_H_
+#ifndef __CGCOLORSPACE__
+#include <CGColorSpace.h>
+#endif
+#endif
+
 
 namespace mac {
 namespace cg  {
