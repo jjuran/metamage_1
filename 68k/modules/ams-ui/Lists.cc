@@ -169,15 +169,15 @@ void draw_list_cells( const ListRec& list, const Rect& range, RgnHandle clip )
 }
 
 static
-void scroll_to( short cols, short rows, ListRec& list )
+void scroll_by( short cols, short rows, ListRec& list )
 {
 	short dh = 0;
 	short dv = 0;
 	
-	dv = (list.visible.top - rows) * list.cellSize.v;
+	dv = -rows * list.cellSize.v;
 	
-	list.visible.bottom = list.visible.bottom - list.visible.top + rows;
-	list.visible.top = rows;
+	list.visible.bottom += rows;
+	list.visible.top    += rows;
 	
 	RgnHandle updateRgn = NewRgn();
 	
@@ -188,6 +188,14 @@ void scroll_to( short cols, short rows, ListRec& list )
 	draw_list_cells( list, list.visible, updateRgn );
 	
 	DisposeRgn( updateRgn );
+}
+
+static inline
+void scroll_to( short cols, short rows, ListRec& list )
+{
+	scroll_by( cols - list.visible.left,
+	           rows - list.visible.top,
+	           list );
 }
 
 /*
@@ -734,14 +742,7 @@ pascal void LScroll_call( short cols, short rows, ListHandle listH )
 {
 	ListRec& list = **listH;
 	
-	/*
-		Convert relative cell coordinates to absolute.
-	*/
-	
-	cols += list.visible.left;
-	rows += list.visible.top;
-	
-	scroll_to( cols, rows, list );
+	scroll_by( cols, rows, list );
 }
 
 static
