@@ -168,6 +168,14 @@ void draw_list_cells( ListHandle listH, RgnHandle clip )
 			const short top  = list.rView.top  + list.cellSize.v * y;
 			const short left = list.rView.left + list.cellSize.h * x;
 			
+			Rect rect =
+			{
+				top,
+				left,
+				top  + list.cellSize.v,
+				left + list.cellSize.h,
+			};
+			
 			MoveTo( left + list.indent.h,
 			        top  + list.indent.v );
 			
@@ -179,14 +187,6 @@ void draw_list_cells( ListHandle listH, RgnHandle clip )
 			
 			if ( is_selected( list, i ) )
 			{
-				const Rect rect =
-				{
-					top,
-					left,
-					top  + list.cellSize.v,
-					left + list.cellSize.h,
-				};
-				
 				InvertRect( &rect );
 			}
 		}
@@ -452,7 +452,7 @@ pascal Boolean LClick_call( Point pt, EventModifiers mods, ListHandle listH )
 			const short top  = view.top  + relative_cell.v * list.cellSize.v;
 			const short left = view.left + relative_cell.h * list.cellSize.h;
 			
-			const Rect rect =
+			Rect rect =
 			{
 				top,
 				left,
@@ -489,7 +489,7 @@ pascal Boolean LClick_call( Point pt, EventModifiers mods, ListHandle listH )
 			
 			const short left = view.left + list.cellSize.h * x;
 			
-			const Rect rect =
+			Rect rect =
 			{
 				top,
 				left,
