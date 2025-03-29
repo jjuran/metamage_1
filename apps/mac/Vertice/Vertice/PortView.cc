@@ -48,6 +48,10 @@ namespace Vertice
 		SetBounds( bounds );
 	}
 	
+	PortView::~PortView()
+	{
+	}
+	
 	
 	static
 	void render_into_GWorld( const std::vector< MeshModel >&  models,

@@ -45,10 +45,14 @@ namespace Vertice
 			mutable nucleus::owned< CGImageRef > itsImage;
 		#endif
 			anaglyph_mode                itsAnaglyphMode;
+			
+			// non-copyable
+			PortView           ( const PortView& );
+			PortView& operator=( const PortView& );
 		
 		public:
 			PortView( const Rect& bounds );
-			~PortView()  {}
+			~PortView();
 			
 			Scene& ItsScene()  { return itsScene; }
 			
