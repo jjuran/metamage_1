@@ -11,6 +11,9 @@
 // Standard C++
 #include <vector>
 
+// mac-cg-utils
+#include "mac_cg/images.hh"
+
 // mac-qd-utils
 #include "mac_qd/copy_bits.hh"
 #include "mac_qd/globals/thePort_window.hh"
@@ -18,9 +21,6 @@
 
 // mac-ui-utils
 #include "mac_ui/windows.hh"
-
-// Nitrogen
-#include "Nitrogen/CGDataProvider.hh"
 
 // worldview
 #include "worldview/Render.hh"
@@ -68,22 +68,10 @@ namespace Vertice
 		render( &*models.begin(), &*models.end(), base, width, height, stride );
 	}
 	
-	static inline
-	CGBitmapInfo skipFirst32Bit()
-	{
-	#ifdef __LITTLE_ENDIAN__
-		
-		return kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little;
-		
-	#endif
-		
-		return kCGImageAlphaNoneSkipFirst;
-	}
-	
 	static
 	n::owned< CGImageRef > CGImage_from_GWorld( CGrafPtr gworld )
 	{
-		n::owned< CGImageRef > result;
+		using mac::cg::create_xRGB_8888_image;
 		
 		PixMapHandle pix = ::GetPortPixMap( gworld );
 		
@@ -94,21 +82,15 @@ namespace Vertice
 		const size_t width  = bounds.right - bounds.left;
 		const size_t height = bounds.bottom - bounds.top;
 		
-		const size_t size = height * stride;
-		
-		n::owned< CGDataProviderRef > provider;
-		provider = N::CGDataProviderCreateWithData( base, size, NULL, NULL );
-		
 		static CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 		
-		return N::CGImageCreate( width,
-		                         height,
-		                         8,
-		                         32,
-		                         stride,
-		                         colorSpace,
-		                         skipFirst32Bit(),
-		                         provider );
+		CGImageRef image = create_xRGB_8888_image( width,
+		                                           height,
+		                                           stride,
+		                                           colorSpace,
+		                                           base );
+		
+		return n::owned< CGImageRef >::seize( image );
 	}
 	
 	void PortView::Render()
