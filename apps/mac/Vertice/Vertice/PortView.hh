@@ -10,9 +10,6 @@
 #include "mac_config/compositing-mode.hh"
 
 // Nitrogen
-#ifndef NITROGEN_CGIMAGE_HH
-#include "Nitrogen/CGImage.hh"
-#endif
 #ifndef NITROGEN_QDOFFSCREEN_HH
 #include "Nitrogen/QDOffscreen.hh"
 #endif
@@ -42,7 +39,7 @@ namespace Vertice
 			std::size_t                  itsSelectedContext;
 			nucleus::owned< GWorldPtr >  itsGWorld;
 		#if CONFIG_COMPOSITING
-			mutable nucleus::owned< CGImageRef > itsImage;
+			mutable CGImageRef           itsImage;
 		#endif
 			anaglyph_mode                itsAnaglyphMode;
 			

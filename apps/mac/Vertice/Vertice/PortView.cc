@@ -45,11 +45,25 @@ namespace Vertice
 	                                           itsSelectedContext(             ),
 	                                           itsAnaglyphMode   ( kNoAnaglyph )
 	{
+	#if CONFIG_COMPOSITING
+		
+		itsImage = NULL;
+		
+	#endif
+		
 		SetBounds( bounds );
 	}
 	
 	PortView::~PortView()
 	{
+	#if CONFIG_COMPOSITING
+		
+		if ( itsImage )
+		{
+			CGImageRelease( itsImage );
+		}
+		
+	#endif
 	}
 	
 	
@@ -73,7 +87,7 @@ namespace Vertice
 	}
 	
 	static
-	n::owned< CGImageRef > CGImage_from_GWorld( CGrafPtr gworld )
+	CGImageRef CGImage_from_GWorld( CGrafPtr gworld )
 	{
 		using mac::cg::create_xRGB_8888_image;
 		
@@ -94,7 +108,7 @@ namespace Vertice
 		                                           colorSpace,
 		                                           base );
 		
-		return n::owned< CGImageRef >::seize( image );
+		return image;
 	}
 	
 	void PortView::Render()
@@ -117,7 +131,15 @@ namespace Vertice
 	{
 	#if CONFIG_COMPOSITING
 		
-		itsImage = CGImage_from_GWorld( itsGWorld );
+		if ( CGImageRef image = CGImage_from_GWorld( itsGWorld ) )
+		{
+			if ( itsImage )
+			{
+				CGImageRelease( itsImage );
+			}
+			
+			itsImage = image;
+		}
 		
 	#endif
 	}
