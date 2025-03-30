@@ -132,7 +132,7 @@ CGDataProviderRef make_data_provider( char* data, size_t size, copier cpy )
 
 CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 {
-	const raster_note* clut_note = NULL;
+	const clut_data* clut = NULL;
 	
 	const raster_desc& desc = raster.meta->desc;
 	
@@ -149,9 +149,9 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	
 	if ( desc.model == Model_palette )
 	{
-		clut_note = find_note( *raster.meta, Note_clut );
+		clut = find_clut( &raster.meta->note );
 		
-		if ( clut_note != NULL )
+		if ( clut != NULL )
 		{
 			tri_colored = true;
 		}
@@ -168,24 +168,22 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	
 	CGColorSpaceRef indexed = NULL;
 	
-	if ( clut_note != NULL )
+	if ( clut != NULL )
 	{
-		const clut_data& clut = *(const clut_data*) (clut_note + 1);
-		
-		Byte* table = (Byte*) alloca( 3 * (clut.max + 1) );
+		Byte* table = (Byte*) alloca( 3 * (clut->max + 1) );
 		
 		Byte* p = table;
 		
-		for ( int i = 0;  i <= clut.max;  ++i )
+		for ( int i = 0;  i <= clut->max;  ++i )
 		{
-			const color& c = clut.palette[ i ];
+			const color& c = clut->palette[ i ];
 			
 			*p++ = c.red   >> 8;
 			*p++ = c.green >> 8;
 			*p++ = c.blue  >> 8;
 		}
 		
-		indexed = CGColorSpaceCreateIndexed( colorSpace, clut.max, table );
+		indexed = CGColorSpaceCreateIndexed( colorSpace, clut->max, table );
 		
 		if ( indexed )
 		{
