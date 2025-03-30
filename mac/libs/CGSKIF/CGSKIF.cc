@@ -166,8 +166,6 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	CGColorSpaceRef colorSpace = tri_colored ? RGBColorSpace()
 	                                         : GrayColorSpace();
 	
-	CGColorSpaceRetain( colorSpace );
-	
 	CGColorSpaceRef indexed = NULL;
 	
 	if ( clut_note != NULL )
@@ -191,8 +189,6 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 		
 		if ( indexed )
 		{
-			CGColorSpaceRelease( colorSpace );
-			
 			colorSpace = indexed;
 		}
 	}
@@ -307,7 +303,11 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	                       kCGRenderingIntentDefault );
 	
 	CFRelease( dataProvider );
-	CGColorSpaceRelease( colorSpace );
+	
+	if ( indexed )
+	{
+		CGColorSpaceRelease( indexed );
+	}
 	
 	return image;
 }
