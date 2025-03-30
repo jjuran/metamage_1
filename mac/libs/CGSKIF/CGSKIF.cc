@@ -24,10 +24,6 @@
 typedef CGImageAlphaInfo CGBitmapInfo;
 #endif
 
-#ifndef MAC_OS_X_VERSION_10_5
-typedef float CGFloat;
-#endif
-
 
 using namespace raster;
 
@@ -44,20 +40,6 @@ static
 void straight_copy( void* dst, const void* src, size_t n )
 {
 	memcpy( dst, src, n );
-}
-
-static
-void inverted_copy( void* dst, const void* src, size_t n )
-{
-	uint32_t const* p   = (const uint32_t*) src;
-	uint32_t const* end = (const uint32_t*) src + n / 4;
-	
-	uint32_t* q = (uint32_t*) dst;
-	
-	while ( p < end )
-	{
-		*q++ = ~*p++;
-	}
 }
 
 static
@@ -96,6 +78,7 @@ CGDataProviderRef make_data_provider( char* data, size_t size, copier cpy )
 
 CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 {
+	using mac::cg::create_inverted_grayscale;
 	using mac::cg::create_RGB_palette;
 	using mac::cg::generic_or_device_gray;
 	using mac::cg::generic_or_device_RGB;
@@ -135,6 +118,11 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	                                         : generic_or_device_gray();
 	
 	CGColorSpaceRef indexed = NULL;
+	
+	if ( desc.model == Model_monochrome_paint )
+	{
+		indexed = create_inverted_grayscale( colorSpace, 1 << desc.weight );
+	}
 	
 	if ( clut != NULL )
 	{
@@ -194,28 +182,7 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 		}
 	}
 	
-	const CGFloat inverted[] = { 1.0, 0.0 };
-	
-	const CGFloat* decode = desc.model == Model_monochrome_paint ? inverted
-	                                                             : NULL;
-	
 	copier cpy = straight_copy;
-	
-#if TARGET_CPU_ARM64
-	
-	if ( decode  &&  (weight == 2  ||  weight == 4) )
-	{
-		/*
-			Using a decode array with 2-bit or 4-bit image data
-			is known to be broken in macOS 14.5 on Apple Silicon.
-		*/
-		
-		decode = NULL;
-		
-		cpy = &inverted_copy;
-	}
-	
-#endif
 	
 	if ( little_endian  &&  weight == 16  &&  is_16bit_565( desc ) )
 	{
@@ -253,7 +220,7 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	                       colorSpace,
 	                       bitmapInfo,
 	                       dataProvider,
-	                       decode,
+	                       NULL,
 	                       false,
 	                       kCGRenderingIntentDefault );
 	
