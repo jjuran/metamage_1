@@ -1219,6 +1219,43 @@ pascal void SetResPurge_patch( Boolean install )
 }
 
 static
+short GetResFileAttrs_handle( short refnum : __D0 )
+{
+	short attrs = 0;
+	OSErr err   = resFNotFound;
+	
+	if ( RsrcMapHandle rsrc_map = find_rsrc_map( refnum ) )
+	{
+		attrs = rsrc_map[0]->attrs;
+		err   = noErr;
+	}
+	
+	ResErr = err;
+	
+	return attrs;
+}
+
+asm
+pascal short GetResFileAttrs_patch( short refnum )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.W   (A2)+,D0
+	
+	JSR      GetResFileAttrs_handle
+	MOVE.W   D0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #2,SP
+	
+	JMP      (A0)
+}
+
+static
 ResType Get1IxType_handler( short index : __D0 )
 {
 	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
