@@ -6,7 +6,6 @@
 #include "CGSKIF.hh"
 
 // Standard C
-#include <stdlib.h>
 #include <string.h>
 
 // iota
@@ -97,6 +96,7 @@ CGDataProviderRef make_data_provider( char* data, size_t size, copier cpy )
 
 CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 {
+	using mac::cg::create_RGB_palette;
 	using mac::cg::generic_or_device_gray;
 	using mac::cg::generic_or_device_RGB;
 	
@@ -138,25 +138,14 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	
 	if ( clut != NULL )
 	{
-		Byte* table = (Byte*) alloca( 3 * (clut->max + 1) );
+		const UInt16* colors = (const UInt16*) clut->palette;
 		
-		Byte* p = table;
-		
-		for ( int i = 0;  i <= clut->max;  ++i )
-		{
-			const color& c = clut->palette[ i ];
-			
-			*p++ = c.red   >> 8;
-			*p++ = c.green >> 8;
-			*p++ = c.blue  >> 8;
-		}
-		
-		indexed = CGColorSpaceCreateIndexed( colorSpace, clut->max, table );
-		
-		if ( indexed )
-		{
-			colorSpace = indexed;
-		}
+		indexed = create_RGB_palette( colorSpace, colors, clut->max + 1 );
+	}
+	
+	if ( indexed )
+	{
+		colorSpace = indexed;
 	}
 	
 	CGBitmapInfo bitmapInfo = kCGImageAlphaNone;
