@@ -168,6 +168,8 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	
 	CGColorSpaceRetain( colorSpace );
 	
+	CGColorSpaceRef indexed = NULL;
+	
 	if ( clut_note != NULL )
 	{
 		const clut_data& clut = *(const clut_data*) (clut_note + 1);
@@ -185,15 +187,13 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 			*p++ = c.blue  >> 8;
 		}
 		
-		CGColorSpaceRef index = CGColorSpaceCreateIndexed( colorSpace,
-		                                                   clut.max,
-		                                                   table );
+		indexed = CGColorSpaceCreateIndexed( colorSpace, clut.max, table );
 		
-		if ( index )
+		if ( indexed )
 		{
 			CGColorSpaceRelease( colorSpace );
 			
-			colorSpace = index;
+			colorSpace = indexed;
 		}
 	}
 	
