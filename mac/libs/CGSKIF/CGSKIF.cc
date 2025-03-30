@@ -12,6 +12,9 @@
 // iota
 #include "iota/endian.hh"
 
+// mac-cg-utils
+#include "mac_cg/colorspaces.hh"
+
 // rasterlib
 #include "raster/clut.hh"
 #include "raster/clut_detail.hh"
@@ -29,44 +32,6 @@ typedef float CGFloat;
 
 using namespace raster;
 
-
-static
-CGColorSpaceRef GrayColorSpace()
-{
-	static CGColorSpaceRef colorSpace =
-	
-#ifdef MAC_OS_X_VERSION_10_4
-	
-	CGColorSpaceCreateWithName( kCGColorSpaceGenericGray )
-	
-#else
-	
-	CGColorSpaceCreateDeviceGray()
-	
-#endif
-	;
-	
-	return colorSpace;
-}
-
-static
-CGColorSpaceRef RGBColorSpace()
-{
-	static CGColorSpaceRef colorSpace =
-	
-#ifdef MAC_OS_X_VERSION_10_4
-	
-	CGColorSpaceCreateWithName( kCGColorSpaceGenericRGB )
-	
-#else
-	
-	CGColorSpaceCreateDeviceRGB()
-	
-#endif
-	;
-	
-	return colorSpace;
-}
 
 static
 void release_data( void* info, const void* data, size_t size )
@@ -132,6 +97,9 @@ CGDataProviderRef make_data_provider( char* data, size_t size, copier cpy )
 
 CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 {
+	using mac::cg::generic_or_device_gray;
+	using mac::cg::generic_or_device_RGB;
+	
 	const clut_data* clut = NULL;
 	
 	const raster_desc& desc = raster.meta->desc;
@@ -163,8 +131,8 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	
 	int n_components = tri_colored ? 3 : 1;
 	
-	CGColorSpaceRef colorSpace = tri_colored ? RGBColorSpace()
-	                                         : GrayColorSpace();
+	CGColorSpaceRef colorSpace = tri_colored ? generic_or_device_RGB()
+	                                         : generic_or_device_gray();
 	
 	CGColorSpaceRef indexed = NULL;
 	
