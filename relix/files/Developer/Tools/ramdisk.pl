@@ -260,7 +260,7 @@ sub auto
 	
 	sleep 0.1 until (`mpw-select -p` || "") ne $mpw;
 	
-	my $script = 'tell app "Finder" to close the window of alias "Ram:Applications:MPW:"';
+	my $script = 'tell app "Finder" to close the front window';
 	
 	system "osascript", "-e", $script, "-e", '""';
 	
