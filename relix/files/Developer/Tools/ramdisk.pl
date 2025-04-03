@@ -176,9 +176,9 @@ sub auto
 	
 	chomp $ramdisk;
 	
-	my $ram = readlink "/Volumes/Ram";
+	my $ram = "$ramdisk/mnt";
 	
-	if ( defined $ram )
+	if ( defined readlink "/Volumes/Ram" )
 	{
 		print "Ram found at $ram\n";
 	}
@@ -195,8 +195,6 @@ sub auto
 		write_file( "$ramdisk/name", "Ram\n" );
 		
 		print "Renamed RAM disk volume to 'Ram'.\n";
-		
-		$ram = "$ramdisk/mnt";
 	}
 	
 	my $mpw = `mpw-select -p`;
