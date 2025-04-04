@@ -258,7 +258,7 @@ sub auto
 	
 	system "open /Volumes/Ram/Applications/MPW";
 	
-	sleep 0.1 until (`mpw-select -p` || "") != $mpw;
+	sleep 0.1 until (`mpw-select -p` || "") ne $mpw;
 	
 	my $script = 'tell app "Finder" to close the window of alias "Ram:Applications:MPW:"';
 	
