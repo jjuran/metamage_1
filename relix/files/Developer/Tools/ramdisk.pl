@@ -256,7 +256,7 @@ sub auto
 		$mpw = `mpw-select -p` || "";
 	}
 	
-	system "open /Volumes/Ram/Applications/MPW";
+	system "open $ram/Applications/MPW";
 	
 	sleep 0.1 until (`mpw-select -p` || "") ne $mpw;
 	
