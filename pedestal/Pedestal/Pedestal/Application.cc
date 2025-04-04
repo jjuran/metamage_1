@@ -845,7 +845,8 @@ namespace Pedestal
 		mac::sys::clear_async_wakeup();
 	}
 	
-	static EventRecord GetAnEvent()
+	static
+	void GetAnEvent( EventRecord& latestEvent )
 	{
 		using monotonic_clock::clock_t;
 		using monotonic_clock::get;
@@ -878,20 +879,20 @@ namespace Pedestal
 		
 		gClockAtNextBusiness = clock_t( -1 );
 		
-		EventRecord nextEvent;
-		
-		WaitNextEvent( nextEvent, ticksToSleep, NULL );
+		WaitNextEvent( latestEvent, ticksToSleep, NULL );
 		
 		if ( ticksToSleep > 0 )
 		{
 			get( &gClockAtLastTrueSleep );
 		}
-		
-		return nextEvent;
 	}
 	
 	static void EventLoop()
 	{
+		EventRecord event;
+		
+		event.what = nullEvent;
+		
 		while ( ! gEndOfEventLoop  ||  (CONFIG_ADB  &&  gKeyboardConfigured) )
 		{
 			try
@@ -907,10 +908,9 @@ namespace Pedestal
 				{
 					using mac::app::quitting;
 					
-					EventRecord event = GetAnEvent();
+					GetAnEvent( event );
 					
 					event_check_due = false;
-					
 					
 					monotonic_clock::get( &gClockAtLastContextSwitch );
 					
