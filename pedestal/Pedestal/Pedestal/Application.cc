@@ -811,10 +811,9 @@ namespace Pedestal
 	
 	const bool has_WNE = has_WaitNextEvent();
 	
-	static EventRecord WaitNextEvent( UInt32 sleep, RgnHandle mouseRgn = NULL )
+	static
+	void WaitNextEvent( EventRecord& event, UInt32 sleep, RgnHandle mouseRgn )
 	{
-		EventRecord event;
-		
 		if ( ! has_WNE )
 		{
 			SystemTask();
@@ -844,8 +843,6 @@ namespace Pedestal
 		}
 		
 		mac::sys::clear_async_wakeup();
-		
-		return event;
 	}
 	
 	static EventRecord GetAnEvent()
@@ -881,7 +878,9 @@ namespace Pedestal
 		
 		gClockAtNextBusiness = clock_t( -1 );
 		
-		EventRecord nextEvent = WaitNextEvent( ticksToSleep );
+		EventRecord nextEvent;
+		
+		WaitNextEvent( nextEvent, ticksToSleep, NULL );
 		
 		if ( ticksToSleep > 0 )
 		{
