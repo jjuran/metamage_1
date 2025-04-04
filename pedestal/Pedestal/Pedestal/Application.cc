@@ -822,28 +822,28 @@ namespace Pedestal
 			(void) ::GetNextEvent( everyEvent, &event );
 			
 			// No need to forge mouse-moved events, since we don't use them.
-			
-			mac::sys::clear_async_wakeup();
-			
-			return event;
 		}
-		
-		static Point last_global_mouse = { 0, 0 };
-		
-		static RgnHandle current_mouse_location = NewRgn();
-		
-		if ( mouseRgn == NULL )
+		else
 		{
-			mouseRgn = current_mouse_location;
+			using mac::qd::assign_pixel_rgn;
+			
+			static Point last_global_mouse = { 0, 0 };
+			
+			static RgnHandle current_mouse_location = NewRgn();
+			
+			if ( mouseRgn == NULL )
+			{
+				mouseRgn = current_mouse_location;
+			}
+			
+			(void) ::WaitNextEvent( everyEvent, &event, sleep, mouseRgn );
+			
+			last_global_mouse = event.where;
+			
+			assign_pixel_rgn( current_mouse_location, last_global_mouse );
 		}
-		
-		(void) ::WaitNextEvent( everyEvent, &event, sleep, mouseRgn );
 		
 		mac::sys::clear_async_wakeup();
-		
-		last_global_mouse = event.where;
-		
-		mac::qd::assign_pixel_rgn( current_mouse_location, last_global_mouse );
 		
 		return event;
 	}
