@@ -902,9 +902,12 @@ namespace Pedestal
 					CheckKeyboard();
 				}
 				
-				ThreadYield();
+				if ( event.what == nullEvent )
+				{
+					ThreadYield();
+				}
 				
-				if ( !ActivelyBusy() || ReadyToWaitForEvents() )
+				if ( event.what  ||  !ActivelyBusy() || ReadyToWaitForEvents() )
 				{
 					using mac::app::quitting;
 					
