@@ -44,8 +44,6 @@
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
-#include "Nitrogen/Str.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -73,7 +71,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -445,52 +442,10 @@ namespace Genie
 		}
 	}
 	
-	static inline
-	OSErr set_vol_name( short vRefNum, const unsigned char* name )
-	{
-		return ::HRename( vRefNum, fsRtDirID, "\p", name );
-	}
-	
-	static
-	OSErr set_vol_name( short vRefNum, const char* begin, const char* end )
-	{
-		N::Str27 name( begin, end - begin );
-		
-		return set_vol_name( vRefNum, name );
-	}
-	
-	static inline
-	OSErr set_vol_name( short vRefNum, const plus::string& name )
-	{
-		return set_vol_name( vRefNum, name.begin(), name.end() );
-	}
-	
-	static
-	void name_set( const vfs::node* that, const char* begin, const char* end, bool binary, const plus::string& name )
-	{
-		const FSVolumeRefNum vRefNum = GetKeyFromParent( *that );
-		
-		OSErr err;
-		
-		if ( name[ 0 ] == '.' )
-		{
-			err = set_vol_name( vRefNum, begin, end );
-		}
-		else
-		{
-			plus::string mac_text = plus::mac_from_utf8( begin, end - begin );
-			
-			err = set_vol_name( vRefNum, mac_text );
-		}
-		
-		Mac::ThrowOSStatus( err );
-	}
-	
 	static const vfs::property_params sys_mac_vol_N_name_params =
 	{
 		vfs::no_fixed_size,
 		(vfs::property_get_hook) &name_get,
-		(vfs::property_set_hook) &name_set,
 	};
 	
 	static vfs::node_ptr folder_link_resolve( const vfs::node* that )
