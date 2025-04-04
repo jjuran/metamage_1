@@ -10,6 +10,8 @@
 #include "mac_sys/beep.hh"
 
 // mac-file-utils
+#include "mac_file/file_traits.hh"
+#include "mac_file/open_data_fork.hh"
 #include "mac_file/parent_directory.hh"
 
 // mac-app-utils
@@ -18,9 +20,6 @@
 
 // Arcana
 #include "MacBinary.hh"
-
-// MacBinaryDecoder
-#include "MacBinaryDecoder.hh"
 
 // Pedestal
 #include "Pedestal/AboutBox.hh"
@@ -31,6 +30,32 @@
 #define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
 
 
+using mac::file::FSIORefNum;
+using mac::file::file_traits;
+
+#if TARGET_API_MAC_CARBON
+	
+	typedef FSRef FileSpec;
+	
+#else
+	
+	typedef FSSpec FileSpec;
+	
+#endif
+
+static
+long read_FSRead( FSIORefNum refnum, void* buffer, SInt32 n_bytes )
+{
+	OSErr err = FSRead( refnum, &n_bytes, buffer );
+	
+	if ( err  &&  err != eofErr )
+	{
+		return err;
+	}
+	
+	return n_bytes;
+}
+
 namespace MacBinaryDecoder
 {
 	
@@ -40,7 +65,7 @@ namespace MacBinaryDecoder
 	
 	
 	static
-	void Decode( Io_Details::stream input, const VRefNum_DirID& destDir )
+	OSErr Decode( FSIORefNum input, const VRefNum_DirID& destDir )
 	{
 		MacBinary::Decoder decoder( destDir );
 		
@@ -52,11 +77,18 @@ namespace MacBinaryDecoder
 		
 		try
 		{
-			while ( std::size_t bytes = io::read( input, data, blockSize ) )
+			long bytes;
+			
+			while ( (bytes = read_FSRead( input, data, blockSize )) > 0 )
 			{
 				decoder.Write( data, bytes );
 				
 				totalBytes += bytes;
+			}
+			
+			if ( bytes < 0 )
+			{
+				return bytes;
 			}
 		}
 		catch ( const MacBinary::InvalidMacBinaryHeader& )
@@ -64,23 +96,36 @@ namespace MacBinaryDecoder
 			//std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %x\n", totalBytes );
 			mac::sys::beep();
 		}
+		
+		return noErr;
 	}
 	
 	static
-	long file_opener( const Io_Details::file_spec& file )
+	long file_opener( const FileSpec& file )
 	{
+		typedef file_traits< FileSpec > traits;
+		
 		try
 		{
 			VRefNum_DirID parent = mac::file::parent_directory( file );
 			
-			Decode( io::open_for_reading( file ), parent );
+			FSIORefNum opened = mac::file::open_data_fork( file, fsRdPerm );
+			
+			if ( opened < 0 )
+			{
+				return opened;
+			}
+			
+			OSErr err = Decode( opened, parent );
+			
+			traits::close( opened );
+			
+			return err;
 		}
 		catch ( ... )
 		{
 			return errAEEventNotHandled;
 		}
-		
-		return noErr;
 	}
 	
 	static
