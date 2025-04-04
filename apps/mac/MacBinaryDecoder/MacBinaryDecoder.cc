@@ -96,6 +96,10 @@ namespace MacBinaryDecoder
 			//std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %x\n", totalBytes );
 			mac::sys::beep();
 		}
+		catch ( ... )
+		{
+			// FIXME
+		}
 		
 		return noErr;
 	}
@@ -105,27 +109,20 @@ namespace MacBinaryDecoder
 	{
 		typedef file_traits< FileSpec > traits;
 		
-		try
+		VRefNum_DirID parent = mac::file::parent_directory( file );
+		
+		FSIORefNum opened = mac::file::open_data_fork( file, fsRdPerm );
+		
+		if ( opened < 0 )
 		{
-			VRefNum_DirID parent = mac::file::parent_directory( file );
-			
-			FSIORefNum opened = mac::file::open_data_fork( file, fsRdPerm );
-			
-			if ( opened < 0 )
-			{
-				return opened;
-			}
-			
-			OSErr err = Decode( opened, parent );
-			
-			traits::close( opened );
-			
-			return err;
+			return opened;
 		}
-		catch ( ... )
-		{
-			return errAEEventNotHandled;
-		}
+		
+		OSErr err = Decode( opened, parent );
+		
+		traits::close( opened );
+		
+		return err;
 	}
 	
 	static
