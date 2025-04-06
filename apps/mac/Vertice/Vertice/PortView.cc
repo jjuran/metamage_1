@@ -22,6 +22,11 @@
 // mac-ui-utils
 #include "mac_ui/windows.hh"
 
+// Nitrogen
+#ifndef NITROGEN_QDOFFSCREEN_HH
+#include "Nitrogen/QDOffscreen.hh"
+#endif
+
 // worldview
 #include "worldview/Render.hh"
 
@@ -45,6 +50,8 @@ namespace Vertice
 	                                           itsSelectedContext(             ),
 	                                           itsAnaglyphMode   ( kNoAnaglyph )
 	{
+		itsGWorld = NULL;
+		
 	#if CONFIG_COMPOSITING
 		
 		itsImage = NULL;
@@ -64,6 +71,11 @@ namespace Vertice
 		}
 		
 	#endif
+		
+		if ( itsGWorld )
+		{
+			DisposeGWorld( itsGWorld );
+		}
 	}
 	
 	
@@ -443,7 +455,12 @@ namespace Vertice
 	{
 		itsBounds = bounds;
 		
-		itsGWorld = new_GWorld( itsBounds );
+		if ( itsGWorld )
+		{
+			DisposeGWorld( itsGWorld );
+		}
+		
+		itsGWorld = new_GWorld( itsBounds ).release();
 		
 		Render();
 	}

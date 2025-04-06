@@ -6,13 +6,27 @@
 #ifndef VERTICE_PORTVIEW_HH
 #define VERTICE_PORTVIEW_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
+#ifndef MAC_OS_X_VERSION_10_7
+#ifndef __QDOFFSCREEN__
+#include <QDOffscreen.h>
+#endif
+#endif
+
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QDOFFSCREEN_H
+#include "missing/QDOffscreen.h"
+#endif
+#endif
+
 // mac-config
 #include "mac_config/compositing-mode.hh"
-
-// Nitrogen
-#ifndef NITROGEN_QDOFFSCREEN_HH
-#include "Nitrogen/QDOffscreen.hh"
-#endif
 
 // Pedestal
 #ifndef PEDESTAL_VIEW_HH
@@ -37,7 +51,7 @@ namespace Vertice
 			Port                         itsPort;
 			Frame                        itsFrame;
 			std::size_t                  itsSelectedContext;
-			nucleus::owned< GWorldPtr >  itsGWorld;
+			GWorldPtr                    itsGWorld;
 		#if CONFIG_COMPOSITING
 			mutable CGImageRef           itsImage;
 		#endif
