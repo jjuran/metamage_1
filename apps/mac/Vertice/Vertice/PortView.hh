@@ -52,6 +52,7 @@ namespace Vertice
 			Frame                        itsFrame;
 			std::size_t                  itsSelectedContext;
 			GWorldPtr                    itsGWorld;
+			GWorldPtr                    altGWorld;
 		#if CONFIG_COMPOSITING
 			mutable CGImageRef           itsImage;
 		#endif

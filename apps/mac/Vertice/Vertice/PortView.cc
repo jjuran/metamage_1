@@ -22,11 +22,6 @@
 // mac-ui-utils
 #include "mac_ui/windows.hh"
 
-// Nitrogen
-#ifndef NITROGEN_QDOFFSCREEN_HH
-#include "Nitrogen/QDOffscreen.hh"
-#endif
-
 // worldview
 #include "worldview/Render.hh"
 
@@ -47,6 +42,7 @@ namespace Vertice
 	                                           itsAnaglyphMode   ( kNoAnaglyph )
 	{
 		itsGWorld = NULL;
+		altGWorld = NULL;
 		
 	#if CONFIG_COMPOSITING
 		
@@ -67,6 +63,11 @@ namespace Vertice
 		}
 		
 	#endif
+		
+		if ( altGWorld )
+		{
+			DisposeGWorld( altGWorld );
+		}
 		
 		if ( itsGWorld )
 		{
@@ -157,10 +158,25 @@ namespace Vertice
 		
 		if ( itsAnaglyphMode )
 		{
-			DrawAnaglyphic();
+			if ( ! altGWorld )
+			{
+				altGWorld = new_GWorld( itsBounds );
+			}
+			
+			if ( altGWorld )
+			{
+				DrawAnaglyphic();
+			}
 		}
 		else
 		{
+			if ( altGWorld )
+			{
+				DisposeGWorld( altGWorld );
+				
+				altGWorld = NULL;
+			}
+			
 			itsPort.MakeFrame( itsFrame );
 			
 			render_into_GWorld( itsFrame.Models(), &paint_onto_surface, itsGWorld );
@@ -228,17 +244,6 @@ namespace Vertice
 		Moveable& target = itsPort.itsScene.GetContext( contextIndex );
 		
 		double eyeRadius = 0.05;  // distance from eye to bridge of nose
-		
-		nucleus::owned< GWorldPtr > altGWorld;
-		
-		if ( GWorldPtr gworld = new_GWorld( itsBounds ) )
-		{
-			altGWorld = nucleus::owned< GWorldPtr >::seize( gworld );
-		}
-		else
-		{
-			return;
-		}
 		
 		
 		target.ContextTranslate( -eyeRadius, 0, 0 );
@@ -472,6 +477,13 @@ namespace Vertice
 	void PortView::SetBounds( const Rect& bounds )
 	{
 		itsBounds = bounds;
+		
+		if ( altGWorld )
+		{
+			DisposeGWorld( altGWorld );
+			
+			altGWorld = NULL;
+		}
 		
 		if ( itsGWorld )
 		{
