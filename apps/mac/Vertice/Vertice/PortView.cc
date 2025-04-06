@@ -143,14 +143,12 @@ namespace Vertice
 	{
 	#if CONFIG_COMPOSITING
 		
-		if ( itsImage.get() == NULL )
-		{
-			return;
-		}
-		
 		OSStatus err;
 		
-		err = HIViewDrawCGImage( context, &bounds, itsImage );
+		if ( itsImage )
+		{
+			err = HIViewDrawCGImage( context, &bounds, itsImage );
+		}
 		
 	#endif
 	}
