@@ -43,24 +43,56 @@ namespace Vertice
 	namespace Ped = Pedestal;
 	
 	
+	static inline
+	bool has_GetAvailableWindowPositioningBounds()
+	{
+		/*
+			Available in CarbonLib 1.3 and Mac OS X 10.0.
+			
+			g++ 3.1 warns about &GetAvailableWindowPositioningBounds
+			always being true, so don't expose the code to it.
+		*/
+		
+	#if ! TARGET_API_MAC_OSX
+		
+		return TARGET_API_MAC_CARBON  &&  &GetAvailableWindowPositioningBounds;
+		
+	#endif
+		
+		return true;
+	}
+	
 	static Rect MakeWindowRect()
 	{
-		const Rect& screenBounds = mac::qd::screenBits().bounds;
-		short mbarHeight = ::GetMBarHeight();
-		Rect rect = screenBounds;
-		rect.top += mbarHeight + 22;
-		rect.bottom -= 7;
-		rect.left = 6;
-		rect.right -= 7;
+		Rect rect;
 		
-		short length = rect.bottom - rect.top;
+		if ( has_GetAvailableWindowPositioningBounds() )
+		{
+			GetAvailableWindowPositioningBounds( GetMainDevice(), &rect );
+		}
+		else
+		{
+			rect = mac::qd::screenBits().bounds;
+			
+			rect.top += GetMBarHeight();
+		}
+		
+		rect.top += 22;  // leave room for title bar
+		
+		UInt16 desktop_width  = rect.right - rect.left;
+		UInt16 desktop_height = rect.bottom - rect.top;
+		
+		UInt16 max_width  = desktop_width - 12;
+		UInt16 max_height = desktop_height - 8;
+		
+		UInt16 length = max_width < max_height ? max_width : max_height;
 		
 		if ( ! TARGET_API_MAC_CARBON  &&  length > 400 )
 		{
 			length = 400;
 		}
 		
-		UInt16 left_margin = (screenBounds.right - length) / 2;
+		UInt16 left_margin = (desktop_width - length) / 2;
 		
 		rect.bottom = rect.top + length;
 		
