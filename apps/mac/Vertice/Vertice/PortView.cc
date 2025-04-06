@@ -119,6 +119,35 @@ namespace Vertice
 		return image;
 	}
 	
+	static
+	GWorldPtr new_GWorld( Rect bounds )
+	{
+	#ifdef MAC_OS_X_VERSION_10_7
+		
+		WindowRef window = mac::qd::thePort_window();
+		
+		CGFloat factor = HIWindowGetBackingScaleFactor( window );
+		
+		bounds.right *= factor;
+		bounds.bottom *= factor;
+		
+	#endif
+		
+		QDErr err;
+		GWorldPtr gworld;
+		
+		err = NewGWorld( &gworld, 32, &bounds, NULL, NULL, GWorldFlags() );
+		
+		if ( err )
+		{
+			return NULL;
+		}
+		
+		LockPixels( GetGWorldPixMap( gworld ) );  // pixels not purgeable
+		
+		return gworld;
+	}
+	
 	void PortView::Render()
 	{
 		if ( ! itsGWorld )
@@ -190,35 +219,6 @@ namespace Vertice
 		}
 		
 	#endif
-	}
-	
-	static
-	GWorldPtr new_GWorld( Rect bounds )
-	{
-	#ifdef MAC_OS_X_VERSION_10_7
-		
-		WindowRef window = mac::qd::thePort_window();
-		
-		CGFloat factor = HIWindowGetBackingScaleFactor( window );
-		
-		bounds.right *= factor;
-		bounds.bottom *= factor;
-		
-	#endif
-		
-		QDErr err;
-		GWorldPtr gworld;
-		
-		err = NewGWorld( &gworld, 32, &bounds, NULL, NULL, GWorldFlags() );
-		
-		if ( err )
-		{
-			return NULL;
-		}
-		
-		LockPixels( GetGWorldPixMap( gworld ) );  // pixels not purgeable
-		
-		return gworld;
 	}
 	
 	void PortView::DrawAnaglyphic()
