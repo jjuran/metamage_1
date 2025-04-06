@@ -60,11 +60,12 @@ namespace Vertice
 			length = 400;
 		}
 		
+		UInt16 left_margin = (screenBounds.right - length) / 2;
+		
 		rect.bottom = rect.top + length;
-		//short vMargin = ( screenBounds.bottom - rect.bottom ) - mbarHeight;
-		short hMargin = ( screenBounds.right - length );
-		rect.left = hMargin / 2;
-		rect.right = hMargin / 2 + length;
+		
+		rect.left  = left_margin;
+		rect.right = left_margin + length;
 		
 		return rect;
 	}
