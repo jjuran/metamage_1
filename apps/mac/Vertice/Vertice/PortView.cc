@@ -111,7 +111,7 @@ namespace Vertice
 	
 	void PortView::Derive() const
 	{
-	#ifdef MAC_OS_X_VERSION_10_2
+	#if CONFIG_COMPOSITING
 		
 		itsImage = CGImage_from_GWorld( itsGWorld );
 		
@@ -120,7 +120,7 @@ namespace Vertice
 	
 	void PortView::Update() const
 	{
-	#ifdef MAC_OS_X_VERSION_10_2
+	#if CONFIG_COMPOSITING
 		
 		WindowRef window = mac::qd::thePort_window();
 		
@@ -141,7 +141,7 @@ namespace Vertice
 	
 	void PortView::DrawInContext( CGContextRef context, CGRect bounds )
 	{
-	#ifdef MAC_OS_X_VERSION_10_2
+	#if CONFIG_COMPOSITING
 		
 		if ( itsImage.get() == NULL )
 		{

@@ -113,7 +113,7 @@ namespace Vertice
 		WindowAttributes attrs = kWindowCloseBoxAttribute
 		                       | kWindowResizableAttribute
 		                       | kWindowCollapseBoxAttribute
-		                     #ifdef MAC_OS_X_VERSION_10_3  // not 10.2
+		                     #if CONFIG_COMPOSITING
 		                       | kWindowCompositingAttribute
 		                     #endif
 		                     #ifdef MAC_OS_X_VERSION_10_3
