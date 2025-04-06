@@ -77,7 +77,7 @@ namespace Vertice
 			rect.top += GetMBarHeight();
 		}
 		
-		rect.top += 22;  // leave room for title bar
+		rect.top += 24;  // leave room for title bar
 		
 		UInt16 desktop_width  = rect.right - rect.left;
 		UInt16 desktop_height = rect.bottom - rect.top;
