@@ -41,10 +41,6 @@
 namespace Vertice
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
-	
-	
 	PortView::PortView( const Rect& bounds ) : itsBounds         ( bounds      ),
 	                                           itsPort           ( itsScene    ),
 	                                           itsSelectedContext(             ),
@@ -125,6 +121,11 @@ namespace Vertice
 	
 	void PortView::Render()
 	{
+		if ( ! itsGWorld )
+		{
+			return;
+		}
+		
 		if ( itsAnaglyphMode )
 		{
 			DrawAnaglyphic();
@@ -192,7 +193,7 @@ namespace Vertice
 	}
 	
 	static
-	n::owned< GWorldPtr > new_GWorld( Rect bounds )
+	GWorldPtr new_GWorld( Rect bounds )
 	{
 	#ifdef MAC_OS_X_VERSION_10_7
 		
@@ -205,7 +206,15 @@ namespace Vertice
 		
 	#endif
 		
-		n::owned< GWorldPtr > gworld = N::NewGWorld( 32, bounds );
+		QDErr err;
+		GWorldPtr gworld;
+		
+		err = NewGWorld( &gworld, 32, &bounds, NULL, NULL, GWorldFlags() );
+		
+		if ( err )
+		{
+			return NULL;
+		}
 		
 		LockPixels( GetGWorldPixMap( gworld ) );  // pixels not purgeable
 		
@@ -220,7 +229,16 @@ namespace Vertice
 		
 		double eyeRadius = 0.05;  // distance from eye to bridge of nose
 		
-		nucleus::owned< GWorldPtr > altGWorld = new_GWorld( itsBounds );
+		nucleus::owned< GWorldPtr > altGWorld;
+		
+		if ( GWorldPtr gworld = new_GWorld( itsBounds ) )
+		{
+			altGWorld = nucleus::owned< GWorldPtr >::seize( gworld );
+		}
+		else
+		{
+			return;
+		}
 		
 		
 		target.ContextTranslate( -eyeRadius, 0, 0 );
@@ -460,7 +478,7 @@ namespace Vertice
 			DisposeGWorld( itsGWorld );
 		}
 		
-		itsGWorld = new_GWorld( itsBounds ).release();
+		itsGWorld = new_GWorld( itsBounds );
 		
 		Render();
 	}
