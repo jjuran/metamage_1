@@ -17,6 +17,9 @@
 // iota
 #include "iota/strings.hh"
 
+// mac-config
+#include "mac_config/compositing-mode.hh"
+
 // mac-sys-utils
 #include "mac_sys/current_process.hh"
 #include "mac_sys/is_front_process.hh"
@@ -83,15 +86,6 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
-
-
-#ifndef CONFIG_COMPOSITING
-#ifdef MAC_OS_X_VERSION_10_3
-#define CONFIG_COMPOSITING  1
-#else
-#define CONFIG_COMPOSITING  0
-#endif
-#endif
 
 
 static inline
