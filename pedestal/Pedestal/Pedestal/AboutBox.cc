@@ -36,6 +36,7 @@
 
 // mac-config
 #include "mac_config/color-quickdraw.hh"
+#include "mac_config/compositing-mode.hh"
 
 // mac-sys-utils
 #include "mac_sys/has/ColorQuickDraw.hh"
@@ -70,21 +71,6 @@
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowStorage.hh"
 
-
-/*
-	Mac OS X 10.2 supports compositing mode, but it has some issues,
-	which we'll avoid by not using it.  In particular, our Quartz-only
-	code path relies on HIThemeDrawTextBox(), which isn't available
-	until 10.3.
-*/
-
-#ifndef CONFIG_COMPOSITING
-#ifdef MAC_OS_X_VERSION_10_3  // not 10.2
-#define CONFIG_COMPOSITING  1
-#else
-#define CONFIG_COMPOSITING  0
-#endif
-#endif
 
 #define LENGTH( array )  (sizeof (array) / sizeof (array)[0])
 
