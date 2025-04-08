@@ -5,6 +5,9 @@
 
 #include "Vertico/Document.hh"
 
+// Standard C
+#include <string.h>
+
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/screenBits.hh"
@@ -12,18 +15,14 @@
 // mac-app-utils
 #include "mac_app/Window_menu.hh"
 
+// MacPlus
+#include "MacPlus/SlurpFile.hh"
+
 // debug
 #include "debug/boost_assert.hh"
 
 // Boost
 #include <boost/intrusive_ptr.hpp>
-
-// text-input
-#include "text_input/feed.hh"
-#include "text_input/get_line_from_feed.hh"
-
-// Nitrogen
-#include "Nitrogen/Files.hh"
 
 // Pedestal
 #include "Pedestal/WindowStorage.hh"
@@ -35,37 +34,13 @@
 #include "Vertico/PortView.hh"
 
 
-namespace Nitrogen
-{
-	
-	class FSReader
-	{
-		private:
-			FSFileRefNum its_fRefNum;
-		
-		public:
-			typedef char*        first_argument_type;
-			typedef std::size_t  second_argument_type;
-			typedef std::size_t  result_type;
-			
-			FSReader( FSFileRefNum fRefNum ) : its_fRefNum( fRefNum )
-			{
-			}
-			
-			std::size_t operator()( char* buffer, std::size_t length ) const
-			{
-				return FSRead( its_fRefNum, length, buffer, ThrowEOF_Never() );
-			}
-	};
-	
-}
-
 namespace Vertico
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
+	
+	using MacPlus::SlurpFile;
 	
 	
 	static inline
@@ -162,21 +137,22 @@ namespace Vertico
 		mac::app::Window_menu_remove( window );
 		mac::app::Window_menu_insert( window );
 		
-		n::owned< N::FSFileRefNum > fRefNum = N::FSpOpenDF( file, N::fsRdPerm );
+		plus::string s = SlurpFile( file );
 		
 		PortView& view = static_cast< PortView& >( *get_window_view( window ) );
 		
 		Loader loader( view.ItsScene() );
 		
-		text_input::feed feed;
+		const char* data = s.c_str();
+		const char* p    = data;
 		
-		N::FSReader reader( fRefNum );
-		
-		while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
+		while ( const char* q = strchr( p, '\n' ) )
 		{
-			const plus::string& line = *s;
+			const plus::string& line = s.substr( p - data, q - p );
 			
 			loader.LoadLine( line );
+			
+			p = q + 1;
 		}
 		
 		view.Render();
