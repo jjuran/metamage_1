@@ -8,6 +8,7 @@
 #if TARGET_RT_MAC_MACHO
 
 // mac-config
+#include "mac_config/compositing-mode.hh"
 #include "mac_config/upp-macros.hh"
 
 // mac-qd-utils
@@ -34,17 +35,6 @@
 
 #pragma exceptions off
 
-
-/*
-	Compositing mode is introduced in Mac OS X 10.2,
-	but doesn't work without major problems until 10.3.
-*/
-
-#ifdef MAC_OS_X_VERSION_10_3
-#define CONFIG_COMPOSITING  1
-#else
-#define CONFIG_COMPOSITING  0
-#endif
 
 namespace mac {
 namespace app {
