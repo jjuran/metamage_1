@@ -21,16 +21,8 @@
 #include <Quickdraw.h>
 #endif
 
-/*
-	Compositing mode is introduced in Mac OS X 10.2,
-	but doesn't work without major problems until 10.3.
-*/
-
-#ifdef MAC_OS_X_VERSION_10_3
-#define CONFIG_COMPOSITING  1
-#else
-#define CONFIG_COMPOSITING  0
-#endif
+// mac-config
+#include "mac_config/compositing-mode.hh"
 
 
 extern WindowRef main_window;
