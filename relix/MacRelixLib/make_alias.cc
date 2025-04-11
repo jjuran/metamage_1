@@ -40,16 +40,21 @@ namespace relix
 	{
 		using mac::types::FSSpec;
 		
-		if ( ! aliases_present )
+		OSStatus err;
+		
+		if ( aliases_present )
+		{
+			const FSSpec targetSpec = vfs::FSSpec_from_node( target );
+			const FSSpec aliasSpec  = vfs::FSSpec_from_node( alias  );
+			
+			err = mac::app::create_alias( aliasSpec, targetSpec );
+			
+			Mac::ThrowOSStatus( err );
+		}
+		else
 		{
 			Mac::ThrowOSStatus( unimpErr );
-			return;
 		}
-		
-		const FSSpec targetSpec = vfs::FSSpec_from_node( target );
-		const FSSpec aliasSpec  = vfs::FSSpec_from_node( alias  );
-		
-		Mac::ThrowOSStatus( mac::app::create_alias( aliasSpec, targetSpec ) );
 	}
 	
 }
