@@ -40,7 +40,7 @@ namespace relix
 	{
 		using mac::types::FSSpec;
 		
-		OSStatus err;
+		OSStatus err = unimpErr;
 		
 		if ( aliases_present )
 		{
@@ -48,13 +48,9 @@ namespace relix
 			const FSSpec aliasSpec  = vfs::FSSpec_from_node( alias  );
 			
 			err = mac::app::create_alias( aliasSpec, targetSpec );
-			
-			Mac::ThrowOSStatus( err );
 		}
-		else
-		{
-			Mac::ThrowOSStatus( unimpErr );
-		}
+		
+		Mac::ThrowOSStatus( err );
 	}
 	
 }
