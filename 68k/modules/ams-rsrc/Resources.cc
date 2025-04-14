@@ -32,6 +32,7 @@
 #include "unglue.hh"
 
 // ams-rsrc
+#include "dcmp.hh"
 #include "rsrc_fork.hh"
 
 
@@ -45,6 +46,8 @@ enum
 	resLocked    = 16,
 	resProtected = 8,
 	resChanged   = 2,
+	
+	resCompressed = 1,  // undocumented
 };
 
 
@@ -603,7 +606,34 @@ Handle new_res_handle( RsrcMapHandle rsrc_map, rsrc_header& rsrc, ResType type )
 		Size data_length;
 		fast_memcpy( &data_length, &data->length, sizeof (Size) );
 		
-		if ( Handle h = PtrToHand( data->bytes, data_length ) )
+		/*
+			Pessimistically assume memFullErr.  If we fail otherwise
+			in PtrToHand_dcmp(), it will have already set ResErr.
+		*/
+		
+		ResErr = memFullErr;
+		
+		Handle h;
+		
+		if ( rsrc.attrs & resCompressed )
+		{
+			if ( type == 'dcmp' )
+			{
+				ERROR = "Resource decompression code 'dcmp' id=", rsrc.id,
+				        " is itself compressed";
+				
+				ResErr = CantDecompress;
+				return NULL;
+			}
+			
+			h = PtrToHand_dcmp( data->bytes, data_length );
+		}
+		else
+		{
+			h = PtrToHand( data->bytes, data_length );
+		}
+		
+		if ( h )
 		{
 			master_pointer& mp = *(master_pointer*) h;
 			
@@ -626,7 +656,6 @@ Handle new_res_handle( RsrcMapHandle rsrc_map, rsrc_header& rsrc, ResType type )
 		}
 		else
 		{
-			ResErr = memFullErr;
 			return NULL;
 		}
 	}
