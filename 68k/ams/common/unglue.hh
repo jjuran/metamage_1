@@ -26,6 +26,12 @@ StringHandle PtrToHand( const void* p : __A0, UInt32 n : __D0 )
 }
 
 inline asm
+StringHandle PtrToHand_StringHandle( const void* p : __A0, UInt32 n : __D0 )
+{
+	_PtrToHand
+}
+
+inline asm
 Handle CopyHandle( Handle src : __A1, Handle dst : __A0 )
 {
 	MOVEQ.L  #0,D0
