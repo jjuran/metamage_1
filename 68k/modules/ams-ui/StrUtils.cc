@@ -16,7 +16,7 @@
 
 pascal unsigned char** NewString_patch( const unsigned char* s )
 {
-	return PtrToHand( s, 1 + s[ 0 ] );
+	return PtrToHand_StringHandle( s, 1 + s[ 0 ] );
 }
 
 pascal void SetString_patch( unsigned char** h, const unsigned char* s )

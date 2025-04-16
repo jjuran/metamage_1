@@ -19,6 +19,7 @@
 #include "FCB.hh"
 #include "module_A4.hh"
 #include "scoped_zone.hh"
+#include "unglue.hh"
 
 // ams-fs
 #include "freemount.hh"
@@ -118,17 +119,6 @@ OSErr documents_Create( VCB* vcb, const uint8_t* name )
 	return err ? ioErr : noErr;
 }
 
-enum
-{
-	_PtrToHand = 0xA9E3,
-};
-
-static inline asm
-StringHandle PtrToHand( const void* p : __A0, UInt32 n : __D0 )
-{
-	_PtrToHand
-}
-
 OSErr documents_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 {
 	const Byte is_rsrc = trap_word;  // Open is A000, OpenRF is A00A
@@ -164,7 +154,7 @@ OSErr documents_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 	
 	const size_t size = file_data.size();
 	
-	StringHandle h = PtrToHand( path, 1 + path[ 0 ] );
+	StringHandle h = PtrToHand_StringHandle( path, 1 + path[ 0 ] );
 	
 	fcb->fcbFlNum  = (long) h;
 	
