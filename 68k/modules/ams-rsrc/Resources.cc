@@ -29,6 +29,7 @@
 #include "callouts.hh"
 #include "FCB.hh"
 #include "master_pointer.hh"
+#include "unglue.hh"
 
 // ams-rsrc
 #include "rsrc_fork.hh"
@@ -58,12 +59,6 @@ short ResErr      : 0x0A60;
 typedef rsrc_data_element  rsrc_data;
 typedef rsrc_map_header**  RsrcMapHandle;
 
-
-static inline
-asm Handle PtrToHand( const void* p : __A0, long size : __D0 )
-{
-	DC.W     0xA9E3  // _PtrToHand
-}
 
 static inline
 FCB* get_FCB( unsigned short refNum )

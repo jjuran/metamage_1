@@ -20,6 +20,7 @@
 #include "callouts.hh"
 #include "c_string.hh"
 #include "QDGlobals.hh"
+#include "unglue.hh"
 
 // ams-ui
 #include "Dialogs.hh"
@@ -162,12 +163,6 @@ static const char SFGetFile_items[] =
 	"\x88"                 // statText + itemDisable
 	"\x00" ""              // static text
 	;
-
-static inline
-asm Handle PtrToHand( const void* p : __A0, long size : __D0 )
-{
-	DC.W     0xA9E3  // _PtrToHand
-}
 
 short SFSaveDisk : 0x0214;
 
