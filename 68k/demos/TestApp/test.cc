@@ -29,9 +29,6 @@
 // mac-app-utils
 #include "mac_app/scoped_EventMask.hh"
 
-// Nostalgia
-#include "Nostalgia/MacWindows.hh"
-
 // TestApp
 #include "desktop.hh"
 #include "display.hh"
@@ -43,6 +40,8 @@
 
 using mac::qd::get_portRect;
 using mac::qd::wide_drag_area;
+
+using mac::ui::invalidate_thePort_window_rect;
 
 using mac::app::scoped_EventMask;
 
@@ -78,8 +77,8 @@ void invalidate_scroll_bar_areas( WindowRef window )
 	const Rect vstrip = { 0, right - 15,  bottom, right };
 	const Rect hstrip = { bottom - 15, 0, bottom, right };
 	
-	InvalRect( &vstrip );
-	InvalRect( &hstrip );
+	invalidate_thePort_window_rect( window, vstrip );
+	invalidate_thePort_window_rect( window, hstrip );
 }
 
 static inline
