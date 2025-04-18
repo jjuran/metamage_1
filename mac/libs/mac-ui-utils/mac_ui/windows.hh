@@ -31,6 +31,34 @@ namespace ui  {
 #if ! __LP64__
 	
 	inline
+	void invalidate_thePort_window_rect( WindowRef window, const Rect& rect )
+	{
+		/*
+			Portable code must pass a window that is already set
+			as the current port.  However, a caller *may* choose
+			to rely on this function's implementation, loosening
+			the requirements:  Carbon callers need not set their
+			window as the current port, while non-Carbon callers
+			need not pass a window at all (though it must be set
+			as the current port).
+			
+			That said, non-portable callers that are built either
+			only as Carbon or only as non-Carbon can (and should)
+			just use InvalRect() or InvalWindowRect() explicitly.
+		*/
+		
+	#if CALL_NOT_IN_CARBON
+		
+		InvalRect( &rect );
+		
+	#else
+		
+		InvalWindowRect( window, &rect );
+		
+	#endif
+	}
+	
+	inline
 	void set_window_title( WindowRef window, const Byte* name )
 	{
 		SetWTitle( window, name );
