@@ -22,9 +22,6 @@
 // Standard C
 #include <string.h>
 
-// Nostalgia
-#include "Nostalgia/MacWindows.hh"
-
 // mac-qd-utils
 #include "mac_qd/get_visRgn.hh"
 #include "mac_qd/globals/thePort.hh"
@@ -177,12 +174,12 @@ namespace Genie
 			ControlRef scrollbar = scrollVert ? ::GetListVerticalScrollBar  ( list )
 			                                  : ::GetListHorizontalScrollBar( list );
 			
+			HideControl( scrollbar );
+			
 		#if OPAQUE_TOOLBOX_STRUCTS
 			
 			Rect bounds;
 			GetControlBounds( scrollbar, &bounds );
-			
-			InvalRect(& bounds );
 			
 			(scrollVert ? bounds.bottom : bounds.right) -= 15;
 			
@@ -192,13 +189,11 @@ namespace Genie
 			
 			Rect& bounds = scrollbar[0]->contrlRect;
 			
-			InvalRect(& bounds );
-			
 			(scrollVert ? bounds.bottom : bounds.right) -= 15;
 			
 		#endif
 			
-			DrawOneControl( scrollbar );
+			ShowControl( scrollbar );
 		}
 	}
 	
