@@ -177,6 +177,8 @@ namespace Genie
 			ControlRef scrollbar = scrollVert ? ::GetListVerticalScrollBar  ( list )
 			                                  : ::GetListHorizontalScrollBar( list );
 			
+		#if OPAQUE_TOOLBOX_STRUCTS
+			
 			Rect bounds;
 			GetControlBounds( scrollbar, &bounds );
 			
@@ -185,6 +187,16 @@ namespace Genie
 			(scrollVert ? bounds.bottom : bounds.right) -= 15;
 			
 			SetControlBounds( scrollbar, &bounds );
+			
+		#else
+			
+			Rect& bounds = scrollbar[0]->contrlRect;
+			
+			InvalRect(& bounds );
+			
+			(scrollVert ? bounds.bottom : bounds.right) -= 15;
+			
+		#endif
 			
 			DrawOneControl( scrollbar );
 		}
