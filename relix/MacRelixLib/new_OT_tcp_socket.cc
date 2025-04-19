@@ -35,6 +35,9 @@
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
 
+// mac-ot-utils
+#include "mac_ot/AsyncOpenEndpoint.hh"
+
 // mac-app-utils
 #include "mac_app/OpenTransport_share.hh"
 
@@ -48,10 +51,6 @@
 
 // Nitrogen
 #include "Nitrogen/OpenTransport.hh"
-#include "Nitrogen/OpenTransportProviders.hh"
-
-// ClassicToolbox
-#include "ClassicToolbox/OpenTransport.hh"
 
 // relix-kernel
 #include "relix/api/broken_pipe.hh"
@@ -209,13 +208,17 @@ namespace relix
 	static
 	void AsyncOpenEndpoint( const char* config, OT_socket_extra* socket )
 	{
+		using mac::ot::AsyncOpenEndpoint;
+		
+		OSStatus err;
+		
 		DEFINE_UPP( OTNotify, socket_notifier )
 		
 		socket->its_result = 1;
 		
-		N::OTAsyncOpenEndpoint( N::OTCreateConfiguration( config ),
-		                        UPP_ARG( socket_notifier ),
-		                        socket );
+		err = AsyncOpenEndpoint( config, UPP_ARG( socket_notifier ), socket );
+		
+		Mac::ThrowOSStatus( err );
 		
 		Complete( *socket );
 	}
