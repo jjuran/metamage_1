@@ -24,6 +24,9 @@
 // mac-config
 #include "mac_config/upp-macros.hh"
 
+// mac-ot-utils
+#include "mac_ot/OpenInternetServices.hh"
+
 // mac-app-utils
 #include "mac_app/OpenTransport_share.hh"
 
@@ -32,8 +35,8 @@
 #include "relix/api/try_again.hh"
 #include "relix/syscall/registry.hh"
 
-// ClassicToolbox
-#include "ClassicToolbox/OpenTransportProviders.hh"
+// Nitrogen
+#include "Nitrogen/OpenTransportProviders.hh"
 
 
 namespace relix
@@ -81,7 +84,14 @@ namespace relix
 	
 	static n::owned< InetSvcRef > InternetServices( netdb_provider_data& data )
 	{
-		n::owned< InetSvcRef > provider = N::OTOpenInternetServices( kDefaultInternetServicesPath );
+		using mac::ot::InternetServices_opened;
+		using mac::ot::OpenInternetServices_default_path;
+		
+		InternetServices_opened opened = OpenInternetServices_default_path();
+		
+		Mac::ThrowOSStatus( error( opened ) );
+		
+		n::owned< InetSvcRef > provider = n::owned< InetSvcRef >::seize( value( opened ) );
 		
 		N::OTInstallNotifier( provider, UPP_ARG( netdb_notifier ), &data );
 		
