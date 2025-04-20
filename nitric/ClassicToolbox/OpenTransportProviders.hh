@@ -32,11 +32,13 @@ namespace Nitrogen
 	{
 		::OSStatus err;
 		
-		InetSvcRef result = ::OTOpenInternetServices( config.release(),
+		InetSvcRef result = ::OTOpenInternetServices( config,
 		                                              OTOpenFlags( 0 ),
 		                                              &err );
 		
 		Mac::ThrowOSStatus( err );
+		
+		config.release();
 		
 		return nucleus::owned< InetSvcRef >::seize( result );
 	}

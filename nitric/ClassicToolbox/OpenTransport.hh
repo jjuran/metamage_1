@@ -30,12 +30,14 @@ namespace Nitrogen
 	{
 		::OSStatus err;
 		
-		EndpointRef result = ::OTOpenEndpoint( config.release(),
+		EndpointRef result = ::OTOpenEndpoint( config,
 		                                       OTOpenFlags( 0 ),
 		                                       info,
 		                                       &err );
 		
 		Mac::ThrowOSStatus( err );
+		
+		config.release();
 		
 		return nucleus::owned< EndpointRef >::seize( result );
 	}
@@ -47,13 +49,15 @@ namespace Nitrogen
 	                     OTNotifyUPP                           notifier,
 	                     void*                                 context )
 	{
-		OSStatus err = ::OTAsyncOpenEndpoint( config.release(),
+		OSStatus err = ::OTAsyncOpenEndpoint( config,
 		                                      OTOpenFlags( 0 ),
 		                                      info,
 		                                      notifier,
 		                                      context );
 		
 		Mac::ThrowOSStatus( err );
+		
+		config.release();
 	}
 	
 	inline void
