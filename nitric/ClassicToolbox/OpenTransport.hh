@@ -6,7 +6,7 @@
 #ifndef CLASSICTOOLBOX_OPENTRANSPORT_HH
 #define CLASSICTOOLBOX_OPENTRANSPORT_HH
 
-// Nostalgia
+// ClassicToolbox
 #include "Nostalgia/OpenTransport.hh"
 
 // Nitrogen
