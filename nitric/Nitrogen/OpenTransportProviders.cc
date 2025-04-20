@@ -72,12 +72,14 @@ namespace Nitrogen
 	{
 		::OSStatus err;
 		
-		InetSvcRef result = ::OTOpenInternetServicesInContext( cfig.release(),
+		InetSvcRef result = ::OTOpenInternetServicesInContext( cfig,
 		                                                       OTOpenFlags( 0 ),
 		                                                       &err,
 		                                                       clientContext );
 		
 		ThrowOSStatus( err );
+		
+		cfig.release();
 		
 		return nucleus::owned< InetSvcRef >::seize( result );
 	}

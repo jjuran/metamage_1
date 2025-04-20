@@ -100,13 +100,15 @@ namespace Nitrogen
 	{
 		::OSStatus err;
 		
-		EndpointRef result = ::OTOpenEndpointInContext( config.release(),
+		EndpointRef result = ::OTOpenEndpointInContext( config,
 		                                                OTOpenFlags( 0 ),
 		                                                info,
 		                                                &err,
 		                                                clientContext );
 		
 		ThrowOSStatus( err );
+		
+		config.release();
 		
 		return nucleus::owned< EndpointRef >::seize( result );
 	}
@@ -119,7 +121,7 @@ namespace Nitrogen
 	                              void*                                 context,
 	                              OTClientContextPtr                    clientContext )
 	{
-		OSStatus err = ::OTAsyncOpenEndpointInContext( config.release(),
+		OSStatus err = ::OTAsyncOpenEndpointInContext( config,
 		                                               OTOpenFlags( 0 ),
 		                                               info,
 		                                               notifier,
@@ -127,6 +129,8 @@ namespace Nitrogen
 		                                               clientContext );
 		
 		ThrowOSStatus( err );
+		
+		config.release();
 	}
 	
 	OTResult OTLook( EndpointRef ref )
