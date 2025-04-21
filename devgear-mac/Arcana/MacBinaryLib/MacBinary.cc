@@ -564,7 +564,9 @@ namespace MacBinary
 	{
 		using mac::file::get_desktop_comment;
 		
-		char comment[ 256 ] = {};
+		char comment[ 256 ];
+		
+		memset( comment, '\0', sizeof comment );
 		
 		long comment_size = 0;
 		long padded_size;
