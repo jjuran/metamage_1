@@ -118,21 +118,30 @@ namespace recall
 	
 #endif
 	
+	static inline
+	const char* to_char( const char* s, char* buffer )
+	{
+		return s;
+	}
+	
 	template < class SymbolPtr >
-	static inline plus::string get_name_from_symbol_pointer( SymbolPtr symbol )
+	static inline
+	const char*
+	get_name_from_symbol_pointer( SymbolPtr symbol, char* buffer )
 	{
 		if ( symbol )
 		{
-			return get_symbol_string( symbol );
+			return to_char( get_symbol_string( symbol ), buffer );
 		}
 		
 		return "???";
 	}
 	
 	template < class ReturnAddr >
-	static inline plus::string get_symbol_name( ReturnAddr addr )
+	static inline
+	const char* get_symbol_name( ReturnAddr addr, char* buffer )
 	{
-		return get_name_from_symbol_pointer( find_symbol_name( addr ) );
+		return get_name_from_symbol_pointer( find_symbol_name( addr ), buffer );
 	}
 	
 	static const char* locate_symbol_name( const void* address )
@@ -153,10 +162,14 @@ namespace recall
 			return "<<odd address>>";
 		}
 		
-		const char* located_name = locate_symbol_name( addr );
+		char symname_buffer[ 256 ];
 		
-		plus::string name = located_name ? plus::string( located_name )
-		                                 : get_symbol_name( addr );
+		const char* name = locate_symbol_name( addr );
+		
+		if ( ! name )
+		{
+			name = get_symbol_name( addr, symname_buffer );
+		}
 		
 		if ( CONFIG_DEMANGLING )
 		{
@@ -174,7 +187,7 @@ namespace recall
 			
 			try
 			{
-				demangler_traits< ReturnAddr >::demangle( result, name.c_str() );
+				demangler_traits< ReturnAddr >::demangle( result, name );
 				
 			#ifdef __GNUC__
 				
