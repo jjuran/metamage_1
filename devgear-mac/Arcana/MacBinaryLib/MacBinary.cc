@@ -213,7 +213,7 @@ namespace MacBinary
 		//kIconPosition,
 		//kFileFolderID,  // reserved in Mac OS 8
 		kFInfo,
-		//kProtectedFlag,  // not used in sample code
+		kFileLocked,  // also called the "Protected" flag
 		kZeroByte82,
 		kDataForkLength,
 		kResourceForkLength,
@@ -400,6 +400,17 @@ namespace MacBinary
 		}
 	};
 	
+	template <>
+	struct Field_Traits< kFileLocked > : POD_Field_Traits< Byte, 81 >
+	{
+		typedef POD_Field_Traits< Byte, 81 > Field;
+		
+		static void Set( Header& h, Value v )
+		{
+			Field::Set( h, v & 0x1 );  // only record the low bit of attrs
+		}
+	};
+	
 	template <> struct Field_Traits< kZeroByte82 > : Zero_Field_Traits< 82 > {};
 	
 	template <> struct Field_Traits< kDataForkLength     > : MisalignedPOD_Field_Traits< UInt32, 83 > {};
@@ -500,6 +511,7 @@ namespace MacBinary
 		
 		h.Set< kOldVersion >();
 		
+		h.Set< kFileLocked         >( pb.ioFlAttrib );
 		h.Set< kDataForkLength     >( pb.ioFlLgLen  );
 		h.Set< kResourceForkLength >( pb.ioFlRLgLen );
 		
