@@ -263,7 +263,7 @@ namespace tool
 			temp_path = plus::concat( output_path, strlen( output_path ), STR_LEN( "~" ) );
 			
 			p7::dup2( p7::open( temp_path,
-			                    p7::o_wronly | p7::o_creat,
+			                    p7::o_wronly | p7::o_creat | p7::o_trunc,
 			                    p7::_666 ),
 			          p7::stdout_fileno );
 		}
