@@ -194,6 +194,19 @@ namespace MacBinary
 	
 #endif
 	
+	static
+	void FSpGetCatInfo( const FSSpec& item, CInfoPBRec& cInfo )
+	{
+		HFileInfo& pb = cInfo.hFileInfo;
+		
+		pb.ioNamePtr   = (StringPtr) item.name;
+		pb.ioVRefNum   = item.vRefNum;
+		pb.ioFDirIndex = 0;
+		pb.ioDirID     = item.parID;
+		
+		Mac::ThrowOSStatus( ::PBGetCatInfoSync( &cInfo ) );
+	}
+	
 	
 	const UInt8 kVersionMacBinaryII  = 129;
 	const UInt8 kVersionMacBinaryIII = 130;
@@ -661,9 +674,7 @@ namespace MacBinary
 	{
 		CInfoPBRec cInfo;
 		
-		N::FSpGetCatInfo( file, cInfo );
-		
-		cInfo.hFileInfo.ioNamePtr = const_cast< unsigned char* >( file.name );
+		FSpGetCatInfo( file, cInfo );
 		
 		Encode( cInfo, blockWrite, output );
 	}
@@ -846,10 +857,9 @@ namespace MacBinary
 		
 		CInfoPBRec pb;
 		
-		N::FSpGetCatInfo( itsFrame.file, pb );
+		FSpGetCatInfo( itsFrame.file, pb );
 		
-		pb.hFileInfo.ioNamePtr = itsFrame.file.name;
-		pb.hFileInfo.ioDirID   = itsFrame.file.parID;
+		pb.hFileInfo.ioDirID = itsFrame.file.parID;
 		
 		pb.hFileInfo.ioFlFndrInfo = h.Get< kFInfo >();
 		
@@ -1003,10 +1013,9 @@ namespace MacBinary
 				
 				CInfoPBRec pb;
 				
-				N::FSpGetCatInfo( itsFrame.file, pb );
+				FSpGetCatInfo( itsFrame.file, pb );
 				
-				pb.hFileInfo.ioNamePtr = itsFrame.file.name;
-				pb.hFileInfo.ioDirID   = itsFrame.file.parID;
+				pb.hFileInfo.ioDirID = itsFrame.file.parID;
 				
 				// Writing to the file bumps the mod date, so set it back
 				pb.hFileInfo.ioFlMdDat = itsFrame.modificationDate;
