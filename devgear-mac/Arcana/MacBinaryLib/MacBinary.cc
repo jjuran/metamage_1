@@ -195,7 +195,7 @@ namespace MacBinary
 #endif
 	
 	static
-	void FSpGetCatInfo( const FSSpec& item, CInfoPBRec& cInfo )
+	OSErr FSpGetCatInfo( const FSSpec& item, CInfoPBRec& cInfo )
 	{
 		HFileInfo& pb = cInfo.hFileInfo;
 		
@@ -204,7 +204,7 @@ namespace MacBinary
 		pb.ioFDirIndex = 0;
 		pb.ioDirID     = item.parID;
 		
-		Mac::ThrowOSStatus( ::PBGetCatInfoSync( &cInfo ) );
+		return PBGetCatInfoSync( &cInfo );
 	}
 	
 	
@@ -674,7 +674,9 @@ namespace MacBinary
 	{
 		CInfoPBRec cInfo;
 		
-		FSpGetCatInfo( file, cInfo );
+		OSErr err = FSpGetCatInfo( file, cInfo );
+		
+		Mac::ThrowOSStatus( err );
 		
 		Encode( cInfo, blockWrite, output );
 	}
@@ -857,7 +859,9 @@ namespace MacBinary
 		
 		CInfoPBRec pb;
 		
-		FSpGetCatInfo( itsFrame.file, pb );
+		err = FSpGetCatInfo( itsFrame.file, pb );
+		
+		Mac::ThrowOSStatus( err );
 		
 		pb.hFileInfo.ioDirID = itsFrame.file.parID;
 		
@@ -1000,6 +1004,8 @@ namespace MacBinary
 					itsResourceFork = 0;
 				}
 				
+				OSErr err;
+				
 				if ( !itsFrame.comment.empty() )
 				{
 					using mac::file::set_desktop_comment;
@@ -1013,7 +1019,9 @@ namespace MacBinary
 				
 				CInfoPBRec pb;
 				
-				FSpGetCatInfo( itsFrame.file, pb );
+				err = FSpGetCatInfo( itsFrame.file, pb );
+				
+				Mac::ThrowOSStatus( err );
 				
 				pb.hFileInfo.ioDirID = itsFrame.file.parID;
 				
