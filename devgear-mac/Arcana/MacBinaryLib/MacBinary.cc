@@ -855,11 +855,12 @@ namespace MacBinary
 			err = HCreate( dir.vRefNum, dir.dirID, name, creator, type );
 		}
 		
-		Mac::ThrowOSStatus( err );
-		
 		CInfoPBRec pb;
 		
-		err = FSpGetCatInfo( itsFrame.file, pb );
+		if ( ! err )
+		{
+			err = FSpGetCatInfo( itsFrame.file, pb );
+		}
 		
 		Mac::ThrowOSStatus( err );
 		
@@ -1004,22 +1005,23 @@ namespace MacBinary
 					itsResourceFork = 0;
 				}
 				
-				OSErr err;
+				OSErr err = noErr;
 				
 				if ( !itsFrame.comment.empty() )
 				{
 					using mac::file::set_desktop_comment;
 					
-					OSErr err = set_desktop_comment( itsFrame.file,
-					                                 itsFrame.comment.data(),
-					                                 itsFrame.comment.size() );
-					
-					Mac::ThrowOSStatus( err );
+					err = set_desktop_comment( itsFrame.file,
+					                           itsFrame.comment.data(),
+					                           itsFrame.comment.size() );
 				}
 				
 				CInfoPBRec pb;
 				
-				err = FSpGetCatInfo( itsFrame.file, pb );
+				if ( ! err )
+				{
+					err = FSpGetCatInfo( itsFrame.file, pb );
+				}
 				
 				Mac::ThrowOSStatus( err );
 				
