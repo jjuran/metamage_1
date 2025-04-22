@@ -860,20 +860,23 @@ namespace MacBinary
 		if ( ! err )
 		{
 			err = FSpGetCatInfo( itsFrame.file, pb );
+			
+			if ( ! err )
+			{
+				pb.hFileInfo.ioDirID = itsFrame.file.parID;
+				
+				pb.hFileInfo.ioFlFndrInfo = h.Get< kFInfo >();
+				
+				pb.hFileInfo.ioFlCrDat = h.Get< kFileCreationDate     >();
+				pb.hFileInfo.ioFlMdDat = h.Get< kFileModificationDate >();
+				
+				reinterpret_cast< ExtendedFileInfo& >( pb.hFileInfo.ioFlXFndrInfo ).extendedFinderFlags = h.Get< kExtendedFinderFlags >();
+				
+				err = PBSetCatInfoSync( &pb );
+			}
 		}
 		
 		Mac::ThrowOSStatus( err );
-		
-		pb.hFileInfo.ioDirID = itsFrame.file.parID;
-		
-		pb.hFileInfo.ioFlFndrInfo = h.Get< kFInfo >();
-		
-		pb.hFileInfo.ioFlCrDat = h.Get< kFileCreationDate     >();
-		pb.hFileInfo.ioFlMdDat = h.Get< kFileModificationDate >();
-		
-		reinterpret_cast< ExtendedFileInfo& >( pb.hFileInfo.ioFlXFndrInfo ).extendedFinderFlags = h.Get< kExtendedFinderFlags >();
-		
-		N::PBSetCatInfoSync( pb );
 		
 		itsFrame.modificationDate = h.Get< kFileModificationDate >();
 		
@@ -1021,30 +1024,33 @@ namespace MacBinary
 				if ( ! err )
 				{
 					err = FSpGetCatInfo( itsFrame.file, pb );
+					
+					if ( ! err )
+					{
+						pb.hFileInfo.ioDirID = itsFrame.file.parID;
+						
+						// Writing to the file bumps the mod date, so set it back
+						pb.hFileInfo.ioFlMdDat = itsFrame.modificationDate;
+						
+						// Clear flags
+						UInt16 flagsToClear = kIsOnDesk;
+						
+						if ( itsFrameStack.empty() )
+						{
+							// Let Finder init the top-level item
+							flagsToClear |= kHasBeenInited;
+							
+							*(UInt32*) &pb.hFileInfo.ioFlFndrInfo.fdLocation = 0;
+							            pb.hFileInfo.ioFlFndrInfo.fdFldr     = 0;
+						}
+						
+						pb.hFileInfo.ioFlFndrInfo.fdFlags &= ~flagsToClear;
+						
+						err = PBSetCatInfoSync( &pb );
+					}
 				}
 				
 				Mac::ThrowOSStatus( err );
-				
-				pb.hFileInfo.ioDirID = itsFrame.file.parID;
-				
-				// Writing to the file bumps the mod date, so set it back
-				pb.hFileInfo.ioFlMdDat = itsFrame.modificationDate;
-				
-				// Clear flags
-				UInt16 flagsToClear = kIsOnDesk;
-				
-				if ( itsFrameStack.empty() )
-				{
-					// Let Finder init the top-level item
-					flagsToClear |= kHasBeenInited;
-					
-					*(UInt32*) &pb.hFileInfo.ioFlFndrInfo.fdLocation = 0;
-					            pb.hFileInfo.ioFlFndrInfo.fdFldr     = 0;
-				}
-				
-				pb.hFileInfo.ioFlFndrInfo.fdFlags &= ~flagsToClear;
-				
-				N::PBSetCatInfoSync( pb );
 			}
 		}
 		
