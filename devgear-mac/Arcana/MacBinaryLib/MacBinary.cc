@@ -41,6 +41,7 @@
 #include "mac_file/listing.hh"
 #include "mac_file/open_data_fork.hh"
 #include "mac_file/open_rsrc_fork.hh"
+#include "mac_file/scoped_open_refnum.hh"
 
 // macbinary
 #include "macbinary-crc16.hh"
@@ -49,7 +50,7 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 
 /*
@@ -128,12 +129,6 @@ Offset	Type	Description
 
 namespace MacBinary
 {
-	
-	namespace N = Nitrogen;
-	
-	using N::fsRdPerm;
-	using N::fsWrPerm;
-	
 	
 	static inline
 	ByteCount min( ByteCount a, ByteCount b )
@@ -550,8 +545,13 @@ namespace MacBinary
 	};
 	
 	static
-	void ReadWrite( FSIORefNum file, BlockWriter blockWrite, int output, SInt32 byteCount )
+	OSErr ReadWrite( FSIORefNum file, BlockWriter blockWrite, int output, SInt32 byteCount )
 	{
+		if ( file < 0 )
+		{
+			return file;
+		}
+		
 		OSErr err;
 		
 		char buffer[ 4096 ];
@@ -573,21 +573,26 @@ namespace MacBinary
 			
 			err = FSRead( file, &n_reading, buffer );
 			
-			if ( err != eofErr )
+			if ( err  &&  err != eofErr )
 			{
-				Mac::ThrowOSStatus( err );
+				break;
 			}
 			
 			blockWrite( output, buffer, n_writing );
 			
 			byteCount -= n_reading;
 		}
+		
+		return err;
 	}
 	
 	static
 	void EncodeFile( const FSSpec& file, const HFileInfo& hFileInfo, BlockWriter blockWrite, int output )
 	{
 		using mac::file::get_desktop_comment;
+		using mac::file::open_data_fork;
+		using mac::file::open_rsrc_fork;
+		using mac::file::scoped_open_refnum;
 		
 		char comment[ 256 ];
 		
@@ -611,15 +616,23 @@ namespace MacBinary
 		
 		blockWrite( output, u.block.data, sizeof u.block );
 		
+		OSErr err = noErr;
+		
 		if ( hFileInfo.ioFlLgLen > 0 )
 		{
-			ReadWrite( N::HOpen( file, fsRdPerm ), blockWrite, output,  hFileInfo.ioFlLgLen );
+			scoped_open_refnum data( open_data_fork( file, fsRdPerm ) );
+			
+			err = ReadWrite( data, blockWrite, output, hFileInfo.ioFlLgLen );
 		}
 		
-		if ( hFileInfo.ioFlRLgLen > 0 )
+		if ( ! err  &&  hFileInfo.ioFlRLgLen > 0 )
 		{
-			ReadWrite( N::HOpenRF( file, fsRdPerm ), blockWrite, output,  hFileInfo.ioFlRLgLen );
+			scoped_open_refnum rsrc( open_rsrc_fork( file, fsRdPerm ) );
+			
+			err = ReadWrite( rsrc, blockWrite, output, hFileInfo.ioFlRLgLen );
 		}
+		
+		Mac::ThrowOSStatus( err );
 		
 		if ( comment_size > 0 )
 		{
