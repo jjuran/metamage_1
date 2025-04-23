@@ -1032,19 +1032,26 @@ namespace MacBinary
 						// Writing to the file bumps the mod date, so set it back
 						pb.hFileInfo.ioFlMdDat = itsFrame.modificationDate;
 						
-						// Clear flags
-						UInt16 flagsToClear = kIsOnDesk;
-						
 						if ( itsFrameStack.empty() )
 						{
-							// Let Finder init the top-level item
-							flagsToClear |= kHasBeenInited;
+							/*
+								This is the top-level (or only) item.
+								Clear the kHasBeenInited flag so that
+								the Finder sets the icon position.
+								
+								Also clear the kIsOnDesk flag, in case
+								it's set -- only a pre-System-7 Finder
+								should be setting that flag, when the
+								user moves something to the desktop.
+							*/
+							
+							UInt16 flagsToClear = kHasBeenInited | kIsOnDesk;
+							
+							pb.hFileInfo.ioFlFndrInfo.fdFlags &= ~flagsToClear;
 							
 							*(UInt32*) &pb.hFileInfo.ioFlFndrInfo.fdLocation = 0;
 							            pb.hFileInfo.ioFlFndrInfo.fdFldr     = 0;
 						}
-						
-						pb.hFileInfo.ioFlFndrInfo.fdFlags &= ~flagsToClear;
 						
 						err = PBSetCatInfoSync( &pb );
 					}
