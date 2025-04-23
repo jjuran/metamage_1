@@ -856,12 +856,6 @@ namespace MacBinary
 		pb.hFileInfo.ioFlCrDat = h.Get< kFileCreationDate     >();
 		pb.hFileInfo.ioFlMdDat = h.Get< kFileModificationDate >();
 		
-		if ( !itIsFolder )
-		{
-			pb.hFileInfo.ioFlLgLen  = itsDataForkLength     = h.Get< kDataForkLength     >();
-			pb.hFileInfo.ioFlRLgLen = itsResourceForkLength = h.Get< kResourceForkLength >();
-		}
-		
 		reinterpret_cast< ExtendedFileInfo& >( pb.hFileInfo.ioFlXFndrInfo ).extendedFinderFlags = h.Get< kExtendedFinderFlags >();
 		
 		N::PBSetCatInfoSync( pb );
@@ -874,6 +868,9 @@ namespace MacBinary
 		if ( !itIsFolder )
 		{
 			using namespace mac::file;
+			
+			itsDataForkLength     = h.Get< kDataForkLength     >();
+			itsResourceForkLength = h.Get< kResourceForkLength >();
 			
 			itsDataFork     = open_data_fork( itsFrame.file, fsWrPerm );
 			itsResourceFork = open_rsrc_fork( itsFrame.file, fsWrPerm );
