@@ -120,12 +120,16 @@ void mark_unselected( ListRec& list, short i )
 }
 
 static
-void draw_list_cells( const ListRec& list, const Rect& range, RgnHandle clip )
+void draw_list_cells( const ListRec& list, RgnHandle clip )
 {
 	if ( ! clip )
 	{
 		clip = rectangular_utility_region( list.rView );
 	}
+	
+	Rect range;
+	
+	SectRect( &list.visible, &list.dataBounds, &range );
 	
 	const short n_rows = list.dataBounds.bottom - list.dataBounds.top;
 	const short n_cols = list.dataBounds.right - list.dataBounds.left;
@@ -185,7 +189,7 @@ void scroll_by( short cols, short rows, ListRec& list )
 	
 	ScrollRect( &list.rView, dh, dv, updateRgn );
 	
-	draw_list_cells( list, list.visible, updateRgn );
+	draw_list_cells( list, updateRgn );
 	
 	DisposeRgn( updateRgn );
 }
@@ -841,13 +845,9 @@ pascal void LUpdate_call( RgnHandle rgn, ListHandle listH )
 		Draw1Control( list.hScroll );
 	}
 	
-	Rect drawable = list.visible;
-	
-	SectRect( &drawable, &list.dataBounds, &drawable );
-	
 	EraseRect( &list.rView );
 	
-	draw_list_cells( list, drawable, NULL );
+	draw_list_cells( list, NULL );
 }
 
 static
