@@ -54,6 +54,25 @@ void set_control_bounds( ControlRef control, const Rect& bounds )
 	ShowControl( control );
 }
 
+static
+void calibrate_scroll_bars( ListRec& list )
+{
+	const Rect& view = list.rView;
+	
+	const short view_height = view.bottom - view.top;
+	const short view_width  = view.right - view.left;
+	
+	if ( ControlRef scrollbar = list.vScroll )
+	{
+		const short dataHeight = list.dataBounds.bottom - list.dataBounds.top;
+		
+		const short fully_visible_height = view_height / list.cellSize.v;
+		
+		SetControlMaximum( scrollbar, dataHeight - fully_visible_height );
+		SetControlValue( scrollbar, list.visible.top );
+	}
+}
+
 class List_drawing
 {
 	private:
@@ -608,15 +627,7 @@ void calc_visible( ListHandle listH )
 	list.visible.bottom = visible_height + list.visible.top;
 	list.visible.right  = visible_width  + list.visible.left;
 	
-	if ( ControlRef scrollbar = list.vScroll )
-	{
-		const short dataHeight = list.dataBounds.bottom - list.dataBounds.top;
-		
-		const short fully_visible_height = view_height / list.cellSize.v;
-		
-		SetControlMaximum( scrollbar, dataHeight - fully_visible_height );
-		SetControlValue( scrollbar, list.visible.top );
-	}
+	calibrate_scroll_bars( list );
 }
 
 static
