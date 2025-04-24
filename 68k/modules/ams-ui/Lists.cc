@@ -32,6 +32,7 @@
 #include "callouts.hh"
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
+#include "scoped_zone.hh"
 #include "utility_region.hh"
 
 // ams-ui
@@ -221,15 +222,13 @@ void scroll_by( short cols, short rows, ListHandle listH )
 	list.visible.bottom += rows;
 	list.visible.top    += rows;
 	
-	RgnHandle updateRgn = NewRgn();
+	static RgnHandle updateRgn = (scoped_zone(), NewRgn());
 	
 	raster_lock lock;
 	
 	ScrollRect( &list.rView, dh, dv, updateRgn );
 	
 	draw_list_cells( listH, updateRgn );
-	
-	DisposeRgn( updateRgn );
 	
 	calibrate_scroll_bars( list );
 }
