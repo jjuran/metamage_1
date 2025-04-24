@@ -178,6 +178,20 @@ void scroll_by( short cols, short rows, ListRec& list )
 	short dh = 0;
 	short dv = 0;
 	
+	if ( rows > 0  &&  list.visible.bottom >= list.dataBounds.bottom )
+	{
+		return;
+	}
+	
+	if ( rows < -list.visible.top )
+	{
+		rows = -list.visible.top;
+	}
+	else if ( rows > list.dataBounds.bottom - list.visible.bottom )
+	{
+		rows = list.dataBounds.bottom - list.visible.bottom;
+	}
+	
 	dv = -rows * list.cellSize.v;
 	
 	list.visible.bottom += rows;
