@@ -225,6 +225,8 @@ void scroll_by( short cols, short rows, ListRec& list )
 	draw_list_cells( list, updateRgn );
 	
 	DisposeRgn( updateRgn );
+	
+	calibrate_scroll_bars( list );
 }
 
 static inline
@@ -348,6 +350,11 @@ pascal short LAddRow_call( short row_count, short row, ListHandle listH )
 	
 	list.dataBounds.bottom += row_count;
 	list.maxIndex          += count;
+	
+	if ( ! (list.listFlags & lDrawingModeOff) )
+	{
+		calibrate_scroll_bars( list );
+	}
 	
 	return row + dataBounds.top;
 }
@@ -510,6 +517,11 @@ pascal void LDelRow_call( short row_count, short row, ListHandle listH )
 		
 		SetHandleSize( list.cells, 0 );
 		
+		if ( ! (list.listFlags & lDrawingModeOff) )
+		{
+			calibrate_scroll_bars( list );
+		}
+		
 		return;
 	}
 	
@@ -553,6 +565,11 @@ pascal void LDelRow_call( short row_count, short row, ListHandle listH )
 	const long offset = sizeof (ListRec) + (first - 1) * sizeof (short);
 	
 	Munger( (Handle) listH, offset, NULL, count * sizeof (short), "", 0 );
+	
+	if ( ! (list.listFlags & lDrawingModeOff) )
+	{
+		calibrate_scroll_bars( list );
+	}
 }
 
 static
@@ -859,6 +876,11 @@ static
 pascal void LUpdate_call( RgnHandle rgn, ListHandle listH )
 {
 	ListRec& list = **listH;
+	
+	if ( list.listFlags & lDrawingModeOff )
+	{
+		calibrate_scroll_bars( list );
+	}
 	
 	if ( list.vScroll )
 	{
