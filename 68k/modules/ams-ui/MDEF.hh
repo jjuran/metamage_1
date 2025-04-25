@@ -10,42 +10,47 @@ struct MenuInfo;
 struct Point;
 struct Rect;
 
+typedef unsigned char Byte;
+
+typedef MenuInfo** MenuRef;
+
 inline
-bool small_icon_key( unsigned char key )
+bool small_icon_key( Byte key )
 {
 	return key == 0x1D;
 }
 
 inline
-bool large_icon_key( unsigned char key )
+bool large_icon_key( Byte key )
 {
 	return ! small_icon_key( key );
 }
 
 pascal
-void MDEF_0( short msg, MenuInfo** menu, Rect* r, Point pt, short* item );
+void MDEF_0( short msg, MenuRef menu, Rect* r, Point pt, short* item );
 
 class menu_iterator
 {
 	private:
-		unsigned char* next;
+		Byte* next;
 	
 	public:
-		menu_iterator( MenuInfo** menu )
+		menu_iterator( MenuRef menu )
 		{
-			next = (unsigned char*) *menu + 14;  // menu[0]->menuData;
+			next = (Byte*) *menu + 14;  // menu[0]->menuData;
 			
 			next += 1 + next[ 0 ];
 		}
 		
-		const unsigned char* get() const  { return next; }
+		const Byte* get() const  { return next; }
 		
 		// bool conversion
-		operator unsigned char*() const  { return *next ? next : 0; }
+		operator Byte*() const  { return *next ? next : 0; }
 		
 		menu_iterator& operator++()
 		{
 			next += 1 + next[ 0 ] + 4;
+			
 			return *this;
 		}
 		
