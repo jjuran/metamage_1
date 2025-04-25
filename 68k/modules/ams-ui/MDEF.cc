@@ -17,6 +17,7 @@
 #endif
 
 // ams-common
+#include "menu_iterator.hh"
 #include "QDGlobals.hh"
 
 

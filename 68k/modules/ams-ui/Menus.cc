@@ -28,6 +28,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "menu_iterator.hh"
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
 #include "unglue.hh"
