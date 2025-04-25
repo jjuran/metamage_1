@@ -25,7 +25,6 @@
 #include "scoped_zone.hh"
 
 // ams-ui
-#include "CDEF.hh"
 #include "scoped_port.hh"
 
 
@@ -70,8 +69,6 @@ void draw_control( ControlRef control )
 #pragma mark Initialization and Allocation
 #pragma mark -
 
-static Ptr gDefProcPtr = (Ptr) &CDEF_0;
-
 pascal ControlRef NewControl_patch( WindowRef    window,
                                     const Rect*  bounds,
                                     const Byte*  title,
@@ -98,7 +95,7 @@ pascal ControlRef NewControl_patch( WindowRef    window,
 		control[0]->contrlValue   = value;
 		control[0]->contrlMin     = min;
 		control[0]->contrlMax     = max;
-		control[0]->contrlDefProc = cdef ? cdef : &gDefProcPtr;
+		control[0]->contrlDefProc = cdef;
 	//	control[0]->contrlData    = NULL;
 	//	control[0]->contrlAction  = NULL;
 		control[0]->contrlRfCon   = refCon;
