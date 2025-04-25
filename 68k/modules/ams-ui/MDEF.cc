@@ -83,7 +83,7 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 	
 	short v = top + pen_v_offset_for_text - menu_item_height;
 	
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( const unsigned char* text = it )
 	{
@@ -214,7 +214,7 @@ long rows_from_item( MenuRef menu, short item )
 	
 	short row = 0;
 	
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( const unsigned char* p = it )
 	{
@@ -244,7 +244,7 @@ long enabled_item_from_row( MenuRef menu, short row )
 {
 	short item = 1;
 	
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( const unsigned char* p = it )
 	{
@@ -314,7 +314,7 @@ void MDEF_0_Size( MenuRef menu )
 	
 	short maxItemWidth = 0;  // Excludes mark area, includes right padding
 	
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( const unsigned char* text = it )
 	{

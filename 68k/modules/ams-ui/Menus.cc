@@ -955,7 +955,7 @@ pascal long MenuKey_patch( unsigned short key )  // char
 			continue;
 		}
 		
-		menu_item_iterator it( menu );
+		menu_iterator it( menu );
 		
 		short n = 0;
 		
@@ -1040,7 +1040,7 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 
 pascal void GetItem_patch( MenuInfo** menu, short item, Str255 result )
 {
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( const unsigned char* text = it )
 	{
@@ -1082,7 +1082,7 @@ pascal void CheckItem_patch( MenuInfo** menu, short item, char checked )
 
 pascal void SetItemMark_patch( MenuInfo** menu, short item, CharParameter mark )
 {
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( unsigned char* p = it )
 	{
@@ -1101,7 +1101,7 @@ pascal void SetItemMark_patch( MenuInfo** menu, short item, CharParameter mark )
 
 pascal void GetItemMark_patch( MenuRef menu, short item, CharParameter* mark )
 {
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( const unsigned char* p = it )
 	{
@@ -1122,7 +1122,7 @@ pascal void SetItmIcon_patch( MenuInfo** menu, short item, CharParameter icon )
 {
 	WMgrPort_bezel_scope port_swap;
 	
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( unsigned char* p = it )
 	{
@@ -1149,7 +1149,7 @@ pascal void SetItmIcon_patch( MenuInfo** menu, short item, CharParameter icon )
 
 pascal void SetItemStyle_patch( MenuRef menu, short item, short style )
 {
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( unsigned char* p = it )
 	{
@@ -1182,7 +1182,7 @@ pascal short CountMItems_patch( MenuInfo** menu )
 {
 	short n = 0;
 	
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( it )
 	{
@@ -1237,7 +1237,7 @@ short insert_one_item( MenuRef menu, const UInt8* format, UInt8 length, short i 
 	
 	SetHandleSize( (Handle) menu, new_size );
 	
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( it  &&  --i > 0 )
 	{
@@ -1313,7 +1313,7 @@ pascal void DelMenuItem_patch( MenuInfo** menu, short item )
 	
 	WMgrPort_bezel_scope port_swap;
 	
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( it  &&  --item > 0 )
 	{
@@ -1330,7 +1330,7 @@ pascal void DelMenuItem_patch( MenuInfo** menu, short item )
 
 pascal void GetItemCmd_patch( MenuInfo** menu, short item, CharParameter* key )
 {
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( const unsigned char* p = it )
 	{
@@ -1351,7 +1351,7 @@ pascal void SetItemCmd_patch( MenuInfo** menu, short item, CharParameter key )
 {
 	WMgrPort_bezel_scope port_swap;
 	
-	menu_item_iterator it( menu );
+	menu_iterator it( menu );
 	
 	while ( unsigned char* p = it )
 	{

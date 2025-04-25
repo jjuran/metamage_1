@@ -25,13 +25,13 @@ bool large_icon_key( unsigned char key )
 pascal
 void MDEF_0( short msg, MenuInfo** menu, Rect* r, Point pt, short* item );
 
-class menu_item_iterator
+class menu_iterator
 {
 	private:
 		unsigned char* next;
 	
 	public:
-		menu_item_iterator( MenuInfo** menu )
+		menu_iterator( MenuInfo** menu )
 		{
 			next = (unsigned char*) *menu + 14;  // menu[0]->menuData;
 			
@@ -43,15 +43,15 @@ class menu_item_iterator
 		// bool conversion
 		operator unsigned char*() const  { return *next ? next : 0; }
 		
-		menu_item_iterator& operator++()
+		menu_iterator& operator++()
 		{
 			next += 1 + next[ 0 ] + 4;
 			return *this;
 		}
 		
-		menu_item_iterator operator++( int )
+		menu_iterator operator++( int )
 		{
-			menu_item_iterator prev = *this;
+			menu_iterator prev = *this;
 			
 			++*this;
 			
