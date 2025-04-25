@@ -697,6 +697,11 @@ void save_bits( BitMap& savedBits )
 static
 void restore_bits( BitMap& savedBits )
 {
+	if ( ! savedBits.baseAddr )
+	{
+		return;  // happens if the menu is empty or MBarHook returns true
+	}
+	
 	const Rect& bounds = savedBits.bounds;
 	
 	const short height = bounds.bottom - bounds.top;
@@ -829,6 +834,8 @@ pascal long MenuSelect_patch( Point pt )
 					{
 						OffsetRect( &menuRect, menuLimit - menuRect.right, 0 );
 					}
+					
+					savedBits.baseAddr = NULL;  // in case we skip save_bits()
 					
 					if ( menu[0]->menuHeight != 0 )
 					{
