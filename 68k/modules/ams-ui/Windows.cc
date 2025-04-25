@@ -35,6 +35,7 @@
 #include "callouts.hh"
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
+#include "utility_region.hh"
 
 // ams-ui
 #include "desktop.hh"
@@ -45,7 +46,6 @@
 #include "scoped_port.hh"
 #include "StrUtils.hh"
 #include "WDEF.hh"
-#include "utility_region.hh"
 
 
 #pragma exceptions off

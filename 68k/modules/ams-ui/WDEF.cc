@@ -17,8 +17,6 @@
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
 #include "scoped_zone.hh"
-
-// ams-ui
 #include "utility_region.hh"
 
 

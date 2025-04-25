@@ -14,8 +14,6 @@
 #include "callouts.hh"
 #include "QDGlobals.hh"
 #include "scoped_zone.hh"
-
-// ams-qd
 #include "utility_region.hh"
 
 

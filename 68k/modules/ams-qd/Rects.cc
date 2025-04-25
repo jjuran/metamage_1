@@ -21,13 +21,13 @@
 #include "math.hh"
 #include "QDGlobals.hh"
 #include "redraw_lock.hh"
+#include "utility_region.hh"
 
 // ams-qd
 #include "color.hh"
 #include "draw.hh"
 #include "Regions.hh"
 #include "segments_box.hh"
-#include "utility_region.hh"
 
 
 #pragma exceptions off

@@ -29,10 +29,10 @@
 #include "callouts.hh"
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
+#include "utility_region.hh"
 
 // ams-ui
 #include "scrolling.hh"
-#include "utility_region.hh"
 
 
 #pragma exceptions off

@@ -20,8 +20,6 @@
 #include "callouts.hh"
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
-
-// ams-ui
 #include "utility_region.hh"
 
 

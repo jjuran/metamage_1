@@ -30,10 +30,10 @@
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
 #include "scoped_zone.hh"
+#include "utility_region.hh"
 
 // ams-ui
 #include "scoped_port.hh"
-#include "utility_region.hh"
 
 
 #pragma exceptions off
