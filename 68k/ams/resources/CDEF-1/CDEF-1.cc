@@ -377,7 +377,7 @@ long CDEF_1_CalcRgns( short varCode, ControlRef control, long param )
 {
 	const bool indicator_only = param < 0;
 	
-	*(Byte*) param = 0;
+	*(Byte*) &param = 0;
 	
 	RgnHandle rgn = (RgnHandle) param;
 	
