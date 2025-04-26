@@ -42,7 +42,6 @@ Pattern   DragPattern : 0x0A34;
 /*
 	TODO:  DragGrayRgn() and DragTheRgn() don't yet support the following:
 	
-	 * limit rect
 	 * action proc
 */
 
@@ -58,6 +57,22 @@ pascal long DragGrayRgn_patch( RgnHandle    rgn,
 	DragPattern = qd.gray;
 	
 	return DragTheRgn( rgn, start, limit, slop, axis, action );
+}
+
+static inline
+long PinRect_pt( const Rect* rect, Point pt )
+{
+	if ( pt.h > rect->right )
+	{
+		pt.h = rect->right;
+	}
+	
+	if ( pt.v > rect->bottom )
+	{
+		pt.v = rect->bottom;
+	}
+	
+	return PinRect( rect, pt );
 }
 
 pascal long DragTheRgn_patch( RgnHandle    rgn,
@@ -195,6 +210,8 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 			default:
 				break;
 		}
+		
+		*(long*) &event.where = PinRect_pt( limit, event.where );
 		
 		if ( is_inside | was_inside  &&  *(long*) &pt != *(long*) &event.where )
 		{
