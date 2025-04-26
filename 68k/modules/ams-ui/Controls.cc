@@ -340,6 +340,37 @@ pascal short TrackControl_patch( ControlRef        control,
 	
 	call_CDEF( control, drawCntl, track_part );
 	
+	if ( track_part >= kControlIndicatorPart )
+	{
+		static RgnHandle rgn = (RgnHandle)((long) NewRgn() | 0x80000000);
+		
+		call_CDEF( control, calcCRgns, (long) rgn );
+		
+		IndicatorDragConstraint drag;
+		
+		*(Point*) &drag = pt;
+		
+		call_CDEF( control, thumbCntl, (long) &drag );
+		
+		typedef pascal void (*Proc)();
+		
+		long d = DragTheRgn( rgn,
+		                     pt,
+		                     &drag.limitRect,
+		                     &drag.slopRect,
+		                     drag.axis,
+		                     (Proc) action );
+		
+		if ( d == 0  ||  d == 0x80008000 )
+		{
+			return 0;
+		}
+		
+		call_CDEF( control, posCntl, d );
+		
+		return track_part;
+	}
+	
 	long sleep = 0;
 	
 	if ( action )
