@@ -28,7 +28,7 @@ OSStatus GeneratePreviewForURL( void*                interface,
 	
 	CGContextRef context = QLPreviewRequestCreateContext( request,
 	                                                      size,
-	                                                      true,
+	                                                      false,
 	                                                      properties );
 	
 	CGContextDrawImage( context, rect, image );
