@@ -66,6 +66,13 @@ create_simple_image( size_t           width,
                      CGColorSpaceRef  colorSpace,
                      void*            baseAddr );
 
+CGImageRef
+create_image_mask( size_t  width,
+                   size_t  height,
+                   size_t  weight,
+                   size_t  stride,
+                   void*   baseAddr );
+
 inline
 CGImageRef create_gray_light_image( size_t  width,
                                     size_t  height,

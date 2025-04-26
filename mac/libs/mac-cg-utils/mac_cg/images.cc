@@ -9,6 +9,11 @@
 #include "mac_cg/data.hh"
 
 
+#ifndef MAC_OS_X_VERSION_10_5
+typedef float CGFloat;
+#endif
+
+
 namespace mac {
 namespace cg  {
 
@@ -59,6 +64,34 @@ create_simple_image( size_t           width,
 	                               colorSpace,
 	                               kCGImageAlphaNone,
 	                               baseAddr );
+}
+
+CGImageRef
+create_image_mask( size_t  width,
+                   size_t  height,
+                   size_t  weight,
+                   size_t  stride,
+                   void*   baseAddr )
+{
+	CGDataProviderRef dataProvider = make_data_provider_copy( baseAddr,
+	                                                          height * stride );
+	
+	if ( ! dataProvider )  return NULL;
+	
+	const CGFloat decode[] = { 1.0, 0.0 };
+	
+	CGImageRef mask = CGImageMaskCreate( width,
+	                                     height,
+	                                     weight,  // bits per component
+	                                     weight,  // bits per pixel
+	                                     stride,
+	                                     dataProvider,
+	                                     decode,
+	                                     false );
+	
+	CFRelease( dataProvider );
+	
+	return mask;
 }
 
 }
