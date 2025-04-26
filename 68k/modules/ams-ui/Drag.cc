@@ -24,6 +24,16 @@
 #pragma exceptions off
 
 
+#ifndef __CONTROLS__
+
+enum
+{
+	hAxisOnly = 1,
+	vAxisOnly = 2,
+};
+
+#endif
+
 Point     Mouse       : 0x0830;
 GrafPtr   WMgrPort    : 0x09DE;
 RgnHandle GrayRgn     : 0x09EE;
@@ -33,7 +43,6 @@ Pattern   DragPattern : 0x0A34;
 	TODO:  DragGrayRgn() and DragTheRgn() don't yet support the following:
 	
 	 * limit rect
-	 * axis
 	 * action proc
 */
 
@@ -171,7 +180,21 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 			sleep = 0xFFFFFFFF;
 		}
 		
+		/*
+			Bounds-check the actual cursor location
+			before applying any modifications to it.
+		*/
+		
 		const bool is_inside = PtInRect( event.where, slop );
+		
+		switch ( axis )
+		{
+			case hAxisOnly:  event.where.v = pt.v;  break;
+			case vAxisOnly:  event.where.h = pt.h;  break;
+			
+			default:
+				break;
+		}
 		
 		if ( is_inside | was_inside  &&  *(long*) &pt != *(long*) &event.where )
 		{
