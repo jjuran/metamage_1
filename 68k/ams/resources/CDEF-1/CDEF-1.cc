@@ -193,10 +193,10 @@ long CDEF_1_Draw( short varCode, ControlRef control, long param )
 	const short min = control[0]->contrlMin;
 	const short max = control[0]->contrlMax;
 	
-	const bool inactive = min >= max  ||  param == 255;
-	const bool hiliting = param != 0  &&  param != 255;
+	const bool inactive = min >= max  ||  param == kControlInactivePart;
+	const bool hiliting = param != 0  &&  param != kControlInactivePart;
 	
-	if ( param == 129 )
+	if ( param == kDrawControlIndicatorOnly )
 	{
 		goto indicator;
 	}
@@ -256,8 +256,7 @@ indicator:
 		}
 		
 		const short value = control[0]->contrlValue;
-		
-		short delta = thumb_offset_from_value( gap, value, min, max );
+		const short delta = thumb_offset_from_value( gap, value, min, max );
 		
 		if ( aspect > 0 )
 		{
