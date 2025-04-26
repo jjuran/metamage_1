@@ -387,6 +387,84 @@ long CDEF_1_CalcRgns( short varCode, ControlRef control, long param )
 	return 0;
 }
 
+static
+long CDEF_1_Thumb( short varCode, ControlRef control, long param )
+{
+	IndicatorDragConstraint& drag = *(IndicatorDragConstraint*) param;
+	
+	const Rect& bounds = control[0]->contrlRect;
+	
+	const short height = bounds.bottom - bounds.top;
+	const short width  = bounds.right - bounds.left;
+	
+	const short aspect = height - width;
+	
+	const short gap = (aspect > 0 ? height : width) - 3 * 16;  // x - 48px
+	
+	const short min = control[0]->contrlMin;
+	const short max = control[0]->contrlMax;
+	
+	const short value = control[0]->contrlValue;
+	
+	const short thumb = thumb_offset_from_value( gap, value, min, max );
+	
+	const short vertical = aspect > 0;
+	
+	short start = ((short*) param)[ ! vertical ];
+	
+	drag.limitRect = bounds;
+	
+	short* coords = (short*) &drag.limitRect;
+	
+	coords += ! vertical;
+	
+	coords[ 0 ] = start - thumb;
+	coords[ 2 ] = start - thumb + gap;
+	
+	drag.slopRect = drag.limitRect;
+	
+	InsetRect( &drag.slopRect, -32, -32 );
+	
+	drag.axis = (aspect > 0) + 1;
+	
+	return 0;
+}
+
+static
+long CDEF_1_Position( short varCode, ControlRef control, long param )
+{
+	const Rect& bounds = control[0]->contrlRect;
+	
+	const short height = bounds.bottom - bounds.top;
+	const short width  = bounds.right - bounds.left;
+	
+	const short aspect = height - width;
+	
+	const short gap = (aspect > 0 ? height : width) - 3 * 16;  // x - 48px
+	
+	if ( gap > 0 )
+	{
+		const short min = control[0]->contrlMin;
+		const short max = control[0]->contrlMax;
+		
+		const short value = control[0]->contrlValue;
+		
+		const short thumb = thumb_offset_from_value( gap, value, min, max );
+		
+		const short delta = aspect > 0 ? param >> 16 : param;
+		
+		const short range = max - min;
+		
+		const short fudge = gap / (range + 1);
+		
+		control[0]->contrlValue = ((thumb + delta) * range + fudge) / gap + min;
+		
+		CDEF_1_Draw( varCode, control, kDrawControlIndicatorOnly );
+	}
+	
+	return 0;
+}
+
 pascal
 long CDEF_1( short varCode, ControlRef control, short message, long param )
 {
@@ -406,7 +484,11 @@ long CDEF_1( short varCode, ControlRef control, short message, long param )
 			break;
 		
 		case posCntl:
+			return CDEF_1_Position( varCode, control, param );
+		
 		case thumbCntl:
+			return CDEF_1_Thumb( varCode, control, param );
+		
 		case dragCntl:
 		case autoTrack:
 		default:
