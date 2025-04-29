@@ -416,7 +416,12 @@ Boolean SFGet_filterProc( DialogRef dialog, EventRecord* event, short* itemHit )
 			switch ( part )
 			{
 				case kControlIndicatorPart:
-					// not yet implemented
+					if ( TrackControl( scrollbar, pt, NULL ) )
+					{
+						short value = GetControlValue( scrollbar );
+						
+						scroll_string_list_to( filename_list, value );
+					}
 					break;
 				
 				case kControlUpButtonPart:
@@ -424,10 +429,12 @@ Boolean SFGet_filterProc( DialogRef dialog, EventRecord* event, short* itemHit )
 				case kControlPageUpPart:
 				case kControlPageDownPart:
 					TrackControl( scrollbar, pt, &scrollbar_actionProc );
-					
-					*itemHit = getScroll;
-					return true;
+					break;
 			}
+			
+			*itemHit = getScroll;
+			
+			return true;
 		}
 	}
 	
