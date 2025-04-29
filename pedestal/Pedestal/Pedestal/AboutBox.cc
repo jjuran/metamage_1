@@ -496,13 +496,13 @@ namespace Pedestal
 	
 	void ShowAboutBox()
 	{
-		if ( sAboutBox.get() == NULL )
+		if ( WindowRef aboutBox = sAboutBox )
 		{
-			sAboutBox = NewAboutBox();
+			SelectWindow( aboutBox );
 		}
 		else
 		{
-			SelectWindow( sAboutBox );
+			sAboutBox = NewAboutBox();
 		}
 	}
 	
