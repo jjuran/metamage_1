@@ -206,11 +206,7 @@ WindowRef QDAboutBox_make()
 
 void QDAboutBox_close( WindowRef window )
 {
-	PicHandle pic = GetWindowPic( window );
-	
 	DisposeWindow( window );
-	
-	KillPicture( pic );
 }
 
 #endif  // #if ! __LP64__
