@@ -513,6 +513,11 @@ pascal void CloseWindow_patch( WindowRef port )
 	DisposeRgn( window->contRgn   );
 	DisposeRgn( window->updateRgn );
 	
+	if ( window->windowPic )
+	{
+		KillPicture( window->windowPic );
+	}
+	
 	if ( window->titleHandle )
 	{
 		DisposeHandle( (Handle) window->titleHandle );
