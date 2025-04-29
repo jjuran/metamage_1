@@ -211,9 +211,9 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 				break;
 		}
 		
-		*(long*) &event.where = PinRect_pt( limit, event.where );
+		long where = PinRect_pt( limit, event.where );
 		
-		if ( is_inside | was_inside  &&  *(long*) &pt != *(long*) &event.where )
+		if ( is_inside | was_inside  &&  *(long*) &pt != where )
 		{
 			raster_lock lock;
 			
@@ -224,14 +224,14 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 			
 			if ( is_inside )
 			{
-				const short dh = event.where.h - pt.h;
-				const short dv = event.where.v - pt.v;
+				const short dh =  where        - pt.h;
+				const short dv = (where >> 16) - pt.v;
 				
 				OffsetRgn( rgn, dh, dv );
 				
 				PaintRgn( rgn );
 				
-				pt = event.where;
+				*(long*) &pt = where;
 			}
 			
 			was_inside = is_inside;
