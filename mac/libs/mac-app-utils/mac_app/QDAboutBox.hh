@@ -27,8 +27,6 @@ namespace app {
 	
 	WindowRef QDAboutBox_make();
 	
-	void QDAboutBox_close( WindowRef window );
-	
 }
 }
 

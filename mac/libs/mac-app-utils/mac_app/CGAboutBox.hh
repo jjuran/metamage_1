@@ -22,8 +22,6 @@ namespace app {
 	
 	WindowRef CGAboutBox_make();
 	
-	void CGAboutBox_close( WindowRef window );
-	
 }
 }
 

@@ -493,11 +493,6 @@ WindowRef CGAboutBox_make()
 	return window;
 }
 
-void CGAboutBox_close( WindowRef window )
-{
-	DisposeWindow( window );
-}
-
 #else  // #if ! __LP64__
 
 int dummy;

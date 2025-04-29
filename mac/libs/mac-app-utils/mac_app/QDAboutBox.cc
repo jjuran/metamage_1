@@ -204,11 +204,6 @@ WindowRef QDAboutBox_make()
 	return window;
 }
 
-void QDAboutBox_close( WindowRef window )
-{
-	DisposeWindow( window );
-}
-
 #endif  // #if ! __LP64__
 
 }

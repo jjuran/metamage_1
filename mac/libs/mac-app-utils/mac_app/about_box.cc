@@ -143,14 +143,7 @@ bool close_About_box( WindowRef window )
 	
 	if ( is_About )
 	{
-		if ( TARGET_RT_MAC_MACHO )
-		{
-			CGAboutBox_close( window );
-		}
-		else
-		{
-			QDAboutBox_close( window );
-		}
+		DisposeWindow( window );
 	}
 	
 	return is_About;
