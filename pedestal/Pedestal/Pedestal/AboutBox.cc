@@ -426,7 +426,7 @@ namespace Pedestal
 	
 	
 	static
-	n::owned< WindowRef > NewAboutBox()
+	void NewAboutBox()
 	{
 		using namespace mac::app;
 		
@@ -494,7 +494,7 @@ namespace Pedestal
 		
 	#endif
 		
-		return window;
+		window.release();
 	}
 	
 	static
@@ -521,7 +521,7 @@ namespace Pedestal
 		}
 		else
 		{
-			NewAboutBox().release();
+			NewAboutBox();
 		}
 	}
 	
