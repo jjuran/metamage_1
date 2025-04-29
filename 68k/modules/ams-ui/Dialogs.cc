@@ -786,13 +786,9 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 			}
 		}
 		
+		if ( filterProc( window, &event, itemHit ) )
 		{
-			raster_lock lock;
-			
-			if ( filterProc( window, &event, itemHit ) )
-			{
-				return;
-			}
+			return;
 		}
 		
 		if ( DialogSelect( &event, &window, itemHit ) )
