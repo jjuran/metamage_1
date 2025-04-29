@@ -415,23 +415,11 @@ namespace Pedestal
 	
 	static n::owned< WindowRef > sAboutBox;
 	
-#if CONFIG_COMPOSITING
-#define GetWindowPic( window )  NULL
-#define KillPicture( picture )  /**/
-#endif
-	
 	static
 	void AboutClosed( WindowRef window )
 	{
-		PicHandle pic = GetWindowPic( window );
-		
 		sAboutBox.reset();
-		
-		KillPicture( pic );
 	}
-	
-#undef GetWindowPic
-#undef KillPicture
 	
 	static
 	n::owned< WindowRef > NewAboutBox()
