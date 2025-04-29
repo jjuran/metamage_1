@@ -171,7 +171,9 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 			sleep = 0xFFFFFFFF;
 		}
 		
-		if ( *(long*) &pt != *(long*) &event.where )
+		const bool is_inside = PtInRect( event.where, slop );
+		
+		if ( is_inside | was_inside  &&  *(long*) &pt != *(long*) &event.where )
 		{
 			raster_lock lock;
 			
@@ -179,8 +181,6 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 			{
 				PaintRgn( rgn );
 			}
-			
-			const bool is_inside = PtInRect( event.where, slop );
 			
 			if ( is_inside )
 			{
