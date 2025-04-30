@@ -330,15 +330,40 @@ namespace tool
 	static inline
 	void AESend( const Mac::AppleEvent& event )
 	{
+		OSErr err;
+		
 		if ( waits )
 		{
 			n::owned< Mac::AEDesc_Data > reply = AESendBlocking( event );
 			
-			n::string output = N::AEGetParamPtr< Mac::typeChar >( reply, Mac::keyDirectObject );
+			Size     size;
+			DescType type;
 			
-			p7::write( p7::stdout_fileno, output.data(), output.size() );
+			err = AESizeOfParam( &reply.get(), keyDirectObject, &type, &size );
 			
-			p7::write( p7::stdout_fileno, "\n", 1 );
+			if ( err == noErr )
+			{
+				plus::string output;
+				
+				char* p = output.reset( size + 1 );
+				
+				err = AEGetParamPtr( &reply.get(),
+				                     keyDirectObject,
+				                     typeChar,
+				                     &type,
+				                     p,
+				                     size,
+				                     &size );
+				
+				if ( err == noErr )
+				{
+					p[ size ] = '\n';
+					
+					p7::write( p7::stdout_fileno, p, size + 1 );
+				}
+			}
+			
+			Mac::ThrowOSStatus( err );
 		}
 		else
 		{
