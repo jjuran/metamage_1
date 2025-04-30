@@ -4,9 +4,9 @@
 
 #define MAJOR 0
 #define MINOR 5
-#define POINT 5
+#define POINT 6
 
-#define VERSION  "0.5.5"
+#define VERSION  "0.5.6"
 
 type '|gan' as 'STR ';
 
