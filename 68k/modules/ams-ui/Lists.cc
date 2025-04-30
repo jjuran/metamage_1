@@ -374,7 +374,28 @@ void scrollbar_hit( ControlRef scrollbar, Point pt )
 		switch ( part )
 		{
 			case kControlIndicatorPart:
-				// not yet implemented
+				if ( TrackControl( scrollbar, pt, NULL ) )
+				{
+					short value = GetControlValue( scrollbar );
+					
+					ListHandle listH = scroll_action_context.listH;
+					
+					const Rect& visible = listH[0]->visible;
+					
+					short rows = 0;
+					short cols = 0;
+					
+					if ( scroll_action_context.horizontal )
+					{
+						cols = value - visible.left;
+					}
+					else
+					{
+						rows = value - visible.top;
+					}
+					
+					scroll_by( cols, rows, listH );
+				}
 				break;
 			
 			case kControlUpButtonPart:
