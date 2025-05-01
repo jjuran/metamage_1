@@ -53,6 +53,26 @@ Boolean IsPortColor( GrafPtr port )
 #endif
 
 static inline
+bool has_IconUtilities()
+{
+#ifdef  MAC_OS_X_VERSION_10_2
+#ifndef MAC_OS_X_VERSION_10_3
+	
+	/*
+		Pretend that we don't have Icon Utilities in Jaguar,
+		where PlotIconID() doesn't display Nyanochrome Cat's
+		icon in the About box, but CopyBits() still works.
+	*/
+	
+	return false;
+	
+#endif
+#endif
+	
+	return ! TARGET_CPU_68K  ||  mac::sys::has_IconUtilities();
+}
+
+static inline
 bool silhouetted( GrafPtr port )
 {
 	/*
@@ -74,7 +94,7 @@ bool silhouetted( GrafPtr port )
 
 short plot_icon_id( const Rect& bounds, short id )
 {
-	if ( ! TARGET_CPU_68K  ||  mac::sys::has_IconUtilities() )
+	if ( has_IconUtilities() )
 	{
 		return PlotIconID( &bounds, 0, 0, id );
 	}
