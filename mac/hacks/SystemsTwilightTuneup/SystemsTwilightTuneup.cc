@@ -4,7 +4,7 @@
 	
 	System's Twilight Tune-up INIT for Advanced Mac Substitute
 	
-	Copyright 2022-2024, Joshua Juran.  All rights reserved.
+	Copyright 2022-2025, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
@@ -24,6 +24,17 @@
 	This extension patches the jump table in order to wrap calls to the
 	animation function.  By bracketing the animation calls with callouts
 	that defer screen updates, we prevent the flickering entirely.
+	
+	A related issue occurs in the modal dialog for examining or taking
+	objects.  Several of them have animated visuals, and one of those
+	exhibits flickering as it draws polygons that float around.  (This
+	was previously solved by placing all filterProc calls in the scope
+	of a raster lock, but this approach interferes with getting live
+	feedback during scrolling (as in SFGetFile()) and presumably other
+	uses of TrackControl(), and consequently must be reverted.)
+	
+	This extension patches the polygon animation routine, bracketing
+	the drawing between calls to the screen-update-deferring callouts.
 	
 	A less significant (but still noticeable) visual defect when running
 	System's Twilight in Advanced Mac Substitute is the lack of support
@@ -115,6 +126,97 @@ void install_portal_animation_patch()
 }
 
 /*
+	There's a polygon animation function at CODE 2, offset $0029d2:
+	
+		void AnimatePretty( DialogRef dialog, short item );
+	
+	It calls PaintRect() to clear the drawing area and then one of
+	PaintPoly(), FillPoly(), or FillCPoly() to draw two polygons.
+	In Advanced Mac Substitute, this results in visible flickering.
+	
+	Wedge in calls to lock_screen() and unlock_screen() surrounding
+	the drawing calls.  The first call site is a code segment that
+	determines the midpoint of the drawing area.  It calculates
+	[(left + right) / 2, (top + bottom) / 2], using DIVS (and thus
+	requiring EXT.L to prepare a 32-bit dividend).  However, since
+	these are port-local (i.e. window-local) coordinates, we know
+	that they're (a) positive integers, so an unsigned division is
+	equivalent, and (b) less than 2^15, so a 16-bit operation is
+	sufficient.  Thus we use a bit shift and no sign extension,
+	saving two words for each dimension, more than plenty for a
+	16-bit jump to lock_screen().
+	
+	The second call site includes a redundant TST instruction
+	(immediately following an ADD to the same destination operand).
+	While it would work to replace just the TST instruction with the
+	new JSR (because unlock_screen() doesn't alter the CCR), it would
+	create a /dependency/ on that fact, which is neither necessary nor
+	desirable.  It's simple enough to slide down a couple preceding
+	instructions and place the unlock_screen() call ahead of them.
+*/
+
+static const UInt16 old_ante_pretty[] =
+{
+	0x48c5,       // 002a34:  EXT.L    D5
+	0x8bfc,   2,  // 002a36:  DIVS.W   #0x0002,D5
+	0x382e,  -6,  // 002a3a:  MOVE.W   (-6,A6),D4
+	0xd86e, -10,  // 002a3e:  ADD.W    (-10,A6),D4
+	0x48c4,       // 002a42:  EXT.L    D4
+	0x89fc,   2,  // 002a44:  DIVS.W   #0x0002,D4
+};
+
+static const UInt16 new_ante_pretty[] =
+{
+	0xe245,          // 002a34:  ASR.W    #1,D5
+	0x4e71,          // 002a36:  NOP
+	0x4e71,          // 002a38:  NOP
+	0x382e,  -6,     // 002a3a:  MOVE.W   (-6,A6),D4
+	0xd86e, -10,     // 002a3e:  ADD.W    (-10,A6),D4
+	0xe244,          // 002a42:  ASR.W    #1,D4
+	0x4eb8, 0xffec,  // 002a44:  JSR      lock_screen
+};
+
+static const UInt16 old_post_pretty[] =
+{
+	0x1b7c,     1, -8218,  // 002c50:  MOVE.B   #0x01,(-8218,A5)
+	0x302d, -8200,         // 002c56:  MOVE.W   (-8200,A5),D0
+	0xd16d, -8202,         // 002c5a:  ADD.W    D0,(-8202,A5)
+	0x4a6d, -8202,         // 002c5e:  TST.W    (-8202,A5)
+};
+
+static const UInt16 new_post_pretty[] =
+{
+	0x4eb8, 0xffea,         // 002c50:  JSR      unlock_screen
+	0x1b7c,      1, -8218,  // 002c54:  MOVE.B   #0x01,(-8218,A5)
+	0x302d,  -8200,         // 002c5a:  MOVE.W   (-8200,A5),D0
+	0xd16d,  -8202,         // 002c5e:  ADD.W    D0,(-8202,A5)
+};
+
+static inline
+void install_CODE_2_patch( Handle h )
+{
+	using mac::glue::GetHandleSize_raw;
+	
+	const int intro_offset = 0x002a34;
+	const int outro_offset = 0x002c50;
+	
+	if ( h  &&  GetHandleSize_raw( h ) >= outro_offset + sizeof old_post_pretty )
+	{
+		Ptr p_in  = (*h + intro_offset);
+		Ptr p_out = (*h + outro_offset);
+		
+		if ( fast_memequ( p_in,  old_ante_pretty, sizeof old_ante_pretty )  &&
+		     fast_memequ( p_out, old_post_pretty, sizeof old_post_pretty ) )
+		{
+			fast_memcpy( p_in,  new_ante_pretty, sizeof new_ante_pretty );
+			fast_memcpy( p_out, new_post_pretty, sizeof new_post_pretty );
+			
+			HNoPurge( h );
+		}
+	}
+}
+
+/*
 	There's a hit-testing function at CODE 5, offset $000c7a:
 	
 		short HitTestPortals( Point, short*, Boolean );
@@ -197,6 +299,7 @@ void TEInit_patch()
 		
 		install_portal_animation_patch();
 		
+		install_CODE_2_patch( Get1Resource( 'CODE', 2 ) );
 		install_CODE_5_patch( Get1Resource( 'CODE', 5 ) );
 		
 		install_InsertMenu_patch();
