@@ -26,6 +26,8 @@ char* ScrnBase : 0x0824;
 Rect  CrsrRect : 0x083C;
 char* CrsrSave : 0x088C;
 
+GrafPtr WMgrPort : 0x09DE;
+
 
 #pragma mark -
 #pragma mark GrafPort Routines
@@ -97,6 +99,13 @@ pascal void ClosePort_patch( struct GrafPort* port )
 
 pascal void SetPort_patch( struct GrafPort* port )
 {
+	if ( ! port )
+	{
+		port = WMgrPort;
+		
+		WARNING = "SetPort: NULL GrafPtr, substituting WMgrPort";
+	}
+	
 	*get_addrof_thePort() = port;
 }
 
