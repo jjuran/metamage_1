@@ -24,8 +24,6 @@ namespace TestEdit
 	{
 		private:
 			nucleus::owned< WindowRef >  itsWindow;
-			bool                         itHasFile;
-			bool                         itIsDirty;
 		
 		public:
 			Document();

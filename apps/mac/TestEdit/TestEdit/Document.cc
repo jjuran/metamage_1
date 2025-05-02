@@ -126,9 +126,7 @@ namespace TestEdit
 	
 	Document::Document()
 	: 
-		itsWindow( NewWindow() ),
-		itHasFile( false ),
-		itIsDirty( false )   // A new document is never dirty, even if not saved
+		itsWindow( NewWindow() )
 	{
 	}
 	
@@ -144,18 +142,14 @@ namespace TestEdit
 	
 	Document::Document( const FSSpec& file )
 	: 
-		itsWindow( NewWindow( file.name ) ),
-		itHasFile( true  ),
-		itIsDirty( false )
+		itsWindow( NewWindow( file.name ) )
 	{
 		LoadText( itsWindow, ReadFileData( file ) );
 	}
 	
 	Document::Document( const FSRef& file )
 	: 
-		itsWindow( NewWindow() ),
-		itHasFile( true  ),
-		itIsDirty( false )
+		itsWindow( NewWindow() )
 	{
 		WindowRef window = itsWindow.get();
 		
