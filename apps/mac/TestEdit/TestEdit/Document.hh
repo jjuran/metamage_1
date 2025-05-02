@@ -6,15 +6,8 @@
 #ifndef TESTEDIT_DOCUMENT_HH
 #define TESTEDIT_DOCUMENT_HH
 
-// nucleus
-#ifndef NUCLEUS_OWNED_HH
-#include "nucleus/owned.hh"
-#endif
-
-// Nitrogen
-#ifndef MAC_WINDOWS_TYPES_WINDOWREF_HH
-#include "Mac/Windows/Types/WindowRef.hh"
-#endif
+// Pedestal
+#include "Pedestal/WindowStorage.hh"
 
 
 namespace TestEdit
@@ -23,12 +16,26 @@ namespace TestEdit
 	class Document
 	{
 		private:
-			nucleus::owned< WindowRef >  itsWindow;
+			WindowRef  itsWindow;
+			
+			// non-copyable
+			Document           ( const Document& );
+			Document& operator=( const Document& );
 		
 		public:
 			Document();
 			Document( const FSSpec& file );
 			Document( const FSRef & file );
+			
+			~Document()
+			{
+				if ( itsWindow )
+				{
+					Pedestal::set_window_closed_proc( itsWindow, NULL );
+					
+					Pedestal::close_window( itsWindow );
+				}
+			}
 			
 			WindowRef GetWindowRef() const  { return itsWindow; }
 	};

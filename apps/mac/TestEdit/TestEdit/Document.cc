@@ -126,7 +126,7 @@ namespace TestEdit
 	
 	Document::Document()
 	: 
-		itsWindow( NewWindow() )
+		itsWindow( NewWindow().release() )
 	{
 	}
 	
@@ -141,17 +141,21 @@ namespace TestEdit
 	}
 	
 	Document::Document( const FSSpec& file )
-	: 
-		itsWindow( NewWindow( file.name ) )
 	{
+		nucleus::owned< WindowRef > window = NewWindow( file.name );
+		
+		itsWindow = window.get();
+		
 		LoadText( itsWindow, ReadFileData( file ) );
+		
+		window.release();
 	}
 	
 	Document::Document( const FSRef& file )
-	: 
-		itsWindow( NewWindow() )
 	{
-		WindowRef window = itsWindow.get();
+		nucleus::owned< WindowRef > window = NewWindow();
+		
+		itsWindow = window.get();
 		
 		set_window_title_to_filename( window, file );
 		
@@ -159,6 +163,8 @@ namespace TestEdit
 		mac::app::Window_menu_insert( window );
 		
 		LoadText( itsWindow, ReadFileData( file ) );
+		
+		window.release();
 	}
 	
 }
