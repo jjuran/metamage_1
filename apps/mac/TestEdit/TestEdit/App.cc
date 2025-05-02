@@ -51,6 +51,7 @@
 
 // TestEdit
 #include "TestEdit/Document.hh"
+#include "TestEdit/Window.hh"
 
 
 #define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
@@ -177,14 +178,6 @@ WindowRef get_document_window_by_id( long id )
 	return window;
 }
 
-
-static
-void DocumentClosed( WindowRef window )
-{
-	Document* doc = (Document*) GetWRefCon( window );
-	
-	delete doc;
-}
 
 static
 void CloseDocuments( const AEDescList& list )
@@ -510,20 +503,6 @@ struct Document_Token
 };
 
 
-static void StoreNewDocument( Document* doc )
-{
-	SetWRefCon( doc->GetWindowRef(), (SRefCon) doc );
-	
-	try
-	{
-		Ped::set_window_closed_proc( doc->GetWindowRef(), &DocumentClosed );
-	}
-	catch ( ... )
-	{
-		delete doc;
-	}
-}
-
 static bool About( Ped::CommandCode )
 {
 	Ped::ShowAboutBox();
@@ -533,16 +512,9 @@ static bool About( Ped::CommandCode )
 
 static bool NewDocument( Ped::CommandCode )
 {
-	StoreNewDocument( new Document );
+	NewWindow();
 	
 	return true;
-}
-
-template < class File >
-static inline
-void OpenDocument( const File& file )
-{
-	StoreNewDocument( new Document( file ) );
 }
 
 #if TARGET_API_MAC_CARBON
@@ -560,7 +532,7 @@ long file_opener( const FileSpec& file )
 {
 	try
 	{
-		OpenDocument( file );
+		NewWindow( file );
 		
 		return noErr;
 	}
