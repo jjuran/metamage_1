@@ -9,9 +9,15 @@
 // Pedestal
 #include "Pedestal/WindowStorage.hh"
 
+// TestEdit
+#include "TestEdit/Window.hh"
+
 
 namespace TestEdit
 {
+	
+	WindowRef NewWindow( const FSSpec& file );
+	WindowRef NewWindow( const FSRef&  file );
 	
 	class Document
 	{
@@ -23,9 +29,9 @@ namespace TestEdit
 			Document& operator=( const Document& );
 		
 		public:
-			Document();
-			Document( const FSSpec& file );
-			Document( const FSRef & file );
+			Document()                     : itsWindow( NewWindow(      ) )  {}
+			Document( const FSSpec& file ) : itsWindow( NewWindow( file ) )  {}
+			Document( const FSRef&  file ) : itsWindow( NewWindow( file ) )  {}
 			
 			~Document()
 			{

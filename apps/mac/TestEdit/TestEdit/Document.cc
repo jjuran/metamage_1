@@ -124,12 +124,6 @@ namespace TestEdit
 	}
 	
 	
-	Document::Document()
-	: 
-		itsWindow( NewWindow() )
-	{
-	}
-	
 	static
 	void LoadText( WindowRef window, const plus::string& text )
 	{
@@ -140,24 +134,22 @@ namespace TestEdit
 		SetText( scrollframe, text );
 	}
 	
-	Document::Document( const FSSpec& file )
+	WindowRef NewWindow( const FSSpec& file )
 	{
 		const plus::string& text = ReadFileData( file );
 		
 		WindowRef window = NewWindow( file.name );
 		
-		itsWindow = window;
-		
 		LoadText( window, text );
+		
+		return window;
 	}
 	
-	Document::Document( const FSRef& file )
+	WindowRef NewWindow( const FSRef& file )
 	{
 		const plus::string& text = ReadFileData( file );
 		
 		WindowRef window = NewWindow();
-		
-		itsWindow = window;
 		
 		set_window_title_to_filename( window, file );
 		
@@ -165,6 +157,8 @@ namespace TestEdit
 		mac::app::Window_menu_insert( window );
 		
 		LoadText( window, text );
+		
+		return window;
 	}
 	
 }
