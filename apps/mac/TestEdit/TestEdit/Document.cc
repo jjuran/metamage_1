@@ -134,18 +134,16 @@ namespace TestEdit
 		SetText( scrollframe, text );
 	}
 	
-	WindowRef NewWindow( const FSSpec& file )
+	void NewWindow( const FSSpec& file )
 	{
 		const plus::string& text = ReadFileData( file );
 		
 		WindowRef window = NewWindow( file.name );
 		
 		LoadText( window, text );
-		
-		return window;
 	}
 	
-	WindowRef NewWindow( const FSRef& file )
+	void NewWindow( const FSRef& file )
 	{
 		const plus::string& text = ReadFileData( file );
 		
@@ -157,8 +155,6 @@ namespace TestEdit
 		mac::app::Window_menu_insert( window );
 		
 		LoadText( window, text );
-		
-		return window;
 	}
 	
 }
