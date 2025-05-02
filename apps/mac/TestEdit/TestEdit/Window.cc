@@ -406,11 +406,11 @@ namespace TestEdit
 		return view;
 	}
 	
-	n::owned< WindowRef > NewWindow( ConstStr255Param title )
+	WindowRef NewWindow( ConstStr255Param title )
 	{
 		const Rect bounds = MakeWindowRect();
 		
-		n::owned< WindowRef > window = Ped::CreateWindow( bounds, title );
+		WindowRef window = Ped::CreateWindow( bounds, title ).release();
 		
 		Ped::set_window_view( window, MakeView().get() );
 		

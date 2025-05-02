@@ -6,18 +6,18 @@
 #ifndef TESTEDIT_WINDOW_HH
 #define TESTEDIT_WINDOW_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __MACWINDOWS__
+#include <MacWindows.h>
+#endif
+
 // plus
 #include "plus/string_fwd.hh"
-
-// nucleus
-#ifndef NUCLEUS_OWNED_HH
-#include "nucleus/owned.hh"
-#endif
-
-// Nitrogen
-#ifndef MAC_WINDOWS_TYPES_WINDOWREF_HH
-#include "Mac/Windows/Types/WindowRef.hh"
-#endif
 
 
 namespace TestEdit
@@ -27,7 +27,7 @@ namespace TestEdit
 	
 	typedef ScrollFrame View;
 	
-	nucleus::owned< WindowRef >
+	WindowRef
 	//
 	NewWindow( ConstStr255Param title = "\p" "TestEdit" );
 	

@@ -126,7 +126,7 @@ namespace TestEdit
 	
 	Document::Document()
 	: 
-		itsWindow( NewWindow().release() )
+		itsWindow( NewWindow() )
 	{
 	}
 	
@@ -144,7 +144,7 @@ namespace TestEdit
 	{
 		const plus::string& text = ReadFileData( file );
 		
-		WindowRef window = NewWindow( file.name ).release();
+		WindowRef window = NewWindow( file.name );
 		
 		itsWindow = window;
 		
@@ -155,7 +155,7 @@ namespace TestEdit
 	{
 		const plus::string& text = ReadFileData( file );
 		
-		WindowRef window = NewWindow().release();
+		WindowRef window = NewWindow();
 		
 		itsWindow = window;
 		
