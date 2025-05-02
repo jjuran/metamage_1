@@ -6,9 +6,6 @@
 #ifndef TESTEDIT_DOCUMENT_HH
 #define TESTEDIT_DOCUMENT_HH
 
-// vxo
-#include "vxo/ref_count.hh"
-
 // nucleus
 #ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
@@ -23,7 +20,7 @@
 namespace TestEdit
 {
 	
-	class Document : public vxo::ref_count< Document >
+	class Document
 	{
 		private:
 			nucleus::owned< WindowRef >  itsWindow;
