@@ -142,17 +142,21 @@ namespace TestEdit
 	
 	Document::Document( const FSSpec& file )
 	{
+		const plus::string& text = ReadFileData( file );
+		
 		nucleus::owned< WindowRef > window = NewWindow( file.name );
 		
 		itsWindow = window.get();
 		
-		LoadText( itsWindow, ReadFileData( file ) );
+		LoadText( window, text );
 		
 		window.release();
 	}
 	
 	Document::Document( const FSRef& file )
 	{
+		const plus::string& text = ReadFileData( file );
+		
 		nucleus::owned< WindowRef > window = NewWindow();
 		
 		itsWindow = window.get();
@@ -162,7 +166,7 @@ namespace TestEdit
 		mac::app::Window_menu_remove( window );
 		mac::app::Window_menu_insert( window );
 		
-		LoadText( itsWindow, ReadFileData( file ) );
+		LoadText( window, text );
 		
 		window.release();
 	}
