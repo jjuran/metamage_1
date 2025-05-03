@@ -144,22 +144,20 @@ namespace TestEdit
 	{
 		const plus::string& text = ReadFileData( file );
 		
-		nucleus::owned< WindowRef > window = NewWindow( file.name );
+		WindowRef window = NewWindow( file.name ).release();
 		
-		itsWindow = window.get();
+		itsWindow = window;
 		
 		LoadText( window, text );
-		
-		window.release();
 	}
 	
 	Document::Document( const FSRef& file )
 	{
 		const plus::string& text = ReadFileData( file );
 		
-		nucleus::owned< WindowRef > window = NewWindow();
+		WindowRef window = NewWindow().release();
 		
-		itsWindow = window.get();
+		itsWindow = window;
 		
 		set_window_title_to_filename( window, file );
 		
@@ -167,8 +165,6 @@ namespace TestEdit
 		mac::app::Window_menu_insert( window );
 		
 		LoadText( window, text );
-		
-		window.release();
 	}
 	
 }
