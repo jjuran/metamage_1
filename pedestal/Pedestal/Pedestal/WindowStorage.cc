@@ -67,7 +67,7 @@ namespace Pedestal
 	static
 	WindowStorage* RecoverWindowStorage( WindowRef window )
 	{
-		if ( GetWindowKind( window ) != kApplicationWindowKind )
+		if ( GetWindowKind( window ) < kApplicationWindowKind )
 		{
 			return NULL;
 		}
