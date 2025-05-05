@@ -88,7 +88,7 @@ CFStringRef GetBundleName()
 }
 
 static
-void DrawApplicationName( CFStringRef text, CGContextRef context )
+void DrawApplicationName( CGContextRef context )
 {
 	/*
 		Nudge the application name down one pixel
@@ -161,7 +161,7 @@ void DrawApplicationName( CFStringRef text, CGContextRef context )
 		x + kAboutBoxTextWidth,
 	};
 	
-	draw_centered_text( text, bounds, APP_NAME_FONT, APP_NAME_SIZE );
+	draw_centered_text( GetBundleName(), bounds, APP_NAME_FONT, APP_NAME_SIZE );
 	
 #endif
 }
@@ -308,7 +308,7 @@ void draw_AboutBox( CGContextRef context, CGRect bounds )
 	
 	CGContextSetGrayFillColor( context, 0.0, 1.0 );  // black
 	
-	DrawApplicationName( GetBundleName(), context );
+	DrawApplicationName( context );
 	
 	y += kAboutBoxAppNameHeight + kAboutBoxInterTextGap;
 	
