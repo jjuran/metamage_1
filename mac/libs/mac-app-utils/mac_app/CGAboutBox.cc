@@ -7,6 +7,15 @@
 
 #if TARGET_RT_MAC_MACHO
 
+// missing-macos
+#if ! __LP64__
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAWTEXT_H
+#include "missing/QuickdrawText.h"
+#endif
+#endif
+#endif
+
 // mac-config
 #include "mac_config/compositing-mode.hh"
 #include "mac_config/upp-macros.hh"
@@ -19,7 +28,11 @@
 #include "mac_icon/plot_IconRef.hh"
 
 // mac-ui-utils
+#include "mac_ui/TETextBox_CFString.hh"
 #include "mac_ui/windows.hh"
+
+// mac-cg-utils
+#include "mac_cg/self_masked_drawing.hh"
 
 // mac-app-utils
 #include "mac_app/about_box_metrics.hh"
@@ -140,6 +153,24 @@ void DrawApplicationName( CFStringRef text, CGContextRef context )
 #endif
 }
 
+#if ! __LP64__
+
+static
+void DrawLabel_TE( CGContextRef context, const CGRect& rect, CFStringRef text )
+{
+	mac::cg::self_masked_drawing drawing( context, rect );
+	
+	if ( drawing.works() )
+	{
+		TextFont( 1 );  // Use application font, which should be Geneva
+		TextSize( 9 );
+		
+		mac::ui::TETextBox_CFString( text, drawing.rect(), teJustCenter );
+	}
+}
+
+#endif
+
 static
 void DrawAboutBoxDetail( CFStringRef    text,
                          const CGRect&  bounds,
@@ -171,15 +202,7 @@ void DrawAboutBoxDetail( CFStringRef    text,
 	
 #else
 	
-	Rect rect =
-	{
-		(short)  bounds.origin.y,
-		(short)  bounds.origin.x,
-		(short) (bounds.origin.y + bounds.size.height),
-		(short) (bounds.origin.x + bounds.size.width),
-	};
-	
-	draw_centered_text( text, rect, "Geneva", 9 );
+	DrawLabel_TE( context, bounds, text );
 	
 #endif
 }
