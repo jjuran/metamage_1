@@ -58,6 +58,7 @@
 #include "mac_ui/TETextBox_CFString.hh"
 
 // mac-app-utils
+#include "mac_app/about_box.hh"
 #include "mac_app/about_box_metrics.hh"
 #include "mac_app/copy_bundle_icon.hh"
 #include "mac_app/draw_centered_text.hh"
@@ -552,14 +553,9 @@ namespace Pedestal
 	
 	void ShowAboutBox()
 	{
-		if ( WindowRef aboutBox = find_About_box() )
-		{
-			SelectWindow( aboutBox );
-		}
-		else
-		{
-			NewAboutBox();
-		}
+		const OSType creator = GetCreatorFromBNDL();
+		
+		mac::app::show_About_box( creator );
 	}
 	
 }

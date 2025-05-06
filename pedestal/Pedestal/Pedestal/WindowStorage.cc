@@ -20,6 +20,7 @@
 #include "mac_ui/windows.hh"
 
 // mac-app-utils
+#include "mac_app/about_box.hh"
 #include "mac_app/DAs.hh"
 #include "mac_app/new_window.hh"
 #include "mac_app/state.hh"
@@ -165,6 +166,11 @@ namespace Pedestal
 	
 	View* get_window_view( WindowRef window )
 	{
+		if ( GetWindowKind( window ) != kApplicationWindowKind )
+		{
+			return NULL;
+		}
+		
 	#if ! TARGET_API_MAC_CARBON
 		
 		if ( WindowStorage* storage = RecoverWindowStorage( window ) )
@@ -301,6 +307,11 @@ namespace Pedestal
 	
 	void close_window( WindowRef window )
 	{
+		if ( mac::app::close_About_box( window ) )
+		{
+			return;
+		}
+		
 		mac::app::Window_menu_remove( window );
 		
 		if ( WindowClosed_proc proc = get_window_closed_proc( window ) )
