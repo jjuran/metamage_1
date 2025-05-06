@@ -48,8 +48,14 @@
 #include "mac_qd/plot_icon_id.hh"
 #include "mac_qd/globals/screenBits.hh"
 
+// mac-cg-utils
+#include "mac_cg/self_masked_drawing.hh"
+
 // mac-icon-utils
 #include "mac_icon/plot_IconRef.hh"
+
+// mac-ui-utils
+#include "mac_ui/TETextBox_CFString.hh"
 
 // mac-app-utils
 #include "mac_app/about_box_metrics.hh"
@@ -71,6 +77,19 @@
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowStorage.hh"
 
+
+/*
+	We should only use Core Graphics if small fonts are readable.
+	Mac OS X 10.4 has subpixel font rendering enabled by default.
+*/
+
+#ifndef CONFIG_HITHEME_LABELS
+#ifdef MAC_OS_X_VERSION_10_4
+#define CONFIG_HITHEME_LABELS  1
+#else
+#define CONFIG_HITHEME_LABELS  0
+#endif
+#endif
 
 #define LENGTH( array )  (sizeof (array) / sizeof (array)[0])
 
@@ -96,6 +115,20 @@ static inline
 bool has_color_quickdraw()
 {
 	return CONFIG_COLOR_QUICKDRAW_GRANTED  ||  mac::sys::has_ColorQuickDraw();
+}
+
+static
+void DrawLabel_TE( CGContextRef context, const CGRect& rect, CFStringRef text )
+{
+	mac::cg::self_masked_drawing drawing( context, rect );
+	
+	if ( drawing.works() )
+	{
+		TextFont( 1 );  // Use application font, which should be Geneva
+		TextSize( 9 );
+		
+		mac::ui::TETextBox_CFString( text, drawing.rect(), teJustCenter );
+	}
 }
 
 namespace Pedestal
@@ -315,7 +348,7 @@ namespace Pedestal
 			perfectly suitable theme font for the purpose.
 		*/
 		
-	#ifdef MAC_OS_X_VERSION_10_3
+	#if CONFIG_HITHEME_LABELS
 		
 		OSStatus err;
 		
@@ -332,6 +365,10 @@ namespace Pedestal
 		                          &textInfo,
 		                          context,
 		                          kHIThemeOrientationNormal );
+		
+	#else
+		
+		DrawLabel_TE( context, bounds, text );
 		
 	#endif
 	}
