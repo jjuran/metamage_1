@@ -40,6 +40,14 @@
 #include "mac_app/draw_centered_text.hh"
 
 
+#ifndef CONFIG_HITHEME_LABELS
+#ifdef MAC_OS_X_VERSION_10_3
+#define CONFIG_HITHEME_LABELS  1
+#else
+#define CONFIG_HITHEME_LABELS  0
+#endif
+#endif
+
 #define LENGTH( array )  (sizeof (array) / sizeof (array)[0])
 
 #define APP_NAME_FONT  "Lucida Grande Bold"
@@ -182,7 +190,7 @@ void DrawAboutBoxDetail( CFStringRef    text,
 		perfectly suitable theme font for the purpose.
 	*/
 	
-#ifdef MAC_OS_X_VERSION_10_3
+#if CONFIG_HITHEME_LABELS
 	
 	OSStatus err;
 	
