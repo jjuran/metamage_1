@@ -40,8 +40,13 @@
 #include "mac_app/draw_centered_text.hh"
 
 
+/*
+	We should only use Core Graphics if small fonts are readable.
+	Mac OS X 10.4 has subpixel font rendering enabled by default.
+*/
+
 #ifndef CONFIG_HITHEME_LABELS
-#ifdef MAC_OS_X_VERSION_10_3
+#ifdef MAC_OS_X_VERSION_10_4
 #define CONFIG_HITHEME_LABELS  1
 #else
 #define CONFIG_HITHEME_LABELS  0
