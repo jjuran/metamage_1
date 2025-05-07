@@ -1,0 +1,94 @@
+#!/usr/bin/env minivx
+
+# This script can be used as a replacement for cp when packaging
+# a .icns file into an application (or other) bundle in Mac OS X.
+#
+# The purpose is to filter out newer icon formats that confuse
+# Mac OS X 10.2 and prevent even the known formats from displaying.
+
+if argc <= 2 then
+{
+	warn "usage: icns-cp-trimmed.vx src-file dst-file"
+	
+	exit 50
+}
+
+let src = argv[ 1 ]
+let dst = argv[ 2 ]
+
+var data = packed load src
+
+def get_osx_vers
+{
+	try
+	{
+		let version = output-from-run ["sw_vers -productVersion" / ' ']
+		
+		var p = begin version
+		var q = p.find('.')
+		
+		let major = int (q - p)
+		
+		++q
+		p = q.find('.' | '\n')
+		
+		let minor = int (p - q)
+		
+		return major, minor
+	}
+	catch
+	{
+	}
+	
+	return 0, 0
+}
+
+let (major, minor) = get_osx_vers()
+
+if major * 100 + minor < 1005 then
+{
+	# Mac OS X 10.4 or earlier -- drop any 512x512 icons (and any
+	# other icons that follow it, which we assume are also newer).
+	#
+	# The presence of an 'ic09' so thoroughly confuses Mac OS X 10.2
+	# that it won't display the .icns at all, so remove it.  While on
+	# the one hand 10.3 and 10.4 are immune to this issue, on the other
+	# they don't actually display an 'ic09', so remove it for them too.
+	
+	struct Header
+	{
+		type: big-endian mb32,
+		size: big-endian u32,
+	}
+	
+	def shown (h)
+	{
+		return "%s: %s bytes" % (rep h.type, h.size)
+	}
+	
+	var icns = Header data[ 0 -> 8 ]
+	
+	var p = begin data + 8
+	
+	while p.rest do
+	{
+		let next = Header p.rest[ 0 -> 8 ]
+		
+		if next.type == 'ic09' then
+		{
+			data = p.past
+			
+			icns.size = data.size
+			
+			data = packed (icns, data[ 8 -> data.size ])
+			
+			put shown icns
+			
+			break
+		}
+		
+		p += next.size
+	}
+}
+
+rewrite dst <== data
