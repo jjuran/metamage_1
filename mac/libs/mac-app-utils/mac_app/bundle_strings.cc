@@ -12,6 +12,9 @@
 #endif
 #endif
 
+// mac-rsrc-utils
+#include "mac_rsrc/get_string_from_resource.hh"
+
 
 namespace mac {
 namespace app {
@@ -20,6 +23,61 @@ static inline
 CFBundleRef MainBundle()
 {
 	return CFBundleGetMainBundle();
+}
+
+static inline
+OSType GetCreator()
+{
+	OSType creator;
+	CFBundleGetPackageInfo( MainBundle(), NULL, &creator );
+	
+	return creator;
+}
+
+static
+CFStringRef CopyOwnerResourceAsCFString()
+{
+	Str255 data;
+	
+	if ( mac::rsrc::get_string_from_resource( data, GetCreator(), 0 ) )
+	{
+		return CFStringCreateWithPascalString( NULL,
+		                                       data,
+		                                       kCFStringEncodingMacRoman );
+	}
+	
+	return NULL;
+}
+
+static
+CFStringRef Copy_vers_1_ResourceAsCFString()
+{
+	Str255 data;
+	
+	if ( mac::rsrc::get_vers_ShortVersionString( data, 1 ) )
+	{
+		return CFStringCreateWithPascalString( NULL,
+		                                       data,
+		                                       kCFStringEncodingMacRoman );
+	}
+	
+	return NULL;
+}
+
+static
+CFStringRef GetOwnerResourceAsCFString()
+{
+	static CFStringRef string = CopyOwnerResourceAsCFString();
+	
+	return string;
+}
+
+static
+CFStringRef Get_vers_1_ResourceAsCFString()
+{
+	static CFStringRef string = Copy_vers_1_ResourceAsCFString();
+	
+	return string;
 }
 
 static
@@ -49,16 +107,22 @@ CFStringRef GetBundleGetInfoString()
 	CFStringRef key = CFSTR( "CFBundleGetInfoString" );
 	CFStringRef alt = CFSTR( "" );
 	
-	CFStringRef string = GetBundleString( key );
+	CFStringRef string;
 	
-	return string ? string : alt;
+	return   (string = GetBundleString( key )      ) ? string
+	       : (string = GetOwnerResourceAsCFString()) ? string
+	       : alt;
 }
 
 CFStringRef GetBundleShortVersionString()
 {
 	CFStringRef key = CFSTR( "CFBundleShortVersionString" );
 	
-	return GetBundleString( key );
+	CFStringRef string;
+	
+	return   (string = GetBundleString( key )         ) ? string
+	       : (string = Get_vers_1_ResourceAsCFString()) ? string
+	       : NULL;
 }
 
 }
