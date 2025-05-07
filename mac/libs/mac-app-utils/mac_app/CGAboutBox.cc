@@ -36,6 +36,7 @@
 
 // mac-app-utils
 #include "mac_app/about_box_metrics.hh"
+#include "mac_app/bundle_strings.hh"
 #include "mac_app/copy_bundle_icon.hh"
 #include "mac_app/draw_centered_text.hh"
 
@@ -64,28 +65,6 @@
 
 namespace mac {
 namespace app {
-
-static inline
-CFBundleRef MainBundle()
-{
-	return CFBundleGetMainBundle();
-}
-
-static
-CFStringRef GetBundleString( CFStringRef key )
-{
-	CFTypeRef value = CFBundleGetValueForInfoDictionaryKey( MainBundle(), key );
-	
-	return (CFStringRef) value;
-}
-
-static
-CFStringRef GetBundleName()
-{
-	CFStringRef key = CFSTR( "CFBundleName" );
-	
-	return GetBundleString( key );
-}
 
 static
 void DrawApplicationName( CGContextRef context )
@@ -221,18 +200,6 @@ void DrawAboutBoxDetail( CFStringRef    text,
 }
 
 static
-CFStringRef GetBundleShortVersionString()
-{
-	return GetBundleString( CFSTR( "CFBundleShortVersionString" ) );
-}
-
-static
-CFStringRef GetBundleVersion()
-{
-	return GetBundleString( CFSTR( "CFBundleVersion" ) );
-}
-
-static
 CFStringRef CopyVersionString()
 {
 	CFStringRef shortVersion = GetBundleShortVersionString();
@@ -268,17 +235,6 @@ CFStringRef CopyVersionString()
 	}
 	
 	return versionString;
-}
-
-static
-CFStringRef GetBundleGetInfoString()
-{
-	CFStringRef key = CFSTR( "CFBundleGetInfoString" );
-	CFStringRef alt = CFSTR( "" );
-	
-	CFStringRef string = GetBundleString( key );
-	
-	return string ? string : alt;
 }
 
 static
