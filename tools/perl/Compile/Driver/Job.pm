@@ -113,7 +113,7 @@ sub print
 	
 	my $type = $self->{TYPE};
 	my $dest = $self->{DEST};
-	my $item = $self->{PATH} || $self->{FROM}->name;
+	my $item = $self->{PATH} || $self->{NAME} || $self->{FROM}->name;
 	
 	$type .= " " x (5 - length( $type ));
 	

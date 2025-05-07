@@ -115,6 +115,7 @@ sub jobs_for
 				push @jobs, Compile::Driver::Job::Copy::->new
 				(
 					TYPE => "COPY",
+					NAME => $basename,
 					FROM => $module,
 					ORIG => $resource,
 					DEST => "$bundle/Contents/Resources/$basename",
