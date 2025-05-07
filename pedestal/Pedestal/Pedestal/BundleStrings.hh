@@ -19,16 +19,10 @@
 #endif
 
 
-#define VERSION_FALLBACK  "(A work in progress)"
-
-
 namespace Pedestal
 {
 	
 	CFStringRef GetBundleName();
-	CFStringRef GetBundleVersion();
-	CFStringRef GetBundleGetInfoString();
-	CFStringRef GetBundleShortVersionString();
 	
 }
 
