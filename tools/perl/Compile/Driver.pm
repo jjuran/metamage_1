@@ -4,6 +4,7 @@ use Compile::Driver::Configuration;
 use Compile::Driver::Job;
 use Compile::Driver::Job::Compile;
 use Compile::Driver::Job::Copy;
+use Compile::Driver::Job::CopyIcns;
 use Compile::Driver::Job::InfoPList;
 use Compile::Driver::Job::Link::Archive;
 use Compile::Driver::Job::Link::Binary;
@@ -112,9 +113,18 @@ sub jobs_for
 			{
 				my ( $basename ) = $resource =~ m{^ .* / ([^/]+) $}x;
 				
-				push @jobs, Compile::Driver::Job::Copy::->new
+				my $copy = 'Compile::Driver::Job::Copy';
+				my $type = "COPY";
+				
+				if ( $basename =~ m{ [.] icns $}x )
+				{
+					$copy = 'Compile::Driver::Job::CopyIcns';
+					$type = "ICNS";
+				}
+				
+				push @jobs, $copy->new
 				(
-					TYPE => "COPY",
+					TYPE => $type,
 					NAME => $basename,
 					FROM => $module,
 					ORIG => $resource,
