@@ -1,0 +1,36 @@
+#!/usr/bin/env lvx
+
+struct Header
+{
+	type: big-endian mb32,
+	size: big-endian u32,
+}
+
+def shown (h)
+{
+	return "%s: %s bytes" % (rep h.type, h.size)
+}
+
+def list_icns (path)
+{
+	let data = packed load path
+	let icns = Header data[ 0 -> 8 ]
+	
+	put shown icns
+	
+	var p = begin data + 8
+	
+	while p.rest do
+	{
+		let next = Header p.rest[ 0 -> 8 ]
+		
+		put "    " shown next
+		
+		p += next.size
+	}
+}
+
+for i in 1 -> argc do
+{
+	list_icns argv[ i ]
+}
