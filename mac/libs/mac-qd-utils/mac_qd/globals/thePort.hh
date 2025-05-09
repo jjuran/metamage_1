@@ -34,13 +34,15 @@ namespace qd  {
 inline
 GrafPtr thePort()
 {
-#if ! (OPAQUE_TOOLBOX_STRUCTS  ||  TARGET_API_MAC_CARBON)
+#if OPAQUE_TOOLBOX_STRUCTS
+	
+	return (GrafPtr) GetQDGlobalsThePort();
+	
+#else
 	
 	return ::qd.thePort;
 	
 #endif
-	
-	return (GrafPtr) GetQDGlobalsThePort();
 }
 
 #endif
