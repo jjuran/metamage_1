@@ -29,6 +29,17 @@
 namespace mac {
 namespace qd  {
 
+#ifdef __MC68K__
+
+inline
+asm
+GrafPtr* deref_A5()
+{
+	MOVEA.L  (A5),A0
+}
+
+#endif
+
 #if ! __LP64__
 
 inline
@@ -38,9 +49,13 @@ GrafPtr thePort()
 	
 	return (GrafPtr) GetQDGlobalsThePort();
 	
-#else
+#elif ! defined( __MC68K__ )  ||  __A5__
 	
 	return ::qd.thePort;
+	
+#else
+	
+	return (GrafPtr) *deref_A5();
 	
 #endif
 }
