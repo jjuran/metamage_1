@@ -20,7 +20,6 @@
 #include "callouts.hh"
 #include "c_string.hh"
 #include "QDGlobals.hh"
-#include "unglue.hh"
 
 // ams-ui
 #include "Dialogs.hh"
@@ -43,126 +42,6 @@ enum
 	getDisk   =  4,
 	getLine   =  9,
 };
-
-static const char SFPutFile_items[] =
-	"\x00\x07"             // count - 1
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x4a" "\x00\x0c"  // bounds.topLeft
-	"\x00\x5c" "\x00\x52"  // bounds.bottomRight
-	"\x04"                 // ctrlItem + btnCtrl
-	"\x04" "Save"          // title
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x4a" "\x00\x72"  // bounds.topLeft
-	"\x00\x5c" "\x00\xb8"  // bounds.bottomRight
-	"\x04"                 // ctrlItem + btnCtrl
-	"\x06" "Cancel"        // title
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x0c" "\x00\x0c"  // bounds.topLeft
-	"\x00\x1c" "\x00\xb8"  // bounds.bottomRight
-	"\x88"                 // statText + itemDisable
-	"\x00" ""              // static text
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x10" "\x00\xd1"  // bounds.topLeft
-	"\x00\x22" "\x01\x27"  // bounds.bottomRight
-	"\x80"                 // userItem + itemDisable
-	"\x00"                 // null
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x2b" "\x00\xd9"  // bounds.topLeft
-	"\x00\x3d" "\x01\x1f"  // bounds.bottomRight
-	"\x04"                 // ctrlItem + btnCtrl
-	"\x05" "Eject"         // title
-	"\x00"                 // pad
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x4a" "\x00\xd9"  // bounds.topLeft
-	"\x00\x5c" "\x01\x1f"  // bounds.bottomRight
-	"\x04"                 // ctrlItem + btnCtrl
-	"\x05" "Drive"         // title
-	"\x00"                 // pad
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x22" "\x00\x0e"  // bounds.topLeft
-	"\x00\x32" "\x00\xb6"  // bounds.bottomRight
-	"\x90"                 // editText + itemDisable
-	"\x00" ""              // initial text
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x10" "\x00\xc8"  // bounds.topLeft
-	"\x00\x58" "\x00\xc9"  // bounds.bottomRight
-	"\x80"                 // userItem + itemDisable
-	"\x00"                 // null
-	;
-
-static const char SFGetFile_items[] =
-	"\x00\x09"             // count - 1
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x1c" "\x00\x98"  // bounds.topLeft
-	"\x00\x2e" "\x00\xe8"  // bounds.bottomRight
-	"\x04"                 // ctrlItem + btnCtrl
-	"\x04" "Open"          // title
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x3b" "\x04\x80"  // bounds.topLeft
-	"\x00\x4d" "\x04\xd0"  // bounds.bottomRight
-	"\x04"                 // ctrlItem + btnCtrl
-	"\x00" ""              // title
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x5a" "\x00\x98"  // bounds.topLeft
-	"\x00\x6c" "\x00\xe8"  // bounds.bottomRight
-	"\x04"                 // ctrlItem + btnCtrl
-	"\x06" "Cancel"        // title
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x1c" "\x00\xf8"  // bounds.topLeft
-	"\x00\x2e" "\x01\x58"  // bounds.bottomRight
-	"\x80"                 // userItem + itemDisable
-	"\x00"                 // null
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x3b" "\x01\x00"  // bounds.topLeft
-	"\x00\x4d" "\x01\x50"  // bounds.bottomRight
-	"\x04"                 // ctrlItem + btnCtrl
-	"\x05" "Eject"         // title
-	"\x00"                 // pad
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x5a" "\x01\x00"  // bounds.topLeft
-	"\x00\x6c" "\x01\x50"  // bounds.bottomRight
-	"\x04"                 // ctrlItem + btnCtrl
-	"\x05" "Drive"         // title
-	"\x00"                 // pad
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x0b" "\x00\x0c"  // bounds.topLeft
-	"\x00\x7d" "\x00\x7d"  // bounds.bottomRight
-	"\x00"                 // userItem
-	"\x00"                 // null
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x0b" "\x00\x7c"  // bounds.topLeft
-	"\x00\x7d" "\x00\x8c"  // bounds.bottomRight
-	"\x80"                 // userItem + itemDisable
-	"\x00"                 // null
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x14" "\x00\xf4"  // bounds.topLeft
-	"\x00\x74" "\x00\xf5"  // bounds.bottomRight
-	"\x80"                 // userItem + itemDisable
-	"\x00"                 // null
-	
-	"\x00\x00\x00\x00"     // handle placeholder
-	"\x00\x14" "\x04\x14"  // bounds.topLeft
-	"\x00\x74" "\x04\x79"  // bounds.bottomRight
-	"\x88"                 // statText + itemDisable
-	"\x00" ""              // static text
-	;
 
 short SFSaveDisk : 0x0214;
 
@@ -310,11 +189,6 @@ pascal void SFPPutFile_call( Point             where,
 		ERROR = "SFPutFile dlgHook is unimplemented";
 	}
 	
-	if ( dialogID != putDlgID )
-	{
-		ERROR = "SFPPutFile dialogID is unimplemented";
-	}
-	
 	const unsigned char* SysTwi_prompt = "\p" "File to save this new game in:";
 	
 	if ( fast_memcmp( prompt, SysTwi_prompt, 1 + prompt[ 0 ] ) == 0 )
@@ -331,25 +205,9 @@ pascal void SFPPutFile_call( Point             where,
 		prompt = "\p" "File to save this game in:";
 	}
 	
-	const short width  = 304;
-	const short height = 104;
+	DialogRef dialog = GetNewDialog( dialogID, NULL, (WindowRef) -1 );
 	
-	const short left = where.h;
-	const short top  = where.v;
-	
-	Rect bounds = { top, left, top + height, left + width };
-	
-	Handle items = PtrToHand( SFPutFile_items, sizeof SFPutFile_items );
-	
-	DialogRef dialog = NewDialog( NULL,
-	                              &bounds,
-	                              "\p",
-	                              true,
-	                              dBoxProc,
-	                              (WindowRef) -1,
-	                              false,
-	                              0,
-	                              items );
+	MoveWindow( dialog, where.h, where.v, false );
 	
 	short type;
 	Handle h;
@@ -372,6 +230,8 @@ pascal void SFPPutFile_call( Point             where,
 	
 	GetDialogItem( dialog, putLine, &type, &h, &box );
 	SetDialogItem( dialog, putLine, type, (Handle) &draw_dotted_line, &box );
+	
+	ShowWindow( dialog );
 	
 	short hit = 0;
 	
@@ -480,30 +340,9 @@ pascal void SFPGetFile_call( Point               where,
 		ERROR = "SFGetFile fileFilter is unimplemented";
 	}
 	
-	if ( dialogID != getDlgID )
-	{
-		ERROR = "SFPGetFile dialogID is unimplemented";
-	}
+	DialogRef dialog = GetNewDialog( dialogID, NULL, (WindowRef) -1 );
 	
-	const short width  = 348;
-	const short height = 136;
-	
-	const short left = where.h;
-	const short top  = where.v;
-	
-	Rect bounds = { top, left, top + height, left + width };
-	
-	Handle items = PtrToHand( SFGetFile_items, sizeof SFGetFile_items );
-	
-	DialogRef dialog = NewDialog( NULL,
-	                              &bounds,
-	                              "\p",
-	                              true,
-	                              dBoxProc,
-	                              (WindowRef) -1,
-	                              false,
-	                              0,
-	                              items );
+	MoveWindow( dialog, where.h, where.v, false );
 	
 	short type;
 	Handle h;
@@ -538,6 +377,8 @@ pascal void SFPGetFile_call( Point               where,
 	{
 		filterProc = &SFGet_filterProc;
 	}
+	
+	ShowWindow( dialog );
 	
 	short hit = 0;
 	
