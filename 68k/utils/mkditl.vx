@@ -1,0 +1,31 @@
+#!/usr/bin/env lvx
+
+let Word = big-endian i16
+
+def encode_item (rect, type_code, name)
+{
+	let handle = x"00000000"
+	let bounds = rect map Word.encode
+	let flags  = u8.encode type_code
+	let length = u8.encode name.length
+	let pad    = x"00" * (name.length % 2)
+	
+	return packed (handle, bounds, flags, length, name, pad)
+}
+
+def encode_items (items)
+{
+	let count = Word.encode (items.length - 1)
+	
+	return packed (count, items map { encode_item *v })
+}
+
+let encoded = encode_items eval load argv[ 1 ]
+
+if isatty OUT then
+{
+	warn "Please redirect output"
+	exit 0
+}
+
+OUT <== encoded
