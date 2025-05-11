@@ -1,0 +1,28 @@
+#!/usr/bin/env lvx
+
+let dBoxProc = 1
+
+let Word = big-endian i16
+
+def encode_dlog (rect, items_id)
+{
+	let bounds  = rect map Word.encode
+	let procID  = Word.encode dBoxProc
+	let visible = x"0000"
+	let goAway  = x"0000"
+	let refcon  = x"00000000"
+	let itemsID = Word.encode items_id
+	let length = x"00"
+	
+	return packed (bounds, procID, visible, goAway, refcon, itemsID, length)
+}
+
+let encoded = encode_dlog eval load argv[ 1 ]
+
+if isatty OUT then
+{
+	warn "Please redirect output"
+	exit 0
+}
+
+OUT <== encoded
