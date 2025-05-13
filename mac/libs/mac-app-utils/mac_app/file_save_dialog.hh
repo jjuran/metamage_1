@@ -33,10 +33,14 @@ namespace app {
 	
 	typedef long (*FSSpec_callback)( const FSSpec& file );
 	
+	typedef HFS_callback    HFS_Proc;
+	typedef FSSpec_callback FSS_Proc;
+	
 	typedef long (*FSRefName_callback )( const FSRef& file, CFStringRef name );
 	
-	long file_save_dialog( StrArg prompt, StrArg name, HFS_callback    proc );
-	long file_save_dialog( StrArg prompt, StrArg name, FSSpec_callback proc );
+	long file_save_dialog( StrArg msg, StrArg name, HFS_Proc f, int ext = 0 );
+	long file_save_dialog( StrArg msg, StrArg name, FSS_Proc f, int ext = 0 );
+	
 	long file_save_dialog( OSType type, OSType creator, FSRefName_callback f );
 	
 }

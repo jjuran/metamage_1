@@ -26,7 +26,7 @@ namespace app {
 
 #if ! TARGET_API_MAC_CARBON
 
-long file_save_dialog( StrArg prompt, StrArg name, HFS_callback proc )
+long file_save_dialog( StrArg prompt, StrArg name, HFS_Proc proc, int ext_len )
 {
 	Point where = { 82, 82 };  // FIXME
 	
@@ -42,7 +42,7 @@ long file_save_dialog( StrArg prompt, StrArg name, HFS_callback proc )
 	return proc( reply.vRefNum, 0, reply.fName );
 }
 
-long file_save_dialog( StrArg prompt, StrArg name, FSSpec_callback proc )
+long file_save_dialog( StrArg prompt, StrArg name, FSS_Proc proc, int ext_len )
 {
 	StandardFileReply reply;
 	
