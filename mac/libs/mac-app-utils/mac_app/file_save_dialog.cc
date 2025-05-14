@@ -45,6 +45,18 @@ Boolean filter_proc( DialogRef dialog, EventRecord* event, short* itemHit )
 	return false;
 }
 
+static
+pascal
+void activate_proc( DialogRef dialog, short item, Boolean activating, void* yd )
+{
+	if ( selection_end > 0  &&  item == sfItemFileNameTextEdit )
+	{
+		SelectDialogItemText( dialog, sfItemFileNameTextEdit, 0, selection_end );
+		
+		selection_end = 0;
+	}
+}
+
 long file_save_dialog( StrArg prompt, StrArg name, HFS_Proc proc, int ext_len )
 {
 	DEFINE_UPP( ModalFilter, filter_proc )
@@ -69,9 +81,16 @@ long file_save_dialog( StrArg prompt, StrArg name, HFS_Proc proc, int ext_len )
 
 long file_save_dialog( StrArg prompt, StrArg name, FSS_Proc proc, int ext_len )
 {
+	DEFINE_UPP( ActivateYD, activate_proc )
+	
+	selection_end = name[ 0 ] - ext_len;
+	
+	Point where = {};
+	
 	StandardFileReply reply;
 	
-	StandardPutFile( prompt, name, &reply );
+	CustomPutFile( prompt, name, &reply, sfPutDialogID, where,
+	               NULL, NULL, NULL, UPP_ARG( activate_proc ), NULL );
 	
 	if ( ! reply.sfGood )
 	{
