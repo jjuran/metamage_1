@@ -349,26 +349,33 @@ void file_save_as()
 		mac::sys::gestalt_bit_set( gestaltStandardFileAttr,
 		                           gestaltStandardFile58 );
 	
+	const FileDesc& file = global_document_file< FileDesc >::value;
+	
 	OSStatus err;
 	
 	if ( TARGET_API_MAC_CARBON )
 	{
 		err = file_save_dialog( doctype, creator, &FSRef_saver );
 	}
-	else if ( has_StandardFile_5_thru_8 )
-	{
-		err = file_save_dialog( PROMPT, "\p", &FSSpec_saver );
-	}
 	else
 	{
-		err = file_save_dialog( PROMPT, "\p", &HFS_file_saver );
+		const Byte* name = "\p";
+		
+		const int ext_len = 0;
+		
+		if ( has_StandardFile_5_thru_8 )
+		{
+			err = file_save_dialog( PROMPT, name, &FSSpec_saver, ext_len );
+		}
+		else
+		{
+			err = file_save_dialog( PROMPT, name, &HFS_file_saver, ext_len );
+		}
 	}
 	
 	if ( err == noErr )
 	{
 		using mac::ui::set_window_title;
-		
-		const FileDesc& file = global_document_file< FileDesc >::value;
 		
 		set_window_title( main_window, mac::file::get_name( file ) );
 		
