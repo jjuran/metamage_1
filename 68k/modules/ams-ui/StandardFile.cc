@@ -175,6 +175,19 @@ static const scroll_action_rec scroll_action_context =
 	n_viewable_cells,
 };
 
+ModalFilterUPP gUserFilterProc;
+
+static pascal
+Boolean SFPut_filterProc( DialogRef dialog, EventRecord* event, short* itemHit )
+{
+	if ( basic_filterProc( dialog, event, itemHit ) )
+	{
+		return true;
+	}
+	
+	return gUserFilterProc  &&  gUserFilterProc( dialog, event, itemHit );
+}
+
 static
 pascal void SFPPutFile_call( Point             where,
                              ConstStr255Param  prompt,
@@ -184,6 +197,8 @@ pascal void SFPPutFile_call( Point             where,
                              short             dialogID,
                              ModalFilterUPP    filterProc )
 {
+	gUserFilterProc = filterProc;
+	
 	if ( dlgHook )
 	{
 		ERROR = "SFPutFile dlgHook is unimplemented";
@@ -237,7 +252,7 @@ pascal void SFPPutFile_call( Point             where,
 	
 	do
 	{
-		ModalDialog( filterProc, &hit );
+		ModalDialog( &SFPut_filterProc, &hit );
 		
 		if ( hit == 1 )
 		{
@@ -276,8 +291,6 @@ pascal void SFPPutFile_call( Point             where,
 static pascal
 Boolean SFGet_filterProc( DialogRef dialog, EventRecord* event, short* itemHit )
 {
-	DialogPeek d = (DialogPeek) dialog;
-	
 	if ( event->what == mouseDown )
 	{
 		Point pt = event->where;
@@ -310,7 +323,7 @@ Boolean SFGet_filterProc( DialogRef dialog, EventRecord* event, short* itemHit )
 		}
 	}
 	
-	return basic_filterProc( dialog, event, itemHit );
+	return SFPut_filterProc( dialog, event, itemHit );
 }
 
 static inline
@@ -330,6 +343,8 @@ pascal void SFPGetFile_call( Point               where,
                              short               dialogID,
                              ModalFilterUPP      filterProc )
 {
+	gUserFilterProc = filterProc;
+	
 	if ( dlgHook )
 	{
 		ERROR = "SFGetFile dlgHook is unimplemented";
@@ -373,18 +388,13 @@ pascal void SFPGetFile_call( Point               where,
 	GetDialogItem( dialog, getLine, &type, &h, &box );
 	SetDialogItem( dialog, getLine, type, (Handle) &draw_dotted_line, &box );
 	
-	if ( filterProc == NULL )
-	{
-		filterProc = &SFGet_filterProc;
-	}
-	
 	ShowWindow( dialog );
 	
 	short hit = 0;
 	
 	do
 	{
-		ModalDialog( filterProc, &hit );
+		ModalDialog( &SFGet_filterProc, &hit );
 		
 		if ( hit == 1  &&  get_string_list_selection( filename_list ) )
 		{
