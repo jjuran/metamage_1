@@ -50,6 +50,7 @@ static bool hardware_cursor;
 
 static short cursor_rowBytes;
 static short CrsrSave_rowBytes;
+static short CrsrRect_width;
 
 static Ptr CrsrAddr;
 
@@ -112,7 +113,11 @@ void init_lowmem_Cursor()
 		return;
 	}
 	
-	CrsrSave_rowBytes = sizeof (UInt32) << DepthLog2;
+	cursor_rowBytes = sizeof (UInt16) << DepthLog2;
+	
+	CrsrSave_rowBytes = cursor_rowBytes + 2;
+	
+	CrsrRect_width = CrsrSave_rowBytes << (3 - DepthLog2);
 	
 	Size CrsrSave_size = CrsrSave_rowBytes * 16;
 	
@@ -122,8 +127,6 @@ void init_lowmem_Cursor()
 	}
 	else
 	{
-		cursor_rowBytes = sizeof (UInt16) << DepthLog2;
-		
 		Size crsrtile_size = cursor_rowBytes * 16;
 		
 		Size buffer_size = CrsrSave_size + crsrtile_size * 2;
@@ -164,7 +167,7 @@ void set_Crsr_vars( short h, short v )
 	}
 	
 	short left  = equal_or_lesser_even_byte_boundary( h );
-	short right = left + 32;
+	short right = left + CrsrRect_width;
 	
 	if ( left < 0 )
 	{
@@ -174,7 +177,7 @@ void set_Crsr_vars( short h, short v )
 		}
 		
 		left  = 0;
-		right = 32;
+		right = CrsrRect_width;
 	}
 	else if ( right > CrsrPin.right )
 	{
@@ -184,7 +187,7 @@ void set_Crsr_vars( short h, short v )
 		}
 		
 		right = CrsrPin.right;
-		left  = right - 32;
+		left  = right - CrsrRect_width;
 	}
 	
 	CrsrRect.top    = top;
