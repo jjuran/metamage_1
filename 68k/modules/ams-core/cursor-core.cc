@@ -239,6 +239,10 @@ void plot_cursor( short h, short v_skip, short n )
 		
 		addr += 2;
 	}
+	else
+	{
+		shift = h & (0xF >> DepthLog2);
+	}
 	
 	if ( crsr_face )
 	{
@@ -252,7 +256,7 @@ void plot_cursor( short h, short v_skip, short n )
 		return;
 	}
 	
-	plot_cursor( &TheCrsr, addr, shift, h_trim, v_skip, n, CrsrRow );
+	plot_cursor( &TheCrsr, addr, shift, h_trim, v_skip, n, CrsrRow, DepthLog2 );
 }
 
 static
