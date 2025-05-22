@@ -23,6 +23,9 @@
 #define NULL  0L
 #endif
 
+#define plot_cursor_2 plot_cursor_to_2bpp
+#define plot_cursor_4 plot_cursor_to_4bpp
+
 
 namespace v68k    {
 namespace callout {
@@ -48,15 +51,20 @@ int32_t plot_cursor_callout( v68k::processor_state& s )
 	int16_t  h_trim    = s.d(0) >> 16;
 	uint16_t v_skip    = s.d(1);
 	uint16_t n         = s.d(1) >> 16;
-	uint32_t stride    = s.d(2);
+	uint16_t stride    = s.d(2);
+	uint16_t log_depth = s.d(2) >> 16;
 	
 	if ( n == 0 )
 	{
 		return rts;
 	}
 	
+	const uint16_t cursor_rowBytes = 2 << log_depth;
+	
+	const uint16_t trailing = (shift  &&  ! h_trim) * 2;
+	
 	const uint32_t crsr_len = 64;  // We don't use the hotspot here
-	const uint32_t dest_len = (n - 1) * stride + (2 << (shift  &&  ! h_trim));
+	const uint32_t dest_len = (n - 1) * stride + cursor_rowBytes + trailing;
 	
 	const uint8_t* p = s.translate( crsr_addr, crsr_len, data_space, mem_read );
 	
@@ -75,7 +83,18 @@ int32_t plot_cursor_callout( v68k::processor_state& s )
 	const uint16_t* p_face = (const uint16_t*) p;
 	const uint16_t* p_mask = (const uint16_t*) p + 16;
 	
-	plot_cursor( p_face, p_mask, addr, shift, h_trim, v_skip, n, stride );
+	if ( log_depth == 0 )
+	{
+		plot_cursor( p_face, p_mask, addr, shift, h_trim, v_skip, n, stride );
+	}
+	else if ( log_depth == 1 )
+	{
+		plot_cursor_2( p_face, p_mask, addr, shift, h_trim, v_skip, n, stride );
+	}
+	else if ( log_depth == 2 )
+	{
+		plot_cursor_4( p_face, p_mask, addr, shift, h_trim, v_skip, n, stride );
+	}
 	
 	s.translate( dest_addr, dest_len, data_space, mem_update );
 	
