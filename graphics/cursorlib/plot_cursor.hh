@@ -19,4 +19,22 @@ void plot_cursor( const uint16_t*  crsr_face,
                   short            n,
                   short            stride );
 
+void plot_cursor_to_2bpp( const uint16_t*  crsr_face,
+                          const uint16_t*  crsr_mask,
+                          uint8_t*         addr,
+                          short            shift,
+                          short            h_trim,
+                          short            v_skip,
+                          short            n,
+                          short            stride );
+
+void plot_cursor_to_4bpp( const uint16_t*  crsr_face,
+                          const uint16_t*  crsr_mask,
+                          uint8_t*         addr,
+                          short            shift,
+                          short            h_trim,
+                          short            v_skip,
+                          short            n,
+                          short            stride );
+
 #endif
