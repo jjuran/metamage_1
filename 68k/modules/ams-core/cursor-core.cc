@@ -113,8 +113,14 @@ void init_lowmem_Cursor()
 	if ( hardware_cursor )
 	{
 		notify_cursor_moved( *(long*) &Mouse );
+		
+		return;
 	}
-	else if ( DepthLog2 == 3 )
+	
+	if ( DepthLog2 < 3 )
+	{
+	}
+	else
 	{
 		cursor_rowBytes   = sizeof (UInt16) << DepthLog2;
 		CrsrSave_rowBytes = sizeof (UInt32) << DepthLog2;
