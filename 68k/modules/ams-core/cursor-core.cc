@@ -221,8 +221,10 @@ void restore_bits_under_cursor( short n )
 }
 
 static inline
-void plot_cursor( Ptr addr, short shift, short h_trim, short v_skip, short n )
+void plot_cursor( Ptr addr, short h, short h_trim, short v_skip, short n )
 {
+	short shift = h & 0xF;
+	
 	if ( crsr_face )
 	{
 		screen_lock lock;
@@ -285,7 +287,7 @@ void paint_cursor( short h, short v )
 		plotAddr += 2;
 	}
 	
-	plot_cursor( plotAddr, h & 0xF, h_trim, v_skip, v_count );
+	plot_cursor( plotAddr, h, h_trim, v_skip, v_count );
 }
 
 void hide_cursor()
