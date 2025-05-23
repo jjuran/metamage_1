@@ -221,9 +221,24 @@ void restore_bits_under_cursor( short n )
 }
 
 static inline
-void plot_cursor( Ptr addr, short h, short h_trim, short v_skip, short n )
+void plot_cursor( short h, short v_skip, short n )
 {
+	Ptr addr = CrsrAddr;
+	
 	short shift = h & 0xF;
+	
+	short h_trim = 0;
+	
+	if ( h < 0 )
+	{
+		h_trim = -1;
+	}
+	else if ( h >= CrsrPin.right - 16 )
+	{
+		h_trim = 1;
+		
+		addr += 2;
+	}
 	
 	if ( crsr_face )
 	{
@@ -260,7 +275,6 @@ void paint_cursor( short h, short v )
 		return;
 	}
 	
-	short h_trim = 0;
 	short v_skip = 0;
 	short v_count = CrsrRect.bottom - CrsrRect.top;
 	
@@ -274,20 +288,7 @@ void paint_cursor( short h, short v )
 		v_skip = -v;
 	}
 	
-	Ptr plotAddr = CrsrAddr;
-	
-	if ( h < 0 )
-	{
-		h_trim = -1;
-	}
-	else if ( h >= CrsrPin.right - 16 )
-	{
-		h_trim = 1;
-		
-		plotAddr += 2;
-	}
-	
-	plot_cursor( plotAddr, h, h_trim, v_skip, v_count );
+	plot_cursor( h, v_skip, v_count );
 }
 
 void hide_cursor()
