@@ -33,8 +33,6 @@ enum
 	kHardwareCursor = 0x68647772,  // 'hdwr'
 };
 
-typedef UInt32 Buffer[ 16 ];
-
 Ptr   ScrnBase  : 0x0824;
 Point Mouse     : 0x0830;
 Rect  CrsrPin   : 0x0834;
@@ -50,11 +48,10 @@ char CrsrObscure: 0x08D2;
 
 static bool hardware_cursor;
 
-static Ptr    CrsrAddr;
-static Buffer bits_under_cursor;
-
 static short cursor_rowBytes;
-static short CrsrSave_rowBytes = 4;
+static short CrsrSave_rowBytes;
+
+static Ptr CrsrAddr;
 
 static Ptr crsr_face;
 static Ptr crsr_mask;
@@ -106,8 +103,6 @@ void init_lowmem_Cursor()
 	JSetCrsr      = &set_cursor;
 	JCrsrObscure  = &obscure_cursor;
 	
-	CrsrSave = (Ptr) bits_under_cursor;
-	
 	CrsrState = -1;  // Invisible cursor, at first
 	
 	if ( hardware_cursor )
@@ -117,16 +112,19 @@ void init_lowmem_Cursor()
 		return;
 	}
 	
+	CrsrSave_rowBytes = sizeof (UInt32) << DepthLog2;
+	
+	Size CrsrSave_size = CrsrSave_rowBytes * 16;
+	
 	if ( DepthLog2 < 3 )
 	{
+		CrsrSave = (scoped_zone(), NewPtr( CrsrSave_size ));
 	}
 	else
 	{
-		cursor_rowBytes   = sizeof (UInt16) << DepthLog2;
-		CrsrSave_rowBytes = sizeof (UInt32) << DepthLog2;
+		cursor_rowBytes = sizeof (UInt16) << DepthLog2;
 		
-		Size CrsrSave_size = CrsrSave_rowBytes * 16;
-		Size crsrtile_size = cursor_rowBytes   * 16;
+		Size crsrtile_size = cursor_rowBytes * 16;
 		
 		Size buffer_size = CrsrSave_size + crsrtile_size * 2;
 		
