@@ -250,8 +250,28 @@ void plot_cursor( short h, short v_skip, short n )
 		
 		const short row_n = cursor_rowBytes;
 		
-		blit_bytes( crsr_mask, row_n, CrsrAddr, CrsrRow, row_n, n, srcBic );
-		blit_bytes( crsr_face, row_n, CrsrAddr, CrsrRow, row_n, n, srcXor );
+		short draw_n = row_n;
+		
+		short skip = 0;
+		
+		if ( h < 0 )
+		{
+			skip = -h;
+			
+			draw_n -= skip;
+		}
+		else
+		{
+			addr += shift;
+			
+			if ( h_trim > 0 )
+			{
+				draw_n -= shift;
+			}
+		}
+		
+		blit_bytes( crsr_mask + skip, row_n, addr, CrsrRow, draw_n, n, srcBic );
+		blit_bytes( crsr_face + skip, row_n, addr, CrsrRow, draw_n, n, srcXor );
 		
 		return;
 	}
