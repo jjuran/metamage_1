@@ -33,8 +33,6 @@ enum
 	kHardwareCursor = 0x68647772,  // 'hdwr'
 };
 
-typedef UInt32 Buffer[ 16 ];
-
 Ptr   ScrnBase  : 0x0824;
 Point Mouse     : 0x0830;
 Rect  CrsrPin   : 0x0834;
@@ -50,11 +48,11 @@ char CrsrObscure: 0x08D2;
 
 static bool hardware_cursor;
 
-static Ptr    CrsrAddr;
-static Buffer bits_under_cursor;
-
 static short cursor_rowBytes;
-static short CrsrSave_rowBytes = 4;
+static short CrsrSave_rowBytes;
+static short CrsrRect_width;
+
+static Ptr CrsrAddr;
 
 static Ptr crsr_face;
 static Ptr crsr_mask;
@@ -106,21 +104,30 @@ void init_lowmem_Cursor()
 	JSetCrsr      = &set_cursor;
 	JCrsrObscure  = &obscure_cursor;
 	
-	CrsrSave = (Ptr) bits_under_cursor;
-	
 	CrsrState = -1;  // Invisible cursor, at first
 	
 	if ( hardware_cursor )
 	{
 		notify_cursor_moved( *(long*) &Mouse );
-	}
-	else if ( DepthLog2 == 3 )
-	{
-		cursor_rowBytes   = sizeof (UInt16) << DepthLog2;
-		CrsrSave_rowBytes = sizeof (UInt32) << DepthLog2;
 		
-		Size CrsrSave_size = CrsrSave_rowBytes * 16;
-		Size crsrtile_size = cursor_rowBytes   * 16;
+		return;
+	}
+	
+	cursor_rowBytes = sizeof (UInt16) << DepthLog2;
+	
+	CrsrSave_rowBytes = cursor_rowBytes + 2;
+	
+	CrsrRect_width = CrsrSave_rowBytes << (3 - DepthLog2);
+	
+	Size CrsrSave_size = CrsrSave_rowBytes * 16;
+	
+	if ( DepthLog2 < 3 )
+	{
+		CrsrSave = (scoped_zone(), NewPtr( CrsrSave_size ));
+	}
+	else
+	{
+		Size crsrtile_size = cursor_rowBytes * 16;
 		
 		Size buffer_size = CrsrSave_size + crsrtile_size * 2;
 		
@@ -160,7 +167,7 @@ void set_Crsr_vars( short h, short v )
 	}
 	
 	short left  = equal_or_lesser_even_byte_boundary( h );
-	short right = left + 32;
+	short right = left + CrsrRect_width;
 	
 	if ( left < 0 )
 	{
@@ -170,7 +177,7 @@ void set_Crsr_vars( short h, short v )
 		}
 		
 		left  = 0;
-		right = 32;
+		right = CrsrRect_width;
 	}
 	else if ( right > CrsrPin.right )
 	{
@@ -180,7 +187,7 @@ void set_Crsr_vars( short h, short v )
 		}
 		
 		right = CrsrPin.right;
-		left  = right - 32;
+		left  = right - CrsrRect_width;
 	}
 	
 	CrsrRect.top    = top;
@@ -214,21 +221,62 @@ void restore_bits_under_cursor( short n )
 }
 
 static inline
-void plot_cursor( Ptr addr, short shift, short h_trim, short v_skip, short n )
+void plot_cursor( short h, short v_skip, short n )
 {
+	Ptr addr = CrsrAddr;
+	
+	short shift = h & 0xF;
+	
+	short h_trim = 0;
+	
+	if ( h < 0 )
+	{
+		h_trim = -1;
+	}
+	else if ( h >= CrsrPin.right - 16 )
+	{
+		h_trim = 1;
+		
+		addr += 2;
+	}
+	else
+	{
+		shift = h & (0xF >> DepthLog2);
+	}
+	
 	if ( crsr_face )
 	{
 		screen_lock lock;
 		
 		const short row_n = cursor_rowBytes;
 		
-		blit_bytes( crsr_mask, row_n, CrsrAddr, CrsrRow, row_n, n, srcBic );
-		blit_bytes( crsr_face, row_n, CrsrAddr, CrsrRow, row_n, n, srcXor );
+		short draw_n = row_n;
+		
+		short skip = 0;
+		
+		if ( h < 0 )
+		{
+			skip = -h;
+			
+			draw_n -= skip;
+		}
+		else
+		{
+			addr += shift;
+			
+			if ( h_trim > 0 )
+			{
+				draw_n -= shift;
+			}
+		}
+		
+		blit_bytes( crsr_mask + skip, row_n, addr, CrsrRow, draw_n, n, srcBic );
+		blit_bytes( crsr_face + skip, row_n, addr, CrsrRow, draw_n, n, srcXor );
 		
 		return;
 	}
 	
-	plot_cursor( &TheCrsr, addr, shift, h_trim, v_skip, n, CrsrRow );
+	plot_cursor( &TheCrsr, addr, shift, h_trim, v_skip, n, CrsrRow, DepthLog2 );
 }
 
 static
@@ -251,7 +299,6 @@ void paint_cursor( short h, short v )
 		return;
 	}
 	
-	short h_trim = 0;
 	short v_skip = 0;
 	short v_count = CrsrRect.bottom - CrsrRect.top;
 	
@@ -265,20 +312,7 @@ void paint_cursor( short h, short v )
 		v_skip = -v;
 	}
 	
-	Ptr plotAddr = CrsrAddr;
-	
-	if ( h < 0 )
-	{
-		h_trim = -1;
-	}
-	else if ( h >= CrsrPin.right - 16 )
-	{
-		h_trim = 1;
-		
-		plotAddr += 2;
-	}
-	
-	plot_cursor( plotAddr, h & 0xF, h_trim, v_skip, v_count );
+	plot_cursor( h, v_skip, v_count );
 }
 
 void hide_cursor()

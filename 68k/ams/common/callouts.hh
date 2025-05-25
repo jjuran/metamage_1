@@ -75,7 +75,7 @@ DEFINE_CALLOUT( void,
                   void*                 dest : __A0,
                   unsigned              ht_s : __D0,
                   unsigned              n_vs : __D1,
-                  unsigned              rowB : __D2 ),
+                  unsigned              rb_d : __D2 ),
                 0xFFBE )
 
 DEFINE_CALLOUT( void,
@@ -241,9 +241,12 @@ void plot_cursor( const struct Cursor*  crsr,
                   short                 h_trim,
                   short                 v_skip,
                   short                 n,
-                  short                 rowBytes )
+                  short                 rowBytes,
+                  short                 log2_depth = 0 )
 {
-	plot_cursor( crsr, dest, shift | h_trim << 16, v_skip | n << 16, rowBytes );
+	plot_cursor( crsr, dest, shift    | h_trim     << 16,
+	                         v_skip   | n          << 16,
+	                         rowBytes | log2_depth << 16 );
 }
 
 inline
