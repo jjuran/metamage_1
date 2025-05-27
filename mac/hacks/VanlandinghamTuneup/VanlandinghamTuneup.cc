@@ -158,6 +158,7 @@ enum
 	_GetAppParms = 0xA9F5,
 };
 
+short    ScreenRow  : 0x0106;
 Ptr      ScrnBase   : 0x0824;
 GDHandle MainDevice : 0x08A4;
 short    MBarHeight : 0x0BAA;
@@ -500,12 +501,16 @@ void InitCursor_handler()
 			{
 				if ( MainDevice )
 				{
+					log2_depth = 0;
+					
 					UInt16 depth = MainDevice[0]->gdPMap[0]->pixelSize;
 					
-					if ( depth > 1 )
+					while ( depth >>= 1 )
 					{
-						return;  // multibit depth currently unsupported
+						log2_depth += 1;
 					}
+					
+					deep_ScreenRow = ScreenRow << log2_depth;
 				}
 				
 				install_heavy_patches( h, size );
