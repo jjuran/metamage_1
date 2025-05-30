@@ -4,7 +4,7 @@
 	
 	Vanlandingham Tune-up INIT for Mac OS
 	
-	Copyright 2024, Joshua Juran.  All rights reserved.
+	Copyright 2024-2025, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
@@ -65,8 +65,12 @@
 enum
 {
 	_InitCursor  = 0xA850,
+	_GetAppParms = 0xA9F5,
 };
 
+static Boolean payload_enabled;
+
+static UniversalProcPtr old_GetAppParms;
 static UniversalProcPtr old_InitCursor;
 
 static inline
@@ -127,11 +131,11 @@ void install_dissolve_bytes_patch( Handle h, Size handle_size )
 static
 void InitCursor_handler()
 {
-	if ( Handle h = Get1Resource( 'VANL', 0 ) )
+	if ( payload_enabled )
 	{
-		ReleaseResource( h );
+		payload_enabled = false;
 		
-		if ( (h = Get1Resource( 'CODE', 1 )) )
+		if ( Handle h = Get1Resource( 'CODE', 1 ) )
 		{
 			Size size = mac::glue::GetHandleSize_raw( h );
 			
@@ -153,6 +157,28 @@ pascal asm void InitCursor_patch()
 	JMP      (A0)
 }
 
+static
+void GetAppParms_handler()
+{
+	if ( Handle h = Get1Resource( 'VANL', 0 ) )
+	{
+		ReleaseResource( h );
+		
+		payload_enabled = true;
+	}
+}
+
+static
+pascal asm void GetAppParms_patch( Ptr a, Ptr b, Ptr c )
+{
+	LINK     A6,#0
+	JSR      GetAppParms_handler
+	UNLK     A6
+	
+	MOVEA.L  old_GetAppParms,A0
+	JMP      (A0)
+}
+
 int main()
 {
 	if ( mac::sys::has_v68k() )
@@ -161,8 +187,10 @@ int main()
 		
 		DetachResource( self );
 		
+		old_GetAppParms = mac::sys::get_trap_address( _GetAppParms );
 		old_InitCursor  = mac::sys::get_trap_address( _InitCursor );
 		
+		mac::sys::set_trap_address( (ProcPtr) GetAppParms_patch, _GetAppParms );
 		mac::sys::set_trap_address( (ProcPtr) InitCursor_patch,  _InitCursor  );
 	}
 	
