@@ -71,6 +71,28 @@ void install_menus()
 		// Delete "Quit" and the separator above it.
 		
 		DeleteMenuItems( fileMenu, last - 1, 2 );
+		
+		enum
+		{
+			kEllipsisCharCode = 0xC9,
+		};
+		
+		MenuRef appleMenu = GetMenuHandle( kAppleMenuID );
+		
+		Str255 text;
+		
+		GetMenuItemText( appleMenu, 1, text );
+		
+		Byte* p = text + text[ 0 ];  // points to last byte in string
+		
+		if ( *p == kEllipsisCharCode )
+		{
+			// Remove the trailing ellipsis from the About menu item text.
+			
+			text[ 0 ] -= 1;
+			
+			SetMenuItemText( appleMenu, 1, text );
+		}
 	}
 }
 
