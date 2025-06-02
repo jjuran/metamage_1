@@ -6,9 +6,6 @@
 // mac-config
 #include "mac_config/apple-events.hh"
 
-// mac-sys-utils
-#include "mac_sys/beep.hh"
-
 // mac-file-utils
 #include "mac_file/file_traits.hh"
 #include "mac_file/open_data_fork.hh"
@@ -18,13 +15,13 @@
 #include "mac_app/documents.hh"
 #include "mac_app/file_open_dialog.hh"
 
-// Arcana
-#include "MacBinary.hh"
-
 // Pedestal
 #include "Pedestal/AboutBox.hh"
 #include "Pedestal/Application.hh"
 #include "Pedestal/Commands.hh"
+
+// MacBinaryDecoder
+#include "decode.hh"
 
 
 #define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
@@ -34,7 +31,6 @@ namespace Ped = Pedestal;
 
 using mac::types::VRefNum_DirID;
 
-using mac::file::FSIORefNum;
 using mac::file::file_traits;
 
 #if TARGET_API_MAC_CARBON
@@ -46,59 +42,6 @@ using mac::file::file_traits;
 	typedef FSSpec FileSpec;
 	
 #endif
-
-static
-long read_FSRead( FSIORefNum refnum, void* buffer, SInt32 n_bytes )
-{
-	OSErr err = FSRead( refnum, &n_bytes, buffer );
-	
-	if ( err  &&  err != eofErr )
-	{
-		return err;
-	}
-	
-	return n_bytes;
-}
-
-static
-OSErr Decode( FSIORefNum input, const VRefNum_DirID& destDir )
-{
-	MacBinary::Decoder decoder( destDir );
-	
-	const std::size_t blockSize = 4096;
-	
-	char data[ blockSize ];
-	
-	std::size_t totalBytes = 0;
-	
-	try
-	{
-		long bytes;
-		
-		while ( (bytes = read_FSRead( input, data, blockSize )) > 0 )
-		{
-			decoder.Write( data, bytes );
-			
-			totalBytes += bytes;
-		}
-		
-		if ( bytes < 0 )
-		{
-			return bytes;
-		}
-	}
-	catch ( const MacBinary::InvalidMacBinaryHeader& )
-	{
-		//std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %x\n", totalBytes );
-		mac::sys::beep();
-	}
-	catch ( ... )
-	{
-		// FIXME
-	}
-	
-	return noErr;
-}
 
 static
 long file_opener( const FileSpec& file )
