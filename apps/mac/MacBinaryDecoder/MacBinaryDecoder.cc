@@ -30,6 +30,10 @@
 #define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
 
 
+namespace Ped = Pedestal;
+
+using mac::types::VRefNum_DirID;
+
 using mac::file::FSIORefNum;
 using mac::file::file_traits;
 
@@ -56,127 +60,115 @@ long read_FSRead( FSIORefNum refnum, void* buffer, SInt32 n_bytes )
 	return n_bytes;
 }
 
-namespace MacBinaryDecoder
+static
+OSErr Decode( FSIORefNum input, const VRefNum_DirID& destDir )
 {
+	MacBinary::Decoder decoder( destDir );
 	
-	namespace Ped = Pedestal;
+	const std::size_t blockSize = 4096;
 	
-	using mac::types::VRefNum_DirID;
+	char data[ blockSize ];
 	
+	std::size_t totalBytes = 0;
 	
-	static
-	OSErr Decode( FSIORefNum input, const VRefNum_DirID& destDir )
+	try
 	{
-		MacBinary::Decoder decoder( destDir );
+		long bytes;
 		
-		const std::size_t blockSize = 4096;
-		
-		char data[ blockSize ];
-		
-		std::size_t totalBytes = 0;
-		
-		try
+		while ( (bytes = read_FSRead( input, data, blockSize )) > 0 )
 		{
-			long bytes;
+			decoder.Write( data, bytes );
 			
-			while ( (bytes = read_FSRead( input, data, blockSize )) > 0 )
-			{
-				decoder.Write( data, bytes );
-				
-				totalBytes += bytes;
-			}
-			
-			if ( bytes < 0 )
-			{
-				return bytes;
-			}
-		}
-		catch ( const MacBinary::InvalidMacBinaryHeader& )
-		{
-			//std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %x\n", totalBytes );
-			mac::sys::beep();
-		}
-		catch ( ... )
-		{
-			// FIXME
+			totalBytes += bytes;
 		}
 		
-		return noErr;
+		if ( bytes < 0 )
+		{
+			return bytes;
+		}
 	}
-	
-	static
-	long file_opener( const FileSpec& file )
+	catch ( const MacBinary::InvalidMacBinaryHeader& )
 	{
-		typedef file_traits< FileSpec > traits;
-		
-		VRefNum_DirID parent = mac::file::parent_directory( file );
-		
-		FSIORefNum opened = mac::file::open_data_fork( file, fsRdPerm );
-		
-		if ( opened < 0 )
-		{
-			return opened;
-		}
-		
-		OSErr err = Decode( opened, parent );
-		
-		traits::close( opened );
-		
-		return err;
+		//std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %x\n", totalBytes );
+		mac::sys::beep();
 	}
-	
-	static
-	long HFS_file_opener( short vRefNum, long dirID, const Byte* name )
+	catch ( ... )
 	{
-	#if ! TARGET_API_MAC_CARBON
-		
-		FSSpec file;
-		
-		file.vRefNum = vRefNum;
-		file.parID   = dirID;
-		
-		BlockMoveData( name, file.name, 1 + name[ 0 ] );
-		
-		return file_opener( file );
-		
-	#endif
-		
-		return 0;
+		// FIXME
 	}
 	
-	static bool About( Ped::CommandCode )
+	return noErr;
+}
+
+static
+long file_opener( const FileSpec& file )
+{
+	typedef file_traits< FileSpec > traits;
+	
+	VRefNum_DirID parent = mac::file::parent_directory( file );
+	
+	FSIORefNum opened = mac::file::open_data_fork( file, fsRdPerm );
+	
+	if ( opened < 0 )
 	{
-		Ped::ShowAboutBox();
-		
-		return true;
+		return opened;
 	}
 	
-	static const OSType file_open_types[] = { 'mBIN', 'BIN+' };
+	OSErr err = Decode( opened, parent );
 	
-	static
-	bool FileOpenDialog( Ped::CommandCode )
+	traits::close( opened );
+	
+	return err;
+}
+
+static
+long HFS_file_opener( short vRefNum, long dirID, const Byte* name )
+{
+#if ! TARGET_API_MAC_CARBON
+	
+	FSSpec file;
+	
+	file.vRefNum = vRefNum;
+	file.parID   = dirID;
+	
+	BlockMoveData( name, file.name, 1 + name[ 0 ] );
+	
+	return file_opener( file );
+	
+#endif
+	
+	return 0;
+}
+
+static bool About( Ped::CommandCode )
+{
+	Ped::ShowAboutBox();
+	
+	return true;
+}
+
+static const OSType file_open_types[] = { 'mBIN', 'BIN+' };
+
+static
+bool FileOpenDialog( Ped::CommandCode )
+{
+	using mac::app::file_open_dialog;
+	using Ped::apple_events_present;
+	
+	if ( apple_events_present )
 	{
-		using mac::app::file_open_dialog;
-		using Ped::apple_events_present;
-		
-		if ( apple_events_present )
-		{
-			file_open_dialog( ARRAY_LEN( file_open_types ), &file_opener );
-		}
-		else
-		{
-			file_open_dialog( ARRAY_LEN( file_open_types ), &HFS_file_opener );
-		}
-		
-		return true;
+		file_open_dialog( ARRAY_LEN( file_open_types ), &file_opener );
+	}
+	else
+	{
+		file_open_dialog( ARRAY_LEN( file_open_types ), &HFS_file_opener );
 	}
 	
+	return true;
 }
 
 int main( void )
 {
-	using namespace MacBinaryDecoder;
-	
 	Ped::Application app;
 	
 	const bool apple_events_present =
