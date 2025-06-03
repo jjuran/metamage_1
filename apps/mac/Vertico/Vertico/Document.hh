@@ -1,17 +1,17 @@
 /*
-	Vertice/Document.hh
+	Vertico/Document.hh
 	-------------------
 */
 
-#ifndef VERTICE_DOCUMENT_HH
-#define VERTICE_DOCUMENT_HH
+#ifndef VERTICO_DOCUMENT_HH
+#define VERTICO_DOCUMENT_HH
 
 // Mac OS
 //#include <Files.h>
 struct FSSpec;
 
 
-namespace Vertice
+namespace Vertico
 {
 	
 	void OpenDocument( const FSSpec& file );

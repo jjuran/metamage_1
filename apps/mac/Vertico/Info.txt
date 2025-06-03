@@ -1,5 +1,5 @@
-CFBundleExecutable:  "Vertice"
-CFBundleName:        "Vertice"
+CFBundleExecutable:  "Vertico"
+CFBundleName:        "Vertico"
 CFBundlePackageType: 'APPL'
 NSHighResolutionCapable: true
 NSSupportsSuddenTermination: true

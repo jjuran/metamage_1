@@ -1,10 +1,10 @@
 /*
-	Vertice/PortView.hh
+	Vertico/PortView.hh
 	-------------------
 */
 
-#ifndef VERTICE_PORTVIEW_HH
-#define VERTICE_PORTVIEW_HH
+#ifndef VERTICO_PORTVIEW_HH
+#define VERTICO_PORTVIEW_HH
 
 // Mac OS X
 #ifdef __APPLE__
@@ -38,7 +38,7 @@
 #include "worldview/Port.hh"
 
 
-namespace Vertice
+namespace Vertico
 {
 	
 	using namespace worldview;

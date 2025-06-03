@@ -1,9 +1,9 @@
 /*
-	Vertice/Document.cc
+	Vertico/Document.cc
 	-------------------
 */
 
-#include "Vertice/Document.hh"
+#include "Vertico/Document.hh"
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
@@ -31,11 +31,11 @@
 // worldview
 #include "worldview/Parser.hh"
 
-// Vertice
-#include "Vertice/PortView.hh"
+// Vertico
+#include "Vertico/PortView.hh"
 
 
-namespace Vertice
+namespace Vertico
 {
 	
 	namespace n = nucleus;

@@ -1,9 +1,9 @@
 /*
-	Vertice/PortView.cc
+	Vertico/PortView.cc
 	-------------------
 */
 
-#include "Vertice/PortView.hh"
+#include "Vertico/PortView.hh"
 
 // Standard C
 #include <string.h>
@@ -33,7 +33,7 @@
 #endif
 
 
-namespace Vertice
+namespace Vertico
 {
 	
 	PortView::PortView( const Rect& bounds ) : itsBounds         ( bounds      ),

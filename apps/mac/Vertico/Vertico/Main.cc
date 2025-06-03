@@ -1,5 +1,5 @@
 /*
-	Vertice/Main.cc
+	Vertico/Main.cc
 	---------------
 */
 
@@ -15,14 +15,14 @@
 #include "Pedestal/AboutBox.hh"
 #include "Pedestal/Commands.hh"
 
-// Vertice
-#include "Vertice/Document.hh"
+// Vertico
+#include "Vertico/Document.hh"
 
 
 #define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
 
 
-namespace Vertice
+namespace Vertico
 {
 	
 	namespace Ped = Pedestal;
@@ -65,7 +65,7 @@ namespace Vertice
 
 int main(void)
 {
-	using namespace Vertice;
+	using namespace Vertico;
 	
 	Ped::Application app;
 	
