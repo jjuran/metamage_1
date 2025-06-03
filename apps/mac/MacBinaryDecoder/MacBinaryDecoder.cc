@@ -3,198 +3,237 @@
 	-------------------
 */
 
-// mac-config
-#include "mac_config/apple-events.hh"
-
-// mac-sys-utils
-#include "mac_sys/beep.hh"
-
-// mac-file-utils
-#include "mac_file/file_traits.hh"
-#include "mac_file/open_data_fork.hh"
-#include "mac_file/parent_directory.hh"
-
-// mac-app-utils
-#include "mac_app/documents.hh"
-#include "mac_app/file_open_dialog.hh"
-
-// Arcana
-#include "MacBinary.hh"
-
-// Pedestal
-#include "Pedestal/AboutBox.hh"
-#include "Pedestal/Application.hh"
-#include "Pedestal/Commands.hh"
-
-
-#define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
-
-
-using mac::file::FSIORefNum;
-using mac::file::file_traits;
-
-#if TARGET_API_MAC_CARBON
-	
-	typedef FSRef FileSpec;
-	
-#else
-	
-	typedef FSSpec FileSpec;
-	
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
 #endif
 
-static
-long read_FSRead( FSIORefNum refnum, void* buffer, SInt32 n_bytes )
+// Mac OS
+#ifndef __MACWINDOWS__
+#include <MacWindows.h>
+#endif
+
+// mac-config
+#include "mac_config/apple-events.hh"
+#include "mac_config/desk-accessories.hh"
+
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+#include "mac_sys/trap_available.hh"
+
+// mac-qd-utils
+#include "mac_qd/wide_drag_area.hh"
+
+// mac-app-utils
+#include "mac_app/about_box.hh"
+#include "mac_app/DAs.hh"
+#include "mac_app/event_handlers.hh"
+#include "mac_app/init.hh"
+#include "mac_app/menus.hh"
+#include "mac_app/state.hh"
+
+// MacBinaryDecoder
+#include "file_open.hh"
+
+
+#pragma exceptions off
+
+
+#define CONFIG_DAs CONFIG_DESK_ACCESSORIES
+
+#if TARGET_API_MAC_CARBON
+#define SystemTask()  /**/
+#endif
+
+
+using mac::qd::wide_drag_area;
+
+
+static inline
+void close_window( WindowRef window )
 {
-	OSErr err = FSRead( refnum, &n_bytes, buffer );
-	
-	if ( err  &&  err != eofErr )
+	if ( ! mac::app::close_About_box( window ) )
 	{
-		return err;
+		// shouldn't happen
 	}
-	
-	return n_bytes;
 }
 
-namespace MacBinaryDecoder
+static
+void menu_item_chosen( long choice )
 {
+	short menu = choice >> 16;
+	short item = choice;
 	
-	namespace Ped = Pedestal;
-	
-	using mac::types::VRefNum_DirID;
-	
-	
-	static
-	OSErr Decode( FSIORefNum input, const VRefNum_DirID& destDir )
+	switch ( menu )
 	{
-		MacBinary::Decoder decoder( destDir );
-		
-		const std::size_t blockSize = 4096;
-		
-		char data[ blockSize ];
-		
-		std::size_t totalBytes = 0;
-		
-		try
-		{
-			long bytes;
-			
-			while ( (bytes = read_FSRead( input, data, blockSize )) > 0 )
+		case 1:  // (Apple)
+			if ( item == 1 )
 			{
-				decoder.Write( data, bytes );
+				// About...
+				const OSType creator = 'mBin';
 				
-				totalBytes += bytes;
+				mac::app::show_About_box( creator );
 			}
-			
-			if ( bytes < 0 )
+			else if ( ! TARGET_API_MAC_CARBON )
 			{
-				return bytes;
+				mac::app::open_DA_from_menu( item );
 			}
-		}
-		catch ( const MacBinary::InvalidMacBinaryHeader& )
-		{
-			//std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %x\n", totalBytes );
-			mac::sys::beep();
-		}
-		catch ( ... )
-		{
-			// FIXME
-		}
+			break;
 		
-		return noErr;
+		case 2:  // File
+			switch ( item )
+			{
+				case 1:  // New
+					break;
+				
+				case 2:  // Open
+					file_open();
+					break;
+				
+				case 3:  // Close
+					if ( CONFIG_DAs  &&  mac::app::close_front_DA() )
+					{
+						// done
+					}
+					else if ( WindowRef window = FrontWindow() )
+					{
+						close_window( window );
+					}
+					break;
+				
+				case 4:  // -
+				case 5:  // Quit
+					mac::app::quitting = true;
+					break;
+				
+				default:
+					break;
+			}
+		
+		case 3:  // Edit
+			break;
+		
+		default:
+			break;
 	}
 	
-	static
-	long file_opener( const FileSpec& file )
-	{
-		typedef file_traits< FileSpec > traits;
-		
-		VRefNum_DirID parent = mac::file::parent_directory( file );
-		
-		FSIORefNum opened = mac::file::open_data_fork( file, fsRdPerm );
-		
-		if ( opened < 0 )
-		{
-			return opened;
-		}
-		
-		OSErr err = Decode( opened, parent );
-		
-		traits::close( opened );
-		
-		return err;
-	}
+	HiliteMenu( 0 );
+}
+
+static inline
+bool has_WaitNextEvent()
+{
+	enum { _WaitNextEvent = 0xA860 };
 	
-	static
-	long HFS_file_opener( short vRefNum, long dirID, const Byte* name )
-	{
-	#if ! TARGET_API_MAC_CARBON
-		
-		FSSpec file;
-		
-		file.vRefNum = vRefNum;
-		file.parID   = dirID;
-		
-		BlockMoveData( name, file.name, 1 + name[ 0 ] );
-		
-		return file_opener( file );
-		
-	#endif
-		
-		return 0;
-	}
+	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _WaitNextEvent );
+}
+
+static inline
+Boolean WaitNextEvent( EventRecord& event )
+{
+	return WaitNextEvent( everyEvent, &event, 0x7FFFFFFF, NULL );
+}
+
+static
+Boolean wait_next_event( EventRecord& event )
+{
+	SystemTask();
 	
-	static bool About( Ped::CommandCode )
-	{
-		Ped::ShowAboutBox();
-		
-		return true;
-	}
-	
-	static const OSType file_open_types[] = { 'mBIN', 'BIN+' };
-	
-	static
-	bool FileOpenDialog( Ped::CommandCode )
-	{
-		using mac::app::file_open_dialog;
-		using Ped::apple_events_present;
-		
-		if ( apple_events_present )
-		{
-			file_open_dialog( ARRAY_LEN( file_open_types ), &file_opener );
-		}
-		else
-		{
-			file_open_dialog( ARRAY_LEN( file_open_types ), &HFS_file_opener );
-		}
-		
-		return true;
-	}
-	
+	return GetNextEvent( everyEvent, &event );
 }
 
 int main( void )
 {
-	using namespace MacBinaryDecoder;
+	using mac::app::quitting;
 	
-	Ped::Application app;
+	mac::app::init_toolbox();
+	mac::app::install_menus();
+	
+	// gestaltAppleEventsAttr = 'evnt'
 	
 	const bool apple_events_present =
 		CONFIG_APPLE_EVENTS  &&
 			(CONFIG_APPLE_EVENTS_GRANTED  ||
-				Ped::apple_events_present);
+				mac::sys::gestalt( 'evnt' ) != 0);
 	
 	if ( apple_events_present )
 	{
-		mac::app::open_documents_with( &file_opener );
+		mac::app::install_basic_event_handlers();
 	}
-	else
+	
+	open_launched_documents();
+	
+	const bool has_WNE = has_WaitNextEvent();
+	
+	while ( ! quitting )
 	{
-		mac::app::open_documents_with( &HFS_file_opener );
+		EventRecord event;
+		
+		if ( has_WNE ? WaitNextEvent( event ) : wait_next_event( event ) )
+		{
+			WindowRef window;
+			
+			switch ( event.what )
+			{
+				case mouseDown:
+					switch ( FindWindow( event.where, &window ) )
+					{
+						case inMenuBar:
+							menu_item_chosen( MenuSelect( event.where ) );
+							break;
+						
+					#if CONFIG_DESK_ACCESSORIES
+						
+						case inSysWindow:
+							SystemClick( &event, window );
+							break;
+						
+					#endif
+						
+						case inDrag:
+							DragWindow( window, event.where, wide_drag_area() );
+							break;
+						
+						case inGoAway:
+							if ( TrackGoAway( window, event.where ) )
+							{
+								close_window( window );
+							}
+							break;
+						
+						case inContent:
+							SelectWindow( window );
+							break;
+						
+						default:
+							break;
+					}
+					break;
+				
+				case keyDown:
+					if ( event.modifiers & cmdKey )
+					{
+						menu_item_chosen( MenuKey( event.message ) );
+					}
+					break;
+				
+				case updateEvt:
+					// shouldn't happen
+					break;
+				
+			#if CONFIG_APPLE_EVENTS
+				
+				case kHighLevelEvent:
+					(void) AEProcessAppleEvent( &event );
+					break;
+				
+			#endif
+				
+				default:
+					break;
+			}
+		}
 	}
 	
-	SetCommandHandler( Ped::kCmdAbout, &About );
-	SetCommandHandler( Ped::kCmdOpen,  &FileOpenDialog );
-	
-	return app.Run();
+	return 0;
 }

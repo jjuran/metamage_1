@@ -1,20 +1,22 @@
-#define COPYRIGHT  "2007-2016 Josh Juran"
+#include "app_name.h"
+#include "version.h"
 
 #define COPY "\0xA9"
 
-type 'mBin' as 'STR ';
+type CREATOR as 'STR ';
 
-resource 'mBin' (0, "MacBinary Decoder")
+resource CREATOR (0, APP_NAME)
 {
 	"Copyright " COPY " " COPYRIGHT
 };
 
-resource 'vers' (1) {
-	0x00,
-	0x50,
-	release,
-	0,
+resource 'vers' (1)
+{
+	MAJOR,
+	MINOR << 4 | POINT,
+	STAGE,
+	PATCH,
 	smRoman,
-	"0.5.0",
-	"0.5.0, " COPY COPYRIGHT
+	VERSION,
+	VERSION ", " COPY COPYRIGHT
 };
