@@ -6,6 +6,7 @@
 #include "vlib/types/record.hh"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/table-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
@@ -42,7 +43,7 @@ namespace vlib
 		switch ( op )
 		{
 			case Op_member:
-				return keyed_subscript( Value( Op_array, a.expr()->right ), b );
+				return keyed_subscript( make_array( a.expr()->right ), b );
 			
 			default:
 				break;
