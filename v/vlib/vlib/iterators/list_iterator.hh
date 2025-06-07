@@ -18,6 +18,7 @@ namespace vlib
 	
 	class list_iterator
 	{
+		NON_COPYABLE( list_iterator )
 		NO_NEW_DELETE
 		
 		private:

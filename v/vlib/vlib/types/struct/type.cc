@@ -163,7 +163,7 @@ size_t Struct_Type::byte_size() const
 {
 	size_t size = 0;
 	
-	list_iterator defs = fields();
+	list_iterator defs( fields() );
 	
 	while ( defs )
 	{
@@ -202,7 +202,7 @@ Value Struct_Type::get( const Value& data, const Member& name ) const
 	size_t offset = 0;
 	size_t size   = 0;
 	
-	list_iterator defs = fields();
+	list_iterator defs( fields() );
 	
 	while ( defs )
 	{
@@ -232,7 +232,7 @@ void Struct_Type::set( Value& data, const Member& name, const Value& v ) const
 	size_t offset = 0;
 	size_t size   = 0;
 	
-	list_iterator defs = fields();
+	list_iterator defs( fields() );
 	
 	while ( defs )
 	{
@@ -273,8 +273,8 @@ Value Struct_Type::pack_initializer_list( const Value& init_list ) const
 	
 	char* end = p + size;
 	
-	list_iterator defs = fields();
-	list_iterator data = init_list;
+	list_iterator defs( fields()  );
+	list_iterator data( init_list );
 	
 	while ( defs  &&  data )
 	{
@@ -306,7 +306,7 @@ Value Struct_Type::unpack_fields( const Value& data ) const
 	size_t offset = 0;
 	size_t size   = 0;
 	
-	list_iterator defs = fields();
+	list_iterator defs( fields() );
 	list_builder  list;
 	
 	while ( defs )

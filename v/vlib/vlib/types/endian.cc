@@ -184,7 +184,7 @@ Value endianized( const Endianness& e, const Value& type )
 		const Value& fields = type.fields();
 		
 		list_builder result;
-		list_iterator it = fields;
+		list_iterator it( fields );
 		
 		while ( it )
 		{
