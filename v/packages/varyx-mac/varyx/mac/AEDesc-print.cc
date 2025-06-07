@@ -18,6 +18,9 @@
 #include <AEDataModel.h>
 #endif
 
+// plus
+#include "plus/mac_utf8.hh"
+
 // vlib
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/string-utils.hh"
@@ -134,6 +137,7 @@ plus::string printable_AEDesc( const ::AEDesc& desc )
 		case 'sing':  append_POD< Float, float  >( result, ptr );  break;
 		case 'doub':  append_POD< Float, double >( result, ptr );  break;
 		
+		case 'TEXT':
 		case 'furl':
 		case 'utf8':
 			count = ::AEGetDescDataSize( ptr );
@@ -145,6 +149,11 @@ plus::string printable_AEDesc( const ::AEDesc& desc )
 				char* p = s.reset( count );
 				
 				::AEGetDescData( ptr, p, count );
+				
+				if ( descType == 'TEXT' )
+				{
+					s = plus::utf8_from_mac( s );
+				}
 				
 				s = rep( String( s ) );
 				
