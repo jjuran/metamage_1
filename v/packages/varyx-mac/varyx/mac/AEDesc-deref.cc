@@ -40,18 +40,6 @@ namespace mac
 {
 
 static
-long count_items( const ::AEDesc* ptr )
-{
-	long n;
-	
-	OSErr err = ::AECountItems( ptr, &n );
-	
-	throw_MacOS_error( err, "AECountItems" );
-	
-	return n;
-}
-
-static
 Value dereferenced_AEDesc( const ::AEDesc& desc )
 {
 	OSErr err;

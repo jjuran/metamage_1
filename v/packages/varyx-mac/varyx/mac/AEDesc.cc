@@ -64,6 +64,17 @@ void throw_MacOS_error( int err, const char* routine )
 	}
 }
 
+long count_items( const ::AEDesc* desc )
+{
+	long n;
+	
+	OSErr err = ::AECountItems( desc, &n );
+	
+	throw_MacOS_error( err, "AECountItems" );
+	
+	return n;
+}
+
 Value AEDesc::coerce( const Value& v )
 {
 	return coerce_to_AEDesc( v );
