@@ -18,6 +18,9 @@
 #include <AEDataModel.h>
 #endif
 
+// conv
+#include "conv/utf8_16.hh"
+
 // plus
 #include "plus/mac_utf8.hh"
 
@@ -65,6 +68,39 @@ OSType get_aevt_attr( const ::AEDesc* ptr, AEKeyword key )
 	}
 	
 	return code;
+}
+
+static
+plus::string UTF8_from_UTF16( const plus::string& utf16 )
+{
+	typedef plus::string::size_type size_t;
+	
+	size_t n_bytes = utf16.size();
+	
+	if ( n_bytes & 1 )
+	{
+		THROW( "invalid odd length for UTF-16 data from AEDesc" );
+	}
+	
+	n_bytes /= 2;
+	
+	const UInt16* q = (const UInt16*) utf16.data();
+	const UInt16* end = q + n_bytes;
+	
+	size_t length = conv::sizeof_utf8_from_utf16( q, end );
+	
+	plus::string buffer_utf8;
+	
+	char* p = buffer_utf8.reset( length );
+	
+	size_t result = conv::utf8_from_utf16_nothrow( p, length, q, n_bytes );
+	
+	if ( result == conv::invalid_utf16 )
+	{
+		THROW( "invalid UTF-16 data" );
+	}
+	
+	return buffer_utf8;
 }
 
 plus::string printable_AEDesc( const ::AEDesc& desc )
@@ -140,6 +176,7 @@ plus::string printable_AEDesc( const ::AEDesc& desc )
 		case 'TEXT':
 		case 'furl':
 		case 'utf8':
+		case 'utxt':
 			count = ::AEGetDescDataSize( ptr );
 			
 			if ( count )
@@ -153,6 +190,10 @@ plus::string printable_AEDesc( const ::AEDesc& desc )
 				if ( descType == 'TEXT' )
 				{
 					s = plus::utf8_from_mac( s );
+				}
+				else if ( descType == 'utxt' )
+				{
+					s = UTF8_from_UTF16( s );
 				}
 				
 				s = rep( String( s ) );
