@@ -22,6 +22,7 @@
 // ams-qd
 #include "antislope.hh"
 #include "Polygons.hh"
+#include "Regions.hh"
 
 
 using quickdraw::convex_region_generator;
@@ -459,7 +460,7 @@ pascal void StdLine_patch( Point newPt )
 	
 	rgn[0]->rgnSize = (char*) end - (char*) *rgn;
 	
-	StdRgn( kQDGrafVerbPaint, rgn );
+	StdRgn_patch( kQDGrafVerbPaint, rgn );
 }
 
 pascal void HidePen_patch()
@@ -567,7 +568,7 @@ pascal void Move_patch( short dh, short dv )
 	
 	Point pnLoc = port.pnLoc;
 	
-	MoveTo( pnLoc.h + dh, pnLoc.v + dv );
+	MoveTo_patch( pnLoc.h + dh, pnLoc.v + dv );
 }
 
 pascal void LineTo_patch( short h, short v )
@@ -594,5 +595,5 @@ pascal void Line_patch( short dh, short dv )
 	
 	Point pnLoc = port.pnLoc;
 	
-	LineTo( pnLoc.h + dh, pnLoc.v + dv );
+	LineTo_patch( pnLoc.h + dh, pnLoc.v + dv );
 }

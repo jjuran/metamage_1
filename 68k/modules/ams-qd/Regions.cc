@@ -66,7 +66,7 @@ pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 	
 	const Rect& box = clipRgn[0]->rgnBBox;
 	
-	StdRect( verb, &box );
+	StdRect_patch( verb, &box );
 	
 	port.clipRgn = saved_clipRgn;
 }

@@ -158,7 +158,7 @@ void frame_rect( const Rect* rect )
 	
 	if ( rect->bottom - rect->top <= h2  ||  rect->right - rect->left <= w2 )
 	{
-		StdRect( kQDGrafVerbPaint, rect );
+		StdRect_patch( kQDGrafVerbPaint, rect );
 		return;
 	}
 	
@@ -170,7 +170,7 @@ void frame_rect( const Rect* rect )
 	
 	edge.bottom = edge.top + penHeight;
 	
-	StdRect( kQDGrafVerbPaint, &edge );
+	StdRect_patch( kQDGrafVerbPaint, &edge );
 	
 	
 	edge.top += penHeight;
@@ -179,13 +179,13 @@ void frame_rect( const Rect* rect )
 	
 	edge.bottom = rect->bottom - penHeight;
 	
-	StdRect( kQDGrafVerbPaint, &edge );
+	StdRect_patch( kQDGrafVerbPaint, &edge );
 	
 	
 	edge.left  = rect->right - penWidth;
 	edge.right = rect->right;
 	
-	StdRect( kQDGrafVerbPaint, &edge );
+	StdRect_patch( kQDGrafVerbPaint, &edge );
 	
 	edge.left = rect->left;
 	
@@ -193,7 +193,7 @@ void frame_rect( const Rect* rect )
 	
 	edge.bottom += penHeight;
 	
-	StdRect( kQDGrafVerbPaint, &edge );
+	StdRect_patch( kQDGrafVerbPaint, &edge );
 }
 
 static

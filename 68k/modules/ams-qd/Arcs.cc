@@ -17,6 +17,7 @@
 // ams-qd
 #include "OvalRgn.hh"
 #include "Polygons.hh"
+#include "Regions.hh"
 
 
 #pragma exceptions off
@@ -276,7 +277,7 @@ pascal void StdArc_patch( SInt8 verb, const Rect* r, short start, short extent )
 	
 	OffsetRgn( ovalRgn, r->left, r->top );
 	
-	StdRgn( verb, ovalRgn );
+	StdRgn_patch( verb, ovalRgn );
 	
 	SetEmptyRgn( ovalRgn );
 }

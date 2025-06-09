@@ -15,6 +15,7 @@
 #include "scoped_zone.hh"
 
 // ams-qd
+#include "Regions.hh"
 #include "RoundRectRgn.hh"
 
 
@@ -71,7 +72,7 @@ pascal void StdRRect_patch( signed char  verb,
 	
 	OffsetRgn( rgn, r->left, r->top );
 	
-	StdRgn( verb, rgn );
+	StdRgn_patch( verb, rgn );
 	
 	SetEmptyRgn( rgn );
 }

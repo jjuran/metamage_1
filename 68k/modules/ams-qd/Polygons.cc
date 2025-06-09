@@ -19,6 +19,10 @@
 #include "math.hh"
 #include "scoped_zone.hh"
 
+// ams-qd
+#include "Pen.hh"
+#include "Regions.hh"
+
 
 #pragma exceptions off
 
@@ -200,13 +204,15 @@ pascal void StdPoly_patch( signed char verb, PolyHandle poly )
 			
 			const Point a = *pt++;  // start
 			
-			MoveTo( a.h, a.v );
+			port.pnLoc = a;  // MoveTo
 			
 			for ( short i = 0;  i < n;  ++i )
 			{
 				const Point b = *pt++;
 				
-				LineTo( b.h, b.v );
+				StdLine_patch( b );  // LineTo
+				
+				port.pnLoc = b;
 			}
 		}
 		
@@ -226,7 +232,7 @@ pascal void StdPoly_patch( signed char verb, PolyHandle poly )
 	}
 	else
 	{
-		StdRgn( verb, rgn );
+		StdRgn_patch( verb, rgn );
 	}
 	
 	SetEmptyRgn( rgn );

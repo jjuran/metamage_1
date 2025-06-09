@@ -16,6 +16,7 @@
 
 // ams-qd
 #include "OvalRgn.hh"
+#include "Regions.hh"
 
 
 #pragma exceptions off
@@ -68,7 +69,7 @@ pascal void StdOval_patch( signed char verb, const Rect* r )
 	
 	OffsetRgn( ovalRgn, r->left, r->top );
 	
-	StdRgn( verb, ovalRgn );
+	StdRgn_patch( verb, ovalRgn );
 	
 	SetEmptyRgn( ovalRgn );
 }
