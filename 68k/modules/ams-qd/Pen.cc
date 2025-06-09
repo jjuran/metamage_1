@@ -370,6 +370,16 @@ pascal void StdLine_patch( Point newPt )
 {
 	const GrafPort& port = *get_thePort();
 	
+	if ( port.polySave )
+	{
+		add_polygon_point( newPt, (PolyHandle) port.polySave );
+	}
+	
+	if ( port.pnVis < 0 )
+	{
+		return;
+	}
+	
 	Point pnLoc = port.pnLoc;
 	
 	if ( pnLoc.v > newPt.v )
@@ -575,15 +585,7 @@ pascal void LineTo_patch( short h, short v )
 {
 	GrafPort& port = *get_thePort();
 	
-	if ( port.pnVis >= 0 )
-	{
-		StdLine( *(const Point*) &v );
-	}
-	
-	if ( port.polySave )
-	{
-		add_polygon_point( *(Point*) &v, (PolyHandle) port.polySave );
-	}
+	StdLine( *(const Point*) &v );
 	
 	port.pnLoc.v = v;
 	port.pnLoc.h = h;
