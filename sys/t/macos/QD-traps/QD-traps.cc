@@ -328,6 +328,24 @@ void bits()
 	++mark;
 }
 
+static
+void text()
+{
+	CharWidth( 'M' );
+	StringWidth( "\p" "string" );
+	TextWidth( "text", 0, 4 );
+	
+	short locs[ 3 ];
+	
+	MeasureText( 2, "hi", locs );
+	
+	DrawChar( 'M' );
+	DrawString( "\p" "string" );
+	DrawText( "text", 0, 4 );
+	
+	++mark;
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc > 1  &&  strcmp( argv[ 1 ], "--custom" ) == 0 )
@@ -349,6 +367,7 @@ int main( int argc, char** argv )
 	regions();
 	lines();
 	bits();
+	text();
 	
 	trace_off();
 	

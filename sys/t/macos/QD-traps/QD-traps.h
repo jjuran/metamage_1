@@ -3,6 +3,11 @@
 	----------
 */
 
+X( StdText )
+	X( DrawChar )
+	X( DrawText )
+	X( DrawString )
+
 X( StdLine )
 	X( Move )
 	X( Line )
@@ -54,6 +59,12 @@ X( StdRgn )
 X( StdBits )
 	X( CopyBits )
 	X( ScrollRect )
+
+X( StdTxMeas )
+	X( CharWidth )
+	X( TextWidth )
+	X( StringWidth )
+	X( MeasureText )
 
 X( OpenRgn  )
 X( CloseRgn )
