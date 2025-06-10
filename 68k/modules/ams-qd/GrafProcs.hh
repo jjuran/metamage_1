@@ -12,7 +12,7 @@
 		{static bool has = custom_grafProc(#name);} else
 
 #define GRAFPROCS( port, name )  \
-	(&null_QDProcs)
+	((port).grafProcs  &&  (port).grafProcs->name ? (port).grafProcs : &null_QDProcs)
 
 #define GRAFPROC( port, name )  GRAFPROCS( port, name )->name
 
