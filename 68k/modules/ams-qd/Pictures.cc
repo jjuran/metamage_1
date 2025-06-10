@@ -329,12 +329,14 @@ const Byte* do_opcode( const Byte* p )
 			p += 6;
 			break;
 		
-		case 0xA0:
-			p += 2;
-			break;
-		
+		case 0xA0:  // short comment
 		case 0xA1:  // long comment
 			p += 2;
+			
+			if ( opcode == 0xA0 )
+			{
+				break;
+			}
 			// fall through
 		case 0x2C:  // reserved
 		case 0x2D:  // reserved
