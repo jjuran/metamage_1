@@ -84,7 +84,7 @@ pascal void DrawText_patch( const char* buffer, short offset, short n )
 	
 	CHECK_CUSTOM_GRAFPROC( port, textProc );
 	
-	StdText( n, buffer + offset, OneOne, OneOne );
+	GRAFPROC_TEXT( port )( n, buffer + offset, OneOne, OneOne );
 }
 
 pascal short CharWidth_patch( short c )
@@ -108,7 +108,7 @@ pascal short TextWidth_patch( const char* buffer, short offset, short n )
 	
 	CHECK_CUSTOM_GRAFPROC( port, txMeasProc );
 	
-	return StdTxMeas( n, buffer + offset, &numer, &denom, &info );
+	return GRAFPROC_TXMEAS( port )( n, buffer + offset, &numer, &denom, &info );
 }
 
 static

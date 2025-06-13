@@ -588,7 +588,7 @@ pascal void LineTo_patch( short h, short v )
 	
 	CHECK_CUSTOM_GRAFPROC( port, lineProc );
 	
-	StdLine( *(const Point*) &v );
+	GRAFPROC_LINE( port )( *(const Point*) &v );
 	
 	port.pnLoc.v = v;
 	port.pnLoc.h = h;

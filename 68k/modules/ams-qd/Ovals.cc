@@ -81,7 +81,7 @@ pascal void EraseOval_patch( const Rect* rect )
 	
 	CHECK_CUSTOM_GRAFPROC( port, ovalProc );
 	
-	StdOval( kQDGrafVerbErase, rect );
+	GRAFPROC_OVAL( port )( kQDGrafVerbErase, rect );
 }
 
 pascal void PaintOval_patch( const Rect* rect )
@@ -90,7 +90,7 @@ pascal void PaintOval_patch( const Rect* rect )
 	
 	CHECK_CUSTOM_GRAFPROC( port, ovalProc );
 	
-	StdOval( kQDGrafVerbPaint, rect );
+	GRAFPROC_OVAL( port )( kQDGrafVerbPaint, rect );
 }
 
 pascal void InvertOval_patch( const Rect* rect )
@@ -99,7 +99,7 @@ pascal void InvertOval_patch( const Rect* rect )
 	
 	CHECK_CUSTOM_GRAFPROC( port, ovalProc );
 	
-	StdOval( kQDGrafVerbInvert, rect );
+	GRAFPROC_OVAL( port )( kQDGrafVerbInvert, rect );
 }
 
 pascal void FrameOval_patch( const Rect* rect )
@@ -108,7 +108,7 @@ pascal void FrameOval_patch( const Rect* rect )
 	
 	CHECK_CUSTOM_GRAFPROC( port, ovalProc );
 	
-	StdOval( kQDGrafVerbFrame, rect );
+	GRAFPROC_OVAL( port )( kQDGrafVerbFrame, rect );
 }
 
 pascal void FillOval_patch( const Rect* rect, const Pattern* pattern )
@@ -119,5 +119,5 @@ pascal void FillOval_patch( const Rect* rect, const Pattern* pattern )
 	
 	CHECK_CUSTOM_GRAFPROC( port, ovalProc );
 	
-	StdOval( kQDGrafVerbFill, rect );
+	GRAFPROC_OVAL( port )( kQDGrafVerbFill, rect );
 }

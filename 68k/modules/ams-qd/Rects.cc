@@ -422,7 +422,7 @@ pascal void EraseRect_patch( const Rect* rect )
 	
 	CHECK_CUSTOM_GRAFPROC( port, rectProc );
 	
-	StdRect( kQDGrafVerbErase, rect );
+	GRAFPROC_RECT( port )( kQDGrafVerbErase, rect );
 }
 
 pascal void PaintRect_patch( const Rect* rect )
@@ -431,7 +431,7 @@ pascal void PaintRect_patch( const Rect* rect )
 	
 	CHECK_CUSTOM_GRAFPROC( port, rectProc );
 	
-	StdRect( kQDGrafVerbPaint, rect );
+	GRAFPROC_RECT( port )( kQDGrafVerbPaint, rect );
 }
 
 pascal void InverRect_patch( const Rect* rect )
@@ -440,7 +440,7 @@ pascal void InverRect_patch( const Rect* rect )
 	
 	CHECK_CUSTOM_GRAFPROC( port, rectProc );
 	
-	StdRect( kQDGrafVerbInvert, rect );
+	GRAFPROC_RECT( port )( kQDGrafVerbInvert, rect );
 }
 
 pascal void FrameRect_patch( const Rect* rect )
@@ -449,7 +449,7 @@ pascal void FrameRect_patch( const Rect* rect )
 	
 	CHECK_CUSTOM_GRAFPROC( port, rectProc );
 	
-	StdRect( kQDGrafVerbFrame, rect );
+	GRAFPROC_RECT( port )( kQDGrafVerbFrame, rect );
 }
 
 pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
@@ -460,7 +460,7 @@ pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
 	
 	CHECK_CUSTOM_GRAFPROC( port, rectProc );
 	
-	StdRect( kQDGrafVerbFill, rect );
+	GRAFPROC_RECT( port )( kQDGrafVerbFill, rect );
 }
 
 pascal Boolean EqualRect_patch( const Rect* a, const Rect* b )

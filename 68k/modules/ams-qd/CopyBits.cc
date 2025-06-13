@@ -61,7 +61,7 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
 	
 	CHECK_CUSTOM_GRAFPROC( *saved_port, bitsProc );
 	
-	StdBits( srcBits, srcRect, dstRect, mode, maskRgn );
+	GRAFPROC_BITS( *saved_port )( srcBits, srcRect, dstRect, mode, maskRgn );
 	
 	thePort = saved_port;
 }

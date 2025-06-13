@@ -78,7 +78,7 @@ pascal void FrameRgn_patch( MacRegion** rgn )
 	
 	CHECK_CUSTOM_GRAFPROC( port, rgnProc );
 	
-	StdRgn( kQDGrafVerbFrame, rgn );
+	GRAFPROC_RGN( port )( kQDGrafVerbFrame, rgn );
 }
 
 pascal void PaintRgn_patch( MacRegion** rgn )
@@ -87,7 +87,7 @@ pascal void PaintRgn_patch( MacRegion** rgn )
 	
 	CHECK_CUSTOM_GRAFPROC( port, rgnProc );
 	
-	StdRgn( kQDGrafVerbPaint, rgn );
+	GRAFPROC_RGN( port )( kQDGrafVerbPaint, rgn );
 }
 
 pascal void EraseRgn_patch( MacRegion** rgn )
@@ -96,7 +96,7 @@ pascal void EraseRgn_patch( MacRegion** rgn )
 	
 	CHECK_CUSTOM_GRAFPROC( port, rgnProc );
 	
-	StdRgn( kQDGrafVerbErase, rgn );
+	GRAFPROC_RGN( port )( kQDGrafVerbErase, rgn );
 }
 
 pascal void InverRgn_patch( MacRegion** rgn )
@@ -105,7 +105,7 @@ pascal void InverRgn_patch( MacRegion** rgn )
 	
 	CHECK_CUSTOM_GRAFPROC( port, rgnProc );
 	
-	StdRgn( kQDGrafVerbInvert, rgn );
+	GRAFPROC_RGN( port )( kQDGrafVerbInvert, rgn );
 }
 
 pascal void FillRgn_patch( MacRegion** rgn, const Pattern* pattern )
@@ -116,7 +116,7 @@ pascal void FillRgn_patch( MacRegion** rgn, const Pattern* pattern )
 	
 	CHECK_CUSTOM_GRAFPROC( port, rgnProc );
 	
-	StdRgn( kQDGrafVerbFill, rgn );
+	GRAFPROC_RGN( port )( kQDGrafVerbFill, rgn );
 }
 
 pascal MacRegion** NewRgn_patch()

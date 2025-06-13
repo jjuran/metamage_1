@@ -289,7 +289,7 @@ pascal void EraseArc_patch( const Rect* rect, short start, short extent )
 	
 	CHECK_CUSTOM_GRAFPROC( port, arcProc );
 	
-	StdArc( kQDGrafVerbErase, rect, start, extent );
+	GRAFPROC_ARC( port )( kQDGrafVerbErase, rect, start, extent );
 }
 
 pascal void PaintArc_patch( const Rect* rect, short start, short extent )
@@ -298,7 +298,7 @@ pascal void PaintArc_patch( const Rect* rect, short start, short extent )
 	
 	CHECK_CUSTOM_GRAFPROC( port, arcProc );
 	
-	StdArc( kQDGrafVerbPaint, rect, start, extent );
+	GRAFPROC_ARC( port )( kQDGrafVerbPaint, rect, start, extent );
 }
 
 pascal void InvertArc_patch( const Rect* rect, short start, short extent )
@@ -307,7 +307,7 @@ pascal void InvertArc_patch( const Rect* rect, short start, short extent )
 	
 	CHECK_CUSTOM_GRAFPROC( port, arcProc );
 	
-	StdArc( kQDGrafVerbInvert, rect, start, extent );
+	GRAFPROC_ARC( port )( kQDGrafVerbInvert, rect, start, extent );
 }
 
 pascal void FrameArc_patch( const Rect* rect, short start, short extent )
@@ -316,7 +316,7 @@ pascal void FrameArc_patch( const Rect* rect, short start, short extent )
 	
 	CHECK_CUSTOM_GRAFPROC( port, arcProc );
 	
-	StdArc( kQDGrafVerbFrame, rect, start, extent );
+	GRAFPROC_ARC( port )( kQDGrafVerbFrame, rect, start, extent );
 }
 
 pascal void FillArc_patch( const Rect*     rect,
@@ -330,5 +330,5 @@ pascal void FillArc_patch( const Rect*     rect,
 	
 	CHECK_CUSTOM_GRAFPROC( port, arcProc );
 	
-	StdArc( kQDGrafVerbFill, rect, start, extent );
+	GRAFPROC_ARC( port )( kQDGrafVerbFill, rect, start, extent );
 }

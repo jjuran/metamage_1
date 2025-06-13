@@ -245,7 +245,7 @@ pascal void FramePoly_patch( PolyHandle poly )
 	
 	CHECK_CUSTOM_GRAFPROC( port, polyProc );
 	
-	StdPoly( kQDGrafVerbFrame, poly );
+	GRAFPROC_POLY( port )( kQDGrafVerbFrame, poly );
 }
 
 pascal void PaintPoly_patch( PolyHandle poly )
@@ -254,7 +254,7 @@ pascal void PaintPoly_patch( PolyHandle poly )
 	
 	CHECK_CUSTOM_GRAFPROC( port, polyProc );
 	
-	StdPoly( kQDGrafVerbPaint, poly );
+	GRAFPROC_POLY( port )( kQDGrafVerbPaint, poly );
 }
 
 pascal void ErasePoly_patch( PolyHandle poly )
@@ -263,7 +263,7 @@ pascal void ErasePoly_patch( PolyHandle poly )
 	
 	CHECK_CUSTOM_GRAFPROC( port, polyProc );
 	
-	StdPoly( kQDGrafVerbErase, poly );
+	GRAFPROC_POLY( port )( kQDGrafVerbErase, poly );
 }
 
 pascal void InvertPoly_patch( PolyHandle poly )
@@ -272,7 +272,7 @@ pascal void InvertPoly_patch( PolyHandle poly )
 	
 	CHECK_CUSTOM_GRAFPROC( port, polyProc );
 	
-	StdPoly( kQDGrafVerbInvert, poly );
+	GRAFPROC_POLY( port )( kQDGrafVerbInvert, poly );
 }
 
 pascal void FillPoly_patch( PolyHandle poly, const Pattern* pattern )
@@ -283,5 +283,5 @@ pascal void FillPoly_patch( PolyHandle poly, const Pattern* pattern )
 	
 	CHECK_CUSTOM_GRAFPROC( port, polyProc );
 	
-	StdPoly( kQDGrafVerbFill, poly );
+	GRAFPROC_POLY( port )( kQDGrafVerbFill, poly );
 }
