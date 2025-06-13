@@ -12,6 +12,9 @@
 #include "errno.h"
 #include "time.h"
 
+// mac-types
+#include "mac_types/gmtDelta.hh"
+
 
 #pragma exceptions off
 
@@ -141,14 +144,7 @@ struct tm* localtime_r( const time_t* time_p, struct tm* result )
 	
 	// Mask off DLS byte, and sign extend if negative
 	
-	if ( delta & 0x00800000 )
-	{
-		delta |= 0xFF000000;
-	}
-	else
-	{
-		delta &= 0x00FFFFFF;
-	}
+	delta = mac::types::gmtDelta_seconds( delta );
 	
 	time_t adjusted_time = *time_p + delta;
 	
