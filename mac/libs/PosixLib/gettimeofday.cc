@@ -3,6 +3,16 @@
 	---------------
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __OSUTILS__
+#include <OSUtils.h>
+#endif
+
 // POSIX
 #include <sys/time.h>
 
@@ -11,12 +21,12 @@
 
 // mac-types
 #include "mac_types/epoch.hh"
+#include "mac_types/gmtDelta.hh"
 
 // mac-glue-utils
 #include "mac_glue/DateTimeUtils.hh"
 
 // mac-sys-utils
-#include "mac_sys/gmt_delta.hh"
 #include "mac_sys/microseconds.hh"
 
 
@@ -36,7 +46,13 @@ namespace PosixLib
 	
 	static inline UInt32 GetGlobalDateTime()
 	{
-		return mac::glue::get_Time() - mac::sys::gmt_delta();
+		MachineLocation location;
+		
+		::ReadLocation( &location );
+		
+		SInt32 delta = mac::types::gmtDelta_seconds( location.u.gmtDelta );
+		
+		return mac::glue::get_Time() - delta;
 	}
 	
 	static inline time_t UnixTime()
