@@ -20,6 +20,15 @@
 // Standard C
 #include <stdio.h>
 
+// mac-types
+#include "mac_types/gmtDelta.hh"
+
+
+static inline
+short div_3600( int x )
+{
+	return x / 3600;
+}
 
 static inline
 int degrees_from_fract( long fract )
@@ -41,25 +50,10 @@ int get_degrees_longitude( const MachineLocation& location )
 	return degrees_from_fract( location.longitude );
 }
 
-static
-int get_GMT_delta_hours( long gmtDelta )
-{
-	if ( gmtDelta & 0x00800000 )
-	{
-		gmtDelta |= 0xFF000000;
-	}
-	else
-	{
-		gmtDelta &= 0x00FFFFFF;
-	}
-	
-	return gmtDelta / 3600;
-}
-
 static inline
 int get_GMT_delta_hours( const MachineLocation& location )
 {
-	return get_GMT_delta_hours( location.u.gmtDelta );
+	return div_3600( mac::types::gmtDelta_seconds( location.u.gmtDelta ) );
 }
 
 static inline
