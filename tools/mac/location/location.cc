@@ -46,9 +46,9 @@ short div_3600( int x )
 static inline
 int degrees_from_fract( long fract )
 {
-	const short fixed_18_14 = fract >> 16;
+	const short fixed_2_14 = fract >> 16;
 	
-	return fixed_18_14 * 90 / 16384;
+	return fixed_2_14 * 90 / 16384;
 }
 
 static inline
