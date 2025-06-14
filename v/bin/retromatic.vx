@@ -309,7 +309,7 @@ if frontend != "Amber" and exists var_bin "/Amber" then
 	copy( var_bin "/Amber", MacOS_dir )
 }
 
-copy( var_bin "/" frontend, MacOS_dir )
+copy( var_bin "/" frontend, MacOS_dir "/" name )
 
 var plist_xml_lines = [ info_plist.version, info_plist.doctype ]
 
@@ -356,7 +356,7 @@ if "document-types" in config then
 
 let info =
 [
-	CFBundleExecutable:  frontend,
+	CFBundleExecutable:  name,
 	CFBundleName:        name,
 	(CFBundleIconFile:   "APPL") (*) bool icon,
 	CFBundlePackageType: 'APPL',
