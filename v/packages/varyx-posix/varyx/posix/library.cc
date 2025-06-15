@@ -67,6 +67,18 @@ namespace posix
 	using namespace vlib;
 	
 	
+	static
+	Value print( int fd, const Value& v )
+	{
+		plus::var_string s = str( v ).move();
+		
+		s += "\n";
+		
+		must_write( fd, s.data(), s.size() );
+		
+		return Value_nothing;
+	}
+	
 	typedef int (*exec_f)( const char* arg0, char* const* argv );
 	
 	static
@@ -165,13 +177,7 @@ namespace posix
 	static
 	Value v_print( const Value& v )
 	{
-		plus::var_string s = str( v ).move();
-		
-		s += "\n";
-		
-		must_write( STDOUT_FILENO, s.data(), s.size() );
-		
-		return Value_nothing;
+		return print( STDOUT_FILENO, v );
 	}
 	
 	enum output_capture
@@ -445,13 +451,7 @@ namespace posix
 	static
 	Value v_warn( const Value& v )
 	{
-		plus::var_string s = str( v ).move();
-		
-		s += "\n";
-		
-		must_write( STDERR_FILENO, s.data(), s.size() );
-		
-		return Value_nothing;
+		return print( STDERR_FILENO, v );
 	}
 	
 	static const Type c_str = c_str_vtype;
