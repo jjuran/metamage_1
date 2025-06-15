@@ -101,7 +101,7 @@ Value v_LaunchApplication( const Value& v )
 static const Type fsspec = FSSpec_vtype;
 static const Type aedesc = AEDesc_vtype;
 
-static const Type null = null_vtype;
+static const Null null;
 
 static const Value aedesc_or_null ( aedesc,         Op_union,     null );
 static const Value optional_aedesc( aedesc_or_null, Op_duplicate, null );
