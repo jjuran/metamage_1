@@ -110,7 +110,12 @@ def render_html (printer, node, depth=0)
 		{
 			var s = ""
 			
-			render_html( { s .= _ }, content )
+			def append (depth, text)
+			{
+				s .= text
+			}
+			
+			render_html( append, content )
 			
 			print "<" name attr ">" s "</" name ">"
 		}
