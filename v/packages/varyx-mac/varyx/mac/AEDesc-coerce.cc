@@ -42,6 +42,7 @@
 #include "vlib/types/table.hh"
 
 // varyx-mac
+#include "varyx/mac/FSRef.hh"
 #include "varyx/mac/FSSpec.hh"
 #include "varyx/mac/OSErr.hh"
 
@@ -319,6 +320,15 @@ AEDesc coerce_to_AEDesc( const Value& v )
 	}
 	
 #endif
+	
+	if ( const FSRef* fsref = v.is< FSRef >() )
+	{
+		const ::FSRef& ref = fsref->get();
+		
+		type = typeFSRef;
+		data = &ref;
+		size = sizeof ref;
+	}
 	
 	if ( type == 0 )
 	{
