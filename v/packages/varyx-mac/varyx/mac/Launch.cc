@@ -49,6 +49,15 @@ Value v_LaunchApplication( const Value& v )
 	const Value& file = first( v );
 	const Value& aevt = rest ( v );
 	
+#if defined( __APPLE__ )  &&  ! __LP64__
+	
+	if ( FSRef::test( file ) )
+	{
+		return v_LaunchApplication( Value( FSSpec::coerce( file ), aevt ) );
+	}
+	
+#endif
+	
 	::AEDesc coerced;
 	
 	coerced.dataHandle = NULL;
@@ -109,9 +118,11 @@ Value v_LaunchApplication( const Value& v )
 	return ProcessSerialNumber( pb.launchProcessSN );
 }
 
-#if __LP64__
+#ifdef __APPLE__
 static const Type fsref  = FSRef_vtype;
-#else
+#endif
+
+#if ! __LP64__
 static const Type fsspec = FSSpec_vtype;
 #endif
 
@@ -121,6 +132,9 @@ static const Null null;
 
 #if __LP64__
 	#define FILEDESC fsref
+#elif defined( __APPLE__ )
+	static const Value fsref_or_fsspec( fsref, Op_union, fsspec );
+	#define FILEDESC fsref_or_fsspec
 #else
 	#define FILEDESC fsspec
 #endif
