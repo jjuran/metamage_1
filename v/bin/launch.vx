@@ -1,0 +1,8 @@
+#!/usr/bin/env macvx
+
+let FileDesc = FSSpec?? or FSRef??  # FSSpec on 32-bit, FSRef on 64-bit
+
+let path = FileDesc argv[ 1 ]
+let noop = AECreateAppleEvent( 'misc', 'noop', AEDesc() )
+
+LaunchApplication( path, noop )
