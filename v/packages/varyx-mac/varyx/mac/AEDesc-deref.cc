@@ -33,6 +33,8 @@
 
 // varyx-mac
 #include "varyx/mac/AEDesc.hh"
+#include "varyx/mac/FSRef.hh"
+#include "varyx/mac/FSSpec.hh"
 #include "varyx/mac/OSErr.hh"
 
 
@@ -93,6 +95,41 @@ Value dereferenced_AEDesc( const ::AEDesc& desc )
 		case 'doub':
 			::AEGetDescData( ptr, &f64, sizeof f64 );
 			return Float( f64 );
+		
+		/*
+			Note:  We're not going to bring <Files.h> into
+			scope just to get the size of FSSpec and FSRef.
+		*/
+		
+	#if ! __LP64__
+		
+		case 'fss ':
+		{
+			enum { sizeof_FSSpec = 64 };
+			
+			FSSpec object;
+			
+			::FSSpec& pod = *object.pointer();
+			
+			::AEGetDescData( ptr, &pod, sizeof_FSSpec );
+			
+			return object;
+		}
+		
+	#endif
+		
+		case 'fsrf':
+		{
+			enum { sizeof_FSRef = 80 };
+			
+			FSRef object;
+			
+			::FSRef& pod = *object.pointer();
+			
+			::AEGetDescData( ptr, &pod, sizeof_FSRef );
+			
+			return object;
+		}
 		
 		case 'TEXT':
 		case 'utxt':
