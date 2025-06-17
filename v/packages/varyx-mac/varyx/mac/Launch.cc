@@ -29,6 +29,7 @@
 // varyx-mac
 #include "varyx/mac/AEDesc.hh"
 #include "varyx/mac/FSSpec.hh"
+#include "varyx/mac/OSErr.hh"
 #include "varyx/mac/ProcessSerialNumber.hh"
 
 

@@ -28,6 +28,7 @@
 
 // varyx-mac
 #include "varyx/mac/AEDesc.hh"
+#include "varyx/mac/OSErr.hh"
 
 
 namespace varyx

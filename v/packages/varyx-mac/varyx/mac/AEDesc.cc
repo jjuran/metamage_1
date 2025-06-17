@@ -25,7 +25,6 @@
 #include "mac_sys/gestalt.hh"
 
 // vlib
-#include "vlib/exceptions.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/targets.hh"
@@ -45,25 +44,13 @@
 #include "varyx/mac/AEDesc-coerce.hh"
 #include "varyx/mac/AEDesc-deref.hh"
 #include "varyx/mac/AEDesc-print.hh"
+#include "varyx/mac/OSErr.hh"
 
 
 namespace varyx
 {
 namespace mac
 {
-
-void throw_MacOS_error( int err, const char* routine )
-{
-	if ( err  )
-	{
-		Value code = mapping( "OSErr", Integer( err ) );
-		Value from = mapping( "from", String( routine ) );
-		
-		const Value exception = Record( Value( code, from ) );
-		
-		throw user_exception( exception, source_spec() );
-	}
-}
 
 long count_items( const ::AEDesc* desc )
 {

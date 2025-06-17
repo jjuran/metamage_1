@@ -28,8 +28,6 @@ namespace mac
 	
 	using namespace vlib;
 	
-	void throw_MacOS_error( int err, const char* from );
-	
 	long count_items( const ::AEDesc* desc );
 	
 	extern const dispatch AEDesc_dispatch;

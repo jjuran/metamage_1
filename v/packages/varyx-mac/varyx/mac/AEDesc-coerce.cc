@@ -43,6 +43,7 @@
 
 // varyx-mac
 #include "varyx/mac/FSSpec.hh"
+#include "varyx/mac/OSErr.hh"
 
 
 #if UNIVERSAL_INTERFACES_VERSION < 0x0400
