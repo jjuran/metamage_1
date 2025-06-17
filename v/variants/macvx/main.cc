@@ -191,6 +191,8 @@ int main( int argc, char** argv )
 	define( proc_Delay );
 	define( proc_Microseconds );
 	
+	define( proc_LaunchApplication );
+	
 	if ( mac::sys::has_FSRef_calls() )
 	{
 		define( FSRef_vtype );
@@ -200,7 +202,6 @@ int main( int argc, char** argv )
 	
 	define( FSSpec_vtype  );
 	
-	define( proc_LaunchApplication );
 	define( proc_PackBits );
 	define( proc_SysBeep );
 	define( proc_UnpackBits );
