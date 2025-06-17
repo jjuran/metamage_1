@@ -28,6 +28,7 @@
 
 // varyx-mac
 #include "varyx/mac/AEDesc.hh"
+#include "varyx/mac/FSRef.hh"
 #include "varyx/mac/FSSpec.hh"
 #include "varyx/mac/OSErr.hh"
 #include "varyx/mac/ProcessSerialNumber.hh"
@@ -38,8 +39,6 @@ namespace varyx
 namespace mac
 {
 
-#if ! __LP64__
-
 static
 Value v_LaunchApplication( const Value& v )
 {
@@ -49,8 +48,6 @@ Value v_LaunchApplication( const Value& v )
 	
 	const Value& file = first( v );
 	const Value& aevt = rest ( v );
-	
-	const ::FSSpec& spec = static_cast< const FSSpec& >( file ).get();
 	
 	::AEDesc coerced;
 	
@@ -87,8 +84,21 @@ Value v_LaunchApplication( const Value& v )
 	pb.launchEPBLength 		= extendedBlockLen;
 	pb.launchFileFlags 		= 0;
 	pb.launchControlFlags	= launchContinue | launchNoFileFlags;
-	pb.launchAppSpec 		= const_cast< ::FSSpec* >( &spec );
 	pb.launchAppParameters	= (AppParameters*) appParams;
+	
+#if __LP64__
+	
+	const ::FSRef& ref = static_cast< const FSRef& >( file ).get();
+	
+	pb.launchAppRef = const_cast< ::FSRef* >( &ref );
+	
+#else 
+	
+	const ::FSSpec& spec = static_cast< const FSSpec& >( file ).get();
+	
+	pb.launchAppSpec = const_cast< ::FSSpec* >( &spec );
+	
+#endif
 	
 	err = LaunchApplication( &pb );
 	
@@ -99,15 +109,26 @@ Value v_LaunchApplication( const Value& v )
 	return ProcessSerialNumber( pb.launchProcessSN );
 }
 
+#if __LP64__
+static const Type fsref  = FSRef_vtype;
+#else
 static const Type fsspec = FSSpec_vtype;
+#endif
+
 static const Type aedesc = AEDesc_vtype;
 
 static const Null null;
 
+#if __LP64__
+	#define FILEDESC fsref
+#else
+	#define FILEDESC fsspec
+#endif
+
 static const Value aedesc_or_null ( aedesc,         Op_union,     null );
 static const Value optional_aedesc( aedesc_or_null, Op_duplicate, null );
 
-static const Value proto_LaunchApplication( fsspec, optional_aedesc );
+static const Value proto_LaunchApplication( FILEDESC, optional_aedesc );
 
 const proc_info proc_LaunchApplication =
 {
@@ -115,12 +136,6 @@ const proc_info proc_LaunchApplication =
 	&v_LaunchApplication,
 	&proto_LaunchApplication,
 };
-
-#else
-
-int dummy;
-
-#endif  // #if ! __LP64__
 
 }
 }
