@@ -37,6 +37,7 @@
 #include "varyx/posix/exception.hh"
 
 // varyx-mac
+#include "varyx/mac/FSSpec.hh"
 #include "varyx/mac/OSErr.hh"
 
 
@@ -58,6 +59,24 @@ Value FSRef::coerce( const Value& v )
 		
 		return FSRef( unix_path );
 	}
+	
+#if ! __LP64__
+	
+	if ( const FSSpec* fsspec = v.is< FSSpec >() )
+	{
+		FSRef fsref;
+		
+		::FSRef&        ref  = *fsref.pointer();
+		::FSSpec const& spec =  fsspec->get();
+		
+		OSErr err = FSpMakeFSRef( &spec, &ref );
+		
+		throw_MacOS_error( err, "FSpMakeFSRef" );
+		
+		return fsref;
+	}
+	
+#endif
 	
 	return NIL;
 }

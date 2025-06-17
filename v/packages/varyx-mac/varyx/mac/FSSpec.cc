@@ -35,6 +35,10 @@
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 
+// varyx-mac
+#include "varyx/mac/FSRef.hh"
+#include "varyx/mac/OSErr.hh"
+
 
 namespace varyx
 {
@@ -82,6 +86,20 @@ Value FSSpec::coerce( const Value& v )
 		const char* unix_path = s->string().c_str();
 		
 		return FSSpec( unix_path );
+	}
+	
+	if ( const FSRef* fsref = v.is< FSRef >() )
+	{
+		FSSpec fsspec;
+		
+		::FSSpec&      spec = *fsspec.pointer();
+		::FSRef const& ref  =  fsref->get();
+		
+		OSErr err = FSGetCatalogInfo( &ref, 0, 0, 0, &spec, 0 );
+		
+		throw_MacOS_error( err, "FSGetCatalogInfo" );
+		
+		return fsspec;
 	}
 	
 	return NIL;
