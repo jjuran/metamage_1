@@ -18,6 +18,9 @@
 // more-posix
 #include "more/perror.hh"
 
+// mac-sys-utils
+#include "mac_sys/has/FSRef_calls.hh"
+
 // command
 #include "command/get_option.hh"
 
@@ -41,6 +44,7 @@
 #include "varyx/mac/AEPrint.hh"
 #include "varyx/mac/AESend.hh"
 #include "varyx/mac/Delay.hh"
+#include "varyx/mac/FSRef.hh"
 #include "varyx/mac/FSSpec.hh"
 #include "varyx/mac/Launch.hh"
 #include "varyx/mac/PackBits.hh"
@@ -186,6 +190,11 @@ int main( int argc, char** argv )
 	
 	define( proc_Delay );
 	define( proc_Microseconds );
+	
+	if ( mac::sys::has_FSRef_calls() )
+	{
+		define( FSRef_vtype );
+	}
 	
 #if ! __LP64__
 	
