@@ -6,6 +6,9 @@
 #ifndef VARYX_MAC_AEDESC_HH
 #define VARYX_MAC_AEDESC_HH
 
+// iota
+#include "iota/class.hh"
+
 // vlib
 #include "vlib/value.hh"
 
@@ -34,6 +37,8 @@ namespace mac
 	
 	class AEDesc : public Value
 	{
+		NO_NEW_DELETE
+		
 		public:
 			enum list_type_to_create
 			{
