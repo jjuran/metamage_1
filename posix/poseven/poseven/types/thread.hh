@@ -9,6 +9,9 @@
 // POSIX
 #include <pthread.h>
 
+// iota
+#include "iota/class.hh"
+
 // poseven
 #include "poseven/types/cond.hh"
 #include "poseven/types/mutex.hh"
@@ -34,6 +37,9 @@ namespace poseven
 	
 	class thread
 	{
+		NON_COPYABLE( thread )
+		NO_NEW_DELETE
+		
 		public:
 			typedef void (*callback_proc)( thread& t );
 			
@@ -57,10 +63,6 @@ namespace poseven
 			
 			bool it_is_joinable;
 			bool it_should_cancel;
-			
-			// non-copyable
-			thread           ( const thread &);
-			thread& operator=( const thread &);
 			
 			static void* start( void* param );
 			

@@ -9,6 +9,9 @@
 // POSIX
 #include <pthread.h>
 
+// iota
+#include "iota/class.hh"
+
 // must
 #include "must/pthread.h"
 
@@ -22,12 +25,11 @@ namespace poseven
 	template < class T >
 	class thread_key
 	{
+		NON_COPYABLE( thread_key )
+		NO_NEW_DELETE
+		
 		private:
 			pthread_key_t its_key;
-			
-			// non-copyable
-			thread_key           ( const thread_key& );
-			thread_key& operator=( const thread_key& );
 		
 		public:
 			typedef T value_type;

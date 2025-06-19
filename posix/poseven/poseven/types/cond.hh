@@ -9,6 +9,9 @@
 // POSIX
 #include <pthread.h>
 
+// iota
+#include "iota/class.hh"
+
 
 namespace poseven
 {
@@ -17,12 +20,11 @@ namespace poseven
 	
 	class cond
 	{
+		NON_COPYABLE( cond )
+		NO_NEW_DELETE
+		
 		private:
 			pthread_cond_t  its_cond;
-			
-			// non-copyable
-			cond           ( const cond& );
-			cond& operator=( const cond& );
 		
 		public:
 			cond();

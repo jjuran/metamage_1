@@ -9,6 +9,9 @@
 // POSIX
 #include <pthread.h>
 
+// iota
+#include "iota/class.hh"
+
 
 namespace poseven
 {
@@ -22,12 +25,11 @@ namespace poseven
 		friend class lock;
 		friend class unlock;
 		
+		NON_COPYABLE( mutex )
+		NO_NEW_DELETE
+		
 		private:
 			pthread_mutex_t  its_mutex;
-			
-			// non-copyable
-			mutex           ( const mutex& );
-			mutex& operator=( const mutex& );
 			
 			pthread_mutex_t& get()  { return its_mutex; }
 		
@@ -40,12 +42,11 @@ namespace poseven
 	{
 		friend class cond;
 		
+		NON_COPYABLE( lock )
+		NO_NEW_DELETE
+		
 		private:
 			mutex& its_mutex;
-			
-			// non-copyable
-			lock           ( const lock& );
-			lock& operator=( const lock& );
 			
 			pthread_mutex_t& get_mutex() const  { return its_mutex.get(); }
 		
@@ -56,12 +57,11 @@ namespace poseven
 	
 	class unlock
 	{
+		NON_COPYABLE( unlock )
+		NO_NEW_DELETE
+		
 		private:
 			mutex& its_mutex;
-			
-			// non-copyable
-			unlock           ( const unlock& );
-			unlock& operator=( const unlock& );
 		
 		public:
 			unlock( mutex& m );
