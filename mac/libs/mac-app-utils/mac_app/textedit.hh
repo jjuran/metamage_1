@@ -6,6 +6,9 @@
 #ifndef MACAPP_TEXTEDIT_HH
 #define MACAPP_TEXTEDIT_HH
 
+// iota
+#include "iota/class.hh"
+
 // <TextEdit.h>
 struct TERec;
 typedef TERec** TEHandle;
@@ -25,10 +28,8 @@ namespace app {
 	
 	class TEClick_scroller_scope
 	{
-		private:
-			// non-copyable
-			TEClick_scroller_scope           ( const TEClick_scroller_scope& );
-			TEClick_scroller_scope& operator=( const TEClick_scroller_scope& );
+		NON_COPYABLE( TEClick_scroller_scope )
+		NO_NEW_DELETE
 		
 		public:
 			TEClick_scroller_scope(TEClickLoop_callback code, void* data)
@@ -46,10 +47,8 @@ namespace app {
 	
 	class TEClick_contents_scope
 	{
-		private:
-			// non-copyable
-			TEClick_contents_scope           ( const TEClick_contents_scope& );
-			TEClick_contents_scope& operator=( const TEClick_contents_scope& );
+		NON_COPYABLE( TEClick_contents_scope )
+		NO_NEW_DELETE
 		
 		public:
 			TEClick_contents_scope(TEClickLoop_callback code, void* data)

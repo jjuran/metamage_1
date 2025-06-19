@@ -6,6 +6,9 @@
 #ifndef MACAPP_OPENTRANSPORTSHARE_HH
 #define MACAPP_OPENTRANSPORTSHARE_HH
 
+// iota
+#include "iota/class.hh"
+
 
 namespace mac {
 namespace app {
@@ -21,6 +24,8 @@ namespace app {
 	
 	class OpenTransport_share
 	{
+		NO_NEW_DELETE
+		
 		public:
 			OpenTransport_share( OSStatus_handler handler = &default_OSStatus_handler )
 			{

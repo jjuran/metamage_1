@@ -16,6 +16,9 @@
 #include <Events.h>
 #endif
 
+// iota
+#include "iota/class.hh"
+
 
 #define SysEvtMask  (*(UInt16*) 0x0144)
 
@@ -25,12 +28,11 @@ namespace app {
 
 class scoped_EventMask
 {
+	NON_COPYABLE( scoped_EventMask )
+	NO_NEW_DELETE
+	
 	private:
 		UInt16 saved_eventMask;
-		
-		// non-copyable
-		scoped_EventMask           ( const scoped_EventMask& );
-		scoped_EventMask& operator=( const scoped_EventMask& );
 	
 	public:
 		explicit scoped_EventMask( UInt16 eventMask )
