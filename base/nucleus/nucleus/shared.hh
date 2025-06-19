@@ -10,6 +10,9 @@
 #ifndef NUCLEUS_SHARED_HH
 #define NUCLEUS_SHARED_HH
 
+// iota
+#include "iota/class.hh"
+
 // nucleus
 #ifndef NUCLEUS_OWNED_HH
 #include "nucleus/owned.hh"
@@ -96,6 +99,8 @@ namespace nucleus
 	           class Disposer = typename disposer_class< Resource >::type >
 	class shared: private shared_access_hack
 	{
+		NO_NEW_DELETE
+		
 		private:
 			friend class shared_access_hack;
 			

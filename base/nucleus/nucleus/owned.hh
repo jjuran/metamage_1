@@ -113,6 +113,7 @@
 #define NUCLEUS_OWNED_HH
 
 // iota
+#include "iota/class.hh"
 #include "iota/swap.hh"
 
 // nucleus
@@ -279,6 +280,8 @@ namespace nucleus
 	           class Disposer = typename disposer_class< Resource >::type >
 	class owned
 	{
+		NO_NEW_DELETE
+		
 		private:
 			typedef Resource resource_type;
 			typedef Disposer disposer_type;
