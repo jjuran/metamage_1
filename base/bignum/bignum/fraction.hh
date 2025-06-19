@@ -6,6 +6,9 @@
 #ifndef BIGNUM_FRACTION_HH
 #define BIGNUM_FRACTION_HH
 
+// iota
+#include "iota/class.hh"
+
 // bignum
 #include "bignum/integer.hh"
 
@@ -15,6 +18,8 @@ namespace bignum
 	
 	class fraction
 	{
+		NO_NEW_DELETE
+		
 		public:
 			typedef math::integer::cmp_t  cmp_t;
 		

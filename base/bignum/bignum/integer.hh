@@ -7,6 +7,7 @@
 #define BIGNUM_INTEGER_HH
 
 // iota
+#include "iota/class.hh"
 #include "iota/integer_cast.hh"
 #include "iota/iterator.hh"
 
@@ -30,6 +31,8 @@ namespace bignum
 	
 	class integer
 	{
+		NO_NEW_DELETE
+		
 		public:
 			typedef math::integer::cmp_t  cmp_t;
 			

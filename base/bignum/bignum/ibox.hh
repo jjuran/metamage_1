@@ -6,6 +6,9 @@
 #ifndef BIGNUM_IBOX_HH
 #define BIGNUM_IBOX_HH
 
+// iota
+#include "iota/class.hh"
+
 // math
 #include "math/integer_types.hh"
 
@@ -60,6 +63,8 @@ namespace bignum
 	
 	class ibox
 	{
+		NO_NEW_DELETE
+		
 		public:
 			typedef math::integer::limb_t   int_t;
 			typedef math::integer::limb_t*  ptr_t;
