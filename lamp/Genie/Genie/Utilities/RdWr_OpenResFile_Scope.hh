@@ -18,20 +18,21 @@
 #include <Resources.h>
 #endif
 
+// iota
+#include "iota/class.hh"
+
 
 namespace Genie
 {
 	
 	class RdWr_OpenResFile_Scope
 	{
+		NON_COPYABLE( RdWr_OpenResFile_Scope )
+		NO_NEW_DELETE
+		
 		private:
 			::ResFileRefNum     itsPreviouslyCurrentResFile;
 			::ResFileRefNum     itsResFile;
-		
-		private:
-			// Non-copyable
-			RdWr_OpenResFile_Scope           ( const RdWr_OpenResFile_Scope& );
-			RdWr_OpenResFile_Scope& operator=( const RdWr_OpenResFile_Scope& );
 		
 		public:
 			RdWr_OpenResFile_Scope( const FSSpec& resFile );

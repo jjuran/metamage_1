@@ -8,6 +8,9 @@
 // Standard C
 #include <string.h>
 
+// iota
+#include "iota/class.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -55,13 +58,12 @@ namespace Genie
 	
 	class FileLockBypass
 	{
+		NON_COPYABLE( FileLockBypass )
+		NO_NEW_DELETE
+		
 		private:
 			FSSpec  itsFileSpec;
 			bool    itWasLocked;
-			
-			// non-copyable
-			FileLockBypass           ( const FileLockBypass& );
-			FileLockBypass& operator=( const FileLockBypass& );
 		
 		public:
 			FileLockBypass( const FSSpec& file ) : itsFileSpec( file ),

@@ -20,6 +20,7 @@
 
 // iota
 #include "iota/char_types.hh"
+#include "iota/class.hh"
 
 // gear
 #include "gear/hexadecimal.hh"
@@ -106,10 +107,8 @@ struct ResSpec
 
 class ResLoad_false_scope
 {
-	private:
-		// non-copyable
-		ResLoad_false_scope           ( const ResLoad_false_scope& );
-		ResLoad_false_scope& operator=( const ResLoad_false_scope& );
+	NON_COPYABLE( ResLoad_false_scope )
+	NO_NEW_DELETE
 	
 	public:
 		ResLoad_false_scope()
