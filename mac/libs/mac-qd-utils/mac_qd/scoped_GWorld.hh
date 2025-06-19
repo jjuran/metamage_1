@@ -25,19 +25,21 @@
 #endif
 #endif
 
+// iota
+#include "iota/class.hh"
+
 
 namespace mac {
 namespace qd  {
 	
 	class scoped_GWorld
 	{
+		NON_COPYABLE( scoped_GWorld )
+		NO_NEW_DELETE
+		
 		private:
 			GWorldPtr its_saved_port;
 			GDHandle  its_saved_gdev;
-			
-			// non-copyable
-			scoped_GWorld           ( const scoped_GWorld& );
-			scoped_GWorld& operator=( const scoped_GWorld& );
 		
 		public:
 			scoped_GWorld();

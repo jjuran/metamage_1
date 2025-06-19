@@ -28,18 +28,20 @@
 #endif
 #endif
 
+// iota
+#include "iota/class.hh"
+
 
 namespace mac {
 namespace qd  {
 	
 	class scoped_port
 	{
+		NON_COPYABLE( scoped_port )
+		NO_NEW_DELETE
+		
 		private:
 			GrafPtr its_saved_port;
-			
-			// non-copyable
-			scoped_port           ( const scoped_port& );
-			scoped_port& operator=( const scoped_port& );
 		
 		public:
 			scoped_port();

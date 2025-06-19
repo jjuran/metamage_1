@@ -25,6 +25,9 @@
 #endif
 #endif
 
+// iota
+#include "iota/class.hh"
+
 // mac-qd-utils
 #include "mac_qd/globals/thePort.hh"
 
@@ -34,12 +37,11 @@ namespace qd  {
 	
 	class scoped_clipRect
 	{
+		NON_COPYABLE( scoped_clipRect )
+		NO_NEW_DELETE
+		
 		private:
 			::RgnHandle saved;
-			
-			// non-copyable
-			scoped_clipRect           ( const scoped_clipRect& );
-			scoped_clipRect& operator=( const scoped_clipRect& );
 		
 		public:
 			scoped_clipRect( const Rect& rect, ::RgnHandle tmp );
