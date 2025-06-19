@@ -6,6 +6,9 @@
 #ifndef VXOSTRING_STRSET_HH
 #define VXOSTRING_STRSET_HH
 
+// iota
+#include "iota/class.hh"
+
 // vxo
 #include "vxo/container.hh"
 
@@ -18,6 +21,8 @@ namespace vxo
 	
 	class StrSet : public Container
 	{
+		NO_NEW_DELETE
+		
 		public:
 			typedef plus::string Item, value_type;
 			

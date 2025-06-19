@@ -6,6 +6,9 @@
 #ifndef VXOSTRING_STRMAP_HH
 #define VXOSTRING_STRMAP_HH
 
+// iota
+#include "iota/class.hh"
+
 // vxo
 #include "vxo/container.hh"
 
@@ -86,6 +89,8 @@ namespace vxo
 	template < class Value >
 	class StrMap_to : public Container
 	{
+		NO_NEW_DELETE
+		
 		public:
 			struct Pair
 			{

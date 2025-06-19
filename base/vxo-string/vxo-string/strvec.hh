@@ -6,6 +6,9 @@
 #ifndef VXOSTRING_STRVEC_HH
 #define VXOSTRING_STRVEC_HH
 
+// iota
+#include "iota/class.hh"
+
 // vxo
 #include "vxo/container.hh"
 
@@ -18,6 +21,8 @@ namespace vxo
 	
 	class StrVec : public Container
 	{
+		NO_NEW_DELETE
+		
 		public:
 			typedef plus::string Item, value_type;
 			
