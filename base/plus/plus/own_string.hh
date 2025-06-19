@@ -6,6 +6,9 @@
 #ifndef PLUS_OWNSTRING_HH
 #define PLUS_OWNSTRING_HH
 
+// iota
+#include "iota/class.hh"
+
 // plus
 #include "plus/string.hh"
 #include "plus/string_common.hh"
@@ -16,6 +19,8 @@ namespace plus
 	
 	class own_string : public string
 	{
+		NO_NEW_DELETE
+		
 		private:
 			char* mutable_data()  { return const_cast< char* >( string::data() ); }
 			

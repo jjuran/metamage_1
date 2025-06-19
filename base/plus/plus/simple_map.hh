@@ -7,6 +7,7 @@
 #define PLUS_SIMPLEMAP_HH
 
 // iota
+#include "iota/class.hh"
 #include "iota/swap.hh"
 
 
@@ -17,6 +18,8 @@ namespace plus
 	
 	class map_base
 	{
+		NO_NEW_DELETE
+		
 		private:
 			typedef const void*  key_t;
 			typedef void*      (*allocator)();

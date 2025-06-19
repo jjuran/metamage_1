@@ -7,6 +7,7 @@
 #define PLUS_STRING_HH
 
 // iota
+#include "iota/class.hh"
 #include "iota/pascal_string.hh"
 #include "iota/swap.hh"
 
@@ -25,6 +26,8 @@ namespace plus
 	
 	class string
 	{
+		NO_NEW_DELETE
+		
 		public:
 			typedef vxo::datum_movable datum_movable;
 			typedef vxo::delete_policy delete_policy;
