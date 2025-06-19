@@ -17,8 +17,8 @@ namespace sys {
 	bool has_CursorDevices()
 	{
 		/*
-			All Power Macs have the Cursor Device Manager, but it's not
-			available in Carbon
+			All Power Macs have the Cursor Device Manager,
+			but it's not available in Carbon.
 		*/
 		
 	#if TARGET_API_MAC_CARBON
