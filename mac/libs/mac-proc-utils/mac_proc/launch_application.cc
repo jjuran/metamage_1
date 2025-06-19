@@ -27,14 +27,14 @@ OSErr launch_application( ProcessSerialNumber*  psn,
 {
 	LaunchParamBlockRec pb;
 	
-	pb.reserved1			= 0;
-	pb.reserved2			= 0;
-	pb.launchBlockID 		= extendedBlock;
-	pb.launchEPBLength 		= extendedBlockLen;
-	pb.launchFileFlags 		= 0;
-	pb.launchControlFlags	= launchContinue | launchNoFileFlags;
-	pb.launchAppRef  		= const_cast< FSRef* >( &file );
-	pb.launchAppParameters	= params;
+	pb.reserved1           = 0;
+	pb.reserved2           = 0;
+	pb.launchBlockID       = extendedBlock;
+	pb.launchEPBLength     = extendedBlockLen;
+	pb.launchFileFlags     = 0;
+	pb.launchControlFlags  = launchContinue | launchNoFileFlags;
+	pb.launchAppRef        = const_cast< FSRef* >( &file );
+	pb.launchAppParameters = params;
 	
 	OSErr err = LaunchApplication( &pb );
 	
@@ -54,14 +54,14 @@ OSErr launch_application( ProcessSerialNumber*  psn,
 {
 	LaunchParamBlockRec pb;
 	
-	pb.reserved1			= 0;
-	pb.reserved2			= 0;
-	pb.launchBlockID 		= extendedBlock;
-	pb.launchEPBLength 		= extendedBlockLen;
-	pb.launchFileFlags 		= 0;
-	pb.launchControlFlags	= launchContinue | launchNoFileFlags;
-	pb.launchAppSpec 		= const_cast< FSSpec* >( &file );
-	pb.launchAppParameters	= params;
+	pb.reserved1            = 0;
+	pb.reserved2            = 0;
+	pb.launchBlockID        = extendedBlock;
+	pb.launchEPBLength      = extendedBlockLen;
+	pb.launchFileFlags      = 0;
+	pb.launchControlFlags   = launchContinue | launchNoFileFlags;
+	pb.launchAppSpec        = const_cast< FSSpec* >( &file );
+	pb.launchAppParameters  = params;
 	
 	OSErr err = LaunchApplication( &pb );
 	
