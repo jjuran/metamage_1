@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 // iota
+#include "iota/class.hh"
 #include "iota/typed_enum.hh"
 
 // vxo
@@ -82,6 +83,8 @@ namespace vxo
 	
 	class Box
 	{
+		NO_NEW_DELETE
+		
 		protected:
 			vxo_u u;
 			
