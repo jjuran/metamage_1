@@ -6,6 +6,9 @@
 #ifndef LOGOFWAR_REPORT_HH
 #define LOGOFWAR_REPORT_HH
 
+// iota
+#include "iota/class.hh"
+
 // log-of-war
 #include "logofwar/levels.hh"
 #include "logofwar/print.hh"
@@ -24,6 +27,8 @@ namespace logofwar
 	
 		template < class T > line& operator=(T x)  { print( x ); return *this; }
 		template < class T > line& operator,(T x)  { print( x ); return *this; }
+		
+		NO_NEW_DELETE
 	};
 	
 }
