@@ -22,13 +22,10 @@
 #include "mac_sys/gestalt.hh"
 
 
-#if TARGET_CPU_68K
-	Byte CPUFlag : 0x12F;
-	
-	#define IN( reg ) : __##reg
-#else
-	#define IN( reg )  /**/
-#endif
+#define LOWMEM( addr, type )  (*(type*) (addr))
+
+#define CPUFlag  LOWMEM( 0x012F, UInt8 )
+
 
 namespace mac {
 namespace sys {
@@ -56,8 +53,12 @@ struct wakeup_TMTask
 	const ProcessSerialNumber*  psn;
 };
 
+#if TARGET_CPU_68K
+#pragma parameter async_wakeup_proc( __A1 )
+#endif
+
 static pascal
-void async_wakeup_proc( TMTaskPtr task IN( a1 ) )
+void async_wakeup_proc( TMTaskPtr task )
 {
 	if ( wakeup_requested )
 	{
@@ -81,7 +82,7 @@ static wakeup_TMTask the_wakeup_timer =
 };
 
 static pascal
-void deferred_wakeup( long param IN( a1 ) )
+void deferred_wakeup( long param )
 {
 	do
 	{
