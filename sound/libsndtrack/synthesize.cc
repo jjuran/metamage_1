@@ -21,6 +21,9 @@
 #include "synth/square-wave.hh"
 
 
+#pragma exceptions off
+
+
 using sndpipe::set_loudness_level;
 using sndpipe::ftMode_flat_buffer;
 using sndpipe::ftMode_flat_update;

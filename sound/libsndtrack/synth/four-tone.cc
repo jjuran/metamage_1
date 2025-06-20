@@ -16,6 +16,9 @@
 #include "output.hh"
 
 
+#pragma exceptions off
+
+
 // sample indices
 static Fixed si1;
 static Fixed si2;
