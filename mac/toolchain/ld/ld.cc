@@ -84,6 +84,13 @@ namespace tool
 	static const char* gFirstObjectFilePath = NULL;
 	
 	
+	static const char* MWLibs_names[] =
+	{
+		"NoArchitecture",
+		"MW68KLibraries",
+		"MWPPCLibraries",
+	};
+	
 	enum Architecture
 	{
 		arch_none,
@@ -154,9 +161,7 @@ namespace tool
 	
 	static plus::string FindSystemLibrary( const plus::string& libName )
 	{
-		char const* const MWLibs_name = arch == arch_m68k ? "MW68KLibraries"
-		                              : arch == arch_ppc  ? "MWPPCLibraries"
-		                              :                     "NoArchitecture";
+		char const* const MWLibs_name = MWLibs_names[ arch ];
 		
 		const plus::string a = get_Libraries_subdir( MWLibs_name ) / libName;
 		
