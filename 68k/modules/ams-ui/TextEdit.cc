@@ -16,6 +16,9 @@
 #include <TextUtils.h>
 #endif
 
+// iota
+#include "iota/class.hh"
+
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
@@ -48,6 +51,9 @@ Handle TEScrpHandle : 0x0AB4;
 
 class scoped_TERec
 {
+	NON_COPYABLE( scoped_TERec )
+	NO_NEW_DELETE
+	
 	private:
 		GrafPtr     its_port;
 		scoped_port its_port_scope;
@@ -57,10 +63,6 @@ class scoped_TERec
 		short its_face;
 		short its_mode;
 		short its_size;
-		
-		// non-copyable
-		scoped_TERec           ( const scoped_TERec& );
-		scoped_TERec& operator=( const scoped_TERec& );
 	
 	public:
 		scoped_TERec( const TERec& te );

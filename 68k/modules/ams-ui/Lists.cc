@@ -22,6 +22,9 @@
 #include <TextUtils.h>
 #endif
 
+// iota
+#include "iota/class.hh"
+
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
@@ -79,13 +82,12 @@ void calibrate_scroll_bars( ListRec& list )
 
 class List_drawing
 {
+	NON_COPYABLE( List_drawing )
+	NO_NEW_DELETE
+	
 	private:
 		GrafPtr    its_saved_port;
 		RgnHandle  its_saved_clip;
-		
-		// non-copyable
-		List_drawing           ( const List_drawing& );
-		List_drawing& operator=( const List_drawing& );
 		
 		void initialize( const ListRec& list, RgnHandle clipRgn );
 	
