@@ -6,19 +6,20 @@
 #ifndef RELIX_TASK_SYSCALLSTACK_HH
 #define RELIX_TASK_SYSCALLSTACK_HH
 
+// iota
+#include "iota/class.hh"
+
 
 namespace relix
 {
 	
 	class syscall_stack
 	{
+		NON_COPYABLE( syscall_stack )
+		NO_NEW_DELETE
+		
 		public:
 			void* memory;
-		
-		private:
-			// non-copyable
-			syscall_stack           ( const syscall_stack& );
-			syscall_stack& operator=( const syscall_stack& );
 		
 		public:
 			void allocate();

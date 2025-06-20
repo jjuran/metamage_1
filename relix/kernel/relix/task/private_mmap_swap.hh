@@ -6,6 +6,9 @@
 #ifndef RELIX_TASK_PRIVATEMMAPSWAP_HH
 #define RELIX_TASK_PRIVATEMMAPSWAP_HH
 
+// iota
+#include "iota/class.hh"
+
 
 namespace relix
 {
@@ -19,14 +22,13 @@ namespace relix
 	
 	class private_mmap_swap
 	{
+		NON_COPYABLE( private_mmap_swap )
+		NO_NEW_DELETE
+		
 		private:
 			typedef char** Handle;
 			
 			Handle h;
-			
-			// non-copyable
-			private_mmap_swap           ( const private_mmap_swap& );
-			private_mmap_swap& operator=( const private_mmap_swap& );
 		
 		public:
 			private_mmap_swap() : h()

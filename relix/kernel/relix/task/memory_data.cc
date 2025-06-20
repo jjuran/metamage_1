@@ -8,6 +8,9 @@
 // Standard C++
 #include <list>
 
+// iota
+#include "iota/class.hh"
+
 // debug
 #include "debug/assert.hh"
 #include "debug/boost_assert.hh"
@@ -39,6 +42,8 @@ namespace relix
 	{
 		argv its_cmdline;
 		argv its_environ;
+		
+		NO_NEW_DELETE
 	};
 	
 	static void swap( program_parameters& a, program_parameters& b )

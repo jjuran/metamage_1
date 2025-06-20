@@ -6,6 +6,9 @@
 #ifndef RELIX_TASK_MEMORYTRACT_HH
 #define RELIX_TASK_MEMORYTRACT_HH
 
+// iota
+#include "iota/class.hh"
+
 // debug
 #include "debug/boost_assert.hh"
 
@@ -24,6 +27,8 @@ namespace relix
 	
 	class memory_tract
 	{
+		NO_NEW_DELETE
+		
 		private:
 			boost::intrusive_ptr< const vfs::memory_mapping > its_mapping;
 			

@@ -6,6 +6,9 @@
 #ifndef RELIX_API_OSTHREADBOX_HH
 #define RELIX_API_OSTHREADBOX_HH
 
+// iota
+#include "iota/class.hh"
+
 // cthread
 #include "cthread/types.hh"
 
@@ -22,6 +25,8 @@ namespace relix
 	
 	class os_thread_box
 	{
+		NO_NEW_DELETE
+		
 		private:
 			os_thread* its_thread;
 		

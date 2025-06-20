@@ -6,6 +6,9 @@
 #ifndef RELIX_TASK_ARGV_HH
 #define RELIX_TASK_ARGV_HH
 
+// iota
+#include "iota/class.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -18,6 +21,8 @@ namespace relix
 	
 	class argv
 	{
+		NO_NEW_DELETE
+		
 		private:
 			plus::var_string      its_string;
 			vxo::UPtrVec< char >  its_vector;
