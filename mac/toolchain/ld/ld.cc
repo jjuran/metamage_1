@@ -852,35 +852,30 @@ namespace tool
 		
 		if ( arch == arch_m68k  &&  ! gCFM68K )
 		{
+			const char* postlink_argv[] =
+			{
+				NULL,
+				"--",
+				output_pathname,
+				NULL,
+			};
+			
 			if ( gProductType == kProductTool )
 			{
-				const char *const postlink_argv[] =
-				{
-					"postlink-68k-tool",
-					sym ? "--" : "--data-fork",
-					output_pathname,
-					NULL
-				};
+				postlink_argv[ 0 ] = "postlink-68k-tool";
 				
-				p7::execvp( postlink_argv );
+				if ( ! sym )
+				{
+					postlink_argv[ 1 ] = "--data-fork";
+				}
 			}
 			else if ( gProductType == kProductDriverOrDA )
 			{
-				const char *const postlink_argv[] =
-				{
-					"postlink-68k-drvr", output_pathname, NULL
-				};
-				
-				p7::execvp( postlink_argv );
+				postlink_argv[ 0 ] = "postlink-68k-drvr";
 			}
 			else if ( gProductType == kProductCodeResource )
 			{
-				const char *const postlink_argv[] =
-				{
-					"postlink-68k-standalone", output_pathname, NULL
-				};
-				
-				p7::execvp( postlink_argv );
+				postlink_argv[ 0 ] = "postlink-68k-standalone";
 			}
 			else if ( gProductType == kProductApp  &&  ! sym )
 			{
@@ -893,11 +888,11 @@ namespace tool
 					won't be running a source-level debugger there.
 				*/
 				
-				const char *const postlink_argv[] =
-				{
-					"postlink-68k-appl", output_pathname, NULL
-				};
-				
+				postlink_argv[ 0 ] = "postlink-68k-appl";
+			}
+			
+			if ( postlink_argv[ 0 ] )
+			{
 				p7::execvp( postlink_argv );
 			}
 		}
