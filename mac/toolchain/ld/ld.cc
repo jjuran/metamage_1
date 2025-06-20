@@ -25,6 +25,7 @@
 
 // poseven
 #include "poseven/extras/load.hh"
+#include "poseven/extras/splat.hh"
 #include "poseven/functions/basename.hh"
 #include "poseven/functions/execvp.hh"
 #include "poseven/functions/open.hh"
@@ -545,6 +546,16 @@ namespace tool
 		command_args.push_back( StoreMacPathFromPOSIXPath( is_pathname ? arg : FindSystemLibrary( arg ).c_str() ) );
 	}
 	
+	static
+	void fix_newlines( const char* path )
+	{
+		plus::var_string s = p7::load( path );
+		
+		std::replace( s.begin(), s.end(), '\r', '\n' );
+		
+		p7::splat( path, s );
+	}
+	
 	int Main( int argc, char** argv )
 	{
 		CStrVec command_args;
@@ -849,6 +860,8 @@ namespace tool
 		{
 			return exit_status;
 		}
+		
+		fix_newlines( plus::concat( output_pathname, ".map" ).c_str() );
 		
 		if ( arch == arch_m68k  &&  ! gCFM68K )
 		{
