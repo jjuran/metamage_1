@@ -143,11 +143,14 @@ Boolean lock_timer()
 	
 #if TARGET_CPU_68K
 	
-	const Byte cpu68000 = 0;
+	const Byte cpu68020 = 2;
 	
-	if ( CPUFlag == cpu68000 )
+	if ( CPUFlag < cpu68020 )
 	{
-		// 68000 only
+		/*
+			For the 68000 and 68010:  We lack the CAS instruction
+			needed for OTCompareAndSwapPtr(), so use TAS instead.
+		*/
 		
 		register Boolean acquired = false;  // Initialize to squelch warning
 		
