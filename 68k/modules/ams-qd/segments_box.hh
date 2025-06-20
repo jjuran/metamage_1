@@ -6,16 +6,17 @@
 #ifndef SEGMENTSBOX_HH
 #define SEGMENTSBOX_HH
 
+// iota
+#include "iota/class.hh"
+
 // quickdraw
 #include "qd/segments.hh"
 
 
 class segments_box : public quickdraw::segments_box
 {
-	private:
-		// non-copyable
-		segments_box           ( const segments_box& );
-		segments_box& operator=( const segments_box& );
+	NON_COPYABLE( segments_box )
+	NO_NEW_DELETE
 	
 	public:
 		explicit segments_box( size_t capacity );  // bytes
