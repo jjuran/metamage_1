@@ -15,6 +15,9 @@
 #include <Sound.h>
 #endif
 
+// iota
+#include "iota/class.hh"
+
 // mac-config
 #include "mac_config/upp-macros.hh"
 
@@ -80,10 +83,8 @@ DEFINE_UPP( SndCallBack, sound_callback )
 
 class SoundManager_client
 {
-	private:
-		// non-copyable
-		SoundManager_client           ( const SoundManager_client& );
-		SoundManager_client& operator=( const SoundManager_client& );
+	NON_COPYABLE( SoundManager_client )
+	NO_NEW_DELETE
 	
 	public:
 		SoundManager_client();
