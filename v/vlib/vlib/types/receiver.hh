@@ -6,6 +6,9 @@
 #ifndef VLIB_TYPES_RECEIVER_HH
 #define VLIB_TYPES_RECEIVER_HH
 
+// iota
+#include "iota/class.hh"
+
 // vlib
 #include "vlib/value.hh"
 
@@ -20,6 +23,8 @@ namespace vlib
 	
 	class Receiver : public Value
 	{
+		NO_NEW_DELETE
+		
 		public:
 			static bool test( const Value& v )
 			{

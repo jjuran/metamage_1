@@ -70,10 +70,8 @@ namespace vlib
 	
 	class gc_lock
 	{
-		private:
-			// non-copyable
-			gc_lock           ( const gc_lock& );
-			gc_lock& operator=( const gc_lock& );
+		NON_COPYABLE( gc_lock )
+		NO_NEW_DELETE
 		
 		public:
 			gc_lock()   { GC_MUTEX( lock   ); }
@@ -302,6 +300,8 @@ namespace vlib
 		{
 			cull_unreachable_objects();
 		}
+		
+		NO_NEW_DELETE
 	};
 	
 	static garbage_collector gc;

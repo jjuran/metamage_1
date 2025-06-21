@@ -9,6 +9,9 @@
 // Standard C
 #include <stdint.h>
 
+// iota
+#include "iota/class.hh"
+
 // vxo
 #include "vxo/datum_storage.hh"
 
@@ -87,6 +90,8 @@ namespace vlib
 	
 	class vbox
 	{
+		NO_NEW_DELETE
+		
 		private:
 			vu u;
 		

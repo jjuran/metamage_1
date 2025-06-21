@@ -6,6 +6,9 @@
 #ifndef VLIB_DYAD_HH
 #define VLIB_DYAD_HH
 
+// iota
+#include "iota/class.hh"
+
 // bignum
 #include "bignum/integer.hh"
 
@@ -31,6 +34,8 @@ namespace vlib
 		}
 		
 		void swap( dyad& b );
+		
+		NO_NEW_DELETE
 	};
 	
 	inline void swap( dyad& a, dyad& b )

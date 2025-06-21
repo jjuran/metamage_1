@@ -7,6 +7,7 @@
 #define VLIB_VALUE_HH
 
 // iota
+#include "iota/class.hh"
 #include "iota/typed_enum.hh"
 
 // plus
@@ -79,6 +80,8 @@ namespace vlib
 	
 	class Value
 	{
+		NO_NEW_DELETE
+		
 		private:
 			const dispatch*  its_dispatch;
 			vbox             its_box;

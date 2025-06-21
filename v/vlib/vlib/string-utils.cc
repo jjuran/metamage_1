@@ -11,6 +11,9 @@
 // more-libc
 #include "more/string.h"
 
+// iota
+#include "iota/class.hh"
+
 // debug
 #include "debug/assert.hh"
 
@@ -234,6 +237,8 @@ namespace vlib
 	
 	class string_maker
 	{
+		NO_NEW_DELETE
+		
 		private:
 			Array_of_String its_cache;
 			

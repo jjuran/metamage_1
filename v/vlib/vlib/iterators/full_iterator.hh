@@ -6,6 +6,9 @@
 #ifndef VLIB_ITERATORS_FULLITERATOR_HH
 #define VLIB_ITERATORS_FULLITERATOR_HH
 
+// iota
+#include "iota/class.hh"
+
 // vxo
 #include "vxo/ptrvec.hh"
 
@@ -17,6 +20,8 @@ namespace vlib
 	
 	class full_iterator
 	{
+		NO_NEW_DELETE
+		
 		private:
 			vxo::UPtrVec< const Value > its_stack;
 		

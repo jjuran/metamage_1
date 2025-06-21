@@ -6,6 +6,9 @@
 #ifndef VLIB_INFLIGHT_HH
 #define VLIB_INFLIGHT_HH
 
+// iota
+#include "iota/class.hh"
+
 // vlib
 #include "vlib/tracker.hh"
 #include "vlib/value.hh"
@@ -16,6 +19,8 @@ namespace vlib
 	
 	class Value_in_flight
 	{
+		NO_NEW_DELETE
+		
 		private:
 			Value its_value;
 			

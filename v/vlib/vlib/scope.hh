@@ -6,6 +6,9 @@
 #ifndef VLIB_SCOPE_HH
 #define VLIB_SCOPE_HH
 
+// iota
+#include "iota/class.hh"
+
 // vlib
 #include "vlib/symbol_table.hh"
 #include "vlib/value.hh"
@@ -45,14 +48,12 @@ namespace vlib
 	
 	class lexical_scope_box
 	{
+		NON_COPYABLE( lexical_scope_box )
+		NO_NEW_DELETE
+		
 		private:
 			lexical_scope* its_bottom_scope;
 			lexical_scope* its_lexical_scope;
-		
-		private:
-			// non-copyable
-			lexical_scope_box           ( const lexical_scope_box& );
-			lexical_scope_box& operator=( const lexical_scope_box& );
 		
 		public:
 			lexical_scope_box( lexical_scope* parent = NULL )

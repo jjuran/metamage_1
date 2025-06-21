@@ -6,6 +6,9 @@
 #ifndef VLIB_RETURN_HH
 #define VLIB_RETURN_HH
 
+// iota
+#include "iota/class.hh"
+
 // vlib
 #include "vlib/in-flight.hh"
 #include "vlib/source.hh"
@@ -25,6 +28,8 @@ namespace vlib
 			source( src )
 		{
 		}
+		
+		NO_NEW_DELETE
 	};
 	
 }

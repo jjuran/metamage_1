@@ -6,6 +6,9 @@
 #ifndef VLIB_ITERATORS_LISTBUILDER_HH
 #define VLIB_ITERATORS_LISTBUILDER_HH
 
+// iota
+#include "iota/class.hh"
+
 // vlib
 #include "vlib/value.hh"
 
@@ -15,6 +18,8 @@ namespace vlib
 	
 	class list_builder
 	{
+		NO_NEW_DELETE
+		
 		private:
 			Value   its_list;
 			Value*  its_mark;

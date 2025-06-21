@@ -6,6 +6,9 @@
 #ifndef VLIB_ITERATORS_LISTITERATOR_HH
 #define VLIB_ITERATORS_LISTITERATOR_HH
 
+// iota
+#include "iota/class.hh"
+
 // vlib
 #include "vlib/value.hh"
 
@@ -15,6 +18,8 @@ namespace vlib
 	
 	class list_iterator
 	{
+		NO_NEW_DELETE
+		
 		private:
 			typedef const struct unspecified* boolean;
 			

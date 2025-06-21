@@ -6,6 +6,9 @@
 #ifndef VLIB_TRACKER_HH
 #define VLIB_TRACKER_HH
 
+// iota
+#include "iota/class.hh"
+
 
 namespace vlib
 {
@@ -24,12 +27,11 @@ namespace vlib
 	
 	class scoped_root
 	{
+		NON_COPYABLE( scoped_root )
+		NO_NEW_DELETE
+		
 		private:
 			const Value& its_root;
-			
-			// non-copyable
-			scoped_root           ( const scoped_root& );
-			scoped_root& operator=( const scoped_root& );
 		
 		public:
 			scoped_root( const Value& root ) : its_root( root )

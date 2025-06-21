@@ -9,6 +9,9 @@
 // Standard C++
 #include <vector>
 
+// iota
+#include "iota/class.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -27,6 +30,8 @@ namespace vlib
 	
 	class symbol_table
 	{
+		NO_NEW_DELETE
+		
 		private:
 			Symbols its_symbols;
 		

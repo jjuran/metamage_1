@@ -11,6 +11,9 @@
 // Standard C++
 #include <vector>
 
+// iota
+#include "iota/class.hh"
+
 // debug
 #include "debug/assert.hh"
 
@@ -165,6 +168,8 @@ namespace vlib
 	
 	class Parser
 	{
+		NO_NEW_DELETE
+		
 		private:
 			typedef std::vector< dyad > Stack;
 			

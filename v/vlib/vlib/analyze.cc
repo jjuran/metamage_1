@@ -5,6 +5,9 @@
 
 #include "vlib/analyze.hh"
 
+// iota
+#include "iota/class.hh"
+
 // debug
 #include "debug/assert.hh"
 
@@ -257,6 +260,8 @@ namespace vlib
 	
 	class Analyzer
 	{
+		NO_NEW_DELETE
+		
 		private:
 			lexical_scope_box its_scope;
 			

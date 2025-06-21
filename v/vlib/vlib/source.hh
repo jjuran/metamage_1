@@ -6,6 +6,9 @@
 #ifndef VLIB_SOURCE_HH
 #define VLIB_SOURCE_HH
 
+// iota
+#include "iota/class.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -15,6 +18,8 @@ namespace vlib
 	
 	class source_spec
 	{
+		NO_NEW_DELETE
+		
 		private:
 			plus::string  its_file;
 			unsigned      its_line;

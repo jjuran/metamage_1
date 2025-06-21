@@ -6,6 +6,9 @@
 #ifndef VLIB_TOKEN_HH
 #define VLIB_TOKEN_HH
 
+// iota
+#include "iota/class.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -28,6 +31,8 @@ namespace vlib
 		}
 		
 		operator token_type() const  { return type; }
+		
+		NO_NEW_DELETE
 	};
 	
 	token_type next_token( const char*& p, Token& result );

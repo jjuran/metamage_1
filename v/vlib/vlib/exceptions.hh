@@ -6,6 +6,9 @@
 #ifndef VLIB_EXCEPTIONS_HH
 #define VLIB_EXCEPTIONS_HH
 
+// iota
+#include "iota/class.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -24,6 +27,8 @@ namespace vlib
 		transfer_via_break( const source_spec& src ) : source( src )
 		{
 		}
+		
+		NO_NEW_DELETE
 	};
 	
 	struct transfer_via_continue
@@ -33,6 +38,8 @@ namespace vlib
 		transfer_via_continue( const source_spec& src ) : source( src )
 		{
 		}
+		
+		NO_NEW_DELETE
 	};
 	
 	struct language_error
@@ -46,6 +53,8 @@ namespace vlib
 			source( src )
 		{
 		}
+		
+		NO_NEW_DELETE
 	};
 	
 	struct user_exception
@@ -59,6 +68,8 @@ namespace vlib
 			source( src )
 		{
 		}
+		
+		NO_NEW_DELETE
 	};
 	
 	struct invalid_token_error
@@ -72,6 +83,8 @@ namespace vlib
 			source( src )
 		{
 		}
+		
+		NO_NEW_DELETE
 	};
 	
 	struct undeclared_symbol_error
@@ -85,6 +98,8 @@ namespace vlib
 			source( src )
 		{
 		}
+		
+		NO_NEW_DELETE
 	};
 	
 }

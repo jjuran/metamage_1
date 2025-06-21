@@ -5,6 +5,9 @@
 
 #include "vlib/execute.hh"
 
+// iota
+#include "iota/class.hh"
+
 // debug
 #include "debug/assert.hh"
 
@@ -43,12 +46,11 @@ namespace vlib
 	
 	class gc_cleanup
 	{
+		NON_COPYABLE( gc_cleanup )
+		NO_NEW_DELETE
+		
 		private:
 			const Value& its_symbol_list;
-			
-			// non-copyable
-			gc_cleanup           ( const gc_cleanup& );
-			gc_cleanup& operator=( const gc_cleanup& );
 		
 		public:
 			gc_cleanup( const Value& symlist ) : its_symbol_list( symlist )
@@ -209,12 +211,11 @@ namespace vlib
 	
 	class temporary
 	{
+		NON_COPYABLE( temporary )
+		NO_NEW_DELETE
+		
 		private:
 			Value& its_location;
-			
-			// non-copyable
-			temporary           ( const temporary& );
-			temporary& operator=( const temporary& );
 		
 		public:
 			temporary( Value& location )
