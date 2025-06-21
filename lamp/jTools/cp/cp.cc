@@ -23,6 +23,9 @@
 #include "relix/pump.h"
 
 
+#pragma exceptions off
+
+
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
