@@ -29,6 +29,9 @@
 #include "Volumes.hh"
 
 
+#pragma exceptions off
+
+
 enum
 {
 	kHFSFlagMask = 0x0200,

@@ -19,6 +19,9 @@
 #include "scoped_zone.hh"
 
 
+#pragma exceptions off
+
+
 struct logical_block
 {
 	uint8_t bytes[ 512 ];

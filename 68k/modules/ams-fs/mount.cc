@@ -21,6 +21,9 @@
 #include "macbinary.hh"
 
 
+#pragma exceptions off
+
+
 VCB* DefVCBPtr : 0x0352;
 QHdr VCBQHdr   : 0x0356;
 

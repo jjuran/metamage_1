@@ -21,6 +21,9 @@
 #include "c_string.hh"
 
 
+#pragma exceptions off
+
+
 enum
 {
 	kHFSFlagMask = 0x0200,

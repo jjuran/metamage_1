@@ -20,6 +20,9 @@
 #include "freemount.hh"
 
 
+#pragma exceptions off
+
+
 int appfs_fd;
 
 static const plus::string data_path = "data";

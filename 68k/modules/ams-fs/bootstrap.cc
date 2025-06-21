@@ -25,6 +25,9 @@
 #include "remotefs.hh"
 
 
+#pragma exceptions off
+
+
 #define STRLEN( s )      (sizeof "" s - 1)
 #define STR_LEN( s )  s, (sizeof "" s - 1)
 
