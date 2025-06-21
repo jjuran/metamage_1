@@ -20,6 +20,9 @@
 #include "callouts.hh"
 
 
+#pragma exceptions off
+
+
 enum
 {
 	kCompressedResourceSignature = 0xA89F6572,
