@@ -68,6 +68,13 @@ short divs_3( long x : __D0 )
 	DIVS.W   #3,D0
 }
 
+static inline
+asm
+UInt32 divmodu_10( UInt32 x : __D0 )
+{
+	DIVU.W   #10,D0
+}
+
 void SysError_patch( short error : __D0 )
 {
 	using math::fractions::half;
@@ -157,8 +164,10 @@ void SysError_patch( short error : __D0 )
 		
 		unsigned char id[] = "\p" "ID = 00";
 		
-		id[ 6 ] += error / 10;
-		id[ 7 ] += error % 10;
+		UInt32 div_mod_10 = divmodu_10( error );
+		
+		id[ 6 ] += div_mod_10;        // quotient
+		id[ 7 ] += div_mod_10 >> 16;  // remainder
 		
 		DrawString( id );
 	}
