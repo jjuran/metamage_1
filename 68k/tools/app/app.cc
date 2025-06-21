@@ -21,6 +21,9 @@
 #include "conv/mac_utf8.hh"
 
 
+#pragma exceptions off
+
+
 struct LaunchParamBlockRec
 {
 	void* appName;
@@ -57,7 +60,7 @@ int main( int argc, char** argv )
 		return 0;
 	}
 	
-	using conv::mac_from_utf8;
+	using conv::mac_from_utf8_nothrow;
 	
 	const char* path = argv[ 1 ];
 	
@@ -70,7 +73,7 @@ int main( int argc, char** argv )
 	
 	Byte appName[ 33 ];
 	
-	size_t n = mac_from_utf8( (char*) appName + 1, 32, path, len );
+	size_t n = mac_from_utf8_nothrow( (char*) appName + 1, 32, path, len );
 	
 	if ( n > 31 )
 	{
