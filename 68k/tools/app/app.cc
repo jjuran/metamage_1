@@ -70,14 +70,14 @@ int main( int argc, char** argv )
 	
 	Str31 appName;
 	
-	size_t n_utf8_bytes = mac_from_utf8( (char*) appName + 1, 31, path, len );
+	size_t n = mac_from_utf8( (char*) appName + 1, 31, path, len );
 	
-	if ( n_utf8_bytes > 31 )
+	if ( n > 31 )
 	{
 		return 2;
 	}
 	
-	appName[ 0 ] = n_utf8_bytes;
+	appName[ 0 ] = n;
 	
 	LaunchParamBlockRec pb = { appName };
 	
