@@ -20,6 +20,9 @@
 #include "math/fractions.hh"
 
 
+#pragma exceptions off
+
+
 BitMap IconBitmap : 0x0A0E;
 
 static const UInt32 icon[] =
