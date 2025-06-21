@@ -61,6 +61,13 @@ static const UInt32 icon[] =
 	0x03f80000,
 };
 
+static inline
+asm
+short divs_3( long x : __D0 )
+{
+	DIVS.W   #3,D0
+}
+
 void SysError_patch( short error : __D0 )
 {
 	using math::fractions::half;
@@ -77,8 +84,8 @@ void SysError_patch( short error : __D0 )
 	
 	OpenPort( &port );
 	
-	short left = half(port.portRect.right  - width );
-	short top  =     (port.portRect.bottom - height) / 3 - 4;
+	short left = half  ( port.portRect.right  - width  );
+	short top  = divs_3( port.portRect.bottom - height ) - 4;
 	
 	Rect bounds = port.portRect;
 	
