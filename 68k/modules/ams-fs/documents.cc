@@ -27,6 +27,9 @@
 #include "remotefs.hh"
 
 
+#pragma exceptions off
+
+
 #define STRLEN( s )      (sizeof "" s - 1)
 #define STR_LEN( s )  s, (sizeof "" s - 1)
 
@@ -209,11 +212,11 @@ OSErr documents_SetFileInfo( HFileParam* pb, const uint8_t* name )
 	fast_memcpy( path, name, len );
 	fast_memcpy( path + len, STR_LEN( "/" SETFINFO ) );
 	
-	plus::string pathname( path, len + STRLEN( "/" SETFINFO ) );
+	plus::string pathname( path, len + STRLEN( "/" SETFINFO ), vxo::delete_never );
 	
 	const Size size = sizeof (FileParam) - offsetof( FileParam, ioFlFndrInfo );
 	
-	plus::string file_info( (char*) &pb->ioFlFndrInfo, size );
+	plus::string file_info( (Ptr) &pb->ioFlFndrInfo, size, vxo::delete_never );
 	
 	int err = try_to_put( docfs_fd, pathname, file_info );
 	
