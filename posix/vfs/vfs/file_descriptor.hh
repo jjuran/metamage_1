@@ -6,6 +6,9 @@
 #ifndef VFS_FILEDESCRIPTOR_HH
 #define VFS_FILEDESCRIPTOR_HH
 
+// iota
+#include "iota/class.hh"
+
 // vfs
 #include "vfs/filehandle_ptr.hh"
 
@@ -41,6 +44,8 @@ namespace vfs
 		{
 			close_on_exec = will_close;
 		}
+		
+		NO_NEW_DELETE
 	};
 	
 	inline void swap( file_descriptor& a, file_descriptor& b )

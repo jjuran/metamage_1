@@ -9,6 +9,9 @@
 // POSIX
 #include <sys/types.h>
 
+// iota
+#include "iota/class.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -30,6 +33,8 @@ namespace vfs
 		}
 		
 		~dir_entry();
+		
+		NO_NEW_DELETE
 	};
 	
 }

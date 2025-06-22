@@ -6,6 +6,9 @@
 #ifndef VFS_DIRCONTENTSBOX_HH
 #define VFS_DIRCONTENTSBOX_HH
 
+// iota
+#include "iota/class.hh"
+
 
 namespace vfs
 {
@@ -14,6 +17,8 @@ namespace vfs
 	
 	class dir_contents_box
 	{
+		NO_NEW_DELETE
+		
 		private:
 			dir_contents* its_contents;
 		
