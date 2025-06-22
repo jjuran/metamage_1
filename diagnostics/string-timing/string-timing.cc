@@ -12,6 +12,7 @@
 #include <string>
 
 // iota
+#include "iota/class.hh"
 #include "iota/strings.hh"
 
 // compat
@@ -62,6 +63,9 @@ static int i;
 
 class timer
 {
+	NON_COPYABLE( timer )
+	NO_NEW_DELETE
+	
 	private:
 		const char* const its_name;
 		
