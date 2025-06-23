@@ -80,7 +80,7 @@ namespace vfs
 					
 					To mitigate, set the file permissions to zero.  This does
 					two things:  It prevents all access except by privileged
-					users, and it prevents users from inadvertantly executing
+					users, and it prevents users from inadvertently executing
 					the file.
 				*/
 				
@@ -101,7 +101,7 @@ namespace vfs
 		}
 	}
 	
-	static void posix_stat( const node*     that,
+	static void posix_stat( const node*   that,
 	                        struct stat&  sb )
 	{
 		posix_extra& extra = *(posix_extra*) that->extra();
