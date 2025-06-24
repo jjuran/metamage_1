@@ -16,6 +16,21 @@
 namespace vlib
 {
 	
+	lexical_scope_box::~lexical_scope_box()
+	{
+		lexical_scope* scope = its_lexical_scope;
+		
+		do
+		{
+			lexical_scope* parent = scope->parent();
+			
+			delete scope;
+			
+			scope = parent;
+		}
+		while ( scope != its_bottom_scope );
+	}
+	
 	const Value& lexical_scope::resolve( const plus::string& name, int depth )
 	{
 		if ( const Value& sym = locate_keyword( name ) )
