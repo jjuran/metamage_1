@@ -68,9 +68,9 @@ int main( int argc, char** argv )
 	InitResources();
 	InitAllPacks();
 	
-	Str31 appName;
+	Byte appName[ 33 ];
 	
-	size_t n = mac_from_utf8( (char*) appName + 1, 31, path, len );
+	size_t n = mac_from_utf8( (char*) appName + 1, 32, path, len );
 	
 	if ( n > 31 )
 	{
