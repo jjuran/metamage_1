@@ -6,6 +6,9 @@
 #ifndef VARYX_POSIX_FILEDESCRIPTOR_HH
 #define VARYX_POSIX_FILEDESCRIPTOR_HH
 
+// iota
+#include "iota/class.hh"
+
 // vlib
 #include "vlib/value.hh"
 
@@ -57,6 +60,8 @@ namespace posix
 	
 	class FileDescriptor : public Value
 	{
+		NO_NEW_DELETE
+		
 		public:
 			static bool test( const Value& v )
 			{

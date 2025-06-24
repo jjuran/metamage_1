@@ -6,6 +6,9 @@
 #ifndef VARYX_POSIX_THREADSTATE_HH
 #define VARYX_POSIX_THREADSTATE_HH
 
+// iota
+#include "iota/class.hh"
+
 // poseven
 #include "poseven/types/thread.hh"
 
@@ -34,6 +37,8 @@ namespace posix
 		Value result;
 		
 		thread_status status;
+		
+		NO_NEW_DELETE
 	};
 	
 	class thread_state

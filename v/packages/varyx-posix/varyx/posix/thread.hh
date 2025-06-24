@@ -6,6 +6,9 @@
 #ifndef VARYX_POSIX_THREAD_HH
 #define VARYX_POSIX_THREAD_HH
 
+// iota
+#include "iota/class.hh"
+
 // vlib
 #include "vlib/value.hh"
 
@@ -33,6 +36,8 @@ namespace posix
 	
 	class Thread : public Value
 	{
+		NO_NEW_DELETE
+		
 		public:
 			static bool test( const Value& v )
 			{

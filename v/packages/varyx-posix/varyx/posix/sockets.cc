@@ -10,6 +10,9 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
+// iota
+#include "iota/class.hh"
+
 // vlib
 #include "vlib/types.hh"
 #include "vlib/iterators/list_iterator.hh"
@@ -40,12 +43,11 @@ namespace posix
 	
 	class addrinfo_cleanup
 	{
+		NON_COPYABLE( addrinfo_cleanup )
+		NO_NEW_DELETE
+		
 		private:
 			addrinfo* its_ai;
-			
-			// non-copyable
-			addrinfo_cleanup           ( const addrinfo_cleanup& );
-			addrinfo_cleanup& operator=( const addrinfo_cleanup& );
 		
 		public:
 			addrinfo_cleanup( addrinfo* ai ) : its_ai( ai )
