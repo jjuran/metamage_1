@@ -107,8 +107,8 @@ namespace vlib
 			:
 				its_dispatch( d ),
 				its_box( type,
-				         !! 1 << Flag_cycle_free |
-				         !! d << Flag_evaluated )
+				         1 << Flag_cycle_free |
+				         1 << Flag_evaluated )
 			{
 			}
 			
