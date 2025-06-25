@@ -314,8 +314,12 @@ curve25519_square_times(bignum25519 out, const bignum25519 in, int count) {
 /* Take a little-endian, 32-byte number and expand it into polynomial form */
 static void
 curve25519_expand(bignum25519 out, const unsigned char in[32]) {
+#if defined( __MC68K__ )  ||  defined( __POWERPC__ )
+	const uint8_t le = 0;
+#else
 	const uint16_t s = 1;
 	const uint8_t le = *(const uint8_t*) &s;
+#endif
 	uint32_t x0,x1,x2,x3,x4,x5,x6,x7;
 
 	if (le) {
