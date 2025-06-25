@@ -43,6 +43,7 @@ void Box::unshare_extent()
 	}
 }
 
+inline
 void Box::destroy_extent()
 {
 	if ( subtype_byte() >= Box_container )
