@@ -37,6 +37,7 @@ namespace bignum
 	using vxo::extent_area;
 	
 	
+	inline
 	void ibox::destroy_extent()
 	{
 		extent_release( (char*) its.pointer );
