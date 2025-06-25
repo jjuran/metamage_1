@@ -64,6 +64,51 @@ namespace vlib
 		}
 	}
 	
+	Value::Value( value_type type, const dispatch* d )
+	:
+		its_dispatch( d ),
+		its_box( type,
+		         1 << Flag_cycle_free |
+		         1 << Flag_evaluated )
+	{
+	}
+	
+	Value::Value( value_type type )
+	:
+		its_dispatch( NULL ),
+		its_box( type,
+		         1 << Flag_cycle_free |
+		         1 << Flag_evaluated )
+	{
+	}
+	
+	Value::Value( const vu_ibox& ix, value_type type, const dispatch* d )
+	:
+		its_box( ix,
+		         type,
+		         1 << Flag_cycle_free |
+		         1 << Flag_evaluated )
+	{
+		its_dispatch = d;
+	}
+	
+	Value::Value( const vu_string& sx, value_type type, const dispatch* d )
+	:
+		its_box( sx, type, 1 << Flag_cycle_free )
+	{
+		its_dispatch = d;
+	}
+	
+	Value::Value( const type_info& type, const dispatch* d )
+	:
+		its_box( &type,
+		         Value_base_type,
+		         !! 1 << Flag_cycle_free |
+		         !! d << Flag_evaluated )
+	{
+		its_dispatch = d;
+	}
+	
 	Value::Value( const Value& a, const Value& b )
 	:
 		its_box( sizeof (Expr), &pair_destructor, NULL, Value_pair )
