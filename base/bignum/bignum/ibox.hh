@@ -81,15 +81,7 @@ namespace bignum
 			bool has_extent() const  { return its.size != 0; }
 			
 			void destroy_extent();
-			
-			void destroy()
-			{
-				if ( has_extent() )
-				{
-					destroy_extent();
-				}
-			}
-			
+			void destroy();
 			void unshare();
 			
 			void construct( unsigned long i )
@@ -129,10 +121,7 @@ namespace bignum
 			void shrink_to_fit();
 		
 		public:
-			~ibox()
-			{
-				destroy();
-			}
+			~ibox();
 			
 			ibox()
 			{

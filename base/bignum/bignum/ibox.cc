@@ -42,6 +42,15 @@ namespace bignum
 		extent_release( (char*) its.pointer );
 	}
 	
+	inline
+	void ibox::destroy()
+	{
+		if ( has_extent() )
+		{
+			destroy_extent();
+		}
+	}
+	
 	void ibox::unshare()
 	{
 		if ( has_extent() )
@@ -100,6 +109,11 @@ namespace bignum
 		its.pointer = (ptr_t) extent;
 		its.size    = n;
 		its.sign    = sign;
+	}
+	
+	ibox::~ibox()
+	{
+		destroy();
 	}
 	
 	ibox::ibox( long long i )
