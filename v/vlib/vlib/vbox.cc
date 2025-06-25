@@ -17,11 +17,14 @@ namespace vlib
 	
 	const int vbox_inline_size = sizeof (vu_string) - 1;
 	
-	void vbox::destroy_extent()
+	vbox::~vbox()
 	{
-		vxo::extent_release( u.alloc.pointer );
-		
-		u.alloc.type = 0;
+		if ( has_extent() )
+		{
+			vxo::extent_release( u.alloc.pointer );
+			
+			u.alloc.type = 0;
+		}
 	}
 	
 	void vbox::secret() const

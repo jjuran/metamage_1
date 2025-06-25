@@ -95,19 +95,8 @@ namespace vlib
 		private:
 			vu u;
 		
-		private:
-			void destroy_extent();
-			
-			void destroy()
-			{
-				if ( has_extent() )
-				{
-					destroy_extent();
-				}
-			}
-		
 		public:
-			~vbox()  { destroy(); }
+			~vbox();
 			
 			vbox( char semantics = 0, short flags = 0 )
 			{
