@@ -14,6 +14,9 @@
 #include "logofwar/report.hh"
 
 
+#pragma exceptions off
+
+
 enum
 {
 	_StdText    = 0xA882,
