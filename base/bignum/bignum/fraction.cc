@@ -18,6 +18,10 @@ namespace bignum
 	using math::integer::cmp_t;
 	
 	
+	fraction::~fraction()
+	{
+	}
+	
 	void fraction::reduce()
 	{
 		if ( its_numer.is_zero() )

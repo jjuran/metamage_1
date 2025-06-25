@@ -12,6 +12,10 @@
 namespace bignum
 {
 	
+	integer::~integer()
+	{
+	}
+	
 	integer& integer::operator+=( const integer& y )
 	{
 		integer& x = *this;

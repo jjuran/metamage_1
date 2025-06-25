@@ -43,6 +43,8 @@ namespace bignum
 			ibox box;
 		
 		public:
+			~integer();
+			
 			integer() : box()
 			{
 			}

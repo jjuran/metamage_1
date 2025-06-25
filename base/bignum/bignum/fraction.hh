@@ -38,6 +38,8 @@ namespace bignum
 				return fraction( integer( numer ) );
 			}
 			
+			~fraction();
+			
 			fraction() : its_denom( 1 )
 			{
 			}
