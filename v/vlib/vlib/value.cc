@@ -26,6 +26,10 @@ namespace vlib
 	const Value empty_list    = Value_empty_list;
 	const Value empty_array   = Value_empty_array;
 	
+	Value::~Value()
+	{
+	}
+	
 	void pair_destructor( void* pointer )
 	{
 		Expr* expr = (Expr*) pointer;

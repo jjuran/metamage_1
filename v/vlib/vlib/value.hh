@@ -158,6 +158,8 @@ namespace vlib
 			}
 			
 		public:
+			~Value();
+			
 			template < class T >
 			T const& pod_cast() const
 			{
