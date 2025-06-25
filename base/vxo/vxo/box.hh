@@ -103,14 +103,7 @@ namespace vxo
 		private:
 			void unshare_extent();
 			void destroy_extent();
-			
-			void destroy()
-			{
-				if ( has_extent() )
-				{
-					destroy_extent();
-				}
-			}
+			void destroy();
 		
 		public:
 			~Box()  { destroy(); }

@@ -65,6 +65,14 @@ void Box::destroy_extent()
 	set_control_byte( 0 );
 }
 
+void Box::destroy()
+{
+	if ( has_extent() )
+	{
+		destroy_extent();
+	}
+}
+
 Box::Box( const Box& that )
 {
 	u = that.u;
