@@ -118,6 +118,14 @@ namespace plus
 	}
 	
 	
+	string::~string()
+	{
+		if ( has_dynamic_extent( store ) )
+		{
+			::vxo::destroy( store );  // disambiguate for CW Pro 4
+		}
+	}
+	
 	string::string( const char*    p,
 	                size_type      length,
 	                delete_policy  policy,

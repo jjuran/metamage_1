@@ -82,6 +82,8 @@ namespace plus
 			
 			static const string null;
 			
+			~string();
+			
 			string()
 			{
 				construct_from_default( store );
@@ -96,14 +98,6 @@ namespace plus
 			string( const char* s );
 			
 			string( size_type n, char c );
-			
-			~string()
-			{
-				if ( has_dynamic_extent( store ) )
-				{
-					::vxo::destroy( store );  // disambiguate for CW Pro 4
-				}
-			}
 			
 			string( datum_movable& m )
 			{
