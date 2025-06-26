@@ -36,6 +36,8 @@ namespace vlib
 			Symbols its_symbols;
 		
 		public:
+			~symbol_table();
+			
 			void define_constant( const char* name, const Value& v );
 			
 			int offset( const plus::string& name ) const;

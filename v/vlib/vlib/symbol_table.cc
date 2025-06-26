@@ -16,6 +16,10 @@ namespace vlib
 	static symbol_table keyword_symbol_table;
 	
 	
+	symbol_table::~symbol_table()
+	{
+	}
+	
 	void symbol_table::define_constant( const char* name, const Value& v )
 	{
 		Constant constant( name );
