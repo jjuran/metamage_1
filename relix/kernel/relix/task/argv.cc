@@ -8,14 +8,8 @@
 // Standard C
 #include <string.h>
 
-// Standard C++
-#include <algorithm>
-
 // more-libc
 #include "more/string.h"
-
-// debug
-#include "debug/assert.hh"
 
 
 namespace relix
@@ -39,49 +33,6 @@ namespace relix
 		return size;
 	}
 	
-	static
-	void flatten_argv( plus::var_string& result, char const *const *argv )
-	{
-		unsigned size = sizeof_argv_strings( argv );
-		
-		char* q = result.reset( size );
-		
-		// Check for NULL environ
-		
-		if ( argv != NULL )
-		{
-			while ( *argv )
-			{
-				const char* p = *argv++;
-				
-				unsigned n = strlen( p ) + 1;  // include trailing NUL
-				
-				q = (char*) mempcpy( q, p, n );
-			}
-		}
-	}
-	
-	static void assign_unflattened_argv( vxo::UPtrVec< char >& result, plus::var_string& flat )
-	{
-		result.clear();
-		
-		char* begin = &*flat.begin();
-		char* end   = &*flat.end();
-		
-		while ( begin < end )
-		{
-			char* null = std::find( begin, end, '\0' );
-			
-			ASSERT( null != end );
-			
-			result.push_back( begin );
-			
-			begin = null + 1;
-		}
-		
-		result.push_back( NULL );
-	}
-	
 	
 	argv::argv()
 	{
@@ -96,9 +47,27 @@ namespace relix
 	
 	argv& argv::assign( const char *const *args )
 	{
-		flatten_argv( its_string, args );
+		unsigned size = sizeof_argv_strings( args );
 		
-		assign_unflattened_argv( its_vector, its_string );
+		char* q = its_string.reset( size );
+		
+		its_vector.clear();
+		
+		// Check for NULL environ
+		
+		if ( args != NULL )
+		{
+			while ( const char* p = *args++ )
+			{
+				its_vector.push_back( q );
+				
+				unsigned n = strlen( p ) + 1;  // include trailing NUL
+				
+				q = (char*) mempcpy( q, p, n );
+			}
+		}
+		
+		its_vector.push_back( NULL );
 		
 		return *this;
 	}
