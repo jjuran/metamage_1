@@ -154,13 +154,15 @@ namespace vlib
 		
 		std::size_t n = length( container );
 		
-		vxo::UPtrVec< const Value > vector( n );
+		vxo::UPtrVec< const Value > vector;
+		
+		vxo::anyptr_t* p = vector.expand_by( n );
 		
 		array_iterator it( container );
 		
 		while ( it )
 		{
-			vector.push_back( &it.use() );
+			*p++ = &it.use();
 		}
 		
 		typedef vxo::UPtrVec< const Value >::iterator Iter;
