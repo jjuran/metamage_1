@@ -35,34 +35,6 @@ PtrVec::PtrVec()
 	set_control_byte( Box_vector_anyptr );
 }
 
-PtrVec::PtrVec( size_t n_items )
-{
-	u.str.pointer  = NULL;
-	u.str.length   = 0;
-	u.str.capacity = 0;
-	
-	set_subtype_byte( Box_vector_anyptr );
-	set_control_byte( Box_vector_anyptr );
-	
-	if ( n_items > 0 )
-	{
-		if ( n_items < minimum_elements )
-		{
-			n_items = minimum_elements;
-		}
-		
-		const size_t n_bytes = n_items * sizeof (anyptr_t);
-		
-		if ( char* alloc = extent_alloc_nothrow( n_bytes ) )
-		{
-			u.str.pointer  = alloc;
-			u.str.capacity = n_items;
-			
-			set_control_byte( Box_shared );
-		}
-	}
-}
-
 anyptr_t* PtrVec::expand_by_nothrow( size_t n )
 {
 	const size_t original_length = u.str.length;

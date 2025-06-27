@@ -27,7 +27,6 @@ namespace vxo
 			static bool test( const Box& box );  // unimplemented
 			
 			PtrVec();
-			explicit PtrVec( size_t n );
 			
 			size_t size() const  { return u.str.length; }
 			
@@ -120,10 +119,6 @@ namespace vxo
 			{
 			}
 			
-			explicit PtrVec_( size_t n ) : PtrVec( n )
-			{
-			}
-			
 			Item* begin()  { unshare(); return (Item*) u.str.pointer; }
 			Item* end()    { return begin() + size(); }
 			
@@ -200,10 +195,6 @@ namespace vxo
 			static bool test( const Box& box );  // unimplemented
 			
 			UPtrVec()
-			{
-			}
-			
-			explicit UPtrVec( size_t n ) : PtrVec( n )
 			{
 			}
 			
