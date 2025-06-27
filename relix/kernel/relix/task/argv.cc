@@ -15,25 +15,6 @@
 namespace relix
 {
 	
-	static inline
-	unsigned sizeof_argv_strings( char const* const* argv )
-	{
-		unsigned size = 0;
-		
-		// Check for NULL environ
-		
-		if ( argv != NULL )
-		{
-			while ( const char* p = *argv++ )
-			{
-				size += strlen( p ) + 1;  // include trailing NUL
-			}
-		}
-		
-		return size;
-	}
-	
-	
 	argv::argv()
 	{
 		its_vector.push_back( NULL );
@@ -47,7 +28,19 @@ namespace relix
 	
 	argv& argv::assign( const char *const *args )
 	{
-		unsigned size = sizeof_argv_strings( args );
+		unsigned size = 0;
+		
+		char const* const* argp = args;
+		
+		// Check for NULL environ
+		
+		if ( argp != NULL )
+		{
+			while ( const char* p = *argp++ )
+			{
+				size += strlen( p ) + 1;  // include trailing NUL
+			}
+		}
 		
 		char* q = its_string.reset( size );
 		
