@@ -29,6 +29,7 @@ namespace relix
 	argv& argv::assign( const char *const *args )
 	{
 		unsigned size = 0;
+		unsigned n    = 1;
 		
 		char const* const* argp = args;
 		
@@ -39,6 +40,8 @@ namespace relix
 			while ( const char* p = *argp++ )
 			{
 				size += strlen( p ) + 1;  // include trailing NUL
+				
+				++n;
 			}
 		}
 		
@@ -46,13 +49,15 @@ namespace relix
 		
 		its_vector.clear();
 		
+		vxo::anyptr_t* r = its_vector.expand_by( n );
+		
 		// Check for NULL environ
 		
 		if ( args != NULL )
 		{
 			while ( const char* p = *args++ )
 			{
-				its_vector.push_back( q );
+				*r++ = q;
 				
 				unsigned n = strlen( p ) + 1;  // include trailing NUL
 				
@@ -60,7 +65,7 @@ namespace relix
 			}
 		}
 		
-		its_vector.push_back( NULL );
+		*r++ = NULL;
 		
 		return *this;
 	}
