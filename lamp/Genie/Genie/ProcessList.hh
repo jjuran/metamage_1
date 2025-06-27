@@ -9,9 +9,6 @@
 // POSIX
 #include <sys/types.h>
 
-// plus
-#include "plus/string_fwd.hh"
-
 
 namespace Genie
 {
@@ -36,7 +33,7 @@ namespace Genie
 	
 	void spawn_process( const char* path, const char* const* argv );
 	
-	void spawn_process( const plus::string& program_args );
+	void spawn_process( const char* path );
 	
 	void destroy_pending();
 	

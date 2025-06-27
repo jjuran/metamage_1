@@ -10,16 +10,9 @@
 
 // Standard C
 #include <signal.h>
-#include <string.h>
 
 // Debug
 #include "debug/boost_assert.hh"
-
-// plus
-#include "plus/var_string.hh"
-
-// vxo
-#include "vxo/ptrvec.hh"
 
 // Boost
 #include <boost/intrusive_ptr.hpp>
@@ -253,42 +246,9 @@ namespace Genie
 		spawn_process( path, argv, envp );
 	}
 	
-	void spawn_process( const plus::string& program_args )
+	void spawn_process( const char* path )
 	{
-		plus::var_string arg_string = program_args;
-		
-		vxo::UPtrVec< const char > args;
-		
-		const char* program_args_data = program_args.c_str();
-		
-		if ( const char* first_space = strchr( program_args_data, ' ' ) )
-		{
-			// Don't copy-on-write unless we have to
-			
-			char* p = arg_string.begin();
-			
-			char* space = p + (first_space - program_args_data);
-			
-			do
-			{
-				args.push_back( p );
-				
-				p = space;
-				
-				*p++ = '\0';
-			}
-			while (( space = strchr( p, ' ' ) ));
-			
-			args.push_back( p );
-		}
-		else
-		{
-			args.push_back( program_args_data );
-		}
-		
-		args.push_back( NULL );
-		
-		char const *const *argv = &args[ 0 ];
+		const char* argv[] = { path, NULL };
 		
 		spawn_process( argv[ 0 ], argv );
 	}

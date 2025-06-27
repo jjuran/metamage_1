@@ -58,7 +58,7 @@ namespace Genie
 		{
 			const plus::string& target = it->second;
 			
-			spawn_process( target );
+			spawn_process( target.c_str() );
 			
 			return true;
 		}
