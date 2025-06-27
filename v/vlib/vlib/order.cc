@@ -156,7 +156,10 @@ namespace vlib
 		
 		vxo::UPtrVec< const Value > vector;
 		
-		vxo::anyptr_t* p = vector.expand_by( n );
+		typedef vxo::UPtrVec< const Value >::iterator Iter;
+		
+		Iter begin = (Iter) vector.expand_by( n );
+		Iter p     = begin;
 		
 		array_iterator it( container );
 		
@@ -165,10 +168,7 @@ namespace vlib
 			*p++ = &it.use();
 		}
 		
-		typedef vxo::UPtrVec< const Value >::iterator Iter;
-		
-		Iter begin = vector.begin();
-		Iter end   = vector.end();
+		Iter end = p;
 		
 		if ( is_via )
 		{
