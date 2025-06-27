@@ -11,6 +11,9 @@
 // Standard C++
 #include <algorithm>
 
+// more-libc
+#include "more/string.h"
+
 // debug
 #include "debug/assert.hh"
 
@@ -18,10 +21,30 @@
 namespace relix
 {
 	
+	static inline
+	unsigned sizeof_argv_strings( char const* const* argv )
+	{
+		unsigned size = 0;
+		
+		// Check for NULL environ
+		
+		if ( argv != NULL )
+		{
+			while ( const char* p = *argv++ )
+			{
+				size += strlen( p ) + 1;  // include trailing NUL
+			}
+		}
+		
+		return size;
+	}
+	
 	static
 	void flatten_argv( plus::var_string& result, char const *const *argv )
 	{
-		result.clear();
+		unsigned size = sizeof_argv_strings( argv );
+		
+		char* q = result.reset( size );
 		
 		// Check for NULL environ
 		
@@ -31,7 +54,9 @@ namespace relix
 			{
 				const char* p = *argv++;
 				
-				result.append( p, strlen( p ) + 1 );  // include trailing NUL
+				unsigned n = strlen( p ) + 1;  // include trailing NUL
+				
+				q = (char*) mempcpy( q, p, n );
 			}
 		}
 	}
