@@ -10,7 +10,7 @@
 #include "iota/class.hh"
 
 // plus
-#include "plus/var_string.hh"
+#include "plus/string.hh"
 
 // vxo
 #include "vxo/ptrvec.hh"
@@ -25,7 +25,7 @@ namespace relix
 		NO_NEW_DELETE
 		
 		private:
-			plus::var_string      its_string;
+			plus::string          its_string;
 			vxo::UPtrVec< char >  its_vector;
 		
 		public:
