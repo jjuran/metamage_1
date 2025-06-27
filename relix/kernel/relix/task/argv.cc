@@ -18,9 +18,10 @@
 namespace relix
 {
 	
-	static plus::string flattened_argv( char const *const *argv )
+	static
+	void flatten_argv( plus::var_string& result, char const *const *argv )
 	{
-		plus::var_string result;
+		result.clear();
 		
 		// Check for NULL environ
 		
@@ -33,8 +34,6 @@ namespace relix
 				result.append( p, strlen( p ) + 1 );  // include trailing NUL
 			}
 		}
-		
-		return result.move();
 	}
 	
 	static void assign_unflattened_argv( vxo::UPtrVec< char >& result, plus::var_string& flat )
@@ -72,7 +71,7 @@ namespace relix
 	
 	argv& argv::assign( const char *const *args )
 	{
-		its_string = flattened_argv( args );
+		flatten_argv( its_string, args );
 		
 		assign_unflattened_argv( its_vector, its_string );
 		
