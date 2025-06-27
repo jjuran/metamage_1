@@ -21,6 +21,7 @@ namespace relix
 	
 	class argv
 	{
+		NON_COPYABLE( argv )
 		NO_NEW_DELETE
 		
 		private:
@@ -30,14 +31,6 @@ namespace relix
 		public:
 			argv();
 			
-			argv( const plus::string& s );
-			
-			argv( const char *const *args );
-			
-			argv( const argv& that );
-			
-			argv& operator=( const argv& that );
-			
 			void swap( argv& that );
 			
 			int get_argc() const  { return its_vector.size() - 1; }
@@ -45,8 +38,6 @@ namespace relix
 			char* const* get_argv() const  { return &its_vector[ 0 ]; }
 			
 			const plus::string& get_string() const  { return its_string; }
-			
-			argv& assign( const plus::string& s );
 			
 			argv& assign( const char *const *args );
 	};
