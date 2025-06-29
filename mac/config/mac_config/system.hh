@@ -73,11 +73,15 @@
 	/*
 		System 4.1 introduced the 68020, and consequently, 32-bit addresses
 		(as opposed to the 68000 which has only 24 address lines).  This in
-		turn created a need for StripAddress().  Since the Metrowerks runtimes
-		call StripAddress() at startup without checking for it in advance,
-		System 4.1 is necessarily our minimum.
+		turn created a need for StripAddress().  Despite Metrowerks' use of
+		StripAddress() in their runtimes without checking its availability,
+		we don't actually depend on it, since we (a) patch it into existence
+		(if needed) in MacRelix, (b) completely replace the startup code in
+		our code resource post-linker, and (c) aren't currently using multi-
+		segment applications.  (Single-segment applications are unaffected.)
+		Therefore, we have no specific system version requirements.
 	*/
-	#define CONFIG_MINIMUM_SYSTEM  MAC_CONFIG_SYSTEM_4_1
+	#define CONFIG_MINIMUM_SYSTEM  0
 #elif ! TARGET_API_MAC_CARBON
 	/*
 		System 7.1.2 is the first system supporting PPC machines.
