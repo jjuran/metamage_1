@@ -32,6 +32,21 @@ namespace vxo
 		destructor    dealloc;
 	};
 	
+	static inline
+	extent_header* header_from_buffer( const char* buffer )
+	{
+		/*
+			This casts away const, but it's only the characters
+			that are const, not the header.
+		*/
+		
+		extent_header* header = (extent_header*) buffer - 1;
+		
+		ASSERT( long( header->refcount ) >= 0 );
+		
+		return header;
+	}
+	
 	/*
 		These can be changed to use malloc() and free() when we're ready to
 		take advantage of realloc().
@@ -122,18 +137,6 @@ namespace vxo
 		extent_set_destructor( extent, dtor );
 		
 		return extent;
-	}
-	
-	static inline extent_header* header_from_buffer( const char* buffer )
-	{
-		// This casts away const, but it's only the characters that are
-		// const, not the header.
-		
-		extent_header* header = (extent_header*) buffer - 1;
-		
-		ASSERT( long( header->refcount ) >= 0 );
-		
-		return header;
 	}
 	
 	static char* extent_duplicate( const char* buffer )
