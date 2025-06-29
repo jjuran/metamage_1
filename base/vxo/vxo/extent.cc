@@ -123,7 +123,7 @@ namespace vxo
 		
 		memset( extent, '\0', capacity );
 		
-		extent_set_destructor( extent, dtor );
+		header_from_buffer( extent )->dtor = dtor;
 		
 		return extent;
 	}
@@ -134,7 +134,7 @@ namespace vxo
 		
 		memset( extent, '\0', capacity );
 		
-		extent_set_destructor( extent, dtor );
+		header_from_buffer( extent )->dtor = dtor;
 		
 		return extent;
 	}
@@ -146,7 +146,7 @@ namespace vxo
 		char* duplicate = extent_alloc( header->capacity );
 		
 		// TODO:  We'll often need a copy constructor as well.
-		extent_set_destructor( duplicate, header->dtor );
+		header_from_buffer( duplicate )->dtor = header->dtor;
 		
 		mempcpy( duplicate, buffer, header->capacity );
 		
