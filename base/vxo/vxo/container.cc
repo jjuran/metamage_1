@@ -28,7 +28,7 @@ bool Container::test( const Box& box )
 	       (box.subtype_byte() & box_type_mask) == box_type_base;
 }
 
-Container::Container( box_type type, size_t n_items )
+Container::Container( box_type type )
 {
 	u.str.pointer  = NULL;
 	u.str.length   = 0;
@@ -36,21 +36,6 @@ Container::Container( box_type type, size_t n_items )
 	
 	set_subtype_byte( type );
 	set_control_byte( Box_pointer );
-	
-	if ( n_items > 0 )
-	{
-		const size_t n_bytes = n_items * sizeof (Box);
-		
-		// Passing a destructor (even if NULL) clears the buffer.
-		
-		if ( char* alloc = extent_alloc_nothrow( n_bytes, NULL ) )
-		{
-			u.str.pointer  = alloc;
-			u.str.capacity = n_items;
-			
-			set_control_byte( Box_shared );
-		}
-	}
 }
 
 Box* Container::expand_by_nothrow( size_t n )

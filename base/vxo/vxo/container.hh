@@ -43,7 +43,7 @@ namespace vxo
 			
 			static bool test( const Box& box );
 			
-			Container( box_type type, size_t n_items = 0 );
+			Container( box_type type );
 			
 			size_t size() const  { return u.str.length; }
 			
@@ -109,7 +109,7 @@ namespace vxo
 			
 			static bool test( const Box& box );  // unimplemented
 			
-			explicit Array_of( size_t n = 0 ) : Container( Box_array, n )
+			Array_of() : Container( Box_array )
 			{
 			}
 			
