@@ -246,7 +246,9 @@ namespace tool
 		}
 		else if ( param == "@"  ||  param == "*" )
 		{
-			StringVector result( gParameterCount );
+			StringVector result;
+			
+			// TODO:  Preallocate gParameterCount slots
 			
 			for ( size_t i = 0;  i < gParameterCount;  ++i )
 			{

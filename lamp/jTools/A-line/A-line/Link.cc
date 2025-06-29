@@ -371,7 +371,9 @@ namespace tool
 		
 		const size_t n = input_filenames.size();
 		
-		StringVector input_pathnames( n + needsCarbResource );
+		StringVector input_pathnames;
+		
+		// TODO:  Preallocate (n + needsCarbResource) slots
 		
 		for ( size_t i = 0;  i < n;  ++i )
 		{

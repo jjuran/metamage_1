@@ -366,7 +366,9 @@ namespace tool
 	StringVector get_search_dir_pathnames( const StringVector&  search_directives,
 	                                       const plus::string&  project_dir_pathname )
 	{
-		StringVector result( search_directives.size() );
+		StringVector result;
+		
+		// TODO:  Preallocate (search_directives.size()) slots
 		
 		for ( size_t i = 0;  i < search_directives.size();  ++i )
 		{
