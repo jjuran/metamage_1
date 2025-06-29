@@ -170,7 +170,7 @@ value_expected:
 			return OutOfMemory;
 		}
 		
-		*current = Container( type, 2 );
+		*current = Container( type );
 		
 		--p;
 		goto value_expected;
