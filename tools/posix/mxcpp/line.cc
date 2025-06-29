@@ -68,7 +68,7 @@ namespace tool
 		
 		if ( !result.empty() )
 		{
-			*(result.end() - 1) = global_newline_char;
+			result.back() = global_newline_char;
 		}
 		
 		return result;

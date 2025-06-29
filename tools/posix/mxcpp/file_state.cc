@@ -156,7 +156,7 @@ namespace tool
 				{
 					path = its_dir_path;
 					
-					if ( *(path.end() - 1) != '/' )
+					if ( path.back() != '/' )
 					{
 						path += '/';
 					}
