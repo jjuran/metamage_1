@@ -18,15 +18,13 @@ namespace tool
 	
 	struct macro_t : token_lists
 	{
-		macro_t() : token_lists( 2 )
+		macro_t()
 		{
 			push_back( token_list() );
 			push_back( token_list() );
 		}
 		
 		macro_t( const token_list& p, const token_list& r )
-		:
-			token_lists( 2 )
 		{
 			push_back( p );
 			push_back( r );
