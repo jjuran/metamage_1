@@ -105,11 +105,16 @@
 		since any machine too old to run 10.4 would be much happier with OS 9.
 	*/
 	#define CONFIG_MINIMUM_SYSTEM  MAC_CONFIG_MAC_OS_X
-#else
+#elif ! defined( __LP64__ )
 	/*
 		Mac OS X begins supporting little endian in version 10.4.
 	*/
 	#define CONFIG_MINIMUM_SYSTEM  MAC_CONFIG_MACOSX_10_4
+#else
+	/*
+		Mac OS X adds 64-bit architectures in version 10.5.
+	*/
+	#define CONFIG_MINIMUM_SYSTEM  MAC_CONFIG_MACOSX_10_5
 #endif
 #endif
 
