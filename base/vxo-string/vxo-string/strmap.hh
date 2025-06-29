@@ -38,7 +38,7 @@ namespace vxo
 			
 			static bool test( const Box& box );  // unimplemented
 			
-			explicit StrMap( size_t n = 0 ) : Container( Box_map, n * 2 )
+			StrMap() : Container( Box_map )
 			{
 			}
 			
@@ -108,7 +108,7 @@ namespace vxo
 			
 			static bool test( const Box& box );  // unimplemented
 			
-			explicit StrMap_to( size_t n = 0 ) : Container( Box_map, n * 2 )
+			StrMap_to() : Container( Box_map )
 			{
 			}
 			

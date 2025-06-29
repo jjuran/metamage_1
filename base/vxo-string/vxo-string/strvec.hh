@@ -34,11 +34,11 @@ namespace vxo
 			
 			static bool test( const Box& box );  // unimplemented
 			
-			explicit StrVec( size_t n = 0 ) : Container( Box_array, n )
+			StrVec() : Container( Box_array )
 			{
 			}
 			
-			explicit StrVec( const Item& string ) : Container( Box_array, 1 )
+			explicit StrVec( const Item& string ) : Container( Box_array )
 			{
 				push_back( string );
 			}

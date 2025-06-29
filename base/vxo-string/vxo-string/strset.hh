@@ -34,7 +34,7 @@ namespace vxo
 			
 			static bool test( const Box& box );  // unimplemented
 			
-			explicit StrSet( size_t n = 0 ) : Container( Box_set, n )
+			StrSet() : Container( Box_set )
 			{
 			}
 			
