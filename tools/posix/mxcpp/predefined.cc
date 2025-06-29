@@ -21,6 +21,9 @@
 // gear
 #include "gear/inscribe_decimal.hh"
 
+// vxo
+#include "vxo/lib/quote.hh"
+
 // mxcpp
 #include "config.hh"
 #include "pragma.hh"
@@ -157,18 +160,16 @@ namespace tool
 	
 	static plus::string quote_string( const plus::string& s )
 	{
+		const char*  s_data = s.data();
 		const size_t s_size = s.size();
-		const size_t length = s_size + 2 * sizeof (char);
+		
+		const size_t length = vxo::quoted_length( s_data, s_size );
 		
 		plus::string result;
 		
 		char* p = result.reset( length );
 		
-		*p++ = '"';
-		
-		p[ s_size ] = '"';
-		
-		mempcpy( p, s.data(), s_size );
+		vxo::quote_string( s_data, s_size, p );
 		
 		return result;
 	}
@@ -176,7 +177,6 @@ namespace tool
 	static
 	const char* predefined_file( const void* )
 	{
-		// FIXME:  Need to escape metacharacters
 		static plus::string file = quote_string( get_current_FILE() );
 		
 		return file.c_str();
