@@ -296,16 +296,6 @@ namespace plus
 		return *this;
 	}
 	
-	char* string::reset_nothrow( size_type length )
-	{
-		return reallocate_nothrow( store, length );
-	}
-	
-	char* string::reset( size_type length )
-	{
-		return reallocate( store, length );
-	}
-	
 	string& string::assign( const char* p, size_type length )
 	{
 		return assign( string( p, length ).move() );

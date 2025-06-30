@@ -193,8 +193,15 @@ namespace plus
 			
 		#endif
 			
-			char* reset_nothrow( size_type n = 0 );
-			char* reset        ( size_type n = 0 );
+			char* reset_nothrow( size_type n = 0 )
+			{
+				return reallocate_nothrow( store, n );
+			}
+			
+			char* reset( size_type n = 0 )
+			{
+				return reallocate( store, n );
+			}
 			
 			string& operator=( const char* s )  { return assign( s ); }
 			
