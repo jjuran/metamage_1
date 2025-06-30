@@ -44,7 +44,10 @@ namespace plus
 			typedef const char*  iterator;
 			typedef const char*  const_iterator;
 			
-			static void check_size( size_type size )  { string_check_size( size ); }
+			static void check_size( size_type size )
+			{
+				vxo::string_check_size( size );
+			}
 			
 			enum
 			{

@@ -93,7 +93,7 @@ namespace plus
 	
 	char* cow_string::embiggen( size_type new_length )
 	{
-		string_check_size( new_length );
+		vxo::string_check_size( new_length );
 		
 		char* data;
 		

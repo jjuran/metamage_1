@@ -8,6 +8,9 @@
 // Standard C
 #include <stdlib.h>
 
+// Standard C++
+#include <stdexcept>
+
 // more-libc
 #include "more/string.h"
 
@@ -19,8 +22,32 @@
 #include "vxo/extent.hh"
 
 
+#if defined(__MWERKS__)  &&  __MWERKS__ < 0x2300
+	#define THROW( type, s )  throw std::exception()
+#else
+	#define THROW( type, s )  throw std::type( s )
+#endif
+
+#define LENGTH_ERROR_MESSAGE  "string size can't exceed 0x7fffffff"
+
+
 namespace vxo
 {
+	
+	void string_check_size( datum_ssize_t size )
+	{
+		// 2 GB limit on 32-bit platforms
+		
+		if ( size < 0 )
+		{
+			const bool _32bit = sizeof size == 4;
+			
+			const char* message = _32bit ? LENGTH_ERROR_MESSAGE
+			                             : LENGTH_ERROR_MESSAGE "ffffffff";
+			
+			THROW( length_error, message );
+		}
+	}
 	
 	void construct_from_move_untaint_policy( datum_storage&  x,
 	                                         datum_movable&  y,

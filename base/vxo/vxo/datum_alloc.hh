@@ -22,6 +22,8 @@ namespace vxo
 	};
 	
 	
+	void string_check_size( datum_ssize_t size );
+	
 	inline void construct_from_default( datum_storage& x )
 	{
 		x.small[ datum_max_offset ] = datum_max_offset;

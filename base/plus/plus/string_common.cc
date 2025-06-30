@@ -5,24 +5,12 @@
 
 #include "plus/string_common.hh"
 
-// Standard C++
-#include <stdexcept>
-
 // debug
 #include "debug/assert.hh"
 
 // vxo
 #include "vxo/datum_access.hh"
 #include "vxo/datum_alloc.hh"
-
-
-#if defined(__MWERKS__)  &&  __MWERKS__ < 0x2300
-	#define THROW( type, s )  throw std::exception()
-#else
-	#define THROW( type, s )  throw std::type( s )
-#endif
-
-#define LENGTH_ERROR_MESSAGE  "string size can't exceed 0x7fffffff"
 
 
 namespace plus
@@ -32,22 +20,8 @@ namespace plus
 	using vxo::datum_storage;
 	using vxo::set_capacity;
 	using vxo::size;
+	using vxo::string_check_size;
 	
-	
-	void string_check_size( long size )
-	{
-		// 2 GB limit on 32-bit platforms
-		
-		if ( size < 0 )
-		{
-			const bool _32bit = sizeof size == 4;
-			
-			const char* message = _32bit ? LENGTH_ERROR_MESSAGE
-			                             : LENGTH_ERROR_MESSAGE "ffffffff";
-			
-			THROW( length_error, message );
-		}
-	}
 	
 	void string_reserve( datum_storage& datum, long capacity )
 	{
