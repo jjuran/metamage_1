@@ -230,6 +230,11 @@ namespace vxo
 	
 	char* reallocate_nothrow( datum_storage& datum, long length )
 	{
+		if ( length > datum_max_size )
+		{
+			return NULL;
+		}
+		
 		datum_storage old = datum;
 		
 		char* new_pointer = allocate_nothrow( datum, length );
@@ -241,6 +246,8 @@ namespace vxo
 	
 	char* reallocate( datum_storage& datum, long length )
 	{
+		string_check_size( length );
+		
 		datum_storage old = datum;
 		
 		char* new_pointer = allocate( datum, length );

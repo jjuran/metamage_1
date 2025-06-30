@@ -298,18 +298,11 @@ namespace plus
 	
 	char* string::reset_nothrow( size_type length )
 	{
-		if ( length > vxo::datum_max_size )
-		{
-			return NULL;
-		}
-		
 		return reallocate_nothrow( store, length );
 	}
 	
 	char* string::reset( size_type length )
 	{
-		check_size( length );
-		
 		return reallocate( store, length );
 	}
 	
