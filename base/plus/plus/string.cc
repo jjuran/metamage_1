@@ -132,7 +132,7 @@ namespace plus
 	                size_type      capacity )
 	{
 		/*
-			Sanity-check length and capacity against max_size().
+			Sanity-check length and capacity against datum_max_size.
 			
 			We were throwing exceptions on failure, which requires a
 			dependency on the C++ exception runtime.  In practice, an
@@ -166,8 +166,8 @@ namespace plus
 			come close to the max size -- half the address space is 8 EiB.
 		*/
 		
-		ASSERT( length   <= max_size() );
-		ASSERT( capacity <= max_size() );
+		ASSERT( length   <= vxo::datum_max_size );
+		ASSERT( capacity <= vxo::datum_max_size );
 		
 	#ifndef __LP64__
 	#ifndef __APPLE__
@@ -298,7 +298,7 @@ namespace plus
 	
 	char* string::reset_nothrow( size_type length )
 	{
-		if ( length > max_size() )
+		if ( length > vxo::datum_max_size )
 		{
 			return NULL;
 		}
@@ -329,7 +329,7 @@ namespace plus
 	
 	string& string::assign( size_type n, char c )
 	{
-		// reset() will throw if n exceeds max_size()
+		// reset() will throw if n exceeds datum_max_size
 		
 		char* pointer = reset( n );
 		

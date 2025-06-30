@@ -44,17 +44,6 @@ namespace plus
 			typedef const char*  iterator;
 			typedef const char*  const_iterator;
 			
-			static size_type max_size()
-			{
-				// 32 or 64
-				const int n_bits = sizeof (size_type) * 8;
-				
-				// 0x7fffffff[ffffffff]
-				const size_type max = (size_type( 1 ) << (n_bits - 1)) - 1;
-				
-				return max;
-			}
-			
 			static void check_size( size_type size )  { string_check_size( size ); }
 			
 			enum

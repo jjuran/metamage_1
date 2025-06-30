@@ -122,7 +122,7 @@ namespace plus
 	
 	void own_string::resize( size_type new_size, char c )
 	{
-		// embiggen() will throw if new_size exceeds max_size()
+		// embiggen() will throw if new_size exceeds datum_max_size
 		
 		const size_type old_size = size();
 		
@@ -141,7 +141,7 @@ namespace plus
 		const size_type old_size = size();
 		const size_type new_size = old_size + n;
 		
-		// embiggen() will throw if new_size exceeds max_size()
+		// embiggen() will throw if new_size exceeds datum_max_size
 		
 		char* begin = const_cast< char* >( data() );
 		char* end   = begin + old_size;
@@ -189,7 +189,7 @@ namespace plus
 	
 	own_string& own_string::insert( size_type pos, const char* s, size_type n )
 	{
-		// insert_uninitialized() will throw if n exceeds max_size()
+		// insert_uninitialized() will throw if n exceeds datum_max_size
 		
 		if ( pos > size() )
 		{
@@ -210,7 +210,7 @@ namespace plus
 	
 	own_string& own_string::insert( size_type pos, size_type n, char c )
 	{
-		// insert_uninitialized() will throw if n exceeds max_size()
+		// insert_uninitialized() will throw if n exceeds datum_max_size
 		
 		if ( pos > size() )
 		{
@@ -230,14 +230,14 @@ namespace plus
 		
 		const size_type n = j - i;
 		
-		// insert_uninitialized() will throw if n exceeds max_size()
+		// insert_uninitialized() will throw if n exceeds datum_max_size
 		
 		std::copy( i, j, insert_uninitialized( p, n ) );
 	}
 	
 	void own_string::insert( char* p, size_type n, char c )
 	{
-		// insert_uninitialized() will throw if n exceeds max_size()
+		// insert_uninitialized() will throw if n exceeds datum_max_size
 		
 		memset( insert_uninitialized( p, n ), c, n );
 	}
@@ -265,7 +265,7 @@ namespace plus
 		const size_type old_size = size();
 		const size_type new_size = old_size + length;
 		
-		// embiggen() will throw if new_size exceeds max_size()
+		// embiggen() will throw if new_size exceeds datum_max_size
 		
 		char* new_pointer = embiggen( new_size );
 		
@@ -307,9 +307,9 @@ namespace plus
 	
 	char* own_string::replace_setup( char* p, size_type m, difference_type delta )
 	{
-		// delta is signed and therefore can't exceed max_size()
+		// delta is signed and therefore can't exceed datum_max_size
 		
-		// insert_uninitialized() will throw if new size exceeds max_size()
+		// insert_uninitialized() will throw if new size exceeds datum_max_size
 		
 		if ( delta == 0 )
 		{

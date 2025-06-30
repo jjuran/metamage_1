@@ -80,7 +80,7 @@ static void reserved()
 	{
 	#ifdef __MACOS__
 		
-		s.reserve( s.max_size() );
+		s.reserve( vxo::datum_max_size );
 		
 	#endif
 	}
@@ -98,7 +98,7 @@ static void reserved()
 	
 	try
 	{
-		s.reserve( s.max_size() + 1 );
+		s.reserve( vxo::datum_max_size + 1 );
 	}
 	catch ( const std::length_error& )
 	{
@@ -181,7 +181,7 @@ static void resized()
 	{
 	#ifdef __MACOS__
 		
-		s.resize( s.max_size() );
+		s.resize( vxo::datum_max_size );
 		
 	#endif
 	}
@@ -199,7 +199,7 @@ static void resized()
 	
 	try
 	{
-		s.resize( s.max_size() + 1 );
+		s.resize( vxo::datum_max_size + 1 );
 	}
 	catch ( const std::length_error& )
 	{
