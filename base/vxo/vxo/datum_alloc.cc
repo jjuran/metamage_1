@@ -250,11 +250,9 @@ namespace vxo
 	
 	char* curtail_capacity( datum_storage& datum, long new_capacity )
 	{
-		try
-		{
-			return extend_capacity( datum, new_capacity );
-		}
-		catch ( ... )
+		char* p = extend_capacity_nothrow( datum, new_capacity );
+		
+		if ( ! p )
 		{
 			// Failure to decrease capacity is not an error
 		}
