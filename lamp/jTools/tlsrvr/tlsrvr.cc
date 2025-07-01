@@ -35,6 +35,12 @@
 #include "RunToolServer.hh"
 
 
+#define UTF8_ZERO_WIDTH_SPACE  "\xe2\x80\x8b"
+#define UTF8_PILCROW           "\xc2\xb6"
+
+#define PATH_MARKER  UTF8_ZERO_WIDTH_SPACE UTF8_PILCROW
+
+
 using namespace command::constants;
 
 enum
@@ -99,9 +105,21 @@ namespace tool
 			
 			plus::string word( arg, strlen( arg ), vxo::delete_never );
 			
-			word = plus::mac_from_utf8( word );
+			if ( word == PATH_MARKER  &&  it < end )
+			{
+				word = escaped_HFS_path( *it++ );
+			}
+			else
+			{
+				word = plus::mac_from_utf8( word );
+				
+				if ( needToEscape )
+				{
+					word = escaped( word );
+				}
+			}
 			
-			command += needToEscape ? escaped( word ) : word;
+			command += word;
 			
 			command += " ";
 		}
