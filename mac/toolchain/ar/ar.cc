@@ -6,9 +6,6 @@
 // Standard C
 #include <string.h>
 
-// Standard C++
-#include <list>
-
 // Iota
 #include "iota/strings.hh"
 
@@ -27,14 +24,17 @@
 #include "poseven/functions/write.hh"
 #include "poseven/functions/wait.hh"
 
-// mac_pathname
-#include "mac_pathname_from_path.hh"
-
 // Orion
 #include "Orion/Main.hh"
 
 // metrowerks
 #include "metrowerks/object_file.hh"
+
+
+#define UTF8_ZERO_WIDTH_SPACE  "\xe2\x80\x8b"
+#define UTF8_PILCROW           "\xc2\xb6"
+
+#define PATH_MARKER  UTF8_ZERO_WIDTH_SPACE UTF8_PILCROW
 
 
 namespace tool
@@ -62,16 +62,6 @@ namespace tool
 		}
 		
 		return result;
-	}
-	
-	
-	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
-	{
-		static std::list< plus::string > static_string_storage;
-		
-		static_string_storage.push_back( mac_pathname_from_path( pathname, true ) );
-		
-		return static_string_storage.back().c_str();
 	}
 	
 	
@@ -185,8 +175,6 @@ namespace tool
 		
 		const char* first_input_path = argv[ 3 ];
 		
-		plus::string output_mac_pathname = mac_pathname_from_path( output_path, true );
-		
 		mw::cpu_architecture arch = mw::cpu_unknown;
 		
 		bool debug = false;
@@ -230,7 +218,8 @@ namespace tool
 		}
 		
 		command.push_back( "-o" );
-		command.push_back( output_mac_pathname.c_str() );
+		command.push_back( PATH_MARKER );
+		command.push_back( output_path );
 		
 		bool dry_run = false;
 		bool verbose = false;
@@ -257,8 +246,8 @@ namespace tool
 			}
 			else
 			{
-				// translate path
-				command.push_back( StoreMacPathFromPOSIXPath( arg ) );
+				command.push_back( PATH_MARKER );
+				command.push_back( arg );
 			}
 		}
 		
