@@ -754,6 +754,8 @@ namespace tool
 		
 		plus::string linkmap_mac_pathname = output_mac_pathname + ".map";
 		
+		plus::string linkmap_pathname = plus::concat( output_pathname, ".map" );
+		
 		command.push_back( "-o" );
 		command.push_back( output_mac_pathname.c_str() );
 		
@@ -861,7 +863,7 @@ namespace tool
 			return exit_status;
 		}
 		
-		fix_newlines( plus::concat( output_pathname, ".map" ).c_str() );
+		fix_newlines( linkmap_pathname.c_str() );
 		
 		if ( arch == arch_m68k  &&  ! gCFM68K )
 		{
