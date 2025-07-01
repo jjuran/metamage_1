@@ -41,6 +41,9 @@
 #include "Orion/Main.hh"
 
 
+#define UTF8_ZERO_WIDTH_SPACE  "\xe2\x80\x8b"
+
+
 using namespace command::constants;
 
 enum
@@ -105,6 +108,33 @@ static struct timespec timespec_from_seconds( float time )
 	const struct timespec result = { seconds, nanoseconds };
 	
 	return result;
+}
+
+static
+size_t filter_cmdline( char* buffer, size_t n )
+{
+	size_t i = 0;
+	
+	enum
+	{
+		skip = STRLEN( UTF8_ZERO_WIDTH_SPACE ),
+	};
+	
+	while ( i <= n - skip )
+	{
+		if ( memcmp( buffer + i, STR_LEN( UTF8_ZERO_WIDTH_SPACE ) ) == 0 )
+		{
+			n -= skip;
+			
+			memmove( buffer + i, buffer + i + skip, n - i );
+		}
+		else
+		{
+			++i;
+		}
+	}
+	
+	return n;
 }
 
 namespace tool
@@ -246,7 +276,11 @@ namespace tool
 		
 		report += "  ";
 		
-		char* cmdline_end = buffer + p7::read( p7::openat( proc_pid, "cmdline", p7::o_rdonly ), buffer, 4096 );
+		size_t n = p7::read( p7::openat( proc_pid, "cmdline", p7::o_rdonly ), buffer, 4096 );
+		
+		n = filter_cmdline( buffer, n );
+		
+		char* cmdline_end = buffer + n;
 		
 		if ( cmdline_end > buffer )
 		{
