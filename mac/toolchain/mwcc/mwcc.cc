@@ -7,9 +7,6 @@
 #include <stdio.h>
 #include <string.h>
 
-// Standard C++
-#include <list>
-
 // plus
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
@@ -27,12 +24,14 @@
 // pfiles
 #include "pfiles/common.hh"
 
-// mac_pathname
-#include "mac_pathname_from_path.hh"
-
 // Orion
 #include "Orion/Main.hh"
 
+
+#define UTF8_ZERO_WIDTH_SPACE  "\xe2\x80\x8b"
+#define UTF8_PILCROW           "\xc2\xb6"
+
+#define PATH_MARKER  UTF8_ZERO_WIDTH_SPACE UTF8_PILCROW
 
 #define COMMON_WARNINGS  "all,nounusedarg,nonotinlined,noextracomma,"
 
@@ -140,41 +139,6 @@ namespace tool
 		}
 	}
 	
-	static inline plus::string MacPathFromPOSIXPath( const char* path )
-	{
-		return mac_pathname_from_path( path, true );
-	}
-	
-	static const plus::string& MacPathForCWD()
-	{
-		static plus::string mac_path = MacPathFromPOSIXPath( "." );
-		
-		return mac_path;
-	}
-	
-	static plus::string ShortMacPathFromPOSIXPath( const char* pathname )
-	{
-		plus::var_string mac_path = MacPathFromPOSIXPath( pathname );
-		
-		const plus::string& mac_cwd = MacPathForCWD();
-		
-		const bool within =  mac_path.length() > mac_cwd.length()
-		                  && std::equal( mac_cwd.begin(),
-		                                 mac_cwd.end(),
-		                                 mac_path.begin() );
-		
-		if ( within )
-		{
-			const bool trailing_colon = *(mac_cwd.end() - 1) == ':';
-			
-			const size_t common = mac_cwd.length() - trailing_colon;
-			
-			mac_path.erase( 0, common );
-		}
-		
-		return mac_path;
-	}
-	
 	static bool extension_begins_with_char( const char* path, char c )
 	{
 		const char* dot   = strrchr( path, '.' );
@@ -231,20 +195,6 @@ namespace tool
 		
 		// FIXME:  Should probably throw ENOENT
 		return prefix_image_path;
-	}
-	
-	static const char* store_string( const plus::string& string )
-	{
-		static std::list< plus::string > static_string_storage;
-		
-		static_string_storage.push_back( string );
-		
-		return static_string_storage.back().c_str();
-	}
-	
-	static const char* store_mac_path_from_posix_path( const char* path )
-	{
-		return store_string( ShortMacPathFromPOSIXPath( path ) );
 	}
 	
 	
@@ -330,7 +280,8 @@ namespace tool
 					case 'I':
 						RememberIncludeDir( arg + 2 );
 						
-						command_args.push_back( store_string( "-I" + MacPathFromPOSIXPath( arg + 2 ) ) );
+						command_args.push_back( PATH_MARKER "-I" );
+						command_args.push_back( arg + 2 );
 						break;
 					
 					case 'i':
@@ -340,7 +291,8 @@ namespace tool
 							
 							command_args.push_back( "-prefix" );
 							
-							command_args.push_back( store_mac_path_from_posix_path( prefix_path.c_str() ) );
+							command_args.push_back( PATH_MARKER );
+							command_args.push_back( prefix_path.c_str() );
 						}
 						break;
 					
@@ -350,7 +302,8 @@ namespace tool
 			}
 			else
 			{
-				command_args.push_back( store_mac_path_from_posix_path( arg ) );
+				command_args.push_back( PATH_MARKER );
+				command_args.push_back( arg );
 			}
 		}
 		
@@ -407,7 +360,8 @@ namespace tool
 		
 		command.push_back( is_object_filename( output_pathname ) ? "-o" : "-precompile" );
 		
-		command.push_back( store_mac_path_from_posix_path( output_pathname ) );
+		command.push_back( PATH_MARKER );
+		command.push_back( output_pathname );
 		
 		if ( !rtti )
 		{
