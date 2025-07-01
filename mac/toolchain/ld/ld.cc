@@ -38,9 +38,6 @@
 // pfiles
 #include "pfiles/common.hh"
 
-// mac_pathname
-#include "mac_pathname_from_path.hh"
-
 // Orion
 #include "Orion/Main.hh"
 
@@ -49,6 +46,12 @@
 
 // one_path
 #include "one_path/find_SDK_dir.hh"
+
+
+#define UTF8_ZERO_WIDTH_SPACE  "\xe2\x80\x8b"
+#define UTF8_PILCROW           "\xc2\xb6"
+
+#define PATH_MARKER  UTF8_ZERO_WIDTH_SPACE UTF8_PILCROW
 
 
 namespace tool
@@ -263,11 +266,6 @@ namespace tool
 		return static_string_storage.back().c_str();
 	}
 	
-	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
-	{
-		return store_string( mac_pathname_from_path( pathname, true ) );
-	}
-	
 	
 	static void check_object_file( p7::fd_t object_file_stream )
 	{
@@ -417,8 +415,6 @@ namespace tool
 					
 					plus::string library_pathname = FindLibrary( lib_name );
 					
-					const char* mac_pathname = StoreMacPathFromPOSIXPath( library_pathname.c_str() );
-					
 					// Link __tool first, if present.
 					// This hack is necessary on 68K to ensure that
 					// _relix_main() resides within the first 32K,
@@ -428,7 +424,11 @@ namespace tool
 					
 					command_args.insert( ( expedited ? command_args.begin()
 					                                 : command_args.end() ),
-					                       mac_pathname );
+					                       PATH_MARKER );
+					
+					command_args.insert( ( expedited ? command_args.begin() + 1
+					                                 : command_args.end() ),
+					                       store_string( library_pathname ) );
 				}
 				
 				break;
@@ -543,7 +543,10 @@ namespace tool
 			}
 		}
 		
-		command_args.push_back( StoreMacPathFromPOSIXPath( is_pathname ? arg : FindSystemLibrary( arg ).c_str() ) );
+		const char* path = is_pathname ? arg : store_string( FindSystemLibrary( arg ) );
+		
+		command_args.push_back( PATH_MARKER );
+		command_args.push_back( path );
 	}
 	
 	static
@@ -750,17 +753,15 @@ namespace tool
 			}
 		}
 		
-		plus::string output_mac_pathname = mac_pathname_from_path( output_pathname, true );
-		
-		plus::string linkmap_mac_pathname = output_mac_pathname + ".map";
-		
 		plus::string linkmap_pathname = plus::concat( output_pathname, ".map" );
 		
 		command.push_back( "-o" );
-		command.push_back( output_mac_pathname.c_str() );
+		command.push_back( PATH_MARKER );
+		command.push_back( output_pathname );
 		
 		command.push_back( "-map" );
-		command.push_back( linkmap_mac_pathname.c_str() );
+		command.push_back( PATH_MARKER );
+		command.push_back( linkmap_pathname.c_str() );
 		
 		command.push_back( "-cmap" );
 		command.push_back( "R*ch" );
