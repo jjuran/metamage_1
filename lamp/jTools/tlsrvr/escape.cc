@@ -8,6 +8,9 @@
 // iota
 #include "iota/char_types.hh"
 
+// mac_pathname
+#include "mac_pathname_from_path.hh"
+
 
 static
 unsigned escaped_size( const char* in, unsigned len )
@@ -117,4 +120,9 @@ plus::string escaped( const plus::string& str )
 	}
 	
 	return str;
+}
+
+plus::string escaped_HFS_path( const char* path )
+{
+	return escaped( mac_pathname_from_path( path ) );
 }

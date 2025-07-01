@@ -56,9 +56,6 @@
 // AESendBlocking
 #include "AESendBlocking.hh"
 
-// mac_pathname
-#include "mac_pathname_from_path.hh"
-
 // Nitrogen
 #include "Mac/AppleEvents/Functions/AEDisposeDesc.hh"
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
@@ -72,13 +69,6 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	
-	
-	static
-	plus::string escaped_HFS_path( const char* path )
-	{
-		return escaped( mac_pathname_from_path( path ) );
-	}
 	
 	
 	static plus::string DirectoryCommandForMPW()
