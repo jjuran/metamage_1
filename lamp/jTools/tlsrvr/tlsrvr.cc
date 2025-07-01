@@ -93,11 +93,11 @@ namespace tool
 	{
 		plus::var_string command;
 		
-		for ( char const *const *it = begin;  it < end;  ++it )
+		for ( char const *const *it = begin;  it < end;  )
 		{
-			plus::string word = plus::string( *it,
-			                                  strlen( *it ),
-			                                  vxo::delete_never );
+			const char* arg = *it++;
+			
+			plus::string word( arg, strlen( arg ), vxo::delete_never );
 			
 			word = plus::mac_from_utf8( word );
 			
