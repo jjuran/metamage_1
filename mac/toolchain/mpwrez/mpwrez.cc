@@ -6,9 +6,6 @@
 // Standard C
 #include <string.h>
 
-// Standard C++
-#include <list>
-
 // plus
 #include "plus/var_string.hh"
 
@@ -21,11 +18,14 @@
 #include "poseven/functions/wait.hh"
 #include "poseven/functions/write.hh"
 
-// mac_pathname
-#include "mac_pathname_from_path.hh"
-
 // Orion
 #include "Orion/Main.hh"
+
+
+#define UTF8_ZERO_WIDTH_SPACE  "\xe2\x80\x8b"
+#define UTF8_PILCROW           "\xc2\xb6"
+
+#define PATH_MARKER  UTF8_ZERO_WIDTH_SPACE UTF8_PILCROW
 
 
 namespace tool
@@ -51,16 +51,6 @@ namespace tool
 		}
 		
 		return result;
-	}
-	
-	
-	static const char* StoreMacPathFromPOSIXPath( const char* pathname )
-	{
-		static std::list< plus::string > static_string_storage;
-		
-		static_string_storage.push_back( mac_pathname_from_path( pathname, true ) );
-		
-		return static_string_storage.back().c_str();
 	}
 	
 	
@@ -109,7 +99,8 @@ namespace tool
 						{
 							command.push_back( arg );
 							
-							command.push_back( StoreMacPathFromPOSIXPath( *++argv ) );
+							command.push_back( PATH_MARKER );
+							command.push_back( *++argv );
 						}
 						break;
 					
@@ -119,8 +110,8 @@ namespace tool
 			}
 			else if ( strchr( arg, '/' ) )
 			{
-				// translate path
-				command.push_back( StoreMacPathFromPOSIXPath( arg ) );
+				command.push_back( PATH_MARKER );
+				command.push_back( arg );
 			}
 			else if ( arg[0] != '\0' )
 			{
