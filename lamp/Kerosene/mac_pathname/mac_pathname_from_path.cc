@@ -34,7 +34,7 @@
 namespace p7 = poseven;
 
 
-plus::string mac_pathname_from_path( const char* path, bool utf8 )
+plus::string mac_pathname_from_path( const char* path )
 {
 #ifdef __APPLE__
 	
@@ -42,7 +42,7 @@ plus::string mac_pathname_from_path( const char* path, bool utf8 )
 	
 	try
 	{
-		return GetMacPathname( Div::ResolvePathToFSSpec( path ), utf8 );
+		return GetMacPathname( Div::ResolvePathToFSSpec( path ) );
 	}
 	catch ( const Mac::OSStatus& err )
 	{
@@ -60,7 +60,7 @@ plus::string mac_pathname_from_path( const char* path, bool utf8 )
 	
 	char buffer[ 4096 ];
 	
-	const int flags = REALPATH_OUTPUT_HFS | utf8 * REALPATH_OUTPUT_UTF8;
+	const int flags = REALPATH_OUTPUT_HFS;
 	
 	ssize_t size = _realpathat( AT_FDCWD, path, buffer, sizeof buffer, flags );
 	
