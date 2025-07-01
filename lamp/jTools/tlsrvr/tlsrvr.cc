@@ -16,6 +16,7 @@
 
 // plus
 #include "plus/mac_utf8.hh"
+#include "plus/string/concat.hh"
 #include "plus/var_string.hh"
 
 // poseven
@@ -39,6 +40,9 @@
 #define UTF8_PILCROW           "\xc2\xb6"
 
 #define PATH_MARKER  UTF8_ZERO_WIDTH_SPACE UTF8_PILCROW
+
+#define STRLEN( s )  (sizeof "" s - 1)
+#define STR_LEN( s )  s, STRLEN( s )
 
 
 using namespace command::constants;
@@ -95,6 +99,12 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
+	static inline
+	bool begins_with( const plus::string& word, const char* token, int len )
+	{
+		return word.substr( 0, len ) == token;
+	}
+	
 	static plus::string MakeCommand( char const *const *begin, char const *const *end, bool needToEscape )
 	{
 		plus::var_string command;
@@ -105,9 +115,10 @@ namespace tool
 			
 			plus::string word( arg, strlen( arg ), vxo::delete_never );
 			
-			if ( word == PATH_MARKER  &&  it < end )
+			if ( begins_with( word, STR_LEN( PATH_MARKER ) )  &&  it < end )
 			{
-				word = escaped_HFS_path( *it++ );
+				word = plus::concat( word.substr( STRLEN( PATH_MARKER ) ),
+				                     escaped_HFS_path( *it++ ) );
 			}
 			else
 			{
