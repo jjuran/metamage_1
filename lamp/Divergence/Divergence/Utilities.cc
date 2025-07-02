@@ -12,6 +12,8 @@
 #include "poseven/types/errno_t.hh"
 
 #if TARGET_RT_MAC_MACHO
+	#include "plus/mac_utf8.hh"
+	#include "plus/var_string.hh"
 	#include "poseven/functions/basename.hh"
 	#include "Nitrogen/Files.hh"
 	#include "MacFiles/Classic.hh"
@@ -49,7 +51,11 @@ namespace Divergence
 		
 		FSSpec parent_spec = Nitrogen::FSMakeFSSpec( parent_ref );
 		
-		return parent_spec / p7::basename( path );
+		plus::var_string filename = plus::mac_from_utf8( p7::basename( path ) );
+		
+		std::replace( filename.begin(), filename.end(), ':', '/' );
+		
+		return parent_spec / filename;
 		
 	#else
 		
