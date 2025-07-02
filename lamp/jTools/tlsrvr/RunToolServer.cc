@@ -348,6 +348,24 @@ namespace tool
 		p7::splat( p7::open( temp_file_paths[ kScriptFile ], p7::o_wronly ),
 		           inner_script );
 		
+	#ifdef __APPLE__
+		
+		/*
+			ToolServer won't execute files of null type, so change it.
+			
+			This is a perfectly safe use of system().  The program
+			to run and its file argument are specified by absolute
+			pathnames, and nothing is interpolated.  This command
+			won't work in Mac OS X 10.5 and later (which moved the
+			contents of /Developer/Tools to /usr/bin), but this is
+			moot because 10.5 also drops the Blue Box environment
+			(a.k.a. "Classic") required to run ToolServer.
+		*/
+		
+		system( "/Developer/Tools/SetFile -t TEXT /tmp/.tlsrvr-script" );
+		
+	#endif
+		
 		plus::string script = MakeToolServerScript( temp_file_paths[ kScriptFile ],
 		                                            temp_file_paths[ kOutputFile ],
 		                                            temp_file_paths[ kErrorFile  ] );
