@@ -17,8 +17,6 @@
 #include <Files.h>
 #endif
 
-#ifdef __RELIX__
-
 // mac-sys-utils
 #include "mac_sys/errno_from_mac_error.hh"
 
@@ -28,26 +26,8 @@
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
 
-#endif
-
 // poseven
 #include "poseven/types/errno_t.hh"
-
-#ifdef __APPLE__
-
-// Nitrogen
-#include "Mac/Toolbox/Types/OSStatus.hh"
-
-// GetPathname
-#include "GetMacPathname.hh"
-
-// Divergence
-#include "Divergence/Utilities.hh"
-
-// OSErrno
-#include "OSErrno/OSErrno.hh"
-
-#endif
 
 
 namespace p7 = poseven;
@@ -55,28 +35,6 @@ namespace p7 = poseven;
 
 plus::string mac_pathname_from_path( const char* path )
 {
-#ifdef __APPLE__
-	
-	namespace Div = Divergence;
-	
-	try
-	{
-		return GetMacPathname( Div::ResolvePathToFSSpec( path ) );
-	}
-	catch ( const Mac::OSStatus& err )
-	{
-		// * Div::ResolvePathToFSSpec() only throws OSStatus on Mach
-		// * GetMacPathname() should only ever throw fnfErr
-		
-		// Don't bother reporting the OSStatus, just convert and rethrow
-		
-		throw p7::errno_t( OSErrno::ErrnoFromOSStatus( err ) );
-	}
-	
-#endif
-	
-#ifdef __RELIX__
-	
 	using mac::file::HFS_pathname;
 	
 	using mac::relix::FSSpec_from_optional_path;
@@ -118,6 +76,4 @@ plus::string mac_pathname_from_path( const char* path )
 	}
 	
 	return result;
-	
-#endif
 }
