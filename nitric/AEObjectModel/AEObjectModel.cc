@@ -187,10 +187,10 @@ namespace Nitrogen
 		Nitrogen::AESetObjectCallbacks( OSLCompare,
 		                                OSLCount,
 		                                OSLDisposeToken,
-		                                ( ::OSLGetMarkTokenProcPtr )NULL,
-		                                ( ::OSLMarkProcPtr         )NULL,
-		                                ( ::OSLAdjustMarksProcPtr  )NULL,
-		                                ( ::OSLGetErrDescProcPtr   )NULL );
+		                                (::OSLGetMarkTokenProcPtr) NULL,
+		                                (::OSLMarkProcPtr        ) NULL,
+		                                (::OSLAdjustMarksProcPtr ) NULL,
+		                                (::OSLGetErrDescProcPtr  ) NULL );
 	}
 	
 	nucleus::owned< Mac::AEDesc_Token >
