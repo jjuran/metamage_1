@@ -39,11 +39,6 @@ namespace Nitrogen
 	UInt32 ComputeAbsoluteIndex( const Mac::AEDesc_Data&  keyData,
 	                             std::size_t              count );
 	
-	pascal OSErr OSLCompare( ::DescType     op,
-	                         const AEDesc*  obj1,
-	                         const AEDesc*  obj2,
-	                         ::Boolean*     result );
-	
 	pascal OSErr OSLCount( ::DescType     desiredClass,
 	                       ::DescType     containerClass,
 	                       const AEDesc*  containerToken,

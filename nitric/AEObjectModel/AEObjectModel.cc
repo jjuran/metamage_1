@@ -21,7 +21,6 @@
 
 // Nitrogen Extras / AEObjectModel
 #include "AEObjectModel/AccessProperty.hh"
-#include "AEObjectModel/Compare.hh"
 #include "AEObjectModel/Count.hh"
 #include "AEObjectModel/DisposeToken.hh"
 
@@ -120,25 +119,6 @@ namespace Nitrogen
 		return 0;
 	}
 	
-	pascal OSErr OSLCompare( ::DescType     op,
-	                         const AEDesc*  obj1,
-	                         const AEDesc*  obj2,
-	                         ::Boolean*     result )
-	{
-		try
-		{
-			*result = Compare( Mac::AECompOperator( op ),
-			                   static_cast< const Mac::AEDesc_Token& >( *obj1 ),
-			                   static_cast< const Mac::AEDesc_Token& >( *obj2 ) );
-		}
-		catch ( ... )
-		{
-			return ConvertTheExceptionToOSStatus( errAEEventFailed );
-		}
-		
-		return noErr;
-	}
-	
 	pascal OSErr OSLCount( ::DescType     desiredClass,
 	                       ::DescType     containerClass,
 	                       const AEDesc*  containerToken,
@@ -184,7 +164,7 @@ namespace Nitrogen
 	
 	void AESetObjectCallbacks()
 	{
-		Nitrogen::AESetObjectCallbacks( OSLCompare,
+		Nitrogen::AESetObjectCallbacks( (::OSLCompareProcPtr     ) NULL,
 		                                OSLCount,
 		                                OSLDisposeToken,
 		                                (::OSLGetMarkTokenProcPtr) NULL,
