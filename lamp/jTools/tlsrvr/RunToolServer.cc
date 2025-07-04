@@ -48,7 +48,6 @@
 
 // poseven
 #include "poseven/extras/load.hh"
-#include "poseven/extras/splat.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
@@ -89,20 +88,6 @@ namespace tool
 		}
 	}
 	
-	static plus::string make_script_from_command( const plus::string& command )
-	{
-		plus::var_string script;
-		
-		script  = DirectoryCommandForMPW();
-		script += command;
-		script += "\r"
-		          "Set CommandStatus {Status}" "\r"
-		          "Directory \"{MPW}\"" "\r"   // don't keep the cwd busy
-		          "Exit {CommandStatus}" "\r";
-		
-		return script;
-	}
-	
 	static
 	plus::string command_with_I_O_redirected( const plus::string&  command,
 	                                          const char*          out_path,
@@ -132,16 +117,19 @@ namespace tool
 		return script;
 	}
 	
-	static plus::string MakeToolServerScript( const char*  script_path,
-	                                          const char*  out_path,
-	                                          const char*  err_path )
+	static plus::string MakeToolServerScript( const plus::string&  command,
+	                                          const char*          out_path,
+	                                          const char*          err_path )
 	{
-		plus::string command = escaped_HFS_path( script_path );
-		
 		plus::var_string script;
 		
 		script += "Set Exit 0; ";
+		script += DirectoryCommandForMPW();
 		script += command_with_I_O_redirected( command, out_path, err_path );
+		script += "\r"
+		          "Set CommandStatus {Status}" "\r"
+		          "Directory \"{MPW}\"" "\r"   // don't keep the cwd busy
+		          "Exit {CommandStatus}" "\r";
 		
 		return script;
 	}
@@ -333,7 +321,7 @@ namespace tool
 	
 	static char const* temp_file_paths[ n_files ] =
 	{
-		"/tmp/.tlsrvr-" "script", 
+		"",
 		"/tmp/.tlsrvr-" "stdout", 
 		"/tmp/.tlsrvr-" "stderr"
 	};
@@ -342,44 +330,16 @@ namespace tool
 	{
 		// Send a Do Script event with the command as the direct object.
 		// Better yet:
-		//  * Write the command to a file (which we'll invoke by its filename)
-		// so we don't have to quote the command.
 		//  * Create temp files to store I/O.
 		//  * Run the script with I/O redirected.
 		//  * Dump the stored output to stdout and stderr.
 		
-		// It's okay if command has the fancy quotes, because we don't actually
-		// refer to it in the Apple event itself.
-		
-		for ( int i = 0;  i < n_files;  ++i )
+		for ( int i = 1;  i < n_files;  ++i )
 		{
 			make_temp_file( temp_file_paths[ i ] );
 		}
 		
-		plus::string inner_script = make_script_from_command( command );
-		
-		p7::splat( p7::open( temp_file_paths[ kScriptFile ], p7::o_wronly ),
-		           inner_script );
-		
-	#ifdef __APPLE__
-		
-		/*
-			ToolServer won't execute files of null type, so change it.
-			
-			This is a perfectly safe use of system().  The program
-			to run and its file argument are specified by absolute
-			pathnames, and nothing is interpolated.  This command
-			won't work in Mac OS X 10.5 and later (which moved the
-			contents of /Developer/Tools to /usr/bin), but this is
-			moot because 10.5 also drops the Blue Box environment
-			(a.k.a. "Classic") required to run ToolServer.
-		*/
-		
-		system( "/Developer/Tools/SetFile -t TEXT /tmp/.tlsrvr-script" );
-		
-	#endif
-		
-		plus::string script = MakeToolServerScript( temp_file_paths[ kScriptFile ],
+		plus::string script = MakeToolServerScript( command,
 		                                            temp_file_paths[ kOutputFile ],
 		                                            temp_file_paths[ kErrorFile  ] );
 		
@@ -562,7 +522,7 @@ namespace tool
 		ConvertAndDumpMacText( output, p7::stdout_fileno );
 		
 		// Delete temp files
-		for ( int i = 0;  i < n_files;  ++i )
+		for ( int i = 1;  i < n_files;  ++i )
 		{
 			unlink( temp_file_paths[ i ] );
 		}
