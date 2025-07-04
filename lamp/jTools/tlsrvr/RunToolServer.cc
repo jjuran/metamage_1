@@ -229,12 +229,18 @@ namespace tool
 		return psn;
 	}
 	
-	static n::owned< Mac::AppleEvent > CreateScriptEvent( const ProcessSerialNumber&  psn,
-	                                                      const plus::string&         script )
+	static
+	n::owned< Mac::AppleEvent >
+	//
+	SendScript( const ProcessSerialNumber&  psn,
+	            const plus::string&         command )
 	{
 		OSErr           err;
 		AEAddressDesc   addr;
 		Mac::AppleEvent event;
+		Mac::AppleEvent reply;
+		
+		plus::string script = MakeToolServerScript( command );
 		
 		err = AECreateDesc( typeProcessSerialNumber, &psn, sizeof psn, &addr );
 		
@@ -264,9 +270,16 @@ namespace tool
 			}
 		}
 		
+		if ( err == noErr )
+		{
+			err = AESendBlocking( &event, &reply );
+			
+			AEDisposeDesc( &event );
+		}
+		
 		Mac::ThrowOSStatus( err );
 		
-		return n::owned< Mac::AppleEvent >::seize( event );
+		return n::owned< Mac::AppleEvent >::seize( reply );
 	}
 	
 	static
@@ -420,8 +433,7 @@ namespace tool
 		
 		// Send a Do Script event with the command as the direct object.
 		
-		n::owned< Mac::AppleEvent > reply = AESendBlocking( CreateScriptEvent( toolServer,
-		                                                                       MakeToolServerScript( command ) ) );
+		n::owned< Mac::AppleEvent > reply = SendScript( toolServer, command );
 		
 		int result = GetResult( reply );
 		
