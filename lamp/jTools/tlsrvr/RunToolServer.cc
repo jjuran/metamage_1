@@ -304,15 +304,6 @@ namespace tool
 		return n::owned< Mac::AppleEvent >::seize( reply );
 	}
 	
-	static plus::string SetUpScript( const plus::string& command )
-	{
-		// Send a Do Script event with the command as the direct object.
-		
-		plus::string script = MakeToolServerScript( command );
-		
-		return script;
-	}
-	
 	static void ConvertAndDumpMacText( plus::var_string& text, p7::fd_t fd )
 	{
 		std::replace( text.begin(), text.end(), '\r', '\n' );
@@ -427,8 +418,10 @@ namespace tool
 			switch_process( self, toolServer );
 		}
 		
+		// Send a Do Script event with the command as the direct object.
+		
 		n::owned< Mac::AppleEvent > reply = AESendBlocking( CreateScriptEvent( toolServer,
-		                                                                       SetUpScript( command ) ) );
+		                                                                       MakeToolServerScript( command ) ) );
 		
 		int result = GetResult( reply );
 		
