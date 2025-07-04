@@ -283,11 +283,12 @@ namespace tool
 	}
 	
 	static
-	n::owned< Mac::AppleEvent > CreateQuitEvent( const ProcessSerialNumber& psn )
+	void SendQuit( const ProcessSerialNumber& psn )
 	{
 		OSErr           err;
 		AEAddressDesc   addr;
 		Mac::AppleEvent event;
+		Mac::AppleEvent reply;
 		
 		err = AECreateDesc( typeProcessSerialNumber, &psn, sizeof psn, &addr );
 		
@@ -303,18 +304,16 @@ namespace tool
 			AEDisposeDesc( &addr );
 		}
 		
+		if ( err == noErr )
+		{
+			err = AESendBlocking( &event, &reply );
+			
+			AEDisposeDesc( &event );
+		}
+		
 		Mac::ThrowOSStatus( err );
 		
-		return n::owned< Mac::AppleEvent >::seize( event );
-	}
-	
-	static n::owned< Mac::AppleEvent > AESendBlocking( const Mac::AppleEvent& appleEvent )
-	{
-		Mac::AppleEvent reply;
-		
-		Mac::ThrowOSStatus( AESendBlocking( &appleEvent, &reply ) );
-		
-		return n::owned< Mac::AppleEvent >::seize( reply );
+		AEDisposeDesc( &reply );
 	}
 	
 	static void ConvertAndDumpMacText( plus::var_string& text, p7::fd_t fd )
@@ -479,7 +478,7 @@ namespace tool
 				write( STDOUT_FILENO, STR_LEN( "tlsrvr: ToolServer is out of memory.\n" ) );
 				write( STDOUT_FILENO, STR_LEN( "tlsrvr: Quitting ToolServer...\n"       ) );
 				
-				AESendBlocking( CreateQuitEvent( toolServer ) );
+				SendQuit( toolServer );
 				
 				while ( process_exists( toolServer ) )
 				{
