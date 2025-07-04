@@ -107,11 +107,13 @@ namespace tool
 	                                          const char*  out_path,
 	                                          const char*  err_path )
 	{
+		plus::string command = escaped_HFS_path( script_path );
+		
 		plus::var_string script;
 		
 		script += "Set Exit 0; ";
 		
-		script += escaped_HFS_path( script_path );
+		script += command;
 		script += " < Dev:Null ";
 		
 		plus::string outPath = escaped_HFS_path( out_path );
