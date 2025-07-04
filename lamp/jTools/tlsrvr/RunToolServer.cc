@@ -103,15 +103,12 @@ namespace tool
 		return script;
 	}
 	
-	static plus::string MakeToolServerScript( const char*  script_path,
-	                                          const char*  out_path,
-	                                          const char*  err_path )
+	static
+	plus::string command_with_I_O_redirected( const plus::string&  command,
+	                                          const char*          out_path,
+	                                          const char*          err_path )
 	{
-		plus::string command = escaped_HFS_path( script_path );
-		
 		plus::var_string script;
-		
-		script += "Set Exit 0; ";
 		
 		script += command;
 		script += " < Dev:Null ";
@@ -131,6 +128,20 @@ namespace tool
 			(script += "\xB3 ") += errPath;  // greater-than-or-equal-to
 			(script += " > "  ) += outPath;
 		}
+		
+		return script;
+	}
+	
+	static plus::string MakeToolServerScript( const char*  script_path,
+	                                          const char*  out_path,
+	                                          const char*  err_path )
+	{
+		plus::string command = escaped_HFS_path( script_path );
+		
+		plus::var_string script;
+		
+		script += "Set Exit 0; ";
+		script += command_with_I_O_redirected( command, out_path, err_path );
 		
 		return script;
 	}
