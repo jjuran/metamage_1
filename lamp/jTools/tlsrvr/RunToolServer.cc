@@ -47,8 +47,6 @@
 #include "plus/var_string.hh"
 
 // poseven
-#include "poseven/extras/load.hh"
-#include "poseven/functions/open.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
@@ -89,43 +87,23 @@ namespace tool
 	}
 	
 	static
-	plus::string command_with_I_O_redirected( const plus::string&  command,
-	                                          const char*          out_path,
-	                                          const char*          err_path )
+	plus::string command_with_I_O_redirected( const plus::string& command )
 	{
 		plus::var_string script;
 		
 		script += command;
 		script += " < Dev:Null ";
 		
-		plus::string outPath = escaped_HFS_path( out_path );
-		plus::string errPath = escaped_HFS_path( err_path );
-		// FIXME:  This is case-sensitive
-		//bool identicalOutputAndError = outPath == errPath;
-		bool identicalOutputAndError = false;
-		
-		if ( identicalOutputAndError )
-		{
-			(script += "\xB7 ") += outPath;  // sum symbol
-		}
-		else
-		{
-			(script += "\xB3 ") += errPath;  // greater-than-or-equal-to
-			(script += " > "  ) += outPath;
-		}
-		
 		return script;
 	}
 	
-	static plus::string MakeToolServerScript( const plus::string&  command,
-	                                          const char*          out_path,
-	                                          const char*          err_path )
+	static plus::string MakeToolServerScript( const plus::string& command )
 	{
 		plus::var_string script;
 		
 		script += "Set Exit 0; ";
 		script += DirectoryCommandForMPW();
-		script += command_with_I_O_redirected( command, out_path, err_path );
+		script += command_with_I_O_redirected( command );
 		script += "\r"
 		          "Set CommandStatus {Status}" "\r"
 		          "Directory \"{MPW}\"" "\r"   // don't keep the cwd busy
@@ -163,6 +141,29 @@ namespace tool
 		}
 		
 		return stat;
+	}
+	
+	static
+	plus::string AEGetParamPtr_text( const AppleEvent& event, AEKeyword key )
+	{
+		OSErr    err;
+		Size     size;
+		DescType type;
+		
+		plus::string result;
+		
+		err = AESizeOfParam( &event, key, &type, &size );
+		
+		if ( err == noErr )
+		{
+			char* p = result.reset( size );
+			
+			err = AEGetParamPtr( &event, key, typeText, &type, p, size, &size );
+			
+			Mac::ThrowOSStatus( err );
+		}
+		
+		return result;
 	}
 	
 	
@@ -303,45 +304,11 @@ namespace tool
 		return n::owned< Mac::AppleEvent >::seize( reply );
 	}
 	
-	enum
-	{
-		kScriptFile,
-		kOutputFile,
-		kErrorFile
-	};
-	
-	static void make_temp_file( const char* path )
-	{
-		(void) p7::open( path,
-		                 p7::o_wronly | p7::o_creat | p7::o_trunc,
-		                 p7::_666 );
-	}
-	
-	const int n_files = 3;
-	
-	static char const* temp_file_paths[ n_files ] =
-	{
-		"",
-		"/tmp/.tlsrvr-" "stdout", 
-		"/tmp/.tlsrvr-" "stderr"
-	};
-	
 	static plus::string SetUpScript( const plus::string& command )
 	{
 		// Send a Do Script event with the command as the direct object.
-		// Better yet:
-		//  * Create temp files to store I/O.
-		//  * Run the script with I/O redirected.
-		//  * Dump the stored output to stdout and stderr.
 		
-		for ( int i = 1;  i < n_files;  ++i )
-		{
-			make_temp_file( temp_file_paths[ i ] );
-		}
-		
-		plus::string script = MakeToolServerScript( command,
-		                                            temp_file_paths[ kOutputFile ],
-		                                            temp_file_paths[ kErrorFile  ] );
+		plus::string script = MakeToolServerScript( command );
 		
 		return script;
 	}
@@ -460,8 +427,10 @@ namespace tool
 			switch_process( self, toolServer );
 		}
 		
-		int result = GetResult( AESendBlocking( CreateScriptEvent( toolServer,
-		                                                           SetUpScript( command ) ) ) );
+		n::owned< Mac::AppleEvent > reply = AESendBlocking( CreateScriptEvent( toolServer,
+		                                                                       SetUpScript( command ) ) );
+		
+		int result = GetResult( reply );
 		
 		if ( switch_layers )
 		{
@@ -474,8 +443,8 @@ namespace tool
 			return 128;
 		}
 		
-		plus::var_string output = p7::load( temp_file_paths[ kOutputFile ] );
-		plus::var_string errors = p7::load( temp_file_paths[ kErrorFile  ] );
+		plus::var_string output = AEGetParamPtr_text( reply, '----' );
+		plus::var_string errors = AEGetParamPtr_text( reply, 'diag' );
 		
 		// A Metrowerks tool returns 1 on error and 2 on user break, except that
 		// if you limit the number of diagnostics displayed and there more errors
@@ -520,12 +489,6 @@ namespace tool
 		
 		ConvertAndDumpMacText( errors, p7::stderr_fileno );
 		ConvertAndDumpMacText( output, p7::stdout_fileno );
-		
-		// Delete temp files
-		for ( int i = 1;  i < n_files;  ++i )
-		{
-			unlink( temp_file_paths[ i ] );
-		}
 		
 		return result;
 	}
