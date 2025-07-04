@@ -19,6 +19,9 @@
 #include "mac_relix/FSSpec_from_path.hh"
 
 
+#pragma exceptions off
+
+
 namespace mac   {
 namespace relix {
 
