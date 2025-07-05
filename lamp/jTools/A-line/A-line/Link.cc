@@ -695,13 +695,18 @@ namespace tool
 	static inline
 	const char* dot_o( bool use_cpp )
 	{
+		if ( ! use_cpp )
+		{
+			return ".o";
+		}
+		
 	#ifdef __RELIX__
 		
-		return use_cpp ? ".cpp.o" : ".o";
+		return ".cpp.o";
 		
 	#endif
 		
-		return use_cpp ? NULL : ".o";
+		return NULL;
 	}
 	
 	void NameObjectFiles( const Project&  project,
