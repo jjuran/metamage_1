@@ -6,6 +6,7 @@
 // Standard C
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // command
 #include "command/get_option.hh"
