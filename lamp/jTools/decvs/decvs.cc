@@ -17,6 +17,9 @@
 // iota
 #include "iota/strings.hh"
 
+// mac-sys-utils
+#include "mac_sys/errno_from_mac_error.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -28,9 +31,6 @@
 // Nitrogen
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Resources.hh"
-
-// OSErrno
-#include "OSErrno/OSErrno.hh"
 
 // Divergence
 #include "Divergence/Utilities.hh"
@@ -302,15 +302,17 @@ namespace tool
 			}
 			catch ( const Mac::OSStatus& err )
 			{
-				try
+				int result = mac::sys::errno_from_mac_error( err );
+				
+				if ( result > 0 )
 				{
-					errno = OSErrno::ErrnoFromOSStatus( err );
+					errno = result;
 					
 					perror( path );
 					
 					exit_status = 1;
 				}
-				catch ( ... )
+				else
 				{
 					fprintf( stderr, "%s: OSStatus %ld\n", path, err.Get() );
 				}
