@@ -20,6 +20,9 @@
 // mac-sys-utils
 #include "mac_sys/errno_from_mac_error.hh"
 
+// mac-relix-utils
+#include "mac_relix/FSSpec_from_path.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -31,9 +34,6 @@
 // Nitrogen
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Resources.hh"
-
-// Divergence
-#include "Divergence/Utilities.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -97,6 +97,8 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
+	using mac::sys::Error;
+	
 	
 	static const char* const cvs_filenames[] =
 	{
@@ -139,6 +141,20 @@ namespace tool
 		}
 	}
 	
+	static
+	void throw_error( Error err )
+	{
+		int errnum = is_errno( err ) ? errno_from_muxed( err )
+		                             : errno_from_mac_error( err );
+		
+		if ( errnum > 0 )
+		{
+			p7::throw_errno( errnum );
+		}
+		
+		Mac::ThrowOSStatus( err );
+	}
+	
 	static bool decvs_file( const char* path );
 	
 	static void decvs_dir( const char* path )
@@ -173,7 +189,13 @@ namespace tool
 	
 	static bool decvs_file( const char* path )
 	{
-		FSSpec file = Divergence::ResolvePathToFSSpec( path );
+		using mac::relix::FSSpec_from_existing_path;
+		
+		FSSpec file;
+		
+		Error err = FSSpec_from_existing_path( path, file );
+		
+		throw_error( err );
 		
 		CInfoPBRec cInfo = { 0 };
 		
