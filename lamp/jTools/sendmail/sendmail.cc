@@ -316,8 +316,8 @@ namespace tool
 		smtpSession.Quit();
 	}
 	
-	template < class Stream >
-	static plus::string ReadOneLinerFromStream( Stream fileH )
+	static
+	plus::string ReadOneLinerFromStream( FSIORefNum fileH )
 	{
 		if ( fileH < 0 )
 		{
@@ -355,8 +355,8 @@ namespace tool
 		return contents.substr( 0, length_of_first_line );
 	}
 	
-	template < class FileSpec >
-	static inline plus::string ReadOneLinerFromFile( const FileSpec& file )
+	static inline
+	plus::string ReadOneLinerFromFile( const FSSpec& file )
 	{
 		return ReadOneLinerFromStream( open_data_fork( file, fsRdPerm ) );
 	}
