@@ -136,7 +136,7 @@ my %fsmap =
 			# Exceptions
 			\ qw( abort addrerror buserror chk div0 illegal privileged trapv ),
 			# Mac-specific
-			\ qw( SetFile aevt ic load-init mwnub rsrc-patch tlsrvr ),
+			\ qw( SetFile aevt ic mwnub tlsrvr ),
 			# AppleScript
 			qw( system ),
 			# aevt wrappers
