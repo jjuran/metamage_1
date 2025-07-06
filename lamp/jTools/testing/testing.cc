@@ -36,6 +36,7 @@
 #include "unistd.h"
 
 // mac-sys-utils
+#include "mac_sys/errno_from_mac_error.hh"
 #include "mac_sys/microseconds.hh"
 
 // gear
@@ -65,12 +66,10 @@
 #include "poseven/functions/perror.hh"
 #include "poseven/functions/read.hh"
 #include "poseven/functions/write.hh"
+#include "poseven/types/errno_t.hh"
 
 // pfiles
 #include "pfiles/common.hh"
-
-// OSErrno
-#include "OSErrno/OSErrno.hh"
 
 // Scaffold
 #include "Tests.hh"
@@ -852,7 +851,14 @@ namespace tool
 			
 			p7::perror( "testing", status, 0 );
 			
-			p7::throw_errno( OSErrno::ErrnoFromOSStatus( err ) );
+			int result = mac::sys::errno_from_mac_error( err );
+			
+			if ( result > 0 )
+			{
+				p7::throw_errno( result );
+			}
+			
+			throw;
 		}
 		
 		// Not reached
