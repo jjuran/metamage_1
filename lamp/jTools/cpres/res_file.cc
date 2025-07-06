@@ -10,14 +10,21 @@
 // Standard C++
 #include <algorithm>
 
+// mac-sys-utils
+#include "mac_sys/errno_from_mac_error.hh"
+
+// mac-relix-utils
+#include "mac_relix/FSRef_from_path.hh"
+#include "mac_relix/FSSpec_from_path.hh"
+
 // plus
 #include "plus/string.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.hh"
 
-// Divergence
-#include "Divergence/Utilities.hh"
+// poseven
+#include "poseven/types/errno_t.hh"
 
 // cpres
 #include "res_file.hh"
@@ -25,7 +32,9 @@
 
 namespace n = nucleus;
 namespace N = Nitrogen;
-namespace Div = Divergence;
+namespace p7 = poseven;
+
+using mac::sys::Error;
 
 
 class ForkNames
@@ -91,9 +100,39 @@ struct file_manager_traits< true >
 };
 
 static
+void throw_error( Error err )
+{
+	int errnum = is_errno( err ) ? errno_from_muxed( err )
+	                             : errno_from_mac_error( err );
+	
+	if ( errnum > 0 )
+	{
+		p7::throw_errno( errnum );
+	}
+	
+	Mac::ThrowOSStatus( err );
+}
+
+static
 void resolve_new_path( const char* path, FSSpec& node )
 {
-	node = Div::ResolvePathToFSSpec( path );
+	using mac::relix::FSSpec_from_optional_path;
+	
+	Error err = FSSpec_from_optional_path( path, node );
+	
+	/*
+		In MacRelix, this will always be an errno, not an OSErr.
+	*/
+	
+#ifdef __RELIX__
+	
+	p7::throw_errno( errno_from_muxed( err ) );
+	
+#else
+	
+	throw_error( err );
+	
+#endif
 }
 
 static inline
@@ -105,15 +144,11 @@ void resolve_path( const char* path, FSSpec& file )
 static
 void resolve_path( const char* path, FSRef& file )
 {
-#ifdef __RELIX__
+	using mac::relix::FSRef_from_path;
 	
-	file = N::FSpMakeFSRef( Div::ResolvePathToFSSpec( path ) );
+	Error err = FSRef_from_path( path, file );
 	
-	return;
-	
-#endif
-	
-	file = N::FSPathMakeRef( path );
+	throw_error( err );
 }
 
 static
