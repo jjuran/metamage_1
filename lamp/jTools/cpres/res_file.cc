@@ -147,20 +147,22 @@ struct file_manager_traits< true >
 };
 
 
-static FSSpec create_res_file( const FSSpec& file, ForkType fork )
+static inline
+const FSSpec& create_res_file( const FSSpec& file, ForkType fork, FSSpec& spec )
 {
 	::FSpCreateResFile( &file, 'RSED', 'rsrc', smRoman );
 	
 	return file;
 }
 
-static FSRef create_res_file( const Mac::FSRefNameSpec& file, ForkType fork )
+static
+const FSRef& create_res_file( const Mac::FSRefNameSpec& file, ForkType fork, FSRef& ref )
 {
 	const HFSUniStr255& forkName = getForkName( fork );
 	
 	N::FSCreateResourceFile( file, forkName );
 	
-	return N::FSMakeFSRefUnicode( file, kTextEncodingUnknown );
+	return ref = N::FSMakeFSRefUnicode( file, kTextEncodingUnknown );
 }
 
 static n::owned< N::ResFileRefNum > open_res_file( const FSSpec&   filespec,
@@ -197,9 +199,21 @@ open_new_res_file_template( const char* path, ForkType fork )
 {
 	typedef file_manager_traits< unicode > Traits;
 	
-	typename Traits::Node destNode = Traits::resolve_new_path( path );
+	typedef typename Traits::File File;
+	typedef typename Traits::Node Node;
 	
-	typename Traits::File destFile = create_res_file( destNode, fork );
+	/*
+		With FSRefs, destFile is a reference to destFileStorage.
+		
+		With FSSpecs, Node and File are the same type and destFile
+		refers to destNode (with destFileStorage remaining unused).
+	*/
+	
+	Node destNode = Traits::resolve_new_path( path );
+	
+	File destFileStorage;
+	
+	const File& destFile = create_res_file( destNode, fork, destFileStorage );
 	
 	return open_res_file( destFile, fork, N::fsRdWrPerm );
 }
