@@ -14,6 +14,9 @@
 // gear
 #include "gear/inscribe_decimal.hh"
 
+// mac-sys-utils
+#include "mac_sys/errno_from_mac_error.hh"
+
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/string/concat.hh"
@@ -21,12 +24,10 @@
 
 // poseven
 #include "poseven/functions/perror.hh"
+#include "poseven/types/errno_t.hh"
 
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
-
-// OSErrno
-#include "OSErrno/OSErrno.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -183,7 +184,14 @@ namespace tool
 			
 			p7::perror( "tlsrvr", status, 0 );
 			
-			p7::throw_errno( OSErrno::ErrnoFromOSStatus( err ) );
+			int result = mac::sys::errno_from_mac_error( err );
+			
+			if ( result > 0 )
+			{
+				p7::throw_errno( result );
+			}
+			
+			throw;
 		}
 		
 		// Not reached
