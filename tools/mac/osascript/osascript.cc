@@ -24,6 +24,9 @@
 // command
 #include "command/get_option.hh"
 
+// mac-relix-utils
+#include "mac_relix/FSSpec_from_path.hh"
+
 // plus
 #include "plus/mac_utf8.hh"
 
@@ -41,9 +44,6 @@
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/OSA.hh"
 #include "Nitrogen/Resources.hh"
-
-// Divergence
-#include "Divergence/Utilities.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -125,7 +125,6 @@ namespace tool
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace Div = Divergence;
 	
 	
 	template < Mac::DescType desiredType >
@@ -295,12 +294,18 @@ namespace tool
 	
 	static n::owned< N::OSAID > LoadScriptFile( const char* pathname, bool useCWD )
 	{
+		using mac::relix::FSSpec_from_existing_path;
+		
+		using mac::sys::Error;
+		
+		FSSpec scriptFile;
+		
+		Error err = FSSpec_from_existing_path( pathname, scriptFile );
+		
+		OSType type = err ? '\0\0\0\0' : N::FSpGetFInfo( scriptFile ).fdType;
+		
 		try
 		{
-			FSSpec scriptFile = Div::ResolvePathToFSSpec( pathname );
-			
-			OSType type = N::FSpGetFInfo( scriptFile ).fdType;
-			
 			if ( type == kOSAFileType )
 			{
 				return LoadCompiledScript( scriptFile );
