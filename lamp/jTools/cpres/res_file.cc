@@ -79,16 +79,6 @@ struct file_manager_traits
 {
 	typedef FSSpec File;
 	typedef FSSpec Node;
-	
-	static File resolve_path( const char* path )
-	{
-		return Div::ResolvePathToFSSpec( path );
-	}
-	
-	static Node resolve_new_path( const char* path )
-	{
-		return Div::ResolvePathToFSSpec( path );
-	}
 };
 
 template <>
@@ -98,53 +88,65 @@ struct file_manager_traits< true >
 	
 	typedef FSRef          File;
 	typedef FSRefNameSpec  Node;
-	
-	static File resolve_path( const char* path )
-	{
-	#ifdef __RELIX__
-		
-		return N::FSpMakeFSRef( Div::ResolvePathToFSSpec( path ) );
-		
-	#endif
-		
-		return N::FSPathMakeRef( path );
-	}
-	
-	static Node resolve_new_path( const char* path )
-	{
-		enum
-		{
-			utf8 = kCFStringEncodingUTF8,
-		};
-		
-		const char* slash = strrchr( path, '/' );
-		
-		const char* filename = slash ? slash + 1 : path;
-		
-		FSRef parent = resolve_path( slash ? plus::string( path, slash ).c_str() : "." );
-		
-		Node node;
-		
-		node.parent = parent;
-		
-		CFStringRef string = CFStringCreateWithCString( NULL, filename, utf8 );
-		
-		if ( ! string )
-		{
-			Mac::ThrowOSStatus( memFullErr );
-		}
-		
-		CFIndex n = CFStringGetLength( string );
-		
-		node.name.length = n;
-		
-		CFStringGetCharacters( string, CFRangeMake( 0, n ), node.name.unicode );
-		
-		CFRelease( string );
-		
-		return node;
-	}
 };
+
+static
+void resolve_new_path( const char* path, FSSpec& node )
+{
+	node = Div::ResolvePathToFSSpec( path );
+}
+
+static inline
+void resolve_path( const char* path, FSSpec& file )
+{
+	resolve_new_path( path, file );
+}
+
+static
+void resolve_path( const char* path, FSRef& file )
+{
+#ifdef __RELIX__
+	
+	file = N::FSpMakeFSRef( Div::ResolvePathToFSSpec( path ) );
+	
+	return;
+	
+#endif
+	
+	file = N::FSPathMakeRef( path );
+}
+
+static
+void resolve_new_path( const char* path, N::FSRefNameSpec& node )
+{
+	enum
+	{
+		utf8 = kCFStringEncodingUTF8,
+	};
+	
+	const char* slash = strrchr( path, '/' );
+	
+	const char* filename = slash ? slash + 1 : path;
+	
+	FSRef& parent = node.parent;
+	
+	resolve_path( slash ? plus::string( path, slash ).c_str() : ".", parent );
+	
+	CFStringRef string = CFStringCreateWithCString( NULL, filename, utf8 );
+	
+	if ( ! string )
+	{
+		Mac::ThrowOSStatus( memFullErr );
+	}
+	
+	CFIndex n = CFStringGetLength( string );
+	
+	node.name.length = n;
+	
+	CFStringGetCharacters( string, CFRangeMake( 0, n ), node.name.unicode );
+	
+	CFRelease( string );
+}
 
 
 static inline
@@ -188,7 +190,9 @@ open_res_file_template( const char* path, ForkType fork, N::FSIOPermssn perm )
 {
 	typedef file_manager_traits< unicode > Traits;
 	
-	typename Traits::File destFile = Traits::resolve_path( path );
+	typename Traits::File destFile;
+	
+	resolve_path( path, destFile );
 	
 	return open_res_file( destFile, fork, perm );
 }
@@ -209,9 +213,10 @@ open_new_res_file_template( const char* path, ForkType fork )
 		refers to destNode (with destFileStorage remaining unused).
 	*/
 	
-	Node destNode = Traits::resolve_new_path( path );
-	
+	Node destNode;
 	File destFileStorage;
+	
+	resolve_new_path( path, destNode );
 	
 	const File& destFile = create_res_file( destNode, fork, destFileStorage );
 	
@@ -260,7 +265,9 @@ open_res_file( const char* path, ForkType fork, bool exists )
 
 void set_BNDL_bit( const char* path, bool value )
 {
-	const FSSpec file = Div::ResolvePathToFSSpec( path );
+	FSSpec file;
+	
+	resolve_path( path, file );
 	
 	FInfo info = N::FSpGetFInfo( file );
 	
