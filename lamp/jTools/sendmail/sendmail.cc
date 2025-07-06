@@ -48,6 +48,9 @@
 // mac-file-utils
 #include "mac_file/directory.hh"
 #include "mac_file/listing.hh"
+#include "mac_file/open_data_fork.hh"
+#include "mac_file/rw.hh"
+#include "mac_file/scoped_open_refnum.hh"
 
 // plus
 #include "plus/string.hh"
@@ -143,6 +146,10 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace n = nucleus;
 	namespace p7 = poseven;
+	
+	using mac::file::FSIORefNum;
+	using mac::file::open_data_fork;
+	using mac::file::scoped_open_refnum;
 	
 	using namespace io::path_descent_operators;
 	
@@ -276,7 +283,12 @@ namespace tool
 		
 		SMTP::Client::Session smtpSession( smtp_server );
 		
-		n::owned< N::FSFileRefNum > messageStream = io::open_for_reading( messageFile );
+		scoped_open_refnum opened( open_data_fork( messageFile, fsRdPerm ) );
+		
+		if ( opened < 0 )
+		{
+			Mac::ThrowOSStatus( opened );
+		}
 		
 		smtpSession.Hello      ( p7::gethostname() );
 		smtpSession.MailFrom   ( returnPath  );
@@ -288,9 +300,16 @@ namespace tool
 		
 		char data[ blockSize ];
 		
-		while ( size_t bytes = io::read( messageStream, data, blockSize ) )
+		ssize_t bytes;
+		
+		while ( (bytes = mac::file::read( opened, data, blockSize )) > 0 )
 		{
 			p7::write( smtp_server, data, bytes );
+		}
+		
+		if ( bytes < 0 )
+		{
+			Mac::ThrowOSStatus( bytes );
 		}
 		
 		smtpSession.EndData();
@@ -300,23 +319,38 @@ namespace tool
 	template < class Stream >
 	static plus::string ReadOneLinerFromStream( Stream fileH )
 	{
-		const size_t file_size = io::get_file_size( fileH );
+		if ( fileH < 0 )
+		{
+			Mac::ThrowOSStatus( fileH );
+		}
 		
 		plus::string contents;
 		
-		char* p = contents.reset( file_size );
+		size_t length_of_first_line = 0;
 		
-		io::read( fileH, p, file_size );
+		OSErr err = fileH;
 		
-		char* q = p;
+		if ( fileH >= 0 )
+		{
+			Size size;
+			char* p;
+			
+			(err = GetEOF( fileH, &size ))                                    ||
+			(! (p = contents.reset_nothrow( size ))  &&  (err = memFullErr))  ||
+			(err = mac::file::read_all( fileH, p, size ));
+			
+			FSClose( fileH );
+			
+			char* q = p;
+			
+			while ( ! iota::is_cntrl( *q++ ) )  continue;
+			
+			const char* end_of_first_line = --q;
+			
+			length_of_first_line = end_of_first_line - p;
+		}
 		
-		while ( ! iota::is_cntrl( *q++ ) )  continue;
-		
-		--q;
-		
-		const char* end_of_first_line = q;
-		
-		const size_t length_of_first_line = end_of_first_line - p;
+		Mac::ThrowOSStatus( err );
 		
 		return contents.substr( 0, length_of_first_line );
 	}
@@ -324,7 +358,7 @@ namespace tool
 	template < class FileSpec >
 	static inline plus::string ReadOneLinerFromFile( const FileSpec& file )
 	{
-		return ReadOneLinerFromStream( io::open_for_reading( file ) );
+		return ReadOneLinerFromStream( open_data_fork( file, fsRdPerm ) );
 	}
 	
 	
@@ -358,7 +392,7 @@ namespace tool
 			// destFile serves as a lock on this destination
 			// We can't switch from FSSpec to pathname until we sort out locking
 			Relay( itsReturnPath,
-			       ReadOneLinerFromStream( io::open_for_io( destFile ) ),
+			       ReadOneLinerFromStream( open_data_fork( destFile, fsRdWrPerm ) ),
 			       itsMessageFile );
 			
 			io::delete_file( destFile );
