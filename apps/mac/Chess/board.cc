@@ -53,6 +53,8 @@ using mac::qd::get_portRect;
 using chess::Square;
 
 
+bool live_dragging_enabled;
+
 static Square& promotion_source = chess::game.promoting_pawn_source;
 static Square& promotion_target = chess::game.promoting_pawn_target;
 
@@ -120,7 +122,10 @@ Square drag_unit( GrafPtr port, Square source )
 {
 	using namespace chess;
 	
-	SetPort( offscreen_port );
+	if ( live_dragging_enabled )
+	{
+		SetPort( offscreen_port );
+	}
 	
 	draw_square( source, Layer_mask );
 	
@@ -174,6 +179,32 @@ Square drag_unit( GrafPtr port, Square source )
 	
 	HideCursor();
 	
+	RgnHandle rgn;
+	
+	if ( ! live_dragging_enabled )
+	{
+		static RgnHandle a = NewRgn();
+		static RgnHandle b = NewRgn();
+		
+		icon_bits.baseAddr += 128;
+		
+		BitMapToRegion( a, &icon_bits );
+		
+		MapRgn( a, &icon_bits.bounds, &rect );
+		
+		CopyRgn( a, b );
+		
+		InsetRgn( b, 2, 2 );
+		
+		DiffRgn( a, b, b );
+		
+		rgn = b;
+		
+		PenMode( patXor );
+		
+		PaintRgn( rgn );
+	}
+	
 	do
 	{
 		Point pt = where;
@@ -182,14 +213,35 @@ Square drag_unit( GrafPtr port, Square source )
 		
 		if ( *(long*) &where != *(long*) &pt )
 		{
+			if ( ! live_dragging_enabled )
+			{
+				PaintRgn( rgn );
+			}
+			
 			OffsetRect( &rect, where.h - pt.h, where.v - pt.v );
 			
-			animate_icon( port, icon_bits, rect, mode );
+			if ( live_dragging_enabled )
+			{
+				animate_icon( port, icon_bits, rect, mode );
+			}
+			else
+			{
+				OffsetRgn( rgn, where.h - pt.h, where.v - pt.v );
+				
+				PaintRgn( rgn );
+			}
 		}
 		
 		mac::glue::delay( 1 );
 	}
 	while ( StillDown() );
+	
+	if ( ! live_dragging_enabled )
+	{
+		PaintRgn( rgn );
+		
+		PenNormal();
+	}
 	
 	ShowCursor();
 	

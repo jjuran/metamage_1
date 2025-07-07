@@ -17,6 +17,8 @@
 #endif
 
 
+extern bool live_dragging_enabled;
+
 void click_board( Point where );
 
 void reset();

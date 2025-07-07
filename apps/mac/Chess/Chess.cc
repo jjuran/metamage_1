@@ -229,6 +229,20 @@ void menu_item_chosen( long choice )
 		case Edit:
 			break;
 		
+		case Options:
+			switch ( item )
+			{
+				case LiveDragging:
+					live_dragging_enabled = ! live_dragging_enabled;
+					
+					CheckMenuItem( Options_menu, item, live_dragging_enabled );
+					break;
+				
+				default:
+					break;
+			}
+			break;
+		
 		default:
 			break;
 	}
@@ -264,6 +278,8 @@ int main()
 	
 	mac::app::init_toolbox();
 	mac::app::install_menus();
+	
+	set_up_menus();
 	
 	if ( apple_events_present )
 	{

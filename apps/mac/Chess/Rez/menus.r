@@ -1,6 +1,7 @@
 #include "Apple-menu.r"
 
-resource 'MENU' (129) {
+resource 'MENU' (129)
+{
 	2,
 	textMenuProc,
 	0x7FFFFFC5,
@@ -17,7 +18,8 @@ resource 'MENU' (129) {
 	}
 };
 
-resource 'MENU' (130) {
+resource 'MENU' (130)
+{
 	3,
 	textMenuProc,
 	0x7FFFFFC0,
@@ -30,5 +32,17 @@ resource 'MENU' (130) {
 		"Copy", noIcon, "C", noMark, plain,
 		"Paste", noIcon, "V", noMark, plain,
 		"Clear", noIcon, noKey, noMark, plain,
+	}
+};
+
+resource 'MENU' (131)
+{
+	4,
+	textMenuProc,
+	0x7FFFFFFF,
+	enabled,
+	"Options",
+	{
+		"Live Dragging", noIcon, noKey, check, plain,
 	}
 };
