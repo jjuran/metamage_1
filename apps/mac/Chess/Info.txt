@@ -3,4 +3,4 @@ CFBundleName:        "Black Knight’s Chess"
 CFBundlePackageType: 'APPL'
 CFBundleSignature:   'Kngt'
 CFBundleGetInfoString: "Copyright 2024-2025 Josh Juran"
-CFBundleShortVersionString: "0.1.1"
+CFBundleShortVersionString: "0.2.0"
