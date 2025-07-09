@@ -117,6 +117,22 @@ void click_for_promotion( GrafPtr port, Point where )
 	}
 }
 
+static
+void blit_square( GrafPtr port, int square )
+{
+	int i = square - 1;
+	
+	int row = 7 - i / 8u;
+	int col =     i % 8u;
+	
+	int x = col * unit_length;
+	int y = row * unit_length;
+	
+	Rect rect = { y, x, y + unit_length, x + unit_length };
+	
+	mac::qd::copy_bits( offscreen_port, port, rect, rect );
+}
+
 static inline
 Square drag_unit( GrafPtr port, Square source )
 {
@@ -205,6 +221,11 @@ Square drag_unit( GrafPtr port, Square source )
 		PaintRgn( rgn );
 	}
 	
+	const Rect& portRect = get_portRect( port );
+	
+	Square lit = Square();
+	Square hit = Square();
+	
 	do
 	{
 		Point pt = where;
@@ -219,6 +240,104 @@ Square drag_unit( GrafPtr port, Square source )
 			}
 			
 			OffsetRect( &rect, where.h - pt.h, where.v - pt.v );
+			
+			/*
+				Each time the cursor moves, hit-test the location
+				to see which square it's over and whether that's
+				a legal move.  Highlight any current legal move.
+			*/
+			
+			hit = PtInRect( where, &portRect ) ? hit_test( where ) : Square();
+			
+			if ( hit != lit )
+			{
+				/*
+					There's a pattern origin bug in 10.4+ and later
+					when draw_square() is drawing to the offscreen port,
+					which it works around by selecting different patterns
+					to compensate.  There's a *different* pattern origin
+					bug (affecting squares in even-numbered ranks) when
+					drawing to the window, which we'll sidestep here by
+					drawing only to the offscreen port (and then blitting
+					the results to the window).
+					
+					Unlike the previous workaround of switching patterns,
+					this workaround is harmless when the bug is absent,
+					so for simplicity we apply it in all Carbon builds.
+					
+				*/
+				
+				if ( TARGET_API_MAC_CARBON  ||  live_dragging_enabled )
+				{
+					SetPort( offscreen_port );
+				}
+				
+				if ( lit )
+				{
+					/*
+						A square that the cursor no longer points to
+						has highlighting.  Redraw to remove it.
+					*/
+					
+					draw_square( lit, Layer_all );
+					
+					if ( TARGET_API_MAC_CARBON  &&  ! live_dragging_enabled )
+					{
+						/*
+							This is the workaround for the second pattern
+							origin bug mentioned above.  Blit the redrawn
+							square with highlight removed to the window.
+						*/
+						
+						SetPort( port );
+						
+						blit_square( port, lit );
+					}
+					
+					lit = Square();
+				}
+				
+				Game hypothetical = game;
+				
+				if ( play( hypothetical, source, hit ) )
+				{
+					lit = hit;
+					
+					/*
+						The square newly pointed to by the cursor is
+						a legal move.  Redraw it with a highlight.
+					*/
+					
+					if ( TARGET_API_MAC_CARBON )
+					{
+						/*
+							If we're applying the workaround, then we
+							switched to the window port above and need
+							to switch back.  For live dragging, this is
+							unnecessary (i.e. redundant) but harmless.
+							
+						*/
+						
+						SetPort( offscreen_port );
+					}
+					
+					draw_square( lit, Layer_all, true );
+					
+					if ( TARGET_API_MAC_CARBON  &&  ! live_dragging_enabled )
+					{
+						/*
+							As before, if we're applying the workaround,
+							then blit the redrawn square to the window.
+						*/
+						
+						SetPort( port );
+						
+						blit_square( port, lit );
+					}
+				}
+				
+				SetPort( port );
+			}
 			
 			if ( live_dragging_enabled )
 			{
@@ -244,8 +363,6 @@ Square drag_unit( GrafPtr port, Square source )
 	}
 	
 	ShowCursor();
-	
-	const Rect& portRect = get_portRect( port );
 	
 	return PtInRect( where, &portRect ) ? hit_test( where ) : Square();
 }

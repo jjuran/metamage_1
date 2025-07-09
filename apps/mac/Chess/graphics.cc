@@ -106,7 +106,7 @@ bool has_buggy_pattern_origin()
 #define ltGray_14_bytes (buggy_origin ? ltGray_14_bytes_41 : ltGray_14_bytes_ok)
 #define dkGray_7D_bytes (buggy_origin ? dkGray_7D_bytes_D7 : mac::qd::dkGray())
 
-void draw_square( int square, Layers layers )
+void draw_square( int square, Layers layers, bool lit )
 {
 	using namespace chess;
 	
@@ -130,6 +130,24 @@ void draw_square( int square, Layers layers )
 		                                     : ltGray_14_bytes;
 		
 		FillRect( &rect, &gray );
+		
+		if ( lit )
+		{
+			const short size = ((unit_length >= ideal_2x_length) + 1) * 3;
+			
+			PenState state;
+			
+			GetPenState( &state );
+			
+			PenMode( patCopy );
+			PenSize( size, size );
+			
+			PenPat( &mac::qd::gray() );
+			
+			FrameRect( &rect );
+			
+			SetPenState( &state );
+		}
 	}
 	
 	Unit unit = game.board.unit[ i ];

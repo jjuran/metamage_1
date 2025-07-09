@@ -16,7 +16,7 @@ enum Layers
 
 extern short unit_length;
 
-void draw_square( int square, Layers layers );
+void draw_square( int square, Layers layers, bool lit = false );
 
 void draw_board();
 
