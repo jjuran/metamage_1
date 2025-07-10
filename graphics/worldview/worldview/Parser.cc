@@ -479,11 +479,13 @@ namespace worldview
 	
 	void Loader::LoadLine( const plus::string& line )
 	{
-		if ( strchr( line.c_str(), '{' ) )
+		const char* s = line.c_str();
+		
+		if ( strchr( s, '{' ) )
 		{
 			itsSavedParsers.push_back( itsParser );
 		}
-		else if ( strchr( line.c_str(), '}' ) )
+		else if ( strchr( s, '}' ) )
 		{
 			itsParser = itsSavedParsers.back();
 			itsSavedParsers.pop_back();
