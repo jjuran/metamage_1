@@ -437,8 +437,11 @@ namespace worldview
 	{
 		const unsigned char whitespace[] = { 2, ' ', '\t' };
 		
-		const char* cmd_start = gear::find_first_nonmatch( line.data(),
-		                                                   line.size(),
+		const char* data = line.data();
+		size_t      size = line.size();
+		
+		const char* cmd_start = gear::find_first_nonmatch( data,
+		                                                   size,
 		                                                   whitespace );
 		
 		if ( cmd_start == NULL )
@@ -446,7 +449,7 @@ namespace worldview
 			return;
 		}
 		
-		const char* end = &*line.end();
+		const char* end = data + size;
 		
 		// We are guaranteed a non-empty line since we didn't return above.
 		
