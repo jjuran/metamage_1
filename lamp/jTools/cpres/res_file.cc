@@ -17,6 +17,10 @@
 #include "mac_file/file_traits.hh"
 #include "mac_file/Finder_info.hh"
 
+// mac-rsrc-utils
+#include "mac_rsrc/create_res_file.hh"
+#include "mac_rsrc/open_res_file.hh"
+
 // mac-relix-utils
 #include "mac_relix/FSRef_from_path.hh"
 #include "mac_relix/FSSpec_from_path.hh"
@@ -203,23 +207,27 @@ void resolve_new_path( const char* path, N::FSRefNameSpec& node )
 #if ! __LP64__
 
 static inline
-const FSSpec& create_res_file( const FSSpec& file, ForkType fork, FSSpec& spec )
+ResFileRefNum open_new_res_file( const FSSpec& file, ForkType fork )
 {
 	::FSpCreateResFile( &file, 'RSED', 'rsrc', smRoman );
 	
-	return file;
+	return mac::rsrc::open_res_file( file, fsRdWrPerm );
 }
 
 #endif
 
 static
-const FSRef& create_res_file( const Mac::FSRefNameSpec& file, ForkType fork, FSRef& ref )
+ResFileRefNum open_new_res_file( const Mac::FSRefNameSpec& file, ForkType fork )
 {
+	using mac::rsrc::create_res_file;
+	using mac::rsrc::open_res_file;
+	
 	const HFSUniStr255& forkName = getForkName( fork );
 	
-	N::FSCreateResourceFile( file, forkName );
+	FSRef ref;
+	OSErr err = create_res_file( ref, file.parent, file.name, forkName );
 	
-	return ref = N::FSMakeFSRefUnicode( file, kTextEncodingUnknown );
+	return err ? err : open_res_file( ref, forkName, fsRdWrPerm );
 }
 
 #if ! __LP64__
@@ -262,24 +270,20 @@ open_new_res_file_template( const char* path, ForkType fork )
 {
 	typedef file_manager_traits< unicode > Traits;
 	
-	typedef typename Traits::File File;
 	typedef typename Traits::Node Node;
 	
-	/*
-		With FSRefs, destFile is a reference to destFileStorage.
-		
-		With FSSpecs, Node and File are the same type and destFile
-		refers to destNode (with destFileStorage remaining unused).
-	*/
-	
 	Node destNode;
-	File destFileStorage;
 	
 	resolve_new_path( path, destNode );
 	
-	const File& destFile = create_res_file( destNode, fork, destFileStorage );
+	ResFileRefNum refnum = open_new_res_file( destNode, fork );
 	
-	return open_res_file( destFile, fork, N::fsRdWrPerm );
+	if ( refnum < 0 )
+	{
+		Mac::ThrowOSStatus( refnum );
+	}
+	
+	return n::owned< N::ResFileRefNum >::seize( N::ResFileRefNum( refnum ) );
 }
 
 n::owned< N::ResFileRefNum >
