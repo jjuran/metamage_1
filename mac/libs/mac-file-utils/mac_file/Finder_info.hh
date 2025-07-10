@@ -20,6 +20,8 @@
 namespace mac  {
 namespace file {
 
+#if ! __LP64__
+
 inline
 OSErr get_Finder_info( const FSSpec& file, FInfo& info )
 {
@@ -31,6 +33,8 @@ OSErr set_Finder_info( const FSSpec& file, const FInfo& info )
 {
 	return HSetFInfo( file.vRefNum, file.parID, file.name, &info );
 }
+
+#endif
 
 inline
 OSErr get_Finder_info( const FSRef& file, FSCatalogInfo& info )

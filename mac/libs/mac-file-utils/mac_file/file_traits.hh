@@ -32,6 +32,8 @@ bool is_read_error( OSErr err )
 template < class File >
 struct file_traits;
 
+#if ! __LP64__
+
 template <>
 struct file_traits< FSSpec >
 {
@@ -85,6 +87,8 @@ struct file_traits< FSSpec >
 		return err;
 	}
 };
+
+#endif
 
 template <>
 struct file_traits< FSRef >
