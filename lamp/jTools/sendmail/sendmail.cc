@@ -358,19 +358,20 @@ namespace tool
 	
 	static void ProcessMessage( const N::FSDirSpec& messages, const unsigned char* name )
 	{
-		FSSpec msgFolderItem = messages / name;
-		
 		using mac::file::directory;
 		using mac::file::directory_listing;
 		using mac::file::list_entry;
 		
-		VRefNum_DirID message_dir = directory( msgFolderItem );
+		VRefNum_DirID message_dir = directory( messages.vRefNum, messages.dirID, name );
 		
 		if ( is_error( message_dir ) )  return;  // Icon files, et al
 		
 		typedef io::filespec_traits< FSSpec >::optimized_directory_spec directory_spec;
 		
-		directory_spec msgFolder( N::FSpMake_FSDirSpec( msgFolderItem ) );
+		Mac::FSDirSpec msgFolder;
+		
+		msgFolder.vRefNum = Mac::FSVolumeRefNum( message_dir.vRefNum );
+		msgFolder.dirID   = Mac::FSDirID       ( message_dir.dirID   );
 		
 		FSSpec message      = msgFolder / "\p" "Message";
 		FSSpec returnPath   = msgFolder / "\p" "Return-Path";
