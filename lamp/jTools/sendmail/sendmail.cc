@@ -362,48 +362,6 @@ namespace tool
 	}
 	
 	
-	class Transmitter
-	{
-		private:
-			plus::string  itsReturnPath;
-			FSSpec        itsMessageFile;
-			FSSpec        itsDestinations;
-		
-		public:
-			Transmitter( const plus::string&  returnPath,
-			             const FSSpec&        message,
-			             const FSSpec&        dests )
-			:
-				itsReturnPath  ( returnPath ),
-				itsMessageFile ( message    ),
-				itsDestinations( dests      )
-			{
-			}
-			
-			void operator()( const unsigned char* dest_filename );
-	};
-	
-	void Transmitter::operator()( const unsigned char* dest_filename )
-	{
-		try
-		{
-			FSSpec destFile = itsDestinations / dest_filename;
-			
-			// destFile serves as a lock on this destination
-			// We can't switch from FSSpec to pathname until we sort out locking
-			Relay( itsReturnPath,
-			       ReadOneLinerFromStream( open_data_fork( destFile, fsRdWrPerm ) ),
-			       itsMessageFile );
-			
-			io::delete_file( destFile );
-		}
-		catch ( ... )
-		{
-			
-		}
-	}
-	
-	
 	static void ProcessMessage( const N::FSDirSpec& messages, const unsigned char* name )
 	{
 		FSSpec msgFolderItem = messages / name;
@@ -437,15 +395,32 @@ namespace tool
 		
 		unsigned n = listing.count();
 		
-		Transmitter transmitter( ReadOneLinerFromFile( returnPath ),
-		                         message,
-		                         destinations );
+		plus::string return_path = ReadOneLinerFromFile( returnPath );
 		
 		for ( unsigned i = 0;  i < n;  ++i )
 		{
 			const list_entry& entry = listing.get_nth( i );
 			
-			transmitter( entry.name );
+			try
+			{
+				FSSpec destFile = destinations / entry.name;
+				
+				/*
+					destFile serves as a lock on this destination.
+					
+					We can't switch from HFS-based filing to pathnames
+					until we sort out file locking.
+				*/
+				
+				Relay( return_path,
+				       ReadOneLinerFromStream( open_data_fork( destFile, fsRdWrPerm ) ),
+				       message );
+				
+				io::delete_file( destFile );
+			}
+			catch ( ... )
+			{
+			}
 		}
 		
 		io::delete_empty_directory( destFolder );  // this fails if destinations remain
