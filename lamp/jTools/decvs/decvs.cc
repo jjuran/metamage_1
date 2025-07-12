@@ -3,6 +3,19 @@
 	--------
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __FILES__
+#include <Files.h>
+#endif
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
+
 // Standard C
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,9 +32,13 @@
 
 // mac-sys-utils
 #include "mac_sys/errno_from_mac_error.hh"
+#include "mac_sys/res_error.hh"
 
 // mac-file-utils
 #include "mac_file/open_rsrc_fork.hh"
+
+// mac-rsrc-utils
+#include "mac_rsrc/open_res_file.hh"
 
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
@@ -36,8 +53,7 @@
 
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
-
-#include "Nitrogen/Resources.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -98,7 +114,6 @@ namespace tool
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	using mac::sys::Error;
@@ -266,20 +281,32 @@ namespace tool
 		
 		if ( !empty_map )
 		{
-			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdWrPerm );
+			using mac::rsrc::open_res_file;
+			using mac::rsrc::ResFileRefNum;
 			
-			Handle ckid = ::Get1Resource( 'ckid', 128 );
+			ResFileRefNum refnum = open_res_file( file, fsRdWrPerm );
 			
-			if ( ckid )
+			if ( refnum > 0 )
 			{
-				(void) N::RemoveResource( ckid );
+				OSErr err = noErr;
 				
-				modified = true;
-			}
-			
-			if ( N::Count1Types() == 0 )
-			{
-				empty_map = true;
+				if ( Handle ckid = Get1Resource( 'ckid', 128 ) )
+				{
+					RemoveResource( ckid );
+					
+					err = mac::sys::res_error();
+					
+					modified = true;
+				}
+				
+				if ( Count1Types() == 0 )
+				{
+					empty_map = true;
+				}
+				
+				CloseResFile( refnum );
+				
+				Mac::ThrowOSStatus( err );
 			}
 		}
 		
