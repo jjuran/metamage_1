@@ -357,12 +357,6 @@ namespace tool
 		return contents.substr( 0, length_of_first_line );
 	}
 	
-	static inline
-	plus::string ReadOneLinerFromFile( const FSSpec& file )
-	{
-		return ReadOneLinerFromStream( open_data_fork( file, fsRdPerm ) );
-	}
-	
 	
 	static
 	void ProcessMessage( const VRefNum_DirID& messages, const Byte* name )
@@ -399,7 +393,7 @@ namespace tool
 		
 		Mac::ThrowOSStatus( err );
 		
-		plus::string return_path = ReadOneLinerFromFile( returnPath );
+		plus::string return_path = ReadOneLinerFromStream( open_data_fork( returnPath, fsRdPerm ) );
 		
 		unsigned n = listing.count();
 		
