@@ -156,21 +156,29 @@ namespace tool
 	
 	
 	static inline
-	Mac::FSDirSpec
+	long directory_ID( const VRefNum_DirID& dir, const Byte* name )
+	{
+		return dir.vRefNum ? mac::file::directory( dir, name ).dirID
+		                   : dir.dirID;
+	}
+	
+	static inline
+	VRefNum_DirID
 	QueueDirectory()
 	{
-		Mac::FSDirSpec folder;
+		VRefNum_DirID folder;
 		
 		folder.vRefNum = Mac::FSVolumeRefNum( mac::file::boot_volume() );
 		
 		folder.dirID = Mac::fsRtDirID;  // root
 		
-		return N::FSpMake_FSDirSpec( folder
-		                             / "\p" "j"
-		                             / "\p" "var"
-		                             / "\p" "spool"
-		                             / "\p" "jmail"
-		                             / "\p" "queue" );
+		folder.dirID = directory_ID( folder, "\p" "j"     );
+		folder.dirID = directory_ID( folder, "\p" "var"   );
+		folder.dirID = directory_ID( folder, "\p" "spool" );
+		folder.dirID = directory_ID( folder, "\p" "jmail" );
+		folder.dirID = directory_ID( folder, "\p" "queue" );
+		
+		return folder;
 	}
 	
 	
@@ -356,7 +364,8 @@ namespace tool
 	}
 	
 	
-	static void ProcessMessage( const N::FSDirSpec& messages, const unsigned char* name )
+	static
+	void ProcessMessage( const VRefNum_DirID& messages, const Byte* name )
 	{
 		using mac::file::directory;
 		using mac::file::directory_listing;
@@ -441,7 +450,7 @@ namespace tool
 		
 		const int argn = argc - (args - argv);
 		
-		N::FSDirSpec queue_dir = QueueDirectory();
+		VRefNum_DirID queue_dir = QueueDirectory();
 		
 		short vRefNum = queue_dir.vRefNum;
 		long  dirID   = queue_dir.dirID;
