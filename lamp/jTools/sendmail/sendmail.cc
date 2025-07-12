@@ -370,16 +370,18 @@ namespace tool
 		using mac::file::directory_listing;
 		using mac::file::list_entry;
 		
-		VRefNum_DirID message_dir = directory( messages.vRefNum, messages.dirID, name );
+		short vRefNum = messages.vRefNum;
 		
-		if ( is_error( message_dir ) )  return;  // Icon files, et al
+		long message_dirID = directory( vRefNum, messages.dirID, name ).dirID;
+		
+		if ( message_dirID < 0 )  return;  // Icon files, et al
 		
 		typedef io::filespec_traits< FSSpec >::optimized_directory_spec directory_spec;
 		
 		Mac::FSDirSpec msgFolder;
 		
-		msgFolder.vRefNum = Mac::FSVolumeRefNum( message_dir.vRefNum );
-		msgFolder.dirID   = Mac::FSDirID       ( message_dir.dirID   );
+		msgFolder.vRefNum = Mac::FSVolumeRefNum( vRefNum       );
+		msgFolder.dirID   = Mac::FSDirID       ( message_dirID );
 		
 		FSSpec message      = msgFolder / "\p" "Message";
 		FSSpec returnPath   = msgFolder / "\p" "Return-Path";
@@ -387,12 +389,11 @@ namespace tool
 		
 		directory_spec destFolder( N::FSpMake_FSDirSpec( destinations ) );
 		
-		short vRefNum = destFolder.vRefNum;
-		long  dirID   = destFolder.dirID;
+		long dest_dirID = destFolder.dirID;
 		
 		directory_listing listing;
 		
-		OSErr err = list_directory( listing, vRefNum, dirID );
+		OSErr err = list_directory( listing, vRefNum, dest_dirID );
 		
 		Mac::ThrowOSStatus( err );
 		
