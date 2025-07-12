@@ -228,7 +228,7 @@ namespace tool
 	
 	static void Relay( const plus::string&  returnPath,
 	                   const plus::string&  forwardPath,
-	                   const FSSpec&        messageFile )
+	                   FSIORefNum           message )
 	{
 		if ( forwardPath == "" )
 		{
@@ -283,13 +283,6 @@ namespace tool
 		
 		SMTP::Client::Session smtpSession( smtp_server );
 		
-		scoped_open_refnum opened( open_data_fork( messageFile, fsRdPerm ) );
-		
-		if ( opened < 0 )
-		{
-			Mac::ThrowOSStatus( opened );
-		}
-		
 		smtpSession.Hello      ( p7::gethostname() );
 		smtpSession.MailFrom   ( returnPath  );
 		smtpSession.RecipientTo( forwardPath );
@@ -302,7 +295,7 @@ namespace tool
 		
 		ssize_t bytes;
 		
-		while ( (bytes = mac::file::read( opened, data, blockSize )) > 0 )
+		while ( (bytes = mac::file::read( message, data, blockSize )) > 0 )
 		{
 			p7::write( smtp_server, data, bytes );
 		}
@@ -399,6 +392,13 @@ namespace tool
 		
 		for ( unsigned i = 0;  i < n;  ++i )
 		{
+			scoped_open_refnum opened( open_data_fork( message, fsRdPerm ) );
+			
+			if ( opened < 0 )
+			{
+				continue;
+			}
+			
 			const list_entry& entry = listing.get_nth( i );
 			
 			try
@@ -414,7 +414,7 @@ namespace tool
 				
 				Relay( return_path,
 				       ReadOneLinerFromStream( open_data_fork( destFile, fsRdWrPerm ) ),
-				       message );
+				       opened );
 				
 				io::delete_file( destFile );
 			}
