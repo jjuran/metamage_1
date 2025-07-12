@@ -59,9 +59,6 @@
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
-
 // poseven
 #include "poseven/bundles/inet.hh"
 #include "poseven/functions/gethostname.hh"
@@ -77,6 +74,8 @@
 
 
 #define DESTINATIONS  "Destinations"
+#define MESSAGE       "Message"
+#define RETURN_PATH   "Return-Path"
 
 
 #if CONFIG_OPEN_TRANSPORT_HEADERS
@@ -150,8 +149,6 @@ namespace tool
 	using mac::file::FSIORefNum;
 	using mac::file::open_data_fork;
 	using mac::file::scoped_open_refnum;
-	
-	using namespace io::path_descent_operators;
 	
 	using mac::types::VRefNum_DirID;
 	
@@ -371,21 +368,9 @@ namespace tool
 		
 		if ( message_dirID < 0 )  return;  // Icon files, et al
 		
-		Mac::FSDirSpec msgFolder;
-		Mac::FSDirSpec destFolder;
-		
-		msgFolder.vRefNum = Mac::FSVolumeRefNum( vRefNum       );
-		msgFolder.dirID   = Mac::FSDirID       ( message_dirID );
-		
-		FSSpec message      = msgFolder / "\p" "Message";
-		FSSpec returnPath   = msgFolder / "\p" "Return-Path";
-		
 		long dest_dirID = directory( vRefNum,
 		                             message_dirID,
 		                             "\p" DESTINATIONS ).dirID;
-		
-		destFolder.vRefNum = Mac::FSVolumeRefNum( vRefNum    );
-		destFolder.dirID   = Mac::FSDirID       ( dest_dirID );
 		
 		directory_listing listing;
 		
@@ -393,13 +378,21 @@ namespace tool
 		
 		Mac::ThrowOSStatus( err );
 		
-		plus::string return_path = ReadOneLinerFromStream( open_data_fork( returnPath, fsRdPerm ) );
+		FSIORefNum return_path_stream = open_data_fork( vRefNum,
+		                                                message_dirID,
+		                                                "\p" RETURN_PATH,
+		                                                fsRdPerm );
+		
+		plus::string return_path = ReadOneLinerFromStream( return_path_stream );
 		
 		unsigned n = listing.count();
 		
 		for ( unsigned i = 0;  i < n;  ++i )
 		{
-			scoped_open_refnum opened( open_data_fork( message, fsRdPerm ) );
+			scoped_open_refnum opened( open_data_fork( vRefNum,
+			                                           message_dirID,
+			                                           "\p" MESSAGE,
+			                                           fsRdPerm ) );
 			
 			if ( opened < 0 )
 			{
@@ -408,10 +401,13 @@ namespace tool
 			
 			const list_entry& entry = listing.get_nth( i );
 			
+			FSIORefNum dest_addr_stream = open_data_fork( vRefNum,
+			                                              dest_dirID,
+			                                              entry.name,
+			                                              fsRdWrPerm );
+			
 			try
 			{
-				FSSpec destFile = destFolder / entry.name;
-				
 				/*
 					destFile serves as a lock on this destination.
 					
@@ -420,20 +416,26 @@ namespace tool
 				*/
 				
 				Relay( return_path,
-				       ReadOneLinerFromStream( open_data_fork( destFile, fsRdWrPerm ) ),
+				       ReadOneLinerFromStream( dest_addr_stream ),
 				       opened );
 				
-				io::delete_file( destFile );
+				err = HDelete( vRefNum, dest_dirID, entry.name );
 			}
 			catch ( ... )
 			{
 			}
 		}
 		
-		io::delete_empty_directory( destFolder );  // this fails if destinations remain
-		io::delete_file           ( returnPath );
-		io::delete_file           ( message    );
-		io::delete_empty_directory( msgFolder  );
+		/*
+			Deleting the Destinations subdir fails if destinations remain.
+		*/
+		
+		(err = HDelete( vRefNum, message_dirID, "\p" DESTINATIONS ))  ||
+		(err = HDelete( vRefNum, message_dirID, "\p" RETURN_PATH  ))  ||
+		(err = HDelete( vRefNum, message_dirID, "\p" MESSAGE      ))  ||
+		(err = HDelete( vRefNum, messages.dirID, name             ));
+		
+		Mac::ThrowOSStatus( err );
 	}
 	
 	
