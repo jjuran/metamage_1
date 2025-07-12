@@ -41,7 +41,6 @@
 // Nitrogen
 #include "Mac/AppleEvents/Types/AEKeyword_scribe_text.hh"
 
-#include "Nitrogen/Files.hh"
 #include "Nitrogen/OSA.hh"
 #include "Nitrogen/Resources.hh"
 
@@ -281,7 +280,7 @@ namespace tool
 	
 	static n::owned< N::OSAID > LoadCompiledScript( const FSSpec& scriptFile )
 	{
-		using N::fsRdPerm;
+		using Mac::fsRdPerm;
 		
 		n::owned< N::ResFileRefNum > resFileH( N::FSpOpenResFile( scriptFile,
 		                                                          fsRdPerm ) );
@@ -299,10 +298,16 @@ namespace tool
 		using mac::sys::Error;
 		
 		FSSpec scriptFile;
+		FInfo  fInfo;
 		
 		Error err = FSSpec_from_existing_path( pathname, scriptFile );
 		
-		OSType type = err ? '\0\0\0\0' : N::FSpGetFInfo( scriptFile ).fdType;
+		if ( ! err )
+		{
+			err = (Error) FSpGetFInfo( &scriptFile, &fInfo );
+		}
+		
+		OSType type = err ? '\0\0\0\0' : fInfo.fdType;
 		
 		try
 		{
