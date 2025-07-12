@@ -20,6 +20,9 @@
 // mac-sys-utils
 #include "mac_sys/errno_from_mac_error.hh"
 
+// mac-file-utils
+#include "mac_file/open_rsrc_fork.hh"
+
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
 
@@ -32,7 +35,8 @@
 #include "poseven/types/fd_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Toolbox/Types/OSStatus.hh"
+
 #include "Nitrogen/Resources.hh"
 
 // Orion
@@ -199,21 +203,18 @@ namespace tool
 		
 		CInfoPBRec cInfo = { 0 };
 		
-		N::Str255 name = file.name;
-		
-		nucleus::initialize< CInfoPBRec >( cInfo,
-		                                   Mac::FSVolumeRefNum( file.vRefNum ),
-		                                   Mac::FSDirID       ( file.parID   ),
-		                                   name,
-		                                   0 );
-		
-		N::PBGetCatInfoSync( cInfo, N::FNF_Throws() );
-		
 		HFileInfo& hFileInfo = cInfo.hFileInfo;
+		
+		hFileInfo.ioNamePtr = file.name;
+		hFileInfo.ioVRefNum = file.vRefNum;
+		hFileInfo.ioFlParID = file.parID;
+//		hFileInfo.ioFDirIndex = 0;
+		
+		Mac::ThrowOSStatus( PBGetCatInfoSync( &cInfo ) );
 		
 		if ( hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
-			if ( memcmp( name, PSTR_LEN( "CVS" ) ) == 0 )
+			if ( memcmp( file.name, PSTR_LEN( "CVS" ) ) == 0 )
 			{
 				bool has_other_files = false;
 				
@@ -265,7 +266,7 @@ namespace tool
 		
 		if ( !empty_map )
 		{
-			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdWrPerm );
+			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdWrPerm );
 			
 			Handle ckid = ::Get1Resource( 'ckid', 128 );
 			
@@ -284,9 +285,17 @@ namespace tool
 		
 		if ( empty_map )
 		{
-			n::owned< N::FSFileRefNum > rsrcFork = N::FSpOpenRF( file, N::fsRdWrPerm );
+			using mac::file::FSIORefNum;
+			using mac::file::open_rsrc_fork;
 			
-			N::SetEOF( rsrcFork, 0 );
+			FSIORefNum rsrcFork = open_rsrc_fork( file, fsRdWrPerm );
+			
+			if ( rsrcFork > 0 )
+			{
+				SetEOF( rsrcFork, 0 );
+				
+				FSClose( rsrcFork );
+			}
 		}
 		
 		if ( modified )
@@ -295,7 +304,7 @@ namespace tool
 			
 			hFileInfo.ioDirID = file.parID;
 			
-			N::PBSetCatInfoSync( cInfo );
+			Mac::ThrowOSStatus( PBSetCatInfoSync( &cInfo ) );
 		}
 		
 		return modified;
