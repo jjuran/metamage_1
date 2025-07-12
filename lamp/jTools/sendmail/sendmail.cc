@@ -142,8 +142,6 @@ namespace tool
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
-	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	using mac::file::FSIORefNum;
@@ -376,9 +374,8 @@ namespace tool
 		
 		if ( message_dirID < 0 )  return;  // Icon files, et al
 		
-		typedef io::filespec_traits< FSSpec >::optimized_directory_spec directory_spec;
-		
 		Mac::FSDirSpec msgFolder;
+		Mac::FSDirSpec destFolder;
 		
 		msgFolder.vRefNum = Mac::FSVolumeRefNum( vRefNum       );
 		msgFolder.dirID   = Mac::FSDirID       ( message_dirID );
@@ -387,9 +384,10 @@ namespace tool
 		FSSpec returnPath   = msgFolder / "\p" "Return-Path";
 		FSSpec destinations = msgFolder / "\p" "Destinations";
 		
-		directory_spec destFolder( N::FSpMake_FSDirSpec( destinations ) );
+		long dest_dirID = directory( destinations ).dirID;
 		
-		long dest_dirID = destFolder.dirID;
+		destFolder.vRefNum = Mac::FSVolumeRefNum( vRefNum    );
+		destFolder.dirID   = Mac::FSDirID       ( dest_dirID );
 		
 		directory_listing listing;
 		
@@ -414,7 +412,7 @@ namespace tool
 			
 			try
 			{
-				FSSpec destFile = destinations / entry.name;
+				FSSpec destFile = destFolder / entry.name;
 				
 				/*
 					destFile serves as a lock on this destination.
