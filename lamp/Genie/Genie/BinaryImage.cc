@@ -25,7 +25,7 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Nitrogen/OSStatus.hh"
 #include "Nitrogen/Resources.hh"
 
 // Genie
@@ -269,14 +269,14 @@ namespace Genie
 		
 		try
 		{
-			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
+			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdPerm );
 			
 			const bool rsrc = TARGET_CPU_68K && !TARGET_RT_MAC_CFM;
 			
 			return rsrc ? ReadProgramAsCodeResource(      )
 			            : ReadProgramAsCodeFragment( file );
 		}
-		catch ( const N::OSStatus& err )
+		catch ( const Mac::OSStatus& err )
 		{
 			if ( err == eofErr )
 			{
