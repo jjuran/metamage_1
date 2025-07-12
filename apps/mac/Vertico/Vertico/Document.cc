@@ -22,8 +22,8 @@
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
 
-// Nitrogen Extras
-#include "FSReader.hh"
+// Nitrogen
+#include "Nitrogen/Files.hh"
 
 // Pedestal
 #include "Pedestal/WindowStorage.hh"
@@ -34,6 +34,31 @@
 // Vertico
 #include "Vertico/PortView.hh"
 
+
+namespace Nitrogen
+{
+	
+	class FSReader
+	{
+		private:
+			FSFileRefNum its_fRefNum;
+		
+		public:
+			typedef char*        first_argument_type;
+			typedef std::size_t  second_argument_type;
+			typedef std::size_t  result_type;
+			
+			FSReader( FSFileRefNum fRefNum ) : its_fRefNum( fRefNum )
+			{
+			}
+			
+			std::size_t operator()( char* buffer, std::size_t length ) const
+			{
+				return FSRead( its_fRefNum, length, buffer, ThrowEOF_Never() );
+			}
+	};
+	
+}
 
 namespace Vertico
 {
