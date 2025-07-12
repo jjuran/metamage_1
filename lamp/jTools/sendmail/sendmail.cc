@@ -76,6 +76,9 @@
 #include "Orion/Main.hh"
 
 
+#define DESTINATIONS  "Destinations"
+
+
 #if CONFIG_OPEN_TRANSPORT_HEADERS
 
 inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
@@ -382,9 +385,10 @@ namespace tool
 		
 		FSSpec message      = msgFolder / "\p" "Message";
 		FSSpec returnPath   = msgFolder / "\p" "Return-Path";
-		FSSpec destinations = msgFolder / "\p" "Destinations";
 		
-		long dest_dirID = directory( destinations ).dirID;
+		long dest_dirID = directory( vRefNum,
+		                             message_dirID,
+		                             "\p" DESTINATIONS ).dirID;
 		
 		destFolder.vRefNum = Mac::FSVolumeRefNum( vRefNum    );
 		destFolder.dirID   = Mac::FSDirID       ( dest_dirID );
