@@ -156,7 +156,9 @@ namespace tool
 	using mac::types::VRefNum_DirID;
 	
 	
-	static N::FSDirSpec QueueDirectory()
+	static inline
+	Mac::FSDirSpec
+	QueueDirectory()
 	{
 		Mac::FSDirSpec folder = N::FindFolder( N::kOnSystemDisk,
 		                                       N::kSystemFolderType,
@@ -386,9 +388,9 @@ namespace tool
 		
 		Mac::ThrowOSStatus( err );
 		
-		unsigned n = listing.count();
-		
 		plus::string return_path = ReadOneLinerFromFile( returnPath );
+		
+		unsigned n = listing.count();
 		
 		for ( unsigned i = 0;  i < n;  ++i )
 		{
