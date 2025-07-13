@@ -276,6 +276,16 @@ let respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
 
 run [ vx_run "mkrsrc.vx", "-o", Files "/AMS Resources/rsrc", *respaths ]
 
+if "docfs" in config then
+{
+	let docfs = config[ "docfs" ]
+	
+	if docfs isa bool and docfs or docfs == "-" then
+	{
+		config[ "docfs" ] = name
+	}
+}
+
 if "files" in config then
 {
 	files_to_copy <-- *config[ "files" ]
