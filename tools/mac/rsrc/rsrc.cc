@@ -16,8 +16,15 @@
 // command
 #include "command/get_option.hh"
 
+// mac-sys-utils
+#include "mac_sys/errno_from_mac_error.hh"
+
 // mac-rsrc-utils
 #include "mac_rsrc/open_res_file.hh"
+
+// mac-relix-utils
+#include "mac_relix/FSRef_from_path.hh"
+#include "mac_relix/FSSpec_from_path.hh"
 
 // gear
 #include "gear/hexadecimal.hh"
@@ -117,6 +124,11 @@ namespace tool
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	
+	using mac::sys::Error;
+	using mac::sys::errno_from_mac_error;
+	
+	using mac::relix::FSObj_from_existing_path;
 	
 	
 	static Mac::ResType  the_type;
@@ -319,7 +331,23 @@ namespace tool
 		return 0;
 	}
 	
+	static inline
+	ResFileRefNum open_res_file( const FSSpec&  file,
+	                             const HFSUniStr255&,  // fork name ignored
+	                             signed char    perm )
+	{
+		return mac::rsrc::open_res_file( file, perm );
+	}
+	
+#ifdef __APPLE__
+	
 	typedef FSRef FSObj;
+	
+#else
+	
+	typedef FSSpec FSObj;
+	
+#endif
 	
 	int Main( int argc, char** argv )
 	{
@@ -337,10 +365,23 @@ namespace tool
 			the_id = Mac::ResID( gear::parse_decimal( the_id_opt ) );
 		}
 		
+	#ifdef __APPLE__
+		
 		if ( !use_data_fork )
 		{
 			N::ThrowOSStatus( ::FSGetResourceForkName( &the_fork_name ) );
 		}
+		
+	#else
+		
+		if ( use_data_fork )
+		{
+			more::perror( "rsrc: data fork resources unsupported", 0 );
+			
+			return 50;
+		}
+		
+	#endif
 		
 		char const *const *free_args = args;
 		
@@ -355,26 +396,27 @@ namespace tool
 		
 		const char* path = free_args[ 1 ];
 		
-		OSStatus err;
-		
 		FSObj file;
-		Boolean isDir;
 		
-		err = FSPathMakeRef( (const Byte*) path, &file, &isDir );
+		Error err = FSObj_from_existing_path( path, file );
 		
 		if ( err )
 		{
-			if ( err != fnfErr )
+			int errnum = is_errno( err ) ? errno_from_muxed( err )
+			                             : errno_from_mac_error( err );
+			
+			if ( errnum < 0 )
 			{
 				Mac::ThrowOSStatus( err );
 			}
 			
-			more::perror( "rsrc", path, ENOENT );
+			more::perror( "rsrc", path, errnum );
 			
 			return 1;
 		}
 		
 		using mac::rsrc::open_res_file;
+		using tool::open_res_file;
 		
 		n::owned< N::ResFileRefNum > resFile;
 		
