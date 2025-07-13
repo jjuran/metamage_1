@@ -105,7 +105,7 @@ Value dereferenced_AEDesc( const ::AEDesc& desc )
 		
 		case 'fss ':
 		{
-			enum { sizeof_FSSpec = 64 };
+			enum { sizeof_FSSpec = 70 };
 			
 			FSSpec object;
 			
