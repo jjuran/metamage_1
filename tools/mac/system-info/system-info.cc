@@ -466,7 +466,7 @@ void host_env()
 		printf( "Paged memory hardware:  %s\n", mmu_name );
 	}
 	
-	if ( TARGET_CPU_68K  &&  mmu )
+	if ( TARGET_CPU_68K  &&  CPUFlag >= 2 )
 	{
 		const int gestalt32BitAddressing = 0;
 		
