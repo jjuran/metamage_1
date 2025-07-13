@@ -81,11 +81,16 @@ let config_data = if src_is_txt then {load input_path} else {""}
 
 let config_lines = config_data.lines() ver bool per comma-separated or "()"
 
-let config = str^[eval( config_lines, realpath input_path )]
+var config = str^[eval( config_lines, realpath input_path )]
 
 def active (feature)
 {
 	return feature in config and config[ feature ]
+}
+
+def config_txt
+{
+	return config map { v.key ": " (rep v.value) '\n' } per str
 }
 
 let named = "name" in config
@@ -290,7 +295,7 @@ copy( *ams_modules, ams_lib "/umsp", ams_bin "/app", xv68k_dir )
 
 let new_data = ("name: " rep name) "\n" * not named
 
-rewrite Resources "/config.txt" <== new_data new_disk config_data
+rewrite Resources "/config.txt" <== new_data new_disk config_txt()
 
 let tools = "graphics/frontend-common/tools/launch-ams-app.vx"
 
