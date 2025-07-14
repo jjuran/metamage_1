@@ -70,12 +70,12 @@ pascal void SpaceExtra_patch( Fixed extra )
 
 pascal void DrawChar_patch( short c )
 {
-	DrawText( (const char*) &c, 1, 1 );
+	DrawText_patch( (const char*) &c, 1, 1 );
 }
 
 pascal void DrawString_patch( const unsigned char* s )
 {
-	DrawText( (const char*) s, 1, s[ 0 ] );
+	DrawText_patch( (const char*) s, 1, s[ 0 ] );
 }
 
 pascal void DrawText_patch( const char* buffer, short offset, short n )
@@ -94,7 +94,7 @@ pascal short CharWidth_patch( short c )
 
 pascal short StringWidth_patch( const unsigned char* s )
 {
-	return TextWidth( (const char*) s, 1, s[ 0 ] );
+	return TextWidth_patch( (const char*) s, 1, s[ 0 ] );
 }
 
 pascal short TextWidth_patch( const char* buffer, short offset, short n )
