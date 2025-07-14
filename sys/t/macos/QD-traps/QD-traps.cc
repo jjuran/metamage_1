@@ -77,6 +77,7 @@ static Byte trace_log[ 1000 ];
 static int mark;
 
 static bool tracing;
+static bool custom_procs;
 
 static
 void trace_on()
@@ -128,6 +129,8 @@ enum
 	port_rowBytes = (port_width + 15) / 16 * 2,
 };
 
+static QDProcs qdProcs;
+
 static
 void init()
 {
@@ -154,6 +157,13 @@ void init()
 	BitMap bitmap = { mem, port_rowBytes, { 0, 0, port_height, port_width } };
 	
 	SetPortBits( &bitmap );
+	
+	if ( custom_procs )
+	{
+		SetStdProcs( &qdProcs );
+		
+		testing_grafPort->grafProcs = &qdProcs;
+	}
 	
 	using mac::sys::get_trap_address;
 	using mac::sys::set_trap_address;
@@ -320,6 +330,11 @@ void bits()
 
 int main( int argc, char** argv )
 {
+	if ( argc > 1  &&  strcmp( argv[ 1 ], "--custom" ) == 0 )
+	{
+		custom_procs = true;
+	}
+	
 	tap::start( "QD-traps", n_tests );
 	
 	init();
