@@ -69,8 +69,8 @@
 #include "plus/var_string.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.hh"
-#include "Nitrogen/Str.hh"
+#include "Mac/Toolbox/Types/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -137,8 +137,6 @@
 namespace Genie
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	using mac::types::VRefNum_DirID;
@@ -1157,7 +1155,9 @@ namespace Genie
 			{
 				const plus::string name_MacRoman = plus::mac_from_utf8( that->name() );
 				
-				if ( name_MacRoman.size() <= 31 )
+				Size size = name_MacRoman.size();
+				
+				if ( size <= 31 )
 				{
 					// Long names are case-sensitive due to hashing
 					
@@ -1169,7 +1169,13 @@ namespace Genie
 					
 					if ( !equal )
 					{
-						N::Str255 new_name( name.data(), name.size() );
+						Str31 new_name;
+						
+						Byte* p = new_name;
+						
+						*p++ = size;
+						
+						mempcpy( p, name.data(), size );
 						
 						OSErr err = HRename( file.vRefNum,
 						                     file.parID,
