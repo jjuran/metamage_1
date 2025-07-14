@@ -42,7 +42,7 @@ long call_CDEF( ControlRef control, short message, long param )
 }
 
 static
-void draw_control( ControlRef control, short part )
+void draw_control( ControlRef control, short part = 0 )
 {
 	if ( control[0]->contrlVis )
 	{
@@ -57,12 +57,6 @@ void draw_control( ControlRef control, short part )
 			call_CDEF( control, drawCntl, part );
 		}
 	}
-}
-
-static
-void draw_control( ControlRef control )
-{
-	draw_control( control, control[0]->contrlHilite );
 }
 
 #pragma mark -
@@ -266,7 +260,7 @@ pascal void HiliteControl_patch( ControlRef control, short hiliteState )
 	{
 		control[0]->contrlHilite = hiliteState;
 		
-		draw_control( control );
+		draw_control( control, hiliteState );
 	}
 }
 
