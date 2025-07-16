@@ -68,6 +68,7 @@ enum
 	tag_VIA_low_word,
 	tag_SPATBConfig,
 	tag_SPKbdPrint,
+	tag_SPVolClik,
 	tag_SPMisc,
 	tag_Time,
 	tag_Time_low_word,
@@ -253,6 +254,7 @@ void initialize()
 	words[ tag_00E4       ] = words[ tag_ROMBase ];
 	words[ tag_VIA        ] = iota::big_u16( 0x00EF     );
 	words[ tag_VIA + 1    ] = iota::big_u16(     0xE1FE );
+	words[ tag_SPVolClik  ] = iota::big_u16( 0x0700 );
 	words[ tag_BootDrive  ] = 0xFFFF;  // initially -1
 	words[ tag_ROM85      ] = 0xFFFF;  // indicates 64K ROM
 	words[ tag_FSFCBLen   ] = 0xFFFF;  // indicates MFS
@@ -322,6 +324,7 @@ static const global globals[] =
 	{ 0x01D4, 4,    tag_VIA         },
 	{ 0x01FA, 2,    tag_SPATBConfig },  // SPATalkB, SPConfig
 	{ 0x0206, 2,    tag_SPKbdPrint  },  // SPKbd, SPPrint
+	{ 0x0208, 2,    tag_SPVolClik   },  // SPVolCtl, SPClikCaret
 	{ 0x020A, 2,    tag_SPMisc      },  // SPMisc, SPMisc2
 	{ 0x020C, 0xC4, tag_Time        },
 	{ 0x0210, 2,    tag_BootDrive   },
