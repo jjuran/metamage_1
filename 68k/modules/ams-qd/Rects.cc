@@ -210,11 +210,9 @@ void draw_rect( const rectangular_op_params&  params,
 	const short n_pixels_skipped = (rect.left - bounds.left) & 0x7;
 	const short n_pixels_drawn   = rect.right - rect.left;
 	
-	Pattern& pattern = params.port->fillPat;
-	
 	short pat_v = params.rect.top & 0x7;
 	
-	draw_sector( pattern, pat_v,
+	draw_sector( params.port->fillPat, pat_v,
 	             rowBase,
 	             rect.bottom - rect.top,
 	             rowBytes,
