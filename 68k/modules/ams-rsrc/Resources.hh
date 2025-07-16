@@ -57,6 +57,8 @@ pascal short GetResAttrs_patch( Handle resource );
 
 pascal long SizeRsrc_patch( Handle resource );
 
+pascal void SetResInfo_patch( Handle resource, short id, ConstStr255Param name );
+
 pascal void SetResAttrs_patch( Handle resource, short attrs );
 
 pascal void ChangedResource_patch( Handle resource );

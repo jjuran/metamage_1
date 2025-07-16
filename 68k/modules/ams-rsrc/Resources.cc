@@ -1074,6 +1074,56 @@ pascal long SizeRsrc_patch( Handle resource )
 }
 
 static
+void SetResInfo_handler( Handle            resource : __A0,
+                         short             id       : __D0,
+                         ConstStr255Param  name     : __A1 )
+{
+	OSErr err = resNotFound;
+	
+	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
+	{
+		if ( name )
+		{
+			ERROR = "SetResInfo to change the resource name is unimplemented";
+			
+			err = paramErr;
+		}
+		else
+		{
+			if ( ! (rsrc->attrs & resProtected) )
+			{
+				rsrc->id = id;
+			}
+			
+			err = noErr;
+		}
+	}
+	
+	ResErr = err;
+}
+
+asm
+pascal void SetResInfo_patch( Handle resource, short id, ConstStr255Param name )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A1
+	MOVE.W   (A2)+,D0
+	MOVEA.L  (A2)+,A0
+	
+	JSR      SetResInfo_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDA.W   #10,SP
+	
+	JMP      (A0)
+}
+
+static
 void SetResAttrs_handler( Handle resource : __A0, short attrs : __D0 )
 {
 	OSErr err = resNotFound;
