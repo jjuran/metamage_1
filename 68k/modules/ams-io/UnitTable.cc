@@ -80,7 +80,7 @@ short find_unused_unit_entry()
 	return 0;
 }
 
-short install( DRVRHeader** d, short i )
+short install( DRVRHeader* d, short i )
 {
 	DCtlHandle h = (DCtlHandle) NewHandleClear( sizeof (DCtlEntry) );
 	
@@ -89,12 +89,12 @@ short install( DRVRHeader** d, short i )
 		return MemErr;
 	}
 	
-	DRVRHeader& drvr = **d;
+	DRVRHeader& drvr = *d;
 	
 	DCtlEntry& dce = **h;
 	
 	dce.dCtlDriver = (Ptr) d;
-	dce.dCtlFlags  = drvr.drvrFlags | dRAMBasedMask;
+	dce.dCtlFlags  = drvr.drvrFlags;
 	
 	dce.dCtlRefNum = ~i;
 	
@@ -107,7 +107,7 @@ short install( DRVRHeader** d, short i )
 	return i;
 }
 
-short install( DRVRHeader** d )
+short install( DRVRHeader* d )
 {
 	if ( const short i = find_unused_unit_entry() )
 	{

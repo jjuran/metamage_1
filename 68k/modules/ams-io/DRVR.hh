@@ -17,11 +17,11 @@ typedef short (*driver_routine)( short : __D1, IOParam* : __A0, DCE* : __A1 );
 
 typedef short (*cntrl_routine)( short : __D1, CntrlParam* : __A0, DCE* : __A1 );
 
-DRVRHeader** make_DRVR( const unsigned char*  name,
-                        driver_routine        open,
-                        driver_routine        prime,
-                        cntrl_routine         cntrl,
-                        cntrl_routine         status,
-                        driver_routine        close );
+DRVRHeader* make_DRVR( const unsigned char*  name,
+                       driver_routine        open,
+                       driver_routine        prime,
+                       cntrl_routine         cntrl,
+                       cntrl_routine         status,
+                       driver_routine        close );
 
 #endif

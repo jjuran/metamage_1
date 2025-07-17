@@ -58,12 +58,12 @@ short read_write_mask( ConstStr255Param name )
 	return dReadEnableMask | dWritEnableMask;
 }
 
-DRVRHeader** make_DRVR( ConstStr255Param  name,
-                        driver_routine    open,
-                        driver_routine    prime,
-                        cntrl_routine     cntrl,
-                        cntrl_routine     status,
-                        driver_routine    close )
+DRVRHeader* make_DRVR( ConstStr255Param  name,
+                       driver_routine    open,
+                       driver_routine    prime,
+                       cntrl_routine     cntrl,
+                       cntrl_routine     status,
+                       driver_routine    close )
 {
 	const int RTS_size = 2;
 	const int JMP_size = 6;
@@ -80,11 +80,11 @@ DRVRHeader** make_DRVR( ConstStr255Param  name,
 	                        + RTS_size * (n_nulls > 0)
 	                        + JMP_size * n_jumps;
 	
-	DRVRHeader** h = (DRVRHeader**) NewHandleClear( block_size );
+	DRVRHeader* h = (DRVRHeader*) NewPtrClear( block_size );
 	
 	if ( h )
 	{
-		DRVRHeader& header = **h;
+		DRVRHeader& header = *h;
 		
 		header.drvrFlags = (prime ? read_write_mask( name ) : 0)
 		                 | dCtlEnableMask  * !! cntrl
@@ -92,7 +92,7 @@ DRVRHeader** make_DRVR( ConstStr255Param  name,
 		
 		BlockMoveData( name, &header.drvrName, 1 + name[ 0 ] );
 		
-		UInt16* p = (UInt16*) ((char*) *h + header_size);
+		UInt16* p = (UInt16*) ((char*) h + header_size);
 		
 		if ( n_nulls )
 		{
@@ -105,11 +105,11 @@ DRVRHeader** make_DRVR( ConstStr255Param  name,
 			*p++ = 0x4E75;  // RTS
 		}
 		
-		if ( open   )  p = set_DRVR_offset( *h, p, &header.drvrOpen,   open   );
-		if ( prime  )  p = set_DRVR_offset( *h, p, &header.drvrPrime,  prime  );
-		if ( cntrl  )  p = set_DRVR_offset( *h, p, &header.drvrCtl,    cntrl  );
-		if ( status )  p = set_DRVR_offset( *h, p, &header.drvrStatus, status );
-		if ( close  )  p = set_DRVR_offset( *h, p, &header.drvrClose,  close  );
+		if ( open   )  p = set_DRVR_offset( h, p, &header.drvrOpen,   open   );
+		if ( prime  )  p = set_DRVR_offset( h, p, &header.drvrPrime,  prime  );
+		if ( cntrl  )  p = set_DRVR_offset( h, p, &header.drvrCtl,    cntrl  );
+		if ( status )  p = set_DRVR_offset( h, p, &header.drvrStatus, status );
+		if ( close  )  p = set_DRVR_offset( h, p, &header.drvrClose,  close  );
 	}
 	
 	return h;
