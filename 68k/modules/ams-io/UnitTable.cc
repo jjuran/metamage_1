@@ -80,7 +80,7 @@ short find_unused_unit_entry()
 	return 0;
 }
 
-short install( DRVRHeader* d, short i )
+short install( DRVRHeader* d, short refnum )
 {
 	DCtlHandle h = (DCtlHandle) NewHandleClear( sizeof (DCtlEntry) );
 	
@@ -96,11 +96,13 @@ short install( DRVRHeader* d, short i )
 	dce.dCtlDriver = (Ptr) d;
 	dce.dCtlFlags  = drvr.drvrFlags;
 	
-	dce.dCtlRefNum = ~i;
+	dce.dCtlRefNum = refnum;
 	
 	dce.dCtlDelay  = drvr.drvrDelay;
 	dce.dCtlEMask  = drvr.drvrEMask;
 	dce.dCtlMenu   = drvr.drvrMenu;
+	
+	short i = ~refnum;
 	
 	UTableBase[ i ] = h;
 	
@@ -111,7 +113,7 @@ short install( DRVRHeader* d )
 {
 	if ( const short i = find_unused_unit_entry() )
 	{
-		return install( d, i );
+		return install( d, ~i );
 	}
 	
 	return 0;

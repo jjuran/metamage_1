@@ -443,10 +443,10 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return err;
 }
 
-#define INSTALL_SYS_DRIVER( d, i )  \
+#define INSTALL_SYS_DRIVER( d, refnum )  \
 	install( make_DRVR( "\p." #d,  \
 	d##_open, d##_prime, d##_control, d##_status, d##_close  \
-	), i )
+	), refnum )
 
 #define INSTALL_DRIVER( d )  \
 	install( make_DRVR( "\p." #d,  \
@@ -475,7 +475,7 @@ void install_drivers()
 	
 	if ( audio_enabled() )
 	{
-		INSTALL_SYS_DRIVER( Sound, 3 );
+		INSTALL_SYS_DRIVER( Sound, -4 );
 		
 		SoundDCE = *UTableBase[ 3 ];
 		
@@ -489,8 +489,8 @@ void install_drivers()
 	
 	if ( modem_fd >= 0 )
 	{
-		assign_fd( INSTALL_SYS_DRIVER( AIn,  5 ), modem_fd );
-		assign_fd( INSTALL_SYS_DRIVER( AOut, 6 ), modem_fd );
+		assign_fd( INSTALL_SYS_DRIVER( AIn,  -6 ), modem_fd );
+		assign_fd( INSTALL_SYS_DRIVER( AOut, -7 ), modem_fd );
 	}
 	
 	assign_fd( INSTALL_DRIVER( CIn  ), 0 );  // STDIN_FILENO
