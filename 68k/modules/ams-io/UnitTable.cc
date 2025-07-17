@@ -80,7 +80,7 @@ short find_unused_unit_entry()
 	return 0;
 }
 
-short install( DRVRHeader* d, short refnum )
+OSErr DrvrInstall_patch( DRVRHeader* d : __A0, short refnum : __D0 )
 {
 	DCtlHandle h = (DCtlHandle) NewHandleClear( sizeof (DCtlEntry) );
 	
@@ -106,7 +106,14 @@ short install( DRVRHeader* d, short refnum )
 	
 	UTableBase[ i ] = h;
 	
-	return i;
+	return noErr;
+}
+
+short install( DRVRHeader* d, short refnum )
+{
+	OSErr err = DriverInstallReserveMem( d, refnum );
+	
+	return err ? err : ~refnum;
 }
 
 short install( DRVRHeader* d )

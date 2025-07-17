@@ -24,6 +24,7 @@
 #include "Devices.hh"
 #include "options.hh"
 #include "reactor-core.hh"
+#include "UnitTable.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -44,6 +45,8 @@ enum
 	_Control = 0xA004,
 	_Status  = 0xA005,
 	_KillIO  = 0xA006,
+	
+	_DrvrInstall = 0xA03D,
 };
 
 #endif
@@ -78,6 +81,8 @@ void install_DeviceManager()
 	OSTRAP( Control );  // A004
 	OSTRAP( Status  );  // A005
 	OSTRAP( KillIO  );  // A006
+	
+	OSTRAP( DrvrInstall );  // A03D
 }
 
 static
