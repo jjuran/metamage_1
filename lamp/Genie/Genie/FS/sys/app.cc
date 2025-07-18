@@ -22,7 +22,7 @@
 #include "Genie/FS/sys/app/cmd.hh"
 #include "Genie/FS/sys/app/dir.hh"
 #include "Genie/FS/sys/app/exe.hh"
-#include "Genie/FS/sys/app/menu.hh"
+#include "Genie/FS/sys/app/menu/list.hh"
 #include "Genie/FS/sys/app/window.hh"
 
 
@@ -57,6 +57,14 @@ namespace Genie
 	{
 		plus::serialize_unsigned< long >::fixed_size,
 		(vfs::property_get_hook) &get,
+	};
+	
+	static
+	const vfs::fixed_mapping sys_app_menu_Mappings[] =
+	{
+		{ "list", &New_FSTree_sys_app_menu_list },
+		
+		{ NULL, NULL }
 	};
 	
 	
