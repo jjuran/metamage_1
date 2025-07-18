@@ -5,9 +5,8 @@
 
 #include "Printing.hh"
 
-#ifndef __TRAPS__
-#include <Traps.h>
-#endif
+// log-of-war
+#include "logofwar/report.hh"
 
 /*
 	Stack on entry to PrGlue_patch():
@@ -69,6 +68,10 @@ void* select_handler( long selector : __D0 )
 		case 0xD0000000:  return &PrClose_handler;
 		
 		default:
+			FATAL = "unimplemented PrGlue call ", selector;
+			
+			asm { ILLEGAL }
+			
 			return 0;
 	}
 }
