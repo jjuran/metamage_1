@@ -8,6 +8,13 @@
 // log-of-war
 #include "logofwar/report.hh"
 
+
+struct TPrint;
+
+typedef unsigned char Boolean;
+
+typedef TPrint** THPrint;
+
 /*
 	Stack on entry to PrGlue_patch():
 	
@@ -58,6 +65,12 @@ pascal void PrintDefault_handler( char** )
 }
 
 static
+pascal Boolean PrStlDialog_handler( THPrint hPrint )
+{
+	return false;
+}
+
+static
 void* select_handler( long selector : __D0 )
 {
 	switch ( selector )
@@ -66,6 +79,7 @@ void* select_handler( long selector : __D0 )
 		case 0xBA000000:  return &PrError_handler;
 		case 0x20040480:  return &PrintDefault_handler;
 		case 0xD0000000:  return &PrClose_handler;
+		case 0x2A040484:  return &PrStlDialog_handler;
 		
 		default:
 			FATAL = "unimplemented PrGlue call ", selector;
