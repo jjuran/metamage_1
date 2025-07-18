@@ -64,7 +64,6 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/serialize_Str255.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 

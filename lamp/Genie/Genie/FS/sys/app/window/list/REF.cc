@@ -63,7 +63,6 @@
 #include "relix/config/color.hh"
 
 // Genie
-#include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/serialize_qd.hh"
 
 
