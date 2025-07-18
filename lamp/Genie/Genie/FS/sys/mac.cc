@@ -22,8 +22,9 @@
 
 // Genie
 #include "Genie/FS/sys/mac/gestalt.hh"
-#include "Genie/FS/sys/mac/user.hh"
-#include "Genie/FS/sys/mac/vol.hh"
+#include "Genie/FS/sys/mac/user/home.hh"
+#include "Genie/FS/sys/mac/user/prefs.hh"
+#include "Genie/FS/sys/mac/vol/list.hh"
 
 
 namespace Genie
@@ -47,6 +48,23 @@ namespace Genie
 		
 		return xpram;
 	}
+	
+	static
+	const vfs::fixed_mapping sys_mac_user_Mappings[] =
+	{
+		{ "home",  &New_FSTree_sys_mac_user_home  },
+		{ "prefs", &New_FSTree_sys_mac_user_prefs },
+		
+		{ NULL, NULL }
+	};
+	
+	static
+	const vfs::fixed_mapping sys_mac_vol_Mappings[] =
+	{
+		{ "list", &New_FSTree_sys_mac_vol },
+		
+		{ NULL, NULL }
+	};
 	
 	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
