@@ -23,15 +23,11 @@ namespace vfs
 	
 	class fixed_address : public program
 	{
-		private:
-			relix_entry its_entry_point;
-		
 		public:
-			fixed_address( relix_entry entry ) : its_entry_point( entry )
+			fixed_address( relix_entry entry )
 			{
+				its_relix_main = entry;
 			}
-			
-			relix_entry get_main_entry_point() const  { return its_entry_point; }
 	};
 	
 	
