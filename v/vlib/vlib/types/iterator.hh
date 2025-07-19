@@ -26,8 +26,6 @@ namespace vlib
 				return v.dispatch_methods() == &iterator_dispatch;
 			}
 			
-			static Value coerce( const Value& v );
-			
 			Iterator( const Value& container )
 			:
 				Value( dummy_operand, Op_begin, container, &iterator_dispatch )
