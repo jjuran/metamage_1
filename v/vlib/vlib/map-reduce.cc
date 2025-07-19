@@ -146,8 +146,6 @@ namespace vlib
 		
 		generic_iterator it( container );
 		
-		list_builder result;
-		
 		while ( it )
 		{
 			const Value& x = it.use();
