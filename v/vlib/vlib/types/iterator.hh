@@ -26,11 +26,7 @@ namespace vlib
 				return v.dispatch_methods() == &iterator_dispatch;
 			}
 			
-			Iterator( const Value& container )
-			:
-				Value( dummy_operand, Op_begin, container, &iterator_dispatch )
-			{
-			}
+			Iterator( const Value& container );
 	};
 	
 	extern const type_info iterator_vtype;

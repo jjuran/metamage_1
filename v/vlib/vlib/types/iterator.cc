@@ -19,6 +19,12 @@
 namespace vlib
 {
 	
+	Iterator::Iterator( const Value& container )
+	:
+		Value( dummy_operand, Op_begin, container, &iterator_dispatch )
+	{
+	}
+	
 	static
 	const char* iterator_str_data( const Value& v )
 	{
