@@ -19,6 +19,9 @@
 // iota
 #include "iota/class.hh"
 
+// mac-file-utils
+#include "mac_file/FSIORefNum.hh"
+
 
 namespace mac  {
 namespace file {
