@@ -34,7 +34,9 @@
 
 
 UInt32 Ticks : 0x016A;
+QHdr VCBQHdr : 0x0356;
 short SysMap : 0x0A58;
+short ResErr : 0x0A60;
 
 
 enum
@@ -80,6 +82,81 @@ void paint_desktop()
 	FillRoundRect( &port.portRect, 16, 16, &qd.gray );
 	
 	ClosePort( &port );
+}
+
+static inline
+short get_Bootstrap_vRefNum()
+{
+	VCB* vcb = (VCB*) VCBQHdr.qHead;
+	
+	for ( ;  vcb != NULL;  vcb = (VCB*) vcb->qLink )
+	{
+		if ( vcb->vcbSigWord == 'Ix' )
+		{
+			return vcb->vcbVRefNum;
+		}
+	}
+	
+	return 0;
+}
+
+static inline
+bool get_next_file_info( ParamBlockRec& pb, int& i )
+{
+	pb.fileParam.ioFDirIndex = ++i;
+	
+	OSErr err = PBGetFInfoSync( &pb );
+	
+	return err == noErr;
+}
+
+static
+void load_DAs()
+{
+	Str255 name;
+	ParamBlockRec pb;
+	
+	pb.fileParam.ioVRefNum = get_Bootstrap_vRefNum();
+	pb.fileParam.ioNamePtr = name;
+	
+	int i = 0;
+	
+	short last_id = 127;
+	
+	while ( get_next_file_info( pb, i ) )
+	{
+		if ( pb.fileParam.ioFlFndrInfo.fdType == 'dfil' )
+		{
+			short refnum = OpenResFile( name );
+			
+			if ( refnum > 0 )
+			{
+				Handle drvr = Get1IndResource( 'DRVR', 1 );
+				
+				ResType type;
+				Str255  name;
+				
+				if ( drvr )
+				{
+					GetResInfo( drvr, NULL, &type, name );
+					
+					DetachResource( drvr );
+				}
+				
+				CloseResFile( refnum );
+				
+				if ( drvr )
+				{
+					AddResource( drvr, type, ++last_id, name );
+					
+					if ( ResErr )
+					{
+						DisposeHandle( drvr );
+					}
+				}
+			}
+		}
+	}
 }
 
 static
@@ -149,6 +226,8 @@ int main( int argc, char** argv )
 	{
 		mac::glue::delay( welcome_ticks - elapsed_ticks );
 	}
+	
+	load_DAs();
 	
 	Byte appName[ 33 ];
 	
