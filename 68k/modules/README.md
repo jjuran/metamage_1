@@ -8,7 +8,6 @@ Advanced Mac Substitute Module Kit
   * Gestalt Manager
   * Memory Manager
   * OS Event Manager
-  * Event Manager
   * Vertical Retrace Manager
   * Patch Manager
   * Operating System Utilities
@@ -63,6 +62,7 @@ Advanced Mac Substitute Module Kit
 [ams-ui][]
 ----------
 
+  * Event Manager
   * Window Manager
   * Control Manager
   * Menu Manager

@@ -5,6 +5,15 @@ Depends on:
 
   * [ams-qd][]
 
+Event Manager
+-------------
+
+  * _WaitNextEvent integrated with the event reactor
+  * _GetNextEvent is throttled by default to save CPU/battery
+  * TODO: FKEYs
+  * TODO: GNE filter
+  * TODO: alarm clock?
+
 Window Manager
 --------------
 

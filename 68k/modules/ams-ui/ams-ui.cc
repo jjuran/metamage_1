@@ -14,6 +14,9 @@
 // POSIX
 #include <unistd.h>
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // command
 #include "command/get_option.hh"
 
@@ -24,6 +27,7 @@
 #include "Controls.hh"
 #include "Dialogs.hh"
 #include "Drag.hh"
+#include "Events.hh"
 #include "Icons.hh"
 #include "Lists.hh"
 #include "Menus.hh"
@@ -231,6 +235,21 @@ static void install_Controls()
 	TBTRAP( GetNewControl  );  // A9BE
 }
 
+static
+void install_EventManager()
+{
+	TBTRAP( WaitNextEvent );  // A860
+	
+	TBTRAP( GetNextEvent  );  // A970
+	TBTRAP( EventAvail    );  // A971
+	TBTRAP( GetMouse      );  // A972
+	TBTRAP( StillDown     );  // A973
+	TBTRAP( Button        );  // A974
+	TBTRAP( TickCount     );  // A975
+	TBTRAP( GetKeys       );  // A976
+	TBTRAP( WaitMouseUp   );  // A977
+}
+
 static void install_Dialogs()
 {
 	TBTRAP( HideDItem );  // A827
@@ -331,6 +350,11 @@ char* const* get_options( char** argv )
 				live_ModalFilter = true;
 				break;
 			
+			case Opt_GNEtix:
+				GetNextEvent_throttle =
+					gear::parse_unsigned_decimal( global_result.param );
+				break;
+			
 			default:
 				break;
 		}
@@ -353,6 +377,7 @@ int main( int argc, char** argv )
 		}
 	}
 	
+	install_EventManager();
 	install_Windows();
 	install_Menus();
 	install_Controls();

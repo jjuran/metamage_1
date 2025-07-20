@@ -47,16 +47,6 @@ OS Event Manager
   * _GetOSEvent throttles _SystemTask if _GetNextEvent isn't called
   * TODO: _PPostEvent
 
-Event Manager
--------------
-
-  * _WaitNextEvent integrated with the event reactor
-  * _GetNextEvent is throttled by default to save CPU/battery
-  * TODO: FKEYs
-  * TODO: GNE filter
-  * TODO: alarm clock?
-  * TODO: move to ams-ui
-
 Vertical Retrace Manager
 ------------------------
 

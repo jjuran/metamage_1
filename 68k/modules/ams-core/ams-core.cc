@@ -35,7 +35,6 @@
 // ams-core
 #include "Debugger.hh"
 #include "Desk.hh"
-#include "Events.hh"
 #include "Gestalt.hh"
 #include "HandleUtils.hh"
 #include "Handles.hh"
@@ -327,20 +326,6 @@ void install_OSEventManager()
 }
 
 static
-void install_EventManager()
-{
-	TBTRAP( WaitNextEvent );  // A860
-	TBTRAP( GetNextEvent  );  // A970
-	TBTRAP( EventAvail    );  // A971
-	TBTRAP( GetMouse      );  // A972
-	TBTRAP( StillDown     );  // A973
-	TBTRAP( Button        );  // A974
-	TBTRAP( TickCount     );  // A975
-	TBTRAP( GetKeys       );  // A976
-	TBTRAP( WaitMouseUp   );  // A977
-}
-
-static
 void install_DeskManager()
 {
 	TBTRAP( SystemEvent );  // A9B2
@@ -426,11 +411,6 @@ char* const* get_options( char** argv )
 				events_fd = gear::parse_unsigned_decimal( global_result.param );
 				break;
 			
-			case Opt_GNEtix:
-				GetNextEvent_throttle =
-					gear::parse_unsigned_decimal( global_result.param );
-				break;
-			
 			case Opt_romgen:
 				romgen = gear::parse_unsigned_decimal( global_result.param );
 				break;
@@ -494,7 +474,6 @@ int main( int argc, char** argv )
 	install_Gestalt();
 	
 	install_OSEventManager();
-	install_EventManager();
 	
 	install_DeskManager();
 	
