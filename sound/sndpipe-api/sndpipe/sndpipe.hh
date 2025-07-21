@@ -38,6 +38,7 @@ enum
 	ping_sent = 0x3e3e,  // basic ('>>')
 	full_stop = 0x5858,  // basic ('XX')
 	
+	a_frame_of_silence = 0x5f5f,  // sound ('__')
 	set_loudness_level = 0x6c6c,  // admin ('ll')
 	
 	ftMode_flat_buffer = ftMode | 0x0100,  // sound
