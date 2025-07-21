@@ -18,7 +18,6 @@ Ptr  SysEvtBuf  : 0x0146;
 QHdr EventQueue : 0x014A;
 short SysEvtCnt : 0x0154;
 
-UInt32 Ticks   : 0x016A;
 Byte   MBState : 0x0172;
 UInt16 KeyMods : 0x017A;
 Point  Mouse   : 0x0830;
@@ -112,7 +111,7 @@ QElemPtr find_an_event( short mask : __D0, EventRecord* event : __A0 )
 	
 	event->what      = nullEvent;
 	event->message   = 0;
-	event->when      = Ticks;
+	event->when      = get_Ticks();
 	event->where     = Mouse;
 	event->modifiers = get_modifiers();
 	

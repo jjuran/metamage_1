@@ -42,7 +42,6 @@
 
 UInt8  CPUFlag    : 0x012F;
 UInt16 SysVersion : 0x015A;
-UInt32 Ticks      : 0x016A;
 UInt32 Time       : 0x020C;
 SInt16 BootDrive  : 0x0210;
 
@@ -452,7 +451,7 @@ bool reactor_wait( UInt64 dt )
 
 long Delay_patch( long numTicks : __A0, short trap_word : __D1 )
 {
-	const UInt64 start = Ticks * tick_microseconds;
+	const UInt64 start = get_Ticks() * tick_microseconds;
 	
 	SInt64 dt = (UInt32) numTicks * tick_microseconds;
 	
@@ -468,7 +467,7 @@ long Delay_patch( long numTicks : __A0, short trap_word : __D1 )
 	}
 	while ( dt > 0  &&  numTicks >= 0 );
 	
-	return Ticks;
+	return get_Ticks();
 }
 
 pascal void SysBeep_patch( short duration )
