@@ -109,6 +109,8 @@ static int n_512K_blocks = -1;
 using v68k::exec::module_spec;
 using v68k::exec::module_specs;
 
+static const char* raster_path;
+
 
 enum
 {
@@ -529,30 +531,9 @@ char* const* get_options( char** argv )
 					exit( 2 );
 				}
 				
-				using v68k::screen::set_screen_backing_store_file;
-				using v68k::memory::allocate_screen;
-				
-				const char* path;
-				path = global_result.param;
-				
-				int nok;
-				
-				nok = set_screen_backing_store_file( path )  ||
-				      allocate_screen();
-				
-				if ( nok )
-				{
-					const char* error = strerror( nok );
-					
-					write( STDERR_FILENO, path, strlen( path ) );
-					write( STDERR_FILENO, STR_LEN( ": " ) );
-					write( STDERR_FILENO, error, strlen( error ) );
-					write( STDERR_FILENO, STR_LEN( "\n" ) );
-					
-					exit( 1 );
-				}
-				
 				has_screen = true;
+				
+				raster_path = global_result.param;
 				
 				break;
 			
@@ -632,6 +613,31 @@ char* const* get_options( char** argv )
 	return argv;
 }
 
+static
+void set_up_screen()
+{
+	if ( raster_path )
+	{
+		using v68k::screen::set_screen_backing_store_file;
+		using v68k::memory::allocate_screen;
+		
+		int nok = set_screen_backing_store_file( raster_path )  ||
+		          allocate_screen();
+		
+		if ( nok )
+		{
+			const char* error = strerror( nok );
+			
+			write( STDERR_FILENO, raster_path, strlen( raster_path ) );
+			write( STDERR_FILENO, STR_LEN( ": " ) );
+			write( STDERR_FILENO, error, strlen( error ) );
+			write( STDERR_FILENO, STR_LEN( "\n" ) );
+			
+			exit( 1 );
+		}
+	}
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc == 0 )
@@ -650,6 +656,8 @@ int main( int argc, char** argv )
 	module_specs = (module_spec*) alloca( argc * sizeof (module_spec) );
 	
 	char* const* args = get_options( argv );
+	
+	set_up_screen();
 	
 	int argn = argc - (args - argv);
 	
