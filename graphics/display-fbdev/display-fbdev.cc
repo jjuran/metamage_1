@@ -215,15 +215,29 @@ draw_proc select_16b_draw_proc( const raster_desc& desc, byte_remapping remap )
 		
 		case 16:
 			/*
-				We're assuming that the screen is RGB 5/6/5 and
-				that an RGB 5/6/5 image is of the same endianness,
-				and also that xRGB 1/5/5/5 is big-endian.
+				Recognizing that display-fbdev is specific to Linux,
+				we're assuming that the screen is RGB 5/6/5 in all cases.
+				
+				For xRGB 1/5/5/5 images (from Mac OS), we're additionally
+				assuming that the host screen is little-endian.
+				
+				For RGB 5/6/5 images (e.g. from Linux), we assume that
+				the image is the same endianness as the host screen.
 			*/
+			
+			if ( bool swapped = remap & 1 )
+			{
+				if ( ! is_16bit_565( desc ) )
+				{
+					return doubling ? &rgb555_BE_to_565_LE_2x
+					                : &rgb555_BE_to_565_LE;
+				}
+			}
 			
 			return is_16bit_565( desc ) ? doubling ? &copy_16_2x
 			                                       : &copy_16
-			                            : doubling ? &rgb555_BE_to_565_LE_2x
-			                                       : &rgb555_BE_to_565_LE;
+			                            : doubling ? &rgb555_LE_to_565_LE_2x
+			                                       : &rgb555_LE_to_565_LE;
 		
 		default:
 			return NULL;
