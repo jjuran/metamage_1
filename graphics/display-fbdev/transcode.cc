@@ -194,6 +194,49 @@ void both_32_2x( const uint8_t* src, uint8_t* dst, int width )
 	}
 }
 
+void rgb555_BE_to_565_LE( const uint8_t* src, uint8_t* dst, int width )
+{
+	uint16_t* p = (uint16_t*) dst;
+	
+	while ( width-- > 0 )
+	{
+		const uint8_t msb = *src++;
+		const uint8_t lsb = *src++;
+		
+		const uint16_t xrgb = msb << 8 | lsb;
+		
+		const uint16_t r = (xrgb & 0x7C00) << 1;
+		const uint16_t g = (xrgb & 0x03E0) << 1 | (xrgb & 0x0200) >> 4;
+		const uint16_t b = (xrgb & 0x001F);
+		
+		const uint16_t rgb = r | g | b;
+		
+		*p++ = rgb;
+	}
+}
+
+void rgb555_BE_to_565_LE_2x( const uint8_t* src, uint8_t* dst, int width )
+{
+	uint16_t* p = (uint16_t*) dst;
+	
+	while ( width-- > 0 )
+	{
+		const uint8_t msb = *src++;
+		const uint8_t lsb = *src++;
+		
+		const uint16_t xrgb = msb << 8 | lsb;
+		
+		const uint16_t r = (xrgb & 0x7C00) << 1;
+		const uint16_t g = (xrgb & 0x03E0) << 1 | (xrgb & 0x0200) >> 4;
+		const uint16_t b = (xrgb & 0x001F);
+		
+		const uint16_t rgb = r | g | b;
+		
+		*p++ = rgb;
+		*p++ = rgb;
+	}
+}
+
 void rgb555_BE_to_32( const uint8_t* src, uint8_t* dst, int width )
 {
 	uint32_t* p = (uint32_t*) dst;

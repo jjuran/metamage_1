@@ -214,8 +214,16 @@ draw_proc select_16b_draw_proc( const raster_desc& desc, byte_remapping remap )
 		CASE_MONOCHROME( 8 );
 		
 		case 16:
-			return doubling ? &copy_16_2x
-			                : &copy_16;
+			/*
+				We're assuming that the screen is RGB 5/6/5 and
+				that an RGB 5/6/5 image is of the same endianness,
+				and also that xRGB 1/5/5/5 is big-endian.
+			*/
+			
+			return is_16bit_565( desc ) ? doubling ? &copy_16_2x
+			                                       : &copy_16
+			                            : doubling ? &rgb555_BE_to_565_LE_2x
+			                                       : &rgb555_BE_to_565_LE;
 		
 		default:
 			return NULL;

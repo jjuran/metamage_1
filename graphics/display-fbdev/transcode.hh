@@ -128,6 +128,9 @@ void rgba_32_2x( const uint8_t* src, uint8_t* dst, int width );
 void both_32   ( const uint8_t* src, uint8_t* dst, int width );
 void both_32_2x( const uint8_t* src, uint8_t* dst, int width );
 
+void rgb555_BE_to_565_LE   ( const uint8_t* src, uint8_t* dst, int width );
+void rgb555_BE_to_565_LE_2x( const uint8_t* src, uint8_t* dst, int width );
+
 void rgb555_BE_to_32   ( const uint8_t* src, uint8_t* dst, int width );
 void rgb555_BE_to_32_2x( const uint8_t* src, uint8_t* dst, int width );
 
