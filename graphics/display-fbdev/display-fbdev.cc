@@ -244,10 +244,15 @@ draw_proc select_32b_draw_proc( const raster_desc& desc, byte_remapping remap )
 		CASE_MONOCHROME( 8 );
 		
 		case 16:
-			return is_16bit_565( desc ) ? doubling ? &rgb565_16_2x
-			                                       : &rgb565_16
-			                            : doubling ? &rgb555_16_2x
-			                                       : &rgb555_16;
+			/*
+				We're assuming that RGB 5/6/5 is little-endian,
+				and also that xRGB 1/5/5/5 is big-endian.
+			*/
+			
+			return is_16bit_565( desc ) ? doubling ? &rgb565_LE_to_32_2x
+			                                       : &rgb565_LE_to_32
+			                            : doubling ? &rgb555_BE_to_32_2x
+			                                       : &rgb555_BE_to_32;
 		
 		case 32:
 			last_pixel = (uint8_t) desc.layout.per_pixel;

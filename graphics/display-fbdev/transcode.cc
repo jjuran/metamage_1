@@ -194,14 +194,12 @@ void both_32_2x( const uint8_t* src, uint8_t* dst, int width )
 	}
 }
 
-void rgb555_16( const uint8_t* src, uint8_t* dst, int width )
+void rgb555_BE_to_32( const uint8_t* src, uint8_t* dst, int width )
 {
 	uint32_t* p = (uint32_t*) dst;
 	
 	while ( width > 0 )
 	{
-		// We're assuming that xRGB 1/5/5/5 is big-endian.
-		
 		const uint8_t msb = *src++;
 		const uint8_t lsb = *src++;
 		
@@ -221,14 +219,12 @@ void rgb555_16( const uint8_t* src, uint8_t* dst, int width )
 	}
 }
 
-void rgb555_16_2x( const uint8_t* src, uint8_t* dst, int width )
+void rgb555_BE_to_32_2x( const uint8_t* src, uint8_t* dst, int width )
 {
 	uint32_t* p = (uint32_t*) dst;
 	
 	while ( width-- > 0 )
 	{
-		// We're assuming that xRGB 1/5/5/5 is big-endian.
-		
 		const uint8_t msb = *src++;
 		const uint8_t lsb = *src++;
 		
@@ -247,14 +243,12 @@ void rgb555_16_2x( const uint8_t* src, uint8_t* dst, int width )
 	}
 }
 
-void rgb565_16( const uint8_t* src, uint8_t* dst, int width )
+void rgb565_LE_to_32( const uint8_t* src, uint8_t* dst, int width )
 {
 	uint32_t* p = (uint32_t*) dst;
 	
 	while ( width > 0 )
 	{
-		// We're assuming that RGB 5/6/5 is little-endian.
-		
 		const uint8_t lsb = *src++;
 		const uint8_t msb = *src++;
 		
@@ -274,14 +268,12 @@ void rgb565_16( const uint8_t* src, uint8_t* dst, int width )
 	}
 }
 
-void rgb565_16_2x( const uint8_t* src, uint8_t* dst, int width )
+void rgb565_LE_to_32_2x( const uint8_t* src, uint8_t* dst, int width )
 {
 	uint32_t* p = (uint32_t*) dst;
 	
 	while ( width-- > 0 )
 	{
-		// We're assuming that RGB 5/6/5 is little-endian.
-		
 		const uint8_t lsb = *src++;
 		const uint8_t msb = *src++;
 		
