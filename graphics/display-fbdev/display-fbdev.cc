@@ -267,14 +267,22 @@ draw_proc select_32b_draw_proc( const raster_desc& desc, byte_remapping remap )
 		
 		case 16:
 			/*
-				We're assuming that RGB 5/6/5 is little-endian,
-				and also that xRGB 1/5/5/5 is big-endian.
+				We're assuming that RGB 5/6/5 is little-endian.
 			*/
+			
+			if ( bool swapped = remap & 1 )
+			{
+				if ( ! is_16bit_565( desc ) )
+				{
+					return doubling ? &rgb555_BE_to_32_2x
+					                : &rgb555_BE_to_32;
+				}
+			}
 			
 			return is_16bit_565( desc ) ? doubling ? &rgb565_LE_to_32_2x
 			                                       : &rgb565_LE_to_32
-			                            : doubling ? &rgb555_BE_to_32_2x
-			                                       : &rgb555_BE_to_32;
+			                            : doubling ? &rgb555_LE_to_32_2x
+			                                       : &rgb555_LE_to_32;
 		
 		case 32:
 			last_pixel = (uint8_t) desc.layout.per_pixel;
