@@ -1344,14 +1344,17 @@ namespace Genie
 	{
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		if ( name == "rsrc"  &&  is_file( *that ) )
+		if ( is_file( *that ) )
 		{
-			return GetRsrcForkFSTree( extra.fsspec );
-		}
-		
-		if ( name == "r"  &&  is_file( *that ) )
-		{
-			return Get_ResFileDir_FSTree( that, extra.fsspec );
+			if ( name == "rsrc" )
+			{
+				return GetRsrcForkFSTree( extra.fsspec );
+			}
+			
+			if ( name == "r" )
+			{
+				return Get_ResFileDir_FSTree( that, extra.fsspec );
+			}
 		}
 		
 		Mac::ThrowOSStatus( extra.cinfo.dirInfo.ioResult );
