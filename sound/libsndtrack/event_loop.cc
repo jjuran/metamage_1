@@ -113,10 +113,12 @@ ssize_t read_header( int fd, command_header& header )
 static
 void read_and_enqueue( int fd, const command_header& header, rt_queue& queue )
 {
+	const uint32_t length = header.length;
+	
 	const unsigned node_size = sizeof (sound_node)
 	                         - sizeof (sound_buffer)
 	                         + sizeof header.opcode
-	                         + header.length;
+	                         + length;
 	
 	if ( sound_node* node = (sound_node*) queue_alloc_node( node_size ) )
 	{
@@ -126,7 +128,7 @@ void read_and_enqueue( int fd, const command_header& header, rt_queue& queue )
 		
 		*addr++ = mode;
 		
-		ssize_t n_read = read_all( fd, addr, header.length );
+		ssize_t n_read = read_all( fd, addr, length );
 		
 		if ( n_read <= 0 )
 		{
@@ -138,18 +140,18 @@ void read_and_enqueue( int fd, const command_header& header, rt_queue& queue )
 		switch ( mode )
 		{
 			case swMode:
-				check_squarewave( header.length, node->sound.square_wave );
+				check_squarewave( length, node->sound.square_wave );
 				
 				endianize( node->sound.square_wave );
 				break;
 			
 			case ffMode:
-				if ( header.length < sizeof (Fixed) )
+				if ( length < sizeof (Fixed) )
 				{
 					take_exception( opcode_length_underrun );
 				}
 				
-				node->size = header.length - sizeof (Fixed);
+				node->size = length - sizeof (Fixed);
 				
 				if ( node->size == 0 )
 				{
@@ -169,7 +171,7 @@ void read_and_enqueue( int fd, const command_header& header, rt_queue& queue )
 				break;
 			
 			case set_loudness_level:
-				if ( header.length < 2 )
+				if ( length < 2 )
 				{
 					take_exception( opcode_length_underrun );
 				}
