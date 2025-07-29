@@ -1346,7 +1346,12 @@ namespace Genie
 		
 		if ( is_file( *that ) )
 		{
-			if ( name == "rsrc" )
+			/*
+				The vfs path resolver has a special case for
+				"..namedfork" and passes the entire subpath.
+			*/
+			
+			if ( name == "rsrc"  ||  name == "..namedfork/rsrc" )
 			{
 				return GetRsrcForkFSTree( extra.fsspec );
 			}
