@@ -857,7 +857,7 @@ namespace tool
 		
 		p7::wait_t wait_status = p7::waitpid( tlsrvr_pid );
 		
-		p7::exit_t exit_status = nucleus::convert< p7::exit_t >( wait_status );
+		p7::exit_t exit_status = exit_from_wait( wait_status );
 		
 		if ( exit_status != 0 )
 		{
