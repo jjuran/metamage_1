@@ -40,7 +40,6 @@
 namespace tool
 {
 	
-	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace mw = metrowerks;
 	
@@ -274,7 +273,7 @@ namespace tool
 			p7::execvp( &command[0] );
 		}
 		
-		return n::convert< p7::exit_t >( p7::wait() );
+		return exit_from_wait( p7::wait() );
 	}
 	
 }
