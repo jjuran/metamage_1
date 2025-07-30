@@ -15,9 +15,6 @@
 #define POSEVEN_TYPES_WAIT_T_HH
 
 // nucleus
-#ifndef NUCLEUS_CONVERT_HH
-#include "nucleus/convert.hh"
-#endif
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
 #include "nucleus/enumeration_traits.hh"
 #endif
@@ -89,34 +86,6 @@ namespace poseven
 		
 		return exit_t( result );
 	}
-	
-}
-
-namespace nucleus
-{
-	
-	template <>
-	struct converter< poseven::exit_t, poseven::wait_t >
-	{
-		typedef poseven::wait_t  argument_type;
-		typedef poseven::exit_t  result_type;
-		
-		poseven::exit_t operator()( poseven::wait_t status ) const
-		{
-			using namespace poseven;
-			
-			int result = wifexited  ( status ) ? wexitstatus( status )
-			           : wifsignaled( status ) ? wtermsig   ( status ) + 128
-			           :                         -1;
-			
-			return exit_t( result );
-		}
-	};
-	
-	template <>
-	struct converter< poseven::exit_t, poseven::wait_result > : public converter< poseven::exit_t, poseven::wait_t > 
-	{
-	};
 	
 }
 
