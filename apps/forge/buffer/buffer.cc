@@ -238,7 +238,7 @@ namespace tool
 			}
 		}
 		
-		return n::convert< p7::exit_t >( p7::wait() );
+		return exit_from_wait( p7::wait() );
 	}
 	
 }
