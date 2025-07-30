@@ -80,6 +80,16 @@ namespace poseven
 		operator wait_t() const  { return status; }
 	};
 	
+	inline
+	exit_t exit_from_wait( wait_t status )
+	{
+		int result = wifexited  ( status ) ? wexitstatus( status )
+		           : wifsignaled( status ) ? wtermsig   ( status ) + 128
+		           :                         -1;
+		
+		return exit_t( result );
+	}
+	
 }
 
 namespace nucleus
