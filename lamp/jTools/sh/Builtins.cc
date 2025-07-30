@@ -534,7 +534,7 @@ namespace tool
 		
 		ReplacedParametersScope dotParams( argc - 2, argv + 2 );
 		
-		return n::convert< p7::exit_t >( ReadExecuteLoop( fd, false ) );
+		return exit_from_wait( ReadExecuteLoop( fd, false ) );
 	}
 	
 	struct builtin_t

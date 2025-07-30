@@ -133,7 +133,6 @@ static char* const* get_options( char* const* argv )
 namespace tool
 {
 	
-	namespace n = nucleus;
 	namespace p7 = poseven;
 	
 	
@@ -278,7 +277,7 @@ namespace tool
 		if ( the_command != NULL )
 		{
 			// Run a single command
-			return n::convert< p7::exit_t >( ExecuteCmdLine( the_command ) );
+			return exit_from_wait( ExecuteCmdLine( the_command ) );
 		}
 		
 		OnExit onExit;
@@ -286,7 +285,7 @@ namespace tool
 		p7::wait_t status = ReadExecuteLoop( input,
 		                                     GetOption( kOptionInteractive ) );
 		
-		return n::convert< p7::exit_t >( status );
+		return exit_from_wait( status );
 	}
 	
 }

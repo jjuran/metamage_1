@@ -169,7 +169,6 @@ argv_box& argv_box::assign( const plus::string& s )
 namespace tool
 {
 	
-	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace Sh = ShellShock;
 	
@@ -225,7 +224,7 @@ namespace tool
 		}
 		else if ( param == "?" )
 		{
-			single_result = gear::inscribe_decimal( n::convert< p7::exit_t >( global_last_wait_status ) );
+			single_result = gear::inscribe_decimal( exit_from_wait( global_last_wait_status ) );
 		}
 		else if ( param == "#" )
 		{
@@ -755,7 +754,7 @@ namespace tool
 			if ( exiting )
 			{
 				// The 'child' was the 'exit' builtin, meaning we should exit
-				throw n::convert< p7::exit_t >( wait_status );
+				throw exit_from_wait( wait_status );
 			}
 			
 			return wait_status;
@@ -824,7 +823,7 @@ namespace tool
 	{
 		try
 		{
-			p7::_exit( n::convert< p7::exit_t >( ExecuteCommandFromPipeline( command, env ) ) );
+			p7::_exit( exit_from_wait( ExecuteCommandFromPipeline( command, env ) ) );
 		}
 		catch ( const p7::exit_t& status )
 		{
