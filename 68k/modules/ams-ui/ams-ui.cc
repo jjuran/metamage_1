@@ -49,6 +49,8 @@
 
 enum
 {
+	Opt_GNEtix = 'G',  // GetNextEvent throttle, in ticks
+	
 	Opt_last_byte = 255,
 	
 	Opt_debug_updates,
@@ -60,6 +62,8 @@ static command::option options[] =
 	{ "debug-updates",     Opt_debug_updates    },
 	{ "live-modal",        Opt_live_ModalFilter },
 	{ "live-modal-filter", Opt_live_ModalFilter },
+	
+	{ "gne-ticks",  Opt_GNEtix, command::Param_required },
 	
 	NULL,
 };
