@@ -489,8 +489,14 @@ def ui_opts
 {
 	let debug_updates = false
 	
+	let gne_ticks_opt = if let gne_ticks = getenv "AMS_GNETICKS" then
+	{
+		"-G" gne_ticks,
+	}
+	
 	let opts =
 	[
+		gne_ticks_opt,
 		"--debug-updates" (*) debug_updates,
 		"--hide-desktop"  (*) hide_desktop,
 		"--live-modal"    (*) live_modal,
