@@ -258,10 +258,16 @@ def ui_opts
 {
 	let opts = [ "hide-desktop", "live-modal" ] map optional
 	
+	let gne_ticks_opt =
+	if "gne-ticks" in config then
+	{
+		"-G" config[ "gne-ticks" ],
+	}
+	
 	return
 	if opts then
 	{
-		ams-ui: opts,
+		ams-ui: [*opts, gne_ticks_opt],
 	}
 }
 
