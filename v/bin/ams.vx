@@ -218,9 +218,9 @@ def get_modem_fd
 	{
 		let required = ["tcpclient", "duplex"]
 		
-		if required ver { not runnable v } then
+		if let lacking = required ver { not runnable v } per {a " and " b} then
 		{
-			warn "ams.vx: TCP modem requires tcpclient and duplex; disabling"
+			warn "ams.vx: TCP modem requires " lacking "; disabling"
 			
 			return ()
 		}
