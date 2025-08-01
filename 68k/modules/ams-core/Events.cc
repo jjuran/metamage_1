@@ -16,6 +16,9 @@
 #include <Timer.h>
 #endif
 
+// mac-glue-utils
+#include "mac_glue/OSUtils.hh"
+
 // ams-common
 #include "callouts.hh"
 
@@ -43,6 +46,12 @@ const long default_GetNextEvent_throttle = 1;  // minimum ticks between calls
 unsigned long GetNextEvent_throttle = default_GetNextEvent_throttle;
 
 static unsigned long next_sleep;
+
+static inline
+void poll_user_input()
+{
+	mac::glue::delay( 0 );
+}
 
 #pragma mark Accessing Events
 #pragma mark -

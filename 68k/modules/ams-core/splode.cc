@@ -43,9 +43,6 @@
 #pragma exceptions off
 
 
-#define STR_LEN( s )  "" s, (sizeof s - 1)
-
-
 typedef KeyMapByteArray Keys;
 
 QHdr EventQueue : 0x014A;
@@ -503,9 +500,4 @@ void wait_for_user_input( unsigned long ticks )
 	}
 	
 	wait_for_user_input( approximate_timeval_from_ticks( ticks ) );
-}
-
-void poll_user_input()
-{
-	wait_for_user_input( zero_timeout );
 }

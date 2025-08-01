@@ -14,6 +14,4 @@ void reactor_insert();
 
 void wait_for_user_input( unsigned long ticks );
 
-void poll_user_input();
-
 #endif
