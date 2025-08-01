@@ -17,12 +17,39 @@
 // Standard C
 #include <string.h>
 
+// mac-glue-utils
+#include "mac_glue/OSUtils.hh"
+
+// gear
+#include "gear/parse_decimal.hh"
+
 // chars
 #include "conv/mac_utf8.hh"
+
+// command
+#include "command/get_option.hh"
 
 
 #pragma exceptions off
 
+
+UInt32 Ticks : 0x016A;
+short SysMap : 0x0A58;
+
+
+enum
+{
+	Opt_last_byte = 255,
+	
+	Opt_welcome,
+};
+
+static command::option options[] =
+{
+	{ "welcome", Opt_welcome, command::Param_required },
+	
+	NULL,
+};
 
 struct LaunchParamBlockRec
 {
@@ -32,6 +59,8 @@ struct LaunchParamBlockRec
 };
 
 static QDGlobals qd;
+
+static UInt32 welcome_ticks;
 
 static inline
 short asm Launch( void* pb : __A0 ) : __D0
@@ -53,23 +82,73 @@ void paint_desktop()
 	ClosePort( &port );
 }
 
+static
+char* const* get_options( char** argv )
+{
+	using command::global_result;
+	
+	int opt;
+	
+	++argv;  // skip arg 0
+	
+	while ( (opt = command::get_option( (char* const**) &argv, options )) > 0 )
+	{
+		using command::global_result;
+		
+		using gear::parse_unsigned_decimal;
+		
+		switch ( opt )
+		{
+			case Opt_welcome:
+				welcome_ticks = parse_unsigned_decimal( &global_result.param );
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
+	return argv;
+}
+
 int main( int argc, char** argv )
 {
-	if ( argc < 2 )
+	char* const* args = get_options( argv );
+	
+	int argn = argc - (args - argv);
+	
+	if ( argn < 1 )
 	{
 		return 0;
 	}
 	
 	using conv::mac_from_utf8_nothrow;
 	
-	const char* path = argv[ 1 ];
+	const char* path = args[ 0 ];
 	
 	const size_t len = strlen( path );
 	
 	paint_desktop();
 	
+	UInt32 initial_Ticks = Ticks;  // probably zero
+	
+	if ( welcome_ticks )
+	{
+		SysMap = OpenResFile( "\p" "AMS Resources" );
+		
+		SysError( dsGreeting );
+	}
+	
 	InitResources();
 	InitAllPacks();
+	
+	UInt32 current_Ticks = Ticks;
+	UInt32 elapsed_ticks = current_Ticks - initial_Ticks;
+	
+	if ( welcome_ticks > elapsed_ticks )
+	{
+		mac::glue::delay( welcome_ticks - elapsed_ticks );
+	}
 	
 	Byte appName[ 33 ];
 	
