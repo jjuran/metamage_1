@@ -134,6 +134,13 @@ void SysError_patch( short error : __D0 )
 	         srcXor,
 	         NULL );
 	
+	const short text_h = -left + icon_h * 2 + 32;
+	const short text_v = top  + 12 + 15 + 12;
+	
+	MoveTo( text_h, text_v );
+	
+	DrawString( "\p" "Sorry, a system error occurred." );
+	
 	short button_bottom = top + height - 16 - 12;
 	
 	Rect restart_bounds =
@@ -147,13 +154,6 @@ void SysError_patch( short error : __D0 )
 	MoveTo( left + 23 + 4, button_bottom - 6 );
 	
 	DrawString( "\p" "Restart" );
-	
-	const short text_h = -left + icon_h * 2 + 32;
-	const short text_v = top  + 12 + 15 + 12;
-	
-	MoveTo( text_h, text_v );
-	
-	DrawString( "\p" "Sorry, a system error occurred." );
 	
 	if ( (UInt16) error < 100 )
 	{
