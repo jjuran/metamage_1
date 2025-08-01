@@ -154,6 +154,8 @@ def which (program)
 	catch {}
 }
 
+let runnable = which
+
 let home     = getenv "HOME"
 
 let root_dir = existing home "/68k" or ams_mnt
@@ -196,7 +198,7 @@ def get_sound_fd
 		return sound_fd
 	}
 	
-	if which "sndtrack" then
+	if runnable "sndtrack" then
 	{
 		let sound_fd_slot = str (sound-fd = reader "/dev/null")
 		sound-server = "--fd", sound_fd_slot, "sndtrack", "//"
@@ -216,7 +218,7 @@ def get_modem_fd
 	{
 		let required = ["tcpclient", "duplex"]
 		
-		if required ver { not which v } then
+		if required ver { not runnable v } then
 		{
 			warn "ams.vx: TCP modem requires tcpclient and duplex; disabling"
 			
