@@ -40,7 +40,17 @@ void run_INIT( ProcPtr proc : __A0 )
 
 pascal short InitResources_patch()
 {
-	SysMap = OpenResFile( "\p" "AMS Resources" );
+	/*
+		The `app` tool calls InitResources() after all modules have
+		loaded and before launching the application.  It may also
+		first open "AMS Resources" itself, so it can use resources
+		before INITs run -- in which case we shouldn't reopen it.
+	*/
+	
+	if ( SysMap <= 0 )
+	{
+		SysMap = OpenResFile( "\p" "AMS Resources" );
+	}
 	
 	short index = 0;
 	
