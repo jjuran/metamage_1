@@ -12,6 +12,9 @@
 #ifndef __QUICKDRAW__
 #include <Quickdraw.h>
 #endif
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
 
 // POSIX
 #include <unistd.h>
@@ -128,6 +131,14 @@ void SysError_patch( short error : __D0 )
 	IconBitmap.bounds.bottom = 32;
 	IconBitmap.bounds.right  = 32;
 	
+	if ( error == dsGreeting )
+	{
+		if ( Handle h = GetResource( 'ICN#', 42 ) )
+		{
+			IconBitmap.baseAddr = *h;
+		}
+	}
+	
 	StdBits( &IconBitmap,
 	         &IconBitmap.bounds,
 	         &icon_rect,
@@ -138,6 +149,13 @@ void SysError_patch( short error : __D0 )
 	const short text_v = top  + 12 + 15 + 12;
 	
 	MoveTo( text_h, text_v );
+	
+	if ( error == dsGreeting )
+	{
+		DrawString( "\p" "Welcome to Advanced Mac Substitute." );
+		
+		return;
+	}
 	
 	DrawString( "\p" "Sorry, a system error occurred." );
 	
