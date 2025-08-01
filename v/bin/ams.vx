@@ -32,6 +32,7 @@ var app_name = null
 var coloring = 0
 var screen_res = null
 var has_cursor = bool getenv "AMS_CURSOR"
+var welcome_ticks = 0
 
 var args = begin argv
 
@@ -86,6 +87,10 @@ while args do
 		else if arg == "--res" then
 		{
 			screen_res = *args++
+		}
+		else if arg == "--welcome" then
+		{
+			welcome_ticks = int *args++
 		}
 		else if arg == "--xv" then
 		{
@@ -492,7 +497,7 @@ def argify (name)
 			else {path}
 }
 
-let prefix_list = "core io fs snd rsrc drvr pack seg qd ui print"
+let prefix_list = "core io fs snd rsrc drvr pack seg qd ui dsat print"
 var ams_modules = [ prefix_list / ' ' ] map {"ams-" v}
 
 ams_modules <-- "vdb"
@@ -501,6 +506,9 @@ ams_modules <-- "umsp"
 let module_opts = ams_modules map {"-m", argify v}
 
 let app = ams_bin "/app"
+
+let welcome = ("--welcome=" welcome_ticks) (*) bool welcome_ticks
+let app_opts = welcome, app_name
 
 let works = home "/run/" getpid() ".works"
 
@@ -543,7 +551,7 @@ let servers = sound-server, modem-server, file-servers
 
 let xv68k_opts = model_opt, mem_opt, sound_opt, "-tSP", crsr_opt, xv_opt
 
-let xv68k-subcmd = xv68k, xv68k_opts, raster, *module_opts, app, app_name
+let xv68k-subcmd = xv68k, xv68k_opts, raster, *module_opts, app, app_opts
 let graft-subcmd = "graft", servers, xv68k-subcmd
 
 let command = [ command-prefix, graft-subcmd ]
