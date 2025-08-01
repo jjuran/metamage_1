@@ -23,6 +23,9 @@
 // Standard C
 #include <string.h>
 
+// chars
+#include "conv/mac_utf8.hh"
+
 // command
 #include "command/get_option.hh"
 
@@ -115,6 +118,11 @@ short documents_vRefNum()
 	return vRefNum;
 }
 
+struct AppFile_padded : AppFile
+{
+	Byte padding;
+};
+
 static char* const* get_options( char** argv )
 {
 	using command::global_result;
@@ -140,13 +148,25 @@ static char* const* get_options( char** argv )
 					is correct in most cases.
 				*/
 				
-				AppFile file;
+				using conv::mac_from_utf8_nothrow;
+				
+				/*
+					Use a padded AppFile structure so we can legally
+					write one byte beyond the end of fName, if needed.
+				*/
+				
+				AppFile_padded file;
 				
 				file.vRefNum = documents_vRefNum();
 				file.fType   = fileType;
 				file.versNum = 0;
 				
-				size_t n = strlen( global_result.param );
+				const char* utf8_name = global_result.param;
+				
+				size_t n = mac_from_utf8_nothrow( (char*) file.fName + 1,
+				                                  256,
+				                                  utf8_name,
+				                                  strlen( utf8_name ) );
 				
 				if ( n > 255 )
 				{
@@ -156,8 +176,6 @@ static char* const* get_options( char** argv )
 				Byte* p = file.fName;
 				
 				*p++ = n;
-				
-				fast_memcpy( p, global_result.param, n );
 				
 				/*
 					To get from the name length to the actual size of an entry,
