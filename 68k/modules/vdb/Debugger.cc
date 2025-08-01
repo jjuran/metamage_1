@@ -29,6 +29,8 @@ enum
 	trace_on = 0xFFFFFFF4
 };
 
+void* old_SysError;
+
 static
 void SysError_message( short error : __D0 )
 {
@@ -60,6 +62,9 @@ void DebugStr_message( const unsigned char* message : __A0 )
 asm
 void SysError_patch( short error : __D0 )
 {
+	CMPI.W   #40,D0  // dsGreeting
+	BEQ.S    pass
+	
 	LINK     A6,#0
 	MOVEM.L  D0-D2/A0-A1,-(SP)
 	
@@ -69,6 +74,18 @@ void SysError_patch( short error : __D0 )
 	UNLK     A6
 	
 	JMP      trace_on
+	
+pass:
+	
+	/*
+		This is a non-fatal situation in which we're merely using
+		the System Error Manager to display an alert.  Nothing has
+		gone wrong, so there's nothing to debug, and clobbering A0
+		(which is normal when calling a Toolbox trap) is harmless.
+	*/
+	
+	MOVEA.L  old_SysError,A0
+	JMP      (A0)
 }
 
 asm

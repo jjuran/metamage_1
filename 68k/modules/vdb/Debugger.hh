@@ -6,6 +6,9 @@
 #ifndef DEBUGGER_HH
 #define DEBUGGER_HH
 
+
+extern void* old_SysError;
+
 void SysError_patch( short error : __D0 );
 
 pascal void Debugger_patch();
