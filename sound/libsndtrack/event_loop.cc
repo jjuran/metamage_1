@@ -170,6 +170,7 @@ void read_and_enqueue( int fd, const command_header& header, rt_queue& queue )
 				break;
 			
 			case ftMode_wave_update:
+			case a_frame_of_silence:
 				// No endianization needed.
 				break;
 			

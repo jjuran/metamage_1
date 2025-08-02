@@ -24,6 +24,7 @@
 #pragma exceptions off
 
 
+using sndpipe::a_frame_of_silence;
 using sndpipe::set_loudness_level;
 using sndpipe::ftMode_flat_buffer;
 using sndpipe::ftMode_flat_update;
@@ -228,6 +229,13 @@ short synthesize( sample_buffer& output )
 			case shutdown_mode:
 				synch::finished();
 				break;
+			
+			case a_frame_of_silence:
+				sounding_now = true;  // not an audio gap
+				
+				queue_advance( sound_queue );
+				
+				return 0;
 			
 			case swMode:
 				count = sw_synth( output, sound.square_wave, reset );
