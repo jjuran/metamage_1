@@ -129,7 +129,7 @@ void sound_update()
 		q += 2;
 	}
 	
-	if ( ! is_silence_and_zeros( buffer.samples, 370 ) )
+	if ( is_silence_and_zeros( buffer.samples, 370 ) )
 	{
 		/*
 			Lemmings begins sound generation by filling the sound
@@ -139,7 +139,9 @@ void sound_update()
 			issue by dropping the faulty frame, as well as any
 			frames filled with actual silence (which are no-ops).
 		*/
-		
+	}
+	else
+	{
 		send_command( sndpipe::sound_domain, &buffer, sizeof buffer );
 	}
 }
