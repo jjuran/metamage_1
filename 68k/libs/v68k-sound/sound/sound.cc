@@ -105,6 +105,23 @@ struct audio_frame_buffer
 	uint8_t samples[ 370 ];
 };
 
+struct silent_frame_buffer
+{
+	short mode;  // '__' (a_frame_of_silence)
+};
+
+void send_silent_frame()
+{
+	/*
+		The value of a_frame_of_silence is intentionally
+		palindromic, so it doesn't need to be byte-swapped.
+	*/
+	
+	silent_frame_buffer buffer = { sndpipe::a_frame_of_silence };
+	
+	send_command( sndpipe::sound_domain, &buffer, sizeof buffer );
+}
+
 static
 void sound_update()
 {
@@ -129,19 +146,21 @@ void sound_update()
 		q += 2;
 	}
 	
-	p = buffer.samples;
-	
-	if ( ! is_silence_and_zeros( p, 370 ) )
+	if ( is_silence_and_zeros( buffer.samples, 370 ) )
 	{
 		/*
 			Lemmings begins sound generation by filling the sound
 			buffer with zero bytes, resulting in a nasty click.
 			
 			Since it's supposed to be silent anyway, prevent the
-			issue by dropping the faulty frame, as well as any
-			frames filled with actual silence (which are no-ops).
+			issue by replacing the faulty frame (as well as any
+			frames filled with actual silence) with a null frame.
 		*/
 		
+		send_silent_frame();
+	}
+	else
+	{
 		send_command( sndpipe::sound_domain, &buffer, sizeof buffer );
 	}
 }
