@@ -128,11 +128,14 @@ void read_and_enqueue( int fd, const command_header& header, rt_queue& queue )
 		
 		*addr++ = mode;
 		
-		ssize_t n_read = read_all( fd, addr, length );
-		
-		if ( n_read <= 0 )
+		if ( length )
 		{
-			take_exception( extent_read_short );
+			ssize_t n_read = read_all( fd, addr, length );
+			
+			if ( n_read <= 0 )
+			{
+				take_exception( extent_read_short );
+			}
 		}
 		
 		node->size = 1;  // Mostly arbitrary value indicating validity
