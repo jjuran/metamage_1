@@ -30,6 +30,8 @@ long send_command( short domain, const void* buffer, uint32_t buffer_length );
 
 void set_audio_level( short level );
 
+void send_silent_frame();
+
 uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access );
 
 }  // namespace sound
