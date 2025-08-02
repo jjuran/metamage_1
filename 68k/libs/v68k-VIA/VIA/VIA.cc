@@ -259,9 +259,22 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 				case VIA_reg_B:
 					if ( diff & 0x80 )
 					{
-						const char* endis = mmio_byte & 0x80 ? "dis" : "en";
+						const uint8_t sound_off = mmio_byte & 0x80;
+						
+						const char* endis = sound_off ? "dis" : "en";
 						
 						NOTICE = "VIA Register B: sound generation ", endis, "abled";
+						
+						if ( ! sound_off )
+						{
+							/*
+								Automatically send a frame of silence
+								when low-level audio generation starts.
+								This seems to help prevent audio gaps.
+							*/
+							
+							sound::send_silent_frame();
+						}
 					}
 					break;
 				
