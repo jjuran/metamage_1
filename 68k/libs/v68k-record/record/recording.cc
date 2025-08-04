@@ -6,6 +6,7 @@
 #include "recording.hh"
 
 // POSIX
+#include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
 
