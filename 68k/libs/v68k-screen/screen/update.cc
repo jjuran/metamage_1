@@ -15,6 +15,9 @@
 // v68k-update
 #include "update/notify.hh"
 
+// v68k-record
+#include "record/graphics.hh"
+
 // v68k-screen
 #include "screen/storage.hh"
 
@@ -66,6 +69,8 @@ void update_bits()
 		}
 		
 		memcpy( transit_buffer, virtual_buffer, the_screen_size );
+		
+		record::frame( virtual_buffer );
 	}
 	
 	if ( the_sync_relay != 0 )  // NULL

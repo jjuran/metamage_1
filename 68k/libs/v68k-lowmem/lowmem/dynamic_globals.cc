@@ -17,6 +17,9 @@
 // v68k-time
 #include "v68k-time/clock.hh"
 
+// v68k-record
+#include "record/clock.hh"
+
 
 #ifdef __MWERKS__
 #pragma exceptions off
@@ -35,7 +38,20 @@ uint32_t get_Ticks()
 
 uint32_t get_Time()
 {
-	return ::time( NULL ) + ::mac::types::epoch_delta();  // TODO:  Local time
+	using mac::types::epoch_delta;
+	
+	static uint32_t prev_Time;
+	
+	uint32_t this_Time = ::time( NULL ) + epoch_delta();  // TODO:  Local time
+	
+	if ( this_Time != prev_Time )
+	{
+		prev_Time = this_Time;
+		
+		v68k::record::clock_Time( this_Time );
+	}
+	
+	return this_Time;
 }
 
 }  // namespace lowmem

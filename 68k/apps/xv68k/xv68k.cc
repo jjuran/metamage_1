@@ -30,6 +30,9 @@
 // v68k-ioutils
 #include "ioutils/print_register_dump.hh"
 
+// v68k-record
+#include "record/start_end.hh"
+
 // v68k-callouts
 #include "callout/bridge.hh"
 #include "callout/cursor_file.hh"
@@ -106,6 +109,8 @@ static int n_512K_blocks = -1;
 using v68k::exec::module_spec;
 using v68k::exec::module_specs;
 
+static const char* raster_path;
+
 
 enum
 {
@@ -125,6 +130,7 @@ enum
 	Opt_pid,
 	Opt_raster,
 	Opt_cursor,
+	Opt_record,
 	Opt_snd_fd,
 	Opt_ignore_screen_locks,
 };
@@ -143,6 +149,7 @@ static command::option options[] =
 	{ "pid",        Opt_pid,    command::Param_optional },
 	{ "raster",     Opt_raster, command::Param_required },
 	{ "cursor",     Opt_cursor, command::Param_required },
+	{ "record",     Opt_record, command::Param_required },
 	{ "module",     Opt_module, command::Param_required },
 	{ "sound-fd",   Opt_snd_fd, command::Param_required },
 	
@@ -382,6 +389,12 @@ int execute_68k( int argc, char* const* argv )
 	return 1;
 }
 
+static
+void atexit_end_recording()
+{
+	v68k::record::end_recording();
+}
+
 static inline
 bool begins_array( const char* param )
 {
@@ -518,30 +531,9 @@ char* const* get_options( char** argv )
 					exit( 2 );
 				}
 				
-				using v68k::screen::set_screen_backing_store_file;
-				using v68k::memory::allocate_screen;
-				
-				const char* path;
-				path = global_result.param;
-				
-				int nok;
-				
-				nok = set_screen_backing_store_file( path )  ||
-				      allocate_screen();
-				
-				if ( nok )
-				{
-					const char* error = strerror( nok );
-					
-					write( STDERR_FILENO, path, strlen( path ) );
-					write( STDERR_FILENO, STR_LEN( ": " ) );
-					write( STDERR_FILENO, error, strlen( error ) );
-					write( STDERR_FILENO, STR_LEN( "\n" ) );
-					
-					exit( 1 );
-				}
-				
 				has_screen = true;
+				
+				raster_path = global_result.param;
 				
 				break;
 			
@@ -551,6 +543,15 @@ char* const* get_options( char** argv )
 				set_cursor_backing_store_file( global_result.param );
 				
 				has_cursor = true;
+				break;
+			
+			case Opt_record:
+				using v68k::record::start_recording;
+				
+				if ( start_recording( global_result.param ) == 0 )
+				{
+					atexit( &atexit_end_recording );
+				}
 				break;
 			
 			case Opt_module:
@@ -612,6 +613,31 @@ char* const* get_options( char** argv )
 	return argv;
 }
 
+static
+void set_up_screen()
+{
+	if ( raster_path )
+	{
+		using v68k::screen::set_screen_backing_store_file;
+		using v68k::memory::allocate_screen;
+		
+		int nok = set_screen_backing_store_file( raster_path )  ||
+		          allocate_screen();
+		
+		if ( nok )
+		{
+			const char* error = strerror( nok );
+			
+			write( STDERR_FILENO, raster_path, strlen( raster_path ) );
+			write( STDERR_FILENO, STR_LEN( ": " ) );
+			write( STDERR_FILENO, error, strlen( error ) );
+			write( STDERR_FILENO, STR_LEN( "\n" ) );
+			
+			exit( 1 );
+		}
+	}
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc == 0 )
@@ -630,6 +656,8 @@ int main( int argc, char** argv )
 	module_specs = (module_spec*) alloca( argc * sizeof (module_spec) );
 	
 	char* const* args = get_options( argv );
+	
+	set_up_screen();
 	
 	int argn = argc - (args - argv);
 	
