@@ -33,7 +33,7 @@ namespace recall
 		{
 			const uint16_t op = *word;
 			
-			if ( (op & 0xfffe) == 0x4e74 )
+			if ( (op & 0xfffe) == 0x4e74  ||  op == 0x4ed0 )
 			{
 				if ( op == 0x4e74 )
 				{
@@ -41,7 +41,7 @@ namespace recall
 				}
 				else
 				{
-					// RTS
+					// RTS or JMP (A0)
 				}
 				
 				const uint8_t* p = (const uint8_t*) ++word;
