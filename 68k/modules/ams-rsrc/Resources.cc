@@ -77,19 +77,21 @@ FCB* get_FCB( unsigned short refNum )
 	return NULL;
 }
 
-static inline
+static
 rsrc_header* recover_rsrc_header( Handle resource )
 {
+	rsrc_header* header = NULL;
+	
 	// Technically we shouldn't deref before null test, but it works in MWC68K
 	
 	const master_pointer& mp = *(const master_pointer*) resource;
 	
 	if ( resource  &&  mp.flags & kHandleIsResourceMask )
 	{
-		return (rsrc_header*) (*(Handle) mp.base + mp.offset);
+		header = (rsrc_header*) (*(Handle) mp.base + mp.offset);
 	}
 	
-	return NULL;
+	return header;
 }
 
 static
