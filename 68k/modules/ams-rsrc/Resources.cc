@@ -115,6 +115,13 @@ RsrcMapHandle& find_rsrc_map( short refnum )
 		rsrc_map = (RsrcMapHandle*) &rsrc_map[0][0]->next_map;
 	}
 	
+	ResErr = noErr;
+	
+	if ( *rsrc_map == NULL )
+	{
+		ResErr = resFNotFound;
+	}
+	
 	return *rsrc_map;
 }
 
@@ -448,7 +455,6 @@ void CloseResFile_core( short refnum : __D0 )
 	
 	if ( rsrc_map == NULL )
 	{
-		ResErr = resFNotFound;
 		return;
 	}
 	
@@ -709,8 +715,6 @@ short CountResources_handler( ResType type : __D0 )
 		
 		rsrc_map = (RsrcMapHandle) rsrc_map[0]->next_map;
 	}
-	
-	ResErr = noErr;
 	
 	return count;
 }
@@ -1284,15 +1288,11 @@ static
 short GetResFileAttrs_handler( short refnum : __D0 )
 {
 	short attrs = 0;
-	OSErr err   = resFNotFound;
 	
 	if ( RsrcMapHandle rsrc_map = find_rsrc_map( refnum ) )
 	{
 		attrs = rsrc_map[0]->attrs;
-		err   = noErr;
 	}
-	
-	ResErr = err;
 	
 	return attrs;
 }
@@ -1320,8 +1320,6 @@ pascal short GetResFileAttrs_patch( short refnum )
 static
 short Count1Types_handler()
 {
-	ResErr = noErr;
-	
 	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
 	
 	return count_types( **rsrc_map );
@@ -1355,8 +1353,6 @@ ResType Get1IxType_handler( short index : __D0 )
 		return 0;
 	}
 	
-	ResErr = noErr;
-	
 	return type;
 }
 
@@ -1384,8 +1380,6 @@ pascal void Get1IxType_patch( ResType* type, short index )
 static
 short Count1Resources_handler( ResType type : __D0 )
 {
-	ResErr = noErr;
-	
 	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
 	
 	return count_rsrcs( **rsrc_map, type );
