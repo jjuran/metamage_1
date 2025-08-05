@@ -80,6 +80,8 @@ FCB* get_FCB( unsigned short refNum )
 static
 rsrc_header* recover_rsrc_header( Handle resource )
 {
+	OSErr err = resNotFound;
+	
 	rsrc_header* header = NULL;
 	
 	// Technically we shouldn't deref before null test, but it works in MWC68K
@@ -88,8 +90,12 @@ rsrc_header* recover_rsrc_header( Handle resource )
 	
 	if ( resource  &&  mp.flags & kHandleIsResourceMask )
 	{
+		err = noErr;
+		
 		header = (rsrc_header*) (*(Handle) mp.base + mp.offset);
 	}
+	
+	ResErr = err;
 	
 	return header;
 }
@@ -898,8 +904,6 @@ pascal void ReleaseResource_patch( Handle resource )
 static
 void DetachResource_handler( Handle resource : __A0 )
 {
-	OSErr err = resNotFound;
-	
 	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
 	{
 		rsrc->handle = NULL;
@@ -907,11 +911,7 @@ void DetachResource_handler( Handle resource : __A0 )
 		master_pointer& mp = *(master_pointer*) resource;
 		
 		mp.flags -= kHandleIsResourceMask;
-		
-		err = noErr;
 	}
-	
-	ResErr = err;
 }
 
 asm
@@ -952,7 +952,6 @@ void GetResInfo_handler( const GetResInfo_args* args : __A0 )
 	
 	if ( rsrc == NULL )
 	{
-		ResErr = resNotFound;
 		return;
 	}
 	
@@ -977,8 +976,6 @@ void GetResInfo_handler( const GetResInfo_args* args : __A0 )
 			fast_memcpy( args->name, name, 1 + name[ 0 ] );
 		}
 	}
-	
-	ResErr = noErr;
 }
 
 asm
@@ -1007,12 +1004,8 @@ short GetResAttrs_handler( Handle resource : __A0 )
 {
 	if ( const rsrc_header* rsrc = recover_rsrc_header( resource ) )
 	{
-		ResErr = noErr;
-		
 		return rsrc->attrs;
 	}
-	
-	ResErr = resNotFound;
 	
 	return 0;
 }
@@ -1080,15 +1073,13 @@ void SetResInfo_handler( Handle            resource : __A0,
                          short             id       : __D0,
                          ConstStr255Param  name     : __A1 )
 {
-	OSErr err = resNotFound;
-	
 	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
 	{
 		if ( name )
 		{
 			ERROR = "SetResInfo to change the resource name is unimplemented";
 			
-			err = paramErr;
+			ResErr = paramErr;
 		}
 		else
 		{
@@ -1096,12 +1087,8 @@ void SetResInfo_handler( Handle            resource : __A0,
 			{
 				rsrc->id = id;
 			}
-			
-			err = noErr;
 		}
 	}
-	
-	ResErr = err;
 }
 
 asm
@@ -1128,16 +1115,10 @@ pascal void SetResInfo_patch( Handle resource, short id, ConstStr255Param name )
 static
 void SetResAttrs_handler( Handle resource : __A0, short attrs : __D0 )
 {
-	OSErr err = resNotFound;
-	
 	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
 	{
 		rsrc->attrs = attrs;
-		
-		err = noErr;
 	}
-	
-	ResErr = err;
 }
 
 asm
@@ -1163,22 +1144,19 @@ pascal void SetResAttrs_patch( Handle resource, short attrs )
 static
 void ChangedResource_handler( Handle resource : __A0 )
 {
-	OSErr err = resNotFound;
-	
 	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
 	{
 		if ( rsrc->attrs & resProtected )
 		{
-			err = noErr;
+			// noErr
 		}
 		else
 		{
 			ERROR = "ChangedResource is unimplemented";
-			err = paramErr;
+			
+			ResErr = paramErr;
 		}
 	}
-	
-	ResErr = err;
 }
 
 asm
@@ -1264,22 +1242,19 @@ pascal void UpdateResFile_patch( short refnum )
 static
 void WriteResource_handler( Handle resource : __A0 )
 {
-	OSErr err = resNotFound;
-	
 	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
 	{
 		if ( (rsrc->attrs & (resProtected | resChanged)) != resChanged )
 		{
-			err = noErr;
+			// noErr
 		}
 		else
 		{
 			ERROR = "WriteResource is unimplemented";
-			err = paramErr;
+			
+			ResErr = paramErr;
 		}
 	}
-	
-	ResErr = err;
 }
 
 asm
