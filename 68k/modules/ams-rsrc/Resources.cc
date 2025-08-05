@@ -1304,7 +1304,7 @@ pascal void SetResPurge_patch( Boolean install )
 }
 
 static
-short GetResFileAttrs_handle( short refnum : __D0 )
+short GetResFileAttrs_handler( short refnum : __D0 )
 {
 	short attrs = 0;
 	OSErr err   = resFNotFound;
@@ -1328,7 +1328,7 @@ pascal short GetResFileAttrs_patch( short refnum )
 	LEA      20(SP),A2
 	MOVE.W   (A2)+,D0
 	
-	JSR      GetResFileAttrs_handle
+	JSR      GetResFileAttrs_handler
 	MOVE.W   D0,(A2)
 	
 	MOVEM.L  (SP)+,D1-D2/A1-A2
