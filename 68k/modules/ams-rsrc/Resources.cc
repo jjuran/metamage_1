@@ -15,6 +15,9 @@
 #ifndef __STRINGCOMPARE__
 #include <StringCompare.h>
 #endif
+#ifndef __TEXTUTILS__
+#include <TextUtils.h>
+#endif
 
 // Standard C
 #include <stddef.h>
@@ -1094,14 +1097,62 @@ void SetResInfo_handler( Handle            resource : __A0,
 		{
 			if ( name  &&  name[ 0 ] )
 			{
-				ERROR = "SetResInfo to change resource name is unimplemented";
+				Size name_size = 1 + name[ 0 ];  // includes length byte
 				
-				ResErr = paramErr;
+				RsrcMapHandle rsrc_map = home_rsrc_map( resource );
+				
+				rsrc_map_header& map = **rsrc_map;
+				
+				if ( rsrc->name_offset != 0xFFFF )
+				{
+					Byte* names = (Byte*) &map + map.offset_to_names;
+					
+					Byte* old_name = names + rsrc->name_offset;
+					
+					if ( name[ 0 ] <= old_name[ 0 ] )
+					{
+						fast_memcpy( old_name, name, name_size );
+						
+						goto name_done;
+					}
+				}
+				
+				rsrc_fork_header& fork = map.fork_header;
+				
+				Handle rsrc_map_h = (Handle) rsrc_map;
+				SInt32 map_length = fork.length_of_map;
+				
+				Size rsrc_offset = (Ptr) rsrc - *rsrc_map_h;
+				
+				Munger( rsrc_map_h, map_length, NULL, 0, name, name_size );
+				
+				if ( OSErr err = MemErr )
+				{
+					ResErr = MemErr;
+					
+					return;
+				}
+				else
+				{
+					rsrc_map_header& map = **rsrc_map;
+					
+					rsrc_fork_header& fork = map.fork_header;
+					
+					fork.length_of_map += name_size;
+					
+					rsrc = (rsrc_header*) (*rsrc_map_h + rsrc_offset);
+					
+					rsrc->name_offset = map_length - map.offset_to_names;
+				}
 			}
 			else
 			{
-				rsrc->id = id;
+				rsrc->name_offset = 0xFFFF;
 			}
+			
+		name_done:
+			
+			rsrc->id = id;
 		}
 	}
 }
