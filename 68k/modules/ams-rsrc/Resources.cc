@@ -1079,15 +1079,15 @@ void SetResInfo_handler( Handle            resource : __A0,
 {
 	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
 	{
-		if ( name )
+		if ( ! (rsrc->attrs & resProtected) )
 		{
-			ERROR = "SetResInfo to change the resource name is unimplemented";
-			
-			ResErr = paramErr;
-		}
-		else
-		{
-			if ( ! (rsrc->attrs & resProtected) )
+			if ( name  &&  name[ 0 ] )
+			{
+				ERROR = "SetResInfo to change resource name is unimplemented";
+				
+				ResErr = paramErr;
+			}
+			else
 			{
 				rsrc->id = id;
 			}
