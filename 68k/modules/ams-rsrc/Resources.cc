@@ -81,6 +81,43 @@ FCB* get_FCB( unsigned short refNum )
 }
 
 static
+rsrc_header* find_rsrc( const rsrc_map_header& map, ResType type, Handle h )
+{
+	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
+	
+	UInt16 n_types = types.count_1 + 1;
+	
+	const type_header* it = types.list;
+	
+	while ( n_types-- > 0 )
+	{
+		if ( it->type != type )
+		{
+			++it;
+			continue;
+		}
+		
+		UInt16 n_rsrcs_1 = it->count_1;
+		UInt16 offset    = it->offset;
+		
+		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + offset);
+		
+		do
+		{
+			if ( rsrc->handle == h )
+			{
+				return rsrc;
+			}
+		}
+		while ( ++rsrc, n_rsrcs_1-- > 0 );
+		
+		++it;
+	}
+	
+	return NULL;
+}
+
+static
 rsrc_header* recover_rsrc_header( Handle resource )
 {
 	OSErr err = resNotFound;
@@ -93,9 +130,12 @@ rsrc_header* recover_rsrc_header( Handle resource )
 	
 	if ( resource  &&  mp.flags & kHandleIsResourceMask )
 	{
-		err = noErr;
+		RsrcMapHandle rsrc_map = (RsrcMapHandle) mp.base;
 		
-		header = (rsrc_header*) (*(Handle) mp.base + mp.offset);
+		if ( (header = find_rsrc( **rsrc_map, mp.type, resource )) )
+		{
+			err = noErr;
+		}
 	}
 	
 	ResErr = err;
@@ -668,10 +708,9 @@ Handle new_res_handle( RsrcMapHandle rsrc_map, rsrc_header& rsrc, ResType type )
 		{
 			master_pointer& mp = *(master_pointer*) h;
 			
-			mp.flags  = kHandleIsResourceMask;
-			mp.offset = (char*) &rsrc - (char*) *rsrc_map;
-			mp.type   = type;
-			mp.base   = rsrc_map;
+			mp.flags = kHandleIsResourceMask;
+			mp.type  = type;
+			mp.base  = rsrc_map;
 			
 			if ( rsrc.attrs & resLocked )
 			{
