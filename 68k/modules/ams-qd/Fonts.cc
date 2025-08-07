@@ -163,22 +163,6 @@ pascal void GetFNum_patch( const unsigned char* name, short* num )
 		return;
 	}
 	
-	short i = 0;
-	
-	ConstStr255Param const* it = basic_font_names;
-	
-	while ( it < basic_font_names + LENGTH( basic_font_names ) )
-	{
-		if ( EqualString_sans_case( *it, name ) )
-		{
-			*num = i;
-			return;
-		}
-		
-		++i;
-		++it;
-	}
-	
 	WARNING = "GetFNum: unknown ", CSTR( name );
 	
 	*num = 10;
