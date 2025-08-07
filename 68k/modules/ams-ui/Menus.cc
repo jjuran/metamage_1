@@ -447,7 +447,6 @@ pascal void AddResMenu_patch( MenuRef menu, ResType type )
 		  * Sort the list of names
 		  * De-dupe names
 		  * For 'FONT', include 'FOND'
-		  * For 'DRVR', insert a divider after DAs
 	*/
 	
 	for ( short i = 1;  i <= n_rsrcs;  ++i )
@@ -469,6 +468,11 @@ pascal void AddResMenu_patch( MenuRef menu, ResType type )
 	
 	if ( type == 'DRVR' )
 	{
+		if ( n_rsrcs )
+		{
+			AppendMenu( menu, "\p(-" );
+		}
+		
 		AppendMenu( menu, "\p"
 		                  "(\0" "Advanced Mac Substitute" ";"
 		                  "(\0" "by Josh Juran" );
