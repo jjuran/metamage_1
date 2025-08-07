@@ -63,6 +63,15 @@ static FontRec** the_current_font_record;
 
 static FMOutput the_current_FMOutput;
 
+static ConstStr255Param basic_font_names[] =
+{
+	"\p" "Chicago",
+	"\p",  // application font
+	"\p" "New York",
+	"\p" "Geneva",
+	"\p" "Monaco",
+};
+
 
 static inline
 Handle get_NFNT_or_FONT( short id )
@@ -77,12 +86,28 @@ Handle get_NFNT_or_FONT( short id )
 	return h;
 }
 
+static inline
+void set_font_family_names()
+{
+	short id = 0;
+	
+	for ( int i = 0;  i < LENGTH( basic_font_names );  ++i, id += 128 )
+	{
+		if ( Handle h = GetResource( 'FONT', id ) )
+		{
+			SetResInfo( h, id, basic_font_names[ i ] );
+		}
+	}
+}
+
 pascal void InitFonts_patch()
 {
 	ROMFont0 = NULL;
 	
 	the_current_font_record = NULL;
 	the_current_font_resID  = 0;
+	
+	set_font_family_names();
 	
 	const FMInput input = { 0, 0, 0, true, 0, OneOne, OneOne };
 	
@@ -95,15 +120,6 @@ pascal void InitFonts_patch()
 		write( STDERR_FILENO, STR_LEN( SYSTEM_FONT_NOT_LOADED "\n" ) );
 	}
 }
-
-static ConstStr255Param basic_font_names[] =
-{
-	"\p" "Chicago",
-	"\p",  // application font
-	"\p" "New York",
-	"\p" "Geneva",
-	"\p" "Monaco",
-};
 
 pascal void GetFName_patch( short num, unsigned char* name )
 {
