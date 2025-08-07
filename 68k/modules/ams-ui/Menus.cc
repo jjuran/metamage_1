@@ -19,6 +19,9 @@
 // <Sound.h>
 extern "C" pascal void SysBeep( short ticks )  ONEWORDINLINE( 0xA9C8 );
 
+// Standard C++
+#include <algorithm>
+
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 #include "mac_glue/OSUtils.hh"
@@ -437,17 +440,29 @@ pascal void AppendMenu_patch( MenuRef menu, ConstStr255Param format )
 	call_MDEF( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
+struct pascal_string_less
+{
+	bool operator()( const Byte* a, const Byte* b )
+	{
+		return RelString_sans_case( a, b ) < 0;
+	}
+};
+
 pascal void AddResMenu_patch( MenuRef menu, ResType type )
 {
 	short const n_rsrcs = CountResources( type );
-	short       n_items = CountMenuItems( menu );
 	
 	/*
 		TODO:
-		  * Sort the list of names
 		  * De-dupe names
 		  * For 'FONT', include 'FOND'
 	*/
+	
+	Handle names = NewHandle( 0 );
+	
+	Size names_len = 0;
+	
+	short n_matches = 0;
 	
 	for ( short i = 1;  i <= n_rsrcs;  ++i )
 	{
@@ -459,16 +474,47 @@ pascal void AddResMenu_patch( MenuRef menu, ResType type )
 			
 			if ( name[ 0 ]  &&  name[ 1 ] != '.'  &&  name[ 1 ] != '%' )
 			{
-				AppendMenu( menu, "\p " );
+				n_matches += 1;
 				
-				SetMenuItemText( menu, ++n_items, name );
+				Munger( names, names_len, NULL, 0, name, 1 + name[ 0 ] );
 			}
 		}
 	}
 	
+	StringPtr* index = (StringPtr*) NewPtr( n_matches * sizeof (StringPtr) );
+	
+	StringPtr* it = index;
+	
+	HLock( names );
+	
+	StringPtr next = (StringPtr) *names;
+	
+	for ( short i = 1;  i <= n_matches;  ++i )
+	{
+		*it++ = next;
+		
+		next += 1 + next[ 0 ];
+	}
+	
+	std::sort( index, index + n_matches, pascal_string_less() );
+	
+	short n_items = CountMenuItems( menu );
+	
+	it = index;
+	
+	for ( short i = 1;  i <= n_matches;  ++i )
+	{
+		AppendMenu( menu, "\p " );
+		
+		SetMenuItemText( menu, ++n_items, *it++ );
+	}
+	
+	DisposePtr( (Ptr) index );
+	DisposeHandle( names );
+	
 	if ( type == 'DRVR' )
 	{
-		if ( n_rsrcs )
+		if ( n_matches )
 		{
 			AppendMenu( menu, "\p(-" );
 		}
