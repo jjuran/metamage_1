@@ -234,7 +234,7 @@ pascal void InitMenus_patch()
 	}
 }
 
-pascal MenuInfo** NewMenu_patch( short menuID, const unsigned char* title )
+pascal MenuRef NewMenu_patch( short menuID, ConstStr255Param title )
 {
 	Handle h = NewHandleClear( sizeof (MenuInfo) - (255 - title[ 0 ]) + 1 );
 	
@@ -250,7 +250,7 @@ pascal MenuInfo** NewMenu_patch( short menuID, const unsigned char* title )
 	return menu;
 }
 
-pascal MenuInfo** GetMenu_patch( short resID )
+pascal MenuRef GetMenu_patch( short resID )
 {
 	Handle h = GetResource( 'MENU', resID );
 	
@@ -264,7 +264,7 @@ pascal MenuInfo** GetMenu_patch( short resID )
 
 static short predisposed_menu_id;
 
-pascal void DisposeMenu_patch( MenuInfo** menu )
+pascal void DisposeMenu_patch( MenuRef menu )
 {
 	if ( ! menu )
 	{
@@ -405,7 +405,7 @@ short append_one_item( MenuRef menu, const UInt8* format, UInt8 length )
 	return decode_item_format( format, length, p, text_len );
 }
 
-pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
+pascal void AppendMenu_patch( MenuRef menu, ConstStr255Param format )
 {
 	short count = CountMItems_patch( menu );
 	
@@ -434,7 +434,7 @@ pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 	call_MDEF( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
-pascal void AddResMenu_patch( MenuInfo** menu, ResType type )
+pascal void AddResMenu_patch( MenuRef menu, ResType type )
 {
 	short const n_rsrcs = CountResources( type );
 	short       n_items = CountMenuItems( menu );
@@ -476,7 +476,7 @@ pascal void AddResMenu_patch( MenuInfo** menu, ResType type )
 #pragma mark Forming the Menu Bar
 #pragma mark -
 
-pascal void InsertMenu_patch( MenuInfo** menu, short beforeID )
+pascal void InsertMenu_patch( MenuRef menu, short beforeID )
 {
 	// TODO:  Respect beforeID
 	
@@ -980,7 +980,7 @@ pascal long MenuSelect_patch( Point pt )
 	return result;
 }
 
-pascal long MenuKey_patch( unsigned short key )  // char
+pascal long MenuKey_patch( CharParameter key )
 {
 	const char c = iota::to_upper( key );
 	
@@ -1054,7 +1054,7 @@ pascal void HiliteMenu_patch( short menuID )
 #pragma mark Controlling the Appearance of Items
 #pragma mark -
 
-pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
+pascal void SetItem_patch( MenuRef menu, short item, ConstStr255Param text )
 {
 	WMgrPort_bezel_scope port_swap;
 	
@@ -1083,7 +1083,7 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 	}
 }
 
-pascal void GetItem_patch( MenuInfo** menu, short item, Str255 result )
+pascal void GetItem_patch( MenuRef menu, short item, Str255 result )
 {
 	menu_iterator it( menu );
 	
@@ -1101,7 +1101,7 @@ pascal void GetItem_patch( MenuInfo** menu, short item, Str255 result )
 	result[ 0 ] = '\0';
 }
 
-pascal void DisableItem_patch( MenuInfo** menu, short item )
+pascal void DisableItem_patch( MenuRef menu, short item )
 {
 	if ( item <= 31 )
 	{
@@ -1109,7 +1109,7 @@ pascal void DisableItem_patch( MenuInfo** menu, short item )
 	}
 }
 
-pascal void EnableItem_patch( MenuInfo** menu, short item )
+pascal void EnableItem_patch( MenuRef menu, short item )
 {
 	if ( item <= 31 )
 	{
@@ -1117,7 +1117,7 @@ pascal void EnableItem_patch( MenuInfo** menu, short item )
 	}
 }
 
-pascal void CheckItem_patch( MenuInfo** menu, short item, char checked )
+pascal void CheckItem_patch( MenuRef menu, short item, Boolean checked )
 {
 	char mark = checked ? kCheckCharCode  // 0x12
 	                    : kNullCharCode;  // 0x00
@@ -1125,7 +1125,7 @@ pascal void CheckItem_patch( MenuInfo** menu, short item, char checked )
 	SetItemMark_patch( menu, item, mark );
 }
 
-pascal void SetItemMark_patch( MenuInfo** menu, short item, CharParameter mark )
+pascal void SetItemMark_patch( MenuRef menu, short item, CharParameter mark )
 {
 	menu_iterator it( menu );
 	
@@ -1163,7 +1163,7 @@ pascal void GetItemMark_patch( MenuRef menu, short item, CharParameter* mark )
 	}
 }
 
-pascal void SetItmIcon_patch( MenuInfo** menu, short item, CharParameter icon )
+pascal void SetItmIcon_patch( MenuRef menu, short item, short icon )
 {
 	WMgrPort_bezel_scope port_swap;
 	
@@ -1192,7 +1192,7 @@ pascal void SetItmIcon_patch( MenuInfo** menu, short item, CharParameter icon )
 	}
 }
 
-pascal void SetItemStyle_patch( MenuRef menu, short item, short style )
+pascal void SetItemStyle_patch( MenuRef menu, short item, StyleParameter style )
 {
 	menu_iterator it( menu );
 	
@@ -1223,7 +1223,7 @@ pascal void SetItemStyle_patch( MenuRef menu, short item, short style )
 #pragma mark Miscellaneous Routines
 #pragma mark -
 
-pascal short CountMItems_patch( MenuInfo** menu )
+pascal short CountMItems_patch( MenuRef menu )
 {
 	short n = 0;
 	
@@ -1238,7 +1238,7 @@ pascal short CountMItems_patch( MenuInfo** menu )
 	return n;
 }
 
-pascal MenuInfo** GetMHandle_patch( short menuID )
+pascal MenuRef GetMHandle_patch( short menuID )
 {
 	MenuList_entry* it = find_menu_id( menuID );
 	
@@ -1306,9 +1306,9 @@ short insert_one_item( MenuRef menu, const UInt8* format, UInt8 length, short i 
 	return decode_item_format( format, length, p, text_len );
 }
 
-pascal void InsMenuItem_patch( MenuInfo**            menu,
-                               const unsigned char*  format,
-                               short                 after )
+pascal void InsMenuItem_patch( MenuRef           menu,
+                               ConstStr255Param  format,
+                               short             after )
 {
 	WMgrPort_bezel_scope port_swap;
 	
@@ -1342,7 +1342,7 @@ pascal void InsMenuItem_patch( MenuInfo**            menu,
 	call_MDEF( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
-pascal void DelMenuItem_patch( MenuInfo** menu, short item )
+pascal void DelMenuItem_patch( MenuRef menu, short item )
 {
 	const long stay_mask =   (1 << item    ) - 1;
 	const long move_mask = ~((1 << item + 1) - 1);
@@ -1373,7 +1373,7 @@ pascal void DelMenuItem_patch( MenuInfo** menu, short item )
 	call_MDEF( mSizeMsg, menu, NULL, zero_Point, NULL );
 }
 
-pascal void GetItemCmd_patch( MenuInfo** menu, short item, CharParameter* key )
+pascal void GetItemCmd_patch( MenuRef menu, short item, CharParameter* key )
 {
 	menu_iterator it( menu );
 	
@@ -1392,7 +1392,7 @@ pascal void GetItemCmd_patch( MenuInfo** menu, short item, CharParameter* key )
 	}
 }
 
-pascal void SetItemCmd_patch( MenuInfo** menu, short item, CharParameter key )
+pascal void SetItemCmd_patch( MenuRef menu, short item, CharParameter key )
 {
 	WMgrPort_bezel_scope port_swap;
 	
