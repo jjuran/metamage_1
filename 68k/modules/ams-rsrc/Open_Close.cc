@@ -24,6 +24,11 @@
 #pragma exceptions off
 
 
+enum
+{
+	mapReadOnly = 128,
+};
+
 short MemErr      : 0x0220;
 short CurApRefNum : 0x0900;
 Handle TopMapHndl : 0x0A50;
@@ -169,6 +174,8 @@ void CloseResFile_core( short refnum : __D0 )
 				mp.flags -= kHandleIsResourceMask;
 				
 				DisposeHandle( h );
+				
+				rsrc->handle = NULL;
 			}
 			
 			++rsrc;
@@ -185,6 +192,24 @@ void CloseResFile_core( short refnum : __D0 )
 	if ( CurMap == refnum )
 	{
 		CurMap = rsrc_map[0]->refnum;
+	}
+	
+	if ( ! (map.attrs & mapReadOnly) )
+	{
+		// Write a clean resource map.
+		
+		map.next_map = NULL;
+		map.refnum   = 0;
+		
+		OSErr err;
+		
+		const rsrc_fork_header& fork = map.fork_header;
+		
+		SInt32 offset_to_map = fork.offset_to_map;
+		SInt32 length_of_map = fork.length_of_map;
+		
+		(err = SetFPos( refnum, fsFromStart, offset_to_map ))  ||
+		(err = FSWrite( refnum, &length_of_map, &map ));
 	}
 	
 	DisposeHandle( h );
