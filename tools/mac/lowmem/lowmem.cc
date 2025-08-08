@@ -307,19 +307,23 @@ static const global global_defs[] =
 	{ 0x03A0, x16, "<unknown>"   },
 	{ 0x03A2, i16, "ErCode"      },
 	
-	{ 0x03A4, x16, "Params[  0 ]" },
-	{ 0x03A6, x32, "Params[  1 ]" },
-	{ 0x03AA, x32, "Params[  2 ]" },
-	{ 0x03AE, x32, "Params[  3 ]" },
-	{ 0x03B2, x32, "Params[  4 ]" },
-	{ 0x03B6, x32, "Params[  5 ]" },
-	{ 0x03BA, x32, "Params[  6 ]" },
-	{ 0x03BE, x32, "Params[  7 ]" },
-	{ 0x03C2, x32, "Params[  8 ]" },
-	{ 0x03C6, x32, "Params[  9 ]" },
-	{ 0x03CA, x32, "Params[ 10 ]" },
-	{ 0x03CE, x32, "Params[ 11 ]" },
-	{ 0x03D2, x32, "Params[ 12 ]" },
+	{ 0x03A4, ptr, "Params.qLink" },
+	{ 0x03A8, i16, "Params.qType" },
+	{ 0x03AA, x16, "Params.ioTrap" },
+	{ 0x03AC, ptr, "Params.ioCmdAddr" },
+	{ 0x03B0, ptr, "Params.ioCompletion" },
+	{ 0x03B4, i16, "Params.ioResult" },
+	{ 0x03B6, ptr, "Params.ioNamePtr" },
+	{ 0x03BA, i16, "Params.ioVRefNum" },
+	{ 0x03BC, i16, "Params.ioRefNum" },
+	{ 0x03BE, i8,  "Params.ioVersNum" },
+	{ 0x03BF, x8,  "Params.ioPermssn" },
+	{ 0x03C0, ptr, "Params.ioMisc" },
+	{ 0x03C4, ptr, "Params.ioBuffer" },
+	{ 0x03C8, i32, "Params.ioReqCount" },
+	{ 0x03CC, i32, "Params.ioActCount" },
+	{ 0x03D0, x16, "Params.ioPosMode" },
+	{ 0x03D2, i32, "Params.ioPosOffset" },
 	
 	{ 0x03D6, x32, "FSTemp8[ 0 ]" },
 	{ 0x03DA, x32, "FSTemp8[ 1 ]" },
@@ -753,6 +757,10 @@ int main( int argc, char** argv )
 				buffer[ 0 ] = '$';
 				gear::encode_32_bit_hex( *(long*) addr, buffer + 1 );
 				buffer[ 9 ] = '\0';
+				break;
+			
+			case i8:
+				p = gear::inscribe_decimal( *(char*) addr );
 				break;
 			
 			case i16:
