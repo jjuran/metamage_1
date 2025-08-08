@@ -1379,6 +1379,18 @@ void AddResource_handler( Handle            data : __A0,
 	}
 	else
 	{
+		/*
+			n_types is the count of types following the one that
+			matched; it's at least zero and at most types.count_1.
+			
+			Those are the types whose offsets must be adjusted.
+		*/
+		
+		for ( int i = 1;  i <= n_types;  ++i )
+		{
+			it[ i ].offset += sizeof (rsrc_header);
+		}
+		
 		map_increase -= sizeof (type_header);
 	}
 	
