@@ -77,6 +77,8 @@ void install_ResourceManager()
 	TBTRAP( ChangedResource );  // A9AA
 	TBTRAP( AddResource     );  // A9AB
 	
+	TBTRAP( RmveResource    );  // A9AD
+	
 	TBTRAP( ResError        );  // A9AF
 	TBTRAP( WriteResource   );  // A9B0
 	TBTRAP( CreateResFile   );  // A9B1

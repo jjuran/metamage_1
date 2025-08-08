@@ -459,3 +459,121 @@ pascal void AddResource_patch( Handle       data,
 	
 	JMP      (A0)
 }
+
+static
+void remove_resource( rsrc_header* rsrc, RsrcMapHandle rsrc_map, ResType type )
+{
+	rsrc_map_header& map = **rsrc_map;
+	
+	type_list& types = *(type_list*) ((Ptr) *rsrc_map + map.offset_to_types);
+	
+	SInt16 n_types = types.count_1 + 1;
+	
+	type_header* it = types.list;
+	
+	while ( n_types-- > 0  &&  it->type != type )
+	{
+		++it;
+	}
+	
+	if ( n_types < 0 )
+	{
+		return;  // shouldn't happen
+	}
+	
+	Size offset = map.offset_to_types + ((Ptr) rsrc - (Ptr) &types);
+	
+	Munger( (Handle) rsrc_map, offset, NULL, sizeof (rsrc_header), "", 0 );
+	
+	map.offset_to_names -= sizeof (rsrc_header);
+	
+	/*
+		Decrement the type's resource count.  If negative (meaning
+		zero resources of that type remain), remove the type as well.
+	*/
+	
+	if ( (SInt16) --it->count_1 < 0 )
+	{
+		--types.count_1;
+		
+		offset = map.offset_to_types + ((Ptr) it - (Ptr) &types);
+		
+		Munger( (Handle) rsrc_map, offset, NULL, sizeof (type_header), "", 0 );
+		
+		/*
+			`it` now points to the type entry that used to follow the
+			removed one.  Adjust the offsets of each preceding entry.
+		*/
+		
+		type_header* it2 = --it;
+		
+		while ( it2 >= types.list )
+		{
+			it2--->offset -= sizeof (type_header);
+		}
+		
+		map.offset_to_names -= sizeof (type_header);
+	}
+	
+	/*
+		Adjust the offsets of each subsequent type entry
+		to account for the removed resource entry.
+		
+		`n_types` is the number of type entries to adjust.
+	*/
+	
+	while ( n_types-- > 0 )
+	{
+		(++it)->offset -= sizeof (rsrc_header);
+	}
+}
+
+static
+void RmveResource_handler( Handle resource : __A0 )
+{
+	OSErr err = rmvResFailed;
+	
+	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
+	{
+		RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
+		
+		master_pointer& mp = *(master_pointer*) resource;
+		
+		if ( ! (rsrc->attrs & resProtected)  &&  mp.base == (Handle) rsrc_map )
+		{
+			if ( rsrc->name_offset != 0xFFFF )
+			{
+				set_resource_name( rsrc_map, rsrc, "\p" );  // clear name
+			}
+			
+			remove_resource( rsrc, rsrc_map, mp.type );
+			
+			mp.flags &= ~kHandleIsResourceMask;
+			
+			rsrc_map[0]->attrs |= mapChanged | mapCompact;
+			
+			err = noErr;
+		}
+	}
+	
+	ResErr = err;
+}
+
+asm
+pascal void RmveResource_patch( Handle resource )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A0
+	
+	JSR      RmveResource_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
+	
+	JMP      (A0)
+}

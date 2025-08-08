@@ -23,4 +23,6 @@ pascal void AddResource_patch( Handle       data,
                                short        id,
                                const Byte*  name );
 
+pascal void RmveResource_patch( Handle resource );
+
 #endif
