@@ -693,12 +693,7 @@ short SetEOF_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return save_app_data( fcb, new_eof );
 	}
 	
-	if ( OSErr err = flush_file( fcb ) )
-	{
-		return pb->ioResult = err;
-	}
-	
-	return pb->ioResult = noErr;
+	return pb->ioResult = flush_file( fcb );
 }
 
 short Allocate_patch( short trap_word : __D1, IOParam* pb : __A0 )
