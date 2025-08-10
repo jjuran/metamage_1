@@ -701,6 +701,18 @@ short Allocate_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = noErr;
 }
 
+short FlushFile_patch( short trap_word : __D1, IOParam* pb : __A0 )
+{
+	OSErr err = rfNumErr;
+	
+	if ( FCB* fcb = get_FCB( pb->ioRefNum ) )
+	{
+		err = flush_file( fcb );
+	}
+	
+	return pb->ioResult = err;
+}
+
 short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	if ( pb->ioRefNum < 0 )

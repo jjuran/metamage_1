@@ -94,7 +94,8 @@ void install_FileManager()
 	OSTRAP( Eject    );  // A017
 	OSTRAP( GetFPos  );  // A018
 	
-	OSTRAP( SetFPos  );  // A044
+	OSTRAP( SetFPos   );  // A044
+	OSTRAP( FlushFile );  // A045
 	
 	OSTRAP( FSDispatch );  // A060
 }
