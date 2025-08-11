@@ -7,6 +7,12 @@
 #define MENUITERATOR_HH
 
 
+enum
+{
+	kMenuItemKey_icon_reduction = 0x1D,
+	kMenuItemKey_icon_from_SICN = 0x1E,
+};
+
 struct MenuInfo;
 
 typedef unsigned char Byte;
@@ -14,15 +20,9 @@ typedef unsigned char Byte;
 typedef MenuInfo** MenuRef;
 
 inline
-bool small_icon_key( Byte key )
-{
-	return key == 0x1D;
-}
-
-inline
 bool large_icon_key( Byte key )
 {
-	return ! small_icon_key( key );
+	return key - 0x1D > 1;  // neither $1D nor $1E
 }
 
 class menu_iterator
