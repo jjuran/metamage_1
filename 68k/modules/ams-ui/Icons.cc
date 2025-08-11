@@ -167,6 +167,17 @@ pascal OSErr IconIDToRgn_call( RgnHandle          rgn,
 }
 
 static
+pascal OSErr PlotSICNHandle_call( const Rect*        rect,
+                                  IconAlignmentType  align,
+                                  IconTransformType  xform,
+                                  Handle             sicn )
+{
+	const short rowBytes = 2;
+	
+	return plot_icon_handle( rect, align, xform, sicn, rowBytes );
+}
+
+static
 void unimplemented_call( short selector : __D0 )
 {
 	FATAL = "unimplemented IconDispatch call ", selector;
@@ -182,6 +193,9 @@ asm void IconDispatch_patch( short method : __D0 )
 	CMPI.W   #0x0613,D0
 	BEQ      dispatch_IconIDToRgn
 	
+	CMPI.W   #0x061E,D0
+	BEQ      dispatch_PlotSICNHandle
+	
 	JMP      unimplemented_call
 	
 dispatch_PlotIconID:
@@ -189,4 +203,7 @@ dispatch_PlotIconID:
 	
 dispatch_IconIDToRgn:
 	JMP      IconIDToRgn_call
+	
+dispatch_PlotSICNHandle:
+	JMP      PlotSICNHandle_call
 }
