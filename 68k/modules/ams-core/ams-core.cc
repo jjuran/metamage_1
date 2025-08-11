@@ -101,6 +101,7 @@ short UnitNtryCnt : 0x01D2;
 void* SysEvtBuf : 0x0146;
 QHdr EventQueue : 0x014A;
 short SysEvtCnt : 0x0154;
+long  RndSeed    : 0x0156;
 short SysVersion : 0x015A;
 Byte  MBState   : 0x0172;
 
@@ -136,6 +137,15 @@ void initialize_low_memory_globals()
 	{
 		ROM85 = 0xFFFFu >> romgen;
 	}
+	
+	/*
+		TODO:  How should RndSeed be initialized?
+		
+		(The important thing is that it's not left at zero,
+		as that breaks the PRNG formula, yielding only zero.)
+	*/
+	
+	RndSeed = -1;
 	
 	SysVersion = System;
 	
