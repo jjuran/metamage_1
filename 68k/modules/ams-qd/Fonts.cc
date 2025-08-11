@@ -165,7 +165,7 @@ pascal void GetFNum_patch( const unsigned char* name, short* num )
 	
 	WARNING = "GetFNum: unknown ", CSTR( name );
 	
-	*num = 10;
+	*num = 0;
 }
 
 static
