@@ -54,30 +54,12 @@ pascal void PlotIcon_patch( const Rect* rect, char** icon )
 }
 
 static
-pascal OSErr PlotIconID_call( const Rect*        rect,
-                              IconAlignmentType  align,
-                              IconTransformType  xform,
-                              short              resID )
+OSErr plot_icon_handle( const Rect*        rect,
+                        IconAlignmentType  align,
+                        IconTransformType  xform,
+                        Handle             icon,
+                        short              rowBytes )
 {
-	const bool small = rect->bottom - rect->top
-	                 + rect->right - rect->left < 32 * 2;
-	
-	const ResType type = small ? 'ics#' : 'ICN#';
-	
-	short rowBytes = 2 << ! small;
-	
-	Handle icon = GetResource( type, resID );
-	
-	if ( ! icon )
-	{
-		if ( OSErr err = ResErr )
-		{
-			return err;
-		}
-		
-		return resNotFound;
-	}
-	
 	short px          = rowBytes * 8;   // 2 *  8 -> 16 or 4 *  8 ->  32
 	short mask_offset = rowBytes * px;  // 2 * 16 -> 32 or 4 * 32 -> 128
 	
@@ -129,6 +111,32 @@ pascal OSErr PlotIconID_call( const Rect*        rect,
 	}
 	
 	return noErr;
+}
+
+static
+pascal OSErr PlotIconID_call( const Rect*        rect,
+                              IconAlignmentType  align,
+                              IconTransformType  xform,
+                              short              resID )
+{
+	const bool small = rect->bottom - rect->top
+	                 + rect->right - rect->left < 32 * 2;
+	
+	const ResType type = small ? 'ics#' : 'ICN#';
+	
+	if ( Handle icon = GetResource( type, resID ) )
+	{
+		short rowBytes = 2 << ! small;
+		
+		return plot_icon_handle( rect, align, xform, icon, rowBytes );
+	}
+	
+	if ( OSErr err = ResErr )
+	{
+		return err;
+	}
+	
+	return resNotFound;
 }
 
 static
