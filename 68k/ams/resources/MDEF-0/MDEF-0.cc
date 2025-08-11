@@ -133,9 +133,12 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 			
 			MoveTo( left + left_padding, v );
 			
+			const ResType type = key == kMenuItemKey_icon_from_SICN ? 'SICN'
+			                                                        : 'ICON';
+			
 			Handle h;
 			
-			if ( icon  &&  (h = GetResource( 'ICON', 256 + icon)) )
+			if ( icon  &&  (h = GetResource( type, 256 + icon)) )
 			{
 				const short icon_width  = 16 << large_icon;
 				const short icon_height = 16 << large_icon;
@@ -147,7 +150,14 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 				
 				Rect r = { top, icon_left, bottom, icon_left + icon_width };
 				
-				PlotIcon( &r, h );
+				if ( key == kMenuItemKey_icon_from_SICN )
+				{
+					PlotSICNHandle( &r, 0, 0, h );
+				}
+				else
+				{
+					PlotIcon( &r, h );
+				}
 				
 				Move( icon_width + 6, 0 );
 			}
