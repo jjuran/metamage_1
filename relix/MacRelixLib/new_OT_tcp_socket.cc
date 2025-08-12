@@ -28,6 +28,9 @@
 #if CONFIG_OPEN_TRANSPORT_HEADERS
 
 // Mac OS
+#ifndef __OPENTRANSPORT__
+#include <OpenTransport.h>
+#endif
 #ifndef __OPENTRANSPORTPROVIDERS__
 #include <OpenTransportProviders.h>
 #endif
@@ -50,7 +53,7 @@
 #include "vfs/filehandle/methods/socket_method_set.hh"
 
 // Nitrogen
-#include "Nitrogen/OpenTransport.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // relix-kernel
 #include "relix/api/broken_pipe.hh"
@@ -61,7 +64,6 @@
 namespace relix
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -194,7 +196,7 @@ namespace relix
 	{
 		socket.its_result = 0;
 		
-		N::OTBind( socket.endpoint, reqAddr, retAddr );
+		socket.its_result = OTBind( socket.endpoint, reqAddr, retAddr );
 		
 		while ( socket.its_result == 0  &&  !socket.it_is_bound )
 		{
@@ -525,6 +527,8 @@ namespace relix
 	static
 	vfs::filehandle_ptr OT_accept( vfs::filehandle* that, sockaddr* client, socklen_t* len )
 	{
+		OSStatus err;
+		
 		OT_socket_extra& extra = *(OT_socket_extra*) that->extra();
 		
 		repair_listener( that );
@@ -548,7 +552,9 @@ namespace relix
 		
 		::OTAtomicAdd32( -1, &extra.n_incoming_connections );
 		
-		N::OTListen( extra.endpoint, &call );
+		err = OTListen( extra.endpoint, &call );
+		
+		Mac::ThrowOSStatus( err );
 		
 		*len = call.addr.len;
 		
@@ -565,7 +571,9 @@ namespace relix
 		
 		extra.its_result = 1;
 		
-		N::OTAccept( extra.endpoint, new_extra.endpoint, &call );
+		err = OTAccept( extra.endpoint, new_extra.endpoint, &call );
+		
+		Mac::ThrowOSStatus( err );
 		
 		Complete( extra );
 		
@@ -617,7 +625,7 @@ namespace relix
 	{
 		OT_socket_extra& extra = *(OT_socket_extra*) that->extra();
 		
-		N::OTSndOrderlyDisconnect( extra.endpoint );
+		Mac::ThrowOSStatus( OTSndOrderlyDisconnect( extra.endpoint ) );
 		
 		extra.it_has_sent_FIN = true;
 	}
