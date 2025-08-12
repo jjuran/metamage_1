@@ -59,36 +59,29 @@ pascal OSErr PlotIconID_call( const Rect*        rect,
                               IconTransformType  xform,
                               short              resID )
 {
-	Handle h;
-	short px;
-	short mask_offset;
-	
 	const bool small = rect->bottom - rect->top
 	                 + rect->right - rect->left < 32 * 2;
 	
-	if ( small  &&  (h = GetResource( 'ics#', resID )) )
+	const ResType type = small ? 'ics#' : 'ICN#';
+	
+	short rowBytes = 2 << ! small;
+	
+	Handle icon = GetResource( type, resID );
+	
+	if ( ! icon )
 	{
-		px = 16;
-		
-		mask_offset = 32;
-	}
-	else if ( (h = GetResource( 'ICN#', resID )) )
-	{
-		px = 32;
-		
-		mask_offset = 128;
-	}
-	else
-	{
-		if ( ResErr != noErr )
+		if ( OSErr err = ResErr )
 		{
-			return ResErr;
+			return err;
 		}
 		
 		return resNotFound;
 	}
 	
-	IconBitmap.rowBytes = px / 8u;
+	short px          = rowBytes * 8;   // 2 *  8 -> 16 or 4 *  8 ->  32
+	short mask_offset = rowBytes * px;  // 2 * 16 -> 32 or 4 * 32 -> 128
+	
+	IconBitmap.rowBytes = rowBytes;
 	
 	IconBitmap.bounds.bottom = px;
 	IconBitmap.bounds.right  = px;
@@ -116,7 +109,7 @@ pascal OSErr PlotIconID_call( const Rect*        rect,
 		substitute srcOr when there's a black background.
 	*/
 	
-	CopyIconBits( *h + mask_offset, rect, srcBic );
+	CopyIconBits( *icon + mask_offset, rect, srcBic );
 	
 	if ( port.fgColor != port.bkColor )
 	{
@@ -125,7 +118,7 @@ pascal OSErr PlotIconID_call( const Rect*        rect,
 			so draw the icon's face over the mask.
 		*/
 		
-		CopyIconBits( *h, rect, srcXor );
+		CopyIconBits( *icon, rect, srcXor );
 	}
 	else
 	{
