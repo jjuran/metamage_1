@@ -21,6 +21,7 @@
 #include "vlib/function-utils.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
+#include "vlib/reference.hh"
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
@@ -423,6 +424,13 @@ namespace vlib
 				}
 				
 				return results;
+			}
+			
+			if ( expr->op == Op_unary_refer )
+			{
+				const Value& pattern = dereference( expr->right );
+				
+				return scan( v, pattern );
 			}
 		}
 		
