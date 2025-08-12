@@ -133,10 +133,11 @@ pascal void MovePortTo_patch( short left, short top )
 {
 	GrafPort& port = *get_thePort();
 	
+	Rect& portRect = port.portRect;
 	Rect& bounds = port.portBits.bounds;
 	
-	const short dh = left + bounds.left;
-	const short dv = top  + bounds.top;
+	const short dh = left + bounds.left - portRect.left;
+	const short dv = top  + bounds.top  - portRect.top;
 	
 	OffsetRect( &bounds, -dh, -dv );
 }
