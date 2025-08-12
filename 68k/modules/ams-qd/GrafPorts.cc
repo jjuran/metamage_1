@@ -134,12 +134,12 @@ pascal void MovePortTo_patch( short left, short top )
 	GrafPort& port = *get_thePort();
 	
 	Rect& portRect = port.portRect;
-	Rect& bounds = port.portBits.bounds;
+	Rect& bounds   = port.portBits.bounds;
 	
-	const short dh = left + bounds.left - portRect.left;
-	const short dv = top  + bounds.top  - portRect.top;
+	const short dh = portRect.left - left - bounds.left;
+	const short dv = portRect.top  - top  - bounds.top;
 	
-	OffsetRect( &bounds, -dh, -dv );
+	OffsetRect( &bounds, dh, dv );
 }
 
 pascal void SetOrigin_patch( short h, short v )
