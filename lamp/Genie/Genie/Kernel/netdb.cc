@@ -17,6 +17,9 @@
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
 #endif
+#ifndef __OPENTRANSPORTPROVIDERS__
+#include <OpenTransportProviders.h>
+#endif
 
 // POSIX
 #include "netdb.h"
@@ -35,14 +38,11 @@
 #include "relix/api/try_again.hh"
 #include "relix/syscall/registry.hh"
 
-// Nitrogen
-#include "Nitrogen/OpenTransportProviders.hh"
-
 
 namespace relix
 {
 	
-	namespace n = nucleus;
+	using mac::ot::InternetServices_opened;
 	
 	using mac::app::OpenTransport_share;
 	
@@ -81,30 +81,31 @@ namespace relix
 	
 	DEFINE_UPP( OTNotify, netdb_notifier )
 	
-	static n::owned< InetSvcRef > InternetServices( netdb_provider_data& data )
+	static
+	InternetServices_opened InternetServices( netdb_provider_data& data )
 	{
-		using mac::ot::InternetServices_opened;
 		using mac::ot::OpenInternetServices_default_path;
 		
-		OSStatus err;
-		
 		InternetServices_opened opened = OpenInternetServices_default_path();
-		
-		Mac::ThrowOSStatus( error( opened ) );
 		
 		InetSvcRef p = value( opened );
 		
 		if ( p )
 		{
+			OSStatus err;
+			
 			(err = OTInstallNotifier( p, UPP_ARG( netdb_notifier ), &data ))  ||
 			(err = OTSetAsynchronous( p ));
+			
+			if ( err )
+			{
+				OTCloseProvider( p );
+				
+				*(OSStatus*) &opened = err;
+			}
 		}
 		
-		n::owned< InetSvcRef > provider = n::owned< InetSvcRef >::seize( p );
-		
-		Mac::ThrowOSStatus( err );
-		
-		return provider;
+		return opened;
 	}
 	
 	
@@ -116,17 +117,22 @@ namespace relix
 		
 		netdb_provider_data data = {};
 		
+		InternetServices_opened opened = InternetServices( data );
+		
+		if ( is_error( opened ) )
+		{
+			return error( opened );
+		}
+		
+		InetSvcRef services = value( opened );
+		
+		if ( (err = OTInetStringToAddress( services, name, result )) )
+		{
+			goto bail;
+		}
+		
 		try
 		{
-			n::owned< InetSvcRef > services = InternetServices( data );
-			
-			err = ::OTInetStringToAddress( services, name, result );
-			
-			if ( err != noErr )
-			{
-				return err;
-			}
-			
 			while ( data.code == 0 )
 			{
 				try_again( false );
@@ -138,6 +144,10 @@ namespace relix
 		{
 			err = set_errno_from_exception();
 		}
+		
+	bail:
+		
+		OTCloseProvider( services );
 		
 		return err;
 	}
@@ -150,17 +160,22 @@ namespace relix
 		
 		netdb_provider_data data = {};
 		
+		InternetServices_opened opened = InternetServices( data );
+		
+		if ( is_error( opened ) )
+		{
+			return error( opened );
+		}
+		
+		InetSvcRef services = value( opened );
+		
+		if ( (err = OTInetMailExchange( services, domain, count, result )) )
+		{
+			goto bail;
+		}
+		
 		try
 		{
-			n::owned< InetSvcRef > services = InternetServices( data );
-			
-			err = ::OTInetMailExchange( services, domain, count, result );
-			
-			if ( err != noErr )
-			{
-				return err;
-			}
-			
 			while ( data.code == 0 )
 			{
 				try_again( false );
@@ -172,6 +187,10 @@ namespace relix
 		{
 			err = set_errno_from_exception();
 		}
+		
+	bail:
+		
+		OTCloseProvider( services );
 		
 		return err;
 	}
