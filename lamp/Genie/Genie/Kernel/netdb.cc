@@ -43,7 +43,6 @@ namespace relix
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	
 	using mac::app::OpenTransport_share;
 	
@@ -87,6 +86,8 @@ namespace relix
 		using mac::ot::InternetServices_opened;
 		using mac::ot::OpenInternetServices_default_path;
 		
+		OSStatus err;
+		
 		InternetServices_opened opened = OpenInternetServices_default_path();
 		
 		Mac::ThrowOSStatus( error( opened ) );
@@ -95,9 +96,10 @@ namespace relix
 		
 		n::owned< InetSvcRef > provider = n::owned< InetSvcRef >::seize( p );
 		
-		N::OTInstallNotifier( provider, UPP_ARG( netdb_notifier ), &data );
+		(err = OTInstallNotifier( p, UPP_ARG( netdb_notifier ), &data ))  ||
+		(err = OTSetAsynchronous( p ));
 		
-		N::OTSetAsynchronous( provider );
+		Mac::ThrowOSStatus( err );
 		
 		return provider;
 	}
