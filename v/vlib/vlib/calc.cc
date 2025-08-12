@@ -18,9 +18,9 @@
 #include "vlib/map-reduce.hh"
 #include "vlib/member.hh"
 #include "vlib/os.hh"
+#include "vlib/reference.hh"
 #include "vlib/return.hh"
 #include "vlib/string-utils.hh"
-#include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/types.hh"
 #include "vlib/dispatch/compare.hh"
@@ -85,14 +85,7 @@ namespace vlib
 			
 			if ( expr->op == Op_unary_refer )
 			{
-				Target target = make_target( expr->right );
-				
-				if ( is_undefined( *target.addr ) )
-				{
-					THROW( "undefined value in dereference" );
-				}
-				
-				return *target.addr;
+				return dereference( expr->right );
 			}
 		}
 		
