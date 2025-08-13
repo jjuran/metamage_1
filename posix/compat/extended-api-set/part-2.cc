@@ -145,7 +145,7 @@ int futimens( int fd, const struct timespec times[2] )
 {
 	const struct timespec& mtime = times[1];
 	
-	const struct timeval tv = { mtime.tv_sec, mtime.tv_nsec / 1000 };
+	const struct timeval tv = { mtime.tv_sec, (int) mtime.tv_nsec / 1000 };
 	
 	struct timeval tvs[2] = { tv, tv };
 	
