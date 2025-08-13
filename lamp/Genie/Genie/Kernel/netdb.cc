@@ -110,17 +110,17 @@ namespace relix
 	
 	static OSStatus _OTInetStringToAddress( char* name, struct InetHostInfo* result )
 	{
+		OSStatus err;
+		
+		OpenTransport_share shared_OpenTransport;
+		
+		netdb_provider_data data = {};
+		
 		try
 		{
-			OpenTransport_share shared_OpenTransport;
-			
-			netdb_provider_data data = { 0 };
-			
 			n::owned< InetSvcRef > services = InternetServices( data );
 			
-			const OSStatus err = ::OTInetStringToAddress( services,
-			                                              name,
-			                                              result );
+			err = ::OTInetStringToAddress( services, name, result );
 			
 			if ( err != noErr )
 			{
@@ -132,28 +132,29 @@ namespace relix
 				try_again( false );
 			}
 			
-			return data.result;
+			err = data.result;
 		}
 		catch ( ... )
 		{
-			return set_errno_from_exception();
+			err = set_errno_from_exception();
 		}
+		
+		return err;
 	}
 	
 	static OSStatus _OTInetMailExchange( char* domain, UInt16* count, InetMailExchange* result )
 	{
+		OSStatus err;
+		
+		OpenTransport_share shared_OpenTransport;
+		
+		netdb_provider_data data = {};
+		
 		try
 		{
-			OpenTransport_share shared_OpenTransport;
-			
-			netdb_provider_data data = { 0 };
-			
 			n::owned< InetSvcRef > services = InternetServices( data );
 			
-			const OSStatus err = ::OTInetMailExchange( services,
-			                                           domain,
-			                                           count,
-			                                           result );
+			err = ::OTInetMailExchange( services, domain, count, result );
 			
 			if ( err != noErr )
 			{
@@ -165,12 +166,14 @@ namespace relix
 				try_again( false );
 			}
 			
-			return data.result;
+			err = data.result;
 		}
 		catch ( ... )
 		{
-			return set_errno_from_exception();
+			err = set_errno_from_exception();
 		}
+		
+		return err;
 	}
 	
 #if CONFIG_OPEN_TRANSPORT
