@@ -87,6 +87,17 @@ namespace relix
 		bool  it_has_received_RST;
 	};
 	
+	static inline
+	OTResult ThrowOTResult( OTResult result )
+	{
+		if ( result < 0 )
+		{
+			Mac::ThrowOSStatus( result );
+		}
+		
+		return result;
+	}
+	
 	static
 	void destroy_OT_socket( vfs::filehandle* that )
 	{
@@ -190,7 +201,7 @@ namespace relix
 			try_again( false );
 		}
 		
-		N::ThrowOTResult( socket.its_result );
+		Mac::ThrowOSStatus( socket.its_result );
 	}
 	
 	
@@ -202,7 +213,7 @@ namespace relix
 			try_again( false );
 		}
 		
-		N::ThrowOTResult( socket.its_result );
+		Mac::ThrowOSStatus( socket.its_result );
 	}
 	
 	static
@@ -417,7 +428,7 @@ namespace relix
 			}
 		}
 		
-		return N::ThrowOTResult( result );
+		return ThrowOTResult( result );
 	}
 	
 	static
@@ -448,7 +459,7 @@ namespace relix
 		
 		if ( sent != kOTFlowErr )
 		{
-			N::ThrowOTResult( sent );
+			ThrowOTResult( sent );
 			
 			n_written += sent;
 		}
