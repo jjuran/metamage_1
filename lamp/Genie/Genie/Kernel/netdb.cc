@@ -94,10 +94,13 @@ namespace relix
 		
 		InetSvcRef p = value( opened );
 		
-		n::owned< InetSvcRef > provider = n::owned< InetSvcRef >::seize( p );
+		if ( p )
+		{
+			(err = OTInstallNotifier( p, UPP_ARG( netdb_notifier ), &data ))  ||
+			(err = OTSetAsynchronous( p ));
+		}
 		
-		(err = OTInstallNotifier( p, UPP_ARG( netdb_notifier ), &data ))  ||
-		(err = OTSetAsynchronous( p ));
+		n::owned< InetSvcRef > provider = n::owned< InetSvcRef >::seize( p );
 		
 		Mac::ThrowOSStatus( err );
 		
