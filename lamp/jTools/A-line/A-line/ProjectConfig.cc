@@ -58,6 +58,7 @@ namespace tool
 			"imports",
 			"macosx-version-min",
 			"name",
+			"pkg-config",
 			"platform",
 			"precompile",
 			"product",
