@@ -45,7 +45,9 @@ sub imports
 	
 	my $preq = $self->{PREQ};
 	
-	return map { $module->get( $_ )->imports } @$preq;
+	my @imports = map { $module->get( $_ )->imports } @$preq;
+	
+	return $self->get_pkgconfig( '--libs' ), @imports;
 }
 
 sub tool_name

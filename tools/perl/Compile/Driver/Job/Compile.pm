@@ -143,7 +143,9 @@ sub command
 	
 	my @i = map { "-I$_" } @{ $module->all_search_dirs };
 	
-	return $self->tool_name, '-c', -o => $dest, @arch, @o, @f, @w, @d, @i;
+	my @x = $self->get_pkgconfig( '--cflags' );
+	
+	return $self->tool_name, '-c', -o => $dest, @arch, @o, @f, @w, @d, @i, @x;
 }
 
 1;

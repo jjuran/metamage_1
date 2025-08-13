@@ -16,6 +16,40 @@ use strict;
 our $build_dir = "$RealBin/var/build";
 
 
+my $has_pkgconfig;
+
+sub get_pkgconfig
+{
+	my $self = shift;
+	
+	my ( @opts ) = @_;
+	
+	if ( ! defined $has_pkgconfig )
+	{
+		$has_pkgconfig = (system "command -v pkg-config > /dev/null 2>&1") == 0;
+	}
+	
+	my @config;
+	
+	if ( $has_pkgconfig )
+	{
+		my $module = $self->{FROM};
+		
+		if ( my @pkgs = @{$module->{DESC}{DATA}{'pkg-config'} || []} )
+		{
+			my $pkgconfig = join " ", 'pkg-config', @opts, @pkgs;
+			
+			my $config = `$pkgconfig`;
+			
+			chop $config;
+			
+			@config = split / /, $config;
+		}
+	}
+	
+	return @config;
+}
+
 sub new
 {
 	my $class = shift;
