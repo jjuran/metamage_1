@@ -62,7 +62,7 @@ int send_mouse_event( int fd, Byte modes, Byte attrs )
 	return write_buffer( fd, &buffer.len, sizeof buffer );
 }
 
-int send_key_event( int fd, char c, Byte modes, Byte attrs )
+int send_key_event( int fd, Byte c, Byte modes, Byte attrs )
 {
 	splode::ascii_event_buffer buffer =
 	{

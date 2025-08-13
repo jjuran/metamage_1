@@ -26,7 +26,7 @@ namespace splode
 	
 	int send_mouse_event( int fd, Byte modes, Byte attrs );
 	
-	int send_key_event( int fd, char c, Byte modes, Byte attrs );
+	int send_key_event( int fd, Byte c, Byte modes, Byte attrs );
 	
 }
 
