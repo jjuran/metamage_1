@@ -39,7 +39,7 @@ sub get_pkgconfig
 		{
 			my $pkgconfig = join " ", 'pkg-config', @opts, @pkgs;
 			
-			my $config = `$pkgconfig`;
+			my $config = `$pkgconfig 2> /dev/null`;
 			
 			chop $config;
 			
