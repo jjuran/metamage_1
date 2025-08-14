@@ -257,6 +257,16 @@ sub main
 	
 	my @modules = map { $conf->get_module( $_ ) } @prereqs;
 	
+	if ( grep { $_->is_static_lib } @modules )
+	{
+		my @jobs = jobs_for( $conf->get_module( 'lib-static' ), 1 );
+		
+		foreach my $job ( @jobs )
+		{
+			$job->perform;
+		}
+	}
+	
 	my $installing = Compile::Driver::Options::installing;
 	
 	my @jobs = map { Compile::Driver::jobs_for( $_, $installing ) } @modules;
