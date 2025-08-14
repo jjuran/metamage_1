@@ -19,7 +19,7 @@ use strict;
 
 sub jobs_for
 {
-	my ( $module ) = @_;
+	my ( $module, $installing ) = @_;
 	
 	return if !$module->is_buildable;
 	
@@ -144,7 +144,7 @@ sub jobs_for
 			DEST => $path,
 		);
 		
-		if ( Compile::Driver::Options::installing )
+		if ( $installing )
 		{
 			$copy = Compile::Driver::Job::Copy::->new
 			(
@@ -257,7 +257,9 @@ sub main
 	
 	my @modules = map { $conf->get_module( $_ ) } @prereqs;
 	
-	my @jobs = map { Compile::Driver::jobs_for( $_ ) } @modules;
+	my $installing = Compile::Driver::Options::installing;
+	
+	my @jobs = map { Compile::Driver::jobs_for( $_, $installing ) } @modules;
 	
 	my $n_jobs = Compile::Driver::Options::job_count;
 	
