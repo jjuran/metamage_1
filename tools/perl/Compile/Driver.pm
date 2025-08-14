@@ -255,7 +255,9 @@ sub main
 	
 	pop @prereqs;
 	
-	my @jobs = map { Compile::Driver::jobs_for( $conf->get_module( $_ ) ) } @prereqs;
+	my @modules = map { $conf->get_module( $_ ) } @prereqs;
+	
+	my @jobs = map { Compile::Driver::jobs_for( $_ ) } @modules;
 	
 	my $n_jobs = Compile::Driver::Options::job_count;
 	
