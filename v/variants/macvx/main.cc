@@ -52,6 +52,9 @@
 #include "varyx/mac/Sound.hh"
 #include "varyx/mac/Timer.hh"
 
+// varyx-quickdraw
+#include "varyx/quickdraw/import.hh"
+
 // varyx-posix
 #include "varyx/posix/argv.hh"
 #include "varyx/posix/library.hh"
@@ -70,6 +73,7 @@ using namespace vlib;
 
 using namespace varyx::mac;
 using namespace varyx::posix;
+using namespace varyx::quickdraw;
 
 
 enum
@@ -207,6 +211,8 @@ int main( int argc, char** argv )
 	define( proc_UnpackBits );
 	
 #endif
+	
+	varyx::quickdraw::import( globals );
 	
 	const char* path = "<inline script>";
 	
