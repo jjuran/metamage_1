@@ -6,6 +6,15 @@
 #ifndef IOTA_CLASS_HH
 #define IOTA_CLASS_HH
 
+#ifdef __RELIX__
+	namespace std
+	{
+		typedef unsigned long size_t;
+	}
+#else
+	#include <cstddef>
+#endif
+
 /*
 	NON_COPYABLE() does exactly what it says and looks like it does.
 */
@@ -56,7 +65,7 @@ private:                      \
 	*/
 	#define NO_NEW_DELETE  \
 	private:               \
-		void* operator new( unsigned long );  \
+		void* operator new( std::size_t );  \
 		void operator delete( void* )  {}
 #endif
 
