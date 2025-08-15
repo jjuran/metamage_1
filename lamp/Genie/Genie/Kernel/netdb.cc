@@ -91,7 +91,9 @@ namespace relix
 		
 		Mac::ThrowOSStatus( error( opened ) );
 		
-		n::owned< InetSvcRef > provider = n::owned< InetSvcRef >::seize( value( opened ) );
+		InetSvcRef p = value( opened );
+		
+		n::owned< InetSvcRef > provider = n::owned< InetSvcRef >::seize( p );
 		
 		N::OTInstallNotifier( provider, UPP_ARG( netdb_notifier ), &data );
 		
