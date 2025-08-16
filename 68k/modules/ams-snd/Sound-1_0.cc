@@ -427,9 +427,18 @@ OSErr SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow )
 pascal
 OSErr SndDoCommand_patch( SndChannel* chan, SndCommand* cmd, Boolean noWait )
 {
+	bool warned = false;
+	
 retry:
 	
 	short queued_next = enqueue_command( *chan, *cmd );
+	
+	if ( queued_next < 0  &&  ! warned )
+	{
+		WARNING = "SndDoCommand: channel's queue is full";
+		
+		warned = true;
+	}
 	
 	if ( queued_next < 0  &&  ! noWait )
 	{
