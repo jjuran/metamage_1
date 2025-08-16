@@ -28,11 +28,11 @@
 // Standard C++
 #include <algorithm>
 
-// Nitrogen
-#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
-
 // Orion
 #include "Orion/Main.hh"
+
+
+#pragma exceptions off
 
 
 #if CONFIG_OPEN_TRANSPORT_HEADERS
@@ -43,14 +43,14 @@ inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
 }
 
 static inline
-UInt16 OTInetMailExchange( InetSvcRef         ref,
-                           char*              name,
-                           UInt16             num,
-                           InetMailExchange*  mx )
+OSStatus OTInetMailExchange( InetSvcRef         ref,
+                             char*              name,
+                             UInt16             num,
+                             InetMailExchange*  mx )
 {
-	Mac::ThrowOSStatus( OTInetMailExchange( ref, name, &num, mx ) );
+	OSStatus err = OTInetMailExchange( ref, name, &num, mx );
 	
-	return num;
+	return err ? err : num;
 }
 
 #endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
@@ -70,10 +70,17 @@ namespace tool
 		
 		InetMailExchange results[ max_results ];
 		
-		UInt16 n = OTInetMailExchange( NULL,
-		                               (char*) domain,
-		                               max_results,
-		                               &results[ 0 ] );
+		OTResult n = OTInetMailExchange( NULL,
+		                                 (char*) domain,
+		                                 max_results,
+		                                 &results[ 0 ] );
+		
+		if ( n < 0 )
+		{
+			fprintf( stderr, "mx: %s: OSStatus %ld\n", domain, n );
+			
+			return 1;
+		}
 		
 		std::sort( &results[ 0 ],
 		           &results[ n ] );
