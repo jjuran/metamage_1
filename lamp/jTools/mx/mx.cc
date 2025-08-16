@@ -28,9 +28,6 @@
 // Standard C++
 #include <algorithm>
 
-// Orion
-#include "Orion/Main.hh"
-
 
 #pragma exceptions off
 
@@ -55,46 +52,41 @@ OSStatus OTInetMailExchange( InetSvcRef         ref,
 
 #endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
 
-namespace tool
+int main( int argc, char** argv )
 {
+	if ( argc < 2 )  return 1;
 	
-	int Main( int argc, char** argv )
+#if CONFIG_OPEN_TRANSPORT_HEADERS
+	
+	const char* domain = argv[ 1 ];
+	
+	const int max_results = 10;  // Should be more than enough
+	
+	InetMailExchange results[ max_results ];
+	
+	OTResult n = OTInetMailExchange( NULL,
+	                                 (char*) domain,
+	                                 max_results,
+	                                 &results[ 0 ] );
+	
+	if ( n < 0 )
 	{
-		if ( argc < 2 )  return 1;
+		fprintf( stderr, "mx: %s: OSStatus %ld\n", domain, n );
 		
-	#if CONFIG_OPEN_TRANSPORT_HEADERS
-		
-		const char* domain = argv[ 1 ];
-		
-		const int max_results = 10;  // Should be more than enough
-		
-		InetMailExchange results[ max_results ];
-		
-		OTResult n = OTInetMailExchange( NULL,
-		                                 (char*) domain,
-		                                 max_results,
-		                                 &results[ 0 ] );
-		
-		if ( n < 0 )
-		{
-			fprintf( stderr, "mx: %s: OSStatus %ld\n", domain, n );
-			
-			return 1;
-		}
-		
-		std::sort( &results[ 0 ],
-		           &results[ n ] );
-		
-		for ( int i = 0;  i < n;  ++i )
-		{
-			const InetMailExchange& mx = results[ i ];
-			
-			printf( "(missing) MX %d %s\n", mx.preference, mx.exchange );
-		}
-		
-	#endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
-		
-		return 0;
+		return 1;
 	}
-
+	
+	std::sort( &results[ 0 ],
+	           &results[ n ] );
+	
+	for ( int i = 0;  i < n;  ++i )
+	{
+		const InetMailExchange& mx = results[ i ];
+		
+		printf( "(missing) MX %d %s\n", mx.preference, mx.exchange );
+	}
+	
+#endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
+	
+	return 0;
 }
