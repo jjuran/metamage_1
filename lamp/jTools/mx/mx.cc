@@ -27,7 +27,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
 
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
@@ -59,19 +58,6 @@ UInt16 OTInetMailExchange( InetSvcRef         ref,
 namespace tool
 {
 	
-#if CONFIG_OPEN_TRANSPORT_HEADERS
-	
-	static void PrintMX( const InetMailExchange& mx )
-	{
-		printf( "(missing) MX %d %s\n", mx.preference, mx.exchange );
-		
-		//N::InetHost ip = N::OTInetStringToAddress( InternetServices(), (char*) mx.exchange ).addrs[ 0 ];
-		
-		//Io::Out << mx.exchange << " A " << ip << "\n";
-	}
-	
-#endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
-	
 	int Main( int argc, char** argv )
 	{
 		if ( argc < 2 )  return 1;
@@ -92,9 +78,12 @@ namespace tool
 		std::sort( &results[ 0 ],
 		           &results[ n ] );
 		
-		std::for_each( &results[ 0 ],
-		               &results[ n ],
-		               std::ptr_fun( PrintMX ) );
+		for ( int i = 0;  i < n;  ++i )
+		{
+			const InetMailExchange& mx = results[ i ];
+			
+			printf( "(missing) MX %d %s\n", mx.preference, mx.exchange );
+		}
 		
 	#endif  // #if CONFIG_OPEN_TRANSPORT_HEADERS
 		
