@@ -258,7 +258,7 @@ namespace vlib
 					THROW( "unary operator not defined for iterators" );
 				
 				default:
-					INTERNAL_ERROR( "unary operator not defined for pairs" );
+					THROW( "unary operator not defined for pairs" );
 			}
 		}
 		
