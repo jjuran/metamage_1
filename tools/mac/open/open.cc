@@ -454,7 +454,10 @@ namespace tool
 			// Resolve to FSSpec
 			err = FSObj_from_existing_path( gAppNameToOpenIn, appFile );
 			
-			Mac::ThrowOSStatus( err );
+			if ( err )
+			{
+				goto error;
+			}
 			
 			// Find it if running
 			ProcessSerialNumber psn;
@@ -506,6 +509,8 @@ namespace tool
 		{
 			err = LaunchApplicationWithDocsToOpen( appFile, items );
 		}
+		
+	error:
 		
 		Mac::ThrowOSStatus( err );
 	}
