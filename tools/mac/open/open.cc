@@ -427,7 +427,8 @@ namespace tool
 		return sigFinder;
 	}
 	
-	static void OpenItemsUsingOptions( const Mac::AEDescList_Data& items )
+	static
+	OSErr OpenItemsUsingOptions( const AEDescList& items )
 	{
 		// we either have a pathname or signature for the app.
 		// if pathname, resolve to FSSpec and check if it's running.
@@ -468,13 +469,8 @@ namespace tool
 				// The app is already running -- send it an odoc event
 				err = OpenItemsWithRunningApp( items, psn );
 				
-				if ( err )
-				{
-					goto error;
-				}
-				
 				// We're done
-				return;
+				return err;
 			}
 			
 			// No such process
@@ -497,13 +493,8 @@ namespace tool
 				// The app is already running -- send it an odoc event
 				err = OpenItemsWithRunningApp( items, psn );
 				
-				if ( err )
-				{
-					goto error;
-				}
-				
 				// We're done
-				return;
+				return err;
 			}
 			
 			if ( err == procNotFound )
@@ -523,7 +514,7 @@ namespace tool
 		
 	error:
 		
-		Mac::ThrowOSStatus( err );
+		return err;
 	}
 	
 	int Main( int argc, char** argv )
@@ -542,6 +533,8 @@ namespace tool
 		}
 		
 	#endif
+		
+		OSErr err = noErr;
 		
 		n::owned< Mac::AEDescList_Data > items = N::AECreateList< Mac::AEDescList_Data >( false );
 		
@@ -582,10 +575,18 @@ namespace tool
 				AEDisposeDesc( &desc );
 			}
 			
-			Mac::ThrowOSStatus( err );
+			if ( err )
+			{
+				break;
+			}
 		}
 		
-		OpenItemsUsingOptions( items );
+		if ( err == noErr )
+		{
+			err = OpenItemsUsingOptions( items );
+		}
+		
+		Mac::ThrowOSStatus( err );
 		
 		return 0;
 	}
