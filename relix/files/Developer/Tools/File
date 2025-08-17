@@ -1,4 +1,4 @@
 #!/bin/sh
 
-open -t --activate --mac $1
+open -t --hfs $1
 
