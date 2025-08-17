@@ -213,12 +213,13 @@ namespace tool
 		return err;
 	}
 	
-	static n::owned< Mac::AppleEvent > MakeOpenDocsEvent( const Mac::AEDescList_Data&  items,
-	                                                      const ProcessSerialNumber&   psn )
+	static
+	OSErr MakeOpenDocsEvent( const AEDescList&           items,
+	                         const ProcessSerialNumber&  psn,
+	                         AppleEvent&                 event )
 	{
 		OSErr           err;
 		AEAddressDesc   addr;
-		Mac::AppleEvent event;
 		
 		err = AECreateDesc( typeProcessSerialNumber, &psn, sizeof psn, &addr );
 		
@@ -246,9 +247,7 @@ namespace tool
 			}
 		}
 		
-		Mac::ThrowOSStatus( err );
-		
-		return n::owned< Mac::AppleEvent >::seize( event );
+		return err;
 	}
 	
 	static void OpenItemsWithRunningApp( const Mac::AEDescList_Data&  items,
@@ -261,15 +260,23 @@ namespace tool
 		
 		OSErr err;
 		
+		AppleEvent event;
 		AppleEvent reply;
 		
-		err = AESend( &MakeOpenDocsEvent( items, psn ).get(),
-		              &reply,
-		              kAENoReply | kAECanInteract,
-		              kAENormalPriority,
-		              kAEDefaultTimeout,
-		              NULL,
-		              NULL );
+		err = MakeOpenDocsEvent( items, psn, event );
+		
+		if ( err == noErr )
+		{
+			err = AESend( &event,
+			              &reply,
+			              kAENoReply | kAECanInteract,
+			              kAENormalPriority,
+			              kAEDefaultTimeout,
+			              NULL,
+			              NULL );
+			
+			AEDisposeDesc( &event );
+		}
 		
 		Mac::ThrowOSStatus( err );
 		
@@ -294,9 +301,16 @@ namespace tool
 		OSErr  err;
 		AEDesc params;
 		
-		n::owned< Mac::AppleEvent > event = MakeOpenDocsEvent( items, no_process );
+		AppleEvent event;
 		
-		err = AECoerceDesc( &event.get(), typeAppParameters, &params );
+		err = MakeOpenDocsEvent( items, no_process, event );
+		
+		if ( err == noErr )
+		{
+			err = AECoerceDesc( &event, typeAppParameters, &params );
+			
+			AEDisposeDesc( &event );
+		}
 		
 		if ( err == noErr )
 		{
@@ -329,6 +343,8 @@ namespace tool
 				DisposeHandle( h );
 			}
 		}
+		
+		Mac::ThrowOSStatus( err );
 	}
 	
 	
