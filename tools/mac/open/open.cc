@@ -495,6 +495,8 @@ namespace tool
 		if ( gUseHFSPathnames )
 		{
 			fprintf( stderr, "open: HFS pathnames are unsupported in 64-bit\n" );
+			
+			return 50;
 		}
 		
 	#endif
