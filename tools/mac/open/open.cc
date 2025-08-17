@@ -442,6 +442,7 @@ namespace tool
 		// -e or -t: either?
 		// default: sig
 		
+		OSErr err;
 		FSObj appFile;
 		
 		if ( gAppNameToOpenIn != NULL )
@@ -451,7 +452,7 @@ namespace tool
 			using mac::relix::FSObj_from_existing_path;
 			
 			// Resolve to FSSpec
-			OSErr err = FSObj_from_existing_path( gAppNameToOpenIn, appFile );
+			err = FSObj_from_existing_path( gAppNameToOpenIn, appFile );
 			
 			Mac::ThrowOSStatus( err );
 			
@@ -480,7 +481,7 @@ namespace tool
 			// Find it if running
 			ProcessSerialNumber psn;
 			
-			OSErr err = mac::proc::find_process( psn, signature );
+			err = mac::proc::find_process( psn, signature );
 			
 			if ( err == noErr )
 			{
