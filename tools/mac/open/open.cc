@@ -250,8 +250,9 @@ namespace tool
 		return err;
 	}
 	
-	static void OpenItemsWithRunningApp( const Mac::AEDescList_Data&  items,
-	                                     const ProcessSerialNumber&   psn )
+	static
+	OSErr OpenItemsWithRunningApp( const AEDescList&           items,
+	                               const ProcessSerialNumber&  psn )
 	{
 		if ( gActivate )
 		{
@@ -278,9 +279,7 @@ namespace tool
 			AEDisposeDesc( &event );
 		}
 		
-		Mac::ThrowOSStatus( err );
-		
-		if ( gActivate )
+		if ( err == noErr  &&  gActivate )
 		{
 			using mac::sys::current_process;
 			using mac::sys::is_front_process;
@@ -290,6 +289,8 @@ namespace tool
 				sleep( 0 );
 			}
 		}
+		
+		return err;
 	}
 	
 	static
@@ -465,7 +466,12 @@ namespace tool
 			if ( mac::proc::find_process( psn, appFile ) == noErr )
 			{
 				// The app is already running -- send it an odoc event
-				OpenItemsWithRunningApp( items, psn );
+				err = OpenItemsWithRunningApp( items, psn );
+				
+				if ( err )
+				{
+					goto error;
+				}
 				
 				// We're done
 				return;
@@ -489,7 +495,12 @@ namespace tool
 			if ( err == noErr )
 			{
 				// The app is already running -- send it an odoc event
-				OpenItemsWithRunningApp( items, psn );
+				err = OpenItemsWithRunningApp( items, psn );
+				
+				if ( err )
+				{
+					goto error;
+				}
 				
 				// We're done
 				return;
