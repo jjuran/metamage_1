@@ -416,7 +416,7 @@ namespace tool
 			
 			if ( strlen( gAppSigToOpenIn ) != sizeof 'quad' )
 			{
-				Mac::ThrowOSStatus( paramErr );
+				return 0;  // becomes paramErr
 			}
 			
 			return gear::decode_quad( gAppSigToOpenIn );
@@ -482,6 +482,11 @@ namespace tool
 			
 			// Pick a signature
 			OSType signature = SignatureOfAppForOpening();
+			
+			if ( ! signature )
+			{
+				return paramErr;
+			}
 			
 			// Find it if running
 			ProcessSerialNumber psn;
