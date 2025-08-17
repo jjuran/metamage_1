@@ -293,8 +293,8 @@ namespace tool
 	}
 	
 	static
-	void LaunchApplicationWithDocsToOpen( const FSObj&                 app,
-	                                      const Mac::AEDescList_Data&  items )
+	OSErr LaunchApplicationWithDocsToOpen( const FSObj&       app,
+	                                       const AEDescList&  items )
 	{
 		static ProcessSerialNumber no_process = {};
 		
@@ -344,7 +344,7 @@ namespace tool
 			}
 		}
 		
-		Mac::ThrowOSStatus( err );
+		return err;
 	}
 	
 	
@@ -500,11 +500,14 @@ namespace tool
 				
 			#endif
 			}
-			
-			Mac::ThrowOSStatus( err );
 		}
 		
-		LaunchApplicationWithDocsToOpen( appFile, items );
+		if ( err == noErr )
+		{
+			err = LaunchApplicationWithDocsToOpen( appFile, items );
+		}
+		
+		Mac::ThrowOSStatus( err );
 	}
 	
 	int Main( int argc, char** argv )
