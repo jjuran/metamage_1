@@ -37,7 +37,6 @@
 
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"
-#include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/Str.hh"
 
 // Orion
@@ -260,8 +259,19 @@ namespace tool
 			SetFrontProcess( &psn );
 		}
 		
-		N::AESend( MakeOpenDocsEvent( items, psn ),
-		           Mac::kAENoReply | Mac::kAECanInteract );
+		OSErr err;
+		
+		AppleEvent reply;
+		
+		err = AESend( &MakeOpenDocsEvent( items, psn ).get(),
+		              &reply,
+		              kAENoReply | kAECanInteract,
+		              kAENormalPriority,
+		              kAEDefaultTimeout,
+		              NULL,
+		              NULL );
+		
+		Mac::ThrowOSStatus( err );
 		
 		if ( gActivate )
 		{
