@@ -81,6 +81,7 @@ enum
 {
 	Option_app_name      = 'a',
 	Option_system_editor = 'e',  // TextEdit on OS X
+	Option_grounded      = 'g',  // Don't bring to foreground
 	Option_user_editor   = 't',  // via LaunchServices on OS X
 	
 	Option_last_byte = 255,
@@ -101,6 +102,7 @@ static command::option options[] =
 	
 	{ "activate", Option_activate  },
 	{ "actv",     Option_activate  },
+	{ "grounded", Option_grounded  },
 	{ "hfs",      Option_HFS_paths },
 	{ "mac",      Option_HFS_paths },
 	
@@ -135,6 +137,10 @@ static char* const* get_options( char* const* argv )
 			case Option_user_editor:
 			case Option_system_editor:
 				gOpenInEditor = true;
+				break;
+			
+			case Option_grounded:
+				gActivate = false;
 				break;
 			
 			case Option_activate:
