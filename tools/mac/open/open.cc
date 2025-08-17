@@ -113,7 +113,7 @@ static const char* gAppNameToOpenIn = NULL;
 static const char* gAppSigToOpenIn  = NULL;
 
 static bool gOpenInEditor    = false;
-static bool gActivate        = false;
+static bool gActivate        = true;
 static bool gUseHFSPathnames = false;
 
 static char* const* get_options( char* const* argv )
