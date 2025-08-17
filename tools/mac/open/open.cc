@@ -183,11 +183,9 @@ namespace tool
 	}
 	
 	static
-	n::owned< Mac::AEDesc_Data > CoerceFSObjToAliasDesc( const FSObj& item )
+	OSErr CoerceFSObjToAliasDesc( const FSObj& item, AEDesc& result )
 	{
 		OSErr err;
-		
-		Mac::AEDesc_Data result;
 		
 		err = AECoercePtr( typeFSObj, &item, sizeof item, typeAlias, &result );
 		
@@ -213,9 +211,7 @@ namespace tool
 			}
 		}
 		
-		Mac::ThrowOSStatus( err );
-		
-		return n::owned< Mac::AEDesc_Data >::seize( result );
+		return err;
 	}
 	
 	static n::owned< Mac::AppleEvent > MakeOpenDocsEvent( const Mac::AEDescList_Data&  items,
@@ -509,9 +505,7 @@ namespace tool
 			
 			FSObj item;
 			
-			Error err = ResolvePathname( item, pathname, gUseHFSPathnames );
-			
-			if ( err )
+			if ( Error err = ResolvePathname( item, pathname, gUseHFSPathnames ) )
 			{
 				int errnum = is_errno( err ) ? errno_from_muxed( err )
 				                             : errno_from_mac_error( err );
@@ -528,7 +522,21 @@ namespace tool
 				continue;
 			}
 			
-			N::AEPutDesc( items, 0, CoerceFSObjToAliasDesc( item ) );
+			AEDesc   desc;
+			OSStatus err;
+			
+			err = CoerceFSObjToAliasDesc( item, desc );
+			
+			if ( err == noErr )
+			{
+				AEDescList& list = N::Detail::mutable_AEDesc( items );
+				
+				err = AEPutDesc( &list, 0, &desc );
+				
+				AEDisposeDesc( &desc );
+			}
+			
+			Mac::ThrowOSStatus( err );
 		}
 		
 		OpenItemsUsingOptions( items );
