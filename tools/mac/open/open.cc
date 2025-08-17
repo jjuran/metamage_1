@@ -3,6 +3,22 @@
 	-------
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __ALIASES__
+#include <Aliases.h>
+#endif
+#ifndef __APPLEEVENTS__
+#include <AppleEvents.h>
+#endif
+#ifndef __PROCESSES__
+#include <Processes.h>
+#endif
+
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
@@ -36,7 +52,8 @@
 #include "mac_relix/FSSpec_from_path.hh"
 
 // Nitrogen
-#include "Nitrogen/AEDataModel.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 #include "Nitrogen/Str.hh"
 
 // Orion
@@ -145,7 +162,6 @@ static char* const* get_options( char* const* argv )
 namespace tool
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
 	using mac::sys::Error;
@@ -541,7 +557,14 @@ namespace tool
 		
 		OSErr err = noErr;
 		
-		n::owned< Mac::AEDescList_Data > items = N::AECreateList< Mac::AEDescList_Data >( false );
+		AEDescList items;
+		
+		err = AECreateList( 0, 0, false, &items );
+		
+		if ( err )
+		{
+			goto error;
+		}
 		
 		for ( char const *const *it = args;  *it != NULL;  ++it )
 		{
@@ -573,9 +596,7 @@ namespace tool
 			
 			if ( err == noErr )
 			{
-				AEDescList& list = N::Detail::mutable_AEDesc( items );
-				
-				err = AEPutDesc( &list, 0, &desc );
+				err = AEPutDesc( &items, 0, &desc );
 				
 				AEDisposeDesc( &desc );
 			}
@@ -590,6 +611,10 @@ namespace tool
 		{
 			err = OpenItemsUsingOptions( items );
 		}
+		
+		AEDisposeDesc( &items );
+		
+	error:
 		
 		Mac::ThrowOSStatus( err );
 		
