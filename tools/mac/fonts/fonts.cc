@@ -51,6 +51,51 @@ int main( int argc, char** argv )
 			utf[ n ] = '\0';
 			
 			printf( "%d: %s\n", (SInt16) i, utf );
+			
+			short first_real_size = 0;
+			short last_real_size  = 0;
+			
+			bool printed = false;
+			
+			for ( short font_size = 1;  font_size < 128;  ++font_size )
+			{
+				bool real = RealFont( i, font_size );
+				
+				if ( real )
+				{
+					last_real_size = font_size;
+					
+					if ( ! first_real_size )
+					{
+						first_real_size = font_size;
+					}
+				}
+				else
+				{
+					if ( first_real_size )
+					{
+						const char* separator = ! printed ? "    " : ", ";
+						
+						printf( "%s", separator );
+						
+						printf( "%d", first_real_size );
+						
+						if ( last_real_size > first_real_size )
+						{
+							printf( "-%d", last_real_size );
+						}
+						
+						first_real_size = 0;
+						
+						printed = true;
+					}
+				}
+			}
+			
+			if ( printed )
+			{
+				printf( "\n" );
+			}
 		}
 	}
 	while ( ++i );
