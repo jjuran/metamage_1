@@ -51,11 +51,8 @@
 #include "mac_relix/FSRef_from_path.hh"
 #include "mac_relix/FSSpec_from_path.hh"
 
-// Nitrogen
-#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
-// Orion
-#include "Orion/Main.hh"
+#pragma exceptions off
 
 
 using namespace command::constants;
@@ -156,9 +153,6 @@ static char* const* get_options( char* const* argv )
 	return argv;
 }
 
-
-namespace tool
-{
 
 using mac::sys::Error;
 using mac::sys::errno_from_mac_error;
@@ -557,7 +551,7 @@ error:
 	return err;
 }
 
-int Main( int argc, char** argv )
+int main( int argc, char** argv )
 {
 	char *const *args = get_options( argv );
 	
@@ -635,9 +629,12 @@ int Main( int argc, char** argv )
 	
 error:
 	
-	Mac::ThrowOSStatus( err );
+	if ( err )
+	{
+		fprintf( stderr, "open: OSErr %d\n", err );
+		
+		return 1;
+	}
 	
 	return 0;
-}
-
 }
