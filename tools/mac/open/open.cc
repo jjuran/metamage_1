@@ -54,8 +54,6 @@
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
-#include "Nitrogen/Str.hh"
-
 // Orion
 #include "Orion/Main.hh"
 
@@ -162,8 +160,6 @@ static char* const* get_options( char* const* argv )
 namespace tool
 {
 	
-	namespace N = Nitrogen;
-	
 	using mac::sys::Error;
 	using mac::sys::errno_from_mac_error;
 	
@@ -181,8 +177,31 @@ namespace tool
 	{
 		using mac::relix::FSSpec_from_existing_path;
 		
-		Error err = hfs ? (Error) FSMakeFSSpec( 0, 0, N::Str255( path ), &file )
-		                : FSSpec_from_existing_path( path, file );
+		Error err;
+		
+		if ( hfs )
+		{
+			size_t len = strlen( path );
+			
+			if ( len > 255 )
+			{
+				err = (Error) paramErr;
+			}
+			else
+			{
+				Str255 hfs_path;
+				
+				hfs_path[ 0 ] = len;
+				
+				BlockMoveData( path, hfs_path + 1, len );
+				
+				err = (Error) FSMakeFSSpec( 0, 0, hfs_path, &file );
+			}
+		}
+		else
+		{
+			err = FSSpec_from_existing_path( path, file );
+		}
 		
 		return err;
 	}
