@@ -175,8 +175,6 @@ namespace MacCDROM
 		return AudioLeadOut( toc ) - LeadIn( toc );
 	}
 	
-	unsigned int CDDBDiscID( const CDROMTableOfContents& toc );
-	
 #if CALL_NOT_IN_CARBON
 	
 	#pragma mark -

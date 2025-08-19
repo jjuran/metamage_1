@@ -39,41 +39,6 @@ namespace MacCDROM
 	
 #if CALL_NOT_IN_CARBON
 	
-	static int cddb_sum( int n )
-	{
-		/* For backward compatibility this algorithm must not change */
-
-		int result = 0;
-
-		while ( n > 0 )
-		{
-			result += ( n % 10 );
-			n /= 10;
-		}
-
-		return result;
-	}
-	
-	unsigned int CDDBDiscID( const CDROMTableOfContents& toc )
-	{
-		TrackCount tracks = CountTracks( toc );
-		
-		int sum = 0;
-		
-		for ( int track = 1;  track <= tracks;  ++track )
-		{
-			int startFrames = TrackStart( toc, track );
-			
-			sum += cddb_sum( startFrames / 75 );
-		}
-		
-		int totalTime = DiscContentLength( toc ) / 75;
-		
-		return   (sum % 0xFF) << 24
-		       | totalTime    <<  8
-		       | tracks;
-	}
-	
 	// E.g. Given 0x12, return 0x0C.
 	static inline int DecodeBCD( unsigned char bcd )
 	{
