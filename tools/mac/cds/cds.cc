@@ -150,16 +150,6 @@ namespace tool
 	
 	static void PrintDiscID()
 	{
-		unsigned int discID = CD::CDDBDiscID( gTOC );
-		
-		char discid_message[] = "Disc ID is abcd1234\n";
-		
-		char *const discid_buf = discid_message + STRLEN( "Disc ID is " );
-		
-		gear::encode_32_bit_hex( discID, discid_buf );
-		
-		p7::write( p7::stdout_fileno, discid_message, sizeof discid_message - 1 );
-		
 		CD::TrackCount tracks = CD::CountTracks( gTOC );
 		
 		plus::var_string command = "discid ";
@@ -177,6 +167,16 @@ namespace tool
 		command += " ";
 		command += gear::inscribe_decimal( CD::DiscLength( gTOC ) / 75 );
 		command += "\n";
+		
+		char discid_message[] = "Disc ID is abcd1234\n";
+		
+		char *const discid_buf = discid_message + STRLEN( "Disc ID is " );
+		
+		unsigned int discID = CD::CDDBDiscID( gTOC );
+		
+		gear::encode_32_bit_hex( discID, discid_buf );
+		
+		p7::write( p7::stdout_fileno, discid_message, sizeof discid_message - 1 );
 		
 		p7::write( p7::stdout_fileno, command );
 	}
