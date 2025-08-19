@@ -3,6 +3,22 @@
 	-------
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __ALIASES__
+#include <Aliases.h>
+#endif
+#ifndef __APPLEEVENTS__
+#include <AppleEvents.h>
+#endif
+#ifndef __PROCESSES__
+#include <Processes.h>
+#endif
+
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
@@ -35,13 +51,8 @@
 #include "mac_relix/FSRef_from_path.hh"
 #include "mac_relix/FSSpec_from_path.hh"
 
-// Nitrogen
-#include "Nitrogen/AEDataModel.hh"
-#include "Nitrogen/AEInteraction.hh"
-#include "Nitrogen/Str.hh"
 
-// Orion
-#include "Orion/Main.hh"
+#pragma exceptions off
 
 
 using namespace command::constants;
@@ -143,397 +154,487 @@ static char* const* get_options( char* const* argv )
 }
 
 
-namespace tool
+using mac::sys::Error;
+using mac::sys::errno_from_mac_error;
+
+
+enum
 {
-	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
-	
-	using mac::sys::Error;
-	using mac::sys::errno_from_mac_error;
-	
-	
-	enum
-	{
-		sigFinder = 'MACS'
-	};
-	
-	
+	sigFinder = 'MACS'
+};
+
+
 #if ! __LP64__
+
+static
+Error ResolvePathname( FSSpec& file, const char* path, bool hfs )
+{
+	using mac::relix::FSSpec_from_existing_path;
 	
-	static
-	Error ResolvePathname( FSSpec& file, const char* path, bool hfs )
+	Error err;
+	
+	if ( hfs )
 	{
-		using mac::relix::FSSpec_from_existing_path;
+		size_t len = strlen( path );
 		
-		Error err = hfs ? (Error) FSMakeFSSpec( 0, 0, N::Str255( path ), &file )
-		                : FSSpec_from_existing_path( path, file );
+		if ( len > 255 )
+		{
+			err = (Error) paramErr;
+		}
+		else
+		{
+			Str255 hfs_path;
+			
+			hfs_path[ 0 ] = len;
+			
+			BlockMoveData( path, hfs_path + 1, len );
+			
+			err = (Error) FSMakeFSSpec( 0, 0, hfs_path, &file );
+		}
+	}
+	else
+	{
+		err = FSSpec_from_existing_path( path, file );
+	}
+	
+	return err;
+}
+
+#endif
+
+static inline
+Error ResolvePathname( FSRef& file, const char* path, bool hfs )
+{
+	using mac::relix::FSRef_from_path;
+	
+	return FSRef_from_path( path, file );
+}
+
+static
+OSErr CoerceFSObjToAliasDesc( const FSObj& item, AEDesc& result )
+{
+	OSErr err;
+	
+	err = AECoercePtr( typeFSObj, &item, sizeof item, typeAlias, &result );
+	
+	if ( ! TARGET_API_MAC_CARBON  &&  err == errAECoercionFail )
+	{
+		/*
+			Older systems don't provide FSSpec->alias
+			coercion, so do it manually.
+		*/
 		
-		return err;
+		AliasHandle alias;
+		
+	#if ! __LP64__
+		
+		err = NewAlias( NULL, &item, &alias );
+		
+	#endif
+		
+		if ( err == noErr )
+		{
+			result.descriptorType = typeAlias;
+			result.dataHandle     = (AEDataStorage) alias;
+		}
+	}
+	
+	return err;
+}
+
+static
+OSErr MakeOpenDocsEvent( const AEDescList&           items,
+                         const ProcessSerialNumber&  psn,
+                         AppleEvent&                 event )
+{
+	OSErr           err;
+	AEAddressDesc   addr;
+	
+	err = AECreateDesc( typeProcessSerialNumber, &psn, sizeof psn, &addr );
+	
+	if ( err == noErr )
+	{
+		err = AECreateAppleEvent( kCoreEventClass,
+		                          kAEOpenDocuments,
+		                          &addr,
+		                          kAutoGenerateReturnID,
+		                          kAnyTransactionID,
+		                          &event );
+		
+		AEDisposeDesc( &addr );
+		
+		if ( err == noErr )
+		{
+			err = AEPutParamDesc( &event,
+			                      keyDirectObject,
+			                      &items );
+			
+			if ( err )
+			{
+				AEDisposeDesc( &event );
+			}
+		}
+	}
+	
+	return err;
+}
+
+static
+OSErr OpenItemsWithRunningApp( const AEDescList&           items,
+                               const ProcessSerialNumber&  psn )
+{
+	if ( gActivate )
+	{
+		SetFrontProcess( &psn );
+	}
+	
+	OSErr err;
+	
+	AppleEvent event;
+	AppleEvent reply;
+	
+	err = MakeOpenDocsEvent( items, psn, event );
+	
+	if ( err == noErr )
+	{
+		err = AESend( &event,
+		              &reply,
+		              kAENoReply | kAECanInteract,
+		              kAENormalPriority,
+		              kAEDefaultTimeout,
+		              NULL,
+		              NULL );
+		
+		AEDisposeDesc( &event );
+	}
+	
+	if ( err == noErr  &&  gActivate )
+	{
+		using mac::sys::current_process;
+		using mac::sys::is_front_process;
+		
+		while ( ! is_front_process( current_process() ) )
+		{
+			sleep( 0 );
+		}
+	}
+	
+	return err;
+}
+
+static
+OSErr LaunchApplicationWithDocsToOpen( const FSObj&       app,
+                                       const AEDescList&  items )
+{
+	static ProcessSerialNumber no_process = {};
+	
+	OSErr  err;
+	AEDesc params;
+	
+	AppleEvent event;
+	
+	err = MakeOpenDocsEvent( items, no_process, event );
+	
+	if ( err == noErr )
+	{
+		err = AECoerceDesc( &event, typeAppParameters, &params );
+		
+		AEDisposeDesc( &event );
+	}
+	
+	if ( err == noErr )
+	{
+		Handle h;
+		
+		if ( TARGET_API_MAC_CARBON )
+		{
+			Size size = AEGetDescDataSize( &params );
+			
+			if ( (h = NewHandle( size )) )
+			{
+				AEGetDescData( &params, *h, size );
+			}
+			
+			AEDisposeDesc( &params );
+		}
+		else
+		{
+			h = (Handle) params.dataHandle;
+		}
+		
+		if ( h )
+		{
+			HLock( h );
+			
+			AppParameters* params = (AppParameters*) *h;
+			
+			mac::proc::launch_application( app, params );
+			
+			DisposeHandle( h );
+		}
+	}
+	
+	return err;
+}
+
+
+static
+OSType DefaultTextFileCreator()
+{
+#ifdef __RELIX__
+	
+	const char* path = "/sys/type/text/.~DEFAULT";
+	
+	int fd = open( path, O_RDONLY );
+	
+	if ( fd >= 0 )
+	{
+		OSType result;
+		
+		ssize_t n_read = read( fd, &result, sizeof result );
+		
+		close( fd );
+		
+		if ( n_read == sizeof result )
+		{
+			return result;
+		}
+	}
+	
+	/*
+		If we get here, either the file /sys/type/text/.~DEFAULT
+		got removed from MacRelix without updating open, or we're so
+		resource-constrained that the open() failed, in which case
+		reporting the error will be similarly dicey.
+		
+		Either way, fall back to 'ttxt'.
+	*/
+	
+#endif
+	
+	return 'ttxt';
+}
+
+static
+OSType SignatureOfAppForOpening()
+{
+	if ( gOpenInEditor )
+	{
+		// User has specified default text editor.
+		// Check MAC_EDITOR_SIGNATURE environment variable first.
+		// If set, it must be a four-character code.
+		
+		if ( const char* macEditorSignature = getenv( "MAC_EDITOR_SIGNATURE" ) )
+		{
+			if ( strlen( macEditorSignature ) == sizeof 'quad' )
+			{
+				return gear::decode_quad( macEditorSignature );
+			}
+			
+			// Treat a malformed quad value the same as no value.  Move on.
+		}
+		
+		// No MAC_EDITOR_SIGNATURE; use the MacRelix default.
+		
+		return DefaultTextFileCreator();
+	}
+	
+	if ( gAppSigToOpenIn != NULL )
+	{
+		// User has specified an application by its signature
+		
+		if ( strlen( gAppSigToOpenIn ) != sizeof 'quad' )
+		{
+			return 0;  // becomes paramErr
+		}
+		
+		return gear::decode_quad( gAppSigToOpenIn );
+	}
+	
+	// Otherwise, give everything to the Finder.
+	
+	return sigFinder;
+}
+
+static
+OSErr OpenItemsUsingOptions( const AEDescList& items )
+{
+	// we either have a pathname or signature for the app.
+	// if pathname, resolve to FSSpec and check if it's running.
+	// if running, send AE and return
+	// if signature, check if it's running.
+	// if it's running, send it odoc and return
+	// if not, lookup in DT
+	// launch with app parameters
+	
+	// ways to specify app:
+	// --app: pathname
+	// --sig: signature
+	// -e or -t: either?
+	// default: sig
+	
+	OSErr err;
+	FSObj appFile;
+	
+	if ( gAppNameToOpenIn != NULL )
+	{
+		// User has specified an application by its pathname
+		
+		using mac::relix::FSObj_from_existing_path;
+		
+		// Resolve to FSSpec
+		err = FSObj_from_existing_path( gAppNameToOpenIn, appFile );
+		
+		if ( err )
+		{
+			goto error;
+		}
+		
+		// Find it if running
+		ProcessSerialNumber psn;
+		
+		if ( mac::proc::find_process( psn, appFile ) == noErr )
+		{
+			// The app is already running -- send it an odoc event
+			err = OpenItemsWithRunningApp( items, psn );
+			
+			// We're done
+			return err;
+		}
+		
+		// No such process
+		// appFile is already set
+	}
+	else
+	{
+		// Look up by signature.
+		
+		// Pick a signature
+		OSType signature = SignatureOfAppForOpening();
+		
+		if ( ! signature )
+		{
+			return paramErr;
+		}
+		
+		// Find it if running
+		ProcessSerialNumber psn;
+		
+		err = mac::proc::find_process( psn, signature );
+		
+		if ( err == noErr )
+		{
+			// The app is already running -- send it an odoc event
+			err = OpenItemsWithRunningApp( items, psn );
+			
+			// We're done
+			return err;
+		}
+		
+		if ( err == procNotFound )
+		{
+		#if ! __LP64__
+			
+			err = mac::file::get_desktop_APPL( appFile, signature );
+			
+		#endif
+		}
+	}
+	
+	if ( err == noErr )
+	{
+		err = LaunchApplicationWithDocsToOpen( appFile, items );
+	}
+	
+error:
+	
+	return err;
+}
+
+int main( int argc, char** argv )
+{
+	char *const *args = get_options( argv );
+	
+	const int argn = argc - (args - argv);
+	
+#if __LP64__
+	
+	if ( gUseHFSPathnames )
+	{
+		fprintf( stderr, "open: HFS pathnames are unsupported in 64-bit\n" );
+		
+		return 50;
 	}
 	
 #endif
 	
-	static inline
-	Error ResolvePathname( FSRef& file, const char* path, bool hfs )
+	OSErr err = noErr;
+	
+	AEDescList items;
+	
+	err = AECreateList( 0, 0, false, &items );
+	
+	if ( err )
 	{
-		using mac::relix::FSRef_from_path;
-		
-		return FSRef_from_path( path, file );
+		goto error;
 	}
 	
-	static
-	n::owned< Mac::AEDesc_Data > CoerceFSObjToAliasDesc( const FSObj& item )
+	for ( char const *const *it = args;  *it != NULL;  ++it )
 	{
-		OSErr err;
+		const char* pathname = *it;
 		
-		Mac::AEDesc_Data result;
+		FSObj item;
 		
-		err = AECoercePtr( typeFSObj, &item, sizeof item, typeAlias, &result );
-		
-		if ( ! TARGET_API_MAC_CARBON  &&  err == errAECoercionFail )
+		if ( Error err = ResolvePathname( item, pathname, gUseHFSPathnames ) )
 		{
-			/*
-				Older systems don't provide FSSpec->alias
-				coercion, so do it manually.
-			*/
+			int errnum = is_errno( err ) ? errno_from_muxed( err )
+			                             : errno_from_mac_error( err );
 			
-			AliasHandle alias;
-			
-		#if ! __LP64__
-			
-			err = NewAlias( NULL, &item, &alias );
-			
-		#endif
-			
-			if ( err == noErr )
+			if ( errnum > 0 )
 			{
-				result.descriptorType = typeAlias;
-				result.dataHandle     = (AEDataStorage) alias;
-			}
-		}
-		
-		Mac::ThrowOSStatus( err );
-		
-		return n::owned< Mac::AEDesc_Data >::seize( result );
-	}
-	
-	static n::owned< Mac::AppleEvent > MakeOpenDocsEvent( const Mac::AEDescList_Data&  items,
-	                                                      const ProcessSerialNumber&   psn )
-	{
-		OSErr           err;
-		AEAddressDesc   addr;
-		Mac::AppleEvent event;
-		
-		err = AECreateDesc( typeProcessSerialNumber, &psn, sizeof psn, &addr );
-		
-		if ( err == noErr )
-		{
-			err = AECreateAppleEvent( kCoreEventClass,
-			                          kAEOpenDocuments,
-			                          &addr,
-			                          kAutoGenerateReturnID,
-			                          kAnyTransactionID,
-			                          &event );
-			
-			AEDisposeDesc( &addr );
-			
-			if ( err == noErr )
-			{
-				err = AEPutParamDesc( &event,
-				                      keyDirectObject,
-				                      &items );
-				
-				if ( err )
-				{
-					AEDisposeDesc( &event );
-				}
-			}
-		}
-		
-		Mac::ThrowOSStatus( err );
-		
-		return n::owned< Mac::AppleEvent >::seize( event );
-	}
-	
-	static void OpenItemsWithRunningApp( const Mac::AEDescList_Data&  items,
-	                                     const ProcessSerialNumber&   psn )
-	{
-		if ( gActivate )
-		{
-			SetFrontProcess( &psn );
-		}
-		
-		N::AESend( MakeOpenDocsEvent( items, psn ),
-		           Mac::kAENoReply | Mac::kAECanInteract );
-		
-		if ( gActivate )
-		{
-			using mac::sys::current_process;
-			using mac::sys::is_front_process;
-			
-			while ( ! is_front_process( current_process() ) )
-			{
-				sleep( 0 );
-			}
-		}
-	}
-	
-	static
-	void LaunchApplicationWithDocsToOpen( const FSObj&                 app,
-	                                      const Mac::AEDescList_Data&  items )
-	{
-		static ProcessSerialNumber no_process = {};
-		
-		OSErr  err;
-		AEDesc params;
-		
-		n::owned< Mac::AppleEvent > event = MakeOpenDocsEvent( items, no_process );
-		
-		err = AECoerceDesc( &event.get(), typeAppParameters, &params );
-		
-		if ( err == noErr )
-		{
-			Handle h;
-			
-			if ( TARGET_API_MAC_CARBON )
-			{
-				Size size = AEGetDescDataSize( &params );
-				
-				if ( (h = NewHandle( size )) )
-				{
-					AEGetDescData( &params, *h, size );
-				}
-				
-				AEDisposeDesc( &params );
+				fprintf( stderr, "open: %s: %s\n", pathname, strerror( errnum ) );
 			}
 			else
 			{
-				h = (Handle) params.dataHandle;
+				fprintf( stderr, "open: %s: OSErr %d\n", pathname, err );
 			}
 			
-			if ( h )
-			{
-				HLock( h );
-				
-				AppParameters* params = (AppParameters*) *h;
-				
-				mac::proc::launch_application( app, params );
-				
-				DisposeHandle( h );
-			}
+			continue;
+		}
+		
+		AEDesc   desc;
+		OSStatus err;
+		
+		err = CoerceFSObjToAliasDesc( item, desc );
+		
+		if ( err == noErr )
+		{
+			err = AEPutDesc( &items, 0, &desc );
+			
+			AEDisposeDesc( &desc );
+		}
+		
+		if ( err )
+		{
+			break;
 		}
 	}
 	
-	
-	static
-	OSType DefaultTextFileCreator()
+	if ( err == noErr )
 	{
-	#ifdef __RELIX__
-		
-		const char* path = "/sys/type/text/.~DEFAULT";
-		
-		int fd = open( path, O_RDONLY );
-		
-		if ( fd >= 0 )
-		{
-			OSType result;
-			
-			ssize_t n_read = read( fd, &result, sizeof result );
-			
-			close( fd );
-			
-			if ( n_read == sizeof result )
-			{
-				return result;
-			}
-		}
-		
-		/*
-			If we get here, either the file /sys/type/text/.~DEFAULT
-			got removed from MacRelix without updating open, or we're so
-			resource-constrained that the open() failed, in which case
-			reporting the error will be similarly dicey.
-			
-			Either way, fall back to 'ttxt'.
-		*/
-		
-	#endif
-		
-		return 'ttxt';
+		err = OpenItemsUsingOptions( items );
 	}
 	
-	static
-	OSType SignatureOfAppForOpening()
+	AEDisposeDesc( &items );
+	
+error:
+	
+	if ( err )
 	{
-		if ( gOpenInEditor )
-		{
-			// User has specified default text editor.
-			// Check MAC_EDITOR_SIGNATURE environment variable first.
-			// If set, it must be a four-character code.
-			
-			if ( const char* macEditorSignature = getenv( "MAC_EDITOR_SIGNATURE" ) )
-			{
-				if ( strlen( macEditorSignature ) == sizeof 'quad' )
-				{
-					return gear::decode_quad( macEditorSignature );
-				}
-				
-				// Treat a malformed quad value the same as no value.  Move on.
-			}
-			
-			// No MAC_EDITOR_SIGNATURE; use the MacRelix default.
-			
-			return DefaultTextFileCreator();
-		}
+		fprintf( stderr, "open: OSErr %d\n", err );
 		
-		if ( gAppSigToOpenIn != NULL )
-		{
-			// User has specified an application by its signature
-			
-			if ( strlen( gAppSigToOpenIn ) != sizeof 'quad' )
-			{
-				Mac::ThrowOSStatus( paramErr );
-			}
-			
-			return gear::decode_quad( gAppSigToOpenIn );
-		}
-		
-		// Otherwise, give everything to the Finder.
-		
-		return sigFinder;
+		return 1;
 	}
 	
-	static void OpenItemsUsingOptions( const Mac::AEDescList_Data& items )
-	{
-		// we either have a pathname or signature for the app.
-		// if pathname, resolve to FSSpec and check if it's running.
-		// if running, send AE and return
-		// if signature, check if it's running.
-		// if it's running, send it odoc and return
-		// if not, lookup in DT
-		// launch with app parameters
-		
-		// ways to specify app:
-		// --app: pathname
-		// --sig: signature
-		// -e or -t: either?
-		// default: sig
-		
-		FSObj appFile;
-		
-		if ( gAppNameToOpenIn != NULL )
-		{
-			// User has specified an application by its pathname
-			
-			using mac::relix::FSObj_from_existing_path;
-			
-			// Resolve to FSSpec
-			OSErr err = FSObj_from_existing_path( gAppNameToOpenIn, appFile );
-			
-			Mac::ThrowOSStatus( err );
-			
-			// Find it if running
-			ProcessSerialNumber psn;
-			
-			if ( mac::proc::find_process( psn, appFile ) == noErr )
-			{
-				// The app is already running -- send it an odoc event
-				OpenItemsWithRunningApp( items, psn );
-				
-				// We're done
-				return;
-			}
-			
-			// No such process
-			// appFile is already set
-		}
-		else
-		{
-			// Look up by signature.
-			
-			// Pick a signature
-			OSType signature = SignatureOfAppForOpening();
-			
-			// Find it if running
-			ProcessSerialNumber psn;
-			
-			OSErr err = mac::proc::find_process( psn, signature );
-			
-			if ( err == noErr )
-			{
-				// The app is already running -- send it an odoc event
-				OpenItemsWithRunningApp( items, psn );
-				
-				// We're done
-				return;
-			}
-			
-			if ( err == procNotFound )
-			{
-			#if ! __LP64__
-				
-				err = mac::file::get_desktop_APPL( appFile, signature );
-				
-			#endif
-			}
-			
-			Mac::ThrowOSStatus( err );
-		}
-		
-		LaunchApplicationWithDocsToOpen( appFile, items );
-	}
-	
-	int Main( int argc, char** argv )
-	{
-		char *const *args = get_options( argv );
-		
-		const int argn = argc - (args - argv);
-		
-	#if __LP64__
-		
-		if ( gUseHFSPathnames )
-		{
-			fprintf( stderr, "open: HFS pathnames are unsupported in 64-bit\n" );
-			
-			return 50;
-		}
-		
-	#endif
-		
-		n::owned< Mac::AEDescList_Data > items = N::AECreateList< Mac::AEDescList_Data >( false );
-		
-		for ( char const *const *it = args;  *it != NULL;  ++it )
-		{
-			const char* pathname = *it;
-			
-			FSObj item;
-			
-			Error err = ResolvePathname( item, pathname, gUseHFSPathnames );
-			
-			if ( err )
-			{
-				int errnum = is_errno( err ) ? errno_from_muxed( err )
-				                             : errno_from_mac_error( err );
-				
-				if ( errnum > 0 )
-				{
-					fprintf( stderr, "open: %s: %s\n", pathname, strerror( errnum ) );
-				}
-				else
-				{
-					fprintf( stderr, "open: %s: OSErr %d\n", pathname, err );
-				}
-				
-				continue;
-			}
-			
-			N::AEPutDesc( items, 0, CoerceFSObjToAliasDesc( item ) );
-		}
-		
-		OpenItemsUsingOptions( items );
-		
-		return 0;
-	}
-
+	return 0;
 }
