@@ -193,18 +193,18 @@ namespace MacCDROM
 		int firstAudioTrack = DecodeBCD( entry->min );
 		ASSERT( firstAudioTrack == 1 );
 		
-		entry = (const RawEntry*) (point + 5);
+		entry = (const RawEntry*) (point += 5);
 		
 		toc.lastAudioTrack = DecodeBCD( entry->min );
 		ASSERT( toc.lastAudioTrack <= toc.lastTrack );
 		
-		entry = (const RawEntry*) (point + 5 * 2);
+		entry = (const RawEntry*) (point += 5);
 		
 		toc.a2 = CountFramesBCD( *entry );
 		
 		for ( int track = firstTrack;  track <= toc.lastTrack;  ++track )
 		{
-			entry = (const RawEntry*) (point + 5 * (2 + track));
+			entry = (const RawEntry*) (point += 5);
 			
 			toc.trackStarts[ track - 1 ] = CountFramesBCD( *entry );
 		}
