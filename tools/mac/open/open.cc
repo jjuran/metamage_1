@@ -283,12 +283,30 @@ static
 OSErr OpenItemsWithRunningApp( const AEDescList&           items,
                                const ProcessSerialNumber&  psn )
 {
+	OSErr err;
+	
 	if ( gActivate )
 	{
-		SetFrontProcess( &psn );
+		using mac::proc::test_process;
+		using mac::sys::is_front_process;
+		
+		/*
+			Wait for the target process to become
+			frontmost before we send it the event.
+			
+			Be on guard for the target process dying
+			before we ever observe it being in front.
+		*/
+		
+		err = SetFrontProcess( &psn );
+		
+		while ( err == noErr  &&  ! is_front_process( psn ) )
+		{
+			sleep( 0 );
+			
+			err = test_process( psn );
+		}
 	}
-	
-	OSErr err;
 	
 	AppleEvent event;
 	AppleEvent reply;
@@ -306,17 +324,6 @@ OSErr OpenItemsWithRunningApp( const AEDescList&           items,
 		              NULL );
 		
 		AEDisposeDesc( &event );
-	}
-	
-	if ( err == noErr  &&  gActivate )
-	{
-		using mac::sys::current_process;
-		using mac::sys::is_front_process;
-		
-		while ( ! is_front_process( current_process() ) )
-		{
-			sleep( 0 );
-		}
 	}
 	
 	return err;
