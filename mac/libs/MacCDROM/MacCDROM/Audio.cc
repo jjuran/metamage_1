@@ -202,7 +202,7 @@ namespace MacCDROM
 		
 		toc.a2 = CountFramesBCD( *entry );
 		
-		for ( int track = firstTrack;  track <= toc.lastTrack;  ++track )
+		for ( int track = 1;  track <= toc.lastTrack;  ++track )
 		{
 			entry = (const RawEntry*) (point += 5);
 			
