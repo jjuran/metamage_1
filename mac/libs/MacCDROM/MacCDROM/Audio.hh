@@ -13,14 +13,6 @@
 #include <MacTypes.h>
 #endif
 
-// nucleus
-#ifndef NUCLEUS_ENUMERATIONTRAITS_HH
-#include "nucleus/enumeration_traits.hh"
-#endif
-#ifndef NUCLEUS_FLAGOPS_HH
-#include "nucleus/flag_ops.hh"
-#endif
-
 
 namespace MacCDROM
 {
@@ -40,17 +32,19 @@ namespace MacCDROM
 		}
 	};
 	
-	enum OpticalPositioningType
+	typedef UInt16 OpticalPositioningType;
+	
+	enum
 	{
 		kOpticalPositioningLogicalBlockAddress = 0x0000,
 		kOpticalPositioningRunningTimeBCD      = 0x0001,
 		kOpticalPositioningTrackNumberBCD      = 0x0002,
 		kOpticalPositioningPlayListIndex       = 0x0003,
-		
-		kOpticalPositioningType_Max = nucleus::enumeration_traits< ::UInt16 >::max
 	};
 	
-	enum AudioStatusCode
+	typedef UInt8 AudioStatusCode;
+	
+	enum
 	{
 		kAudioStatusPlaying = 0,
 		kAudioStatusPaused  = 1,
@@ -58,11 +52,11 @@ namespace MacCDROM
 		kAudioStatusDone    = 3,
 		kAudioStatusError   = 4,
 		kAudioStatusNil     = 5,
-		
-		kAudioStatusCode_Max = nucleus::enumeration_traits< ::UInt8 >::max
 	};
 	
-	enum AudioPlayMode
+	typedef UInt8 AudioPlayMode;
+	
+	enum
 	{
 		kAudioPlayModeMute = 0,
 		
@@ -78,13 +72,11 @@ namespace MacCDROM
 		                       | kAudioPlayModeRightThruLeft
 		                       | kAudioPlayModeLeftThruRight
 		                       | kAudioPlayModeRightThruRight,
-		
-		kAudioPlayMode_Max = nucleus::enumeration_traits< ::UInt8 >::max
 	};
 	
-	NUCLEUS_DEFINE_FLAG_OPS( AudioPlayMode )
+	typedef UInt8 TrackControl;
 	
-	enum TrackControl
+	enum
 	{
 		kTrackControlTrackFormatMask = 0x0D,
 		kTrackControlDigitalCopyMask = 0x02,
@@ -98,9 +90,7 @@ namespace MacCDROM
 		kTrackControlData = 0x04,
 		
 		kTrackControlDigitalCopyProhibited = 0x00,
-		kTrackControlDigitalCopyPermitted = 0x02,
-		
-		kTrackControl_Max = nucleus::enumeration_traits< ::UInt8 >::max
+		kTrackControlDigitalCopyPermitted  = 0x02,
 	};
 	
 	typedef unsigned long Frames;
