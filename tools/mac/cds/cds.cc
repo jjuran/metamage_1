@@ -11,6 +11,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// disc-id
+#include "disc-id/disc-id.hh"
+
 // gear
 #include "gear/hexadecimal.hh"
 #include "gear/inscribe_decimal.hh"
@@ -152,6 +155,8 @@ namespace tool
 	{
 		CD::TrackCount tracks = CD::CountTracks( gTOC );
 		
+		disc_id::start_t starts[ 99 ];
+		
 		plus::var_string command = "discid ";
 		
 		command += gear::inscribe_decimal( tracks );
@@ -159,6 +164,8 @@ namespace tool
 		for ( int track = 1;  track <= tracks;  ++track )
 		{
 			int offset = CD::TrackStart( gTOC, track );
+			
+			starts[ track ] = offset / 75;
 			
 			command += " ";
 			command += gear::inscribe_decimal( offset );
@@ -172,7 +179,9 @@ namespace tool
 		
 		char *const discid_buf = discid_message + STRLEN( "Disc ID is " );
 		
-		unsigned int discID = CD::CDDBDiscID( gTOC );
+		disc_id::start_t total = DiscContentLength( gTOC ) / 75;
+		
+		disc_id::hash_t discID = disc_id::hash( tracks, starts + 1, total );
 		
 		gear::encode_32_bit_hex( discID, discid_buf );
 		
