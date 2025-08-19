@@ -413,6 +413,12 @@ namespace tool
 		}
 	}
 	
+	static inline
+	bool all_spaces( const plus::string& s )
+	{
+		return s.find_first_not_of( " " ) == s.npos;
+	}
+	
 	int RunCommandInToolServer( const plus::string& command, bool switch_layers )
 	{
 		const ProcessSerialNumber& self = mac::sys::current_process();
@@ -422,6 +428,11 @@ namespace tool
 	retry:
 		
 		const ProcessSerialNumber toolServer = find_or_launch_ToolServer();
+		
+		if ( all_spaces( command ) )
+		{
+			return 0;
+		}
 		
 		// This is a bit of a hack.
 		// It really ought to happen just after we send the event.
