@@ -202,11 +202,11 @@ namespace MacCDROM
 		
 		toc.a2 = CountFramesBCD( *entry );
 		
-		for ( int track = 1;  track <= toc.lastTrack;  ++track )
+		for ( int i = 0;  i < toc.lastTrack;  ++i )
 		{
 			entry = (const RawEntry*) (point += 5);
 			
-			toc.trackStarts[ track - 1 ] = CountFramesBCD( *entry );
+			toc.trackStarts[ i ] = CountFramesBCD( *entry );
 		}
 		
 		if ( toc.lastAudioTrack == toc.lastTrack )
