@@ -67,8 +67,8 @@ int main( int argc, char** argv )
 		
 		const UInt8 id = registers[ 3 ][ 2 ];
 		
-		printf( "Type:   %.2x -> %.2x\n", data.devType, id );
-		printf( "Origin: %c\n",     '0' + data.origADBAddr );
+		printf( "Type:   %.2x -> %.2x\n", (Byte) data.devType, id );
+		printf( "Origin: %c\n",     '0' +        data.origADBAddr );
 		
 		printf( "Registers:\n" );
 		
