@@ -3,14 +3,14 @@
 	-----------------
 */
 
-#ifndef GENIE_FS_HFS_HASHLONGNAME_HH
-#define GENIE_FS_HFS_HASHLONGNAME_HH
+#ifndef RELIXLONGFILENAMEHASH_HASHLONGNAME_HH
+#define RELIXLONGFILENAMEHASH_HASHLONGNAME_HH
 
 // more-libc
 #include "more/size.h"
 
 
-namespace Genie
+namespace relix
 {
 	
 	typedef unsigned char Byte;

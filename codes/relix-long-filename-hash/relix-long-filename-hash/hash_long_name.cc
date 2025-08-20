@@ -3,7 +3,7 @@
 	-----------------
 */
 
-#include "Genie/FS/HFS/hash_long_name.hh"
+#include "relix-long-filename-hash/hash_long_name.hh"
 
 // more-libc
 #include "more/string.h"
@@ -18,7 +18,7 @@
 #pragma exceptions off
 
 
-namespace Genie
+namespace relix
 {
 
 using crypto::md5;

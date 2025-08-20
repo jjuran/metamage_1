@@ -60,6 +60,9 @@
 // mac-app-utils
 #include "mac_app/create_alias.hh"
 
+// relix-long-filename-hash
+#include "relix-long-filename-hash/hash_long_name.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -113,7 +116,6 @@
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree_RsrcFile.hh"
-#include "Genie/FS/HFS/hash_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/FS/HFS/Rename.hh"
 #include "Genie/FS/HFS/SetFileTimes.hh"
@@ -142,6 +144,8 @@ namespace Genie
 	using mac::types::VRefNum_DirID;
 	using mac::file::make_FSSpec;
 	using mac::file::parent_directory;
+	
+	using relix::hash_long_name;
 	
 	
 	static inline bool operator==( const FSSpec& a, const FSSpec& b )
