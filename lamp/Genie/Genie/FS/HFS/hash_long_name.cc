@@ -34,11 +34,11 @@ char base32_encode( unsigned x )
 	return (x < 10 ? '0' : 'a' - 10) + x;
 }
 
-void hash_long_name( unsigned char* hashed, const char* long_name, size_t long_length )
+void hash_long_name( Byte* hashed, const char* long_name, size_t long_length )
 {
 	const size_t max_length = 31;
 	
-	uint8_t* p = hashed;
+	Byte* p = hashed;
 	
 	if ( long_length <= max_length )
 	{
@@ -83,11 +83,11 @@ void hash_long_name( unsigned char* hashed, const char* long_name, size_t long_l
 	
 	md5_digest hash = md5( begin, long_length );
 	
-	const unsigned char* data = (const unsigned char*) &hash;
+	const Byte* data = (const Byte*) &hash;
 	
 	*p++ = 31;
 	
-	p = (uint8_t*) mempcpy( p, begin, shortened_base_length );
+	p = (Byte*) mempcpy( p, begin, shortened_base_length );
 	
 	*p++ = 0xA5;  // bullet
 	
@@ -96,7 +96,7 @@ void hash_long_name( unsigned char* hashed, const char* long_name, size_t long_l
 		*p++ = base32_encode( data[ i ] >> 3 );
 	}
 	
-	p = (uint8_t*) mempcpy( p, base_end, end - base_end );
+	p = (Byte*) mempcpy( p, base_end, end - base_end );
 }
 
 }

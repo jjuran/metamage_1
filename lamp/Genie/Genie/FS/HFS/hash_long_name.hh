@@ -13,7 +13,9 @@
 namespace Genie
 {
 	
-	void hash_long_name( unsigned char* hashed, const char* name, size_t len );
+	typedef unsigned char Byte;
+	
+	void hash_long_name( Byte* hashed, const char* name, size_t length );
 	
 }
 
