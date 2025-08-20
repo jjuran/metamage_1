@@ -28,9 +28,10 @@ using crypto::md5;
 using crypto::md5_digest;
 
 
-static char base32_encode( unsigned x )
+static inline
+char base32_encode( unsigned x )
 {
-	return ( x < 10 ? '0' : 'a' - 10 ) + x;
+	return (x < 10 ? '0' : 'a' - 10) + x;
 }
 
 void hash_long_name( unsigned char* hashed, const char* long_name, size_t long_length )
