@@ -225,26 +225,12 @@ namespace tool
 		
 	}
 	
-	class IncludeDirGatherer
+	static
+	void gather_includes( CompilerOptions&     options,
+	                      bool&                needs_union,
+	                      const plus::string&  project_name )
 	{
-		private:
-			CompilerOptions& its_options;
-			bool&            it_needs_include_union;
-		
-		public:
-			IncludeDirGatherer( CompilerOptions& options, bool& needs_union )
-			:
-				its_options( options ),
-				it_needs_include_union( needs_union )
-			{
-			}
-			
-			void operator()( const plus::string& project_name );
-	};
-	
-	void IncludeDirGatherer::operator()( const plus::string& project_name )
-	{
-		const Project& project = GetProject( project_name, its_options.Target().platform );
+		const Project& project = GetProject( project_name, options.Target().platform );
 		
 		const ProductType product = project.Product();
 		
@@ -257,7 +243,7 @@ namespace tool
 		if ( !project.SourceDirs().empty() )
 		{
 			// Omit projects with 'sources' dirs, since those will be unioned
-			it_needs_include_union = true;
+			needs_union = true;
 			
 			populate_include_union( project );
 			
@@ -270,7 +256,7 @@ namespace tool
 		
 		for ( Iter it = search_dirs.begin();  it != search_dirs.end();  ++it )
 		{
-			its_options.AppendIncludeDir( *it );
+			options.AppendIncludeDir( *it );
 		}
 	}
 	
@@ -789,14 +775,15 @@ namespace tool
 		bool needs_include_union = false;
 		
 		// Select the includes belonging to the projects we use
-		IncludeDirGatherer gatherer( preprocess_options, needs_include_union );
 		
 		const StringVector& all_used_projects = project.AllUsedProjects();
 		
 		// Reverse direction so projects can override Prefix.hh
 		for ( size_t i = all_used_projects.size();  i > 0;  )
 		{
-			gatherer( all_used_projects[ --i ] );
+			gather_includes( preprocess_options,
+			                 needs_include_union,
+			                 all_used_projects[ --i ] );
 		}
 		
 		if ( needs_include_union )
