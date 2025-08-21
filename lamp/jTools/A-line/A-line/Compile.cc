@@ -225,6 +225,16 @@ namespace tool
 		
 	}
 	
+#ifdef __APPLE__
+	
+	static bool include_union_is_usable = true;
+	
+#else
+	
+	const bool include_union_is_usable = true;
+	
+#endif
+	
 	static
 	void gather_includes( CompilerOptions&     options,
 	                      bool&                needs_union,
@@ -240,7 +250,7 @@ namespace tool
 			return;
 		}
 		
-		if ( !project.SourceDirs().empty() )
+		if ( include_union_is_usable  &&  ! project.SourceDirs().empty() )
 		{
 			// Omit projects with 'sources' dirs, since those will be unioned
 			needs_union = true;
@@ -760,6 +770,73 @@ namespace tool
 			}
 	};
 	
+	static inline
+	bool can_run_Classic()
+	{
+	#if defined( __APPLE__ )  &&  defined( __POWERPC__ )
+		
+		return true;
+		
+	#endif
+		
+		return false;
+	}
+	
+	static inline
+	bool can_use_symlinks( const TargetInfo& info )
+	{
+	#ifdef __APPLE__
+		
+		if ( can_run_Classic()  &&  info.toolchain == toolchainMetrowerks )
+		{
+			/*
+				If we're targeting the Metrowerks compiler MPW tool
+				(which implies the Classic environment), then we
+				can't give it include paths with symlinks.  So we
+				can only use symlinks if we preprocess separately.
+				
+				TODO:  In MacRelix, the --cpp option is overridden
+				by setting a precompiled header in A-line.conf.
+				Native A-line in Mac OS X is currently exhibiting
+				the opposite behavior (--cpp overrides `prefix`),
+				but we may wish to change that in the future.
+			*/
+			
+			return Options().preprocess;
+		}
+		
+		return true;
+		
+	#endif
+		
+	#ifdef __RELIX__
+		
+		/*
+			The symlinks we create in MacRelix are also aliases,
+			and the MPW-hosted compiler has no problem with them.
+		*/
+		
+		return true;
+		
+	#endif
+		
+		/*
+			We assume, if we get here, that we're not running
+			in any kind of Mac OS, and further, that targeting
+			classic Mac OS isn't an option on this platform.
+			
+			The first assumption would be invalidated by using
+			Metrowerks' compiler targeting Mach-O.  The second
+			could be invalidated by using a modified tlsrvr
+			that somehow communicates with ToolServer running
+			over a network or in an emulator, or possibly with
+			a reimplementation of the MPW environment that also
+			includes emulation and can run MPW tools and scripts.
+		*/
+		
+		return true;
+	}
+	
 	void CompileSources( Project&                 project,
 	                     const TargetInfo&        target_info,
 	                     const TaskPtr&           project_base_task,
@@ -771,6 +848,12 @@ namespace tool
 		CompilerOptions preprocess_options = basic_options;
 		
 		DefineMacros( preprocess_options, target_info );
+		
+	#ifdef __APPLE__
+		
+		include_union_is_usable = can_use_symlinks( target_info );
+		
+	#endif
 		
 		bool needs_include_union = false;
 		
