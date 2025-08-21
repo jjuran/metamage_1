@@ -14,9 +14,6 @@
 // crypto
 #include "md5/md5.hh"
 
-// Debug
-#include "debug/assert.hh"
-
 
 #pragma exceptions off
 
@@ -69,8 +66,11 @@ void hash_long_name( Byte* hashed, const char* long_name, size_t long_length )
 	
 	const bool dotted = dot != NULL  &&  end - dot <= extension_limit;
 	
-	// Set the end of the base to end of string if there's no dot,
-	// or if the extension (including the dot) exceeds the limit.
+	/*
+		Set the end of the base to end-of-string if there's no dot,
+		or if the extension (including the dot) exceeds the limit.
+	*/
+	
 	const char* base_end = dotted ? dot : end;
 	
 	const size_t base_length = base_end - begin;
@@ -78,8 +78,6 @@ void hash_long_name( Byte* hashed, const char* long_name, size_t long_length )
 	const size_t replaced_length = long_length - max_length + inserted_length;
 	
 	const size_t shortened_base_length = base_length - replaced_length;
-	
-	ASSERT( shortened_base_length >= minimum_remaining_base );
 	
 	md5_digest hash = md5( begin, long_length );
 	
