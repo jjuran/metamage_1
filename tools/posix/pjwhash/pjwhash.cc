@@ -9,7 +9,7 @@
 // gear
 #include "gear/hexadecimal.hh"
 
-// adler32
+// pjw-hash
 #include "pjw-hash/pjw-hash.hh"
 
 
