@@ -593,47 +593,28 @@ namespace tool
 	}
 	
 	
-	class object_filename_filler
-	{
-		private:
-			const plus::string& its_objects_dir;
-			const char*         its_extension;
-		
-		public:
-			object_filename_filler( const plus::string& objects, const char* extension )
-			:
-				its_objects_dir( objects ),
-				its_extension( extension )
-			{
-				ASSERT( !its_objects_dir.empty() );
-			}
-			
-			plus::string operator()( const plus::string& source_path ) const
-			{
-				const char* ext = its_extension;
-				
-				if ( ! ext )
-				{
-					const bool is_C = source_path.end()[ -2 ] == '.';
-					
-					ext = is_C ? ".i.o" : ".ii.o";
-				}
-				
-				return derived_pathname( its_objects_dir, source_path, ext );
-			}
-	};
-	
 	static
 	void FillObjectFiles( const plus::string&  objects_dir,
 	                      const StringVector&  source_paths,
 	                      StringVector&        object_pathnames,
 	                      const char*          extension = ".o" )
 	{
-		object_filename_filler f( objects_dir, extension );
-		
 		for ( size_t i = 0;  i < source_paths.size();  ++i )
 		{
-			object_pathnames.push_back( f( source_paths[ i ] ) );
+			const plus::string& path = source_paths[ i ];
+			
+			const char* ext = extension;
+			
+			if ( ! ext )
+			{
+				const bool is_C = path.end()[ -2 ] == '.';
+				
+				ext = is_C ? ".i.o" : ".ii.o";
+			}
+			
+			object_pathnames.push_back( derived_pathname( objects_dir,
+			                                              path,
+			                                              ext ) );
 		}
 	}
 	
