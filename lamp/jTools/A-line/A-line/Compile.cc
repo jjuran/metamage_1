@@ -984,29 +984,13 @@ namespace tool
 			
 			const plus::string& output_path = *the_object;
 			
-			plus::string cpp_path;
-			
-			if ( preprocessing )
-			{
-				const char* p = output_path.data();
-				
-				const char* it = gear::find_last_match( p, output_path.size(), '/' );
-				
-				it = it ? it + 1 : p;
-				
-				plus::string name( it, &*output_path.end() - 2 );
-				
-				cpp_path = cpp_dir / name;
-			}
-			
-			TaskPtr task = add_cpp_and_cc_tasks( project,
-			                                     preprocess_options,
-			                                     options,
-			                                     source_pathname,
-			                                     cpp_path,
-			                                     output_path,
-			                                     diagnostics_dir_path,
-			                                     precompile_task );
+			TaskPtr task = make_unit_tasks( project,
+			                                preprocess_options,
+			                                options,
+			                                cpp_dir,
+			                                precompile_task,
+			                                source_pathname,
+			                                output_path );
 			
 			task->AddDependent( source_dependency );
 		}
