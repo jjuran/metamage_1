@@ -738,37 +738,43 @@ namespace tool
 			{
 			}
 			
-			TaskPtr operator()( const plus::string& source_pathname, const plus::string& object_pathname )
-			{
-				const bool preprocessing = !its_cpp_dir.empty();
-				
-				plus::string cpp_path;
-				
-				if ( preprocessing )
-				{
-					const char* p = object_pathname.data();
-					
-					const char* it = gear::find_last_match( p, object_pathname.size(), '/' );
-					
-					it = it ? it + 1 : p;
-					
-					plus::string name( it, &*object_pathname.end() - 2 );
-					
-					cpp_path = its_cpp_dir / name;
-				}
-				
-				TaskPtr task = add_cpp_and_cc_tasks( its_project,
-				                                     its_cpp_options,
-				                                     its_cc_options,
-				                                     source_pathname,
-				                                     cpp_path,
-				                                     object_pathname,
-				                                     ProjectDiagnosticsDirPath( its_project.Name() ),
-				                                     its_precompile_task );
-				
-				return task;
-			}
+			TaskPtr operator()( const plus::string&  source_pathname,
+			                    const plus::string&  object_pathname );
 	};
+	
+	TaskPtr ToolTaskMaker::operator()( const plus::string&  source_pathname,
+	                                   const plus::string&  object_pathname )
+	{
+		using gear::find_last_match;
+		
+		const bool preprocessing = ! its_cpp_dir.empty();
+		
+		plus::string cpp_path;
+		
+		if ( preprocessing )
+		{
+			const char* p = object_pathname.data();
+			
+			const char* it = find_last_match( p, object_pathname.size(), '/' );
+			
+			it = it ? it + 1 : p;
+			
+			plus::string name( it, &*object_pathname.end() - 2 );
+			
+			cpp_path = its_cpp_dir / name;
+		}
+		
+		TaskPtr task = add_cpp_and_cc_tasks( its_project,
+		                                     its_cpp_options,
+		                                     its_cc_options,
+		                                     source_pathname,
+		                                     cpp_path,
+		                                     object_pathname,
+		                                     ProjectDiagnosticsDirPath( its_project.Name() ),
+		                                     its_precompile_task );
+		
+		return task;
+	}
 	
 	static inline
 	bool can_run_Classic()
@@ -986,7 +992,8 @@ namespace tool
 		
 		for ( size_t i = 0;  i < n_tools;  ++i )
 		{
-			tool_dependencies.push_back( task_maker( source_paths[ i ], object_paths[ i ] ) );
+			tool_dependencies.push_back( task_maker( source_paths[ i ],
+			                                         object_paths[ i ] ) );
 		}
 		
 		StringVector::const_iterator the_source, the_object, end = source_paths.end();
