@@ -84,6 +84,18 @@ namespace tool
 	                                        const plus::string&     source_pathname,
 	                                        const plus::string&     output_pathname );
 	
+#ifndef __RELIX__
+	
+	static
+	bool using_nexus()
+	{
+		static bool nexus_peered = getenv( "NEXUS_PEER" );
+		
+		return nexus_peered;
+	}
+	
+#endif
+	
 	static plus::string diagnostics_file_path( const plus::string&  dir_path,
 	                                           const plus::string&  target_path )
 	{
@@ -937,6 +949,30 @@ namespace tool
 		{
 			const char* _i  = ".i";
 			const char* _ii = ".ii";
+			
+		#ifndef __RELIX__
+			
+			/*
+				We're preprocessing separately, which already implies
+				targeting classic Mac OS.  The question is whether we
+				use native tools that directly drive ToolServer (running
+				on this machine in Classic), or the nexus wrappers that
+				shuttle commands and their inputs to a Mac OS 9 host via
+				a shared directory (e.g. over AFP or SheepShaver's extfs).
+				
+				If the former, we need to avoid using ".i" and ".ii" as
+				extensions for source filenames, as that will confuse the
+				Metrowerks compiler and yield warnings.  Therefore, we
+				should only use those extensions if we're using nexus.
+				(If we can't run Classic, we can assume the use of nexus.)
+			*/
+			
+			if ( can_run_Classic()  &&  ! using_nexus() )
+			{
+				_i = _ii = ".cpp";
+			}
+			
+		#endif
 			
 			FillOutputFiles( cpp_dir, source_paths, cppout_paths, _i, _ii );
 		}
