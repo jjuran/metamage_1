@@ -714,40 +714,18 @@ namespace tool
 		return cc_task;
 	}
 	
-	class ToolTaskMaker
-	{
-		private:
-			const Project&          its_project;
-			const CompilerOptions&  its_cpp_options;
-			const CompilerOptions&  its_cc_options;
-			const plus::string&     its_cpp_dir;
-			const TaskPtr&          its_precompile_task;
-		
-		public:
-			ToolTaskMaker( const Project&          project,
-			               const CompilerOptions&  cpp_options,
-			               const CompilerOptions&  cc_options,
-			               const plus::string&     cpp_dir,
-			               const TaskPtr&          precompile )
-			:
-				its_project        ( project     ),
-				its_cpp_options    ( cpp_options ),
-				its_cc_options     ( cc_options  ),
-				its_cpp_dir        ( cpp_dir     ),
-				its_precompile_task( precompile  )
-			{
-			}
-			
-			TaskPtr operator()( const plus::string&  source_pathname,
-			                    const plus::string&  object_pathname );
-	};
-	
-	TaskPtr ToolTaskMaker::operator()( const plus::string&  source_pathname,
-	                                   const plus::string&  object_pathname )
+	static
+	TaskPtr make_unit_tasks( const Project&          project,
+	                         const CompilerOptions&  cpp_options,
+	                         const CompilerOptions&  cc_options,
+	                         const plus::string&     cpp_dir,
+	                         const TaskPtr&          precompile,
+	                         const plus::string&     source_pathname,
+	                         const plus::string&     object_pathname )
 	{
 		using gear::find_last_match;
 		
-		const bool preprocessing = ! its_cpp_dir.empty();
+		const bool preprocessing = ! cpp_dir.empty();
 		
 		plus::string cpp_path;
 		
@@ -761,17 +739,17 @@ namespace tool
 			
 			plus::string name( it, &*object_pathname.end() - 2 );
 			
-			cpp_path = its_cpp_dir / name;
+			cpp_path = cpp_dir / name;
 		}
 		
-		TaskPtr task = add_cpp_and_cc_tasks( its_project,
-		                                     its_cpp_options,
-		                                     its_cc_options,
+		TaskPtr task = add_cpp_and_cc_tasks( project,
+		                                     cpp_options,
+		                                     cc_options,
 		                                     source_pathname,
 		                                     cpp_path,
 		                                     object_pathname,
-		                                     ProjectDiagnosticsDirPath( its_project.Name() ),
-		                                     its_precompile_task );
+		                                     ProjectDiagnosticsDirPath( project.Name() ),
+		                                     precompile );
 		
 		return task;
 	}
@@ -984,16 +962,15 @@ namespace tool
 		
 		tool_dependencies.reserve( n_tools );
 		
-		ToolTaskMaker task_maker( project,
-		                          preprocess_options,
-		                          options,
-		                          cpp_dir,
-		                          precompile_task );
-		
 		for ( size_t i = 0;  i < n_tools;  ++i )
 		{
-			tool_dependencies.push_back( task_maker( source_paths[ i ],
-			                                         object_paths[ i ] ) );
+			tool_dependencies.push_back( make_unit_tasks( project,
+			                                              preprocess_options,
+			                                              options,
+			                                              cpp_dir,
+			                                              precompile_task,
+			                                              source_paths[ i ],
+			                                              object_paths[ i ] ) );
 		}
 		
 		StringVector::const_iterator the_source, the_object, end = source_paths.end();
