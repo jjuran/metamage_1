@@ -755,18 +755,6 @@ namespace tool
 	}
 	
 	static inline
-	bool can_run_Classic()
-	{
-	#if defined( __APPLE__ )  &&  defined( __POWERPC__ )
-		
-		return true;
-		
-	#endif
-		
-		return false;
-	}
-	
-	static inline
 	bool can_use_symlinks( const TargetInfo& info )
 	{
 	#ifdef __APPLE__
@@ -953,6 +941,11 @@ namespace tool
 		}
 		
 		StringVector object_paths;
+		
+		if ( can_run_Classic() )
+		{
+			avoid_long_names = target_info.toolchain == toolchainMetrowerks;
+		}
 		
 		NameObjectFiles( project, object_paths, preprocessing );
 		

@@ -11,11 +11,15 @@
 // Standard C++
 #include <algorithm>
 
+// relix-long-filename-hash
+#include "relix-long-filename-hash/hash_long_name.hh"
+
 // posix-utils
 #include "posix/update_file.hh"
 
 // plus
 #include "plus/string/concat.hh"
+#include "plus/mac_utf8.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -51,6 +55,8 @@ namespace tool
 	
 	using namespace io::path_descent_operators;
 	
+	
+	bool avoid_long_names;
 	
 	class RemoveDirTask : public Task
 	{
@@ -612,6 +618,52 @@ namespace tool
 				ext = is_C ? ".i.o" : ".ii.o";
 			}
 			
+		#ifdef __APPLE__
+			
+			if ( avoid_long_names )
+			{
+				plus::var_string pathname = derived_pathname( objects_dir,
+				                                              path,
+				                                              ext );
+				
+				size_t i = pathname.find_last_of( '/' ) + 1;
+				size_t n = pathname.size() - i;
+				
+				plus::string filename( &pathname[ i ], n );
+				
+				plus::var_string hfs_filename = mac_from_utf8( filename );
+				
+				n = hfs_filename.size();
+				
+				if ( n > 31 )
+				{
+					unsigned char hashed[ 32 ];
+					
+					char* q = &hfs_filename[ 0 ];
+					
+					std::replace( q, q + n, ':', '/' );
+					
+					relix::hash_long_name( hashed, q, n );
+					
+					hfs_filename = hashed;
+					
+					q = &hfs_filename[ 0 ];
+					
+					std::replace( q, q + n, '/', ':' );
+					
+					filename = utf8_from_mac( hfs_filename );
+					
+					pathname.resize( i );
+					pathname.append( filename );
+				}
+				
+				object_pathnames.push_back( pathname );
+				
+				continue;
+			}
+			
+		#endif
+			
 			object_pathnames.push_back( derived_pathname( objects_dir,
 			                                              path,
 			                                              ext ) );
@@ -658,6 +710,11 @@ namespace tool
 		StringVector objectFiles;
 		
 		const bool preprocessing = Options().preprocess  &&  !get_project_providing_prefix( project, targetInfo.platform );
+		
+		if ( can_run_Classic() )
+		{
+			avoid_long_names = targetInfo.toolchain == toolchainMetrowerks;
+		}
 		
 		NameObjectFiles( project, objectFiles, preprocessing );
 		
