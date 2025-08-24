@@ -599,10 +599,9 @@ namespace tool
 	}
 	
 	
-	static
-	void FillObjectFiles( const plus::string&  objects_dir,
+	void FillOutputFiles( const plus::string&  output_dir,
 	                      const StringVector&  source_paths,
-	                      StringVector&        object_pathnames,
+	                      StringVector&        output_pathnames,
 	                      const char*          ext_c,
 	                      const char*          ext_cc )
 	{
@@ -618,7 +617,7 @@ namespace tool
 			
 			if ( avoid_long_names )
 			{
-				plus::var_string pathname = derived_pathname( objects_dir,
+				plus::var_string pathname = derived_pathname( output_dir,
 				                                              path,
 				                                              ext );
 				
@@ -653,14 +652,14 @@ namespace tool
 					pathname.append( filename );
 				}
 				
-				object_pathnames.push_back( pathname );
+				output_pathnames.push_back( pathname );
 				
 				continue;
 			}
 			
 		#endif
 			
-			object_pathnames.push_back( derived_pathname( objects_dir,
+			output_pathnames.push_back( derived_pathname( output_dir,
 			                                              path,
 			                                              ext ) );
 		}
@@ -684,7 +683,7 @@ namespace tool
 	{
 		const char* ext = dot_o( use_cpp );
 		
-		FillObjectFiles( ProjectObjectsDirPath( project.Name() ),
+		FillOutputFiles( ProjectObjectsDirPath( project.Name() ),
 		                 project.Sources(),
 		                 object_pathnames,
 		                 ext ? ext : ".i.o",

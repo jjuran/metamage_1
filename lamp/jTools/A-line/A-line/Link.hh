@@ -22,6 +22,12 @@ namespace tool
 	
 	extern bool avoid_long_names;
 	
+	void FillOutputFiles( const plus::string&  output_dir,
+	                      const StringVector&  source_paths,
+	                      StringVector&        output_pathnames,
+	                      const char*          ext_c,
+	                      const char*          ext_cc );
+	
 	void NameObjectFiles( const Project&  project,
 	                      StringVector&   object_pathnames,
 	                      bool            use_cpp );
