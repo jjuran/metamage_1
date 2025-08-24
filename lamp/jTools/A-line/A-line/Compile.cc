@@ -966,24 +966,17 @@ namespace tool
 			                                              object_paths[ i ] ) );
 		}
 		
-		StringVector::const_iterator the_source, the_object, end = source_paths.end();
+		const size_t n = source_paths.size();
 		
-		for ( the_source = source_paths.begin() + n_tools,
-		      the_object = object_paths.begin() + n_tools;  the_source != end;  ++the_source,
-		                                                                        ++the_object )
+		for ( size_t i = n_tools;  i < n;  ++i )
 		{
-			// The source file
-			const plus::string& source_pathname = *the_source;
-			
-			const plus::string& output_path = *the_object;
-			
 			TaskPtr task = make_unit_tasks( project,
 			                                preprocess_options,
 			                                options,
 			                                cpp_dir,
 			                                precompile_task,
-			                                source_pathname,
-			                                output_path );
+			                                source_paths[ i ],
+			                                object_paths[ i ] );
 			
 			task->AddDependent( source_dependency );
 		}
