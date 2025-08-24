@@ -9,9 +9,9 @@
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
-
-// POSIX
-#include <unistd.h>
+#ifndef __SHUTDOWN__
+#include <ShutDown.h>
+#endif
 
 // Standard C
 #include <stdint.h>
@@ -25,9 +25,6 @@
 // ams-common
 #include "callouts.hh"
 #include "c_string.hh"
-
-// ams-seg
-#include "options.hh"
 
 
 #pragma exceptions off
@@ -377,10 +374,5 @@ void ExitToShell_patch()
 		Launch_patch( &pb );
 	}
 	
-	if ( linger_on_exit )
-	{
-		pause();
-	}
-	
-	_exit( 0 );
+	ShutDwnPower();
 }

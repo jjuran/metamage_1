@@ -35,6 +35,7 @@
 // ams-seg
 #include "Scrap.hh"
 #include "Segments.hh"
+#include "Shutdown.hh"
 #include "options.hh"
 
 
@@ -77,6 +78,12 @@ enum
 	_UnloadSeg = _UnLoadSeg,
 };
 
+
+static
+void install_Shutdown()
+{
+	TBTRAP( ShutDown );  // A895
+}
 
 static void install_SegmentLoader()
 {
@@ -249,6 +256,7 @@ int main( int argc, char** argv )
 	}
 	
 	install_Scrap();
+	install_Shutdown();
 	install_SegmentLoader();
 	
 	module_suspend();  // doesn't return
