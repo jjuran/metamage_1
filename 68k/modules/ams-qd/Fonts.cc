@@ -311,6 +311,14 @@ void apply_characterization( Style face, FMOutput& output )
 	}
 }
 
+static inline
+Handle get_specific_font( short fontNum, short fontSize )
+{
+	const short resID = new_resID_for_font_and_size( fontNum, fontSize );
+	
+	return get_NFNT_or_FONT( resID );
+}
+
 pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 {
 	const short fontNum  = specific_font( input->family );
@@ -327,9 +335,25 @@ pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 		
 		if ( resID != system_font_resID  ||  newFont == NULL )
 		{
-			if ( Handle h = get_NFNT_or_FONT( resID ) )
+			Handle h;
+			
+			if ( (h = get_NFNT_or_FONT( resID )) )
 			{
 				newFont = (FontRec**) h;
+			}
+			else if ( (h = get_specific_font( fontNum, fontSize * 2 )) )
+			{
+				newFont = (FontRec**) h;
+				
+				the_current_FMOutput.denom.v *= 2;
+				the_current_FMOutput.denom.h *= 2;
+			}
+			else if ( (h = get_specific_font( fontNum, fontSize / 2u )) )
+			{
+				newFont = (FontRec**) h;
+				
+				the_current_FMOutput.numer.v *= 2;
+				the_current_FMOutput.numer.h *= 2;
 			}
 			else if ( newFont == NULL )
 			{
