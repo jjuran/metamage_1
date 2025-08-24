@@ -718,35 +718,16 @@ namespace tool
 	TaskPtr make_unit_tasks( const Project&          project,
 	                         const CompilerOptions&  cpp_options,
 	                         const CompilerOptions&  cc_options,
-	                         const plus::string&     cpp_dir,
 	                         const TaskPtr&          precompile,
 	                         const plus::string&     source_pathname,
+	                         const plus::string&     cppout_pathname,
 	                         const plus::string&     object_pathname )
 	{
-		using gear::find_last_match;
-		
-		const bool preprocessing = ! cpp_dir.empty();
-		
-		plus::string cpp_path;
-		
-		if ( preprocessing )
-		{
-			const char* p = object_pathname.data();
-			
-			const char* it = find_last_match( p, object_pathname.size(), '/' );
-			
-			it = it ? it + 1 : p;
-			
-			plus::string name( it, &*object_pathname.end() - 2 );
-			
-			cpp_path = cpp_dir / name;
-		}
-		
 		TaskPtr task = add_cpp_and_cc_tasks( project,
 		                                     cpp_options,
 		                                     cc_options,
 		                                     source_pathname,
-		                                     cpp_path,
+		                                     cppout_pathname,
 		                                     object_pathname,
 		                                     ProjectDiagnosticsDirPath( project.Name() ),
 		                                     precompile );
@@ -940,6 +921,7 @@ namespace tool
 			cpp_dir = mkdir_path( "cpp" / project.Name() );
 		}
 		
+		StringVector cppout_paths;
 		StringVector object_paths;
 		
 		if ( can_run_Classic() )
@@ -951,18 +933,29 @@ namespace tool
 		
 		const StringVector& source_paths = project.Sources();
 		
+		if ( preprocessing )
+		{
+			const char* _i  = ".i";
+			const char* _ii = ".ii";
+			
+			FillOutputFiles( cpp_dir, source_paths, cppout_paths, _i, _ii );
+		}
+		
 		const size_t n_tools = project.ToolCount();
 		
 		tool_dependencies.reserve( n_tools );
 		
 		for ( size_t i = 0;  i < n_tools;  ++i )
 		{
+			const plus::string& cppout = preprocessing ? cppout_paths[ i ]
+			                                           : plus::string::null;
+			
 			tool_dependencies.push_back( make_unit_tasks( project,
 			                                              preprocess_options,
 			                                              options,
-			                                              cpp_dir,
 			                                              precompile_task,
 			                                              source_paths[ i ],
+			                                              cppout,
 			                                              object_paths[ i ] ) );
 		}
 		
@@ -970,12 +963,15 @@ namespace tool
 		
 		for ( size_t i = n_tools;  i < n;  ++i )
 		{
+			const plus::string& cppout = preprocessing ? cppout_paths[ i ]
+			                                           : plus::string::null;
+			
 			TaskPtr task = make_unit_tasks( project,
 			                                preprocess_options,
 			                                options,
-			                                cpp_dir,
 			                                precompile_task,
 			                                source_paths[ i ],
+			                                cppout,
 			                                object_paths[ i ] );
 			
 			task->AddDependent( source_dependency );
