@@ -100,11 +100,8 @@ static command::option options[] =
 	{ "edit",    Option_user_editor   },
 	{ "sysedit", Option_system_editor },
 	
-	{ "activate", Option_activate  },
-	{ "actv",     Option_activate  },
 	{ "grounded", Option_grounded  },
 	{ "hfs",      Option_HFS_paths },
-	{ "mac",      Option_HFS_paths },
 	
 	{ NULL }
 };
@@ -141,10 +138,6 @@ static char* const* get_options( char* const* argv )
 			
 			case Option_grounded:
 				gActivate = false;
-				break;
-			
-			case Option_activate:
-				gActivate = true;
 				break;
 			
 			case Option_HFS_paths:
