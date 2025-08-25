@@ -114,11 +114,23 @@ pascal long ZeroScrap_patch()
 
 pascal long PutScrap_patch( long length, ResType type, const char* src )
 {
+	short prev_state = scrapVars.scrapState;
+	
+	if ( prev_state < 0 )
+	{
+		return noScrapErr;
+	}
+	
 	Handle h = scrapVars.scrapHandle;
 	
 	if ( ! h )
 	{
-		return noScrapErr;
+		if ( long err = LoadScrap() )
+		{
+			return err;
+		}
+		
+		h = scrapVars.scrapHandle;
 	}
 	
 	/*
@@ -142,6 +154,11 @@ pascal long PutScrap_patch( long length, ResType type, const char* src )
 		scrapVars.scrapSize += 8 + length + (length & 0x1);
 	}
 	
+	if ( prev_state == 0 )
+	{
+		UnloadScrap();
+	}
+	
 	return err;
 }
 
@@ -151,11 +168,23 @@ pascal long PutScrap_patch( long length, ResType type, const char* src )
 
 pascal long GetScrap_patch( Handle dst, ResType type, long* offset )
 {
+	short prev_state = scrapVars.scrapState;
+	
+	if ( prev_state < 0 )
+	{
+		return noScrapErr;
+	}
+	
 	Handle h = scrapVars.scrapHandle;
 	
 	if ( ! h )
 	{
-		return noScrapErr;
+		if ( long err = LoadScrap() )
+		{
+			return err;
+		}
+		
+		h = scrapVars.scrapHandle;
 	}
 	
 	long result = noTypeErr;
@@ -197,6 +226,11 @@ pascal long GetScrap_patch( Handle dst, ResType type, long* offset )
 		entry_size += entry_size & 0x1;
 		
 		p += entry_size;
+	}
+	
+	if ( prev_state == 0 )
+	{
+		UnloadScrap();
 	}
 	
 	return result;
