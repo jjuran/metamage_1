@@ -30,7 +30,6 @@
 #include "Lists.hh"
 #include "Menus.hh"
 #include "options.hh"
-#include "Scrap.hh"
 #include "StandardFile.hh"
 #include "StrUtils.hh"
 #include "TextEdit.hh"
@@ -302,17 +301,6 @@ static void install_Packages()
 }
 
 static
-void install_Scrap()
-{
-	TBTRAP( InfoScrap   );  // A9F9
-	TBTRAP( UnloadScrap );  // A9FA
-	TBTRAP( LoadScrap   );  // A9FB
-	TBTRAP( ZeroScrap   );  // A9FC
-	TBTRAP( GetScrap    );  // A9FD
-	TBTRAP( PutScrap    );  // A9FE
-}
-
-static
 void install_IconUtilities()
 {
 	TBTRAP( IconDispatch );  // ABC9
@@ -366,7 +354,6 @@ int main( int argc, char** argv )
 	install_Controls();
 	install_TextEdit();
 	install_Dialogs();
-	install_Scrap();
 	
 	install_IconUtilities();
 	

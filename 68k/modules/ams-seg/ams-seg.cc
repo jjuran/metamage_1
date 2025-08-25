@@ -33,6 +33,7 @@
 #include "callouts.hh"
 
 // ams-seg
+#include "Scrap.hh"
 #include "Segments.hh"
 #include "options.hh"
 
@@ -84,6 +85,17 @@ static void install_SegmentLoader()
 	TBTRAP( Launch      );  // A9F2
 	TBTRAP( ExitToShell );  // A9F4
 	TBTRAP( GetAppParms );  // A9F5
+}
+
+static
+void install_Scrap()
+{
+	TBTRAP( InfoScrap   );  // A9F9
+	TBTRAP( UnloadScrap );  // A9FA
+	TBTRAP( LoadScrap   );  // A9FB
+	TBTRAP( ZeroScrap   );  // A9FC
+	TBTRAP( GetScrap    );  // A9FD
+	TBTRAP( PutScrap    );  // A9FE
 }
 
 struct AppFilesHeader
@@ -236,6 +248,7 @@ int main( int argc, char** argv )
 		}
 	}
 	
+	install_Scrap();
 	install_SegmentLoader();
 	
 	module_suspend();  // doesn't return
