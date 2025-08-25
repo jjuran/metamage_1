@@ -155,8 +155,10 @@ pascal long GetScrap_patch( Handle dst, ResType type, long* offset )
 	
 	if ( ! h )
 	{
-		return noTypeErr;
+		return noScrapErr;
 	}
+	
+	long result = noTypeErr;
 	
 	Ptr p = *h;
 	
@@ -179,15 +181,17 @@ pascal long GetScrap_patch( Handle dst, ResType type, long* offset )
 			{
 				SetHandleSize( dst, entry_size );
 				
-				if ( OSErr err = MemErr )
+				if ( (result = MemErr) )
 				{
-					return err;
+					break;
 				}
 				
 				BlockMoveData( *h + *offset, *dst, entry_size );
 			}
 			
-			return entry_size;
+			result = entry_size;
+			
+			break;
 		}
 		
 		entry_size += entry_size & 0x1;
@@ -195,5 +199,5 @@ pascal long GetScrap_patch( Handle dst, ResType type, long* offset )
 		p += entry_size;
 	}
 	
-	return noTypeErr;
+	return result;
 }
