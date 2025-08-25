@@ -5,6 +5,11 @@
 
 #include "Shutdown.hh"
 
+// Mac OS
+#ifndef __SCRAP__
+#include <Scrap.h>
+#endif
+
 // POSIX
 #include <unistd.h>
 
@@ -32,6 +37,13 @@ void unimplemented_call( short selector : __D0 )
 static
 void ShutDown_call( short selector : __D0 )
 {
+	/*
+		TODO:  Perform various housekeeping tasks, like
+		closing drivers and calling shutdown handlers.
+	*/
+	
+	UnloadScrap();
+	
 	if ( linger_on_exit )
 	{
 		pause();
