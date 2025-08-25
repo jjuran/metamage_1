@@ -122,7 +122,7 @@ pascal long PutScrap_patch( long length, ResType type, const char* src )
 #pragma mark Reading from the Desk Scrap
 #pragma mark -
 
-pascal long GetScrap_patch( char** dst, ResType type, long* offset )
+pascal long GetScrap_patch( Handle dst, ResType type, long* offset )
 {
 	Handle h = scrapVars.scrapHandle;
 	
@@ -147,6 +147,18 @@ pascal long GetScrap_patch( char** dst, ResType type, long* offset )
 		if ( entry_type == type )
 		{
 			*offset = p - *h;
+			
+			if ( dst )
+			{
+				SetHandleSize( dst, entry_size );
+				
+				if ( OSErr err = MemErr )
+				{
+					return err;
+				}
+				
+				BlockMoveData( *h + *offset, *dst, entry_size );
+			}
 			
 			return entry_size;
 		}
