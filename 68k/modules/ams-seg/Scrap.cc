@@ -6,6 +6,9 @@
 #include "Scrap.hh"
 
 // Mac OS
+#ifndef __FILES__
+#include <Files.h>
+#endif
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
@@ -68,19 +71,43 @@ pascal long LoadScrap_patch()
 
 pascal long ZeroScrap_patch()
 {
-	scrapVars.scrapSize = 0;
-	
 	if ( Handle h = scrapVars.scrapHandle )
 	{
 		SetHandleSize( h, 0 );
 	}
+	else if ( scrapVars.scrapState == 0 )
+	{
+		OSErr err;
+		short refnum;
+		
+		err = FSOpen( scrapName, fsRdPerm, &refnum );
+		
+		if ( err == noErr )
+		{
+			err = SetEOF( refnum, 0 );
+			
+			FSClose( refnum );
+			
+			if ( err )
+			{
+				return err;
+			}
+		}
+	}
 	else
 	{
 		scrapVars.scrapHandle = NewHandle( 0 );
+		
+		if ( ! scrapVars.scrapHandle )
+		{
+			return memFullErr;
+		}
+		
+		scrapVars.scrapState = 1;
 	}
 	
+	scrapVars.scrapSize = 0;
 	scrapVars.scrapCount++;
-	scrapVars.scrapState = 1;
 	
 	return noErr;
 }
