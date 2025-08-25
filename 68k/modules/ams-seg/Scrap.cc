@@ -57,12 +57,84 @@ pascal ScrapStuff* InfoScrap_patch()
 
 pascal long UnloadScrap_patch()
 {
-	return noErr;
+	OSErr err;
+	short refnum;
+	
+	if ( scrapVars.scrapState == 0 )
+	{
+		return noErr;  // scrap already on disk
+	}
+	
+	if ( scrapVars.scrapState < 0 )
+	{
+		return noScrapErr;  // scrap not initialized
+	}
+	
+	err = FSOpen( scrapName, fsRdWrPerm, &refnum );
+	
+	if ( err == noErr )
+	{
+		Handle h = scrapVars.scrapHandle;
+		
+		Size size = scrapVars.scrapSize;
+		
+		(err = FSWrite( refnum, &size, *h ))  ||
+		(err = SetEOF ( refnum, size ));
+		
+		FSClose( refnum );
+		
+		if ( err == noErr )
+		{
+			DisposeHandle( h );
+			
+			scrapVars.scrapHandle = NULL;
+			scrapVars.scrapState  = 0;
+		}
+	}
+	
+	return err;
 }
 
 pascal long LoadScrap_patch()
 {
-	return noErr;
+	OSErr err;
+	short refnum;
+	
+	if ( scrapVars.scrapState > 0 )
+	{
+		return noErr;  // scrap already in memory
+	}
+	
+	if ( scrapVars.scrapState < 0 )
+	{
+		return noScrapErr;  // scrap not initialized
+	}
+	
+	err = FSOpen( scrapName, fsRdPerm, &refnum );
+	
+	if ( err == noErr )
+	{
+		err = memFullErr;
+		
+		Size size = scrapVars.scrapSize;
+		
+		if ( Handle h = NewHandle( size ) )
+		{
+			if ( (err = FSRead( refnum, &size, *h )) )
+			{
+				DisposeHandle( h );
+			}
+			else
+			{
+				scrapVars.scrapHandle = h;
+				scrapVars.scrapState  = 1;
+			}
+		}
+		
+		FSClose( refnum );
+	}
+	
+	return err;
 }
 
 #pragma mark -
