@@ -118,6 +118,23 @@ pascal long LoadScrap_patch()
 		
 		Size size = scrapVars.scrapSize;
 		
+		if ( size < 0 )
+		{
+			/*
+				This extension allows the `app` startup program
+				to poke a few values into the scrap globals and
+				then call LoadScrap(), reloading into memory the
+				scrap as it was when the prior application quit.
+			*/
+			
+			if ( (err = GetEOF( refnum, &size )) )
+			{
+				goto bail;
+			}
+			
+			scrapVars.scrapSize = size;
+		}
+		
 		if ( Handle h = NewHandle( size ) )
 		{
 			if ( (err = FSRead( refnum, &size, *h )) )
@@ -130,6 +147,8 @@ pascal long LoadScrap_patch()
 				scrapVars.scrapState  = 1;
 			}
 		}
+		
+	bail:
 		
 		FSClose( refnum );
 	}
