@@ -13,6 +13,9 @@
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
+#ifndef __SCRAP__
+#include <Scrap.h>
+#endif
 
 // Standard C
 #include <string.h>
@@ -228,6 +231,16 @@ int main( int argc, char** argv )
 	}
 	
 	load_DAs();
+	
+	ScrapStuff* info = InfoScrap();
+	
+	info->scrapSize = -1;  // invalid size, will be updated on load
+	info->scrapState = 0;  // scrap is now initialized as unloaded
+	
+	if ( long err = LoadScrap() )
+	{
+		info->scrapState = err;  // oops, make that uninitialized
+	}
 	
 	Byte appName[ 33 ];
 	
