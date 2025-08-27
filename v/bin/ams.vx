@@ -280,14 +280,19 @@ def get_docfs_fd
 {
 	var docfs = getenv "AMS_DOCFS" or return ()
 	
-	if docfs == "-" then
+	if not '/' in docfs then
 	{
+		if docfs == "-" then
+		{
+			docfs = app_name
+		}
+		
 		let osx_docs = home "/Documents"
 		let ams_docs = if exists osx_docs
 		then { osx_docs "/Advanced Mac Substitute" }
 		else { home "/.advanced-mac-substitute/documents" }
 		
-		docfs = ams_docs "/" app_name
+		docfs = ams_docs "/" docfs
 		
 		if not exists docfs then
 		{
