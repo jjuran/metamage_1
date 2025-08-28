@@ -67,6 +67,43 @@ char* const* get_options( char** argv )
 	return argv;
 }
 
+static const char* dce_flag_names[] =
+{
+	"dVMImmune",
+	"<bit 1 undefined>",
+	"<bit 2 undefined>",
+	"<bit 3 undefined>",
+	"<bit 4 undefined>",
+	"dOpened",
+	"dRAMBased",
+	"drvrActive",
+	
+	"dReadEnable",
+	"dWriteEnable",
+	"dControlEnable",
+	"dStatusEnable",
+	"dNeedGoodBye",
+	"dNeedTime",
+	"dNeedLock",
+	"<bit 15 undefined>",
+};
+
+static
+void print_DCE_flags( short flags )
+{
+	short mask = 0x1;
+	
+	for ( int i = 0;  i < 16;  ++i )
+	{
+		if ( flags & mask )
+		{
+			printf( "              %s\n", dce_flag_names[ i ] );
+		}
+		
+		mask <<= 1;
+	}
+}
+
 int main( int argc, char** argv )
 {
 	char* const* args = get_options( argv );
@@ -124,6 +161,8 @@ int main( int argc, char** argv )
 		printf( "Name:     %s\n",   utf              );
 		printf( "RefNum:   %d\n",   dce.dCtlRefNum   );
 		printf( "Flags:    %.4x\n", dce.dCtlFlags    );
+		
+		print_DCE_flags( dce.dCtlFlags );
 		
 		PRINT_NULLABLE( Position, "%ld" );
 		PRINT_NULLABLE( Storage, " %p"  );
