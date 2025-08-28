@@ -16,6 +16,9 @@
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
+// command
+#include "command/get_option.hh"
+
 // chars
 #include "conv/mac_utf8.hh"
 
@@ -23,8 +26,53 @@
 #pragma exceptions off
 
 
+enum
+{
+	Opt_verbose = 'v',
+	
+	Opt_last_byte = 255,
+};
+
+static command::option options[] =
+{
+	{ "verbose", Opt_verbose },
+	
+	{}
+};
+
+static bool verbose;
+
+static
+char* const* get_options( char** argv )
+{
+	int opt;
+	
+	++argv;  // skip arg 0
+	
+	while ( (opt = command::get_option( (char* const**) &argv, options )) > 0 )
+	{
+		using command::global_result;
+		
+		switch ( opt )
+		{
+			case Opt_verbose:
+				verbose = true;
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
+	return argv;
+}
+
 int main( int argc, char** argv )
 {
+	char* const* args = get_options( argv );
+	
+	int argn = argc - (args - argv);
+	
 #if ! TARGET_API_MAC_CARBON
 	
 	typedef AuxDCEHandle* UTable;
@@ -69,25 +117,30 @@ int main( int argc, char** argv )
 		
 		utf[ n ] = '\0';
 		
+		#define PRINT_NULLABLE( field, format )  \
+			if ( verbose  ||  dce.dCtl##field )  \
+				printf( #field ": " format "\n",  dce.dCtl##field )
+		
 		printf( "Name:     %s\n",   utf              );
 		printf( "RefNum:   %d\n",   dce.dCtlRefNum   );
 		printf( "Flags:    %.4x\n", dce.dCtlFlags    );
-		printf( "Position: %ld\n",  dce.dCtlPosition );
-		printf( "Storage:  %p\n",   dce.dCtlStorage  );
-		printf( "CurTicks: %ld\n",  dce.dCtlCurTicks );
-		printf( "Window:   %p\n",   dce.dCtlWindow   );
-		printf( "Delay:    %d\n",   dce.dCtlDelay    );
-		printf( "EMask:    %d\n",   dce.dCtlEMask    );
-		printf( "Menu:     %d\n",   dce.dCtlMenu     );
+		
+		PRINT_NULLABLE( Position, "%ld" );
+		PRINT_NULLABLE( Storage, " %p"  );
+		PRINT_NULLABLE( CurTicks, "%ld" );
+		PRINT_NULLABLE( Window, "  %p"  );
+		PRINT_NULLABLE( Delay, "   %d"  );
+		PRINT_NULLABLE( EMask, "   %d"  );
+		PRINT_NULLABLE( Menu, "    %d"  );
 		
 		if ( size >= sizeof (AuxDCE) )
 		{
-			printf( "Slot:     %d\n",   dce.dCtlSlot     );
-			printf( "SlotId:   %d\n",   dce.dCtlSlotId   );
-			printf( "DevBase:  %lx\n",  dce.dCtlDevBase  );
-			printf( "Owner:    %p\n",   dce.dCtlOwner    );
-			printf( "ExtDev:   %d\n",   dce.dCtlExtDev   );
-			printf( "NodeID:   %lu\n",  dce.dCtlNodeID   );
+			PRINT_NULLABLE( Slot, "    %d"  );
+			PRINT_NULLABLE( SlotId, "  %d"  );
+			PRINT_NULLABLE( DevBase, " %lx" );
+			PRINT_NULLABLE( Owner, "   %p"  );
+			PRINT_NULLABLE( ExtDev, "  %d"  );
+			PRINT_NULLABLE( NodeID, "  %lu" );
 		}
 		
 		printf( "\n" );
