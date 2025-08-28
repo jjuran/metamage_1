@@ -158,19 +158,19 @@ int main( int argc, char** argv )
 			if ( verbose  ||  dce.dCtl##field )  \
 				printf( #field ": " format "\n",  dce.dCtl##field )
 		
-		printf( "Name:     %s\n",   utf              );
-		printf( "RefNum:   %d\n",   dce.dCtlRefNum   );
-		printf( "Flags:    %.4x\n", dce.dCtlFlags    );
+		printf( "Name:     %s\n",   utf            );
+		printf( "RefNum:   %d\n",   dce.dCtlRefNum );
+		printf( "Flags:    %.4x\n", dce.dCtlFlags  );
 		
 		print_DCE_flags( dce.dCtlFlags );
 		
-		PRINT_NULLABLE( Position, "%ld" );
-		PRINT_NULLABLE( Storage, " %p"  );
-		PRINT_NULLABLE( CurTicks, "%ld" );
-		PRINT_NULLABLE( Window, "  %p"  );
-		PRINT_NULLABLE( Delay, "   %d"  );
-		PRINT_NULLABLE( EMask, "   %d"  );
-		PRINT_NULLABLE( Menu, "    %d"  );
+		PRINT_NULLABLE( Position, "%ld"  );
+		PRINT_NULLABLE( Storage, " %p"   );
+		PRINT_NULLABLE( CurTicks, "%ld"  );
+		PRINT_NULLABLE( Window, "  %p"   );
+		PRINT_NULLABLE( Delay, "   %d"   );
+		PRINT_NULLABLE( EMask, "   %.4x" );
+		PRINT_NULLABLE( Menu, "    %d"   );
 		
 		if ( size >= sizeof (AuxDCE) )
 		{
