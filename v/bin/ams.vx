@@ -33,6 +33,7 @@ var coloring = 0
 var recording = null
 var screen_res = null
 var has_cursor = bool getenv "AMS_CURSOR"
+var startup_ticks = 0
 var welcome_ticks = 0
 
 var args = begin argv
@@ -92,6 +93,10 @@ while args do
 		else if arg == "--res" then
 		{
 			screen_res = *args++
+		}
+		else if arg in ["--startup-delay", "--startup"] then
+		{
+			startup_ticks = int *args++
 		}
 		else if arg in ["--welcome-delay", "--welcome"] then
 		{
@@ -521,8 +526,9 @@ let module_opts = ams_modules map {"-m", argify v}
 
 let app = ams_bin "/app"
 
+let startup = ("--startup=" startup_ticks) (*) bool startup_ticks
 let welcome = ("--welcome=" welcome_ticks) (*) bool welcome_ticks
-let app_opts = welcome, app_name
+let app_opts = startup, welcome, app_name
 
 let works = home "/run/" getpid() ".works"
 
