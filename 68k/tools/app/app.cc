@@ -46,12 +46,12 @@ enum
 {
 	Opt_last_byte = 255,
 	
-	Opt_welcome,
+	Opt_welcome_delay,
 };
 
 static command::option options[] =
 {
-	{ "welcome", Opt_welcome, command::Param_required },
+	{ "welcome", Opt_welcome_delay, command::Param_required },
 	
 	NULL,
 };
@@ -179,7 +179,7 @@ char* const* get_options( char** argv )
 		
 		switch ( opt )
 		{
-			case Opt_welcome:
+			case Opt_welcome_delay:
 				welcome_ticks = parse_unsigned_decimal( &global_result.param );
 				break;
 			
