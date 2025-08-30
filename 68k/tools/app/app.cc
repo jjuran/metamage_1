@@ -32,6 +32,9 @@
 // command
 #include "command/get_option.hh"
 
+// app
+#include "paint_screen.hh"
+
 
 #pragma exceptions off
 
@@ -46,11 +49,13 @@ enum
 {
 	Opt_last_byte = 255,
 	
+	Opt_startup_delay,
 	Opt_welcome_delay,
 };
 
 static command::option options[] =
 {
+	{ "startup", Opt_startup_delay, command::Param_required },
 	{ "welcome", Opt_welcome_delay, command::Param_required },
 	
 	NULL,
@@ -65,7 +70,10 @@ struct LaunchParamBlockRec
 
 static QDGlobals qd;
 
+static UInt32 startup_ticks;
 static UInt32 welcome_ticks;
+
+static const Byte startupscreen_filename[] = "\p" "StartupScreen";
 
 static inline
 short asm Launch( void* pb : __A0 ) : __D0
@@ -165,6 +173,10 @@ char* const* get_options( char** argv )
 		
 		switch ( opt )
 		{
+			case Opt_startup_delay:
+				startup_ticks = parse_unsigned_decimal( &global_result.param );
+				break;
+			
 			case Opt_welcome_delay:
 				welcome_ticks = parse_unsigned_decimal( &global_result.param );
 				break;
@@ -200,13 +212,18 @@ int main( int argc, char** argv )
 	
 	OpenPort( &port );
 	
+	if ( startup_ticks  &&  paint_screen( startupscreen_filename ) == noErr )
+	{
+		mac::glue::delay( startup_ticks );
+	}
+	else
 	{
 		FillRoundRect( &port.portRect, 16, 16, &qd.gray );
 	}
 	
 	ClosePort( &port );
 	
-	UInt32 initial_Ticks = Ticks;  // probably zero
+	UInt32 initial_Ticks = Ticks;  // probably startup_ticks
 	
 	if ( welcome_ticks )
 	{
