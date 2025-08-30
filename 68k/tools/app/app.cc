@@ -16,6 +16,9 @@
 #ifndef __SCRAP__
 #include <Scrap.h>
 #endif
+#ifndef __SHUTDOWN__
+#include <ShutDown.h>
+#endif
 
 // Standard C
 #include <string.h>
@@ -49,14 +52,16 @@ enum
 {
 	Opt_last_byte = 255,
 	
+	Opt_shutoff_delay,
 	Opt_startup_delay,
 	Opt_welcome_delay,
 };
 
 static command::option options[] =
 {
-	{ "startup", Opt_startup_delay, command::Param_required },
-	{ "welcome", Opt_welcome_delay, command::Param_required },
+	{ "shutdown", Opt_shutoff_delay, command::Param_required },
+	{ "startup",  Opt_startup_delay, command::Param_required },
+	{ "welcome",  Opt_welcome_delay, command::Param_required },
 	
 	NULL,
 };
@@ -70,10 +75,12 @@ struct LaunchParamBlockRec
 
 static QDGlobals qd;
 
+static UInt32 shutoff_ticks;
 static UInt32 startup_ticks;
 static UInt32 welcome_ticks;
 
 static const Byte startupscreen_filename[] = "\p" "StartupScreen";
+static const Byte shutoffscreen_filename[] = "\p" "ShutdownScreen";
 
 static inline
 short asm Launch( void* pb : __A0 ) : __D0
@@ -157,6 +164,20 @@ void load_DAs()
 }
 
 static
+pascal
+void paint_shutdown_screen()
+{
+	HideCursor();
+	
+	OSErr err = paint_screen( shutoffscreen_filename );
+	
+	if ( err == noErr )
+	{
+		mac::glue::delay( shutoff_ticks );
+	}
+}
+
+static
 char* const* get_options( char** argv )
 {
 	using command::global_result;
@@ -173,6 +194,10 @@ char* const* get_options( char** argv )
 		
 		switch ( opt )
 		{
+			case Opt_shutoff_delay:
+				shutoff_ticks = parse_unsigned_decimal( &global_result.param );
+				break;
+			
 			case Opt_startup_delay:
 				startup_ticks = parse_unsigned_decimal( &global_result.param );
 				break;
@@ -230,6 +255,11 @@ int main( int argc, char** argv )
 		SysMap = OpenResFile( "\p" "AMS Resources" );
 		
 		SysError( dsGreeting );
+	}
+	
+	if ( shutoff_ticks )
+	{
+		ShutDwnInstall( &paint_shutdown_screen, sdOnPowerOff | sdOnUnmount );
 	}
 	
 	InitResources();
