@@ -74,20 +74,6 @@ short asm Launch( void* pb : __A0 ) : __D0
 }
 
 static inline
-void paint_desktop()
-{
-	InitGraf( &qd.thePort );
-	
-	GrafPort port;
-	
-	OpenPort( &port );
-	
-	FillRoundRect( &port.portRect, 16, 16, &qd.gray );
-	
-	ClosePort( &port );
-}
-
-static inline
 short get_Bootstrap_vRefNum()
 {
 	VCB* vcb = (VCB*) VCBQHdr.qHead;
@@ -208,7 +194,17 @@ int main( int argc, char** argv )
 	
 	const size_t len = strlen( path );
 	
-	paint_desktop();
+	InitGraf( &qd.thePort );
+	
+	GrafPort port;
+	
+	OpenPort( &port );
+	
+	{
+		FillRoundRect( &port.portRect, 16, 16, &qd.gray );
+	}
+	
+	ClosePort( &port );
 	
 	UInt32 initial_Ticks = Ticks;  // probably zero
 	
