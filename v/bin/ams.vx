@@ -93,7 +93,7 @@ while args do
 		{
 			screen_res = *args++
 		}
-		else if arg == "--welcome" then
+		else if arg in ["--welcome-delay", "--welcome"] then
 		{
 			welcome_ticks = int *args++
 		}
