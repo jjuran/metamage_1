@@ -1135,7 +1135,12 @@ void SetResInfo_handler( Handle            resource : __A0,
 	{
 		if ( ! (rsrc->attrs & resProtected) )
 		{
-			if ( name  &&  name[ 0 ] )
+			if ( name == NULL )
+			{
+				goto name_done;
+			}
+			
+			if ( name[ 0 ] )
 			{
 				Size name_size = 1 + name[ 0 ];  // includes length byte
 				
