@@ -201,6 +201,8 @@ short enqueue_command( SndChannel& chan, const SndCommand& command )
 static
 void start_next_command( SndChannel& chan )
 {
+next:
+	
 	if ( chan.qTail < 0 )
 	{
 		chan.cmdInProgress.cmd = nullCmd;
@@ -224,7 +226,21 @@ void start_next_command( SndChannel& chan )
 		chan.qHead = 0;
 	}
 	
-	do_snd_command( &chan, chan.cmdInProgress );
+	/*
+		Run any consecutive admin commands immediately, in a loop.
+	*/
+	
+	OSErr err = do_admin_command( &chan, chan.cmdInProgress );
+	
+	if ( err == noErr )
+	{
+		goto next;
+	}
+	
+	if ( err == unimplemented )
+	{
+		do_snd_command( &chan, chan.cmdInProgress );
+	}
 }
 
 static
@@ -402,7 +418,42 @@ OSErr SndNewChannel_patch( SndChannel** c, short s, long i, SndCallBackUPP u )
 pascal
 OSErr SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow )
 {
-	ERROR = "SndDisposeChannel is unimplemented";
+	if ( chan == NULL )
+	{
+		if ( (chan = default_channel) == NULL )
+		{
+			return badChannel;
+		}
+	}
+	
+	SndCommand flush;  flush.cmd = flushCmd;
+	SndCommand quiet;  quiet.cmd = quietCmd;
+	
+	/*
+		If quietNow is set, then we immediately flush (emptying the
+		queue) and quiet (terminating any currently playing sound).
+		
+		If it's clear, we queue a quietCmd (as documented).  We also
+		queue a flushCmd in case anything got queued while we waited.
+	*/
+	
+	if ( quietNow )
+	{
+		do_admin_command( chan, flush );
+		do_admin_command( chan, quiet );
+	}
+	else
+	{
+		SndDoCommand( chan, &quiet, false );
+		SndDoCommand( chan, &flush, false );
+	}
+	
+	if ( chan == default_channel )
+	{
+		DisposePtr( (Ptr) chan );
+		
+		default_channel = NULL;
+	}
 	
 	return noErr;
 }
