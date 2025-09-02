@@ -61,25 +61,25 @@ OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 		addr += (long) *h;
 	}
 	
-	const SoundHeader* snd = (SoundHeader*) addr;
+	const SoundHeader& snd = *(SoundHeader*) addr;
 	
-	if ( snd->encode != stdSH )
+	if ( snd.encode != stdSH )
 	{
-		ERROR = "unimplemented snd header encoding ", snd->encode;
+		ERROR = "unimplemented snd header encoding ", snd.encode;
 		return unimplemented;
 	}
 	
-	Ptr samples = snd->samplePtr ? snd->samplePtr : (Ptr) snd->sampleArea;
+	Ptr samples = snd.samplePtr ? snd.samplePtr : (Ptr) snd.sampleArea;
 	
-	if ( snd->length > 30000  &&  snd->sampleRate != rate22khz )
+	if ( snd.length > 30000  &&  snd.sampleRate != rate22khz )
 	{
-		ERROR = "sampled sound size of ", snd->length, " bytes is is too long";
+		ERROR = "sampled sound size of ", snd.length, " bytes is is too long";
 		return unimplemented;
 	}
 	
-	Size payload_len = snd->length;
+	Size payload_len = snd.length;
 	
-	if ( snd->length > 30000 )
+	if ( snd.length > 30000 )
 	{
 		payload_len = 370 * 80;  // 29600
 	}
@@ -99,9 +99,9 @@ OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 	FFSynthRec* freeform = (FFSynthRec*) buffer;
 	
 	freeform->mode  = ffMode;
-	freeform->count = playback_rate_from_sample_rate( snd->sampleRate );
+	freeform->count = playback_rate_from_sample_rate( snd.sampleRate );
 	
-	Size samples_remaining = snd->length;
+	Size samples_remaining = snd.length;
 	
 	do
 	{
