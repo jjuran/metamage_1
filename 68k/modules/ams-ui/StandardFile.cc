@@ -83,6 +83,20 @@ OSErr get_volume_name()
 	return err;
 }
 
+static inline
+OSType get_file_type( short vRefNum, const Byte* name )
+{
+	static FileParam pb;
+	
+	pb.ioNamePtr = (StringPtr) name;
+	pb.ioVRefNum = vRefNum;
+	pb.ioFDirIndex = 0;
+	
+	OSErr err = PBGetFInfoSync( (ParamBlockRec*) &pb );
+	
+	return err ? 0 : pb.ioFlFndrInfo.fdType;
+}
+
 static
 void populate_file_list( short n_types, const OSType* types )
 {
@@ -432,11 +446,15 @@ pascal void SFPGetFile_call( Point               where,
 	while ( hit != 3 );
 	
 	reply->good = hit != 3;  // $01 or $00
+	reply->copy = false;  // TODO
+	
 	reply->vRefNum = -SFSaveDisk;
 	reply->version = 0;
 	
 	if ( ConstStr255Param name = get_string_list_selection( filename_list ) )
 	{
+		reply->fType = get_file_type( -SFSaveDisk, name );
+		
 		fast_memcpy( reply->fName, name, 1 + name[ 0 ] );
 	}
 	
