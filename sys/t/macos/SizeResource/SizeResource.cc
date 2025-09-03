@@ -3,12 +3,18 @@
 	---------------
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
 
 // mac-sys-utils
+#include "mac_sys/has/native_Carbon.hh"
 #include "mac_sys/res_error.hh"
 
 // tap-out
@@ -32,14 +38,26 @@ static short refnum;
 static
 void init()
 {
+#if ! TARGET_API_MAC_CARBON
+	
 	CreateResFile( name );
 	
 	refnum = OpenResFile( name );
+	
+	return;
+	
+#endif
+	
+	HCreateResFile( vRefNum, dirID, name );
+	
+	refnum = HOpenResFile( vRefNum, dirID, name, fsRdWrPerm );
 }
 
 static
 void added_size()
 {
+	using mac::sys::has_native_Carbon;
+	
 	const OSErr noErr        =    0;
 	const OSErr nilHandleErr = -109;
 	const OSErr resNotFound  = -192;
@@ -114,7 +132,10 @@ void added_size()
 		
 		state = HGetState( h );
 		
-		EXPECT_EQ( state, nilHandleErr );
+		const SignedByte expected_state = has_native_Carbon() ? noErr
+		                                                      : nilHandleErr;
+		
+		EXPECT_EQ( state, expected_state );
 		
 		AddResource( h, 'TEXT', 129, NULL );
 		
