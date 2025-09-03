@@ -191,7 +191,7 @@ void CloseResFile_core( short refnum : __D0 )
 	
 	if ( CurMap == refnum )
 	{
-		CurMap = rsrc_map[0]->refnum;
+		CurMap = rsrc_map ? rsrc_map[0]->refnum : -1;
 	}
 	
 	if ( ! (map.attrs & mapReadOnly) )
