@@ -1362,10 +1362,8 @@ void AddResource_handler( Handle            data : __A0,
 	
 	SetHandleSize( (Handle) rsrc_map, length_of_map + map_increase );
 	
-	if ( OSErr err = MemErr )
+	if ( (ResErr = MemErr) )
 	{
-		ResErr = err;
-		
 		return;
 	}
 	
@@ -1379,18 +1377,18 @@ void AddResource_handler( Handle            data : __A0,
 	
 	rsrc_map_header& map = **rsrc_map;
 	
-	rsrc_header rsrc;
+	rsrc_header new_rsrc;
 	
-	rsrc.id               = id;
-	rsrc.name_offset      = -1;
-	rsrc.attrs            = resChanged;
-	rsrc.offset_high_byte = -1;
-	rsrc.offset_low_word  = -1;
-	rsrc.handle           = data;
+	new_rsrc.id               = id;
+	new_rsrc.name_offset      = -1;
+	new_rsrc.attrs            = resChanged;
+	new_rsrc.offset_high_byte = -1;
+	new_rsrc.offset_low_word  = -1;
+	new_rsrc.handle           = data;
 	
 	if ( name_size )
 	{
-		rsrc.name_offset = length_of_map - map.offset_to_names;
+		new_rsrc.name_offset = length_of_map - map.offset_to_names;
 		
 		Munger( (Handle) rsrc_map, length_of_map, NULL, 0, name, name_size );
 	}
@@ -1448,7 +1446,7 @@ void AddResource_handler( Handle            data : __A0,
 	
 	Size offset = map.offset_to_types + it->offset;
 	
-	Munger( (Handle) rsrc_map, offset, NULL, 0, &rsrc, sizeof rsrc );
+	Munger( (Handle) rsrc_map, offset, NULL, 0, &new_rsrc, sizeof new_rsrc );
 	
 	map.offset_to_names += sizeof (rsrc_header);
 	
