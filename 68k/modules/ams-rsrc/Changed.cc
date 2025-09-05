@@ -298,13 +298,22 @@ void AddResource_handler( Handle       data : __A0,
 	
 	rsrc_map_header& map = **rsrc_map;
 	
+	SInt32 file_size = extend_file_by( map, map_increase + 4 + data_size );
+	
+	if ( file_size < 0 )
+	{
+		return;
+	}
+	
+	long data_offset = file_size + map_increase - 256;
+	
 	rsrc_header new_rsrc;
 	
 	new_rsrc.id               = id;
 	new_rsrc.name_offset      = -1;
 	new_rsrc.attrs            = resChanged;
-	new_rsrc.offset_high_byte = -1;
-	new_rsrc.offset_low_word  = -1;
+	new_rsrc.offset_high_byte = data_offset >> 16;
+	new_rsrc.offset_low_word  = data_offset;
 	new_rsrc.handle           = data;
 	
 	if ( name_size )
