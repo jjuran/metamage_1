@@ -13,9 +13,6 @@
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
-// log-of-war
-#include "logofwar/report.hh"
-
 // ams-common
 #include "master_pointer.hh"
 
@@ -232,9 +229,46 @@ void ChangedResource_handler( Handle resource : __A0 )
 		}
 		else
 		{
-			ERROR = "ChangedResource is unimplemented";
+			OSErr err;
 			
-			ResErr = paramErr;
+			/*
+				If recover_rsrc_header() succeeds, then resource is valid,
+				which guarantees that home_rsrc_map() will also succeed.
+			*/
+			
+			rsrc_map_header& map = **home_rsrc_map( resource );
+			
+			long& attrs_offset = *(long*) &rsrc->attrs;
+			
+			Size data_offset = attrs_offset & 0x00FFFFFF;
+			
+			Size new_data_size = mac::glue::GetHandleSize( resource );
+			Size old_data_size = -1;
+			
+			Size data_size_size = sizeof old_data_size;
+			
+			(err = SetFPos( map.refnum, fsFromStart, 256 + data_offset  ))  ||
+			(err = FSRead ( map.refnum, &data_size_size, &old_data_size ));
+			
+			if ( (ResErr = err) )
+			{
+				return;
+			}
+			
+			if ( new_data_size > old_data_size )
+			{
+				SInt32 file_size = extend_file_by( map, 4 + new_data_size );
+				
+				if ( file_size < 0 )
+				{
+					return;
+				}
+				
+				attrs_offset += file_size - 256 - data_offset;
+			}
+			
+			map.attrs   |= mapChanged;
+			rsrc->attrs |= resChanged;
 		}
 	}
 }
