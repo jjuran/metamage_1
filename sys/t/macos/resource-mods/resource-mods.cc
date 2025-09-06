@@ -20,6 +20,7 @@
 #include "gear/parse_decimal.hh"
 
 // mac-sys-utils
+#include "mac_sys/gestalt.hh"
 #include "mac_sys/res_error.hh"
 
 // tap-out
@@ -68,6 +69,8 @@ struct rsrc_fork_header
 	U_32  length_of_data;
 	U_32  length_of_map;
 };
+
+const UInt32 sysv = mac::sys::gestalt( 'sysv' );
 
 static
 long geteof()
@@ -400,7 +403,7 @@ void one_rsrc()
 		
 		EXPECT_EQ( GetResFileAttrs( refnum ), mapChanged | mapCompact );
 		
-		EXPECT_EQ( geteof(), 328 );
+		EXPECT_EQ( geteof(), sysv < 0x1000 ? 302 : 328 );
 		
 		EXPECT_CMP_DATA( 256, 16, "\0\0\0\x0c" "Hello world?", 16 );
 		
