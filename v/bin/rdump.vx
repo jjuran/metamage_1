@@ -92,6 +92,13 @@ let src = argv[ 1 ]
 
 let fork = packed load src
 
+if not fork then
+{
+	warn "rdump: " src ": zero-length file"
+	
+	exit 50
+}
+
 let fork_header = rsrc_fork_header fork[ 0 -> rsrc_fork_header.size ]
 
 let superheader = rsrc_fork_superheader fork[ 0 -> rsrc_fork_superheader.size ]
