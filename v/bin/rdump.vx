@@ -90,7 +90,18 @@ def dump (structure, indent="")
 
 let src = argv[ 1 ]
 
-let fork = packed load src
+var fork = null
+
+try
+{
+	fork = packed load src "/..namedfork/rsrc"
+}
+catch {}
+
+if not fork then
+{
+	fork = packed load src
+}
 
 if not fork then
 {
