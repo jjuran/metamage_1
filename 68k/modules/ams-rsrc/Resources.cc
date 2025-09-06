@@ -357,6 +357,44 @@ const rsrc_data* get_data( const rsrc_map_header& map, const rsrc_header& rsrc )
 }
 
 static
+void adjust_name_offsets( rsrc_map_header& map, long name_offset, int delta )
+{
+	/*
+		We're adding one to all name offsets before comparing
+		so that we don't have to explicitly check for 0xFFFF.
+	*/
+	
+	name_offset += 1;
+	
+	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
+	
+	UInt16 n_types = types.count_1 + 1;
+	
+	const type_header* it = types.list;
+	
+	while ( n_types-- > 0 )
+	{
+		UInt16 n_rsrcs_1 = it->count_1;
+		UInt16 offset    = it->offset;
+		
+		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + offset);
+		
+		do
+		{
+			UInt16 name_offset_1 = rsrc->name_offset + 1;
+			
+			if ( name_offset_1 > name_offset )
+			{
+				rsrc->name_offset += delta;
+			}
+		}
+		while ( ++rsrc, n_rsrcs_1-- > 0 );
+		
+		++it;
+	}
+}
+
+static
 void CreateResFile_handler( ConstStr255Param name : __A0, short vRefNum : __D0 )
 {
 	OSErr err;
@@ -1134,9 +1172,7 @@ set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 	
 	if ( name[ 0 ] == 0 )
 	{
-		rsrc->name_offset = 0xFFFF;
-		
-		return rsrc;
+		new_name_size = 0;
 	}
 	
 	rsrc_map_header& map = **rsrc_map;
@@ -1147,23 +1183,22 @@ set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 	
 	Size length_of_map = mac::glue::GetHandleSize_raw( rsrc_map_h );
 	
+	long munge_index = length_of_map;
+	
+	long old_name_size = 0;
+	
 	if ( rsrc->name_offset != 0xFFFF )
 	{
-		Byte* names = (Byte*) &map + offset_to_names;
+		munge_index = offset_to_names + rsrc->name_offset;
 		
-		Byte* old_name = names + rsrc->name_offset;
+		Byte* old_name = (Byte*) &map + munge_index;
 		
-		if ( name[ 0 ] <= old_name[ 0 ] )
-		{
-			fast_memcpy( old_name, name, new_name_size );
-			
-			return rsrc;
-		}
+		old_name_size = 1 + old_name[ 0 ];
 	}
 	
 	Size rsrc_offset = (Ptr) rsrc - *rsrc_map_h;
 	
-	Munger( rsrc_map_h, length_of_map, NULL, 0, name, new_name_size );
+	Munger( rsrc_map_h, munge_index, NULL, old_name_size, name, new_name_size );
 	
 	if ( (ResErr = MemErr) )
 	{
@@ -1172,7 +1207,21 @@ set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 	
 	rsrc = (rsrc_header*) (*rsrc_map_h + rsrc_offset);
 	
-	rsrc->name_offset = length_of_map - offset_to_names;
+	long name_offset = munge_index - offset_to_names;
+	
+	if ( old_name_size == 0 )
+	{
+		rsrc->name_offset = name_offset;
+	}
+	else if ( new_name_size == 0 )
+	{
+		rsrc->name_offset = 0xFFFF;
+	}
+	
+	if ( int delta = new_name_size - old_name_size )
+	{
+		adjust_name_offsets( **rsrc_map, name_offset, delta );
+	}
 	
 	return rsrc;
 }
