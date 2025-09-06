@@ -112,8 +112,27 @@ dump (header, "    ")
 let map_offset = fork_header.offset_to_map
 let map_length = fork_header.length_of_map
 
+if map_length >= 65536 then
+{
+	warn "rdump: " src ": error: unreasonable map length: " map_length
+	
+	exit 30
+}
+
 let data_offset = fork_header.offset_to_data
 let data_length = fork_header.length_of_data
+
+if data_offset != 256 then
+{
+	warn "rdump: " src ": warning: data offset is not 256"
+}
+
+if data_offset + data_length != map_offset then
+{
+	let delta = map_offset - (data_offset + data_length)
+	
+	warn "rdump: " src ": warning: data->map gap is " delta
+}
 
 let rsrc_map  = fork[ map_offset  -> map_offset  + map_length  ]
 let rsrc_data = fork[ data_offset -> data_offset + data_length ]
