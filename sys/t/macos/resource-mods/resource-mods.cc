@@ -1,6 +1,27 @@
 /*
 	resource-mods.cc
 	----------------
+	
+	To run this in Advanced Mac Substitute:
+	
+		cd ~/src/metamage_1
+		
+		bin/rbuild -B46 resource-mods
+		
+		cd ../ams-68k-bin
+		
+		rm -f ~/var/tmp/resource-mods-test-tmpfile.rsrc
+		
+		graft --fd 20  \
+			freemountd --rw -qu --root ~/var/tmp/ //  \
+			xv68k -St                                 \
+				-mlib/ams-{core,io}              \
+				-m [ lib/ams-fs --docfs-fd=20 ]  \
+				-m lib/ams-rsrc                  \
+				~/var/build/68k-a4-blue-dbg/bin/resource-mods/resource-mods -2
+		
+		rm ~/var/tmp/resource-mods-test-tmpfile.rsrc
+	
 */
 
 // Mac OS X
@@ -22,6 +43,7 @@
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/has/BlueBox.hh"
+#include "mac_sys/has/virtualization.hh"
 
 // mac-rsrc-utils
 #include "mac_rsrc/create_res_file.hh"
@@ -54,6 +76,10 @@
 	if ( sysv < 0x1000  &&  ! in_Classic ) EXPECT( true ); else  \
 	EXPECT_CMP_DATA( offset, length, ZERO_x256, length )
 
+#define EXPECT_ZERO_DATA_EXCEPT_AMS( offset, length )  \
+	if ( in_AMS ) EXPECT( true ); else  \
+	EXPECT_ZERO_DATA( offset, length )
+
 
 const unsigned n_tests = 120;
 
@@ -78,6 +104,7 @@ struct rsrc_fork_header
 const UInt32 sysv = mac::sys::gestalt( 'sysv' );
 
 const bool in_Classic = mac::sys::has_BlueBox();
+const bool in_AMS     = mac::sys::has_v68k();
 
 static
 long geteof()
@@ -166,6 +193,8 @@ void one_rsrc()
 	
 	const short mapChanged = 32;
 	const short mapCompact = 64;
+	
+	const short mapCompact_AMS = in_AMS ? mapCompact : 0;
 	
 	rsrc_fork_header header;
 	
@@ -365,9 +394,9 @@ void one_rsrc()
 		
 		EXPECT_EQ( GetResAttrs( h ), resChanged );
 		
-		EXPECT_EQ( GetResFileAttrs( refnum ), mapChanged );
+		EXPECT_EQ( GetResFileAttrs( refnum ), mapChanged | mapCompact_AMS );
 		
-		EXPECT_EQ( geteof(), 322 );
+		EXPECT_EQ( geteof(), in_AMS ? 338 : 322 );
 		
 		read_header( header );
 		
@@ -378,37 +407,38 @@ void one_rsrc()
 		
 		WriteResource( h );
 		
-		EXPECT_EQ( geteof(), 322 );
+		EXPECT_EQ( geteof(), in_AMS ? 338 : 322 );
 		
-		EXPECT_CMP_DATA( 256, 16, "\0\0\0\x0c" "Hello world?", 16 );
+		EXPECT_CMP_DATA( 256, 16, in_AMS ? "\0\0\0\x0b" "Hello world!"
+		                                 : "\0\0\0\x0c" "Hello world?", 16 );
 		
 		SetResInfo( h, 128, "\p" "Hello?" );
 		
 		EXPECT_EQ( GetResAttrs( h ), 0 );
 		
-		EXPECT_EQ( GetResFileAttrs( refnum ), mapChanged );
+		EXPECT_EQ( GetResFileAttrs( refnum ), mapChanged | mapCompact_AMS );
 		
-		EXPECT_EQ( geteof(), 329 );
+		EXPECT_EQ( geteof(), in_AMS ? 345 : 329 );
 		
-		EXPECT_ZERO_DATA( 322, 7 );
+		EXPECT_ZERO_DATA_EXCEPT_AMS( 322, 7 );
 		
 		ChangedResource( h );
 		
 		EXPECT_EQ( GetResAttrs( h ), resChanged );
 		
-		EXPECT_EQ( GetResFileAttrs( refnum ), mapChanged );
+		EXPECT_EQ( GetResFileAttrs( refnum ), mapChanged | mapCompact_AMS );
 		
-		EXPECT_EQ( geteof(), 329 );
+		EXPECT_EQ( geteof(), in_AMS ? 345 : 329 );
 		
-		EXPECT_ZERO_DATA( 322, 7 );
+		EXPECT_ZERO_DATA_EXCEPT_AMS( 322, 7 );
 		
 		WriteResource( h );
 		
 		EXPECT_EQ( GetResAttrs( h ), 0 );
 		
-		EXPECT_EQ( GetResFileAttrs( refnum ), mapChanged );
+		EXPECT_EQ( GetResFileAttrs( refnum ), mapChanged | mapCompact_AMS );
 		
-		EXPECT_ZERO_DATA( 322, 7 );
+		EXPECT_ZERO_DATA_EXCEPT_AMS( 322, 7 );
 		
 		UpdateResFile( refnum );
 		
@@ -420,7 +450,7 @@ void one_rsrc()
 		
 		EXPECT_EQ( GetResFileAttrs( refnum ), mapChanged );
 		
-		EXPECT_EQ( geteof(), 328 );
+		EXPECT_EQ( geteof(), 328 + in_AMS );
 		
 		EXPECT_CMP_DATA( 322, 6, "\p" "Hello?", 6 );  // !!
 		
@@ -436,7 +466,7 @@ void one_rsrc()
 		
 		EXPECT_EQ( GetResFileAttrs( refnum ), mapChanged | mapCompact );
 		
-		EXPECT_EQ( geteof(), sysv < 0x1000 ? 302 : 328 );
+		EXPECT_EQ( geteof(), in_AMS ? 329 : sysv < 0x1000 ? 302 : 328 );
 		
 		EXPECT_CMP_DATA( 256, 16, "\0\0\0\x0c" "Hello world?", 16 );
 		
@@ -447,7 +477,7 @@ void one_rsrc()
 			somewhere between System 7.1 and Mac OS 8.1.
 		*/
 		
-		EXPECT_EQ( geteof(), sysv < 0x0750 ? 302 : 286 );
+		EXPECT_EQ( geteof(), ! in_AMS  &&  sysv < 0x0750 ? 302 : 286 );
 	}
 }
 
