@@ -110,6 +110,32 @@ OSErr read_header( rsrc_fork_header& header )
 	return err;
 }
 
+/*
+	System 6 returns garbage in the high byte of the
+	results of GetResAttrs() and GetResFileAttrs().
+*/
+
+#if TARGET_CPU_68K
+typedef Byte clean_Attrs_t;
+#else
+typedef short clean_Attrs_t;
+#endif
+
+static inline
+short GetResAttrs_clean( Handle h )
+{
+	return (clean_Attrs_t) GetResAttrs( h );
+}
+
+static inline
+short GetResFileAttrs_clean( short refnum )
+{
+	return (clean_Attrs_t) GetResFileAttrs( refnum );
+}
+
+#define     GetResAttrs( handle )      GetResAttrs_clean( handle )
+#define GetResFileAttrs( refnum )  GetResFileAttrs_clean( refnum )
+
 static
 void init()
 {
@@ -118,6 +144,20 @@ void init()
 	const OSErr noErr = 0;
 	
 	HDelete( vRefNum, dirID, name );
+	
+#if TARGET_CPU_68K
+	
+	CreateResFile( name );
+	
+	EXPECT_EQ( res_error(), noErr );
+	
+	refnum = OpenResFile( name );
+	
+	EXPECT_EQ( res_error(), noErr );
+	
+	return;
+	
+#endif
 	
 	HCreateResFile( vRefNum, dirID, name );
 	
