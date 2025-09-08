@@ -210,7 +210,16 @@ def dump_type (rsrc_type)
 	}
 }
 
-let type_list_count = (BE u16).decode types_block[ 0 -> 2 ] + 1
+let type_list_count = (BE i16).decode types_block[ 0 -> 2 ] + 1
+
+if type_list_count == 0 then
+{
+	put "(empty)"
+	
+	exit 0
+}
+
+assert type_list_count > 0
 
 let type_list_size = type_list_count * type_header.size
 
