@@ -22,7 +22,10 @@
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/has/BlueBox.hh"
-#include "mac_sys/res_error.hh"
+
+// mac-rsrc-utils
+#include "mac_rsrc/create_res_file.hh"
+#include "mac_rsrc/open_res_file.hh"
 
 // tap-out
 #include "tap/test.hh"
@@ -139,33 +142,19 @@ short GetResFileAttrs_clean( short refnum )
 static
 void init()
 {
-	using mac::sys::res_error;
-	
 	const OSErr noErr = 0;
 	
 	HDelete( vRefNum, dirID, name );
 	
-#if TARGET_CPU_68K
+	OSErr err = mac::rsrc::create_res_file( vRefNum, dirID, name );
 	
-	CreateResFile( name );
+	EXPECT_EQ( err, noErr );
 	
-	EXPECT_EQ( res_error(), noErr );
+	refnum = mac::rsrc::open_res_file( vRefNum, dirID, name, fsRdWrPerm );
 	
-	refnum = OpenResFile( name );
+	err = refnum < 0 ? refnum : 0;
 	
-	EXPECT_EQ( res_error(), noErr );
-	
-	return;
-	
-#endif
-	
-	HCreateResFile( vRefNum, dirID, name );
-	
-	EXPECT_EQ( res_error(), noErr );
-	
-	refnum = HOpenResFile( vRefNum, dirID, name, fsRdWrPerm );
-	
-	EXPECT_EQ( res_error(), noErr );
+	EXPECT_EQ( err, noErr );
 }
 
 static
