@@ -398,7 +398,9 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		const short this_offset = locTable[ c ];
 		const short next_offset = locTable[ c + 1 ];
 		
-		if ( port.txMode == srcCopy )
+		short mode = port.txMode;
+		
+		if ( mode == srcCopy )
 		{
 			dstRect.left  = port.pnLoc.h;
 			dstRect.right = port.pnLoc.h + widMax;
@@ -417,8 +419,6 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 			
 			dstRect.left  = dstLeft;
 			dstRect.right = dstLeft + width;
-			
-			short mode = port.txMode;
 			
 			UInt8 bold = output->boldPixels;
 			UInt8 edge = output->shadowPixels;
