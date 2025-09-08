@@ -73,17 +73,17 @@ def dump (structure, indent="")
 		
 		if v isa struct then
 		{
-			print indent k ":"
+			put indent k ":"
 			
 			dump (v, indent "    ")
 		}
 		else if v isa vector then
 		{
-			print indent k ": " rep packed v
+			put indent k ": " rep packed v
 		}
 		else
 		{
-			print indent k ": " rep v
+			put indent k ": " rep v
 		}
 	}
 }
@@ -96,7 +96,7 @@ let fork_header = rsrc_fork_header fork[ 0 -> rsrc_fork_header.size ]
 
 let superheader = rsrc_fork_superheader fork[ 0 -> rsrc_fork_superheader.size ]
 
-print "fork header:"
+put "fork header:"
 
 let header = if verbose_data then {superheader} else {fork_header}
 
@@ -113,7 +113,7 @@ let rsrc_data = fork[ data_offset -> data_offset + data_length ]
 
 let map_header = rsrc_map_header rsrc_map[ 0 -> rsrc_map_header.size ]
 
-print "map header:"
+put "map header:"
 
 dump (map_header, "    ")
 
@@ -124,7 +124,7 @@ def dump_type (rsrc_type)
 {
 	let rtype = rep rsrc_type.type
 	
-	print "    " rtype ":"
+	put "    " rtype ":"
 	
 	let count = rsrc_type.count_1 + 1
 	
@@ -139,7 +139,7 @@ def dump_type (rsrc_type)
 	
 	for rsrc in rsrcs do
 	{
-		print "        " "ind " ++n
+		put "        " "ind " ++n
 		
 		let indent = "            "
 		
@@ -151,11 +151,11 @@ def dump_type (rsrc_type)
 		let size = (BE u32).decode rsrc_data[ i -> j ]
 		let data = rsrc_data[ j -> j + size ]
 		
-		print indent "length: " size
+		put indent "length: " size
 		
 		if verbose_data then
 		{
-			print indent "data: " rep data
+			put indent "data: " rep data
 		}
 		
 		assert rsrc.name_offset >= -1
@@ -168,7 +168,7 @@ def dump_type (rsrc_type)
 			
 			let name = names_block[ k -> k + len ].string
 			
-			print indent "name: " rep name
+			put indent "name: " rep name
 		}
 	}
 }
@@ -181,7 +181,7 @@ let type_list_bytes = types_block[ 2 -> 2 + type_list_size ]
 
 let type_list = [type_list_bytes / type_list_count] map type_header
 
-print "types:"
+put "types:"
 
 for rsrc_type in type_list do
 {
