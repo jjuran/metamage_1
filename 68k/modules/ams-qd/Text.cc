@@ -403,7 +403,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		if ( mode == srcCopy )
 		{
 			dstRect.left  = port.pnLoc.h;
-			dstRect.right = port.pnLoc.h + widMax;
+			dstRect.right = port.pnLoc.h + character_width + output->extra;
 			
 			FillRect( &dstRect, &qd.white );
 			
