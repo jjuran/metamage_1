@@ -406,6 +406,8 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 			dstRect.right = port.pnLoc.h + widMax;
 			
 			FillRect( &dstRect, &qd.white );
+			
+			mode = srcOr;
 		}
 		
 		if ( short width = next_offset - this_offset )
