@@ -14,8 +14,15 @@ struct FSRef;
 struct FSSpec;
 struct HFSUniStr255;
 
+typedef unsigned char Byte;
+
 namespace mac  {
 namespace rsrc {
+	
+	ResFileRefNum open_res_file( short        vRefNum,
+	                             long         parID,
+	                             const Byte*  name,
+	                             signed char  perm );
 	
 	ResFileRefNum open_res_file( const FSSpec& file, signed char perm );
 	ResFileRefNum open_res_file( const FSRef&  file, signed char perm );

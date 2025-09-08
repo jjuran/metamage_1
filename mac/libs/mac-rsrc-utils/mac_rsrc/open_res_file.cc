@@ -26,7 +26,10 @@
 namespace mac  {
 namespace rsrc {
 
-ResFileRefNum open_res_file( const FSSpec& file, signed char perm )
+ResFileRefNum open_res_file( short        vRefNum,
+                             long         parID,
+                             const Byte*  file_name,
+                             signed char  perm )
 {
 	ResFileRefNum result;
 	
@@ -34,7 +37,7 @@ ResFileRefNum open_res_file( const FSSpec& file, signed char perm )
 	
 	if ( mac::sys::has_FSSpec_calls() )
 	{
-		result = FSpOpenResFile( &file, perm );
+		result = HOpenResFile( vRefNum, parID, file_name, perm );
 	}
 	else
 	{
@@ -44,7 +47,7 @@ ResFileRefNum open_res_file( const FSSpec& file, signed char perm )
 		long  saved_dirID;
 		
 		(err = HGetVol( name, &saved_vRefNum, &saved_dirID ))  ||
-		(err = HSetVol( NULL, file.vRefNum,   file.parID   ));
+		(err = HSetVol( NULL, vRefNum,        parID        ));
 		
 		if ( err )
 		{
@@ -53,7 +56,7 @@ ResFileRefNum open_res_file( const FSSpec& file, signed char perm )
 		
 	#if CALL_NOT_IN_CARBON
 		
-		result = OpenResFile( file.name );
+		result = OpenResFile( file_name );
 		
 	#endif
 		
@@ -71,6 +74,15 @@ ResFileRefNum open_res_file( const FSSpec& file, signed char perm )
 	
 	return 0;
 }
+
+#if ! __LP64__
+
+ResFileRefNum open_res_file( const FSSpec& file, signed char perm )
+{
+	return open_res_file( file.vRefNum, file.parID, file.name, perm );
+}
+
+#endif
 
 ResFileRefNum open_res_file( const FSRef& file, signed char perm )
 {
