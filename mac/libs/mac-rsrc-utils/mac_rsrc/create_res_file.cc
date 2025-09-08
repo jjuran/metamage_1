@@ -26,7 +26,7 @@
 namespace mac  {
 namespace rsrc {
 
-OSErr create_res_file( const FSSpec& file )
+OSErr create_res_file( short vRefNum, long parID, const Byte* file_name )
 {
 #if ! __LP64__
 	
@@ -43,7 +43,7 @@ OSErr create_res_file( const FSSpec& file )
 			it has to for CreateResFile() anyway.
 		*/
 		
-		HCreateResFile( file.vRefNum, file.parID, file.name );
+		HCreateResFile( vRefNum, parID, file_name );
 	}
 	else
 	{
@@ -53,7 +53,7 @@ OSErr create_res_file( const FSSpec& file )
 		long  saved_dirID;
 		
 		(err = HGetVol( name, &saved_vRefNum, &saved_dirID ))  ||
-		(err = HSetVol( NULL, file.vRefNum,   file.parID   ));
+		(err = HSetVol( NULL, vRefNum,        parID        ));
 		
 		if ( err )
 		{
@@ -62,7 +62,7 @@ OSErr create_res_file( const FSSpec& file )
 		
 	#if CALL_NOT_IN_CARBON
 		
-		CreateResFile( file.name );
+		CreateResFile( file_name );
 		
 	#endif
 		
@@ -75,6 +75,15 @@ OSErr create_res_file( const FSSpec& file )
 	
 	return 0;
 }
+
+#if ! __LP64__
+
+OSErr create_res_file( const FSSpec& file )
+{
+	return create_res_file( file.vRefNum, file.parID, file.name );
+}
+
+#endif
 
 OSErr create_res_file( const FSRef& file )
 {
