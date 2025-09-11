@@ -21,6 +21,7 @@
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
+#include "mac_sys/has/BlueBox.hh"
 #include "mac_sys/res_error.hh"
 
 // tap-out
@@ -47,6 +48,7 @@
 	else EXPECT( false )
 
 #define EXPECT_ZERO_DATA( offset, length )  \
+	if ( sysv < 0x1000  &&  ! in_Classic ) EXPECT( true ); else  \
 	EXPECT_CMP_DATA( offset, length, ZERO_x256, length )
 
 
@@ -71,6 +73,8 @@ struct rsrc_fork_header
 };
 
 const UInt32 sysv = mac::sys::gestalt( 'sysv' );
+
+const bool in_Classic = mac::sys::has_BlueBox();
 
 static
 long geteof()
