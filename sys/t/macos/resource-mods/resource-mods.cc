@@ -413,7 +413,12 @@ void one_rsrc()
 		
 		UpdateResFile( refnum );
 		
-		EXPECT_EQ( geteof(), 286 );
+		/*
+			This is a guess for now.  The cutoff is
+			somewhere between System 7.1 and Mac OS 8.1.
+		*/
+		
+		EXPECT_EQ( geteof(), sysv < 0x0750 ? 302 : 286 );
 	}
 }
 
