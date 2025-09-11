@@ -191,7 +191,7 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 				
 				Rect itemRect = { top, left, bottom, right };
 				
-				if ( icon )
+				if ( large_icon )
 				{
 					itemRect.top -= menu_item_height;
 				}
