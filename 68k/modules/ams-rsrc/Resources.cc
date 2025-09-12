@@ -1165,11 +1165,12 @@ void SetResInfo_handler( Handle            resource : __A0,
 				rsrc_fork_header& fork = map.fork_header;
 				
 				Handle rsrc_map_h = (Handle) rsrc_map;
-				SInt32 map_length = fork.length_of_map;
+				
+				SInt32 length_of_map = fork.length_of_map;
 				
 				Size rsrc_offset = (Ptr) rsrc - *rsrc_map_h;
 				
-				Munger( rsrc_map_h, map_length, NULL, 0, name, name_size );
+				Munger( rsrc_map_h, length_of_map, NULL, 0, name, name_size );
 				
 				if ( OSErr err = MemErr )
 				{
@@ -1187,7 +1188,7 @@ void SetResInfo_handler( Handle            resource : __A0,
 					
 					rsrc = (rsrc_header*) (*rsrc_map_h + rsrc_offset);
 					
-					rsrc->name_offset = map_length - map.offset_to_names;
+					rsrc->name_offset = length_of_map - map.offset_to_names;
 				}
 			}
 			else
@@ -1310,9 +1311,9 @@ void AddResource_handler( Handle            data : __A0,
 	
 	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
 	
-	Size map_size = mac::glue::GetHandleSize_raw( (Handle) rsrc_map );
+	Size length_of_map = mac::glue::GetHandleSize_raw( (Handle) rsrc_map );
 	
-	SetHandleSize( (Handle) rsrc_map, map_size + map_increase );
+	SetHandleSize( (Handle) rsrc_map, length_of_map + map_increase );
 	
 	if ( OSErr err = MemErr )
 	{
@@ -1327,7 +1328,7 @@ void AddResource_handler( Handle            data : __A0,
 		original size) will (a) also succeed, and (b) not move memory.
 	*/
 	
-	SetHandleSize( (Handle) rsrc_map, map_size );
+	SetHandleSize( (Handle) rsrc_map, length_of_map );
 	
 	rsrc_map_header& map = **rsrc_map;
 	
