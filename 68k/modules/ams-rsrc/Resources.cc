@@ -1162,11 +1162,9 @@ void SetResInfo_handler( Handle            resource : __A0,
 					}
 				}
 				
-				rsrc_fork_header& fork = map.fork_header;
-				
 				Handle rsrc_map_h = (Handle) rsrc_map;
 				
-				SInt32 length_of_map = fork.length_of_map;
+				Size length_of_map = mac::glue::GetHandleSize_raw( rsrc_map_h );
 				
 				Size rsrc_offset = (Ptr) rsrc - *rsrc_map_h;
 				
@@ -1181,10 +1179,6 @@ void SetResInfo_handler( Handle            resource : __A0,
 				else
 				{
 					rsrc_map_header& map = **rsrc_map;
-					
-					rsrc_fork_header& fork = map.fork_header;
-					
-					fork.length_of_map += name_size;
 					
 					rsrc = (rsrc_header*) (*rsrc_map_h + rsrc_offset);
 					
@@ -1332,8 +1326,6 @@ void AddResource_handler( Handle            data : __A0,
 	
 	rsrc_map_header& map = **rsrc_map;
 	
-	rsrc_fork_header& fork = map.fork_header;
-	
 	rsrc_header rsrc;
 	
 	rsrc.id               = id;
@@ -1345,8 +1337,6 @@ void AddResource_handler( Handle            data : __A0,
 	
 	if ( name_size )
 	{
-		SInt32 length_of_map = fork.length_of_map;
-		
 		rsrc.name_offset = length_of_map - map.offset_to_names;
 		
 		Munger( (Handle) rsrc_map, length_of_map, NULL, 0, name, name_size );
@@ -1408,8 +1398,6 @@ void AddResource_handler( Handle            data : __A0,
 	Munger( (Handle) rsrc_map, offset, NULL, 0, &rsrc, sizeof rsrc );
 	
 	map.offset_to_names += sizeof (rsrc_header);
-	
-	fork.length_of_map  += map_increase;
 	
 	master_pointer& mp = *(master_pointer*) data;
 	
