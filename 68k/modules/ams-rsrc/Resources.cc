@@ -1140,7 +1140,11 @@ void SetResInfo_handler( Handle            resource : __A0,
 				goto name_done;
 			}
 			
-			if ( name[ 0 ] )
+			if ( name[ 0 ] == 0 )
+			{
+				rsrc->name_offset = 0xFFFF;
+			}
+			else
 			{
 				Size name_size = 1 + name[ 0 ];  // includes length byte
 				
@@ -1184,10 +1188,6 @@ void SetResInfo_handler( Handle            resource : __A0,
 					
 					rsrc->name_offset = length_of_map - map.offset_to_names;
 				}
-			}
-			else
-			{
-				rsrc->name_offset = 0xFFFF;
 			}
 			
 		name_done:
