@@ -1176,18 +1176,14 @@ void SetResInfo_handler( Handle            resource : __A0,
 				
 				Munger( rsrc_map_h, length_of_map, NULL, 0, name, name_size );
 				
-				if ( OSErr err = MemErr )
+				if ( (ResErr = MemErr) )
 				{
-					ResErr = MemErr;
-					
 					return;
 				}
-				else
-				{
-					rsrc = (rsrc_header*) (*rsrc_map_h + rsrc_offset);
-					
-					rsrc->name_offset = length_of_map - offset_to_names;
-				}
+				
+				rsrc = (rsrc_header*) (*rsrc_map_h + rsrc_offset);
+				
+				rsrc->name_offset = length_of_map - offset_to_names;
 			}
 			
 		name_done:
