@@ -1152,9 +1152,11 @@ void SetResInfo_handler( Handle            resource : __A0,
 				
 				rsrc_map_header& map = **rsrc_map;
 				
+				UInt32 offset_to_names = map.offset_to_names;
+				
 				if ( rsrc->name_offset != 0xFFFF )
 				{
-					Byte* names = (Byte*) &map + map.offset_to_names;
+					Byte* names = (Byte*) &map + offset_to_names;
 					
 					Byte* old_name = names + rsrc->name_offset;
 					
@@ -1182,11 +1184,9 @@ void SetResInfo_handler( Handle            resource : __A0,
 				}
 				else
 				{
-					rsrc_map_header& map = **rsrc_map;
-					
 					rsrc = (rsrc_header*) (*rsrc_map_h + rsrc_offset);
 					
-					rsrc->name_offset = length_of_map - map.offset_to_names;
+					rsrc->name_offset = length_of_map - offset_to_names;
 				}
 			}
 			
