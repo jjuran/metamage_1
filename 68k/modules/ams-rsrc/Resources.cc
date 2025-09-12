@@ -1130,14 +1130,14 @@ static
 rsrc_header*
 set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 {
+	long new_name_size = 1 + name[ 0 ];  // includes length byte
+	
 	if ( name[ 0 ] == 0 )
 	{
 		rsrc->name_offset = 0xFFFF;
 		
 		return rsrc;
 	}
-	
-	Size name_size = 1 + name[ 0 ];  // includes length byte
 	
 	rsrc_map_header& map = **rsrc_map;
 	
@@ -1151,7 +1151,7 @@ set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 		
 		if ( name[ 0 ] <= old_name[ 0 ] )
 		{
-			fast_memcpy( old_name, name, name_size );
+			fast_memcpy( old_name, name, new_name_size );
 			
 			return rsrc;
 		}
@@ -1163,7 +1163,7 @@ set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 	
 	Size rsrc_offset = (Ptr) rsrc - *rsrc_map_h;
 	
-	Munger( rsrc_map_h, length_of_map, NULL, 0, name, name_size );
+	Munger( rsrc_map_h, length_of_map, NULL, 0, name, new_name_size );
 	
 	if ( (ResErr = MemErr) )
 	{
