@@ -81,6 +81,7 @@ void install_ResourceManager()
 	TBTRAP( OpenRFPerm      );  // A9C4
 	
 	TBTRAP( GetResFileAttrs );  // A9F6
+	TBTRAP( SetResFileAttrs );  // A9F7
 }
 
 static void install_Utilities()

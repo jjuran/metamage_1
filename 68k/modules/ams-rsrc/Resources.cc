@@ -1584,6 +1584,35 @@ pascal short GetResFileAttrs_patch( short refnum )
 }
 
 static
+void SetResFileAttrs_handler( short refnum : __D0, short attrs : __D1 )
+{
+	if ( RsrcMapHandle rsrc_map = find_rsrc_map( refnum ) )
+	{
+		rsrc_map[0]->attrs = attrs;
+	}
+}
+
+asm
+pascal void SetResFileAttrs_patch( short refnum, short attrs )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.W   (A2)+,D1
+	MOVE.W   (A2)+,D0
+	
+	JSR      SetResFileAttrs_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
+	
+	JMP      (A0)
+}
+
+static
 short Count1Types_handler()
 {
 	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );

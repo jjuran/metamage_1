@@ -76,6 +76,8 @@ pascal void SetResPurge_patch( Boolean install );
 
 pascal short GetResFileAttrs_patch( short refnum );
 
+pascal void SetResFileAttrs_patch( short refnum, short attrs );
+
 pascal short Count1Types_patch();
 
 pascal void Get1IxType_patch( ResType* type, short index );
