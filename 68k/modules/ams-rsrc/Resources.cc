@@ -1133,46 +1133,46 @@ set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 	if ( name[ 0 ] == 0 )
 	{
 		rsrc->name_offset = 0xFFFF;
+		
+		return rsrc;
 	}
-	else
+	
+	Size name_size = 1 + name[ 0 ];  // includes length byte
+	
+	rsrc_map_header& map = **rsrc_map;
+	
+	UInt32 offset_to_names = map.offset_to_names;
+	
+	if ( rsrc->name_offset != 0xFFFF )
 	{
-		Size name_size = 1 + name[ 0 ];  // includes length byte
+		Byte* names = (Byte*) &map + offset_to_names;
 		
-		rsrc_map_header& map = **rsrc_map;
+		Byte* old_name = names + rsrc->name_offset;
 		
-		UInt32 offset_to_names = map.offset_to_names;
-		
-		if ( rsrc->name_offset != 0xFFFF )
+		if ( name[ 0 ] <= old_name[ 0 ] )
 		{
-			Byte* names = (Byte*) &map + offset_to_names;
+			fast_memcpy( old_name, name, name_size );
 			
-			Byte* old_name = names + rsrc->name_offset;
-			
-			if ( name[ 0 ] <= old_name[ 0 ] )
-			{
-				fast_memcpy( old_name, name, name_size );
-				
-				return rsrc;
-			}
+			return rsrc;
 		}
-		
-		Handle rsrc_map_h = (Handle) rsrc_map;
-		
-		Size length_of_map = mac::glue::GetHandleSize_raw( rsrc_map_h );
-		
-		Size rsrc_offset = (Ptr) rsrc - *rsrc_map_h;
-		
-		Munger( rsrc_map_h, length_of_map, NULL, 0, name, name_size );
-		
-		if ( (ResErr = MemErr) )
-		{
-			return NULL;
-		}
-		
-		rsrc = (rsrc_header*) (*rsrc_map_h + rsrc_offset);
-		
-		rsrc->name_offset = length_of_map - offset_to_names;
 	}
+	
+	Handle rsrc_map_h = (Handle) rsrc_map;
+	
+	Size length_of_map = mac::glue::GetHandleSize_raw( rsrc_map_h );
+	
+	Size rsrc_offset = (Ptr) rsrc - *rsrc_map_h;
+	
+	Munger( rsrc_map_h, length_of_map, NULL, 0, name, name_size );
+	
+	if ( (ResErr = MemErr) )
+	{
+		return NULL;
+	}
+	
+	rsrc = (rsrc_header*) (*rsrc_map_h + rsrc_offset);
+	
+	rsrc->name_offset = length_of_map - offset_to_names;
 	
 	return rsrc;
 }
