@@ -52,6 +52,17 @@ pascal short InitResources_patch()
 		SysMap = OpenResFile( "\p" "AMS Resources" );
 	}
 	
+	/*
+		Allow `app` to use AddResource() to add desk accessories.
+		
+		Normally, AddResource() would fail when trying to extend
+		the system resource file because it resides on a read-only
+		filesystem.  Set the system resource map read-only so that
+		file extension is skipped and AddResource() will succeed.
+	*/
+	
+	SetResFileAttrs( SysMap, mapReadOnly );
+	
 	short index = 0;
 	
 	while ( Handle h = GetIndResource( 'INIT', ++index ) )
