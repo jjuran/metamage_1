@@ -1143,6 +1143,10 @@ set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 	
 	UInt32 offset_to_names = map.offset_to_names;
 	
+	Handle rsrc_map_h = (Handle) rsrc_map;
+	
+	Size length_of_map = mac::glue::GetHandleSize_raw( rsrc_map_h );
+	
 	if ( rsrc->name_offset != 0xFFFF )
 	{
 		Byte* names = (Byte*) &map + offset_to_names;
@@ -1156,10 +1160,6 @@ set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 			return rsrc;
 		}
 	}
-	
-	Handle rsrc_map_h = (Handle) rsrc_map;
-	
-	Size length_of_map = mac::glue::GetHandleSize_raw( rsrc_map_h );
 	
 	Size rsrc_offset = (Ptr) rsrc - *rsrc_map_h;
 	
