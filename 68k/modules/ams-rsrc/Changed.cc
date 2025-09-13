@@ -33,6 +33,13 @@ enum
 	resChanged   = 2,
 };
 
+enum
+{
+	mapReadOnly = 128,
+	mapCompact  =  64,
+	mapChanged  =  32,
+};
+
 
 short MemErr : 0x0220;
 short CurMap : 0x0A5A;
@@ -75,6 +82,36 @@ void adjust_name_offsets( rsrc_map_header& map, long name_offset, int delta )
 		
 		++it;
 	}
+}
+
+static
+SInt32 extend_file_by( rsrc_map_header& map, long delta )
+{
+	OSErr  err;
+	SInt32 file_size;
+	
+	/*
+		Always get the file size, but skip actually
+		extending the file if the map is read-only.
+	*/
+	
+	(err = GetEOF( map.refnum, &file_size       ))  ||
+	map.attrs & mapReadOnly                         ||
+	(err = SetEOF( map.refnum, file_size + delta ));
+	
+	/*
+		Propagate any error to ResErr.  If none occurred, update
+		the map attributes and return the *previous* file size.
+	*/
+	
+	if ( err )
+	{
+		return ResErr = err;
+	}
+	
+	map.attrs |= mapChanged | mapCompact;
+	
+	return file_size;
 }
 
 static
