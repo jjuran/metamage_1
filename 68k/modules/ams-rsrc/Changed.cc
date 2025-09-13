@@ -143,6 +143,16 @@ set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 		old_name_size = 1 + old_name[ 0 ];
 	}
 	
+	int delta = new_name_size - old_name_size;
+	
+	if ( delta > 0 )
+	{
+		if ( extend_file_by( map, delta ) < 0 )
+		{
+			return NULL;
+		}
+	}
+	
 	Size rsrc_offset = (Ptr) rsrc - *rsrc_map_h;
 	
 	Munger( rsrc_map_h, munge_index, NULL, old_name_size, name, new_name_size );
@@ -165,7 +175,7 @@ set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 		rsrc->name_offset = 0xFFFF;
 	}
 	
-	if ( int delta = new_name_size - old_name_size )
+	if ( delta )
 	{
 		adjust_name_offsets( **rsrc_map, name_offset, delta );
 	}
@@ -182,15 +192,17 @@ void SetResInfo_handler( Handle       resource : __A0,
 	{
 		if ( ! (rsrc->attrs & resProtected) )
 		{
+			RsrcMapHandle rsrc_map = home_rsrc_map( resource );
+			
 			if ( name != NULL )
 			{
-				RsrcMapHandle rsrc_map = home_rsrc_map( resource );
-				
 				rsrc = set_resource_name( rsrc_map, rsrc, name );
 			}
 			
 			if ( rsrc )
 			{
+				rsrc_map[0]->attrs |= mapChanged;
+				
 				rsrc->id = id;
 			}
 		}
