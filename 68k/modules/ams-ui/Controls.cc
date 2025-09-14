@@ -113,18 +113,6 @@ pascal ControlRef NewControl_patch( WindowRef    window,
 	return control;
 }
 
-struct CNTL_resource
-{
-	Rect    bounds;
-	short   value;
-	short   visible;
-	short   max;
-	short   min;
-	short   procID;
-	long    refCon;
-	Str255  title;
-};
-
 pascal ControlRef GetNewControl_patch( short controlID, WindowRef window )
 {
 	Handle h = GetResource( 'CNTL', controlID );
@@ -134,19 +122,19 @@ pascal ControlRef GetNewControl_patch( short controlID, WindowRef window )
 		return NULL;
 	}
 	
-	const CNTL_resource cntl = *(const CNTL_resource*) *h;
+	const ControlTemplate cntl = *(const ControlTemplate*) *h;
 	
 	ReleaseResource( h );
 	
 	ControlRef control = NewControl( window,
-	                                 &cntl.bounds,
-	                                 cntl.title,
-	                                 (Boolean&) cntl.visible,
-	                                 cntl.value,
-	                                 cntl.min,
-	                                 cntl.max,
-	                                 cntl.procID,
-	                                 cntl.refCon );
+	                                 &cntl.controlRect,
+	                                 cntl.controlTitle,
+	                                 cntl.controlVisible,
+	                                 cntl.controlValue,
+	                                 cntl.controlMinimum,
+	                                 cntl.controlMaximum,
+	                                 cntl.controlDefProcID,
+	                                 cntl.controlReference );
 	
 	return control;
 }
