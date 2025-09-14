@@ -462,6 +462,18 @@ Handle new_dialog_control( WindowRef window, DialogItem* item )
 	
 	const partial_CNTL_template* subcntl = &default_NewControl_arguments;
 	
+	if ( (item->type & 0x7F) == ctrlItem + resCtrl )
+	{
+		if ( Handle h = GetResource( 'CNTL', item_ResID( item ) ) )
+		{
+			const ControlTemplate* cntl = (const ControlTemplate*) *h;
+			
+			subcntl = (const partial_CNTL_template*) &cntl->controlValue;
+			
+			procID = subcntl->procID;
+		}
+	}
+	
 	Handle h = (Handle) NewControl( window,
 	                                &item->bounds,
 	                                &item->length,
@@ -558,11 +570,8 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 			case ctrlItem + btnCtrl:
 			case ctrlItem + chkCtrl:
 			case ctrlItem + radCtrl:
-				item->handle = new_dialog_control( window, item );
-				break;
-			
 			case ctrlItem + resCtrl:
-				item->handle = (Handle) GetNewControl( item_ResID( item ), window );
+				item->handle = new_dialog_control( window, item );
 				break;
 			
 			case editText:
