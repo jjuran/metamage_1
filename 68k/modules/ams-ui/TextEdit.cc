@@ -456,22 +456,40 @@ void update_selection( TERec& te, short selStart, short selEnd )
 static
 void autoscroll( TERec& te )
 {
-	short dv;
+	short dv_top;
+	short dv_bottom;
 	
-	if ( (dv = te.viewRect.top - te.selRect.top) > 0 )
+	if ( (dv_bottom = te.viewRect.bottom - te.selRect.bottom) > 0 )
 	{
-		// scroll up
-	}
-	else if ( (dv = te.viewRect.bottom - te.selRect.bottom) < 0 )
-	{
-		// scroll down
-	}
-	else
-	{
-		return;
+		/*
+			If dv above is negative, then the selection rect
+			is (at least partially) below the view rect, and
+			we'll need to scroll down (using the negative dv).
+			
+			Otherwise, zero the dv so we don't scroll up.
+		*/
+		
+		dv_bottom = 0;
 	}
 	
-	OffsetRect( &te.destRect, 0, dv );
+	if ( (dv_top = te.viewRect.top - te.selRect.top - dv_bottom) < 0 )
+	{
+		/*
+			Similarly, if the new dv is *positive*, then the
+			selection rect is (at least partially) above the
+			view rect *after accounting for scrolling down*
+			(if that happened), and we need to scroll up.
+			
+			Otherwise, zero the dv so we don't scroll down.
+			
+			If the view rect isn't tall enough to fit the entire
+			selection, the top of the selection takes precedence.
+		*/
+		
+		dv_top = 0;
+	}
+	
+	OffsetRect( &te.destRect, 0, dv_top + dv_bottom );
 }
 
 pascal void TEClick_patch( Point pt, char extend, TERec** hTE )
