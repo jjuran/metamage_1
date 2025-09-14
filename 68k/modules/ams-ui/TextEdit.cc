@@ -229,13 +229,30 @@ void update_selRect( TERec& te )
 	const short thisStart = *--starts;
 	const short leftChars = start - thisStart;
 	
-	const short left = te.destRect.left + TextWidth( pText, thisStart, leftChars );
+	const short leftWidth = TextWidth( pText, thisStart, leftChars );
+	
+	short left = te.destRect.left + leftWidth;
 	
 	const bool bleedRight = count > 0  &&  end == nextStart;
+	
+	if ( te.just & 1 )
+	{
+		// center- or right-justified
+		
+		short margin = te.destRect.right - te.destRect.left - leftWidth;
+		
+		if ( te.just == teCenter )
+		{
+			margin /= 2;
+		}
+		
+		left += margin;
+	}
 	
 	te.selRect.left  = left + (start > 0  &&  count > 0);
 	te.selRect.right = bleedRight ? te.destRect.right
 	                              : left + TextWidth( pText, start, count ) + 1;
+	
 }
 
 static
