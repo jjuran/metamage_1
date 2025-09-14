@@ -15,6 +15,7 @@
 #include "module_A4.hh"
 
 // ams-rsrc
+#include "Changed.hh"
 #include "Init.hh"
 #include "Resources.hh"
 #include "Utilities.hh"
