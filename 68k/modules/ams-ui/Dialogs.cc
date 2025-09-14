@@ -431,6 +431,52 @@ void update_edit_record( TEHandle hTE, const DialogItem* item )
 	TECalText( hTE );
 }
 
+struct partial_CNTL_template
+{
+//	Rect     bounds;   // not appearing in this struct
+	short    value;
+	Boolean  visible;
+	Byte     fill;
+	short    max;
+	short    min;
+	short    procID;
+	long     refCon;
+//	Str255   title;    // not appearing in this struct
+};
+
+static const partial_CNTL_template default_NewControl_arguments =
+{
+	0,     // value
+	true,  // visible
+	0,     // (fill byte, not used)
+	1,     // max
+	0,     // min
+	0,     // (procID, not used)
+	0,     // refcon
+};
+
+static
+Handle new_dialog_control( WindowRef window, DialogItem* item )
+{
+	short procID = item->type & 0x03;
+	
+	const partial_CNTL_template* subcntl = &default_NewControl_arguments;
+	
+	Handle h = (Handle) NewControl( window,
+	                                &item->bounds,
+	                                &item->length,
+	                                subcntl->visible,
+	                                subcntl->value,
+	                                subcntl->min,
+	                                subcntl->max,
+	                                procID,
+	                                subcntl->refCon );
+	
+	ValidRect( &item->bounds );
+	
+	return h;
+}
+
 pascal DialogRef NewDialog_patch( void*                 storage,
                                   const Rect*           bounds,
                                   const unsigned char*  title,
@@ -512,17 +558,7 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 			case ctrlItem + btnCtrl:
 			case ctrlItem + chkCtrl:
 			case ctrlItem + radCtrl:
-				item->handle = (Handle) NewControl( window,
-				                                    &item->bounds,
-				                                    &item->length,
-				                                    true,
-				                                    0,  // value
-				                                    0,  // min
-				                                    1,  // max
-				                                    item->type & 0x03,
-				                                    0 );
-				
-				ValidRect( &item->bounds );
+				item->handle = new_dialog_control( window, item );
 				break;
 			
 			case ctrlItem + resCtrl:
