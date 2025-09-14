@@ -19,9 +19,6 @@
 #include <TextUtils.h>
 #endif
 
-// Standard C
-#include <stddef.h>
-
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
@@ -36,14 +33,11 @@
 
 // ams-rsrc
 #include "dcmp.hh"
+#include "RsrcMap.hh"
 #include "rsrc_fork.hh"
 
 
 #pragma exceptions off
-
-
-#define STRLEN( s )  (sizeof "" s - 1)
-#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 enum
@@ -61,13 +55,11 @@ long  RndSeed     : 0x0156;
 short MemErr      : 0x0220;
 short CurApRefNum : 0x0900;
 Handle TopMapHndl : 0x0A50;
-short SysMap      : 0x0A58;
 short CurMap      : 0x0A5A;
 short ResErr      : 0x0A60;
 
 
 typedef rsrc_data_element  rsrc_data;
-typedef rsrc_map_header**  RsrcMapHandle;
 
 
 static inline
@@ -79,94 +71,6 @@ FCB* get_FCB( unsigned short refNum )
 	}
 	
 	return NULL;
-}
-
-static
-rsrc_header* find_rsrc( const rsrc_map_header& map, ResType type, Handle h )
-{
-	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
-	
-	UInt16 n_types = types.count_1 + 1;
-	
-	const type_header* it = types.list;
-	
-	while ( n_types-- > 0 )
-	{
-		if ( it->type != type )
-		{
-			++it;
-			continue;
-		}
-		
-		UInt16 n_rsrcs_1 = it->count_1;
-		UInt16 offset    = it->offset;
-		
-		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + offset);
-		
-		do
-		{
-			if ( rsrc->handle == h )
-			{
-				return rsrc;
-			}
-		}
-		while ( ++rsrc, n_rsrcs_1-- > 0 );
-		
-		++it;
-	}
-	
-	return NULL;
-}
-
-static
-rsrc_header* recover_rsrc_header( Handle resource )
-{
-	OSErr err = resNotFound;
-	
-	rsrc_header* header = NULL;
-	
-	// Technically we shouldn't deref before null test, but it works in MWC68K
-	
-	const master_pointer& mp = *(const master_pointer*) resource;
-	
-	if ( resource  &&  mp.flags & kHandleIsResourceMask )
-	{
-		RsrcMapHandle rsrc_map = (RsrcMapHandle) mp.base;
-		
-		if ( (header = find_rsrc( **rsrc_map, mp.type, resource )) )
-		{
-			err = noErr;
-		}
-	}
-	
-	ResErr = err;
-	
-	return header;
-}
-
-static
-RsrcMapHandle& find_rsrc_map( short refnum )
-{
-	if ( refnum == 0 )
-	{
-		refnum = SysMap;
-	}
-	
-	RsrcMapHandle* rsrc_map = (RsrcMapHandle*) &TopMapHndl;
-	
-	while ( *rsrc_map  &&  rsrc_map[0][0]->refnum != refnum )
-	{
-		rsrc_map = (RsrcMapHandle*) &rsrc_map[0][0]->next_map;
-	}
-	
-	ResErr = noErr;
-	
-	if ( *rsrc_map == NULL )
-	{
-		ResErr = resFNotFound;
-	}
-	
-	return *rsrc_map;
 }
 
 static inline
@@ -641,21 +545,6 @@ pascal short ResError_patch()
 pascal short CurResFile_patch()
 {
 	return CurMap;
-}
-
-static
-RsrcMapHandle home_rsrc_map( Handle resource : __A0 )
-{
-	const master_pointer& mp = *(const master_pointer*) resource;
-	
-	if ( mp.flags & kHandleIsResourceMask )
-	{
-		RsrcMapHandle map = (RsrcMapHandle) mp.base;
-		
-		return map;
-	}
-	
-	return NULL;
 }
 
 static
