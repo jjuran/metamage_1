@@ -24,12 +24,12 @@
 
 // ams-common
 #include "callouts.hh"
-#include "FCB.hh"
 #include "master_pointer.hh"
 #include "unglue.hh"
 
 // ams-rsrc
 #include "dcmp.hh"
+#include "get_FCB.hh"
 #include "RsrcMap.hh"
 #include "rsrc_fork.hh"
 
@@ -56,17 +56,6 @@ short ResErr      : 0x0A60;
 
 typedef rsrc_data_element  rsrc_data;
 
-
-static inline
-FCB* get_FCB( unsigned short refNum )
-{
-	if ( refNum > 0 )
-	{
-		return (FCB*) ((char*) FCBSPtr + refNum);
-	}
-	
-	return NULL;
-}
 
 static inline
 UInt16 count_types( const rsrc_map_header& map )
