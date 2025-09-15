@@ -18,8 +18,6 @@ typedef const Byte* ConstStr255Param;
 typedef Byte Str255[ 256 ];
 
 
-pascal void CreateResFile_patch( ConstStr255Param name );
-
 pascal short OpenResFile_patch( ConstStr255Param name );
 
 pascal void CloseResFile_patch( short refnum );
@@ -60,8 +58,6 @@ pascal long SizeRsrc_patch( Handle resource );
 pascal void SetResAttrs_patch( Handle resource, short attrs );
 
 pascal void UpdateResFile_patch( short refnum );
-
-pascal void WriteResource_patch( Handle resource );
 
 pascal void SetResPurge_patch( Boolean install );
 

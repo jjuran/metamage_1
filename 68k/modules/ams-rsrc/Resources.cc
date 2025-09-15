@@ -41,8 +41,6 @@ enum
 {
 	resPurgeable = 32,
 	resLocked    = 16,
-	resProtected = 8,
-	resChanged   = 2,
 	
 	resCompressed = 1,  // undocumented
 };
@@ -255,38 +253,6 @@ const rsrc_data* get_data( const rsrc_map_header& map, const rsrc_header& rsrc )
 	p += offset;
 	
 	return (const rsrc_data*) p;
-}
-
-static
-void CreateResFile_handler( ConstStr255Param name : __A0, short vRefNum : __D0 )
-{
-	OSErr err;
-	
-	ERROR = "CreateResFile is unimplemented";
-	
-	err = wrgVolTypErr;
-	
-	ResErr = err;
-}
-
-asm
-pascal void CreateResFile_patch( ConstStr255Param name )
-{
-	MOVEM.L  D1-D2/A1-A2,-(SP)
-	
-	LEA      20(SP),A2
-	MOVEA.L  (A2)+,A0
-	MOVEQ.L  #0,D0    // vRefNum = 0
-	
-	JSR      CreateResFile_handler
-	
-	MOVEM.L  (SP)+,D1-D2/A1-A2
-	
-	MOVEA.L  (SP)+,A0
-	
-	ADDQ.L   #4,SP
-	
-	JMP      (A0)
 }
 
 static
@@ -1037,68 +1003,6 @@ pascal void SetResAttrs_patch( Handle resource, short attrs )
 	MOVEA.L  (SP)+,A0
 	
 	ADDQ.L   #6,SP
-	
-	JMP      (A0)
-}
-
-static
-void UpdateResFile_handler( short refnum : __D0 )
-{
-	ERROR = "UpdateResFile is unimplemented";
-}
-
-asm
-pascal void UpdateResFile_patch( short refnum )
-{
-	MOVEM.L  D1-D2/A1-A2,-(SP)
-	
-	LEA      20(SP),A2
-	MOVE.W   (A2)+,D0
-	
-	JSR      UpdateResFile_handler
-	
-	MOVEM.L  (SP)+,D1-D2/A1-A2
-	
-	MOVEA.L  (SP)+,A0
-	
-	ADDQ.L   #2,SP
-	
-	JMP      (A0)
-}
-
-static
-void WriteResource_handler( Handle resource : __A0 )
-{
-	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
-	{
-		if ( (rsrc->attrs & (resProtected | resChanged)) != resChanged )
-		{
-			// noErr
-		}
-		else
-		{
-			ERROR = "WriteResource is unimplemented";
-			
-			ResErr = paramErr;
-		}
-	}
-}
-
-asm
-pascal void WriteResource_patch( Handle resource )
-{
-	MOVEM.L  D1-D2/A1-A2,-(SP)
-	
-	LEA      20(SP),A2
-	MOVEA.L  (A2)+,A0
-	
-	JSR      WriteResource_handler
-	
-	MOVEM.L  (SP)+,D1-D2/A1-A2
-	
-	MOVEA.L  (SP)+,A0
-	
-	ADDQ.L   #4,SP
 	
 	JMP      (A0)
 }

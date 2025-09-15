@@ -16,6 +16,7 @@
 
 // ams-rsrc
 #include "Changed.hh"
+#include "Create_Write_Update.hh"
 #include "Init.hh"
 #include "Resources.hh"
 #include "Utilities.hh"
