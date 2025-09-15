@@ -13,9 +13,6 @@
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
-// log-of-war
-#include "logofwar/report.hh"
-
 // ams-common
 #include "master_pointer.hh"
 
@@ -31,6 +28,13 @@ enum
 {
 	resProtected = 8,
 	resChanged   = 2,
+};
+
+enum
+{
+	mapReadOnly = 128,
+	mapCompact  =  64,
+	mapChanged  =  32,
 };
 
 
@@ -78,6 +82,36 @@ void adjust_name_offsets( rsrc_map_header& map, long name_offset, int delta )
 }
 
 static
+SInt32 extend_file_by( rsrc_map_header& map, long delta )
+{
+	OSErr  err;
+	SInt32 file_size;
+	
+	/*
+		Always get the file size, but skip actually
+		extending the file if the map is read-only.
+	*/
+	
+	(err = GetEOF( map.refnum, &file_size       ))  ||
+	map.attrs & mapReadOnly                         ||
+	(err = SetEOF( map.refnum, file_size + delta ));
+	
+	/*
+		Propagate any error to ResErr.  If none occurred, update
+		the map attributes and return the *previous* file size.
+	*/
+	
+	if ( err )
+	{
+		return ResErr = err;
+	}
+	
+	map.attrs |= mapChanged | mapCompact;
+	
+	return file_size;
+}
+
+static
 rsrc_header*
 set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 {
@@ -109,6 +143,16 @@ set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 		old_name_size = 1 + old_name[ 0 ];
 	}
 	
+	int delta = new_name_size - old_name_size;
+	
+	if ( delta > 0 )
+	{
+		if ( extend_file_by( map, delta ) < 0 )
+		{
+			return NULL;
+		}
+	}
+	
 	Size rsrc_offset = (Ptr) rsrc - *rsrc_map_h;
 	
 	Munger( rsrc_map_h, munge_index, NULL, old_name_size, name, new_name_size );
@@ -131,7 +175,7 @@ set_resource_name( RsrcMapHandle rsrc_map, rsrc_header* rsrc, const Byte* name )
 		rsrc->name_offset = 0xFFFF;
 	}
 	
-	if ( int delta = new_name_size - old_name_size )
+	if ( delta )
 	{
 		adjust_name_offsets( **rsrc_map, name_offset, delta );
 	}
@@ -148,15 +192,17 @@ void SetResInfo_handler( Handle       resource : __A0,
 	{
 		if ( ! (rsrc->attrs & resProtected) )
 		{
+			RsrcMapHandle rsrc_map = home_rsrc_map( resource );
+			
 			if ( name != NULL )
 			{
-				RsrcMapHandle rsrc_map = home_rsrc_map( resource );
-				
 				rsrc = set_resource_name( rsrc_map, rsrc, name );
 			}
 			
 			if ( rsrc )
 			{
+				rsrc_map[0]->attrs |= mapChanged;
+				
 				rsrc->id = id;
 			}
 		}
@@ -195,9 +241,46 @@ void ChangedResource_handler( Handle resource : __A0 )
 		}
 		else
 		{
-			ERROR = "ChangedResource is unimplemented";
+			OSErr err;
 			
-			ResErr = paramErr;
+			/*
+				If recover_rsrc_header() succeeds, then resource is valid,
+				which guarantees that home_rsrc_map() will also succeed.
+			*/
+			
+			rsrc_map_header& map = **home_rsrc_map( resource );
+			
+			long& attrs_offset = *(long*) &rsrc->attrs;
+			
+			Size data_offset = attrs_offset & 0x00FFFFFF;
+			
+			Size new_data_size = mac::glue::GetHandleSize( resource );
+			Size old_data_size = -1;
+			
+			Size data_size_size = sizeof old_data_size;
+			
+			(err = SetFPos( map.refnum, fsFromStart, 256 + data_offset  ))  ||
+			(err = FSRead ( map.refnum, &data_size_size, &old_data_size ));
+			
+			if ( (ResErr = err) )
+			{
+				return;
+			}
+			
+			if ( new_data_size > old_data_size )
+			{
+				SInt32 file_size = extend_file_by( map, 4 + new_data_size );
+				
+				if ( file_size < 0 )
+				{
+					return;
+				}
+				
+				attrs_offset += file_size - 256 - data_offset;
+			}
+			
+			map.attrs   |= mapChanged;
+			rsrc->attrs |= resChanged;
 		}
 	}
 }
@@ -261,13 +344,22 @@ void AddResource_handler( Handle       data : __A0,
 	
 	rsrc_map_header& map = **rsrc_map;
 	
+	SInt32 file_size = extend_file_by( map, map_increase + 4 + data_size );
+	
+	if ( file_size < 0 )
+	{
+		return;
+	}
+	
+	long data_offset = file_size + map_increase - 256;
+	
 	rsrc_header new_rsrc;
 	
 	new_rsrc.id               = id;
 	new_rsrc.name_offset      = -1;
 	new_rsrc.attrs            = resChanged;
-	new_rsrc.offset_high_byte = -1;
-	new_rsrc.offset_low_word  = -1;
+	new_rsrc.offset_high_byte = data_offset >> 16;
+	new_rsrc.offset_low_word  = data_offset;
 	new_rsrc.handle           = data;
 	
 	if ( name_size )
