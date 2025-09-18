@@ -36,6 +36,23 @@ struct rectangular_op_params
 };
 
 static inline
+const Pattern& rotate_pattern( Pattern& rotated, const Pattern& pattern, int h )
+{
+	if ( h == 0 )
+	{
+		return pattern;
+	}
+	
+	for ( int i = 0;  i < 8;  ++i )
+	{
+		rotated.pat[ i ] = pattern.pat[ i ] <<      h
+		                 | pattern.pat[ i ] >> (8 - h);
+	}
+	
+	return rotated;
+}
+
+static inline
 void get_rectangular_op_params( rectangular_op_params&  params,
                                 const Rect&             rect )
 {
@@ -387,14 +404,7 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		}
 	}
 	
-	if ( const short h = origin_h & 0x07 )
-	{
-		for ( int i = 0;  i < 8;  ++i )
-		{
-			pattern.pat[ i ] = pattern.pat[ i ] <<      h
-			                 | pattern.pat[ i ] >> (8 - h);
-		}
-	}
+	rotate_pattern( pattern, pattern, origin_h & 0x07 );
 	
 	if ( ! clipping_to_rect )
 	{
