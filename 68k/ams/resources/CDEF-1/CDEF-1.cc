@@ -231,7 +231,7 @@ long CDEF_1_Draw( short varCode, ControlRef control, long param )
 	
 indicator:
 	
-	if ( param == 0  ||  param == kDrawControlIndicatorOnly )
+	if ( ! hiliting  ||  param == kDrawControlIndicatorOnly )
 	{
 		if ( aspect > 0 )
 		{
@@ -242,10 +242,12 @@ indicator:
 			InsetRect( &bounds, 16, 1 );
 		}
 		
+		const UInt8 hilite = control[0]->contrlHilite;
+		
 		const short min = control[0]->contrlMin;
 		const short max = control[0]->contrlMax;
 		
-		const bool inactive = min >= max  ||  param == kControlInactivePart;
+		const bool inactive = min >= max  ||  hilite == kControlInactivePart;
 		
 		QDGlobals& qd = get_QDGlobals();
 		
@@ -278,7 +280,7 @@ indicator:
 			return 0;
 		}
 		
-		param = control[0]->contrlHilite;
+		param = hilite;
 	}
 	
 hilite:
