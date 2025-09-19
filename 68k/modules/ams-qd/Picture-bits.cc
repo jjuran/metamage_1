@@ -222,12 +222,18 @@ void save_bits_to_picture( Handle         picSave,
 		return;
 	}
 	
+	PICT_bitmap_header header;
+	
+	header.opcode   = 0x90;
+	header.rowBytes = rowBytes;
+	header.bounds   = srcBits->bounds;
+	header.srcRect  = *srcRect;
+	header.dstRect  = *dstRect;
+	header.mode     = mode;
+	
 	Size size = mac::glue::GetHandleSize_raw( picSave );
 	
 	Size data_size = mulu_w( height, rowBytes );
-	Size pack_size = data_size;
-	
-	PICT_bitmap_header header;
 	
 	SetHandleSize( picSave, size + true_header_size + data_size );
 	
@@ -238,13 +244,6 @@ void save_bits_to_picture( Handle         picSave,
 	
 	SetHandleSize( picSave, size );
 	
-	header.opcode   = 0x90;
-	header.rowBytes = rowBytes;
-	header.bounds   = srcBits->bounds;
-	header.srcRect  = *srcRect;
-	header.dstRect  = *dstRect;
-	header.mode     = mode;
-	
 	PtrAndHand( &header.opcode, picSave, true_header_size );
 	
 	Ptr src = srcBits->baseAddr - srcBits->rowBytes * srcBits->bounds.top;
@@ -254,5 +253,5 @@ void save_bits_to_picture( Handle         picSave,
 		so we don't need a cursor-hiding raster lock.
 	*/
 	
-	PtrAndHand( src, picSave, mulu_w( rowBytes, height ) );
+	PtrAndHand( src, picSave, data_size );
 }
