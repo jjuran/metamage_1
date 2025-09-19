@@ -840,6 +840,7 @@ pascal WindowRef FrontWindow_patch()
 pascal void DrawGrowIcon_patch( WindowPeek window )
 {
 	scoped_port thePort = &window->port;
+	raster_lock lock;
 	
 	call_WDEF( window, wDrawGIcon, 0 );
 }
