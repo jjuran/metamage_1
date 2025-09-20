@@ -190,10 +190,6 @@ long CDEF_1_Draw( short varCode, ControlRef control, long param )
 		return 0;
 	}
 	
-	const short min = control[0]->contrlMin;
-	const short max = control[0]->contrlMax;
-	
-	const bool inactive = min >= max  ||  param == kControlInactivePart;
 	const bool hiliting = param != 0  &&  param != kControlInactivePart;
 	
 	if ( param == kDrawControlIndicatorOnly )
@@ -245,6 +241,11 @@ indicator:
 		{
 			InsetRect( &bounds, 16, 1 );
 		}
+		
+		const short min = control[0]->contrlMin;
+		const short max = control[0]->contrlMax;
+		
+		const bool inactive = min >= max  ||  param == kControlInactivePart;
 		
 		QDGlobals& qd = get_QDGlobals();
 		
