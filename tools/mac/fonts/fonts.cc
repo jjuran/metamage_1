@@ -14,6 +14,7 @@
 #endif
 
 // Standard C
+#include <signal.h>
 #include <stdio.h>
 
 // missing-macos
@@ -95,6 +96,19 @@ int main( int argc, char** argv )
 			if ( printed )
 			{
 				printf( "\n" );
+				
+			#ifdef __RELIX__
+				
+				/*
+					To get timely output, we need to flush
+					stdout and yield control to the kernel.
+				*/
+				
+				fflush( stdout );
+				
+				kill( 1, 0 );
+				
+			#endif
 			}
 		}
 	}
