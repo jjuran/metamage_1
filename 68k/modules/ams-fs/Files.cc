@@ -25,6 +25,7 @@
 
 // ams-fs
 #include "appfs.hh"
+#include "preferences.hh"
 #include "vfs.hh"
 #include "Volumes.hh"
 
@@ -175,7 +176,22 @@ short Create_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 	const short is_HFS = trap_word & kHFSFlagMask;
 	
 	INFO = "HCreate:" + ! is_HFS;
-	INFO = "-> ioVRefNum: ", pb->ioVRefNum;
+	
+	/*
+		If the Create call targets the (read-only) Bootstrap volume,
+		divert it to the Preferences volume (if we have one).
+	*/
+	
+	if ( prefs_vRefNum  &&  pb->ioVRefNum == -1 )
+	{
+		pb->ioVRefNum = prefs_vRefNum;
+		
+		INFO = "-> ioVRefNum: -1 -> ", prefs_vRefNum, " (prefs)";
+	}
+	else
+	{
+		INFO = "-> ioVRefNum: ", pb->ioVRefNum;
+	}
 	
 	if ( is_HFS )
 	{
