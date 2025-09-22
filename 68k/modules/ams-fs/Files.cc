@@ -854,8 +854,6 @@ short GetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 		return pb->ioResult = fnfErr;
 	}
 	
-	pb->ioFRefNum = 0;  // FIXME
-	
 	OSErr err = vfs->GetFileInfo( pb, entry );
 	
 	if ( err == noErr )
