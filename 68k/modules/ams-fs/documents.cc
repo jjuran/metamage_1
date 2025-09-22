@@ -53,6 +53,8 @@ void mount_virtual_documents_volume()
 	vcb->vcbAlBlkSiz = 4096;
 	vcb->vcbFreeBks  = 4096;
 	
+	vcb->vcbDRefNum = docfs_fd;
+	
 	#define VOLNAME  "\p" "Documents"
 	
 	fast_memcpy( vcb->vcbVN, VOLNAME, sizeof VOLNAME );
@@ -68,8 +70,8 @@ static plus::var_string filename_cache;
 
 const Byte* documents_get_nth( VCB* vcb, short n )
 {
-	const int in  = docfs_fd;
-	const int out = docfs_fd;
+	const int in  = vcb->vcbDRefNum;
+	const int out = vcb->vcbDRefNum;
 	
 	return remotefs_get_nth( in, out, n, filename_cache );
 }
@@ -92,7 +94,9 @@ OSErr documents_Write( FCB* fcb, const char* buffer, UInt32 length )
 	plus::string name( p,              vxo::delete_never );
 	plus::string data( buffer, length, vxo::delete_never );
 	
-	int err = try_to_write( docfs_fd, name, data, fcb->fcbCrPs );
+	int fd = fcb->fcbVPtr->vcbDRefNum;
+	
+	int err = try_to_write( fd, name, data, fcb->fcbCrPs );
 	
 	return err ? ioErr : noErr;
 }
@@ -105,7 +109,9 @@ OSErr documents_Create( VCB* vcb, const Byte* name )
 	
 	plus::var_string file_data;
 	
-	err = try_to_get( docfs_fd, name, file_data );
+	int fd = vcb->vcbDRefNum;
+	
+	err = try_to_get( fd, name, file_data );
 	
 	if ( ! err )
 	{
@@ -117,7 +123,7 @@ OSErr documents_Create( VCB* vcb, const Byte* name )
 		return ioErr;
 	}
 	
-	err = try_to_put( docfs_fd, name, plus::string::null );
+	err = try_to_put( fd, name, plus::string::null );
 	
 	return err ? ioErr : noErr;
 }
@@ -145,7 +151,9 @@ OSErr documents_open_fork( short trap_word, FCB* fcb, const Byte* name )
 	
 	plus::var_string file_data;
 	
-	int err = try_to_get( docfs_fd, path, file_data );
+	int fd = fcb->fcbVPtr->vcbDRefNum;
+	
+	int err = try_to_get( fd, path, file_data );
 	
 	if ( err < 0 )
 	{
@@ -182,15 +190,19 @@ OSErr documents_FlushFile( FCB* fcb )
 	plus::string name( p,                           vxo::delete_never );
 	plus::string data( fcb->fcbBfAdr, fcb->fcbPLen, vxo::delete_never );
 	
-	int err = try_to_put( docfs_fd, name, data );
+	int fd = fcb->fcbVPtr->vcbDRefNum;
+	
+	int err = try_to_put( fd, name, data );
 	
 	return err ? ioErr : noErr;
 }
 
 OSErr documents_GetFileInfo( HFileParam* pb, const Byte* name )
 {
-	const int in  = docfs_fd;
-	const int out = docfs_fd;
+	const int fd = *(short*) &pb->ioFVersNum;
+	
+	const int in  = fd;
+	const int out = fd;
 	
 	return remotefs_GetFileInfo( in, out, pb, name );
 }
@@ -218,7 +230,9 @@ OSErr documents_SetFileInfo( HFileParam* pb, const Byte* name )
 	
 	plus::string file_info( (Ptr) &pb->ioFlFndrInfo, size, vxo::delete_never );
 	
-	int err = try_to_put( docfs_fd, pathname, file_info );
+	const int fd = *(short*) &pb->ioFVersNum;
+	
+	int err = try_to_put( fd, pathname, file_info );
 	
 	if ( err == -ENOENT )
 	{
