@@ -301,8 +301,13 @@ let docfs-server = make_shared_dir_server (str getenv "AMS_DOCFS",
                                            "Documents",
                                            "documents")
 
+let prefs-server = make_shared_dir_server (str getenv "AMS_PREFS",
+                                           "Library/Preferences",
+                                           "preferences")
+
 let appfs_opt = if appfs-server then { "--appfs-fd", [appfs-server][ 1 ] }
 let docfs_opt = if docfs-server then { "--docfs-fd", [docfs-server][ 1 ] }
+let prefs_opt = if prefs-server then { "--prefs-fd", [prefs-server][ 1 ] }
 
 def core_opts
 {
@@ -430,7 +435,7 @@ def fs_opts
 		"--disk", v,
 	}
 	
-	let opts = *disk_opts, appfs_opt, docfs_opt
+	let opts = *disk_opts, appfs_opt, docfs_opt, prefs_opt
 	
 	return
 	if opts then
@@ -548,7 +553,7 @@ let zoom = "-x" (getenv "AMS_ZOOM" or 1)
 let event_input = events_fd_opt, ev_opt
 let command-prefix = "exhibit", "-t", title, raster, event_input, zoom
 
-let file-servers = freemountd-server, appfs-server, docfs-server
+let file-servers = freemountd-server, appfs-server, docfs-server, prefs-server
 let servers = sound-server, modem-server, file-servers
 
 let xv68k_opts = model_opt, mem_opt, sound_opt, rec_opt, "-tSP", crsr_opt, xv_opt
