@@ -603,20 +603,16 @@ namespace tool
 	void FillObjectFiles( const plus::string&  objects_dir,
 	                      const StringVector&  source_paths,
 	                      StringVector&        object_pathnames,
-	                      const char*          extension = ".o" )
+	                      const char*          ext_c,
+	                      const char*          ext_cc )
 	{
 		for ( size_t i = 0;  i < source_paths.size();  ++i )
 		{
 			const plus::string& path = source_paths[ i ];
 			
-			const char* ext = extension;
+			const bool is_C = path.end()[ -2 ] == '.';
 			
-			if ( ! ext )
-			{
-				const bool is_C = path.end()[ -2 ] == '.';
-				
-				ext = is_C ? ".i.o" : ".ii.o";
-			}
+			const char* ext = is_C ? ext_c : ext_cc;
 			
 		#ifdef __APPLE__
 			
@@ -686,10 +682,13 @@ namespace tool
 	                      StringVector&   object_pathnames,
 	                      bool            use_cpp )
 	{
+		const char* ext = dot_o( use_cpp );
+		
 		FillObjectFiles( ProjectObjectsDirPath( project.Name() ),
 		                 project.Sources(),
 		                 object_pathnames,
-		                 dot_o( use_cpp ) );
+		                 ext ? ext : ".i.o",
+		                 ext ? ext : ".ii.o" );
 	}
 	
 	
