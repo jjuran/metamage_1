@@ -86,13 +86,13 @@ void try_to_mount( const char* name )
 	
 	const macbinary::hdr& possible_mBIN_header = *(const macbinary::hdr*) image;
 	
-	if ( int8_t version = macbinary::version( possible_mBIN_header ) )
+	if ( SInt8 version = macbinary::version( possible_mBIN_header ) )
 	{
 		vcb->vcbSigWord = 'mB';
 		
-		const uint8_t* filename = possible_mBIN_header.filename;
+		const Byte* filename = possible_mBIN_header.filename;
 		
-		uint8_t len = filename[ 0 ];
+		Byte len = filename[ 0 ];
 		
 		if ( len > 27 )
 		{

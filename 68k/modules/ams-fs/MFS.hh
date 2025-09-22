@@ -6,15 +6,17 @@
 #ifndef MOUNT_HH
 #define MOUNT_HH
 
-// Standard
-#include <stdint.h>
-
 
 struct FCB;
 struct HFileParam;
 struct VCB;
 
-typedef short OSErr;
+typedef unsigned char   Byte;
+typedef short           OSErr;
+typedef signed char     SInt8;
+typedef unsigned char   UInt8;
+typedef unsigned short  UInt16;
+typedef unsigned long   UInt32;
 
 
 namespace mfs
@@ -24,24 +26,24 @@ namespace mfs
 	
 	struct f_info
 	{
-		uint16_t words[ 8 ];
+		UInt16 words[ 8 ];
 	};
 	
 	struct file_directory_entry
 	{
-		int8_t    flAttrib;
-		uint8_t   flVersNum;
-		f_info    flFndrInfo;
-		uint32_t  flNum;
-		uint16_t  flStBlk;
-		uint32_t  flLgLen;
-		uint32_t  flPyLen;
-		uint16_t  flRStBlk;
-		uint32_t  flRLgLen;
-		uint32_t  flRPyLen;
-		uint32_t  flCrDat;
-		uint32_t  flMdDat;
-		uint8_t   flNam[ 256 ];
+		SInt8   flAttrib;
+		UInt8   flVersNum;
+		f_info  flFndrInfo;
+		UInt32  flNum;
+		UInt16  flStBlk;
+		UInt32  flLgLen;
+		UInt32  flPyLen;
+		UInt16  flRStBlk;
+		UInt32  flRLgLen;
+		UInt32  flRPyLen;
+		UInt32  flCrDat;
+		UInt32  flMdDat;
+		Byte    flNam[ 256 ];
 	};
 	
 	typedef file_directory_entry _fde;
@@ -52,9 +54,9 @@ namespace mfs
 
 const mfs::file_directory_entry* MFS_get_nth( VCB* vcb, short n );
 
-const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name );
+const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const Byte* name );
 
-void MFS_load( VCB* vcb, uint16_t stBlk, char* buffer, int16_t n );
+void MFS_load( VCB* vcb, UInt16 stBlk, char* buffer, short n );
 
 OSErr MFS_open_fork( short trap_word, FCB* fcb, const mfs::_fde* entry );
 

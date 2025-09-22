@@ -24,14 +24,14 @@
 
 struct logical_block
 {
-	uint8_t bytes[ 512 ];
+	Byte bytes[ 512 ];
 };
 
 struct fork_spec
 {
-	uint16_t  forkStBlk;
-	uint32_t  forkLgLen;
-	uint32_t  forkPyLen;
+	UInt16  forkStBlk;
+	UInt32  forkLgLen;
+	UInt32  forkPyLen;
 };
 
 static inline
@@ -61,8 +61,8 @@ const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
 		the filename length can be trusted.)
 	*/
 	
-	const uint16_t drDirSt = vcb->vcbVBMSt;     // file directory first block
-	const uint16_t drBlLen = vcb->vcbAllocPtr;  // file directory block count
+	const UInt16 drDirSt = vcb->vcbVBMSt;     // file directory first block
+	const UInt16 drBlLen = vcb->vcbAllocPtr;  // file directory block count
 	
 	const Byte* disk_start = (const Byte*) vcb->vcbBufAdr;
 	
@@ -72,8 +72,8 @@ const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
 	
 	if ( prev )
 	{
-		const uint32_t fde_disk_offset  = (const Byte*) prev - disk_start;
-		const uint32_t fde_block_offset = fde_disk_offset % 512u;
+		const UInt32 fde_disk_offset  = (const Byte*) prev - disk_start;
+		const UInt32 fde_block_offset = fde_disk_offset % 512u;
 		
 		fd_block = disk_start + (fde_disk_offset - fde_block_offset);
 		
@@ -85,7 +85,7 @@ const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
 		
 		const Byte* next_fde = name + (1 + name[ 0 ] + 1 & 0xFE);
 		
-		if ( next_fde < block_end  &&  (int8_t) *next_fde < 0 )
+		if ( next_fde < block_end  &&  (SInt8) *next_fde < 0 )
 		{
 			return (const mfs::file_directory_entry*) next_fde;
 		}
@@ -109,7 +109,7 @@ const mfs::file_directory_entry* MFS_iterate( VCB* vcb, const mfs::_fde* prev )
 	
 	while ( fd_block < file_directory_end )
 	{
-		if ( (int8_t) *fd_block < 0 )
+		if ( (SInt8) *fd_block < 0 )
 		{
 			return (const mfs::file_directory_entry*) fd_block;
 		}
@@ -133,7 +133,7 @@ const mfs::file_directory_entry* MFS_get_nth( VCB* vcb, short n )
 	return entry;
 }
 
-const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name )
+const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const Byte* name )
 {
 	if ( name == NULL  ||  name[ 0 ] == '\0' )
 	{
@@ -154,7 +154,7 @@ const mfs::file_directory_entry* MFS_lookup( VCB* vcb, const uint8_t* name )
 }
 
 static
-int16_t get_next( const uint8_t* block_map, int16_t curBlk )
+SInt16 get_next( const Byte* block_map, SInt16 curBlk )
 {
 	if ( curBlk == 1 )
 	{
@@ -180,7 +180,7 @@ int16_t get_next( const uint8_t* block_map, int16_t curBlk )
 	}
 }
 
-void MFS_load( VCB* vcb, uint16_t stBlk, Ptr buffer, int16_t n )
+void MFS_load( VCB* vcb, UInt16 stBlk, Ptr buffer, short n )
 {
 	Ptr p = buffer;
 	
@@ -188,11 +188,11 @@ void MFS_load( VCB* vcb, uint16_t stBlk, Ptr buffer, int16_t n )
 	
 	const logical_block* master_directory_block = all_blocks + 2;
 	
-	const uint8_t* block_map = (const uint8_t*) master_directory_block + 64;
+	const Byte* block_map = (const Byte*) master_directory_block + 64;
 	
 	const char* alloc_blocks = (const char*) (all_blocks + vcb->vcbAlBlSt);
 	
-	const uint32_t k = vcb->vcbAlBlkSiz;
+	const UInt32 k = vcb->vcbAlBlkSiz;
 	
 	while ( stBlk > 1  &&  n-- > 0 )
 	{

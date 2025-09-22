@@ -6,26 +6,25 @@
 #ifndef VFS_HH
 #define VFS_HH
 
-// Standard
-#include <stdint.h>
-
 
 struct FCB;
 struct HFileParam;
 struct VCB;
 
-typedef short OSErr;
+typedef unsigned char  Byte;
+typedef short          OSErr;
+typedef unsigned long  UInt32;
 
 
 template < class Entry >
 struct filesystem_vtable
 {
-	typedef const Entry* (*lookup_proc)( VCB* vcb, const uint8_t* name );
+	typedef const Entry* (*lookup_proc)( VCB* vcb, const Byte* name );
 	typedef const Entry* (*getnth_proc)( VCB* vcb, short n );
 	
 	typedef OSErr (*Close_proc)( FCB* fcb );
-	typedef OSErr (*Write_proc)( FCB* fcb, const char* p, uint32_t n );
-	typedef OSErr (*Create_proc)( VCB* vcb, const uint8_t* name );
+	typedef OSErr (*Write_proc)( FCB* fcb, const char* p, UInt32 n );
+	typedef OSErr (*Create_proc)( VCB* vcb, const Byte* name );
 	typedef OSErr (*openfork_proc)( short trap_word, FCB* fcb, const Entry* e );
 	typedef OSErr (*FlushFile_proc)( FCB* fcb );
 	typedef OSErr (*GetFileInfo_proc)( HFileParam* pb, const Entry* entry );

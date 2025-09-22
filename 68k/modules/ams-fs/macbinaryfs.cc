@@ -24,17 +24,17 @@
 static
 const macbinary::header* next( const macbinary::header* h )
 {
-	uint32_t forkLen;
+	UInt32 forkLen;
 	
-	const uint32_t data_offset = 128 + h->extHeaderLen + 127 & ~0x7f;
+	const UInt32 data_offset = 128 + h->extHeaderLen + 127 & ~0x7f;
 	
 	fast_memcpy( &forkLen, h->dataForkLen, 4 );
 	
-	const uint32_t rsrc_offset = data_offset + forkLen + 127 & ~0x7f;
+	const UInt32 rsrc_offset = data_offset + forkLen + 127 & ~0x7f;
 	
 	fast_memcpy( &forkLen, h->rsrcForkLen, 4 );
 	
-	const uint32_t next_offset = rsrc_offset + forkLen + 127 & ~0x7f;
+	const UInt32 next_offset = rsrc_offset + forkLen + 127 & ~0x7f;
 	
 	h = (const macbinary::header*) ((Ptr) h + next_offset);
 	
@@ -45,7 +45,7 @@ const macbinary::header* MacBinary_get_nth( VCB* vcb, short n )
 {
 	const macbinary::header* h = (const macbinary::header*) vcb->vcbBufAdr;
 	
-	uint16_t depth = 0;
+	UInt16 depth = 0;
 	
 	do
 	{
@@ -58,7 +58,7 @@ const macbinary::header* MacBinary_get_nth( VCB* vcb, short n )
 		}
 		else
 		{
-			depth += (int8_t) h->fileCreator[ 3 ] * 2 + 3;
+			depth += (SInt8) h->fileCreator[ 3 ] * 2 + 3;
 		}
 		
 		h = next( h );
@@ -68,14 +68,14 @@ const macbinary::header* MacBinary_get_nth( VCB* vcb, short n )
 	return NULL;
 }
 
-const macbinary::header* MacBinary_lookup( VCB* vcb, const uint8_t* name )
+const macbinary::header* MacBinary_lookup( VCB* vcb, const Byte* name )
 {
 	if ( name == NULL  ||  name[ 0 ] == '\0' )
 	{
 		return NULL;
 	}
 	
-	uint8_t name_len = *name++;
+	Byte name_len = *name++;
 	
 	if ( *name == ':' )
 	{
@@ -85,14 +85,14 @@ const macbinary::header* MacBinary_lookup( VCB* vcb, const uint8_t* name )
 	
 	const macbinary::header* h = (const macbinary::header*) vcb->vcbBufAdr;
 	
-	uint16_t depth = 0;
+	UInt16 depth = 0;
 	
 	do
 	{
 		if ( h->extensions == 0 )
 		{
-			const uint8_t* this_name = h->filename;
-			const uint8_t  this_len  = *this_name++;
+			const Byte* this_name = h->filename;
+			const Byte  this_len  = *this_name++;
 			
 			if ( EqualString_sans_case( this_name, this_len, name, name_len ) )
 			{
@@ -101,7 +101,7 @@ const macbinary::header* MacBinary_lookup( VCB* vcb, const uint8_t* name )
 		}
 		else
 		{
-			depth += (int8_t) h->fileCreator[ 3 ] * 2 + 3;
+			depth += (SInt8) h->fileCreator[ 3 ] * 2 + 3;
 		}
 		
 		h = next( h );
@@ -119,14 +119,14 @@ OSErr MacBinary_Close( FCB* fcb )
 }
 
 static inline
-uint32_t get_filenum( VCB* vcb, const macbinary::header* h )
+UInt32 get_filenum( VCB* vcb, const macbinary::header* h )
 {
 	return h - (const macbinary::header*) vcb->vcbBufAdr + 1;
 }
 
 OSErr MacBinary_open_fork( short trap_word, FCB* fcb, const macbinary::hdr* h )
 {
-	const uint32_t data_offset = 128 + h->extHeaderLen + 127 & ~0x7f;
+	const UInt32 data_offset = 128 + h->extHeaderLen + 127 & ~0x7f;
 	
 	fcb->fcbBfAdr = (Ptr) h + data_offset;
 	
@@ -159,7 +159,7 @@ OSErr MacBinary_GetFileInfo( HFileParam* pb, const macbinary::hdr* h )
 	
 	fast_memcpy( &pb->ioFlFndrInfo, h->fileType, sizeof (FInfo) );
 	
-	((uint8_t*) &pb->ioFlFndrInfo.fdFlags)[ 1 ] = h->fndrFlagsLow;
+	((Byte*) &pb->ioFlFndrInfo.fdFlags)[ 1 ] = h->fndrFlagsLow;
 	
 	pb->ioDirID = get_filenum( VCB_lookup( pb->ioVRefNum ), h );  // ioFlNum
 	

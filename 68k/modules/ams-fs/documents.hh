@@ -6,33 +6,32 @@
 #ifndef DOCUMENTS_HH
 #define DOCUMENTS_HH
 
-// Standard
-#include <stdint.h>
-
 
 struct FCB;
 struct HFileParam;
 struct VCB;
 
-typedef short OSErr;
+typedef unsigned char  Byte;
+typedef short          OSErr;
+typedef unsigned long  UInt32;
 
 
 extern int docfs_fd;
 
 void mount_virtual_documents_volume();
 
-const uint8_t* documents_get_nth( VCB* vcb, short n );
+const Byte* documents_get_nth( VCB* vcb, short n );
 
 OSErr documents_Close( FCB* fcb );
-OSErr documents_Write( FCB* fcb, const char* buffer, uint32_t length );
+OSErr documents_Write( FCB* fcb, const char* buffer, UInt32 length );
 
-OSErr documents_Create( VCB* vcb, const uint8_t* name );
+OSErr documents_Create( VCB* vcb, const Byte* name );
 
-OSErr documents_open_fork( short trap_word, FCB* fcb, const uint8_t* name );
+OSErr documents_open_fork( short trap_word, FCB* fcb, const Byte* name );
 
 OSErr documents_FlushFile( FCB* fcb );
 
-OSErr documents_GetFileInfo( HFileParam* pb, const uint8_t* name );
-OSErr documents_SetFileInfo( HFileParam* pb, const uint8_t* name );
+OSErr documents_GetFileInfo( HFileParam* pb, const Byte* name );
+OSErr documents_SetFileInfo( HFileParam* pb, const Byte* name );
 
 #endif

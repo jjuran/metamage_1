@@ -56,7 +56,7 @@ void mount_virtual_bootstrap_volume()
 
 static plus::var_string filename_cache;
 
-const uint8_t* bootstrap_get_nth( VCB* vcb, short n )
+const Byte* bootstrap_get_nth( VCB* vcb, short n )
 {
 	const int in  = 6;
 	const int out = 7;
@@ -64,7 +64,7 @@ const uint8_t* bootstrap_get_nth( VCB* vcb, short n )
 	return remotefs_get_nth( in, out, n, filename_cache );
 }
 
-OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
+OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const Byte* name )
 {
 	const Byte is_rsrc = trap_word;  // Open is A000, OpenRF is A00A
 	
@@ -142,7 +142,7 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
 	return noErr;
 }
 
-OSErr bootstrap_GetFileInfo( HFileParam* pb, const uint8_t* name )
+OSErr bootstrap_GetFileInfo( HFileParam* pb, const Byte* name )
 {
 	const int in  = 6;
 	const int out = 7;

@@ -18,7 +18,7 @@
 #include "remotefs.hh"
 
 
-static const filesystem_vtable< uint8_t > bootstrap_vtable =
+static const filesystem_vtable< Byte > bootstrap_vtable =
 {
 	&remotefs_lookup,
 	&bootstrap_get_nth,
@@ -31,7 +31,7 @@ static const filesystem_vtable< uint8_t > bootstrap_vtable =
 	&bootstrap_GetFileInfo,
 };
 
-static const filesystem_vtable< uint8_t > documents_vtable =
+static const filesystem_vtable< Byte > documents_vtable =
 {
 	&remotefs_lookup,
 	&documents_get_nth,

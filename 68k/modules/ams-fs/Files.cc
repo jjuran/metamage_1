@@ -106,7 +106,7 @@ FCB* find_next_empty_FCB()
 }
 
 static inline
-bool is_current_application( uint32_t flNum )
+bool is_current_application( UInt32 flNum )
 {
 	const FCB& curApFCB = *get_FCB( CurApRefNum );
 	
@@ -966,7 +966,7 @@ OSErr GetWDInfo_call( WDPBRec* pb : __A0 )
 		
 		if ( pb->ioNamePtr )
 		{
-			const uint8_t* name = vcb->vcbVN;
+			const Byte* name = vcb->vcbVN;
 			
 			fast_memcpy( pb->ioNamePtr, name, 1 + name[ 0 ] );
 		}

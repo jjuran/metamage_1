@@ -14,12 +14,13 @@ struct FCB;
 struct HFileParam;
 struct VCB;
 
-typedef short OSErr;
+typedef unsigned char  Byte;
+typedef short          OSErr;
 
 
 const macbinary::header* MacBinary_get_nth( VCB* vcb, short n );
 
-const macbinary::header* MacBinary_lookup( VCB* vcb, const uint8_t* name );
+const macbinary::header* MacBinary_lookup( VCB* vcb, const Byte* name );
 
 OSErr MacBinary_Close( FCB* fcb );
 

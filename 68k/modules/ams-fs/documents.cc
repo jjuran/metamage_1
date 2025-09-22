@@ -66,7 +66,7 @@ void mount_virtual_documents_volume()
 
 static plus::var_string filename_cache;
 
-const uint8_t* documents_get_nth( VCB* vcb, short n )
+const Byte* documents_get_nth( VCB* vcb, short n )
 {
 	const int in  = docfs_fd;
 	const int out = docfs_fd;
@@ -83,7 +83,7 @@ OSErr documents_Close( FCB* fcb )
 	return noErr;
 }
 
-OSErr documents_Write( FCB* fcb, const char* buffer, uint32_t length )
+OSErr documents_Write( FCB* fcb, const char* buffer, UInt32 length )
 {
 	temp_A4 a4;
 	
@@ -97,7 +97,7 @@ OSErr documents_Write( FCB* fcb, const char* buffer, uint32_t length )
 	return err ? ioErr : noErr;
 }
 
-OSErr documents_Create( VCB* vcb, const uint8_t* name )
+OSErr documents_Create( VCB* vcb, const Byte* name )
 {
 	int err;
 	
@@ -122,7 +122,7 @@ OSErr documents_Create( VCB* vcb, const uint8_t* name )
 	return err ? ioErr : noErr;
 }
 
-OSErr documents_open_fork( short trap_word, FCB* fcb, const uint8_t* name )
+OSErr documents_open_fork( short trap_word, FCB* fcb, const Byte* name )
 {
 	const Byte is_rsrc = trap_word;  // Open is A000, OpenRF is A00A
 	
@@ -187,7 +187,7 @@ OSErr documents_FlushFile( FCB* fcb )
 	return err ? ioErr : noErr;
 }
 
-OSErr documents_GetFileInfo( HFileParam* pb, const uint8_t* name )
+OSErr documents_GetFileInfo( HFileParam* pb, const Byte* name )
 {
 	const int in  = docfs_fd;
 	const int out = docfs_fd;
@@ -195,7 +195,7 @@ OSErr documents_GetFileInfo( HFileParam* pb, const uint8_t* name )
 	return remotefs_GetFileInfo( in, out, pb, name );
 }
 
-OSErr documents_SetFileInfo( HFileParam* pb, const uint8_t* name )
+OSErr documents_SetFileInfo( HFileParam* pb, const Byte* name )
 {
 	temp_A4 a4;
 	
