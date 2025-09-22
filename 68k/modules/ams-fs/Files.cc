@@ -854,7 +854,17 @@ short GetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 		return pb->ioResult = fnfErr;
 	}
 	
+	/*
+		The Documents filesystem stores the server fd in vcbDRefNum.
+		Temporarily stash it in the parameter block (clobbering
+		ioFVersNum and filler1) during the GetFileInfo vfs call.
+	*/
+	
+	*(short*) &pb->ioFVersNum = vcb->vcbDRefNum;
+	
 	OSErr err = vfs->GetFileInfo( pb, entry );
+	
+	*(short*) &pb->ioFVersNum = 0;
 	
 	if ( err == noErr )
 	{
@@ -933,7 +943,19 @@ short SetFileInfo_patch( short trap_word : __D1, HFileParam* pb : __A0 )
 	
 	if ( vfs->SetFileInfo )
 	{
-		return pb->ioResult = vfs->SetFileInfo( pb, entry );
+		/*
+			The Documents filesystem stores the server fd in vcbDRefNum.
+			Temporarily stash it in the parameter block (clobbering
+			ioFVersNum and filler1) during the SetFileInfo vfs call.
+		*/
+		
+		*(short*) &pb->ioFVersNum = vcb->vcbDRefNum;
+		
+		pb->ioResult = vfs->SetFileInfo( pb, entry );
+		
+		*(short*) &pb->ioFVersNum = 0;
+		
+		return pb->ioResult;
 	}
 	
 	WARNING = "returning noErr for unimplemented SetFileInfo";
