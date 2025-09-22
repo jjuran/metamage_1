@@ -111,9 +111,11 @@ def make_shared_dir_server (key, subpath)
 
 let appfs-server = make_shared_dir_server ("appfs", "Library/Preferences")
 let docfs-server = make_shared_dir_server ("docfs", "Documents")
+let prefs-server = make_shared_dir_server ("prefs", "Library/Preferences")
 
 let appfs_opt = if appfs-server then { "--appfs-fd", [appfs-server][ 1 ] }
 let docfs_opt = if docfs-server then { "--docfs-fd", [docfs-server][ 1 ] }
+let prefs_opt = if prefs-server then { "--prefs-fd", [prefs-server][ 1 ] }
 
 let model_opt = if "cpu" in config then {"-M" config[ "cpu" ]}  # may be ()
 
@@ -171,7 +173,7 @@ def fs_opts
 		*(disks map {"--disk", v}),
 	}
 	
-	let opts = disk_opt, appfs_opt, docfs_opt
+	let opts = disk_opt, appfs_opt, docfs_opt, prefs_opt
 	
 	return
 	if opts then
@@ -251,7 +253,7 @@ let module_opts = ams_modules map {"-m", argify v}
 
 let app = ams_bin "/app"
 
-let servers = sound-server, freemountd-server, appfs-server, docfs-server
+let servers = sound-server, freemountd-server, appfs-server, docfs-server, prefs-server
 
 let xv68k_opts = model_opt, mem_opt, sound_opt, xv_opt, "-tSP"
 
