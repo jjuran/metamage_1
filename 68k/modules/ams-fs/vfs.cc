@@ -79,6 +79,7 @@ const vfs_table* vfs_from_vcb( const VCB* vcb )
 			return (const vfs_table*) &bootstrap_vtable;
 		
 		case 0xD0C5:
+		case 0x3e1a:
 			return (const vfs_table*) &documents_vtable;
 		
 		case 'mB':
