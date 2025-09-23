@@ -72,7 +72,7 @@ static const exception_spec exceptions[] =
 	{ inval, "invalid zero playback rate" },
 	{ inval, "invalid duration value > 255" },
 	{ empty, "sound duration is zero" },
-	{ inval, "invalid zero wavelength for tone" },
+	{ debug, "invalid zero wavelength for tone" },
 	{ empty, "tone duration is zero" },
 	{ badid, "no such ID for four-tone update" },
 	{ audio, "gap in audio playback detected" },

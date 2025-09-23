@@ -103,6 +103,11 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 		reset = true;
 	}
 	
+	if ( end_of_tones( tone ) )
+	{
+		return -1;
+	}
+	
 	if ( reset )
 	{
 		/*
