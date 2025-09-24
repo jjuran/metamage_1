@@ -264,71 +264,45 @@ def get_modem_fd
 	return ()
 }
 
-var appfs-server = ()
-
-def get_appfs_fd
+def make_shared_dir_server (param, mac_subpath, alt_subpath )
 {
-	var appfs = getenv "AMS_APPFS" or return ()
+	var path = param or return ()
 	
-	if not '/' in appfs then
+	if not '/' in path then
 	{
-		if appfs == "-" then
+		if path == "-" then
 		{
-			appfs = app_name
+			path = app_name
 		}
 		
-		let osx_prefs = home "/Library/Preferences"
-		let ams_prefs = if exists osx_prefs
-		then { osx_prefs "/Advanced Mac Substitute" }
-		else { home "/.advanced-mac-substitute/preferences" }
+		let mac_path = home "/" mac_subpath
+		let dir_path = if exists mac_path
+		then { mac_path "/Advanced Mac Substitute" }
+		else { home "/.advanced-mac-substitute/" alt_subpath }
 		
-		appfs = ams_prefs "/" app_name
+		path = dir_path "/" path
 		
-		if not exists appfs then
+		if not exists path then
 		{
-			run [ "mkdir -p" / ' ', appfs ]
+			run [ "mkdir -p" / ' ', path ]
 		}
 	}
 	
 	let fd_slot = alloc_fd()
 	
-	appfs-server = "--fd", fd_slot, freemountd_rw appfs
-	
-	return fd_slot
+	return "--fd", fd_slot, freemountd_rw path
 }
 
-var docfs-server = ()
+let appfs-server = make_shared_dir_server (str getenv "AMS_APPFS",
+                                           "Library/Preferences",
+                                           "preferences")
 
-def get_docfs_fd
-{
-	var docfs = getenv "AMS_DOCFS" or return ()
-	
-	if not '/' in docfs then
-	{
-		if docfs == "-" then
-		{
-			docfs = app_name
-		}
-		
-		let osx_docs = home "/Documents"
-		let ams_docs = if exists osx_docs
-		then { osx_docs "/Advanced Mac Substitute" }
-		else { home "/.advanced-mac-substitute/documents" }
-		
-		docfs = ams_docs "/" docfs
-		
-		if not exists docfs then
-		{
-			run [ "mkdir -p" / ' ', docfs ]
-		}
-	}
-	
-	let fd_slot = alloc_fd()
-	
-	docfs-server = "--fd", fd_slot, freemountd_rw docfs
-	
-	return fd_slot
-}
+let docfs-server = make_shared_dir_server (str getenv "AMS_DOCFS",
+                                           "Documents",
+                                           "documents")
+
+let appfs_opt = if appfs-server then { "--appfs-fd", [appfs-server][ 1 ] }
+let docfs_opt = if docfs-server then { "--docfs-fd", [docfs-server][ 1 ] }
 
 def core_opts
 {
@@ -454,18 +428,6 @@ def fs_opts
 	let disk_opts = disks map
 	{
 		"--disk", v,
-	}
-	
-	let appfs_opt =
-	if let appfs_fd = get_appfs_fd() then
-	{
-		"--appfs-fd", appfs_fd,
-	}
-	
-	let docfs_opt =
-	if let docfs_fd = get_docfs_fd() then
-	{
-		"--docfs-fd", docfs_fd,
 	}
 	
 	let opts = *disk_opts, appfs_opt, docfs_opt
