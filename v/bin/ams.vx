@@ -267,7 +267,7 @@ def get_appfs_fd
 		let osx_prefs = home "/Library/Preferences"
 		let ams_prefs = if exists osx_prefs
 		then { osx_prefs "/Advanced Mac Substitute" }
-		else { home "/.advanced-mac-substitute" }
+		else { home "/.advanced-mac-substitute/preferences" }
 		
 		appfs = ams_prefs "/" app_name
 		
