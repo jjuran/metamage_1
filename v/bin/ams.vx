@@ -270,8 +270,13 @@ def get_appfs_fd
 {
 	var appfs = getenv "AMS_APPFS" or return ()
 	
-	if appfs == "-" then
+	if not '/' in appfs then
 	{
+		if appfs == "-" then
+		{
+			appfs = app_name
+		}
+		
 		let osx_prefs = home "/Library/Preferences"
 		let ams_prefs = if exists osx_prefs
 		then { osx_prefs "/Advanced Mac Substitute" }
