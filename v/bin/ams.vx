@@ -202,10 +202,19 @@ def module_path (name)
 dup2(ERR, 6)
 dup2(ERR, 7)
 
-let events_fd_slot = reader "/dev/null"
-let events_fd_opt  = "--events-fd=" events_fd_slot
+var opened_fds = []
 
-var sound-fd
+def alloc_fd ()
+{
+	let fd = reader "/dev/null"
+	
+	opened_fds <-- fd
+	
+	return str fd
+}
+
+let events_fd_opt = "--events-fd=" alloc_fd()
+
 var sound-server = ()
 
 def get_sound_fd
@@ -217,7 +226,8 @@ def get_sound_fd
 	
 	if runnable "sndtrack" then
 	{
-		let sound_fd_slot = str (sound-fd = reader "/dev/null")
+		let sound_fd_slot = alloc_fd()
+		
 		sound-server = "--fd", sound_fd_slot, "sndtrack", "//"
 		
 		return sound_fd_slot
@@ -226,7 +236,6 @@ def get_sound_fd
 	return ()
 }
 
-var modem-fd
 var modem-server = ()
 
 def get_modem_fd
@@ -246,7 +255,7 @@ def get_modem_fd
 		
 		let command = "tcpclient", host, port, "duplex", "6-1", "0-7"
 		
-		let modem_fd_slot = str (modem-fd = reader "/dev/null")
+		let modem_fd_slot = alloc_fd()
 		modem-server = "--fd", modem_fd_slot, command, "//"
 		
 		return modem_fd_slot
@@ -255,7 +264,6 @@ def get_modem_fd
 	return ()
 }
 
-var appfs-fd
 var appfs-server = ()
 
 def get_appfs_fd
@@ -277,13 +285,13 @@ def get_appfs_fd
 		}
 	}
 	
-	let fd_slot = str (appfs-fd = reader "/dev/null")
+	let fd_slot = alloc_fd()
+	
 	appfs-server = "--fd", fd_slot, freemountd_rw appfs
 	
 	return fd_slot
 }
 
-var docfs-fd
 var docfs-server = ()
 
 def get_docfs_fd
@@ -310,7 +318,8 @@ def get_docfs_fd
 		}
 	}
 	
-	let fd_slot = str (docfs-fd = reader "/dev/null")
+	let fd_slot = alloc_fd()
+	
 	docfs-server = "--fd", fd_slot, freemountd_rw docfs
 	
 	return fd_slot
