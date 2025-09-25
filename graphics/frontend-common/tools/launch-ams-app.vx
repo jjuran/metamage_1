@@ -89,55 +89,31 @@ let sound_opt = if let sound_fd = get_sound_fd() then
 	"--sound-fd=" sound_fd,
 }
 
-var appfs-server = ()
-
-def get_appfs_fd
+def make_shared_dir_server (key, subpath)
 {
-	var appfs = active "appfs" or return ()
+	var path = active key or return ()
 	
-	if not '/' in appfs then
+	if not '/' in path then
 	{
 		let home = getenv "HOME"
 		
-		let osx_prefs = home "/Library/Preferences"
-		let ams_prefs = osx_prefs "/Advanced Mac Substitute"
+		let dir_path = home "/" subpath "/Advanced Mac Substitute"
 		
-		appfs = ams_prefs "/" app_name
+		path = dir_path "/" path
 		
-		run [ "mkdir", "-p", appfs ]
+		run [ "mkdir", "-p", path ]
 	}
 	
 	let fd_slot = alloc_fd()
 	
-	appfs-server = "--fd", fd_slot, freemountd_rw appfs
-	
-	return fd_slot
+	return "--fd", fd_slot, freemountd_rw path
 }
 
-var docfs-server = ()
+let appfs-server = make_shared_dir_server ("appfs", "Library/Preferences")
+let docfs-server = make_shared_dir_server ("docfs", "Documents")
 
-def get_docfs_fd
-{
-	var docfs = active "docfs" or return ()
-	
-	if not '/' in docfs then
-	{
-		let home = getenv "HOME"
-		
-		let osx_docs = home "/Documents"
-		let ams_docs = osx_docs "/Advanced Mac Substitute"
-		
-		docfs = ams_docs "/" docfs
-		
-		run [ "mkdir", "-p", docfs ]
-	}
-	
-	let fd_slot = alloc_fd()
-	
-	docfs-server = "--fd", fd_slot, freemountd_rw docfs
-	
-	return fd_slot
-}
+let appfs_opt = if appfs-server then { "--appfs-fd", [appfs-server][ 1 ] }
+let docfs_opt = if docfs-server then { "--docfs-fd", [docfs-server][ 1 ] }
 
 let model_opt = if "cpu" in config then {"-M" config[ "cpu" ]}  # may be ()
 
@@ -193,18 +169,6 @@ def fs_opts
 		let disks = config[ "disks" ]
 		
 		*(disks map {"--disk", v}),
-	}
-	
-	let appfs_opt =
-	if let appfs_fd = get_appfs_fd() then
-	{
-		"--appfs-fd", appfs_fd,
-	}
-	
-	let docfs_opt =
-	if let docfs_fd = get_docfs_fd() then
-	{
-		"--docfs-fd", docfs_fd,
 	}
 	
 	let opts = disk_opt, appfs_opt, docfs_opt
