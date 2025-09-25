@@ -48,7 +48,17 @@ let freemountd-server = "./freemountd -qu --root" / ' ', root_dir, "//"
 dup2(ERR, 6)
 dup2(ERR, 7)
 
-var sound-fd
+var opened_fds = []
+
+def alloc_fd ()
+{
+	let fd = reader "/dev/null"
+	
+	opened_fds <-- fd
+	
+	return str fd
+}
+
 var sound-server = ()
 
 def get_sound_fd
@@ -64,7 +74,8 @@ def get_sound_fd
 	}
 	else if exists "./sndtrack" then
 	{
-		let sound_fd_slot = str (sound-fd = reader "/dev/null")
+		let sound_fd_slot = alloc_fd()
+		
 		sound-server = "--fd", sound_fd_slot, "./sndtrack", "//"
 		
 		return sound_fd_slot
@@ -78,7 +89,6 @@ let sound_opt = if let sound_fd = get_sound_fd() then
 	"--sound-fd=" sound_fd,
 }
 
-var appfs-fd
 var appfs-server = ()
 
 def get_appfs_fd
@@ -97,13 +107,13 @@ def get_appfs_fd
 		run [ "mkdir", "-p", appfs ]
 	}
 	
-	let fd_slot = str (appfs-fd = reader "/dev/null")
+	let fd_slot = alloc_fd()
+	
 	appfs-server = "--fd", fd_slot, freemountd_rw appfs
 	
 	return fd_slot
 }
 
-var docfs-fd
 var docfs-server = ()
 
 def get_docfs_fd
@@ -122,7 +132,8 @@ def get_docfs_fd
 		run [ "mkdir", "-p", docfs ]
 	}
 	
-	let fd_slot = str (docfs-fd = reader "/dev/null")
+	let fd_slot = alloc_fd()
+	
 	docfs-server = "--fd", fd_slot, freemountd_rw docfs
 	
 	return fd_slot
