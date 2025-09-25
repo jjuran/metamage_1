@@ -276,6 +276,16 @@ let respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
 
 run [ vx_run "mkrsrc.vx", "-o", Files "/AMS Resources/rsrc", *respaths ]
 
+if "appfs" in config then
+{
+	let appfs = config[ "appfs" ]
+	
+	if appfs isa bool and appfs or appfs == "-" then
+	{
+		config[ "appfs" ] = name
+	}
+}
+
 if "docfs" in config then
 {
 	let docfs = config[ "docfs" ]
