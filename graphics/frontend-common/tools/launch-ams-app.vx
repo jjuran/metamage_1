@@ -95,7 +95,7 @@ def get_appfs_fd
 {
 	var appfs = active "appfs" or return ()
 	
-	if appfs isa bool or appfs == "-" then
+	if not '/' in appfs then
 	{
 		let home = getenv "HOME"
 		
