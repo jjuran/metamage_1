@@ -12,6 +12,8 @@ let mutations =
 [
 	drop '\'',
 	drop "\u2019",  # typographer's apostrophe / closing single quote
+	drop "\u00a1",  # inverted exclamation point
+	drop '!',
 	drop '.',
 	repl " -",
 	repl str ('A' .. 'Z', 'a' .. 'z'),
