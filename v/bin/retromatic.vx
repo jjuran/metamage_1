@@ -296,6 +296,16 @@ if "docfs" in config then
 	}
 }
 
+if "prefs" in config then
+{
+	let prefs = config[ "prefs" ]
+	
+	if prefs isa bool and prefs or prefs == "-" then
+	{
+		config[ "prefs" ] = name
+	}
+}
+
 if "files" in config then
 {
 	files_to_copy <-- *config[ "files" ]

@@ -26,6 +26,7 @@
 #include "documents.hh"
 #include "Files.hh"
 #include "mount.hh"
+#include "preferences.hh"
 #include "Volumes.hh"
 
 
@@ -43,6 +44,7 @@ enum
 	Opt_disk,
 	Opt_appfs_fd,
 	Opt_docfs_fd,
+	Opt_prefs_fd,
 };
 
 static command::option options[] =
@@ -50,6 +52,7 @@ static command::option options[] =
 	{ "disk",     Opt_disk,     command::Param_required },
 	{ "appfs-fd", Opt_appfs_fd, command::Param_required },
 	{ "docfs-fd", Opt_docfs_fd, command::Param_required },
+	{ "prefs-fd", Opt_prefs_fd, command::Param_required },
 	
 	NULL,
 };
@@ -121,6 +124,10 @@ char* const* get_options( char** argv )
 				docfs_fd = gear::parse_unsigned_decimal( global_result.param );
 				break;
 			
+			case Opt_prefs_fd:
+				prefs_fd = gear::parse_unsigned_decimal( global_result.param );
+				break;
+			
 			case Opt_disk:
 				try_to_mount( global_result.param );
 				break;
@@ -154,6 +161,11 @@ int main( int argc, char** argv )
 	if ( docfs_fd )
 	{
 		mount_virtual_documents_volume();
+	}
+	
+	if ( prefs_fd )
+	{
+		mount_virtual_preferences_volume();
 	}
 	
 	module_A4_suspend();  // doesn't return
