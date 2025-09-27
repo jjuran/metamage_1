@@ -745,6 +745,16 @@ namespace MacBinary
 		return true;
 	}
 	
+	static inline
+	bool n1_or_n2( UInt32 x )
+	{
+		/*
+			Return true iff x is $FFFFFFFF (-1) or $FFFFFFFE (-2).
+		*/
+		
+		return (x | 1) + 1 == 0;
+	}
+	
 	// Contrary to <http://www.lazerware.com/formats/macbinary/macbinary_iii.html>,
 	// we will not be satisfied with the presence of 'mBIN' at offset 102.
 	
@@ -781,7 +791,7 @@ namespace MacBinary
 		::OSType type    = h.Get< kFileType    >();
 		::OSType creator = h.Get< kFileCreator >();
 		
-		if ( versionOne  &&  crc  &&  type == 'fold'  &&  (creator & 0xFFFFFFFE) == 0xFFFFFFFE )
+		if ( versionOne  &&  crc  &&  type == 'fold'  &&  n1_or_n2( creator ) )
 		{
 			return (Byte) creator;
 		}
