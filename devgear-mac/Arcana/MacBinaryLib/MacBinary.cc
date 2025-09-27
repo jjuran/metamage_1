@@ -510,7 +510,9 @@ namespace MacBinary
 		h.Set< kFileCreationDate     >( pb.ioFlCrDat );
 		h.Set< kFileModificationDate >( pb.ioFlMdDat );
 		
-		h.Set< kExtendedFinderFlags >( reinterpret_cast< const ExtendedFileInfo& >( pb.ioFlXFndrInfo ).extendedFinderFlags );
+		const UInt16 xflags = *(const UInt16*) &pb.ioFlXFndrInfo.fdScript;
+		
+		h.Set< kExtendedFinderFlags >( xflags );
 	}
 	
 	static void MakeFileHeader( const HFileInfo& pb, Header& h )
@@ -883,7 +885,9 @@ namespace MacBinary
 				pb.hFileInfo.ioFlCrDat = h.Get< kFileCreationDate     >();
 				pb.hFileInfo.ioFlMdDat = h.Get< kFileModificationDate >();
 				
-				reinterpret_cast< ExtendedFileInfo& >( pb.hFileInfo.ioFlXFndrInfo ).extendedFinderFlags = h.Get< kExtendedFinderFlags >();
+				const UInt16 xflags = h.Get< kExtendedFinderFlags >();
+				
+				*(UInt16*) &pb.hFileInfo.ioFlXFndrInfo.fdScript = xflags;
 				
 				err = PBSetCatInfoSync( &pb );
 			}
