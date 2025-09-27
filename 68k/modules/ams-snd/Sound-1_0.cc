@@ -22,6 +22,9 @@
 // ams-common
 #include "callouts.hh"
 
+// ams-snd
+#include "buffers.hh"
+
 
 #pragma exceptions off
 
@@ -92,26 +95,26 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	Size buffer_size = 6 + payload_len;
 	
-	Ptr buffer = NewPtr( buffer_size );
+	audio_buffer* buffer = alloc_buffer();
 	
 	if ( buffer == NULL )
 	{
-		ERROR = "couldn't allocate ", buffer_size, " bytes";
-		return MemErr;
+		ERROR = "bufferCmd: audio buffers exhausted";
+		
+		return notEnoughBufferSpace;
 	}
 	
 	OSErr err;
 	
-	FFSynthRec* freeform = (FFSynthRec*) buffer;
+	buffer->ff.count = playback_rate_from_sample_rate( sampleRate );
 	
-	freeform->mode  = ffMode;
-	freeform->count = playback_rate_from_sample_rate( sampleRate );
+	Byte* output = (Byte*) buffer->ff.waveBytes;
 	
 	do
 	{
-		fast_memcpy( freeform->waveBytes, samples, payload_len );
+		fast_memcpy( output, samples, payload_len );
 		
-		err = FSWrite( -4, &buffer_size, buffer );
+		err = FSWrite( -4, &buffer_size, &buffer->ff );
 		
 		samples           += payload_len;
 		samples_remaining -= payload_len;
@@ -124,7 +127,7 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	}
 	while ( samples_remaining > 0  &&  err == noErr );
 	
-	DisposePtr( buffer );
+	return_buffer( buffer );
 	
 	chan->cmdInProgress.cmd = nullCmd;
 	
@@ -221,6 +224,27 @@ void start_next_command( SndChannel& chan )
 	do_snd_command( &chan, chan.cmdInProgress );
 }
 
+static
+void init_buffer( audio_buffer& buffer )
+{
+	buffer.next = NULL;
+	
+	buffer.ff.mode = ffMode;
+}
+
+static
+void create_buffers( int n )
+{
+	while ( n-- > 0 )
+	{
+		audio_buffer* buffer = (audio_buffer*) NewPtr( sizeof (audio_buffer) );
+		
+		init_buffer( *buffer );
+		
+		return_buffer( buffer );
+	}
+}
+
 static SndChannel* default_channel;
 
 static
@@ -257,6 +281,11 @@ OSErr SndPlay_patch( SndChannel* chan, SndListResource** h, Boolean async )
 		}
 		
 		async = false;
+	}
+	
+	if ( free_audio_buffer == NULL )
+	{
+		create_buffers( 1 );
 	}
 	
 	const short format = h[0]->format;
