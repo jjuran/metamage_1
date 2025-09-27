@@ -26,29 +26,12 @@
 #include "callouts.hh"
 
 // ams-snd
+#include "admin.hh"
 #include "buffers.hh"
 
 
 #pragma exceptions off
 
-
-enum
-{
-	kSoundDriverRefNum = -4,
-};
-
-enum
-{
-	/*
-		Apparently noHardwareErr isn't used for anything -- at least nothing
-		deserving of mention in Apple's Sound Manager 3.3 documentation -- so
-		we'll use it here for things that are yet to be implemented.  (There's
-		also unimpErr, but that's used to indicate that a particular software
-		operation is unsupported by a hardware device, e.g. volume control.)
-	*/
-	
-	unimplemented = noHardwareErr,
-};
 
 short MemErr : 0x0220;
 
@@ -460,4 +443,10 @@ retry:
 	}
 	
 	return queued_next;  // either noErr or queueFull
+}
+
+pascal
+OSErr SndDoImmediate_patch( SndChannel* chan, SndCommand* command )
+{
+	return do_admin_command( chan, *command );
 }

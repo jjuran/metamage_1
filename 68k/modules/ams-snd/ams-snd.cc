@@ -38,8 +38,8 @@ void install_SoundManager()
 	TBTRAP( SndDisposeChannel );  // A801
 	
 	TBTRAP( SndDoCommand      );  // A803
-	
-	TBTRAP( SndPlay );  // A805
+	TBTRAP( SndDoImmediate    );  // A804
+	TBTRAP( SndPlay           );  // A805
 	
 	TBTRAP( SndNewChannel );  // A807
 }

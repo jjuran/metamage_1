@@ -24,4 +24,6 @@ pascal OSErr SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow );
 
 pascal OSErr SndDoCommand_patch( SndChannel* c, SndCommand* cmd, Boolean nblk );
 
+pascal OSErr SndDoImmediate_patch( SndChannel* chan, SndCommand* cmd );
+
 #endif
