@@ -16,6 +16,8 @@ typedef short OSErr;
 
 typedef pascal void (*SndCallBackUPP)( SndChannel*, SndCommand* );
 
+extern int max_channels;
+
 pascal OSErr SndPlay_patch( SndChannel* c, SndListResource** h, Boolean async );
 
 pascal OSErr SndNewChannel_patch( SndChannel**, short, long, SndCallBackUPP );

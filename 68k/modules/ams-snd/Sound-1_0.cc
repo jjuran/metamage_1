@@ -35,6 +35,10 @@
 
 short MemErr : 0x0220;
 
+int max_channels;
+
+static int n_channels;
+
 static inline
 Fixed playback_rate_from_sample_rate( long sampleRate )
 {
@@ -410,9 +414,20 @@ OSErr SndPlay_patch( SndChannel* chan, SndListResource** h, Boolean async )
 pascal
 OSErr SndNewChannel_patch( SndChannel** c, short s, long i, SndCallBackUPP u )
 {
+	if ( n_channels >= max_channels )
+	{
+		NOTICE = "SndNewChannel: channel count is already ", n_channels;
+		
+		return notEnoughHardwareErr;
+	}
+	
 	ERROR = "SndNewChannel is unimplemented";
 	
 	return notEnoughHardwareErr;
+	
+	++n_channels;
+	
+	return noErr;
 }
 
 pascal
@@ -454,6 +469,8 @@ OSErr SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow )
 		
 		default_channel = NULL;
 	}
+	
+	--n_channels;
 	
 	return noErr;
 }
