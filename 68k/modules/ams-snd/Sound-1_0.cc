@@ -546,5 +546,19 @@ retry:
 pascal
 OSErr SndDoImmediate_patch( SndChannel* chan, SndCommand* command )
 {
+	if ( command->cmd == bufferCmd )
+	{
+		if ( chan->qTail < 0 )
+		{
+			NOTICE = "SndDoImmediate: processing bufferCmd via SndDoCommand";
+			
+			return SndDoCommand( chan, command, true );
+		}
+		
+		WARNING = "SndDoImmediate: rejecting bufferCmd with non-empty queue";
+		
+		return channelBusy;
+	}
+	
 	return do_admin_command( chan, *command );
 }
