@@ -218,9 +218,42 @@ void start_next_command( SndChannel& chan )
 	do_snd_command( &chan, chan.cmdInProgress );
 }
 
+static SndChannel* default_channel;
+
+static
+SndChannel* get_default_channel()
+{
+	if ( default_channel == NULL )
+	{
+		default_channel = (SndChannel*) NewPtrClear( sizeof (SndChannel) );
+		
+		if ( default_channel )
+		{
+			default_channel->qLength = stdQLength;  // 128
+			default_channel->qTail   = -1;
+		}
+		else
+		{
+			ERROR = "couldn't allocate internal sound channel";
+		}
+	}
+	
+	return default_channel;
+}
+
 pascal
 OSErr SndPlay_patch( SndChannel* chan, SndListResource** h, Boolean async )
 {
+	if ( chan == NULL )
+	{
+		chan = get_default_channel();
+		
+		if ( chan == NULL )
+		{
+			return MemErr;
+		}
+	}
+	
 	const short format = h[0]->format;
 	const short n_mods = h[0]->numModifiers;
 	const short n_cmds = h[0]->numCommands;
@@ -270,7 +303,7 @@ OSErr SndPlay_patch( SndChannel* chan, SndListResource** h, Boolean async )
 				next = &copy;
 			}
 			
-			if ( OSErr err = do_snd_command( chan, *next ) )
+			if ( OSErr err = SndDoCommand( chan, next, false ) )
 			{
 				return err;
 			}
