@@ -12,12 +12,14 @@ struct SndListResource;
 
 typedef unsigned char Boolean;
 
+typedef short OSErr;
+
 typedef pascal void (*SndCallBackUPP)( SndChannel*, SndCommand* );
 
-pascal short SndPlay_patch( SndChannel* c, SndListResource** h, Boolean async );
+pascal OSErr SndPlay_patch( SndChannel* c, SndListResource** h, Boolean async );
 
-pascal short SndNewChannel_patch( SndChannel**, short, long, SndCallBackUPP );
+pascal OSErr SndNewChannel_patch( SndChannel**, short, long, SndCallBackUPP );
 
-pascal short SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow );
+pascal OSErr SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow );
 
 #endif

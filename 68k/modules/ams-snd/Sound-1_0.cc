@@ -151,7 +151,7 @@ OSErr do_snd_command( SndChannel* chan, SndList** h, const SndCommand& command )
 }
 
 pascal
-short SndPlay_patch( SndChannel* c, SndListResource** h, Boolean async )
+OSErr SndPlay_patch( SndChannel* chan, SndListResource** h, Boolean async )
 {
 	const short format = h[0]->format;
 	const short n_mods = h[0]->numModifiers;
@@ -187,7 +187,7 @@ short SndPlay_patch( SndChannel* c, SndListResource** h, Boolean async )
 	
 	for ( int i = 0;  i < n_cmds;  ++i )
 	{
-		if ( OSErr err = do_snd_command( c, h, *command++ ) )
+		if ( OSErr err = do_snd_command( chan, h, *command++ ) )
 		{
 			return err;
 		}
@@ -197,7 +197,7 @@ short SndPlay_patch( SndChannel* c, SndListResource** h, Boolean async )
 }
 
 pascal
-short SndNewChannel_patch( SndChannel** c, short s, long i, SndCallBackUPP u )
+OSErr SndNewChannel_patch( SndChannel** c, short s, long i, SndCallBackUPP u )
 {
 	ERROR = "SndNewChannel is unimplemented";
 	
@@ -205,7 +205,7 @@ short SndNewChannel_patch( SndChannel** c, short s, long i, SndCallBackUPP u )
 }
 
 pascal
-short SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow )
+OSErr SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow )
 {
 	ERROR = "SndDisposeChannel is unimplemented";
 	
