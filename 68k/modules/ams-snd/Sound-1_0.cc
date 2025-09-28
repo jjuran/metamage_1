@@ -56,11 +56,6 @@ OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 {
 	Ptr addr = (Ptr) command.param2;
 	
-	if ( command.cmd & dataOffsetFlag )
-	{
-		addr += (long) *h;
-	}
-	
 	const SoundHeader& snd = *(SoundHeader*) addr;
 	
 	if ( snd.encode != stdSH )
@@ -140,9 +135,6 @@ OSErr do_snd_command( SndChannel* chan, SndList** h, const SndCommand& command )
 	
 	switch ( cmd )
 	{
-		case nullCmd:
-			return noErr;
-		
 		case bufferCmd:
 			return do_bufferCmd( chan, h, command );
 		
@@ -189,10 +181,28 @@ OSErr SndPlay_patch( SndChannel* chan, SndListResource** h, Boolean async )
 	
 	for ( int i = 0;  i < n_cmds;  ++i )
 	{
-		if ( OSErr err = do_snd_command( chan, h, *command++ ) )
+		const SndCommand* next = command;
+		
+		if ( next->cmd != nullCmd )
 		{
-			return err;
+			SndCommand copy;
+			
+			if ( next->cmd == bufferCmd + dataOffsetFlag )
+			{
+				copy.cmd    = bufferCmd;
+				copy.param1 = next->param1;
+				copy.param2 = next->param2 + (long) *h;
+				
+				next = &copy;
+			}
+			
+			if ( OSErr err = do_snd_command( chan, h, *next ) )
+			{
+				return err;
+			}
 		}
+		
+		++command;
 	}
 	
 	return noErr;
