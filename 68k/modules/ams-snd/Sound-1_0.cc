@@ -38,8 +38,6 @@ enum
 
 short MemErr : 0x0220;
 
-typedef SndListResource SndList;
-
 static inline
 Fixed playback_rate_from_sample_rate( long sampleRate )
 {
@@ -52,7 +50,7 @@ Fixed playback_rate_from_sample_rate( long sampleRate )
 }
 
 static
-OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
+OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 {
 	Ptr addr = (Ptr) command.param2;
 	
@@ -129,14 +127,14 @@ OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 }
 
 static
-OSErr do_snd_command( SndChannel* chan, SndList** h, const SndCommand& command )
+OSErr do_snd_command( SndChannel* chan, const SndCommand& command )
 {
 	const int8_t cmd = command.cmd;
 	
 	switch ( cmd )
 	{
 		case bufferCmd:
-			return do_bufferCmd( chan, h, command );
+			return do_bufferCmd( chan, command );
 		
 		default:
 			ERROR = "unimplemented Sound Manager command ", cmd;
@@ -196,7 +194,7 @@ OSErr SndPlay_patch( SndChannel* chan, SndListResource** h, Boolean async )
 				next = &copy;
 			}
 			
-			if ( OSErr err = do_snd_command( chan, h, *next ) )
+			if ( OSErr err = do_snd_command( chan, *next ) )
 			{
 				return err;
 			}
