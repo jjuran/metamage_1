@@ -91,7 +91,7 @@ OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 			return unimplemented;
 		}
 		
-		payload_len = 370 * 80;  // 29600
+		payload_len = 370 * 81;  // 29970
 	}
 	
 	Size buffer_size = 6 + payload_len;
