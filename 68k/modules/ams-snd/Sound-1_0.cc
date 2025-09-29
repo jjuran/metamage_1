@@ -75,13 +75,11 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	Size samples_remaining = payload_len;
 	
-	const long sampleRate = snd.sampleRate;
-	
-	Fixed playback_rate = playback_rate_from_sample_rate( sampleRate );
+	Fixed playback_rate = playback_rate_from_sample_rate( snd.sampleRate );
 	
 	if ( payload_len > 30000 )
 	{
-		if ( sampleRate != rate22khz )
+		if ( playback_rate != 0x00010000 )
 		{
 			ERROR = "sampled sound size of ", payload_len, " bytes is too long";
 			
