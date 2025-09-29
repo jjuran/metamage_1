@@ -69,15 +69,22 @@ OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 		return unimplemented;
 	}
 	
-	Ptr samples = snd.samplePtr ? snd.samplePtr : (Ptr) snd.sampleArea;
+	Ptr samples = snd.samplePtr;
+	
+	if ( ! samples )
+	{
+		samples = (Ptr) snd.sampleArea;
+	}
 	
 	Size payload_len = snd.length;
 	
 	Size samples_remaining = payload_len;
 	
+	const long sampleRate = snd.sampleRate;
+	
 	if ( payload_len > 30000 )
 	{
-		if ( snd.sampleRate != rate22khz )
+		if ( sampleRate != rate22khz )
 		{
 			ERROR = "sampled sound size of ", payload_len, " bytes is too long";
 			
@@ -102,7 +109,7 @@ OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 	FFSynthRec* freeform = (FFSynthRec*) buffer;
 	
 	freeform->mode  = ffMode;
-	freeform->count = playback_rate_from_sample_rate( snd.sampleRate );
+	freeform->count = playback_rate_from_sample_rate( sampleRate );
 	
 	do
 	{
