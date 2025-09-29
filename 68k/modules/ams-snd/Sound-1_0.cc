@@ -53,14 +53,14 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 		return unimplemented;
 	}
 	
-	Ptr samples = snd.samplePtr;
+	Ptr packets = snd.samplePtr;
 	
-	if ( ! samples )
+	if ( ! packets )
 	{
-		samples = (Ptr) snd.sampleArea;
+		packets = (Ptr) snd.sampleArea;
 	}
 	
-	return play_async( chan, samples, snd.length, snd.sampleRate );
+	return play_async( chan, packets, snd.length, snd.sampleRate );
 }
 
 static

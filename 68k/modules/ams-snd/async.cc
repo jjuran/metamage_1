@@ -57,23 +57,23 @@ Fixed playback_rate_from_sample_rate( UnsignedFixed sampleRate )
 
 OSErr play_async( SndChannel* chan, Ptr p, long n_samples, UFixed rate )
 {
-	Byte* samples = (Byte*) p;
+	Byte* packets = (Byte*) p;
 	
-	Size samples_remaining = n_samples;
-	Size payload_len       = n_samples;
+	Size packets_remaining = n_samples;
+	Size cluster_len       = n_samples;
 	
 	Fixed playback_rate = playback_rate_from_sample_rate( rate );
 	
-	if ( payload_len > 30000 )
+	if ( cluster_len > 30000 )
 	{
 		if ( playback_rate != 0x00010000  &&  playback_rate != 0x00008000 )
 		{
-			ERROR = "sampled sound size of ", payload_len, " bytes is too long";
+			ERROR = "sampled sound size of ", cluster_len, " bytes is too long";
 			
 			return unimplemented;
 		}
 		
-		payload_len = 370 * 81;  // 29970
+		cluster_len = 370 * 81;  // 29970
 	}
 	
 	OSErr err;
@@ -92,25 +92,25 @@ OSErr play_async( SndChannel* chan, Ptr p, long n_samples, UFixed rate )
 		buffer->ch       = chan;
 		buffer->ff.count = playback_rate;
 		
-		fast_memcpy( buffer->ff.waveBytes, samples, payload_len );
+		fast_memcpy( buffer->ff.waveBytes, packets, cluster_len );
 		
-		samples           += payload_len;
-		samples_remaining -= payload_len;
+		packets           += cluster_len;
+		packets_remaining -= cluster_len;
 		
 		ParamBlockRec& pb = buffer->pb;
 		IOParam&       io = pb.ioParam;
 		
-		io.ioPosOffset = samples_remaining;
-		io.ioReqCount  = 6 + payload_len;
+		io.ioPosOffset = packets_remaining;
+		io.ioReqCount  = 6 + cluster_len;
 		
 		err = PBWriteAsync( &pb );
 		
-		if ( samples_remaining < payload_len )
+		if ( packets_remaining < cluster_len )
 		{
-			payload_len = samples_remaining;
+			cluster_len = packets_remaining;
 		}
 	}
-	while ( samples_remaining > 0  &&  err == noErr );
+	while ( packets_remaining > 0  &&  err == noErr );
 	
 	return err;
 }
