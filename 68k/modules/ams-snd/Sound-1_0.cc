@@ -46,6 +46,7 @@ Fixed playback_rate_from_sample_rate( long sampleRate )
 	switch ( sampleRate )
 	{
 		case rate22khz:  return 0x00010000;
+		case rate11khz + 1:  // TaskMaker does this
 		case rate11khz:  return 0x00008000;
 		default:         return (0ull + sampleRate << 16 | 0x8000) / rate22khz;
 	}
@@ -79,7 +80,7 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	if ( payload_len > 30000 )
 	{
-		if ( playback_rate != 0x00010000 )
+		if ( playback_rate != 0x00010000  &&  playback_rate != 0x00008000 )
 		{
 			ERROR = "sampled sound size of ", payload_len, " bytes is too long";
 			
