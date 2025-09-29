@@ -71,16 +71,17 @@ OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 	
 	Ptr samples = snd.samplePtr ? snd.samplePtr : (Ptr) snd.sampleArea;
 	
-	if ( snd.length > 30000  &&  snd.sampleRate != rate22khz )
-	{
-		ERROR = "sampled sound size of ", snd.length, " bytes is is too long";
-		return unimplemented;
-	}
-	
 	Size payload_len = snd.length;
 	
 	if ( snd.length > 30000 )
 	{
+		if ( snd.sampleRate != rate22khz )
+		{
+			ERROR = "sampled sound size of ", snd.length, " bytes is too long";
+			
+			return unimplemented;
+		}
+		
 		payload_len = 370 * 80;  // 29600
 	}
 	
