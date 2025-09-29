@@ -81,6 +81,8 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	const long sampleRate = snd.sampleRate;
 	
+	Fixed playback_rate = playback_rate_from_sample_rate( sampleRate );
+	
 	if ( payload_len > 30000 )
 	{
 		if ( sampleRate != rate22khz )
@@ -95,23 +97,23 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	Size buffer_size = 6 + payload_len;
 	
-	audio_buffer* buffer = alloc_buffer();
-	
-	if ( buffer == NULL )
-	{
-		ERROR = "bufferCmd: audio buffers exhausted";
-		
-		return notEnoughBufferSpace;
-	}
-	
 	OSErr err;
-	
-	buffer->ff.count = playback_rate_from_sample_rate( sampleRate );
-	
-	Byte* output = (Byte*) buffer->ff.waveBytes;
 	
 	do
 	{
+		audio_buffer* buffer = alloc_buffer();
+		
+		if ( buffer == NULL )
+		{
+			ERROR = "bufferCmd: audio buffers exhausted";
+			
+			return notEnoughBufferSpace;
+		}
+		
+		buffer->ff.count = playback_rate;
+		
+		Byte* output = (Byte*) buffer->ff.waveBytes;
+		
 		fast_memcpy( output, samples, payload_len );
 		
 		err = FSWrite( -4, &buffer_size, &buffer->ff );
@@ -124,10 +126,10 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 			payload_len = samples_remaining;
 			buffer_size = 6 + payload_len;
 		}
+		
+		return_buffer( buffer );
 	}
 	while ( samples_remaining > 0  &&  err == noErr );
-	
-	return_buffer( buffer );
 	
 	chan->cmdInProgress.cmd = nullCmd;
 	
