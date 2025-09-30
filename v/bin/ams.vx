@@ -33,6 +33,7 @@ var coloring = 0
 var recording = null
 var screen_res = null
 var has_cursor = bool getenv "AMS_CURSOR"
+var max_channels = 0
 var shutoff_ticks = 0
 var startup_ticks = 0
 var welcome_ticks = 0
@@ -78,6 +79,10 @@ while args do
 		else if arg == "--live-modal" then
 		{
 			live_modal = true
+		}
+		else if arg == "--max-channels" then
+		{
+			max_channels = int *args++
 		}
 		else if arg == "--mem" then
 		{
@@ -463,6 +468,19 @@ def seg_opts
 	}
 }
 
+def snd_opts
+{
+	let max_channels_opt = "--max-channels=" max_channels (*) bool max_channels
+	
+	let opts = [ max_channels_opt ]
+	
+	return
+	if opts then
+	{
+		ams-snd: opts,
+	}
+}
+
 def ui_opts
 {
 	let debug_updates = false
@@ -486,6 +504,7 @@ let module_args = str^
 	fs_opts(),
 	io_opts(),
 	seg_opts(),
+	snd_opts(),
 	ui_opts(),
 	
 	# This setting is not recommended, which is why no logic enables it.
