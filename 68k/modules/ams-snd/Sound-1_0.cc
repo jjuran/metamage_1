@@ -40,6 +40,17 @@ short MemErr : 0x0220;
 
 typedef SndListResource SndList;
 
+static inline
+Fixed playback_rate_from_sample_rate( long sampleRate )
+{
+	switch ( sampleRate )
+	{
+		case rate22khz:  return 0x00010000;
+		case rate11khz:  return 0x00008000;
+		default:         return (0ull + sampleRate << 16 | 0x8000) / rate22khz;
+	}
+}
+
 static
 OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 {
@@ -83,29 +94,12 @@ OSErr do_bufferCmd( SndChannel* chan, SndList** h, const SndCommand& command )
 		return MemErr;
 	}
 	
-	Fixed playback_rate;
-	
-	switch ( snd->sampleRate )
-	{
-		case rate22khz:
-			playback_rate = 0x00010000;
-			break;
-		
-		case rate11khz:
-			playback_rate = 0x00008000;
-			break;
-		
-		default:
-			playback_rate = (0ull + snd->sampleRate << 16 | 0x8000) / rate22khz;
-			break;
-	}
-	
 	OSErr err;
 	
 	FFSynthRec* freeform = (FFSynthRec*) buffer;
 	
 	freeform->mode  = ffMode;
-	freeform->count = playback_rate;
+	freeform->count = playback_rate_from_sample_rate( snd->sampleRate );
 	
 	Size samples_remaining = snd->length;
 	
