@@ -427,7 +427,21 @@ OSErr SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow )
 pascal
 OSErr SndDoCommand_patch( SndChannel* chan, SndCommand* cmd, Boolean noWait )
 {
+retry:
+	
 	short queued_next = enqueue_command( *chan, *cmd );
+	
+	if ( queued_next < 0  &&  ! noWait )
+	{
+		/*
+			enqueue_command() returned queueFull.  If we're
+			waiting for a queue slot, delay and try again.
+		*/
+		
+		mac::glue::delay( -1 );  // calls reactor_wait() once
+		
+		goto retry;
+	}
 	
 	if ( queued_next > 0 )
 	{
