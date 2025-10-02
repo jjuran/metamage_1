@@ -209,6 +209,23 @@ def seg_opts
 	}
 }
 
+def snd_opts
+{
+	let max_channels_opt =
+	if "max-channels" in config then
+	{
+		"--max-channels=" config[ "max-channels" ],
+	}
+	
+	let opts = [ max_channels_opt ]
+	
+	return
+	if opts then
+	{
+		ams-snd: opts,
+	}
+}
+
 def ui_opts
 {
 	let live_modal_opt =
@@ -231,6 +248,7 @@ let module_args = str^
 	core_opts(),
 	fs_opts(),
 	seg_opts(),
+	snd_opts(),
 	ui_opts(),
 ]
 
