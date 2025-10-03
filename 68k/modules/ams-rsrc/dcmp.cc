@@ -18,6 +18,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "unglue.hh"
 
 
 #pragma exceptions off
@@ -44,21 +45,31 @@ Handle PtrToHand_dcmp( const void* p : __A0, UInt32 size : __D0 )
 {
 	compressed_rsrc_header header;
 	
-	ResErr = CantDecompress;
+	/*
+		If the resource is shorter than the compressed
+		resource header or the signature doesn't match,
+		then assume the resource isn't actually compressed.
+	*/
 	
 	if ( size < sizeof header )
 	{
-		ERROR = "Compressed resource lacks a metadata header";
-		return NULL;
+		ERROR = "resCompressed resource lacks a metadata header";
+		
+		goto uncompressed;
 	}
 	
 	fast_memcpy( &header, p, sizeof header );  // possibly misaligned
 	
 	if ( header.signature != kCompressedResourceSignature )
 	{
-		ERROR = "Compressed resource has unrecognized signature";
-		return NULL;
+		ERROR = "resCompressed resource has unrecognized signature";
+		
+	uncompressed:
+		
+		return PtrToHand( p, size );
 	}
+	
+	ResErr = CantDecompress;
 	
 	if ( header.length < sizeof header )
 	{
