@@ -6,6 +6,9 @@
 #include "Sound-1_0.hh"
 
 // Mac OS
+#ifndef __DEVICES__
+#include <Devices.h>
+#endif
 #ifndef __SOUND__
 #include <Sound.h>
 #endif
@@ -13,30 +16,29 @@
 // SoundDriver
 #include "SoundDriver/SoundDriver.h"
 
+// mac-glue-utils
+#include "mac_glue/OSUtils.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
 // ams-common
 #include "callouts.hh"
+#include "interrupts.hh"
+
+// ams-snd
+#include "admin.hh"
+#include "buffers.hh"
 
 
 #pragma exceptions off
 
 
-enum
-{
-	/*
-		Apparently noHardwareErr isn't used for anything -- at least nothing
-		deserving of mention in Apple's Sound Manager 3.3 documentation -- so
-		we'll use it here for things that are yet to be implemented.  (There's
-		also unimpErr, but that's used to indicate that a particular software
-		operation is unsupported by a hardware device, e.g. volume control.)
-	*/
-	
-	unimplemented = noHardwareErr,
-};
-
 short MemErr : 0x0220;
+
+int max_channels;
+
+static int n_channels;
 
 static inline
 Fixed playback_rate_from_sample_rate( long sampleRate )
@@ -75,6 +77,8 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	const long sampleRate = snd.sampleRate;
 	
+	Fixed playback_rate = playback_rate_from_sample_rate( sampleRate );
+	
 	if ( payload_len > 30000 )
 	{
 		if ( sampleRate != rate22khz )
@@ -89,29 +93,43 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	Size buffer_size = 6 + payload_len;
 	
-	Ptr buffer = NewPtr( buffer_size );
-	
-	if ( buffer == NULL )
-	{
-		ERROR = "couldn't allocate ", buffer_size, " bytes";
-		return MemErr;
-	}
-	
 	OSErr err;
-	
-	FFSynthRec* freeform = (FFSynthRec*) buffer;
-	
-	freeform->mode  = ffMode;
-	freeform->count = playback_rate_from_sample_rate( sampleRate );
 	
 	do
 	{
-		fast_memcpy( freeform->waveBytes, samples, payload_len );
+		audio_buffer* buffer = alloc_buffer();
 		
-		err = FSWrite( -4, &buffer_size, buffer );
+		if ( buffer == NULL )
+		{
+			ERROR = "bufferCmd: audio buffers exhausted";
+			
+			return notEnoughBufferSpace;
+		}
+		
+		buffer->ch = chan;
+		
+		buffer->ff.count = playback_rate;
+		
+		Byte* output = (Byte*) buffer->ff.waveBytes;
+		
+		fast_memcpy( output, samples, payload_len );
 		
 		samples           += payload_len;
 		samples_remaining -= payload_len;
+		
+		ParamBlockRec& pb = buffer->pb;
+		IOParam& io = pb.ioParam;
+		
+		io.ioPosOffset = samples_remaining;
+		
+	//	io.ioRefNum = kSoundDriverRefNum;
+	//	io.ioBuffer = buffer;
+		io.ioReqCount = buffer_size;
+	//	io.ioCompletion = NULL;
+		io.ioVRefNum = 0;
+		io.ioPosMode = 0;
+		
+		err = PBWriteAsync( &pb );
 		
 		if ( samples_remaining < payload_len )
 		{
@@ -120,10 +138,6 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 		}
 	}
 	while ( samples_remaining > 0  &&  err == noErr );
-	
-	DisposePtr( buffer );
-	
-	chan->cmdInProgress.cmd = nullCmd;
 	
 	return err;
 }
@@ -147,6 +161,8 @@ OSErr do_snd_command( SndChannel* chan, const SndCommand& command )
 static
 short enqueue_command( SndChannel& chan, const SndCommand& command )
 {
+	short saved_SR = disable_interrupts();
+	
 	short tail = chan.qTail;
 	
 	if ( ++tail == chan.qLength )
@@ -170,6 +186,8 @@ short enqueue_command( SndChannel& chan, const SndCommand& command )
 				matches qHead indicates a full queue.
 			*/
 			
+			reenable_interrupts( saved_SR );
+			
 			return queueFull;
 		}
 		
@@ -186,15 +204,23 @@ short enqueue_command( SndChannel& chan, const SndCommand& command )
 	
 	chan.queue[ tail ] = command;
 	
+	reenable_interrupts( saved_SR );
+	
 	return queued_next;
 }
 
 static
 void start_next_command( SndChannel& chan )
 {
+next:
+	
+	short saved_SR = disable_interrupts();
+	
 	if ( chan.qTail < 0 )
 	{
 		chan.cmdInProgress.cmd = nullCmd;
+		
+		reenable_interrupts( saved_SR );
 		
 		return;  // queue is empty
 	}
@@ -215,12 +241,120 @@ void start_next_command( SndChannel& chan )
 		chan.qHead = 0;
 	}
 	
-	do_snd_command( &chan, chan.cmdInProgress );
+	reenable_interrupts( saved_SR );
+	
+	/*
+		Run any consecutive admin commands immediately, in a loop.
+	*/
+	
+	OSErr err = do_admin_command( &chan, chan.cmdInProgress );
+	
+	if ( err == noErr )
+	{
+		goto next;
+	}
+	
+	if ( err == unimplemented )
+	{
+		do_snd_command( &chan, chan.cmdInProgress );
+	}
+}
+
+static
+OSErr audio_completion( ParamBlockRec* pb : __A0 )
+{
+	IOParam& io = pb->ioParam;
+	
+	io.ioResult = noErr;
+	
+	const int pb_offset = offsetof(audio_buffer, pb);
+	
+	audio_buffer* buffer = (audio_buffer*) ((char*) pb - pb_offset);
+	
+	return_buffer( buffer );
+	
+	SndChannel* chan = buffer->ch;
+	
+	if ( io.ioPosOffset == 0 )
+	{
+		start_next_command( *chan );
+	}
+	
+	return noErr;
+}
+
+static
+void init_buffer( audio_buffer& buffer )
+{
+	buffer.next = NULL;
+	
+	IOParam& io = buffer.pb.ioParam;
+	
+	io.ioRefNum = kSoundDriverRefNum;
+	io.ioBuffer = (Ptr) &buffer.ff;
+	io.ioCompletion = (IOCompletionProcPtr) &audio_completion;
+	io.ioVRefNum = 0;
+	io.ioPosMode = 0;
+	
+	buffer.ff.mode = ffMode;
+}
+
+static
+void create_buffers( int n )
+{
+	while ( n-- > 0 )
+	{
+		audio_buffer* buffer = (audio_buffer*) NewPtr( sizeof (audio_buffer) );
+		
+		init_buffer( *buffer );
+		
+		return_buffer( buffer );
+	}
+}
+
+static SndChannel* default_channel;
+
+static
+SndChannel* get_default_channel()
+{
+	if ( default_channel == NULL )
+	{
+		default_channel = (SndChannel*) NewPtrClear( sizeof (SndChannel) );
+		
+		if ( default_channel )
+		{
+			default_channel->qLength = stdQLength;  // 128
+			default_channel->qTail   = -1;
+		}
+		else
+		{
+			ERROR = "couldn't allocate internal sound channel";
+		}
+	}
+	
+	return default_channel;
 }
 
 pascal
 OSErr SndPlay_patch( SndChannel* chan, SndListResource** h, Boolean async )
 {
+	if ( chan == NULL )
+	{
+		chan = get_default_channel();
+		
+		if ( chan == NULL )
+		{
+			return MemErr;
+		}
+		
+		async = false;
+	}
+	
+	if ( free_audio_buffer == NULL )
+	{
+		create_buffers( 2 );
+	}
+	
 	const short format = h[0]->format;
 	const short n_mods = h[0]->numModifiers;
 	const short n_cmds = h[0]->numCommands;
@@ -270,7 +404,7 @@ OSErr SndPlay_patch( SndChannel* chan, SndListResource** h, Boolean async )
 				next = &copy;
 			}
 			
-			if ( OSErr err = do_snd_command( chan, *next ) )
+			if ( OSErr err = SndDoCommand( chan, next, false ) )
 			{
 				return err;
 			}
@@ -279,21 +413,94 @@ OSErr SndPlay_patch( SndChannel* chan, SndListResource** h, Boolean async )
 		++command;
 	}
 	
+	if ( ! async )
+	{
+		while ( chan->qTail >= 0 )
+		{
+			mac::glue::delay( -1 );  // calls reactor_wait() once
+		}
+	}
+	
 	return noErr;
 }
 
 pascal
 OSErr SndNewChannel_patch( SndChannel** c, short s, long i, SndCallBackUPP u )
 {
-	ERROR = "SndNewChannel is unimplemented";
+	if ( n_channels >= max_channels )
+	{
+		NOTICE = "SndNewChannel: channel count is already ", n_channels;
+		
+		return notEnoughHardwareErr;
+	}
 	
-	return notEnoughHardwareErr;
+	SndChannel* chan = *c;
+	
+	if ( chan == NULL )
+	{
+		chan = get_default_channel();
+		
+		if ( chan == NULL )
+		{
+			return MemErr;
+		}
+		
+		*c = chan;
+	}
+	
+	chan->callBack = u;
+	
+	if ( free_audio_buffer == NULL )
+	{
+		create_buffers( 2 );
+	}
+	
+	++n_channels;
+	
+	return noErr;
 }
 
 pascal
 OSErr SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow )
 {
-	ERROR = "SndDisposeChannel is unimplemented";
+	if ( chan == NULL )
+	{
+		if ( (chan = default_channel) == NULL )
+		{
+			return badChannel;
+		}
+	}
+	
+	SndCommand flush;  flush.cmd = flushCmd;
+	SndCommand quiet;  quiet.cmd = quietCmd;
+	
+	/*
+		If quietNow is set, then we immediately flush (emptying the
+		queue) and quiet (terminating any currently playing sound).
+		
+		If it's clear, we queue a quietCmd (as documented).  We also
+		queue a flushCmd in case anything got queued while we waited.
+	*/
+	
+	if ( quietNow )
+	{
+		do_admin_command( chan, flush );
+		do_admin_command( chan, quiet );
+	}
+	else
+	{
+		SndDoCommand( chan, &quiet, false );
+		SndDoCommand( chan, &flush, false );
+	}
+	
+	if ( chan == default_channel )
+	{
+		DisposePtr( (Ptr) chan );
+		
+		default_channel = NULL;
+	}
+	
+	--n_channels;
 	
 	return noErr;
 }
@@ -301,7 +508,30 @@ OSErr SndDisposeChannel_patch( SndChannel* chan, Boolean quietNow )
 pascal
 OSErr SndDoCommand_patch( SndChannel* chan, SndCommand* cmd, Boolean noWait )
 {
+	bool warned = false;
+	
+retry:
+	
 	short queued_next = enqueue_command( *chan, *cmd );
+	
+	if ( queued_next < 0  &&  ! warned )
+	{
+		WARNING = "SndDoCommand: channel's queue is full";
+		
+		warned = true;
+	}
+	
+	if ( queued_next < 0  &&  ! noWait )
+	{
+		/*
+			enqueue_command() returned queueFull.  If we're
+			waiting for a queue slot, delay and try again.
+		*/
+		
+		mac::glue::delay( -1 );  // calls reactor_wait() once
+		
+		goto retry;
+	}
 	
 	if ( queued_next > 0 )
 	{
@@ -311,4 +541,10 @@ OSErr SndDoCommand_patch( SndChannel* chan, SndCommand* cmd, Boolean noWait )
 	}
 	
 	return queued_next;  // either noErr or queueFull
+}
+
+pascal
+OSErr SndDoImmediate_patch( SndChannel* chan, SndCommand* command )
+{
+	return do_admin_command( chan, *command );
 }
