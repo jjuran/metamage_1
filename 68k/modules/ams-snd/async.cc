@@ -16,9 +16,6 @@
 // log-of-war
 #include "logofwar/report.hh"
 
-// ams-common
-#include "callouts.hh"
-
 // ams-snd
 #include "buffers.hh"
 
@@ -36,6 +33,64 @@ enum
 	
 	unimplemented = -200,  // same as noHardwareErr
 };
+
+/*
+	You'd think that
+	
+		f( buffer->ff.waveBytes, packets, cluster_len );
+	
+	would work, but Metrowerks' codegen is faulty:
+	
+		PEA      resume
+		MOVE.L   f,-(A7)
+		LEA      buffer->ff.waveBytes,A1
+		MOVEA.L  packets,A0
+		MOVE.L   len,D0
+		RTS
+	resume:
+		ADDQ.W   #4,A7
+	
+	The compiler correctly recognizes that it can't
+	jump through either A0 or A1, because both are
+	used for parameters.  No other address registers
+	are considered volatile, so it can't use a JSR.
+	
+	Conceptually, a JSR can be split into a push / JMP
+	combo.  Although JMP is unavailable for the same
+	reason, it in turn can be replaced by push / RTS.
+	
+	The compiler in fact applies this exact pattern.
+	First it pushes a return address onto the stack,
+	then the jump target address, and after loading the
+	parameter registers, it effects a jump with RTS.
+	
+	The problem is the last instruction.  The function
+	address has been popped by the generated RTS, and
+	the return address has been popped by the function's
+	own RTS, returning the stack to its original state.
+	The subsequent superfluous pop corrupts the stack.
+	
+	As a workaround, we call a utility function (using
+	JSR with either a PC-relative address or a relocated
+	absolute address) that uses the push / RTS pattern:
+	
+		call_cpy( f, buffer->ff.waveBytes, packets, cluster_len );
+*/
+
+static
+asm
+void call_cpy( cpy f : __D2, void* : __A1, const void* : __A0, long : __D0 )
+{
+	MOVE.L   D2,-(SP)
+	RTS
+}
+
+static inline
+asm
+short divu_w( UInt32 dividend : __D0, UInt16 divisor : __D1 )
+{
+	DIVU.W   D1,D0
+}
 
 static inline
 Fixed playback_rate_from_sample_rate( UnsignedFixed sampleRate )
@@ -55,16 +110,16 @@ Fixed playback_rate_from_sample_rate( UnsignedFixed sampleRate )
 	}
 }
 
-OSErr play_async( SndChannel* chan, Ptr p, long n_samples, UFixed rate )
+OSErr play_async( SndChannel* chan, Ptr p, long n, UFixed rate, cpy f, int x )
 {
 	Byte* packets = (Byte*) p;
 	
-	Size packets_remaining = n_samples;
-	Size cluster_len       = n_samples;
+	Size packets_remaining = n;
+	Size cluster_len       = n;
 	
 	Fixed playback_rate = playback_rate_from_sample_rate( rate );
 	
-	if ( cluster_len > 30000 )
+	if ( cluster_len > divu_w( 30000, x ) )
 	{
 		if ( playback_rate != 0x00010000  &&  playback_rate != 0x00008000 )
 		{
@@ -73,7 +128,7 @@ OSErr play_async( SndChannel* chan, Ptr p, long n_samples, UFixed rate )
 			return unimplemented;
 		}
 		
-		cluster_len = 370 * 81;  // 29970
+		cluster_len = divu_w( 370 * 81, x );  // 29970 / x (for x = 3, 9995)
 	}
 	
 	OSErr err;
@@ -92,7 +147,7 @@ OSErr play_async( SndChannel* chan, Ptr p, long n_samples, UFixed rate )
 		buffer->ch       = chan;
 		buffer->ff.count = playback_rate;
 		
-		fast_memcpy( buffer->ff.waveBytes, packets, cluster_len );
+		call_cpy( f, buffer->ff.waveBytes, packets, cluster_len );
 		
 		packets           += cluster_len;
 		packets_remaining -= cluster_len;
@@ -101,7 +156,7 @@ OSErr play_async( SndChannel* chan, Ptr p, long n_samples, UFixed rate )
 		IOParam&       io = pb.ioParam;
 		
 		io.ioPosOffset = packets_remaining;
-		io.ioReqCount  = 6 + cluster_len;
+		io.ioReqCount  = 6 + (short) cluster_len * (short) x;
 		
 		err = PBWriteAsync( &pb );
 		

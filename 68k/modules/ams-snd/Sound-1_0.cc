@@ -54,9 +54,22 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	size_t offsetof_sampleArea;
 	
+	cpy decode;
+	
 	if ( snd.encode == stdSH )
 	{
 		offsetof_sampleArea = offsetof( SoundHeader, sampleArea );
+		
+		/*
+			We need a function pointer to pass to play_async().
+			
+			_BlockMoveData is another name for _BlockMove with
+			bit 9 set.  Currently, the trap handler doesn't make
+			a distinction, so we'll let it be called with an
+			arbitrary value in D1 (in lieu of the trap word).
+		*/
+		
+		decode = (cpy) GetOSTrapAddress( 0xA22E );  // _BlockMoveData
 	}
 	else
 	{
@@ -72,7 +85,7 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 		packets = addr + offsetof_sampleArea;
 	}
 	
-	return play_async( chan, packets, snd.length, snd.sampleRate );
+	return play_async( chan, packets, snd.length, snd.sampleRate, decode, 1 );
 }
 
 static

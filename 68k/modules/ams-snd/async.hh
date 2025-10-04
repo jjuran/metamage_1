@@ -14,6 +14,8 @@ typedef short OSErr;
 
 typedef unsigned long UFixed;
 
-OSErr play_async( SndChannel* chan, Ptr p, long n_samples, UFixed rate );
+typedef void (*cpy)( void* : __A1, const void* : __A0, unsigned long : __D0 );
+
+OSErr play_async( SndChannel* chan, Ptr p, long n, UFixed rate, cpy f, int x );
 
 #endif
