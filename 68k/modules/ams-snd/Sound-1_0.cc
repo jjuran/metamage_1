@@ -93,8 +93,6 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 		payload_len = 370 * 81;  // 29970
 	}
 	
-	Size buffer_size = 6 + payload_len;
-	
 	OSErr err;
 	
 	do
@@ -112,9 +110,7 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 		
 		buffer->ff.count = playback_rate;
 		
-		Byte* output = (Byte*) buffer->ff.waveBytes;
-		
-		fast_memcpy( output, samples, payload_len );
+		fast_memcpy( buffer->ff.waveBytes, samples, payload_len );
 		
 		samples           += payload_len;
 		samples_remaining -= payload_len;
@@ -123,20 +119,13 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 		IOParam& io = pb.ioParam;
 		
 		io.ioPosOffset = samples_remaining;
-		
-	//	io.ioRefNum = kSoundDriverRefNum;
-	//	io.ioBuffer = buffer;
-		io.ioReqCount = buffer_size;
-	//	io.ioCompletion = NULL;
-		io.ioVRefNum = 0;
-		io.ioPosMode = 0;
+		io.ioReqCount  = 6 + payload_len;
 		
 		err = PBWriteAsync( &pb );
 		
 		if ( samples_remaining < payload_len )
 		{
 			payload_len = samples_remaining;
-			buffer_size = 6 + payload_len;
 		}
 	}
 	while ( samples_remaining > 0  &&  err == noErr );
