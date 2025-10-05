@@ -47,9 +47,13 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	const SoundHeader& snd = *(SoundHeader*) addr;
 	
-	if ( snd.encode != stdSH )
+	if ( snd.encode == stdSH )
+	{
+	}
+	else
 	{
 		ERROR = "unimplemented snd header encoding ", snd.encode;
+		
 		return unimplemented;
 	}
 	
