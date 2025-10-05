@@ -134,22 +134,6 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 }
 
 static
-OSErr do_snd_command( SndChannel* chan, const SndCommand& command )
-{
-	const int8_t cmd = command.cmd;
-	
-	switch ( cmd )
-	{
-		case bufferCmd:
-			return do_bufferCmd( chan, command );
-		
-		default:
-			ERROR = "unimplemented Sound Manager command ", cmd;
-			return unimplemented;
-	}
-}
-
-static
 short enqueue_command( SndChannel& chan, const SndCommand& command )
 {
 	short saved_SR = disable_interrupts();
@@ -247,7 +231,18 @@ next:
 	
 	if ( err == unimplemented )
 	{
-		do_snd_command( &chan, chan.cmdInProgress );
+		int cmd = chan.cmdInProgress.cmd;
+		
+		switch ( cmd )
+		{
+			case bufferCmd:
+				do_bufferCmd( &chan, chan.cmdInProgress );
+				break;
+			
+			default:
+				ERROR = "unimplemented Sound Manager command ", cmd;
+				break;
+		}
 	}
 }
 
