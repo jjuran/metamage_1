@@ -187,20 +187,22 @@ short enqueue_command( SndChannel& chan, const SndCommand& command )
 static
 void start_next_command( SndChannel& chan )
 {
+	SndCommand& cmdInProgress = chan.cmdInProgress;
+	
 next:
 	
 	short saved_SR = disable_interrupts();
 	
 	if ( chan.qTail < 0 )
 	{
-		chan.cmdInProgress.cmd = nullCmd;
+		cmdInProgress.cmd = nullCmd;
 		
 		reenable_interrupts( saved_SR );
 		
 		return;  // queue is empty
 	}
 	
-	chan.cmdInProgress = chan.queue[ chan.qHead ];
+	cmdInProgress = chan.queue[ chan.qHead ];
 	
 	/*
 		Remove the command from the queue immediately.
@@ -222,7 +224,7 @@ next:
 		Run any consecutive admin commands immediately, in a loop.
 	*/
 	
-	OSErr err = do_admin_command( &chan, chan.cmdInProgress );
+	OSErr err = do_admin_command( &chan, cmdInProgress );
 	
 	if ( err == noErr )
 	{
@@ -231,12 +233,12 @@ next:
 	
 	if ( err == unimplemented )
 	{
-		int cmd = chan.cmdInProgress.cmd;
+		int cmd = cmdInProgress.cmd;
 		
 		switch ( cmd )
 		{
 			case bufferCmd:
-				do_bufferCmd( &chan, chan.cmdInProgress );
+				do_bufferCmd( &chan, cmdInProgress );
 				break;
 			
 			default:
