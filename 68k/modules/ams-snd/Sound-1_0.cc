@@ -54,6 +54,9 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	size_t offsetof_sampleArea;
 	
+	long n_packets;  // input units
+	int  x;          // samples per packet
+	
 	cpy decode;
 	
 	if ( snd.encode == stdSH )
@@ -70,6 +73,38 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 		*/
 		
 		decode = (cpy) GetOSTrapAddress( 0xA22E );  // _BlockMoveData
+		
+		n_packets = snd.length;
+		
+		x = 1;
+	}
+	else if ( snd.encode == cmpSH )
+	{
+		const CmpSoundHeader& snd = *(CmpSoundHeader*) addr;
+		
+		offsetof_sampleArea = offsetof( CmpSoundHeader, sampleArea );
+		
+		if ( snd.compressionID == threeToOne )
+		{
+			decode = (cpy) 0xFFFFFFAC;  // decode_MACE3
+			
+			/*
+				In MACE6, a one-byte frame expands to six samples,
+				whereas in MACE3, the frame is two bytes.  But each
+				byte is decoded separately, so we'll treat them as
+				individual inputs, each expanding to three samples.
+			*/
+			
+			n_packets = snd.numFrames * 2;  // each semiframe is a packet
+			
+			x = 3;  // 3 samples per packet
+		}
+		else
+		{
+			ERROR = "unimplemented audio codec ", snd.compressionID;
+			
+			return unimplemented;
+		}
 	}
 	else
 	{
@@ -85,7 +120,7 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 		packets = addr + offsetof_sampleArea;
 	}
 	
-	return play_async( chan, packets, snd.length, snd.sampleRate, decode, 1 );
+	return play_async( chan, packets, n_packets, snd.sampleRate, decode, x );
 }
 
 static
