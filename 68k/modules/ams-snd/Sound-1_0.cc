@@ -47,8 +47,16 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	const SoundHeader& snd = *(SoundHeader*) addr;
 	
+	/*
+		If samplePtr is NULL, then we substitute sampleArea.
+		But the sampleArea offset varies between header types.
+	*/
+	
+	size_t offsetof_sampleArea;
+	
 	if ( snd.encode == stdSH )
 	{
+		offsetof_sampleArea = offsetof( SoundHeader, sampleArea );
 	}
 	else
 	{
@@ -61,7 +69,7 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	if ( ! packets )
 	{
-		packets = (Ptr) snd.sampleArea;
+		packets = addr + offsetof_sampleArea;
 	}
 	
 	return play_async( chan, packets, snd.length, snd.sampleRate );
