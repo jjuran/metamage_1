@@ -9,6 +9,9 @@
 #ifndef __DEVICES__
 #include <Devices.h>
 #endif
+#ifndef __FIXMATH__
+#include <FixMath.h>
+#endif
 #ifndef __SOUND__
 #include <Sound.h>
 #endif
@@ -41,14 +44,14 @@ int max_channels;
 static int n_channels;
 
 static inline
-Fixed playback_rate_from_sample_rate( long sampleRate )
+Fixed playback_rate_from_sample_rate( UnsignedFixed sampleRate )
 {
 	switch ( sampleRate )
 	{
 		case rate22khz:  return 0x00010000;
 		case rate11khz + 1:  // TaskMaker does this
 		case rate11khz:  return 0x00008000;
-		default:         return (0ull + sampleRate << 16 | 0x8000) / rate22khz;
+		default:         return FixDiv( sampleRate, rate22khz );
 	}
 }
 
