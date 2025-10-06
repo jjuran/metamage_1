@@ -9,9 +9,6 @@
 #ifndef __DEVICES__
 #include <Devices.h>
 #endif
-#ifndef __FIXMATH__
-#include <FixMath.h>
-#endif
 #ifndef __SOUND__
 #include <Sound.h>
 #endif
@@ -26,11 +23,11 @@
 #include "logofwar/report.hh"
 
 // ams-common
-#include "callouts.hh"
 #include "interrupts.hh"
 
 // ams-snd
 #include "admin.hh"
+#include "async.hh"
 #include "buffers.hh"
 
 
@@ -43,18 +40,6 @@ int max_channels;
 
 static int n_channels;
 
-static inline
-Fixed playback_rate_from_sample_rate( UnsignedFixed sampleRate )
-{
-	switch ( sampleRate )
-	{
-		case rate22khz:  return 0x00010000;
-		case rate11khz + 1:  // TaskMaker does this
-		case rate11khz:  return 0x00008000;
-		default:         return FixDiv( sampleRate, rate22khz );
-	}
-}
-
 static
 OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 {
@@ -62,75 +47,80 @@ OSErr do_bufferCmd( SndChannel* chan, const SndCommand& command )
 	
 	const SoundHeader& snd = *(SoundHeader*) addr;
 	
-	if ( snd.encode != stdSH )
+	/*
+		If samplePtr is NULL, then we substitute sampleArea.
+		But the sampleArea offset varies between header types.
+	*/
+	
+	size_t offsetof_sampleArea;
+	
+	long n_packets;  // input units
+	int  x;          // samples per packet
+	
+	cpy decode;
+	
+	if ( snd.encode == stdSH )
 	{
-		ERROR = "unimplemented snd header encoding ", snd.encode;
-		return unimplemented;
+		offsetof_sampleArea = offsetof( SoundHeader, sampleArea );
+		
+		/*
+			We need a function pointer to pass to play_async().
+			
+			_BlockMoveData is another name for _BlockMove with
+			bit 9 set.  Currently, the trap handler doesn't make
+			a distinction, so we'll let it be called with an
+			arbitrary value in D1 (in lieu of the trap word).
+		*/
+		
+		decode = (cpy) GetOSTrapAddress( 0xA22E );  // _BlockMoveData
+		
+		n_packets = snd.length;
+		
+		x = 1;
 	}
-	
-	Ptr samples = snd.samplePtr;
-	
-	if ( ! samples )
+	else if ( snd.encode == cmpSH )
 	{
-		samples = (Ptr) snd.sampleArea;
-	}
-	
-	Size payload_len = snd.length;
-	
-	Size samples_remaining = payload_len;
-	
-	Fixed playback_rate = playback_rate_from_sample_rate( snd.sampleRate );
-	
-	if ( payload_len > 30000 )
-	{
-		if ( playback_rate != 0x00010000  &&  playback_rate != 0x00008000 )
+		const CmpSoundHeader& snd = *(CmpSoundHeader*) addr;
+		
+		offsetof_sampleArea = offsetof( CmpSoundHeader, sampleArea );
+		
+		if ( snd.compressionID == threeToOne )
 		{
-			ERROR = "sampled sound size of ", payload_len, " bytes is too long";
+			decode = (cpy) 0xFFFFFFAC;  // decode_MACE3
+			
+			/*
+				In MACE6, a one-byte frame expands to six samples,
+				whereas in MACE3, the frame is two bytes.  But each
+				byte is decoded separately, so we'll treat them as
+				individual inputs, each expanding to three samples.
+			*/
+			
+			n_packets = snd.numFrames * 2;  // each semiframe is a packet
+			
+			x = 3;  // 3 samples per packet
+		}
+		else
+		{
+			ERROR = "unimplemented audio codec ", snd.compressionID;
 			
 			return unimplemented;
 		}
-		
-		payload_len = 370 * 81;  // 29970
 	}
-	
-	OSErr err;
-	
-	do
+	else
 	{
-		audio_buffer* buffer = alloc_buffer();
+		ERROR = "unimplemented snd header encoding ", snd.encode;
 		
-		if ( buffer == NULL )
-		{
-			ERROR = "bufferCmd: audio buffers exhausted";
-			
-			return notEnoughBufferSpace;
-		}
-		
-		buffer->ch = chan;
-		
-		buffer->ff.count = playback_rate;
-		
-		fast_memcpy( buffer->ff.waveBytes, samples, payload_len );
-		
-		samples           += payload_len;
-		samples_remaining -= payload_len;
-		
-		ParamBlockRec& pb = buffer->pb;
-		IOParam& io = pb.ioParam;
-		
-		io.ioPosOffset = samples_remaining;
-		io.ioReqCount  = 6 + payload_len;
-		
-		err = PBWriteAsync( &pb );
-		
-		if ( samples_remaining < payload_len )
-		{
-			payload_len = samples_remaining;
-		}
+		return unimplemented;
 	}
-	while ( samples_remaining > 0  &&  err == noErr );
 	
-	return err;
+	Ptr packets = snd.samplePtr;
+	
+	if ( ! packets )
+	{
+		packets = addr + offsetof_sampleArea;
+	}
+	
+	return play_async( chan, packets, n_packets, snd.sampleRate, decode, x );
 }
 
 static
