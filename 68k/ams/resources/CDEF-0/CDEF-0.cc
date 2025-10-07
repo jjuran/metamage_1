@@ -240,8 +240,9 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 	const bool draw   = false;
 	const bool hilite = true;
 	
-	const bool inactive = param == 255;
-	const bool hiliting = param != 0  &&  param != 129  &&  ! inactive;
+	const bool inactive = control[0]->contrlHilite == kControlInactivePart;
+	
+	const bool hiliting = param > 0  &&  param < kDrawControlIndicatorOnly;
 	
 	const unsigned char* title = control[0]->contrlTitle;
 	const short          value = control[0]->contrlValue;
