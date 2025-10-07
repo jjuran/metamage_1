@@ -43,6 +43,7 @@
 
 // mac-sys-utils
 #include "mac_sys/delay.hh"
+#include "mac_sys/gestalt.hh"
 
 // legacynth-common
 #include "legacynth/common.hh"
@@ -380,9 +381,18 @@ static CntrlParam Control_pb;
 static
 OSErr check_installability()
 {
+	using mac::sys::gestalt;
+	
 	if ( has_Sound_Driver() )
 	{
 		return dupFNErr;  // we don't replace a working .Sound driver
+	}
+	
+	UInt32 has_16bit = gestalt( 'snd ' ) & (1 << gestalt16BitAudioSupport);
+	
+	if ( ! has_16bit )
+	{
+		return notEnoughHardwareErr;
 	}
 	
 	/*
