@@ -93,6 +93,19 @@ namespace glue {
 	}
 	
 #endif  // #else  // #ifdef __MC68K__
+	
+	inline
+	SInt32 gestalt( OSType selector, SInt32 alternative = 0 )
+	{
+		return gestalt_or( selector, alternative );
+	}
+	
+	inline
+	bool gestalt_bit_set( OSType selector, int bit )
+	{
+		return gestalt( selector ) & (1UL << bit);
+	}
+	
 }
 }
 
