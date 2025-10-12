@@ -136,6 +136,12 @@ namespace MacBinary
 		return b < a ? b : a;
 	}
 	
+	static inline
+	bool is_zero( Point pt )
+	{
+		return *(long*) &pt == 0;
+	}
+	
 	template < class Type > struct ByteSwap_Traits
 	{
 		static Type Swap( Type value )
@@ -506,6 +512,15 @@ namespace MacBinary
 		// folder ID
 		*/
 		h.Set< kFInfo >( pb.ioFlFndrInfo );
+		
+		/*
+			If the icon position reads as zero, clear the Inited bit.
+		*/
+		
+		if ( TARGET_RT_MAC_MACHO  &&  is_zero( pb.ioFlFndrInfo.fdLocation ) )
+		{
+			h.Set< kFinderFlags >( pb.ioFlFndrInfo.fdFlags & ~kHasBeenInited );
+		}
 		
 		h.Set< kFileCreationDate     >( pb.ioFlCrDat );
 		h.Set< kFileModificationDate >( pb.ioFlMdDat );
