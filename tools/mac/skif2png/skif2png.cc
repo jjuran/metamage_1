@@ -94,22 +94,24 @@ int main( int argc, char** argv )
 	
 	char** args = argv + 1;
 	
-	if ( argc >= 3  &&  strcmp( *args, "-o" ) == 0 )
-	{
-		++args;
-		output_path = *args++;
-	}
-	else if ( isatty( STDOUT_FILENO ) )
-	{
-		write( STDERR_FILENO, STR_LEN( PROGRAM ": " MISSING_OUTPUT "\n" ) );
-		return 2;
-	}
-	
 	const char* src = *args;
 	
 	if ( src == NULL )
 	{
 		write( STDERR_FILENO, STR_LEN( PROGRAM ": " MISSING_INPUT "\n" ) );
+		return 2;
+	}
+	
+	if ( argc >= 3  &&  strcmp( *args, "-o" ) == 0 )
+	{
+		++args;
+		output_path = *args++;
+		
+		src = *args;
+	}
+	else if ( isatty( STDOUT_FILENO ) )
+	{
+		write( STDERR_FILENO, STR_LEN( PROGRAM ": " MISSING_OUTPUT "\n" ) );
 		return 2;
 	}
 	
