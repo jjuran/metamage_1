@@ -103,7 +103,7 @@ static const UInt16 old_eventloop_available[] =
 
 static const UInt16 new_eventloop_throttled[] =
 {
-	0x307c, 1,  // 0034be:  MOVEA.W  #1,A0
+	0x307c, 2,  // 0034be:  MOVEA.W  #2,A0
 	0xa03b,     // 0034c2:  _Delay
 	0x4e71,     // 0034c4:  NOP
 	0x4e71,     // 0034c6:  NOP
