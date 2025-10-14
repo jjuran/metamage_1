@@ -158,8 +158,14 @@ void InitWindows_patch()
 		
 		h = GetResource( 'CODE', 1 );
 		
+		// StuntCopter 1.2
+		
 		PATCH( h, 0x00129c, old_backflip_timer,      new_backflip_delay      );
 		PATCH( h, 0x0034be, old_eventloop_available, new_eventloop_throttled );
+		
+		// StuntCopter 1.5
+		
+		PATCH( h, 0x00131a, old_backflip_timer,      new_backflip_delay      );
 	}
 	
 	old_InitWindows();
