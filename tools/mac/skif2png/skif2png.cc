@@ -18,6 +18,9 @@
 #include <stdio.h>
 #include <string.h>
 
+// more-libc
+#include "more/string.h"
+
 // more-posix
 #include "more/perror.hh"
 
@@ -31,7 +34,6 @@
 #define PROGRAM  "skif2png"
 
 #define MISSING_INPUT   "input file required"
-#define MISSING_OUTPUT  "stdout is a tty, either redirect or use -o"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -90,7 +92,7 @@ void raster_to_PNG( const raster_load& raster, const char* path )
 
 int main( int argc, char** argv )
 {
-	const char* output_path = "/dev/fd/1";
+	const char* output_path = NULL;
 	
 	char** args = argv + 1;
 	
@@ -109,10 +111,16 @@ int main( int argc, char** argv )
 		
 		src = *args;
 	}
-	else if ( isatty( STDOUT_FILENO ) )
+	else
 	{
-		write( STDERR_FILENO, STR_LEN( PROGRAM ": " MISSING_OUTPUT "\n" ) );
-		return 2;
+		size_t len = strlen( src );
+		
+		void* p = alloca( len + sizeof ".png" );
+		
+		output_path = (char*) p;
+		
+		p = mempcpy( p, src,    len           );
+		p = mempcpy( p, ".png", sizeof ".png" );  // includes final NUL byte
 	}
 	
 	int fd = open( src, O_RDONLY );
