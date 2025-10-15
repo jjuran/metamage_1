@@ -126,7 +126,8 @@ my %fsmap =
 		Tools =>
 		[
 			# Build tools
-			\ qw( A-line ar cpres ld lib-static mpw-select mpwrez mwcc mxcpp
+			\ qw( A-line ar cpres fatten ld lib-static
+				mpw-select mpwrez mwcc mxcpp
 				postlink-68k-appl postlink-68k-drvr postlink-68k-standalone
 				postlink-68k-tool strip ),
 			# Debugging
