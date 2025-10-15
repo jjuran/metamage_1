@@ -6,7 +6,11 @@
 // Mac OS X
 #ifdef __APPLE__
 #include <CoreServices/CoreServices.h>
+#ifdef MAC_OS_X_VERSION_10_5
 #include <copyfile.h>
+#else
+#warning `copyfile()` requires 10.5+.
+#endif
 #endif
 
 // Mac OS
@@ -147,6 +151,7 @@ int main( int argc, char** argv )
 	}
 	
 #ifdef __APPLE__
+#ifdef MAC_OS_X_VERSION_10_5
 	
 	copyfile_state_t state = copyfile_state_alloc();
 	
@@ -154,6 +159,13 @@ int main( int argc, char** argv )
 	
 	copyfile_state_free( state );
 	
+#else  // #ifdef MAC_OS_X_VERSION_10_5
+	
+	errno = ENOSYS;
+	
+	int nok = -1;
+	
+#endif
 #else
 	
 	int nok = copyfile( input_68k, output );
