@@ -5,44 +5,12 @@
 
 #include "mac_cg/images.hh"
 
-// Standard C
-#include <stdlib.h>
-#include <string.h>
+// mac-cg-utils
+#include "mac_cg/data.hh"
 
 
 namespace mac {
 namespace cg  {
-
-static
-void release_data( void* info, const void* data, size_t size )
-{
-	free( const_cast< void* >( data ) );
-}
-
-static
-CGDataProviderRef make_data_provider( void* data, size_t size )
-{
-	void* buffer = malloc( size );
-	
-	if ( buffer == NULL )
-	{
-		return NULL;
-	}
-	
-	memcpy( buffer, data, size );
-	
-	CGDataProviderRef result = CGDataProviderCreateWithData( NULL,
-	                                                         buffer,
-	                                                         size,
-	                                                         &release_data );
-	
-	if ( result == NULL )
-	{
-		free( buffer );
-	}
-	
-	return result;
-}
 
 CGImageRef create_image_from_data( size_t           width,
                                    size_t           height,
@@ -53,8 +21,8 @@ CGImageRef create_image_from_data( size_t           width,
                                    CGBitmapInfo     bitmapInfo,
                                    void*            baseAddr )
 {
-	CGDataProviderRef dataProvider = make_data_provider( baseAddr,
-	                                                     height * stride );
+	CGDataProviderRef dataProvider = make_data_provider_copy( baseAddr,
+	                                                          height * stride );
 	
 	if ( ! dataProvider )  return NULL;
 	
