@@ -7,7 +7,6 @@
 
 // Standard C
 #include <stdlib.h>
-#include <string.h>
 
 // iota
 #include "iota/endian.hh"
@@ -31,20 +30,6 @@ using namespace raster;
 
 
 static
-void release_data( void* info, const void* data, size_t size )
-{
-	::operator delete( const_cast< void* >( data ) );
-}
-
-typedef void (*copier)( void* dst, const void* src, size_t n );
-
-static
-void straight_copy( void* dst, const void* src, size_t n )
-{
-	memcpy( dst, src, n );
-}
-
-static
 void convert_LE_565_to_555( void* dst, const void* src, size_t n )
 {
 	uint16_t const* p   = (const uint16_t*) src;
@@ -63,19 +48,6 @@ void convert_LE_565_to_555( void* dst, const void* src, size_t n )
 		
 		*q++ = iota::little_u16( pixel );
 	}
-}
-
-static
-CGDataProviderRef make_data_provider( char* data, size_t size, copier cpy )
-{
-	void* buffer = ::operator new( size );
-	
-	cpy( buffer, data, size );
-	
-	return CGDataProviderCreateWithData( NULL,
-	                                     buffer,
-	                                     size,
-	                                     &release_data );
 }
 
 CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
@@ -184,9 +156,8 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 		}
 	}
 	
+	using mac::cg::make_data_provider_copy;
 	using mac::cg::make_data_provider_xfer;
-	
-	copier cpy = straight_copy;
 	
 	CGDataProviderRef dataProvider;
 	
@@ -214,7 +185,7 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	}
 	else
 	{
-		dataProvider = make_data_provider( base, height * stride, cpy );
+		dataProvider = make_data_provider_copy( base, height * stride );
 	}
 	
 #ifdef MAC_OS_X_VERSION_10_4
