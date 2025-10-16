@@ -6,6 +6,7 @@
 #include "CGSKIF.hh"
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // iota
@@ -13,6 +14,7 @@
 
 // mac-cg-utils
 #include "mac_cg/colorspaces.hh"
+#include "mac_cg/data.hh"
 
 // rasterlib
 #include "raster/clut.hh"
@@ -43,7 +45,7 @@ void straight_copy( void* dst, const void* src, size_t n )
 }
 
 static
-void converting_LE_565_to_555_copy( void* dst, const void* src, size_t n )
+void convert_LE_565_to_555( void* dst, const void* src, size_t n )
 {
 	uint16_t const* p   = (const uint16_t*) src;
 	uint16_t const* end = (const uint16_t*) src + n / 2;
@@ -182,7 +184,11 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 		}
 	}
 	
+	using mac::cg::make_data_provider_xfer;
+	
 	copier cpy = straight_copy;
+	
+	CGDataProviderRef dataProvider;
 	
 	if ( little_endian  &&  weight == 16  &&  is_16bit_565( desc ) )
 	{
@@ -193,7 +199,22 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 			TODO:  Convert to 8/8/8/8 instead.
 		*/
 		
-		cpy = &converting_LE_565_to_555_copy;
+		size_t size = height * stride;
+		
+		void* converted = malloc( size );
+		
+		if ( ! converted )
+		{
+			return NULL;
+		}
+		
+		convert_LE_565_to_555( converted, base, size );
+		
+		dataProvider = make_data_provider_xfer( converted, size );
+	}
+	else
+	{
+		dataProvider = make_data_provider( base, height * stride, cpy );
 	}
 	
 #ifdef MAC_OS_X_VERSION_10_4
@@ -206,10 +227,6 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	}
 	
 #endif
-	
-	CGDataProviderRef dataProvider = make_data_provider( base,
-	                                                     height * stride,
-	                                                     cpy );
 	
 	CGImageRef image;
 	image = CGImageCreate( width,
