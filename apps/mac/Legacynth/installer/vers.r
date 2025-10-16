@@ -18,5 +18,5 @@ resource 'vers' (1)
 	PATCH,
 	smRoman,
 	VERSION,
-	"Legacynth Mini " VERSION ", " COPY COPYRIGHT
+	"Legacynth 4000 " VERSION ", " COPY COPYRIGHT
 };

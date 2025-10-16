@@ -1,7 +1,7 @@
 #!/bin/sh -e
 
-TITLENAME="Legacynth Mini"
-SMALLNAME="legacynth-mini"
+TITLENAME="Legacynth 4000"
+SMALLNAME="legacynth-4000"
 
 VERS="$1"
 
