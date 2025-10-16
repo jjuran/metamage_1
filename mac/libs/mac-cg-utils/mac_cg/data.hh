@@ -25,6 +25,7 @@
 namespace mac {
 namespace cg  {
 
+CGDataProviderRef make_data_provider_xfer( void* data, size_t size );
 CGDataProviderRef make_data_provider_copy( void* data, size_t size );
 
 }
