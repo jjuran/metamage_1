@@ -30,6 +30,7 @@ class CGContextForPort
 	
 	private:
 		CGContextRef context;
+		CGRect       bounds_rect;
 		
 		Rect create();
 		
@@ -44,6 +45,8 @@ class CGContextForPort
 		~CGContextForPort();
 		
 		operator CGContextRef() const  { return context; }
+		
+		const CGRect& bounds() const  { return bounds_rect; }
 };
 
 #endif

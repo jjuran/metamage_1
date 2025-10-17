@@ -20,6 +20,8 @@ Rect CGContextForPort::create()
 	
 	const Rect& portRect = get_portRect( port );
 	
+	bounds_rect = CGRectMake( 0, 0, portRect.right, portRect.bottom );
+	
 	return portRect;
 }
 
