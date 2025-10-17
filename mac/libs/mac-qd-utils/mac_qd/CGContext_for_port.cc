@@ -1,21 +1,21 @@
 /*
-	CGContextForPort.cc
-	-------------------
+	CGContext_for_port.cc
+	---------------------
 */
 
-#include "CGContextForPort.hh"
+#include "mac_qd/CGContext_for_port.hh"
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 
 
-using mac::qd::get_portRect;
+namespace mac {
+namespace qd  {
 
+#if ! __LP64__
 
-CGContextForPort::CGContextForPort()
+CGContext_for_port::CGContext_for_port( CGrafPtr port )
 {
-	CGrafPtr port = GetQDGlobalsThePort();
-	
 	CreateCGContextForPort( port, &context );
 	
 	const Rect& portRect = get_portRect( port );
@@ -31,8 +31,13 @@ CGContextForPort::CGContextForPort()
 	CGContextScaleCTM    ( context, 1, -1 );
 }
 
-CGContextForPort::~CGContextForPort()
+#endif
+
+CGContext_for_port::~CGContext_for_port()
 {
 	CGContextFlush  ( context );  // required in Mac OS X 10.4
 	CGContextRelease( context );
+}
+
+}
 }

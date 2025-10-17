@@ -13,6 +13,7 @@
 #endif
 
 // mac-qd-utils
+#include "mac_qd/CGContext_for_port.hh"
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/arrow.hh"
 #include "mac_qd/globals/thePort_window.hh"
@@ -28,7 +29,6 @@
 #include "CGTictactoe.hh"
 
 // Tic-tac-toe
-#include "CGContextForPort.hh"
 #include "cursors.hh"
 #include "dock_tile.hh"
 #include "menus.hh"
@@ -127,10 +127,12 @@ void draw_window( const Rect& portRect )
 {
 	if ( CONFIG_USE_COREGRAPHICS )
 	{
+		using mac::qd::CGContext_for_thePort;
+		
 		float white_or_black =   fullscreen::in_effect;
 		float black_or_white = ! fullscreen::in_effect;
 		
-		CGContextForPort port_context;
+		CGContext_for_thePort port_context;
 		
 		CGContextSetGrayStrokeColor( port_context, white_or_black, 1 );
 		CGContextSetGrayFillColor  ( port_context, black_or_white, 1 );
@@ -213,9 +215,11 @@ void draw_token( player_t token, short index )
 	
 	if ( CONFIG_USE_COREGRAPHICS )
 	{
+		using mac::qd::CGContext_for_thePort;
+		
 		float white_or_black = fullscreen::in_effect;
 		
-		CGContextForPort port_context;
+		CGContext_for_thePort port_context;
 		
 		CGContextTranslateCTM( port_context, margin.h, margin.v );
 		CGContextScaleCTM( port_context, unitLength, unitLength );
