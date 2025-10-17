@@ -22,7 +22,6 @@
 
 // mac-qd-utils
 #include "mac_qd/CGContext_for_port.hh"
-#include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/screenBits.hh"
 
 // mac-icon-utils
@@ -318,17 +317,9 @@ pascal OSStatus window_DrawContent( EventHandlerCallRef  handler,
 		
 		CGContext_for_port context( port );
 		
-		Rect portRect = mac::qd::get_portRect( port );
-		
-		int width  = portRect.right - portRect.left;
-		int height = portRect.bottom - portRect.top;
-		
 		CGRect bounds;
 		
-		bounds.origin.x = portRect.left;
-		bounds.origin.y = portRect.top;
-		bounds.size.width  = width;
-		bounds.size.height = height;
+		bounds = context.bounds();
 		
 		draw_AboutBox( context, bounds );
 	}
