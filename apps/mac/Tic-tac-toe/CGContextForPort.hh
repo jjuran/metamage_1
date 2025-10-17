@@ -18,11 +18,16 @@
 #endif
 #endif
 
+// iota
+#include "iota/class.hh"
+
 
 #define CGContextForPort CGContextForPort_
 
 class CGContextForPort
 {
+	NON_COPYABLE( CGContextForPort )
+	
 	private:
 		CGContextRef context;
 		
@@ -31,10 +36,6 @@ class CGContextForPort
 		void erase( const Rect& portRect, float gray );
 		
 		void transform( int height );
-		
-		// non-copyable
-		CGContextForPort           ( const CGContextForPort& );
-		CGContextForPort& operator=( const CGContextForPort& );
 	
 	public:
 		CGContextForPort();
