@@ -39,6 +39,7 @@
 #include "mac_sys/has/ColorQuickDraw.hh"
 
 // mac-qd-utils
+#include "mac_qd/CGContext_for_port.hh"
 #include "mac_qd/copy_bits.hh"
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/main_display_bounds.hh"
@@ -602,21 +603,20 @@ void draw_window( WindowRef window )
 {
 	if ( window_state* state = (window_state*) GetWRefCon( window ) )
 	{
+		using mac::qd::CGContext_for_port;
+		
 		CGrafPtr port = GetWindowPort( window );
 		
 		const Rect& bounds = mac::qd::get_portRect( port );
 		
 		if ( TARGET_API_MAC_OSX  &&  state->image )
 		{
-			CGContextRef context;
-			CreateCGContextForPort( port, &context );
+			CGContext_for_port context( port );
 			
-			CGRect rect = CGRectMake( 0, 0, bounds.right, bounds.bottom );
+			CGRect rect = context.bounds();
 			
 			CGContextDrawImage( context, rect, state->image );
 			
-			CGContextFlush  ( context );  // required in Mac OS X 10.4
-			CGContextRelease( context );
 			return;
 		}
 		
