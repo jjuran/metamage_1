@@ -130,12 +130,15 @@ void draw_window( const Rect& portRect )
 		float white_or_black =   fullscreen::in_effect;
 		float black_or_white = ! fullscreen::in_effect;
 		
-		CGContextForPort port_context( black_or_white );
+		CGContextForPort port_context;
+		
+		CGContextSetGrayStrokeColor( port_context, white_or_black, 1 );
+		CGContextSetGrayFillColor  ( port_context, black_or_white, 1 );
+		
+		CGContextFillRect( port_context, port_context.bounds() );
 		
 		CGContextTranslateCTM( port_context, margin.h, margin.v );
 		CGContextScaleCTM( port_context, unitLength, unitLength );
-		
-		CGContextSetGrayStrokeColor( port_context, white_or_black, 1 );
 		
 		draw_board( port_context, tictactoe::squares );
 		
