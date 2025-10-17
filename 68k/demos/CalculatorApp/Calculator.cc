@@ -22,21 +22,20 @@
 #endif
 #endif
 
-// mac-sys-utils
-#include "mac_sys/trap_available.hh"
-
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/patterns.hh"
 #include "mac_qd/main_display_bounds.hh"
 #include "mac_qd/wide_drag_area.hh"
 
+// mac-app-utils
+#include "mac_app/wait_next_event.hh"
+
 
 #pragma exceptions off
 
 
 #if TARGET_API_MAC_CARBON
-#define SystemTask()  /**/
 #define rDocProc noGrowDocProc
 #endif
 
@@ -183,30 +182,10 @@ void draw_window( const Rect& rect )
 	}
 }
 
-static inline
-bool has_WaitNextEvent()
-{
-	enum { _WaitNextEvent = 0xA860 };
-	
-	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _WaitNextEvent );
-}
-
-static inline
-Boolean WaitNextEvent( EventRecord& event )
-{
-	return WaitNextEvent( everyEvent, &event, 0x7FFFFFFF, NULL );
-}
-
-static inline
-Boolean GetNextEvent( EventRecord& event )
-{
-	SystemTask();
-	
-	return GetNextEvent( everyEvent, &event );
-}
-
 int main()
 {
+	using mac::app::wait_next_event;
+	
 	Boolean quitting = false;
 	
 #if ! TARGET_API_MAC_CARBON
@@ -227,13 +206,11 @@ int main()
 	
 	WindowRef main_window = make_window();
 	
-	const bool has_WNE = has_WaitNextEvent();
-	
 	while ( ! quitting )
 	{
 		EventRecord event;
 		
-		if ( has_WNE ? WaitNextEvent( event ) : GetNextEvent( event ) )
+		if ( wait_next_event( event ) )
 		{
 			WindowRef window;
 			

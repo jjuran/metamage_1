@@ -17,7 +17,6 @@
 
 // mac-sys-utils
 #include "mac_sys/beep.hh"
-#include "mac_sys/trap_available.hh"
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
@@ -28,15 +27,12 @@
 
 // mac-app-utils
 #include "mac_app/scoped_EventMask.hh"
+#include "mac_app/wait_next_event.hh"
 
 // TestApp
 #include "desktop.hh"
 #include "display.hh"
 
-
-#if TARGET_API_MAC_CARBON
-#define SystemTask()  /**/
-#endif
 
 using mac::qd::get_portRect;
 using mac::qd::wide_drag_area;
@@ -87,30 +83,10 @@ void EraseRect( const Rect& rect )
 	EraseRect( &rect );
 }
 
-static inline
-bool has_WaitNextEvent()
-{
-	enum { _WaitNextEvent = 0xA860 };
-	
-	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _WaitNextEvent );
-}
-
-static inline
-Boolean WaitNextEvent( EventRecord& event )
-{
-	return WaitNextEvent( everyEvent, &event, 0x7FFFFFFF, NULL );
-}
-
-static inline
-Boolean GetNextEvent( EventRecord& event )
-{
-	SystemTask();
-	
-	return GetNextEvent( everyEvent, &event );
-}
-
 int main()
 {
+	using mac::app::wait_next_event;
+	
 	Boolean quitting = false;
 	int menu_bar_inversion_level = 0;
 	
@@ -130,13 +106,11 @@ int main()
 	
 	WindowRef main_window = NULL;
 	
-	const bool has_WNE = has_WaitNextEvent();
-	
 	while ( ! quitting )
 	{
 		EventRecord event;
 		
-		if ( has_WNE ? WaitNextEvent( event ) : GetNextEvent( event ) )
+		if ( wait_next_event( event ) )
 		{
 			WindowRef window;
 			

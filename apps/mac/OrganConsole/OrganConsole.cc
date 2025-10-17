@@ -31,7 +31,6 @@
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
-#include "mac_sys/trap_available.hh"
 
 // mac-qd-utils
 #include "mac_qd/wide_drag_area.hh"
@@ -44,6 +43,7 @@
 #include "mac_app/menus.hh"
 #include "mac_app/scoped_EventMask.hh"
 #include "mac_app/state.hh"
+#include "mac_app/wait_next_event.hh"
 
 // posix-utils
 #ifdef __APPLE__
@@ -63,10 +63,6 @@
 
 
 #define CONFIG_DAs CONFIG_DESK_ACCESSORIES
-
-#if TARGET_API_MAC_CARBON
-#define SystemTask()  /**/
-#endif
 
 using mac::qd::wide_drag_area;
 
@@ -152,31 +148,10 @@ void menu_item_chosen( long choice )
 	HiliteMenu( 0 );
 }
 
-static inline
-bool has_WaitNextEvent()
-{
-	enum { _WaitNextEvent = 0xA860 };
-	
-	return ! TARGET_CPU_68K  ||  mac::sys::trap_available( _WaitNextEvent );
-}
-
-static inline
-Boolean WaitNextEvent( EventRecord& event )
-{
-	return WaitNextEvent( everyEvent, &event, 0x7FFFFFFF, NULL );
-}
-
-static
-Boolean wait_next_event( EventRecord& event )
-{
-	SystemTask();
-	
-	return GetNextEvent( everyEvent, &event );
-}
-
 int main( int argc, char** argv )
 {
 	using mac::app::quitting;
+	using mac::app::wait_next_event;
 	
 	mac::app::init_toolbox();
 	mac::app::install_menus();
@@ -205,15 +180,13 @@ int main( int argc, char** argv )
 	
 	open_launched_documents();
 	
-	const bool has_WNE = has_WaitNextEvent();
-	
 	create_window();
 	
 	while ( ! quitting )
 	{
 		EventRecord event;
 		
-		if ( has_WNE ? WaitNextEvent( event ) : wait_next_event( event ) )
+		if ( wait_next_event( event ) )
 		{
 			WindowRef window;
 			
