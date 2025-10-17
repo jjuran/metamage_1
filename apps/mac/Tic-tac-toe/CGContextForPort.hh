@@ -22,8 +22,6 @@
 #include "iota/class.hh"
 
 
-#define CGContextForPort CGContextForPort_
-
 class CGContextForPort
 {
 	NON_COPYABLE( CGContextForPort )
@@ -31,17 +29,9 @@ class CGContextForPort
 	private:
 		CGContextRef context;
 		CGRect       bounds_rect;
-		
-		Rect create();
-		
-		void erase( const Rect& portRect, float gray );
-		
-		void transform( int height );
 	
 	public:
 		CGContextForPort();
-		CGContextForPort( float erase_gray );
-		
 		~CGContextForPort();
 		
 		operator CGContextRef() const  { return context; }

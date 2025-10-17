@@ -12,7 +12,7 @@
 using mac::qd::get_portRect;
 
 
-Rect CGContextForPort::create()
+CGContextForPort::CGContextForPort()
 {
 	CGrafPtr port = GetQDGlobalsThePort();
 	
@@ -22,46 +22,13 @@ Rect CGContextForPort::create()
 	
 	bounds_rect = CGRectMake( 0, 0, portRect.right, portRect.bottom );
 	
-	return portRect;
-}
-
-void CGContextForPort::erase( const Rect& portRect, float gray )
-{
-	CGRect whole = {};
-	
-	whole.size.width  = portRect.right;
-	whole.size.height = portRect.bottom;
-	
-	CGContextSetGrayFillColor( context, gray, 1 );
-	
-	CGContextFillRect( context, whole );
-}
-
-void CGContextForPort::transform( int height )
-{
 	/*
 		Flip the coordinate system so that the Y axis increases
 		downward as in QuickDraw (and compositing-mode windows).
 	*/
 	
-	CGContextTranslateCTM( context, 0, height );
+	CGContextTranslateCTM( context, 0, bounds_rect.size.height );
 	CGContextScaleCTM    ( context, 1, -1 );
-}
-
-CGContextForPort::CGContextForPort()
-{
-	const Rect& portRect = create();
-	
-	transform( portRect.bottom );
-}
-
-CGContextForPort::CGContextForPort( float erase_gray )
-{
-	const Rect& portRect = create();
-	
-	erase( portRect, erase_gray );
-	
-	transform( portRect.bottom );
 }
 
 CGContextForPort::~CGContextForPort()
