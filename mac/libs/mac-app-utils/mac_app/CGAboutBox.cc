@@ -21,6 +21,7 @@
 #include "mac_config/upp-macros.hh"
 
 // mac-qd-utils
+#include "mac_qd/CGContext_for_port.hh"
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/globals/screenBits.hh"
 
@@ -311,7 +312,11 @@ pascal OSStatus window_DrawContent( EventHandlerCallRef  handler,
 	
 	if ( err == noErr )
 	{
+		using mac::qd::CGContext_for_port;
+		
 		CGrafPtr port = GetWindowPort( window );
+		
+		CGContext_for_port context( port );
 		
 		Rect portRect = mac::qd::get_portRect( port );
 		
@@ -325,20 +330,7 @@ pascal OSStatus window_DrawContent( EventHandlerCallRef  handler,
 		bounds.size.width  = width;
 		bounds.size.height = height;
 		
-	#ifndef MAC_OS_X_VERSION_10_7
-		
-		CGContextRef context;
-		
-		err = CreateCGContextForPort( port, &context );
-		
-		CGContextTranslateCTM( context, 0, height );
-		CGContextScaleCTM    ( context, 1, -1 );
-		
 		draw_AboutBox( context, bounds );
-		
-		CGContextRelease( context );
-		
-	#endif
 	}
 	
 	return err;
