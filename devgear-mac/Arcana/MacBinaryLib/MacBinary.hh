@@ -19,6 +19,9 @@
 // Standard C++
 #include <vector>
 
+// iota
+#include "iota/class.hh"
+
 // mac-types
 #include "mac_types/VRefNum_DirID.hh"
 
@@ -53,6 +56,8 @@ namespace MacBinary
 	
 	class Decoder
 	{
+		NON_COPYABLE( Decoder )
+		
 		private:
 			struct Frame
 			{
@@ -80,11 +85,7 @@ namespace MacBinary
 			void DecodeHeader( const char* header );
 			
 			void CloseFiles();
-			
-			// non-copyable
-			Decoder           ( const Decoder& );
-			Decoder& operator=( const Decoder& );
-			
+		
 		public:
 			Decoder( const VRefNum_DirID& destination );
 			
