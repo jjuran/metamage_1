@@ -815,9 +815,9 @@ namespace MacBinary
 		itsResourceFork = 0;
 	}
 	
-	Decoder::Decoder( const VRefNum_DirID& destination )
+	Decoder::Decoder( const VRefNum_DirID& destination, const Byte* alt_name )
 	:
-		//fDestDir( destination ),
+		itsAltTopLevelName( alt_name ),
 		itIsFolder( false ),
 		itsHeaderWasReceived( false ),
 		itsDataForkLength       ( 0 ),
@@ -858,6 +858,13 @@ namespace MacBinary
 		}
 		
 		ConstStr63Param name = h.Get< kFileName >();
+		
+		if ( itsAltTopLevelName )
+		{
+			name = itsAltTopLevelName;
+			
+			itsAltTopLevelName = NULL;
+		}
 		
 		const VRefNum_DirID& dir = itsFrame.destDir;
 		

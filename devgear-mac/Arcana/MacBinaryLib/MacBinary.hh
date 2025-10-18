@@ -67,6 +67,8 @@ namespace MacBinary
 				plus::var_string  comment;
 			};
 			
+			const Byte* itsAltTopLevelName;
+			
 			Frame itsFrame;
 			std::vector< Frame > itsFrameStack;
 			
@@ -87,7 +89,7 @@ namespace MacBinary
 			void CloseFiles();
 		
 		public:
-			Decoder( const VRefNum_DirID& destination );
+			Decoder( const VRefNum_DirID& destination, const Byte* alt_name = NULL );
 			
 			~Decoder()  { CloseFiles(); }
 			
