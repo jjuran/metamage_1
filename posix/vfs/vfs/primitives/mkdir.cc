@@ -36,7 +36,7 @@ namespace vfs
 			}
 		}
 
-		p7::throw_errno( EPERM );
+		p7::throw_errno( that.filemode() ? EEXIST : EPERM );
 	}
 	
 }
