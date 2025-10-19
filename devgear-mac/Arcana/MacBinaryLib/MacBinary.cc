@@ -818,6 +818,7 @@ namespace MacBinary
 	Decoder::Decoder( const VRefNum_DirID& destination, const Byte* alt_name )
 	:
 		itsAltTopLevelName( alt_name ),
+		itShouldAlwaysInit( false ),
 		itIsFolder( false ),
 		itsHeaderWasReceived( false ),
 		itsDataForkLength       ( 0 ),
@@ -898,6 +899,11 @@ namespace MacBinary
 				pb.hFileInfo.ioDirID = itsFrame.file.parID;
 				
 				pb.hFileInfo.ioFlFndrInfo = h.Get< kFInfo >();
+				
+				if ( itShouldAlwaysInit )
+				{
+					pb.hFileInfo.ioFlFndrInfo.fdFlags &= ~kHasBeenInited;
+				}
 				
 				pb.hFileInfo.ioFlCrDat = h.Get< kFileCreationDate     >();
 				pb.hFileInfo.ioFlMdDat = h.Get< kFileModificationDate >();

@@ -72,6 +72,7 @@ namespace MacBinary
 			Frame itsFrame;
 			std::vector< Frame > itsFrameStack;
 			
+			bool itShouldAlwaysInit;
 			bool itIsFolder;
 			bool itsHeaderWasReceived;
 			bool itsTrailerWasReceived;
@@ -92,6 +93,8 @@ namespace MacBinary
 			Decoder( const VRefNum_DirID& destination, const Byte* alt_name = NULL );
 			
 			~Decoder()  { CloseFiles(); }
+			
+			void SetAlwaysInit( bool should )  { itShouldAlwaysInit = should; }
 			
 			int Write( const char* data, ByteCount byteCount );
 	};
