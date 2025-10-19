@@ -122,8 +122,8 @@ static const vfs::node_method_set volumes_link_methods =
 
 static
 vfs::node_ptr volumes_lookup( const vfs::node*     that,
-                                     const plus::string&  name,
-                                     const vfs::node*     parent )
+                              const plus::string&  name,
+                              const vfs::node*     parent )
 {
 	return new vfs::node( parent,
 	                      name,
