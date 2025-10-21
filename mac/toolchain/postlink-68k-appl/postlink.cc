@@ -205,6 +205,14 @@ Handle patch_68K_startup()
 			
 			SetResAttrs( code, attrs & ~resProtected );
 			
+			/*
+				MWLink68K gives the name "Main" to 'CODE' id=1.
+				
+				It adds no value whatsoever.  Delete it.
+			*/
+			
+			SetResInfo( code, 1, "\p" );
+			
 			ChangedResource( code );
 			WriteResource  ( code );
 			
