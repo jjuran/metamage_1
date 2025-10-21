@@ -111,8 +111,8 @@ short sw_synth( sample_buffer& output, sw_buffer& rec, bool reset )
 	if ( reset )
 	{
 		/*
-			Square wave tones are too loud relative to four-tone and
-			freeform-wave sounds (as well as the host system generally).
+			Square-wave tones are too loud relative to four-tone and
+			free-form sounds (as well as the host system generally).
 			
 			Halve their amplitude to compensate.
 		*/

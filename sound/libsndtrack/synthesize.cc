@@ -248,7 +248,7 @@ short synthesize( sample_buffer& output )
 					For audio frame gap detection, we're only interested
 					in low-level audio produced by writing to the sound
 					buffer, which we'll heuristically characterize as any
-					freeform sound whose length is 370 bytes.
+					free-form sound whose length is 370 bytes.
 				*/
 				
 				sounding_now = count > 0  &&  input->size == 370;
