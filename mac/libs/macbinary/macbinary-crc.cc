@@ -1,9 +1,9 @@
 /*
-	macbinary-crc16.cc
-	------------------
+	macbinary-crc.cc
+	----------------
 */
 
-#include "macbinary-crc16.hh"
+#include "macbinary-crc.hh"
 
 
 namespace macbinary

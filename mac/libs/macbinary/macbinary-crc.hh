@@ -1,10 +1,10 @@
 /*
-	macbinary-crc16.hh
-	------------------
+	macbinary-crc.hh
+	----------------
 */
 
-#ifndef MACBINARYCRC16_HH
-#define MACBINARYCRC16_HH
+#ifndef MACBINARYCRC_HH
+#define MACBINARYCRC_HH
 
 
 namespace macbinary

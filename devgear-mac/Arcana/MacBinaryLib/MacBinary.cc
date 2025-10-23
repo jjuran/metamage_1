@@ -44,7 +44,7 @@
 #include "mac_file/scoped_open_refnum.hh"
 
 // macbinary
-#include "macbinary-crc16.hh"
+#include "macbinary-crc.hh"
 
 // Debug
 #include "debug/assert.hh"

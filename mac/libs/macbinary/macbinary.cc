@@ -12,7 +12,7 @@
 #include "iota/endian.hh"
 
 // macbinary
-#include "macbinary-crc16.hh"
+#include "macbinary-crc.hh"
 
 
 namespace macbinary
