@@ -40,7 +40,7 @@
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
 
-// Misc
+// MacBinaryLib
 #include "MacBinary.hh"
 
 // Orion
