@@ -43,7 +43,7 @@
 #include "mac_file/open_rsrc_fork.hh"
 #include "mac_file/scoped_open_refnum.hh"
 
-// macbinary
+// macbinary-crc
 #include "macbinary-crc.hh"
 
 // Debug

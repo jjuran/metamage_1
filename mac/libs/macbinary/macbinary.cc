@@ -11,7 +11,7 @@
 // iota
 #include "iota/endian.hh"
 
-// macbinary
+// macbinary-crc
 #include "macbinary-crc.hh"
 
 
