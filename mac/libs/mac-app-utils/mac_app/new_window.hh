@@ -3,8 +3,8 @@
 	-------------
 */
 
-#ifndef MACAPP_DOCUMENTS_HH
-#define MACAPP_DOCUMENTS_HH
+#ifndef MACAPP_NEWWINDOW_HH
+#define MACAPP_NEWWINDOW_HH
 
 // Mac OS X
 #ifdef __APPLE__
