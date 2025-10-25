@@ -29,6 +29,12 @@
 namespace mac {
 namespace app {
 
+#if __LP64__
+
+int dummy;
+
+#else
+
 Boolean wait_next_event( EventMask event_mask, EventRecord& event )
 {
 	STATIC_68K const bool has_WNE = mac::sys::has_WaitNextEvent();
@@ -46,6 +52,8 @@ Boolean wait_next_event( EventMask event_mask, EventRecord& event )
 	
 	return GetNextEvent( everyEvent, &event );
 }
+
+#endif
 
 }
 }
