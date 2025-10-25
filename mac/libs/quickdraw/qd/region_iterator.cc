@@ -70,12 +70,4 @@ namespace quickdraw
 		return &its_next_band;
 	}
 	
-	malloc_region_iterator::malloc_region_iterator( short         size,
-	                                                const short*  extent )
-	:
-		its_segments( size ),
-		its_base( its_segments, extent )
-	{
-	}
-	
 }
