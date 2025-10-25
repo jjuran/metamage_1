@@ -126,10 +126,12 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 			{
 				default:
 				case xRGB:
+				case BGRx:
 //					bitmapInfo = kCGImageAlphaNoneSkipFirst;
 					break;
 				
 				case ARGB:
+				case BGRA:
 					bitmapInfo = kCGImageAlphaFirst;
 					break;
 				
