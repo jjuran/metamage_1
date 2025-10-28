@@ -327,6 +327,8 @@ sub filter
 {
 	my ( $conf ) = @_;
 	
+	return 1  if / \. m m? $/x;
+	
 	return  if !/\.(c|cc|cpp)$/;
 	
 	my @parts = split m{\.}, $_;
