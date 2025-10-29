@@ -8,7 +8,6 @@
 // Mac OS X
 #ifdef __APPLE__
 #include <AGL/AGL.h>
-#include <OpenGL/OpenGL.h>
 #endif
 
 // OpenGL
@@ -21,43 +20,7 @@
 #include "glfb/glfb.hh"
 
 
-static int image_width;
-static int image_height;
-
-static int tex_width;
-static int tex_height;
-
-const GLenum texture_target = GL_TEXTURE_2D;
-
-#define glTexCoord_ glTexCoord2f
-
-static float tex_x1;
-static float tex_y1;
-
-static bool bitmaps_make_textures;
-
-static GLenum texture_format = GL_LUMINANCE;
-static GLenum texture_type   = GL_UNSIGNED_BYTE;
-
-static uint8_t* texture_data;
-
 static AGLContext context;
-static GLuint     texture;
-
-static inline
-unsigned binary_power_up( unsigned x )
-{
-	--x;
-	
-	int power = 1;
-	
-	while ( x >>= 1 )
-	{
-		++power;
-	}
-	
-	return 1 << power;
-}
 
 void create_AGL_context()
 {
