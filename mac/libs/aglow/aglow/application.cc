@@ -110,8 +110,6 @@ void blit( const raster_load& load )
 	const uint32_t offset = desc.height * desc.stride * desc.frame;
 	
 	glfb::set_screen_image( (Ptr) load.addr + offset );
-	
-	render_AGL();
 }
 
 static
@@ -556,6 +554,8 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	}
 	
 	blit( load );
+	
+	render_AGL();
 	
 	ShowWindow( screen_window );
 	
