@@ -146,10 +146,10 @@ pascal OSStatus AmicusUpdate( EventHandlerCallRef  handler,
 {
 	EventKind kind = GetEventKind( event );
 	
+	const raster_load& load = *(raster_load*) userData;
+	
 	if ( kind == kEventAmicusNewPalette )
 	{
-		const raster_load& load = *(raster_load*) userData;
-		
 		set_palette( load );
 		
 		kind = kEventAmicusScreenBits;  // force redraw with new palette
@@ -157,12 +157,7 @@ pascal OSStatus AmicusUpdate( EventHandlerCallRef  handler,
 	
 	if ( kind == kEventAmicusScreenBits )
 	{
-		const raster_load& load = *(raster_load*) userData;
-		const raster_desc& desc = load.meta->desc;
-		
-		const uint32_t offset = desc.height * desc.stride * desc.frame;
-		
-		glfb::set_screen_image( (Ptr) load.addr + offset );
+		blit( load );
 		
 		return noErr;
 	}
