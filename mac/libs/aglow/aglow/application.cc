@@ -53,6 +53,7 @@
 // amicus
 #include "amicus/events.hh"
 #include "amicus/keycodes.hh"
+#include "amicus/menu_cmds.h"
 #include "amicus/raster_task.hh"
 #include "amicus/splode.hh"
 #include "amicus/zoom.hh"
