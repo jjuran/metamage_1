@@ -477,6 +477,11 @@ void transcode_8x_1bpp_to_8bpp( const void* src, void* dst, int n )
 
 pascal void set_cursor( const Cursor* crsr )
 {
+	if ( fast_memequ( &TheCrsr, crsr, sizeof (Cursor) ) )
+	{
+		return;  // no change
+	}
+	
 	fast_memcpy( &TheCrsr, crsr, sizeof (Cursor) );
 	
 	if ( hardware_cursor )
