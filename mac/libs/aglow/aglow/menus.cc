@@ -30,7 +30,7 @@ MenuRef set_up_menu( const menu_description& desc )
 	{
 		const menu_item_description& item = desc.items[ i++ ];
 		
-		ConstStr255Param format = item.format ? item.format : "\p" "-";
+		ConstStr255Param format = item.text ? item.text : "\p" "-";
 		
 		AppendMenu( menu, format );
 		
