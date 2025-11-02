@@ -68,7 +68,7 @@
 
 #define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
 
-#define LENGTH( array )  (sizeof (array) / sizeof *(array))
+#define COUNT( array )  (sizeof (array) / sizeof *(array))
 
 
 static WindowRef screen_window;
@@ -556,35 +556,35 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	EventHandlerRef updateHandler;
 	err = InstallApplicationEventHandler( UPP_ARG( AmicusUpdate ),
-	                                      LENGTH( AmicusUpdate_event ),
+	                                      COUNT( AmicusUpdate_event ),
 	                                      AmicusUpdate_event,
 	                                      (void*) &load,
 	                                      &updateHandler );
 	
 	EventHandlerRef commandHandler;
 	err = InstallApplicationEventHandler( UPP_ARG( ProcessCommand ),
-	                                      LENGTH( ProcessCommand_event ),
+	                                      COUNT( ProcessCommand_event ),
 	                                      ProcessCommand_event,
 	                                      (void*) &load,
 	                                      &commandHandler );
 	
 	EventHandlerRef mouseHandler;
 	err = InstallApplicationEventHandler( UPP_ARG( Mouse_action ),
-	                                      LENGTH( Mouse_event ),
+	                                      COUNT( Mouse_event ),
 	                                      Mouse_event,
 	                                      NULL,
 	                                      &mouseHandler );
 	
 	EventHandlerRef keyboardHandler;
 	err = InstallApplicationEventHandler( UPP_ARG( Keyboard_action ),
-	                                      LENGTH( Keyboard_event ),
+	                                      COUNT( Keyboard_event ),
 	                                      Keyboard_event,
 	                                      (void*) &load,
 	                                      &keyboardHandler );
 	
 	EventHandlerRef modifiersHandler;
 	err = InstallApplicationEventHandler( UPP_ARG( Modifiers_changed ),
-	                                      LENGTH( Modifiers_event ),
+	                                      COUNT( Modifiers_event ),
 	                                      Modifiers_event,
 	                                      (void*) &load,
 	                                      &modifiersHandler );

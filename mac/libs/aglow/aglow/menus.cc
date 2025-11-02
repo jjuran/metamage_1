@@ -6,16 +6,18 @@
 #include "aglow/menus.hh"
 
 
-#define LENGTH( array )  (sizeof (array) / sizeof *(array))
+#define COUNT( array )  (sizeof (array) / sizeof *(array))
 
 #define DEFINE_MENU_WITH_TITLE(name, title)  \
 static const menu_description name##_desc =  \
-{ "\p" title, name##_items, LENGTH( name##_items ) }
+{ "\p" title, name##_items, COUNT( name##_items ) }
 
 #define DEFINE_MENU(title)  DEFINE_MENU_WITH_TITLE(title, #title)
 
 #define SET_UP_MENU(name)  (name = set_up_menu( name##_desc ))
 
+
+typedef unsigned char Byte;
 
 MenuRef Apple;
 MenuRef File;
@@ -24,13 +26,13 @@ MenuRef View;
 
 struct menu_item_description
 {
-	const unsigned char*  format;
-	MenuCommand           command;
+	const Byte*  format;
+	MenuCommand  command;
 };
 
 struct menu_description
 {
-	const unsigned char*          title;
+	const Byte*                   title;
 	const menu_item_description*  items;
 	short                         count;
 };
