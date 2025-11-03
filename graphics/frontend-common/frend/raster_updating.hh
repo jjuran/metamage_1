@@ -10,6 +10,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+// iota
+#include "iota/class.hh"
+
 // frontend-common
 #include "frend/displayfs.hh"
 #include "frend/update_fifo.hh"
@@ -20,10 +23,7 @@ namespace frend
 
 class raster_updating
 {
-	private:
-		// non-copyable
-		raster_updating           ( const raster_updating& );
-		raster_updating& operator=( const raster_updating& );
+	NON_COPYABLE( raster_updating )
 	
 	public:
 		raster_updating()

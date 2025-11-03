@@ -6,6 +6,9 @@
 #ifndef FREND_MAKECURSOR_HH
 #define FREND_MAKECURSOR_HH
 
+// iota
+#include "iota/class.hh"
+
 // rasterlib
 #include "raster/raster.hh"
 
@@ -17,15 +20,13 @@ struct cursor_creation_error {};
 
 class cursor_lifetime
 {
+	NON_COPYABLE( cursor_lifetime )
+	
 	typedef raster::raster_load raster_load;
 	
 	private:
 		const char* its_path;
 		raster_load its_load;
-		
-		// non-copyable
-		cursor_lifetime           ( const cursor_lifetime& );
-		cursor_lifetime& operator=( const cursor_lifetime& );
 	
 	public:
 		cursor_lifetime( const char* cursor_path );

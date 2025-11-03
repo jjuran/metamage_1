@@ -6,6 +6,9 @@
 #ifndef FREND_COPROCESS_HH
 #define FREND_COPROCESS_HH
 
+// iota
+#include "iota/class.hh"
+
 
 namespace frend
 {
@@ -14,13 +17,11 @@ struct coprocess_failed {};
 
 class coprocess_launch
 {
+	NON_COPYABLE( coprocess_launch )
+	
 	private:
 		int its_pid;
 		int its_socket;
-		
-		// non-copyable
-		coprocess_launch           ( const coprocess_launch& );
-		coprocess_launch& operator=( const coprocess_launch& );
 	
 	public:
 		coprocess_launch( int bindir_fd, const char* works_path );
