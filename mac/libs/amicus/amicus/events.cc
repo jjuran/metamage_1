@@ -30,9 +30,6 @@
 #include "amicus/splode.hh"
 
 
-#define LENGTH( array )  (sizeof (array) / sizeof *(array))
-
-
 namespace amicus
 {
 
