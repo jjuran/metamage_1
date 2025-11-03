@@ -8,6 +8,7 @@
 
 // POSIX
 #include <fcntl.h>
+#include <unistd.h>
 
 
 #define UPDATE_FIFO  "update-signal.fifo"
@@ -23,6 +24,24 @@
 
 namespace frend
 {
+
+inline
+int wait_for_update()
+{
+	if ( CONFIG_UPDATES_VIA_FIFO )
+	{
+		return close( open( UPDATE_FIFO, O_WRONLY ) );
+	}
+	
+	enum
+	{
+		half_tick = 1000000 / 120,  // 1s/120, or 8333us
+	};
+	
+	usleep( half_tick );
+	
+	return 0;
+}
 
 inline
 int unblock_update_waiters()

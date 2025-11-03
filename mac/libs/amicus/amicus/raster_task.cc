@@ -10,10 +10,6 @@
 #include <Carbon/Carbon.h>
 #endif
 
-// POSIX
-#include <fcntl.h>
-#include <unistd.h>
-
 // v68k-cursor
 #include "cursor/cursor.hh"
 
@@ -70,8 +66,9 @@ void raster_event_loop( const clut_data* clut, const sync_relay* sync )
 	while ( monitoring  &&  sync->status == raster::Sync_ready )
 	{
 		using frend::cursor_state;
+		using frend::wait_for_update;
 		
-		close( open( UPDATE_FIFO, O_WRONLY ) );
+		wait_for_update();
 		
 		if ( cursor_state  &&  cursor_state->seed != cursor_seed )
 		{

@@ -5,10 +5,6 @@
 
 #include "Pearl/screen.hh"
 
-// POSIX
-#include <fcntl.h>
-#include <unistd.h>
-
 // libsdl2
 #if defined(__MSYS__) || defined(__CYGWIN__)
 // MSYS/Cygwin doesn't know about _beginthreadex / _endthreadex
@@ -69,16 +65,9 @@ void raster_event_loop( const raster::sync_relay* sync )
 	while ( monitoring  &&  sync->status == raster::Sync_ready )
 	{
 		using frend::cursor_state;
+		using frend::wait_for_update;
 
-	#if ! defined(__MSYS__)  &&  ! defined(__CYGWIN__)
-
-		close( open( UPDATE_FIFO, O_WRONLY ) );
-
-	#else
-
-		usleep( 8333 );
-
-	#endif
+		wait_for_update();
 
 		if ( cursor_state  &&  cursor_state->seed != cursor_seed )
 		{
