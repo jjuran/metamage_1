@@ -3,10 +3,10 @@
 	-----------
 */
 
-#ifndef AMICUS_TEMPFILE_HH
-#define AMICUS_TEMPFILE_HH
+#ifndef FREND_TEMPFILE_HH
+#define FREND_TEMPFILE_HH
 
-namespace amicus
+namespace frend
 {
 
 const char* tempfile_location();

@@ -22,13 +22,13 @@
 #include "frend/make_cursor.hh"
 #include "frend/make_raster.hh"
 #include "frend/raster_updating.hh"
+#include "frend/tempfile.hh"
 #include "frend/update_fifo.hh"
 
 // amicus
 #include "amicus/apple_events.hh"
 #include "amicus/events.hh"
 #include "amicus/raster_task.hh"
-#include "amicus/tempfile.hh"
 
 
 #ifndef HARDWARE_CURSOR
@@ -93,6 +93,8 @@ void run_event_loop( const raster_load& load, const raster_desc& desc );
 
 int main( int argc, char** argv )
 {
+	using frend::tempfile_location;
+	
 	signal( SIGCHLD, &sigchld );
 	
 	// Reserve fds 6 and 7 for graft to connect ams-fs/xv68k to freemountd.

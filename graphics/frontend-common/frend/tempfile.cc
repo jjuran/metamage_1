@@ -3,7 +3,7 @@
 	-----------
 */
 
-#include "amicus/tempfile.hh"
+#include "frend/tempfile.hh"
 
 // POSIX
 #include <unistd.h>
@@ -18,16 +18,16 @@
 #include "frend/tempdir.hh"
 
 
-namespace amicus
+namespace frend
 {
 
 const char* tempfile_location()
 {
 	static plus::var_string path;
 	
-	path = frend::tempdir_path();
+	path = tempdir_path();
 	
-	path += "/amicus-";
+	path += "/displayfs-";
 	path += gear::inscribe_unsigned_decimal( getpid() );
 	path += ".works";
 	
