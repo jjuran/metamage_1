@@ -151,7 +151,7 @@ int main( int argc, char** argv )
 		
 		run_event_loop( load, desc );
 		
-		open( UPDATE_FIFO, O_RDONLY | O_NONBLOCK );
+		frend::unblock_update_waiters();
 	}
 	
 	return 0;

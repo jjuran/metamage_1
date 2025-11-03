@@ -9,7 +9,6 @@
 #endif
 
 // POSIX
-#include <fcntl.h>
 #include <signal.h>
 #include <unistd.h>
 
@@ -135,7 +134,7 @@ void set_app_name( void (*setter)( const char* ) )
 static
 void sigchld( int )
 {
-	open( UPDATE_FIFO, O_RDONLY | O_NONBLOCK );
+	frend::unblock_update_waiters();
 }
 
 #endif

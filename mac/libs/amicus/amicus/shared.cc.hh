@@ -9,7 +9,6 @@
 #endif
 
 // POSIX
-#include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -38,7 +37,7 @@
 static
 void sigchld( int )
 {
-	open( UPDATE_FIFO, O_RDONLY | O_NONBLOCK );
+	frend::unblock_update_waiters();
 }
 
 namespace amicus
