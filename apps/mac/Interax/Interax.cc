@@ -30,6 +30,7 @@
 
 // frontend-common
 #include "frend/cursor.hh"
+#include "frend/displayfs.hh"
 #include "frend/update_fifo.hh"
 
 // amicus
@@ -106,8 +107,8 @@ pascal OSErr handle_odoc_Apple_event( AppleEvent const* event,
 	
 	if ( err )  return err;
 	
-	const char raster_path[] = "screen.skif";
-	const char cursor_path[] = "cursor.skif";
+	using frend::cursor_path;
+	using frend::raster_path;
 	
 	frend::cursor_state = open_cursor_file( cursor_path );
 	

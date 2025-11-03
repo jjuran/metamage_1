@@ -17,6 +17,7 @@
 // frontend-common
 #include "frend/coprocess.hh"
 #include "frend/cursor.hh"
+#include "frend/displayfs.hh"
 #include "frend/make_cursor.hh"
 #include "frend/make_raster.hh"
 #include "frend/raster_updating.hh"
@@ -116,8 +117,8 @@ raster_monitor::~raster_monitor()
 	SDL_WaitThread( raster_thread, NULL );
 }
 
-static const char raster_path[] = "screen.skif";
-static const char cursor_path[] = "cursor.skif";
+using frend::cursor_path;
+using frend::raster_path;
 
 emulated_screen::emulated_screen( int bindir_fd, const char* works_path )
 :

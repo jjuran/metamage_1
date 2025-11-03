@@ -17,6 +17,7 @@
 
 // frontend-common
 #include "frend/coprocess.hh"
+#include "frend/displayfs.hh"
 #include "frend/documents.hh"
 #include "frend/make_cursor.hh"
 #include "frend/make_raster.hh"
@@ -46,8 +47,8 @@ namespace amicus
 using raster::raster_desc;
 using raster::raster_load;
 
-static const char raster_path[] = "screen.skif";
-static const char cursor_path[] = "cursor.skif";
+using frend::cursor_path;
+using frend::raster_path;
 
 class emulated_screen
 {
