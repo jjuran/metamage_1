@@ -17,6 +17,22 @@
 #define CONFIG_UPDATES_VIA_FIFO  0
 #endif
 
+/*
+	Signaling updates via a FIFO does work in Mac OS X on PPC,
+	but it's unusably slow -- the latency introduced is far worse
+	than any tearing that might be observable otherwise.
+	
+	The problem has been observed occurring in Mac OS X 10.2 through 10.4
+	on PPC, and not occurring in 10.5 on PPC nor any OS X version on x86.
+*/
+
+#if defined(__APPLE__)  &&  defined(__POWERPC__)
+#include <AvailabilityMacros.h>
+#ifndef MAC_OS_X_VERSION_10_5
+#define CONFIG_UPDATES_VIA_FIFO  0
+#endif
+#endif
+
 #ifndef CONFIG_UPDATES_VIA_FIFO
 #define CONFIG_UPDATES_VIA_FIFO  1
 #endif
