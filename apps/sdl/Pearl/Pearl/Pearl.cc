@@ -24,6 +24,7 @@
 
 // frontend-common
 #include "frend/cursor.hh"
+#include "frend/tempfile.hh"
 #include "frend/update_fifo.hh"
 
 // libsndtrack
@@ -47,7 +48,6 @@
 #include "Pearl/cursor.hh"
 #include "Pearl/events.hh"
 #include "Pearl/screen.hh"
-#include "Pearl/tempfile.hh"
 #include "Pearl/window.hh"
 
 
@@ -246,6 +246,8 @@ void set_sdl_app_name( const char* app_name )
 
 int main( int argc, char** argv )
 {
+	using frend::tempfile_location;
+
 	set_app_name( &set_sdl_app_name );
 
 #if ! defined(__MSYS__)  &&  ! defined(__CYGWIN)
