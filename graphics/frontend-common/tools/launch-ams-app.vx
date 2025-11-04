@@ -7,7 +7,16 @@ let events_fd_slot = argv[ 2 ]
 
 let has_cursor = bool getenv "AMS_CURSOR"
 
-setenv( "GRAPHICS_UPDATE_SIGNAL_FIFO", works_dir_path "/update-signal.fifo" )
+let update_fifo_path = works_dir_path "/update-signal.fifo"
+
+try
+{
+	stat update_fifo_path
+	
+	setenv( "GRAPHICS_UPDATE_SIGNAL_FIFO", update_fifo_path )
+}
+catch {}
+
 
 let ams_bin = "../xv68k"
 let ams_lib = "../xv68k"
