@@ -582,6 +582,10 @@ void render()
 void terminate()
 {
 	free( screen_texture_data );
+	free( cursor_texture_data );
+	
+	screen_texture_data = NULL;
+	cursor_texture_data = NULL;
 }
 
 }
