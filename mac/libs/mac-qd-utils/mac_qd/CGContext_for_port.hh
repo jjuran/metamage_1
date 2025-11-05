@@ -52,6 +52,8 @@ class CGContext_for_port
 		const CGRect& bounds() const  { return bounds_rect; }
 };
 
+#if ! __LP64__
+
 class CGContext_for_thePort : public CGContext_for_port
 {
 	public:
@@ -59,6 +61,8 @@ class CGContext_for_thePort : public CGContext_for_port
 		{
 		}
 };
+
+#endif
 
 }
 }
