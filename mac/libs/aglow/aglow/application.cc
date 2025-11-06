@@ -30,6 +30,7 @@
 #include "mac_evt/any_keys_down.hh"
 
 // mac-app-utils
+#include "mac_app/become_application.hh"
 #include "mac_app/menus.hh"
 
 // splode
@@ -61,6 +62,12 @@
 #include "aglow/window.hh"
 
 
+#define PROGRAM  "Amber"
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+#define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
+
 #define LENGTH( array )  (sizeof (array) / sizeof *(array))
 
 
@@ -73,6 +80,8 @@ static bool mid_click;
 
 namespace amicus
 {
+
+using mac::app::become_application;
 
 using glfb::overlay_enabled;
 
@@ -613,6 +622,13 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 
 void initialize()
 {
+	if ( ! become_application() )
+	{
+		WARN( "Can't become an application, exiting." );
+		
+		_exit( 1 );
+	}
+	
 	set_up_menus();
 	
 	SetMenuCommandMark( View, kZoom100Percent, kCheckCharCode );
