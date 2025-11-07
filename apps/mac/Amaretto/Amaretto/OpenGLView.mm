@@ -80,15 +80,20 @@ void handle_event( NSEvent* event )
 
 - (void) setScale: (CGFloat) scale
 {
+	const NSPoint origin = NSMakePoint( kScreenMargin, kScreenMargin );
+	
 	_scale = scale;
 	
 	CGFloat inner_width  = _resolution.width  * _scale;
 	CGFloat inner_height = _resolution.height * _scale;
 	
+	CGFloat outer_width  = inner_width  + kScreenMargin * 2;
+	CGFloat outer_height = inner_height + kScreenMargin * 2;
+	
 	glViewport( 0, 0, (long) inner_width, (long) inner_height );
 	
 	NSSize inner_size = NSMakeSize( inner_width, inner_height );
-	NSSize outer_size = inner_size;
+	NSSize outer_size = NSMakeSize( outer_width, outer_height );
 	
 	NSWindow* window = [self window];
 	
@@ -102,6 +107,7 @@ void handle_event( NSEvent* event )
 	[window setFrameOrigin: proportional_location];
 	
 	[self   setFrameSize:   inner_size];
+	[self   setFrameOrigin: origin];
 	
 	NSEnableScreenUpdates();
 }
@@ -132,8 +138,14 @@ void handle_event( NSEvent* event )
 {
 	NSPoint pt = [self convertPoint: [event locationInWindow] fromView: nil];
 	
+	pt.x += kScreenMargin;
+	pt.y += kScreenMargin;
+	
 	if ( [self hitTest: pt] )
 	{
+		pt.x -= kScreenMargin;
+		pt.y -= kScreenMargin;
+		
 		if ( ! cursor_hidden )
 		{
 			cursor_hidden = true;

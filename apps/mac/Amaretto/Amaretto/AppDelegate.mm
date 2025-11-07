@@ -80,11 +80,26 @@ NSWindow* create_window( const raster::raster_desc& desc )
 	                              backing:             NSBackingStoreBuffered
 	                              defer:               NO];
 	
+	id viewContainer = window;
+	
+	if ( kScreenMargin > 0 )
+	{
+		id black = [NSColor blackColor];
+		id box   = [NSBox new];
+		
+		[box    setBoxType:         NSBoxCustom];
+		[box    setFillColor:       black];
+		[window setBackgroundColor: black];
+		[window setContentView:     releasing( box )];
+		
+		viewContainer = box;
+	}
+	
 	CGSize resolution = CGSizeMake( width, height );
 	
 	id view = [[AmarettoOpenGLView alloc] initWithResolution: resolution];
 	
-	[window setContentView: releasing( view )];
+	[viewContainer setContentView: releasing( view )];
 	
 	id appName = [[NSProcessInfo processInfo] processName];
 	
@@ -93,6 +108,7 @@ NSWindow* create_window( const raster::raster_desc& desc )
 	[window setTitle:                   appName];
 	[window makeKeyAndOrderFront:       nil];
 	[window setAcceptsMouseMovedEvents: YES];
+	[window setInitialFirstResponder:   view];
 	
 	[view setScale: 1.0];
 	
@@ -270,7 +286,7 @@ void set_up_menus()
 	set_up_menus();
 	
 	_mainWindow = create_window( *_desc );
-	_mainGLView = [_mainWindow contentView];
+	_mainGLView = [_mainWindow initialFirstResponder];
 	
 	[self onCursorBits];
 }

@@ -7,6 +7,20 @@
 #import <Cocoa/Cocoa.h>
 
 
+#ifndef CONFIG_MARGIN
+#ifdef MAC_OS_X_VERSION_10_7
+#define CONFIG_MARGIN  1
+#else
+#define CONFIG_MARGIN  0
+#endif
+#endif
+
+
+enum
+{
+	kScreenMargin = CONFIG_MARGIN * 8,
+};
+
 @interface AmarettoOpenGLView : NSOpenGLView
 {
 	CGSize  _resolution;
