@@ -12,6 +12,9 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+// iota
+#include "iota/class.hh"
+
 
 namespace amicus
 {
@@ -20,12 +23,10 @@ struct CGDisplayCapture_Failed {};
 
 class display_capture
 {
+	NON_COPYABLE( display_capture )
+	
 	private:
 		CGDirectDisplayID  its_id;
-		
-		// non-copyable
-		display_capture           ( const display_capture& );
-		display_capture& operator=( const display_capture& );
 	
 	public:
 		display_capture( CGDirectDisplayID id = CGMainDisplayID() );

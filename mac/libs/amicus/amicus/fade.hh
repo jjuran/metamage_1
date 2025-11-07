@@ -11,21 +11,22 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+// iota
+#include "iota/class.hh"
+
 
 namespace amicus
 {
 
 class transition_fader
 {
+	NON_COPYABLE( transition_fader )
+	
 	private:
 		CGDisplayFadeReservationToken token;
 		
 		void release();
 		void acquire();
-		
-		// non-copyable
-		transition_fader           ( const transition_fader& );
-		transition_fader& operator=( const transition_fader& );
 	
 	public:
 		transition_fader() : token()  {}

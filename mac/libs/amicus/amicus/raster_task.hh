@@ -6,6 +6,9 @@
 #ifndef AMICUS_RASTERTASK_HH
 #define AMICUS_RASTERTASK_HH
 
+// iota
+#include "iota/class.hh"
+
 
 namespace raster
 {
@@ -29,10 +32,7 @@ enum
 
 class raster_monitor
 {
-	private:
-		// non-copyable
-		raster_monitor           ( const raster_monitor& );
-		raster_monitor& operator=( const raster_monitor& );
+	NON_COPYABLE( raster_monitor )
 	
 	public:
 		explicit raster_monitor( const raster::raster_load& load );
