@@ -10,8 +10,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-
-#define UPDATE_FIFO  "update-signal.fifo"
+// frontend-common
+#include "frend/displayfs.hh"
 
 #if defined(__MSYS__)  ||  defined(__CYGWIN)
 #define CONFIG_UPDATES_VIA_FIFO  0
@@ -30,7 +30,7 @@ int wait_for_update()
 {
 	if ( CONFIG_UPDATES_VIA_FIFO )
 	{
-		return close( open( UPDATE_FIFO, O_WRONLY ) );
+		return close( open( update_fifo, O_WRONLY ) );
 	}
 	
 	enum
@@ -46,7 +46,7 @@ int wait_for_update()
 inline
 int unblock_update_waiters()
 {
-	return CONFIG_UPDATES_VIA_FIFO ? open( UPDATE_FIFO, O_RDONLY | O_NONBLOCK )
+	return CONFIG_UPDATES_VIA_FIFO ? open( update_fifo, O_RDONLY | O_NONBLOCK )
 	                               : 0;
 }
 

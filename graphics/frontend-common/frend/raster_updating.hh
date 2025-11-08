@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 // frontend-common
-#include "frend/update_fifo.hh"
+#include "frend/displayfs.hh"
 
 
 namespace frend
@@ -26,12 +26,12 @@ class raster_updating
 	public:
 		raster_updating()
 		{
-			mkfifo( UPDATE_FIFO, 0666 );
+			mkfifo( update_fifo, 0666 );
 		}
 		
 		~raster_updating()
 		{
-			unlink( UPDATE_FIFO );
+			unlink( update_fifo );
 		}
 };
 
