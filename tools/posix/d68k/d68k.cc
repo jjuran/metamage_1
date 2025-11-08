@@ -158,9 +158,12 @@ static void append_signed_decimal( plus::var_string& s, int x )
 	s += gear::inscribe_decimal( x );
 }
 
-static inline const char* get_aTrap_name( uint16_t trap_word )
+static
+const char* get_aTrap_name( uint16_t trap_word )
 {
-	return get_trap_name( trap_word );
+	const char* name = get_trap_name( trap_word );
+	
+	return name;
 }
 
 
@@ -897,7 +900,7 @@ static void decode_MOVE( uint16_t op, short size_index )
 		
 		if ( (data & 0xf000) == 0xa000 )
 		{
-			if ( const char* name = get_aTrap_name( data ) )
+			if ( const char* name = get_trap_name( data ) )
 			{
 				comment = COMMENT;
 				
