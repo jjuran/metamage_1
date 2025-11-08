@@ -71,6 +71,7 @@ using mac::sys::gestalt_defined;
 
 #define M68K    "Motorola 68K"
 #define PPC     "PowerPC"
+#define PPC64   "PowerPC (64-bit)"
 #define X86     "x86"
 #define X86_64  "x86_64"
 #define ARM     "Apple Silicon"
@@ -122,6 +123,7 @@ void compiled()
 	
 	const char* arch = TARGET_CPU_68K    ? COMPILED M68K
 	                 : TARGET_CPU_PPC    ? COMPILED PPC
+	                 : TARGET_CPU_PPC64  ? COMPILED PPC64
 	                 : TARGET_CPU_X86    ? COMPILED X86
 	                 : TARGET_CPU_X86_64 ? COMPILED X86_64
 	                 : TARGET_CPU_ARM64  ? COMPILED ARM
