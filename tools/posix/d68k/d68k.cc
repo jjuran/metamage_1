@@ -3,6 +3,9 @@
 	-------
 */
 
+// POSIX
+#include <unistd.h>
+
 // Standard C++
 #include <vector>
 
@@ -34,7 +37,6 @@
 #include "poseven/functions/dup2.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/read.hh"
-#include "poseven/functions/write.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -63,6 +65,11 @@
 	Line E:  complete (shift/rotate)
 	Line F:  F-Traps
 */
+
+
+#define PROGRAM  "d68k"
+
+#define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
 
 
 using namespace command::constants;
@@ -400,7 +407,7 @@ static uint16_t read_word( bool peeking = false )
 		else
 		{
 			// or we're at end of file
-			p7::write( p7::stderr_fileno, STR_LEN( "d68k: Warning: dropping odd last byte.\n" ) );
+			WARN( "Warning: dropping odd last byte." );
 			
 			throw end_of_file();
 		}
