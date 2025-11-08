@@ -158,12 +158,48 @@ static void append_signed_decimal( plus::var_string& s, int x )
 	s += gear::inscribe_decimal( x );
 }
 
+static bool trap_name_lookup_failed = false;
+
 static
 const char* get_aTrap_name( uint16_t trap_word )
 {
 	const char* name = get_trap_name( trap_word );
 	
+	if ( ! name )
+	{
+		trap_name_lookup_failed = true;
+	}
+	
 	return name;
+}
+
+static inline
+void advise_using_traps_file()
+{
+	/*
+		Trap 0 (A000) is _Open, which we can expect
+		will always be present in a list of A-traps.
+		
+		If any trap name lookups failed during disassembly
+		*and* trap 0 lookup fails, advise the user to set
+		the D68K_TRAPS environment variable.
+		
+		Rationale:  If trap 0 lookup succeeds, then clearly
+		D68K_TRAPS is already set appropriately, and there's
+		nothing to be done about any lookup failures.
+		
+		Though if there were no trap name lookup failures
+		during the disassembly, then there's no advantage to
+		loading the trap names, so the advice is irrelevant.
+		
+		But if lookups failed and trap names aren't loaded,
+		then loading them could benefit the disassembly.
+	*/
+	
+	if ( trap_name_lookup_failed  &&  ! get_trap_name( 0 ) )
+	{
+		WARN( "Set D68K_TRAPS for trap name lookup." );
+	}
 }
 
 
@@ -2559,6 +2595,8 @@ int Main( int argc, char** argv )
 	{
 		printf( "\n" );
 	}
+	
+	advise_using_traps_file();
 	
 	return 0;
 }
