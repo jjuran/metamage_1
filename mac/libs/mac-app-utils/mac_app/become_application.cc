@@ -10,6 +10,11 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+// Mac OS
+#ifndef __PROCESSES__
+#include <Processes.h>
+#endif
+
 // Standard C
 #include <stdlib.h>
 #include <string.h>
