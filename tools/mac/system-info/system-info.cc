@@ -53,6 +53,10 @@ enum { kMachineNameStrID = -16395 };
 
 #define STRLEN( s )  (sizeof "" s - 1)
 
+#ifndef TARGET_CPU_PPC64
+#define TARGET_CPU_PPC64  0
+#endif
+
 #ifndef TARGET_CPU_X86_64
 #define TARGET_CPU_X86_64  0
 #endif
