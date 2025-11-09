@@ -5,26 +5,12 @@
 
 #include "play_tone.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
-
-// Mac OS
-#ifndef MAC_OS_X_VERSION_10_5
-#ifndef __DEVICES__
-#include <Devices.h>
-#endif
-#endif
-
 // SoundDriver
 #include "SoundDriver/SoundDriver.h"
 
+// mac-snd-utils
+#include "mac_snd/playback.hh"
 
-enum
-{
-	kSoundDriverRefNum = -4,
-};
 
 static ParamBlockRec pb;
 
@@ -51,19 +37,7 @@ void play_tone( unsigned short swCount )
 	*p++ = 0;
 	*p++ = 0;
 	
-	IOParam& io = pb.ioParam;
-	
-	io.ioRefNum   = kSoundDriverRefNum;
-	io.ioBuffer   = (Ptr) buffer;
-	io.ioReqCount = sizeof buffer;
-	
-#if CALL_NOT_IN_CARBON
-	
-	PBKillIOSync( &pb );
-	
-#endif
-	
-	PBWriteAsync( &pb );
+	mac::snd::play_now_async( pb, (Ptr) buffer, sizeof buffer );
 }
 
 void silence()
@@ -77,10 +51,6 @@ void silence()
 	
 	if ( io.ioRefNum )
 	{
-	#if CALL_NOT_IN_CARBON
-		
-		PBKillIOSync( &pb );
-		
-	#endif
+		mac::snd::full_stop( pb );
 	}
 }
