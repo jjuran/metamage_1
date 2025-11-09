@@ -84,8 +84,6 @@ namespace tool
 	                                        const plus::string&     source_pathname,
 	                                        const plus::string&     output_pathname );
 	
-#ifndef __RELIX__
-	
 	static
 	bool using_nexus()
 	{
@@ -93,8 +91,6 @@ namespace tool
 		
 		return nexus_peered;
 	}
-	
-#endif
 	
 	static plus::string diagnostics_file_path( const plus::string&  dir_path,
 	                                           const plus::string&  target_path )
@@ -950,7 +946,13 @@ namespace tool
 			const char* _i  = ".i";
 			const char* _ii = ".ii";
 			
+			bool in_MacRelix = true;
+			
 		#ifndef __RELIX__
+			
+			in_MacRelix = false;
+			
+		#endif
 			
 			/*
 				We're preprocessing separately, which already implies
@@ -967,12 +969,10 @@ namespace tool
 				(If we can't run Classic, we can assume the use of nexus.)
 			*/
 			
-			if ( can_run_Classic()  &&  ! using_nexus() )
+			if ( in_MacRelix  ||  (can_run_Classic()  &&  ! using_nexus()) )
 			{
 				_i = _ii = ".cpp";
 			}
-			
-		#endif
 			
 			FillOutputFiles( cpp_dir, source_paths, cppout_paths, _i, _ii );
 		}
