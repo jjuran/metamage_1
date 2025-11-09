@@ -943,12 +943,15 @@ namespace tool
 		
 		if ( preprocessing )
 		{
-			const char* _i  = ".i";
-			const char* _ii = ".ii";
+			const char* _i;
+			const char* _ii;
 			
 			bool in_MacRelix = true;
 			
 		#ifndef __RELIX__
+			
+			_i  = ".i";
+			_ii = ".ii";
 			
 			in_MacRelix = false;
 			
