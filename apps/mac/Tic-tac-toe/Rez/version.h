@@ -2,10 +2,10 @@
 
 #define CREATOR  'XvO#'
 
-#define VERSION  "0.3.7"
+#define VERSION  "0.3.8"
 
 #define MAJOR  0
 #define MINOR  3
-#define POINT  7
+#define POINT  8
 #define STAGE  release
 #define PATCH  0
