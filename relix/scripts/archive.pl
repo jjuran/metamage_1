@@ -239,6 +239,7 @@ my %fsmap =
 			{
 				copy_vx( 'arcsign' ),
 				copy_vx( 'mkmfs' ),
+				copy_vx( 'rcleanse' ),
 			},
 		],
 		lib =>
