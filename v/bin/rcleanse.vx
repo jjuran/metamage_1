@@ -1,0 +1,212 @@
+#!/usr/bin/env minivx
+
+if argc < 2 then
+{
+	warn "usage: " argv[ 0 ] "[-q] path/to/rsrc/fork"
+	
+	exit 50
+}
+
+let BE = big-endian
+
+let Handle = vector[ byte, 4 ]
+
+struct rsrc_fork_header
+{
+	offset_to_data: BE u32,
+	offset_to_map:  BE u32,
+	length_of_data: BE u32,
+	length_of_map:  BE u32,
+}
+
+struct type_header
+{
+	type:    BE mb32,  # a ResType
+	count_1: BE u16,
+	offset:  BE u16,
+}
+
+struct rsrc_header
+{
+	id:               BE i16,
+	name_offset:      BE i16,
+	attrs:            vector[ byte, 1 ],
+	offset_high_byte: u8,
+	offset_low_word:  BE u16,
+	handle:           Handle,
+}
+
+struct rsrc_map_header
+{
+	fork_header:     rsrc_fork_header,
+	next_map:        Handle,
+	refnum:          BE i16,
+	attrs:           vector[ byte, 2 ],
+	offset_to_types: BE u16,
+	offset_to_names: BE u16,
+}
+
+var put_if_verbose = put
+
+var i = 1
+
+if i < argc and argv[ i ] in ["-q", "--quiet"] then
+{
+	put_if_verbose = ()
+	
+	++i
+}
+
+let src = argv[ i ]
+var dst
+
+var fork = null
+
+var rsrc_fork = true
+
+try
+{
+	dst = src "/..namedfork/rsrc"
+	
+	fork = packed load dst
+}
+catch {}
+
+if not fork then
+{
+	dst = src
+	
+	fork = packed load dst
+	
+	rsrc_fork = false
+}
+
+if not fork then
+{
+	# zero-length file
+	
+	exit 0
+}
+
+def fail (message)
+{
+	if rsrc_fork then
+	{
+		warn message
+		
+		exit 30
+	}
+	
+	exit 0
+}
+
+if fork.size < 286 then
+{
+	fail "rcleanse: " src ": truncated resource fork of size " fork.size
+}
+
+let fork_header = rsrc_fork_header fork[ 0 -> rsrc_fork_header.size ]
+
+let map_offset = fork_header.offset_to_map
+let map_length = fork_header.length_of_map
+
+if map_offset < 256 or map_length < rsrc_map_header.size then
+{
+	fail "rcleanse: " src ": bogus resource fork header"
+}
+
+if map_offset + map_length > fork.size then
+{
+	fail "rcleanse: " src ": insufficient resource fork length: " fork.size
+}
+
+var printable_filename = src ":\n"
+
+var changed = false
+
+def zero (range, label)
+{
+	if fork[ range ] any ... then
+	{
+		changed = true
+		
+		put_if_verbose printable_filename "    " label
+		
+		for i in range do
+		{
+			fork[ i ] = '\0'
+		}
+		
+		printable_filename = ""
+	}
+}
+
+let rsrc_map = fork[ map_offset -> map_offset + map_length  ]
+
+let map_header = rsrc_map_header rsrc_map[ 0 -> rsrc_map_header.size ]
+
+let types_block = rsrc_map[ map_header.offset_to_types -> rsrc_map.size ]
+
+def cleanse_type (rsrc_type)
+{
+	let types_offset = map_offset + map_header.offset_to_types
+	
+	let rtype = rep rsrc_type.type
+	
+	let count = rsrc_type.count_1 + 1
+	
+	let start = rsrc_type.offset
+	let end   = rsrc_type.offset + count * rsrc_header.size
+	
+	let type_data = types_block[ start -> end ]
+	
+	let rsrcs = [type_data / count] map rsrc_header
+	
+	var offset = types_offset + start + 8
+	
+	for rsrc in rsrcs do
+	{
+		assert packed rsrc.handle == fork[ offset -> offset + 4 ]
+		
+		if rsrc.handle then
+		{
+			zero (offset -> offset + 4, rtype " id=" rsrc.id)
+		}
+		
+		offset += rsrc_header.size
+	}
+}
+
+let type_list_count = (BE i16).decode types_block[ 0 -> 2 ] + 1
+
+if type_list_count == 0 then
+{
+	exit 0
+}
+
+assert type_list_count > 0
+
+let type_list_size = type_list_count * type_header.size
+
+let type_list_bytes = types_block[ 2 -> 2 + type_list_size ]
+
+let type_list = [type_list_bytes / type_list_count] map type_header
+
+zero ( 16 -> 128, "reserved area"   )
+zero (128 -> 256, "application data")
+
+let next_map = map_offset + 16
+let refnum   = map_offset + 16 + 4
+
+zero (next_map -> next_map + 4, "next_map")
+zero (refnum   -> refnum   + 2, "refnum"  )
+
+for rsrc_type in type_list do
+{
+	cleanse_type rsrc_type
+}
+
+if changed then
+{
+	rewrite dst <== fork
+}
