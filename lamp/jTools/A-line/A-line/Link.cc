@@ -455,6 +455,36 @@ namespace tool
 		// check_diagnostics( succeeded, its_diagnostics_file_path.c_str() );
 	}
 	
+	class ResourceForkCleansingTask : public FileTask
+	{
+		public:
+			ResourceForkCleansingTask( const plus::string& pathname )
+			:
+				FileTask( pathname )
+			{
+			}
+			
+			void Make();
+	};
+	
+	void ResourceForkCleansingTask::Make()
+	{
+		Command command;
+		
+		command.push_back( "rcleanse" );
+		
+		if ( ! Options().verbose )
+		{
+			command.push_back( "-q" );  // quiet
+		}
+		
+		command.push_back( OutputPath().c_str() );
+		
+		command.push_back( NULL );
+		
+		ExecuteCommand( shared_from_this(), "ZAP   " + p7::basename( OutputPath() ), command );
+	}
+	
 	
 	class FileCopyingTask : public FileTask
 	{
@@ -1089,6 +1119,17 @@ namespace tool
 				
 				project_base_task->AddDependent( rez_task );
 				
+				TaskPtr rcleanse_task;
+				
+				Task* rcleanse_prerequisite = NULL;
+				
+				if ( ! bundle )
+				{
+					rcleanse_task = seize_ptr( new ResourceForkCleansingTask( outFile ) );
+					
+					rcleanse_prerequisite = link_task.get();
+				}
+				
 				if ( !rsrc_pathnames.empty() )
 				{
 					plus::string rsrcFile = bundle ? outputDir / BundleResourceFileRelativePath( linkName )
@@ -1107,7 +1148,14 @@ namespace tool
 						rez_task->AddDependent( link_task );
 						
 						link_task->AddDependent( copy_rsrcs );
+						
+						rcleanse_prerequisite = copy_rsrcs.get();
 					}
+				}
+				
+				if ( rcleanse_prerequisite  &&  targetInfo.build != buildSymbolics )
+				{
+					rcleanse_prerequisite->AddDependent( rcleanse_task );
 				}
 			}
 		}
