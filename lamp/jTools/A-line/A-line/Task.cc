@@ -65,10 +65,7 @@ namespace tool
 		for ( size_t i = 0;  i < its_dependents.size();  ++i )
 		{
 			UpdateTaskInputStamp( its_dependents[ i ], its_input_stamp );
-		}
-		
-		for ( size_t i = 0;  i < its_dependents.size();  ++i )
-		{
+			
 			CheckIfTaskIsReady( its_dependents[ i ] );
 		}
 		
