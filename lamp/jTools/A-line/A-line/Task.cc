@@ -31,7 +31,8 @@ namespace tool
 		task->UpdateInputStamp( stamp );
 	}
 	
-	static void CheckIfTaskIsReady( const TaskPtr& task )
+	static inline
+	void CheckIfTaskIsReady( const TaskPtr& task )
 	{
 		if ( intrusive_ptr_ref_count( task.get() ) == 1 )
 		{
