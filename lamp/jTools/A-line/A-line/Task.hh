@@ -126,8 +126,6 @@ namespace tool
 	
 	bool StartNextTask();
 	
-	bool RunNextTask();
-	
 }
 
 #endif

@@ -185,20 +185,4 @@ namespace tool
 		return true;
 	}
 	
-	bool RunNextTask()
-	{
-		if ( gReadyTasks.empty() )
-		{
-			return false;
-		}
-		
-		TaskPtr task = gReadyTasks.front();
-		
-		gReadyTasks.pop();
-		
-		task->Run();
-		
-		return true;
-	}
-	
 }
