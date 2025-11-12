@@ -102,6 +102,14 @@ Value FSSpec::coerce( const Value& v )
 		
 		throw_MacOS_error( err, "FSGetCatalogInfo" );
 		
+	#if ! __LP64__
+		
+		size_t size = 1 + spec.name[ 0 ];
+		
+		memset( spec.name + size, '\0', sizeof spec.name - size );
+		
+	#endif
+		
 		return fsspec;
 	}
 	
