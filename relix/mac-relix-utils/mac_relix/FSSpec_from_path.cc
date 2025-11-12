@@ -26,6 +26,7 @@
 
 // mac-file-utils
 #include "mac_file/directory.hh"
+#include "mac_file/FSGetCatalogInfo.hh"
 
 #endif
 
@@ -63,11 +64,13 @@ Error FSSpec_from_existing_path( const char* path, FSSpec& result )
 	
 #ifdef __APPLE__
 	
+	using mac::file::FSGetCatalogInfo_spec;
+	
 	OSStatus err;
 	FSRef ref;
 	
 	(err = FSPathMakeRef( (const UInt8*) path, &ref, NULL ))  ||
-	(err = FSGetCatalogInfo( &ref, 0, 0, 0, &result, 0 ));
+	(err = FSGetCatalogInfo_spec( &ref, 0, 0, 0, &result, 0 ));
 	
 	return muxed_OSStatus( err );
 	
