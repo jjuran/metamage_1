@@ -18,6 +18,9 @@
 // Standard C
 #include <string.h>
 
+// mac-file-utils
+#include "mac_file/FSGetCatalogInfo.hh"
+
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
 
@@ -88,12 +91,14 @@ Value FSSpec::coerce( const Value& v )
 	
 	if ( const FSRef* fsref = v.is< FSRef >() )
 	{
+		using ::mac::file::FSGetCatalogInfo_spec;
+		
 		FSSpec fsspec;
 		
 		::FSSpec&      spec = *fsspec.pointer();
 		::FSRef const& ref  =  fsref->get();
 		
-		OSErr err = FSGetCatalogInfo( &ref, 0, 0, 0, &spec, 0 );
+		OSErr err = FSGetCatalogInfo_spec( &ref, 0, 0, 0, &spec, 0 );
 		
 		throw_MacOS_error( err, "FSGetCatalogInfo" );
 		
