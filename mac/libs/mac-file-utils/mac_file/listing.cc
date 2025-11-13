@@ -8,6 +8,9 @@
 // mac-sys-utils
 #include "mac_sys/mem_error.hh"
 
+// mac-file-utils
+#include "mac_file/FSGetCatalogInfo.hh"
+
 
 #pragma exceptions off
 
@@ -31,6 +34,7 @@ OSErr get_name_from_iterator( FSIterator it, Byte* hfs_name )
 	OSErr err;
 	FSSpec spec;
 	ItemCount count;
+	HFSUniStr255 name;
 	
 	err = FSGetCatalogInfoBulk( it,
 	                            1,
@@ -40,7 +44,7 @@ OSErr get_name_from_iterator( FSIterator it, Byte* hfs_name )
 	                            NULL,
 	                            NULL,
 	                            &spec,
-	                            NULL );
+	                            &name );
 	
 	/*
 		We aren't trusting the length byte in spec.name,
@@ -48,6 +52,11 @@ OSErr get_name_from_iterator( FSIterator it, Byte* hfs_name )
 	*/
 	
 	BlockMoveData( spec.name, hfs_name, sizeof (Str63) );
+	
+	if ( err == noErr  &&  spec.name[ 0 ] > name.length )
+	{
+		err = Str63_from_HFSUniStr255( hfs_name, name );
+	}
 	
 	return err;
 }
