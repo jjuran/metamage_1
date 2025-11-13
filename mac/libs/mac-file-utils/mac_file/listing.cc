@@ -25,6 +25,33 @@ OSErr SetHandleSize( Handle h, Size size )
 	return mac::sys::mem_error();
 }
 
+static inline
+OSErr get_name_from_iterator( FSIterator it, Byte* hfs_name )
+{
+	OSErr err;
+	FSSpec spec;
+	ItemCount count;
+	
+	err = FSGetCatalogInfoBulk( it,
+	                            1,
+	                            &count,
+	                            NULL,
+	                            0,
+	                            NULL,
+	                            NULL,
+	                            &spec,
+	                            NULL );
+	
+	/*
+		We aren't trusting the length byte in spec.name,
+		so this is safe whether the call succeeded or not.
+	*/
+	
+	BlockMoveData( spec.name, hfs_name, sizeof (Str63) );
+	
+	return err;
+}
+
 OSErr list_directory( Handle           result,
                       short            vRefNum,
                       long             dirID,
@@ -62,10 +89,44 @@ OSErr list_directory( Handle           result,
 		
 		list_entry* next = (list_entry*) *result;
 		
+		FSIterator it;
+		
+		if ( TARGET_API_MAC_CARBON  &&  err == noErr )
+		{
+			FSRef ref;
+			FSRefParam pb;
+			
+			pb.ioNamePtr = name;
+			pb.ioVRefNum = vRefNum;
+			pb.ioDirID   = dirID;
+			pb.newRef    = &ref;
+			
+			err                             ||
+			(err = PBMakeFSRefSync( &pb ))  ||
+			(err = FSOpenIterator( &ref, kFSIterateFlat, &it ));
+			
+			if ( err )
+			{
+				return err;
+			}
+		}
+		
 		for ( int i = 1;  ! err  &&  i <= (int) n;  ++i, ++next )
 		{
 			CInfoPBRec& child = next->cInfo;
 			
+			if ( TARGET_API_MAC_CARBON )
+			{
+				err = get_name_from_iterator( it, next->name );
+				
+				if ( err )
+				{
+					break;
+				}
+				
+				child.dirInfo.ioFDirIndex = 0;
+			}
+			else
 			{
 				next->name[ 0 ] = 0;
 				
@@ -89,6 +150,11 @@ OSErr list_directory( Handle           result,
 			*/
 			
 			child.dirInfo.ioNamePtr = NULL;
+		}
+		
+		if ( TARGET_API_MAC_CARBON )
+		{
+			FSCloseIterator( it );
 		}
 	}
 	else
