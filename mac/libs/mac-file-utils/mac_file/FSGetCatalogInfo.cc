@@ -12,6 +12,38 @@
 namespace mac  {
 namespace file {
 
+OSErr Str63_from_HFSUniStr255( Str63 out, const HFSUniStr255& in )
+{
+	/*
+		Silence "enumeral mismatch in conditional expression" warning:
+	*/
+	
+	enum
+	{
+		noErr    = ::noErr,
+		bdNamErr = ::bdNamErr,
+	};
+	
+	OSErr err = memFullErr;
+	
+	CFStringRef s = CFStringCreateWithCharacters( NULL, in.unicode,
+	                                                    in.length );
+	
+	if ( s )
+	{
+		Boolean got = CFStringGetPascalString( s,
+		                                       out,
+		                                       sizeof (Str63),  // 64
+		                                       kCFStringEncodingMacRoman );
+		
+		err = got ? noErr : bdNamErr;
+		
+		CFRelease( s );
+	}
+	
+	return err;
+}
+
 #if ! __LP64__
 #if TARGET_API_MAC_CARBON
 
@@ -59,53 +91,22 @@ OSErr FSGetCatalogInfo_spec( const FSRef*         ref,
 			we're getting $"81 5c".  (In UTF-8, it's $"e2 80 94".)
 			
 			The other 127 non-ASCII MacRoman characters work just fine.
+			
+			Since we're shrinking the name to its proper length,
+			there will be detritus in the unused bytes immediately
+			following in the name field (one byte per em dash).
+			These bytes will duplicate the end of the name that
+			we're returning anyway, so no information is leaked.
+			It's up to the caller to clear the excess if desired.
 		*/
 		
-		CFStringRef s = CFStringCreateWithCharacters( NULL, name->unicode,
-		                                                    name->length );
-		
-		err = memFullErr;
-		
-		if ( s )
-		{
-			/*
-				Silence "enumeral mismatch in conditional expression" warning:
-			*/
-			
-			enum
-			{
-				noErr    = ::noErr,
-				bdNamErr = ::bdNamErr,
-			};
-			
-			/*
-				Since we're shrinking the name to its proper length,
-				there will be detritus in the unused bytes immediately
-				following in the name field (one byte per em dash).
-				These bytes will duplicate the end of the name that
-				we're returning anyway, so no information is leaked.
-				It's up to the caller to clear the excess if desired.
-			*/
-			
-			Boolean got = CFStringGetPascalString( s,
-			                                       spec->name,
-			                                       sizeof spec->name,  // 64
-			                                       kCFStringEncodingMacRoman );
-			
-			err = got ? noErr : bdNamErr;
-			
-			CFRelease( s );
-		}
+		err = Str63_from_HFSUniStr255( spec->name, *name );
 	}
 	
 	return err;
 }
 
 #endif  // #if TARGET_API_MAC_CARBON
-#else
-
-int dummy;
-
 #endif  // #if ! __LP64__
 
 }

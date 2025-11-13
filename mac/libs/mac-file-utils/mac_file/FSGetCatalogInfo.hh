@@ -20,6 +20,8 @@
 namespace mac  {
 namespace file {
 	
+	OSErr Str63_from_HFSUniStr255( Str63 out, const HFSUniStr255& in );
+	
 #if TARGET_API_MAC_CARBON
 	
 	OSErr FSGetCatalogInfo_spec( const FSRef*         ref,
