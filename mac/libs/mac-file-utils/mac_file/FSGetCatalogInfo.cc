@@ -69,6 +69,16 @@ OSErr FSGetCatalogInfo_spec( const FSRef*         ref,
 		if ( s )
 		{
 			/*
+				Silence "enumeral mismatch in conditional expression" warning:
+			*/
+			
+			enum
+			{
+				noErr    = ::noErr,
+				bdNamErr = ::bdNamErr,
+			};
+			
+			/*
 				Since we're shrinking the name to its proper length,
 				there will be detritus in the unused bytes immediately
 				following in the name field (one byte per em dash).
