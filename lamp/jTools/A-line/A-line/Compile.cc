@@ -687,25 +687,25 @@ namespace tool
 	{
 		const bool preprocessing = !cpp_path.empty();
 		
-		TaskPtr cc_task = seize_ptr( new CompilingTask( project,
-		                                                cc_options,
-		                                                preprocessing ? cpp_path : source_path,
-		                                                output_path,
-		                                                diagnostics_dir_path,
-		                                                "CC    ",
-		                                                &MakeCompileCommand,
-		                                                preprocessing ) );
+		TaskPtr cc_task = new CompilingTask( project,
+		                                     cc_options,
+		                                     preprocessing ? cpp_path : source_path,
+		                                     output_path,
+		                                     diagnostics_dir_path,
+		                                     "CC    ",
+		                                     &MakeCompileCommand,
+		                                     preprocessing );
 		
 		if ( preprocessing )
 		{
-			TaskPtr cpp_task = seize_ptr( new CompilingTask( project,
-			                                                 cpp_options,
-			                                                 source_path,
-			                                                 cpp_path,
-			                                                 diagnostics_dir_path,
-			                                                 "CPP   ",
-			                                                 &MakePreprocessCommand,
-			                                                 false ) );
+			TaskPtr cpp_task = new CompilingTask( project,
+			                                      cpp_options,
+			                                      source_path,
+			                                      cpp_path,
+			                                      diagnostics_dir_path,
+			                                      "CPP   ",
+			                                      &MakePreprocessCommand,
+			                                      false );
 			
 			precompile_task->AddDependent( cpp_task );
 			
@@ -839,7 +839,7 @@ namespace tool
 		
 		const plus::string& diagnostics_dir_path = ProjectDiagnosticsDirPath( project.Name() );
 		
-		TaskPtr precompile_task = seize_ptr( new NullTask() );
+		TaskPtr precompile_task = new NullTask();
 		
 		// In case we have a toolkit with no common sources
 		precompile_task->AddDependent( source_dependency );
@@ -890,14 +890,14 @@ namespace tool
 					prefix_source_pathname.insert( prefix_source_pathname.end() - prefix_source_path.size(), '/' );
 				}
 				
-				precompile_task = seize_ptr( new CompilingTask( project,
-				                                                precompile_options,
-				                                                prefix_source_pathname,
-				                                                pchImage,
-				                                                diagnostics_dir_path,
-				                                                "PCH   ",
-				                                                &MakeCompileCommand,
-				                                                false ) );
+				precompile_task = new CompilingTask( project,
+				                                     precompile_options,
+				                                     prefix_source_pathname,
+				                                     pchImage,
+				                                     diagnostics_dir_path,
+				                                     "PCH   ",
+				                                     &MakeCompileCommand,
+				                                     false );
 				
 				project.set_precompile_task( precompile_task );
 			}

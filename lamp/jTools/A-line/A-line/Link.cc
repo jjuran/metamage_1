@@ -393,10 +393,10 @@ namespace tool
 		
 		const plus::string& includeDir = project.ProjectFolder();
 		
-		TaskPtr rez_task = seize_ptr( new RezzingTask( input_pathnames,
-		                                               output_pathname,
-		                                               includeDir,
-		                                               relix ) );
+		TaskPtr rez_task = new RezzingTask( input_pathnames,
+		                                    output_pathname,
+		                                    includeDir,
+		                                    relix );
 		
 		for ( size_t i = 0;  i < n;  ++i )
 		{
@@ -582,12 +582,12 @@ namespace tool
 	                               const plus::string&  diagnostics_dir,
 	                               const char*          caption = "LINK  " )
 	{
-		return seize_ptr( new LinkingTask( link_command,
-		                                   output_path,
-		                                   begin,
-		                                   end,
-		                                   diagnostics_dir,
-		                                   caption ) );
+		return new LinkingTask( link_command,
+		                        output_path,
+		                        begin,
+		                        end,
+		                        diagnostics_dir,
+		                        caption );
 	}
 	
 	template < class Container >
@@ -597,12 +597,12 @@ namespace tool
 	                                      const plus::string&  diagnostics_dir,
 	                                      const char*          caption = "LINK  " )
 	{
-		return seize_ptr( new LinkingTask( link_command,
-		                                   output_path,
-		                                   input.begin(),
-		                                   input.end(),
-		                                   diagnostics_dir,
-		                                   caption ) );
+		return new LinkingTask( link_command,
+		                        output_path,
+		                        input.begin(),
+		                        input.end(),
+		                        diagnostics_dir,
+		                        caption );
 	}
 	
 	template < class Iter >
@@ -729,7 +729,7 @@ namespace tool
 		
 		plus::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
 		
-		TaskPtr rmdir_diagnostics_task = seize_ptr( new RemoveDirTask( diagnosticsDir ) );
+		TaskPtr rmdir_diagnostics_task = new RemoveDirTask( diagnosticsDir );
 		
 		StringVector objectFiles;
 		
@@ -880,7 +880,7 @@ namespace tool
 		
 		const bool toolkit = n_tools > 0;
 		
-		TaskPtr link_dependency_task = seize_ptr( new NullTask() );
+		TaskPtr link_dependency_task = new NullTask();
 		
 		StringVector link_input_arguments;
 		
@@ -1110,7 +1110,7 @@ namespace tool
 				}
 				else
 				{
-					rez_task = seize_ptr( new NullTask() );
+					rez_task = new NullTask();
 				}
 				
 				project_base_task->AddDependent( rez_task );
@@ -1121,7 +1121,7 @@ namespace tool
 				
 				if ( ! bundle )
 				{
-					rcleanse_task = seize_ptr( new ResourceForkCleansingTask( outFile ) );
+					rcleanse_task = new ResourceForkCleansingTask( outFile );
 					
 					rcleanse_prerequisite = link_task.get();
 				}
@@ -1131,9 +1131,9 @@ namespace tool
 					plus::string rsrcFile = bundle ? outputDir / BundleResourceFileRelativePath( linkName )
 					                               : outFile;
 					
-					TaskPtr copy_rsrcs = seize_ptr( new ResourceCopyingTask( rsrc_pathnames,
-					                                                         rsrcFile,
-					                                                         relix ) );
+					TaskPtr copy_rsrcs = new ResourceCopyingTask( rsrc_pathnames,
+					                                              rsrcFile,
+					                                              relix );
 					
 					if ( bundle )
 					{

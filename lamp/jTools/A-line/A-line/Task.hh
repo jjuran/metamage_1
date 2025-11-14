@@ -41,11 +41,6 @@ namespace tool
 	
 	typedef boost::intrusive_ptr< Task > TaskPtr;
 	
-	inline TaskPtr seize_ptr( Task* task )
-	{
-		return TaskPtr( task );
-	}
-	
 	class Task : public vxo::ref_count< Task >
 	{
 		private:
