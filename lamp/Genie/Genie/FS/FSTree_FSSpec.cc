@@ -51,6 +51,7 @@
 
 // mac-file-utils
 #include "mac_file/desktop.hh"
+#include "mac_file/listing.hh"
 #include "mac_file/make_FSSpec.hh"
 #include "mac_file/open_data_fork.hh"
 #include "mac_file/parent_directory.hh"
@@ -1545,13 +1546,44 @@ namespace Genie
 		
 		if ( err == noErr )
 		{
-			IterateIntoCache_CInfoPBRec pb;
-			
-			pb.task = relix::current_thread().get_task();
-			
-			mempcpy( &pb.cInfo, POD( extra.cinfo ) );
-			
-			err = IterateFilesIntoCache( pb, cache );
+			if ( TARGET_API_MAC_CARBON )
+			{
+				using mac::file::directory_listing;
+				using mac::file::list_entry;
+				
+				short vRefNum = extra.cinfo.dirInfo.ioVRefNum;
+				long  dirID   = extra.cinfo.dirInfo.ioDrDirID;
+				
+				directory_listing listing;
+				
+				err = list_directory( listing, vRefNum, dirID );
+				
+				unsigned n = err ? 0 : listing.count();
+				
+				for ( unsigned i = 0;  i < n;  ++i )
+				{
+					list_entry entry = listing.get_nth( i );
+					
+					entry.cInfo.hFileInfo.ioNamePtr = entry.name;
+					
+					const vfs::dir_entry node( entry.cInfo.dirInfo.ioDrDirID,
+					                           GetUnixName( vRefNum,
+					                                        dirID,
+					                                        entry.name ) );
+					
+					cache.push_back( node );
+				}
+			}
+			else
+			{
+				IterateIntoCache_CInfoPBRec pb;
+				
+				pb.task = relix::current_thread().get_task();
+				
+				mempcpy( &pb.cInfo, POD( extra.cinfo ) );
+				
+				err = IterateFilesIntoCache( pb, cache );
+			}
 		}
 		
 		Mac::ThrowOSStatus( err );
