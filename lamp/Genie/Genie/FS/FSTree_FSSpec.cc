@@ -1451,15 +1451,10 @@ namespace Genie
 		
 		CInfoPBRec& cInfo = pb.cInfo;
 		
-		FSSpec item;
+		short vRefNum = cInfo.dirInfo.ioVRefNum;
+		long  dirID   = cInfo.dirInfo.ioDrDirID;
 		
-		item.vRefNum = cInfo.dirInfo.ioVRefNum;
-		item.parID   = cInfo.dirInfo.ioDrDirID;
-		item.name[0] = 0;
-		
-		long dirID = cInfo.dirInfo.ioDrDirID;
-		
-		const bool async = mac::sys::item_is_on_server( item );
+		const bool async = mac::sys::volume_is_on_server( vRefNum );
 		
 		if ( async )
 		{
@@ -1520,7 +1515,7 @@ namespace Genie
 				
 				ConstStr255Param name = pb.items[ j ].name;
 				
-				const vfs::dir_entry node( inode, GetUnixName( item.vRefNum, item.parID, name ) );
+				const vfs::dir_entry node( inode, GetUnixName( vRefNum, dirID, name ) );
 				
 				cache.push_back( node );
 			}
