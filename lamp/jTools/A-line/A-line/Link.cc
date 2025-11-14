@@ -569,7 +569,7 @@ namespace tool
 			
 			const Project& project  = GetProject( name, platform );
 			
-			project.get_static_lib_task().lock()->AddDependent( task );
+			project.get_static_lib_task()->AddDependent( task );
 		}
 	}
 	

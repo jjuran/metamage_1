@@ -903,7 +903,7 @@ namespace tool
 			}
 			else
 			{
-				precompile_task = project_providing_prefix->get_precompile_task().lock();
+				precompile_task = project_providing_prefix->get_precompile_task()->shared_from_this();
 			}
 		}
 		

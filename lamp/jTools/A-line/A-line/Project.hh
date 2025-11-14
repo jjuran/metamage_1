@@ -9,9 +9,6 @@
 // Debug
 #include "debug/boost_assert.hh"
 
-// Boost
-#include <boost/weak_ptr.hpp>
-
 // plus
 #include "plus/string.hh"
 
@@ -65,8 +62,8 @@ namespace tool
 			// maps include paths to absolute pathnames
 			mutable vxo::StrMap_to< vxo::String > its_include_map;
 			
-			boost::weak_ptr< Task > its_precompile_task;
-			boost::weak_ptr< Task > its_static_lib_task;
+			Task* its_precompile_task;
+			Task* its_static_lib_task;
 		
 		public:
 			Project();
@@ -111,11 +108,11 @@ namespace tool
 			
 			plus::string FindResourceFile( const plus::string& filename ) const;
 			
-			const boost::weak_ptr< Task >& get_precompile_task() const  { return its_precompile_task; }
-			const boost::weak_ptr< Task >& get_static_lib_task() const  { return its_static_lib_task; }
+			Task* get_precompile_task() const  { return its_precompile_task; }
+			Task* get_static_lib_task() const  { return its_static_lib_task; }
 			
-			void set_precompile_task( const TaskPtr& task )  { its_precompile_task = task; }
-			void set_static_lib_task( const TaskPtr& task )  { its_static_lib_task = task; }
+			void set_precompile_task( const TaskPtr& task )  { its_precompile_task = task.get(); }
+			void set_static_lib_task( const TaskPtr& task )  { its_static_lib_task = task.get(); }
 	};
 	
 }
