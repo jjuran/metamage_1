@@ -55,7 +55,7 @@ namespace tool
 			
 			void AddDependent( const TaskPtr& task )  { its_dependents.push_back( task ); }
 			
-			virtual void Start() = 0;
+			virtual void Start()  {}
 			
 			virtual void Success()  {}
 			
@@ -66,11 +66,7 @@ namespace tool
 			void Complete();
 	};
 	
-	class NullTask : public Task
-	{
-		public:
-			void Start()  {}
-	};
+	typedef Task NullTask;
 	
 	class FileTask : public Task
 	{
