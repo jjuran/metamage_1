@@ -16,6 +16,9 @@
 #include <Files.h>
 #endif
 
+// iota
+#include "iota/class.hh"
+
 
 namespace mac  {
 namespace file {
@@ -82,12 +85,11 @@ namespace file {
 	
 	class directory_listing
 	{
+		NON_COPYABLE( directory_listing )
+		NO_NEW_DELETE
+		
 		private:
 			Handle its_handle;
-			
-			// non-copyable
-			directory_listing           ( const directory_listing& );
-			directory_listing& operator=( const directory_listing& );
 		
 		public:
 			directory_listing() : its_handle( NewHandle( 0 ) )
