@@ -26,10 +26,11 @@ namespace sys {
 	
 	OSErr get_volume_params( GetVolParmsInfoBuffer& buffer, short vRefNum )
 	{
-		HParamBlockRec pb = {};
+		HParamBlockRec pb;
 		
 		HIOParam& io = pb.ioParam;
 		
+		io.ioNamePtr  = NULL;
 		io.ioVRefNum  = vRefNum;
 		io.ioBuffer   = (Ptr) &buffer;
 		io.ioReqCount = sizeof buffer;
