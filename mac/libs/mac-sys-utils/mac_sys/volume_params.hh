@@ -10,11 +10,13 @@
 //#include <Files.h>
 struct GetVolParmsInfoBuffer;
 
+typedef short OSErr;
+
 
 namespace mac {
 namespace sys {
 	
-	short get_volume_params( ::GetVolParmsInfoBuffer& buffer, short vRefNum );
+	OSErr get_volume_params( GetVolParmsInfoBuffer& buffer, short vRefNum );
 	
 	bool volume_is_on_server( short vRefNum );
 	

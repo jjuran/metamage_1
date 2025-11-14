@@ -24,19 +24,19 @@ namespace sys {
 	
 #if ! __LP64__
 	
-	short get_volume_params( ::GetVolParmsInfoBuffer& buffer, short vRefNum )
+	OSErr get_volume_params( GetVolParmsInfoBuffer& buffer, short vRefNum )
 	{
-		HParamBlockRec pb = {{ 0 }};
+		HParamBlockRec pb = {};
 		
 		HIOParam& io = pb.ioParam;
 		
 		io.ioVRefNum  = vRefNum;
-		io.ioBuffer   = (char *) &buffer;
+		io.ioBuffer   = (Ptr) &buffer;
 		io.ioReqCount = sizeof buffer;
 		
 		memset( &buffer, '\0', sizeof buffer );
 		
-		const OSErr err = ::PBHGetVolParmsSync( &pb );
+		const OSErr err = PBHGetVolParmsSync( &pb );
 		
 		return err;
 	}
@@ -50,9 +50,7 @@ namespace sys {
 	
 #else
 	
-	void dummy()
-	{
-	}
+	int dummy;
 	
 #endif
 	
