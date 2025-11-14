@@ -64,15 +64,17 @@ OSErr list_directory( Handle           result,
 		
 		for ( int i = 1;  ! err  &&  i <= (int) n;  ++i, ++next )
 		{
-			next->name[ 0 ] = 0;
-			
 			CInfoPBRec& child = next->cInfo;
+			
+			{
+				next->name[ 0 ] = 0;
+				
+				child.dirInfo.ioFDirIndex = i;  // one-based indexing
+			}
 			
 			child.dirInfo.ioVRefNum = vRefNum;
 			child.dirInfo.ioDrDirID = dirID;
 			child.dirInfo.ioNamePtr = next->name;
-			
-			child.dirInfo.ioFDirIndex = i;  // one-based indexing
 			
 			err = PBGetCatInfoSync( &child );
 			
