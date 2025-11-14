@@ -6,7 +6,7 @@
 #include "A-line/Task.hh"
 
 // Standard C++
-#include <queue>
+#include <deque>
 
 // poseven
 #include "poseven/functions/stat.hh"
@@ -22,7 +22,7 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
-	static std::queue< TaskPtr > gReadyTasks;
+	static std::deque< TaskPtr > gReadyTasks;
 	static std::vector< TaskPtr > gFailedTasks;
 	
 	
@@ -36,7 +36,7 @@ namespace tool
 	{
 		if ( intrusive_ptr_ref_count( task.get() ) == 1 )
 		{
-			gReadyTasks.push( task );
+			gReadyTasks.push_back( task );
 		}
 	}
 	
@@ -164,7 +164,7 @@ namespace tool
 	
 	void AddReadyTask( const TaskPtr& task )
 	{
-		gReadyTasks.push( task );
+		gReadyTasks.push_back( task );
 	}
 	
 	bool StartNextTask()
@@ -176,7 +176,7 @@ namespace tool
 		
 		TaskPtr task = gReadyTasks.front();
 		
-		gReadyTasks.pop();
+		gReadyTasks.pop_front();
 		
 		task->Start();
 		
