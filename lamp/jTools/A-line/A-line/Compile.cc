@@ -619,7 +619,7 @@ namespace tool
 		
 		plus::string full_caption = plus::concat( its_caption, source_path );
 		
-		ExecuteCommand( shared_from_this(), full_caption, command, its_diagnostics_file_path.c_str() );
+		ExecuteCommand( this, full_caption, command, its_diagnostics_file_path.c_str() );
 	}
 	
 	void CompilingTask::Return( bool succeeded )
@@ -903,7 +903,7 @@ namespace tool
 			}
 			else
 			{
-				precompile_task = project_providing_prefix->get_precompile_task()->shared_from_this();
+				precompile_task = project_providing_prefix->get_precompile_task();
 			}
 		}
 		

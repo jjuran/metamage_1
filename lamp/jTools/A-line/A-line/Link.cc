@@ -6,6 +6,7 @@
 #include "A-line/Link.hh"
 
 // Standard C
+#include <stdio.h>
 #include <string.h>
 
 // Standard C++
@@ -240,7 +241,7 @@ namespace tool
 	{
 		plus::string output_filename = p7::basename( OutputPath() );
 		
-		ExecuteCommand( shared_from_this(), its_caption + output_filename, get_command(), get_diagnostics_file_path().c_str() );
+		ExecuteCommand( this, its_caption + output_filename, get_command(), get_diagnostics_file_path().c_str() );
 	}
 	
 	static plus::string BundleResourceFileRelativePath( const plus::string& linkName )
@@ -356,7 +357,7 @@ namespace tool
 		
 		rezCommand.push_back( NULL );
 		
-		ExecuteCommand( shared_from_this(), "REZ   " + p7::basename( OutputPath() ), rezCommand );
+		ExecuteCommand( this, "REZ   " + p7::basename( OutputPath() ), rezCommand );
 	}
 	
 	void RezzingTask::Return( bool succeeded )
@@ -444,7 +445,7 @@ namespace tool
 		
 		command.push_back( NULL );
 		
-		ExecuteCommand( shared_from_this(), "RSRC  " + p7::basename( OutputPath() ), command );
+		ExecuteCommand( this, "RSRC  " + p7::basename( OutputPath() ), command );
 	}
 	
 	void ResourceCopyingTask::Return( bool succeeded )
@@ -479,7 +480,7 @@ namespace tool
 		
 		command.push_back( NULL );
 		
-		ExecuteCommand( shared_from_this(), "ZAP   " + p7::basename( OutputPath() ), command );
+		ExecuteCommand( this, "ZAP   " + p7::basename( OutputPath() ), command );
 	}
 	
 	
@@ -513,7 +514,7 @@ namespace tool
 		
 		const plus::string message = "COPY  " + p7::basename( OutputPath() );
 		
-		ExecuteCommand( shared_from_this(), message, command );
+		ExecuteCommand( this, message, command );
 	}
 	
 	void FileCopyingTask::Return( bool succeeded )

@@ -15,12 +15,14 @@
 // Debug
 #include "debug/boost_assert.hh"
 
+// vxo
+#include "vxo/ref_count.hh"
+
 // plus
 #include "plus/string.hh"
 
 // Boost
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 // poseven
 #ifndef POSEVEN_TYPES_WAIT_T_HH
@@ -37,14 +39,14 @@ namespace tool
 	
 	class Task;
 	
-	typedef boost::shared_ptr< Task > TaskPtr;
+	typedef boost::intrusive_ptr< Task > TaskPtr;
 	
 	inline TaskPtr seize_ptr( Task* task )
 	{
 		return TaskPtr( task );
 	}
 	
-	class Task : public boost::enable_shared_from_this< Task >
+	class Task : public vxo::ref_count< Task >
 	{
 		private:
 			std::vector< TaskPtr >  its_dependents;

@@ -39,7 +39,7 @@ namespace tool
 	
 	static void CheckIfTaskIsReady( const TaskPtr& task )
 	{
-		if ( task.unique() )
+		if ( intrusive_ptr_ref_count( task.get() ) == 1 )
 		{
 			gReadyTasks.push( task );
 		}
@@ -83,7 +83,7 @@ namespace tool
 	void Task::Failure()
 	{
 		// Save the task for later reporting and to tie up its dependents
-		gFailedTasks.push_back( shared_from_this() );
+		gFailedTasks.push_back( this );
 	}
 	
 	
