@@ -37,9 +37,6 @@
 #include "io/io.hh"
 #include "io/files.hh"
 
-// Debug
-#include "debug/assert.hh"
-
 // poseven
 #include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/basename.hh"
@@ -906,8 +903,6 @@ namespace tool
 			}
 			else
 			{
-				ASSERT( !project_providing_prefix->get_precompile_task().expired() );
-				
 				precompile_task = project_providing_prefix->get_precompile_task().lock();
 			}
 		}

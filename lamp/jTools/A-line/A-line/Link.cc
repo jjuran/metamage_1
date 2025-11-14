@@ -21,9 +21,6 @@
 #include "plus/string/concat.hh"
 #include "plus/mac_utf8.hh"
 
-// Debug
-#include "debug/assert.hh"
-
 // poseven
 #include "poseven/functions/basename.hh"
 #include "poseven/functions/stat.hh"
@@ -571,8 +568,6 @@ namespace tool
 			const plus::string& name = *it;
 			
 			const Project& project  = GetProject( name, platform );
-			
-			ASSERT( !project.get_static_lib_task().expired() );
 			
 			project.get_static_lib_task().lock()->AddDependent( task );
 		}
