@@ -144,8 +144,6 @@ namespace tool
 			PartialMessage();
 			
 			~PartialMessage();
-			
-			void WriteLine( const plus::string& line );
 	};
 	
 	PartialMessage::PartialMessage()
@@ -167,14 +165,6 @@ namespace tool
 		{
 			io::recursively_delete_directory( partial_message_dir );
 		}
-	}
-	
-	void PartialMessage::WriteLine( const plus::string& line )
-	{
-		//static unsigned int lastFlushKBytes = 0;
-		plus::string terminatedLine = line + "\r\n";
-		
-		p7::write( message_output, terminatedLine );
 	}
 	
 	
@@ -273,7 +263,7 @@ namespace tool
 	
 	static void DoData( const plus::string& data )
 	{
-		myMessage->WriteLine( data );
+		p7::write( message_output, data + "\r\n" );
 		
 		if ( data == "." )
 		{
