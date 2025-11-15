@@ -127,7 +127,8 @@ namespace tool
 		p7::splat( p7::open( path, p7::o_wronly | p7::o_creat | p7::o_excl ), output );
 	}
 	
-	static const char* QueueDirectory()
+	static inline
+	const char* QueueDirectory()
 	{
 		return "/var/spool/mail/queue";
 	}
