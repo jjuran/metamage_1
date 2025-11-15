@@ -134,10 +134,11 @@ namespace tool
 	}
 	
 	
+	static plus::string partial_message_dir;
+	
 	class PartialMessage
 	{
 		private:
-			plus::string          partial_message_dir;
 			n::owned< p7::fd_t >  out;
 		
 		private:
@@ -150,7 +151,6 @@ namespace tool
 			
 			~PartialMessage();
 			
-			const plus::string& Dir() const  { return partial_message_dir; }
 			void WriteLine( const plus::string& line );
 			
 			void Finished();
@@ -198,8 +198,6 @@ namespace tool
 	
 	static void QueueMessage()
 	{
-		const plus::string& partial_message_dir = myMessage->Dir();
-		
 		// Create the Destinations subdirectory.
 		plus::string destinations_dir = partial_message_dir / "Destinations";
 		
