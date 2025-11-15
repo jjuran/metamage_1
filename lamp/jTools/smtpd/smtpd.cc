@@ -136,16 +136,10 @@ namespace tool
 	
 	static plus::string partial_message_dir;
 	
+	static n::owned< p7::fd_t > message_output;
+	
 	class PartialMessage
 	{
-		private:
-			n::owned< p7::fd_t >  message_output;
-		
-		private:
-			// non-copyable
-			PartialMessage           ( const PartialMessage& );
-			PartialMessage& operator=( const PartialMessage& );
-		
 		public:
 			PartialMessage();
 			
@@ -167,6 +161,8 @@ namespace tool
 	
 	PartialMessage::~PartialMessage()
 	{
+		message_output.reset();
+		
 		if ( ! partial_message_dir.empty() )
 		{
 			io::recursively_delete_directory( partial_message_dir );
