@@ -316,7 +316,8 @@ namespace tool
 		}
 	}
 	
-	static void DoLine( const plus::string& line )
+	static inline
+	void DoLine( const plus::string& line )
 	{
 		if ( dataMode )
 		{
