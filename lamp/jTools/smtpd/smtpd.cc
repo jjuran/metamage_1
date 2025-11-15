@@ -139,7 +139,7 @@ namespace tool
 	class PartialMessage
 	{
 		private:
-			n::owned< p7::fd_t >  out;
+			n::owned< p7::fd_t >  message_output;
 		
 		private:
 			// non-copyable
@@ -160,7 +160,9 @@ namespace tool
 		
 		p7::mkdir( dir );
 		
-		out = p7::open( dir / "Message", p7::o_wronly | p7::o_creat | p7::o_excl, p7::_400 );
+		message_output = p7::open( dir / "Message",
+		                           p7::o_wronly | p7::o_creat | p7::o_excl,
+		                           p7::_400 );
 	}
 	
 	PartialMessage::~PartialMessage()
@@ -176,7 +178,7 @@ namespace tool
 		//static unsigned int lastFlushKBytes = 0;
 		plus::string terminatedLine = line + "\r\n";
 		
-		p7::write( out, terminatedLine );
+		p7::write( message_output, terminatedLine );
 	}
 	
 	
