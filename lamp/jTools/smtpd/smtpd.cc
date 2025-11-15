@@ -127,12 +127,7 @@ namespace tool
 		p7::splat( p7::open( path, p7::o_wronly | p7::o_creat | p7::o_excl ), output );
 	}
 	
-	static inline
-	const char* QueueDirectory()
-	{
-		return "/var/spool/mail/queue";
-	}
-	
+	static const char queue_directory[] = "/var/spool/mail/queue";
 	
 	static plus::string partial_message_dir;
 	
@@ -214,7 +209,7 @@ namespace tool
 		}
 		else if ( word == "DATA" )
 		{
-			partial_message_dir = QueueDirectory() / MakeMessageName();
+			partial_message_dir = queue_directory / MakeMessageName();
 			
 			new_partial_message();
 			
