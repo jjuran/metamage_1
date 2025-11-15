@@ -575,12 +575,13 @@ namespace tool
 	}
 	
 	template < class Iter >
-	static TaskPtr make_link_task( const Command&       link_command,
-	                               const plus::string&  output_path,
-	                               Iter                 begin,
-	                               Iter                 end,
-	                               const plus::string&  diagnostics_dir,
-	                               const char*          caption = "LINK  " )
+	static inline
+	Task* make_link_task( const Command&       link_command,
+	                      const plus::string&  output_path,
+	                      Iter                 begin,
+	                      Iter                 end,
+	                      const plus::string&  diagnostics_dir,
+	                      const char*          caption = "LINK  " )
 	{
 		return new LinkingTask( link_command,
 		                        output_path,
