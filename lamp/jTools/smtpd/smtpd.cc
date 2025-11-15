@@ -4,7 +4,6 @@
  */
 
 // Standard C++
-#include <memory>
 #include <vector>
 
 // Standard C
@@ -138,15 +137,8 @@ namespace tool
 	
 	static n::owned< p7::fd_t > message_output;
 	
-	class PartialMessage
-	{
-		public:
-			PartialMessage();
-			
-			~PartialMessage();
-	};
-	
-	PartialMessage::PartialMessage()
+	static
+	void new_partial_message()
 	{
 		const plus::string& dir = partial_message_dir;
 		
@@ -157,7 +149,8 @@ namespace tool
 		                           p7::_400 );
 	}
 	
-	PartialMessage::~PartialMessage()
+	static
+	void discard_partial_message()
 	{
 		message_output.reset();
 		
@@ -171,8 +164,6 @@ namespace tool
 	plus::string myHello;
 	plus::string myFrom;
 	std::vector< plus::string > myTo;
-	
-	static std::auto_ptr< PartialMessage > myMessage;
 	
 	bool dataMode = false;
 	
@@ -224,7 +215,8 @@ namespace tool
 		{
 			partial_message_dir = QueueDirectory() / MakeMessageName();
 			
-			myMessage.reset( new PartialMessage() );
+			new_partial_message();
+			
 			dataMode  = true;
 			
 			p7::write( p7::stdout_fileno, STR_LEN( "354 I'm listening"  "\r\n" ) );
@@ -291,7 +283,7 @@ namespace tool
 			
 			p7::write( p7::stdout_fileno, message, strlen( message ) );
 			
-			myMessage.reset();
+			discard_partial_message();
 		}
 		else
 		{
@@ -354,6 +346,8 @@ namespace tool
 			
 			DoLine( line );
 		}
+		
+		discard_partial_message();
 		
 		return 0;
 	}
