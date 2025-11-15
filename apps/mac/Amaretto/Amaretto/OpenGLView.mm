@@ -82,25 +82,26 @@ void handle_event( NSEvent* event )
 {
 	_scale = scale;
 	
-	CGFloat width  = _resolution.width  * _scale;
-	CGFloat height = _resolution.height * _scale;
+	CGFloat inner_width  = _resolution.width  * _scale;
+	CGFloat inner_height = _resolution.height * _scale;
 	
-	glViewport( 0, 0, (long) width, (long) height );
+	glViewport( 0, 0, (long) inner_width, (long) inner_height );
 	
-	NSSize size = NSMakeSize( width, height );
+	NSSize inner_size = NSMakeSize( inner_width, inner_height );
+	NSSize outer_size = inner_size;
 	
 	NSWindow* window = [self window];
 	
 	NSPoint proportional_location = get_proportional_location( [window frame] );
 	
-	proportional_location = new_location( size, proportional_location );
+	proportional_location = new_location( outer_size, proportional_location );
 	
 	NSDisableScreenUpdates();
 	
-	[window setContentSize: size];
+	[window setContentSize: outer_size];
 	[window setFrameOrigin: proportional_location];
 	
-	[self   setFrameSize:   size];
+	[self   setFrameSize:   inner_size];
 	
 	NSEnableScreenUpdates();
 }
