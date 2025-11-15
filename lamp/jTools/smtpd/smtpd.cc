@@ -137,7 +137,7 @@ namespace tool
 	class PartialMessage
 	{
 		private:
-			plus::string          dir;
+			plus::string          partial_message_dir;
 			n::owned< p7::fd_t >  out;
 		
 		private:
@@ -150,16 +150,16 @@ namespace tool
 			
 			~PartialMessage();
 			
-			const plus::string& Dir() const  { return dir; }
+			const plus::string& Dir() const  { return partial_message_dir; }
 			void WriteLine( const plus::string& line );
 			
 			void Finished();
 	};
 	
-	PartialMessage::PartialMessage( const plus::string& dirLoc )
-	:
-		dir( dirLoc )
+	PartialMessage::PartialMessage( const plus::string& dir )
 	{
+		partial_message_dir = dir;
+		
 		p7::mkdir( dir );
 		
 		out = p7::open( dir / "Message", p7::o_wronly | p7::o_creat | p7::o_excl, p7::_400 );
@@ -167,9 +167,9 @@ namespace tool
 	
 	PartialMessage::~PartialMessage()
 	{
-		if ( !dir.empty() )
+		if ( ! partial_message_dir.empty() )
 		{
-			io::recursively_delete_directory( dir );
+			io::recursively_delete_directory( partial_message_dir );
 		}
 	}
 	
@@ -183,7 +183,7 @@ namespace tool
 	
 	void PartialMessage::Finished()
 	{
-		dir.reset();
+		partial_message_dir.reset();
 	}
 	
 	
@@ -198,10 +198,10 @@ namespace tool
 	
 	static void QueueMessage()
 	{
-		const plus::string& dir = myMessage->Dir();
+		const plus::string& partial_message_dir = myMessage->Dir();
 		
 		// Create the Destinations subdirectory.
-		plus::string destinations_dir = dir / "Destinations";
+		plus::string destinations_dir = partial_message_dir / "Destinations";
 		
 		p7::mkdir( destinations_dir );
 		
@@ -216,7 +216,7 @@ namespace tool
 		
 		// Create the Return-Path file.
 		// Write this last so the sender won't delete the message prematurely.
-		CreateOneLiner( dir / "Return-Path", 
+		CreateOneLiner( partial_message_dir / "Return-Path",
 		                myFrom );
 		
 	}
