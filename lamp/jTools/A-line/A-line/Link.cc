@@ -607,10 +607,11 @@ namespace tool
 	}
 	
 	template < class Iter >
-	static TaskPtr MakeStaticLibTask( const plus::string&  output_pathname,
-	                                  Iter                 begin,
-	                                  Iter                 end,
-	                                  const plus::string&  diagnostics_dir )
+	static inline
+	Task* MakeStaticLibTask( const plus::string&  output_pathname,
+	                         Iter                 begin,
+	                         Iter                 end,
+	                         const plus::string&  diagnostics_dir )
 	{
 		Command link_command;
 		
