@@ -147,7 +147,7 @@ namespace tool
 			PartialMessage& operator=( const PartialMessage& );
 		
 		public:
-			PartialMessage( const plus::string& dir );
+			PartialMessage();
 			
 			~PartialMessage();
 			
@@ -156,9 +156,9 @@ namespace tool
 			void Finished();
 	};
 	
-	PartialMessage::PartialMessage( const plus::string& dir )
+	PartialMessage::PartialMessage()
 	{
-		partial_message_dir = dir;
+		const plus::string& dir = partial_message_dir;
 		
 		p7::mkdir( dir );
 		
@@ -241,7 +241,9 @@ namespace tool
 		}
 		else if ( word == "DATA" )
 		{
-			myMessage.reset( new PartialMessage( QueueDirectory() / MakeMessageName() ) );
+			partial_message_dir = QueueDirectory() / MakeMessageName();
+			
+			myMessage.reset( new PartialMessage() );
 			dataMode  = true;
 			
 			p7::write( p7::stdout_fileno, STR_LEN( "354 I'm listening"  "\r\n" ) );
