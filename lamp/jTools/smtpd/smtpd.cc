@@ -152,8 +152,6 @@ namespace tool
 			~PartialMessage();
 			
 			void WriteLine( const plus::string& line );
-			
-			void Finished();
 	};
 	
 	PartialMessage::PartialMessage()
@@ -179,11 +177,6 @@ namespace tool
 		plus::string terminatedLine = line + "\r\n";
 		
 		p7::write( out, terminatedLine );
-	}
-	
-	void PartialMessage::Finished()
-	{
-		partial_message_dir.reset();
 	}
 	
 	
@@ -295,7 +288,9 @@ namespace tool
 			try
 			{
 				QueueMessage();
-				myMessage->Finished();
+				
+				partial_message_dir.reset();
+				
 				queued = true;
 			}
 			catch ( ... )
