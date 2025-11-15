@@ -11,9 +11,6 @@
 // poseven
 #include "poseven/functions/stat.hh"
 
-// pfiles
-#include "pfiles/common.hh"
-
 // A-line
 #include "A-line/A-line.hh"
 #include "A-line/Commands.hh"
@@ -23,9 +20,6 @@ namespace tool
 {
 	
 	namespace p7 = poseven;
-	
-	
-	using namespace io::path_descent_operators;
 	
 	
 	static std::queue< TaskPtr > gReadyTasks;

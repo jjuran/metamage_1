@@ -6,11 +6,7 @@
 #ifndef ALINE_COMMANDS_HH
 #define ALINE_COMMANDS_HH
 
-// plus
-#include "plus/string.hh"
-
 // A-line
-#include "A-line/Platform.hh"
 #include "A-line/StrConVector.hh"
 #include "A-line/StringVector.hh"
 #include "A-line/TargetInfo.hh"
@@ -21,10 +17,6 @@ namespace tool
 	
 	typedef StrConVector Command;
 	
-	
-	void RunCommand( const Command&       command,
-	                 const char*          diagnostics_pathname,
-	                 const plus::string&  caption );
 	
 	inline Command MakeCommand( const char* a, const char* b )
 	{

@@ -6,9 +6,6 @@
 #ifndef ALINE_PROJECT_HH
 #define ALINE_PROJECT_HH
 
-// Debug
-#include "debug/boost_assert.hh"
-
 // plus
 #include "plus/string.hh"
 

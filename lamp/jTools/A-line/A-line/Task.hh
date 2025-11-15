@@ -24,11 +24,6 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
-// poseven
-#ifndef POSEVEN_TYPES_WAIT_T_HH
-#include "poseven/types/wait_t.hh"
-#endif
-
 // A-line
 #include "A-line/StrConVector.hh"
 #include "A-line/StringVector.hh"

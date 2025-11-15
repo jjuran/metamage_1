@@ -17,6 +17,7 @@
 
 // poseven
 #include "poseven/functions/basename.hh"
+#include "poseven/types/exit_t.hh"
 
 // pfiles
 #include "pfiles/common.hh"
