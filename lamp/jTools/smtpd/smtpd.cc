@@ -128,12 +128,6 @@ namespace tool
 		p7::splat( p7::open( path, p7::o_wronly | p7::o_creat | p7::o_excl ), output );
 	}
 	
-	static void CreateDestinationFile( const plus::string& dest_dir_path, const plus::string& dest )
-	{
-		CreateOneLiner( dest_dir_path / dest,
-		                dest );
-	}
-	
 	static const char* QueueDirectory()
 	{
 		return "/var/spool/mail/queue";
