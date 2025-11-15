@@ -14,6 +14,13 @@
 namespace tool
 {
 	
+	Command& AugmentCommand( Command& command, const Command& more )
+	{
+		command.insert( command.end(), more.begin(), more.end() );
+		
+		return command;
+	}
+	
 	Command& AugmentCommand( Command& command, const StringVector& more )
 	{
 		for ( size_t i = 0;  i < more.size();  ++i )

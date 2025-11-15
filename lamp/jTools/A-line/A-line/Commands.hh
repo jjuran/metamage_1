@@ -28,13 +28,7 @@ namespace tool
 		return result;
 	}
 	
-	inline Command& AugmentCommand( Command& command, const Command& more )
-	{
-		command.insert( command.end(), more.begin(), more.end() );
-		
-		return command;
-	}
-	
+	Command& AugmentCommand( Command& command, const Command&      more );
 	Command& AugmentCommand( Command& command, const StringVector& more );
 	
 	inline Command OutputOption( const char* pathname )
