@@ -16,6 +16,7 @@ BLD=opt
 bin/rbuild $BUILD_FLAGS -B46 LegacynthINIT
 bin/rbuild $BUILD_FLAGS -B56 LegacynthServer
 bin/rbuild $BUILD_FLAGS -BFP LegacynthServer
+bin/rbuild $BUILD_FLAGS -B56 Tic-tac-toe
 bin/rbuild $BUILD_FLAGS -B56 SoundCheck
 bin/rbuild $BUILD_FLAGS -B56 SEAshell
 
@@ -35,11 +36,13 @@ PPC=~/var/build/ppc-cfm-blue-$BLD/bin
 INIT="Legacynth Extension"
 APP="Legacynth Server"
 README="Legacynth — Read Me"
+T1Cx3="Tic-tac-toe"
 SNDCK="Sound Check"
 SEASH="SEA Shell"
 
 SUBDIR_APP="LegacynthServer/$APP"
 SUBDIR_INIT="LegacynthINIT/$INIT"
+SUBDIR_T1Cx3="Tic-tac-toe/$T1Cx3"
 SUBDIR_SNDCK="SoundCheck/$SNDCK"
 SUBDIR_SEASH="SEAshell/$SEASH"
 
@@ -73,11 +76,13 @@ SetFile -t TEXT -c ttxt "$DIRNAME/$README"
 cp        "$A4/$SUBDIR_INIT"                         "$DIRNAME/"
 fatten -K "$A5/$SUBDIR_APP" -P "$PPC/$SUBDIR_APP" -o "$DIRNAME/$TITLENAME"
 cp        "$A5/$SUBDIR_SNDCK"                        "$DIRNAME/"
+cp        "$A5/$SUBDIR_T1Cx3"                        "$DIRNAME/"
 cp        "$A5/$SUBDIR_SEASH"                        "$INSTALLER_TMP"
 
 $REZ -o "$DIRNAME/$INIT"      "$VERS2_R"
 $REZ -o "$DIRNAME/$TITLENAME" "$VERS2_R"
 $REZ -o "$DIRNAME/$SNDCK"     "$VERS2_R"
+$REZ -o "$DIRNAME/$T1Cx3"     "$VERS2_R"
 
 if [ -f "$SND" ]; then
 	echo "read '_SND' (128, purgeable) \"$SND\";" > sound.r
@@ -92,6 +97,7 @@ fi
 $RCLEANSE "$DIRNAME/$INIT"
 $RCLEANSE "$DIRNAME/$TITLENAME"
 $RCLEANSE "$DIRNAME/$SNDCK"
+$RCLEANSE "$DIRNAME/$T1Cx3"
 
 if [ -n "$TIME" ]; then
 	SetFile -d "$TIME" -m "$TIME" "$DIRNAME"/*
