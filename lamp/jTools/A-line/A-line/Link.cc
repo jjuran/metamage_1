@@ -480,7 +480,7 @@ namespace tool
 		
 		command.push_back( NULL );
 		
-		ExecuteCommand( this, "ZAP     " + p7::basename( OutputPath() ), command );
+		ExecuteCommand( this, "CLEAN   " + p7::basename( OutputPath() ), command );
 	}
 	
 	
