@@ -43,7 +43,7 @@ namespace tool
 	
 	void InfoPListTask::Make()
 	{
-		const plus::string jobhead = "INFO  " + its_name + "\n";
+		const plus::string jobhead = "INFO    " + its_name + "\n";
 		
 		write( STDOUT_FILENO, jobhead.data(), jobhead.size() );
 		

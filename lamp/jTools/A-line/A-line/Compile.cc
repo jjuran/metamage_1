@@ -692,7 +692,7 @@ namespace tool
 		                                     preprocessing ? cpp_path : source_path,
 		                                     output_path,
 		                                     diagnostics_dir_path,
-		                                     "CC    ",
+		                                     "CC      ",
 		                                     &MakeCompileCommand,
 		                                     preprocessing );
 		
@@ -703,7 +703,7 @@ namespace tool
 			                                      source_path,
 			                                      cpp_path,
 			                                      diagnostics_dir_path,
-			                                      "CPP   ",
+			                                      "CPP     ",
 			                                      &MakePreprocessCommand,
 			                                      false );
 			
@@ -895,7 +895,7 @@ namespace tool
 				                                     prefix_source_pathname,
 				                                     pchImage,
 				                                     diagnostics_dir_path,
-				                                     "PCH   ",
+				                                     "PCH     ",
 				                                     &MakeCompileCommand,
 				                                     false );
 				

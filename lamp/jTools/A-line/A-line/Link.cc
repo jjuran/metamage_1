@@ -287,7 +287,7 @@ namespace tool
 		{
 			plus::string name = p7::basename( OutputPath() );
 			
-			fprintf( stderr, "SKIP  %s %s\n", name.c_str(), out_of_order );
+			fprintf( stderr, "SKIP    %s %s\n", name.c_str(), out_of_order );
 		}
 		
 		return;
@@ -357,7 +357,7 @@ namespace tool
 		
 		rezCommand.push_back( NULL );
 		
-		ExecuteCommand( this, "REZ   " + p7::basename( OutputPath() ), rezCommand );
+		ExecuteCommand( this, "REZ     " + p7::basename( OutputPath() ), rezCommand );
 	}
 	
 	void RezzingTask::Return( bool succeeded )
@@ -445,7 +445,7 @@ namespace tool
 		
 		command.push_back( NULL );
 		
-		ExecuteCommand( this, "RSRC  " + p7::basename( OutputPath() ), command );
+		ExecuteCommand( this, "RSRC    " + p7::basename( OutputPath() ), command );
 	}
 	
 	void ResourceCopyingTask::Return( bool succeeded )
@@ -480,7 +480,7 @@ namespace tool
 		
 		command.push_back( NULL );
 		
-		ExecuteCommand( this, "ZAP   " + p7::basename( OutputPath() ), command );
+		ExecuteCommand( this, "ZAP     " + p7::basename( OutputPath() ), command );
 	}
 	
 	
@@ -512,7 +512,7 @@ namespace tool
 		command.push_back( OutputPath()      .c_str() );
 		command.push_back( NULL                       );
 		
-		const plus::string message = "COPY  " + p7::basename( OutputPath() );
+		const plus::string message = "COPY    " + p7::basename( OutputPath() );
 		
 		ExecuteCommand( this, message, command );
 	}
@@ -581,7 +581,7 @@ namespace tool
 	                      Iter                 begin,
 	                      Iter                 end,
 	                      const plus::string&  diagnostics_dir,
-	                      const char*          caption = "LINK  " )
+	                      const char*          caption = "LINK    " )
 	{
 		return new LinkingTask( link_command,
 		                        output_path,
@@ -602,7 +602,7 @@ namespace tool
 		                        input.begin(),
 		                        input.end(),
 		                        diagnostics_dir,
-		                        "LINK  " );
+		                        "LINK    " );
 	}
 	
 	template < class Iter >
@@ -622,7 +622,7 @@ namespace tool
 		                       begin,
 		                       end,
 		                       diagnostics_dir,
-		                       "LIB   " );
+		                       "LIB     " );
 	}
 	
 	
