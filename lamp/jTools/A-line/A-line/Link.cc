@@ -595,15 +595,14 @@ namespace tool
 	static inline TaskPtr make_link_task( const Command&       link_command,
 	                                      const plus::string&  output_path,
 	                                      const Container&     input,
-	                                      const plus::string&  diagnostics_dir,
-	                                      const char*          caption = "LINK  " )
+	                                      const plus::string&  diagnostics_dir )
 	{
 		return new LinkingTask( link_command,
 		                        output_path,
 		                        input.begin(),
 		                        input.end(),
 		                        diagnostics_dir,
-		                        caption );
+		                        "LINK  " );
 	}
 	
 	template < class Iter >
