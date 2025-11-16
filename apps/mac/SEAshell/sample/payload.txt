@@ -1,0 +1,3 @@
+This is a sample SEA Shell payload.
+
+If you build and run SEA Shell without replacing the sample resources, this is the result.
