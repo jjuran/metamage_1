@@ -632,11 +632,6 @@ int main()
 							if ( window != FrontWindow() )
 							{
 								SelectWindow( window );
-								
-								if ( window == main_window )
-								{
-									gMouseRgn = mouse_moved( event.where );
-								}
 								break;
 							}
 							
