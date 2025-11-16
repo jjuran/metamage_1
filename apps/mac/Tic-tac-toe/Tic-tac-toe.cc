@@ -632,11 +632,12 @@ int main()
 							if ( window != FrontWindow() )
 							{
 								SelectWindow( window );
-								break;
 							}
-							
-							GlobalToLocal( &event.where );
-							click( event.where );
+							else if ( window == main_window )
+							{
+								GlobalToLocal( &event.where );
+								click( event.where );
+							}
 							break;
 						
 						case inGrow:
