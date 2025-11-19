@@ -49,6 +49,7 @@
 
 // LegacynthServer
 #include "lock_high_bit.hh"
+#include "squarewave.hh"
 #include "status.hh"
 
 
@@ -70,10 +71,29 @@ static DCtlEntry pseudo_dce;
 
 static exported_state global_state;
 
+/*
+	Our buffer is large enough for a two-second-long
+	square-wave tone sequence.  For most cases, that
+	will be enough, and this is indeed the Simplest
+	Thing That Could Possibly Work.  However, we'll
+	need to retool it later to use double-buffering
+	and generate additional audio at interrupt time.
+*/
+
+enum
+{
+	kOctetsPerSample =   1,
+	kSamplesPerFrame = 370,
+	kFramesPerSecond =  60,  // (approximate)
+	
+	kBufferSize = kOctetsPerSample * kSamplesPerFrame * kFramesPerSecond * 2,
+};
+
 struct PrivateStorage
 {
 	SndChannelPtr channel;
 	SoundHeader   header;
+	char          buffer[ kBufferSize ];
 };
 
 static PrivateStorage* private_storage;
@@ -223,6 +243,25 @@ OSErr Sound_prime( IOParam*  pb  IN_REGISTER( __A0 ),
 		sh.samplePtr  = (Ptr) p32;
 		sh.length     = pb->ioReqCount - 6;
 		sh.sampleRate = FixMul( rate, rate22khz );
+		
+		SndCommand playback = { bufferCmd,   0, (long) &sh };
+		SndCommand callback = { callBackCmd, 0, (long) dce };
+		
+		(err = SndDoCommand( channel, &playback, true ))  ||
+		(err = SndDoCommand( channel, &callback, true ));
+	}
+	else if ( mode == swMode )
+	{
+		const Ptr end = pb->ioBuffer + pb->ioReqCount;
+		const Ptr last = end - sizeof (Tone);
+		
+		const Tone* tone = (const Tone*) p16;
+		
+		long extra = squarewave_fill( tone, last, storage.buffer, kBufferSize );
+		
+		sh.samplePtr  = storage.buffer;
+		sh.length     = kBufferSize - extra;
+		sh.sampleRate = rate22khz;
 		
 		SndCommand playback = { bufferCmd,   0, (long) &sh };
 		SndCommand callback = { callBackCmd, 0, (long) dce };

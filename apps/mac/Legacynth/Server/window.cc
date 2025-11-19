@@ -337,6 +337,10 @@ void check_device_controller()
 		{
 			synthesizer_string = freeform;
 		}
+		else if ( sound_mode == -1 )
+		{
+			synthesizer_string = squarewave;
+		}
 		else
 		{
 			synthesizer_string = "\p" "???";
