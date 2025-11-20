@@ -44,6 +44,19 @@ void report_error( const char* path, uint32_t err )
 static
 void icon2skif( const char* masked_icon, const char* path )
 {
+	enum
+	{
+		empty = 0x00000000,
+		black = 0xFF000000,
+		white = 0xFFFFFFFF,
+		
+		figure = black,   // mask: 1, face: 1
+		ground = white,   // mask: 1, face: 0
+		
+		wayward = empty,  // mask: 0, face: 1
+		outside = empty,  // mask: 0, face: 0
+	};
+	
 	using iota::bit_iterator;
 	
 	uint32_t buffer[ 32 * 32 ];
@@ -61,9 +74,10 @@ void icon2skif( const char* masked_icon, const char* path )
 			For 'ICN#' data, OFF bits are white and ON bits are black.
 		*/
 		
-		const uint32_t pixel = ! *mask ? 0x00000000
-		                     : ! *face ? 0xFFFFFFFF
-		                     :           0xFF000000;
+		const uint32_t pixel = *mask ? *face ? figure
+		                                     : ground
+		                             : *face ? wayward
+		                                     : outside;
 		
 		*p++ = pixel;
 		
