@@ -53,7 +53,7 @@ void icon2skif( const char* masked_icon, const char* path )
 		figure = black,   // mask: 1, face: 1
 		ground = white,   // mask: 1, face: 0
 		
-		wayward = empty,  // mask: 0, face: 1
+		wayward = black,  // mask: 0, face: 1
 		outside = empty,  // mask: 0, face: 0
 	};
 	
