@@ -240,6 +240,15 @@ def ams-get-app (property, args: ...)
 	return packed output-from-run [ vx_run "ams-get.vx", property, path, args ]
 }
 
+def remask (icon)
+{
+	var (face, mask) = icon / 2
+	
+	mask |= face
+	
+	return face mask
+}
+
 def icns (icon)
 {
 	if icon.size == 0 then
@@ -249,7 +258,7 @@ def icns (icon)
 	
 	assert icon.size == 256
 	
-	return packed ('icns', x"00000110", 'ICN#', x"00000108", icon)
+	return packed ('icns', x"00000110", 'ICN#', x"00000108", remask icon)
 }
 
 let creator = ???
