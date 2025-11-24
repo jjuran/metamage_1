@@ -76,7 +76,7 @@ long squarewave_fill( const Tone* tone, Ptr last, Ptr p, long n )
 			
 			UInt32 n_samples = min( n_samples_to_fill, samples_in_run );
 			
-			p = mempset( sample ^ 0x80, p, n_samples );
+			p = mempset( sample, p, n_samples );
 			
 			n_samples_to_fill    -= n_samples;
 			remaining_run_length -= n_samples << shift;
