@@ -17,6 +17,9 @@
 #include "iota/bit_iterator.hh"
 #include "iota/endian.hh"
 
+// more-libc
+#include "more/string.h"
+
 // more-posix
 #include "more/perror.hh"
 
@@ -170,7 +173,7 @@ void icon2skif( const char* masked_icon, const char* path )
 
 int main( int argc, char** argv )
 {
-	const char* output_path = "/dev/fd/1";
+	const char* output_path = NULL;
 	
 	char** args = argv + 1;
 	
@@ -189,10 +192,16 @@ int main( int argc, char** argv )
 		
 		src = *args;
 	}
-	else if ( isatty( STDOUT_FILENO ) )
+	else
 	{
-		WARN( "stdout is a tty, either redirect or use -o" );
-		return 2;
+		size_t len = strlen( src );
+		
+		void* p = alloca( len + sizeof ".skif" );
+		
+		output_path = (char*) p;
+		
+		p = mempcpy( p, src,     len            );
+		p = mempcpy( p, ".skif", sizeof ".skif" );  // includes final NUL byte
 	}
 	
 	int fd = open( src, O_RDONLY );
