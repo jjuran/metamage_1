@@ -174,22 +174,24 @@ int main( int argc, char** argv )
 	
 	char** args = argv + 1;
 	
-	if ( argc >= 3  &&  strcmp( *args, "-o" ) == 0 )
-	{
-		++args;
-		output_path = *args++;
-	}
-	else if ( isatty( STDOUT_FILENO ) )
-	{
-		WARN( "stdout is a tty, either redirect or use -o" );
-		return 2;
-	}
-	
 	const char* src = *args;
 	
 	if ( src == NULL )
 	{
 		WARN( "input file required" );
+		return 2;
+	}
+	
+	if ( argc >= 3  &&  strcmp( *args, "-o" ) == 0 )
+	{
+		++args;
+		output_path = *args++;
+		
+		src = *args;
+	}
+	else if ( isatty( STDOUT_FILENO ) )
+	{
+		WARN( "stdout is a tty, either redirect or use -o" );
 		return 2;
 	}
 	
