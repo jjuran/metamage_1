@@ -24,13 +24,15 @@ MenuRef Options_menu;
 static
 void set_up_Options_menu()
 {
-	if ( ! TARGET_API_MAC_CARBON  &&  SdVolume > 0 )
+	const bool lowmem_present = ! TARGET_API_MAC_CARBON;
+	
+	if ( lowmem_present  &&  SdVolume > 0 )
 	{
 		sound_enabled = true;
 		
 		CheckMenuItem( Options_menu, Sound, sound_enabled );
 	}
-	else if ( TARGET_API_MAC_CARBON  ||  ! SdEnable )
+	else if ( ! lowmem_present  ||  ! SdEnable )
 	{
 		mac::ui::disable_menu_item( Options_menu, Sound );
 	}
