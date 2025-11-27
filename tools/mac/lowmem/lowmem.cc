@@ -3,16 +3,6 @@
 	---------
 */
 
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
-
-// Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
-
 // POSIX
 #include <unistd.h>
 
@@ -21,6 +11,9 @@
 
 // more-libc
 #include "more/string.h"
+
+// mac-sys-utils
+#include "mac_sys/has/lowmem.hh"
 
 // gear
 #include "gear/hexadecimal.hh"
@@ -680,30 +673,12 @@ static const global global_defs[] =
 	{ 0x0DA4, x16, "HiliteRGB.blue"  },
 };
 
-static inline
-bool has_lowmem()
-{
-#ifdef __MACH__
-	
-	return false;
-	
-#endif
-	
-#if TARGET_API_MAC_CARBON
-	
-	SInt32 sysv;
-	
-	return Gestalt( 'sysv', &sysv ) == noErr  &&  sysv < 0x1000;
-	
-#endif
-	
-	return true;
-}
-
 #define NOPE  "Low memory exists only in Mac OS 9 and earlier, not Mac OS X"
 
 int main( int argc, char** argv )
 {
+	using mac::sys::has_lowmem;
+	
 	if ( ! has_lowmem() )
 	{
 		write( STDERR_FILENO, STR_LEN( "lowmem: " NOPE "\n" ) );
