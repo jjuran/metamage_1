@@ -6,36 +6,29 @@
 #include "mac_cg/colorspaces.hh"
 
 
-#ifndef CONFIG_GENERIC_COLORSPACES
-#ifdef MAC_OS_X_VERSION_10_4
-#define CONFIG_GENERIC_COLORSPACES  1
-#else
-#define CONFIG_GENERIC_COLORSPACES  0
-#endif
-#endif
-
-#if CONFIG_GENERIC_COLORSPACES
-#define CREATE_GRAY_CS() CGColorSpaceCreateWithName( kCGColorSpaceGenericGray )
-#define CREATE_RGB_CS()  CGColorSpaceCreateWithName( kCGColorSpaceGenericRGB  )
-#else
-#define CREATE_GRAY_CS() CGColorSpaceCreateDeviceGray()
-#define CREATE_RGB_CS()  CGColorSpaceCreateDeviceRGB()
-#endif
-
-
 namespace mac {
 namespace cg  {
 
+/*
+	The CGColorSpace reference says:
+	
+		"In Mac OS X v10.4 and later, this color space
+		is no longer device-dependent and is replaced
+		by the generic counterpart"
+	
+	in its description of CGColorSpaceCreateDevice{Gray,RGB}().
+*/
+
 CGColorSpaceRef generic_or_device_gray()
 {
-	static CGColorSpaceRef colorSpace = CREATE_GRAY_CS();
+	static CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
 	
 	return colorSpace;
 }
 
 CGColorSpaceRef generic_or_device_RGB()
 {
-	static CGColorSpaceRef colorSpace = CREATE_RGB_CS();
+	static CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 	
 	return colorSpace;
 }
