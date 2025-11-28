@@ -23,6 +23,9 @@
 // more-posix
 #include "more/perror.hh"
 
+// command
+#include "command/get_option.hh"
+
 // rasterlib
 #include "raster/raster.hh"
 #include "raster/skif.hh"
@@ -37,6 +40,45 @@
 
 #define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
 
+
+using namespace command::constants;
+
+enum
+{
+	Option_output = 'o',
+};
+
+static command::option options[] =
+{
+	{ "--out", Option_output, Param_required },
+	
+	{ NULL }
+};
+
+static const char* output_path;
+
+static
+char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_output:
+				output_path = command::global_result.param;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 static inline
 void report_error( const char* path, uint32_t err )
@@ -173,9 +215,7 @@ void icon2skif( const char* masked_icon, const char* path )
 
 int main( int argc, char** argv )
 {
-	const char* output_path = NULL;
-	
-	char** args = argv + 1;
+	char *const *args = get_options( argv );
 	
 	const char* src = *args;
 	
@@ -185,14 +225,7 @@ int main( int argc, char** argv )
 		return 2;
 	}
 	
-	if ( argc >= 3  &&  strcmp( *args, "-o" ) == 0 )
-	{
-		++args;
-		output_path = *args++;
-		
-		src = *args;
-	}
-	else
+	if ( ! output_path )
 	{
 		size_t len = strlen( src );
 		
