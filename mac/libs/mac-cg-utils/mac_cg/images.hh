@@ -87,6 +87,57 @@ CGImageRef create_gray_paint_image( size_t  width,
 }
 
 inline
+CGImageRef create_RGB_image( size_t        width,
+                             size_t        height,
+                             size_t        degree,
+                             size_t        weight,
+                             size_t        stride,
+                             CGBitmapInfo  bitmapInfo,
+                             void*         baseAddr )
+{
+	return create_image_from_data( width,
+	                               height,
+	                               degree,  // bits per component
+	                               weight,  // bits per pixel
+	                               stride,
+	                               generic_or_device_RGB(),
+	                               bitmapInfo,
+	                               baseAddr );
+}
+
+inline
+CGImageRef create_1555_image( size_t        width,
+                              size_t        height,
+                              size_t        stride,
+                              CGBitmapInfo  bitmapInfo,
+                              void*         baseAddr )
+{
+	return create_RGB_image( width,
+	                         height,
+	                         5,   // bits per component
+	                         16,  // bits per pixel
+	                         stride,
+	                         bitmapInfo,
+	                         baseAddr );
+}
+
+inline
+CGImageRef create_8888_image( size_t        width,
+                              size_t        height,
+                              size_t        stride,
+                              CGBitmapInfo  bitmapInfo,
+                              void*         baseAddr )
+{
+	return create_RGB_image( width,
+	                         height,
+	                         8,   // bits per component
+	                         32,  // bits per pixel
+	                         stride,
+	                         bitmapInfo,
+	                         baseAddr );
+}
+
+inline
 CGImageRef
 create_xRGB_1555_BE_image( size_t           width,
                            size_t           height,
