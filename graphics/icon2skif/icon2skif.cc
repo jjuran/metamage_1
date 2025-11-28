@@ -45,6 +45,16 @@ using namespace command::constants;
 
 enum
 {
+	empty = 0x00000000,
+	black = 0xFF000000,
+	white = 0xFFFFFFFF,
+	
+	wayward = black,  // mask: 0, face: 1
+	outside = empty,  // mask: 0, face: 0
+};
+
+enum
+{
 	Option_output = 'o',
 };
 
@@ -56,6 +66,9 @@ static command::option options[] =
 };
 
 static const char* output_path;
+
+static uint32_t figure = black;
+static uint32_t ground = white;
 
 static
 char* const* get_options( char* const* argv )
@@ -89,19 +102,6 @@ void report_error( const char* path, uint32_t err )
 static
 void icon2skif( const char* masked_icon, const char* path )
 {
-	enum
-	{
-		empty = 0x00000000,
-		black = 0xFF000000,
-		white = 0xFFFFFFFF,
-		
-		figure = black,   // mask: 1, face: 1
-		ground = white,   // mask: 1, face: 0
-		
-		wayward = black,  // mask: 0, face: 1
-		outside = empty,  // mask: 0, face: 0
-	};
-	
 	using iota::bit_iterator;
 	
 	uint32_t buffer[ 32 * 32 ];
