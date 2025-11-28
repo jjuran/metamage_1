@@ -49,21 +49,30 @@ enum
 	black = 0xFF000000,
 	white = 0xFFFFFFFF,
 	
+	red   = 0xFFFF0000,
+	cyan  = 0xFF00FFFF,
+	
 	wayward = black,  // mask: 0, face: 1
 	outside = empty,  // mask: 0, face: 0
 };
 
 enum
 {
+	Option_anaglyph = 'A',
+	
 	Option_output = 'o',
 };
 
 static command::option options[] =
 {
+	{ "--anaglyph", Option_anaglyph },
+	
 	{ "--out", Option_output, Param_required },
 	
 	{ NULL }
 };
+
+static bool make_anaglyph;
 
 static const char* output_path;
 
@@ -81,6 +90,13 @@ char* const* get_options( char* const* argv )
 	{
 		switch ( opt )
 		{
+			case Option_anaglyph:
+				figure = red;
+				ground = cyan;
+				
+				make_anaglyph = true;
+				break;
+			
 			case Option_output:
 				output_path = command::global_result.param;
 				break;
@@ -227,14 +243,21 @@ int main( int argc, char** argv )
 	
 	if ( ! output_path )
 	{
+		#define REDCYAN "-anaglyph"
+		
 		size_t len = strlen( src );
 		
-		void* p = alloca( len + sizeof ".skif" );
+		size_t red_cyan_len = (sizeof REDCYAN - 1) * make_anaglyph;
+		
+		void* p = alloca( len + red_cyan_len + sizeof ".skif" );
 		
 		output_path = (char*) p;
 		
 		p = mempcpy( p, src,     len            );
+		p = mempcpy( p, REDCYAN, red_cyan_len   );
 		p = mempcpy( p, ".skif", sizeof ".skif" );  // includes final NUL byte
+		
+		#undef REDCYAN
 	}
 	
 	int fd = open( src, O_RDONLY );
