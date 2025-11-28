@@ -173,6 +173,20 @@ create_xRGB_1555_BE_image( size_t           width,
 
 inline
 CGImageRef
+create_xRGB_1555_BE_image( size_t  width,
+                           size_t  height,
+                           size_t  stride,
+                           void*   baseAddr )
+{
+	return create_1555_image( width,
+	                          height,
+	                          stride,
+	                          kCGImageAlphaNoneSkipFirst,
+	                          baseAddr );
+}
+
+inline
+CGImageRef
 create_xRGB_8888_BE_image( size_t           width,
                            size_t           height,
                            size_t           stride,
@@ -187,6 +201,20 @@ create_xRGB_8888_BE_image( size_t           width,
 	                               colorSpace,
 	                               kCGImageAlphaNoneSkipFirst,
 	                               baseAddr );
+}
+
+inline
+CGImageRef
+create_xRGB_8888_BE_image( size_t  width,
+                           size_t  height,
+                           size_t  stride,
+                           void*   baseAddr )
+{
+	return create_8888_image( width,
+	                          height,
+	                          stride,
+	                          kCGImageAlphaNoneSkipFirst,
+	                          baseAddr );
 }
 
 inline
@@ -213,6 +241,20 @@ create_xRGB_8888_image( size_t           width,
 	                               colorSpace,
 	                               bitmapInfo,
 	                               baseAddr );
+}
+
+inline
+CGImageRef
+create_xRGB_8888_image( size_t  width,
+                        size_t  height,
+                        size_t  stride,
+                        void*   baseAddr )
+{
+	return create_8888_image( width,
+	                          height,
+	                          stride,
+	                          (CGBitmapInfo) kBitmapInfo_xRGB_32,
+	                          baseAddr );
 }
 
 }
