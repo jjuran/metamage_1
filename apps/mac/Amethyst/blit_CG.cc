@@ -44,13 +44,10 @@ CG_blitter::~CG_blitter()
 void CG_blitter::set_palette( const unsigned short* colors, int n )
 {
 	using mac::cg::create_RGB_palette;
-	using mac::cg::generic_or_device_RGB;
 	
 	CGColorSpaceRelease( palette );  // ok with NULL
 	
-	CGColorSpaceRef rgb = generic_or_device_RGB();
-	
-	palette = create_RGB_palette( rgb, colors, n );
+	palette = create_RGB_palette( colors, n );
 }
 
 void CG_blitter::prep( int stride, int width, int height, int depth )
@@ -68,21 +65,12 @@ void CG_blitter::area( CGRect bounds )
 	image_bounds = bounds;
 }
 
-static
-CGColorSpaceRef create_Mac_grayscale( int n )
-{
-	using mac::cg::create_inverted_grayscale;
-	using mac::cg::generic_or_device_gray;
-	
-	return create_inverted_grayscale( generic_or_device_gray(), n );
-}
-
 void CG_blitter::blit( const void* src_addr )
 {
+	using mac::cg::create_inverted_grayscale;
 	using mac::cg::create_simple_image;
 	using mac::cg::create_xRGB_1555_BE_image;
 	using mac::cg::create_xRGB_8888_BE_image;
-	using mac::cg::generic_or_device_RGB;
 	
 	void* p = const_cast< void* >( src_addr );
 	
@@ -90,25 +78,19 @@ void CG_blitter::blit( const void* src_addr )
 	
 	if ( bpp <= 8 )
 	{
-		CGColorSpaceRef color_space = palette;  // possibly NULL
-		
-		if ( ! color_space )
+		if ( ! palette )
 		{
 			int n = 1 << bpp;
 			
-			static CGColorSpaceRef black_on_white = create_Mac_grayscale( n );
-			
-			color_space = black_on_white;
+			palette = create_inverted_grayscale( n );
 		}
 		
-		image = create_simple_image( w, h, bpp, rowBytes, color_space, p );
+		image = create_simple_image( w, h, bpp, rowBytes, palette, p );
 	}
 	else
 	{
-		CGColorSpaceRef rgb = generic_or_device_RGB();
-		
-		image = bpp == 16 ? create_xRGB_1555_BE_image( w, h, rowBytes, rgb, p )
-		                  : create_xRGB_8888_BE_image( w, h, rowBytes, rgb, p );
+		image = bpp == 16 ? create_xRGB_1555_BE_image( w, h, rowBytes, p )
+		                  : create_xRGB_8888_BE_image( w, h, rowBytes, p );
 	}
 	
 	if ( image )
