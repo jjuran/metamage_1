@@ -40,34 +40,11 @@ typedef CGImageAlphaInfo CGBitmapInfo;
 #endif
 
 
+using mac::cg::create_gray_paint_image;
 using mac::cg::create_RGB_image;
 
 using mac::qd::is_monochrome;
 
-
-static
-CGImageRef image_from_monochrome_data( size_t  width,
-                                       size_t  height,
-                                       size_t  weight,
-                                       size_t  stride,
-                                       char*   baseAddr )
-{
-	using mac::cg::create_inverted_grayscale;
-	using mac::cg::create_simple_image;
-	
-	CGColorSpaceRef black_on_white = create_inverted_grayscale( 1 << weight );
-	
-	CGImageRef image = create_simple_image( width,
-	                                        height,
-	                                        weight,
-	                                        stride,
-	                                        black_on_white,
-	                                        baseAddr );
-	
-	CGColorSpaceRelease( black_on_white );
-	
-	return image;
-}
 
 static
 CGImageRef image_from_indexed_data( size_t            width,
@@ -101,11 +78,11 @@ CGImageRef CreateCGImageFromBitMap( const BitMap& bitmap )
 	const short width  = bitmap.bounds.right - bitmap.bounds.left;
 	const short height = bitmap.bounds.bottom - bitmap.bounds.top;
 	
-	return image_from_monochrome_data( width,
-	                                   height,
-	                                   1,  // weight / depth
-	                                   bitmap.rowBytes,
-	                                   bitmap.baseAddr );
+	return create_gray_paint_image( width,
+	                                height,
+	                                1,  // weight / depth
+	                                bitmap.rowBytes,
+	                                bitmap.baseAddr );
 }
 
 static
@@ -164,11 +141,11 @@ CGImageRef CreateCGImageFromPixMap( PixMapHandle pix )
 	}
 	else if ( const bool monochrome = is_monochrome( pixmap ) )
 	{
-		return image_from_monochrome_data( width,
-		                                   height,
-		                                   pixmap.pixelSize,
-		                                   rowBytes,
-		                                   baseAddr );
+		return create_gray_paint_image( width,
+		                                height,
+		                                pixmap.pixelSize,
+		                                rowBytes,
+		                                baseAddr );
 	}
 	else if ( CTabHandle ctab = pixmap.pmTable )
 	{
