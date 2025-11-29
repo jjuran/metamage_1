@@ -21,6 +21,9 @@
 // Standard C
 #include <stddef.h>
 
+// mac-cg-utils
+#include "mac_cg/colorspaces.hh"
+
 
 #ifndef MAC_OS_X_VERSION_10_4
 typedef CGImageAlphaInfo CGBitmapInfo;
@@ -46,6 +49,42 @@ create_simple_image( size_t           width,
                      size_t           stride,
                      CGColorSpaceRef  colorSpace,
                      void*            baseAddr );
+
+inline
+CGImageRef create_gray_light_image( size_t  width,
+                                    size_t  height,
+                                    size_t  weight,
+                                    size_t  stride,
+                                    void*   baseAddr )
+{
+	return create_simple_image( width,
+	                            height,
+	                            weight,
+	                            stride,
+	                            generic_or_device_gray(),
+	                            baseAddr );
+}
+
+inline
+CGImageRef create_gray_paint_image( size_t  width,
+                                    size_t  height,
+                                    size_t  weight,
+                                    size_t  stride,
+                                    void*   baseAddr )
+{
+	CGColorSpaceRef black_on_white = create_inverted_grayscale( 1 << weight );
+	
+	CGImageRef image = create_simple_image( width,
+	                                        height,
+	                                        weight,
+	                                        stride,
+	                                        black_on_white,
+	                                        baseAddr );
+	
+	CGColorSpaceRelease( black_on_white );
+	
+	return image;
+}
 
 inline
 CGImageRef
