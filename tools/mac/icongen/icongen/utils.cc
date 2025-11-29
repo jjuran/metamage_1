@@ -81,7 +81,7 @@ void write_image_as_type( CGContextRef c, const char* path, CFStringRef type )
 	
 	CFURLRef url;
 	url = CFURLCreateFromFileSystemRepresentation( NULL,
-	                                               (const uint8_t*) path,
+	                                               (const UInt8*) path,
 	                                               strlen( path ),
 	                                               false );
 	
@@ -149,7 +149,7 @@ void write_buffer_to_file( const void* buffer, size_t n, const char* path )
 	}
 }
 
-typedef uint8_t* (*encoder)( size_t, size_t, size_t, const uint8_t*, uint8_t* );
+typedef Byte* (*encoder)( size_t, size_t, size_t, const Byte*, Byte* );
 
 void write_thumbnail_data( CGContextRef c, const char* path, encoder encode )
 {
@@ -164,12 +164,12 @@ void write_thumbnail_data( CGContextRef c, const char* path, encoder encode )
 	
 	void* buffer = malloc( buffer_size );
 	
-	uint8_t const* src = (uint8_t*) data;
-	uint8_t*       dst = (uint8_t*) buffer;
+	Byte const* src = (Byte*) data;
+	Byte*       dst = (Byte*) buffer;
 	
 	dst = encode( width, height, bytes_per_row, src, dst );
 	
-	const size_t n = dst - (uint8_t*) buffer;
+	const size_t n = dst - (Byte*) buffer;
 	
 	write_buffer_to_file( buffer, n, path );
 	
