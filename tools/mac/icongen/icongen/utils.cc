@@ -151,6 +151,7 @@ void write_buffer_to_file( const void* buffer, size_t n, const char* path )
 
 typedef Byte* (*encoder)( size_t, size_t, size_t, const Byte*, Byte* );
 
+static
 void write_thumbnail_data( CGContextRef c, const char* path, encoder encode )
 {
 	void* data = CGBitmapContextGetData( c );
