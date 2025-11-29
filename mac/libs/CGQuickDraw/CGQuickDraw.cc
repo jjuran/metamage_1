@@ -40,6 +40,8 @@ typedef CGImageAlphaInfo CGBitmapInfo;
 #endif
 
 
+using mac::cg::create_RGB_image;
+
 using mac::qd::is_monochrome;
 
 
@@ -93,32 +95,6 @@ CGImageRef image_from_indexed_data( size_t            width,
 	return result;
 }
 
-
-static inline
-CGImageRef image_from_RGB_data( size_t        width,
-                                size_t        height,
-                                size_t        degree,
-                                size_t        weight,
-                                size_t        stride,
-                                CGBitmapInfo  bitmapInfo,
-                                char*         baseAddr )
-{
-	using mac::cg::create_image_from_data;
-	using mac::cg::generic_or_device_RGB;
-	
-	CGColorSpaceRef rgb = generic_or_device_RGB();
-	
-	CGImageRef image = create_image_from_data( width,
-	                                           height,
-	                                           degree,  // bits per component
-	                                           weight,  // bits per pixel
-	                                           stride,
-	                                           rgb,
-	                                           bitmapInfo,
-	                                           baseAddr );
-	
-	return image;
-}
 
 CGImageRef CreateCGImageFromBitMap( const BitMap& bitmap )
 {
@@ -178,13 +154,13 @@ CGImageRef CreateCGImageFromPixMap( PixMapHandle pix )
 	
 	if ( const bool direct = pixmap.pixelType != 0 )
 	{
-		return image_from_RGB_data( width,
-		                            height,
-		                            pixmap.cmpSize,
-		                            pixmap.pixelSize,
-		                            rowBytes,
-		                            BitmapInfo_from_PixMap( pixmap ),
-		                            baseAddr );
+		return create_RGB_image( width,
+		                         height,
+		                         pixmap.cmpSize,
+		                         pixmap.pixelSize,
+		                         rowBytes,
+		                         BitmapInfo_from_PixMap( pixmap ),
+		                         baseAddr );
 	}
 	else if ( const bool monochrome = is_monochrome( pixmap ) )
 	{
