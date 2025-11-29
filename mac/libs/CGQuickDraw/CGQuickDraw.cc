@@ -117,8 +117,6 @@ CGImageRef image_from_RGB_data( size_t        width,
 	                                           bitmapInfo,
 	                                           baseAddr );
 	
-	CGColorSpaceRelease( rgb );
-	
 	return image;
 }
 
