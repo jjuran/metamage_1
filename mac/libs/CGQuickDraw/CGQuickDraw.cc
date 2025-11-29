@@ -44,24 +44,16 @@ using mac::qd::is_monochrome;
 
 
 static
-CGColorSpaceRef create_Mac_grayscale( int n )
-{
-	using mac::cg::create_inverted_grayscale;
-	using mac::cg::generic_or_device_gray;
-	
-	return create_inverted_grayscale( generic_or_device_gray(), n );
-}
-
-static
 CGImageRef image_from_monochrome_data( size_t  width,
                                        size_t  height,
                                        size_t  weight,
                                        size_t  stride,
                                        char*   baseAddr )
 {
+	using mac::cg::create_inverted_grayscale;
 	using mac::cg::create_simple_image;
 	
-	CGColorSpaceRef black_on_white = create_Mac_grayscale( 1 << weight );
+	CGColorSpaceRef black_on_white = create_inverted_grayscale( 1 << weight );
 	
 	CGImageRef image = create_simple_image( width,
 	                                        height,
@@ -86,11 +78,8 @@ CGImageRef image_from_indexed_data( size_t            width,
 {
 	using mac::cg::create_RGB_palette;
 	using mac::cg::create_simple_image;
-	using mac::cg::generic_or_device_RGB;
 	
-	CGColorSpaceRef rgb = generic_or_device_RGB();
-	
-	CGColorSpaceRef index = create_RGB_palette( rgb, (UInt16*) colors, count );
+	CGColorSpaceRef index = create_RGB_palette( (UInt16*) colors, count );
 	
 	CGImageRef result = create_simple_image( width,
 	                                         height,
