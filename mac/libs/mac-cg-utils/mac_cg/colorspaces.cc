@@ -33,7 +33,7 @@ CGColorSpaceRef generic_or_device_RGB()
 	return colorSpace;
 }
 
-CGColorSpaceRef create_inverted_grayscale( CGColorSpaceRef gray, int count )
+CGColorSpaceRef create_inverted_grayscale( int count )
 {
 	if ( (unsigned) count > 256 )
 	{
@@ -61,12 +61,13 @@ CGColorSpaceRef create_inverted_grayscale( CGColorSpaceRef gray, int count )
 		value -= delta;
 	}
 	
+	CGColorSpaceRef gray = generic_or_device_gray();
+	
 	return CGColorSpaceCreateIndexed( gray, count - 1, table );
 }
 
-CGColorSpaceRef create_RGB_palette( CGColorSpaceRef  rgb,
-                                    const UInt16*    colors,
-                                    int              count )
+CGColorSpaceRef create_RGB_palette( const UInt16*  colors,
+                                    int            count )
 {
 	if ( (unsigned) count > 256 )
 	{
@@ -85,6 +86,8 @@ CGColorSpaceRef create_RGB_palette( CGColorSpaceRef  rgb,
 		*p++ = *colors++ >> 8;  // green
 		*p++ = *colors++ >> 8;  // blue
 	}
+	
+	CGColorSpaceRef rgb = generic_or_device_RGB();
 	
 	return CGColorSpaceCreateIndexed( rgb, count - 1, table );
 	

@@ -25,24 +25,10 @@ namespace cg  {
 CGColorSpaceRef generic_or_device_gray();
 CGColorSpaceRef generic_or_device_RGB();
 
-CGColorSpaceRef create_inverted_grayscale( CGColorSpaceRef gray, int count );
+CGColorSpaceRef create_inverted_grayscale( int count );
 
-inline
-CGColorSpaceRef create_inverted_grayscale( int count )
-{
-	return create_inverted_grayscale( generic_or_device_gray(), count );
-}
-
-CGColorSpaceRef create_RGB_palette( CGColorSpaceRef  rgb,
-                                    const UInt16*    colors,
-                                    int              count );
-
-inline
 CGColorSpaceRef create_RGB_palette( const UInt16*  colors,
-                                    int            count )
-{
-	return create_RGB_palette( generic_or_device_RGB(), colors, count );
-}
+                                    int            count );
 
 }
 }
