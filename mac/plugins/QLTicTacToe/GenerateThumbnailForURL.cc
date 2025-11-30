@@ -23,8 +23,17 @@ OSStatus GenerateThumbnailForURL( void*                  interface,
 	size_t bitsPerComponent = 8;
 	size_t bytesPerRow      = size.width;
 	
-	CFStringRef colorSpaceName = kCGColorSpaceGenericGray;
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName( colorSpaceName );
+	/*
+		The CGColorSpace reference says:
+		
+			"In Mac OS X v10.4 and later, this color space
+			is no longer device-dependent and is replaced
+			by the generic counterpart"
+		
+		in its description of CGColorSpaceCreateDeviceGray().
+	*/
+	
+	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
 	
 	CGContextRef context = CGBitmapContextCreate( NULL,
 	                                              size.width,
