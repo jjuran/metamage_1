@@ -25,7 +25,6 @@
 #endif
 
 // mac-cg-utils
-#include "mac_cg/colorspaces.hh"
 #include "mac_cg/images.hh"
 
 
@@ -40,9 +39,6 @@ namespace cg  {
 static
 CGImageRef create_self_masked_image( PixMapHandle pix )
 {
-	using mac::cg::create_image_from_data;
-	using mac::cg::generic_or_device_RGB;
-	
 	Ptr   baseAddr = GetPixBaseAddr( pix );
 	short rowBytes = GetPixRowBytes( pix );
 	
@@ -65,21 +61,10 @@ CGImageRef create_self_masked_image( PixMapHandle pix )
 		p += 4;
 	}
 	
-	CGImageRef image = NULL;
-	
-	if ( CGColorSpaceRef rgb = generic_or_device_RGB() )
-	{
-		image = create_image_from_data( width,
-		                                height,
-		                                8,   // bits per component
-		                                32,  // bits per pixel
-		                                rowBytes,
-		                                rgb,
-		                                kCGImageAlphaFirst,
-		                                baseAddr );
-	}
-	
-	return image;
+	return create_ARGB_8888_BE_image( width,
+	                                  height,
+	                                  rowBytes,
+	                                  baseAddr );
 }
 
 self_masked_drawing::self_masked_drawing( CGContextRef   context,

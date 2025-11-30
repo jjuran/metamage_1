@@ -195,6 +195,20 @@ create_xRGB_8888_image( size_t  width,
 	                          baseAddr );
 }
 
+inline
+CGImageRef
+create_ARGB_8888_BE_image( size_t  width,
+                           size_t  height,
+                           size_t  stride,
+                           void*   baseAddr )
+{
+	return create_8888_image( width,
+	                          height,
+	                          stride,
+	                          kCGImageAlphaFirst,
+	                          baseAddr );
+}
+
 }
 }
 
