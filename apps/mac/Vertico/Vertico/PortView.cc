@@ -109,12 +109,9 @@ namespace Vertico
 		const size_t width  = bounds.right - bounds.left;
 		const size_t height = bounds.bottom - bounds.top;
 		
-		static CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-		
 		CGImageRef image = create_xRGB_8888_image( width,
 		                                           height,
 		                                           stride,
-		                                           colorSpace,
 		                                           base );
 		
 		return image;
