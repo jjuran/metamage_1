@@ -33,6 +33,22 @@ typedef CGImageAlphaInfo CGBitmapInfo;
 namespace mac {
 namespace cg  {
 
+enum
+{
+#ifdef __LITTLE_ENDIAN__
+	
+	kBitmapInfo_32bit = kCGBitmapByteOrder32Little,
+	
+#else
+	
+	kBitmapInfo_32bit = 0,
+	
+#endif
+	
+	kBitmapInfo_ARGB_32 = kBitmapInfo_32bit | kCGImageAlphaFirst,
+	kBitmapInfo_xRGB_32 = kBitmapInfo_32bit | kCGImageAlphaNoneSkipFirst,
+};
+
 CGImageRef create_image_from_data( size_t           width,
                                    size_t           height,
                                    size_t           degree,
