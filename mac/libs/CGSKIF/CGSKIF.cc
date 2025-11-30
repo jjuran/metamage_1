@@ -95,14 +95,14 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	
 	if ( desc.model == Model_monochrome_paint )
 	{
-		indexed = create_inverted_grayscale( colorSpace, 1 << desc.weight );
+		indexed = create_inverted_grayscale( 1 << weight );
 	}
 	
 	if ( clut != NULL )
 	{
 		const UInt16* colors = (const UInt16*) clut->palette;
 		
-		indexed = create_RGB_palette( colorSpace, colors, clut->max + 1 );
+		indexed = create_RGB_palette( colors, clut->max + 1 );
 	}
 	
 	if ( indexed )
