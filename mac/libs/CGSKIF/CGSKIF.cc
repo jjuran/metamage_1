@@ -70,26 +70,14 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	size_t weight = desc.weight;
 	size_t stride = desc.stride;
 	
-	bool tri_colored = desc.model > Model_palette;
-	
 	if ( desc.model == Model_palette )
 	{
 		clut = find_clut( &raster.meta->note );
-		
-		if ( clut != NULL )
-		{
-			tri_colored = true;
-		}
 	}
 	
 	size_t bits_per_component = weight == 32 ? 8
 	                          : weight == 16 ? 5
 	                          :                weight;
-	
-	int n_components = tri_colored ? 3 : 1;
-	
-	CGColorSpaceRef colorSpace = tri_colored ? generic_or_device_RGB()
-	                                         : generic_or_device_gray();
 	
 	CGColorSpaceRef indexed = NULL;
 	
@@ -103,11 +91,6 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 		const UInt16* colors = (const UInt16*) clut->palette;
 		
 		indexed = create_RGB_palette( colors, clut->max + 1 );
-	}
-	
-	if ( indexed )
-	{
-		colorSpace = indexed;
 	}
 	
 	CGBitmapInfo bitmapInfo = kCGImageAlphaNone;
@@ -200,6 +183,10 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 	}
 	
 #endif
+	
+	CGColorSpaceRef colorSpace = indexed    ? indexed
+	                           : weight > 8 ? generic_or_device_RGB()
+	                                        : generic_or_device_gray();
 	
 	CGImageRef image;
 	image = CGImageCreate( width,
