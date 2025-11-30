@@ -37,13 +37,21 @@ CGContextRef create_bitmap_context( size_t length )
 		exit( 1 );
 	}
 	
-	CGColorSpaceRef colorSpace;
+	/*
+		The CGColorSpace reference says:
+		
+			"In Mac OS X v10.4 and later, this color space
+			is no longer device-dependent and is replaced
+			by the generic counterpart"
+		
+		in its description of CGColorSpaceCreateDeviceRGB().
+	*/
 	
-	colorSpace = CGColorSpaceCreateWithName( kCGColorSpaceGenericRGB );
+	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 	
 	if ( colorSpace == NULL )
 	{
-		fprintf( stderr, "CGColorSpaceCreateWithName() returned NULL\n" );
+		fprintf( stderr, "CGColorSpaceCreateDeviceRGB() returned NULL\n" );
 		exit( 1 );
 	}
 	
