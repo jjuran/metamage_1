@@ -138,34 +138,6 @@ Rect get_proportional_bounds( short width, short height, Point location )
 }
 
 static
-Rect get_window_bounds( const raster_desc& desc, UInt16 numer, UInt16 denom )
-{
-	short desk_height = rect_height( desktop_bounds );
-	short desk_width  = rect_width ( desktop_bounds );
-	
-	unsigned window_height = desc.height;
-	unsigned window_width  = desc.width;
-	
-	window_height /= denom;
-	window_width  /= denom;
-	
-	window_height *= numer;
-	window_width  *= numer;
-	
-	short v_margin = (desk_height - window_height) / 2u;
-	short h_margin = (desk_width  - window_width ) / 2u;
-	
-	Rect bounds = desktop_bounds;
-	
-	bounds.top += v_margin;
-	bounds.left += h_margin;
-	bounds.right -= h_margin;
-	bounds.bottom -= v_margin;
-	
-	return bounds;
-}
-
-static
 void SetWindowTitleToProcessName( WindowRef window )
 {
 	ProcessSerialNumber psn = { 0, kCurrentProcess };
