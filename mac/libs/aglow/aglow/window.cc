@@ -20,15 +20,6 @@
 // mac-qd-utils
 #include "mac_qd/main_display_bounds.hh"
 
-// rasterlib
-#include "raster/raster.hh"
-
-
-using raster::raster_desc;
-
-
-short x_numer = 1;
-short x_denom = 1;
 
 static inline
 short rect_width( const Rect& r )
@@ -154,7 +145,7 @@ void SetWindowTitleToProcessName( WindowRef window )
 	}
 }
 
-WindowRef create_window( const raster_desc& desc, WindowRef previous )
+WindowRef create_window( unsigned width, unsigned height, WindowRef previous )
 {
 	const WindowAttributes attrs = kWindowCloseBoxAttribute
 	                             | kWindowCollapseBoxAttribute
@@ -169,15 +160,6 @@ WindowRef create_window( const raster_desc& desc, WindowRef previous )
 	                           #endif
 	                             ;
 	
-	unsigned window_height = desc.height;
-	unsigned window_width  = desc.width;
-	
-	window_height /= x_denom;
-	window_width  /= x_denom;
-	
-	window_height *= x_numer;
-	window_width  *= x_numer;
-	
 	Rect bounds;
 	
 	if ( previous )
@@ -189,8 +171,8 @@ WindowRef create_window( const raster_desc& desc, WindowRef previous )
 		proportional_location = get_proportional_location( bounds );
 	}
 	
-	bounds = get_proportional_bounds( window_width,
-	                                  window_height,
+	bounds = get_proportional_bounds( width,
+	                                  height,
 	                                  proportional_location );
 	
 	OffsetRect( &bounds, desktop_bounds.left, desktop_bounds.top );

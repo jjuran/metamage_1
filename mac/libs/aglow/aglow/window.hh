@@ -12,16 +12,8 @@
 #endif
 
 
-namespace raster
-{
-	struct raster_desc;
-}
-
-extern short x_numer;
-extern short x_denom;
-
 Fixed maximum_zoom( short window_width, short window_height );
 
-WindowRef create_window( const raster::raster_desc& desc, WindowRef previous );
+WindowRef create_window( unsigned width, unsigned height, WindowRef previous );
 
 #endif

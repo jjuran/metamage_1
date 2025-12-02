@@ -75,6 +75,9 @@ static WindowRef screen_window;
 
 static MenuCommand current_zoom = kZoom100Percent;
 
+static short x_numer = 1;
+static short x_denom = 1;
+
 static bool mid_click;
 
 
@@ -113,9 +116,9 @@ void blit( const raster_load& load )
 }
 
 static
-void remake_window( const raster_load& load )
+void remake_window( unsigned width, unsigned height )
 {
-	WindowRef window = create_window( load.meta->desc, screen_window );
+	WindowRef window = create_window( width, height, screen_window );
 	
 	attach_to_window( window );
 	
@@ -204,6 +207,7 @@ pascal OSStatus ProcessCommand( EventHandlerCallRef  handler,
 	OSStatus err;
 	
 	const raster_load& load = *(raster_load*) userData;
+	const raster_desc& desc = load.meta->desc;
 	
 	HICommand command = {};
 	err = GetEventParameter( event,
@@ -234,12 +238,13 @@ pascal OSStatus ProcessCommand( EventHandlerCallRef  handler,
 			x_denom = 1 + (id >> 16 & 0x1);
 			x_numer = ((id >> 24 & 0xf) + 1) * x_denom - 1;
 			
+			remake_window( desc.width  / x_denom * x_numer,
+			               desc.height / x_denom * x_numer );
+			
 			SetMenuCommandMark( View, current_zoom, noMark );
 			SetMenuCommandMark( View, id, kCheckCharCode );
 			
 			current_zoom = id;
-			
-			remake_window( load );
 			
 			return noErr;
 		
@@ -530,7 +535,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	set_AGL_geometry( desc.stride, desc.width, desc.height, desc.weight );
 	
-	screen_window = create_window( desc, NULL );
+	screen_window = create_window( desc.width, desc.height, NULL );
 	
 	attach_to_window( screen_window );
 	
