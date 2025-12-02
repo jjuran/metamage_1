@@ -73,6 +73,9 @@
 
 static WindowRef screen_window;
 
+static int shifted_max_zoom;
+static int shifted_current_zoom = 0x100 >> 7;  // 100%
+
 static MenuCommand current_zoom = kZoom100Percent;
 
 static short x_numer = 1;
@@ -200,6 +203,51 @@ static EventTypeSpec AmicusUpdate_event[] =
 };
 
 static
+MenuCommand MenuCommand_for_shifted_zoom( int zoom )
+{
+	if ( zoom == 1 )
+	{
+		return ' 50%';
+	}
+	
+	MenuCommand command_ID = ('0' + (zoom >> 1)) << 24
+	                       | "05"[ zoom & 1 ]    << 16
+	                       | '0'                 <<  8
+	                       | '%';
+	
+	return command_ID;
+}
+
+static
+MenuCommand command_to_zoom_in()
+{
+	const int shifted_zoom = shifted_current_zoom + 1;
+	
+	if ( shifted_zoom > shifted_max_zoom )
+	{
+		return current_zoom;
+	}
+	
+	return MenuCommand_for_shifted_zoom( shifted_zoom );
+}
+
+static
+MenuCommand command_to_zoom_out()
+{
+	const int shifted_zoom = shifted_current_zoom - 1;
+	
+	if ( shifted_zoom == 0 )
+	{
+		return current_zoom;
+	}
+	
+	return MenuCommand_for_shifted_zoom( shifted_zoom );
+}
+
+static
+OSStatus choose_zoom( MenuCommand id, const raster_desc& desc );
+
+static
 pascal OSStatus ProcessCommand( EventHandlerCallRef  handler,
                                 EventRef             event,
                                 void*                userData )
@@ -218,8 +266,12 @@ pascal OSStatus ProcessCommand( EventHandlerCallRef  handler,
 	                         NULL,
 	                         &command );
 	
-	const MenuCommand id = command.commandID;
-	
+	return choose_zoom( command.commandID, desc );
+}
+
+static
+OSStatus choose_zoom( MenuCommand id, const raster_desc& desc )
+{
 	if ( id == current_zoom )
 	{
 		return noErr;
@@ -237,6 +289,9 @@ pascal OSStatus ProcessCommand( EventHandlerCallRef  handler,
 		case kZoom400Percent:  // 4/1
 			x_denom = 1 + (id >> 16 & 0x1);
 			x_numer = ((id >> 24 & 0xf) + 1) * x_denom - 1;
+			
+			shifted_current_zoom = (id >> 23 & 0xf << 1)   // _00%  (1 .. 4)
+			                     | (id >> 16 & 0x1     );  //  _0%  (0 or 5)
 			
 			remake_window( desc.width  / x_denom * x_numer,
 			               desc.height / x_denom * x_numer );
@@ -366,12 +421,20 @@ static EventTypeSpec Mouse_event[] =
 };
 
 static
-void command_handler( char c )
+void command_handler( char c, const raster_desc& desc )
 {
 	switch ( c )
 	{
 		case 'q':  Q_hit = true;  break;
 		case 'x':  X_hit = true;  break;
+		
+		case '=':  // same key as '+'
+			choose_zoom( command_to_zoom_in(), desc );
+			break;
+		
+		case '-':
+			choose_zoom( command_to_zoom_out(), desc );
+			break;
 		
 		default:
 			break;
@@ -393,6 +456,7 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 	OSStatus err;
 	
 	const raster_load& load = *(raster_load*) userData;
+	const raster_desc& desc = load.meta->desc;
 	
 	if ( FrontWindow() != screen_window )
 	{
@@ -420,7 +484,7 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 		switch ( kind )
 		{
 			case kEventRawKeyDown:
-				command_handler( c );
+				command_handler( c, desc );
 				break;
 			
 			case kEventRawKeyUp:
@@ -599,14 +663,11 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	const Fixed max_zoom = maximum_zoom( desc.width, desc.height );
 	
-	const int shifted_max_zoom = max_zoom >> 15;
+	shifted_max_zoom = max_zoom >> 15;
 	
 	for ( int i = 2 * 4;  i > shifted_max_zoom;  --i )
 	{
-		OSType command_ID = ('0' + (i >> 1)) << 24
-		                  | "05"[ i & 1 ]    << 16
-		                  | '0'              <<  8
-		                  | '%';
+		MenuCommand command_ID = MenuCommand_for_shifted_zoom( i );
 		
 		DisableMenuCommand( View, command_ID );
 	}
