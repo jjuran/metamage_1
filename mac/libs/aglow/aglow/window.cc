@@ -81,9 +81,14 @@ short get_proportional_coordinate( short outer, short inner, short offset )
 {
 	short delta = outer - inner;
 	
-	if ( delta <= 0 )
+	if ( offset <= 0  ||  delta <= 0 )
 	{
 		return 0;
+	}
+	
+	if ( offset >= delta )
+	{
+		return outer;
 	}
 	
 	return offset * outer / delta;
