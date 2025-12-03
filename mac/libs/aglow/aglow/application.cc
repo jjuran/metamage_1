@@ -225,7 +225,7 @@ MenuCommand command_to_zoom_in()
 	
 	if ( shifted_zoom > shifted_max_zoom )
 	{
-		return current_zoom;
+		return 0;
 	}
 	
 	return MenuCommand_for_shifted_zoom( shifted_zoom );
@@ -238,7 +238,7 @@ MenuCommand command_to_zoom_out()
 	
 	if ( shifted_zoom == 0 )
 	{
-		return current_zoom;
+		return 0;
 	}
 	
 	return MenuCommand_for_shifted_zoom( shifted_zoom );
@@ -272,7 +272,7 @@ pascal OSStatus ProcessCommand( EventHandlerCallRef  handler,
 static
 OSStatus choose_zoom( MenuCommand id, const raster_desc& desc )
 {
-	if ( id == current_zoom )
+	if ( id == 0  ||  id == current_zoom )
 	{
 		return noErr;
 	}
