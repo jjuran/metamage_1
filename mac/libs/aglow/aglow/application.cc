@@ -73,8 +73,10 @@
 
 static WindowRef screen_window;
 
-static int shifted_max_zoom;
-static int shifted_current_zoom = 0x100 >> 7;  // 100%
+static int maximum_zoom_index;
+static int current_zoom_index = 0x100 >> 7;  // 100%
+
+const int top_zoom_index = 2 * 4;  // 400%
 
 static MenuCommand current_zoom = kZoom100Percent;
 
@@ -203,7 +205,7 @@ static EventTypeSpec AmicusUpdate_event[] =
 };
 
 static
-MenuCommand MenuCommand_for_shifted_zoom( int zoom )
+MenuCommand command_ID_for_zoom_index( int zoom )
 {
 	if ( zoom == 1 )
 	{
@@ -221,27 +223,27 @@ MenuCommand MenuCommand_for_shifted_zoom( int zoom )
 static
 MenuCommand command_to_zoom_in()
 {
-	const int shifted_zoom = shifted_current_zoom + 1;
+	const int zoom_index = current_zoom_index + 1;
 	
-	if ( shifted_zoom > shifted_max_zoom )
+	if ( zoom_index > maximum_zoom_index )
 	{
 		return 0;
 	}
 	
-	return MenuCommand_for_shifted_zoom( shifted_zoom );
+	return command_ID_for_zoom_index( zoom_index );
 }
 
 static
 MenuCommand command_to_zoom_out()
 {
-	const int shifted_zoom = shifted_current_zoom - 1;
+	const int zoom_index = current_zoom_index - 1;
 	
-	if ( shifted_zoom == 0 )
+	if ( zoom_index == 0 )
 	{
 		return 0;
 	}
 	
-	return MenuCommand_for_shifted_zoom( shifted_zoom );
+	return command_ID_for_zoom_index( zoom_index );
 }
 
 static
@@ -290,8 +292,8 @@ OSStatus choose_zoom( MenuCommand id, const raster_desc& desc )
 			x_denom = 1 + (id >> 16 & 0x1);
 			x_numer = ((id >> 24 & 0xf) + 1) * x_denom - 1;
 			
-			shifted_current_zoom = (id >> 23 & 0xf << 1)   // _00%  (1 .. 4)
-			                     | (id >> 16 & 0x1     );  //  _0%  (0 or 5)
+			current_zoom_index = (id >> 23 & 0xf << 1)   // _00%  (1 .. 4)
+			                   | (id >> 16 & 0x1     );  //  _0%  (0 or 5)
 			
 			remake_window( desc.width  / x_denom * x_numer,
 			               desc.height / x_denom * x_numer );
@@ -663,11 +665,11 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	const Fixed max_zoom = maximum_zoom( desc.width, desc.height );
 	
-	shifted_max_zoom = max_zoom >> 15;
+	maximum_zoom_index = max_zoom >> 15;
 	
-	for ( int i = 2 * 4;  i > shifted_max_zoom;  --i )
+	for ( int i = top_zoom_index;  i > maximum_zoom_index;  --i )
 	{
-		MenuCommand command_ID = MenuCommand_for_shifted_zoom( i );
+		MenuCommand command_ID = command_ID_for_zoom_index( i );
 		
 		DisableMenuCommand( View, command_ID );
 	}
