@@ -55,6 +55,7 @@
 #include "amicus/keycodes.hh"
 #include "amicus/raster_task.hh"
 #include "amicus/splode.hh"
+#include "amicus/zoom.hh"
 
 // aglow
 #include "aglow/blit_AGL.hh"
@@ -72,11 +73,6 @@
 
 
 static WindowRef screen_window;
-
-static int maximum_zoom_index;
-static int current_zoom_index = 0x100 >> 7;  // 100%
-
-const int top_zoom_index = 2 * 4;  // 400%
 
 static MenuCommand current_zoom = kZoom100Percent;
 
@@ -203,48 +199,6 @@ static EventTypeSpec AmicusUpdate_event[] =
 	{ kEventClassAmicus, kEventAmicusCursorBits },
 	{ kEventClassAmicus, kEventAmicusNewPalette },
 };
-
-static
-MenuCommand command_ID_for_zoom_index( int zoom )
-{
-	if ( zoom == 1 )
-	{
-		return ' 50%';
-	}
-	
-	MenuCommand command_ID = ('0' + (zoom >> 1)) << 24
-	                       | "05"[ zoom & 1 ]    << 16
-	                       | '0'                 <<  8
-	                       | '%';
-	
-	return command_ID;
-}
-
-static
-MenuCommand command_to_zoom_in()
-{
-	const int zoom_index = current_zoom_index + 1;
-	
-	if ( zoom_index > maximum_zoom_index )
-	{
-		return 0;
-	}
-	
-	return command_ID_for_zoom_index( zoom_index );
-}
-
-static
-MenuCommand command_to_zoom_out()
-{
-	const int zoom_index = current_zoom_index - 1;
-	
-	if ( zoom_index == 0 )
-	{
-		return 0;
-	}
-	
-	return command_ID_for_zoom_index( zoom_index );
-}
 
 static
 OSStatus choose_zoom( MenuCommand id, const raster_desc& desc );
