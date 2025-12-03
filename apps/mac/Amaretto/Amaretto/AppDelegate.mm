@@ -24,10 +24,17 @@
 
 // amicus
 #include "amicus/menu_defs.hh"
+#include "amicus/zoom.hh"
 
 // Amaretto
 #include "Amaretto/OpenGLView.h"
 #include "releasing.hh"
+
+
+using amicus::cap_zoom_index;
+using amicus::command_ID_for_zoom_index;
+using amicus::maximum_zoom_index;
+using amicus::top_zoom_index;
 
 
 static
@@ -154,6 +161,15 @@ void set_up_menus()
 	menu = SET_UP_MENU( View  );
 	
 	[[menu itemWithTag: kZoom100Percent] setState: NSOnState];
+	
+	[menu setAutoenablesItems: NO];
+	
+	for ( int i = top_zoom_index;  i > maximum_zoom_index;  --i )
+	{
+		MenuCommand command_ID = command_ID_for_zoom_index( i );
+		
+		[[menu itemWithTag: command_ID] setEnabled: NO];
+	}
 }
 
 @implementation AmarettoAppDelegate
@@ -161,6 +177,10 @@ void set_up_menus()
 - (id) initWithRaster: (const raster::raster_load&) load
 {
 	const raster::raster_desc& desc = load.meta->desc;
+	
+	NSSize space = [[NSScreen mainScreen] frame].size;
+	
+	cap_zoom_index( desc.width, desc.height, space.width, space.height );
 	
 	_addr = load.addr;
 	_desc = &desc;
