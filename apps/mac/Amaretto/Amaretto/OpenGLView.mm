@@ -16,9 +16,41 @@
 
 // amicus
 #include "amicus/events.hh"
+#include "amicus/resize.hh"
+
+
+using amicus::get_proportional_coordinate;
+using amicus::get_proportional_offset;
 
 
 static bool cursor_hidden;
+
+static
+NSPoint get_proportional_location( NSRect bounds )
+{
+	NSPoint origin = bounds.origin;
+	NSSize  window = bounds.size;
+	
+	NSSize space = [[NSScreen mainScreen] frame].size;
+	
+	return NSMakePoint
+	(
+		get_proportional_coordinate( space.width,  window.width,  origin.x ),
+		get_proportional_coordinate( space.height, window.height, origin.y )
+	);
+}
+
+static
+NSPoint new_location( NSSize size, NSPoint location )
+{
+	NSSize space = [[NSScreen mainScreen] frame].size;
+	
+	return NSMakePoint
+	(
+		get_proportional_offset( space.width,  size.width,  location.x ),
+		get_proportional_offset( space.height, size.height, location.y )
+	);
+}
 
 static
 void handle_event( NSEvent* event )
@@ -59,8 +91,18 @@ void handle_event( NSEvent* event )
 	
 	NSWindow* window = [self window];
 	
+	NSPoint proportional_location = get_proportional_location( [window frame] );
+	
+	proportional_location = new_location( size, proportional_location );
+	
+	NSDisableScreenUpdates();
+	
 	[window setContentSize: size];
+	[window setFrameOrigin: proportional_location];
+	
 	[self   setFrameSize:   size];
+	
+	NSEnableScreenUpdates();
 }
 
 - (BOOL) acceptsFirstResponder
