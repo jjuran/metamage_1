@@ -20,6 +20,12 @@
 // mac-qd-utils
 #include "mac_qd/main_display_bounds.hh"
 
+// amicus
+#include "amicus/resize.hh"
+
+
+using amicus::get_proportional_coordinate;
+using amicus::get_proportional_offset;
 
 static inline
 short rect_width( const Rect& r )
@@ -54,37 +60,6 @@ static Point proportional_location =
 	desk_height / 2u,
 	desk_width  / 2u,
 };
-
-static
-short get_proportional_coordinate( short outer, short inner, short offset )
-{
-	short delta = outer - inner;
-	
-	if ( offset <= 0  ||  delta <= 0 )
-	{
-		return 0;
-	}
-	
-	if ( offset >= delta )
-	{
-		return outer;
-	}
-	
-	return offset * outer / delta;
-}
-
-static
-short get_proportional_offset( short outer, short inner, short coordinate )
-{
-	short delta = outer - inner;
-	
-	if ( delta <= 0 )
-	{
-		return 0;
-	}
-	
-	return coordinate * delta / outer;
-}
 
 static
 Point get_proportional_location( const Rect& bounds )
