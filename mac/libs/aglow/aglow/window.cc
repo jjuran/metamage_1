@@ -46,26 +46,14 @@ Rect get_desktop_bounds()
 
 static Rect desktop_bounds = get_desktop_bounds();
 
-static const short desk_height = rect_height( desktop_bounds );
-static const short desk_width  = rect_width ( desktop_bounds );
+const short desk_height = rect_height( desktop_bounds );
+const short desk_width  = rect_width ( desktop_bounds );
 
 static Point proportional_location =
 {
 	desk_height / 2u,
 	desk_width  / 2u,
 };
-
-int maximum_zoom( short window_width, short window_height )
-{
-	Fixed X_zoom = (desk_width  << 16) / window_width;
-	Fixed Y_zoom = (desk_height << 16) / window_height;
-	
-	// The maximum zoom is the /lesser/ of the max X zoom and max Y zoom.
-	
-	Fixed max = X_zoom < Y_zoom ? X_zoom : Y_zoom;
-	
-	return max >> 15;
-}
 
 static
 short get_proportional_coordinate( short outer, short inner, short offset )

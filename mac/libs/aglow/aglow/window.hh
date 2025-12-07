@@ -12,7 +12,8 @@
 #endif
 
 
-int maximum_zoom( short window_width, short window_height );
+extern const short desk_height;
+extern const short desk_width;
 
 WindowRef create_window( unsigned width, unsigned height, WindowRef previous );
 

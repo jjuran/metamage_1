@@ -617,7 +617,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	mac::app::set_Aqua_menu_key( kHICommandQuit, '\0' );
 	mac::app::set_Aqua_menu_key( kHICommandHide, '\0' );
 	
-	maximum_zoom_index = maximum_zoom( desc.width, desc.height );
+	cap_zoom_index( desc.width, desc.height, desk_width, desk_height );
 	
 	for ( int i = top_zoom_index;  i > maximum_zoom_index;  --i )
 	{
