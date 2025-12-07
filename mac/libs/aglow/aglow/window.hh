@@ -12,7 +12,7 @@
 #endif
 
 
-Fixed maximum_zoom( short window_width, short window_height );
+int maximum_zoom( short window_width, short window_height );
 
 WindowRef create_window( unsigned width, unsigned height, WindowRef previous );
 

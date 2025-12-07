@@ -55,7 +55,7 @@ static Point proportional_location =
 	desk_width  / 2u,
 };
 
-Fixed maximum_zoom( short window_width, short window_height )
+int maximum_zoom( short window_width, short window_height )
 {
 	Fixed X_zoom = (desk_width  << 16) / window_width;
 	Fixed Y_zoom = (desk_height << 16) / window_height;
@@ -64,7 +64,7 @@ Fixed maximum_zoom( short window_width, short window_height )
 	
 	Fixed max = X_zoom < Y_zoom ? X_zoom : Y_zoom;
 	
-	return max;
+	return max >> 15;
 }
 
 static
