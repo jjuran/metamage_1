@@ -136,10 +136,7 @@ void draw_text( const TERec& te )
 	
 	const short lineHeight = te.lineHeight;
 	
-	if ( te.active )
-	{
-		EraseRect( &viewRect );
-	}
+	EraseRect( &viewRect );
 	
 	const short* starts = te.lineStarts;
 	
