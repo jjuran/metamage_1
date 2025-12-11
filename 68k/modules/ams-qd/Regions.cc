@@ -31,7 +31,7 @@ OSErr MemErr : 0x0220;
 static const Rect emptyRect = { 0, 0, 0, 0 };
 
 
-pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
+pascal void StdRgn_patch( signed char verb, RgnHandle rgn )
 {
 	static RgnHandle utility_rgn = (scoped_zone(), NewRgn());
 	
@@ -72,7 +72,7 @@ pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 	port.clipRgn = saved_clipRgn;
 }
 
-pascal void FrameRgn_patch( MacRegion** rgn )
+pascal void FrameRgn_patch( RgnHandle rgn )
 {
 	GrafPort& port = *get_thePort();
 	
@@ -81,7 +81,7 @@ pascal void FrameRgn_patch( MacRegion** rgn )
 	GRAFPROC_RGN( port )( kQDGrafVerbFrame, rgn );
 }
 
-pascal void PaintRgn_patch( MacRegion** rgn )
+pascal void PaintRgn_patch( RgnHandle rgn )
 {
 	GrafPort& port = *get_thePort();
 	
@@ -90,7 +90,7 @@ pascal void PaintRgn_patch( MacRegion** rgn )
 	GRAFPROC_RGN( port )( kQDGrafVerbPaint, rgn );
 }
 
-pascal void EraseRgn_patch( MacRegion** rgn )
+pascal void EraseRgn_patch( RgnHandle rgn )
 {
 	GrafPort& port = *get_thePort();
 	
@@ -99,7 +99,7 @@ pascal void EraseRgn_patch( MacRegion** rgn )
 	GRAFPROC_RGN( port )( kQDGrafVerbErase, rgn );
 }
 
-pascal void InverRgn_patch( MacRegion** rgn )
+pascal void InverRgn_patch( RgnHandle rgn )
 {
 	GrafPort& port = *get_thePort();
 	
@@ -108,7 +108,7 @@ pascal void InverRgn_patch( MacRegion** rgn )
 	GRAFPROC_RGN( port )( kQDGrafVerbInvert, rgn );
 }
 
-pascal void FillRgn_patch( MacRegion** rgn, const Pattern* pattern )
+pascal void FillRgn_patch( RgnHandle rgn, const Pattern* pattern )
 {
 	GrafPort& port = *get_thePort();
 	
@@ -119,7 +119,7 @@ pascal void FillRgn_patch( MacRegion** rgn, const Pattern* pattern )
 	GRAFPROC_RGN( port )( kQDGrafVerbFill, rgn );
 }
 
-pascal MacRegion** NewRgn_patch()
+pascal RgnHandle NewRgn_patch()
 {
 	RgnHandle h = (RgnHandle) NewHandleClear( sizeof (MacRegion) );
 	
@@ -142,7 +142,7 @@ pascal void OpenRgn_patch()
 	OpenPoly();
 }
 
-pascal void CloseRgn_patch( MacRegion** rgn )
+pascal void CloseRgn_patch( RgnHandle rgn )
 {
 	GrafPort& port = *get_thePort();
 	
@@ -168,12 +168,12 @@ pascal void CloseRgn_patch( MacRegion** rgn )
 	port.rgnSave = NULL;
 }
 
-pascal void DisposeRgn_patch( MacRegion** rgn )
+pascal void DisposeRgn_patch( RgnHandle rgn )
 {
 	DisposeHandle( (Handle) rgn );
 }
 
-pascal void CopyRgn_patch( MacRegion** src, MacRegion** dst )
+pascal void CopyRgn_patch( RgnHandle src, RgnHandle dst )
 {
 	if ( src == dst )
 	{
@@ -192,7 +192,7 @@ pascal void CopyRgn_patch( MacRegion** src, MacRegion** dst )
 	fast_memcpy( *dst, *src, size );
 }
 
-static void set_rect_region( MacRegion** rgn, const Rect& r )
+static void set_rect_region( RgnHandle rgn, const Rect& r )
 {
 	MacRegion& region = **rgn;
 	
@@ -203,16 +203,16 @@ static void set_rect_region( MacRegion** rgn, const Rect& r )
 	SetHandleSize( (Handle) rgn, sizeof (MacRegion) );
 }
 
-pascal void SetEmptyRgn_patch( MacRegion** rgn )
+pascal void SetEmptyRgn_patch( RgnHandle rgn )
 {
 	set_rect_region( rgn, emptyRect );
 }
 
-pascal void SetRectRgn_patch( MacRegion**  rgn,
-                              short        left,
-                              short        top,
-                              short        right,
-                              short        bottom )
+pascal void SetRectRgn_patch( RgnHandle  rgn,
+                              short      left,
+                              short      top,
+                              short      right,
+                              short      bottom )
 {
 	if ( top >= bottom  ||  left >= right )
 	{
@@ -226,7 +226,7 @@ pascal void SetRectRgn_patch( MacRegion**  rgn,
 	}
 }
 
-pascal void RectRgn_patch( MacRegion** rgn, const Rect* r )
+pascal void RectRgn_patch( RgnHandle rgn, const Rect* r )
 {
 	if ( r->top >= r->bottom  ||  r->left >= r->right )
 	{
@@ -236,7 +236,7 @@ pascal void RectRgn_patch( MacRegion** rgn, const Rect* r )
 	set_rect_region( rgn, *r );
 }
 
-pascal unsigned char RectInRgn_patch( const Rect* r, MacRegion** rgn )
+pascal Boolean RectInRgn_patch( const Rect* r, RgnHandle rgn )
 {
 	/*
 		Inside Macintosh Volume I documents that RectInRgn() sometimes
@@ -251,7 +251,7 @@ pascal unsigned char RectInRgn_patch( const Rect* r, MacRegion** rgn )
 	return SectRect( r, &rgn[0]->rgnBBox, &intersection );
 }
 
-pascal unsigned char EqualRgn_patch( MacRegion** a, MacRegion** b )
+pascal Boolean EqualRgn_patch( RgnHandle a, RgnHandle b )
 {
 	if ( a == b )
 	{
@@ -271,7 +271,7 @@ pascal unsigned char EqualRgn_patch( MacRegion** a, MacRegion** b )
 	return fast_memcmp( *a, *b, a[0]->rgnSize ) == 0;
 }
 
-pascal unsigned char EmptyRgn_patch( MacRegion** rgn )
+pascal Boolean EmptyRgn_patch( RgnHandle rgn )
 {
 	/*
 		Empty regions should be 0,0 - 0,0, but Postel's Law suggests we

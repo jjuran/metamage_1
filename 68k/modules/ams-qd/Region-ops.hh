@@ -10,16 +10,23 @@ struct BitMap;
 struct MacRegion;
 struct Point;
 
-pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap );
+typedef unsigned char Boolean;
 
-pascal void OffsetRgn_patch( MacRegion** rgn, short dh, short dv );
-pascal void InsetRgn_patch ( MacRegion** rgn, short dh, short dv );
+typedef short OSErr;
 
-pascal void SectRgn_patch ( MacRegion** a, MacRegion** b, MacRegion** dst );
-pascal void UnionRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst );
-pascal void DiffRgn_patch ( MacRegion** a, MacRegion** b, MacRegion** dst );
-pascal void XOrRgn_patch  ( MacRegion** a, MacRegion** b, MacRegion** dst );
+typedef MacRegion** RgnHandle;
 
-pascal unsigned char PtInRgn_patch( Point pt, MacRegion** rgn );
+
+pascal OSErr BitMapToRegion_patch( RgnHandle rgn, const BitMap* bitmap );
+
+pascal void OffsetRgn_patch( RgnHandle rgn, short dh, short dv );
+pascal void InsetRgn_patch ( RgnHandle rgn, short dh, short dv );
+
+pascal void SectRgn_patch ( RgnHandle a, RgnHandle b, RgnHandle dst );
+pascal void UnionRgn_patch( RgnHandle a, RgnHandle b, RgnHandle dst );
+pascal void DiffRgn_patch ( RgnHandle a, RgnHandle b, RgnHandle dst );
+pascal void XOrRgn_patch  ( RgnHandle a, RgnHandle b, RgnHandle dst );
+
+pascal Boolean PtInRgn_patch( Point pt, RgnHandle rgn );
 
 #endif

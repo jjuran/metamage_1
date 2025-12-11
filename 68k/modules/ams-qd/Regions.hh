@@ -10,39 +10,44 @@ struct MacRegion;
 struct Pattern;
 struct Rect;
 
-pascal void StdRgn_patch( signed char verb, MacRegion** rgn );
+typedef unsigned char Boolean;
 
-pascal void FrameRgn_patch( MacRegion** rgn );
-pascal void PaintRgn_patch( MacRegion** rgn );
-pascal void EraseRgn_patch( MacRegion** rgn );
-pascal void InverRgn_patch( MacRegion** rgn );
+typedef MacRegion** RgnHandle;
 
-pascal void FillRgn_patch( MacRegion** rgn, const Pattern* pattern );
 
-pascal MacRegion** NewRgn_patch();
+pascal void StdRgn_patch( signed char verb, RgnHandle rgn );
+
+pascal void FrameRgn_patch( RgnHandle rgn );
+pascal void PaintRgn_patch( RgnHandle rgn );
+pascal void EraseRgn_patch( RgnHandle rgn );
+pascal void InverRgn_patch( RgnHandle rgn );
+
+pascal void FillRgn_patch( RgnHandle rgn, const Pattern* pattern );
+
+pascal RgnHandle NewRgn_patch();
 
 pascal void OpenRgn_patch();
 
-pascal void CloseRgn_patch( MacRegion** rgn );
+pascal void CloseRgn_patch( RgnHandle rgn );
 
-pascal void DisposeRgn_patch( MacRegion** rgn );
+pascal void DisposeRgn_patch( RgnHandle rgn );
 
-pascal void CopyRgn_patch( MacRegion** src, MacRegion** dst );
+pascal void CopyRgn_patch( RgnHandle src, RgnHandle dst );
 
-pascal void SetEmptyRgn_patch( MacRegion** rgn );
+pascal void SetEmptyRgn_patch( RgnHandle rgn );
 
-pascal void SetRectRgn_patch( MacRegion**  rgn,
-                              short        left,
-                              short        top,
-                              short        right,
-                              short        bottom );
+pascal void SetRectRgn_patch( RgnHandle  rgn,
+                              short      left,
+                              short      top,
+                              short      right,
+                              short      bottom );
 
-pascal void RectRgn_patch( MacRegion** rgn, const Rect* r );
+pascal void RectRgn_patch( RgnHandle rgn, const Rect* r );
 
-pascal unsigned char RectInRgn_patch( const Rect* r, MacRegion** rgn );
+pascal Boolean RectInRgn_patch( const Rect* r, RgnHandle rgn );
 
-pascal unsigned char EqualRgn_patch( MacRegion** a, MacRegion** b );
+pascal Boolean EqualRgn_patch( RgnHandle a, RgnHandle b );
 
-pascal unsigned char EmptyRgn_patch( MacRegion** rgn );
+pascal Boolean EmptyRgn_patch( RgnHandle rgn );
 
 #endif

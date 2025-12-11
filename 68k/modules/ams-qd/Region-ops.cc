@@ -306,7 +306,7 @@ bool check_region( RgnHandle rgn, const char* func, int line )
 	return valid;
 }
 
-pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap )
+pascal OSErr BitMapToRegion_patch( RgnHandle rgn, const BitMap* bitmap )
 {
 	typedef unsigned short uint16_t;
 	
@@ -376,7 +376,7 @@ pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap )
 	return noErr;
 }
 
-pascal void OffsetRgn_patch( MacRegion** rgn, short dh, short dv )
+pascal void OffsetRgn_patch( RgnHandle rgn, short dh, short dv )
 {
 	CHECK_REGION( "OffsetRgn", rgn );
 	
@@ -464,7 +464,7 @@ void stretch_region_v( RgnHandle rgn, short dv, RgnHandle tmp )
 	}
 }
 
-pascal void InsetRgn_patch ( MacRegion** rgn, short dh, short dv )
+pascal void InsetRgn_patch ( RgnHandle rgn, short dh, short dv )
 {
 	static RgnHandle tmp = (scoped_zone(), NewRgn());
 	
@@ -558,7 +558,7 @@ bool empty_rgn( RgnHandle rgn )
 	return rgn == NULL  ||  empty_rect( rgn[0]->rgnBBox );
 }
 
-pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
+pascal void SectRgn_patch( RgnHandle a, RgnHandle b, RgnHandle dst )
 {
 	CHECK_REGION( "SectRgn", a );
 	CHECK_REGION( "SectRgn", b );
@@ -709,7 +709,7 @@ pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 
 static RgnHandle union_diff_tmp = NewRgn_patch();
 
-pascal void UnionRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
+pascal void UnionRgn_patch( RgnHandle a, RgnHandle b, RgnHandle dst )
 {
 	RgnHandle tmp = union_diff_tmp;
 	
@@ -719,7 +719,7 @@ pascal void UnionRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 	XorRgn( b, tmp, dst );
 }
 
-pascal void DiffRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
+pascal void DiffRgn_patch( RgnHandle a, RgnHandle b, RgnHandle dst )
 {
 	if ( empty_rgn( a ) )
 	{
@@ -737,7 +737,7 @@ pascal void DiffRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 
 static Handle xor_scratch = NewHandle( 0 );
 
-pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
+pascal void XOrRgn_patch( RgnHandle a, RgnHandle b, RgnHandle dst )
 {
 	CHECK_REGION( "XOrRgn", a );
 	CHECK_REGION( "XOrRgn", b );
@@ -795,7 +795,7 @@ bool odd_count_between( const short* begin, const short* end )
 	return byte_distance( begin, end ) & 2;
 }
 
-pascal unsigned char PtInRgn_patch( Point pt, MacRegion** rgn )
+pascal Boolean PtInRgn_patch( Point pt, RgnHandle rgn )
 {
 	if ( ! PtInRect( pt, &rgn[0]->rgnBBox ) )
 	{
