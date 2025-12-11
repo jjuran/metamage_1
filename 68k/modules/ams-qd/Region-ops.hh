@@ -8,9 +8,6 @@
 
 
 struct MacRegion;
-struct Point;
-
-typedef unsigned char Boolean;
 
 typedef MacRegion** RgnHandle;
 
@@ -22,7 +19,5 @@ pascal void SectRgn_patch ( RgnHandle a, RgnHandle b, RgnHandle dst );
 pascal void UnionRgn_patch( RgnHandle a, RgnHandle b, RgnHandle dst );
 pascal void DiffRgn_patch ( RgnHandle a, RgnHandle b, RgnHandle dst );
 pascal void XOrRgn_patch  ( RgnHandle a, RgnHandle b, RgnHandle dst );
-
-pascal Boolean PtInRgn_patch( Point pt, RgnHandle rgn );
 
 #endif

@@ -37,6 +37,7 @@
 #include "Rect-math.hh"
 #include "Rects.hh"
 #include "Region-ops.hh"
+#include "Region-test.hh"
 #include "Regions.hh"
 #include "RoundRects.hh"
 #include "StdBits.hh"

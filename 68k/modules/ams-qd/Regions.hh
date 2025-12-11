@@ -10,8 +10,6 @@ struct MacRegion;
 struct Pattern;
 struct Rect;
 
-typedef unsigned char Boolean;
-
 typedef MacRegion** RgnHandle;
 
 
@@ -43,11 +41,5 @@ pascal void SetRectRgn_patch( RgnHandle  rgn,
                               short      bottom );
 
 pascal void RectRgn_patch( RgnHandle rgn, const Rect* r );
-
-pascal Boolean RectInRgn_patch( const Rect* r, RgnHandle rgn );
-
-pascal Boolean EqualRgn_patch( RgnHandle a, RgnHandle b );
-
-pascal Boolean EmptyRgn_patch( RgnHandle rgn );
 
 #endif
