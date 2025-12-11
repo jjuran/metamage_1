@@ -115,7 +115,15 @@ void set_offscreen_chess_board_size( short x )
 		ExitToShell();
 	}
 	
-	SetGWorld( offscreen_port, NULL );
+	/*
+		Calling SetGWorld() here confuses the hell
+		out of CarbonLib (in Classic, not the native
+		Carbon.framework) in Mac OS X 10.2 and 10.3.
+		
+		We're not using a CLUT, so just call SetPort().
+	*/
+	
+	SetPort( offscreen_port );
 	
 #endif
 }
