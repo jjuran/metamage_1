@@ -19,6 +19,7 @@
 
 // ams-core
 #include "Arcs.hh"
+#include "BitMapToRegion.hh"
 #include "CopyBits.hh"
 #include "CopyMask.hh"
 #include "Cursor.hh"

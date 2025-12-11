@@ -25,7 +25,6 @@
 // quickdraw
 #include "qd/regions.hh"
 #include "qd/region_detail.hh"
-#include "qd/region_scanner.hh"
 
 // ams-common
 #include "callouts.hh"
@@ -43,12 +42,8 @@
 using quickdraw::offset_region;
 using quickdraw::Region_end;
 using quickdraw::region_geometry;
-using quickdraw::region_scanner;
 
 typedef quickdraw::region_geometry_t geometry_t;
-
-
-short MemErr : 0x0220;
 
 
 static inline short min( short a, short b )
@@ -303,76 +298,6 @@ bool check_region( RgnHandle rgn, const char* func, int line )
 	}
 	
 	return valid;
-}
-
-pascal OSErr BitMapToRegion_patch( RgnHandle rgn, const BitMap* bitmap )
-{
-	typedef unsigned short uint16_t;
-	
-	const Rect& bounds = bitmap->bounds;
-	
-	if ( bounds.bottom <= bounds.top  ||  bounds.right <= bounds.left )
-	{
-		SetEmptyRgn( rgn );
-		
-		return noErr;
-	}
-	
-	const short rowBytes = bitmap->rowBytes;
-	
-	const UInt16 height = bounds.bottom - bounds.top;
-	const UInt16 width  = bounds.right - bounds.left;
-	
-	/*
-		width and height are at least 1 and have a theoretical maximum
-		of 65534 (32767 - -32767), so we can safely add 1 to each.
-		
-		If width is exactly 65534, then max_h_longs will be 32768,
-		which is still small enough to fit in a UInt16 (which is why
-		we're counting longwords instead of words or bytes).
-	*/
-	
-	const UInt16 half_max_h_coords = width + 1 >> 1;
-	
-	const UInt16 max_h_longs = 1 + half_max_h_coords;
-	const UInt32 max_rgn_size = 10 + mulu_w( max_h_longs, height + 1 ) * 4 + 2;
-	
-	SetHandleSize( (Handle) rgn, max_rgn_size + rowBytes );
-	
-	uint16_t* temp_space = (uint16_t*) *rgn + max_rgn_size / 2;
-	
-	if ( MemErr )
-	{
-		return MemErr;
-	}
-	
-	int margin = -width & 0xF;
-	
-	short v = bounds.top;
-	
-	short* extent = rgn_extent( *rgn );
-	
-	region_scanner scanner( extent, temp_space, rowBytes );
-	
-	const uint16_t* p = (const uint16_t*) bitmap->baseAddr;
-	
-	const uint16_t* prev = temp_space;
-	
-	do
-	{
-		scanner.scan( bounds.left, v, p, prev, margin );
-		
-		prev = p;
-		
-		p += rowBytes / 2u;
-	}
-	while ( ++v < bounds.bottom );
-	
-	scanner.finish( bounds.left, v, prev, margin );
-	
-	finish_region( rgn, max_rgn_size + rowBytes );
-	
-	return noErr;
 }
 
 pascal void OffsetRgn_patch( RgnHandle rgn, short dh, short dv )

@@ -6,18 +6,14 @@
 #ifndef REGIONOPS_HH
 #define REGIONOPS_HH
 
-struct BitMap;
+
 struct MacRegion;
 struct Point;
 
 typedef unsigned char Boolean;
 
-typedef short OSErr;
-
 typedef MacRegion** RgnHandle;
 
-
-pascal OSErr BitMapToRegion_patch( RgnHandle rgn, const BitMap* bitmap );
 
 pascal void OffsetRgn_patch( RgnHandle rgn, short dh, short dv );
 pascal void InsetRgn_patch ( RgnHandle rgn, short dh, short dv );
