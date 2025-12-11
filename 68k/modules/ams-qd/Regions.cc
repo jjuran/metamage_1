@@ -18,7 +18,6 @@
 // ams-qd
 #include "GrafProcs.hh"
 #include "Polygons.hh"
-#include "Rect-utils.hh"
 #include "Rects.hh"
 
 
@@ -279,5 +278,5 @@ pascal Boolean EmptyRgn_patch( RgnHandle rgn )
 		i.e. don't just check for all zero data.
 	*/
 	
-	return empty_rect( rgn[0]->rgnBBox );
+	return EmptyRect( &rgn[0]->rgnBBox );
 }
