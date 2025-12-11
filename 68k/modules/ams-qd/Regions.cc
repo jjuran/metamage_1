@@ -213,16 +213,9 @@ pascal void SetRectRgn_patch( RgnHandle  rgn,
                               short      right,
                               short      bottom )
 {
-	if ( top >= bottom  ||  left >= right )
-	{
-		set_rect_region( rgn, emptyRect );
-	}
-	else
-	{
-		const Rect r = { top, left, bottom, right };
-		
-		set_rect_region( rgn, r );
-	}
+	const Rect r = { top, left, bottom, right };
+	
+	RectRgn( rgn, &r );
 }
 
 pascal void RectRgn_patch( RgnHandle rgn, const Rect* r )
