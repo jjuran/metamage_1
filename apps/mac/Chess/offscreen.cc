@@ -108,7 +108,20 @@ void set_offscreen_chess_board_size( short x )
 		offscreen_port = NULL;
 	}
 	
-	QDErr err = NewGWorld( &offscreen_port, 1, &buffer_bounds, NULL, NULL, 0 );
+	/*
+		Using depth=1 draws the black units as silhouettes
+		in CarbonLib (in Classic, that is, not the native
+		Carbon.framework) in Mac OS X 10.2 and 10.3.
+		
+		But depth=0 alters the pattern origin.  Perhaps it
+		fixes the bug in Tiger and later, but it doesn't
+		do so universally -- it's observed in macOS 10.12,
+		but not OS X 10.9.  So we'll set it conditionally.
+	*/
+	
+	const short d = TARGET_RT_MAC_MACHO;  // 1 for Mach-O, 0 for CFM
+	
+	QDErr err = NewGWorld( &offscreen_port, d, &buffer_bounds, NULL, NULL, 0 );
 	
 	if ( err )
 	{
