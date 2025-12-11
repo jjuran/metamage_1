@@ -33,7 +33,6 @@
 #include "scoped_zone.hh"
 
 // ams-qd
-#include "Rect-utils.hh"
 #include "Rects.hh"
 #include "Regions.hh"
 
@@ -552,18 +551,12 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 	ASSERT( CHECK_REGION( "sect_rect_region", dst ) );
 }
 
-static inline
-bool empty_rgn( RgnHandle rgn )
-{
-	return rgn == NULL  ||  empty_rect( rgn[0]->rgnBBox );
-}
-
 pascal void SectRgn_patch( RgnHandle a, RgnHandle b, RgnHandle dst )
 {
 	CHECK_REGION( "SectRgn", a );
 	CHECK_REGION( "SectRgn", b );
 	
-	if ( empty_rgn( a )  ||  empty_rgn( b ) )
+	if ( EmptyRgn( a )  ||  EmptyRgn( b ) )
 	{
 		SetEmptyRgn( dst );
 		
@@ -721,7 +714,7 @@ pascal void UnionRgn_patch( RgnHandle a, RgnHandle b, RgnHandle dst )
 
 pascal void DiffRgn_patch( RgnHandle a, RgnHandle b, RgnHandle dst )
 {
-	if ( empty_rgn( a ) )
+	if ( EmptyRgn( a ) )
 	{
 		SetEmptyRgn( dst );
 		
@@ -742,14 +735,14 @@ pascal void XOrRgn_patch( RgnHandle a, RgnHandle b, RgnHandle dst )
 	CHECK_REGION( "XOrRgn", a );
 	CHECK_REGION( "XOrRgn", b );
 	
-	if ( empty_rgn( a ) )
+	if ( EmptyRgn( a ) )
 	{
 		CopyRgn( b, dst );
 		
 		return;
 	}
 	
-	if ( empty_rgn( b ) )
+	if ( EmptyRgn( b ) )
 	{
 		CopyRgn( a, dst );
 		
