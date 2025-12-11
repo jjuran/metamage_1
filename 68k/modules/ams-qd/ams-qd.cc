@@ -33,6 +33,7 @@
 #include "Pictures.hh"
 #include "Points.hh"
 #include "Polygons.hh"
+#include "Rect-math.hh"
 #include "Rects.hh"
 #include "Region-ops.hh"
 #include "Regions.hh"
