@@ -33,7 +33,7 @@
 
 // ams-qd
 #include "Rects.hh"
-#include "Regions.hh"
+#include "Region-make.hh"
 
 
 #pragma exceptions off

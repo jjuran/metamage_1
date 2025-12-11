@@ -36,6 +36,7 @@
 #include "Polygons.hh"
 #include "Rect-math.hh"
 #include "Rects.hh"
+#include "Region-make.hh"
 #include "Region-ops.hh"
 #include "Region-test.hh"
 #include "Regions.hh"

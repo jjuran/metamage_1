@@ -19,7 +19,7 @@
 #include "color.hh"
 #include "draw.hh"
 #include "GrafProcs.hh"
-#include "Regions.hh"
+#include "Region-make.hh"
 #include "segments_box.hh"
 
 
