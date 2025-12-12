@@ -14,10 +14,12 @@ namespace vxo
 {
 	
 	char* extent_alloc_nothrow( unsigned long capacity );
-	char* extent_alloc_nothrow( unsigned long capacity, destructor dtor );
+	char* extent_alloc_nothrow( unsigned long capacity, destructor dtor,
+	                                                    duplicator dup = 0 );
 	
 	char* extent_alloc( unsigned long capacity );
-	char* extent_alloc( unsigned long capacity, destructor dtor );
+	char* extent_alloc( unsigned long capacity, destructor dtor,
+	                                            duplicator dup = 0 );
 	
 	void extent_add_ref( const char* buffer );
 	void extent_release( const char* buffer );

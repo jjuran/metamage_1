@@ -29,6 +29,7 @@ namespace vxo
 		
 		refcount_t    refcount;
 		unsigned long capacity;
+		duplicator    dup;
 		destructor    dtor;
 		destructor    dealloc;
 	};
@@ -80,6 +81,7 @@ namespace vxo
 		
 		header->refcount = 1;
 		header->capacity = capacity;
+		header->dup      = NULL;
 		header->dtor     = NULL;
 		header->dealloc  = &free;
 		
@@ -93,20 +95,25 @@ namespace vxo
 		return required( extent_alloc_nothrow( capacity ) );
 	}
 	
-	char* extent_alloc_nothrow( unsigned long capacity, destructor dtor )
+	char* extent_alloc_nothrow( unsigned long capacity, destructor dtor,
+	                                                    duplicator dup )
 	{
 		char* extent = extent_alloc_nothrow( capacity );
 		
 		memset( extent, '\0', capacity );
 		
-		header_from_buffer( extent )->dtor = dtor;
+		extent_header* header = header_from_buffer( extent );
+		
+		header->dup  = dup;
+		header->dtor = dtor;
 		
 		return extent;
 	}
 	
-	char* extent_alloc( unsigned long capacity, destructor dtor )
+	char* extent_alloc( unsigned long capacity, destructor dtor,
+	                                            duplicator dup )
 	{
-		return required( extent_alloc_nothrow( capacity, dtor ) );
+		return required( extent_alloc_nothrow( capacity, dtor, dup ) );
 	}
 	
 	static
@@ -118,10 +125,19 @@ namespace vxo
 		
 		if ( duplicate )
 		{
-			// TODO:  We'll often need a copy constructor as well.
-			header_from_buffer( duplicate )->dtor = header->dtor;
+			extent_header* second = header_from_buffer( duplicate );
+			
+			second->dup  = header->dup;
+			second->dtor = header->dtor;
 			
 			mempcpy( duplicate, buffer, header->capacity );
+			
+			if ( header->dup  &&  ! header->dup( (void*) buffer ) )
+			{
+				extent_release( duplicate );
+				
+				duplicate = NULL;
+			}
 		}
 		
 		return duplicate;
