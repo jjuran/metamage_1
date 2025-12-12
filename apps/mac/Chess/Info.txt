@@ -4,4 +4,4 @@ CFBundleIconFile:    "APPL.icns"
 CFBundlePackageType: 'APPL'
 CFBundleSignature:   'Kngt'
 CFBundleGetInfoString: "Copyright 2024-2025 Josh Juran"
-CFBundleShortVersionString: "0.2.2"
+CFBundleShortVersionString: "0.2.3"
