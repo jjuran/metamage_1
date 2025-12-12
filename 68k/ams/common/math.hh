@@ -8,6 +8,7 @@
 
 /*
 	mulu_w(a, b)       --> a * b
+	muldivs_w(a, b, d) --> a * b / d
 	muldivu_w(a, b, d) --> a * b / d
 	fixmulu_w(a, b)    --> a * b >> 16
 */
@@ -18,6 +19,16 @@ unsigned long mulu_w( unsigned short a : __D0,
                       unsigned short b : __D1 )
 {
 	MULU.W   D1,D0
+}
+
+inline
+asm
+short muldivs_w( short a : __D0,
+                 short b : __D1,
+                 short d : __D2 )  // divisor
+{
+	MULS.W   D1,D0
+	DIVS.W   D2,D0
 }
 
 inline
