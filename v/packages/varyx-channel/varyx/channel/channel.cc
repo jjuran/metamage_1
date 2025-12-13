@@ -158,6 +158,7 @@ namespace channel
 	:
 		Value( sizeof (channel_state),
 		       &generic_destructor< channel_state >,
+		       &vxo::no_duplication,
 		       Value_other,
 		       &channel_dispatch )
 	{
