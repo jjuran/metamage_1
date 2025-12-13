@@ -191,6 +191,7 @@ FSSpec::FSSpec()
 :
 	Value( sizeof (::FSSpec),
 	       NULL,
+	       &vxo::POD_duplicator,
 	       Value_other,
 	       &FSSpec_dispatch )
 {
@@ -203,6 +204,7 @@ FSSpec::FSSpec( const char* unix_path )
 :
 	Value( sizeof (::FSSpec),
 	       NULL,
+	       &vxo::POD_duplicator,
 	       Value_other,
 	       &FSSpec_dispatch )
 {

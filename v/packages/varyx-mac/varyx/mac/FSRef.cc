@@ -154,6 +154,7 @@ FSRef::FSRef()
 :
 	Value( sizeof (::FSRef),
 	       NULL,
+	       &vxo::POD_duplicator,
 	       Value_other,
 	       &FSRef_dispatch )
 {
@@ -166,6 +167,7 @@ FSRef::FSRef( const char* unix_path )
 :
 	Value( sizeof (::FSRef),
 	       NULL,
+	       &vxo::POD_duplicator,
 	       Value_other,
 	       &FSRef_dispatch )
 {
