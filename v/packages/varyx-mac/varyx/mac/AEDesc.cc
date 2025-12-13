@@ -239,10 +239,12 @@ Value mutating_op_handler( op_type        op,
                            const Value&   x,
                            const Value&   b )
 {
+	Value& desc = target.addr->unshare();
+	
 	switch ( op )
 	{
 		case Op_push:
-			return append_to_list( *target.addr, b );
+			return append_to_list( desc, b );
 		
 		default:
 			break;
@@ -275,10 +277,30 @@ void AEDesc_destructor( void* ptr )
 	::AEDisposeDesc( desc );
 }
 
+static
+bool AEDesc_duplicator( void* ptr )
+{
+	::AEDesc* desc = (::AEDesc*) ptr;
+	
+	::AEDesc dup;
+	
+	OSErr err = AEDuplicateDesc( desc, &dup );
+	
+	bool ok = err == noErr;
+	
+	if ( ok )
+	{
+		desc->dataHandle = dup.dataHandle;
+	}
+	
+	return ok;
+}
+
 AEDesc::AEDesc()
 :
 	Value( sizeof (::AEDesc),
 	       &AEDesc_destructor,
+	       &AEDesc_duplicator,
 	       Value_other,
 	       &AEDesc_dispatch )
 {
@@ -292,6 +314,7 @@ AEDesc::AEDesc( unsigned long type, const void* data, unsigned long size )
 :
 	Value( sizeof (::AEDesc),
 	       &AEDesc_destructor,
+	       &AEDesc_duplicator,
 	       Value_other,
 	       &AEDesc_dispatch )
 {
@@ -311,6 +334,7 @@ AEDesc::AEDesc( list_type_to_create list_type )
 :
 	Value( sizeof (::AEDesc),
 	       &AEDesc_destructor,
+	       &AEDesc_duplicator,
 	       Value_other,
 	       &AEDesc_dispatch )
 {
