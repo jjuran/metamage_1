@@ -109,18 +109,28 @@ namespace vxo
 		return required( extent_alloc_nothrow( capacity, dtor ) );
 	}
 	
-	static char* extent_duplicate( const char* buffer )
+	static
+	char* extent_duplicate_nothrow( const char* buffer )
 	{
 		extent_header* header = header_from_buffer( buffer );
 		
-		char* duplicate = extent_alloc( header->capacity );
+		char* duplicate = extent_alloc_nothrow( header->capacity );
 		
-		// TODO:  We'll often need a copy constructor as well.
-		header_from_buffer( duplicate )->dtor = header->dtor;
-		
-		mempcpy( duplicate, buffer, header->capacity );
+		if ( duplicate )
+		{
+			// TODO:  We'll often need a copy constructor as well.
+			header_from_buffer( duplicate )->dtor = header->dtor;
+			
+			mempcpy( duplicate, buffer, header->capacity );
+		}
 		
 		return duplicate;
+	}
+	
+	static inline
+	char* extent_duplicate( const char* buffer )
+	{
+		return required( extent_duplicate_nothrow( buffer ) );
 	}
 	
 	void extent_add_ref( const char* buffer )
