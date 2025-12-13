@@ -73,7 +73,11 @@ namespace vlib
 	
 	Term::Term( symbol_type symtype, const plus::string& name )
 	:
-		Value( sizeof (Symbol), &generic_destructor< Symbol >, Value_symbol, &term_dispatch )
+		Value( sizeof (Symbol),
+		       &generic_destructor< Symbol >,
+		       &vxo::no_duplication,
+		       Value_symbol,
+		       &term_dispatch )
 	{
 		new ((void*) pointer()) Symbol( symtype, name );
 	}
