@@ -13,6 +13,7 @@
 #include "iota/class.hh"
 
 // vxo
+#include "vxo/callback.hh"
 #include "vxo/datum_storage.hh"
 
 // bignum
@@ -52,7 +53,8 @@
 namespace vlib
 {
 	
-	typedef void (*destructor)( void* );
+	using vxo::destructor;
+	using vxo::duplicator;
 	
 	enum vbox_type
 	{
@@ -117,7 +119,8 @@ namespace vlib
 				u.alloc.flags     = flags;
 			}
 			
-			vbox( unsigned long n, destructor dtor, char semantics );
+			vbox( unsigned long n, destructor dtor,
+			                       duplicator dup, char semantics );
 			
 			vbox( const vbox& that );
 			

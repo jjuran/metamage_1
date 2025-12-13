@@ -62,7 +62,7 @@ namespace vlib
 	
 	Value::Value( const Value& a, const Value& b )
 	:
-		its_box( sizeof (Expr), &pair_destructor, Value_pair )
+		its_box( sizeof (Expr), &pair_destructor, NULL, Value_pair )
 	{
 		its_dispatch = NULL;
 		new ((void*) its_box.pointer()) Expr( a, Op_list, b );
@@ -80,7 +80,7 @@ namespace vlib
 	
 	Value::Value( op_type op, const Value& v )
 	:
-		its_box( sizeof (Expr), &pair_destructor, Value_pair )
+		its_box( sizeof (Expr), &pair_destructor, NULL, Value_pair )
 	{
 		its_dispatch = NULL;
 		new ((void*) its_box.pointer()) Expr( Value_dummy_operand, op, v );
@@ -101,7 +101,7 @@ namespace vlib
 	              const Value&        b,
 	              const source_spec&  s )
 	:
-		its_box( sizeof (Expr), &pair_destructor, Value_pair )
+		its_box( sizeof (Expr), &pair_destructor, NULL, Value_pair )
 	{
 		its_dispatch = NULL;
 		new ((void*) its_box.pointer()) Expr( a, op, b, s );
@@ -132,7 +132,7 @@ namespace vlib
 	              const Value&        b,
 	              const dispatch*     d )
 	:
-		its_box( sizeof (Expr), &pair_destructor, Value_pair )
+		its_box( sizeof (Expr), &pair_destructor, NULL, Value_pair )
 	{
 		its_dispatch = d;
 		new ((void*) its_box.pointer()) Expr( a, op, b );
@@ -150,7 +150,15 @@ namespace vlib
 	
 	Value::Value( long n, destructor dtor, value_type t, const dispatch* d )
 	:
-		its_box( n, dtor, t )
+		its_box( n, dtor, NULL, t )
+	{
+		its_dispatch = d;
+	}
+	
+	Value::Value( long n, destructor dtor,
+	                      duplicator dup, value_type t, const dispatch* d )
+	:
+		its_box( n, dtor, dup, t )
 	{
 		its_dispatch = d;
 	}

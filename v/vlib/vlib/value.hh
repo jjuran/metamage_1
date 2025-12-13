@@ -146,6 +146,9 @@ namespace vlib
 			
 			Value( long n, destructor dtor, value_type t, const dispatch* d );
 			
+			Value( long n, destructor dtor,
+			               duplicator dup, value_type t, const dispatch* d );
+			
 			void set_cycle_free()    { set_flag  ( Flag_cycle_free ); }
 			void clear_cycle_free()  { clear_flag( Flag_cycle_free ); }
 			

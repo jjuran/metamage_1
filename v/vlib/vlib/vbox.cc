@@ -116,9 +116,10 @@ namespace vlib
 		u.alloc.flags     = flags;
 	}
 	
-	vbox::vbox( unsigned long n, destructor dtor, char semantics )
+	vbox::vbox( unsigned long n, destructor dtor,
+	                             duplicator dup, char semantics )
 	{
-		char* extent = vxo::extent_alloc( n, dtor );
+		char* extent = vxo::extent_alloc( n, dtor, dup );
 		
 		u.alloc.pointer   = extent;
 		u.alloc.type      = Vbox_alloc;
