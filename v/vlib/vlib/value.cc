@@ -148,13 +148,6 @@ namespace vlib
 		}
 	}
 	
-	Value::Value( long n, destructor dtor, value_type t, const dispatch* d )
-	:
-		its_box( n, dtor, NULL, t )
-	{
-		its_dispatch = d;
-	}
-	
 	Value::Value( long n, destructor dtor,
 	                      duplicator dup, value_type t, const dispatch* d )
 	:
