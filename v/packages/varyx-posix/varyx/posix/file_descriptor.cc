@@ -244,6 +244,7 @@ namespace posix
 	:
 		Value( sizeof (auto_fd),
 		       &generic_destructor< auto_fd >,
+		       &vxo::no_duplication,
 		       Value_other,
 		       &fd_dispatch )
 	{

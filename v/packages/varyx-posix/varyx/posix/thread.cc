@@ -117,6 +117,7 @@ namespace posix
 	:
 		Value( sizeof (thread_state),
 		       &generic_destructor< thread_state >,
+		       &vxo::no_duplication,
 		       Value_other,
 		       &thread_dispatch )
 	{
