@@ -14,11 +14,9 @@ namespace vlib
 	
 	Value& first_mutable( Value& list )
 	{
-		list.unshare();
-		
 		if ( Expr* expr = list.listexpr() )
 		{
-			return expr->left;
+			return list.unshare().expr()->left;
 		}
 		
 		return list;  // not a (non-empty) list
