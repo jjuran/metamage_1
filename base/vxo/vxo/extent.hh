@@ -6,11 +6,12 @@
 #ifndef VXO_EXTENT_HH
 #define VXO_EXTENT_HH
 
+// vxo
+#include "vxo/callback.hh"
+
 
 namespace vxo
 {
-	
-	typedef void (*destructor)( void* );
 	
 	char* extent_alloc_nothrow( unsigned long capacity );
 	char* extent_alloc_nothrow( unsigned long capacity, destructor dtor );
