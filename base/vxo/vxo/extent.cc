@@ -31,7 +31,6 @@ namespace vxo
 		unsigned long capacity;
 		duplicator    dup;
 		destructor    dtor;
-		destructor    dealloc;
 	};
 	
 	static inline
@@ -83,7 +82,6 @@ namespace vxo
 		header->capacity = capacity;
 		header->dup      = NULL;
 		header->dtor     = NULL;
-		header->dealloc  = &free;
 		
 		char* buffer = reinterpret_cast< char* >( header + 1 );
 		
@@ -167,7 +165,7 @@ namespace vxo
 				dtor( (void*) buffer );
 			}
 			
-			header->dealloc( header );
+			free( header );
 		}
 	}
 	
