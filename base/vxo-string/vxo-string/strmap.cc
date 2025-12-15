@@ -9,6 +9,9 @@
 #include <algorithm>
 
 
+#pragma exceptions off
+
+
 namespace vxo
 {
 

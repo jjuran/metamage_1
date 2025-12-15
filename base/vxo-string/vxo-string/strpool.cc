@@ -18,6 +18,9 @@
 #include "debug/assert.hh"
 
 
+#pragma exceptions off
+
+
 namespace vxo
 {
 
