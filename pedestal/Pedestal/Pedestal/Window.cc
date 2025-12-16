@@ -27,8 +27,9 @@ namespace Pedestal
 	static NONCARBON_INLINE
 	void ResizedWindow( WindowRef window )
 	{
+		using mac::qd::get_portRect;
+		
 		// Don't rely on the requested size because it might have been tweaked
-		Rect bounds = mac::qd::get_portRect( window );
 		
 		// Shotgun approach -- invalidate the whole window.
 		// This conveniently includes both old and new grow box locations.
@@ -38,7 +39,7 @@ namespace Pedestal
 		
 		if ( View* view = get_window_view( window ) )
 		{
-			view->SetBounds( bounds );
+			view->SetBounds( get_portRect( window ) );
 		}
 		
 		if ( WindowResized_proc proc = get_window_resized_proc( window ) )
