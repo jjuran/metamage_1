@@ -15,6 +15,7 @@
 
 // ams-common
 #include "callouts.hh"
+#include "scoped_zone.hh"
 
 
 #pragma exceptions off
@@ -76,17 +77,13 @@ pascal Boolean PtInRgn_patch( Point pt, RgnHandle rgn )
 
 pascal Boolean RectInRgn_patch( const Rect* r, RgnHandle rgn )
 {
-	/*
-		Inside Macintosh Volume I documents that RectInRgn() sometimes
-		returns true when the rectangle merely intersects the region's
-		bounding box but not the region itself.  It's not clear if Apple's
-		implementation is more than a glorified SectRect() call, but in any
-		case the documentation doesn't require it.
-	*/
+	static RgnHandle tmp = (scoped_zone(), NewRgn());
 	
-	Rect intersection;
+	RectRgn( tmp, r );
 	
-	return SectRect( r, &rgn[0]->rgnBBox, &intersection );
+	SectRgn( rgn, tmp, tmp );
+	
+	return ! EmptyRgn( tmp );
 }
 
 pascal Boolean EqualRgn_patch( RgnHandle a, RgnHandle b )
