@@ -89,7 +89,7 @@ namespace Genie
 		
 		static void Set( WindowRef window, Point position )
 		{
-			Ped::SetWindowPosition( window, position );
+			MoveWindow( window, position.h, position.v, false );
 		}
 	};
 	
@@ -102,7 +102,9 @@ namespace Genie
 		
 		static void Set( WindowRef window, Point size )
 		{
-			Ped::SetWindowSize( window, size );
+			mac::qd::scoped_port port( window );
+			
+			Ped::ResizeWindow( window, size );
 		}
 	};
 	
