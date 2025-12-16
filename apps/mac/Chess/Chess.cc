@@ -94,19 +94,6 @@ Point get_global_mouse()
 	return pt;
 }
 
-static inline
-bool point_in_rect_rgn( Point pt, RgnHandle rgn )
-{
-#if ! OPAQUE_TOOLBOX_STRUCTS
-	
-	return PtInRect( pt, &rgn[0]->rgnBBox );
-	
-#endif
-	
-	return PtInRgn( pt, rgn );
-	
-}
-
 static
 void set_regions()
 {
@@ -135,7 +122,7 @@ void mouse_moved( Point where )
 	
 	if ( ! chess::game.finished  &&  FrontWindow() == main_window )
 	{
-		if ( point_in_rect_rgn( where, gBoardRgn ) )
+		if ( PtInRgn( where, gBoardRgn ) )
 		{
 			gMouseRgn = gBoardRgn;
 			
