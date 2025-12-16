@@ -8,12 +8,12 @@
 
 // Mac OS X
 #ifdef __APPLE__
-#include <Carbon/Carbon.h>
+#include <ApplicationServices/ApplicationServices.h>
 #endif
 
 // Mac OS
-#ifndef __MACWINDOWS__
-#include <MacWindows.h>
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
 #endif
 
 
@@ -23,14 +23,6 @@ namespace Pedestal
 	void ResizeWindow( WindowRef window, Point newSize );
 	
 	void ResizingWindow( WindowRef window, Point start );
-	
-	
-	void SetWindowSize( WindowRef window, Point size );
-	
-	inline void SetWindowPosition( WindowRef window, Point position )
-	{
-		::MoveWindow( window, position.h, position.v, false );
-	}
 	
 }
 

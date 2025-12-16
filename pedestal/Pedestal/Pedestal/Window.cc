@@ -5,9 +5,18 @@
 
 #include "Pedestal/Window.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __MACWINDOWS__
+#include <MacWindows.h>
+#endif
+
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
-#include "mac_qd/scoped_port.hh"
 
 // Pedestal
 #include "Pedestal/View.hh"
@@ -79,13 +88,6 @@ namespace Pedestal
 				ResizeWindow( window, (Point&) grown );
 			}
 		}
-	}
-	
-	void SetWindowSize( WindowRef window, Point size )
-	{
-		mac::qd::scoped_port thePort( window );
-		
-		ResizeWindow( window, size );
 	}
 	
 }
