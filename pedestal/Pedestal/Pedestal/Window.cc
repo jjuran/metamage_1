@@ -88,40 +88,4 @@ namespace Pedestal
 		ResizeWindow( window, size );
 	}
 	
-	
-	#if 0
-	
-	static Rect CalcWindowStructureDiff()
-	{
-		Rect r = { -200, -200, -100, -100 };
-		unsigned char* title = "\pTest";
-		bool vis = true;
-		int procID = 0;
-		WindowRef front = kFirstWindowOfClass;
-		bool goAway = true;
-		int refCon = 0;
-		WindowRef windowPtr = ::NewWindow(NULL, &r, title, vis, procID, front, goAway, refCon);
-		
-		VRegion region;
-		::GetWindowStructureRgn(windowPtr, region);
-		::DisposeWindow(windowPtr);
-		RgnHandle rgnH = region;
-		Rect bounds = (**rgnH).rgnBBox;
-		
-		return SetRect(
-			bounds.left   - r.left, 
-			bounds.top    - r.top, 
-			bounds.right  - r.right, 
-			bounds.bottom - r.bottom
-		);
-	}
-	
-	static Rect WindowStructureDiff()
-	{
-		static Rect diff = CalcWindowStructureDiff();
-		return diff;
-	}
-	
-	#endif
-	
 }
