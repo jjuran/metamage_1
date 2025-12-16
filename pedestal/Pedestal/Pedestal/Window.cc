@@ -48,7 +48,6 @@ namespace Pedestal
 		}
 	}
 	
-	static
 	void ResizeWindow( WindowRef window, Point newSize )
 	{
 		SizeWindow( window, newSize.h, newSize.v, true );
