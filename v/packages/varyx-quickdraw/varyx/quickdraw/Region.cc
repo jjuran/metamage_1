@@ -260,7 +260,7 @@ const type_info Region_vtype =
 	&Region::coerce,
 	NULL,
 	&Region_member,
-	0,
+	Type_pure,
 };
 
 }
