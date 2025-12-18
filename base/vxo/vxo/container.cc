@@ -22,6 +22,32 @@
 namespace vxo
 {
 
+/*
+	Passing an Item* directly to memmove() or memset()
+	triggers a compiler warning that Item is a type
+	that's "non-trivially copyable".  Which is indeed
+	true, but we know something the compiler doesn't:
+	that an Item can be trivially shifted in memory.
+*/
+
+static inline
+void POD_move( void* dst, const void* src, size_t n_bytes_to_move )
+{
+	memmove( dst, src, n_bytes_to_move );
+}
+
+static inline
+void POD_zero( void* dst, size_t n_bytes_to_zero )
+{
+	memset( dst, '\0', n_bytes_to_zero );
+}
+
+static inline
+void POD_void( void* dst, size_t n_bytes_to_void )
+{
+	memset( dst, Box_undefined, n_bytes_to_void );
+}
+
 bool Container::test( const Box& box )
 {
 	return box.has_pointer()  &&
@@ -166,7 +192,7 @@ Box* Container::insert_n( Item* loc, size_t n )
 	
 	loc = begin() + offset;  // In case we reallocated
 	
-	memmove( loc + n, loc, n_bytes_to_move );
+	POD_move( loc + n, loc, n_bytes_to_move );
 	
 	/*
 		Void the inserted bytes by setting them to 0x7f rather than 0x00.
@@ -175,7 +201,7 @@ Box* Container::insert_n( Item* loc, size_t n )
 		undefined values.
 	*/
 	
-	memset( loc, Box_undefined, n_bytes_to_void );
+	POD_void( loc, n_bytes_to_void );
 	
 	return loc;
 }
@@ -190,9 +216,9 @@ void Container::erase_n( Item* loc, size_t n )
 	const size_t n_bytes_to_move = (char*) end() - (char*) (loc + n);
 	const size_t n_bytes_to_zero = n * sizeof (Box);
 	
-	memmove( loc, loc + n, n_bytes_to_move );
+	POD_move( loc, loc + n, n_bytes_to_move );
 	
-	memset( end() - n, '\0', n_bytes_to_zero );
+	POD_zero( end() - n, n_bytes_to_zero );
 	
 	u.str.length -= n;
 }
