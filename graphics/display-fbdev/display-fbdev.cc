@@ -9,11 +9,11 @@
 
 // POSIX
 #include <fcntl.h>
-#include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 // Standard C
 #include <errno.h>
@@ -133,6 +133,14 @@ static inline
 size_t min( size_t a, size_t b )
 {
 	return b < a ? b : a;
+}
+
+static inline
+const char* get_framebuffer()
+{
+	const char* framebuffer = getenv( "FRAMEBUFFER" );
+	
+	return framebuffer ? framebuffer : DEFAULT_FB_PATH;
 }
 
 static
@@ -923,7 +931,7 @@ int main( int argc, char** argv )
 	
 	const raster_desc& desc = loaded_raster.meta->desc;
 	
-	fb::handle fbh( DEFAULT_FB_PATH );
+	fb::handle fbh( get_framebuffer() );
 	
 	fb_var_screeninfo var_info = get_var_screeninfo( fbh );
 	

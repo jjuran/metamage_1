@@ -7,18 +7,27 @@
 
 // POSIX
 #include <fcntl.h>
-#include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
 // Standard C
 #include <errno.h>
+#include <stdlib.h>
 
+
+static inline
+const char* get_framebuffer()
+{
+	const char* framebuffer = getenv( "FRAMEBUFFER" );
+	
+	return framebuffer ? framebuffer : "/dev/fb0";
+}
 
 namespace fb
 {
 	
-	handle::handle() : fd( open( "/dev/fb0", O_RDWR ) )
+	handle::handle() : fd( open( get_framebuffer(), O_RDWR ) )
 	{
 		if ( fd < 0 )
 		{

@@ -8,12 +8,21 @@
 
 // POSIX
 #include <fcntl.h>
-#include <unistd.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 
 // Standard C
 #include <stdio.h>
+#include <stdlib.h>
 
+
+static inline
+const char* get_framebuffer()
+{
+	const char* framebuffer = getenv( "FRAMEBUFFER" );
+	
+	return framebuffer ? framebuffer : "/dev/fb0";
+}
 
 static
 void check_nok( const char* s, int nok )
@@ -28,9 +37,11 @@ void check_nok( const char* s, int nok )
 
 int main( int argc, char** argv )
 {
-	int fb0 = open( "/dev/fb0", O_WRONLY );
+	const char* framebuffer = get_framebuffer();
 	
-	check_nok( "/dev/fb0", fb0 < 0 );
+	int fb0 = open( framebuffer, O_WRONLY );
+	
+	check_nok( framebuffer, fb0 < 0 );
 	
 	check_nok( "FB_BLANK_UNBLANK", ioctl( fb0, FBIOBLANK, FB_BLANK_UNBLANK ) );
 	

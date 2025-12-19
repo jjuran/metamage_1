@@ -8,14 +8,24 @@
 
 // POSIX
 #include <fcntl.h>
-#include <unistd.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 
 // Standard C
 #include <stdio.h>
+#include <stdlib.h>
 
 
 #define PROGRAM  "redraw-screen"
+
+
+static inline
+const char* get_framebuffer()
+{
+	const char* framebuffer = getenv( "FRAMEBUFFER" );
+	
+	return framebuffer ? framebuffer : "/dev/fb0";
+}
 
 static
 void check_nok( const char* s, int nok )
@@ -30,9 +40,11 @@ void check_nok( const char* s, int nok )
 
 int main( int argc, char** argv )
 {
-	int fd = open( "/dev/fb0", O_WRONLY );
+	const char* framebuffer = get_framebuffer();
 	
-	check_nok( "/dev/fb0", fd < 0 );
+	int fd = open( framebuffer, O_WRONLY );
+	
+	check_nok( framebuffer, fd < 0 );
 	
 	fb_var_screeninfo var_info;
 	check_nok( PROGRAM ": FBIOGET_VSCREENINFO",

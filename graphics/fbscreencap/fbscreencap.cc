@@ -43,6 +43,14 @@
 
 
 static inline
+const char* get_framebuffer()
+{
+	const char* framebuffer = getenv( "FRAMEBUFFER" );
+	
+	return framebuffer ? framebuffer : DEFAULT_FB_PATH;
+}
+
+static inline
 void report_error( const char* path, uint32_t err )
 {
 	more::perror( PROGRAM, path, err );
@@ -92,7 +100,7 @@ void save_desktop_screenshot( const char* path )
 	using raster::kSKIFFileType;
 	using raster::Model_RGB;
 	
-	fb::handle fbh( DEFAULT_FB_PATH );
+	fb::handle fbh( get_framebuffer() );
 	
 	fb_var_screeninfo var_info = get_var_screeninfo( fbh );
 	fb_fix_screeninfo fix_info = get_fix_screeninfo( fbh );

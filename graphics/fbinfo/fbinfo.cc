@@ -11,6 +11,7 @@
 // Standard C
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 // fbinfo
@@ -25,6 +26,14 @@
 #define DEFAULT_FB_PATH  "/dev/fb0"
 #endif
 
+
+static inline
+const char* get_framebuffer()
+{
+	const char* framebuffer = getenv( "FRAMEBUFFER" );
+	
+	return framebuffer ? framebuffer : DEFAULT_FB_PATH;
+}
 
 static
 void print_fb_bitfield( const char* label,
@@ -138,7 +147,7 @@ void print_fbdev_info( const char* path )
 
 int main( int argc, char** argv )
 {
-	const char* filename = DEFAULT_FB_PATH;
+	const char* filename = get_framebuffer();
 	
 	if ( argc >= 3  &&  strcmp( argv[ 1 ], "-d" ) == 0 )
 	{
