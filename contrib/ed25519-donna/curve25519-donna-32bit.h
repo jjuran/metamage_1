@@ -362,16 +362,16 @@ curve25519_expand(bignum25519 out, const unsigned char in[32]) {
 		#undef F
 	}
 
-	out[0] = (                   x0       ) & 0x3ffffff;
-	out[1] = ((x1 << 32 - 26) | (x0 >> 26)) & 0x1ffffff;
-	out[2] = ((x2 << 32 - 19) | (x1 >> 19)) & 0x3ffffff;
-	out[3] = ((x3 << 32 - 13) | (x2 >> 13)) & 0x1ffffff;
-	out[4] = (                  (x3 >>  6)) & 0x3ffffff;
-	out[5] = (                   x4       ) & 0x1ffffff;
-	out[6] = ((x5 << 32 - 25) | (x4 >> 25)) & 0x3ffffff;
-	out[7] = ((x6 << 32 - 19) | (x5 >> 19)) & 0x1ffffff;
-	out[8] = ((x7 << 32 - 12) | (x6 >> 12)) & 0x3ffffff;
-	out[9] = (                  (x7 >>  6)) & 0x1ffffff;
+	out[0] = (                     x0       ) & 0x3ffffff;
+	out[1] = ((x1 << (32 - 26)) | (x0 >> 26)) & 0x1ffffff;
+	out[2] = ((x2 << (32 - 19)) | (x1 >> 19)) & 0x3ffffff;
+	out[3] = ((x3 << (32 - 13)) | (x2 >> 13)) & 0x1ffffff;
+	out[4] = (                    (x3 >>  6)) & 0x3ffffff;
+	out[5] = (                     x4       ) & 0x1ffffff;
+	out[6] = ((x5 << (32 - 25)) | (x4 >> 25)) & 0x3ffffff;
+	out[7] = ((x6 << (32 - 19)) | (x5 >> 19)) & 0x1ffffff;
+	out[8] = ((x7 << (32 - 12)) | (x6 >> 12)) & 0x3ffffff;
+	out[9] = (                    (x7 >>  6)) & 0x1ffffff;
 }
 
 /* Take a fully reduced polynomial form number and contract it into a
