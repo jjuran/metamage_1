@@ -49,6 +49,9 @@
 // gear
 #include "gear/parse_decimal.hh"
 
+// cthread-either
+#include "cthread-either.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -189,6 +192,11 @@ namespace Genie
 				break;
 			
 		#endif
+			
+			case runctl_current_thread_stack_space:
+				using cthread::either::current_thread_stack_space;
+				
+				return current_thread_stack_space();
 			
 			default:
 				break;
