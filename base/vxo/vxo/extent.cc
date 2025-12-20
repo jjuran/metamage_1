@@ -98,12 +98,15 @@ namespace vxo
 	{
 		char* extent = extent_alloc_nothrow( capacity );
 		
-		memset( extent, '\0', capacity );
-		
-		extent_header* header = header_from_buffer( extent );
-		
-		header->dup  = dup;
-		header->dtor = dtor;
+		if ( extent )
+		{
+			memset( extent, '\0', capacity );
+			
+			extent_header* header = header_from_buffer( extent );
+			
+			header->dup  = dup;
+			header->dtor = dtor;
+		}
 		
 		return extent;
 	}
