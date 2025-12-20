@@ -5,14 +5,6 @@
 extern "C" {
 #endif
 
-enum
-{
-	runctl_get_max,
-	runctl_allocate_syscall_stack,
-	
-	runctl_end
-};
-
 struct _relix_user_parameter_block
 {
 	const void* stack_bottom;

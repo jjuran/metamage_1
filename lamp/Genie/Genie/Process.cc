@@ -39,6 +39,7 @@
 #include "mac_sys/exit_to_shell.hh"
 
 // relix-include
+#include "relix/runctl.h"
 #include "relix/syscalls.h"
 #include "relix/task/syscall_stack_base.hh"
 

@@ -9,6 +9,7 @@
 // Relix
 #include "relix/parameter_block.h"
 #include "relix/restack.h"
+#include "relix/runctl.h"
 #include "tool-runtime/parameter_block.h"
 
 
