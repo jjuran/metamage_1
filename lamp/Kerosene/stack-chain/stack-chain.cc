@@ -10,6 +10,7 @@
 // Relix
 #include "relix/parameter_block.h"
 #include "relix/restack.h"
+#include "relix/runctl.h"
 #include "relix/stack.h"
 #include "tool-runtime/parameter_block.h"
 
@@ -55,28 +56,21 @@ static _relix_stack_footer* get_top_stack()
 	return NULL;
 }
 
-static inline const void* get_stack_limit()
+unsigned _relix_stack_space()
 {
 	if ( _relix_stack_footer* stack = get_top_stack() )
 	{
-		return stack->stack_limit;
+		register const char* stack_pointer = 0;
+		
+		asm
+		{
+			GETSP( stack_pointer );
+		}
+		
+		return stack_pointer - (const char*) stack->stack_limit;
 	}
 	
-	return global_user_params->stack_limit;
-}
-
-unsigned _relix_stack_space()
-{
-	register const char* stack_pointer = 0;
-	
-	asm
-	{
-		GETSP( stack_pointer );
-	}
-	
-	const char* stack_limit = (const char*) get_stack_limit();
-	
-	return stack_pointer - stack_limit;
+	return global_system_params->runctl( runctl_current_thread_stack_space );
 }
 
 void* _create_new_stack()
