@@ -5,10 +5,10 @@
 
 // POSIX
 #include <fcntl.h>
-#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 // Standard C
 #include <errno.h>
@@ -381,6 +381,8 @@ void launch_interactive( char* const* args )
 		const int other = viewer_fd;
 		
 		const int keep_output = -1;  // Don't clobber stdout
+		
+		signal( SIGINT, SIG_DFL );
 		
 		exec_or_exit_endpoint( args, ours, other, events_fd, keep_output );
 	}
