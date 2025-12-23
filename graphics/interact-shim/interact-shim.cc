@@ -5,11 +5,15 @@
 
 // POSIX
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 // Standard C
 #include <signal.h>
 #include <stdlib.h>
+
+// more-posix
+#include "more/perror.hh"
 
 
 #define PROGRAM  "interact-shim"
@@ -37,6 +41,23 @@ int main( int argc, char** argv )
 	{
 		write( STDERR_FILENO, STR_LEN( USAGE ) );
 		return 2;
+	}
+	
+	struct stat st;
+	int nok = stat( update_fifo, &st );
+	
+	if ( nok )
+	{
+		more::perror( PROGRAM, update_fifo );
+		
+		return 1;
+	}
+	
+	if ( ! S_ISFIFO( st.st_mode ) )
+	{
+		more::perror( PROGRAM, update_fifo, "not a named pipe" );
+		
+		return 1;
 	}
 	
 	signal( SIGTERM, &sigterm );
