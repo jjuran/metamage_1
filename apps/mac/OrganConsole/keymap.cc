@@ -31,21 +31,21 @@
 /*
 	Upper manual:
 	
-	      Db  Eb      Gb  Ab  Bb      Db  Eb
-	      4   5       7   8   9       -   =
-	      21  23      26  28  25      27  24
-	B   C   D   E   F   G   A   B   C   D   E   F
-	w   e   r   t   y   u   i   o   p   [   ]   \
-	13  14  15  17  16  32  34  31  35  33  30  42
+	  Bb      Db  Eb      Gb  Ab  Bb      Db  Eb
+	  2       4   5       7   8   9       -   =
+	  19      21  23      26  28  25      27  24
+	A   B   C   D   E   F   G   A   B   C   D   E   F
+	q   w   e   r   t   y   u   i   o   p   [   ]   \
+	12  13  14  15  17  16  32  34  31  35  33  30  42
 	
 	Lower manual:
 	
-	      Db  Eb      Gb  Ab  Bb      Db
-	      d   f       h   j   k       ;
-	      2   3       4   38  40      41
-	B   C   D   E   F   G   A   B   C   D
-	z   x   c   v   b   n   m   ,   .   /
-	6   7   8   9   11  45  46  43  47  44
+	          Db  Eb      Gb  Ab  Bb      Db
+	          d   f       h   j   k       ;
+	          2   3       4   38  40      41
+	    B   C   D   E   F   G   A   B   C   D
+	    z   x   c   v   b   n   m   ,   .   /
+	    6   7   8   9   11  45  46  43  47  44
 	
 */
 
@@ -67,7 +67,7 @@ short keymap[ 64 ] =
 	LOWER E,   // V
 	0,
 	LOWER F,   // B
-	0,
+	LOWER A,   // Q
 	LOWER B,   // W
 	UPPER C,   // E
 	UPPER D,   // R
@@ -77,7 +77,7 @@ short keymap[ 64 ] =
 	UPPER F,   // Y
 	UPPER E,   // T
 	0,
-	0,
+	LOWER Bb,  // 2
 	0,
 	UPPER Db,  // 4
 	0,
