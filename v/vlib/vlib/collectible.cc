@@ -186,7 +186,9 @@ namespace vlib
 	{
 		list_iterator it( symlist );
 		
-		while ( const Symbol* sym = it.use().sym() )
+		const Symbol* sym;
+		
+		while ( it  &&  (sym = it.use().sym()) )
 		{
 			if ( sym->mark() )
 			{

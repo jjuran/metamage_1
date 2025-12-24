@@ -83,7 +83,7 @@ namespace vlib
 				return result;
 			}
 			
-			const Value& arg = args.use();
+			const Value& arg = args ? args.use() : empty_list;
 			
 			const Value r = expr ? apply_prototype_param( expr, arg ) : arg;
 			
