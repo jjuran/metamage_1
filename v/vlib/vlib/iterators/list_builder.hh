@@ -18,6 +18,7 @@ namespace vlib
 	
 	class list_builder
 	{
+		NON_COPYABLE( list_builder )
 		NO_NEW_DELETE
 		
 		private:
