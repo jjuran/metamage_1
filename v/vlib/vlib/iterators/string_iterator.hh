@@ -6,6 +6,9 @@
 #ifndef VLIB_ITERATORS_STRINGITERATOR_HH
 #define VLIB_ITERATORS_STRINGITERATOR_HH
 
+// iota
+#include "iota/class.hh"
+
 // vlib
 #include "vlib/value.hh"
 
@@ -15,6 +18,9 @@ namespace vlib
 	
 	class string_iterator
 	{
+		NON_COPYABLE( string_iterator )
+		NO_NEW_DELETE
+		
 		private:
 			typedef const struct unspecified* boolean;
 			
