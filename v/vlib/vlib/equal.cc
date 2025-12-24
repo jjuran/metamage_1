@@ -136,7 +136,7 @@ namespace vlib
 		list_iterator a( one );
 		list_iterator b( two );
 		
-		while ( a  ||  b )
+		while ( a  &&  b )
 		{
 			if ( ! equal_atoms( a.use(), b.use() ) )
 			{
@@ -144,7 +144,7 @@ namespace vlib
 			}
 		}
 		
-		return true;
+		return ! a  &&  ! b;
 	}
 	
 }
