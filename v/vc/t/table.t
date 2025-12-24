@@ -14,3 +14,6 @@ $ vc 'var t = str^[]; t <-- (); t'
 
 $ vc 'int^[] map {_}'
 1 >= '[]'
+
+$ vc -- '-int^[]'
+1 >= '(integer^[])'

@@ -52,6 +52,11 @@ namespace vlib
 			{
 				Expr* expr = v.expr();
 				
+				if ( ! expr->right.expr() )
+				{
+					return v;
+				}
+				
 				const Value& old_list = expr->right.expr()->right;
 				
 				const Value new_list  = reverse_list( old_list );
