@@ -132,10 +132,17 @@ namespace vlib
 		
 		const bool is_call = arguments.type();
 		
-		const Value underscore = is_call ? gensym( Symbol_var, "_", arguments )
-		                                 : first( locals );
+		Value new_frame = locals;
 		
-		const Value new_frame( underscore, unshare_symbols( rest( locals ) ) );
+		Expr* frame_expr = new_frame.unshare().expr();
+		
+		if ( is_call )
+		{
+			frame_expr->left = gensym( Symbol_var, "_", arguments );
+		}
+		
+		frame_expr->right = unshare_symbols( frame_expr->right );
+		
 		const Value new_stack( caller, Op_frame, new_frame );
 		
 		const Value& unshared_locals = is_call ? new_frame
