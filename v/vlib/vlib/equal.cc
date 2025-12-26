@@ -11,6 +11,7 @@
 // vlib
 #include "vlib/error.hh"
 #include "vlib/is_type.hh"
+#include "vlib/list-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/dispatch.hh"

@@ -328,12 +328,6 @@ namespace vlib
 	}
 	
 	inline
-	bool is_single( const Value& v )
-	{
-		return ! is_empty_list( v )  &&  ! v.listexpr();
-	}
-	
-	inline
 	bool is_symbol_declarator( const Value& v )
 	{
 		if ( Expr* expr = v.expr() )

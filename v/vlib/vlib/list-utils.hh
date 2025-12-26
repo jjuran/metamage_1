@@ -15,6 +15,8 @@ namespace vlib
 	
 	struct mutable_list_overrun {};
 	
+	bool is_single( const Value& v );
+	
 	const Value& first( const Value& list );
 	const Value& rest ( const Value& list );
 	

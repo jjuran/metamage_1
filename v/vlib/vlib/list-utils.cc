@@ -12,6 +12,11 @@
 namespace vlib
 {
 	
+	bool is_single( const Value& v )
+	{
+		return ! is_empty_list( v )  &&  ! v.listexpr();
+	}
+	
 	const Value& first( const Value& list )
 	{
 		if ( Expr* expr = list.listexpr() )
