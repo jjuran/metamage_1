@@ -68,7 +68,7 @@ namespace vlib
 		}
 	}
 	
-	static inline
+	static
 	void unshare_symbol( Value& v )
 	{
 		const Symbol* sym = v.sym();
@@ -76,6 +76,24 @@ namespace vlib
 		if ( sym  &&  ! sym->is_immutable() )
 		{
 			v = sym->clone();
+		}
+	}
+	
+	static
+	void unshare_symbols( Value* next )
+	{
+		while ( Expr* expr = next->listexpr() )
+		{
+			expr = next->unshare().expr();
+			
+			unshare_symbol( expr->left );
+			
+			next = &expr->right;
+		}
+		
+		if ( ! is_empty_list( *next ) )
+		{
+			unshare_symbol( *next );
 		}
 	}
 	
@@ -92,24 +110,6 @@ namespace vlib
 		symbol.sym()->deref_unsafe() = v;
 		
 		return symbol;
-	}
-	
-	static
-	Value unshare_symbols( const Value& presets )
-	{
-		const Value& head = first( presets );
-		const Value& tail = rest ( presets );
-		
-		Value new_head = head;
-		
-		unshare_symbol( new_head );
-		
-		if ( is_empty_list( tail ) )
-		{
-			return new_head;
-		}
-		
-		return Value( new_head, unshare_symbols( tail ) );
 	}
 	
 	static
@@ -147,7 +147,7 @@ namespace vlib
 			frame_expr->left = gensym( Symbol_var, "_", arguments );
 		}
 		
-		frame_expr->right = unshare_symbols( frame_expr->right );
+		unshare_symbols( &frame_expr->right );
 		
 		const Value new_stack( caller, Op_frame, new_frame );
 		
