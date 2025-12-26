@@ -360,9 +360,6 @@ namespace vlib
 	
 	unsigned long area( const Value& v );
 	
-	const Value& first( const Value& list );
-	const Value& rest ( const Value& list );
-	
 }
 
 #endif

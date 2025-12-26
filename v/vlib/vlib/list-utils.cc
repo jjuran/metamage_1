@@ -12,6 +12,26 @@
 namespace vlib
 {
 	
+	const Value& first( const Value& list )
+	{
+		if ( Expr* expr = list.listexpr() )
+		{
+			return expr->left;
+		}
+		
+		return list;  // not a (non-empty) list
+	}
+	
+	const Value& rest( const Value& list )
+	{
+		if ( Expr* expr = list.listexpr() )
+		{
+			return expr->right;
+		}
+		
+		return empty_list;
+	}
+	
 	Value& first_mutable( Value& list )
 	{
 		if ( Expr* expr = list.listexpr() )

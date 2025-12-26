@@ -29,8 +29,9 @@
 #include "plus/string.hh"
 
 // vlib
-#include "vlib/types/endec/stdint.hh"
+#include "vlib/list-utils.hh"
 #include "vlib/types/boolean.hh"
+#include "vlib/types/endec/stdint.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/stdint.hh"

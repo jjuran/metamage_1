@@ -32,6 +32,7 @@
 
 // vlib
 #include "vlib/array-utils.hh"
+#include "vlib/list-utils.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/types.hh"
 #include "vlib/iterators/list_builder.hh"
