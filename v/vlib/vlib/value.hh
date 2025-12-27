@@ -171,15 +171,7 @@ namespace vlib
 			}
 			
 			template < class Type >
-			Type const& as() const
-			{
-				if ( Type const* that = is< Type >() )
-				{
-					return *that;
-				}
-				
-				throw invalid_cast();
-			}
+			Type const& as() const;
 			
 			template < class Type >
 			Type to() const
@@ -283,6 +275,17 @@ namespace vlib
 		      const Value&        b,
 		      const source_spec&  s = source_spec() );
 	};
+	
+	template < class Type >
+	Type const& Value::as() const
+	{
+		if ( Type const* that = is< Type >() )
+		{
+			return *that;
+		}
+		
+		throw invalid_cast();
+	}
 	
 	template < class Type >
 	Value assign_to( const Value& v )
