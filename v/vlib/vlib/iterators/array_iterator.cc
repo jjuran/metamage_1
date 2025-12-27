@@ -8,11 +8,14 @@
 // debug
 #include "debug/assert.hh"
 
+// vlib
+#include "vlib/array-utils.hh"
+
 
 namespace vlib
 {
 	
-	static
+	static inline
 	const Value& array_list( const Value& array )
 	{
 		ASSERT( is_array( array ) );
