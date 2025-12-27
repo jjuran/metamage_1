@@ -292,20 +292,6 @@ namespace vlib
 		      const source_spec&  s = source_spec() );
 	};
 	
-	inline
-	Symbol* Value::decl_sym() const
-	{
-		if ( Expr* ex = expr() )
-		{
-			if ( declares_symbols( ex->op ) )
-			{
-				return ex->right.sym();
-			}
-		}
-		
-		return 0;  // NULL
-	}
-	
 	template < class Type >
 	Value assign_to( const Value& v )
 	{

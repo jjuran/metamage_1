@@ -215,6 +215,19 @@ namespace vlib
 		return decl_sym();
 	}
 	
+	Symbol* Value::decl_sym() const
+	{
+		if ( Expr* ex = expr() )
+		{
+			if ( declares_symbols( ex->op ) )
+			{
+				return ex->right.sym();
+			}
+		}
+		
+		return 0;  // NULL
+	}
+	
 	Expr* Value::listexpr() const
 	{
 		if ( Expr* exp = expr() )
