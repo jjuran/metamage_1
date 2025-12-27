@@ -244,15 +244,7 @@ namespace vlib
 			
 			Symbol* decl_sym() const;
 			
-			Expr* expr() const
-			{
-				if ( its_box.semantics() == Value_pair )
-				{
-					return (Expr*) its_box.pointer();
-				}
-				
-				return 0;  // NULL
-			}
+			Expr* expr() const;
 			
 			Expr* listexpr() const;
 			

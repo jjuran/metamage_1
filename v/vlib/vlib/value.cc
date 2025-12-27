@@ -228,6 +228,16 @@ namespace vlib
 		return 0;  // NULL
 	}
 	
+	Expr* Value::expr() const
+	{
+		if ( its_box.semantics() == Value_pair )
+		{
+			return (Expr*) its_box.pointer();
+		}
+		
+		return 0;  // NULL
+	}
+	
 	Expr* Value::listexpr() const
 	{
 		if ( Expr* exp = expr() )
