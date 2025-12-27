@@ -33,6 +33,12 @@ namespace vlib
 		return is_empty_array( v );
 	}
 	
+	Value make_array( const Value& list )
+	{
+		return is_empty_list( list ) ? empty_array
+		                             : Value( Op_array, list );
+	}
+	
 	unsigned subscript_integer( const Value& index )
 	{
 		return integer_cast< unsigned >( index );

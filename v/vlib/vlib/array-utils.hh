@@ -17,12 +17,7 @@ namespace vlib
 	
 	bool is_array( const Value& v );
 	
-	inline
-	Value make_array( const Value& list )
-	{
-		return is_empty_list( list ) ? empty_array
-		                             : Value( Op_array, list );
-	}
+	Value make_array( const Value& list );
 	
 	unsigned subscript_integer( const Value& index );
 	
