@@ -15,6 +15,8 @@ namespace vlib
 	
 	struct Target;
 	
+	bool is_array( const Value& v );
+	
 	inline
 	Value make_array( const Value& list )
 	{

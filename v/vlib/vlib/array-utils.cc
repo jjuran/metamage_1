@@ -23,6 +23,16 @@
 namespace vlib
 {
 	
+	bool is_array( const Value& v )
+	{
+		if ( Expr* expr = v.expr() )
+		{
+			return expr->op == Op_array;
+		}
+		
+		return is_empty_array( v );
+	}
+	
 	unsigned subscript_integer( const Value& index )
 	{
 		return integer_cast< unsigned >( index );

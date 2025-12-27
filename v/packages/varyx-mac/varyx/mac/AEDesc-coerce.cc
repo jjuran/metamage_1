@@ -29,6 +29,7 @@
 #include "bignum/integer.hh"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/boolean.hh"
