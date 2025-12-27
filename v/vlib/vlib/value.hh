@@ -240,15 +240,7 @@ namespace vlib
 				return *(const type_info*) its_box.pointer();
 			}
 			
-			Symbol* sym() const
-			{
-				if ( type() == Value_symbol )
-				{
-					return (Symbol*) its_box.pointer();
-				}
-				
-				return decl_sym();
-			}
+			Symbol* sym() const;
 			
 			Symbol* decl_sym() const;
 			
@@ -285,8 +277,6 @@ namespace vlib
 	extern const Value undefined;
 	extern const Value empty_list;
 	extern const Value empty_array;
-	
-	typedef Value symbol_id;
 	
 	struct Expr
 	{

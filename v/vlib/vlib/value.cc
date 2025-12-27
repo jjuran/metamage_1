@@ -205,6 +205,16 @@ namespace vlib
 		its_dispatch = d;
 	}
 	
+	Symbol* Value::sym() const
+	{
+		if ( type() == Value_symbol )
+		{
+			return (Symbol*) its_box.pointer();
+		}
+		
+		return decl_sym();
+	}
+	
 	Expr* Value::listexpr() const
 	{
 		if ( Expr* exp = expr() )
