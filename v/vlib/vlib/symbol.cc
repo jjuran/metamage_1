@@ -18,6 +18,16 @@
 namespace vlib
 {
 	
+	bool is_symbol_declarator( const Value& v )
+	{
+		if ( Expr* expr = v.expr() )
+		{
+			return declares_symbols( expr->op );
+		}
+		
+		return false;
+	}
+	
 	void Symbol::denote( const Value& vtype )
 	{
 		if ( ! is_type( vtype ) )

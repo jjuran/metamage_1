@@ -317,23 +317,6 @@ namespace vlib
 	}
 	
 	inline
-	bool is_symbol_declarator( const Value& v )
-	{
-		if ( Expr* expr = v.expr() )
-		{
-			return declares_symbols( expr->op );
-		}
-		
-		return false;
-	}
-	
-	inline
-	bool is_symbol( const Value& v )
-	{
-		return v.type() == Value_symbol  ||  is_symbol_declarator( v );
-	}
-	
-	inline
 	bool is_block( const Value& v )
 	{
 		Expr* expr = v.expr();

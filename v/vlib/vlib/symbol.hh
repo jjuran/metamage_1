@@ -27,6 +27,14 @@ namespace vlib
 		Mark_black,  // reachable from a root
 	};
 	
+	bool is_symbol_declarator( const Value& v );
+	
+	inline
+	bool is_symbol( const Value& v )
+	{
+		return v.type() == Value_symbol  ||  is_symbol_declarator( v );
+	}
+	
 	class Symbol
 	{
 		private:
