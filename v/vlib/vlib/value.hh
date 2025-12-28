@@ -316,14 +316,6 @@ namespace vlib
 		return v.type() == Value_empty_array;
 	}
 	
-	inline
-	bool is_block( const Value& v )
-	{
-		Expr* expr = v.expr();
-		
-		return expr  &&  (uint8_t) expr->op == Op_block;
-	}
-	
 	unsigned long area( const Value& v );
 	
 }

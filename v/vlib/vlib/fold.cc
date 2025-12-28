@@ -10,6 +10,7 @@
 
 // vlib
 #include "vlib/assert.hh"
+#include "vlib/block-utils.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/execute.hh"
 #include "vlib/pure.hh"

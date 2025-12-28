@@ -21,6 +21,7 @@
 #include "poseven/types/errno_t.hh"
 
 // vlib
+#include "vlib/block-utils.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/function-utils.hh"
 #include "vlib/symbol.hh"

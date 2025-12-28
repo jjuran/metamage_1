@@ -7,6 +7,7 @@
 
 // vlib
 #include "vlib/array-utils.hh"
+#include "vlib/block-utils.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/peephole.hh"
 #include "vlib/return.hh"

@@ -12,6 +12,13 @@
 namespace vlib
 {
 
+bool is_block( const Value& v )
+{
+	Expr* expr = v.expr();
+	
+	return expr  &&  (uint8_t) expr->op == Op_block;
+}
+
 const Value& unembrace( const Value& block )
 {
 	if ( Expr* expr = block.expr() )

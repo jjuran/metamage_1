@@ -8,6 +8,7 @@
 // vlib
 #include "vlib/array-utils.hh"
 #include "vlib/assign.hh"
+#include "vlib/block-utils.hh"
 #include "vlib/compare.hh"
 #include "vlib/equal.hh"
 #include "vlib/error.hh"

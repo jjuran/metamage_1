@@ -12,6 +12,8 @@ namespace vlib
 	
 	class Value;
 	
+	bool is_block( const Value& v );
+	
 	const Value& unembrace( const Value& block );
 	
 }
