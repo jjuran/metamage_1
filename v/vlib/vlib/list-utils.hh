@@ -17,7 +17,6 @@ namespace vlib
 	
 	bool is_single( const Value& v );
 	
-	const Value& first( const Value& list );
 	const Value& rest ( const Value& list );
 	
 	Value& first_mutable( Value& list );
@@ -26,6 +25,12 @@ namespace vlib
 	const Value& get_nth( const Value& list, unsigned i );
 	
 	Value& get_nth_mutable( Value& list, unsigned i );
+	
+	inline
+	const Value& first( const Value& list )
+	{
+		return get_nth( list, 0 );
+	}
 	
 	unsigned long count( const Value& list );
 	

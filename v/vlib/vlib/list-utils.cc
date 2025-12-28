@@ -17,16 +17,6 @@ namespace vlib
 		return ! is_empty_list( v )  &&  ! v.listexpr();
 	}
 	
-	const Value& first( const Value& list )
-	{
-		if ( Expr* expr = list.listexpr() )
-		{
-			return expr->left;
-		}
-		
-		return list;  // not a (non-empty) list
-	}
-	
 	const Value& rest( const Value& list )
 	{
 		if ( Expr* expr = list.listexpr() )
@@ -68,7 +58,7 @@ namespace vlib
 			next = &rest( *next );
 		}
 		
-		return first( *next );
+		return next->listexpr() ? next->expr()->left : *next;
 	}
 	
 	Value& get_nth_mutable( Value& list, unsigned i )
