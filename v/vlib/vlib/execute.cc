@@ -68,6 +68,17 @@ namespace vlib
 		}
 	}
 	
+	static inline
+	void unshare_symbol( Value& v )
+	{
+		const Symbol* sym = v.sym();
+		
+		if ( sym  &&  ! sym->is_immutable() )
+		{
+			v = sym->clone();
+		}
+	}
+	
 	static
 	Value gensym( symbol_type type, const plus::string& name, const Value &v )
 	{
@@ -86,17 +97,12 @@ namespace vlib
 	static
 	Value unshare_symbols( const Value& presets )
 	{
-		if ( is_empty_list( presets ) )
-		{
-			return Value_empty_list;
-		}
-		
 		const Value& head = first( presets );
 		const Value& tail = rest ( presets );
 		
-		const Symbol* sym = head.sym();
+		Value new_head = head;
 		
-		const Value new_head = sym->is_immutable() ? head : sym->clone();
+		unshare_symbol( new_head );
 		
 		if ( is_empty_list( tail ) )
 		{
