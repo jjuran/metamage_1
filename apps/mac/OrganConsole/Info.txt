@@ -4,7 +4,7 @@ CFBundleName:        "Organ Console"
 CFBundlePackageType: 'APPL'
 CFBundleSignature:   '|gan'
 CFBundleGetInfoString: "Copyright 2021-2025 Josh Juran"
-CFBundleShortVersionString: "0.5.5"
+CFBundleShortVersionString: "0.6"
 CFBundleDocumentTypes:
 [
 	[
