@@ -20,6 +20,9 @@
 #ifndef MISSING_QUICKDRAW_H
 #include "missing/Quickdraw.h"
 #endif
+#ifndef MISSING_QUICKDRAWTEXT_H
+#include "missing/QuickdrawText.h"
+#endif
 #endif
 
 // mac-qd-utils
@@ -107,6 +110,23 @@ WindowRef create_window()
 	return new_window( "\p" "Organ Console" );
 }
 
+static char upper_black_keys[] = " 2 45 789 -=";
+static char upper_white_keys[] = "QWERTYUIOP[]\\";
+static char lower_black_keys[] = "   DF HJK ;";
+static char lower_white_keys[] = " ZXCVBNM,./  ";
+
+static
+void draw_char( char c, short width, short left, short bottom )
+{
+	short char_width = CharWidth( c );
+	
+	short h = left + (width - char_width) / 2u;
+	
+	MoveTo( h, bottom - width / 2u );
+	
+	DrawChar( c );
+}
+
 static inline
 void draw_white_keys( const Rect& bounds )
 {
@@ -123,6 +143,9 @@ void draw_white_keys( const Rect& bounds )
 	for ( int i = 0;  i < n_keys_wide;  ++i )
 	{
 		FrameRect( &key_rect );
+		
+		draw_char( upper_white_keys[ i ], key_width, key_rect.left, midway );
+		draw_char( lower_white_keys[ i ], key_width, key_rect.left, bottom );
 		
 		key_rect.left   = key_rect.right;
 		key_rect.right += key_width;
@@ -148,13 +171,20 @@ void draw_white_keys( const Rect& bounds )
 static inline
 void draw_black_keys( const Rect& bounds )
 {
+	ForeColor( whiteColor );
+	BackColor( blackColor );
+	
 	const short manual_width = bounds.right - bounds.left;
 	const short padded_width = manual_width * 16 / n_keys_wide;
 	
 	Rect key_rect = bounds;
 	
-	key_rect.bottom = bounds.bottom * 5 / 8u / 2;
+	short bottom = bounds.bottom * 5 / 8u / 2;
+	
+	key_rect.bottom = bottom;
 	key_rect.left   = padded_width / 32u;
+	
+	short key_width = padded_width / 32u;
 	
 	for ( int i = 1;  i <= 11;  ++i )
 	{
@@ -168,8 +198,12 @@ void draw_black_keys( const Rect& bounds )
 		key_rect.left  = edge - padded_width / 64u;
 		key_rect.right = edge + padded_width / 64u;
 		
-		PaintRect( &key_rect );
+		EraseRect( &key_rect );
+		
+		draw_char( upper_black_keys[ i ], key_width, key_rect.left, bottom );
 	}
+	
+	bottom += bounds.bottom / 2u;
 	
 	OffsetRect( &key_rect, 0, bounds.bottom / 2u );
 	
@@ -187,8 +221,13 @@ void draw_black_keys( const Rect& bounds )
 		key_rect.left  = edge - padded_width / 64u;
 		key_rect.right = edge + padded_width / 64u;
 		
-		PaintRect( &key_rect );
+		EraseRect( &key_rect );
+		
+		draw_char( lower_black_keys[ i ], key_width, key_rect.left, bottom );
 	}
+	
+	ForeColor( blackColor );
+	BackColor( whiteColor );
 }
 
 void draw_window( WindowRef window )
@@ -198,6 +237,8 @@ void draw_window( WindowRef window )
 	SetPortWindowPort( window );
 	
 	EraseRect( &bounds );
+	
+	TextFont( 0 );
 	
 	draw_white_keys( bounds );
 	draw_black_keys( bounds );
