@@ -1,8 +1,8 @@
 #define COPY "\0xA9"
 
-#define VERSION  "1.5.1"
-
 #define COPYRIGHT  "2025 Josh Juran"
+
+#define VERSION  "1.5.1"
 
 #define MAJOR  1
 #define MINOR  5
