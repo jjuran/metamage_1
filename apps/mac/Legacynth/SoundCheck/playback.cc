@@ -27,6 +27,9 @@
 #include <Resources.h>
 #endif
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
@@ -62,8 +65,13 @@ static ParamBlockRec pb;
 
 static ProcessSerialNumber psn;
 
+#ifdef __MC68K__
+#pragma parameter audio_completion( __A0 )
+#endif
+
 static
-OSErr audio_completion( ParamBlockRec* pb : __A0 )
+pascal
+void audio_completion( ParamBlockRec* pb )
 {
 	playing = false;
 	updated = true;
@@ -76,9 +84,9 @@ OSErr audio_completion( ParamBlockRec* pb : __A0 )
 	{
 		PostEvent( app1Evt, 0 );
 	}
-	
-	return noErr;
 }
+
+DEFINE_UPP( IOCompletion, audio_completion )
 
 OSErr start_playback()
 {
@@ -122,7 +130,7 @@ OSErr start_playback()
 	
 	err = PBKillIOSync( &pb );
 	
-	pb.ioParam.ioCompletion = (IOCompletionProcPtr) &audio_completion;
+	pb.ioParam.ioCompletion = (IOCompletionUPP) UPP_ARG( audio_completion );
 	
 	err = PBWriteAsync( &pb );
 	
