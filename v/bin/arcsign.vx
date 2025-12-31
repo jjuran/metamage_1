@@ -16,6 +16,7 @@ let command_defs = str^
 [
 	seal:   [load, append],
 	unseal: [load, truncate],
+	verify: [load, null],
 ]
 
 def usage
@@ -23,7 +24,7 @@ def usage
 	ERR <== "Usage: arcsign <command> <args> ...\n"
 	        "       arcsign seal -k <key-file> <msg-file> ...\n"
 	        "       arcsign unseal -K <key-hex> <msg-file> ...\n"
-	        "       arcsign verify <msg-file> ...\n"
+	        "       arcsign verify -K <key-hex> <msg-file> ...\n"
 	
 	return 2
 }
