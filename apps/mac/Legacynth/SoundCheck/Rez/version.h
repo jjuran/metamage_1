@@ -2,10 +2,10 @@
 
 #define CREATOR  'SDck'
 
-#define VERSION  "1.0"
+#define VERSION  "1.0.1"
 
 #define MAJOR  1
 #define MINOR  0
-#define POINT  0
+#define POINT  1
 #define STAGE  release
 #define PATCH  0
