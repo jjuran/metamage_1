@@ -117,10 +117,15 @@ const stringifiers AEDesc_stringifiers =
 static
 Value unary_op_handler( op_type op, const Value& v )
 {
+	const AEDesc& desc = static_cast< const AEDesc& >( v );
+	
 	switch ( op )
 	{
 		case Op_typeof:
 			return Type( AEDesc_vtype );
+		
+		case Op_areaof:
+			return Integer( desc.data_size() );
 		
 		case Op_unary_deref:
 			return AEDesc_deref( v );

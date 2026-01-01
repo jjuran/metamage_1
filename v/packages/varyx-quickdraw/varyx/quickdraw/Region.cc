@@ -34,6 +34,7 @@
 #include "vlib/type_info.hh"
 #include "vlib/types/struct/struct.hh"
 #include "vlib/types/struct/type.hh"
+#include "vlib/types/integer.hh"
 #include "vlib/types/type.hh"
 
 // varyx-quickdraw
@@ -132,10 +133,15 @@ static const stringifiers Region_stringifiers =
 static
 Value unary_op_handler( op_type op, const Value& v )
 {
+	const Region& region = static_cast< const Region& >( v );
+	
 	switch ( op )
 	{
 		case Op_typeof:
 			return Type( Region_vtype );
+		
+		case Op_areaof:
+			return Integer( region.data_size() );
 		
 		default:
 			break;
