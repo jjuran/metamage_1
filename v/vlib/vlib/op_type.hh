@@ -70,6 +70,7 @@ namespace vlib
 		Op_function,
 		
 		Op_typeof,
+		Op_areaof,
 		Op_unary_plus,
 		Op_unary_minus,
 		Op_unary_negate,
