@@ -31,6 +31,7 @@
 #include "bignum/integer_hex.hh"
 
 // vlib
+#include "vlib/area.hh"
 #include "vlib/compare.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"

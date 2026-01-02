@@ -316,8 +316,6 @@ namespace vlib
 		return v.type() == Value_empty_array;
 	}
 	
-	unsigned long area( const Value& v );
-	
 }
 
 #endif
