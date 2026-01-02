@@ -163,10 +163,10 @@ namespace vlib
 	{
 		if ( box.has_extent() )
 		{
-			return sizeof (vbox) + vxo::extent_area( box.u.alloc.pointer );
+			return vxo::extent_area( box.u.alloc.pointer );
 		}
 		
-		return sizeof (vbox);
+		return 0;
 	}
 	
 }

@@ -16,7 +16,7 @@ namespace vlib
 	
 	unsigned long area( const Value& v )
 	{
-		unsigned long total = area( v.its_box ) + sizeof (dispatch*);
+		unsigned long total = area( v.its_box ) + sizeof (Value);
 		
 		if ( const dispatch* methods = v.dispatch_methods() )
 		{
@@ -43,7 +43,7 @@ namespace vlib
 		
 		while ( expr != NULL )
 		{
-			total -= 2 * sizeof (Value);
+			total -= sizeof (Value);
 			
 			total += area( expr->left );
 			total += area( expr->right.its_box );
