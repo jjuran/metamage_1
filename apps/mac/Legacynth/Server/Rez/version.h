@@ -1,11 +1,11 @@
-#define COPYRIGHT  "2022-2025 Josh Juran"
+#define COPYRIGHT  "2022-2026 Josh Juran"
 
 #define CREATOR  'Snd*'
 
-#define VERSION  "1.5.1"
+#define VERSION  "2.0"
 
-#define MAJOR  1
-#define MINOR  5
-#define POINT  1
+#define MAJOR  2
+#define MINOR  0
+#define POINT  0
 #define STAGE  release
 #define PATCH  0
