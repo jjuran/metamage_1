@@ -333,6 +333,10 @@ void check_device_controller()
 		{
 			synthesizer_string = idle;
 		}
+		else if ( sound_mode == 1 )
+		{
+			synthesizer_string = fourtone;
+		}
 		else if ( sound_mode == 0 )
 		{
 			synthesizer_string = freeform;

@@ -18,14 +18,15 @@ Support for the Sound Driver API was dropped in AV Mac models and all [PowerPC-b
 
 Legacynth restores Sound Driver API support by intercepting `Write` and `KillIO` calls to the `.Sound` driver, and generating sounds using the Sound Manager.
 
-**Legacynth Mini** implements the Sound Driver's **free-form** and **square-wave** synthesizers.
+**Legacynth 4000** implements the Sound Driver's **free-form**, **square-wave**, and **four-tone** synthesizers.
 
 To use it:
 
-  * Place the **Legacynth Extension** in the Extensions folder and restart.  (If you already installed the extension from Legacynth Demo, then skip this step.)
-  * Open **Legacynth Mini** and click Start.  (If the button is labeled "Quit", then you can't use Legacynth on this system.)
+  * Place the **Legacynth Extension** in the Extensions folder and restart.  (If you already installed the extension from Legacynth Demo or Legacynth Mini, then skip this step.)
+  * Open **Legacynth 4000** and click Start.  (If the button is labeled "Quit", then you can't use Legacynth on this system.)
   * Open **Sound Check** and click Test to play a free-form (i.e. sampled) sound and verify that it works.
   * Open **Tic-tac-toe** and click a square in the grid to test the square-wave synthesizer.
+  * Open **Organ Console** and press a combination of the indicated QWERTY keys to test the four-tone synthesizer.
 
 Feel free to contact me by email at `jjuran@gmail.com` or in `#mac68k` on Libera.Chat with any questions or other comments.
 

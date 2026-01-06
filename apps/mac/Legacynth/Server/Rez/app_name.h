@@ -1,1 +1,1 @@
-#define APP_NAME "Legacynth Mini"
+#define APP_NAME "Legacynth 4000"
