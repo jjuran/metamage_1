@@ -328,7 +328,14 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		
 		Ptr tmp1 = tmp + (skip_delta < 0);
 		
+		int readable_src_row_bytes = srcRowBytes - srcLeft / 8u;
+		
 		int blit_width = tmpRowBytes - 1;
+		
+		if ( blit_width > readable_src_row_bytes )
+		{
+			blit_width = readable_src_row_bytes;
+		}
 		
 		blit_bytes( src, srcRowBytes, tmp1, tmpRowBytes, blit_width, n_rows );
 		
