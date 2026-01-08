@@ -4,7 +4,6 @@
  */
 
 // Standard C++
-#include <memory>
 #include <vector>
 
 // Standard C
@@ -128,68 +127,33 @@ namespace tool
 		p7::splat( p7::open( path, p7::o_wronly | p7::o_creat | p7::o_excl ), output );
 	}
 	
-	static void CreateDestinationFile( const plus::string& dest_dir_path, const plus::string& dest )
-	{
-		CreateOneLiner( dest_dir_path / dest,
-		                dest );
-	}
+	static const char queue_directory[] = "/var/spool/mail/queue";
 	
-	static const char* QueueDirectory()
-	{
-		return "/var/spool/mail/queue";
-	}
+	static plus::string partial_message_dir;
 	
+	static n::owned< p7::fd_t > message_output;
 	
-	class PartialMessage
+	static
+	void new_partial_message()
 	{
-		private:
-			plus::string          dir;
-			n::owned< p7::fd_t >  out;
+		const plus::string& dir = partial_message_dir;
 		
-		private:
-			// non-copyable
-			PartialMessage           ( const PartialMessage& );
-			PartialMessage& operator=( const PartialMessage& );
-		
-		public:
-			PartialMessage( const plus::string& dir );
-			
-			~PartialMessage();
-			
-			const plus::string& Dir() const  { return dir; }
-			void WriteLine( const plus::string& line );
-			
-			void Finished();
-	};
-	
-	PartialMessage::PartialMessage( const plus::string& dirLoc )
-	:
-		dir( dirLoc )
-	{
 		p7::mkdir( dir );
 		
-		out = p7::open( dir / "Message", p7::o_wronly | p7::o_creat | p7::o_excl, p7::_400 );
+		message_output = p7::open( dir / "Message",
+		                           p7::o_wronly | p7::o_creat | p7::o_excl,
+		                           p7::_400 );
 	}
 	
-	PartialMessage::~PartialMessage()
+	static
+	void discard_partial_message()
 	{
-		if ( !dir.empty() )
-		{
-			io::recursively_delete_directory( dir );
-		}
-	}
-	
-	void PartialMessage::WriteLine( const plus::string& line )
-	{
-		//static unsigned int lastFlushKBytes = 0;
-		plus::string terminatedLine = line + "\r\n";
+		message_output.reset();
 		
-		p7::write( out, terminatedLine );
-	}
-	
-	void PartialMessage::Finished()
-	{
-		dir.reset();
+		if ( ! partial_message_dir.empty() )
+		{
+			io::recursively_delete_directory( partial_message_dir );
+		}
 	}
 	
 	
@@ -197,17 +161,13 @@ namespace tool
 	plus::string myFrom;
 	std::vector< plus::string > myTo;
 	
-	static std::auto_ptr< PartialMessage > myMessage;
-	
 	bool dataMode = false;
 	
 	
 	static void QueueMessage()
 	{
-		const plus::string& dir = myMessage->Dir();
-		
 		// Create the Destinations subdirectory.
-		plus::string destinations_dir = dir / "Destinations";
+		plus::string destinations_dir = partial_message_dir / "Destinations";
 		
 		p7::mkdir( destinations_dir );
 		
@@ -222,7 +182,7 @@ namespace tool
 		
 		// Create the Return-Path file.
 		// Write this last so the sender won't delete the message prematurely.
-		CreateOneLiner( dir / "Return-Path", 
+		CreateOneLiner( partial_message_dir / "Return-Path",
 		                myFrom );
 		
 	}
@@ -249,7 +209,10 @@ namespace tool
 		}
 		else if ( word == "DATA" )
 		{
-			myMessage.reset( new PartialMessage( QueueDirectory() / MakeMessageName() ) );
+			partial_message_dir = queue_directory / MakeMessageName();
+			
+			new_partial_message();
+			
 			dataMode  = true;
 			
 			p7::write( p7::stdout_fileno, STR_LEN( "354 I'm listening"  "\r\n" ) );
@@ -288,7 +251,7 @@ namespace tool
 	
 	static void DoData( const plus::string& data )
 	{
-		myMessage->WriteLine( data );
+		p7::write( message_output, data + "\r\n" );
 		
 		if ( data == "." )
 		{
@@ -301,7 +264,9 @@ namespace tool
 			try
 			{
 				QueueMessage();
-				myMessage->Finished();
+				
+				partial_message_dir.reset();
+				
 				queued = true;
 			}
 			catch ( ... )
@@ -314,7 +279,7 @@ namespace tool
 			
 			p7::write( p7::stdout_fileno, message, strlen( message ) );
 			
-			myMessage.reset();
+			discard_partial_message();
 		}
 		else
 		{
@@ -322,7 +287,8 @@ namespace tool
 		}
 	}
 	
-	static void DoLine( const plus::string& line )
+	static inline
+	void DoLine( const plus::string& line )
 	{
 		if ( dataMode )
 		{
@@ -376,6 +342,8 @@ namespace tool
 			
 			DoLine( line );
 		}
+		
+		discard_partial_message();
 		
 		return 0;
 	}
