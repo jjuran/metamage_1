@@ -314,9 +314,9 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	{
 		static Handle buffer = (scoped_zone(), NewHandle( 0 ));
 		
-		const int rowBytes = width / 16u * 2 + 4;  // include a 2-byte margin
+		const int tmpRowBytes = width / 16u * 2 + 4;  // include a 2-byte margin
 		
-		Size size = mulu_w( rowBytes, n_rows );
+		Size size = mulu_w( tmpRowBytes, n_rows );
 		
 		SetHandleSize( buffer, size );
 		
@@ -328,14 +328,16 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		
 		Ptr tmp1 = tmp + (skip_delta < 0);
 		
-		blit_bytes( src, srcRowBytes, tmp1, rowBytes, rowBytes - 1, n_rows );
+		int blit_width = tmpRowBytes - 1;
+		
+		blit_bytes( src, srcRowBytes, tmp1, tmpRowBytes, blit_width, n_rows );
 		
 		fast_lshift( tmp, size, skip_delta & 0x7 );
 		
 		src         = tmp;
-		srcRowBytes = rowBytes;
+		srcRowBytes = tmpRowBytes;
 		
-		const Rect bounds = { 0, 0, n_rows, rowBytes };
+		const Rect bounds = { 0, 0, n_rows, tmpRowBytes };
 		
 		buffered_bits_rect = bounds;
 		
@@ -344,7 +346,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		OffsetRect( &buffered_bits_rect, dstSkip - clippedLeft, -clippedTop );
 		
 		buffered_bits.baseAddr = tmp;  // no locking needed yet
-		buffered_bits.rowBytes = rowBytes;
+		buffered_bits.rowBytes = tmpRowBytes;
 		buffered_bits.bounds   = bounds;
 		
 		srcBits = &buffered_bits;
