@@ -570,7 +570,7 @@ if has_cursor then
 
 let zoom = "-x" (getenv "AMS_ZOOM" or 1)
 let event_input = events_fd_opt, ev_opt
-let command-prefix = "exhibit", "-t", title, raster, event_input, zoom
+let command-prefix = "exhibit", "-It", title, raster, event_input, zoom
 
 let file-servers = freemountd-server, appfs-server, docfs-server, prefs-server
 let servers = sound-server, modem-server, file-servers
