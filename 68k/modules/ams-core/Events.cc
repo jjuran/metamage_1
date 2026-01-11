@@ -320,7 +320,11 @@ pascal Boolean WaitNextEvent_patch( unsigned short  eventMask,
 	
 	while ( true )
 	{
+		++wake_on_mouse_moved;
+		
 		const bool got = GetNextEvent( eventMask, event );
+		
+		--wake_on_mouse_moved;
 		
 		if ( got  ||  event->what != nullEvent )
 		{

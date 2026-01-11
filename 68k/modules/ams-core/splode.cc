@@ -9,6 +9,9 @@
 #ifndef __EVENTS__
 #include <Events.h>
 #endif
+#ifndef __TIMER__
+#include <Timer.h>
+#endif
 
 // POSIX
 #include <unistd.h>
@@ -45,6 +48,8 @@
 
 typedef KeyMapByteArray Keys;
 
+QHdr EventQueue : 0x014A;
+
 Byte   MBState : 0x0172;
 Keys   KeyMaps : 0x0174;
 UInt16 KeyMods : 0x017A;  // Yes, this is a subfield of KeyMaps.
@@ -55,6 +60,9 @@ Rect   CrsrPin : 0x0834;
 
 bool button_clicked;
 
+short wake_on_mouse_moved;
+
+const UInt64 approx_microseconds_per_tick = 1024 * 1024 / 64;
 
 static inline
 timeval approximate_timeval_from_ticks( unsigned long ticks )
@@ -448,6 +456,55 @@ void wait_for_user_input( const timeval& timeout )
 
 void wait_for_user_input( unsigned long ticks )
 {
+	if ( ! wake_on_mouse_moved )
+	{
+		QElemPtr tail = EventQueue.qTail;
+		
+		SInt64 delta = approx_microseconds_per_tick * ticks;
+		UInt64 then;
+		UInt64 now;
+		
+		::Microseconds( (UnsignedWide*) &then );
+		
+		while ( delta >= 1000000 )
+		{
+			timeval one_second = { 1, 0 };
+			
+			wait_for_user_input( one_second );
+			
+			if ( EventQueue.qTail != tail )
+			{
+				return;
+			}
+			
+			::Microseconds( (UnsignedWide*) &now );
+			
+			delta -= now - then;
+			
+			then = now;
+		}
+		
+		while ( delta > 0 )
+		{
+			timeval tv = { 0, delta };
+			
+			wait_for_user_input( tv );
+			
+			if ( EventQueue.qTail != tail )
+			{
+				return;
+			}
+			
+			::Microseconds( (UnsignedWide*) &now );
+			
+			delta -= now - then;
+			
+			then = now;
+		}
+		
+		return;
+	}
+	
 	wait_for_user_input( approximate_timeval_from_ticks( ticks ) );
 }
 

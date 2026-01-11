@@ -8,6 +8,8 @@
 
 extern bool button_clicked;
 
+extern short wake_on_mouse_moved;
+
 void wait_for_user_input( unsigned long ticks );
 
 void poll_user_input();
