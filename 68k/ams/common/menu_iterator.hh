@@ -22,7 +22,7 @@ typedef MenuInfo** MenuRef;
 inline
 bool large_icon_key( Byte key )
 {
-	return key - 0x1D > 1;  // neither $1D nor $1E
+	return key - 0x1D >> 1;  // neither $1D nor $1E
 }
 
 class menu_iterator
