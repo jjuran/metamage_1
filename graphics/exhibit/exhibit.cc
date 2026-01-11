@@ -44,6 +44,7 @@
 
 enum
 {
+	Opt_ignore  = 'I',  // leave SIGINT ignored
 	Opt_title   = 't',
 	Opt_magnify = 'x',
 	
@@ -61,9 +62,14 @@ static command::option options[] =
 	{ "magnify", Opt_magnify, command::Param_required },
 	{ "events-fd", Opt_events_fd, command::Param_required },
 	{ "events-fifo", Opt_events_fifo, command::Param_required },
+	
+	{ "ignore-sigint", Opt_ignore },
+	
 	{ NULL }
 };
 
+
+static bool ignoring_sigint;
 
 static const char* raster_path;
 static const char* fifo_path;
@@ -126,6 +132,10 @@ char* const* get_options( char** argv )
 		
 		switch ( opt )
 		{
+			case Opt_ignore:
+				ignoring_sigint = true;
+				break;
+			
 			case Opt_raster:
 				raster_path = global_result.param;
 				break;
@@ -382,7 +392,10 @@ void launch_interactive( char* const* args )
 		
 		const int keep_output = -1;  // Don't clobber stdout
 		
-		signal( SIGINT, SIG_DFL );
+		if ( ! ignoring_sigint )
+		{
+			signal( SIGINT, SIG_DFL );
+		}
 		
 		exec_or_exit_endpoint( args, ours, other, events_fd, keep_output );
 	}
