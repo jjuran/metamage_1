@@ -13,9 +13,6 @@
 #include <ShutDown.h>
 #endif
 
-// Standard C
-#include <stdint.h>
-
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
@@ -70,25 +67,25 @@ pascal void GetAppParms_patch( StringPtr name, short* refNum, Handle* hp )
 
 struct jump_table_header
 {
-	uint32_t above_a5_size;
-	uint32_t below_a5_size;
-	uint32_t jmptable_size;
-	uint32_t jmptable_offset;
+	UInt32 above_a5_size;
+	UInt32 below_a5_size;
+	UInt32 jmptable_size;
+	UInt32 jmptable_offset;
 };
 
 struct jump_table_entry_unloaded
 {
-	uint16_t offset;
-	uint16_t opcode;
-	uint16_t segnum;
-	uint16_t trap;
+	UInt16 offset;
+	UInt16 opcode;
+	UInt16 segnum;
+	UInt16 trap;
 };
 
 struct jump_table_entry_loaded
 {
-	uint16_t segnum;
-	uint16_t opcode;
-	uint32_t addr;
+	UInt16 segnum;
+	UInt16 opcode;
+	UInt32 addr;
 };
 
 union jump_table_entry
@@ -99,14 +96,14 @@ union jump_table_entry
 
 struct segment_header
 {
-	uint16_t table_offset;
-	uint16_t entry_count;
+	UInt16 table_offset;
+	UInt16 entry_count;
 };
 
 struct LaunchParamBlockRec
 {
-	uint8_t* reserved1;
-	uint16_t reserved2;
+	Byte*   reserved1;
+	UInt16  reserved2;
 	// ...
 };
 
@@ -115,25 +112,25 @@ typedef struct GrafPort* GrafPtr;
 struct above_A5_area
 {
 	GrafPtr*  thePort_addr;
-	uint32_t  unknown_4;
+	UInt32    unknown_4;
 	void*     stdin_hook;
 	void*     stdout_hook;
 	Handle    Finder_handle;
-	uint32_t  unknown_20;
-	uint32_t  unknown_24;
-	uint32_t  unknown_28;
+	UInt32    unknown_20;
+	UInt32    unknown_24;
+	UInt32    unknown_28;
 };
 
 static inline asm
-jump_table_entry* get_jump_table_offset( uint16_t offset : __D0 )
+jump_table_entry* get_jump_table_offset( UInt16 offset : __D0 )
 {
 	MOVEA.L  A5,A0
 	ADDA.W   CurJTOffset,A0
 	ADDA.W   D0,A0
 }
 
-const uint16_t push_opcode = 0x3F3C;  // MOVE.W   #n,-(SP)
-const uint16_t jump_opcode = 0x4EF9;  // JMP      0xABCD1234
+const UInt16 push_opcode = 0x3F3C;  // MOVE.W   #n,-(SP)
+const UInt16 jump_opcode = 0x4EF9;  // JMP      0xABCD1234
 
 static
 void LoadSegment( short segnum : __D0 )
@@ -154,8 +151,8 @@ void LoadSegment( short segnum : __D0 )
 	
 	const segment_header* segment = (segment_header*) *code;
 	
-	uint16_t offset = segment->table_offset;
-	uint16_t count  = segment->entry_count;
+	UInt16 offset = segment->table_offset;
+	UInt16 count  = segment->entry_count;
 	
 	const void* start = segment + 1;  // skip header
 	
@@ -166,11 +163,11 @@ void LoadSegment( short segnum : __D0 )
 		jump_table_entry_unloaded&  unloaded = it->unloaded;
 		jump_table_entry_loaded&    loaded   = it->loaded;
 		
-		const uint16_t offset = unloaded.offset;
+		const UInt16 offset = unloaded.offset;
 		
 		loaded.segnum = segnum;
 		loaded.opcode = jump_opcode;
-		loaded.addr   = (uint32_t) start + offset;
+		loaded.addr   = (UInt32) start + offset;
 		
 		++it;
 	}
@@ -207,7 +204,7 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 		works, in 24 numbered steps, paraphrased below.
 	*/
 	
-	const unsigned char* appName = (StringPtr) pb->reserved1;
+	const Byte* appName = (StringPtr) pb->reserved1;
 	
 	if ( appName == NULL )
 	{
@@ -218,7 +215,7 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	
 	NOTICE = "Launching application \"", CSTR( appName ), "\"";
 	
-	const uint8_t len = appName[ 0 ];
+	const Byte len = appName[ 0 ];
 	
 	if ( len > 31 )
 	{
@@ -300,12 +297,12 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	
 	CurJTOffset = header.jmptable_offset;
 	
-	const uint32_t total_a5_size = header.above_a5_size
-	                             + header.below_a5_size;
+	const UInt32 total_a5_size = header.above_a5_size
+	                           + header.below_a5_size;
 	
-	const uint32_t stack_size = DefltStack;
+	const UInt32 stack_size = DefltStack;
 	
-	const uint32_t total_alloc_size = stack_size + total_a5_size;
+	const UInt32 total_alloc_size = stack_size + total_a5_size;
 	
 	Ptr alloc = MemTop ? stack_bottom - total_alloc_size
 	                   : NewPtrClear( total_alloc_size );
