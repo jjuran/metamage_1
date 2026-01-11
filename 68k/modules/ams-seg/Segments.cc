@@ -348,10 +348,31 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	return 0;  // not reached
 }
 
+struct Loader_AppParams
+{
+	short message;
+	short count;
+	
+	short   vRefNum;
+	OSType  type;
+	short   versNum;
+	Str31   name;
+};
+
 void ExitToShell_patch()
 {
 	if ( FinderName[ 0 ] )
 	{
+		SetHandleSize( AppParmHandle, sizeof (Loader_AppParams) );
+		
+		Loader_AppParams& params = *(Loader_AppParams*) *AppParmHandle;
+		
+		fast_memset( &params, '\0', sizeof params - sizeof (Str31) );
+		fast_memcpy( params.name,   CurApName,      sizeof (Str31) );
+		
+		params.count = 1;
+		params.type = 'APPL';
+		
 		LaunchParamBlockRec pb;
 		
 		pb.reserved1 = FinderName;
