@@ -38,6 +38,8 @@ using mac::qd::wide_drag_area;
 
 Str15 FinderName : 0x02E0;
 
+Handle AppParmHandle : 0x0AEC;
+
 struct LaunchParams
 {
 	void* appName;
@@ -200,7 +202,17 @@ int main()
 	mac::app::init_toolbox();
 	mac::app::install_menus();
 	
+	/*
+		Crawl AppParmHandle to see if we should display
+		a specific application.  As we go, we clear the
+		file type of each entry (via ClrAppFiles()), but
+		the stale entry still confuses System's Twilight.
+		So after we do that, clear the count as well.
+	*/
+	
 	mac::app::open_AppFiles_with( &HFS_file_opener );
+	
+	*(long*) *AppParmHandle = 0;
 	
 	if ( ! *app_name )
 	{
