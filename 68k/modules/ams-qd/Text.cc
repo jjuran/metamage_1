@@ -398,16 +398,24 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		const short this_offset = locTable[ c ];
 		const short next_offset = locTable[ c + 1 ];
 		
+		short not_ = 0x4;
 		short mode = port.txMode;
 		
-		if ( mode == srcCopy )
+		if ( (mode & ~not_) == srcCopy )
 		{
+			/*
+				For srcCopy or notSrcCopy, we explicitly erase
+				so we can target the full span of the character
+				rather than just the glyph's width.  Then we
+				reduce to srcOr or srcBic so that bold works.
+			*/
+			
 			dstRect.left  = port.pnLoc.h;
 			dstRect.right = port.pnLoc.h + character_width + output->extra;
 			
-			FillRect( &dstRect, &qd.white );
+			FillRect( &dstRect, (mode & not_) ? &qd.black : &qd.white );
 			
-			mode = srcOr;
+			mode = srcOr | (mode & not_) >> 1;  // srcOr or srcBic
 		}
 		
 		if ( short width = next_offset - this_offset )
