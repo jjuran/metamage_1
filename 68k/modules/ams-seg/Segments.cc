@@ -17,6 +17,7 @@
 #include "mac_glue/Memory.hh"
 
 // log-of-war
+#include "logofwar/print.hh"
 #include "logofwar/report.hh"
 
 // ams-common
@@ -43,19 +44,7 @@ short CurPageOption : 0x0936;
 Handle AppParmHandle : 0x0AEC;
 
 
-enum hex32
-{
-	hex32_min = 0,
-	hex32_max = 0xffffffff,
-};
-
-inline
-void print( hex32 x )
-{
-	logofwar::print( "$" );
-	
-	logofwar::print_hex( x );
-}
+using logofwar::hex32_t;
 
 pascal void GetAppParms_patch( StringPtr name, short* refNum, Handle* hp )
 {
@@ -146,8 +135,8 @@ void LoadSegment( short segnum : __D0 )
 	
 	long addr = (long) *code;
 	
-	NOTICE = hex32( addr ), " -> ",
-	         hex32( addr + GetHandleSize_raw( code ) ), ": 'CODE' ", segnum;
+	NOTICE = hex32_t( addr ), " -> ",
+	         hex32_t( addr + GetHandleSize_raw( code ) ), ": 'CODE' ", segnum;
 	
 	const segment_header* segment = (segment_header*) *code;
 	
