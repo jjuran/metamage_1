@@ -63,8 +63,8 @@ bool get_lowlevel_event( short eventMask, EventRecord* event )
 	return false;
 }
 
-pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
-                                         EventRecord*    event )
+pascal Boolean GetNextEvent_patch( unsigned short  eventMask,
+                                   EventRecord*    event )
 {
 	UInt32 ticks = get_Ticks();
 	
@@ -176,8 +176,8 @@ bool peek_lowlevel_event( short eventMask, EventRecord* event )
 	return false;
 }
 
-pascal unsigned char EventAvail_patch( unsigned short  eventMask,
-                                       EventRecord*    event )
+pascal Boolean EventAvail_patch( unsigned short  eventMask,
+                                 EventRecord*    event )
 {
 	const unsigned long sleep = next_sleep;
 	
@@ -248,10 +248,10 @@ asm UInt32 add_pinned( UInt32 a : __D0, UInt32 b : __D1 ) : __D0
 no_carry:
 }
 
-pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
-                                          EventRecord*    event,
-                                          unsigned long   sleep,
-                                          RgnHandle       mouseRgn )
+pascal Boolean WaitNextEvent_patch( unsigned short  eventMask,
+                                    EventRecord*    event,
+                                    unsigned long   sleep,
+                                    RgnHandle       mouseRgn )
 {
 	if ( mouseRgn != NULL  &&  EmptyRgn( mouseRgn ) )
 	{
@@ -367,7 +367,7 @@ pascal void GetMouse_patch( Point* loc )
 	}
 }
 
-pascal char Button_patch()
+pascal Boolean Button_patch()
 {
 	if ( button_clicked )
 	{
@@ -381,14 +381,14 @@ pascal char Button_patch()
 	return ! MBState;
 }
 
-pascal char StillDown_patch()
+pascal Boolean StillDown_patch()
 {
 	EventRecord event;
 	
 	return Button_patch()  &&  ! OSEventAvail( mDownMask | mUpMask, &event );
 }
 
-pascal char WaitMouseUp_patch()
+pascal Boolean WaitMouseUp_patch()
 {
 	EventRecord event;
 	

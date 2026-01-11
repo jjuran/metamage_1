@@ -10,24 +10,29 @@ struct EventRecord;
 struct MacRegion;
 struct Point;
 
+typedef unsigned char Boolean;
+
+typedef MacRegion** RgnHandle;
+
+
 extern unsigned long GetNextEvent_throttle;  // minimum ticks between calls
 
-pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
-                                         EventRecord*    event );
+pascal Boolean GetNextEvent_patch( unsigned short  eventMask,
+                                   EventRecord*    event );
 
-pascal unsigned char EventAvail_patch( unsigned short  eventMask,
-                                       EventRecord*    event );
+pascal Boolean EventAvail_patch( unsigned short  eventMask,
+                                 EventRecord*    event );
 
-pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
-                                          EventRecord*    event,
-                                          unsigned long   sleep,
-                                          MacRegion**     mouseRgn );
+pascal Boolean WaitNextEvent_patch( unsigned short  eventMask,
+                                    EventRecord*    event,
+                                    unsigned long   sleep,
+                                    RgnHandle       mouseRgn );
 
 pascal void GetMouse_patch( Point* loc );
 
-pascal char Button_patch();
-pascal char StillDown_patch();
-pascal char WaitMouseUp_patch();
+pascal Boolean Button_patch();
+pascal Boolean StillDown_patch();
+pascal Boolean WaitMouseUp_patch();
 
 pascal void GetKeys_patch( unsigned long* keys );
 
