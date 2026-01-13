@@ -45,10 +45,7 @@ var/links/%: var/links
 %.git: ../% var/links/%
 	@true
 
-$(VAR_BIN)/lib-static:
-	$(BUILD) lib-static
-
-build-tools: $(VAR_BIN)/lib-static
+build-tools:
 
 app-build-tools: build-tools
 	$(BUILD) minivx
