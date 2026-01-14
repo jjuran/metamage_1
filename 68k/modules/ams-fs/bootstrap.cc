@@ -34,6 +34,8 @@
 #define RSRC_FORK "..namedfork/rsrc"
 
 
+int mntfs_fd = 6;
+
 void mount_virtual_bootstrap_volume()
 {
 	static VCB virtual_bootstrap_volume_VCB;
@@ -44,6 +46,8 @@ void mount_virtual_bootstrap_volume()
 	vcb->vcbFSID    = 'Ix';
 	
 	vcb->vcbAtrb |= kioVAtrbHardwareLockedMask;
+	
+	vcb->vcbDRefNum = mntfs_fd;
 	
 	#define VOLNAME  "\p" "Bootstrap"
 	
@@ -58,10 +62,7 @@ static plus::var_string filename_cache;
 
 const Byte* bootstrap_get_nth( VCB* vcb, short n )
 {
-	const int in  = 6;
-	const int out = 7;
-	
-	return remotefs_get_nth( in, out, n, filename_cache );
+	return remotefs_get_nth( vcb, n, filename_cache );
 }
 
 OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const Byte* name )
@@ -85,30 +86,31 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const Byte* name )
 	
 	plus::var_string file_data;
 	
+	int fd = mntfs_fd;
 	int err;
 	
 	if ( ! is_rsrc )
 	{
-		err = try_to_get( path, len, file_data );
+		err = try_to_get( fd, path, len, file_data );
 		
 		if ( err == -EISDIR )
 		{
 			fast_memcpy( path + len, STR_LEN( "/data" ) );
 			
-			err = try_to_get( path, len + STRLEN( "/data" ), file_data );
+			err = try_to_get( fd, path, len + STRLEN( "/data" ), file_data );
 		}
 	}
 	else
 	{
 		fast_memcpy( path + len, STR_LEN( "/rsrc" ) );
 		
-		err = try_to_get( path, len + STRLEN( "/rsrc" ), file_data );
+		err = try_to_get( fd, path, len + STRLEN( "/rsrc" ), file_data );
 		
 		if ( err == -ENOENT  ||  err == -ENOTDIR )
 		{
 			fast_memcpy( path + len, STR_LEN( "/" RSRC_FORK ) );
 			
-			err = try_to_get( path, len + STRLEN( "/" RSRC_FORK ), file_data );
+			err = try_to_get( fd, path, len + STRLEN( "/" RSRC_FORK ), file_data );
 		}
 	}
 	
@@ -140,12 +142,4 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const Byte* name )
 	fcb->fcbBfAdr = (Ptr) buffer;
 	
 	return noErr;
-}
-
-OSErr bootstrap_GetFileInfo( HFileParam* pb, const Byte* name )
-{
-	const int in  = 6;
-	const int out = 7;
-	
-	return remotefs_GetFileInfo( in, out, pb, name );
 }

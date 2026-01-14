@@ -58,13 +58,15 @@ void sort_filenames( plus::var_string& cache )
 	std::sort( begin, end );
 }
 
-const Byte* remotefs_get_nth( int in, int out, int n, plus::var_string& cache )
+const Byte* remotefs_get_nth( VCB* vcb, int n, plus::var_string& cache )
 {
+	const int fd = vcb->vcbDRefNum;
+	
 	if ( n == 1 )
 	{
 		temp_A4 a4;
 		
-		int err = try_to_list( in, out, plus::string::null, cache );
+		int err = try_to_list( fd, plus::string::null, cache );
 		
 		sort_filenames( cache );
 	}
@@ -89,7 +91,7 @@ const Byte* remotefs_lookup( VCB* vcb, const Byte* name )
 	return name;
 }
 
-OSErr remotefs_GetFileInfo( int in, int out, HFileParam* pb, const Byte* name )
+OSErr remotefs_GetFileInfo( HFileParam* pb, const Byte* name )
 {
 	temp_A4 a4;
 	
@@ -110,7 +112,9 @@ OSErr remotefs_GetFileInfo( int in, int out, HFileParam* pb, const Byte* name )
 	
 	plus::var_string file_info;
 	
-	int err = try_to_get( in, out, path, len, file_info );
+	const int fd = *(short*) &pb->ioFVersNum;
+	
+	int err = try_to_get( fd, path, len, file_info );
 	
 	if ( err < 0 )
 	{

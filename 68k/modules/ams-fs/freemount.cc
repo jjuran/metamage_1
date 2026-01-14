@@ -28,7 +28,7 @@ using plus::string;
 using plus::utf8_from_mac;
 using plus::var_string;
 
-int try_to_get( int in, int out, const string& path, var_string& data )
+int try_to_get( int fd, const plus::string& path, plus::var_string& data )
 {
 	namespace F = freemount;
 	
@@ -36,7 +36,7 @@ int try_to_get( int in, int out, const string& path, var_string& data )
 	
 	try
 	{
-		data = F::synced_get( in, out, plus::utf8_from_mac( path ) ).move();
+		data = F::synced_get( fd, fd, plus::utf8_from_mac( path ) ).move();
 		
 		return 0;
 	}
@@ -54,11 +54,11 @@ int try_to_get( int in, int out, const string& path, var_string& data )
 	}
 }
 
-int try_to_get( int in, int out, const char* p, int n, plus::var_string& data )
+int try_to_get( int fd, const char* p, int n, plus::var_string& data )
 {
 	plus::string path( p, n, vxo::delete_never );
 	
-	return try_to_get( in, out, path, data );
+	return try_to_get( fd, path, data );
 }
 
 int try_to_put( int fd, const plus::string& path, const plus::string& data )
@@ -138,7 +138,7 @@ void per_dirent( const char* name, uint32_t size, void* x )
 	}
 }
 
-int try_to_list( int in, int out, const string& path, var_string& data )
+int try_to_list( int fd, const string& path, var_string& data )
 {
 	namespace F = freemount;
 	
@@ -148,7 +148,7 @@ int try_to_list( int in, int out, const string& path, var_string& data )
 	{
 		data.clear();
 		
-		F::synced_dir( in, out, utf8_from_mac( path ), &per_dirent, &data );
+		F::synced_dir( fd, fd, utf8_from_mac( path ), &per_dirent, &data );
 		
 		return 0;
 	}

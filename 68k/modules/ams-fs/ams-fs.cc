@@ -44,6 +44,7 @@ enum
 	Opt_disk,
 	Opt_appfs_fd,
 	Opt_docfs_fd,
+	Opt_mntfs_fd,  // bootstrap filesystem
 	Opt_prefs_fd,
 };
 
@@ -52,6 +53,7 @@ static command::option options[] =
 	{ "disk",     Opt_disk,     command::Param_required },
 	{ "appfs-fd", Opt_appfs_fd, command::Param_required },
 	{ "docfs-fd", Opt_docfs_fd, command::Param_required },
+	{ "mntfs-fd", Opt_mntfs_fd, command::Param_required },
 	{ "prefs-fd", Opt_prefs_fd, command::Param_required },
 	
 	NULL,
@@ -122,6 +124,10 @@ char* const* get_options( char** argv )
 			
 			case Opt_docfs_fd:
 				docfs_fd = gear::parse_unsigned_decimal( global_result.param );
+				break;
+			
+			case Opt_mntfs_fd:
+				mntfs_fd = gear::parse_unsigned_decimal( global_result.param );
 				break;
 			
 			case Opt_prefs_fd:

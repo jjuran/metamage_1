@@ -70,10 +70,7 @@ static plus::var_string filename_cache;
 
 const Byte* documents_get_nth( VCB* vcb, short n )
 {
-	const int in  = vcb->vcbDRefNum;
-	const int out = vcb->vcbDRefNum;
-	
-	return remotefs_get_nth( in, out, n, filename_cache );
+	return remotefs_get_nth( vcb, n, filename_cache );
 }
 
 OSErr documents_Close( FCB* fcb )
@@ -195,16 +192,6 @@ OSErr documents_FlushFile( FCB* fcb )
 	int err = try_to_put( fd, name, data );
 	
 	return err ? ioErr : noErr;
-}
-
-OSErr documents_GetFileInfo( HFileParam* pb, const Byte* name )
-{
-	const int fd = *(short*) &pb->ioFVersNum;
-	
-	const int in  = fd;
-	const int out = fd;
-	
-	return remotefs_GetFileInfo( in, out, pb, name );
 }
 
 OSErr documents_SetFileInfo( HFileParam* pb, const Byte* name )
