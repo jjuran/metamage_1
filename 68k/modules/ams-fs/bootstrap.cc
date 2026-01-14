@@ -34,6 +34,8 @@
 #define RSRC_FORK "..namedfork/rsrc"
 
 
+const int mntfs_fd = 6;
+
 void mount_virtual_bootstrap_volume()
 {
 	static VCB virtual_bootstrap_volume_VCB;
@@ -44,6 +46,8 @@ void mount_virtual_bootstrap_volume()
 	vcb->vcbFSID    = 'Ix';
 	
 	vcb->vcbAtrb |= kioVAtrbHardwareLockedMask;
+	
+	vcb->vcbDRefNum = mntfs_fd;
 	
 	#define VOLNAME  "\p" "Bootstrap"
 	
@@ -58,8 +62,8 @@ static plus::var_string filename_cache;
 
 const Byte* bootstrap_get_nth( VCB* vcb, short n )
 {
-	const int in  = 6;
-	const int out = 7;
+	const int in  = vcb->vcbDRefNum;
+	const int out = vcb->vcbDRefNum;
 	
 	return remotefs_get_nth( in, out, n, filename_cache );
 }
@@ -144,8 +148,10 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const Byte* name )
 
 OSErr bootstrap_GetFileInfo( HFileParam* pb, const Byte* name )
 {
-	const int in  = 6;
-	const int out = 7;
+	const int fd = *(short*) &pb->ioFVersNum;
+	
+	const int in  = fd;
+	const int out = fd;
 	
 	return remotefs_GetFileInfo( in, out, pb, name );
 }
