@@ -145,13 +145,3 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const Byte* name )
 	
 	return noErr;
 }
-
-OSErr bootstrap_GetFileInfo( HFileParam* pb, const Byte* name )
-{
-	const int fd = *(short*) &pb->ioFVersNum;
-	
-	const int in  = fd;
-	const int out = fd;
-	
-	return remotefs_GetFileInfo( in, out, pb, name );
-}

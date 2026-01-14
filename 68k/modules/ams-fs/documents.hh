@@ -31,7 +31,6 @@ OSErr documents_open_fork( short trap_word, FCB* fcb, const Byte* name );
 
 OSErr documents_FlushFile( FCB* fcb );
 
-OSErr documents_GetFileInfo( HFileParam* pb, const Byte* name );
 OSErr documents_SetFileInfo( HFileParam* pb, const Byte* name );
 
 #endif

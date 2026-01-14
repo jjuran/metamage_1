@@ -89,7 +89,7 @@ const Byte* remotefs_lookup( VCB* vcb, const Byte* name )
 	return name;
 }
 
-OSErr remotefs_GetFileInfo( int in, int out, HFileParam* pb, const Byte* name )
+OSErr remotefs_GetFileInfo( HFileParam* pb, const Byte* name )
 {
 	temp_A4 a4;
 	
@@ -110,7 +110,9 @@ OSErr remotefs_GetFileInfo( int in, int out, HFileParam* pb, const Byte* name )
 	
 	plus::var_string file_info;
 	
-	int err = try_to_get( in, out, path, len, file_info );
+	const int fd = *(short*) &pb->ioFVersNum;
+	
+	int err = try_to_get( fd, path, len, file_info );
 	
 	if ( err < 0 )
 	{

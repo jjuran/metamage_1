@@ -197,16 +197,6 @@ OSErr documents_FlushFile( FCB* fcb )
 	return err ? ioErr : noErr;
 }
 
-OSErr documents_GetFileInfo( HFileParam* pb, const Byte* name )
-{
-	const int fd = *(short*) &pb->ioFVersNum;
-	
-	const int in  = fd;
-	const int out = fd;
-	
-	return remotefs_GetFileInfo( in, out, pb, name );
-}
-
 OSErr documents_SetFileInfo( HFileParam* pb, const Byte* name )
 {
 	temp_A4 a4;

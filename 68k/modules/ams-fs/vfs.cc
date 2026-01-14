@@ -28,7 +28,7 @@ static const filesystem_vtable< Byte > bootstrap_vtable =
 	NULL,
 	&bootstrap_open_fork,
 	NULL,
-	&bootstrap_GetFileInfo,
+	&remotefs_GetFileInfo,
 };
 
 static const filesystem_vtable< Byte > documents_vtable =
@@ -41,7 +41,7 @@ static const filesystem_vtable< Byte > documents_vtable =
 	&documents_Create,
 	&documents_open_fork,
 	&documents_FlushFile,
-	&documents_GetFileInfo,
+	&remotefs_GetFileInfo,
 	&documents_SetFileInfo,
 };
 
