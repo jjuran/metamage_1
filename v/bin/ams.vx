@@ -203,10 +203,6 @@ def module_path (name)
 	return ams_lib "/" name
 }
 
-# Reserve fds 6 and 7
-dup2(ERR, 6)
-dup2(ERR, 7)
-
 var opened_fds = []
 
 def alloc_fd ()
@@ -298,6 +294,8 @@ def make_shared_dir_server (param, mac_subpath, alt_subpath )
 	return "--fd", fd_slot, freemountd_rw path
 }
 
+let mntfs-server = "--fd", alloc_fd(), freemountd-server
+
 let appfs-server = make_shared_dir_server (str getenv "AMS_APPFS",
                                            "Library/Preferences",
                                            "preferences")
@@ -309,6 +307,8 @@ let docfs-server = make_shared_dir_server (str getenv "AMS_DOCFS",
 let prefs-server = make_shared_dir_server (str getenv "AMS_PREFS",
                                            "Library/Preferences",
                                            "preferences")
+
+let mntfs_opt = "--mntfs-fd", [mntfs-server][ 1 ]
 
 let appfs_opt = if appfs-server then { "--appfs-fd", [appfs-server][ 1 ] }
 let docfs_opt = if docfs-server then { "--docfs-fd", [docfs-server][ 1 ] }
@@ -440,7 +440,7 @@ def fs_opts
 		"--disk", v,
 	}
 	
-	let opts = *disk_opts, appfs_opt, docfs_opt, prefs_opt
+	let opts = mntfs_opt, *disk_opts, appfs_opt, docfs_opt, prefs_opt
 	
 	return
 	if opts then
@@ -572,7 +572,7 @@ let zoom = "-x" (getenv "AMS_ZOOM" or 1)
 let event_input = events_fd_opt, ev_opt
 let command-prefix = "exhibit", "-It", title, raster, event_input, zoom
 
-let file-servers = freemountd-server, appfs-server, docfs-server, prefs-server
+let file-servers = mntfs-server, appfs-server, docfs-server, prefs-server
 let servers = sound-server, modem-server, file-servers
 
 let xv68k_opts = model_opt, mem_opt, sound_opt, rec_opt, "-tSP", crsr_opt, xv_opt
