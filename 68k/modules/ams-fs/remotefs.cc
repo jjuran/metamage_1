@@ -58,13 +58,15 @@ void sort_filenames( plus::var_string& cache )
 	std::sort( begin, end );
 }
 
-const Byte* remotefs_get_nth( int in, int out, int n, plus::var_string& cache )
+const Byte* remotefs_get_nth( VCB* vcb, int n, plus::var_string& cache )
 {
+	const int fd = vcb->vcbDRefNum;
+	
 	if ( n == 1 )
 	{
 		temp_A4 a4;
 		
-		int err = try_to_list( in, out, plus::string::null, cache );
+		int err = try_to_list( fd, plus::string::null, cache );
 		
 		sort_filenames( cache );
 	}

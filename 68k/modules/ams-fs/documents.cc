@@ -70,10 +70,7 @@ static plus::var_string filename_cache;
 
 const Byte* documents_get_nth( VCB* vcb, short n )
 {
-	const int in  = vcb->vcbDRefNum;
-	const int out = vcb->vcbDRefNum;
-	
-	return remotefs_get_nth( in, out, n, filename_cache );
+	return remotefs_get_nth( vcb, n, filename_cache );
 }
 
 OSErr documents_Close( FCB* fcb )

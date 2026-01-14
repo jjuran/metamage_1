@@ -16,7 +16,7 @@ struct VCB;
 typedef unsigned char Byte;
 typedef short         OSErr;
 
-const Byte* remotefs_get_nth( int in, int out, int n, plus::var_string& cache );
+const Byte* remotefs_get_nth( VCB* vcb, int n, plus::var_string& cache );
 
 const Byte* remotefs_lookup( VCB* vcb, const Byte* name );
 
