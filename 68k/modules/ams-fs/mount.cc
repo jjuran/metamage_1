@@ -17,6 +17,7 @@
 #include "callouts.hh"
 
 // ams-fs
+#include "bootstrap.hh"
 #include "freemount.hh"
 #include "macbinary.hh"
 
@@ -54,7 +55,7 @@ void try_to_mount( const char* name )
 	
 	plus::var_string data;
 	
-	int nerr = try_to_get( name, strlen( name ), data );
+	int nerr = try_to_get( mntfs_fd, name, strlen( name ), data );
 	
 	if ( nerr )
 	{

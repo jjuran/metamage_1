@@ -15,6 +15,8 @@ typedef unsigned char  Byte;
 typedef short          OSErr;
 
 
+extern int mntfs_fd;
+
 void mount_virtual_bootstrap_volume();
 
 const Byte* bootstrap_get_nth( VCB* vcb, short n );

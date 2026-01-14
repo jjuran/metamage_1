@@ -34,7 +34,7 @@
 #define RSRC_FORK "..namedfork/rsrc"
 
 
-const int mntfs_fd = 6;
+int mntfs_fd = 6;
 
 void mount_virtual_bootstrap_volume()
 {
@@ -86,30 +86,31 @@ OSErr bootstrap_open_fork( short trap_word, FCB* fcb, const Byte* name )
 	
 	plus::var_string file_data;
 	
+	int fd = mntfs_fd;
 	int err;
 	
 	if ( ! is_rsrc )
 	{
-		err = try_to_get( path, len, file_data );
+		err = try_to_get( fd, path, len, file_data );
 		
 		if ( err == -EISDIR )
 		{
 			fast_memcpy( path + len, STR_LEN( "/data" ) );
 			
-			err = try_to_get( path, len + STRLEN( "/data" ), file_data );
+			err = try_to_get( fd, path, len + STRLEN( "/data" ), file_data );
 		}
 	}
 	else
 	{
 		fast_memcpy( path + len, STR_LEN( "/rsrc" ) );
 		
-		err = try_to_get( path, len + STRLEN( "/rsrc" ), file_data );
+		err = try_to_get( fd, path, len + STRLEN( "/rsrc" ), file_data );
 		
 		if ( err == -ENOENT  ||  err == -ENOTDIR )
 		{
 			fast_memcpy( path + len, STR_LEN( "/" RSRC_FORK ) );
 			
-			err = try_to_get( path, len + STRLEN( "/" RSRC_FORK ), file_data );
+			err = try_to_get( fd, path, len + STRLEN( "/" RSRC_FORK ), file_data );
 		}
 	}
 	
