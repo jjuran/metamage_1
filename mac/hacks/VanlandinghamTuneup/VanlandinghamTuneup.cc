@@ -54,7 +54,8 @@
 
 #define LENGTH(array)  (sizeof (array) / sizeof (array)[0])
 
-#define VEC_LEN(array)  array, LENGTH(array)
+#define VEC_LEN(array)   array, LENGTH (array)
+#define VEC_SIZE(array)  array, sizeof (array)
 
 
 static UniversalProcPtr old_InitFonts;
@@ -191,7 +192,7 @@ void install_sleep_patch( Handle h, Size handle_size )
 		
 		if ( equal_words( p, VEC_LEN( shipped_sleep_loop ) ) )
 		{
-			my_memcpy( p, patched_sleep_trap, sizeof patched_sleep_trap );
+			my_memcpy( p, VEC_SIZE( patched_sleep_trap ) );
 		}
 	}
 }
@@ -210,8 +211,8 @@ void install_byte_dissolve_patch( Handle h, Size handle_size )
 		
 		if ( patch_byte_dissolve )
 		{
-			my_memcpy( pA, patched_byte_dissolve_A, sizeof patched_byte_dissolve_A );
-			my_memcpy( pB, patched_byte_dissolve_B, sizeof patched_byte_dissolve_B );
+			my_memcpy( pA, VEC_SIZE( patched_byte_dissolve_A ) );
+			my_memcpy( pB, VEC_SIZE( patched_byte_dissolve_B ) );
 		}
 	}
 }
