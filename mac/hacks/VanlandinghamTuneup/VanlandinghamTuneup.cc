@@ -48,6 +48,10 @@
 #include "mac_sys/has/virtualization.hh"
 #include "mac_sys/trap_address.hh"
 
+// VanlandinghamTuneup
+#include "dissolve_bytes.hh"
+#include "sleep.hh"
+
 
 #pragma exceptions off
 
@@ -59,108 +63,6 @@
 
 
 static UniversalProcPtr old_InitFonts;
-
-static const UInt16 shipped_sleep_loop[] =
-{
-	0x4e56, -4,  // 0000dc:  LINK     A6,#-4
-	0x2f07,      // 0000e0:  MOVE.L   D7,-(A7)
-	0x42a7,      // 0000e2:  CLR.L    -(A7)
-	0xa975,      // 0000e4:  _TickCount
-	0x2e1f,      // 0000e6:  MOVE.L   (A7)+,D7
-	0x302e,  8,  // 0000e8:  MOVE.W   (8,A6),D0
-	0x48c0,      // 0000ec:  EXT.L    D0
-	0xde80,      // 0000ee:  ADD.L    D0,D7
-	0x42a7,      // 0000f0:  CLR.L    -(A7)
-	0xA975,      // 0000f2:  _TickCount
-	0xbe9f,      // 0000f4:  CMP.L    (A7)+,D7
-	0x6f02,      // 0000f6:  BLE.S    *+4       // $0000fa
-	0x60f6,      // 0000f8:  BRA.S    *-8       // $0000f0
-	0x2e1f,      // 0000fa:  MOVE.L   (A7)+,D7
-	0x4e5e,      // 0000fc:  UNLK     A6
-	0x205f,      // 0000fe:  MOVEA.L  (A7)+,A0
-	0x544f,      // 000100:  ADDQ.W   #2,A7
-	0x4ed0,      // 000102:  JMP      (A0)
-};
-
-static const UInt16 patched_sleep_trap[] =
-{
-	0x225f,  // 0000dc:  MOVEA.L  (A7)+,A1
-	0x305f,  // 0000de:  MOVEA.W  (A7)+,A0
-	0xa03b,  // 0000e0:  _Delay
-	0x4ed1,  // 0000e2:  JMP      (A1)
-	0x4e71,  // 0000e4:  NOP
-	0x4e71,  // 0000e6:  NOP
-	0x4e71,  // 0000e8:  NOP
-	0x4e71,  // 0000ea:  NOP
-	0x4e71,  // 0000ec:  NOP
-	0x4e71,  // 0000ee:  NOP
-	0x4e71,  // 0000f0:  NOP
-	0x4e71,  // 0000f2:  NOP
-	0x4e71,  // 0000f4:  NOP
-	0x4e71,  // 0000f6:  NOP
-	0x4e71,  // 0000f8:  NOP
-	0x4e71,  // 0000fa:  NOP
-	0x4e71,  // 0000fc:  NOP
-	0x4e71,  // 0000fe:  NOP
-	0x4e71,  // 000100:  NOP
-	0x4e71,  // 000102:  NOP
-};
-
-static const UInt16 shipped_dissolve_bytes_A[] =
-{
-	0x4e56,      0,  // 002566:  LINK     A6,#0
-	0x48e7, 0x1020,  // 00256a:  MOVEM.L  D3/A2,-(A7)
-};
-
-static const UInt16 shipped_dissolve_bytes_B[] =
-{
-	0x45fa, 0x002a,          // 0025c4:  LEA      *+44,A2    ; $0025f0
-	0x2232, 0x0000,          // 0025c8:  MOVE.L   (A2,D0.W),D1
-	0x2401,                  // 0025cc:  MOVE.L   D1,D2
-	0x2050,                  // 0025ce:  MOVEA.L  (A0),A0     // srcBase
-	0x2251,                  // 0025d0:  MOVEA.L  (A1),A1     // dstBase
-	0xa852,                  // 0025d2:  _HideCursor
-	0x6002,                  // 0025d4:  BRA.S    *+4    ; $0025d8
-	0xb342,                  // 0025d6:  EOR.W    D1,D2
-	0xb642,                  // 0025d8:  CMP.W    D2,D3
-	0x6f06,                  // 0025da:  BLE.S    *+8    ; $0025e2
-	0x13b0, 0x2000, 0x2000,  // 0025dc:  MOVE.B   (A0,D2.W),(A1,D2.W)
-	0xe24a,                  // 0025e2:  LSR.W    #1,D2
-	0x62f6,                  // 0025e4:  BHI.S    *-8    ; $0025dc
-	0x66ee,                  // 0025e6:  BNE.S    *-16    ; $0025d6
-	0x1290,                  // 0025e8:  MOVE.B   (A0),(A1)
-	0xa853,                  // 0025ea:  _ShowCursor
-	0x4cdf, 0x0408,          // 0025ec:  MOVEM.L  (A7)+,D3/A2
-	0x4e5e,                  // 0025f0:  UNLK     A6
-};
-
-static const UInt16 patched_dissolve_bytes_A[] =
-{
-	0x4e56,      0,  // 002566:  LINK     A6,#0
-	0x48e7, 0x1c30,  // 00256a:  MOVEM.L  D3-D5/A2-A3,-(A7)
-};
-
-static const UInt16 patched_dissolve_bytes_B[] =
-{
-	0x45fa, 0x002a,          // 0025c4:  LEA      *+44,A2    ; $0025f0
-	0x2832, 0x0000,          // 0025c8:  MOVE.L   (A2,D0.W),D4
-	0x2a04,                  // 0025cc:  MOVE.L   D4,D5
-	0x2450,                  // 0025ce:  MOVEA.L  (A0),A2     // srcBase
-	0x2651,                  // 0025d0:  MOVEA.L  (A1),A3     // dstBase
-	0xa852,                  // 0025d2:  _HideCursor
-	0x6002,                  // 0025d4:  BRA.S    *+4    ; $0025d8
-	0xb945,                  // 0025d6:  EOR.W    D4,D5
-	0xb645,                  // 0025d8:  CMP.W    D5,D3
-	0x6f06,                  // 0025da:  BLE.S    *+8    ; $0025e2
-	0x17b2, 0x5000, 0x5000,  // 0025dc:  MOVE.B   (A2,D5.W),(A3,D5.W)
-	0xe24d,                  // 0025e2:  LSR.W    #1,D5
-	0x62f6,                  // 0025e4:  BHI.S    *-8    ; $0025dc
-	0x66ee,                  // 0025e6:  BNE.S    *-16    ; $0025d6
-	0x1692,                  // 0025e8:  MOVE.B   (A2),(A3)
-	0xa853,                  // 0025ea:  _ShowCursor
-	0x4cdf, 0x0c38,          // 0025ec:  MOVEM.L  (A7)+,D3-D5/A2-A3
-	0x4e5e,                  // 0025f0:  UNLK     A6
-};
 
 static inline
 void my_memcpy( void* dst, const void* src, long n )
