@@ -106,13 +106,13 @@ static const UInt16 patched_sleep_trap[] =
 	0x4e71,  // 000102:  NOP
 };
 
-static const UInt16 shipped_byte_dissolve_A[] =
+static const UInt16 shipped_dissolve_bytes_A[] =
 {
 	0x4e56,      0,  // 002566:  LINK     A6,#0
 	0x48e7, 0x1020,  // 00256a:  MOVEM.L  D3/A2,-(A7)
 };
 
-static const UInt16 shipped_byte_dissolve_B[] =
+static const UInt16 shipped_dissolve_bytes_B[] =
 {
 	0x45fa, 0x002a,          // 0025c4:  LEA      *+44,A2    ; $0025f0
 	0x2232, 0x0000,          // 0025c8:  MOVE.L   (A2,D0.W),D1
@@ -134,13 +134,13 @@ static const UInt16 shipped_byte_dissolve_B[] =
 	0x4e5e,                  // 0025f0:  UNLK     A6
 };
 
-static const UInt16 patched_byte_dissolve_A[] =
+static const UInt16 patched_dissolve_bytes_A[] =
 {
 	0x4e56,      0,  // 002566:  LINK     A6,#0
 	0x48e7, 0x1c30,  // 00256a:  MOVEM.L  D3-D5/A2-A3,-(A7)
 };
 
-static const UInt16 patched_byte_dissolve_B[] =
+static const UInt16 patched_dissolve_bytes_B[] =
 {
 	0x45fa, 0x002a,          // 0025c4:  LEA      *+44,A2    ; $0025f0
 	0x2832, 0x0000,          // 0025c8:  MOVE.L   (A2,D0.W),D4
@@ -198,21 +198,21 @@ void install_sleep_patch( Handle h, Size handle_size )
 }
 
 static inline
-void install_byte_dissolve_patch( Handle h, Size handle_size )
+void install_dissolve_bytes_patch( Handle h, Size handle_size )
 {
 	if ( handle_size >= 0x0025f2 )
 	{
 		UInt16* pA = (UInt16*) (*h + 0x002566);
 		UInt16* pB = (UInt16*) (*h + 0x0025c4);
 		
-		bool patch_byte_dissolve =
-			equal_words( pA, VEC_LEN( shipped_byte_dissolve_A ) )  &&
-			equal_words( pB, VEC_LEN( shipped_byte_dissolve_B ) );
+		bool patch_dissolve_bytes =
+			equal_words( pA, VEC_LEN( shipped_dissolve_bytes_A ) )  &&
+			equal_words( pB, VEC_LEN( shipped_dissolve_bytes_B ) );
 		
-		if ( patch_byte_dissolve )
+		if ( patch_dissolve_bytes )
 		{
-			my_memcpy( pA, VEC_SIZE( patched_byte_dissolve_A ) );
-			my_memcpy( pB, VEC_SIZE( patched_byte_dissolve_B ) );
+			my_memcpy( pA, VEC_SIZE( patched_dissolve_bytes_A ) );
+			my_memcpy( pB, VEC_SIZE( patched_dissolve_bytes_B ) );
 		}
 	}
 }
@@ -230,7 +230,7 @@ void InitFonts_handler()
 			
 			install_sleep_patch( h, size );
 			
-			install_byte_dissolve_patch( h, size );
+			install_dissolve_bytes_patch( h, size );
 		}
 	}
 }
