@@ -4,14 +4,39 @@
 	
 	Vanlandingham Tune-up INIT for Mac OS
 	
-	Copyright 2024-2025, Joshua Juran.  All rights reserved.
+	Copyright 2024-2026, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
+	Vanlandingham is a bouncing ball demo (like Amiga's "boing!")
+	designed to run on Macs with the original graphics hardware.
+	
+	https://www.v68k.org/ams/demo/Vanlandingham-AMS-demo.mp4
+	
+	Here's a brief synopsis of the Vanlandingham demo:
+	
+		1. Clear the screen to white.
+		2. Dissolve to a text display.
+		3. Display an animated busy cursor while setting up.
+		4. Beep, flash the screen, and display a blinking prompt.
+		5. Dissolve to a holodeck-like grid space[1].
+		6. Display a bouncing, rotating ball (via page flipping).
+		7. On keypress, dissolve back to the empty grid space.
+		8. Dissolve to a gray checkerboard pattern.
+	
+	Note that the dissolve in #7 (which is localized to the ball)
+	changes a single bit at a time.  The other dissolves (#2, #5,
+	and #8) cover the whole screen and set entire bytes at once.
+	
+	[1] Vanlandingham's grid is derived from the one in "boing!",
+	which debuted in January 1984.  Star Trek: The Next Generation
+	(in which a holodeck is first shown) didn't air until 1987.
+	
+	
 	This is a pair of application hot patches for Vanlandingham.
 	One replaces a 20-word busy loop with a 4-word Delay call.
-	Another rewrites a dissolve routine to use only non-volatile
-	registers across a Toolbox trap call to HideCursor().
+	Another rewrites the dissolve-bytes routine to use only non-
+	volatile registers across a Toolbox trap call to HideCursor().
 	
 	Although Vanlandingham's "sleep" function is only called
 	once at startup (for 10 ticks) and once on Quit (for 12 ticks),
