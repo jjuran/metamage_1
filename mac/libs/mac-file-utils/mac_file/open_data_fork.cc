@@ -41,14 +41,15 @@ FSIORefNum open_data_fork( short                 vRefNum,
 	
 	if ( name[ 1 ] == '.' )
 	{
-		Byte len = name[ 0 ];
+		const Byte old_len = name[ 0 ];
+		const Byte new_len = old_len + 1;
 		
 		Byte* p = path;
 		
-		*p++ = len + 1;
+		*p++ = new_len;
 		*p++ = ':';
 		
-		mempcpy( p, name + 1, len );
+		mempcpy( p, name + 1, old_len );
 		
 		name = path;
 	}
