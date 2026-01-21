@@ -1,8 +1,8 @@
 /*
-	TESyncScrap.cc
+	TEScrapSync.cc
 	--------------
 	
-	TESyncScrap INIT for Mac OS
+	TEScrapSync INIT for Mac OS
 	
 	Copyright 2009, Joshua Juran.  All rights reserved.
 	
@@ -51,16 +51,26 @@
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
 #endif
-#ifndef __TRAPS__
-#include <Traps.h>
-#endif
 
 // mac-sys-utils
 #include "mac_sys/trap_address.hh"
 
+// mac-qd-utils
+#include "mac_qd/plot_icon_id.hh"
+
+// ShowAnIcon
+#include "ShowAnIcon.hh"
+
 
 #pragma exceptions off
 
+
+enum
+{
+	_TECopy  = 0xA9D5,
+	_TECut   = 0xA9D6,
+	_TEPaste = 0xA9DB,
+};
 
 typedef pascal void (*TEScrap_ProcPtr)( TEHandle hTE );
 
@@ -112,7 +122,19 @@ TEPaste_patch( TEHandle hTE )
 
 int main()
 {
-	Handle self = Get1Resource( 'INIT', 0 );
+	using show_an_icon::advance_location;
+	using show_an_icon::get_icon_rect;
+	using show_an_icon::temporary_graphics_port;
+	
+	temporary_graphics_port port;
+	
+	Rect r;
+	
+	get_icon_rect( r );
+	
+	mac::qd::plot_icon_id( r, 128 );
+	
+	Handle self = GetResource( 'INIT', 0 );
 	
 	DetachResource( self );
 	
@@ -123,6 +145,8 @@ int main()
 	mac::sys::set_trap_address( (ProcPtr) TECopy_patch,  _TECopy  );
 	mac::sys::set_trap_address( (ProcPtr) TECut_patch,   _TECut   );
 	mac::sys::set_trap_address( (ProcPtr) TEPaste_patch, _TEPaste );
+	
+	advance_location();
 	
 	return 0;
 }
