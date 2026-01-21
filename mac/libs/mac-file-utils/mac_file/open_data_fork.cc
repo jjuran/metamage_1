@@ -44,6 +44,11 @@ FSIORefNum open_data_fork( short                 vRefNum,
 		const Byte old_len = name[ 0 ];
 		const Byte new_len = old_len + 1;
 		
+		if ( new_len == 0 )
+		{
+			return bdNamErr;
+		}
+		
 		Byte* p = path;
 		
 		*p++ = new_len;
