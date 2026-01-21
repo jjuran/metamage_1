@@ -1,8 +1,8 @@
 /*
-	TESyncScrap.cc
+	TEScrapSync.cc
 	--------------
 	
-	TESyncScrap INIT for Mac OS
+	TEScrapSync INIT for Mac OS
 	
 	Copyright 2009, Joshua Juran.  All rights reserved.
 	
