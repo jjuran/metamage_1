@@ -57,7 +57,7 @@ int allocate_screen()
 		{
 			size_t size = sizeof_clut( *transit_clut );
 			
-			virtual_clut = (clut_data*) malloc( size );
+			virtual_clut = (clut_data*) calloc( size, 1 );
 			
 			if ( ! virtual_clut )
 			{
