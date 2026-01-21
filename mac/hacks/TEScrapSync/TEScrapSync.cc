@@ -51,9 +51,6 @@
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
 #endif
-#ifndef __TRAPS__
-#include <Traps.h>
-#endif
 
 // mac-sys-utils
 #include "mac_sys/trap_address.hh"
@@ -61,6 +58,13 @@
 
 #pragma exceptions off
 
+
+enum
+{
+	_TECopy  = 0xA9D5,
+	_TECut   = 0xA9D6,
+	_TEPaste = 0xA9DB,
+};
 
 typedef pascal void (*TEScrap_ProcPtr)( TEHandle hTE );
 
