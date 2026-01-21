@@ -59,6 +59,13 @@ int allocate_screen()
 			
 			virtual_clut = (clut_data*) malloc( size );
 			
+			if ( ! virtual_clut )
+			{
+				// We leak virtual_buffer, but caller will exit() anyway.
+				
+				return -1;
+			}
+			
 			virtual_clut->max = transit_clut->max;
 		}
 	}
