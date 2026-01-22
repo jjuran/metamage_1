@@ -53,8 +53,9 @@ int main( int argc, char** argv )
 		
 		const Rect& rect = gdH[0]->gdRect;
 		
-		printf( "%c %p (%.4x, %d)  [%d,%d - %d,%d]\n", mark, gdH,
+		printf( "%c %p (%.4x, %d)  %p: [%d,%d - %d,%d]\n", mark, gdH,
 		        (uint16_t) gdH[0]->gdFlags, gdH[0]->gdRefNum,
+		        gdH[0]->gdPMap[0]->baseAddr,
 		        rect.left, rect.top, rect.right, rect.bottom );
 		
 		gdH = GetNextDevice( gdH );
