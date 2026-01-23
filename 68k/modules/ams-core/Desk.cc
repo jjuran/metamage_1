@@ -5,16 +5,9 @@
 
 #include "Desk.hh"
 
-// Mac OS
-#ifndef __OSUTILS__
-#include <OSUtils.h>
-#endif
-
 // ams-core
 #include "splode.hh"
-
-
-QHdr EventQueue : 0x014A;
+#include "throttle.hh"
 
 
 pascal Boolean SystemEdit_patch( short cmd )
@@ -24,7 +17,7 @@ pascal Boolean SystemEdit_patch( short cmd )
 
 pascal void SystemTask_patch()
 {
-	wait_for_user_input( EventQueue.qFlags & 1 );
+	wait_for_user_input( ticks_to_wait_in_SystemTask() );
 }
 
 pascal Boolean SystemEvent_patch( const EventRecord* event )

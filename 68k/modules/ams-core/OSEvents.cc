@@ -13,6 +13,9 @@
 // ams-common
 #include "callouts.hh"
 
+// ams-core
+#include "throttle.hh"
+
 
 Ptr  SysEvtBuf  : 0x0146;
 QHdr EventQueue : 0x014A;
@@ -134,7 +137,7 @@ char GetOSEvent_patch( short mask : __D0, EventRecord* event : __A0 )
 		dequeue_event( it );
 	}
 	
-	EventQueue.qFlags |= 1;  // GetOSEvent was here
+	enable_SystemTask_throttle();
 	
 	return -(it == NULL);
 }

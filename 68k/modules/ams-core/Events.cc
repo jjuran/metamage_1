@@ -21,10 +21,10 @@
 
 // ams-core
 #include "splode.hh"
+#include "throttle.hh"
 
 
 UInt32 Ticks   : 0x016A;
-QHdr EventQueue : 0x014A;
 Byte   MBState : 0x0172;
 KeyMap KeyMaps : 0x0174;
 Point  Mouse   : 0x0830;
@@ -146,13 +146,13 @@ pascal Boolean GetNextEvent_patch( unsigned short  eventMask,
 		}
 	}
 	
-	EventQueue.qFlags &= ~1;
+	disable_SystemTask_throttle();
 	
 	return false;
 	
 got_event:
 	
-	EventQueue.qFlags &= ~1;
+	disable_SystemTask_throttle();
 	
 	return ! SystemEvent( event );
 }
