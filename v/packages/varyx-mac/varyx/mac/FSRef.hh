@@ -6,11 +6,11 @@
 #ifndef VARYX_MAC_FSREF_HH
 #define VARYX_MAC_FSREF_HH
 
+// mac-types
+#include "mac_types/FSRef.hh"
+
 // vlib
 #include "vlib/value.hh"
-
-
-struct FSRef;
 
 
 namespace vlib
@@ -32,6 +32,8 @@ namespace mac
 	
 	class FSRef : public Value
 	{
+		typedef ::mac::types::FSRef POD_type;
+		
 		public:
 			static bool test( const Value& v )
 			{
@@ -43,14 +45,14 @@ namespace mac
 			FSRef();
 			FSRef( const char* unix_path );
 			
-			const ::FSRef& get() const
+			const POD_type& get() const
 			{
-				return *(const ::FSRef*) pointer();
+				return *(const POD_type*) pointer();
 			}
 			
-			::FSRef* pointer() const
+			POD_type* pointer() const
 			{
-				return (::FSRef*) Value::pointer();
+				return (POD_type*) Value::pointer();
 			}
 	};
 	

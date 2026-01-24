@@ -6,11 +6,11 @@
 #ifndef VARYX_MAC_FSSPEC_HH
 #define VARYX_MAC_FSSPEC_HH
 
+// mac-types
+#include "mac_types/FSSpec.hh"
+
 // vlib
 #include "vlib/value.hh"
-
-
-struct FSSpec;
 
 
 namespace vlib
@@ -32,6 +32,8 @@ namespace mac
 	
 	class FSSpec : public Value
 	{
+		typedef ::mac::types::FSSpec POD_type;
+		
 		public:
 			static bool test( const Value& v )
 			{
@@ -43,14 +45,14 @@ namespace mac
 			FSSpec();
 			FSSpec( const char* unix_path );
 			
-			const ::FSSpec& get() const
+			const POD_type& get() const
 			{
-				return *(const ::FSSpec*) pointer();
+				return *(const POD_type*) pointer();
 			}
 			
-			::FSSpec* pointer() const
+			POD_type* pointer() const
 			{
-				return (::FSSpec*) Value::pointer();
+				return (POD_type*) Value::pointer();
 			}
 	};
 	
