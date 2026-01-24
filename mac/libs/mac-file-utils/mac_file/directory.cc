@@ -93,7 +93,8 @@ namespace file {
 	VRefNum_DirID directory( const FSRef& file )
 	{
 		FSSpec spec;
-		if ( OSStatus err = FSGetCatalogInfo_spec( &file, 0, 0, 0, &spec, 0 ) )
+		
+		if ( OSStatus err = FSGetCatalogInfo_spec( file, spec ) )
 		{
 			VRefNum_DirID error = { 0, err };
 			return error;

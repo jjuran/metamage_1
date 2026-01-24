@@ -46,6 +46,12 @@ namespace file {
 	
 #endif
 	
+	inline
+	OSErr FSGetCatalogInfo_spec( const FSRef& ref, FSSpec& spec )
+	{
+		return FSGetCatalogInfo_spec( &ref, 0, 0, 0, &spec, 0 );
+	}
+	
 }
 }
 
