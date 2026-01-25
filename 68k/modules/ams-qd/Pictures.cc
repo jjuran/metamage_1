@@ -494,6 +494,7 @@ const Byte* do_opcode( const Byte* p )
 			break;
 		
 		case 0x90:
+		case 0x91:
 		case 0x98:
 		case 0x99:
 			p = draw_bits( p, opcode & 1 );
