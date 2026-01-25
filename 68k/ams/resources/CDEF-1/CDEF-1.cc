@@ -180,7 +180,8 @@ long CDEF_1_Draw( short varCode, ControlRef control, long param )
 	
 	const short aspect = height - width;  // x > 0: vertical, x < 0: horizontal
 	
-	const short gap = (aspect > 0 ? height : width) - 3 * 16;  // x - 48px
+	const short edge = aspect > 0 ? width : height;
+	const short gap = (aspect > 0 ? height : width) - 3 * edge;  // x - 48px
 	
 	if ( aspect == 0  ||  gap < 2 )
 	{
@@ -213,8 +214,8 @@ long CDEF_1_Draw( short varCode, ControlRef control, long param )
 	
 	bounds = control[0]->contrlRect;
 	
-	bounds.bottom = bounds.top + 16;
-	bounds.right = bounds.left + 16;
+	bounds.bottom = bounds.top + edge;
+	bounds.right = bounds.left + edge;
 	
 	CopyBits( &arrow, dstBits, &arrow.bounds, &bounds, srcCopy, NULL );
 	
@@ -222,8 +223,8 @@ long CDEF_1_Draw( short varCode, ControlRef control, long param )
 	
 	bounds = control[0]->contrlRect;
 	
-	bounds.top = bounds.bottom - 16;
-	bounds.left = bounds.right - 16;
+	bounds.top = bounds.bottom - edge;
+	bounds.left = bounds.right - edge;
 	
 	CopyBits( &arrow, dstBits, &arrow.bounds, &bounds, srcCopy, NULL );
 	
@@ -235,11 +236,11 @@ indicator:
 	{
 		if ( aspect > 0 )
 		{
-			InsetRect( &bounds, 1, 16 );
+			InsetRect( &bounds, 1, edge );
 		}
 		else
 		{
-			InsetRect( &bounds, 16, 1 );
+			InsetRect( &bounds, edge, 1 );
 		}
 		
 		const UInt8 hilite = control[0]->contrlHilite;
@@ -264,12 +265,12 @@ indicator:
 		if ( aspect > 0 )
 		{
 			bounds.top += delta;
-			bounds.bottom = bounds.top + 16;
+			bounds.bottom = bounds.top + edge;
 		}
 		else
 		{
 			bounds.left += delta;
-			bounds.right = bounds.left + 16;
+			bounds.right = bounds.left + edge;
 		}
 		
 		EraseRect( &bounds );
@@ -289,13 +290,13 @@ hilite:
 	
 	if ( param == kControlUpButtonPart )
 	{
-		bounds.bottom = bounds.top + 16;
-		bounds.right = bounds.left + 16;
+		bounds.bottom = bounds.top + edge;
+		bounds.right = bounds.left + edge;
 	}
 	else if ( param == kControlDownButtonPart )
 	{
-		bounds.top = bounds.bottom - 16;
-		bounds.left = bounds.right - 16;
+		bounds.top = bounds.bottom - edge;
+		bounds.left = bounds.right - edge;
 	}
 	else
 	{
@@ -336,7 +337,8 @@ long CDEF_1_Hit( short varCode, ControlRef control, Point where )
 	
 	const short aspect = height - width;  // x > 0: vertical, x < 0: horizontal
 	
-	const short gap = (aspect > 0 ? height : width) - 3 * 16;  // x - 48px
+	const short edge = aspect > 0 ? width : height;
+	const short gap = (aspect > 0 ? height : width) - 3 * edge;  // x - 48px
 	
 	if ( aspect == 0  ||  gap < 2 )
 	{
@@ -348,30 +350,30 @@ long CDEF_1_Hit( short varCode, ControlRef control, Point where )
 	
 	const short end = aspect > 0 ? height : width;
 	
-	if ( coord <= 16 )
+	if ( coord <= edge )
 	{
 		return kControlUpButtonPart;
 	}
 	
-	if ( end - coord <= 16 )
+	if ( end - coord <= edge )
 	{
 		return kControlDownButtonPart;
 	}
 	
 	const short value = control[0]->contrlValue;
-	const short delta = 16 + thumb_offset_from_value( gap, value, min, max );
+	const short delta = edge + thumb_offset_from_value( gap, value, min, max );
 	
 	if ( coord < delta )
 	{
 		return kControlPageUpPart;
 	}
 	
-	if ( coord > delta + 16 )
+	if ( coord > delta + edge )
 	{
 		return kControlPageDownPart;
 	}
 	
-	if ( coord > delta  &&  coord < delta + 16 )
+	if ( coord > delta  &&  coord < delta + edge )
 	{
 		return kControlIndicatorPart;
 	}
@@ -398,17 +400,18 @@ long CDEF_1_CalcRgns( short varCode, ControlRef control, long param )
 		
 		const short aspect = height - width;
 		
-		const short gap = (aspect > 0 ? height : width) - 3 * 16;  // x - 48px
+		const short edge = aspect > 0 ? width : height;
+		const short gap = (aspect > 0 ? height : width) - 3 * edge;  // x - 48px
 		
 		const short min = control[0]->contrlMin;
 		const short max = control[0]->contrlMax;
 		
 		const short value = control[0]->contrlValue;
 		
-		const short delta = 16 + thumb_offset_from_value( gap, value, min, max );
+		const short delta = edge + thumb_offset_from_value( gap, value, min, max );
 		
-		bounds.bottom = bounds.top + 16;
-		bounds.right = bounds.left + 16;
+		bounds.bottom = bounds.top + edge;
+		bounds.right = bounds.left + edge;
 		
 		if ( aspect > 0 )
 		{
@@ -439,7 +442,8 @@ long CDEF_1_Thumb( short varCode, ControlRef control, long param )
 	
 	const short aspect = height - width;
 	
-	const short gap = (aspect > 0 ? height : width) - 3 * 16;  // x - 48px
+	const short edge = aspect > 0 ? width : height;
+	const short gap = (aspect > 0 ? height : width) - 3 * edge;  // x - 48px
 	
 	const short min = control[0]->contrlMin;
 	const short max = control[0]->contrlMax;
@@ -480,7 +484,8 @@ long CDEF_1_Position( short varCode, ControlRef control, long param )
 	
 	const short aspect = height - width;
 	
-	const short gap = (aspect > 0 ? height : width) - 3 * 16;  // x - 48px
+	const short edge = aspect > 0 ? width : height;
+	const short gap = (aspect > 0 ? height : width) - 3 * edge;  // x - 48px
 	
 	if ( gap > 0 )
 	{
