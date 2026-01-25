@@ -98,7 +98,7 @@ Value FSSpec::coerce( const Value& v )
 		::FSSpec&      spec = *fsspec.pointer();
 		::FSRef const& ref  =  fsref->get();
 		
-		OSErr err = FSGetCatalogInfo_spec( &ref, 0, 0, 0, &spec, 0 );
+		OSErr err = FSGetCatalogInfo_spec( ref, spec );
 		
 		throw_MacOS_error( err, "FSGetCatalogInfo" );
 		
@@ -221,7 +221,7 @@ FSSpec::FSSpec( const char* unix_path )
 	size_t name_len = 1 + *spec.name;
 	size_t n_unused = sizeof spec.name - name_len;
 	
-	uint8_t* begin = spec.name + name_len;
+	Byte* begin = spec.name + name_len;
 	
 	memset( begin, '\0', n_unused );
 }
