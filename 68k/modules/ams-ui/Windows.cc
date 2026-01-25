@@ -43,6 +43,7 @@
 #include "modal_updating.hh"
 #include "options.hh"
 #include "patches.hh"
+#include "scoped_black_on_white.hh"
 #include "scoped_port.hh"
 #include "StrUtils.hh"
 
@@ -839,6 +840,8 @@ pascal WindowRef FrontWindow_patch()
 
 pascal void DrawGrowIcon_patch( WindowPeek window )
 {
+	scoped_black_on_white black_on_white( &window->port );
+	
 	scoped_port thePort = &window->port;
 	raster_lock lock;
 	

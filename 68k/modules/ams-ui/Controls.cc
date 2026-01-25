@@ -25,6 +25,7 @@
 #include "scoped_zone.hh"
 
 // ams-ui
+#include "scoped_black_on_white.hh"
 #include "scoped_port.hh"
 
 
@@ -50,6 +51,8 @@ void draw_control( ControlRef control, short part = 0 )
 		
 		if ( ((WindowPeek) window)->visible )
 		{
+			scoped_black_on_white black_on_white( window );
+			
 			scoped_port thePort = window;
 			
 			raster_lock lock;
@@ -293,6 +296,8 @@ pascal short TrackControl_patch( ControlRef        control,
 	RgnHandle mouseRgn = tmp;
 	
 	WindowRef window = control[0]->contrlOwner;
+	
+	scoped_black_on_white black_on_white( window );
 	
 	scoped_port thePort = window;
 	
