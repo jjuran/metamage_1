@@ -95,20 +95,16 @@ Value FSSpec::coerce( const Value& v )
 		
 		FSSpec fsspec;
 		
-		::FSSpec&      spec = *fsspec.pointer();
+		POD_type&      spec = *fsspec.pointer();
 		::FSRef const& ref  =  fsref->get();
 		
 		OSErr err = FSGetCatalogInfo_spec( ref, spec );
 		
 		throw_MacOS_error( err, "FSGetCatalogInfo" );
 		
-	#if ! __LP64__
-		
 		size_t size = 1 + spec.name[ 0 ];
 		
 		memset( spec.name + size, '\0', sizeof spec.name - size );
-		
-	#endif
 		
 		return fsspec;
 	}
@@ -185,8 +181,6 @@ const dispatch FSSpec_dispatch =
 	&ops,
 };
 
-#if ! __LP64__
-
 FSSpec::FSSpec()
 :
 	Value( sizeof (::FSSpec),
@@ -212,7 +206,7 @@ FSSpec::FSSpec( const char* unix_path )
 	
 	OSErr err;
 	
-	::FSSpec& spec = *pointer();
+	POD_type& spec = *pointer();
 	
 	err = FSSpec_from_optional_path( unix_path, spec );
 	
@@ -259,8 +253,6 @@ const type_info FSSpec_vtype =
 	&FSSpec_member,
 	0,
 };
-
-#endif  // #if ! __LP64__
 
 }
 }
