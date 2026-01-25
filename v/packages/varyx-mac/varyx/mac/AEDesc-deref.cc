@@ -18,6 +18,10 @@
 #include <AEDataModel.h>
 #endif
 
+// mac-types
+#include "mac_types/FSRef.hh"
+#include "mac_types/FSSpec.hh"
+
 // vlib
 #include "vlib/array-utils.hh"
 #include "vlib/iterators/list_builder.hh"
@@ -96,22 +100,15 @@ Value dereferenced_AEDesc( const ::AEDesc& desc )
 			::AEGetDescData( ptr, &f64, sizeof f64 );
 			return Float( f64 );
 		
-		/*
-			Note:  We're not going to bring <Files.h> into
-			scope just to get the size of FSSpec and FSRef.
-		*/
-		
 	#if ! __LP64__
 		
 		case 'fss ':
 		{
-			enum { sizeof_FSSpec = 70 };
-			
 			FSSpec object;
 			
-			::FSSpec& pod = *object.pointer();
+			::mac::types::FSSpec& pod = *object.pointer();
 			
-			::AEGetDescData( ptr, &pod, sizeof_FSSpec );
+			::AEGetDescData( ptr, &pod, sizeof pod );
 			
 			return object;
 		}
@@ -120,13 +117,11 @@ Value dereferenced_AEDesc( const ::AEDesc& desc )
 		
 		case 'fsrf':
 		{
-			enum { sizeof_FSRef = 80 };
-			
 			FSRef object;
 			
-			::FSRef& pod = *object.pointer();
+			::mac::types::FSRef& pod = *object.pointer();
 			
-			::AEGetDescData( ptr, &pod, sizeof_FSRef );
+			::AEGetDescData( ptr, &pod, sizeof pod );
 			
 			return object;
 		}
