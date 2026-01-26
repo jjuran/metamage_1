@@ -309,6 +309,24 @@ const Byte* poly( const Byte* p, Op op )
 }
 
 static
+const Byte* region( const Byte* p, Op op )
+{
+	const Byte* q = p;
+	
+	const short rgnSize = read_word( q );
+	
+	Handle h = PtrToHand( p, rgnSize );
+	
+	signed char verb = op - 0x80;
+	
+	StdRgn( verb, (RgnHandle) h );
+	
+	DisposeHandle( h );
+	
+	return p + rgnSize;
+}
+
+static
 const Byte* do_opcode( const Byte* p )
 {
 	const Byte opcode = *p++;
@@ -491,6 +509,14 @@ const Byte* do_opcode( const Byte* p )
 		case 0x73:
 		case 0x74:
 			p = poly( p, opcode );
+			break;
+		
+		case 0x80:
+		case 0x81:
+		case 0x82:
+		case 0x83:
+		case 0x84:
+			p = region( p, opcode );
 			break;
 		
 		case 0x90:
