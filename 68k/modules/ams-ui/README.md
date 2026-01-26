@@ -47,7 +47,7 @@ TextEdit
   * _TEAutoView stub
   * _TEStyleNew just calls TENew()
   * _TEDispatch
-    * TEStyleInsert no-op
+    * TEStyleInsert just calls TEInsert()
     * TEGetHeight (assumes fixed line height)
 
 Dialog Manager

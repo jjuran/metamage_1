@@ -1028,6 +1028,7 @@ static
 pascal
 void TEStyleInsert_call( const void* p, long n, StScrpHandle hST, TEHandle hTE )
 {
+	TEInsert( p, n, hTE );
 }
 
 static
