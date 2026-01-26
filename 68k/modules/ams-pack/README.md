@@ -25,6 +25,7 @@ Binary-Decimal Conversion
   * _Pack7
     * NumToString
     * StringToNum
+    * FDecToStr
 
 International Utilities
 -----------------------
