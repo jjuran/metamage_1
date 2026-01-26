@@ -10,14 +10,30 @@ Package Manager
 
   * _InitAllPacks calls GetResource( 'PACK', id ) directly
   * _InitPack is a no-op (launcher calls InitAllPacks())
-  * _Pack0 .. _Pack7
+  * _Pack0 .. _Pack5
     * handler checks in AppPacks, then GetResource(), then SysError()
       * _Pack2 no-ops DILoad first
       * TODO: InitAllPacks() call makes resource load redundant, axe it
     * _Pack0 patched by ams-ui (List Manager)
     * _Pack3 patched by ams-ui (Standard File)
-    * _Pack6 patched by ams-ui (International Utilities)
-    * _Pack7 patched by ams-ui (Binary-Decimal Conversion)
+  * _Pack6 (International Utilities)
+  * _Pack7 (Binary-Decimal Conversion)
+
+Binary-Decimal Conversion
+-------------------------
+
+  * _Pack7
+    * NumToString
+    * StringToNum
+
+International Utilities
+-----------------------
+
+  * _Pack6
+    * IUDateString
+    * IUTimeString
+    * IUMagString
+    * IUMagIDString
 
 Disk Initialization Package
 ---------------------------

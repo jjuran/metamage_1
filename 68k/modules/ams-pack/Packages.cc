@@ -251,15 +251,3 @@ asm void Pack5_patch()
 	PEA      0x0005
 	JMP      call_PACK
 }
-
-asm void Pack6_patch()
-{
-	PEA      0x0006
-	JMP      call_PACK
-}
-
-asm void Pack7_patch()
-{
-	PEA      0x0007
-	JMP      call_PACK
-}

@@ -16,7 +16,5 @@ void Pack2_patch();
 void Pack3_patch();
 void Pack4_patch();
 void Pack5_patch();
-void Pack6_patch();
-void Pack7_patch();
 
 #endif

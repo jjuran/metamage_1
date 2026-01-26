@@ -59,22 +59,6 @@ Dialog Manager
   * _FindDItem
   * _UpdateDialog just calls DrawDialog()
 
-Binary-Decimal Conversion
--------------------------
-
-  * patches _Pack7
-    * NumToString
-    * StringToNum
-
-International Utilities
------------------------
-
-  * patches _Pack6
-    * IUDateString
-    * IUTimeString
-    * IUMagString
-    * IUMagIDString
-
 List Manager
 ------------
 

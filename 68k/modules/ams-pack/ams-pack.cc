@@ -15,6 +15,8 @@
 #include "callouts.hh"
 
 // ams-pack
+#include "BinaryDecimal.hh"
+#include "IntlUtils.hh"
 #include "Packages.hh"
 
 

@@ -44,6 +44,8 @@ Advanced Mac Substitute Module Kit
 ------------
 
   * Package Manager
+  * Binary-Decimal Conversion Package
+  * International Utilities Package
 
 [ams-seg][]
 -----------
@@ -66,8 +68,6 @@ Advanced Mac Substitute Module Kit
   * Menu Manager
   * TextEdit
   * Dialog Manager
-  * Binary-Decimal Conversion Package
-  * International Utilities Package
   * List Manager
   * Standard File Package
 

@@ -21,12 +21,10 @@
 #include "callouts.hh"
 
 // ams-ui
-#include "BinaryDecimal.hh"
 #include "Controls.hh"
 #include "Dialogs.hh"
 #include "Drag.hh"
 #include "Icons.hh"
-#include "IntlUtils.hh"
 #include "Lists.hh"
 #include "Menus.hh"
 #include "options.hh"
@@ -297,9 +295,6 @@ static void install_Packages()
 	TBTRAP( Pack0 );  // A9E7
 	
 	TBTRAP( Pack3 );  // A9EA
-	
-	TBTRAP( Pack6 );  // A9ED
-	TBTRAP( Pack7 );  // A9EE
 }
 
 static
