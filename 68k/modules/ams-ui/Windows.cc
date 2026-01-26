@@ -1410,7 +1410,7 @@ pascal void ValidRgn_patch( RgnHandle rgn )
 	JMP      update_updateRgn
 }
 
-const  short max_update_attempts = 2;
+const  short max_update_attempts = 3;
 static short update_attempts;
 
 static WindowPeek window_with_pending_updateEvt;
