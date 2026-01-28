@@ -20,6 +20,7 @@
 // ams-common
 #include "callouts.hh"
 #include "QDGlobals.hh"
+#include "unglue.hh"
 
 // ams-qd
 #include "GrafProcs.hh"
@@ -296,9 +297,7 @@ const Byte* poly( const Byte* p, Op op )
 	
 	const short polySize = read_word( q );
 	
-	Handle h = NewHandle( polySize );
-	
-	BlockMoveData( p, *h, polySize );
+	Handle h = PtrToHand( p, polySize );
 	
 	signed char verb = op - 0x70;
 	
