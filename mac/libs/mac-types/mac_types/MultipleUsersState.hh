@@ -37,7 +37,7 @@ namespace types {
 		short giForceSaves;
 		short giForceOpens;
 		
-		Str31 giWorkgroupName;
+		Str31 giSetupName;
 		Str31 giUserName;
 		Str31 giFrontAppName;
 		
