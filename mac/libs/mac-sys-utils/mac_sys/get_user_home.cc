@@ -15,9 +15,6 @@
 #include <Folders.h>
 #endif
 
-// mac-types
-#include "mac_types/MultipleUsersState.hh"
-
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/has/FindFolder.hh"
@@ -27,7 +24,6 @@ namespace mac {
 namespace sys {
 	
 	using mac::types::VRefNum_DirID;
-	using mac::types::MultipleUsersState;
 	
 	
 	static inline
@@ -52,6 +48,8 @@ namespace sys {
 		};
 		
 	#ifndef __APPLE__
+		
+		typedef MultiUserGestalt MultipleUsersState;
 		
 		if ( long got = gestalt( gestaltMultipleUsersState ) )
 		{
