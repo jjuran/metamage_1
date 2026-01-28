@@ -44,14 +44,28 @@ namespace sys {
 	}
 	
 	static inline
-	MultipleUsersState** get_MultipleUsersState()
+	const VRefNum_DirID* get_MultiUsersDocsFolder()
 	{
 		enum
 		{
 			gestaltMultipleUsersState = 'mfdr',
 		};
 		
-		return (MultipleUsersState**) gestalt( gestaltMultipleUsersState );
+	#ifndef __APPLE__
+		
+		if ( long got = gestalt( gestaltMultipleUsersState ) )
+		{
+			MultipleUsersState* state = *(MultipleUsersState**) got;
+			
+			if ( state->giVersion > 1 )
+			{
+				return (const VRefNum_DirID*) &state->giDocsVRefNum;
+			}
+		}
+		
+	#endif
+		
+		return NULL;
 	}
 	
 	mac::types::VRefNum_DirID get_user_home()
@@ -63,16 +77,9 @@ namespace sys {
 			return result;
 		}
 		
-		if ( MultipleUsersState** handle = get_MultipleUsersState() )
+		if ( const VRefNum_DirID* documents = get_MultiUsersDocsFolder() )
 		{
-			MultipleUsersState* state = *handle;
-			
-			const short version = state->giVersion;
-			
-			if ( version > 1 )
-			{
-				return (const VRefNum_DirID&) state->giDocsVRefNum;
-			}
+			return *documents;
 		}
 		
 		result.vRefNum = 0;
