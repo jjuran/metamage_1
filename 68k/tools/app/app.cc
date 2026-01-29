@@ -85,6 +85,7 @@ static const Byte shutoffscreen_filename[] = "\p" "ShutdownScreen";
 enum
 {
 	_InitWindows = 0xA912,
+	_Launch      = 0xA9F2,
 };
 
 static inline
@@ -95,9 +96,10 @@ void InitWindows()
 }
 
 static inline
-short asm Launch( void* pb : __A0 ) : __D0
+asm
+short Launch( void* pb : __A0 )
 {
-	DC.W     0xA9F2  // _Launch
+	_Launch
 }
 
 static inline
