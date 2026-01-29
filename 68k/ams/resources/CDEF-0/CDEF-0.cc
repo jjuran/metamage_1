@@ -50,6 +50,22 @@ Rect switch_button_rect( const Rect& bounds )
 	return switch_rect;
 }
 
+static inline
+short text_lines( const Byte* s, short len )
+{
+	short n_lines = 1;
+	
+	for ( short i = 0;  i < len;  ++i )
+	{
+		if ( s[ i ] == '\r' )
+		{
+			++n_lines;
+		}
+	}
+	
+	return n_lines;
+}
+
 static
 void draw_pushbutton( const Rect&           bounds,
                       const unsigned char*  title,
@@ -59,17 +75,42 @@ void draw_pushbutton( const Rect&           bounds,
 	
 	EraseRoundRect( &bounds, diameter, diameter );
 	
+	const Byte* title_start = title;
+	const short title_len   = *title_start++;
+	const Byte* title_end   = title_start + title_len;
+	
 	const short titleAscent = 9;
+	const short lineHeight = 16;
+	
+	short n_lines = text_lines( title_start, title_len );
 	
 	short v = (bounds.top + bounds.bottom + titleAscent) / 2u;
 	
-	if ( const short titleWidth = StringWidth( title ) )
+	v -= (n_lines - 1) * lineHeight / 2u;
+	
+	for ( short i = 0;  i < n_lines;  ++i )
 	{
+		const Byte* p = title_start;
+		
+		while ( p < title_end  &&  *p != '\r' )
+		{
+			++p;
+		}
+		
+		const short titleWidth = TextWidth( title_start, 0, p - title_start );
+		
 		const short h = (bounds.left + bounds.right - titleWidth) / 2u;
 		
 		MoveTo( h, v );
 		
-		DrawString( title );
+		v += lineHeight;
+		
+		DrawText( title_start, 0, p - title_start );
+		
+		if ( p < title_end )
+		{
+			title_start = p + 1;
+		}
 	}
 	
 	if ( inactive )
