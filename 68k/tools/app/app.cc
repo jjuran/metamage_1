@@ -82,6 +82,18 @@ static UInt32 welcome_ticks;
 static const Byte startupscreen_filename[] = "\p" "StartupScreen";
 static const Byte shutoffscreen_filename[] = "\p" "ShutdownScreen";
 
+enum
+{
+	_InitWindows = 0xA912,
+};
+
+static inline
+asm
+void InitWindows()
+{
+	_InitWindows
+}
+
 static inline
 short asm Launch( void* pb : __A0 ) : __D0
 {
@@ -168,6 +180,10 @@ pascal
 void paint_shutdown_screen()
 {
 	HideCursor();
+	
+	InitGraf( &qd.thePort );
+	
+	InitWindows();
 	
 	OSErr err = paint_screen( shutoffscreen_filename );
 	
