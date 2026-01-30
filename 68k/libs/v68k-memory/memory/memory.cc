@@ -263,6 +263,16 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 			return 0;  // NULL
 		}
 		
+		using namespace v68k::screen;
+		
+		if ( is_unlocked()  &&  access == v68k::mem_update )
+		{
+			if ( virtual_buffer == page_2_virtual_buffer )
+			{
+				update_bits();
+			}
+		}
+		
 		const uint32_t offset = addr - alt_screen_addr;
 		
 		return page_2_virtual_buffer + offset;
