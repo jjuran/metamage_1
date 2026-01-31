@@ -532,6 +532,8 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 		return NULL;
 	}
 	
+	scoped_port thePort = window;
+	
 	TextFont( DlgFont );
 	
 	WindowPeek w = (WindowPeek) window;
@@ -539,11 +541,7 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	
 	w->windowKind = dialogKind;
 	
-	{
-		scoped_port thePort = window;
-		
-		d->textH = TENew( &window->portRect, &window->portRect );
-	}
+	d->textH = TENew( &window->portRect, &window->portRect );
 	
 	TEHandle hTE = d->textH;
 	
