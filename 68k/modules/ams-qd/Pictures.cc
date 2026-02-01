@@ -621,6 +621,17 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	
 	const Rect& frame = pic[0]->picFrame;
 	
+	const short pic_width  = frame.right - frame.left;
+	const short pic_height = frame.bottom - frame.top;
+	
+	const short dst_width  = dstRect->right - dstRect->left;
+	const short dst_height = dstRect->bottom - dstRect->top;
+	
+	if ( pic_width != dst_width  ||  pic_height != dst_height )
+	{
+		WARNING = "Drawn picture requires scaling that's unimplemented";
+	}
+	
 	const short dh = dstRect->left - frame.left;
 	const short dv = dstRect->top  - frame.top;
 	
@@ -654,7 +665,7 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	}
 	else
 	{
-		WARNING = "Unknown PICT format ", version;
+		ERROR = "Unknown PICT format ", version;
 	}
 	
 	if ( clipTopLeft != (long&) port.clipRgn[0]->rgnBBox )
