@@ -59,28 +59,29 @@ void draw_pushbutton( const Rect&           bounds,
 	
 	EraseRoundRect( &bounds, diameter, diameter );
 	
+	const short titleAscent = 9;
+	
+	short v = (bounds.top + bounds.bottom + titleAscent) / 2u;
+	
 	if ( const short titleWidth = StringWidth( title ) )
 	{
-		const short titleAscent = 9;
-		
 		const short h = (bounds.left + bounds.right - titleWidth) / 2u;
-		const short v = (bounds.top + bounds.bottom + titleAscent) / 2u;
 		
 		MoveTo( h, v );
 		
 		DrawString( title );
+	}
+	
+	if ( inactive )
+	{
+		QDGlobals& qd = get_QDGlobals();
 		
-		if ( inactive )
-		{
-			QDGlobals& qd = get_QDGlobals();
-			
-			PenPat( &qd.gray );
-			PenMode( patBic );
-			
-			PaintRoundRect( &bounds, diameter, diameter );
-			
-			PenNormal();
-		}
+		PenPat( &qd.gray );
+		PenMode( patBic );
+		
+		PaintRoundRect( &bounds, diameter, diameter );
+		
+		PenNormal();
 	}
 	
 	FrameRoundRect( &bounds, diameter, diameter );
