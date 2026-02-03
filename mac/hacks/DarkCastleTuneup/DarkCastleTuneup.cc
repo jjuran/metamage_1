@@ -8,10 +8,11 @@
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
-	This is an application hot patch for Dark Castle.  Note that
-	the Dark Castle application is a shim that launches "Data A",
-	which is the real application.  Also note that both have the
-	'DCAS' owner resource, although only Data A has 'CODE' id=3.
+	This is a set of application hot patches for Dark Castle.
+	Note that the Dark Castle application is actually a shim
+	that launches "Data A", which is the real application.
+	Also note that both contain the 'DCAS' owner resource,
+	although only Data A has 'CODE' id=3 or id=4.
 	
 	As part of its environment check at launch, Data A peeks into
 	I/O space at $f80030 for the string "DEADFACEBEEFCAFE".  In
@@ -26,6 +27,18 @@
 	What does apply to Advanced Mac Substitute is access to unmapped
 	memory regions, of which this signature check definitely is one.
 	This patch NOPs out the JSR instruction, preventing the access.
+	
+	Dark Castle has exceptionally high CPU usage in the title
+	screen (~80%) and during gameplay (100%) due to spinlooping.
+	The spinloop has an inner loop that executes 6 NOPs and
+	increments a counter that is never read anywhere else.
+	
+	To mitigate this, we patch the outer loop branch offset to
+	return directly to the preceding TST.B instruction, skipping
+	the inner loop.  The resulting code matches a pattern that
+	xv68k recognizes and further patches into a custom A-trap
+	invocation.  The trap handler uses the event reactor to wait
+	for the loop exit condition without dominating the CPU.
 	
 */
 
@@ -77,6 +90,38 @@ void install_envcheck_patch( Handle h, Size handle_size )
 	}
 }
 
+static inline
+void install_spinloop_patch( Handle h, Size handle_size )
+{
+	enum
+	{
+		// These are offsets relative to the start of the 'CODE' resource.
+		
+		offset_to_BNE       = 0x074a,
+		minimum_handle_size = offset_to_BNE + 2,
+	};
+	
+	if ( handle_size > minimum_handle_size )
+	{
+		UInt16* p = (UInt16*) (*h + offset_to_BNE);
+		
+		/*
+			Old:
+				BNE.S    *-18    // $000738
+			
+			New:
+				BNE.S    *-4     // $000746
+		*/
+		
+		if ( *p == 0x66EC )
+		{
+			*p = 0x66FA;
+			
+			HNoPurge( h );
+		}
+	}
+}
+
 static
 void TEInit_handler()
 {
@@ -89,6 +134,11 @@ void TEInit_handler()
 		if ( (h = GetResource( 'CODE', 3 )) )
 		{
 			install_envcheck_patch( h, GetHandleSize_raw( h ) );
+		}
+		
+		if ( (h = GetResource( 'CODE', 4 )) )
+		{
+			install_spinloop_patch( h, GetHandleSize_raw( h ) );
 		}
 	}
 }
