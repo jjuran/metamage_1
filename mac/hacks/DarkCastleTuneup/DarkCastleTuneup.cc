@@ -2,9 +2,9 @@
 	DarkCastleTuneup.cc
 	-------------------
 	
-	Dark Castle Tune-up INIT for Mac OS
+	Dark Castle Tune-up INIT for Advanced Mac Substitute
 	
-	Copyright 2020-2024, Joshua Juran.  All rights reserved.
+	Copyright 2020-2026, Joshua Juran.  All rights reserved.
 	
 	License:  AGPLv3+ (see bottom for legal boilerplate)
 	
@@ -41,8 +41,6 @@
 #include "mac_sys/trap_address.hh"
 
 
-#endif
-
 static UniversalProcPtr old_TEInit;
 
 
@@ -57,7 +55,7 @@ void install_envcheck_patch( Handle h, Size handle_size )
 		minimum_handle_size = offset_to_JSR + 4,
 	};
 	
-	if ( h  &&  handle_size > minimum_handle_size )
+	if ( handle_size > minimum_handle_size )
 	{
 		UInt32* p = (UInt32*) (*h + offset_to_JSR);
 		
@@ -70,7 +68,7 @@ void install_envcheck_patch( Handle h, Size handle_size )
 				NOP
 		*/
 		
-		if ( *p == 0x4ead0072 )
+		if ( *p == 0x4EAD0072 )
 		{
 			*p = 0x4E714E71;
 			
@@ -82,15 +80,15 @@ void install_envcheck_patch( Handle h, Size handle_size )
 static
 void TEInit_handler()
 {
+	using mac::glue::GetHandleSize_raw;
+	
 	if ( Handle h = GetResource( 'DCAS', 0 ) )
 	{
 		ReleaseResource( h );
 		
 		if ( (h = GetResource( 'CODE', 3 )) )
 		{
-			Size size = mac::glue::GetHandleSize_raw( h );
-			
-			install_envcheck_patch( h, size );
+			install_envcheck_patch( h, GetHandleSize_raw( h ) );
 		}
 	}
 }
