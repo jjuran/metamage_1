@@ -35,7 +35,16 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
+enum
+{
+	kSoundSetVolume = 2,
+};
+
+Byte SdVolume : 0x0260;
+
 DCtlEntry* SoundDCE : 0x027A;
+
+Byte VIA_Reg_A : 0x00effffe;
 
 const short noQueueMask   = 1 << noQueueBit;
 const short asyncTrapMask = 1 << asyncTrpBit;
@@ -408,6 +417,26 @@ done:
 	return err;
 }
 
+static inline
+OSErr set_sound_volume( UInt16 level )
+{
+	if ( level > 7 )
+	{
+		return paramErr;
+	}
+	
+	SdVolume = level;
+	
+	Byte reg_A = VIA_Reg_A;
+	
+	reg_A &= 0xf8;
+	reg_A |= level;
+	
+	VIA_Reg_A = reg_A;
+	
+	return noErr;
+}
+
 short Sound_control( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
 {
 	OSErr err = noErr;
@@ -420,6 +449,9 @@ short Sound_control( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
 			cancel_timer();
 			
 			return pb->ioResult = noErr;
+		
+		case kSoundSetVolume:
+			return pb->ioResult = set_sound_volume( pb->csParam[ 0 ] );
 		
 		default:
 			err = controlErr;
