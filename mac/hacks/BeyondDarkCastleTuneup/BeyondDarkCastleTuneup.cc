@@ -20,10 +20,12 @@
 
 #define ENVCHECK_CODE_RESID  4
 #define SPINLOOP_CODE_RESID  3
+#define BLITTING_CODE_RESID  3
 
 #define ENVCHECK_JSR  0x4EBAFE2E
 
 #define OFFSET_TO_ENVCHECK_JSR  0x02ac
+#define OFFSET_TO_BLITTER_READ  0x06b2
 #define OFFSET_TO_SPINLOOP_BNE  0x084a
 
 // CastleTuneup-template

@@ -83,6 +83,23 @@
 	invocation.  The trap handler uses the event reactor to wait
 	for the loop exit condition without dominating the CPU.
 	
+	Dark Castle uses a bare bones blitter routine that copies
+	bitmaps directly to the screen buffer, bypassing Mac OS
+	entirely (which allows it to be used at interrupt time).
+	It copies a source, e.g. "foobarbaz", to the destination
+	as "foo  bar  baz" (i.e. adjusting for the screen width).
+	Dark Castle uses this in-game only.  Beyond Dark Castle
+	also uses it for its splash screen, and additionally, for
+	the menu screen's fireplace animation, but *without page
+	flipping* -- resulting in multiple update notifications
+	per scanline (which utterly swamped the front ends using
+	Cocoa, prompting the hasty addition of a 500us sleep as
+	a mitigation to make them usable for Beyond Dark Castle).
+	
+	The fill_bytes() callout was originally intended to be
+	used for Color QuickDraw support, but it's exactly what
+	we need here, and we reimplement the blitter to use it.
+	
 */
 
 // Mac OS
@@ -94,8 +111,15 @@
 #include "mac_glue/Memory.hh"
 
 // mac-sys-utils
+#include "mac_sys/has/virtualization.hh"
 #include "mac_sys/trap_address.hh"
 
+
+enum
+{
+	fast_memcmp = 0xFFFFFFC6,
+	fill_bytes  = 0xFFFFFFB2,
+};
 
 enum
 {
@@ -250,6 +274,161 @@ void install_spinloop_patch( Handle h, Size handle_size )
 	}
 }
 
+/*
+	We can use fast_memcmp() / fast_memequ() here (knowing
+	they're v68k-only), because fill_bytes() is similarly
+	restricted, and we check before installing the patch.
+	
+	But call them v68k_memcmp() and v68k_memequ(),
+	to avoid conflict with fast_memcmp in the enum.
+*/
+
+static inline
+asm
+int v68k_memcmp( void const*  a : __A0,
+                 void const*  b : __A1,
+                 unsigned     n : __D0 )
+{
+	JSR  fast_memcmp
+}
+
+static inline
+int v68k_memequ( const void* a, const void* b, unsigned long n )
+{
+	return v68k_memcmp( a, b, n ) == 0;
+}
+
+static
+asm
+void blitter_sample()
+{
+	MOVE.W   (A2)+,D0
+	MOVE.W   (A2)+,D1
+	MOVE.L   (A2)+,D2
+	MOVE.L   (A2)+,D3
+	MOVEA.L  2(A1),A3
+	ADDA.L   D2,A3
+}
+
+static
+asm
+void blitter_patch()
+{
+	MOVE.W   (A0)+,D0
+	MOVE.W   (A0)+,D1
+	MOVE.L   (A0)+,D2
+	MOVE.L   (A0)+,D3
+	MOVEA.L  2(A1),A3
+	ADDA.L   D2,A3
+	
+	EXG      A3,A1   // load A3 to A1 (and save old A1)
+	
+	ADDQ.W   #1,D0   // unpredecrement row words
+	ADDQ.W   #1,D1   // unpredecrement height
+	ADD.W    D0,D0   // convert word count to byte count
+	ADD.W    D0,D3   // convert gutter to stride
+	SWAP     D0      // move src_len into place
+	MOVE.W   D1,D0   // populate srcx
+	MOVE.L   D0,D1   // populate dstx
+	EXG      D3,D2   // populate ddst
+	
+	JSR      fill_bytes
+	
+	EXG      A3,A1   // restore A1
+	EXG      A2,A0   // restore A0
+}
+
+static inline
+void install_blitter_patch( Handle h, Size handle_size )
+{
+	enum
+	{
+		sample_size = 0x000e,
+		patch_size  = 0x0028,
+		
+		// These are offsets relative to the start of the 'CODE' resource.
+		
+		offset_to_target    = OFFSET_TO_BLITTER_READ,
+		minimum_handle_size = offset_to_target + 0x002c,
+	};
+	
+	if ( handle_size > minimum_handle_size )
+	{
+		Ptr p = *h + offset_to_target;
+		
+		/*
+			The offsets below are for Beyond Dark Castle.
+			
+			Old:
+				0006b2:  MOVE.W   (A2)+,D0
+				0006b4:  MOVE.W   (A2)+,D1
+				0006b6:  MOVE.L   (A2)+,D2
+				0006b8:  MOVE.L   (A2)+,D3
+				0006ba:  MOVEA.L  (2,A1),A3
+				0006be:  ADDA.L   D2,A3
+				0006c0:  SUBQ.W         #1,D0
+				0006c2:  BTST           #0,D0
+				0006c6:  BEQ.S          *+22         // $0006dc
+				0006c8:    ASR.W        #1,D0
+				0006ca:      MOVE.W     D0,D4
+				0006cc:        MOVE.L   (A2)+,(A3)+
+				0006ce:      DBF        D4,*-2       // $0006cc
+				0006d2:      MOVE.W     (A2)+,(A3)+
+				0006d4:      ADDA.L     D3,A3
+				0006d6:    DBF          D1,*-12      // $0006ca
+				0006da:  BRA.S          *-54         // $0006a4
+				0006dc:    ASR.W        #1,D0
+				0006de:      MOVE.W     D0,D4
+				0006e0:        MOVE.L   (A2)+,(A3)+
+				0006e2:      DBF        D4,*-2       // $0006e0
+				0006e6:      ADDA.L     D3,A3
+				0006e8:    DBF          D1,*-10      // $0006de
+				0006ec:  BRA.S          *-72         // $0006a4
+				0006ee:
+			
+			Reading from A0 instead of A2 saves a word
+			(since we'd otherwise have to move A2 to A0),
+			allowing us to reuse the branch instruction.
+			
+			(A further word could be saved by swapping D2 and D3.)
+			
+			New:
+				0006b2:  MOVE.W   (A0)+,D0
+				0006b4:  MOVE.W   (A0)+,D1
+				0006b6:  MOVE.L   (A0)+,D2
+				0006b8:  MOVE.L   (A0)+,D3
+				0006ba:  MOVEA.L  (2,A1),A3
+				0006be:  ADDA.L   D2,A3
+				
+				0006c0:  EXG      A3,A1   // load A3 to A1 (and save old A1)
+				
+				0006c2:  ADDQ.W   #1,D0   // unpredecrement row words
+				0006c4:  ADDQ.W   #1,D1   // unpredecrement height
+				0006c6:  ADD.W    D0,D0   // convert word count to byte count
+				0006c8:  ADD.W    D0,D3   // convert gutter to stride
+				0006ca:  SWAP     D0      // move src_len into place
+				0006cc:  MOVE.W   D1,D0   // populate srcx
+				0006de:  MOVE.L   D0,D1   // populate dstx
+				0006d0:  EXG      D3,D2   // populate ddst
+				
+				0006d2:  JSR      fill_bytes
+				
+				0006d6:  EXG      A3,A1   // restore A1
+				0006d8:  EXG      A2,A0   // restore A0
+				
+				0006da:  BRA.S    *-54    // $0006a4
+				0006dc:  ...
+		*/
+		
+		if ( v68k_memequ( &blitter_sample, p, sample_size ) )
+		{
+			BlockMoveData( &blitter_patch, p, patch_size );
+			
+			HNoPurge( h );
+		}
+	}
+}
+
 static
 void TEInit_handler()
 {
@@ -280,6 +459,13 @@ void TEInit_handler()
 		if ( (h = GetResource( 'CODE', SPINLOOP_CODE_RESID )) )
 		{
 			install_spinloop_patch( h, GetHandleSize_raw( h ) );
+		}
+		
+		const bool v68k = mac::sys::has_v68k();
+		
+		if ( v68k  &&  (h = GetResource( 'CODE', BLITTING_CODE_RESID )) )
+		{
+			install_blitter_patch( h, GetHandleSize_raw( h ) );
 		}
 	}
 }
