@@ -56,6 +56,8 @@ void raster_event_loop( const clut_data* clut, const sync_relay* sync )
 		using frend::cursor_state;
 		using frend::wait_for_update;
 		
+		usleep( 500 );
+		
 		wait_for_update();
 		
 		if ( cursor_state  &&  cursor_state->seed != cursor_seed )
