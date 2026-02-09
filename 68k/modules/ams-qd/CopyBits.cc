@@ -11,7 +11,6 @@
 #endif
 
 // ams-common
-#include "callouts.hh"
 #include "GrafProcs.hh"
 #include "QDGlobals.hh"
 #include "scoped_zone.hh"
@@ -20,12 +19,6 @@
 
 #pragma exceptions off
 
-
-static inline
-bool equal_bitmaps( const BitMap* a, const BitMap* b )
-{
-	return a == b  ||  fast_memcmp( a, b, sizeof (BitMap) ) == 0;
-}
 
 static
 GrafPtr new_port()
@@ -50,7 +43,7 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
 	
 	const GrafPtr saved_port = thePort;
 	
-	if ( ! equal_bitmaps( dstBits, &thePort->portBits ) )
+	if ( dstBits != &thePort->portBits )
 	{
 		static GrafPtr port = new_port();
 		
