@@ -66,11 +66,9 @@ void raster_event_loop( const raster::sync_relay* sync )
 	while ( monitoring  &&  sync->status == raster::Sync_ready )
 	{
 		using frend::cursor_state;
-		using frend::wait_for_update;
+		using frend::wait_for_update_throttled;
 
-		usleep( 500 );
-
-		wait_for_update();
+		long sleep = wait_for_update_throttled();
 
 		if ( cursor_state  &&  cursor_state->seed != cursor_seed )
 		{
@@ -87,6 +85,8 @@ void raster_event_loop( const raster::sync_relay* sync )
 		}
 
 		SDL_PushEvent( (SDL_Event*) &repaint_due );
+
+		usleep( sleep );
 	}
 }
 
