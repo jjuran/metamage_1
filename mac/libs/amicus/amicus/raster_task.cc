@@ -66,28 +66,26 @@ void raster_event_loop( const clut_data* clut, const sync_relay* sync )
 	while ( monitoring  &&  sync->status == raster::Sync_ready )
 	{
 		using frend::cursor_state;
-		using frend::wait_for_update;
+		using frend::wait_for_update_throttled;
 		
 		/*
-			Sleep a little bit (0.5ms) before checking for updates.
+			Sleep a little bit (0.5ms) before checking for updates
+			again, if the time spent waiting is really short.
 			
 			If the back end renders at 60 fps (e.g. Vanlandingham
 			while the ball is bouncing), it doesn't matter --
-			we'll be blocking for another 16ms (until the update
-			notification arrives) anyway.
+			the wait routine will exceed 16ms and return zero.
 			
 			But if the back end is making rapid-fire writes to
 			screen memory (e.g. Vanlandingham during a dissolve),
-			the stampede of updates can overwhelm the front end
+			the stampede of updates could overwhelm the front end
 			and starve the display thread, such that very few (or
 			even none) of the intermediate frames get displayed.
 			
 			(This was an issue with AGL-based Amber / Interax.)
 		*/
 		
-		usleep( 500 );
-		
-		wait_for_update();
+		long sleep = wait_for_update_throttled();
 		
 		if ( cursor_state  &&  cursor_state->seed != cursor_seed )
 		{
@@ -111,6 +109,8 @@ void raster_event_loop( const clut_data* clut, const sync_relay* sync )
 		}
 		
 		PostEventToQueue( queue, repaint_due, kEventPriorityStandard );
+		
+		usleep( sleep );
 	}
 	
 	ReleaseEvent( repaint_due );
