@@ -60,6 +60,19 @@ int wait_for_update()
 }
 
 inline
+long wait_for_update_throttled()
+{
+	wait_for_update();
+	
+	if ( CONFIG_UPDATES_VIA_FIFO )
+	{
+		return 500;
+	}
+	
+	return 0;
+}
+
+inline
 int unblock_update_waiters()
 {
 	return CONFIG_UPDATES_VIA_FIFO ? open( update_fifo, O_RDONLY | O_NONBLOCK )
