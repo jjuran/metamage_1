@@ -1,6 +1,6 @@
 /*
-	DarkCastleTuneupHelper.cc.hh
-	----------------------------
+	CastleTuneup.cc.hh
+	------------------
 	
 	Dark Castle Tune-up INIT template for Advanced Mac Substitute
 	

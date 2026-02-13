@@ -24,5 +24,5 @@
 #define OFFSET_TO_ENVCHECK_JSR  0x02ac
 #define OFFSET_TO_SPINLOOP_BNE  0x084a
 
-// DarkCastleTuneupHelper
-#include "DarkCastleTuneupHelper.cc.hh"
+// CastleTuneup-template
+#include "CastleTuneup.cc.hh"
