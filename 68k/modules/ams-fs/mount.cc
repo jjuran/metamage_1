@@ -28,13 +28,22 @@
 VCB* DefVCBPtr : 0x0352;
 QHdr VCBQHdr   : 0x0356;
 
-short mount_VCB( VCB* vcb )
+short mount_VCB( VCB* vcb, Boolean first )
 {
 	static short last_vRefNum;
 	
 	vcb->vcbVRefNum = --last_vRefNum;
 	
-	Enqueue( (QElemPtr) vcb, &VCBQHdr );
+	if ( first )
+	{
+		vcb->qLink = VCBQHdr.qHead;
+		
+		VCBQHdr.qHead = (QElemPtr) vcb;
+	}
+	else
+	{
+		Enqueue( (QElemPtr) vcb, &VCBQHdr );
+	}
 	
 	if ( DefVCBPtr == NULL )
 	{

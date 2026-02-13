@@ -45,5 +45,5 @@ void mount_virtual_preferences_volume()
 	
 	#undef VOLNAME
 	
-	prefs_vRefNum = mount_VCB( vcb );
+	prefs_vRefNum = mount_VCB( vcb, true );
 }
