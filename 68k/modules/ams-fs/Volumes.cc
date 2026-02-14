@@ -70,7 +70,7 @@ VCB* VCB_lookup( const unsigned char* name )
 		--name_len;
 	}
 	
-	while ( vcb  &&  EqualString_sans_case( name, name_len, vcb->vcbVN ) )
+	while ( vcb  &&  ! EqualString_sans_case( name, name_len, vcb->vcbVN ) )
 	{
 		vcb = (VCB*) vcb->qLink;
 	}
