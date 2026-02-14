@@ -381,5 +381,7 @@ void ExitToShell_patch()
 		Launch_patch( &pb );
 	}
 	
+	CloseResFile( CurApRefNum );
+	
 	ShutDwnPower();
 }
