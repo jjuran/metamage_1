@@ -38,6 +38,11 @@ enum
 	kHFSFlagMask = 0x0200,
 };
 
+enum
+{
+	kFCBIsServableMask = 0x8000,
+};
+
 QHdr VCBQHdr : 0x0356;
 
 short CurApRefNum : 0x0900;
@@ -133,7 +138,7 @@ bool is_locked( const FCB* fcb )
 static inline
 bool is_servable( const FCB* fcb )
 {
-	return fcb->fcbFlPos;
+	return fcb->fcbFlPos < 0;
 }
 
 static inline
@@ -145,7 +150,7 @@ void set_writable( FCB* fcb )
 static inline
 void set_servable( FCB* fcb )
 {
-	fcb->fcbFlPos = 1;
+	fcb->fcbFlPos |= kFCBIsServableMask;
 }
 
 void initialize()
