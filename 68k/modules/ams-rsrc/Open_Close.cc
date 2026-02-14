@@ -194,7 +194,7 @@ void CloseResFile_core( short refnum : __D0 )
 		CurMap = rsrc_map ? rsrc_map[0]->refnum : -1;
 	}
 	
-	if ( ! (map.attrs & mapReadOnly) )
+	if ( ! (map.attrs & mapReadOnly)  &&  was_written( get_FCB( refnum ) ) )
 	{
 		// Write a clean resource map.
 		
