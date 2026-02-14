@@ -148,6 +148,12 @@ void set_writable( FCB* fcb )
 }
 
 static inline
+void set_written( FCB* fcb )
+{
+	fcb->fcbFlPos |= kFCBWasWrittenMask;
+}
+
+static inline
 void set_servable( FCB* fcb )
 {
 	fcb->fcbFlPos |= kFCBIsServableMask;
@@ -594,6 +600,8 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 				return pb->ioResult = err;
 			}
 		}
+		
+		set_written( fcb );
 		
 		fast_memcpy( &fcb->fcbBfAdr[ mark ], pb->ioBuffer, count );
 		

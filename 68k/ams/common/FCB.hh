@@ -50,4 +50,15 @@ struct FCBS
 
 FCBS* FCBSPtr : 0x034E;
 
+enum
+{
+	kFCBWasWrittenMask = 0x0001,
+};
+
+static inline
+bool was_written( const FCB* fcb )
+{
+	return fcb->fcbFlPos & kFCBWasWrittenMask;
+}
+
 #endif
