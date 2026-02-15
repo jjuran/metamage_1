@@ -37,6 +37,10 @@
 #include "vfs/node/types/mac.hh"
 
 
+#define STRLEN( s )      (sizeof "" s - 1)
+#define STR_LEN( s )  s, (sizeof "" s - 1)
+
+
 namespace vfs
 {
 	
@@ -171,12 +175,17 @@ namespace vfs
 		
 		const uid_t uid = that->user();
 		
-		if ( node_ptr info = mac_lookup_info( parent_path.c_str(),
-		                                      subpath,
-		                                      parent,
-		                                      uid ) )
+		if ( strncmp( subpath, STR_LEN( "..namedfork/" ) ) == 0 )
 		{
-			return info;
+			const char* fork_name = subpath + STRLEN( "..namedfork/" );
+			
+			if ( node_ptr info = mac_lookup_info( parent_path.c_str(),
+			                                      fork_name,
+			                                      parent,
+			                                      uid ) )
+			{
+				return info;
+			}
 		}
 		
 		plus::string path;

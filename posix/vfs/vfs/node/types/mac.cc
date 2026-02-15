@@ -35,10 +35,6 @@
 #include "vfs/methods/node_method_set.hh"
 
 
-#define STRLEN( s )      (sizeof "" s - 1)
-#define STR_LEN( s )  s, (sizeof "" s - 1)
-
-
 namespace vfs
 {
 	
@@ -426,41 +422,36 @@ namespace vfs
 	}
 	
 	node_ptr mac_lookup_info( const char*  path,
-	                          const char*  subpath,
+	                          const char*  fork_name,
 	                          const node*  parent,
 	                          uid_t        user )
 	{
-		if ( strncmp( subpath, STR_LEN( "..namedfork/" ) ) == 0 )
+		special_info type = Info_null;
+		
+		if ( strcmp( fork_name, "rsrc" ) == 0 )
 		{
-			special_info type = Info_null;
-			
-			const char* fork_name = subpath + STRLEN( "..namedfork/" );
-			
-			if ( strcmp( fork_name, "rsrc" ) == 0 )
-			{
-				// Just return, since OS X's filesystem handles it
-			}
-			else if ( strcmp( fork_name, "PkgInfo" ) == 0 )
-			{
-				type = Info_PkgInfo;
-			}
-			else if ( strcmp( fork_name, "FInfo" ) == 0 )
-			{
-				type = Info_FInfo;
-			}
-			else if ( strcmp( fork_name, "GetFInfo" ) == 0 )
-			{
-				type = Info_GetFInfo;
-			}
-			else if ( strcmp( fork_name, "SetFInfo" ) == 0 )
-			{
-				type = Info_SetFInfo;
-			}
-			
-			if ( type )
-			{
-				return new_info( type, path, parent, user );
-			}
+			// Just return, since OS X's filesystem handles it
+		}
+		else if ( strcmp( fork_name, "PkgInfo" ) == 0 )
+		{
+			type = Info_PkgInfo;
+		}
+		else if ( strcmp( fork_name, "FInfo" ) == 0 )
+		{
+			type = Info_FInfo;
+		}
+		else if ( strcmp( fork_name, "GetFInfo" ) == 0 )
+		{
+			type = Info_GetFInfo;
+		}
+		else if ( strcmp( fork_name, "SetFInfo" ) == 0 )
+		{
+			type = Info_SetFInfo;
+		}
+		
+		if ( type )
+		{
+			return new_info( type, path, parent, user );
 		}
 		
 		return node_ptr();
