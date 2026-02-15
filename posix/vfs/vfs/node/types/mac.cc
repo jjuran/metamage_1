@@ -366,10 +366,10 @@ namespace vfs
 	};
 	
 	static
-	node_ptr new_info( special_info         type,
-	                   const plus::string&  path,
-	                   const node*          parent,
-	                   uid_t                user )
+	node_ptr new_info( special_info  type,
+	                   const char*   path,
+	                   const node*   parent,
+	                   uid_t         user )
 	{
 	#ifdef __APPLE__
 		
@@ -381,7 +381,7 @@ namespace vfs
 		
 		OSStatus err;
 		
-		(err = FSPathMakeRef( (UInt8*) path.c_str(), &ref, &isDir ))  ||
+		(err = FSPathMakeRef( (UInt8*) path, &ref, &isDir ))  ||
 		(err = FSGetCatalogInfo( &ref, bits, &info, NULL, NULL, NULL ));
 		
 		if ( err != noErr )
@@ -395,7 +395,7 @@ namespace vfs
 		
 		struct stat st;
 		
-		int nok = stat( path.c_str(), &st );
+		int nok = stat( path, &st );
 		
 		if ( nok )
 		{
@@ -425,13 +425,11 @@ namespace vfs
 		return result;
 	}
 	
-	node_ptr mac_lookup_info( const plus::string&  path,
-	                          const plus::string&  name,
-	                          const node*          parent,
-	                          uid_t                user )
+	node_ptr mac_lookup_info( const char*  path,
+	                          const char*  subpath,
+	                          const node*  parent,
+	                          uid_t        user )
 	{
-		const char* subpath = name.c_str();
-		
 		if ( strncmp( subpath, STR_LEN( "..namedfork/" ) ) == 0 )
 		{
 			special_info type = Info_null;

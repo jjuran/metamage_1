@@ -167,9 +167,14 @@ namespace vfs
 		
 		const plus::string& parent_path = *(const plus::string*) &extra.path;
 		
+		const char* subpath = name.c_str();
+		
 		const uid_t uid = that->user();
 		
-		if ( node_ptr info = mac_lookup_info( parent_path, name, parent, uid ) )
+		if ( node_ptr info = mac_lookup_info( parent_path.c_str(),
+		                                      subpath,
+		                                      parent,
+		                                      uid ) )
 		{
 			return info;
 		}

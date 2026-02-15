@@ -9,9 +9,6 @@
 // POSIX
 #include <sys/types.h>
 
-// plus
-#include "plus/string_fwd.hh"
-
 // vfs
 #include "vfs/node_ptr.hh"
 
@@ -19,10 +16,10 @@
 namespace vfs
 {
 	
-	node_ptr mac_lookup_info( const plus::string&  path,
-	                          const plus::string&  name,
-	                          const node*          parent,
-	                          uid_t                user );
+	node_ptr mac_lookup_info( const char*  path,
+	                          const char*  name,
+	                          const node*  parent,
+	                          uid_t        user );
 	
 }
 
