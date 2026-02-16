@@ -169,6 +169,16 @@ namespace vfs
 			p7::throw_errno( ENOENT );
 		}
 		
+		plus::string path;
+		
+		char* p = path.reset( path_size + 1 + name_size );
+		
+		p = (char*) mempcpy( p, begin( extra.path ), path_size );
+		
+		*p++ = '/';
+		
+		mempcpy( p, name.data(), name_size );
+		
 		const plus::string& parent_path = *(const plus::string*) &extra.path;
 		
 		const char* subpath = name.c_str();
@@ -198,16 +208,6 @@ namespace vfs
 				return info;
 			}
 		}
-		
-		plus::string path;
-		
-		char* p = path.reset( path_size + 1 + name_size );
-		
-		p = (char*) mempcpy( p, begin( extra.path ), path_size );
-		
-		*p++ = '/';
-		
-		mempcpy( p, name.data(), name_size );
 		
 		return new_posix_file( path.move(), name, parent, uid );
 	}
