@@ -40,6 +40,14 @@
 #define STRLEN( s )      (sizeof "" s - 1)
 #define STR_LEN( s )  s, (sizeof "" s - 1)
 
+#ifndef CONFIG_ALWAYS_RSRC_FORKS
+	#ifdef __RELIX__
+		#define CONFIG_ALWAYS_RSRC_FORKS  1
+	#else
+		#define CONFIG_ALWAYS_RSRC_FORKS  0
+	#endif
+#endif
+
 
 namespace vfs
 {
@@ -196,6 +204,20 @@ namespace vfs
 					
 					In MacRelix and in native Mac OS X / macOS,
 					this refers to the file's resource fork.
+					
+					On HFS+ (and earlier Mac filesystems), the
+					resource fork of a file always exists, but
+					on APFS this isn't the case.  Create it if
+					it doesn't already exist.
+				*/
+				
+				if ( ! CONFIG_ALWAYS_RSRC_FORKS )
+				{
+					close( open( path.c_str(), O_CREAT | O_RDONLY, 0666 ) );
+				}
+				
+				/*
+					At this point, the resource fork should exist.
 					
 					Let the OS handle this for us via POSIX APIs.
 				*/
