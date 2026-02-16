@@ -428,11 +428,7 @@ namespace vfs
 	{
 		special_info type = Info_null;
 		
-		if ( strcmp( fork_name, "rsrc" ) == 0 )
-		{
-			// Just return, since OS X's filesystem handles it
-		}
-		else if ( strcmp( fork_name, "PkgInfo" ) == 0 )
+		if ( strcmp( fork_name, "PkgInfo" ) == 0 )
 		{
 			type = Info_PkgInfo;
 		}

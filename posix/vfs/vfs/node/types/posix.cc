@@ -179,10 +179,21 @@ namespace vfs
 		{
 			const char* fork_name = subpath + STRLEN( "..namedfork/" );
 			
-			if ( node_ptr info = mac_lookup_info( parent_path.c_str(),
-			                                      fork_name,
-			                                      parent,
-			                                      uid ) )
+			if ( strcmp( fork_name, "rsrc" ) == 0 )
+			{
+				/*
+					This is an access to foo/..namedfork/rsrc.
+					
+					In MacRelix and in native Mac OS X / macOS,
+					this refers to the file's resource fork.
+					
+					Let the OS handle this for us via POSIX APIs.
+				*/
+			}
+			else if ( node_ptr info = mac_lookup_info( parent_path.c_str(),
+			                                           fork_name,
+			                                           parent,
+			                                           uid ) )
 			{
 				return info;
 			}
