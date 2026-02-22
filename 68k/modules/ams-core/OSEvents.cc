@@ -14,8 +14,14 @@
 #include "callouts.hh"
 
 // ams-core
+#include "reactor-core.hh"
 #include "throttle.hh"
 
+
+enum
+{
+	kOSEventWaiting = 0x0200,
+};
 
 Ptr  SysEvtBuf  : 0x0146;
 QHdr EventQueue : 0x014A;
@@ -126,6 +132,21 @@ long GetOSEvent_patch( short         trap  : __D1,
                        EventRecord*  event : __A0 )
 {
 	QElemPtr it = find_an_event( mask, event );
+	
+	/*
+		Our custom _WaitOSEvent and _WaitOSEventAvail are like the
+		originals, except they wait politely for a matching event.
+	*/
+	
+	if ( trap & kOSEventWaiting )
+	{
+		while ( it == NULL )
+		{
+			reactor_wait( NULL );
+			
+			it = find_an_event( mask, event );
+		}
+	}
 	
 	/*
 		_OSEventAvail is A030 and _GetOSEvent is A031,
