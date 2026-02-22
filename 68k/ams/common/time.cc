@@ -5,16 +5,28 @@
 
 #include "time.hh"
 
+// Mac OS
+#ifndef __TIMER__
+#include <Timer.h>
+#endif
+
 // POSIX
 #include <sys/time.h>
 
 // math
 #include "math/integer.hh"
 
+// ams-common
+#include "callouts.hh"
+
 
 void time( timeval* now )
 {
-	gettimeofday( now, NULL );
+	UInt64 microseconds;
+	
+	Microseconds( (UnsignedWide*) &microseconds );
+	
+	timeval_from_microseconds( now, &microseconds );
 }
 
 timeval timeval_sub( const timeval& a, const timeval& b )
