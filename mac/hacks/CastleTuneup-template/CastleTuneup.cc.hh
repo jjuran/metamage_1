@@ -123,6 +123,14 @@ enum
 
 enum
 {
+	kOSEventWaiting = 0x0200,
+};
+
+enum
+{
+	_OSEventAvail     = 0xA030,
+	_WaitOSEventAvail = 0xA030 | kOSEventWaiting,
+	
 	_CurResFile  = 0xA994,
 	_ExitToShell = 0xA9F4,
 	_TEInit      = 0xA9CC,
@@ -429,6 +437,46 @@ void install_blitter_patch( Handle h, Size handle_size )
 	}
 }
 
+static inline
+void install_tabpause_patch( Handle h, Size handle_size )
+{
+	enum
+	{
+		// These are offsets relative to the start of the 'CODE' resource.
+		
+		offset_to_trap      = OFFSET_TO_PAUSING_TRAP,
+		minimum_handle_size = offset_to_trap + 6,
+	};
+	
+	if ( handle_size > minimum_handle_size )
+	{
+		UInt16* p = (UInt16*) (*h + offset_to_trap);
+		
+		/*
+			Old:
+				LEA      (-130,A5),A0
+				MOVE.W   #0x000a,D0
+				_OSEventAvail
+				TST.W    D0
+				BNE.S    *-12
+			
+			New:
+				LEA      (-130,A5),A0
+				MOVE.W   #0x000a,D0
+				_WaitOSEventAvail
+				TST.W    D0
+				BNE.S    *-12
+		*/
+		
+		if ( *p == _OSEventAvail )
+		{
+			*p = _WaitOSEventAvail;
+			
+			HNoPurge( h );
+		}
+	}
+}
+
 static
 void TEInit_handler()
 {
@@ -466,6 +514,11 @@ void TEInit_handler()
 		if ( v68k  &&  (h = GetResource( 'CODE', BLITTING_CODE_RESID )) )
 		{
 			install_blitter_patch( h, GetHandleSize_raw( h ) );
+		}
+		
+		if ( v68k  &&  (h = GetResource( 'CODE', 2 )) )
+		{
+			install_tabpause_patch( h, GetHandleSize_raw( h ) );
 		}
 	}
 }

@@ -25,6 +25,7 @@
 #define OFFSET_TO_ENVCHECK_JSR  0x0496
 #define OFFSET_TO_BLITTER_READ  0x05b8
 #define OFFSET_TO_SPINLOOP_BNE  0x074a
+#define OFFSET_TO_PAUSING_TRAP  0x2d9e
 
 // CastleTuneup-template
 #include "CastleTuneup.cc.hh"
