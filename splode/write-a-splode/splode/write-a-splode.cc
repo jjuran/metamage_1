@@ -44,7 +44,7 @@ int send_mouse_moved_event( int fd, short x, short y )
 		(int16_t) iota::big_u16( y ),
 	};
 	
-	return write_buffer( fd, &buffer.len, sizeof buffer );
+	return write_buffer( fd, &buffer, sizeof buffer );
 }
 
 int send_mouse_event( int fd, Byte modes, Byte attrs )
@@ -59,7 +59,7 @@ int send_mouse_event( int fd, Byte modes, Byte attrs )
 		0,  // unspecified device
 	};
 	
-	return write_buffer( fd, &buffer.len, sizeof buffer );
+	return write_buffer( fd, &buffer, sizeof buffer );
 }
 
 int send_key_event( int fd, Byte c, Byte modes, Byte attrs )
@@ -73,7 +73,7 @@ int send_key_event( int fd, Byte c, Byte modes, Byte attrs )
 		0,  // unspecified device
 	};
 	
-	return write_buffer( fd, &buffer.len, sizeof buffer );
+	return write_buffer( fd, &buffer, sizeof buffer );
 }
 
 }
