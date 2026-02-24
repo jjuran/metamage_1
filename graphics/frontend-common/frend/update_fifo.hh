@@ -10,6 +10,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// compat
+#include "clock/time.h"
+
 // frontend-common
 #include "frend/displayfs.hh"
 
@@ -41,6 +44,27 @@
 namespace frend
 {
 
+enum
+{
+	half_tick    = 1000000 / (60 * 2),  // 1s/120, or 8333us
+	quarter_tick = 1000000 / (60 * 4),  // 1s/240, or 4166us
+	
+	min_delta = half_tick,
+	min_sleep = quarter_tick,
+};
+
+const int64_t billion = 1000 * 1000 * 1000;
+
+inline
+int64_t timespec_diff_us( const timespec& a, const timespec& b )
+{
+	int64_t dt = (a.tv_sec - b.tv_sec) * billion
+	           + a.tv_nsec
+	           - b.tv_nsec;
+	
+	return dt / 1000;
+}
+
 inline
 int wait_for_update()
 {
@@ -48,11 +72,6 @@ int wait_for_update()
 	{
 		return close( open( update_fifo, O_WRONLY ) );
 	}
-	
-	enum
-	{
-		half_tick = 1000000 / 120,  // 1s/120, or 8333us
-	};
 	
 	usleep( half_tick );
 	
@@ -66,7 +85,29 @@ long wait_for_update_throttled()
 	
 	if ( CONFIG_UPDATES_VIA_FIFO )
 	{
-		return 500;
+		static unsigned long counter;
+		
+		static
+		timespec last_time;
+		timespec this_time;
+		
+		counter += 1;
+		
+		clock_gettime( CLOCK_MONOTONIC, &this_time );
+		
+		int64_t delta = timespec_diff_us( this_time, last_time );
+		
+		if ( delta > min_delta )
+		{
+			counter >>= 1;
+			
+			last_time = this_time;
+		}
+		
+		if ( counter >= 5 )
+		{
+			return min_sleep;
+		}
 	}
 	
 	return 0;
