@@ -121,14 +121,14 @@ QElemPtr find_an_event( short mask : __D0, EventRecord* event : __A0 )
 	return NULL;
 }
 
-char OSEventAvail_patch( short mask : __D0, EventRecord* event : __A0 )
+long OSEventAvail_patch( short mask : __D0, EventRecord* event : __A0 )
 {
 	QElemPtr it = find_an_event( mask, event );
 	
-	return -(it == NULL);
+	return it ? 0 : -1;
 }
 
-char GetOSEvent_patch( short mask : __D0, EventRecord* event : __A0 )
+long GetOSEvent_patch( short mask : __D0, EventRecord* event : __A0 )
 {
 	QElemPtr it = find_an_event( mask, event );
 	
@@ -139,7 +139,7 @@ char GetOSEvent_patch( short mask : __D0, EventRecord* event : __A0 )
 	
 	enable_SystemTask_throttle();
 	
-	return -(it == NULL);
+	return it ? 0 : -1;
 }
 
 void FlushEvents_patch( unsigned long masks : __D0 )
