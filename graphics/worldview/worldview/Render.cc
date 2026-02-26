@@ -493,8 +493,8 @@ namespace worldview
 		std::vector< DeepVertex >& sorted_vertices = vertices;
 		
 		// sort by Y
-		std::sort( sorted_vertices.begin(),
-		           sorted_vertices.end(),
+		std::sort( &*sorted_vertices.begin(),
+		           &*sorted_vertices.end(),
 		           plus::ptr_fun( VerticallyGreater ) );
 		
 		double top    = sorted_vertices.front()[ Y ];
@@ -787,9 +787,9 @@ namespace worldview
 				
 				V::Plane3D::Type plane = V::PlaneVector( faceNormal, points[ 0 ] );
 				
-				std::transform( points.begin(),
-				                points.end(),
-				                points.begin(),
+				std::transform( &*points.begin(),
+				                &*points.end(),
+				                &*points.begin(),
 				                plus::ptr_fun( PerspectiveDivision ) );
 				
 				std::vector< DeepVertex > vertices( points.size() );
@@ -944,9 +944,9 @@ namespace worldview
 						V::Plane3D::Type plane = V::PlaneVector( faceNormal, points[ 0 ] );
 						
 						// Perspective division
-						std::transform( points.begin(),
-						                points.end(),
-						                points.begin(),
+						std::transform( &*points.begin(),
+						                &*points.end(),
+						                &*points.begin(),
 						                plus::ptr_fun( PerspectiveDivision ) );
 						
 						V::Polygon2D poly2d;
