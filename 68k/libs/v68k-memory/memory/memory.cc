@@ -258,7 +258,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	{
 		using v68k::screen::page_2_virtual_buffer;
 		
-		if ( access == mem_exec  ||  ! page_2_virtual_buffer )
+		if ( ! page_2_virtual_buffer )
 		{
 			return 0;  // NULL
 		}
@@ -274,6 +274,11 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		}
 		
 		const uint32_t offset = addr - alt_screen_addr;
+		
+		if ( access == mem_exec )
+		{
+			return 0;  // NULL
+		}
 		
 		return page_2_virtual_buffer + offset;
 	}
