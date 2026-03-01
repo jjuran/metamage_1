@@ -2506,8 +2506,6 @@ static void decode_one()
 			{
 				decode_data( read_word() );
 			}
-			
-			return;
 		}
 	}
 	
