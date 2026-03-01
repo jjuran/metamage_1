@@ -29,7 +29,6 @@
 
 
 Ptr   MemTop       : 0x0108;
-Ptr   BufPtr       : 0x010C;
 Ptr   ApplLimit    : 0x0130;
 Str15 FinderName   : 0x02E0;
 long  DefltStack   : 0x0322;
@@ -222,8 +221,6 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	Ptr stack_bottom = CurPageOption < 0 ? ScrnBase - 0x8000
 	                 : CurPageOption > 0 ? ScrnBase - 0x0600
 	                 :                     ScrnBase;
-	
-	BufPtr = stack_bottom;
 	
 	if ( CurPageOption < 0 )
 	{
