@@ -269,6 +269,11 @@ static const char* condition_codes[] =
 };
 
 
+enum
+{
+	initial_CMPI_recency = 10,
+};
+
 static bool globally_prefix_address;
 static bool globally_attach_target_comments;
 
@@ -279,6 +284,7 @@ static uint32_t global_pc = 0;
 static uint16_t global_last_op = 0;
 
 static uint32_t global_last_CMPI_operand = 0;
+static uint32_t global_last_CMPI_recency = 0;
 
 static uint32_t global_last_branch_target = 0;
 static uint32_t global_last_pc_relative_target = 0;
@@ -883,6 +889,7 @@ static void decode_Immediate( uint16_t op )
 		{
 			// needed for index jumps
 			global_last_CMPI_operand = immediate_data;
+			global_last_CMPI_recency = initial_CMPI_recency;
 		}
 		
 		const plus::string ea = read_ea( mode_reg, immediate_size );
@@ -1088,6 +1095,26 @@ static void decode_jump_table()
 	printf( "// indexed jump table\n" );
 	
 	const uint32_t jump_table = global_bytes_read;
+	
+	if ( ! global_last_CMPI_recency )
+	{
+		int max_offset = 0;
+		int the_offset;
+		
+		while ( (the_offset = peek_word()) - max_offset < 0x0400 )
+		{
+			printf( "// goto $%.6x\n", jump_table + the_offset );
+			
+			if ( the_offset > max_offset )
+			{
+				max_offset = the_offset;
+			}
+			
+			read_word();
+		}
+		
+		return;
+	}
 	
 	int n_jumps = global_last_CMPI_operand;
 	
@@ -2492,6 +2519,11 @@ static const char* get_name( uint16_t word )
 
 static void decode_one()
 {
+	if ( global_last_CMPI_recency )
+	{
+		--global_last_CMPI_recency;
+	}
+	
 	if ( global_bytes_read == global_successor_of_last_exit )
 	{
 		// Check for Macsbug symbol names
