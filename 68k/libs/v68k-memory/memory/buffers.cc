@@ -32,6 +32,7 @@ int place_buffers( const processor_state& emu, uint8_t* mem, uint32_t mem_top )
 	{
 		ScreenRow = 0x0106,
 		MemTop    = 0x0108,
+		BufPtr    = 0x010C,
 		SoundBase = 0x0266,
 		ScrnBase  = 0x0824,
 		CrsrPin   = 0x0834,
@@ -77,6 +78,7 @@ int place_buffers( const processor_state& emu, uint8_t* mem, uint32_t mem_top )
 	emu.put_word( ScreenRow,   screen_row,       user_data_space );
 	emu.put_long( SoundBase,   main_sound_addr,  user_data_space );
 	emu.put_long( ScrnBase,    main_screen_addr, user_data_space );
+	emu.put_long( BufPtr,      main_screen_addr, user_data_space );
 	emu.put_long( CrsrPin + 4, screen_res,       user_data_space );
 	emu.put_word( CrsrRow,     deep_row,         user_data_space );
 	emu.put_word( DepthLog2,   log2_depth,       user_data_space );
