@@ -275,12 +275,17 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		
 		const uint32_t offset = addr - alt_screen_addr;
 		
+		uint8_t* p = page_2_virtual_buffer + offset;
+		
 		if ( access == mem_exec )
 		{
-			return 0;  // NULL
+			if ( (long) p & 0x1  ||  *(uint16_t*) p != iota::big_u16( 0x484F ) )
+			{
+				return 0;  // NULL
+			}
 		}
 		
-		return page_2_virtual_buffer + offset;
+		return p;
 	}
 	
 	if ( addr_within_span( addr, main_sound_addr, sound_size ) )
