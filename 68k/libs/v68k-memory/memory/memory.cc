@@ -281,8 +281,12 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		{
 			if ( (long) p & 0x1  ||  *(uint16_t*) p != iota::big_u16( 0x484F ) )
 			{
+				ERROR = "Execution in page 2 graphics buffer";
+				
 				return 0;  // NULL
 			}
+			
+			NOTICE = "OS trap return in page 2 graphics buffer";
 		}
 		
 		return p;
