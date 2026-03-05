@@ -40,6 +40,14 @@
 #define STRLEN( s )      (sizeof "" s - 1)
 #define STR_LEN( s )  s, (sizeof "" s - 1)
 
+#ifndef CONFIG_RSRC_FORKS
+	#if defined( __MACOS__ )  ||  defined( __APPLE__ )
+		#define CONFIG_RSRC_FORKS  1
+	#else
+		#define CONFIG_RSRC_FORKS  0
+	#endif
+#endif
+
 #ifndef CONFIG_ALWAYS_RSRC_FORKS
 	#ifdef __RELIX__
 		#define CONFIG_ALWAYS_RSRC_FORKS  1
@@ -197,7 +205,7 @@ namespace vfs
 		{
 			const char* fork_name = subpath + STRLEN( "..namedfork/" );
 			
-			if ( strcmp( fork_name, "rsrc" ) == 0 )
+			if ( CONFIG_RSRC_FORKS  &&  strcmp( fork_name, "rsrc" ) == 0 )
 			{
 				/*
 					This is an access to foo/..namedfork/rsrc.
