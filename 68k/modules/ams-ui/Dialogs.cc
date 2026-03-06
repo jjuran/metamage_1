@@ -389,16 +389,17 @@ DialogPeek recover_dialog( Handle h )
 }
 
 static
-WindowPeek front_dialog_window()
+WindowPeek next_dialog_window( WindowPeek w )
 {
-	WindowPeek w = WindowList;
-	
-	if ( w  &&  (w->windowKind == dialogKind  ||  w->windowKind < 0) )
+	for ( ;  w != NULL;  w = w->nextWindow )
 	{
-		return w;  // The window doesn't have to be visible
+		if ( w->windowKind == dialogKind  ||  w->windowKind < 0 )
+		{
+			break;  // The window doesn't have to be visible
+		}
 	}
 	
-	return NULL;
+	return w;
 }
 
 
@@ -1330,7 +1331,9 @@ pascal void ParamText_patch( const Byte*  p1,
 	set_param( 2, p3 );
 	set_param( 3, p4 );
 	
-	if ( WindowPeek window = front_dialog_window() )
+	WindowPeek window = WindowList;
+	
+	while ( (window = next_dialog_window( window )) )
 	{
 		DialogPeek d = (DialogPeek) window;
 		
@@ -1355,6 +1358,8 @@ pascal void ParamText_patch( const Byte*  p1,
 			item = next( item );
 		}
 		while ( --n_items_1 >= 0 );
+		
+		window = window->nextWindow;
 	}
 }
 
