@@ -93,6 +93,23 @@ void set_param( short i, const Byte* text )
 	fast_memcpy( *h, text, 1 + text[ 0 ] );
 }
 
+static inline
+bool needs_expansion( const Byte* text )
+{
+	const Byte* begin = text + 1;
+	const Byte* end   = begin + text[ 0 ];
+	
+	for ( const Byte* it = begin;  it < end; )
+	{
+		if ( *it++ == '^'  &&  it != end  &&  *it++ - '0' <= 3 )
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 static
 Handle expand_param_text( const Byte* text )
 {
@@ -1346,9 +1363,13 @@ pascal void ParamText_patch( const Byte*  p1,
 			switch ( item->type & 0x7F )
 			{
 				case statText:
-					DisposeHandle( item->handle );
+					if ( needs_expansion( &item->length ) )
+					{
+						DisposeHandle( item->handle );
+						
+						item->handle = expand_param_text( &item->length );
+					}
 					
-					item->handle = expand_param_text( &item->length );
 					break;
 				
 				default:
