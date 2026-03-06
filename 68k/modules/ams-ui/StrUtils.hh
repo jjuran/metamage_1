@@ -6,8 +6,13 @@
 #ifndef STRUTILS_HH
 #define STRUTILS_HH
 
-pascal unsigned char** NewString_patch( const unsigned char* s );
 
-pascal void SetString_patch( unsigned char** h, const unsigned char* s );
+typedef unsigned char    Byte;
+typedef unsigned char**  StringHandle;
+
+
+pascal StringHandle NewString_patch( const Byte* s );
+
+pascal void SetString_patch( StringHandle h, const Byte* s );
 
 #endif

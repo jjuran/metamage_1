@@ -218,7 +218,7 @@ pascal void SFPPutFile_call( Point             where,
 		ERROR = "SFPutFile dlgHook is unimplemented";
 	}
 	
-	const unsigned char* SysTwi_prompt = "\p" "File to save this new game in:";
+	const Byte* SysTwi_prompt = "\p" "File to save this new game in:";
 	
 	if ( fast_memcmp( prompt, SysTwi_prompt, 1 + prompt[ 0 ] ) == 0 )
 	{

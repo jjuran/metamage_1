@@ -97,7 +97,7 @@ void clear_string_list( string_list_handle slh )
 	list.cell_count  = 0;
 }
 
-void append_to_string_list( string_list_handle slh, const unsigned char* str )
+void append_to_string_list( string_list_handle slh, const Byte* str )
 {
 	Size size = mac::glue::GetHandleSize( (Handle) slh );
 	
@@ -221,7 +221,7 @@ bool string_list_click( string_list_handle slh, Point pt )
 	return false;
 }
 
-const unsigned char* get_string_list_selection( string_list_handle slh )
+const Byte* get_string_list_selection( string_list_handle slh )
 {
 	string_list_record& list = **slh;
 	

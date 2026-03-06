@@ -13,15 +13,18 @@ struct Point;
 struct Rect;
 
 typedef unsigned char Boolean;
+typedef unsigned char Byte;
+
+typedef char** Handle;
 
 typedef MacRegion** RgnHandle;
 
 typedef GrafPort* WindowRef;
 typedef GrafPort* DialogRef;
 
-typedef pascal unsigned char (*ModalFilterUPP)( DialogRef     dialog,
-                                                EventRecord*  event,
-                                                short*        itemHit );
+typedef pascal Boolean (*ModalFilterUPP)( DialogRef     dialog,
+                                          EventRecord*  event,
+                                          short*        itemHit );
 
 pascal Boolean basic_filterProc( DialogRef     dialog,
                                  EventRecord*  event,
@@ -30,15 +33,15 @@ pascal Boolean basic_filterProc( DialogRef     dialog,
 pascal void InitDialogs_patch( void* proc );
 pascal void ErrorSound_patch ( void* proc );
 
-pascal DialogRef NewDialog_patch( void*                 storage,
-                                  const Rect*           bounds,
-                                  const unsigned char*  title,
-                                  unsigned char         visible,
-                                  short                 procID,
-                                  WindowRef             behind,
-                                  unsigned char         closable,
-                                  long                  refCon,
-                                  char**                items );
+pascal DialogRef NewDialog_patch( void*        storage,
+                                  const Rect*  bounds,
+                                  const Byte*  title,
+                                  Boolean      visible,
+                                  short        procID,
+                                  WindowRef    behind,
+                                  Boolean      closable,
+                                  long         refCon,
+                                  Handle       items );
 
 pascal DialogRef GetNewDialog_patch( short id, void* ds, WindowRef behind );
 
@@ -51,11 +54,11 @@ pascal void FreeDialog_patch ( short id );
 
 pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit );
 
-pascal unsigned char IsDialogEvent_patch( const EventRecord* event );
+pascal Boolean IsDialogEvent_patch( const EventRecord* event );
 
-pascal unsigned char DialogSelect_patch( const EventRecord*  event,
-                                         DialogRef*          dialogHit,
-                                         short*              itemHit );
+pascal Boolean DialogSelect_patch( const EventRecord*  event,
+                                   DialogRef*          dialogHit,
+                                   short*              itemHit );
 
 pascal void DrawDialog_patch( DialogRef dialog );
 
@@ -67,26 +70,26 @@ pascal short CautionAlert_patch( short alertID, ModalFilterUPP filterProc );
 pascal void CouldAlert_patch( short id );
 pascal void FreeAlert_patch ( short id );
 
-pascal void ParamText_patch( const unsigned char*  p1,
-                             const unsigned char*  p2,
-                             const unsigned char*  p3,
-                             const unsigned char*  p4 );
+pascal void ParamText_patch( const Byte*  p1,
+                             const Byte*  p2,
+                             const Byte*  p3,
+                             const Byte*  p4 );
 
 pascal void GetDItem_patch( DialogRef  dialog,
                             short      i,
                             short*     type,
-                            char***    h,
+                            Handle*    h,
                             Rect*      box );
 
 pascal void SetDItem_patch( DialogRef    dialog,
                             short        i,
                             short        type,
-                            char**       h,
+                            Handle       h,
                             const Rect*  box );
 
-pascal void GetIText_patch( char** h, unsigned char text[ 255 ] );
+pascal void GetIText_patch( Handle h, Byte text[ 255 ] );
 
-pascal void SetIText_patch( char** h, const unsigned char* text );
+pascal void SetIText_patch( Handle h, const Byte* text );
 
 pascal void SelIText_patch( DialogRef  dialog,
                             short      item,

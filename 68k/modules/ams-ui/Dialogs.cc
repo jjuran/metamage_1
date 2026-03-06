@@ -71,7 +71,7 @@ Handle NewHandleOrBust( Size size )
 }
 
 static
-void set_param( short i, const unsigned char* text )
+void set_param( short i, const Byte* text )
 {
 	StringHandle& h = DAStrings[ i ];
 	
@@ -94,16 +94,16 @@ void set_param( short i, const unsigned char* text )
 }
 
 static
-Handle expand_param_text( const unsigned char* text )
+Handle expand_param_text( const Byte* text )
 {
 	UInt16 expanded_size = 0;
 	
-	const unsigned char* begin = text + 1;
-	const unsigned char* end   = begin + text[ 0 ];
+	const Byte* begin = text + 1;
+	const Byte* end   = begin + text[ 0 ];
 	
-	for ( const unsigned char* it = begin;  it < end; )
+	for ( const Byte* it = begin;  it < end; )
 	{
-		unsigned char c = *it++;
+		Byte c = *it++;
 		
 		if ( c != '^'  ||  it == end )
 		{
@@ -129,9 +129,9 @@ Handle expand_param_text( const unsigned char* text )
 	
 	char* p = *expanded;
 	
-	for ( const unsigned char* q = begin;  q < end; )
+	for ( const Byte* q = begin;  q < end; )
 	{
-		unsigned char c = *q++;
+		Byte c = *q++;
 		
 		if ( c != '^'  ||  q == end )
 		{
@@ -489,15 +489,15 @@ Handle new_dialog_control( WindowRef window, DialogItem* item )
 	return h;
 }
 
-pascal DialogRef NewDialog_patch( void*                 storage,
-                                  const Rect*           bounds,
-                                  const unsigned char*  title,
-                                  Boolean               visible,
-                                  short                 procID,
-                                  WindowRef             behind,
-                                  Boolean               closable,
-                                  long                  refCon,
-                                  Handle                items )
+pascal DialogRef NewDialog_patch( void*        storage,
+                                  const Rect*  bounds,
+                                  const Byte*  title,
+                                  Boolean      visible,
+                                  short        procID,
+                                  WindowRef    behind,
+                                  Boolean      closable,
+                                  long         refCon,
+                                  Handle       items )
 {
 	void* original_storage = storage;
 	
@@ -1322,10 +1322,10 @@ pascal void FreeAlert_patch ( short id )
 #pragma mark Manipulating Items in Dialogs and Alerts
 #pragma mark -
 
-pascal void ParamText_patch( const unsigned char*  p1,
-                             const unsigned char*  p2,
-                             const unsigned char*  p3,
-                             const unsigned char*  p4 )
+pascal void ParamText_patch( const Byte*  p1,
+                             const Byte*  p2,
+                             const Byte*  p3,
+                             const Byte*  p4 )
 {
 	set_param( 0, p1 );
 	set_param( 1, p2 );
@@ -1429,7 +1429,7 @@ pascal void GetIText_patch( Handle h, Str255 text )
 	fast_memcpy( text + 1, *h, size );
 }
 
-pascal void SetIText_patch( Handle h, const unsigned char* text )
+pascal void SetIText_patch( Handle h, const Byte* text )
 {
 	const Size len = text[ 0 ];
 	

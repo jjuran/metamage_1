@@ -406,7 +406,7 @@ short append_one_item( MenuRef menu, const UInt8* format, UInt8 length )
 	
 	SetHandleSize( (Handle) menu, newSize );
 	
-	unsigned char* p = (unsigned char*) *menu + oldSize - 1;
+	Byte* p = (Byte*) *menu + oldSize - 1;
 	
 	return decode_item_format( format, length, p, text_len );
 }
@@ -1064,7 +1064,7 @@ pascal long MenuKey_patch( CharParameter key )
 		
 		short n = 0;
 		
-		while ( const unsigned char* text = it )
+		while ( const Byte* text = it )
 		{
 			++it;
 			++n;
@@ -1076,7 +1076,7 @@ pascal long MenuKey_patch( CharParameter key )
 				continue;
 			}
 			
-			const unsigned char* p = text + 1 + text[ 0 ] + 1;  // skip icon
+			const Byte* p = text + 1 + text[ 0 ] + 1;  // skip icon
 			
 			if ( *p == c )
 			{
@@ -1120,7 +1120,7 @@ pascal void SetItem_patch( MenuRef menu, short item, ConstStr255Param text )
 	
 	const UInt8 newLen = text[ 0 ];
 	
-	unsigned char* p = menu[0]->menuData;
+	Byte* p = menu[0]->menuData;
 	
 	p += 1 + *p;
 	
@@ -1130,7 +1130,7 @@ pascal void SetItem_patch( MenuRef menu, short item, ConstStr255Param text )
 		{
 			const UInt8 oldLen = p[ 0 ];
 			
-			const short offset = p - (unsigned char*) *menu;
+			const short offset = p - (Byte*) *menu;
 			
 			Munger( (Handle) menu, offset, NULL, 1 + oldLen, text, 1 + newLen );
 			
@@ -1147,7 +1147,7 @@ pascal void GetItem_patch( MenuRef menu, short item, Str255 result )
 {
 	menu_iterator it( menu );
 	
-	while ( const unsigned char* text = it )
+	while ( const Byte* text = it )
 	{
 		if ( --item == 0 )
 		{
@@ -1189,7 +1189,7 @@ pascal void SetItemMark_patch( MenuRef menu, short item, CharParameter mark )
 {
 	menu_iterator it( menu );
 	
-	while ( unsigned char* p = it )
+	while ( Byte* p = it )
 	{
 		if ( --item == 0 )
 		{
@@ -1208,7 +1208,7 @@ pascal void GetItemMark_patch( MenuRef menu, short item, CharParameter* mark )
 {
 	menu_iterator it( menu );
 	
-	while ( const unsigned char* p = it )
+	while ( const Byte* p = it )
 	{
 		if ( --item == 0 )
 		{
@@ -1229,7 +1229,7 @@ pascal void SetItmIcon_patch( MenuRef menu, short item, short icon )
 	
 	menu_iterator it( menu );
 	
-	while ( unsigned char* p = it )
+	while ( Byte* p = it )
 	{
 		if ( --item == 0 )
 		{
@@ -1256,7 +1256,7 @@ pascal void SetItemStyle_patch( MenuRef menu, short item, StyleParameter style )
 {
 	menu_iterator it( menu );
 	
-	while ( unsigned char* p = it )
+	while ( Byte* p = it )
 	{
 		if ( --item == 0 )
 		{
@@ -1349,17 +1349,17 @@ short insert_one_item( MenuRef menu, const UInt8* format, UInt8 length, short i 
 		++it;
 	}
 	
-	const size_t offset = it.get() - (unsigned char*) *menu;
+	const size_t offset = it.get() - (Byte*) *menu;
 	
-	unsigned char* p = (unsigned char*) *menu + offset;
-	unsigned char* q = p + increase;
+	Byte* p = (Byte*) *menu + offset;
+	Byte* q = p + increase;
 	
 	while ( it )
 	{
 		++it;
 	}
 	
-	const unsigned char* end = it.get() + 1;
+	const Byte* end = it.get() + 1;
 	
 	fast_memmove( q, p, end - p );
 	
@@ -1437,7 +1437,7 @@ pascal void GetItemCmd_patch( MenuRef menu, short item, CharParameter* key )
 {
 	menu_iterator it( menu );
 	
-	while ( const unsigned char* p = it )
+	while ( const Byte* p = it )
 	{
 		if ( --item == 0 )
 		{
@@ -1458,7 +1458,7 @@ pascal void SetItemCmd_patch( MenuRef menu, short item, CharParameter key )
 	
 	menu_iterator it( menu );
 	
-	while ( unsigned char* p = it )
+	while ( Byte* p = it )
 	{
 		if ( --item == 0 )
 		{

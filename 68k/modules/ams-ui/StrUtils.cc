@@ -14,12 +14,12 @@
 #include "unglue.hh"
 
 
-pascal unsigned char** NewString_patch( const unsigned char* s )
+pascal StringHandle NewString_patch( const Byte* s )
 {
 	return PtrToHand_StringHandle( s, 1 + s[ 0 ] );
 }
 
-pascal void SetString_patch( unsigned char** h, const unsigned char* s )
+pascal void SetString_patch( StringHandle h, const Byte* s )
 {
 	PtrToXHand( (Ptr) s, (Handle) h, 1 + s[ 0 ] );
 }
