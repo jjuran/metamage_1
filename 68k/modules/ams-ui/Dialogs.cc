@@ -107,7 +107,7 @@ Handle expand_param_text( const Byte* text )
 		
 		if ( c != '^'  ||  it == end )
 		{
-			++expanded_size;
+			expanded_size += 1;
 			continue;
 		}
 		
@@ -1053,8 +1053,6 @@ pascal void DrawDialog_patch( DialogRef dialog )
 			
 			case statText:
 			{
-				Handle h = item->handle;
-				
 				if ( item_index == edit_index )
 				{
 					edit = item;
