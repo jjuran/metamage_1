@@ -535,6 +535,15 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
 	
+	cap_zoom_index( desc.width, desc.height, desk_width, desk_height );
+	
+	for ( int i = top_zoom_index;  i > maximum_zoom_index;  --i )
+	{
+		MenuCommand command_ID = command_ID_for_zoom_index( i );
+		
+		DisableMenuCommand( View, command_ID );
+	}
+	
 	/*
 		We have to launch the coprocess before we create the window in
 		Mac OS X 10.4, or the application will immediately terminate after
@@ -556,10 +565,6 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	set_AGL_geometry( desc.stride, desc.width, desc.height, desc.weight );
 	
-	screen_window = create_window( desc.width, desc.height, NULL );
-	
-	attach_to_window( screen_window );
-	
 	if ( const frend::shared_cursor_state* cursor = frend::cursor_state )
 	{
 		int y  = cursor->pointer[ 0 ];
@@ -575,6 +580,10 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	}
 	
 	blit( load );
+	
+	screen_window = create_window( desc.width, desc.height, NULL );
+	
+	attach_to_window( screen_window );
 	
 	render_AGL();
 	
@@ -617,15 +626,6 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	mac::app::set_Aqua_menu_key( kHICommandQuit, '\0' );
 	mac::app::set_Aqua_menu_key( kHICommandHide, '\0' );
-	
-	cap_zoom_index( desc.width, desc.height, desk_width, desk_height );
-	
-	for ( int i = top_zoom_index;  i > maximum_zoom_index;  --i )
-	{
-		MenuCommand command_ID = command_ID_for_zoom_index( i );
-		
-		DisableMenuCommand( View, command_ID );
-	}
 	
 	RunApplicationEventLoop();
 	
