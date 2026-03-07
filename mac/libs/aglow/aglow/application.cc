@@ -75,7 +75,7 @@
 
 static WindowRef screen_window;
 
-static MenuCommand current_zoom = kZoom100Percent;
+static MenuCommand current_zoom;
 
 static short x_numer = 1;
 static short x_denom = 1;
@@ -584,7 +584,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	blit( load );
 	
-	remake_window( desc.width, desc.height );
+	choose_zoom( kZoom100Percent, desc );
 	
 	EventHandlerRef updateHandler;
 	err = InstallApplicationEventHandler( UPP_ARG( AmicusUpdate ),
@@ -643,8 +643,6 @@ void initialize()
 	}
 	
 	set_up_menus();
-	
-	SetMenuCommandMark( View, kZoom100Percent, kCheckCharCode );
 }
 
 }  // namespace amicus
