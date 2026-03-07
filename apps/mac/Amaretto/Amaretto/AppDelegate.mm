@@ -277,7 +277,9 @@ void set_up_menus( unsigned default_zoom_command )
 {
 	OSStatus err;
 	
-	int default_zoom_index = 0x100 >> 7;  // 2
+	const int x2 = 0x200 >> 7;  // 4
+	
+	int default_zoom_index = maximum_zoom_index < x2 ? maximum_zoom_index : x2;
 	
 	_zoomLevel = command_ID_for_zoom_index( default_zoom_index );
 	
