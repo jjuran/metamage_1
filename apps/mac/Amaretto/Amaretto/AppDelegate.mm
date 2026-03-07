@@ -68,12 +68,12 @@ pascal OSErr handle_Quit_Apple_event( AppleEvent const* event,
 DEFINE_UPP( AEEventHandler, handle_Quit_Apple_event )
 
 static
-NSWindow* create_window( const raster::raster_desc& desc )
+NSWindow* create_window( const raster::raster_desc& desc, CGFloat scale )
 {
 	int width  = desc.width;
 	int height = desc.height;
 	
-	NSRect contentRect = NSMakeRect( 0, 0, width, height );
+	NSRect contentRect = NSMakeRect( 0, 0, width * scale, height * scale );
 	
 	id window = [[NSWindow alloc] initWithContentRect: contentRect
 	                              styleMask:           NSTitledWindowMask
@@ -110,7 +110,7 @@ NSWindow* create_window( const raster::raster_desc& desc )
 	[window setAcceptsMouseMovedEvents: YES];
 	[window setInitialFirstResponder:   view];
 	
-	[view setScale: 1.0];
+	[view setScale: scale];
 	
 	glfb::initialize();
 	
@@ -163,7 +163,7 @@ NSMenu* set_up_menu( NSMenu* menubar, const menu_description& desc )
 #define SET_UP_MENU( name )  set_up_menu( menubar, name##_desc )
 
 static
-void set_up_menus()
+void set_up_menus( unsigned default_zoom_command )
 {
 	id menubar = [NSMenu new];
 	
@@ -176,7 +176,7 @@ void set_up_menus()
 	menu = SET_UP_MENU( Edit  );
 	menu = SET_UP_MENU( View  );
 	
-	[[menu itemWithTag: kZoom100Percent] setState: NSOnState];
+	[[menu itemWithTag: default_zoom_command] setState: NSOnState];
 	
 	[menu setAutoenablesItems: NO];
 	
@@ -277,15 +277,19 @@ void set_up_menus()
 {
 	OSStatus err;
 	
+	int default_zoom_index = 0x100 >> 7;  // 2
+	
+	_zoomLevel = command_ID_for_zoom_index( default_zoom_index );
+	
 	err = AEInstallEventHandler( kCoreEventClass,
 	                             kAEQuitApplication,
 	                             UPP_ARG( handle_Quit_Apple_event ),
 	                             0,
 	                             false );
 	
-	set_up_menus();
+	set_up_menus( _zoomLevel );
 	
-	_mainWindow = create_window( *_desc );
+	_mainWindow = create_window( *_desc, default_zoom_index / 2.0 );
 	_mainGLView = [_mainWindow initialFirstResponder];
 	
 	[self onCursorBits];
