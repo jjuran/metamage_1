@@ -213,10 +213,9 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	max_scale_factor = max_scale( display_bounds, width, height );
 	
-	if ( max_scale_factor > 1 )
-	{
-		scale_factor = floor( max_scale_factor );
-	}
+	scale_factor = max_scale_factor >= 2.0 ? 2.0
+	             : max_scale_factor >= 1.5 ? 1.5
+	             :                           1.0;
 	
 	Blitter blitter( captured_display.id() );
 	
