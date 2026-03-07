@@ -547,6 +547,12 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		DisableMenuCommand( View, command_ID );
 	}
 	
+	const int x2 = 0x200 >> 7;  // 4
+	
+	int default_zoom_index = maximum_zoom_index < x2 ? maximum_zoom_index : x2;
+	
+	unsigned zoom_command = command_ID_for_zoom_index( default_zoom_index );
+	
 	/*
 		We have to launch the coprocess before we create the window in
 		Mac OS X 10.4, or the application will immediately terminate after
@@ -584,7 +590,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	blit( load );
 	
-	choose_zoom( kZoom100Percent, desc );
+	choose_zoom( zoom_command, desc );
 	
 	EventHandlerRef updateHandler;
 	err = InstallApplicationEventHandler( UPP_ARG( AmicusUpdate ),
