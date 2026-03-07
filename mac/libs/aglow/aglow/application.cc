@@ -128,7 +128,10 @@ void remake_window( unsigned width, unsigned height )
 	
 	ShowWindow( window );
 	
-	DisposeWindow( screen_window );
+	if ( screen_window )
+	{
+		DisposeWindow( screen_window );
+	}
 	
 	screen_window = window;
 }
@@ -581,13 +584,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	blit( load );
 	
-	screen_window = create_window( desc.width, desc.height, NULL );
-	
-	attach_to_window( screen_window );
-	
-	render_AGL();
-	
-	ShowWindow( screen_window );
+	remake_window( desc.width, desc.height );
 	
 	EventHandlerRef updateHandler;
 	err = InstallApplicationEventHandler( UPP_ARG( AmicusUpdate ),
