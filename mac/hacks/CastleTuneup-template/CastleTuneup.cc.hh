@@ -1054,7 +1054,7 @@ void install_blitter_patch( Handle h, Size handle_size )
 				0006c8:  ADD.W    D0,D3   // convert gutter to stride
 				0006ca:  SWAP     D0      // move src_len into place
 				0006cc:  MOVE.W   D1,D0   // populate srcx
-				0006de:  MOVE.L   D0,D1   // populate dstx
+				0006ce:  MOVE.L   D0,D1   // populate dstx
 				0006d0:  EXG      D3,D2   // populate ddst
 				
 				0006d2:  JSR      fill_bytes
