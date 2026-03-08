@@ -16,6 +16,7 @@ namespace Pearl
 {
 
 class Cursor;
+class Window;
 
 extern int events_fd;
 
@@ -34,7 +35,7 @@ enum
 	kEventPearlMouseGrab = 8,
 };
 
-bool handle_sdl_event( SDL_Event& event, Cursor& cursor );
+bool handle_sdl_event( SDL_Event& event, Cursor& cursor, Window& window );
 
 }
 

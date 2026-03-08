@@ -18,6 +18,7 @@
 // Pearl
 #include "Pearl/cursor.hh"
 #include "Pearl/keycodes.hh"
+#include "Pearl/window.hh"
 
 
 namespace Pearl
@@ -181,7 +182,7 @@ bool handle_command( const SDL_KeyboardEvent& event )
 	return true;
 }
 
-bool handle_sdl_event( SDL_Event& event, Cursor& cursor )
+bool handle_sdl_event( SDL_Event& event, Cursor& cursor, Window& window )
 {
 	switch ( event.type )
 	{
@@ -220,6 +221,12 @@ bool handle_sdl_event( SDL_Event& event, Cursor& cursor )
 				cursor.send_mouse_button_event( get_modes( SDL_GetModState() ),
 				                                event.button.state == SDL_PRESSED );
 			}
+
+			if ( event.button.state == SDL_RELEASED )
+			{
+				window.activate();
+			}
+
 			break;
 		}
 

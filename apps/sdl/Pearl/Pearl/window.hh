@@ -51,6 +51,8 @@ class Window
 		bool toggle_fullscreen();
 		bool toggle_keyboard_grab();
 		bool toggle_mouse_grab();
+
+		bool activate();
 };
 
 }

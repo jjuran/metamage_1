@@ -38,7 +38,6 @@ Window::Window( const char* title,
 	if ( window != NULL )
 	{
 		SDL_SetWindowKeyboardGrab( window, SDL_TRUE );
-		SDL_SetWindowMouseGrab( window, SDL_TRUE );
 	}
 }
 
@@ -138,6 +137,18 @@ bool Window::toggle_mouse_grab()
 
 	SDL_bool was_grabbed = SDL_GetWindowMouseGrab( window );
 	SDL_SetWindowMouseGrab( window, SDL_bool( ! was_grabbed ) );
+
+	return true;
+}
+
+bool Window::activate()
+{
+	if ( window == NULL )
+	{
+		return false;
+	}
+
+	SDL_SetWindowMouseGrab( window, SDL_TRUE );
 
 	return true;
 }

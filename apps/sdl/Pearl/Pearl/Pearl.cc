@@ -231,7 +231,7 @@ int run_event_loop( const raster::raster_load& load, const raster::raster_desc& 
 			continue;
 		}
 
-		running = handle_sdl_event( event, cursor );
+		running = handle_sdl_event( event, cursor, window );
 	}
 
 	return 0;
