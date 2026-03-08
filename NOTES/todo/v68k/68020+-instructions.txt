@@ -6,18 +6,6 @@ The following instructions are introduced in the 68020:
 PACK
 UNPK
 
-MULL
-DIVL
-
-BFCHG
-BFCLR
-BFEXTS
-BFEXTU
-BFFFO
-BFINS
-BFSET
-BFTST
-
 CAS
 CAS2
 
@@ -25,4 +13,3 @@ CHK2
 TRAPcc
 
 They need to be implemented in v68k.
-
