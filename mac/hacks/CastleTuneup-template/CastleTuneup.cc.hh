@@ -69,7 +69,7 @@
 	
 	What does apply to Advanced Mac Substitute is access to unmapped
 	memory regions, of which this signature check definitely is one.
-	This patch NOPs out the JSR instruction, preventing the access.
+	This patch replaces the logic with an RTS, preventing the access.
 	
 	Dark Castle has exceptionally high CPU usage in the title
 	screen (~80%) and during gameplay (100%) due to spinlooping.
@@ -220,33 +220,35 @@ void ExitToShell_patch()
 static inline
 void install_envcheck_patch( Handle h, Size handle_size )
 {
-	enum
-	{
-		// These are offsets relative to the start of the 'CODE' resource.
-		
-		offset_to_JSR       = OFFSET_TO_ENVCHECK_JSR,
-		minimum_handle_size = offset_to_JSR + 4,
-	};
+	Ptr p = *h;
+	Ptr q = *h + handle_size - sizeof (UInt32);
 	
-	if ( handle_size > minimum_handle_size )
+	while ( p <= q )
 	{
-		UInt32* p = (UInt32*) (*h + offset_to_JSR);
-		
 		/*
 			Old:
-				JSR      (114,A5)
+				MOVEA.L  D3,A1
+				LEA      ...,A0
+				MOVEM.L  (A0),D0-D3             // DEAD FACE BEEF CAFE
+				MOVEA.L  #0x00f80030,A0
+				...
 			
 			New:
-				NOP
-				NOP
+				RTS
 		*/
 		
-		if ( *p == ENVCHECK_JSR )
+		if ( *(UInt32*) p == 0x00f80030 )
 		{
-			*p = 0x4E714E71;
+			p -= 12;
+			
+			*(UInt16*) p = 0x4E75;  // RTS
 			
 			HNoPurge( h );
+			
+			break;
 		}
+		
+		p += 2;
 	}
 }
 
