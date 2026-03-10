@@ -85,6 +85,22 @@ long wait_for_update_throttled()
 	
 	if ( CONFIG_UPDATES_VIA_FIFO )
 	{
+		enum
+		{
+			/*
+				How many updates within a very short span of time
+				do we tolerate before advising the caller to sleep?
+				
+				It has to be enough for complex pictures to display
+				fully on fast machines without reaching the limit.
+				
+				Empirical observation shows that 50 is too low.
+				So far, 60 seems to be okay, but leave a margin.
+			*/
+			
+			counter_sleep_threshold = 100,
+		};
+		
 		static unsigned long counter;
 		
 		static
@@ -104,7 +120,7 @@ long wait_for_update_throttled()
 			last_time = this_time;
 		}
 		
-		if ( counter >= 5 )
+		if ( counter >= counter_sleep_threshold )
 		{
 			return min_sleep;
 		}
