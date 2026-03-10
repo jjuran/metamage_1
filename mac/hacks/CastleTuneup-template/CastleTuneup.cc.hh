@@ -54,6 +54,12 @@
 	not at system startup time), we have to remove the patch
 	as well, so we patch _ExitToShell and remove both there.
 	
+	Another issue in Beyond Dark Castle is that the animated
+	fire on the menu screen is accomplished by means of many
+	individual writes to the screen buffer.  By patching the
+	routine that animates the fireplace and the two sconces,
+	we insert a screen lock that limits refreshes to 12 fps.
+	
 	The subsequent comments refer to "Dark Castle", but apply
 	equally to both Dark Castle and Beyond Dark Castle.
 	
@@ -117,6 +123,9 @@
 
 enum
 {
+	lock_screen   = 0xFFFFFFEC,
+	unlock_screen = 0xFFFFFFEA,
+	
 	fast_memcmp = 0xFFFFFFC6,
 	fill_bytes  = 0xFFFFFFB2,
 };
@@ -439,6 +448,109 @@ void install_blitter_patch( Handle h, Size handle_size )
 	}
 }
 
+static
+asm
+void fireside_sample()
+{
+	LINK     A6,#-12
+	MOVE.L   A5,-(A7)
+	MOVEA.L  0x0904,A5
+	MOVE.W   #0x0108,-6(A6)
+	MOVE.W   #0x01e8,-2(A6)
+	MOVE.W   #0x0050,-8(A6)
+	MOVE.W   #0x0111,-4(A6)
+	
+	CLR.W    -10(A6)
+	CLR.W    -12(A6)
+	
+	PEA      -8(A6)       
+	MOVE.L   -12(A6),-(A7)
+}
+
+static
+asm
+void fireside_patch()
+{
+	PEA      unlock_screen
+	
+	LINK     A6,#-12
+	MOVE.L   A5,-(A7)
+	MOVEA.L  0x0904,A5
+	MOVE.W   #0x0108,-6(A6)
+	MOVE.W   #0x01e8,-2(A6)
+	MOVE.W   #0x0050,-8(A6)
+	MOVE.W   #0x0111,-4(A6)
+	
+	JSR      lock_screen
+	
+	PEA      -8(A6)
+	PEA      0x0000
+}
+
+static inline
+void install_fireside_patch( Handle h, Size handle_size )
+{
+	enum
+	{
+		sample_size = 0x0032,
+		patch_size  = 0x0032,
+		
+		// These are offsets relative to the start of the 'CODE' resource.
+		
+		offset_to_target    = 0x0f60,
+		minimum_handle_size = offset_to_target + sample_size,
+	};
+	
+	if ( handle_size > minimum_handle_size )
+	{
+		Ptr p = *h + offset_to_target;
+		
+		/*
+			Old:
+				000f60:  LINK     A6,#-12
+				000f64:  MOVE.L   A5,-(A7)
+				000f66:  MOVEA.L  0x0904,A5
+				000f6a:  MOVE.W   #0x0108,(-6,A6)
+				000f70:  MOVE.W   #0x01e8,(-2,A6)
+				000f76:  MOVE.W   #0x0050,(-8,A6)
+				000f7c:  MOVE.W   #0x0111,(-4,A6)
+				
+				000f82:  CLR.W    (-10,A6)
+				000f86:  CLR.W    (-12,A6)
+				
+				000f8a:  PEA      (-8,A6)
+				000f8e:  MOVE.L   (-12,A6),-(A7)
+				000f92:  _ShieldCursor
+				...
+			
+			New:
+				000f60:  PEA      unlock_screen
+				
+				000f64:  LINK     A6,#-12
+				000f68:  MOVE.L   A5,-(A7)
+				000f6a:  MOVEA.L  0x0904,A5
+				000f6e:  MOVE.W   #0x0108,(-6,A6)
+				000f74:  MOVE.W   #0x01e8,(-2,A6)
+				000f7a:  MOVE.W   #0x0050,(-8,A6)
+				000f80:  MOVE.W   #0x0111,(-4,A6)
+				
+				000f86:  JSR      lock_screen
+				
+				000f8a:  PEA      (-8,A6)
+				000f8e:  PEA      0x0000
+				000f92:  _ShieldCursor
+				...
+		*/
+		
+		if ( v68k_memequ( &fireside_sample, p, sample_size ) )
+		{
+			BlockMoveData( &fireside_patch, p, patch_size );
+			
+			HNoPurge( h );
+		}
+	}
+}
+
 static inline
 void install_tabpause_patch( Handle h, Size handle_size )
 {
@@ -517,6 +629,15 @@ void TEInit_handler()
 		{
 			install_blitter_patch( h, GetHandleSize_raw( h ) );
 		}
+		
+	#ifdef FIRESIDE_CODE_RESID
+		
+		if ( v68k  &&  (h = GetResource( 'CODE', FIRESIDE_CODE_RESID )) )
+		{
+			install_fireside_patch( h, GetHandleSize_raw( h ) );
+		}
+		
+	#endif
 		
 		if ( v68k  &&  (h = GetResource( 'CODE', 2 )) )
 		{
