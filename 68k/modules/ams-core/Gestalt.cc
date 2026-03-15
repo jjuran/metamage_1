@@ -12,8 +12,12 @@
 #include "reactor-core.hh"
 
 
+typedef unsigned char Byte;
+
 enum
 {
+	gestaltLoaderTargetName       = 'Load',
+	
 	gestaltAddressingModeAttr     = 'addr',
 	gestaltAppleTalkVersion       = 'atlk',
 	gestaltFPUType                = 'fpu ',
@@ -35,12 +39,26 @@ short SysVersion : 0x015A;
 
 Gestalt_ProcPtr old_Gestalt;
 
+/*
+	This is where Loader will stash the application name so
+	it can redisplay the same application when it next runs.
+	
+	It's a Str255 so that Loader can point ioNamePtr to it
+	in a GetFInfo call without risk of overrun (from MFS).
+*/
+
+static Byte loader_target_name[ 255 ];
+
 static
 long Gestalt_payload( unsigned long  selector : __D0,
                       long*          response : __A1 )
 {
 	switch ( selector )
 	{
+		case gestaltLoaderTargetName:
+			*response = (long) loader_target_name;
+			break;
+		
 		case gestaltAddressingModeAttr:
 		case gestaltAppleTalkVersion:
 		case gestaltFPUType:
