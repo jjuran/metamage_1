@@ -60,6 +60,8 @@ short asm Launch( void* pb : __A0 )
 static Str255 app_name;
 static Handle app_icon;
 
+static Byte* target_name;
+
 static WindowRef main_window;
 
 static
@@ -128,11 +130,11 @@ void draw_window( WindowRef window )
 		PlotIcon( &icon_rect, app_icon );
 	}
 	
-	const short width = StringWidth( app_name );
+	const short width = StringWidth( target_name );
 	
 	MoveTo( h_center - width / 2u, v_center + 10 );
 	
-	DrawString( app_name );
+	DrawString( target_name );
 }
 
 static
@@ -177,7 +179,7 @@ void menu_item_chosen( long choice )
 static
 long HFS_file_opener( short vRefNum, long dirID, const Byte* name )
 {
-	BlockMoveData( name, app_name, 1 + name[ 0 ] );
+	BlockMoveData( name, target_name, 1 + name[ 0 ] );
 	
 	return noErr;
 }
@@ -199,6 +201,11 @@ int main()
 		FinderName[ 0 ] = '\0';
 	}
 	
+	if ( ! target_name )
+	{
+		target_name = app_name;
+	}
+	
 	mac::app::init_toolbox();
 	mac::app::install_menus();
 	
@@ -214,14 +221,14 @@ int main()
 	
 	*(long*) *AppParmHandle = 0;
 	
-	if ( ! *app_name )
+	if ( ! *target_name )
 	{
-		find_appl( app_name );
+		find_appl( target_name );
 	}
 	
-	if ( *app_name )
+	if ( *target_name )
 	{
-		app_icon = get_icon( app_name );
+		app_icon = get_icon( target_name );
 	}
 	
 	make_main_window();
@@ -269,9 +276,9 @@ int main()
 					switch ( (Byte) event.message )
 					{
 						case kReturnCharCode:
-							if ( in_AMS  &&  *app_name )
+							if ( in_AMS  &&  *target_name )
 							{
-								LaunchParams params = { app_name };
+								LaunchParams params = { target_name };
 								
 							#if TARGET_CPU_68K
 								
