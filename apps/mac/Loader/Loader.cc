@@ -11,6 +11,9 @@
 // more-libc
 #include "more/string.h"
 
+// mac-glue-utils
+#include "mac_glue/Gestalt.hh"
+
 // mac-sys-utils
 #include "mac_sys/beep.hh"
 #include "mac_sys/has/virtualization.hh"
@@ -35,6 +38,11 @@ using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
 using mac::qd::wide_drag_area;
 
+
+enum
+{
+	gestaltLoaderTargetName = 'Load',
+};
 
 Str15 FinderName : 0x02E0;
 
@@ -186,6 +194,8 @@ long HFS_file_opener( short vRefNum, long dirID, const Byte* name )
 
 int main()
 {
+	using mac::glue::gestalt_or;
+	
 	using mac::app::open_documents_with;
 	using mac::app::quitting;
 	
@@ -199,6 +209,8 @@ int main()
 		*/
 		
 		FinderName[ 0 ] = '\0';
+		
+		target_name = (Byte*) gestalt_or( gestaltLoaderTargetName, 0 );
 	}
 	
 	if ( ! target_name )
