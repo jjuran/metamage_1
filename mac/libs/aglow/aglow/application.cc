@@ -207,6 +207,48 @@ static EventTypeSpec AmicusUpdate_event[] =
 };
 
 static
+bool update_cursor_state()
+{
+	using splode::send_mouse_moved_event;
+	
+	Rect bounds;
+	GetWindowBounds( screen_window, kWindowGlobalPortRgn, &bounds );
+	
+	Point pt = { (short) cursor_location.y, (short) cursor_location.x };
+	
+	bool inside = PtInRect( pt, &bounds );
+	
+	if ( inside )
+	{
+		if ( ! cursor_hidden )
+		{
+			cursor_hidden = true;
+			
+			CGDisplayHideCursor( 0 );
+		}
+		
+		short x = pt.h - bounds.left;
+		short y = pt.v - bounds.top;
+		
+		x *= x_denom;
+		y *= x_denom;
+		
+		x /= x_numer;
+		y /= x_numer;
+		
+		send_mouse_moved_event( events_fd, x, y );
+	}
+	else if ( cursor_hidden )
+	{
+		cursor_hidden = false;
+		
+		CGDisplayShowCursor( 0 );
+	}
+	
+	return inside;
+}
+
+static
 OSStatus choose_zoom( MenuCommand id, const raster_desc& desc )
 {
 	if ( id == 0  ||  id == current_zoom )
@@ -285,7 +327,6 @@ pascal OSStatus Mouse_action( EventHandlerCallRef  handler,
 	using namespace splode::key;
 	
 	using splode::send_mouse_event;
-	using splode::send_mouse_moved_event;
 	
 	OSStatus err;
 	
@@ -313,35 +354,12 @@ pascal OSStatus Mouse_action( EventHandlerCallRef  handler,
 	                         NULL,
 	                         &modifiers );
 	
-	Rect bounds;
-	GetWindowBounds( screen_window, kWindowGlobalPortRgn, &bounds );
-	
 	const uint8_t mode_mask = Command | Shift | Option | Control;
 	
 	const uint8_t modes = (modifiers >> 8) & mode_mask;
 	
-	Point pt = { (short) cursor_location.y, (short) cursor_location.x };
-	
-	if ( PtInRect( pt, &bounds ) )
+	if ( update_cursor_state() )
 	{
-		if ( ! cursor_hidden )
-		{
-			cursor_hidden = true;
-			
-			CGDisplayHideCursor( 0 );
-		}
-		
-		short x = pt.h - bounds.left;
-		short y = pt.v - bounds.top;
-		
-		x *= x_denom;
-		y *= x_denom;
-		
-		x /= x_numer;
-		y /= x_numer;
-		
-		send_mouse_moved_event( events_fd, x, y );
-		
 		if ( kind <= 2 )
 		{
 			mid_click = kind == 1;
@@ -349,12 +367,6 @@ pascal OSStatus Mouse_action( EventHandlerCallRef  handler,
 			send_mouse_event( events_fd, modes, kind );
 			return noErr;
 		}
-	}
-	else if ( cursor_hidden )
-	{
-		cursor_hidden = false;
-		
-		CGDisplayShowCursor( 0 );
 	}
 	
 	if ( mid_click  &&  kind == 2 )
