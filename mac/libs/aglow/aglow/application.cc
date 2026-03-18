@@ -275,6 +275,8 @@ OSStatus choose_zoom( MenuCommand id, const raster_desc& desc )
 			remake_window( desc.width  / x_denom * x_numer,
 			               desc.height / x_denom * x_numer );
 			
+			update_cursor_state();
+			
 			SetMenuCommandMark( View, current_zoom, noMark );
 			SetMenuCommandMark( View, id, kCheckCharCode );
 			
