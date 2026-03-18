@@ -14,6 +14,7 @@ namespace frend
 
 CommandMode_state commandmode_state;
 
+bool fullscreen;
 bool sharp_pixels;
 
 bool Q_hit;
@@ -23,6 +24,10 @@ bool commandmode_key( char c )
 {
 	switch ( c )
 	{
+		case '0':
+			fullscreen = ! fullscreen;
+			break;
+		
 		case '\\':
 			sharp_pixels = ! sharp_pixels;
 			break;

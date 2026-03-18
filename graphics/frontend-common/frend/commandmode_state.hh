@@ -32,6 +32,7 @@ enum CommandMode_state
 
 extern CommandMode_state commandmode_state;
 
+extern bool fullscreen;
 extern bool sharp_pixels;
 
 extern bool Q_hit;
