@@ -73,6 +73,8 @@
 #define COUNT( array )  (sizeof (array) / sizeof *(array))
 
 
+static HIPoint cursor_location;
+
 static WindowRef screen_window;
 
 static MenuCommand current_zoom;
@@ -294,14 +296,13 @@ pascal OSStatus Mouse_action( EventHandlerCallRef  handler,
 	
 	EventKind kind = GetEventKind( event );
 	
-	HIPoint location = {};
 	err = GetEventParameter( event,
 	                         kEventParamMouseLocation,
 	                         typeHIPoint,
 	                         NULL,
-	                         sizeof location,
+	                         sizeof cursor_location,
 	                         NULL,
-	                         &location );
+	                         &cursor_location );
 	
 	UInt32 modifiers = 0;
 	err = GetEventParameter( event,
@@ -319,7 +320,7 @@ pascal OSStatus Mouse_action( EventHandlerCallRef  handler,
 	
 	const uint8_t modes = (modifiers >> 8) & mode_mask;
 	
-	Point pt = { (short) location.y, (short) location.x };
+	Point pt = { (short) cursor_location.y, (short) cursor_location.x };
 	
 	if ( PtInRect( pt, &bounds ) )
 	{
