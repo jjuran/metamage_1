@@ -205,31 +205,6 @@ static EventTypeSpec AmicusUpdate_event[] =
 };
 
 static
-OSStatus choose_zoom( MenuCommand id, const raster_desc& desc );
-
-static
-pascal OSStatus ProcessCommand( EventHandlerCallRef  handler,
-                                EventRef             event,
-                                void*                userData )
-{
-	OSStatus err;
-	
-	const raster_load& load = *(raster_load*) userData;
-	const raster_desc& desc = load.meta->desc;
-	
-	HICommand command = {};
-	err = GetEventParameter( event,
-	                         kEventParamDirectObject,
-	                         typeHICommand,
-	                         NULL,
-	                         sizeof command,
-	                         NULL,
-	                         &command );
-	
-	return choose_zoom( command.commandID, desc );
-}
-
-static
 OSStatus choose_zoom( MenuCommand id, const raster_desc& desc )
 {
 	if ( id == 0  ||  id == current_zoom )
@@ -268,6 +243,28 @@ OSStatus choose_zoom( MenuCommand id, const raster_desc& desc )
 	}
 	
 	return eventNotHandledErr;
+}
+
+static
+pascal OSStatus ProcessCommand( EventHandlerCallRef  handler,
+                                EventRef             event,
+                                void*                userData )
+{
+	OSStatus err;
+	
+	const raster_load& load = *(raster_load*) userData;
+	const raster_desc& desc = load.meta->desc;
+	
+	HICommand command = {};
+	err = GetEventParameter( event,
+	                         kEventParamDirectObject,
+	                         typeHICommand,
+	                         NULL,
+	                         sizeof command,
+	                         NULL,
+	                         &command );
+	
+	return choose_zoom( command.commandID, desc );
 }
 
 DEFINE_CARBON_UPP( EventHandler, ProcessCommand )
