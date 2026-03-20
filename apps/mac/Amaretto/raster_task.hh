@@ -20,6 +20,15 @@ namespace raster
 	
 }
 
+struct raster_event_set
+{
+	bool screenBits;
+	bool cursorBits;
+	bool newPalette;
+	bool repaintDue;
+	bool rasterDone;
+};
+
 class raster_monitor
 {
 	NON_COPYABLE( raster_monitor )
@@ -30,6 +39,9 @@ class raster_monitor
 		~raster_monitor();
 };
 
-extern id raster_event_target;
+extern raster_event_set raster_events;
+
+extern CFRunLoopRef        mainRunLoop;
+extern CFRunLoopSourceRef  inputSource;
 
 #endif

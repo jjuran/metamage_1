@@ -34,14 +34,17 @@ static bool monitoring;
 
 static poseven::thread raster_thread;
 
-id raster_event_target = nil;
+raster_event_set raster_events;
+
+CFRunLoopRef        mainRunLoop;
+CFRunLoopSourceRef  inputSource;
 
 static
-void post( SEL selector )
+void signal_runloop()
 {
-	[raster_event_target performSelectorOnMainThread: selector
-	                     withObject:                  nil
-	                     waitUntilDone:               NO];
+	CFRunLoopSourceSignal( inputSource );
+	
+	CFRunLoopWakeUp( mainRunLoop );
 }
 
 static
@@ -62,29 +65,33 @@ void raster_event_loop( const clut_data* clut, const sync_relay* sync )
 		{
 			cursor_seed = cursor_state->seed;
 			
-			post( @selector(onCursorBits) );
+			raster_events.cursorBits = true;
 		}
 		
 		if ( clut  &&  clut->seed != colors_seed )
 		{
 			colors_seed = clut->seed;
 			
-			post( @selector(onNewPalette) );
+			raster_events.newPalette = true;
 		}
 		
 		if ( raster_seed != sync->seed )
 		{
 			raster_seed = sync->seed;
 			
-			post( @selector(onScreenBits) );
+			raster_events.screenBits = true;
 		}
 		
-		post( @selector(onRepaintDue) );
+		raster_events.repaintDue = true;
+		
+		signal_runloop();
 		
 		usleep( sleep );
 	}
 	
-	post( @selector(onRasterDone) );
+	raster_events.rasterDone = true;
+	
+	signal_runloop();
 }
 
 static

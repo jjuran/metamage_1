@@ -74,6 +74,45 @@ void sigchld( int )
 	frend::unblock_update_waiters();
 }
 
+static
+void on_raster_event( void* info )
+{
+	AmarettoAppDelegate* appDelegate = (AmarettoAppDelegate*) info;
+	
+	if ( raster_events.cursorBits )
+	{
+		raster_events.cursorBits = false;
+		
+		[appDelegate onCursorBits];
+	}
+	
+	if ( raster_events.newPalette )
+	{
+		raster_events.newPalette = false;
+		
+		[appDelegate onNewPalette];
+	}
+	
+	if ( raster_events.screenBits )
+	{
+		raster_events.screenBits = false;
+		
+		[appDelegate onScreenBits];
+	}
+	
+	if ( raster_events.repaintDue )
+	{
+		raster_events.repaintDue = false;
+		
+		[appDelegate onRepaintDue];
+	}
+	
+	if ( raster_events.rasterDone )
+	{
+		[appDelegate onRasterDone];
+	}
+}
+
 int main( int argc, char** argv )
 {
 	releasing pool( [NSAutoreleasePool new] );
@@ -118,7 +157,24 @@ int main( int argc, char** argv )
 		
 		releasing appDelegate( [[AmarettoAppDelegate alloc] initWithRaster: load] );
 		
-		raster_event_target = appDelegate;
+		CFRunLoopSourceContext context =
+		{
+			0,
+			appDelegate,
+			NULL,  // retain
+			NULL,  // release
+			NULL,  // copyDescription
+			NULL,  // equal
+			NULL,  // hash
+			NULL,  // schedule
+			NULL,  // cancel
+			&on_raster_event,
+		};
+		
+		mainRunLoop = CFRunLoopGetCurrent();
+		inputSource = CFRunLoopSourceCreate( NULL, 0, &context );
+		
+		CFRunLoopAddSource( mainRunLoop, inputSource, kCFRunLoopDefaultMode );
 		
 		raster_updating   update_fifo;
 		raster_monitor    monitored_raster( live_raster.get() );
