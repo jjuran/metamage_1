@@ -17,11 +17,19 @@
 // posix-utils
 #include "posix/bindir.hh"
 
+// v68k-cursor
+#include "cursor/cursor.hh"
+
 // mac-app-utils
 #include "mac_app/become_application.hh"
+#include "mac_app/quit.hh"
+
+// glfb-common
+#include "glfb/glfb.hh"
 
 // frontend-common
 #include "frend/coprocess.hh"
+#include "frend/cursor.hh"
 #include "frend/displayfs.hh"
 #include "frend/documents.hh"
 #include "frend/make_cursor.hh"
@@ -31,6 +39,8 @@
 #include "frend/update_fifo.hh"
 
 // rasterlib
+#include "raster/clut.hh"
+#include "raster/clut_detail.hh"
 #include "raster/raster.hh"
 
 // amicus
@@ -41,6 +51,7 @@
 #include "Amaretto/AppDelegate.hh"
 #include "raster_task.hh"
 #include "releasing.hh"
+#include "render.hh"
 
 
 #define PROGRAM  "Amaretto"
@@ -68,6 +79,12 @@ using amicus::events_fd;
 using amicus::wait_for_first_Apple_event;
 
 
+static void*                      the_addr;
+static const raster::raster_desc* the_desc;
+static const raster::clut_data*   the_clut;
+
+static long the_image_size;
+
 static
 void sigchld( int )
 {
@@ -77,39 +94,60 @@ void sigchld( int )
 static
 void on_raster_event( void* info )
 {
-	AmarettoAppDelegate* appDelegate = (AmarettoAppDelegate*) info;
+	using frend::cursor_state;
+	using frend::shared_cursor_state;
 	
 	if ( raster_events.cursorBits )
 	{
 		raster_events.cursorBits = false;
 		
-		[appDelegate onCursorBits];
+		if ( cursor_state )
+		{
+			glfb::set_cursor_image( cursor_state );
+		}
 	}
 	
 	if ( raster_events.newPalette )
 	{
 		raster_events.newPalette = false;
 		
-		[appDelegate onNewPalette];
+		if ( const raster::clut_data* clut = the_clut )
+		{
+			glfb::set_palette( &clut->palette[ 0 ].value, clut->max + 1 );
+		}
 	}
 	
 	if ( raster_events.screenBits )
 	{
 		raster_events.screenBits = false;
 		
-		[appDelegate onScreenBits];
+		const uint32_t offset = the_image_size * the_desc->frame;
+		
+		glfb::set_screen_image( (Ptr) the_addr + offset );
 	}
 	
 	if ( raster_events.repaintDue )
 	{
 		raster_events.repaintDue = false;
 		
-		[appDelegate onRepaintDue];
+		if ( const shared_cursor_state* cursor = cursor_state )
+		{
+			int y  = cursor->pointer[ 0 ];
+			int x  = cursor->pointer[ 1 ];
+			int dy = cursor->hotspot[ 0 ];
+			int dx = cursor->hotspot[ 1 ];
+			
+			glfb::set_cursor_hotspot( dx, dy );
+			glfb::set_cursor_location( x, y );
+			glfb::set_cursor_visibility( cursor->visible );
+		}
+		
+		render();
 	}
 	
 	if ( raster_events.rasterDone )
 	{
-		[appDelegate onRasterDone];
+		mac::app::quit();
 	}
 }
 
@@ -155,12 +193,20 @@ int main( int argc, char** argv )
 		const raster_load& load = live_raster.get();
 		const raster_desc& desc = live_raster.desc();
 		
+		the_addr = load.addr;
+		the_desc = &desc;
+		the_clut = find_clut( &load.meta->note );
+		
+		the_image_size = desc.stride * desc.height;
+		
+		glfb::cursor_enabled = frend::cursor_state != NULL;
+		
 		releasing appDelegate( [[AmarettoAppDelegate alloc] initWithRaster: load] );
 		
 		CFRunLoopSourceContext context =
 		{
 			0,
-			appDelegate,
+			NULL,  // info
 			NULL,  // retain
 			NULL,  // release
 			NULL,  // copyDescription
