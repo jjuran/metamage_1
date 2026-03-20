@@ -11,6 +11,9 @@
 // mac-config
 #include "mac_config/upp-macros.hh"
 
+// mac-app-utils
+#include "mac_app/quit.hh"
+
 // rasterlib
 #include "raster/clut.hh"
 #include "raster/clut_detail.hh"
@@ -31,29 +34,13 @@
 #include "releasing.hh"
 
 
+using mac::app::quit;
+
 using amicus::cap_zoom_index;
 using amicus::command_ID_for_zoom_index;
 using amicus::maximum_zoom_index;
 using amicus::top_zoom_index;
 
-
-static
-void quit()
-{
-	[NSApp stop: nil];
-	
-	NSEvent* dummy = [NSEvent otherEventWithType: NSApplicationDefined
-	                          location:           NSZeroPoint
-	                          modifierFlags:      0
-	                          timestamp:          0
-	                          windowNumber:       0
-	                          context:            nil
-	                          subtype:            0
-	                          data1:              0
-	                          data2:              0];
-	
-	[NSApp postEvent: dummy atStart: YES];
-}
 
 static
 pascal OSErr handle_Quit_Apple_event( AppleEvent const* event,
