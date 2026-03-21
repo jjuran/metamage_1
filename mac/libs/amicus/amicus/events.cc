@@ -259,7 +259,12 @@ bool handle_CGEvent( CGEventRef event, command_handler_proc command_handler )
 	
 	int8_t key = CGEventGetIntegerValueField( event, kCGKeyboardEventKeycode );
 	
-	uint8_t c = lookup_from_virtual[ key & 0x7F ];
+	uint8_t c = 0;
+	
+	if ( type != kCGEventFlagsChanged )
+	{
+		c = lookup_from_virtual[ key & 0x7F ];
+	}
 	
 	if ( commandmode_state )
 	{
