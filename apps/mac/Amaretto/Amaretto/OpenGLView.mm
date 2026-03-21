@@ -132,9 +132,9 @@ void handle_event( NSEvent* event )
 	render();
 }
 
-- (void) handleMouseMovedEvent: (NSEvent*) event
+- (void) handleMouseMovedTo: (NSPoint) location
 {
-	NSPoint pt = [self convertPoint: [event locationInWindow] fromView: nil];
+	NSPoint pt = [self convertPoint: location fromView: nil];
 	
 	pt.x += kScreenMargin;
 	pt.y += kScreenMargin;
@@ -162,6 +162,11 @@ void handle_event( NSEvent* event )
 		
 		CGDisplayShowCursor( 0 );
 	}
+}
+
+- (void) handleMouseMovedEvent: (NSEvent*) event
+{
+	[self handleMouseMovedTo: [event locationInWindow]];
 }
 
 - (void) handleMouseEvent: (NSEvent*) event

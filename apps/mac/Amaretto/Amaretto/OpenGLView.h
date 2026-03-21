@@ -37,6 +37,7 @@ enum
 
 - (void) drawRect: (NSRect) bounds;
 
+- (void) handleMouseMovedTo:    (NSPoint) location;
 - (void) handleMouseMovedEvent: (NSEvent*) event;
 - (void) handleMouseEvent:      (NSEvent*) event;
 
