@@ -280,8 +280,6 @@ void set_up_menus( unsigned default_zoom_command )
 	
 	_mainWindow = create_window( *_desc, default_zoom_index / 2.0 );
 	_mainGLView = [_mainWindow initialFirstResponder];
-	
-	[self onCursorBits];
 }
 
 - (void) onRepaintDue
