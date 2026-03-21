@@ -267,6 +267,15 @@ void set_up_menus( unsigned default_zoom_command )
 	
 	_mainWindow = create_window( *_desc, default_zoom_index / 2.0 );
 	_mainGLView = [_mainWindow initialFirstResponder];
+	
+	NSRect frame = [_mainWindow frame];
+	
+	NSPoint pt = [NSEvent mouseLocation];
+	
+	pt.x -= frame.origin.x;
+	pt.y -= frame.origin.y;
+	
+	[_mainGLView handleMouseMovedTo: pt];
 }
 
 @end
