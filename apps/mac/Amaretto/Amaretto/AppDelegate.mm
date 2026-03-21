@@ -5,9 +5,6 @@
 
 #include "Amaretto/AppDelegate.hh"
 
-// v68k-cursor
-#include "cursor/cursor.hh"
-
 // mac-config
 #include "mac_config/upp-macros.hh"
 
@@ -15,15 +12,10 @@
 #include "mac_app/quit.hh"
 
 // rasterlib
-#include "raster/clut.hh"
-#include "raster/clut_detail.hh"
 #include "raster/raster.hh"
 
 // glfb-common
 #include "glfb/glfb.hh"
-
-// frontend-common
-#include "frend/cursor.hh"
 
 // amicus
 #include "amicus/menu_defs.hh"
@@ -185,14 +177,9 @@ void set_up_menus( unsigned default_zoom_command )
 	
 	cap_zoom_index( desc.width, desc.height, space.width, space.height );
 	
-	_addr = load.addr;
 	_desc = &desc;
-	_clut = find_clut( &load.meta->note );
 	
-	_imageSize = desc.stride * desc.height;
 	_zoomLevel = kZoom100Percent;
-	
-	glfb::cursor_enabled = frend::cursor_state != NULL;
 	
 	return self;
 }
@@ -280,57 +267,6 @@ void set_up_menus( unsigned default_zoom_command )
 	
 	_mainWindow = create_window( *_desc, default_zoom_index / 2.0 );
 	_mainGLView = [_mainWindow initialFirstResponder];
-}
-
-- (void) onRepaintDue
-{
-	using frend::cursor_state;
-	using frend::shared_cursor_state;
-	
-	if ( const shared_cursor_state* cursor = cursor_state )
-	{
-		int y  = cursor->pointer[ 0 ];
-		int x  = cursor->pointer[ 1 ];
-		int dy = cursor->hotspot[ 0 ];
-		int dx = cursor->hotspot[ 1 ];
-		
-		glfb::set_cursor_hotspot( dx, dy );
-		glfb::set_cursor_location( x, y );
-		glfb::set_cursor_visibility( cursor->visible );
-	}
-	
-	[_mainGLView setNeedsDisplay: YES];
-}
-
-- (void) onScreenBits
-{
-	const uint32_t offset = _imageSize * _desc->frame;
-	
-	glfb::set_screen_image( (Ptr) _addr + offset );
-}
-
-- (void) onCursorBits
-{
-	using frend::cursor_state;
-	using frend::shared_cursor_state;
-	
-	if ( const shared_cursor_state* cursor = cursor_state )
-	{
-		glfb::set_cursor_image( cursor );
-	}
-}
-
-- (void) onNewPalette
-{
-	if ( _clut )
-	{
-		glfb::set_palette( &_clut->palette[ 0 ].value, _clut->max + 1 );
-	}
-}
-
-- (void) onRasterDone
-{
-	quit();
 }
 
 @end
