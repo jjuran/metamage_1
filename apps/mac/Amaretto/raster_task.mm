@@ -57,9 +57,9 @@ void raster_event_loop( const clut_data* clut, const sync_relay* sync )
 	while ( monitoring  &&  sync->status == raster::Sync_ready )
 	{
 		using frend::cursor_state;
-		using frend::wait_for_update_throttled;
+		using frend::wait_for_update;
 		
-		long sleep = wait_for_update_throttled();
+		wait_for_update();
 		
 		if ( cursor_state  &&  cursor_state->seed != cursor_seed )
 		{
@@ -85,8 +85,6 @@ void raster_event_loop( const clut_data* clut, const sync_relay* sync )
 		raster_events.repaintDue = true;
 		
 		signal_runloop();
-		
-		usleep( sleep );
 	}
 	
 	raster_events.rasterDone = true;
