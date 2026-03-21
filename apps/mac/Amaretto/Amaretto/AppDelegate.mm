@@ -299,7 +299,7 @@ void set_up_menus( unsigned default_zoom_command )
 		glfb::set_cursor_visibility( cursor->visible );
 	}
 	
-	[_mainGLView setNeedsDisplay: YES];
+	[_mainGLView display];
 }
 
 - (void) onScreenBits
