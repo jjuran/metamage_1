@@ -128,3 +128,7 @@ void CGL_blitter::blit( const void* src_addr )
 	
 	CGLFlushDrawable( context );  // implicitly calls glFlush()
 }
+
+void CGL_blitter::render()
+{
+}
