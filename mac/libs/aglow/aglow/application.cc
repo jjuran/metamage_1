@@ -542,6 +542,17 @@ static EventTypeSpec Modifiers_event[] =
 	{ kEventClassKeyboard, kEventRawKeyModifiersChanged },
 };
 
+static
+void CGGetGlobalMouse( CGPoint* location )
+{
+	Point globalMouse;
+	
+	GetGlobalMouse( &globalMouse );
+	
+	location->x = globalMouse.h;
+	location->y = globalMouse.v;
+}
+
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
@@ -581,20 +592,6 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	create_AGL_context();
 	
 	set_AGL_geometry( desc.stride, desc.width, desc.height, desc.weight );
-	
-	if ( const frend::shared_cursor_state* cursor = frend::cursor_state )
-	{
-		int y  = cursor->pointer[ 0 ];
-		int x  = cursor->pointer[ 1 ];
-		int dy = cursor->hotspot[ 0 ];
-		int dx = cursor->hotspot[ 1 ];
-		
-		glfb::set_cursor_hotspot( dx, dy );
-		glfb::set_cursor_location( x, y );
-		glfb::set_cursor_visibility( cursor->visible );
-		
-		glfb::set_cursor_image( cursor );
-	}
 	
 	blit( load );
 	
@@ -637,6 +634,10 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	mac::app::set_Aqua_menu_key( kHICommandQuit, '\0' );
 	mac::app::set_Aqua_menu_key( kHICommandHide, '\0' );
+	
+	CGGetGlobalMouse( &cursor_location );
+	
+	update_cursor_state();
 	
 	RunApplicationEventLoop();
 	
