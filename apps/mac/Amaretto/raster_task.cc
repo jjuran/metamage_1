@@ -1,12 +1,14 @@
 /*
-	raster_task.mm
+	raster_task.cc
 	--------------
 */
 
 #include "raster_task.hh"
 
 // Mac OS X
-#include <Cocoa/Cocoa.h>
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
 
 // v68k-cursor
 #include "cursor/cursor.hh"
