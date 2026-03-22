@@ -12,13 +12,13 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+// iota
+#include "iota/class.hh"
+
 
 class QD_blitter
 {
-	private:
-		// non-copyable
-		QD_blitter           ( const QD_blitter& );
-		QD_blitter& operator=( const QD_blitter& );
+	NON_COPYABLE( QD_blitter )
 	
 	public:
 		explicit QD_blitter( CGDirectDisplayID id );
@@ -31,6 +31,8 @@ class QD_blitter
 		static void area( CGRect bounds );
 		
 		static void blit( const void* src_addr );
+		
+		static void render()  {}
 };
 
 #endif
