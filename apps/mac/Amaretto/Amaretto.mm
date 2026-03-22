@@ -220,7 +220,7 @@ int main( int argc, char** argv )
 		mainRunLoop = CFRunLoopGetCurrent();
 		inputSource = CFRunLoopSourceCreate( NULL, 0, &context );
 		
-		CFRunLoopAddSource( mainRunLoop, inputSource, kCFRunLoopDefaultMode );
+		CFRunLoopAddSource( mainRunLoop, inputSource, kCFRunLoopCommonModes );
 		
 		raster_updating   update_fifo;
 		raster_monitor    monitored_raster( live_raster.get() );
