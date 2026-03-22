@@ -155,8 +155,6 @@ pascal OSStatus Modifiers_changed( EventHandlerCallRef  handler,
 {
 	OSStatus err;
 	
-	const raster_load& load = *(raster_load*) userData;
-	
 	CommandMode_state prev_state = commandmode_state;
 	
 	err = amicus::send_key_event( event, '\0' );
@@ -170,7 +168,7 @@ pascal OSStatus Modifiers_changed( EventHandlerCallRef  handler,
 	{
 		overlay_enabled = ! overlay_enabled;
 		
-		blit( load );
+		Blitter::render();
 	}
 	
 	return err;
@@ -259,7 +257,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		err = InstallApplicationEventHandler( UPP_ARG( Modifiers_changed ),
 		                                      LENGTH( Modifiers_event ),
 		                                      Modifiers_event,
-		                                      (void*) &load,
+		                                      NULL,
 		                                      &modifiersHandler );
 	}
 	
@@ -372,7 +370,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 			{
 				overlay_enabled = ! overlay_enabled;
 				
-				blit( load );
+				Blitter::render();
 			}
 			else if ( scale_factor != prev_scale )
 			{
