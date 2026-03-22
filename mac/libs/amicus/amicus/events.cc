@@ -30,6 +30,13 @@
 #include "amicus/splode.hh"
 
 
+#ifdef MAC_OS_X_VERSION_10_5
+	#define CONFIG_CGEVENTS  1
+#else
+	#define CONFIG_CGEVENTS  0
+#endif
+
+
 namespace amicus
 {
 
@@ -79,7 +86,7 @@ void handle_mouse_moved_event( CGPoint next_cursor_location )
 	}
 }
 
-#ifdef MAC_OS_X_VERSION_10_5
+#if CONFIG_CGEVENTS
 
 static
 void handle_mouse_moved_event( CGEventRef event )
@@ -198,7 +205,7 @@ long send_key_event( EventRef event, char c, uint8_t more_attrs )
 	return noErr;
 }
 
-#ifdef MAC_OS_X_VERSION_10_5
+#if CONFIG_CGEVENTS
 
 bool handle_CGEvent( CGEventRef event, command_handler_proc command_handler )
 {
@@ -316,7 +323,7 @@ bool handle_CGEvent( CGEventRef event, command_handler_proc command_handler )
 	return false;
 }
 
-#endif  // #ifdef MAC_OS_X_VERSION_10_5
+#endif  // #if CONFIG_CGEVENTS
 
 bool handle_EventRecord( const EventRecord&    event,
                          command_handler_proc  command_handler )

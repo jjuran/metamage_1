@@ -35,6 +35,12 @@
 
 #define LENGTH( array )  (sizeof (array) / sizeof *(array))
 
+#ifdef MAC_OS_X_VERSION_10_5
+	#define CONFIG_CGEVENTS  1
+#else
+	#define CONFIG_CGEVENTS  0
+#endif
+
 
 namespace amicus
 {
@@ -223,21 +229,21 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	blitter.area( display_area( display_bounds, width, height ) );
 	
-#ifndef MAC_OS_X_VERSION_10_5
-	
 	/*
 		Install a Carbon Event handler to respond to changes to the currently
 		active modifier keys.  OS X 10.5+ uses CGEvents and doesn't need this.
 	*/
 	
-	EventHandlerRef modifiersHandler;
-	err = InstallApplicationEventHandler( UPP_ARG( Modifiers_changed ),
-	                                      LENGTH( Modifiers_event ),
-	                                      Modifiers_event,
-	                                      (void*) &load,
-	                                      &modifiersHandler );
-	
-#endif
+	if ( ! CONFIG_CGEVENTS )
+	{
+		EventHandlerRef modifiersHandler;
+		
+		err = InstallApplicationEventHandler( UPP_ARG( Modifiers_changed ),
+		                                      LENGTH( Modifiers_event ),
+		                                      Modifiers_event,
+		                                      (void*) &load,
+		                                      &modifiersHandler );
+	}
 	
 	cursor_limit = CGPointMake( width - 1, height - 1 );
 	
@@ -325,6 +331,10 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 			goto next;
 		}
 		
+	#endif
+		
+	#if CONFIG_CGEVENTS
+		
 		if ( CGEventRef cgevent = CopyEventCGEvent( event ) )
 		{
 			CommandMode_state prev_state = commandmode_state;
@@ -359,7 +369,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 			}
 		}
 		
-	#else  // #ifdef MAC_OS_X_VERSION_10_5
+	#else  // #if CONFIG_CGEVENTS
 		
 		EventRecord eventRec;
 		
@@ -390,7 +400,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 			}
 		}
 		
-	#endif  // #ifdef MAC_OS_X_VERSION_10_5
+	#endif  // #if CONFIG_CGEVENTS
 		
 		if ( ! event_crashes_Ventura( event ) )
 		{
