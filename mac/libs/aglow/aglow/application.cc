@@ -506,8 +506,6 @@ pascal OSStatus Modifiers_changed( EventHandlerCallRef  handler,
 {
 	OSStatus err;
 	
-	const raster_load& load = *(raster_load*) userData;
-	
 	CommandMode_state prev_state = commandmode_state;
 	
 	err = amicus::send_key_event( event, '\0' );
@@ -624,7 +622,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	err = InstallApplicationEventHandler( UPP_ARG( Modifiers_changed ),
 	                                      COUNT( Modifiers_event ),
 	                                      Modifiers_event,
-	                                      (void*) &load,
+	                                      NULL,
 	                                      &modifiersHandler );
 	
 	mac::app::set_Aqua_menu_key( kHICommandQuit, '\0' );
