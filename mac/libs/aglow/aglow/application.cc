@@ -476,13 +476,11 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 		return noErr;
 	}
 	
-	CommandMode_state prev_state = commandmode_state;
-	
 	err = amicus::send_key_event( event, c, keypad | action );
 	
-	if ( ! commandmode_state != ! prev_state )
+	if ( commandmode_state )
 	{
-		overlay_enabled = ! overlay_enabled;
+		overlay_enabled = true;
 		
 		render_AGL();
 	}
