@@ -209,8 +209,6 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	const int height = desc.height;
 	const int stride = desc.stride;
 	
-	void* addr = load.addr;
-	
 	max_scale_factor = max_scale( display_bounds, width, height );
 	
 	scale_factor = max_scale_factor >= 2.0 ? 2.0
@@ -314,9 +312,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 				set_palette( blitter, load );
 			}
 			
-			const uint32_t offset = height * stride * desc.frame;
-			
-			blitter.blit( (Ptr) addr + offset );
+			blit( load );
 			goto next;
 		}
 		
@@ -348,17 +344,13 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 			{
 				overlay_enabled = ! overlay_enabled;
 				
-				const uint32_t offset = height * stride * desc.frame;
-				
-				blitter.blit( (Ptr) addr + offset );
+				blit( load );
 			}
 			else if ( scale_factor != prev_scale )
 			{
-				const uint32_t offset = height * stride * desc.frame;
-				
 				blitter.area( display_area( display_bounds, width, height ) );
 				
-				blitter.blit( (Ptr) addr + offset );
+				blit( load );
 			}
 			
 			if ( handled )
@@ -383,17 +375,13 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 			{
 				overlay_enabled = ! overlay_enabled;
 				
-				const uint32_t offset = height * stride * desc.frame;
-				
-				blitter.blit( (Ptr) addr + offset );
+				blit( load );
 			}
 			else if ( scale_factor != prev_scale )
 			{
-				const uint32_t offset = height * stride * desc.frame;
-				
 				blitter.area( display_area( display_bounds, width, height ) );
 				
-				blitter.blit( (Ptr) addr + offset );
+				blit( load );
 			}
 			
 			if ( handled )
