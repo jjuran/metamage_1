@@ -37,8 +37,24 @@
 
 #ifdef MAC_OS_X_VERSION_10_5
 	#define CONFIG_CGEVENTS  1
+	
+	typedef CGEventRef LowLevelEvent;
+	
+	#define CONVERT_EVENT( event, ll )  (ll = CopyEventCGEvent( event ))
+	
+	#define HANDLE_EVENT  handle_CGEvent
+	
+	#define RELEASE_EVENT( ll )  CFRelease( ll )
 #else
 	#define CONFIG_CGEVENTS  0
+	
+	typedef EventRecord LowLevelEvent;
+	
+	#define CONVERT_EVENT( e, ll )  ConvertEventRefToEventRecord( e, &ll )
+	
+	#define HANDLE_EVENT  handle_EventRecord
+	
+	#define RELEASE_EVENT( ll )  /**/
 #endif
 
 
@@ -333,19 +349,19 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		
 	#endif
 		
-	#if CONFIG_CGEVENTS
+		LowLevelEvent lowlevel_event;
 		
-		if ( CGEventRef cgevent = CopyEventCGEvent( event ) )
+		if ( CONVERT_EVENT( event, lowlevel_event ) )
 		{
 			CommandMode_state prev_state = commandmode_state;
 			
 			const double prev_scale = scale_factor;
 			
-			const bool handled = handle_CGEvent( cgevent, &command_handler );
+			bool handled = HANDLE_EVENT( lowlevel_event, &command_handler );
 			
-			CFRelease( cgevent );
+			RELEASE_EVENT( lowlevel_event );
 			
-			if ( ! commandmode_state )
+			if ( CONFIG_CGEVENTS  &&  ! commandmode_state )
 			{
 				clear_chords();
 			}
@@ -368,39 +384,6 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 				goto next;
 			}
 		}
-		
-	#else  // #if CONFIG_CGEVENTS
-		
-		EventRecord eventRec;
-		
-		if ( bool ok = ConvertEventRefToEventRecord( event, &eventRec ) )
-		{
-			CommandMode_state prev_state = commandmode_state;
-			
-			const double prev_scale = scale_factor;
-			
-			bool handled = handle_EventRecord( eventRec, &command_handler );
-			
-			if ( ! commandmode_state != ! prev_state )
-			{
-				overlay_enabled = ! overlay_enabled;
-				
-				blit( load );
-			}
-			else if ( scale_factor != prev_scale )
-			{
-				blitter.area( display_area( display_bounds, width, height ) );
-				
-				blit( load );
-			}
-			
-			if ( handled )
-			{
-				goto next;
-			}
-		}
-		
-	#endif  // #if CONFIG_CGEVENTS
 		
 		if ( ! event_crashes_Ventura( event ) )
 		{
