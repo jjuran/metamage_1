@@ -144,6 +144,8 @@ void blit( const raster_load& load )
 	const uint32_t offset = desc.height * desc.stride * desc.frame;
 	
 	Blitter::blit( (Ptr) load.addr + offset );
+	
+	Blitter::render();
 }
 
 static
