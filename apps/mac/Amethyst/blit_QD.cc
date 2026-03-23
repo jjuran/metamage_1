@@ -10,8 +10,8 @@
 #include "mac_qd/copy_bits.hh"
 #endif
 
-// amicus
-#include "amicus/quickdraw.hh"
+// Amethyst
+#include "quickdraw.hh"
 
 
 static CGrafPtr captured_display_port;

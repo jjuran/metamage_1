@@ -3,12 +3,10 @@
 	-----------
 */
 
-// amicus
-#include "amicus/quickdraw.hh"
-
 // Amethyst
 #include "blit_CG.hh"
 #include "blit_QD.hh"
+#include "quickdraw.hh"
 
 
 #if CONFIG_QUICKDRAW
