@@ -31,7 +31,6 @@
 #include "frend/coprocess.hh"
 #include "frend/cursor.hh"
 #include "frend/displayfs.hh"
-#include "frend/documents.hh"
 #include "frend/make_cursor.hh"
 #include "frend/make_raster.hh"
 #include "frend/raster_updating.hh"
@@ -182,8 +181,6 @@ int main( int argc, char** argv )
 	if ( wait_for_first_Apple_event() == noErr )
 	{
 		int bindir_fd = bindir( argv[ 0 ] );
-		
-		frend::scrub_documents_dir( bindir_fd );
 		
 		chdir( works_path );
 		
