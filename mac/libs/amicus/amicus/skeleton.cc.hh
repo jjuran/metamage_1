@@ -30,6 +30,8 @@
 #include "amicus/events.hh"
 #include "amicus/fade.hh"
 
+#define CAPTURING_DISPLAY  1
+
 #include "amicus/shared.cc.hh"
 
 

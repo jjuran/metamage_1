@@ -31,6 +31,10 @@
 #include "amicus/raster_task.hh"
 
 
+#ifndef CAPTURING_DISPLAY
+#define CAPTURING_DISPLAY 0
+#endif
+
 #ifndef HARDWARE_CURSOR
 #define HARDWARE_CURSOR 0
 #endif
@@ -118,7 +122,10 @@ int main( int argc, char** argv )
 	{
 		int bindir_fd = bindir( argv[ 0 ] );
 		
-		frend::scrub_documents_dir( bindir_fd );
+		if ( CAPTURING_DISPLAY )
+		{
+			frend::scrub_documents_dir( bindir_fd );
+		}
 		
 		chdir( works_path );
 		
