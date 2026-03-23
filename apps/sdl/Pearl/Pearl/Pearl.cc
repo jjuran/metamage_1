@@ -255,10 +255,6 @@ int main( int argc, char** argv )
 
 #endif
 
-	// Reserve fds 6 and 7 for graft to connect ams-fs/xv68k to freemountd.
-	dup2( STDERR_FILENO, 6 );
-	dup2( STDERR_FILENO, 7 );
-
 	if ( SDL_Init( SDL_INIT_VIDEO ) != 0 )
 	{
 		FATAL = "could not initialize SDL";

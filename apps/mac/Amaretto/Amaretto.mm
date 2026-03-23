@@ -165,10 +165,6 @@ int main( int argc, char** argv )
 	
 	signal( SIGCHLD, &sigchld );
 	
-	// Reserve fds 6 and 7 for graft to connect ams-fs/xv68k to freemountd.
-	dup2( STDERR_FILENO, 6 );
-	dup2( STDERR_FILENO, 7 );
-	
 	const char* works_path = frend::tempfile_location();
 	
 	int nok = mkdir( works_path, 0777 );
