@@ -3,7 +3,7 @@
 	----------
 */
 
-#include "amicus/display.hh"
+#include "amnesty/display.hh"
 
 
 namespace amicus

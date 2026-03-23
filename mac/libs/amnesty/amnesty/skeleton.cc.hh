@@ -26,13 +26,15 @@
 #include "frend/cursor.hh"
 
 // amicus
-#include "amicus/display.hh"
 #include "amicus/events.hh"
 #include "amicus/fade.hh"
 
 #define CAPTURING_DISPLAY  1
 
 #include "amicus/shared.cc.hh"
+
+// amnesty
+#include "amnesty/display.hh"
 
 
 #define LENGTH( array )  (sizeof (array) / sizeof *(array))
@@ -197,7 +199,7 @@ bool event_crashes_Ventura( EventRef event )
 		
 		HIToolbox's HandleAppShowHide() calls _ReorderWindowsTogether(),
 		which calls Skylight's SLSReorderWindows().  Since applications
-		using amicus don't have any windows at all, their order seems
+		using amnesty don't have any windows at all, their order seems
 		unimportant, and these events can probably be safely discarded.
 		
 		https://github.com/jjuran/metamage_1/issues/26

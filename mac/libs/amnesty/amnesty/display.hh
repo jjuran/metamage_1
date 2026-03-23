@@ -3,8 +3,8 @@
 	----------
 */
 
-#ifndef AMICUS_DISPLAY_HH
-#define AMICUS_DISPLAY_HH
+#ifndef AMNESTY_DISPLAY_HH
+#define AMNESTY_DISPLAY_HH
 
 // Mac OS X
 #ifdef __APPLE__

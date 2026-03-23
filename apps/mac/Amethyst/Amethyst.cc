@@ -17,4 +17,4 @@
 
 static bool overlay_enabled;
 
-#include "amicus/skeleton.cc.hh"
+#include "amnesty/skeleton.cc.hh"

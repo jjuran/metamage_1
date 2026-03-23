@@ -16,4 +16,4 @@ using glfb::overlay_enabled;
 
 typedef CGL_blitter Blitter;
 
-#include "amicus/skeleton.cc.hh"
+#include "amnesty/skeleton.cc.hh"
