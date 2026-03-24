@@ -579,6 +579,13 @@ void render()
 	glBindTexture( texture_target, 0 );
 }
 
+void render_and_flush()
+{
+	render();
+	
+	glFlush();
+}
+
 void terminate()
 {
 	free( screen_texture_data );

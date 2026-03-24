@@ -11,12 +11,12 @@
 // write-a-splode
 #include "splode/write-a-splode.hh"
 
+// glfb-common
+#include "glfb/glfb.hh"
+
 // amicus
 #include "amicus/events.hh"
 #include "amicus/resize.hh"
-
-// Amaretto
-#include "render.hh"
 
 
 using amicus::get_proportional_coordinate;
@@ -129,7 +129,7 @@ void handle_event( NSEvent* event )
 
 - (void) drawRect: (NSRect) bounds
 {
-	render();
+	glfb::render_and_flush();
 }
 
 - (void) handleMouseMovedTo: (NSPoint) location

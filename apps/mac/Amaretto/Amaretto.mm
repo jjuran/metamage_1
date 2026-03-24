@@ -50,7 +50,6 @@
 #include "Amaretto/AppDelegate.hh"
 #include "raster_task.hh"
 #include "releasing.hh"
-#include "render.hh"
 
 
 #define PROGRAM  "Amaretto"
@@ -141,7 +140,7 @@ void on_raster_event( void* info )
 			glfb::set_cursor_visibility( cursor->visible );
 		}
 		
-		render();
+		glfb::render_and_flush();
 	}
 	
 	if ( raster_events.rasterDone )

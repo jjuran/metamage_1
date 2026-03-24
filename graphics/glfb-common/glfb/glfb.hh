@@ -53,6 +53,7 @@ namespace glfb
 	}
 	
 	void render();
+	void render_and_flush();
 	
 	void terminate();
 	
