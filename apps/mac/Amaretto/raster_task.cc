@@ -29,6 +29,7 @@
 
 
 using raster::clut_data;
+using raster::raster_load;
 using raster::raster_metadata;
 using raster::sync_relay;
 
@@ -50,8 +51,14 @@ void signal_runloop()
 }
 
 static
-void raster_event_loop( const clut_data* clut, const sync_relay* sync )
+void* raster_thread_body( void* arg )
 {
+	const raster_load&     load = *(const raster_load*) arg;
+	const raster_metadata& meta = *load.meta;
+	
+	const clut_data*  clut = find_clut( &meta.note );
+	const sync_relay* sync = find_sync( &meta.note );
+	
 	uint32_t raster_seed = 0;
 	uint32_t colors_seed = 0;
 	uint16_t cursor_seed = 0;
@@ -92,17 +99,6 @@ void raster_event_loop( const clut_data* clut, const sync_relay* sync )
 	raster_events.rasterDone = true;
 	
 	signal_runloop();
-}
-
-static
-void* raster_thread_entry( void* arg )
-{
-	const raster_metadata* meta = (const raster_metadata*) arg;
-	
-	const clut_data*  clut = find_clut( &meta->note );
-	const sync_relay* sync = find_sync( &meta->note );
-	
-	raster_event_loop( clut, sync );
 	
 	return NULL;
 }
@@ -131,7 +127,7 @@ raster_monitor::raster_monitor( const raster::raster_load&  load,
 	
 	monitoring = true;
 	
-	raster_thread.create( &raster_thread_entry, (void*) load.meta );
+	raster_thread.create( &raster_thread_body, (void*) &load );
 }
 
 raster_monitor::~raster_monitor()
