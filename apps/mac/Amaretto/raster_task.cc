@@ -59,6 +59,12 @@ void* display_thread_body( void* arg )
 	const clut_data*  clut = find_clut( &meta.note );
 	const sync_relay* sync = find_sync( &meta.note );
 	
+	if ( clut )
+	{
+		display_events.clut_palette = &clut->palette[ 0 ].value;
+		display_events.clut_maximum = clut->max;
+	}
+	
 	uint32_t raster_seed = 0;
 	uint32_t colors_seed = 0;
 	uint16_t cursor_seed = 0;

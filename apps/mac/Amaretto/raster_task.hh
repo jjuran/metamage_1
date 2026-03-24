@@ -19,6 +19,9 @@ namespace raster
 
 struct display_event_set
 {
+	const unsigned short*  clut_palette;
+	unsigned               clut_maximum;
+	
 	bool screenBits;
 	bool cursorBits;
 	bool newPalette;

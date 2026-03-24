@@ -38,8 +38,6 @@
 #include "frend/update_fifo.hh"
 
 // rasterlib
-#include "raster/clut.hh"
-#include "raster/clut_detail.hh"
 #include "raster/raster.hh"
 
 // amicus
@@ -79,7 +77,6 @@ using amicus::wait_for_first_Apple_event;
 
 static void*                      the_addr;
 static const raster::raster_desc* the_desc;
-static const raster::clut_data*   the_clut;
 
 static long the_image_size;
 
@@ -111,9 +108,9 @@ void on_display_event( void* info )
 	{
 		events.newPalette = false;
 		
-		if ( const raster::clut_data* clut = the_clut )
+		if ( const unsigned short* palette = events.clut_palette )
 		{
-			glfb::set_palette( &clut->palette[ 0 ].value, clut->max + 1 );
+			glfb::set_palette( palette, events.clut_maximum + 1 );
 		}
 	}
 	
@@ -189,7 +186,6 @@ int main( int argc, char** argv )
 		
 		the_addr = load.addr;
 		the_desc = &desc;
-		the_clut = find_clut( &load.meta->note );
 		
 		the_image_size = desc.stride * desc.height;
 		
