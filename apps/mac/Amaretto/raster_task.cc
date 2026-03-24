@@ -37,7 +37,7 @@ static bool monitoring;
 
 static poseven::thread raster_thread;
 
-raster_event_set raster_events;
+display_event_set display_events;
 
 static CFRunLoopRef        mainRunLoop;
 static CFRunLoopSourceRef  inputSource;
@@ -74,29 +74,29 @@ void* raster_thread_body( void* arg )
 		{
 			cursor_seed = cursor_state->seed;
 			
-			raster_events.cursorBits = true;
+			display_events.cursorBits = true;
 		}
 		
 		if ( clut  &&  clut->seed != colors_seed )
 		{
 			colors_seed = clut->seed;
 			
-			raster_events.newPalette = true;
+			display_events.newPalette = true;
 		}
 		
 		if ( raster_seed != sync->seed )
 		{
 			raster_seed = sync->seed;
 			
-			raster_events.screenBits = true;
+			display_events.screenBits = true;
 		}
 		
-		raster_events.repaintDue = true;
+		display_events.repaintDue = true;
 		
 		signal_runloop();
 	}
 	
-	raster_events.rasterDone = true;
+	display_events.rasterDone = true;
 	
 	signal_runloop();
 	
@@ -109,7 +109,7 @@ raster_monitor::raster_monitor( const raster::raster_load&  load,
 	CFRunLoopSourceContext context =
 	{
 		0,
-		&raster_events,
+		&display_events,
 		NULL,  // retain
 		NULL,  // release
 		NULL,  // copyDescription

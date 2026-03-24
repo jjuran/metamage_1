@@ -90,12 +90,12 @@ void sigchld( int )
 }
 
 static
-void on_raster_event( void* info )
+void on_display_event( void* info )
 {
 	using frend::cursor_state;
 	using frend::shared_cursor_state;
 	
-	raster_event_set& events = *(raster_event_set*) info;
+	display_event_set& events = *(display_event_set*) info;
 	
 	if ( events.cursorBits )
 	{
@@ -197,7 +197,7 @@ int main( int argc, char** argv )
 		
 		releasing appDelegate( [[AmarettoAppDelegate alloc] initWithRaster: load] );
 		
-		raster_monitor::perform_proc perform = &on_raster_event;
+		raster_monitor::perform_proc perform = &on_display_event;
 		
 		raster_updating   update_fifo;
 		raster_monitor    monitored_raster( live_raster.get(), perform );

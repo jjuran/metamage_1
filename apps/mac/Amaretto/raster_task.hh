@@ -17,7 +17,7 @@ namespace raster
 	
 }
 
-struct raster_event_set
+struct display_event_set
 {
 	bool screenBits;
 	bool cursorBits;
@@ -39,6 +39,6 @@ class raster_monitor
 		~raster_monitor();
 };
 
-extern raster_event_set raster_events;
+extern display_event_set display_events;
 
 #endif
