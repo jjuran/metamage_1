@@ -30,6 +30,7 @@
 // frontend-common
 #include "frend/coprocess.hh"
 #include "frend/cursor.hh"
+#include "frend/display_events.hh"
 #include "frend/displayfs.hh"
 #include "frend/make_cursor.hh"
 #include "frend/make_raster.hh"
@@ -65,6 +66,8 @@ using raster::raster_load;
 using frend::cursor_path;
 using frend::raster_path;
 
+using frend::display_events;
+
 using frend::coprocess_launch;
 using frend::cursor_lifetime;
 using frend::raster_lifetime;
@@ -85,6 +88,7 @@ static
 void on_display_event( void* info )
 {
 	using frend::cursor_state;
+	using frend::display_event_set;
 	using frend::shared_cursor_state;
 	
 	display_event_set& events = *(display_event_set*) info;

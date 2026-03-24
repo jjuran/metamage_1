@@ -25,8 +25,11 @@
 
 // frontend-common
 #include "frend/cursor.hh"
+#include "frend/display_events.hh"
 #include "frend/update_fifo.hh"
 
+
+using frend::display_events;
 
 using raster::clut_data;
 using raster::raster_desc;
@@ -37,8 +40,6 @@ using raster::sync_relay;
 static bool monitoring;
 
 static poseven::thread display_thread;
-
-display_event_set display_events;
 
 static CFRunLoopRef        mainRunLoop;
 static CFRunLoopSourceRef  inputSource;

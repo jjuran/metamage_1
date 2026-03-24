@@ -17,25 +17,6 @@ namespace raster
 	
 }
 
-typedef void (*finish_proc)();
-typedef void (*render_proc)();
-
-struct display_event_set
-{
-	finish_proc  finish;
-	render_proc  render;
-	
-	const void*            addr;
-	const unsigned short*  clut_palette;
-	unsigned               clut_maximum;
-	
-	bool screenBits;
-	bool cursorBits;
-	bool newPalette;
-	bool repaintDue;
-	bool rasterDone;
-};
-
 class display_monitor
 {
 	NON_COPYABLE( display_monitor )
@@ -48,7 +29,5 @@ class display_monitor
 		
 		~display_monitor();
 };
-
-extern display_event_set display_events;
 
 #endif
