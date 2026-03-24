@@ -17,8 +17,14 @@ namespace raster
 	
 }
 
+typedef void (*finish_proc)();
+typedef void (*render_proc)();
+
 struct display_event_set
 {
+	finish_proc  finish;
+	render_proc  render;
+	
 	const void*            addr;
 	const unsigned short*  clut_palette;
 	unsigned               clut_maximum;
