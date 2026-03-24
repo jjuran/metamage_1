@@ -29,6 +29,7 @@
 
 
 using raster::clut_data;
+using raster::raster_desc;
 using raster::raster_load;
 using raster::raster_metadata;
 using raster::sync_relay;
@@ -55,6 +56,9 @@ void* display_thread_body( void* arg )
 {
 	const raster_load&     load = *(const raster_load*) arg;
 	const raster_metadata& meta = *load.meta;
+	const raster_desc&     desc = meta.desc;
+	
+	const uint32_t image_size = desc.stride * desc.height;
 	
 	const clut_data*  clut = find_clut( &meta.note );
 	const sync_relay* sync = find_sync( &meta.note );
@@ -94,6 +98,9 @@ void* display_thread_body( void* arg )
 		{
 			raster_seed = sync->seed;
 			
+			const size_t offset = image_size * meta.desc.frame;
+			
+			display_events.addr       = (char*) load.addr + offset;
 			display_events.screenBits = true;
 		}
 		

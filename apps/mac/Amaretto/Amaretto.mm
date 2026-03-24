@@ -75,11 +75,6 @@ using amicus::events_fd;
 using amicus::wait_for_first_Apple_event;
 
 
-static void*                      the_addr;
-static const raster::raster_desc* the_desc;
-
-static long the_image_size;
-
 static
 void sigchld( int )
 {
@@ -118,9 +113,7 @@ void on_display_event( void* info )
 	{
 		events.screenBits = false;
 		
-		const uint32_t offset = the_image_size * the_desc->frame;
-		
-		glfb::set_screen_image( (Ptr) the_addr + offset );
+		glfb::set_screen_image( (char*) events.addr );
 	}
 	
 	if ( events.repaintDue )
@@ -183,11 +176,6 @@ int main( int argc, char** argv )
 		
 		const raster_load& load = live_raster.get();
 		const raster_desc& desc = live_raster.desc();
-		
-		the_addr = load.addr;
-		the_desc = &desc;
-		
-		the_image_size = desc.stride * desc.height;
 		
 		glfb::cursor_enabled = frend::cursor_state != NULL;
 		

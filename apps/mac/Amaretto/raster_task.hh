@@ -19,6 +19,7 @@ namespace raster
 
 struct display_event_set
 {
+	const void*            addr;
 	const unsigned short*  clut_palette;
 	unsigned               clut_maximum;
 	
