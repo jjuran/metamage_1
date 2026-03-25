@@ -1,9 +1,9 @@
 /*
-	raster_task.cc
-	--------------
+	display_task.cc
+	---------------
 */
 
-#include "raster_task.hh"
+#include "amicus/display_task.hh"
 
 // Mac OS X
 #ifdef __APPLE__
@@ -28,6 +28,9 @@
 #include "frend/display_events.hh"
 #include "frend/update_fifo.hh"
 
+
+namespace amicus
+{
 
 using frend::display_events;
 
@@ -153,4 +156,6 @@ display_monitor::~display_monitor()
 	CFRunLoopRemoveSource( mainRunLoop, inputSource, kCFRunLoopCommonModes );
 	
 	CFRelease( inputSource );
+}
+
 }

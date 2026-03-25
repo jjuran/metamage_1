@@ -1,10 +1,10 @@
 /*
-	raster_task.hh
-	--------------
+	display_task.hh
+	---------------
 */
 
-#ifndef RASTERTASK_HH
-#define RASTERTASK_HH
+#ifndef AMICUS_DISPLAYTASK_HH
+#define AMICUS_DISPLAYTASK_HH
 
 // iota
 #include "iota/class.hh"
@@ -16,6 +16,9 @@ namespace raster
 	struct raster_load;
 	
 }
+
+namespace amicus
+{
 
 class display_monitor
 {
@@ -29,5 +32,7 @@ class display_monitor
 		
 		~display_monitor();
 };
+
+}
 
 #endif

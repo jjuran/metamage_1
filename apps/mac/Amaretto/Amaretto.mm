@@ -46,11 +46,11 @@
 
 // amicus
 #include "amicus/apple_events.hh"
+#include "amicus/display_task.hh"
 #include "amicus/events.hh"
 
 // Amaretto
 #include "Amaretto/AppDelegate.hh"
-#include "raster_task.hh"
 #include "releasing.hh"
 
 
@@ -79,6 +79,7 @@ using frend::raster_updating;
 using glitter::on_display_event;
 
 using amicus::cursor_limit;
+using amicus::display_monitor;
 using amicus::events_fd;
 using amicus::wait_for_first_Apple_event;
 
