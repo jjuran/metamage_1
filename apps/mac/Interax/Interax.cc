@@ -33,9 +33,12 @@
 #include "frend/displayfs.hh"
 #include "frend/update_fifo.hh"
 
+// glitter
+#include "glitter/display_events.hh"
+
 // amicus
+#include "amicus/display_task.hh"
 #include "amicus/events.hh"
-#include "amicus/raster_task.hh"
 
 // aglow
 #include "aglow/application.hh"
@@ -145,7 +148,8 @@ int main( int argc, char** argv )
 	
 	if ( running )
 	{
-		raster_monitor monitored_raster( loaded_raster );
+		display_monitor monitored_raster( loaded_raster,
+		                                  &glitter::on_display_event );
 		
 		const raster_load& load = loaded_raster;
 		const raster_desc& desc = loaded_raster.meta->desc;
