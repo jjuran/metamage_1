@@ -36,8 +36,8 @@ static poseven::thread raster_thread;
 
 raster_event_set raster_events;
 
-CFRunLoopRef        mainRunLoop;
-CFRunLoopSourceRef  inputSource;
+static CFRunLoopRef        mainRunLoop;
+static CFRunLoopSourceRef  inputSource;
 
 static
 void signal_runloop()
@@ -105,8 +105,28 @@ void* raster_thread_entry( void* arg )
 	return NULL;
 }
 
-raster_monitor::raster_monitor( const raster::raster_load& load )
+raster_monitor::raster_monitor( const raster::raster_load&  load,
+                                perform_proc                perform )
 {
+	CFRunLoopSourceContext context =
+	{
+		0,
+		&raster_events,
+		NULL,  // retain
+		NULL,  // release
+		NULL,  // copyDescription
+		NULL,  // equal
+		NULL,  // hash
+		NULL,  // schedule
+		NULL,  // cancel
+		perform,
+	};
+	
+	mainRunLoop = CFRunLoopGetCurrent();
+	inputSource = CFRunLoopSourceCreate( NULL, 0, &context );
+	
+	CFRunLoopAddSource( mainRunLoop, inputSource, kCFRunLoopCommonModes );
+	
 	monitoring = true;
 	
 	raster_thread.create( &raster_thread_entry, (void*) load.meta );
@@ -117,4 +137,8 @@ raster_monitor::~raster_monitor()
 	monitoring = false;
 	
 	raster_thread.join();
+	
+	CFRunLoopRemoveSource( mainRunLoop, inputSource, kCFRunLoopCommonModes );
+	
+	CFRelease( inputSource );
 }

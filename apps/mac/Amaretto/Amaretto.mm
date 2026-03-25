@@ -197,27 +197,10 @@ int main( int argc, char** argv )
 		
 		releasing appDelegate( [[AmarettoAppDelegate alloc] initWithRaster: load] );
 		
-		CFRunLoopSourceContext context =
-		{
-			0,
-			&raster_events,
-			NULL,  // retain
-			NULL,  // release
-			NULL,  // copyDescription
-			NULL,  // equal
-			NULL,  // hash
-			NULL,  // schedule
-			NULL,  // cancel
-			&on_raster_event,
-		};
-		
-		mainRunLoop = CFRunLoopGetCurrent();
-		inputSource = CFRunLoopSourceCreate( NULL, 0, &context );
-		
-		CFRunLoopAddSource( mainRunLoop, inputSource, kCFRunLoopCommonModes );
+		raster_monitor::perform_proc perform = &on_raster_event;
 		
 		raster_updating   update_fifo;
-		raster_monitor    monitored_raster( live_raster.get() );
+		raster_monitor    monitored_raster( live_raster.get(), perform );
 		coprocess_launch  launched_coprocess( bindir_fd, works_path );
 		
 		events_fd = launched_coprocess.socket();
