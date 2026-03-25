@@ -35,7 +35,7 @@ using raster::sync_relay;
 
 static bool monitoring;
 
-static poseven::thread raster_thread;
+static poseven::thread display_thread;
 
 display_event_set display_events;
 
@@ -51,7 +51,7 @@ void signal_runloop()
 }
 
 static
-void* raster_thread_body( void* arg )
+void* display_thread_body( void* arg )
 {
 	const raster_load&     load = *(const raster_load*) arg;
 	const raster_metadata& meta = *load.meta;
@@ -103,8 +103,8 @@ void* raster_thread_body( void* arg )
 	return NULL;
 }
 
-raster_monitor::raster_monitor( const raster::raster_load&  load,
-                                perform_proc                perform )
+display_monitor::display_monitor( const raster::raster_load&  load,
+                                  perform_proc                perform )
 {
 	CFRunLoopSourceContext context =
 	{
@@ -127,14 +127,14 @@ raster_monitor::raster_monitor( const raster::raster_load&  load,
 	
 	monitoring = true;
 	
-	raster_thread.create( &raster_thread_body, (void*) &load );
+	display_thread.create( &display_thread_body, (void*) &load );
 }
 
-raster_monitor::~raster_monitor()
+display_monitor::~display_monitor()
 {
 	monitoring = false;
 	
-	raster_thread.join();
+	display_thread.join();
 	
 	CFRunLoopRemoveSource( mainRunLoop, inputSource, kCFRunLoopCommonModes );
 	

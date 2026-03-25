@@ -197,10 +197,10 @@ int main( int argc, char** argv )
 		
 		releasing appDelegate( [[AmarettoAppDelegate alloc] initWithRaster: load] );
 		
-		raster_monitor::perform_proc perform = &on_display_event;
+		display_monitor::perform_proc perform = &on_display_event;
 		
 		raster_updating   update_fifo;
-		raster_monitor    monitored_raster( live_raster.get(), perform );
+		display_monitor   monitored_display( live_raster.get(), perform );
 		coprocess_launch  launched_coprocess( bindir_fd, works_path );
 		
 		events_fd = launched_coprocess.socket();

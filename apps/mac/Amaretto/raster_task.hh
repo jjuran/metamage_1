@@ -26,17 +26,17 @@ struct display_event_set
 	bool rasterDone;
 };
 
-class raster_monitor
+class display_monitor
 {
-	NON_COPYABLE( raster_monitor )
+	NON_COPYABLE( display_monitor )
 	
 	public:
 		typedef void (*perform_proc)( void* info );
 		
-		raster_monitor( const raster::raster_load&  load,
-		                perform_proc                perform );
+		display_monitor( const raster::raster_load&  load,
+		                 perform_proc                perform );
 		
-		~raster_monitor();
+		~display_monitor();
 };
 
 extern display_event_set display_events;
