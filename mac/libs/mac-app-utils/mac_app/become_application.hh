@@ -32,13 +32,9 @@ int become_application()
 	
 	become_application_Cocoa();
 	
-#elif defined( MAC_OS_X_VERSION_10_3 )
-	
-	become_application_Carbon();
-	
 #else
 	
-	return 0;  // can't become an application
+	become_application_Carbon();
 	
 #endif
 	

@@ -23,6 +23,16 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
+/*
+	This undocumented API call works in Mac OS X 10.2, at least.
+*/
+
+extern "C" OSErr CPSEnableForegroundOperation( ProcessSerialNumber*  psn,
+                                               UInt32                _2,
+                                               UInt32                _3,
+                                               UInt32                _4,
+                                               UInt32                _5 );
+
 namespace mac {
 namespace app {
 
@@ -50,6 +60,12 @@ void become_application_Carbon()
 #ifdef MAC_OS_X_VERSION_10_3
 	
 	TransformProcessType( &psn, kProcessTransformToForegroundApplication );
+	
+#else
+	
+	GetCurrentProcess( &psn );
+	
+	CPSEnableForegroundOperation( &psn, 0x03, 0x3C, 0x2C, 0x1103 );
 	
 #endif
 	
