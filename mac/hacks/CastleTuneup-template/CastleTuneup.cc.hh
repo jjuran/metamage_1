@@ -151,21 +151,17 @@ static UniversalProcPtr old_TEInit;
 
 
 static
-void CurResFile_handler()
+void CurResFile_handler( UInt16* return_address : __A0 )
 {
-	using mac::glue::GetHandleSize_raw;
-	
-	enum
-	{
-		// These are offsets relative to the start of the 'CODE' resource.
-		
-		offset_to_CurResFile = 0x02d0,
-		offset_to_MOVE_pop   = 0x02d2,  // MOVE.W  (A7)+,D6
-		offset_to_MOVE_push  = 0x02d4,  // MOVE.W  (-746,A5),-(A7)
-		offset_to_A5_index   = offset_to_MOVE_push + 2,
-		offset_to_UseResFile = offset_to_A5_index + 2,
-		minimum_handle_size  = offset_to_UseResFile + 2,
-	};
+	/*
+		The saved-game code is in either 'CODE' id=12 (BDC 1.0)
+		or 'CODE' id=10 (BDC 1.1).  In each case, there's a call
+		to _CurResFile at offset $0002d0.  It's followed by one
+		instruction to pop the result off the stack and another
+		to push the argument to _UseResFile.  We patch the index
+		of the argument to load the refnum of BDC Prefs, rather
+		than BDC Data B, so new 'MagT' resources get added there.
+	*/
 	
 	enum
 	{
@@ -173,33 +169,22 @@ void CurResFile_handler()
 		A5_index_of_Prefs_refnum = (UInt16) -744,
 	};
 	
-#ifdef SAVEGAME_CODE_RESID
+	UInt16* p = return_address;
 	
-	if ( Handle h = GetResource( 'CODE', SAVEGAME_CODE_RESID ) )
+	if ( *p++ == 0x3C1F  &&                  // MOVE.W   (A7)+,D6
+	     *p++ == 0x3F2D  &&                  // MOVE.W   (-746,A5),-(A7)
+	     *p   == A5_index_of_DataB_refnum )
 	{
-		Size size = GetHandleSize_raw( h );
-		
-		if ( size >= minimum_handle_size )
-		{
-			UInt16* p = (UInt16*) (*h + offset_to_CurResFile);
-			
-			if ( *p++ == _CurResFile  &&
-			     *p++ == 0x3C1F       &&
-			     *p++ == 0x3F2D       &&
-			     *p   == A5_index_of_DataB_refnum )
-			{
-				*p = A5_index_of_Prefs_refnum;
-			}
-		}
+		*p = A5_index_of_Prefs_refnum;
 	}
-	
-#endif
 }
 
 static
 asm
 pascal short CurResFile_patch()
 {
+	MOVEA.L  (SP),A0              // return address
+	
 	LINK     A6,#0
 	MOVEM.L  D1-D2/A1,-(SP)
 	
@@ -603,7 +588,7 @@ void TEInit_handler()
 	{
 		ReleaseResource( h );
 		
-	#ifdef SAVEGAME_CODE_RESID
+	#ifdef PATCH_SAVEGAME_CODE
 		
 		old_CurResFile  = get_trap_address( _CurResFile  );
 		old_ExitToShell = get_trap_address( _ExitToShell );
