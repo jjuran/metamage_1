@@ -55,7 +55,6 @@
 #include "amicus/events.hh"
 #include "amicus/keycodes.hh"
 #include "amicus/menu_cmds.h"
-#include "amicus/raster_task.hh"
 #include "amicus/splode.hh"
 #include "amicus/zoom.hh"
 
@@ -151,63 +150,6 @@ void set_palette( const raster_load& load )
 		glfb::set_palette( &clut->palette[ 0 ].value, clut->max + 1 );
 	}
 }
-
-static
-pascal OSStatus AmicusUpdate( EventHandlerCallRef  handler,
-                              EventRef             event,
-                              void*                userData )
-{
-	EventKind kind = GetEventKind( event );
-	
-	const raster_load& load = *(raster_load*) userData;
-	
-	if ( kind == kEventAmicusNewPalette )
-	{
-		set_palette( load );
-		
-		kind = kEventAmicusScreenBits;  // force redraw with new palette
-	}
-	
-	if ( kind == kEventAmicusScreenBits )
-	{
-		blit( load );
-		
-		return noErr;
-	}
-	
-	if ( const frend::shared_cursor_state* cursor = frend::cursor_state )
-	{
-		if ( kind == kEventAmicusCursorBits )
-		{
-			glfb::set_cursor_image( cursor );
-			
-			return noErr;
-		}
-		
-		int y  = cursor->pointer[ 0 ];
-		int x  = cursor->pointer[ 1 ];
-		int dy = cursor->hotspot[ 0 ];
-		int dx = cursor->hotspot[ 1 ];
-		
-		glfb::set_cursor_hotspot( dx, dy );
-		glfb::set_cursor_location( x, y );
-		glfb::set_cursor_visibility( cursor->visible );
-	}
-	
-	render_AGL();
-	
-	return noErr;
-}
-
-DEFINE_CARBON_UPP( EventHandler, AmicusUpdate )
-
-static EventTypeSpec AmicusUpdate_event[] =
-{
-	{ kEventClassAmicus, kEventAmicusUpdate },
-	{ kEventClassAmicus, kEventAmicusScreenBits },
-	{ kEventClassAmicus, kEventAmicusCursorBits },
-	{ kEventClassAmicus, kEventAmicusNewPalette },
-};
 
 static
 bool update_cursor_state()
@@ -599,13 +541,6 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	blit( load );
 	
 	choose_zoom( zoom_command, desc );
-	
-	EventHandlerRef updateHandler;
-	err = InstallApplicationEventHandler( UPP_ARG( AmicusUpdate ),
-	                                      COUNT( AmicusUpdate_event ),
-	                                      AmicusUpdate_event,
-	                                      (void*) &load,
-	                                      &updateHandler );
 	
 	EventHandlerRef commandHandler;
 	err = InstallApplicationEventHandler( UPP_ARG( ProcessCommand ),
