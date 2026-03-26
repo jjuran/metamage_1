@@ -49,6 +49,7 @@
 
 // frontend-common
 #include "frend/cursor.hh"
+#include "frend/display_events.hh"
 
 // amicus
 #include "amicus/events.hh"
@@ -91,6 +92,8 @@ namespace amicus
 using mac::app::become_application;
 
 using glfb::overlay_enabled;
+
+using frend::display_events;
 
 using raster::raster_desc;
 using raster::raster_load;
@@ -638,6 +641,9 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	CGGetGlobalMouse( &cursor_location );
 	
 	update_cursor_state();
+	
+	display_events.finish = &QuitApplicationEventLoop;
+	display_events.render = &render_AGL;
 	
 	RunApplicationEventLoop();
 	
