@@ -26,6 +26,9 @@
 // v68k-cursor
 #include "cursor/cursor.hh"
 
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // mac-evt-utils
 #include "mac_evt/any_keys_down.hh"
 
@@ -498,6 +501,20 @@ void CGGetGlobalMouse( CGPoint* location )
 	location->y = globalMouse.v;
 }
 
+static inline
+bool painful_at_2x()
+{
+	/*
+		It's not clear what the condition should be, though
+		it's probably related to running out of GPU memory.
+		In the meantime, use sysv as a rough approximation.
+		
+		TODO:  Query the GPU properties to get a real answer.
+	*/
+	
+	return TARGET_CPU_PPC  &&  mac::sys::gestalt( 'sysv' ) < 0x1030;
+}
+
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
@@ -511,9 +528,10 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		DisableMenuCommand( View, command_ID );
 	}
 	
-	const int x2 = 0x200 >> 7;  // 4
+	const int ideal = (0x200 >> 7) - painful_at_2x();  // 4 (200%) or 3 (150%)
 	
-	int default_zoom_index = maximum_zoom_index < x2 ? maximum_zoom_index : x2;
+	int default_zoom_index = maximum_zoom_index < ideal
+	                       ? maximum_zoom_index : ideal;
 	
 	unsigned zoom_command = command_ID_for_zoom_index( default_zoom_index );
 	
