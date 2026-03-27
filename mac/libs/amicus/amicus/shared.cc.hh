@@ -29,7 +29,6 @@
 #include "amicus/apple_events.hh"
 #include "amicus/display_task.hh"
 #include "amicus/events.hh"
-#include "amicus/raster_task.hh"
 
 
 #ifndef CAPTURING_DISPLAY
@@ -68,11 +67,7 @@ class emulated_screen
 	#endif
 		raster_lifetime   live_raster;
 		raster_updating   update_fifo;
-	#ifdef ON_DISPLAY_EVENT
 		display_monitor   monitored_display;
-	#else
-		raster_monitor    monitored_raster;
-	#endif
 		coprocess_launch  launched_coprocess;
 	
 	public:
@@ -88,11 +83,7 @@ emulated_screen::emulated_screen( int bindir_fd, const char* works_path )
 	live_cursor       ( cursor_path ),
 #endif
 	live_raster       ( raster_path ),
-#ifdef ON_DISPLAY_EVENT
 	monitored_display ( live_raster.get(), ON_DISPLAY_EVENT ),
-#else
-	monitored_raster  ( live_raster.get() ),
-#endif
 	launched_coprocess( bindir_fd, works_path )
 {
 	events_fd = launched_coprocess.socket();
