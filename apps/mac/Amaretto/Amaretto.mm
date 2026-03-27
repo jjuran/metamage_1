@@ -95,9 +95,11 @@ void on_raster_event( void* info )
 	using frend::cursor_state;
 	using frend::shared_cursor_state;
 	
-	if ( raster_events.cursorBits )
+	raster_event_set& events = *(raster_event_set*) info;
+	
+	if ( events.cursorBits )
 	{
-		raster_events.cursorBits = false;
+		events.cursorBits = false;
 		
 		if ( cursor_state )
 		{
@@ -105,9 +107,9 @@ void on_raster_event( void* info )
 		}
 	}
 	
-	if ( raster_events.newPalette )
+	if ( events.newPalette )
 	{
-		raster_events.newPalette = false;
+		events.newPalette = false;
 		
 		if ( const raster::clut_data* clut = the_clut )
 		{
@@ -115,18 +117,18 @@ void on_raster_event( void* info )
 		}
 	}
 	
-	if ( raster_events.screenBits )
+	if ( events.screenBits )
 	{
-		raster_events.screenBits = false;
+		events.screenBits = false;
 		
 		const uint32_t offset = the_image_size * the_desc->frame;
 		
 		glfb::set_screen_image( (Ptr) the_addr + offset );
 	}
 	
-	if ( raster_events.repaintDue )
+	if ( events.repaintDue )
 	{
-		raster_events.repaintDue = false;
+		events.repaintDue = false;
 		
 		if ( const shared_cursor_state* cursor = cursor_state )
 		{
@@ -143,7 +145,7 @@ void on_raster_event( void* info )
 		glfb::render_and_flush();
 	}
 	
-	if ( raster_events.rasterDone )
+	if ( events.rasterDone )
 	{
 		mac::app::quit();
 	}
@@ -198,7 +200,7 @@ int main( int argc, char** argv )
 		CFRunLoopSourceContext context =
 		{
 			0,
-			NULL,  // info
+			&raster_events,
 			NULL,  // retain
 			NULL,  // release
 			NULL,  // copyDescription
