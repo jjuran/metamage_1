@@ -615,6 +615,9 @@ void draw_window( WindowRef window )
 			
 			CGRect rect = context.bounds();
 			
+			CGContextTranslateCTM( context, 0, rect.size.height );
+			CGContextScaleCTM    ( context, 1,               -1 );
+			
 			CGContextDrawImage( context, rect, state->image );
 			
 			return;
