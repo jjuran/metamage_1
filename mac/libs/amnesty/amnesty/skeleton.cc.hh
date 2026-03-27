@@ -19,11 +19,7 @@
 #include "raster/clut.hh"
 #include "raster/clut_detail.hh"
 
-// v68k-cursor
-#include "cursor/cursor.hh"
-
 // frontend-common
-#include "frend/cursor.hh"
 #include "frend/display_events.hh"
 
 // amicus
@@ -321,49 +317,6 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 				
 				goto next;
 			}
-		}
-		
-		if ( eventClass == kEventClassAmicus )
-		{
-			EventKind kind = GetEventKind( event );
-			
-			if ( kind == kEventAmicusScreenBits )
-			{
-				goto next;
-			}
-			
-		#if HARDWARE_CURSOR
-			
-			using frend::cursor_state;
-			using frend::shared_cursor_state;
-			
-			if ( const shared_cursor_state* cursor = cursor_state )
-			{
-				if ( kind == kEventAmicusCursorBits )
-				{
-					glfb::set_cursor_image( cursor );
-					goto next;
-				}
-				
-				int y  = cursor->pointer[ 0 ];
-				int x  = cursor->pointer[ 1 ];
-				int dy = cursor->hotspot[ 0 ];
-				int dx = cursor->hotspot[ 1 ];
-				
-				glfb::set_cursor_hotspot( dx, dy );
-				glfb::set_cursor_location( x, y );
-				glfb::set_cursor_visibility( cursor->visible );
-			}
-			
-		#endif
-			
-			if ( kind == kEventAmicusNewPalette )
-			{
-				set_palette( blitter, load );
-			}
-			
-			blit( load );
-			goto next;
 		}
 		
 	#ifdef MAC_OS_X_VERSION_10_5
