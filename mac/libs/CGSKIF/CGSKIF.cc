@@ -46,7 +46,7 @@ void convert_LE_565_to_555( void* dst, const void* src, size_t n )
 		
 		pixel = (red_green >> 1) | blue;
 		
-		*q++ = iota::little_u16( pixel );
+		*q++ = pixel;
 	}
 }
 
@@ -165,6 +165,11 @@ CGImageRef CGSKIFCreateImageFromRaster( const raster_load& raster )
 		}
 		
 		convert_LE_565_to_555( converted, base, size );
+		
+		if ( ! iota::is_little_endian() )
+		{
+			little_endian = false;
+		}
 		
 		dataProvider = make_data_provider_xfer( converted, size );
 	}
