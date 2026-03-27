@@ -30,6 +30,7 @@
 // frontend-common
 #include "frend/coprocess.hh"
 #include "frend/cursor.hh"
+#include "frend/display_events.hh"
 #include "frend/displayfs.hh"
 #include "frend/make_cursor.hh"
 #include "frend/make_raster.hh"
@@ -37,9 +38,10 @@
 #include "frend/tempfile.hh"
 #include "frend/update_fifo.hh"
 
+// glitter
+#include "glitter/display_events.hh"
+
 // rasterlib
-#include "raster/clut.hh"
-#include "raster/clut_detail.hh"
 #include "raster/raster.hh"
 
 // amicus
@@ -67,88 +69,24 @@ using raster::raster_load;
 using frend::cursor_path;
 using frend::raster_path;
 
+using frend::display_events;
+
 using frend::coprocess_launch;
 using frend::cursor_lifetime;
 using frend::raster_lifetime;
 using frend::raster_updating;
+
+using glitter::on_display_event;
 
 using amicus::cursor_limit;
 using amicus::events_fd;
 using amicus::wait_for_first_Apple_event;
 
 
-static void*                      the_addr;
-static const raster::raster_desc* the_desc;
-static const raster::clut_data*   the_clut;
-
-static long the_image_size;
-
 static
 void sigchld( int )
 {
 	frend::unblock_update_waiters();
-}
-
-static
-void on_raster_event( void* info )
-{
-	using frend::cursor_state;
-	using frend::shared_cursor_state;
-	
-	raster_event_set& events = *(raster_event_set*) info;
-	
-	if ( events.cursorBits )
-	{
-		events.cursorBits = false;
-		
-		if ( cursor_state )
-		{
-			glfb::set_cursor_image( cursor_state );
-		}
-	}
-	
-	if ( events.newPalette )
-	{
-		events.newPalette = false;
-		
-		if ( const raster::clut_data* clut = the_clut )
-		{
-			glfb::set_palette( &clut->palette[ 0 ].value, clut->max + 1 );
-		}
-	}
-	
-	if ( events.screenBits )
-	{
-		events.screenBits = false;
-		
-		const uint32_t offset = the_image_size * the_desc->frame;
-		
-		glfb::set_screen_image( (Ptr) the_addr + offset );
-	}
-	
-	if ( events.repaintDue )
-	{
-		events.repaintDue = false;
-		
-		if ( const shared_cursor_state* cursor = cursor_state )
-		{
-			int y  = cursor->pointer[ 0 ];
-			int x  = cursor->pointer[ 1 ];
-			int dy = cursor->hotspot[ 0 ];
-			int dx = cursor->hotspot[ 1 ];
-			
-			glfb::set_cursor_hotspot( dx, dy );
-			glfb::set_cursor_location( x, y );
-			glfb::set_cursor_visibility( cursor->visible );
-		}
-		
-		glfb::render_and_flush();
-	}
-	
-	if ( events.rasterDone )
-	{
-		mac::app::quit();
-	}
 }
 
 int main( int argc, char** argv )
@@ -187,20 +125,17 @@ int main( int argc, char** argv )
 		const raster_load& load = live_raster.get();
 		const raster_desc& desc = live_raster.desc();
 		
-		the_addr = load.addr;
-		the_desc = &desc;
-		the_clut = find_clut( &load.meta->note );
-		
-		the_image_size = desc.stride * desc.height;
+		display_events.finish = &mac::app::quit_Cocoa;
+		display_events.render = &glfb::render_and_flush;
 		
 		glfb::cursor_enabled = frend::cursor_state != NULL;
 		
 		releasing appDelegate( [[AmarettoAppDelegate alloc] initWithRaster: load] );
 		
-		raster_monitor::perform_proc perform = &on_raster_event;
+		display_monitor::perform_proc perform = &on_display_event;
 		
 		raster_updating   update_fifo;
-		raster_monitor    monitored_raster( live_raster.get(), perform );
+		display_monitor   monitored_display( live_raster.get(), perform );
 		coprocess_launch  launched_coprocess( bindir_fd, works_path );
 		
 		events_fd = launched_coprocess.socket();

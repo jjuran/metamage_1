@@ -25,19 +25,21 @@
 
 // frontend-common
 #include "frend/cursor.hh"
+#include "frend/display_events.hh"
 #include "frend/update_fifo.hh"
 
 
+using frend::display_events;
+
 using raster::clut_data;
+using raster::raster_desc;
 using raster::raster_load;
 using raster::raster_metadata;
 using raster::sync_relay;
 
 static bool monitoring;
 
-static poseven::thread raster_thread;
-
-raster_event_set raster_events;
+static poseven::thread display_thread;
 
 static CFRunLoopRef        mainRunLoop;
 static CFRunLoopSourceRef  inputSource;
@@ -51,13 +53,22 @@ void signal_runloop()
 }
 
 static
-void* raster_thread_body( void* arg )
+void* display_thread_body( void* arg )
 {
 	const raster_load&     load = *(const raster_load*) arg;
 	const raster_metadata& meta = *load.meta;
+	const raster_desc&     desc = meta.desc;
+	
+	const uint32_t image_size = desc.stride * desc.height;
 	
 	const clut_data*  clut = find_clut( &meta.note );
 	const sync_relay* sync = find_sync( &meta.note );
+	
+	if ( clut )
+	{
+		display_events.clut_palette = &clut->palette[ 0 ].value;
+		display_events.clut_maximum = clut->max;
+	}
 	
 	uint32_t raster_seed = 0;
 	uint32_t colors_seed = 0;
@@ -74,42 +85,45 @@ void* raster_thread_body( void* arg )
 		{
 			cursor_seed = cursor_state->seed;
 			
-			raster_events.cursorBits = true;
+			display_events.cursorBits = true;
 		}
 		
 		if ( clut  &&  clut->seed != colors_seed )
 		{
 			colors_seed = clut->seed;
 			
-			raster_events.newPalette = true;
+			display_events.newPalette = true;
 		}
 		
 		if ( raster_seed != sync->seed )
 		{
 			raster_seed = sync->seed;
 			
-			raster_events.screenBits = true;
+			const size_t offset = image_size * meta.desc.frame;
+			
+			display_events.addr       = (char*) load.addr + offset;
+			display_events.screenBits = true;
 		}
 		
-		raster_events.repaintDue = true;
+		display_events.repaintDue = true;
 		
 		signal_runloop();
 	}
 	
-	raster_events.rasterDone = true;
+	display_events.rasterDone = true;
 	
 	signal_runloop();
 	
 	return NULL;
 }
 
-raster_monitor::raster_monitor( const raster::raster_load&  load,
-                                perform_proc                perform )
+display_monitor::display_monitor( const raster::raster_load&  load,
+                                  perform_proc                perform )
 {
 	CFRunLoopSourceContext context =
 	{
 		0,
-		&raster_events,
+		&display_events,
 		NULL,  // retain
 		NULL,  // release
 		NULL,  // copyDescription
@@ -127,14 +141,14 @@ raster_monitor::raster_monitor( const raster::raster_load&  load,
 	
 	monitoring = true;
 	
-	raster_thread.create( &raster_thread_body, (void*) &load );
+	display_thread.create( &display_thread_body, (void*) &load );
 }
 
-raster_monitor::~raster_monitor()
+display_monitor::~display_monitor()
 {
 	monitoring = false;
 	
-	raster_thread.join();
+	display_thread.join();
 	
 	CFRunLoopRemoveSource( mainRunLoop, inputSource, kCFRunLoopCommonModes );
 	
