@@ -24,6 +24,7 @@
 
 // frontend-common
 #include "frend/cursor.hh"
+#include "frend/display_events.hh"
 
 // amicus
 #include "amicus/events.hh"
@@ -64,6 +65,8 @@
 
 namespace amicus
 {
+
+using frend::display_events;
 
 static double max_scale_factor = 1;
 static double scale_factor = 1;
@@ -217,6 +220,24 @@ void set_palette( Blitter& blitter, const raster_load& load )
 	}
 }
 
+static
+void quit()
+{
+	OSStatus err;
+	EventRef quitEvent;
+	
+	EventQueueRef queue = GetMainEventQueue();
+	
+	err = CreateEvent( NULL,
+	                   kEventClassApplication,
+	                   kEventAppQuit,
+	                   0,
+	                   kEventAttributeNone,
+	                   &quitEvent );
+	
+	err = PostEventToQueue( queue, quitEvent, kEventPriorityHigh );
+}
+
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	OSStatus err;
@@ -274,6 +295,9 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	CGWarpMouseCursorPosition( last_cursor_location );
 	
 #endif
+	
+	display_events.finish = &quit;
+	display_events.render = &Blitter::render;
 	
 	EventTargetRef target = GetEventDispatcherTarget();
 	
