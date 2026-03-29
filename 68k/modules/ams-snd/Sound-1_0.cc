@@ -438,7 +438,7 @@ OSErr SndNewChannel_patch( SndChannel** c, short s, long i, SndCallBackUPP u )
 	
 	if ( free_audio_buffer == NULL )
 	{
-		create_buffers( 2 );
+		create_buffers( 4 );
 	}
 	
 	++n_channels;
