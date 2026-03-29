@@ -285,8 +285,6 @@ struct global
 	uint16_t index;
 	
 	uint8_t size() const  { return (int8_t) size_ < 0 ? size_ & 0x3F : size_; }
-	
-	uint16_t word() const  { return int16_t( int8_t( index ) ); }
 };
 
 static inline
@@ -299,10 +297,10 @@ enum { ROM = -0x8000 };
 
 static const global globals[] =
 {
-	{ ROM + 0x0008, 0x82, 0x00 },  // ROM version = 0x0000
+	{ ROM + 0x0008, 0x82, 0x0000 },  // ROM version = 0x0000
 	
 	{ 0x00E4, 4,    tag_00E4        },
-	{ 0x0100, 0x82, 0xFF            },  // MonkeyLives
+	{ 0x0100, 0x82, 0xFFFF          },  // MonkeyLives
 	{ 0x0102, 0x84, 72              },  // ScrVRes, ScrHRes
 	{ 0x0106, 2,    tag_ScreenRow   },
 	{ 0x0108, 4,    tag_MemTop      },
@@ -354,7 +352,7 @@ static const global globals[] =
 	{ 0x02F8, 2,    tag_ScrDmpEnbTyp},  // ScrDmpEnb, ScrDmpType
 	{ 0x0308, 10,   tag_DrvQHdr     },
 	{ 0x0316, 4,    tag_HpChk       },
-	{ 0x031A, 0x83, 0xFF            },  // Lo3Bytes
+	{ 0x031A, 0x83, 0xFFFF          },  // Lo3Bytes
 	{ 0x0322, 4,    tag_DefltStack  },
 	{ 0x033C, 4,    tag_IAZNotify   },
 	{ 0x034E, 4,    tag_FCBSPtr     },
@@ -436,8 +434,8 @@ static const global globals[] =
 	{ 0x09EE, 4,    tag_GrayRgn     },
 	{ 0x09F2, 4,    tag_SaveVisRgn  },
 	{ 0x09FA, 8,    tag_TempRect    },
-	{ 0x0A02, 0x84, 0x01            },  // OneOne
-	{ 0x0A06, 0x84, 0xFF            },  // MinusOne
+	{ 0x0A02, 0x84, 0x0001          },  // OneOne
+	{ 0x0A06, 0x84, 0xFFFF          },  // MinusOne
 	{ 0x0A0E, 14,   tag_IconBitmap  },
 	
 	{ 0x0A1C, 4,    tag_MenuList    },
@@ -574,7 +572,7 @@ static uint8_t* read_globals( const global* g, int16_t addr, uint32_t size )
 			}
 			else
 			{
-				const uint16_t word = g->word();
+				const uint16_t word = g->index;
 				
 				buffer[ i++ ] = word >> 8;
 				buffer[ i++ ] = word;
