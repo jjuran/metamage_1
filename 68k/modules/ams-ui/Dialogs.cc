@@ -459,6 +459,7 @@ struct partial_CNTL_template
 	short    min;
 	short    procID;
 	long     refCon;
+	Byte     length;   // all we need of the title, replacing it
 //	Str255   title;    // not appearing in this struct
 };
 
@@ -471,12 +472,15 @@ static const partial_CNTL_template default_NewControl_arguments =
 	0,     // min
 	0,     // (procID, not used)
 	0,     // refcon
+	0,     // empty string
 };
 
 static
 Handle new_dialog_control( WindowRef window, DialogItem* item )
 {
 	short procID = item->type & 0x03;
+	
+	const Byte* title = &item->length;
 	
 	const partial_CNTL_template* subcntl = &default_NewControl_arguments;
 	
@@ -488,13 +492,14 @@ Handle new_dialog_control( WindowRef window, DialogItem* item )
 			
 			subcntl = (const partial_CNTL_template*) &cntl->controlValue;
 			
+			title = &subcntl->length;
 			procID = subcntl->procID;
 		}
 	}
 	
 	Handle h = (Handle) NewControl( window,
 	                                &item->bounds,
-	                                &item->length,
+	                                title,
 	                                subcntl->visible,
 	                                subcntl->value,
 	                                subcntl->min,
