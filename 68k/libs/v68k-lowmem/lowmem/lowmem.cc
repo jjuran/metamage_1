@@ -298,6 +298,7 @@ enum { ROM = -0x8000 };
 static const global globals[] =
 {
 	{ ROM + 0x0008, 0x82, 0x0000 },  // ROM version = 0x0000
+	{ ROM + 0x000A, 0x82, 0xA9F4 },  // ROM reset:  just ExitToShell
 	
 	{ 0x00E4, 4,    tag_00E4        },
 	{ 0x0100, 0x82, 0xFFFF          },  // MonkeyLives
@@ -638,9 +639,17 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 {
 	if ( access == mem_exec )
 	{
-		// None of Mac low memory is executable
+		/*
+			None of Mac low memory is executable,
+			but we do allow the ROM reset vector.
+		*/
 		
-		return 0;  // NULL
+		if ( (uint16_t) addr != 0x000a )
+		{
+			return 0;  // NULL
+		}
+		
+		access = mem_read;
 	}
 	
 	if ( (addr >> 16) == 0x0040 )
