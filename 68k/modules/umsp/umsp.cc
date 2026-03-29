@@ -12,6 +12,9 @@
 	emulate it in the Privilege Violation exception handler.
 */
 
+// POSIX
+#include <unistd.h>
+
 // Standard C
 #include <stdint.h>
 
@@ -20,6 +23,11 @@
 
 
 #pragma exceptions off
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+#define WARN( msg )  write( STDERR_FILENO, STR_LEN( "umsp: " msg "\n" ) )
 
 
 uint8_t CPUFlag : 0x012F;
@@ -195,7 +203,34 @@ bool handle_exception( registers& regs )
 		}
 	}
 	
+	/*
+		Rewind the PC to the beginning of this instruction.
+		If we don't recognize what the instruction is, then
+		we don't know its length and can't simply skip it.
+	*/
+	
 	regs.pc = old_pc;
+	
+	// 0100 1110 0111 0000:  RESET
+	
+	if ( opcode == 0x4E70 )
+	{
+		/*
+			Some early Mac applications issue RESET
+			in a misguided attempt to warm-restart.
+			
+			Assume that's the intent here, and just
+			ExitToShell instead (as for ROM reset).
+		*/
+		
+		uint16_t* pc = (uint16_t*) old_pc;
+		
+		*pc = 0xA9F4;  // ExitToShell
+		
+		WARN( "transmuting RESET to _ExitToShell" );
+		
+		return true;
+	}
 	
 	return false;
 }
