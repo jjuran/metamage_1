@@ -16,7 +16,7 @@
 // frontend-common
 #include "frend/displayfs.hh"
 
-#if defined(__MSYS__)  ||  defined(__CYGWIN)
+#if defined(__MSYS__)  ||  defined(__CYGWIN__)
 #define CONFIG_UPDATES_VIA_FIFO  0
 #endif
 

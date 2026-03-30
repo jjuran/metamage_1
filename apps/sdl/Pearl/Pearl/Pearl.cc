@@ -129,7 +129,7 @@ void set_app_name( void (*setter)( const char* ) )
 
 #endif
 
-#if ! defined(__MSYS__)  &&  ! defined(__CYGWIN)
+#if ! defined(__MSYS__)  &&  ! defined(__CYGWIN__)
 
 static
 void sigchld( int )
@@ -249,7 +249,7 @@ int main( int argc, char** argv )
 
 	set_app_name( &set_sdl_app_name );
 
-#if ! defined(__MSYS__)  &&  ! defined(__CYGWIN)
+#if ! defined(__MSYS__)  &&  ! defined(__CYGWIN__)
 
 	signal( SIGCHLD, &sigchld );
 
