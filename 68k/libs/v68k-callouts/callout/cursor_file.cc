@@ -7,6 +7,10 @@
 
 // Standard C
 #include <errno.h>
+#include <string.h>
+
+// v68k-cursor
+#include "cursor/cursor.hh"
 
 // v68k-callouts
 #include "callout/cursor_state.hh"
@@ -30,6 +34,11 @@ int set_cursor_backing_store_file( const char* path )
 	}
 	
 	cursor_state = (v68k::cursor::shared_cursor_state*) alloc;
+	
+	if ( cursor_state )
+	{
+		memset( cursor_state, '\0', sizeof *cursor_state );
+	}
 	
 	return 0;
 }
