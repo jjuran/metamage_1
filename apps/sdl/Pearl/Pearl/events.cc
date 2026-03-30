@@ -187,14 +187,19 @@ bool handle_sdl_event( SDL_Event& event, Cursor& cursor, Window& window )
 	switch ( event.type )
 	{
 		case SDL_KEYDOWN:
-			if ( (SDL_GetModState() & KMOD_ALT) == KMOD_ALT )
 			{
-				handle_command( event.key );
-				break;
-			}
-			else
-			{
-				clear_chords();
+				SDL_Keymod mod_state = SDL_GetModState();
+				if ( mod_state != 0  &&
+					 ( (mod_state & KMOD_ALT) == KMOD_ALT  ||
+					 ( (SDL_KeyboardEvent&) event ).keysym.scancode == SDL_SCANCODE_RETURN ) )
+				{
+					handle_command( event.key );
+					break;
+				}
+				else
+				{
+					clear_chords();
+				}
 			}
 
 			// Fall through to...
