@@ -451,7 +451,8 @@ short Sound_control( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
 			return pb->ioResult = noErr;
 		
 		case kSoundSetVolume:
-			return pb->ioResult = set_sound_volume( pb->csParam[ 0 ] );
+			err = set_sound_volume( pb->csParam[ 0 ] );
+			break;
 		
 		default:
 			err = controlErr;
