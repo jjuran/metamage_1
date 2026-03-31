@@ -22,3 +22,5 @@ Privileged Instruction Emulation
         * on 68000, the handler previously in that vector slot
         * on 68010+, the handler in the low memory vector table
       * for MOVE to/from SR, all 68000 addressing modes except PC-relative
+    * replaces RESET with _ExitToShell
+      * for some early applications which expect RESET to restart
