@@ -216,11 +216,6 @@ next:
 	
 	OSErr err = do_admin_command( &chan, cmdInProgress );
 	
-	if ( err == noErr )
-	{
-		goto next;
-	}
-	
 	if ( err == unimplemented )
 	{
 		int cmd = cmdInProgress.cmd;
@@ -228,7 +223,13 @@ next:
 		switch ( cmd )
 		{
 			case bufferCmd:
-				do_bufferCmd( &chan, cmdInProgress );
+				err = do_bufferCmd( &chan, cmdInProgress );
+				
+				if ( err == noErr )
+				{
+					return;
+				}
+				
 				break;
 			
 			default:
@@ -236,6 +237,13 @@ next:
 				break;
 		}
 	}
+	
+	/*
+		Continue after any admin command, even on error.
+		Continue after do_bufferCmd() *only* on error.
+	*/
+	
+	goto next;
 }
 
 static
