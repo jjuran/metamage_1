@@ -133,17 +133,17 @@ OSErr play_async( SndChannel* chan, Ptr p, long n, UFixed rate, cpy f, int x )
 	
 	OSErr err;
 	
+	audio_buffer* buffer = alloc_buffer();
+	
+	if ( buffer == NULL )
+	{
+		ERROR = "bufferCmd: no audio buffers available";
+		
+		return notEnoughBufferSpace;
+	}
+	
 	do
 	{
-		audio_buffer* buffer = alloc_buffer();
-		
-		if ( buffer == NULL )
-		{
-			ERROR = "bufferCmd: audio buffers exhausted";
-			
-			return notEnoughBufferSpace;
-		}
-		
 		buffer->ch       = chan;
 		buffer->ff.count = playback_rate;
 		
@@ -154,6 +154,24 @@ OSErr play_async( SndChannel* chan, Ptr p, long n, UFixed rate, cpy f, int x )
 		
 		ParamBlockRec& pb = buffer->pb;
 		IOParam&       io = pb.ioParam;
+		
+		if ( packets_remaining )
+		{
+			buffer = alloc_buffer();
+			
+			if ( ! buffer )
+			{
+				ERROR = "bufferCmd: audio buffers exhausted";
+				
+				/*
+					Zero packets_remaining so we exit the loop,
+					as well as to signal audio_completion() to
+					start the next command.
+				*/
+				
+				packets_remaining = 0;
+			}
+		}
 		
 		io.ioPosOffset = packets_remaining;
 		io.ioReqCount  = 6 + (short) cluster_len * (short) x;
