@@ -44,6 +44,13 @@ void on_display_event( void* info )
 		if ( const unsigned short* palette = events.clut_palette )
 		{
 			glfb::set_palette( palette, events.clut_maximum + 1 );
+			
+			/*
+				We need set_screen_image() to be called, since
+				that's where transcoding samples the palette.
+			*/
+			
+			events.screenBits = true;
 		}
 	}
 	
