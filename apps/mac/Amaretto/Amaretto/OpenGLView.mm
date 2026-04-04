@@ -11,19 +11,39 @@
 // write-a-splode
 #include "splode/write-a-splode.hh"
 
+// mac-app-utils
+#include "mac_app/quit.hh"
+
 // glfb-common
 #include "glfb/glfb.hh"
+
+// frontend-common
+#include "frend/commandmode_state.hh"
 
 // amicus
 #include "amicus/events.hh"
 #include "amicus/resize.hh"
 
 
+using glfb::render_and_flush;
+
 using amicus::get_proportional_coordinate;
 using amicus::get_proportional_offset;
 
 
 static bool cursor_hidden;
+
+static
+void command_handler( char c )
+{
+	if ( frend::commandmode_key( c ) )
+	{
+		if ( frend::quick_exit() )
+		{
+			mac::app::quit();
+		}
+	}
+}
 
 static
 NSPoint get_proportional_location( NSRect bounds )
@@ -55,7 +75,26 @@ NSPoint new_location( NSSize size, NSPoint location )
 static
 void handle_event( NSEvent* event )
 {
-	amicus::handle_CGEvent( [event CGEvent] );
+	using frend::CommandMode_state;
+	using frend::commandmode_state;
+	
+	using glfb::overlay_enabled;
+	
+	CommandMode_state prev_state = commandmode_state;
+	
+	amicus::handle_CGEvent( [event CGEvent], &command_handler );
+	
+	if ( ! commandmode_state )
+	{
+		frend::clear_chords();
+	}
+	
+	if ( ! commandmode_state != ! prev_state )
+	{
+		overlay_enabled = ! overlay_enabled;
+		
+		render_and_flush();
+	}
 }
 
 @implementation AmarettoOpenGLView
@@ -129,7 +168,7 @@ void handle_event( NSEvent* event )
 
 - (void) drawRect: (NSRect) bounds
 {
-	glfb::render_and_flush();
+	render_and_flush();
 }
 
 - (void) handleMouseMovedTo: (NSPoint) location
