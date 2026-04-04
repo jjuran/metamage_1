@@ -26,6 +26,12 @@
 // mac-sys-utils
 #include "mac_sys/trap_address.hh"
 
+// mac-qd-utils
+#include "mac_qd/plot_icon_id.hh"
+
+// ShowAnIcon
+#include "ShowAnIcon.hh"
+
 // WorldTuneup
 #include "playback.hh"
 #include "state.hh"
@@ -297,6 +303,19 @@ pascal asm void TEInit_patch()
 
 int main()
 {
+	using show_an_icon::advance_location;
+	using show_an_icon::draw_X;
+	using show_an_icon::get_icon_rect;
+	using show_an_icon::temporary_graphics_port;
+	
+	temporary_graphics_port port;
+	
+	Rect r;
+	
+	get_icon_rect( r );
+	
+	mac::qd::plot_icon_id( r, 128 );
+	
 	if ( SysVersion >= 0x0700 )
 	{
 		Handle self = Get1Resource( 'INIT', 0 );
@@ -307,6 +326,12 @@ int main()
 		
 		set_trap_address( (ProcPtr) TEInit_patch, _TEInit );
 	}
+	else
+	{
+		draw_X( r );
+	}
+	
+	advance_location();
 	
 	return 0;
 }
