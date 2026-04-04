@@ -51,6 +51,7 @@
 
 // Amaretto
 #include "Amaretto/AppDelegate.hh"
+#include "Amaretto/Application.h"
 #include "releasing.hh"
 
 
@@ -94,7 +95,7 @@ int main( int argc, char** argv )
 {
 	releasing pool( [NSAutoreleasePool new] );
 	
-	[NSApplication sharedApplication];
+	[AmarettoApplication sharedApplication];
 	
 	if ( ! become_application() )
 	{
