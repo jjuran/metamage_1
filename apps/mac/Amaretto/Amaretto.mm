@@ -42,6 +42,8 @@
 #include "glitter/display_events.hh"
 
 // rasterlib
+#include "raster/clut.hh"
+#include "raster/clut_detail.hh"
 #include "raster/raster.hh"
 
 // amicus
@@ -91,6 +93,17 @@ void sigchld( int )
 	frend::unblock_update_waiters();
 }
 
+static
+void set_palette( const raster::raster_load& load )
+{
+	using namespace raster;
+	
+	if ( const clut_data* clut = find_clut( &load.meta->note ) )
+	{
+		glfb::set_palette( &clut->palette[ 0 ].value, clut->max + 1 );
+	}
+}
+
 int main( int argc, char** argv )
 {
 	releasing pool( [NSAutoreleasePool new] );
@@ -131,6 +144,8 @@ int main( int argc, char** argv )
 		display_events.render = &glfb::render_and_flush;
 		
 		glfb::cursor_enabled = frend::cursor_state != NULL;
+		
+		set_palette( load );
 		
 		releasing appDelegate( [[AmarettoAppDelegate alloc] initWithRaster: load] );
 		
