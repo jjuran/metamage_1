@@ -38,7 +38,7 @@ sync_relay* the_sync_relay;
 
 #ifdef __RELIX__
 
-void update_bits()
+void update_bits( bool page_flipped )
 {
 }
 
@@ -57,13 +57,13 @@ struct end_sync
 
 static end_sync finally_end_sync;
 
-void update_bits()
+void update_bits( bool page_flipped )
 {
 	if ( memcmp( virtual_buffer, transit_buffer, the_screen_size ) != 0 )
 	{
 		memcpy( transit_buffer, virtual_buffer, the_screen_size );
 	}
-	else
+	else if ( ! page_flipped )
 	{
 		return;
 	}

@@ -19,7 +19,7 @@ namespace screen {
 
 extern raster::sync_relay* the_sync_relay;
 
-void update_bits();
+void update_bits( bool page_flipped = false );
 
 }  // namespace screen
 }  // namespace v68k
