@@ -29,7 +29,9 @@
 
 
 Ptr   MemTop       : 0x0108;
+Ptr   BufPtr       : 0x010C;
 Ptr   ApplLimit    : 0x0130;
+Ptr   ApplZone     : 0x02AA;
 Str15 FinderName   : 0x02E0;
 long  DefltStack   : 0x0322;
 Ptr   ScrnBase     : 0x0824;
@@ -224,11 +226,11 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	
 	if ( CurPageOption < 0 )
 	{
-		NOTICE = "Allocating page 2 buffers";
+		NOTICE = "    Allocating page 2 buffers";
 	}
 	else if ( CurPageOption > 0 )
 	{
-		NOTICE = "Allocating page 2 audio buffer";
+		NOTICE = "    Allocating page 2 audio buffer";
 	}
 	
 	// 2. Send goodBye to open drivers with dNeedGoodBye set.
@@ -251,7 +253,11 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	if ( MemTop )
 	{
 		InitApplZone();
+		
+		NOTICE = "    MemTop:       ", (hex32_t) MemTop;
 	}
+	
+	NOTICE = "    BufPtr:       ", (hex32_t) BufPtr;
 	
 	// 8. Move the scrap into a new handle (if any).
 	// 9. Reinitialize the unit table.
@@ -283,6 +289,11 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	
 	CurJTOffset = header.jmptable_offset;
 	
+	if ( CurJTOffset != 0x20 )
+	{
+		WARNING = "    CurJTOffset:  ", (hex32_t) CurJTOffset;
+	}
+	
 	const UInt32 total_a5_size = header.above_a5_size
 	                           + header.below_a5_size;
 	
@@ -306,6 +317,10 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	
 	void* jump_table = CurrentA5 + CurJTOffset;
 	
+	NOTICE = "    jump table:   ", (hex32_t) jump_table;
+	NOTICE = "    CurrentA5:    ", (hex32_t) CurrentA5;
+	NOTICE = "    CurStackBase: ", (hex32_t) CurStackBase;
+	
 	fast_memcpy( jump_table, &header + 1, header.jmptable_size );
 	
 	// 20. Release 'CODE' 0.
@@ -320,6 +335,9 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	if ( MemTop )
 	{
 		ApplLimit = alloc;
+		
+		NOTICE = "    ApplLimit:    ", (hex32_t) ApplLimit;
+		NOTICE = "    ApplZone:     ", (hex32_t) ApplZone;
 	}
 	
 	asm
