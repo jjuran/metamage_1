@@ -59,19 +59,16 @@ static end_sync finally_end_sync;
 
 void update_bits()
 {
-	void* previous_frame = virtual_buffer;
-	
-	if ( previous_frame )
+	if ( memcmp( virtual_buffer, transit_buffer, the_screen_size ) != 0 )
 	{
-		if ( memcmp( previous_frame, transit_buffer, the_screen_size ) == 0 )
-		{
-			return;
-		}
-		
 		memcpy( transit_buffer, virtual_buffer, the_screen_size );
-		
-		record::frame( virtual_buffer );
 	}
+	else
+	{
+		return;
+	}
+	
+	record::frame( virtual_buffer );
 	
 	if ( the_sync_relay != 0 )  // NULL
 	{
