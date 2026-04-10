@@ -149,6 +149,7 @@ display-check:
 NEW_PATH = PATH="$$PWD/var/demo:$$PWD/$(VAR_BIN):$$PATH"
 AMS_ROOT = var/links/ams-68k-bin
 AMS_RSRC = "$(AMS_ROOT)/mnt/AMS Resources"
+SYS_RSRC = "$(AMS_ROOT)/mnt/SystemResources"
 AMS_VARS = AMS_BIN=$(AMS_ROOT)/bin AMS_LIB=$(AMS_ROOT)/lib AMS_MNT=$(AMS_ROOT)/mnt
 RUN_AMS  = $(NEW_PATH) $(AMS_VARS) v/bin/ams.vx
 
@@ -169,6 +170,8 @@ ams-x11: ams-x11-build
 
 ams-system-rsrcs: build-tools
 	$(BUILD) minivx
+	mkdir -p $(SYS_RSRC)
+	$(VAR_BIN)/minivx v/bin/mkrsrc.vx -o $(SYS_RSRC)/rsrc $(AMS_RSRC)
 	$(VAR_BIN)/minivx v/bin/mkrsrc.vx -o $(AMS_RSRC)/rsrc $(AMS_RSRC)
 
 ams-68k-install: var/install ams-system-rsrcs
