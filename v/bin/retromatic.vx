@@ -213,7 +213,7 @@ let xv68k_dir = contents "/xv68k"
 
 let Files = Resources "/Files"
 
-mkdir-p (MacOS_dir, Files "/AMS Resources", Files "/SystemResources", xv68k_dir)
+mkdir-p (MacOS_dir, Files "/SystemResources", xv68k_dir)
 
 def ams-get-app (property, args: ...)
 {
@@ -265,7 +265,6 @@ if icon then
 let resfiles = [ "AMS Resources", "System" ]
 let respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
 
-run [ vx_run "mkrsrc.vx", "-o", Files "/AMS Resources/rsrc", *respaths ]
 run [ vx_run "mkrsrc.vx", "-o", Files "/SystemResources/rsrc", *respaths ]
 
 def substitute_name_for_default (key)
