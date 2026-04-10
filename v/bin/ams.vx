@@ -14,6 +14,11 @@ def existing (path)
 
 let exists = existing
 
+def mkdir-p
+{
+	run [ "mkdir", "-p", _ ]
+}
+
 let amsdir = getenv "AMS_ROOT" or existing bindir "/../share/ams/"
                                or existing bindir "/../../../ams-68k-bin"
                                or throw "AMS_ROOT not set; can't find AMS files"
@@ -290,7 +295,7 @@ def make_shared_dir_server (param, mac_subpath, alt_subpath )
 		
 		if not exists path then
 		{
-			run [ "mkdir -p" / ' ', path ]
+			mkdir-p path
 		}
 	}
 	
@@ -524,7 +529,7 @@ let app_opts = startup, welcome, shutoff, app_name
 
 let works = home "/run/" getpid() ".works"
 
-run [ "mkdir -p" / ' ', works ]
+mkdir-p works
 
 let update = works "/update-signal.fifo"
 let events = works "/events.fifo"
