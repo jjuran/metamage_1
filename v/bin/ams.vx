@@ -197,9 +197,14 @@ let respaths = resfiles map { root_dir "/" v } ver { exists v "/r" }
 
 if exists bindir "/mkrsrc.vx" then
 {
-	let output = "-o", root_dir "/AMS Resources/rsrc"
+	mkdir-p root_dir "/SystemResources"
 	
-	run [ "minivx", bindir "/mkrsrc.vx", output, *respaths ]
+	for rsrcs in ["AMS Resources", "SystemResources"] do
+	{
+		let output = "-o", root_dir "/" rsrcs "/rsrc"
+		
+		run [ "minivx", bindir "/mkrsrc.vx", output, *respaths ]
+	}
 }
 
 def freemountd_rw (root) { "freemountd -qu --rw --root" / ' ', root, "//" }
