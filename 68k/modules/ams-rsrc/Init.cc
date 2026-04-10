@@ -20,6 +20,7 @@ short CurApRefNum : 0x0900;
 Str31 CurApName   : 0x0910;
 Handle TopMapHndl : 0x0A50;
 short SysMap      : 0x0A58;
+Str15 SysResName  : 0x0AD8;
 
 
 typedef rsrc_map_header**  RsrcMapHandle;
@@ -43,13 +44,13 @@ pascal short InitResources_patch()
 	/*
 		The `app` tool calls InitResources() after all modules have
 		loaded and before launching the application.  It may also
-		first open "AMS Resources" itself, so it can use resources
+		first open the System file itself, so it can use resources
 		before INITs run -- in which case we shouldn't reopen it.
 	*/
 	
 	if ( SysMap <= 0 )
 	{
-		SysMap = OpenResFile( "\p" "AMS Resources" );
+		SysMap = OpenResFile( SysResName );
 	}
 	
 	/*

@@ -12,6 +12,7 @@
 #include <unistd.h>
 
 // ams-common
+#include "callouts.hh"
 #include "module_A4.hh"
 
 // ams-rsrc
@@ -23,12 +24,18 @@
 #include "Utilities.hh"
 
 
+#define PSTR_LEN( s ) "\p" s, sizeof s
+
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define PROGRAM  "ams-rsrc"
 
 #define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
 
+
+typedef unsigned char Str15[ 16 ];
+
+Str15 SysResName : 0x0AD8;
 
 void* os_trap_table     [] : 1 * 1024;
 void* toolbox_trap_table[] : 3 * 1024;
@@ -106,6 +113,8 @@ int main( int argc, char** argv )
 		
 		_exit( 1 );
 	}
+	
+	fast_memcpy( SysResName, PSTR_LEN( "AMS Resources" ) );
 	
 	install_ResourceManager();
 	
