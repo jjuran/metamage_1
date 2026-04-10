@@ -199,12 +199,9 @@ if exists bindir "/mkrsrc.vx" then
 {
 	mkdir-p root_dir "/SystemResources"
 	
-	for rsrcs in ["AMS Resources", "SystemResources"] do
-	{
-		let output = "-o", root_dir "/" rsrcs "/rsrc"
-		
-		run [ "minivx", bindir "/mkrsrc.vx", output, *respaths ]
-	}
+	let output = "-o", root_dir "/SystemResources/rsrc"
+	
+	run [ "minivx", bindir "/mkrsrc.vx", output, *respaths ]
 }
 
 def freemountd_rw (root) { "freemountd -qu --rw --root" / ' ', root, "//" }
