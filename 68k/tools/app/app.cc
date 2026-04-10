@@ -47,6 +47,8 @@ QHdr VCBQHdr : 0x0356;
 short SysMap : 0x0A58;
 short ResErr : 0x0A60;
 
+Str15 SysResName : 0x0AD8;
+
 
 enum
 {
@@ -270,7 +272,7 @@ int main( int argc, char** argv )
 	
 	if ( welcome_ticks )
 	{
-		SysMap = OpenResFile( "\p" "AMS Resources" );
+		SysMap = OpenResFile( SysResName );
 		
 		SysError( dsGreeting );
 	}
