@@ -114,7 +114,7 @@ int main( int argc, char** argv )
 		_exit( 1 );
 	}
 	
-	fast_memcpy( SysResName, PSTR_LEN( "AMS Resources" ) );
+	fast_memcpy( SysResName, PSTR_LEN( "SystemResources" ) );
 	
 	install_ResourceManager();
 	
