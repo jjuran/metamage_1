@@ -5,17 +5,19 @@ let cursor_fb_file = "cursor.skif"
 let works_dir_path = argv[ 1 ]
 let events_fd_slot = argv[ 2 ]
 
+def exists (path)
+{
+	return try {stat path; true} catch {false}
+}
+
 let has_cursor = bool getenv "AMS_CURSOR"
 
 let update_fifo_path = works_dir_path "/update-signal.fifo"
 
-try
+if exists update_fifo_path then
 {
-	stat update_fifo_path
-	
 	setenv( "GRAPHICS_UPDATE_SIGNAL_FIFO", update_fifo_path )
 }
-catch {}
 
 
 let ams_bin = "../xv68k"
@@ -40,11 +42,6 @@ let app_name = config[ "name" ]
 def active (feature)
 {
 	return feature in config and config[ feature ]
-}
-
-def exists (path)
-{
-	return try {stat path; true} catch {false}
 }
 
 let root_dir = ams_mnt
