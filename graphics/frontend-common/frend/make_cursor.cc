@@ -11,7 +11,6 @@
 
 // Standard C
 #include <errno.h>
-#include <stdlib.h>
 #include <string.h>
 
 // shared_cursor
@@ -126,11 +125,6 @@ cursor_lifetime::cursor_lifetime( const char* cursor_path )
 		}
 		
 		frend::cursor_state = open_cursor_file( cursor_path );
-		
-		if ( frend::cursor_state )
-		{
-			setenv( "AMS_CURSOR", "hardware", 1 );
-		}
 	}
 }
 
