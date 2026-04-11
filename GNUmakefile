@@ -187,7 +187,7 @@ ams-68k-install: var/install ams-system-rsrcs
 	cp -R $(AMS_ROOT)/mnt/*              var/install/share/ams/mnt
 
 ams-common-install: var/install
-	install -d var/install/bin
+	install -d var/install/bin var/install/lib
 	test \! -x $(VAR_BIN)/sndtrack || install $(VAR_BIN)/sndtrack var/install/bin
 	install $(VAR_BIN)/minivx      var/install/bin
 	install $(VAR_BIN)/skif        var/install/bin
@@ -196,6 +196,7 @@ ams-common-install: var/install
 	install $(VAR_BIN)/freemountd  var/install/bin
 	install $(VAR_BIN)/xv68k       var/install/bin
 	$(INSTALL_SCRIPT) v/bin/ams.vx var/install/bin/ams
+	install v/lib/redux_name.vy    var/install/lib
 
 ams-vnc-install: ams-vnc-build ams-68k-install ams-common-install
 	install $(VAR_BIN)/listen        var/install/bin
