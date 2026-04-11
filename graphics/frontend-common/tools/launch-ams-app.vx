@@ -13,7 +13,7 @@ def exists (path)
 	return try {stat path; true} catch {false}
 }
 
-let has_cursor = bool getenv "AMS_CURSOR"
+let has_cursor = exists cursor_fb_path
 
 let update_fifo_path = works_dir_path "/update-signal.fifo"
 
