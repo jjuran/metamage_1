@@ -193,7 +193,7 @@ let home     = getenv "HOME"
 let root_dir = existing home "/68k" or ams_mnt
 
 let resfiles = [ "AMS Resources", "System" ]
-let respaths = resfiles map { root_dir "/" v } ver { exists v "/r" }
+let respaths = resfiles map { root_dir "/../res/" v } ver { exists v "/r" }
 
 if exists bindir "/mkrsrc.vx" then
 {

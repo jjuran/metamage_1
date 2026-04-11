@@ -263,7 +263,7 @@ if icon then
 }
 
 let resfiles = [ "AMS Resources", "System" ]
-let respaths = resfiles map { parent_dir "/" v } ver { exists v "/r" }
+let respaths = resfiles map { parent_dir "/../res/" v } ver { exists v "/r" }
 
 run [ vx_run "mkrsrc.vx", "-o", Files "/SystemResources/rsrc", *respaths ]
 
