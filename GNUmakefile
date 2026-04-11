@@ -148,7 +148,7 @@ display-check:
 
 NEW_PATH = PATH="$$PWD/var/demo:$$PWD/$(VAR_BIN):$$PATH"
 AMS_ROOT = var/links/ams-68k-bin
-AMS_RSRC = "$(AMS_ROOT)/mnt/AMS Resources"
+AMS_RSRC = "$(AMS_ROOT)/res/AMS Resources"
 SYS_RSRC = "$(AMS_ROOT)/mnt/SystemResources"
 AMS_VARS = AMS_BIN=$(AMS_ROOT)/bin AMS_LIB=$(AMS_ROOT)/lib AMS_MNT=$(AMS_ROOT)/mnt
 RUN_AMS  = $(NEW_PATH) $(AMS_VARS) v/bin/ams.vx
