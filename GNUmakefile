@@ -172,7 +172,6 @@ ams-system-rsrcs: build-tools
 	$(BUILD) minivx
 	mkdir -p $(SYS_RSRC)
 	$(VAR_BIN)/minivx v/bin/mkrsrc.vx -o $(SYS_RSRC)/rsrc $(AMS_RSRC)
-	$(VAR_BIN)/minivx v/bin/mkrsrc.vx -o $(AMS_RSRC)/rsrc $(AMS_RSRC)
 
 ams-68k-install: var/install ams-system-rsrcs
 	install -d var/install/share/ams/bin
