@@ -5,6 +5,9 @@ let cursor_fb_file = "cursor.skif"
 let works_dir_path = argv[ 1 ]
 let events_fd_slot = argv[ 2 ]
 
+let screen_fb_path = works_dir_path "/" screen_fb_file
+let cursor_fb_path = works_dir_path "/" cursor_fb_file
+
 def exists (path)
 {
 	return try {stat path; true} catch {false}
@@ -282,8 +285,8 @@ let servers = sound-server, file-servers
 
 let xv68k_opts = model_opt, mem_opt, sound_opt, xv_opt, "-tSP"
 
-let xv68k-screen = "--raster=" works_dir_path "/" screen_fb_file
-let xv68k-cursor = "--cursor=" works_dir_path "/" cursor_fb_file (*) has_cursor
+let xv68k-screen = "--raster=" screen_fb_path
+let xv68k-cursor = "--cursor=" cursor_fb_path (*) has_cursor
 
 let xv68k-subcmd = "./xv68k", xv68k_opts, xv68k-screen, xv68k-cursor, *module_opts, app, app_name
 let graft-subcmd = "./graft", servers, xv68k-subcmd
