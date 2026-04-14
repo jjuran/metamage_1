@@ -20,6 +20,7 @@
 #include "raster/clut_detail.hh"
 
 // frontend-common
+#include "frend/commandmode_state.hh"
 #include "frend/display_events.hh"
 
 // amicus
@@ -62,6 +63,8 @@
 namespace amicus
 {
 
+using frend::CommandMode_state;
+using frend::commandmode_state;
 using frend::display_events;
 
 static double max_scale_factor = 1;

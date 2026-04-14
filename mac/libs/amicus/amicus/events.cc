@@ -23,6 +23,7 @@
 #include "splode/write-a-splode.hh"
 
 // frontend-common
+#include "frend/commandmode_state.hh"
 #include "frend/pinned.hh"
 
 // amicus
@@ -40,7 +41,11 @@
 namespace amicus
 {
 
-CommandMode_state commandmode_state;
+using frend::CommandMode_activated;
+using frend::CommandMode_off;
+using frend::CommandMode_oneshot;
+using frend::CommandMode_quasimode;
+using frend::commandmode_state;
 
 int events_fd = -1;
 

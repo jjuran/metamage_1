@@ -51,6 +51,7 @@
 #include "glfb/glfb.hh"
 
 // frontend-common
+#include "frend/commandmode_state.hh"
 #include "frend/cursor.hh"
 #include "frend/display_events.hh"
 
@@ -95,6 +96,8 @@ using mac::app::become_application;
 
 using glfb::overlay_enabled;
 
+using frend::CommandMode_state;
+using frend::commandmode_state;
 using frend::display_events;
 
 using raster::raster_desc;
@@ -372,6 +375,11 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
                                  void*                userData )
 {
 	using namespace splode::key;
+	
+	using frend::CommandMode_activated;
+	using frend::CommandMode_off;
+	using frend::CommandMode_oneshot;
+	using frend::CommandMode_quasimode;
 	
 	OSStatus err;
 	
