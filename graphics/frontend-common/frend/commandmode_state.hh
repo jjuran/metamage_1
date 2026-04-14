@@ -32,6 +32,24 @@ enum CommandMode_state
 
 extern CommandMode_state commandmode_state;
 
+extern bool Q_hit;
+extern bool X_hit;
+
+inline
+bool quick_exit()
+{
+	return Q_hit  &&  X_hit;
+}
+
+inline
+void clear_chords()
+{
+	Q_hit = false;
+	X_hit = false;
+}
+
+bool commandmode_key( char c );
+
 }
 
 #endif
