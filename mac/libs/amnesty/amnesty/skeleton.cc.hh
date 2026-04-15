@@ -127,7 +127,7 @@ double max_scale( CGRect frame, double width, double height )
 	
 	double factor = x_factor < y_factor ? x_factor : y_factor;
 	
-	return factor;
+	return floor( factor * 2 ) / 2;
 }
 
 static
