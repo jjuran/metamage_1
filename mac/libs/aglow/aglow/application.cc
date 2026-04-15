@@ -54,6 +54,7 @@
 #include "frend/commandmode_state.hh"
 #include "frend/cursor.hh"
 #include "frend/display_events.hh"
+#include "frend/zoom.hh"
 
 // amicus
 #include "amicus/events.hh"
@@ -98,6 +99,7 @@ using glfb::overlay_enabled;
 
 using frend::CommandMode_state;
 using frend::commandmode_state;
+using frend::current_zoom_index;
 using frend::display_events;
 
 using raster::raster_desc;
@@ -106,16 +108,6 @@ using raster::raster_load;
 using v68k::cursor::shared_cursor_state;
 
 static bool cursor_hidden;
-
-static bool Q_hit;
-static bool X_hit;
-
-static
-void clear_chords()
-{
-	Q_hit = false;
-	X_hit = false;
-}
 
 static
 void blit( const raster_load& load )
@@ -344,32 +336,6 @@ static EventTypeSpec Mouse_event[] =
 };
 
 static
-void command_handler( char c, const raster_desc& desc )
-{
-	switch ( c )
-	{
-		case 'q':  Q_hit = true;  break;
-		case 'x':  X_hit = true;  break;
-		
-		case '=':  // same key as '+'
-			choose_zoom( command_to_zoom_in(), desc );
-			break;
-		
-		case '-':
-			choose_zoom( command_to_zoom_out(), desc );
-			break;
-		
-		default:
-			break;
-	}
-	
-	if ( Q_hit  &&  X_hit )
-	{
-		QuitApplicationEventLoop();
-	}
-}
-
-static
 pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
                                  EventRef             event,
                                  void*                userData )
@@ -409,10 +375,26 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 	
 	if ( commandmode_state )
 	{
+		int previous_zoom_index;
+		
 		switch ( kind )
 		{
 			case kEventRawKeyDown:
-				command_handler( c, desc );
+				previous_zoom_index = current_zoom_index;
+				
+				if ( frend::commandmode_key( c ) )
+				{
+					if ( frend::quick_exit() )
+					{
+						QuitApplicationEventLoop();
+					}
+					else if ( current_zoom_index != previous_zoom_index )
+					{
+						int i = current_zoom_index;
+						
+						choose_zoom( command_ID_for_zoom_index( i ), desc );
+					}
+				}
 				break;
 			
 			case kEventRawKeyUp:
@@ -470,6 +452,8 @@ pascal OSStatus Modifiers_changed( EventHandlerCallRef  handler,
                                    EventRef             event,
                                    void*                userData )
 {
+	using frend::clear_chords;
+	
 	OSStatus err;
 	
 	CommandMode_state prev_state = commandmode_state;
@@ -525,6 +509,9 @@ bool painful_at_2x()
 
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
+	using frend::cap_zoom_index;
+	using frend::maximum_zoom_index;
+	
 	OSStatus err;
 	
 	cap_zoom_index( desc.width, desc.height, desk_width, desk_height );
