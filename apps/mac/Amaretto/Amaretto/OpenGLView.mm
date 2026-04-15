@@ -19,10 +19,15 @@
 
 // frontend-common
 #include "frend/commandmode_state.hh"
+#include "frend/zoom.hh"
 
 // amicus
 #include "amicus/events.hh"
 #include "amicus/resize.hh"
+#include "amicus/zoom.hh"
+
+// Amaretto
+#include "Amaretto/AppDelegate.hh"
 
 
 using glfb::render_and_flush;
@@ -237,7 +242,20 @@ void handle_event( NSEvent* event )
 
 - (void) keyDown: (NSEvent*) event
 {
+	using frend::current_zoom_index;
+	
+	using amicus::command_ID_for_zoom_index;
+	
+	int previous_zoom_index = current_zoom_index;
+	
 	handle_event( event );
+	
+	if ( current_zoom_index != previous_zoom_index )
+	{
+		AmarettoAppDelegate* delegate = (AmarettoAppDelegate*) [NSApp delegate];
+		
+		[delegate doZoom: command_ID_for_zoom_index( current_zoom_index )];
+	}
 }
 
 - (void) keyUp: (NSEvent*) event
