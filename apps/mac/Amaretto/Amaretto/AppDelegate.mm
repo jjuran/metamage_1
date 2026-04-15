@@ -11,6 +11,9 @@
 // mac-app-utils
 #include "mac_app/quit.hh"
 
+// frontend-common
+#include "frend/zoom.hh"
+
 // rasterlib
 #include "raster/raster.hh"
 
@@ -28,9 +31,11 @@
 
 using mac::app::quit;
 
-using amicus::cap_zoom_index;
+using frend::cap_zoom_index;
+using frend::current_zoom_index;
+using frend::maximum_zoom_index;
+
 using amicus::command_ID_for_zoom_index;
-using amicus::maximum_zoom_index;
 using amicus::top_zoom_index;
 
 
@@ -253,9 +258,9 @@ void set_up_menus( unsigned default_zoom_command )
 	
 	const int x2 = 0x200 >> 7;  // 4
 	
-	int default_zoom_index = maximum_zoom_index < x2 ? maximum_zoom_index : x2;
+	current_zoom_index = maximum_zoom_index < x2 ? maximum_zoom_index : x2;
 	
-	_zoomLevel = command_ID_for_zoom_index( default_zoom_index );
+	_zoomLevel = command_ID_for_zoom_index( current_zoom_index );
 	
 	err = AEInstallEventHandler( kCoreEventClass,
 	                             kAEQuitApplication,
@@ -265,7 +270,7 @@ void set_up_menus( unsigned default_zoom_command )
 	
 	set_up_menus( _zoomLevel );
 	
-	_mainWindow = create_window( *_desc, default_zoom_index / 2.0 );
+	_mainWindow = create_window( *_desc, current_zoom_index / 2.0 );
 	_mainGLView = [_mainWindow initialFirstResponder];
 	
 	NSRect frame = [_mainWindow frame];
