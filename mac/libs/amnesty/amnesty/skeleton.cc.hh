@@ -22,6 +22,7 @@
 // frontend-common
 #include "frend/commandmode_state.hh"
 #include "frend/display_events.hh"
+#include "frend/zoom.hh"
 
 // amicus
 #include "amicus/events.hh"
@@ -63,62 +64,28 @@
 namespace amicus
 {
 
+using frend::clear_chords;
 using frend::CommandMode_state;
 using frend::commandmode_state;
 using frend::display_events;
+using frend::quick_exit;
+
+using frend::current_zoom_index;
+using frend::maximum_zoom_index;
+using frend::minimum_zoom_index;
 
 static double max_scale_factor = 1;
 static double scale_factor = 1;
 
-static bool Q_hit;
-static bool X_hit;
-
-static
-void clear_chords()
-{
-	Q_hit = false;
-	X_hit = false;
-}
-
 static
 void command_handler( char c )
 {
-	switch ( c )
+	if ( frend::commandmode_key( c ) )
 	{
-		case 'q':  Q_hit = true;  break;
-		case 'x':  X_hit = true;  break;
-		
-		case '-':
-			if ( scale_factor * 2 > floor( max_scale_factor * 2 ) )
-			{
-				scale_factor = floor( max_scale_factor * 2 ) / 2;
-				break;
-			}
-			
-			scale_factor = floor( scale_factor * 2 - 1 ) / 2;
-			
-			if ( scale_factor < 1 )
-			{
-				scale_factor = 1;
-			}
-			break;
-		
-		case '=':  // +
-			scale_factor = floor( scale_factor * 2 + 1 ) / 2;
-			
-			if ( scale_factor > max_scale_factor )
-			{
-				scale_factor = max_scale_factor;
-			}
-			break;
-		
-		default:
-			break;
-	}
-	
-	if ( Q_hit  &&  X_hit )
-	{
-		mac::app::quitting = true;
+		if ( quick_exit() )
+		{
+			mac::app::quitting = true;
+		}
 	}
 }
 
@@ -261,6 +228,10 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	             : max_scale_factor >= 1.5 ? 1.5
 	             :                           1.0;
 	
+	minimum_zoom_index = 0x100 >> 7;  // 100%
+	maximum_zoom_index = (int) floor( max_scale_factor * 2 );
+	current_zoom_index = (int) floor(     scale_factor * 2 );
+	
 	Blitter blitter( captured_display.id() );
 	
 	set_palette( blitter, load );
@@ -339,7 +310,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		{
 			CommandMode_state prev_state = commandmode_state;
 			
-			const double prev_scale = scale_factor;
+			const int previous_zoom_index = current_zoom_index;
 			
 			bool handled = HANDLE_EVENT( lowlevel_event, &command_handler );
 			
@@ -356,8 +327,10 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 				
 				Blitter::render();
 			}
-			else if ( scale_factor != prev_scale )
+			else if ( current_zoom_index != previous_zoom_index )
 			{
+				scale_factor = current_zoom_index / 2.0;
+				
 				blitter.area( display_area( display_bounds, width, height ) );
 				
 				blit( load );
