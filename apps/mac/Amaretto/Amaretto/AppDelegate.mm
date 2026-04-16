@@ -147,7 +147,7 @@ NSMenu* set_up_menu( NSMenu* menubar, const menu_description& desc )
 #define SET_UP_MENU( name )  set_up_menu( menubar, name##_desc )
 
 static
-void set_up_menus( unsigned default_zoom_command )
+NSMenu* set_up_menus( unsigned default_zoom_command )
 {
 	id menubar = [NSMenu new];
 	
@@ -170,6 +170,8 @@ void set_up_menus( unsigned default_zoom_command )
 		
 		[[menu itemWithTag: command_ID] setEnabled: NO];
 	}
+	
+	return menu;  // View menu
 }
 
 @implementation AmarettoAppDelegate
@@ -196,6 +198,25 @@ void set_up_menus( unsigned default_zoom_command )
 	glfb::terminate();
 	
 	[super dealloc];
+}
+
+- (void) doZoom: (long) commandID
+{
+	using frend::current_zoom_index;
+	
+	const long tag = commandID;
+	
+	if ( tag != _zoomLevel )
+	{
+		CGFloat x = current_zoom_index / 2.0;
+		
+		[_mainGLView setScale: x];
+		
+		[[_viewMenu itemWithTag: _zoomLevel ] setState: NSOffState];
+		[[_viewMenu itemWithTag: commandID  ] setState: NSOnState ];
+		
+		_zoomLevel = tag;
+	}
 }
 
 - (void) doMenuItem: (id) sender
@@ -229,21 +250,17 @@ void set_up_menus( unsigned default_zoom_command )
 		case kZoom400Percent:
 			if ( tag != _zoomLevel )
 			{
+				using frend::current_zoom_index;
+				
 				int  _50 = tag >> 16 & 0x1;
 				int _100 = tag >> 24 & 0xf;
 				
 				int x_denom =  _50 + 1;              // 1 or 2
 				int x_numer = _100 * x_denom + _50;
 				
-				CGFloat x = 1.0 * x_numer / x_denom;
+				current_zoom_index = 2 * x_numer / x_denom;
 				
-				[_mainGLView setScale: x];
-				
-				[[[sender menu] itemWithTag: _zoomLevel ] setState: NSOffState];
-				
-				[sender setState: NSOnState];
-				
-				_zoomLevel = tag;
+				[self doZoom: tag];
 			}
 			break;
 		
@@ -268,7 +285,7 @@ void set_up_menus( unsigned default_zoom_command )
 	                             0,
 	                             false );
 	
-	set_up_menus( _zoomLevel );
+	_viewMenu = set_up_menus( _zoomLevel );
 	
 	_mainWindow = create_window( *_desc, current_zoom_index / 2.0 );
 	_mainGLView = [_mainWindow initialFirstResponder];

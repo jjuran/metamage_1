@@ -21,6 +21,7 @@ namespace raster
 	
 	long _zoomLevel;
 	
+	id _viewMenu;
 	id _mainWindow;
 	id _mainGLView;
 }
@@ -28,6 +29,8 @@ namespace raster
 - (id) initWithRaster: (const raster::raster_load&) load;
 
 - (void) dealloc;
+
+- (void) doZoom: (long) commandID;
 
 - (void) doMenuItem: (id) sender;
 
