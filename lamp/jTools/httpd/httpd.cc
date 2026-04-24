@@ -641,9 +641,9 @@ namespace tool
 				
 				from_file = io::open_for_reading( pathname );
 				
-				const size_t size = p7::fstat( from_file ).st_size;
+				const off_t size = p7::fstat( from_file ).st_size;
 				
-				responseHeader += HTTP::HeaderFieldLine( "Content-Length",  gear::inscribe_unsigned_decimal( size ) );
+				responseHeader += HTTP::HeaderFieldLine( "Content-Length",  gear::inscribe_unsigned_wide_decimal( size ) );
 			}
 			
 			responseHeader += HTTP::HeaderFieldLine( "Content-Type",  contentType );
