@@ -77,6 +77,12 @@ typedef int socklen_t;
 #endif
 #endif
 
+#if TARGET_OS_MAC  &&  ! __LP64__
+#define CONFIG_FSSPEC_CALL_DEFS  1
+#else
+#define CONFIG_FSSPEC_CALL_DEFS  0
+#endif
+
 
 #define HTTP_VERSION  "HTTP/1.0"
 
@@ -596,7 +602,7 @@ namespace tool
 			
 			OSType type = 0;
 			
-		#if TARGET_OS_MAC
+		#if CONFIG_FSSPEC_CALL_DEFS
 			
 			type = kUnknownType;
 			
@@ -626,7 +632,7 @@ namespace tool
 			{
 				contentType = GuessContentType( pathname, type );
 				
-			#if TARGET_OS_MAC
+			#if CONFIG_FSSPEC_CALL_DEFS
 				
 				responseHeader += HTTP::HeaderFieldLine( "X-Mac-Type",    plus::encode_32_bit_hex( info.fdType    ) );
 				responseHeader += HTTP::HeaderFieldLine( "X-Mac-Creator", plus::encode_32_bit_hex( info.fdCreator ) );
