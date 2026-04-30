@@ -17,9 +17,6 @@
 #endif
 #endif
 
-// mac-qd-utils
-#include "mac_qd/main_display_bounds.hh"
-
 // amicus
 #include "amicus/resize.hh"
 
@@ -42,10 +39,9 @@ short rect_height( const Rect& r )
 static
 Rect get_desktop_bounds()
 {
-	Rect bounds = mac::qd::main_display_bounds();
+	Rect bounds;
 	
-	bounds.top    += 40;  // approximate menu bar height + title bar height
-	bounds.bottom -=  2;  // approximate window frame thickness
+	GetAvailableWindowPositioningBounds( GetMainDevice(), &bounds );
 	
 	return bounds;
 }
