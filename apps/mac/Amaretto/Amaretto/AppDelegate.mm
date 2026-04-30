@@ -181,7 +181,7 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 {
 	const raster::raster_desc& desc = load.meta->desc;
 	
-	NSSize space = [[NSScreen mainScreen] frame].size;
+	NSSize space = [[NSScreen mainScreen] visibleFrame].size;
 	
 	cap_zoom_index( desc.width, desc.height, space.width, space.height );
 	
