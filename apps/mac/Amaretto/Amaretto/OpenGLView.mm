@@ -141,7 +141,9 @@ void handle_event( NSEvent* event )
 	
 	NSWindow* window = [self window];
 	
-	NSPoint proportional_location = get_proportional_location( [window frame] );
+	NSRect contentRect = [window contentRectForFrameRect: [window frame]];
+	
+	NSPoint proportional_location = get_proportional_location( contentRect );
 	
 	proportional_location = new_location( outer_size, proportional_location );
 	
