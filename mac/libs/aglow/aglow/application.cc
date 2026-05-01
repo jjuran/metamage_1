@@ -212,8 +212,12 @@ OSStatus choose_zoom( MenuCommand id, const raster_desc& desc )
 			current_zoom_index = (id >> 23 & 0xf << 1)   // _00%  (1 .. 4)
 			                   | (id >> 16 & 0x1     );  //  _0%  (0 or 5)
 			
+			DisableScreenUpdates();
+			
 			remake_window( desc.width  / x_denom * x_numer,
 			               desc.height / x_denom * x_numer );
+			
+			EnableScreenUpdates();
 			
 			update_cursor_state();
 			
