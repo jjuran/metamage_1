@@ -56,25 +56,35 @@ NSPoint get_proportional_location( NSRect bounds )
 	NSPoint origin = bounds.origin;
 	NSSize  window = bounds.size;
 	
-	NSSize space = [[NSScreen mainScreen] frame].size;
+	NSRect frame = [[NSScreen mainScreen] visibleFrame];
+	NSSize space = frame.size;
+	
+	CGFloat x = origin.x - frame.origin.x;
+	CGFloat y = origin.y - frame.origin.y;
 	
 	return NSMakePoint
 	(
-		get_proportional_coordinate( space.width,  window.width,  origin.x ),
-		get_proportional_coordinate( space.height, window.height, origin.y )
+		get_proportional_coordinate( space.width,  window.width,  x ),
+		get_proportional_coordinate( space.height, window.height, y )
 	);
 }
 
 static
 NSPoint new_location( NSSize size, NSPoint location )
 {
-	NSSize space = [[NSScreen mainScreen] frame].size;
+	NSRect frame = [[NSScreen mainScreen] visibleFrame];
+	NSSize space = frame.size;
 	
-	return NSMakePoint
+	location = NSMakePoint
 	(
 		get_proportional_offset( space.width,  size.width,  location.x ),
 		get_proportional_offset( space.height, size.height, location.y )
 	);
+	
+	location.x += frame.origin.x;
+	location.y += frame.origin.y;
+	
+	return location;
 }
 
 static
