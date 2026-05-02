@@ -10,6 +10,13 @@
 namespace frend
 {
 
+enum
+{
+	Zoom_index_1_0 = 0x100 >> 7,          // 100%
+	Zoom_index_0_5 = Zoom_index_1_0 / 2,  //  50%
+	Zoom_index_2_0 = Zoom_index_1_0 * 2,  // 200%
+};
+
 extern int minimum_zoom_index;
 extern int maximum_zoom_index;
 extern int current_zoom_index;

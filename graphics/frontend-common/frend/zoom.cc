@@ -9,9 +9,9 @@
 namespace frend
 {
 
-int minimum_zoom_index = 0x080 >> 7;  //  50%
+int minimum_zoom_index = Zoom_index_0_5;  //  50%
 int maximum_zoom_index;
-int current_zoom_index = 0x100 >> 7;  // 100%
+int current_zoom_index = Zoom_index_1_0;  // 100%
 
 void cap_zoom_index( int window_X, int window_Y, int screen_X, int screen_Y )
 {

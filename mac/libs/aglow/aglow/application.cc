@@ -498,6 +498,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	using frend::cap_zoom_index;
 	using frend::maximum_zoom_index;
+	using frend::Zoom_index_2_0;
 	
 	OSStatus err;
 	
@@ -510,7 +511,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		DisableMenuCommand( View, command_ID );
 	}
 	
-	const int x2 = 0x200 >> 7;  // 4
+	const int x2 = Zoom_index_2_0;  // 200%
 	
 	int default_zoom_index = maximum_zoom_index < x2 ? maximum_zoom_index : x2;
 	

@@ -34,6 +34,7 @@ using mac::app::quit;
 using frend::cap_zoom_index;
 using frend::current_zoom_index;
 using frend::maximum_zoom_index;
+using frend::Zoom_index_2_0;
 
 using amicus::command_ID_for_zoom_index;
 using amicus::top_zoom_index;
@@ -273,7 +274,7 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 {
 	OSStatus err;
 	
-	const int x2 = 0x200 >> 7;  // 4
+	const int x2 = Zoom_index_2_0;  // 200%
 	
 	current_zoom_index = maximum_zoom_index < x2 ? maximum_zoom_index : x2;
 	

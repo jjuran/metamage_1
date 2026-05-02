@@ -73,6 +73,7 @@ using frend::quick_exit;
 using frend::current_zoom_index;
 using frend::maximum_zoom_index;
 using frend::minimum_zoom_index;
+using frend::Zoom_index_1_0;
 
 static double max_scale_factor = 1;
 static double scale_factor = 1;
@@ -228,7 +229,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	             : max_scale_factor >= 1.5 ? 1.5
 	             :                           1.0;
 	
-	minimum_zoom_index = 0x100 >> 7;  // 100%
+	minimum_zoom_index = Zoom_index_1_0;  // 100%
 	maximum_zoom_index = (int) floor( max_scale_factor * 2 );
 	current_zoom_index = (int) floor(     scale_factor * 2 );
 	
