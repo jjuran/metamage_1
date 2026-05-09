@@ -81,14 +81,11 @@ void handle_mouse_moved_event( CGPoint next_cursor_location )
 	
 #endif
 	
-	if ( ! CGPointEqualToPoint( pinned_cursor, last_cursor_location ) )
-	{
-		using splode::send_mouse_moved_event;
-		
-		send_mouse_moved_event( events_fd, pinned_cursor.x, pinned_cursor.y );
-		
-		last_cursor_location = pinned_cursor;
-	}
+	using splode::send_mouse_moved_event;
+	
+	send_mouse_moved_event( events_fd, pinned_cursor.x, pinned_cursor.y );
+	
+	last_cursor_location = pinned_cursor;
 }
 
 #if CONFIG_CGEVENTS
