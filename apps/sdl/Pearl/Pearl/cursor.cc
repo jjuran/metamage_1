@@ -105,14 +105,11 @@ void Cursor::send_mouse_moved_event( const SDL_Point& location )
 
 	pin( pinned_location );
 
-	if ( ! is_point_equal_to_point( pinned_location, last_location ) )
-	{
-		using splode::send_mouse_moved_event;
+	using splode::send_mouse_moved_event;
 
-		send_mouse_moved_event( events_fd, pinned_location.x, pinned_location.y );
+	send_mouse_moved_event( events_fd, pinned_location.x, pinned_location.y );
 
-		last_location = pinned_location;
-	}
+	last_location = pinned_location;
 }
 
 void Cursor::send_mouse_button_event( uint8_t modes, bool button_down )
