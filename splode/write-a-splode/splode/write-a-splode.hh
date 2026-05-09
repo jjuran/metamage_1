@@ -15,6 +15,9 @@ namespace splode
 	
 	typedef unsigned char Byte;
 	
+	extern short last_sent_x;
+	extern short last_sent_y;
+	
 	int send_mouse_moved_event( int fd, short x, short y );
 	
 	template < class Coord >
