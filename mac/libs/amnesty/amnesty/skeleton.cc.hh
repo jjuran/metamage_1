@@ -78,6 +78,12 @@ using frend::maximum_zoom_index;
 using frend::minimum_zoom_index;
 using frend::Zoom_index_1_0;
 
+enum
+{
+	initial_cursor_x = 15,
+	initial_cursor_y = 15,
+};
+
 static double max_scale_factor = 1;
 static double scale_factor = 1;
 
@@ -262,11 +268,14 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	cursor_limit = CGPointMake( width - 1, height - 1 );
 	
-	last_cursor_location = CGPointMake( 15, 15 );
+	splode::last_sent_x = initial_cursor_x;
+	splode::last_sent_y = initial_cursor_y;
 	
 #ifndef MAC_OS_X_VERSION_10_5
 	
-	CGWarpMouseCursorPosition( last_cursor_location );
+	CGPoint initial_cursor = CGPointMake( initial_cursor_x, initial_cursor_y );
+	
+	CGWarpMouseCursorPosition( initial_cursor );
 	
 #endif
 	

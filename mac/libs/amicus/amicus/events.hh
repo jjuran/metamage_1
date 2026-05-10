@@ -24,7 +24,6 @@ typedef void (*command_handler_proc)( char c );
 extern int events_fd;
 
 extern CGPoint cursor_limit;
-extern CGPoint last_cursor_location;
 
 void move_cursor_to( CGPoint location );
 
