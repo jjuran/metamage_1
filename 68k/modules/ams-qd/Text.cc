@@ -503,7 +503,7 @@ pascal void MeasureText_patch( short count, const char* p, short* locs )
 				of 32767.)
 				
 				Since the results of measuring entire pages of text at once
-				are implcitly undefined, we're free to define the semantics
+				are implicitly undefined, we're free to define the semantics
 				for ourselves:  A CR sets the width back to zero.  This allows
 				TextEdit to make a single MeasureText() call in TECalText(),
 				for example.
