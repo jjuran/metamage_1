@@ -15,6 +15,9 @@
 #include "mac_app/event_handlers.hh"
 #include "mac_app/state.hh"
 
+// write-a-splode
+#include "splode/write-a-splode.hh"
+
 // rasterlib
 #include "raster/clut.hh"
 #include "raster/clut_detail.hh"
@@ -371,8 +374,8 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	double x_offset = (display_bounds.size.width  - scale_factor * width ) / 2;
 	double y_offset = (display_bounds.size.height - scale_factor * height) / 2;
 	
-	transformed_location.x = last_cursor_location.x * scale_factor + x_offset;
-	transformed_location.y = last_cursor_location.y * scale_factor + y_offset;
+	transformed_location.x = splode::last_sent_x * scale_factor + x_offset;
+	transformed_location.y = splode::last_sent_y * scale_factor + y_offset;
 	
 	move_cursor_to( transformed_location );
 	
