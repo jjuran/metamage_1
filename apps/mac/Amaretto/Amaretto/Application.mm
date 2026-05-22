@@ -1,6 +1,6 @@
 /*
-	Amaretto/Application.m
-	----------------------
+	Amaretto/Application.mm
+	-----------------------
 */
 
 #include "Amaretto/Application.h"
