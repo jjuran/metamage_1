@@ -22,6 +22,7 @@
 #include "frend/zoom.hh"
 
 // amicus
+#include "amicus/cursor.hh"
 #include "amicus/events.hh"
 #include "amicus/resize.hh"
 #include "amicus/zoom.hh"
@@ -35,8 +36,6 @@ using glfb::render_and_flush;
 using amicus::get_proportional_coordinate;
 using amicus::get_proportional_offset;
 
-
-static bool cursor_hidden;
 
 static
 void command_handler( char c )
@@ -195,28 +194,19 @@ void handle_event( NSEvent* event )
 	pt.x += kScreenMargin;
 	pt.y += kScreenMargin;
 	
-	if ( [self hitTest: pt] )
+	bool inside = [self hitTest: pt];
+	
+	amicus::set_cursor_hidden( inside );
+	
+	if ( inside )
 	{
 		pt.x -= kScreenMargin;
 		pt.y -= kScreenMargin;
-		
-		if ( ! cursor_hidden )
-		{
-			cursor_hidden = true;
-			
-			CGDisplayHideCursor( 0 );
-		}
 		
 		CGFloat x = pt.x / _scale;
 		CGFloat y = pt.y / _scale;
 		
 		splode::send_mouse_moved_event( amicus::events_fd, (int) x, (int) y );
-	}
-	else if ( cursor_hidden )
-	{
-		cursor_hidden = false;
-		
-		CGDisplayShowCursor( 0 );
 	}
 }
 

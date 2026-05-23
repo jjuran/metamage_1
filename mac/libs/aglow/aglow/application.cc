@@ -54,6 +54,7 @@
 #include "frend/zoom.hh"
 
 // amicus
+#include "amicus/cursor.hh"
 #include "amicus/events.hh"
 #include "amicus/keycodes.hh"
 #include "amicus/menu_cmds.h"
@@ -103,8 +104,6 @@ using raster::raster_desc;
 using raster::raster_load;
 
 using v68k::cursor::shared_cursor_state;
-
-static bool cursor_hidden;
 
 static
 void blit( const raster_load& load )
@@ -158,15 +157,10 @@ bool update_cursor_state()
 	
 	bool inside = PtInRect( pt, &bounds );
 	
+	set_cursor_hidden( inside );
+	
 	if ( inside )
 	{
-		if ( ! cursor_hidden )
-		{
-			cursor_hidden = true;
-			
-			CGDisplayHideCursor( 0 );
-		}
-		
 		short x = pt.h - bounds.left;
 		short y = pt.v - bounds.top;
 		
@@ -177,12 +171,6 @@ bool update_cursor_state()
 		y /= x_numer;
 		
 		send_mouse_moved_event( events_fd, x, y );
-	}
-	else if ( cursor_hidden )
-	{
-		cursor_hidden = false;
-		
-		CGDisplayShowCursor( 0 );
 	}
 	
 	return inside;
