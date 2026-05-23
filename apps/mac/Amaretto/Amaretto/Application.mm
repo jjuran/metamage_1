@@ -10,12 +10,14 @@
 
 - (void) sendEvent: (NSEvent*) event
 {
+	NSEventType type = [event type];
+	
 	/*
 		NSApplication's sendEvent method drops keyUp events
 		when the Command key is down, so forward them here.
 	*/
 	
-	if ( [event type] == NSKeyUp  &&  [event modifierFlags] & NSCommandKeyMask )
+	if ( type == NSKeyUp  &&  [event modifierFlags] & NSCommandKeyMask )
 	{
 		[[self keyWindow] sendEvent: event];
 	}
