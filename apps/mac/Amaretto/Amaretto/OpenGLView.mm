@@ -137,8 +137,6 @@ void handle_event( NSEvent* event )
 
 - (void) setScale: (CGFloat) scale
 {
-	const NSPoint origin = NSMakePoint( kScreenMargin, kScreenMargin );
-	
 	_scale = scale;
 	
 	CGFloat inner_width  = _resolution.width  * _scale;
@@ -156,17 +154,22 @@ void handle_event( NSEvent* event )
 	
 	NSPoint proportional_location = get_proportional_location( lastSetBounds );
 	
-	proportional_location = new_location( outer_size, proportional_location );
+	NSPoint w_origin;
+	NSPoint v_origin;
+	
+	w_origin = new_location( outer_size, proportional_location );
+	
+	v_origin = NSMakePoint( kScreenMargin, kScreenMargin );
 	
 	setting_scale = true;
 	
 	NSDisableScreenUpdates();
 	
 	[window setContentSize: outer_size];
-	[window setFrameOrigin: proportional_location];
+	[window setFrameOrigin: w_origin];
 	
 	[self   setFrameSize:   inner_size];
-	[self   setFrameOrigin: origin];
+	[self   setFrameOrigin: v_origin];
 	
 	NSEnableScreenUpdates();
 	
