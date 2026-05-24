@@ -30,6 +30,7 @@ void update_scale( unsigned image_width, unsigned image_height );
 	long _zoomLevel;
 	
 	id _viewMenu;
+	id _idleWindow;
 	id _mainWindow;
 	id _mainGLView;
 }
@@ -40,6 +41,8 @@ void update_scale( unsigned image_width, unsigned image_height );
 
 - (void) setCursorEjected: (BOOL) ejected;
 - (void) setCursorPinning: (BOOL) pinning;
+
+- (void) toggleFullscreen;
 
 - (void) doZoom: (long) commandID;
 

@@ -25,6 +25,7 @@
 #include "glfb/glfb.hh"
 
 // frontend-common
+#include "frend/commandmode_state.hh"
 #include "frend/cursor.hh"
 #include "frend/display_events.hh"
 #include "frend/displayfs.hh"
@@ -67,6 +68,7 @@ using frend::cursor_path;
 using frend::raster_path;
 
 using frend::display_events;
+using frend::fullscreen;
 
 using frend::cursor_lifetime;
 using frend::raster_lifetime;
@@ -97,6 +99,11 @@ void set_palette( const raster::raster_load& load )
 static
 void on_cursor_vis( bool visible )
 {
+	if ( fullscreen )
+	{
+		return;
+	}
+	
 	AmarettoAppDelegate* delegate = (AmarettoAppDelegate*) [NSApp delegate];
 	
 	[delegate setCursorPinning: ! visible];

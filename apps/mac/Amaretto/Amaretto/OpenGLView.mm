@@ -34,6 +34,7 @@
 
 
 using frend::cursor_ejected;
+using frend::fullscreen;
 
 using glfb::render_and_flush;
 
@@ -157,9 +158,24 @@ void handle_event( NSEvent* event )
 	NSPoint w_origin;
 	NSPoint v_origin;
 	
-	w_origin = new_location( outer_size, proportional_location );
-	
-	v_origin = NSMakePoint( kScreenMargin, kScreenMargin );
+	if ( fullscreen )
+	{
+		w_origin = NSMakePoint( 0, 0 );
+		
+		outer_size = [[NSScreen mainScreen] frame].size;
+		
+		v_origin = NSMakePoint
+		(
+			(outer_size.width  - inner_width ) / 2,
+			(outer_size.height - inner_height) / 2
+		);
+	}
+	else
+	{
+		w_origin = new_location( outer_size, proportional_location );
+		
+		v_origin = NSMakePoint( kScreenMargin, kScreenMargin );
+	}
 	
 	setting_scale = true;
 	
@@ -291,6 +307,7 @@ void handle_event( NSEvent* event )
 	
 	int previous_scale_index = active_scale->current;
 	
+	bool was_fullscreen   = fullscreen;
 	bool had_sharp_pixels = sharp_pixels;
 	
 	handle_event( event );
@@ -302,7 +319,11 @@ void handle_event( NSEvent* event )
 		render_and_flush();
 	}
 	
-	if ( active_scale->current != previous_scale_index )
+	if ( fullscreen != was_fullscreen )
+	{
+		[(AmarettoAppDelegate*) [NSApp delegate] toggleFullscreen];
+	}
+	else if ( active_scale->current != previous_scale_index )
 	{
 		AmarettoAppDelegate* delegate = (AmarettoAppDelegate*) [NSApp delegate];
 		

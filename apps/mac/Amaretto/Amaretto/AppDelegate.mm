@@ -21,6 +21,7 @@
 #include "splode/write-a-splode.hh"
 
 // frontend-common
+#include "frend/commandmode_state.hh"
 #include "frend/coprocess.hh"
 #include "frend/cursor_invisible.hh"
 #include "frend/zoom.hh"
@@ -39,6 +40,7 @@
 #include "amicus/zoom.hh"
 
 // Amaretto
+#include "Amaretto/FullscreenWindow.h"
 #include "Amaretto/OpenGLView.h"
 #include "Amaretto/WindowDelegate.hh"
 #include "releasing.hh"
@@ -52,10 +54,13 @@ using frend::coprocess_state;
 using frend::cursor_ejected;
 using frend::cursor_invisible;
 using frend::cursor_pinned;
+using frend::fullscreen;
 using frend::launch_coprocess;
+using frend::screen_scale;
 using frend::wait_for_coprocess;
 using frend::window_scale;
 using frend::Zoom_index_0_5;
+using frend::Zoom_index_1_0;
 using frend::Zoom_index_2_0;
 
 using amicus::command_ID_for_zoom_index;
@@ -408,8 +413,25 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	return view;  // View menu
 }
 
+static
+void set_screen_scale( unsigned image_width, unsigned image_height )
+{
+	active_scale = &screen_scale;
+	
+	NSSize space = [[NSScreen mainScreen] frame].size;
+	
+	cap_zoom_index( image_width, image_height, space.width, space.height );
+}
+
 void update_scale( unsigned image_width, unsigned image_height )
 {
+	if ( fullscreen )
+	{
+		active_scale = &screen_scale;
+		
+		return;
+	}
+	
 	active_scale = &window_scale;
 	
 	NSSize space = [[NSScreen mainScreen] visibleFrame].size;
@@ -427,10 +449,14 @@ void update_scale( unsigned image_width, unsigned image_height )
 	
 	const raster::raster_desc& desc = load.meta->desc;
 	
-	update_scale( desc.width, desc.height );
+	set_screen_scale( desc.width, desc.height );  // initialize screen scale
+	update_scale    ( desc.width, desc.height );  // set initial window scale
 	
-	window_scale.minimum = Zoom_index_0_5;  // 50%
+	window_scale.minimum = Zoom_index_0_5;  //  50%
+	screen_scale.minimum = Zoom_index_1_0;  // 100%
+	
 	window_scale.current = window_scale.maximum;
+	screen_scale.current = screen_scale.maximum;
 	
 	if ( window_scale.current > x2 )
 	{
@@ -465,6 +491,7 @@ void update_scale( unsigned image_width, unsigned image_height )
 	}
 	
 	[_mainWindow release];
+	[_idleWindow release];
 	
 	glfb::terminate();
 }
@@ -485,6 +512,11 @@ void update_scale( unsigned image_width, unsigned image_height )
 			ignore_next_mouse_moved_event = true;
 			
 			CGAssociateMouseAndMouseCursorPosition( true );
+			
+			if ( ! invisible )
+			{
+				synchronize_cursor_location( _mainGLView );
+			}
 		}
 		
 		set_cursor_hidden( false );
@@ -497,7 +529,8 @@ void update_scale( unsigned image_width, unsigned image_height )
 		{
 			update_cursor_location( _mainGLView );
 		}
-		else
+		
+		if ( fullscreen  ||  invisible )
 		{
 			[self setCursorPinning: true];
 		}
@@ -540,24 +573,54 @@ void update_scale( unsigned image_width, unsigned image_height )
 	}
 }
 
+- (void) toggleFullscreen
+{
+	NSDisableScreenUpdates();
+	
+	bool windowed = ! fullscreen;
+	
+	[NSMenu setMenuBarVisible: windowed];
+	
+	[_mainWindow orderOut: nil];
+	
+	[_idleWindow setContentView: [_mainWindow contentView] ];
+	
+	id tmp      = _mainWindow;
+	_mainWindow = _idleWindow;
+	_idleWindow = tmp;
+	
+	[_mainWindow makeKeyAndOrderFront: nil];
+	
+	update_scale( _desc->width, _desc->height );
+	
+	[_mainGLView setScale: current_scale()];
+	
+	[self setCursorPinning: fullscreen  ||  cursor_invisible()];
+	
+	NSEnableScreenUpdates();
+}
+
 - (void) doZoom: (long) commandID
 {
 	using amicus::cursor_hidden;
 	
 	const long tag = commandID;
 	
-	if ( tag != _zoomLevel )
+	if ( fullscreen  ||  tag != _zoomLevel )
 	{
 		CGFloat x = current_scale();
 		
 		[_mainGLView setScale: x];
 		
-		[[_viewMenu itemWithTag: _zoomLevel ] setState: NSOffState];
-		[[_viewMenu itemWithTag: commandID  ] setState: NSOnState ];
+		if ( ! fullscreen )
+		{
+			[[_viewMenu itemWithTag: _zoomLevel ] setState: NSOffState];
+			[[_viewMenu itemWithTag: commandID  ] setState: NSOnState ];
+			
+			_zoomLevel = tag;
+		}
 		
-		_zoomLevel = tag;
-		
-		if ( cursor_hidden )
+		if ( cursor_hidden  &&  ! fullscreen )
 		{
 			synchronize_cursor_location( _mainGLView );
 		}
@@ -643,6 +706,11 @@ void update_scale( unsigned image_width, unsigned image_height )
 	_mainWindow = create_window( *_desc, current_scale() );
 	_mainGLView = [_mainWindow initialFirstResponder];
 	
+	_idleWindow = [[FullscreenWindow alloc] initWithWindow: _mainWindow];
+	
+	[_idleWindow setAcceptsMouseMovedEvents: YES];
+	[_idleWindow setHidesOnDeactivate:       YES];
+	
 	/*
 		Installing a handler for event ID typeWildCard doesn't work;
 		we need kAEOpenApplication and kAEOpenDocuments explicitly.
@@ -690,7 +758,7 @@ void update_scale( unsigned image_width, unsigned image_height )
 	
 	if ( ! pin_postponed )
 	{
-		[self setCursorPinning: cursor_invisible()];
+		[self setCursorPinning: fullscreen  ||  cursor_invisible()];
 	}
 }
 
