@@ -296,7 +296,6 @@ NSWindow* create_window( const raster::raster_desc& desc, CGFloat scale )
 	lastSetBounds = [window contentRectForFrameRect: [window frame]];
 	
 	[window setTitle:                   processName];
-	[window makeKeyAndOrderFront:       nil];
 	[window setAcceptsMouseMovedEvents: YES];
 	[window setInitialFirstResponder:   view];
 	
@@ -740,6 +739,15 @@ void on_cursor_vis( bool visible )
 	
 	[_idleWindow setAcceptsMouseMovedEvents: YES];
 	[_idleWindow setHidesOnDeactivate:       YES];
+	
+	if ( fullscreen )
+	{
+		[self toggleFullscreen];
+	}
+	else
+	{
+		[_mainWindow makeKeyAndOrderFront: nil];
+	}
 	
 	/*
 		Installing a handler for event ID typeWildCard doesn't work;
