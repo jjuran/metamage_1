@@ -11,6 +11,9 @@
 // mac-app-utils
 #include "mac_app/quit.hh"
 
+// write-a-splode
+#include "splode/write-a-splode.hh"
+
 // frontend-common
 #include "frend/zoom.hh"
 
@@ -21,6 +24,7 @@
 #include "glfb/glfb.hh"
 
 // amicus
+#include "amicus/cursor.hh"
 #include "amicus/menu_defs.hh"
 #include "amicus/zoom.hh"
 
@@ -51,6 +55,36 @@ pascal OSErr handle_Quit_Apple_event( AppleEvent const* event,
 }
 
 DEFINE_UPP( AEEventHandler, handle_Quit_Apple_event )
+
+static
+NSPoint window_contentRect_topLeft( NSWindow* window )
+{
+	NSRect outer = [[window screen] frame];
+	NSRect inner = [window contentRectForFrameRect: [window frame]];
+	
+	CGFloat x = inner.origin.x;
+	CGFloat y = outer.size.height - inner.origin.y - inner.size.height;
+	
+	return NSMakePoint( x, y );
+}
+
+static
+void synchronize_cursor_location( NSView* view )
+{
+	NSWindow* window = [view window];
+	
+	NSPoint v_origin = [view frame].origin;
+	NSPoint w_origin = window_contentRect_topLeft( window );
+	
+	CGFloat scale = current_zoom_index / 2.0;
+	
+	CGFloat x = splode::last_sent_x * scale + v_origin.x + w_origin.x;
+	CGFloat y = splode::last_sent_y * scale + v_origin.y + w_origin.y;
+	
+	CGWarpMouseCursorPosition( CGPointMake( x, y ) );
+	
+	CGAssociateMouseAndMouseCursorPosition( true );
+}
 
 static
 NSWindow* create_window( const raster::raster_desc& desc, CGFloat scale )
@@ -205,6 +239,8 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 {
 	using frend::current_zoom_index;
 	
+	using amicus::cursor_hidden;
+	
 	const long tag = commandID;
 	
 	if ( tag != _zoomLevel )
@@ -217,6 +253,11 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 		[[_viewMenu itemWithTag: commandID  ] setState: NSOnState ];
 		
 		_zoomLevel = tag;
+		
+		if ( cursor_hidden )
+		{
+			synchronize_cursor_location( _mainGLView );
+		}
 	}
 }
 
