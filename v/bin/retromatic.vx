@@ -89,6 +89,11 @@ def active (feature)
 	return feature in config and config[ feature ]
 }
 
+def optional (key)
+{
+	return if key in config then { key => config[ key ] }
+}
+
 def config_txt
 {
 	return config map { v.key ": " (rep v.value) '\n' } per str
@@ -370,6 +375,8 @@ if "document-types" in config then
 
 let info =
 [
+	optional "CFBundleIdentifier",
+	
 	CFBundleExecutable:  name,
 	CFBundleName:        name,
 	(CFBundleIconFile:   "APPL") (*) bool icon,
