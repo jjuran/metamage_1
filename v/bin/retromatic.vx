@@ -353,6 +353,7 @@ if "document-types" in config then
 		
 		[
 			CFBundleTypeName: v.value,
+			CFBundleTypeRole: "Editor",  # a reasonable default for now
 			CFBundleTypeOSTypes: [ v.key ],
 			
 			if icon.size then
