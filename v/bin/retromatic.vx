@@ -94,6 +94,15 @@ def optional (key)
 	return if key in config then { key => config[ key ] }
 }
 
+def fallback (property)
+{
+	let key = property.key
+	
+	return if key in config
+		then { key => config[ key ] }
+		else { property }
+}
+
 def config_txt
 {
 	return config map { v.key ": " (rep v.value) '\n' } per str
@@ -376,13 +385,15 @@ if "document-types" in config then
 let info =
 [
 	optional "CFBundleIdentifier",
+	optional "CFBundleShortVersionString",
+	
+	fallback (CFBundleVersion: "for Advanced Mac Substitute"),
 	
 	CFBundleExecutable:  name,
 	CFBundleName:        name,
 	(CFBundleIconFile:   "APPL") (*) bool icon,
 	CFBundlePackageType: 'APPL',
 	CFBundleSignature:   creator,
-	CFBundleVersion:     "for Advanced Mac Substitute",
 	CFBundleGetInfoString: "(using the " frontend " front end)",
 	NSHighResolutionCapable: true,
 	
