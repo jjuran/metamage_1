@@ -398,6 +398,8 @@ let info =
 	NSHighResolutionCapable: true,
 	
 	doctypes,
+	
+	optional "LSApplicationCategoryType",
 ]
 
 def printer (depth, text)
