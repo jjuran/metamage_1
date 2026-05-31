@@ -40,6 +40,11 @@ namespace vfs
 	
 	namespace p7 = poseven;
 	
+	using iota::big_u16;
+	using iota::big_u32;
+	using iota::u16_from_big;
+	using iota::u32_from_big;
+	
 	
 	enum special_info
 	{
@@ -188,8 +193,8 @@ namespace vfs
 		
 		const OSType* q4 = (const OSType*) info.finderInfo;
 		
-		*p4++ = iota::big_u32( *q4++ );  // type
-		*p4++ = iota::big_u32( *q4++ );  // creator
+		*p4++ = big_u32( *q4++ );  // type
+		*p4++ = big_u32( *q4++ );  // creator
 		
 	#else
 		
@@ -206,10 +211,10 @@ namespace vfs
 			
 			const UInt16* q2 = (const UInt16*) q4;
 			
-			*p2++ = iota::big_u16( *q2++ );  // finderFlags
-			*p2++ = iota::big_u16( *q2++ );  // location.v
-			*p2++ = iota::big_u16( *q2++ );  // location.h
-			*p2++ = iota::big_u16( *q2++ );  // reservedField
+			*p2++ = big_u16( *q2++ );  // finderFlags
+			*p2++ = big_u16( *q2++ );  // location.v
+			*p2++ = big_u16( *q2++ );  // location.h
+			*p2++ = big_u16( *q2++ );  // reservedField
 			
 		#else
 			
@@ -226,11 +231,11 @@ namespace vfs
 			
 		#ifdef __APPLE__
 			
-			*p4++ = iota::big_u32( info.nodeID );  // Host information leak?
+			*p4++ = big_u32( info.nodeID );  // Host information leak?
 			
 		#else
 			
-			*p4++ = iota::big_u32( extra.st.st_ino );  // Host information leak?
+			*p4++ = big_u32( extra.st.st_ino );  // Host information leak?
 			
 		#endif
 			
@@ -242,13 +247,13 @@ namespace vfs
 			
 		#ifdef __APPLE__
 			
-			*p4++ = iota::big_u32( info.dataLogicalSize );
-			*p4++ = iota::big_u32( info.dataPhysicalSize );
+			*p4++ = big_u32( info.dataLogicalSize );
+			*p4++ = big_u32( info.dataPhysicalSize );
 			
 		#else
 			
-			*p4++ = iota::big_u32( extra.st.st_size );
-			*p4++ = iota::big_u32( extra.st.st_blocks * 512 );
+			*p4++ = big_u32( extra.st.st_size );
+			*p4++ = big_u32( extra.st.st_blocks * 512 );
 			
 		#endif
 			
@@ -260,10 +265,10 @@ namespace vfs
 			
 		#ifdef __APPLE__
 			
-			*p4++ = iota::big_u32( info.rsrcLogicalSize  );
-			*p4++ = iota::big_u32( info.rsrcPhysicalSize );
-			*p4++ = iota::big_u32( info.createDate    .lowSeconds );
-			*p4++ = iota::big_u32( info.contentModDate.lowSeconds );
+			*p4++ = big_u32( info.rsrcLogicalSize  );
+			*p4++ = big_u32( info.rsrcPhysicalSize );
+			*p4++ = big_u32( info.createDate    .lowSeconds );
+			*p4++ = big_u32( info.contentModDate.lowSeconds );
 			
 		#else
 			
@@ -272,7 +277,7 @@ namespace vfs
 			*p4++ = 0;
 			*p4++ = 0;
 			*p4++ = 0;
-			*p4++ = iota::big_u32( epoch_delta() + extra.st.st_mtime );
+			*p4++ = big_u32( epoch_delta() + extra.st.st_mtime );
 			
 		#endif
 		}
@@ -308,8 +313,8 @@ namespace vfs
 		
 		OSType* q4 = (OSType*) info.finderInfo;
 		
-		*q4++ = iota::u32_from_big( *p4++ );  // type
-		*q4++ = iota::u32_from_big( *p4++ );  // creator
+		*q4++ = u32_from_big( *p4++ );  // type
+		*q4++ = u32_from_big( *p4++ );  // creator
 		
 		const UInt16* p2 = (const UInt16*) p4;
 		
@@ -317,18 +322,18 @@ namespace vfs
 		{
 			UInt16* q2 = (UInt16*) q4;
 			
-			*q2++ = iota::u16_from_big( *p2++ );  // finderFlags
-			*q2++ = iota::u16_from_big( *p2++ );  // location.v
-			*q2++ = iota::u16_from_big( *p2++ );  // location.h
-			*q2++ = iota::u16_from_big( *p2++ );  // reservedField
+			*q2++ = u16_from_big( *p2++ );  // finderFlags
+			*q2++ = u16_from_big( *p2++ );  // location.v
+			*q2++ = u16_from_big( *p2++ );  // location.h
+			*q2++ = u16_from_big( *p2++ );  // reservedField
 		}
 		
 		if ( extra.type == Info_SetFInfo )
 		{
 			p4 = (const UInt32*) (data + size - 2 * sizeof (UInt32));
 			
-			info.createDate    .lowSeconds = iota::u32_from_big( *p4++ );
-			info.contentModDate.lowSeconds = iota::u32_from_big( *p4++ );
+			info.createDate    .lowSeconds = u32_from_big( *p4++ );
+			info.contentModDate.lowSeconds = u32_from_big( *p4++ );
 		}
 		
 		err = FSSetCatalogInfo( &extra.ref, bits, &info );
