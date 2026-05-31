@@ -19,8 +19,8 @@
 // iota
 #include "iota/endian.hh"
 
-// mac-types
-#include "mac_types/epoch.hh"
+// d1904z
+#include "d1904z.hh"
 
 // plus
 #include "plus/string.hh"
@@ -267,17 +267,15 @@ namespace vfs
 			
 			*p4++ = big_u32( info.rsrcLogicalSize  );
 			*p4++ = big_u32( info.rsrcPhysicalSize );
-			*p4++ = big_u32( info.createDate    .lowSeconds );
-			*p4++ = big_u32( info.contentModDate.lowSeconds );
+			*p4++ = big_u32( d1904_from_d1904z( info.createDate    .lowSeconds ) );
+			*p4++ = big_u32( d1904_from_d1904z( info.contentModDate.lowSeconds ) );
 			
 		#else
 			
-			using mac::types::epoch_delta;
-			
 			*p4++ = 0;
 			*p4++ = 0;
 			*p4++ = 0;
-			*p4++ = big_u32( epoch_delta() + extra.st.st_mtime );
+			*p4++ = big_u32( d1904_from_time( extra.st.st_mtime ) );
 			
 		#endif
 		}
@@ -332,8 +330,8 @@ namespace vfs
 		{
 			p4 = (const UInt32*) (data + size - 2 * sizeof (UInt32));
 			
-			info.createDate    .lowSeconds = u32_from_big( *p4++ );
-			info.contentModDate.lowSeconds = u32_from_big( *p4++ );
+			info.createDate    .lowSeconds = d1904z_from_d1904( u32_from_big( *p4++ ) );
+			info.contentModDate.lowSeconds = d1904z_from_d1904( u32_from_big( *p4++ ) );
 		}
 		
 		err = FSSetCatalogInfo( &extra.ref, bits, &info );
