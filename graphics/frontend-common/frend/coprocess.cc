@@ -23,7 +23,7 @@ namespace frend
 static const char* coprocess_argv[] =
 {
 	"./minivx",
-	"launch-ams-app.vx",
+	"../Resources/launch-app.vx",
 	NULL,  // #2, raster path
 	NULL,  // #3, events fd
 	NULL,

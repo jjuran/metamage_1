@@ -319,12 +319,14 @@ let new_data = ("name: " rep name) "\n" * not named
 
 rewrite Resources "/config.txt" <== new_data new_disk config_txt()
 
-let tools = "graphics/frontend-common/tools/launch-ams-app.vx"
+let launch_app = "graphics/frontend-common/tools/launch-ams-app.vx"
+
+copy( launch_app, Resources "/launch-app.vx" )
 
 let native_binary_names = ["minivx graft xv68k freemountd" / ' ']
 let native_binary_paths = native_binary_names map {var_bin "/" v}
 
-copy( tools, *native_binary_paths, MacOS_dir )
+copy( *native_binary_paths, MacOS_dir )
 
 if active "sound" and exists var_bin "/sndtrack" then
 {
