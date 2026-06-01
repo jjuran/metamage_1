@@ -48,6 +48,7 @@ extern "C" {
 	struct tm* localtime_r( const time_t*, struct tm *result );
 	
 	time_t mktime( struct tm *tm );
+	time_t timegm( struct tm *tm );
 	
 	time_t time( time_t* t );
 	
