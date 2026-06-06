@@ -46,7 +46,6 @@
 #include "raster/raster.hh"
 
 // amicus
-#include "amicus/apple_events.hh"
 #include "amicus/display_task.hh"
 
 // Amaretto
@@ -79,7 +78,6 @@ using frend::raster_updating;
 using glitter::on_display_event;
 
 using amicus::display_monitor;
-using amicus::wait_for_first_Apple_event;
 
 
 static
@@ -123,7 +121,6 @@ int main( int argc, char** argv )
 		return 1;
 	}
 	
-	if ( wait_for_first_Apple_event() == noErr )
 	{
 		bindir_fd = bindir( argv[ 0 ] );
 		

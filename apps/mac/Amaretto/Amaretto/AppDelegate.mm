@@ -28,6 +28,7 @@
 #include "glfb/glfb.hh"
 
 // amicus
+#include "amicus/apple_events.hh"
 #include "amicus/cursor.hh"
 #include "amicus/events.hh"
 #include "amicus/menu_defs.hh"
@@ -51,8 +52,11 @@ using frend::Zoom_index_2_0;
 using amicus::command_ID_for_zoom_index;
 using amicus::cursor_limit;
 using amicus::events_fd;
+using amicus::handle_Open_event;
 using amicus::top_zoom_index;
 
+
+static bool opened;
 
 static coprocess_state coprocess;
 
@@ -81,6 +85,28 @@ pascal OSErr handle_Quit_Apple_event( AppleEvent const* event,
 }
 
 DEFINE_UPP( AEEventHandler, handle_Quit_Apple_event )
+
+static
+pascal OSErr handle_Open_Apple_event( AppleEvent const* event,
+                                      AppleEvent*       reply,
+                                      SRefCon           refcon )
+{
+	OSErr err = handle_Open_event( event );
+	
+	if ( err == noErr )
+	{
+		if ( ! opened )
+		{
+			launch_coprocess();
+			
+			opened = true;
+		}
+	}
+	
+	return err;
+}
+
+DEFINE_UPP( AEEventHandler, handle_Open_Apple_event )
 
 static
 NSPoint window_contentRect_topLeft( NSWindow* window )
@@ -362,6 +388,23 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	                             0,
 	                             false );
 	
+	/*
+		Installing a handler for event ID typeWildCard doesn't work;
+		we need kAEOpenApplication and kAEOpenDocuments explicitly.
+	*/
+	
+	err = AEInstallEventHandler( kCoreEventClass,
+	                             kAEOpenApplication,
+	                             UPP_ARG( handle_Open_Apple_event ),
+	                             0,
+	                             false );
+	
+	err = AEInstallEventHandler( kCoreEventClass,
+	                             kAEOpenDocuments,
+	                             UPP_ARG( handle_Open_Apple_event ),
+	                             0,
+	                             false );
+	
 	_viewMenu = set_up_menus( _zoomLevel );
 	
 	_mainWindow = create_window( *_desc, current_zoom_index / 2.0 );
@@ -375,8 +418,6 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	pt.y -= frame.origin.y;
 	
 	[_mainGLView handleMouseMovedTo: pt];
-	
-	launch_coprocess();
 }
 
 @end
