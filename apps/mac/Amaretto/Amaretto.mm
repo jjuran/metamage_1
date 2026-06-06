@@ -119,7 +119,7 @@ int main( int argc, char** argv )
 	
 	signal( SIGCHLD, &sigchld );
 	
-	const char* works_path = frend::tempfile_location();
+	works_path = frend::tempfile_location();
 	
 	int nok = mkdir( works_path, 0777 );
 	
@@ -130,7 +130,7 @@ int main( int argc, char** argv )
 	
 	if ( wait_for_first_Apple_event() == noErr )
 	{
-		int bindir_fd = bindir( argv[ 0 ] );
+		bindir_fd = bindir( argv[ 0 ] );
 		
 		chdir( works_path );
 		

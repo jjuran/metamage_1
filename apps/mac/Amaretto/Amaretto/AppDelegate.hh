@@ -15,6 +15,10 @@ namespace raster
 	
 }
 
+extern int bindir_fd;
+
+extern const char* works_path;
+
 @interface AmarettoAppDelegate : NSObject
 {
 	const raster::raster_desc* _desc;

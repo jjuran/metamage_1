@@ -44,6 +44,10 @@ using amicus::command_ID_for_zoom_index;
 using amicus::top_zoom_index;
 
 
+int bindir_fd;
+
+const char* works_path;
+
 static
 pascal OSErr handle_Quit_Apple_event( AppleEvent const* event,
                                       AppleEvent*       reply,
