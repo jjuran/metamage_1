@@ -37,8 +37,10 @@ void exec_or_exit( const char* const argv[] )
 	_exit( errno == ENOENT ? 127 : 126 );
 }
 
-coprocess_launch::coprocess_launch( int bindir_fd, const char* works_path )
+coprocess_state launch_coprocess( int bindir_fd, const char* works_path )
 {
+	coprocess_state state;
+	
 	int socket_fds[ 2 ];
 	
 	int nok = socketpair( PF_UNIX, SOCK_STREAM, 0, socket_fds );
@@ -51,9 +53,9 @@ coprocess_launch::coprocess_launch( int bindir_fd, const char* works_path )
 	const int other_fd = socket_fds[ 0 ];
 	const int local_fd = socket_fds[ 1 ];
 	
-	its_pid = fork();
+	pid_t pid = fork();
 	
-	if ( its_pid < 0 )
+	if ( pid < 0 )
 	{
 		close( other_fd );
 		close( local_fd );
@@ -61,7 +63,7 @@ coprocess_launch::coprocess_launch( int bindir_fd, const char* works_path )
 		throw coprocess_failed();
 	}
 	
-	if ( its_pid == 0 )
+	if ( pid == 0 )
 	{
 		fchdir( bindir_fd );
 		close ( bindir_fd );
@@ -78,13 +80,19 @@ coprocess_launch::coprocess_launch( int bindir_fd, const char* works_path )
 	
 	close( other_fd );
 	
-	its_socket = local_fd;
+	state.child_pid = pid;
+	state.socket_fd = local_fd;
+	
+	return state;
 }
 
-coprocess_launch::~coprocess_launch()
+int wait_for_coprocess( int pid )
 {
 	int wait_status;
-	waitpid( its_pid, &wait_status, 0 );
+	
+	waitpid( pid, &wait_status, 0 );
+	
+	return wait_status;
 }
 
 }
