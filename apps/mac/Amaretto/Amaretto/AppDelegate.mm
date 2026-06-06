@@ -5,6 +5,9 @@
 
 #include "Amaretto/AppDelegate.hh"
 
+// POSIX
+#include <unistd.h>
+
 // mac-config
 #include "mac_config/upp-macros.hh"
 
@@ -15,6 +18,7 @@
 #include "splode/write-a-splode.hh"
 
 // frontend-common
+#include "frend/coprocess.hh"
 #include "frend/zoom.hh"
 
 // rasterlib
@@ -25,6 +29,7 @@
 
 // amicus
 #include "amicus/cursor.hh"
+#include "amicus/events.hh"
 #include "amicus/menu_defs.hh"
 #include "amicus/zoom.hh"
 
@@ -36,17 +41,34 @@
 using mac::app::quit;
 
 using frend::cap_zoom_index;
+using frend::coprocess_state;
 using frend::current_zoom_index;
+using frend::launch_coprocess;
 using frend::maximum_zoom_index;
+using frend::wait_for_coprocess;
 using frend::Zoom_index_2_0;
 
 using amicus::command_ID_for_zoom_index;
+using amicus::cursor_limit;
+using amicus::events_fd;
 using amicus::top_zoom_index;
 
+
+static coprocess_state coprocess;
 
 int bindir_fd;
 
 const char* works_path;
+
+static
+void launch_coprocess()
+{
+	coprocess = launch_coprocess( bindir_fd, works_path );
+	
+	events_fd = coprocess.socket_fd;
+	
+	close( bindir_fd );
+}
 
 static
 pascal OSErr handle_Quit_Apple_event( AppleEvent const* event,
@@ -223,6 +245,8 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	
 	cap_zoom_index( desc.width, desc.height, space.width, space.height );
 	
+	cursor_limit = CGPointMake( desc.width - 1, desc.height - 1 );
+	
 	_desc = &desc;
 	
 	_zoomLevel = kZoom100Percent;
@@ -232,6 +256,13 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 
 - (void) dealloc
 {
+	close( events_fd );
+	
+	if ( int pid = coprocess.child_pid )
+	{
+		wait_for_coprocess( pid );
+	}
+	
 	[_mainWindow release];
 	
 	glfb::terminate();
@@ -344,6 +375,8 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	pt.y -= frame.origin.y;
 	
 	[_mainGLView handleMouseMovedTo: pt];
+	
+	launch_coprocess();
 }
 
 @end

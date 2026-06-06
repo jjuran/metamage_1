@@ -28,7 +28,6 @@
 #include "glfb/glfb.hh"
 
 // frontend-common
-#include "frend/coprocess.hh"
 #include "frend/cursor.hh"
 #include "frend/display_events.hh"
 #include "frend/displayfs.hh"
@@ -49,7 +48,6 @@
 // amicus
 #include "amicus/apple_events.hh"
 #include "amicus/display_task.hh"
-#include "amicus/events.hh"
 
 // Amaretto
 #include "Amaretto/AppDelegate.hh"
@@ -74,16 +72,13 @@ using frend::raster_path;
 
 using frend::display_events;
 
-using frend::coprocess_launch;
 using frend::cursor_lifetime;
 using frend::raster_lifetime;
 using frend::raster_updating;
 
 using glitter::on_display_event;
 
-using amicus::cursor_limit;
 using amicus::display_monitor;
-using amicus::events_fd;
 using amicus::wait_for_first_Apple_event;
 
 
@@ -153,19 +148,10 @@ int main( int argc, char** argv )
 		
 		raster_updating   update_fifo;
 		display_monitor   monitored_display( live_raster.get(), perform );
-		coprocess_launch  launched_coprocess( bindir_fd, works_path );
-		
-		events_fd = launched_coprocess.socket();
-		
-		close( bindir_fd );
-		
-		cursor_limit = CGPointMake( desc.width - 1, desc.height - 1 );
 		
 		[NSApp setDelegate: appDelegate];
 		
 		[NSApp run];
-		
-		close( events_fd );
 	}
 	
 	rmdir( works_path );
