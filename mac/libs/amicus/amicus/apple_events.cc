@@ -162,6 +162,11 @@ pascal OSErr handle_required_Apple_event( AppleEvent const* event,
 
 DEFINE_UPP( AEEventHandler, handle_required_Apple_event )
 
+int handle_Open_event( const AppleEvent* event )
+{
+	return handle_required_Apple_event( event, NULL, 0 );
+}
+
 int wait_for_first_Apple_event()
 {
 	OSStatus err;
