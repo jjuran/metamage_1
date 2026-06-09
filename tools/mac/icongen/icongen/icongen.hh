@@ -12,6 +12,8 @@
 #endif
 
 
+extern const char* input_path;
+
 typedef void (*drawer)( CGContextRef c, size_t width, size_t height );
 
 int icongen_main( int argc, char** argv, drawer draw );

@@ -27,6 +27,7 @@ enum
 {
 	Opt_JP2    = 'J',
 	Opt_PNG    = 'P',
+	Opt_input  = 'i',
 	Opt_output = 'o',
 	Opt_RLE_24 = 't',  // thumbnail 24-bit RLE-compressed planar data
 	Opt_mask_8 = 'k',  // thumbnail 8-bit mask
@@ -40,6 +41,7 @@ static command::option options[] =
 	{ "jp2k",        Opt_JP2                    },
 	{ "thumbnail",   Opt_RLE_24                 },
 	{ "mask",        Opt_mask_8                 },
+	{ "input-file",  Opt_input,  Param_required },
 	{ "output-file", Opt_output, Param_required },
 	{ "edge-length", Opt_length, Param_required },
 	{ NULL }
@@ -55,6 +57,8 @@ enum Image_mode
 
 static Image_mode image_mode;
 
+const char* input_path = NULL;
+
 const char* output_path = NULL;
 const char* edge_length = NULL;
 
@@ -69,6 +73,10 @@ char* const* get_options( char** argv )
 	{
 		switch ( opt )
 		{
+			case Opt_input:
+				input_path = command::global_result.param;
+				break;
+			
 			case Opt_output:
 				output_path = command::global_result.param;
 				break;
