@@ -51,6 +51,8 @@ int events_fd = -1;
 
 CGPoint cursor_limit;
 
+bool ignore_next_mouse_moved_event;
+
 void move_cursor_to( CGPoint location )
 {
 	CGWarpMouseCursorPosition( location );
@@ -90,6 +92,13 @@ void handle_mouse_moved_event( CGPoint next_cursor_location )
 static
 void handle_mouse_moved_event( CGEventRef event )
 {
+	if ( ignore_next_mouse_moved_event )
+	{
+		ignore_next_mouse_moved_event = false;
+		
+		return;
+	}
+	
 	long dx = CGEventGetIntegerValueField( event, kCGMouseEventDeltaX );
 	long dy = CGEventGetIntegerValueField( event, kCGMouseEventDeltaY );
 	

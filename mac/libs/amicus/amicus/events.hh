@@ -25,6 +25,8 @@ extern int events_fd;
 
 extern CGPoint cursor_limit;
 
+extern bool ignore_next_mouse_moved_event;
+
 void move_cursor_to( CGPoint location );
 
 long send_key_event( EventRef event, char c, uint8_t more_attrs = 0 );
