@@ -202,7 +202,12 @@ void ExitToShell_patch()
 {
 	using mac::sys::set_trap_address;
 	
+#ifdef PATCH_SAVEGAME_CODE
+	
 	set_trap_address( old_CurResFile,  _CurResFile  );
+	
+#endif
+	
 	set_trap_address( old_ExitToShell, _ExitToShell );
 	
 	asm
@@ -623,12 +628,14 @@ void TEInit_handler()
 	#ifdef PATCH_SAVEGAME_CODE
 		
 		old_CurResFile  = get_trap_address( _CurResFile  );
-		old_ExitToShell = get_trap_address( _ExitToShell );
 		
 		set_trap_address( (ProcPtr) CurResFile_patch,  _CurResFile  );
-		set_trap_address( (ProcPtr) ExitToShell_patch, _ExitToShell );
 		
 	#endif
+		
+		old_ExitToShell = get_trap_address( _ExitToShell );
+		
+		set_trap_address( (ProcPtr) ExitToShell_patch, _ExitToShell );
 		
 		if ( (h = GetResource( 'CODE', ENVCHECK_CODE_RESID )) )
 		{
