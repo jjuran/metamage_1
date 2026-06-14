@@ -109,6 +109,9 @@
 */
 
 // Mac OS
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
@@ -142,11 +145,17 @@ enum
 	
 	_CurResFile  = 0xA994,
 	_ExitToShell = 0xA9F4,
+	_InitCursor  = 0xA850,
+	_ShowCursor  = 0xA853,
 	_TEInit      = 0xA9CC,
 };
 
+short CrsrState : 0x08D0;
+
 static UniversalProcPtr old_CurResFile;
 static UniversalProcPtr old_ExitToShell;
+static UniversalProcPtr old_InitCursor;
+static UniversalProcPtr old_ShowCursor;
 static UniversalProcPtr old_TEInit;
 
 
@@ -208,6 +217,8 @@ void ExitToShell_patch()
 	
 #endif
 	
+	set_trap_address( old_InitCursor,  _InitCursor  );
+	set_trap_address( old_ShowCursor,  _ShowCursor  );
 	set_trap_address( old_ExitToShell, _ExitToShell );
 	
 	asm
@@ -614,6 +625,47 @@ void install_tabpause_patch( Handle h, Size handle_size )
 }
 
 static
+void InitCursor_patch()
+{
+	using mac::sys::set_trap_address;
+	
+	/*
+		Suppress the call to InitCursor(), once.
+		Otherwise, a brief flicker of the cursor
+		is visible before the title screen shows.
+	*/
+	
+	set_trap_address( old_InitCursor, _InitCursor );
+}
+
+static
+void ShowCursor_patch()
+{
+	using mac::sys::set_trap_address;
+	
+	/*
+		Since we suppressed the call to InitCursor(),
+		the initial cursor level after initialization
+		is -1, not 0, and the current cursor level is
+		one less than what it would otherwise be.
+		
+		If incrementing CrsrState returns us to the
+		initial cursor level of -1, then explicitly
+		call InitCursor(), which will (a) initialize
+		the cursor (since we skipped it earlier) and
+		(b) show the cursor.  Also, remove the patch,
+		since the cursor is no longer out of balance.
+	*/
+	
+	if ( ++CrsrState == -1 )
+	{
+		InitCursor();
+		
+		set_trap_address( old_ShowCursor, _ShowCursor );
+	}
+}
+
+static
 void TEInit_handler()
 {
 	using mac::glue::GetHandleSize_raw;
@@ -632,6 +684,23 @@ void TEInit_handler()
 		set_trap_address( (ProcPtr) CurResFile_patch,  _CurResFile  );
 		
 	#endif
+		
+		old_InitCursor = get_trap_address( _InitCursor );
+		old_ShowCursor = get_trap_address( _ShowCursor );
+		
+		if ( CrsrState < 0 )
+		{
+			/*
+				Install patches to suppress showing the cursor
+				during initialization, but only if the cursor
+				remains hidden -- the ShowCursor patch assumes
+				assumes this.  (Also, if the cursor is already
+				showing, the patches provide no benefit.)
+			*/
+			
+			set_trap_address( (ProcPtr) InitCursor_patch, _InitCursor );
+			set_trap_address( (ProcPtr) ShowCursor_patch, _ShowCursor );
+		}
 		
 		old_ExitToShell = get_trap_address( _ExitToShell );
 		
