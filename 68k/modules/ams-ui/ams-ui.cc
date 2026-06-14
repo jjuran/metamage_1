@@ -51,14 +51,17 @@ enum
 	Opt_last_byte = 255,
 	
 	Opt_debug_updates,
+	Opt_hide_initial_desktop,
 	Opt_live_ModalFilter,
 };
 
 static command::option options[] =
 {
-	{ "debug-updates",     Opt_debug_updates    },
-	{ "live-modal",        Opt_live_ModalFilter },
-	{ "live-modal-filter", Opt_live_ModalFilter },
+	{ "debug-updates",        Opt_debug_updates        },
+	{ "hide-desktop",         Opt_hide_initial_desktop },
+	{ "hide-initial-desktop", Opt_hide_initial_desktop },
+	{ "live-modal",           Opt_live_ModalFilter     },
+	{ "live-modal-filter",    Opt_live_ModalFilter     },
 	
 	{ "gne-ticks",  Opt_GNEtix, command::Param_required },
 	
@@ -318,6 +321,10 @@ char* const* get_options( char** argv )
 		{
 			case Opt_debug_updates:
 				debug_updates = true;
+				break;
+			
+			case Opt_hide_initial_desktop:
+				hide_initial_desktop = true;
 				break;
 			
 			case Opt_live_ModalFilter:

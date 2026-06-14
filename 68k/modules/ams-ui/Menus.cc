@@ -41,6 +41,7 @@ extern "C" pascal void SysBeep( short ticks )  ONEWORDINLINE( 0xA9C8 );
 
 // ams-ui
 #include "MBDF.hh"
+#include "options.hh"
 #include "Windows.hh"
 
 
@@ -228,7 +229,10 @@ pascal void InitMenus_patch()
 	
 	calculate_menu_bar_height();
 	
-	draw_menu_bar_from_WMgr_port();
+	if ( ! hide_initial_desktop )
+	{
+		draw_menu_bar_from_WMgr_port();
+	}
 	
 	MenuList = (MenuList_header**) NewHandleClear( sizeof (MenuList_header) );
 	

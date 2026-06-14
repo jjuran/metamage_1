@@ -284,7 +284,10 @@ pascal void InitWindows_patch()
 	CurActivate = NULL;
 	CurDeactive = NULL;
 	
-	draw_desktop_from_WMgrPort();
+	if ( ! hide_initial_desktop )
+	{
+		draw_desktop_from_WMgrPort();
+	}
 	
 	InitMenus();  // Some applications assume this.
 	
