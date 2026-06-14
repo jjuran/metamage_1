@@ -54,6 +54,8 @@ enum
 {
 	Opt_last_byte = 255,
 	
+	Opt_hide_startup,
+	
 	Opt_shutoff_delay,
 	Opt_startup_delay,
 	Opt_welcome_delay,
@@ -61,6 +63,8 @@ enum
 
 static command::option options[] =
 {
+	{ "hide-startup", Opt_hide_startup },
+	
 	{ "shutdown", Opt_shutoff_delay, command::Param_required },
 	{ "startup",  Opt_startup_delay, command::Param_required },
 	{ "welcome",  Opt_welcome_delay, command::Param_required },
@@ -76,6 +80,8 @@ struct LaunchParamBlockRec
 };
 
 static QDGlobals qd;
+
+static bool hiding_startup;
 
 static UInt32 shutoff_ticks;
 static UInt32 startup_ticks;
@@ -214,6 +220,10 @@ char* const* get_options( char** argv )
 		
 		switch ( opt )
 		{
+			case Opt_hide_startup:
+				hiding_startup = true;
+				break;
+			
 			case Opt_shutoff_delay:
 				shutoff_ticks = parse_unsigned_decimal( &global_result.param );
 				break;
@@ -251,7 +261,10 @@ int main( int argc, char** argv )
 	
 	const size_t len = strlen( path );
 	
-	InitCursor();
+	if ( ! hiding_startup )
+	{
+		InitCursor();
+	}
 	
 	InitGraf( &qd.thePort );
 	
@@ -263,7 +276,7 @@ int main( int argc, char** argv )
 	{
 		mac::glue::delay( startup_ticks );
 	}
-	else
+	else if ( ! hiding_startup )
 	{
 		FillRoundRect( &port.portRect, 16, 16, &qd.gray );
 	}
@@ -283,6 +296,12 @@ int main( int argc, char** argv )
 	{
 		ShutDwnInstall( &paint_shutdown_screen, sdOnPowerOff | sdOnUnmount );
 	}
+	
+	/*
+		TODO:  If we're hiding startup, then lock the screen to
+		suppress the showing of INITs' icons.  If any icons are
+		animated using delays, we'll need a way to defeat that.
+	*/
 	
 	InitResources();
 	InitAllPacks();
