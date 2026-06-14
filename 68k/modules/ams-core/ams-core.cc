@@ -479,7 +479,6 @@ int main( int argc, char** argv )
 	create_system_heap();
 	
 	init_lowmem_Cursor();
-	init_cursor();
 	
 	install_OSUtils();
 	

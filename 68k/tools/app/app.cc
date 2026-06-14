@@ -251,6 +251,8 @@ int main( int argc, char** argv )
 	
 	const size_t len = strlen( path );
 	
+	InitCursor();
+	
 	InitGraf( &qd.thePort );
 	
 	GrafPort port;
