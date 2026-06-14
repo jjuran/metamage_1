@@ -279,6 +279,17 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 #endif
 	
+	/*
+		After disassociating mouse movement and the cursor position
+		(which display_capture's constructor does), the next mouse-
+		moved event sometimes has a bogus location and delta -- even
+		without a preceding call to warp/move the cursor, apparently.
+		
+		See also <https://github.com/glfw/glfw/issues/2523>.
+	*/
+	
+	ignore_next_mouse_moved_event = true;
+	
 	display_events.finish = &quit;
 	display_events.render = &Blitter::render;
 	
