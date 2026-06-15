@@ -140,12 +140,12 @@ def core_opts
 {
 	var opts = [ "--events-fd=" events_fd_slot ]
 	
-	if "auto-clear" in config and config[ "auto-clear" ] then
+	if active "auto-clear" then
 	{
 		opts <-- "-0"
 	}
 	
-	if "auto-vsync" in config and config[ "auto-vsync" ] then
+	if active "auto-vsync" then
 	{
 		opts <-- "-Y"
 	}
