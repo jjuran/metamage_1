@@ -222,6 +222,7 @@ namespace vfs
 					Let the OS handle this for us via POSIX APIs.
 				*/
 			}
+		#ifndef __RELIX__
 			else if ( node_ptr info = mac_lookup_info( parent_path.c_str(),
 			                                           fork_name,
 			                                           parent,
@@ -229,6 +230,7 @@ namespace vfs
 			{
 				return info;
 			}
+		#endif
 		}
 		
 		return new_posix_file( path.move(), name, parent, uid );
