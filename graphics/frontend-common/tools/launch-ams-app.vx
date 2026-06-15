@@ -242,7 +242,7 @@ def snd_opts
 
 def ui_opts
 {
-	let opts = [ optional "live-modal" ]
+	let opts = [ "hide-desktop", "live-modal" ] map optional
 	
 	return
 	if opts then
@@ -277,7 +277,7 @@ ams_modules <-- "umsp"
 
 let module_opts = ams_modules map {"-m", argify v}
 
-let app-subcmd = ams_bin "/app", app_name
+let app-subcmd = ams_bin "/app", optional "hide-startup", app_name
 
 let file-servers = mntfs-server, appfs-server, docfs-server, prefs-server
 let servers = sound-server, file-servers
