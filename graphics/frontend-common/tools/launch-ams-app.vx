@@ -278,7 +278,7 @@ ams_modules <-- "umsp"
 
 let module_opts = ams_modules map {"-m", argify v}
 
-let app = ams_bin "/app"
+let app-subcmd = ams_bin "/app", app_name
 
 let file-servers = mntfs-server, appfs-server, docfs-server, prefs-server
 let servers = sound-server, file-servers
@@ -288,7 +288,9 @@ let xv68k_opts = model_opt, mem_opt, sound_opt, xv_opt, "-tSP"
 let xv68k-screen = "--raster=" screen_fb_path
 let xv68k-cursor = "--cursor=" cursor_fb_path (*) has_cursor
 
-let xv68k-subcmd = "./xv68k", xv68k_opts, xv68k-screen, xv68k-cursor, *module_opts, app, app_name
+let xv68k-basics = xv68k_opts, xv68k-screen, xv68k-cursor
+
+let xv68k-subcmd = "./xv68k", xv68k-basics, *module_opts, app-subcmd
 let graft-subcmd = "./graft", servers, xv68k-subcmd
 
 let command = [ graft-subcmd ]
