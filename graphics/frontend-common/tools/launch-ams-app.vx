@@ -47,6 +47,11 @@ def active (feature)
 	return feature in config and config[ feature ]
 }
 
+def optional (feature)
+{
+	return if active feature then { "--" feature }
+}
+
 let root_dir = ams_mnt
 
 def freemountd_rw (root) { "./freemountd -qu --rw --root" / ' ', root, "//" }
@@ -237,13 +242,7 @@ def snd_opts
 
 def ui_opts
 {
-	let live_modal_opt =
-	if "live-modal" in config then
-	{
-		"--live-modal",
-	}
-	
-	let opts = [ live_modal_opt ]
+	let opts = [ optional "live-modal" ]
 	
 	return
 	if opts then
