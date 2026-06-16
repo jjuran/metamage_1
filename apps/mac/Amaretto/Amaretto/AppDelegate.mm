@@ -19,6 +19,7 @@
 
 // frontend-common
 #include "frend/coprocess.hh"
+#include "frend/cursor.hh"
 #include "frend/zoom.hh"
 
 // rasterlib
@@ -44,6 +45,7 @@ using mac::app::quit;
 using frend::cap_zoom_index;
 using frend::coprocess_state;
 using frend::current_zoom_index;
+using frend::cursor_pinned;
 using frend::launch_coprocess;
 using frend::maximum_zoom_index;
 using frend::wait_for_coprocess;
@@ -95,6 +97,11 @@ void synchronize_cursor_location( NSView* view )
 static
 void update_cursor_location( AmarettoOpenGLView* view )
 {
+	if ( cursor_pinned )
+	{
+		return;
+	}
+	
 	NSWindow* window = [view window];
 	
 	NSPoint origin = [window frame].origin;
@@ -306,11 +313,41 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 		wait_for_coprocess( pid );
 	}
 	
+	if ( cursor_pinned )
+	{
+		synchronize_cursor_location( _mainGLView );
+	}
+	
 	[_mainWindow release];
 	
 	glfb::terminate();
 	
 	[super dealloc];
+}
+
+- (void) setCursorPinning: (BOOL) pinning
+{
+	using amicus::ignore_next_mouse_moved_event;
+	using amicus::set_cursor_hidden;
+	
+	/*
+		If we're pinning a visible cursor, hide it.
+		(We don't show the cursor when unpinning it,
+		because it stays within the window.)
+	*/
+	
+	cursor_pinned = pinning;
+	
+	if ( pinning )
+	{
+		ignore_next_mouse_moved_event = true;
+		
+		set_cursor_hidden( true );
+	}
+	
+	synchronize_cursor_location( _mainGLView );
+	
+	CGAssociateMouseAndMouseCursorPosition( ! pinning );
 }
 
 - (void) doZoom: (long) commandID
@@ -334,9 +371,7 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 		
 		if ( cursor_hidden )
 		{
-			synchronize_cursor_location( _mainGLView );
-			
-			CGAssociateMouseAndMouseCursorPosition( true );
+			[self setCursorPinning: cursor_pinned];
 		}
 	}
 }

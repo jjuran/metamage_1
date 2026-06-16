@@ -34,6 +34,8 @@ extern const char* works_path;
 
 - (void) dealloc;
 
+- (void) setCursorPinning: (BOOL) pinning;
+
 - (void) doZoom: (long) commandID;
 
 - (void) doMenuItem: (id) sender;

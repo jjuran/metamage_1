@@ -17,9 +17,6 @@
 // posix-utils
 #include "posix/bindir.hh"
 
-// v68k-cursor
-#include "cursor/cursor.hh"
-
 // mac-app-utils
 #include "mac_app/become_application.hh"
 #include "mac_app/quit.hh"
@@ -97,6 +94,14 @@ void set_palette( const raster::raster_load& load )
 	}
 }
 
+static
+void on_cursor_vis( bool visible )
+{
+	AmarettoAppDelegate* delegate = (AmarettoAppDelegate*) [NSApp delegate];
+	
+	[delegate setCursorPinning: ! visible];
+}
+
 int main( int argc, char** argv )
 {
 	releasing pool( [NSAutoreleasePool new] );
@@ -134,6 +139,8 @@ int main( int argc, char** argv )
 		
 		display_events.finish = &mac::app::quit_Cocoa;
 		display_events.render = &glfb::render_and_flush;
+		
+		display_events.cursor_vis = &on_cursor_vis;
 		
 		glfb::cursor_enabled = frend::cursor_state != NULL;
 		
