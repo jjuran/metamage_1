@@ -109,7 +109,7 @@ pascal OSErr handle_Open_Apple_event( AppleEvent const* event,
 DEFINE_UPP( AEEventHandler, handle_Open_Apple_event )
 
 static
-NSPoint window_contentRect_topLeft( NSWindow* window )
+CGPoint window_contentRect_topLeft( NSWindow* window )
 {
 	NSRect outer = [[window screen] frame];
 	NSRect inner = [window contentRectForFrameRect: [window frame]];
@@ -117,7 +117,7 @@ NSPoint window_contentRect_topLeft( NSWindow* window )
 	CGFloat x = inner.origin.x;
 	CGFloat y = outer.size.height - inner.origin.y - inner.size.height;
 	
-	return NSMakePoint( x, y );
+	return CGPointMake( x, y );
 }
 
 static
@@ -126,7 +126,7 @@ void synchronize_cursor_location( NSView* view )
 	NSWindow* window = [view window];
 	
 	NSPoint v_origin = [view frame].origin;
-	NSPoint w_origin = window_contentRect_topLeft( window );
+	CGPoint w_origin = window_contentRect_topLeft( window );
 	
 	CGFloat scale = current_zoom_index / 2.0;
 	
