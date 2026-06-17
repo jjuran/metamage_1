@@ -428,4 +428,9 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	update_cursor_location( _mainGLView );
 }
 
+- (void) applicationDidBecomeActive: (NSNotification*) notification
+{
+	update_cursor_location( _mainGLView );
+}
+
 @end

@@ -40,4 +40,6 @@ extern const char* works_path;
 
 - (void) applicationWillFinishLaunching: (NSNotification*) notification;
 
+- (void) applicationDidBecomeActive: (NSNotification*) notification;
+
 @end
