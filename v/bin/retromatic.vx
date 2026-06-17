@@ -131,7 +131,7 @@ var disks = []
 
 var files_to_copy = []
 
-let extensions = [ ".mbin", ".mbim" ]
+let extensions = [ ".archive", ".mbin", ".mbim" ]
 
 def auto_mbin_disk (name)
 {
