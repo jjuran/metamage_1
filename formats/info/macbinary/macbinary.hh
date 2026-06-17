@@ -82,6 +82,8 @@ namespace macbinary
 	
 #pragma options align=reset
 	
+	void update_crc( header& h );
+	
 	int8_t version( const header& h );
 	
 }

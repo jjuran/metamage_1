@@ -38,6 +38,11 @@ bool crc_check( const header& h )
 	return header_checksum( &h ) == iota::u16_from_big( h.crc );
 }
 
+void update_crc( header& h )
+{
+	h.crc = iota::big_u16( header_checksum( &h ) );
+}
+
 int8_t version( const header& h )
 {
 	const uint8_t filename_len = h.filename[ 0 ];
