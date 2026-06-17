@@ -139,6 +139,21 @@ void synchronize_cursor_location( NSView* view )
 }
 
 static
+void update_cursor_location( AmarettoOpenGLView* view )
+{
+	NSWindow* window = [view window];
+	
+	NSPoint origin = [window frame].origin;
+	
+	NSPoint pt = [NSEvent mouseLocation];
+	
+	pt.x -= origin.x;
+	pt.y -= origin.y;
+	
+	[view handleMouseMovedTo: pt];
+}
+
+static
 NSWindow* create_window( const raster::raster_desc& desc, CGFloat scale )
 {
 	int width  = desc.width;
@@ -410,14 +425,7 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	_mainWindow = create_window( *_desc, current_zoom_index / 2.0 );
 	_mainGLView = [_mainWindow initialFirstResponder];
 	
-	NSRect frame = [_mainWindow frame];
-	
-	NSPoint pt = [NSEvent mouseLocation];
-	
-	pt.x -= frame.origin.x;
-	pt.y -= frame.origin.y;
-	
-	[_mainGLView handleMouseMovedTo: pt];
+	update_cursor_location( _mainGLView );
 }
 
 @end
