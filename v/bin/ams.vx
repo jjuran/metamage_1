@@ -379,7 +379,7 @@ def io_opts
 	}
 }
 
-let extensions = [ ".mbin", ".mbim" ]
+let extensions = [ ".archive", ".mbin", ".mbim" ]
 
 def auto_mbin_disk (app_name)
 {
