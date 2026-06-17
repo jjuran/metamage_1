@@ -90,8 +90,6 @@ void synchronize_cursor_location( NSView* view )
 	CGFloat y = splode::last_sent_y * scale + v_origin.y + w_origin.y;
 	
 	CGWarpMouseCursorPosition( CGPointMake( x, y ) );
-	
-	CGAssociateMouseAndMouseCursorPosition( true );
 }
 
 static
@@ -337,6 +335,8 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 		if ( cursor_hidden )
 		{
 			synchronize_cursor_location( _mainGLView );
+			
+			CGAssociateMouseAndMouseCursorPosition( true );
 		}
 	}
 }
