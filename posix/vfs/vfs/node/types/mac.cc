@@ -387,13 +387,12 @@ node_ptr mac_lookup_info( const char*  path,
 	{
 		type = Info_SetFInfo;
 	}
-	
-	if ( type )
+	else
 	{
-		return new_info( type, path, parent, user );
+		return node_ptr();
 	}
 	
-	return node_ptr();
+	return new_info( type, path, parent, user );
 }
 
 }
