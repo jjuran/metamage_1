@@ -29,10 +29,11 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
-#include "vfs/node.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node.hh"
+#include "vfs/node/types/FSCatInfo.hh"
 
 
 namespace vfs
@@ -63,50 +64,6 @@ namespace vfs
 		80 - 30,  // size of HFileParam starting at ioFlAttrib
 		80 - 32,  // size of HFileParam starting at ioFlFndrInfo
 	};
-	
-#ifdef __APPLE__
-	
-	const FSCatalogInfoBitmap bitmap_for_GetFInfo
-		= kFSCatInfoNodeID
-		| kFSCatInfoCreateDate
-		| kFSCatInfoContentMod
-		| kFSCatInfoFinderInfo
-		| kFSCatInfoDataSizes
-		| kFSCatInfoRsrcSizes;
-	
-	const FSCatalogInfoBitmap bitmap_for_SetFInfo
-		= kFSCatInfoCreateDate
-		| kFSCatInfoContentMod
-		| kFSCatInfoFinderInfo;
-	
-	static const FSCatalogInfoBitmap info_bits[] =
-	{
-		0,
-		kFSCatInfoFinderInfo,
-		kFSCatInfoFinderInfo,
-		bitmap_for_GetFInfo,
-		bitmap_for_SetFInfo,
-	};
-	
-	static inline
-	FSPermissionInfo& get( FSPermissionInfo& permissions )
-	{
-		return permissions;
-	}
-	
-	static inline
-	FSPermissionInfo& get( UInt32* permissions )
-	{
-		return *(FSPermissionInfo*) permissions;
-	}
-	
-	static inline
-	FSPermissionInfo& permissions( FSCatalogInfo& info )
-	{
-		return get( info.permissions );
-	}
-	
-#endif  // #ifdef __APPLE__
 	
 	struct macinfo_extra
 	{
