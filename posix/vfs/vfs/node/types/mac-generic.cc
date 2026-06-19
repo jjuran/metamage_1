@@ -1,14 +1,9 @@
 /*
-	mac.cc
-	------
+	mac-generic.cc
+	--------------
 */
 
 #include "vfs/node/types/mac.hh"
-
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
 
 // POSIX
 #include <sys/stat.h>
@@ -33,7 +28,6 @@
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node.hh"
-#include "vfs/node/types/FSCatInfo.hh"
 #include "vfs/node/types/namedfork.hh"
 
 
@@ -48,15 +42,13 @@ using iota::u16_from_big;
 using iota::u32_from_big;
 
 
-struct macinfo_extra
+struct macinfo_extra_generic
 {
-#ifdef __APPLE__
-	FSRef         ref;
-#else
 	struct stat   st;
-#endif
 	special_info  type;
 };
+
+typedef macinfo_extra_generic macinfo_extra;
 
 static
 void macinfo_stat( const node*   that,
@@ -66,27 +58,7 @@ void macinfo_stat( const node*   that,
 	
 	memset( &st, '\0', sizeof st );
 	
-#ifdef __APPLE__
-	
-	FSCatalogInfoBitmap bits = kFSCatInfoPermissions;
-	FSCatalogInfo       info;
-	
-	OSStatus err;
-	
-	err = FSGetCatalogInfo( &extra.ref, bits, &info, NULL, NULL, NULL );
-	
-	if ( err )
-	{
-		return;
-	}
-	
-	st.st_mode = permissions( info ).mode;
-	
-#else
-	
 	st.st_mode = extra.st.st_mode;
-	
-#endif
 	
 	st.st_size = info_sizes[ extra.type ];
 }
@@ -101,22 +73,6 @@ plus::string macinfo_slurp( const node* that )
 		p7::throw_errno( EPERM );
 	}
 	
-#ifdef __APPLE__
-	
-	FSCatalogInfoBitmap bits = info_bits[ extra.type ];
-	FSCatalogInfo       info;
-	
-	OSStatus err;
-	
-	err = FSGetCatalogInfo( &extra.ref, bits, &info, NULL, NULL, NULL );
-	
-	if ( err )
-	{
-		return plus::string::null;  // FIXME
-	}
-	
-#endif
-	
 	plus::string result;
 	
 	char* begin = result.reset( info_sizes[ extra.type ] );
@@ -129,55 +85,23 @@ plus::string macinfo_slurp( const node* that )
 	
 	uint32_t* p4 = (uint32_t*) begin;
 	
-#ifdef __APPLE__
-	
-	const OSType* q4 = (const OSType*) info.finderInfo;
-	
-	*p4++ = big_u32( *q4++ );  // type
-	*p4++ = big_u32( *q4++ );  // creator
-	
-#else
-	
 	*p4++ = '*' * 0x01010101;  // type
 	*p4++ = '?' * 0x01010101;  // creator
-	
-#endif
 	
 	uint16_t* p2 = (uint16_t*) p4;
 	
 	if ( extra.type >= Info_FInfo )
 	{
-	#ifdef __APPLE__
-		
-		const UInt16* q2 = (const UInt16*) q4;
-		
-		*p2++ = big_u16( *q2++ );  // finderFlags
-		*p2++ = big_u16( *q2++ );  // location.v
-		*p2++ = big_u16( *q2++ );  // location.h
-		*p2++ = big_u16( *q2++ );  // reservedField
-		
-	#else
-		
 		memset( p2, '\0', 4 * sizeof (uint16_t) );
 		
 		p2 += 4;
-		
-	#endif
 	}
 	
 	if ( extra.type == Info_GetFInfo )
 	{
 		p4 = (uint32_t*) p2;
 		
-	#ifdef __APPLE__
-		
-		*p4++ = big_u32( info.nodeID );  // Host information leak?
-		
-	#else
-		
 		*p4++ = big_u32( extra.st.st_ino );  // Host information leak?
-		
-	#endif
 		
 		p2 = (uint16_t*) p4;
 		
@@ -185,17 +109,8 @@ plus::string macinfo_slurp( const node* that )
 		
 		p4 = (uint32_t*) p2;
 		
-	#ifdef __APPLE__
-		
-		*p4++ = big_u32( info.dataLogicalSize );
-		*p4++ = big_u32( info.dataPhysicalSize );
-		
-	#else
-		
 		*p4++ = big_u32( extra.st.st_size );
 		*p4++ = big_u32( extra.st.st_blocks * 512 );
-		
-	#endif
 		
 		p2 = (uint16_t*) p4;
 		
@@ -203,21 +118,10 @@ plus::string macinfo_slurp( const node* that )
 		
 		p4 = (uint32_t*) p2;
 		
-	#ifdef __APPLE__
-		
-		*p4++ = big_u32( info.rsrcLogicalSize  );
-		*p4++ = big_u32( info.rsrcPhysicalSize );
-		*p4++ = big_u32( d1904_from_d1904z( info.createDate    .lowSeconds ) );
-		*p4++ = big_u32( d1904_from_d1904z( info.contentModDate.lowSeconds ) );
-		
-	#else
-		
 		*p4++ = 0;
 		*p4++ = 0;
 		*p4++ = 0;
 		*p4++ = big_u32( d1904_from_time( extra.st.st_mtime ) );
-		
-	#endif
 	}
 	
 	return result;
@@ -239,49 +143,6 @@ void macinfo_splat( const node* that, const char* data, size_t size )
 	{
 		p7::throw_errno( EINVAL );
 	}
-	
-#ifdef __APPLE__
-	
-	OSStatus err;
-	
-	FSCatalogInfoBitmap bits = info_bits[ extra.type ];
-	FSCatalogInfo       info = {};
-	
-	const OSType* p4 = (const OSType*) data;
-	
-	OSType* q4 = (OSType*) info.finderInfo;
-	
-	*q4++ = u32_from_big( *p4++ );  // type
-	*q4++ = u32_from_big( *p4++ );  // creator
-	
-	const UInt16* p2 = (const UInt16*) p4;
-	
-	if ( extra.type >= Info_FInfo )
-	{
-		UInt16* q2 = (UInt16*) q4;
-		
-		*q2++ = u16_from_big( *p2++ );  // finderFlags
-		*q2++ = u16_from_big( *p2++ );  // location.v
-		*q2++ = u16_from_big( *p2++ );  // location.h
-		*q2++ = u16_from_big( *p2++ );  // reservedField
-	}
-	
-	if ( extra.type == Info_SetFInfo )
-	{
-		p4 = (const UInt32*) (data + size - 2 * sizeof (UInt32));
-		
-		info.createDate    .lowSeconds = d1904z_from_d1904( u32_from_big( *p4++ ) );
-		info.contentModDate.lowSeconds = d1904z_from_d1904( u32_from_big( *p4++ ) );
-	}
-	
-	err = FSSetCatalogInfo( &extra.ref, bits, &info );
-	
-	if ( err )
-	{
-		p7::throw_errno( EIO );
-	}
-	
-#endif
 }
 
 static const item_method_set macinfo_item_methods =
@@ -310,28 +171,6 @@ node_ptr new_info( special_info  type,
                    const node*   parent,
                    uid_t         user )
 {
-#ifdef __APPLE__
-	
-	FSRef ref;
-	Boolean isDir;
-	
-	FSCatalogInfoBitmap bits = kFSCatInfoPermissions;
-	FSCatalogInfo       info;
-	
-	OSStatus err;
-	
-	(err = FSPathMakeRef( (UInt8*) path, &ref, &isDir ))  ||
-	(err = FSGetCatalogInfo( &ref, bits, &info, NULL, NULL, NULL ));
-	
-	if ( err != noErr )
-	{
-		return node_ptr();  // A call ancestor will deal with it
-	}
-	
-	mode_t mode = permissions( info ).mode;
-	
-#else
-	
 	struct stat st;
 	
 	int nok = stat( path, &st );
@@ -343,8 +182,6 @@ node_ptr new_info( special_info  type,
 	
 	mode_t mode = st.st_mode;
 	
-#endif
-	
 	node* result = new node( parent,
 	                         "<info>",
 	                         mode,
@@ -354,15 +191,15 @@ node_ptr new_info( special_info  type,
 	
 	macinfo_extra& extra = *(macinfo_extra*) result->extra();
 	
-#ifdef __APPLE__
-	extra.ref  = ref;
-#else
 	extra.st   = st;
-#endif
 	extra.type = type;
 	
 	return result;
 }
+
+#ifdef __APPLE__
+#define mac_lookup_info  mac_lookup_info_generic
+#endif
 
 node_ptr mac_lookup_info( const char*  path,
                           const char*  fork_name,
