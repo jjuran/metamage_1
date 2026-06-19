@@ -34,6 +34,7 @@
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node.hh"
 #include "vfs/node/types/FSCatInfo.hh"
+#include "vfs/node/types/namedfork.hh"
 
 
 namespace vfs
@@ -46,24 +47,6 @@ namespace vfs
 	using iota::u16_from_big;
 	using iota::u32_from_big;
 	
-	
-	enum special_info
-	{
-		Info_null,
-		Info_PkgInfo,
-		Info_FInfo,
-		Info_GetFInfo,
-		Info_SetFInfo,
-	};
-	
-	static const size_t info_sizes[] =
-	{
-		0,
-		2 * 4,    // two 4-byte OSTypes
-		16,       // FInfo, which is 16 bytes
-		80 - 30,  // size of HFileParam starting at ioFlAttrib
-		80 - 32,  // size of HFileParam starting at ioFlFndrInfo
-	};
 	
 	struct macinfo_extra
 	{
