@@ -117,6 +117,11 @@ if src_is_txt and not named then
 	exit 1
 }
 
+if not "runtime" in config then
+{
+	config[ "runtime" ] = "Advanced Mac Substitute"
+}
+
 var name = if src_is_txt then {config[ "name" ]} else {basename input_path}
 
 # This path may not actually exist in the case of a disk image.
