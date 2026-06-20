@@ -41,6 +41,7 @@ let config_lines = (load config_txt).lines() ver bool map comma-terminated
 let config = str^(eval "[" join( "\n", *config_lines, "]" ))
 
 let app_name = config[ "name" ]
+let runtime  = config[ "runtime" ]
 
 def active (feature)
 {
@@ -107,7 +108,7 @@ def make_shared_dir_server (key, subpath)
 	{
 		let home = getenv "HOME"
 		
-		let dir_path = home "/" subpath "/Advanced Mac Substitute"
+		let dir_path = home "/" subpath "/" runtime
 		
 		path = dir_path "/" path
 		
