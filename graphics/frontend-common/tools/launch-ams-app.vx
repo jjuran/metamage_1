@@ -108,7 +108,16 @@ def make_shared_dir_server (key, subpath)
 	{
 		let home = getenv "HOME"
 		
-		let dir_path = home "/" subpath "/" runtime
+		if let ID = active "CFBundleIdentifier" then
+		{
+			path = ID
+		}
+		else
+		{
+			subpath .= "/" runtime
+		}
+		
+		let dir_path = home "/" subpath
 		
 		path = dir_path "/" path
 		
