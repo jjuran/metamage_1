@@ -40,9 +40,6 @@ let config_lines = (load config_txt).lines() ver bool map comma-terminated
 
 let config = str^(eval "[" join( "\n", *config_lines, "]" ))
 
-let app_name = config[ "name" ]
-let runtime  = config[ "runtime" ]
-
 def active (feature)
 {
 	return feature in config and config[ feature ]
@@ -52,6 +49,9 @@ def optional (feature)
 {
 	return if active feature then { "--" feature }
 }
+
+let app_name = active "loader" or config[ "name" ]
+let runtime  = config[ "runtime" ]
 
 let root_dir = ams_mnt
 
