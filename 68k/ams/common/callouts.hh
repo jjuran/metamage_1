@@ -205,6 +205,11 @@ DEFINE_CALLOUT( long,
                   unsigned     c1   : __D2 ),
                 0xFF86 )
 
+DEFINE_CALLOUT( void,
+                ReadLocation,
+                ( struct MachineLocation* dst : __A0 ),
+                0xFF76 )
+
 #undef DEFINE_CALLOUT
 
 inline
