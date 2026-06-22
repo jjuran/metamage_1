@@ -15,6 +15,9 @@
 #include "amicus/menu_cmds.h"
 
 
+#define RUNTIME_NAME  "Advanced Mac Substitute"
+
+
 #define COUNT( array )  (sizeof (array) / sizeof *(array))
 
 #define DEFINE_MENU_WITH_TITLE(name, title)  \
@@ -58,10 +61,10 @@ struct menu_description
 
 static const menu_item_description Apple_items[] =
 {
-	{ STR "About Advanced Mac Substitute", kHICommandAbout },
+	{ STR "About " RUNTIME_NAME, kHICommandAbout },
 #ifdef __OBJC__
 	{},
-	{ STR "Quit Advanced Mac Substitute", kHICommandQuit },
+	{ STR "Quit " RUNTIME_NAME, kHICommandQuit },
 #endif
 };
 
