@@ -34,6 +34,7 @@
 #include "callout/cursor.hh"
 #include "callout/exceptions.hh"
 #include "callout/fixed.hh"
+#include "callout/location.hh"
 #include "callout/notify_cursor.hh"
 #include "callout/polygons.hh"
 #include "callout/regions.hh"
@@ -970,6 +971,16 @@ static const function_type the_callouts[] =
 	NULL,
 	
 	&transcode_8x_1bpp_to_8bpp_callout,
+	NULL,
+	NULL,
+	NULL,
+	
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	
+	&ReadLocation_callout,
 	NULL,
 	NULL,
 	NULL,

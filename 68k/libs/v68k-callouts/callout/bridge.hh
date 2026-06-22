@@ -111,6 +111,18 @@ enum
 	reserved26,
 	reserved27,
 	
+	// $FF7E - $FF78
+	reserved28,
+	reserved29,
+	reserved30,
+	reserved31,
+	
+	// $FF76 - $FF70
+	ReadLocation,
+	reserved33,
+	reserved34,
+	reserved35,
+	
 	system_call,
 	microseconds,  // returns on stack, for MacRelix tool exec parameter block
 	
