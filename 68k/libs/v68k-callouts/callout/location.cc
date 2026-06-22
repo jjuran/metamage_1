@@ -5,6 +5,11 @@
 
 #include "callout/location.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifdef __MACOS__
 #ifndef __OSUTILS__
@@ -14,10 +19,14 @@
 
 // Standard C
 #include <string.h>
+#include <time.h>
 
 
-#if defined(__MACOS__)
+#if defined(__MACOS__)  ||  defined(__APPLE__)
 #define HAVE_READLOCATION  1
+	#if TARGET_RT_LITTLE_ENDIAN
+	#define dlsDelta dls.Delta
+	#endif
 #else
 #define HAVE_READLOCATION  0
 #endif
@@ -30,6 +39,33 @@ enum
 {
 	rts = 0x4E75,
 };
+
+static
+void read_location_POSIX( uint8_t* p )
+{
+	/*
+		Leave latitude and longitude set to zero.
+	*/
+	
+	p += 8;
+	
+	struct tm date;
+	
+	time_t global = time( NULL );
+	
+	localtime_r( &global, &date );
+	
+	*p++ = date.tm_isdst ? 0x80 : 0x00;
+	
+	time_t local = timegm( &date );
+	
+	int32_t delta = local - global;
+	
+	*p++ = delta >> 16;
+	*p++ = delta >>  8;
+	*p++ = delta;
+
+}
 
 static
 void read_location_Mac( uint8_t* p )
@@ -85,6 +121,8 @@ int32_t ReadLocation_callout( v68k::processor_state& s )
 	if ( ! HAVE_READLOCATION )
 	{
 		memset( p, '\0', dst_size );
+		
+		read_location_POSIX( p );
 	}
 	else
 	{

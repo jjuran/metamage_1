@@ -20,8 +20,8 @@
 // Standard C
 #include <time.h>
 
-// mac-types
-#include "mac_types/epoch.hh"
+// d1904z
+#include "d1904z.hh"
 
 // v68k-time
 #include "v68k-time/clock.hh"
@@ -52,8 +52,6 @@ uint32_t get_Ticks()
 
 uint32_t get_Time()
 {
-	using mac::types::epoch_delta;
-	
 #ifdef __MACOS__
 #if TARGET_API_MAC_CARBON
 	
@@ -71,7 +69,7 @@ uint32_t get_Time()
 	
 	static uint32_t prev_Time;
 	
-	uint32_t this_Time = ::time( NULL ) + epoch_delta();  // TODO:  Local time
+	uint32_t this_Time = d1904_from_time( ::time( NULL ) );
 	
 	if ( this_Time != prev_Time )
 	{
