@@ -278,6 +278,38 @@ void install_spinloop_patch( Handle h, Size handle_size )
 	}
 }
 
+static inline
+void install_gravity_patch( Handle h, Size handle_size )
+{
+	enum
+	{
+		// These are offsets relative to the start of the 'CODE' resource.
+		
+		offset_to_MOVE_L    = 0x32d6,
+		minimum_handle_size = offset_to_MOVE_L + 4,
+	};
+	
+	if ( handle_size > minimum_handle_size )
+	{
+		/*
+			Old:
+				MOVE.L   D4,(38,A0)
+			
+			New:
+				MOVE.W   D4,(40,A0)
+		*/
+		
+		UInt32* p = (UInt32*) (*h + offset_to_MOVE_L);
+		
+		if ( *p == 0x21440026 )
+		{
+			*p = 0x31440028;
+			
+			HNoPurge( h );
+		}
+	}
+}
+
 /*
 	We can use fast_memcmp() / fast_memequ() here (knowing
 	they're v68k-only), because fill_bytes() is similarly
@@ -607,6 +639,15 @@ void TEInit_handler()
 		{
 			install_spinloop_patch( h, GetHandleSize_raw( h ) );
 		}
+		
+	#ifdef ANTIGRAV_CODE_RESID
+		
+		if ( (h = GetResource( 'CODE', ANTIGRAV_CODE_RESID )) )
+		{
+			install_gravity_patch( h, GetHandleSize_raw( h ) );
+		}
+		
+	#endif
 		
 		const bool v68k = mac::sys::has_v68k();
 		
