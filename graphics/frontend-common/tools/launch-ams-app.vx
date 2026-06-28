@@ -217,7 +217,11 @@ def just_the_name (path)
 def seg_opts
 {
 	let open_opt =
-	if let open = getenv "AMS_OPEN" then
+	if active "loader" then
+	{
+		"--type", "APPL", "--open", config[ "name" ],
+	}
+	else if let open = getenv "AMS_OPEN" then
 	{
 		assert open[ 4 ] == ':'
 		
