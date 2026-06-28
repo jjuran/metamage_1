@@ -641,6 +641,77 @@ void install_keydefs_patch( Handle h, Size handle_size )
 }
 
 static
+short load_volume()
+{
+	if ( Handle h = GetResource( 'KDEF', 0 ) )
+	{
+		Size size = mac::glue::GetHandleSize_raw( h );
+		
+		if ( size >= 22 )
+		{
+			return *(short*) (*h + 20) & 0x0007;
+		}
+	}
+	
+	return 7;
+}
+
+static
+asm
+void volumes_sample()
+{
+	PEA      -1270(A5)                        // saved_volume
+	JSR      226(A5)                          // GetVolume
+	MOVE.W   #0x0007,-(SP)
+}
+
+static
+asm
+short volumes_helper()
+{
+	MOVE.B   SdVolume,-1270(A5)               // saved_volume
+	
+	JMP      load_volume
+}
+
+static
+asm
+void volumes_patch()
+{
+	JSR      volumes_helper
+	MOVE.W   D0,-(SP)
+	NOP
+	NOP
+}
+
+static inline
+void install_volumes_patch( Handle h, Size handle_size )
+{
+	enum
+	{
+		sample_size = 12,
+		patch_size  = 12,
+		
+		// These are offsets relative to the start of the 'CODE' resource.
+		
+		offset_to_target    = 0x0a8e,
+		minimum_handle_size = offset_to_target + sample_size,
+	};
+	
+	if ( handle_size > minimum_handle_size )
+	{
+		Ptr p = *h + offset_to_target;
+		
+		if ( v68k_memequ( &volumes_sample, p, sample_size ) )
+		{
+			BlockMoveData( &volumes_patch, p, patch_size );
+			
+			HNoPurge( h );
+		}
+	}
+}
+
+static
 asm
 void blitter_sample()
 {
@@ -1022,6 +1093,15 @@ void TEInit_handler()
 		if ( (h = GetResource( 'CODE', KDEFSAVE_CODE_RESID )) )
 		{
 			install_keydefs_patch( h, GetHandleSize_raw( h ) );
+		}
+		
+	#endif
+		
+	#ifdef SNDLEVEL_CODE_RESID
+		
+		if ( (h = GetResource( 'CODE', SNDLEVEL_CODE_RESID )) )
+		{
+			install_volumes_patch( h, GetHandleSize_raw( h ) );
 		}
 		
 	#endif
