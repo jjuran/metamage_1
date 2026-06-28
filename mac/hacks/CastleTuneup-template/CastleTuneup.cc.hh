@@ -490,6 +490,13 @@ int v68k_memequ( const void* a, const void* b, unsigned long n )
 	return v68k_memcmp( a, b, n ) == 0;
 }
 
+enum
+{
+	_SetHandleSize = 0xA024,
+};
+
+Byte SdVolume : 0x0260;
+
 static
 asm
 void keydefs_sample()
@@ -544,8 +551,31 @@ void keydefs_patch()
 	MOVEA.L  -114(A5),A0                      // KDEF 0 rsrc
 	MOVE.L   (A0),D1                          // KDEF data
 	
+	/*
+		Extend the 'KDEF' resource to include an additional word
+		to store the sound volume (like Beyond Dark Castle has).
+	*/
+	
 //	+000a
-	LEA      *-0x76,A0                        // GetKeyDef
+	MOVEQ    #22,D0
+	_SetHandleSize
+	BNE.S    no_volume
+	
+	/*
+		Store the sound volume in the final slot of the KDEF.
+	*/
+	
+//	+0010
+	MOVE.L   (A0),A0                          // KDEF data
+	MOVE.L   A0,D1                            // update data pointer
+	MOVE.B   SdVolume,D0
+	ANDI.W   #0x0007,D0
+	MOVE.W   D0,20(A0)                        // store volume
+	
+no_volume:
+	
+//	+0020
+	LEA      *-0x8c,A0                        // GetKeyDef
 	MOVEQ    #1,D0
 	
 	/*
@@ -566,7 +596,7 @@ void keydefs_patch()
 	
 args_loop:
 	
-//	+0010
+//	+0026
 	MOVE.W   D0,-(SP)                         // item
 	MOVE.L   D1,-(SP)                         // storage slot
 	MOVE.L   D2,-(SP)                         // caller context
@@ -577,10 +607,10 @@ args_loop:
 	CMPI.W   #7,D0
 	BLT.S    args_loop
 	
-//	+0024
+//	+003a
 	JMP      (A1)
 	
-//	+0026
+//	+003c
 }
 
 static inline
@@ -589,7 +619,7 @@ void install_keydefs_patch( Handle h, Size handle_size )
 	enum
 	{
 		sample_size = 0x0082,  // 130 bytes
-		patch_size  = 0x0026,  // 38 bytes
+		patch_size  = 0x003c,  // 60 bytes
 		
 		// These are offsets relative to the start of the 'CODE' resource.
 		
