@@ -492,6 +492,126 @@ int v68k_memequ( const void* a, const void* b, unsigned long n )
 
 static
 asm
+void keydefs_sample()
+{
+	LINK     A6,#0
+	MOVE.L   A4,-(A7)
+	MOVEA.L  -114(A5),A0                      // KDEF 0 rsrc
+	MOVEA.L  (A0),A4                          // KDEF data
+	MOVE.W   #0x0001,-(A7)
+	MOVE.L   A4,-(A7)
+	MOVE.L   8(A6),-(A7)
+	JSR      *-130    // $0007b2              // GetKeyDef
+	MOVE.W   #0x0002,-(A7)
+	PEA      2(A4)
+	MOVE.L   8(A6),-(A7)
+	JSR      *-146    // $0007b2              // GetKeyDef
+	MOVE.W   #0x0003,-(A7)
+	PEA      4(A4)
+	MOVE.L   8(A6),-(A7)
+	JSR      *-162    // $0007b2              // GetKeyDef
+	MOVE.W   #0x0004,-(A7)
+	PEA      6(A4)
+	MOVE.L   8(A6),-(A7)
+	JSR      *-178    // $0007b2              // GetKeyDef
+	MOVE.W   #0x0005,-(A7)
+	PEA      8(A4)
+	MOVE.L   8(A6),-(A7)
+	JSR      *-194    // $0007b2              // GetKeyDef
+	MOVE.W   #0x0006,-(A7)
+	PEA      10(A4)
+	MOVE.L   8(A6),-(A7)
+	JSR      *-210    // $0007b2              // GetKeyDef
+	MOVE.W   #0x0007,-(A7)
+	PEA      12(A4)
+	MOVE.L   8(A6),-(A7)
+	JSR      *-226    // $0007b2              // GetKeyDef
+	MOVEA.L  (A7)+,A4
+	UNLK     A6
+	MOVE.L   (A7)+,(A7)
+	RTS
+}
+
+static
+asm
+void keydefs_patch()
+{
+//	+0000
+	MOVEA.L  (SP)+,A1                         // return address
+	MOVE.L   (SP)+,D2                         // context arg
+	
+//	+0004
+	MOVEA.L  -114(A5),A0                      // KDEF 0 rsrc
+	MOVE.L   (A0),D1                          // KDEF data
+	
+//	+000a
+	LEA      *-0x76,A0                        // GetKeyDef
+	MOVEQ    #1,D0
+	
+	/*
+		Call GetKeyDef() for each user-settable key definition.
+		We push the arguments for all seven calls all at once.
+		The first argument set we push has our caller's return
+		address, but every subsequent one has GetKeyDef() itself,
+		so each invocation of GetKeyDef() returns to the next one
+		(until the last one, which just returns to our caller).
+		
+		We push the arguments for key #1 first and for key #7
+		last, but the argument sets get used in reverse order.
+		
+		We store the keydefs in reverse order *chronologically*,
+		i.e. the first one stored is #7, but each one is stored
+		at the same offset in the 'KDEF' resource as before.
+	*/
+	
+args_loop:
+	
+//	+0010
+	MOVE.W   D0,-(SP)                         // item
+	MOVE.L   D1,-(SP)                         // storage slot
+	MOVE.L   D2,-(SP)                         // caller context
+	MOVE.L   A1,-(SP)                         // return address
+	ADDQ.W   #1,D0                            // next item
+	ADDQ.L   #2,D1                            // next storage slot
+	MOVEA.L  A0,A1                            // return to GetKeyDef
+	CMPI.W   #7,D0
+	BLT.S    args_loop
+	
+//	+0024
+	JMP      (A1)
+	
+//	+0026
+}
+
+static inline
+void install_keydefs_patch( Handle h, Size handle_size )
+{
+	enum
+	{
+		sample_size = 0x0082,  // 130 bytes
+		patch_size  = 0x0026,  // 38 bytes
+		
+		// These are offsets relative to the start of the 'CODE' resource.
+		
+		offset_to_target    = 0x081e,
+		minimum_handle_size = offset_to_target + sample_size,
+	};
+	
+	if ( handle_size > minimum_handle_size )
+	{
+		Ptr p = *h + offset_to_target;
+		
+		if ( v68k_memequ( &keydefs_sample, p, sample_size ) )
+		{
+			BlockMoveData( &keydefs_patch, p, patch_size );
+			
+			HNoPurge( h );
+		}
+	}
+}
+
+static
+asm
 void blitter_sample()
 {
 	MOVE.W   (A2)+,D0
@@ -863,6 +983,15 @@ void TEInit_handler()
 		if ( (h = GetResource( 'CODE', ANTIGRAV_CODE_RESID )) )
 		{
 			install_gravity_patch( h, GetHandleSize_raw( h ) );
+		}
+		
+	#endif
+		
+	#ifdef KDEFSAVE_CODE_RESID
+		
+		if ( (h = GetResource( 'CODE', KDEFSAVE_CODE_RESID )) )
+		{
+			install_keydefs_patch( h, GetHandleSize_raw( h ) );
 		}
 		
 	#endif
