@@ -206,7 +206,7 @@ DEFINE_CALLOUT( long,
                 0xFF86 )
 
 DEFINE_CALLOUT( void,
-                ReadLocation,
+                read_location,
                 ( struct MachineLocation* dst : __A0 ),
                 0xFF76 )
 

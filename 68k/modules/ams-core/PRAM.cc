@@ -36,7 +36,7 @@ pascal void ReadXPRam_patch( void* buffer : __A0, long length_offset : __D0 )
 	
 	if ( offset < location_end  &&  offset + length > location_begin )
 	{
-		ReadLocation( (MachineLocation*) &xpram[ location_begin ] );
+		read_location( (MachineLocation*) &xpram[ location_begin ] );
 		
 		fast_memcpy( buffer, xpram + offset, length );
 	}
