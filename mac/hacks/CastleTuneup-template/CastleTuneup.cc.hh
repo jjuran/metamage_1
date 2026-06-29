@@ -109,12 +109,18 @@
 */
 
 // Mac OS
+#ifndef __DIALOGS__
+#include <Dialogs.h>
+#endif
 #ifndef __QUICKDRAW__
 #include <Quickdraw.h>
 #endif
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
+
+// mac-types
+#include "mac_types/DialogItemList.hh"
 
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
@@ -123,6 +129,12 @@
 #include "mac_sys/has/virtualization.hh"
 #include "mac_sys/trap_address.hh"
 
+// mac-ui-utils
+#include "mac_ui/invoke_button.hh"
+
+
+using mac::types::DialogItem;
+using mac::types::get_nth_item_inline;
 
 enum
 {
@@ -146,8 +158,28 @@ enum
 	_CurResFile  = 0xA994,
 	_ExitToShell = 0xA9F4,
 	_InitCursor  = 0xA850,
+	_ModalDialog = 0xA991,
 	_ShowCursor  = 0xA853,
 	_TEInit      = 0xA9CC,
+};
+
+enum
+{
+	kMainMenuDLOGResourceID = 170,
+};
+
+enum
+{
+	kMainMenuDialogRefCon = 'Main',
+};
+
+enum
+{
+	kMainMenuDialog_Play = 1,
+	kMainMenuDialog_Quit = 2,
+	
+	kMainMenuDialog_Info = 4,
+	kMainMenuDialog_Opts = 5,
 };
 
 short CrsrState : 0x08D0;
@@ -155,6 +187,7 @@ short CrsrState : 0x08D0;
 static UniversalProcPtr old_CurResFile;
 static UniversalProcPtr old_ExitToShell;
 static UniversalProcPtr old_InitCursor;
+static UniversalProcPtr old_ModalDialog;
 static UniversalProcPtr old_ShowCursor;
 static UniversalProcPtr old_TEInit;
 
@@ -206,6 +239,112 @@ pascal short CurResFile_patch()
 	JMP      (A0)
 }
 
+static inline
+bool invoke_item( const DialogItem* item )
+{
+	mac::ui::invoke_button_inline( (ControlRef) item->handle );
+	
+	return true;
+}
+
+static
+pascal
+Boolean main_filterProc( DialogRef dialog, EventRecord* event, short* itemHit )
+{
+#ifdef OPTION_STATE_OFFSET
+	
+	/*
+		Certain buttons in Beyond Dark Castle behave
+		differently when the Option key is down.
+		
+		Since we're replacing the filterProc which
+		records the signal for those behaviors, we
+		have to reimplement that signal ourselves.
+	*/
+	
+	Boolean option_down = (event->modifiers & optionKey) != 0;
+	
+	asm
+	{
+		MOVE.B   option_down,OPTION_STATE_OFFSET(A5)
+	}
+	
+#endif
+	
+	if ( event->what == keyDown )
+	{
+		DialogPeek d = (DialogPeek) dialog;
+		
+		short i;
+		
+		char c = event->message;
+		
+		if ( c == kEnterCharCode  ||  c == kReturnCharCode )
+		{
+			i = kMainMenuDialog_Play;
+		}
+		else if ( event->modifiers & cmdKey  &&  c == 'q' )
+		{
+			i = kMainMenuDialog_Quit;
+		}
+		else if ( event->modifiers & cmdKey  &&  c == 'i' )
+		{
+			i = kMainMenuDialog_Info;
+		}
+		else if ( event->modifiers & cmdKey  &&  c == 'k' )
+		{
+			i = kMainMenuDialog_Opts;
+		}
+		else
+		{
+			return false;
+		}
+		
+		*itemHit = i;
+		
+		return invoke_item( get_nth_item_inline( d->items, i ) );
+	}
+	
+	return false;
+}
+
+static
+ModalFilterUPP filterProc_filter( ModalFilterUPP filterProc : __A0 )
+{
+	if ( WindowRef window = FrontWindow() )
+	{
+		if ( GetWRefCon( window ) == kMainMenuDialogRefCon )
+		{
+			filterProc = &main_filterProc;
+		}
+	}
+	
+	return filterProc;
+}
+
+static
+pascal
+asm
+void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
+{
+	MOVEA.L  8(SP),A0
+	JSR      filterProc_filter
+	MOVE.L   A0,8(SP)
+	
+	MOVEA.L  old_ModalDialog,A0
+	JMP      (A0)
+}
+
+static inline
+void set_DLOG_refcon( Handle h, OSType refcon )
+{
+	DialogTemplate& dlog = *(DialogTemplate*) *h;
+	
+	dlog.refCon = refcon;
+	
+	HNoPurge( h );
+}
+
 static
 void ExitToShell_patch()
 {
@@ -218,6 +357,7 @@ void ExitToShell_patch()
 #endif
 	
 	set_trap_address( old_InitCursor,  _InitCursor  );
+	set_trap_address( old_ModalDialog, _ModalDialog );
 	set_trap_address( old_ShowCursor,  _ShowCursor  );
 	set_trap_address( old_ExitToShell, _ExitToShell );
 	
@@ -702,8 +842,10 @@ void TEInit_handler()
 			set_trap_address( (ProcPtr) ShowCursor_patch, _ShowCursor );
 		}
 		
+		old_ModalDialog = get_trap_address( _ModalDialog );
 		old_ExitToShell = get_trap_address( _ExitToShell );
 		
+		set_trap_address( (ProcPtr) ModalDialog_patch, _ModalDialog );
 		set_trap_address( (ProcPtr) ExitToShell_patch, _ExitToShell );
 		
 		if ( (h = GetResource( 'CODE', ENVCHECK_CODE_RESID )) )
@@ -744,6 +886,11 @@ void TEInit_handler()
 		if ( v68k  &&  (h = GetResource( 'CODE', 2 )) )
 		{
 			install_tabpause_patch( h, GetHandleSize_raw( h ) );
+		}
+		
+		if ( (h = GetResource( 'DLOG', kMainMenuDLOGResourceID )) )
+		{
+			set_DLOG_refcon( h, kMainMenuDialogRefCon );
 		}
 	}
 }
