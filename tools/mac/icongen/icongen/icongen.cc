@@ -25,6 +25,7 @@ using namespace command::constants;
 
 enum
 {
+	Opt_PDF    = 'D',
 	Opt_JP2    = 'J',
 	Opt_PNG    = 'P',
 	Opt_input  = 'i',
@@ -36,6 +37,7 @@ enum
 
 static command::option options[] =
 {
+	{ "pdf",         Opt_PDF                    },
 	{ "png",         Opt_PNG                    },
 	{ "jp2",         Opt_JP2                    },
 	{ "jp2k",        Opt_JP2                    },
@@ -53,6 +55,7 @@ enum Image_mode
 	Image_JP2K,
 	Image_thumbnail,
 	Image_mask,
+	Image_PDF,
 };
 
 static Image_mode image_mode;
@@ -79,6 +82,10 @@ char* const* get_options( char** argv )
 			
 			case Opt_output:
 				output_path = command::global_result.param;
+				break;
+			
+			case Opt_PDF:
+				image_mode = Image_PDF;
 				break;
 			
 			case Opt_PNG:
@@ -116,6 +123,13 @@ int draw_icon( drawer draw, size_t length, const char* path )
 {
 	const size_t width  = length;
 	const size_t height = length;
+	
+	if ( image_mode == Image_PDF )
+	{
+		write_PDF_document( draw, width, height, path );
+		
+		return 0;
+	}
 	
 	CGContextRef c = create_bitmap_context( length );
 	

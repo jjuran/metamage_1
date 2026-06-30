@@ -194,3 +194,38 @@ void write_mask( CGContextRef c, const char* path )
 {
 	write_thumbnail_data( c, path, &copy_thumbnail_plane );
 }
+
+void write_PDF_document( drawer draw, int width, int height, const char* path )
+{
+	CFURLRef url;
+	url = CFURLCreateFromFileSystemRepresentation( NULL,
+	                                               (const UInt8*) path,
+	                                               strlen( path ),
+	                                               false );
+	
+	if ( url == NULL )
+	{
+		fprintf( stderr, "CFURLCreateFromFileSystemRepresentation() returned NULL\n" );
+		exit( 1 );
+	}
+	
+	const CGRect box = CGRectMake( 0, 0, width, height );
+	
+	CGContextRef c = CGPDFContextCreateWithURL( url, &box, NULL );
+	
+	if ( c == NULL )
+	{
+		fprintf( stderr, "CGPDFContextCreateWithURL() returned NULL\n" );
+		exit( 1 );
+	}
+	
+	CFRelease( url );
+	
+	CGPDFContextBeginPage( c, NULL );
+	
+	draw( c, width, height );
+	
+	CGPDFContextEndPage( c );
+	
+	CGContextRelease( c );
+}
