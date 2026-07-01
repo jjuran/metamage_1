@@ -336,7 +336,7 @@ THz GetZone_handler()
 	if ( TheZone == NULL )
 	{
 		ERROR   = "GetZone() called when TheZone is NULL!";
-		WARNING = "Set AMS_MEM for ams.vx to pass --mem to xv68k for a heap.";
+		WARNING = "Pass --mem to xv68k (via ams.vx or config) for a heap.";
 		WARNING = "Valid values: 0 1 2 4 5 8 (number of 512K RAM units)";
 	}
 	
@@ -360,7 +360,7 @@ short SetZone_patch( THz z : __A0 )
 	if ( TheZone == NULL )
 	{
 		ERROR   = "SetZone() called with a NULL zone!";
-		WARNING = "Set AMS_MEM for ams.vx to pass --mem to xv68k for a heap.";
+		WARNING = "Pass --mem to xv68k (via ams.vx or config) for a heap.";
 		WARNING = "Valid values: 0 1 2 4 5 8 (number of 512K RAM units)";
 	}
 	
