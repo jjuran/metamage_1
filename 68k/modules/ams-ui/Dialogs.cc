@@ -19,6 +19,9 @@
 // <Sound.h>
 extern "C" pascal void SysBeep( short ticks )  ONEWORDINLINE( 0xA9C8 );
 
+// mac-types
+#include "mac_types/DialogItemList.hh"
+
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 #include "mac_glue/OSUtils.hh"
@@ -43,6 +46,10 @@ extern "C" pascal void SysBeep( short ticks )  ONEWORDINLINE( 0xA9C8 );
 
 #pragma exceptions off
 
+
+using mac::types::DialogItem;
+using mac::types::DialogItemList_header;
+using mac::types::first_dialog_item;
 
 static short ANumber;
 static short ACount = -1;
@@ -177,20 +184,6 @@ Handle expand_param_text( const Byte* text )
 	return expanded;
 }
 
-struct DialogItem
-{
-	Handle  handle;
-	Rect    bounds;
-	UInt8   type;
-	UInt8   length;
-};
-
-struct DialogItemList_header
-{
-	short       count_minus_1;
-	DialogItem  first;
-};
-
 static inline
 short& dialog_item_count_minus_one( Handle items )
 {
@@ -201,12 +194,6 @@ static inline
 short dialog_item_count( Handle items )
 {
 	return dialog_item_count_minus_one( items ) + 1;
-}
-
-static inline
-DialogItem* first_dialog_item( Handle items )
-{
-	return &((DialogItemList_header*) *items)->first;
 }
 
 static
@@ -224,10 +211,10 @@ ResID item_ResID( const DialogItem* di )
 static
 DialogItem* next( DialogItem* di )
 {
-	return (DialogItem*) ((char*) (di + 1) + di->length + (di->length & 1));
+	return next_dialog_item( di );
 }
 
-static
+static inline
 const DialogItem* next( const DialogItem* di )
 {
 	return next( const_cast< DialogItem* >( di ) );
@@ -236,14 +223,7 @@ const DialogItem* next( const DialogItem* di )
 static
 DialogItem* get_nth_item( Handle items, short i )
 {
-	DialogItem* item = first_dialog_item( items );
-	
-	while ( --i > 0 )
-	{
-		item = next( item );
-	}
-	
-	return item;
+	return mac::types::get_nth_item_inline( items, i );
 }
 
 static inline
