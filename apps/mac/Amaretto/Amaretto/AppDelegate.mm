@@ -133,6 +133,10 @@ pascal OSErr handle_Open_Apple_event( AppleEvent const* event,
 			launch_coprocess();
 			
 			opened = true;
+			
+			AmarettoOpenGLView* view = (AmarettoOpenGLView*) refcon;
+			
+			update_cursor_location( view );
 		}
 	}
 	
@@ -416,19 +420,22 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	err = AEInstallEventHandler( kCoreEventClass,
 	                             kAEOpenApplication,
 	                             UPP_ARG( handle_Open_Apple_event ),
-	                             0,
+	                             (SRefCon) _mainGLView,
 	                             false );
 	
 	err = AEInstallEventHandler( kCoreEventClass,
 	                             kAEOpenDocuments,
 	                             UPP_ARG( handle_Open_Apple_event ),
-	                             0,
+	                             (SRefCon) _mainGLView,
 	                             false );
 }
 
 - (void) applicationDidBecomeActive: (NSNotification*) notification
 {
-	update_cursor_location( _mainGLView );
+	if ( events_fd >= 0 )
+	{
+		update_cursor_location( _mainGLView );
+	}
 }
 
 @end
