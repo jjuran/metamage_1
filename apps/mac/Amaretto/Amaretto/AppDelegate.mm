@@ -424,8 +424,6 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	
 	_mainWindow = create_window( *_desc, current_zoom_index / 2.0 );
 	_mainGLView = [_mainWindow initialFirstResponder];
-	
-	update_cursor_location( _mainGLView );
 }
 
 - (void) applicationDidBecomeActive: (NSNotification*) notification
