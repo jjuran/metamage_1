@@ -65,50 +65,6 @@ int bindir_fd;
 const char* works_path;
 
 static
-void launch_coprocess()
-{
-	coprocess = launch_coprocess( bindir_fd, works_path );
-	
-	events_fd = coprocess.socket_fd;
-	
-	close( bindir_fd );
-}
-
-static
-pascal OSErr handle_Quit_Apple_event( AppleEvent const* event,
-                                      AppleEvent*       reply,
-                                      SRefCon           refcon )
-{
-	quit();
-	
-	return noErr;
-}
-
-DEFINE_UPP( AEEventHandler, handle_Quit_Apple_event )
-
-static
-pascal OSErr handle_Open_Apple_event( AppleEvent const* event,
-                                      AppleEvent*       reply,
-                                      SRefCon           refcon )
-{
-	OSErr err = handle_Open_event( event );
-	
-	if ( err == noErr )
-	{
-		if ( ! opened )
-		{
-			launch_coprocess();
-			
-			opened = true;
-		}
-	}
-	
-	return err;
-}
-
-DEFINE_UPP( AEEventHandler, handle_Open_Apple_event )
-
-static
 CGPoint window_contentRect_topLeft( NSWindow* window )
 {
 	NSRect outer = [[window screen] frame];
@@ -152,6 +108,50 @@ void update_cursor_location( AmarettoOpenGLView* view )
 	
 	[view handleMouseMovedTo: pt];
 }
+
+static
+void launch_coprocess()
+{
+	coprocess = launch_coprocess( bindir_fd, works_path );
+	
+	events_fd = coprocess.socket_fd;
+	
+	close( bindir_fd );
+}
+
+static
+pascal OSErr handle_Open_Apple_event( AppleEvent const* event,
+                                      AppleEvent*       reply,
+                                      SRefCon           refcon )
+{
+	OSErr err = handle_Open_event( event );
+	
+	if ( err == noErr )
+	{
+		if ( ! opened )
+		{
+			launch_coprocess();
+			
+			opened = true;
+		}
+	}
+	
+	return err;
+}
+
+DEFINE_UPP( AEEventHandler, handle_Open_Apple_event )
+
+static
+pascal OSErr handle_Quit_Apple_event( AppleEvent const* event,
+                                      AppleEvent*       reply,
+                                      SRefCon           refcon )
+{
+	quit();
+	
+	return noErr;
+}
+
+DEFINE_UPP( AEEventHandler, handle_Quit_Apple_event )
 
 static
 NSWindow* create_window( const raster::raster_desc& desc, CGFloat scale )
@@ -403,6 +403,11 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	                             0,
 	                             false );
 	
+	_viewMenu = set_up_menus( _zoomLevel );
+	
+	_mainWindow = create_window( *_desc, current_zoom_index / 2.0 );
+	_mainGLView = [_mainWindow initialFirstResponder];
+	
 	/*
 		Installing a handler for event ID typeWildCard doesn't work;
 		we need kAEOpenApplication and kAEOpenDocuments explicitly.
@@ -419,11 +424,6 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	                             UPP_ARG( handle_Open_Apple_event ),
 	                             0,
 	                             false );
-	
-	_viewMenu = set_up_menus( _zoomLevel );
-	
-	_mainWindow = create_window( *_desc, current_zoom_index / 2.0 );
-	_mainGLView = [_mainWindow initialFirstResponder];
 }
 
 - (void) applicationDidBecomeActive: (NSNotification*) notification
