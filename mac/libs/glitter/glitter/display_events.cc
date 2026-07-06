@@ -67,14 +67,25 @@ void on_display_event( void* info )
 		
 		if ( const shared_cursor_state* cursor = cursor_state )
 		{
+			static bool was_visible;
+			
 			int y  = cursor->pointer[ 0 ];
 			int x  = cursor->pointer[ 1 ];
 			int dy = cursor->hotspot[ 0 ];
 			int dx = cursor->hotspot[ 1 ];
 			
+			const bool is_visible = cursor->visible;
+			
 			glfb::set_cursor_hotspot( dx, dy );
 			glfb::set_cursor_location( x, y );
-			glfb::set_cursor_visibility( cursor->visible );
+			glfb::set_cursor_visibility( is_visible );
+			
+			if ( is_visible != was_visible  &&  events.cursor_vis )
+			{
+				events.cursor_vis( is_visible );
+			}
+			
+			was_visible = is_visible;
 		}
 		
 		if ( events.render )
