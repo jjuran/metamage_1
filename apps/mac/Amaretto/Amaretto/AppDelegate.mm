@@ -264,25 +264,23 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	
 	[NSApp setMainMenu: releasing( menubar )];
 	
-	NSMenu* menu;
+	NSMenu* apple = SET_UP_MENU( Apple );
+	NSMenu* file  = SET_UP_MENU( File  );
+	NSMenu* edit  = SET_UP_MENU( Edit  );
+	NSMenu* view  = SET_UP_MENU( View  );
 	
-	menu = SET_UP_MENU( Apple );
-	menu = SET_UP_MENU( File  );
-	menu = SET_UP_MENU( Edit  );
-	menu = SET_UP_MENU( View  );
+	[[view itemWithTag: default_zoom_command] setState: NSOnState];
 	
-	[[menu itemWithTag: default_zoom_command] setState: NSOnState];
-	
-	[menu setAutoenablesItems: NO];
+	[view setAutoenablesItems: NO];
 	
 	for ( int i = top_zoom_index;  i > maximum_zoom_index;  --i )
 	{
 		MenuCommand command_ID = command_ID_for_zoom_index( i );
 		
-		[[menu itemWithTag: command_ID] setEnabled: NO];
+		[[view itemWithTag: command_ID] setEnabled: NO];
 	}
 	
-	return menu;  // View menu
+	return view;  // View menu
 }
 
 @implementation AmarettoAppDelegate
