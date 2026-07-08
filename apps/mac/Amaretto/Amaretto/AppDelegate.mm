@@ -67,6 +67,16 @@ int bindir_fd;
 const char* works_path;
 
 static
+NSMenuItem* parentMenuItemOfMenu( NSMenu* menu )
+{
+	NSMenu* parent = [menu supermenu];
+	
+	NSInteger index = [parent indexOfItemWithSubmenu: menu];
+	
+	return [parent itemAtIndex: index];
+}
+
+static
 CGPoint window_contentRect_topLeft( NSWindow* window )
 {
 	NSRect outer = [[window screen] frame];
@@ -268,6 +278,8 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	NSMenu* file  = SET_UP_MENU( File  );
 	NSMenu* edit  = SET_UP_MENU( Edit  );
 	NSMenu* view  = SET_UP_MENU( View  );
+	
+	[parentMenuItemOfMenu( edit ) setEnabled: NO];
 	
 	[[view itemWithTag: default_zoom_command] setState: NSOnState];
 	
