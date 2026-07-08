@@ -393,7 +393,14 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 		case kHICommandClose:
 			if ( NSWindow* window = [NSApp keyWindow] )
 			{
-				[window close];
+				if ( window == _mainWindow )
+				{
+					quit();
+				}
+				else
+				{
+					[window close];
+				}
 			}
 			break;
 		
