@@ -43,9 +43,10 @@ Rect switch_button_rect( const Rect& bounds )
 	
 	const short margin = (height - length) / 2u;
 	
-	const short top = bounds.top + margin;
+	const short top  = bounds.top  + margin;
+	const short left = bounds.left + 2;
 	
-	Rect switch_rect = { top, bounds.left, top + length, bounds.left + length };
+	Rect switch_rect = { top, left, top + length, left + length };
 	
 	return switch_rect;
 }
