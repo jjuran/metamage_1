@@ -146,12 +146,12 @@ int main( int argc, char** argv )
 		
 		set_palette( load );
 		
-		releasing appDelegate( [[AmarettoAppDelegate alloc] initWithRaster: load] );
-		
 		display_monitor::perform_proc perform = &on_display_event;
 		
 		raster_updating   update_fifo;
 		display_monitor   monitored_display( live_raster.get(), perform );
+		
+		releasing appDelegate( [[AmarettoAppDelegate alloc] initWithRaster: load] );
 		
 		[NSApp setDelegate: appDelegate];
 		
