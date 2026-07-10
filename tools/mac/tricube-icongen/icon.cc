@@ -95,6 +95,8 @@ void draw_tricube_icon( CGContextRef c, size_t width, size_t height )
 	
 	CGContextTranslateCTM( c, 16, 14 );
 	
+	CGContextSetLineWidth( c, 1.0 * 12 / 16 );
+	
 	draw_cube_at( c,  0,  8 );
 	draw_cube_at( c, -7, -4 );
 	draw_cube_at( c,  7, -4 );
