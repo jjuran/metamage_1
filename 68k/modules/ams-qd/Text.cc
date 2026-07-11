@@ -167,7 +167,7 @@ pascal short StdTxMeas_patch( short        n,
 	{
 		short c = (uint8_t) *p++ - rec.firstChar;
 		
-		if ( c > missingChar )
+		if ( c > missingChar  ||  owTable[ c ] == -1 )
 		{
 			c = missingChar;  // missing character glyph
 		}
@@ -379,12 +379,11 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	{
 		short c = (uint8_t) *p++ - rec.firstChar;
 		
-		if ( c > missingChar )
+		if ( c > missingChar  ||  owTable[ c ] == -1 )
 		{
 			c = missingChar;  // missing character glyph
 		}
 		
-		// FIXME:  Check for -1
 		const int8_t* offset_width = (int8_t*) &owTable[ c ];
 		
 		const int8_t character_offset = fixmulu_w( *offset_width++, h_scale );
@@ -513,7 +512,7 @@ pascal void MeasureText_patch( short count, const char* p, short* locs )
 			continue;
 		}
 		
-		if ( c > missingChar )
+		if ( c > missingChar  ||  owTable[ c ] == -1 )
 		{
 			c = missingChar;  // missing character glyph
 		}
