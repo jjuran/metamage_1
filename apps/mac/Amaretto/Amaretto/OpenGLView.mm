@@ -229,6 +229,22 @@ void handle_event( NSEvent* event )
 
 - (void) mouseMoved: (NSEvent*) event
 {
+	if ( [self window] != [NSApp keyWindow] )
+	{
+		/*
+			Recent versions of macOS (including macOS 14 (Sonoma)
+			and later, at least) deliver mouseMoved events even to
+			windows that aren't in front.  Since cursor emulation
+			involves hiding the host cursor in favor of the guest
+			cursor, which is obscured by any windows on top of the
+			display window, interacting with such windows (such as
+			the About box) becomes difficult with cursor emulation
+			in effect.  So only proceed if we're the front window.
+		*/
+		
+		return;
+	}
+	
 	[self handleMouseMovedEvent: event];
 }
 
