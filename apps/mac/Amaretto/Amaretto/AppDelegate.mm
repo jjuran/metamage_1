@@ -172,6 +172,8 @@ pascal OSErr handle_Quit_Apple_event( AppleEvent const* event,
 
 DEFINE_UPP( AEEventHandler, handle_Quit_Apple_event )
 
+static NSString* processName = [[NSProcessInfo processInfo] processName];
+
 static
 NSWindow* create_window( const raster::raster_desc& desc, CGFloat scale )
 {
@@ -206,11 +208,9 @@ NSWindow* create_window( const raster::raster_desc& desc, CGFloat scale )
 	
 	[viewContainer setContentView: releasing( view )];
 	
-	id appName = [[NSProcessInfo processInfo] processName];
-	
 	[(NSWindow*) window center];
 	
-	[window setTitle:                   appName];
+	[window setTitle:                   processName];
 	[window makeKeyAndOrderFront:       nil];
 	[window setAcceptsMouseMovedEvents: YES];
 	[window setInitialFirstResponder:   view];
@@ -268,6 +268,12 @@ NSMenu* set_up_menu( NSMenu* menubar, const menu_description& desc )
 #define SET_UP_MENU( name )  set_up_menu( menubar, name##_desc )
 
 static
+NSString* string_with_processName_appended( NSString* prefix )
+{
+	return [prefix stringByAppendingString: processName];
+}
+
+static
 NSMenu* set_up_menus( unsigned default_zoom_command )
 {
 	id menubar = [NSMenu new];
@@ -278,6 +284,12 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	NSMenu* file  = SET_UP_MENU( File  );
 	NSMenu* edit  = SET_UP_MENU( Edit  );
 	NSMenu* view  = SET_UP_MENU( View  );
+	
+	NSString* aboutText = string_with_processName_appended( @"About " );
+	NSString* quitText  = string_with_processName_appended( @"Quit "  );
+	
+	[[apple itemWithTag: kHICommandAbout] setTitle: aboutText];
+	[[apple itemWithTag: kHICommandQuit ] setTitle: quitText ];
 	
 	[parentMenuItemOfMenu( edit ) setEnabled: NO];
 	
