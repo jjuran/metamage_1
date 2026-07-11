@@ -32,7 +32,7 @@ extern const char* works_path;
 
 - (id) initWithRaster: (const raster::raster_load&) load;
 
-- (void) dealloc;
+- (void) destruct;
 
 - (void) setCursorPinning: (BOOL) pinning;
 

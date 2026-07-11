@@ -304,7 +304,7 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	return self;
 }
 
-- (void) dealloc
+- (void) destruct
 {
 	close( events_fd );
 	
@@ -321,8 +321,6 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	[_mainWindow release];
 	
 	glfb::terminate();
-	
-	[super dealloc];
 }
 
 - (void) setCursorPinning: (BOOL) pinning

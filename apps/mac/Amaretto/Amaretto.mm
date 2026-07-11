@@ -151,11 +151,23 @@ int main( int argc, char** argv )
 		raster_updating   update_fifo;
 		display_monitor   monitored_display( live_raster.get(), perform );
 		
+		/*
+			Create and install the application delegate object.
+			
+			After run returns, we explicitly destruct it -- we
+			have to use a custom method instead of dealloc (as
+			we once did) because macOS 11 (if not earlier) and
+			later leak the object, preventing the retain count
+			from reaching zero, and it never gets deallocated.
+		*/
+		
 		releasing appDelegate( [[AmarettoAppDelegate alloc] initWithRaster: load] );
 		
 		[NSApp setDelegate: appDelegate];
 		
 		[NSApp run];
+		
+		[appDelegate destruct];
 	}
 	
 	rmdir( works_path );
