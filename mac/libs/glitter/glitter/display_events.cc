@@ -25,6 +25,8 @@ void on_display_event( void* info )
 	using frend::display_event_set;
 	using frend::shared_cursor_state;
 	
+	static bool cursor_vis_called;
+	
 	display_event_set& events = *(display_event_set*) info;
 	
 	if ( events.cursorBits )
@@ -80,9 +82,13 @@ void on_display_event( void* info )
 			glfb::set_cursor_location( x, y );
 			glfb::set_cursor_visibility( is_visible );
 			
-			if ( is_visible != was_visible  &&  events.cursor_vis )
+			bool new_vis = is_visible != was_visible  ||  ! cursor_vis_called;
+			
+			if ( new_vis  &&  events.cursor_vis )
 			{
 				events.cursor_vis( is_visible );
+				
+				cursor_vis_called = true;
 			}
 			
 			was_visible = is_visible;
