@@ -962,6 +962,8 @@ pascal void TECalText_patch( TERec** hTE )
 	
 	TERec& te = **hTE;
 	
+	scoped_TERec scope = te;
+	
 	const Rect& destRect = te.destRect;
 	
 	const short rectWidth = destRect.right - destRect.left;
