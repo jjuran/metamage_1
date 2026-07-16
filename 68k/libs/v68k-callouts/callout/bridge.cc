@@ -933,7 +933,7 @@ static const function_type the_callouts[] =
 	&fast_memcmp_callout,
 	NULL,
 	NULL,
-	NULL,
+	&notify_cursor_payload_callout,
 	
 	&plot_cursor_callout,
 	&notify_cursor_moved_callout,

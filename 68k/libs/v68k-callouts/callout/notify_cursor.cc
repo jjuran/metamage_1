@@ -116,5 +116,32 @@ int32_t notify_cursor_set_callout( v68k::processor_state& s )
 	return rts;
 }
 
+int32_t notify_cursor_payload_callout( v68k::processor_state& s )
+{
+	if ( shared_cursor_state* cursor = cursor_state )
+	{
+		uint32_t a = s.a(0);
+		uint32_t n = s.d(0);
+		
+		const v68k::function_code_t data_space = s.data_space();
+		
+		if ( const uint8_t* src = s.translate( a, n, data_space, mem_read ) )
+		{
+			const size_t max_size = sizeof cursor->payload;
+			
+			if ( n > max_size )
+			{
+				n = max_size;
+			}
+			
+			memcpy( cursor->payload, src, n );
+			
+			update_cursor();
+		}
+	}
+	
+	return rts;
+}
+
 }  // namespace callout
 }  // namespace v68k

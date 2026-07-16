@@ -17,6 +17,8 @@ int32_t notify_cursor_moved_callout( v68k::processor_state& s );
 int32_t notify_cursor_vis_callout  ( v68k::processor_state& s );
 int32_t notify_cursor_set_callout  ( v68k::processor_state& s );
 
+int32_t notify_cursor_payload_callout( v68k::processor_state& s );
+
 }  // namespace callout
 }  // namespace v68k
 

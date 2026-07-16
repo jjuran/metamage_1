@@ -61,7 +61,7 @@ enum
 	fast_memcmp,
 	reserved10,
 	reserved11,
-	reserved12,
+	notify_cursor_payload,
 	
 	// $FFBE - $FFB8
 	plot_cursor,
