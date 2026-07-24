@@ -35,6 +35,8 @@ enum
 - (BOOL) isFlipped;
 - (BOOL) isOpaque;
 
+- (void) reshape;
+
 - (void) drawRect: (NSRect) bounds;
 
 - (void) handleMouseMovedTo:    (NSPoint) location;

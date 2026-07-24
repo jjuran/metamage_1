@@ -182,6 +182,17 @@ void handle_event( NSEvent* event )
 	return YES;
 }
 
+- (void) reshape
+{
+	[super reshape];
+	
+#ifndef MAC_OS_X_VERSION_10_7
+	
+	[[NSOpenGLContext currentContext] update];
+	
+#endif
+}
+
 - (void) drawRect: (NSRect) bounds
 {
 	render_and_flush();
