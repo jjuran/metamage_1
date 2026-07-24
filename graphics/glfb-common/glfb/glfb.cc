@@ -187,6 +187,10 @@ void set_dimensions( int width, int height, int depth )
 		buffer_size *= 4;
 	}
 	
+	free( screen_texture_data );
+	
+	screen_texture_data = (Byte*) calloc( buffer_size, 1 );
+	
 	glTexImage2D( texture_target,
 	              0,
 	              GL_RGB,
@@ -195,11 +199,7 @@ void set_dimensions( int width, int height, int depth )
 	              0,
 	              texture_format,
 	              texture_type,
-	              0 );  // NULL
-	
-	free( screen_texture_data );
-	
-	screen_texture_data = (Byte*) malloc( buffer_size );
+	              screen_texture_data );
 }
 
 void set_palette( const unsigned short* colors, int n )
