@@ -1,0 +1,26 @@
+CFBundleDevelopmentRegion: "English"
+CFBundleDocumentTypes:
+[
+	[
+		CFBundleTypeName: "Bitmap file"
+		CFBundleTypeRole: "QLGenerator"
+		LSItemContentTypes:
+		[
+			"com.metamage.bits"
+			"dyn.ah62d4rv4ge80e4pysq"
+		]
+	]
+]
+CFBundleIdentifier: "com.metamage.QLBitmap"
+CFPlugInFactories:
+[
+	"1C931BB1-4F9C-4727-850D-CFD56D24CB3A": "QLGeneratorFactory"
+]
+CFPlugInTypes:
+[
+	"5E2D9680-5022-40FA-B806-43349622E5B9": ["1C931BB1-4F9C-4727-850D-CFD56D24CB3A"]
+]
+NSHumanReadableCopyright: "Copyright 2026 Josh Juran. All rights reserved."
+QLNeedsToBeRunInMainThread: false
+QLSupportsConcurrentRequests: true
+QLThumbnailMinimumSize: 17
