@@ -72,6 +72,9 @@
 #include "plus/replaced_string.hh"
 #include "plus/var_string.hh"
 
+// MacPlus
+#include "MacPlus/SlurpFile.hh"
+
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
@@ -146,6 +149,8 @@ namespace Genie
 	using mac::file::make_FSSpec;
 	using mac::file::parent_directory;
 	
+	using MacPlus::SlurpFile;
+	
 	using relix::hash_long_name;
 	
 	
@@ -192,34 +197,6 @@ namespace Genie
 		FileSignature sig = PickFileSignatureForName( name.data(), name.size() );
 		
 		create_file( file, name, sig.type, sig.creator );
-	}
-	
-	static plus::string SlurpFile( const FSSpec& file )
-	{
-		using mac::file::FSIORefNum;
-		using mac::file::open_data_fork;
-		
-		plus::string result;
-		
-		FSIORefNum input = open_data_fork( file, fsRdPerm );
-		
-		OSErr err = input;
-		
-		if ( input >= 0 )
-		{
-			Size size;
-			char* p;
-			
-			(err = GetEOF( input, &size ))                                  ||
-			(! (p = result.reset_nothrow( size ))  &&  (err = memFullErr))  ||
-			(err = mac::file::read_all( input, p, size ));
-			
-			FSClose( input );
-		}
-		
-		Mac::ThrowOSStatus( err );
-		
-		return result;
 	}
 	
 	static inline
