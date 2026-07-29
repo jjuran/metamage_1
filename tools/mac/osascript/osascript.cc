@@ -24,6 +24,12 @@
 // command
 #include "command/get_option.hh"
 
+// mac-sys-utils
+#include "mac_sys/res_error.hh"
+
+// mac-rsrc-utils
+#include "mac_rsrc/scoped_open_resfile.hh"
+
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
 
@@ -278,12 +284,21 @@ namespace tool
 		return n::owned< N::OSAID >();
 	}
 	
+	static inline
+	ResFileRefNum open_res_file( const FSSpec& file, SInt8 perm )
+	{
+		ResFileRefNum refnum = FSpOpenResFile( &file, perm );
+		
+		Mac::ThrowOSStatus( mac::sys::res_error() );
+		
+		return refnum;
+	}
+	
 	static n::owned< N::OSAID > LoadCompiledScript( const FSSpec& scriptFile )
 	{
-		using Mac::fsRdPerm;
+		using mac::rsrc::scoped_open_resfile;
 		
-		n::owned< N::ResFileRefNum > resFileH( N::FSpOpenResFile( scriptFile,
-		                                                          fsRdPerm ) );
+		scoped_open_resfile resFileH( open_res_file( scriptFile, fsRdPerm ) );
 		
 		return N::OSALoad( OpenGenericScriptingComponent(),
 		                   N::AECreateDesc< Mac::AEDesc_Data >( Mac::typeOSAGenericStorage,
