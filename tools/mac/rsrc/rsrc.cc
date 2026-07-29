@@ -21,6 +21,7 @@
 
 // mac-rsrc-utils
 #include "mac_rsrc/open_res_file.hh"
+#include "mac_rsrc/scoped_open_resfile.hh"
 
 // mac-relix-utils
 #include "mac_relix/FSRef_from_path.hh"
@@ -48,9 +49,6 @@
 // Orion
 #include "Orion/Main.hh"
 
-
-namespace n = nucleus;
-namespace N = Nitrogen;
 
 using namespace command::constants;
 
@@ -121,7 +119,6 @@ static char* const* get_options( char* const* argv )
 namespace tool
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
@@ -416,9 +413,8 @@ namespace tool
 		}
 		
 		using mac::rsrc::open_res_file;
+		using mac::rsrc::scoped_open_resfile;
 		using tool::open_res_file;
-		
-		n::owned< N::ResFileRefNum > resFile;
 		
 		ResFileRefNum refnum = open_res_file( file, the_fork_name, fsRdPerm );
 		
@@ -448,7 +444,7 @@ namespace tool
 			return 1;
 		}
 		
-		resFile = n::owned< N::ResFileRefNum >::seize( N::ResFileRefNum( refnum ) );
+		scoped_open_resfile scoped( refnum );
 		
 	#ifdef __LITTLE_ENDIAN__
 		
