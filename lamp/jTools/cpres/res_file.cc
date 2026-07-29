@@ -5,6 +5,11 @@
 
 #include "res_file.hh"
 
+// Mac OS
+#ifndef __SCRIPT__
+#include <Script.h>
+#endif
+
 // Standard C
 #include <stdlib.h>
 #include <string.h>
@@ -31,17 +36,22 @@
 #include "plus/string.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
 
-namespace N = Nitrogen;
 namespace p7 = poseven;
 
 using mac::sys::Error;
 
+
+struct FSRefNameSpec
+{
+	FSRef         parent;
+	HFSUniStr255  name;
+};
 
 class ForkNames
 {
@@ -97,8 +107,6 @@ struct FSSpec_traits
 
 struct FSRef_traits
 {
-	typedef N::FSRefNameSpec FSRefNameSpec;
-	
 	typedef FSRef          File;
 	typedef FSRefNameSpec  Node;
 };
@@ -170,7 +178,7 @@ void resolve_path( const char* path, FSRef& file )
 }
 
 static
-void resolve_new_path( const char* path, N::FSRefNameSpec& node )
+void resolve_new_path( const char* path, FSRefNameSpec& node )
 {
 	enum
 	{
@@ -215,7 +223,7 @@ ResFileRefNum open_new_res_file( const FSSpec& file, ForkType fork )
 #endif
 
 static
-ResFileRefNum open_new_res_file( const Mac::FSRefNameSpec& file, ForkType fork )
+ResFileRefNum open_new_res_file( const FSRefNameSpec& file, ForkType fork )
 {
 	using mac::rsrc::create_res_file;
 	using mac::rsrc::open_res_file;
