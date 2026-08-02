@@ -197,8 +197,11 @@ NSWindow* create_window( const raster::raster_desc& desc, CGFloat scale )
 	
 	NSRect contentRect = NSMakeRect( 0, 0, width * scale, height * scale );
 	
+	NSUInteger mask = NSTitledWindowMask
+	                | NSMiniaturizableWindowMask;
+	
 	id window = [[NSWindow alloc] initWithContentRect: contentRect
-	                              styleMask:           NSTitledWindowMask
+	                              styleMask:           mask
 	                              backing:             NSBackingStoreBuffered
 	                              defer:               NO];
 	
