@@ -5,6 +5,12 @@
 
 #include "Amaretto/WindowDelegate.hh"
 
+// mac-app-utils
+#include "mac_app/quit.hh"
+
+
+using mac::app::quit;
+
 
 /*
 	The window_moving flag is set in windowWillMove below.
@@ -45,6 +51,13 @@ NSRect lastSetBounds;
 		
 		lastSetBounds = [window contentRectForFrameRect: [window frame]];
 	}
+}
+
+- (BOOL) windowShouldClose: (id) sender
+{
+	quit();
+	
+	return false;
 }
 
 @end

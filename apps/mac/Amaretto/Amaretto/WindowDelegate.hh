@@ -27,4 +27,6 @@ extern NSRect lastSetBounds;
 - (void) windowWillMove: (id) sender;
 - (void) windowDidMove:  (id) sender;
 
+- (BOOL) windowShouldClose: (id) sender;
+
 @end
