@@ -3,6 +3,8 @@
 	-----------
 */
 
+#include "res_file.hh"
+
 // Standard C
 #include <stdlib.h>
 #include <string.h>
@@ -33,9 +35,6 @@
 
 // poseven
 #include "poseven/types/errno_t.hh"
-
-// cpres
-#include "res_file.hh"
 
 
 namespace N = Nitrogen;
