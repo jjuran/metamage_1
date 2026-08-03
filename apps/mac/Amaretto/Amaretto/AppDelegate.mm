@@ -298,16 +298,16 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	
 	[NSApp setMainMenu: releasing( menubar )];
 	
-	NSMenu* apple = SET_UP_MENU( Apple );
-	NSMenu* file  = SET_UP_MENU( File  );
-	NSMenu* edit  = SET_UP_MENU( Edit  );
-	NSMenu* view  = SET_UP_MENU( View  );
+	NSMenu* appl = SET_UP_MENU( Apple );
+	NSMenu* file = SET_UP_MENU( File  );
+	NSMenu* edit = SET_UP_MENU( Edit  );
+	NSMenu* view = SET_UP_MENU( View  );
 	
 	NSString* aboutText = string_with_processName_appended( @"About " );
 	NSString* quitText  = string_with_processName_appended( @"Quit "  );
 	
-	[[apple itemWithTag: kHICommandAbout] setTitle: aboutText];
-	[[apple itemWithTag: kHICommandQuit ] setTitle: quitText ];
+	[[appl itemWithTag: kHICommandAbout] setTitle: aboutText];
+	[[appl itemWithTag: kHICommandQuit ] setTitle: quitText ];
 	
 	[parentMenuItemOfMenu( edit ) setEnabled: NO];
 	
