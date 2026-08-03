@@ -292,6 +292,35 @@ NSString* string_with_processName_appended( NSString* prefix )
 }
 
 static
+void augment_appl_menu( NSMenu* appl )
+{
+	NSString* hideText = string_with_processName_appended( @"Hide " );
+	
+	SEL hide      = @selector(hide:);
+	SEL hideOther = @selector(hideOtherApplications:);
+	SEL unhideAll = @selector(unhideAllApplications:);
+	
+	NSMenuItem* separator  = [NSMenuItem separatorItem];
+	
+	NSMenuItem* hideThis   = [[NSMenuItem alloc] initWithTitle: hideText
+	                                             action:        hide
+	                                             keyEquivalent: @""];
+	
+	NSMenuItem* hideOthers = [[NSMenuItem alloc] initWithTitle: @"Hide Others"
+	                                             action:        hideOther
+	                                             keyEquivalent: @""];
+	
+	NSMenuItem* showAll    = [[NSMenuItem alloc] initWithTitle: @"Show All"
+	                                             action:        unhideAll
+	                                             keyEquivalent: @""];
+	
+	[appl insertItem: releasing( showAll    ) atIndex: 1];
+	[appl insertItem: releasing( hideOthers ) atIndex: 1];
+	[appl insertItem: releasing( hideThis   ) atIndex: 1];
+	[appl insertItem:            separator    atIndex: 1];
+}
+
+static
 NSMenu* set_up_menus( unsigned default_zoom_command )
 {
 	id menubar = [NSMenu new];
@@ -308,6 +337,8 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	
 	[[appl itemWithTag: kHICommandAbout] setTitle: aboutText];
 	[[appl itemWithTag: kHICommandQuit ] setTitle: quitText ];
+	
+	augment_appl_menu( appl );
 	
 	[parentMenuItemOfMenu( edit ) setEnabled: NO];
 	
