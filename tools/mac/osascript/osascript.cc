@@ -48,7 +48,6 @@
 #include "Mac/AppleEvents/Types/AEKeyword_scribe_text.hh"
 
 #include "Nitrogen/OSA.hh"
-#include "Nitrogen/Resources.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -298,14 +297,38 @@ namespace tool
 	{
 		using mac::rsrc::scoped_open_resfile;
 		
+		enum
+		{
+			kOSAScriptResourceID = 128,
+		};
+		
+		const DescType type = typeOSAGenericStorage;
+		
+		OSErr err;
+		
+		Mac::AEDesc_Data desc;
+		
 		n::owned< ComponentInstance > component = OpenGenericScriptingComponent();
 		
 		scoped_open_resfile resFileH( open_res_file( scriptFile, fsRdPerm ) );
 		
+		Handle h = Get1Resource( kOSAScriptResourceType, kOSAScriptResourceID );
+		
+		if ( h )
+		{
+			HLock( h );
+			
+			err = AECreateDesc( type, *h, GetHandleSize( h ), &desc );
+		}
+		else if ( (err = mac::sys::res_error()) == noErr )
+		{
+			err = resNotFound;
+		}
+		
+		Mac::ThrowOSStatus( err );
+		
 		return N::OSALoad( component,
-		                   N::AECreateDesc< Mac::AEDesc_Data >( Mac::typeOSAGenericStorage,
-		                                    N::Get1Resource( Mac::kOSAScriptResourceType,
-		                                                     N::ResID( 128 ) ) ) );
+		                   n::owned< Mac::AEDesc_Data >::seize( desc ) );
 	}
 	
 	static n::owned< N::OSAID > LoadScriptFile( const char* pathname, bool useCWD )
