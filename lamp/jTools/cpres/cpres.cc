@@ -149,6 +149,19 @@ namespace tool
 				if ( Handle existing = Get1Resource( type, id ) )
 				{
 					RemoveResource( existing );
+					
+					/*
+						If removing the existing resource fails,
+						abort the copy.  If it succeeds, dispose
+						the handle which is no longer a resource.
+					*/
+					
+					if ( (err = res_error()) )
+					{
+						goto error;
+					}
+					
+					DisposeHandle( existing );
 				}
 				else if ( (err = res_error())  &&  err != resNotFound )
 				{
