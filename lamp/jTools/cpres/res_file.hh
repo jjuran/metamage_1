@@ -6,9 +6,14 @@
 #ifndef CPRES_RESFILE_HH
 #define CPRES_RESFILE_HH
 
-// Nitrogen
-#ifndef NITROGEN_RESOURCES_HH
-#include "Nitrogen/Resources.hh"
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __RESOURCES__
+#include <Resources.h>
 #endif
 
 
@@ -19,11 +24,9 @@ enum ForkType
 };
 
 
-nucleus::owned< Nitrogen::ResFileRefNum >
-open_res_file( const char* path, ForkType fork );
+ResFileRefNum open_res_file( const char* path, ForkType fork );
 
-nucleus::owned< Nitrogen::ResFileRefNum >
-open_res_file( const char* path, ForkType fork, bool exists );
+ResFileRefNum open_res_file( const char* path, ForkType fork, bool exists );
 
 void set_BNDL_bit( const char* path, bool value );
 
