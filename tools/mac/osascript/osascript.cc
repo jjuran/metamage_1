@@ -298,9 +298,11 @@ namespace tool
 	{
 		using mac::rsrc::scoped_open_resfile;
 		
+		n::owned< ComponentInstance > component = OpenGenericScriptingComponent();
+		
 		scoped_open_resfile resFileH( open_res_file( scriptFile, fsRdPerm ) );
 		
-		return N::OSALoad( OpenGenericScriptingComponent(),
+		return N::OSALoad( component,
 		                   N::AECreateDesc< Mac::AEDesc_Data >( Mac::typeOSAGenericStorage,
 		                                    N::Get1Resource( Mac::kOSAScriptResourceType,
 		                                                     N::ResID( 128 ) ) ) );
