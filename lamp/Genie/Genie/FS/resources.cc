@@ -459,6 +459,10 @@ void rsrc_file_rename( const vfs::node* that, const vfs::node* destination )
 		p7::throw_errno( EXDEV );
 	}
 	
+	const FSSpec& fileSpec = *(FSSpec*) that->extra();
+	
+	RdWr_OpenResFile_Scope openResFile( fileSpec );
+	
 	const plus::string& new_name = destination->name();
 	
 	const ResSpec old_res = GetResSpec_from_name( that->name() );
@@ -468,10 +472,6 @@ void rsrc_file_rename( const vfs::node* that, const vfs::node* destination )
 	{
 		p7::throw_errno( EXDEV );
 	}
-	
-	const FSSpec& fileSpec = *(FSSpec*) that->extra();
-	
-	RdWr_OpenResFile_Scope openResFile( fileSpec );
 	
 	::SetResLoad( false );
 	
