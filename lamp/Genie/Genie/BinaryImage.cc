@@ -5,6 +5,11 @@
 
 #include "Genie/BinaryImage.hh"
 
+// Mac OS
+#ifndef __CODEFRAGMENTS__
+#include <CodeFragments.h>
+#endif
+
 // Standard C
 #include <string.h>
 
@@ -27,8 +32,8 @@
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.hh"
-#include "Nitrogen/Resources.hh"
+#include "Mac/Toolbox/Types/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // Genie
 #include "Genie/Utilities/Get1Resource_detached.hh"
@@ -46,7 +51,6 @@ namespace Genie
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	
 	
 	struct BinaryFileMetadata
@@ -183,7 +187,7 @@ namespace Genie
 	}
 	
 	static bool
-	ends_with( const uint8_t* whole, const char* part, size_t len )
+	ends_with( const Byte* whole, const char* part, size_t len )
 	{
 		size_t length = whole[ 0 ];
 		size_t offset = 1 + length - len;
@@ -240,13 +244,13 @@ namespace Genie
 	
 	static BinaryImage ReadProgramAsCodeFragment( const FSSpec& file )
 	{
-		N::ResType  resType = N::ResType( kCFragResourceType );  // cfrg
-		N::ResID    resID   = N::ResID  ( kCFragResourceID   );  // 0
+		const CFragResourceMember* member = NULL;
 		
-		::CFragResource** cfrg = N::Handle_Cast< ::CFragResource >( N::Get1Resource( resType, resID ) );
-		
-		// Handle dereferenced here
-		const ::CFragResourceMember* member = FindLoadableMemberInCFragResource( **cfrg );
+		if ( Handle h = Get1Resource( kCFragResourceType, kCFragResourceID ) )
+		{
+			// Handle dereferenced here
+			member = FindLoadableMemberInCFragResource( *(CFragResource*) *h );
+		}
 		
 		if ( member == NULL )
 		{
@@ -388,7 +392,7 @@ namespace Genie
 			{
 				const BinaryImage& image = cacheEntry->image;
 				
-				N::Handle h = image.get();
+				Handle h = image.get();
 				
 				/*
 					h could theoretically be NULL here *if* the code loader
