@@ -165,7 +165,7 @@ namespace tool
 	static
 	void install_null_flippers()
 	{
-		int n_types = N::Count1Types();
+		int n_types = Count1Types();
 		
 		for ( int i = 1;  i <= n_types;  ++i )
 		{
@@ -246,7 +246,7 @@ namespace tool
 		}
 		else
 		{
-			int n_rsrcs = N::Count1Resources( type );
+			int n_rsrcs = Count1Resources( type );
 			
 			for ( int j = 1;  j <= n_rsrcs;  ++j )
 			{
@@ -267,7 +267,7 @@ namespace tool
 		}
 		else
 		{
-			int n_types = N::Count1Types();
+			int n_types = Count1Types();
 			
 			for ( int i = 1;  i <= n_types;  ++i )
 			{
