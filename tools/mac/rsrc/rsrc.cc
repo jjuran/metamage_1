@@ -43,7 +43,6 @@
 #include "poseven/functions/write.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.hh"
 #include "Nitrogen/Resources.hh"
 
 // Orion
@@ -366,7 +365,7 @@ namespace tool
 		
 		if ( !use_data_fork )
 		{
-			N::ThrowOSStatus( ::FSGetResourceForkName( &the_fork_name ) );
+			Mac::ThrowOSStatus( ::FSGetResourceForkName( &the_fork_name ) );
 		}
 		
 	#else
