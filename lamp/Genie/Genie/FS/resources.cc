@@ -482,6 +482,11 @@ void rsrc_file_rename( const vfs::node* that, const vfs::node* destination )
 		p7::throw_errno( EXDEV );
 	}
 	
+	if ( new_resSpec.id == old_resSpec.id )
+	{
+		return;
+	}
+	
 	const FSSpec& fileSpec = *(FSSpec*) that->extra();
 	
 	RdWr_OpenResFile_Scope openResFile( fileSpec );
