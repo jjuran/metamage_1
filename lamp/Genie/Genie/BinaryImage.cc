@@ -21,6 +21,9 @@
 #include "mac_file/open_data_fork.hh"
 #include "mac_file/rw.hh"
 
+// mac-rsrc-utils
+#include "mac_rsrc/scoped_open_resfile.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -30,6 +33,7 @@
 
 // Genie
 #include "Genie/Utilities/GetCatInfo.hh"
+#include "Genie/Utilities/open_res_file.hh"
 
 
 #if TARGET_CPU_68K
@@ -262,6 +266,8 @@ namespace Genie
 	
 	static inline BinaryImage ReadImageFromFile( const FSSpec& file )
 	{
+		using mac::rsrc::scoped_open_resfile;
+		
 		if ( ! mac::sys::has_FSSpec_calls() )
 		{
 			goto data_fork_only;
@@ -269,7 +275,7 @@ namespace Genie
 		
 		try
 		{
-			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdPerm );
+			scoped_open_resfile resFile( open_res_file( file, fsRdPerm ) );
 			
 			const bool rsrc = TARGET_CPU_68K && !TARGET_RT_MAC_CFM;
 			

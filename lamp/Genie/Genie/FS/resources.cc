@@ -30,7 +30,7 @@
 #include "mac_sys/res_error.hh"
 
 // mac-rsrc-utils
-#include "mac_rsrc/open_res_file.hh"
+#include "mac_rsrc/scoped_open_resfile.hh"
 
 // plus
 #include "plus/hexadecimal.hh"
@@ -62,30 +62,12 @@
 
 // Genie
 #include "Genie/IO/Handle.hh"
+#include "Genie/Utilities/open_res_file.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
 
 #define POD( obj )  (&(obj)), (sizeof (obj))
 
-
-namespace Nitrogen
-{
-	
-	namespace n = nucleus;
-	
-	static
-	n::owned< ResFileRefNum > open_res_file( const FSSpec& file, SInt8 perm )
-	{
-		::ResFileRefNum opened = mac::rsrc::open_res_file( file, perm );
-		
-		ResError();
-		
-		ResFileRefNum refNum = ResFileRefNum( opened );
-		
-		return nucleus::owned< ResFileRefNum >::seize( refNum );
-	}
-	
-}
 
 namespace Genie
 {
@@ -96,6 +78,8 @@ namespace p7 = poseven;
 
 
 using mac::sys::res_error;
+
+using mac::rsrc::scoped_open_resfile;
 
 using MacScribe::is_safe_quad;
 using MacScribe::parse_quad_name;
@@ -169,7 +153,7 @@ void mac_name_get( plus::var_string& result, const vfs::node* that, bool binary 
 	
 	const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
 	
-	n::owned< N::ResFileRefNum > resFile = N::open_res_file( fileSpec, fsRdPerm );
+	scoped_open_resfile resFile( open_res_file( fileSpec, fsRdPerm ) );
 	
 	const ResSpec resSpec = GetResSpec_from_name( that->name() );
 	
@@ -442,7 +426,7 @@ static const vfs::node_method_set rsrc_file_methods =
 static
 bool has_resource( const FSSpec& file, const ResSpec& resSpec )
 {
-	n::owned< N::ResFileRefNum > resFile = N::open_res_file( file, fsRdPerm );
+	scoped_open_resfile resFile( open_res_file( file, fsRdPerm ) );
 	
 	return ::Get1Resource( resSpec.type, resSpec.id ) != NULL;
 }
@@ -511,7 +495,7 @@ off_t rsrc_file_geteof( const vfs::node* that )
 {
 	const FSSpec& fileSpec = *(FSSpec*) that->extra();
 	
-	n::owned< N::ResFileRefNum > resFile = N::open_res_file( fileSpec, fsRdPerm );
+	scoped_open_resfile resFile( open_res_file( fileSpec, fsRdPerm ) );
 	
 	const ResSpec resSpec = GetResSpec_from_name( that->name() );
 	
@@ -579,7 +563,7 @@ vfs::filehandle_ptr rsrc_file_open( const vfs::node* that, int flags, mode_t mod
 	
 	const FSSpec& fileSpec = *(FSSpec*) that->extra();
 	
-	n::owned< N::ResFileRefNum > resFile = N::open_res_file( fileSpec, fsRdPerm );
+	scoped_open_resfile resFile( open_res_file( fileSpec, fsRdPerm ) );
 	
 	const ResSpec resSpec = GetResSpec_from_name( that->name() );
 	
