@@ -62,6 +62,7 @@
 
 // Genie
 #include "Genie/IO/Handle.hh"
+#include "Genie/Utilities/checked_resource.hh"
 #include "Genie/Utilities/Get1Resource_detached.hh"
 #include "Genie/Utilities/open_res_file.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
@@ -160,7 +161,7 @@ void mac_name_get( plus::var_string& result, const vfs::node* that, bool binary 
 	
 	ResLoad_false_scope ResLoad_false;
 	
-	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
+	Handle r = checked_resource( Get1Resource( resSpec.type, resSpec.id ) );
 	
 	short    id;
 	ResType  type;
@@ -197,7 +198,7 @@ void mac_name_set( const vfs::node* that, const char* begin, const char* end, bo
 	
 	ResLoad_false_scope ResLoad_false;
 	
-	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
+	Handle r = checked_resource( Get1Resource( resSpec.type, resSpec.id ) );
 	
 	SetResInfo( r, resSpec.id, name );
 	
@@ -441,7 +442,7 @@ void rsrc_file_remove( const vfs::node* that )
 	
 	const ResSpec resSpec = GetResSpec_from_name( that->name() );
 	
-	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
+	Handle r = checked_resource( Get1Resource( resSpec.type, resSpec.id ) );
 	
 	RemoveResource( r );
 	
@@ -503,7 +504,7 @@ off_t rsrc_file_geteof( const vfs::node* that )
 	
 	const ResSpec resSpec = GetResSpec_from_name( that->name() );
 	
-	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
+	Handle r = checked_resource( Get1Resource( resSpec.type, resSpec.id ) );
 	
 	return mac::glue::GetHandleSize( r );
 }
