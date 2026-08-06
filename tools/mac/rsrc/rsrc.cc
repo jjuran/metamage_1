@@ -235,7 +235,7 @@ namespace tool
 		
 		list_rsrc_by_handle( h );
 		
-		N::ReleaseResource( h );
+		ReleaseResource( h );
 	}
 	
 	static void list_rsrcs_of_type( Mac::ResType type )
@@ -254,7 +254,7 @@ namespace tool
 				
 				list_rsrc_by_handle( h );
 				
-				N::ReleaseResource( h );
+				ReleaseResource( h );
 			}
 		}
 	}
