@@ -466,29 +466,32 @@ void rsrc_file_rename( const vfs::node* that, const vfs::node* destination )
 		p7::throw_errno( EXDEV );
 	}
 	
-	if ( new_res.id == old_res.id )
-	{
-		return;
-	}
-	
 	const FSSpec& fileSpec = *(FSSpec*) that->extra();
 	
 	RdWr_OpenResFile_Scope openResFile( fileSpec );
 	
 	::SetResLoad( false );
 	
-	if ( const Handle r = ::Get1Resource( new_res.type, new_res.id ) )
+	OSErr err = resNotFound;
+	
+	if ( Handle r = Get1Resource( old_res.type, old_res.id ) )
 	{
-		::RemoveResource( r );
+		if ( new_res.id != old_res.id )
+		{
+			if ( Handle dupe = Get1Resource( new_res.type, new_res.id ) )
+			{
+				RemoveResource( dupe );
+			}
+		}
+		
+		SetResInfo( r, new_res.id, NULL );
+		
+		err = res_error();
 	}
 	
 	::SetResLoad( true );
 	
-	const N::Handle r = N::Get1Resource( old_res.type, old_res.id );
-	
-	SetResInfo( r, new_res.id, NULL );
-	
-	Mac::ThrowOSStatus( res_error() );
+	Mac::ThrowOSStatus( err );
 }
 
 static
