@@ -18,6 +18,7 @@
 
 // mac-sys-utils
 #include "mac_sys/errno_from_mac_error.hh"
+#include "mac_sys/res_error.hh"
 
 // mac-rsrc-utils
 #include "mac_rsrc/open_res_file.hh"
@@ -43,7 +44,7 @@
 #include "poseven/functions/write.hh"
 
 // Nitrogen
-#include "Nitrogen/Resources.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -114,11 +115,46 @@ static char* const* get_options( char* const* argv )
 	return argv;
 }
 
+static
+Handle checked_resource( Handle h )
+{
+	using mac::sys::res_error;
+	
+	if ( ! h )
+	{
+		OSErr err = res_error();
+		
+		if ( err == noErr )
+		{
+			err = resNotFound;
+		}
+		
+		Mac::ThrowOSStatus( err );
+	}
+	
+	return h;
+}
+
+static inline
+Handle get1_rsrc( ResType type, short id )
+{
+	Handle h = Get1Resource( type, id );
+	
+	return checked_resource( h );
+}
+
+static
+Handle get1_ind_rsrc( ResType type, short index )
+{
+	Handle h = Get1IndResource( type, index );
+	
+	return checked_resource( h );
+}
+
 
 namespace tool
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	using mac::sys::Error;
@@ -127,8 +163,8 @@ namespace tool
 	using mac::relix::FSObj_from_existing_path;
 	
 	
-	static Mac::ResType  the_type;
-	static Mac::ResID    the_id;
+	static ResType  the_type;
+	static ResID    the_id;
 	
 	static HFSUniStr255 the_fork_name;
 	
@@ -165,19 +201,23 @@ namespace tool
 	static
 	void install_null_flippers()
 	{
-		int n_types = N::Count1Types();
+		int n_types = Count1Types();
 		
 		for ( int i = 1;  i <= n_types;  ++i )
 		{
-			Mac::ResType type = N::Get1IndType( i );
+			ResType type;
+			
+			Get1IndType( &type, i );
 			
 			install_null_flipper( type );
 		}
 	}
 	
-	static void list_rsrc_by_handle( N::Handle h )
+	static void list_rsrc_by_handle( Handle h )
 	{
-		mac::types::ResInfo resInfo = N::GetResInfo( h );
+		mac::types::ResInfo resInfo;
+		
+		GetResInfo( h, &resInfo.id, &resInfo.type, resInfo.name );
 		
 		if ( use_hex_types )
 		{
@@ -227,16 +267,18 @@ namespace tool
 		p7::write( p7::stdout_fileno, data, size );
 	}
 	
-	static void list_rsrc_by_id( Mac::ResType type, Mac::ResID id )
+	static
+	void list_rsrc_by_id( ResType type, ResID id )
 	{
-		Mac::Handle h = N::Get1Resource( type, id );
+		Handle h = get1_rsrc( type, id );
 		
 		list_rsrc_by_handle( h );
 		
-		N::ReleaseResource( h );
+		ReleaseResource( h );
 	}
 	
-	static void list_rsrcs_of_type( Mac::ResType type )
+	static
+	void list_rsrcs_of_type( ResType type )
 	{
 		if ( the_id_opt )
 		{
@@ -244,15 +286,15 @@ namespace tool
 		}
 		else
 		{
-			int n_rsrcs = N::Count1Resources( type );
+			int n_rsrcs = Count1Resources( type );
 			
 			for ( int j = 1;  j <= n_rsrcs;  ++j )
 			{
-				Mac::Handle h = N::Get1IndResource( type, j );
+				Handle h = get1_ind_rsrc( type, j );
 				
 				list_rsrc_by_handle( h );
 				
-				N::ReleaseResource( h );
+				ReleaseResource( h );
 			}
 		}
 	}
@@ -265,11 +307,13 @@ namespace tool
 		}
 		else
 		{
-			int n_types = N::Count1Types();
+			int n_types = Count1Types();
 			
 			for ( int i = 1;  i <= n_types;  ++i )
 			{
-				Mac::ResType type = N::Get1IndType( i );
+				ResType type;
+				
+				Get1IndType( &type, i );
 				
 				list_rsrcs_of_type( type );
 			}
@@ -320,7 +364,7 @@ namespace tool
 			return 1;
 		}
 		
-		Handle h = N::Get1Resource( the_type, the_id );
+		Handle h = get1_rsrc( the_type, the_id );
 		
 		print_rsrc_by_handle( h, showing );
 		
@@ -353,12 +397,12 @@ namespace tool
 		
 		if ( the_type_opt != NULL )
 		{
-			the_type = Mac::ResType( MacScribe::parse_utf8_quad_name( the_type_opt ) );
+			the_type = MacScribe::parse_utf8_quad_name( the_type_opt );
 		}
 		
 		if ( the_id_opt != NULL )
 		{
-			the_id = Mac::ResID( gear::parse_decimal( the_id_opt ) );
+			the_id = gear::parse_decimal( the_id_opt );
 		}
 		
 	#ifdef __APPLE__
