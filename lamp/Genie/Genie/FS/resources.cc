@@ -469,16 +469,15 @@ void rsrc_file_rename( const vfs::node* that, const vfs::node* destination )
 	
 	const plus::string& new_name = destination->name();
 	
-	const ResSpec old_resSpec = GetResSpec_from_name( that->name() );
+	const ResSpec old_res = GetResSpec_from_name( that->name() );
+	const ResSpec new_res = GetResSpec_from_name( new_name );
 	
-	const ResSpec new_resSpec = GetResSpec_from_name( new_name );
-	
-	if ( old_resSpec.type != new_resSpec.type )
+	if ( new_res.type != old_res.type )
 	{
 		p7::throw_errno( EXDEV );
 	}
 	
-	if ( new_resSpec.id == old_resSpec.id )
+	if ( new_res.id == old_res.id )
 	{
 		return;
 	}
@@ -489,16 +488,16 @@ void rsrc_file_rename( const vfs::node* that, const vfs::node* destination )
 	
 	::SetResLoad( false );
 	
-	if ( const Handle r = ::Get1Resource( new_resSpec.type, new_resSpec.id ) )
+	if ( const Handle r = ::Get1Resource( new_res.type, new_res.id ) )
 	{
 		::RemoveResource( r );
 	}
 	
 	::SetResLoad( true );
 	
-	const N::Handle r = N::Get1Resource( old_resSpec.type, old_resSpec.id );
+	const N::Handle r = N::Get1Resource( old_res.type, old_res.id );
 	
-	N::SetResInfo( r, new_resSpec.id, NULL );
+	N::SetResInfo( r, new_res.id, NULL );
 }
 
 static
