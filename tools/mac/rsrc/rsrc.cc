@@ -177,7 +177,9 @@ namespace tool
 	
 	static void list_rsrc_by_handle( N::Handle h )
 	{
-		mac::types::ResInfo resInfo = N::GetResInfo( h );
+		mac::types::ResInfo resInfo;
+		
+		GetResInfo( h, &resInfo.id, &resInfo.type, resInfo.name );
 		
 		if ( use_hex_types )
 		{
