@@ -181,8 +181,6 @@ void mac_name_get( plus::var_string& result, const vfs::node* that, bool binary 
 	
 	GetResInfo( r, &id, &type, name );
 	
-	::ReleaseResource( r );
-	
 	result.assign( name );
 }
 
@@ -215,8 +213,6 @@ void mac_name_set( const vfs::node* that, const char* begin, const char* end, bo
 	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 	
 	N::SetResInfo( r, resSpec.id, name );
-	
-	::ReleaseResource( r );
 }
 
 static
