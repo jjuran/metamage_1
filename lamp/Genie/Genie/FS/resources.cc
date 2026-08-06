@@ -95,6 +95,8 @@ namespace N = Nitrogen;
 namespace p7 = poseven;
 
 
+using mac::sys::res_error;
+
 using MacScribe::is_safe_quad;
 using MacScribe::parse_quad_name;
 
@@ -212,7 +214,9 @@ void mac_name_set( const vfs::node* that, const char* begin, const char* end, bo
 	
 	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 	
-	N::SetResInfo( r, resSpec.id, name );
+	SetResInfo( r, resSpec.id, name );
+	
+	Mac::ThrowOSStatus( res_error() );
 }
 
 static
@@ -254,8 +258,6 @@ struct rsrc_extra : Mac_Handle_extra
 static inline
 Handle GetOrAddResource( const ResSpec& resSpec )
 {
-	using mac::sys::res_error;
-	
 	Handle h = Get1Resource( resSpec.type, resSpec.id );
 	
 	if ( ! h  &&  res_error() == resNotFound  &&  (h = NewHandle( 0 )) )
@@ -497,7 +499,9 @@ void rsrc_file_rename( const vfs::node* that, const vfs::node* destination )
 	
 	const N::Handle r = N::Get1Resource( old_res.type, old_res.id );
 	
-	N::SetResInfo( r, new_res.id, NULL );
+	SetResInfo( r, new_res.id, NULL );
+	
+	Mac::ThrowOSStatus( res_error() );
 }
 
 static
