@@ -498,13 +498,7 @@ void rsrc_file_rename( const vfs::node* that, const vfs::node* destination )
 	
 	const N::Handle r = N::Get1Resource( old_resSpec.type, old_resSpec.id );
 	
-	short    id;
-	ResType  type;
-	Str255   name;
-	
-	GetResInfo( r, &id, &type, name );
-	
-	N::SetResInfo( r, new_resSpec.id, name );
+	N::SetResInfo( r, new_resSpec.id, NULL );
 }
 
 static
