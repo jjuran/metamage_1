@@ -31,6 +31,7 @@
 #include "Nitrogen/Resources.hh"
 
 // Genie
+#include "Genie/Utilities/Get1Resource_detached.hh"
 #include "Genie/Utilities/GetCatInfo.hh"
 #include "Genie/Utilities/open_res_file.hh"
 
@@ -174,10 +175,7 @@ namespace Genie
 	
 	static BinaryImage ReadProgramAsCodeResource()
 	{
-		N::ResType  resType = N::ResType( 'Tool' );
-		N::ResID    resID   = N::ResID  ( 0      );
-		
-		BinaryImage code = N::DetachResource( N::Get1Resource( resType, resID ) );
+		BinaryImage code = Get1Resource_detached( 'Tool', 0 );
 		
 		HLockHi( code.get() );
 		

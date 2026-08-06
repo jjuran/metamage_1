@@ -62,6 +62,7 @@
 
 // Genie
 #include "Genie/IO/Handle.hh"
+#include "Genie/Utilities/Get1Resource_detached.hh"
 #include "Genie/Utilities/open_res_file.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
@@ -567,9 +568,7 @@ vfs::filehandle_ptr rsrc_file_open( const vfs::node* that, int flags, mode_t mod
 	
 	const ResSpec resSpec = GetResSpec_from_name( that->name() );
 	
-	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
-	
-	n::owned< N::Handle > h = N::DetachResource( r );
+	n::owned< N::Handle > h = Get1Resource_detached( resSpec.type, resSpec.id );
 	
 	vfs::filehandle* result = writing ? new_rsrc_handle  ( *that, flags, h, fileSpec )
 	                                  : new_Handle_handle( *that, flags, h );
