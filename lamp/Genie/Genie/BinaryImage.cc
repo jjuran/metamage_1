@@ -12,7 +12,6 @@
 #include <map>
 
 // mac-sys-utils
-#include "mac_sys/has/FSSpec_calls.hh"
 #include "mac_sys/has/native_Carbon.hh"
 #include "mac_sys/has/RealTempMemory.hh"
 #include "mac_sys/mem_error.hh"
@@ -268,11 +267,6 @@ namespace Genie
 	{
 		using mac::rsrc::scoped_open_resfile;
 		
-		if ( ! mac::sys::has_FSSpec_calls() )
-		{
-			goto data_fork_only;
-		}
-		
 		try
 		{
 			scoped_open_resfile resFile( open_res_file( file, fsRdPerm ) );
@@ -297,8 +291,6 @@ namespace Genie
 				throw;
 			}
 		}
-		
-	data_fork_only:
 		
 		return ReadProgramFromDataFork( file, 0, kCFragGoesToEOF );
 	}
