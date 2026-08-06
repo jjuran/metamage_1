@@ -458,7 +458,9 @@ void rsrc_file_remove( const vfs::node* that )
 	
 	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 	
-	(void) N::RemoveResource( r );
+	RemoveResource( r );
+	
+	Mac::ThrowOSStatus( res_error() );
 }
 
 static
