@@ -539,7 +539,21 @@ vfs::filehandle_ptr unrsrc_file_open( const vfs::node* that, int flags, mode_t m
 		
 		const ResSpec resSpec = GetResSpec_from_name( that->name() );
 		
-		(void) N::AddResource( N::NewHandle( 0 ), resSpec.type, resSpec.id, NULL );
+		Handle h = NewHandle( 0 );
+		
+		if ( ! h )
+		{
+			Mac::ThrowOSStatus( memFullErr );
+		}
+		
+		AddResource( h, resSpec.type, resSpec.id, NULL );
+		
+		if ( OSErr err = res_error() )
+		{
+			DisposeHandle( h );
+			
+			Mac::ThrowOSStatus( err );
+		}
 	}
 	
 	n::owned< N::Handle > h = N::NewHandle( 0 );
