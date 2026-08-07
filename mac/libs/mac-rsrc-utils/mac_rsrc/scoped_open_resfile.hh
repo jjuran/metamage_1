@@ -25,7 +25,7 @@
 
 namespace mac  {
 namespace rsrc {
-
+	
 	class scoped_open_resfile
 	{
 		NON_COPYABLE( scoped_open_resfile )
