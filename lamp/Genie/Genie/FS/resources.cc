@@ -133,7 +133,9 @@ ResSpec GetResSpec_from_name( const plus::string& name )
 		p7::throw_errno( ENOENT );
 	}
 	
-	const short id = gear::decode_16_bit_hex( begin );
+	ResSpec result;
+	
+	result.id = gear::decode_16_bit_hex( begin );
 	
 	begin += 4;
 	
@@ -142,9 +144,7 @@ ResSpec GetResSpec_from_name( const plus::string& name )
 		p7::throw_errno( ENOENT );
 	}
 	
-	const ::OSType type = parse_quad_name( begin, end - begin );
-	
-	const ResSpec result = { type, id };
+	result.type = parse_quad_name( begin, end - begin );
 	
 	return result;
 }
