@@ -45,7 +45,9 @@
 #include "nucleus/owned.hh"
 
 // Nitrogen
-#include "Nitrogen/Resources.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
+#include "Nitrogen/MacMemory.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -89,8 +91,8 @@ using MacScribe::parse_quad_name;
 
 struct ResSpec
 {
-	Mac::ResType  type;
-	Mac::ResID    id;
+	ResType  type;
+	ResID    id;
 };
 
 class ResLoad_false_scope
@@ -142,7 +144,7 @@ ResSpec GetResSpec_from_name( const plus::string& name )
 	
 	const ::OSType type = parse_quad_name( begin, end - begin );
 	
-	const ResSpec result = { Mac::ResType( type ), Mac::ResID( id ) };
+	const ResSpec result = { type, id };
 	
 	return result;
 }
