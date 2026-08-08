@@ -1,6 +1,6 @@
-resource 'ICN#' (128) {
-	{	/* array: 2 elements */
-		/* [1] */
+resource 'ICN#' (128)
+{
+	{
 		$"0000 0000 0000 0000 0001 0000 0006 C000"
 		$"0018 3000 0060 0C00 0080 0200 00E0 0E00"
 		$"00B8 3E00 00D6 FE00 00AB FE00 00D5 FE00"
@@ -9,7 +9,7 @@ resource 'ICN#' (128) {
 		$"6C1F B07C 577F 5DFC 6AFF ABFC 55FF 57FC"
 		$"6AFF ABFC 55FF 57FC 6AFF ABFC 35FE D7F8"
 		$"0EF8 3BE0 03E0 0F80 0080 02",
-		/* [2] */
+		
 		$"0000 0000 0000 0000 0001 0000 0007 C000"
 		$"001F F000 007F FC00 00FF FE00 00FF FE00"
 		$"00FF FE00 00FF FE00 00FF FE00 00FF FE00"
@@ -21,9 +21,9 @@ resource 'ICN#' (128) {
 	}
 };
 
-resource 'ICN#' (129) {
-	{	/* array: 2 elements */
-		/* [1] */
+resource 'ICN#' (129)
+{
+	{
 		$"FFFF FC00 8000 0400 FFFF FC00 8000 0400"
 		$"8000 8400 8081 C400 8082 A7FF 9EF2 8401"
 		$"A089 C7FF 9C88 A401 828A A401 BC89 C401"
@@ -32,7 +32,7 @@ resource 'ICN#' (129) {
 		$"1060 C101 1080 2101 10E0 E101 10DB E1FF"
 		$"10AF E100 10D7 E100 10AF E100 1077 C100"
 		$"101F 0100 1004 0100 1000 0100 1FFF FF",
-		/* [2] */
+		
 		$"FFFF FC00 FFFF FC00 FFFF FC00 FFFF FC00"
 		$"FFFF FC00 FFFF FC00 FFFF FFFF FFFF FFFF"
 		$"FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF"
@@ -44,9 +44,9 @@ resource 'ICN#' (129) {
 	}
 };
 
-resource 'ICN#' (130) {
-	{	/* array: 2 elements */
-		/* [1] */
+resource 'ICN#' (130)
+{
+	{
 		$"03FF FFC0 0200 0060 0200 0050 027F FE48"
 		$"0200 0044 027F FE42 0200 007F 0200 0001"
 		$"0380 FFF9 0660 0001 0810 FFF9 0E70 0001"
@@ -55,7 +55,7 @@ resource 'ICN#' (130) {
 		$"DFDF 0001 6E6E 1FF9 1A18 0001 0200 0001"
 		$"0203 FFF9 0200 0001 027F FFF9 0200 0001"
 		$"027F FFF9 0200 0001 0200 0001 03FF FFFF",
-		/* [2] */
+		
 		$"03FF FFC0 03FF FFE0 03FF FFF0 03FF FFF8"
 		$"03FF FFFC 03FF FFFE 03FF FFFF 03FF FFFF"
 		$"03FF FFFF 07FF FFFF 0FFF FFFF 0FFF FFFF"
@@ -67,7 +67,8 @@ resource 'ICN#' (130) {
 	}
 };
 
-resource 'icl8' (128) {
+resource 'icl8' (128)
+{
 	$"0000 0000 0000 0000 0000 0000 0000 0000"
 	$"0000 0000 0000 0000 0000 0000 0000 0000"
 	$"0000 0000 0000 0000 0000 0000 0000 0000"
@@ -132,7 +133,8 @@ resource 'icl8' (128) {
 	$"0000 0000 0000 FF"
 };
 
-resource 'icl8' (129) {
+resource 'icl8' (129)
+{
 	$"FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF"
 	$"FFFF FFFF FFFF 0000 0000 0000 0000 0000"
 	$"FF2B 2B2B 2B2B 2B2B 2B2B 2B2B 2B2B 2B2B"
@@ -199,7 +201,8 @@ resource 'icl8' (129) {
 	$"FFFF FFFF FFFF FFFF"
 };
 
-resource 'icl8' (130) {
+resource 'icl8' (130)
+{
 	$"0000 0000 0000 FFFF FFFF FFFF FFFF FFFF"
 	$"FFFF FFFF FFFF FFFF FFFF 0000 0000 0000"
 	$"0000 0000 0000 FFF5 F5F5 F5F5 F5F5 F5F5"
@@ -266,7 +269,8 @@ resource 'icl8' (130) {
 	$"FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF"
 };
 
-resource 'icl4' (128) {
+resource 'icl4' (128)
+{
 	$"0000 0000 0000 0000 0000 0000 0000 0000"
 	$"0000 0000 0000 0000 0000 0000 0000 0000"
 	$"0000 0000 0000 000F 0000 0000 0000 0000"
@@ -300,7 +304,8 @@ resource 'icl4' (128) {
 	$"0000 0000 F000 0000 0000 00F0"
 };
 
-resource 'icl4' (129) {
+resource 'icl4' (129)
+{
 	$"FFFF FFFF FFFF FFFF FFFF FF00 0000 0000"
 	$"FCCC CCCC CCCC CCCC CCCC CF00 0000 0000"
 	$"FFFF FFFF FFFF FFFF FFFF FF00 0000 0000"
@@ -335,7 +340,8 @@ resource 'icl4' (129) {
 	$"000F FFFF FFFF FFFF FFFF FFFF"
 };
 
-resource 'icl4' (130) {
+resource 'icl4' (130)
+{
 	$"0000 00FF FFFF FFFF FFFF FFFF FF00 0000"
 	$"0000 00F0 0000 0000 0000 0000 0FF0 0000"
 	$"0000 00F0 0000 0000 0000 0000 0FCF 0000"
@@ -370,51 +376,52 @@ resource 'icl4' (130) {
 	$"0000 00FF FFFF FFFF FFFF FFFF FFFF FFFF"
 };
 
-resource 'ics#' (128) {
-	{	/* array: 2 elements */
-		/* [1] */
+resource 'ics#' (128)
+{
+	{
 		$"0000 0180 0660 0810 0E70 0DF0 0AF0 1DF8"
 		$"66E6 8181 E7E7 DFDF AFAF DFDF 6E6E 1818",
-		/* [2] */
+		
 		$"0000 0180 07E0 0FF0 0FF0 0FF0 0FF0 1FF8"
 		$"7FFE FFFF FFFF FFFF FFFF FFFF 7E7E 1818"
 	}
 };
 
-resource 'ics#' (129) {
-	{	/* array: 2 elements */
-		/* [1] */
+resource 'ics#' (129)
+{
+	{
 		$"FFE0 8020 FFFF 8021 AA3F 8021 BFFD A005"
 		$"FFFD 2285 2C65 2AE7 2DE4 2BE4 25C4 3FFC",
-		/* [2] */
+		
 		$"FFE0 FFE0 FFFF FFFF FFFF FFFF FFFF FFFF"
 		$"FFFF 3FFF 3FFF 3FFF 3FFC 3FFC 3FFC 3FFC"
 	}
 };
 
-resource 'ics#' (130) {
-	{	/* array: 2 elements */
-		/* [1] */
+resource 'ics#' (130)
+{
+	{
 		$"1FF8 100C 13EA 180F 6601 817D E701 DF7D"
 		$"AF01 DF7D 6E01 18FD 1001 17FD 1001 1FFF",
-		/* [2] */
+		
 		$"1FF8 1FFC 1FFE 1FFF 7FFF FFFF FFFF FFFF"
 		$"FFFF FFFF 7FFF 1FFF 1FFF 1FFF 1FFF 1FFF"
 	}
 };
 
-resource 'ics#' (131) {
-	{	/* array: 2 elements */
-		/* [1] */
+resource 'ics#' (131)
+{
+	{
 		$"03FC 0204 03FC 0D08 3308 4088 7388 6F88"
 		$"5788 6F88 3708 0D08 0108 03FC 0204 03FC",
-		/* [2] */
+		
 		$"03FC 03FC 03FC 0FF8 3FF8 7FF8 7FF8 7FF8"
 		$"7FF8 7FF8 3FF8 0DF8 01F8 03FC 03FC 03FC"
 	}
 };
 
-resource 'ics8' (128) {
+resource 'ics8' (128)
+{
 	$"0000 0000 0000 0000 0000 0000 0000 0000"
 	$"0000 0000 0000 00FF FF00 0000 0000 0000"
 	$"0000 0000 00FF FF2A 2AFF FF00 0000 0000"
@@ -433,7 +440,8 @@ resource 'ics8' (128) {
 	$"0000 00FF FF00 0000 0000 00FF FF"
 };
 
-resource 'ics8' (129) {
+resource 'ics8' (129)
+{
 	$"FFFF FFFF FFFF FFFF FFFF FF00 0000 0000"
 	$"FF2B 2B2B 2B2B 2B2B 2B2B FF00 0000 0000"
 	$"FFFF FFFF FFFF FFFF FFFF FFFF FFFF FFFF"
@@ -452,7 +460,8 @@ resource 'ics8' (129) {
 	$"0000 FFFF FFFF FFFF FFFF FFFF FFFF"
 };
 
-resource 'ics8' (130) {
+resource 'ics8' (130)
+{
 	$"0000 00FF FFFF FFFF FFFF FFFF FF00 0000"
 	$"0000 00FF F5F5 F5F5 F5F5 F5F5 FFFF 0000"
 	$"0000 00FF F5F5 FDFD FDFD FDF5 FF2B FF00"
@@ -471,7 +480,8 @@ resource 'ics8' (130) {
 	$"0000 00FF FFFF FFFF FFFF FFFF FFFF FFFF"
 };
 
-resource 'ics8' (131) {
+resource 'ics8' (131)
+{
 	$"0000 0000 0000 FFFF FFFF FFFF FFFF 0000"
 	$"0000 0000 0000 FFF6 F5F6 2BF7 F8FF 0000"
 	$"0000 0000 0000 FFFF FFFF FFFF FFFF 0000"
@@ -490,7 +500,8 @@ resource 'ics8' (131) {
 	$"0000 0000 0000 FFFF FFFF FFFF FFFF"
 };
 
-resource 'ics4' (128) {
+resource 'ics4' (128)
+{
 	$"0000 0000 0000 0000 0000 000F F000 0000"
 	$"0000 0FFC CFF0 0000 0000 FCCC CCCF 0000"
 	$"0000 FFFC CFFF 0000 0000 FDDF FEEF 0000"
@@ -501,7 +512,8 @@ resource 'ics4' (128) {
 	$"0FFD FFF0 0FFD FFF0 000F F000 000F F0"
 };
 
-resource 'ics4' (129) {
+resource 'ics4' (129)
+{
 	$"FFFF FFFF FFF0 0000 FCCC CCCC CCF0 0000"
 	$"FFFF FFFF FFFF FFFF F000 0000 00FC CCCF"
 	$"F0F0 F0F0 00FF FFFF F000 0000 00F0 000F"
@@ -512,7 +524,8 @@ resource 'ics4' (129) {
 	$"00F0 0FDF EF00 0F00 00FF FFFF FFFF FF"
 };
 
-resource 'ics4' (130) {
+resource 'ics4' (130)
+{
 	$"000F FFFF FFFF F000 000F 0000 0000 FF00"
 	$"000F 00DD DDD0 FCF0 000F F000 0000 FFFF"
 	$"0FFC CFF0 0000 000F FCCC CCCF 0DDD DD0F"
@@ -523,7 +536,8 @@ resource 'ics4' (130) {
 	$"000F 0000 0000 000F 000F FFFF FFFF FFFF"
 };
 
-resource 'ics4' (131) {
+resource 'ics4' (131)
+{
 	$"0000 00FF FFFF FF00 0000 00FC CCCC CF00"
 	$"0000 00FF FFFF FF00 0000 FF0F CCCC F000"
 	$"00FF CCFF CCCC F000 0FCC CCCC FCCC F000"
@@ -534,56 +548,51 @@ resource 'ics4' (131) {
 	$"0000 00FC CCCC CF00 0000 00FF FFFF FF"
 };
 
-resource 'BNDL' (128) {
+resource 'BNDL' (128)
+{
 	'Poof',
 	0,
-	{	/* array TypeArray: 2 elements */
-		/* [1] */
+	{
 		'FREF',
-		{	/* array IDArray: 4 elements */
-			/* [1] */
+		{
 			0, 128,
-			/* [2] */
 			1, 129,
-			/* [3] */
 			2, 130,
-			/* [4] */
-			3, 131
+			3, 131,
 		},
-		/* [2] */
 		'ICN#',
-		{	/* array IDArray: 4 elements */
-			/* [1] */
+		{
 			0, 128,
-			/* [2] */
 			1, 129,
-			/* [3] */
 			2, 130,
-			/* [4] */
-			3, 131
+			3, 131,
 		}
 	}
 };
 
-resource 'FREF' (128) {
+resource 'FREF' (128)
+{
 	'APPL',
 	0,
 	""
 };
 
-resource 'FREF' (129) {
+resource 'FREF' (129)
+{
 	'Tool',
 	1,
 	""
 };
 
-resource 'FREF' (130) {
+resource 'FREF' (130)
+{
 	'TEXT',
 	2,
 	""
 };
 
-resource 'FREF' (131) {
+resource 'FREF' (131)
+{
 	'FIFO',
 	3,
 	""
