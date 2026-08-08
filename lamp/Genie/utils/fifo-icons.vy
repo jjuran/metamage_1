@@ -221,7 +221,7 @@ export const guage_levels = 1 .. 17 map { pipify mixed_guage (air, v, stuff) }
 
 export const broken_pipe = broken pipify mixed_guage (error, 7, white)
 
-def make_simple_badge
+def make_badge
 {
 	let cube_data =
 	[
@@ -272,37 +272,26 @@ def make_4_from_8 (icon)
 	return unhex translated (icon.string, light dull other, white gray color)
 }
 
-let simple_badge_spec = make_simple_badge()
-let simple_badge_mask = translated (simple_badge_spec, ".-^+X", black * 5)
-let shadow_badge_mask = simple_badge_mask
-let shadow_badge_spec = simple_badge_spec
-
-let badge_spec = shadow_badge_spec.string
+let badge_spec = make_badge().string
+let badge_mask = packed translated (badge_spec, ".-^+X", black * 5)
 
 let badge_data_8 = packed translated (badge_spec, ".-^+X",   x"2a7f7fb0FF")
 let badge_data_4 = unhex  translated (badge_spec, ".-^+X\0", "cddef0")
 let badge_data_1 = unbin  translated (badge_spec, ".-^+X\0", "001110")
 
-let shadow_badge_mask_8 = shadow_badge_mask
-let shadow_badge_mask_4 = make_4_from_8 shadow_badge_mask
-let shadow_badge_mask_1 = make_1_from_8 shadow_badge_mask
-let simple_badge_mask_1 = make_1_from_8 simple_badge_mask
+let badge_mask_8 = badge_mask
+let badge_mask_4 = make_4_from_8 badge_mask
+let badge_mask_1 = make_1_from_8 badge_mask
 
-def badged_icl8 (data) { data & ~shadow_badge_mask_8 | badge_data_8 }
-def badged_icl4 (data) { data & ~shadow_badge_mask_4 | badge_data_4 }
+def badged_icl8 (data) { data & ~badge_mask_8 | badge_data_8 }
+def badged_icl4 (data) { data & ~badge_mask_4 | badge_data_4 }
 
 def badged_ICN_ (icon)
 {
 	var (data, mask) = icon / 2
 	
-	# Use the simple (unshadowed) mask for the Bic operation, so we don't
-	# clear pixels that would belong to the shadow (if we had one).
-	
-	# But use the shadowed badge mask for augmenting the icon mask,
-	# so shadow pixels in colored icons don't get clipped out.
-	
-	data = data & ~simple_badge_mask_1 | badge_data_1
-	mask = mask |  shadow_badge_mask_1
+	data = data & ~badge_mask_1 | badge_data_1
+	mask = mask |  badge_mask_1
 	
 	return data mask
 }
