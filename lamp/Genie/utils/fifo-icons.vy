@@ -223,31 +223,27 @@ export const broken_pipe = broken pipify mixed_guage (error, 7, white)
 
 def make_badge
 {
-	let cube_data =
+	let badge_data =
 	[
-		"      X X      ",
-		"  X X . . X X  ",
-		"X . . . . . . X",
-		"X X X . . X X *",
-		"X ^ - X X + + *",
-		"X - ^ - X + + *",
-		"X ^ - ^ X + + X",
-		"  X X - X X X  ",
-		"      X X      ",
+		"X X X X X X X X X X X X X X",
+		"X - - - - - - - - - - - - X",
+		"X X X X X X X X X X X X X X",
+		"X                         X",
+		"X       X                 X",
+		"X     X X X               X",
+		"X   X   X   X             X",
+		"X   X   X                 X",
+		"X     X X X               X",
+		"X       X   X             X",
+		"X   X   X   X             X",
+		"X     X X X               X",
+		"X       X                 X",
+		"X                         X",
+		"X X X X X X X X X X X X X X",
 	]
 	map { mince v }
 	
-	let open_cube   = cube_data map { translated (v, "* ", "+\0") }
-	let closed_cube = cube_data map { translated (v, "* ", "X\0") }
-	
-	let top   = packed (closed_cube map { ("\0" * 4) v ("\0" * 4) })
-	let left  = packed (open_cube   map {            v ("\0" * 8) })
-	let right = packed (closed_cube map { ("\0" * 8) v            })
-	
-	let upper =                         top       (white * (16 * 6))
-	let lower = (white * (16 * 6)) (left | right)
-	
-	return frame (16, 32, 32, 1, 8, upper | lower)
+	return frame (14, 32, 32, 2, 7, packed badge_data)
 }
 
 def make_1_from_8 (icon)
@@ -273,11 +269,11 @@ def make_4_from_8 (icon)
 }
 
 let badge_spec = make_badge().string
-let badge_mask = packed translated (badge_spec, ".-^+X", black * 5)
+let badge_mask = packed translated (badge_spec, " -X", black * 3)
 
-let badge_data_8 = packed translated (badge_spec, ".-^+X",   x"2a7f7fb0FF")
-let badge_data_4 = unhex  translated (badge_spec, ".-^+X\0", "cddef0")
-let badge_data_1 = unbin  translated (badge_spec, ".-^+X\0", "001110")
+let badge_data_8 = packed translated (badge_spec, " -X",   x"002BFF")
+let badge_data_4 = unhex  translated (badge_spec, " -X\0", "0cf0")
+let badge_data_1 = unbin  translated (badge_spec, " -X\0", "0010")
 
 let badge_mask_8 = badge_mask
 let badge_mask_4 = make_4_from_8 badge_mask
