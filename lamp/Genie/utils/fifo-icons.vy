@@ -4,7 +4,6 @@ let vacuum = x"48"  # cyan
 let air    = x"2a"  # light grey-blue
 let stuff  = x"e3"  # green
 let error  = x"d8"  # red
-let shade  = x"f9"  # grey
 let white  = x"00"  # self-
 let black  = x"FF"  # explanatory
 
@@ -25,13 +24,6 @@ def frame (src_width, dst_width, dst_height, x, y, src)
 	let rows = [src / -src_width] map { left v right }
 	
 	return top (packed rows) bottom
-}
-
-def LSR_L (icon)
-{
-	let width = 32
-	
-	return packed ([icon / -width] map { white v[ 0 -> width - 1] }) 
 }
 
 def calc_mask (width, icon)
@@ -281,17 +273,15 @@ def make_4_from_8 (icon)
 }
 
 let simple_badge_spec = make_simple_badge()
-let simple_badge_mask = translated (simple_badge_spec, ".-^+X\xf9", black * 6)
-let shadow_badge_mask = simple_badge_mask | LSR_L simple_badge_mask
-let badge_shadow_mask = ~simple_badge_mask & shadow_badge_mask
-let badge_shadow      = translated (badge_shadow_mask, black, shade)
-let shadow_badge_spec = simple_badge_spec | badge_shadow
+let simple_badge_mask = translated (simple_badge_spec, ".-^+X", black * 5)
+let shadow_badge_mask = simple_badge_mask
+let shadow_badge_spec = simple_badge_spec
 
 let badge_spec = shadow_badge_spec.string
 
 let badge_data_8 = packed translated (badge_spec, ".-^+X",   x"2a7f7fb0FF")
-let badge_data_4 = unhex  translated (badge_spec, ".-^+X\xf9\0", "cddefd0")
-let badge_data_1 = unbin  translated (badge_spec, ".-^+X\xf9\0", "0011100")
+let badge_data_4 = unhex  translated (badge_spec, ".-^+X\0", "cddef0")
+let badge_data_1 = unbin  translated (badge_spec, ".-^+X\0", "001110")
 
 let shadow_badge_mask_8 = shadow_badge_mask
 let shadow_badge_mask_4 = make_4_from_8 shadow_badge_mask
