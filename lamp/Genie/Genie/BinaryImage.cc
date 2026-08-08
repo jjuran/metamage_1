@@ -5,6 +5,11 @@
 
 #include "Genie/BinaryImage.hh"
 
+// Mac OS
+#ifndef __CODEFRAGMENTS__
+#include <CodeFragments.h>
+#endif
+
 // Standard C
 #include <string.h>
 
@@ -12,7 +17,6 @@
 #include <map>
 
 // mac-sys-utils
-#include "mac_sys/has/FSSpec_calls.hh"
 #include "mac_sys/has/native_Carbon.hh"
 #include "mac_sys/has/RealTempMemory.hh"
 #include "mac_sys/mem_error.hh"
@@ -21,15 +25,20 @@
 #include "mac_file/open_data_fork.hh"
 #include "mac_file/rw.hh"
 
+// mac-rsrc-utils
+#include "mac_rsrc/scoped_open_resfile.hh"
+
 // Debug
 #include "debug/assert.hh"
 
 // Nitrogen
-#include "Nitrogen/OSStatus.hh"
-#include "Nitrogen/Resources.hh"
+#include "Mac/Toolbox/Types/OSStatus.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // Genie
+#include "Genie/Utilities/Get1Resource_detached.hh"
 #include "Genie/Utilities/GetCatInfo.hh"
+#include "Genie/Utilities/open_res_file.hh"
 
 
 #if TARGET_CPU_68K
@@ -42,7 +51,6 @@ namespace Genie
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	
 	
 	struct BinaryFileMetadata
@@ -171,10 +179,7 @@ namespace Genie
 	
 	static BinaryImage ReadProgramAsCodeResource()
 	{
-		N::ResType  resType = N::ResType( 'Tool' );
-		N::ResID    resID   = N::ResID  ( 0      );
-		
-		BinaryImage code = N::DetachResource( N::Get1Resource( resType, resID ) );
+		BinaryImage code = Get1Resource_detached( 'Tool', 0 );
 		
 		HLockHi( code.get() );
 		
@@ -182,7 +187,7 @@ namespace Genie
 	}
 	
 	static bool
-	ends_with( const uint8_t* whole, const char* part, size_t len )
+	ends_with( const Byte* whole, const char* part, size_t len )
 	{
 		size_t length = whole[ 0 ];
 		size_t offset = 1 + length - len;
@@ -239,13 +244,13 @@ namespace Genie
 	
 	static BinaryImage ReadProgramAsCodeFragment( const FSSpec& file )
 	{
-		N::ResType  resType = N::ResType( kCFragResourceType );  // cfrg
-		N::ResID    resID   = N::ResID  ( kCFragResourceID   );  // 0
+		const CFragResourceMember* member = NULL;
 		
-		::CFragResource** cfrg = N::Handle_Cast< ::CFragResource >( N::Get1Resource( resType, resID ) );
-		
-		// Handle dereferenced here
-		const ::CFragResourceMember* member = FindLoadableMemberInCFragResource( **cfrg );
+		if ( Handle h = Get1Resource( kCFragResourceType, kCFragResourceID ) )
+		{
+			// Handle dereferenced here
+			member = FindLoadableMemberInCFragResource( *(CFragResource*) *h );
+		}
 		
 		if ( member == NULL )
 		{
@@ -262,14 +267,11 @@ namespace Genie
 	
 	static inline BinaryImage ReadImageFromFile( const FSSpec& file )
 	{
-		if ( ! mac::sys::has_FSSpec_calls() )
-		{
-			goto data_fork_only;
-		}
+		using mac::rsrc::scoped_open_resfile;
 		
 		try
 		{
-			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdPerm );
+			scoped_open_resfile resFile( open_res_file( file, fsRdPerm ) );
 			
 			const bool rsrc = TARGET_CPU_68K && !TARGET_RT_MAC_CFM;
 			
@@ -291,8 +293,6 @@ namespace Genie
 				throw;
 			}
 		}
-		
-	data_fork_only:
 		
 		return ReadProgramFromDataFork( file, 0, kCFragGoesToEOF );
 	}
@@ -392,7 +392,7 @@ namespace Genie
 			{
 				const BinaryImage& image = cacheEntry->image;
 				
-				N::Handle h = image.get();
+				Handle h = image.get();
 				
 				/*
 					h could theoretically be NULL here *if* the code loader

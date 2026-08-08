@@ -5,6 +5,16 @@
 
 #include "Genie/FS/resfs.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
+
 // POSIX
 #include <sys/stat.h>
 
@@ -31,19 +41,16 @@
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node.hh"
 
-// Nitrogen
-#include "Nitrogen/Resources.hh"
-
 // Genie
 #include "Genie/code/prepare_executable.hh"
 #include "Genie/IO/Handle.hh"
+#include "Genie/Utilities/Get1Resource_detached.hh"
 
 
 namespace Genie
 {
 	
 	namespace p7 = poseven;
-	namespace N = Nitrogen;
 	
 	
 	typedef std::map< plus::string, vfs::node_ptr > map_of_nodes_by_name;
@@ -130,12 +137,10 @@ namespace Genie
 	{
 		resfs_file_extra& extra = *(resfs_file_extra*) that->extra();
 		
-		const Mac::ResType resType = Mac::ResType( extra.res_type );
-		const Mac::ResID   resID   = Mac::ResID  ( extra.res_id   );
-		
-		Mac::Handle r = N::Get1Resource( resType, resID );
-		
-		return new_Handle_handle( *that, flags, N::DetachResource( r ) );
+		return new_Handle_handle( *that,
+		                          flags,
+		                          Get1Resource_detached( extra.res_type,
+		                                                 extra.res_id ) );
 	}
 	
 	static off_t resfs_file_geteof( const vfs::node* that )
@@ -176,10 +181,8 @@ namespace Genie
 	{
 		resfs_file_extra& extra = *(resfs_file_extra*) that->extra();
 		
-		const Mac::ResType resType = Mac::ResType( extra.res_type );
-		const Mac::ResID   resID   = Mac::ResID  ( extra.res_id   );
-		
-		execution_unit unit = N::DetachResource( N::Get1Resource( resType, resID ) );
+		execution_unit unit = Get1Resource_detached( extra.res_type,
+		                                             extra.res_id );
 		
 		HLockHi( unit.get() );
 		

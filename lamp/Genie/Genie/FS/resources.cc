@@ -30,7 +30,7 @@
 #include "mac_sys/res_error.hh"
 
 // mac-rsrc-utils
-#include "mac_rsrc/open_res_file.hh"
+#include "mac_rsrc/scoped_open_resfile.hh"
 
 // plus
 #include "plus/hexadecimal.hh"
@@ -45,7 +45,9 @@
 #include "nucleus/owned.hh"
 
 // Nitrogen
-#include "Nitrogen/Resources.hh"
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
+#include "Nitrogen/MacMemory.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -62,30 +64,14 @@
 
 // Genie
 #include "Genie/IO/Handle.hh"
+#include "Genie/Utilities/checked_resource.hh"
+#include "Genie/Utilities/Get1Resource_detached.hh"
+#include "Genie/Utilities/open_res_file.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
 
 #define POD( obj )  (&(obj)), (sizeof (obj))
 
-
-namespace Nitrogen
-{
-	
-	namespace n = nucleus;
-	
-	static
-	n::owned< ResFileRefNum > open_res_file( const FSSpec& file, SInt8 perm )
-	{
-		::ResFileRefNum opened = mac::rsrc::open_res_file( file, perm );
-		
-		ResError();
-		
-		ResFileRefNum refNum = ResFileRefNum( opened );
-		
-		return nucleus::owned< ResFileRefNum >::seize( refNum );
-	}
-	
-}
 
 namespace Genie
 {
@@ -95,14 +81,18 @@ namespace N = Nitrogen;
 namespace p7 = poseven;
 
 
+using mac::sys::res_error;
+
+using mac::rsrc::scoped_open_resfile;
+
 using MacScribe::is_safe_quad;
 using MacScribe::parse_quad_name;
 
 
 struct ResSpec
 {
-	Mac::ResType  type;
-	Mac::ResID    id;
+	ResType  type;
+	ResID    id;
 };
 
 class ResLoad_false_scope
@@ -143,7 +133,9 @@ ResSpec GetResSpec_from_name( const plus::string& name )
 		p7::throw_errno( ENOENT );
 	}
 	
-	const short id = gear::decode_16_bit_hex( begin );
+	ResSpec result;
+	
+	result.id = gear::decode_16_bit_hex( begin );
 	
 	begin += 4;
 	
@@ -152,9 +144,7 @@ ResSpec GetResSpec_from_name( const plus::string& name )
 		p7::throw_errno( ENOENT );
 	}
 	
-	const ::OSType type = parse_quad_name( begin, end - begin );
-	
-	const ResSpec result = { Mac::ResType( type ), Mac::ResID( id ) };
+	result.type = parse_quad_name( begin, end - begin );
 	
 	return result;
 }
@@ -167,13 +157,13 @@ void mac_name_get( plus::var_string& result, const vfs::node* that, bool binary 
 	
 	const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
 	
-	n::owned< N::ResFileRefNum > resFile = N::open_res_file( fileSpec, fsRdPerm );
+	scoped_open_resfile resFile( open_res_file( fileSpec, fsRdPerm ) );
 	
 	const ResSpec resSpec = GetResSpec_from_name( that->name() );
 	
 	ResLoad_false_scope ResLoad_false;
 	
-	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
+	Handle r = checked_resource( Get1Resource( resSpec.type, resSpec.id ) );
 	
 	short    id;
 	ResType  type;
@@ -210,9 +200,11 @@ void mac_name_set( const vfs::node* that, const char* begin, const char* end, bo
 	
 	ResLoad_false_scope ResLoad_false;
 	
-	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
+	Handle r = checked_resource( Get1Resource( resSpec.type, resSpec.id ) );
 	
-	N::SetResInfo( r, resSpec.id, name );
+	SetResInfo( r, resSpec.id, name );
+	
+	Mac::ThrowOSStatus( res_error() );
 }
 
 static
@@ -254,8 +246,6 @@ struct rsrc_extra : Mac_Handle_extra
 static inline
 Handle GetOrAddResource( const ResSpec& resSpec )
 {
-	using mac::sys::res_error;
-	
 	Handle h = Get1Resource( resSpec.type, resSpec.id );
 	
 	if ( ! h  &&  res_error() == resNotFound  &&  (h = NewHandle( 0 )) )
@@ -440,7 +430,7 @@ static const vfs::node_method_set rsrc_file_methods =
 static
 bool has_resource( const FSSpec& file, const ResSpec& resSpec )
 {
-	n::owned< N::ResFileRefNum > resFile = N::open_res_file( file, fsRdPerm );
+	scoped_open_resfile resFile( open_res_file( file, fsRdPerm ) );
 	
 	return ::Get1Resource( resSpec.type, resSpec.id ) != NULL;
 }
@@ -454,9 +444,11 @@ void rsrc_file_remove( const vfs::node* that )
 	
 	const ResSpec resSpec = GetResSpec_from_name( that->name() );
 	
-	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
+	Handle r = checked_resource( Get1Resource( resSpec.type, resSpec.id ) );
 	
-	(void) N::RemoveResource( r );
+	RemoveResource( r );
+	
+	Mac::ThrowOSStatus( res_error() );
 }
 
 static
@@ -477,27 +469,32 @@ void rsrc_file_rename( const vfs::node* that, const vfs::node* destination )
 		p7::throw_errno( EXDEV );
 	}
 	
-	if ( new_res.id == old_res.id )
-	{
-		return;
-	}
-	
 	const FSSpec& fileSpec = *(FSSpec*) that->extra();
 	
 	RdWr_OpenResFile_Scope openResFile( fileSpec );
 	
 	::SetResLoad( false );
 	
-	if ( const Handle r = ::Get1Resource( new_res.type, new_res.id ) )
+	OSErr err = resNotFound;
+	
+	if ( Handle r = Get1Resource( old_res.type, old_res.id ) )
 	{
-		::RemoveResource( r );
+		if ( new_res.id != old_res.id )
+		{
+			if ( Handle dupe = Get1Resource( new_res.type, new_res.id ) )
+			{
+				RemoveResource( dupe );
+			}
+		}
+		
+		SetResInfo( r, new_res.id, NULL );
+		
+		err = res_error();
 	}
 	
 	::SetResLoad( true );
 	
-	const N::Handle r = N::Get1Resource( old_res.type, old_res.id );
-	
-	N::SetResInfo( r, new_res.id, NULL );
+	Mac::ThrowOSStatus( err );
 }
 
 static
@@ -505,11 +502,11 @@ off_t rsrc_file_geteof( const vfs::node* that )
 {
 	const FSSpec& fileSpec = *(FSSpec*) that->extra();
 	
-	n::owned< N::ResFileRefNum > resFile = N::open_res_file( fileSpec, fsRdPerm );
+	scoped_open_resfile resFile( open_res_file( fileSpec, fsRdPerm ) );
 	
 	const ResSpec resSpec = GetResSpec_from_name( that->name() );
 	
-	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
+	Handle r = checked_resource( Get1Resource( resSpec.type, resSpec.id ) );
 	
 	return mac::glue::GetHandleSize( r );
 }
@@ -533,7 +530,21 @@ vfs::filehandle_ptr unrsrc_file_open( const vfs::node* that, int flags, mode_t m
 		
 		const ResSpec resSpec = GetResSpec_from_name( that->name() );
 		
-		(void) N::AddResource( N::NewHandle( 0 ), resSpec.type, resSpec.id, NULL );
+		Handle h = NewHandle( 0 );
+		
+		if ( ! h )
+		{
+			Mac::ThrowOSStatus( memFullErr );
+		}
+		
+		AddResource( h, resSpec.type, resSpec.id, NULL );
+		
+		if ( OSErr err = res_error() )
+		{
+			DisposeHandle( h );
+			
+			Mac::ThrowOSStatus( err );
+		}
 	}
 	
 	n::owned< N::Handle > h = N::NewHandle( 0 );
@@ -559,13 +570,11 @@ vfs::filehandle_ptr rsrc_file_open( const vfs::node* that, int flags, mode_t mod
 	
 	const FSSpec& fileSpec = *(FSSpec*) that->extra();
 	
-	n::owned< N::ResFileRefNum > resFile = N::open_res_file( fileSpec, fsRdPerm );
+	scoped_open_resfile resFile( open_res_file( fileSpec, fsRdPerm ) );
 	
 	const ResSpec resSpec = GetResSpec_from_name( that->name() );
 	
-	const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
-	
-	n::owned< N::Handle > h = N::DetachResource( r );
+	n::owned< N::Handle > h = Get1Resource_detached( resSpec.type, resSpec.id );
 	
 	vfs::filehandle* result = writing ? new_rsrc_handle  ( *that, flags, h, fileSpec )
 	                                  : new_Handle_handle( *that, flags, h );
