@@ -2,7 +2,7 @@
 	icon.cc
 	-------
 	
-	A program that draws the MacRelix icon using Core Graphics
+	A program that draws the tricube icon using Core Graphics
 	
 	Copyright 2016, Joshua Juran.  All rights reserved.
 	
@@ -89,7 +89,7 @@ void draw_cube_at( CGContextRef c, float x, float y )
 	CGContextRestoreGState( c );
 }
 
-void draw_macrelix_icon( CGContextRef c, size_t width, size_t height )
+void draw_tricube_icon( CGContextRef c, size_t width, size_t height )
 {
 	CGContextScaleCTM( c, width / 32, height / 32 );
 	

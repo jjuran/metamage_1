@@ -12,12 +12,12 @@
 #endif
 
 
-void draw_macrelix_icon( CGContextRef c, size_t width, size_t height );
+void draw_tricube_icon( CGContextRef c, size_t width, size_t height );
 
 inline
 void draw_the_icon( CGContextRef c, size_t width, size_t height )
 {
-	draw_macrelix_icon( c, width, height );
+	draw_tricube_icon( c, width, height );
 }
 
 
