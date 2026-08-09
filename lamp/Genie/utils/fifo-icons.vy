@@ -4,7 +4,6 @@ let vacuum = x"48"  # cyan
 let air    = x"2a"  # light grey-blue
 let stuff  = x"e3"  # green
 let error  = x"d8"  # red
-let shade  = x"f9"  # grey
 let white  = x"00"  # self-
 let black  = x"FF"  # explanatory
 
@@ -25,13 +24,6 @@ def frame (src_width, dst_width, dst_height, x, y, src)
 	let rows = [src / -src_width] map { left v right }
 	
 	return top (packed rows) bottom
-}
-
-def LSR_L (icon)
-{
-	let width = 32
-	
-	return packed ([icon / -width] map { white v[ 0 -> width - 1] }) 
 }
 
 def calc_mask (width, icon)
@@ -138,9 +130,9 @@ let blank_guage = make_blank_guage()
 
 def make_pipe
 {
-	let edge = (white * 13) x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" (white * 4)
-	let Head = (white * 13) x"FFf8f72bf6f5f62bf7f8f9fafbfcFF" (white * 4)
-	let tube = (white * 15)     x"FFf72bf6f5f62bf7f8f9FF"     (white * 6)
+	let edge = (white * 12) x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" (white * 3)
+	let Head = (white * 12) x"FFf8f72bf6f5f5f5f62bf7f8f9fafbfcFF" (white * 3)
+	let tube = (white * 14)     x"FFf8f72bf6f5f62bf7f8f9faFF"     (white * 5)
 	
 	let cap = edge Head Head edge
 	
@@ -154,11 +146,11 @@ def make_fat_pipe
 	let sections =
 	[
 		6: blank_row,
-		1: (white * 14)     x"FFf72bf6f5FFFFFF2bf7f8f9FF"     (white * 5),
-		2: (white * 14)     x"FFf72bf6FFe3e3e3FFf7f8f9FF"     (white * 5),
-		2: (white * 13)   x"FFf72bf6f5FFe3e3e3FF2bf7f8f9FF"   (white * 4),
-		2: (white * 13)   x"FFf72bf6FFe3e3e3e3e3FFf7f8f9FF"   (white * 4),
-		3: (white * 12) x"FFf72bf6f5FFe3e3e3e3e3FF2bf7f8f9FF" (white * 3),
+		1: (white * 13)     x"FFf8f72bf6f5FFFFFF2bf7f8f9faFF"     (white * 4),
+		2: (white * 13)     x"FFf8f72bf6FFe3e3e3FFf7f8f9faFF"     (white * 4),
+		2: (white * 12)   x"FFf8f72bf6f5FFe3e3e3FF2bf7f8f9faFF"   (white * 3),
+		2: (white * 12)   x"FFf8f72bf6FFe3e3e3e3e3FFf7f8f9faFF"   (white * 3),
+		3: (white * 11) x"FFf8f72bf6f5FFe3e3e3e3e3FF2bf7f8f9faFF" (white * 2),
 	]
 	
 	let upper = sections map { v.value * v.key }
@@ -166,7 +158,7 @@ def make_fat_pipe
 	
 	let fat_pipe = packed (upper, lower)
 	
-	return fat_pipe => translated (fat_pipe, x"2be3f5f6f7f8f9", black * 7)
+	return fat_pipe => translated (fat_pipe, x"2be3f5f6f7f8f9fa", black * 8)
 }
 
 def solid_guage (color)
@@ -229,33 +221,29 @@ export const guage_levels = 1 .. 17 map { pipify mixed_guage (air, v, stuff) }
 
 export const broken_pipe = broken pipify mixed_guage (error, 7, white)
 
-def make_simple_badge
+def make_badge
 {
-	let cube_data =
+	let badge_data =
 	[
-		"      X X      ",
-		"  X X . . X X  ",
-		"X . . . . . . X",
-		"X X X . . X X *",
-		"X ^ - X X + + *",
-		"X - ^ - X + + *",
-		"X ^ - ^ X + + X",
-		"  X X - X X X  ",
-		"      X X      ",
+		"X X X X X X X X X X X X X X",
+		"X - - - - - - - - - - - - X",
+		"X X X X X X X X X X X X X X",
+		"X                         X",
+		"X       X                 X",
+		"X     X X X               X",
+		"X   X   X   X             X",
+		"X   X   X                 X",
+		"X     X X X               X",
+		"X       X   X             X",
+		"X   X   X   X             X",
+		"X     X X X               X",
+		"X       X                 X",
+		"X                         X",
+		"X X X X X X X X X X X X X X",
 	]
 	map { mince v }
 	
-	let open_cube   = cube_data map { translated (v, "* ", "+\0") }
-	let closed_cube = cube_data map { translated (v, "* ", "X\0") }
-	
-	let top   = packed (closed_cube map { ("\0" * 4) v ("\0" * 4) })
-	let left  = packed (open_cube   map {            v ("\0" * 8) })
-	let right = packed (closed_cube map { ("\0" * 8) v            })
-	
-	let upper =                         top       (white * (16 * 6))
-	let lower = (white * (16 * 6)) (left | right)
-	
-	return frame (16, 32, 32, 1, 8, upper | lower)
+	return frame (14, 32, 32, 2, 7, packed badge_data)
 }
 
 def make_1_from_8 (icon)
@@ -280,39 +268,26 @@ def make_4_from_8 (icon)
 	return unhex translated (icon.string, light dull other, white gray color)
 }
 
-let simple_badge_spec = make_simple_badge()
-let simple_badge_mask = translated (simple_badge_spec, ".-^+X\xf9", black * 6)
-let shadow_badge_mask = simple_badge_mask | LSR_L simple_badge_mask
-let badge_shadow_mask = ~simple_badge_mask & shadow_badge_mask
-let badge_shadow      = translated (badge_shadow_mask, black, shade)
-let shadow_badge_spec = simple_badge_spec | badge_shadow
+let badge_spec = make_badge().string
+let badge_mask = packed translated (badge_spec, " -X", black * 3)
 
-let badge_spec = shadow_badge_spec.string
+let badge_data_8 = packed translated (badge_spec, " -X",   x"002BFF")
+let badge_data_4 = unhex  translated (badge_spec, " -X\0", "0cf0")
+let badge_data_1 = unbin  translated (badge_spec, " -X\0", "0010")
 
-let badge_data_8 = packed translated (badge_spec, ".-^+X",   x"2a7f7fb0FF")
-let badge_data_4 = unhex  translated (badge_spec, ".-^+X\xf9\0", "cddefd0")
-let badge_data_1 = unbin  translated (badge_spec, ".-^+X\xf9\0", "0011100")
+let badge_mask_8 = badge_mask
+let badge_mask_4 = make_4_from_8 badge_mask
+let badge_mask_1 = make_1_from_8 badge_mask
 
-let shadow_badge_mask_8 = shadow_badge_mask
-let shadow_badge_mask_4 = make_4_from_8 shadow_badge_mask
-let shadow_badge_mask_1 = make_1_from_8 shadow_badge_mask
-let simple_badge_mask_1 = make_1_from_8 simple_badge_mask
-
-def badged_icl8 (data) { data & ~shadow_badge_mask_8 | badge_data_8 }
-def badged_icl4 (data) { data & ~shadow_badge_mask_4 | badge_data_4 }
+def badged_icl8 (data) { data & ~badge_mask_8 | badge_data_8 }
+def badged_icl4 (data) { data & ~badge_mask_4 | badge_data_4 }
 
 def badged_ICN_ (icon)
 {
 	var (data, mask) = icon / 2
 	
-	# Use the simple (unshadowed) mask for the Bic operation, so we don't
-	# clear pixels that would belong to the shadow (if we had one).
-	
-	# But use the shadowed badge mask for augmenting the icon mask,
-	# so shadow pixels in colored icons don't get clipped out.
-	
-	data = data & ~simple_badge_mask_1 | badge_data_1
-	mask = mask |  shadow_badge_mask_1
+	data = data & ~badge_mask_1 | badge_data_1
+	mask = mask |  badge_mask_1
 	
 	return data mask
 }
