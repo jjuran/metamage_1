@@ -130,9 +130,9 @@ let blank_guage = make_blank_guage()
 
 def make_pipe
 {
-	let edge = (white * 13) x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" (white * 4)
-	let Head = (white * 13) x"FFf8f72bf6f5f62bf7f8f9fafbfcFF" (white * 4)
-	let tube = (white * 15)     x"FFf72bf6f5f62bf7f8f9FF"     (white * 6)
+	let edge = (white * 12) x"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" (white * 3)
+	let Head = (white * 12) x"FFf8f72bf6f5f5f5f62bf7f8f9fafbfcFF" (white * 3)
+	let tube = (white * 14)     x"FFf8f72bf6f5f62bf7f8f9faFF"     (white * 5)
 	
 	let cap = edge Head Head edge
 	
@@ -146,11 +146,11 @@ def make_fat_pipe
 	let sections =
 	[
 		6: blank_row,
-		1: (white * 14)     x"FFf72bf6f5FFFFFF2bf7f8f9FF"     (white * 5),
-		2: (white * 14)     x"FFf72bf6FFe3e3e3FFf7f8f9FF"     (white * 5),
-		2: (white * 13)   x"FFf72bf6f5FFe3e3e3FF2bf7f8f9FF"   (white * 4),
-		2: (white * 13)   x"FFf72bf6FFe3e3e3e3e3FFf7f8f9FF"   (white * 4),
-		3: (white * 12) x"FFf72bf6f5FFe3e3e3e3e3FF2bf7f8f9FF" (white * 3),
+		1: (white * 13)     x"FFf8f72bf6f5FFFFFF2bf7f8f9faFF"     (white * 4),
+		2: (white * 13)     x"FFf8f72bf6FFe3e3e3FFf7f8f9faFF"     (white * 4),
+		2: (white * 12)   x"FFf8f72bf6f5FFe3e3e3FF2bf7f8f9faFF"   (white * 3),
+		2: (white * 12)   x"FFf8f72bf6FFe3e3e3e3e3FFf7f8f9faFF"   (white * 3),
+		3: (white * 11) x"FFf8f72bf6f5FFe3e3e3e3e3FF2bf7f8f9faFF" (white * 2),
 	]
 	
 	let upper = sections map { v.value * v.key }
@@ -158,7 +158,7 @@ def make_fat_pipe
 	
 	let fat_pipe = packed (upper, lower)
 	
-	return fat_pipe => translated (fat_pipe, x"2be3f5f6f7f8f9", black * 7)
+	return fat_pipe => translated (fat_pipe, x"2be3f5f6f7f8f9fa", black * 8)
 }
 
 def solid_guage (color)
