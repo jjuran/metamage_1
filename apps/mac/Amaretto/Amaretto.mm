@@ -167,7 +167,7 @@ int main( int argc, char** argv )
 		
 		[NSApp run];
 		
-		[appDelegate destruct];
+		[appDelegate.get() destruct];
 	}
 	
 	rmdir( works_path );

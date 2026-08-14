@@ -30,6 +30,7 @@ class releasing
 			[_object release];
 		}
 		
+		id get()      const  { return _object; }
 		operator id() const  { return _object; }
 };
 
