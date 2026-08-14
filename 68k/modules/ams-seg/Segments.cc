@@ -322,8 +322,6 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 		ApplLimit = alloc;
 	}
 	
-	void* start = (char*) jump_table + 2;
-	
 	/*
 		Poison the unused stack space.
 		
@@ -336,8 +334,11 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	asm
 	{
 		MOVEA.L  CurrentA5,A5
-		MOVEA.L  start,A3
 		MOVE.L   CurStackBase,SP
+		
+		MOVEA.L  A5,A3
+		ADDA.W   CurJTOffset,A3
+		ADDQ.L   #2,A3
 		
 		MOVEA.L  alloc,A0
 		MOVE.L   stack_size,D0
