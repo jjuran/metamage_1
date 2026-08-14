@@ -371,18 +371,21 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 		because it stays within the window.)
 	*/
 	
-	cursor_pinned = pinning;
-	
-	if ( pinning )
+	if ( pinning != cursor_pinned )
 	{
-		ignore_next_mouse_moved_event = true;
+		cursor_pinned = pinning;
 		
-		set_cursor_hidden( true );
+		if ( pinning )
+		{
+			ignore_next_mouse_moved_event = true;
+			
+			set_cursor_hidden( true );
+		}
+		
+		synchronize_cursor_location( _mainGLView );
+		
+		CGAssociateMouseAndMouseCursorPosition( ! pinning );
 	}
-	
-	synchronize_cursor_location( _mainGLView );
-	
-	CGAssociateMouseAndMouseCursorPosition( ! pinning );
 }
 
 - (void) doZoom: (long) commandID
