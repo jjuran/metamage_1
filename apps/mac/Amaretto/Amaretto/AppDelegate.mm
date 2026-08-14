@@ -102,6 +102,21 @@ void synchronize_cursor_location( NSView* view )
 	CGFloat y = splode::last_sent_y * scale + v_origin.y + w_origin.y;
 	
 	CGWarpMouseCursorPosition( CGPointMake( x, y ) );
+	
+	/*
+		Observed in OS X 10.9.5 on a 2013 Retina MacBook Pro with
+		Nvidia graphics, but not in OS X 10.9.5 on a Mac Mini with
+		Intel graphics (nor anywhere else):
+		
+		The CGWarpMouseCursorPosition() call above cancels the
+		cursor hiding.  Compensate by turning it off and on again.
+	*/
+	
+	if ( amicus::cursor_hidden )
+	{
+		amicus::set_cursor_hidden( false );
+		amicus::set_cursor_hidden( true  );
+	}
 }
 
 static
