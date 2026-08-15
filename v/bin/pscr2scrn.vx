@@ -1,0 +1,45 @@
+#!/usr/bin/env lvx
+
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
+
+def import (lib) { eval (load, realpath) libdir lib ".vy" }
+
+let decoders = ["DC", "BDC"] map { import "pscr2scrn-" v }
+
+let path = argv[ 1 ]
+
+let pscr_data = packed load path
+
+let decodings = decoders map { v pscr_data } ver { v.size == 21888 }
+
+if not decodings then
+{
+	warn "pscr2scrn: " path ": invalid PSCR data"
+	
+	exit 1
+}
+
+if decodings.length > 1 then
+{
+	warn "pscr2scrn: " path ": ambiguous PSCR data"
+	
+	exit 3
+}
+
+if rewrite?? then
+{
+	rewrite path ".skif" <== decodings[ 0 ]
+}
+else if not isatty OUT then
+{
+	OUT <== decodings[ 0 ]
+}
+else
+{
+	warn "pscr2scrn:  Either run under minivx or redirect output"
+	
+	exit 2
+}
+
+end.
