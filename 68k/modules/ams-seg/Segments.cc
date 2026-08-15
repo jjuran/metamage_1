@@ -322,6 +322,16 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 		ApplLimit = alloc;
 	}
 	
+	asm
+	{
+		MOVEA.L  CurrentA5,A5
+		MOVE.L   CurStackBase,SP
+		
+		MOVEA.L  A5,A3
+		ADDA.W   CurJTOffset,A3
+		ADDQ.L   #2,A3
+	}	
+	
 	/*
 		Poison the unused stack space.
 		
@@ -333,13 +343,6 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	
 	asm
 	{
-		MOVEA.L  CurrentA5,A5
-		MOVE.L   CurStackBase,SP
-		
-		MOVEA.L  A5,A3
-		ADDA.W   CurJTOffset,A3
-		ADDQ.L   #2,A3
-		
 		MOVEA.L  alloc,A0
 		MOVE.L   stack_size,D0
 		SUBQ.L   #4,D0          // Don't clobber the return address
@@ -348,9 +351,11 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 		JSR      0xffffffd6  // fast_memset
 		
 	// 23. Clear D7.
+		
 		MOVEQ.L  #0,D7
 		
 	// 24. Start the application.
+		
 		JSR      (A3)
 		DC.W     0xA9F4  // _ExitToShell
 	}
