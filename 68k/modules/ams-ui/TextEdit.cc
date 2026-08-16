@@ -370,8 +370,6 @@ pascal void TESetText_patch( const char* p, long n, TERec** hTE )
 	te.teLength = n;
 	
 	TECalText( hTE );
-	
-	update_selRect( te );
 }
 
 pascal void TEIdle_patch( TEHandle hTE )
