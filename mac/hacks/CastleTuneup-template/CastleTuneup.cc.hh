@@ -805,6 +805,79 @@ void install_savegame_patch( Handle h, Size handle_size )
 	}
 }
 
+/*
+	struct projectile_node
+	{
+		projectile_node* prev;
+		projectile_node* next;
+		...
+	};
+	
+	struct projectile_list
+	{
+		projectile_node* head;
+	};
+	
+	These are nodes in a doubly-linked list.  The `prev` slot
+	links to the next older projectile, if any.  For example,
+	if the hero has thrown two rocks, the second one thrown
+	has `prev` linking the first one.  The oldest projectile
+	still on screen has `prev` set to NULL.
+	
+	The `next` slot links in the other direction.  The most
+	recently launched projectile has `next` linking to the
+	list head pointer; it's never NULL.
+*/
+
+static
+asm
+void projectile_management_sample()
+{
+	MOVEA.L  4(A6),A3                    // next = this->next
+	CMPA.W   #0x0000,A3                  // if next != NULL then
+	BEQ.S    null
+	MOVEA.L  (A6),A4                     //     prev = this->prev
+	MOVE.L   A4,(A3)                     //     next->prev = prev
+	MOVE.L   A3,4(A4)                    //     prev->next = next (crash)
+null:
+}
+
+static
+asm
+void projectile_management_patch()
+{
+	MOVEA.L  4(A6),A3                    // next = this->next
+	MOVEA.L  (A6),A4                     // prev = this->prev
+	MOVE.L   A4,(A3)                     // next->prev = prev
+	BEQ.S    null                        // if prev != NULL then
+	NOP
+	NOP
+	MOVE.L   A3,4(A4)                    //     prev->next = next
+null:
+}
+
+static
+void install_unlink_patch( Handle h, Size handle_size, int offset_to_target )
+{
+	enum
+	{
+		sample_size = 0x0012,
+		patch_size  = 0x0012,
+	};
+	
+	if ( handle_size > offset_to_target + sample_size )
+	{
+		Ptr p = *h + offset_to_target;
+		
+		if ( v68k_memequ( &projectile_management_sample, p, sample_size ) )
+		{
+			BlockMoveData( &projectile_management_patch, p, patch_size );
+			
+			HNoPurge( h );
+		}
+	}
+}
+
 static
 void install_Data_B_patches()
 {
@@ -814,6 +887,15 @@ void install_Data_B_patches()
 	{
 		install_savegame_patch( h, GetHandleSize_raw( h ) );
 	}
+	
+#ifdef BK_MUG_DATA_B_RESID
+	
+	if ( Handle h = GetResource( 'CODE', BK_MUG_DATA_B_RESID ) )
+	{
+		install_unlink_patch( h, GetHandleSize_raw( h ), 0x000eba );
+	}
+	
+#endif
 }
 
 static
@@ -1227,10 +1309,25 @@ void TEInit_handler()
 		
 		if ( (h = GetResource( 'CODE', 2 )) )
 		{
+			enum
+			{
+				offset = OFFSET_TO_UNLINK_MOVEA,
+			};
+			
 			Size size = GetHandleSize_raw( h );
 			
+			install_unlink_patch( h, size, offset );
 			install_Data_B_patch( h, size );
 		}
+		
+	#ifdef BK_MUG_DATA_A_RESID
+		
+		if ( (h = GetResource( 'CODE', BK_MUG_DATA_A_RESID )) )
+		{
+			install_unlink_patch( h, GetHandleSize_raw( h ), 0x0033b0 );
+		}
+		
+	#endif
 		
 		if ( (h = GetResource( 'CODE', SPINLOOP_CODE_RESID )) )
 		{

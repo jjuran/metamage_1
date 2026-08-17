@@ -21,11 +21,13 @@
 #define SPINLOOP_CODE_RESID  4
 #define ANTIGRAV_CODE_RESID  4
 #define BLITTING_CODE_RESID  4
+#define BK_MUG_DATA_A_RESID  4
 #define KDEFSAVE_CODE_RESID  7
 
 #define OFFSET_TO_BLITTER_READ  0x05b8
 #define OFFSET_TO_SPINLOOP_BNE  0x074a
 #define OFFSET_TO_PAUSING_TRAP  0x2d9e
+#define OFFSET_TO_UNLINK_MOVEA  0x33d2
 
 // CastleTuneup-template
 #include "CastleTuneup.cc.hh"

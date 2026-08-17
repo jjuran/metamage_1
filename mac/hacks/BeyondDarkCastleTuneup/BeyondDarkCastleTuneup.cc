@@ -23,12 +23,14 @@
 #define SPINLOOP_CODE_RESID  3
 #define BLITTING_CODE_RESID  3
 #define FIRESIDE_CODE_RESID  5
+#define BK_MUG_DATA_B_RESID  9
 
 #define OPTION_STATE_OFFSET  -713
 
 #define OFFSET_TO_BLITTER_READ  0x06b2
 #define OFFSET_TO_SPINLOOP_BNE  0x084a
 #define OFFSET_TO_PAUSING_TRAP  0x32d0
+#define OFFSET_TO_UNLINK_MOVEA  0x349e
 
 // CastleTuneup-template
 #include "CastleTuneup.cc.hh"
