@@ -712,6 +712,53 @@ void install_volumes_patch( Handle h, Size handle_size )
 }
 
 static
+void install_Data_B_patches()
+{
+}
+
+static
+asm
+void Data_B_predecessor_sample()
+{
+	MOVE.W   12(A6),D0
+	MOVE.W   14(A6),D1
+	MOVE.W   18(A6),D3
+}
+
+static
+asm
+void Data_B_predecessor_patch()
+{
+	JSR      install_Data_B_patches
+	
+	MOVEM.W  12(A6),D0-D3
+}
+
+static inline
+void install_Data_B_patch( Handle h, Size handle_size )
+{
+	enum
+	{
+		sample_size = 12,
+		patch_size  = 12,
+		
+		offset_to_target = 0x002e50,
+	};
+	
+	if ( handle_size > offset_to_target + sample_size )
+	{
+		Ptr p = *h + offset_to_target;
+		
+		if ( v68k_memequ( &Data_B_predecessor_sample, p, sample_size ) )
+		{
+			BlockMoveData( &Data_B_predecessor_patch, p, patch_size );
+			
+			HNoPurge( h );
+		}
+	}
+}
+
+static
 asm
 void blitter_sample()
 {
@@ -1073,6 +1120,17 @@ void TEInit_handler()
 		{
 			install_envcheck_patch( h, GetHandleSize_raw( h ) );
 		}
+		
+	#ifdef PATCH_DATA_B_CALLER
+		
+		if ( (h = GetResource( 'CODE', 2 )) )
+		{
+			Size size = GetHandleSize_raw( h );
+			
+			install_Data_B_patch( h, size );
+		}
+		
+	#endif
 		
 		if ( (h = GetResource( 'CODE', SPINLOOP_CODE_RESID )) )
 		{
