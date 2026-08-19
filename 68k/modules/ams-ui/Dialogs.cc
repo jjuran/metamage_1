@@ -1015,6 +1015,24 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 			
 			TEKey( c, d->textH );
 			
+			/*
+				Our implementation of TEKey() does insertion in
+				amortized constant time -- by which the handle
+				is extended on rare occasion by a large amount
+				instead of every time by just enough.  Sadly,
+				doing this interacts poorly with the Toolbox's
+				own optimization of sharing a single TE record
+				among every text field in the dialog, so don't.
+				
+				(For example, if a modal dialog gets a keyDown
+				event prior to an update event, the text would
+				expand to include the entire handle contents.)
+			*/
+			
+			const TERec& te = **d->textH;
+			
+			SetHandleSize( te.hText, te.teLength );
+			
 			const DialogItem* item = get_editField( d );
 			
 			*itemHit = d->editField + 1;
