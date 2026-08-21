@@ -20,17 +20,12 @@
 #ifndef __CONTROLS__
 #include <Controls.h>
 #endif
-#ifndef __CONTROLDEFINITIONS__
-#include <ControlDefinitions.h>
-#endif
-
-// mac-glue-utils
-#include "mac_glue/OSUtils.hh"
 
 // mac-sys-utils
 #include "mac_sys/beep.hh"
 
 // mac-ui-utils
+#include "mac_ui/invoke_button.hh"
 #include "mac_ui/windows.hh"
 
 // SEAshell
@@ -91,11 +86,7 @@ void install()
 
 void default_button_click()
 {
-	HiliteControl( install_button, kControlButtonPart );
-	
-	mac::glue::delay( 8 );
-	
-	HiliteControl( install_button, kControlNoPart );
+	mac::ui::invoke_button_inline( install_button );
 	
 	if ( installed )
 	{
