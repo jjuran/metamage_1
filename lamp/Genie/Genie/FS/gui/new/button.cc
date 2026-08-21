@@ -27,11 +27,11 @@
 // POSIX
 #include <sys/stat.h>
 
-// mac-sys-utils
-#include "mac_sys/delay.hh"
-
 // mac-qd-utils
 #include "mac_qd/globals/thePort_window.hh"
+
+// mac-ui-utils
+#include "mac_ui/invoke_button.hh"
 
 // plus
 #include "plus/mac_utf8.hh"
@@ -203,14 +203,6 @@ namespace Genie
 		HiliteControl( itsControl, code );
 	}
 	
-	static inline void QDFlushPortBuffer()
-	{
-		if ( TARGET_API_MAC_CARBON )
-		{
-			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), NULL );
-		}
-	}
-	
 	void PushButton::Idle( const EventRecord& event )
 	{
 		Ped::View::Idle( event );
@@ -221,15 +213,7 @@ namespace Genie
 		{
 			params.pseudoclicked = false;
 			
-			HiliteControl( itsControl, kControlButtonPart );
-			
-			QDFlushPortBuffer();
-			
-			mac::sys::delay( 8 );
-			
-			HiliteControl( itsControl, kControlNoPart );
-			
-			QDFlushPortBuffer();
+			mac::ui::invoke_button_inline( itsControl );
 			
 			++params.seed;
 		}
