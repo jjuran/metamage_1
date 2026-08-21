@@ -8,8 +8,8 @@
 // mac-qd-utils
 #include "mac_qd/globals/thePort_window.hh"
 
-// mac-ui-utils
-#include "mac_ui/windows.hh"
+// mac-app-utils
+#include "mac_app/invalidate_window.hh"
 
 // plus
 #include "plus/serialize.hh"
@@ -32,6 +32,8 @@ namespace Genie
 {
 	
 	namespace Ped = Pedestal;
+	
+	using mac::app::invalidate_window;
 	
 	
 	struct Icon_Parameters
@@ -108,7 +110,7 @@ namespace Genie
 			params.xform = activating ? kTransformNone
 			                          : kTransformDisabled;
 			
-			mac::ui::invalidate_window( mac::qd::thePort_window() );
+			invalidate_window( mac::qd::thePort_window() );
 		}
 	}
 	

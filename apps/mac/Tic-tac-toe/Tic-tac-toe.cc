@@ -43,6 +43,7 @@
 #include "mac_app/documents.hh"
 #include "mac_app/event_handlers.hh"
 #include "mac_app/init.hh"
+#include "mac_app/invalidate_window.hh"
 #include "mac_app/menus.hh"
 #include "mac_app/state.hh"
 
@@ -72,6 +73,8 @@
 using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
 using mac::qd::wide_drag_area;
+
+using mac::app::invalidate_window;
 
 
 // gestaltAppleEventsAttr = 'evnt'
@@ -216,7 +219,7 @@ void invalidate_window_size( WindowRef window )
 	
 	window_size_changed( portRect );
 	
-	mac::ui::invalidate_window( window );
+	invalidate_window( window );
 }
 
 static WindowRef overlay;
@@ -425,7 +428,7 @@ void menu_item_chosen( long choice )
 							WindowRef window = is_fullscreen ? overlay
 							                                 : main_window;
 							
-							mac::ui::invalidate_window( window );
+							invalidate_window( window );
 						}
 						else
 						{
@@ -569,7 +572,7 @@ int main()
 	
 	if ( CONFIG_COMPOSITING )
 	{
-		mac::ui::invalidate_window( main_window );
+		invalidate_window( main_window );
 	}
 	
 	propagate_to_dock_tile();

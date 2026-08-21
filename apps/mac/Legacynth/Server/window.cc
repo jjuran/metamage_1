@@ -50,10 +50,6 @@
 #include "mac_qd/globals/thePort_window.hh"
 #include "mac_qd/main_display_bounds.hh"
 
-// mac-ui-utils
-#include "mac_ui/menus.hh"
-#include "mac_ui/windows.hh"
-
 // mac-app-utils
 #include "mac_app/state.hh"
 

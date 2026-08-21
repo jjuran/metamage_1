@@ -26,7 +26,9 @@
 
 // mac-ui-utils
 #include "mac_ui/invoke_button.hh"
-#include "mac_ui/windows.hh"
+
+// mac-app-utils
+#include "mac_app/invalidate_window.hh"
 
 // SEAshell
 #include "install.hh"
@@ -35,6 +37,9 @@
 
 
 #pragma exceptions off
+
+
+using mac::app::invalidate_window;
 
 
 WindowRef  console_window;
@@ -75,7 +80,7 @@ void install()
 	
 	if ( err != install_error )
 	{
-		mac::ui::invalidate_window( console_window );
+		invalidate_window( console_window );
 	}
 	
 	if ( (install_error = err) )

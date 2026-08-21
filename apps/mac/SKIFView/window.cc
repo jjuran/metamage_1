@@ -48,6 +48,7 @@
 #include "mac_ui/windows.hh"
 
 // mac-app-utils
+#include "mac_app/invalidate_window.hh"
 #include "mac_app/new_window.hh"
 
 // rasterlib
@@ -61,6 +62,8 @@
 
 #pragma exceptions off
 
+
+using mac::app::invalidate_window;
 
 using raster::raster_desc;
 
@@ -478,7 +481,7 @@ WindowRef populate_window_nonnull( WindowRef window, const raster_load& load )
 				                                  state->image,
 				                                  NULL );
 				
-				mac::ui::invalidate_window( window );
+				invalidate_window( window );
 				
 			#endif
 				

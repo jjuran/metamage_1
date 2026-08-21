@@ -24,13 +24,18 @@
 
 // mac-ui-utils
 #include "mac_ui/invoke_button.hh"
-#include "mac_ui/windows.hh"
+
+// mac-app-utils
+#include "mac_app/invalidate_window.hh"
 
 // SoundCheck
 #include "playback.hh"
 
 
 #pragma exceptions off
+
+
+using mac::app::invalidate_window;
 
 
 const Byte play_button_name[] = "\p" "Test";
@@ -51,7 +56,7 @@ void play()
 		SetControlReference( play_stop_button, (long) &stop );
 	}
 	
-	mac::ui::invalidate_window( console_window );
+	invalidate_window( console_window );
 }
 
 void stop()
@@ -61,7 +66,7 @@ void stop()
 	SetControlTitle    ( play_stop_button, play_button_name );
 	SetControlReference( play_stop_button, (long) &play );
 	
-	mac::ui::invalidate_window( console_window );
+	invalidate_window( console_window );
 }
 
 void default_button_click()

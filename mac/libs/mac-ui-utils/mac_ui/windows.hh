@@ -26,8 +26,6 @@ namespace ui  {
 	
 	bool invalidate_if_compositing( WindowRef window );
 	
-	void invalidate_window( WindowRef window );
-	
 #if ! __LP64__
 	
 	inline

@@ -29,7 +29,6 @@
 
 // mac-ui-utils
 #include "mac_ui/TETextBox_CFString.hh"
-#include "mac_ui/windows.hh"
 
 // mac-cg-utils
 #include "mac_cg/self_masked_drawing.hh"
@@ -39,6 +38,7 @@
 #include "mac_app/bundle_strings.hh"
 #include "mac_app/copy_bundle_icon.hh"
 #include "mac_app/draw_centered_text.hh"
+#include "mac_app/invalidate_window.hh"
 
 
 /*
@@ -449,7 +449,7 @@ WindowRef CGAboutBox_make()
 		                                  NULL,
 		                                  NULL );
 		
-		mac::ui::invalidate_window( window );
+		invalidate_window( window );
 		
 	#endif
 	}

@@ -22,6 +22,9 @@
 #include "mac_ui/menus.hh"
 #include "mac_ui/windows.hh"
 
+// mac-app-utils
+#include "mac_app/invalidate_window.hh"
+
 // QDFullscreen
 #include "fullscreen.hh"
 
@@ -46,6 +49,8 @@
 
 
 using mac::qd::get_portRect;
+
+using mac::app::invalidate_window;
 
 using tictactoe::move_t;
 using tictactoe::player_t;
@@ -392,7 +397,7 @@ void reload( const unsigned char* data, unsigned short size )
 	
 	propagate_to_dock_tile();
 	
-	mac::ui::invalidate_window( mac::qd::thePort_window() );
+	invalidate_window( mac::qd::thePort_window() );
 	
 	if ( tictactoe::can_undo() )
 	{

@@ -29,8 +29,8 @@
 #include <Menus.h>
 #endif
 
-// mac-ui-utils
-#include "mac_ui/windows.hh"
+// mac-app-utils
+#include "mac_app/invalidate_window.hh"
 
 // Legacynth
 #include "Sound.hh"
@@ -38,6 +38,9 @@
 
 
 #pragma exceptions off
+
+
+using mac::app::invalidate_window;
 
 
 const Byte start_button_name[] = "\p" "Start";
@@ -63,7 +66,7 @@ void startup()
 		EnableItem ( fileMenu, Stop  );
 	}
 	
-	mac::ui::invalidate_window( console_window );
+	invalidate_window( console_window );
 }
 
 void cleanup()
@@ -80,7 +83,7 @@ void cleanup()
 		DisableItem( fileMenu, Stop  );
 		EnableItem ( fileMenu, Start );
 		
-		mac::ui::invalidate_window( console_window );
+		invalidate_window( console_window );
 	}
 }
 

@@ -35,13 +35,11 @@
 // mac-qd-utils
 #include "mac_qd/wide_drag_area.hh"
 
-// mac-ui-utils
-#include "mac_ui/windows.hh"
-
 // mac-app-utils
 #include "mac_app/about_box.hh"
 #include "mac_app/DAs.hh"
 #include "mac_app/event_handlers.hh"
+#include "mac_app/invalidate_window.hh"
 #include "mac_app/menus.hh"
 #include "mac_app/state.hh"
 #include "mac_app/wait_next_event.hh"
@@ -57,6 +55,8 @@
 #define CONFIG_DAs CONFIG_DESK_ACCESSORIES
 
 using mac::qd::wide_drag_area;
+
+using mac::app::invalidate_window;
 
 
 // gestaltAppleEventsAttr = 'evnt'
@@ -224,7 +224,7 @@ int main()
 					switch ( (event.message & osEvtMessageMask) >> 24 )
 					{
 						case suspendResumeMessage:
-							mac::ui::invalidate_window( console_window );
+							invalidate_window( console_window );
 							break;
 						
 						default:

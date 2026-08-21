@@ -28,8 +28,8 @@
 #include "mac_qd/globals/thePort_window.hh"
 #include "mac_qd/set_cursor_by_id.hh"
 
-// mac-ui-utils
-#include "mac_ui/windows.hh"
+// mac-app-utils
+#include "mac_app/invalidate_window.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -45,6 +45,9 @@
 #include "Pedestal/Clipboard.hh"
 #include "Pedestal/CurrentFocus.hh"
 #include "Pedestal/IncrementalSearch.hh"
+
+
+using mac::app::invalidate_window;
 
 
 static inline
@@ -849,7 +852,7 @@ namespace Pedestal
 	
 	void TextEdit::EndQuasimode()
 	{
-		mac::ui::invalidate_window( mac::qd::thePort_window() );
+		invalidate_window( mac::qd::thePort_window() );
 	}
 	
 	TextSelection TextEdit::GetCurrentSelection() const

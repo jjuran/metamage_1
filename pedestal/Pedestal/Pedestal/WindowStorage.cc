@@ -16,12 +16,10 @@
 // mac-sys-utils
 #include "mac_sys/mem_error.hh"
 
-// mac-ui-utils
-#include "mac_ui/windows.hh"
-
 // mac-app-utils
 #include "mac_app/about_box.hh"
 #include "mac_app/DAs.hh"
+#include "mac_app/invalidate_window.hh"
 #include "mac_app/new_window.hh"
 #include "mac_app/state.hh"
 #include "mac_app/Window_menu.hh"
@@ -300,7 +298,7 @@ namespace Pedestal
 	
 	void invalidate_window( WindowRef window )
 	{
-		mac::ui::invalidate_window( window );
+		mac::app::invalidate_window( window );
 		
 		mac::app::event_check_due = true;
 	}
