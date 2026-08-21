@@ -16,7 +16,11 @@
 #endif
 
 // Standard C
+#ifdef __RELIX__
+#include <alloca.h>
+#else
 #include <stdlib.h>
+#endif
 
 
 namespace mac {
