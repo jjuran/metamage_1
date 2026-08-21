@@ -23,6 +23,9 @@ extern "C" pascal void SysBeep( short ticks )  ONEWORDINLINE( 0xA9C8 );
 #include "mac_glue/Memory.hh"
 #include "mac_glue/OSUtils.hh"
 
+// mac-ui-utils
+#include "mac_ui/invoke_button.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -751,13 +754,7 @@ bool invoke_defItem( DialogPeek d )
 	
 	if ( type == ctrlItem + btnCtrl )
 	{
-		ControlRef button = (ControlRef) item->handle;
-		
-		HiliteControl( button, kControlButtonPart );
-		
-		mac::glue::delay( 8 );
-		
-		HiliteControl( button, kControlNoPart );
+		mac::ui::invoke_button_inline( (ControlRef) item->handle );
 	}
 	
 	return ! (type & 0x80);
