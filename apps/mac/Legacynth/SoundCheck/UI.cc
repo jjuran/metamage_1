@@ -21,14 +21,9 @@
 #ifndef __CONTROLS__
 #include <Controls.h>
 #endif
-#ifndef __CONTROLDEFINITIONS__
-#include <ControlDefinitions.h>
-#endif
-
-// mac-glue-utils
-#include "mac_glue/OSUtils.hh"
 
 // mac-ui-utils
+#include "mac_ui/invoke_button.hh"
 #include "mac_ui/windows.hh"
 
 // SoundCheck
@@ -71,11 +66,7 @@ void stop()
 
 void default_button_click()
 {
-	HiliteControl( play_stop_button, kControlButtonPart );
-	
-	mac::glue::delay( 8 );
-	
-	HiliteControl( play_stop_button, kControlNoPart );
+	mac::ui::invoke_button_inline( play_stop_button );
 	
 	if ( playing )
 	{
