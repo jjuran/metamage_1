@@ -27,6 +27,8 @@ namespace glfb
 	
 	void set_dimensions( int width, int height, int depth );
 	
+	void set_interpolating( bool interpolating );
+	
 	void set_palette( const unsigned short* colors, int n );
 	
 	void set_screen_image( const void* src_addr );

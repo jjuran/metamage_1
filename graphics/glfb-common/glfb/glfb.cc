@@ -202,6 +202,22 @@ void set_dimensions( int width, int height, int depth )
 	              screen_texture_data );
 }
 
+void set_texture_mag_sampling( GLuint texture, GLint param )
+{
+	glBindTexture( texture_target, texture );
+	
+	glTexParameteri( texture_target, GL_TEXTURE_MAG_FILTER, param );
+}
+
+void set_interpolating( bool interpolating )
+{
+	const GLint param = interpolating ? GL_LINEAR : GL_NEAREST;
+	
+	set_texture_mag_sampling( screen_texture,      param );
+	set_texture_mag_sampling( cursor_face_texture, param );
+	set_texture_mag_sampling( cursor_mask_texture, param );
+}
+
 void set_palette( const unsigned short* colors, int n )
 {
 	palette_size = n;
