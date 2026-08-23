@@ -17,9 +17,17 @@ enum
 	Zoom_index_2_0 = Zoom_index_1_0 * 2,  // 200%
 };
 
-extern int minimum_zoom_index;
-extern int maximum_zoom_index;
-extern int current_zoom_index;
+struct scale_indices
+{
+	int minimum;
+	int maximum;
+	int current;
+};
+
+extern scale_indices screen_scale;
+extern scale_indices window_scale;
+
+extern scale_indices* active_scale;
 
 void cap_zoom_index( int window_X, int window_Y, int screen_X, int screen_Y );
 

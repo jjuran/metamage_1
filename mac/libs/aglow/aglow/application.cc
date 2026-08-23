@@ -89,12 +89,13 @@ using mac::app::become_application;
 
 using glfb::overlay_enabled;
 
+using frend::active_scale;
 using frend::CommandMode_state;
 using frend::commandmode_state;
-using frend::current_zoom_index;
 using frend::cursor_ejected;
 using frend::display_events;
 using frend::sharp_pixels;
+using frend::window_scale;
 
 using raster::raster_desc;
 using raster::raster_load;
@@ -217,8 +218,8 @@ OSStatus choose_zoom( MenuCommand id, const raster_desc& desc )
 			x_denom = 1 + (id >> 16 & 0x1);
 			x_numer = ((id >> 24 & 0xf) + 1) * x_denom - 1;
 			
-			current_zoom_index = (id >> 23 & 0xf << 1)   // _00%  (1 .. 4)
-			                   | (id >> 16 & 0x1     );  //  _0%  (0 or 5)
+			active_scale->current = (id >> 23 & 0xf << 1)   // _00%  (1 .. 4)
+			                      | (id >> 16 & 0x1     );  //  _0%  (0 or 5)
 			
 			DisableScreenUpdates();
 			
@@ -393,7 +394,7 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 		{
 			case kEventRawKeyDown:
 				had_sharp_pixels    = sharp_pixels;
-				previous_zoom_index = current_zoom_index;
+				previous_zoom_index = active_scale->current;
 				
 				if ( frend::commandmode_key( c ) )
 				{
@@ -407,9 +408,9 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 						
 						glfb::render_and_flush();
 					}
-					else if ( current_zoom_index != previous_zoom_index )
+					else if ( active_scale->current != previous_zoom_index )
 					{
-						int i = current_zoom_index;
+						int i = active_scale->current;
 						
 						choose_zoom( command_ID_for_zoom_index( i ), desc );
 					}
@@ -500,14 +501,18 @@ namespace amicus
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
 	using frend::cap_zoom_index;
-	using frend::maximum_zoom_index;
+	using frend::Zoom_index_0_5;
 	using frend::Zoom_index_2_0;
 	
 	OSStatus err;
 	
+	active_scale = &window_scale;
+	
+	window_scale.minimum = Zoom_index_0_5;
+	
 	cap_zoom_index( desc.width, desc.height, desk_width, desk_height );
 	
-	for ( int i = top_zoom_index;  i > maximum_zoom_index;  --i )
+	for ( int i = top_zoom_index;  i > window_scale.maximum;  --i )
 	{
 		MenuCommand command_ID = command_ID_for_zoom_index( i );
 		
@@ -516,7 +521,8 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	
 	const int x2 = Zoom_index_2_0;  // 200%
 	
-	int default_zoom_index = maximum_zoom_index < x2 ? maximum_zoom_index : x2;
+	int default_zoom_index = window_scale.maximum < x2
+	                       ? window_scale.maximum : x2;
 	
 	unsigned zoom_command = command_ID_for_zoom_index( default_zoom_index );
 	

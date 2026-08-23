@@ -46,15 +46,16 @@
 
 using mac::app::quit;
 
+using frend::active_scale;
 using frend::cap_zoom_index;
 using frend::coprocess_state;
-using frend::current_zoom_index;
 using frend::cursor_ejected;
 using frend::cursor_invisible;
 using frend::cursor_pinned;
 using frend::launch_coprocess;
-using frend::maximum_zoom_index;
 using frend::wait_for_coprocess;
+using frend::window_scale;
+using frend::Zoom_index_0_5;
 using frend::Zoom_index_2_0;
 
 using amicus::command_ID_for_zoom_index;
@@ -78,7 +79,7 @@ const char* works_path;
 static
 CGFloat current_scale()
 {
-	return current_zoom_index / 2.0;
+	return active_scale->current / 2.0;
 }
 
 static inline
@@ -409,11 +410,13 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 
 void update_scale( unsigned image_width, unsigned image_height )
 {
+	active_scale = &window_scale;
+	
 	NSSize space = [[NSScreen mainScreen] visibleFrame].size;
 	
 	cap_zoom_index( image_width, image_height, space.width, space.height );
 	
-	max_scale_command_ID = command_ID_for_zoom_index( maximum_zoom_index );
+	max_scale_command_ID = command_ID_for_zoom_index( window_scale.maximum );
 }
 
 @implementation AmarettoAppDelegate
@@ -423,6 +426,8 @@ void update_scale( unsigned image_width, unsigned image_height )
 	const raster::raster_desc& desc = load.meta->desc;
 	
 	update_scale( desc.width, desc.height );
+	
+	window_scale.minimum = Zoom_index_0_5;  // 50%
 	
 	cursor_limit = CGPointMake( desc.width - 1, desc.height - 1 );
 	
@@ -589,12 +594,10 @@ void update_scale( unsigned image_width, unsigned image_height )
 		case kZoom400Percent:
 			if ( tag != _zoomLevel )
 			{
-				using frend::current_zoom_index;
-				
 				int  _50 = tag >> 16 & 0x1;
 				int _100 = tag >> 24 & 0xf;
 				
-				current_zoom_index = _100 * 2 + _50;
+				active_scale->current = _100 * 2 + _50;
 				
 				[self doZoom: tag];
 			}
@@ -623,9 +626,10 @@ void update_scale( unsigned image_width, unsigned image_height )
 	
 	const int x2 = Zoom_index_2_0;  // 200%
 	
-	current_zoom_index = maximum_zoom_index < x2 ? maximum_zoom_index : x2;
+	window_scale.current = window_scale.maximum < x2
+	                     ? window_scale.maximum : x2;
 	
-	_zoomLevel = command_ID_for_zoom_index( current_zoom_index );
+	_zoomLevel = command_ID_for_zoom_index( window_scale.current );
 	
 	err = AEInstallEventHandler( kCoreEventClass,
 	                             kAEQuitApplication,

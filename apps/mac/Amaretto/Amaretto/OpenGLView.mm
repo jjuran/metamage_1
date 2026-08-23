@@ -282,14 +282,14 @@ void handle_event( NSEvent* event )
 
 - (void) keyDown: (NSEvent*) event
 {
-	using frend::current_zoom_index;
+	using frend::active_scale;
 	using frend::sharp_pixels;
 	
 	using amicus::command_ID_for_zoom_index;
 	
 	update_scale( _resolution.width, _resolution.height );
 	
-	int previous_zoom_index = current_zoom_index;
+	int previous_scale_index = active_scale->current;
 	
 	bool had_sharp_pixels = sharp_pixels;
 	
@@ -302,11 +302,11 @@ void handle_event( NSEvent* event )
 		render_and_flush();
 	}
 	
-	if ( current_zoom_index != previous_zoom_index )
+	if ( active_scale->current != previous_scale_index )
 	{
 		AmarettoAppDelegate* delegate = (AmarettoAppDelegate*) [NSApp delegate];
 		
-		[delegate doZoom: command_ID_for_zoom_index( current_zoom_index )];
+		[delegate doZoom: command_ID_for_zoom_index( active_scale->current )];
 	}
 }
 

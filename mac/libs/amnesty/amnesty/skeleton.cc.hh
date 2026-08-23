@@ -73,9 +73,8 @@ using frend::commandmode_state;
 using frend::display_events;
 using frend::quick_exit;
 
-using frend::current_zoom_index;
-using frend::maximum_zoom_index;
-using frend::minimum_zoom_index;
+using frend::active_scale;
+using frend::screen_scale;
 using frend::Zoom_index_1_0;
 
 enum
@@ -238,9 +237,11 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 	             : max_scale_factor >= 1.5 ? 1.5
 	             :                           1.0;
 	
-	minimum_zoom_index = Zoom_index_1_0;  // 100%
-	maximum_zoom_index = (int) floor( max_scale_factor * 2 );
-	current_zoom_index = (int) floor(     scale_factor * 2 );
+	active_scale = &screen_scale;
+	
+	screen_scale.minimum = Zoom_index_1_0;  // 100%
+	screen_scale.maximum = (int) floor( max_scale_factor * 2 );
+	screen_scale.current = (int) floor(     scale_factor * 2 );
 	
 	Blitter blitter( captured_display.id() );
 	
@@ -334,7 +335,7 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		{
 			CommandMode_state prev_state = commandmode_state;
 			
-			const int previous_zoom_index = current_zoom_index;
+			const int previous_scale_index = screen_scale.current;
 			
 			bool handled = HANDLE_EVENT( lowlevel_event, &command_handler );
 			
@@ -351,9 +352,9 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 				
 				Blitter::render();
 			}
-			else if ( current_zoom_index != previous_zoom_index )
+			else if ( screen_scale.current != previous_scale_index )
 			{
-				scale_factor = current_zoom_index / 2.0;
+				scale_factor = screen_scale.current / 2.0;
 				
 				blitter.area( display_area( display_bounds, width, height ) );
 				

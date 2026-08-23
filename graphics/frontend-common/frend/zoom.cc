@@ -9,9 +9,10 @@
 namespace frend
 {
 
-int minimum_zoom_index = Zoom_index_0_5;  //  50%
-int maximum_zoom_index;
-int current_zoom_index = Zoom_index_1_0;  // 100%
+scale_indices screen_scale;
+scale_indices window_scale;
+
+scale_indices* active_scale;
 
 void cap_zoom_index( int window_X, int window_Y, int screen_X, int screen_Y )
 {
@@ -22,7 +23,7 @@ void cap_zoom_index( int window_X, int window_Y, int screen_X, int screen_Y )
 	
 	long max = X_zoom < Y_zoom ? X_zoom : Y_zoom;
 	
-	maximum_zoom_index = max >> 15;
+	active_scale->maximum = max >> 15;
 }
 
 }

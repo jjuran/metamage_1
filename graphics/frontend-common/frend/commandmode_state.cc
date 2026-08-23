@@ -31,16 +31,16 @@ bool commandmode_key( char c )
 		case 'x':  X_hit = true;  break;
 		
 		case '-':
-			if ( current_zoom_index > minimum_zoom_index )
+			if ( active_scale->current > active_scale->minimum )
 			{
-				--current_zoom_index;
+				--active_scale->current;
 			}
 			break;
 		
 		case '=':  // +
-			if ( current_zoom_index < maximum_zoom_index )
+			if ( active_scale->current < active_scale->maximum )
 			{
-				++current_zoom_index;
+				++active_scale->current;
 			}
 			break;
 		
