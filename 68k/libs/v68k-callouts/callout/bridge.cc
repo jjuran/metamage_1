@@ -50,6 +50,13 @@
 #endif
 
 
+#if defined(__MACOS__)  ||  defined(__APPLE__)
+#define COMMANDS_USE_CTRL_KEY  0
+#else
+#define COMMANDS_USE_CTRL_KEY  1
+#endif
+
+
 namespace v68k    {
 namespace callout {
 
@@ -875,6 +882,13 @@ int32_t Gestalt_callout( v68k::processor_state& s )
 		
 		case OSTYPE('p', 'r', 'o', 'c'):  // 'proc'
 			value = (s.model >> 4) + 1;
+			break;
+		
+		case OSTYPE('K', 'e', 'y', 's'):  // 'Keys'
+			if ( COMMANDS_USE_CTRL_KEY )
+			{
+				value = 1;  // gestaltCommandsUseCtrlKey
+			}
 			break;
 		
 		default:
