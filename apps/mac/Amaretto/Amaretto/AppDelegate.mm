@@ -105,8 +105,8 @@ void synchronize_cursor_location( NSView* view )
 	
 	/*
 		Observed in OS X 10.9.5 on a 2013 Retina MacBook Pro with
-		Nvidia graphics, but not in OS X 10.9.5 on a Mac Mini with
-		Intel graphics (nor anywhere else):
+		Nvidia graphics, but not in OS X 10.9.5 on a 2012 Mac Mini
+		with Intel graphics (nor anywhere else):
 		
 		The CGWarpMouseCursorPosition() call above cancels the
 		cursor hiding.  Compensate by turning it off and on again.
@@ -396,6 +396,7 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 
 - (void) setCursorPinning: (BOOL) pinning
 {
+	using amicus::cursor_hidden;
 	using amicus::ignore_next_mouse_moved_event;
 	using amicus::set_cursor_hidden;
 	
@@ -419,6 +420,10 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 		synchronize_cursor_location( _mainGLView );
 		
 		CGAssociateMouseAndMouseCursorPosition( ! pinning );
+	}
+	else if ( cursor_hidden )
+	{
+		synchronize_cursor_location( _mainGLView );
 	}
 }
 
