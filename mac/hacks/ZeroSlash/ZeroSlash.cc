@@ -12,6 +12,20 @@
 	updating the zero glyph to include a slash, which
 	makes it distinguishable from the uppercase 'O'.
 	
+	It also potentially replaces the feature symbol used
+	to represent the Command key with a caret indicating
+	the Control key (if directed to by a Gestalt query).
+	
+	Generally speaking, the latter is not something you
+	want, but it's useful in some unusual circumstances:
+	
+	If a Mac application advertises a keystroke shortcut
+	using Command, and the front end either translates
+	Control to Command (before passing the event to the
+	back end) or intercepts the keystroke (with Control)
+	and handles it itself (e.g. on a non-Mac), this INIT
+	will correct the display of the advertised keystroke.
+	
 	As written, this INIT wouldn't have any effect in
 	Mac OS -- the modified resource would be lost when
 	the INIT's resource file is closed.
@@ -28,6 +42,9 @@
 #ifndef __TEXTUTILS__
 #include <TextUtils.h>
 #endif
+
+// mac-glue-utils
+#include "mac_glue/Gestalt.hh"
 
 
 #define PACK16( _15, _14, _13,_12,  \
@@ -53,12 +70,21 @@
 		| ( _0 <<  0)  \
 	)
 
+#define PACK9( _8, _7, _6, _5, _4, _3, _2, _1, _0 )  \
+	PACK16( _8, _7, _6, _5, _4, _3, _2, _1, _0, 0, 0, 0, 0, 0, 0, 0 )
+
 #define PACK6( _5, _4, _3, _2, _1, _0 )  \
 	PACK16( _5, _4, _3, _2, _1, _0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
 
 #define _ 0
 #define X 1
 
+enum
+{
+	gestaltKeysAttr = 'Keys',
+	
+	gestaltCommandsUseCtrlKey = 0,
+};
 
 enum
 {
@@ -84,6 +110,32 @@ static const BitMap zero_bitmap =
 	(Ptr) zero_data,
 	2,
 	{ 0, 0, zero_height, zero_width },
+};
+
+enum
+{
+	ctrl_height = 9,
+	ctrl_width  = 9,
+};
+
+static const UInt16 ctrl_data[] =
+{
+	PACK9( _,_,_,_,X,_,_,_,_ ),
+	PACK9( _,_,_,X,X,X,_,_,_ ),
+	PACK9( _,_,X,X,_,X,X,_,_ ),
+	PACK9( _,X,X,_,_,_,X,X,_ ),
+	PACK9( _,_,_,_,_,_,_,_,_ ),
+	PACK9( _,_,_,_,_,_,_,_,_ ),
+	PACK9( _,_,_,_,_,_,_,_,_ ),
+	PACK9( _,_,_,_,_,_,_,_,_ ),
+	PACK9( _,_,_,_,_,_,_,_,_ ),
+};
+
+static const BitMap ctrl_bitmap =
+{
+	(Ptr) ctrl_data,
+	2,
+	{ 0, 0, ctrl_height, ctrl_width },
 };
 
 inline
@@ -162,6 +214,17 @@ void install_Chicago_12_patch( Handle h )
 	BitMap dstBits = { dst, rowBytes, { 0, 0, fRectHeight, rowBytes * 8 } };
 	
 	const short* locTable = (short*) (dst + mulu_w( rowBytes, fRectHeight ));
+	
+	enum
+	{
+		bit = gestaltCommandsUseCtrlKey,
+		cmd = kCommandCharCode,
+	};
+	
+	if ( mac::glue::gestalt_bit_set( gestaltKeysAttr, bit ) )
+	{
+		patch_glyph( first, missing, locTable, cmd, ctrl_bitmap, dstBits, top );
+	}
 	
 	patch_glyph( first, missing, locTable, '0', zero_bitmap, dstBits, top );
 	
