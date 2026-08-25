@@ -70,6 +70,11 @@
 #define SystemTask()  /**/
 #endif
 
+#define LOWMEM( addr, type )  (*(type*) (addr))
+
+#define SonyVars  LOWMEM( 0x0134, UInt32 )
+
+
 using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
 using mac::qd::wide_drag_area;
@@ -298,7 +303,7 @@ void leave_fullscreen()
 static
 void cleanup_fullscreen()
 {
-	if ( TARGET_CPU_68K  &&  mac::sys::gestalt_defined( 'v68k' ) )
+	if ( TARGET_CPU_68K  &&  SonyVars == 'v68k' )
 	{
 		return;
 	}
