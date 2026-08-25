@@ -40,6 +40,7 @@ enum
 	u8,
 	u16,
 	u32,
+	ost,
 	str,
 };
 
@@ -604,7 +605,7 @@ static const global global_defs[] =
 	{ 0x0B74, x32, "<unknown>"   },
 	{ 0x0B78, x32, "<unknown>"   },
 	{ 0x0B7C, x32, "<unknown>"   },
-	{ 0x0B80, x32, "<unknown>"   },
+	{ 0x0B80, ost, "LastResType" },
 	{ 0x0B84, x32, "<unknown>"   },
 	{ 0x0B88, x32, "<unknown>"   },
 	{ 0x0B8C, x32, "<unknown>"   },
@@ -756,6 +757,21 @@ int main( int argc, char** argv )
 			
 			case u32:
 				p = gear::inscribe_unsigned_decimal( *(unsigned long*) addr );
+				break;
+			
+			case ost:
+				{
+					char* q = buffer;
+					
+					*q++ = '\'';
+					
+					q = (char*) mempcpy( q, (void*) addr, sizeof 'type' );
+					
+					*q++ = '\'';
+					
+					*q = '\0';
+				}
+				
 				break;
 			
 			case str:
