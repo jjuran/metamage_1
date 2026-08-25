@@ -314,6 +314,8 @@ static const global globals[] =
 	{ 0x011C, 4,    tag_UTableBase  },
 	{ 0x012E, 2,    tag_MMOk_CPUFlag},  // MMInOk, CPUFlag
 	{ 0x0130, 4,    tag_ApplLimit   },
+	{ 0x0134, 0x82, ('v' << 8) | '6'},  // Place 'v68k'
+	{ 0x0136, 0x82, ('8' << 8) | 'k'},  // in SonyVars
 	{ 0x0144, 2,    tag_SysEvtMask  },
 	{ 0x0146, 4,    tag_SysEvtBuf   },
 	{ 0x014A, 10,   tag_EventQueue  },
