@@ -36,7 +36,10 @@
 #include "mac_app/wait_next_event.hh"
 
 
-#define MBarHeight  *(short*) 0x0BAA  // only used in v68k for AMS
+#define LOWMEM( addr, type )  (*(type*) (addr))
+
+#define SonyVars    LOWMEM( 0x0134, UInt32 )
+#define MBarHeight  LOWMEM( 0x0BAA, SInt16 )  // only used in v68k for AMS
 
 
 using mac::qd::get_portRect;
@@ -46,7 +49,7 @@ using mac::qd::main_display_bounds;
 static inline
 bool in_v68k()
 {
-	return mac::sys::gestalt_defined( 'v68k' );
+	return TARGET_CPU_68K  &&  SonyVars == 'v68k';
 }
 
 static
