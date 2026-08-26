@@ -32,6 +32,8 @@ enum CommandMode_state
 
 extern CommandMode_state commandmode_state;
 
+extern bool sharp_pixels;
+
 extern bool Q_hit;
 extern bool X_hit;
 
