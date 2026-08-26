@@ -23,8 +23,8 @@
 #endif
 #endif
 
-// mac-sys-utils
-#include "mac_sys/gestalt.hh"
+// mac-glue-utils
+#include "mac_glue/Gestalt.hh"
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
@@ -39,6 +39,7 @@
 #define LOWMEM( addr, type )  (*(type*) (addr))
 
 #define SonyVars    LOWMEM( 0x0134, UInt32 )
+#define SysVersion  LOWMEM( 0x015A, UInt16 )
 #define MBarHeight  LOWMEM( 0x0BAA, SInt16 )  // only used in v68k for AMS
 
 
@@ -50,6 +51,18 @@ static inline
 bool in_v68k()
 {
 	return TARGET_CPU_68K  &&  SonyVars == 'v68k';
+}
+
+static inline
+bool has_Gestalt()
+{
+	return ! TARGET_CPU_68K  ||  in_v68k()  ||  SysVersion >= 0x0604;
+}
+
+static inline
+short machine_icon_ID()
+{
+	return has_Gestalt() ? mac::glue::gestalt( 'micn' ) : 0;
 }
 
 static
@@ -82,7 +95,7 @@ void draw_window( WindowRef window )
 	
 	EraseRect( &portRect );
 	
-	SInt32 micn = mac::sys::gestalt( 'micn' );
+	const short micn = machine_icon_ID();
 	
 	const short icon_h = 16;
 	const short icon_v = 16;
