@@ -66,6 +66,24 @@ int bindir_fd;
 
 const char* works_path;
 
+static inline
+void preventEnterFullScreenMenuItem()
+{
+	if ( TARGET_CPU_PPC )
+	{
+		return;
+	}
+	
+	/*
+		OS X 10.11 began sneaking an "Enter Full Screen"
+		menu item into any menu named "View".  Prevent it.
+	*/
+	
+	NSString* key = @"NSFullScreenMenuItemEverywhere";
+	
+	[[NSUserDefaults standardUserDefaults] setBool: NO forKey: key];
+}
+
 static
 NSMenuItem* parentMenuItemOfMenu( NSMenu* menu )
 {
@@ -371,6 +389,8 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	_desc = &desc;
 	
 	_zoomLevel = kZoom100Percent;
+	
+	preventEnterFullScreenMenuItem();
 	
 	return self;
 }
