@@ -409,15 +409,21 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	return view;  // View menu
 }
 
+static
+void update_scale( unsigned image_width, unsigned image_height )
+{
+	NSSize space = [[NSScreen mainScreen] visibleFrame].size;
+	
+	cap_zoom_index( image_width, image_height, space.width, space.height );
+}
+
 @implementation AmarettoAppDelegate
 
 - (id) initWithRaster: (const raster::raster_load&) load
 {
 	const raster::raster_desc& desc = load.meta->desc;
 	
-	NSSize space = [[NSScreen mainScreen] visibleFrame].size;
-	
-	cap_zoom_index( desc.width, desc.height, space.width, space.height );
+	update_scale( desc.width, desc.height );
 	
 	cursor_limit = CGPointMake( desc.width - 1, desc.height - 1 );
 	
