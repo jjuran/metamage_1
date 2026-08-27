@@ -82,9 +82,27 @@ int bindir_fd;
 
 const char* works_path;
 
+static CGFloat absolute_max_scale;
+
+static
+double max_scale_factor( NSSize size, double width, double height )
+{
+	double x_factor = size.width  / width;
+	double y_factor = size.height / height;
+	
+	double factor = x_factor < y_factor ? x_factor : y_factor;
+	
+	return factor;
+}
+
 static
 CGFloat current_scale()
 {
+	if ( fullscreen  &&  active_scale->current == active_scale->maximum )
+	{
+		return absolute_max_scale;
+	}
+	
 	return active_scale->current / 2.0;
 }
 
@@ -421,6 +439,8 @@ void set_screen_scale( unsigned image_width, unsigned image_height )
 	NSSize space = [[NSScreen mainScreen] frame].size;
 	
 	cap_zoom_index( image_width, image_height, space.width, space.height );
+	
+	absolute_max_scale = max_scale_factor( space, image_width, image_height );
 }
 
 void update_scale( unsigned image_width, unsigned image_height )
@@ -486,6 +506,11 @@ void on_cursor_vis( bool visible )
 	if ( window_scale.current > x2 )
 	{
 		window_scale.current = x2;
+	}
+	
+	if ( absolute_max_scale > screen_scale.maximum / 2.0 )
+	{
+		screen_scale.maximum += 1;
 	}
 	
 	cursor_limit = CGPointMake( desc.width - 1, desc.height - 1 );
