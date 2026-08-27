@@ -58,6 +58,7 @@ using frend::cursor_pinned;
 using frend::fullscreen;
 using frend::launch_coprocess;
 using frend::screen_scale;
+using frend::sharp_pixels;
 using frend::wait_for_coprocess;
 using frend::window_scale;
 using frend::Zoom_index_0_5;
@@ -104,6 +105,18 @@ CGFloat current_scale()
 	}
 	
 	return active_scale->current / 2.0;
+}
+
+static inline
+bool high_res( NSScreen* screen )
+{
+#ifdef MAC_OS_X_VERSION_10_7
+	
+	return [screen backingScaleFactor] > 1.0;
+	
+#endif
+	
+	return false;
 }
 
 static inline
@@ -492,6 +505,8 @@ void on_cursor_vis( bool visible )
 {
 	const int x2 = Zoom_index_2_0;  // 200%
 	
+	frend::load_defaults( bindir_fd );
+	
 	const raster::raster_desc& desc = load.meta->desc;
 	
 	set_screen_scale( desc.width, desc.height );  // initialize screen scale
@@ -506,6 +521,17 @@ void on_cursor_vis( bool visible )
 	if ( window_scale.current > x2 )
 	{
 		window_scale.current = x2;
+	}
+	
+	/*
+		If we're using Sharp Pixels on a standard
+		resolution (non-Retina) screen, then limit
+		the starting scale to an integer multiple.
+	*/
+	
+	if ( sharp_pixels  &&  ! high_res( [NSScreen mainScreen] ) )
+	{
+		screen_scale.current &= ~1;
 	}
 	
 	if ( absolute_max_scale > screen_scale.maximum / 2.0 )
@@ -745,8 +771,6 @@ void on_cursor_vis( bool visible )
 
 - (void) applicationWillFinishLaunching: (NSNotification*) notification
 {
-	using frend::sharp_pixels;
-	
 	OSStatus err;
 	
 	err = AEInstallEventHandler( kCoreEventClass,
@@ -754,8 +778,6 @@ void on_cursor_vis( bool visible )
 	                             UPP_ARG( handle_Quit_Apple_event ),
 	                             0,
 	                             false );
-	
-	frend::load_defaults( bindir_fd );
 	
 	_viewMenu = set_up_menus( _zoomLevel );
 	
