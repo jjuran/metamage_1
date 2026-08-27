@@ -107,19 +107,42 @@ CGPoint window_contentRect_topLeft( NSWindow* window )
 }
 
 static
+CGPoint window_contentRect_center( NSWindow* window )
+{
+	NSRect outer = [[window screen] frame];
+	NSRect inner = [window contentRectForFrameRect: [window frame]];
+	
+	CGFloat x = inner.origin.x                     + inner.size.width  / 2;
+	CGFloat y = outer.size.height - inner.origin.y - inner.size.height / 2;
+	
+	return CGPointMake( x, y );
+}
+
+static
 void synchronize_cursor_location( NSView* view )
 {
 	NSWindow* window = [view window];
 	
-	NSPoint v_origin = [view frame].origin;
-	CGPoint w_origin = window_contentRect_topLeft( window );
+	CGPoint new_cursor_loc;
 	
-	CGFloat scale = current_zoom_index / 2.0;
+	if ( cursor_pinned )
+	{
+		new_cursor_loc = window_contentRect_center( window );
+	}
+	else
+	{
+		NSPoint v_origin = [view frame].origin;
+		CGPoint w_origin = window_contentRect_topLeft( window );
+		
+		CGFloat scale = current_zoom_index / 2.0;
+		
+		CGFloat x = splode::last_sent_x * scale + v_origin.x + w_origin.x;
+		CGFloat y = splode::last_sent_y * scale + v_origin.y + w_origin.y;
+		
+		new_cursor_loc = CGPointMake( x, y );
+	}
 	
-	CGFloat x = splode::last_sent_x * scale + v_origin.x + w_origin.x;
-	CGFloat y = splode::last_sent_y * scale + v_origin.y + w_origin.y;
-	
-	CGWarpMouseCursorPosition( CGPointMake( x, y ) );
+	CGWarpMouseCursorPosition( new_cursor_loc );
 	
 	/*
 		Observed in OS X 10.9.5 on a 2013 Retina MacBook Pro with
@@ -406,6 +429,8 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	
 	if ( cursor_pinned )
 	{
+		cursor_pinned = false;
+		
 		synchronize_cursor_location( _mainGLView );
 	}
 	
