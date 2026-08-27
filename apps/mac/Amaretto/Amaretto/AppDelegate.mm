@@ -75,6 +75,12 @@ int bindir_fd;
 
 const char* works_path;
 
+static
+CGFloat current_scale()
+{
+	return current_zoom_index / 2.0;
+}
+
 static inline
 void preventEnterFullScreenMenuItem()
 {
@@ -143,7 +149,7 @@ void synchronize_cursor_location( NSView* view )
 		NSPoint v_origin = [view frame].origin;
 		CGPoint w_origin = window_contentRect_topLeft( window );
 		
-		CGFloat scale = current_zoom_index / 2.0;
+		CGFloat scale = current_scale();
 		
 		CGFloat x = splode::last_sent_x * scale + v_origin.x + w_origin.x;
 		CGFloat y = splode::last_sent_y * scale + v_origin.y + w_origin.y;
@@ -523,15 +529,13 @@ void update_scale( unsigned image_width, unsigned image_height )
 
 - (void) doZoom: (long) commandID
 {
-	using frend::current_zoom_index;
-	
 	using amicus::cursor_hidden;
 	
 	const long tag = commandID;
 	
 	if ( tag != _zoomLevel )
 	{
-		CGFloat x = current_zoom_index / 2.0;
+		CGFloat x = current_scale();
 		
 		[_mainGLView setScale: x];
 		
@@ -631,7 +635,7 @@ void update_scale( unsigned image_width, unsigned image_height )
 	
 	_viewMenu = set_up_menus( _zoomLevel );
 	
-	_mainWindow = create_window( *_desc, current_zoom_index / 2.0 );
+	_mainWindow = create_window( *_desc, current_scale() );
 	_mainGLView = [_mainWindow initialFirstResponder];
 	
 	/*
