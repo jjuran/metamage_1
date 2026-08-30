@@ -543,7 +543,7 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 		
 		if ( cursor_hidden )
 		{
-			[self setCursorPinning: cursor_pinned];
+			synchronize_cursor_location( _mainGLView );
 		}
 	}
 }
