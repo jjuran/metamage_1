@@ -15,6 +15,8 @@ namespace raster
 	
 }
 
+extern bool pin_postponed;
+
 extern int bindir_fd;
 
 extern const char* works_path;
@@ -43,5 +45,6 @@ extern const char* works_path;
 - (void) applicationWillFinishLaunching: (NSNotification*) notification;
 
 - (void) applicationDidBecomeActive: (NSNotification*) notification;
+- (void) applicationDidResignActive: (NSNotification*) notification;
 
 @end

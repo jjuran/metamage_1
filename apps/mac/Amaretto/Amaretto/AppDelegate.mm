@@ -14,6 +14,9 @@
 // mac-app-utils
 #include "mac_app/quit.hh"
 
+// v68k-cursor
+#include "cursor/cursor.hh"
+
 // write-a-splode
 #include "splode/write-a-splode.hh"
 
@@ -37,6 +40,7 @@
 
 // Amaretto
 #include "Amaretto/OpenGLView.h"
+#include "Amaretto/WindowDelegate.hh"
 #include "releasing.hh"
 
 
@@ -46,6 +50,7 @@ using frend::cap_zoom_index;
 using frend::coprocess_state;
 using frend::current_zoom_index;
 using frend::cursor_pinned;
+using frend::cursor_state;
 using frend::launch_coprocess;
 using frend::maximum_zoom_index;
 using frend::wait_for_coprocess;
@@ -61,6 +66,8 @@ using amicus::top_zoom_index;
 static bool opened;
 
 static coprocess_state coprocess;
+
+bool pin_postponed;
 
 int bindir_fd;
 
@@ -245,6 +252,8 @@ NSWindow* create_window( const raster::raster_desc& desc, CGFloat scale )
 	                              styleMask:           mask
 	                              backing:             NSBackingStoreBuffered
 	                              defer:               NO];
+	
+	[window setDelegate: [WindowDelegate new]];
 	
 	id viewContainer = window;
 	
@@ -600,6 +609,38 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	{
 		update_cursor_location( _mainGLView );
 	}
+	
+	/*
+		If we were brought forward by a click in the
+		window's title bar, we can't pin the cursor
+		until the mouse button is released, or when
+		we park the cursor in the window center, the
+		window will jump (because the mouse is still
+		dragging it).  Set a flag to do it later.
+		
+		We set pin_postponed regardless of the cursor
+		visibility -- the cursor could theoretically
+		become invisible between now and mouse-up, so
+		we postpone the visibility check as well the
+		actual cursor pinning until sendEvent sees a
+		mouse-up event (and clears pin_postponed).
+		
+	*/
+	
+	pin_postponed = window_moving;
+	window_moving = false;
+	
+	if ( ! pin_postponed )
+	{
+		bool invisible = cursor_state  &&  ! cursor_state->visible;
+		
+		[self setCursorPinning: invisible];
+	}
+}
+
+- (void) applicationDidResignActive: (NSNotification*) notification
+{
+	[self setCursorPinning: false];
 }
 
 @end
