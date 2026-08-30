@@ -29,6 +29,7 @@
 
 // Amaretto
 #include "Amaretto/AppDelegate.hh"
+#include "Amaretto/WindowDelegate.hh"
 
 
 using glfb::render_and_flush;
@@ -150,11 +151,11 @@ void handle_event( NSEvent* event )
 	
 	NSWindow* window = [self window];
 	
-	NSRect contentRect = [window contentRectForFrameRect: [window frame]];
-	
-	NSPoint proportional_location = get_proportional_location( contentRect );
+	NSPoint proportional_location = get_proportional_location( lastSetBounds );
 	
 	proportional_location = new_location( outer_size, proportional_location );
+	
+	setting_scale = true;
 	
 	NSDisableScreenUpdates();
 	
@@ -165,6 +166,8 @@ void handle_event( NSEvent* event )
 	[self   setFrameOrigin: origin];
 	
 	NSEnableScreenUpdates();
+	
+	setting_scale = false;
 }
 
 - (BOOL) acceptsFirstResponder

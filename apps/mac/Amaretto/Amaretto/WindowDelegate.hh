@@ -15,6 +15,9 @@
 
 
 extern bool window_moving;
+extern bool setting_scale;
+
+extern NSRect lastSetBounds;
 
 
 @interface WindowDelegate : NSObject WINDOWDELEGATE_PROTOCOLS
@@ -22,5 +25,6 @@ extern bool window_moving;
 }
 
 - (void) windowWillMove: (id) sender;
+- (void) windowDidMove:  (id) sender;
 
 @end

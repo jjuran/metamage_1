@@ -278,6 +278,8 @@ NSWindow* create_window( const raster::raster_desc& desc, CGFloat scale )
 	
 	[(NSWindow*) window center];
 	
+	lastSetBounds = [window contentRectForFrameRect: [window frame]];
+	
 	[window setTitle:                   processName];
 	[window makeKeyAndOrderFront:       nil];
 	[window setAcceptsMouseMovedEvents: YES];
