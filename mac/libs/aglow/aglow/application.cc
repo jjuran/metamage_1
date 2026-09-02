@@ -99,6 +99,7 @@ using frend::CommandMode_state;
 using frend::commandmode_state;
 using frend::current_zoom_index;
 using frend::display_events;
+using frend::sharp_pixels;
 
 using raster::raster_desc;
 using raster::raster_load;
@@ -364,11 +365,13 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 	
 	if ( commandmode_state )
 	{
+		bool had_sharp_pixels;
 		int previous_zoom_index;
 		
 		switch ( kind )
 		{
 			case kEventRawKeyDown:
+				had_sharp_pixels    = sharp_pixels;
 				previous_zoom_index = current_zoom_index;
 				
 				if ( frend::commandmode_key( c ) )
@@ -376,6 +379,12 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 					if ( frend::quick_exit() )
 					{
 						QuitApplicationEventLoop();
+					}
+					else if ( sharp_pixels != had_sharp_pixels )
+					{
+						glfb::set_interpolating( had_sharp_pixels );
+						
+						glfb::render_and_flush();
 					}
 					else if ( current_zoom_index != previous_zoom_index )
 					{
