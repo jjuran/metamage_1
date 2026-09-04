@@ -20,6 +20,9 @@
 // Standard C
 #include <stdio.h>
 
+// math
+#include "math/div_65536.hh"
+
 // mac-types
 #include "mac_types/gmtDelta.hh"
 
@@ -46,9 +49,11 @@ short div_3600( int x )
 static inline
 int degrees_from_fract( long fract )
 {
+	using math::fractions::div_65536;
+	
 	const short fixed_2_14 = fract >> 16;
 	
-	return fixed_2_14 * 90 / 16384;
+	return div_65536( fixed_2_14 * 360 );
 }
 
 static inline
