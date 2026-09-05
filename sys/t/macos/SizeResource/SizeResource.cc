@@ -17,6 +17,10 @@
 #include "mac_sys/has/native_Carbon.hh"
 #include "mac_sys/res_error.hh"
 
+// mac-rsrc-utils
+#include "mac_rsrc/create_res_file.hh"
+#include "mac_rsrc/open_res_file.hh"
+
 // tap-out
 #include "tap/test.hh"
 
@@ -27,7 +31,7 @@
 #define TEMPFILE_NAME  "\p" "SizeResource-test-tempfile.rsrc"
 
 
-const unsigned n_tests = 15;
+const unsigned n_tests = 17;
 
 static short        vRefNum;
 static long         dirID;
@@ -38,19 +42,19 @@ static short refnum;
 static
 void init()
 {
-#if ! TARGET_API_MAC_CARBON
+	const OSErr noErr = 0;
 	
-	CreateResFile( name );
+	HDelete( vRefNum, dirID, name );
 	
-	refnum = OpenResFile( name );
+	OSErr err = mac::rsrc::create_res_file( vRefNum, dirID, name );
 	
-	return;
+	EXPECT_EQ( err, noErr );
 	
-#endif
+	refnum = mac::rsrc::open_res_file( vRefNum, dirID, name, fsRdWrPerm );
 	
-	HCreateResFile( vRefNum, dirID, name );
+	err = refnum < 0 ? refnum : 0;
 	
-	refnum = HOpenResFile( vRefNum, dirID, name, fsRdWrPerm );
+	EXPECT_EQ( err, noErr );
 }
 
 static
