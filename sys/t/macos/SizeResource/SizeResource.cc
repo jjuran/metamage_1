@@ -13,6 +13,9 @@
 #include <Resources.h>
 #endif
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // mac-sys-utils
 #include "mac_sys/has/native_Carbon.hh"
 #include "mac_sys/res_error.hh"
@@ -163,6 +166,11 @@ void term()
 int main( int argc, char** argv )
 {
 	tap::start( "SizeResource", n_tests );
+	
+	if ( argc > 1 )
+	{
+		vRefNum = gear::parse_decimal( argv[ 1 ] );
+	}
 	
 	init();
 	
