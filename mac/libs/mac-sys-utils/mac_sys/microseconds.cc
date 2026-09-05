@@ -21,7 +21,7 @@
 #endif
 
 // math
-#include "math/fractions.hh"
+#include "math/div_65536.hh"
 #include "math/integer.hh"
 
 // mac-sys-utils
