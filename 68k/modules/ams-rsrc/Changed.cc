@@ -310,6 +310,20 @@ void AddResource_handler( Handle       data : __A0,
                           short        id   : __D1,
                           const Byte*  name : __A1 )
 {
+	if ( data == NULL )
+	{
+		ResErr = addResFailed;
+		
+		return;
+	}
+	
+	if ( *data == NULL )
+	{
+		ResErr = nilHandleErr;
+		
+		return;
+	}
+	
 	Size data_size = mac::glue::GetHandleSize_raw( data );
 	
 	if ( data_size < 0 )
