@@ -12,7 +12,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 11 * 3 + 1;
+static const unsigned n_tests = 11 * 3 + 13 + 1;
 
 template < class Int >
 void test_half( Int x )
@@ -71,6 +71,31 @@ void longword()
 	test_half( (long) -2147483647  );
 }
 
+#define EXPECT_EQ_DIV_65536( x )  EXPECT_EQ( div_65536( x ), x / 65536 )
+
+static
+void div_65536()
+{
+	using math::fractions::div_65536;
+	
+	EXPECT_EQ_DIV_65536( (short)  32767 );
+	EXPECT_EQ_DIV_65536( (short) -32768 );
+	
+	EXPECT_EQ_DIV_65536( (unsigned short) 65535 );
+	
+	EXPECT_EQ_DIV_65536( (long) 0 );
+	EXPECT_EQ_DIV_65536( (long) 1 );
+	EXPECT_EQ_DIV_65536( (long) 65535 );
+	EXPECT_EQ_DIV_65536( (long) 65536 );
+	EXPECT_EQ_DIV_65536( (long) -1 );
+	EXPECT_EQ_DIV_65536( (long) -65535 );
+	EXPECT_EQ_DIV_65536( (long) -65536 );
+	
+	EXPECT_EQ_DIV_65536( (long) 0x7FFFFFFF );
+	EXPECT_EQ_DIV_65536( (long) 0x80000000 );
+	EXPECT_EQ_DIV_65536( (long) 0x80000001 );
+}
+
 static
 void div_65536_ULL()
 {
@@ -90,6 +115,7 @@ int main( int argc, char** argv )
 	word();
 	longword();
 	
+	div_65536();
 	div_65536_ULL();
 	
 	return 0;
