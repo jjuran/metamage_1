@@ -4,6 +4,7 @@
 */
 
 // math
+#include "math/div_65536.hh"
 #include "math/fractions.hh"
 
 // tap-out
@@ -71,7 +72,7 @@ void longword()
 }
 
 static
-void div_65536()
+void div_65536_ULL()
 {
 	unsigned long long a = 0xfedcba9876543210;
 	unsigned long long b = a / 65536;
@@ -89,7 +90,7 @@ int main( int argc, char** argv )
 	word();
 	longword();
 	
-	div_65536();
+	div_65536_ULL();
 	
 	return 0;
 }
