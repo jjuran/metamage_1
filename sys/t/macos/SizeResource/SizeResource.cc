@@ -55,7 +55,7 @@
 #define TEMPFILE_NAME  "\p" "SizeResource-test-tempfile.rsrc"
 
 
-const unsigned n_tests = 17;
+const unsigned n_tests = 22;
 
 static short        vRefNum;
 static long         dirID;
@@ -89,6 +89,7 @@ void added_size()
 	const OSErr noErr        =    0;
 	const OSErr nilHandleErr = -109;
 	const OSErr resNotFound  = -192;
+	const OSErr addResFailed = -194;
 	
 	if ( Handle h = NewHandle( 11 ) )
 	{
@@ -165,11 +166,44 @@ void added_size()
 		
 		EXPECT_EQ( state, expected_state );
 		
+		AddResource( NULL, 'TEXT', 129, NULL );
+		
+		EXPECT_EQ( mac::sys::res_error(), addResFailed );
+		
 		AddResource( h, 'TEXT', 129, NULL );
 		
 		EXPECT_EQ( mac::sys::res_error(), nilHandleErr );
 		
-		DisposeHandle( h );
+		ReallocateHandle( h, 13 );
+		
+		AddResource( h, 'TEXT', 129, NULL );
+		
+		size = GetResourceSizeOnDisk( h );
+		
+		EXPECT_EQ( size, 13 );
+		
+		EXPECT_EQ( mac::sys::res_error(), noErr );
+		
+		EmptyHandle( h );
+		
+		size = GetResourceSizeOnDisk( h );
+		
+		/*
+			In OS X, the size returned here is zero.
+			In classic Mac OS, it's garbage.
+		*/
+		
+		EXPECT_EQ( mac::sys::res_error(), noErr );
+		
+		LoadResource( h );
+		
+		size = GetResourceSizeOnDisk( h );
+		
+		/*
+			The size returned here is the same as above.
+		*/
+		
+		EXPECT_EQ( mac::sys::res_error(), noErr );
 	}
 }
 
