@@ -1,6 +1,27 @@
 /*
 	SizeResource.cc
 	---------------
+	
+	To run this in Advanced Mac Substitute:
+	
+		cd ~/src/metamage_1
+		
+		bin/rbuild -B46 SizeResource
+		
+		cd ../ams-68k-bin
+		
+		rm -f ~/var/tmp/SizeResource-test-tempfile.rsrc
+		
+		graft --fd 20  \
+			freemountd --rw -qu --root ~/var/tmp/ //  \
+			xv68k -St                                 \
+				-mlib/ams-{core,io}              \
+				-m [ lib/ams-fs --docfs-fd=20 ]  \
+				-m lib/ams-rsrc                  \
+				~/var/build/68k-a4-blue-dbg/bin/SizeResource/SizeResource -2
+		
+		rm ~/var/tmp/SizeResource-test-tempfile.rsrc
+	
 */
 
 // Mac OS X
