@@ -190,6 +190,7 @@ namespace iota
 			
 			case 2:  data = big_u16( x );  break;
 			case 4:  data = big_u32( x );  break;
+			case 8:  data = big_u64( x );  break;
 		}
 	}
 	
@@ -202,6 +203,7 @@ namespace iota
 			
 			case 2:  return u16_from_big( data );
 			case 4:  return u32_from_big( data );
+			case 8:  return u64_from_big( data );
 		}
 	}
 	
