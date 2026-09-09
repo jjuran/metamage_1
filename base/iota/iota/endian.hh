@@ -163,26 +163,12 @@ namespace iota
 	
 	inline uint16_t& select_u16( uint32_t& x, int i )
 	{
-		uint8_t* p = (uint8_t*) &x;
-		
-		if ( i == is_little_endian() )
-		{
-			p += 2;
-		}
-		
-		return *(uint16_t*) p;
+		return ((uint16_t*) &x)[ i == iota::is_little_endian() ];
 	}
 	
 	inline uint32_t& select_u32( uint64_t& x, int i )
 	{
-		uint8_t* p = (uint8_t*) &x;
-		
-		if ( i == is_little_endian() )
-		{
-			p += 4;
-		}
-		
-		return *(uint32_t*) p;
+		return ((uint32_t*) &x)[ i == iota::is_little_endian() ];
 	}
 	
 	inline uint8_t& high_u8( uint16_t& x )  { return select_u8( x, 1 ); }
