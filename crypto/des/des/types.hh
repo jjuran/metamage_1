@@ -24,6 +24,7 @@ namespace des
 	
 	typedef iota::big_endian_conversion< uint64_t >::type U_64;
 	
+	typedef U_64 iv_t;
 	typedef U_64 key_t;
 	typedef U_64 block_t;
 	
