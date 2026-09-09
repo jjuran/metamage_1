@@ -156,6 +156,44 @@ namespace iota
 		return swap_8_bytes_little( u64 );
 	}
 	
+	inline uint8_t& select_u8( uint16_t& x, int i )
+	{
+		return ((uint8_t*) &x)[ i == is_little_endian() ];
+	}
+	
+	inline uint16_t& select_u16( uint32_t& x, int i )
+	{
+		uint8_t* p = (uint8_t*) &x;
+		
+		if ( i == is_little_endian() )
+		{
+			p += 2;
+		}
+		
+		return *(uint16_t*) p;
+	}
+	
+	inline uint32_t& select_u32( uint64_t& x, int i )
+	{
+		uint8_t* p = (uint8_t*) &x;
+		
+		if ( i == is_little_endian() )
+		{
+			p += 4;
+		}
+		
+		return *(uint32_t*) p;
+	}
+	
+	inline uint8_t& high_u8( uint16_t& x )  { return select_u8( x, 1 ); }
+	inline uint8_t& low_u8 ( uint16_t& x )  { return select_u8( x, 0 ); }
+	
+	inline uint16_t& high_u16( uint32_t& x )  { return select_u16( x, 1 ); }
+	inline uint16_t& low_u16 ( uint32_t& x )  { return select_u16( x, 0 ); }
+	
+	inline uint32_t& high_u32( uint64_t& x )  { return select_u32( x, 1 ); }
+	inline uint32_t& low_u32 ( uint64_t& x )  { return select_u32( x, 0 ); }
+	
 	template < class Int >
 	class big_endian
 	{

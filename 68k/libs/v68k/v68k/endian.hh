@@ -13,7 +13,6 @@
 namespace v68k
 {
 	
-	using iota::is_little_endian;
 	using iota::swap_2_bytes_big;
 	using iota::swap_4_bytes_big;
 	
@@ -38,43 +37,14 @@ namespace v68k
 		return swap_4_bytes_big( longword );
 	}
 	
-	inline uint8_t& select_byte( uint16_t& word, int i )
-	{
-		return ((uint8_t*) &word)[ i == is_little_endian() ];
-	}
+	inline uint8_t& high_byte( uint16_t& x )  { return iota::high_u8( x ); }
+	inline uint8_t& low_byte ( uint16_t& x )  { return iota::low_u8 ( x ); }
 	
-	inline uint16_t& select_word( uint32_t& longword, int i )
-	{
-		uint8_t* p = (uint8_t*) &longword;
-		
-		if ( i == is_little_endian() )
-		{
-			p += 2;
-		}
-		
-		return *(uint16_t*) p;
-	}
+	inline uint16_t& high_word( uint32_t& x )  { return iota::high_u16( x ); }
+	inline uint16_t& low_word ( uint32_t& x )  { return iota::low_u16 ( x ); }
 	
-	inline uint32_t& select_long( uint64_t& quadword, int i )
-	{
-		uint8_t* p = (uint8_t*) &quadword;
-		
-		if ( i == is_little_endian() )
-		{
-			p += 4;
-		}
-		
-		return *(uint32_t*) p;
-	}
-	
-	inline uint8_t& high_byte( uint16_t& x )  { return select_byte( x, 1 ); }
-	inline uint8_t& low_byte ( uint16_t& x )  { return select_byte( x, 0 ); }
-	
-	inline uint16_t& high_word( uint32_t& x )  { return select_word( x, 1 ); }
-	inline uint16_t& low_word ( uint32_t& x )  { return select_word( x, 0 ); }
-	
-	inline uint32_t& high_long( uint64_t& x )  { return select_long( x, 1 ); }
-	inline uint32_t& low_long ( uint64_t& x )  { return select_long( x, 0 ); }
+	inline uint32_t& high_long( uint64_t& x )  { return iota::high_u32( x ); }
+	inline uint32_t& low_long ( uint64_t& x )  { return iota::low_u32 ( x ); }
 	
 }
 
