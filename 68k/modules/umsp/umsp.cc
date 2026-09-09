@@ -44,12 +44,7 @@ struct registers
 
 static uint32_t vector_array[ 256 ];
 
-inline uint16_t& select_word( uint32_t& longword, int i )
-{
-	return ((uint16_t*) &longword)[ i == iota::is_little_endian() ];
-}
-
-inline uint16_t& low_word ( uint32_t& x )  { return select_word( x, 0 ); }
+inline uint16_t& low_word ( uint32_t& x )  { return iota::low_u16( x ); }
 
 static inline
 uint16_t read_word( uint32_t& address )
