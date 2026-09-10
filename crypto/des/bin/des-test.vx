@@ -1,0 +1,60 @@
+#!/usr/bin/env minivx
+
+let test_file = argv[ 1 ]
+
+let tests = load test_file
+
+put "1..291"
+
+var op
+
+def test_DES (key, text)
+{
+	let output = output-from-run [ "des-test-helper", op, hex key, hex text ]
+	
+	return unhex output.lines()[ 0 ]
+}
+
+var n_lines = 0
+var n_tests = 0
+
+for line in tests.lines() do
+{
+	++n_lines
+	
+	if line then
+	{
+		let c = line[ 0 ]
+		
+		if c == ' ' then
+		{
+			let (key, input, output) = *([substr (line, 1) / ' '] map unhex)
+			
+			let result = test_DES (key, input)
+			
+			let ok = result == output
+			
+			if not ok then
+			{
+				put "### failed at line " n_lines
+				put "EXPECTED: " output
+				put "RECEIVED: " result
+				put "XOR DIFF: " (result ~ output)
+			}
+			
+			put ("not " * not ok) "ok " ++n_tests
+		}
+		else if c == '#' then
+		{
+			# comment
+		}
+		else if line in ["encrypt", "decrypt"] then
+		{
+			op = line
+		}
+		else
+		{
+			warn "ignoring line: " rep line
+		}
+	}
+}
