@@ -1,6 +1,6 @@
 # Test vectors for DES Electronic Code Book (ECB)
 # implementation, derived from:
-#   "Validating the Correctness of Hardware 
+#   "Validating the Correctness of Hardware
 #   Implementations of the NBS Data Encryption Standard"
 #   NBS Special Publication 500-20, 1980.
 #
@@ -73,7 +73,7 @@ encrypt
  0101010101010101 06E7EA22CE92708F 0000000000000002
  0101010101010101 166B40B44ABA4BD6 0000000000000001
 #
-#    Inverse Permutation and Expansion test 
+#    Inverse Permutation and Expansion test
 #
 encrypt
 #     KEY                PT               CT
