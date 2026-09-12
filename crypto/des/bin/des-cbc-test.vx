@@ -1,0 +1,35 @@
+#!/usr/bin/env minivx
+
+let dir = argv[ 1 ]
+
+put "1..12"
+
+def nul_padded (text)
+{
+	let n = text.length
+	
+	let n_pad_bytes = -n mod 8
+	
+	return text ("\0" * n_pad_bytes)
+}
+
+def test_DES_CBC (op, path)
+{
+	let output = output-from-run [ "des-cbc-test-helper", op, path ]
+	
+	return output
+}
+
+var n_tests = 0
+
+for i in 0 .. 5 do
+{
+	let txt_path = dir "/" i ".txt"
+	let des_path = txt_path ".des"
+	
+	let enc_ok = test_DES_CBC ("encrypt", txt_path) ==            load des_path
+	let dec_ok = test_DES_CBC ("decrypt", des_path) == nul_padded load txt_path
+	
+	put ("not " * not enc_ok) "ok " ++n_tests
+	put ("not " * not dec_ok) "ok " ++n_tests
+}

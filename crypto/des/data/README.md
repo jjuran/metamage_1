@@ -1,5 +1,5 @@
-Test vectors for DES (ECB mode)
-===============================
+Test vectors for DES
+====================
 
 The `des_test_vectors.txt` file was copied verbatim from Del Hatch's [DES_decrypt][].
 
