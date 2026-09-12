@@ -31,6 +31,8 @@ struct CBC_mode
 	void crypt_block( uint64_t& text );
 	
 	void crypt_block( block_t* text );
+	
+	void crypt_blocks( block_t* out, const block_t* in, int n );
 };
 
 /*
@@ -84,6 +86,22 @@ void crypt_block( CBC_mode< Cipher, Operation >& cbc, block_t* text )
 }
 
 template < class Cipher, class Operation >
+void crypt_blocks( CBC_mode< Cipher, Operation >&  cbc,
+                   block_t*                        out,
+                   const block_t*                  in,
+                   int                             n )
+{
+	while ( n-- > 0 )
+	{
+		uint64_t block = *in++;
+		
+		crypt_block( cbc, block );
+		
+		*out++ = block;
+	}
+}
+
+template < class Cipher, class Operation >
 inline
 void CBC_mode< Cipher, Operation >::crypt_block( uint64_t& text )
 {
@@ -95,6 +113,15 @@ inline
 void CBC_mode< Cipher, Operation >::crypt_block( block_t* text )
 {
 	::des::crypt_block( *this, text );
+}
+
+template < class Cipher, class Operation >
+inline
+void CBC_mode< Cipher, Operation >::crypt_blocks( block_t*        out,
+                                                  const block_t*  in,
+                                                  int             n )
+{
+	::des::crypt_blocks( *this, out, in, n );
 }
 
 }
