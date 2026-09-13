@@ -231,8 +231,6 @@ void handle_event( NSEvent* event )
 
 - (void) handleMouseEvent: (NSEvent*) event
 {
-	[self handleMouseMovedEvent: event];
-	
 	handle_event( event );
 }
 
