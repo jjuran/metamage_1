@@ -26,10 +26,6 @@ BOOL is_mouse_event( NSEventType type )
 {
 	switch ( type )
 	{
-		case NSLeftMouseDown:
-		case NSLeftMouseUp:
-		case NSRightMouseDown:
-		case NSRightMouseUp:
 		case NSMouseMoved:
 		case NSLeftMouseDragged:
 		case NSRightMouseDragged:
