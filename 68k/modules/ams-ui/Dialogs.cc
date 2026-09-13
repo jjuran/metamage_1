@@ -62,6 +62,8 @@ WindowPeek WindowList  : 0x09D6;
 
 OSErr ResErr : 0x0A60;
 
+SoundUPP DABeeper : 0x0A9C;
+
 StringHandle DAStrings[ 4 ] : 0x0AA0;
 
 short DlgFont : 0x0AFA;
@@ -402,6 +404,16 @@ WindowPeek next_dialog_window( WindowPeek w )
 	return w;
 }
 
+static
+pascal
+void standard_ErrorSound_proc( SInt16 number )
+{
+	while ( number-- > 0 )
+	{
+		SysBeep( 6 );
+	}
+}
+
 
 #pragma mark -
 #pragma mark Initialization
@@ -409,11 +421,12 @@ WindowPeek next_dialog_window( WindowPeek w )
 
 pascal void InitDialogs_patch( void* proc )
 {
+	DABeeper = &standard_ErrorSound_proc;
 }
 
 pascal void ErrorSound_patch( void* proc )
 {
-	ERROR = "ErrorSound is unimplemented";
+	DABeeper = (SoundUPP) proc;
 }
 
 #pragma mark -
@@ -720,6 +733,15 @@ pascal void FreeDialog_patch ( short id )
 #pragma mark Handling Dialog Events
 #pragma mark -
 
+static inline
+void clicked_outside_dialog()
+{
+	if ( DABeeper )
+	{
+		DABeeper( 1 );
+	}
+}
+
 static
 bool invoke_defItem( DialogPeek d )
 {
@@ -823,7 +845,8 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 			{
 				if ( ! PtInRgn( event.where, w->contRgn ) )
 				{
-					SysBeep( 6 );
+					clicked_outside_dialog();
+					
 					continue;
 				}
 			}
