@@ -224,19 +224,9 @@ void handle_event( NSEvent* event )
 	}
 }
 
-- (void) handleMouseMovedEvent: (NSEvent*) event
-{
-	[self handleMouseMovedTo: [event locationInWindow]];
-}
-
-- (void) handleMouseEvent: (NSEvent*) event
-{
-	handle_event( event );
-}
-
 - (void) mouseDragged: (NSEvent*) event
 {
-	[self handleMouseMovedEvent: event];
+	[self handleMouseMovedTo: [event locationInWindow]];
 }
 
 - (void) mouseMoved: (NSEvent*) event
@@ -257,17 +247,17 @@ void handle_event( NSEvent* event )
 		return;
 	}
 	
-	[self handleMouseMovedEvent: event];
+	[self handleMouseMovedTo: [event locationInWindow]];
 }
 
 - (void) mouseDown: (NSEvent*) event
 {
-	[self handleMouseEvent: event];
+	handle_event( event );
 }
 
 - (void) mouseUp: (NSEvent*) event
 {
-	[self handleMouseEvent: event];
+	handle_event( event );
 }
 
 - (void) keyDown: (NSEvent*) event
