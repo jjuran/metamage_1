@@ -19,6 +19,7 @@
 
 // frontend-common
 #include "frend/commandmode_state.hh"
+#include "frend/cursor.hh"
 #include "frend/zoom.hh"
 
 // amicus
@@ -31,6 +32,8 @@
 #include "Amaretto/AppDelegate.hh"
 #include "Amaretto/WindowDelegate.hh"
 
+
+using frend::cursor_ejected;
 
 using glfb::render_and_flush;
 
@@ -203,6 +206,11 @@ void handle_event( NSEvent* event )
 
 - (void) handleMouseMovedTo: (NSPoint) location
 {
+	if ( cursor_ejected )
+	{
+		return;
+	}
+	
 	NSPoint pt = [self convertPoint: location fromView: nil];
 	
 	pt.x += kScreenMargin;
@@ -252,7 +260,16 @@ void handle_event( NSEvent* event )
 
 - (void) mouseDown: (NSEvent*) event
 {
+	bool cursor_was_ejected = cursor_ejected;
+	
 	handle_event( event );
+	
+	if ( cursor_ejected != cursor_was_ejected )
+	{
+		AmarettoAppDelegate* delegate = (AmarettoAppDelegate*) [NSApp delegate];
+		
+		[delegate setCursorEjected: cursor_ejected];
+	}
 }
 
 - (void) mouseUp: (NSEvent*) event

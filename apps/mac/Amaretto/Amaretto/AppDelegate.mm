@@ -49,6 +49,7 @@ using mac::app::quit;
 using frend::cap_zoom_index;
 using frend::coprocess_state;
 using frend::current_zoom_index;
+using frend::cursor_ejected;
 using frend::cursor_pinned;
 using frend::cursor_state;
 using frend::launch_coprocess;
@@ -450,6 +451,41 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	glfb::terminate();
 }
 
+- (void) setCursorEjected: (BOOL) ejected
+{
+	using amicus::ignore_next_mouse_moved_event;
+	using amicus::set_cursor_hidden;
+	
+	bool invisible = cursor_state  &&  ! cursor_state->visible;
+	
+	if ( ejected )
+	{
+		if ( cursor_pinned )
+		{
+			cursor_pinned = false;
+			
+			ignore_next_mouse_moved_event = true;
+			
+			CGAssociateMouseAndMouseCursorPosition( true );
+		}
+		
+		set_cursor_hidden( false );
+	}
+	else
+	{
+		set_cursor_hidden( true );
+		
+		if ( ! invisible )
+		{
+			update_cursor_location( _mainGLView );
+		}
+		else
+		{
+			[self setCursorPinning: true];
+		}
+	}
+}
+
 - (void) setCursorPinning: (BOOL) pinning
 {
 	using amicus::cursor_hidden;
@@ -466,16 +502,19 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	{
 		cursor_pinned = pinning;
 		
-		if ( pinning )
+		if ( ! cursor_ejected )
 		{
-			ignore_next_mouse_moved_event = true;
+			if ( pinning )
+			{
+				ignore_next_mouse_moved_event = true;
+				
+				set_cursor_hidden( true );
+			}
 			
-			set_cursor_hidden( true );
+			synchronize_cursor_location( _mainGLView );
+			
+			CGAssociateMouseAndMouseCursorPosition( ! pinning );
 		}
-		
-		synchronize_cursor_location( _mainGLView );
-		
-		CGAssociateMouseAndMouseCursorPosition( ! pinning );
 	}
 	else if ( cursor_hidden )
 	{

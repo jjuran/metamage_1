@@ -36,6 +36,7 @@ extern const char* works_path;
 
 - (void) destruct;
 
+- (void) setCursorEjected: (BOOL) ejected;
 - (void) setCursorPinning: (BOOL) pinning;
 
 - (void) doZoom: (long) commandID;
