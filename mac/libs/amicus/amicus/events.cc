@@ -24,6 +24,7 @@
 
 // frontend-common
 #include "frend/commandmode_state.hh"
+#include "frend/cursor.hh"
 #include "frend/pinned.hh"
 
 // amicus
@@ -46,6 +47,7 @@ using frend::CommandMode_off;
 using frend::CommandMode_oneshot;
 using frend::CommandMode_quasimode;
 using frend::commandmode_state;
+using frend::cursor_ejected;
 
 int events_fd = -1;
 
@@ -233,7 +235,10 @@ bool handle_CGEvent( CGEventRef event, command_handler_proc command_handler )
 		case kCGEventMouseMoved:
 		case kCGEventLeftMouseDragged:
 		case kCGEventRightMouseDragged:
-			handle_mouse_moved_event( event );
+			if ( ! cursor_ejected )
+			{
+				handle_mouse_moved_event( event );
+			}
 			break;
 		
 		default:
@@ -243,10 +248,38 @@ bool handle_CGEvent( CGEventRef event, command_handler_proc command_handler )
 	using splode::send_key_event;
 	using splode::send_mouse_event;
 	
+	static bool ejection_click;
+	
 	switch ( type )
 	{
 		case kCGEventLeftMouseDown:
+			if ( cursor_ejected  ||  commandmode_state )
+			{
+				cursor_ejected = ! cursor_ejected;
+				ejection_click = true;
+				
+				return strike_commandmode_state();
+			}
+			
+			goto send_mouse_event;
+		
 		case kCGEventLeftMouseUp:
+			if ( ejection_click )
+			{
+				/*
+					If the mouseUp corresponds to a mouseDown
+					that either began or ended cursor ejection
+					(and thus was consumed without sending it),
+					then consume the mouseDown as well.
+				*/
+				
+				ejection_click = false;
+				
+				return true;
+			}
+			
+		send_mouse_event:
+			
 			send_mouse_event( events_fd, modes, type );
 			return true;
 		
