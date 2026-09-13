@@ -226,6 +226,8 @@ enum
 	tag_ApplScratch,
 	tag_ApplScratch_word_5 = tag_ApplScratch + 5,  // 12 bytes
 	tag_ACount,
+	tag_DABeeper,
+	tag_DABeeper_low_word,
 	tag_DAStrings,
 	tag_DAStrings_word_7 = tag_DAStrings + 7,  // 16 bytes
 	tag_TEScrpLength,
@@ -463,6 +465,7 @@ static const global globals[] =
 	{ 0x0A6C, 4,    tag_DeskHook    },
 	{ 0x0A78, 12,   tag_ApplScratch },
 	{ 0x0A9A, 2,    tag_ACount      },
+	{ 0x0A9C, 4,    tag_DABeeper    },
 	{ 0x0AA0, 16,   tag_DAStrings   },
 	{ 0x0AB0, 2,    tag_TEScrpLength},
 	{ 0x0AB4, 4,    tag_TEScrpHandle},
