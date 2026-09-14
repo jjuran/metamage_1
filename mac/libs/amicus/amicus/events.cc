@@ -230,10 +230,6 @@ bool handle_CGEvent( CGEventRef event, command_handler_proc command_handler )
 	
 	switch ( type )
 	{
-		case kCGEventLeftMouseDown:
-		case kCGEventLeftMouseUp:
-		case kCGEventRightMouseDown:
-		case kCGEventRightMouseUp:
 		case kCGEventMouseMoved:
 		case kCGEventLeftMouseDragged:
 		case kCGEventRightMouseDragged:
