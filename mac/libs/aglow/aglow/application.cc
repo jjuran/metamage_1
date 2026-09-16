@@ -308,20 +308,12 @@ pascal OSStatus Mouse_action( EventHandlerCallRef  handler,
 	
 	bool inside = update_cursor_state();
 	
-	if ( inside  &&  kind <= 2 )
+	if ( (inside  &&  kind == 1)  ||  (mid_click  &&  kind == 2) )
 	{
 		mid_click = kind == 1;
 		
 		send_mouse_event( events_fd, modes, kind );
 		
-		return noErr;
-	}
-	
-	if ( mid_click  &&  kind == 2 )
-	{
-		mid_click = false;
-		
-		send_mouse_event( events_fd, modes, kind );
 		return noErr;
 	}
 	
