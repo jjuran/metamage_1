@@ -88,9 +88,6 @@ static short x_denom = 1;
 static bool mid_click;
 
 
-namespace amicus
-{
-
 using mac::app::become_application;
 
 using glfb::overlay_enabled;
@@ -105,6 +102,9 @@ using raster::raster_desc;
 using raster::raster_load;
 
 using v68k::cursor::shared_cursor_state;
+
+using amicus::events_fd;
+using amicus::set_cursor_hidden;
 
 static
 void blit( const raster_load& load )
@@ -337,6 +337,10 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 	using frend::CommandMode_oneshot;
 	using frend::CommandMode_quasimode;
 	
+	using amicus::command_ID_for_zoom_index;
+	using amicus::is_keypad;
+	using amicus::lookup_from_virtual;
+	
 	OSStatus err;
 	
 	const raster_load& load = *(raster_load*) userData;
@@ -490,6 +494,9 @@ void CGGetGlobalMouse( CGPoint* location )
 	location->x = globalMouse.h;
 	location->y = globalMouse.v;
 }
+
+namespace amicus
+{
 
 void run_event_loop( const raster_load& load, const raster_desc& desc )
 {
