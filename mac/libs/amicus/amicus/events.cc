@@ -114,7 +114,6 @@ void handle_mouse_moved_event( CGEventRef event )
 
 #endif
 
-static
 bool strike_commandmode_state()
 {
 	switch ( commandmode_state )

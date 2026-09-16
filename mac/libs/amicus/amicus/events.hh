@@ -29,6 +29,8 @@ extern bool ignore_next_mouse_moved_event;
 
 void move_cursor_to( CGPoint location );
 
+bool strike_commandmode_state();
+
 long send_key_event( EventRef event, char c, uint8_t more_attrs = 0 );
 
 bool handle_CGEvent( CGEventRef event, command_handler_proc handler = 0 );
