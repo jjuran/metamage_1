@@ -61,12 +61,13 @@ using amicus::command_ID_for_zoom_index;
 using amicus::cursor_limit;
 using amicus::events_fd;
 using amicus::handle_Open_event;
-using amicus::top_zoom_index;
 
 
 static bool opened;
 
 static coprocess_state coprocess;
+
+static MenuCommand max_scale_command_ID;
 
 bool pin_postponed;
 
@@ -397,15 +398,6 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	
 	[[view itemWithTag: default_zoom_command] setState: NSOnState];
 	
-	[view setAutoenablesItems: NO];
-	
-	for ( int i = top_zoom_index;  i > maximum_zoom_index;  --i )
-	{
-		MenuCommand command_ID = command_ID_for_zoom_index( i );
-		
-		[[view itemWithTag: command_ID] setEnabled: NO];
-	}
-	
 	return view;  // View menu
 }
 
@@ -415,6 +407,8 @@ void update_scale( unsigned image_width, unsigned image_height )
 	NSSize space = [[NSScreen mainScreen] visibleFrame].size;
 	
 	cap_zoom_index( image_width, image_height, space.width, space.height );
+	
+	max_scale_command_ID = command_ID_for_zoom_index( maximum_zoom_index );
 }
 
 @implementation AmarettoAppDelegate
@@ -609,6 +603,18 @@ void update_scale( unsigned image_width, unsigned image_height )
 		default:
 			break;
 	}
+}
+
+- (BOOL) validateMenuItem: (NSMenuItem*) menuItem
+{
+	if ( [menuItem menu] == _viewMenu )
+	{
+		update_scale( _desc->width, _desc->height );
+		
+		return [menuItem tag] <= max_scale_command_ID;
+	}
+	
+	return YES;
 }
 
 - (void) applicationWillFinishLaunching: (NSNotification*) notification

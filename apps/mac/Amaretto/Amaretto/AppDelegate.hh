@@ -43,6 +43,8 @@ extern const char* works_path;
 
 - (void) doMenuItem: (id) sender;
 
+- (BOOL) validateMenuItem: (NSMenuItem*) menuItem;
+
 - (void) applicationWillFinishLaunching: (NSNotification*) notification;
 
 - (void) applicationDidBecomeActive: (NSNotification*) notification;
