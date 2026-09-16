@@ -590,10 +590,7 @@ void update_scale( unsigned image_width, unsigned image_height )
 				int  _50 = tag >> 16 & 0x1;
 				int _100 = tag >> 24 & 0xf;
 				
-				int x_denom =  _50 + 1;              // 1 or 2
-				int x_numer = _100 * x_denom + _50;
-				
-				current_zoom_index = 2 * x_numer / x_denom;
+				current_zoom_index = _100 * 2 + _50;
 				
 				[self doZoom: tag];
 			}
