@@ -92,6 +92,7 @@ using glfb::overlay_enabled;
 using frend::CommandMode_state;
 using frend::commandmode_state;
 using frend::current_zoom_index;
+using frend::cursor_ejected;
 using frend::display_events;
 using frend::sharp_pixels;
 
@@ -170,6 +171,11 @@ bool update_cursor_state()
 	Point pt = { (short) cursor_location.y, (short) cursor_location.x };
 	
 	bool inside = PtInRect( pt, &bounds );
+	
+	if ( cursor_ejected )
+	{
+		return inside;
+	}
 	
 	set_cursor_hidden( inside );
 	
@@ -310,6 +316,17 @@ pascal OSStatus Mouse_action( EventHandlerCallRef  handler,
 	
 	if ( (inside  &&  kind == 1)  ||  (mid_click  &&  kind == 2) )
 	{
+		if ( kind == 1  &&  (cursor_ejected  ||  commandmode_state) )
+		{
+			set_cursor_hidden( cursor_ejected );
+			
+			cursor_ejected = ! cursor_ejected;
+			
+			strike_commandmode_state();
+			
+			return noErr;
+		}
+		
 		mid_click = kind == 1;
 		
 		send_mouse_event( events_fd, modes, kind );
