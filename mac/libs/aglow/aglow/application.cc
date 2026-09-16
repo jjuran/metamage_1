@@ -26,9 +26,6 @@
 // v68k-cursor
 #include "cursor/cursor.hh"
 
-// mac-evt-utils
-#include "mac_evt/any_keys_down.hh"
-
 // mac-app-utils
 #include "mac_app/become_application.hh"
 #include "mac_app/menus.hh"
@@ -105,6 +102,22 @@ using v68k::cursor::shared_cursor_state;
 
 using amicus::events_fd;
 using amicus::set_cursor_hidden;
+
+static
+void strike_commandmode_state()
+{
+	if ( commandmode_state )
+	{
+		amicus::strike_commandmode_state();
+		
+		if ( ! commandmode_state )
+		{
+			overlay_enabled = false;
+			
+			render_AGL();
+		}
+	}
+}
 
 static
 void blit( const raster_load& load )
@@ -332,11 +345,6 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 {
 	using namespace splode::key;
 	
-	using frend::CommandMode_activated;
-	using frend::CommandMode_off;
-	using frend::CommandMode_oneshot;
-	using frend::CommandMode_quasimode;
-	
 	using amicus::command_ID_for_zoom_index;
 	using amicus::is_keypad;
 	using amicus::lookup_from_virtual;
@@ -400,25 +408,7 @@ pascal OSStatus Keyboard_action( EventHandlerCallRef  handler,
 				break;
 			
 			case kEventRawKeyUp:
-				switch ( commandmode_state )
-				{
-					case CommandMode_activated:
-						commandmode_state = CommandMode_quasimode;
-						break;
-					
-					case CommandMode_oneshot:
-						if ( ! mac::evt::any_keys_down() )
-						{
-							commandmode_state = CommandMode_off;
-							overlay_enabled   = false;
-							
-							render_AGL();
-						}
-						break;
-					
-					default:
-						break;
-				}
+				strike_commandmode_state();
 				break;
 		
 			default:
