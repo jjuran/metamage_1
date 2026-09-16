@@ -306,15 +306,15 @@ pascal OSStatus Mouse_action( EventHandlerCallRef  handler,
 	
 	const uint8_t modes = (modifiers >> 8) & mode_mask;
 	
-	if ( update_cursor_state() )
+	bool inside = update_cursor_state();
+	
+	if ( inside  &&  kind <= 2 )
 	{
-		if ( kind <= 2 )
-		{
-			mid_click = kind == 1;
-			
-			send_mouse_event( events_fd, modes, kind );
-			return noErr;
-		}
+		mid_click = kind == 1;
+		
+		send_mouse_event( events_fd, modes, kind );
+		
+		return noErr;
 	}
 	
 	if ( mid_click  &&  kind == 2 )
