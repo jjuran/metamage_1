@@ -401,7 +401,6 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	return view;  // View menu
 }
 
-static
 void update_scale( unsigned image_width, unsigned image_height )
 {
 	NSSize space = [[NSScreen mainScreen] visibleFrame].size;

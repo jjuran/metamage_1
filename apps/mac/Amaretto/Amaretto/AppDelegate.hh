@@ -21,6 +21,8 @@ extern int bindir_fd;
 
 extern const char* works_path;
 
+void update_scale( unsigned image_width, unsigned image_height );
+
 @interface AmarettoAppDelegate : NSObject
 {
 	const raster::raster_desc* _desc;

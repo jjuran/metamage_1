@@ -284,6 +284,8 @@ void handle_event( NSEvent* event )
 	
 	using amicus::command_ID_for_zoom_index;
 	
+	update_scale( _resolution.width, _resolution.height );
+	
 	int previous_zoom_index = current_zoom_index;
 	
 	bool had_sharp_pixels = sharp_pixels;
