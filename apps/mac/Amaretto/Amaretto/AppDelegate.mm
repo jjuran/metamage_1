@@ -22,7 +22,7 @@
 
 // frontend-common
 #include "frend/coprocess.hh"
-#include "frend/cursor.hh"
+#include "frend/cursor_invisible.hh"
 #include "frend/zoom.hh"
 
 // rasterlib
@@ -50,8 +50,8 @@ using frend::cap_zoom_index;
 using frend::coprocess_state;
 using frend::current_zoom_index;
 using frend::cursor_ejected;
+using frend::cursor_invisible;
 using frend::cursor_pinned;
-using frend::cursor_state;
 using frend::launch_coprocess;
 using frend::maximum_zoom_index;
 using frend::wait_for_coprocess;
@@ -456,7 +456,7 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	using amicus::ignore_next_mouse_moved_event;
 	using amicus::set_cursor_hidden;
 	
-	bool invisible = cursor_state  &&  ! cursor_state->visible;
+	bool invisible = cursor_invisible();
 	
 	if ( ejected )
 	{
@@ -673,9 +673,7 @@ NSMenu* set_up_menus( unsigned default_zoom_command )
 	
 	if ( ! pin_postponed )
 	{
-		bool invisible = cursor_state  &&  ! cursor_state->visible;
-		
-		[self setCursorPinning: invisible];
+		[self setCursorPinning: cursor_invisible()];
 	}
 }
 

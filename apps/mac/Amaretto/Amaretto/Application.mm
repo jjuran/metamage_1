@@ -5,11 +5,8 @@
 
 #include "Amaretto/Application.h"
 
-// v68k-cursor
-#include "cursor/cursor.hh"
-
 // frontend-common
-#include "frend/cursor.hh"
+#include "frend/cursor_invisible.hh"
 
 // amicus
 #include "amicus/events.hh"
@@ -18,7 +15,7 @@
 #include "Amaretto/AppDelegate.hh"
 
 
-using frend::cursor_state;
+using frend::cursor_invisible;
 
 
 static
@@ -62,7 +59,7 @@ BOOL is_mouse_event( NSEventType type )
 		
 		AmarettoAppDelegate* delegate = (AmarettoAppDelegate*) [NSApp delegate];
 		
-		[delegate setCursorPinning: cursor_state  &&  ! cursor_state->visible];
+		[delegate setCursorPinning: cursor_invisible()];
 	}
 	else if ( frend::cursor_pinned  &&  is_mouse_event( type ) )
 	{
