@@ -423,17 +423,25 @@ void update_scale( unsigned image_width, unsigned image_height )
 
 - (id) initWithRaster: (const raster::raster_load&) load
 {
+	const int x2 = Zoom_index_2_0;  // 200%
+	
 	const raster::raster_desc& desc = load.meta->desc;
 	
 	update_scale( desc.width, desc.height );
 	
 	window_scale.minimum = Zoom_index_0_5;  // 50%
+	window_scale.current = window_scale.maximum;
+	
+	if ( window_scale.current > x2 )
+	{
+		window_scale.current = x2;
+	}
 	
 	cursor_limit = CGPointMake( desc.width - 1, desc.height - 1 );
 	
 	_desc = &desc;
 	
-	_zoomLevel = kZoom100Percent;
+	_zoomLevel = command_ID_for_zoom_index( window_scale.current );
 	
 	preventEnterFullScreenMenuItem();
 	
@@ -623,13 +631,6 @@ void update_scale( unsigned image_width, unsigned image_height )
 - (void) applicationWillFinishLaunching: (NSNotification*) notification
 {
 	OSStatus err;
-	
-	const int x2 = Zoom_index_2_0;  // 200%
-	
-	window_scale.current = window_scale.maximum < x2
-	                     ? window_scale.maximum : x2;
-	
-	_zoomLevel = command_ID_for_zoom_index( window_scale.current );
 	
 	err = AEInstallEventHandler( kCoreEventClass,
 	                             kAEQuitApplication,
