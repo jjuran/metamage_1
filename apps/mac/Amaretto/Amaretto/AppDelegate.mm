@@ -88,6 +88,12 @@ CGFloat current_scale()
 }
 
 static inline
+void discardMouseMovedEvents()
+{
+	[NSApp discardEventsMatchingMask: NSMouseMovedMask beforeEvent: nil];
+}
+
+static inline
 void preventEnterFullScreenMenuItem()
 {
 	if ( TARGET_CPU_PPC )
@@ -565,6 +571,8 @@ void update_scale( unsigned image_width, unsigned image_height )
 			synchronize_cursor_location( _mainGLView );
 			
 			CGAssociateMouseAndMouseCursorPosition( ! pinning );
+			
+			discardMouseMovedEvents();
 		}
 	}
 	else if ( cursor_hidden )
