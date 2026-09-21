@@ -275,26 +275,19 @@ NSWindow* create_window( const raster::raster_desc& desc, CGFloat scale )
 	
 	[window setDelegate: [WindowDelegate new]];
 	
-	id viewContainer = window;
+	id black = [NSColor blackColor];
+	id box   = [NSBox new];
 	
-	if ( kScreenMargin > 0 )
-	{
-		id black = [NSColor blackColor];
-		id box   = [NSBox new];
-		
-		[box    setBoxType:         NSBoxCustom];
-		[box    setFillColor:       black];
-		[window setBackgroundColor: black];
-		[window setContentView:     releasing( box )];
-		
-		viewContainer = box;
-	}
+	[box    setBoxType:         NSBoxCustom];
+	[box    setFillColor:       black];
+	[window setBackgroundColor: black];
+	[window setContentView:     releasing( box )];
 	
 	CGSize resolution = CGSizeMake( width, height );
 	
 	id view = [[AmarettoOpenGLView alloc] initWithResolution: resolution];
 	
-	[viewContainer setContentView: releasing( view )];
+	[box setContentView: releasing( view )];
 	
 	[(NSWindow*) window center];
 	
