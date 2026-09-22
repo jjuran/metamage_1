@@ -42,6 +42,11 @@ using amicus::get_proportional_coordinate;
 using amicus::get_proportional_offset;
 
 
+enum
+{
+	kScreenMargin = 4,
+};
+
 static
 void command_handler( char c )
 {
@@ -140,11 +145,13 @@ void handle_event( NSEvent* event )
 {
 	_scale = scale;
 	
+	CGFloat margin = kScreenMargin * _scale;
+	
 	CGFloat inner_width  = _resolution.width  * _scale;
 	CGFloat inner_height = _resolution.height * _scale;
 	
-	CGFloat outer_width  = inner_width  + kScreenMargin * 2;
-	CGFloat outer_height = inner_height + kScreenMargin * 2;
+	CGFloat outer_width  = inner_width  + margin * 2;
+	CGFloat outer_height = inner_height + margin * 2;
 	
 	glViewport( 0, 0, (long) inner_width, (long) inner_height );
 	
@@ -174,7 +181,7 @@ void handle_event( NSEvent* event )
 	{
 		w_origin = new_location( outer_size, proportional_location );
 		
-		v_origin = NSMakePoint( kScreenMargin, kScreenMargin );
+		v_origin = NSMakePoint( margin, margin );
 	}
 	
 	setting_scale = true;
@@ -232,8 +239,10 @@ void handle_event( NSEvent* event )
 	
 	NSPoint pt = [self convertPoint: location fromView: nil];
 	
-	pt.x += kScreenMargin;
-	pt.y += kScreenMargin;
+	CGFloat margin = kScreenMargin * _scale;
+	
+	pt.x += margin;
+	pt.y += margin;
 	
 	bool inside = [self hitTest: pt];
 	
@@ -241,8 +250,8 @@ void handle_event( NSEvent* event )
 	
 	if ( inside )
 	{
-		pt.x -= kScreenMargin;
-		pt.y -= kScreenMargin;
+		pt.x -= margin;
+		pt.y -= margin;
 		
 		CGFloat x = pt.x / _scale;
 		CGFloat y = pt.y / _scale;
