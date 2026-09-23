@@ -445,12 +445,12 @@ pascal short TrackControl_patch( ControlRef        control,
 		}
 	}
 	
-	control[0]->contrlHilite = 0;
-	
 	hit = TestControl( control, pt );
 	
-	if ( hit == track_part )
+	if ( hit  ||  control[0]->contrlHilite )
 	{
+		control[0]->contrlHilite = 0;
+		
 		call_CDEF( control, drawCntl, hit );
 	}
 	
