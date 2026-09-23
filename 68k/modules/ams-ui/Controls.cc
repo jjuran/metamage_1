@@ -452,7 +452,10 @@ pascal short TrackControl_patch( ControlRef        control,
 	if ( hit == track_part )
 	{
 		call_CDEF( control, drawCntl, hit );
-		
+	}
+	
+	if ( hit == track_part )
+	{
 		return hit;
 	}
 	
