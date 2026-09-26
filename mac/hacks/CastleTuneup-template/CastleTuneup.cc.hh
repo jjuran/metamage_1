@@ -192,6 +192,12 @@ static UniversalProcPtr old_ShowCursor;
 static UniversalProcPtr old_TEInit;
 
 
+enum
+{
+	_ChangedResource = 0xA9AA,
+	_UpdateResFile   = 0xA999,
+};
+
 static
 void CurResFile_handler( UInt16* return_address : __A0 )
 {
@@ -712,8 +718,102 @@ void install_volumes_patch( Handle h, Size handle_size )
 }
 
 static
+asm
+void savegame_sample()
+{
+	MOVEA.L  (A4),A0
+	MOVE.W   -350(A5),(A0)
+	MOVE.L   -268(A5),2(A0)
+	MOVE.L   -290(A5),6(A0)
+	MOVE.W   -204(A5),10(A0)
+	MOVE.W   -220(A5),12(A0)
+	MOVE.W   -216(A5),14(A0)
+	MOVE.W   -214(A5),16(A0)
+	MOVE.W   -222(A5),18(A0)
+	MOVE.W   -224(A5),20(A0)
+	MOVE.W   -338(A5),22(A0)
+	MOVE.W   -340(A5),24(A0)
+	MOVE.W   -342(A5),26(A0)
+	MOVE.W   -264(A5),28(A0)
+	MOVE.W   -198(A5),30(A0)
+	MOVE.L   A4,-(A7)
+	_ChangedResource
+}
+
+static
+asm
+void savegame_patch()
+{
+	MOVEA.L  (A4),A0
+	MOVE.W   -350(A5),(A0)+
+	MOVE.L   -268(A5),(A0)+
+	MOVE.L   -290(A5),(A0)+
+	MOVE.W   -204(A5),(A0)+
+	MOVE.W   -220(A5),(A0)+
+	MOVE.W   -216(A5),(A0)+
+	MOVE.W   -214(A5),(A0)+
+	MOVE.W   -222(A5),(A0)+
+	MOVE.W   -224(A5),(A0)+
+	MOVE.W   -338(A5),(A0)+
+	MOVE.W   -340(A5),(A0)+
+	MOVE.W   -342(A5),(A0)+
+	MOVE.W   -264(A5),(A0)+
+	MOVE.W   -198(A5),(A0)
+	
+	MOVE.L   A4,-(A7)
+	_ChangedResource
+	
+	MOVE.W   -744(A5),-(A7)
+	_UpdateResFile
+	
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+}
+
+static inline
+void install_savegame_patch( Handle h, Size handle_size )
+{
+	enum
+	{
+		sample_size = 88,
+		patch_size  = 88,
+		
+		// These are offsets relative to the start of the 'CODE' resource.
+		
+		offset_to_target    = 0x02ee,
+		minimum_handle_size = offset_to_target + sample_size,
+	};
+	
+	if ( handle_size > minimum_handle_size )
+	{
+		Ptr p = *h + offset_to_target;
+		
+		if ( v68k_memequ( &savegame_sample, p, sample_size ) )
+		{
+			BlockMoveData( &savegame_patch, p, patch_size );
+			
+			HNoPurge( h );
+		}
+	}
+}
+
+static
 void install_Data_B_patches()
 {
+	using mac::glue::GetHandleSize_raw;
+	
+	if ( Handle h = GetResource( 'CODE', 10 ) )
+	{
+		install_savegame_patch( h, GetHandleSize_raw( h ) );
+	}
 }
 
 static
