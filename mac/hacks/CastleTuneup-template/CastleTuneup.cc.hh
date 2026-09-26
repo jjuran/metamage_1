@@ -845,6 +845,8 @@ void install_Data_B_patch( Handle h, Size handle_size )
 		offset_to_target = 0x002e50,
 	};
 	
+#ifdef PATCH_DATA_B_CALLER
+	
 	if ( handle_size > offset_to_target + sample_size )
 	{
 		Ptr p = *h + offset_to_target;
@@ -856,6 +858,8 @@ void install_Data_B_patch( Handle h, Size handle_size )
 			HNoPurge( h );
 		}
 	}
+	
+#endif
 }
 
 static
@@ -1221,16 +1225,12 @@ void TEInit_handler()
 			install_envcheck_patch( h, GetHandleSize_raw( h ) );
 		}
 		
-	#ifdef PATCH_DATA_B_CALLER
-		
 		if ( (h = GetResource( 'CODE', 2 )) )
 		{
 			Size size = GetHandleSize_raw( h );
 			
 			install_Data_B_patch( h, size );
 		}
-		
-	#endif
 		
 		if ( (h = GetResource( 'CODE', SPINLOOP_CODE_RESID )) )
 		{
