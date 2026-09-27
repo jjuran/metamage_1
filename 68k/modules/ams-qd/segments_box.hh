@@ -11,9 +11,6 @@
 #include <MacMemory.h>
 #endif
 
-// iota
-#include "iota/class.hh"
-
 // quickdraw
 #include "qd/segments.hh"
 
@@ -23,17 +20,22 @@ extern Handle segments_storage_handle;
 inline
 short* segments_storage( size_t capacity )
 {
+	SetHandleSize( segments_storage_handle, capacity );
+	
 	return (short*) *segments_storage_handle;
 }
 
 class segments_box : public quickdraw::segments_box
 {
-	NON_COPYABLE( segments_box )
-	NO_NEW_DELETE
-	
 	public:
 		explicit segments_box( size_t capacity );  // bytes
-		~segments_box();
 };
+
+inline
+segments_box::segments_box( size_t capacity )  // bytes
+:
+	quickdraw::segments_box( segments_storage( capacity ) )
+{
+}
 
 #endif

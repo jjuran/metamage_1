@@ -12,13 +12,4 @@
 #pragma exceptions off
 
 
-segments_box::segments_box( size_t capacity )  // bytes
-:
-	quickdraw::segments_box( (scoped_zone(), (short*) NewPtr( capacity )) )
-{
-}
-
-segments_box::~segments_box()
-{
-	DisposePtr( (Ptr) begin() );
-}
+Handle segments_storage_handle = (scoped_zone(), NewHandle( 0 ));
