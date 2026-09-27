@@ -5,11 +5,6 @@
 
 #include "segments_box.hh"
 
-// Mac OS
-#ifndef __MACMEMORY__
-#include <MacMemory.h>
-#endif
-
 // ams-common
 #include "scoped_zone.hh"
 
