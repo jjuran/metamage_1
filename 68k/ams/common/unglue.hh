@@ -11,6 +11,7 @@ enum
 {
 	_SetHandleSize = 0xA024,
 	
+	_HandToHand  = 0xA9E1,
 	_PtrToHand   = 0xA9E3,
 	_HandAndHand = 0xA9E4,
 };
@@ -18,6 +19,17 @@ enum
 typedef char**           Handle;
 typedef unsigned char**  StringHandle;
 typedef unsigned long    UInt32;
+
+inline asm
+Handle HandToHand( Handle h : __A0 )
+{
+	_HandToHand
+	BPL.S    end
+	
+	SUBA.L   A0,A0
+	
+end:
+}
 
 inline asm
 Handle PtrToHand( const void* p : __A0, UInt32 n : __D0 )
