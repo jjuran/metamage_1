@@ -8,9 +8,6 @@
 // Standard C
 #include <string.h>
 
-// Standard C++
-#include <vector>
-
 // Iota
 #include "iota/strings.hh"
 
@@ -72,7 +69,10 @@ namespace tool
 	static
 	bool ends_with( const plus::string& string, const char* substring, size_t length )
 	{
-		return std::equal( string.end() - length, string.end(), substring );
+		const char* begin = string.data();
+		const size_t size = string.size();
+		
+		return memcmp( begin + size - length, substring, length ) == 0;
 	}
 	
 	static plus::string get_project_dir_from_config_file( const plus::string& config_pathname )
