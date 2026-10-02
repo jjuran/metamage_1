@@ -94,30 +94,6 @@ namespace tool
 		gProjectCatalog[ name ][ demands ] = config;
 	}
 	
-	struct platform_compatibility
-	{
-		Platform platform;
-		
-		platform_compatibility() : platform()
-		{
-		}
-		
-		platform_compatibility( Platform p ) : platform( p )
-		{
-		}
-		
-		bool operator()( const PlatformDemands& demands ) const
-		{
-			return demands.Test( platform );
-		}
-		
-		template < class value_type >
-		bool operator()( const value_type& map_value ) const
-		{
-			return operator()( map_value.first );
-		}
-	};
-	
 	static ProjectConfigCandidates& find_project_config_candidates( const plus::string& project_name )
 	{
 		ProjectCatalog::iterator it = gProjectCatalog.find( project_name );
@@ -138,9 +114,16 @@ namespace tool
 	{
 		ProjectConfigCandidates& candidates = find_project_config_candidates( name );
 		
-		ProjectConfigCandidates::iterator it = std::find_if( candidates.begin(),
-		                                                     candidates.end(),
-		                                                     platform_compatibility( targetPlatform ) );
+		ProjectConfigCandidates::iterator it;
+		
+		for ( it = candidates.begin();  it != candidates.end();  ++it )
+		{
+			if ( it->first.Test( targetPlatform ) )
+			{
+				break;
+			}
+		}
+		
 		if ( it == candidates.end() )
 		{
 			if ( optional )
