@@ -23,6 +23,9 @@
 #include "raster/skif.hh"
 #include "raster/sync.hh"
 
+// frontend-common
+#include "frend/screen_spec.hh"
+
 
 namespace frend
 {
@@ -49,9 +52,15 @@ int create_raster_file( const char* path, raster::raster_load& result )
 		return errno;
 	}
 	
-	const uint32_t width  = 512;
-	const uint32_t height = 342;
-	const uint32_t weight = 1;
+	uint32_t width  = 512;
+	uint32_t height = 342;
+	uint32_t weight = 1;
+	
+	if ( screen_spec.width  &&  screen_spec.height )
+	{
+		width  = screen_spec.width;
+		height = screen_spec.height;
+	}
 	
 	const bool uses_color = false;
 	
