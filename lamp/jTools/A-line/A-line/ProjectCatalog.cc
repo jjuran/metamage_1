@@ -175,9 +175,10 @@ namespace tool
 		return result;
 	}
 	
-	static void add_cached_config( const plus::string&     project_name,
-	                               const PlatformDemands&  demands,
-	                               const plus::string&     pathname )
+	static inline
+	void add_cached_config( const plus::string&     project_name,
+	                        const PlatformDemands&  demands,
+	                        const plus::string&     pathname )
 	{
 		ProjectConfig& config = gProjectCatalog[ project_name ][ demands ];
 		
