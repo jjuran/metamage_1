@@ -66,7 +66,7 @@ namespace tool
 	static ProjectCatalog gProjectCatalog;
 	
 	
-	static
+	static inline
 	bool ends_with( const plus::string& string, const char* substring, size_t length )
 	{
 		const char* begin = string.data();
