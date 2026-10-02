@@ -70,10 +70,10 @@ int create_raster_file( const char* path, raster::raster_load& result )
 	
 	const bool has_palette = model == Model_palette;
 	
-	const uint32_t frame_count = 2;
-	
 	const uint32_t stride     = make_stride( width, weight );
 	const uint32_t image_size = height * stride;
+	
+	const uint32_t frame_count = (image_size == 21888) + 1;  // 2 or 1
 	const uint32_t raster_size = image_size * frame_count;
 	
 	const uint32_t footer_size_minimum = sizeof (raster_metadata)
