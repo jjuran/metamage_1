@@ -72,7 +72,8 @@ namespace tool
 		const char* begin = string.data();
 		const size_t size = string.size();
 		
-		return memcmp( begin + size - length, substring, length ) == 0;
+		return size >= length  &&
+		       memcmp( begin + size - length, substring, length ) == 0;
 	}
 	
 	static plus::string get_project_dir_from_config_file( const plus::string& config_pathname )
