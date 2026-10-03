@@ -11,9 +11,6 @@
 #include <sys/types.h>
 #endif
 #include <dirent.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 // Standard C
 #include <errno.h>
@@ -25,6 +22,9 @@
 
 // plus
 #include "plus/var_string.hh"
+
+// frontend-common
+#include "frend/load_file.hh"
 
 
 #define STRLEN( s )  (sizeof "" s - 1)
@@ -57,49 +57,6 @@ int scrub_dir( const char* path )
 	}
 	
 	return errno;
-}
-
-static
-plus::string load( int fd )
-{
-	plus::string s;
-	
-	char* p = NULL;
-	
-	struct stat st;
-	
-	size_t n;
-	
-	int nok = fstat( fd, &st )                                ||
-	          (! S_ISREG( st.st_mode )  &&
-	           (errno = ESPIPE))                              ||
-	          ! (n = st.st_size,p = s.reset_nothrow( n ))     ||
-	          (read( fd, p, n ) != n  &&
-	           (errno = EAGAIN));
-	
-	if ( nok )
-	{
-		return plus::string::null;
-	}
-	
-	return s;
-}
-
-static
-plus::string load_file( int dirfd, const char* path )
-{
-	int fd = openat( dirfd, path, O_RDONLY | O_NONBLOCK );
-	
-	if ( fd < 0 )
-	{
-		return plus::string::null;
-	}
-	
-	plus::string data = load( fd );
-	
-	close( fd );
-	
-	return data;
 }
 
 static
