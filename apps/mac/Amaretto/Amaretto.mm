@@ -32,6 +32,7 @@
 #include "frend/make_cursor.hh"
 #include "frend/make_raster.hh"
 #include "frend/raster_updating.hh"
+#include "frend/screen_spec.hh"
 #include "frend/tempfile.hh"
 #include "frend/update_fifo.hh"
 
@@ -137,6 +138,8 @@ int main( int argc, char** argv )
 		bindir_fd = bindir( argv[ 0 ] );
 		
 		chdir( works_path );
+		
+		frend::load_screen_spec( bindir_fd );
 		
 		cursor_lifetime   live_cursor( cursor_path );
 		raster_lifetime   live_raster( raster_path );
