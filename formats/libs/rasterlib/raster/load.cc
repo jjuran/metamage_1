@@ -16,6 +16,7 @@
 #include <errno.h>
 
 // iota
+#include "iota/class.hh"
 #include "iota/endian.hh"
 
 // raster
@@ -34,13 +35,12 @@ namespace raster
 	
 	class mmap_box
 	{
+		NON_COPYABLE( mmap_box )
+		NO_NEW_DELETE
+		
 		private:
 			void*   its_addr;
 			size_t  its_size;
-			
-			// non-copyable
-			mmap_box           ( const mmap_box& );
-			mmap_box& operator=( const mmap_box& );
 		
 		public:
 			mmap_box( void* addr, size_t n ) : its_addr( addr ), its_size( n )
