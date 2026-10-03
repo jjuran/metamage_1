@@ -86,20 +86,28 @@ plus::string load( int fd )
 }
 
 static
-plus::string load_config( int bindir_fd )
+plus::string load_file( int dirfd, const char* path )
 {
-	const char* config_path = "../Resources/config.txt";
-	
-	int fd = openat( bindir_fd, config_path, O_RDONLY | O_NONBLOCK );
+	int fd = openat( dirfd, path, O_RDONLY | O_NONBLOCK );
 	
 	if ( fd < 0 )
 	{
 		return plus::string::null;
 	}
 	
-	plus::var_string config = load( fd );
+	plus::string data = load( fd );
 	
 	close( fd );
+	
+	return data;
+}
+
+static
+plus::string load_config( int bindir_fd )
+{
+	const char* config_path = "../Resources/config.txt";
+	
+	plus::var_string config = load_file( bindir_fd, config_path );
 	
 	if ( ! config.empty() )
 	{
