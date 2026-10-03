@@ -1,0 +1,85 @@
+#!/usr/bin/env lvx
+
+if argc < 2 then
+{
+	warn "usage: sndsoun sound.SOUN"
+	
+	exit 2
+}
+
+let soun_data = packed load argv[ 1 ]
+
+let N = soun_data.size
+
+let delta_table = soun_data[ 6 -> 22 ]
+let index_pairs = soun_data[ 22 -> N ]
+
+let n_pairs = N - 22
+
+var output = x"80" * (n_pairs * 2)
+
+var level = 0
+
+var p = begin index_pairs
+
+var i = 0
+
+while p do
+{
+	let pair = u8 *p++
+	
+	let i0 = pair div 16
+	let i1 = pair mod 16
+	
+	level += i8 delta_table[ i0 ]
+	
+	output[ i++ ] = byte u8 (level + 0x80)
+	
+	level += i8 delta_table[ i1 ]
+	
+	output[ i++ ] = byte u8 (level + 0x80)
+}
+
+def connect_output()
+{
+	if let sndpipe_fd = getenv "SNDPIPE_FD" then
+	{
+		return fd int sndpipe_fd
+	}
+	
+	if isatty OUT then
+	{
+		if run?? then
+		{
+			run [ "graft --fd 1 sndtrack //" / ' ', *argv ]
+			
+			exit 0
+		}
+		
+		warn "sndsoun: Precede with `minivx` or `graft --fd 1 sndtrack //`"
+		
+		exit 2
+	}
+	
+	return OUT
+}
+
+let output_fd = connect_output()
+
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
+
+def import (lib) { eval (load, realpath) libdir lib ".vy" }
+
+let sndpipe = import "sndpipe"
+
+let sound = sndpipe.player ({ output_fd <== _ }, output_fd.read)
+
+let playrate       = 1/2
+let playrate_fixed = 2^16 * playrate
+
+sound.free_form (playrate_fixed, output)
+
+sound.detach()
+
+end.
