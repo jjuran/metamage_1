@@ -1,0 +1,122 @@
+#!/usr/bin/env lvx
+
+let path = argv[ 1 ]
+
+def parse (text)
+{
+	let digit = '0' .. '9'
+	let upper = 'A' .. 'Z'
+	let lower = 'a' .. 'z'
+	let alpha = upper | lower
+	let alnum = alpha | digit
+	let other = '_' | '$' | '@' | '\\'
+	let param = '<' | '>' | '-' | ',' | '&'
+	let weird = '-' | '+' | ' ' | '(' | ')' | ':'
+	
+	let xdigit = digit | 'A' .. 'F' | 'a' .. 'f'
+	
+	let ellipsis = '\xc9' => {"\u2026"}
+	
+	let sign = '-'? => { int _ "1" }
+	
+	let number = digit+ => int
+	let hexnum = [ '$', xdigit+ => { unhex "0x" _ } ]
+	let offset = [ sign, hexnum, "(A", digit, ")" ] => Math.product
+	
+	let name = [ alpha | other | '#', (alnum | other | param)* ] => str
+	
+	let longname = [ name, ellipsis? ] => str
+	
+	let filename = [ '"', (alnum | '_' | weird | '.' | '/')+, '"' ] => eval
+	
+	
+	let file_entry = [ "  File:", ' '+, digit+, '\t', filename, '\n' ]
+	
+	let files = [ file_entry+, '\n' ] => { files: [_] }
+	
+	
+	let segname = ['"', "Main" | "", '"']  # FIXME
+	
+	let size    = [" size=",    hexnum]
+	let rsrcid  = [" rsrcid=",  number]
+	let JTindex = [" JTindex=", hexnum]
+	let JTEnts  = [" #JTEnts=", hexnum]
+	
+	let segment_heading = [ "Segment ", segname, size, rsrcid, JTindex, JTEnts, '\n' ] => {[_]}
+	
+	let linkage = "local" | "extern" => str
+	
+	let file = ["file=", filename => { file: _ }]?
+	
+	let segment_entry = [ '\t', longname, ' '+, hexnum, ' ', size, "  ", linkage, ' '+, file, '\n' ] => {[_]}
+	
+	let segment = [ segment_heading, segment_entry+, '\n' ] => { head _ => [tail _] }
+	
+	let segments = [ segment+ ] => { segments: [_] }
+	
+	
+	let near = "above" | "below" => str
+	let hint = " (", digit+, " bytes)"
+	
+	let A5_data_summary = ["Data section ", near, " A5:", size, hint, '\n'] => { head _ => tail _ }
+	let A4_data_summary = ["Data section begins at ", offset, ":", size, hint, '\n'] => { tail _ }
+	
+	let data_summary = [ A4_data_summary | [A5_data_summary (*) 2] ] => {datasize: [_]}
+	
+	let data_group_heading = [ "\n\n", ("I" | "Uni"), "nitialized ", ("ne" | "f"), "ar data\n\n" ]
+	
+	let inited = ["hasContents", ' '*]?
+	
+	let data_entry = [ '\t', name, ' '+, offset, ' ', size, "  ", linkage, ' '+, inited, file, '\n' ] => {[_]}
+	
+	let data_group = [ data_group_heading, data_entry+ ]
+	
+	let data = data_group+ => { data: [_] }
+	
+	let grammar = [ files, segments, data_summary, data? ]
+	
+	var p = begin text
+	
+	return record (p += grammar)
+}
+
+let linkmap = parse translated (load path, "\r", "\n")
+
+if linkmap.segments[0].value.length > 5 then
+{
+	let code_desc = Iter.sorted linkmap.segments[0].value via { -v[2] }
+	
+	put "Biggest code objects:"
+	
+	for obj in code_desc[ 0 -> 5 ] do
+	{
+		let sp = " " * (8 - (str obj[2]).length)
+		
+		put "    " obj[2] sp obj[0]
+	}
+}
+
+if "data" in str^[*linkmap] then
+{
+	if linkmap.data.length > 5 then
+	{
+		let data_desc = Iter.sorted linkmap.data via { -v[2] }
+		
+		put "Biggest data objects:"
+		
+		for obj in data_desc[ 0 -> 5 ] do
+		{
+			let sp = " " * (8 - (str obj[2]).length)
+			
+			put "    " obj[2] sp obj[0]
+		}
+	}
+	
+	if let exceptioninfos = linkmap.data ver { v[0] == "@exceptioninfo@" } then
+	{
+		let count = exceptioninfos.length
+		let total = exceptioninfos map { v[2] } per {a + b} or 0
+		
+		put ("%s exceptioninfo objects totalling %s bytes" % (count, total))
+	}
+}
