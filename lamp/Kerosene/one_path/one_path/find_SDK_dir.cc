@@ -28,7 +28,7 @@ namespace p7 = poseven;
 
 
 static const char env_sdk_dir[] = "SDK_DIR";
-static const char txt_intfs_libs[] = "Interfaces&Libraries";
+static const char sdk_dirname[] = "Interfaces&Libraries";
 
 
 plus::string find_SDK_dir()
@@ -55,10 +55,10 @@ plus::string find_SDK_dir()
 		
 		plus::string sdk_dir;
 		
-		char* q = sdk_dir.reset( it - p + sizeof txt_intfs_libs - 1 );
+		char* q = sdk_dir.reset( it - p + sizeof sdk_dirname - 1 );
 		
 		q = (char*) mempcpy( q, p, it - p );
-		q = (char*) mempcpy( q, txt_intfs_libs, sizeof txt_intfs_libs - 1 );
+		q = (char*) mempcpy( q, sdk_dirname, sizeof sdk_dirname - 1 );
 		
 		return sdk_dir;
 	}
