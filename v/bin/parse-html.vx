@@ -1,0 +1,12 @@
+#!/usr/bin/env lvx
+
+let bindir = dirname realpath argv[ 0 ]
+let libdir = bindir "/../lib/v/"
+
+def import (lib) { eval (load, realpath) libdir lib ".vy" }
+
+let parse-html = import "parse-html"
+
+put rep parse-html load argv[ 1 ]
+
+end.
