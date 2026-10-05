@@ -9,6 +9,9 @@
 #include "logofwar/report.hh"
 
 
+#pragma exceptions off
+
+
 struct TPrint;
 
 typedef unsigned char Boolean;
