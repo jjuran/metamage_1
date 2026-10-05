@@ -17,6 +17,9 @@
 #include "callouts.hh"
 
 
+#pragma exceptions off
+
+
 enum
 {
 	kHFSFlagMask = 0x0200,
