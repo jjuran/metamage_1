@@ -19,6 +19,9 @@
 #include "mac_file/compare.hh"
 
 
+#pragma exceptions off
+
+
 namespace mac  {
 namespace proc {
 
