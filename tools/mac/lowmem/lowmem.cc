@@ -20,6 +20,9 @@
 #include "gear/inscribe_decimal.hh"
 
 
+#pragma exceptions off
+
+
 #define COUNT( v )  (sizeof v / sizeof *v)
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
