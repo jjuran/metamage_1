@@ -28,6 +28,9 @@
 #include "mac_glue/Memory.hh"
 
 
+#pragma exceptions off
+
+
 struct CStr255
 {
 	char data[ 256 ];
