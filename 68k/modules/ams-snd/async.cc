@@ -20,6 +20,9 @@
 #include "buffers.hh"
 
 
+#pragma exceptions off
+
+
 enum
 {
 	/*
