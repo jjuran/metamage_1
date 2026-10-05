@@ -30,6 +30,9 @@
 #endif
 
 
+#pragma exceptions off
+
+
 #define PACK16( _15, _14, _13,_12,  \
                 _11, _10,  _9, _8,  \
                  _7,  _6,  _5, _4,  \
