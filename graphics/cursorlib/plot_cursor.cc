@@ -9,6 +9,9 @@
 #include "iota/endian.hh"
 
 
+#pragma exceptions off
+
+
 void plot_cursor( const uint16_t*  crsr_face,
                   const uint16_t*  crsr_mask,
                   uint8_t*         addr,
