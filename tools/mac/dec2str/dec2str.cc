@@ -29,6 +29,9 @@
 #include "command/get_option.hh"
 
 
+#pragma exceptions off
+
+
 using namespace command::constants;
 
 enum
