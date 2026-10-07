@@ -89,8 +89,13 @@ const byte_t* advance_repeated_pairs( const byte_t* begin, const byte_t* end )
 	                                               (const short*) end );
 }
 
-unsigned long pack_preflight( const uint8_t* src, const uint8_t* end )
+long pack_preflight( const uint8_t* src, const uint8_t* end )
 {
+	if ( ((long) end - (long) src) & 0x1 )
+	{
+		return -1;
+	}
+	
 	unsigned long packed_byte_count = 0;
 	
 	#define TOTAL  packed_byte_count
