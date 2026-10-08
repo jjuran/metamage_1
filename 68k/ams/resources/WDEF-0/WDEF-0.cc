@@ -11,6 +11,9 @@
 #include <MacWindows.h>
 #endif
 
+// Chiaroscuro
+#include "Chiaroscuro/Widget/Splat_Bits.hh"
+
 // ams-common
 #include "QDGlobals.hh"
 #include "utility_region.hh"
@@ -47,61 +50,14 @@ const short close_box_h_offset = 8;
 const short close_box_margin   = 1;
 const short close_box_width    = 11;
 
-#define PACK16( _15, _14, _13,_12,  \
-                _11, _10,  _9, _8,  \
-                 _7,  _6,  _5, _4,  \
-                 _3,  _2,  _1, _0 ) \
-	(                            \
-		+ (_15 << 15)  \
-		| (_14 << 14)  \
-		| (_13 << 13)  \
-		| (_12 << 12)  \
-		| (_11 << 11)  \
-		| (_10 << 10)  \
-		| ( _9 <<  9)  \
-		| ( _8 <<  8)  \
-		| ( _7 <<  7)  \
-		| ( _6 <<  6)  \
-		| ( _5 <<  5)  \
-		| ( _4 <<  4)  \
-		| ( _3 <<  3)  \
-		| ( _2 <<  2)  \
-		| ( _1 <<  1)  \
-		| ( _0 <<  0)  \
-	)
-
-#define PACK9( _8, _7, _6, _5, _4, _3, _2, _1, _0 )  \
-	PACK16( _8, _7, _6, _5, _4, _3, _2, _1, _0, 0, 0, 0, 0, 0, 0, 0 )
-
-#define _ 0
-#define X 1
-
-static const UInt16 splat_bits[] =
-{
-	PACK9( _,_,_,_,X,_,_,_,_ ),
-	PACK9( _,X,_,_,X,_,_,X,_ ),
-	PACK9( _,_,X,_,X,_,X,_,_ ),
-	PACK9( _,_,_,_,_,_,_,_,_ ),
-	PACK9( X,X,X,_,_,_,X,X,X ),
-	PACK9( _,_,_,_,_,_,_,_,_ ),
-	PACK9( _,_,X,_,X,_,X,_,_ ),
-	PACK9( _,X,_,_,X,_,_,X,_ ),
-	PACK9( _,_,_,_,X,_,_,_,_ ),
-};
-
-static BitMap splat_bitmap =
-{
-	(Ptr) splat_bits,
-	2,
-	{ 0, 0, 9, 9 },
-};
-
 static
 RgnHandle make_splat()
 {
+	using Chiaroscuro::document_window_splatBits;
+	
 	RgnHandle rgn = NewRgn();
 	
-	BitMapToRegion( rgn, &splat_bitmap );
+	BitMapToRegion( rgn, &document_window_splatBits );
 	
 	return rgn;
 }
