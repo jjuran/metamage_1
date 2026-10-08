@@ -56,17 +56,40 @@ int create_raster_file( const char* path, raster::raster_load& result )
 	uint32_t height = 342;
 	uint32_t weight = 1;
 	
+	raster_model model = Model_monochrome_paint;
+	
 	if ( screen_spec.width  &&  screen_spec.height )
 	{
 		width  = screen_spec.width;
 		height = screen_spec.height;
+		
+		if ( screen_spec.weight )
+		{
+			weight = screen_spec.weight;
+			
+			if ( weight > 8 )
+			{
+				model = Model_RGB;  // 16-bit and 32-bit are always RGB
+			}
+			else if ( is_color( screen_spec ) )
+			{
+				model = Model_palette;  // 8-bit or less color is indexed
+			}
+			else if ( is_grayscale( screen_spec ) )
+			{
+//				model = Model_monochrome_paint;  // already set above
+			}
+			else if ( weight > 2 )
+			{
+				/*
+					If neither color or grayscale is specified,
+					select one.  Use color for 4-bit and 8-bit.
+				*/
+				
+				model = Model_palette;
+			}
+		}
 	}
-	
-	const bool uses_color = false;
-	
-	const raster_model model = weight > 8 ? Model_RGB
-	                         : uses_color ? Model_palette
-	                         :              Model_monochrome_paint;
 	
 	const bool has_palette = model == Model_palette;
 	
