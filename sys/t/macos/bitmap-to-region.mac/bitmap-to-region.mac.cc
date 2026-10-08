@@ -376,6 +376,8 @@ static void splat()
 	
 	EXPECT( err == noErr );
 	EXPECT_RGN( r, splat_rgn );
+	
+	DisposeRgn( r );
 }
 
 
