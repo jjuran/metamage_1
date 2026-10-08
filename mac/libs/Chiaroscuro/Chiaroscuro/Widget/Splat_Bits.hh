@@ -13,6 +13,7 @@ namespace Chiaroscuro
 {
 	
 	extern const BitMap document_window_splatBits;
+	extern const BitMap utility_window_splatBits;
 	
 }
 
