@@ -11,8 +11,14 @@
 #include <Controls.h>
 #endif
 
+// Chiaroscuro
+#include "Chiaroscuro/Widget/Scroll_Bits.hh"
+
 // ams-common
 #include "QDGlobals.hh"
+
+
+using namespace Chiaroscuro;
 
 
 static
@@ -23,137 +29,6 @@ asm int main()
 {
 	JMP      CDEF_1
 }
-
-#define PACK8( _7, _6, _5, _4,  \
-               _3, _2, _1, _0 ) \
-	(  \
-		+ ( _7 <<  7)  \
-		| ( _6 <<  6)  \
-		| ( _5 <<  5)  \
-		| ( _4 <<  4)  \
-		| ( _3 <<  3)  \
-		| ( _2 <<  2)  \
-		| ( _1 <<  1)  \
-		| ( _0 <<  0)  \
-	)
-
-#define PACK16( _15, _14, _13, _12,  \
-                _11, _10,  _9,  _8,  \
-                 _7,  _6,  _5,  _4,  \
-                 _3,  _2,  _1,  _0 ) \
-	(  \
-		+ (_15 << 15)  \
-		| (_14 << 14)  \
-		| (_13 << 13)  \
-		| (_12 << 12)  \
-		| (_11 << 11)  \
-		| (_10 << 10)  \
-		| ( _9 <<  9)  \
-		| ( _8 <<  8)  \
-		| ( _7 <<  7)  \
-		| ( _6 <<  6)  \
-		| ( _5 <<  5)  \
-		| ( _4 <<  4)  \
-		| ( _3 <<  3)  \
-		| ( _2 <<  2)  \
-		| ( _1 <<  1)  \
-		| ( _0 <<  0)  \
-	)
-
-#define _ 0
-#define X 1
-
-static const UInt8 error_pattern[] =
-{
-	PACK8( _,_,_,X,_,_,_,X ),
-	PACK8( _,_,X,_,_,_,X,_ ),
-	PACK8( _,X,_,_,_,X,_,_ ),
-	PACK8( X,_,_,_,X,_,_,_ ),
-	PACK8( _,_,_,X,_,_,_,X ),
-	PACK8( _,_,X,_,_,_,X,_ ),
-	PACK8( _,X,_,_,_,X,_,_ ),
-	PACK8( X,_,_,_,X,_,_,_ ),
-};
-
-static const UInt16 up_bits[] =
-{
-	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
-	PACK16( X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,X,_,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,X,_,X,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,X,_,_,_,X,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,X,_,_,_,_,_,X,_,_,_,_,X ),
-	PACK16( X,_,_,X,_,_,_,_,_,_,_,X,_,_,_,X ),
-	PACK16( X,_,X,_,_,_,_,_,_,_,_,_,X,_,_,X ),
-	PACK16( X,X,X,X,X,_,_,_,_,_,X,X,X,X,_,X ),
-	PACK16( X,_,_,_,X,_,_,_,_,_,X,_,_,_,_,X ),
-	PACK16( X,_,_,_,X,_,_,_,_,_,X,_,_,_,_,X ),
-	PACK16( X,_,_,_,X,_,_,_,_,_,X,_,_,_,_,X ),
-	PACK16( X,_,_,_,X,X,X,X,X,X,X,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X ),
-	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
-};
-
-static const UInt16 down_bits[] =
-{
-	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
-	PACK16( X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,X,X,X,X,X,X,X,_,_,_,_,X ),
-	PACK16( X,_,_,_,X,_,_,_,_,_,X,_,_,_,_,X ),
-	PACK16( X,_,_,_,X,_,_,_,_,_,X,_,_,_,_,X ),
-	PACK16( X,_,_,_,X,_,_,_,_,_,X,_,_,_,_,X ),
-	PACK16( X,X,X,X,X,_,_,_,_,_,X,X,X,X,_,X ),
-	PACK16( X,_,X,_,_,_,_,_,_,_,_,_,X,_,_,X ),
-	PACK16( X,_,_,X,_,_,_,_,_,_,_,X,_,_,_,X ),
-	PACK16( X,_,_,_,X,_,_,_,_,_,X,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,X,_,_,_,X,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,X,_,X,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,X,_,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X ),
-	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
-};
-
-static const UInt16 left_bits[] =
-{
-	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
-	PACK16( X,_,_,_,_,_,_,X,_,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,X,X,_,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,X,_,X,_,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,X,_,_,X,X,X,X,X,_,_,_,X ),
-	PACK16( X,_,_,X,_,_,_,_,_,_,_,X,_,_,_,X ),
-	PACK16( X,_,X,_,_,_,_,_,_,_,_,X,_,_,_,X ),
-	PACK16( X,X,_,_,_,_,_,_,_,_,_,X,_,_,_,X ),
-	PACK16( X,_,X,_,_,_,_,_,_,_,_,X,_,_,_,X ),
-	PACK16( X,_,_,X,_,_,_,_,_,_,_,X,_,_,_,X ),
-	PACK16( X,_,_,_,X,_,_,X,X,X,X,X,_,_,_,X ),
-	PACK16( X,_,_,_,_,X,_,X,_,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,X,X,_,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,X,_,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X ),
-	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
-};
-
-static const UInt16 right_bits[] =
-{
-	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
-	PACK16( X,_,_,_,_,_,_,_,X,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,_,X,X,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,_,X,_,X,_,_,_,_,X ),
-	PACK16( X,_,_,_,X,X,X,X,X,_,_,X,_,_,_,X ),
-	PACK16( X,_,_,_,X,_,_,_,_,_,_,_,X,_,_,X ),
-	PACK16( X,_,_,_,X,_,_,_,_,_,_,_,_,X,_,X ),
-	PACK16( X,_,_,_,X,_,_,_,_,_,_,_,_,_,X,X ),
-	PACK16( X,_,_,_,X,_,_,_,_,_,_,_,_,X,_,X ),
-	PACK16( X,_,_,_,X,_,_,_,_,_,_,_,X,_,_,X ),
-	PACK16( X,_,_,_,X,X,X,X,X,_,_,X,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,_,X,_,X,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,_,X,X,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,_,X,_,_,_,_,_,_,X ),
-	PACK16( X,_,_,_,_,_,_,_,_,_,_,_,_,_,_,X ),
-	PACK16( X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X ),
-};
 
 static inline
 short thumb_offset_from_value( short gap, short value, short min, short max )
@@ -187,7 +62,7 @@ long CDEF_1_Draw( short varCode, ControlRef control, long param )
 	{
 		InsetRect( &bounds, 1, 1 );
 		
-		FillRect( &bounds, (Pattern*) &error_pattern );
+		FillRect( &bounds, (Pattern*) scroll_bar_error_pattern_bits );
 		return 0;
 	}
 	
@@ -207,7 +82,8 @@ long CDEF_1_Draw( short varCode, ControlRef control, long param )
 	
 	BitMap arrow =
 	{
-		(Ptr) (aspect > 0 ? &up_bits : &left_bits),
+		(Ptr) (aspect > 0 ? scroll_arrow_up_bits
+		                  : scroll_arrow_left_bits),
 		2,
 		{ 0, 0, 16, 16 },
 	};
@@ -219,7 +95,8 @@ long CDEF_1_Draw( short varCode, ControlRef control, long param )
 	
 	CopyBits( &arrow, dstBits, &arrow.bounds, &bounds, srcCopy, NULL );
 	
-	arrow.baseAddr = (Ptr) (aspect > 0 ? &down_bits : &right_bits);
+	arrow.baseAddr = (Ptr) (aspect > 0 ? scroll_arrow_down_bits
+	                                   : scroll_arrow_right_bits);
 	
 	bounds = control[0]->contrlRect;
 	
