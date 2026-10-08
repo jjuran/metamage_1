@@ -24,7 +24,8 @@
 static const unsigned n_tests = 2 + 4 + 8 + 2;
 
 
-#define EXPECT_RGN( rgn, mem )  EXPECT_CMP( *(rgn), (rgn)[0]->rgnSize, (mem), sizeof (mem) )
+#define EXPECT_RGN( rgn, mem )  \
+        EXPECT_CMP( *(rgn), (rgn)[0]->rgnSize, (mem), sizeof (mem) )
 
 
 static inline int rowBytes_from_bitwidth( int bits )
@@ -122,9 +123,11 @@ static void rectangular( const BitMap& bitmap )
 	DisposeRgn( r );
 }
 
-#define ONE_TO_30  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+#define ONE_TO_30   1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, \
+                   16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+
 #define GRAY_AA  0, ONE_TO_30, 31
-#define GRAY_55  ONE_TO_30, 31, 32
+#define GRAY_55     ONE_TO_30, 31, 32
 
 static const short complex_rgn[] =
 {
