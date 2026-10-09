@@ -11,6 +11,11 @@
 #endif
 
 // Mac OS
+#ifdef __MACOS__
+#ifndef __EVENTS__
+#include <Events.h>
+#endif
+#endif
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
@@ -28,7 +33,6 @@
 // mac-qd-utils
 #include "mac_qd/copy_bits.hh"
 #include "mac_qd/get_portRect.hh"
-#include "mac_qd/plot_icon_id.hh"
 
 // chess-logic
 #include "chess/game.hh"
