@@ -13,13 +13,21 @@
 #define _ 0
 #define X 1
 
+#if defined( CONFIG_LITTLE_ENDIAN )  &&  ! CONFIG_LITTLE_ENDIAN
+#define IOTA_BIGU16( x ) x
+#define IOTA_BIGU32( x ) x
+#else
+#define IOTA_BIGU16( x ) ::iota::big_u16( x )
+#define IOTA_BIGU32( x ) ::iota::big_u32( x )
+#endif
+
 #define BIG16( _15, _14, _13,_12,  \
                _11, _10,  _9, _8,  \
                 _7,  _6,  _5, _4,  \
                 _3,  _2,  _1, _0 ) \
 	(   \
-		::iota::big_u16  \
-		(                \
+		IOTA_BIGU16  \
+		(            \
 			+ (_15 << 15)  \
 			| (_14 << 14)  \
 			| (_13 << 13)  \
@@ -48,8 +56,8 @@
                 _7,  _6,  _5, _4,  \
                 _3,  _2,  _1, _0 ) \
 	(   \
-		::iota::big_u32  \
-		(                \
+		IOTA_BIGU32  \
+		(            \
 			+ (_31 << 31)  \
 			| (_30 << 30)  \
 			| (_29 << 29)  \
