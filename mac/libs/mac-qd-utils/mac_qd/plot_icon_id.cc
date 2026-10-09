@@ -53,18 +53,21 @@ Boolean IsPortColor( GrafPtr port )
 #endif
 
 static inline
-bool has_IconUtilities()
+bool use_IconUtilities( short icon_id )
 {
 #ifdef  MAC_OS_X_VERSION_10_2
 #ifndef MAC_OS_X_VERSION_10_3
 	
 	/*
-		Pretend that we don't have Icon Utilities in Jaguar,
+		Don't use Icon Utilities with color icons in Jaguar,
 		where PlotIconID() doesn't display Nyanochrome Cat's
 		icon in the About box, but CopyBits() still works.
+		
+		However, we still need to use PlotIconID() with plain
+		icons for correct silhouetting in Black Knight's Chess.
 	*/
 	
-	return false;
+	return ! GetResource( 'icl8', icon_id );
 	
 #endif
 #endif
@@ -94,7 +97,7 @@ bool silhouetted( GrafPtr port )
 
 short plot_icon_id( const Rect& bounds, short id )
 {
-	if ( has_IconUtilities() )
+	if ( use_IconUtilities( id ) )
 	{
 		return PlotIconID( &bounds, 0, 0, id );
 	}
