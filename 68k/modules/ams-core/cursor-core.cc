@@ -16,8 +16,8 @@
 #include "scoped_zone.hh"
 #include "screen_lock.hh"
 
-// ams-core
-#include "arrow.hh"
+// Chiaroscuro
+#include "Chiaroscuro/Widget/Arrow_Cursor.hh"
 
 
 #pragma exceptions off
@@ -457,7 +457,9 @@ void update_cursor_location()
 
 void init_cursor()
 {
-	set_cursor( &arrow );
+	using Chiaroscuro::arrow_cursor;
+	
+	set_cursor( &arrow_cursor );
 	
 	CrsrObscure = false;
 	

@@ -13,8 +13,10 @@
 #include <Quickdraw.h>
 #endif
 
+// Chiaroscuro
+#include "Chiaroscuro/Widget/Arrow_Cursor.hh"
+
 // ams-common
-#include "arrow.hh"
 #include "callouts.hh"
 
 
@@ -55,6 +57,8 @@ struct private_QDGlobals
 
 pascal void InitGraf_patch( GrafPtr* thePort_ptr )
 {
+	using Chiaroscuro::arrow_cursor;
+	
 	asm
 	{
 		MOVE.L  thePort_ptr,(A5)
@@ -79,7 +83,7 @@ pascal void InitGraf_patch( GrafPtr* thePort_ptr )
 	qd.screenBits.rowBytes = ScreenRow;
 	qd.screenBits.bounds   = CrsrPin;
 	
-	fast_memcpy( &qd.arrow, &arrow, sizeof arrow );
+	fast_memcpy( &qd.arrow, &arrow_cursor, sizeof arrow_cursor );
 	
 	set_Pattern( qd.dkGray, 0x77DD77DD );
 	set_Pattern( qd.ltGray, 0x88228822 );
