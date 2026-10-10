@@ -360,8 +360,8 @@
 // more-libc
 #include <more/string.h>
 
-// mac-sys-utils
-#include "mac_sys/res_error.hh"
+// mac-glue-utils
+#include "mac_glue/LowMem.hh"
 
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
@@ -636,7 +636,7 @@ bool fix_up_near_code( Handle code )
 static inline
 OSErr CompactResFile( short refnum )
 {
-	using mac::sys::res_error;
+	using mac::glue::res_error;
 	
 	short attrs;
 	
@@ -649,8 +649,8 @@ OSErr CompactResFile( short refnum )
 
 int main( int argc, char** argv )
 {
+	using mac::glue::res_error;
 	using mac::relix::FSSpec_from_existing_path;
-	using mac::sys::res_error;
 	
 	char *const *args = get_options( argv );
 	
