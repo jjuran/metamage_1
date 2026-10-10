@@ -21,6 +21,7 @@
 
 // mac-glue-utils
 #include "mac_glue/LowMem.hh"
+#include "mac_glue/Memory.hh"
 
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
@@ -91,13 +92,15 @@ char* const* get_options( char* const* argv )
 static
 bool fix_up_DRVR_resource( Handle code )
 {
+	using mac::glue::GetHandleSize_raw;
+	
 	/*
 		Return true if we changed anything, and false otherwise.
 	*/
 	
 	const Size expected_minimum_size = 18 + 20;
 	
-	Size size = GetHandleSize( code );
+	Size size = GetHandleSize_raw( code );
 	
 	if ( size > expected_minimum_size  &&  *(short*) code[0] == 0x600A )
 	{

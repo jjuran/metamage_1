@@ -362,6 +362,7 @@
 
 // mac-glue-utils
 #include "mac_glue/LowMem.hh"
+#include "mac_glue/Memory.hh"
 
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
@@ -533,9 +534,11 @@ static const UInt16 startup_code[] =
 static
 bool fix_up_far_code( Handle code )
 {
+	using mac::glue::GetHandleSize_raw;
+	
 	const Size expected_minimum_size = 0x0116;
 	
-	Size size = GetHandleSize( code );
+	Size size = GetHandleSize_raw( code );
 	
 	char* p = *code;
 	
@@ -602,9 +605,11 @@ bool fix_up_far_code( Handle code )
 static
 bool fix_up_near_code( Handle code )
 {
+	using mac::glue::GetHandleSize_raw;
+	
 	const Size expected_minimum_size = 0x0014;
 	
-	Size size = GetHandleSize( code );
+	Size size = GetHandleSize_raw( code );
 	
 	char* p = *code;
 	

@@ -21,6 +21,7 @@
 
 // mac-glue-utils
 #include "mac_glue/LowMem.hh"
+#include "mac_glue/Memory.hh"
 
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
@@ -155,6 +156,7 @@ Handle Patch68KStartup()
 
 int main( int argc, char** argv )
 {
+	using mac::glue::GetHandleSize_raw;
 	using mac::glue::res_error;
 	
 	char *const *args = get_options( argv );
@@ -201,7 +203,12 @@ int main( int argc, char** argv )
 		{
 			if ( ! dry_run )
 			{
-				SInt32 size = GetHandleSize( code );
+				/*
+					The code resource handle is valid,
+					so GetHandleSize can't fail here.
+				*/
+				
+				SInt32 size = GetHandleSize_raw( code );
 				
 				err = FSWrite( refnum, &size, *code );
 			}
