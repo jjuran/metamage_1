@@ -19,6 +19,9 @@
 // command
 #include "command/get_option.hh"
 
+// mac-glue-utils
+#include "mac_glue/LowMem.hh"
+
 // mac-relix-utils
 #include "mac_relix/FSSpec_from_path.hh"
 
@@ -152,6 +155,8 @@ Handle Patch68KStartup()
 
 int main( int argc, char** argv )
 {
+	using mac::glue::res_error;
+	
 	char *const *args = get_options( argv );
 	
 	const int argn = argc - (args - argv);
@@ -179,9 +184,14 @@ int main( int argc, char** argv )
 	
 	Handle code = Patch68KStartup();
 	
-	OSErr err = noErr;
+	OSErr err = res_error();
 	
-	if ( in_data )
+	if ( ! code  &&  ! err )
+	{
+		err = resNotFound;
+	}
+	
+	if ( in_data  &&  err == noErr )
 	{
 		short refnum;
 		
