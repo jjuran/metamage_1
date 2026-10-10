@@ -16,9 +16,6 @@
 // POSIX
 #include <unistd.h>
 
-// Standard C
-#include <stdlib.h>
-
 // command
 #include "command/get_option.hh"
 
@@ -92,7 +89,7 @@ char* const* get_options( char* const* argv )
 				break;
 			
 			default:
-				abort();
+				break;
 		}
 	}
 	

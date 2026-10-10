@@ -7,9 +7,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-// Standard C
-#include <stdlib.h>
-
 // Standard C++
 #include <algorithm>
 
@@ -73,7 +70,7 @@ static char* const* get_options( char* const* argv )
 				break;
 			
 			default:
-				abort();
+				break;
 		}
 	}
 	

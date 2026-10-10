@@ -24,7 +24,6 @@
 
 // Standard C
 #include <stdio.h>
-#include <stdlib.h>
 
 // Relix
 #ifdef __RELIX__
@@ -99,7 +98,7 @@ char* const* get_options( char* const* argv )
 				break;
 			
 			default:
-				abort();
+				break;
 		}
 	}
 	

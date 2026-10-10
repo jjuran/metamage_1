@@ -19,7 +19,6 @@
 #include <sys/socket.h>
 
 // Standard C
-#include <stdlib.h>
 #include <string.h>
 
 // more-libc
@@ -152,7 +151,7 @@ namespace tool
 					break;
 				
 				default:
-					abort();
+					break;
 			}
 		}
 		

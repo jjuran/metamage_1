@@ -7,7 +7,6 @@
 #include <dirent.h>
 
 // Standard C
-#include <stdlib.h>
 #include <string.h>
 
 // Standard C++
@@ -93,7 +92,7 @@ static char* const* get_options( char* const* argv )
 				break;
 			
 			default:
-				abort();
+				break;
 		}
 	}
 	

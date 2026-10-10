@@ -201,7 +201,7 @@ static char* const* get_options( char* const* argv )
 			case Option_release:  buildVariety = buildRelease;    break;
 			
 			default:
-				abort();
+				break;
 		}
 	}
 	

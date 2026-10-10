@@ -12,7 +12,6 @@
 // Standard C
 #include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 // more-libc
@@ -104,7 +103,7 @@ char* const* get_options( char* const* argv )
 				break;
 			
 			default:
-				abort();
+				break;
 		}
 	}
 	

@@ -6,7 +6,6 @@
 // Standard C
 #include <errno.h>
 #include <signal.h>
-#include <stdlib.h>
 
 // POSIX
 #include <fcntl.h>
@@ -103,7 +102,7 @@ static char* const* get_options( char* const* argv )
 				break;
 			
 			default:
-				abort();
+				break;
 		}
 	}
 	

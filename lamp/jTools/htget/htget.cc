@@ -9,7 +9,6 @@
 
 // Standard C
 #include <errno.h>
-#include <stdlib.h>
 #include <string.h>
 
 // Iota
@@ -115,7 +114,7 @@ static char* const* get_options( char* const* argv )
 				break;
 			
 			default:
-				abort();
+				break;
 		}
 	}
 	
