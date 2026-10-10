@@ -24,6 +24,9 @@
 #include "mac_config/apple-events.hh"
 #include "mac_config/desk-accessories.hh"
 
+// mac-glue-utils
+#include "mac_glue/MacWindows.hh"
+
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/trap_available.hh"
@@ -649,9 +652,11 @@ int main()
 							break;
 						
 						case inGrow:
+							using mac::glue::SizeWindow;
+							
 							if ( long grew = GrowWindow( window, event.where, &grow_size ) )
 							{
-								SizeWindow( window, grew, grew >> 16, true );
+								SizeWindow( window, grew, true );
 								
 								invalidate_window_size( window );
 							}
