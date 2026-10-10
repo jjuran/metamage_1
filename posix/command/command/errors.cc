@@ -10,7 +10,6 @@
 #include <sys/uio.h>
 
 // Standard C
-#include <stdlib.h>
 #include <string.h>
 
 
@@ -38,10 +37,10 @@ namespace command
 		
 		if ( n_written < 0 )
 		{
-			abort();
+			_exit( 13 );
 		}
 	
-		exit( 2 );
+		_exit( 2 );
 	}
 	
 }
