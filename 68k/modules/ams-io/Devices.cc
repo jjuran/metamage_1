@@ -13,8 +13,8 @@
 // sndpipe
 #include "sndpipe/sndpipe.hh"
 
-// mac-sys-utils
-#include "mac_sys/delay.hh"
+// mac-glue-utils
+#include "mac_glue/OSUtils.hh"
 
 // log-of-war
 #include "logofwar/report.hh"
@@ -232,7 +232,7 @@ short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	while ( QElemPtr head = dce->dCtlQHdr.qHead )
 	{
-		mac::sys::delay( -1 );  // calls reactor_wait() once
+		mac::glue::delay( -1 );  // calls reactor_wait() once
 	}
 	
 	trap_word |= 1 << noQueueBit;  // treat Close like an immediate call
@@ -434,7 +434,7 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	{
 		while ( pb->ioResult > 0 )
 		{
-			mac::sys::delay( -1 );  // calls reactor_wait() once
+			mac::glue::delay( -1 );  // calls reactor_wait() once
 		}
 		
 		err = pb->ioResult;
