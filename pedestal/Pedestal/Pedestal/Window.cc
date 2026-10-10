@@ -15,6 +15,9 @@
 #include <MacWindows.h>
 #endif
 
+// mac-glue-utils
+#include "mac_glue/MacWindows.hh"
+
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 
@@ -59,7 +62,9 @@ namespace Pedestal
 	
 	void ResizeWindow( WindowRef window, Point newSize )
 	{
-		SizeWindow( window, newSize.h, newSize.v, true );
+		using mac::glue::SizeWindow;
+		
+		SizeWindow( window, *(long*) &newSize, true );
 		
 		ResizedWindow( window );
 	}
