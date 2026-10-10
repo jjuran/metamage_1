@@ -15,6 +15,9 @@
 #endif
 #endif
 
+// mac-glue-utils
+#include "mac_glue/MacWindows.hh"
+
 // mac-sys-utils
 #include "mac_sys/beep.hh"
 
@@ -131,14 +134,13 @@ int main()
 							break;
 						
 						case inGrow:
+							using mac::glue::SizeWindow;
+							
 							if ( long grown = GrowWindow( window, event.where, &grow_size ) )
 							{
 								invalidate_scroll_bar_areas( window );
 								
-								short h = grown;
-								short v = grown >> 16;
-								
-								SizeWindow( window, h, v, true );
+								SizeWindow( window, grown, true );
 								
 								invalidate_scroll_bar_areas( window );
 							}
