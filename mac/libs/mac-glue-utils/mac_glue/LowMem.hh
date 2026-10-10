@@ -19,21 +19,24 @@
 #endif
 
 
+#define LOWMEM( addr, type )  (*(type*) (addr))
+
+#define ResErr  LOWMEM( 0x0A60, short )
+
+
 namespace mac  {
 namespace glue {
 	
 	inline
 	short res_error()
 	{
-	#if ! TARGET_API_MAC_CARBON
-		
-		return *(short*) 0xA60;  // ResErr
-		
-	#else
+	#if TARGET_API_MAC_CARBON
 		
 		return LMGetResErr();
 		
 	#endif
+		
+		return ResErr;
 	}
 	
 }
