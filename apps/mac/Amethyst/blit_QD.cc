@@ -21,6 +21,13 @@ static Rect   dstRect;
 
 #if CONFIG_QUICKDRAW
 
+static
+void clear()
+{
+	Rect bounds;
+	PaintRect( GetPortBounds( captured_display_port, &bounds ) );
+}
+
 QD_blitter::QD_blitter( CGDirectDisplayID id )
 {
 	// UInt32 cast required for 10.4 PPC, at least
@@ -30,8 +37,7 @@ QD_blitter::QD_blitter( CGDirectDisplayID id )
 
 QD_blitter::~QD_blitter()
 {
-	Rect bounds;
-	PaintRect( GetPortBounds( captured_display_port, &bounds ) );
+	clear();
 	
 	if ( CTabHandle ctab = srcBits.pmTable )
 	{
@@ -88,6 +94,8 @@ void QD_blitter::prep( int stride, int width, int height, int depth )
 
 void QD_blitter::area( CGRect bounds )
 {
+	clear();
+	
 	dstRect.top    = (short)  bounds.origin.y;
 	dstRect.left   = (short)  bounds.origin.x;
 	dstRect.bottom = (short) (bounds.origin.y + bounds.size.height);
