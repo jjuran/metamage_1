@@ -32,6 +32,8 @@ class QD_blitter
 		
 		static void blit( const void* src_addr );
 		
+		static void set_interpolating( bool interpolating );
+		
 		static void render()  {}
 };
 

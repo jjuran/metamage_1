@@ -112,4 +112,12 @@ void QD_blitter::blit( const void* src_addr )
 	                    dstRect );
 }
 
+void QD_blitter::set_interpolating( bool interpolating )
+{
+	/*
+		QuickDraw doesn't have an interpolation option.
+		Sharp Pixels is always on, and this is a no-op.
+	*/
+}
+
 #endif

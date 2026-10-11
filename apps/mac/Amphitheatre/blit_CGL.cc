@@ -125,6 +125,11 @@ void CGL_blitter::blit( const void* src_addr )
 	glfb::set_screen_image( src_addr );
 }
 
+void CGL_blitter::set_interpolating( bool interpolating )
+{
+	glfb::set_interpolating( interpolating );
+}
+
 void CGL_blitter::render()
 {
 	glfb::render();

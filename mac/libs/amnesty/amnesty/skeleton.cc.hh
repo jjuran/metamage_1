@@ -72,6 +72,7 @@ using frend::CommandMode_state;
 using frend::commandmode_state;
 using frend::display_events;
 using frend::quick_exit;
+using frend::sharp_pixels;
 
 using frend::active_scale;
 using frend::screen_scale;
@@ -335,7 +336,8 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 		{
 			CommandMode_state prev_state = commandmode_state;
 			
-			const int previous_scale_index = screen_scale.current;
+			const bool had_sharp_pixels     = sharp_pixels;
+			const int  previous_scale_index = screen_scale.current;
 			
 			bool handled = HANDLE_EVENT( lowlevel_event, &command_handler );
 			
@@ -349,6 +351,12 @@ void run_event_loop( const raster_load& load, const raster_desc& desc )
 			if ( ! commandmode_state != ! prev_state )
 			{
 				overlay_enabled = ! overlay_enabled;
+				
+				Blitter::render();
+			}
+			else if ( sharp_pixels != had_sharp_pixels )
+			{
+				blitter.set_interpolating( had_sharp_pixels );
 				
 				Blitter::render();
 			}

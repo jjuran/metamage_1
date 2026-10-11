@@ -20,6 +20,9 @@ static int w, h, rowBytes, bpp;
 static CGColorSpaceRef palette;
 static CGImageRef      image;
 
+static bool sharp_pixels;
+
+
 CG_blitter::CG_blitter( CGDirectDisplayID id )
 {
 	display_bounds = CGDisplayBounds( id );
@@ -95,10 +98,28 @@ void CG_blitter::blit( const void* src_addr )
 	}
 }
 
+void CG_blitter::set_interpolating( bool interpolating )
+{
+	sharp_pixels = ! interpolating;
+}
+
 void CG_blitter::render()
 {
 	if ( image )
 	{
+		if ( sharp_pixels )
+		{
+			CGContextSaveGState( captured_display_context );
+			
+			CGContextSetInterpolationQuality( captured_display_context,
+			                                  kCGInterpolationNone );
+		}
+		
 		CGContextDrawImage( captured_display_context, image_bounds, image );
+		
+		if ( sharp_pixels )
+		{
+			CGContextRestoreGState( captured_display_context );
+		}
 	}
 }
