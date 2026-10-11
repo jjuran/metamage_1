@@ -37,6 +37,9 @@
 #include "recall/traceback_tables.hh"
 
 
+#pragma exceptions off
+
+
 #if defined( __i386__ )  ||  defined( __x86_64__ )
 #define CONFIG_ODD_ADDRESSES  1
 #else
@@ -91,6 +94,15 @@ namespace recall
 	{
 		static void demangle( plus::var_string& result, const char* name )
 		{
+			size_t len = strlen( name );
+			
+			if ( ! result.reserve_nothrow( len ) )
+			{
+				result = "<out of memory>";  // 15 bytes, guaranteed ok
+				
+				return;
+			}
+			
 			result = name;
 			
 			// s/:.*//;
@@ -188,23 +200,17 @@ namespace recall
 			
 		#endif
 			
-			try
-			{
-				demangler_traits< ReturnAddr >::demangle( result, name );
-				
-			#ifdef __GNUC__
-				
-				return move( result );
-				
-			#else
-				
-				return plus::string( result.data(), result.size() );
-				
-			#endif
-			}
-			catch ( ... )
-			{
-			}
+			demangler_traits< ReturnAddr >::demangle( result, name );
+			
+		#ifdef __GNUC__
+			
+			return move( result );
+			
+		#else
+			
+			return plus::string( result.data(), result.size() );
+			
+		#endif
 		}
 		
 		return name;
