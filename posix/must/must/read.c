@@ -5,11 +5,11 @@
 
 #include "must/read.h"
 
-// Standard C
-#include <stdlib.h>
-
 // POSIX
 #include <unistd.h>
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 ssize_t must_read( int fd, void* buffer, size_t n )
@@ -18,7 +18,9 @@ ssize_t must_read( int fd, void* buffer, size_t n )
 	
 	if ( n_read != n )
 	{
-		abort();
+		write( STDERR_FILENO, STR_LEN( "*** critical read() failed ***\n" ) );
+		
+		_exit( 13 );
 	}
 	
 	return n_read;
