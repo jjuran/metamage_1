@@ -51,6 +51,8 @@ void on_display_event( void* info )
 		events.screenBits = false;
 		
 		Blitter::blit( (char*) events.addr );
+		
+		Blitter::render();
 	}
 	
 	events.repaintDue = false;

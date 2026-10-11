@@ -32,7 +32,7 @@ class CG_blitter
 		
 		static void blit( const void* src_addr );
 		
-		static void render()  {}
+		static void render();
 };
 
 #endif

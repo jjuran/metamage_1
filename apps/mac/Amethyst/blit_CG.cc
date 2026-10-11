@@ -18,6 +18,7 @@ static CGContextRef captured_display_context;
 static int w, h, rowBytes, bpp;
 
 static CGColorSpaceRef palette;
+static CGImageRef      image;
 
 CG_blitter::CG_blitter( CGDirectDisplayID id )
 {
@@ -74,7 +75,7 @@ void CG_blitter::blit( const void* src_addr )
 	
 	void* p = const_cast< void* >( src_addr );
 	
-	CGImageRef image = NULL;
+	CGImageRelease( image );  // ok with NULL
 	
 	if ( bpp <= 8 )
 	{
@@ -92,11 +93,12 @@ void CG_blitter::blit( const void* src_addr )
 		image = bpp == 16 ? create_xRGB_1555_BE_image( w, h, rowBytes, p )
 		                  : create_xRGB_8888_BE_image( w, h, rowBytes, p );
 	}
-	
+}
+
+void CG_blitter::render()
+{
 	if ( image )
 	{
 		CGContextDrawImage( captured_display_context, image_bounds, image );
-		
-		CGImageRelease( image );
 	}
 }
