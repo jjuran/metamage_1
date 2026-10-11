@@ -18,7 +18,7 @@
 	... using this command to unpack and print it:
 	
 		md5-table | perl -e 'read STDIN, $_, 256; $_ = unpack "H*";
-			s/(.{64})/\t\t$1\n/g; s/(\S{8})/$1 /g; s/ \n/\n/g; print'
+			s/(.{64})/\t$1\n/g; s/(\S{8})/$1 /g; s/ \n/\n/g; print'
 	
 	See RFC 1321, "The MD5 Message-Digest Algorithm".
 	<http://www.faqs.org/rfcs/rfc1321.html>
@@ -30,7 +30,6 @@
 // Standard C
 #include <math.h>
 #include <stdint.h>
-#include <stdlib.h>
 
 // iota
 #include "iota/endian.hh"
@@ -54,7 +53,7 @@ int main()
 	
 	if ( n_written != sizeof data )
 	{
-		abort();
+		return 13;
 	}
 	
 	return 0;
