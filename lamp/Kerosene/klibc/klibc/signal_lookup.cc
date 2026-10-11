@@ -24,7 +24,7 @@ struct signal_record
 
 #define SIG(name) { #name, SIG##name }
 
-const signal_record gSignals[] =
+static const signal_record signals[] =
 {
 	// These need to be alphabetized
 	SIG( ALRM ),
@@ -39,7 +39,7 @@ const signal_record gSignals[] =
 	{ "~", 0 }  // The end of the sequence points *to* this element, not after.
 };
 
-static const unsigned gCountOfSignals = sizeof gSignals / sizeof (signal_record) - 1;
+static const unsigned n_signals = sizeof signals / sizeof signals[ 0 ] - 1;
 
 static bool eq_strings( const char* a, const char* b )
 {
@@ -58,9 +58,9 @@ static bool operator==( const signal_record& sig, const char* name )
 
 int signal_lookup( const char* signame )
 {
-	const signal_record* end = gSignals + gCountOfSignals;
+	const signal_record* end = signals + n_signals;
 	
-	const signal_record* it = std::find( gSignals, end, signame );
+	const signal_record* it = std::find( signals, end, signame );
 	
 	// The end-of-sequence iterator points to an element with number 0
 	//if ( it == end )  return 0;
