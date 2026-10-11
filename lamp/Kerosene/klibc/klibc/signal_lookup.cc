@@ -7,10 +7,7 @@
 
 // Standard C
 #include <signal.h>
-
-// Standard C++
-#include <algorithm>
-#include <cstring>
+#include <string.h>
 
 
 namespace klibc
@@ -41,26 +38,19 @@ static const signal_record signals[] =
 
 static const unsigned n_signals = sizeof signals / sizeof signals[ 0 ] - 1;
 
-static bool eq_strings( const char* a, const char* b )
-{
-	return std::strcmp( a, b ) == 0;
-}
-
-static bool compare_signal_name( const signal_record& sig, const char* name )
-{
-	return eq_strings( sig.name, name );
-}
-
-static bool operator==( const signal_record& sig, const char* name )
-{
-	return compare_signal_name( sig, name );
-}
-
 int signal_lookup( const char* signame )
 {
 	const signal_record* end = signals + n_signals;
 	
-	const signal_record* it = std::find( signals, end, signame );
+	const signal_record* it;
+	
+	for ( it = signals;  it < end;  ++it )
+	{
+		if ( strcmp( it->name, signame ) == 0 )
+		{
+			break;
+		}
+	}
 	
 	// The end-of-sequence iterator points to an element with number 0
 	//if ( it == end )  return 0;
