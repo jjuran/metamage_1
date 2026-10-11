@@ -12,6 +12,9 @@
 #include "plus/var_string.hh"
 
 
+#pragma exceptions off
+
+
 #define STR_LEN( string )  "" string, (sizeof string - 1)
 
 #define ARRAY_LEN( array )  ( sizeof array / sizeof array[0] )
