@@ -5,14 +5,17 @@
 
 #include "recall/backtrace.hh"
 
-// Standard C++
-#include <algorithm>
-
 // Standard C
 #include <string.h>
 
 #ifdef __GNUC__
+
+// Standard C++
+#include <algorithm>
+
+// GNU C++ ABI
 #include <cxxabi.h>
+
 #endif
 
 // Iota
