@@ -203,6 +203,11 @@ namespace plus
 			
 			void clear()  { resize( 0 ); }
 			
+			char* reserve_nothrow( size_type size )
+			{
+				return string_reserve_nothrow( store, size );
+			}
+			
 			void reserve( size_type size )  { string_reserve( store, size ); }
 			void resize ( size_type size, char c = '\0' );
 			
