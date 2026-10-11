@@ -5,11 +5,11 @@
 
 #include "must/chdir.h"
 
-// Standard C
-#include <stdlib.h>
-
 // POSIX
 #include <unistd.h>
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 int must_chdir( const char* path )
@@ -18,7 +18,9 @@ int must_chdir( const char* path )
 	
 	if ( changed != 0 )
 	{
-		abort();
+		write( STDERR_FILENO, STR_LEN( "*** critical chdir() failed ***\n" ) );
+		
+		_exit( 13 );
 	}
 	
 	return changed;
