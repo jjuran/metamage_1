@@ -5,9 +5,6 @@
 
 #include "Genie/FS/gui/new.hh"
 
-// relix-kernel
-#include "relix/config/gui_new_gworld.hh"
-
 // Genie
 #include "Genie/FS/gui/new/bitmap.hh"
 #include "Genie/FS/gui/new/button.hh"
@@ -17,7 +14,6 @@
 #include "Genie/FS/gui/new/eventtap.hh"
 #include "Genie/FS/gui/new/focuser.hh"
 #include "Genie/FS/gui/new/frame.hh"
-#include "Genie/FS/gui/new/gworld.hh"
 #include "Genie/FS/gui/new/icon.hh"
 #include "Genie/FS/gui/new/list.hh"
 #include "Genie/FS/gui/new/port.hh"
@@ -40,13 +36,6 @@ namespace Genie
 		{ "eventtap",     &new_eventtap                       },
 		{ "focuser",      &New_focuser                        },
 		{ "frame",        &New_FSTree_new_frame               },
-		
-	#if CONFIG_GUI_NEW_GWORLD
-		
-		{ "gworld",       &New_FSTree_new_gworld              },
-		
-	#endif
-		
 		{ "icon",         &New_FSTree_new_icon                },
 		{ "list",         &New_FSTree_new_list                },
 		{ "scrollframe",  &New_FSTree_new_scrollframe         },
