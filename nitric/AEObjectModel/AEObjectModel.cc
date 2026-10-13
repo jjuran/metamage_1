@@ -21,7 +21,6 @@
 
 // Nitrogen Extras / AEObjectModel
 #include "AEObjectModel/AccessProperty.hh"
-#include "AEObjectModel/Count.hh"
 #include "AEObjectModel/DisposeToken.hh"
 
 
@@ -119,25 +118,6 @@ namespace Nitrogen
 		return 0;
 	}
 	
-	pascal OSErr OSLCount( ::DescType     desiredClass,
-	                       ::DescType     containerClass,
-	                       const AEDesc*  containerToken,
-	                       SInt32*        result )
-	{
-		try
-		{
-			*result = Count( Mac::AEObjectClass( desiredClass   ),
-			                 Mac::AEObjectClass( containerClass ),
-			                 static_cast< const Mac::AEDesc_Token& >( *containerToken ) );
-		}
-		catch ( ... )
-		{
-			return ConvertTheExceptionToOSStatus( errAEEventFailed );
-		}
-		
-		return noErr;
-	}
-	
 	pascal OSErr OSLDisposeToken( AEDesc* token )
 	{
 		try
@@ -165,7 +145,7 @@ namespace Nitrogen
 	void AESetObjectCallbacks()
 	{
 		Nitrogen::AESetObjectCallbacks( (::OSLCompareProcPtr     ) NULL,
-		                                OSLCount,
+		                                (::OSLCountProcPtr       ) NULL,
 		                                OSLDisposeToken,
 		                                (::OSLGetMarkTokenProcPtr) NULL,
 		                                (::OSLMarkProcPtr        ) NULL,
