@@ -21,11 +21,60 @@
 
 // Nitrogen Extras / AEObjectModel
 #include "AEObjectModel/AccessProperty.hh"
-#include "AEObjectModel/DisposeToken.hh"
 
 
 namespace Nitrogen
 {
+	
+	static
+	OSErr dispose_token_list( AEDesc& list )
+	{
+		OSErr err;
+		long  count;
+		
+		err = AECountItems( &list, &count );
+		
+		if ( err )
+		{
+			return err;
+		}
+		
+		for ( long i = count;  i > 0;  --i )
+		{
+			AEDesc    token;
+			AEKeyword keyword;
+			
+			err = AEGetNthDesc( &list, i, typeWildCard, &keyword, &token );
+			
+			if ( err )
+			{
+				break;
+			}
+			
+			AEDeleteItem( &list, i );
+			
+			AEDisposeToken( &token );
+		}
+		
+		return err;
+	}
+	
+	static
+	OSErr dispose_token( AEDesc& token )
+	{
+		// FIXME:  Check for typeWildCard?
+		
+		OSErr err = noErr;
+		
+		if ( token.descriptorType == typeAEList )
+		{
+			err = dispose_token_list( token );
+		}
+		
+		::AEDisposeDesc( &token );
+		
+		return err;
+	}
 	
 	/*
 		Given key data of form formAbsolutePosition and a count of the elements,
@@ -120,26 +169,7 @@ namespace Nitrogen
 	
 	pascal OSErr OSLDisposeToken( AEDesc* token )
 	{
-		try
-		{
-			// Yes, that's right.  We are seizing the token as AEDesc_Data, 
-			// not AEDesc_Token.  That's because we're releasing the token-ness,
-			// but not the AEDesc-ness just yet.
-			// More pragmatically, it makes the called code work more smoothly.
-			// The called function is only responsible for disposing the token material,
-			// and the Owned destructor will call AEDisposeDesc() for us.
-			
-			const Mac::AEDesc_Data& desc( static_cast< const Mac::AEDesc_Data& >( *token ) );
-			
-			// Atom or list, it will hence be missed.
-			DisposeToken( nucleus::owned< Mac::AEDesc_Data >::seize( desc ) );
-		}
-		catch ( ... )
-		{
-			return ConvertTheExceptionToOSStatus( errAEEventFailed );
-		}
-		
-		return noErr;
+		return dispose_token( *token );
 	}
 	
 	void AESetObjectCallbacks()
