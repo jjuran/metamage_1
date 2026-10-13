@@ -15,9 +15,6 @@
 #ifndef NITROGEN_AEOBJECTS_HH
 #include "Nitrogen/AEObjects.hh"
 #endif
-#ifndef NITROGEN_ASREGISTRY_HH
-#include "Nitrogen/ASRegistry.hh"
-#endif
 
 // Nitrogen Extras / AEObjectModel
 #include "AEObjectModel/AccessProperty.hh"
@@ -201,54 +198,6 @@ namespace Nitrogen
 		return AccessProperty( propertyID, containerToken, containerClass );
 	}
 	
-	static inline const Mac::AEDesc_Token& AEToken_Cast( const AEDesc& token )
-	{
-		return AEDesc_Cast< const Mac::AEDesc_Token >( token );
-	}
-	
-	class ObjectAccessor_Caller
-	{
-		private:
-			Mac::AEObjectClass       itsDesiredClass;
-			Mac::AEObjectClass       itsContainerClass;
-			Mac::AEKeyForm           itsKeyForm;
-			const Mac::AEDesc_Data&  itsKeyData;
-		
-		public:
-			ObjectAccessor_Caller( Mac::AEObjectClass       desiredClass,
-	                               Mac::AEObjectClass       containerClass,
-	                               Mac::AEKeyForm           keyForm,
-	                               const Mac::AEDesc_Data&  keyData )
-			:
-				itsDesiredClass  ( desiredClass   ),
-				itsContainerClass( containerClass ),
-				itsKeyForm       ( keyForm        ),
-				itsKeyData       ( keyData        )
-			{
-			}
-			
-			nucleus::owned< Mac::AEDesc_Token > operator()( const AEDesc& containerToken ) const
-			{
-				try
-				{
-					return AECallObjectAccessor( itsDesiredClass,
-					                             AEToken_Cast( containerToken ),
-					                             itsContainerClass,
-					                             itsKeyForm,
-					                             itsKeyData );
-				}
-				catch ( const Mac::OSStatus& err )
-				{
-					if ( err != errAENoSuchObject )
-					{
-						throw;
-					}
-					
-					return MissingValue();
-				}
-			}
-	};
-	
 	nucleus::owned< Mac::AEDesc_Token >
 	//
 	DispatchAccessToList( Mac::AEObjectClass        desiredClass,
@@ -259,16 +208,60 @@ namespace Nitrogen
 	{
 		nucleus::owned< Mac::AEDescList_Token > result = AECreateList< Mac::AEDescList_Token >();
 		
-		ObjectAccessor_Caller caller( desiredClass,
-		                              containerClass,
-		                              keyForm,
-		                              keyData );
+		OSErr err;
+		
+		/*
+			Given a query like `get the name of every document`,
+			an object accessor will be called to produce a list
+			of tokens for each document.  This object accessor,
+			in turn, will be called to access the name from the
+			list.  We accomplish this by retrieving each token
+			from the list and calling the object accessor that
+			matches the token type of an individual list item
+			and the same key data that we were given (in this
+			example, the `name` property), for each item.
+			
+			The subtoken's AEDesc, but not its token-nature,
+			will be disposed automatically, which is what we
+			want.  We explicitly dispose of the new token's
+			AEDesc after adding it the the list (if it was
+			successfully created).  If adding it to the list
+			fails, then we destroy the object's token-nature
+			as well.  In the event of failure, we explicitly
+			throw an exception and the partially populated
+			token list is destroyed in full.
+		*/
 		
 		long count = AECountItems( containerToken );
 		
 		for ( long i = 1;  i <= count;  ++i )
 		{
-			AEPutDesc( result, 0, caller( AEGetNthDesc( containerToken, i ) ) );
+			nucleus::owned< Mac::AEDesc_Data > subtoken = AEGetNthDesc( containerToken, i );
+			
+			AEDesc object;
+			
+			err = AECallObjectAccessor( desiredClass,
+			                            &subtoken.get(),
+			                            containerClass,
+			                            keyForm,
+			                            &keyData,
+			                            &object );
+			
+			if ( err == noErr )
+			{
+				err = AEPutDesc( &Detail::mutable_AEDesc( result ), 0, &object );
+				
+				if ( err )
+				{
+					AEDisposeToken( &object );
+				}
+				else
+				{
+					::AEDisposeDesc( &object );
+				}
+			}
+			
+			Mac::ThrowOSStatus( err );
 		}
 		
 		return result;
