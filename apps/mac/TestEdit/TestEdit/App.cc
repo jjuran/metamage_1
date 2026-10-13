@@ -38,7 +38,6 @@
 
 // AEObjectModel
 #include "AEObjectModel/AEObjectModel.hh"
-#include "AEObjectModel/GetData.hh"
 
 // Pedestal
 #include "Pedestal/AboutBox.hh"
@@ -55,6 +54,52 @@
 
 #define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
 
+
+namespace Nitrogen
+{
+	
+	static inline
+	nucleus::owned< Mac::AEDesc_ObjectSpecifier > GetRootObjectSpecifier()
+	{
+		return nucleus::owned< Mac::AEDesc_ObjectSpecifier >();
+	}
+	
+	static
+	nucleus::owned< Mac::AEDesc_ObjectSpecifier >
+	//
+	AECreateObjectSpecifier( Mac::AEObjectClass                  objectClass,
+	                         const Mac::AEDesc_ObjectSpecifier&  container,
+	                         Mac::AEKeyForm                      keyForm,
+	                         const Mac::AEDesc_Data&             keyData )
+	{
+		nucleus::owned< Mac::AERecord_Data > record = AECreateList( true );
+		
+		/*
+			g++ 3 can't handle this:
+			
+			AEPutKeyPtr< Mac::keyAEDesiredClass >( record, objectClass );
+			AEPutKeyPtr< Mac::keyAEKeyForm      >( record, keyForm     );
+		*/
+		
+		AEPutKeyPtr( record,
+		             Mac::keyAEDesiredClass,
+		             Mac::typeType,
+		             &objectClass,
+		             sizeof objectClass );
+		
+		AEPutKeyPtr( record,
+		             Mac::keyAEKeyForm,
+		             Mac::typeEnumerated,
+		             &keyForm,
+		             sizeof keyForm );
+		
+		AEPutKeyDesc( record, Mac::keyAEKeyData,   keyData   );
+		AEPutKeyDesc( record, Mac::keyAEContainer, container );
+		
+		return AECoerceDesc( record, Mac::typeObjectSpecifier );
+	}
+	
+}
 
 namespace TestEdit
 {
