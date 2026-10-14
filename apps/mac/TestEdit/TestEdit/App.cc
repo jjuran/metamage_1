@@ -37,7 +37,6 @@
 #include "Nitrogen/MacWindows.hh"
 
 // AEObjectModel
-#include "AEObjectModel/AccessProperty.hh"
 #include "AEObjectModel/AEObjectModel.hh"
 #include "AEObjectModel/Count.hh"
 #include "AEObjectModel/GetData.hh"
@@ -53,6 +52,8 @@
 #include "TestEdit/Document.hh"
 #include "TestEdit/Window.hh"
 
+
+#define COUNT( a )  (sizeof (a) / sizeof *(a))
 
 #define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
 
@@ -290,23 +291,8 @@ struct GetData_AppleEvent
 
 // Object accessors
 
-struct AppFrontmost_Property
-{
-	static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEPropertyID         propertyID,
-	                                               const Mac::AEDesc_Token&  containerToken,
-	                                               Mac::AEObjectClass        containerClass );
-	
-	static void Install_Accessor()
-	{
-		N::RegisterPropertyAccessor( Mac::pIsFrontProcess, Mac::typeNull, Accessor );
-	}
-};
-
-n::owned< Mac::AEDesc_Token >
-//
-AppFrontmost_Property::Accessor( Mac::AEPropertyID         propertyID,
-                                 const Mac::AEDesc_Token&  containerToken,
-                                 Mac::AEObjectClass        containerClass )
+static
+n::owned< Mac::AEDesc_Token > is_frontmost()
 {
 	using mac::sys::current_process;
 	using mac::sys::is_front_process;
@@ -319,23 +305,8 @@ AppFrontmost_Property::Accessor( Mac::AEPropertyID         propertyID,
 	return N::AECreateDesc< typeBoolean, AEDesc_Token >( frontmost );
 }
 
-struct AppName_Property
-{
-	static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEPropertyID         propertyID,
-	                                               const Mac::AEDesc_Token&  containerToken,
-	                                               Mac::AEObjectClass        containerClass );
-	
-	static void Install_Accessor()
-	{
-		N::RegisterPropertyAccessor( Mac::pName, Mac::typeNull, Accessor );
-	}
-};
-
-n::owned< Mac::AEDesc_Token >
-//
-AppName_Property::Accessor( Mac::AEPropertyID         propertyID,
-                            const Mac::AEDesc_Token&  containerToken,
-                            Mac::AEObjectClass        containerClass )
+static
+n::owned< Mac::AEDesc_Token > app_name()
 {
 	return N::AECreateDesc< Mac::typeChar, Mac::AEDesc_Token >( "TestEdit" );
 }
@@ -441,23 +412,8 @@ struct Document_Element
 	}
 };
 
-struct DocName_Property
-{
-	static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEPropertyID         propertyID,
-	                                               const Mac::AEDesc_Token&  containerToken,
-	                                               Mac::AEObjectClass        containerClass );
-	
-	static void Install_Accessor()
-	{
-		N::RegisterPropertyAccessor( Mac::pName, typeDocument, Accessor );
-	}
-};
-
-n::owned< Mac::AEDesc_Token >
-//
-DocName_Property::Accessor( Mac::AEPropertyID         propertyID,
-                            const Mac::AEDesc_Token&  containerToken,
-                            Mac::AEObjectClass        containerClass )
+static
+n::owned< Mac::AEDesc_Token > doc_name( const Mac::AEDesc_Token& containerToken )
 {
 	WindowRef window = N::AEGetDescData< typeDocument >( containerToken );
 	
@@ -603,6 +559,154 @@ bool FileOpenDialog( Ped::CommandCode )
 	return true;
 }
 
+static const DescType app_properties[] =
+{
+	pName,
+	pIsFrontProcess,
+};
+
+static const DescType doc_properties[] =
+{
+	pName,
+};
+
+static
+n::owned< Mac::AEDesc_Token >
+//
+new_property_token( const Mac::AEDesc_Token&  containerToken,
+                    DescType                  containerClass,
+                    DescType                  propertyID )
+{
+	switch ( containerClass )
+	{
+		case typeNull:
+			switch ( propertyID )
+			{
+				case pName:
+					return app_name();
+				
+				case pIsFrontProcess:
+					return is_frontmost();
+				
+				default:
+					break;
+			}
+			break;
+		
+		case cDocument:
+			switch ( propertyID )
+			{
+				case pName:
+					return doc_name( containerToken );
+				
+				default:
+					break;
+			}
+			break;
+		
+		default:
+			break;
+	}
+	
+	Mac::ThrowOSStatus( errAENoSuchObject );
+	
+	return n::owned< Mac::AEDesc_Token >();
+}
+
+static
+n::owned< Mac::AEDesc_Token >
+//
+access_all_properties( const Mac::AEDesc_Token&  containerToken,
+                       Mac::AEObjectClass        containerClass,
+                       const DescType*           p,
+                       unsigned                  n_properties )
+{
+	typedef Mac::AEDesc_Token Token;
+	
+	n::owned< Token > result = N::AECreateList< Token >( true );
+	
+	/*
+		For each property belonging to the container
+		object class, create a token corresponding
+		to that property of the container object.
+		
+		The newly created token is stored in a scoped
+		type that will automatically destroy it fully.
+		After adding it the list, we need to have the
+		AEDesc disposed, but token disposal shouldn't
+		occur yet.  Therefore, disclaim the ownership
+		and call AEDisposeDesc() explicitly.
+		
+		If adding the token to the list fails, then
+		AEPutDesc() will throw and the token will be
+		fully destroyed.  If any failure in the loop
+		occurs, the partially built token list will
+		be fully destroyed as well.
+	*/
+	
+	while ( n_properties-- > 0 )
+	{
+		AEKeyword prop = *p++;
+		
+		n::owned< Token > token = new_property_token( containerToken,
+		                                              containerClass,
+		                                              prop );
+		
+		N::AEPutKeyDesc( result, (Mac::AEKeyword) prop, token );
+		
+		AEDesc desc = token.release();
+		
+		AEDisposeDesc( &desc );
+	}
+	
+	return result;
+}
+
+n::owned< Mac::AEDesc_Token >
+//
+DispatchPropertyAccess( Mac::AEObjectClass        desiredClass,
+                        const Mac::AEDesc_Token&  containerToken,
+                        Mac::AEObjectClass        containerClass,
+                        Mac::AEKeyForm            keyForm,
+                        const Mac::AEDesc_Data&   keyData );
+
+n::owned< Mac::AEDesc_Token >
+//
+DispatchPropertyAccess( Mac::AEObjectClass        desiredClass,
+                        const Mac::AEDesc_Token&  containerToken,
+                        Mac::AEObjectClass        containerClass,
+                        Mac::AEKeyForm            keyForm,
+                        const Mac::AEDesc_Data&   keyData )
+{
+	if ( keyData.descriptorType == typeAbsoluteOrdinal )
+	{
+		const DescType* p;
+		unsigned        n;
+		
+		switch ( containerClass | 0 )
+		{
+			case typeNull:
+				p =        app_properties;
+				n = COUNT( app_properties );
+				break;
+			
+			case cDocument:
+				p =        doc_properties;
+				n = COUNT( doc_properties );
+				break;
+			
+			default:
+				Mac::ThrowOSStatus( errAEEventNotHandled );
+		}
+		
+		return access_all_properties( containerToken, containerClass, p, n );
+	}
+	
+	DescType propertyID = N::AEGetDescData< Mac::typeType >( keyData );
+	
+	return new_property_token( containerToken, containerClass, propertyID );
+}
+
 static
 void SetUpAppleEvents()
 {
@@ -617,8 +721,8 @@ void SetUpAppleEvents()
 	N::AEInstallObjectAccessor< N::DispatchAccessToList >( Mac::AEObjectClass( typeWildCard ), Mac::typeAEList ).release();
 	
 	// Property accessors
-	N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( Mac::cProperty, Mac::typeNull ).release();
-	N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( Mac::cProperty, typeDocument  ).release();
+	N::AEInstallObjectAccessor< DispatchPropertyAccess >( Mac::cProperty, Mac::typeNull ).release();
+	N::AEInstallObjectAccessor< DispatchPropertyAccess >( Mac::cProperty, typeDocument  ).release();
 	
 	Document_Element::Install_Accessor();
 	
@@ -637,11 +741,6 @@ void SetUpAppleEvents()
 	}
 	
 	Document_Token::Install_DataGetter();
-	
-	AppName_Property     ::Install_Accessor();
-	AppFrontmost_Property::Install_Accessor();
-	
-	DocName_Property::Install_Accessor();
 }
 
 }
