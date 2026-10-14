@@ -385,6 +385,7 @@ GetData( const Mac::AEDesc_Token& obj, Mac::DescType desiredType )
 		
 		case typeBoolean:
 		case typeChar:
+		case typeType:
 		case typeAERecord:
 		case typeUnicodeText:
 			return N::AEDuplicateDesc( obj );
@@ -634,12 +635,14 @@ bool FileOpenDialog( Ped::CommandCode )
 
 static const DescType app_properties[] =
 {
+	pClass,
 	pName,
 	pIsFrontProcess,
 };
 
 static const DescType doc_properties[] =
 {
+	pClass,
 	pName,
 };
 
@@ -655,6 +658,9 @@ new_property_token( const Mac::AEDesc_Token&  containerToken,
 		case typeNull:
 			switch ( propertyID )
 			{
+				case pClass:
+					return N::AECreateDesc< Mac::typeType, Mac::AEDesc_Token >( Mac::DescType( cApplication ) );
+				
 				case pName:
 					return app_name();
 				
@@ -679,6 +685,11 @@ new_property_token( const Mac::AEDesc_Token&  containerToken,
 		
 		default:
 			break;
+	}
+	
+	if ( propertyID == pClass )
+	{
+		return N::AECreateDesc< Mac::typeType, Mac::AEDesc_Token >( Mac::DescType( containerClass ) );
 	}
 	
 	Mac::ThrowOSStatus( errAENoSuchObject );
