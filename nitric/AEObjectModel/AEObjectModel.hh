@@ -6,16 +6,6 @@
 #ifndef AEOBJECTMODEL_AEOBJECTMODEL_HH
 #define AEOBJECTMODEL_AEOBJECTMODEL_HH
 
-// Mac OS X
-#ifdef __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
-#endif
-
-// Mac OS
-#ifndef __AEREGISTRY__
-#include <AERegistry.h>
-#endif
-
 // Nitrogen
 #ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSETOKEN_HH
 #include "Mac/AppleEvents/Functions/AEDisposeToken.hh"
@@ -42,14 +32,6 @@ namespace Nitrogen
 	pascal OSErr OSLDisposeToken( AEDesc* token );
 	
 	void AESetObjectCallbacks();
-	
-	nucleus::owned< Mac::AEDesc_Token >
-	//
-	DispatchPropertyAccess( Mac::AEObjectClass        desiredClass,
-	                        const Mac::AEDesc_Token&  containerToken,
-	                        Mac::AEObjectClass        containerClass,
-	                        Mac::AEKeyForm            keyForm,
-	                        const Mac::AEDesc_Data&   keyData );
 	
 	nucleus::owned< Mac::AEDesc_Token >
 	//

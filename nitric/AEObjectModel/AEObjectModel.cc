@@ -16,9 +16,6 @@
 #include "Nitrogen/AEObjects.hh"
 #endif
 
-// Nitrogen Extras / AEObjectModel
-#include "AEObjectModel/AccessProperty.hh"
-
 
 namespace Nitrogen
 {
@@ -178,24 +175,6 @@ namespace Nitrogen
 		                                (::OSLMarkProcPtr        ) NULL,
 		                                (::OSLAdjustMarksProcPtr ) NULL,
 		                                (::OSLGetErrDescProcPtr  ) NULL );
-	}
-	
-	nucleus::owned< Mac::AEDesc_Token >
-	//
-	DispatchPropertyAccess( Mac::AEObjectClass        desiredClass,
-	                        const Mac::AEDesc_Token&  containerToken,
-	                        Mac::AEObjectClass        containerClass,
-	                        Mac::AEKeyForm            keyForm,
-	                        const Mac::AEDesc_Data&   keyData )
-	{
-		if ( keyData.descriptorType == typeAbsoluteOrdinal )
-		{
-			return AccessAllProperties( containerToken, containerClass );
-		}
-		
-		Mac::AEPropertyID propertyID = Mac::AEPropertyID( AEGetDescData< Mac::typeType >( keyData ) + 0 );
-		
-		return AccessProperty( propertyID, containerToken, containerClass );
 	}
 	
 	nucleus::owned< Mac::AEDesc_Token >
