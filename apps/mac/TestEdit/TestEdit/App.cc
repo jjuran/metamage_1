@@ -294,18 +294,7 @@ struct AppFrontmost_Property
 {
 	static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEPropertyID         propertyID,
 	                                               const Mac::AEDesc_Token&  containerToken,
-	                                               Mac::AEObjectClass        containerClass )
-	{
-		using mac::sys::current_process;
-		using mac::sys::is_front_process;
-		
-		const bool frontmost = is_front_process( current_process() );
-		
-		using Mac::typeBoolean;
-		using Mac::AEDesc_Token;
-		
-		return N::AECreateDesc< typeBoolean, AEDesc_Token >( frontmost );
-	}
+	                                               Mac::AEObjectClass        containerClass );
 	
 	static void Install_Accessor()
 	{
@@ -313,20 +302,43 @@ struct AppFrontmost_Property
 	}
 };
 
+n::owned< Mac::AEDesc_Token >
+//
+AppFrontmost_Property::Accessor( Mac::AEPropertyID         propertyID,
+                                 const Mac::AEDesc_Token&  containerToken,
+                                 Mac::AEObjectClass        containerClass )
+{
+	using mac::sys::current_process;
+	using mac::sys::is_front_process;
+	
+	const bool frontmost = is_front_process( current_process() );
+	
+	using Mac::typeBoolean;
+	using Mac::AEDesc_Token;
+	
+	return N::AECreateDesc< typeBoolean, AEDesc_Token >( frontmost );
+}
+
 struct AppName_Property
 {
 	static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEPropertyID         propertyID,
 	                                               const Mac::AEDesc_Token&  containerToken,
-	                                               Mac::AEObjectClass        containerClass )
-	{
-		return N::AECreateDesc< Mac::typeChar, Mac::AEDesc_Token >( "TestEdit" );
-	}
+	                                               Mac::AEObjectClass        containerClass );
 	
 	static void Install_Accessor()
 	{
 		N::RegisterPropertyAccessor( Mac::pName, Mac::typeNull, Accessor );
 	}
 };
+
+n::owned< Mac::AEDesc_Token >
+//
+AppName_Property::Accessor( Mac::AEPropertyID         propertyID,
+                            const Mac::AEDesc_Token&  containerToken,
+                            Mac::AEObjectClass        containerClass )
+{
+	return N::AECreateDesc< Mac::typeChar, Mac::AEDesc_Token >( "TestEdit" );
+}
 
 static
 n::owned< Mac::AEDesc_Token > token_for_document_window( WindowRef window )
@@ -433,18 +445,24 @@ struct DocName_Property
 {
 	static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEPropertyID         propertyID,
 	                                               const Mac::AEDesc_Token&  containerToken,
-	                                               Mac::AEObjectClass        containerClass )
-	{
-		WindowRef window = N::AEGetDescData< typeDocument >( containerToken );
-		
-		return window_name_token( window );
-	}
+	                                               Mac::AEObjectClass        containerClass );
 	
 	static void Install_Accessor()
 	{
 		N::RegisterPropertyAccessor( Mac::pName, typeDocument, Accessor );
 	}
 };
+
+n::owned< Mac::AEDesc_Token >
+//
+DocName_Property::Accessor( Mac::AEPropertyID         propertyID,
+                            const Mac::AEDesc_Token&  containerToken,
+                            Mac::AEObjectClass        containerClass )
+{
+	WindowRef window = N::AEGetDescData< typeDocument >( containerToken );
+	
+	return window_name_token( window );
+}
 
 // Count
 
