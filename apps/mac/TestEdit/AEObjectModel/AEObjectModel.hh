@@ -23,8 +23,6 @@ UInt32 ComputeAbsoluteIndex( const Mac::AEDesc_Data&  keyData,
 
 pascal OSErr OSLDisposeToken( AEDesc* token );
 
-void AESetObjectCallbacks();
-
 nucleus::owned< Mac::AEDesc_Token >
 //
 DispatchAccessToList( Mac::AEObjectClass        desiredClass,

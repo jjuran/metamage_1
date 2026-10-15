@@ -18,6 +18,7 @@
 
 // mac-config
 #include "mac_config/apple-events.hh"
+#include "mac_config/upp-macros.hh"
 
 // mac-sys-utils
 #include "mac_sys/current_process.hh"
@@ -792,9 +793,13 @@ DispatchPropertyAccess( Mac::AEObjectClass        desiredClass,
 	return new_property_token( containerToken, containerClass, propertyID );
 }
 
+DEFINE_UPP( OSLDisposeToken, OSLDisposeToken )
+
 static
 void SetUpAppleEvents()
 {
+	OSErr err;
+	
 	N::AEInstallEventHandler< Close_AppleEvent  ::Handler >( Mac::kAECoreSuite, Mac::kAEClose         ).release();
 	N::AEInstallEventHandler< Count_AppleEvent  ::Handler >( Mac::kAECoreSuite, Mac::kAECountElements ).release();
 	N::AEInstallEventHandler< GetData_AppleEvent::Handler >( Mac::kAECoreSuite, Mac::kAEGetData       ).release();
@@ -811,7 +816,15 @@ void SetUpAppleEvents()
 	
 	N::AEInstallObjectAccessor< Document_Element::Accessor >( Mac::cDocument, Mac::typeNull ).release();
 	
-	AESetObjectCallbacks();
+	err = AESetObjectCallbacks( (OSLCompareUPP     ) NULL,
+	                            (OSLCountUPP       ) NULL,
+	                            UPP_ARG( OSLDisposeToken ),
+	                            (OSLGetMarkTokenUPP) NULL,
+	                            (OSLMarkUPP        ) NULL,
+	                            (OSLAdjustMarksUPP ) NULL,
+	                            (OSLGetErrDescUPP  ) NULL );
+	
+	Mac::ThrowOSStatus( err );
 }
 
 }

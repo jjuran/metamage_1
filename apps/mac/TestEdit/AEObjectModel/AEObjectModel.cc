@@ -12,9 +12,6 @@
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif
-#ifndef NITROGEN_AEOBJECTS_HH
-#include "Nitrogen/AEObjects.hh"
-#endif
 
 
 namespace N = Nitrogen;
@@ -163,17 +160,6 @@ UInt32 ComputeAbsoluteIndex( const Mac::AEDesc_Data&  keyData,
 pascal OSErr OSLDisposeToken( AEDesc* token )
 {
 	return dispose_token( *token );
-}
-
-void AESetObjectCallbacks()
-{
-	Nitrogen::AESetObjectCallbacks( (::OSLCompareProcPtr     ) NULL,
-	                                (::OSLCountProcPtr       ) NULL,
-	                                OSLDisposeToken,
-	                                (::OSLGetMarkTokenProcPtr) NULL,
-	                                (::OSLMarkProcPtr        ) NULL,
-	                                (::OSLAdjustMarksProcPtr ) NULL,
-	                                (::OSLGetErrDescProcPtr  ) NULL );
 }
 
 nucleus::owned< Mac::AEDesc_Token >
