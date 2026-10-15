@@ -149,12 +149,6 @@ got_title:
 namespace Nitrogen
 {
 	
-	static inline
-	nucleus::owned< Mac::AEDesc_ObjectSpecifier > GetRootObjectSpecifier()
-	{
-		return nucleus::owned< Mac::AEDesc_ObjectSpecifier >();
-	}
-	
 	static
 	nucleus::owned< Mac::AEDesc_ObjectSpecifier >
 	//
@@ -435,7 +429,7 @@ GetDocumentObjSpec( const Mac::AEDesc_Token& obj )
 	n::owned< Mac::AEDesc_Data > keyData = N::AECreateDesc< Mac::typeSInt32 >( id );
 	
 	return N::AECreateObjectSpecifier( Mac::cDocument,
-	                                   N::GetRootObjectSpecifier(),
+	                                   n::owned< Mac::AEDesc_ObjectSpecifier >(),
 	                                   Mac::formUniqueID,
 	                                   keyData );
 }
@@ -448,7 +442,7 @@ GetData( const Mac::AEDesc_Token& obj, Mac::DescType desiredType )
 	switch ( obj.descriptorType )
 	{
 		case typeNull:
-			return N::GetRootObjectSpecifier();
+			return n::owned< Mac::AEDesc_ObjectSpecifier >();
 		
 		case typeAEList:
 			return GetDataFromTokenList( obj, desiredType );
