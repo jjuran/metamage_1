@@ -198,16 +198,17 @@ namespace tool
 		
 		plus::var_string result = slurped.move();
 		
-		if ( result.size() >= 2  &&  result[0] == '#'  &&  result[1] == '!' )
+		char*  data = &result[ 0 ];
+		size_t size = result.size();
+		
+		if ( size >= 2  &&  data[ 0 ] == '#'  &&  data[ 1 ] == '!' )
 		{
-			result[0] = result[1] = '-';  // Turn she-bang line into comment 
+			data[ 0 ] = data[ 1 ] = '-';  // Turn she-bang line into comment 
 		}
 		
 		// AppleScript 1.4.3 (in 9.0.4) hates linefeeds (1.8.3 in 9.2 is ok)
-		std::replace( result.begin(),
-		              result.end(),
-		              '\n',
-		              '\r' );
+		
+		std::replace( data, data + size, '\n', '\r' );
 		
 		return result;
 	}
