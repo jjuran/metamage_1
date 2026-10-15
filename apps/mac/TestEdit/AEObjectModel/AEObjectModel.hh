@@ -6,16 +6,6 @@
 #ifndef AEOBJECTMODEL_AEOBJECTMODEL_HH
 #define AEOBJECTMODEL_AEOBJECTMODEL_HH
 
-// Mac OS X
-#ifdef __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
-#endif
-
-// Mac OS
-#ifndef __AEREGISTRY__
-#include <AERegistry.h>
-#endif
-
 // Nitrogen
 #ifndef MAC_APPLEEVENTS_FUNCTIONS_AEDISPOSETOKEN_HH
 #include "Mac/AppleEvents/Functions/AEDisposeToken.hh"
@@ -39,27 +29,9 @@ namespace Nitrogen
 	UInt32 ComputeAbsoluteIndex( const Mac::AEDesc_Data&  keyData,
 	                             std::size_t              count );
 	
-	pascal OSErr OSLCompare( ::DescType     op,
-	                         const AEDesc*  obj1,
-	                         const AEDesc*  obj2,
-	                         ::Boolean*     result );
-	
-	pascal OSErr OSLCount( ::DescType     desiredClass,
-	                       ::DescType     containerClass,
-	                       const AEDesc*  containerToken,
-	                       SInt32*        result );
-	
 	pascal OSErr OSLDisposeToken( AEDesc* token );
 	
 	void AESetObjectCallbacks();
-	
-	nucleus::owned< Mac::AEDesc_Token >
-	//
-	DispatchPropertyAccess( Mac::AEObjectClass        desiredClass,
-	                        const Mac::AEDesc_Token&  containerToken,
-	                        Mac::AEObjectClass        containerClass,
-	                        Mac::AEKeyForm            keyForm,
-	                        const Mac::AEDesc_Data&   keyData );
 	
 	nucleus::owned< Mac::AEDesc_Token >
 	//

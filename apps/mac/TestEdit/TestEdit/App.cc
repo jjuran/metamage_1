@@ -37,11 +37,7 @@
 #include "Nitrogen/MacWindows.hh"
 
 // AEObjectModel
-#include "AEObjectModel/AccessProperty.hh"
 #include "AEObjectModel/AEObjectModel.hh"
-#include "AEObjectModel/Count.hh"
-#include "AEObjectModel/GetData.hh"
-#include "AEObjectModel/GetObjectClass.hh"
 
 // Pedestal
 #include "Pedestal/AboutBox.hh"
@@ -54,8 +50,56 @@
 #include "TestEdit/Window.hh"
 
 
+#define COUNT( a )  (sizeof (a) / sizeof *(a))
+
 #define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
 
+
+namespace Nitrogen
+{
+	
+	static inline
+	nucleus::owned< Mac::AEDesc_ObjectSpecifier > GetRootObjectSpecifier()
+	{
+		return nucleus::owned< Mac::AEDesc_ObjectSpecifier >();
+	}
+	
+	static
+	nucleus::owned< Mac::AEDesc_ObjectSpecifier >
+	//
+	AECreateObjectSpecifier( Mac::AEObjectClass                  objectClass,
+	                         const Mac::AEDesc_ObjectSpecifier&  container,
+	                         Mac::AEKeyForm                      keyForm,
+	                         const Mac::AEDesc_Data&             keyData )
+	{
+		nucleus::owned< Mac::AERecord_Data > record = AECreateList( true );
+		
+		/*
+			g++ 3 can't handle this:
+			
+			AEPutKeyPtr< Mac::keyAEDesiredClass >( record, objectClass );
+			AEPutKeyPtr< Mac::keyAEKeyForm      >( record, keyForm     );
+		*/
+		
+		AEPutKeyPtr( record,
+		             Mac::keyAEDesiredClass,
+		             Mac::typeType,
+		             &objectClass,
+		             sizeof objectClass );
+		
+		AEPutKeyPtr( record,
+		             Mac::keyAEKeyForm,
+		             Mac::typeEnumerated,
+		             &keyForm,
+		             sizeof keyForm );
+		
+		AEPutKeyDesc( record, Mac::keyAEKeyData,   keyData   );
+		AEPutKeyDesc( record, Mac::keyAEContainer, container );
+		
+		return AECoerceDesc( record, Mac::typeObjectSpecifier );
+	}
+	
+}
 
 namespace TestEdit
 {
@@ -238,11 +282,9 @@ struct Count_AppleEvent
 		// AEResolve can't handle a null descriptor.
 		n::owned< Mac::AEDesc_Token > containerToken = containerIsRoot ? N::GetRootToken()
 		                                                               : N::AEResolve( containerObjSpec );
-		// The kind of container of the things we're counting, e.g. 'folder'
-		Mac::AEObjectClass containerClass = N::GetObjectClass( containerToken );
 		
 		// The kind of thing we're counting, e.g. 'file'
-		Mac::AEObjectClass desiredClass;
+		DescType desiredClass;
 		
 		/*
 			g++ 3 can't handle this:
@@ -256,7 +298,16 @@ struct Count_AppleEvent
 		                  &desiredClass,
 		                  sizeof desiredClass );
 		
-		std::size_t count = N::Count( desiredClass, containerClass, containerToken );
+		std::size_t count;
+		
+		if ( containerToken.get().descriptorType == typeNull  &&  desiredClass == cDocument )
+		{
+			count = count_document_windows();
+		}
+		else
+		{
+			Mac::ThrowOSStatus( errAEEventNotHandled );
+		}
 		
 		N::AEPutParamDesc( reply,
 		                   Mac::keyDirectObject,
@@ -270,6 +321,85 @@ struct Count_AppleEvent
 	}
 };
 
+static
+nucleus::owned< Mac::AEDesc_Data >
+//
+GetData( const Mac::AEDesc_Token&  obj,
+         Mac::DescType             desiredType = Mac::typeWildCard );
+
+static
+nucleus::owned< Mac::AEDesc_Data >
+//
+GetDataFromTokenList( const Mac::AEDescList_Token& obj, Mac::DescType desiredType )
+{
+	using N::AECreateList;
+	using N::AECountItems;
+	using N::AEPutDesc;
+	using N::AEDesc_Cast;
+	using N::AEGetNthDesc;
+	
+	nucleus::owned< Mac::AEDescList_Data > list = AECreateList< Mac::AEDesc_Data >( false );
+	
+	UInt32 count = AECountItems( obj );
+	
+	for ( UInt32 i = 1;  i <= count;  ++i )
+	{
+		AEPutDesc( list,
+		           0,
+		           GetData( AEDesc_Cast< const Mac::AEDesc_Token >( AEGetNthDesc( obj, i ).get() ),
+		                    desiredType ).get() );
+	}
+	
+	return list;
+}
+
+static
+nucleus::owned< Mac::AEDesc_Data >
+//
+GetDocumentObjSpec( const Mac::AEDesc_Token& obj )
+{
+	const WindowRef window = N::AEGetDescData< typeDocument >( obj );
+	
+	const long id = id_of_window( window );
+	
+	n::owned< Mac::AEDesc_Data > keyData = N::AECreateDesc< Mac::typeSInt32 >( id );
+	
+	return N::AECreateObjectSpecifier( Mac::cDocument,
+	                                   N::GetRootObjectSpecifier(),
+	                                   Mac::formUniqueID,
+	                                   keyData );
+}
+
+static
+nucleus::owned< Mac::AEDesc_Data >
+//
+GetData( const Mac::AEDesc_Token& obj, Mac::DescType desiredType )
+{
+	switch ( obj.descriptorType )
+	{
+		case typeNull:
+			return N::GetRootObjectSpecifier();
+		
+		case typeAEList:
+			return GetDataFromTokenList( obj, desiredType );
+		
+		case typeBoolean:
+		case typeChar:
+		case typeAERecord:
+		case typeUnicodeText:
+			return N::AEDuplicateDesc( obj );
+		
+		case typeDocument:
+			return GetDocumentObjSpec( obj );
+		
+		default:
+			Mac::ThrowOSStatus( errAEEventNotHandled );
+	}
+	
+	// not reached
+	return nucleus::owned< Mac::AEDesc_Data >();
+}
+
 struct GetData_AppleEvent
 {
 	static void Handler( Mac::AppleEvent const&  event,
@@ -277,8 +407,8 @@ struct GetData_AppleEvent
 	{
 		N::AEPutParamDesc( reply,
 		                   Mac::keyDirectObject,
-		                   N::GetData( N::AEResolve( N::AEGetParamDesc( event,
-		                                                                Mac::keyDirectObject ) ) ) );
+		                   GetData( N::AEResolve( N::AEGetParamDesc( event,
+		                                                             Mac::keyDirectObject ) ) ) );
 	}
 	
 	static void Install_Handler()
@@ -290,43 +420,25 @@ struct GetData_AppleEvent
 
 // Object accessors
 
-struct AppFrontmost_Property
+static
+n::owned< Mac::AEDesc_Token > is_frontmost()
 {
-	static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEPropertyID         propertyID,
-	                                               const Mac::AEDesc_Token&  containerToken,
-	                                               Mac::AEObjectClass        containerClass )
-	{
-		using mac::sys::current_process;
-		using mac::sys::is_front_process;
-		
-		const bool frontmost = is_front_process( current_process() );
-		
-		using Mac::typeBoolean;
-		using Mac::AEDesc_Token;
-		
-		return N::AECreateDesc< typeBoolean, AEDesc_Token >( frontmost );
-	}
+	using mac::sys::current_process;
+	using mac::sys::is_front_process;
 	
-	static void Install_Accessor()
-	{
-		N::RegisterPropertyAccessor( Mac::pIsFrontProcess, Mac::typeNull, Accessor );
-	}
-};
+	const bool frontmost = is_front_process( current_process() );
+	
+	using Mac::typeBoolean;
+	using Mac::AEDesc_Token;
+	
+	return N::AECreateDesc< typeBoolean, AEDesc_Token >( frontmost );
+}
 
-struct AppName_Property
+static
+n::owned< Mac::AEDesc_Token > app_name()
 {
-	static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEPropertyID         propertyID,
-	                                               const Mac::AEDesc_Token&  containerToken,
-	                                               Mac::AEObjectClass        containerClass )
-	{
-		return N::AECreateDesc< Mac::typeChar, Mac::AEDesc_Token >( "TestEdit" );
-	}
-	
-	static void Install_Accessor()
-	{
-		N::RegisterPropertyAccessor( Mac::pName, Mac::typeNull, Accessor );
-	}
-};
+	return N::AECreateDesc< Mac::typeChar, Mac::AEDesc_Token >( "TestEdit" );
+}
 
 static
 n::owned< Mac::AEDesc_Token > token_for_document_window( WindowRef window )
@@ -429,78 +541,13 @@ struct Document_Element
 	}
 };
 
-struct DocName_Property
+static
+n::owned< Mac::AEDesc_Token > doc_name( const Mac::AEDesc_Token& containerToken )
 {
-	static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEPropertyID         propertyID,
-	                                               const Mac::AEDesc_Token&  containerToken,
-	                                               Mac::AEObjectClass        containerClass )
-	{
-		WindowRef window = N::AEGetDescData< typeDocument >( containerToken );
-		
-		return window_name_token( window );
-	}
+	WindowRef window = N::AEGetDescData< typeDocument >( containerToken );
 	
-	static void Install_Accessor()
-	{
-		N::RegisterPropertyAccessor( Mac::pName, typeDocument, Accessor );
-	}
-};
-
-// Count
-
-struct Documents_Count
-{
-	static std::size_t Get( Mac::AEObjectClass        desiredClass,
-	                        Mac::AEObjectClass        containerClass,
-	                        const Mac::AEDesc_Token&  containerToken )
-	{
-		return count_document_windows();
-	}
-	
-	static void Install()
-	{
-		N::RegisterCounter( Mac::cDocument, Mac::typeNull, Get );
-	}
-};
-
-// Get data
-
-struct LiteralData_Token
-{
-	static n::owned< Mac::AEDesc_Data > Get( const Mac::AEDesc_Token&  obj,
-	                                         Mac::DescType             desiredType )
-	{
-		return N::AEDuplicateDesc( obj );
-	}
-	
-	static void Install_DataGetter( Mac::DescType type )
-	{
-		N::RegisterDataGetter( type, Get );
-	}
-};
-
-struct Document_Token
-{
-	static n::owned< Mac::AEDesc_Data > Get( const Mac::AEDesc_Token&  obj,
-	                                         Mac::DescType             desiredType )
-	{
-		const WindowRef window = N::AEGetDescData< typeDocument >( obj );
-		
-		const long id = id_of_window( window );
-		
-		n::owned< Mac::AEDesc_Data > keyData = N::AECreateDesc< Mac::typeSInt32 >( id );
-		
-		return N::AECreateObjectSpecifier( Mac::cDocument,
-		                                   N::GetRootObjectSpecifier(),
-		                                   Mac::formUniqueID,
-		                                   keyData );
-	}
-	
-	static void Install_DataGetter()
-	{
-		N::RegisterDataGetter( typeDocument, Get );
-	}
-};
+	return window_name_token( window );
+}
 
 
 static bool About( Ped::CommandCode )
@@ -585,6 +632,154 @@ bool FileOpenDialog( Ped::CommandCode )
 	return true;
 }
 
+static const DescType app_properties[] =
+{
+	pName,
+	pIsFrontProcess,
+};
+
+static const DescType doc_properties[] =
+{
+	pName,
+};
+
+static
+n::owned< Mac::AEDesc_Token >
+//
+new_property_token( const Mac::AEDesc_Token&  containerToken,
+                    DescType                  containerClass,
+                    DescType                  propertyID )
+{
+	switch ( containerClass )
+	{
+		case typeNull:
+			switch ( propertyID )
+			{
+				case pName:
+					return app_name();
+				
+				case pIsFrontProcess:
+					return is_frontmost();
+				
+				default:
+					break;
+			}
+			break;
+		
+		case cDocument:
+			switch ( propertyID )
+			{
+				case pName:
+					return doc_name( containerToken );
+				
+				default:
+					break;
+			}
+			break;
+		
+		default:
+			break;
+	}
+	
+	Mac::ThrowOSStatus( errAENoSuchObject );
+	
+	return n::owned< Mac::AEDesc_Token >();
+}
+
+static
+n::owned< Mac::AEDesc_Token >
+//
+access_all_properties( const Mac::AEDesc_Token&  containerToken,
+                       Mac::AEObjectClass        containerClass,
+                       const DescType*           p,
+                       unsigned                  n_properties )
+{
+	typedef Mac::AEDesc_Token Token;
+	
+	n::owned< Token > result = N::AECreateList< Token >( true );
+	
+	/*
+		For each property belonging to the container
+		object class, create a token corresponding
+		to that property of the container object.
+		
+		The newly created token is stored in a scoped
+		type that will automatically destroy it fully.
+		After adding it the list, we need to have the
+		AEDesc disposed, but token disposal shouldn't
+		occur yet.  Therefore, disclaim the ownership
+		and call AEDisposeDesc() explicitly.
+		
+		If adding the token to the list fails, then
+		AEPutDesc() will throw and the token will be
+		fully destroyed.  If any failure in the loop
+		occurs, the partially built token list will
+		be fully destroyed as well.
+	*/
+	
+	while ( n_properties-- > 0 )
+	{
+		AEKeyword prop = *p++;
+		
+		n::owned< Token > token = new_property_token( containerToken,
+		                                              containerClass,
+		                                              prop );
+		
+		N::AEPutKeyDesc( result, (Mac::AEKeyword) prop, token );
+		
+		AEDesc desc = token.release();
+		
+		AEDisposeDesc( &desc );
+	}
+	
+	return result;
+}
+
+n::owned< Mac::AEDesc_Token >
+//
+DispatchPropertyAccess( Mac::AEObjectClass        desiredClass,
+                        const Mac::AEDesc_Token&  containerToken,
+                        Mac::AEObjectClass        containerClass,
+                        Mac::AEKeyForm            keyForm,
+                        const Mac::AEDesc_Data&   keyData );
+
+n::owned< Mac::AEDesc_Token >
+//
+DispatchPropertyAccess( Mac::AEObjectClass        desiredClass,
+                        const Mac::AEDesc_Token&  containerToken,
+                        Mac::AEObjectClass        containerClass,
+                        Mac::AEKeyForm            keyForm,
+                        const Mac::AEDesc_Data&   keyData )
+{
+	if ( keyData.descriptorType == typeAbsoluteOrdinal )
+	{
+		const DescType* p;
+		unsigned        n;
+		
+		switch ( containerClass | 0 )
+		{
+			case typeNull:
+				p =        app_properties;
+				n = COUNT( app_properties );
+				break;
+			
+			case cDocument:
+				p =        doc_properties;
+				n = COUNT( doc_properties );
+				break;
+			
+			default:
+				Mac::ThrowOSStatus( errAEEventNotHandled );
+		}
+		
+		return access_all_properties( containerToken, containerClass, p, n );
+	}
+	
+	DescType propertyID = N::AEGetDescData< Mac::typeType >( keyData );
+	
+	return new_property_token( containerToken, containerClass, propertyID );
+}
+
 static
 void SetUpAppleEvents()
 {
@@ -599,31 +794,13 @@ void SetUpAppleEvents()
 	N::AEInstallObjectAccessor< N::DispatchAccessToList >( Mac::AEObjectClass( typeWildCard ), Mac::typeAEList ).release();
 	
 	// Property accessors
-	N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( Mac::cProperty, Mac::typeNull ).release();
-	N::AEInstallObjectAccessor< N::DispatchPropertyAccess >( Mac::cProperty, typeDocument  ).release();
+	N::AEInstallObjectAccessor< DispatchPropertyAccess >( Mac::cProperty, Mac::typeNull ).release();
+	N::AEInstallObjectAccessor< DispatchPropertyAccess >( Mac::cProperty, typeDocument  ).release();
 	
 	Document_Element::Install_Accessor();
 	
 	// Set up AEObjectModel
 	N::AESetObjectCallbacks();
-	
-	Documents_Count::Install();
-	
-	LiteralData_Token::Install_DataGetter( Mac::typeBoolean  );
-	LiteralData_Token::Install_DataGetter( Mac::typeChar     );
-	LiteralData_Token::Install_DataGetter( Mac::typeAERecord );
-	
-	if ( TARGET_API_MAC_CARBON )
-	{
-		LiteralData_Token::Install_DataGetter( Mac::typeUnicodeText );
-	}
-	
-	Document_Token::Install_DataGetter();
-	
-	AppName_Property     ::Install_Accessor();
-	AppFrontmost_Property::Install_Accessor();
-	
-	DocName_Property::Install_Accessor();
 }
 
 }
