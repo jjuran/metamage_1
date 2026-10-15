@@ -34,7 +34,6 @@
 #include "Nitrogen/AEDataModel.hh"
 #include "Nitrogen/AEObjects.hh"
 #include "Nitrogen/AppleEvents.hh"
-#include "Nitrogen/MacWindows.hh"
 
 // AEObjectModel
 #include "AEObjectModel/AEObjectModel.hh"
@@ -54,6 +53,53 @@
 
 #define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
 
+
+static inline
+OSStatus CopyWindowTitleAsAEDesc( WindowRef window, AEDesc* result )
+{
+	CFStringRef string;
+	Str255      str;
+	
+	DescType    type;
+	const void* data;
+	Size        size;
+	
+	if ( TARGET_API_MAC_CARBON )
+	{
+		OSStatus err = CopyWindowTitleAsCFString( window, &string );
+		
+		if ( err )
+		{
+			return err;
+		}
+		
+		if ( const UniChar* characters = CFStringGetCharactersPtr( string ) )
+		{
+			type = typeUnicodeText;
+			data = characters;
+			size = sizeof (UniChar) * CFStringGetLength( string );
+			
+			goto got_title;
+		}
+	}
+	
+	GetWTitle( window, str );
+	
+	type = typeChar;
+	data = str + 1;
+	size = str[ 0 ];
+	
+got_title:
+	
+	OSStatus err = AECreateDesc( type, data, size, result );
+	
+	if ( TARGET_API_MAC_CARBON )
+	{
+		CFRelease( string );
+	}
+	
+	return err;
+}
 
 namespace Nitrogen
 {
@@ -453,34 +499,6 @@ n::owned< Mac::AEDesc_Token > token_for_document_window( WindowRef window )
 }
 
 static
-n::owned< Mac::AEDesc_Token > window_name_token( WindowRef window )
-{
-	if ( TARGET_API_MAC_CARBON )
-	{
-		n::owned< CFStringRef > title = N::CopyWindowTitleAsCFString( window );
-		
-		if ( const UniChar* characters = CFStringGetCharactersPtr( title ) )
-		{
-			CFIndex length = CFStringGetLength( title );
-			
-			Size size = length * sizeof (UniChar);
-			
-			return N::AECreateDesc< Mac::AEDesc_Token >( Mac::typeUnicodeText,
-			                                             characters,
-			                                             size );
-		}
-	}
-	
-	Str255 title;
-	
-	GetWTitle( window, title );
-	
-	return N::AECreateDesc< Mac::AEDesc_Token >( Mac::typeChar,
-	                                             title + 1,
-	                                             title[ 0 ] );
-}
-
-static
 n::owned< Mac::AEDesc_Token > get_nth_document_token( std::size_t index )
 {
 	return token_for_document_window( get_nth_document_window( index ) );
@@ -547,7 +565,13 @@ n::owned< Mac::AEDesc_Token > doc_name( const Mac::AEDesc_Token& containerToken 
 {
 	WindowRef window = N::AEGetDescData< typeDocument >( containerToken );
 	
-	return window_name_token( window );
+	Mac::AEDesc_Token desc;
+	
+	OSStatus err = CopyWindowTitleAsAEDesc( window, &desc );
+	
+	Mac::ThrowOSStatus( err );
+	
+	return n::owned< Mac::AEDesc_Token >::seize( desc );
 }
 
 
