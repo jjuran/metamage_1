@@ -326,7 +326,7 @@ struct Count_AppleEvent
 		bool containerIsRoot = containerObjSpec.get().descriptorType == typeNull;
 		
 		// AEResolve can't handle a null descriptor.
-		n::owned< Mac::AEDesc_Token > containerToken = containerIsRoot ? N::GetRootToken()
+		n::owned< Mac::AEDesc_Token > containerToken = containerIsRoot ? n::owned< Mac::AEDesc_Token >()
 		                                                               : N::AEResolve( containerObjSpec );
 		
 		// The kind of thing we're counting, e.g. 'file'

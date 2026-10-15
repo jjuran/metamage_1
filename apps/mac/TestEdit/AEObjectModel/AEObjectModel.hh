@@ -21,11 +21,6 @@
 namespace Nitrogen
 {
 
-inline nucleus::owned< Mac::AEDesc_Token > GetRootToken()
-{
-	return nucleus::owned< Mac::AEDesc_Token >();
-}
-
 UInt32 ComputeAbsoluteIndex( const Mac::AEDesc_Data&  keyData,
                              std::size_t              count );
 
