@@ -58,6 +58,38 @@
 namespace n = nucleus;
 
 static inline
+OSErr AECreateObjectSpecifier( DescType       objectClass,
+                               const AEDesc&  container,
+                               DescType       keyForm,
+                               const AEDesc&  keyData,
+                               AEDesc&        result )
+{
+	OSErr err;
+	
+	AEDesc record;
+	
+	err = AECreateList( 0, 0, true, &record );
+	
+	if ( err == noErr )
+	{
+		#define PUT( key, type, data )  \
+			AEPutKeyPtr( &record, key, type, &data, sizeof data ) )
+		
+		(err = PUT( keyAEDesiredClass, typeType,       objectClass  )  ||
+		(err = PUT( keyAEKeyForm,      typeEnumerated, keyForm      )  ||
+		(err = AEPutKeyDesc( &record, keyAEKeyData,   &keyData     ))  ||
+		(err = AEPutKeyDesc( &record, keyAEContainer, &container   ))  ||
+		(err = AECoerceDesc( &record, typeObjectSpecifier, &result ));
+		
+		#undef PUT
+		
+		AEDisposeDesc( &record );
+	}
+	
+	return err;
+}
+
+static inline
 OSErr resolve_direct_object( const AppleEvent& event, AEDesc& token )
 {
 	OSErr err;
@@ -144,46 +176,6 @@ got_title:
 	}
 	
 	return err;
-}
-
-namespace Nitrogen
-{
-	
-	static
-	nucleus::owned< Mac::AEDesc_ObjectSpecifier >
-	//
-	AECreateObjectSpecifier( Mac::AEObjectClass                  objectClass,
-	                         const Mac::AEDesc_ObjectSpecifier&  container,
-	                         Mac::AEKeyForm                      keyForm,
-	                         const Mac::AEDesc_Data&             keyData )
-	{
-		nucleus::owned< Mac::AERecord_Data > record = AECreateList( true );
-		
-		/*
-			g++ 3 can't handle this:
-			
-			AEPutKeyPtr< Mac::keyAEDesiredClass >( record, objectClass );
-			AEPutKeyPtr< Mac::keyAEKeyForm      >( record, keyForm     );
-		*/
-		
-		AEPutKeyPtr( record,
-		             Mac::keyAEDesiredClass,
-		             Mac::typeType,
-		             &objectClass,
-		             sizeof objectClass );
-		
-		AEPutKeyPtr( record,
-		             Mac::keyAEKeyForm,
-		             Mac::typeEnumerated,
-		             &keyForm,
-		             sizeof keyForm );
-		
-		AEPutKeyDesc( record, Mac::keyAEKeyData,   keyData   );
-		AEPutKeyDesc( record, Mac::keyAEContainer, container );
-		
-		return AECoerceDesc( record, Mac::typeObjectSpecifier );
-	}
-	
 }
 
 namespace TestEdit
@@ -422,16 +414,25 @@ nucleus::owned< Mac::AEDesc_Data >
 //
 GetDocumentObjSpec( const Mac::AEDesc_Token& obj )
 {
+	OSErr err;
+	
 	const WindowRef window = N::AEGetDescData< typeDocument >( obj );
 	
 	const long id = id_of_window( window );
 	
 	n::owned< Mac::AEDesc_Data > keyData = N::AECreateDesc< Mac::typeSInt32 >( id );
 	
-	return N::AECreateObjectSpecifier( Mac::cDocument,
-	                                   n::owned< Mac::AEDesc_ObjectSpecifier >(),
-	                                   Mac::formUniqueID,
-	                                   keyData );
+	Mac::AEDesc_ObjectSpecifier result;
+	
+	err = AECreateObjectSpecifier( cDocument,
+	                               n::owned< Mac::AEDesc_ObjectSpecifier >(),
+	                               formUniqueID,
+	                               keyData,
+	                               result );
+	
+	Mac::ThrowOSStatus( err );
+	
+	return n::owned< Mac::AEDesc_ObjectSpecifier >::seize( result );
 }
 
 static
