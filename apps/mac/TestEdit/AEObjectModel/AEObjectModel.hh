@@ -18,9 +18,6 @@
 #endif
 
 
-namespace Nitrogen
-{
-
 UInt32 ComputeAbsoluteIndex( const Mac::AEDesc_Data&  keyData,
                              std::size_t              count );
 
@@ -35,7 +32,5 @@ DispatchAccessToList( Mac::AEObjectClass        desiredClass,
                       Mac::AEObjectClass        containerClass,
                       Mac::AEKeyForm            keyForm,
                       const Mac::AEDesc_Data&   keyData );
-
-}
 
 #endif

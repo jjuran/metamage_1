@@ -510,7 +510,7 @@ struct Document_Element
 		{
 			std::size_t count = count_document_windows();
 			
-			UInt32 index = N::ComputeAbsoluteIndex( keyData, count );
+			UInt32 index = ComputeAbsoluteIndex( keyData, count );
 			
 			if ( index > 0 )
 			{
@@ -803,7 +803,7 @@ void SetUpAppleEvents()
 	N::AEObjectInit();
 	
 	// List multiplexor, e.g. for 'get name of every window'
-	N::AEInstallObjectAccessor< N::DispatchAccessToList >( Mac::AEObjectClass( typeWildCard ), Mac::typeAEList ).release();
+	N::AEInstallObjectAccessor< DispatchAccessToList >( Mac::AEObjectClass( typeWildCard ), Mac::typeAEList ).release();
 	
 	// Property accessors
 	N::AEInstallObjectAccessor< DispatchPropertyAccess >( Mac::cProperty, Mac::typeNull ).release();
@@ -811,8 +811,7 @@ void SetUpAppleEvents()
 	
 	N::AEInstallObjectAccessor< Document_Element::Accessor >( Mac::cDocument, Mac::typeNull ).release();
 	
-	// Set up AEObjectModel
-	N::AESetObjectCallbacks();
+	AESetObjectCallbacks();
 }
 
 }

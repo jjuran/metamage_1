@@ -17,8 +17,7 @@
 #endif
 
 
-namespace Nitrogen
-{
+namespace N = Nitrogen;
 
 static
 OSErr dispose_token_list( AEDesc& list )
@@ -65,7 +64,7 @@ OSErr dispose_token( AEDesc& token )
 		err = dispose_token_list( token );
 	}
 	
-	::AEDisposeDesc( &token );
+	AEDisposeDesc( &token );
 	
 	return err;
 }
@@ -95,7 +94,7 @@ UInt32 ComputeAbsoluteIndex( const Mac::AEDesc_Data&  keyData,
 	{
 		case typeAbsoluteOrdinal:
 			{
-				Mac::AEAbsoluteOrdinal ordinal = AEGetDescData< Mac::typeAbsoluteOrdinal >( keyData );
+				Mac::AEAbsoluteOrdinal ordinal = N::AEGetDescData< Mac::typeAbsoluteOrdinal >( keyData );
 				
 				// Check for 'every' first
 				if ( ordinal == Mac::kAEAll )
@@ -135,7 +134,7 @@ UInt32 ComputeAbsoluteIndex( const Mac::AEDesc_Data&  keyData,
 		
 		case typeSInt32:
 			{
-				SInt32 index = AEGetDescData< Mac::typeSInt32 >( keyData );
+				SInt32 index = N::AEGetDescData< Mac::typeSInt32 >( keyData );
 				
 				if ( index < 0 )
 				{
@@ -185,7 +184,7 @@ DispatchAccessToList( Mac::AEObjectClass        desiredClass,
                       Mac::AEKeyForm            keyForm,
                       const Mac::AEDesc_Data&   keyData )
 {
-	nucleus::owned< Mac::AEDescList_Token > result = AECreateList< Mac::AEDescList_Token >();
+	nucleus::owned< Mac::AEDescList_Token > result = N::AECreateList< Mac::AEDescList_Token >();
 	
 	OSErr err;
 	
@@ -211,11 +210,11 @@ DispatchAccessToList( Mac::AEObjectClass        desiredClass,
 		token list is destroyed in full.
 	*/
 	
-	long count = AECountItems( containerToken );
+	long count = N::AECountItems( containerToken );
 	
 	for ( long i = 1;  i <= count;  ++i )
 	{
-		nucleus::owned< Mac::AEDesc_Data > subtoken = AEGetNthDesc( containerToken, i );
+		nucleus::owned< Mac::AEDesc_Data > subtoken = N::AEGetNthDesc( containerToken, i );
 		
 		AEDesc object;
 		
@@ -228,7 +227,7 @@ DispatchAccessToList( Mac::AEObjectClass        desiredClass,
 		
 		if ( err == noErr )
 		{
-			err = AEPutDesc( &Detail::mutable_AEDesc( result ), 0, &object );
+			err = AEPutDesc( &N::Detail::mutable_AEDesc( result ), 0, &object );
 			
 			if ( err )
 			{
@@ -236,7 +235,7 @@ DispatchAccessToList( Mac::AEObjectClass        desiredClass,
 			}
 			else
 			{
-				::AEDisposeDesc( &object );
+				AEDisposeDesc( &object );
 			}
 		}
 		
@@ -244,6 +243,4 @@ DispatchAccessToList( Mac::AEObjectClass        desiredClass,
 	}
 	
 	return result;
-}
-
 }
