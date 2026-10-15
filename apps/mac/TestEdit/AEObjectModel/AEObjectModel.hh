@@ -20,27 +20,27 @@
 
 namespace Nitrogen
 {
-	
-	inline nucleus::owned< Mac::AEDesc_Token > GetRootToken()
-	{
-		return nucleus::owned< Mac::AEDesc_Token >();
-	}
-	
-	UInt32 ComputeAbsoluteIndex( const Mac::AEDesc_Data&  keyData,
-	                             std::size_t              count );
-	
-	pascal OSErr OSLDisposeToken( AEDesc* token );
-	
-	void AESetObjectCallbacks();
-	
-	nucleus::owned< Mac::AEDesc_Token >
-	//
-	DispatchAccessToList( Mac::AEObjectClass        desiredClass,
-	                      const Mac::AEDesc_Token&  containerToken,
-	                      Mac::AEObjectClass        containerClass,
-	                      Mac::AEKeyForm            keyForm,
-	                      const Mac::AEDesc_Data&   keyData );
-	
+
+inline nucleus::owned< Mac::AEDesc_Token > GetRootToken()
+{
+	return nucleus::owned< Mac::AEDesc_Token >();
+}
+
+UInt32 ComputeAbsoluteIndex( const Mac::AEDesc_Data&  keyData,
+                             std::size_t              count );
+
+pascal OSErr OSLDisposeToken( AEDesc* token );
+
+void AESetObjectCallbacks();
+
+nucleus::owned< Mac::AEDesc_Token >
+//
+DispatchAccessToList( Mac::AEObjectClass        desiredClass,
+                      const Mac::AEDesc_Token&  containerToken,
+                      Mac::AEObjectClass        containerClass,
+                      Mac::AEKeyForm            keyForm,
+                      const Mac::AEDesc_Data&   keyData );
+
 }
 
 #endif
