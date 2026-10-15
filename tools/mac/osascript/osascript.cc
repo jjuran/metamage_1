@@ -14,7 +14,6 @@
 #include <unistd.h>
 
 // iota
-#include "iota/convert_string.hh"
 #include "iota/strings.hh"
 
 // more-libc
@@ -197,7 +196,7 @@ namespace tool
 			// Invalid UTF-8, probably MacRoman
 		}
 		
-		nucleus::mutable_string result = iota::convert_string< nucleus::string >( slurped );
+		plus::var_string result = slurped.move();
 		
 		if ( result.size() >= 2  &&  result[0] == '#'  &&  result[1] == '!' )
 		{
@@ -422,9 +421,7 @@ namespace tool
 			
 			joined_script = plus::mac_from_utf8( joined_script );
 			
-			nucleus::string converted_string = iota::convert_string< nucleus::string >( joined_script );
-			
-			script = CompileSource( N::AECreateDesc< Mac::typeChar >( converted_string ), getsCWDProperty );
+			script = CompileSource( N::AECreateDesc< Mac::typeChar >( joined_script ), getsCWDProperty );
 		}
 		else
 		{
@@ -473,9 +470,7 @@ namespace tool
 					output += "\n";
 				}
 				
-				plus::string converted = iota::convert_string< plus::string >( output );
-				
-				plus::string utf8_output = plus::utf8_from_mac( converted );
+				plus::string utf8_output = plus::utf8_from_mac( output );
 				
 				p7::write( p7::stdout_fileno, utf8_output );
 			}
