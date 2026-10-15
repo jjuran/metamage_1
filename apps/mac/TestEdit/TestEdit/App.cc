@@ -535,11 +535,6 @@ struct Document_Element
 		
 		return n::owned< Mac::AEDesc_Token >();
 	}
-	
-	static void Install_Accessor()
-	{
-		N::AEInstallObjectAccessor< Accessor >( Mac::cDocument, Mac::typeNull ).release();
-	}
 };
 
 static
@@ -814,7 +809,7 @@ void SetUpAppleEvents()
 	N::AEInstallObjectAccessor< DispatchPropertyAccess >( Mac::cProperty, Mac::typeNull ).release();
 	N::AEInstallObjectAccessor< DispatchPropertyAccess >( Mac::cProperty, typeDocument  ).release();
 	
-	Document_Element::Install_Accessor();
+	N::AEInstallObjectAccessor< Document_Element::Accessor >( Mac::cDocument, Mac::typeNull ).release();
 	
 	// Set up AEObjectModel
 	N::AESetObjectCallbacks();
