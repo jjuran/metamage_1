@@ -55,6 +55,50 @@
 #define ARRAY_LEN( a )  a, (sizeof (a) / sizeof *(a))
 
 
+namespace n = nucleus;
+
+static inline
+OSErr resolve_direct_object( const AppleEvent& event, AEDesc& token )
+{
+	OSErr err;
+	
+	AEDesc object_spec;
+	
+	err = AEGetParamDesc( &event, keyDirectObject, typeWildCard, &object_spec );
+	
+	if ( err == noErr )
+	{
+		// AEResolve can't handle a null descriptor.
+		
+		if ( object_spec.descriptorType == typeNull )
+		{
+			token = object_spec;
+		}
+		else
+		{
+			err = AEResolve( &object_spec, kAEIDoMinimum, &token );
+			
+			AEDisposeDesc( &object_spec );
+		}
+	}
+	
+	return err;
+}
+
+static
+n::owned< Mac::AEDesc_Token >
+//
+resolve_direct_object( const AppleEvent& event )
+{
+	Mac::AEDesc_Token token;
+	
+	OSErr err = resolve_direct_object( event, token );
+	
+	Mac::ThrowOSStatus( err );
+	
+	return n::owned< Mac::AEDesc_Token >::seize( token );
+}
+
 static inline
 OSStatus CopyWindowTitleAsAEDesc( WindowRef window, AEDesc* result )
 {
@@ -151,7 +195,6 @@ namespace Nitrogen
 namespace TestEdit
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
@@ -290,8 +333,7 @@ struct Close_AppleEvent
 	static void Handler( Mac::AppleEvent const&  event,
 	                     Mac::AppleEvent&        reply )
 	{
-		n::owned< Mac::AEDesc_Token > token = N::AEResolve( N::AEGetParamDesc( event,
-		                                                                       Mac::keyDirectObject ) );
+		n::owned< Mac::AEDesc_Token > token = resolve_direct_object( event );
 		
 		switch ( token.get().descriptorType )
 		{
@@ -315,14 +357,7 @@ struct Count_AppleEvent
 	static void Handler( Mac::AppleEvent const&  event,
 	                     Mac::AppleEvent&        reply )
 	{
-		n::owned< Mac::AEDesc_ObjectSpecifier > containerObjSpec = N::AEGetParamDesc( event,
-		                                                                              Mac::keyDirectObject );
-		
-		bool containerIsRoot = containerObjSpec.get().descriptorType == typeNull;
-		
-		// AEResolve can't handle a null descriptor.
-		n::owned< Mac::AEDesc_Token > containerToken = containerIsRoot ? n::owned< Mac::AEDesc_Token >()
-		                                                               : N::AEResolve( containerObjSpec );
+		n::owned< Mac::AEDesc_Token > containerToken = resolve_direct_object( event );
 		
 		// The kind of thing we're counting, e.g. 'file'
 		DescType desiredClass;
@@ -443,8 +478,7 @@ struct GetData_AppleEvent
 	{
 		N::AEPutParamDesc( reply,
 		                   Mac::keyDirectObject,
-		                   GetData( N::AEResolve( N::AEGetParamDesc( event,
-		                                                             Mac::keyDirectObject ) ) ) );
+		                   GetData( resolve_direct_object( event ) ) );
 	}
 };
 
