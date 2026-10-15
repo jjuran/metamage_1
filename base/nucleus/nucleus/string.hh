@@ -11,51 +11,19 @@
 #ifndef NUCLEUS_STRING_HH
 #define NUCLEUS_STRING_HH
 
-
-#ifdef NUCLEUS_STRING_HEADER
-#include NUCLEUS_STRING_HEADER
-#elif defined( __RELIX__ )
+// plus
 #ifndef PLUS_VARSTRING_HH
 #include "plus/var_string.hh"
-#endif
-#else
-#include <string>
 #endif
 
 
 namespace nucleus
 {
-#ifdef NUCLEUS_STRING_TYPE
-	
-	typedef NUCLEUS_STRING_TYPE string;
-	
-#elif defined( __RELIX__ )
 	
 	typedef plus::string string;
-	
-#else
-	
-	typedef std::string string;
-	
-#endif
 
-#ifdef NUCLEUS_MUTABLE_STRING_TYPE
-	
-	typedef NUCLEUS_MUTABLE_STRING_TYPE mutable_string;
-	
-#elif defined( NUCLEUS_STRING_TYPE )
-	
-	typedef NUCLEUS_STRING_TYPE mutable_string;
-	
-#elif defined( __RELIX__ )
-	
 	typedef plus::var_string mutable_string;
 	
-#else
-	
-	typedef std::string mutable_string;
-	
-#endif
 }
 
 #endif
