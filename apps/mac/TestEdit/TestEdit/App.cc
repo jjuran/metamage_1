@@ -307,12 +307,6 @@ struct Close_AppleEvent
 				break;
 		}
 	}
-	
-	static void Install_Handler()
-	{
-		N::AEInstallEventHandler< Handler >( Mac::kAECoreSuite,
-		                                     Mac::kAEClose ).release();
-	}
 };
 
 struct Count_AppleEvent
@@ -358,12 +352,6 @@ struct Count_AppleEvent
 		N::AEPutParamDesc( reply,
 		                   Mac::keyDirectObject,
 		                   N::AECreateDesc< Mac::typeUInt32 >( count ) );
-	}
-	
-	static void Install_Handler()
-	{
-		N::AEInstallEventHandler< Handler >( Mac::kAECoreSuite,
-		                                     Mac::kAECountElements ).release();
 	}
 };
 
@@ -456,12 +444,6 @@ struct GetData_AppleEvent
 		                   Mac::keyDirectObject,
 		                   GetData( N::AEResolve( N::AEGetParamDesc( event,
 		                                                             Mac::keyDirectObject ) ) ) );
-	}
-	
-	static void Install_Handler()
-	{
-		N::AEInstallEventHandler< Handler >( Mac::kAECoreSuite,
-		                                     Mac::kAEGetData ).release();
 	}
 };
 
@@ -818,9 +800,9 @@ DispatchPropertyAccess( Mac::AEObjectClass        desiredClass,
 static
 void SetUpAppleEvents()
 {
-	Close_AppleEvent  ::Install_Handler();
-	Count_AppleEvent  ::Install_Handler();
-	GetData_AppleEvent::Install_Handler();
+	N::AEInstallEventHandler< Close_AppleEvent  ::Handler >( Mac::kAECoreSuite, Mac::kAEClose         ).release();
+	N::AEInstallEventHandler< Count_AppleEvent  ::Handler >( Mac::kAECoreSuite, Mac::kAECountElements ).release();
+	N::AEInstallEventHandler< GetData_AppleEvent::Handler >( Mac::kAECoreSuite, Mac::kAEGetData       ).release();
 	
 	// Initialize the Object Support Library.
 	N::AEObjectInit();
