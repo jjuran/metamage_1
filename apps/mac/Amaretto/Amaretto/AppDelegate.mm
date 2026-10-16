@@ -24,6 +24,7 @@
 #include "frend/commandmode_state.hh"
 #include "frend/coprocess.hh"
 #include "frend/cursor_invisible.hh"
+#include "frend/settings.hh"
 #include "frend/zoom.hh"
 
 // rasterlib
@@ -726,6 +727,8 @@ void on_cursor_vis( bool visible )
 	                             UPP_ARG( handle_Quit_Apple_event ),
 	                             0,
 	                             false );
+	
+	frend::load_defaults( bindir_fd );
 	
 	_viewMenu = set_up_menus( _zoomLevel );
 	
