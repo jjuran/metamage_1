@@ -324,6 +324,10 @@ let new_data = ("name: " rep name) "\n" * not named
 
 rewrite Resources "/config.txt" <== new_data new_disk config_txt()
 
+let hide-cursor = "hide-cursor: 1\n" * active "hide-startup"
+
+rewrite Resources "/defaults.txt" <== hide-cursor
+
 let launch_app = "graphics/frontend-common/tools/launch-ams-app.vx"
 
 copy( launch_app, Resources "/launch-app.vx" )
