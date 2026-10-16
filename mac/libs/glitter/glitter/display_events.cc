@@ -22,10 +22,9 @@ namespace glitter
 void on_display_event( void* info )
 {
 	using frend::cursor_state;
+	using frend::cursor_to_be_pinned;
 	using frend::display_event_set;
 	using frend::shared_cursor_state;
-	
-	static bool cursor_vis_called;
 	
 	display_event_set& events = *(display_event_set*) info;
 	
@@ -82,13 +81,13 @@ void on_display_event( void* info )
 			glfb::set_cursor_location( x, y );
 			glfb::set_cursor_visibility( is_visible );
 			
-			bool new_vis = is_visible != was_visible  ||  ! cursor_vis_called;
+			bool new_vis = is_visible != was_visible  ||  cursor_to_be_pinned;
 			
 			if ( new_vis  &&  events.cursor_vis )
 			{
 				events.cursor_vis( is_visible );
 				
-				cursor_vis_called = true;
+				cursor_to_be_pinned = false;
 			}
 			
 			was_visible = is_visible;
