@@ -15,6 +15,7 @@
 #include "plus/string.hh"
 
 // frontend-common
+#include "frend/commandmode_state.hh"
 #include "frend/cursor.hh"
 #include "frend/load_file.hh"
 
@@ -52,6 +53,16 @@ void parse_settings( const char* text )
 			if ( strncmp( p, "hide-cursor:", n ) == 0 )
 			{
 				cursor_to_be_pinned = x;
+			}
+			
+			if ( strncmp( p, "fullscreen:", n ) == 0 )
+			{
+				fullscreen = x;
+			}
+			
+			if ( strncmp( p, "sharp-pixels:", n ) == 0 )
+			{
+				sharp_pixels = x;
 			}
 		}
 		
