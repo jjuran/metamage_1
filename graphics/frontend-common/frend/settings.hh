@@ -10,6 +10,8 @@
 namespace frend
 {
 
+extern bool closable;
+
 void load_settings( int dir_fd, const char* path );
 
 inline

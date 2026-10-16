@@ -22,6 +22,8 @@
 namespace frend
 {
 
+bool closable;
+
 static
 void parse_settings( const char* text )
 {
@@ -41,6 +43,11 @@ void parse_settings( const char* text )
 			}
 			
 			unsigned x = gear::parse_unsigned_decimal( value );
+			
+			if ( strncmp( p, "closable:", n ) == 0 )
+			{
+				closable = x;
+			}
 			
 			if ( strncmp( p, "hide-cursor:", n ) == 0 )
 			{
