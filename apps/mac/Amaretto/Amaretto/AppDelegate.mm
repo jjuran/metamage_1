@@ -720,6 +720,8 @@ void on_cursor_vis( bool visible )
 
 - (void) applicationWillFinishLaunching: (NSNotification*) notification
 {
+	using frend::sharp_pixels;
+	
 	OSStatus err;
 	
 	err = AEInstallEventHandler( kCoreEventClass,
@@ -739,6 +741,8 @@ void on_cursor_vis( bool visible )
 	
 	[_idleWindow setAcceptsMouseMovedEvents: YES];
 	[_idleWindow setHidesOnDeactivate:       YES];
+	
+	glfb::set_interpolating( ! sharp_pixels );
 	
 	if ( fullscreen )
 	{
