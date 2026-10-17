@@ -442,6 +442,19 @@ void update_scale( unsigned image_width, unsigned image_height )
 
 void on_cursor_vis( bool visible )
 {
+	using splode::valid_coordinates;
+	
+	if ( ! valid_coordinates )
+	{
+		if ( const frend::shared_cursor_state* cursor = frend::cursor_state )
+		{
+			splode::last_sent_y = cursor->pointer[ 0 ];
+			splode::last_sent_x = cursor->pointer[ 1 ];
+			
+			valid_coordinates = true;
+		}
+	}
+	
 	if ( fullscreen )
 	{
 		return;
