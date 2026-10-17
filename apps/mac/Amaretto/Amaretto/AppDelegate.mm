@@ -757,10 +757,25 @@ void on_cursor_vis( bool visible )
 
 - (void) applicationDidBecomeActive: (NSNotification*) notification
 {
-	if ( events_fd >= 0 )
+	/*
+		When launched from the Finder or via open(1),
+		the applicationDidBecomeActive handler is called
+		before handle_Open_Apple_event, in which case the
+		coprocess hasn't been launched and the socket pair
+		referenced by events_fd hasn't been created.
+		
+		Don't do anything that would send a mouse-moved
+		event to an invalid fd, because then a subsequent
+		mouse-moved event with the same location would
+		get dropped on account of being a duplicate.
+	*/
+	
+	if ( events_fd < 0 )
 	{
-		update_cursor_location( _mainGLView );
+		return;
 	}
+	
+	update_cursor_location( _mainGLView );
 	
 	/*
 		If we were brought forward by a click in the
