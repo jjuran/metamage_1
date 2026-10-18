@@ -440,6 +440,18 @@ void update_scale( unsigned image_width, unsigned image_height )
 	max_scale_command_ID = command_ID_for_zoom_index( window_scale.maximum );
 }
 
+void on_cursor_vis( bool visible )
+{
+	if ( fullscreen )
+	{
+		return;
+	}
+	
+	AmarettoAppDelegate* delegate = (AmarettoAppDelegate*) [NSApp delegate];
+	
+	[delegate setCursorPinning: ! visible];
+}
+
 @implementation AmarettoAppDelegate
 
 - (id) initWithRaster: (const raster::raster_load&) load

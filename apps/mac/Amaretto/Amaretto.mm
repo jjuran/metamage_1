@@ -97,19 +97,6 @@ void set_palette( const raster::raster_load& load )
 	}
 }
 
-static
-void on_cursor_vis( bool visible )
-{
-	if ( fullscreen )
-	{
-		return;
-	}
-	
-	AmarettoAppDelegate* delegate = (AmarettoAppDelegate*) [NSApp delegate];
-	
-	[delegate setCursorPinning: ! visible];
-}
-
 int main( int argc, char** argv )
 {
 	releasing pool( [NSAutoreleasePool new] );
