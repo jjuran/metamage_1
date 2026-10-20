@@ -21,6 +21,8 @@ namespace splode
 short last_sent_x = 0;
 short last_sent_y = 0;
 
+bool valid_coordinates;
+
 static
 ssize_t write_buffer( int fd, const void* buffer, size_t len )
 {
@@ -39,13 +41,15 @@ ssize_t write_buffer( int fd, const void* buffer, size_t len )
 
 int send_mouse_moved_event( int fd, short x, short y )
 {
-	if ( x == last_sent_x  &&  y == last_sent_y )
+	if ( valid_coordinates  &&  x == last_sent_x  &&  y == last_sent_y )
 	{
 		return 0;
 	}
 	
 	last_sent_x = x;
 	last_sent_y = y;
+	
+	valid_coordinates = true;
 	
 	splode::pointer_location_buffer buffer =
 	{

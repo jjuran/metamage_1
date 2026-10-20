@@ -18,6 +18,8 @@ namespace splode
 	extern short last_sent_x;
 	extern short last_sent_y;
 	
+	extern bool valid_coordinates;
+	
 	int send_mouse_moved_event( int fd, short x, short y );
 	
 	template < class Coord >
