@@ -768,10 +768,18 @@ void on_cursor_vis( bool visible )
 		event to an invalid fd, because then a subsequent
 		mouse-moved event with the same location would
 		get dropped on account of being a duplicate.
+		
+		In fact, don't do anything at all the first time
+		this handler is called (at launch) -- act only
+		when becoming active after a layer switch.
 	*/
 	
-	if ( events_fd < 0 )
+	static bool ever_became_active;
+	
+	if ( ! ever_became_active )
 	{
+		ever_became_active = true;
+		
 		return;
 	}
 	
