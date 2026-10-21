@@ -300,7 +300,7 @@ NSWindow* create_window( const raster::raster_desc& desc, CGFloat scale )
 	[window setAcceptsMouseMovedEvents: YES];
 	[window setInitialFirstResponder:   view];
 	
-	[view setScale: scale];
+	[view setScale: scale fullscreen: NO];
 	
 	glfb::initialize();
 	
@@ -621,7 +621,7 @@ void on_cursor_vis( bool visible )
 	
 	update_scale( _desc->width, _desc->height );
 	
-	[_mainGLView setScale: current_scale()];
+	[_mainGLView setScale: current_scale() fullscreen: fullscreen];
 	
 	[self setCursorPinning: fullscreen  ||  cursor_invisible()];
 	
@@ -638,7 +638,7 @@ void on_cursor_vis( bool visible )
 	{
 		CGFloat x = current_scale();
 		
-		[_mainGLView setScale: x];
+		[_mainGLView setScale: x fullscreen: fullscreen];
 		
 		if ( ! fullscreen )
 		{

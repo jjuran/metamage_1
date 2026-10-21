@@ -141,7 +141,7 @@ void handle_event( NSEvent* event )
 	return self;
 }
 
-- (void) setScale: (CGFloat) scale
+- (void) setScale: (CGFloat) scale fullscreen: (BOOL) fullscreen
 {
 	_scale = scale;
 	

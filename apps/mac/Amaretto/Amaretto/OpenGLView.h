@@ -15,7 +15,7 @@
 
 - (id) initWithResolution: (CGSize) resolution;
 
-- (void) setScale: (CGFloat) scale;
+- (void) setScale: (CGFloat) scale fullscreen: (BOOL) fullscreen;
 
 - (BOOL) acceptsFirstResponder;
 - (BOOL) isFlipped;
