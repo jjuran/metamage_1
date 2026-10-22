@@ -1,0 +1,95 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Getopt::Std;
+use File::Find;
+
+sub HELP_MESSAGE {
+    print "Usage: $0 [-vrh] [-t TYPE] [-c CREATOR] [-e EXTENSION(S)] <FILE> "
+        . "...\n\n"
+        . "Parameters:\n"
+        . "  FILE             A file or path to a subtree with HFS attributes "
+        . "you'd like\n"
+        . "                   to change.\n\n"
+        . "Options:\n"
+        . "  -h               Display this help.\n"
+        . "  -v               Print filenames as their types changed.\n"
+        . "  -r               Recurse into subdirectories if any FILE is a"
+        . " directory.        \n"
+        . "  -t TYPE          Assign FILEs to a TYPE attribute.\n"
+        . "  -c CREATOR       Assign FILEs to a CREATOR attribute.\n"
+        . "  -e EXTENSION(s)  Set attributes on files matching an extension or "
+        . "suffix.\n"
+        . "                   You can specify multiple suffixes by separating "
+        . "them with\n"
+        . "                   ':' (colon).\n"
+    ;
+}
+
+my %opts;
+getopts('hvrt:c:e:', \%opts);
+my $verbose = (exists $opts{v}) ? 1 : 0;
+my $recurse = (exists $opts{r}) ? 1 : 0;
+
+if (exists $opts{h}) {
+    HELP_MESSAGE();
+    exit 0;
+}
+
+my @SETFILE_ARGS = ( "/Developer/Tools/SetFile" );
+my @EXTS = (exists $opts{e})
+    ? split(':', $opts{e})
+    : ( '.txt', '.c', '.h', '.cpp', '.hpp', '.cc', '.hh', '.pm', '.pl', '.vx',
+        '.md', '.patch', '.conf', '.vim', '.note', '.py', '.sh', '.bash', '.t'
+      )
+;
+
+if (not exists $opts{c} and not exists $opts{t}) {
+    print "ERROR: Must specify an HFS attribute to change!\n"
+        . "       Please specify one with a '-t TYPE', a '-c CREATOR', or both."
+        . "\n\n"
+    ;
+
+    HELP_MESSAGE();
+    exit 1;
+} elsif (exists $opts{c}) {
+    push @SETFILE_ARGS, '-c';
+    push @SETFILE_ARGS, $opts{c};
+} elsif (exists $opts{t}) {
+    push @SETFILE_ARGS, '-t';
+    push @SETFILE_ARGS, $opts{t};
+}
+
+my @FILES;
+if ($recurse) {
+    find sub {unless (-d) {push @FILES, $File::Find::name;}}, @ARGV;
+} else {
+    @FILES = @ARGV;
+}
+
+sub setfile_if_match {
+    my $file = shift;
+    my $ext;
+
+    for $ext (@EXTS) {
+        if ($file =~ /\/.git\//) {
+            return;
+        } elsif ($file =~ /$ext\z/) {
+            push @SETFILE_ARGS, $file;
+            my $ret = system(@SETFILE_ARGS);
+            pop @SETFILE_ARGS;
+
+            if ($verbose) {
+                print "$file: $ret\n";
+            }
+            return;
+        }
+    }
+}
+
+my $file;
+for $file (@FILES) {
+    setfile_if_match($file);
+}
