@@ -41,6 +41,7 @@
 #define PROGRAM  "bits2pict"
 
 #define MISSING_INPUT   "input file required"
+#define GARBAGE_OUTPUT  "warning: garbage output expected in x86 builds"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -261,6 +262,13 @@ int main( int argc, char** argv )
 		report_error( output_path, errnum );
 		
 		return 1;
+	}
+	
+	if ( TARGET_RT_LITTLE_ENDIAN )
+	{
+		write( STDERR_FILENO, STR_LEN( PROGRAM ": " GARBAGE_OUTPUT "\n" ) );
+		
+		return 3;
 	}
 	
 	return 0;
