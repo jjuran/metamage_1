@@ -3,6 +3,11 @@
 	------------
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 // Mac OS
 #ifndef __QUICKDRAW__
 #include <Quickdraw.h>
@@ -25,6 +30,9 @@
 
 // bits
 #include "bits/bits.hh"
+
+// mac-qd-utils
+#include "mac_qd/scoped_temp_port.hh"
 
 
 #pragma exceptions off
@@ -52,9 +60,7 @@ void CopyBits_in_place( const BitMap& bits )
 static inline
 PicHandle picture_from_BitMap( const BitMap& bits )
 {
-	GrafPort port;
-	
-	OpenPort( &port );
+	mac::qd::scoped_temp_port_basic port;
 	
 	SetPortBits( &bits );
 	
@@ -65,8 +71,6 @@ PicHandle picture_from_BitMap( const BitMap& bits )
 	CopyBits_in_place( bits );
 	
 	ClosePicture();
-	
-	ClosePort( &port );
 	
 	return pic;
 }
