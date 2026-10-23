@@ -222,6 +222,8 @@ my %fsmap =
 			\ qw( daemonize follower idle overwrite select stream ),
 			# Misc
 			\ qw( chain chess-test copier divide graft jtest pause th zpipe ),
+			# Graphics
+			\ qw( bits2pict ),
 			# Mac-specific
 			\ qw( AFPServer CurPageOption GetCatInfo adbs beep cds crsr
 				deicon drives drvr err2text gdev hfs-pathname keymods
