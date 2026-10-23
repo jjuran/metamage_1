@@ -23,8 +23,8 @@
 #endif
 #endif
 
-// mac-sys-utils
-#include "mac_sys/res_error.hh"
+// mac-glue-utils
+#include "mac_glue/LowMem.hh"
 
 
 namespace mac {
@@ -45,7 +45,7 @@ short set_cursor_by_id( short id )
 		return 0;
 	}
 	
-	return mac::sys::res_error();
+	return mac::glue::res_error();
 }
 
 }

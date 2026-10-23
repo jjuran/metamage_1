@@ -18,11 +18,11 @@
 #include <Resources.h>
 #endif
 
+// mac-glue-utils
+#include "mac_glue/LowMem.hh"
+
 // mac-env-utils
 #include "mac_env/has/IconUtilities.hh"
-
-// mac-sys-utils
-#include "mac_sys/res_error.hh"
 
 // mac-qd-utils
 #include "mac_qd/copy_bits.hh"
@@ -176,7 +176,7 @@ short plot_icon_id( const Rect& bounds, short id )
 		
 		return noErr;
 	}
-	else if ( OSErr err = mac::sys::res_error() )
+	else if ( OSErr err = mac::glue::res_error() )
 	{
 		return err;
 	}
