@@ -6,16 +6,16 @@
 	See Listing 8-1: "Determining if a system software is available".
 */
 
-#include "mac_sys/trap_available.hh"
+#include "mac_env/trap_available.hh"
 
-// mac-sys-utils
+// mac-env-utils
 #if ! TARGET_API_MAC_CARBON
-#include "mac_sys/trap_address.hh"
+#include "mac_env/trap_address.hh"
 #endif
 
 
 namespace mac {
-namespace sys {
+namespace env {
 	
 	enum
 	{
