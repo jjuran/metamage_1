@@ -15,8 +15,8 @@
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 
-// mac-sys-utils
-#include "mac_sys/has/IconUtilities.hh"
+// mac-env-utils
+#include "mac_env/has/IconUtilities.hh"
 
 // mac-qd-utils
 #include "mac_qd/plot_icon_id.hh"
@@ -115,7 +115,7 @@ namespace Genie
 		
 		if ( itsRef == NULL )
 		{
-			if ( ! mac::sys::has_IconUtilities() )
+			if ( ! mac::env::has_IconUtilities() )
 			{
 				mac::qd::plot_icon_id( area, itsResID );
 				return;

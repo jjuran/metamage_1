@@ -18,8 +18,10 @@
 #include <Resources.h>
 #endif
 
+// mac-env-utils
+#include "mac_env/has/IconUtilities.hh"
+
 // mac-sys-utils
-#include "mac_sys/has/IconUtilities.hh"
 #include "mac_sys/res_error.hh"
 
 // mac-qd-utils
@@ -72,7 +74,7 @@ bool use_IconUtilities( short icon_id )
 #endif
 #endif
 	
-	return ! TARGET_CPU_68K  ||  mac::sys::has_IconUtilities();
+	return ! TARGET_CPU_68K  ||  mac::env::has_IconUtilities();
 }
 
 static inline

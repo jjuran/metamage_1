@@ -3,15 +3,15 @@
 	----------------
 */
 
-#ifndef MACSYS_HAS_ICONUTILITIES_HH
-#define MACSYS_HAS_ICONUTILITIES_HH
+#ifndef MACENV_HAS_ICONUTILITIES_HH
+#define MACENV_HAS_ICONUTILITIES_HH
 
-// mac-sys-utils
-#include "mac_sys/trap_available.hh"
+// mac-env-utils
+#include "mac_env/trap_available.hh"
 
 
 namespace mac {
-namespace sys {
+namespace env {
 	
 	inline
 	bool has_IconUtilities()
