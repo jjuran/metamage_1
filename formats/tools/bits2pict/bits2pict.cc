@@ -46,6 +46,14 @@
 
 
 static inline
+bool ends_with( const char* s, const char* sub, size_t sublen )
+{
+	size_t len = strlen( s );
+	
+	return len >= sublen  &&  memcmp( s + len - sublen, sub, sublen ) == 0;
+}
+
+static inline
 void report_error( const char* path, unsigned err )
 {
 	more::perror( PROGRAM, path, err );
@@ -177,12 +185,12 @@ int main( int argc, char** argv )
 	{
 		size_t len = strlen( src );
 		
-		void* p = alloca( len + sizeof ".PICT" );
+		void* p = alloca( len + sizeof ".pict" );
 		
 		output_path = (char*) p;
 		
 		p = mempcpy( p, src,     len            );
-		p = mempcpy( p, ".PICT", sizeof ".PICT" );  // includes final NUL byte
+		p = mempcpy( p, ".pict", sizeof ".pict" );  // includes final NUL byte
 	}
 	
 	PicHandle pic = bits_to_picture( src );
@@ -207,6 +215,32 @@ int main( int argc, char** argv )
 	
 	if ( fd >= 0 )
 	{
+		if ( ! ends_with( output_path, STR_LEN( ".PICT" ) ) )
+		{
+			/*
+				If the filename ends with ".PICT", assume it's
+				an actual resource (possible in MacRelix), or
+				a build file that will become a resource via
+				the `read` directive in Rez -- omit the header.
+				
+				Otherwise, add the header.  Mac OS X varies
+				widely in its support for PICT files, but in
+				some cases having the header is required and
+				in no case is it counter-productive.
+			*/
+			
+			char header[ 512 ];
+			
+			memset( header, '\0', sizeof header );
+			
+			/*
+				A write to disk of 512 bytes should either
+				fail or succeed in full, not partially.
+			*/
+			
+			wrote = write( fd, header, sizeof header );
+		}
+		
 		wrote = write( fd, *pic, size );
 		
 		write_errnum = errno;
