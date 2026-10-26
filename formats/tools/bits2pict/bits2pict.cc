@@ -54,7 +54,12 @@ void report_error( const char* path, unsigned err )
 static inline
 void CopyBits_in_place( const BitMap& bits )
 {
-	CopyBits( &bits, &bits, &bits.bounds, &bits.bounds, srcCopy, NULL );
+	/*
+		We're targeting the current graphics port anyway,
+		so just use StdBits() instead of CopyBits().
+	*/
+	
+	StdBits( &bits, &bits.bounds, &bits.bounds, srcCopy, NULL );
 }
 
 static inline
