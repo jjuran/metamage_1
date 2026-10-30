@@ -41,7 +41,9 @@ pascal PicHandle OpenPicture_patch( const Rect* frame )
 	
 	CHECK_CUSTOM_GRAFPROC( port, putPicProc );
 	
-	enum { initial_size = 12 };
+	Size clip_size = port.clipRgn[0]->rgnSize;
+	
+	Size initial_size = sizeof (Picture) + 3 + clip_size;
 	
 	Handle h = NewHandle( initial_size );
 	
@@ -53,6 +55,10 @@ pascal PicHandle OpenPicture_patch( const Rect* frame )
 		
 		*p++ = 0x11;  // picVersion
 		*p++ = 0x01;  // version 1
+		
+		*p++ = 0x01;  // ClipRgn
+		
+		fast_memcpy( p, *port.clipRgn, clip_size );
 		
 		HidePen();
 	}
