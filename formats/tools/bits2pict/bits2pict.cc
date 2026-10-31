@@ -31,6 +31,9 @@
 // bits
 #include "bits/bits.hh"
 
+// mac-glue-utils
+#include "mac_glue/Memory.hh"
+
 // mac-qd-utils
 #include "mac_qd/scoped_temp_port.hh"
 
@@ -204,7 +207,7 @@ int main( int argc, char** argv )
 	
 	HLock( (Handle) pic );
 	
-	Size size = pic[0]->picSize;
+	Size size = mac::glue::GetHandleSize_raw( (Handle) pic );
 	
 	ssize_t wrote = 0;
 	
