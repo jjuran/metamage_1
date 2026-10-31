@@ -16,6 +16,8 @@ bool valid( const header& h, uint32_t size )
 		return false;
 	}
 	
+	size -= sizeof h;
+	
 	const int16_t stride = h.stride;
 	const int16_t height = h.height;
 	const int16_t width  = h.width;
