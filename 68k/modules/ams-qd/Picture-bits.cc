@@ -178,6 +178,11 @@ struct PICT_bitmap_header
 	*/
 };
 
+enum
+{
+	true_header_size = sizeof (PICT_bitmap_header) - 1,
+};
+
 void save_bits_to_picture( Handle         picSave,
                            const BitMap*  srcBits,
                            const Rect*    srcRect,
@@ -224,9 +229,7 @@ void save_bits_to_picture( Handle         picSave,
 	
 	PICT_bitmap_header header;
 	
-	Size extra_size = sizeof header + pack_size;
-	
-	SetHandleSize( picSave, size + sizeof header + pack_size );
+	SetHandleSize( picSave, size + true_header_size + data_size );
 	
 	if ( MemErr )
 	{
@@ -242,7 +245,7 @@ void save_bits_to_picture( Handle         picSave,
 	header.dstRect  = *dstRect;
 	header.mode     = mode;
 	
-	OSErr err = PtrAndHand( &header.opcode, picSave, sizeof header - 1 );
+	PtrAndHand( &header.opcode, picSave, true_header_size );
 	
 	Ptr src = srcBits->baseAddr - srcBits->rowBytes * srcBits->bounds.top;
 	
