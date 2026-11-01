@@ -231,9 +231,9 @@ void save_bits_to_picture( Handle         picSave,
 	header.dstRect  = *dstRect;
 	header.mode     = mode;
 	
-	Size size = mac::glue::GetHandleSize_raw( picSave );
-	
 	Size data_size = mulu_w( height, rowBytes );
+	
+	Size size = mac::glue::GetHandleSize_raw( picSave );
 	
 	SetHandleSize( picSave, size + true_header_size + data_size );
 	
@@ -248,10 +248,14 @@ void save_bits_to_picture( Handle         picSave,
 	
 	Ptr src = srcBits->baseAddr - srcBits->rowBytes * srcBits->bounds.top;
 	
-	/*
-		This can't possibly be the screen (since rowBytes < 8),
-		so we don't need a cursor-hiding raster lock.
-	*/
-	
-	PtrAndHand( src, picSave, data_size );
+	{
+		/*
+			This can't possibly be the screen (since rowBytes < 8),
+			so we don't need a cursor-hiding raster lock.
+		*/
+		
+		PtrAndHand( src, picSave, data_size );
+		
+		return;
+	}
 }
