@@ -21,7 +21,6 @@
 
 // ams-core
 #include "splode.hh"
-#include "throttle.hh"
 
 
 UInt32 Ticks   : 0x016A;
@@ -146,13 +145,9 @@ pascal Boolean GetNextEvent_patch( unsigned short  eventMask,
 		}
 	}
 	
-	disable_SystemTask_throttle();
-	
 	return false;
 	
 got_event:
-	
-	disable_SystemTask_throttle();
 	
 	return ! SystemEvent( event );
 }

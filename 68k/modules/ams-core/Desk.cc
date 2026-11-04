@@ -18,6 +18,8 @@ pascal Boolean SystemEdit_patch( short cmd )
 pascal void SystemTask_patch()
 {
 	wait_for_user_input( ticks_to_wait_in_SystemTask() );
+	
+	disable_SystemTask_throttle();
 }
 
 pascal Boolean SystemEvent_patch( const EventRecord* event )
