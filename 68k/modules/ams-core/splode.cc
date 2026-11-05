@@ -50,8 +50,6 @@ Point  Mouse   : 0x0830;
 Rect   CrsrPin : 0x0834;
 
 
-bool button_clicked;
-
 short wake_on_mouse_moved;
 
 static inline
@@ -117,11 +115,6 @@ void post_event( const splode::pointer_event_buffer& buffer )
 	KeyMods = keymods_from_modifiers_high_byte( mod );
 	
 	const Byte action = buffer.attrs & action_mask;
-	
-	if ( action <= 1 )
-	{
-		button_clicked = true;
-	}
 	
 	if ( action == 0 )
 	{

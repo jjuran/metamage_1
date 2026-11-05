@@ -83,8 +83,6 @@ Boolean next_lowlevel_event( bool get, short eventMask, EventRecord* event )
 	{
 		if ( next_OSEvent( get, eventMask & ~autoKeyMask, event ) )
 		{
-			button_clicked = false;
-			
 			return true;
 		}
 	}
@@ -379,13 +377,6 @@ pascal void GetMouse_patch( Point* loc )
 
 pascal Boolean Button_patch()
 {
-	if ( button_clicked )
-	{
-		button_clicked = false;
-		
-		return true;
-	}
-	
 	poll_user_input();
 	
 	return ! MBState;
