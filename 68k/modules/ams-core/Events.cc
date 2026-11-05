@@ -86,21 +86,11 @@ Boolean next_lowlevel_event( bool get, short eventMask, EventRecord* event )
 	return false;
 }
 
-static inline
-Boolean get_lowlevel_event( short eventMask, EventRecord* event )
-{
-	return next_lowlevel_event( true, eventMask, event );
-}
-
-static inline
-Boolean peek_lowlevel_event( short eventMask, EventRecord* event )
-{
-	return next_lowlevel_event( false, eventMask, event );
-}
-
 pascal Boolean GetNextEvent_patch( unsigned short  eventMask,
                                    EventRecord*    event )
 {
+	const bool getting = true;
+	
 	UInt32 ticks = get_Ticks();
 	
 	const unsigned long sleep = next_sleep;
@@ -119,7 +109,10 @@ pascal Boolean GetNextEvent_patch( unsigned short  eventMask,
 			event->where     = Mouse;
 			event->modifiers = 0;
 			
-			CurDeactive = NULL;
+			if ( getting )
+			{
+				CurDeactive = NULL;
+			}
 			
 			goto got_event;
 		}
@@ -132,13 +125,16 @@ pascal Boolean GetNextEvent_patch( unsigned short  eventMask,
 			event->where     = Mouse;
 			event->modifiers = activeFlag;
 			
-			CurActivate = NULL;
+			if ( getting )
+			{
+				CurActivate = NULL;
+			}
 			
 			goto got_event;
 		}
 	}
 	
-	if ( get_lowlevel_event( eventMask, event ) )
+	if ( next_lowlevel_event( getting, eventMask, event ) )
 	{
 		goto got_event;
 	}
@@ -150,7 +146,7 @@ pascal Boolean GetNextEvent_patch( unsigned short  eventMask,
 	
 	wait_for_user_input( sleep );
 	
-	if ( get_lowlevel_event( eventMask, event ) )
+	if ( next_lowlevel_event( getting, eventMask, event ) )
 	{
 		goto got_event;
 	}
@@ -185,12 +181,14 @@ pascal Boolean GetNextEvent_patch( unsigned short  eventMask,
 	
 got_event:
 	
-	return ! SystemEvent( event );
+	return ! getting  ||  ! SystemEvent( event );
 }
 
 pascal Boolean EventAvail_patch( unsigned short  eventMask,
                                  EventRecord*    event )
 {
+	const bool getting = false;
+	
 	const unsigned long sleep = next_sleep;
 	
 	next_sleep = 0;
@@ -222,7 +220,7 @@ pascal Boolean EventAvail_patch( unsigned short  eventMask,
 		}
 	}
 	
-	if ( peek_lowlevel_event( eventMask, event ) )
+	if ( next_lowlevel_event( getting, eventMask, event ) )
 	{
 		return true;
 	}
@@ -234,7 +232,7 @@ pascal Boolean EventAvail_patch( unsigned short  eventMask,
 	
 	wait_for_user_input( sleep );
 	
-	if ( peek_lowlevel_event( eventMask, event ) )
+	if ( next_lowlevel_event( getting, eventMask, event ) )
 	{
 		return true;
 	}
