@@ -389,6 +389,10 @@ const Byte* do_opcode( const Byte* p )
 			TextMode( read_word( p ) );
 			break;
 		
+		case 0x06:
+			p += 4;  // SpExtra
+			break;
+		
 		case 0x07:
 			p = pen_size( p );
 			break;
