@@ -12,6 +12,4 @@ extern short wake_on_mouse_moved;
 
 void reactor_insert();
 
-void wait_for_user_input( unsigned long ticks );
-
 #endif
