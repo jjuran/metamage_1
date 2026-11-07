@@ -50,8 +50,6 @@ Point  Mouse   : 0x0830;
 Rect   CrsrPin : 0x0834;
 
 
-short wake_on_mouse_moved;
-
 static inline
 ssize_t direct_read( int fd, unsigned char* buffer, size_t n )
 {

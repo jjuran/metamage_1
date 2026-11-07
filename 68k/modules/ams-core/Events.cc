@@ -22,9 +22,6 @@
 // ams-common
 #include "callouts.hh"
 
-// ams-core
-#include "splode.hh"
-
 
 enum
 {
@@ -48,6 +45,8 @@ const long default_GetNextEvent_throttle = 1;  // minimum ticks between calls
 unsigned long GetNextEvent_throttle = default_GetNextEvent_throttle;
 
 static unsigned long next_sleep;
+
+static Boolean wake_on_mouse_moved;
 
 static inline
 void poll_user_input()
