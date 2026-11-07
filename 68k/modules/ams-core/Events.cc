@@ -32,6 +32,8 @@ enum
 	_GetOSEvent   = 0xA031,
 };
 
+QHdr EventQueue : 0x014A;
+
 UInt32 Ticks   : 0x016A;
 Byte   MBState : 0x0172;
 KeyMap KeyMaps : 0x0174;
@@ -95,6 +97,23 @@ Boolean next_lowlevel_event( bool get, short eventMask, EventRecord* event )
 	return false;
 }
 
+static inline
+void event_sleep( unsigned long sleep )
+{
+	/*
+		Do not call this function with sleep=0.
+		
+		Since sleep may be close to $FFFFFFFF (which
+		indicates an arbitrarily long sleep), clear
+		the high bit (yielding a value that's close
+		to $7FFFFFFF, which is still arbitrarily
+		long), so that the negated value interpreted
+		as a signed integer is in fact negative.
+	*/
+	
+	mac::glue::delay( ~(sleep & 0x7FFFFFFF) );
+}
+
 static
 Boolean next_event( bool            getting,
                     unsigned short  eventMask,
@@ -102,7 +121,7 @@ Boolean next_event( bool            getting,
 {
 	UInt32 ticks = get_Ticks();
 	
-	const unsigned long sleep = next_sleep;
+	unsigned long sleep = next_sleep;
 	
 	next_sleep = 0;
 	
@@ -153,7 +172,28 @@ Boolean next_event( bool            getting,
 		goto got_event;
 	}
 	
-	wait_for_user_input( sleep );
+	if ( sleep )
+	{
+		if ( wake_on_mouse_moved )
+		{
+			event_sleep( sleep );
+		}
+		else
+		{
+			UInt32 wake_ticks = ticks + sleep;
+			
+			QElemPtr tail = EventQueue.qTail;
+			
+			do
+			{
+				event_sleep( sleep );
+				
+				ticks = get_Ticks();
+				sleep = wake_ticks - ticks;
+			}
+			while ( ticks < wake_ticks  &&  EventQueue.qTail == tail );
+		}
+	}
 	
 	if ( next_lowlevel_event( getting, eventMask, event ) )
 	{
