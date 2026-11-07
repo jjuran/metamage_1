@@ -421,7 +421,6 @@ void splode_ready( reactor_node* )
 	queue_event( events_fd );
 }
 
-static
 void reactor_insert()
 {
 	splode_node.fd    = events_fd;
@@ -441,8 +440,6 @@ void wait_for_user_input( const timeval& timeout )
 	}
 	
 	wait_timeout = timeout;
-	
-	static int inserted = (reactor_insert(), 0);
 	
 	while ( reactor_wait( &wait_timeout ) )
 	{

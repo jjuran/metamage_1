@@ -51,6 +51,7 @@
 #include "interrupt-handlers.hh"
 #include "memwatch.hh"
 #include "options.hh"
+#include "splode.hh"
 
 
 #pragma exceptions off
@@ -319,6 +320,8 @@ void install_OSEventManager()
 	OSTRAP( OSEventAvail );  // A030
 	OSTRAP( GetOSEvent   );  // A031
 	OSTRAP( FlushEvents  );  // A032
+	
+	reactor_insert();  // post events as they're read via SPIEL
 	
 	install_interrupt_handlers();
 }
