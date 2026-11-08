@@ -9,9 +9,6 @@
 #ifndef __EVENTS__
 #include <Events.h>
 #endif
-#ifndef __TIMER__
-#include <Timer.h>
-#endif
 
 // POSIX
 #include <unistd.h>
@@ -43,12 +40,7 @@
 #pragma exceptions off
 
 
-#define STR_LEN( s )  "" s, (sizeof s - 1)
-
-
 typedef KeyMapByteArray Keys;
-
-QHdr EventQueue : 0x014A;
 
 Byte   MBState : 0x0172;
 Keys   KeyMaps : 0x0174;
@@ -61,47 +53,6 @@ Rect   CrsrPin : 0x0834;
 bool button_clicked;
 
 short wake_on_mouse_moved;
-
-const UInt64 approx_microseconds_per_tick = 1024 * 1024 / 64;
-
-static inline
-timeval approximate_timeval_from_ticks( unsigned long ticks )
-{
-	/*
-		The number of ticks per seconds is 60.15, but we'll use 64, or 2^6.
-		
-		The number of microseconds per tick is (1000 * 1000 * 100 / 6015),
-		which is approximately 16625.1.  We'll use 16384, or 2^14.
-		
-		To convert microseconds to seconds, we need to divide by 1000000.
-		We'll use 1048576, or 2^20.
-		
-		Since we're multiplying dt by 2^14 and then dividing it by 2^20,
-		we can instead just divide it by 2^6.  Using a bit shift, of course.
-		
-		We're also taking (ticks * 2^14) modulo 2^20, i.e. the low 20 bits.
-		We already know the low 14 bits will be zero, so we can do the modulo
-		first, keeping the low 6 bits.  (Using bit intersection, naturally.)
-	*/
-	
-	/*
-	const UInt64 actual_microseconds_per_tick = 1000 * 1000 * 100 / 6015;
-	const UInt64 approx_microseconds_per_tick = 1024 * 1024       / 64;
-	
-	const UInt64 dt = ticks * microseconds_per_tick;
-	*/
-	
-	UInt32 usec = (ticks & (1 << 6) - 1) << 14;
-	
-	if ( usec >= 1000000 )
-	{
-		usec = 999999;
-	}
-	
-	const timeval tv = { ticks >> 6, usec };
-	
-	return tv;
-}
 
 static inline
 ssize_t direct_read( int fd, unsigned char* buffer, size_t n )
@@ -404,15 +355,6 @@ void queue_event( int fd )
 	}
 }
 
-static char reentered_flag;
-
-static inline
-asm char reentered()
-{
-	TAS.B    reentered_flag
-	SNE.B    D0
-}
-
 static reactor_node splode_node;
 
 static
@@ -421,94 +363,10 @@ void splode_ready( reactor_node* )
 	queue_event( events_fd );
 }
 
-static
 void reactor_insert()
 {
 	splode_node.fd    = events_fd;
 	splode_node.ready = &splode_ready;
 	
 	the_reactor_core.insert( &splode_node );
-}
-
-static
-void wait_for_user_input( const timeval& timeout )
-{
-	static timeval wait_timeout;
-	
-	if ( reentered() )
-	{
-		return;
-	}
-	
-	wait_timeout = timeout;
-	
-	static int inserted = (reactor_insert(), 0);
-	
-	while ( reactor_wait( &wait_timeout ) )
-	{
-		wait_timeout = zero_timeout;
-		
-		// already handled
-	}
-	
-	reentered_flag = 0;
-}
-
-void wait_for_user_input( unsigned long ticks )
-{
-	if ( ! wake_on_mouse_moved )
-	{
-		QElemPtr tail = EventQueue.qTail;
-		
-		SInt64 delta = approx_microseconds_per_tick * ticks;
-		UInt64 then;
-		UInt64 now;
-		
-		::Microseconds( (UnsignedWide*) &then );
-		
-		while ( delta >= 1000000 )
-		{
-			timeval one_second = { 1, 0 };
-			
-			wait_for_user_input( one_second );
-			
-			if ( EventQueue.qTail != tail )
-			{
-				return;
-			}
-			
-			::Microseconds( (UnsignedWide*) &now );
-			
-			delta -= now - then;
-			
-			then = now;
-		}
-		
-		while ( delta > 0 )
-		{
-			timeval tv = { 0, delta };
-			
-			wait_for_user_input( tv );
-			
-			if ( EventQueue.qTail != tail )
-			{
-				return;
-			}
-			
-			::Microseconds( (UnsignedWide*) &now );
-			
-			delta -= now - then;
-			
-			then = now;
-		}
-		
-		return;
-	}
-	
-	wait_for_user_input( approximate_timeval_from_ticks( ticks ) );
-}
-
-void poll_user_input()
-{
-	wait_for_user_input( zero_timeout );
 }

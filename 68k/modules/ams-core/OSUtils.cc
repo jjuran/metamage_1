@@ -451,9 +451,31 @@ bool reactor_wait( UInt64 dt )
 
 long Delay_patch( long numTicks : __A0, short trap_word : __D1 )
 {
+	if ( numTicks == 0 )
+	{
+		/*
+			If the delay is zero, take the fast track with no math.
+		*/
+		
+		timeval timeout = zero_timeout;
+		
+		reactor_wait( &timeout );
+		
+		return get_Ticks();
+	}
+	
 	const UInt64 start = get_Ticks() * tick_microseconds;
 	
-	SInt64 dt = (UInt32) numTicks * tick_microseconds;
+	/*
+		If numTicks is -1, wait arbitrarily long in the reactor,
+		but if it's less, wait only ~numTicks ticks.
+	*/
+	
+	SInt32 negTicks  = ~numTicks;
+	UInt32 waitTicks = negTicks > 0 ? negTicks   // numTicks <  -1
+	                                : numTicks;  // numTicks >= -1
+	
+	SInt64 dt = waitTicks * tick_microseconds;
 	
 	const UInt64 end_time = start + dt;
 	

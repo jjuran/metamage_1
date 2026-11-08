@@ -5,9 +5,11 @@
 
 #include "interrupt-handlers.hh"
 
-// ams-core
-#include "splode.hh"
 
+enum
+{
+	_Delay = 0xA03B,
+};
 
 void* event_poll_interrupt_vector    : 0x0100;  // Vector 64 (user interrupt 0)
 void* sploop_detect_interrupt_vector : 0x0160;  // Vector 88 (user interrupt 24)
@@ -19,7 +21,8 @@ asm void event_poll_interrupt_handler()
 	
 	ANDI     #0xDFFF,SR  // leave supervisor mode
 	
-	JSR      poll_user_input
+	SUBA.L   A0,A0
+	_Delay
 	
 	JSR      0xFFFFFFFA  // enter_supervisor_mode()
 	

@@ -5,8 +5,10 @@
 
 #include "Desk.hh"
 
+// mac-glue-utils
+#include "mac_glue/OSUtils.hh"
+
 // ams-core
-#include "splode.hh"
 #include "throttle.hh"
 
 
@@ -17,7 +19,17 @@ pascal Boolean SystemEdit_patch( short cmd )
 
 pascal void SystemTask_patch()
 {
-	wait_for_user_input( ticks_to_wait_in_SystemTask() );
+	/*
+		If we're in a tight loop calling SystemTask()
+		and either GetOSEvent() or OSEventAvail(),
+		then wait up to one tick (or less, if an
+		event arrives) to throttle use of the CPU.
+	*/
+	
+	if ( ticks_to_wait_in_SystemTask() )
+	{
+		mac::glue::delay( ~1 );
+	}
 	
 	disable_SystemTask_throttle();
 }
