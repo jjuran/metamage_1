@@ -29,7 +29,7 @@ void report( diagnostic_level level, const char* file, int line )
 		print( "\n" );
 	}
 	
-	unsigned long long t = runclock();
+	unsigned long t = runclock();
 	
 	unsigned long ts = t / 1000;
 	unsigned     tms = t % 1000;

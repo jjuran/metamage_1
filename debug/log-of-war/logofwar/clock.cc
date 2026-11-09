@@ -42,7 +42,7 @@ unsigned long long timeofday()
 
 static unsigned long long start = timeofday();
 
-unsigned long long runclock()
+unsigned long runclock()
 {
 	return timeofday() - start;
 }
