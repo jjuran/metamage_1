@@ -23,6 +23,9 @@
 // iota
 #include "iota/char_types.hh"
 
+// mac-glue-utils
+#include "mac_glue/OSUtils.hh"
+
 // log-of-war
 #include "logofwar/report.hh"
 
@@ -497,6 +500,8 @@ pascal void SysBeep_patch( short duration )
 	char c = 0x07;
 	
 	write( STDOUT_FILENO, &c, sizeof c );
+	
+	mac::glue::delay( duration );
 }
 
 short SysEnvirons_patch( short v : __D0, SysEnvRec* env : __A0 )
