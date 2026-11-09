@@ -24,6 +24,7 @@
 #include "iota/char_types.hh"
 
 // mac-glue-utils
+#include "mac_glue/Gestalt.hh"
 #include "mac_glue/OSUtils.hh"
 
 // log-of-war
@@ -506,6 +507,13 @@ pascal void SysBeep_patch( short duration )
 
 short SysEnvirons_patch( short v : __D0, SysEnvRec* env : __A0 )
 {
+	using mac::glue::gestalt_err;
+	
+	enum
+	{
+		gestaltQuickdrawFeatures = 'qdrw',
+	};
+	
 	/*
 		Default to a Mac Plus for now, which is the minimum for Glider 3.0.
 		A program that refuses to run because a Mac Plus is too old wouldn't
@@ -520,7 +528,7 @@ short SysEnvirons_patch( short v : __D0, SysEnvRec* env : __A0 )
 	env->systemVersion   = SysVersion;
 	env->processor       = CPUFlag + 1;
 	env->hasFPU          = false;
-	env->hasColorQD      = false;
+	env->hasColorQD      = ! gestalt_err( gestaltQuickdrawFeatures );
 	env->keyBoardType    = envUnknownKbd;  // Mac Plus keyboard with keypad
 	env->atDrvrVersNum   = 0;
 	env->sysVRefNum      = BootDrive;
