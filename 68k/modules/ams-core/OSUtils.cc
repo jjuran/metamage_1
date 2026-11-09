@@ -512,6 +512,7 @@ short SysEnvirons_patch( short v : __D0, SysEnvRec* env : __A0 )
 	
 	enum
 	{
+		gestaltKeyboardType      = 'kbd ',
 		gestaltMachineType       = 'mach',
 		gestaltQuickdrawFeatures = 'qdrw',
 	};
@@ -531,7 +532,7 @@ short SysEnvirons_patch( short v : __D0, SysEnvRec* env : __A0 )
 	env->processor       = CPUFlag + 1;
 	env->hasFPU          = false;
 	env->hasColorQD      = ! gestalt_err( gestaltQuickdrawFeatures );
-	env->keyBoardType    = envUnknownKbd;  // Mac Plus keyboard with keypad
+	env->keyBoardType    = gestalt( gestaltKeyboardType );
 	env->atDrvrVersNum   = 0;
 	env->sysVRefNum      = BootDrive;
 	
