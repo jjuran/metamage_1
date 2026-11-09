@@ -21,6 +21,7 @@ enum
 	gestaltAddressingModeAttr     = 'addr',
 	gestaltAppleTalkVersion       = 'atlk',
 	gestaltFPUType                = 'fpu ',
+	gestaltMachineType            = 'mach',
 	gestaltMachineIcon            = 'micn',
 	gestaltUserVisibleMachineName = 'mnam',
 	gestaltMMUType                = 'mmu ',
@@ -35,6 +36,14 @@ enum
 	gestaltVMAttr                 = 'vm  ',
 };
 
+enum
+{
+	gestaltClassic  = 1,  // i.e. original Macintosh with 128K (or 512K?)
+	gestaltMac512KE = 3,
+	gestaltMacPlus  = 4,
+};
+
+long  MemTop     : 0x0108;
 short SysVersion : 0x015A;
 
 Gestalt_ProcPtr old_Gestalt;
@@ -82,6 +91,12 @@ long Gestalt_payload( unsigned long  selector : __D0,
 		
 		case gestaltToolboxTable:
 			*response = 0x00000c00;  // 3K
+			break;
+		
+		case gestaltMachineType:
+			*response = MemTop <  512 * 1024 ? gestaltClassic
+			          : MemTop < 1024 * 1024 ? gestaltMac512KE
+			          :                        gestaltMacPlus;
 			break;
 		
 		case gestaltMachineIcon:
