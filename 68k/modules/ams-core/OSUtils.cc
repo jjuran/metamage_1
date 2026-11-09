@@ -507,10 +507,12 @@ pascal void SysBeep_patch( short duration )
 
 short SysEnvirons_patch( short v : __D0, SysEnvRec* env : __A0 )
 {
+	using mac::glue::gestalt;
 	using mac::glue::gestalt_err;
 	
 	enum
 	{
+		gestaltMachineType       = 'mach',
 		gestaltQuickdrawFeatures = 'qdrw',
 	};
 	
@@ -524,7 +526,7 @@ short SysEnvirons_patch( short v : __D0, SysEnvRec* env : __A0 )
 	const short maxSysEnvVers = curSysEnvVers;  // version 2
 	
 	env->environsVersion = maxSysEnvVers;
-	env->machineType     = envMacPlus;
+	env->machineType     = gestalt( gestaltMachineType ) - 2;
 	env->systemVersion   = SysVersion;
 	env->processor       = CPUFlag + 1;
 	env->hasFPU          = false;
