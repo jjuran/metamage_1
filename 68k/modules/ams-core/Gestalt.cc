@@ -21,6 +21,7 @@ enum
 	gestaltAddressingModeAttr     = 'addr',
 	gestaltAppleTalkVersion       = 'atlk',
 	gestaltFPUType                = 'fpu ',
+	gestaltKeyboardType           = 'kbd ',
 	gestaltMachineType            = 'mach',
 	gestaltMachineIcon            = 'micn',
 	gestaltUserVisibleMachineName = 'mnam',
@@ -38,6 +39,8 @@ enum
 
 enum
 {
+	gestaltMacPlusKbd = 3,
+	
 	gestaltClassic  = 1,  // i.e. original Macintosh with 128K (or 512K?)
 	gestaltMac512KE = 3,
 	gestaltMacPlus  = 4,
@@ -91,6 +94,10 @@ long Gestalt_payload( unsigned long  selector : __D0,
 		
 		case gestaltToolboxTable:
 			*response = 0x00000c00;  // 3K
+			break;
+		
+		case gestaltKeyboardType:
+			*response = gestaltMacPlusKbd;
 			break;
 		
 		case gestaltMachineType:
