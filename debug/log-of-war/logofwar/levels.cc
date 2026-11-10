@@ -9,7 +9,8 @@
 namespace logofwar
 {
 
-diagnostic_level current_verbosity = Level_warning;
+diagnostic_level current_verbosity = CONFIG_DEBUGGING ? Level_notice
+                                                      : Level_warning;
 
 char const* const diagnostic_level_names[] =
 {
