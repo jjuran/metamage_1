@@ -236,7 +236,7 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 						
 						if ( ! video_page_flips++ )
 						{
-							NOTICE = "Video page flips occuring";
+							INFO = "Video page flips occuring";
 						}
 					}
 					
