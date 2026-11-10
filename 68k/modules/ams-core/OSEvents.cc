@@ -12,10 +12,10 @@
 
 // ams-common
 #include "callouts.hh"
+#include "throttle.hh"
 
 // ams-core
 #include "reactor-core.hh"
-#include "throttle.hh"
 
 
 enum

@@ -8,7 +8,7 @@
 // mac-glue-utils
 #include "mac_glue/OSUtils.hh"
 
-// ams-core
+// ams-common
 #include "throttle.hh"
 
 
