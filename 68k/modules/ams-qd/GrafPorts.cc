@@ -196,12 +196,12 @@ pascal void ForeColor_patch( long color )
 	
 	if ( color == port.fgColor  &&  color == blackColor )
 	{
-		NOTICE = "ForeColor: redundantly set to black";
+		INFO = "ForeColor: redundantly set to black";
 	}
 	
 	if ( is_nongray( color ) )
 	{
-		WARNING = "ForeColor: non-gray color ", color, " will render as black";
+		NOTICE = "ForeColor: non-gray color ", color, " will render as black";
 	}
 	
 	port.fgColor = color;
@@ -213,12 +213,12 @@ pascal void BackColor_patch( long color )
 	
 	if ( color == port.bkColor  &&  color == whiteColor )
 	{
-		NOTICE = "BackColor: redundantly set to white";
+		INFO = "BackColor: redundantly set to white";
 	}
 	
 	if ( is_nongray( color ) )
 	{
-		WARNING = "BackColor: non-gray color ", color, " will render as black";
+		NOTICE = "BackColor: non-gray color ", color, " will render as black";
 	}
 	
 	port.bkColor = color;
