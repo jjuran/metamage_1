@@ -224,11 +224,11 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	
 	if ( CurPageOption < 0 )
 	{
-		WARNING = "Allocating page 2 buffers";
+		NOTICE = "Allocating page 2 buffers";
 	}
 	else if ( CurPageOption > 0 )
 	{
-		WARNING = "Allocating page 2 audio buffer";
+		NOTICE = "Allocating page 2 audio buffer";
 	}
 	
 	// 2. Send goodBye to open drivers with dNeedGoodBye set.
