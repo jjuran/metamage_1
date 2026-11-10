@@ -25,6 +25,7 @@
 
 // ams-ui
 #include "Controls.hh"
+#include "Desk.hh"
 #include "Dialogs.hh"
 #include "Drag.hh"
 #include "Events.hh"
@@ -93,6 +94,7 @@ enum
 	_GetMenu        = _GetRMenu,
 	_SetItemMark    = _SetItmMark,
 	_SetItemStyle   = _SetItmStyle,
+	_SystemEdit     = _SysEdit,
 	_UpdateControls = _UpdtControl,
 	_UpdateDialog   = _UpdtDialog,
 };
@@ -233,6 +235,16 @@ static void install_Controls()
 	TBTRAP( FindControl    );  // A96C
 	TBTRAP( Draw1Control   );  // A96D
 	TBTRAP( GetNewControl  );  // A9BE
+}
+
+static
+void install_DeskManager()
+{
+	TBTRAP( SystemEvent );  // A9B2
+	
+	TBTRAP( SystemTask  );  // A9B4
+	
+	TBTRAP( SystemEdit  );  // A9C2
 }
 
 static
@@ -377,6 +389,7 @@ int main( int argc, char** argv )
 		}
 	}
 	
+	install_DeskManager();
 	install_EventManager();
 	install_Windows();
 	install_Menus();

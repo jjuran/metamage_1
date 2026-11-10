@@ -70,12 +70,6 @@ Operating System Utilities
   * _SysBeep shim writes $07 to the console (patched by ams-io)
   * _SysEnvirons hard-coded for Mac Plus
 
-Desk Manager
-------------
-
-  * _SystemTask (TODO: give time to drivers)
-  * _SystemEdit and _SystemEvent shims always return false (no DA support yet)
-
 System Error Manager
 --------------------
 

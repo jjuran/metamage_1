@@ -34,7 +34,6 @@
 
 // ams-core
 #include "Debugger.hh"
-#include "Desk.hh"
 #include "Gestalt.hh"
 #include "HandleUtils.hh"
 #include "Handles.hh"
@@ -126,7 +125,6 @@ enum
 {
 	_ReallocateHandle = _ReallocHandle,
 	_ReserveMem       = _ResrvMem,
-	_SystemEdit       = _SysEdit,
 };
 
 
@@ -326,16 +324,6 @@ void install_OSEventManager()
 }
 
 static
-void install_DeskManager()
-{
-	TBTRAP( SystemEvent );  // A9B2
-	
-	TBTRAP( SystemTask );  // A9B4
-	
-	TBTRAP( SystemEdit );  // A9C2
-}
-
-static
 void install_Debugger()
 {
 	TBTRAP( Debugger );  // A9FF
@@ -474,8 +462,6 @@ int main( int argc, char** argv )
 	install_Gestalt();
 	
 	install_OSEventManager();
-	
-	install_DeskManager();
 	
 	install_Debugger();
 	

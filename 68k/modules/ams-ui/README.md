@@ -68,6 +68,12 @@ Dialog Manager
   * _FindDItem
   * _UpdateDialog just calls DrawDialog()
 
+Desk Manager
+------------
+
+  * _SystemTask (TODO: give time to drivers)
+  * _SystemEdit and _SystemEvent shims always return false (no DA support yet)
+
 List Manager
 ------------
 
