@@ -183,7 +183,7 @@ bool native_override( v68k::emulator& emu )
 		const int level  = 1;
 		const int vector = 88;
 		
-		WARNING = "Patching spinloop at ", (v68k::hex32_t) emu.regs[ PC ];
+		NOTICE = "Patching spinloop at ", (v68k::hex32_t) emu.regs[ PC ];
 		
 		emu.interrupt( level, vector );
 		
