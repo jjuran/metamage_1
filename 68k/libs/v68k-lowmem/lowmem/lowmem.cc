@@ -304,6 +304,7 @@ static const global globals[] =
 	{ ROM + 0x0008, 0x82, 0x0000 },  // ROM version = 0x0000
 	{ ROM + 0x000A, 0x82, 0xA9F4 },  // ROM reset:  just ExitToShell
 	
+	{ 0x00E0, 0x84, 0xFFFF          },
 	{ 0x00E4, 4,    tag_00E4        },
 	{ 0x0100, 0x82, 0xFFFF          },  // MonkeyLives
 	{ 0x0102, 0x84, 72              },  // ScrVRes, ScrHRes
