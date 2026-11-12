@@ -317,12 +317,8 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		return;
 	}
 	
-	Rect clipRect;
-	
-	SectRect( r, &port.portRect, &clipRect );
-	
 	// This initializes clipRgn by calling RectRgn().
-	get_refined_clip_region( port, clipRect, clipRgn );
+	get_refined_clip_region( port, *r, clipRgn );
 	
 	if ( EmptyRgn( clipRgn ) )
 	{
