@@ -41,9 +41,6 @@
 
 using quickdraw::offset_region;
 using quickdraw::Region_end;
-using quickdraw::region_geometry;
-
-typedef quickdraw::region_geometry_t geometry_t;
 
 
 static inline short min( short a, short b )
@@ -64,21 +61,6 @@ static inline const short* rgn_extent( const MacRegion* rgn )
 static inline short* rgn_extent( MacRegion* rgn )
 {
 	return (short*) &rgn[ 1 ];
-}
-
-static inline
-geometry_t region_geometry( const MacRegion* rgn )
-{
-	return region_geometry( rgn_extent( rgn ) );
-}
-
-static inline
-size_t max_new_region_size( geometry_t a, geometry_t b )
-{
-	const short v =      a.n_v_coords + b.n_v_coords;
-	const short h = max( a.n_h_coords,  b.n_h_coords ) + 2;
-	
-	return sizeof (MacRegion) + v * h * 2 + 2;
 }
 
 static inline
@@ -683,10 +665,7 @@ pascal void XOrRgn_patch( RgnHandle a, RgnHandle b, RgnHandle dst )
 	a = reify_region( a, &a_rect );
 	b = reify_region( b, &b_rect );
 	
-	const geometry_t g_a = region_geometry( *a );
-	const geometry_t g_b = region_geometry( *b );
-	
-	const size_t size = max_new_region_size( g_a, g_b );
+	const Size size = a[0]->rgnSize + b[0]->rgnSize;
 	
 	SetHandleSize( xor_scratch, size );
 	
