@@ -50,7 +50,7 @@ enum
 	sizeof_region = sizeof (coord_t) * 5,
 	
 	min_rgn_size  =    28,  // minimum size of a non-bbox-only region
-	max_rgn_size  = 32766,
+	max_rgn_size  = 65534,  // 2^16 - 2
 	
 	Region_end    = 0x7FFF,
 };
