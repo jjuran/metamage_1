@@ -382,7 +382,7 @@ int32_t sect_rect_region_callout( v68k::processor_state& s )
 	
 	Byte* q = NULL;
 	
-	short src_size = 0;
+	uint16_t src_size = 0;
 	
 	bool ok = (r = s.translate( box, sizeof_rect, data_space, mem_read ))    &&
 	          ((long) r & 0x1) == 0                                          &&
@@ -475,10 +475,10 @@ int32_t sect_regions_callout( v68k::processor_state& s )
 	
 	Byte* r = NULL;
 	
-	short a_size = 0;
-	short b_size = 0;
+	uint16_t a_size = 0;
+	uint16_t b_size = 0;
 	
-	short r_size;
+	uint32_t r_size;
 	
 	bool ok = (p = s.translate( one, sizeof_region, data_space, mem_read ))  &&
 	          ((long) p & 0x1) == 0                                          &&
@@ -586,10 +586,10 @@ int32_t xor_regions_callout( v68k::processor_state& s )
 	
 	Byte* r = NULL;
 	
-	short a_size = 0;
-	short b_size = 0;
+	uint16_t a_size = 0;
+	uint16_t b_size = 0;
 	
-	short r_size;
+	uint32_t r_size;
 	
 	bool ok = (p = s.translate( one, sizeof_region, data_space, mem_read ))  &&
 	          ((long) p & 0x1) == 0                                          &&
