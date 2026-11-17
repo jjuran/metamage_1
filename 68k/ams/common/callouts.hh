@@ -34,11 +34,6 @@ DEFINE_CALLOUT( void,
                 0xFFD6 )
 
 DEFINE_CALLOUT( void,
-                fast_memnot,
-                ( void* : __A0, unsigned long : __D0 ),
-                0xFFD4 )
-
-DEFINE_CALLOUT( void,
                 fast_rshift,
                 ( void*        dst : __A1,
                   void const*  src : __A0,
