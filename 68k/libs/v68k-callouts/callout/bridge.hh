@@ -28,7 +28,7 @@ enum
 	trace_off,
 	
 	// $FFEE - $FFE8
-	obsolete_ScrnBitMap_trap,
+	reserved_FFEE,
 	lock_screen,
 	unlock_screen,
 	reserved1,
@@ -47,7 +47,7 @@ enum
 	
 	// $FFD6 - $FFD0
 	fast_memset,
-	fast_memnot,
+	reserved_FFD4,
 	fast_shift,
 	fast_mempcpy,
 	

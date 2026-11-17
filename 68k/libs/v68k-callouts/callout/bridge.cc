@@ -313,40 +313,6 @@ int32_t fast_memset_callout( v68k::processor_state& s )
 }
 
 static
-int32_t fast_memnot_callout( v68k::processor_state& s )
-{
-	const v68k::function_code_t data_space = s.data_space();
-	
-	const uint32_t mem = s.a(0);
-	
-	const uint32_t n = s.d(0);
-	
-	if ( n == 0 )
-	{
-		return rts;
-	}
-	
-	uint8_t* p = s.translate( mem, n, data_space, mem_write );
-	
-	if ( p == NULL )
-	{
-		abort();
-		return nil;  // FIXME
-	}
-	
-	uint8_t* q = p + n;
-	
-	while ( p < q )
-	{
-		*p++ ^= 0xFF;
-	}
-	
-	s.translate( mem, n, data_space, mem_update );
-	
-	return rts;
-}
-
-static
 int32_t fast_shift_callout( v68k::processor_state& s )
 {
 	const v68k::function_code_t data_space = s.data_space();
@@ -934,7 +900,7 @@ static const function_type the_callouts[] =
 	&timeval_from_nanoseconds_callout,
 	
 	&fast_memset_callout,
-	&fast_memnot_callout,
+	NULL,
 	&fast_shift_callout,
 	&fast_mempcpy_callout,
 	
