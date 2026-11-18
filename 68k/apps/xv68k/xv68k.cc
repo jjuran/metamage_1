@@ -120,6 +120,7 @@ enum
 	Opt_supervisor = 'S',
 	Opt_trace      = 'T',
 	Opt_module     = 'm',
+	Opt_quiet      = 'q',
 	Opt_turbo      = 't',
 	Opt_verbose    = 'v',
 	
@@ -139,6 +140,7 @@ static command::option options[] =
 {
 	{ "",           Opt_authorized },
 	{ "poll",       Opt_poll       },
+	{ "quiet",      Opt_quiet      },
 	{ "supervisor", Opt_supervisor },
 	{ "trace",      Opt_trace      },
 	{ "turbo",      Opt_turbo      },
@@ -444,6 +446,10 @@ char* const* get_options( char** argv )
 			
 			case Opt_poll:
 				polling = true;
+				break;
+			
+			case Opt_quiet:
+				logofwar::current_verbosity = logofwar::Level_warning;
 				break;
 			
 			case Opt_trace:
