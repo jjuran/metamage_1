@@ -36,7 +36,7 @@ let mods = ["core fs rsrc" / ' '] map ams_mod
 let program = ams_bin "/get-" property
 
 let freemount-srv = "freemountd -q --root" / ' ', fs_root
-let xv68k-command = "xv68k", "-tS", *mods, program, app_name, arguments
+let xv68k-command = "xv68k", "-qtS", *mods, program, app_name, arguments
 let graft-command = "graft", freemount-srv, "//", xv68k-command
 
 run [graft-command]
